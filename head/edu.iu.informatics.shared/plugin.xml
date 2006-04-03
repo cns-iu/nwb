@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.0"?>
+<plugin
+   id="edu.iu.informatics.shared"
+   name="Shared Java Code Plug-in"
+   version="1.0.0"
+   provider-name="Team IVC"
+   class="edu.iu.informatics.shared.PersisterProviderPlugin">
+
+   <runtime>
+      <library name="shared.jar">
+         <export name="*"/>
+      </library>
+   </runtime>
+
+   <requires>
+      <import plugin="edu.iu.iv.core"/>
+      <import plugin="edu.iu.nwb.core"/>
+   </requires>
+
+<!--
+   <extension
+         point="org.eclipse.ui.startup">
+      <startup
+            class="edu.iu.informatics.shared.PersisterProviderPlugin">
+      </startup>
+   </extension>
+-->
+
+</plugin>
