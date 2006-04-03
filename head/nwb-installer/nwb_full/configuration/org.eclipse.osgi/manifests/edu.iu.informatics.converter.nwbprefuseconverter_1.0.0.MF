@@ -1,0 +1,16 @@
+Manifest-Version: 1.0
+Generated-from: 1143738085250;type=2
+Bundle-ManifestVersion: 2
+Bundle-Name: Nwbprefuseconverter Plug-in
+Bundle-SymbolicName: edu.iu.informatics.converter.nwbprefuseconverter; singleton:=true
+Bundle-Version: 1.0.0
+Bundle-ClassPath: nwbtoprefuse.jar
+Bundle-Vendor: Team IVC
+Bundle-Localization: plugin
+Export-Package: edu.iu.informatics.converter.nwbprefuseconverter
+Require-Bundle: org.eclipse.ui,
+ edu.iu.iv.core,
+ edu.iu.iv.prefuselib,
+ edu.iu.iv.persisters,
+ edu.iu.nwb.core
+Eclipse-AutoStart: true

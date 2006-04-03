@@ -1,0 +1,13 @@
+Manifest-Version: 1.0
+Generated-from: 1143738081812;type=2
+Bundle-ManifestVersion: 2
+Bundle-Name: JUNG Network Layouts
+Bundle-SymbolicName: edu.iu.iv.visualization.networks.jungnetworklayouts; singleton:=true
+Bundle-Version: 1.0.4
+Bundle-ClassPath: jungnetworklayouts.jar
+Bundle-Vendor: Team IVC
+Bundle-Localization: plugin
+Export-Package: edu.iu.iv.visualization.networks.jungnetworklayouts
+Require-Bundle: edu.iu.iv.junglib,
+ edu.iu.iv.core
+Eclipse-AutoStart: true

@@ -1,0 +1,15 @@
+Manifest-Version: 1.0
+Generated-from: 1143738082890;type=2
+Bundle-ManifestVersion: 2
+Bundle-Name: OnePointCorrelations Plug-in
+Bundle-SymbolicName: edu.iu.informatics.analysis.onepointcorrelations; singleton:=true
+Bundle-Version: 1.0.0
+Bundle-ClassPath: onePointCorrelations.jar
+Bundle-Vendor: Team IVC
+Bundle-Localization: plugin
+Export-Package: edu.iu.informatics.analysis.onepointcorrelations
+Require-Bundle: org.eclipse.ui,
+ edu.iu.iv.core,
+ edu.iu.informatics.shared,
+ edu.iu.nwb.core
+Eclipse-AutoStart: true

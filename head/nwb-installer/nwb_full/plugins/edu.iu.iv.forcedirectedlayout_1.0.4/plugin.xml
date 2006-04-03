@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.0"?>
+<plugin
+   id="edu.iu.iv.forcedirectedlayout"
+   name="Force Directed Layout Plug-in"
+   version="1.0.4"
+   provider-name="Team IVC">
+
+   <runtime>
+      <library name="ForceDirectedLayout.jar">
+         <export name="*"/>
+      </library>
+   </runtime>
+   <requires>
+      <import plugin="edu.iu.iv.prefuselib"/>
+      <import plugin="edu.iu.iv.core"/>
+   </requires>
+
+   <extension
+         point="org.eclipse.ui.actionSets">
+      <actionSet
+            label="edu.iu.iv.forcedirectedlayout.actionSet"
+            visible="true"
+            id="edu.iu.iv.forcedirectedlayout.actionSet">
+         <action
+               label="Force Directed Layout"
+               class="edu.iu.iv.forcedirectedlayout.ForceDirectedLayoutPlugin"
+               style="push"
+               menubarPath="visualization/additions"
+               id="edu.iu.iv.forcedirectedlayout" />
+      </actionSet>
+   </extension>
+   <extension
+         point="org.eclipse.ui.startup">
+      <startup class="edu.iu.iv.forcedirectedlayout.ForceDirectedLayoutPlugin"/>
+   </extension>
+
+</plugin>

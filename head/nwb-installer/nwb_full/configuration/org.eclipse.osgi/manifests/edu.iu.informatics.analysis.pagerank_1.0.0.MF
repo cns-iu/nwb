@@ -1,0 +1,14 @@
+Manifest-Version: 1.0
+Generated-from: 1143738084484;type=2
+Bundle-ManifestVersion: 2
+Bundle-Name: PageRankAlgorithm
+Bundle-SymbolicName: edu.iu.informatics.analysis.pagerank; singleton:=true
+Bundle-Version: 1.0.0
+Bundle-ClassPath: PageRankAlgorithm.jar
+Bundle-Vendor: Santo
+Bundle-Localization: plugin
+Export-Package: edu.iu.informatics.analysis.pagerank
+Require-Bundle: edu.iu.iv.core,
+ edu.iu.informatics.shared,
+ edu.iu.nwb.core
+Eclipse-AutoStart: true

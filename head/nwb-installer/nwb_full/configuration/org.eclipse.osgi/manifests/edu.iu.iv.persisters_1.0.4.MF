@@ -1,0 +1,19 @@
+Manifest-Version: 1.0
+Generated-from: 1143738081718;type=2
+Bundle-ManifestVersion: 2
+Bundle-Name: Core Persisters Plug-in
+Bundle-SymbolicName: edu.iu.iv.persisters; singleton:=true
+Bundle-Version: 1.0.4
+Bundle-ClassPath: core_persisters.jar
+Bundle-Activator: edu.iu.iv.persisters.PersisterPlugin
+Bundle-Vendor: Team IVC
+Bundle-Localization: plugin
+Export-Package: edu.iu.iv.persisters,
+ edu.iu.iv.persisters.ivc,
+ edu.iu.iv.persisters.standard
+Require-Bundle: edu.iu.iv.core,
+ edu.iu.iv.junglib,
+ edu.iu.iv.prefuselib,
+ edu.iu.iv.matrixmodel,
+ edu.iu.iv.coltlib
+Eclipse-AutoStart: true

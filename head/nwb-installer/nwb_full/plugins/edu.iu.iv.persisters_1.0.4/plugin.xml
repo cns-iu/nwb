@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.0"?>
+<plugin
+   id="edu.iu.iv.persisters"
+   name="Core Persisters Plug-in"
+   version="1.0.4"
+   provider-name="Team IVC"
+   class="edu.iu.iv.persisters.PersisterPlugin">
+
+   <runtime>
+      <library name="core_persisters.jar">
+         <export name="*"/>
+      </library>
+   </runtime>
+
+   <requires>
+      <import plugin="edu.iu.iv.core"/>
+      <import plugin="edu.iu.iv.junglib"/>
+      <import plugin="edu.iu.iv.prefuselib"/>
+      <import plugin="edu.iu.iv.matrixmodel"/>
+      <import plugin="edu.iu.iv.coltlib"/>
+   </requires>
+   <extension
+         point="org.eclipse.ui.startup">
+      <startup class="edu.iu.iv.persisters.PersisterPlugin"/>
+   </extension>
+
+</plugin>

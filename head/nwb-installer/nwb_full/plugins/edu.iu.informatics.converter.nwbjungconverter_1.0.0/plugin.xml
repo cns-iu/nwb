@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.0"?>
+<plugin
+   id="edu.iu.informatics.converter.nwbjungconverter"
+   name="Nwbjungconverter Plug-in"
+   version="1.0.0"
+   provider-name="Team IVC">
+
+   <runtime>
+      <library name="nwbjungconverter.jar">
+         <export name="*"/>
+      </library>
+   </runtime>
+
+   <requires>
+      <import plugin="org.eclipse.ui"/>
+      <import plugin="edu.iu.iv.core"/>
+      <import plugin="edu.iu.iv.junglib"/>
+      <import plugin="edu.iu.iv.persisters"/>
+      <import plugin="edu.iu.nwb.core"/>
+   </requires>
+
+   <extension
+         point="org.eclipse.ui.actionSets">
+      <actionSet
+            label="edu.iu.informatics.converter.nwbjungconverter.actionSet"
+            visible="true"
+            id="edu.iu.informatics.converter.nwbjungconverter.actionSet">
+         <action
+               label="NWB -&gt; JUNG"
+               class="edu.iu.informatics.converter.nwbjungconverter.NwbJungConverterPlugin"
+               tooltip="Click to convert NWB file to JUNG"
+               menubarPath="Converters/additions"
+               id="edu.iu.informatics.converter.nwbjungconverter.NwbJungConverterPlugin">
+         </action>
+      </actionSet>
+   </extension>
+   <extension
+         point="org.eclipse.ui.startup">
+      <startup
+            class="edu.iu.informatics.converter.nwbjungconverter.NwbJungConverterPlugin">
+      </startup>
+   </extension>
+
+</plugin>

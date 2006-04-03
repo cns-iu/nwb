@@ -1,0 +1,13 @@
+Manifest-Version: 1.0
+Generated-from: 1143738083687;type=2
+Bundle-ManifestVersion: 2
+Bundle-Name: Radial Graph Plug-in
+Bundle-SymbolicName: edu.iu.iv.radialgraph; singleton:=true
+Bundle-Version: 1.0.4
+Bundle-ClassPath: radialgraph.jar
+Bundle-Vendor: Team IVC
+Bundle-Localization: plugin
+Export-Package: edu.iu.iv.radialgraph
+Require-Bundle: edu.iu.iv.core,
+ edu.iu.iv.prefuselib
+Eclipse-AutoStart: true

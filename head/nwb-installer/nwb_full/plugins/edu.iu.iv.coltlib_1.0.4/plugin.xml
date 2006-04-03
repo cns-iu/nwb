@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.0"?>
+<plugin
+   id="edu.iu.iv.coltlib"
+   name="Coltlib Plug-in"
+   version="1.0.4"
+   provider-name="Team IVC">
+   <runtime>
+      <library name="colt.jar">
+         <export name="*"/>
+      </library>
+   </runtime>
+
+</plugin>

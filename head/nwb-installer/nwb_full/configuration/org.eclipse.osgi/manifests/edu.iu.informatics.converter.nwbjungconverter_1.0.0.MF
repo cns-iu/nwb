@@ -1,0 +1,16 @@
+Manifest-Version: 1.0
+Generated-from: 1143738085281;type=2
+Bundle-ManifestVersion: 2
+Bundle-Name: Nwbjungconverter Plug-in
+Bundle-SymbolicName: edu.iu.informatics.converter.nwbjungconverter; singleton:=true
+Bundle-Version: 1.0.0
+Bundle-ClassPath: nwbjungconverter.jar
+Bundle-Vendor: Team IVC
+Bundle-Localization: plugin
+Export-Package: edu.iu.informatics.converter.nwbjungconverter
+Require-Bundle: org.eclipse.ui,
+ edu.iu.iv.core,
+ edu.iu.iv.junglib,
+ edu.iu.iv.persisters,
+ edu.iu.nwb.core
+Eclipse-AutoStart: true

@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<workbench version="2.0">
+<workbenchAdvisor/>
+<window height="600" width="600" x="66" y="87">
+<fastViewData fastViewLocation="1024"/>
+<perspectiveBar/>
+<coolbarLayout locked="0"/>
+<page focus="true" label="&lt;Unknown Label&gt; - IVCPerspective">
+<editors>
+<editorArea activeWorkbook="DefaultEditorWorkbook">
+<info part="DefaultEditorWorkbook">
+<folder appearance="1" expanded="2">
+<presentation id="org.eclipse.ui.presentations.WorkbenchPresentationFactory"/>
+</folder>
+</info>
+</editorArea>
+</editors>
+<views>
+<view id="edu.iu.iv.messaging.IVCConsole" partName="Console">
+<viewState/>
+</view>
+<view id="edu.iu.iv.datamodelview.DataModelTreeView" partName="Data Models">
+<viewState/>
+</view>
+</views>
+<perspectives activePart="edu.iu.iv.datamodelview.DataModelTreeView" activePerspective="edu.iu.iv.gui.IVCPerspective">
+<perspective editorAreaVisible="0" fixed="0" version="0.016">
+<descriptor class="edu.iu.iv.gui.IVCPerspective" id="edu.iu.iv.gui.IVCPerspective" label="IVCPerspective"/>
+<alwaysOnActionSet id="edu.iu.informatics.analysis.directeddegreedistribution.actionSet"/>
+<alwaysOnActionSet id="edu.iu.informatics.analysis.directedknn.actionSet"/>
+<alwaysOnActionSet id="edu.iu.informatics.analysis.onepointcorrelations.actionSet"/>
+<alwaysOnActionSet id="edu.iu.informatics.analysis.pagerank.actionSet"/>
+<alwaysOnActionSet id="edu.iu.informatics.analysis.totaldegreedistribution.actionSet"/>
+<alwaysOnActionSet id="edu.iu.informatics.analysis.undirectedknn.actionSet"/>
+<alwaysOnActionSet id="edu.iu.informatics.analysis.wattsclustercoefficient.actionSet"/>
+<alwaysOnActionSet id="edu.iu.informatics.converter.nwbjungconverter.actionSet"/>
+<alwaysOnActionSet id="edu.iu.informatics.converter.nwbprefuseconverter.actionSet"/>
+<alwaysOnActionSet id="edu.iu.informatics.modeling.barabasialbert.actionSet"/>
+<alwaysOnActionSet id="edu.iu.informatics.randomGraph.actionSet"/>
+<alwaysOnActionSet id="edu.iu.informatics.modeling.smallworld.actionSet"/>
+<alwaysOnActionSet id="edu.iu.iv.forcedirectedlayout.actionSet"/>
+<alwaysOnActionSet id="edu.iu.iv.persistence.actionSet"/>
+<alwaysOnActionSet id="edu.iu.iv.radialgraph.actionSet"/>
+<alwaysOnActionSet id="edu.iu.iv.visualization.networks.jungnetworklayouts.actionSet"/>
+<view id="edu.iu.iv.messaging.IVCConsole"/>
+<view id="edu.iu.iv.datamodelview.DataModelTreeView"/>
+<viewLayoutRec closeable="false" id="edu.iu.iv.messaging.IVCConsole"/>
+<viewLayoutRec closeable="false" id="edu.iu.iv.datamodelview.DataModelTreeView"/>
+<layout>
+<mainWindow>
+<info folder="true" part="org.eclipse.ui.internal.ViewStack@4be2cc">
+<folder activePageID="edu.iu.iv.messaging.IVCConsole" appearance="2" expanded="2">
+<page content="edu.iu.iv.messaging.IVCConsole" label="Console"/>
+<presentation id="org.eclipse.ui.presentations.WorkbenchPresentationFactory">
+<part id="0"/>
+</presentation>
+</folder>
+</info>
+<info folder="true" part="stickyFolderRight" ratio="0.7491409" ratioLeft="436" ratioRight="146" relationship="2" relative="org.eclipse.ui.internal.ViewStack@4be2cc">
+<folder appearance="2" expanded="2">
+<page content="org.eclipse.ui.internal.introview" label="LabelNotFound"/>
+</folder>
+</info>
+<info part="org.eclipse.ui.editorss" ratio="0.599631" ratioLeft="325" ratioRight="217" relationship="4" relative="org.eclipse.ui.internal.ViewStack@4be2cc"/>
+<info part="edu.iu.iv.schedulerview.SchedulerView" ratio="0.59907836" ratioLeft="130" ratioRight="87" relationship="4" relative="org.eclipse.ui.editorss"/>
+<info folder="true" part="org.eclipse.ui.internal.ViewStack@16ef71" ratio="0.7491409" ratioLeft="436" ratioRight="146" relationship="2" relative="org.eclipse.ui.internal.ViewStack@4be2cc">
+<folder activePageID="edu.iu.iv.datamodelview.DataModelTreeView" appearance="2" expanded="2">
+<page content="edu.iu.iv.datamodelview.DataModelTreeView" label="Data Models"/>
+<presentation id="org.eclipse.ui.presentations.WorkbenchPresentationFactory">
+<part id="0"/>
+</presentation>
+</folder>
+</info>
+</mainWindow>
+</layout>
+</perspective>
+</perspectives>
+<navigationHistory/>
+<stickyState/>
+</page>
+<workbenchWindowAdvisor/>
+<actionBarAdvisor/>
+</window>
+<mruList/>
+</workbench>

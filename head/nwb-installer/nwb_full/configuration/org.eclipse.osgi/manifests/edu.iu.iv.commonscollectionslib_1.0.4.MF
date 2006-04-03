@@ -1,0 +1,21 @@
+Manifest-Version: 1.0
+Generated-from: 1143738086125;type=2
+Bundle-ManifestVersion: 2
+Bundle-Name: Apache Commons Collections 3.1 Library
+Bundle-SymbolicName: edu.iu.iv.commonscollectionslib
+Bundle-Version: 1.0.4
+Bundle-ClassPath: commons-collections-3.1.jar
+Bundle-Vendor: Team IVC
+Bundle-Localization: plugin
+Export-Package: org.apache.commons.collections,
+ org.apache.commons.collections.bag,
+ org.apache.commons.collections.bidimap,
+ org.apache.commons.collections.buffer,
+ org.apache.commons.collections.collection,
+ org.apache.commons.collections.comparators,
+ org.apache.commons.collections.functors,
+ org.apache.commons.collections.iterators,
+ org.apache.commons.collections.keyvalue,
+ org.apache.commons.collections.list,
+ org.apache.commons.collections.map,
+ org.apache.commons.collections.set
