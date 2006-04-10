@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<feature
+      id="edu.iu.informatics.templates_feature"
+      label="edu.iu.informatics.templates-feature"
+      version="1.0.0"
+      provider-name="NWB Team">
+
+   <description url="http://www.example.com/description">
+      [Enter Feature Description here.]
+   </description>
+
+   <copyright url="http://www.example.com/copyright">
+      [Enter Copyright Description here.]
+   </copyright>
+
+   <license url="http://www.example.com/license">
+      [Enter License Description here.]
+   </license>
+
+   <requires>
+      <import plugin="edu.iu.iv.core"/>
+      <import plugin="edu.iu.iv.templates"/>
+      <import plugin="edu.iu.iv.common"/>
+      <import plugin="edu.iu.iv.swtguibuilder"/>
+      <import plugin="org.eclipse.pde.ui"/>
+      <import plugin="org.eclipse.jface"/>
+      <import plugin="org.eclipse.core.runtime"/>
+      <import plugin="org.eclipse.pde.core"/>
+      <import plugin="org.eclipse.core.resources"/>
+   </requires>
+
+   <plugin
+         id="edu.iu.informatics.templates"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"/>
+
+</feature>
