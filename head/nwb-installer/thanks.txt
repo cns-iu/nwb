@@ -1,6 +1,0 @@
-Installation of the Network Workbench was successful!
-
-You can always update the NWB or find new plugins by clicking
-Help->Update... when running the NWB!
-
-Visit http://nwb.slis.indiana.edu for more information.
