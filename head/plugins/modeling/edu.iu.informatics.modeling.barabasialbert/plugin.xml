@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.0"?>
+<plugin
+   id="edu.iu.informatics.modeling.barabasialbert"
+   name="Barabasi-Albert Modeling Plug-in"
+   version="1.0.0"
+   provider-name="Team IVC">
+
+   <runtime>
+      <library name="barabasialbert.jar">
+         <export name="*"/>
+      </library>
+   </runtime>
+
+   <requires>
+      <import plugin="org.eclipse.ui"/>
+      <import plugin="edu.iu.iv.core"/>
+      <import plugin="edu.iu.informatics.shared"/>
+   </requires>
+
+   <extension
+         point="org.eclipse.ui.actionSets">
+      <actionSet
+            label="edu.iu.informatics.modeling.barabasialbert.actionSet"
+            visible="true"
+            id="edu.iu.informatics.modeling.barabasialbert.actionSet">
+         <action
+               label="Barabasi-Albert Modeling"
+               class="edu.iu.informatics.modeling.barabasialbert.BarabasiAlbertPlugin"
+               tooltip="Select to launch Barabasi-Albert Modeling Plug-in"
+               menubarPath="modeling/additions"
+               id="edu.iu.informatics.modeling.barabasialbert.BarabasiAlbertPlugin">
+         </action>
+      </actionSet>
+   </extension>
+   <extension
+         point="org.eclipse.ui.startup">
+      <startup
+            class="edu.iu.informatics.modeling.barabasialbert.BarabasiAlbertPlugin">
+      </startup>
+   </extension>
+
+</plugin>
