@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?pde version="3.1"?>
+
+<product name="NWB" id="edu.iu.iv.gui.ivc" application="edu.iu.iv.gui.IVCApplication" useFeatures="true">
+
+   <configIni use="default"/>
+
+   <launcherArgs>
+   </launcherArgs>
+
+   <windowImages/>
+
+   <launcher name="nwb">
+      <solaris/>
+      <win useIco="false">
+         <bmp/>
+      </win>
+   </launcher>
+
+   <plugins>
+      <plugin id="edu.iu.informatics.shared"/>
+      <plugin id="edu.iu.iv.common"/>
+      <plugin id="edu.iu.iv.core"/>
+      <plugin id="edu.iu.iv.core.rcp"/>
+      <plugin id="edu.iu.iv.informatics.barabasialbert"/>
+      <plugin id="edu.iu.iv.swtguibuilder"/>
+      <plugin id="edu.iu.nwb.persisters"/>
+      <plugin id="org.eclipse.core.commands"/>
+      <plugin id="org.eclipse.core.expressions"/>
+      <plugin id="org.eclipse.core.runtime"/>
+      <plugin id="org.eclipse.help"/>
+      <plugin id="org.eclipse.jface"/>
+      <plugin id="org.eclipse.osgi"/>
+      <plugin id="org.eclipse.swt"/>
+      <plugin id="org.eclipse.swt.gtk.linux.x86"/>
+      <plugin id="org.eclipse.ui"/>
+      <plugin id="org.eclipse.ui.workbench"/>
+      <plugin id="santo_persisters"/>
+   </plugins>
+
+   <features>
+      <feature id="edu.iu.informatics.analysis.directeddegreedistribution_feature" version="1.0.0"/>
+      <feature id="edu.iu.informatics.analysis.directedknn_feature" version="1.0.0"/>
+      <feature id="edu.iu.informatics.analysis.onepointcorrelations_feature" version="1.0.0"/>
+      <feature id="edu.iu.informatics.analysis.pagerankalgorithm_feature" version="1.0.0"/>
+      <feature id="edu.iu.informatics.analysis.totaldegreedistribution_feature" version="1.0.0"/>
+      <feature id="edu.iu.informatics.analysis.undirectedknn_feature" version="1.0.0"/>
+      <feature id="edu.iu.informatics.analysis.wattsclustercoefficient_feature" version="1.0.0"/>
+      <feature id="edu.iu.informatics.converter.nwbjungconverter_feature" version="1.0.0"/>
+      <feature id="edu.iu.informatics.converter.nwbtoprefuse_feature" version="1.0.0"/>
+      <feature id="edu.iu.informatics.modeling.barabasialbert_feature" version="1.0.0"/>
+      <feature id="edu.iu.informatics.modeling.erdosrandom_feature" version="1.0.0"/>
+      <feature id="edu.iu.informatics.modeling.smallworld_feature" version="1.0.0"/>
+      <feature id="edu.iu.informatics.shared_feature" version="1.0.0"/>
+      <feature id="edu.iu.iv.forcedirectedlayout" version="1.0.4"/>
+      <feature id="edu.iu.iv.ivccore" version="1.0.4"/>
+      <feature id="edu.iu.iv.persisters" version="1.0.4"/>
+      <feature id="edu.iu.iv.radialgraph" version="1.0.4"/>
+      <feature id="edu.iu.iv.visualization.networks.jungnetworklayouts" version="1.0.4"/>
+      <feature id="nwb_core_feature" version="1.0.0"/>
+   </features>
+
+</product>
