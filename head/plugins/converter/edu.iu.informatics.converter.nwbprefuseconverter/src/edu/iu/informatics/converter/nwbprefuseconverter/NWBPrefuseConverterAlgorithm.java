@@ -30,7 +30,7 @@ import edu.iu.nwb.core.model.Node;
 /**
  * Class to implement the Algorithm for this IVC Plug-in.
  *
- * @author
+ * @author Team NWB
  */
 public class NWBPrefuseConverterAlgorithm extends AbstractAlgorithm {    
     private static final String ALGORITHM_NAME = "NWB -> Prefuse Converter";
@@ -38,6 +38,8 @@ public class NWBPrefuseConverterAlgorithm extends AbstractAlgorithm {
     
     /**
      * Creates a new NWBPrefuseConverterAlgorithm.
+     * 
+     * @param dm The datamodel to convert
      */
 	public NWBPrefuseConverterAlgorithm(DataModel dm) {
 	    propertyMap.put(AlgorithmProperty.LABEL, ALGORITHM_NAME);
@@ -53,23 +55,18 @@ public class NWBPrefuseConverterAlgorithm extends AbstractAlgorithm {
 	public boolean execute() {
 		NWBModel nwbModel = (NWBModel) dm.getData();
 
+		//Create the temporary file directory
 		String temp = IVC.getInstance().getTemporaryFilesFolder();
 		File tempFile;
 		try {
 			tempFile = File.createTempFile("graph-ml-", ".xml", new File(temp));
 			writeGraphMl(nwbModel, tempFile);
 
-//			PersistenceRegistry perReg = IVC.getInstance()
-//					.getPersistenceRegistry();
 			try {
-//				XMLGraphReader xgr = new XMLGraphReader() ;
-//		        Graph graph = xgr.loadGraph(tempFile) ;
-				
+				//Create the datamodel using the Prefuse Persister
 				PrefusexGMMLGraphPersister persister = new PrefusexGMMLGraphPersister();
 		        
 				Object model = persister.restore(new BasicFileResourceDescriptor(tempFile));
-//				Object model = perReg.load(new BasicFileResourceDescriptor(tempFile));
-//				System.out.println(model.getClass().getName());
 				String label = tempFile.getName();
 				DataModelType type = DataModelType.NETWORK;
 
@@ -77,7 +74,10 @@ public class NWBPrefuseConverterAlgorithm extends AbstractAlgorithm {
 				PropertyMap propMap = dataModel.getProperties();
 				propMap.put(DataModelProperty.LABEL, label);
 				propMap.put(DataModelProperty.TYPE, type);
+				dataModel.getProperties().setPropertyValue(DataModelProperty.PARENT, this.dm);
+				
 				try {
+					//Add the datamodel to IVC
 					IVC.getInstance().addModel(dataModel);
 				} catch (UnsupportedModelException e) {
 					e.printStackTrace();
@@ -87,7 +87,6 @@ public class NWBPrefuseConverterAlgorithm extends AbstractAlgorithm {
 				e.printStackTrace();
 			} catch (IOException e) {
 				e.printStackTrace();
-//			}
 			} catch (PersistenceException e) {
 				e.printStackTrace();
 			}
@@ -96,28 +95,32 @@ public class NWBPrefuseConverterAlgorithm extends AbstractAlgorithm {
 		}
 	    return true;
 	}
-	
+
+	/**
+	 * Write out graphML format given an NWB model
+	 * @param nwbModel The model to write
+	 * @param tempFile The temporary file to write to
+	 */
 	private void writeGraphMl(NWBModel nwbModel, File tempFile) {
 		try {
-//			System.out.println("file: " + tempFile);
 			PrintWriter out
 			   = new PrintWriter(new BufferedWriter(new FileWriter(tempFile)));
 			
+			//Write the header
 			out.println("<?xml version=\"1.0\" encoding=\"UTF-8\"?>");
 			out.println("<graphml xmlns=\"http://graphml.graphdrawing.org/xmlns\">");
 			out.println("<graph edgedefault=\"undirected\">");
 			
-			Iterator nodeIter = nwbModel.getNodes();
-			
-			//System.out.println(nwbModel.getClass());
+			//Write out the nodes
+			Iterator nodeIter = nwbModel.getNodes();			
 			while (nodeIter.hasNext()) {
 				Node bnc = (Node)nodeIter.next();
 				Object numAttr = bnc.getPropertyValue(Node.ID);
-				
-				out.println("<node id=\"" + numAttr.toString() + "\" label=\""+bnc.toString()+"\"> </node>");
+				out.println("<node id=\"" + numAttr.toString() + "\" label=\""+bnc.toString()+"\"> </node>");			
 //				out.println("<node id=\"" + numAttr.toString() + "\"></node>");
 			}
 			
+			//Write out the undirected edges
 			Iterator edgeIter = nwbModel.getUndirectedEdges();
 			while (edgeIter.hasNext()) {
 				Edge bec = (Edge)edgeIter.next();
