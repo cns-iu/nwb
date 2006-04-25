@@ -10,16 +10,16 @@ import edu.iu.iv.core.plugin.PluginProperty;
 import edu.iu.nwb.core.model.NWBModel;
 
 /**
- * Plugin class for this addition to IVC.
+ * Plugin class for the NWB JUNG converter.
  *
- * @author
+ * @author Team NWB
  */
 public class NwbJungConverterPlugin extends AbstractPlugin {
     //id of this Plugin
     public static final String ID_PLUGIN = "edu.iu.informatics.converter.nwbjungconverter";
     
     //basic Plugin information
-    private static final String AUTHOR = "Ben and Bonnie";
+    private static final String AUTHOR = "Team NWB";
     private static final String DESCRIPTION = "NWB datamodel to JUNG datamodel";
 //    private static final String CITATION_STRING = "!FIXME!";   
     private static final String UNSUPPORTED_REASON = "Data model not supported";
@@ -56,8 +56,6 @@ public class NwbJungConverterPlugin extends AbstractPlugin {
      * @param model the data model to be used to launch this Plugin, if needed.
      */
     public void launch(DataModel model) {
-        //this template simple creates a NwbJungConverterAlgorithm and executes it,
-        //replace as needed.
         NwbJungConverterAlgorithm algorithm = new NwbJungConverterAlgorithm(model);
         algorithm.execute();        
     }
@@ -71,7 +69,6 @@ public class NwbJungConverterPlugin extends AbstractPlugin {
      * @return true if the model is supported, false otherwise.
      */
     public boolean supports(DataModel model) {
-        //this template simply returns true, replace as needed.
         return model.getData() instanceof NWBModel;
     }
 
