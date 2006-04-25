@@ -29,7 +29,7 @@ import edu.iu.nwb.core.model.NWBModel;
 import edu.iu.nwb.core.model.Node;
 
 /**
- * Class to implement the Algorithm for this IVC Plug-in.
+ * Class to implement the NWB to JUNG Algorithm.
  *
  * @author
  */
@@ -39,6 +39,7 @@ public class NwbJungConverterAlgorithm extends AbstractAlgorithm {
     
     /**
      * Creates a new NwbJungConverterAlgorithm.
+     * @param dm Datamodel to convert
      */
 	public NwbJungConverterAlgorithm(DataModel dm) {
 	    propertyMap.put(AlgorithmProperty.LABEL, ALGORITHM_NAME);
@@ -57,10 +58,12 @@ public class NwbJungConverterAlgorithm extends AbstractAlgorithm {
 		String temp = IVC.getInstance().getTemporaryFilesFolder();
 		File tempFile;
 		try {
+			//Create a temporary file and write tdata to it
 			tempFile = File.createTempFile("graph-ml-", ".xml", new File(temp));
 			writeGraphMl(nwbModel, tempFile);
 
 			try {
+				//Use the JUNG persister to create the data model
 				JUNGGraphMLPersister persister = new JUNGGraphMLPersister();
 
 				Object model;
@@ -74,7 +77,10 @@ public class NwbJungConverterAlgorithm extends AbstractAlgorithm {
 				PropertyMap propMap = dataModel.getProperties();
 				propMap.put(DataModelProperty.LABEL, label);
 				propMap.put(DataModelProperty.TYPE, type);
+				dataModel.getProperties().setPropertyValue(DataModelProperty.PARENT, this.dm);
+				
 				try {
+					//Add the datamodel to IVC
 					IVC.getInstance().addModel(dataModel);
 				} catch (UnsupportedModelException e) {
 					e.printStackTrace();
@@ -90,25 +96,30 @@ public class NwbJungConverterAlgorithm extends AbstractAlgorithm {
 		return true;
 	}
 	
+	/**
+	 * Write out the data model to GraphML format
+	 * @param nwbModel The NWBmodel to save
+	 * @param tempFile The temporary file to write to
+	 */
 	private void writeGraphMl(NWBModel nwbModel, File tempFile) {
 		try {
 			PrintWriter out
 			   = new PrintWriter(new BufferedWriter(new FileWriter(tempFile)));
-			
+			//write the header
 			out.println("<?xml version=\"1.0\" encoding=\"UTF-8\"?>");
 			out.println("<graphml xmlns=\"http://graphml.graphdrawing.org/xmlns\"  xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\"");
 			out.println("xsi:schemaLocation=\"http://graphml.graphdrawing.org/xmlns http://graphml.graphdrawing.org/xmlns/1.0/graphml.xsd\">");
 			out.println("<graph id=\"" + nwbModel.getClass() + "\" edgedefault=\"undirected\">");
 			
-			Iterator nodeIter = nwbModel.getNodes();
-			
+			//write the nodes
+			Iterator nodeIter = nwbModel.getNodes();			
 			while (nodeIter.hasNext()) {
 				Node bnc = (Node)nodeIter.next();
 				Object numAttr = bnc.getPropertyValue(Node.ID);
 				out.println("<node id=\"" + numAttr.toString() + "\"><data key=\"label\">"+bnc.toString()+"</data></node>");
 			}
 			
-			
+			//Write the undirected edges
 			Iterator   edgeIter       = nwbModel.getUndirectedEdges();
 			HashSet    edgesProcessed = new HashSet();
 			int        edgeNumber     = 0;
