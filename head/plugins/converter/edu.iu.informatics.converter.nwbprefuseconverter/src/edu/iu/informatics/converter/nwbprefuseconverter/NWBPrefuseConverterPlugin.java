@@ -10,16 +10,16 @@ import edu.iu.iv.core.plugin.PluginProperty;
 import edu.iu.nwb.core.model.NWBModel;
 
 /**
- * Plugin class for this addition to IVC.
+ * Plugin class for converting NWB to Prefuse format.
  *
- * @author
+ * @author Team NWB
  */
 public class NWBPrefuseConverterPlugin extends AbstractPlugin {
     //id of this Plugin
-    public static final String ID_PLUGIN = "edu.iu.informatics.converter.nwbprefuseconverter";
+    public static final String ID_PLUGIN = "edu.iu.informatics.converter.nwbtoprefuse";
     
     //basic Plugin information
-    private static final String AUTHOR = "Bonnie and Ben";
+    private static final String AUTHOR = "Team NWB";
     private static final String DESCRIPTION = "NWB data model to Prefuse data model";
 //    private static final String CITATION_STRING = "!FIXME!";   
     private static final String UNSUPPORTED_REASON = "Data model not supported";
@@ -56,8 +56,6 @@ public class NWBPrefuseConverterPlugin extends AbstractPlugin {
      * @param model the data model to be used to launch this Plugin, if needed.
      */
     public void launch(DataModel model) {
-        //this template simple creates a NWBPrefuseConverterAlgorithm and executes it,
-        //replace as needed.
         NWBPrefuseConverterAlgorithm algorithm = new NWBPrefuseConverterAlgorithm(model);
         algorithm.execute();        
     }
@@ -71,7 +69,6 @@ public class NWBPrefuseConverterPlugin extends AbstractPlugin {
      * @return true if the model is supported, false otherwise.
      */
     public boolean supports(DataModel model) {
-        //this template simply returns true, replace as needed.
     	return model.getData() instanceof NWBModel;
     }
 
