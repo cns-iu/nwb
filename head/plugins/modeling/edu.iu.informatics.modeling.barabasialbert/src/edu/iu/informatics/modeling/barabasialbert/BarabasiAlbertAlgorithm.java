@@ -44,7 +44,8 @@ public class BarabasiAlbertAlgorithm extends FortranAlgorithm {
         		           "network file",
         		           DataModelType.NETWORK,
         		           new BasicEdgePersister(parameterMap.getIntValue("nodes")));
-
+        runner.setParentFilename("network");
+        
         makeInputFile(runner, "inputfile");
         runner.execute(BarabasiAlbertPlugin.PLUGIN_ID);
         
