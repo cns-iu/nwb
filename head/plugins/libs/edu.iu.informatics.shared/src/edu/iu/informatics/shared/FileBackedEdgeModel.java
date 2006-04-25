@@ -13,198 +13,58 @@ import edu.iu.nwb.core.model.Edge;
 import edu.iu.nwb.core.model.NWBModel;
 import edu.iu.nwb.core.model.Node;
 
+/**
+ * Handles a network file which is just a list of edges wrapped by an
+ * NWBModel.  Programs using this will view this as an NWBModel.
+ * 
+ * @author Team NWB
+ *
+ */
 public class FileBackedEdgeModel implements NWBModel {
 	
 	private FileResourceDescriptor fileResourceDesc;
 	private long                   numNodes;
-//	private NWBModel nwbModel; 
-	
-	public FileBackedEdgeModel(FileResourceDescriptor fileResourceDesc, long numNodes) {
-		//System.out.println("filebackededgemodel: " + fileResourceDesc.getFilePath());
-		//this.fileResourceDesc = fileResourceDesc;
 
+	/**
+	 * Create a new edge model
+	 * 
+	 * @param fileResourceDesc
+	 * @param numNodes
+	 */
+	public FileBackedEdgeModel(FileResourceDescriptor fileResourceDesc, long numNodes) {
 		this.numNodes         = numNodes;
 		this.fileResourceDesc = fileResourceDesc;
 	}
-/*
-	public void setFileResourceDescriptor(FileResourceDescriptor fileResourceDesc) {
-		this.fileResourceDesc = fileResourceDesc;
-	}
-*/
-/*
-	public void addEdge(Object origin, Object dest) {
-		try {
-			//Open the file to read from
-			BufferedReader reader  = new BufferedReader(new FileReader(fileResourceDesc.getFile()));
-			
-			//Create and init the file to write to
-			File tempFile = File.createTempFile("AddBasicEdge", ".tmp");
-			PrintWriter out
-			   = new PrintWriter(new BufferedWriter(new FileWriter(tempFile)));
 
-			String line = reader.readLine();
-			boolean edgePresent = false;
-			
-			while (line != null) {
-				StringTokenizer st = new StringTokenizer(line);
-
-				String currentOrigin = st.nextToken();
-				String currentDest   = st.nextToken();
-
-				if (currentOrigin.equals(origin) &&
-					currentDest.equals(dest)) {
-					edgePresent = true;
-				}
-				out.write(line);
-
-				line = reader.readLine();
-			}
-			
-			if (!edgePresent) {
-				out.println(origin + " " + dest);
-			}
-
-			reader.close();
-			out.close();
-
-			fileResourceDesc.getFile().delete();
-			tempFile.renameTo(fileResourceDesc.getFile());
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-	}
-
-	public void removeEdge(Object origin, Object dest) {
-		try {
-			//Open the file to read from
-			BufferedReader reader  = new BufferedReader(new FileReader(fileResourceDesc.getFile()));
-			
-			//Create and init the file to write to
-			File tempFile = File.createTempFile("RemoveBasicEdge", ".tmp");
-			PrintWriter out
-			   = new PrintWriter(new BufferedWriter(new FileWriter(tempFile)));
-
-			String line = reader.readLine();
-			
-			while (line != null) {
-				StringTokenizer st = new StringTokenizer(line);
-
-				String currentOrigin = st.nextToken();
-				String currentDest   = st.nextToken();
-
-				if (!currentOrigin.equals(origin) &&
-					!currentDest.equals(dest)) {
-					out.write(line);
-				}
-
-				line = reader.readLine();
-			}
-			
-			reader.close();
-			out.close();
-
-			fileResourceDesc.getFile().delete();
-			tempFile.renameTo(fileResourceDesc.getFile());
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-	}
-*/
-/*	public Object getEdges(FileResourceDescriptor fileResourceDesc) {
-		Collection edges = new HashSet();
-//		System.out.println("Reading from file: " + fileResourceDesc.getFilePath());
-		try {
-			BufferedReader reader = new BufferedReader(new FileReader(fileResourceDesc.getFile()));
-			
-			while (true) {
-				try {
-					String inputLine = reader.readLine();
-					//System.out.println("Reading line: " + inputLine);
-					if (inputLine == null) break;
-					StringTokenizer tokenizer = new StringTokenizer(inputLine);
-					
-					if (tokenizer.hasMoreElements()) {
-						String origin = tokenizer.nextToken();
-						String dest   = tokenizer.nextToken();
-						
-//						System.out.println(origin + ", " + dest);
-						Edge bec = new Edge();
-						bec.setPropertyValue(Edge.ORIGIN, origin);
-						bec.setPropertyValue(Edge.DEST, dest);
-						
-						edges.add(bec);
-					}
-					else {
-						break;
-					}
-				} catch (IOException e) {
-					e.printStackTrace();
-				}				
-			}
-			try {
-				reader.close();
-			} catch (IOException e) {
-				e.printStackTrace();
-			}
-		} catch (FileNotFoundException e) {
-			e.printStackTrace();
-		}
-		
-		return edges;
-	}
-*//*
-	public int getNumEdges() {
-		int numEdges = 0;
-		try {
-			BufferedReader reader = new BufferedReader(new FileReader(fileResourceDesc.getFile()));
-			
-			Pattern pattern = Pattern.compile("[a-zA-Z0-9]+");
-			while (true) {
-				try {
-					String line = reader.readLine();
-					Matcher matcher = pattern.matcher(line);
-					if (matcher.matches()) {
-						numEdges++;
-					}
-					else {
-						break;
-					}
-				} catch (IOException e) {
-					e.printStackTrace();
-				}				
-			}
-			try {
-				reader.close();
-			} catch (IOException e) {
-				e.printStackTrace();
-			}
-		} catch (FileNotFoundException e) {
-			e.printStackTrace();
-		}
-		
-		
-		return numEdges;
-	}
-*/
-
-
+	/**
+	 * Get the number of nodes in the model
+	 * @return Number of nodes
+	 */
 	public long getNumNodes() {
 		return this.numNodes;
 	}
 
+	/**
+	 * Get the number of directed edges
+	 * @return Number of directed edges
+	 */
 	public long getNumDirectedEdges() {
 		return 0;
 	}
 
+	/**
+	 * Get the number of undirected edges
+	 * @return Number of undirected edges
+	 */
 	public long getNumUndirectedEdges() {
 		long numEdges = 0;
-		try {
+		try {			
 			BufferedReader reader = new BufferedReader(new FileReader(fileResourceDesc.getFile()));
 			
+			//Read in each line and count
 			while (true) {
 				try {
 					String inputLine = reader.readLine();
-					//System.out.println("Reading line: " + inputLine);
 					if (inputLine == null) break;
 					StringTokenizer tokenizer = new StringTokenizer(inputLine);
 					
@@ -230,21 +90,20 @@ public class FileBackedEdgeModel implements NWBModel {
 		return numEdges;
 	}
 
+	/**
+	 * Return an iterator over all the nodes
+	 * @return Iterator over the nodes
+	 */
 	public Iterator getNodes() {
 		return new NodeSectionIterator(this.fileResourceDesc, this.numNodes);
-		/*
-		ArrayList nodeList = new ArrayList((int)this.numNodes);
-		for (int i = 0; i < this.numNodes; ++i) {
-			int nodeId = i+1;
-			Node node = new Node();
-			node.put(Node.ID, ""+nodeId);
-			node.put(Node.LABEL, ""+nodeId);
-			nodeList.add(node);
-		}
-		return nodeList.iterator();
-		*/
 	}
 
+	/**
+	 * Get the node given an id
+	 * 
+	 * @param id The id of the node
+	 * @return An instance of the node
+	 */
 	public Node getNode(Object id) {
 		Node node = new Node();
 		node.setPropertyValue(Node.ID, id);
@@ -252,87 +111,63 @@ public class FileBackedEdgeModel implements NWBModel {
 		return node;
 	}
 
+	/**
+	 * Adds a node to the model
+	 * @param id The id of the node to add
+	 * @param node The node information
+	 */
 	public void addNode(Object id, Node node) {
 		throw new UnsupportedOperationException();
 	}
 
+	/**
+	 * Get an iterator over the directed edges
+	 * @return an empty iterator over the edges
+	 */
 	public Iterator getDirectedEdges() {
 		return (new ArrayList()).iterator();
 	}
 
+	/**
+	 * Get a directed edge from the file
+	 * @param origin The source node of the edge
+	 * @param dest The target node of the edge
+	 */
 	public Edge getDirectedEdge(Node origin, Node dest) {
-/*		// TODO Auto-generated method stub
-		
-		try {
-			BufferedReader reader = new BufferedReader(new FileReader(fileResourceDesc.getFile()));
-			
-			while (true) {
-				try {
-					String inputLine = reader.readLine();
-					//System.out.println("Reading line: " + inputLine);
-					if (inputLine == null) break;
-					StringTokenizer tokenizer = new StringTokenizer(inputLine);
-					
-					if (tokenizer.hasMoreElements()) {
-						String currentOrigin = tokenizer.nextToken().trim();
-						String currentDest   = tokenizer.nextToken().trim();
-						
-//						System.out.println(origin + ", " + dest);
-						if (currentOrigin.equals(origin) &&
-							currentDest.equals(dest)) { 
-							BasicEdgeComponent bec = new BasicEdgeComponent();
-							bec.addAttribute(BasicEdgeComponent.ORIGIN, origin);
-							bec.addAttribute(BasicEdgeComponent.DEST, dest);
-							
-							return bec;
-						}
-					}
-					else {
-						break;
-					}
-				} catch (IOException e) {
-					e.printStackTrace();
-				}				
-			}
-			try {
-				reader.close();
-			} catch (IOException e) {
-				e.printStackTrace();
-			}
-		} catch (FileNotFoundException e) {
-			e.printStackTrace();
-		}
-		
-		return null;*/
 		return new Edge();
 	}
 
+	/**
+	 * Add a directed edge to the model
+	 * @param edge The edge to add
+	 */
 	public void addDirectedEdge(Edge edge) {
 		throw new UnsupportedOperationException();
-
-/*		try {
-			PrintWriter out
-			   = new PrintWriter(new BufferedWriter(new FileWriter(fileResourceDesc.getFile(), true)));
-			out.println(edge);
-			out.close();
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-*/	
 	}
 
+	/**
+	 * Get an iterator over the undirected edges
+	 * @return Iterator over the undirected edges
+	 */
 	public Iterator getUndirectedEdges() {
 		return new EdgeSectionIterator(fileResourceDesc);
 	}
 
+	/**
+	 * Get an individual undirected edge
+	 * 
+	 * @param origin The Source of the undirected edge
+	 * @param dest The target of the undirected edge
+	 * @return The undirected edge
+	 */
 	public Edge getUndirectedEdge(Node origin, Node dest) {
 		try {
 			BufferedReader reader = new BufferedReader(new FileReader(fileResourceDesc.getFile()));
 			
+			//Searches for the undirected edge in the file
 			while (true) {
 				try {
 					String inputLine = reader.readLine();
-					//System.out.println("Reading line: " + inputLine);
 					if (inputLine == null) break;
 					StringTokenizer tokenizer = new StringTokenizer(inputLine);
 					
@@ -340,7 +175,6 @@ public class FileBackedEdgeModel implements NWBModel {
 						String currentOrigin = tokenizer.nextToken().trim();
 						String currentDest   = tokenizer.nextToken().trim();
 						
-//						System.out.println(origin + ", " + dest);
 						if (currentOrigin.equals(origin) &&
 							currentDest.equals(dest)) { 
 							Edge edge = new Edge();
@@ -369,7 +203,11 @@ public class FileBackedEdgeModel implements NWBModel {
 		return new Edge();
 	}
 
-	public void addUndirectedEdge(Edge source) {
+	/**
+	 * Add an undirected edge to the model
+	 * @param edge The edge to add
+	 */
+	public void addUndirectedEdge(Edge edge) {
 		throw new UnsupportedOperationException();
 /*
 		try {
@@ -382,25 +220,43 @@ public class FileBackedEdgeModel implements NWBModel {
 		}
 */	}
 	
+	/**
+	 * Remove a node from the model
+	 * @param id The id of the node
+	 */
 	public void removeNode(Object id) {
 		throw new UnsupportedOperationException();		
 	}
 	
+	/**
+	 * Remove a directed edge
+	 * @param source Source node of the edge
+	 * @param target Target node of the edge
+	 */
 	public void removeDirectedEdge(Node source, Node target) {
 		throw new UnsupportedOperationException();		
 	}
 
+	/**
+	 * Remove an undirected edge
+	 * @param source Source node of the undirected edge
+	 * @param target Target node of the undirected edge
+	 */
 	public void removeUndirectedEdge(Node source, Node target) {
 		throw new UnsupportedOperationException();		
 	}
 
 	/**
-	 * 
+	 * General class to iterate over the elements of the model
 	 */
 	private abstract class ElementIterator implements Iterator {
 		private BufferedReader reader;
 		private String         currentLine;
 		
+		/**
+		 * Creates an element iterator
+		 * @param frd The file to read from
+		 */
 		public ElementIterator (FileResourceDescriptor frd) {
 			try {
 				reader      = new BufferedReader(new FileReader(frd.getFile()));				
@@ -412,6 +268,10 @@ public class FileBackedEdgeModel implements NWBModel {
 			}
 		}
 		
+		/**
+		 * Checks whether there is another element in the list
+		 * @return True if there are more elements
+		 */
 		public boolean hasNext() {
 			if (currentLine != null) {
 				return (currentLine.trim().length() > 0);
@@ -419,6 +279,10 @@ public class FileBackedEdgeModel implements NWBModel {
 			return false;
 		}
 		
+		/**
+		 * Retrieves the next element
+		 * @param The element which is either a node or edge
+		 */
 		public Object next() {
 			if (currentLine != null) {
 				if (currentLine.trim().length() > 0) {
@@ -437,6 +301,9 @@ public class FileBackedEdgeModel implements NWBModel {
 			return null;
 		}
 
+		/**
+		 * Remove the current object from the model
+		 */
 		public void remove() {
 			throw new UnsupportedOperationException("Remove not supported with NodeIterator");
 		}
@@ -444,11 +311,24 @@ public class FileBackedEdgeModel implements NWBModel {
 		protected abstract Object getElement (String line);
 	}
 	
+	/**
+	 * Specifically handles the edges of the model
+	 * @author Team NWB
+	 */
 	private class EdgeSectionIterator extends ElementIterator {
+		/**
+		 * Create the iterator
+		 * @param frd The file descriptor of the model
+		 */
 		public EdgeSectionIterator (FileResourceDescriptor frd) {
 			super (frd);
 		}
 		
+		/**
+		 * Get a line from the file and return the edge
+		 * @param line The current line of the file
+		 * @return An edge object
+		 */
 		protected Object getElement(String line) {
 			StringTokenizer st = new StringTokenizer(line);
 
@@ -463,10 +343,19 @@ public class FileBackedEdgeModel implements NWBModel {
 		}
 	}
 	
+	/**
+	 * Iterator over the nodes
+	 * @author Team NWB
+	 */
 	private class NodeSectionIterator extends ElementIterator {
 		private long numNodes;
 		private long currentNode;
 		
+		/**
+		 * Create a node iterator
+		 * @param frd The file source of the model (not used)
+		 * @param numNodes Number of nodes in the model
+		 */
 		public NodeSectionIterator(FileResourceDescriptor frd, long numNodes) {
 			super(frd);
 			this.numNodes = numNodes;
@@ -474,10 +363,18 @@ public class FileBackedEdgeModel implements NWBModel {
 			this.currentNode = 0;
 		}
 		
+		/**
+		 * Check whether or not there are more nodes
+		 * @return True if there are more elements
+		 */
 		public boolean hasNext() {
 			return this.currentNode < this.numNodes;
 		}
 		
+		/**
+		 * Get the next node
+		 * @return Next node
+		 */
 		public Object next() {
 			if (this.currentNode < this.numNodes) {
 				Node node = new Node();
@@ -492,7 +389,9 @@ public class FileBackedEdgeModel implements NWBModel {
 			return null;
 		}
 		
+		/**
+		 * Unused for edge list iterator
+		 */
 		protected Object getElement(String line) {return null;}
 	}
-
 }
