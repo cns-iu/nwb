@@ -25,8 +25,9 @@ import edu.iu.iv.core.persistence.Persister;
 import edu.iu.iv.core.util.staticexecutable.StaticExecutableRunner;
 
 /**
+ * Model and analysis fortran algorithms common methods
  * 
- * @author Bruce Herr
+ * @author Team NWB
  */
 public abstract class FortranAlgorithm extends AbstractAlgorithm {
     protected DataModel dm;
@@ -40,14 +41,25 @@ public abstract class FortranAlgorithm extends AbstractAlgorithm {
      */
     public abstract boolean execute();
 
+    /**
+     * Saves the datamodel to disk for the static executable runner
+     * @param runner Instance of StaticExecutableRunner
+     * @param fileName File name to save it as
+     * @param p The persister that will be able to write the model
+     */
     protected void saveDataModel(StaticExecutableRunner runner,
 			                     String fileName, 
 			                     Persister p) {
+    	//Set the parent of any output for this algorithm
+    	runner.setParentDataModel(dm);
+    	
+    	//Get the temporary directory
 		String file = runner.getTempDirectory().getPath() + File.separator
 				+ fileName;
 		
-		FileResourceDescriptor frd = new BasicFileResourceDescriptor(new File(
-				file));
+		
+		FileResourceDescriptor frd = new BasicFileResourceDescriptor(
+				new File(file));
 		try {
 			if (p == null) {
 				IVC.getInstance().getPersistenceRegistry().save(dm.getData(),
@@ -63,10 +75,22 @@ public abstract class FortranAlgorithm extends AbstractAlgorithm {
 
 	}
 
+    /**
+     * Saves the data model to disk without a specified persister
+     * @param runner The static executable that needs the file
+     * @param fileName The filename to use
+     */
     protected void saveDataModel(StaticExecutableRunner runner, String fileName) {
     	saveDataModel(runner, fileName, null);
     }
     
+    /**
+     * Builds an input file for the Fortran code that will execute
+     * @param runner The StaticExecutableRunner that will execute the Fortran code
+     * @param fileName The filename to use for the input file
+     * @param parmList Parameters passed to the fortran program
+     * @param parmListAtBegin True when the parameter list is to start with
+     */
     protected void makeInputFile(StaticExecutableRunner runner, String fileName, 
     		                     List parmList, boolean parmListAtBegin) {
         try {
@@ -88,6 +112,11 @@ public abstract class FortranAlgorithm extends AbstractAlgorithm {
         }
     }
     
+    /**
+     * Write the parameter list to output specified
+     * @param out Where to print the parameters to
+     * @param parmList The list of parameters to write
+     */
     private void writeParameterList(PrintStream out, List parmList) {
     	Iterator iter = parmList.iterator();
     	
@@ -95,7 +124,11 @@ public abstract class FortranAlgorithm extends AbstractAlgorithm {
     		out.println(iter.next());
     	}
     }
-    
+
+    /**
+     * Writes the parameter map to the inputfile
+     * @param out Where to write the parameter map
+     */
     private void writeParameterMap(PrintStream out) {
         Iterator iter = parameterMap.getAllKeys();
         
@@ -106,24 +139,12 @@ public abstract class FortranAlgorithm extends AbstractAlgorithm {
         }
     }
     
+    /**
+     * Build the input file for the fortran algorithm
+     * @param runner The static executable runner that it will run under
+     * @param fileName The filename of the input file
+     */
     protected void makeInputFile(StaticExecutableRunner runner, String fileName) {
-/*    	
-        try {
-            String file = runner.getTempDirectory().getPath() + File.separator + fileName;
-            PrintStream out = new PrintStream(new FileOutputStream(file));
-            
-            Iterator iter = parameterMap.getAllKeys();
-            
-            while (iter.hasNext()) {
-                String key = iter.next().toString();
-                
-                out.println(parameterMap.getTextValue(key));
-            }
-            out.close();
-        } catch (FileNotFoundException e) {
-            throw new Error(e);
-        }
-*/
     	makeInputFile(runner, fileName, new ArrayList(), false);
     }
 }

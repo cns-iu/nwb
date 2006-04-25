@@ -3,15 +3,14 @@ package edu.iu.informatics.shared;
 import edu.iu.iv.provider.PersisterProvider;
 
 /**
- * The main class that will provide persisters in this project
- * to the IVC.
+ * Implementation of a persister plug-in
  */
 public class PersisterProviderPlugin extends PersisterProvider {
     //The shared instance.
     private static PersisterProviderPlugin plugin;  
 
     /**
-     * The constructor.
+     * The constructor for the persister plugin
      */
     public PersisterProviderPlugin() {
         super("edu.iu.informatics.shared.PersisterProviderPlugin");
@@ -20,6 +19,7 @@ public class PersisterProviderPlugin extends PersisterProvider {
     
     /**
      * Returns the shared instance.
+     * @return Persister plugin
      */
     public static PersisterProviderPlugin getDefault() {
         return plugin;
