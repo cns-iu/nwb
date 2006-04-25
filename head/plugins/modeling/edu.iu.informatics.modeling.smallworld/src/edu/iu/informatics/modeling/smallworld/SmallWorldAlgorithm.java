@@ -52,7 +52,8 @@ public class SmallWorldAlgorithm extends FortranAlgorithm {
 
 		runner.registerFile("network", "network file", DataModelType.NETWORK,
 				new BasicEdgePersister(parameterMap.getIntValue("nodes")));
-
+		runner.setParentFilename("network");
+		
 		makeInputFile(runner, "inputfile");
 		runner.execute(SmallWorldPlugin.ID_PLUGIN);
 
