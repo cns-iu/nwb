@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.0"?>
+<plugin
+   id="edu.iu.informatics.analysis.directeddegreedistribution"
+   name="DirectedDegreeDistr Plug-in"
+   version="1.0.0"
+   provider-name="Team IVC">
+
+   <runtime>
+      <library name="directedDegreeDistr.jar">
+         <export name="*"/>
+      </library>
+   </runtime>
+
+   <requires>
+      <import plugin="org.eclipse.ui"/>
+      <import plugin="edu.iu.iv.core"/>
+      <import plugin="edu.iu.informatics.shared"/>
+      <import plugin="edu.iu.nwb.core"/>
+   </requires>
+
+   <extension
+         point="org.eclipse.ui.actionSets">
+      <actionSet
+            label="edu.iu.informatics.analysis.directeddegreedistribution.actionSet"
+            visible="true"
+            id="edu.iu.informatics.analysis.directeddegreedistribution.actionSet">
+         <action
+               label="Directed Degree Distribution"
+               class="edu.iu.informatics.analysis.directeddegreedistribution.DirectedDegreeDistributionPlugin"
+               tooltip="Select to launch DirectedDegreeDistr Plug-in"
+               menubarPath="Analysis/additions"
+               id="edu.iu.informatics.analysis.directeddegreedistribution.DirectedDegreeDistributionPlugin">
+         </action>
+      </actionSet>
+   </extension>
+   <extension
+         point="org.eclipse.ui.startup">
+      <startup
+            class="edu.iu.informatics.analysis.directeddegreedistribution.DirectedDegreeDistributionPlugin">
+      </startup>
+   </extension>
+
+</plugin>
