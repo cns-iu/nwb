@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.0"?>
+<plugin
+   id="edu.iu.informatics.converter.nwbgraphvizconverter"
+   name="Nwbgraphvizconverter Plug-in"
+   version="1.0.0"
+   provider-name="Team NWB">
+
+   <runtime>
+      <library name="nwbgraphvizconverter.jar">
+         <export name="*"/>
+      </library>
+   </runtime>
+
+   <requires>
+      <import plugin="org.eclipse.ui"/>
+      <import plugin="edu.iu.iv.core"/>
+      <import plugin="ajapadlib"/>
+      <import plugin="edu.iu.nwb.core"/>
+   </requires>
+
+   <extension
+         point="org.eclipse.ui.actionSets">
+      <actionSet
+            label="edu.iu.informatics.converter.nwbgraphvizconverter.actionSet"
+            visible="true"
+            id="edu.iu.informatics.converter.nwbgraphvizconverter.actionSet">
+         <action
+               label="NWB Graphviz Converter"
+               class="edu.iu.informatics.converter.nwbgraphvizconverter.NwbGraphvizConverterPlugin"
+               tooltip="Select to launch NWB Graphviz Converter"
+               menubarPath="Converters/additions"
+               id="edu.iu.informatics.converter.nwbgraphvizconverter.NwbGraphvizConverterPlugin">
+         </action>
+      </actionSet>
+   </extension>
+   <extension
+         point="org.eclipse.ui.startup">
+      <startup
+            class="edu.iu.informatics.converter.nwbgraphvizconverter.NwbGraphvizConverterPlugin">
+      </startup>
+   </extension>
+
+</plugin>
