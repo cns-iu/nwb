@@ -40,7 +40,15 @@ public class Node extends PropertyMap {
 */
 	
 	public String toString() {
-		String resultString = getPropertyValue(ID) + " " + getPropertyValue(LABEL);
+		String resultString = (String)getPropertyValue(ID);
+		
+		String label = (String)getPropertyValue(LABEL);
+		if (label.charAt(0) == '"') {
+			resultString += " " + label;
+		}
+		else {
+			resultString += " " + "\"" + label + "\"";			
+		}
 		
 //		String resultString = (String)getPropertyValue(ID);
 		Object weight = getPropertyValue(WEIGHT);
