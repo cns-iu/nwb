@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.0"?>
+<plugin
+   id="ajapadlib"
+   name="Ajapadlib Plug-in"
+   version="1.0.0"
+   provider-name="Team NWB">
+   <runtime>
+      <library name="zgrviewer.jar">
+         <export name="*"/>
+      </library>
+      <library name="antlr.jar">
+         <export name="*"/>
+      </library>
+   </runtime>
+
+</plugin>
