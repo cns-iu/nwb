@@ -25,7 +25,6 @@ import edu.iu.iv.core.persistence.PersistenceException;
 import edu.iu.iv.persisters.standard.PrefusexGMMLGraphPersister;
 import edu.iu.nwb.core.model.Edge;
 import edu.iu.nwb.core.model.NWBModel;
-import edu.iu.nwb.core.model.Node;
 
 /**
  * Class to implement the Algorithm for this IVC Plug-in.
@@ -59,7 +58,7 @@ public class NWBPrefuseConverterAlgorithm extends AbstractAlgorithm {
 		String temp = IVC.getInstance().getTemporaryFilesFolder();
 		File tempFile;
 		try {
-			tempFile = File.createTempFile("graph-ml-", ".xml", new File(temp));
+			tempFile = File.createTempFile("graph-ml-prefuse-", ".xml", new File(temp));
 			writeGraphMl(nwbModel, tempFile);
 
 			try {
@@ -102,41 +101,51 @@ public class NWBPrefuseConverterAlgorithm extends AbstractAlgorithm {
 	 * @param tempFile The temporary file to write to
 	 */
 	private void writeGraphMl(NWBModel nwbModel, File tempFile) {
+
 		try {
-			PrintWriter out
-			   = new PrintWriter(new BufferedWriter(new FileWriter(tempFile)));
-			
+			PrintWriter out = new PrintWriter(new BufferedWriter(
+					new FileWriter(tempFile)));
+
 			//Write the header
 			out.println("<?xml version=\"1.0\" encoding=\"UTF-8\"?>");
-			out.println("<graphml xmlns=\"http://graphml.graphdrawing.org/xmlns\">");
+			out
+					.println("<graphml xmlns=\"http://graphml.graphdrawing.org/xmlns\">");
 			out.println("<graph edgedefault=\"undirected\">");
-			
+
 			//Write out the nodes
-			Iterator nodeIter = nwbModel.getNodes();			
+			Iterator nodeIter = nwbModel.getNodes();
 			while (nodeIter.hasNext()) {
-				Node bnc = (Node)nodeIter.next();
-				Object numAttr = bnc.getPropertyValue(Node.ID);
-				out.println("<node id=\"" + numAttr.toString() + "\" label=\""+bnc.toString()+"\"> </node>");			
-//				out.println("<node id=\"" + numAttr.toString() + "\"></node>");
+				edu.iu.nwb.core.model.Node bnc = (edu.iu.nwb.core.model.Node) nodeIter
+						.next();
+				String nodeId = (String)bnc
+						.getPropertyValue(edu.iu.nwb.core.model.Node.ID);
+				if (nodeId.charAt(0) != '"') {
+					nodeId = "\"" + nodeId + "\"";
+				}
+				String nodeLabel = (String)bnc
+						.getPropertyValue(edu.iu.nwb.core.model.Node.LABEL);
+				if (nodeLabel.charAt(0) != '"') {
+					nodeLabel = "\"" + nodeLabel + "\"";
+				}
+
+				out.println("<node id=" + nodeId.toString() + " label=" + nodeLabel + "></node>");
 			}
-			
+
 			//Write out the undirected edges
 			Iterator edgeIter = nwbModel.getUndirectedEdges();
 			while (edgeIter.hasNext()) {
-				Edge bec = (Edge)edgeIter.next();
-				
-				
-				out.println("<edge source=\"" + bec.getPropertyValue(Edge.ORIGIN)  + 
-						    "\" target=\"" + bec.getPropertyValue(Edge.DEST) + "\">" +
-						    "</edge>");
+				Edge bec = (Edge) edgeIter.next();
+
+				out.println("<edge source=\""
+						+ bec.getPropertyValue(Edge.ORIGIN) + "\" target=\""
+						+ bec.getPropertyValue(Edge.DEST) + "\">" + "</edge>");
 			}
-			
+
 			out.println("</graph>");
 			out.println("</graphml>");
 			out.close();
 		} catch (IOException e) {
 			e.printStackTrace();
-		}
-		
+		}		
 	}
 }
