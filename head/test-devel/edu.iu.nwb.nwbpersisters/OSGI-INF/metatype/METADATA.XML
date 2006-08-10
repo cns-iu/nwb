@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<metatype:MetaData xmlns:metatype="http://www.osgi.org/xmlns/metatype/v1.0.0">
+	<OCD name="%windows_name" id="edu.iu.nwb.nwbpersisters.NWBReader.OCD"
+		 description="%windows_name_desc">
+		<AD name="%file_input" id="edu.iu.nwb.nwbpersisters.NWBReader.fileInput" type="String" 
+			default="" description="%file_desc" />
+	</OCD>
+	<Designate pid="default.id">
+		<Object ocdref="edu.iu.nwb.nwbpersisters.NWBReader.OCD" />
+	</Designate>
+</metatype:MetaData>
