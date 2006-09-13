@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.0"?>
+<plugin
+   id="edu.iu.informatics.visualization.grace"
+   name="Grace Plug-in"
+   version="1.0.0"
+   provider-name="Team IVC">
+
+   <runtime>
+      <library name="grace.jar">
+         <export name="*"/>
+      </library>
+   </runtime>
+
+   <requires>
+      <import plugin="org.eclipse.ui"/>
+      <import plugin="edu.iu.iv.core"/>
+      <import plugin="edu.iu.informatics.shared"/>
+   </requires>
+
+   <extension
+         point="org.eclipse.ui.actionSets">
+      <actionSet
+            label="edu.iu.informatics.visualization.grace.actionSet"
+            visible="true"
+            id="edu.iu.informatics.visualization.grace.actionSet">
+         <action
+               tooltip="Select to launch Grace"
+               label="Grace"
+               class="edu.iu.informatics.visualization.grace.GracePlugin"
+               menubarPath="Visualization/additions"
+               id="edu.iu.informatics.visualization.grace.GracePlugin">
+         </action>
+      </actionSet>
+   </extension>
+   <extension
+         point="org.eclipse.ui.startup">
+      <startup
+            class="edu.iu.informatics.visualization.grace.GracePlugin">
+      </startup>
+   </extension>
+
+</plugin>

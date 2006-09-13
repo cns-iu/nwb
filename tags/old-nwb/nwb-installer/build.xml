@@ -1,0 +1,31 @@
+<!--
+	InfoVis Cyberinfrastructure: A Data-Code-Compute Resource for Research
+	and Education in Information Visualization (http://iv.slis.indiana.edu/).
+
+	NWB Installer ant build file.
+	
+	Note: this script assumes there is a full version of NWB extracted to:
+	${basedir}/nwb_full
+	
+	Maintained by Bruce Herr.
+-->
+
+<project name='NWB Installer' default='compile' basedir='.'>
+
+	<!--  Properties -->
+	<property name="version" value="0.1.1"/>
+	<property name="full.xml" value="install.xml"/>
+	<property name="full.jar" value="nwb.${version}.jar"/>
+
+	<!-- Allows us to use the IzPack Ant task -->
+	<taskdef name="izpack" classpath="${basedir}/lib/standalone-compiler.jar"
+	         classname="com.izforge.izpack.ant.IzPackTask"/>
+	
+	<target name='compile'>
+		<echo message="Making the full nwb installer using IzPack"/>
+		<izpack input="${basedir}/${full.xml}"
+	    	    output="${basedir}/${full.jar}"
+	        	installerType="standard"
+		        basedir="${basedir}/nwb_full"/>
+	</target>
+</project>
