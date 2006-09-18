@@ -40,3 +40,5 @@ Export-Package: edu.uci.ics.jung.algorithms,
  samples.preview_new_graphdraw.staticlayouts,
  samples.preview_new_graphdraw.test,
  samples.preview_new_graphdraw.transform
+Import-Package: org.apache.commons.collections,
+ org.apache.commons.collections.functors
