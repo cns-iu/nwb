@@ -2,11 +2,11 @@
 <metatype:MetaData xmlns:metatype="http://www.osgi.org/xmlns/metatype/v1.0.0">
 	<OCD name="Barabasi Albert Scale Free" id="edu.iu.iv.modeling.barabasialbertmodel.OCD"
 		 description="">
-		<AD name="Number of time steps" id="timeSteps" type="Integer" default="1"/>
-		<AD name="Number of Initial nodes" id="nodes" type="Integer" default="1"/>
-		<AD name="Number of Edges" id="edges" type="Integer" default="1"/>
-		<AD name="Specify random number seed" id="useSeed" type="Boolean" default="false"/>
-		<AD name="Random Number Generator Seed" id="seed" type="Long" default="-1284839877"/>
+		<AD name="Number of time steps" description="Enter number of time steps, must be integer>0" id="timeSteps" type="Integer" default="1"/>
+		<AD name="Number of Initial nodes" description="Enter number of initial nodes,must be integer>0)" id="nodes" type="Integer" default="1"/>
+		<AD name="Number of Edges" description="Entet number of edges,must be >0 and <= number of initial nodes" id="edges" type="Integer" default="1"/>
+		<AD name="Specify random number seed" description="If you wish to provide your random number generator seed, check this box" id="useSeed" type="Boolean" default="false"/>
+		<AD name="Random Number Generator Seed" idescription="Enter a random integer" id="seed" type="Long" default="-1284839877"/>
 	</OCD>
 	<Designate pid="edu.iu.iv.modeling.barabasialbertmodel">
 		<Object ocdref="edu.iu.iv.modeling.barabasialbertmodel.OCD" />
