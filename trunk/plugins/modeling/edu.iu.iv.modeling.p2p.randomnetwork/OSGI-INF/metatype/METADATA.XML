@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <metatype:MetaData xmlns:metatype="http://www.osgi.org/xmlns/metatype/v1.0.0">
 	<OCD name="Random Network" id="edu.iu.iv.modeling.p2p.randomnetwork.RandomNetwork.OCD"
-		 description="">
-		<AD name="Number of nodes" description="Enter number of nodes in the network, must be>0" id="networkSize" type="Integer" default="1"/>
-		<AD name="Wiring probabitly" description="Enter wiring probabity(0.0<=probability<1.0)" id="probabilty" type="Double" default="0.0"/>
+		 description=" ">
+		<AD name="Number of nodes" description="Enter number of nodes in the network, must be&gt;0" id="networkSize" type="Integer" default="1"/>
+		<AD name="Wiring probability" description="Enter wiring probability(0.0&lt;=probability&gt;1.0)" id="probability" type="Double" default="0.0"/>
 	</OCD>
 	<Designate pid="edu.iu.iv.modeling.p2p.randomnetwork.RandomNetwork">
 		<Object ocdref="edu.iu.iv.modeling.p2p.randomnetwork.RandomNetwork.OCD" />
