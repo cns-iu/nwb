@@ -9,13 +9,13 @@ import org.osgi.service.log.LogService;
 
 import edu.uci.ics.jung.graph.Graph;
 
-public class BreadthFirstSearchAlgortihm implements Algorithm {
+public class BreadthFirstSearchAlgorithm implements Algorithm {
     Data[] data;
     Dictionary parameters;
     CIShellContext context;
     LogService log;
     
-    public BreadthFirstSearchAlgortihm(Data[] data, Dictionary parameters, CIShellContext context) {
+    public BreadthFirstSearchAlgorithm(Data[] data, Dictionary parameters, CIShellContext context) {
         this.data = data;
         this.parameters = parameters;
         this.context = context;

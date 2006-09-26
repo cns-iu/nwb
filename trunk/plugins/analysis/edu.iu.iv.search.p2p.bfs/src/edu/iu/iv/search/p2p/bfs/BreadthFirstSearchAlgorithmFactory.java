@@ -11,7 +11,7 @@ import org.osgi.service.metatype.MetaTypeProvider;
 import org.osgi.service.metatype.MetaTypeService;
 
 
-public class BreadthFirstSearchAlgortihmFactory implements AlgorithmFactory {
+public class BreadthFirstSearchAlgorithmFactory implements AlgorithmFactory {
     private MetaTypeProvider provider;
 
     protected void activate(ComponentContext ctxt) {
@@ -26,7 +26,7 @@ public class BreadthFirstSearchAlgortihmFactory implements AlgorithmFactory {
     }
 
     public Algorithm createAlgorithm(Data[] data, Dictionary parameters, CIShellContext context) {
-        return new BreadthFirstSearchAlgortihm(data, parameters, context);
+        return new BreadthFirstSearchAlgorithm(data, parameters, context);
     }
     public MetaTypeProvider createParameters(Data[] data) {
         return provider;
