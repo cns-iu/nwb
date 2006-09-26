@@ -3,9 +3,9 @@
 	<OCD name="Directory Hierarchy Reader" id="edu.iu.iv.preprocessing.directoryhierarchyreader.DirectoryHierarchyReaderAlgorithm.OCD"
 		 description=" ">
 		<AD name="Root Directory" description="Choose a root directory to read in" id="rootDirectory" type="String" default=""/>
-		<AD name="Levels to recurse" description="Choose the number of levels to recurse from root directory(must be&gte;0)" id="level" type="Integer" default="1"/>
+		<AD name="Levels to recurse" description="Choose the number of levels to read from root directory(must be&gt;=0)" id="level" type="Integer" default="1"/>
 		<AD name="Recurse the entire tree" description="This overrides the levels option" id="doRecurse" type="Boolean" default="false"/>
-		<AD name="Read directories only (skips files)" description="Choose whether to include files when reading from root diectory" id="readDirectories" type="Boolean" default="true"/>
+		<AD name="Read directories only (skips files)" description="Choose whether to include files when reading from root directory" id="readDirectories" type="Boolean" default="true"/>
 	</OCD>
 	<Designate pid="edu.iu.iv.preprocessing.directoryhierarchyreader.DirectoryHierarchyReaderAlgorithm">
 		<Object ocdref="edu.iu.iv.preprocessing.directoryhierarchyreader.DirectoryHierarchyReaderAlgorithm.OCD" />
