@@ -19,7 +19,7 @@ public class BreadthFirstSearchAlgortihm implements Algorithm {
         this.data = data;
         this.parameters = parameters;
         this.context = context;
-        this.log = (LogService)context.getService(LogService.class.getName());
+        
     }
 
     public Data[] execute() {
