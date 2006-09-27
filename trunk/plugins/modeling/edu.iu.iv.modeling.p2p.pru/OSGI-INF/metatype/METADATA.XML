@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <metatype:MetaData xmlns:metatype="http://www.osgi.org/xmlns/metatype/v1.0.0">
-	<OCD name="ThePru Network Modeling Algorithm" id="edu.iu.iv.modeling.p2p.pru.PruAlgorithm.OCD"
+	<OCD name="The PRU Network Modeling Algorithm" id="edu.iu.iv.modeling.p2p.pru.PruAlgorithm.OCD"
 		 description=" ">
 		<AD name="Number of nodes" description="Enter number of nodes in the network, must be&gt;1" id="networkSize" type="Integer" default="1"/>
 		<AD name="Number to keep in Cache" description="Enter number of nodes to be kept in the cache,must be&gt;0" id="cacheSize" type="Integer" default="1"/>
