@@ -4,7 +4,7 @@
 		 description=" ">
 		<AD name="Source Node" description="Enter source node number, must be&gt;0" id="source" type="Integer" default="1"/>
 		<AD name="Target Node" description="Enter target node number, must be&gt;0" id="target" type="Integer" default="1"/>
-		<AD name="Threshold" description="Enter threshold(0.0&lt;=threshold&gt;1.0)" id="threshold" type="Double" default="0.0"/>
+		<AD name="Threshold" description="Enter threshold(0.0&lt;=threshold&lt;1.0)" id="threshold" type="Double" default="0.0"/>
 	</OCD>
 	<Designate pid="edu.iu.iv.search.p2p.bfs.BreadthFirstSearchAlgorithm">
 		<Object ocdref="edu.iu.iv.search.p2p.bfs.BreadthFirstSearchAlgorithm.OCD" />
