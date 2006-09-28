@@ -1,7 +1,7 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: Force Directed Layout Visualization Plug-in
-Bundle-SymbolicName: edu.iu.nwb.forcedirectedlayout
+Bundle-SymbolicName: edu.iu.nwb.visualization.forcedirectedlayout
 Bundle-Version: 0.0.1
 Bundle-Localization: plugin
 Service-Component: OSGI-INF/ForceDirectedLayout.xml

@@ -1,4 +1,4 @@
-package edu.iu.nwb.forcedirectedlayout;
+package edu.iu.nwb.visualization.forcedirectedlayout;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Container;
