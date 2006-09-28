@@ -1,4 +1,4 @@
-package edu.iu.nwb.jungnetworklayout;
+package edu.iu.nwb.visualization.jungnetworklayout;
 
 import java.util.Dictionary;
 
@@ -13,11 +13,12 @@ import org.cishell.framework.data.Data;
 
 import edu.uci.ics.jung.graph.Graph;
 import edu.uci.ics.jung.visualization.contrib.CircleLayout;
+import edu.uci.ics.jung.visualization.contrib.KKLayout;
 
 /**
  * @author Weixia(Bonnie) Huang 
  */
-public class JUNGCircleLayout implements AlgorithmFactory {
+public class JUNGKamadaKawaiLayout implements AlgorithmFactory {
 	   private MetaTypeProvider provider;
 
 	   protected void activate(ComponentContext ctxt) {
@@ -40,15 +41,15 @@ public class JUNGCircleLayout implements AlgorithmFactory {
 	     */
 	    public Algorithm createAlgorithm(Data[] dm, Dictionary parameters,
 	            CIShellContext context) {
-	        return new JUNGCircleLayoutAlg(dm, parameters, context);
+	        return new JUNGKamadaKawaiLayoutAlg(dm, parameters, context);
 	    }
 	    
-	    private class JUNGCircleLayoutAlg implements Algorithm {
+	    private class JUNGKamadaKawaiLayoutAlg implements Algorithm {
 	        Data[] dm;
 	        Dictionary parameters;
 	        CIShellContext ciContext;
 	        
-	        public JUNGCircleLayoutAlg(Data[] dm, Dictionary parameters,
+	        public JUNGKamadaKawaiLayoutAlg(Data[] dm, Dictionary parameters,
 	        		CIShellContext ciContext) {
 	        	this.dm = dm;
 	        	this.parameters = parameters;
@@ -58,7 +59,7 @@ public class JUNGCircleLayout implements AlgorithmFactory {
 	        public Data[] execute() {
 	            Graph graph = (Graph) dm[0].getData();
 	            ;
-	            JUNGLayoutGUI gui = new JUNGLayoutGUI("Circle Layout", new CircleLayout(graph)); 
+	            JUNGLayoutGUI gui = new JUNGLayoutGUI("Kamada-Kawai Layout", new KKLayout(graph)); 
 	    		gui.pack();
 	    	    gui.setSize(400, 400) ;
 	    	    gui.show();

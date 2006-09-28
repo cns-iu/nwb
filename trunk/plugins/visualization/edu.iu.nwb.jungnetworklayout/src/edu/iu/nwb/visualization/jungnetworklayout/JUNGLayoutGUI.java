@@ -1,4 +1,4 @@
-package edu.iu.nwb.jungnetworklayout;
+package edu.iu.nwb.visualization.jungnetworklayout;
 
 import java.awt.Color;
 import java.awt.Shape;

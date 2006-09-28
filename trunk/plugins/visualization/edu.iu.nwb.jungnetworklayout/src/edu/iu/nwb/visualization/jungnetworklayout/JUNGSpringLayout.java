@@ -1,4 +1,4 @@
-package edu.iu.nwb.jungnetworklayout;
+package edu.iu.nwb.visualization.jungnetworklayout;
 
 import java.util.Dictionary;
 
@@ -12,12 +12,12 @@ import org.cishell.framework.algorithm.AlgorithmFactory;
 import org.cishell.framework.data.Data;
 
 import edu.uci.ics.jung.graph.Graph;
-import edu.uci.ics.jung.visualization.FRLayout;
+import edu.uci.ics.jung.visualization.SpringLayout;
 
 /**
  * @author Weixia(Bonnie) Huang 
  */
-public class JUNGFruchtermanReingoldLayout implements AlgorithmFactory {
+public class JUNGSpringLayout implements AlgorithmFactory {
 	   private MetaTypeProvider provider;
 
 	   protected void activate(ComponentContext ctxt) {
@@ -40,15 +40,15 @@ public class JUNGFruchtermanReingoldLayout implements AlgorithmFactory {
 	     */
 	    public Algorithm createAlgorithm(Data[] dm, Dictionary parameters,
 	            CIShellContext context) {
-	        return new JUNGFruchtermanReingoldLayoutAlg(dm, parameters, context);
+	        return new JUNGSpringLayoutAlg(dm, parameters, context);
 	    }
 	    
-	    private class JUNGFruchtermanReingoldLayoutAlg implements Algorithm {
+	    private class JUNGSpringLayoutAlg implements Algorithm {
 	        Data[] dm;
 	        Dictionary parameters;
 	        CIShellContext ciContext;
 	        
-	        public JUNGFruchtermanReingoldLayoutAlg(Data[] dm, Dictionary parameters,
+	        public JUNGSpringLayoutAlg(Data[] dm, Dictionary parameters,
 	        		CIShellContext ciContext) {
 	        	this.dm = dm;
 	        	this.parameters = parameters;
@@ -58,7 +58,7 @@ public class JUNGFruchtermanReingoldLayout implements AlgorithmFactory {
 	        public Data[] execute() {
 	            Graph graph = (Graph) dm[0].getData();
 	            ;
-	            JUNGLayoutGUI gui = new JUNGLayoutGUI("Fruchterman-Reingold Layout", new FRLayout(graph)); 
+	            JUNGLayoutGUI gui = new JUNGLayoutGUI("Spring Layout", new SpringLayout(graph)); 
 	    		gui.pack();
 	    	    gui.setSize(400, 400) ;
 	    	    gui.show();

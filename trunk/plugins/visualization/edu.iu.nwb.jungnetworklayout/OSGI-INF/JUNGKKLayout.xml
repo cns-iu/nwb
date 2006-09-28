@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<component name="edu.iu.nwb.jungnetworklayout.JUNGKamadaKawaiLayout.component" immediate="false">
-	<implementation class="edu.iu.nwb.jungnetworklayout.JUNGKamadaKawaiLayout"/>
+<component name="edu.iu.nwb.visualization.jungnetworklayout.JUNGKamadaKawaiLayout.component" immediate="false">
+	<implementation class="edu.iu.nwb.visualization.jungnetworklayout.JUNGKamadaKawaiLayout"/>
 	<properties entry="OSGI-INF/JUNGKKLayout.properties"/>
 	<reference name="LOG" interface="org.osgi.service.log.LogService"/>
 	<reference name="MTS" interface="org.osgi.service.metatype.MetaTypeService"/>
