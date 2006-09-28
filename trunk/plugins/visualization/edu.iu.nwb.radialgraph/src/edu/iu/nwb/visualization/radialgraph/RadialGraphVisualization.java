@@ -1,4 +1,4 @@
-package edu.iu.nwb.radialgraph;
+package edu.iu.nwb.visualization.radialgraph;
 
 import edu.berkeley.guir.prefuse.AggregateItem;
 import edu.berkeley.guir.prefuse.Display;
