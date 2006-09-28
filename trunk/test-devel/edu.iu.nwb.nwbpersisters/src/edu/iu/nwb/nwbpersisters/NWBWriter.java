@@ -1,14 +1,18 @@
 package edu.iu.nwb.nwbpersisters;
 
 import java.util.Dictionary;
+import java.io.File;
+import java.io.IOException;
 
 import org.osgi.service.component.ComponentContext;
+import org.osgi.service.log.LogService;
 import org.osgi.service.metatype.MetaTypeProvider;
 import org.osgi.service.metatype.MetaTypeService;
 
 import org.cishell.framework.CIShellContext;
 import org.cishell.framework.algorithm.Algorithm;
 import org.cishell.framework.algorithm.AlgorithmFactory;
+import org.cishell.framework.data.BasicData;
 import org.cishell.framework.data.Data;
 
 /**
@@ -45,20 +49,40 @@ public class NWBWriter implements AlgorithmFactory {
 	        Data[] dm;
 	        Dictionary parameters;
 	        CIShellContext ciContext;
+	        LogService logger;
 	        
 	        public NWBWriterPersister(Data[] dm, Dictionary parameters,
 	        		CIShellContext ciContext) {
 	        	this.dm = dm;
 	        	this.parameters = parameters;
 	            this.ciContext = ciContext;
+	            logger = (LogService) ciContext.getService(LogService.class.getName());
+
 	        }
 
 	        public Data[] execute() {
-	            String fileHandler = (String) parameters.get("edu.iu.nwb.nwbpersisters.NWBReader.fileInput");
-	            System.out.println("in NWBWriterPersister execute method, input fileHandler= "+fileHandler);
-	    		(new NWBFile()).save((NWBModel)(dm[0].getData()), fileHandler) ;
+	        	File tempFile;
+	        
+//	        	String tempPath = System.getProperty("user.dir"); 
+	        	String tempPath = System.getProperty("java.io.tmpdir");
+	        	File tempDir = new File(tempPath+File.separator+"temp");
+	        	if(!tempDir.exists())
+	        		tempDir.mkdir();
+	        	try{
+	        		tempFile = File.createTempFile("NWB-Session-", ".nwb", tempDir);
+	        		
+	        	}catch (IOException e){
+	        		logger.log(LogService.LOG_ERROR, e.toString());
+	        		tempFile = new File (tempPath+File.separator+"nwbTemp"+File.separator+"temp.nwb");
 
-	            return null;
+	        	}
+//	            String fileHandler = (String) parameters.get("edu.iu.nwb.nwbpersisters.NWBReader.fileInput");
+	        	if (tempFile != null){
+	        		System.out.println("in NWBWriterPersister execute method, tempFile= "+tempFile.getPath());
+	        	
+	        		(new NWBFile()).save((NWBModel)(dm[0].getData()), tempFile) ;
+	        	}
+	            return new Data[]{new BasicData(tempFile, File.class.getName()) };
 	        }
 	    }
 }

@@ -14,7 +14,6 @@ import org.cishell.framework.data.BasicData;
 import org.cishell.framework.data.Data;
 import org.cishell.framework.data.DataProperty;
 
-import edu.iu.nwb.nwbpersisters.BasicFileResourceDescriptor;
 import edu.iu.nwb.nwbpersisters.FileBackedNWBModel;
 
 /**
@@ -43,19 +42,25 @@ public class NWBReader implements AlgorithmFactory {
 	     */
 	    public Algorithm createAlgorithm(Data[] dm, Dictionary parameters,
 	            CIShellContext context) {
-	        return new NWBReaderPersister(parameters);
+	        return new NWBReaderPersister(dm, parameters);
 	    }
 	    
 	    private class NWBReaderPersister implements Algorithm {
+	    	Data[] dm;
 	        Dictionary parameters;
 	        
-	        public NWBReaderPersister(Dictionary parameters) {
+	        public NWBReaderPersister(Data[] dm, Dictionary parameters) {
+	        	this.dm = dm;
 	            this.parameters = parameters;
 	        }
 
 	        public Data[] execute() {
-	            String fileHandler = (String) parameters.get("edu.iu.nwb.nwbpersisters.NWBReader.fileInput");
-	            FileBackedNWBModel nwbData = new FileBackedNWBModel(new BasicFileResourceDescriptor(new File(fileHandler)));
+//	            String fileHandler = (String) parameters.get("edu.iu.nwb.nwbpersisters.NWBReader.fileInput");
+	        	String fileHandler = (String) dm[0].getData();
+	        	File frd = new File(fileHandler);
+	        	System.out.println("File Name is "+frd.getName());
+	            System.out.println("File path is "+frd.getPath());	           
+	            FileBackedNWBModel nwbData = new FileBackedNWBModel(frd);
 	            Data[] dm = new Data[]{new BasicData(nwbData, NWBModel.class.getName()) };
 	            dm[0].getMetaData().put(DataProperty.LABEL, "NWB Data Model: " + fileHandler);
 	            

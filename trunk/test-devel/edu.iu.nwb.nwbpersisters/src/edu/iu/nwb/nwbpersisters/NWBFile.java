@@ -7,20 +7,19 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.Iterator;
 
-import edu.iu.nwb.nwbpersisters.BasicFileResourceDescriptor;
 import edu.iu.nwb.nwbpersisters.FileBackedNWBModel;
 import edu.iu.nwb.nwbpersisters.NWBModel;
 
 public class NWBFile {
 	
 	public NWBModel load(String filename) {
-		return new FileBackedNWBModel(new BasicFileResourceDescriptor(new File(filename)));
+		return new FileBackedNWBModel(new File(filename));
 	}
 	
-	public void save(NWBModel model, String filename) {
+	public void save(NWBModel model, File file) {
 		try {
-			PrintWriter out
-			   = new PrintWriter(new BufferedWriter(new FileWriter(filename)));
+						PrintWriter out
+			   = new PrintWriter(new BufferedWriter(new FileWriter(file)));
 
 			out.println("*Nodes");
 			Iterator data = model.getNodes();

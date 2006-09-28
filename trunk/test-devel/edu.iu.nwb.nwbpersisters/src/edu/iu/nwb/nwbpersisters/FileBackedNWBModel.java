@@ -1,5 +1,6 @@
 package edu.iu.nwb.nwbpersisters;
 
+import java.io.File;
 import java.io.BufferedReader;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
@@ -7,7 +8,6 @@ import java.io.IOException;
 import java.util.Iterator;
 import java.util.StringTokenizer;
 
-import edu.iu.nwb.nwbpersisters.FileResourceDescriptor;
 import edu.iu.nwb.nwbpersisters.Edge;
 import edu.iu.nwb.nwbpersisters.NWBModel;
 import edu.iu.nwb.nwbpersisters.Node;
@@ -19,13 +19,13 @@ import edu.iu.nwb.nwbpersisters.Node;
  * @author Team NWB
  */
 public class FileBackedNWBModel implements NWBModel {
-	private FileResourceDescriptor fileResourceDesc;
+	private File fileResourceDesc;
 	
 	/**
 	 * Accepts the NWB file that this is based off of
 	 * @param frd The file resource descriptor for the NWB model
 	 */
-	public FileBackedNWBModel (FileResourceDescriptor frd) {
+	public FileBackedNWBModel (File frd) {
 		fileResourceDesc = frd;
 	}
 	
@@ -37,7 +37,7 @@ public class FileBackedNWBModel implements NWBModel {
 	 */
 	private int getNumElements(String header) {
 		try {
-			BufferedReader reader = new BufferedReader(new FileReader(fileResourceDesc.getFile()));
+			BufferedReader reader = new BufferedReader(new FileReader(fileResourceDesc));
 			
 			//find location of nodes
 			while (true) {
@@ -169,7 +169,7 @@ public class FileBackedNWBModel implements NWBModel {
 	 */
 	public Node getNode(Object id) {
 		try {
-			BufferedReader reader  = new BufferedReader(new FileReader(fileResourceDesc.getFile()));
+			BufferedReader reader  = new BufferedReader(new FileReader(fileResourceDesc));
 			Node bnc = null;
 			
 			//find location of nodes
@@ -416,7 +416,7 @@ public class FileBackedNWBModel implements NWBModel {
 	 */
 	private Edge getEdge (String sectionPattern, Object origin, Object dest) {
 		try {
-			BufferedReader reader  = new BufferedReader(new FileReader(fileResourceDesc.getFile()));
+			BufferedReader reader  = new BufferedReader(new FileReader(fileResourceDesc));
 			Edge bec = null;
 			
 			//find location of nodes
@@ -564,9 +564,9 @@ public class FileBackedNWBModel implements NWBModel {
 		private BufferedReader reader;
 		private String         currentLine;
 		
-		public ElementIterator (FileResourceDescriptor frd, String header) {
+		public ElementIterator (File frd, String header) {
 			try {
-				reader      = new BufferedReader(new FileReader(frd.getFile()));
+				reader      = new BufferedReader(new FileReader(frd));
 				this.header = header;
 				
 				findSection();
@@ -624,7 +624,7 @@ public class FileBackedNWBModel implements NWBModel {
 	}
 	
 	private class NodeSectionIterator extends ElementIterator {
-		public NodeSectionIterator (FileResourceDescriptor frd, String header) {
+		public NodeSectionIterator (File frd, String header) {
 			super (frd, header);
 		}
 		
@@ -651,7 +651,7 @@ public class FileBackedNWBModel implements NWBModel {
 	}
 	
 	private class EdgeSectionIterator extends ElementIterator {
-		public EdgeSectionIterator (FileResourceDescriptor frd, String header) {
+		public EdgeSectionIterator (File frd, String header) {
 			super (frd, header);
 		}
 		
