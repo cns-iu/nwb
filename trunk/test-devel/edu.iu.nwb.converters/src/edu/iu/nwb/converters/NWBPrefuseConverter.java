@@ -20,9 +20,7 @@ import org.osgi.service.metatype.MetaTypeProvider;
 import edu.berkeley.guir.prefuse.graph.io.XMLGraphReader;
 import edu.berkeley.guir.prefuse.graph.Graph;
 
-import edu.iu.nwb.nwbpersisters.BasicFileResourceDescriptor;
 import edu.iu.nwb.nwbpersisters.Edge;
-import edu.iu.nwb.nwbpersisters.FileResourceDescriptor;
 import edu.iu.nwb.nwbpersisters.NWBModel;
 import edu.iu.nwb.nwbpersisters.Node;
 
@@ -85,11 +83,9 @@ public class NWBPrefuseConverter implements AlgorithmFactory, DataValidator {
     		try{
     			tempFile = File.createTempFile("graph-ml-prefuse-", ".xml", tempDir);
     			writeGraphMl(nwbModel, tempFile);
-
     			
-    			FileResourceDescriptor frd = new BasicFileResourceDescriptor(tempFile); 
     			XMLGraphReader xgr = new XMLGraphReader() ;
-    			Graph model = xgr.loadGraph(frd.getFile()) ;
+    			Graph model = xgr.loadGraph(tempFile) ;
     			String label = tempFile.getName();
     			prefuseDM = new Data[]{new BasicData(model, Graph.class.getName()) };
     			Dictionary prefuseMetaData = prefuseDM[0].getMetaData();
