@@ -78,7 +78,7 @@ public class NWBWriter implements AlgorithmFactory {
 	        	}
 //	            String fileHandler = (String) parameters.get("edu.iu.nwb.nwbpersisters.NWBReader.fileInput");
 	        	if (tempFile != null){
-	        		System.out.println("in NWBWriterPersister execute method, tempFile= "+tempFile.getPath());
+//	        		System.out.println("in NWBWriterPersister execute method, tempFile= "+tempFile.getPath());
 	        	
 	        		(new NWBFile()).save((NWBModel)(dm[0].getData()), tempFile) ;
 	        	}

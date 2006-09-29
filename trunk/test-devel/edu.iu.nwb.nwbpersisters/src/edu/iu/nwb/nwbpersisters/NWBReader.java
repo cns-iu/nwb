@@ -58,8 +58,6 @@ public class NWBReader implements AlgorithmFactory {
 //	            String fileHandler = (String) parameters.get("edu.iu.nwb.nwbpersisters.NWBReader.fileInput");
 	        	String fileHandler = (String) dm[0].getData();
 	        	File frd = new File(fileHandler);
-	        	System.out.println("File Name is "+frd.getName());
-	            System.out.println("File path is "+frd.getPath());	           
 	            FileBackedNWBModel nwbData = new FileBackedNWBModel(frd);
 	            Data[] dm = new Data[]{new BasicData(nwbData, NWBModel.class.getName()) };
 	            dm[0].getMetaData().put(DataProperty.LABEL, "NWB Data Model: " + fileHandler);
