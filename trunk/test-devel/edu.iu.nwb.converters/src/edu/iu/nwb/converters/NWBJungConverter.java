@@ -19,9 +19,7 @@ import org.cishell.framework.data.Data;
 import org.cishell.framework.data.DataProperty;
 import org.osgi.service.metatype.MetaTypeProvider;
 
-import edu.iu.nwb.nwbpersisters.BasicFileResourceDescriptor;
 import edu.iu.nwb.nwbpersisters.Edge;
-import edu.iu.nwb.nwbpersisters.FileResourceDescriptor;
 import edu.iu.nwb.nwbpersisters.NWBModel;
 import edu.iu.nwb.nwbpersisters.Node;
 import edu.uci.ics.jung.graph.Graph;
@@ -86,8 +84,7 @@ public class NWBJungConverter implements AlgorithmFactory, DataValidator {
     			tempFile = File.createTempFile("graph-ml", ".xml", tempDir);
     			writeGraphMl(nwbModel, tempFile);
 		
-    			FileResourceDescriptor frd = new BasicFileResourceDescriptor(tempFile); 
-    			Graph model = (new GraphMLFile()).load(frd.getFilePath()) ;
+    			Graph model = (new GraphMLFile()).load(tempFile.getPath()) ;
     			String label = tempFile.getName();
     			jungDM = new Data[]{new BasicData(model, Graph.class.getName()) };
     			Dictionary jungMetaData = jungDM[0].getMetaData();
