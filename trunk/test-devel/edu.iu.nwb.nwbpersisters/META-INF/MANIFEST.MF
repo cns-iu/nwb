@@ -1,7 +1,7 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: Nwbpersisters Plug-in
-Bundle-SymbolicName: edu.iu.nwb.nwbpersisters
+Bundle-SymbolicName: edu.iu.nwb.nwbpersisters;singleton:=true
 Bundle-Version: 0.0.1
 Bundle-Localization: plugin
 Service-Component: OSGI-INF/NWBReader.xml, OSGI-INF/NWBWriter.xml
