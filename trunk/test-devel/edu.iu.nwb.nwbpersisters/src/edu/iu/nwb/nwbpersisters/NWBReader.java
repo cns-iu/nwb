@@ -46,17 +46,17 @@ public class NWBReader implements AlgorithmFactory {
 	    }
 	    
 	    private class NWBReaderPersister implements Algorithm {
-	    	Data[] dm;
+	    	Data[] data;
 	        Dictionary parameters;
 	        
 	        public NWBReaderPersister(Data[] dm, Dictionary parameters) {
-	        	this.dm = dm;
+	        	this.data = dm;
 	            this.parameters = parameters;
 	        }
 
 	        public Data[] execute() {
 //	            String fileHandler = (String) parameters.get("edu.iu.nwb.nwbpersisters.NWBReader.fileInput");
-	        	String fileHandler = (String) dm[0].getData();
+	        	String fileHandler = (String) data[0].getData();
 	        	File frd = new File(fileHandler);
 	            FileBackedNWBModel nwbData = new FileBackedNWBModel(frd);
 	            Data[] dm = new Data[]{new BasicData(nwbData, NWBModel.class.getName()) };
