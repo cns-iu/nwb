@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<metatype:MetaData xmlns:metatype="http://www.osgi.org/xmlns/metatype/v1.0.0">
+	<OCD name="JungPajekNetReader" id="edu.iu.nwb.converter.jungpajeknet.reader.JungPajekNetReader.OCD"
+		 description="">
+	</OCD>
+	<Designate pid="edu.iu.nwb.converter.jungpajeknet.reader.JungPajekNetReader">
+		<Object ocdref="edu.iu.nwb.converter.jungpajeknet.reader.JungPajekNetReader.OCD" />
+	</Designate>
+</metatype:MetaData>
