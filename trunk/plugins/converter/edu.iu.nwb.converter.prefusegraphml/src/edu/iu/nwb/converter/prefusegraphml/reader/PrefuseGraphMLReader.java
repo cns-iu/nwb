@@ -31,7 +31,6 @@ public class PrefuseGraphMLReader implements Algorithm {
 
     public Data[] execute() {
     	String fileHandler = (String) data[0].getData();
-//    	Graph graph = (new GraphMLFile()).load(fileHandler);
     	try{
     		Graph graph= (new GraphMLReader()).readGraph(new FileInputStream(fileHandler));
     		Data[] dm = new Data[] {new BasicData(graph, Graph.class.getName())};
