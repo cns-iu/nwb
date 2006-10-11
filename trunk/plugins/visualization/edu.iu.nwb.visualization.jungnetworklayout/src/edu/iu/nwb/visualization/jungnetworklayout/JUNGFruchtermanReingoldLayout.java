@@ -2,14 +2,11 @@ package edu.iu.nwb.visualization.jungnetworklayout;
 
 import java.util.Dictionary;
 
-import org.osgi.service.component.ComponentContext;
-import org.osgi.service.metatype.MetaTypeProvider;
-import org.osgi.service.metatype.MetaTypeService;
-
 import org.cishell.framework.CIShellContext;
 import org.cishell.framework.algorithm.Algorithm;
 import org.cishell.framework.algorithm.AlgorithmFactory;
 import org.cishell.framework.data.Data;
+import org.osgi.service.metatype.MetaTypeProvider;
 
 import edu.uci.ics.jung.graph.Graph;
 import edu.uci.ics.jung.visualization.FRLayout;
@@ -18,21 +15,12 @@ import edu.uci.ics.jung.visualization.FRLayout;
  * @author Weixia(Bonnie) Huang 
  */
 public class JUNGFruchtermanReingoldLayout implements AlgorithmFactory {
-	   private MetaTypeProvider provider;
-
-	   protected void activate(ComponentContext ctxt) {
-	        MetaTypeService mts = (MetaTypeService)ctxt.locateService("MTS");
-	        provider = mts.getMetaTypeInformation(ctxt.getBundleContext().getBundle());  
-	    }
-	    protected void deactivate(ComponentContext ctxt) {
-	        provider = null;
-	    }
 
 	    /**
 	     * @see org.cishell.framework.algorithm.AlgorithmFactory#createParameters(org.cishell.framework.data.Data[])
 	     */
 	    public MetaTypeProvider createParameters(Data[] dm) {
-	        return provider;
+	        return null;
 	    }
 	    
 	    /**
