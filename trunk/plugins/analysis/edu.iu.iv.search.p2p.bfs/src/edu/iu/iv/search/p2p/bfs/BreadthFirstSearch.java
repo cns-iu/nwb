@@ -6,10 +6,9 @@ import java.util.Stack;
 
 import org.osgi.service.log.LogService;
 
+import edu.uci.ics.jung.graph.ArchetypeVertex;
 import edu.uci.ics.jung.graph.Graph;
 import edu.uci.ics.jung.graph.decorators.Indexer;
-import edu.uci.ics.jung.graph.impl.UndirectedSparseGraph;
-import edu.uci.ics.jung.graph.impl.UndirectedSparseVertex;
 
 /**
  * Breadth First Search Algorithm
@@ -17,7 +16,7 @@ import edu.uci.ics.jung.graph.impl.UndirectedSparseVertex;
 */
 public class BreadthFirstSearch {
 
-	private UndirectedSparseGraph graph;
+	private Graph graph;
 	private int networkSize;
 	private int searchCost;
 	private Indexer indxr;
@@ -43,7 +42,7 @@ public class BreadthFirstSearch {
 	 * Requires a graph to be passed that represents the network on which the search is to be performed. 
 	 */
 	public BreadthFirstSearch(Graph graph) {
-		this.graph = (UndirectedSparseGraph) graph;
+		this.graph = graph;
 		networkSize = graph.numVertices();		
 		searchCost = 0;
 		threshold = 0.0;
@@ -57,7 +56,7 @@ public class BreadthFirstSearch {
 	 * and the threshold  
 	 */
 	public BreadthFirstSearch(Graph graph, double threshold) {
-		this.graph = (UndirectedSparseGraph) graph;
+		this.graph = graph;
 		networkSize = graph.numVertices();		
 		searchCost = 0;
 		this.threshold = threshold;
@@ -129,7 +128,7 @@ public class BreadthFirstSearch {
 	   	Integer tmpnode;
 	   	double probability;
 	   	byte[] visited;
-		UndirectedSparseVertex currentNode;
+		ArchetypeVertex currentNode;
 		Iterator neighIter;
 		searchCost = 0;
 		
@@ -171,10 +170,10 @@ public class BreadthFirstSearch {
 				  if(stk.search(new Integer(qval)) == -1)
 					  stk.push(new Integer(qval));
 	           
-				  currentNode = (UndirectedSparseVertex) indxr.getVertex(qval);
+				  currentNode = indxr.getVertex(qval);
 				  neighIter = currentNode.getNeighbors().iterator();
 				  while (neighIter.hasNext()) {	
-				  		  currentIndex = indxr.getIndex((UndirectedSparseVertex)neighIter.next());				  
+				  		  currentIndex = indxr.getIndex((ArchetypeVertex)neighIter.next());				  
 						  if(visited[currentIndex] == 0)
 						  {
 							  probability = randNum.nextDouble();
@@ -197,7 +196,7 @@ public class BreadthFirstSearch {
 	 * This method returns the graph on which search is performed
 	 * @return graph
 	 */
-	public UndirectedSparseGraph getGraph() {
+	public Graph getGraph() {
 		return graph;
 	}
 
@@ -229,7 +228,7 @@ public class BreadthFirstSearch {
 	 * This method sets the graph on which search is to be performed 
 	 * @param graph
 	 */
-	public void setGraph(UndirectedSparseGraph graph) {
+	public void setGraph(Graph graph) {
 		this.graph = graph;
 		indxr = Indexer.newIndexer(graph, 0);
 	}
