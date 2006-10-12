@@ -10,8 +10,10 @@ import java.awt.geom.Ellipse2D;
 import javax.swing.JFrame;
 import javax.swing.SwingUtilities;
 
+import edu.uci.ics.jung.graph.ArchetypeVertex;
 import edu.uci.ics.jung.graph.Vertex;
 import edu.uci.ics.jung.graph.decorators.VertexShapeFunction;
+import edu.uci.ics.jung.graph.decorators.VertexStringer;
 import edu.uci.ics.jung.visualization.Layout;
 import edu.uci.ics.jung.visualization.PluggableRenderer;
 import edu.uci.ics.jung.visualization.VisualizationViewer;
@@ -42,8 +44,22 @@ public class JUNGLayoutGUI extends JFrame {
                 return new Ellipse2D.Float(-5, -5, 10, 10);
             }
         });
+        pr.setVertexLabelCentering(true);
+        pr.setVertexStringer(new VertexStringer() {
+			public String getLabel(ArchetypeVertex v) {
+				
+				Object label = v.getUserDatum("label");
+				
+				if (label != null) {
+					label = label.toString();
+				}
+				
+				return (String)label;
+			}});
+        
         vv = new VisualizationViewer(layout, pr);
         vv.setBackground(Color.WHITE);
+
         this.getContentPane().add(vv);
         this.vv.removeMouseListener(this.vv.getMouseListeners()[0]);
         this.vv.removeMouseMotionListener(this.vv.getMouseMotionListeners()[0]);

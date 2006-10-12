@@ -8,6 +8,7 @@ Service-Component: OSGI-INF/JUNGSpringLayout.xml, OSGI-INF/JUNGCircleLayout.xml,
 X-AutoStart: true
 Import-Package: edu.uci.ics.jung.graph,
  edu.uci.ics.jung.graph.decorators,
+ edu.uci.ics.jung.utils,
  edu.uci.ics.jung.visualization,
  edu.uci.ics.jung.visualization.contrib,
  org.cishell.framework,
