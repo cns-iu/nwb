@@ -1,13 +1,19 @@
 package edu.iu.nwb.converter.junggraphml.reader;
 
+//Java
 import java.util.Dictionary;
-
+import java.io.File;
+import java.io.FileReader;
+import java.io.FileNotFoundException;
+//OSGi
+import org.osgi.service.log.LogService;
+//CIShell 
 import org.cishell.framework.CIShellContext;
 import org.cishell.framework.algorithm.Algorithm;
 import org.cishell.framework.data.Data;
 import org.cishell.framework.data.DataProperty;
 import org.cishell.framework.data.BasicData;
-
+//Jung lib
 import edu.uci.ics.jung.graph.Graph;
 import edu.uci.ics.jung.io.GraphMLFile; 
 
@@ -26,10 +32,17 @@ public class JungGraphMLReader implements Algorithm {
     }
 
     public Data[] execute() {
-    	String fileHandler = (String) data[0].getData();
-    	Graph graph = (new GraphMLFile()).load(fileHandler);
-    	Data[] dm = new Data[] {new BasicData(graph, Graph.class.getName())};
-    	dm[0].getMetaData().put(DataProperty.LABEL, "Jung GraphML Data Model: " + fileHandler);
-    	return dm;
+    	LogService logger = (LogService)context.getService(LogService.class.getName());
+    	File fileHandler = (File) data[0].getData();
+    	try {
+    		Graph graph = (new GraphMLFile()).load(new FileReader(fileHandler));
+    		Data[] dm = new Data[] {new BasicData(graph, Graph.class.getName())};
+    		dm[0].getMetaData().put(DataProperty.LABEL, "Jung Graph: " + fileHandler.getAbsolutePath());
+    		return dm;
+    	}catch (FileNotFoundException exception){
+    		logger.log(LogService.LOG_ERROR, "FileNotFoundException", exception);
+    		return null;
+    	}
+    	
     }
 }
