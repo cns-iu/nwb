@@ -1,17 +1,18 @@
 package edu.iu.nwb.converter.junggraphml.writer;
 
+//Java
 import java.io.File;
 import java.io.IOException;
 import java.util.Dictionary;
-
+//CIShell
 import org.cishell.framework.CIShellContext;
 import org.cishell.framework.algorithm.Algorithm;
-import org.cishell.framework.data.Data;
 import org.cishell.framework.data.BasicData;
+import org.cishell.framework.data.Data;
 import org.osgi.service.log.LogService;
-
+//Jung
 import edu.uci.ics.jung.graph.Graph;
-import edu.uci.ics.jung.io.GraphMLFile; 
+import edu.uci.ics.jung.io.GraphMLFile;
 
 /**
  * @author Weixia(Bonnie) Huang 
@@ -26,12 +27,11 @@ public class JungGraphMLWriter implements Algorithm {
         this.data = data;
         this.parameters = parameters;
         this.context = context;
-        logger = (LogService) context.getService(LogService.class.getName());
-
+        logger = (LogService)context.getService("LogService.class.getName()");
     }
 
     public Data[] execute() {
-        File tempFile;
+       File tempFile;
         
     	String tempPath = System.getProperty("java.io.tmpdir");
     	File tempDir = new File(tempPath+File.separator+"temp");
@@ -48,9 +48,7 @@ public class JungGraphMLWriter implements Algorithm {
     	if (tempFile != null){
     		(new GraphMLFile()).save((Graph)(data[0].getData()), tempFile.getPath()) ;
     	}
-        return new Data[]{new BasicData(tempFile, File.class.getName()) };
-    }
+        return new Data[]{new BasicData(tempFile, "file:text/graphml+xml") };
 
-    	
-		
+    }
 }
