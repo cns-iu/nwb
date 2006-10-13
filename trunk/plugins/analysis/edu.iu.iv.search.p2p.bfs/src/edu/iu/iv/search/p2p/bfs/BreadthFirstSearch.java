@@ -33,8 +33,7 @@ public class BreadthFirstSearch {
 		graph = null;
 		networkSize = graph.numVertices();		
 		searchCost = 0;
-		threshold = 0.0;	
-		
+		threshold = 0.0;
 	}
 		
 	/**
@@ -66,8 +65,8 @@ public class BreadthFirstSearch {
 	
 	public void setLogger(LogService logger){
 		this.logger = logger;
-		
 	}
+    
  	/**
    	* Perform BFS on the network
    	* @param fromId - source node from where search begins

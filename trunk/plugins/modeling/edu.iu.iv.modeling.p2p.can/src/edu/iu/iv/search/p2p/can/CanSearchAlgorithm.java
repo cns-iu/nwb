@@ -6,9 +6,10 @@ import org.cishell.framework.CIShellContext;
 import org.cishell.framework.algorithm.Algorithm;
 import org.cishell.framework.data.Data;
 import org.osgi.service.log.LogService;
+
 import edu.uci.ics.jung.graph.Graph;
 
-public class CanSearchAlgorithm implements Algorithm {
+public class CanSearchAlgorithm implements Algorithm{
     Data[] data;
     Dictionary parameters;
     CIShellContext context;

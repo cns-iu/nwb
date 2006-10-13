@@ -5,10 +5,9 @@ import java.util.Random;
 
 import org.osgi.service.log.LogService;
 
+import edu.uci.ics.jung.graph.ArchetypeVertex;
 import edu.uci.ics.jung.graph.Graph;
 import edu.uci.ics.jung.graph.decorators.Indexer;
-import edu.uci.ics.jung.graph.impl.UndirectedSparseGraph;
-import edu.uci.ics.jung.graph.impl.UndirectedSparseVertex;
 
 /**
  * Random-Walk Search Algorithm
@@ -16,7 +15,7 @@ import edu.uci.ics.jung.graph.impl.UndirectedSparseVertex;
 */
 public class RandomWalk {
 
-	private UndirectedSparseGraph graph;
+	private Graph graph;
 	private int networkSize;
 	private int searchCost;
 	private int numWalkers;
@@ -30,7 +29,7 @@ public class RandomWalk {
 	 * @param graph
 	 */	
 	public RandomWalk(Graph graph) {
-		this.graph = (UndirectedSparseGraph) graph;
+		this.graph = graph;
 		networkSize = graph.numVertices();
 		numWalkers = 1;
 		searchCost = 0;
@@ -45,7 +44,7 @@ public class RandomWalk {
 	 * @param numWalkers
 	 */	
 		public RandomWalk(Graph graph, int numWalkers) {
-			this.graph = (UndirectedSparseGraph) graph;
+			this.graph = graph;
 			networkSize = graph.numVertices();
 			this.numWalkers = numWalkers;
 			searchCost = 0;
@@ -123,7 +122,7 @@ public class RandomWalk {
 		
 		boolean roundDone;		
 		int past, next, currentIndex; 
-		UndirectedSparseVertex currentNode;
+		ArchetypeVertex currentNode;
 		Iterator neighIter;
 		searchCost = 0;
 		Random rand = new Random();
@@ -154,7 +153,7 @@ public class RandomWalk {
 		for(int i = 0; i< numWalkers; i++)
 		{
 			roundDone = false;
-            currentNode = (UndirectedSparseVertex) indxr.getVertex(currentPosition[i]);
+            currentNode = indxr.getVertex(currentPosition[i]);
 			// Process only if a node has more than one neighbor            
 			if ( currentNode.numNeighbors() > 1 )
 			{
@@ -166,7 +165,7 @@ public class RandomWalk {
 				neighIter = currentNode.getNeighbors().iterator();
 				while (neighIter.hasNext()) {				
 					//System.out.println("searchCost next: " + next);
-					currentIndex = indxr.getIndex((UndirectedSparseVertex)neighIter.next());
+					currentIndex = indxr.getIndex((ArchetypeVertex)neighIter.next());
 					if( (next == 0) && (currentIndex != lastNode[i]) && !roundDone ) 
 					{
 						roundDone = true;
@@ -189,7 +188,7 @@ public class RandomWalk {
 				// just return to previous node
 				neighIter = currentNode.getNeighbors().iterator();
 				while (neighIter.hasNext()) {	
-					currentIndex = indxr.getIndex((UndirectedSparseVertex)neighIter.next());
+					currentIndex = indxr.getIndex((ArchetypeVertex)neighIter.next());
 					if( (currentIndex != currentPosition[i]) && !roundDone)
 					{
 						//System.out.println("w:" + i

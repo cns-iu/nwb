@@ -43,6 +43,5 @@ public class ChordSearchAlgorithm implements Algorithm {
 	 private void println(String string) {
 		 LogService log = (LogService) context.getService(LogService.class.getName());
 	        log.log(LogService.LOG_INFO, string);
-	    }
-
+    }
 }

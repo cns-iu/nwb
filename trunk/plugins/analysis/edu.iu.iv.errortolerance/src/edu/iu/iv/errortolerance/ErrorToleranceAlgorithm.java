@@ -25,6 +25,8 @@ public class ErrorToleranceAlgorithm implements Algorithm {
     	
     	int numNodes = getInt("numNodes");	   
     	Graph graph = (Graph)data[0].getData();
+        graph = (Graph)graph.copy();
+        
 		ErrorTolerance et = new ErrorTolerance(graph, numNodes);
 		boolean isDone = et.testErrorTolerance();
 		Data[] newdata=null;

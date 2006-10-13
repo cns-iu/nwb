@@ -1,9 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<metatype:MetaData xmlns:metatype="http://www.osgi.org/xmlns/metatype/v1.0.0">
-	<OCD name="TreeViz Algorithm" id="edu.iu.iv.visualization.treeviz.TreeVizAlgorithm.OCD"
-		 description="">
-	</OCD>
-	<Designate pid="edu.iu.iv.visualization.treeviz.TreeVizAlgorithm">
-		<Object ocdref="edu.iu.iv.visualization.treeviz.TreeVizAlgorithm.OCD" />
-	</Designate>
-</metatype:MetaData>

@@ -7,6 +7,7 @@ import org.cishell.framework.algorithm.Algorithm;
 import org.cishell.framework.data.BasicData;
 import org.cishell.framework.data.Data;
 import org.cishell.framework.data.DataProperty;
+import org.cishell.service.guibuilder.GUIBuilderService;
 
 import edu.uci.ics.jung.graph.Graph;
 
@@ -27,6 +28,15 @@ public class BarabasiAlbertModelAlgorithm implements Algorithm {
 	    int numEdges = getInt("edges");
 	    boolean useSeed = ((Boolean) parameters.get("useSeed")).booleanValue();
 	    
+        if (numEdges > numInitialNodes) {
+            GUIBuilderService builder = (GUIBuilderService) 
+                context.getService(GUIBuilderService.class.getName());
+            builder.showError("Illegal Argument!", "Illegal Argument: number of " +
+                    "edges ("+numEdges+") is > number of initial nodes ("+
+                    numInitialNodes+")", "");
+            return null;
+        }
+        
         BarabasiAlbertModelGenerator generator = null ;
         if (useSeed) {
             int seed = getInt("seed");
@@ -39,12 +49,12 @@ public class BarabasiAlbertModelAlgorithm implements Algorithm {
         Graph graph = generator.generateGraph();
 	    
 		
-		    Data dm = new BasicData(graph, Graph.class.getName());
-		    dm.getMetaData().put(DataProperty.LABEL,"Barabasi Albert Scale-Free Network Model");
-		    dm.getMetaData().put(DataProperty.TYPE,DataProperty.NETWORK_TYPE);
-		
-	    
-		    return new Data[]{dm};
+	    Data dm = new BasicData(graph, Graph.class.getName());
+	    dm.getMetaData().put(DataProperty.LABEL,"Barabasi Albert Scale-Free Network Model");
+	    dm.getMetaData().put(DataProperty.TYPE,DataProperty.NETWORK_TYPE);
+	
+    
+	    return new Data[]{dm};
 	}
 	
     private int getInt(String key) {

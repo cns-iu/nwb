@@ -32,6 +32,8 @@ public class BreadthFirstSearchAlgorithm implements Algorithm {
 				", threshold = " + threshold);
 		Graph graph = (Graph)data[0].getData();
 		BreadthFirstSearch bfs = new BreadthFirstSearch(graph, threshold);
+        bfs.setLogger(log);
+        
 		boolean is_done = bfs.searchNetwork(sourceNode, targetNode);
 		if (is_done) {
 			println("Search Cost : "+bfs.getSearchCost());

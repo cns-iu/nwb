@@ -5,12 +5,16 @@ import java.util.Dictionary;
 import org.cishell.framework.CIShellContext;
 import org.cishell.framework.algorithm.Algorithm;
 import org.cishell.framework.algorithm.AlgorithmFactory;
+import org.cishell.framework.algorithm.DataValidator;
 import org.cishell.framework.data.Data;
 import org.osgi.service.component.ComponentContext;
 import org.osgi.service.metatype.MetaTypeProvider;
 import org.osgi.service.metatype.MetaTypeService;
 
-public class CanSearchAlgorithmFactory implements AlgorithmFactory {
+import edu.uci.ics.jung.graph.Graph;
+import edu.uci.ics.jung.graph.Vertex;
+
+public class CanSearchAlgorithmFactory implements AlgorithmFactory, DataValidator {
     private MetaTypeProvider provider;
 
     protected void activate(ComponentContext ctxt) {
@@ -29,5 +33,23 @@ public class CanSearchAlgorithmFactory implements AlgorithmFactory {
     }
     public MetaTypeProvider createParameters(Data[] data) {
         return provider;
+    }
+    
+    public String validate(Data[] data) {
+        //make sure its a Can Network Graph
+        String supports = "Not a CAN Graph";
+        if (data[0].getData() instanceof Graph) {
+            Graph g = (Graph) data[0].getData();
+            if (g.containsUserDatumKey("0")) {
+                Vertex v = (Vertex) g.getUserDatum("0");
+                if (v.containsUserDatumKey("id"))
+                    if (v.containsUserDatumKey("xmid"))
+                        if (v.containsUserDatumKey("ymid"))
+                            if (v.containsUserDatumKey("zmid"))
+                                supports = "";
+            }
+        }
+        
+        return supports;
     }
 }

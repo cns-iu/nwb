@@ -36,11 +36,20 @@ public class ErrorTolerance {
 		
 		while (cnt < numNodes) {
 			/* Select a random node. Deletes all its edges and then delete the node. */
+            
+            //ran out of nodes
+            if (graph.numVertices() == 0) break;
+            
 			nodeNumber = randNum.nextInt(graph.numVertices());	
-			Vertex v = (Vertex) indxr.getVertex(nodeNumber);			
-			graph.removeEdges(v.getIncidentEdges());
-			graph.removeVertex(v);
+			Vertex v = (Vertex) indxr.getVertex(nodeNumber);
 			
+            //Note: graph.removeVertex does this
+			//graph.removeEdges(v.getIncidentEdges());
+			
+            graph.removeVertex(v);
+			
+            indxr.updateIndex();
+            
 			/* Increment count if node deleted from the graph */
 			cnt++;
 		}

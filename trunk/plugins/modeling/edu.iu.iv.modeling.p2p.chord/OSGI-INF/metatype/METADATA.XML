@@ -1,9 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <metatype:MetaData xmlns:metatype="http://www.osgi.org/xmlns/metatype/v1.0.0">
-	<OCD name="The CHORD Network Modeling" id="edu.iu.iv.modeling.p2p.chord.ChordAlgorithm.OCD"
-		 description=" ">
+	<OCD name="The CHORD Network Modeling" id="edu.iu.iv.modeling.p2p.chord.ChordAlgorithm.OCD">
 		<AD name="Number of Nodes" id="networkSize" type="Integer" description="Enter  number of nodes in network,must be &gt; 0" default="1"/>
-		<AD name="Minimum Degree of Each Node" id="fingerTableSize" type="Integer" description="Enter minimum degree of each node in the network,must be &gt; 0" default="1"/>
+		<AD name="Minimum Degree of Each Node" id="fingerTableSize" type="Integer" description="Enter minimum degree of each node in the network, must be &gt; 0" default="1" min="1" />
 	</OCD>
 	<Designate pid="edu.iu.iv.modeling.p2p.chord.ChordAlgorithm">
 		<Object ocdref="edu.iu.iv.modeling.p2p.chord.ChordAlgorithm.OCD" />

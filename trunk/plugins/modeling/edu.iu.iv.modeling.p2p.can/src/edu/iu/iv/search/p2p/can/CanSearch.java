@@ -4,6 +4,7 @@ import java.util.Iterator;
 import java.util.Set;
 
 import org.osgi.service.log.LogService;
+
 import edu.uci.ics.jung.graph.Graph;
 import edu.uci.ics.jung.graph.impl.UndirectedSparseGraph;
 import edu.uci.ics.jung.graph.impl.UndirectedSparseVertex;

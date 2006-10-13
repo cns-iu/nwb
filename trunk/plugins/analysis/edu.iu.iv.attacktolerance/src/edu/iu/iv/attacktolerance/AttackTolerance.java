@@ -38,10 +38,13 @@ public class AttackTolerance {
 		
 		Iterator nodeRankingList = ranker.getRankings().iterator();
 		
-		while (cnt < numNodes) {
+		while (cnt < numNodes && nodeRankingList.hasNext()) {
 			/* Select a highly-connected node. Deletes all its edges and then delete the node. */	
 			Vertex v = ((NodeRanking)nodeRankingList.next()).vertex;
-			graph.removeEdges(v.getIncidentEdges());
+            
+            //graph.removeVertex does this
+			//graph.removeEdges(v.getIncidentEdges());
+            
 			graph.removeVertex(v);
 						
 			/* Increment count if node deleted from the graph */

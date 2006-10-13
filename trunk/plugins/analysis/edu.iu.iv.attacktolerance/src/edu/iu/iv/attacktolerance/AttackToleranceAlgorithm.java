@@ -23,6 +23,8 @@ public class AttackToleranceAlgorithm implements Algorithm {
 
     public Data[] execute() {
     	 Graph graph = (Graph)(data[0].getData());
+         graph = (Graph) graph.copy();
+         
     	 int numNodes = getInt("numNodes");
          AttackTolerance at = new AttackTolerance(graph, numNodes);
          boolean isDone = at.testAttackTolerance();
