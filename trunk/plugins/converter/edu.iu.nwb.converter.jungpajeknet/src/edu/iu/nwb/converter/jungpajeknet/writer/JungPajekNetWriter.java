@@ -41,21 +41,21 @@ public class JungPajekNetWriter implements Algorithm {
 	    	tempFile = File.createTempFile("NWB-Session-", ".net", tempDir);
 	    		
 	    }catch (IOException e){
-	    	logger.log(LogService.LOG_ERROR, e.toString());
-	   		tempFile = new File (tempPath+File.separator+"nwbTemp"+File.separator+"temp.nwb");
+	    	logger.log(LogService.LOG_ERROR, "IOException", e);
+	   		tempFile = new File (tempPath+File.separator+"nwbTemp"+File.separator+"temp.net");
     	}
     	if (tempFile != null){
     		try{
     			(new PajekNetWriter()).save((Graph)(data[0].getData()), 
     						tempFile.getPath()) ;
-    			return new Data[]{new BasicData(tempFile, File.class.getName()) };
+    			return new Data[]{new BasicData(tempFile, "file:application/pajek") };
     		}catch (IOException ioe){
-    			//use guibuilder to display the exception
+    			logger.log(LogService.LOG_ERROR, "IOException", ioe);
     			return null;
     		}
     	}
     	else{
-//    		use guibuilder to display the exception
+    		logger.log(LogService.LOG_ERROR, "Fail to generate a file in the temporary directory.");
     		return null;
     	}
 
