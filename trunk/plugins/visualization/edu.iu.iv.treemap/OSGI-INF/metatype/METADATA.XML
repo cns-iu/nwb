@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<metatype:MetaData xmlns:metatype="http://www.osgi.org/xmlns/metatype/v1.0.0">
+	<OCD name="TreeMap Algorithm" id="edu.iu.iv.treemap.TreeMapAlgorithm.OCD"
+		 description="">
+	</OCD>
+	<Designate pid="edu.iu.iv.treemap.TreeMapAlgorithm">
+		<Object ocdref="edu.iu.iv.treemap.TreeMapAlgorithm.OCD" />
+	</Designate>
+</metatype:MetaData>
