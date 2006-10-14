@@ -47,7 +47,7 @@ public class PrefuseXGMMLWriter implements Algorithm {
     		try{
     			(new XMLGraphWriter()).writeGraph((Graph)(data[0].getData()), 
     						tempFile) ;
-    			return new Data[]{new BasicData(tempFile, File.class.getName()) };
+    			return new Data[]{new BasicData(tempFile, "file:text/xgmml+xml") };
     		}catch (IOException ioe){
     			//use guibuilder to display the exception
     			return null;

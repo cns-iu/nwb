@@ -1,5 +1,6 @@
 package edu.iu.nwb.converter.prefusexgmml.reader;
 
+import java.io.File;
 import java.io.IOException;
 import java.util.Dictionary;
 
@@ -8,6 +9,7 @@ import org.cishell.framework.algorithm.Algorithm;
 import org.cishell.framework.data.BasicData;
 import org.cishell.framework.data.Data;
 import org.cishell.framework.data.DataProperty;
+import org.osgi.service.log.LogService;
 
 import edu.berkeley.guir.prefuse.graph.Graph;
 import edu.berkeley.guir.prefuse.graph.io.XMLGraphReader;
@@ -27,14 +29,16 @@ public class PrefuseXGMMLReader implements Algorithm {
     }
 
     public Data[] execute() {
-    	String fileHandler = (String) data[0].getData();
+    	LogService logger = (LogService)context.getService(LogService.class.getName());
+    	File fileHandler = (File) data[0].getData();
+
     	try{
-    		Graph graph = (new XMLGraphReader()).loadGraph(fileHandler);
+    		Graph graph = (new XMLGraphReader()).loadGraph(fileHandler.getAbsoluteFile());
     		Data[] dm = new Data[] {new BasicData(graph, Graph.class.getName())};
-    		dm[0].getMetaData().put(DataProperty.LABEL, "Old Prefuse Graph Data Model: " + fileHandler);
+    		dm[0].getMetaData().put(DataProperty.LABEL, "Old Prefuse Graph: " + fileHandler);
     		return dm;
     	}catch (IOException ioe){
-    		//use guibuilder to display the exception
+       		logger.log(LogService.LOG_ERROR, "IOException", ioe);       	 
     		return null;
     	}
 

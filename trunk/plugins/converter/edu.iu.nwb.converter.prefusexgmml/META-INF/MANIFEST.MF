@@ -16,4 +16,5 @@ Import-Package: edu.berkeley.guir.prefuse.graph,
  org.osgi.service.metatype;version="1.1.0",
  org.osgi.service.prefs;version="1.1.0"
 X-AutoStart: true
-Service-Component: OSGI-INF/reader.xml, OSGI-INF/writer.xml
+Service-Component: OSGI-INF/reader.xml, OSGI-INF/writer.xml, OSGI-INF/validation.xml, OSGI-INF/filehandler.xml
+
