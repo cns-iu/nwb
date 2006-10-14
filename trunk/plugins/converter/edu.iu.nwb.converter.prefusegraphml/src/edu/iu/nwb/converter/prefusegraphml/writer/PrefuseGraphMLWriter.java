@@ -49,17 +49,18 @@ public class PrefuseGraphMLWriter implements Algorithm {
     		try{
     			(new GraphMLWriter()).writeGraph((Graph)(data[0].getData()), 
     						new FileOutputStream(tempFile)) ;
-    			return new Data[]{new BasicData(tempFile, File.class.getName()) };
+    			return new Data[]{new BasicData(tempFile, "file:text/graphml+xml") };
     		}catch (DataIOException dioe){
-    			return null;
+    	   		logger.log(LogService.LOG_ERROR, "DataIOException", dioe);
+    	   		return null;
     		}catch (IOException ioe){
-    			//use guibuilder to display the exception
-    			return null;
+    	   		logger.log(LogService.LOG_ERROR, "IOException", ioe);
+    	   	 	return null;
     		}
     	}
     	else{
-//    		use guibuilder to display the exception
-    		return null;
+       		logger.log(LogService.LOG_ERROR, "Fail to generate a file in the temporary directory.");
+       	 	return null;
     	}
     	
     }
