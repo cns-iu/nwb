@@ -1,8 +1,8 @@
 package edu.iu.nwb.converter.jungpajeknet.writer;
 
-import java.util.Dictionary;
 import java.io.File;
 import java.io.IOException;
+import java.util.Dictionary;
 
 import org.cishell.framework.CIShellContext;
 import org.cishell.framework.algorithm.Algorithm;
@@ -10,13 +10,15 @@ import org.cishell.framework.data.BasicData;
 import org.cishell.framework.data.Data;
 import org.osgi.service.log.LogService;
 
+import edu.uci.ics.jung.graph.ArchetypeVertex;
 import edu.uci.ics.jung.graph.Graph;
+import edu.uci.ics.jung.graph.decorators.VertexStringer;
 import edu.uci.ics.jung.io.PajekNetWriter;
 
 /**
  * @author Weixia(Bonnie) Huang 
  */
-public class JungPajekNetWriter implements Algorithm {
+public class JungPajekNetWriter implements Algorithm, VertexStringer {
     Data[] data;
     Dictionary parameters;
     CIShellContext context;
@@ -47,7 +49,7 @@ public class JungPajekNetWriter implements Algorithm {
     	if (tempFile != null){
     		try{
     			(new PajekNetWriter()).save((Graph)(data[0].getData()), 
-    						tempFile.getPath()) ;
+    						tempFile.getPath(), this, null) ;
     			return new Data[]{new BasicData(tempFile, "file:application/pajek") };
     		}catch (IOException ioe){
     			logger.log(LogService.LOG_ERROR, "IOException", ioe);
@@ -59,5 +61,11 @@ public class JungPajekNetWriter implements Algorithm {
     		return null;
     	}
 
+    }
+
+    public String getLabel(ArchetypeVertex v) {
+        Object label = v.getUserDatum("label");
+        
+        return label == null ? null : label.toString();
     }
 }

@@ -53,6 +53,7 @@ public class JungPajekNetValidation implements AlgorithmFactory {
         		(new PajekNetReader()).load(new FileReader(inData));
         		Data[] dm = new Data[] {new BasicData(inData, "file:application/pajek")};
         		dm[0].getMetaData().put(DataProperty.LABEL, "Pajek .net file: " + fileHandler);
+                dm[0].getMetaData().put(DataProperty.TYPE, DataProperty.NETWORK_TYPE);
         		return dm;
 			}catch (FileNotFoundException exception){
 				logger.log(LogService.LOG_ERROR,"FileNotFoundException",exception);
