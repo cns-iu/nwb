@@ -136,7 +136,7 @@ public class RadialGraphVisualization {
      */
     private void initializeRenderers() {
         Renderer nodeRenderer = new TextItemRenderer() {
-                private int maxWidth = 75;
+                private int maxWidth = 175;
                 private StringAbbreviator abbrev = new StringAbbreviator(null,
                         null);
 
@@ -149,8 +149,8 @@ public class RadialGraphVisualization {
                     }
 
                     FontMetrics fm = DEFAULT_GRAPHICS.getFontMetrics(font);
-
-                    if (fm.stringWidth(s) > maxWidth) {
+                    
+                    if (s != null && fm.stringWidth(s) > maxWidth) {
                         s = abbrev.abbreviate(s, StringAbbreviator.NAME, fm,
                                 maxWidth);
                     }
