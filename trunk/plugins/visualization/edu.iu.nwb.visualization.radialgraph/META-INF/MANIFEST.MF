@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: Radial Graph Visualization Plug-in
 Bundle-SymbolicName: edu.iu.nwb.visualization.radialgraph
-Bundle-Version: 0.0.1
+Bundle-Version: 0.2.0
 Bundle-Localization: plugin
 Service-Component: OSGI-INF/RadialGraph.xml
 X-AutoStart: true

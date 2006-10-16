@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: edu.iu.iv.treemap
 Bundle-SymbolicName: edu.iu.iv.treemap
-Bundle-Version: 0.0.1
+Bundle-Version: 0.2.0
 Bundle-ClassPath: .
 Bundle-Localization: plugin
 Import-Package: edu.berkeley.guir.prefuse,
