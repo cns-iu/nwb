@@ -63,6 +63,7 @@ public class PrefuseGraphMLValidation implements AlgorithmFactory {
         		(new GraphMLReader()).readGraph(new FileInputStream(fileHandler));
         		Data[] dm = new Data[] {new BasicData(inData, "file:text/graphml+xml")};
         		dm[0].getMetaData().put(DataProperty.LABEL, "Prefuse GraphML file: " + fileHandler);
+                dm[0].getMetaData().put(DataProperty.TYPE, DataProperty.NETWORK_TYPE);
         		return dm;
         	}catch (DataIOException dioe){
         		logger.log(LogService.LOG_ERROR, "DataIOException", dioe);

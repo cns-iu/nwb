@@ -39,6 +39,7 @@ public class PrefuseGraphMLReader implements Algorithm {
     		Graph graph= (new GraphMLReader()).readGraph(new FileInputStream(fileHandler));
     		Data[] dm = new Data[] {new BasicData(graph, Graph.class.getName())};
     		dm[0].getMetaData().put(DataProperty.LABEL, "Prefuse Graph: " + fileHandler);
+            dm[0].getMetaData().put(DataProperty.TYPE, DataProperty.NETWORK_TYPE);
     		return dm;
     	}catch (DataIOException dioe){
     		logger.log(LogService.LOG_ERROR, "DataIOException", dioe);

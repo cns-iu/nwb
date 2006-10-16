@@ -53,6 +53,7 @@ public class PrefuseXGMMLValidation implements AlgorithmFactory {
         		(new XMLGraphReader()).loadGraph(fileHandler);
         		Data[] dm = new Data[] {new BasicData(inData, "file:text/xgmml+xml")};
         		dm[0].getMetaData().put(DataProperty.LABEL, "Prefuse XGMML .xml file: " + fileHandler);
+                dm[0].getMetaData().put(DataProperty.TYPE, DataProperty.NETWORK_TYPE);
         		return dm;
         	}catch (IOException ioe){
         		logger.log(LogService.LOG_ERROR, "IOException", ioe);
