@@ -1,5 +1,6 @@
       program BA
 !   
+!
 !     It builds a network based on linear preferential attachment (Barabasi-Albert)
 !
 !   * degree is the array which stores the total degree of each node,
