@@ -1,8 +1,6 @@
 package edu.iu.nwb.converter.prefusegraphml.writer;
 
 import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
 import java.util.Dictionary;
 
 import org.cishell.framework.CIShellContext;
@@ -13,10 +11,6 @@ import org.cishell.framework.data.Data;
 import org.osgi.service.component.ComponentContext;
 import org.osgi.service.log.LogService;
 import org.osgi.service.metatype.MetaTypeProvider;
-
-import prefuse.data.Graph;
-import prefuse.data.io.DataIOException;
-import prefuse.data.io.GraphMLWriter;
 
 /**
  * @author Weixia(Bonnie) Huang 
