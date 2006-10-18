@@ -1,7 +1,7 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
-Bundle-Name: edu.iu.iv.treemap
-Bundle-SymbolicName: edu.iu.iv.treemap
+Bundle-Name: edu.iu.iv.visualization.treemap
+Bundle-SymbolicName: edu.iu.iv.visualization.treemap
 Bundle-Version: 0.2.0
 Bundle-ClassPath: .
 Bundle-Localization: plugin

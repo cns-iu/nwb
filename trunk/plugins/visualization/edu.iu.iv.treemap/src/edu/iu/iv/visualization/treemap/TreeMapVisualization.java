@@ -1,4 +1,4 @@
-package edu.iu.iv.treemap;
+package edu.iu.iv.visualization.treemap;
 
 import edu.berkeley.guir.prefuse.Display;
 import edu.berkeley.guir.prefuse.ItemRegistry;
