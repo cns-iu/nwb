@@ -50,7 +50,7 @@ public class JungGraphMLFileHandler implements AlgorithmFactory {
             this.data = data;
             this.parameters = parameters;
             this.context = context;
-            logger = (LogService)context.getService("LogService.class.getName()");
+            logger = (LogService)context.getService(LogService.class.getName());
         }
 
         public Data[] execute() {
