@@ -42,14 +42,14 @@ public class ValidateNWBFile {
 			   line.startsWith(NWBFileProperty.HEADER_UNDIRECTED_EDGES_LOWERCASE) ||
 			   line.startsWith(NWBFileProperty.HEADER_UNDIRECTED_EDGES_LOWERFIRST) ||
 			   line.startsWith(NWBFileProperty.HEADER_UNDIRECTED_EDGES_UPPERCASE) ) {
-						hasHeader_UndirectedEdges = true;
+				hasHeader_UndirectedEdges = true;
 			}				
 			line = reader.readLine();	
 		}
 		
 		if (!hasHeader_Nodes){
 			isFileGood = false;
-		}else if (!hasHeader_DirectedEdges || hasHeader_UndirectedEdges) {
+		}else if (!hasHeader_DirectedEdges && !hasHeader_UndirectedEdges) {
 			isFileGood = false;	
 		}else{
 			isFileGood = true;
