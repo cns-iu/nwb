@@ -41,7 +41,7 @@
 
        open(20,file=filename,status='unknown')
        do 
-          read(20,106)str1
+          read(20,106,err=8103,end=8103)str1
           if(str1(1:1)=='*'.AND.str1(2:2)=='U')then
              do 
                 read(20,*,err=8103,end=8103)i1,i2
@@ -56,8 +56,12 @@
 8103   continue
        close(20)
 
+       if(n_edges==0)then
+          write(*,*)'Error! The program should be applied on undirected networks'
+          stop
+       endif
        if(minind/=1)then
-          write(*,*)'The minimal node index is not 1'
+          write(*,*)'Error! The minimal node index is not 1'
           stop
        endif
 
@@ -79,10 +83,6 @@
           endif
        enddo
        close(20)
-       if(minind/=1)then
-          write(*,*)'The minimal node index is not 1'
-          stop
-       endif
 
        allocate(intdegree(1:n_vert))
        allocate(check_neigh(1:n_vert))
@@ -187,19 +187,15 @@
 106    format(a256)
 
        if(ntot_triangles==0)then
-          open(20,file='Message_on_vanishing_clustering.txt',status='unknown')
-          write(20,*)'Average clustering coefficient is zero: the network is a tree!'
-          close(20)
+          write(*,*)'Remark! Average clustering coefficient is zero: the network is a tree!'
           goto 9001
        endif
        if(abs(minclus-maxclus)<0.0000000001d0)then
-          open(20,file='Message_on_single_clustering_coefficient.txt',status='unknown')
-          write(20,*)'The clustering coefficient is the same for all nodes,'
-          write(20,*)'except possibly for those nodes with zero clustering'
-          write(20,*)'The fraction of nodes with zero clustering is ',real(ncluszero)/n_vert
-          write(20,*)'The remaining fraction ', real(n_vert-ncluszero)/n_vert, ' of nodes &
+          write(*,*)'Remark! The clustering coefficient is the same for all nodes,'
+          write(*,*)'except possibly for those nodes with zero clustering'
+          write(*,*)'The fraction of nodes with zero clustering is ',real(ncluszero)/n_vert
+          write(*,*)'The remaining fraction ', real(n_vert-ncluszero)/n_vert, ' of nodes &
                & has clustering coefficient ',minclus
-          close(20)
           goto 9001
        endif
 
@@ -228,9 +224,7 @@
 
 
        if(real(minclus)/real(maxclus)>0.1d0)then
-          open(20,file='Message_on_binning_clustering_coefficient.txt',status='unknown')
-          write(20,*)'Clustering coefficient varies too little: the logarithmic binning is not useful'
-          close(20)
+          write(*,*)'Warning! Clustering coefficient varies too little: the logarithmic binning is not useful'
           goto 9001
        endif
 
