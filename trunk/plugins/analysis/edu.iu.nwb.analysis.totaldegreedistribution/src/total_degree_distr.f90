@@ -27,7 +27,7 @@
 
        open(20,file=filename,status='unknown')
        do 
-          read(20,*)str1
+          read(20,*,err=8103,end=8103)str1
           if(str1(1:1)=='*'.AND.str1(2:2)=='U')then
              do 
                 read(20,*,err=8103,end=8103)str2
@@ -38,6 +38,11 @@
        enddo
 8103   continue
        close(20)
+
+       if(n_edges==0)then
+          write(*,*)'Error! The program should be applied on undirected networks'
+          stop
+       endif
 
        allocate(deg(1:2*n_edges))
 
@@ -67,7 +72,7 @@
 8203   continue
        close(20)
        if(minind/=1)then
-          write(*,*)'The minimal node index is not 1'
+          write(*,*)'Error! The minimal node index is not 1'
           stop
        endif
 
@@ -136,9 +141,7 @@
 !      Here we calculate the binned degree distribution
 
        if(real(mindeg+1)/real(maxdeg)>0.1d0)then
-          open(20,file='Message_on_binning_degree.txt',status='unknown')
-          write(20,*)'Degree varies too little: the logarithmic binning is not useful'
-          close(20)
+          write(*,*)'Degree varies too little: the logarithmic binning is not useful'
           goto 9001
        endif
 
