@@ -34,7 +34,7 @@
 
        open(20,file=filename,status='unknown')
        do 
-          read(20,*)str1
+          read(20,*,err=8103,end=8103)str1
           if(str1(1:1)=='*'.AND.str1(2:2)=='D')then
              do 
                 read(20,*,err=8103,end=8103)i1,i2
@@ -49,8 +49,12 @@
 8103   continue
        close(20)
 
+       if(n_edges==0)then
+          write(*,*)'Error! The program should be applied on directed networks'
+          stop
+       endif
        if(minind/=1)then
-          write(*,*)'The minimal node index is not 1'
+          write(*,*)'Error! The minimal node index is not 1'
           stop
        endif
 
@@ -156,9 +160,7 @@
        maxdeg=maxindeg
 
        if(real(mindeg+1)/real(maxdeg)>0.1d0)then
-          open(20,file='Message_on_binning_indegree.txt',status='unknown')
-          write(20,*)'In-degree varies too little: the logarithmic binning is not useful'
-          close(20)
+          write(*,*)'Warning! In-degree varies too little: the logarithmic binning is not useful'
           goto 9001
        endif
 
@@ -218,9 +220,7 @@
        mindeg=minoutdeg
        maxdeg=maxoutdeg
        if(real(mindeg+1)/real(maxdeg)>0.1d0)then
-          open(20,file='Message_on_binning_outdegree.txt',status='unknown')
-          write(20,*)'Out-degree varies too little: the logarithmic binning is not useful'
-          close(20)
+          write(*,*)'Out-degree varies too little: the logarithmic binning is not useful'
           goto 9002
        endif
 
