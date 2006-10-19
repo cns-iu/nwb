@@ -1,7 +1,7 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
-Bundle-Name: edu.iu.nwb.converter.nwb.reader
-Bundle-SymbolicName: org.my.bundle.name
+Bundle-Name: edu.iu.nwb.converter.nwb
+Bundle-SymbolicName: edu.iu.nwb.converter.nwb
 Bundle-Version: 0.0.1
 Bundle-ClassPath: .
 Bundle-Localization: plugin
