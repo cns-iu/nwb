@@ -45,7 +45,7 @@
 
       open(20,file=filename,status='unknown')
       do 
-         read(20,106)str1
+         read(20,106,err=8103,end=8103)str1
          if(str1(1:1)=='*'.AND.str1(2:2)=='D')then
             do 
                read(20,*,err=8103,end=8103)i1,i2
@@ -60,8 +60,12 @@
 8103  continue
       close(20)
 
+      if(n_edges==0)then
+         write(*,*)'Error! The program should be applied on directed networks'
+         stop
+      endif
       if(minind/=1)then
-         write(*,*)'The minimal node index is not 1'
+         write(*,*)'Error! The minimal node index is not 1'
          stop
       endif
 
@@ -200,9 +204,7 @@
 !     Here we calculate the distribution of PageRank with logarithmic bins
 
       if(real(minPR)/real(maxPR)>0.1d0)then
-         open(20,file='Message_on_binning_PageRank.txt',status='unknown')
-         write(20,*)'PageRank varies too little: the logarithmic binning is not useful'
-         close(20)
+         write(*,*)'PageRank varies too little: the logarithmic binning is not useful'
          goto 9001
       endif
       interv(0)=minPR-0.0001d0*minPR
