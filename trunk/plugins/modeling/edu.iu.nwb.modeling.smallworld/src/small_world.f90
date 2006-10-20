@@ -10,7 +10,7 @@
       implicit none
       integer*8 ibm
       integer i,j,k,vic,newvic,n_vert,k_nei
-      integer, allocatable,dimension(:)::linklist,degree
+      integer, allocatable,dimension(:)::linklist
       integer, allocatable,dimension(:)::check_vic_in,check_vic_out
       real*8 r,p
       character*60 sn_vert,sk_nei,sp
@@ -28,7 +28,6 @@
 !     Array allocations
 
       allocate(linklist(1:n_vert*k_nei))
-      allocate(degree(1:n_vert))
       allocate(check_vic_in(1:n_vert))
       allocate(check_vic_out(1:n_vert))
 
@@ -91,13 +90,9 @@
          enddo
       enddo
 
-      degree=0
-
       do i=1,n_vert
          do j=1,k_nei
             write(21,*)i,linklist((i-1)*k_nei+j)
-            degree(i)=degree(i)+1
-            degree(linklist((i-1)*k_nei+j))=degree(linklist((i-1)*k_nei+j))+1
          enddo
       enddo
 
