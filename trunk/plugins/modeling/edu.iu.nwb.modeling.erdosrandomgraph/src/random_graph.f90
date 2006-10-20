@@ -9,8 +9,7 @@
 
       implicit none
       integer*8 ibm
-      integer i,j,n_edges,maxdeg,mindeg,iter,n_vert
-      integer, allocatable,dimension(:)::degree,degdis
+      integer i,j,n_edges,iter,n_vert
       real*8 r,p
       character*60 sn_vert,sp
 
@@ -24,8 +23,6 @@
 
 !     Array allocations
 
-      allocate(degree(1:n_vert))
-
 !     Opening of the file where the edges will be saved
 
       open(21,file='network.nwb',status='unknown')
@@ -33,11 +30,6 @@
       write(21,110)'// Linking probability ',p
       write(21,103)'*Nodes ',n_vert
       write(21,109)'*UndirectedEdges'
-
-
-!     Initialization of the degree of all nodes 
-
-      degree=0
 
 !     ibm is the seed of the multiplicative random number generator used
 !     in this program 
@@ -63,56 +55,10 @@
 
          if(i/=j)then
             write(21,*)i,j
-            degree(j)=degree(j)+1
          endif
       enddo
 
       close(21)
-
-!     Here we write out the total degree of all vertices
-
-      open(20,file='degree_random_graph.dat',status='unknown')
-      write(20,*)'# Erdoes-Renyi graph'
-      write(20,110)'# Linking probability ',p
-      write(20,103)'# Nodes ',n_vert
-      write(20,*)'#     Node     |     Degree'
-      write(20,*)
-      do i=1,n_vert
-         write(20,*)i,degree(i)
-      enddo
-      close(20)
-
-!     Here we determine the minimum and maximum degree of the graph
-
-      mindeg=MINVAL(degree)
-      maxdeg=MAXVAL(degree)
-
-!     Here we allocate the histogram of the degree distribution
-
-      allocate(degdis(mindeg:maxdeg))
-
-!     Here we initialize the histogram of the degree distribution
-!     and evaluate the occurrence of each degree 
-
-      degdis=0
-
-      do i=1,n_vert
-         degdis(degree(i))=degdis(degree(i))+1
-      enddo
-      
-!     Here we write out the degree distribution: the occurrence of each degree is 
-!     transformed in a probability by normalizing by the total number of nodes
-
-      open(20,file='degree_distr_random_graph.dat',status='unknown')
-      write(20,*)'# Erdoes-Renyi graph'
-      write(20,110)'# Linking probability ',p
-      write(20,103)'# Nodes ',n_vert
-      write(20,*)'#     Degree    |    Probability'
-      write(20,*)
-      do i=mindeg,maxdeg
-         write(20,*)i,real(degdis(i))/n_vert
-      enddo
-      close(20)
          
 101   format(i10,8x,i10)
 102   format(a34,i10)
