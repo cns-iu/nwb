@@ -175,10 +175,9 @@
 
 !      Here we write out the average clustering coefficient
 
-       open(20,file=fileout2,status='unknown')
-       write(20,103)'# Nodes ',n_vert
-       write(20,105)'# The average clustering coefficient is ',Avcluscoeff/nCC 
-       close(20)
+       write(*,*)'**************************************************************************'
+       write(*,*)'The average clustering coefficient is ',Avcluscoeff/nCC
+       write(*,*)'**************************************************************************'
 
 101    format(i10,13x,e15.6)
 103    format(a8,i10)
