@@ -9,8 +9,8 @@
 
       implicit none
       integer*8 ibm
-      integer i,j,k,vic,newvic,mindeg,maxdeg,n_vert,k_nei
-      integer, allocatable,dimension(:)::linklist,degree,degdis
+      integer i,j,k,vic,newvic,n_vert,k_nei
+      integer, allocatable,dimension(:)::linklist,degree
       integer, allocatable,dimension(:)::check_vic_in,check_vic_out
       real*8 r,p
       character*60 sn_vert,sk_nei,sp
@@ -35,7 +35,7 @@
 !     Opening of the file where the edges will be saved
 
       open(21,file='network.nwb',status='unknown')
-      write(21,108)'// Barabasi-Albert network'
+      write(21,108)'// Small world network'
       write(21,102)'// Initial neighbors of each node ',k_nei
       write(21,110)'// Rewiring probability ',p
       write(21,103)'*Nodes ',n_vert
@@ -91,9 +91,6 @@
          enddo
       enddo
 
-!     Here we calculate the degree of the nodes and write out the final 
-!     network as list of its edges in the file "network"
-
       degree=0
 
       do i=1,n_vert
@@ -105,55 +102,6 @@
       enddo
 
       close(21)
-
-!     Here we write out the degree of all vertices
-
-      open(20,file='degree_small_world.dat',status='unknown')
-      write(20,*)'# Small World network'
-      write(20,102)'# Initial neighbors of each node ',k_nei
-      write(20,110)'# Rewiring probability ',p
-      write(20,103)'# Nodes ',n_vert
-      write(20,*)'#     Node     |     Degree'
-      write(20,*)
-      do i=1,n_vert
-         write(20,*)i,degree(i)
-      enddo
-      close(20)
-
-!     Here we determine the minimum and maximum degree of the graph
-
-      mindeg=MINVAL(degree)
-      maxdeg=MAXVAL(degree)
-
-!     Here we allocate the histogram of the degree distribution
-
-      allocate(degdis(mindeg:maxdeg))
-
-!     Here we initialize the histogram of the degree distribution
-!     and evaluate the occurrence of each degree 
-
-      degdis=0
-
-      do i=1,n_vert
-         degdis(degree(i))=degdis(degree(i))+1
-      enddo
-      
-!     Here we write out the degree distribution: the occurrence of each degree is 
-!     transformed in a probability by normalizing by the total degree 
-
-      open(20,file='degree_distr_small_world.dat',status='unknown')
-      write(20,*)'# Small world network'
-      write(20,102)'# Initial neighbors of each node ',k_nei
-      write(20,110)'# Rewiring probability ',p
-      write(20,103)'# Nodes ',n_vert
-      write(20,*)'#     Degree    |    Probability'
-      write(20,*)
-      do i=mindeg,maxdeg
-         if(degdis(i)>0)then
-            write(20,104)i,real(degdis(i))/n_vert
-         endif
-      enddo
-      close(20)
 
 101   format(i10,8x,i10)
 102   format(a34,i10)
