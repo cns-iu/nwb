@@ -10,9 +10,6 @@
 		<AD name="Links set by new node" id="NewLinks" 
 			type="Integer" default="1" min="1"                        
                         description="Number of links set by new node, must be at least 1"/> 
-		<AD name="Number of bins" id="NumBins" 
-			type="Integer" default="10" min="8"
-                        description="Number of bins for the degree distribution, must be at least 8"/>
 	</OCD>
 	<Designate pid="edu.iu.nwb.modeling.barabasialbert">
 		<Object ocdref="edu.iu.nwb.modeling.barabasialbert.gui" />

@@ -17,21 +17,18 @@
 
       implicit none
       integer*8 ibm
-      integer i,j,k,n_edges,index,maxdeg,mindeg,m,n_vert,m0,n_bins
-      integer, allocatable,dimension(:)::degree,list_edges,loc_edges,np
-      integer, allocatable,dimension(:)::degdis,list_newedges,npoints
-      real*8, allocatable,dimension(:)::interv,avdegbin
+      integer i,j,k,n_edges,index,m,n_vert,m0
+      integer, allocatable,dimension(:)::degree,list_edges,loc_edges
+      integer, allocatable,dimension(:)::list_newedges
       logical, allocatable,dimension(:)::label
       real*8 r, binsize
-      character*60 sn_vert,sm0,sn_bins
+      character*60 sn_vert,sm0
 
 
       call GETARG(2,sn_vert)
       call GETARG(4,sm0)
-      call GETARG(6,sn_bins)
       read(sn_vert,*)n_vert
       read(sm0,*)m0
-      read(sn_bins,*)n_bins
 
 !     Reading of input parameters 
 
@@ -44,10 +41,6 @@
       allocate(list_edges(1:2*m0*n_vert))
       allocate(list_newedges(1:m0))
       allocate(loc_edges(1:m0))
-      allocate(interv(0:n_bins))
-      allocate(avdegbin(1:n_bins))
-      allocate(npoints(1:n_bins))
-      allocate(np(1:n_bins))
 
 !     Opening of the file where the edges will be saved
 
@@ -124,18 +117,8 @@
       enddo
       close(21)
 
-!     Here we write out the total degree of all nodes 
+9001  continue
 
-      open(20,file='degree_BA.dat',status='unknown')
-      write(20,*)'# Barabasi-Albert undirected network'
-      write(20,102)'# Links created by each node ',m0
-      write(20,103)'# Nodes ',n_vert
-      write(20,*)'#     Node     |     Degree'
-      write(20,*)
-      do i=1,n_vert
-         write(20,101)i,degree(i)
-      enddo
-      close(20)
 101   format(i10,8x,i10)
 102   format(a29,i10)
 103   format(a6,i10)
@@ -143,104 +126,6 @@
 105   format(4x,e15.6,4x,e15.6)
 108   format(a26)
 109   format(a16)
-
-!     Here we determine the minimum and maximum degree of the graph
-
-      mindeg=MINVAL(degree)
-      maxdeg=MAXVAL(degree)
-
-!     Here we allocate the histogram of the degree distribution
-
-      allocate(degdis(mindeg:maxdeg))
-
-!     Here we initialize the histogram of the degree distribution
-!     and evaluate the occurrence of each degree 
-
-      degdis=0
-
-      do i=1,n_vert
-         degdis(degree(i))=degdis(degree(i))+1
-      enddo
-      
-!     Here we write out the degree distribution: the occurrence of each degree is 
-!     transformed in a probability by normalizing by the total degree 
-
-      open(20,file='degree_distr_BA.dat',status='unknown')
-      write(20,*)'# Barabasi-Albert undirected network'
-      write(20,102)'# Links created by each node ',m0
-      write(20,103)'# Nodes ',n_vert
-      write(20,*)'#     Degree    |    Probability'
-      write(20,*)
-      do i=mindeg,maxdeg
-         if(degdis(i)>0)then
-            write(20,104)i,real(degdis(i))/n_vert
-         endif
-      enddo
-      close(20)
-
-!     Here we calculate the binned degree distribution
-
-      if(real(mindeg+1)/real(maxdeg)>0.1d0)then
-         open(20,file='Message_on_binning_degree.txt',status='unknown')
-         write(20,*)'Degree varies too little: the logarithmic binning is not useful'
-         close(20)
-         goto 9001
-      endif
-
-      if(mindeg==0)then
-         interv(0)=real(mindeg+1)
-      else
-         interv(0)=real(mindeg)
-      endif
-      binsize=(log(real(maxdeg)+0.1d0)-log(interv(0)))/n_bins
-
-      do i=1,n_bins
-         interv(i)=exp(log(interv(i-1))+binsize)
-      enddo
-
-      npoints=0
-      do i=mindeg,maxdeg
-         do j=1,n_bins
-            if(real(i)<interv(j))then
-               npoints(j)=npoints(j)+1
-               exit
-            endif
-         enddo
-      enddo
-      
-      avdegbin=0.0d0
-      np=0
-
-      do i=1,n_vert
-         do j=1,n_bins
-            if(real(degree(i))<interv(j))then
-               np(j)=np(j)+1
-               avdegbin(j)=avdegbin(j)+real(degree(i))
-               exit
-            endif
-         enddo
-      enddo
-
-      do i=1,n_bins
-         if(np(i)>0)then
-            avdegbin(i)=avdegbin(i)/np(i)
-         endif
-      enddo
-
-      open(20,file='degree_distr_binned_BA.dat',status='unknown')
-      write(20,*)'# Barabasi-Albert undirected network'
-      write(20,102)'# Links created by each node ',m0
-      write(20,103)'# Nodes ',n_vert
-      write(20,*)'# Center of Degree bin | Probability'
-      write(20,*)
-      do i=1,n_bins
-         if(np(i)>0)then
-            write(20,105)avdegbin(i),real(np(i))/(n_vert*npoints(i))
-         endif
-      enddo
-      close(20)
-
-9001  continue
 
       stop
     end program BA
