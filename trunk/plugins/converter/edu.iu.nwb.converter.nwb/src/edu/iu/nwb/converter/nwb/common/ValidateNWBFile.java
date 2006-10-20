@@ -14,11 +14,7 @@ public class ValidateNWBFile {
 //	private boolean hasHeader_EdgeAttributes = false;
 	private boolean isFileGood = false;
 	
-	
-	
-	public ValidateNWBFile (){}
-	
-    public void validateNWBFormat(File fileHandler) 
+	public void validateNWBFormat(File fileHandler) 
     		throws FileNotFoundException, IOException    {
 		BufferedReader reader = 
 			new BufferedReader(new FileReader(fileHandler));
