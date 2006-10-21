@@ -39,7 +39,7 @@
 !     The average degree of the graph is given by the product of the
 !     linking probability p and the number of nodes n_vert
 
-      n_edges=ceiling(n_vert*p)*n_vert
+      n_edges=(ceiling(n_vert*p)*(n_vert-1))/2
 
 !     Here we build the graph
 
