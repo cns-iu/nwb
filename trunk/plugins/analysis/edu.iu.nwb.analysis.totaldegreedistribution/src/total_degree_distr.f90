@@ -9,29 +9,34 @@
        implicit none
 
        integer i,j,k,maxdeg,mindeg,n_vert,n_edges,n_bins,i1,i2,maxind,minind
-       integer, allocatable, dimension (:) :: degree,degdis,npoints,np,deg
+       integer, allocatable, dimension (:) :: degree,degdis,npoints,np
        real*8, allocatable, dimension (:) :: interv,avdegbin
        real*8 binsize
-       character*256 filename,fileout1,fileout2,fileout3,str1,str2,sn_bins
+       character*256 filename,fileout2,fileout3,str1,str2,sn_bins
        
 !      Here the program reads the input parameters
        
        call GETARG(2,sn_bins)
        call GETARG(4,filename)
        read(sn_bins,*)n_bins
-       fileout1='degree_sequence.dat'
+
        fileout2='degree_distribution.dat'
        fileout3='degree_distribution_binned.dat'
-       n_vert=0
+
        n_edges=0
+       maxind=1
+       minind=1000000
 
        open(20,file=filename,status='unknown')
        do 
-          read(20,*,err=8103,end=8103)str1
+          read(20,106,err=8103,end=8103)str1
           if(str1(1:1)=='*'.AND.str1(2:2)=='U')then
              do 
-                read(20,*,err=8103,end=8103)str2
-                if(str2(1:1)=='*'.OR.str1(2:2)=='*')goto 8103
+                read(20,*,err=8103,end=8103)i1,i2
+                if(minind>i1)minind=i1
+                if(minind>i2)minind=i2
+                if(maxind<i2)maxind=i2
+                if(maxind<i1)maxind=i1
                 n_edges=n_edges+1   
              enddo
           endif
@@ -43,34 +48,6 @@
           write(*,*)'Error! The program should be applied on undirected networks'
           stop
        endif
-
-       allocate(deg(1:2*n_edges))
-
-       deg=0
-       maxind=1
-       minind=n_edges
-
-!      Here we update the degrees of each node
-!      directly from the reading of the edges
-
-       open(20,file=filename,status='unknown')
-       do 
-          read(20,106)str1
-          if(str1(1:1)=='*'.AND.str1(2:2)=='U')then
-             do j=1,n_edges
-                read(20,*)i1,i2
-                if(minind>i1)minind=i1
-                if(minind>i2)minind=i2
-                if(maxind<i2)maxind=i2
-                if(maxind<i1)maxind=i1
-                deg(i1)=deg(i1)+1
-                deg(i2)=deg(i2)+1
-             enddo
-             exit
-          endif
-       enddo
-8203   continue
-       close(20)
        if(minind/=1)then
           write(*,*)'Error! The minimal node index is not 1'
           stop
@@ -78,34 +55,30 @@
 
        n_vert=maxind
 
+       allocate(degree(1:n_vert))
+       degree=0
+
+       open(20,file=filename,status='unknown')
+       do 
+          read(20,106)str1
+          if(str1(1:1)=='*'.AND.str1(2:2)=='U')then
+             do j=1,n_edges
+                read(20,*)i1,i2
+                degree(i1)=degree(i1)+1
+                degree(i2)=degree(i2)+1
+             enddo
+             exit
+          endif
+       enddo
+       close(20)
+
 !      Here the arrays are allocated
 
-       allocate(degree(1:n_vert))
        allocate(interv(0:n_bins))
        allocate(npoints(1:n_bins))
        allocate(np(1:n_bins))
        allocate(avdegbin(1:n_bins))
        
-!      Here we initialize to zero the degrees of the nodes
-
-       degree=deg
-
-       deallocate(deg)
-
-!      Here we update the degrees of each node
-!      directly from the reading of the edges
-
-!      Here we write out the final degree sequence 
-
-       open(20,file=fileout1,status='unknown')
-       write(20,103)'# Nodes ',n_vert
-       write(20,*)'#     Node     |     Degree'
-       write(20,*)
-       do k=1,n_vert
-          write(20,101)k,degree(k)
-       enddo
-       close(20)
-
 101    format(i10,8x,i10)
 103    format(a8,i10)
 104    format(i10,9x,e15.6)

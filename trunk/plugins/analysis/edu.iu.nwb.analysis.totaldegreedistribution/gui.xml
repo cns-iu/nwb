@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <metatype:MetaData xmlns:metatype="http://www.osgi.org/xmlns/metatype/v1.0.0">
-	<OCD name="Shortest path distribution" id="edu.iu.nwb.analysis.totaldegreedistribution.gui"
-		 description="Shortest path distribution">
+	<OCD name="Undirected degree distribution" id="edu.iu.nwb.analysis.totaldegreedistribution.gui"
+		 description="Undirected degree distribution">
 	</OCD>
 	<Designate pid="edu.iu.nwb.analysis.totaldegreedistribution">
 		<Object ocdref="edu.iu.nwb.analysis.totaldegreedistribution.gui" />
