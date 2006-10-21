@@ -15,8 +15,7 @@
        integer maxind,minind,i1,i2,ncluszero
        integer, allocatable, dimension (:) :: degree,intdegree,clus_coef,np
        integer, allocatable, dimension (:) :: check_neigh,listlink
-       integer, allocatable, dimension (:) :: clusdis,clusdis_bin
-       real*8, allocatable, dimension (:) :: clus,interv,avclusbin,avdegbin
+       real*8, allocatable, dimension (:) :: clus,interv,avclusbin
        real*8 norm,Avcluscoeff,minclus,maxclus,abin,binsize,zero
        character*256 filename,fileout,fileout1,fileout2,fileout3,fileout4,fileout5,sn_bins,str1,str2
        
@@ -30,7 +29,6 @@
        fileout2='Avcluscoeff.dat'
        fileout3='clus_coeff_distr.dat'
        fileout4='clus_coeff_distr_binned.dat'
-       fileout5='clus_coeff_vs_degree_binned.dat'
        
 !      Here the arrays are allocated
 
@@ -89,10 +87,8 @@
        allocate(clus_coef(1:n_vert))
        allocate(clus(1:n_vert))
        allocate(listlink(1:2*n_edges))
-       allocate(clusdis(0:n_bins))
        allocate(np(1:n_bins))
        allocate(avclusbin(1:n_bins))
-       allocate(avdegbin(1:n_bins))
        allocate(interv(0:n_bins))
 
 !      Here we determine for each node the position of the first link
@@ -200,13 +196,24 @@
 
 !      Here we calculate the distribution of clustering with equal bins
 
-       clusdis=0
-
+       interv(0)=minclus-0.0001d0*minclus
        abin=(maxclus-minclus+0.0002d0*minclus)/n_bins
+
+       do i=1,n_bins
+          interv(i)=interv(i-1)+abin
+       enddo
+
+       np=0
        
        do i=1,n_vert
-          clusdis(ceiling((clus(i)-minclus+0.0001d0*minclus)/abin))=clusdis(ceiling((clus(i)-minclus+0.0001d0*minclus)/abin))+1
+          do j=1,n_bins
+             if(clus(i)<interv(j).AND.clus_coef(i)>0)then
+                np(j)=np(j)+1
+                exit
+             endif
+          enddo
        enddo
+
        open(20,file=fileout3,status='unknown')
        write(20,103)'# Nodes ',n_vert
        write(20,*)'#   Clustering coefficient |   Probability'
@@ -215,7 +222,7 @@
           write(20,104)zero,real(ncluszero)/n_vert
        endif
        do i=1,n_bins
-          write(20,104)minclus+(i-1)*abin+abin/2,real(clusdis(i))/n_vert
+          write(20,104)minclus+(i-1)*abin+abin/2,real(np(i))/n_vert
        enddo
        close(20)
 
@@ -239,7 +246,7 @@
        
        do i=1,n_vert
           do j=1,n_bins
-             if(clus(i)<interv(j))then
+             if(clus(i)<interv(j).AND.clus_coef(i)>0)then
                 np(j)=np(j)+1
                 avclusbin(j)=avclusbin(j)+clus(i)
                 exit
@@ -263,52 +270,6 @@
        do i=1,n_bins
           if(np(i)>0)then
              write(20,104)avclusbin(i),real(np(i))/(n_vert*(interv(i)-interv(i-1)))
-          endif
-       enddo
-       close(20)
-       mindeg=MINVAL(degree)
-       maxdeg=MAXVAL(degree)
-
-       if(mindeg==0)then
-          interv(0)=real(mindeg+1)
-       else
-          interv(0)=real(mindeg)
-       endif
-       binsize=(log(real(maxdeg)+0.1d0)-log(interv(0)))/n_bins
-       
-       do i=1,n_bins
-          interv(i)=exp(log(interv(i-1))+binsize)
-       enddo
-
-       avdegbin=0.0d0
-       avclusbin=0.0d0
-       np=0
-       
-       do i=1,n_vert
-          do j=1,n_bins
-             if(real(degree(i))<interv(j))then
-                np(j)=np(j)+1
-                avdegbin(j)=avdegbin(j)+real(degree(i))
-                avclusbin(j)=avclusbin(j)+clus(i)
-                exit
-             endif
-          enddo
-       enddo
-       
-       do i=1,n_bins
-          if(np(i)>0)then
-             avclusbin(i)=avclusbin(i)/np(i)
-             avdegbin(i)=avdegbin(i)/np(i)
-          endif
-       enddo
-       
-       open(20,file=fileout5,status='unknown')
-       write(20,103)'# Nodes ',n_vert
-       write(20,*)'#   Degree |   Clustering coefficient'
-       write(20,*)
-       do i=1,n_bins
-          if(np(i)>0)then
-             write(20,104)avdegbin(i),avclusbin(i)
           endif
        enddo
        close(20)
