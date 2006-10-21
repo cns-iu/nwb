@@ -1,12 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <metatype:MetaData xmlns:metatype="http://www.osgi.org/xmlns/metatype/v1.0.0">
-	<OCD name="Directed degree distributions" id="edu.iu.nwb.analysis.directeddegreedistribution.gui"
-		 description="Directed degree distributions">
-		<AD name="Number of bins" id="NumBins" 
-			type="Integer" default="10" min="8"
-                        description="Number of bins for the degree distributions, must be at least 8"/>
+	<OCD name="Node indegree (directed)" id="edu.iu.nwb.analysis.indegreesequence.gui"
+		 description="Node indegree (directed)">
 	</OCD>
-	<Designate pid="edu.iu.nwb.analysis.directeddegreedistribution">
-		<Object ocdref="edu.iu.nwb.analysis.directeddegreedistribution.gui" />
+	<Designate pid="edu.iu.nwb.analysis.indegreesequence">
+		<Object ocdref="edu.iu.nwb.analysis.indegreesequence.gui" />
 	</Designate>
 </metatype:MetaData>
