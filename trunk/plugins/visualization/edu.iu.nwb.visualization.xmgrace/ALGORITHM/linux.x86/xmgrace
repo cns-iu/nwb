@@ -1,0 +1,11 @@
+#!/bin/bash
+
+x=`which xmgrace`
+
+if [ -n "$x" ]; then
+  xmgrace $2
+else
+  echo "XMGrace not found in default PATH environment variable.  "
+  echo "Please include the directory containing XMGrace in the PATH variable.  "
+  echo "Download and documentation is also available at http://plasma-gate.weizmann.ac.il/Grace/."
+fi
