@@ -52,6 +52,13 @@ public class ValidateNWBFile {
 		}    	
     }
     
+	public boolean isDirectedGraph(){
+		return hasHeader_DirectedEdges;
+	}
+	
+	public boolean isUndirectedGraph(){
+		return hasHeader_UndirectedEdges;
+	}
     public boolean getValidationResult(){
     	return isFileGood;
     }
