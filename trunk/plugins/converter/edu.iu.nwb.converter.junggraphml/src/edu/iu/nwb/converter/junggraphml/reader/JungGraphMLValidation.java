@@ -56,10 +56,11 @@ public class JungGraphMLValidation implements AlgorithmFactory {
                 
 				return dm;
 			}catch (FileNotFoundException exception){
-				logger.log(LogService.LOG_ERROR,"FileNotFoundException",exception);
+//				logger.log(LogService.LOG_ERROR,"FileNotFoundException",exception);
 				return null;
 			}catch (Exception e){
-				logger.log(LogService.LOG_ERROR, "Exception", e);
+//				logger.log(LogService.LOG_ERROR, "Might not be a GraphML file. Got the following exception");
+//				logger.log(LogService.LOG_ERROR, "Exception", e);
 				return null;	
 			}
 			

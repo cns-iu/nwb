@@ -66,13 +66,15 @@ public class PrefuseGraphMLValidation implements AlgorithmFactory {
                 dm[0].getMetaData().put(DataProperty.TYPE, DataProperty.NETWORK_TYPE);
         		return dm;
         	}catch (DataIOException dioe){
-        		logger.log(LogService.LOG_ERROR, "DataIOException", dioe);
+//				logger.log(LogService.LOG_ERROR, "Might not be a GraphML file. Got the following exception");
+//        		logger.log(LogService.LOG_ERROR, "DataIOException", dioe);
         		return null;
         	}catch (SecurityException exception){
-        		logger.log(LogService.LOG_ERROR, "SecurityException", exception);
+//				logger.log(LogService.LOG_ERROR, "Might not be a GraphML file. Got the following exception");
+//        		logger.log(LogService.LOG_ERROR, "SecurityException", exception);
         		return null;
         	}catch (FileNotFoundException e){
-        		logger.log(LogService.LOG_ERROR, "FileNotFoundException", e);
+//       		logger.log(LogService.LOG_ERROR, "FileNotFoundException", e);
         		return null;
         	}
         	

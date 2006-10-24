@@ -56,7 +56,8 @@ public class PrefuseXGMMLValidation implements AlgorithmFactory {
                 dm[0].getMetaData().put(DataProperty.TYPE, DataProperty.NETWORK_TYPE);
         		return dm;
         	}catch (IOException ioe){
-        		logger.log(LogService.LOG_ERROR, "IOException", ioe);
+//				logger.log(LogService.LOG_ERROR, "Might not be a XGMML file. Got the following exception");
+//        		logger.log(LogService.LOG_ERROR, "IOException", ioe);
         		return null;
         	}
 
