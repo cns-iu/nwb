@@ -1,8 +1,11 @@
 package edu.iu.nwb.converter.prefusegraphml.reader;
 
+import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.io.IOException;
 import java.util.Dictionary;
 
 import org.cishell.framework.CIShellContext;
@@ -12,9 +15,8 @@ import org.cishell.framework.data.BasicData;
 import org.cishell.framework.data.Data;
 import org.cishell.framework.data.DataProperty;
 import org.osgi.service.component.ComponentContext;
-import org.osgi.service.log.LogService;
+//import org.osgi.service.log.LogService;
 import org.osgi.service.metatype.MetaTypeProvider;
-import org.osgi.service.metatype.MetaTypeService;
 
 import prefuse.data.io.DataIOException;
 import prefuse.data.io.GraphMLReader;
@@ -23,24 +25,16 @@ import prefuse.data.io.GraphMLReader;
  * @author Weixia(Bonnie) Huang 
  */
 public class PrefuseGraphMLValidation implements AlgorithmFactory {
-    private MetaTypeProvider provider;
-
     protected void activate(ComponentContext ctxt) {
-        //You may delete all references to metatype service if 
-        //your algorithm does not require parameters and return
-        //null in the createParameters() method
-        MetaTypeService mts = (MetaTypeService)ctxt.locateService("MTS");
-        provider = mts.getMetaTypeInformation(ctxt.getBundleContext().getBundle());       
     }
     protected void deactivate(ComponentContext ctxt) {
-        provider = null;
     }
 
     public Algorithm createAlgorithm(Data[] data, Dictionary parameters, CIShellContext context) {
         return new PrefuseGraphMLValidationAlg(data, parameters, context);
     }
     public MetaTypeProvider createParameters(Data[] data) {
-        return provider;
+        return null;
     }
     
     public class PrefuseGraphMLValidationAlg implements Algorithm {
@@ -55,16 +49,20 @@ public class PrefuseGraphMLValidation implements AlgorithmFactory {
         }
 
         public Data[] execute() {
-	    	LogService logger = (LogService)context.getService(LogService.class.getName());
+//	    	LogService logger = (LogService)context.getService(LogService.class.getName());
 			
         	String fileHandler = (String) data[0].getData();
         	File inData = new File(fileHandler);
+        	
         	try{
-        		(new GraphMLReader()).readGraph(new FileInputStream(fileHandler));
-        		Data[] dm = new Data[] {new BasicData(inData, "file:text/graphml+xml")};
-        		dm[0].getMetaData().put(DataProperty.LABEL, "Prefuse GraphML file: " + fileHandler);
-                dm[0].getMetaData().put(DataProperty.TYPE, DataProperty.NETWORK_TYPE);
-        		return dm;
+        		if (validateGraphMLHeader(inData)){
+	        		(new GraphMLReader()).readGraph(new FileInputStream(fileHandler));
+	        		Data[] dm = new Data[] {new BasicData(inData, "file:text/graphml+xml")};
+	        		dm[0].getMetaData().put(DataProperty.LABEL, "Prefuse GraphML file: " + fileHandler);
+	                dm[0].getMetaData().put(DataProperty.TYPE, DataProperty.NETWORK_TYPE);
+	        		return dm;
+        		}else 
+            		return null;
         	}catch (DataIOException dioe){
 //				logger.log(LogService.LOG_ERROR, "Might not be a GraphML file. Got the following exception");
 //        		logger.log(LogService.LOG_ERROR, "DataIOException", dioe);
@@ -76,8 +74,37 @@ public class PrefuseGraphMLValidation implements AlgorithmFactory {
         	}catch (FileNotFoundException e){
 //       		logger.log(LogService.LOG_ERROR, "FileNotFoundException", e);
         		return null;
+        	}catch (IOException ioe){
+//       		logger.log(LogService.LOG_ERROR, "IOException", ioe);
+        		return null;
         	}
         	
+        	
+        }
+        
+        //TODO
+        //This is a temporary fix. The problem is after we get rid of LoadDataChooser
+        //It seems that prefuse library can load xgmml file(.xml) in as a graphml.
+        //but all visualization algs didn't work since it is not a real graphml file.
+        //Here I try to detect if there is "<graphml" header in the file, if not, it 
+        //is not a gramphml file
+        private boolean validateGraphMLHeader(File inData)
+        		throws FileNotFoundException, IOException{
+        	boolean hasGraphMLHeader = false;
+    		
+        	BufferedReader reader = 
+    			new BufferedReader(new FileReader(inData));
+    		
+    		String line = reader.readLine();
+    		while(line != null){
+    			if(line.startsWith("<graphml")){
+    				hasGraphMLHeader = true;
+    				break;
+    			}    			
+    			line = reader.readLine();	
+    		}
+    		return hasGraphMLHeader;
+    		
         }
     }
 }
