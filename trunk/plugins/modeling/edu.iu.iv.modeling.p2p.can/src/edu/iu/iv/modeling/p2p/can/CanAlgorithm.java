@@ -24,7 +24,7 @@ public class CanAlgorithm implements Algorithm {
     }
 
     public Data[] execute() {
-    	Object size = parameters.get("networkSize");
+    	Object size = parameters.get("Number of nodes");
 
 		CanNetwork c = new CanNetwork(((Integer) size).intValue(),logger);
 		
@@ -36,7 +36,7 @@ public class CanAlgorithm implements Algorithm {
 			    map.put(DataProperty.TYPE,DataProperty.NETWORK_TYPE);
 			
 	
-			println("Input Parameter: " + c.getGraph().numVertices() + " nodes");
+			println("");
 			println("Network Properties: " + c.getGraph().numEdges() + " edges, " + 
 			        "min degree = " + c.getMinDegree() +
 			        ", max degree = " + c.getMaxDegree() +
