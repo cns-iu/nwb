@@ -23,7 +23,6 @@
        read(sn_bins,*)n_bins
        
        fileout='indegree_outdegree_onepoint.dat'
-       fileout1='in_out_degree.dat'
        fileout2='indegree_outdegree_onepoint_binned.dat'
 
 !      Here the arrays are allocated
@@ -90,17 +89,6 @@
 !      directly from the reading of the edges
 
 !      Here we print out the in- and the out-degrees of all nodes
-
-       open(20,file=fileout1,status='unknown')
-       write(20,103)'# Nodes ',n_vert
-       write(20,101)'#        Node  |   Indegree  |  Outdegree'
-       write(20,*)
-
-       do i=1,n_vert
-          write(20,102)i,indegree(i),outdegree(i)
-       enddo
-
-       close(20)
 
 !      Here we calculate the minimum and maximum in-degree, allocate and 
 !      initialize the histogram of the correlations 
