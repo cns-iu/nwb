@@ -8,7 +8,7 @@ import java.util.Dictionary;
 import org.osgi.service.component.ComponentContext;
 import org.osgi.service.log.LogService;
 import org.osgi.service.metatype.MetaTypeProvider;
-import org.osgi.service.metatype.MetaTypeService;
+
 //CIShell
 import org.cishell.framework.CIShellContext;
 import org.cishell.framework.algorithm.Algorithm;
@@ -20,24 +20,17 @@ import org.cishell.framework.data.Data;
  * @author Weixia(Bonnie) Huang 
  */
 public class JungGraphMLFileHandler implements AlgorithmFactory {
-    private MetaTypeProvider provider;
 
     protected void activate(ComponentContext ctxt) {
-        //You may delete all references to metatype service if 
-        //your algorithm does not require parameters and return
-        //null in the createParameters() method
-        MetaTypeService mts = (MetaTypeService)ctxt.locateService("MTS");
-        provider = mts.getMetaTypeInformation(ctxt.getBundleContext().getBundle());       
     }
     protected void deactivate(ComponentContext ctxt) {
-        provider = null;
     }
 
     public Algorithm createAlgorithm(Data[] data, Dictionary parameters, CIShellContext context) {
         return new JungGraphMLFileHandlerAlg(data, parameters, context);
     }
     public MetaTypeProvider createParameters(Data[] data) {
-        return provider;
+        return null;
     }
     
     public class JungGraphMLFileHandlerAlg implements Algorithm {
