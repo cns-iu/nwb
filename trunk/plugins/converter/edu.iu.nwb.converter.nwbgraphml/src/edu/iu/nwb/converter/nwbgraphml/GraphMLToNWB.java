@@ -1,6 +1,5 @@
 package edu.iu.nwb.converter.nwbgraphml;
 
-import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -13,7 +12,6 @@ import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
-import java.util.StringTokenizer;
 
 import org.cishell.framework.CIShellContext;
 import org.cishell.framework.algorithm.Algorithm;
@@ -22,7 +20,6 @@ import org.cishell.framework.data.Data;
 import org.cishell.service.guibuilder.GUIBuilderService;
 import org.osgi.service.log.LogService;
 
-import edu.iu.nwb.converter.nwb.common.NWBFileProperty;
 import edu.uci.ics.jung.graph.Edge;
 import edu.uci.ics.jung.graph.Graph;
 import edu.uci.ics.jung.graph.Vertex;
