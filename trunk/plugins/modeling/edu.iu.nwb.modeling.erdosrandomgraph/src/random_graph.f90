@@ -93,8 +93,6 @@
       do i=1,n_vert
          do j=1,degree(i)
             label(listlink(intdegree(i)+j))=label(listlink(intdegree(i)+j))+1
-         enddo
-         do j=1,degree(i)
             if(label(listlink(intdegree(i)+j))==1.AND.i<listlink(intdegree(i)+j))then
                write(21,*)i,listlink(intdegree(i)+j)
             endif
