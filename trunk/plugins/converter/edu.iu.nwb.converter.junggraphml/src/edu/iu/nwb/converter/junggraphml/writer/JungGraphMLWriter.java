@@ -37,7 +37,7 @@ public class JungGraphMLWriter implements Algorithm {
         this.data = data;
         this.parameters = parameters;
         this.context = context;
-        logger = (LogService)context.getService("LogService.class.getName()");
+        logger = (LogService)context.getService(LogService.class.getName());
     	guiBuilder = (GUIBuilderService) context.getService(GUIBuilderService.class.getName());
 
     }
@@ -104,7 +104,6 @@ public class JungGraphMLWriter implements Algorithm {
 			return null;
 		}    	
         return new Data[]{new BasicData(goodGraphML, "file:text/graphml+xml") };
-
     }
     
 	private File getTempFile(){
@@ -118,11 +117,9 @@ public class JungGraphMLWriter implements Algorithm {
 			tempFile = File.createTempFile("NWB-Session-", ".xml", tempDir);
 		
 		}catch (IOException e){
-			logger.log(LogService.LOG_ERROR, e.toString());
+			logger.log(LogService.LOG_ERROR, e.getMessage(), e);
 			tempFile = new File (tempPath+File.separator+"nwbTemp"+File.separator+"temp.nwb");
-
 		}
 		return tempFile;
 	}
-
 }
