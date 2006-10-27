@@ -53,57 +53,71 @@ public class JungGraphMLWriter implements Algorithm {
     	//TODO: This is a temporary fix. We found a bug in GraphMLFile.save. 
     	//It can generate a bad graphml file that won't be able to read in.
     	//Here I read in the file and clean the bad entry and save it back.
-    	try{
-    		BufferedReader reader = new BufferedReader(new FileReader(tempFile));
-			PrintWriter out = new PrintWriter(new BufferedWriter(new FileWriter(goodGraphML)));
-
-			String line = reader.readLine();
-			while(line != null){
-				if(line.startsWith("<graph edgedefault=")){
-					StringBuffer goodline = new StringBuffer();
-					StringTokenizer st = new StringTokenizer(line) ;
-				     while (st.hasMoreTokens()) {
-				    	 String token = st.nextToken();
-				         if (token.equals("<graph")){
-				         	goodline.append(token);	
-				         }else if (token.startsWith("edgedefault=")){
-				        	goodline.append(" "+token+">");
-				        	break;
-				         }			         
-				     }
-				     out.println(goodline.toString());
-
+    	
+    	try {
+    		(new GraphMLFile()).load(new FileReader(tempFile));   
+    		return new Data[]{new BasicData(tempFile, "file:text/graphml+xml")};
+    		
+    	}catch (FileNotFoundException exception){
+    		logger.log(LogService.LOG_ERROR, "FileNotFoundException", exception);
+    		return null;
+    	}catch (Exception e){    	
+	    	try{
+	    		BufferedReader reader = new BufferedReader(new FileReader(tempFile));
+				PrintWriter out = new PrintWriter(new BufferedWriter(new FileWriter(goodGraphML)));
+	
+				String line = reader.readLine();
+				while(line != null){
+					if(line.startsWith("<graph edgedefault=")){
+						StringBuffer goodline = new StringBuffer();
+						StringTokenizer st = new StringTokenizer(line) ;
+					     while (st.hasMoreTokens()) {
+					    	 String token = st.nextToken();
+					         if (token.equals("<graph")){
+					         	goodline.append(token);	
+					         }else if (token.startsWith("edgedefault=")){
+					        	goodline.append(" "+token+">");
+					        	break;
+					         }			         
+					     }
+					     out.println(goodline.toString());
+	
+					}
+					else if(line.startsWith ("<node" )){
+						StringBuffer goodline = new StringBuffer();
+						StringTokenizer st = new StringTokenizer(line) ;
+					     while (st.hasMoreTokens()) {
+					    	 String token = st.nextToken();
+					         if (token.equals("<node")){
+					         	goodline.append(token);	
+					         }else if (token.startsWith("id=")){
+					        	goodline.append(" "+token);
+					        	token=token.replace("id", "label");
+					        	goodline.append(" "+token+"/>");
+					        	break;
+					         }			         
+					     }
+					     out.println(goodline.toString());
+					}
+					else
+						out.println(line);
+					line = reader.readLine();
 				}
-				else if(line.startsWith ("<node" )){
-					StringBuffer goodline = new StringBuffer();
-					StringTokenizer st = new StringTokenizer(line) ;
-				     while (st.hasMoreTokens()) {
-				    	 String token = st.nextToken();
-				         if (token.equals("<node")){
-				         	goodline.append(token);	
-				         }else if (token.startsWith("id=")){
-				        	goodline.append(" "+token+"/>");
-				        	break;
-				         }			         
-				     }
-				     out.println(goodline.toString());
-				}
-				else
-					out.println(line);
-				line = reader.readLine();
-			}
-	    	reader.close();
-			out.close();
-    	}catch (FileNotFoundException e){
-			guiBuilder.showError("File Not Found Exception", 
-					"Got an File Not Found Exception",e);	
-			return null;
-		}catch (IOException ioe){
-			guiBuilder.showError("IOException", 
-					"Got an IOException",ioe);
-			return null;
-		}    	
-        return new Data[]{new BasicData(goodGraphML, "file:text/graphml+xml") };
+		    	reader.close();
+				out.close();
+	    	}catch (FileNotFoundException fnfe){
+				guiBuilder.showError("File Not Found Exception", 
+						"Got an File Not Found Exception",e);	
+				return null;
+			}catch (IOException ioe){
+				guiBuilder.showError("IOException", 
+						"Got an IOException",ioe);
+				return null;
+			}    	
+	    	
+	        return new Data[]{new BasicData(goodGraphML, "file:text/graphml+xml")};
+    	}
+    	
     }
     
 	private File getTempFile(){
