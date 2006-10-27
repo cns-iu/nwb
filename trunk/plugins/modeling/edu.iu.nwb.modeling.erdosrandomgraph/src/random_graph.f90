@@ -9,7 +9,8 @@
 
       implicit none
       integer*8 ibm
-      integer i,j,n_edges,iter,n_vert
+      integer i,j,k,n_edges,iter,n_vert,n_edges_true
+      integer, allocatable,dimension(:)::ind,indc,degree,label,listlink,intdegree
       real*8 r,p
       character*60 sn_vert,sp
 
@@ -40,6 +41,16 @@
 !     linking probability p and the number of nodes n_vert
 
       n_edges=(ceiling(n_vert*p)*(n_vert-1))/2
+      n_edges_true=0
+
+      allocate(ind(1:n_edges))
+      allocate(indc(1:n_edges))
+      allocate(degree(1:n_vert))
+      allocate(label(1:n_vert))
+      allocate(intdegree(1:n_vert))
+
+      degree=0
+      label=0
 
 !     Here we build the graph
 
@@ -54,8 +65,43 @@
 !     If the two randomly chosen vertices coincide, we disregard the pair
 
          if(i/=j)then
-            write(21,*)i,j
+            n_edges_true=n_edges_true+1
+            ind(n_edges_true)=j
+            indc(n_edges_true)=i
+            degree(i)=degree(i)+1
+            degree(j)=degree(j)+1
          endif
+      enddo
+
+      allocate(listlink(1:2*n_edges_true))
+      
+      intdegree(1)=0
+      
+      do k=1,n_vert-1
+         intdegree(k+1)=intdegree(k)+degree(k)
+      enddo
+
+      degree=0
+
+      do i=1,n_edges_true
+         degree(indc(i))=degree(indc(i))+1
+         degree(ind(i))=degree(ind(i))+1
+         listlink(intdegree(indc(i))+degree(indc(i)))=ind(i)
+         listlink(intdegree(ind(i))+degree(ind(i)))=indc(i)
+      enddo
+      
+      do i=1,n_vert
+         do j=1,degree(i)
+            label(listlink(intdegree(i)+j))=label(listlink(intdegree(i)+j))+1
+         enddo
+         do j=1,degree(i)
+            if(label(listlink(intdegree(i)+j))==1.AND.i<listlink(intdegree(i)+j))then
+               write(21,*)i,listlink(intdegree(i)+j)
+            endif
+         enddo
+         do j=1,degree(i)
+            label(listlink(intdegree(i)+j))=0
+         enddo
       enddo
 
       close(21)
