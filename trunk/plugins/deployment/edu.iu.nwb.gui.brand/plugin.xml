@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <?eclipse version="3.2"?>
 <plugin>
-   	<extension point="org.eclipse.core.runtime.products" id="cishell">
+   	<extension point="org.eclipse.core.runtime.products" id="nwb">
 	   <product
 	      name="Network Workbench"
           application="org.cishell.reference.gui.workspace.CIShellApplication">
