@@ -14,7 +14,7 @@
        real*8, allocatable, dimension (:) :: knn_his,avdegbin,interv,avoutbin
        integer, allocatable, dimension (:) :: count_in
        character*256 filename,fileout,fileout1,fileout2,sn_bins,str1,str2
-       real*8 binsize
+       real*8 binsize,avdeg,avkinkout
 
 !      Here the program reads the input parameters
        
@@ -101,16 +101,24 @@
        allocate(count_in(minindeg:maxindeg))
 
        knn_his=0.0d0
+       avkinkout=0.0d0
        count_in=0
+       avdeg=0.0d0
 
 !      Here we average the correlation coefficients among nodes with equal degree
 !      (array knn_his)
 !      and write out the final averages
 
        do k=1,n_vert
+          avkinkout=avkinkout+(real(indegree(k))/n_vert)*outdegree(k)
           knn_his(indegree(k))=knn_his(indegree(k))+real(outdegree(k))
           count_in(indegree(k))=count_in(indegree(k))+1
+          avdeg=avdeg+real(outdegree(k))/n_vert
        enddo
+
+       write(*,*)'**************************************************************************'
+       write(*,*)'The crossed one-point correlation equals ',avkinkout/(avdeg*avdeg)
+       write(*,*)'**************************************************************************'
 
        open(21,file=fileout,status='unknown')
 
@@ -119,8 +127,7 @@
        write(21,*)
        do k=minindeg, maxindeg
           if(count_in(k)>0)then
-             knn_his(k)=knn_his(k)/count_in(k)
-             write(21,107)k,knn_his(k)
+             write(21,107)k,knn_his(k)/count_in(k)
           endif
        enddo
 
@@ -170,6 +177,7 @@
           endif
        enddo
        close(20)
+
 
 101    format(a41)
 102    format(3i12)
