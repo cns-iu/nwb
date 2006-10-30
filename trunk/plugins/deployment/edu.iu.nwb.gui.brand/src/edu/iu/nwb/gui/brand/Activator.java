@@ -24,7 +24,9 @@ public class Activator extends AbstractUIPlugin implements IStartup{
 		"The NWB Tool is funded by an NSF IIS-0513650 award to Katy Börner, "+
 		"Albert-Laszlo Barabasi, Santiago Schnell, Alessandro Vespignani, "+
 		"Stanley Wasserman, and Eric Wernert, see  http://nwb.slis.indiana.edu.\n"+
-		"It builds on the Cyberinfrastructure Shell  (http://cishell.org) developed "+
+		"It is developed by Weixia (Bonnie) Huang, Dr. Santo Fortunato, Ben Markines, Bruce Herr, "+
+		"Ramya Sabbineni, Vivek S Thakres, Dr. Soma Sanyal and Dr. Katy Börner.\n"+
+		"It builds on the Cyberinfrastructure Shell (http://cishell.org) developed "+
 		"at the InfoVis Lab and the CI for Network Science Center at Indiana University.\n\n"+
         "Please acknowledge this effort by citing:\n"+
         "Bruce Herr, Weixia Huang, Shashikant Penumarthy, and Katy Börner. (in press). "+
