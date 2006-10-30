@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<metatype:MetaData xmlns:metatype="http://www.osgi.org/xmlns/metatype/v1.0.0">
+	<OCD name="PageRank" id="edu.iu.nwb.analysis.pagerank.gui"
+		 description="PageRank">
+		<AD name="Number of bins" id="NumBins" 
+			type="Integer" default="10" min="8"
+                        description="Number of bins for the PageRank distribution, must be at least 8"/>
+		<AD name="Damping factor" id="Dampfactor" 
+			type="Double" default="0.15" min="0.000001" max="1.0"
+                        description="Damping factor for the PageRank distribution, must be positive and not exceeding 1"/>
+	</OCD>
+	<Designate pid="edu.iu.nwb.analysis.pagerank">
+		<Object ocdref="edu.iu.nwb.analysis.pagerank.gui" />
+	</Designate>
+</metatype:MetaData>

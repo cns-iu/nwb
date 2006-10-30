@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<feature
+      id="edu.iu.nwb.converter.feature"
+      label="NWB Data Format Converters"
+      version="0.2.0"
+      provider-name="Weixia Huang, Ben Markines, Bruce Herr">
+
+   <description>
+      The tool supports the following data/file formats:
+GraphML, XGMML, Pajek .net, NWB, Plain Text for XMGrace application, and Plain Text.
+
+The tool deliver the following data/file converters:
+   </description>
+
+   <copyright url="http://www.example.com/copyright">
+      [Enter Copyright Description here.]
+   </copyright>
+
+   <license url="http://www.example.com/license">
+      [Enter License Description here.]
+   </license>
+
+   <url>
+      <update label="Network Workbench Tool Update Site" url="http://nwb.slis.indiana.edu/update"/>
+   </url>
+
+   <plugin
+         id="edu.iu.nwb.converter.junggraphml"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+   <plugin
+         id="edu.iu.nwb.converter.jungpajeknet"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+   <plugin
+         id="edu.iu.nwb.converter.jungprefuse"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+   <plugin
+         id="edu.iu.nwb.converter.nwb"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+   <plugin
+         id="edu.iu.nwb.converter.nwbgraphml"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+   <plugin
+         id="edu.iu.nwb.converter.prefusegraphml"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+   <plugin
+         id="edu.iu.nwb.converter.prefusexgmml"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+</feature>
