@@ -139,7 +139,7 @@
 			<executable os="unix" targetfile="$INSTALL_PATH/nwb"
 				keep="true" stage="never" />
 			<executable os="mac" 
-				targetfile="$INSTALL_PATH/CIShell.app/Contents/MacOS/nwb"
+				targetfile="$INSTALL_PATH/NWB.app/Contents/MacOS/nwb"
 				keep="true" stage="never" />			
 			
 			<!--	    for some stupid reason this isn't working, so we'll 
