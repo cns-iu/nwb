@@ -92,7 +92,7 @@ public class JungGraphMLWriter implements Algorithm {
 					         	goodline.append(token);	
 					         }else if (token.startsWith("id=")){
 					        	goodline.append(" "+token);
-					        	token=token.replace("id", "label");
+					        	token=token.replaceAll("id", "label");
 					        	goodline.append(" "+token+"/>");
 					        	break;
 					         }			         
