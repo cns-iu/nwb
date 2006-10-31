@@ -28,6 +28,7 @@ import edu.uci.ics.jung.utils.Pair;
 import edu.uci.ics.jung.utils.PredicateUtils;
 
 /**
+ * Converts from GraphML to NWB file format
  * @author Ben Markines 
  */
 public class GraphMLToNWB implements Algorithm {
@@ -39,12 +40,23 @@ public class GraphMLToNWB implements Algorithm {
     
     Map vertexToIdMap;
     
+    /**
+     * Intializes the algorithm
+     * @param data List of Data objects to convert
+     * @param parameters Parameters passed to the converter
+     * @param context Provides access to CIShell services
+     */
     public GraphMLToNWB(Data[] data, Dictionary parameters, CIShellContext context) {
         this.data = data;
         this.parameters = parameters;
         this.ciContext = context;
     }
 
+    /**
+     * Executes the conversion
+     * 
+     * @return A single java file object
+     */
     public Data[] execute() {
 		Object inFile = data[0].getData();
     	
@@ -64,6 +76,11 @@ public class GraphMLToNWB implements Algorithm {
 		return null;
     }
     
+    /**
+     * Creates a file given a JUNG Graph object
+     * @param g JUNG Graph object
+     * @return NWB file
+     */
     private File writeNWBFile(Graph g) {
     	File nwbFile = getTempFile();
 		try {
@@ -104,6 +121,10 @@ public class GraphMLToNWB implements Algorithm {
 		}
     }
     
+    /**
+     * Retrieves all the vertices from the JUNG Graph
+     * @param g The JUNG Graph
+     */
     private void extractVertices(Graph g) {
     	vertexToIdMap = new Hashtable();
     	Set set = g.getVertices();
@@ -114,7 +135,11 @@ public class GraphMLToNWB implements Algorithm {
     		++vertexId;
     	}
     }
-		
+	
+    /**
+     * Creates a temporary file for the NWB file
+     * @return The temporary file
+     */
 	private File getTempFile(){
 		File tempFile;
     
@@ -132,5 +157,4 @@ public class GraphMLToNWB implements Algorithm {
 		}
 		return tempFile;
 	}
-	
 }
