@@ -22,6 +22,8 @@ import org.osgi.service.log.LogService;
 //Jung
 import edu.uci.ics.jung.graph.Graph;
 import edu.uci.ics.jung.io.GraphMLFile;
+import edu.uci.ics.jung.graph.decorators.Indexer;
+
 
 /**
  * @author Weixia(Bonnie) Huang 
@@ -47,6 +49,9 @@ public class JungGraphMLWriter implements Algorithm {
     	File goodGraphML = getTempFile();
         
     	if (tempFile != null){
+    		//Update the graph index. This is a fix for the bug I report at 
+    		//https://nwb.slis.indiana.edu/wiki/?n=Nwbtool.BugAttackToleranceSave
+    		Indexer.getAndUpdateIndexer((Graph)(data[0].getData()));
     		(new GraphMLFile()).save((Graph)(data[0].getData()), tempFile.getPath()) ;
     	}
     	
