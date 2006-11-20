@@ -6,6 +6,7 @@ Bundle-Version: 0.2.0
 Bundle-ClassPath: .
 Bundle-Localization: plugin
 Import-Package: edu.uci.ics.jung.graph,
+ edu.uci.ics.jung.graph.decorators,
  edu.uci.ics.jung.io,
  org.cishell.framework,
  org.cishell.framework.algorithm,
