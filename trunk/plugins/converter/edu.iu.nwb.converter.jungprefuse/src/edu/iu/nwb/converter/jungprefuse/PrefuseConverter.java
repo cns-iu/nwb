@@ -42,30 +42,40 @@ public class PrefuseConverter {
         
         public JungNode(Vertex v) {
             this.jungVertex = v;
-        }
-        
-        public String getAttribute(String key) {
-            Object attr = jungVertex.getUserDatum(key);
             
-            return attr == null ? null : attr.toString();
+            Iterator iter = v.getUserDatumKeyIterator();
+            while (iter.hasNext()) {
+         	   Object key = iter.next();
+         	   Object value = v.getUserDatum(key);
+         	   
+         	   key = key == null? null : key.toString();
+         	   value = value == null? null : value.toString();
+         	   
+         	   setAttribute((String)key, (String)value);
+            }
         }
 
         public final Vertex jungVertex;
     }
 
     public static class JungEdge extends DefaultEdge {
-        
+
        public JungEdge(Edge jungEdge, Node n1, Node n2, boolean directed) {
            super(n1, n2, directed);
            this.jungEdge = jungEdge;
+           
+           Iterator iter = jungEdge.getUserDatumKeyIterator();
+           while (iter.hasNext()) {
+        	   Object key = iter.next();
+        	   Object value = jungEdge.getUserDatum(key);
+        	   
+        	   key = key == null? null : key.toString();
+        	   value = value == null? null : value.toString();
+        	   
+        	   setAttribute((String)key, (String)value);
+           }
        }
        
-       public String getAttribute(String key) {
-           Object attr = jungEdge.getUserDatum(key);
-           
-           return attr == null ? null : attr.toString();
-       }
-
        public final Edge jungEdge;
     }
 
