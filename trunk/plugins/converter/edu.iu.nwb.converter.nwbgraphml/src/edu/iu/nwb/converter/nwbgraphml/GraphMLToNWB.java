@@ -90,6 +90,12 @@ public class GraphMLToNWB implements Algorithm {
 			extractVertices(g);
 			out.write("// GraphML to NWB conversion\n");
 			out.write("*Nodes " + g.numVertices() + "\n");
+			for (Iterator i = g.getVertices().iterator(); i.hasNext();) {
+				Vertex vertex = (Vertex)i.next();
+				String vertexStr = (String)vertexToIdMap.get(vertex);
+				String label     = (String)vertex.getUserDatum("label");
+				out.write(vertexStr + " " + label + "\n");				
+			}
 			
 			//print the edges
 			boolean isUndirectedGraph = PredicateUtils.enforcesUndirected(g);
