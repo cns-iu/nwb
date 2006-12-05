@@ -15,12 +15,14 @@ import edu.uci.ics.jung.graph.Edge;
 import edu.uci.ics.jung.graph.Graph;
 import edu.uci.ics.jung.graph.Vertex;
 import edu.uci.ics.jung.graph.decorators.EdgeWeightLabeller;
+import edu.uci.ics.jung.utils.UserData;
 
 public class GraphMetadataMemory {
 
 	private Graph graph;
 	private DoubleMatrix2D matrix;
 	private List vertices = new ArrayList();
+	private boolean weighted = false;
 
 	public GraphMetadataMemory(Graph graph) {
 		this.graph = graph;
@@ -36,12 +38,12 @@ public class GraphMetadataMemory {
 		//assume sparcity for now. This should later get some smarts.
 		DoubleMatrix2D graphMatrix = new SparseDoubleMatrix2D(numVertices, numVertices);
 		
-		EdgeWeightLabeller weights = null;
+		/* EdgeWeightLabeller weights = null;
 		
 		if(EdgeWeightLabeller.hasWeightLabeller(graph)) {
 			weights = EdgeWeightLabeller.getLabeller(graph);
 		}
-		
+		*/
 		
 		vertices = new ArrayList(this.graph.getVertices());
 		
@@ -55,10 +57,15 @@ public class GraphMetadataMemory {
 			Iterator edgeIterator = vertex.getIncidentEdges().iterator();
 			while(edgeIterator.hasNext()) {
 				Edge edge = (Edge) edgeIterator.next();
-				int weight = weights != null ? weights.getWeight(edge) : 1;
+				String weightString = "1";
+				if(edge.containsUserDatumKey("weight")) {
+					weightString = (String) edge.getUserDatum("weight");
+					weighted = true;
+				}
 				
 				Vertex connectedVertex = edge.getOpposite(vertex);
 				
+				int weight = Integer.parseInt(weightString);
 				graphMatrix.setQuick(vertices.indexOf(vertex), vertices.indexOf(connectedVertex), weight);
 			}
 		}
@@ -73,6 +80,7 @@ public class GraphMetadataMemory {
 
 	public Graph reconstructMetadata(DoubleMatrix2D matrix) {
 		System.out.println(matrix.toString());
+		System.out.println(matrix.equals(this.matrix));
 		Graph graph = null;
 		try {
 			graph = (Graph) this.graph.clone();
@@ -80,8 +88,7 @@ public class GraphMetadataMemory {
 			//Big problem!
 		}
 		
-		if(EdgeWeightLabeller.hasWeightLabeller(graph)) {
-			EdgeWeightLabeller weights = EdgeWeightLabeller.getLabeller(graph);
+		if(weighted) {
 			for(int row = 0; row < matrix.rows(); row++) {
 				//begin is a bit of a misnomer until this can handle directed graphs
 				Vertex begin = (Vertex) vertices.get(row);
@@ -96,7 +103,7 @@ public class GraphMetadataMemory {
 							graph.removeEdge(edge);
 						} else {
 							System.out.println("Setting edge weight: " + edge.toString());
-							weights.setWeight(edge, weight);
+							edge.setUserDatum("weight", Integer.toString(weight), UserData.SHARED);
 						}
 					} else if(weight != 0) {
 						//for now do nothing, later create the appropriate directed or undirected edge and add it to the graph
