@@ -6,25 +6,23 @@ import org.cishell.framework.CIShellContext;
 import org.cishell.framework.algorithm.Algorithm;
 import org.cishell.framework.data.BasicData;
 import org.cishell.framework.data.Data;
+import org.cishell.framework.data.DataProperty;
 import org.osgi.service.log.LogService;
 
 import cern.colt.matrix.DoubleMatrix2D;
 
-import edu.iu.iv.analysis.pathfindernetworkscaling.PathFinderAlgorithm;
-import edu.iu.iv.analysis.pathfindernetworkscaling.PathFinderAlgorithmFactory;
+import edu.iu.nwb.analysis.pathfindergraphnetworkscaling.old.PathFinderAlgorithm;
 import edu.uci.ics.jung.graph.Graph;
 
 public class PathfinderGraphAlgorithm implements Algorithm {
     private Data[] data;
     private Dictionary parameters;
     private CIShellContext context;
-	private PathFinderAlgorithmFactory pathfinderFactory;
     
-    public PathfinderGraphAlgorithm(Data[] data, Dictionary parameters, CIShellContext context, PathFinderAlgorithmFactory pathfinderFactory) {
+    public PathfinderGraphAlgorithm(Data[] data, Dictionary parameters, CIShellContext context) {
         this.data = data;
         this.parameters = parameters;
         this.context = context;
-        this.pathfinderFactory = pathfinderFactory;
     }
 
     public Data[] execute() {
@@ -37,7 +35,7 @@ public class PathfinderGraphAlgorithm implements Algorithm {
     	
     	Data inputData = new BasicData(memory.getMatrix(), DoubleMatrix2D.class.getName());
     	
-		PathFinderAlgorithm pathfinder = (PathFinderAlgorithm) pathfinderFactory.createAlgorithm(new Data[]{ inputData },
+		PathFinderAlgorithm pathfinder = new PathFinderAlgorithm(new Data[]{ inputData },
 				parameters, context);
     	
     	Data[] pathfinderData = pathfinder.execute();
@@ -48,6 +46,13 @@ public class PathfinderGraphAlgorithm implements Algorithm {
 		if(outputMatrix.getFormat().equals(DoubleMatrix2D.class.getName())) {
     		Graph outputGraph = memory.reconstructMetadata((DoubleMatrix2D) outputMatrix.getData());
     		outputData = new BasicData(outputGraph, Graph.class.getName());
+    		
+    		Dictionary map = outputData.getMetaData();
+    		map.put(DataProperty.MODIFIED,
+                    new Boolean(true));
+            map.put(DataProperty.PARENT, data[0]);
+            map.put(DataProperty.TYPE, DataProperty.NETWORK_TYPE);
+            map.put(DataProperty.LABEL, "Pathfinder Network Scaling");
     		
     	} else {
     		log.log(LogService.LOG_ERROR, "PathFinderAlgorithm did not return correct "

@@ -67,11 +67,12 @@ public class GraphMetadataMemory {
 	}
 
 	public DoubleMatrix2D getMatrix() {
+		System.out.println(matrix.toString());
 		return matrix;
 	}
 
 	public Graph reconstructMetadata(DoubleMatrix2D matrix) {
-		
+		System.out.println(matrix.toString());
 		Graph graph = null;
 		try {
 			graph = (Graph) this.graph.clone();
@@ -91,8 +92,10 @@ public class GraphMetadataMemory {
 					Edge edge = begin.findEdge(end);
 					if(edge != null) {
 						if(weight == 0) {
+							System.out.println("Tossing edge " + edge.toString());
 							graph.removeEdge(edge);
 						} else {
+							System.out.println("Setting edge weight: " + edge.toString());
 							weights.setWeight(edge, weight);
 						}
 					} else if(weight != 0) {
@@ -109,6 +112,7 @@ public class GraphMetadataMemory {
 					Edge edge = begin.findEdge(end);
 					if(edge != null) {
 						if(!connected) {
+							System.out.println("Tossing edge " + edge.toString());
 							graph.removeEdge(edge);
 						}
 					} else if(connected){
