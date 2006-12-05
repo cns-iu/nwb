@@ -1,9 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<metatype:MetaData xmlns:metatype="http://www.osgi.org/xmlns/metatype/v1.0.0">
-	<OCD name="XMGrace" id="edu.iu.nwb.visualization.xmgrace.gui"
-		 description="XMGrace">
-	</OCD>
-	<Designate pid="edu.iu.nwb.visualization.xmgrace">
-		<Object ocdref="edu.iu.nwb.visualization.xmgrace.gui" />
-	</Designate>
-</metatype:MetaData>
