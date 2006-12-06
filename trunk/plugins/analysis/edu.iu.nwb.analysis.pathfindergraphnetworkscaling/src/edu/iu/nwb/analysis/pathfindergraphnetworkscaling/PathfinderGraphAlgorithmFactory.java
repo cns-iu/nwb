@@ -6,13 +6,14 @@ import org.cishell.framework.CIShellContext;
 import org.cishell.framework.algorithm.Algorithm;
 import org.cishell.framework.algorithm.AlgorithmFactory;
 import org.cishell.framework.data.Data;
-import org.osgi.framework.InvalidSyntaxException;
-import org.osgi.framework.ServiceReference;
 import org.osgi.service.component.ComponentContext;
-import org.osgi.service.log.LogService;
 import org.osgi.service.metatype.MetaTypeProvider;
 import org.osgi.service.metatype.MetaTypeService;
 
+/**
+ * @author Russell Duhon
+ *
+ */
 public class PathfinderGraphAlgorithmFactory implements AlgorithmFactory {
     private MetaTypeProvider provider;
     
@@ -22,8 +23,6 @@ public class PathfinderGraphAlgorithmFactory implements AlgorithmFactory {
         //null in the createParameters() method
         MetaTypeService mts = (MetaTypeService)ctxt.locateService("MTS");
         provider = mts.getMetaTypeInformation(ctxt.getBundleContext().getBundle());
-        
-        LogService log = ((LogService) ctxt.locateService("LOG"));
     }
     protected void deactivate(ComponentContext ctxt) {
         provider = null;

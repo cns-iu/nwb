@@ -2,21 +2,29 @@ package edu.iu.nwb.analysis.pathfindergraphnetworkscaling.old;
 
 import java.util.Dictionary;
 
+import org.cishell.framework.CIShellContext;
+import org.cishell.framework.algorithm.Algorithm;
 import org.cishell.framework.data.BasicData;
 import org.cishell.framework.data.Data;
 import org.cishell.framework.data.DataProperty;
+
 import cern.colt.matrix.DoubleMatrix2D;
-import cern.colt.matrix.impl.SparseDoubleMatrix2D;
-
-import org.cishell.framework.CIShellContext;
-import org.cishell.framework.algorithm.Algorithm;
 
 
+/**
+ * @author Russell Duhon
+ *
+ */
 public class PathFinderAlgorithm implements Algorithm {
     Data[] data;
     Dictionary parameters;
     CIShellContext context;
     
+    /**
+     * @param data
+     * @param parameters
+     * @param context
+     */
     public PathFinderAlgorithm(Data[] data, Dictionary parameters, CIShellContext context) {
         this.data = data;
         this.parameters = parameters;
@@ -28,7 +36,6 @@ public class PathFinderAlgorithm implements Algorithm {
 	    int r = ((Integer)parameters.get("r")).intValue();
 	    DoubleMatrix2D inputMatrix = (DoubleMatrix2D)data[0].getData();
 		PathFinder pathFinder = new PathFinder(q, r,inputMatrix);
-        pathFinder.applyScaling();
 		
         DoubleMatrix2D outputMatrix = pathFinder.getResultMatrix();
 		BasicData dm = new BasicData(outputMatrix,DoubleMatrix2D.class.getName());

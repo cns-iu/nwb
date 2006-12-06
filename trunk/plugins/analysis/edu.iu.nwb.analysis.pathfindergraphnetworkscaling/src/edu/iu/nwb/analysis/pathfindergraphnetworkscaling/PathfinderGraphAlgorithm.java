@@ -14,11 +14,22 @@ import cern.colt.matrix.DoubleMatrix2D;
 import edu.iu.nwb.analysis.pathfindergraphnetworkscaling.old.PathFinderAlgorithm;
 import edu.uci.ics.jung.graph.Graph;
 
+/**
+ * @author Russell Duhon
+ *
+ */
 public class PathfinderGraphAlgorithm implements Algorithm {
     private Data[] data;
     private Dictionary parameters;
     private CIShellContext context;
     
+
+    /**
+     * Construct with the appropriate parameters
+     * @param data This contains the input graph
+     * @param parameters This contains r and q
+     * @param context And this allows access to some additional capabilities
+     */
     public PathfinderGraphAlgorithm(Data[] data, Dictionary parameters, CIShellContext context) {
         this.data = data;
         this.parameters = parameters;

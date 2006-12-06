@@ -8,7 +8,7 @@ import cern.colt.matrix.impl.SparseDoubleMatrix2D;
  */
 public class PathFinder {
 
-    private int q, r, n, percentageDone;
+    private int q, r, n;
 
     private DoubleMatrix2D weightMatrix;
 
@@ -61,7 +61,7 @@ public class PathFinder {
         this.n = this.weightMatrix.rows();
     }
 
-    public void applyScaling() {
+    private void applyScaling() {
         // allocate memory for d matrix
         DoubleMatrix2D distanceMatrix = new SparseDoubleMatrix2D(n, n);
         // copy weight matrix into it
@@ -87,11 +87,6 @@ public class PathFinder {
         // for PFNETs"
         //System.out.print("Computing..") ;
         for (int i = 1; i < q; ++i) {
-            if (i % 10 == 0) {
-                float per = ((float)i/q)*100 ;
-                //System.out.print((int)per + "%..") ;
-                percentageDone = (int) per;
-            }
             higherOrderMatrix = computeHigherOrderMatrix(higherOrderMatrix);
             distanceMatrix = computeMinimumDistanceMatrix(distanceMatrix,
                     higherOrderMatrix);
@@ -102,12 +97,7 @@ public class PathFinder {
         this.pfnet = compareWithWeightMatrix(distanceMatrix);
     }
     
-    /**
-     * @return the percentage done computing while computing
-     */
-    public int getPercentageDone() {
-        return percentageDone;
-    }
+    
     
     /**
      * The final step in the PFNET algorithm, where the 'q' <sup>th </sup>
@@ -212,7 +202,7 @@ public class PathFinder {
      *            The lower order matrix.
      * @return The higher order matrix.
      */
-    public DoubleMatrix2D computeHigherOrderMatrix(
+    private DoubleMatrix2D computeHigherOrderMatrix(
             DoubleMatrix2D lowerOrderMatrix) {
 
         DoubleMatrix2D higherOrderMatrix = new SparseDoubleMatrix2D(n, n);
@@ -257,6 +247,9 @@ public class PathFinder {
         return higherOrderMatrix;
     }
 
+    /**
+     * @return The resulting matrix
+     */
     public DoubleMatrix2D getResultMatrix() {
         if (this.pfnet == null)
             this.applyScaling();
