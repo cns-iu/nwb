@@ -10,6 +10,7 @@ import cern.colt.matrix.DoubleMatrix2D;
 import cern.colt.matrix.impl.SparseDoubleMatrix2D;
 
 import edu.uci.ics.jung.graph.ArchetypeEdge;
+import edu.uci.ics.jung.graph.ArchetypeGraph;
 import edu.uci.ics.jung.graph.ArchetypeVertex;
 import edu.uci.ics.jung.graph.Edge;
 import edu.uci.ics.jung.graph.Graph;
@@ -74,19 +75,14 @@ public class GraphMetadataMemory {
 	}
 
 	public DoubleMatrix2D getMatrix() {
-		System.out.println(matrix.toString());
 		return matrix;
 	}
 
 	public Graph reconstructMetadata(DoubleMatrix2D matrix) {
-		System.out.println(matrix.toString());
-		System.out.println(matrix.equals(this.matrix));
-		Graph graph = null;
-		try {
-			graph = (Graph) this.graph.clone();
-		} catch (CloneNotSupportedException e) {
-			//Big problem!
-		}
+		//we're copying a Graph, so we're guaranteed to get a Graph back
+		Graph graph = (Graph) this.graph.copy();
+		
+		vertices = new ArrayList(graph.getVertices());
 		
 		if(weighted) {
 			for(int row = 0; row < matrix.rows(); row++) {
@@ -99,10 +95,8 @@ public class GraphMetadataMemory {
 					Edge edge = begin.findEdge(end);
 					if(edge != null) {
 						if(weight == 0) {
-							System.out.println("Tossing edge " + edge.toString());
 							graph.removeEdge(edge);
 						} else {
-							System.out.println("Setting edge weight: " + edge.toString());
 							edge.setUserDatum("weight", Integer.toString(weight), UserData.SHARED);
 						}
 					} else if(weight != 0) {
@@ -119,7 +113,6 @@ public class GraphMetadataMemory {
 					Edge edge = begin.findEdge(end);
 					if(edge != null) {
 						if(!connected) {
-							System.out.println("Tossing edge " + edge.toString());
 							graph.removeEdge(edge);
 						}
 					} else if(connected){

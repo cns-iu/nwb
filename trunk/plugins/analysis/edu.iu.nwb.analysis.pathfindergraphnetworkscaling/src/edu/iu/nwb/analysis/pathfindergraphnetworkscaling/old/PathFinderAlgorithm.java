@@ -6,6 +6,8 @@ import org.cishell.framework.data.BasicData;
 import org.cishell.framework.data.Data;
 import org.cishell.framework.data.DataProperty;
 import cern.colt.matrix.DoubleMatrix2D;
+import cern.colt.matrix.impl.SparseDoubleMatrix2D;
+
 import org.cishell.framework.CIShellContext;
 import org.cishell.framework.algorithm.Algorithm;
 
@@ -24,16 +26,18 @@ public class PathFinderAlgorithm implements Algorithm {
     public Data[] execute() {
     	int q = ((Integer)parameters.get("q")).intValue();
 	    int r = ((Integer)parameters.get("r")).intValue();
-	    PathFinder pathFinder = new PathFinder(q, r,(DoubleMatrix2D)data[0].getData());
+	    DoubleMatrix2D inputMatrix = (DoubleMatrix2D)data[0].getData();
+		PathFinder pathFinder = new PathFinder(q, r,inputMatrix);
         pathFinder.applyScaling();
+		
+        DoubleMatrix2D outputMatrix = pathFinder.getResultMatrix();
+		BasicData dm = new BasicData(outputMatrix,DoubleMatrix2D.class.getName());
+        Dictionary map = dm.getMetaData();
+		map.put(DataProperty.LABEL,"Path Finder Network Scaled Model");
+		map.put(DataProperty.TYPE,DataProperty.MATRIX_TYPE);
+		map.put(DataProperty.PARENT,DataProperty.PARENT);
+		
         
-		    BasicData dm = new BasicData(pathFinder.getResultMatrix(),PathFinder.class.getName());
-		    Dictionary map = dm.getMetaData();
-		    map.put(DataProperty.LABEL,"Path Finder Network Scaled Model");
-		    map.put(DataProperty.TYPE,DataProperty.MATRIX_TYPE);
-		    map.put(DataProperty.PARENT,DataProperty.PARENT);
-		    
-        
-        return data;
+        return new Data[]{ dm };
     }
 }
