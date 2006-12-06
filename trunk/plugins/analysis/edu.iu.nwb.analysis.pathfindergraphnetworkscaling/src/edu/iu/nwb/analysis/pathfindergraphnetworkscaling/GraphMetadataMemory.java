@@ -22,8 +22,8 @@ public class GraphMetadataMemory {
 
 	private Graph graph;
 	private DoubleMatrix2D matrix;
-	private List vertices = new ArrayList();
 	private boolean weighted = false;
+	private List vertices = new ArrayList();
 
 	public GraphMetadataMemory(Graph graph) {
 		this.graph = graph;
@@ -36,15 +36,8 @@ public class GraphMetadataMemory {
 		
 		int numVertices = graph.numVertices();
 		
-		//assume sparcity for now. This should later get some smarts.
+		//assume sparcity for now. This should later get some smarts, particularly if used with other algorithms
 		DoubleMatrix2D graphMatrix = new SparseDoubleMatrix2D(numVertices, numVertices);
-		
-		/* EdgeWeightLabeller weights = null;
-		
-		if(EdgeWeightLabeller.hasWeightLabeller(graph)) {
-			weights = EdgeWeightLabeller.getLabeller(graph);
-		}
-		*/
 		
 		vertices = new ArrayList(this.graph.getVertices());
 		
@@ -80,22 +73,22 @@ public class GraphMetadataMemory {
 
 	public Graph reconstructMetadata(DoubleMatrix2D matrix) {
 		//we're copying a Graph, so we're guaranteed to get a Graph back
-		Graph graph = (Graph) this.graph.copy();
-		
-		vertices = new ArrayList(graph.getVertices());
+		Graph graphCopy = (Graph) this.graph.copy();
 		
 		if(weighted) {
 			for(int row = 0; row < matrix.rows(); row++) {
 				//begin is a bit of a misnomer until this can handle directed graphs
-				Vertex begin = (Vertex) vertices.get(row);
+				Vertex begin = ((Vertex) vertices.get(row));
+				begin = (Vertex) begin.getEqualVertex(graphCopy);
 				for(int column = 0; column < matrix.columns(); column++) {
 					Vertex end = (Vertex) vertices.get(column);
+					end = (Vertex) end.getEqualVertex(graphCopy);
 					//round or drop? for now, drop, on the assumption that these should still be ints anyways
 					int weight = (int) matrix.getQuick(row, column);
 					Edge edge = begin.findEdge(end);
 					if(edge != null) {
 						if(weight == 0) {
-							graph.removeEdge(edge);
+							graphCopy.removeEdge(edge);
 						} else {
 							edge.setUserDatum("weight", Integer.toString(weight), UserData.SHARED);
 						}
@@ -113,7 +106,7 @@ public class GraphMetadataMemory {
 					Edge edge = begin.findEdge(end);
 					if(edge != null) {
 						if(!connected) {
-							graph.removeEdge(edge);
+							graphCopy.removeEdge(edge);
 						}
 					} else if(connected){
 						//see above note about creating the appropriate edge
@@ -122,7 +115,7 @@ public class GraphMetadataMemory {
 			}
 		}
 		
-		return graph;
+		return graphCopy;
 	}
 
 }
