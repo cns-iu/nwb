@@ -5,8 +5,10 @@ Bundle-SymbolicName: edu.iu.nwb.analysis.pathfindergraphnetworkscaling
 Bundle-Version: 0.0.1
 Bundle-ClassPath: .
 Bundle-Localization: plugin
-Import-Package: cern.colt.matrix,
+Import-Package: cern.colt.function,
+ cern.colt.matrix,
  cern.colt.matrix.impl,
+ cern.jet.math,
  edu.uci.ics.jung.graph,
  edu.uci.ics.jung.graph.decorators,
  edu.uci.ics.jung.utils,

@@ -44,7 +44,8 @@ public class PathFinder {
      */
     public PathFinder(int q, int r, DoubleMatrix2D matrix)
             throws IllegalArgumentException {
-        if (matrix.rows() != matrix.columns())
+        int rows = matrix.rows();
+		if (rows != matrix.columns())
             throw new IllegalArgumentException("Matrix must be square!");
         this.weightMatrix = matrix;
 
@@ -53,25 +54,18 @@ public class PathFinder {
                     "r parameter must be non-negative.");
         this.r = r;
 
-        if (q > matrix.rows() - 1)
+        if (q > rows - 1)
             throw new IllegalArgumentException(
                     "q parameter cannot be greater than number of rows/columns of matrix minus 1.");
         this.q = q;
 
-        this.n = this.weightMatrix.rows();
+        this.n = rows;
     }
 
     private void applyScaling() {
-        // allocate memory for d matrix
-        DoubleMatrix2D distanceMatrix = new SparseDoubleMatrix2D(n, n);
-        // copy weight matrix into it
-        distanceMatrix = copyMatrixValues(this.weightMatrix, distanceMatrix);
+        DoubleMatrix2D distanceMatrix = this.weightMatrix.copy();
 
-        // allocate memory for higher order matrix
-        DoubleMatrix2D higherOrderMatrix = new SparseDoubleMatrix2D(n, n);
-        // copy weight matrix into it
-        higherOrderMatrix = copyMatrixValues(this.weightMatrix,
-                higherOrderMatrix);
+        DoubleMatrix2D higherOrderMatrix = this.weightMatrix.copy();
 
         // At this point the weightMatrix, distanceMatrix and higherOrderMatrix
         // have the same elements.
@@ -106,11 +100,8 @@ public class PathFinder {
      * PFNET whenever the corresponding elements of D <sup>q </sup> and W <sup>1
      * </sup> are the same (and not zero). <br>
      * This operation may result in a substantially sparser matrix. The original
-     * weight matrix is already expected to be sparse. In addition to that,
-     * during the scaling process may edges will be eliminated. This is taken
-     * advantage of by returning a matrix with only the non-zero values filled
-     * in. For very large networks, this will probably result in a lot of
-     * spacing saving.
+     * weight matrix is already expected to be sparse. During the scaling process
+     * many edges will be eliminated.
      * 
      * @param distanceMatrixQ
      *            The distance matrix D <sup>q </sup>.
@@ -121,11 +112,11 @@ public class PathFinder {
         DoubleMatrix2D finalMatrix = new SparseDoubleMatrix2D(n, n);
         for (int i = 0; i < n; ++i) {
             for (int j = 0; j < n; ++j) {
-                double valWeight = this.weightMatrix.get(i, j);
-                double valD = distanceMatrixQ.get(i, j);
+                double valWeight = this.weightMatrix.getQuick(i, j);
+                double valD = distanceMatrixQ.getQuick(i, j);
                 // add to PFNET if they are equal
                 if (valWeight == valD) {
-                    finalMatrix.set(i, j, valD);
+                    finalMatrix.setQuick(i, j, valD);
                 }
             }
         }
@@ -149,34 +140,13 @@ public class PathFinder {
             for (int j = 0; j < n; ++j) {
                 if (i == j)
                     continue;
-                double valD = distanceMatrix.get(i, j);
-                double valH = higherOrderMatrix.get(i, j);
-                if (valD > 0 && valH > 0)
-                    distanceMatrix.set(i, j, Math.min(valD, valH));
+                double valD = distanceMatrix.getQuick(i, j);
+                double valH = higherOrderMatrix.getQuick(i, j);
+                if (valH > 0) //previously if (valD > 0 && valH >0)
+                	//but if valD = 0 we don't mind replacing it w/ the min, as that will be zero
+                    distanceMatrix.setQuick(i, j, Math.min(valD, valH));
             }
         return distanceMatrix;
-    }
-
-    /**
-     * Copies contents of the upper triangle of one matrix into another.
-     * 
-     * @param matrixSrc
-     *            The source matrix.
-     * @param matrixDest
-     *            The destination matrix.
-     * @return The destination matrix with the contents copied.
-     */
-    private DoubleMatrix2D copyMatrixValues(
-            final DoubleMatrix2D matrixSrc, DoubleMatrix2D matrixDest) {
-        int rows = matrixSrc.rows();
-        int cols = matrixSrc.columns();
-        for (int i = 0; i < rows; ++i)
-            for (int j = 0; j < cols; ++j) {
-                double val = matrixSrc.get(i, j);
-                if (val != 0)
-                    matrixDest.set(i, j, val);
-            }
-        return matrixDest;
     }
 
     /**
@@ -213,15 +183,15 @@ public class PathFinder {
                 for (int k = 0; k < n; ++k) {
                     double minWeight = Double.POSITIVE_INFINITY;
                     for (int m = 0; m < n; ++m) {
-                        double temp = Math.max(lowerOrderMatrix.get(m, k),
-                                this.weightMatrix.get(j, m));
+                        double temp = Math.max(lowerOrderMatrix.getQuick(m, k),
+                                this.weightMatrix.getQuick(j, m));
                         if (temp == 0)
                             continue ;
                         if (minWeight > temp)
                             minWeight = temp;
                     }
                     if (minWeight != Double.POSITIVE_INFINITY)
-                        higherOrderMatrix.set(j, k, minWeight);
+                        higherOrderMatrix.setQuick(j, k, minWeight);
                 }
             }
         } else {
@@ -230,9 +200,9 @@ public class PathFinder {
                 for (int k = 0; k < n; ++k) {
                     double minWeight = Double.POSITIVE_INFINITY;
                     for (int m = 0; m < n; ++m) {
-                        double temp = Math.pow(Math.pow(this.weightMatrix.get(
+                        double temp = Math.pow(Math.pow(this.weightMatrix.getQuick(
                                 j, m), this.r)
-                                + Math.pow(lowerOrderMatrix.get(m, k), this.r),
+                                + Math.pow(lowerOrderMatrix.getQuick(m, k), this.r),
                                 1.0 / this.r);
                         if (temp == 0)
                             continue ;
@@ -240,7 +210,7 @@ public class PathFinder {
                             minWeight = temp;
                     }
                     if (minWeight != Double.POSITIVE_INFINITY)
-                        higherOrderMatrix.set(j, k, minWeight);
+                        higherOrderMatrix.setQuick(j, k, minWeight);
                 }
             }
         }
