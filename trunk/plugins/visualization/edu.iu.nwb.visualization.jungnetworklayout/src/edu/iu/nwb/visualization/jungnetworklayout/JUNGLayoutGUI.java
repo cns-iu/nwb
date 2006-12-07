@@ -17,6 +17,7 @@ import edu.uci.ics.jung.graph.decorators.VertexStringer;
 import edu.uci.ics.jung.visualization.Layout;
 import edu.uci.ics.jung.visualization.PluggableRenderer;
 import edu.uci.ics.jung.visualization.VisualizationViewer;
+import edu.uci.ics.jung.visualization.control.DefaultModalGraphMouse;
 
 public class JUNGLayoutGUI extends JFrame {
     private static final long serialVersionUID = -1066069022881159726L;
@@ -61,10 +62,11 @@ public class JUNGLayoutGUI extends JFrame {
         vv.setBackground(Color.WHITE);
 
         this.getContentPane().add(vv);
-        this.vv.removeMouseListener(this.vv.getMouseListeners()[0]);
+        vv.setGraphMouse(new DefaultModalGraphMouse());
+        /* this.vv.removeMouseListener(this.vv.getMouseListeners()[0]);
         this.vv.removeMouseMotionListener(this.vv.getMouseMotionListeners()[0]);
         ZoomPanMouseBehaviour zpmb = new ZoomPanMouseBehaviour() ;
-        zpmb.setListeningSource(this.vv) ;
+        zpmb.setListeningSource(this.vv) ; */
     }
 }
 
