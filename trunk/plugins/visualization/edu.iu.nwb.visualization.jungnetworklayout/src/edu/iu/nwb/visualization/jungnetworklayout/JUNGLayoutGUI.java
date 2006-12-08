@@ -45,7 +45,7 @@ public class JUNGLayoutGUI extends JFrame {
                 return new Ellipse2D.Float(-5, -5, 10, 10);
             }
         });
-        pr.setVertexLabelCentering(true);
+        pr.setVertexLabelCentering(false);
         pr.setVertexStringer(new VertexStringer() {
 			public String getLabel(ArchetypeVertex v) {
 				
