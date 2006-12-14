@@ -15,21 +15,14 @@ import edu.uci.ics.jung.graph.Vertex;
 import edu.uci.ics.jung.utils.PredicateUtils;
 import edu.uci.ics.jung.utils.UserDataContainer;
 
-/**
- * Takes in a Graph, and returns a Prefuse Graph. The Prefuse Graph will be
- * of the same topology as the JUNG graph, but will be a Prefuse JungGraph
- * extends DefaultGraph object. Its vertices and edges will all be of type 
- * JungVertex extends DefaultVertex and JungEdge extends DefaultEdge. 
- * The Jung* classes contain a field that points back to the original JUNG
- * object.
- * 
- * @author danyelf
- */
+
 public class JungPrefuseBetaConverter {
     
+	private static prefuse.data.Graph prefuseGraph;
+	
     public static prefuse.data.Graph getPrefuseGraph( Graph jungGraph ) {
         Map jungToPrefuseVertices = new HashMap();
-        prefuse.data.Graph prefuseGraph = new prefuse.data.Graph(PredicateUtils.enforcesDirected(jungGraph));
+        prefuseGraph = new prefuse.data.Graph(PredicateUtils.enforcesDirected(jungGraph));
         
         for (Iterator iter = jungGraph.getVertices().iterator(); iter.hasNext();) {
             Vertex vertex = (Vertex) iter.next();
@@ -61,9 +54,11 @@ public class JungPrefuseBetaConverter {
 			Object datum = jungContainer.getUserDatum(realKey);
 			Class metadataClass = datum.getClass();
 			if(!prefuseTuple.canSet(key, metadataClass)) {
-				prefuseTuple.getSchema().addColumn(key, metadataClass);
+				System.out.println("Can't set key " + key + " to class " + metadataClass.toString());
+				prefuseGraph.addColumn(key, metadataClass);
 			}
 			prefuseTuple.set(key, datum);
+			System.out.println("Key " + key + " successfully set to " + prefuseTuple.get(key).toString());
 		}
 		
 	}
