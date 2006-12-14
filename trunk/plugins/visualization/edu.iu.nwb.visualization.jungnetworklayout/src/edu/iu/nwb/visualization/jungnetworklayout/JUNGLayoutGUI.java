@@ -1,6 +1,7 @@
 package edu.iu.nwb.visualization.jungnetworklayout;
 
 import java.awt.Color;
+import java.awt.Dimension;
 import java.awt.Shape;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
@@ -20,7 +21,9 @@ import edu.uci.ics.jung.visualization.VisualizationViewer;
 import edu.uci.ics.jung.visualization.control.DefaultModalGraphMouse;
 
 public class JUNGLayoutGUI extends JFrame {
-    private static final long serialVersionUID = -1066069022881159726L;
+    private static final int ADDITIONAL_SIZE = 100;
+
+	private static final long serialVersionUID = -1066069022881159726L;
 
     private Layout layout ;
 
@@ -60,8 +63,12 @@ public class JUNGLayoutGUI extends JFrame {
         
         vv = new VisualizationViewer(layout, pr);
         vv.setBackground(Color.WHITE);
-
+        
+        
         this.getContentPane().add(vv);
+        this.pack();
+        Dimension size = vv.getGraphLayout().getCurrentSize();
+		this.setSize(new Dimension(size.width + ADDITIONAL_SIZE, size.height + ADDITIONAL_SIZE));
         vv.setGraphMouse(new DefaultModalGraphMouse());
         /* this.vv.removeMouseListener(this.vv.getMouseListeners()[0]);
         this.vv.removeMouseMotionListener(this.vv.getMouseMotionListeners()[0]);

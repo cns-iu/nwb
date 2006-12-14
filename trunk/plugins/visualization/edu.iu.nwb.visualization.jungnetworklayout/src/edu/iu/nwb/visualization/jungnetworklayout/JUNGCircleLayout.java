@@ -47,8 +47,8 @@ public class JUNGCircleLayout implements AlgorithmFactory {
 	            Graph graph = (Graph) dm[0].getData();
 	            ;
 	            JUNGLayoutGUI gui = new JUNGLayoutGUI("Circle Layout", new CircleLayout(graph)); 
-	    		gui.pack();
-	    	    gui.setSize(400, 400) ;
+	    		//gui.pack();
+	    	    //gui.setSize(400, 400) ;
 	    	    gui.show();
 	    	    return null;
 	        }
