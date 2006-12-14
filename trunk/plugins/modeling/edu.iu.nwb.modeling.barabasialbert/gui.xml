@@ -10,6 +10,9 @@
 		<AD name="Links set by new node" id="NewLinks" 
 			type="Integer" default="1" min="1"                        
                         description="Number of links set by new node, must be at least 1"/> 
+		<AD name="Seed of random number generator" id="RandomSeed" 
+			type="Integer" default="1" min="1"                        
+                        description="Seed of random number generator, must be at least 1"/> 
 	</OCD>
 	<Designate pid="edu.iu.nwb.modeling.barabasialbert">
 		<Object ocdref="edu.iu.nwb.modeling.barabasialbert.gui" />

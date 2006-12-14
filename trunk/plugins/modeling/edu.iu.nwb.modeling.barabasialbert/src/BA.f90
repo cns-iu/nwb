@@ -22,13 +22,16 @@
       integer, allocatable,dimension(:)::list_newedges
       logical, allocatable,dimension(:)::label
       real*8 r, binsize
-      character*60 sn_vert,sm0
+      character*60 sn_vert,sm0,sibm
 
 
       call GETARG(2,sn_vert)
       call GETARG(4,sm0)
+      call GETARG(6,sibm)
+
       read(sn_vert,*)n_vert
       read(sm0,*)m0
+      read(sibm,*)ibm
 
 !     Reading of input parameters 
 
@@ -59,8 +62,6 @@
 
 !     ibm is the seed of the multiplicative random number generator used
 !     in this program 
-
-      ibm=10
 
 !     Here the network building starts with the formation of a clique of m vertices
 
