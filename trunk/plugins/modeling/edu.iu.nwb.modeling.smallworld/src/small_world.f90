@@ -13,17 +13,19 @@
       integer, allocatable,dimension(:)::linklist
       integer, allocatable,dimension(:)::check_vic_in,check_vic_out
       real*8 r,p
-      character*60 sn_vert,sk_nei,sp
+      character*60 sn_vert,sk_nei,sp,sibm
 
 !     Reading of input parameters 
       
       call GETARG(2,sn_vert)
       call GETARG(4,sk_nei)
       call GETARG(6,sp)
+      call GETARG(8,sibm)
 
       read(sn_vert,*)n_vert
       read(sk_nei,*)k_nei
       read(sp,*)p
+      read(sibm,*)ibm
 
 !     Array allocations
 
@@ -50,10 +52,6 @@
          enddo
       enddo
       
-!     ibm is the seed of the multiplicative random number generator used
-!     in this program 
-
-      ibm=10
       check_vic_in=0
       check_vic_out=0
 
