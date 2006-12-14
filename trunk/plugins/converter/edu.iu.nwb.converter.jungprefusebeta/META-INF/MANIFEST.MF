@@ -20,4 +20,4 @@ Import-Package: edu.uci.ics.jung.graph,
  prefuse.data,
  prefuse.data.tuple
 X-AutoStart: true
-Service-Component: 
+Service-Component: OSGI-INF/jungprefusebeta.xml
