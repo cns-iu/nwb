@@ -12,15 +12,17 @@
       integer i,j,k,n_edges,iter,n_vert,n_edges_true
       integer, allocatable,dimension(:)::ind,indc,degree,label,listlink,intdegree
       real*8 r,p
-      character*60 sn_vert,sp
+      character*60 sn_vert,sp,sibm
 
 !     Reading of input parameters 
       
       call GETARG(2,sn_vert)
       call GETARG(4,sp)
+      call GETARG(6,sibm)
 
       read(sn_vert,*)n_vert
       read(sp,*)p
+      read(sibm,*)ibm
 
 !     Array allocations
 
@@ -31,11 +33,6 @@
       write(21,110)'// Linking probability ',p
       write(21,103)'*Nodes ',n_vert
       write(21,109)'*UndirectedEdges'
-
-!     ibm is the seed of the multiplicative random number generator used
-!     in this program 
-
-      ibm=10
 
 !     The average degree of the graph is given by the product of the
 !     linking probability p and the number of nodes n_vert
