@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<component name="edu.iu.nwb.converter.jungprefuse.JungPrefuseConverterAlgorithm.component" immediate="false">
-	<implementation class="edu.iu.nwb.converter.jungprefuse.JungPrefuseConverterAlgorithmFactory"/>
-	<properties entry="OSGI-INF/algorithm.properties"/>
+<component name="edu.iu.nwb.converter.jungprefuse.PrefuseJungConverterAlgorithm.component" immediate="false">
+	<implementation class="edu.iu.nwb.converter.jungprefuse.PrefuseJungConverterAlgorithmFactory"/>
+	<properties entry="OSGI-INF/prefusejung.properties"/>
 	<reference name="LOG" interface="org.osgi.service.log.LogService"/>
 	<reference name="MTS" interface="org.osgi.service.metatype.MetaTypeService"/>
 	

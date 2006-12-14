@@ -26,7 +26,7 @@ import edu.uci.ics.jung.graph.Vertex;
  * 
  * @author danyelf
  */
-public class PrefuseConverter {
+public class JungPrefuseConverter {
     
     public static  class JungGraph extends DefaultGraph {
 
