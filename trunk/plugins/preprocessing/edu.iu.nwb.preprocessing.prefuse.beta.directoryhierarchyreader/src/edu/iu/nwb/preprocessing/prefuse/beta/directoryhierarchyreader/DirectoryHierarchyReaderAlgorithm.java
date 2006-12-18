@@ -10,6 +10,7 @@ import org.cishell.framework.data.Data;
 import org.cishell.framework.data.DataProperty;
 
 import prefuse.data.Graph;
+import prefuse.data.Tree;
 
 public class DirectoryHierarchyReaderAlgorithm implements Algorithm {
     Data[] data;
@@ -34,8 +35,8 @@ public class DirectoryHierarchyReaderAlgorithm implements Algorithm {
 	    
 	    Graph g = DirectoryHierarchyReader.readDirectory(rootFile,numLevels,!doSkipFiles);
 	    
-	    Data dm = new BasicData(g, Graph.class.getName());
-	    dm.getMetaData().put(DataProperty.LABEL,"Directory Tree - Prefuse Graph");
+	    Data dm = new BasicData(g, Tree.class.getName());
+	    dm.getMetaData().put(DataProperty.LABEL,"Directory Tree - Prefuse (Beta) Graph");
 	    dm.getMetaData().put(DataProperty.TYPE,DataProperty.TREE_TYPE);
 	    
 	    return new Data[]{dm};
