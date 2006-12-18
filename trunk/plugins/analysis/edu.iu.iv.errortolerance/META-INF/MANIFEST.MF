@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: Error Tolerance
 Bundle-SymbolicName: edu.iu.iv.errortolerance
-Bundle-Version: 0.2.0
+Bundle-Version: 0.3.0
 Bundle-ClassPath: .
 Bundle-Localization: plugin
 Import-Package: edu.uci.ics.jung.graph,
