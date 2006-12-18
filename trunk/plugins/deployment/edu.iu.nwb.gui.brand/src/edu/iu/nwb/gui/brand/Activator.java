@@ -19,7 +19,7 @@ public class Activator extends AbstractUIPlugin implements IStartup{
 	private BundleContext bContext;
 	private static final String nwb_greeting=
 		"Welcome to use Network Workbench Tool "+
-		"-- A large-scale network analysis, modeling and visualization "+
+		"- A large-scale network analysis, modeling and visualization "+
 		"cyberinfrastructure for network scientists.\n"+
 		"The NWB Tool is funded by an NSF IIS-0513650 award to Katy B�rner, "+
 		"Albert-Laszlo Barabasi, Santiago Schnell, Alessandro Vespignani, "+
@@ -27,12 +27,12 @@ public class Activator extends AbstractUIPlugin implements IStartup{
 		"It is developed by Weixia (Bonnie) Huang, Dr. Santo Fortunato, Ben Markines, Bruce Herr, "+
 		"Ramya Sabbineni, Vivek S Thakres, Dr. Soma Sanyal and Dr. Katy B�rner.\n"+
 		"It builds on the Cyberinfrastructure Shell (http://cishell.org) developed "+
-		"at the InfoVis Lab and the CI for Network Science Center at Indiana University.\n\n"+
+		"at the InfoVis Lab and the Cyberinfrastructure for Network Science Center at Indiana University.\n\n"+
         "Please acknowledge this effort by citing:\n"+
         "Bruce Herr, Weixia Huang, Shashikant Penumarthy, and Katy B�rner. (in press). "+
         "Designing Highly Flexible and Usable Cyberinfrastructures for Convergence. "+
         "William S. Bainbridge (Ed.) Progress in Convergence. Annals of the New York Academy of Sciences.\n"+
-        "http://ella.slis.indiana.edu/~katy/paper/06-cishell.pdf";
+        "http://cishell.org/papers/06-cishell.pdf";
 	
 	/**
 	 * The constructor
