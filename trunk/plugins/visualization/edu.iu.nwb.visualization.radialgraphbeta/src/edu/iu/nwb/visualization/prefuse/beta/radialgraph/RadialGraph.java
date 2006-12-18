@@ -1,4 +1,4 @@
-package edu.iu.nwb.visualization.radialgraphbeta;
+package edu.iu.nwb.visualization.prefuse.beta.radialgraph;
 
 import java.util.Dictionary;
 

@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<component name="edu.iu.nwb.visualization.prefuse.beta.radialgraph.RadialGraph.component" immediate="false">
-	<implementation class="edu.iu.nwb.visualization.prefuse.beta.radialgraph.RadialGraph"/>
-	<properties entry="OSGI-INF/RadialGraph.properties"/>
+<component name="edu.iu.nwb.visualization.prefuse.beta.graphview.GraphView.component" immediate="false">
+	<implementation class="edu.iu.nwb.visualization.prefuse.beta.graphview.GraphView"/>
+	<properties entry="OSGI-INF/GraphView.properties"/>
 	<reference name="LOG" interface="org.osgi.service.log.LogService"/>
 	<reference name="MTS" interface="org.osgi.service.metatype.MetaTypeService"/>
 	

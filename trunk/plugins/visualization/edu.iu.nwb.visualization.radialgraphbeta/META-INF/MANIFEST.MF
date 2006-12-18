@@ -1,10 +1,10 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
-Bundle-Name: Radial Graph Visualization Plug-in using Prefuse Beta
-Bundle-SymbolicName: edu.iu.nwb.visualization.radialgraphbeta
-Bundle-Version: 0.2.0
+Bundle-Name: Visualization Plug-in using Prefuse Beta
+Bundle-SymbolicName: edu.iu.nwb.visualization.prefuse.beta
+Bundle-Version: 0.3
 Bundle-Localization: plugin
-Service-Component: OSGI-INF/RadialGraph.xml
+Service-Component: OSGI-INF/RadialGraph.xml, OSGI-INF/GraphView.xml
 X-AutoStart: true
 Import-Package: org.cishell.framework,
  org.cishell.framework.algorithm,
