@@ -6,6 +6,7 @@ Bundle-Version: 0.2.0
 Bundle-ClassPath: .
 Bundle-Localization: plugin
 Import-Package: edu.uci.ics.jung.graph,
+ edu.uci.ics.jung.graph.impl,
  edu.uci.ics.jung.utils,
  org.apache.commons.collections,
  org.cishell.framework,
@@ -20,4 +21,4 @@ Import-Package: edu.uci.ics.jung.graph,
  prefuse.data,
  prefuse.data.tuple
 X-AutoStart: true
-Service-Component: OSGI-INF/jungprefusebeta.xml
+Service-Component: OSGI-INF/jungprefusebeta.xml, OSGI-INF/prefusebetajung.xml
