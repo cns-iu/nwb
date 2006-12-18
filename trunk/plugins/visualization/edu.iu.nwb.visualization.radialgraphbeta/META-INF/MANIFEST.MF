@@ -4,7 +4,7 @@ Bundle-Name: Visualization Plug-in using Prefuse Beta
 Bundle-SymbolicName: edu.iu.nwb.visualization.prefuse.beta
 Bundle-Version: 0.3
 Bundle-Localization: plugin
-Service-Component: OSGI-INF/RadialGraph.xml, OSGI-INF/GraphView.xml
+Service-Component: OSGI-INF/RadialGraph.xml, OSGI-INF/GraphView.xml, OSGI-INF/TreeMap.xml
 X-AutoStart: true
 Import-Package: org.cishell.framework,
  org.cishell.framework.algorithm,

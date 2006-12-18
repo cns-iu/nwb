@@ -13,6 +13,8 @@ import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.SwingConstants;
 
+import edu.iu.nwb.visualization.prefuse.beta.common.PrefuseBetaVisualization;
+
 import prefuse.Constants;
 import prefuse.Display;
 import prefuse.Visualization;
@@ -67,7 +69,7 @@ import prefuse.visual.sort.TreeDepthItemSorter;
  * @version 1.0
  * @author <a href="http://jheer.org">jeffrey heer</a>
  */
-public class RadialGraphVisualization extends Display {
+public class RadialGraphVisualization extends Display implements PrefuseBetaVisualization {
 
     public static final String DATA_FILE = "/socialnet.xml";
     
@@ -215,7 +217,11 @@ public class RadialGraphVisualization extends Display {
     
     // ------------------------------------------------------------------------
     
-    public static void create(Graph g, final String label) {
+    public RadialGraphVisualization() {
+		// TODO Auto-generated constructor stub
+	}
+
+	public void create(Graph g, final String label) {
         
         UILib.setPlatformLookAndFeel();
         
@@ -226,7 +232,7 @@ public class RadialGraphVisualization extends Display {
         frame.setVisible(true);
     }
     
-    public static JPanel demo(Graph g, final String label) {        
+    public JPanel demo(Graph g, final String label) {        
         // create a new radial tree view
         final RadialGraphVisualization gview = new RadialGraphVisualization(g, label);
         Visualization vis = gview.getVisualization();

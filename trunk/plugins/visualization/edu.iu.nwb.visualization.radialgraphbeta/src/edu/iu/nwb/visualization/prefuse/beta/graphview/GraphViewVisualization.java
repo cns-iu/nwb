@@ -31,6 +31,8 @@ import javax.swing.event.ChangeListener;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
+import edu.iu.nwb.visualization.prefuse.beta.common.PrefuseBetaVisualization;
+
 import prefuse.Display;
 import prefuse.Visualization;
 import prefuse.action.ActionList;
@@ -70,7 +72,7 @@ import prefuse.visual.VisualItem;
 /**
  * @author <a href="http://jheer.org">jeffrey heer</a>
  */
-public class GraphViewVisualization extends JPanel {
+public class GraphViewVisualization extends JPanel implements PrefuseBetaVisualization {
 
     private static final String graph = "graph";
     private static final String nodes = "graph.nodes";
@@ -222,7 +224,11 @@ public class GraphViewVisualization extends JPanel {
         add(split);
     }
     
-    public void setGraph(Graph g, String label) {
+    public GraphViewVisualization() {
+		// TODO Auto-generated constructor stub
+	}
+
+	public void setGraph(Graph g, String label) {
         // update labeling
         DefaultRendererFactory drf = (DefaultRendererFactory)
                                                 m_vis.getRendererFactory();
@@ -240,7 +246,7 @@ public class GraphViewVisualization extends JPanel {
     // ------------------------------------------------------------------------
     // Main and demo methods
     
-    public static void create(Graph graph, String label) {
+    public void create(Graph graph, String label) {
         UILib.setPlatformLookAndFeel();
         
         // create graphview
@@ -252,7 +258,7 @@ public class GraphViewVisualization extends JPanel {
     
     
     
-    public static JFrame demo(Graph g, String label) {
+    public JFrame demo(Graph g, String label) {
         final GraphViewVisualization view = new GraphViewVisualization(g, label);
         
         // set up menu
