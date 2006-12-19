@@ -21,15 +21,15 @@ public class Activator extends AbstractUIPlugin implements IStartup{
 		"Welcome to use Network Workbench Tool "+
 		"- A large-scale network analysis, modeling and visualization "+
 		"cyberinfrastructure for network scientists.\n"+
-		"The NWB Tool is funded by an NSF IIS-0513650 award to Katy Bï¿½rner, "+
+		"The NWB Tool is funded by an NSF IIS-0513650 award to Katy Börner, "+
 		"Albert-Laszlo Barabasi, Santiago Schnell, Alessandro Vespignani, "+
 		"Stanley Wasserman, and Eric Wernert, see  http://nwb.slis.indiana.edu.\n"+
 		"It is developed by Weixia (Bonnie) Huang, Dr. Santo Fortunato, Ben Markines, Bruce Herr, "+
-		"Ramya Sabbineni, Vivek S Thakres, Dr. Soma Sanyal and Dr. Katy Bï¿½rner.\n"+
+		"Ramya Sabbineni, Vivek S Thakres, Dr. Soma Sanyal and Dr. Katy Börner.\n"+
 		"It builds on the Cyberinfrastructure Shell (http://cishell.org) developed "+
 		"at the InfoVis Lab and the Cyberinfrastructure for Network Science Center at Indiana University.\n\n"+
         "Please acknowledge this effort by citing:\n"+
-        "Bruce Herr, Weixia Huang, Shashikant Penumarthy, and Katy Bï¿½rner. (in press). "+
+        "Bruce Herr, Weixia Huang, Shashikant Penumarthy, and Katy Börner. (in press). "+
         "Designing Highly Flexible and Usable Cyberinfrastructures for Convergence. "+
         "William S. Bainbridge (Ed.) Progress in Convergence. Annals of the New York Academy of Sciences.\n"+
         "http://cishell.org/papers/06-cishell.pdf";
