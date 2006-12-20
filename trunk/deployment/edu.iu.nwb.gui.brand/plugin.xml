@@ -60,7 +60,7 @@
                 relationship="bottom"
                 ratio="1.00"
                 moveable = "true"
-                closeable = "true"
+                closeable = "false"
                 visible="true"/>
       </perspectiveExtension>      
 	</extension>

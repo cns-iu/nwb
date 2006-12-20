@@ -17,6 +17,7 @@ public class Activator extends AbstractUIPlugin implements IStartup{
 	// The shared instance
 	private static Activator plugin;	
 	private BundleContext bContext;
+	private boolean enableEarlyStartup;
 	private static final String nwb_greeting=
 		"Welcome to use Network Workbench Tool "+
 		"- A large-scale network analysis, modeling and visualization "+
@@ -48,6 +49,15 @@ public class Activator extends AbstractUIPlugin implements IStartup{
 	public void start(BundleContext context) throws Exception {
 		super.start(context);
 		this.bContext = context;
+		if (!enableEarlyStartup){
+    		ServiceReference ref = bContext.getServiceReference(LogService.class.getName());
+            
+            if (ref != null) {
+                LogService logger = (LogService)bContext.getService(ref);
+                logger.log(LogService.LOG_INFO, nwb_greeting);
+            }
+
+		}
 		
 	}
 
@@ -77,8 +87,13 @@ public class Activator extends AbstractUIPlugin implements IStartup{
             if (ref != null) {
                 LogService logger = (LogService)bContext.getService(ref);
                 logger.log(LogService.LOG_INFO, nwb_greeting);
+                enableEarlyStartup = true;
             }
+            else
+            	enableEarlyStartup = false;
         }
+        else
+        	enableEarlyStartup = false;
 	}
 
 	/**
