@@ -12,11 +12,11 @@ GraphML, XGMML, Pajek .net, NWB, Plain Text for XMGrace application, and Plain T
 The tool deliver the following data/file converters:
    </description>
 
-  	<copyright>
+   <copyright>
       Copyright 2006 Indiana University
-   	</copyright>
+   </copyright>
 
-   	<license url="http://www.apache.org/licenses/LICENSE-2.0">
+   <license url="http://www.apache.org/licenses/LICENSE-2.0">
       NWB Tool: Network Workbench Tool
 Copyright 2006 Indiana University
 Licensed under the Apache License, Version 2.0 (the &quot;License&quot;);
@@ -32,7 +32,7 @@ Project Contacts:
 Weixia Huang (huangb@indiana.edu)
 Bruce Herr (bh2@bh2.net)
 Dr. Katy Borner (katy@indiana.edu)
-	</license>
+   </license>
 
    <url>
       <update label="Network Workbench Tool Update Site" url="http://nwb.slis.indiana.edu/update"/>
@@ -74,14 +74,14 @@ Dr. Katy Borner (katy@indiana.edu)
          unpack="false"/>
 
    <plugin
-         id="edu.iu.nwb.converter.prefusegraphml"
+         id="edu.iu.nwb.converter.prefusexgmml"
          download-size="0"
          install-size="0"
          version="0.0.0"
          unpack="false"/>
 
    <plugin
-         id="edu.iu.nwb.converter.prefusexgmml"
+         id="edu.iu.nwb.converter.jungprefusebeta"
          download-size="0"
          install-size="0"
          version="0.0.0"
