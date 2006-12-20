@@ -223,7 +223,7 @@ public class SmallWorldFrame extends JFrame implements ProgressUpdate, Component
             lower_panel.setLayout( new GridLayout( 2, 1 ) );
             lower_panel.add( m_quality );
             lower_panel.add( progress );            
-			setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);            
+			setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);            
             getContentPane( ).setLayout( new BorderLayout(5,5) );
             getContentPane( ).add(m_display, BorderLayout.CENTER );
             getContentPane( ).add(slider, BorderLayout.EAST );
