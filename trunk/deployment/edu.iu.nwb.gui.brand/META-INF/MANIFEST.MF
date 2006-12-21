@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: Brand Plug-in
 Bundle-SymbolicName: edu.iu.nwb.gui.brand; singleton:=true
-Bundle-Version: 0.2.0
+Bundle-Version: 0.3.0
 Bundle-Activator: edu.iu.nwb.gui.brand.Activator
 Bundle-Localization: plugin
 Require-Bundle: org.eclipse.ui,

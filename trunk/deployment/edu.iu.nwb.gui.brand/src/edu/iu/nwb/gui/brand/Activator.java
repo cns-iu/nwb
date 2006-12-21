@@ -17,9 +17,23 @@ public class Activator extends AbstractUIPlugin implements IStartup{
 	// The shared instance
 	private static Activator plugin;	
 	private BundleContext bContext;
-	private boolean enableEarlyStartup;
 	private static final String nwb_greeting=
-		"Welcome to use Network Workbench Tool "+
+		"Welcome to the Network Workbench (NWB) tool that supports "+
+		"the preprocessing, modeling, analysis, and visualization of "+
+		"small, medium, and large networks. \n"+
+		"The tool was developed by Weixia (Bonnie) Huang, Dr. Santo Fortunato, "+
+		"Ben Markines, Bruce Herr, Russell Duhon, Ramya Sabbineni, Vivek S. Thakres, "+
+		"Dr. Soma Sanyal, and Dr. Katy Börner. It builds on the Cyberinfrastructure Shell "+
+		"(http://cishell.org) developed at the Information Visualization Laboratory and "+
+		"the Cyberinfrastructure for Network Science Center, both at Indiana University.\n"+
+		"The NWB tool is an integral part of a cyberinfrastructure for network scientists "+
+		"that is funded by an NSF IIS-0513650 award to Katy Börner, Albert-Laszlo Barabasi, "+
+		"Santiago Schnell, Alessandro Vespignani, Stanley Wasserman, and Eric Wernert. "+
+		"For more information on the Network Workbench project, see "+
+		"http://nwb.slis.indiana.edu.";
+
+	
+/*		"Welcome to use Network Workbench Tool "+
 		"- A large-scale network analysis, modeling and visualization "+
 		"cyberinfrastructure for network scientists.\n"+
 		"The NWB Tool is funded by an NSF IIS-0513650 award to Katy Börner, "+
@@ -34,6 +48,7 @@ public class Activator extends AbstractUIPlugin implements IStartup{
         "Designing Highly Flexible and Usable Cyberinfrastructures for Convergence. "+
         "William S. Bainbridge (Ed.) Progress in Convergence. Annals of the New York Academy of Sciences.\n"+
         "http://cishell.org/papers/06-cishell.pdf";
+*/
 	
 	/**
 	 * The constructor
@@ -49,16 +64,6 @@ public class Activator extends AbstractUIPlugin implements IStartup{
 	public void start(BundleContext context) throws Exception {
 		super.start(context);
 		this.bContext = context;
-		if (!enableEarlyStartup){
-    		ServiceReference ref = bContext.getServiceReference(LogService.class.getName());
-            
-            if (ref != null) {
-                LogService logger = (LogService)bContext.getService(ref);
-                logger.log(LogService.LOG_INFO, nwb_greeting);
-            }
-
-		}
-		
 	}
 
 	/*
@@ -87,13 +92,9 @@ public class Activator extends AbstractUIPlugin implements IStartup{
             if (ref != null) {
                 LogService logger = (LogService)bContext.getService(ref);
                 logger.log(LogService.LOG_INFO, nwb_greeting);
-                enableEarlyStartup = true;
-            }
-            else
-            	enableEarlyStartup = false;
+            }            
         }
-        else
-        	enableEarlyStartup = false;
+        
 	}
 
 	/**
