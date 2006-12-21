@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<metatype:MetaData xmlns:metatype="http://www.osgi.org/xmlns/metatype/v1.0.0">
+	<OCD name="Diameter" id="edu.iu.nwb.analysis.diameter.gui"
+		 description="Diameter">
+	</OCD>
+	<Designate pid="edu.iu.nwb.analysis.diameter">
+		<Object ocdref="edu.iu.nwb.analysis.diameter.gui" />
+	</Designate>
+</metatype:MetaData>
