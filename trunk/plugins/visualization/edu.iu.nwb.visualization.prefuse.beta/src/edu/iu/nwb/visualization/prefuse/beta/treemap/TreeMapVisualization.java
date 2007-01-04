@@ -8,6 +8,7 @@ import java.awt.Font;
 import java.awt.Shape;
 import java.awt.event.MouseEvent;
 import java.awt.geom.Rectangle2D;
+import java.util.Dictionary;
 import java.util.Iterator;
 
 import javax.swing.BorderFactory;
@@ -17,6 +18,7 @@ import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.SwingConstants;
 
+import edu.iu.nwb.visualization.prefuse.beta.common.Constants;
 import edu.iu.nwb.visualization.prefuse.beta.common.PrefuseBetaVisualization;
 
 import prefuse.Display;
@@ -163,17 +165,19 @@ public class TreeMapVisualization extends Display implements PrefuseBetaVisualiz
         return searchQ;
     }
     
-    public void create(Graph graph, String label) {
+    public Graph create(Graph graph, Dictionary parameters) {
         UILib.setPlatformLookAndFeel();
         
         
-        JComponent treemap = demo((Tree) graph, label);
+        String label = (String) parameters.get(Constants.label);
+		JComponent treemap = demo((Tree) graph, label);
         
         JFrame frame = new JFrame("p r e f u s e  |  t r e e m a p");
         frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         frame.setContentPane(treemap);
         frame.pack();
         frame.setVisible(true);
+		return null;
     }
     
     

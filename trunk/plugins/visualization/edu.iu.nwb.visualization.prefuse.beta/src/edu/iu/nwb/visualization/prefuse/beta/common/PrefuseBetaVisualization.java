@@ -1,7 +1,9 @@
 package edu.iu.nwb.visualization.prefuse.beta.common;
 
+import java.util.Dictionary;
+
 import prefuse.data.Graph;
 
 public interface PrefuseBetaVisualization {
-	public void create(Graph graph, String label);
+	public Graph create(Graph graph, Dictionary parameters);
 }

@@ -7,6 +7,7 @@ import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.MouseEvent;
 import java.awt.geom.Point2D;
+import java.util.Dictionary;
 
 import javax.swing.AbstractAction;
 import javax.swing.BorderFactory;
@@ -18,9 +19,10 @@ import javax.swing.JPanel;
 import javax.swing.KeyStroke;
 import javax.swing.SwingConstants;
 
+import edu.iu.nwb.visualization.prefuse.beta.common.Constants;
 import edu.iu.nwb.visualization.prefuse.beta.common.PrefuseBetaVisualization;
 
-import prefuse.Constants;
+
 import prefuse.Display;
 import prefuse.Visualization;
 import prefuse.action.Action;
@@ -80,7 +82,7 @@ public class TreeViewVisualization extends Display implements PrefuseBetaVisuali
     private EdgeRenderer m_edgeRenderer;
     
     private String m_label = "label";
-    private int m_orientation = Constants.ORIENT_LEFT_RIGHT;
+    private int m_orientation = prefuse.Constants.ORIENT_LEFT_RIGHT;
     
     public TreeViewVisualization(Tree t, String label) {
         super(new Visualization());
@@ -90,9 +92,9 @@ public class TreeViewVisualization extends Display implements PrefuseBetaVisuali
         
         m_nodeRenderer = new LabelRenderer(m_label);
         m_nodeRenderer.setRenderType(AbstractShapeRenderer.RENDER_TYPE_FILL);
-        m_nodeRenderer.setHorizontalAlignment(Constants.LEFT);
+        m_nodeRenderer.setHorizontalAlignment(prefuse.Constants.LEFT);
         m_nodeRenderer.setRoundedCorner(8,8);
-        m_edgeRenderer = new EdgeRenderer(Constants.EDGE_TYPE_CURVE);
+        m_edgeRenderer = new EdgeRenderer(prefuse.Constants.EDGE_TYPE_CURVE);
         
         DefaultRendererFactory rf = new DefaultRendererFactory(m_nodeRenderer);
         rf.add(new InGroupPredicate(treeEdges), m_edgeRenderer);
@@ -179,16 +181,16 @@ public class TreeViewVisualization extends Display implements PrefuseBetaVisuali
         addControlListener(new FocusControl(1, "filter"));
         
         registerKeyboardAction(
-            new OrientAction(Constants.ORIENT_LEFT_RIGHT),
+            new OrientAction(prefuse.Constants.ORIENT_LEFT_RIGHT),
             "left-to-right", KeyStroke.getKeyStroke("ctrl 1"), WHEN_FOCUSED);
         registerKeyboardAction(
-            new OrientAction(Constants.ORIENT_TOP_BOTTOM),
+            new OrientAction(prefuse.Constants.ORIENT_TOP_BOTTOM),
             "top-to-bottom", KeyStroke.getKeyStroke("ctrl 2"), WHEN_FOCUSED);
         registerKeyboardAction(
-            new OrientAction(Constants.ORIENT_RIGHT_LEFT),
+            new OrientAction(prefuse.Constants.ORIENT_RIGHT_LEFT),
             "right-to-left", KeyStroke.getKeyStroke("ctrl 3"), WHEN_FOCUSED);
         registerKeyboardAction(
-            new OrientAction(Constants.ORIENT_BOTTOM_TOP),
+            new OrientAction(prefuse.Constants.ORIENT_BOTTOM_TOP),
             "bottom-to-top", KeyStroke.getKeyStroke("ctrl 4"), WHEN_FOCUSED);
         
         // ------------------------------------------------
@@ -220,33 +222,33 @@ public class TreeViewVisualization extends Display implements PrefuseBetaVisuali
         CollapsedSubtreeLayout stl
             = (CollapsedSubtreeLayout)m_vis.getAction("subLayout");
         switch ( orientation ) {
-        case Constants.ORIENT_LEFT_RIGHT:
-            m_nodeRenderer.setHorizontalAlignment(Constants.LEFT);
-            m_edgeRenderer.setHorizontalAlignment1(Constants.RIGHT);
-            m_edgeRenderer.setHorizontalAlignment2(Constants.LEFT);
-            m_edgeRenderer.setVerticalAlignment1(Constants.CENTER);
-            m_edgeRenderer.setVerticalAlignment2(Constants.CENTER);
+        case prefuse.Constants.ORIENT_LEFT_RIGHT:
+            m_nodeRenderer.setHorizontalAlignment(prefuse.Constants.LEFT);
+            m_edgeRenderer.setHorizontalAlignment1(prefuse.Constants.RIGHT);
+            m_edgeRenderer.setHorizontalAlignment2(prefuse.Constants.LEFT);
+            m_edgeRenderer.setVerticalAlignment1(prefuse.Constants.CENTER);
+            m_edgeRenderer.setVerticalAlignment2(prefuse.Constants.CENTER);
             break;
-        case Constants.ORIENT_RIGHT_LEFT:
-            m_nodeRenderer.setHorizontalAlignment(Constants.RIGHT);
-            m_edgeRenderer.setHorizontalAlignment1(Constants.LEFT);
-            m_edgeRenderer.setHorizontalAlignment2(Constants.RIGHT);
-            m_edgeRenderer.setVerticalAlignment1(Constants.CENTER);
-            m_edgeRenderer.setVerticalAlignment2(Constants.CENTER);
+        case prefuse.Constants.ORIENT_RIGHT_LEFT:
+            m_nodeRenderer.setHorizontalAlignment(prefuse.Constants.RIGHT);
+            m_edgeRenderer.setHorizontalAlignment1(prefuse.Constants.LEFT);
+            m_edgeRenderer.setHorizontalAlignment2(prefuse.Constants.RIGHT);
+            m_edgeRenderer.setVerticalAlignment1(prefuse.Constants.CENTER);
+            m_edgeRenderer.setVerticalAlignment2(prefuse.Constants.CENTER);
             break;
-        case Constants.ORIENT_TOP_BOTTOM:
-            m_nodeRenderer.setHorizontalAlignment(Constants.CENTER);
-            m_edgeRenderer.setHorizontalAlignment1(Constants.CENTER);
-            m_edgeRenderer.setHorizontalAlignment2(Constants.CENTER);
-            m_edgeRenderer.setVerticalAlignment1(Constants.BOTTOM);
-            m_edgeRenderer.setVerticalAlignment2(Constants.TOP);
+        case prefuse.Constants.ORIENT_TOP_BOTTOM:
+            m_nodeRenderer.setHorizontalAlignment(prefuse.Constants.CENTER);
+            m_edgeRenderer.setHorizontalAlignment1(prefuse.Constants.CENTER);
+            m_edgeRenderer.setHorizontalAlignment2(prefuse.Constants.CENTER);
+            m_edgeRenderer.setVerticalAlignment1(prefuse.Constants.BOTTOM);
+            m_edgeRenderer.setVerticalAlignment2(prefuse.Constants.TOP);
             break;
-        case Constants.ORIENT_BOTTOM_TOP:
-            m_nodeRenderer.setHorizontalAlignment(Constants.CENTER);
-            m_edgeRenderer.setHorizontalAlignment1(Constants.CENTER);
-            m_edgeRenderer.setHorizontalAlignment2(Constants.CENTER);
-            m_edgeRenderer.setVerticalAlignment1(Constants.TOP);
-            m_edgeRenderer.setVerticalAlignment2(Constants.BOTTOM);
+        case prefuse.Constants.ORIENT_BOTTOM_TOP:
+            m_nodeRenderer.setHorizontalAlignment(prefuse.Constants.CENTER);
+            m_edgeRenderer.setHorizontalAlignment1(prefuse.Constants.CENTER);
+            m_edgeRenderer.setHorizontalAlignment2(prefuse.Constants.CENTER);
+            m_edgeRenderer.setVerticalAlignment1(prefuse.Constants.TOP);
+            m_edgeRenderer.setVerticalAlignment2(prefuse.Constants.BOTTOM);
             break;
         default:
             throw new IllegalArgumentException(
@@ -263,15 +265,17 @@ public class TreeViewVisualization extends Display implements PrefuseBetaVisuali
     
     // ------------------------------------------------------------------------
     
-    public void create(Graph graph, String label) {
+    public Graph create(Graph graph, Dictionary parameters) {
         
-        JComponent treeview = demo((Tree) graph, label);
+        String label = (String) parameters.get(Constants.label);
+		JComponent treeview = demo((Tree) graph, label);
         
         JFrame frame = new JFrame("p r e f u s e  |  t r e e v i e w");
         frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         frame.setContentPane(treeview);
         frame.pack();
         frame.setVisible(true);
+		return null;
     }
     
     
@@ -358,16 +362,16 @@ public class TreeViewVisualization extends Display implements PrefuseBetaVisuali
             if ( frac == 0.0 ) {
                 int xbias=0, ybias=0;
                 switch ( m_orientation ) {
-                case Constants.ORIENT_LEFT_RIGHT:
+                case prefuse.Constants.ORIENT_LEFT_RIGHT:
                     xbias = m_bias;
                     break;
-                case Constants.ORIENT_RIGHT_LEFT:
+                case prefuse.Constants.ORIENT_RIGHT_LEFT:
                     xbias = -m_bias;
                     break;
-                case Constants.ORIENT_TOP_BOTTOM:
+                case prefuse.Constants.ORIENT_TOP_BOTTOM:
                     ybias = m_bias;
                     break;
-                case Constants.ORIENT_BOTTOM_TOP:
+                case prefuse.Constants.ORIENT_BOTTOM_TOP:
                     ybias = -m_bias;
                     break;
                 }

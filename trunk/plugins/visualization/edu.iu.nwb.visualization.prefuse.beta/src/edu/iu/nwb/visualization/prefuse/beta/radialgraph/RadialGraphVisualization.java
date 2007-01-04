@@ -5,6 +5,7 @@ import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.event.MouseEvent;
+import java.util.Dictionary;
 
 import javax.swing.BorderFactory;
 import javax.swing.Box;
@@ -13,9 +14,9 @@ import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.SwingConstants;
 
+import edu.iu.nwb.visualization.prefuse.beta.common.Constants;
 import edu.iu.nwb.visualization.prefuse.beta.common.PrefuseBetaVisualization;
 
-import prefuse.Constants;
 import prefuse.Display;
 import prefuse.Visualization;
 import prefuse.action.ActionList;
@@ -28,6 +29,7 @@ import prefuse.action.animate.QualityControlAnimator;
 import prefuse.action.animate.VisibilityAnimator;
 import prefuse.action.assignment.ColorAction;
 import prefuse.action.assignment.FontAction;
+import prefuse.action.assignment.SizeAction;
 import prefuse.action.layout.CollapsedSubtreeLayout;
 import prefuse.action.layout.graph.RadialTreeLayout;
 import prefuse.activity.SlowInSlowOutPacer;
@@ -94,7 +96,7 @@ public class RadialGraphVisualization extends Display implements PrefuseBetaVisu
         // -- set up renderers --
         m_nodeRenderer = new LabelRenderer(m_label);
         m_nodeRenderer.setRenderType(ShapeRenderer.RENDER_TYPE_FILL);
-        m_nodeRenderer.setHorizontalAlignment(Constants.CENTER);
+        m_nodeRenderer.setHorizontalAlignment(prefuse.Constants.CENTER);
         m_nodeRenderer.setRoundedCorner(8,8);
         m_edgeRenderer = new EdgeRenderer() {
         	public double getLineWidth(VisualItem item) {
@@ -130,8 +132,20 @@ public class RadialGraphVisualization extends Display implements PrefuseBetaVisu
         recolor.add(textColor);
         m_vis.putAction("recolor", recolor);
         
+        SizeAction sizeAction = new SizeAction() {
+        	public double getSize(VisualItem item) {
+        		double scale = RadialGraphVisualization.this.getScale();
+        		if(scale <= 1) {
+        			return 1;
+        		} else {
+        			return 1 / scale;
+        		}
+        	}
+        };
+        
         // repaint
         ActionList repaint = new ActionList();
+        repaint.add(sizeAction);
         repaint.add(recolor);
         repaint.add(new RepaintAction());
         m_vis.putAction("repaint", repaint);
@@ -150,12 +164,16 @@ public class RadialGraphVisualization extends Display implements PrefuseBetaVisu
         CollapsedSubtreeLayout subLayout = new CollapsedSubtreeLayout(tree);
         m_vis.putAction("subLayout", subLayout);
         
+        
+        m_vis.putAction("size", sizeAction);
+        
         // create the filtering and layout
         ActionList filter = new ActionList();
         filter.add(new TreeRootAction(tree));
         filter.add(fonts);
         filter.add(treeLayout);
         filter.add(subLayout);
+		filter.add(sizeAction);
         filter.add(textColor);
         filter.add(nodeColor);
         filter.add(edgeColor);
@@ -163,6 +181,7 @@ public class RadialGraphVisualization extends Display implements PrefuseBetaVisu
         
         // animated transition
         ActionList animate = new ActionList(1250);
+        animate.add(sizeAction);
         animate.setPacingFunction(new SlowInSlowOutPacer());
         animate.add(new QualityControlAnimator());
         animate.add(new VisibilityAnimator(tree));
@@ -178,8 +197,18 @@ public class RadialGraphVisualization extends Display implements PrefuseBetaVisu
         setSize(600,600);
         setItemSorter(new TreeDepthItemSorter());
         addControlListener(new DragControl());
-        addControlListener(new ZoomToFitControl());
-        addControlListener(new ZoomControl());
+        addControlListener(new ZoomToFitControl() {
+        	public void mouseClicked(MouseEvent event) {
+        		m_vis.run("size");
+        		super.mouseClicked(event);
+        	}
+        });
+        addControlListener(new ZoomControl() {
+        	public void mouseDragged(MouseEvent event) {
+        		m_vis.run("size");
+        		super.mouseDragged(event);
+        	}
+        });
         addControlListener(new PanControl());
         addControlListener(new FocusControl(1, "filter"));
         addControlListener(new HoverActionControl("repaint"));
@@ -221,15 +250,17 @@ public class RadialGraphVisualization extends Display implements PrefuseBetaVisu
 		// TODO Auto-generated constructor stub
 	}
 
-	public void create(Graph g, final String label) {
+	public Graph create(Graph g, Dictionary parameters) {
         
         UILib.setPlatformLookAndFeel();
         
         JFrame frame = new JFrame("p r e f u s e  |  r a d i a l t r e e v i e w");
         frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-        frame.setContentPane(demo(g, label));
+        String label = (String) parameters.get(Constants.label);
+		frame.setContentPane(demo(g, label));
         frame.pack();
         frame.setVisible(true);
+		return null;
     }
     
     public JPanel demo(Graph g, final String label) {        

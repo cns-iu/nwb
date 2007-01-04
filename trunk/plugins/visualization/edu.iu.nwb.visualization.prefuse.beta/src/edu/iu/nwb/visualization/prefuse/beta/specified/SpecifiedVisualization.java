@@ -1,4 +1,4 @@
-package edu.iu.nwb.visualization.prefuse.beta.graphview;
+package edu.iu.nwb.visualization.prefuse.beta.specified;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
@@ -11,6 +11,7 @@ import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.awt.geom.Rectangle2D;
 import java.util.Dictionary;
+import java.util.Iterator;
 
 import javax.swing.AbstractAction;
 import javax.swing.BorderFactory;
@@ -44,6 +45,7 @@ import prefuse.action.RepaintAction;
 import prefuse.action.assignment.ColorAction;
 import prefuse.action.assignment.SizeAction;
 import prefuse.action.filter.GraphDistanceFilter;
+import prefuse.action.layout.SpecifiedLayout;
 import prefuse.action.layout.graph.ForceDirectedLayout;
 import prefuse.activity.Activity;
 import prefuse.controls.DragControl;
@@ -54,9 +56,12 @@ import prefuse.controls.WheelZoomControl;
 import prefuse.controls.ZoomControl;
 import prefuse.controls.ZoomToFitControl;
 import prefuse.data.Graph;
+import prefuse.data.Node;
+import prefuse.data.Schema;
 import prefuse.data.Table;
 import prefuse.data.Tuple;
 import prefuse.data.event.TupleSetListener;
+import prefuse.data.expression.ColumnExpression;
 import prefuse.data.io.GraphMLReader;
 import prefuse.data.tuple.TupleSet;
 import prefuse.render.DefaultRendererFactory;
@@ -77,18 +82,17 @@ import prefuse.visual.VisualItem;
 /**
  * @author <a href="http://jheer.org">jeffrey heer</a>
  */
-public class GraphViewVisualization extends JPanel implements PrefuseBetaVisualization {
+public class SpecifiedVisualization extends JPanel implements PrefuseBetaVisualization {
 
     private static final String graph = "graph";
     private static final String nodes = "graph.nodes";
     private static final String edges = "graph.edges";
 
     private Visualization m_vis;
-    public Graph visualGraph;
-	private VisualGraph vg;
+	private Dictionary parameters;
     
-    public GraphViewVisualization(Graph g, String label) {
-        
+    public SpecifiedVisualization(Graph g, String label, Dictionary parameters) {
+        this.parameters = parameters;
         // create a new, empty visualization for our data
         m_vis = new Visualization();
         
@@ -98,31 +102,45 @@ public class GraphViewVisualization extends JPanel implements PrefuseBetaVisuali
         LabelRenderer tr = new LabelRenderer();
         tr.setRoundedCorner(8, 8);
         m_vis.setRendererFactory(new DefaultRendererFactory(tr));
-
+        
+        String xLabel = (String) parameters.get(Constants.x);
+		String yLabel = (String) parameters.get(Constants.y);
+		
+		//moderately bad, but necessary, hack
+		
+		class ToDoubleExpression extends ColumnExpression {
+			ToDoubleExpression(String column) {
+				super(column);
+			}
+			
+			public double getDouble(Tuple t) {
+				if(super.getType(t.getSchema()) == double.class) {
+					return super.getDouble(t);
+				}
+				double value = Double.parseDouble((String) super.get(t));
+				return value;
+			}
+			public Class getType(Schema s) {
+				return double.class;
+			}
+		}
+		
+		g.addColumn(Constants._x, new ToDoubleExpression(xLabel));
+		g.addColumn(Constants._y, new ToDoubleExpression(yLabel));
+		
+		
+		
+        
+        
         // --------------------------------------------------------------------
         // register the data with a visualization
         
         // adds graph to visualization and sets renderer label field
         setGraph(g, label);
         
-        // fix selected focus nodes
-        TupleSet focusGroup = m_vis.getGroup(Visualization.FOCUS_ITEMS); 
-        focusGroup.addTupleSetListener(new TupleSetListener() {
-            public void tupleSetChanged(TupleSet ts, Tuple[] add, Tuple[] rem)
-            {
-                for ( int i=0; i<rem.length; ++i )
-                    ((VisualItem)rem[i]).setFixed(false);
-                for ( int i=0; i<add.length; ++i ) {
-                    ((VisualItem)add[i]).setFixed(false);
-                    ((VisualItem)add[i]).setFixed(true);
-                }
-                if ( ts.getTupleCount() == 0 ) {
-                    ts.addTuple(rem[0]);
-                    ((VisualItem)rem[0]).setFixed(false);
-                }
-                m_vis.run("draw");
-            }
-        });
+        
+        
+        
         SizeAction sizeAction = new SizeAction() {
         	public double getSize(VisualItem item) {
         		double scale = m_vis.getDisplay(0).getScale();
@@ -139,25 +157,27 @@ public class GraphViewVisualization extends JPanel implements PrefuseBetaVisuali
         // --------------------------------------------------------------------
         // create actions to process the visual data
 
-        int hops = 30;
-        final GraphDistanceFilter filter = new GraphDistanceFilter(graph, hops);
+        
 
         ColorAction fill = new ColorAction(nodes, 
                 VisualItem.FILLCOLOR, ColorLib.rgb(200,200,255));
-        fill.add(VisualItem.FIXED, ColorLib.rgb(255,100,100));
+        //fill.add(VisualItem.FIXED, ColorLib.rgb(255,100,100));
         fill.add(VisualItem.HIGHLIGHT, ColorLib.rgb(255,200,125));
         
         ActionList draw = new ActionList();
-        draw.add(filter);
         draw.add(fill);
         draw.add(new ColorAction(nodes, VisualItem.STROKECOLOR, 0));
         draw.add(new ColorAction(nodes, VisualItem.TEXTCOLOR, ColorLib.rgb(0,0,0)));
         draw.add(new ColorAction(edges, VisualItem.FILLCOLOR, ColorLib.gray(200)));
         draw.add(new ColorAction(edges, VisualItem.STROKECOLOR, ColorLib.gray(200)));
         
-        ActionList animate = new ActionList(Activity.INFINITY);
-        animate.add(new ForceDirectedLayout(graph));
-        animate.add(fill);
+        ActionList animate = new ActionList(1500);
+        
+        
+		
+		animate.add(new SpecifiedLayout(graph, Constants._x, Constants._y));
+        //animate.add(new ForceDirectedLayout(graph));
+		animate.add(fill);
         animate.add(new RepaintAction());
         
         // finally, we register our ActionList with the Visualization.
@@ -174,7 +194,7 @@ public class GraphViewVisualization extends JPanel implements PrefuseBetaVisuali
         
         Display display = new Display(m_vis);
         display.setSize(700,700);
-        display.pan(350, 350);
+        //display.pan(350, 350);
         display.setForeground(Color.GRAY);
         display.setBackground(Color.WHITE);
         
@@ -208,51 +228,20 @@ public class GraphViewVisualization extends JPanel implements PrefuseBetaVisuali
         // --------------------------------------------------------------------        
         // launch the visualization
         
-        // create a panel for editing force values
-        ForceSimulator fsim = ((ForceDirectedLayout)animate.get(0)).getForceSimulator();
-        JForcePanel fpanel = new JForcePanel(fsim);
         
-//        JPanel opanel = new JPanel();
-//        opanel.setBorder(BorderFactory.createTitledBorder("Overview"));
-//        opanel.setBackground(Color.WHITE);
-//        opanel.add(overview);
         
-        final JValueSlider slider = new JValueSlider("Distance", 0, hops, hops);
-        slider.addChangeListener(new ChangeListener() {
-            public void stateChanged(ChangeEvent e) {
-                filter.setDistance(slider.getValue().intValue());
-                m_vis.run("draw");
-            }
-        });
-        slider.setBackground(Color.WHITE);
-        slider.setPreferredSize(new Dimension(300,30));
-        slider.setMaximumSize(new Dimension(300,30));
         
-        Box cf = new Box(BoxLayout.Y_AXIS);
-        cf.add(slider);
-        cf.setBorder(BorderFactory.createTitledBorder("Connectivity Filter"));
-        fpanel.add(cf);
+        
 
-        //fpanel.add(opanel);
-        
-        fpanel.add(Box.createVerticalGlue());
-        
-        // create a new JSplitPane to present the interface
-        JSplitPane split = new JSplitPane();
-        split.setLeftComponent(display);
-        split.setRightComponent(fpanel);
-        split.setOneTouchExpandable(true);
-        split.setContinuousLayout(false);
-        split.setDividerLocation(700);
+       
         
         // now we run our action list
         m_vis.run("draw");
-        visualGraph = vg;
         
-        add(split);
+        add(display);
     }
     
-    public GraphViewVisualization() {
+    public SpecifiedVisualization() {
 		// TODO Auto-generated constructor stub
 	}
 
@@ -264,8 +253,8 @@ public class GraphViewVisualization extends JPanel implements PrefuseBetaVisuali
         
         // update graph
         m_vis.removeGroup(graph);
-        vg = m_vis.addGraph(graph, g);
-		m_vis.setValue(edges, null, VisualItem.INTERACTIVE, Boolean.FALSE);
+        VisualGraph vg = m_vis.addGraph(graph, g);
+        m_vis.setValue(edges, null, VisualItem.INTERACTIVE, Boolean.FALSE);
         VisualItem f = (VisualItem)vg.getNode(0);
         m_vis.getGroup(Visualization.FOCUS_ITEMS).setTuple(f);
         f.setFixed(false);
@@ -279,19 +268,16 @@ public class GraphViewVisualization extends JPanel implements PrefuseBetaVisuali
         
         // create graphview
         
-        
         String label = (String) parameters.get(Constants.label);
-		JFrame frame = demo(graph, label);
+		JFrame frame = demo(graph, label, parameters);
         frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-        //return visualGraph;
-        return null;
+		return null;
     }
     
     
     
-    public JFrame demo(Graph g, String label) {
-        final GraphViewVisualization view = new GraphViewVisualization(g, label);
-        this.visualGraph = view.visualGraph;
+    public JFrame demo(Graph g, String label, Dictionary parameters) {
+        final SpecifiedVisualization view = new SpecifiedVisualization(g, label, parameters);
         
         // set up menu
         /* JMenu dataMenu = new JMenu("Data");
@@ -350,8 +336,8 @@ public class GraphViewVisualization extends JPanel implements PrefuseBetaVisuali
      * Swing menu action that loads a graph into the graph viewer.
      */
     public abstract static class GraphMenuAction extends AbstractAction {
-        private GraphViewVisualization m_view;
-        public GraphMenuAction(String name, String accel, GraphViewVisualization view) {
+        private SpecifiedVisualization m_view;
+        public GraphMenuAction(String name, String accel, SpecifiedVisualization view) {
             m_view = view;
             this.putValue(AbstractAction.NAME, name);
             this.putValue(AbstractAction.ACCELERATOR_KEY,
@@ -364,9 +350,9 @@ public class GraphViewVisualization extends JPanel implements PrefuseBetaVisuali
     }
     
     public static class OpenGraphAction extends AbstractAction {
-        private GraphViewVisualization m_view;
+        private SpecifiedVisualization m_view;
 
-        public OpenGraphAction(GraphViewVisualization view) {
+        public OpenGraphAction(SpecifiedVisualization view) {
             m_view = view;
             this.putValue(AbstractAction.NAME, "Open File...");
             this.putValue(AbstractAction.ACCELERATOR_KEY,
