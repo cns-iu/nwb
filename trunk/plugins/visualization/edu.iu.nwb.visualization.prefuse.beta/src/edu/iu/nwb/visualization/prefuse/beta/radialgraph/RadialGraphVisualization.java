@@ -38,6 +38,7 @@ import prefuse.controls.DragControl;
 import prefuse.controls.FocusControl;
 import prefuse.controls.HoverActionControl;
 import prefuse.controls.PanControl;
+import prefuse.controls.WheelZoomControl;
 import prefuse.controls.ZoomControl;
 import prefuse.controls.ZoomToFitControl;
 import prefuse.data.Graph;
@@ -196,6 +197,7 @@ public class RadialGraphVisualization extends Display implements PrefuseBetaVisu
         // initialize the display
         setSize(600,600);
         setItemSorter(new TreeDepthItemSorter());
+        addControlListener(new WheelZoomControl());
         addControlListener(new DragControl());
         addControlListener(new ZoomToFitControl() {
         	public void mouseClicked(MouseEvent event) {

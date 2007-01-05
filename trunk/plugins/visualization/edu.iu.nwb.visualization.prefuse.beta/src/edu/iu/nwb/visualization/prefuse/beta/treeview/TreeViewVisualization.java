@@ -42,6 +42,7 @@ import prefuse.activity.SlowInSlowOutPacer;
 import prefuse.controls.ControlAdapter;
 import prefuse.controls.FocusControl;
 import prefuse.controls.PanControl;
+import prefuse.controls.WheelZoomControl;
 import prefuse.controls.ZoomControl;
 import prefuse.controls.ZoomToFitControl;
 import prefuse.data.Graph;
@@ -178,6 +179,7 @@ public class TreeViewVisualization extends Display implements PrefuseBetaVisuali
         addControlListener(new ZoomToFitControl());
         addControlListener(new ZoomControl());
         addControlListener(new PanControl());
+        addControlListener(new WheelZoomControl());
         addControlListener(new FocusControl(1, "filter"));
         
         registerKeyboardAction(
