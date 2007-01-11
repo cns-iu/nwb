@@ -28,6 +28,9 @@ import prefuse.util.FontLib;
 
 public class LegendDataColorAction extends DataColorAction {
 
+	private static final Font EMPTY_FIELD_FONT = FontLib.getFont("Tahoma", Font.ITALIC, 8);
+	private static final Font FIELD_VALUE_FONT = FontLib.getFont("Tahoma", 8);
+	private static final Font FIELD_SPECIFYING_FONT = FontLib.getFont("Tahoma", Font.BOLD, 11);
 	private String dataField;
 	private int[] palette;
 
@@ -51,7 +54,7 @@ public class LegendDataColorAction extends DataColorAction {
 			double min = DataLib.min(tuples, dataField).getDouble(dataField);
 			double max = DataLib.max(tuples, dataField).getDouble(dataField);
 			Canvas canvas;
-			if(this.getScale() != prefuse.Constants.QUANTILE_SCALE) {
+			if(this.getScale() == prefuse.Constants.QUANTILE_SCALE) {
 				final ColorMap colorMap = new ColorMap(palette, 0, 1);
 				
 				canvas = new Canvas() {
@@ -83,15 +86,22 @@ public class LegendDataColorAction extends DataColorAction {
 			}
 			canvas.setBounds(0, 0, 50, 10);
 			
-			legend.add(new JLabel(context + " (" + column + "): " + min));
+			JLabel fieldLabel = new JLabel(context + " (" + column + "): ");
+			fieldLabel.setFont(FIELD_SPECIFYING_FONT);
+			legend.add(fieldLabel);
+			JLabel minLabel = new JLabel("" + min);
+			minLabel.setFont(FIELD_VALUE_FONT);
+			legend.add(minLabel);
 			
 			legend.add(canvas);
 			
-			legend.add(new JLabel("" + max));
+			JLabel maxLabel = new JLabel("" + max);
+			maxLabel.setFont(FIELD_VALUE_FONT);
+			legend.add(maxLabel);
 		} else {
 			legend = new Box(BoxLayout.PAGE_AXIS);
 			JLabel label = new JLabel(context + " (" + column + "):");
-			label.setFont(FontLib.getFont("Tahoma", Font.BOLD, 11));
+			label.setFont(FIELD_SPECIFYING_FONT);
 			legend.add(label);
 			legend.add(Box.createVerticalStrut(3));
 			
@@ -115,14 +125,20 @@ public class LegendDataColorAction extends DataColorAction {
 				};
 				canvas.setBounds(0, 0, 10, 10);
 				JPanel keyValue = new JPanel(new FlowLayout(FlowLayout.RIGHT));
-				String value = values[valueIndex].toString();
+				Object objectValue = values[valueIndex];
+				String value;
+				if(objectValue == null) {
+					value = "";
+				} else {
+					value = objectValue.toString();
+				}
 				JLabel itemLabel;
 				if("".equals(value)) {
 					itemLabel = new JLabel("(empty): ");
-					itemLabel.setFont(FontLib.getFont("Tahoma", Font.ITALIC, 8));
+					itemLabel.setFont(EMPTY_FIELD_FONT);
 				} else {
 					itemLabel = new JLabel(value + ": ");
-					itemLabel.setFont(FontLib.getFont("Tahoma", 8));
+					itemLabel.setFont(FIELD_VALUE_FONT);
 				}
 				
 				keyValue.add(itemLabel);
