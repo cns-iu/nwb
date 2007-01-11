@@ -9,4 +9,18 @@
 		<Object ocdref="edu.iu.nwb.visualization.prefuse.beta.specified.Specified.OCD" />
 	</Designate>
 	
+	<OCD name="Fruchterman-Reingold Layout" id="edu.iu.nwb.visualization.prefuse.beta.fruchtermanreingold.FruchtermanReingold.OCD"
+		 description="Enter the property labels.">
+		<!-- <AD name="Label" id="label" type="String" description="The label for the identifier property" default="label" /> -->
+		<AD name="Node Size" id="nodeSize" type="String" description="The label for the node size property" default="" />
+		<AD name="Edge Size" id="edgeSize" type="String" description="The label for the edge size property" default="" />
+		<AD name="Node Color" id="nodeColor" type="String" description="The label for the node color property" default="" />
+		<AD name="Edge Color" id="edgeColor" type="String" description="The label for the edge color property" default="" />
+		<AD name="Ring Color" id="ringColor" type="String" description="The label for the ring color property" default="" />
+		<AD name="Node Shape" id="nodeShape" type="String" description="The label for the node shape property" default="" />
+	</OCD>
+	<Designate pid="edu.iu.nwb.visualization.prefuse.beta.fruchtermanreingold.FruchtermanReingold">
+		<Object ocdref="edu.iu.nwb.visualization.prefuse.beta.fruchtermanreingold.FruchtermanReingold.OCD" />
+	</Designate>
+	
 </metatype:MetaData>

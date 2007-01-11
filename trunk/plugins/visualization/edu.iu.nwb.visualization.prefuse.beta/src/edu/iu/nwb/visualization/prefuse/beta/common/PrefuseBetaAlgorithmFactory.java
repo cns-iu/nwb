@@ -67,7 +67,7 @@ public abstract class PrefuseBetaAlgorithmFactory implements AlgorithmFactory {
 		public Data[] execute() {
 			Graph graph = (Graph) dm[0].getData();
 			Object label = parameters.get(Constants.label);
-			if(label == null) {
+			if(label == null  || "".equals(label)) {
 				parameters.put(Constants.label, Constants.label);
 			}
 			Graph resultGraph = visualization.create(graph, parameters);
