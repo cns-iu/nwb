@@ -9,7 +9,7 @@
 		<Object ocdref="edu.iu.nwb.visualization.prefuse.beta.specified.Specified.OCD" />
 	</Designate>
 	
-	<OCD name="Fruchterman-Reingold Layout" id="edu.iu.nwb.visualization.prefuse.beta.fruchtermanreingold.FruchtermanReingold.OCD"
+	<OCD name="Layout Parameters" id="edu.iu.nwb.visualization.prefuse.beta.common.parameters.OCD"
 		 description="Enter the property labels.">
 		<!-- <AD name="Label" id="label" type="String" description="The label for the identifier property" default="label" /> -->
 		<AD name="Node Size" id="nodeSize" type="String" description="The label for the node size property" default="" />
@@ -20,7 +20,13 @@
 		<AD name="Node Shape" id="nodeShape" type="String" description="The label for the node shape property" default="" />
 	</OCD>
 	<Designate pid="edu.iu.nwb.visualization.prefuse.beta.fruchtermanreingold.FruchtermanReingold">
-		<Object ocdref="edu.iu.nwb.visualization.prefuse.beta.fruchtermanreingold.FruchtermanReingold.OCD" />
+		<Object ocdref="edu.iu.nwb.visualization.prefuse.beta.common.parameters.OCD" />
+	</Designate>
+	<Designate pid="edu.iu.nwb.visualization.prefuse.beta.graphview.GraphView">
+		<Object ocdref="edu.iu.nwb.visualization.prefuse.beta.common.parameters.OCD" />
+	</Designate>
+	<Designate pid="edu.iu.nwb.visualization.prefuse.beta.radialgraph.RadialGraph">
+		<Object ocdref="edu.iu.nwb.visualization.prefuse.beta.common.parameters.OCD" />
 	</Designate>
 	
 </metatype:MetaData>

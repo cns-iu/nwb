@@ -41,15 +41,28 @@ public class ShapeLabelRenderer implements Renderer {
 
 		public void render(Graphics2D graphics, VisualItem item) {
 			//hack to make labels remain constant size despite item size changing
+			boolean scaled = false;
+			double scale = item.getVisualization().getDisplay(0).getScale();
+			Font currentFont = item.getFont();
 			if(!firstRun.containsKey(item.get(Constants.label).toString())) {
-				Font currentFont = item.getFont();
 				//scale font down to maintain consistent size
-				item.setFont(currentFont.deriveFont((float) (currentFont.getSize() * 1/(item.getSize() * .9))));
+				item.setFont(currentFont.deriveFont((float) (currentFont.getSize() * 1.11/item.getSize())));
 				firstRun.put(item.get(Constants.label).toString(), new Boolean(false));
+			} else if(scale > .8) {
+				scaled = true;
+				
+				item.setFont(currentFont.deriveFont((float) (currentFont.getSize() * 1/Math.pow(scale, .6))));
 			}
+			
+			
 			
 			shapeRenderer.render(graphics, item);
 			labelRenderer.render(graphics, item);
+			
+			if(scaled) {
+				item.setFont(currentFont);
+			}
+			
 			
 		}
 

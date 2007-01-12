@@ -20,6 +20,6 @@ import prefuse.data.Graph;
  */
 public class RadialGraph extends PrefuseBetaAlgorithmFactory {
 	protected PrefuseBetaVisualization getVisualization() {
-    	return new RadialGraphVisualization();
+    	return new RadialVisualization();
     }
 }

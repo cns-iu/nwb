@@ -45,6 +45,7 @@ import prefuse.action.assignment.ColorAction;
 import prefuse.action.assignment.SizeAction;
 import prefuse.action.filter.GraphDistanceFilter;
 import prefuse.action.layout.graph.ForceDirectedLayout;
+//import prefuse.action.layout.graph.ForceDirectedLayout;
 import prefuse.activity.Activity;
 import prefuse.controls.DragControl;
 import prefuse.controls.FocusControl;
@@ -196,26 +197,11 @@ public class GraphViewVisualization extends JPanel implements PrefuseBetaVisuali
         	}
         });
         display.addControlListener(new NeighborHighlightControl());
-
-        // overview display
-//        Display overview = new Display(vis);
-//        overview.setSize(290,290);
-//        overview.addItemBoundsListener(new FitOverviewListener());
         
-        display.setForeground(Color.GRAY);
-        display.setBackground(Color.WHITE);
-        
-        // --------------------------------------------------------------------        
-        // launch the visualization
         
         // create a panel for editing force values
         ForceSimulator fsim = ((ForceDirectedLayout)animate.get(0)).getForceSimulator();
         JForcePanel fpanel = new JForcePanel(fsim);
-        
-//        JPanel opanel = new JPanel();
-//        opanel.setBorder(BorderFactory.createTitledBorder("Overview"));
-//        opanel.setBackground(Color.WHITE);
-//        opanel.add(overview);
         
         final JValueSlider slider = new JValueSlider("Distance", 0, hops, hops);
         slider.addChangeListener(new ChangeListener() {
@@ -233,7 +219,6 @@ public class GraphViewVisualization extends JPanel implements PrefuseBetaVisuali
         cf.setBorder(BorderFactory.createTitledBorder("Connectivity Filter"));
         fpanel.add(cf);
 
-        //fpanel.add(opanel);
         
         fpanel.add(Box.createVerticalGlue());
         
@@ -253,7 +238,7 @@ public class GraphViewVisualization extends JPanel implements PrefuseBetaVisuali
     }
     
     public GraphViewVisualization() {
-		// TODO Auto-generated constructor stub
+		
 	}
 
 	public void setGraph(Graph g, String label) {
@@ -293,40 +278,7 @@ public class GraphViewVisualization extends JPanel implements PrefuseBetaVisuali
         final GraphViewVisualization view = new GraphViewVisualization(g, label);
         this.visualGraph = view.visualGraph;
         
-        // set up menu
-        /* JMenu dataMenu = new JMenu("Data");
-        dataMenu.add(new OpenGraphAction(view));
-        dataMenu.add(new GraphMenuAction("Grid","ctrl 1",view) {
-            protected Graph getGraph() {
-                return GraphLib.getGrid(15,15);
-            }
-        });
-        dataMenu.add(new GraphMenuAction("Clique","ctrl 2",view) {
-            protected Graph getGraph() {
-                return GraphLib.getClique(10);
-            }
-        });
-        dataMenu.add(new GraphMenuAction("Honeycomb","ctrl 3",view) {
-            protected Graph getGraph() {
-                return GraphLib.getHoneycomb(5);
-            }
-        });
-        dataMenu.add(new GraphMenuAction("Balanced Tree","ctrl 4",view) {
-            protected Graph getGraph() {
-                return GraphLib.getBalancedTree(3,5);
-            }
-        });
-        dataMenu.add(new GraphMenuAction("Diamond Tree","ctrl 5",view) {
-            protected Graph getGraph() {
-                return GraphLib.getDiamondTree(3,3,3);
-            }
-        });
-        JMenuBar menubar = new JMenuBar();
-        menubar.add(dataMenu);
-        */
-        // launch window
         JFrame frame = new JFrame("p r e f u s e  |  g r a p h v i e w");
-        //frame.setJMenuBar(menubar);
         frame.setContentPane(view);
         frame.pack();
         frame.setVisible(true);
@@ -341,146 +293,6 @@ public class GraphViewVisualization extends JPanel implements PrefuseBetaVisuali
         });
         
         return frame;
-    }
-    
-    
-    // ------------------------------------------------------------------------
-    
-    /**
-     * Swing menu action that loads a graph into the graph viewer.
-     */
-    public abstract static class GraphMenuAction extends AbstractAction {
-        private GraphViewVisualization m_view;
-        public GraphMenuAction(String name, String accel, GraphViewVisualization view) {
-            m_view = view;
-            this.putValue(AbstractAction.NAME, name);
-            this.putValue(AbstractAction.ACCELERATOR_KEY,
-                          KeyStroke.getKeyStroke(accel));
-        }
-        public void actionPerformed(ActionEvent e) {
-            m_view.setGraph(getGraph(), "label");
-        }
-        protected abstract Graph getGraph();
-    }
-    
-    public static class OpenGraphAction extends AbstractAction {
-        private GraphViewVisualization m_view;
-
-        public OpenGraphAction(GraphViewVisualization view) {
-            m_view = view;
-            this.putValue(AbstractAction.NAME, "Open File...");
-            this.putValue(AbstractAction.ACCELERATOR_KEY,
-                          KeyStroke.getKeyStroke("ctrl O"));
-        }
-        public void actionPerformed(ActionEvent e) {
-            Graph g = IOLib.getGraphFile(m_view);
-            if ( g == null ) return;
-            String label = getLabel(m_view, g);
-            if ( label != null ) {
-                m_view.setGraph(g, label);
-            }
-        }
-        public static String getLabel(Component c, Graph g) {
-            // get the column names
-            Table t = g.getNodeTable();
-            int  cc = t.getColumnCount();
-            String[] names = new String[cc];
-            for ( int i=0; i<cc; ++i )
-                names[i] = t.getColumnName(i);
-            
-            // where to store the result
-            final String[] label = new String[1];
-
-            // -- build the dialog -----
-            // we need to get the enclosing frame first
-            while ( c != null && !(c instanceof JFrame) ) {
-                c = c.getParent();
-            }
-            final JDialog dialog = new JDialog(
-                    (JFrame)c, "Choose Label Field", true);
-            
-            // create the ok/cancel buttons
-            final JButton ok = new JButton("OK");
-            ok.setEnabled(false);
-            ok.addActionListener(new ActionListener() {
-               public void actionPerformed(ActionEvent e) {
-                   dialog.setVisible(false);
-               }
-            });
-            JButton cancel = new JButton("Cancel");
-            cancel.addActionListener(new ActionListener() {
-                public void actionPerformed(ActionEvent e) {
-                    label[0] = null;
-                    dialog.setVisible(false);
-                }
-            });
-            
-            // build the selection list
-            final JList list = new JList(names);
-            list.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-            list.getSelectionModel().addListSelectionListener(
-            new ListSelectionListener() {
-                public void valueChanged(ListSelectionEvent e) {
-                    int sel = list.getSelectedIndex(); 
-                    if ( sel >= 0 ) {
-                        ok.setEnabled(true);
-                        label[0] = (String)list.getModel().getElementAt(sel);
-                    } else {
-                        ok.setEnabled(false);
-                        label[0] = null;
-                    }
-                }
-            });
-            JScrollPane scrollList = new JScrollPane(list);
-            
-            JLabel title = new JLabel("Choose a field to use for node labels:");
-            
-            // layout the buttons
-            Box bbox = new Box(BoxLayout.X_AXIS);
-            bbox.add(Box.createHorizontalStrut(5));
-            bbox.add(Box.createHorizontalGlue());
-            bbox.add(ok);
-            bbox.add(Box.createHorizontalStrut(5));
-            bbox.add(cancel);
-            bbox.add(Box.createHorizontalStrut(5));
-            
-            // put everything into a panel
-            JPanel panel = new JPanel(new BorderLayout());
-            panel.add(title, BorderLayout.NORTH);
-            panel.add(scrollList, BorderLayout.CENTER);
-            panel.add(bbox, BorderLayout.SOUTH);
-            panel.setBorder(BorderFactory.createEmptyBorder(5,2,2,2));
-            
-            // show the dialog
-            dialog.setContentPane(panel);
-            dialog.pack();
-            dialog.setLocationRelativeTo(c);
-            dialog.setVisible(true);
-            dialog.dispose();
-            
-            // return the label field selection
-            return label[0];
-        }
-    }
-    
-    public static class FitOverviewListener implements ItemBoundsListener {
-        private Rectangle2D m_bounds = new Rectangle2D.Double();
-        private Rectangle2D m_temp = new Rectangle2D.Double();
-        private double m_d = 15;
-        public void itemBoundsChanged(Display d) {
-            d.getItemBounds(m_temp);
-            GraphicsLib.expand(m_temp, 25/d.getScale());
-            
-            double dd = m_d/d.getScale();
-            double xd = Math.abs(m_temp.getMinX()-m_bounds.getMinX());
-            double yd = Math.abs(m_temp.getMinY()-m_bounds.getMinY());
-            double wd = Math.abs(m_temp.getWidth()-m_bounds.getWidth());
-            double hd = Math.abs(m_temp.getHeight()-m_bounds.getHeight());
-            if ( xd>dd || yd>dd || wd>dd || hd>dd ) {
-                m_bounds.setFrame(m_temp);
-                DisplayLib.fitViewToBounds(d, m_bounds, 0);
-            }
-        }
     }
     
 } // end of class GraphView

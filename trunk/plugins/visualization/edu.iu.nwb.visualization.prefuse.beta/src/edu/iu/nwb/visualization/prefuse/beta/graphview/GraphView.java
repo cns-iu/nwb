@@ -20,6 +20,6 @@ import prefuse.data.Graph;
  */
 public class GraphView extends PrefuseBetaAlgorithmFactory {
 	protected PrefuseBetaVisualization getVisualization() {
-    	return new GraphViewVisualization();
+    	return new ForceDirectedVisualization();
     }
 }
