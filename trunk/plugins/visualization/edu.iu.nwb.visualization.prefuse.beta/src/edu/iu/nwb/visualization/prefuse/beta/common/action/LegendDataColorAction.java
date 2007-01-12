@@ -1,4 +1,4 @@
-package edu.iu.nwb.visualization.prefuse.beta.fruchtermanreingold;
+package edu.iu.nwb.visualization.prefuse.beta.common.action;
 
 import java.awt.Canvas;
 import java.awt.Color;
@@ -19,42 +19,59 @@ import javax.swing.JComponent;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 
+import edu.iu.nwb.visualization.prefuse.beta.common.Constants;
+
 import prefuse.action.assignment.DataColorAction;
+import prefuse.data.DataTypeException;
 import prefuse.data.tuple.TupleSet;
 import prefuse.util.ColorLib;
 import prefuse.util.ColorMap;
 import prefuse.util.DataLib;
 import prefuse.util.FontLib;
 
-public class LegendDataColorAction extends DataColorAction {
+public class LegendDataColorAction extends DataColorAction implements LegendAction {
 
-	private static final Font EMPTY_FIELD_FONT = FontLib.getFont("Tahoma", Font.ITALIC, 8);
-	private static final Font FIELD_VALUE_FONT = FontLib.getFont("Tahoma", 8);
-	private static final Font FIELD_SPECIFYING_FONT = FontLib.getFont("Tahoma", Font.BOLD, 11);
 	private String dataField;
 	private int[] palette;
+	private String column;
+	private String context;
+	private int size = 0;
 
-	public LegendDataColorAction(String group, String dataField, int dataType, String colorField, int[] palette) {
+	public LegendDataColorAction(String group, String dataField, int dataType, String colorField, int[] palette, String column, String context) {
 		super(group, dataField, dataType, colorField, palette);
 		this.dataField = dataField;
 		this.palette = palette;
-		
+		this.column = column;
+		this.context = context;
 		
 	}
 	
-	public JComponent getLegend(String context, String column) {
-		LayoutManager layout = new FlowLayout();
+	public JComponent getLegend() {
+		//LayoutManager layout = new FlowLayout(FlowLayout.LEFT);
 		JComponent legend;
 		
 		final TupleSet tuples = this.getVisualization().getGroup(this.m_group);
 		
 		if(this.getDataType() == prefuse.Constants.NUMERICAL) {
-			legend = new JPanel(layout);
+			size = 2;
 			
-			double min = DataLib.min(tuples, dataField).getDouble(dataField);
-			double max = DataLib.max(tuples, dataField).getDouble(dataField);
+			legend = new Box(BoxLayout.PAGE_AXIS);
+			
+			double min = 0;
+			double max = 1;
+			
+			boolean bad = false;
+			try {
+				min = DataLib.min(tuples, dataField).getDouble(dataField);
+				max = DataLib.max(tuples, dataField).getDouble(dataField);
+			} catch(DataTypeException exception) {
+				bad = true;
+			} catch(NullPointerException exception) {
+				bad = true;
+			}
 			Canvas canvas;
 			if(this.getScale() == prefuse.Constants.QUANTILE_SCALE) {
+				
 				final ColorMap colorMap = new ColorMap(palette, 0, 1);
 				
 				canvas = new Canvas() {
@@ -72,7 +89,6 @@ public class LegendDataColorAction extends DataColorAction {
 					}
 				};
 			} else {
-				
 				canvas = new Canvas() {
 					public void paint(Graphics g) {
 						Graphics2D graphics = (Graphics2D) g;
@@ -84,26 +100,47 @@ public class LegendDataColorAction extends DataColorAction {
 					}
 				};
 			}
-			canvas.setBounds(0, 0, 50, 10);
+			canvas.setBounds(0, 0, 50, Constants.LEGEND_CANVAS_HEIGHT);
 			
-			JLabel fieldLabel = new JLabel(context + " (" + column + "): ");
-			fieldLabel.setFont(FIELD_SPECIFYING_FONT);
-			legend.add(fieldLabel);
-			JLabel minLabel = new JLabel("" + min);
-			minLabel.setFont(FIELD_VALUE_FONT);
-			legend.add(minLabel);
+			JLabel fieldLabel = new JLabel(context + " (" + column + ")");
+			fieldLabel.setFont(Constants.FIELD_SPECIFYING_FONT);
+			JPanel titlePanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
+			titlePanel.add(fieldLabel);
+			legend.add(titlePanel);
+			legend.add(Box.createVerticalStrut(Constants.VERTICAL_STRUT_DISTANCE));
+			JPanel continuumPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
+			JLabel minLabel;
+			if(bad) {
+				minLabel = new JLabel("error");
+				minLabel.setFont(Constants.EMPTY_FIELD_FONT);
+			} else {
+				minLabel = new JLabel("" + min);
+				minLabel.setFont(Constants.FIELD_VALUE_FONT);
+			}
 			
-			legend.add(canvas);
+			continuumPanel.add(minLabel);
 			
-			JLabel maxLabel = new JLabel("" + max);
-			maxLabel.setFont(FIELD_VALUE_FONT);
-			legend.add(maxLabel);
+			continuumPanel.add(canvas);
+			
+			JLabel maxLabel;
+			if(bad) {
+				maxLabel = new JLabel("error");
+				maxLabel.setFont(Constants.EMPTY_FIELD_FONT);
+			} else {
+				maxLabel = new JLabel("" + max);
+				maxLabel.setFont(Constants.FIELD_VALUE_FONT);
+			}
+			continuumPanel.add(maxLabel);
+			legend.add(continuumPanel);
 		} else {
+			size += 1;
 			legend = new Box(BoxLayout.PAGE_AXIS);
-			JLabel label = new JLabel(context + " (" + column + "):");
-			label.setFont(FIELD_SPECIFYING_FONT);
-			legend.add(label);
-			legend.add(Box.createVerticalStrut(3));
+			JLabel label = new JLabel(context + " (" + column + ")");
+			label.setFont(Constants.FIELD_SPECIFYING_FONT);
+			JPanel titlePanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
+			titlePanel.add(label);
+			legend.add(titlePanel);
+			legend.add(Box.createVerticalStrut(Constants.VERTICAL_STRUT_DISTANCE));
 			
 			final ColorMap colorMap = new ColorMap(null, 0, 1);
 			colorMap.setColorPalette(palette);
@@ -114,6 +151,7 @@ public class LegendDataColorAction extends DataColorAction {
 			final Object[] values = DataLib.ordinalArray(tuples, dataField);
 			
 			for(int valueIndex = 0; valueIndex < values.length; valueIndex++) {
+				size += 1;
 				final int tempIndex = valueIndex;
 				Canvas canvas = new Canvas() {
 					public void paint(Graphics g) {
@@ -123,8 +161,8 @@ public class LegendDataColorAction extends DataColorAction {
 						graphics.fillRect(0, 0, this.getWidth(), this.getHeight());
 					}
 				};
-				canvas.setBounds(0, 0, 10, 10);
-				JPanel keyValue = new JPanel(new FlowLayout(FlowLayout.RIGHT));
+				canvas.setBounds(0, 0, Constants.LEGEND_CANVAS_HEIGHT, Constants.LEGEND_CANVAS_HEIGHT);
+				JPanel keyValue = new JPanel(new FlowLayout(FlowLayout.LEFT));
 				Object objectValue = values[valueIndex];
 				String value;
 				if(objectValue == null) {
@@ -134,21 +172,26 @@ public class LegendDataColorAction extends DataColorAction {
 				}
 				JLabel itemLabel;
 				if("".equals(value)) {
-					itemLabel = new JLabel("(empty): ");
-					itemLabel.setFont(EMPTY_FIELD_FONT);
+					itemLabel = new JLabel(" (empty)");
+					itemLabel.setFont(Constants.EMPTY_FIELD_FONT);
 				} else {
-					itemLabel = new JLabel(value + ": ");
-					itemLabel.setFont(FIELD_VALUE_FONT);
+					itemLabel = new JLabel(" " + value);
+					itemLabel.setFont(Constants.FIELD_VALUE_FONT);
 				}
-				
-				keyValue.add(itemLabel);
 				keyValue.add(canvas);
+				keyValue.add(itemLabel);
+				
 				legend.add(keyValue);
-				legend.add(Box.createVerticalStrut(3));
+				legend.add(Box.createVerticalStrut(Constants.VERTICAL_STRUT_DISTANCE));
 			}	
 		}
 		
 		return legend;
+	}
+
+	public int getLegendSize() {
+		getLegend(); //minor hack, make sure size is computed
+		return size;
 	}
 
 }

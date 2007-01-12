@@ -1,13 +1,17 @@
 package edu.iu.nwb.visualization.prefuse.beta.common.renderer;
 
 import java.awt.BasicStroke;
+import java.awt.Font;
 import java.awt.Graphics2D;
 import java.awt.Rectangle;
 import java.awt.Shape;
 import java.awt.geom.Point2D;
+import java.util.HashMap;
+import java.util.Map;
 
 import edu.iu.nwb.visualization.prefuse.beta.common.Constants;
 
+import prefuse.action.assignment.FontAction;
 import prefuse.render.LabelRenderer;
 import prefuse.render.Renderer;
 import prefuse.render.ShapeRenderer;
@@ -17,6 +21,7 @@ public class ShapeLabelRenderer implements Renderer {
 		
 		private ShapeRenderer shapeRenderer = new ShapeRenderer();
 		private LabelRenderer labelRenderer;
+		private Map firstRun = new HashMap();
 		
 		public ShapeLabelRenderer() {
 			this(Constants.label);
@@ -35,6 +40,14 @@ public class ShapeLabelRenderer implements Renderer {
 		}
 
 		public void render(Graphics2D graphics, VisualItem item) {
+			//hack to make labels remain constant size despite item size changing
+			if(!firstRun.containsKey(item.get(Constants.label).toString())) {
+				Font currentFont = item.getFont();
+				//scale font down to maintain consistent size
+				item.setFont(currentFont.deriveFont((float) (currentFont.getSize() * 1/(item.getSize() * .9))));
+				firstRun.put(item.get(Constants.label).toString(), new Boolean(false));
+			}
+			
 			shapeRenderer.render(graphics, item);
 			labelRenderer.render(graphics, item);
 			

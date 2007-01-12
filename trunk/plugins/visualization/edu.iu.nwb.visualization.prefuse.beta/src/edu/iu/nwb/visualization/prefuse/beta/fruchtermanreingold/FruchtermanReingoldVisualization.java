@@ -16,8 +16,13 @@ import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.Dictionary;
+import java.util.Iterator;
+import java.util.List;
 import java.util.Random;
 
 import javax.swing.AbstractAction;
@@ -25,6 +30,7 @@ import javax.swing.BorderFactory;
 import javax.swing.Box;
 import javax.swing.BoxLayout;
 import javax.swing.JButton;
+import javax.swing.JComponent;
 import javax.swing.JDialog;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
@@ -33,6 +39,7 @@ import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
+import javax.swing.JSeparator;
 import javax.swing.JSplitPane;
 import javax.swing.KeyStroke;
 import javax.swing.ListSelectionModel;
@@ -44,6 +51,10 @@ import javax.swing.event.ListSelectionListener;
 import edu.iu.nwb.visualization.prefuse.beta.common.Constants;
 import edu.iu.nwb.visualization.prefuse.beta.common.Indirection;
 import edu.iu.nwb.visualization.prefuse.beta.common.PrefuseBetaVisualization;
+import edu.iu.nwb.visualization.prefuse.beta.common.action.LegendAction;
+import edu.iu.nwb.visualization.prefuse.beta.common.action.LegendDataColorAction;
+import edu.iu.nwb.visualization.prefuse.beta.common.action.LegendDataShapeAction;
+import edu.iu.nwb.visualization.prefuse.beta.common.action.LegendDataSizeAction;
 import edu.iu.nwb.visualization.prefuse.beta.common.control.SmartMarginZoomToFitControl;
 import edu.iu.nwb.visualization.prefuse.beta.common.expression.SmartValueExpression;
 import edu.iu.nwb.visualization.prefuse.beta.common.expression.ToDoubleExpression;
@@ -120,11 +131,13 @@ public class FruchtermanReingoldVisualization implements PrefuseBetaVisualizatio
 	public Graph create(Graph graph, Dictionary parameters) {
 		UILib.setPlatformLookAndFeel();
 		
+		//use this later, once a workaround with the expressions has been decided on
+		List legendActions = new ArrayList();
+		
 		Box box = Box.createHorizontalBox();
-		box.add(Box.createHorizontalGlue());
-		Box legendsBox = new Box(BoxLayout.PAGE_AXIS);
-		box.add(legendsBox);
 		box.add(Box.createHorizontalStrut(5));
+		Box legendsBox = null;
+		//box.add(Box.createHorizontalStrut(5));
 
 
 		visualization = new Visualization();
@@ -159,72 +172,92 @@ public class FruchtermanReingoldVisualization implements PrefuseBetaVisualizatio
 		ActionList draw = new ActionList();
 		
 		
-		LegendDataColorAction nodeFillAction = null;
-		ColumnExpression nodeFillExpression = null;
 		if(!"".equals(nodeColorField)) {
-			nodeFillExpression = new SmartValueExpression(nodeColorField, Indirection.getExample(graph.getNodes(), nodeColorField));
+			ColumnExpression nodeFillExpression = new SmartValueExpression(nodeColorField, Indirection.getExample(graph.getNodes(), nodeColorField));
 			Indirection nodeFillIndirection = new Indirection(visualization, nodes, nodeFillExpression);
-			nodeFillAction = new LegendDataColorAction(
+			LegendDataColorAction nodeFillAction = new LegendDataColorAction(
 										nodes,
 										nodeFillIndirection.getField(),
 										nodeFillIndirection.getDataType(),
 										VisualItem.FILLCOLOR,
-										greenPalette);
+										nodeFillIndirection.getPalette(),
+										nodeFillExpression.getColumnName(),
+										"Node Color");
 			draw.add(nodeFillAction);
+			legendActions.add(nodeFillAction);
 		} else {
 			draw.add(new ColorAction(nodes, VisualItem.FILLCOLOR, white));
 		}
 		
 		
-		LegendDataColorAction edgeColorAction = null;
-		ColumnExpression edgeColorExpression = null;
 		if(!"".equals(edgeColorField)) {
-			edgeColorExpression = new SmartValueExpression(edgeColorField, Indirection.getExample(graph.getEdges(), edgeColorField));
+			ColumnExpression edgeColorExpression = new SmartValueExpression(edgeColorField, Indirection.getExample(graph.getEdges(), edgeColorField));
 			Indirection edgeColorIndirection = new Indirection(visualization, edges, edgeColorExpression);
-			edgeColorAction = new LegendDataColorAction(
+			LegendDataColorAction edgeColorAction = new LegendDataColorAction(
 										edges,
 										edgeColorIndirection.getField(),
 										edgeColorIndirection.getDataType(),
 										VisualItem.STROKECOLOR,
-										greenPalette);
+										edgeColorIndirection.getPalette(),
+										edgeColorExpression.getColumnName(),
+										"Edge Color");
 			draw.add(edgeColorAction);
-			
+			legendActions.add(edgeColorAction);
 			
 		} else {
 			draw.add(new ColorAction(edges, VisualItem.STROKECOLOR, black));
 		}
-
+		
 		if(!"".equals(ringColorField)) {
-			Expression ringColorExpression = new SmartValueExpression(ringColorField, Indirection.getExample(graph.getNodes(), ringColorField));
+			ColumnExpression ringColorExpression = new SmartValueExpression(ringColorField, Indirection.getExample(graph.getNodes(), ringColorField));
 			Indirection ringColorIndirection = new Indirection(visualization, nodes, ringColorExpression);
-			draw.add(new DataColorAction(
-							nodes,
-							ringColorIndirection.getField(),
-							ringColorIndirection.getDataType(),
-							VisualItem.STROKECOLOR,
-							redPalette));
+			LegendDataColorAction ringColorAction = new LegendDataColorAction(
+										nodes,
+										ringColorIndirection.getField(),
+										ringColorIndirection.getDataType(),
+										VisualItem.STROKECOLOR,
+										ringColorIndirection.getPalette(),
+										ringColorExpression.getColumnName(),
+										"Ring Color");
+			draw.add(ringColorAction);
+			legendActions.add(ringColorAction);
 		}  else {
 			draw.add(new ColorAction(nodes, VisualItem.STROKECOLOR, black));
 		}
 
 		if(!"".equals(edgeSizeField)) {
-			draw.add(new DataSizeAction(
-							edges,
-							new Indirection(visualization, edges, new ToDoubleExpression(edgeSizeField)).getField()));
+			ColumnExpression edgeSizeExpression = new ToDoubleExpression(edgeSizeField);
+			Indirection edgeSizeIndirection = new Indirection(visualization, edges, edgeSizeExpression);
+			LegendDataSizeAction edgeSizeAction = new LegendDataSizeAction(
+					edges,
+					edgeSizeIndirection.getField(),
+					edgeSizeExpression.getColumnName(),
+					"Edge Width");
+			draw.add(edgeSizeAction);
+			legendActions.add(edgeSizeAction);
 		} //no need for edge size if not specified
 
 		if(!"".equals(nodeSizeField)) {
-			draw.add(new DataSizeAction(
-							nodes,
-							new Indirection(visualization, nodes, new ToDoubleExpression(nodeSizeField)).getField()));
+			ToDoubleExpression nodeSizeExpression = new ToDoubleExpression(nodeSizeField);
+			Indirection nodeSizeIndirection = new Indirection(visualization, nodes, nodeSizeExpression);
+			LegendDataSizeAction nodeSizeAction = new LegendDataSizeAction(
+					nodes,
+					nodeSizeIndirection.getField(),
+					nodeSizeExpression.getColumnName(),
+					"Node Size");
+			draw.add(nodeSizeAction);
+			legendActions.add(nodeSizeAction);
 		}
 
 		if(!"".equals(nodeShapeField)) {
-			draw.add(new DataShapeAction(nodes, nodeShapeField, new int[] { prefuse.Constants.SHAPE_ELLIPSE,
-																			prefuse.Constants.SHAPE_RECTANGLE,
-																			prefuse.Constants.SHAPE_TRIANGLE_UP,
-																			prefuse.Constants.SHAPE_DIAMOND,
-																			prefuse.Constants.SHAPE_TRIANGLE_DOWN}));
+			LegendDataShapeAction nodeShapeAction = new LegendDataShapeAction(nodes, nodeShapeField, new int[] { prefuse.Constants.SHAPE_ELLIPSE,
+																						prefuse.Constants.SHAPE_RECTANGLE,
+																						prefuse.Constants.SHAPE_TRIANGLE_UP,
+																						prefuse.Constants.SHAPE_DIAMOND,
+																						prefuse.Constants.SHAPE_TRIANGLE_DOWN},
+																						"Node Shape");
+			draw.add(nodeShapeAction);
+			legendActions.add(nodeShapeAction);
 		} else {
 			draw.add(new ShapeAction(nodes, prefuse.Constants.SHAPE_ELLIPSE));
 		}
@@ -240,12 +273,39 @@ public class FruchtermanReingoldVisualization implements PrefuseBetaVisualizatio
 		visualization.putAction("layout", layout);
 		visualization.runAfter("draw", "layout");
 		
-		if(edgeColorAction != null) {
-			legendsBox.add(edgeColorAction.getLegend("Edge Color", edgeColorExpression.getColumnName()));
-			//legendsBox.add(Box.createVerticalStrut(5));
+		class LegendComparator implements Comparator {
+
+			public int compare(Object one, Object two) {
+				LegendAction first = (LegendAction) one;
+				LegendAction second = (LegendAction) two;
+				Integer firstSize = new Integer(first.getLegendSize());
+				Integer secondSize = new Integer(second.getLegendSize());
+				
+				return firstSize.compareTo(secondSize);
+			}
+			
 		}
-		if(nodeFillAction != null) {
-			legendsBox.add(nodeFillAction.getLegend("Node Color", nodeFillExpression.getColumnName()));
+		Collections.sort(legendActions, new LegendComparator());
+		Collections.reverse(legendActions);
+		int overflow = 5; //trick to make it initialize legendsBox first go around
+		int current = 6;
+		
+		Iterator legendActionsIter = legendActions.iterator();
+		while(legendActionsIter.hasNext()) {
+			if(current >= overflow) {
+				legendsBox = new Box(BoxLayout.PAGE_AXIS);
+				box.add(legendsBox);
+				current = 0;
+			} else {
+				legendsBox.add(Box.createVerticalStrut(Constants.VERTICAL_STRUT_DISTANCE));
+				legendsBox.add(new JSeparator());
+				legendsBox.add(Box.createVerticalStrut(Constants.VERTICAL_STRUT_DISTANCE));
+			}
+			LegendAction action = (LegendAction) legendActionsIter.next();
+			JComponent legend = action.getLegend();
+			legendsBox.add(legend);
+			System.out.println(action.getLegendSize());
+			current += action.getLegendSize();
 		}
 
 

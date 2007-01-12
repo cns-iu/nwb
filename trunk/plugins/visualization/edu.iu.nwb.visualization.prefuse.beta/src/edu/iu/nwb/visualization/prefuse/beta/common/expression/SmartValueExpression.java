@@ -16,6 +16,7 @@ public class SmartValueExpression extends ColumnExpression { //this should make 
 		if(super.getType(t.getSchema()) == double.class) {
 			return super.getDouble(t);
 		}
+		//no need for try/catch because of getType
 		double value = Double.parseDouble(super.get(t).toString());
 		return value;
 	}
