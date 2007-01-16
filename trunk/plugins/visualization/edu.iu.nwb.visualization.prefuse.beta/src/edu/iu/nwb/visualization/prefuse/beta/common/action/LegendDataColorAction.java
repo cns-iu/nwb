@@ -39,7 +39,7 @@ public class LegendDataColorAction extends DataColorAction implements LegendActi
 
 	public LegendDataColorAction(String group, String dataField, int dataType, String colorField, int[] palette, String column, String context) {
 		super(group, dataField, dataType, colorField, palette);
-		this.dataField = dataField;
+		this.dataField = dataField; //the likely-indirected field used to really 
 		this.palette = palette;
 		this.column = column;
 		this.context = context;

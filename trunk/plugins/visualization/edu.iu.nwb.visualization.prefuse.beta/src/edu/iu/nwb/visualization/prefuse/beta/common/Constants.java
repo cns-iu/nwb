@@ -19,6 +19,7 @@ public class Constants {
 	public static final Font FIELD_SPECIFYING_FONT = FontLib.getFont("Tahoma", Font.BOLD, 11);
 	public static final Font FIELD_VALUE_FONT = FontLib.getFont("Tahoma", 8);
 	public static final Font EMPTY_FIELD_FONT = FontLib.getFont("Tahoma", Font.ITALIC, 8);
+	public static final Font LABEL_FONT = FontLib.getFont("Tahoma", 10);
 	public static final int VERTICAL_STRUT_DISTANCE = 1;
 	public static final int LEGEND_CANVAS_HEIGHT = 13;
 	public static final int DEFAULT_EXPRESSION_NUMBER = 1;
