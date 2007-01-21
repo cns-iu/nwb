@@ -151,7 +151,7 @@
 
        intdegree(minind)=0
 
-       do k=minind,maxind
+       do k=minind,maxind-1
           intdegree(k+1)=intdegree(k)+degree(k)
        enddo
 
