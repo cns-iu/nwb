@@ -9,6 +9,7 @@
       integer, allocatable,dimension(:)::itnei,degree,indvic,distance,lista,np
       integer, allocatable,dimension(:)::itnei1,indc,predec,n_predec,sp,totneigh
       real*8, allocatable,dimension(:)::s_btw,s_btw_it,interv,avsbwbin
+      logical, allocatable, dimension(:):: nodelist
       integer i,j,k,nneigh,nneigh1,dist,diameter,n_paths,ilist,n_vert,n_edges
       integer i1,i2,maxind,minind,n_bins
       character*256 filename,fileout1,fileout2,fileout3,str1,str2,sn_bins
@@ -29,9 +30,17 @@
       open(20,file=filename,status='unknown')
       do 
          read(20,106,err=8103,end=8103)str1
-         if(str1(1:1)=='*'.AND.str1(2:2)=='U')then
+         if(str1(1:1)=='*'.AND.str1(2:2)=='N')then
+            n_vert=0
             do 
-               read(20,*,err=8103,end=8103)i1,i2
+               read(20,*,err=8103,end=8103)i1
+               if(minind>i1)minind=i1
+               if(maxind<i1)maxind=i1
+               n_vert=n_vert+1  
+            enddo
+         else if(str1(1:1)=='*'.AND.str1(2:2)=='U')then 
+            do 
+               read(20,*,err=9103,end=9103)i1,i2
                if(minind>i1)minind=i1
                if(minind>i2)minind=i2
                if(maxind<i2)maxind=i2
@@ -41,55 +50,102 @@
          endif
       enddo
 8103  continue
+      backspace(20)
+      do
+         read(20,106,err=9103,end=9103)str1
+         if(str1(1:1)=='*'.AND.str1(2:2)=='U')then
+            do 
+               read(20,*,err=9103,end=9103)i1,i2
+               if(minind>i1)minind=i1
+               if(minind>i2)minind=i2
+               if(maxind<i2)maxind=i2
+               if(maxind<i1)maxind=i1
+               n_edges=n_edges+1   
+            enddo
+         endif
+      enddo
+9103  continue
+      close(20)
+      allocate(nodelist(minind:maxind))
+      allocate(degree(minind:maxind))
+      degree=0
+      nodelist=.false.
+      open(20,file=filename,status='unknown')
+      do 
+         read(20,106,err=9203,end=9203)str1
+         if(str1(1:1)=='*'.AND.str1(2:2)=='N')then
+            n_vert=0
+            do 
+               read(20,*,err=9203,end=9203)i1
+               nodelist(i1)=.true.
+               n_vert=n_vert+1
+            enddo
+         else if(str1(1:1)=='*'.AND.str1(2:2)=='U')then
+            n_vert=0
+            do i=1,n_edges
+               read(20,*)i1,i2
+               if(nodelist(i1).eqv..false.)then
+                  nodelist(i1)=.true.
+                  n_vert=n_vert+1
+               endif
+               if(nodelist(i2).eqv..false.)then
+                  nodelist(i2)=.true.
+                  n_vert=n_vert+1
+               endif
+               degree(i1)=degree(i1)+1
+               degree(i2)=degree(i2)+1
+            enddo
+            goto 9303
+         endif
+      enddo
+9203  continue
+      backspace(20)
+      do
+         read(20,106,err=9303,end=9303)str1
+         if(str1(1:1)=='*'.AND.str1(2:2)=='U')then
+            do i=1,n_edges
+               read(20,*)i1,i2
+               if(nodelist(i1).eqv..false.)then
+                  nodelist(i1)=.true.
+                  n_vert=n_vert+1
+               endif
+               if(nodelist(i2).eqv..false.)then
+                  nodelist(i2)=.true.
+                  n_vert=n_vert+1
+               endif
+               degree(i1)=degree(i1)+1
+               degree(i2)=degree(i2)+1
+            enddo
+         endif
+      enddo
+9303  continue
       close(20)
 
       if(n_edges==0)then
          write(*,*)'Error! The program should be applied on undirected networks'
          stop
       endif
-      if(minind/=1)then
-         write(*,*)'Error! The minimal node index is not 1'
-         stop
-      endif
-      
-      n_vert=maxind
 
       allocate(predec(1:2*n_edges))
-      allocate(n_predec(1:n_vert))
-      allocate(sp(1:n_vert))
-      allocate(s_btw(1:n_vert))
-      allocate(s_btw_it(1:n_vert))
+      allocate(n_predec(minind:maxind))
+      allocate(sp(minind:maxind))
+      allocate(s_btw(minind:maxind))
+      allocate(s_btw_it(minind:maxind))
       allocate(itnei(1:n_vert))
       allocate(itnei1(1:n_vert))
-      allocate(totneigh(1:n_vert))
-      allocate(indvic(1:n_vert))
+      allocate(totneigh(minind:maxind))
+      allocate(indvic(minind:maxind))
+      allocate(distance(minind:maxind))
       allocate(lista(1:n_vert-1))
-      allocate(degree(1:n_vert))
-      allocate(distance(1:n_vert))
       allocate(indc(1:2*n_edges))
       allocate(np(1:n_bins))
       allocate(avsbwbin(1:n_bins))
       allocate(interv(0:n_bins))
 
-      indvic(1)=0
+      indvic(minind)=0
       s_btw=0.0d0
-      degree=0
       
-      open(20,file=filename,status='unknown')
-      do 
-         read(20,106)str1
-         if(str1(1:1)=='*'.AND.str1(2:2)=='U')then
-            do j=1,n_edges
-               read(20,*)i1,i2
-               degree(i1)=degree(i1)+1
-               degree(i2)=degree(i2)+1
-            enddo
-            exit
-         endif
-      enddo
-      close(20)
-      
-      do k=1,n_vert-1
+      do k=minind,maxind-1
          indvic(k+1)=indvic(k)+degree(k)
       enddo
 
@@ -111,58 +167,57 @@
       enddo
       close(20)
       totneigh=0
-      do i=1,n_vert
-         ilist=0
-         s_btw_it(i)=0.0d0
-         sp=0
-         n_predec=0
-         distance=n_vert
-         dist=1
-         distance(i)=0
-         nneigh=1
-         itnei(nneigh)=i
-         sp(i)=1
-1001     continue
-         nneigh1=0
-         do k=1,nneigh
-            do j=1,degree(itnei(k))
-               if(distance(indc(indvic(itnei(k))+j))>dist)then
-                  nneigh1=nneigh1+1
-                  itnei1(nneigh1)=indc(indvic(itnei(k))+j)
-                  distance(itnei1(nneigh1))=dist
-                  s_btw_it(itnei1(nneigh1))=1.0d0
-                  n_predec(itnei1(nneigh1))=n_predec(itnei1(nneigh1))+1
-                  predec(indvic(itnei1(nneigh1))+n_predec(itnei1(nneigh1)))=itnei(k)
-                  ilist=ilist+1
-                  lista(ilist)=itnei1(nneigh1)
-                  sp(lista(ilist))=sp(lista(ilist))+sp(itnei(k))
-               else if(distance(indc(indvic(itnei(k))+j))==dist)then
-                  n_predec(indc(indvic(itnei(k))+j))=n_predec(indc(indvic(itnei(k))+j))+1
-                  predec(indvic(indc(indvic(itnei(k))+j))+n_predec(indc(indvic(itnei(k))+j)))=itnei(k)
-                  sp(indc(indvic(itnei(k))+j))=sp(indc(indvic(itnei(k))+j))+sp(itnei(k))
-               endif
+      do i=minind,maxind
+         if(nodelist(i).eqv..true.)then
+            ilist=0
+            s_btw_it(i)=0.0d0
+            sp=0
+            n_predec=0
+            distance=n_vert
+            dist=1
+            distance(i)=0
+            nneigh=1
+            itnei(nneigh)=i
+            sp(i)=1
+1001        continue
+            nneigh1=0
+            do k=1,nneigh
+               do j=1,degree(itnei(k))
+                  if(distance(indc(indvic(itnei(k))+j))>dist)then
+                     nneigh1=nneigh1+1
+                     itnei1(nneigh1)=indc(indvic(itnei(k))+j)
+                     distance(itnei1(nneigh1))=dist
+                     s_btw_it(itnei1(nneigh1))=1.0d0
+                     n_predec(itnei1(nneigh1))=n_predec(itnei1(nneigh1))+1
+                     predec(indvic(itnei1(nneigh1))+n_predec(itnei1(nneigh1)))=itnei(k)
+                     ilist=ilist+1
+                     lista(ilist)=itnei1(nneigh1)
+                     sp(lista(ilist))=sp(lista(ilist))+sp(itnei(k))
+                  else if(distance(indc(indvic(itnei(k))+j))==dist)then
+                     n_predec(indc(indvic(itnei(k))+j))=n_predec(indc(indvic(itnei(k))+j))+1
+                     predec(indvic(indc(indvic(itnei(k))+j))+n_predec(indc(indvic(itnei(k))+j)))=itnei(k)
+                     sp(indc(indvic(itnei(k))+j))=sp(indc(indvic(itnei(k))+j))+sp(itnei(k))
+                  endif
+               enddo
             enddo
-         enddo
-         if(nneigh1==0)goto 101
-         dist=dist+1
-         nneigh=nneigh1
-         totneigh(i)=totneigh(i)+nneigh1
-         do k=1,nneigh
-            itnei(k)=itnei1(k)
-         enddo
-         goto 1001
-101      continue
-         do k=1,ilist
-            do j=1,n_predec(lista(ilist-k+1))
-               s_btw_it(predec(indvic(lista(ilist-k+1))+j))=s_btw_it(predec(indvic(lista(ilist-k+1))+j))+&
-                    &(s_btw_it(lista(ilist-k+1))*sp(predec(indvic(lista(ilist-k+1))+j)))/sp(lista(ilist-k+1))
+            if(nneigh1==0)goto 101
+            dist=dist+1
+            nneigh=nneigh1
+            totneigh(i)=totneigh(i)+nneigh1
+            do k=1,nneigh
+               itnei(k)=itnei1(k)
             enddo
-         enddo
-         s_btw=s_btw+s_btw_it
-         do k=1,ilist
-            s_btw_it(k)=0.0d0
-         enddo
-         s_btw_it(i)=0.0d0
+            goto 1001
+101         continue
+            do k=1,ilist
+               do j=1,n_predec(lista(ilist-k+1))
+                  s_btw_it(predec(indvic(lista(ilist-k+1))+j))=s_btw_it(predec(indvic(lista(ilist-k+1))+j))+&
+                       &(s_btw_it(lista(ilist-k+1))*sp(predec(indvic(lista(ilist-k+1))+j)))/sp(lista(ilist-k+1))
+               enddo
+            enddo
+            s_btw=s_btw+s_btw_it
+            s_btw_it(i)=0.0d0
+         endif
       enddo
 
       s_btw=s_btw-real(totneigh)
@@ -174,8 +229,10 @@
       write(20,103)'# Nodes ',n_vert
       write(20,*)'#   Node   |  Site betweenness'
       write(20,*)
-      do i=1,n_vert
-         write(20,128)i,s_btw(i)
+      do i=minind,maxind
+         if(nodelist(i).eqv..true.)then
+            write(20,128)i,s_btw(i)
+         endif
       enddo
 
       close(20)
@@ -189,13 +246,15 @@
 
       np=0
        
-      do i=1,n_vert
-         do j=1,n_bins
-            if(s_btw(i)<interv(j))then
-               np(j)=np(j)+1
-               exit
-            endif
-         enddo
+      do i=minind,maxind
+         if(nodelist(i).eqv..true.)then
+            do j=1,n_bins
+               if(s_btw(i)<interv(j))then
+                  np(j)=np(j)+1
+                  exit
+               endif
+            enddo
+         endif
       enddo
 
       open(20,file=fileout2,status='unknown')
@@ -223,14 +282,16 @@
       avsbwbin=0.0d0
       np=0
       
-      do i=1,n_vert
-         do j=1,n_bins
-            if(s_btw(i)<interv(j))then
-               np(j)=np(j)+1
-               avsbwbin(j)=avsbwbin(j)+s_btw(i)
-               exit
-            endif
-         enddo
+      do i=minind,maxind
+         if(nodelist(i).eqv..true.)then
+            do j=1,n_bins
+               if(s_btw(i)<interv(j))then
+                  np(j)=np(j)+1
+                  avsbwbin(j)=avsbwbin(j)+s_btw(i)
+                  exit
+               endif
+            enddo
+         endif
       enddo
       
       do i=1,n_bins
@@ -249,7 +310,6 @@
          endif
       enddo
       close(20)
-      
       
 103   format(a8,i10)
 128   format(i10,e15.6)
