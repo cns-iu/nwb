@@ -25,9 +25,9 @@ public class LegendDataShapeAction extends DataShapeAction implements LegendActi
 	private String column;
 	private String context;
 
-	public LegendDataShapeAction(String group, String field, int[] shapes, String context) {
+	public LegendDataShapeAction(String group, String field, int[] shapes, String indirectedColumn, String context) {
 		super(group, field, shapes);
-		this.column = field;
+		this.column = indirectedColumn;
 		this.context = context;
 	}
 

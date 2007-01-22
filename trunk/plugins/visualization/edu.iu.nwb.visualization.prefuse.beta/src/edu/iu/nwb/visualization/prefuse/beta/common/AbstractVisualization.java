@@ -211,14 +211,17 @@ public abstract class AbstractVisualization implements PrefuseBetaVisualization 
 		}
 
 		if(!"".equals(nodeShapeField)) {
-			//no indirection or expression is needed because this can work with anything
+			//no indirection or expression is needed because this can work with anything . . . except it can't
+			SmartValueExpression nodeShapeExpression = new SmartValueExpression(nodeShapeField, Indirection.getExample(graph.getNodes(), nodeShapeField));
+			Indirection nodeShapeIndirection = new Indirection(visualization, nodes, nodeShapeExpression);
 			LegendDataShapeAction nodeShapeAction = new LegendDataShapeAction(	nodes, //the group
-																				nodeShapeField, //the field used to determine shape
+																				nodeShapeIndirection.getField(), //the field used to determine shape
 																				new int[] { prefuse.Constants.SHAPE_ELLIPSE, //the shapes we will cycle through
 																						prefuse.Constants.SHAPE_RECTANGLE,
 																						prefuse.Constants.SHAPE_TRIANGLE_UP,
 																						prefuse.Constants.SHAPE_DIAMOND,
 																						prefuse.Constants.SHAPE_TRIANGLE_DOWN},
+																				nodeShapeExpression.getColumnName(),
 																				"Node Shape"); //context for legend
 			draw.add(nodeShapeAction);
 			legendActions.add(nodeShapeAction);

@@ -32,6 +32,11 @@ public class ToDoubleExpression extends ColumnExpression {
 		}
 		return value;
 	}
+	
+	public Object get(Tuple t) {
+		return new Double(getDouble(t));
+	}
+	
 	public Class getType(Schema s) {
 		return double.class;
 	}

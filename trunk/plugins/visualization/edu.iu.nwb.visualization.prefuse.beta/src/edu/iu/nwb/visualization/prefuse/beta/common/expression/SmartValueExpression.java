@@ -22,6 +22,9 @@ public class SmartValueExpression extends ColumnExpression { //this should make 
 	}
 	
 	public Object get(Tuple t) {
+		if(this.getType(t.getSchema()) == double.class) {
+			return new Double(this.getDouble(t));
+		}
 		Object object = super.get(t);
 		if(object == null) {
 			return "";

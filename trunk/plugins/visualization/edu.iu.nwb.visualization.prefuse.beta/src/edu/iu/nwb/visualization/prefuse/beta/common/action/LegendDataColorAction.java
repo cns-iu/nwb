@@ -39,23 +39,20 @@ public class LegendDataColorAction extends DataColorAction implements LegendActi
 
 	public LegendDataColorAction(String group, String dataField, int dataType, String colorField, int[] palette, String column, String context) {
 		super(group, dataField, dataType, colorField, palette);
-		this.dataField = dataField; //the likely-indirected field used to really 
+		this.dataField = dataField; //the likely-indirected field used for the data
 		this.palette = palette;
-		this.column = column;
+		this.column = column; //the name of the field the data's originally from
 		this.context = context;
 		
 	}
 	
 	public JComponent getLegend() {
-		//LayoutManager layout = new FlowLayout(FlowLayout.LEFT);
-		JComponent legend;
+		JComponent legend = new Box(BoxLayout.PAGE_AXIS);
 		
 		final TupleSet tuples = this.getVisualization().getGroup(this.m_group);
 		
 		if(this.getDataType() == prefuse.Constants.NUMERICAL) {
 			size = 2;
-			
-			legend = new Box(BoxLayout.PAGE_AXIS);
 			
 			double min = 0;
 			double max = 1;
@@ -134,7 +131,6 @@ public class LegendDataColorAction extends DataColorAction implements LegendActi
 			legend.add(continuumPanel);
 		} else {
 			size += 1;
-			legend = new Box(BoxLayout.PAGE_AXIS);
 			JLabel label = new JLabel(context + " (" + column + ")");
 			label.setFont(Constants.FIELD_SPECIFYING_FONT);
 			JPanel titlePanel = new JPanel(new FlowLayout(FlowLayout.LEFT));

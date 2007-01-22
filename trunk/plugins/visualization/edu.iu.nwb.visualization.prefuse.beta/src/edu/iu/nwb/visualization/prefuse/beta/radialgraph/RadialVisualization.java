@@ -56,7 +56,7 @@ public class RadialVisualization extends AbstractVisualization {
         title.setPreferredSize(new Dimension(350, 20));
         title.setVerticalAlignment(SwingConstants.BOTTOM);
         title.setBorder(BorderFactory.createEmptyBorder(3,0,0,0));
-        title.setFont(FontLib.getFont("Tahoma", Font.PLAIN, 16));
+        title.setFont(Constants.TITLE_FONT);
         
         display.addControlListener(new ControlAdapter() {
             public void itemEntered(VisualItem item, MouseEvent e) {

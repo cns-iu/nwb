@@ -18,6 +18,7 @@ import edu.iu.nwb.visualization.prefuse.beta.common.Constants;
 
 import prefuse.action.assignment.DataSizeAction;
 import prefuse.data.DataTypeException;
+import prefuse.data.Tuple;
 import prefuse.data.parser.DataParseException;
 import prefuse.data.tuple.TupleSet;
 import prefuse.util.DataLib;
@@ -42,6 +43,8 @@ public class LegendDataSizeAction extends DataSizeAction implements LegendAction
 		final TupleSet tuples = this.getVisualization().getGroup(this.m_group);
 		
 		JComponent legend = new Box(BoxLayout.PAGE_AXIS);
+		
+		
 		
 		double min = 0;
 		double max = 1;
