@@ -19,8 +19,9 @@
 
       implicit none
       integer, allocatable,dimension(:)::out_deg,ind,indc,label_degzero,np
-      real*8,  allocatable,dimension(:)::prob_stat,PR,PR_it,interv,avPRbin
+      real*8,  allocatable,dimension(:)::PR,PR_it,interv,avPRbin
       integer, allocatable, dimension (:) :: PRdis
+      logical, allocatable, dimension(:):: nodelist
       integer i,j,k,icheck,n_degzero,n_vert,n_edges,n_bins,minind,maxind,i1,i2
       real*8 eps,PR_dangling,pq,pqv,minPR,maxPR,abin,q
       character*256 filename,fileout,fileout1,fileout2,sq,sn_bins,str1,str2
@@ -41,14 +42,22 @@
       pq=1.0d0-q
       n_edges=0
       maxind=1
-      minind=1000000
+      minind=10000000
 
       open(20,file=filename,status='unknown')
       do 
          read(20,106,err=8103,end=8103)str1
-         if(str1(1:1)=='*'.AND.str1(2:2)=='D')then
+         if(str1(1:1)=='*'.AND.str1(2:2)=='N')then
+            n_vert=0
             do 
-               read(20,*,err=8103,end=8103)i1,i2
+               read(20,*,err=8103,end=8103)i1
+               if(minind>i1)minind=i1
+               if(maxind<i1)maxind=i1
+               n_vert=n_vert+1  
+            enddo
+         else if(str1(1:1)=='*'.AND.str1(2:2)=='D')then 
+            do 
+               read(20,*,err=9103,end=9103)i1,i2
                if(minind>i1)minind=i1
                if(minind>i2)minind=i2
                if(maxind<i2)maxind=i2
@@ -58,47 +67,90 @@
          endif
       enddo
 8103  continue
+      backspace(20)
+      do
+         read(20,106,err=9103,end=9103)str1
+         if(str1(1:1)=='*'.AND.str1(2:2)=='D')then
+            do 
+               read(20,*,err=9103,end=9103)i1,i2
+               if(minind>i1)minind=i1
+               if(minind>i2)minind=i2
+               if(maxind<i2)maxind=i2
+               if(maxind<i1)maxind=i1
+               n_edges=n_edges+1   
+            enddo
+         endif
+      enddo
+9103  continue
+      close(20)
+      allocate(nodelist(minind:maxind))
+      allocate(ind(1:n_edges))         
+      allocate(indc(1:n_edges))
+      allocate(out_deg(minind:maxind))
+      out_deg=0
+      nodelist=.false.
+      open(20,file=filename,status='unknown')
+      do 
+         read(20,106,err=9203,end=9203)str1
+         if(str1(1:1)=='*'.AND.str1(2:2)=='N')then
+            n_vert=0
+            do 
+               read(20,*,err=9203,end=9203)i1
+               nodelist(i1)=.true.
+               n_vert=n_vert+1
+            enddo
+         else if(str1(1:1)=='*'.AND.str1(2:2)=='D')then
+            n_vert=0
+            do i=1,n_edges
+               read(20,*)i1,i2
+               if(nodelist(i1).eqv..false.)then
+                  nodelist(i1)=.true.
+                  n_vert=n_vert+1
+               endif
+               if(nodelist(i2).eqv..false.)then
+                  nodelist(i2)=.true.
+                  n_vert=n_vert+1
+               endif
+               out_deg(i1)=out_deg(i1)+1
+               ind(i)=i2
+               indc(i)=i1
+            enddo
+            goto 9303
+         endif
+      enddo
+9203  continue
+      backspace(20)
+      do
+         read(20,106,err=9303,end=9303)str1
+         if(str1(1:1)=='*'.AND.str1(2:2)=='D')then
+            do i=1,n_edges
+               read(20,*)i1,i2
+               if(nodelist(i1).eqv..false.)then
+                  nodelist(i1)=.true.
+                  n_vert=n_vert+1
+               endif
+               if(nodelist(i2).eqv..false.)then
+                  nodelist(i2)=.true.
+                  n_vert=n_vert+1
+               endif
+               out_deg(i1)=out_deg(i1)+1
+               ind(i)=i2
+               indc(i)=i1
+            enddo
+         endif
+      enddo
+9303  continue
       close(20)
 
       if(n_edges==0)then
          write(*,*)'Error! The program should be applied on directed networks'
          stop
       endif
-      if(minind/=1)then
-         write(*,*)'Error! The minimal node index is not 1'
-         stop
-      endif
-
-      n_vert=maxind
-
-!     Here the arrays are allocated
-
-      allocate(prob_stat(1:n_edges))
-      allocate(ind(1:n_edges))         
-      allocate(indc(1:n_edges))
-      allocate(out_deg(1:n_vert))
-
-      out_deg=0
-
-      open(20,file=filename,status='unknown')
-      do 
-         read(20,106)str1
-         if(str1(1:1)=='*'.AND.str1(2:2)=='D')then
-            do j=1,n_edges
-               read(20,*)i1,i2
-               out_deg(i1)=out_deg(i1)+1
-               ind(j)=i2
-               indc(j)=i1
-            enddo
-            exit
-         endif
-      enddo
-      close(20)
 
       pqv=pq/n_vert
 
-      allocate(PR_it(1:n_vert))
-      allocate(PR(1:n_vert))
+      allocate(PR_it(minind:maxind))
+      allocate(PR(minind:maxind))
       allocate(PRdis(1:n_bins))
       allocate(np(1:n_bins))
       allocate(avPRbin(1:n_bins))
@@ -117,19 +169,23 @@
 !     with zero out-degree
 
       n_degzero=0
-      do i=1,n_vert
-         if(out_deg(i)==0)then
-            n_degzero=n_degzero+1
+      do i=minind,maxind
+         if(nodelist(i).eqv..true.)then
+            if(out_deg(i)==0)then
+               n_degzero=n_degzero+1
+            endif
          endif
       enddo
 
       allocate(label_degzero(1:n_degzero))
 
       n_degzero=0
-      do i=1,n_vert
-         if(out_deg(i)==0)then
-            n_degzero=n_degzero+1
-            label_degzero(n_degzero)=i
+      do i=minind,maxind
+         if(nodelist(i).eqv..true.)then
+            if(out_deg(i)==0)then
+               n_degzero=n_degzero+1
+               label_degzero(n_degzero)=i
+            endif
          endif
       enddo
 
@@ -155,9 +211,11 @@
 !     the relative error must be smaller than eps 
 
       icheck=0
-      do j=1,n_vert
-         if(abs((PR_it(j)-PR(j))/PR(j))>eps)then
-            icheck=icheck+1
+      do j=minind,maxind
+         if(nodelist(j).eqv..true.)then
+            if(abs((PR_it(j)-PR(j))/PR(j))>eps)then
+               icheck=icheck+1
+            endif
          endif
       enddo
       if(icheck>0)then
@@ -171,8 +229,10 @@
       write(20,103)'# Nodes ',n_vert
       write(20,*)'#     Node     |     PageRank'
       write(20,*)
-      do i=1,n_vert
-         write(20,101)i,PR(i)
+      do i=minind,maxind
+         if(nodelist(i).eqv..true.)then
+            write(20,101)i,PR(i)
+         endif
       enddo
       close(20)
 101   format(i10,8x,e15.6)
@@ -188,8 +248,10 @@
       PRdis=0
       abin=(maxPR-minPR+0.0002d0*minPR)/n_bins
        
-      do i=1,n_vert
-         PRdis(ceiling((PR(i)-minPR+0.0001d0*minPR)/abin))=PRdis(ceiling((PR(i)-minPR+0.0001d0*minPR)/abin))+1
+      do i=minind,maxind
+         if(nodelist(i).eqv..true.)then
+            PRdis(ceiling((PR(i)-minPR+0.0001d0*minPR)/abin))=PRdis(ceiling((PR(i)-minPR+0.0001d0*minPR)/abin))+1
+         endif
       enddo
        
       open(20,file=fileout1,status='unknown')
@@ -217,14 +279,16 @@
       avPRbin=0.0d0
       np=0
 
-      do i=1,n_vert
-         do j=1,n_bins
-            if(PR(i)<interv(j))then
-               np(j)=np(j)+1
-               avPRbin(j)=avPRbin(j)+PR(i)
-               exit
-            endif
-         enddo
+      do i=minind,maxind
+         if(nodelist(i).eqv..true.)then
+            do j=1,n_bins
+               if(PR(i)<interv(j))then
+                  np(j)=np(j)+1
+                  avPRbin(j)=avPRbin(j)+PR(i)
+                  exit
+               endif
+            enddo
+         endif
       enddo
       
       do i=1,n_bins
