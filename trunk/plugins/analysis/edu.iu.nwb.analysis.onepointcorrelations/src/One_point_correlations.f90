@@ -13,6 +13,7 @@
        integer, allocatable, dimension (:) :: indegree,outdegree,np
        real*8, allocatable, dimension (:) :: knn_his,avdegbin,interv,avoutbin
        integer, allocatable, dimension (:) :: count_in
+       logical, allocatable, dimension(:):: nodelist
        character*256 filename,fileout,fileout1,fileout2,sn_bins,str1,str2
        real*8 binsize,avdeg,avkinkout
 
@@ -29,14 +30,22 @@
 
        n_edges=0
        maxind=1
-       minind=1000000
+       minind=10000000
 
        open(20,file=filename,status='unknown')
        do 
           read(20,106,err=8103,end=8103)str1
-          if(str1(1:1)=='*'.AND.str1(2:2)=='D')then
+          if(str1(1:1)=='*'.AND.str1(2:2)=='N')then
+             n_vert=0
              do 
-                read(20,*,err=8103,end=8103)i1,i2
+                read(20,*,err=8103,end=8103)i1
+                if(minind>i1)minind=i1
+                if(maxind<i1)maxind=i1
+                n_vert=n_vert+1  
+             enddo
+          else if(str1(1:1)=='*'.AND.str1(2:2)=='D')then 
+             do 
+                read(20,*,err=9103,end=9103)i1,i2
                 if(minind>i1)minind=i1
                 if(minind>i2)minind=i2
                 if(maxind<i2)maxind=i2
@@ -46,44 +55,88 @@
           endif
        enddo
 8103   continue
+       backspace(20)
+       do
+          read(20,106,err=9103,end=9103)str1
+          if(str1(1:1)=='*'.AND.str1(2:2)=='D')then
+             do 
+                read(20,*,err=9103,end=9103)i1,i2
+                if(minind>i1)minind=i1
+                if(minind>i2)minind=i2
+                if(maxind<i2)maxind=i2
+                if(maxind<i1)maxind=i1
+                n_edges=n_edges+1   
+             enddo
+          endif
+       enddo
+9103   continue
+       close(20)
+       allocate(nodelist(minind:maxind))
+       allocate(indegree(minind:maxind))
+       allocate(outdegree(minind:maxind))
+       indegree=0
+       outdegree=0
+       nodelist=.false.
+       open(20,file=filename,status='unknown')
+       do 
+          read(20,106,err=9203,end=9203)str1
+          if(str1(1:1)=='*'.AND.str1(2:2)=='N')then
+             n_vert=0
+             do 
+                read(20,*,err=9203,end=9203)i1
+                nodelist(i1)=.true.
+                n_vert=n_vert+1
+             enddo
+          else if(str1(1:1)=='*'.AND.str1(2:2)=='D')then
+             n_vert=0
+             do i=1,n_edges
+                read(20,*)i1,i2
+                if(nodelist(i1).eqv..false.)then
+                   nodelist(i1)=.true.
+                   n_vert=n_vert+1
+                endif
+                if(nodelist(i2).eqv..false.)then
+                   nodelist(i2)=.true.
+                   n_vert=n_vert+1
+                endif
+                indegree(i2)=indegree(i2)+1
+                outdegree(i1)=outdegree(i1)+1
+             enddo
+             goto 9303
+          endif
+       enddo
+9203   continue
+       backspace(20)
+       do
+          read(20,106,err=9303,end=9303)str1
+          if(str1(1:1)=='*'.AND.str1(2:2)=='D')then
+             do i=1,n_edges
+                read(20,*)i1,i2
+                if(nodelist(i1).eqv..false.)then
+                   nodelist(i1)=.true.
+                   n_vert=n_vert+1
+                endif
+                if(nodelist(i2).eqv..false.)then
+                   nodelist(i2)=.true.
+                   n_vert=n_vert+1
+                endif
+                indegree(i2)=indegree(i2)+1
+                outdegree(i1)=outdegree(i1)+1
+             enddo
+          endif
+       enddo
+9303   continue
        close(20)
 
        if(n_edges==0)then
           write(*,*)'Error! The program should be applied on directed networks'
           stop
        endif
-       if(minind/=1)then
-          write(*,*)'Error! The minimal node index is not 1'
-          stop
-       endif
 
-       n_vert=maxind
-
-       allocate(indegree(1:n_vert))
-       allocate(outdegree(1:n_vert))
        allocate(np(1:n_bins))
        allocate(avdegbin(1:n_bins))
        allocate(avoutbin(1:n_bins))
        allocate(interv(0:n_bins))
-
-!      Here we initialize to zero the degrees of the nodes
-
-       indegree=0
-       outdegree=0
-
-       open(20,file=filename,status='unknown')
-       do 
-          read(20,106)str1
-          if(str1(1:1)=='*'.AND.str1(2:2)=='D')then
-             do j=1,n_edges
-                read(20,*)i1,i2
-                outdegree(i1)=outdegree(i1)+1
-                indegree(i2)=indegree(i2)+1
-             enddo
-             exit
-          endif
-       enddo
-       close(20)
 
 !      Here we update the degrees of each node
 !      directly from the reading of the edges
@@ -94,9 +147,16 @@
 !      initialize the histogram of the correlations 
 !      (arrays knn_his)
 
-       minindeg=MINVAL(indegree)
-       maxindeg=MAXVAL(indegree)
-       
+       minindeg=1000000
+       maxindeg=0
+
+       do i=minind,maxind
+          if(nodelist(i).eqv..true.)then
+             if(indegree(i)>maxindeg)maxindeg=indegree(i)
+             if(indegree(i)<minindeg)minindeg=indegree(i)
+          endif
+       enddo
+
        allocate(knn_his(minindeg:maxindeg))
        allocate(count_in(minindeg:maxindeg))
 
@@ -109,11 +169,13 @@
 !      (array knn_his)
 !      and write out the final averages
 
-       do k=1,n_vert
-          avkinkout=avkinkout+(real(indegree(k))/n_vert)*outdegree(k)
-          knn_his(indegree(k))=knn_his(indegree(k))+real(outdegree(k))
-          count_in(indegree(k))=count_in(indegree(k))+1
-          avdeg=avdeg+real(outdegree(k))/n_vert
+       do k=minind,maxind
+          if(nodelist(k).eqv..true.)then
+             avkinkout=avkinkout+(real(indegree(k))/n_vert)*outdegree(k)
+             knn_his(indegree(k))=knn_his(indegree(k))+real(outdegree(k))
+             count_in(indegree(k))=count_in(indegree(k))+1
+             avdeg=avdeg+real(outdegree(k))/n_vert
+          endif
        enddo
 
        write(*,*)'**************************************************************************'
@@ -149,15 +211,17 @@
        avoutbin=0.0d0
        np=0
        
-       do i=1,n_vert
-          do j=1,n_bins
-             if(real(indegree(i))<interv(j))then
-                np(j)=np(j)+1
-                avdegbin(j)=avdegbin(j)+real(indegree(i))
-                avoutbin(j)=avoutbin(j)+real(outdegree(i))
-                exit
-             endif
-          enddo
+       do i=minind,maxind
+          if(nodelist(i).eqv..true.)then
+             do j=1,n_bins
+                if(real(indegree(i))<interv(j))then
+                   np(j)=np(j)+1
+                   avdegbin(j)=avdegbin(j)+real(indegree(i))
+                   avoutbin(j)=avoutbin(j)+real(outdegree(i))
+                   exit
+                endif
+             enddo
+          endif
        enddo
 
        do i=1,n_bins
