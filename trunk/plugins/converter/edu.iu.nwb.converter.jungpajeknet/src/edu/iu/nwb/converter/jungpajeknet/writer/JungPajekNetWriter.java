@@ -1,7 +1,12 @@
 package edu.iu.nwb.converter.jungpajeknet.writer;
 
+import java.io.BufferedWriter;
 import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.OutputStreamWriter;
+import java.io.Writer;
+import java.nio.charset.Charset;
 import java.util.Dictionary;
 
 import org.cishell.framework.CIShellContext;
@@ -48,8 +53,10 @@ public class JungPajekNetWriter implements Algorithm, VertexStringer {
     	}
     	if (tempFile != null){
     		try{
+    			Writer writer = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(tempFile), "UTF8"));
+    			
     			(new PajekNetWriter()).save((Graph)(data[0].getData()), 
-    						tempFile.getPath(), this, null) ;
+    						writer, this, null) ;
     			return new Data[]{new BasicData(tempFile, "file:application/pajek") };
     		}catch (IOException ioe){
     			logger.log(LogService.LOG_ERROR, "IOException", ioe);

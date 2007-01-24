@@ -1,9 +1,13 @@
 package edu.iu.nwb.converter.jungpajeknet.reader;
 
+import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.Reader;
 import java.util.Dictionary;
 import java.util.Iterator;
 
@@ -37,7 +41,9 @@ public class JungPajekNetReader implements Algorithm {
     	LogService logger = (LogService)context.getService(LogService.class.getName());
     	File fileHandler = (File) data[0].getData();
     	try{
-    		Graph graph = (new PajekNetReader()).load(new FileReader(fileHandler));
+    		Reader reader = new BufferedReader(new InputStreamReader(new FileInputStream(fileHandler), "UTF8"));
+    		
+    		Graph graph = (new PajekNetReader()).load(reader);
             fixLabels(graph);
             
     		Data[] dm = new Data[] {new BasicData(graph, Graph.class.getName())};
