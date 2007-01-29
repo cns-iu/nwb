@@ -1,9 +1,13 @@
 package edu.iu.nwb.converter.prefusegraphml.writer;
 
 import java.util.Dictionary;
+import java.io.BufferedOutputStream;
+import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.OutputStreamWriter;
+import java.io.Writer;
 
 import org.cishell.framework.CIShellContext;
 import org.cishell.framework.algorithm.Algorithm;
@@ -39,19 +43,20 @@ public class PrefuseGraphMLWriter implements Algorithm {
 	    if(!tempDir.exists())
 	    	tempDir.mkdir();
 	    try{
-	    	tempFile = File.createTempFile("NWB-Session-", ".net", tempDir);
+	    	tempFile = File.createTempFile("NWB-Session-", ".graphml.xml", tempDir);
 	    		
 	    }catch (IOException e){
 	    	logger.log(LogService.LOG_ERROR, e.toString());
-	   		tempFile = new File (tempPath+File.separator+"nwbTemp"+File.separator+"temp.nwb");
+	   		tempFile = new File (tempPath+File.separator+"nwbTemp"+File.separator+"temp.graphml.xml");
     	}
     	if (tempFile != null){
     		try{
+    			
     			(new GraphMLWriter()).writeGraph((Graph)(data[0].getData()), 
-    						new FileOutputStream(tempFile)) ;
+    						new BufferedOutputStream(new FileOutputStream(tempFile))) ;
     			return new Data[]{new BasicData(tempFile, "file:text/graphml+xml") };
     		}catch (DataIOException dioe){
-    	   		logger.log(LogService.LOG_ERROR, "DataIOException", dioe);
+    	   		logger.log(LogService.LOG_ERROR, "DataIOException: " + dioe.toString(), dioe);
     	   		return null;
     		}catch (IOException ioe){
     	   		logger.log(LogService.LOG_ERROR, "IOException", ioe);
