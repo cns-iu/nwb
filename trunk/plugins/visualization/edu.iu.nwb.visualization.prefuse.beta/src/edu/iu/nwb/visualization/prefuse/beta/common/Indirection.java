@@ -15,6 +15,13 @@ public class Indirection {
 	private Expression expression;
 	private TupleSet visGroup;
 	private int dataType = -1;
+	private static int currentColorIndex = 0;
+	private static int[] interpolationPalette = new int[13];
+	
+	static {
+		interpolationPalette[0] = ColorLib.rgb(0, 255, 0);
+		System.arraycopy(ColorLib.getCategoryPalette(12), 0, interpolationPalette, 1, 12);
+	}
 
 	public Indirection(Visualization visualization, String group, Expression expression) {
 		this.createdField = "_x_nwb" + new Random().nextInt(); //we need a random element to prevent duplication; this should be random enough given at most four numbers are needed, and this will draw from the entire range of integers 
@@ -52,11 +59,18 @@ public class Indirection {
 
 	public int[] getPalette() { //make an appropriate color palette for expressions that use color, either interpolated or just for categories
 		int type = getDataType();
+		int[] palette;
 		if(type == prefuse.Constants.NUMERICAL) {
-			return ColorLib.getInterpolatedPalette(ColorLib.rgb(0, 0, 0), ColorLib.rgb(0, 255, 0));
+			palette =  ColorLib.getInterpolatedPalette(ColorLib.rgb(0, 0, 0), interpolationPalette[currentColorIndex % 12]);
+			currentColorIndex++;
 		} else {
 			int size = DataLib.ordinalArray(visGroup, createdField).length;
-			return ColorLib.getCategoryPalette(size);
+			palette = ColorLib.getCategoryPalette(size);
 		}
+		return palette;
 	} 
+	
+	public static void resetPalette() {
+		currentColorIndex = 0;
+	}
 }

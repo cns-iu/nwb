@@ -81,7 +81,7 @@ public abstract class AbstractVisualization implements PrefuseBetaVisualization 
 		List legendActions = new ArrayList();
 		
 		//this is what the legend will go in
-		Box legends = Box.createHorizontalBox();
+		Box legends = Box.createHorizontalBox();	
 		//a little padding on the left
 		legends.add(Box.createHorizontalStrut(5));
 		Box legendBox = null; //this variable will later hold individual parts of the legend as it is assembled
@@ -241,6 +241,8 @@ public abstract class AbstractVisualization implements PrefuseBetaVisualization 
 		visualization.putAction(DRAW, draw);
 		visualization.putAction(LAYOUT, layout);
 		visualization.runAfter(DRAW, LAYOUT);
+		
+		Indirection.resetPalette();
 		
 		//sort legend parts by the number of 'lines' in the part -- reported as size
 		class LegendComparator implements Comparator {
