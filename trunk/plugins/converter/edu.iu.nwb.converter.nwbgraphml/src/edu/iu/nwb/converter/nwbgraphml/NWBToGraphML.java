@@ -121,6 +121,9 @@ public class NWBToGraphML implements Algorithm {
 			out.println("xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\"");
 			out.println("xsi:schemaLocation=\"http://graphml.graphdrawing.org/xmlns/graphml\">");
 			out.println("<graph edgedefault=\"undirected\">");
+			
+			//minor cheat because we know what the first attribute's index will be. Do this smarter later
+			out.println("<key id='d0' for='node' attr.name='label' attr.type='string'/>");
 	
 			String line = reader.readLine();
 			while(line != null){
@@ -131,7 +134,7 @@ public class NWBToGraphML implements Algorithm {
 						if (countNodes==0 && totalNodes>0){
 							//nwb file ignore the nodes list
 							for (int index=1; index<=totalNodes;index++){
-								out.println("<node id=\""+index+"\" label=\""+index+"\"></node>");
+								out.println(createNode(""+index, new String[]{""+index}));
 								countNodes++;
 							}
 						}else if(countNodes == 0 && totalNodes ==0){
@@ -150,14 +153,14 @@ public class NWBToGraphML implements Algorithm {
 						if (totalTokens ==1 ){
 							//only have node id
 							String id = st.nextToken();
-							out.println("<node id=\""+id+"\" label=\""+id+"\"></node>");
+							out.println(createNode(id, new String[]{id}));
 							countNodes++;
 						}
 						else if (totalTokens == 2){
 							//have node id and label
 							String id = st.nextToken();
 							String label = st.nextToken();
-							out.println("<node id=\""+id+"\" label=\""+label+"\"></node>");
+							out.println(createNode(id, new String[]{label}));
 							countNodes++;
 						}
 						else if (totalTokens > 2){
@@ -165,7 +168,7 @@ public class NWBToGraphML implements Algorithm {
 							String id = st.nextToken();
 							String label = st.nextToken();
 							//TODO NEED TO HANDLE ATTRIBUTES OF NODES
-							out.println("<node id=\""+id+"\" label=\""+label+"\"></node>");
+							out.println(createNode(id, new String[]{label}));
 							countNodes++;							
 						}					
 						
@@ -260,6 +263,30 @@ public class NWBToGraphML implements Algorithm {
 
 		}
 		return tempFile;
+	}
+	
+	private String createNode(String id, String[] attributes) {
+		return createNode(id, attributes, "d");
+	}
+
+	private String createNode(String id, String[] attributes, String baseAttributeId) {
+		
+		StringBuffer node = new StringBuffer();
+		node.append("<node id='");
+		node.append(id);
+		node.append("'>");
+		
+		for(int attributeIndex = 0; attributeIndex < attributes.length; attributeIndex++) {
+			node.append("<data key='");
+			node.append(baseAttributeId + attributeIndex);
+			node.append("'>");
+			node.append(attributes[attributeIndex]);
+			node.append("</data>");
+		}
+		
+		node.append("</node>");
+		
+		return node.toString();
 	}
 
 				
