@@ -1,5 +1,7 @@
 package edu.iu.nwb.converter.nwbgraphml;
 
+import java.io.IOException;
+import java.net.URL;
 import java.util.Dictionary;
 
 import javax.xml.transform.Source;
@@ -24,8 +26,10 @@ import org.osgi.service.metatype.MetaTypeProvider;
 public class GraphMLToNWBFactory implements AlgorithmFactory {
 	
 	private Templates cachedXslt;
+	private URL xsltUrl;
 
     protected void activate(ComponentContext ctxt) {
+    	xsltUrl = ctxt.getBundleContext().getBundle().getResource("/edu/iu/nwb/converter/nwbgraphml/xslt/convert.xsl");
     	loadXslt();
     }
     protected void deactivate(ComponentContext ctxt) { }
@@ -66,10 +70,12 @@ public class GraphMLToNWBFactory implements AlgorithmFactory {
     
     private void loadXslt() {
     	TransformerFactory xsltFactory = TransformerFactory.newInstance();
-		Source xslt = new StreamSource(this.getClass().getResourceAsStream("xslt/convert.xsl"));
-		try {
+    	try {
+    		Source xslt = new StreamSource(xsltUrl.openStream());
 			cachedXslt = xsltFactory.newTemplates(xslt);
 		} catch (TransformerConfigurationException e) {
+			cachedXslt = null;
+		} catch (IOException e) {
 			cachedXslt = null;
 		}
     }
