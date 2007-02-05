@@ -6,9 +6,6 @@ Bundle-Version: 0.3.0
 Bundle-ClassPath: .
 Bundle-Localization: plugin
 Import-Package: edu.iu.nwb.converter.nwb.common,
- edu.uci.ics.jung.graph,
- edu.uci.ics.jung.io,
- edu.uci.ics.jung.utils,
  org.cishell.framework,
  org.cishell.framework.algorithm,
  org.cishell.framework.data,
