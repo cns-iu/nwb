@@ -124,6 +124,7 @@ public class NWBToGraphML implements Algorithm {
 			
 			//minor cheat because we know what the first attribute's index will be. Do this smarter later
 			out.println("<key id='d0' for='node' attr.name='label' attr.type='string'/>");
+			out.println("<key id='e0' for='edge' attr.name='weight' attr.type='double'/>");
 	
 			String line = reader.readLine();
 			while(line != null){
@@ -187,7 +188,12 @@ public class NWBToGraphML implements Algorithm {
 							//have node id and label
 							String source = st.nextToken();
 							String target = st.nextToken();
-							out.println("<edge source=\""+source+"\" target=\""+target+"\"></edge>");
+							out.println(this.createEdge(source, target, new String[] {}, "e"));
+						} else if (totalTokens > 2) {
+							String source = st.nextToken();
+							String target = st.nextToken();
+							String weight = st.nextToken();
+							out.println(this.createEdge(source, target, new String[] {weight}, "e"));
 					    }else{
 					    	wrongNWBFormat = true;
 							break;
@@ -237,7 +243,7 @@ public class NWBToGraphML implements Algorithm {
 	    	
 		}catch (FileNotFoundException e){
 			guiBuilder.showError("File Not Found Exception", 
-					"Got an File Not Found Exception",e);	
+					"Got an File Not Found Exception",e);
 			return null;
 		}catch (IOException ioe){
 			guiBuilder.showError("IOException", 
@@ -276,17 +282,31 @@ public class NWBToGraphML implements Algorithm {
 		node.append(id);
 		node.append("'>");
 		
-		for(int attributeIndex = 0; attributeIndex < attributes.length; attributeIndex++) {
-			node.append("<data key='");
-			node.append(baseAttributeId + attributeIndex);
-			node.append("'>");
-			node.append(attributes[attributeIndex]);
-			node.append("</data>");
-		}
+		node.append(createAttributes(attributes, baseAttributeId));
 		
 		node.append("</node>");
 		
 		return node.toString();
+	}
+	
+	private String createAttributes(String[] attributes, String baseAttributeId) {
+		StringBuffer atts = new StringBuffer();
+		for(int attributeIndex = 0; attributeIndex < attributes.length; attributeIndex++) {
+			atts.append("<data key='");
+			atts.append(baseAttributeId + attributeIndex);
+			atts.append("'>");
+			atts.append(attributes[attributeIndex]);
+			atts.append("</data>");
+		}
+		return atts.toString();
+	}
+	
+	private String createEdge(String from, String to, String[] attributes, String baseAttributeId) {
+		StringBuffer edge = new StringBuffer();
+		edge.append("<edge source=\"" + from + "\" target=\"" + to + "\">");
+		edge.append(createAttributes(attributes, baseAttributeId));
+		edge.append("</edge>");
+		return edge.toString();
 	}
 
 				
