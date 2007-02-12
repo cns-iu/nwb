@@ -17,6 +17,7 @@ import org.osgi.service.log.LogService;
 
 import edu.uci.ics.jung.graph.ArchetypeVertex;
 import edu.uci.ics.jung.graph.Graph;
+import edu.uci.ics.jung.graph.decorators.UserDatumNumberEdgeValue;
 import edu.uci.ics.jung.graph.decorators.VertexStringer;
 import edu.uci.ics.jung.io.PajekNetWriter;
 
@@ -56,7 +57,7 @@ public class JungPajekNetWriter implements Algorithm, VertexStringer {
     			Writer writer = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(tempFile), "UTF8"));
     			
     			(new PajekNetWriter()).save((Graph)(data[0].getData()), 
-    						writer, this, null) ;
+    						writer, this, new UserDatumNumberEdgeValue("weight")) ;
     			return new Data[]{new BasicData(tempFile, "file:application/pajek") };
     		}catch (IOException ioe){
     			logger.log(LogService.LOG_ERROR, "IOException", ioe);
