@@ -53,7 +53,7 @@ public class PrefuseXGMMLValidation implements AlgorithmFactory {
 			String fileHandler = (String) data[0].getData();
 			File inData = new File(fileHandler);
         	try{
-        		if (!validateGraphMLHeader(inData)){
+        		if (validateGraphMLHeader(inData)){
 	        		(new XMLGraphReader()).loadGraph(fileHandler);
 	        		Data[] dm = new Data[] {new BasicData(inData, "file:text/xgmml+xml")};
 	        		dm[0].getMetaData().put(DataProperty.LABEL, "Prefuse XGMML .xml file: " + fileHandler);
@@ -88,7 +88,7 @@ public class PrefuseXGMMLValidation implements AlgorithmFactory {
     		
     		String line = reader.readLine();
     		while(line != null){
-    			if(line.startsWith("<graphml")){
+    			if(line.startsWith("<graph ") || line.startsWith("<graph>")){
     				hasGraphMLHeader = true;
     				break;
     			}    			
