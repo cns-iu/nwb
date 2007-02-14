@@ -20,8 +20,11 @@ import org.osgi.service.log.LogService;
 
 import edu.uci.ics.jung.graph.Graph;
 import edu.uci.ics.jung.graph.Vertex;
+import edu.uci.ics.jung.graph.decorators.UserDatumNumberEdgeValue;
 import edu.uci.ics.jung.io.PajekNetReader;
+import edu.uci.ics.jung.utils.UserData;
 import edu.uci.ics.jung.utils.UserDataContainer;
+import edu.uci.ics.jung.utils.UserDataContainer.CopyAction;
 
 /**
  * @author Weixia(Bonnie) Huang 
@@ -43,7 +46,9 @@ public class JungPajekNetReader implements Algorithm {
     	try{
     		Reader reader = new BufferedReader(new InputStreamReader(new FileInputStream(fileHandler), "UTF8"));
     		
-    		Graph graph = (new PajekNetReader()).load(reader);
+    		UserDatumNumberEdgeValue weightValues = new UserDatumNumberEdgeValue("weight");
+    		weightValues.setCopyAction(UserData.SHARED);
+			Graph graph = (new PajekNetReader()).load(reader, weightValues);
             fixLabels(graph);
             
     		Data[] dm = new Data[] {new BasicData(graph, Graph.class.getName())};
