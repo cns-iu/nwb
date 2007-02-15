@@ -74,7 +74,7 @@ public class PrefuseJungConverter {
 		Iterator keys = attributes.keySet().iterator();
 		while(keys.hasNext()) {
 			Object key = keys.next();
-			jungContainer.addUserDatum(key, attributes.get(key), UserData.CLONE);
+			jungContainer.addUserDatum(key, attributes.get(key), UserData.SHARED);
 		}
 		
 	}
