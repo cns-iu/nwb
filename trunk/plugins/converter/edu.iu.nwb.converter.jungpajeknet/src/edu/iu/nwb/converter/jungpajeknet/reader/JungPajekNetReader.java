@@ -70,7 +70,7 @@ public class JungPajekNetReader implements Algorithm {
             Vertex v = (Vertex) vertices.next();
             Object label = v.getUserDatum(PajekNetReader.LABEL);
             if (label != null) {
-                v.addUserDatum("label", label, new UserDataContainer.CopyAction.Clone());
+                v.addUserDatum("label", label, UserData.SHARED);
             }
         }
         
