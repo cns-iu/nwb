@@ -55,7 +55,7 @@ public class GraphMetadataMemory {
 				Edge edge = (Edge) edgeIterator.next();
 				String weightString = "1";
 				if(edge.containsUserDatumKey("weight")) {
-					weightString = (String) edge.getUserDatum("weight");
+					weightString = edge.getUserDatum("weight").toString();
 					//bit of a hack, since we can't rely on anything other than the presence of this userdatum on an edge
 					weighted = true;
 				}
