@@ -10,7 +10,8 @@
 	</Designate>
 	
 	<OCD name="Layout Parameters" id="edu.iu.nwb.visualization.prefuse.beta.common.parameters.OCD"
-		 description="Enter the property labels.">
+		 description="Select the property labels. NOTE: Edge and Node properties may appear together, and not all properties are suitable for all
+		 values. Numeric properties work in all cases, and non-numeric properties should only be used with shape and color options">
 		<!-- <AD name="Label" id="label" type="String" description="The label for the identifier property" default="label" /> -->
 		<AD name="Node Size" id="nodeSize" type="String" description="The label for the node size property" default="" />
 		<AD name="Edge Size" id="edgeSize" type="String" description="The label for the edge size property" default="" />
