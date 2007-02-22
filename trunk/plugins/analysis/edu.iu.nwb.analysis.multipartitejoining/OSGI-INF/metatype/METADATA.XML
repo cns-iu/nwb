@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<metatype:MetaData xmlns:metatype="http://www.osgi.org/xmlns/metatype/v1.0.0">
+	<OCD name="Multipartite Joining" id="edu.iu.nwb.analysis.multipartitejoining.JoiningAlgorithm.OCD"
+		 description="Joins a multipartite graph for one node type across another node type">
+		<AD name="Metadata key for type" id="key" type="String" description="The type of the node that will be present in the output graph" default="type"/>
+		<AD name="Type of node in output graph" id="type" type="String" description="The type of the node that will be present in the output graph" default=""/>
+		<AD name="Type of node to join across" id="join" type="String" description="Type of the node the output nodes will be joined across" default=""/>
+		<AD name="Metadata File" id="metadata" type="String" description="File containing specifications on metadata joining" default="file:"/>
+	</OCD>
+	<Designate pid="edu.iu.nwb.analysis.multipartitejoining.JoiningAlgorithm">
+		<Object ocdref="edu.iu.nwb.analysis.multipartitejoining.JoiningAlgorithm.OCD" />
+	</Designate>
+</metatype:MetaData>
