@@ -44,10 +44,11 @@ public class ShapeLabelRenderer implements Renderer {
 			boolean scaled = false;
 			double scale = item.getVisualization().getDisplay(0).getScale();
 			Font currentFont = item.getFont();
-			if(!firstRun.containsKey(item.get(Constants.label).toString())) {
+			String row = "" + item.getRow();
+			if(!firstRun.containsKey(row)) {
 				//scale font down to maintain consistent size
 				item.setFont(currentFont.deriveFont((float) (currentFont.getSize() * 1.11/item.getSize())));
-				firstRun.put(item.get(Constants.label).toString(), new Boolean(false));
+				firstRun.put(row, new Boolean(false));
 			} else if(scale > .8) {
 				scaled = true;
 				
