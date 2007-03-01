@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: Jung Network Layout Plug-in
 Bundle-SymbolicName: edu.iu.nwb.visualization.jungnetworklayout
-Bundle-Version: 0.3.0
+Bundle-Version: 0.4.0
 Bundle-Localization: plugin
 Service-Component: OSGI-INF/JUNGSpringLayout.xml, OSGI-INF/JUNGCircleLayout.xml, OSGI-INF/JUNGFRLayout.xml, OSGI-INF/JUNGKKLayout.xml
 X-AutoStart: true

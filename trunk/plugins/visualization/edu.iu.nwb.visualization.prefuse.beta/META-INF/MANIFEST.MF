@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: Visualization Plug-in using Prefuse Beta
 Bundle-SymbolicName: edu.iu.nwb.visualization.prefuse.beta
-Bundle-Version: 0.3
+Bundle-Version: 0.4.0
 Bundle-Localization: plugin
 Service-Component: OSGI-INF/RadialGraph.xml, OSGI-INF/GraphView.xml, OSGI-INF/TreeMap.xml, OSGI-INF/TreeView.xml, OSGI-INF/Specified.xml, OSGI-INF/FruchtermanReingold.xml
 X-AutoStart: true
