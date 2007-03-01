@@ -2,7 +2,7 @@
 <feature
       id="edu.iu.iv.algorithm.feature"
       label="Java-based algorithms"
-      version="0.3.0"
+      version="0.4.0"
       provider-name="NWB Team">
 
    <description>
@@ -151,6 +151,13 @@ Dr. Katy Borner (katy@indiana.edu)
 
    <plugin
          id="org.my.algorithm.test"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+   <plugin
+         id="edu.iu.nwb.analysis.sampling"
          download-size="0"
          install-size="0"
          version="0.0.0"

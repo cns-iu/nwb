@@ -2,7 +2,7 @@
 <feature
       id="edu.iu.nwb.converter.feature"
       label="NWB Data Format Converters"
-      version="0.3.0"
+      version="0.4.0"
       provider-name="Weixia Huang, Ben Markines, Bruce Herr, Russell Duhon">
 
    <description>
@@ -37,13 +37,6 @@ Dr. Katy Borner (katy@indiana.edu)
    <url>
       <update label="Network Workbench Tool Update Site" url="http://nwb.slis.indiana.edu/update"/>
    </url>
-
-   <plugin
-         id="edu.iu.nwb.converter.junggraphml"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         unpack="false"/>
 
    <plugin
          id="edu.iu.nwb.converter.jungpajeknet"
@@ -82,6 +75,13 @@ Dr. Katy Borner (katy@indiana.edu)
 
    <plugin
          id="edu.iu.nwb.converter.jungprefusebeta"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+   <plugin
+         id="edu.iu.nwb.converter.prefusegraphml"
          download-size="0"
          install-size="0"
          version="0.0.0"
