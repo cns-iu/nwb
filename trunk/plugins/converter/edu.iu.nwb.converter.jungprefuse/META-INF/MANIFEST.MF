@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: Jung To Prefuse Converter
 Bundle-SymbolicName: edu.iu.nwb.converter.jungprefuse
-Bundle-Version: 0.3.0
+Bundle-Version: 0.4.0
 Bundle-ClassPath: .
 Bundle-Localization: plugin
 Service-Component: OSGI-INF/prefusejung.xml, OSGI-INF/jungprefuse.xml
