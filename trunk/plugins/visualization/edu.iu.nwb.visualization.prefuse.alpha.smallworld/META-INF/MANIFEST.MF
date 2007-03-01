@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: Small World Visualization
 Bundle-SymbolicName: edu.iu.nwb.visualization.prefuse.alpha.smallworld
-Bundle-Version: 0.0.2
+Bundle-Version: 0.4.0
 Bundle-ClassPath: .
 Bundle-Localization: plugin
 Import-Package: cern.colt.function,
