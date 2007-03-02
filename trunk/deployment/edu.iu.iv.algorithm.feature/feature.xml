@@ -163,4 +163,25 @@ Dr. Katy Borner (katy@indiana.edu)
          version="0.0.0"
          unpack="false"/>
 
+   <plugin
+         id="edu.iu.nwb.analysis.weakcomponentclustering"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+   <plugin
+         id="edu.iu.nwb.visualization.prefuse.alpha.smallworld"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+   <plugin
+         id="edu.iu.nwb.preprocessing.csv"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
 </feature>
