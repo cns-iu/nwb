@@ -16,6 +16,7 @@ import org.cishell.framework.data.Data;
 import org.cishell.framework.data.DataProperty;
 import org.osgi.service.component.ComponentContext;
 //import org.osgi.service.log.LogService;
+import org.osgi.service.log.LogService;
 import org.osgi.service.metatype.MetaTypeProvider;
 
 import prefuse.data.io.DataIOException;
@@ -49,7 +50,7 @@ public class PrefuseGraphMLValidation implements AlgorithmFactory {
         }
 
         public Data[] execute() {
-//	    	LogService logger = (LogService)context.getService(LogService.class.getName());
+	    	LogService logger = (LogService)context.getService(LogService.class.getName());
 			
         	String fileHandler = (String) data[0].getData();
         	File inData = new File(fileHandler);
@@ -64,18 +65,22 @@ public class PrefuseGraphMLValidation implements AlgorithmFactory {
         		}else 
             		return null;
         	}catch (DataIOException dioe){
-//				logger.log(LogService.LOG_ERROR, "Might not be a GraphML file. Got the following exception");
-//        		logger.log(LogService.LOG_ERROR, "DataIOException", dioe);
+				logger.log(LogService.LOG_ERROR, "Might not be a GraphML file. Got the following exception");
+        		logger.log(LogService.LOG_ERROR, "DataIOException", dioe);
+        		dioe.printStackTrace();
         		return null;
         	}catch (SecurityException exception){
-//				logger.log(LogService.LOG_ERROR, "Might not be a GraphML file. Got the following exception");
-//        		logger.log(LogService.LOG_ERROR, "SecurityException", exception);
+				logger.log(LogService.LOG_ERROR, "Might not be a GraphML file. Got the following exception");
+        		logger.log(LogService.LOG_ERROR, "SecurityException", exception);
+        		exception.printStackTrace();
         		return null;
         	}catch (FileNotFoundException e){
-//       		logger.log(LogService.LOG_ERROR, "FileNotFoundException", e);
+        		logger.log(LogService.LOG_ERROR, "FileNotFoundException", e);
+        		e.printStackTrace();
         		return null;
         	}catch (IOException ioe){
-//       		logger.log(LogService.LOG_ERROR, "IOException", ioe);
+        		logger.log(LogService.LOG_ERROR, "IOException", ioe);
+        		ioe.printStackTrace();
         		return null;
         	}
         	

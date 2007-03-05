@@ -16,7 +16,6 @@ import org.cishell.framework.data.Data;
 import org.osgi.service.log.LogService;
 
 import prefuse.data.Graph;
-import prefuse.data.io.GraphMLWriter;
 import prefuse.data.io.DataIOException;
 
 /**
