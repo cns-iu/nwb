@@ -41,15 +41,19 @@ import prefuse.data.expression.parser.ExpressionParser;
  *
  */
 public class JoiningAlgorithm implements Algorithm {
-    private Data[] data;
+    private static final String WEIGHT_COLUMN = "weight";
+	private static final String SEPARATOR = "\\.";
+	private Data[] data;
     private Dictionary parameters;
     private CIShellContext context;
 	private LogService log;
 	private Map transferred;
 	
-	private class IntegerAdder implements ObjectObjectFunction {
+	private class LongAdder implements ObjectObjectFunction {
 		public Object apply(Object aggregate, Object current) {
-			return new Long(((Number) aggregate).longValue() + ((Number) current).longValue());
+			long totalSoFar = ((Number) aggregate).longValue();
+			long soFar = totalSoFar + ((Number) current).longValue();
+			return new Long(soFar);
 		}
 	}
 	
@@ -67,11 +71,13 @@ public class JoiningAlgorithm implements Algorithm {
 		}
 		
 		public Object apply(Object current) {
+			Long result;
 			if(current == null) {
-				return new Long(0);
+				result = new Long(0);
 			} else {
-				return new Long(((Tuple) current).getLong(field));
+				result = new Long(((Tuple) current).getLong(field));
 			}
+			return result;
 		}
 	}
 	
@@ -252,20 +258,20 @@ public class JoiningAlgorithm implements Algorithm {
 		for(Enumeration keys = metadata.propertyNames(); keys.hasMoreElements(); ) {
 			String key = (String) keys.nextElement();
 			if(key.startsWith("edge.")) {
-				String realKey = key.split(".")[1];
-				if(realKey.equals("weight")) {
+				String realKey = key.split(SEPARATOR)[1];
+				if(realKey.equals(WEIGHT_COLUMN)) {
 					weightSpecifiedFlag = true;
 				} else if(realKey.equals("source") || realKey.equals("target")) {
 					log.log(LogService.LOG_WARNING, "The metadata key " + realKey + " is not allowed for edges and will be ignored.");
 				} else {
-					String fromKey = metadata.getProperty(key).split(".")[0];
+					String fromKey = metadata.getProperty(key).split(SEPARATOR)[0];
 					output.addColumn(realKey, joinSchema.getColumnType(fromKey));
 				}
 			}
 		}
 		
 		if(!weightSpecifiedFlag) {
-			output.addColumn("weight", int.class, new Integer(1));
+			output.addColumn(WEIGHT_COLUMN, int.class, new Integer(1));
 		}
 		
 		return output;
@@ -283,7 +289,7 @@ public class JoiningAlgorithm implements Algorithm {
 		for(Enumeration keys = metadata.propertyNames(); keys.hasMoreElements(); ) {
 			String key = (String) keys.nextElement();
 			
-			String[] keyArray = (String[]) metadata.getProperty(key).split(".");
+			String[] keyArray = (String[]) metadata.getProperty(key).split(SEPARATOR);
 			String sourceField = keyArray[0];
 			String operation = keyArray[1];
 			
@@ -293,9 +299,9 @@ public class JoiningAlgorithm implements Algorithm {
 				
 				
 				
-				String realKey = key.split(".")[1];
+				String realKey = key.split(SEPARATOR)[1];
 				
-				if(realKey.equals("weight")) {
+				if(realKey.equals(WEIGHT_COLUMN)) {
 					weightSpecifiedFlag = true;
 				}
 				
@@ -314,12 +320,16 @@ public class JoiningAlgorithm implements Algorithm {
 		}
 		
 		if(!weightSpecifiedFlag) {
-			edge.setInt("weight", number(joins));
+			int base = 0;
+			if(edge.canGetInt(WEIGHT_COLUMN)) {
+				base = edge.getInt(WEIGHT_COLUMN);
+			}
+			edge.setInt(WEIGHT_COLUMN, base + number(joins));
 		}
 	}
 
 	private int number(ObjectMatrix1D joins) {
-		return ((Number) joins.aggregate(new IntegerAdder(), new ObjectFunction() {
+		return ((Number) joins.aggregate(new LongAdder(), new ObjectFunction() {
 			public Object apply(Object current) {
 				if(current == null) {
 					return new Integer(0);
@@ -339,23 +349,35 @@ public class JoiningAlgorithm implements Algorithm {
 	}
 	
 	private int integerSum(ObjectMatrix1D joins, final String field) {
-		return ((Number) joins.aggregate(new IntegerAdder(), new IntegerMaker(field))).intValue();
+		return ((Number) joins.aggregate(new LongAdder(), new IntegerMaker(field))).intValue();
 	}
 	
 	private long longSum(ObjectMatrix1D joins, final String field) {
-		return ((Number) joins.aggregate(new IntegerAdder(), new LongMaker(field))).longValue();
+		return ((Number) joins.aggregate(new LongAdder(), new LongMaker(field))).longValue();
 	}
 
 	private void foldField(String operation, String sourceField, String key, ObjectMatrix1D joins, Tuple tuple) {
 		if("sum".equals(operation)) {
+			Number base = new Double(0);
+			if(tuple.get(key) != null) {
+				if(tuple.canSetDouble(key)) {
+					base = new Double(tuple.getDouble(key));
+				} else if(tuple.canSetFloat(key)) {
+					base = new Float(tuple.getFloat(key));
+				} else if(tuple.canSetLong(key)) {
+					base = new Long(tuple.getLong(key));
+				} else if(tuple.canSetInt(key)) {
+					base = new Integer(tuple.getInt(key));
+				}
+			}
 			if(tuple.canSetDouble(key)) {
-				tuple.setDouble(key, doubleSum(joins, sourceField));
+				tuple.setDouble(key, base.doubleValue() + doubleSum(joins, sourceField));
 			} else if(tuple.canSetFloat(key)) {
-				tuple.setFloat(key, floatSum(joins, sourceField));
+				tuple.setFloat(key, base.floatValue() + floatSum(joins, sourceField));
 			} else if(tuple.canSetLong(key)) {
-				tuple.setLong(key, longSum(joins, sourceField));
+				tuple.setLong(key, base.longValue() + longSum(joins, sourceField));
 			} else if(tuple.canSetInt(key)) {
-				tuple.setFloat(key, integerSum(joins, sourceField));
+				tuple.setFloat(key, base.intValue() + integerSum(joins, sourceField));
 			}
 		}
 		
@@ -367,9 +389,9 @@ public class JoiningAlgorithm implements Algorithm {
     		String key = (String) keys.nextElement();
     		if(!key.startsWith("edge.")) {
     			if(schema.getColumnIndex(key) != -1) {
-    				log.log(LogService.LOG_WARNING, "The metadata key " + key + " is already in use for this graph. It will be overwritten with the aggregated values");
+    				log.log(LogService.LOG_ERROR, "The metadata key " + key + " is already in use for this graph. You must specify an unused metadata key.");
     			}
-    			String fromKey = (String) metadata.getProperty(key).split(".")[0];
+    			String fromKey = metadata.getProperty(key).split(SEPARATOR)[0];
     		
     			output.addColumn(key, schema.getColumnType(fromKey));
     		}
