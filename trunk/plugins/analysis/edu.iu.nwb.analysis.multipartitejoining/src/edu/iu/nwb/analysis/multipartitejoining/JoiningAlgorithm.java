@@ -26,7 +26,9 @@ import org.osgi.service.log.LogService;
 import cern.colt.function.ObjectFunction;
 import cern.colt.function.ObjectObjectFunction;
 import cern.colt.matrix.ObjectMatrix1D;
+import cern.colt.matrix.ObjectMatrix2D;
 import cern.colt.matrix.ObjectMatrix3D;
+import cern.colt.matrix.impl.SparseObjectMatrix2D;
 import cern.colt.matrix.impl.SparseObjectMatrix3D;
 
 import prefuse.data.Edge;
@@ -187,7 +189,8 @@ public class JoiningAlgorithm implements Algorithm {
 		}
 		
 		int nodeCount = inputGraph.getNodeCount();
-		ObjectMatrix3D matrix = new SparseObjectMatrix3D(totalJoinNodes, nodeCount, nodeCount);
+		ObjectMatrix3D edgeMatrix = new SparseObjectMatrix3D(totalJoinNodes, nodeCount, nodeCount);
+		ObjectMatrix2D nodeMatrix = new SparseObjectMatrix2D(nodeCount, totalJoinNodes);
 		
 		
 		Iterator typeIterator = inputGraph.tuples(ExpressionParser.predicate("[" + key + "] = \"" + type + "\""));
@@ -218,21 +221,31 @@ public class JoiningAlgorithm implements Algorithm {
 				for(Iterator rest = typeNeighbors.iterator(); rest.hasNext(); ) {
 					Node second = (Node) rest.next();//moveTo((Node) rest.next(), outputGraph);
 					
-					matrix.setQuick(currentJoinNodeLocation, first.getRow(), second.getRow(), joinNode);
+					edgeMatrix.setQuick(currentJoinNodeLocation, first.getRow(), second.getRow(), joinNode);
+					nodeMatrix.setQuick(first.getRow(), currentJoinNodeLocation, joinNode);
+					nodeMatrix.setQuick(second.getRow(), currentJoinNodeLocation, joinNode);
 					
 					//fold(first, second, joinNode, metadata);
 				}
 			}
 		}
 		
-		for(int row = 0; row < matrix.rows(); row++) {
-			for(int column = 0; column < matrix.columns(); column++) {
-				ObjectMatrix1D joins = matrix.viewRow(row).viewColumn(column);
-				if(joins.cardinality() != 0) {
+		for(int row = 0; row < edgeMatrix.rows(); row++) {
+			for(int column = 0; column < edgeMatrix.columns(); column++) {
+				ObjectMatrix1D joins = edgeMatrix.viewRow(row).viewColumn(column);
+				if(joins.cardinality() > 0) {
 					Node first = moveTo(inputGraph.getNode(row), outputGraph);
 					Node second = moveTo(inputGraph.getNode(column), outputGraph);
-					fold(first, second, joins, metadata);
+					foldEdge(first, second, joins, metadata);
 				}
+			}
+		}
+		
+		for(int row = 0; row < nodeMatrix.rows(); row++) {
+			ObjectMatrix1D joins = nodeMatrix.viewRow(row);
+			if(joins.cardinality() > 0) {
+				Node node = moveTo(inputGraph.getNode(row), outputGraph);
+				foldNode(node, joins, metadata);
 			}
 		}
 		
@@ -248,7 +261,23 @@ public class JoiningAlgorithm implements Algorithm {
     	return new Data[]{outputData};
     }
     
-    private Schema createEdgeSchema(Schema joinSchema, Properties metadata) {
+    private void foldNode(Node node, ObjectMatrix1D joins, Properties metadata) {
+    	for(Enumeration keys = metadata.propertyNames(); keys.hasMoreElements(); ) {
+			String key = (String) keys.nextElement();
+			
+			String[] keyArray = (String[]) metadata.getProperty(key).split(SEPARATOR);
+			String sourceField = keyArray[0];
+			String operation = keyArray[1];
+			
+			if(!key.startsWith("edge.")) {
+				foldField(operation, sourceField, key, joins, node);
+			}
+			
+		}
+		
+	}
+
+	private Schema createEdgeSchema(Schema joinSchema, Properties metadata) {
 		Schema output = new Schema();
 		output.addColumn("source", int.class);
 		output.addColumn("target", int.class);
@@ -277,7 +306,7 @@ public class JoiningAlgorithm implements Algorithm {
 		return output;
 	}
 
-	private void fold(Node first, Node second, ObjectMatrix1D joins, Properties metadata) {
+	private void foldEdge(Node first, Node second, ObjectMatrix1D joins, Properties metadata) {
 		
 		boolean weightSpecifiedFlag = false;
 		
@@ -311,20 +340,12 @@ public class JoiningAlgorithm implements Algorithm {
 				
 				
 				
-			} else {
-				
-				foldField(operation, sourceField, key, joins, first);
-				foldField(operation, sourceField, key, joins, second);
 			}
 			
 		}
 		
 		if(!weightSpecifiedFlag) {
-			int base = 0;
-			if(edge.canGetInt(WEIGHT_COLUMN)) {
-				base = edge.getInt(WEIGHT_COLUMN);
-			}
-			edge.setInt(WEIGHT_COLUMN, base + number(joins));
+			edge.setInt(WEIGHT_COLUMN, number(joins));
 		}
 	}
 
@@ -358,26 +379,14 @@ public class JoiningAlgorithm implements Algorithm {
 
 	private void foldField(String operation, String sourceField, String key, ObjectMatrix1D joins, Tuple tuple) {
 		if("sum".equals(operation)) {
-			Number base = new Double(0);
-			if(tuple.get(key) != null) {
-				if(tuple.canSetDouble(key)) {
-					base = new Double(tuple.getDouble(key));
-				} else if(tuple.canSetFloat(key)) {
-					base = new Float(tuple.getFloat(key));
-				} else if(tuple.canSetLong(key)) {
-					base = new Long(tuple.getLong(key));
-				} else if(tuple.canSetInt(key)) {
-					base = new Integer(tuple.getInt(key));
-				}
-			}
 			if(tuple.canSetDouble(key)) {
-				tuple.setDouble(key, base.doubleValue() + doubleSum(joins, sourceField));
+				tuple.setDouble(key, doubleSum(joins, sourceField));
 			} else if(tuple.canSetFloat(key)) {
-				tuple.setFloat(key, base.floatValue() + floatSum(joins, sourceField));
+				tuple.setFloat(key, floatSum(joins, sourceField));
 			} else if(tuple.canSetLong(key)) {
-				tuple.setLong(key, base.longValue() + longSum(joins, sourceField));
+				tuple.setLong(key, longSum(joins, sourceField));
 			} else if(tuple.canSetInt(key)) {
-				tuple.setFloat(key, base.intValue() + integerSum(joins, sourceField));
+				tuple.setFloat(key, integerSum(joins, sourceField));
 			}
 		}
 		
@@ -389,7 +398,7 @@ public class JoiningAlgorithm implements Algorithm {
     		String key = (String) keys.nextElement();
     		if(!key.startsWith("edge.")) {
     			if(schema.getColumnIndex(key) != -1) {
-    				log.log(LogService.LOG_ERROR, "The metadata key " + key + " is already in use for this graph. You must specify an unused metadata key.");
+    				log.log(LogService.LOG_ERROR, "The metadata key " + key + " is already in use for this graph. It will be overwriten with the new value.");
     			}
     			String fromKey = metadata.getProperty(key).split(SEPARATOR)[0];
     		
