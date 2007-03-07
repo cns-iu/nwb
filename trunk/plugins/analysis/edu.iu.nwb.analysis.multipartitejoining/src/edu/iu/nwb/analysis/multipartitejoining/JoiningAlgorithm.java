@@ -7,9 +7,11 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Dictionary;
 import java.util.Enumeration;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.ListIterator;
+import java.util.Map;
 import java.util.Properties;
 import java.util.Stack;
 import java.util.Vector;
@@ -20,6 +22,12 @@ import org.cishell.framework.data.BasicData;
 import org.cishell.framework.data.Data;
 import org.cishell.framework.data.DataProperty;
 import org.osgi.service.log.LogService;
+
+import cern.colt.function.ObjectFunction;
+import cern.colt.function.ObjectObjectFunction;
+import cern.colt.matrix.ObjectMatrix1D;
+import cern.colt.matrix.ObjectMatrix3D;
+import cern.colt.matrix.impl.SparseObjectMatrix3D;
 
 import prefuse.data.Edge;
 import prefuse.data.Graph;
@@ -37,6 +45,88 @@ public class JoiningAlgorithm implements Algorithm {
     private Dictionary parameters;
     private CIShellContext context;
 	private LogService log;
+	private Map transferred;
+	
+	private class IntegerAdder implements ObjectObjectFunction {
+		public Object apply(Object aggregate, Object current) {
+			return new Long(((Number) aggregate).longValue() + ((Number) current).longValue());
+		}
+	}
+	
+	private class DoubleAdder implements ObjectObjectFunction {
+		public Object apply(Object aggregate, Object current) {
+			return new Double(((Number) aggregate).doubleValue() + ((Number) current).doubleValue());
+		}
+	}
+	private class LongMaker implements ObjectFunction {
+		
+		private String field;
+
+		public LongMaker(String field) {
+			this.field = field;
+		}
+		
+		public Object apply(Object current) {
+			if(current == null) {
+				return new Long(0);
+			} else {
+				return new Long(((Tuple) current).getLong(field));
+			}
+		}
+	}
+	
+	private class IntegerMaker implements ObjectFunction {
+		
+		private String field;
+
+		public IntegerMaker(String field) {
+			this.field = field;
+		}
+		
+		public Object apply(Object current) {
+			if(current == null) {
+				return new Integer(0);
+			} else {
+				return new Integer(((Tuple) current).getInt(field));
+			}
+		}
+	}
+	
+	private class DoubleMaker implements ObjectFunction {
+		
+		private String field;
+
+		public DoubleMaker(String field) {
+			this.field = field;
+		}
+		
+		public Object apply(Object current) {
+			if(current == null) {
+				return new Double(0);
+			} else {
+				return new Double(((Tuple) current).getDouble(field));
+			}
+		}
+	}
+	
+	private class FloatMaker implements ObjectFunction {
+		
+		private String field;
+
+		public FloatMaker(String field) {
+			this.field = field;
+		}
+		
+		public Object apply(Object current) {
+			if(current == null) {
+				return new Float(0);
+			} else {
+				return new Float(((Tuple) current).getFloat(field));
+			}
+		}
+	}
+	
+	
     
     //private Schema edgeWeightSchema = new Schema(new String[]{"weight", "source", "target"}, new Class[]{int.class, long.class, long.class});
     
@@ -51,6 +141,7 @@ public class JoiningAlgorithm implements Algorithm {
         this.data = data;
         this.parameters = parameters;
         this.context = context;
+        this.transferred = new HashMap();
     }
 
     public Data[] execute() {
@@ -62,7 +153,7 @@ public class JoiningAlgorithm implements Algorithm {
     	String key = (String) parameters.get("key");
     	String type = (String) parameters.get("type");
     	String join = (String) parameters.get("join");
-    	File metadataFile = (File) parameters.get("metadata");
+    	File metadataFile = new File((String)parameters.get("metadata"));
     	
     	Properties metadata = new Properties();
     	try {
@@ -82,6 +173,16 @@ public class JoiningAlgorithm implements Algorithm {
 		
 		Graph outputGraph = new Graph(outputNodeSchema.instantiate(), outputEdgeSchema.instantiate(), inputGraph.isDirected());
 		
+		Iterator joinTemp = inputGraph.tuples(ExpressionParser.predicate("[" + key + "] = \"" + join + "\""));
+		int totalJoinNodes = 0;
+		while(joinTemp.hasNext()) {
+			totalJoinNodes += 1;
+			joinTemp.next();
+		}
+		
+		int nodeCount = inputGraph.getNodeCount();
+		ObjectMatrix3D matrix = new SparseObjectMatrix3D(totalJoinNodes, nodeCount, nodeCount);
+		
 		
 		Iterator typeIterator = inputGraph.tuples(ExpressionParser.predicate("[" + key + "] = \"" + type + "\""));
 		Iterator joinIterator = inputGraph.tuples(ExpressionParser.predicate("[" + key + "] = \"" + join + "\""));
@@ -92,8 +193,10 @@ public class JoiningAlgorithm implements Algorithm {
 			typeNodes.add(typeIterator.next());
 		}
 		
+		int currentJoinNodeLocation = 0;
 		while(joinIterator.hasNext()) {
 			Node joinNode = (Node) joinIterator.next();
+			currentJoinNodeLocation += 1;
 			
 			Iterator neighbors = joinNode.neighbors();
 			Stack typeNeighbors = new Stack();
@@ -105,32 +208,44 @@ public class JoiningAlgorithm implements Algorithm {
 			}
 			
 			while(!typeNeighbors.isEmpty()) {
-				Node first = moveTo((Node) typeNeighbors.pop(), outputGraph);
+				Node first = (Node) typeNeighbors.pop();//moveTo((Node) typeNeighbors.pop(), outputGraph);
 				for(Iterator rest = typeNeighbors.iterator(); rest.hasNext(); ) {
-					Node second = moveTo((Node) rest.next(), outputGraph);
-					fold(first, second, joinNode, metadata);
+					Node second = (Node) rest.next();//moveTo((Node) rest.next(), outputGraph);
 					
+					matrix.setQuick(currentJoinNodeLocation, first.getRow(), second.getRow(), joinNode);
+					
+					//fold(first, second, joinNode, metadata);
 				}
-				
 			}
-			
-			
-			
+		}
+		
+		for(int row = 0; row < matrix.rows(); row++) {
+			for(int column = 0; column < matrix.columns(); column++) {
+				ObjectMatrix1D joins = matrix.viewRow(row).viewColumn(column);
+				if(joins.cardinality() != 0) {
+					Node first = moveTo(inputGraph.getNode(row), outputGraph);
+					Node second = moveTo(inputGraph.getNode(column), outputGraph);
+					fold(first, second, joins, metadata);
+				}
+			}
 		}
 		
 		
 		
-		
-		
-		
+		Data outputData = new BasicData(outputGraph, Graph.class.getName());
+		Dictionary attributes = outputData.getMetaData();
+		attributes.put(DataProperty.MODIFIED, new Boolean(true));
+		attributes.put(DataProperty.PARENT, this.data[0]);
+		attributes.put(DataProperty.TYPE, DataProperty.NETWORK_TYPE);
+		attributes.put(DataProperty.LABEL, "Graph of a join of " + type + " nodes across " + join + " nodes.");
     	
-    	return null;
+    	return new Data[]{outputData};
     }
     
     private Schema createEdgeSchema(Schema joinSchema, Properties metadata) {
 		Schema output = new Schema();
-		output.addColumn("source", long.class);
-		output.addColumn("target", long.class);
+		output.addColumn("source", int.class);
+		output.addColumn("target", int.class);
 		
 		boolean weightSpecifiedFlag = false;
 		
@@ -156,9 +271,14 @@ public class JoiningAlgorithm implements Algorithm {
 		return output;
 	}
 
-	private void fold(Node first, Node second, Node joinNode, Properties metadata) {
+	private void fold(Node first, Node second, ObjectMatrix1D joins, Properties metadata) {
 		
 		boolean weightSpecifiedFlag = false;
+		
+		Edge edge = first.getGraph().getEdge(first, second);
+		if(edge == null) {
+			edge = first.getGraph().addEdge(first, second);
+		}
 		
 		for(Enumeration keys = metadata.propertyNames(); keys.hasMoreElements(); ) {
 			String key = (String) keys.nextElement();
@@ -171,10 +291,7 @@ public class JoiningAlgorithm implements Algorithm {
 				
 				
 				
-				Edge edge = first.getGraph().getEdge(first, second);
-				if(edge == null) {
-					edge = first.getGraph().addEdge(first, second);
-				}
+				
 				
 				String realKey = key.split(".")[1];
 				
@@ -182,7 +299,7 @@ public class JoiningAlgorithm implements Algorithm {
 					weightSpecifiedFlag = true;
 				}
 				
-				foldField(operation, sourceField, realKey, joinNode, edge);
+				foldField(operation, sourceField, realKey, joins, edge);
 				
 				
 				
@@ -190,15 +307,58 @@ public class JoiningAlgorithm implements Algorithm {
 				
 			} else {
 				
-				foldField(operation, sourceField, key, joinNode, first);
-				foldField(operation, sourceField, key, joinNode, second);
+				foldField(operation, sourceField, key, joins, first);
+				foldField(operation, sourceField, key, joins, second);
 			}
 			
 		}
 		
 		if(!weightSpecifiedFlag) {
-			
+			edge.setInt("weight", number(joins));
 		}
+	}
+
+	private int number(ObjectMatrix1D joins) {
+		return ((Number) joins.aggregate(new IntegerAdder(), new ObjectFunction() {
+			public Object apply(Object current) {
+				if(current == null) {
+					return new Integer(0);
+				} else {
+					return new Integer(1);
+				}
+			}
+		})).intValue();
+	}
+	
+	private double doubleSum(ObjectMatrix1D joins, final String field) {
+		return ((Number) joins.aggregate(new DoubleAdder(), new DoubleMaker(field))).doubleValue();
+	}
+	
+	private float floatSum(ObjectMatrix1D joins, final String field) {
+		return ((Number) joins.aggregate(new DoubleAdder(), new FloatMaker(field))).floatValue();
+	}
+	
+	private int integerSum(ObjectMatrix1D joins, final String field) {
+		return ((Number) joins.aggregate(new IntegerAdder(), new IntegerMaker(field))).intValue();
+	}
+	
+	private long longSum(ObjectMatrix1D joins, final String field) {
+		return ((Number) joins.aggregate(new IntegerAdder(), new LongMaker(field))).longValue();
+	}
+
+	private void foldField(String operation, String sourceField, String key, ObjectMatrix1D joins, Tuple tuple) {
+		if("sum".equals(operation)) {
+			if(tuple.canSetDouble(key)) {
+				tuple.setDouble(key, doubleSum(joins, sourceField));
+			} else if(tuple.canSetFloat(key)) {
+				tuple.setFloat(key, floatSum(joins, sourceField));
+			} else if(tuple.canSetLong(key)) {
+				tuple.setLong(key, longSum(joins, sourceField));
+			} else if(tuple.canSetInt(key)) {
+				tuple.setFloat(key, integerSum(joins, sourceField));
+			}
+		}
+		
 	}
 
 	private Schema enhanceNodeSchema(Schema schema, Properties metadata) {
@@ -217,7 +377,8 @@ public class JoiningAlgorithm implements Algorithm {
     	
     	for(int ii = 0; ii < schema.getColumnCount(); ii++) {
     		String columnName = schema.getColumnName(ii);
-			if(output.getColumnIndex(columnName) != -1) {
+    		
+			if(output.getColumnIndex(columnName) == -1) {
     			output.addColumn(columnName, schema.getColumnType(columnName), schema.getDefault(columnName));
     		}
     	}
@@ -225,28 +386,22 @@ public class JoiningAlgorithm implements Algorithm {
     	return output;
     }
     
-    private Node moveTo(Node oldNode, Graph newGraph) {
-    	Node newNode = newGraph.addNode();
-    	
-    	Schema newSchema = newGraph.getNodeTable().getSchema();
-    	
-    	for(int columnIndex = 0; columnIndex < oldNode.getColumnCount(); columnIndex++) {
-    		String columnName = oldNode.getColumnName(columnIndex);
-    		if(newSchema.getColumnIndex(columnName) == -1) {
-    			newNode.set(columnName, oldNode.get(columnIndex));
-    		}
-    	}
-    	
-    	return newNode;
-    }
-    
-    private void foldField(String operation, String fromField, String toField, Node join, Tuple assign) {
-    	
-    }
-    
-    private void increase(Tuple tuple, String field, Number amount) {
-    	Class columnType = tuple.getColumnType(field);
-		
-    	
-    }
+	private Node moveTo(Node oldNode, Graph newGraph) {
+		if(this.transferred.keySet().contains(oldNode)) {
+			return (Node) this.transferred.get(oldNode);
+		} else {
+			Node newNode = newGraph.addNode();
+
+			Schema newSchema = newGraph.getNodeTable().getSchema();
+
+			for(int columnIndex = 0; columnIndex < oldNode.getColumnCount(); columnIndex++) {
+				String columnName = oldNode.getColumnName(columnIndex);
+				if(newSchema.getColumnIndex(columnName) != -1) {
+					newNode.set(columnName, oldNode.get(columnIndex));
+				}
+			}
+			this.transferred.put(oldNode, newNode);
+			return newNode;
+		}
+	}
 }
