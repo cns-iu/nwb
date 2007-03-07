@@ -56,7 +56,9 @@ public class JungPrefuseBetaConverter {
 			if(!prefuseTuple.canSet(key, metadataClass)) {
 				prefuseGraph.addColumn(key, metadataClass);
 			}
-			prefuseTuple.set(key, datum);
+			if(!"target".equals(key) && !"source".equals(key)) { //special cases that prefuse refuses to set for
+				prefuseTuple.set(key, datum);
+			}
 		}
 		
 	}

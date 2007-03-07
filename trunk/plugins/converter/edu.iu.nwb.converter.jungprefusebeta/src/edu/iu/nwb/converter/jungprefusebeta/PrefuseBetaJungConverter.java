@@ -67,7 +67,9 @@ public class PrefuseBetaJungConverter {
 		int columns = schema.getColumnCount();
 		
 		for(int ii = 0; ii < columns; ii++) {
-			jungContainer.addUserDatum(schema.getColumnName(ii), prefuseTuple.get(ii), UserData.SHARED);
+			if(prefuseTuple.get(ii) != null) { //no storing nulls in jung userdatacontainers.
+				jungContainer.addUserDatum(schema.getColumnName(ii), prefuseTuple.get(ii), UserData.SHARED);
+			}
 		}
 		
 	}
