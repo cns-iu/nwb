@@ -5,6 +5,8 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Comparator;
 import java.util.Dictionary;
 import java.util.Enumeration;
 import java.util.HashMap;
@@ -23,7 +25,6 @@ import org.cishell.framework.data.Data;
 import org.cishell.framework.data.DataProperty;
 import org.osgi.service.log.LogService;
 
-import cern.colt.function.ObjectFunction;
 import cern.colt.function.ObjectObjectFunction;
 import cern.colt.matrix.ObjectMatrix1D;
 import cern.colt.matrix.ObjectMatrix2D;
@@ -51,88 +52,7 @@ public class JoiningAlgorithm implements Algorithm {
 	private LogService log;
 	private Map transferred;
 	
-	private class LongAdder implements ObjectObjectFunction {
-		public Object apply(Object aggregate, Object current) {
-			long totalSoFar = ((Number) aggregate).longValue();
-			long soFar = totalSoFar + ((Number) current).longValue();
-			return new Long(soFar);
-		}
-	}
 	
-	private class DoubleAdder implements ObjectObjectFunction {
-		public Object apply(Object aggregate, Object current) {
-			return new Double(((Number) aggregate).doubleValue() + ((Number) current).doubleValue());
-		}
-	}
-	private class LongMaker implements ObjectFunction {
-		
-		private String field;
-
-		public LongMaker(String field) {
-			this.field = field;
-		}
-		
-		public Object apply(Object current) {
-			Long result;
-			if(current == null) {
-				result = new Long(0);
-			} else {
-				result = new Long(((Tuple) current).getLong(field));
-			}
-			return result;
-		}
-	}
-	
-	private class IntegerMaker implements ObjectFunction {
-		
-		private String field;
-
-		public IntegerMaker(String field) {
-			this.field = field;
-		}
-		
-		public Object apply(Object current) {
-			if(current == null) {
-				return new Integer(0);
-			} else {
-				return new Integer(((Tuple) current).getInt(field));
-			}
-		}
-	}
-	
-	private class DoubleMaker implements ObjectFunction {
-		
-		private String field;
-
-		public DoubleMaker(String field) {
-			this.field = field;
-		}
-		
-		public Object apply(Object current) {
-			if(current == null) {
-				return new Double(0);
-			} else {
-				return new Double(((Tuple) current).getDouble(field));
-			}
-		}
-	}
-	
-	private class FloatMaker implements ObjectFunction {
-		
-		private String field;
-
-		public FloatMaker(String field) {
-			this.field = field;
-		}
-		
-		public Object apply(Object current) {
-			if(current == null) {
-				return new Float(0);
-			} else {
-				return new Float(((Tuple) current).getFloat(field));
-			}
-		}
-	}
 	
 	
     
@@ -345,53 +265,72 @@ public class JoiningAlgorithm implements Algorithm {
 		}
 		
 		if(!weightSpecifiedFlag) {
-			edge.setInt(WEIGHT_COLUMN, number(joins));
+			edge.setInt(WEIGHT_COLUMN, Util.number(joins));
 		}
-	}
-
-	private int number(ObjectMatrix1D joins) {
-		return ((Number) joins.aggregate(new LongAdder(), new ObjectFunction() {
-			public Object apply(Object current) {
-				if(current == null) {
-					return new Integer(0);
-				} else {
-					return new Integer(1);
-				}
-			}
-		})).intValue();
-	}
-	
-	private double doubleSum(ObjectMatrix1D joins, final String field) {
-		return ((Number) joins.aggregate(new DoubleAdder(), new DoubleMaker(field))).doubleValue();
-	}
-	
-	private float floatSum(ObjectMatrix1D joins, final String field) {
-		return ((Number) joins.aggregate(new DoubleAdder(), new FloatMaker(field))).floatValue();
-	}
-	
-	private int integerSum(ObjectMatrix1D joins, final String field) {
-		return ((Number) joins.aggregate(new LongAdder(), new IntegerMaker(field))).intValue();
-	}
-	
-	private long longSum(ObjectMatrix1D joins, final String field) {
-		return ((Number) joins.aggregate(new LongAdder(), new LongMaker(field))).longValue();
 	}
 
 	private void foldField(String operation, String sourceField, String key, ObjectMatrix1D joins, Tuple tuple) {
+		
+		int cardinality = joins.cardinality();
+		
 		if("sum".equals(operation)) {
 			if(tuple.canSetDouble(key)) {
-				tuple.setDouble(key, doubleSum(joins, sourceField));
+				tuple.setDouble(key, Util.doubleSum(joins, sourceField));
 			} else if(tuple.canSetFloat(key)) {
-				tuple.setFloat(key, floatSum(joins, sourceField));
+				tuple.setFloat(key, Util.floatSum(joins, sourceField));
 			} else if(tuple.canSetLong(key)) {
-				tuple.setLong(key, longSum(joins, sourceField));
+				tuple.setLong(key, Util.longSum(joins, sourceField));
 			} else if(tuple.canSetInt(key)) {
-				tuple.setFloat(key, integerSum(joins, sourceField));
+				tuple.setFloat(key, Util.integerSum(joins, sourceField));
 			}
+		} else if("average".equals(operation)) {
+			if(tuple.canSetDouble(key)) {
+				tuple.setDouble(key, Util.doubleSum(joins, sourceField) / cardinality);
+			} else if(tuple.canSetFloat(key)) {
+				tuple.setFloat(key, Util.floatSum(joins, sourceField) / cardinality);
+			} else if(tuple.canSetLong(key)) {
+				tuple.setLong(key, Util.longSum(joins, sourceField) / cardinality);
+			} else if(tuple.canSetInt(key)) {
+				tuple.setFloat(key, Util.integerSum(joins, sourceField) / cardinality);
+			}
+		} else if("min".equals(operation)) {
+			if(tuple.canSetDouble(key)) {
+				tuple.setDouble(key, Util.doubleMin(joins, sourceField));
+			} else if(tuple.canSetFloat(key)) {
+				tuple.setFloat(key, Util.floatMin(joins, sourceField));
+			} else if(tuple.canSetLong(key)) {
+				tuple.setLong(key, Util.longMin(joins, sourceField));
+			} else if(tuple.canSetInt(key)) {
+				tuple.setFloat(key, Util.integerMin(joins, sourceField));
+			}
+		} else if("max".equals(operation)) {
+			if(tuple.canSetDouble(key)) {
+				tuple.setDouble(key, Util.doubleMax(joins, sourceField));
+			} else if(tuple.canSetFloat(key)) {
+				tuple.setFloat(key, Util.floatMax(joins, sourceField));
+			} else if(tuple.canSetLong(key)) {
+				tuple.setLong(key, Util.longMax(joins, sourceField));
+			} else if(tuple.canSetInt(key)) {
+				tuple.setFloat(key, Util.integerMax(joins, sourceField));
+			}
+		} else if("mode".equals(operation)) {
+			final Map map = (Map) joins.aggregate(new NumberMapper(), new FieldFetcher(sourceField));
+			
+			Object[] possibles = map.keySet().toArray();
+			Arrays.sort(possibles, new Comparator() {
+				public int compare(Object one, Object two) {
+					Integer first = (Integer) map.get(one);
+					Integer second = (Integer) map.get(two);
+					
+					return first.compareTo(second);
+				}
+			});
+			
+			tuple.set(key, possibles[possibles.length - 1]);
+			
 		}
 		
 	}
-
 	private Schema enhanceNodeSchema(Schema schema, Properties metadata) {
     	Schema output = new Schema();
     	for(Enumeration keys = metadata.propertyNames(); keys.hasMoreElements();) {
