@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <projectDescription>
-	<name>edu.iu.nwb.analysis.clustering</name>
+	<name>edu.iu.nwb.transformations.symmetrizemin</name>
 	<comment></comment>
 	<projects>
 	</projects>
