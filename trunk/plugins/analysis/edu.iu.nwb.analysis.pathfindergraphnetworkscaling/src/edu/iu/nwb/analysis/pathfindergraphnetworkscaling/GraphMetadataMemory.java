@@ -119,7 +119,7 @@ public class GraphMetadataMemory {
 							graphCopy.removeEdge(edge); //so get rid of the edge
 						} else { //there is in our output
 							//we can share because its a String
-							edge.setUserDatum("weight", Integer.toString(weight), UserData.SHARED); //update its weight
+							edge.setUserDatum("weight", new Integer(weight), UserData.SHARED); //update its weight
 						}
 					} else if(weight != 0) { //no edge in the original, but there is in the output
 						//for now do nothing (since there should be no new edges with this algorithm)
