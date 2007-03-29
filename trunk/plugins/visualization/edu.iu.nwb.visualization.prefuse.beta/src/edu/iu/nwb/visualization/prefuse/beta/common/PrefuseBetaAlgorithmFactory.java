@@ -27,18 +27,18 @@ import prefuse.data.Table;
 
 
 
-/**
- * @author Weixia(Bonnie) Huang 
- */
+
 public abstract class PrefuseBetaAlgorithmFactory implements AlgorithmFactory {
 	
 	private MetaTypeInformation originalProvider;
+	private String pid;
 
 	protected void activate(ComponentContext ctxt) {
 		//You may delete all references to metatype service if 
 		//your algorithm does not require parameters and return
 		//null in the createParameters() method
 		MetaTypeService mts = (MetaTypeService)ctxt.locateService("MTS");
+		pid = (String) ctxt.getServiceReference().getProperty(org.osgi.framework.Constants.SERVICE_PID);
 		originalProvider = mts.getMetaTypeInformation(ctxt.getBundleContext().getBundle());
 	}
 	protected void deactivate(ComponentContext ctxt) {
@@ -63,7 +63,7 @@ public abstract class PrefuseBetaAlgorithmFactory implements AlgorithmFactory {
 		
 		Graph graph = (Graph) dm[0].getData();
 		
-		ObjectClassDefinition oldDefinition = originalProvider.getObjectClassDefinition(originalProvider.getPids()[0], null);
+		ObjectClassDefinition oldDefinition = originalProvider.getObjectClassDefinition(this.pid, null);
 		
 		BasicObjectClassDefinition definition;
 		try {
@@ -75,26 +75,36 @@ public abstract class PrefuseBetaAlgorithmFactory implements AlgorithmFactory {
 		String[] nodeAttributesArray = createKeyArray(graph.getNodeTable().getSchema());
 		String[] edgeAttributesArray = createKeyArray(graph.getEdgeTable().getSchema());
 		
-		definition.addAttributeDefinition(ObjectClassDefinition.REQUIRED,
-				new BasicAttributeDefinition("nodeSize", "Node Size", "The label for the node size property", AttributeDefinition.STRING, nodeAttributesArray, nodeAttributesArray));
+		System.err.println(oldDefinition.getID());
 		
-		definition.addAttributeDefinition(ObjectClassDefinition.REQUIRED,
-				new BasicAttributeDefinition("edgeSize", "Edge Size", "The label for the edge size property", AttributeDefinition.STRING, edgeAttributesArray, edgeAttributesArray));
+		AttributeDefinition[] definitions = oldDefinition.getAttributeDefinitions(ObjectClassDefinition.ALL);
+		
+		for(int ii = 0; ii < definitions.length; ii++) {
+			String id = definitions[ii].getID();
+			System.err.println(id);
+			if(id.equals("nodeSize")) {
+				definition.addAttributeDefinition(ObjectClassDefinition.REQUIRED,
+						new BasicAttributeDefinition("nodeSize", "Node Size", "The label for the node size property", AttributeDefinition.STRING, nodeAttributesArray, nodeAttributesArray));
+			} else if(id.equals("edgeSize")) {
+				definition.addAttributeDefinition(ObjectClassDefinition.REQUIRED,
+						new BasicAttributeDefinition("edgeSize", "Edge Size", "The label for the edge size property", AttributeDefinition.STRING, edgeAttributesArray, edgeAttributesArray));
+			} else if(id.equals("nodeColor")) {
+				definition.addAttributeDefinition(ObjectClassDefinition.REQUIRED,
+						new BasicAttributeDefinition("nodeColor", "Node Color", "The label for the node color property", AttributeDefinition.STRING, nodeAttributesArray, nodeAttributesArray));
+			} else if(id.equals("edgeColor")) {
+				definition.addAttributeDefinition(ObjectClassDefinition.REQUIRED,
+						new BasicAttributeDefinition("edgeColor", "Edge Color", "The label for the edge color property", AttributeDefinition.STRING, edgeAttributesArray, edgeAttributesArray));
+			} else if(id.equals("ringColor")) {
+				definition.addAttributeDefinition(ObjectClassDefinition.REQUIRED,
+						new BasicAttributeDefinition("ringColor", "Ring Color", "The label for the ring color property", AttributeDefinition.STRING, nodeAttributesArray, nodeAttributesArray));
+			} else if(id.equals("nodeShape")) {
+				definition.addAttributeDefinition(ObjectClassDefinition.REQUIRED,
+						new BasicAttributeDefinition("nodeShape", "Node Shape", "The label for the node shape property", AttributeDefinition.STRING, nodeAttributesArray, nodeAttributesArray));
+			} else {
+				definition.addAttributeDefinition(ObjectClassDefinition.REQUIRED, definitions[ii]);
+			}
+		}
 
-		definition.addAttributeDefinition(ObjectClassDefinition.REQUIRED,
-				new BasicAttributeDefinition("nodeColor", "Node Color", "The label for the node color property", AttributeDefinition.STRING, nodeAttributesArray, nodeAttributesArray));
-		
-		definition.addAttributeDefinition(ObjectClassDefinition.REQUIRED,
-				new BasicAttributeDefinition("edgeColor", "Edge Color", "The label for the edge color property", AttributeDefinition.STRING, edgeAttributesArray, edgeAttributesArray));
-		
-		definition.addAttributeDefinition(ObjectClassDefinition.REQUIRED,
-				new BasicAttributeDefinition("ringColor", "Ring Color", "The label for the ring color property", AttributeDefinition.STRING, nodeAttributesArray, nodeAttributesArray));
-
-		definition.addAttributeDefinition(ObjectClassDefinition.REQUIRED,
-				new BasicAttributeDefinition("nodeShape", "Node Shape", "The label for the node shape property", AttributeDefinition.STRING, nodeAttributesArray, nodeAttributesArray));
-
-		
-		
 		MetaTypeProvider provider = new BasicMetaTypeProvider(definition);
 		return provider;
 	}
