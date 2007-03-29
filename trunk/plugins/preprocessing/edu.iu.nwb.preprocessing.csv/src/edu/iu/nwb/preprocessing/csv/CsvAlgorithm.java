@@ -1,6 +1,8 @@
 package edu.iu.nwb.preprocessing.csv;
 
 import java.util.Dictionary;
+import java.util.HashMap;
+import java.util.Map;
 
 import org.cishell.framework.CIShellContext;
 import org.cishell.framework.algorithm.Algorithm;
@@ -43,6 +45,8 @@ public class CsvAlgorithm implements Algorithm {
 			e.printStackTrace();
 			return null;
 		}
+		
+		
     	
 		/* class ToIntegerExpression extends ColumnExpression {
 			
@@ -72,12 +76,47 @@ public class CsvAlgorithm implements Algorithm {
 		edges.addColumn("_x_nwb_first", new ToIntegerExpression((String) parameters.get("first")));
 		edges.addColumn("_x_nwb_second", new ToIntegerExpression((String) parameters.get("second"))); */
 		
-    	Graph graph = new Graph(nodes, edges, false, (String) parameters.get("nodeid"), (String) parameters.get("first"), (String) parameters.get("second"));
+    	String nodeId = (String) parameters.get("nodeid");
+		String first = (String) parameters.get("first");
+		String second = (String) parameters.get("second");
+		
+		
+		
+		String nwbId = "_x_nwb_id";
+		nodes.addColumn(nwbId, int.class);
+		String nwbFirst = "_x_nwb_first";
+		edges.addColumn(nwbFirst, int.class);
+		String nwbSecond = "_x_nwb_second";
+		edges.addColumn(nwbSecond, int.class);
+		
+		int nodeCount = nodes.getRowCount();
+		Map newIds = new HashMap(nodeCount);
+		
+		int currentId = 0;
+		
+		for(int row = 0; row < nodeCount; row++) {
+			Tuple node = nodes.getTuple(row);
+			newIds.put(node.get(nodeId), new Integer(currentId));
+			node.setInt(nwbId, currentId);
+			currentId++;
+		}
+		
+		int edgeCount = edges.getRowCount();
+		for(int row = 0; row < edgeCount; row++) {
+			Tuple edge = edges.getTuple(row);
+			edge.setInt(nwbFirst, ((Integer) newIds.get(edge.get(first))).intValue());
+			edge.setInt(nwbSecond, ((Integer) newIds.get(edge.get(second))).intValue());
+		}
+		
+		
+		
+		
+		Graph graph = new Graph(nodes, edges, false, nwbId, nwbFirst, nwbSecond);
     	
     	Data data = new BasicData(graph, Graph.class.getName());
-    	Dictionary map = data.getMetaData();
-        map.put(DataProperty.LABEL, "Prefuse Beta Graph from CSV");
-        map.put(DataProperty.TYPE,DataProperty.NETWORK_TYPE);
+    	Dictionary metadata = data.getMetaData();
+        metadata.put(DataProperty.LABEL, "Prefuse Beta Graph from CSV");
+        metadata.put(DataProperty.TYPE,DataProperty.NETWORK_TYPE);
     	
     	return new Data[] { data };
     }
