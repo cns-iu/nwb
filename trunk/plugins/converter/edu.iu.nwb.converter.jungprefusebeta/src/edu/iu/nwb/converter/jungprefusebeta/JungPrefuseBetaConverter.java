@@ -54,7 +54,7 @@ public class JungPrefuseBetaConverter {
 			Object datum = jungContainer.getUserDatum(realKey);
 			Class metadataClass = datum.getClass();
 			if(!prefuseTuple.canSet(key, metadataClass)) {
-				prefuseGraph.addColumn(key, metadataClass);
+				prefuseTuple.getTable().addColumn(key, metadataClass);
 			}
 			if(!"target".equals(key) && !"source".equals(key)) { //special cases that prefuse refuses to set for
 				prefuseTuple.set(key, datum);
