@@ -38,6 +38,8 @@ import prefuse.data.Node;
 import prefuse.data.Schema;
 import prefuse.data.Tuple;
 import prefuse.data.expression.parser.ExpressionParser;
+import prefuse.data.tuple.TableTuple;
+import prefuse.data.tuple.TupleSet;
 
 /**
  * @author Russell Duhon
@@ -51,6 +53,12 @@ public class JoiningAlgorithm implements Algorithm {
     private CIShellContext context;
 	private LogService log;
 	private Map transferred;
+	
+	private static Map typeMap = new HashMap();
+	
+	static {
+		typeMap.put("count", int.class);
+	}
 	
 	
 	
@@ -101,7 +109,9 @@ public class JoiningAlgorithm implements Algorithm {
 		
 		Graph outputGraph = new Graph(outputNodeSchema.instantiate(), outputEdgeSchema.instantiate(), inputGraph.isDirected());
 		
-		Iterator joinTemp = inputGraph.tuples(ExpressionParser.predicate("[" + key + "] = \"" + join + "\""));
+		
+		TupleSet nodes = inputGraph.getNodeTable();
+		Iterator joinTemp = nodes.tuples(ExpressionParser.predicate("[" + key + "] = \"" + join + "\""));
 		int totalJoinNodes = 0;
 		while(joinTemp.hasNext()) {
 			totalJoinNodes += 1;
@@ -113,19 +123,20 @@ public class JoiningAlgorithm implements Algorithm {
 		ObjectMatrix2D nodeMatrix = new SparseObjectMatrix2D(nodeCount, totalJoinNodes);
 		
 		
-		Iterator typeIterator = inputGraph.tuples(ExpressionParser.predicate("[" + key + "] = \"" + type + "\""));
-		Iterator joinIterator = inputGraph.tuples(ExpressionParser.predicate("[" + key + "] = \"" + join + "\""));
+		Iterator typeIterator = nodes.tuples(ExpressionParser.predicate("[" + key + "] = \"" + type + "\""));
+		Iterator joinIterator = nodes.tuples(ExpressionParser.predicate("[" + key + "] = \"" + join + "\""));
 		
 		
 		Vector typeNodes = new Vector();
 		while(typeIterator.hasNext()) {
-			typeNodes.add(typeIterator.next());
+			typeNodes.add(inputGraph.getNode(((TableTuple) typeIterator.next()).getRow()));
 		}
 		
 		int currentJoinNodeLocation = 0;
 		while(joinIterator.hasNext()) {
-			Node joinNode = (Node) joinIterator.next();
+			Node joinNode = inputGraph.getNode(((TableTuple) joinIterator.next()).getRow());
 			currentJoinNodeLocation += 1;
+			
 			
 			Iterator neighbors = joinNode.neighbors();
 			Stack typeNeighbors = new Stack();
@@ -327,7 +338,8 @@ public class JoiningAlgorithm implements Algorithm {
 			});
 			
 			tuple.set(key, possibles[possibles.length - 1]);
-			
+		} else if("count".equals(operation)) {
+			tuple.setInt(key, Util.number(joins));
 		}
 		
 	}
@@ -339,9 +351,14 @@ public class JoiningAlgorithm implements Algorithm {
     			if(schema.getColumnIndex(key) != -1) {
     				log.log(LogService.LOG_ERROR, "The metadata key " + key + " is already in use for this graph. It will be overwriten with the new value.");
     			}
-    			String fromKey = metadata.getProperty(key).split(SEPARATOR)[0];
-    		
-    			output.addColumn(key, schema.getColumnType(fromKey));
+    			String[] split = metadata.getProperty(key).split(SEPARATOR);
+				String fromKey = split[0];
+				String operation = split[1];
+    			Class type = (Class) typeMap.get(operation);
+    			if(type == null) {
+    				type = schema.getColumnType(fromKey);
+    			}
+   				output.addColumn(key, type);
     		}
     	}
     	

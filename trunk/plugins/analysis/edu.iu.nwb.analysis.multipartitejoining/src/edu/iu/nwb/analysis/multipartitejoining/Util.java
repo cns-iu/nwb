@@ -55,47 +55,53 @@ public class Util {
 	}
 
 	static double doubleMin(ObjectMatrix1D joins, String field) {
-		return ((Number) joins.aggregate(new DoubleMin(), new DoubleMaker(field))).doubleValue();
+		return ((Number) joins.aggregate(new NullDoubleMin(), new NullDoubleMaker(field))).doubleValue();
 	}
 
 	static float floatMin(ObjectMatrix1D joins, String field) {
-		return ((Number) joins.aggregate(new DoubleMin(), new FloatMaker(field))).floatValue();
+		return ((Number) joins.aggregate(new NullDoubleMin(), new NullFloatMaker(field))).floatValue();
 	}
 
 	static long longMin(ObjectMatrix1D joins, String field) {
-		return ((Number) joins.aggregate(new LongMin(), new LongMaker(field))).longValue();
+		return ((Number) joins.aggregate(new NullLongMin(), new NullLongMaker(field))).longValue();
 	}
 
 	static int integerMin(ObjectMatrix1D joins, String field) {
-		return ((Number) joins.aggregate(new LongMin(), new IntegerMaker(field))).intValue();
+		return ((Number) joins.aggregate(new NullLongMin(), new NullIntegerMaker(field))).intValue();
 	}
 
 }
 
 class NumberMapper implements ObjectObjectFunction {
-	
+
 	private Map map = new HashMap();
-	
+
 	public Object apply(Object aggregate, Object current) {
-		if(map.containsKey(current)) {
-			map.put(current, new Integer(((Integer) map.get(current)).intValue() + 1));
-		} else {
-			map.put(current, new Integer(1));
+		if(current != null) {
+			if(map.containsKey(current)) {
+				map.put(current, new Integer(((Integer) map.get(current)).intValue() + 1));
+			} else {
+				map.put(current, new Integer(1));
+			}
 		}
 		return map;
 	}
 }
 
 class FieldFetcher implements ObjectFunction {
-	
+
 	private String field;
 
 	public FieldFetcher(String field) {
 		this.field = field;
 	}
-	
+
 	public Object apply(Object object) {
-		return ((Tuple) object).get(field);
+		if(object == null) {
+			return null;
+		} else {
+			return ((Tuple) object).get(field);
+		}
 	}
 }
 
@@ -126,6 +132,34 @@ class DoubleMin implements ObjectObjectFunction {
 	}
 }
 
+class NullLongMin implements ObjectObjectFunction {
+	public Object apply(Object aggregate, Object current) {
+		if(current == null && aggregate != null) {
+			return aggregate;
+		} else if(aggregate == null && current != null) {
+			return current;
+		} else if(aggregate == null && current == null) {
+			return null;
+		} else {
+			return new Long(Math.min(((Number) aggregate).longValue(), ((Number) current).longValue()));
+		}
+	}
+}
+
+class NullDoubleMin implements ObjectObjectFunction {
+	public Object apply(Object aggregate, Object current) {
+		if(current == null && aggregate != null) {
+			return aggregate;
+		} else if(aggregate == null && current != null) {
+			return current;
+		} else if(aggregate == null && current == null) {
+			return null;
+		} else {
+			return new Double(Math.min(((Number) aggregate).doubleValue(), ((Number) current).doubleValue()));
+		}
+	}
+}
+
 class LongMax implements ObjectObjectFunction {
 	public Object apply(Object aggregate, Object current) {
 		return new Long(Math.max(((Number) aggregate).longValue(), ((Number) current).longValue()));
@@ -139,13 +173,13 @@ class DoubleMax implements ObjectObjectFunction {
 }
 
 class LongMaker implements ObjectFunction {
-	
+
 	private String field;
 
 	public LongMaker(String field) {
 		this.field = field;
 	}
-	
+
 	public Object apply(Object current) {
 		Long result;
 		if(current == null) {
@@ -158,13 +192,13 @@ class LongMaker implements ObjectFunction {
 }
 
 class IntegerMaker implements ObjectFunction {
-	
+
 	private String field;
 
 	public IntegerMaker(String field) {
 		this.field = field;
 	}
-	
+
 	public Object apply(Object current) {
 		if(current == null) {
 			return new Integer(0);
@@ -175,13 +209,13 @@ class IntegerMaker implements ObjectFunction {
 }
 
 class DoubleMaker implements ObjectFunction {
-	
+
 	private String field;
 
 	public DoubleMaker(String field) {
 		this.field = field;
 	}
-	
+
 	public Object apply(Object current) {
 		if(current == null) {
 			return new Double(0);
@@ -192,16 +226,86 @@ class DoubleMaker implements ObjectFunction {
 }
 
 class FloatMaker implements ObjectFunction {
-	
+
 	private String field;
 
 	public FloatMaker(String field) {
 		this.field = field;
 	}
-	
+
 	public Object apply(Object current) {
 		if(current == null) {
 			return new Float(0);
+		} else {
+			return new Float(((Tuple) current).getFloat(field));
+		}
+	}
+}
+
+class NullLongMaker implements ObjectFunction {
+
+	private String field;
+
+	public NullLongMaker(String field) {
+		this.field = field;
+	}
+
+	public Object apply(Object current) {
+		Long result;
+		if(current == null) {
+			result = null;
+		} else {
+			result = new Long(((Tuple) current).getLong(field));
+		}
+		return result;
+	}
+}
+
+class NullIntegerMaker implements ObjectFunction {
+
+	private String field;
+
+	public NullIntegerMaker(String field) {
+		this.field = field;
+	}
+
+	public Object apply(Object current) {
+		if(current == null) {
+			return null;
+		} else {
+			return new Integer(((Tuple) current).getInt(field));
+		}
+	}
+}
+
+class NullDoubleMaker implements ObjectFunction {
+
+	private String field;
+
+	public NullDoubleMaker(String field) {
+		this.field = field;
+	}
+
+	public Object apply(Object current) {
+		if(current == null) {
+			return null;
+		} else {
+			return new Double(((Tuple) current).getDouble(field));
+		}
+	}
+}
+
+class NullFloatMaker implements ObjectFunction {
+
+	private String field;
+
+	public NullFloatMaker(String field) {
+		this.field = field;
+	}
+
+	public Object apply(Object current) {
+		if(current == null) {
+			return null;
 		} else {
 			return new Float(((Tuple) current).getFloat(field));
 		}
