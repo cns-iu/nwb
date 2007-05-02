@@ -138,6 +138,7 @@ public class ValidateNWBFile {
 					// for backward compatibility
 					else 
 					{	
+						skipNodeList=false;
 						StringTokenizer st = new StringTokenizer(line);	
 						String[] columns = processTokens(st);
 						int realSize = 0;
@@ -179,6 +180,7 @@ public class ValidateNWBFile {
 					//basically, make sure if there's a value, the value belongs to the declared
 					//data type. If it is a string, it must be surrounded by double quotations
 					try{
+						skipNodeList= false;
 						validateALine (line, nodeAttrList);
 					}catch (Exception e){
 						isFileGood = false;
@@ -202,7 +204,6 @@ public class ValidateNWBFile {
 					if (line_lower.startsWith(NWBFileProperty.ATTRIBUTE_SOURCE)||
 						line_lower.startsWith(NWBFileProperty.PREFIX_COMMENTS+
 											NWBFileProperty.ATTRIBUTE_SOURCE))
-//					if (line_lower.startsWith("//source"))
 					{
 						//process attribut line
 						StringTokenizer st = new StringTokenizer(line);
@@ -315,7 +316,7 @@ public class ValidateNWBFile {
 			}				
 		}
     }
-	
+    
 	private boolean validateALine (String line, List attrList) throws Exception{
 		if (line.length()<=0)
 			return true;
@@ -384,7 +385,7 @@ public class ValidateNWBFile {
     		throw new Exception ("Can not find * from attribut*datatype line.");
     }
     
-    private String[] processTokens(StringTokenizer st){
+    public String[] processTokens(StringTokenizer st){
     	int total = st.countTokens();
     	int tokenIndex =0;
     	String [] tokens = new String [total];
@@ -432,12 +433,21 @@ public class ValidateNWBFile {
 
     
 	public boolean isDirectedGraph(){
-		return hasHeader_DirectedEdges;
+		if (hasHeader_DirectedEdges &&
+			directedEdgeAttrList.size()>0)
+			return true;
+		else
+			return false;
 	}
 	
 	public boolean isUndirectedGraph(){
-		return hasHeader_UndirectedEdges;
+		if(hasHeader_UndirectedEdges &&
+		   undirectedEdgeAttrList.size()>0)
+			return true;
+		else
+			return false;
 	}
+	
     public boolean getValidationResult(){
     	return isFileGood;
     }
@@ -459,6 +469,15 @@ public class ValidateNWBFile {
     public int getTotalNumOfNodes(){
     	return totalNumOfNodes;
     }
+    
+	public boolean getHasTotalNumOfNodes (){
+		return hasTotalNumOfNodes;
+	}
+	
+	public boolean getSkipNodeList(){
+		return skipNodeList; 
+	}
+
    
     
 
