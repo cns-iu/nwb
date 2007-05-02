@@ -10,7 +10,8 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.Dictionary;
 import java.util.StringTokenizer;
-
+import java.util.List;
+import java.util.ArrayList;
 
 import org.cishell.framework.CIShellContext;
 import org.cishell.framework.algorithm.Algorithm;
@@ -21,6 +22,7 @@ import org.osgi.service.log.LogService;
 
 import edu.iu.nwb.converter.nwb.common.ValidateNWBFile;
 import edu.iu.nwb.converter.nwb.common.NWBFileProperty;
+import edu.iu.nwb.converter.nwb.common.NWBAttribute;
 
 /**
  * @author Weixia(Bonnie) Huang 
@@ -56,7 +58,7 @@ public class NWBToGraphML implements Algorithm {
 			try {
 				validator.validateNWBFormat(inData);
 				if (validator.getValidationResult()) {
-					outData = convertNWBtoGraphML(inData);
+					outData = convertNWBtoGraphML(inData, validator);
 					if (outData != null){
 						dm = new Data[] {new BasicData(outData, "file:text/graphml+xml")};
 						return dm;
@@ -102,157 +104,249 @@ public class NWBToGraphML implements Algorithm {
 			
 		}
     }
-    
-    private File convertNWBtoGraphML(File nwbFile){
-    	File graphml  = getTempFile();
-    	boolean inProcessingNodes = false;
-    	boolean inProcessingUndirectedEdges = false;
-    	boolean wrongNWBFormat = false;
-    	int totalNodes = 0;
-    	int countNodes = 0;
-    	
+    private File convertNWBtoGraphML(File nwbFile, ValidateNWBFile validator){
+    	System.out.println(">>in convertNWBtoGraphML method...");
     	try{
-    		BufferedReader reader = new BufferedReader(new FileReader(nwbFile));
-			
+    		File graphml  = getTempFile();
+    		System.out.println(">>graphml file = "+graphml.getAbsolutePath());
     		PrintWriter out = new PrintWriter(new BufferedWriter(new FileWriter(graphml)));
-			//write the header
-			out.println("<?xml version=\"1.0\" encoding=\"UTF-8\"?>");
-			out.println("<graphml xmlns=\"http://graphml.graphdrawing.org/xmlns/graphml\"");
-			out.println("xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\"");
-			out.println("xsi:schemaLocation=\"http://graphml.graphdrawing.org/xmlns/graphml\">");
-			out.println("<graph edgedefault=\"undirected\">");
-			
-			//minor cheat because we know what the first attribute's index will be. Do this smarter later
-			out.println("<key id='d0' for='node' attr.name='label' attr.type='string'/>");
-			out.println("<key id='e0' for='edge' attr.name='weight' attr.type='double'/>");
-	
-			String line = reader.readLine();
-			while(line != null){
-				if(inProcessingNodes){
-					//first detect if the node section is ended.			
-					if(line.startsWith("*") || line.startsWith("//") ){
-						inProcessingNodes = false;
-						if (countNodes==0 && totalNodes>0){
-							//nwb file ignore the nodes list
-							for (int index=1; index<=totalNodes;index++){
-								out.println(createNode(""+index, new String[]{""+index}));
-								countNodes++;
-							}
-						}else if(countNodes == 0 && totalNodes ==0){
-							wrongNWBFormat = true;
-							break;
-						}else if(totalNodes !=0 && countNodes!=totalNodes)	{
-							wrongNWBFormat = true;
-							break;
-						}
-						
-					}
-					else{					
-					    //process and write a node
-						StringTokenizer st = new StringTokenizer(line);
-						int totalTokens = st.countTokens();
-						if (totalTokens ==1 ){
-							//only have node id
-							String id = st.nextToken();
-							out.println(createNode(id, new String[]{id}));
-							countNodes++;
-						}
-						else if (totalTokens == 2){
-							//have node id and label
-							String id = st.nextToken();
-							String label = st.nextToken();
-							out.println(createNode(id, new String[]{label}));
-							countNodes++;
-						}
-						else if (totalTokens > 2){
-							//have node id and label
-							String id = st.nextToken();
-							String label = st.nextToken();
-							//TODO NEED TO HANDLE ATTRIBUTES OF NODES
-							out.println(createNode(id, new String[]{label}));
-							countNodes++;							
-						}					
-						
-					}				
-				}//end if(inProcessNodes)
-				
-				if(inProcessingUndirectedEdges){
-					//first detect if the undirectededges section is ended.			
-					if(line.startsWith("*") || line.startsWith("//") ){
-						inProcessingUndirectedEdges = false;
-					}
-					else {
-						StringTokenizer st = new StringTokenizer(line);
-						int totalTokens = st.countTokens();
-						if (totalTokens == 2){
-							//have node id and label
-							String source = st.nextToken();
-							String target = st.nextToken();
-							out.println(this.createEdge(source, target, new String[] {}, "e"));
-						} else if (totalTokens > 2) {
-							String source = st.nextToken();
-							String target = st.nextToken();
-							String weight = st.nextToken();
-							out.println(this.createEdge(source, target, new String[] {weight}, "e"));
-					    }else{
-					    	wrongNWBFormat = true;
-							break;
-					    }
-	
-					}
-				}//end if(inProcessingUndirectedEdges)
-				
-				//process nodes
-				if(line.startsWith(NWBFileProperty.HEADER_NODE) || 
-						   line.startsWith(NWBFileProperty.HEADER_NODE_LOWERCASE) ||
-						   line.startsWith(NWBFileProperty.HEADER_NODE_UPPERCASE) ) {
-					inProcessingNodes  = true;
-					StringTokenizer st = new StringTokenizer(line);
-					int totalTokens = st.countTokens();
-					if (totalTokens == 2){
-						st.nextToken();
-						totalNodes = new Integer(st.nextToken()).intValue();						
-					}
-						   
-				}
-				
-				//TODO Figure out the right format to present the directed edgs in graphml
-	/*			if(line.startsWith(NWBFileProperty.HEADER_DIRECTED_EDGES) || 
-						   line.startsWith(NWBFileProperty.HEADER_DIRECTED_EDGES_LOWERCASE) ||
-						   line.startsWith(NWBFileProperty.HEADER_DIRECTED_EDGES_LOWERFIRST) ||
-						   line.startsWith(NWBFileProperty.HEADER_DIRECTED_EDGES_UPPERCASE) ) {
-					hasHeader_DirectedEdges = true;
-				}
-	*/
-				if(line.startsWith(NWBFileProperty.HEADER_UNDIRECTED_EDGES) || 
-						   line.startsWith(NWBFileProperty.HEADER_UNDIRECTED_EDGES_LOWERCASE) ||
-						   line.startsWith(NWBFileProperty.HEADER_UNDIRECTED_EDGES_LOWERFIRST) ||
-						   line.startsWith(NWBFileProperty.HEADER_UNDIRECTED_EDGES_UPPERCASE) ) {
-					inProcessingUndirectedEdges = true;
-				}
-				line = reader.readLine();
-			}//end while(line != null)
-			out.println("</graph>");
-			out.println("</graphml>");
+    		BufferedReader reader = new BufferedReader(new FileReader(nwbFile));
+
+    		writeGraphMLHeader (out);
+    		writeAttributes(out, validator);
+    		printGraph (out, validator, reader);
+    		out.println("</graph>");
+    		out.println("</graphml>");
 			reader.close();
 			out.close();
-			if (wrongNWBFormat)
-				return null;
-			else
-				return graphml;
-	    	
-		}catch (FileNotFoundException e){
+    		return graphml;
+    	}catch (FileNotFoundException e){
+    		System.err.println("File Not Found Exception:"+e.toString());
 			guiBuilder.showError("File Not Found Exception", 
 					"Got an File Not Found Exception",e);
 			return null;
 		}catch (IOException ioe){
+			System.err.println("IOException:"+ioe.toString());
 			guiBuilder.showError("IOException", 
 					"Got an IOException",ioe);
 			return null;
-		}
-
+		} 	
+    	
     }
-		
+    
+    //  write a Header with XML Schema reference 
+    private void writeGraphMLHeader (PrintWriter out){
+    	out.println("<?xml version=\"1.0\" encoding=\"UTF-8\" ?>"); 
+    	out.println("<graphml xmlns=\"http://graphml.graphdrawing.org/xmlns\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\"");
+    	out.println("xsi:schemaLocation=\"http://graphml.graphdrawing.org/xmlns http://graphml.graphdrawing.org/xmlns/1.0/graphml.xsd\">");
+    	System.out.println("after write GrapML header...");
+    }
+    
+    // write GraphML-Attributes
+    private void writeAttributes(PrintWriter out, ValidateNWBFile validator){
+    	//    	first handle node attributes
+    	List array = validator.getNodeAttrList();
+    	for (int i=0; i<array.size(); i++){
+    		NWBAttribute attr = (NWBAttribute) array.get(i);
+    		out.println("<key id=\""+attr.getAttrName()+
+    				"\" for=\"node\" attr.name=\""+attr.getAttrName()+
+    				"\" attr.type=\""+attr.getDataType()+"\" /> ");	
+    	}
+    	
+    	if (validator.isDirectedGraph() && !validator.isUndirectedGraph()){
+    		//this is a directed graph
+    		array = validator.getDirectedEdgeAttrList();
+        	for (int i=0; i<array.size(); i++){
+        		NWBAttribute attr = (NWBAttribute) array.get(i);
+        		out.println("<key id=\""+attr.getAttrName()+
+        				"\" for=\"edge\" attr.name=\""+attr.getAttrName()+
+        				"\" attr.type=\""+attr.getDataType()+"\" />");
+        	}
+        	out.println("<graph edgedefault=\"directed\">");
+    	}
+    	else if (!validator.isDirectedGraph() && validator.isUndirectedGraph()){
+    		//this is a undirected graph
+    		array = validator.getUndirectedEdgeAttrList();
+        	for (int i=0; i<array.size(); i++){
+        		NWBAttribute attr = (NWBAttribute) array.get(i);
+        		out.println("<key id=\""+attr.getAttrName()+
+        				"\" for=\"edge\" attr.name=\""+attr.getAttrName()+
+        				"\" attr.type=\""+attr.getDataType()+"\" /> ");
+        	}
+        	out.println("<graph edgedefault=\"undirected\">");
+    	}
+    	else if (validator.isDirectedGraph() && validator.isUndirectedGraph()){
+    		//hybrid graph, don't know how to handle it???
+    	}    	
+    }
+
+    private void printGraph (PrintWriter out, ValidateNWBFile validator,
+    		BufferedReader reader) throws IOException{
+    	if (validator.getHasTotalNumOfNodes() && validator.getSkipNodeList()){
+    		int totalNumOfNodes = validator.getTotalNumOfNodes();
+    		for(int i = 1; i<=totalNumOfNodes; i++){
+    			out.println("<node id=\""+i+"\">");
+    			out.println("<data key=\"label\">"+i+"</data></node>");    			
+    		}
+    	}
+    	
+    	//read from nwb file and write to the graphml file
+    	boolean inNodesSection = false;
+		boolean inDirectededgesSection = false;
+		boolean inUndirectededgesSection = false;
+    	String line = reader.readLine();
+        int edgeID = 0;
+			
+    	while (line != null){
+    		if (line.length()==0){
+    			line = reader.readLine();
+				continue;
+    		}
+    		String line_lower = line.toLowerCase();
+    			
+    		//find node section header that looks like
+    		//  *nodes   or  *nodes 1000
+    		if(line_lower.startsWith(NWBFileProperty.HEADER_NODE)) 
+    		{
+    				inNodesSection = true;
+    				inDirectededgesSection = false;
+    				inUndirectededgesSection = false;
+    				line = reader.readLine();
+    				continue;
+    		}
+    		if(line_lower.startsWith(NWBFileProperty.HEADER_DIRECTED_EDGES)) 
+    		{
+    				inDirectededgesSection = true;
+    				inNodesSection = false;
+    				inUndirectededgesSection = false;
+    				line = reader.readLine();
+    				continue;    				
+    		}
+
+    		if(line_lower.startsWith(NWBFileProperty.HEADER_UNDIRECTED_EDGES)) 
+    		{
+    				inUndirectededgesSection =true;
+    				inNodesSection = false;
+    				inDirectededgesSection = false;	
+    				line = reader.readLine();
+    				continue;
+    		}
+
+    		if (inNodesSection)
+    		{	//ignore attribute list line or comment line(s)
+				if (line_lower.startsWith(NWBFileProperty.ATTRIBUTE_ID)||
+					line_lower.startsWith(NWBFileProperty.PREFIX_COMMENTS+
+											NWBFileProperty.ATTRIBUTE_ID)||
+					line_lower.startsWith(NWBFileProperty.PREFIX_COMMENTS))
+				{
+					line = reader.readLine();
+	    			continue;
+				}
+ 				else
+ 				{   
+ 					StringTokenizer st = new StringTokenizer(line);
+ 					System.out.println("line = "+line);
+ 				    String[] columns = validator.processTokens(st);
+ 				    List nodeAttrList = validator.getNodeAttrList();
+ 				    System.out.println("columns size="+columns.length+", attr size="+nodeAttrList.size());
+ 		   			out.println("<node id=\""+columns[0]+"\">");
+ 		    		for(int i = 1; i<nodeAttrList.size(); i++){
+ 		    			NWBAttribute attr = (NWBAttribute) nodeAttrList.get(i);
+ 		    			out.println("<data key=\""+attr.getAttrName()+
+ 		    					"\">"+columns[i]+"</data>");    			
+ 		    		}
+ 		    		out.println("</node>");
+
+ 				}
+    		}//end if (inNodesSection)
+    			
+    		if (inDirectededgesSection || inUndirectededgesSection){
+    			//ignore attribute list line or comment line(s)
+				if (line_lower.startsWith(NWBFileProperty.ATTRIBUTE_SOURCE)||
+					line_lower.startsWith(NWBFileProperty.PREFIX_COMMENTS+
+											NWBFileProperty.ATTRIBUTE_SOURCE)||
+					line_lower.startsWith(NWBFileProperty.PREFIX_COMMENTS))	
+				{
+					line = reader.readLine();
+	    			continue;
+				}
+ 			    else{
+ 			    	List edgeAttrList = new ArrayList();
+ 					StringTokenizer st = new StringTokenizer(line);
+ 				    String[] columns = validator.processTokens(st);
+ 				    if (inDirectededgesSection)
+ 				    	edgeAttrList = validator.getDirectedEdgeAttrList();
+ 				    else if (inUndirectededgesSection)
+ 				    	edgeAttrList = validator.getUndirectedEdgeAttrList();
+ 				    edgeID++;
+ 				    //find if there is an id attribute
+ 				    int idColumnNumber = findAttr(NWBFileProperty.ATTRIBUTE_ID,edgeAttrList);
+ 				    int sourceColumnNumber = findAttr(NWBFileProperty.ATTRIBUTE_SOURCE, edgeAttrList);
+ 				    int targetColumnNumber = findAttr(NWBFileProperty.ATTRIBUTE_TARGET, edgeAttrList);
+ 				    if (idColumnNumber == -1)
+ 				    {
+ 				    	 if (edgeAttrList.size()>2){
+ 				    		 out.println("<edge id=\""+edgeID+"\" source=\""+columns[sourceColumnNumber]+
+ 				    			"\" target=\""+columns[targetColumnNumber]+"\">");
+ 				    		 for(int i = 0; i<edgeAttrList.size(); i++){
+ 	 				    		NWBAttribute attr = (NWBAttribute) edgeAttrList.get(i);
+ 	 				    		String  attrName = attr.getAttrName();
+ 	 				    		if (!(attrName.equalsIgnoreCase(NWBFileProperty.ATTRIBUTE_SOURCE) ||
+ 	 				    			attrName.equalsIgnoreCase(NWBFileProperty.ATTRIBUTE_TARGET)	||
+ 	 				    			attrName.equalsIgnoreCase(NWBFileProperty.ATTRIBUTE_ID))){
+ 	 				    			out.println("<data key=\""+attr.getAttrName()+
+ 	 		 		    					"\">"+columns[i]+"</data>");  				    			
+ 	 				    		}
+ 	 				    	}
+ 				    		out.println("</edge>"); 
+ 				    	 }else{
+ 				    		 out.println("<edge id=\""+edgeID+"\" source=\""+columns[sourceColumnNumber]+
+ 	 				    			"\" target=\""+columns[targetColumnNumber]+"\"/>");
+ 				    	 }
+ 				    }
+ 				    else {
+ 				    	if (edgeAttrList.size()>3){
+ 				    		out.println("<edge id=\""+columns[idColumnNumber]+
+ 				    				"\" source=\""+columns[sourceColumnNumber]+
+ 				    				"\" target=\""+columns[targetColumnNumber]+"\">");
+ 				    		for(int i = 0; i<edgeAttrList.size(); i++){
+ 	 				    		NWBAttribute attr = (NWBAttribute) edgeAttrList.get(i);
+ 	 				    		String  attrName = attr.getAttrName();
+ 	 				    		if (!(attrName.equalsIgnoreCase(NWBFileProperty.ATTRIBUTE_SOURCE) ||
+ 	 				    			attrName.equalsIgnoreCase(NWBFileProperty.ATTRIBUTE_TARGET)	||
+ 	 				    			attrName.equalsIgnoreCase(NWBFileProperty.ATTRIBUTE_ID))){
+ 	 				    			out.println("<data key=\""+attr.getAttrName()+
+ 	 		 		    					"\">"+columns[i]+"</data>");  				    			
+ 	 				    		}
+ 	 				    	}
+ 				    		out.println("</edge>");  				    		
+ 				    	}
+ 				    	else{
+ 				    		out.println("<edge id=\""+columns[idColumnNumber]+
+ 				    				"\" source=\""+columns[sourceColumnNumber]+
+ 				    				"\" target=\""+columns[targetColumnNumber]+"\"/>");
+ 				    	}
+ 				    } 		    			
+ 			    }
+    		}//end if (inDirectededgesSection || inUndirectededgesSection)
+    			
+    		line = reader.readLine();    		
+    		
+    	}//end while
+    }
+    	
+    private int findAttr(String attrName, List attrList){
+    	for(int i = 0; i<attrList.size(); i++){
+    		NWBAttribute attr = (NWBAttribute) attrList.get(i); 
+    		if (attr.getAttrName().equalsIgnoreCase(attrName)){
+    			return i;
+    		}
+    	}
+    	return -1;
+    }
+    		
+
+    
 	private File getTempFile(){
 		File tempFile;
     
@@ -269,47 +363,7 @@ public class NWBToGraphML implements Algorithm {
 
 		}
 		return tempFile;
-	}
-	
-	private String createNode(String id, String[] attributes) {
-		return createNode(id, attributes, "d");
-	}
-
-	private String createNode(String id, String[] attributes, String baseAttributeId) {
-		
-		StringBuffer node = new StringBuffer();
-		node.append("<node id='");
-		node.append(id);
-		node.append("'>");
-		
-		node.append(createAttributes(attributes, baseAttributeId));
-		
-		node.append("</node>");
-		
-		return node.toString();
-	}
-	
-	private String createAttributes(String[] attributes, String baseAttributeId) {
-		StringBuffer atts = new StringBuffer();
-		for(int attributeIndex = 0; attributeIndex < attributes.length; attributeIndex++) {
-			atts.append("<data key='");
-			atts.append(baseAttributeId + attributeIndex);
-			atts.append("'>");
-			atts.append(attributes[attributeIndex]);
-			atts.append("</data>");
-		}
-		return atts.toString();
-	}
-	
-	private String createEdge(String from, String to, String[] attributes, String baseAttributeId) {
-		StringBuffer edge = new StringBuffer();
-		edge.append("<edge source=\"" + from + "\" target=\"" + to + "\">");
-		edge.append(createAttributes(attributes, baseAttributeId));
-		edge.append("</edge>");
-		return edge.toString();
-	}
-
-				
+	}			
 
 	
 }
