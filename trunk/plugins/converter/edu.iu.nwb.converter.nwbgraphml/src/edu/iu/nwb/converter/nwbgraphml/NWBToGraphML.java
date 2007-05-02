@@ -105,11 +105,9 @@ public class NWBToGraphML implements Algorithm {
 		}
     }
     private File convertNWBtoGraphML(File nwbFile, ValidateNWBFile validator){
-    	System.out.println(">>in convertNWBtoGraphML method...");
     	try{
     		File graphml  = getTempFile();
-    		System.out.println(">>graphml file = "+graphml.getAbsolutePath());
-    		PrintWriter out = new PrintWriter(new BufferedWriter(new FileWriter(graphml)));
+     		PrintWriter out = new PrintWriter(new BufferedWriter(new FileWriter(graphml)));
     		BufferedReader reader = new BufferedReader(new FileReader(nwbFile));
 
     		writeGraphMLHeader (out);
@@ -121,12 +119,10 @@ public class NWBToGraphML implements Algorithm {
 			out.close();
     		return graphml;
     	}catch (FileNotFoundException e){
-    		System.err.println("File Not Found Exception:"+e.toString());
 			guiBuilder.showError("File Not Found Exception", 
 					"Got an File Not Found Exception",e);
 			return null;
 		}catch (IOException ioe){
-			System.err.println("IOException:"+ioe.toString());
 			guiBuilder.showError("IOException", 
 					"Got an IOException",ioe);
 			return null;
@@ -139,8 +135,7 @@ public class NWBToGraphML implements Algorithm {
     	out.println("<?xml version=\"1.0\" encoding=\"UTF-8\" ?>"); 
     	out.println("<graphml xmlns=\"http://graphml.graphdrawing.org/xmlns\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\"");
     	out.println("xsi:schemaLocation=\"http://graphml.graphdrawing.org/xmlns http://graphml.graphdrawing.org/xmlns/1.0/graphml.xsd\">");
-    	System.out.println("after write GrapML header...");
-    }
+     }
     
     // write GraphML-Attributes
     private void writeAttributes(PrintWriter out, ValidateNWBFile validator){
@@ -148,6 +143,10 @@ public class NWBToGraphML implements Algorithm {
     	List array = validator.getNodeAttrList();
     	for (int i=0; i<array.size(); i++){
     		NWBAttribute attr = (NWBAttribute) array.get(i);
+    		String attrName = attr.getAttrName();
+    		if (attrName.equalsIgnoreCase(NWBFileProperty.ATTRIBUTE_ID)){
+    			continue;
+    		}
     		out.println("<key id=\""+attr.getAttrName()+
     				"\" for=\"node\" attr.name=\""+attr.getAttrName()+
     				"\" attr.type=\""+attr.getDataType()+"\" /> ");	
@@ -158,6 +157,12 @@ public class NWBToGraphML implements Algorithm {
     		array = validator.getDirectedEdgeAttrList();
         	for (int i=0; i<array.size(); i++){
         		NWBAttribute attr = (NWBAttribute) array.get(i);
+        		String attrName = attr.getAttrName();
+        		if (attrName.equalsIgnoreCase(NWBFileProperty.ATTRIBUTE_SOURCE)||
+        			attrName.equalsIgnoreCase(NWBFileProperty.ATTRIBUTE_TARGET)	||
+        			attrName.equalsIgnoreCase(NWBFileProperty.ATTRIBUTE_ID)){
+        			continue;
+        		}
         		out.println("<key id=\""+attr.getAttrName()+
         				"\" for=\"edge\" attr.name=\""+attr.getAttrName()+
         				"\" attr.type=\""+attr.getDataType()+"\" />");
@@ -169,6 +174,12 @@ public class NWBToGraphML implements Algorithm {
     		array = validator.getUndirectedEdgeAttrList();
         	for (int i=0; i<array.size(); i++){
         		NWBAttribute attr = (NWBAttribute) array.get(i);
+        		String attrName = attr.getAttrName();
+        		if (attrName.equalsIgnoreCase(NWBFileProperty.ATTRIBUTE_SOURCE)||
+        			attrName.equalsIgnoreCase(NWBFileProperty.ATTRIBUTE_TARGET)	||
+        			attrName.equalsIgnoreCase(NWBFileProperty.ATTRIBUTE_ID)){
+        			continue;
+        		}
         		out.println("<key id=\""+attr.getAttrName()+
         				"\" for=\"edge\" attr.name=\""+attr.getAttrName()+
         				"\" attr.type=\""+attr.getDataType()+"\" /> ");
@@ -245,15 +256,22 @@ public class NWBToGraphML implements Algorithm {
  				else
  				{   
  					StringTokenizer st = new StringTokenizer(line);
- 					System.out.println("line = "+line);
- 				    String[] columns = validator.processTokens(st);
+ 					String[] columns = validator.processTokens(st);
  				    List nodeAttrList = validator.getNodeAttrList();
- 				    System.out.println("columns size="+columns.length+", attr size="+nodeAttrList.size());
- 		   			out.println("<node id=\""+columns[0]+"\">");
+  		   			out.println("<node id=\""+columns[0]+"\">");
  		    		for(int i = 1; i<nodeAttrList.size(); i++){
  		    			NWBAttribute attr = (NWBAttribute) nodeAttrList.get(i);
+ 		    			String value = columns[i];
+ 		    			if(attr.getDataType().equalsIgnoreCase(NWBFileProperty.TYPE_STRING)){
+ 		    				if (value.startsWith("\"")){
+ 		    					value=value.substring(1);
+ 		    				}
+ 		    				if (value.endsWith("\"")){
+ 		    					value = value.substring(0, value.length()-1);
+ 		    				}
+ 		    			}
  		    			out.println("<data key=\""+attr.getAttrName()+
- 		    					"\">"+columns[i]+"</data>");    			
+ 		    					"\">"+value+"</data>");    			
  		    		}
  		    		out.println("</node>");
 
@@ -294,8 +312,17 @@ public class NWBToGraphML implements Algorithm {
  	 				    		if (!(attrName.equalsIgnoreCase(NWBFileProperty.ATTRIBUTE_SOURCE) ||
  	 				    			attrName.equalsIgnoreCase(NWBFileProperty.ATTRIBUTE_TARGET)	||
  	 				    			attrName.equalsIgnoreCase(NWBFileProperty.ATTRIBUTE_ID))){
+ 	 				    			String value = columns[i];
+ 	 		 		    			if(attr.getDataType().equalsIgnoreCase(NWBFileProperty.TYPE_STRING)){
+ 	 		 		    				if (value.startsWith("\"")){
+ 	 		 		    					value=value.substring(1);
+ 	 		 		    				}
+ 	 		 		    				if (value.endsWith("\"")){
+ 	 		 		    					value = value.substring(0, value.length()-1);
+ 	 		 		    				}
+ 	 		 		    			}
  	 				    			out.println("<data key=\""+attr.getAttrName()+
- 	 		 		    					"\">"+columns[i]+"</data>");  				    			
+ 	 		 		    					"\">"+value+"</data>");  				    			
  	 				    		}
  	 				    	}
  				    		out.println("</edge>"); 
