@@ -107,7 +107,7 @@ public class JoiningAlgorithm implements Algorithm {
 		Schema outputNodeSchema = enhanceNodeSchema(inputNodeSchema, metadata);
 		Schema outputEdgeSchema = createEdgeSchema(inputNodeSchema, metadata);
 		
-		Graph outputGraph = new Graph(outputNodeSchema.instantiate(), outputEdgeSchema.instantiate(), inputGraph.isDirected());
+		Graph outputGraph = new Graph(outputNodeSchema.instantiate(), outputEdgeSchema.instantiate(), false);
 		
 		
 		TupleSet nodes = inputGraph.getNodeTable();
@@ -139,6 +139,8 @@ public class JoiningAlgorithm implements Algorithm {
 			
 			
 			Iterator neighbors = joinNode.neighbors();
+			
+			
 			Stack typeNeighbors = new Stack();
 			while(neighbors.hasNext()) {
 				Node neighbor = (Node) neighbors.next();
@@ -147,12 +149,17 @@ public class JoiningAlgorithm implements Algorithm {
 				}
 			}
 			
+			
+			
 			while(!typeNeighbors.isEmpty()) {
 				Node first = (Node) typeNeighbors.pop();//moveTo((Node) typeNeighbors.pop(), outputGraph);
 				for(Iterator rest = typeNeighbors.iterator(); rest.hasNext(); ) {
 					Node second = (Node) rest.next();//moveTo((Node) rest.next(), outputGraph);
 					
-					edgeMatrix.setQuick(currentJoinNodeLocation, first.getRow(), second.getRow(), joinNode);
+					int row = Math.min(first.getRow(), second.getRow()); //this eliminates multiple edges (by creating a triangular matrix)
+					int column = Math.max(first.getRow(), second.getRow());
+					
+					edgeMatrix.setQuick(currentJoinNodeLocation, row, column, joinNode);
 					nodeMatrix.setQuick(first.getRow(), currentJoinNodeLocation, joinNode);
 					nodeMatrix.setQuick(second.getRow(), currentJoinNodeLocation, joinNode);
 					
@@ -174,9 +181,12 @@ public class JoiningAlgorithm implements Algorithm {
 		
 		for(int row = 0; row < nodeMatrix.rows(); row++) {
 			ObjectMatrix1D joins = nodeMatrix.viewRow(row);
-			if(joins.cardinality() > 0) {
-				Node node = moveTo(inputGraph.getNode(row), outputGraph);
-				foldNode(node, joins, metadata);
+			Node rowNode = inputGraph.getNode(row);
+			if(typeNodes.contains(rowNode)) {
+				Node node = moveTo(rowNode, outputGraph);
+				if(joins.cardinality() > 0) {
+					foldNode(node, joins, metadata);
+				}
 			}
 		}
 		
