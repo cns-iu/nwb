@@ -5,7 +5,7 @@ y=`which awk`
 
 if [ -n "$x" ]; then
   echo "plot \"$*\";">gnuplotstart.txt
-  xterm -e "gnuplot -persist gnuplotstart.txt"
+  gnome-terminal -e "gnuplot -persist gnuplotstart.txt -" 
 else
   echo "gnuplot not found in default PATH environment variable.  "
   echo "Please include the directory containing gnuplot in the PATH variable.  "
