@@ -4,13 +4,8 @@ x=`which gnuplot`
 y=`which awk`
 
 if [ -n "$x" ]; then
-    if [ -n "$y" ]; then
-        echo "plot \"$*\";">gnuplotstart.txt
-        gnuplot -persist gnuplotstart.txt
-    else
-        echo "awk not found in the default PATH environment variable."
-        echo "Please include the directory containing awk in the PATH variable."
-    fi
+  echo "plot \"$*\";">gnuplotstart.txt
+  xterm -e "gnuplot -persist gnuplotstart.txt"
 else
   echo "gnuplot not found in default PATH environment variable.  "
   echo "Please include the directory containing gnuplot in the PATH variable.  "
