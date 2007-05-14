@@ -2,6 +2,7 @@ package edu.iu.nwb.visualization.prefuse.beta.common.action;
 
 import java.awt.Canvas;
 import java.awt.Color;
+import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
@@ -61,7 +62,7 @@ public class LegendDataSizeAction extends DataSizeAction implements LegendAction
 		final double tempMax = max;
 		final boolean badNumbers = bad;
 		
-		Canvas canvas = new Canvas() {
+		JPanel canvas = new JPanel() {
 			public void paint(Graphics g) {
 				Graphics2D graphics = (Graphics2D) g;
 				int startSize;
@@ -80,11 +81,11 @@ public class LegendDataSizeAction extends DataSizeAction implements LegendAction
 				
 				graphics.setColor(Color.DARK_GRAY);
 				graphics.fillPolygon(polygon);
-				
 			}
 		};
 		
 		canvas.setBounds(0, 0, 50, Constants.LEGEND_CANVAS_HEIGHT);
+		canvas.setMinimumSize(new Dimension(Constants.LEGEND_CANVAS_HEIGHT * 3, 0));
 		
 		JLabel fieldLabel = new JLabel(context + " (" + column + ")", JLabel.LEFT);
 		fieldLabel.setFont(Constants.FIELD_SPECIFYING_FONT);
@@ -119,6 +120,8 @@ public class LegendDataSizeAction extends DataSizeAction implements LegendAction
 	}
 
 	public int getLegendSize() {
+		//JComponent legend = getLegend();
+		
 		return size;
 	}
 

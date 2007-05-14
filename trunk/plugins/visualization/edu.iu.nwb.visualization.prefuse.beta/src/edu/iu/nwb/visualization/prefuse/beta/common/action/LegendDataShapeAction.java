@@ -2,6 +2,7 @@ package edu.iu.nwb.visualization.prefuse.beta.common.action;
 
 import java.awt.Canvas;
 import java.awt.Color;
+import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
@@ -47,7 +48,7 @@ public class LegendDataShapeAction extends DataShapeAction implements LegendActi
 		for(int valueIndex = 0; valueIndex < values.length; valueIndex++) {
 			size += 1;
 			final int tempIndex = valueIndex;
-			Canvas canvas = new Canvas() {
+			JPanel canvas = new JPanel() {
 				public void paint(Graphics g) {
 					Graphics2D graphics = (Graphics2D) g;
 					Shape shape = getSpecifiedShape(m_palette[tempIndex % m_palette.length], 1, 1, this.getWidth() - 3);
@@ -117,6 +118,7 @@ public class LegendDataShapeAction extends DataShapeAction implements LegendActi
 
 	public int getLegendSize() {
 		getLegend();
+		//legend.setMaximumSize(new Dimension(Integer.MAX_VALUE, (int) (Constants.LEGEND_CANVAS_HEIGHT * size)));
 		return size;
 	}
 	

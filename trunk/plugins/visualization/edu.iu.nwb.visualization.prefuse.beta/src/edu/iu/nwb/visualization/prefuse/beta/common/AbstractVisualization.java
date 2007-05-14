@@ -2,6 +2,8 @@ package edu.iu.nwb.visualization.prefuse.beta.common;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
+import java.awt.Component;
+import java.awt.Dimension;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -14,6 +16,7 @@ import javax.swing.BoxLayout;
 import javax.swing.JComponent;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
+import javax.swing.JScrollPane;
 import javax.swing.JSeparator;
 
 import edu.iu.nwb.visualization.prefuse.beta.common.action.LegendAction;
@@ -81,7 +84,7 @@ public abstract class AbstractVisualization implements PrefuseBetaVisualization 
 		List legendActions = new ArrayList();
 		
 		//this is what the legend will go in
-		Box legends = Box.createHorizontalBox();	
+		Box legends = Box.createHorizontalBox();
 		//a little padding on the left
 		legends.add(Box.createHorizontalStrut(5));
 		Box legendBox = null; //this variable will later hold individual parts of the legend as it is assembled
@@ -263,24 +266,43 @@ public abstract class AbstractVisualization implements PrefuseBetaVisualization 
 		Collections.reverse(legendActions);
 		int overflow = 5; //max # of 'lines' in the box -- but overflow happens when the last added element is longer than needed to make this number.
 		int current = 6; //trick to make it initialize legendsBox first go around (resetting current to 0)
+		int maxHeight = 0;
 		
 		Iterator legendActionsIter = legendActions.iterator();
 		while(legendActionsIter.hasNext()) {
 			if(current >= overflow) { //if overflowed, start a new box
+				if(legendBox != null) {
+					legendBox.add(Box.createVerticalGlue());
+					legendBox.setMaximumSize(new Dimension(Integer.MAX_VALUE, maxHeight * 2)); //horrible kludge
+					//System.err.println(maxHeight);
+				}
 				legendBox = new Box(BoxLayout.PAGE_AXIS);
+				legendBox.setAlignmentY(Component.TOP_ALIGNMENT);
 				legends.add(legendBox);
 				current = 0;
+				maxHeight = 0;
 			} else { //add to the current box as appropriate, including separator
 				legendBox.add(Box.createVerticalStrut(Constants.VERTICAL_STRUT_DISTANCE));
 				legendBox.add(new JSeparator());
 				legendBox.add(Box.createVerticalStrut(Constants.VERTICAL_STRUT_DISTANCE));
+				maxHeight += Constants.VERTICAL_STRUT_DISTANCE * 3;
 			}
 			LegendAction action = (LegendAction) legendActionsIter.next();
 			JComponent legend = action.getLegend();
+			int legendSize = action.getLegendSize();
+			legend.setMaximumSize(new Dimension(Integer.MAX_VALUE, (int) Constants.LEGEND_CANVAS_HEIGHT * legendSize));
+			maxHeight += legend.getMaximumSize().height;
+			legend.setAlignmentX(Component.LEFT_ALIGNMENT);
+			//legend.setMaximumSize(maximumSize)
 			legendBox.add(legend); //add the next legend part to the box
-			current += action.getLegendSize();
+			
+			current += legendSize;
 		}
-
+		if(legendBox != null) {
+			legendBox.add(Box.createVerticalGlue());
+			legendBox.setMaximumSize(new Dimension(Integer.MAX_VALUE, maxHeight * 2)); //horrible kludge
+			//System.err.println(maxHeight);
+		}
 
 
 		Display display = new Display(visualization);
@@ -309,8 +331,14 @@ public abstract class AbstractVisualization implements PrefuseBetaVisualization 
 		//create a frame to stick everything in
         JFrame frame = new JFrame();
         
-        //let the given visualization layout the frame as desired
-		this.arrangeComponents(frame, display, legends);
+        JScrollPane scrollPane = new JScrollPane(legends);
+        scrollPane.setPreferredSize(new Dimension(100, Math.min(180, maxHeight * 2)));
+        display.setOpaque(true);
+        //JPanel wrapper = new JPanel(new BorderLayout());
+        //wrapper.add(scrollPane, BorderLayout.CENTER);
+        
+		//let the given visualization layout the frame as desired
+		this.arrangeComponents(frame, display, scrollPane);
 		
 		
 		//standard boilerplate

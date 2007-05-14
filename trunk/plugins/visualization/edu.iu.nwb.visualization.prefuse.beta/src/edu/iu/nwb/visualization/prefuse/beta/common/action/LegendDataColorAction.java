@@ -1,5 +1,6 @@
 package edu.iu.nwb.visualization.prefuse.beta.common.action;
 
+import java.awt.BorderLayout;
 import java.awt.Canvas;
 import java.awt.Color;
 import java.awt.Dimension;
@@ -43,20 +44,22 @@ public class LegendDataColorAction extends DataColorAction implements LegendActi
 		this.palette = palette;
 		this.column = column; //the name of the field the data's originally from
 		this.context = context;
-		
+
 	}
-	
+
 	public JComponent getLegend() {
-		JComponent legend = new Box(BoxLayout.PAGE_AXIS);
-		
+		JComponent legend = Box.createVerticalBox();
+		legend.setMaximumSize(new Dimension(Integer.MAX_VALUE, (int) (Constants.LEGEND_CANVAS_HEIGHT * 2.5)));
+		//legend.setMaximumSize(new Dimension(75, Constants.LEGEND_CANVAS_HEIGHT * 3));
+
 		final TupleSet tuples = this.getVisualization().getGroup(this.m_group);
-		
+
 		if(this.getDataType() == prefuse.Constants.NUMERICAL) {
 			size = 2;
-			
+
 			double min = 0;
 			double max = 1;
-			
+
 			boolean bad = false;
 			try {
 				min = DataLib.min(tuples, dataField).getDouble(dataField);
@@ -66,15 +69,15 @@ public class LegendDataColorAction extends DataColorAction implements LegendActi
 			} catch(NullPointerException exception) {
 				bad = true;
 			}
-			Canvas canvas;
+			JPanel canvas;
 			if(this.getScale() == prefuse.Constants.QUANTILE_SCALE) {
-				
+
 				final ColorMap colorMap = new ColorMap(palette, 0, 1);
-				
-				canvas = new Canvas() {
+
+				canvas = new JPanel() {
 					public void paint(Graphics g) {
 						Graphics2D graphics = (Graphics2D) g;
-						
+
 						Object[] valueArray = DataLib.ordinalArray(tuples, dataField);
 						int width = this.getWidth() / valueArray.length - 1;
 						for(int valueIndex = 0; valueIndex < valueArray.length; valueIndex++) {
@@ -86,7 +89,7 @@ public class LegendDataColorAction extends DataColorAction implements LegendActi
 					}
 				};
 			} else {
-				canvas = new Canvas() {
+				canvas = new JPanel() {
 					public void paint(Graphics g) {
 						Graphics2D graphics = (Graphics2D) g;
 						Color startColor = ColorLib.getColor(palette[0]);
@@ -98,13 +101,14 @@ public class LegendDataColorAction extends DataColorAction implements LegendActi
 				};
 			}
 			canvas.setBounds(0, 0, 50, Constants.LEGEND_CANVAS_HEIGHT);
-			
+			canvas.setMinimumSize(new Dimension(Constants.LEGEND_CANVAS_HEIGHT * 3, 0));
+
 			JLabel fieldLabel = new JLabel(context + " (" + column + ")");
 			fieldLabel.setFont(Constants.FIELD_SPECIFYING_FONT);
 			JPanel titlePanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
 			titlePanel.add(fieldLabel);
-			legend.add(titlePanel);
-			legend.add(Box.createVerticalStrut(Constants.VERTICAL_STRUT_DISTANCE));
+			legend.add(titlePanel, BorderLayout.NORTH);
+			//legend.add(Box.createVerticalStrut(Constants.VERTICAL_STRUT_DISTANCE));
 			JPanel continuumPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
 			JLabel minLabel;
 			if(bad) {
@@ -114,11 +118,11 @@ public class LegendDataColorAction extends DataColorAction implements LegendActi
 				minLabel = new JLabel("" + min);
 				minLabel.setFont(Constants.FIELD_VALUE_FONT);
 			}
-			
+
 			continuumPanel.add(minLabel);
-			
+
 			continuumPanel.add(canvas);
-			
+
 			JLabel maxLabel;
 			if(bad) {
 				maxLabel = new JLabel("error");
@@ -128,28 +132,29 @@ public class LegendDataColorAction extends DataColorAction implements LegendActi
 				maxLabel.setFont(Constants.FIELD_VALUE_FONT);
 			}
 			continuumPanel.add(maxLabel);
-			legend.add(continuumPanel);
+			legend.add(continuumPanel, BorderLayout.SOUTH);
 		} else {
 			size += 1;
+			//legend = Box.createVerticalBox();
 			JLabel label = new JLabel(context + " (" + column + ")");
 			label.setFont(Constants.FIELD_SPECIFYING_FONT);
 			JPanel titlePanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
 			titlePanel.add(label);
 			legend.add(titlePanel);
 			legend.add(Box.createVerticalStrut(Constants.VERTICAL_STRUT_DISTANCE));
-			
+
 			final ColorMap colorMap = new ColorMap(null, 0, 1);
 			colorMap.setColorPalette(palette);
 			double[] distribution = this.getDistribution();
 			colorMap.setMinValue(distribution[0]);
 			colorMap.setMaxValue(distribution[1]);
-			
+
 			final Object[] values = DataLib.ordinalArray(tuples, dataField);
-			
+
 			for(int valueIndex = 0; valueIndex < values.length; valueIndex++) {
 				size += 1;
 				final int tempIndex = valueIndex;
-				Canvas canvas = new Canvas() {
+				JPanel canvas = new JPanel() {
 					public void paint(Graphics g) {
 						Graphics2D graphics = (Graphics2D) g;
 						Color color = ColorLib.getColor(colorMap.getColor(tempIndex));
@@ -176,17 +181,18 @@ public class LegendDataColorAction extends DataColorAction implements LegendActi
 				}
 				keyValue.add(canvas);
 				keyValue.add(itemLabel);
-				
+
 				legend.add(keyValue);
 				legend.add(Box.createVerticalStrut(Constants.VERTICAL_STRUT_DISTANCE));
 			}	
 		}
-		
+
 		return legend;
 	}
 
 	public int getLegendSize() {
 		getLegend(); //minor hack, make sure size is computed
+		//legend.setMaximumSize(new Dimension(Integer.MAX_VALUE, (int) (Constants.LEGEND_CANVAS_HEIGHT * size)));
 		return size;
 	}
 
