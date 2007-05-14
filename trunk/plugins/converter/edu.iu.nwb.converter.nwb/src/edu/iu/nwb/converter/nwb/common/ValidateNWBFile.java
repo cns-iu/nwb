@@ -112,8 +112,9 @@ public class ValidateNWBFile {
 											NWBFileProperty.ATTRIBUTE_ID))
 					{
 						//process attribut line
-						StringTokenizer st = new StringTokenizer(line);						
-						for (int i = 1; i<=st.countTokens(); i++){
+						StringTokenizer st = new StringTokenizer(line);	
+						int totalTokens= st.countTokens();
+						for (int i = 1; i<=totalTokens; i++){
 							//process token
 							try {
 								NWBAttribute attr = processAttrToken(st.nextToken());
@@ -321,9 +322,10 @@ public class ValidateNWBFile {
 		if (line.length()<=0)
 			return true;
 		StringTokenizer st = new StringTokenizer(line);
-		if (st.countTokens()<=0)
+		int totalTokens = st.countTokens();
+		if (totalTokens<=0)
 			return true;
-		if (st.countTokens()<attrList.size())
+		if (totalTokens<attrList.size())
 			throw new Exception ("Did not specify all values for defined attributes!");
 		String[] columns = processTokens(st);
 		for (int i=0; i< attrList.size(); i++){
