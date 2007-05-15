@@ -4,20 +4,37 @@ import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.Dimension;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
+import java.awt.geom.Rectangle2D;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Dictionary;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Properties;
 
+import javax.print.DocPrintJob;
+import javax.print.PrintService;
+import javax.print.PrintServiceLookup;
+import javax.print.SimpleDoc;
 import javax.swing.Box;
 import javax.swing.BoxLayout;
 import javax.swing.JComponent;
+import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JSeparator;
+import javax.swing.filechooser.FileFilter;
+
+import org.freehep.graphics2d.VectorGraphics;
+import org.freehep.graphicsio.ps.PSGraphics2D;
+import org.freehep.util.export.ExportDialog;
 
 import edu.iu.nwb.visualization.prefuse.beta.common.action.LegendAction;
 import edu.iu.nwb.visualization.prefuse.beta.common.action.LegendDataColorAction;
@@ -57,6 +74,26 @@ import prefuse.visual.VisualItem;
 import prefuse.visual.expression.InGroupPredicate;
 
 public abstract class AbstractVisualization implements PrefuseBetaVisualization {
+	
+	private static final JFileChooser chooser = new JFileChooser();
+	
+	/* static {
+		chooser.addChoosableFileFilter(new FileFilter() {
+			public boolean accept(File f) {
+				if(f.isFile()) {
+					if(f.getName().endsWith(".eps") || f.getName().endsWith(".ps")) {
+						return true;
+					}
+					return false;
+				}
+				return true;
+			}
+			
+			public String getDescription() {
+				return "EPS file";
+			}
+		});
+	} */
 	
 	protected static final String LAYOUT = "layout";
 	protected static final String DRAW = "draw";
@@ -305,7 +342,7 @@ public abstract class AbstractVisualization implements PrefuseBetaVisualization 
 		}
 
 
-		Display display = new Display(visualization);
+		final Display display = new Display(visualization);
 		display.setSize(700, 700); //seems a good default; visualizations will generally scale themselves to this
 		
 		display.setBackground(Color.WHITE);
@@ -329,7 +366,50 @@ public abstract class AbstractVisualization implements PrefuseBetaVisualization 
 		
 		
 		//create a frame to stick everything in
-        JFrame frame = new JFrame();
+        final JFrame frame = new JFrame();
+        KeyAdapter keyAdapter = new KeyAdapter() {
+		        	
+
+					public void keyTyped(KeyEvent e) {
+		        		if(e.getKeyChar() == 'e') {
+		        			
+		        			int option = chooser.showSaveDialog(frame);
+		        			if(option == JFileChooser.APPROVE_OPTION) {
+		        				Properties properties = new Properties();
+			        			properties.setProperty("PageSize", "A5");
+			        			
+			        			try {
+			        				
+			        				
+			        				
+			        				
+			        				//display.saveImage(new FileOutputStream(chooser.getSelectedFile()), "eps", 1.0);
+			        				
+			        				
+									//Rectangle2D bounds = visualization.getBounds(all);
+			        				
+									VectorGraphics graphics = new PSGraphics2D(chooser.getSelectedFile(), display.getSize());
+									graphics.setProperties(properties);
+									graphics.startExport();
+									display.printAll(graphics);
+									graphics.endExport();
+								} catch (FileNotFoundException e1) {
+									// TODO Auto-generated catch block
+									e1.printStackTrace();
+								}
+		        			}
+		        			
+							
+		        			
+		        			
+		        			
+		        			//ExportDialog export = new ExportDialog();
+		        			//export.showExportDialog(frame, "Export visualization as . . .", display, "export");
+		        		}
+		        	}
+		        };
+		frame.addKeyListener(keyAdapter);
+		display.addKeyListener(keyAdapter);
         
         JScrollPane scrollPane = new JScrollPane(legends);
         scrollPane.setPreferredSize(new Dimension(100, Math.min(180, maxHeight * 2)));
