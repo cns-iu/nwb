@@ -53,7 +53,7 @@ public class PrefuseXGMMLValidation implements AlgorithmFactory {
 			String fileHandler = (String) data[0].getData();
 			File inData = new File(fileHandler);
         	try{
-        		if (validateGraphMLHeader(inData)){
+        		if (validateXGMMLHeader(inData)){
 	        		(new XMLGraphReader()).loadGraph(fileHandler);
 	        		Data[] dm = new Data[] {new BasicData(inData, "file:text/xgmml+xml")};
 	        		dm[0].getMetaData().put(DataProperty.LABEL, "Prefuse XGMML .xml file: " + fileHandler);
@@ -79,9 +79,9 @@ public class PrefuseXGMMLValidation implements AlgorithmFactory {
         //although the reverse path never happened in my testing env. 
         //Here I try to detect if there is "<graphml" header in the file, if not, it 
         //is not a gramphml file
-        private boolean validateGraphMLHeader(File inData)
+        private boolean validateXGMMLHeader(File inData)
         		throws FileNotFoundException, IOException{
-        	boolean hasGraphMLHeader = false;
+        	boolean hasXGMMLHeader = false;
     		
         	BufferedReader reader = 
     			new BufferedReader(new FileReader(inData));
@@ -89,12 +89,12 @@ public class PrefuseXGMMLValidation implements AlgorithmFactory {
     		String line = reader.readLine();
     		while(line != null){
     			if(line.startsWith("<graph ") || line.startsWith("<graph>")){
-    				hasGraphMLHeader = true;
+    				hasXGMMLHeader = true;
     				break;
     			}    			
     			line = reader.readLine();	
     		}
-    		return hasGraphMLHeader;
+    		return hasXGMMLHeader;
     		
         }
 
