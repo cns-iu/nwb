@@ -5,7 +5,7 @@ y=`which gnome-terminal`
 z=`which xterm`
 
 if [ -n "$x" ]; then
-	echo "plot \"$*\";">gnuplotstart.txt
+	echo "plot \"$*\"">gnuplotstart.txt
 	if [ -n "$y" ]; then
 	  gnome-terminal -e "gnuplot -persist gnuplotstart.txt -" 
 	elif [ -n "$z" ]; then
