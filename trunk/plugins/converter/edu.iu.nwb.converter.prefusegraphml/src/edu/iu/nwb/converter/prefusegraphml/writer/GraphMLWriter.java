@@ -102,11 +102,11 @@ public class GraphMLWriter extends AbstractGraphWriter {
             Node n = (Node)nodes.next();
             
             if ( ns.getColumnCount() > 0 ) {
-                xml.start(Tokens.NODE, Tokens.ID, String.valueOf(n.getRow()));
+                xml.start(Tokens.NODE, Tokens.ID, "n" + String.valueOf(n.getRow()));
                 for ( int i=0; i<ns.getColumnCount(); ++i ) {
                     String field = ns.getColumnName(i);
                     if(n.get(field) != null) {
-                    	xml.contentTag(Tokens.DATA, Tokens.KEY, field, n.getString(field));
+                    	xml.contentTag(Tokens.DATA, Tokens.KEY, field, n.get(field).toString());
                     }
                 }
                 xml.end();
@@ -126,9 +126,9 @@ public class GraphMLWriter extends AbstractGraphWriter {
         Iterator edges = graph.edges();
         while ( edges.hasNext() ) {
             Edge e = (Edge)edges.next();
-            vals[0] = String.valueOf(e.getRow());
-            vals[1] = String.valueOf(e.getSourceNode().getRow());
-            vals[2] = String.valueOf(e.getTargetNode().getRow());
+            vals[0] = "e" + String.valueOf(e.getRow());
+            vals[1] = "n" + String.valueOf(e.getSourceNode().getRow());
+            vals[2] = "n" + String.valueOf(e.getTargetNode().getRow());
             
             if ( es.getColumnCount() > 2 ) {
                 xml.start(Tokens.EDGE, attr, vals, 3);
@@ -139,7 +139,7 @@ public class GraphMLWriter extends AbstractGraphWriter {
                         continue;
                     
                     xml.contentTag(Tokens.DATA, Tokens.KEY, field, 
-                                   e.getString(field));
+                                   e.get(field).toString());
                 }
                 xml.end();
             } else {
