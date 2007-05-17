@@ -1,0 +1,157 @@
+<?xml version="1.0" encoding="iso-8859-1" standalone="yes" ?>
+
+<!-- 
+	CIShell Installer XML File
+	
+	To compile it :
+	- go in the bin directory where you installed IzPack
+	- call "compile ../install.xml -b ../cishell_full"
+-->
+
+<installation version="1.0">
+
+	<!-- 
+		The info section.
+	-->
+	<info>
+		<appname>the Network Workbench Tool</appname>
+		<appsubpath>nwb</appsubpath>
+		<appversion>0.5.0</appversion>
+		<authors>
+		    <author name="Weixia (Bonnie) Huang" email="huangb@indiana.edu" />
+		    <author name="Dr. Santo Fortunato" email="santo@indiana.edu" />
+		    <author name="Ben Markines" email="bmarkine@indiana.edu" />
+		    <author name="Bruce Herr" email="bh2@bh2.net" />
+		    <author name="Russell Duhon" email="rduhon@indiana.edu" />
+		    <author name="M Felix Terkhorn" email="terkhorn@gmail.com"/>
+		    <author name="Timothy Kelley" email="kelleyt@indiana.edu"/>
+		    <author name="Cesar Augusto Hidalgo Ramaciotti" email="cesifoti@gmail.com" />
+			<author name="Dr. Soma Sanyal" email="ssanyal@indiana.edu" />
+			<author name="Ann McCranie" email="amccrani@indiana.edu" />
+			<author name="Dr. Katy Börner" email="katy@indiana.edu" />
+			<author name="Dr. Alessandro Vespignani" email="alexv@indiana.edu"	/>
+			<author name="Ramya Sabbineni" email="rsabbine@indiana.edu" />
+			<author name="Vivek S. Thakres" email="vsthakre@indiana.edu" />		
+		</authors>
+		<url>http://nwb.slis.indiana.edu/</url>
+	</info>
+
+	<!-- 
+		The gui preferences indication.
+		Sets the installer window to 640x480. It will not be able to change the size.
+	-->
+	<guiprefs width="640" height="480" resizable="no">
+		<laf name="metouia">
+			<os family="unix" />
+		</laf>
+		<laf name="looks">
+			<os family="windows" />
+			<param name="variant" value="extwin" />
+		</laf>
+	</guiprefs>
+
+	<!-- 
+		The locale section.
+		Asks here to include the English and French langpacks.
+	-->
+	<locale>
+		<langpack iso3="eng" />
+	</locale>
+
+	<!-- 
+		The resources section.
+		The ids must be these ones if you want to use the LicencePanel and/or the InfoPanel.
+	-->
+	<resources>
+		<res id="LicencePanel.licence" src="../licenses/license-nwb.txt" />
+		<!-- <res id="Installer.image" src="../nice-image.png" /> -->
+		<res src="../windows_shortcut_specification.xml"
+			id="shortcutSpec.xml" />
+		<!-- <res src="../unix_shortcut_specification.xml"
+			id="Unix_shortcutSpec.xml"/> -->
+		<res id="InfoPanel.info" src="../thanks.txt" />
+		<res id="XInfoPanel.info" src="../mac_instructions.txt" />
+	</resources>
+
+	<native type="izpack" name="ShellLink.dll" />
+
+	<!-- 
+		The panels section.
+		We indicate here which panels we want to use. The order will be respected.
+	-->
+	<panels>
+		<panel classname="HelloPanel" />
+		<panel classname="LicencePanel" />
+		<panel classname="TargetPanel" />
+		<!-- <panel classname="PacksPanel"/> -->
+		<panel classname="InstallPanel" />
+		<panel os="windows" classname="ShortcutPanel" />
+		<panel os="mac" classname="XInfoPanel" />
+		<panel classname="InfoPanel" />
+		<panel classname="SimpleFinishPanel" />
+	</panels>
+
+	<!-- 
+		The packs section.
+		We specify here our packs.
+	-->
+	<packs>
+		<pack name="Base" required="yes">
+			<description>The base files</description>
+			<defaultexcludes />
+			<fileset dir="../licenses" targetdir="$INSTALL_PATH/licenses">
+				<defaultexcludes />
+				<include name="**/*"/>
+			</fileset>
+			<fileset dir="." targetdir="$INSTALL_PATH">
+				<include name="**/*" />
+				<exclude name="nwb" />
+				<exclude name="libcairo.so.1" />
+				<exclude name="nwb.exe" />
+				<exclude name="plugins/*linux*" />
+				<exclude name="plugins/*gtk*" />
+				<exclude name="plugins/*win32*" />
+			</fileset>
+			<fileset dir="../cishell_linux" os="unix"
+				targetdir="$INSTALL_PATH">
+				<include name="**/*" />
+			</fileset>
+
+			<fileset dir=".."
+				targetdir="$INSTALL_PATH">
+				<include name="sampledata/**/*" />
+			</fileset>
+
+			<fileset dir="../cishell_win32" os="windows"
+				targetdir="$INSTALL_PATH">
+				<include name="**/*" />
+			</fileset>
+
+			<fileset dir="../cishell_macosx" os="mac"
+				targetdir="$INSTALL_PATH">
+				<include name="**/*" />
+			</fileset>
+
+			<fileset dir="../cishell_macosx_ppc" os="mac" arch="ppc"
+				targetdir="$INSTALL_PATH">
+				<include name="**/*" />
+			</fileset>			
+			
+			<fileset dir="../cishell_macosx_x86" os="mac" arch="x86"
+				targetdir="$INSTALL_PATH">
+				<include name="**/*" />
+			</fileset>
+
+			<executable os="unix" targetfile="$INSTALL_PATH/nwb"
+				keep="true" stage="never" />
+			<executable os="mac" 
+				targetfile="$INSTALL_PATH/NWB.app/Contents/MacOS/nwb"
+				keep="true" stage="never" />			
+			
+			<!--	    for some stupid reason this isn't working, so we'll 
+				just not have desktop icons for linux for now...
+				<executable os="unix" targetfile="$INSTALL_PATH/cishell.sh" keep="true" stage="never"/>
+				<parsable os="unix" targetfile="$INSTALL_PATH/cishell.sh"/>
+			-->
+		</pack>
+	</packs></installation>
