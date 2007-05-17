@@ -16,17 +16,22 @@
 	<info>
 		<appname>the Network Workbench Tool</appname>
 		<appsubpath>nwb</appsubpath>
-		<appversion>0.3.0</appversion>
+		<appversion>0.5.0</appversion>
 		<authors>
 		    <author name="Weixia (Bonnie) Huang" email="huangb@indiana.edu" />
 		    <author name="Dr. Santo Fortunato" email="santo@indiana.edu" />
 		    <author name="Ben Markines" email="bmarkine@indiana.edu" />
 		    <author name="Bruce Herr" email="bh2@bh2.net" />
 		    <author name="Russell Duhon" email="rduhon@indiana.edu" />
-			<author name="Ramya Sabbineni" email="rsabbine@indiana.edu" />
-			<author name="Vivek S. Thakres" email="vsthakre@indiana.edu" />
+		    <author name="M Felix Terkhorn" email="terkhorn@gmail.com"/>
+		    <author name="Timothy Kelley" email="kelleyt@indiana.edu"/>
+		    <author name="Cesar Augusto Hidalgo Ramaciotti" email="cesifoti@gmail.com" />
 			<author name="Dr. Soma Sanyal" email="ssanyal@indiana.edu" />
+			<author name="Ann McCranie" email="amccrani@indiana.edu" />
 			<author name="Dr. Katy Börner" email="katy@indiana.edu" />
+			<author name="Dr. Alessandro Vespignani" email="alexv@indiana.edu"	/>
+			<author name="Ramya Sabbineni" email="rsabbine@indiana.edu" />
+			<author name="Vivek S. Thakres" email="vsthakre@indiana.edu" />		
 		</authors>
 		<url>http://nwb.slis.indiana.edu/</url>
 	</info>
