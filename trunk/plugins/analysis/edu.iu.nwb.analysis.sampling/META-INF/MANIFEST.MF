@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: Graph Sampling Techniques
 Bundle-SymbolicName: edu.iu.nwb.analysis.sampling
-Bundle-Version: 0.4.0
+Bundle-Version: 0.5.0
 Bundle-ClassPath: .
 Bundle-Localization: plugin
 Import-Package: edu.uci.ics.jung.graph,
