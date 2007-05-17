@@ -24,7 +24,14 @@ public class DirectoryHierarchyReaderAlgorithm implements Algorithm {
     }
 
     public Data[] execute() {
-    	File rootFile = new File((String)parameters.get("rootDirectory"));
+    	String myregex = "[a-zA-Z]:";
+    	String rootParam = (String)parameters.get("rootDirectory");
+    	// compensate for windows users possibly entering "C:", "d:", etc... 
+    	if (rootParam.matches(myregex)) {
+    		rootParam = rootParam+"\\";
+    	}
+    
+    	File rootFile = new File(rootParam);
 	    int numLevels = ((Integer) parameters.get("level")).intValue();
 	    boolean doRecurseTree = ((Boolean) parameters.get("doRecurse")).booleanValue();
 	    boolean doSkipFiles = ((Boolean) parameters.get("readDirectories")).booleanValue();
