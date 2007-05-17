@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<metatype:MetaData xmlns:metatype="http://www.osgi.org/xmlns/metatype/v1.0.0">
+	<OCD name="Network Analysis Toolkit Algorithm" id="edu.iu.iv.toolkits.networkanalysistoolkit.edu.iu.iv.toolkits.networkanalysistoolkit.OCD"
+		 description="">
+	</OCD>
+	<Designate pid="edu.iu.iv.toolkits.networkanalysistoolkit.edu.iu.iv.toolkits.networkanalysistoolkit">
+		<Object ocdref="edu.iu.iv.toolkits.networkanalysistoolkit.edu.iu.iv.toolkits.networkanalysistoolkit.OCD" />
+	</Designate>
+</metatype:MetaData>
