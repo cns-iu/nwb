@@ -2,18 +2,18 @@
 <feature
       id="edu.iu.nwb.gui.brand.feature"
       label="NWB Brand "
-      version="0.4.0"
+      version="0.5.0"
       provider-name="Weixia Huang">
 
-	<description>
+   <description>
       Network Workbench Tool (NWB Tool)
-   	</description>
+   </description>
 
-   	<copyright>
+   <copyright>
       Copyright 2006 Indiana University
-   	</copyright>
+   </copyright>
 
-   	<license url="http://www.apache.org/licenses/LICENSE-2.0">
+   <license url="http://www.apache.org/licenses/LICENSE-2.0">
       NWB Tool: Network Workbench Tool
 Copyright 2006 Indiana University
 Licensed under the Apache License, Version 2.0 (the &quot;License&quot;);
@@ -29,7 +29,7 @@ Project Contacts:
 Weixia Huang (huangb@indiana.edu)
 Bruce Herr (bh2@bh2.net)
 Dr. Katy Borner (katy@indiana.edu)
-	</license>
+   </license>
 
    <plugin
          id="edu.iu.nwb.gui.brand"
