@@ -21,16 +21,19 @@ public class Activator extends AbstractUIPlugin implements IStartup{
 		"Welcome to the Network Workbench (NWB) tool that supports "+
 		"the preprocessing, modeling, analysis, and visualization of "+
 		"small, medium, and large networks. \n"+
-		"The tool was developed by Weixia (Bonnie) Huang, Dr. Santo Fortunato, "+
-		"Ben Markines, Bruce Herr, Russell Duhon, Ramya Sabbineni, Vivek S. Thakres, "+
-		"Dr. Soma Sanyal, and Dr. Katy Börner. It builds on the Cyberinfrastructure Shell "+
-		"(http://cishell.org) developed at the Information Visualization Laboratory and "+
-		"the Cyberinfrastructure for Network Science Center, both at Indiana University.\n"+
-		"The NWB tool is an integral part of a cyberinfrastructure for network scientists "+
-		"that is funded by an NSF IIS-0513650 award to Katy Börner, Albert-Laszlo Barabasi, "+
-		"Santiago Schnell, Alessandro Vespignani, Stanley Wasserman, and Eric Wernert. "+
-		"For more information on the Network Workbench project, see "+
-		"http://nwb.slis.indiana.edu.";
+		"The Network Workbench project is supported in part by the NSF IIS-0513650 award. "+
+		"The primary investigators are Katy Börner, Albert-László Barabási, Santiago Schnell, "+
+		"Alessandro Vespignani, Stanley Wasserman, Eric A. Wernert, and Craig Stewart. "+
+		"The NWB tool was developed by Weixia (Bonnie) Huang, Dr. Santo Fortunato, "+
+		"Bruce Herr, Russell Duhon, Timothy Kelley, M Felix Terkhorn, Cesar A. Hidalgo R., "+
+        "Ben Markines, Dr. Soma Sanyal, Ann McCranie, Ramya Sabbineni, Vivek S. Thakres., "+
+        "Dr. Alessandro Vespignani, and Dr. Katy Börner.\n"+
+        "It builds on the Cyberinfrastructure Shell (http://cishell.org) developed at the "+
+        "Information Visualization Laboratory and the Cyberinfrastructure for Network Science Center, "+
+        "both at Indiana University.\n"+
+        "For more information on the Network Workbench project, "+
+        "see http://nwb.slis.indiana.edu and https://nwb.slis.indiana.edu/community/.";
+
 
 	
 /*		"Welcome to use Network Workbench Tool "+
