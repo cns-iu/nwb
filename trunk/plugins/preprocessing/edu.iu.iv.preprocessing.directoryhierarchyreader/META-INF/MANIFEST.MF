@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: Directory Hierarchy Reader
 Bundle-SymbolicName: edu.iu.iv.preprocessing.directoryhierarchyreader
-Bundle-Version: 0.3.0
+Bundle-Version: 0.5.0
 Bundle-ClassPath: .
 Bundle-Localization: plugin
 Import-Package: edu.berkeley.guir.prefuse.graph,
