@@ -64,7 +64,9 @@ public abstract class PrefuseBetaAlgorithmFactory implements AlgorithmFactory {
 
 		Graph graph = (Graph) dm[0].getData();
 
-		if(Arrays.binarySearch(originalProvider.getPids(), this.pid) >= 0) {
+		String[] pids = originalProvider.getPids();
+		Arrays.sort(pids);
+		if(Arrays.binarySearch(pids, this.pid) >= 0) {
 			ObjectClassDefinition oldDefinition = originalProvider.getObjectClassDefinition(this.pid, null);
 
 			BasicObjectClassDefinition definition;
