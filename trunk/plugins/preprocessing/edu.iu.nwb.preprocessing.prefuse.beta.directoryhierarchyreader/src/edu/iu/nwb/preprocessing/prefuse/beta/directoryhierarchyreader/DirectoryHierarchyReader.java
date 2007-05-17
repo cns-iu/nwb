@@ -26,13 +26,11 @@ public class DirectoryHierarchyReader {
 
     private final static FileFilter fileFilter = new FileFilter() {
         public boolean accept(File file) {
-        	System.out.println(file.getName() +" is File? "+ file.isFile());
             return file.isFile();
         }};
         
     private final static FileFilter dirFilter = new FileFilter() {
         public boolean accept(File file) {
-        	System.out.println(file.getName()+" is Dir? " + file.isDirectory());
             return file.isDirectory();
         }};
 
