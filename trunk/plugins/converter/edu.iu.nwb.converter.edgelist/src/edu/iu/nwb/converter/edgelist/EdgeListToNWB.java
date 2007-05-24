@@ -62,6 +62,7 @@ public class EdgeListToNWB implements Algorithm {
 		int i=0,edgesCount=0;
 		HashMap map = new HashMap();
 		int mapCount = 1;
+		int weightCount = 0;
 		
 		try {
 			while ((currentLine = reader.readLine()) != null) {
@@ -70,39 +71,48 @@ public class EdgeListToNWB implements Algorithm {
 				tokens = currentLine.trim().split("\\s+");
 				
 				for(i = 0;i < tokens.length;i++){
-					if (!map.containsKey(tokens[i])) {
-						if (tokens[i].matches("\".*\"")) {
+					if (!map.containsKey(tokens[i]) && i < 2) {
+						if (tokens[i].matches("\".*\"") && i < 2) { // looks like "xyz" but we are not in third column
 							map.put(tokens[i], new Integer(mapCount++));
 						}
-						else { 
+						else if (i < 2){ // we are not in third column 
 							tokens[i] ="\""+tokens[i]+"\""; 
 							map.put(tokens[i], new Integer(mapCount++));
 						}
 					}
-			//		System.out.println(tokens[i]+"   ");
+					if (i > 1) {
+						weightCount++;
+					}
 				}
-				//System.out.println("\n");
-				//System.out.println("Adding tokens "+tokens[0]+" "+tokens[1]+"\n");
 				edgelist.add(tokens);
 				edgesCount++;
 			}
 			// currentLine is null
 
 			writer.write("*Nodes "+map.size()+"\n");
-			writer.write("//id*int  label*string\n");
+			writer.write("id*int  label*string\n");
 			Iterator it = map.entrySet().iterator();
 			while (it.hasNext()) {
 				Map.Entry pairs = (Map.Entry)it.next();
-				//System.out.println("Attempting to write: "+ ((Integer)(pairs.getValue())).intValue() + " " +pairs.getKey() +"\n");
+			
 				writer.write(((Integer)(pairs.getValue())).intValue() + " " +pairs.getKey() +"\n");
 			}
 			writer.write("*UndirectedEdges "+edgesCount+"\n");
-			writer.write("//source*int  target*int\n");
-			for (i=0;i<edgesCount;i++){
-				//System.out.println("Attempting to write:"+((String[])(edgelist.get(i)))[0] + " " + ((String[])(edgelist.get(i)))[1] +"\n");
-				writer.write(((Integer)map.get(((String[])(edgelist.get(i)))[0])).intValue() + " " + ((Integer)map.get(((String[])(edgelist.get(i)))[1])).intValue() +"\n");
+			if (weightCount == 0) {
+				writer.write("source*int  target*int\n");
+			} else {// weightCount > 1
+				writer.write("source*int  target*int  weight*int\n");
 			}
+			for (i=0;i<edgesCount;i++){
 			
+				if (((String[])(edgelist.get(i))).length > 2) { // this tuple has a weight value
+					//System.out.println("weight = "+((String[])(edgelist.get(i)))[2]);
+					writer.write(((Integer)map.get(((String[])(edgelist.get(i)))[0])).intValue() + " " + ((Integer)map.get(((String[])(edgelist.get(i)))[1])).intValue() + " " + ((String[])(edgelist.get(i)))[2] +"\n");
+				} else { // only source, target were found in this tuple
+					writer.write(((Integer)map.get(((String[])(edgelist.get(i)))[0])).intValue() + " " + ((Integer)map.get(((String[])(edgelist.get(i)))[1])).intValue() +"\n");
+				}
+
+			}						
 			writer.flush();
 			
 		} catch (IOException e) {

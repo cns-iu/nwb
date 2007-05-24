@@ -58,8 +58,8 @@ public class EdgeListValidatorFactory implements AlgorithmFactory {
 				String fileHandler = (String) data[0].getData();
 				File inData = new File(fileHandler);
 
-				Data[] dm = new Data[] {new BasicData(inData, "file:text/edgelist")};
-				dm[0].getMetaData().put(DataProperty.LABEL, "edgelist file: " + fileHandler);
+				Data[] dm = new Data[] {new BasicData(inData, "file:text/edge")};
+				dm[0].getMetaData().put(DataProperty.LABEL, "edge file: " + fileHandler);
 				dm[0].getMetaData().put(DataProperty.TYPE, DataProperty.NETWORK_TYPE);
             	return dm;
 
