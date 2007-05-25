@@ -66,16 +66,16 @@ public class EdgeListToNWB implements Algorithm {
 		
 		try {
 			while ((currentLine = reader.readLine()) != null) {
-				//		System.out.println(currentLine+"\n");
 			
 				tokens = currentLine.trim().split("\\s+");
+				System.out.println("new while\n");
 				
 				for(i = 0;i < tokens.length;i++){
 					if (!map.containsKey(tokens[i]) && i < 2) {
-						if (tokens[i].matches("\".*\"") && i < 2) { // looks like "xyz" but we are not in third column
+						if (tokens[i].matches("\".*\"")) { // looks like "xyz" but we are not in third column
 							map.put(tokens[i], new Integer(mapCount++));
 						}
-						else if (i < 2){ // we are not in third column 
+						else { // we are not in third column, unquoted data 
 							tokens[i] ="\""+tokens[i]+"\""; 
 							map.put(tokens[i], new Integer(mapCount++));
 						}
@@ -84,8 +84,11 @@ public class EdgeListToNWB implements Algorithm {
 						weightCount++;
 					}
 				}
+				
+				System.out.println("length of tokens = "+tokens.length);
 				edgelist.add(tokens);
 				edgesCount++;
+				System.out.println("here");
 			}
 			// currentLine is null
 
@@ -106,7 +109,6 @@ public class EdgeListToNWB implements Algorithm {
 			for (i=0;i<edgesCount;i++){
 			
 				if (((String[])(edgelist.get(i))).length > 2) { // this tuple has a weight value
-					//System.out.println("weight = "+((String[])(edgelist.get(i)))[2]);
 					writer.write(((Integer)map.get(((String[])(edgelist.get(i)))[0])).intValue() + " " + ((Integer)map.get(((String[])(edgelist.get(i)))[1])).intValue() + " " + ((String[])(edgelist.get(i)))[2] +"\n");
 				} else { // only source, target were found in this tuple
 					writer.write(((Integer)map.get(((String[])(edgelist.get(i)))[0])).intValue() + " " + ((Integer)map.get(((String[])(edgelist.get(i)))[1])).intValue() +"\n");
