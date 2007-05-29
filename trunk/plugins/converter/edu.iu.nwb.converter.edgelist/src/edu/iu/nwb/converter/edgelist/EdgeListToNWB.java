@@ -66,29 +66,30 @@ public class EdgeListToNWB implements Algorithm {
 		
 		try {
 			while ((currentLine = reader.readLine()) != null) {
-			
+
 				tokens = currentLine.trim().split("\\s+");
-				System.out.println("new while\n");
-				
+			
+
 				for(i = 0;i < tokens.length;i++){
-					if (!map.containsKey(tokens[i]) && i < 2) {
-						if (tokens[i].matches("\".*\"")) { // looks like "xyz" but we are not in third column
-							map.put(tokens[i], new Integer(mapCount++));
-						}
-						else { // we are not in third column, unquoted data 
-							tokens[i] ="\""+tokens[i]+"\""; 
-							map.put(tokens[i], new Integer(mapCount++));
-						}
+					if (!map.containsKey(tokens[i]) && tokens[i].matches("\".*\"") && i < 2) 
+					{ //	looks like "xyz" but we are not in third column
+						map.put(tokens[i], new Integer(mapCount++));
 					}
+					else if (!map.containsKey(tokens[i]) && i < 2)
+					{ // we are not in third column, unquoted data 
+						tokens[i] ="\""+tokens[i]+"\""; 
+						map.put(tokens[i], new Integer(mapCount++));
+					}
+
 					if (i > 1) {
 						weightCount++;
 					}
 				}
+
 				
-				System.out.println("length of tokens = "+tokens.length);
 				edgelist.add(tokens);
 				edgesCount++;
-				System.out.println("here");
+				
 			}
 			// currentLine is null
 
