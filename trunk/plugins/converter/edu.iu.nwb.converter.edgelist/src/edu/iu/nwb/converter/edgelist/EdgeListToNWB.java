@@ -205,7 +205,7 @@ public class EdgeListToNWB implements Algorithm {
 						"Sorry, your file does not comply with edge-list format specifications.",
 						"Sorry, your file does not comply with edge-list format specifications.\n"+
 						"Please review the latest edge-list format specification at "+
-						"http://nwb.slis.indiana.edu/software.html, and update your file. \n"
+						"https://nwb.slis.indiana.edu/community/?n=LoadData.Edgelist, and update your file. \n"
 				);
 				throw (new IOException("Improperly formatted edgelist file"));
 			}
