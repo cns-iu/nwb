@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<component name="edu.iu.nwb.converter.edgelist.EdgeListValidator" immediate="false">
+<component name="edu.iu.nwb.converter.edgelist.EdgeListValidatorFactory" immediate="false">
 	<implementation class="edu.iu.nwb.converter.edgelist.EdgeListValidatorFactory"/>
 	<properties entry="OSGI-INF/validation.properties"/>
 	<reference name="LOG" interface="org.osgi.service.log.LogService"/>
