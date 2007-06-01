@@ -140,7 +140,7 @@ public class NETVertex {
 
 			System.out.println(s1 + " " + s2+"\n------------\n");
 			boolean b1 = false ,b2 = false;
-			if(ValidateNETFile.isInList(s1,NETFileParameter.VERTEX_NUMBER_PARAMETER_LIST)){
+			if(NETFileFunctions.isInList(s1,NETFileParameter.VERTEX_NUMBER_PARAMETER_LIST)){
 
 				try{
 					b1 = NETFileFunctions.isAFloat(s2, NETFileProperty.TYPE_FLOAT);
@@ -155,7 +155,7 @@ public class NETVertex {
 
 
 			}
-			else if(ValidateNETFile.isInList(s1,NETFileParameter.VERTEX_COLOR_PARAMETER_LIST)){
+			else if(NETFileFunctions.isInList(s1,NETFileParameter.VERTEX_COLOR_PARAMETER_LIST)){
 
 
 				try{
@@ -296,10 +296,25 @@ public class NETVertex {
 				this.setCornerRadius(s2);
 			}
 			else if(s1.equalsIgnoreCase(NETFileParameter.PARAMETER_Q)){
-				
+				this.setDiamondRatio(s2);
+			}
+			else if(s1.equalsIgnoreCase(NETFileParameter.PARAMETER_IC)){
+				this.setInternalColor(s2);
+			}
+			else if(s1.equalsIgnoreCase(NETFileParameter.PARAMETER_BC)){
+				this.setBorderColor(s2);
+			}
+			else if(s1.equalsIgnoreCase(NETFileParameter.PARAMETER_BW)){
+				this.setBorderWidth(s2);
+			}
+			else if(s1.equalsIgnoreCase(NETFileParameter.PARAMETER_LC)){
+				this.setLabelColor(s2);
+			}
+			else if(s1.equalsIgnoreCase(NETFileParameter.PARAMETER_LA)){
+				this.setLabelAngle(s2);
 			}
 			boolean b1 = false ,b2 = false;
-			if(ValidateNETFile.isInList(s1,NETFileParameter.VERTEX_NUMBER_PARAMETER_LIST)){
+			if(NETFileFunctions.isInList(s1,NETFileParameter.VERTEX_NUMBER_PARAMETER_LIST)){
 
 				try{
 					b1 = NETFileFunctions.isAFloat(s2, NETFileProperty.TYPE_FLOAT);
@@ -314,7 +329,7 @@ public class NETVertex {
 
 
 			}
-			else if(ValidateNETFile.isInList(s1,NETFileParameter.VERTEX_COLOR_PARAMETER_LIST)){
+			else if(NETFileFunctions.isInList(s1,NETFileParameter.VERTEX_COLOR_PARAMETER_LIST)){
 
 
 				try{
@@ -438,28 +453,56 @@ public class NETVertex {
 		this.bc = s;
 	}
 	
+	
 	private void setBorderWidth(float f){
 		NETVertex.Attributes.put("bw", "float");
 		this.bw = f;
 	}
+	private void setBorderWidth(String s) throws Exception{
+		float f = NETFileFunctions.asAFloat(s);
+		if(f <= 0)
+			throw new Exception("The border width must be greater than 0.0");
+		this.setBorderWidth(f);
+	}
 	
-	private void setInternalColor(String s){
-		NETVertex.Attributes.put("ic", "string");
+	
+	private void setInternalColor(String s) throws Exception{
+		if(NETFileFunctions.isInList(s, NETFileColor.VERTEX_COLOR_LIST)){
+		NETVertex.Attributes.put(NETFileParameter.PARAMETER_IC, "string");
 		this.ic = s;
+		}
+		else
+			throw new Exception(s + "is an invalid color selection");
+		
 	}
 	private void setFontSize(float f){
 		NETVertex.Attributes.put("fos", "float");
 		this.fos = f;
 	}
 
+	
 	private void setLabelAngle(float f){
-		NETVertex.Attributes.put("la", "float");
+		NETVertex.Attributes.put(NETFileParameter.PARAMETER_LA, "float");
 		this.la = f;
+	}
+	private void setLabelAngle(String s) throws Exception{
+		float f = NETFileFunctions.asAFloat(s);
+		if((f >= 0) && (f <= 360))
+			this.setLabelAngle(f);
+		else
+			throw new Exception("The label angle must be between 0 and 360, inclusive");
 	}
 	
 	private void setLabelPhi(float f){
-		NETVertex.Attributes.put("lphi", "float");
+		NETVertex.Attributes.put(NETFileParameter.PARAMETER_LPHI, "float");
 		this.lphi = f;
+	}
+	private void setLabelPhi(String s) throws Exception {
+		float f = NETFileFunctions.asAFloat(s);
+		if((f >= 0) && (f <= 360))
+			this.setLabelPhi(f);
+		else
+			throw new Exception("The label position in degrees must be between 0 and 360, inclusive");
 	}
 	
 	private void setLabelRadius(float f){
@@ -467,8 +510,22 @@ public class NETVertex {
 		this.lr = f;
 	}
 	
-
+	private void setLabelRadius(String s) throws Exception{
+		float f = NETFileFunctions.asAFloat(s);
+		if(f <= 0)
+			throw new Exception("The Label radius must be greater than 0.0");
+		this.setLabelRadius(f);
+	}
 	
+	private void setLabelColor(String s) throws Exception{
+		if(NETFileFunctions.isInList(s, NETFileColor.VERTEX_COLOR_LIST)){
+			NETVertex.Attributes.put(NETFileParameter.PARAMETER_LC, "string");
+			this.ic = s;
+			}
+			else
+				throw new Exception(s + " is an invalid color selection");
+			
+	}
 	
 	private void setXScaleFactor(float f){
 		NETVertex.Attributes.put(NETFileParameter.PARAMETER_X_FACT, "float");
@@ -477,10 +534,10 @@ public class NETVertex {
 	
 	private void setXScaleFactor(String s) throws Exception{
 		float f = NETFileFunctions.asAFloat(s);
-		if(f > 0)
+		if(f <= 0)
+			throw new Exception("Scale factor must be greater than 0.0");
 		this.setXScaleFactor(f);
-		else
-			throw new Exception("Scale factor must be greater than 0.0");		
+					
 	}
 	
 	
@@ -526,7 +583,7 @@ public class NETVertex {
 	private void setDiamondRatio(String s) throws Exception{
 		float f = NETFileFunctions.asAFloat(s);
 		if(f > 0)
-			this.setCornerRadius(f);
+			this.setDiamondRatio(f);
 		else
 			throw new Exception("The Diamond scaling ratio must be greater than 0.0");
 		try {

@@ -535,16 +535,7 @@ public class ValidateNETFile {
 		}	*/
 	}
 
-	public static boolean isInList(String s, String...strings){
-		boolean value = false;
-		if(strings != null){
-			for(String st : strings){
-				if(s.equalsIgnoreCase(st))
-					return true;
-			}
-		}
-		return value;
-	}
+	
 
 
 }

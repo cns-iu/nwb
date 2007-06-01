@@ -116,4 +116,15 @@ public class NETFileFunctions {
 		return true;
 	}
 
+	protected static boolean isInList(String s, String...strings){
+		boolean value = false;
+		if(strings != null){
+			for(String st : strings){
+				if(s.equalsIgnoreCase(st))
+					return true;
+			}
+		}
+		return value;
+	}
+	
 }
