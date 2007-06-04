@@ -19,6 +19,11 @@ import org.cishell.framework.data.BasicData;
 import org.cishell.framework.data.Data;
 import org.cishell.service.guibuilder.GUIBuilderService;
 import org.osgi.service.log.LogService;
+
+import edu.iu.nwb.converter.edgelist.EdgeListValidatorFactory;
+import edu.iu.nwb.converter.edgelist.EdgeListValidatorFactory.EdgeListValidator;
+import edu.iu.nwb.converter.edgelist.EdgeListValidatorFactory.ValidateEdgeFile;
+
 import java.util.HashMap;
 
 
@@ -49,138 +54,17 @@ public class EdgeListToNWB implements Algorithm {
         this.logger = (LogService)ciContext.getService(LogService.class.getName());
     }
 
-    /* handle this merging of tokens with tail recursion */
-    public String[] tokenmanage (String[] tokens, int startFrom) {
-    	
-    	int i;
-    	int j;
-    	String newtokens[];
-    	boolean breakflag = false;
-    	for (i = startFrom;i < tokens.length;i++) {
-    		if (breakflag) break;
-    		// find "\"\w" tokens (position i) and match them with end tokens (position j)
-    		// once matched and merged, set i = j, rinse and repeat
-    		if (tokens[i].matches("\".*\"")) { // it's  a single word, quoted
-    			// continue
-    	
-    		}
-    		else if (tokens[i].matches("\".*\".*")) { // end-quote happens in the middle of the token
-    			// probably we should just continue...
-    	
-    		}
-    		else if (tokens[i].startsWith("\"")) {
-    			// starts with ", but since previous ifs didn't match, we know it doesn't end
-    			// with " or have a " in the middle
-    	
-    			j = i+1;
-    			if (j < tokens.length) {
-    				for (;j < tokens.length;j++) {
-    					if (tokens[j].matches(".*\"")) {
-    						newtokens = tokenmerge(tokens,i,j);
-    						return tokenmanage(newtokens, i+1);
-    		/*				breakflag = true;
-    						break;*/
 
-    					}
-    				}
-    			}
-    		}
-
-    	}
-    	return tokens;
-    }
-    
-    /*
-     * Takes a String[] of tokens and merges all tokens from index i to index j
-     * Returns the number of 
-     */
-    public String[] tokenmerge(String[] tokens, int i, int j) {
-    	
-    	int x,y;
-    	String [] out = new String[tokens.length - (j - i)];
-    	String merged = "";
-    	for (y = i;y < j+1;y++){
-    		//System.out.println("-  merging.  y="+y+"; j="+j+"\n");
-    	    if (y == j) {
-    	    	merged = merged.concat(tokens[y]);
-    	    } else {
-    	    	merged = merged.concat(tokens[y] + " ");	
-    	    }
-    		
-    	}
-    	for (x=0;x < tokens.length - (j - i);x++) {
-    		//constructing result string.  
-    		if (x < i) {
-    			out[x] = tokens[x];
-    		}
-    		else if (x == i) {
-    			out[x] = merged;
-    		} else { // x > i
-    			out[x] = tokens[x + (j - i)];
-    		}
-    	}
-    	return out;
-    }
-    
     /*
      * Reads edgelist data in from reader and outputs it as NWB data to writer
      */
-    public void transform(BufferedReader reader, BufferedWriter writer)  
+    public void transform(BufferedReader reader, BufferedWriter writer,  EdgeListValidatorFactory.ValidateEdgeFile validator)  
     	throws IOException {
-    	ArrayList edgelist = new ArrayList();
-		String currentLine;
-		String[] tokens;	
-		int i=0,edgesCount=0;
-		HashMap map = new HashMap();
-		int mapCount = 1;
-		int weightCount = 0;
-		int l;
-		String [] mergedTokens;
-		int lineCounter = 1;
+    	int i=0,edgesCount;
 		boolean badFormat = false;
+		ArrayList validatorEdges = new ArrayList();
 		
 		try {
-			while ((currentLine = reader.readLine()) != null) {
-				if (currentLine.matches("\\s*")) {
-					continue;
-				}
-				tokens = currentLine.trim().split("\\s+");
-				if (tokens.length < 2) {
-					badFormat = true;
-					break;
-				}
-				mergedTokens = tokenmanage(tokens,0);
-				
-				// need to merge tokens that look like "\"\w"  with ending-quoted tokens that look like
-				// "\w\"" and all those in between...
-				// this should rewrite the array, tokens
-				// so that the following code can work (relatively) unchanged
-
-				for(i = 0;i < mergedTokens.length;i++){
-					if (!map.containsKey(mergedTokens[i]) && mergedTokens[i].matches("\".*\"") && i < 2) 
-					{ //	looks like "xyz" but we are not in third column
-						map.put(mergedTokens[i], new Integer(mapCount++));
-						
-					}
-					else if (!map.containsKey("\""+mergedTokens[i]+"\"") && i < 2)
-					{ // we are not in third column, unquoted data 
-						
-						mergedTokens[i] ="\""+mergedTokens[i]+"\""; 
-						map.put(mergedTokens[i], new Integer(mapCount++));
-					} else if (map.containsKey("\""+mergedTokens[i]+"\"") && i < 2) {
-						mergedTokens[i] ="\""+mergedTokens[i]+"\"";
-					}
-
-					if (i > 1) {
-						weightCount++;
-					}
-				}
-
-				
-				edgelist.add(mergedTokens);
-				edgesCount++;
-				lineCounter++;
-			}
 			if (badFormat) {
 				GUIBuilderService guiBuilder =   (GUIBuilderService)ciContext.getService(GUIBuilderService.class.getName());
 				guiBuilder.showError("Bad NWB Format",
@@ -192,31 +76,45 @@ public class EdgeListToNWB implements Algorithm {
 				throw (new IOException("Improperly formatted edgelist file"));
 			}
 			// currentLine is null
-			writer.write("*Nodes "+map.size()+"\n");
+			HashMap validatorMap = validator.getLabelIDMap(); 
+			Iterator it = validatorMap.entrySet().iterator();
+			
+			validatorEdges = validator.getEdges();
+			writer.write("*Nodes "+validatorMap.size()+"\n");
 			writer.write("id*int  label*string\n");
-			Iterator it = map.entrySet().iterator();
+			
 			while (it.hasNext()) {
 				Map.Entry pairs = (Map.Entry)it.next();
 			
 				writer.write(((Integer)(pairs.getValue())).intValue() + " " +pairs.getKey() +"\n");
 			}
-			writer.write("*UndirectedEdges "+edgesCount+"\n");
-			if (weightCount == 0) {
+			edgesCount = validator.getTotalNumOfEdges();
+			if (validator.isUndirectedGraph()) { 
+				writer.write("*UndirectedEdges "+edgesCount+"\n");
+			} else {
+				writer.write("*DirectedEdges "+edgesCount+"\n");
+			}
+			if (validator.getWeightCount() == 0) {
 				writer.write("source*int  target*int\n");
 			} else {// weightCount > 1
-				writer.write("source*int  target*int  weight*int\n");
+				if (validator.usesFloatWeight()) {
+					writer.write("source*int  target*int  weight*float\n");
+				} else {
+					writer.write("source*int  target*int  weight*int\n");	
+				}
+				
 			}
-			for (i=0;i<edgelist.size();i++){
-				if (((String[])(edgelist.get(i))).length > 2) { // this tuple has a weight value
+			for (i=0;i<validatorEdges.size();i++){
+				if (((String[])(validatorEdges.get(i))).length > 2) { // this tuple has a weight value
 					try {
 					
-						writer.write(((Integer)map.get(((String[])(edgelist.get(i)))[0])).intValue() + " " + ((Integer)map.get(((String[])(edgelist.get(i)))[1])).intValue() + " " + ((String[])(edgelist.get(i)))[2] +"\n");
+						writer.write(((Integer)validatorMap.get(((String[])(validatorEdges.get(i)))[0])).intValue() + " " + ((Integer)validatorMap.get(((String[])(validatorEdges.get(i)))[1])).intValue() + " " + ((String[])(validatorEdges.get(i)))[2] +"\n");
 					} catch (NullPointerException e) {
 						e.printStackTrace();
 					}
 				} else { // only source, target were found in this tuple
 					try {
-						writer.write(((Integer)map.get(((String[])(edgelist.get(i)))[0])).intValue() + " " + ((Integer)map.get(((String[])(edgelist.get(i)))[1])).intValue() +"\n");
+						writer.write(((Integer)validatorMap.get(((String[])(validatorEdges.get(i)))[0])).intValue() + " " + ((Integer)validatorMap.get(((String[])(validatorEdges.get(i)))[1])).intValue() +"\n");
 					} catch (NullPointerException e) {
 						e.printStackTrace();
 					}
@@ -242,9 +140,11 @@ public class EdgeListToNWB implements Algorithm {
      */
     public Data[] execute() {
 		File inFile = (File)data[0].getData();
+		File outFile;
     	BufferedReader edgelistreader;
 		BufferedWriter nwb;
-		
+		EdgeListValidatorFactory eLVFact;
+		ValidateEdgeFile validator;
 			
 			
 		// BufferedReader wrapping a FileReader -- should give you readline
@@ -268,7 +168,15 @@ public class EdgeListToNWB implements Algorithm {
 			return null;
 		}
 		try {
-			transform(edgelistreader, nwb);
+			eLVFact = new EdgeListValidatorFactory();
+			validator = eLVFact.new ValidateEdgeFile();
+			validator.validateEdgeFormat(inFile);
+			if (validator.getValidationResult()) {
+				
+				ArrayList edges = validator.getEdges();
+				 
+				transform(edgelistreader, nwb, validator);
+			}
 			return new Data[] {new BasicData(nwbFile, "file:text/nwb")};
 		} catch (Exception e ) {
 			e.printStackTrace();

@@ -6,7 +6,9 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Dictionary;
+import java.util.HashMap;
 //OSGi
 import org.osgi.service.component.ComponentContext;
 import org.osgi.service.metatype.MetaTypeProvider;
@@ -112,10 +114,20 @@ public class EdgeListValidatorFactory implements AlgorithmFactory {
 		   private int currentLine;
 		   private StringBuffer errorMessages = new StringBuffer();
 		   private boolean isFileGood = true;
-
+		   private int totalNumOfNodes = 0;
+		   
+		   private ArrayList edgelist = new ArrayList();
+		   private String[] currentTokens;
+		   private int edgesCount = 0;
+		   private HashMap labelIDMap = new HashMap();
+		   private int mapCount = 1;
+		   private int weightCount = 0;
+		   private boolean weightUseFloat=false;
+		   private boolean isUndirected = true;
+		   
 		   /* handle this merging of tokens with tail recursion */
 		   public String[] tokenmanage (String[] tokens, int startFrom) {
-			   //System.out.println("entering tokenmanage\n");
+
 			   int i;
 			   int j;
 			   String newtokens[];
@@ -151,6 +163,7 @@ public class EdgeListValidatorFactory implements AlgorithmFactory {
 				   }
 
 			   }
+			   this.currentTokens = tokens;
 			   return tokens;
 		   }
 
@@ -186,13 +199,44 @@ public class EdgeListValidatorFactory implements AlgorithmFactory {
 
 
 		   public String getErrorMessages() {
-			   return errorMessages.toString();
+			   return this.errorMessages.toString();
 		   }
 
 		   public boolean getValidationResult() {
-			   return isFileGood;
+			   return this.isFileGood;
 		   }
+		   
+		   public int getTotalNumOfNodes() {
+				return this.totalNumOfNodes;
+			}
 
+		   public int getWeightCount() {
+			   return this.weightCount;
+		   }
+		   
+		   public HashMap getLabelIDMap() {
+			   return this.labelIDMap;
+		   }
+		   
+		   public ArrayList getEdges() {
+			   return this.edgelist;
+		   }
+		   
+		   public int getTotalNumOfEdges () {
+			   return this.edgesCount;
+		   }
+		   
+		   public boolean isUndirectedGraph () {
+			   return this.isUndirected;
+		   }
+		   
+		   public boolean isDirectedGraph() {
+			   return !this.isUndirected;
+		   }
+		   
+		   public boolean usesFloatWeight() {
+			   return this.weightUseFloat;
+		   }
 		  
 		   /*
 		    * validateEdgeFormat invokes processFile with a BufferedReader corresponding to the file
@@ -202,7 +246,7 @@ public class EdgeListValidatorFactory implements AlgorithmFactory {
 		    */
 		   public void validateEdgeFormat(File fileHandler)
 		   throws FileNotFoundException, IOException, EdgeFormat {
-			   //System.out.println("inside validateEdgeFormat\n");
+			
 			   currentLine = 0;
 			   BufferedReader reader = new BufferedReader(new FileReader(fileHandler));
 			   try {
@@ -217,16 +261,30 @@ public class EdgeListValidatorFactory implements AlgorithmFactory {
 		   }
 		   
 		   public void processFile(BufferedReader reader) throws EdgeFormat, IOException {
-			   //System.out.println("inside processFile method\n");
 			   String line = reader.readLine();
 
 			   while (line != null && isFileGood) {
 				   currentLine++;
-				   //System.out.println("inside while loop at processFile. currentLine = "+currentLine+"\n");
+				   
+				   
+				   if (currentLine == 1 && line.matches("^directed\\s*$")) {
+					   this.isUndirected = false;
+					   line = reader.readLine();
+					   continue;
+				   }
+				   if (currentLine == 1 && line.matches("^undirected\\s*$")) {
+					   this.isUndirected = true;
+					   line = reader.readLine();
+					   continue;
+				   }
 				   // process section header that looks like
 				   // *nodes or *nodes 1000
+				   if (line.matches("^\\s*$")) { // skip blank lines
+					   line = reader.readLine();
+					   continue;
+				   }
 				   if (this.validateEdge(line) && isFileGood) {
-					   //System.out.println("inside validateEdge clause\n");
+					   
 					   processEdge(line);
 					   if (isFileGood) {
 						   this.checkFile();
@@ -234,6 +292,7 @@ public class EdgeListValidatorFactory implements AlgorithmFactory {
 					   line = reader.readLine();
 					   continue;
 				   } else {
+					   this.isFileGood = false;
 					   throw new EdgeFormat();
 				   }
 				 
@@ -246,6 +305,10 @@ public class EdgeListValidatorFactory implements AlgorithmFactory {
 		    */
 		   public void processEdge(String s) {
 			   
+			   if (this.currentTokens != null) {
+				   this.edgelist.add(this.currentTokens);
+			   }
+			   
 		   }
 		   
 		   /*
@@ -255,10 +318,11 @@ public class EdgeListValidatorFactory implements AlgorithmFactory {
 		    * 	case2-> "node1 node2							<no matching end-quote in this line>
 		    * 	case3-> node1 node2"							<no matching begin-quote in this line>
 		    * 	case4-> "" node2								<empty node name>
-		    * 	case5-> node1	node2	three				<weight must be an int OR float value>
+		    * 	case5-> node1	node2	three				    <weight must be an int OR float value>
 		    */
 		   public boolean validateEdge(String s) {
-			   //System.out.println("inside validateEdge\n");
+			   int i;
+			   
 			   String[] tokens = tokenmanage(s.trim().split("\\s+"),0);
 			   if (tokens.length < 2) { // case 1 
 				   return false;
@@ -266,9 +330,36 @@ public class EdgeListValidatorFactory implements AlgorithmFactory {
 				   return false;
 			   } else if (s.matches(".*\"\".*")) { // case 4
 				   return false;
-			   } else if (tokens.length > 2 && !tokens[2].matches("[0-9]+")) { // case 5
+			   } else if (tokens.length > 2 && !tokens[2].matches("[0-9]+") && !tokens[2].matches("[0-9]+\\.[0-9]+")) { // case 5
 				   return false;
 			   } else {  // if none of the above clauses are true, this line is OK.
+				   for(i = 0;i < tokens.length;i++){
+						if (!labelIDMap.containsKey(tokens[i]) && tokens[i].matches("\".*\"") && i < 2) 
+						{ //	looks like "xyz" but we are not in third column
+							labelIDMap.put(tokens[i], new Integer(mapCount++));
+							
+						}
+						else if (!labelIDMap.containsKey("\""+tokens[i]+"\"") && !tokens[i].matches( "\".*\"") &&i < 2)
+						{ // we are not in third column, unquoted data 
+							
+							tokens[i] ="\""+tokens[i]+"\""; 
+							labelIDMap.put(tokens[i], new Integer(mapCount++));
+						} else if (labelIDMap.containsKey("\""+tokens[i]+"\"") && i < 2) {
+							
+							tokens[i] ="\""+tokens[i]+"\"";
+						}
+
+						if (i > 1) {
+							weightCount++;
+						}
+					}
+				   if (tokens.length > 2 && tokens[2].matches("[0-9]+\\.[0-9]+")) { // float
+					   this.weightUseFloat = true;
+				   }
+				   
+				   this.currentTokens = tokens;
+				  
+				   this.edgesCount++;
 				   return true;
 			   }
 		   }
