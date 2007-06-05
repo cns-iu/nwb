@@ -257,7 +257,7 @@ public class EdgeListValidatorFactory implements AlgorithmFactory {
 		   }
 		   
 		   public class EdgeFormat extends Exception {
-			   
+			  
 		   }
 		   
 		   public void processFile(BufferedReader reader) throws EdgeFormat, IOException {
@@ -266,12 +266,13 @@ public class EdgeListValidatorFactory implements AlgorithmFactory {
 			   while (line != null && isFileGood) {
 				   currentLine++;
 				   
-				   
+				   // When first line matches "directed", graph is directed
 				   if (currentLine == 1 && line.matches("^directed\\s*$")) {
 					   this.isUndirected = false;
 					   line = reader.readLine();
 					   continue;
 				   }
+				   // Can also specify "undirected" for undirected graph
 				   if (currentLine == 1 && line.matches("^undirected\\s*$")) {
 					   this.isUndirected = true;
 					   line = reader.readLine();
@@ -304,7 +305,8 @@ public class EdgeListValidatorFactory implements AlgorithmFactory {
 		    * This method saves information about the edge in this object
 		    */
 		   public void processEdge(String s) {
-			   
+			  // this could stand to be reworked, most of the state-changing
+			  // operations occur in validateEdge 
 			   if (this.currentTokens != null) {
 				   this.edgelist.add(this.currentTokens);
 			   }
@@ -345,7 +347,7 @@ public class EdgeListValidatorFactory implements AlgorithmFactory {
 							tokens[i] ="\""+tokens[i]+"\""; 
 							labelIDMap.put(tokens[i], new Integer(mapCount++));
 						} else if (labelIDMap.containsKey("\""+tokens[i]+"\"") && i < 2) {
-							
+							// if quoted token is already present in the hash, go ahead and quote the token
 							tokens[i] ="\""+tokens[i]+"\"";
 						}
 
@@ -353,7 +355,8 @@ public class EdgeListValidatorFactory implements AlgorithmFactory {
 							weightCount++;
 						}
 					}
-				   if (tokens.length > 2 && tokens[2].matches("[0-9]+\\.[0-9]+")) { // float
+				   if (tokens.length > 2 && tokens[2].matches("[0-9]+\\.[0-9]+")) { 
+					   // weight token is float
 					   this.weightUseFloat = true;
 				   }
 				   

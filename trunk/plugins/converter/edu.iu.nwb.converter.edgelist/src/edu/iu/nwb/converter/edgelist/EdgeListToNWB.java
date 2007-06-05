@@ -21,7 +21,6 @@ import org.cishell.service.guibuilder.GUIBuilderService;
 import org.osgi.service.log.LogService;
 
 import edu.iu.nwb.converter.edgelist.EdgeListValidatorFactory;
-import edu.iu.nwb.converter.edgelist.EdgeListValidatorFactory.EdgeListValidator;
 import edu.iu.nwb.converter.edgelist.EdgeListValidatorFactory.ValidateEdgeFile;
 
 import java.util.HashMap;
@@ -57,6 +56,7 @@ public class EdgeListToNWB implements Algorithm {
 
     /*
      * Reads edgelist data in from reader and outputs it as NWB data to writer
+     * @author Felix Terkhorn
      */
     public void transform(BufferedReader reader, BufferedWriter writer,  EdgeListValidatorFactory.ValidateEdgeFile validator)  
     	throws IOException {
@@ -85,7 +85,7 @@ public class EdgeListToNWB implements Algorithm {
 			
 			while (it.hasNext()) {
 				Map.Entry pairs = (Map.Entry)it.next();
-			
+				// print node IDs followed by node stringlabels
 				writer.write(((Integer)(pairs.getValue())).intValue() + " " +pairs.getKey() +"\n");
 			}
 			edgesCount = validator.getTotalNumOfEdges();
@@ -95,8 +95,10 @@ public class EdgeListToNWB implements Algorithm {
 				writer.write("*DirectedEdges "+edgesCount+"\n");
 			}
 			if (validator.getWeightCount() == 0) {
+				// if there are no weights in the edgelist, there will be no weights in the NWB output
 				writer.write("source*int  target*int\n");
 			} else {// weightCount > 1
+				
 				if (validator.usesFloatWeight()) {
 					writer.write("source*int  target*int  weight*float\n");
 				} else {
@@ -105,6 +107,7 @@ public class EdgeListToNWB implements Algorithm {
 				
 			}
 			for (i=0;i<validatorEdges.size();i++){
+				// step through edges and output corresponding NWB edge definition
 				if (((String[])(validatorEdges.get(i))).length > 2) { // this tuple has a weight value
 					try {
 					
@@ -134,13 +137,12 @@ public class EdgeListToNWB implements Algorithm {
     }
     
     /**
-     * Executes the conversion
+     * Executes the conversion from edgelist format to NWB format
      * 
      * @return A single java file object
      */
     public Data[] execute() {
 		File inFile = (File)data[0].getData();
-		File outFile;
     	BufferedReader edgelistreader;
 		BufferedWriter nwb;
 		EdgeListValidatorFactory eLVFact;
@@ -169,14 +171,15 @@ public class EdgeListToNWB implements Algorithm {
 		}
 		try {
 			eLVFact = new EdgeListValidatorFactory();
+			// validate the file.  file information is given by various methods
+			// of the validator.
 			validator = eLVFact.new ValidateEdgeFile();
 			validator.validateEdgeFormat(inFile);
 			if (validator.getValidationResult()) {
-				
-				ArrayList edges = validator.getEdges();
-				 
+				// if it's a valid edgelist, go ahead with conversion 
 				transform(edgelistreader, nwb, validator);
 			}
+			// should there be an else clause here?
 			return new Data[] {new BasicData(nwbFile, "file:text/nwb")};
 		} catch (Exception e ) {
 			e.printStackTrace();
