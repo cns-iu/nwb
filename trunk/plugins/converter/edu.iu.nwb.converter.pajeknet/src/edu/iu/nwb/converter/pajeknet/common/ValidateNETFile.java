@@ -268,11 +268,11 @@ public class ValidateNETFile {
 
 	public void processVertices(String s){
 		s = s.toLowerCase();
-		for(NETAttribute na : NETVertex.getVertexAttributes()){
+		/*for(NETAttribute na : NETVertex.getVertexAttributes()){
 			System.out.println(na.getAttrName()+ ":  :" + na.getDataType());
 		}
 		System.out.println("-----");
-		
+		*/
 		/*
 		 * 
 		 * This will process the node list, there are no headers in .net so we don't check for that
@@ -284,7 +284,8 @@ public class ValidateNETFile {
 			else {
 				try{
 					NETVertex nv = new NETVertex(s);
-					//System.out.println(nv.isValid());
+					
+					System.out.println(nv);
 			
 				}
 				catch (NumberFormatException nfe){

@@ -1,47 +1,35 @@
 package edu.iu.nwb.converter.pajeknet.common;
 
+import java.awt.GraphicsEnvironment;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Queue;
+import java.util.TreeSet;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
 public class NETVertex {
 	private static Map<String,String> Attributes = new LinkedHashMap<String,String>();
+	private Map<String, Float> Numeric_Parameters;
+	private Map<String, String> String_Parameters;
 	private int id = -1;
 	
-	private float xpos;
-	private float ypos;
-	private float zpos;
-
-	private float size;
-	private float x_fact;
-	private float y_fact;
-	private float phi;
-	private float r;
-	private float q;
-	private float bw;
-	private float la;
-	private float lr;
-	private float lphi;
-	private float fos;
-
 	private String label = null;
-	private String ic;
-	private String bc;
-	private String font;
-	private String shape;
+	
 
 	private boolean valid = false;
 
 	public NETVertex(){
-
+		this.Numeric_Parameters = new ConcurrentHashMap<String, Float>();
+		this.String_Parameters = new ConcurrentHashMap<String,String>();
 	}
 
 	public NETVertex(String s) throws Exception {
 		String[] properties = NETFileFunctions.processTokens(s);
-
+		this.Numeric_Parameters = new ConcurrentHashMap<String, Float>();
+		this.String_Parameters = new ConcurrentHashMap<String,String>();
 		this.valid = testVertices(properties);
 		
 	}
@@ -155,7 +143,7 @@ public class NETVertex {
 
 
 			}
-			else if(NETFileFunctions.isInList(s1,NETFileParameter.VERTEX_COLOR_PARAMETER_LIST)){
+			else if(NETFileFunctions.isInList(s1,NETFileParameter.VERTEX_STRING_PARAMETER_LIST)){
 
 
 				try{
@@ -191,7 +179,7 @@ public class NETVertex {
 		{
 			NETFileFunctions.isAnInteger(s[0], NETFileProperty.ATTRIBUTE_ID);
 			NETFileFunctions.isAString (s[1], NETFileProperty.ATTRIBUTE_LABEL);
-			this.setID(new Integer(s[0]).intValue());
+			this.setID(s[0]);
 			this.setLabel(s[1]);
 			NETAttribute netAttr = new NETAttribute
 			(NETFileProperty.ATTRIBUTE_ID, NETFileProperty.TYPE_INT);	
@@ -313,7 +301,13 @@ public class NETVertex {
 			else if(s1.equalsIgnoreCase(NETFileParameter.PARAMETER_LA)){
 				this.setLabelAngle(s2);
 			}
-			boolean b1 = false ,b2 = false;
+			else if(s1.equalsIgnoreCase(NETFileParameter.PARAMETER_FONT)){
+					this.setFont(s2,qs);	
+			}
+			else if(s1.equalsIgnoreCase(NETFileParameter.PARAMETER_LPHI)){
+				this.setLabelPhi(s2);
+			}
+		/*	boolean b1 = false ,b2 = false;
 			if(NETFileFunctions.isInList(s1,NETFileParameter.VERTEX_NUMBER_PARAMETER_LIST)){
 
 				try{
@@ -346,7 +340,7 @@ public class NETVertex {
 
 				}
 
-			} 
+			} */
 			else if(s1.startsWith(NETFileProperty.PREFIX_COMMENTS)){
 				qs.clear();
 				break;
@@ -365,33 +359,65 @@ public class NETVertex {
 	 * Setters
 	 **********************/
 	
-	private void setID(int i) throws Exception{
+	/*
+	 * setID
+	 * setID sets the ID of each vertex. The public version takes in a string and
+	 * tries to cast it as an integer. If it succeeds, then checks to see if it is
+	 * greater than 0. If that succeeds, then the id is set.
+	 * written by: Tim Kelley
+	 */
+	
+	private void setID(int i){
+		this.id = i;
+	}
+	public void setID(String s) throws Exception{
+		int i = new Float(NETFileFunctions.asAFloat(s)).intValue();
 		if(i < 0){
 			throw new NumberFormatException("Vertex ID must be greater than 0");
 		}
-		this.id = i;
+		this.setID(i);
 	}
 	
-	private void setLabel(String s){
+	/*
+	 * setLabel
+	 * setLabel sets the label of the vertex. If the label does not start and end with a quotations, it throws
+	 * an exception.
+	 * written by: Tim Kelley
+	 */
+	
+	
+	public void setLabel(String s) throws Exception{
+		if(s.startsWith("\"") && s.endsWith("\""))
 		this.label = s;
+		else
+			throw new Exception("The label must begin and end with \"\'s");
 	}
+
+	/*
+	 * setPos
+	 * the setPos function takes in a string telling which positional data to set
+	 * and calls the required set?Pos(float) function. Those functions add the
+	 * positional data attributes to the attribute list and add the values to
+	 * the numeric value attributes.
+	 * written by: Tim Kelley
+	 */
 	
 	private void setXpos(float f){
 		NETVertex.Attributes.put("xpos", "float");
-		this.xpos = f;
+		this.Numeric_Parameters.put("xpos", f);
 	}
 	
 	private void setYpos(float f){
 		NETVertex.Attributes.put("ypos", "float");
-		this.ypos = f;
+		this.Numeric_Parameters.put("ypos", f);
 	}
 	
 	private void setZpos(float f){
 		NETVertex.Attributes.put("zpos", "float");
-		this.zpos = f;
+		this.Numeric_Parameters.put("zpos", f);
 	}
 	
-	private void setPos(String s, float f){
+	public void setPos(String s, float f){
 		switch(s.charAt(0)){
 		case 'x':
 		case 'X':
@@ -408,18 +434,36 @@ public class NETVertex {
 		}
 	}
 	
-	private void setShape(String s){
+	/*
+	 * setShape
+	 * setShape attempts to set the shape of a vertex. If the shape is not in the recognized shape list
+	 * it throws an exception saying so.
+	 * written by: Tim Kelley
+	 */
+	
+	public void setShape(String s) throws Exception{
+		if(!NETFileFunctions.isInList(s, NETFileShape.ATTRIBUTE_SHAPE_LIST))
+			throw new Exception(s + " is an unknown shape");
 		NETVertex.Attributes.put("shape", "string");
-		this.shape = s;
+		this.String_Parameters.put("shape", s);
 	}
+	
+	/*
+	 * setPhi
+	 * phi is a positional angle of the object. theSetPhi(String) takes in a string value,
+	 * casts it to a float and establishes the phi attribute in the attribute list and sets the 
+	 * attribute value for the vertex. It throws an exception if the string is not a float, or,
+	 * if the float value is not between 0 and 360 degrees inclusive.
+	 * written by: Tim Kelley
+	 */
 	
 	
 	
 	private void setPhi(float f){
 		NETVertex.Attributes.put(NETFileParameter.PARAMETER_PHI, "float");
-		this.phi = f;
+		this.Numeric_Parameters.put(NETFileParameter.PARAMETER_PHI, f);
 	}
-	private void setPhi(String s) throws Exception{
+	public void setPhi(String s) throws Exception{
 			float f = NETFileFunctions.asAFloat(s);
 			if((f >= 0) && (f <= 360))
 				this.setPhi(f);
@@ -427,13 +471,20 @@ public class NETVertex {
 				throw new Exception("Value must be between 0 and 360, inclusive");
 	}
 	
+	/*
+	 * setSize
+	 * setSize takes a String, casts it as a float. Size must be greater than 0, and so setSize throws an
+	 * Exception when either the String is not a float value, or if the float value is less than or equal to
+	 * zero.
+	 * written by: Tim Kelley
+	 */
+	
 	
 	private void setSize(float f){
-		NETVertex.Attributes.put(NETFileParameter.PARAMETER_SIZE, "string");
-		this.size = f;
+		NETVertex.Attributes.put(NETFileParameter.PARAMETER_SIZE, "float");
+		this.Numeric_Parameters.put(NETFileParameter.PARAMETER_SIZE, f);
 	}
-	
-	private void setSize(String s) throws Exception{
+	public void setSize(String s) throws Exception{
 			float f = NETFileFunctions.asAFloat(s);
 			if(f > 0)
 				this.setSize(f);
@@ -442,23 +493,78 @@ public class NETVertex {
 	}
 	
 	
-	private void setFont(String s){
-		NETVertex.Attributes.put("font", "string");
-		this.font = s;
+	
+	/*
+	 * setFont
+	 * setFont takes a string and a queue of strings and compares them with the system font list. If the
+	 * listed font is not found on the system, it throws an exception, otherwise, it sets the font attribute
+	 * in the attribute list and sets the font value for the vertex.
+	 * written by: Tim Kelley
+	 */
+	private TreeSet<String> setFontPrime(String s, TreeSet<String> ss){
+		String compare = s;
+		TreeSet<String> ts = new TreeSet<String>();
+		compare = compare.toLowerCase();
+		for(String st : ss){
+			if(st.startsWith(s)){
+				ts.add(st);
+			}
+		}
+		return ts;
+	}
+	public void setFont(String s, Queue<String> qs) throws Exception{
+		String[] fonts = GraphicsEnvironment.getLocalGraphicsEnvironment().getAvailableFontFamilyNames();
+		TreeSet<String> compareList = new TreeSet<String>();
+		String compare = s;
+		for(String st : fonts){
+			String st2 = st.toLowerCase();
+			if(st2.startsWith(compare)){
+					compareList.add(st2);		
+			}
+		}	
+		
+		while(!qs.isEmpty()){
+			
+			String peekValue = qs.peek();
+			if(compareList.isEmpty())
+				throw new Exception(compare + " is not a recognized font on this system");
+			else if(NETFileFunctions.isInList(peekValue, NETFileParameter.VERTEX_NUMBER_PARAMETER_LIST) || NETFileFunctions.isInList(peekValue, NETFileParameter.VERTEX_STRING_PARAMETER_LIST))
+				break;
+			compare = compare + " " + qs.poll();
+			compareList = this.setFontPrime(compare, compareList);
+		}
+		NETVertex.Attributes.put(NETFileParameter.PARAMETER_FONT, "string");
+		this.String_Parameters.put(NETFileParameter.PARAMETER_FONT, compare);
 	}
 	
+	/*
+	 * setBorderColor
+	 * setBorderColor takes a string, compares it with a list of recognized colors. if the color is recognized
+	 * the function sets the border color attribute in the attribute list and the border color value for the vertex.
+	 * Otherwise, it throws an Exception.
+	 * written by: Tim Kelley
+	 */
 	
-	private void setBorderColor(String s){
-		NETVertex.Attributes.put("bc", "string");
-		this.bc = s;
+	public void setBorderColor(String s) throws Exception{
+		if(NETFileFunctions.isInList(s, NETFileColor.VERTEX_COLOR_LIST)){
+		NETVertex.Attributes.put(NETFileParameter.PARAMETER_BC, "string");
+		this.String_Parameters.put(NETFileParameter.PARAMETER_BC, s);
+		}
+		else
+			throw new Exception(s + " is not a valid color selection");
 	}
+	
+	/*
+	 * setBorderWidth
+	 * 
+	 */
 	
 	
 	private void setBorderWidth(float f){
-		NETVertex.Attributes.put("bw", "float");
-		this.bw = f;
+		NETVertex.Attributes.put(NETFileParameter.PARAMETER_BW, "float");
+		this.Numeric_Parameters.put(NETFileParameter.PARAMETER_BW, f);
 	}
-	private void setBorderWidth(String s) throws Exception{
+	public void setBorderWidth(String s) throws Exception{
 		float f = NETFileFunctions.asAFloat(s);
 		if(f <= 0)
 			throw new Exception("The border width must be greater than 0.0");
@@ -469,21 +575,30 @@ public class NETVertex {
 	private void setInternalColor(String s) throws Exception{
 		if(NETFileFunctions.isInList(s, NETFileColor.VERTEX_COLOR_LIST)){
 		NETVertex.Attributes.put(NETFileParameter.PARAMETER_IC, "string");
-		this.ic = s;
+		this.String_Parameters.put(NETFileParameter.PARAMETER_IC,s);
 		}
 		else
-			throw new Exception(s + "is an invalid color selection");
+			throw new Exception(s + " is not a valid color selection");
 		
 	}
+	
 	private void setFontSize(float f){
-		NETVertex.Attributes.put("fos", "float");
-		this.fos = f;
+		NETVertex.Attributes.put(NETFileParameter.PARAMETER_FOS, "float");
+		this.Numeric_Parameters.put(NETFileParameter.PARAMETER_FOS,f);
+	}
+	private void setFontSize(String s) throws Exception {
+		float f = NETFileFunctions.asAFloat(s);
+		if(f > 0){
+			this.setFontSize(f);
+		}
+		else
+			throw new Exception("The Font must be greater than 0.0");
 	}
 
 	
 	private void setLabelAngle(float f){
 		NETVertex.Attributes.put(NETFileParameter.PARAMETER_LA, "float");
-		this.la = f;
+		this.Numeric_Parameters.put(NETFileParameter.PARAMETER_LA, f);
 	}
 	private void setLabelAngle(String s) throws Exception{
 		float f = NETFileFunctions.asAFloat(s);
@@ -495,7 +610,7 @@ public class NETVertex {
 	
 	private void setLabelPhi(float f){
 		NETVertex.Attributes.put(NETFileParameter.PARAMETER_LPHI, "float");
-		this.lphi = f;
+		this.Numeric_Parameters.put(NETFileParameter.PARAMETER_LPHI, f);
 	}
 	private void setLabelPhi(String s) throws Exception {
 		float f = NETFileFunctions.asAFloat(s);
@@ -505,11 +620,12 @@ public class NETVertex {
 			throw new Exception("The label position in degrees must be between 0 and 360, inclusive");
 	}
 	
+	
+	
 	private void setLabelRadius(float f){
 		NETVertex.Attributes.put(NETFileParameter.PARAMETER_LR, "float");
-		this.lr = f;
+		this.Numeric_Parameters.put(NETFileParameter.PARAMETER_LR, f);
 	}
-	
 	private void setLabelRadius(String s) throws Exception{
 		float f = NETFileFunctions.asAFloat(s);
 		if(f <= 0)
@@ -520,7 +636,7 @@ public class NETVertex {
 	private void setLabelColor(String s) throws Exception{
 		if(NETFileFunctions.isInList(s, NETFileColor.VERTEX_COLOR_LIST)){
 			NETVertex.Attributes.put(NETFileParameter.PARAMETER_LC, "string");
-			this.ic = s;
+			this.String_Parameters.put(NETFileParameter.PARAMETER_LC, s);
 			}
 			else
 				throw new Exception(s + " is an invalid color selection");
@@ -529,9 +645,8 @@ public class NETVertex {
 	
 	private void setXScaleFactor(float f){
 		NETVertex.Attributes.put(NETFileParameter.PARAMETER_X_FACT, "float");
-		this.x_fact = f;
+		this.Numeric_Parameters.put(NETFileParameter.PARAMETER_X_FACT, f);
 	}
-	
 	private void setXScaleFactor(String s) throws Exception{
 		float f = NETFileFunctions.asAFloat(s);
 		if(f <= 0)
@@ -543,9 +658,8 @@ public class NETVertex {
 	
 	private void setYScaleFactor(float f){
 		NETVertex.Attributes.put(NETFileParameter.PARAMETER_Y_FACT, "float");
-		this.y_fact = f;
+		this.Numeric_Parameters.put(NETFileParameter.PARAMETER_Y_FACT, f);
 	}
-	
 	private void setYScaleFactor(String s) throws Exception{	
 			float f = NETFileFunctions.asAFloat(s);
 			if(f > 0)
@@ -557,7 +671,7 @@ public class NETVertex {
 	
 	private void setCornerRadius(float f){
 		NETVertex.Attributes.put(NETFileParameter.PARAMETER_R, "float");
-		this.r = f;
+		this.Numeric_Parameters.put(NETFileParameter.PARAMETER_R, f);
 	}
 	private void setCornerRadius(String s) throws Exception{
 		float f = NETFileFunctions.asAFloat(s);
@@ -578,7 +692,7 @@ public class NETVertex {
 	
 	private void setDiamondRatio(float f){
 		NETVertex.Attributes.put(NETFileParameter.PARAMETER_Q, "float");
-		this.q = f;
+		this.Numeric_Parameters.put(NETFileParameter.PARAMETER_Q, f);
 	}
 	private void setDiamondRatio(String s) throws Exception{
 		float f = NETFileFunctions.asAFloat(s);
@@ -615,29 +729,44 @@ public class NETVertex {
 	public String getLabel(){
 		return this.label;
 	}
+
 	
 	public int getID(){
 		return this.id;
 	}
 	
 	public float getXpos(){
-		return this.xpos;
+		return this.Numeric_Parameters.get("xpos");
 	}
 	
 	public float getYpos(){
-		return this.ypos;
+		return this.Numeric_Parameters.get("ypos");
 	}
 	
 	public float getZpos(){
-		return this.zpos;
+		return this.Numeric_Parameters.get("zpos");
 	}
 	
 	public String getShape() throws Exception{
-		return this.shape;
+		return this.String_Parameters.get("shape");
 	}
 	
 	public boolean isValid(){
 		return this.valid;
+	}
+	
+	public Object getAttribute(String s){
+		String st = NETVertex.Attributes.get(s);
+		if(st == null)
+			return null;
+		else if(s.equalsIgnoreCase(NETFileProperty.ATTRIBUTE_ID))
+			return this.getID();
+		else if(s.equalsIgnoreCase(NETFileProperty.ATTRIBUTE_LABEL))
+			return this.getLabel();
+		else if(st.equalsIgnoreCase("float"))
+			return this.Numeric_Parameters.get(s);
+		else 
+			return this.String_Parameters.get(s);
 	}
 	
 	/****************************
@@ -653,4 +782,17 @@ public class NETVertex {
 			return true;
 		return false;
 	}
+	
+	/************
+	 *  Output
+	 *************/
+	
+	public String toString(){
+		String output = "";
+		for(String s : NETVertex.Attributes.keySet()){
+			output += s + ":"+this.getAttribute(s) + " ";
+		}
+		return output;
+	}
+	
 }
