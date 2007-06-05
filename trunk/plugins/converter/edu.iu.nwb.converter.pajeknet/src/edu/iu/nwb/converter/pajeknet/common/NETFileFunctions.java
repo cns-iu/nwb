@@ -15,6 +15,7 @@ public class NETFileFunctions {
 					sl.add(st);
 				}
 				else if (st.startsWith("\"") && st.endsWith("\"")){
+					st.replace("\"", "");
 					sl.add(st);
 				}
 				else {
@@ -29,7 +30,7 @@ public class NETFileFunctions {
 				}
 				else if (st.endsWith("\"")){    				
 					bf.append(" "+st);
-					sl.add(bf.toString());
+					sl.add(bf.toString().replace("\"", ""));
 					bf = new StringBuffer();
 					append=false;
 				}
@@ -101,10 +102,12 @@ public class NETFileFunctions {
 	}    
 
 	protected static boolean isAString(String input, String attr) throws Exception {
-		if (!input.startsWith("\"") || !input.endsWith("\"")) {
-			throw new Exception("A string value must be surrounded by double quatation marks.");
-		}    	
+		/*if (!input.startsWith("\"") || !input.endsWith("\"")) {
+			
+		}   */ 	
+		if(input.getClass().toString().endsWith("String"))
 		return true;
+		throw new Exception("Not a String value.");
 	}
 
 	protected static float asAFloat(String input) throws NumberFormatException{

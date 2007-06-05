@@ -267,17 +267,6 @@ public class ValidateNETFile {
 	 */
 
 	public void processVertices(String s){
-		s = s.toLowerCase();
-		/*for(NETAttribute na : NETVertex.getVertexAttributes()){
-			System.out.println(na.getAttrName()+ ":  :" + na.getDataType());
-		}
-		System.out.println("-----");
-		*/
-		/*
-		 * 
-		 * This will process the node list, there are no headers in .net so we don't check for that
-		 * 
-		 */
 			if (s.startsWith(NETFileProperty.PREFIX_COMMENTS)) {
 
 			}
