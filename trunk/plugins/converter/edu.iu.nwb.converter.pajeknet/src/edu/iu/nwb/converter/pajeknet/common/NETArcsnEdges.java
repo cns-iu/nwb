@@ -155,13 +155,25 @@ public class NETArcsnEdges {
 	 * Setters
 	 * 
 	 *************************/
-
+	private void setWidth(float f){
+		NETArcsnEdges.Attributes.put(ARCEDGEParameter.PARAMETER_WIDTH, NETFileProperty.TYPE_FLOAT);
+		this.Numeric_Parameters.put(ARCEDGEParameter.PARAMETER_WIDTH, f);
+	}
 	public void setWidth(String s) throws Exception {
-		
+		float f = NETFileFunctions.asAFloat(s);
+		if(f > 0)
+			this.setWidth(f);
+		else
+			throw new Exception("Line width must be greater than 0.0");
 	}
 	
 	public void setColor(String s) throws Exception {
-		
+		if(NETFileFunctions.isInList(s, NETFileColor.VERTEX_COLOR_LIST)){
+			NETArcsnEdges.Attributes.put(ARCEDGEParameter.PARAMETER_COLOR, NETFileProperty.TYPE_STRING);
+			this.String_Parameters.put(ARCEDGEParameter.PARAMETER_COLOR, s);
+		}
+		else
+			throw new Exception(s + " is not a valid color selection");
 	}
 	
 	public void setPattern(String s) throws Exception {

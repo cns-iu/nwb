@@ -291,7 +291,31 @@ public class ValidateNETFile {
 
 		}
 	
+	public void processArcsnEdges(String s){
+		if (s.startsWith(NETFileProperty.PREFIX_COMMENTS)) {
 
+		}
+		else {
+			try{
+				NETArcsnEdges nae = new NETArcsnEdges(s);
+				
+				System.out.println(nae);
+		
+			}
+			catch (NumberFormatException nfe){
+				isFileGood = false;
+				errorMessages.append("*Wrong NET format at line "+currentLine+".\n"+
+				"Node id must be an integer and greater than 0.\n\n");
+			}
+			catch (Exception e){
+				isFileGood = false;
+				errorMessages.append("*Wrong NET format at line "+currentLine+".\n"+
+						e.toString()+"\n\n");
+			}
+		}
+
+		
+	}
 
 	public void processEdges(String s){
 		s = s.toLowerCase();
@@ -481,14 +505,14 @@ public class ValidateNETFile {
 			}
 
 			if(inEdgesSection && isFileGood){
-				processEdges(line);
+				processArcsnEdges(line);
 				line = reader.readLine();
 
 				continue;
 			}
 
 			if(inArcsSection && isFileGood){
-				processArcs(line);
+				processArcsnEdges(line);
 				line = reader.readLine();
 
 				continue;
