@@ -1,7 +1,9 @@
 package edu.iu.nwb.converter.pajeknet.common;
 
 import java.awt.GraphicsEnvironment;
+import java.util.ArrayList;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Queue;
 import java.util.TreeSet;
@@ -451,6 +453,15 @@ private boolean finalTest() throws Exception{
 	
 	public boolean isValid(){
 		return this.valid;
+	}
+	
+	public static List<NETAttribute> getArcsnEdgesAttributes(){
+		ArrayList<NETAttribute> attributeList = new ArrayList<NETAttribute>();
+		for(String s : NETArcsnEdges.Attributes.keySet()){
+			attributeList.add(new NETAttribute(s,NETArcsnEdges.Attributes.get(s)));
+		}
+		return attributeList;
+
 	}
 	
 	/*****
