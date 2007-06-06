@@ -73,7 +73,7 @@ public class NWBToGraphML implements Algorithm {
 				else {
 					guiBuilder.showError("Unable to Make a File Conversion",
 							"The input file has a bad NWB format. \n"+
-							"Please review the latest NWB File Formate Specification at \n"+
+							"Please review the latest NWB File Format Specification at \n"+
 							"http://nwb.slis.indiana.edu/software.html, and update your file.", 
 							"");
 
