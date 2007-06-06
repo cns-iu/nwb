@@ -89,6 +89,11 @@ public class NETFileFunctions {
 
 
 	}
+	
+	protected static int asAnInteger(String input) throws NumberFormatException{
+		int i = new Integer(input).intValue();
+		return i;
+	}
 
 	protected static boolean isAnInteger(String input, String attr) throws NumberFormatException, Exception{
 		Integer value = new Integer (input);    

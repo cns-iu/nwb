@@ -19,12 +19,9 @@ public class NETFileProperty {
     public static final String PREFIX_COMMENTS ="//";
     public static final String ATTRIBUTE_ID = "id";
     public static final String ATTRIBUTE_LABEL = "label";
-    public static final String ATTRIBUTE_XPOS = "xpos";
-    public static final String ATTRIBUTE_YPOS = "ypos";
-    public static final String ATTRIBUTE_ZPOS = "zpos";
     public static final String ATTRIBUTE_SOURCE = "source";
     public static final String ATTRIBUTE_TARGET = "target";
-    public static final String ATTRIBUTE_SHAPE = "shape";
+    public static final String ATTRIBUTE_WEIGHT = "weight";
     
     
     public static final String TYPE_INT = "int";

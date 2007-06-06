@@ -79,11 +79,9 @@ public class NETVertex {
 				String s = qs.peek();
 				switch(i){
 				case 0:
-					NETFileFunctions.isAnInteger(s, NETFileProperty.ATTRIBUTE_ID);
 					this.setID(s);
 					break;
 				case 1:
-					NETFileFunctions.isAString(s, NETFileProperty.ATTRIBUTE_LABEL);
 					this.setLabel(s);
 					break;
 				default:
@@ -92,6 +90,8 @@ public class NETVertex {
 				qs.poll();
 				i++;
 			}
+			if(this.getLabel() == null)
+				throw new Exception("Vertices must have both ID and Label");
 			return true;
 		}
 		catch(Exception ex){
@@ -246,7 +246,7 @@ public class NETVertex {
 		this.id = i;
 	}
 	public void setID(String s) throws Exception{
-		int i = new Float(NETFileFunctions.asAFloat(s)).intValue();
+		int i = NETFileFunctions.asAnInteger(s);
 		if(i < 0){
 			throw new NumberFormatException("Vertex ID must be greater than 0");
 		}
@@ -290,7 +290,7 @@ public class NETVertex {
 		this.Numeric_Parameters.put("zpos", f);
 	}
 
-	public void setPos(String s, float f){
+	public void setPos(String s, float f) throws Exception{
 		switch(s.charAt(0)){
 		case 'x':
 		case 'X':
@@ -304,6 +304,8 @@ public class NETVertex {
 		case 'Z':
 			this.setZpos(f);
 			break;
+			default :
+				throw new Exception("Unknown positional data");
 		}
 	}
 
@@ -714,9 +716,9 @@ public class NETVertex {
 	
 	private boolean finalCheck() throws Exception{
 	
-		if((this.getAttribute("lphi") == null) && (this.getAttribute("lr") == null))
+		if((this.getAttribute(NETFileParameter.PARAMETER_LPHI) == null) && (this.getAttribute(NETFileParameter.PARAMETER_LR) == null))
 			return true;
-		else if((this.getAttribute("lphi") != null) && (this.getAttribute("lr") != null))
+		else if((this.getAttribute(NETFileParameter.PARAMETER_LPHI) != null) && (this.getAttribute(NETFileParameter.PARAMETER_LR) != null))
 			return true;
 		else
 			throw new Exception("Only one of two polar coordinates has been set");
