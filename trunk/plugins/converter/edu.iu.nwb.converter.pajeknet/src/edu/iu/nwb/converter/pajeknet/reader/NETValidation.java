@@ -27,7 +27,7 @@ import edu.iu.nwb.converter.pajeknet.common.ValidateNETFile;
 public class NETValidation implements AlgorithmFactory {
 
 	 protected void activate(ComponentContext ctxt) {}
-	   protected void deactivate(ComponentContext ctxt) { }
+	 protected void deactivate(ComponentContext ctxt) { }
 	/* (non-Javadoc)
 	 * @see org.cishell.framework.algorithm.AlgorithmFactory#createAlgorithm(org.cishell.framework.data.Data[], java.util.Dictionary, org.cishell.framework.CIShellContext)
 	 */
@@ -68,7 +68,7 @@ public class NETValidation implements AlgorithmFactory {
 				validator.validateNETFormat(inData);
 				if(validator.getValidationResult()){						
 					Data[] dm = new Data[] {new BasicData(inData, "file:text/net")};
-					dm[0].getMetaData().put(DataProperty.LABEL, "NET file: " + fileHandler);
+					dm[0].getMetaData().put(DataProperty.LABEL, "Pajek .net file: " + fileHandler);
 					dm[0].getMetaData().put(DataProperty.TYPE, DataProperty.NETWORK_TYPE);
                 	return dm;
 
