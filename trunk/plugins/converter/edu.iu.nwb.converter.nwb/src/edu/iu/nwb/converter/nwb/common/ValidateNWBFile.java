@@ -38,7 +38,7 @@ public class ValidateNWBFile {
 
 	private StringBuffer errorMessages = new StringBuffer();
 
-	private List nodeAttrList, directedEdgeAttrList, undirectedEdgeAttrList;
+	private List<NWBAttribute> nodeAttrList, directedEdgeAttrList, undirectedEdgeAttrList;
 
 	/*
 	 * 
@@ -57,7 +57,7 @@ public class ValidateNWBFile {
 			inDirectededgesSection = false;
 			inUndirectededgesSection = false;
 			passHeader = true;
-			nodeAttrList = new ArrayList();
+			nodeAttrList = new ArrayList<NWBAttribute>();
 
 			//get the total number of nodes
 			StringTokenizer st = new StringTokenizer(s);
@@ -91,7 +91,7 @@ public class ValidateNWBFile {
 			inNodesSection = false;
 			inUndirectededgesSection = false;
 			passHeader = true;
-			directedEdgeAttrList = new ArrayList();
+			directedEdgeAttrList = new ArrayList<NWBAttribute>();
 			return true;
 		}
 		return false;
@@ -112,7 +112,7 @@ public class ValidateNWBFile {
 			inNodesSection = false;
 			inDirectededgesSection = false;
 			passHeader = true;
-			undirectedEdgeAttrList = new ArrayList();
+			undirectedEdgeAttrList = new ArrayList<NWBAttribute>();
 			return true;
 		}
 		return false;
@@ -539,6 +539,8 @@ public class ValidateNWBFile {
 		for (int i = 0; i < attrList.size(); i++) {
 			NWBAttribute nwbAttr = (NWBAttribute) attrList.get(i);
 			String dt = nwbAttr.getDataType();
+			if(columns[i].equalsIgnoreCase("*"))
+				return true;
 			if (dt.equalsIgnoreCase(NWBFileProperty.TYPE_STRING)) {
 				isAString(columns[i], nwbAttr.getAttrName());
 			} else if (dt.equalsIgnoreCase(NWBFileProperty.TYPE_INT)) {
