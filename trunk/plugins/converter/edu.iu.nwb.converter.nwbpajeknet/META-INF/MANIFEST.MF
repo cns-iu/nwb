@@ -17,4 +17,4 @@ Import-Package: edu.iu.nwb.converter.nwb.common,
  org.osgi.service.metatype;version="1.1.0",
  org.osgi.service.prefs;version="1.1.0"
 X-AutoStart: true
-Service-Component: OSGI-INF/pajeknettonwb.xml
+Service-Component: OSGI-INF/pajeknettonwb.xml, OSGI-INF/nwbtopajeknet.xml
