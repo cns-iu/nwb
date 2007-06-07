@@ -270,6 +270,8 @@ public class NWBToGraphML implements Algorithm {
  		    					value = value.substring(0, value.length()-1);
  		    				}
  		    			}
+ 		    			if(value.equalsIgnoreCase("*"))
+ 		    				value = null;
  		    			out.println("<data key=\""+attr.getAttrName()+
  		    					"\">"+value+"</data>");    			
  		    		}
@@ -321,6 +323,8 @@ public class NWBToGraphML implements Algorithm {
  	 		 		    					value = value.substring(0, value.length()-1);
  	 		 		    				}
  	 		 		    			}
+ 	 		 		    			if(value.equalsIgnoreCase("*"))
+ 	 		 		    				value = null;
  	 				    			out.println("<data key=\""+attr.getAttrName()+
  	 		 		    					"\">"+value+"</data>");  				    			
  	 				    		}
@@ -342,7 +346,11 @@ public class NWBToGraphML implements Algorithm {
  	 				    		if (!(attrName.equalsIgnoreCase(NWBFileProperty.ATTRIBUTE_SOURCE) ||
  	 				    			attrName.equalsIgnoreCase(NWBFileProperty.ATTRIBUTE_TARGET)	||
  	 				    			attrName.equalsIgnoreCase(NWBFileProperty.ATTRIBUTE_ID))){
- 	 				    			out.println("<data key=\""+attr.getAttrName()+
+ 	 				    			if(columns[i].equalsIgnoreCase("*"))
+ 	 				    				out.println("<data key=\""+attr.getAttrName()+
+ 	 	 		 		    					"\">"+"null"+"</data>");
+ 	 				    			else
+ 	 				    				out.println("<data key=\""+attr.getAttrName()+
  	 		 		    					"\">"+columns[i]+"</data>");  				    			
  	 				    		}
  	 				    	}
