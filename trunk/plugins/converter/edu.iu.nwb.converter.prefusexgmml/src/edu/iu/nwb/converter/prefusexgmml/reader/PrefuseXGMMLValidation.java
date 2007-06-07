@@ -88,6 +88,10 @@ public class PrefuseXGMMLValidation implements AlgorithmFactory {
     		
     		String line = reader.readLine();
     		while(line != null){
+    			if(line.startsWith("<graphml")) {
+    				hasXGMMLHeader = false;
+    				break;
+    			}
     			if(line.startsWith("<graph ") || line.startsWith("<graph>")){
     				hasXGMMLHeader = true;
     				break;
