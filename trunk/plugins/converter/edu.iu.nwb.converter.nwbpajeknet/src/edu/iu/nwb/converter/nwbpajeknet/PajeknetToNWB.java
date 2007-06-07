@@ -136,7 +136,7 @@ public class PajeknetToNWB implements Algorithm {
 	
 	private void writeHeader(String s, PrintWriter out){
 		String st = NWBFileProperty.PRESERVED_STAR+s;
-		System.out.println(st);
+		//System.out.println(st);
 		out.println(st);
 	}
 	
@@ -145,7 +145,7 @@ public class PajeknetToNWB implements Algorithm {
 		for(NETAttribute na : validator.getVertexAttrList()){
 			st += na.getAttrName()+NWBFileProperty.PRESERVED_STAR+na.getDataType()+ " ";
 		}
-		System.out.println(st);
+	//	System.out.println(st);
 		out.println(st);
 	}
 	private void writeUndirectedEdgeAttributeList(ValidateNETFile validator, PrintWriter out){
@@ -154,7 +154,7 @@ public class PajeknetToNWB implements Algorithm {
 			st += na.getAttrName()+NWBFileProperty.PRESERVED_STAR+na.getDataType()+ " ";
 			
 		}
-		System.out.println(st);
+	//	System.out.println(st);
 		out.println(st);
 	}
 	private void writeDirectedEdgeAttributeList(ValidateNETFile validator, PrintWriter out){
@@ -162,7 +162,7 @@ public class PajeknetToNWB implements Algorithm {
 		for(NETAttribute na : validator.getArcAttrList()){
 			st += na.getAttrName()+NWBFileProperty.PRESERVED_STAR+na.getDataType()+ " ";
 		}
-		System.out.println(st);
+		//System.out.println(st);
 		out.println(st);
 	}
 	private void writeNodes(ValidateNETFile validator, PrintWriter out){
@@ -184,7 +184,7 @@ public class PajeknetToNWB implements Algorithm {
 					st += "* ";
 				}
 			}
-			System.out.println(st);
+			//System.out.println(st);
 			out.println(st);
 		}
 		}
@@ -205,7 +205,7 @@ public class PajeknetToNWB implements Algorithm {
 				
 				
 			}
-			System.out.println(st);
+			//System.out.println(st);
 			out.println(st);
 		}
 		}
@@ -226,7 +226,7 @@ public class PajeknetToNWB implements Algorithm {
 					
 					
 				}
-				System.out.println(st);
+			//	System.out.println(st);
 				out.println(st);
 		}
 	}
