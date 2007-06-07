@@ -40,8 +40,8 @@ public class ValidateNETFile {
 
 	private int totalNumOfNodes, currentLine;
 	private StringBuffer errorMessages = new StringBuffer();
-	private ArrayList<NETVertex> vertices;
-	private ArrayList<NETArcsnEdges>arcs, edges; 
+	private ArrayList<NETVertex> vertices = new ArrayList<NETVertex>();
+	private ArrayList<NETArcsnEdges>arcs = new ArrayList<NETArcsnEdges>(), edges = new ArrayList<NETArcsnEdges>(); 
 
 	public void validateNETFormat(File fileHandler) throws FileNotFoundException, IOException {
 		currentLine = 0;

@@ -82,7 +82,7 @@ public class NETVertex {
 					this.setID(s);
 					break;
 				case 1:
-					this.setLabel(s);
+					this.setLabel(s.replace("\"", ""));
 					break;
 				default:
 					return true;
