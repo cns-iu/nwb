@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.StringTokenizer;
 
 public class NETFileFunctions {
-	protected static String[] processTokens(String s){
+	public static String[] processTokens(String s){
 		String[] tokens = s.split("\\s+");
 		ArrayList<String> sl = new ArrayList<String>();
 		StringBuffer bf = new StringBuffer();
@@ -124,7 +124,7 @@ public class NETFileFunctions {
 		return true;
 	}
 
-	protected static boolean isInList(String s, String...strings){
+	public static boolean isInList(String s, String...strings){
 		boolean value = false;
 		if(strings != null){
 			for(String st : strings){
