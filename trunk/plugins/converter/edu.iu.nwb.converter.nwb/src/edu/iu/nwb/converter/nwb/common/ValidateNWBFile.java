@@ -539,9 +539,9 @@ public class ValidateNWBFile {
 		for (int i = 0; i < attrList.size(); i++) {
 			NWBAttribute nwbAttr = (NWBAttribute) attrList.get(i);
 			String dt = nwbAttr.getDataType();
-			if(columns[i].equalsIgnoreCase("*"))
-				return true;
-			if (dt.equalsIgnoreCase(NWBFileProperty.TYPE_STRING)) {
+			if(columns[i].equalsIgnoreCase("*")){
+			}
+			else if (dt.equalsIgnoreCase(NWBFileProperty.TYPE_STRING)) {
 				isAString(columns[i], nwbAttr.getAttrName());
 			} else if (dt.equalsIgnoreCase(NWBFileProperty.TYPE_INT)) {
 				isAnInteger(columns[i], nwbAttr.getAttrName());
