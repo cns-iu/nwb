@@ -11,7 +11,7 @@ import org.osgi.service.metatype.MetaTypeProvider;
 
 public class NWBToPajeknetFactory implements AlgorithmFactory {
 
-	protected void activate(ComponentContext ctxt) { System.out.println("I'm ACTIVATED!");}
+	protected void activate(ComponentContext ctxt) { }
     protected void deactivate(ComponentContext ctxt) { }
 
     public Algorithm createAlgorithm(Data[] data, Dictionary parameters, CIShellContext context) {
