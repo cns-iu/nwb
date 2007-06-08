@@ -210,7 +210,7 @@ public ArrayList<NETArcsnEdges> getEdges(){
 			else {
 				try{
 					nv = new NETVertex(s);
-					//System.out.println(nv);
+				//	System.out.println(nv);
 			
 				}
 				catch (NumberFormatException nfe){

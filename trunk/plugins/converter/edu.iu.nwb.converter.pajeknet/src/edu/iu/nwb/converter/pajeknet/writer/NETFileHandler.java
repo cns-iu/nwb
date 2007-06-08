@@ -84,9 +84,9 @@ public class NETFileHandler implements AlgorithmFactory {
 						return new Data[]{new BasicData(inData, NETFileProperty.NET_FILE_TYPE)};  
 					}else {
 						guiBuilder.showError("Bad NET Format", 
-								"Sorry, your file does not comply with the NET File Formate Specification.",
-								"Sorry, your file does not comply with the NET File Formate Specification.\n"+
-								"Please review the latest NET File Formate Specification at "+
+								"Sorry, your file does not comply with the NET File Format Specification.",validator.getErrorMessages()+
+								"\nSorry, your file does not comply with the NET File Format Specification.\n"+
+								"Please review the latest NET File Format Specification at "+
 								"http://vlado.fmf.uni-lj.si/pub/networks/pajek/doc/pajekman.pdf, and update your file.");
 						return null;
 					}

@@ -82,7 +82,7 @@ public class NETVertex {
 					this.setID(s);
 					break;
 				case 1:
-					this.setLabel(s.replace("\"", ""));
+					this.setLabel(s);
 					break;
 				default:
 					return true;
@@ -106,7 +106,10 @@ public class NETVertex {
 		int i = 0;
 		try{
 			while(!qs.isEmpty()){
-				if((NETFileFunctions.isInList(qs.peek(), NETFileShape.ATTRIBUTE_SHAPE_LIST) || (NETFileFunctions.isInList(qs.peek(), NETFileParameter.VERTEX_NUMBER_PARAMETER_LIST)) || (NETFileFunctions.isInList(qs.peek(), NETFileParameter.VERTEX_STRING_PARAMETER_LIST)))){
+				String s = qs.peek();
+				
+			//	System.out.println("!!"+s+"!!");
+				if((NETFileFunctions.isInList(s, NETFileShape.ATTRIBUTE_SHAPE_LIST) || (NETFileFunctions.isInList(qs.peek(), NETFileParameter.VERTEX_NUMBER_PARAMETER_LIST)) || (NETFileFunctions.isInList(qs.peek(), NETFileParameter.VERTEX_STRING_PARAMETER_LIST)))){
 					break;
 				}
 				f = Float.parseFloat(qs.poll());
@@ -687,6 +690,7 @@ public class NETVertex {
 	}
 
 	public Object getAttribute(String s){
+		//System.out.println(s);
 		String st = NETVertex.Attributes.get(s);
 		if(st == null)
 			return null;
@@ -696,8 +700,9 @@ public class NETVertex {
 			return this.getLabel();
 		else if(st.equalsIgnoreCase("float"))
 			return this.Numeric_Parameters.get(s);
-		else 
+		else {
 			return this.String_Parameters.get(s);
+		}
 	}
 
 	/****************************

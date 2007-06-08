@@ -5,17 +5,20 @@ import java.util.StringTokenizer;
 
 public class NETFileFunctions {
 	public static String[] processTokens(String s){
-		String[] tokens = s.split("\\s+");
+		String str = s.trim();
+		//System.out.println("::"+str+"::");
+		String[] tokens = str.split("\\s+");
 		ArrayList<String> sl = new ArrayList<String>();
 		StringBuffer bf = new StringBuffer();
 		boolean append = false;
 		for(String st: tokens){
 			if(!append){
 				if(!st.startsWith("\"")){
+					st = st.replace("\"", "");
 					sl.add(st);
 				}
 				else if (st.startsWith("\"") && st.endsWith("\"")){
-					st.replace("\"", "");
+					st = st.replace("\"", "");
 					sl.add(st);
 				}
 				else {
