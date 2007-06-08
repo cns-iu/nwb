@@ -20,6 +20,8 @@ import org.cishell.service.guibuilder.GUIBuilderService;
 import org.osgi.service.log.LogService;
 
 
+
+
 /**
  * Converts from GraphML to NWB file format
  * @author Ben Markines 
@@ -67,6 +69,7 @@ public class GraphMLToNWB implements Algorithm {
 			Result nwb = new StreamResult(nwbFile);
 			
 			try {
+				System.out.println("calling stylesheet transform\n");
 				stylesheet.transform(graphml, nwb);
 				return new Data[] {new BasicData(nwbFile, "file:text/nwb")};
 			} catch(TransformerException exception) {
