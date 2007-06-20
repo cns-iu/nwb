@@ -9,7 +9,10 @@ Import-Package: org.cishell.app.service.datamanager,
  org.cishell.framework.algorithm,
  org.cishell.framework.data,
  org.cishell.reference.app.service.datamanager,
- org.cishell.reference.gui.datamanager,
  org.cishell.reference.service.conversion,
  org.cishell.remoting.service.conversion,
- org.cishell.service.conversion
+ org.cishell.service.conversion,
+ prefuse,
+ prefuse.data,
+ prefuse.data.tuple,
+ prefuse.util.collections
