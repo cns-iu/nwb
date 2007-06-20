@@ -1,0 +1,15 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: NWB_Converter_Tester
+Bundle-SymbolicName: NWB_Converter_Tester
+Bundle-Version: 1.0.0
+Bundle-Localization: plugin
+Import-Package: org.cishell.app.service.datamanager,
+ org.cishell.framework,
+ org.cishell.framework.algorithm,
+ org.cishell.framework.data,
+ org.cishell.reference.app.service.datamanager,
+ org.cishell.reference.gui.datamanager,
+ org.cishell.reference.service.conversion,
+ org.cishell.remoting.service.conversion,
+ org.cishell.service.conversion

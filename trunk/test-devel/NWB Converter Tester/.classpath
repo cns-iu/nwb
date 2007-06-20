@@ -6,5 +6,6 @@
 	<classpathentry combineaccessrules="false" kind="src" path="/edu.iu.nwb.converter.nwb"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/edu.iu.nwb.converter.nwbgraphml"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/edu.iu.nwb.converter.pajeknet"/>
+	<classpathentry kind="con" path="org.eclipse.pde.core.requiredPlugins"/>
 	<classpathentry kind="output" path=""/>
 </classpath>
