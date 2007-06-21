@@ -9,7 +9,9 @@ import java.util.Map.Entry;
 
 import prefuse.data.Graph;
 import prefuse.data.Node;
+import prefuse.data.Schema;
 import prefuse.data.Table;
+import prefuse.data.tuple.TableEdge;
 import prefuse.util.collections.IntIterator;
 
 /**
@@ -21,6 +23,7 @@ public class BasicGraphComparer implements GraphComparer {
 
 	public ComparisonResult compare(Graph g1, Graph g2, boolean IdsPreserved) {
 		//basic tests
+		
 		if (! isSameDirectedness(g1, g2)) {
 			return new ComparisonResult(false, "Directedness not of the " +
 					"same type.");
@@ -31,6 +34,7 @@ public class BasicGraphComparer implements GraphComparer {
 		}
 		
 		//complex tests
+		
 		if (IdsPreserved) {
 			//tests for when graph IDs are preserved across the conversion
 			if (! nodesHaveSameNeighbors(g1, g2)) 
@@ -187,6 +191,10 @@ public class BasicGraphComparer implements GraphComparer {
 		//setup
 		GraphComparer comparer = new BasicGraphComparer();
 		
+		Schema edgeTableSchema = new Schema();
+		edgeTableSchema.addColumn(Graph.DEFAULT_SOURCE_KEY, Integer.class);
+		edgeTableSchema.addColumn(Graph.DEFAULT_TARGET_KEY, Integer.class);
+		
 		//test1
 		Graph emptyGraph1 = new Graph();
 		Graph emptyGraph2 = new Graph();
@@ -232,8 +240,15 @@ public class BasicGraphComparer implements GraphComparer {
 //		nodeTable1.addRows(4);
 //		
 //		Table edgeTable4 = new Table();
-//		edgeTable4.add
+//		edgeTable4.addColumns(edgeTableSchema);
+//		edgeTable4.addRows(4);
+//		
+//		//edgeTable4.set(0, Graph.DEFAULT_Source_KEY, arg2)
 	}
-	
+//	
+//	private static void addEdge(Table edgeTable, int sourceID, int targetID) {
+//		TableEdge edge = new TableEdge(); 
+//		edge.set
+//	}
 
 }
