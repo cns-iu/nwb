@@ -81,7 +81,8 @@ public class NWBValidatorTest {
 	
 	/*@Test(expected = NullPointerException.class)
 	public void testNullFileValidator() {
-		validator.validateNWBFormat(null);
+		//TODO: uncomment this and handle the exception.
+		//validator.validateNWBFormat(null);
 		
 	}*/
 	
