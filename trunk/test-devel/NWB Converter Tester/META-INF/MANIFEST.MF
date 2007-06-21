@@ -12,7 +12,15 @@ Import-Package: org.cishell.app.service.datamanager,
  org.cishell.reference.service.conversion,
  org.cishell.remoting.service.conversion,
  org.cishell.service.conversion,
- prefuse,
- prefuse.data,
- prefuse.data.tuple,
- prefuse.util.collections
+ org.osgi.framework;version="1.3.0"
+Require-Bundle: edu.uci.ics.jung,
+ org.prefuse.lib
+
+
+
+
+
+
+
+
+
