@@ -319,7 +319,7 @@
 
        open(20,file=fileout3,status='unknown')
        write(20,112)'*Nodes'
-       write(20,109)(headattrN(i),i=1,nattrN),'degree*int'
+       write(20,109)(headattrN(i),i=1,nattrN),'knn*real'
        if(nattrN-1==1)then
           do i=1,n_vert
              write(20,120)nodes(i),(attrN(j,i),j=1,nattrN-1),knn(nodes(i))
