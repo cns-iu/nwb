@@ -190,8 +190,6 @@
           stop
        endif
 
-       deallocate(nodes)
-
 !      Here the arrays are allocated
 
        allocate(interv(0:n_bins))
