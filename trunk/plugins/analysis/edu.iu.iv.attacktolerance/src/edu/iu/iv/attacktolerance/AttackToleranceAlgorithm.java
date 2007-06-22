@@ -37,7 +37,7 @@ public class AttackToleranceAlgorithm implements Algorithm {
                  new Boolean(true));
              map.put(DataProperty.PARENT, data[0]);
              map.put(DataProperty.TYPE, DataProperty.NETWORK_TYPE);
-             map.put(DataProperty.LABEL, "Attack Tolerance");
+             map.put(DataProperty.LABEL, "High Degree Node Deletion (Attack Tolerance)");
              
              out_data = new Data[]{model};
          }
