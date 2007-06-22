@@ -187,10 +187,6 @@
           stop
        endif
 
-       deallocate(nodes)
-       allocate(nodes(1:n_vert))
-
-
 !      Here we write out the final outdegree sequence
 
        n_vert1=n_vert0
