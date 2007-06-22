@@ -38,7 +38,7 @@ public class ValidateNWBFile {
 
 	private StringBuffer errorMessages = new StringBuffer();
 
-	private List<NWBAttribute> nodeAttrList, directedEdgeAttrList, undirectedEdgeAttrList;
+	private List nodeAttrList, directedEdgeAttrList, undirectedEdgeAttrList;
 
 	/*
 	 * 
@@ -57,7 +57,7 @@ public class ValidateNWBFile {
 			inDirectededgesSection = false;
 			inUndirectededgesSection = false;
 			passHeader = true;
-			nodeAttrList = new ArrayList<NWBAttribute>();
+			nodeAttrList = new ArrayList();
 
 			//get the total number of nodes
 			StringTokenizer st = new StringTokenizer(s);
@@ -91,7 +91,7 @@ public class ValidateNWBFile {
 			inNodesSection = false;
 			inUndirectededgesSection = false;
 			passHeader = true;
-			directedEdgeAttrList = new ArrayList<NWBAttribute>();
+			directedEdgeAttrList = new ArrayList();
 			return true;
 		}
 		return false;
@@ -112,7 +112,7 @@ public class ValidateNWBFile {
 			inNodesSection = false;
 			inDirectededgesSection = false;
 			passHeader = true;
-			undirectedEdgeAttrList = new ArrayList<NWBAttribute>();
+			undirectedEdgeAttrList = new ArrayList();
 			return true;
 		}
 		return false;
