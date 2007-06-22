@@ -12,13 +12,15 @@
        implicit none
 
        integer i,j,k,l,maxdeg,mindeg,nCC,ntot_triangles,n_vert,n_edges,n_bins
-       integer maxind,minind,i1,i2,ncluszero
-       integer, allocatable, dimension (:) :: degree,intdegree,clus_coef,np
+       integer maxind,minind,i1,i2,ncluszero,nattrN,nattrE,n_edges_N,n_edges_E,n_vert0,ch,n_vert1,i0
+       integer, allocatable, dimension (:) :: degree,intdegree,clus_coef,np,ind,indc,nodes
        integer, allocatable, dimension (:) :: check_neigh,listlink
        real*8, allocatable, dimension (:) :: clus,interv,avclusbin,avdegbin
        logical, allocatable, dimension(:):: nodelist
        real*8 norm,Avcluscoeff,minclus,maxclus,abin,binsize,zero
-       character*256 filename,fileout5,sn_bins,str1,str2
+       character*256 filename,fileout5,sn_bins
+       character*25 str(1:20),headattrN(1:20),headattrE(1:20),str1,str2,str3
+       character*25,allocatable,dimension(:,:):: attrN,attrE
        
 !      Here the program reads the input parameters
        
@@ -31,29 +33,55 @@
 !      Here the arrays are allocated
 
        n_edges=0
+       n_vert0=0
+       n_vert1=0
        maxind=1
        minind=10000000
        zero=0.0d0
+       ch=0
+       n_edges_N=0
+       n_edges_E=0
+       nattrN=0
 
        open(20,file=filename,status='unknown')
        do 
           read(20,106,err=8103,end=8103)str1
           if(str1(1:1)=='*'.AND.str1(2:2)=='N')then
-             n_vert=0
+             read(20,*)str3
+             if(str3(1:1)=='*')then
+                ch=1
+                goto 8103
+             endif
+             read(20,*)str2
+             backspace(20)
+             backspace(20)
+             do k=1,20
+                read(20,*)(str(j),j=1,k)
+                if(str(k)(1:1)==str2(1:1))exit
+                backspace(20)
+             enddo
+             backspace(20)
+             nattrN=k-1
              do 
-                read(20,*,err=8103,end=8103)i1
-                if(minind>i1)minind=i1
-                if(maxind<i1)maxind=i1
-                n_vert=n_vert+1  
+                read(20,*,err=8103,end=8103)str2
+                if(str2(1:1)=='*')goto 8103
+                n_edges_N=n_edges_N+1  
              enddo
           else if(str1(1:1)=='*'.AND.str1(2:2)=='U')then 
+             read(20,*)
+             read(20,*)str2
+             backspace(20)
+             backspace(20)
+             do k=1,20
+                read(20,*)(str(j),j=1,k)
+                if(str(k)(1:1)==str2(1:1))exit
+                backspace(20)
+             enddo
+             backspace(20)
+             nattrE=k-1
              do 
-                read(20,*,err=9103,end=9103)i1,i2
-                if(minind>i1)minind=i1
-                if(minind>i2)minind=i2
-                if(maxind<i2)maxind=i2
-                if(maxind<i1)maxind=i1
-                n_edges=n_edges+1   
+                read(20,*,err=9103,end=9103)
+                n_edges_E=n_edges_E+1   
              enddo
           endif
        enddo
@@ -62,75 +90,111 @@
        do
           read(20,106,err=9103,end=9103)str1
           if(str1(1:1)=='*'.AND.str1(2:2)=='U')then
+             read(20,*)
+             read(20,*)str2
+             backspace(20)
+             backspace(20)
+             do k=1,20
+                read(20,*)(str(j),j=1,k)
+                if(str(k)(1:1)==str2(1:1))exit
+                backspace(20)
+             enddo
+             backspace(20)
+             nattrE=k-1
              do 
-                read(20,*,err=9103,end=9103)i1,i2
-                if(minind>i1)minind=i1
-                if(minind>i2)minind=i2
-                if(maxind<i2)maxind=i2
-                if(maxind<i1)maxind=i1
-                n_edges=n_edges+1   
+                read(20,*,err=9103,end=9103)
+                n_edges_E=n_edges_E+1   
              enddo
           endif
        enddo
 9103   continue
        close(20)
-       allocate(nodelist(minind:maxind))
-       allocate(degree(minind:maxind))
-       degree=0
-       nodelist=.false.
+       allocate(nodes(1:n_edges_N))
+       allocate(ind(1:n_edges_E))
+       allocate(indc(1:n_edges_E))
+       allocate(attrE(1:nattrE-2,1:n_edges_E))
+       if(nattrN>1)then
+          allocate(attrN(1:nattrN-1,1:n_edges_N))
+       endif
+
        open(20,file=filename,status='unknown')
        do 
-          read(20,106,err=9203,end=9203)str1
+          read(20,106,err=8104,end=8104)str1
           if(str1(1:1)=='*'.AND.str1(2:2)=='N')then
-             n_vert=0
-             do 
-                read(20,*,err=9203,end=9203)i1
-                nodelist(i1)=.true.
-                n_vert=n_vert+1
+             if(ch==1)then
+                read(20,*)
+                goto 8104
+             endif
+             read(20,*)(headattrN(i),i=1,nattrN)
+             do k=1,n_edges_N
+                read(20,*,err=8114,end=8114)nodes(n_vert0+1),(attrN(j,n_vert0+1),j=1,nattrN-1)
+                n_vert0=n_vert0+1
+                if(minind>nodes(n_vert0))minind=nodes(n_vert0)
+                if(maxind<nodes(n_vert0))maxind=nodes(n_vert0)  
+8114            continue
              enddo
-          else if(str1(1:1)=='*'.AND.str1(2:2)=='U')then
-             n_vert=0
-             do i=1,n_edges
-                read(20,*)i1,i2
-                if(nodelist(i1).eqv..false.)then
-                   nodelist(i1)=.true.
-                   n_vert=n_vert+1
-                endif
-                if(nodelist(i2).eqv..false.)then
-                   nodelist(i2)=.true.
-                   n_vert=n_vert+1
-                endif
-                degree(i1)=degree(i1)+1
-                degree(i2)=degree(i2)+1
+             goto 8104
+          else if(str1(1:1)=='*'.AND.str1(2:2)=='U')then 
+             read(20,*)(headattrE(i),i=1,nattrE)
+             do k=1,n_edges_E
+                read(20,*,err=9114,end=9114)indc(n_edges+1),ind(n_edges+1),(attrE(j,n_edges+1),j=1,nattrE-2)
+                n_edges=n_edges+1
+                if(minind>indc(n_edges))minind=indc(n_edges)
+                if(minind>ind(n_edges))minind=ind(n_edges)
+                if(maxind<ind(n_edges))maxind=ind(n_edges)
+                if(maxind<indc(n_edges))maxind=indc(n_edges)
+9114            continue
              enddo
-             goto 9303
+             goto 9104
           endif
        enddo
-9203   continue
+8104   continue
        backspace(20)
        do
-          read(20,106,err=9303,end=9303)str1
+          read(20,106,err=9104,end=9104)str1
           if(str1(1:1)=='*'.AND.str1(2:2)=='U')then
-             do i=1,n_edges
-                read(20,*)i1,i2
-                if(nodelist(i1).eqv..false.)then
-                   nodelist(i1)=.true.
-                   n_vert=n_vert+1
-                endif
-                if(nodelist(i2).eqv..false.)then
-                   nodelist(i2)=.true.
-                   n_vert=n_vert+1
-                endif
-                degree(i1)=degree(i1)+1
-                degree(i2)=degree(i2)+1
+             read(20,*)(headattrE(i),i=1,nattrE)
+             do k=1,n_edges_E
+                read(20,*,err=9214,end=9214)indc(n_edges+1),ind(n_edges+1),(attrE(j,n_edges+1),j=1,nattrE-2)
+                n_edges=n_edges+1
+                if(minind>indc(n_edges))minind=indc(n_edges)
+                if(minind>ind(n_edges))minind=ind(n_edges)
+                if(maxind<ind(n_edges))maxind=ind(n_edges)
+                if(maxind<indc(n_edges))maxind=indc(n_edges)
+9214            continue
              enddo
           endif
        enddo
-9303   continue
+9104   continue
        close(20)
 
        if(n_edges==0)then
           write(*,*)'Error! The program should be applied on undirected networks'
+          stop
+       endif
+       
+       allocate(nodelist(minind:maxind))
+       allocate(degree(minind:maxind))
+       degree=0
+       nodelist=.false.
+       do i=1,n_vert0
+          nodelist(nodes(i))=.true.
+       enddo
+       n_vert=n_vert0
+       do i=1,n_edges
+          if(nodelist(ind(i)).eqv..false.)then
+             nodelist(ind(i))=.true.
+             n_vert=n_vert+1
+          endif
+          if(nodelist(indc(i)).eqv..false.)then
+             nodelist(indc(i))=.true.
+             n_vert=n_vert+1
+          endif
+          degree(indc(i))=degree(indc(i))+1
+          degree(ind(i))=degree(ind(i))+1
+       enddo
+       if(n_vert0<n_vert)then
+          print*,'The nwb file is not properly formatted: not all nodes/labels are listed'
           stop
        endif
 
@@ -157,21 +221,12 @@
 
        degree=0
 
-       open(20,file=filename,status='unknown')
-       do 
-          read(20,106)str1
-          if(str1(1:1)=='*'.AND.str1(2:2)=='U')then
-             do j=1,n_edges
-                read(20,*)i1,i2
-                degree(i1)=degree(i1)+1
-                degree(i2)=degree(i2)+1
-                listlink(intdegree(i1)+degree(i1))=i2
-                listlink(intdegree(i2)+degree(i2))=i1
-             enddo
-             exit
-          endif
+       do j=1,n_edges
+          degree(indc(j))=degree(indc(j))+1
+          degree(ind(j))=degree(ind(j))+1
+          listlink(intdegree(indc(j))+degree(indc(j)))=ind(j)
+          listlink(intdegree(ind(j))+degree(ind(j)))=indc(j)
        enddo
-       close(20)
 
 !      Here we calculate the clustering coefficients (array clus_coef) and their average
 !      over the nodes for which the clustering coefficient is non-zero: the sequence
@@ -274,7 +329,7 @@
 103    format(a8,i10)
 104    format(8x,e15.6,6x,e15.6)
 105    format(a40,e15.6)
-106    format(a256)
+106    format(a25)
 
 9001   continue
 
