@@ -187,9 +187,6 @@
           stop
        endif
 
-       deallocate(nodes)
-       allocate(nodes(1:n_vert))
-
 !      Here we write out the final degree sequence 
 
        n_vert1=n_vert0
@@ -211,43 +208,43 @@
        write(20,109)(headattrN(i),i=1,nattrN),'degree*int'
        if(nattrN-1==1)then
           do i=1,n_vert
-             write(20,120)nodes(i),(attrN(j,i),j=1,nattrN-1),degree(i)
+             write(20,120)nodes(i),(attrN(j,i),j=1,nattrN-1),degree(nodes(i))
           enddo
        else if(nattrN-1==2)then
           do i=1,n_vert
-             write(20,121)nodes(i),(attrN(j,i),j=1,nattrN-1),degree(i)
+             write(20,121)nodes(i),(attrN(j,i),j=1,nattrN-1),degree(nodes(i))
           enddo
        else if(nattrN-1==3)then
           do i=1,n_vert
-             write(20,122)nodes(i),(attrN(j,i),j=1,nattrN-1),degree(i)
+             write(20,122)nodes(i),(attrN(j,i),j=1,nattrN-1),degree(nodes(i))
           enddo
        else if(nattrN-1==4)then
           do i=1,n_vert
-             write(20,123)nodes(i),(attrN(j,i),j=1,nattrN-1),degree(i)
+             write(20,123)nodes(i),(attrN(j,i),j=1,nattrN-1),degree(nodes(i))
           enddo
        else if(nattrN-1==5)then
           do i=1,n_vert
-             write(20,124)nodes(i),(attrN(j,i),j=1,nattrN-1),degree(i)
+             write(20,124)nodes(i),(attrN(j,i),j=1,nattrN-1),degree(nodes(i))
           enddo
        else if(nattrN-1==6)then
           do i=1,n_vert
-             write(20,125)nodes(i),(attrN(j,i),j=1,nattrN-1),degree(i)
+             write(20,125)nodes(i),(attrN(j,i),j=1,nattrN-1),degree(nodes(i))
           enddo
        else if(nattrN-1==7)then
           do i=1,n_vert
-             write(20,126)nodes(i),(attrN(j,i),j=1,nattrN-1),degree(i)
+             write(20,126)nodes(i),(attrN(j,i),j=1,nattrN-1),degree(nodes(i))
           enddo
        else if(nattrN-1==8)then
           do i=1,n_vert
-             write(20,127)nodes(i),(attrN(j,i),j=1,nattrN-1),degree(i)
+             write(20,127)nodes(i),(attrN(j,i),j=1,nattrN-1),degree(nodes(i))
           enddo
        else if(nattrN-1==9)then
           do i=1,n_vert
-             write(20,128)nodes(i),(attrN(j,i),j=1,nattrN-1),degree(i)
+             write(20,128)nodes(i),(attrN(j,i),j=1,nattrN-1),degree(nodes(i))
           enddo
        else if(nattrN-1==10)then
           do i=1,n_vert
-             write(20,129)nodes(i),(attrN(j,i),j=1,nattrN-1),degree(i)
+             write(20,129)nodes(i),(attrN(j,i),j=1,nattrN-1),degree(nodes(i))
           enddo
        endif
        write(20,113)'*UndirectedEdges'
