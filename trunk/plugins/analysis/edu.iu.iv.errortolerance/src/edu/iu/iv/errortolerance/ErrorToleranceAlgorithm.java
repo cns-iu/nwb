@@ -37,7 +37,7 @@ public class ErrorToleranceAlgorithm implements Algorithm {
 		    map.put(DataProperty.MODIFIED, new Boolean(true));
 		    map.put(DataProperty.PARENT, data[0]);
 		    map.put(DataProperty.TYPE, DataProperty.NETWORK_TYPE);
-		    map.put(DataProperty.LABEL, "Error Tolerance");
+		    map.put(DataProperty.LABEL, "Random Node Deletion (Error Tolerance)");
 		    newdata=new Data[]{model};
 				
 		}
