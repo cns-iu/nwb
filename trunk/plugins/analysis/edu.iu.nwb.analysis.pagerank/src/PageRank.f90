@@ -432,7 +432,7 @@
             write(20,129)nodes(i),(attrN(j,i),j=1,nattrN-1),PR(nodes(i))
          enddo
       endif
-      write(20,113)'*UndirectedEdges'
+      write(20,113)'*DirectedEdges'
       write(20,109)(headattrE(i),i=1,nattrE)
       do i=1,n_edges
          write(20,110)indc(i),ind(i),(attrE(j,i),j=1,nattrE-2)
