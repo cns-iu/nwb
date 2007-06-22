@@ -11,15 +11,18 @@ import prefuse.data.Graph;
 import prefuse.data.Node;
 import prefuse.data.Schema;
 import prefuse.data.Table;
-import prefuse.data.tuple.TableEdge;
+import prefuse.data.Tuple;
+import prefuse.data.tuple.TupleSet;
 import prefuse.util.collections.IntIterator;
 
 /**
  * 
  * @author mwlinnem
+ * 
+ * Under Construction
  *
  */
-public class BasicGraphComparer implements GraphComparer {
+public class DefaultGraphComparer implements GraphComparer {
 
 	public ComparisonResult compare(Graph g1, Graph g2, boolean IdsPreserved) {
 		//basic tests
@@ -40,12 +43,27 @@ public class BasicGraphComparer implements GraphComparer {
 			if (! nodesHaveSameNeighbors(g1, g2)) 
 				return new ComparisonResult(false, "Nodes do not connect to" +
 						" the same nodes in both graphs.");
+			//if this works it is very interesting, and will account for
+			//attributes as well.
+			//doesn't work though :P
+//			if (! g1.equals(g2)) 
+//				return new ComparisonResult(false, "Graphs are not equal to" +
+//						" each other.");
+				
 		} else {
 			//tests for when graph IDs are NOT preserved across the conversion
 			if (! nodeDegreeFrequenciesEqual(g1, g2))
 				return new ComparisonResult(false, "The number of nodes" +
 						"with a certain number of edges is not the same in" +
 						"both graphs.");
+			
+			if (! haveSameNodeAttributes(g1, g2))
+				return new ComparisonResult(false, "Node attributes are not" +
+						"the same in both graphs.");
+			
+			if (! haveSameEdgeAttributes(g1, g2)) 
+				return new ComparisonResult(false, "Edge attributes are not" +
+						"the same in both graphs.");
 		}
 		
 		//all tests passed
@@ -82,6 +100,9 @@ public class BasicGraphComparer implements GraphComparer {
 		return result;
 	}
 	
+	/*
+	 * Helper method for nodeDegreeFrequenciesEqual
+	 */
 	private Set<Entry<Integer,Integer>> getNodeDegreeFrequencies(Graph g) {
 		Map<Integer, Integer> nodeDegreeFrequencies 
 			= new HashMap<Integer, Integer>();
@@ -127,6 +148,9 @@ public class BasicGraphComparer implements GraphComparer {
 		return result;
 	}
 	
+	/*
+	 * Helper method for nodesHaveSameNeighbors
+	 */
 	private Map generateNodeEdgeMap (Graph g) {
 		String nodeKeyField = g.getNodeKeyField();
 		if (nodeKeyField != null) {
@@ -151,6 +175,129 @@ public class BasicGraphComparer implements GraphComparer {
 		
 		return nodeEdgeMap;
 	}
+	
+	private boolean haveSameNodeAttributes(Graph g1, Graph g2) {
+		boolean result = areEqualWhenSorted(g1.getNodeTable(), g2.getNodeTable());
+		return result;
+	}
+	
+//	private boolean haveSameNodeAttributesOld(Graph g1, Graph g2) {
+//		TupleSet g1NodeAttributes = getNodeAttributeSet(g1);
+//		TupleSet g2NodeAttributes = getNodeAttributeSet(g2);
+//		
+//		if (g1NodeAttributes == null || g2NodeAttributes == null) 
+//			return false;
+//		
+//		boolean result = g1NodeAttributes.equals(g2NodeAttributes);
+//		return result;
+//	}
+//	
+//	private TupleSet getNodeAttributeSet(Graph g) {
+//		String nodeKeyField = g.getNodeKeyField();
+//		
+//		if (nodeKeyField == null) {
+//			//IDs are represented by row numbers (standard).
+//			return g.getNodes();
+//		} else {
+//			//IDs are held in a special field (not currently handled)
+//			System.err.println("BasicGraphComparer: could not handle " +
+//					"special ID field");
+//			return null;
+//		}
+//	}
+	
+	/*
+	 * Determines whether the two graphs have the same edge attributes.
+	 * That is, for every edge in table A there is an edge in table B with
+	 * the same exactly attribute values, and vice versa. Has no regard for
+	 * source and target IDs, or the order the edgesappear in the edge tables.
+	 */
+	private boolean haveSameEdgeAttributes(Graph g1, Graph g2) {
+		//remove the IDs
+		Table t1 = getStrippedEdgeTable(g1.getEdgeTable());
+		Table t2 = getStrippedEdgeTable(g2.getEdgeTable());
+		
+		boolean result = areEqualWhenSorted(t1, t2);
+		return result;
+	}
+	
+	/*
+	 * Helper method for haveSameNodeAttributes and haveSameEdgeAttributes
+	 */
+	private boolean areEqualWhenSorted(Table t1, Table t2) {
+		//(Maybe compare schemas instead of this preliminary stuff?)
+		
+		//sort so that order is unimportant
+		if (t1.getColumnCount() == 0 && t2.getColumnCount() == 0) 
+			return true; //no attributes means they have the same attributes!
+		
+		if (t1.getColumnCount() != t2.getColumnCount()) 
+			return false; 
+		//no point comparing values if they don't even have the same attributes
+		
+		//iterate over both rows sorted by a common attribute
+		String colName1 = t1.getColumnName(0);
+		String colName2 = t2.getColumnName(0);
+		
+		if (! colName1.equals(colName2))
+			return false;
+		
+		String colName = colName1; //column name works for both tables
+		
+		IntIterator t1Iter = t1.rowsSortedBy(colName, true);
+		IntIterator t2Iter = t2.rowsSortedBy(colName, true);
+		
+		while (t1Iter.hasNext()) {
+			int t1Index = t1Iter.nextInt();
+			Tuple t1Tuple = t1.getTuple(t1Index);
+			
+			int t2Index = t2Iter.nextInt();
+			Tuple t2Tuple = t2.getTuple(t2Index);
+			
+			if (! t1Tuple.equals(t2Tuple)) 
+				return false;		
+		}
+		//every tuple has an identical tuple in the other table.
+		return true;
+	}
+	
+	/**
+	 * Removes source and target columns from a copied version of the table.
+	 * 
+	 * Helper method for haveSameEdgeAttributes
+	 * 
+	 * @param t the original table
+	 * @return a stripped copy of the original table
+	 */
+	private Table getStrippedEdgeTable(Table t) {
+		Table tCopy = copyTable(t);
+		tCopy.removeColumn(Graph.DEFAULT_SOURCE_KEY);
+		tCopy.removeColumn(Graph.DEFAULT_TARGET_KEY);
+		return tCopy;
+	}
+	
+	private Table copyTable(Table t) {
+		//System.out.println("Table!: " + t);
+		Table tCopy = new Table();
+		tCopy.addColumns(t.getSchema());
+		
+		for (Iterator ii = t.tuples(); ii.hasNext();) {
+			Tuple tuple = (Tuple) ii.next();
+			//System.out.println(tuple);
+			tCopy.addTuple(tuple);
+		}
+		
+		for (Iterator ii = tCopy.tuples(); ii.hasNext();) {
+			//System.out.println("Copy tuples!!!---");
+			Tuple tuple = (Tuple) ii.next();
+			//System.out.println(tuple);
+		}
+		//System.out.println("Tabele2!: " + tCopy);
+		return tCopy;
+	}
+	
+	
+	
 	
 	/*
 	 * Compares nodes in each graph with the same ID to see whether they have
@@ -187,68 +334,6 @@ public class BasicGraphComparer implements GraphComparer {
 //		//g.getNo
 //	}
 	
-	public static void main(String[] args) {
-		//setup
-		GraphComparer comparer = new BasicGraphComparer();
-		
-		Schema edgeTableSchema = new Schema();
-		edgeTableSchema.addColumn(Graph.DEFAULT_SOURCE_KEY, Integer.class);
-		edgeTableSchema.addColumn(Graph.DEFAULT_TARGET_KEY, Integer.class);
-		
-		//test1
-		Graph emptyGraph1 = new Graph();
-		Graph emptyGraph2 = new Graph();
-		
-		ComparisonResult result1 = comparer.compare(emptyGraph1, 
-				emptyGraph2, true);	
-		System.out.println("Empty undirected graph test ... " + result1);
-		
-		//test2
-		Graph directedGraph1 = new Graph(true);
-		Graph directedGraph2 = new Graph(true);
-		
-		ComparisonResult result2 = comparer.compare(directedGraph1,
-				directedGraph2, true);		
-		System.out.println("Empty directed graph test ... " + result2);
-		
-		//test3
-		Table nodeTable1 = new Table();
-		nodeTable1.addRows(10);
-		
-		Table nodeTable2 = new Table();
-		nodeTable2.addRows(10);
-		
-		Graph noEdgeGraph1 = new Graph(nodeTable1, true);
-		Graph noEdgeGraph2 = new Graph(nodeTable2, true);
-		
-		ComparisonResult result3 = comparer.compare(noEdgeGraph1,
-				noEdgeGraph2, true);
-		System.out.println("No edge graph test ... " + result3);
-		
-		//test4 (should fail)
-		Table nodeTable3 = new Table();
-		nodeTable3.addRows(11);
-		
-		Graph noEdgeGraph3 = new Graph(nodeTable3, true);
-		
-		ComparisonResult result4 = comparer.compare(noEdgeGraph1,
-				noEdgeGraph3, true);
-		System.out.println("No edge graph test 2 (should fail) ... " + result4);
-		
-		//test5
-//		Table nodeTable4 = new Table();
-//		nodeTable1.addRows(4);
-//		
-//		Table edgeTable4 = new Table();
-//		edgeTable4.addColumns(edgeTableSchema);
-//		edgeTable4.addRows(4);
-//		
-//		//edgeTable4.set(0, Graph.DEFAULT_Source_KEY, arg2)
-	}
-//	
-//	private static void addEdge(Table edgeTable, int sourceID, int targetID) {
-//		TableEdge edge = new TableEdge(); 
-//		edge.set
-//	}
+
 
 }

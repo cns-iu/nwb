@@ -20,7 +20,7 @@ public class PrefuseGraphMLReaderTest {
 		Graph graph= (new GraphMLReader()).readGraph(new FileInputStream(fileHandler));
 		
 		Table edgeTable = graph.getEdgeTable();
-		
+		edgeTable.removeColumn(Graph.DEFAULT_SOURCE_KEY);
 		for (int ii = 0; ii < edgeTable.getRowCount(); ii++) {
 			System.out.println(edgeTable.getTuple(ii));
 		}
