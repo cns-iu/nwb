@@ -1,32 +1,23 @@
 package converter;
 
-import java.util.AbstractList;
 import java.util.ArrayList;
 import java.util.Hashtable;
-import java.util.Iterator;
+import java.util.LinkedHashMap;
 import java.util.Map;
 
-import org.cishell.framework.CIShellContext;
 import org.cishell.framework.algorithm.AlgorithmFactory;
 import org.cishell.framework.algorithm.AlgorithmProperty;
 import org.cishell.framework.data.Data;
 import org.cishell.service.conversion.Converter;
 import org.cishell.service.conversion.DataConversionService;
-import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleContext;
-import org.osgi.framework.Constants;
 import org.osgi.framework.InvalidSyntaxException;
 import org.osgi.framework.ServiceEvent;
 import org.osgi.framework.ServiceListener;
 import org.osgi.framework.ServiceReference;
 
-import edu.uci.ics.jung.graph.Edge;
 import edu.uci.ics.jung.graph.Graph;
-import edu.uci.ics.jung.graph.Vertex;
-import edu.uci.ics.jung.graph.impl.DirectedSparseEdge;
 import edu.uci.ics.jung.graph.impl.DirectedSparseGraph;
-import edu.uci.ics.jung.graph.impl.SparseVertex;
-import edu.uci.ics.jung.utils.UserDataContainer;
 
 
 
@@ -35,25 +26,25 @@ public class ConverterLoaderImpl implements AlgorithmProperty, DataConversionSer
 	//private Converter[] toGraphObjectConverters; //to store the chain of converters to convert the files to prefuse or jung Graph objects.
 	//private BundleContext bContext;
 public final static String SERVICE_LIST = "SERVICE_LIST"; 
-	
+	private Map<String, ServiceReference> testConverters;
+	private Map<String, ServiceReference> comparisonConverters;
+	private Map<String, ServiceReference> converterList;
     private BundleContext bContext;
    // private CIShellContext ciContext;
-    private Map   dataTypeToVertex;
-    private Graph graph;
+   // private Map   dataTypeToVertex;
+   // private Graph graph;
     
     public ConverterLoaderImpl(BundleContext bContext){
     	this.bContext = bContext;
+        testConverters = new LinkedHashMap<String, ServiceReference>();
+        comparisonConverters = new LinkedHashMap<String, ServiceReference>();
+        converterList = new Hashtable<String, ServiceReference>();
         
-        
-        this.graph = new DirectedSparseGraph();
-        this.dataTypeToVertex = new Hashtable();
+        //this.graph = new DirectedSparseGraph();
+       // this.dataTypeToVertex = new Hashtable();
 
-        String filter = "(&("+ALGORITHM_TYPE+"="+TYPE_CONVERTER+")" +
-                          "("+IN_DATA+"=*) " +
-                          "("+OUT_DATA+"=*)" +
-                          "(!("+REMOTE+"=*))" +
-                          "(!("+IN_DATA+"=file-ext:*))" + 
-                          "(!("+OUT_DATA+"=file-ext:*)))";
+        String filter = "(&("+ALGORITHM_TYPE+"="+TYPE_CONVERTER+"))";
+        printConverters(bContext);
         
         try {
 			this.bContext.addServiceListener(this, filter);
@@ -65,12 +56,12 @@ public final static String SERVICE_LIST = "SERVICE_LIST";
     
     private void assembleGraph() {    	
         try {
-            String filter = "(&("+ALGORITHM_TYPE+"="+TYPE_CONVERTER+")" +
-            				  "("+IN_DATA+"=*) " +
+            String filter = "(&("+ALGORITHM_TYPE+"="+TYPE_CONVERTER+"))";// +
+            				 /* "("+IN_DATA+"=*) " +
                               "("+OUT_DATA+"=*)" +
                               "(!("+REMOTE+"=*))" +
                               "(!("+IN_DATA+"=file-ext:*))" + 
-                              "(!("+OUT_DATA+"=file-ext:*)))";
+                              "(!("+OUT_DATA+"=file-ext:*)))";*/
 
             ServiceReference[] refs = bContext.getServiceReferences(
                     AlgorithmFactory.class.getName(), filter);
@@ -78,12 +69,13 @@ public final static String SERVICE_LIST = "SERVICE_LIST";
             if (refs != null) {
 				for (int i = 0; i < refs.length; ++i) {
 					//System.out.println(refs[i]);
-					String inData = (String) refs[i]
+					this.converterList.put(refs[i].getProperty("service.pid").toString(), refs[i]);
+					/*String inData = (String) refs[i]
 							.getProperty(AlgorithmProperty.IN_DATA);
 					String outData = (String) refs[i]
 							.getProperty(AlgorithmProperty.OUT_DATA);
 
-					addServiceReference(inData, outData, refs[i]);
+					addServiceReference(inData, outData, refs[i]);*/
 				}
 			}
         } catch (InvalidSyntaxException e) {
@@ -92,14 +84,13 @@ public final static String SERVICE_LIST = "SERVICE_LIST";
     } 
 
     
-    private void addServiceReference(String srcDataType, String tgtDataType, ServiceReference serviceReference) {
+   /* private void addServiceReference(String srcDataType, String tgtDataType, ServiceReference serviceReference) {
 		if (srcDataType != null && srcDataType.length() > 0
 				&& tgtDataType != null && tgtDataType.length() > 0) {
 			Vertex srcVertex = getVertex(srcDataType);
 			Vertex tgtVertex = getVertex(tgtDataType);
-
 			removeServiceReference(srcDataType, tgtDataType, serviceReference);
-			
+			this.converterList.put(serviceReference.getProperty("service.pid").toString(), serviceReference);
 			Edge directedEdge = srcVertex.findEdge(tgtVertex);
 			if (directedEdge == null) {
 				directedEdge = new DirectedSparseEdge(srcVertex, tgtVertex);
@@ -114,9 +105,9 @@ public final static String SERVICE_LIST = "SERVICE_LIST";
 			directedEdge.setUserDatum(SERVICE_LIST, serviceList,
 					new UserDataContainer.CopyAction.Shared());
 		}
-	}
+	}*/
     
-    private Vertex getVertex(String dataType) {
+   /* private Vertex getVertex(String dataType) {
 		Vertex vertex = (SparseVertex)dataTypeToVertex.get(dataType);
 		if (vertex== null) {
 			vertex = new SparseVertex();
@@ -157,12 +148,37 @@ public final static String SERVICE_LIST = "SERVICE_LIST";
 				}
 			}
 		}
-	}
+	}*/
     
 	
 	public void serviceChanged(ServiceEvent event) {
-		// TODO Auto-generated method stub
+		ServiceReference inServiceRef = event.getServiceReference();
 		
+		/*String inDataType = (String)inServiceRef.getProperty(AlgorithmProperty.IN_DATA);
+		String outDataType = (String)inServiceRef.getProperty(AlgorithmProperty.OUT_DATA);*/
+
+		if (event.getType() ==  ServiceEvent.MODIFIED) {
+			this.converterList.put(inServiceRef.getProperty("service.pid").toString(), inServiceRef);
+			if(this.comparisonConverters.get(inServiceRef.getProperty("service.pid").toString()) != null)
+				this.comparisonConverters.put(inServiceRef.getProperty("service.pid").toString(), inServiceRef);
+			if(this.testConverters.get(inServiceRef.getProperty("service.pid").toString()) != null)
+				this.testConverters.put(inServiceRef.getProperty("service.pid").toString(), inServiceRef);
+			/*removeServiceReference(inDataType, outDataType, inServiceRef);
+			addServiceReference(inDataType, outDataType, inServiceRef);*/
+		}
+		else if(event.getType() == ServiceEvent.REGISTERED) {
+			this.converterList.put(inServiceRef.getProperty("service.pid").toString(), inServiceRef);
+			this.comparisonConverters.put(inServiceRef.getProperty("service.pid").toString(), inServiceRef);
+			this.testConverters.put(inServiceRef.getProperty("service.pid").toString(), inServiceRef);
+			//addServiceReference(inDataType, outDataType, inServiceRef);
+		}
+		else if(event.getType() == ServiceEvent.UNREGISTERING) {
+			System.out.println("Unregistering service: " + inServiceRef);
+			this.converterList.remove(inServiceRef.getProperty("service.pid").toString());
+			this.comparisonConverters.remove(inServiceRef.getProperty("service.pid").toString());
+			this.testConverters.remove(inServiceRef.getProperty("service.pid").toString());
+			//removeServiceReference(inDataType, outDataType, inServiceRef);			
+		}
 	}
 
 	public Data convert(Data data, String outFormat) {
@@ -187,26 +203,27 @@ public final static String SERVICE_LIST = "SERVICE_LIST";
 
 	
 	
-	/*private Converter[] getConverters(String[] converterChain){
-		
-		
-		
-	}*/
+	public Converter getConverter(String...converterChain) throws Exception{
+		ArrayList<ServiceReference> services = new ArrayList<ServiceReference>();
+		for(String s : converterChain){
+			ServiceReference ref = this.converterList.get(s);
+			if(ref == null){
+				throw new Exception("Converter: " + s + " cannot be found");
+			}
+			services.add(ref);
+		}
+		return new ConverterTesterImpl(this.bContext,(ServiceReference[])services.toArray(new ServiceReference[0]));
+	}
 	
 	private static void printConverters(BundleContext bContext){
-		String filter = "(&("+ALGORITHM_TYPE+"="+TYPE_CONVERTER+")" +
-        "("+IN_DATA+"=*) " +
-        "("+OUT_DATA+"=*)" +
-        "(!("+REMOTE+"=*))" +
-        "(!("+IN_DATA+"=file-ext:*))" + 
-        "(!("+OUT_DATA+"=file-ext:*)))";
+		String filter = "(&("+ALGORITHM_TYPE+"="+TYPE_CONVERTER+"))";
 		try{
-		for(Bundle b : bContext.getBundles()){
-			System.out.println(b.getSymbolicName());
-			for(ServiceReference ref : b.getRegisteredServices()){
-				System.out.println("\t"+ref);
+			
+	
+			for(ServiceReference ref : bContext.getAllServiceReferences(AlgorithmFactory.class.getName(), filter)){
+				System.out.println("\t"+ref.getProperty("service.pid"));
 			}
-		}
+		
 		}
 		catch(Exception ex){
 			System.err.println(ex);
