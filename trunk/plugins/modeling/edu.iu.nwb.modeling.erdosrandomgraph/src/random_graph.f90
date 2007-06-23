@@ -9,10 +9,11 @@
 
       implicit none
       integer*8 ibm
-      integer i,j,k,n_edges,iter,n_vert,n_edges_true
+      integer i,j,k,n_edges,iter,n_vert,n_edges_true,denom,denom0,k0
       integer, allocatable,dimension(:)::ind,indc,degree,label,listlink,intdegree
       real*8 r,p
       character*60 sn_vert,sp,sibm
+      character*25,allocatable,dimension(:):: attrN
 
 !     Reading of input parameters 
       
@@ -28,11 +29,40 @@
 
 !     Opening of the file where the edges will be saved
 
+      allocate(attrN(1:n_vert))
+
+      denom=1000000000
+      
+      do i=1,n_vert
+         denom0=denom
+         k=i
+         do
+            if((k/denom0)/=0)exit
+            denom0=denom0/10
+         enddo
+         attrN(i)(1:1)='"'
+         j=2
+         do
+            attrN(i)(j:j)=char(48+k/denom0)
+            k0=k-(k/denom0)*denom0
+            k=k0
+            denom0=denom0/10
+            j=j+1
+            if(denom0==0)exit
+         enddo
+         attrN(i)(j:j)='"'
+      enddo
+
       open(21,file='network.nwb',status='unknown')
       write(21,108)'// Erdoes-Renyi graph'
       write(21,110)'// Linking probability ',p
       write(21,103)'*Nodes ',n_vert
+      write(21,120)'id*int      label*string'
+      do i=1,n_vert
+         write(21,*)i,attrN(i)
+      enddo
       write(21,109)'*UndirectedEdges'
+      write(21,121)'source*int      target*int'
 
 !     The average degree of the graph is given by the product of the
 !     linking probability p and the number of nodes n_vert
@@ -109,6 +139,8 @@
 108   format(a21)
 109   format(a16)
 110   format(a22,e15.6)
+120   format(a24)
+121   format(a26)
 
       stop
     end program random_graph
