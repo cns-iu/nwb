@@ -17,13 +17,13 @@
 
       implicit none
       integer*8 ibm
-      integer i,j,k,n_edges,index,m,n_vert,m0
+      integer i,j,k,n_edges,index,m,n_vert,m0,denom,denom0,k0
       integer, allocatable,dimension(:)::degree,list_edges,loc_edges
       integer, allocatable,dimension(:)::list_newedges
       logical, allocatable,dimension(:)::label
       real*8 r, binsize
       character*60 sn_vert,sm0,sibm
-
+      character*25,allocatable,dimension(:):: attrN
 
       call GETARG(2,sn_vert)
       call GETARG(4,sm0)
@@ -44,6 +44,30 @@
       allocate(list_edges(1:2*m0*n_vert))
       allocate(list_newedges(1:m0))
       allocate(loc_edges(1:m0))
+      allocate(attrN(1:n_vert))
+
+      denom=1000000000
+      
+      do i=1,n_vert
+         denom0=denom
+         k=i
+         do
+            if((k/denom0)/=0)exit
+            denom0=denom0/10
+         enddo
+         attrN(i)(1:1)='"'
+         j=2
+         do
+            attrN(i)(j:j)=char(48+k/denom0)
+            k0=k-(k/denom0)*denom0
+            k=k0
+            denom0=denom0/10
+            j=j+1
+            if(denom0==0)exit
+         enddo
+         attrN(i)(j:j)='"'
+      enddo
+
 
 !     Opening of the file where the edges will be saved
 
@@ -51,7 +75,12 @@
       write(21,108)'// Barabasi-Albert network'
       write(21,102)'// Links created by each node ',m0
       write(21,103)'*Nodes ',n_vert
+      write(21,110)'id*int      label*string'
+      do i=1,n_vert
+         write(21,*)i,attrN(i)
+      enddo
       write(21,109)'*UndirectedEdges'
+      write(21,111)'source*int      target*int'
 
 !     Initialization of the number of edges and the total degree of all nodes
 !     The entries of the array "label" are initialized to .false.
@@ -127,6 +156,8 @@
 105   format(4x,e15.6,4x,e15.6)
 108   format(a26)
 109   format(a16)
+110   format(a24)
+111   format(a26)
 
       stop
     end program BA
