@@ -9,11 +9,12 @@
 
       implicit none
       integer*8 ibm
-      integer i,j,k,vic,newvic,n_vert,k_nei
+      integer i,j,k,vic,newvic,n_vert,k_nei,denom,denom0,k0
       integer, allocatable,dimension(:)::linklist
       integer, allocatable,dimension(:)::check_vic_in,check_vic_out
       real*8 r,p
       character*60 sn_vert,sk_nei,sp,sibm
+      character*25,allocatable,dimension(:):: attrN
 
 !     Reading of input parameters 
       
@@ -32,6 +33,29 @@
       allocate(linklist(1:n_vert*k_nei))
       allocate(check_vic_in(1:n_vert))
       allocate(check_vic_out(1:n_vert))
+      allocate(attrN(1:n_vert))
+
+      denom=1000000000
+      
+      do i=1,n_vert
+         denom0=denom
+         k=i
+         do
+            if((k/denom0)/=0)exit
+            denom0=denom0/10
+         enddo
+         attrN(i)(1:1)='"'
+         j=2
+         do
+            attrN(i)(j:j)=char(48+k/denom0)
+            k0=k-(k/denom0)*denom0
+            k=k0
+            denom0=denom0/10
+            j=j+1
+            if(denom0==0)exit
+         enddo
+         attrN(i)(j:j)='"'
+      enddo
 
 !     Opening of the file where the edges will be saved
 
@@ -40,7 +64,12 @@
       write(21,102)'// Initial neighbors of each node ',k_nei
       write(21,110)'// Rewiring probability ',p
       write(21,103)'*Nodes ',n_vert
+      write(21,120)'id*int      label*string'
+      do i=1,n_vert
+         write(21,*)i,attrN(i)
+      enddo
       write(21,109)'*UndirectedEdges'
+      write(21,121)'source*int      target*int'
 
 !     Initialization of list of neighbors before rewiring
 
@@ -104,6 +133,8 @@
 108   format(a22)
 109   format(a16)
 110   format(a24,e15.6)
+120   format(a24)
+121   format(a26)
 
 9001  continue
 
