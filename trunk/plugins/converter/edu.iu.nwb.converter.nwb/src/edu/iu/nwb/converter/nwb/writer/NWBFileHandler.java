@@ -76,9 +76,9 @@ public class NWBFileHandler implements AlgorithmFactory {
 						return new Data[]{new BasicData(inData, NWBFileProperty.NWB_FILE_TYPE)};  
 					}else {
 						guiBuilder.showError("Bad NWB Format", 
-								"Sorry, your file does not comply with the NWB File Formate Specification.",
-								"Sorry, your file does not comply with the NWB File Formate Specification.\n"+
-								"Please review the latest NWB File Formate Specification at "+
+								"Sorry, your file does not comply with the NWB File Format Specification.",
+								"Sorry, your file does not comply with the NWB File Format Specification.\n"+
+								"Please review the latest NWB File Format Specification at "+
 								"http://nwb.slis.indiana.edu/software.html, and update your file.");
 						return null;
 					}
