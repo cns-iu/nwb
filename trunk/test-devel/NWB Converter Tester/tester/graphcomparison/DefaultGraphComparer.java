@@ -18,8 +18,6 @@ import prefuse.util.collections.IntIterator;
 /**
  * 
  * @author mwlinnem
- * 
- * Under Construction
  *
  */
 public class DefaultGraphComparer implements GraphComparer {
@@ -44,15 +42,9 @@ public class DefaultGraphComparer implements GraphComparer {
 				return new ComparisonResult(false, "Nodes do not connect to" +
 						" the same nodes in both graphs.");
 			
-			if (! haveSameContentsGraphs(g1, g2)) 
+			if (! areEqual(g1, g2)) 
 				return new ComparisonResult(false, "Graphs do not have the " +
 						"same contents.");
-			//if this works it is very interesting, and will account for
-			//attributes as well.
-			//doesn't work though :P
-//			if (! g1.equals(g2)) 
-//				return new ComparisonResult(false, "Graphs are not equal to" +
-//						" each other.");
 				
 		} else {
 			//tests for when graph IDs are NOT preserved across the conversion
@@ -60,6 +52,12 @@ public class DefaultGraphComparer implements GraphComparer {
 				return new ComparisonResult(false, "The number of nodes" +
 						"with a certain number of edges is not the same in" +
 						"both graphs.");
+			
+			/*
+			 * TODO: we could really use a graph isomorphism comparison right
+			 * here. nodeDegreeFrequencies will catch some errors, but lets
+			 * a lot through.
+			 */
 			
 			if (! haveSameNodeAttributes(g1, g2))
 				return new ComparisonResult(false, "Node attributes are not " +
@@ -74,51 +72,7 @@ public class DefaultGraphComparer implements GraphComparer {
 		return new ComparisonResult(true, "All tests succeeded.");
 	}
 	
-	private boolean haveSameContentsGraphs(Graph g1, Graph g2) {
-		Table nodeTable1 = g1.getNodeTable();
-		Table nodeTable2 = g2.getNodeTable();
-		
-		if (! haveSameContentsTables(nodeTable1, nodeTable2))
-			return false;
-		
-		Table edgeTable1 = g1.getEdgeTable();
-		Table edgeTable2 = g2.getEdgeTable();
-		
-		if (! haveSameContentsTables(edgeTable1, edgeTable2)) 
-			return false;
-		
-		return true;
-	}
-	
-	private boolean haveSameContentsTables(Table t1, Table t2) {
-		Iterator tuplesIterator1 = t1.tuples();
-		Iterator tuplesIterator2 = t2.tuples();
-		
-		while (tuplesIterator1.hasNext()) {
-			Tuple tuple1 = (Tuple) tuplesIterator1.next();
-			Tuple tuple2 = (Tuple) tuplesIterator2.next();
-			
-			if (! haveSameContentsTuples(tuple1, tuple2)) {
-			//	System.out.println("BAD TUPLE PAIR!");
-			//	System.out.println(tuple1 + " : " + tuple2);
-				return false;
-			}
-		}
-		
-		return true;
-	}
-	
-	private boolean haveSameContentsTuples(Tuple tu1, Tuple tu2) {
-		if (tu1.getColumnCount() != tu2.getColumnCount()) 
-			return false;
-		
-		for (int ii = 0; ii < tu1.getColumnCount(); ii++) {
-			if (! tu1.get(ii).equals(tu2.get(ii))) 
-				return false;
-		}
-		
-		return true;
-	}
+
 	
 	private boolean isSameDirectedness(Graph g1, Graph g2) {
 		boolean result = g1.isDirected() == g2.isDirected();
@@ -231,31 +185,6 @@ public class DefaultGraphComparer implements GraphComparer {
 		return result;
 	}
 	
-//	private boolean haveSameNodeAttributesOld(Graph g1, Graph g2) {
-//		TupleSet g1NodeAttributes = getNodeAttributeSet(g1);
-//		TupleSet g2NodeAttributes = getNodeAttributeSet(g2);
-//		
-//		if (g1NodeAttributes == null || g2NodeAttributes == null) 
-//			return false;
-//		
-//		boolean result = g1NodeAttributes.equals(g2NodeAttributes);
-//		return result;
-//	}
-//	
-//	private TupleSet getNodeAttributeSet(Graph g) {
-//		String nodeKeyField = g.getNodeKeyField();
-//		
-//		if (nodeKeyField == null) {
-//			//IDs are represented by row numbers (standard).
-//			return g.getNodes();
-//		} else {
-//			//IDs are held in a special field (not currently handled)
-//			System.err.println("BasicGraphComparer: could not handle " +
-//					"special ID field");
-//			return null;
-//		}
-//	}
-	
 	/*
 	 * Determines whether the two graphs have the same edge attributes.
 	 * That is, for every edge in table A there is an edge in table B with
@@ -304,7 +233,7 @@ public class DefaultGraphComparer implements GraphComparer {
 			int t2Index = t2Iter.nextInt();
 			Tuple t2Tuple = t2.getTuple(t2Index);
 			
-			if (! haveSameContentsTuples(t1Tuple, t2Tuple)) 
+			if (! areEqual(t1Tuple, t2Tuple)) 
 				return false;
 		}
 		//every tuple has an identical tuple in the other table.
@@ -327,63 +256,70 @@ public class DefaultGraphComparer implements GraphComparer {
 	}
 	
 	private Table copyTable(Table t) {
-		//System.out.println("Table!: " + t);
 		Table tCopy = new Table();
 		tCopy.addColumns(t.getSchema());
 		
 		for (Iterator ii = t.tuples(); ii.hasNext();) {
 			Tuple tuple = (Tuple) ii.next();
-			//System.out.println(tuple);
 			tCopy.addTuple(tuple);
 		}
 		
 		for (Iterator ii = tCopy.tuples(); ii.hasNext();) {
-			//System.out.println("Copy tuples!!!---");
 			Tuple tuple = (Tuple) ii.next();
-			//System.out.println(tuple);
 		}
-		//System.out.println("Tabele2!: " + tCopy);
 		return tCopy;
 	}
-	
-	
-	
-	
+		
 	/*
-	 * Compares nodes in each graph with the same ID to see whether they have
-	 * same number of edges. Returns false if IDs do not match, or if number
-	 * of edges is not the same for nodes whose IDs do match.
-	 * 
-	 * For now this assumes that the conversion preserved the order of the IDs, 
-	 * i.e. If the conversion worked then if the first node in g2 has an id of 
-	 * 5 then so will the first node of g2.
+	 * These methods do what .equals() should do for their respective objects:
+	 * Actually compare the contents to see if they are .equals() to each
+	 * other. The default methods instead appear to be doing a memory 
+	 * location comparison.
 	 */
-//	private boolean idsAndEdgesAgreeOrig(Graph g1, Graph g2) {
-//		Table table1 = g1.getNodeTable();
-//		Table table2 = g2.getNodeTable();
-//		
-//		return true;
+
+	private boolean areEqual(Graph g1, Graph g2) {
+		Table nodeTable1 = g1.getNodeTable();
+		Table nodeTable2 = g2.getNodeTable();
 		
-		//UNDER CONSTRUCTION
+		if (! areEqual(nodeTable1, nodeTable2))
+			return false;
 		
-		//-----------
-//		TupleSet nodeTuples = g.getNodes();
-//		
-//		/*
-//		 * The name of the key field can vary. This ensures that the name of 
-//		 * the field we use to get the key is correct.
-//		 */
-//		String nodeKeyField = g.getNodeKeyField();
-//		
-//		for (Iterator ii = nodeTuples.tuples(); ii.hasNext();) {
-//			
-//		}
-//
-//		Tuple nodeTuple = (Tuple) ii.next();
-//		long nodeKey = nodeTuple.getLong(nodeKeyField);
-//		//g.getNo
-//	}
+		Table edgeTable1 = g1.getEdgeTable();
+		Table edgeTable2 = g2.getEdgeTable();
+		
+		if (! areEqual(edgeTable1, edgeTable2)) 
+			return false;
+		
+		return true;
+	}
 	
-
-
+	private boolean areEqual(Table t1, Table t2) {
+		Iterator tuplesIterator1 = t1.tuples();
+		Iterator tuplesIterator2 = t2.tuples();
+		
+		while (tuplesIterator1.hasNext()) {
+			Tuple tuple1 = (Tuple) tuplesIterator1.next();
+			Tuple tuple2 = (Tuple) tuplesIterator2.next();
+			
+			if (! areEqual(tuple1, tuple2)) {
+			//	System.out.println("BAD TUPLE PAIR!");
+			//	System.out.println(tuple1 + " : " + tuple2);
+				return false;
+			}
+		}
+		
+		return true;
+	}
+	
+	private boolean areEqual(Tuple tu1, Tuple tu2) {
+		if (tu1.getColumnCount() != tu2.getColumnCount()) 
+			return false;
+		
+		for (int ii = 0; ii < tu1.getColumnCount(); ii++) {
+			if (! tu1.get(ii).equals(tu2.get(ii))) 
+				return false;
+		}
+		
+		return true;
+	}
 }

@@ -8,6 +8,11 @@ import prefuse.data.Schema;
 import prefuse.data.Table;
 import prefuse.data.io.GraphMLReader;
 
+/**
+ * 
+ * @author mwlinnem
+ *
+ */
 public class GraphComparerTester {
 	public static final String DEFAULT_GRAPHML_FILE_DIRECTORY = "/home/" +
 			"mwlinnem/workspace/NWB Converter Tester/test_files/" +
@@ -205,31 +210,4 @@ public class GraphComparerTester {
 		}
 
 	}
-	
-	
-	
-//	//test5
-//	Table nodeTable4 = new Table();
-//	nodeTable4.addRows(4);
-//	
-//	Table edgeTable4 = new Table();
-//	edgeTable4.addColumns(edgeTableSchema);
-//	edgeTable4.addRows(4);
-//	
-//	addEdge(edgeTable4, 0, 0, 1);
-//	addEdge(edgeTable4, 1, 0, 3);
-//	addEdge(edgeTable4, 2, 1, 0);
-//	addEdge(edgeTable4, 3, 3, 2);
-//	
-//	Graph edgedGraph1 = new Graph(nodeTable4, edgeTable4, true);
-//	Graph edgedGraph2 = new Graph(nodeTable4, edgeTable4, true);
-//	
-//	ComparisonResult result5 = comparer.compare(edgedGraph1, 
-//					edgedGraph2, true);
-//	System.out.println("Edged graph test ... " + result5);
-	
-//	private static void addEdge(Table edgeTable,int row, int sourceID, int targetID) {
-//	edgeTable.setString(row, Graph.DEFAULT_SOURCE_KEY, String.valueOf(sourceID));
-//	edgeTable.setString(row, Graph.DEFAULT_TARGET_KEY, String.valueOf(targetID));
-//}
 }
