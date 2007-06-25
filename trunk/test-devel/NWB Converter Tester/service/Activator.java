@@ -1,18 +1,16 @@
 package service;
 
-import org.cishell.service.conversion.Converter;
+import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleActivator;
 import org.osgi.framework.BundleContext;
+import org.osgi.framework.ServiceReference;
 
 import converter.ConverterLoaderImpl;
 
 public class Activator implements BundleActivator{
 	private ConverterLoaderImpl cli;
-	private Converter comparisonConverter;
-	private Converter testConverter;
-	private ConfigurationFileParser cfp;
 	public void start(BundleContext b){
-		
+		cli = new ConverterLoaderImpl(b);
 		System.out.println("Hello!");
 		//System.out.println(b.getBundles());
 		/*for(Bundle bn : b.getBundles()){
@@ -24,17 +22,7 @@ public class Activator implements BundleActivator{
 				}
 			}
 		}*/
-		this.cli = new ConverterLoaderImpl(b);
-		this.cfp = new ConfigurationFileParser();
-		try{
-		this.comparisonConverter = this.cli.getConverter(this.cfp.getComparisonConverters());
-		this.testConverter = this.cli.getConverter(this.cfp.getTestConverters());
-		System.out.println(this.comparisonConverter);
-		System.out.println(this.testConverter);
-		}
-		catch(Exception ex){
-			System.err.println(ex);
-		}
+		
 	}
 	
 	public void stop(BundleContext b){

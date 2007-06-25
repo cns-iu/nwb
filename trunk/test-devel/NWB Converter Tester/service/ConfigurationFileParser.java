@@ -116,6 +116,29 @@ public class ConfigurationFileParser {
 		return this.nodeIDChange;
 	}
 	
+	public String toString(){
+		String output = "";
+		output += "Files to test:\n";
+		for(File f : this.comparisonFiles){
+			if(f.isDirectory())
+				output += "Directory:\t";
+			output+= f.getName()+"\n";
+		}
+		
+		output += "\nConverters to test:\n";
+		for(String s : this.testConverters){
+			output += s + "\n";
+		}
+		
+		output += "\nConverters used to Compare files:\n";
+		
+		for(String s : this.comparisonConverters){
+			output += s +"\n";
+		}
+		
+		return output;
+	}
+	
 }
 
 	

@@ -16,9 +16,6 @@ import org.osgi.framework.ServiceEvent;
 import org.osgi.framework.ServiceListener;
 import org.osgi.framework.ServiceReference;
 
-import edu.uci.ics.jung.graph.Graph;
-import edu.uci.ics.jung.graph.impl.DirectedSparseGraph;
-
 
 
 public class ConverterLoaderImpl implements AlgorithmProperty, DataConversionService, ServiceListener{
