@@ -144,13 +144,27 @@ public class ConfigurationFileParser {
 		return this.nodeIDChange;
 	}
 	
+	public static String asString(File f, String s){
+		String output = s;
+		if(f.isDirectory() && !f.isHidden()){
+			output += "Directory: ";
+			output += f.getName()+ "\n";
+			for(File ff : f.listFiles()){
+				output += asString(ff, s);
+			}
+		}
+		else{
+			output += "\t" + f.getName() + "\n";
+		}
+		
+		return output;
+	}
+	
 	public String toString(){
 		String output = "";
 		output += "Files to test:\n";
 		for(File f : this.comparisonFiles){
-			if(f.isDirectory())
-				output += "Directory:\t";
-			output+= f.getName()+"\n";
+			output += asString(f,"");
 		}
 		
 		output += "\nConverters to test:\n";

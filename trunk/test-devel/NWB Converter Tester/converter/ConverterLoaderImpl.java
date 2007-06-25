@@ -37,7 +37,7 @@ public final static String SERVICE_LIST = "SERVICE_LIST";
        // this.dataTypeToVertex = new Hashtable();
 
         String filter = "(&("+ALGORITHM_TYPE+"="+TYPE_CONVERTER+"))";
-        printConverters(bContext);
+        //printConverters(bContext);
         
         try {
 			this.bContext.addServiceListener(this, filter);

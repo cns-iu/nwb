@@ -1,22 +1,15 @@
 package service;
 
-import java.io.File;
-
-import org.cishell.service.conversion.Converter;
 import org.osgi.framework.BundleActivator;
 import org.osgi.framework.BundleContext;
 
-import converter.ConverterLoaderImpl;
+import tester.ConverterTester;
 
 public class Activator implements BundleActivator{
-	private ConverterLoaderImpl cli;
-	private ConfigurationFileParser cfp;
-	private Converter testConverters;
-	private Converter comparisonConverters;
+	private ConverterTester ct;
 	
 	public void start(BundleContext b){
-		cli = new ConverterLoaderImpl(b);
-		cfp = new ConfigurationFileParser();
+		
 		System.out.println("Hello!");
 		//System.out.println(b.getBundles());
 		/*for(Bundle bn : b.getBundles()){
@@ -29,11 +22,8 @@ public class Activator implements BundleActivator{
 			}
 		}*/
 		try{
-		cfp.parseFile(new File("/home/kelleyt/workspace/edu.iu.nwb.converter.tester/test_files/test.cfg"));
-		System.out.println(cfp);
-		testConverters = cli.getConverter(cfp.getTestConverters());
-		comparisonConverters = cli.getConverter(cfp.getComparisonConverters());
-		System.out.println(testConverters + "\n" + comparisonConverters);
+			ct = new ConverterTester(b,"/home/kelleyt/workspace/edu.iu.nwb.converter.tester/test_files/test.cfg");
+			System.out.println(ct);
 		}catch(Exception ex){
 			System.err.println(ex);
 		}
