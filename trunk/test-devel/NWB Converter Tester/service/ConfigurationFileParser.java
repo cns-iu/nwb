@@ -2,7 +2,9 @@ package service;
 
 import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.FileReader;
+import java.io.IOException;
 import java.util.LinkedList;
 import java.util.Queue;
 
@@ -22,43 +24,60 @@ public class ConfigurationFileParser {
 	public ConfigurationFileParser(){
 		comparisonConverters = new LinkedList<String>();
 		testConverters = new LinkedList<String>();
+		comparisonFiles = new LinkedList<File>();
 		nodeIDChange = true;
 	}
 	
 	public ConfigurationFileParser(File f) throws Exception{
 		comparisonConverters = new LinkedList<String>();
 		testConverters = new LinkedList<String>();
+		comparisonFiles = new LinkedList<File>();
 		nodeIDChange = true;
 		this.parseFile(f);
 	}
 	
-	public void parseFile(File f) throws Exception{
+	public void parseFile(File f){
+		int lineNum = 0;
 		String line = null;
-		BufferedReader reader = 
-			new BufferedReader(new FileReader(f));
-		
-		while((line = reader.readLine().toLowerCase()) != null){
+		BufferedReader reader;
+		try{
+		reader = new BufferedReader(new FileReader(f));
+		 
+		//System.out.println("Beginning to parse.");
+	
+		while((line = reader.readLine()) != null){
+			
+			
+	
+			System.out.println("Parsing line: " + lineNum + " " + line);
 			if(line.startsWith(ConfigurationFileConstants.TEST_GRAPHS)){
-				line.replace(ConfigurationFileConstants.TEST_GRAPHS, "");
+				line = line.replace(ConfigurationFileConstants.TEST_GRAPHS, "");
+				//System.out.println(line);
 				this.processFileList = true;
 				this.processComparisonConvertersList = false;
 				this.processTestConvertersList = false;	
 			}
 			if(line.startsWith(ConfigurationFileConstants.COMPARISON_CONVERTERS)){
-				line.replace(ConfigurationFileConstants.COMPARISON_CONVERTERS, "");
+				line = line.replace(ConfigurationFileConstants.COMPARISON_CONVERTERS, "");
+				//System.out.println(line);
 				this.processFileList = false;
 				this.processComparisonConvertersList = true;
 				this.processTestConvertersList = false;
 			}
 			if(line.startsWith(ConfigurationFileConstants.TEST_CONVERTERS)){
-				line.replace(ConfigurationFileConstants.TEST_CONVERTERS, "");
+				line = line.replace(ConfigurationFileConstants.TEST_CONVERTERS, "");
+				//System.out.println(line);
 				this.processFileList = false;
 				this.processComparisonConvertersList = false;
 				this.processTestConvertersList = true;
 			}
 			if(line.startsWith(ConfigurationFileConstants.NODE_ID_CHANGE)){
-				line.replace(ConfigurationFileConstants.NODE_ID_CHANGE, "");
-				this.nodeIDChange = new Boolean(line).booleanValue();
+				line = line.replace(ConfigurationFileConstants.NODE_ID_CHANGE, "");
+				//System.out.println(line );
+				this.nodeIDChange = new Boolean(line.toLowerCase()).booleanValue();
+				this.processFileList = false;
+				this.processComparisonConvertersList = false;
+				this.processTestConvertersList = false;
 			}
 			if(this.processFileList){
 				this.processFiles(this.processLine(line));
@@ -69,8 +88,17 @@ public class ConfigurationFileParser {
 			if(this.processTestConvertersList){
 				this.processTestConverters(this.processLine(line));
 			}
-			
+			lineNum++;
+			//System.out.println("Next line");
 		}
+		}
+		catch(FileNotFoundException fnfe){
+			System.out.println(fnfe);
+		}
+		catch(IOException iex){
+			System.out.println(iex);
+		}
+		//System.out.println("Finished parsing");
 	}
 	
 	private String[] processLine(String s){
@@ -81,7 +109,7 @@ public class ConfigurationFileParser {
 		return line;
 	}
 	
-	private void processFiles(String...strings) throws Exception{
+	private void processFiles(String...strings) throws FileNotFoundException{
 		for(String s : strings){
 			File f = new File(s);
 			this.comparisonFiles.add(f);
@@ -135,6 +163,8 @@ public class ConfigurationFileParser {
 		for(String s : this.comparisonConverters){
 			output += s +"\n";
 		}
+		
+		output += "\nNode IDs are expected to change: " + this.nodeIDChange + "\n";
 		
 		return output;
 	}

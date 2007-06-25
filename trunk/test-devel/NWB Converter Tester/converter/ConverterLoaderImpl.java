@@ -23,8 +23,6 @@ public class ConverterLoaderImpl implements AlgorithmProperty, DataConversionSer
 	//private Converter[] toGraphObjectConverters; //to store the chain of converters to convert the files to prefuse or jung Graph objects.
 	//private BundleContext bContext;
 public final static String SERVICE_LIST = "SERVICE_LIST"; 
-	private Map<String, ServiceReference> testConverters;
-	private Map<String, ServiceReference> comparisonConverters;
 	private Map<String, ServiceReference> converterList;
     private BundleContext bContext;
    // private CIShellContext ciContext;
@@ -33,8 +31,6 @@ public final static String SERVICE_LIST = "SERVICE_LIST";
     
     public ConverterLoaderImpl(BundleContext bContext){
     	this.bContext = bContext;
-        testConverters = new LinkedHashMap<String, ServiceReference>();
-        comparisonConverters = new LinkedHashMap<String, ServiceReference>();
         converterList = new Hashtable<String, ServiceReference>();
         
         //this.graph = new DirectedSparseGraph();
@@ -156,25 +152,14 @@ public final static String SERVICE_LIST = "SERVICE_LIST";
 
 		if (event.getType() ==  ServiceEvent.MODIFIED) {
 			this.converterList.put(inServiceRef.getProperty("service.pid").toString(), inServiceRef);
-			if(this.comparisonConverters.get(inServiceRef.getProperty("service.pid").toString()) != null)
-				this.comparisonConverters.put(inServiceRef.getProperty("service.pid").toString(), inServiceRef);
-			if(this.testConverters.get(inServiceRef.getProperty("service.pid").toString()) != null)
-				this.testConverters.put(inServiceRef.getProperty("service.pid").toString(), inServiceRef);
-			/*removeServiceReference(inDataType, outDataType, inServiceRef);
-			addServiceReference(inDataType, outDataType, inServiceRef);*/
 		}
 		else if(event.getType() == ServiceEvent.REGISTERED) {
 			this.converterList.put(inServiceRef.getProperty("service.pid").toString(), inServiceRef);
-			this.comparisonConverters.put(inServiceRef.getProperty("service.pid").toString(), inServiceRef);
-			this.testConverters.put(inServiceRef.getProperty("service.pid").toString(), inServiceRef);
-			//addServiceReference(inDataType, outDataType, inServiceRef);
 		}
 		else if(event.getType() == ServiceEvent.UNREGISTERING) {
 			System.out.println("Unregistering service: " + inServiceRef);
 			this.converterList.remove(inServiceRef.getProperty("service.pid").toString());
-			this.comparisonConverters.remove(inServiceRef.getProperty("service.pid").toString());
-			this.testConverters.remove(inServiceRef.getProperty("service.pid").toString());
-			//removeServiceReference(inDataType, outDataType, inServiceRef);			
+			
 		}
 	}
 
