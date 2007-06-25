@@ -9,27 +9,137 @@ import prefuse.data.Table;
 import prefuse.data.io.GraphMLReader;
 
 public class GraphComparerTester {
-	public static final String graphMLFileDirectory = "/home/mwlinnem/" +
-		"workspace/NWB Converter Tester/test_files/GraphML Files/";
+	public static final String DEFAULT_GRAPHML_FILE_DIRECTORY = "/home/" +
+			"mwlinnem/workspace/NWB Converter Tester/test_files/" +
+			"GraphML Files/";
+	
 	public static void main(String[] args) {
 		GraphComparer comparer = new DefaultGraphComparer();
 		
 		System.out.println("---Basic Tests Assuming Ids are not preserved-");
-		runBasicTests(comparer, true);
-		System.out.println("----------------------------------------------");
-		System.out.println("---Basic Tests Assuming Ids are preserved-----");
 		runBasicTests(comparer, false);
 		System.out.println("----------------------------------------------");
+		System.out.println("---Basic Tests Assuming Ids are preserved-----");
+		runBasicTests(comparer, true);
+		System.out.println("----------------------------------------------");
 		System.out.println("---Real Tests Assuming Ids are not preserved--");
-		runRealTests(comparer, true);
+		runRealTests(comparer, false);
 		System.out.println("----------------------------------------------");
 		System.out.println("---Real Tests Assuming Ids are preserved------");
+		runRealTests(comparer, true);
+		System.out.println("----------------------------------------------");
+		System.out.println("----------*-All Tests Completed-*-------------");
 	}
 	
 	private static void runRealTests(GraphComparer comparer,
 			boolean idsPreserved) {
+		//directedness test
+		Graph directedness1 = loadGraph("directedness1.xml");
+		Graph directedness2 = loadGraph("directedness2.xml");
 		
-	}
+		ComparisonResult result1 = comparer.compare(directedness1,
+				directedness2, idsPreserved);
+		
+		System.out.println("Directedness Test (should fail) ... " + result1);
+		
+		//nodecount test
+		Graph nodeCount1 = loadGraph("nodecount1.xml");
+		Graph nodeCount2 = loadGraph("nodecount2.xml");
+		
+		ComparisonResult result2 = comparer.compare(nodeCount1, nodeCount2,
+				idsPreserved);
+		
+		System.out.println("Node Count Test (should fail) ... " + result2);
+		
+		//edgecount test
+		Graph edgeCount1 = loadGraph("edgecount1.xml");
+		Graph edgeCount2 = loadGraph("edgecount2.xml");
+		
+		ComparisonResult result3 = comparer.compare(edgeCount1, edgeCount2,
+				idsPreserved);
+		
+		System.out.println("Edge Count Test (should fail) ... " + result3);	
+
+	
+		//neighbor test 1
+		Graph neighbor1 = loadGraph("neighbor1.xml");
+		Graph neighbor2 = loadGraph("neighbor2.xml");
+		
+		ComparisonResult result4 = comparer.compare(neighbor1, neighbor2,
+				idsPreserved);
+		
+		System.out.println("Neighbor Test 1 (should fail, but will be missed if idsNotPreserved) ..." + result4);
+		
+		//neighbor test 2
+		Graph neighbor3 = loadGraph("neighbor3.xml");
+		Graph neighbor4 = loadGraph("neighbor4.xml");
+		
+		ComparisonResult result5 = comparer.compare(neighbor3, neighbor4,
+				idsPreserved);
+		
+		System.out.println("Neighbor Test 2 (should pass) ..." + result5);
+		
+		//neighbor test 3
+		Graph neighbor5 = loadGraph("neighbor5.xml");
+		Graph neighbor6 = loadGraph("neighbor6.xml");
+		
+		ComparisonResult result6 = comparer.compare(neighbor5, neighbor6,
+				idsPreserved);
+		
+		System.out.println("Neighbor Test 3 (should pass) ..." + result6);
+		
+		//edgeFrequency test 1
+		Graph frequency1 = loadGraph("edgefrequency1.xml");
+		Graph frequency2 = loadGraph("edgefrequency2.xml");
+		
+		ComparisonResult result7 = comparer.compare(frequency1, frequency2,
+				idsPreserved);
+		
+		System.out.println("Degree frequency test 1 (should fail, but won't " +
+				"on idsNotPreserved)" + result7);
+		
+		//edgeFrequency test2
+		
+		Graph frequency3 = loadGraph("edgefrequency3.xml");
+		Graph frequency4 = loadGraph("edgefrequency4.xml");
+		
+		ComparisonResult result8 = comparer.compare(frequency3, frequency4,
+				idsPreserved);
+		
+		System.out.println("Degree frequency test 2 (Fail if IdsPreserved) " +
+				result8);
+		
+		//nodeAttributes test 1
+		Graph nodeAttr1 = loadGraph("nodeattributes1.xml");
+		Graph nodeAttr2 = loadGraph("nodeattributes2.xml");
+		
+		ComparisonResult result9 = comparer.compare(nodeAttr1, nodeAttr2,
+				idsPreserved);
+		
+		System.out.println("Node Attributes Test 1 (should fail) ... " + 
+				result9);
+		
+		//nodeAttributes test 2
+		Graph nodeAttr3 = loadGraph("nodeattributes3.xml");
+		Graph nodeAttr4 = loadGraph("nodeattributes4.xml");
+		
+		ComparisonResult result10 = comparer.compare(nodeAttr3, nodeAttr4, 
+				idsPreserved);
+		
+		System.out.println("Node Attributes Test 2 (should fail but may " +
+				"pass on ids not preserved) " + result10);
+		
+		//edgeAttributes
+		Graph edgeAttr1 = loadGraph("edgeattributes1.xml");
+		Graph edgeAttr2 = loadGraph("edgeattributes2.xml");
+		
+		ComparisonResult result11 = comparer.compare(edgeAttr1, edgeAttr2,
+				idsPreserved);
+		
+		System.out.println("Edge Attributes Test (should fail) ... " + 
+				result11);
+	}	
+	
 	private static void runBasicTests(GraphComparer comparer,
 			boolean idsPreserved) {
 //		setup
@@ -80,7 +190,7 @@ public class GraphComparerTester {
 	
 
 	private static Graph loadGraph(String fileName) {
-		return loadGraph(graphMLFileDirectory, fileName);
+		return loadGraph(DEFAULT_GRAPHML_FILE_DIRECTORY, fileName);
 	}
 	
 	private static Graph loadGraph(String directoryPath, String fileName) {

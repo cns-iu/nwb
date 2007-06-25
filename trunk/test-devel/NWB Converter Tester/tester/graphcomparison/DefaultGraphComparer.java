@@ -43,6 +43,10 @@ public class DefaultGraphComparer implements GraphComparer {
 			if (! nodesHaveSameNeighbors(g1, g2)) 
 				return new ComparisonResult(false, "Nodes do not connect to" +
 						" the same nodes in both graphs.");
+			
+			if (! haveSameContentsGraphs(g1, g2)) 
+				return new ComparisonResult(false, "Graphs do not have the " +
+						"same contents.");
 			//if this works it is very interesting, and will account for
 			//attributes as well.
 			//doesn't work though :P
@@ -58,16 +62,62 @@ public class DefaultGraphComparer implements GraphComparer {
 						"both graphs.");
 			
 			if (! haveSameNodeAttributes(g1, g2))
-				return new ComparisonResult(false, "Node attributes are not" +
+				return new ComparisonResult(false, "Node attributes are not " +
 						"the same in both graphs.");
 			
 			if (! haveSameEdgeAttributes(g1, g2)) 
-				return new ComparisonResult(false, "Edge attributes are not" +
+				return new ComparisonResult(false, "Edge attributes are not " +
 						"the same in both graphs.");
 		}
 		
 		//all tests passed
 		return new ComparisonResult(true, "All tests succeeded.");
+	}
+	
+	private boolean haveSameContentsGraphs(Graph g1, Graph g2) {
+		Table nodeTable1 = g1.getNodeTable();
+		Table nodeTable2 = g2.getNodeTable();
+		
+		if (! haveSameContentsTables(nodeTable1, nodeTable2))
+			return false;
+		
+		Table edgeTable1 = g1.getEdgeTable();
+		Table edgeTable2 = g2.getEdgeTable();
+		
+		if (! haveSameContentsTables(edgeTable1, edgeTable2)) 
+			return false;
+		
+		return true;
+	}
+	
+	private boolean haveSameContentsTables(Table t1, Table t2) {
+		Iterator tuplesIterator1 = t1.tuples();
+		Iterator tuplesIterator2 = t2.tuples();
+		
+		while (tuplesIterator1.hasNext()) {
+			Tuple tuple1 = (Tuple) tuplesIterator1.next();
+			Tuple tuple2 = (Tuple) tuplesIterator2.next();
+			
+			if (! haveSameContentsTuples(tuple1, tuple2)) {
+			//	System.out.println("BAD TUPLE PAIR!");
+			//	System.out.println(tuple1 + " : " + tuple2);
+				return false;
+			}
+		}
+		
+		return true;
+	}
+	
+	private boolean haveSameContentsTuples(Tuple tu1, Tuple tu2) {
+		if (tu1.getColumnCount() != tu2.getColumnCount()) 
+			return false;
+		
+		for (int ii = 0; ii < tu1.getColumnCount(); ii++) {
+			if (! tu1.get(ii).equals(tu2.get(ii))) 
+				return false;
+		}
+		
+		return true;
 	}
 	
 	private boolean isSameDirectedness(Graph g1, Graph g2) {
@@ -239,7 +289,7 @@ public class DefaultGraphComparer implements GraphComparer {
 		String colName1 = t1.getColumnName(0);
 		String colName2 = t2.getColumnName(0);
 		
-		if (! colName1.equals(colName2))
+		if (! colName1.equals(colName2)) 
 			return false;
 		
 		String colName = colName1; //column name works for both tables
@@ -254,8 +304,8 @@ public class DefaultGraphComparer implements GraphComparer {
 			int t2Index = t2Iter.nextInt();
 			Tuple t2Tuple = t2.getTuple(t2Index);
 			
-			if (! t1Tuple.equals(t2Tuple)) 
-				return false;		
+			if (! haveSameContentsTuples(t1Tuple, t2Tuple)) 
+				return false;
 		}
 		//every tuple has an identical tuple in the other table.
 		return true;
