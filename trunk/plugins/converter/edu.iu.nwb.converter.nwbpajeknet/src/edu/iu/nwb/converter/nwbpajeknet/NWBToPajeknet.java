@@ -16,11 +16,9 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.Dictionary;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-
-import javax.xml.transform.Source;
-import javax.xml.transform.stream.StreamSource;
 
 import org.cishell.framework.CIShellContext;
 import org.cishell.framework.algorithm.Algorithm;
@@ -253,13 +251,13 @@ public class NWBToPajeknet implements Algorithm {
 		out.println(st);
 	}
 
-	private void writeNodes(String s, PrintWriter out, ValidateNWBFile validator, List<NWBAttribute> nodeAttrList){
+	private void writeNodes(String s, PrintWriter out, ValidateNWBFile validator, List nodeAttrList){
 		
 		String[] columns = NETFileFunctions.processTokens(s);
 		
 		int i = 0;
-		for(NWBAttribute na : nodeAttrList){
-
+		for(Iterator ii = nodeAttrList.iterator(); ii.hasNext();){
+			NWBAttribute na = (NWBAttribute) ii.next();
 			String value = columns[i];
 			//System.out.print(value+"::");
 			//value.replace("\"", "");
@@ -296,7 +294,7 @@ public class NWBToPajeknet implements Algorithm {
 
 	}
 	
-	private void writeEdges(String s, PrintWriter out, ValidateNWBFile validator, List<NWBAttribute> edgeAttrList){
+	private void writeEdges(String s, PrintWriter out, ValidateNWBFile validator, List edgeAttrList){
 	
 		int i = 0;
 			String[] columns = NETFileFunctions.processTokens(s);
@@ -304,7 +302,8 @@ public class NWBToPajeknet implements Algorithm {
 				edgeAttrList = validator.getDirectedEdgeAttrList();
 			else if (inUndirectededgesSection)
 				edgeAttrList = validator.getUndirectedEdgeAttrList();*/
-			for(NWBAttribute na : edgeAttrList){
+			for(Iterator ii = edgeAttrList.iterator(); ii.hasNext();){
+				NWBAttribute na = (NWBAttribute) ii.next();
 				String value = columns[i];
 				if(value.equalsIgnoreCase("*")){
 					continue;
