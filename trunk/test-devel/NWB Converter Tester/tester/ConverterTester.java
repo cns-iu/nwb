@@ -149,7 +149,7 @@ public class ConverterTester {
 		String s = fileName.substring(0,fileName.lastIndexOf("."));
 		if(inDM != null){
 			try{
-				copy((File)inDM.getData(), new File(tempDir.getCanonicalPath()+File.separator+"converted"+s+ "." + inDM.getFormat()));
+				copy((File)inDM.getData(), new File(tempDir.getCanonicalPath()+File.separator+"converted"+s+ this.cfp.getExtension()));
 			}catch(Exception ex){
 				ex.printStackTrace();
 			}

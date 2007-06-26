@@ -15,6 +15,8 @@ public class ConfigurationFileParser {
 	private Queue<String> comparisonConverters;
 	private Queue<String> testConverters;
 	private boolean nodeIDChange = true;
+	private String extension;
+	
 
 	private boolean processFileList  = false;
 	private boolean processComparisonConvertersList = false;
@@ -75,6 +77,14 @@ public class ConfigurationFileParser {
 					line = line.replace(ConfigurationFileConstants.NODE_ID_CHANGE, "");
 					//System.out.println(line );
 					this.nodeIDChange = new Boolean(line.toLowerCase()).booleanValue();
+					this.processFileList = false;
+					this.processComparisonConvertersList = false;
+					this.processTestConvertersList = false;
+				}
+				if(line.startsWith(ConfigurationFileConstants.EXTENSION)){
+					line = line.replace(ConfigurationFileConstants.EXTENSION, "");
+					//System.out.println(line );
+					this.extension = line;
 					this.processFileList = false;
 					this.processComparisonConvertersList = false;
 					this.processTestConvertersList = false;
@@ -186,6 +196,10 @@ public class ConfigurationFileParser {
 		return output;
 	}
 
+	public String getExtension(){
+		return this.extension;
+	}
+	
 }
 
 
