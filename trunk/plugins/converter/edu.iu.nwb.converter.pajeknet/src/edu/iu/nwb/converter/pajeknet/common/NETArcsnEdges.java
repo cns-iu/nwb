@@ -2,6 +2,7 @@ package edu.iu.nwb.converter.pajeknet.common;
 
 import java.awt.GraphicsEnvironment;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -11,9 +12,9 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
 public class NETArcsnEdges {
-	private static Map<String,String> Attributes = new LinkedHashMap<String,String>();
-	private Map<String, Float> Numeric_Parameters;
-	private Map<String, String> String_Parameters;
+	private static Map Attributes = new LinkedHashMap();
+	private Map Numeric_Parameters;
+	private Map String_Parameters;
 	private int source;
 	private int target;
 	private String comment = null;
@@ -22,27 +23,30 @@ public class NETArcsnEdges {
 
 	private boolean valid = false;
 	public NETArcsnEdges(){	
-		this.Numeric_Parameters = new ConcurrentHashMap<String, Float>();
-		this.String_Parameters = new ConcurrentHashMap<String,String>();	
+		this.Numeric_Parameters = new ConcurrentHashMap();
+		this.String_Parameters = new ConcurrentHashMap();	
 	}
 
 	public NETArcsnEdges(String s) throws Exception{
 		String[] properties = NETFileFunctions.processTokens(s);
-		this.Numeric_Parameters = new ConcurrentHashMap<String, Float>();
-		this.String_Parameters = new ConcurrentHashMap<String,String>();
+		this.Numeric_Parameters = new ConcurrentHashMap();
+		this.String_Parameters = new ConcurrentHashMap();
 		this.valid = testArcsnEdges(properties);
 	}
 
-	public boolean testArcsnEdges(String...strings) throws Exception{
+	public boolean testArcsnEdges(String[] strings) throws Exception{
 		boolean value = false;
-		Queue<String> stringQueue = new ConcurrentLinkedQueue<String>();
-		for(String s : strings){
+		Queue stringQueue = new ConcurrentLinkedQueue();
+		for(int ii = 0; ii < strings.length; ii++){
+			String s = strings[ii];
 			stringQueue.add(s);
 		}
-		if(stringQueue.peek().startsWith(NETFileProperty.PREFIX_COMMENTS)){
+		if(((String)stringQueue.peek()).startsWith(NETFileProperty.PREFIX_COMMENTS)){
 			comment = "";
-			for(String s : strings)
+			for(int ii = 0; ii < strings.length; ii++){
+				String s = strings[ii];
 				comment += s;
+			}
 			return true;
 		}
 
@@ -64,23 +68,26 @@ public class NETArcsnEdges {
 		return value;
 	}
 
-	public boolean testSourceTargetWeight(Queue<String> qs) throws Exception{
+	public boolean testSourceTargetWeight(Queue qs) throws Exception{
 		boolean value = true;
 		int i = 0;
 		try{
 			while(!qs.isEmpty()){
-				if((NETFileFunctions.isInList(qs.peek(), ARCEDGEParameter.ARCEDGE_NUMERIC_PARAMETER_LIST)) || (NETFileFunctions.isInList(qs.peek(), ARCEDGEParameter.ARCEDGE_STRING_PARAMETER_LIST))){
+				if((NETFileFunctions.isInList((String) qs.peek(),
+						ARCEDGEParameter.ARCEDGE_NUMERIC_PARAMETER_LIST)) 
+						|| (NETFileFunctions.isInList((String) qs.peek(),
+								ARCEDGEParameter.ARCEDGE_STRING_PARAMETER_LIST))){
 					break;
 				}
 					switch (i){
 					case 0:
-						this.setSource(qs.poll());
+						this.setSource((String) qs.poll());
 						break;
 					case 1:
-						this.setTarget(qs.poll());
+						this.setTarget((String) qs.poll());
 						break;
 					case 2:
-						this.setWeight(qs.poll());
+						this.setWeight((String) qs.poll());
 						break;
 					default:
 						throw new Exception("Unknown data found");
@@ -104,15 +111,15 @@ public class NETArcsnEdges {
 	}
 	
 
-	public boolean testParameters(Queue<String> qs) throws Exception{
+	public boolean testParameters(Queue qs) throws Exception{
 		boolean value = false;
 		while(!qs.isEmpty()){
-			String s1 = qs.poll();
+			String s1 = (String) qs.poll();
 
 			if(qs.isEmpty()){
 				throw new Exception("Expected a value for parameter: " + s1);
 			}
-			String s2 = qs.poll();
+			String s2 = (String) qs.poll();
 
 
 			if(s1.equalsIgnoreCase(ARCEDGEParameter.PARAMETER_WIDTH)){
@@ -222,13 +229,13 @@ private boolean finalTest() throws Exception{
 	public void setWeight(String s) throws Exception{
 		float f = NETFileFunctions.asAFloat(s);
 		NETArcsnEdges.Attributes.put(NETFileProperty.ATTRIBUTE_WEIGHT,NETFileProperty.TYPE_FLOAT);
-		this.Numeric_Parameters.put(NETFileProperty.ATTRIBUTE_WEIGHT, f);
+		this.Numeric_Parameters.put(NETFileProperty.ATTRIBUTE_WEIGHT, new Float(f));
 	}
 	
 	
 	private void setWidth(float f){
 		NETArcsnEdges.Attributes.put(ARCEDGEParameter.PARAMETER_WIDTH, NETFileProperty.TYPE_FLOAT);
-		this.Numeric_Parameters.put(ARCEDGEParameter.PARAMETER_WIDTH, f);
+		this.Numeric_Parameters.put(ARCEDGEParameter.PARAMETER_WIDTH, new Float(f));
 	}
 	public void setWidth(String s) throws Exception {
 		float f = NETFileFunctions.asAFloat(s);
@@ -258,7 +265,7 @@ private boolean finalTest() throws Exception{
 	
 	private void setSize(float f){
 		NETArcsnEdges.Attributes.put(ARCEDGEParameter.PARAMETER_SIZE, NETFileProperty.TYPE_FLOAT);
-		this.Numeric_Parameters.put(ARCEDGEParameter.PARAMETER_SIZE, f);
+		this.Numeric_Parameters.put(ARCEDGEParameter.PARAMETER_SIZE, new Float(f));
 	}
 	public void setSize(String s) throws Exception {
 		float f = NETFileFunctions.asAFloat(s);
@@ -278,7 +285,7 @@ private boolean finalTest() throws Exception{
 	
 	private void setArrowPosition(float f){
 		NETArcsnEdges.Attributes.put(ARCEDGEParameter.PARAMETER_ARROW_POSITION, NETFileProperty.TYPE_FLOAT);
-		this.Numeric_Parameters.put(ARCEDGEParameter.PARAMETER_ARROW_POSITION, f);
+		this.Numeric_Parameters.put(ARCEDGEParameter.PARAMETER_ARROW_POSITION, new Float(f));
 	}
 	public void setArrowPosition(String s) throws Exception {
 		float f = NETFileFunctions.asAFloat(s);
@@ -294,7 +301,7 @@ private boolean finalTest() throws Exception{
 	
 	private void setLabelPosition(float f){
 		NETArcsnEdges.Attributes.put(ARCEDGEParameter.PARAMETER_LABEL_POSITION, NETFileProperty.TYPE_STRING);
-		this.Numeric_Parameters.put(ARCEDGEParameter.PARAMETER_LABEL_POSITION, f);
+		this.Numeric_Parameters.put(ARCEDGEParameter.PARAMETER_LABEL_POSITION, new Float(f));
 	}
 	public void setLabelPosition(String s) throws Exception {
 		float f = NETFileFunctions.asAFloat(s);
@@ -305,7 +312,7 @@ private boolean finalTest() throws Exception{
 	
 	private void setLabelRadius(float f){
 		NETArcsnEdges.Attributes.put(ARCEDGEParameter.PARAMETER_LABEL_RADIUS, NETFileProperty.TYPE_STRING);
-		this.Numeric_Parameters.put(ARCEDGEParameter.PARAMETER_LABEL_RADIUS, f);
+		this.Numeric_Parameters.put(ARCEDGEParameter.PARAMETER_LABEL_RADIUS, new Float(f));
 	}
 	public void setLabelRadius(String s) throws Exception {
 		float f = NETFileFunctions.asAFloat(s);
@@ -316,7 +323,7 @@ private boolean finalTest() throws Exception{
 	
 	private void setLabelPhi(float f){
 		NETArcsnEdges.Attributes.put(ARCEDGEParameter.PARAMETER_LABEL_PHI, NETFileProperty.TYPE_FLOAT);
-		this.Numeric_Parameters.put(ARCEDGEParameter.PARAMETER_LABEL_PHI, f);
+		this.Numeric_Parameters.put(ARCEDGEParameter.PARAMETER_LABEL_PHI, new Float(f));
 	}
 	public void setLabelPhi(String s) throws Exception {
 		float f = NETFileFunctions.asAFloat(s);
@@ -336,7 +343,7 @@ private boolean finalTest() throws Exception{
 
 	private void setLabelAngle(float f){
 		NETArcsnEdges.Attributes.put(ARCEDGEParameter.PARAMETER_LABEL_ANGLE, NETFileProperty.TYPE_STRING);
-		this.Numeric_Parameters.put(ARCEDGEParameter.PARAMETER_LABEL_ANGLE, f);
+		this.Numeric_Parameters.put(ARCEDGEParameter.PARAMETER_LABEL_ANGLE, new Float(f));
 	}
 	public void setLabelAngle(String s) throws Exception {
 		float f = NETFileFunctions.asAFloat(s);
@@ -347,7 +354,7 @@ private boolean finalTest() throws Exception{
 	
 	private void setFontSize(float f) throws Exception {
 		NETArcsnEdges.Attributes.put(ARCEDGEParameter.PARAMETER_FONT_SIZE, NETFileProperty.TYPE_FLOAT);
-		this.Numeric_Parameters.put(ARCEDGEParameter.PARAMETER_FONT_SIZE, f);
+		this.Numeric_Parameters.put(ARCEDGEParameter.PARAMETER_FONT_SIZE, new Float(f));
 	}
 	public void setFontSize(String s) throws Exception {
 		float f = NETFileFunctions.asAFloat(s);
@@ -356,22 +363,24 @@ private boolean finalTest() throws Exception{
 		this.setFontSize(f);
 	}
 	
-	private TreeSet<String> setFontPrime(String s, TreeSet<String> ss){
+	private TreeSet setFontPrime(String s, TreeSet ss){
 		String compare = s;
-		TreeSet<String> ts = new TreeSet<String>();
+		TreeSet ts = new TreeSet();
 		compare = compare.toLowerCase();
-		for(String st : ss){
+		for(Iterator ii = ss.iterator(); ii.hasNext();){
+			String st = (String) ii.next();
 			if(st.startsWith(s)){
 				ts.add(st);
 			}
 		}
 		return ts;
 	}
-	public void setFont(String s, Queue<String> qs) throws Exception {
+	public void setFont(String s, Queue qs) throws Exception {
 		String[] fonts = GraphicsEnvironment.getLocalGraphicsEnvironment().getAvailableFontFamilyNames();
-		TreeSet<String> compareList = new TreeSet<String>();
+		TreeSet compareList = new TreeSet();
 		String compare = s;
-		for(String st : fonts){
+		for(int ii = 0; ii < fonts.length; ii++){
+			String st = fonts[ii];
 			if(st.startsWith(compare)){
 				compareList.add(st);		
 			}
@@ -379,7 +388,7 @@ private boolean finalTest() throws Exception{
 
 		while(!qs.isEmpty()){
 
-			String peekValue = qs.peek();
+			String peekValue = (String) qs.peek();
 			if(compareList.isEmpty())
 				throw new Exception(compare + " is not a recognized font on this system");
 			else if(NETFileFunctions.isInList(peekValue, ARCEDGEParameter.ARCEDGE_NUMERIC_PARAMETER_LIST) || NETFileFunctions.isInList(peekValue, ARCEDGEParameter.ARCEDGE_STRING_PARAMETER_LIST))
@@ -395,11 +404,11 @@ private boolean finalTest() throws Exception{
 		switch(i){
 		case 1:
 			NETArcsnEdges.Attributes.put(ARCEDGEParameter.PARAMETER_HOOK_ONE, NETFileProperty.TYPE_FLOAT);
-			this.Numeric_Parameters.put(ARCEDGEParameter.PARAMETER_HOOK_ONE, NETFileFunctions.asAFloat(s));
+			this.Numeric_Parameters.put(ARCEDGEParameter.PARAMETER_HOOK_ONE, new Float(NETFileFunctions.asAFloat(s)));
 			break;
 		case 2:
 			NETArcsnEdges.Attributes.put(ARCEDGEParameter.PARAMETER_HOOK_TWO, NETFileProperty.TYPE_FLOAT);
-			this.Numeric_Parameters.put(ARCEDGEParameter.PARAMETER_HOOK_TWO, NETFileFunctions.asAFloat(s));
+			this.Numeric_Parameters.put(ARCEDGEParameter.PARAMETER_HOOK_TWO, new Float(NETFileFunctions.asAFloat(s)));
 			default:
 				throw new Exception("Unknown hook h"+i);
 		}
@@ -409,11 +418,13 @@ private boolean finalTest() throws Exception{
 		switch(i){
 		case 1:
 			NETArcsnEdges.Attributes.put(ARCEDGEParameter.PARAMETER_ANGLE_ONE, NETFileProperty.TYPE_FLOAT);
-			this.Numeric_Parameters.put(ARCEDGEParameter.PARAMETER_ANGLE_ONE, NETFileFunctions.asAFloat(s));
+			this.Numeric_Parameters.put(ARCEDGEParameter.PARAMETER_ANGLE_ONE,
+					new Float(NETFileFunctions.asAFloat(s)));
 			break;
 		case 2:
 			NETArcsnEdges.Attributes.put(ARCEDGEParameter.PARAMETER_ANGLE_TWO, NETFileProperty.TYPE_FLOAT);
-			this.Numeric_Parameters.put(ARCEDGEParameter.PARAMETER_ANGLE_TWO, NETFileFunctions.asAFloat(s));
+			this.Numeric_Parameters.put(ARCEDGEParameter.PARAMETER_ANGLE_TWO,
+					new Float(NETFileFunctions.asAFloat(s)));
 			default:
 				throw new Exception("Unknown angle a"+i);
 		}
@@ -423,11 +434,13 @@ private boolean finalTest() throws Exception{
 		switch(i){
 		case 1:
 			NETArcsnEdges.Attributes.put(ARCEDGEParameter.PARAMETER_VELOCITY_ONE, NETFileProperty.TYPE_FLOAT);
-			this.Numeric_Parameters.put(ARCEDGEParameter.PARAMETER_VELOCITY_ONE, NETFileFunctions.asAFloat(s));
+			this.Numeric_Parameters.put(ARCEDGEParameter.PARAMETER_VELOCITY_ONE,
+					new Float(NETFileFunctions.asAFloat(s)));
 			break;
 		case 2:
 			NETArcsnEdges.Attributes.put(ARCEDGEParameter.PARAMETER_VELOCITY_TWO, NETFileProperty.TYPE_FLOAT);
-			this.Numeric_Parameters.put(ARCEDGEParameter.PARAMETER_VELOCITY_TWO, NETFileFunctions.asAFloat(s));
+			this.Numeric_Parameters.put(ARCEDGEParameter.PARAMETER_VELOCITY_TWO,
+					new Float(NETFileFunctions.asAFloat(s)));
 			default:
 				throw new Exception("Unknown velocity k"+i);
 		}
@@ -438,13 +451,13 @@ private boolean finalTest() throws Exception{
 	 ******/
 	
 	public Object getAttribute(String s){
-		String st = NETArcsnEdges.Attributes.get(s);
+		String st = (String) NETArcsnEdges.Attributes.get(s);
 		if(st == null)
 			return null;
 		else if(s.equalsIgnoreCase(NETFileProperty.ATTRIBUTE_SOURCE))
-			return this.source;
+			return new Integer(this.source);
 		else if(s.equalsIgnoreCase(NETFileProperty.ATTRIBUTE_TARGET))
-			return this.target;
+			return new Integer(this.target);
 		else if(st.equalsIgnoreCase("float"))
 			return this.Numeric_Parameters.get(s);
 		else 
@@ -455,10 +468,11 @@ private boolean finalTest() throws Exception{
 		return this.valid;
 	}
 	
-	public static List<NETAttribute> getArcsnEdgesAttributes(){
-		ArrayList<NETAttribute> attributeList = new ArrayList<NETAttribute>();
-		for(String s : NETArcsnEdges.Attributes.keySet()){
-			attributeList.add(new NETAttribute(s,NETArcsnEdges.Attributes.get(s)));
+	public static List getArcsnEdgesAttributes(){
+		ArrayList attributeList = new ArrayList();
+		for(Iterator ii = NETArcsnEdges.Attributes.keySet().iterator(); ii.hasNext();){
+			String s = (String) ii.next();
+			attributeList.add(new NETAttribute(s, (String) NETArcsnEdges.Attributes.get(s)));
 		}
 		return attributeList;
 
@@ -473,7 +487,8 @@ private boolean finalTest() throws Exception{
 	public String toString(){
 		String output = "";
 
-		for(String s : NETArcsnEdges.Attributes.keySet()){
+		for(Iterator ii = NETArcsnEdges.Attributes.keySet().iterator(); ii.hasNext();){
+			String s = (String) ii.next();
 			output += s + ":"+this.getAttribute(s) + " ";
 		}
 		return output;

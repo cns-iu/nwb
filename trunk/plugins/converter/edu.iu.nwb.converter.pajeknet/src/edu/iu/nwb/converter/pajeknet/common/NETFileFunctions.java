@@ -1,6 +1,7 @@
 package edu.iu.nwb.converter.pajeknet.common;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.StringTokenizer;
 
 public class NETFileFunctions {
@@ -8,10 +9,11 @@ public class NETFileFunctions {
 		String str = s.trim();
 		//System.out.println("::"+str+"::");
 		String[] tokens = str.split("\\s+");
-		ArrayList<String> sl = new ArrayList<String>();
+		ArrayList sl = new ArrayList();
 		StringBuffer bf = new StringBuffer();
 		boolean append = false;
-		for(String st: tokens){
+		for(int ii = 0; ii < tokens.length; ii++){
+			String st = tokens[ii];
 			if(!append){
 				if(!st.startsWith("\"")){
 					st = st.replace("\"", "");
@@ -41,7 +43,7 @@ public class NETFileFunctions {
 			}
 		}
 		tokens = new String[sl.size()];
-		return sl.toArray(tokens);
+		return (String[]) sl.toArray(tokens);
 	}
 
 
@@ -119,7 +121,7 @@ public class NETFileFunctions {
 	}
 
 	protected static float asAFloat(String input) throws NumberFormatException{
-		Float f = new Float(input).floatValue();
+		float f = new Float(input).floatValue();
 		return f;
 	}
 	protected static boolean isAFloat (String input, String attr) throws NumberFormatException, Exception {
@@ -127,10 +129,11 @@ public class NETFileFunctions {
 		return true;
 	}
 
-	public static boolean isInList(String s, String...strings){
+	public static boolean isInList(String s, String[] strings){
 		boolean value = false;
 		if(strings != null){
-			for(String st : strings){
+			for(int ii = 0; ii < strings.length; ii++){
+				String st = strings[ii];
 				if(s.equalsIgnoreCase(st))
 					return true;
 			}
