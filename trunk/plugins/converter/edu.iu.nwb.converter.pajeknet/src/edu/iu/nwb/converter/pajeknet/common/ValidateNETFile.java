@@ -40,8 +40,19 @@ public class ValidateNETFile {
 
 	private int totalNumOfNodes, currentLine;
 	private StringBuffer errorMessages = new StringBuffer();
-	private ArrayList<NETVertex> vertices = new ArrayList<NETVertex>();
-	private ArrayList<NETArcsnEdges>arcs = new ArrayList<NETArcsnEdges>(), edges = new ArrayList<NETArcsnEdges>(); 
+	/**
+	 * The object in the ArrayList is NETVertex
+	 */
+	private ArrayList vertices = new ArrayList();
+	
+	/**
+	 * The object in the ArrayList is NETArcsnEdges
+	 */
+	private ArrayList arcs = new ArrayList();
+	/**
+	 * The object in the ArrayList is NETArcsnEdges
+	 */
+	private ArrayList edges = new ArrayList(); 
 
 	public void validateNETFormat(File fileHandler) throws FileNotFoundException, IOException {
 		currentLine = 0;
@@ -73,15 +84,27 @@ public class ValidateNETFile {
 	public String getErrorMessages(){
 		return errorMessages.toString();
 	}
-	public List<NETAttribute> getVertexAttrList(){ 
+	/**
+	 * The object in the list is NETAttribute
+	 * @return
+	 */
+	public List getVertexAttrList(){ 
 		return NETVertex.getVertexAttributes();
 	}
-
-	public List<NETAttribute> getEdgeAttrList(){
+	
+	/**
+	 * The object in the list is NETAttribute
+	 * @return
+	 */
+	public List getEdgeAttrList(){
 		return NETArcsnEdges.getArcsnEdgesAttributes();
 	}
 
-	public List<NETAttribute> getArcAttrList() {
+	/**
+	 * The object in the list is NETAttribute
+	 * @return
+	 */
+	public List getArcAttrList() {
 		return NETArcsnEdges.getArcsnEdgesAttributes();
 	}
 
@@ -93,15 +116,27 @@ public class ValidateNETFile {
 		return hasTotalNumOfNodes;
 	}
 	
-public ArrayList<NETVertex> getVertices(){
-	return this.vertices;
-}
-public ArrayList<NETArcsnEdges> getArcs(){
-	return this.arcs;
-}
-public ArrayList<NETArcsnEdges> getEdges(){
-	return this.edges;
-}
+	/**
+	 * The object in the ArrayList is NETVertex
+	 * @return
+	 */
+	public ArrayList getVertices(){
+		return this.vertices;
+	}
+	/**
+	 * The object in the ArrayList is NETArcsnEdges
+	 * @return
+	 */
+	public ArrayList getArcs(){
+		return this.arcs;
+	}
+	/**
+	 * The object in the ArrayList is NETArcsnEdges
+	 * @return
+	 */
+	public ArrayList getEdges(){
+		return this.edges;
+	}
 
 
 	/*
@@ -124,7 +159,7 @@ public ArrayList<NETArcsnEdges> getEdges(){
 			this.inVerticesSection = true;
 			this.inEdgesSection = false;
 			this.inArcsSection = false;
-			this.vertices = new ArrayList<NETVertex>();
+			this.vertices = new ArrayList();
 			StringTokenizer st= new StringTokenizer(s);
 			if (st.countTokens()>1){
 				st.nextToken();
@@ -159,7 +194,7 @@ public ArrayList<NETArcsnEdges> getEdges(){
 			inArcsSection = true;
 			inVerticesSection = false;
 			inEdgesSection = false;
-			this.arcs = new ArrayList<NETArcsnEdges>();
+			this.arcs = new ArrayList();
 			return true;
 		}
 		return false;
@@ -181,7 +216,7 @@ public ArrayList<NETArcsnEdges> getEdges(){
 			inArcsSection = false;
 			inVerticesSection = false;
 			inEdgesSection = true;
-			this.edges = new ArrayList<NETArcsnEdges>();
+			this.edges = new ArrayList();
 			return true;
 		}
 
