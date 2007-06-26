@@ -146,9 +146,10 @@ public class ConverterTester {
 	}
 	
 	private void writeAsFile(Data inDM, String fileName){
+		String s = fileName.substring(0,fileName.lastIndexOf("."));
 		if(inDM != null){
 			try{
-				copy((File)inDM.getData(), new File(tempDir.getCanonicalPath()+File.separator+"converted"+fileName+(String)this.testConverters.getProperties().get(AlgorithmProperty.OUT_DATA)));
+				copy((File)inDM.getData(), new File(tempDir.getCanonicalPath()+File.separator+"converted"+s+ "." + inDM.getFormat()));
 			}catch(Exception ex){
 				ex.printStackTrace();
 			}
