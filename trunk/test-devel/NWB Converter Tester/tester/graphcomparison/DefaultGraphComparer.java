@@ -9,10 +9,8 @@ import java.util.Map.Entry;
 
 import prefuse.data.Graph;
 import prefuse.data.Node;
-import prefuse.data.Schema;
 import prefuse.data.Table;
 import prefuse.data.Tuple;
-import prefuse.data.tuple.TupleSet;
 import prefuse.util.collections.IntIterator;
 
 /**
@@ -263,10 +261,7 @@ public class DefaultGraphComparer implements GraphComparer {
 			Tuple tuple = (Tuple) ii.next();
 			tCopy.addTuple(tuple);
 		}
-		
-		for (Iterator ii = tCopy.tuples(); ii.hasNext();) {
-			Tuple tuple = (Tuple) ii.next();
-		}
+
 		return tCopy;
 	}
 		

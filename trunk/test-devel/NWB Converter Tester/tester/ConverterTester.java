@@ -9,7 +9,6 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.cishell.framework.CIShellContext;
-import org.cishell.framework.algorithm.AlgorithmProperty;
 import org.cishell.framework.data.BasicData;
 import org.cishell.framework.data.Data;
 import org.cishell.service.conversion.Converter;

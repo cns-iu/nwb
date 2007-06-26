@@ -1,7 +1,7 @@
 package tester;
 
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertTrue;
 
 import java.io.File;
 
@@ -11,14 +11,11 @@ import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
-import edu.iu.nwb.converter.nwb.common.ValidateNWBFile;
-import edu.iu.nwb.converter.pajeknet.common.*;
+import edu.iu.nwb.converter.pajeknet.common.ValidateNETFile;
 
 public class NETValidatorTest {
 	private File goodFile1;
-	private File goodFile2;
-	private File badFile1;
-	private File badFile2;
+
 	private static final String pathName = "/home/kelleyt/workspace/NWB Converter Tester/test_files/NET Files/";
 	private ValidateNETFile validator;
 	
