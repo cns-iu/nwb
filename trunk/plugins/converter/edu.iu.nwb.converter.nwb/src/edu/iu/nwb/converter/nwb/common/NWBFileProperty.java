@@ -2,11 +2,11 @@ package edu.iu.nwb.converter.nwb.common;
 
 public class NWBFileProperty {
 	public static final String PRESERVED_STAR = "*";
-    public static final String HEADER_NODE = PRESERVED_STAR+"nodes";     
-    public static final String HEADER_UNDIRECTED_EDGES = PRESERVED_STAR+"undirectededges";
-    public static final String HEADER_DIRECTED_EDGES = PRESERVED_STAR+"directededges";
+    public static final String HEADER_NODE = PRESERVED_STAR+"Nodes";     
+    public static final String HEADER_UNDIRECTED_EDGES = PRESERVED_STAR+"UndirectedEdges";
+    public static final String HEADER_DIRECTED_EDGES = PRESERVED_STAR+"DirectedEdges";
     
-    public static final String PREFIX_COMMENTS ="//";
+    public static final String PREFIX_COMMENTS ="#";
     public static final String ATTRIBUTE_ID = "id";
     public static final String ATTRIBUTE_SOURCE = "source";
     public static final String ATTRIBUTE_TARGET = "target";
