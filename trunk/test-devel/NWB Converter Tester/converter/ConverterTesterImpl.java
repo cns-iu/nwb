@@ -22,11 +22,11 @@ public class ConverterTesterImpl implements Converter, AlgorithmFactory, Algorit
 	private ServiceReference[] refs;
     private BundleContext bContext;
     private Dictionary props;
-    private CIShellContext cContext= null;
+    private CIShellContext cContext;
     
-    public ConverterTesterImpl(BundleContext bContext, ServiceReference[] refs) {
+    public ConverterTesterImpl(BundleContext bContext, CIShellContext cContext, ServiceReference[] refs) {
         this.bContext = bContext;
-        
+        this.cContext = cContext;
         this.refs = refs;
         
         props = new Hashtable();

@@ -1,5 +1,6 @@
 package service;
 
+import org.cishell.framework.LocalCIShellContext;
 import org.osgi.framework.BundleActivator;
 import org.osgi.framework.BundleContext;
 
@@ -7,6 +8,7 @@ import tester.ConverterTester;
 
 public class Activator implements BundleActivator{
 	private ConverterTester ct;
+	
 	
 	public void start(BundleContext b){
 		
@@ -22,10 +24,17 @@ public class Activator implements BundleActivator{
 			}
 		}*/
 		try{
-			ct = new ConverterTester(b,"/home/kelleyt/workspace/edu.iu.nwb.converter.tester/test_files/test.cfg");
+			ct = new ConverterTester(b, new LocalCIShellContext(b), "/home/kelleyt/workspace/edu.iu.nwb.converter.tester/test_files/test.cfg");
 			System.out.println(ct);
-		}catch(Exception ex){
-			System.err.println(ex);
+			ct.testFiles();
+			System.out.println(ct.printErrors());
+			
+		}catch(NullPointerException npe){
+			
+		}
+		
+		catch(Exception ex){
+			ex.printStackTrace();
 		}
 		
 	}

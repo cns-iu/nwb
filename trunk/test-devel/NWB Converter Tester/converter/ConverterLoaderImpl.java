@@ -2,9 +2,9 @@ package converter;
 
 import java.util.ArrayList;
 import java.util.Hashtable;
-import java.util.LinkedHashMap;
 import java.util.Map;
 
+import org.cishell.framework.CIShellContext;
 import org.cishell.framework.algorithm.AlgorithmFactory;
 import org.cishell.framework.algorithm.AlgorithmProperty;
 import org.cishell.framework.data.Data;
@@ -25,11 +25,12 @@ public class ConverterLoaderImpl implements AlgorithmProperty, DataConversionSer
 public final static String SERVICE_LIST = "SERVICE_LIST"; 
 	private Map<String, ServiceReference> converterList;
     private BundleContext bContext;
-   // private CIShellContext ciContext;
+   private CIShellContext ciContext;
    // private Map   dataTypeToVertex;
    // private Graph graph;
     
-    public ConverterLoaderImpl(BundleContext bContext){
+    public ConverterLoaderImpl(BundleContext bContext, CIShellContext cContext){
+    	this.ciContext = cContext;
     	this.bContext = bContext;
         converterList = new Hashtable<String, ServiceReference>();
         
@@ -194,7 +195,7 @@ public final static String SERVICE_LIST = "SERVICE_LIST";
 			}
 			services.add(ref);
 		}
-		return new ConverterTesterImpl(this.bContext,(ServiceReference[])services.toArray(new ServiceReference[0]));
+		return new ConverterTesterImpl(this.bContext, this.ciContext, (ServiceReference[])services.toArray(new ServiceReference[0]));
 	}
 	
 	private static void printConverters(BundleContext bContext){
