@@ -6,7 +6,6 @@ import java.io.FileInputStream;
 import prefuse.data.Graph;
 import prefuse.data.Table;
 import prefuse.data.io.GraphMLReader;
-import prefuse.util.collections.IntIterator;
 
 public class PrefuseGraphMLReaderTest {
 
