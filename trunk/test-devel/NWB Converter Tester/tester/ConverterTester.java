@@ -1,11 +1,15 @@
 package tester;
 
 import java.io.File;
-import java.io.FileNotFoundException;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.nio.channels.FileChannel;
+import java.util.HashMap;
 import java.util.Map;
 
 import org.cishell.framework.CIShellContext;
+import org.cishell.framework.algorithm.AlgorithmProperty;
 import org.cishell.framework.data.BasicData;
 import org.cishell.framework.data.Data;
 import org.cishell.service.conversion.Converter;
@@ -13,6 +17,7 @@ import org.osgi.framework.BundleContext;
 
 import prefuse.data.Graph;
 import service.ConfigurationFileParser;
+import tester.graphcomparison.ComparisonResult;
 import tester.graphcomparison.DefaultGraphComparer;
 import converter.ConverterLoaderImpl;
 
@@ -22,10 +27,11 @@ public class ConverterTester {
 	private ConverterLoaderImpl cli;
 	private Converter comparisonConverters;
 	private DefaultGraphComparer dgc;
-	private Map<String, Exception> fileErrors;
+	//private Map<String, Exception> fileErrors;
 	private static File tempDir;
 	private Converter testConverters;
-
+	private Map<String, ComparisonResult> results;
+	
 	public ConverterTester(BundleContext b, CIShellContext c){
 		this.cContext = c;
 		cli = new ConverterLoaderImpl(b, this.cContext);
@@ -39,7 +45,8 @@ public class ConverterTester {
 		cfp = new ConfigurationFileParser(configFile);
 		testConverters = cli.getConverter(cfp.getTestConverters());
 		comparisonConverters = cli.getConverter(cfp.getComparisonConverters());
-		//setupDirectory();
+		results = new HashMap<String, ComparisonResult>();
+		setupDirectory();
 	}
 
 	public ConverterTester(BundleContext b, CIShellContext c, String configFileName) throws Exception {
@@ -48,30 +55,43 @@ public class ConverterTester {
 		cfp = new ConfigurationFileParser(new File(configFileName));
 		testConverters = cli.getConverter(cfp.getTestConverters());
 		comparisonConverters = cli.getConverter(cfp.getComparisonConverters());
-		//setupDirectory();
+		results = new HashMap<String, ComparisonResult>();
+		setupDirectory();
+	}
+	
+	
+	private static void setupDirectory(){
+		tempDir = new File(System.getProperty("user.home") + File.separator + "converterTemp");
+		tempDir.mkdir();
 	}
 	
 	
 	private void compareFiles(File sourceFile, File convertedFile){
+		System.out.println("Comparing: " + sourceFile.getName() + " and " + convertedFile.getName());
 		try{
-		Data sourceData = new BasicData(sourceFile.getCanonicalPath(),"");
-		Data convertedData = new BasicData(convertedFile.getCanonicalPath(),"");
 		dgc = new DefaultGraphComparer();
-		dgc.compare((Graph)comparisonConverters.convert(sourceData), (Graph)comparisonConverters.convert(convertedData), cfp.getNodeIDChange());
+		results.put(sourceFile.getName() + " " + convertedFile.getName(), dgc.compare((Graph)convertFile(sourceFile,this.comparisonConverters).getData(), (Graph)convertFile(convertedFile,this.comparisonConverters).getData(), cfp.getNodeIDChange()));
+		
 		}
 		catch(Exception ex){
 			ex.printStackTrace();
 		}
 	}
 	
-	private Data convertFile(File f){
+	public void compareFiles(){
+		for(File f : tempDir.listFiles()){
+			compareFiles(f,f);
+		}
+	}
+	
+	private Data convertFile(File f, Converter cnv){
 		
 		try{
 			//String s = f.getName();
 			//String extension = this.testConverters.getProperties().get(AlgorithmProperty.OUT_DATA).toString();
 			System.out.println("Converting " + f.getCanonicalPath());
 			Data inData = new BasicData(f.getCanonicalPath(),"");
-			Data dm = this.testConverters.convert(inData);
+			Data dm = cnv.convert(inData);
 
 
 			if(dm != null){
@@ -89,29 +109,6 @@ public class ConverterTester {
 	}
 	
 
-	public String[] getErrors(){
-		String[] output = new String[this.fileErrors.size()];
-		int i = 0;
-		for(String s : this.fileErrors.keySet()){
-			String ss = s + ":\n";
-			for(StackTraceElement ste : this.fileErrors.get(s).getStackTrace()){
-				ss += "\t" + ste + "\n";
-			}
-			output[i] = ss;
-			i++;
-		}
-		return output;
-	}
-
-
-	public String printErrors(){
-		String output = "";
-		for(String s : this.getErrors()){
-			output += s + "\n";
-		}
-		return output;
-	}
-
 	public void testFile(File f){
 		
 		System.out.println("Testing " + f.getName());
@@ -120,8 +117,13 @@ public class ConverterTester {
 				for(File ff : f.listFiles())
 					testFile(ff);
 			}
-			else
-				convertFile(f);
+			else{
+				Data dm = convertFile(f,this.testConverters);
+				if(dm != null){
+					writeAsFile(dm, f.getName());
+					compareFiles(f,(File)dm.getData());
+				}
+			}
 		}
 
 	}
@@ -143,15 +145,41 @@ public class ConverterTester {
 		return output;
 	}
 	
-	private void writeAsFile(Data inDM) throws FileNotFoundException, IOException, Exception{
+	private void writeAsFile(Data inDM, String fileName){
 		if(inDM != null){
 			try{
-				
+				copy((File)inDM.getData(), new File(tempDir.getCanonicalPath()+File.separator+"converted"+fileName+(String)this.testConverters.getProperties().get(AlgorithmProperty.OUT_DATA)));
 			}catch(Exception ex){
 				ex.printStackTrace();
-				throw ex;
 			}
 			
+		}
+	}
+	
+	private boolean copy(File in, File out) {
+    	try {
+    		FileInputStream  fis = new FileInputStream(in);
+    		FileOutputStream fos = new FileOutputStream(out);
+    		
+    		FileChannel readableChannel = fis.getChannel();
+    		FileChannel writableChannel = fos.getChannel();
+    		
+    		writableChannel.truncate(0);
+    		writableChannel.transferFrom(readableChannel, 0, readableChannel.size());
+    		fis.close();
+    		fos.close();
+    		return true;
+    	}
+    	catch (IOException ioe) {
+    		System.out.println("Copy Error: IOException during copy\n" + ioe.getMessage());
+            return false;
+    	}
+    }
+	
+	public void printResults(){
+		for(String s : this.results.keySet()){
+			System.out.println(s);
+			System.out.println("\t"+this.results.get(s));
 		}
 	}
 

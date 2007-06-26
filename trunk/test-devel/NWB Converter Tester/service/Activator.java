@@ -27,7 +27,8 @@ public class Activator implements BundleActivator{
 			ct = new ConverterTester(b, new LocalCIShellContext(b), "/home/kelleyt/workspace/edu.iu.nwb.converter.tester/test_files/test.cfg");
 			System.out.println(ct);
 			ct.testFiles();
-			System.out.println(ct.printErrors());
+			
+			ct.printResults();
 			
 		}catch(NullPointerException npe){
 			
