@@ -40,26 +40,14 @@ public class ValidateNETFile {
 
 	private int totalNumOfNodes, currentLine;
 	private StringBuffer errorMessages = new StringBuffer();
-	/**
-	 * The object in the ArrayList is NETVertex
-	 */
 	private ArrayList vertices = new ArrayList();
-	
-	/**
-	 * The object in the ArrayList is NETArcsnEdges
-	 */
-	private ArrayList arcs = new ArrayList();
-	/**
-	 * The object in the ArrayList is NETArcsnEdges
-	 */
-	private ArrayList edges = new ArrayList(); 
+	private ArrayList arcs = new ArrayList(), edges = new ArrayList(); 
 
 	public void validateNETFormat(File fileHandler) throws FileNotFoundException, IOException {
 		currentLine = 0;
 		BufferedReader reader = 
 			new BufferedReader(new FileReader(fileHandler));
 		this.processFile(reader);
-
 	}
 
 	public boolean isDirectedGraph(){
@@ -84,26 +72,14 @@ public class ValidateNETFile {
 	public String getErrorMessages(){
 		return errorMessages.toString();
 	}
-	/**
-	 * The object in the list is NETAttribute
-	 * @return
-	 */
 	public List getVertexAttrList(){ 
 		return NETVertex.getVertexAttributes();
 	}
-	
-	/**
-	 * The object in the list is NETAttribute
-	 * @return
-	 */
+
 	public List getEdgeAttrList(){
 		return NETArcsnEdges.getArcsnEdgesAttributes();
 	}
 
-	/**
-	 * The object in the list is NETAttribute
-	 * @return
-	 */
 	public List getArcAttrList() {
 		return NETArcsnEdges.getArcsnEdgesAttributes();
 	}
@@ -116,27 +92,15 @@ public class ValidateNETFile {
 		return hasTotalNumOfNodes;
 	}
 	
-	/**
-	 * The object in the ArrayList is NETVertex
-	 * @return
-	 */
-	public ArrayList getVertices(){
-		return this.vertices;
-	}
-	/**
-	 * The object in the ArrayList is NETArcsnEdges
-	 * @return
-	 */
-	public ArrayList getArcs(){
-		return this.arcs;
-	}
-	/**
-	 * The object in the ArrayList is NETArcsnEdges
-	 * @return
-	 */
-	public ArrayList getEdges(){
-		return this.edges;
-	}
+public ArrayList getVertices(){
+	return this.vertices;
+}
+public ArrayList getArcs(){
+	return this.arcs;
+}
+public ArrayList getEdges(){
+	return this.edges;
+}
 
 
 	/*
@@ -293,13 +257,12 @@ public class ValidateNETFile {
 
 	public void processFile(BufferedReader reader) throws IOException{
 		String line = reader.readLine();
-
 		while (line != null && isFileGood){
 			currentLine++;
 			//String line_lower = line.toLowerCase();
 			if(this.validateVertexHeader(line)){
 				line = reader.readLine();
-
+				
 				continue;
 			}
 			if(this.validateArcHeader(line)){
@@ -342,8 +305,6 @@ public class ValidateNETFile {
 			}
 			line = reader.readLine();
 		}
-
-
 	}
 
 	public void checkFile(){
