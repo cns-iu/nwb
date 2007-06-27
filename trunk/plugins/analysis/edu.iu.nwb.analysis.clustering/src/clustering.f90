@@ -22,6 +22,9 @@
        character*25 str(1:20),headattrN(1:20),headattrE(1:20),str1,str2,str3
        character*25,allocatable,dimension(:,:):: attrN,attrE
        
+       logical quoteit
+       character*(25) addquotes
+       
 !      Here the program reads the input parameters
        
        call GETARG(2,sn_bins)
@@ -294,7 +297,7 @@
 105    format(a40,e15.6)
 106    format(a25)
 109    format(20a20)      
-110    format(i10,8x,i10,18a25)
+110    format(i10,8x,i10,1x,18a25)
 111    format(i10,10x,20a25)
 112    format(a6)
 113    format(a16)
@@ -462,3 +465,26 @@
 
        stop
      end program clustering
+     
+     logical function quoteit(header, value)
+		character*(*) header, value
+		if(index(header, '*string') > 0 .AND. '*' /= value) then
+			quoteit = .TRUE.
+		else
+			quoteit = .FALSE.
+		endif
+		return
+	end 
+	
+	character*(25) function addquotes(value)
+		character*(*) value
+		character*22 longname
+		
+		if(len(TRIM(ADJUSTL(value))) >= 23) then
+			longname = ADJUSTL(value)
+			addquotes = '"' // longname // '"'
+		else
+			addquotes = '"' // TRIM(ADJUSTL(value)) // '"'
+		endif
+		return
+	end

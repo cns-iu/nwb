@@ -1,6 +1,6 @@
        program total_degree_seq
 
-  
+       
 !
 !      It calculates the degree sequence of a network 
 !      whose matrix is given as input as list of all edges
@@ -14,8 +14,15 @@
        character*256 filename,fileout1,fileout2
        character*25 str(1:20),headattrN(1:20),headattrE(1:20),str1,str2,str3
        character*25,allocatable,dimension(:,:):: attrN,attrE
+       
+       
+       logical quoteit
+       character*(25) addquotes
 
 !      Here the program reads the input parameters
+       
+       
+       
        
        call GETARG(2,filename)
 
@@ -117,6 +124,11 @@
              read(20,*)(headattrN(i),i=1,nattrN)
              do k=1,n_edges_N
                 read(20,*,err=8114,end=8114)nodes(n_vert0+1),(attrN(j,n_vert0+1),j=1,nattrN-1)
+                do i = 1, nattrN - 1, 1
+                   if(quoteit(headattrN(i+1),attrN(i, n_vert0+1))) then
+                       attrN(i, n_vert0+1) = addquotes(attrN(i, n_vert0+1))
+                   endif
+                enddo
                 n_vert0=n_vert0+1
                 if(minind>nodes(n_vert0))minind=nodes(n_vert0)
                 if(maxind<nodes(n_vert0))maxind=nodes(n_vert0)  
@@ -186,6 +198,10 @@
           print*,'The nwb file is not properly formatted: not all nodes/labels are listed'
           stop
        endif
+
+!      Here we construct a logical array corresponding to the node headers
+       
+       !logical headstringN(1:20)
 
 !      Here we write out the final degree sequence 
 
@@ -261,7 +277,7 @@
 106    format(a25)
 107    format(a16,a18,a10)      
 109    format(20a20)      
-110    format(i10,8x,i10,18a25)
+110    format(i10,8x,i10,1x,18a25)
 111    format(i10,10x,20a25)
 112    format(a6)
 113    format(a16)
@@ -281,3 +297,26 @@
        
        stop
      end program total_degree_seq
+     
+	logical function quoteit(header, value)
+		character*(*) header, value
+		if(index(header, '*string') > 0 .AND. '*' /= value) then
+			quoteit = .TRUE.
+		else
+			quoteit = .FALSE.
+		endif
+		return
+	end 
+	
+	character*(25) function addquotes(value)
+		character*(*) value
+		character*22 longname
+		
+		if(len(TRIM(ADJUSTL(value))) >= 23) then
+			longname = ADJUSTL(value)
+			addquotes = '"' // longname // '"'
+		else
+			addquotes = '"' // TRIM(ADJUSTL(value)) // '"'
+		endif
+		return
+	end
