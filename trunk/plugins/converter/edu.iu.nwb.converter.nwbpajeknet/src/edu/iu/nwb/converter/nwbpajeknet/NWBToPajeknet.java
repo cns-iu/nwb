@@ -148,13 +148,13 @@ public class NWBToPajeknet implements Algorithm {
 	private void printGraph (PrintWriter out, ValidateNWBFile validator,
 			BufferedReader reader) throws IOException{
 
-		if (validator.getHasTotalNumOfNodes() && validator.getSkipNodeList()){
+/*		if (validator.getHasTotalNumOfNodes() && validator.getSkipNodeList()){
 			int totalNumOfNodes = validator.getTotalNumOfNodes();
 			for(int i = 1; i<=totalNumOfNodes; i++){
 				out.println(i+"\""+i+"\"");			
 			}
 		}
-
+*/
 		//read from nwb file and write to the graphml file
 		boolean inNodesSection = false;
 		boolean inDirectededgesSection = false;
