@@ -54,8 +54,8 @@
       enddo
 
       open(21,file='network.nwb',status='unknown')
-      write(21,108)'// Erdoes-Renyi graph'
-      write(21,110)'// Linking probability ',p
+      write(21,108)'# Erdoes-Renyi graph'
+      write(21,110)'# Linking probability ',p
       write(21,103)'*Nodes ',n_vert
       write(21,120)'id*int      label*string'
       do i=1,n_vert

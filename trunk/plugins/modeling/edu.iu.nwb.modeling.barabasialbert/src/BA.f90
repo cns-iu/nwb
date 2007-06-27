@@ -72,8 +72,8 @@
 !     Opening of the file where the edges will be saved
 
       open(21,file='network.nwb',status='unknown')
-      write(21,108)'// Barabasi-Albert network'
-      write(21,102)'// Links created by each node ',m0
+      write(21,108)'# Barabasi-Albert network'
+      write(21,102)'# Links created by each node ',m0
       write(21,103)'*Nodes ',n_vert
       write(21,110)'id*int      label*string'
       do i=1,n_vert

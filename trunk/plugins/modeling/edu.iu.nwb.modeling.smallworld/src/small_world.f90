@@ -60,9 +60,9 @@
 !     Opening of the file where the edges will be saved
 
       open(21,file='network.nwb',status='unknown')
-      write(21,108)'// Small world network'
-      write(21,102)'// Initial neighbors of each node ',k_nei
-      write(21,110)'// Rewiring probability ',p
+      write(21,108)'# Small world network'
+      write(21,102)'# Initial neighbors of each node ',k_nei
+      write(21,110)'# Rewiring probability ',p
       write(21,103)'*Nodes ',n_vert
       write(21,120)'id*int      label*string'
       do i=1,n_vert
