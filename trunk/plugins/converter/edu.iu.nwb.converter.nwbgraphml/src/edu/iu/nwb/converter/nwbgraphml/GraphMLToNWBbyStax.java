@@ -306,10 +306,16 @@ public class GraphMLToNWBbyStax implements Algorithm {
 			if (keyDataList.get(i) == null)
 			{
 				keyDOTemp = (KeyDO)keyEdgeList.get(i);
+				/*if ( keyDOTemp.getAttr_type().equalsIgnoreCase("String"))
+					printline += "\t" + '"' + keyDOTemp.getAttr_value()+ '"'  ;
+				else*/	
 				printline += "\t" + keyDOTemp.getAttr_value();
 			}else
 			{
 				keydata = (String)keyDataList.get(i);
+				/*if ( keyDOTemp.getAttr_type().equalsIgnoreCase("String"))
+					printline += "\t" + '"' + keydata + '"'  ;
+				else*/	
 				printline += "\t" + keydata;
 			}
 		}
@@ -420,11 +426,25 @@ public class GraphMLToNWBbyStax implements Algorithm {
 				if (keyDataList.get(i) == null)
 				{
 					keyDOTemp = (KeyDO)keyNodeList.get(i);
-					printline += "\t" + keyDOTemp.getAttr_value();
+					
+					if (keyDOTemp.getAttr_type()!=null)
+					{
+						if ( keyDOTemp.getAttr_type().equalsIgnoreCase("String"))
+							printline += "\t" + '"' + keyDOTemp.getAttr_value()+ '"'  ;
+						else
+							printline += "\t" +  keyDOTemp.getAttr_value()  ;
+					}
 				}else
 				{
 					keydata = (String)keyDataList.get(i);
-					printline += "\t" + keydata;
+					/*if ( keyDOTemp.getAttr_type().equalsIgnoreCase("String"))
+						printline += "\t" + '"' + keydata + '"';
+					else*/
+						//printline += "\t" + keydata;
+					if(!keydata.equals("*"))
+					printline += "\t" + '"' + keydata + '"'  ;
+					else
+						printline += "\t" + keydata   ;
 				}
 			}
 			
