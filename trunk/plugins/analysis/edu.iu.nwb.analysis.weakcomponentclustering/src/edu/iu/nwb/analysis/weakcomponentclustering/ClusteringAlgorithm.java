@@ -9,8 +9,6 @@ import org.cishell.framework.data.Data;
 import org.cishell.framework.data.DataProperty;
 import org.osgi.service.log.LogService;
 
-import cern.colt.matrix.DoubleMatrix2D;
-
 import edu.uci.ics.jung.algorithms.cluster.ClusterSet;
 import edu.uci.ics.jung.algorithms.cluster.WeakComponentClusterer;
 import edu.uci.ics.jung.graph.Graph;
