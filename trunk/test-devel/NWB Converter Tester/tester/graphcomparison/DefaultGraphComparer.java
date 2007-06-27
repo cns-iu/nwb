@@ -292,10 +292,6 @@ public class DefaultGraphComparer implements GraphComparer {
 			Tuple tuple = (Tuple) ii.next();
 			tCopy.addTuple(tuple);
 		}
-		
-		for (Iterator ii = tCopy.tuples(); ii.hasNext();) {
-			Tuple tuple = (Tuple) ii.next();
-		}
 		return tCopy;
 	}
 	
