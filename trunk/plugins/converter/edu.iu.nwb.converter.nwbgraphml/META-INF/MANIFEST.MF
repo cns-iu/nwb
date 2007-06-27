@@ -6,6 +6,8 @@ Bundle-Version: 0.6.0
 Bundle-ClassPath: .
 Bundle-Localization: plugin
 Import-Package: edu.iu.nwb.converter.nwb.common,
+ javax.xml.stream,
+ javax.xml.stream.events,
  org.cishell.framework,
  org.cishell.framework.algorithm,
  org.cishell.framework.data,
@@ -16,4 +18,4 @@ Import-Package: edu.iu.nwb.converter.nwb.common,
  org.osgi.service.metatype;version="1.1.0",
  org.osgi.service.prefs;version="1.1.0"
 X-AutoStart: true
-Service-Component: OSGI-INF/nwbtographml.xml, OSGI-INF/graphmltonwbbydom.xml
+Service-Component: OSGI-INF/nwbtographml.xml, OSGI-INF/graphmltonwbbystax.xml
