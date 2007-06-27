@@ -59,6 +59,21 @@ public class ValidateNWBFile {
 		while (line != null && isFileGood) {
 			currentLine++;
 
+			// process section header that looks like
+			// *Nodes or *Nodes 1000
+			if (validateNodeHeader(line) ){
+				line = reader.readLine();
+				continue;
+			}
+			if (validateDirectedEdgeHeader(line)){
+				line = reader.readLine();
+				continue;
+			}
+			if(validateUndirectedEdgeHeader(line)) {
+				line = reader.readLine();
+				continue;
+			}
+
 			if (inNodesSection && isFileGood) {
 				processNodes(line);
 				line = reader.readLine();
@@ -77,14 +92,6 @@ public class ValidateNWBFile {
 				continue;
 			}
 			
-			// process section header that looks like
-			// *Nodes or *Nodes 1000
-			if (validateNodeHeader(line) ||
-				validateDirectedEdgeHeader(line)||
-				validateUndirectedEdgeHeader(line)) {
-				line = reader.readLine();
-				continue;
-			}
 
 
 			if (isFileGood) {
