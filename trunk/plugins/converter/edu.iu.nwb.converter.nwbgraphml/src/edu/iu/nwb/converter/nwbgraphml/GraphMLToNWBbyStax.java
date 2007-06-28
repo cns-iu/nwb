@@ -93,7 +93,7 @@ public class GraphMLToNWBbyStax implements Algorithm {
 	   	 	}
 	   	 	catch(IOException eio)
 	   	 	{
-	   	 		eio.printStackTrace();
+	   	 	  eio.printStackTrace();
 	   	 	}
 	   	 	
 	   	 	
@@ -238,7 +238,8 @@ public class GraphMLToNWBbyStax implements Algorithm {
 			}
 		 }catch(IOException ioe)
 		 {
-			 
+			  logger.log(LogService.LOG_ERROR, "Unable to create nwb file"); 
+			  ioe.getStackTrace();
 		 }
 		 
 
@@ -303,20 +304,30 @@ public class GraphMLToNWBbyStax implements Algorithm {
 	 	addDataToList("edge");	
 		for(int i=0; i < keyEdgeList.size(); i++)
 		{
+			keyDOTemp = (KeyDO)keyEdgeList.get(i);
 			if (keyDataList.get(i) == null)
 			{
-				keyDOTemp = (KeyDO)keyEdgeList.get(i);
-				/*if ( keyDOTemp.getAttr_type().equalsIgnoreCase("String"))
-					printline += "\t" + '"' + keyDOTemp.getAttr_value()+ '"'  ;
-				else*/	
-				printline += "\t" + keyDOTemp.getAttr_value();
+				// check for datatype as String
+				if(keyDOTemp.getAttr_type().equalsIgnoreCase("String"))
+				{
+					if(keyDOTemp.getAttr_value().equals("*"))
+						printline += "\t" + keyDOTemp.getAttr_value();
+					else
+						printline += "\t" + '"'+ keyDOTemp.getAttr_value()+ '"';
+				}else
+					printline += "\t" + keyDOTemp.getAttr_value();
 			}else
 			{
 				keydata = (String)keyDataList.get(i);
-				/*if ( keyDOTemp.getAttr_type().equalsIgnoreCase("String"))
-					printline += "\t" + '"' + keydata + '"'  ;
-				else*/	
-				printline += "\t" + keydata;
+				if(keyDOTemp.getAttr_type().equalsIgnoreCase("String"))
+				{
+					if(keydata.equals("*"))
+						printline += "\t" + keydata;
+					else
+						printline += "\t" + '"'+ keydata + '"';
+				}else
+					    printline += "\t" + keydata;
+				
 			}
 		}
 		
@@ -352,6 +363,7 @@ public class GraphMLToNWBbyStax implements Algorithm {
 			
 			wf(printLineData,nodeWriter);
 	   }
+	 
 	public void addDataToList(String type)
 	{
 		 int eventType = -1;
@@ -423,28 +435,32 @@ public class GraphMLToNWBbyStax implements Algorithm {
 			
 			for(int i=0; i < keyNodeList.size(); i++)
 			{
+				keyDOTemp = (KeyDO)keyNodeList.get(i);
 				if (keyDataList.get(i) == null)
 				{
-					keyDOTemp = (KeyDO)keyNodeList.get(i);
-					
-					if (keyDOTemp.getAttr_type()!=null)
-					{
 						if ( keyDOTemp.getAttr_type().equalsIgnoreCase("String"))
+						{
+							if (keyDOTemp.getAttr_value().equals("*"))
+								printline += "\t" +  keyDOTemp.getAttr_value()  ;
+							else
 							printline += "\t" + '"' + keyDOTemp.getAttr_value()+ '"'  ;
+						}	
 						else
 							printline += "\t" +  keyDOTemp.getAttr_value()  ;
-					}
+					
 				}else
 				{
-					keydata = (String)keyDataList.get(i);
-					/*if ( keyDOTemp.getAttr_type().equalsIgnoreCase("String"))
-						printline += "\t" + '"' + keydata + '"';
-					else*/
-						//printline += "\t" + keydata;
-					if(!keydata.equals("*"))
-					printline += "\t" + '"' + keydata + '"'  ;
-					else
-						printline += "\t" + keydata   ;
+					
+						keydata = (String)keyDataList.get(i);
+						if (keyDOTemp.getAttr_type().equalsIgnoreCase("String"))
+						{
+							if(keydata.equals("*"))
+								printline += "\t" + keydata   ;
+							else
+								printline += "\t" + '"'+ keydata + '"'   ;
+							
+						}else
+							printline += "\t" + keydata   ;
 				}
 			}
 			
@@ -635,6 +651,7 @@ public class GraphMLToNWBbyStax implements Algorithm {
 				tempFile = new File (fullFileName);
 			
 			}catch (Exception e){
+				  logger.log(LogService.LOG_ERROR, "Unable to create nwb file");
 				e.printStackTrace();
 			}
 			
