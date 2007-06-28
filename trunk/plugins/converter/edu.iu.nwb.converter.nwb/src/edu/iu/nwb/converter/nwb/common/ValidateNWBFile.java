@@ -58,9 +58,11 @@ public class ValidateNWBFile {
 
 		while (line != null && isFileGood) {
 			currentLine++;
-
-			if (line.startsWith(NWBFileProperty.PREFIX_COMMENTS) ||line.length()<=0)
-				continue;
+			
+			if (line.startsWith(NWBFileProperty.PREFIX_COMMENTS) ||line.length()<=0){
+				line = reader.readLine();
+				continue;				
+			}			
 			// process section header that looks like
 			// *Nodes or *Nodes 1000
 			if (validateNodeHeader(line) ){
