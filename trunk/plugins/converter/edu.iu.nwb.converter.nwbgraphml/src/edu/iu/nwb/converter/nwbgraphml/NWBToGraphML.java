@@ -213,11 +213,11 @@ public class NWBToGraphML implements Algorithm {
     			line = reader.readLine();
 				continue;
     		}
-    		String line_lower = line.toLowerCase();
+//    		String line_lower = line.toLowerCase();
     			
     		//find node section header that looks like
     		//  *nodes   or  *nodes 1000
-    		if(line_lower.startsWith(NWBFileProperty.HEADER_NODE)) 
+    		if(line.startsWith(NWBFileProperty.HEADER_NODE)) 
     		{
     				inNodesSection = true;
     				inDirectededgesSection = false;
@@ -225,7 +225,7 @@ public class NWBToGraphML implements Algorithm {
     				line = reader.readLine();
     				continue;
     		}
-    		if(line_lower.startsWith(NWBFileProperty.HEADER_DIRECTED_EDGES)) 
+    		if(line.startsWith(NWBFileProperty.HEADER_DIRECTED_EDGES)) 
     		{
     				inDirectededgesSection = true;
     				inNodesSection = false;
@@ -234,7 +234,7 @@ public class NWBToGraphML implements Algorithm {
     				continue;    				
     		}
 
-    		if(line_lower.startsWith(NWBFileProperty.HEADER_UNDIRECTED_EDGES)) 
+    		if(line.startsWith(NWBFileProperty.HEADER_UNDIRECTED_EDGES)) 
     		{
     				inUndirectededgesSection =true;
     				inNodesSection = false;
@@ -245,10 +245,10 @@ public class NWBToGraphML implements Algorithm {
 
     		if (inNodesSection)
     		{	//ignore attribute list line or comment line(s)
-				if (line_lower.startsWith(NWBFileProperty.ATTRIBUTE_ID)||
-					line_lower.startsWith(NWBFileProperty.PREFIX_COMMENTS+
+				if (line.startsWith(NWBFileProperty.ATTRIBUTE_ID)||
+					line.startsWith(NWBFileProperty.PREFIX_COMMENTS+
 											NWBFileProperty.ATTRIBUTE_ID)||
-					line_lower.startsWith(NWBFileProperty.PREFIX_COMMENTS))
+					line.startsWith(NWBFileProperty.PREFIX_COMMENTS))
 				{
 					line = reader.readLine();
 	    			continue;
@@ -282,10 +282,10 @@ public class NWBToGraphML implements Algorithm {
     			
     		if (inDirectededgesSection || inUndirectededgesSection){
     			//ignore attribute list line or comment line(s)
-				if (line_lower.startsWith(NWBFileProperty.ATTRIBUTE_SOURCE)||
-					line_lower.startsWith(NWBFileProperty.PREFIX_COMMENTS+
+				if (line.startsWith(NWBFileProperty.ATTRIBUTE_SOURCE)||
+					line.startsWith(NWBFileProperty.PREFIX_COMMENTS+
 											NWBFileProperty.ATTRIBUTE_SOURCE)||
-					line_lower.startsWith(NWBFileProperty.PREFIX_COMMENTS))	
+					line.startsWith(NWBFileProperty.PREFIX_COMMENTS))	
 				{
 					line = reader.readLine();
 	    			continue;
