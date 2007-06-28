@@ -121,7 +121,7 @@ public class NETVertex {
 										NETFileParameter.VERTEX_STRING_PARAMETER_LIST)))){
 					break;
 				}
-				f = ((Float) qs.poll()).floatValue();
+				f = new Float((String)qs.poll()).floatValue();
 				if(NETVertex.betweenZeroandOne(f)){  //we should actually make this better to handle round off errors.
 					value = true;
 					switch (i){
@@ -154,7 +154,6 @@ public class NETVertex {
 
 
 	public boolean testVertexShape(String st) throws Exception{
-		boolean value = false;
 		try {
 			for(int ii = 0; ii < NETFileShape.ATTRIBUTE_SHAPE_LIST.length; ii++){
 				String s = NETFileShape.ATTRIBUTE_SHAPE_LIST[ii];
@@ -163,11 +162,11 @@ public class NETVertex {
 					return true;
 				}
 			}
+			return false;
 		}
 		catch(Exception ex){
-			throw ex;
+			return false;
 		}
-		return value;
 	}
 
 
@@ -231,6 +230,9 @@ public class NETVertex {
 			else if(s1.startsWith(NETFileProperty.PREFIX_COMMENTS)){
 				qs.clear();
 				break;
+			}
+			else if(s1.startsWith(NETFileParameter.PARAMETER_SHAPE)){
+				this.testVertexShape(s2);
 			}
 
 			else {
