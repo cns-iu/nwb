@@ -111,7 +111,7 @@ public class GraphMLWriter extends AbstractGraphWriter {
                 }
                 xml.end();
             } else {
-                xml.tag(Tokens.NODE, Tokens.ID, String.valueOf(n.getRow()));
+                xml.tag(Tokens.NODE, Tokens.ID, "n" + String.valueOf(n.getRow()));
             }
         }
         
