@@ -143,7 +143,7 @@ public class PajeknetToNWB implements Algorithm {
 	}
 	
 	private void writeNodeAttributeList(ValidateNETFile validator, PrintWriter out){
-		String st = NWBFileProperty.PREFIX_COMMENTS;
+		String st = "";// = NWBFileProperty.PREFIX_COMMENTS;
 		for(Iterator ii = validator.getVertexAttrList().iterator(); ii.hasNext();){
 			NETAttribute na = (NETAttribute) ii.next();
 			st += na.getAttrName()+NWBFileProperty.PRESERVED_STAR+na.getDataType()+ " ";
@@ -152,7 +152,7 @@ public class PajeknetToNWB implements Algorithm {
 		out.println(st);
 	}
 	private void writeUndirectedEdgeAttributeList(ValidateNETFile validator, PrintWriter out){
-		String st = NWBFileProperty.PREFIX_COMMENTS;
+		String st = "";//NWBFileProperty.PREFIX_COMMENTS;
 		for(Iterator ii = validator.getEdgeAttrList().iterator(); ii.hasNext();){
 			NETAttribute na = (NETAttribute) ii.next();
 			st += na.getAttrName()+NWBFileProperty.PRESERVED_STAR+na.getDataType()+ " ";
@@ -162,7 +162,7 @@ public class PajeknetToNWB implements Algorithm {
 		out.println(st);
 	}
 	private void writeDirectedEdgeAttributeList(ValidateNETFile validator, PrintWriter out){
-		String st = NWBFileProperty.PREFIX_COMMENTS;
+		String st = ""; //NWBFileProperty.PREFIX_COMMENTS;
 		for(Iterator ii = validator.getArcAttrList().iterator(); ii.hasNext();){
 			NETAttribute na = (NETAttribute) ii.next();
 			st += na.getAttrName()+NWBFileProperty.PRESERVED_STAR+na.getDataType()+ " ";
@@ -214,7 +214,16 @@ public class PajeknetToNWB implements Algorithm {
 			for(Iterator jj = validator.getEdgeAttrList().iterator(); jj.hasNext();){
 				NETAttribute na = (NETAttribute) jj.next();
 				try{
-					st += nae.getAttribute(na.getAttrName())+ " ";
+					Object o = nae.getAttribute(na.getAttrName());
+					if(o.toString() == null)
+						st += "* ";
+					else
+						if(na.getDataType().equalsIgnoreCase("string")){
+							st +=  "\""+o + "\" ";
+						}
+						else
+							st +=  o + " ";
+					
 				}catch(NullPointerException npe){
 					st += "* ";
 				}
@@ -238,7 +247,16 @@ public class PajeknetToNWB implements Algorithm {
 				for(Iterator jj = validator.getEdgeAttrList().iterator(); jj.hasNext();){
 					NETAttribute na = (NETAttribute) jj.next();
 					try{
-						st += nae.getAttribute(na.getAttrName())+ " ";
+						Object o = nae.getAttribute(na.getAttrName());
+						if(o.toString() == null)
+							st += "* ";
+						else
+							if(na.getDataType().equalsIgnoreCase("string")){
+								st +=  "\""+o + "\" ";
+							}
+							else
+								st +=  o + " ";
+						
 					}catch(NullPointerException npe){
 						st += "* ";
 					}
