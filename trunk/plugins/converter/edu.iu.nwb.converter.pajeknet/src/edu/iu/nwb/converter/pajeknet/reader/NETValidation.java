@@ -76,9 +76,9 @@ public class NETValidation implements AlgorithmFactory {
 				}else {
 					System.out.println(">>>wrong format: "+validator.getErrorMessages());
 					guiBuilder.showError("Bad NET Format", 
-							"Sorry, your file does not comply with the NET File Formate Specification.",
-							"Sorry, your file does not comply with the NET File Formate Specification.\n"+
-							"Please review the latest NET File Formate Specification at "+
+							"Sorry, your file does not comply with the NET File Format Specification.",
+							"Sorry, your file does not comply with the NET File Format Specification.\n"+
+							"Please review the latest NET File Format Specification at "+
 							"http://vlado.fmf.uni-lj.si/pub/networks/pajek/doc/pajekman.pdf, and update your file. \n"+
 							validator.getErrorMessages());
 					return null;
