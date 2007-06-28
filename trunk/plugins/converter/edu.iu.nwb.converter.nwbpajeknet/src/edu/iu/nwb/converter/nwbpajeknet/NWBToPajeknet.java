@@ -168,45 +168,45 @@ public class NWBToPajeknet implements Algorithm {
 			}
 
 			out.flush();
-			String line_lower = line.toLowerCase();
+			//String line_lower = line.toLowerCase();
 
 			//find node section header that looks like
 			//  *nodes   or  *nodes 1000
-			if(line_lower.startsWith(NWBFileProperty.HEADER_NODE)) 
+			if(line.startsWith(NWBFileProperty.HEADER_NODE)) 
 			{
 				inNodesSection = true;
 				inDirectededgesSection = false;
 				inUndirectededgesSection = false;
-				writeHeader(line_lower.replace(NWBFileProperty.HEADER_NODE, "Vertices"), out);
+				writeHeader(line.replace(NWBFileProperty.HEADER_NODE, "Vertices"), out);
 				line = reader.readLine();
 				continue;
 			}
-			if(line_lower.startsWith(NWBFileProperty.HEADER_DIRECTED_EDGES)) 
+			if(line.startsWith(NWBFileProperty.HEADER_DIRECTED_EDGES)) 
 			{
 				inDirectededgesSection = true;
 				inNodesSection = false;
 				inUndirectededgesSection = false;
-				writeHeader(line_lower.replace(NWBFileProperty.HEADER_DIRECTED_EDGES, "Arcs"), out);
+				writeHeader(line.replace(NWBFileProperty.HEADER_DIRECTED_EDGES, "Arcs"), out);
 				line = reader.readLine();
 				continue;    				
 			}
 
-			if(line_lower.startsWith(NWBFileProperty.HEADER_UNDIRECTED_EDGES)) 
+			if(line.startsWith(NWBFileProperty.HEADER_UNDIRECTED_EDGES)) 
 			{
 				inUndirectededgesSection =true;
 				inNodesSection = false;
 				inDirectededgesSection = false;
-				writeHeader(line_lower.replace(NWBFileProperty.HEADER_UNDIRECTED_EDGES, "Edges"), out);
+				writeHeader(line.replace(NWBFileProperty.HEADER_UNDIRECTED_EDGES, "Edges"), out);
 				line = reader.readLine();
 				continue;
 			}
 
 			if (inNodesSection)
 			{	//ignore attribute list line or comment line(s)
-				if (line_lower.startsWith(NWBFileProperty.ATTRIBUTE_ID)||
-						line_lower.startsWith(NWBFileProperty.PREFIX_COMMENTS+
+				if (line.startsWith(NWBFileProperty.ATTRIBUTE_ID)||
+						line.startsWith(NWBFileProperty.PREFIX_COMMENTS+
 								NWBFileProperty.ATTRIBUTE_ID)||
-								line_lower.startsWith(NWBFileProperty.PREFIX_COMMENTS))
+								line.startsWith(NWBFileProperty.PREFIX_COMMENTS))
 				{
 					line = reader.readLine();
 					continue;
@@ -218,10 +218,10 @@ public class NWBToPajeknet implements Algorithm {
 			}//end if (inNodesSection)
 
 				if (inDirectededgesSection || inUndirectededgesSection){
-					if (line_lower.startsWith(NWBFileProperty.ATTRIBUTE_SOURCE)||
-							line_lower.startsWith(NWBFileProperty.PREFIX_COMMENTS+
+					if (line.startsWith(NWBFileProperty.ATTRIBUTE_SOURCE)||
+							line.startsWith(NWBFileProperty.PREFIX_COMMENTS+
 									NWBFileProperty.ATTRIBUTE_SOURCE)||
-									line_lower.startsWith(NWBFileProperty.PREFIX_COMMENTS))	
+									line.startsWith(NWBFileProperty.PREFIX_COMMENTS))	
 					{
 						line = reader.readLine();
 						continue;
