@@ -59,6 +59,8 @@ public class ValidateNWBFile {
 		while (line != null && isFileGood) {
 			currentLine++;
 
+			if (line.startsWith(NWBFileProperty.PREFIX_COMMENTS) ||line.length()<=0)
+				continue;
 			// process section header that looks like
 			// *Nodes or *Nodes 1000
 			if (validateNodeHeader(line) ){
@@ -91,13 +93,11 @@ public class ValidateNWBFile {
 				line = reader.readLine();
 				continue;
 			}
-			
-
-
-			if (isFileGood) {
-				checkFile();
-			}
 			line = reader.readLine();
+		}
+
+		if (isFileGood) {
+			checkFile();
 		}
 	}
 
@@ -108,7 +108,7 @@ public class ValidateNWBFile {
 					.append("*The file does not specify the node header.\n\n");
 		} else if (!hasHeader_DirectedEdges && !hasHeader_UndirectedEdges) {
 			isFileGood = false;
-		} 
+		} 		
 	}
 	
 	/**
@@ -189,8 +189,6 @@ public class ValidateNWBFile {
 	 * refers to a valid undirected edge header.
 	 */
 	private boolean validateUndirectedEdgeHeader(String s) throws IOException {
-		s = s.toLowerCase();
-
 		if (s.startsWith(NWBFileProperty.HEADER_UNDIRECTED_EDGES)) {
 			hasHeader_UndirectedEdges = true;
 			inUndirectededgesSection = true;
