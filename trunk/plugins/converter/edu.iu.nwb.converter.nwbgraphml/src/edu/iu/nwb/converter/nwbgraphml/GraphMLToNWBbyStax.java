@@ -46,6 +46,7 @@ public class GraphMLToNWBbyStax implements Algorithm {
 	  private KeyDO objKeyDO = null;
 	  private String tempPath = null;	
 	  private File tempDir = null;
+	  private File outData = null;
 	  
 	  /**
      * Intializes the algorithm
@@ -64,6 +65,7 @@ public class GraphMLToNWBbyStax implements Algorithm {
 	        keyNodeList = new ArrayList();
 	   	 	keyEdgeList = new ArrayList();
 	   	 	NodeIdMapList = new Hashtable();
+	   		
 	   	 	
 	   	 	inputFactory = XMLInputFactory.newInstance();
 	   	 	
@@ -89,7 +91,8 @@ public class GraphMLToNWBbyStax implements Algorithm {
 
 	   	 		tempPath = System.getProperty("java.io.tmpdir");
 	   	 		tempDir = new File(tempPath+File.separator+"temp");
-	   	 		nodeWriter = new BufferedWriter(new FileWriter(getTempFile("node")));
+	   	 		outData = getTempFile("node");
+	   	 		nodeWriter = new BufferedWriter(new FileWriter(outData));
 	   	 		undirectedEdgeWriter = new BufferedWriter(new FileWriter(getTempFile("undirectedEdge")));
 	   	 		directedEdgeWriter = new BufferedWriter(new FileWriter(getTempFile("directedEdge")));
 	   	 	}
@@ -112,7 +115,8 @@ public class GraphMLToNWBbyStax implements Algorithm {
 			    	  logger.log(LogService.LOG_ERROR, "Problem executing transformation from GraphML to NWB");  
 			           exception.printStackTrace();
 			      }
-			 return new Data[] {new BasicData(new File(tempDir.toString()+ File.separator + "node.nwb"), "file:text/nwb")};
+			 System.out.println(">>>>>>>"+outData.toString());
+			 return new Data[] {new BasicData(outData, "file:text/nwb")};
 		 }else
 			 return null;
 	 }
@@ -209,7 +213,7 @@ public class GraphMLToNWBbyStax implements Algorithm {
 			if (nodeCount>0)
 			{
 				 RandomAccessFile node = new RandomAccessFile(tempDir.toString()+File.separator + "node.nwb" ,"rw");
-				 node.seek("*Node".length());
+				 node.seek("*Nodes".length());
 				 node.writeBytes("\t" + String.valueOf(nodeCount));
 				 node.seek(node.length());
 				 if (directedEdge!=null)
@@ -332,7 +336,7 @@ public class GraphMLToNWBbyStax implements Algorithm {
 			}
 		}
 		
-		pl(printline);
+		
 		
 		if (directed)
 			wf(printline,directedEdgeWriter);
@@ -350,7 +354,7 @@ public class GraphMLToNWBbyStax implements Algorithm {
 		    String printLineData = null;
 		    KeyDO objKeyDO = null;
 		    
-		    printLineData = "*Node     ";
+		    printLineData = "*Nodes     ";
 		    wf(printLineData,nodeWriter);
 		    
 		    
@@ -542,7 +546,7 @@ public class GraphMLToNWBbyStax implements Algorithm {
 		   
 		   try
 		   {
-			    pl(data);
+			  
 			   writer.write(data);
 			   writer.newLine();
 			   writer.flush();
