@@ -1,5 +1,6 @@
-//Converted by Cesifoti for the NWB... :-)
+#Converted by Cesifoti for the NWB... :-)
 *Nodes 952
+id*int	lable*string
 1 "5C820"
 2 "ACTA1"
 3 "APAF1"
@@ -953,6 +954,7 @@
 951 "zip-1"
 952 "zyg-11"
 *UndirectedEdges
+source*int	target*int
 604 39
 827 278
 869 28

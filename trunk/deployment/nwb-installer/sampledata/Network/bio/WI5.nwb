@@ -1,5 +1,6 @@
-//Converted by Cesifoti for the NWB... :-)
+#Converted by Cesifoti for the NWB... :-)
 *Nodes 3228
+id*int	lable*string
 1 "AC3.3"
 2 "AC7.2"
 3 "AC8.1"
@@ -3229,6 +3230,7 @@
 3227 "ZK973.10"
 3228 "ZK973.9"
 *UndirectedEdges
+source*int	target*int
 1925 1768
 524 272
 605 1130

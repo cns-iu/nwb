@@ -1,5 +1,6 @@
-//Converted by Cesifoti for the NWB... :-)
+#Converted by Cesifoti for the NWB... :-)
 *Nodes 1333
+id*int	lable*string
 1 "aceA"
 2 "aceB"
 3 "aceE"
@@ -1334,6 +1335,7 @@
 1332 "zur"
 1333 "zwf"
 *UndirectedEdges
+source*int	target*int weight*int
 829 813 1
 829 812 1
 75 578 -1

@@ -1,5 +1,6 @@
-//Converted by Cesifoti for the NWB... :-)
+#Converted by Cesifoti for the NWB... :-)
 *Nodes 330
+id*int	lable*string
 1 "ACTB"
 2 "AKAP1"
 3 "ATPsyn-beta"
@@ -331,6 +332,7 @@
 329 "yps"
 330 "zfh1"
 *UndirectedEdges
+source*int	target*int
 97 262
 48 18
 322 134
