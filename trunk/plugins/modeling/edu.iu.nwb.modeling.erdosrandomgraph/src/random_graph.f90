@@ -14,6 +14,8 @@
       real*8 r,p
       character*60 sn_vert,sp,sibm
       character*25,allocatable,dimension(:):: attrN
+      
+      character*(25) addquotes
 
 !     Reading of input parameters 
       
@@ -34,23 +36,8 @@
       denom=1000000000
       
       do i=1,n_vert
-         denom0=denom
-         k=i
-         do
-            if((k/denom0)/=0)exit
-            denom0=denom0/10
-         enddo
-         attrN(i)(1:1)='"'
-         j=2
-         do
-            attrN(i)(j:j)=char(48+k/denom0)
-            k0=k-(k/denom0)*denom0
-            k=k0
-            denom0=denom0/10
-            j=j+1
-            if(denom0==0)exit
-         enddo
-         attrN(i)(j:j)='"'
+         write(attrN(i),*) i
+         attrN(i) = addquotes(attrN(i))
       enddo
 
       open(21,file='network.nwb',status='unknown')
@@ -144,3 +131,16 @@
 
       stop
     end program random_graph
+    
+    character*(25) function addquotes(value)
+		character*(*) value
+		character*22 longname
+		
+		if(len(TRIM(ADJUSTL(value))) >= 23) then
+			longname = ADJUSTL(value)
+			addquotes = '"' // longname // '"'
+		else
+			addquotes = '"' // TRIM(ADJUSTL(value)) // '"'
+		endif
+		return
+	end
