@@ -31,7 +31,7 @@ public class NETFileProperty {
 //    public static final String HEADER_NODE_ATTRIBUTES = "*NodeAttributes";
 //    public static final String HEADER_EDGE_ATTRIBUTES = "*EdgeAttributes";
    
-    public static final String NET_MIME_TYPE = "file:text/net";
+    public static final String NET_MIME_TYPE = "file:application/pajek";
     public static final String NET_FILE_TYPE = "file-ext:net";
     
 }

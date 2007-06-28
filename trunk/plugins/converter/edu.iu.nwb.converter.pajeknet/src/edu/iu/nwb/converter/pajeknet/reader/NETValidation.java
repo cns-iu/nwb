@@ -18,6 +18,7 @@ import org.cishell.service.guibuilder.GUIBuilderService;
 import org.osgi.service.component.ComponentContext;
 import org.osgi.service.metatype.MetaTypeProvider;
 
+import edu.iu.nwb.converter.pajeknet.common.NETFileProperty;
 import edu.iu.nwb.converter.pajeknet.common.ValidateNETFile;
 
 /**
@@ -67,7 +68,7 @@ public class NETValidation implements AlgorithmFactory {
 			try{ 
 				validator.validateNETFormat(inData);
 				if(validator.getValidationResult()){						
-					Data[] dm = new Data[] {new BasicData(inData, "file:text/net")};
+					Data[] dm = new Data[] {new BasicData(inData, NETFileProperty.NET_MIME_TYPE)};
 					dm[0].getMetaData().put(DataProperty.LABEL, "Pajek .net file: " + fileHandler);
 					dm[0].getMetaData().put(DataProperty.TYPE, DataProperty.NETWORK_TYPE);
                 	return dm;
