@@ -1,5 +1,5 @@
 *Nodes
-//id*int	label*string
+id*int	label*string
 541	"SLP"
 542	"wg"
 543	"WG"
@@ -60,8 +60,8 @@
 598	"CI"
 599	"CIA"
 600	"CIR"
-*Directededges
-//source*int	target*int
+*DirectedEdges 
+source*int	target*int
 541	544
 541	557
 541	562

@@ -16,6 +16,7 @@ public class ConfigurationFileParser {
 	private Queue<String> testConverters;
 	private boolean nodeIDChange = true;
 	private String extension;
+	private String configFile;
 	
 
 	private boolean processFileList  = false;
@@ -35,10 +36,12 @@ public class ConfigurationFileParser {
 		testConverters = new LinkedList<String>();
 		comparisonFiles = new LinkedList<File>();
 		nodeIDChange = true;
+		
 		this.parseFile(f);
 	}
 
 	public void parseFile(File f){
+		configFile = f.getName();
 		int lineNum = 0;
 		String line = null;
 		BufferedReader reader;
@@ -49,9 +52,9 @@ public class ConfigurationFileParser {
 
 			while((line = reader.readLine()) != null){
 
+				if(!line.trim().equals("")){
 
-
-				System.out.println("Parsing line: " + lineNum + " " + line);
+				//System.out.println("Parsing line: " + lineNum + " " + line);
 				if(line.startsWith(ConfigurationFileConstants.TEST_GRAPHS)){
 					line = line.replace(ConfigurationFileConstants.TEST_GRAPHS, "");
 					//System.out.println(line);
@@ -97,6 +100,7 @@ public class ConfigurationFileParser {
 				}
 				if(this.processTestConvertersList){
 					this.processTestConverters(this.processLine(line));
+				}
 				}
 				lineNum++;
 				//System.out.println("Next line");
@@ -198,6 +202,10 @@ public class ConfigurationFileParser {
 
 	public String getExtension(){
 		return this.extension;
+	}
+	
+	public String getConfigFile(){
+		return this.configFile;
 	}
 	
 }
