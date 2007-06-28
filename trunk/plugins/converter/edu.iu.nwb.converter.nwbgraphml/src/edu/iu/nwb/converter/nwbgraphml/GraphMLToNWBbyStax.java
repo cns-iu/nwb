@@ -73,7 +73,9 @@ public class GraphMLToNWBbyStax implements Algorithm {
 	   	 		xmlReader = inputFactory.createXMLStreamReader(new FileReader((data[0].getData()).toString()));
 	   	 	}
 	   	 	catch(XMLStreamException ex)
-	   	 	{}
+	   	 	{
+	   	 		ex.printStackTrace();
+	   	 		}
 	   	    catch(FileNotFoundException foe)
 	   	    {
 	   	    	logger.log(LogService.LOG_ERROR, "GraphML file not found ");
@@ -132,9 +134,8 @@ public class GraphMLToNWBbyStax implements Algorithm {
 	    		//check for node element
 	        	if (xmlReader.getLocalName().equals("node")&& xmlReader.getAttributeCount() > 0)
 	        	{
-	        		NodeIdMapList.put( getAttributeValue("id"),Integer.valueOf(nodeCount));
 	        		nodeCount++;
-	        		
+	        		NodeIdMapList.put( getAttributeValue("id"),Integer.valueOf(nodeCount));
 	        		if (nodeCount == 1)
 	        			printNodeHeader(nodeCount);
 	        		
