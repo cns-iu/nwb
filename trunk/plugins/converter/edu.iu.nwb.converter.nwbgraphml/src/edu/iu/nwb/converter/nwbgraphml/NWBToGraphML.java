@@ -270,10 +270,18 @@ public class NWBToGraphML implements Algorithm {
  		    					value = value.substring(0, value.length()-1);
  		    				}
  		    			}
- 		    			if(value.equalsIgnoreCase("*"))
- 		    				value = "";
- 		    			out.println("<data key=\""+attr.getAttrName()+
- 		    					"\">"+value+"</data>");    			
+ 		    			if(! value.equalsIgnoreCase("*")) {
+	 		    				out.println("<data key=\""+attr.getAttrName()+
+		 		    					"\">"+value+"</data>");  	
+	 		    			} else {
+	 		    				/*
+	 		    				 * Don't print anything.
+	 		    				 * 
+	 		    				 * If no data is specified for a 
+	 		    				 * field, it should be okay to
+	 		    				 * just not print the tag.
+	 		    				 */
+	 		    			}
  		    		}
  		    		out.println("</node>");
 
@@ -323,10 +331,18 @@ public class NWBToGraphML implements Algorithm {
  	 		 		    					value = value.substring(0, value.length()-1);
  	 		 		    				}
  	 		 		    			}
- 	 		 		    			if(value.equalsIgnoreCase("*"))
- 	 		 		    				value = "";
- 	 				    			out.println("<data key=\""+attr.getAttrName()+
- 	 		 		    					"\">"+value+"</data>");  				    			
+ 	 		 		    			if(! value.equalsIgnoreCase("*")) {
+ 	 		 		    				out.println("<data key=\""+attr.getAttrName()+
+ 	 	 		 		    					"\">"+value+"</data>");  	
+ 	 		 		    			} else {
+ 	 		 		    				/*
+ 	 		 		    				 * Don't print anything.
+ 	 		 		    				 * 
+ 	 		 		    				 * If no data is specified for a 
+ 	 		 		    				 * field, it should be okay to
+ 	 		 		    				 * just not print the tag.
+ 	 		 		    				 */
+ 	 		 		    			}
  	 				    		}
  	 				    	}
  				    		out.println("</edge>"); 
@@ -346,12 +362,19 @@ public class NWBToGraphML implements Algorithm {
  	 				    		if (!(attrName.equalsIgnoreCase(NWBFileProperty.ATTRIBUTE_SOURCE) ||
  	 				    			attrName.equalsIgnoreCase(NWBFileProperty.ATTRIBUTE_TARGET)	||
  	 				    			attrName.equalsIgnoreCase(NWBFileProperty.ATTRIBUTE_ID))){
- 	 				    			if(columns[i].equalsIgnoreCase("*"))
- 	 				    				out.println("<data key=\""+attr.getAttrName()+
- 	 	 		 		    					"\">"+"</data>");
- 	 				    			else
- 	 				    				out.println("<data key=\""+attr.getAttrName()+
- 	 		 		    					"\">"+columns[i]+"</data>");  				    			
+ 	 				    			
+ 	 		 		    			if(! columns[i].equalsIgnoreCase("*")) {
+ 	 		 		    				out.println("<data key=\""+attr.getAttrName()+
+ 	 	 		 		    					"\">"+columns[i]+"</data>"); 	
+ 	 		 		    			} else {
+ 	 		 		    				/*
+ 	 		 		    				 * Don't print anything.
+ 	 		 		    				 * 
+ 	 		 		    				 * If no data is specified for a 
+ 	 		 		    				 * field, it should be okay to
+ 	 		 		    				 * just not print the tag.
+ 	 		 		    				 */
+ 	 		 		    			}
  	 				    		}
  	 				    	}
  				    		out.println("</edge>");  				    		
