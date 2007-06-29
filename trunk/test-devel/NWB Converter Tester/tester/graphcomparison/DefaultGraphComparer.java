@@ -18,12 +18,10 @@ import prefuse.util.collections.IntIterator;
  * 
  * @author mwlinnem
  *
- * Still under construction, although it works (lots of commented out code 
- * that needs to hang around for future reference)
  */
 public class DefaultGraphComparer implements GraphComparer {
 
-	public ComparisonResult compare(Graph g1, Graph g2, boolean IdsPreserved) {
+	public ComparisonResult compare(Graph g1, Graph g2, boolean idsPreserved) {
 		//basic tests	
 		if (! isSameDirectedness(g1, g2)) {
 			return new ComparisonResult(false, "Directedness not of the " +
@@ -35,7 +33,7 @@ public class DefaultGraphComparer implements GraphComparer {
 		}
 		
 		//complex tests		
-		if (IdsPreserved) {
+		if (idsPreserved) {
 			//tests for when graph IDs are preserved across the conversion	
 			if (! areEqual(g1, g2,  true)) 
 				return new ComparisonResult(false, "Graphs do not have the " +
@@ -131,7 +129,8 @@ public class DefaultGraphComparer implements GraphComparer {
 		}
 
 		//convert the result to a more usable format.
-		Set<Entry<Integer,Integer>> nodeFrequencyPairs = nodeDegreeFrequencies.entrySet();
+		Set<Entry<Integer,Integer>> nodeFrequencyPairs 
+			= nodeDegreeFrequencies.entrySet();
 		
 		return nodeFrequencyPairs;
 	}
@@ -147,8 +146,9 @@ public class DefaultGraphComparer implements GraphComparer {
 	/*
 	 * Determines whether the two graphs have the same edge attributes.
 	 * That is, for every edge in table A there is an edge in table B with
-	 * the same exactly attribute values, and vice versa. Has no regard for
-	 * source and target IDs, or the order the edgesappear in the edge tables.
+	 * the exactly the same attribute values, and vice versa. Has no regard 
+	 * for source and target IDs, or the order the edgesappear in the edge 
+	 * tables.
 	 */
 	private boolean haveSameEdgeAttributes(Graph g1, Graph g2) {
 		//remove the IDs
@@ -251,6 +251,10 @@ public class DefaultGraphComparer implements GraphComparer {
 	
 	private boolean areEqualWhenSorted(Table t1, Table t2) {	
 		Sort t1Sort = new Sort(getColumnNames(t1));
+		/*
+		 * Predicates here are always true, because we don't want to remove 
+		 * any rows when we select. We only want to sort them.
+		 */
 		Table sortedT1 = t1.select(ExpressionParser.predicate("TRUE"), t1Sort);
 		
 		Sort t2Sort = new Sort(getColumnNames(t2));
