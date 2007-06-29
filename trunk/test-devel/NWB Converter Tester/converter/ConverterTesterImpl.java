@@ -117,8 +117,14 @@ public class ConverterTesterImpl implements Converter, AlgorithmFactory, Algorit
                 
                 if (factory != null) {
                     Algorithm alg = factory.createAlgorithm(dm, parameters, context);
-                    
+                    System.out.println("Entering: " + refs[i].getProperty(Constants.SERVICE_PID) + "\nIn data: " + 
+                    		refs[i].getProperty(AlgorithmProperty.IN_DATA+ "\nOut data: " +
+                    				refs[i].getProperty(AlgorithmProperty.OUT_DATA)));
                     dm = alg.execute();
+                    if(dm == null){
+                    	throw new RuntimeException("Error after " + refs[i].getProperty(Constants.SERVICE_PID));
+                    
+                    }
                 } else {
                     throw new RuntimeException("Missing subconverter: " 
                             + refs[i].getProperty(Constants.SERVICE_PID));
