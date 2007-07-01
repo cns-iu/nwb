@@ -1,22 +1,30 @@
 package edu.iu.nwb.converter.nwbgraphml;
 
+import java.io.BufferedWriter;
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.OutputStreamWriter;
+import java.io.SequenceInputStream;
 import java.util.ArrayList;
 import java.util.Dictionary;
 import java.util.Hashtable;
-
-import org.cishell.framework.CIShellContext;
-import org.cishell.framework.algorithm.Algorithm;
-import org.cishell.framework.data.BasicData;
-import org.cishell.framework.data.Data;
-import org.cishell.service.guibuilder.GUIBuilderService;
-import org.osgi.service.log.LogService;
-import java.io.*;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
 
 import javax.xml.stream.XMLInputFactory;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamReader;
 import javax.xml.stream.events.XMLEvent;
+
+import org.cishell.framework.CIShellContext;
+import org.cishell.framework.algorithm.Algorithm;
+import org.cishell.framework.data.BasicData;
+import org.cishell.framework.data.Data;
+import org.osgi.service.log.LogService;
 
 /**
  * Converts from GraphML to NWB file format via the Stax libraries
@@ -24,642 +32,408 @@ import javax.xml.stream.events.XMLEvent;
  */
 
 public class GraphMLToNWBbyStax implements Algorithm {
-	
-	  Data[] data;
-	  Dictionary parameters;
-	  CIShellContext ciContext;
-	  LogService logger;
-	  GUIBuilderService guiBuilder;
-	  private XMLInputFactory inputFactory = null;    
-	  private XMLStreamReader xmlReader = null;
-	  private ArrayList keyNodeList;
-	  private ArrayList keyEdgeList;
-	  private ArrayList keyDataList;
-	  private BufferedWriter nodeWriter;
-	  private BufferedWriter undirectedEdgeWriter;
-	  private BufferedWriter directedEdgeWriter;
-	  private boolean boolDirected;
-	  private int nodeCount=0;
-	  private int undirectedEdgeCount=0;
-	  private int directedEdgeCount=0;
-	  private Hashtable NodeIdMapList;
-	  private KeyDO objKeyDO = null;
-	  private String tempPath = null;	
-	  private File tempDir = null;
-	  private File outData = null;
-	  
-	  /**
-     * Intializes the algorithm
-     * @param data List of Data objects to convert
-     * @param parameters Parameters passed to the converter
-     * @param context Provides access to CIShell services
-     * @param transformer 
-     */
 
-	    public GraphMLToNWBbyStax(Data[] data, Dictionary parameters, CIShellContext context) {
-	        this.data = data;
-	        this.parameters = parameters;
-	        this.ciContext = context;
-	        this.logger = (LogService)ciContext.getService(LogService.class.getName());
-	        
-	        keyNodeList = new ArrayList();
-	   	 	keyEdgeList = new ArrayList();
-	   	 	NodeIdMapList = new Hashtable();
-	   		
-	   	 	
-	   	 	inputFactory = XMLInputFactory.newInstance();
-	   	 	
-	       
-	   	 	
-	   	 	try{
-	   	 		xmlReader = inputFactory.createXMLStreamReader(new FileReader((data[0].getData()).toString()));
-	   	 	}
-	   	 	catch(XMLStreamException ex)
-	   	 	{
-	   	 		ex.printStackTrace();
-	   	 		}
-	   	    catch(FileNotFoundException foe)
-	   	    {
-	   	    	logger.log(LogService.LOG_ERROR, "GraphML file not found ");
-	   	    	foe.printStackTrace();
-				
-	   	    }
-	   	 
-	   	 	
-	   	 	try
-	   	 	{
+	Data[] data;
+	Dictionary parameters;
+	CIShellContext ciContext;
+	LogService logger;
 
-	   	 		tempPath = System.getProperty("java.io.tmpdir");
-	   	 		tempDir = new File(tempPath+File.separator+"temp");
-	   	 		outData = getTempFile("node");
-	   	 		nodeWriter = new BufferedWriter(new FileWriter(outData));
-	   	 		undirectedEdgeWriter = new BufferedWriter(new FileWriter(getTempFile("undirectedEdge")));
-	   	 		directedEdgeWriter = new BufferedWriter(new FileWriter(getTempFile("directedEdge")));
-	   	 	}
-	   	 	catch(IOException eio)
-	   	 	{
-	   	 	  eio.printStackTrace();
-	   	 	}
-	   	 	
-	   	 	
-	       
-	    } 
+
+
+	/**
+	 * Intializes the algorithm
+	 * @param data List of Data objects to convert
+	 * @param parameters Parameters passed to the converter
+	 * @param context Provides access to CIShell services
+	 * @param transformer 
+	 */
+
+	public GraphMLToNWBbyStax(Data[] data, Dictionary parameters, CIShellContext context) {
+		this.data = data;
+		this.parameters = parameters;
+		this.ciContext = context;
+		this.logger = (LogService)ciContext.getService(LogService.class.getName());
+	} 
 
 	public Data[] execute(){
-		System.err.println("inside exceute method of stax parsing ");
-		 Object inFile = data[0].getData();
-		 if (inFile instanceof File){
-	          try{
-	        	   	read();            
-			      }catch(Exception exception){
-			    	  logger.log(LogService.LOG_ERROR, "Problem executing transformation from GraphML to NWB");  
-			           exception.printStackTrace();
-			      }
-			 System.out.println(">>>>>>>"+outData.toString());
-			 return new Data[] {new BasicData(outData, "file:text/nwb")};
-		 }else
-			 return null;
-	 }
-	
-	 public void read() throws Exception
-	 {
-		pl("inside read method");
-		 while (xmlReader.hasNext())
-	    {   
-	        int eventType = xmlReader.next();
-	        if (eventType == XMLEvent.START_ELEMENT){
-	        	//check for graph element
-	        	if (xmlReader.getLocalName().equals("graph")&& xmlReader.getAttributeCount() > 0)
-	        	{
-	        		if (getAttributeValue("edgedefault").equals("directed"))
-	        			boolDirected = true;
-	        	}
-				
-	    		//check for node element
-	        	if (xmlReader.getLocalName().equals("node")&& xmlReader.getAttributeCount() > 0)
-	        	{
-	        		nodeCount++;
-	        		NodeIdMapList.put( getAttributeValue("id"),Integer.valueOf(nodeCount));
-	        		if (nodeCount == 1)
-	        			printNodeHeader(nodeCount);
-	        		
-	    			printNode(nodeCount);
-	        	}
-		            
-	        	// check for edge element
-	        	if (xmlReader.getLocalName().equals("edge")&& xmlReader.getAttributeCount() > 0)
-	        	{
-	        		if(isDirectedEdge())
-	        		{
-	        			directedEdgeCount++;
-	        			if(directedEdgeCount==1)
-	        				printEdgeHeader(true);
-	        			printEdge(true);
-	        		}else
-	        		{
-	        			undirectedEdgeCount++;
-	        			if(undirectedEdgeCount==1)
-	        				printEdgeHeader(false);
-	        			printEdge(false);
-	        		}
-	        	}
-	        	
-	          	//check for key element
-	        	if (xmlReader.getLocalName().equals("key")&& xmlReader.getAttributeCount() > 0)
-	        		addKeyDOToList();
-	            	
-	        }
-	    }
-	          
-	    xmlReader.close();
-	    directedEdgeWriter.close();
-	    undirectedEdgeWriter.close();
-	    nodeWriter.close();
-	    
-	    MergeFile();
-	   
-	    		File	undirectedFile = new File(tempDir.toString()+File.separator + "directedEdge.nwb");
-	    		undirectedFile.delete();
-	    		File	directedFile = new File(tempDir.toString()+File.separator + "undirectedEdge.nwb");
-	    		directedFile.delete();
-	    
-	   
 
-	}
-	 private void MergeFile()
-	 {
-		 RandomAccessFile directedEdge=null;
-		 RandomAccessFile undirectedEdge=null;
-		 String str = null;
-			
-		 try{
-			 	
-			if (directedEdgeCount>0)
-			{
-				 directedEdge = new RandomAccessFile(tempDir.toString()+File.separator + "directedEdge.nwb" ,"rw");
-				 directedEdge.seek("*DirectedEdges".length());
-				 directedEdge.writeBytes("\t" + String.valueOf(directedEdgeCount));
-				 directedEdge.seek(0);
-			}
-			
-			if (undirectedEdgeCount>0)
-			{
-				undirectedEdge = new RandomAccessFile(tempDir.toString()+File.separator + "undirectedEdge.nwb" ,"rw");
-				 undirectedEdge.seek("*UndirectedEdges".length());
-				 undirectedEdge.writeBytes("\t" + String.valueOf(undirectedEdgeCount));
-				 undirectedEdge.seek(0);
-			} 
-			
-			if (nodeCount>0)
-			{
-				 RandomAccessFile node = new RandomAccessFile(tempDir.toString()+File.separator + "node.nwb" ,"rw");
-				 node.seek("*Nodes".length());
-				 node.writeBytes("\t" + String.valueOf(nodeCount));
-				 node.seek(node.length());
-				 if (directedEdge!=null)
-				 {
-					
-					 while((str = directedEdge.readLine())!= null) 
-					 {
-						
-						 node.writeBytes("\n"+ str);
-						 
-					 }
-						directedEdge.close();
-				 }
-				 if (undirectedEdge!=null)
-				 {
-					 
-					while((str = undirectedEdge.readLine())!= null) 
-					 {
-						 
-						 node.writeBytes("\n"+ str);
-						 
-					 }
-					 undirectedEdge.close();
-				 }
-				node.close();
-				
-			}
-		 }catch(IOException ioe)
-		 {
-			  logger.log(LogService.LOG_ERROR, "Unable to create nwb file"); 
-			  ioe.getStackTrace();
-		 }
-		 
+		XMLInputFactory inputFactory = XMLInputFactory.newInstance();
+		XMLStreamReader xmlReader;
 
-	 }
-	 public boolean isDirectedEdge()
-	 {
-		 if (hasAttribute("directed"))
-			 return boolDirected && Boolean.parseBoolean(getAttributeValue("directed"));
-		 else
-			 return boolDirected;
-	 }
-	 
-	 public boolean hasAttribute(String attr_name)
-	 {
-		 for (int i=0; i< xmlReader.getAttributeCount(); i++)
-		 {
-			 if (xmlReader.getAttributeLocalName(i).equals(attr_name))
-			 {
-				 return true;
-			 }
-		 }
-		 return false;
-	 }
-	 public void printEdgeHeader(boolean directed)
-	 {
-		  String printLineData = null;
-		    KeyDO objKeyDO = null;
-		    if (!directed)
-		    {
-		    	printLineData = "*UndirectedEdges     ";
-		    	wf(printLineData, undirectedEdgeWriter);
-		    }
-		    else
-		    {
-		    	printLineData = "*DirectedEdges     ";
-		    	wf(printLineData, directedEdgeWriter);
-		    }
-		    
-		    printLineData = "source*int" + "\t" + "target*int";
-		    
-		    
-			for (int i=0; i< keyEdgeList.size(); i++)
-			{
-				objKeyDO = (KeyDO)keyEdgeList.get(i);
-				printLineData += "\t" + objKeyDO.getAttr_name()+"*"+ objKeyDO.getAttr_type();
-			}
-			if (!directed)
-				wf(printLineData, undirectedEdgeWriter);
-			else
-				wf(printLineData, directedEdgeWriter);
-	 }
-
-	 public void printEdge(boolean directed)
-	 {
-		String printline = null;
-		String keydata = null;
-		KeyDO keyDOTemp = null;
-		
-		printline = NodeIdMapList.get(getAttributeValue("source")) + "\t" + NodeIdMapList.get(getAttributeValue("target"));
-
-		// get data value of current edge
-	 	addDataToList("edge");	
-		for(int i=0; i < keyEdgeList.size(); i++)
+		try{
+			xmlReader = inputFactory.createXMLStreamReader(new FileInputStream((File) data[0].getData()));
+		}
+		catch(XMLStreamException ex)
 		{
-			keyDOTemp = (KeyDO)keyEdgeList.get(i);
-			if (keyDataList.get(i) == null)
-			{
-				// check for datatype as String
-				if(keyDOTemp.getAttr_type().equalsIgnoreCase("String"))
+			logger.log(LogService.LOG_ERROR, "Unable to open XML Stream", ex);
+			ex.printStackTrace();
+			return null;
+		}
+		catch(FileNotFoundException foe)
+		{
+			logger.log(LogService.LOG_ERROR, "GraphML file not found ", foe);
+			foe.printStackTrace();
+			return null;
+		}
+
+
+
+		File outData;
+		try {
+			outData = this.convert(xmlReader);
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			logger.log(LogService.LOG_ERROR, "Unable to convert graphml to NWB", e);
+			return null;
+		}
+
+		return new Data[] {new BasicData(outData, "file:text/nwb")};
+	}
+
+	protected String tmpFileLocation(String base, String extension) {
+
+		String tmpRoot = System.getProperty("java.io.tmpdir") + File.separator + "temp";
+
+		File tmpDir = new File(tmpRoot);
+
+		if(!tmpDir.exists()) {
+			tmpDir.mkdir();
+		}
+		return tmpRoot + File.separator + base + System.currentTimeMillis() + "." + extension;
+	}
+
+	protected File convert(XMLStreamReader xmlReader) throws XMLStreamException, IOException
+	{
+		boolean directed = false;
+		int nodeCount = 0;
+		int directedEdgeCount = 0;
+		int undirectedEdgeCount = 0;
+
+		String labelKey = null;
+		String weightKey = null;
+
+		Map nodeIds = new Hashtable();
+		List nodeAttributes = new ArrayList();
+		List edgeAttributes = new ArrayList();
+
+		String nodeFileLocation = tmpFileLocation("node", "nwb");
+		String undirectedEdgeFileLocation = tmpFileLocation("undirected", "nwb");
+		String directedEdgeFileLocation = tmpFileLocation("directed", "nwb");
+
+		BufferedWriter nodeWriter = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(nodeFileLocation), "UTF-8"));
+		BufferedWriter undirectedEdgeWriter = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(undirectedEdgeFileLocation), "UTF-8"));
+		BufferedWriter directedEdgeWriter = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(directedEdgeFileLocation), "UTF-8"));
+
+		while (xmlReader.hasNext())
+		{   
+			int eventType = xmlReader.next();
+			if (eventType == XMLEvent.START_ELEMENT){
+				//check for graph element
+				if (xmlReader.getLocalName().equals("graph")&& xmlReader.getAttributeCount() > 0)
 				{
-					if(keyDOTemp.getAttr_value().equals("*"))
-						printline += "\t" + keyDOTemp.getAttr_value();
-					else
-						printline += "\t" + '"'+ keyDOTemp.getAttr_value()+ '"';
-				}else
-					printline += "\t" + keyDOTemp.getAttr_value();
-			}else
-			{
-				keydata = (String)keyDataList.get(i);
-				if(keyDOTemp.getAttr_type().equalsIgnoreCase("String"))
+					if ("directed".equals(xmlReader.getAttributeValue(null, "edgedefault"))) {
+						directed = true;
+					}
+				}
+
+				//check for node element
+				if (xmlReader.getLocalName().equals("node")&& xmlReader.getAttributeCount() > 0)
 				{
-					if(keydata.equals("*"))
-						printline += "\t" + keydata;
-					else
-						printline += "\t" + '"'+ keydata + '"';
-				}else
-					    printline += "\t" + keydata;
-				
+					nodeCount++;
+					nodeIds.put( xmlReader.getAttributeValue(null, "id"), Integer.valueOf(nodeCount));
+					if (nodeCount == 1) {
+						nodeWriter.write(createNodeHeader(nodeAttributes));
+					}
+
+
+					nodeWriter.write(createNode(nodeCount, labelKey, xmlReader, nodeAttributes));
+				}
+
+				// check for edge element
+				if (xmlReader.getLocalName().equals("edge")&& xmlReader.getAttributeCount() > 0)
+				{
+					Integer source = (Integer) nodeIds.get(xmlReader.getAttributeValue(null, "source"));
+					Integer target = (Integer) nodeIds.get(xmlReader.getAttributeValue(null, "target"));
+					if(isDirectedEdge(directed, xmlReader))
+					{
+						directedEdgeCount++;
+						if(directedEdgeCount==1) {
+							directedEdgeWriter.write(createDirectedEdgeHeader(edgeAttributes));
+						}
+
+
+						directedEdgeWriter.write(createEdge(source.intValue(), target.intValue(), weightKey, xmlReader, edgeAttributes));
+					}else
+					{
+						undirectedEdgeCount++;
+						if(undirectedEdgeCount==1) {
+							undirectedEdgeWriter.write(createUndirectedEdgeHeader(edgeAttributes));
+						}
+						undirectedEdgeWriter.write(createEdge(source.intValue(), target.intValue(), weightKey, xmlReader, edgeAttributes));
+					}
+				}
+
+				//check for key element
+				if (xmlReader.getLocalName().equals("key")&& xmlReader.getAttributeCount() > 0) {
+					Attribute attribute = readAttribute(xmlReader);
+					if(!attribute.isReserved()) {
+						if(attribute.isForNode()) {
+							nodeAttributes.add(attribute);
+						} 
+						if(attribute.isForEdge()) {
+							edgeAttributes.add(attribute);
+						}
+					}
+				}
+
+
 			}
 		}
-		
-		
-		
-		if (directed)
-			wf(printline,directedEdgeWriter);
-		else
-			wf(printline,undirectedEdgeWriter);
-		// need to write a code to store data value of specific edge
-		
-		
-	}
-		
-		
 
-	 public void printNodeHeader(int intCount)
-	   {
-		    String printLineData = null;
-		    KeyDO objKeyDO = null;
-		    
-		    printLineData = "*Nodes     ";
-		    wf(printLineData,nodeWriter);
-		    
-		    
-		    printLineData = "id*int";
-		    
-			for (int i=0; i< keyNodeList.size(); i++)
-			{
-				objKeyDO = (KeyDO)keyNodeList.get(i);
-				printLineData += "\t" + objKeyDO.getAttr_name()+"*"+ objKeyDO.getAttr_type();
-			}
-			
-			wf(printLineData,nodeWriter);
-	   }
-	 
-	public void addDataToList(String type)
-	{
-		 int eventType = -1;
-		 int index = -1;
-		 boolean boolLoop = true;
-		 String keydataid = null;
-		 ArrayList listTemp;
-		 String keydata = null;
-		 
-		 if (type.equals("node"))
-			 listTemp = keyNodeList;
-		 else
-			 listTemp = keyEdgeList;
-				 
-		 
-		 
-		keyDataList = new ArrayList(listTemp.size());
-		   
-		   for (int i=0; i < listTemp.size(); i++)
-			   keyDataList.add(i, null);
+		xmlReader.close();
+		directedEdgeWriter.close();
+		undirectedEdgeWriter.close();
+		nodeWriter.close();
 
-		   try
-		    {
-			    while (boolLoop)
-			 	{
-			 		if (xmlReader.hasNext())
-			 		{
-			 			eventType = xmlReader.next();
-			 			if (eventType == XMLEvent.START_ELEMENT){
-			 				if (xmlReader.getLocalName().equals("data")&& xmlReader.getAttributeCount() > 0)
-			 				{
-			 					keydataid = getAttributeValue("key");
-			 					index = getKeyDataIndex(keydataid, type);
-			 					keydata = getElementText("data");
-			 					
-			 					if (keydata.equals("null"))
-			 						keydata = "*";
-			 					keyDataList.add(index, keydata);
-			 				}
-			 				
-			 			}
-			 			else if (eventType == XMLEvent.END_ELEMENT)
-			 			{
-			 				if (xmlReader.getLocalName().equals(type))
-			 					boolLoop = false;
-			 			}
-			 		}
-			 		else
-				    {
-				    	return;
-				    }
-			 	}
-			    
-		    }
-			catch(XMLStreamException ese)
-	   	 	{}
+
+		File directedEdgeFile = new File(directedEdgeFileLocation);
+
+		File undirectedEdgeFile = new File(undirectedEdgeFileLocation);
+
+
+		File nodeFile = new File(nodeFileLocation);
+
+		File output = mergeFiles(nodeFile, undirectedEdgeFile, directedEdgeFile);
+
+		directedEdgeFile.delete();
+
+		undirectedEdgeFile.delete();
+
+		return output;
+
 
 	}
-	   public void printNode(int intCount)
-	   {
-		  
-		   String keydata = null;
-		   String printline = null;
-		   KeyDO keyDOTemp = null;
+	protected File mergeFiles(File nodeFile, File undirectedEdgeFile, File directedEdgeFile) throws IOException {
 
-			
-			printline = String.valueOf(intCount);
-			addDataToList("node");
-			
-			for(int i=0; i < keyNodeList.size(); i++)
+		FileOutputStream nodeStream = new FileOutputStream(nodeFile, true);
+
+		//nodeStream.write('\n');
+		//no need to insert extra newlines because every line must end with a newline
+
+		SequenceInputStream edgeStream = new SequenceInputStream(new FileInputStream(undirectedEdgeFile), new FileInputStream(directedEdgeFile));
+
+		int c;
+
+		while((c = edgeStream.read()) != -1) {
+			nodeStream.write(c);
+		}
+
+		return nodeFile;
+	}
+
+	protected String createNode(int id, String labelKey, XMLStreamReader xmlReader, List nodeAttributes) throws XMLStreamException {
+		return "" + id + "\t" + nodeAttributes(id, labelKey, xmlReader, nodeAttributes) + "\n";
+	}
+
+	protected String createUndirectedEdgeHeader(List edgeAttributes) {
+		return "*UndirectedEdges\nsource*int target*int weight*float" + attributesHeader(edgeAttributes) + "\n";
+	}
+
+	protected String createDirectedEdgeHeader(List edgeAttributes) {
+		return "*DirectedEdges\nsource*int target*int weight*float" + attributesHeader(edgeAttributes) + "\n";
+	}
+
+	protected String createEdge(int source, int target, String weightKey, XMLStreamReader xmlReader, List edgeAttributes) throws XMLStreamException {
+		return "" + source + "\t" + target + "\t" + edgeAttributes(weightKey, xmlReader, edgeAttributes) + "\n";
+	}
+
+	protected Attribute readAttribute(XMLStreamReader xmlReader) throws XMLStreamException {
+		Attribute attribute = new Attribute();
+		int eventType;
+
+
+		attribute.setDomain(xmlReader.getAttributeValue(null, "for"));
+		attribute.setId(xmlReader.getAttributeValue(null, "id"));
+		attribute.setName(xmlReader.getAttributeValue(null, "attr.name"));
+		attribute.setType(xmlReader.getAttributeValue(null, "attr.type"));
+
+		while (xmlReader.hasNext())
+		{
+
+			eventType = xmlReader.next();
+			if (eventType == XMLEvent.START_ELEMENT)
 			{
-				keyDOTemp = (KeyDO)keyNodeList.get(i);
-				if (keyDataList.get(i) == null)
-				{
-						if ( keyDOTemp.getAttr_type().equalsIgnoreCase("String"))
-						{
-							if (keyDOTemp.getAttr_value().equals("*"))
-								printline += "\t" +  keyDOTemp.getAttr_value()  ;
-							else
-							printline += "\t" + '"' + keyDOTemp.getAttr_value()+ '"'  ;
-						}	
-						else
-							printline += "\t" +  keyDOTemp.getAttr_value()  ;
-					
-				}else
-				{
-					
-						keydata = (String)keyDataList.get(i);
-						if (keyDOTemp.getAttr_type().equalsIgnoreCase("String"))
-						{
-							if(keydata.equals("*"))
-								printline += "\t" + keydata   ;
-							else
-								printline += "\t" + '"'+ keydata + '"'   ;
-							
-						}else
-							printline += "\t" + keydata   ;
+				if (xmlReader.getLocalName().equals("default")) {
+					attribute.setDefault(getElementText(xmlReader));
 				}
 			}
-			
-			wf(printline,nodeWriter);
-			
-	   }
-	   
-	   public String getElementText(String elmName)
-	   {
-		   boolean boolLoop = true;
-		   int eventType = -1;
-		   
-		   try
-		    {
-			    while (boolLoop)
-			 	{
-			 		if (xmlReader.hasNext())
-			 		{
-			 			eventType = xmlReader.next();
-
-			 			
-			 			if (eventType == XMLEvent.CHARACTERS)
-			 			{
-			 				
-			 				return xmlReader.getText();
-			 				
-			 			}
-			 			else if (eventType == XMLEvent.END_ELEMENT)
-			 			{
-			 				if (xmlReader.getLocalName().equals(elmName))
-			 					boolLoop = false;
-			 			}
-			 		}
-			 		else
-				    {
-				    	return null;
-				    }
-			 	}
-			    
-		    }
-			catch(XMLStreamException ese)
-	  	 	{}
-			
-		   return null;
-	   }
-	  
-	   public int getKeyDataIndex(String id, String type)
-	   {
-		   KeyDO objKeyDOTemp = null;
-		   
-		   if (type.equals("node"))
-		   {
-			   for(int i=0;i < keyNodeList.size(); i++)
-			   {
-				   objKeyDOTemp = (KeyDO)keyNodeList.get(i);
-				   
-				   if (objKeyDOTemp.getId().equals(id))
-						   return i;
-			   }
-		   }
-		   else
-		   {
-			   for(int i=0;i < keyEdgeList.size(); i++)
-			   {
-				   objKeyDOTemp = (KeyDO)keyEdgeList.get(i);
-				   
-				   if (objKeyDOTemp.getId().equals(id))
-						   return i;
-			   }
-		   }
-
-		   return -1;
-		   
-	   }
-	   
-	   public void wf(String data,BufferedWriter writer)
-	   {
-		   
-		   try
-		   {
-			  
-			   writer.write(data);
-			   writer.newLine();
-			   writer.flush();
-			   
-			 //  writer.close();
-
-		   }
-		   catch(IOException eio)
-		   {
-			   
-		   }
-	   }
-	   
-	   public void pl(String data)
-	   {
-		   System.out.println(data);
-	   }
-	  
-	 
-	   public void addKeyDOToList()
-	   {
-			objKeyDO = new KeyDO();
-			int eventType = 0;
-			boolean boolLoop = true;
-			boolean boolNode = false;
-			
-			boolNode = getAttributeValue("for").equals("node");
-				
-	   	 	for (int i=0; i< xmlReader.getAttributeCount(); i++)
-	   		{
-	   			if (xmlReader.getAttributeLocalName(i).equals("id"))
-	   			{
-	   				objKeyDO.setId(xmlReader.getAttributeValue(i));
-	   			}
-	   			if (xmlReader.getAttributeLocalName(i).equals("attr.name"))
-	   			{
-	   				objKeyDO.setAttr_name(xmlReader.getAttributeValue(i));
-	   			}
-	   			if (xmlReader.getAttributeLocalName(i).equals("attr.type"))
-	   			{
-	   				objKeyDO.setattr_type(xmlReader.getAttributeValue(i));
-	   			}
-	   		
-	   		}
-		   	 
-	   	 	try
-	   	 	{
-	   	 		while (boolLoop)
-	   	 		{
-	   	 			if (xmlReader.hasNext())
-	   	 			{
-	   	 				eventType = xmlReader.next();
-	   	 				if (eventType == XMLEvent.START_ELEMENT)
-	   	 				{
-	   	 					if (xmlReader.getLocalName().equals("default"))
-	   	 						objKeyDO.setAttr_value(getElementText("default"));
-	   	 				}
-	   	 				else if (eventType == XMLEvent.END_ELEMENT)
-	   	 				{
-	   	 					if (xmlReader.getLocalName().equals("key"))
-	   	 						boolLoop = false;
-	   	 				}
-	   	 			}
-	   	 			else
-	   	 			{
-	   	 				return;
-	   	 			}
-	   	 		}
-	   	 	}
-	   	 	catch(XMLStreamException ese)
-	   	 	{}
-
-	   	 	if (boolNode)
-	   	 		keyNodeList.add(objKeyDO);
-	   	 	else
-	   	 		keyEdgeList.add(objKeyDO);
-	       	 	
-	        }
-	   
-	   public String getAttributeValue(String attrName)
-	   {
-	   	String attrValue = null;
-	   	for(int i=0;i<xmlReader.getAttributeCount();i++)
-	   	{
-	   		if (xmlReader.getAttributeLocalName(i).equals(attrName))
-	   			attrValue = xmlReader.getAttributeValue(i);
-	   	}
-	   	
-	   	return attrValue;
-	   }
-	           
-
-
-	
-	 /**
-	    * Creates a temporary file for the NWB file
-	    * @return The temporary file
-	  */
-	  public File getTempFile(String fileName){
-			File tempFile = null;
-			String fullFileName = tempDir.toString()+ File.separator + fileName + ".nwb";
-			
-			if(!tempDir.exists())
-				tempDir.mkdir();
-			try{
-				
-				tempFile = new File (fullFileName);
-			
-			}catch (Exception e){
-				  logger.log(LogService.LOG_ERROR, "Unable to create nwb file");
-				e.printStackTrace();
+			else if (eventType == XMLEvent.END_ELEMENT)
+			{
+				break;
 			}
-			
-			return tempFile;
 		}
+
+		return attribute;
+	}
+
+	public boolean isDirectedEdge(boolean defaultValue, XMLStreamReader xmlReader)
+	{
+		String attributeValue = xmlReader.getAttributeValue(null, "directed");
+		if(defaultValue) {
+			return !"false".equals(attributeValue);
+		} else {
+			return "true".equals(attributeValue);
+		}
+	}
+
+
+
+
+	public String createNodeHeader(List nodeAttributes)
+	{
+		return "*Nodes\nid*int label*string " + attributesHeader(nodeAttributes) + "\n";
+	}
+
+	public String attributesHeader(List attributesList) {
+		StringBuffer header = new StringBuffer();
+		Iterator attributes = attributesList.iterator();
+		while(attributes.hasNext()) {
+			Attribute attribute = (Attribute) attributes.next();
+
+			header.append(" ");
+			header.append(attribute.getName());
+			header.append("*");
+			header.append(attribute.getType());
+
+		}
+		return header.toString();
+	}
+
+	protected String nodeAttributes(int id, String labelKey, XMLStreamReader xmlReader, List nodeAttributes) throws XMLStreamException {
+		String label = "" + id;
+		Map attributeValues = extractAttributes(xmlReader, "node");
+
+		if(labelKey != null && attributeValues.containsKey(labelKey)) {
+			label = formatString((String) attributeValues.get(labelKey));
+		}
+
+		String value = attributesString(nodeAttributes, attributeValues);
+
+
+		return "\"" + label + "\"" + value.toString();
+	}
+	
+	protected String formatString(String string) {
+		return string.replaceAll("\"", "");
+	}
+
+	protected Map extractAttributes(XMLStreamReader xmlReader, String endElement) throws XMLStreamException {
+		int eventType;
+		Map attributeValues = new Hashtable();
+
+		while (xmlReader.hasNext())
+		{
+			eventType = xmlReader.next();
+			if (eventType == XMLEvent.START_ELEMENT)
+			{
+				if (xmlReader.getLocalName().equals("data")) {
+					attributeValues.put(xmlReader.getAttributeValue(null, "key"), getElementText(xmlReader));
+				}
+			}
+			else if (eventType == XMLEvent.END_ELEMENT)
+			{
+				if(xmlReader.getLocalName().equals(endElement)) {
+					break;
+				}
+			}
+		}
+		return attributeValues;
+	}
+
+	protected String edgeAttributes(String weightKey, XMLStreamReader xmlReader, List edgeAttributes) throws XMLStreamException {
+
+		String weight = "" + 1;
+		Map attributeValues = extractAttributes(xmlReader, "edge");
+
+		if(weightKey != null && attributeValues.containsKey(weightKey)) {
+			weight = (String) attributeValues.get(weightKey);
+			if("null".equals(weight)) {
+				weight = "*";
+			}
+		}
+
+		String value = attributesString(edgeAttributes, attributeValues);
+
+
+		return weight + value;
+	}
+
+	protected String attributesString(List attributeTypes, Map attributeValues) {
+		StringBuffer value = new StringBuffer();
+
+		Iterator attributes = attributeTypes.iterator();
+		while(attributes.hasNext()) {
+			Attribute attribute = (Attribute) attributes.next();
+
+			value.append(' ');
+			if(attributeValues.containsKey(attribute.getId())) {
+				String attributeValue = (String) attributeValues.get(attribute.getId());
+				if(attribute.isString()) {
+					value.append('"');
+					value.append(formatString(attributeValue));
+					value.append('"');
+				} else {
+					if("null".equals(attributeValue)) {
+						value.append('*');
+					} else {
+						value.append(attributeValue);
+					}
+				}
+			} else if(attribute.hasDefault()) {
+				String attributeValue = attribute.getDefault();
+				if(attribute.isString()) {
+					value.append('"');
+					value.append(formatString(attributeValue));
+					value.append('"');
+				} else {
+					if("null".equals(attributeValue)) {
+						value.append('*');
+					} else {
+						value.append(attributeValue);
+					}
+				}
+			} else {
+				value.append('*');
+			}
+
+		}
+		return value.toString();
+	}
+
+
+	protected String getElementText(XMLStreamReader xmlReader) throws XMLStreamException
+	{
+		int eventType;
+
+		StringBuffer value = new StringBuffer();
+
+		while (xmlReader.hasNext())
+		{
+			eventType = xmlReader.next();
+
+
+			if (eventType == XMLEvent.CHARACTERS)
+			{
+
+				value.append(xmlReader.getText());
+
+			}
+			else if (eventType == XMLEvent.END_ELEMENT)
+			{
+				break;
+			}
+		}
+		return  value.toString();
+	}
 }
