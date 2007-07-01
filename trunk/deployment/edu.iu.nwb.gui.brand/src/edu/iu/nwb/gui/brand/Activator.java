@@ -1,6 +1,9 @@
 package edu.iu.nwb.gui.brand;
 
 //import org.eclipse.jface.resource.ImageDescriptor;
+import java.io.IOException;
+import java.util.Properties;
+
 import org.eclipse.ui.IStartup;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 import org.osgi.framework.BundleContext;
@@ -17,6 +20,7 @@ public class Activator extends AbstractUIPlugin implements IStartup{
 	// The shared instance
 	private static Activator plugin;	
 	private BundleContext bContext;
+	private boolean alreadyLogged;
 	private static final String nwb_greeting=
 		"Welcome to the Network Workbench (NWB) tool that supports "+
 		"the preprocessing, modeling, analysis, and visualization of "+
@@ -58,6 +62,7 @@ public class Activator extends AbstractUIPlugin implements IStartup{
 	 */
 	public Activator() {
 		plugin = this;
+		alreadyLogged = false;
 	}
 
 	/*
@@ -67,6 +72,10 @@ public class Activator extends AbstractUIPlugin implements IStartup{
 	public void start(BundleContext context) throws Exception {
 		super.start(context);
 		this.bContext = context;
+        if (!alreadyLogged) {
+            earlyStartup();
+        }
+
 	}
 
 	/*
@@ -89,13 +98,35 @@ public class Activator extends AbstractUIPlugin implements IStartup{
 	
 	public void earlyStartup(){
 		//		TODO: Get log and print initial log blurb
-        if (bContext != null) {
+/*        if (bContext != null) {
     		ServiceReference ref = bContext.getServiceReference(LogService.class.getName());
             
             if (ref != null) {
                 LogService logger = (LogService)bContext.getService(ref);
                 logger.log(LogService.LOG_INFO, nwb_greeting);
             }            
+        }
+*/
+		if (bContext != null) {
+            String greeting = null;
+            Properties props = new Properties();
+
+            try {
+                props.load(bContext.getBundle().getEntry("/plugin.properties").openStream());                
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            
+            greeting = props.getProperty("greeting", null);
+            
+            ServiceReference ref = bContext.getServiceReference(LogService.class.getName());
+                
+            if (ref != null && greeting != null) {
+                alreadyLogged = true;
+                
+                LogService logger = (LogService)bContext.getService(ref);
+                logger.log(LogService.LOG_INFO, greeting);
+            }
         }
         
 	}
