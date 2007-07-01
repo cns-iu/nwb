@@ -2,7 +2,7 @@
 <feature
       id="edu.iu.nwb.converter.feature"
       label="NWB Data Format Converters"
-      version="0.5.0"
+      version="0.6.0"
       provider-name="Weixia Huang, Ben Markines, Bruce Herr, Russell Duhon">
 
    <description>
@@ -39,13 +39,6 @@ Dr. Katy Borner (katy@indiana.edu)
    </url>
 
    <plugin
-         id="edu.iu.nwb.converter.jungpajeknet"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         unpack="false"/>
-
-   <plugin
          id="edu.iu.nwb.converter.jungprefuse"
          download-size="0"
          install-size="0"
@@ -54,20 +47,6 @@ Dr. Katy Borner (katy@indiana.edu)
 
    <plugin
          id="edu.iu.nwb.converter.jungprefusebeta"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         unpack="false"/>
-
-   <plugin
-         id="edu.iu.nwb.converter.nwb"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         unpack="false"/>
-
-   <plugin
-         id="edu.iu.nwb.converter.nwbgraphml"
          download-size="0"
          install-size="0"
          version="0.0.0"
@@ -96,6 +75,41 @@ Dr. Katy Borner (katy@indiana.edu)
 
    <plugin
          id="edu.iu.nwb.converter.treegraph"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+   <plugin
+         id="edu.iu.nwb.converter.nwb"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+   <plugin
+         id="edu.iu.nwb.converter.nwbgraphml"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+   <plugin
+         id="edu.iu.nwb.converter.nwbpajeknet"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+   <plugin
+         id="edu.iu.nwb.converter.pajeknet"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+   <plugin
+         id="edu.iu.nwb.converter.edgelist"
          download-size="0"
          install-size="0"
          version="0.0.0"
