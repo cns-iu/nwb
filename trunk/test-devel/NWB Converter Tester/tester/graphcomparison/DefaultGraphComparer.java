@@ -246,10 +246,25 @@ public class DefaultGraphComparer implements GraphComparer {
 			return false;
 		
 		for (int ii = 0; ii < tu1.getColumnCount(); ii++) {
-			if (! tu1.get(ii).equals(tu2.get(ii))) 
+			Object columnContents1 = tu1.get(ii);
+			Object columnContents2 = tu2.get(ii);
+			
+			if (columnContents1 == null && columnContents2 == null) {
+				//nulls are equal to each other!
+				continue;
+			} else if (columnContents1 == null) {
+				//one is null and the other is not.
 				return false;
+			} else if (columnContents2 == null) {
+				//one is null and the other is not.
+				return false;
+			} else if (! tu1.get(ii).equals(tu2.get(ii))){
+				//neither are null, but they are still not equal.
+				return false;
+			}
 		}
 		
+		//all column contents are equal.
 		return true;
 	}
 	
