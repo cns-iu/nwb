@@ -39,6 +39,8 @@ id*int label*string
 37 "file-ext:edge"
 39 "JungPrefuseBetaConverterAlgorithm"
 40 "PrefuseBetaJungConverterAlgorithm"
+41 "JungGraphMLReader"
+42 "JungGraphMLWriter"
 *DirectedEdges
 source*int target*int
 20 14
@@ -91,3 +93,7 @@ source*int target*int
 39 8
 8 40
 40 9
+8 41
+41 4
+4 42
+42 8
