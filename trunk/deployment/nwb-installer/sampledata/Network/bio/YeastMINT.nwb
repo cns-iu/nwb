@@ -1,6 +1,6 @@
 #Converted by Cesifoti for the NWB... :-)
 *Nodes 928
-id*int	lable*string
+id*int	label*string
 1 "AAC3"
 2 "AAR2"
 3 "AAT2"

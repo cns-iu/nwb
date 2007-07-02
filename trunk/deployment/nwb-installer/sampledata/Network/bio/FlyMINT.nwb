@@ -1,6 +1,6 @@
 #Converted by Cesifoti for the NWB... :-)
 *Nodes 330
-id*int	lable*string
+id*int	label*string
 1 "ACTB"
 2 "AKAP1"
 3 "ATPsyn-beta"
