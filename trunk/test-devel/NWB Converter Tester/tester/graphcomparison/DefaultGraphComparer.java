@@ -254,11 +254,17 @@ public class DefaultGraphComparer implements GraphComparer {
 				continue;
 			} else if (columnContents1 == null) {
 				//one is null and the other is not.
+				System.out.println("Bad pair of tuples!");
+				System.out.println(tu1 + " : " + tu2);
 				return false;
 			} else if (columnContents2 == null) {
 				//one is null and the other is not.
+				System.out.println("Bad pair of tuples!");
+				System.out.println(tu1 + " : " + tu2);
 				return false;
 			} else if (! tu1.get(ii).equals(tu2.get(ii))){
+				System.out.println("Bad pair of tuples!");
+				System.out.println(tu1 + " : " + tu2);
 				//neither are null, but they are still not equal.
 				return false;
 			}
