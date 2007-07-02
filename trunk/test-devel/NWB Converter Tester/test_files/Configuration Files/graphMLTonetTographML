@@ -1,6 +1,10 @@
 test_graphs=/home/kelleyt/workspace/edu.iu.nwb.converter.tester/test_files/GraphML Files
 test_converters=edu.iu.nwb.converter.prefusegraphml.reader.PrefuseGraphMLValidationAlg,
-edu.iu.nwb.converter.prefusegraphml.writer.PrefuseGraphMLFileHandlerAlg
+edu.iu.nwb.converter.nwbgraphml.GraphMLToNWBbyStax,edu.iu.nwb.converter.nwbpajeknet.NWBToPajeknet,
+edu.iu.nwb.converter.pajeknet.writer.NETFileHandler,
+edu.iu.nwb.converter.pajeknet.reader.NETValidation,
+edu.iu.nwb.converter.nwbpajeknet.PajeknetToNWB,
+edu.iu.nwb.converter.nwbgraphml.NWBToGraphML
 comparison_converters=edu.iu.nwb.converter.prefusegraphml.reader.PrefuseGraphMLValidationAlg,
 edu.iu.nwb.converter.prefusegraphml.reader.PrefuseGraphMLReader
 nodeid_change=false
