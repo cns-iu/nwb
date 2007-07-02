@@ -41,6 +41,7 @@ id*int label*string
 40 "PrefuseBetaJungConverterAlgorithm"
 41 "JungGraphMLReader"
 42 "JungGraphMLWriter"
+43 "PrefuseJungConverterAlgorithm"
 *DirectedEdges
 source*int target*int
 20 14
@@ -97,3 +98,5 @@ source*int target*int
 8 39
 5 40
 39 5
+9 43
+43 8
