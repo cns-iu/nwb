@@ -79,13 +79,13 @@ public abstract class PrefuseBetaAlgorithmFactory implements AlgorithmFactory {
 			String[] nodeAttributesArray = createKeyArray(graph.getNodeTable().getSchema());
 			String[] edgeAttributesArray = createKeyArray(graph.getEdgeTable().getSchema());
 
-			System.err.println(oldDefinition.getID());
+			//System.err.println(oldDefinition.getID());
 
 			AttributeDefinition[] definitions = oldDefinition.getAttributeDefinitions(ObjectClassDefinition.ALL);
 
 			for(int ii = 0; ii < definitions.length; ii++) {
 				String id = definitions[ii].getID();
-				System.err.println(id);
+				//System.err.println(id);
 				if(id.equals("nodeSize")) {
 					definition.addAttributeDefinition(ObjectClassDefinition.REQUIRED,
 							new BasicAttributeDefinition("nodeSize", "Node Size", "The label for the node size property", AttributeDefinition.STRING, nodeAttributesArray, nodeAttributesArray));
