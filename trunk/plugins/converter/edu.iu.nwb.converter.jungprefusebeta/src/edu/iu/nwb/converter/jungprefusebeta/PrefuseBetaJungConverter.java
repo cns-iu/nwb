@@ -1,6 +1,8 @@
 package edu.iu.nwb.converter.jungprefusebeta;
 
+import java.util.Collection;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Map;
 
@@ -27,7 +29,15 @@ public class PrefuseBetaJungConverter {
 	public static Graph getJungGraph(prefuse.data.Graph prefuseGraph) {
 		Map prefuseToJungVertices = new HashMap();
         boolean directed = prefuseGraph.isDirected();
-		jungGraph = new SparseGraph();
+        Collection constraints = new HashSet();
+        
+        if(directed) {
+        	constraints.add(Graph.DIRECTED_EDGE);
+        } else {
+        	constraints.add(Graph.UNDIRECTED_EDGE);
+        }
+        
+		jungGraph = new SparseGraph(constraints);
         
         for (Iterator iter = prefuseGraph.nodes(); iter.hasNext();) {
             Node node = (Node) iter.next();
