@@ -4,10 +4,11 @@ import java.util.ArrayList;
 import java.util.Hashtable;
 import java.util.Map;
 
+import javax.xml.crypto.Data;
+
 import org.cishell.framework.CIShellContext;
 import org.cishell.framework.algorithm.AlgorithmFactory;
 import org.cishell.framework.algorithm.AlgorithmProperty;
-import org.cishell.framework.data.Data;
 import org.cishell.service.conversion.Converter;
 import org.cishell.service.conversion.DataConversionService;
 import org.osgi.framework.BundleContext;
@@ -212,6 +213,16 @@ public final static String SERVICE_LIST = "SERVICE_LIST";
 			System.err.println(ex);
 		}
 		
+	}
+
+	public org.cishell.framework.data.Data convert(org.cishell.framework.data.Data data, String outFormat) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	public Converter[] findConverters(org.cishell.framework.data.Data data, String outFormat) {
+		// TODO Auto-generated method stub
+		return null;
 	}
 	
 }
