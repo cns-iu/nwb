@@ -203,10 +203,6 @@ public ArrayList getEdges(){
 
 	public NETVertex processVertices(String s){
 		NETVertex nv = null;
-			if (s.startsWith(NETFileProperty.PREFIX_COMMENTS)) {
-
-			}
-			else {
 				try{
 					nv = new NETVertex(s);
 				//	System.out.println(nv);
@@ -222,16 +218,14 @@ public ArrayList getEdges(){
 					errorMessages.append("*Wrong NET format at line "+currentLine+".\n"+
 							e.toString()+"\n\n");
 				}
-			}
+			
 			return nv;
 		}
 	
 	public NETArcsnEdges processArcsnEdges(String s){
 		NETArcsnEdges nae = null;
-		if (s.startsWith(NETFileProperty.PREFIX_COMMENTS)) {
-
-		}
-		else {
+	
+	
 			try{
 				nae = new NETArcsnEdges(s);
 				
@@ -248,7 +242,7 @@ public ArrayList getEdges(){
 				errorMessages.append("*Wrong NET format at line "+currentLine+".\n"+
 						e.toString()+"\n\n");
 			}
-		}
+		
 
 			return nae;
 		
@@ -259,7 +253,13 @@ public ArrayList getEdges(){
 		String line = reader.readLine();
 		while (line != null && isFileGood){
 			currentLine++;
-			//String line_lower = line.toLowerCase();
+		
+
+			if(line.startsWith(NETFileProperty.PREFIX_COMMENTS) || (line.length() < 1)){
+				line = reader.readLine();
+				continue;
+			}
+			
 			if(this.validateVertexHeader(line)){
 				line = reader.readLine();
 				
