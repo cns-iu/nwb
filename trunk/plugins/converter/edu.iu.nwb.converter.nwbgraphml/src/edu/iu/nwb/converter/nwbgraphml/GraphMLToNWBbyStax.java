@@ -147,7 +147,7 @@ public class GraphMLToNWBbyStax implements Algorithm {
 					}
 
 
-					nodeWriter.write(createNode(nodeCount, labelKey, xmlReader, nodeAttributes));
+					nodeWriter.write(createNode(nodeCount, labelKey, extractAttributes(xmlReader, "node"), nodeAttributes));
 				}
 
 				// check for edge element
@@ -155,6 +155,7 @@ public class GraphMLToNWBbyStax implements Algorithm {
 				{
 					Integer source = (Integer) nodeIds.get(xmlReader.getAttributeValue(null, "source"));
 					Integer target = (Integer) nodeIds.get(xmlReader.getAttributeValue(null, "target"));
+					Map attributeValues = extractAttributes(xmlReader, "edge");
 					if(isDirectedEdge(directed, xmlReader))
 					{
 						directedEdgeCount++;
@@ -163,14 +164,14 @@ public class GraphMLToNWBbyStax implements Algorithm {
 						}
 
 
-						directedEdgeWriter.write(createEdge(source.intValue(), target.intValue(), weightKey, xmlReader, edgeAttributes));
+						directedEdgeWriter.write(createEdge(source.intValue(), target.intValue(), weightKey, attributeValues, edgeAttributes));
 					}else
 					{
 						undirectedEdgeCount++;
 						if(undirectedEdgeCount==1) {
 							undirectedEdgeWriter.write(createUndirectedEdgeHeader(edgeAttributes));
 						}
-						undirectedEdgeWriter.write(createEdge(source.intValue(), target.intValue(), weightKey, xmlReader, edgeAttributes));
+						undirectedEdgeWriter.write(createEdge(source.intValue(), target.intValue(), weightKey,  attributeValues, edgeAttributes));
 					}
 				}
 
@@ -232,8 +233,8 @@ public class GraphMLToNWBbyStax implements Algorithm {
 		return nodeFile;
 	}
 
-	protected String createNode(int id, String labelKey, XMLStreamReader xmlReader, List nodeAttributes) throws XMLStreamException {
-		return "" + id + "\t" + nodeAttributes(id, labelKey, xmlReader, nodeAttributes) + "\n";
+	protected String createNode(int id, String labelKey, Map attributeValues, List nodeAttributes) throws XMLStreamException {
+		return "" + id + "\t" + nodeAttributes(id, labelKey, attributeValues, nodeAttributes) + "\n";
 	}
 
 	protected String createUndirectedEdgeHeader(List edgeAttributes) {
@@ -244,8 +245,8 @@ public class GraphMLToNWBbyStax implements Algorithm {
 		return "*DirectedEdges\nsource*int target*int weight*float" + attributesHeader(edgeAttributes) + "\n";
 	}
 
-	protected String createEdge(int source, int target, String weightKey, XMLStreamReader xmlReader, List edgeAttributes) throws XMLStreamException {
-		return "" + source + "\t" + target + "\t" + edgeAttributes(weightKey, xmlReader, edgeAttributes) + "\n";
+	protected String createEdge(int source, int target, String weightKey, Map attributeValues, List edgeAttributes) throws XMLStreamException {
+		return "" + source + "\t" + target + "\t" + edgeAttributes(weightKey, attributeValues, edgeAttributes) + "\n";
 	}
 
 	protected Attribute readAttribute(XMLStreamReader xmlReader) throws XMLStreamException {
@@ -310,9 +311,8 @@ public class GraphMLToNWBbyStax implements Algorithm {
 		return header.toString();
 	}
 
-	protected String nodeAttributes(int id, String labelKey, XMLStreamReader xmlReader, List nodeAttributes) throws XMLStreamException {
+	protected String nodeAttributes(int id, String labelKey, Map attributeValues, List nodeAttributes) throws XMLStreamException {
 		String label = "" + id;
-		Map attributeValues = extractAttributes(xmlReader, "node");
 
 		if(labelKey != null && attributeValues.containsKey(labelKey)) {
 			label = formatString((String) attributeValues.get(labelKey));
@@ -323,7 +323,7 @@ public class GraphMLToNWBbyStax implements Algorithm {
 
 		return "\"" + label + "\"" + value.toString();
 	}
-	
+
 	protected String formatString(String string) {
 		return string.replaceAll("\"", "");
 	}
@@ -351,10 +351,9 @@ public class GraphMLToNWBbyStax implements Algorithm {
 		return attributeValues;
 	}
 
-	protected String edgeAttributes(String weightKey, XMLStreamReader xmlReader, List edgeAttributes) throws XMLStreamException {
+	protected String edgeAttributes(String weightKey, Map attributeValues, List edgeAttributes) throws XMLStreamException {
 
 		String weight = "" + 1;
-		Map attributeValues = extractAttributes(xmlReader, "edge");
 
 		if(weightKey != null && attributeValues.containsKey(weightKey)) {
 			weight = (String) attributeValues.get(weightKey);
