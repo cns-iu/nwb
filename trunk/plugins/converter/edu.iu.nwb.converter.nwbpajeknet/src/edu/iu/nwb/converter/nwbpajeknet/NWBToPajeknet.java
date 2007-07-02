@@ -278,6 +278,7 @@ public class NWBToPajeknet implements Algorithm {
 				}
 			}
 			else if((NETFileFunctions.isInList(na.getAttrName(), NETFileParameter.VERTEX_STRING_PARAMETER_LIST))){
+				//System.out.println(na.getAttrName() + " ");
 				if(!value.equalsIgnoreCase("")){
 					//		System.out.print(na.getAttrName() + " \"" + value + "\" ");
 
@@ -295,7 +296,7 @@ public class NWBToPajeknet implements Algorithm {
 	}
 
 	private void writeEdges(String s, PrintWriter out, ValidateNWBFile validator, List edgeAttrList){
-
+		//System.out.print(s + " ");
 		int i = 0;
 		String[] columns = NETFileFunctions.processTokens(s);
 		/*if (inDirectededgesSection)
@@ -305,15 +306,20 @@ public class NWBToPajeknet implements Algorithm {
 		for(Iterator ii = edgeAttrList.iterator(); ii.hasNext();){
 			NWBAttribute na = (NWBAttribute) ii.next();
 			String value = columns[i];
+			//System.out.print(na.getAttrName()+ " ");
 			if(value.equalsIgnoreCase("*")){
 				continue;
 			}
-			if(NETFileFunctions.isInList(na.getAttrName(), noPrintParameters)){
+			if(na.getAttrName().equals(NETFileProperty.ATTRIBUTE_LABEL) || na.getAttrName().equals(ARCEDGEParameter.PARAMETER_LABEL)){
+				out.println(ARCEDGEParameter.PARAMETER_LABEL + " \"" + value + "\" ");
+			}
+			if((NETFileFunctions.isInList(na.getAttrName(), noPrintParameters)) && !(na.getAttrName().equals(NETFileProperty.ATTRIBUTE_LABEL))){
 				//System.out.print(value + " ");
 				out.print(value + " ");
 			}
-			else if((NETFileFunctions.isInList(na.getAttrName(), ARCEDGEParameter.ARCEDGE_NUMERIC_PARAMETER_LIST)) || (NETFileFunctions.isInList(na.getAttrName(), ARCEDGEParameter.ARCEDGE_STRING_PARAMETER_LIST))){
-				//System.out.print(na.getAttrName() + " " + value + " ");
+			else if(((NETFileFunctions.isInList(na.getAttrName(), ARCEDGEParameter.ARCEDGE_NUMERIC_PARAMETER_LIST)) || (NETFileFunctions.isInList(na.getAttrName(), ARCEDGEParameter.ARCEDGE_STRING_PARAMETER_LIST))) && 
+					!na.getAttrName().equals(ARCEDGEParameter.PARAMETER_LABEL)){
+			//	System.out.print(na.getAttrName() + " " + value + " ");
 				out.print(na.getAttrName() + " " + value + " ");
 			}
 			else;
