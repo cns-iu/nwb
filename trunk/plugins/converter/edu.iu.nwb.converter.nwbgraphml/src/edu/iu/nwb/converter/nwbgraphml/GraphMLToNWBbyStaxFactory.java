@@ -41,7 +41,7 @@ public class GraphMLToNWBbyStaxFactory implements AlgorithmFactory  {
      * @param context Access to the CIShell environment
      */
     public Algorithm createAlgorithm(Data[] data, Dictionary parameters, CIShellContext context) {
-    		System.err.println("createAlgorithm");
+    		//System.err.println("createAlgorithm");
 				return new GraphMLToNWBbyStax(data, parameters, context);
 		
         
