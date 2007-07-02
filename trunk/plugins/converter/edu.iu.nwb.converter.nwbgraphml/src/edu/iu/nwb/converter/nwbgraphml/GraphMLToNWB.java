@@ -69,7 +69,7 @@ public class GraphMLToNWB implements Algorithm {
 			Result nwb = new StreamResult(nwbFile);
 			
 			try {
-				System.out.println("calling stylesheet transform\n");
+				//System.out.println("calling stylesheet transform\n");
 				stylesheet.transform(graphml, nwb);
 				return new Data[] {new BasicData(nwbFile, "file:text/nwb")};
 			} catch(TransformerException exception) {
