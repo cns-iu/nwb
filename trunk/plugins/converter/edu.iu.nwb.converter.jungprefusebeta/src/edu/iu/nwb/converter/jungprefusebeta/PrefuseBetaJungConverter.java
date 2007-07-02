@@ -13,6 +13,7 @@ import edu.uci.ics.jung.graph.Vertex;
 import edu.uci.ics.jung.graph.impl.DirectedSparseEdge;
 import edu.uci.ics.jung.graph.impl.DirectedSparseGraph;
 import edu.uci.ics.jung.graph.impl.SimpleSparseVertex;
+import edu.uci.ics.jung.graph.impl.SparseGraph;
 import edu.uci.ics.jung.graph.impl.UndirectedSparseEdge;
 import edu.uci.ics.jung.graph.impl.UndirectedSparseGraph;
 import edu.uci.ics.jung.utils.PredicateUtils;
@@ -26,11 +27,7 @@ public class PrefuseBetaJungConverter {
 	public static Graph getJungGraph(prefuse.data.Graph prefuseGraph) {
 		Map prefuseToJungVertices = new HashMap();
         boolean directed = prefuseGraph.isDirected();
-		if(directed) {
-        	jungGraph = new DirectedSparseGraph();
-        } else {
-        	jungGraph = new UndirectedSparseGraph();
-        }
+		jungGraph = new SparseGraph();
         
         for (Iterator iter = prefuseGraph.nodes(); iter.hasNext();) {
             Node node = (Node) iter.next();
