@@ -22,6 +22,10 @@ import prefuse.util.collections.IntIterator;
 public class DefaultGraphComparer implements GraphComparer {
 
 	public ComparisonResult compare(Graph g1, Graph g2, boolean idsPreserved) {
+		if (g1 == null || g2 == null) {
+			return new ComparisonResult(false, "At least one of the provided" +
+					" graphs was null.");
+		}
 		//basic tests	
 		if (! isSameDirectedness(g1, g2)) {
 			return new ComparisonResult(false, "Directedness not of the " +
