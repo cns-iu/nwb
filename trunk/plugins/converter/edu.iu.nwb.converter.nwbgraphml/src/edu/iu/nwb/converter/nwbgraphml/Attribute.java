@@ -84,7 +84,13 @@ public class Attribute {
 		return value != null;
 	}
 	
+	public boolean isForLabel() {
+		return this.name.equals("label");
+	}
 	
+	public boolean isForWeight() {
+		return this.name.equals("weight");
+	}
 	
 
 

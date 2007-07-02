@@ -153,10 +153,11 @@ public class GraphMLToNWBbyStax implements Algorithm {
 				// check for edge element
 				if (xmlReader.getLocalName().equals("edge")&& xmlReader.getAttributeCount() > 0)
 				{
+					boolean isDirected = isDirectedEdge(directed, xmlReader);
 					Integer source = (Integer) nodeIds.get(xmlReader.getAttributeValue(null, "source"));
 					Integer target = (Integer) nodeIds.get(xmlReader.getAttributeValue(null, "target"));
 					Map attributeValues = extractAttributes(xmlReader, "edge");
-					if(isDirectedEdge(directed, xmlReader))
+					if(isDirected)
 					{
 						directedEdgeCount++;
 						if(directedEdgeCount==1) {
@@ -185,6 +186,12 @@ public class GraphMLToNWBbyStax implements Algorithm {
 						if(attribute.isForEdge()) {
 							edgeAttributes.add(attribute);
 						}
+					}
+					if(attribute.isForNode() && attribute.isForLabel()) {
+						labelKey = attribute.getId();
+					}
+					if(attribute.isForEdge() && attribute.isForWeight()) {
+						weightKey = attribute.getId();
 					}
 				}
 
