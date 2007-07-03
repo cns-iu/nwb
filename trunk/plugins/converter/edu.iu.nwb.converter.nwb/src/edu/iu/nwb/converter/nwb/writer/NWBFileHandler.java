@@ -73,15 +73,13 @@ public class NWBFileHandler implements AlgorithmFactory {
 				try{ 
 					validator.validateNWBFormat((File)inData);
 					if(validator.getValidationResult()){
-						return new Data[]{new BasicData(inData, NWBFileProperty.NWB_FILE_TYPE)};  
+						  
 					}else {
-						guiBuilder.showError("Bad NWB Format", 
-								"Sorry, your file does not comply with the NWB File Format Specification.\n" + validator.getErrorMessages(),
-								"Sorry, your file does not comply with the NWB File Format Specification.\n"+
-								"Please review the latest NWB File Format Specification at "+
-								"http://nwb.slis.indiana.edu/software.html, and update your file.");
-						return null;
+						logger.log(LogService.LOG_WARNING, "This file does not seem to comply with the NWB format specification. Forwarding anyways.\n" +
+								"Please notify the developers of the algorithm you are using or the NWB team.");
+						System.err.println(validator.getErrorMessages());
 					}
+					return new Data[]{new BasicData(inData, NWBFileProperty.NWB_FILE_TYPE)};
 
 				}catch (FileNotFoundException e){
 					guiBuilder.showError("File Not Found Exception", 
