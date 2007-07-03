@@ -1,0 +1,175 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Form style="Swing" ide="eclipse" builder="jigloo" version="2.7.2">
+<NonVisualComponents>
+		<Component class="java.lang.Object" name="object1">
+			<Constraints>
+				<LayoutConstraint/>
+			</Constraints>
+			<Properties>
+			</Properties>
+		</Component></NonVisualComponents>
+	<Component class="javax.swing.JFrame" name="NetworkAnalysisGUI">
+		<Constraints>
+			<LayoutConstraint/>
+		</Constraints>
+		<Layout class="GridBag">
+			<Property name="columnWidths" type="IntegerArray">
+			<IntegerArray value="[ 1,1,1,1 ]"/>
+		</Property>
+			<Property name="rowHeights" type="IntegerArray">
+			<IntegerArray value="[ 1,1,1,1,1 ]"/>
+		</Property>
+			<Property name="columnWeights" type="DoubleArray">
+			<DoubleArray value="[ 0.1,0.1,0.1,0.1 ]"/>
+		</Property>
+			<Property name="rowWeights" type="DoubleArray">
+			<DoubleArray value="[ 0.1,0.1,0.1,0.1,0.1 ]"/>
+		</Property>
+			<Property name="columns" type="int" value="4"/>
+			<Property name="rows" type="int" value="5"/>
+		</Layout>
+		<Events>
+		</Events>
+		<Properties>
+			<Property name="title" type="String" value="Network Analysis Toolkit"/>
+			<Property name="size" type="Dimension">
+				<Dimension value="[182, 181]"/>
+			</Property>
+			<Property name="bounds" type="Rectangle">
+				<Rectangle value="[0, 0, 182, 181]"/>
+			</Property>
+		</Properties>
+		<SubComponents>
+			<Component class="javax.swing.JButton" name="btnGraphType">
+				<Constraints>
+					<Constraint class="java.awt.GridBagConstraints"/>
+					<LayoutConstraint class="java.awt.GridBagConstraints">
+						<Property name="gridx" type="int" value="0"/>
+						<Property name="gridy" type="int" value="0"/>
+						<Property name="gridwidth" type="int" value="4"/>
+						<Property name="gridheight" type="int" value="1"/>
+						<Property name="weightx" type="double" value="0.0"/>
+						<Property name="weighty" type="double" value="0.0"/>
+						<Property name="anchor" type="int" value="10"/>
+						<Property name="fill" type="int" value="2"/>
+						<Property name="insets" type="Insets">
+						<Insets value="[0, 0, 0, 0]"/>
+					</Property>
+						<Property name="ipadx" type="int" value="0"/>
+						<Property name="ipady" type="int" value="0"/>
+					</LayoutConstraint>
+				</Constraints>
+				<Events>
+					<EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" handler="btnGraphTypeActionPerformed"/>
+				</Events>
+				<Properties>
+					<Property name="text" type="String" value="Graph Type"/>
+				</Properties>
+			</Component>
+			<Component class="javax.swing.JButton" name="btnPathCharacteristics">
+				<Constraints>
+					<Constraint class="java.awt.GridBagConstraints"/>
+					<LayoutConstraint class="java.awt.GridBagConstraints">
+						<Property name="gridx" type="int" value="0"/>
+						<Property name="gridy" type="int" value="1"/>
+						<Property name="gridwidth" type="int" value="4"/>
+						<Property name="gridheight" type="int" value="1"/>
+						<Property name="weightx" type="double" value="0.0"/>
+						<Property name="weighty" type="double" value="0.0"/>
+						<Property name="anchor" type="int" value="10"/>
+						<Property name="fill" type="int" value="2"/>
+						<Property name="insets" type="Insets">
+						<Insets value="[0, 0, 0, 0]"/>
+					</Property>
+						<Property name="ipadx" type="int" value="0"/>
+						<Property name="ipady" type="int" value="0"/>
+					</LayoutConstraint>
+				</Constraints>
+				<Events>
+					<EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" handler="btnPathCharacteristicsActionPerformed"/>
+				</Events>
+				<Properties>
+					<Property name="text" type="String" value="Path Characteristics"/>
+				</Properties>
+			</Component>
+			<Component class="javax.swing.JButton" name="btnClusteringCoefficients">
+				<Constraints>
+					<Constraint class="java.awt.GridBagConstraints"/>
+					<LayoutConstraint class="java.awt.GridBagConstraints">
+						<Property name="gridx" type="int" value="0"/>
+						<Property name="gridy" type="int" value="2"/>
+						<Property name="gridwidth" type="int" value="4"/>
+						<Property name="gridheight" type="int" value="1"/>
+						<Property name="weightx" type="double" value="0.0"/>
+						<Property name="weighty" type="double" value="0.0"/>
+						<Property name="anchor" type="int" value="10"/>
+						<Property name="fill" type="int" value="2"/>
+						<Property name="insets" type="Insets">
+						<Insets value="[0, 0, 0, 0]"/>
+					</Property>
+						<Property name="ipadx" type="int" value="0"/>
+						<Property name="ipady" type="int" value="0"/>
+					</LayoutConstraint>
+				</Constraints>
+				<Events>
+					<EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" handler="btnClusteringCoefficientsActionPerformed"/>
+				</Events>
+				<Properties>
+					<Property name="text" type="String" value="Clustering Coefficients"/>
+				</Properties>
+			</Component>
+			<Component class="javax.swing.JButton" name="btnPruning">
+				<Constraints>
+					<Constraint class="java.awt.GridBagConstraints"/>
+					<LayoutConstraint class="java.awt.GridBagConstraints">
+						<Property name="gridx" type="int" value="0"/>
+						<Property name="gridy" type="int" value="3"/>
+						<Property name="gridwidth" type="int" value="4"/>
+						<Property name="gridheight" type="int" value="1"/>
+						<Property name="weightx" type="double" value="0.0"/>
+						<Property name="weighty" type="double" value="0.0"/>
+						<Property name="anchor" type="int" value="10"/>
+						<Property name="fill" type="int" value="2"/>
+						<Property name="insets" type="Insets">
+						<Insets value="[0, 0, 0, 0]"/>
+					</Property>
+						<Property name="ipadx" type="int" value="0"/>
+						<Property name="ipady" type="int" value="0"/>
+					</LayoutConstraint>
+				</Constraints>
+				<Events>
+					<EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" handler="btnPruningActionPerformed"/>
+				</Events>
+				<Properties>
+					<Property name="text" type="String" value="Pruning"/>
+				</Properties>
+			</Component>
+			<Component class="javax.swing.JButton" name="btnDegreeDistributions">
+				<Constraints>
+					<Constraint class="java.awt.GridBagConstraints"/>
+					<LayoutConstraint class="java.awt.GridBagConstraints">
+						<Property name="gridx" type="int" value="0"/>
+						<Property name="gridy" type="int" value="4"/>
+						<Property name="gridwidth" type="int" value="4"/>
+						<Property name="gridheight" type="int" value="1"/>
+						<Property name="weightx" type="double" value="0.0"/>
+						<Property name="weighty" type="double" value="0.0"/>
+						<Property name="anchor" type="int" value="10"/>
+						<Property name="fill" type="int" value="2"/>
+						<Property name="insets" type="Insets">
+						<Insets value="[0, 0, 0, 0]"/>
+					</Property>
+						<Property name="ipadx" type="int" value="0"/>
+						<Property name="ipady" type="int" value="0"/>
+					</LayoutConstraint>
+				</Constraints>
+				<Events>
+					<EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" handler="btnDegreeDistributionsActionPerformed"/>
+				</Events>
+				<Properties>
+					<Property name="text" type="String" value="Degree Distributions"/>
+				</Properties>
+			</Component>
+		</SubComponents>
+	</Component>
+</Form>
