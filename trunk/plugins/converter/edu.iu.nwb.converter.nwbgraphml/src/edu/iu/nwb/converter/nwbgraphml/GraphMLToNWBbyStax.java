@@ -179,14 +179,13 @@ public class GraphMLToNWBbyStax implements Algorithm {
 				//check for key element
 				if (xmlReader.getLocalName().equals("key")&& xmlReader.getAttributeCount() > 0) {
 					Attribute attribute = readAttribute(xmlReader);
-					if(!attribute.isReserved()) {
-						if(attribute.isForNode()) {
-							nodeAttributes.add(attribute);
-						} 
-						if(attribute.isForEdge()) {
-							edgeAttributes.add(attribute);
-						}
+					if(!attribute.isReservedForNode() && attribute.isForNode()) {
+						nodeAttributes.add(attribute);
+					} 
+					if(!attribute.isReservedForEdge() && attribute.isForEdge()) {
+						edgeAttributes.add(attribute);
 					}
+
 					if(attribute.isForNode() && attribute.isForLabel()) {
 						labelKey = attribute.getId();
 					}

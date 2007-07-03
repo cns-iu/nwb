@@ -58,11 +58,16 @@ public class Attribute {
 		return "edge".equals(domain) || "all".equals(domain);
 	}
 	
-	public boolean isReserved() {
+	public boolean isReservedForNode() {
 		boolean reserved = false;
 		if(isForNode()) {
 			reserved = reserved || "id".equals(name) || "label".equals(name);
 		}
+		return reserved;
+	}
+	
+	public boolean isReservedForEdge() {
+		boolean reserved = false;
 		if(isForEdge()) {
 			reserved = reserved || "source".equals(name) || "target".equals(name) || "weight".equals(name);
 		}
