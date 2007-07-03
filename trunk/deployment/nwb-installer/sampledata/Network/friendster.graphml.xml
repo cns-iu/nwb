@@ -5,9 +5,11 @@
   http://graphml.graphdrawing.org/xmlns/1.0/graphml.xsd">
 
   <!-- prefuse GraphML Writer | Mon Jul 02 11:39:43 EDT 2007 -->
-  <!-- This writer is still not good. It generates some edge attributes -->
-  <!-- but don't have any value cross all edges. -->
-  <!-- Have to manually remove those attributes from the file. -->
+  <!-- This writer works properly now. But since the source -->
+  <!-- xgmml file has empty labels on every edge, the prefuse -->
+  <!-- GraphML Writer generates label attribute without any value -->
+  <!-- cross all edges. Have to manually remove those attributes -->
+  <!-- from the file. -->
   <key id="label" for="node" attr.name="label" attr.type="string"/>
   <key id="id" for="node" attr.name="id" attr.type="string"/>
 
