@@ -16,7 +16,6 @@ import org.cishell.framework.CIShellContext;
 import org.cishell.framework.algorithm.Algorithm;
 import org.cishell.framework.data.BasicData;
 import org.cishell.framework.data.Data;
-import org.cishell.service.guibuilder.GUIBuilderService;
 import org.osgi.service.log.LogService;
 
 
@@ -31,7 +30,6 @@ public class GraphMLToNWB implements Algorithm {
     Dictionary parameters;
     CIShellContext ciContext;
     LogService logger;
-    GUIBuilderService guiBuilder;
     
     Map vertexToIdMap;
 	private Transformer stylesheet;

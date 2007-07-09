@@ -17,7 +17,7 @@ import org.cishell.framework.CIShellContext;
 import org.cishell.framework.algorithm.Algorithm;
 import org.cishell.framework.data.BasicData;
 import org.cishell.framework.data.Data;
-import org.cishell.service.guibuilder.GUIBuilderService;
+
 import org.osgi.service.log.LogService;
 
 import edu.iu.nwb.converter.nwb.common.ValidateNWBFile;
@@ -32,7 +32,7 @@ public class NWBToGraphML implements Algorithm {
     Dictionary parameters;
     CIShellContext ciContext;
     LogService logger;
-    GUIBuilderService guiBuilder;
+
     
     public NWBToGraphML(Data[] data, Dictionary parameters, CIShellContext context) {
         this.data = data;
@@ -45,8 +45,7 @@ public class NWBToGraphML implements Algorithm {
     	Data [] dm = null;
     	ValidateNWBFile validator;
     	
-    	guiBuilder = (GUIBuilderService) ciContext
-				.getService(GUIBuilderService.class.getName());
+
     	logger = (LogService)ciContext.getService(LogService.class.getName());
 
 		Object inFile = data[0].getData();
@@ -64,40 +63,35 @@ public class NWBToGraphML implements Algorithm {
 						return dm;
 					}
 					else {
-						guiBuilder.showError("Unable to Make a File Conversion",
-								"Fail to convert a file from NWB file format to GraphML file format.",
-								"");
+						logger.log(LogService.LOG_ERROR, "Failed to convert a file from NWB file format to GraphML file format.");
 						return null;
 					}
 				}
 				else {
-					guiBuilder.showError("Unable to Make a File Conversion",
-							"The input file has a bad NWB format. \n"+
-							"Please review the latest NWB File Format Specification at \n"+
-							"http://nwb.slis.indiana.edu/software.html, and update your file.", 
-							"");
+					logger.log(LogService.LOG_ERROR, 
+							"Unable to Make a File Conversion. " +
+							"The input file has a bad NWB format. \n " +
+							"Please review the latest NWB File Format Specification at \n" +
+							"http://nwb.slis.indiana.edu/software.html, and update your file."
+							);
 
 					return null;
 				}
 			} catch (FileNotFoundException e) {
-				guiBuilder.showError("File Not Found Exception",
-						"Got an File Not Found Exception", e);
+				logger.log(LogService.LOG_ERROR, "Unable to find the given file.", e);
 				return null;
 			} catch (IOException ioe) {
-				guiBuilder.showError("IOException", "Got an IOException", ioe);
+				logger.log(LogService.LOG_ERROR, "Got an IOException", ioe);
 				return null;
 			}
 		}else {
 			if (! (inFile instanceof File)){
-				guiBuilder.showError("Unable to Make a File Conversion",
-						"Fail to convert a file from NWB format to GraphML format, because the input is not a file.", 
-						"");
+				logger.log(LogService.LOG_ERROR, "Failed to convert a file from NWB format to GraphML format, because the input is not a file.");
 			}
 			else if (!(format.equalsIgnoreCase(NWBFileProperty.NWB_MIME_TYPE))){
-				guiBuilder.showError("Unable to Make a File Conversion",
+				logger.log(LogService.LOG_ERROR,
 						"Wrong input file type. Expecting "+ NWBFileProperty.NWB_MIME_TYPE+
-						", but the input file type is "+format+".", 
-						"");
+						", but the input file type is "+format+".");
 				
 			}
 			return null;	
@@ -119,12 +113,11 @@ public class NWBToGraphML implements Algorithm {
 			out.close();
     		return graphml;
     	}catch (FileNotFoundException e){
-			guiBuilder.showError("File Not Found Exception", 
+			logger.log(LogService.LOG_ERROR, 
 					"Got an File Not Found Exception",e);
 			return null;
 		}catch (IOException ioe){
-			guiBuilder.showError("IOException", 
-					"Got an IOException",ioe);
+			logger.log(LogService.LOG_ERROR, "IOException",ioe);
 			return null;
 		} 	
     	

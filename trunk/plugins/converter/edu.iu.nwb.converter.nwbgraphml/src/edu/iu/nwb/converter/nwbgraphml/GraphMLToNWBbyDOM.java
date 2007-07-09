@@ -2,34 +2,24 @@ package edu.iu.nwb.converter.nwbgraphml;
 
 import java.io.BufferedWriter;
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Dictionary;
 import java.util.HashMap;
 import java.util.Iterator;
-import java.util.Map;
-import java.util.Set;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
-import javax.xml.transform.Result;
 import javax.xml.transform.Source;
-import javax.xml.transform.Transformer;
-import javax.xml.transform.TransformerException;
-import javax.xml.transform.stream.StreamResult;
 import javax.xml.transform.stream.StreamSource;
 
 import org.cishell.framework.CIShellContext;
 import org.cishell.framework.algorithm.Algorithm;
 import org.cishell.framework.data.BasicData;
 import org.cishell.framework.data.Data;
-import org.cishell.service.guibuilder.GUIBuilderService;
 import org.osgi.service.log.LogService;
-import org.w3c.dom.DOMException;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NamedNodeMap;
@@ -38,8 +28,6 @@ import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 
 import com.sun.java.browser.dom.DOMAccessException;
-
-import edu.iu.nwb.converter.nwb.common.ValidateNWBFile;
 
 
 /**
@@ -51,7 +39,7 @@ public class GraphMLToNWBbyDOM implements Algorithm {
     Dictionary parameters;
     CIShellContext ciContext;
     LogService logger;
-    GUIBuilderService guiBuilder;
+
     private Document dom;
     private HashMap vertexAttrMap;
     private HashMap edgeAttrMap;
