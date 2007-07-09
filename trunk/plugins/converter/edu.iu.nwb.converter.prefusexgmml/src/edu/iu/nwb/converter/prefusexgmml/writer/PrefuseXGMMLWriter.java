@@ -49,12 +49,12 @@ public class PrefuseXGMMLWriter implements Algorithm {
     						tempFile) ;
     			return new Data[]{new BasicData(tempFile, "file:text/xgmml+xml") };
     		}catch (IOException ioe){
-    			//use guibuilder to display the exception
+
     			return null;
     		}
     	}
     	else{
-//    		use guibuilder to display the exception
+
     		return null;
     	}
 
