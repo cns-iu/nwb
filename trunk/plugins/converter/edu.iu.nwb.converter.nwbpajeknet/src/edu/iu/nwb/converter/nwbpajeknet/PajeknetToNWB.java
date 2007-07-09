@@ -15,7 +15,6 @@ import org.cishell.framework.CIShellContext;
 import org.cishell.framework.algorithm.Algorithm;
 import org.cishell.framework.data.BasicData;
 import org.cishell.framework.data.Data;
-import org.cishell.service.guibuilder.GUIBuilderService;
 import org.osgi.service.log.LogService;
 
 import edu.iu.nwb.converter.nwb.common.NWBFileProperty;
@@ -31,7 +30,7 @@ public class PajeknetToNWB implements Algorithm {
     Dictionary parameters;
     CIShellContext ciContext;
     LogService logger;
-    GUIBuilderService guiBuilder;
+
     
     Map vertexToIdMap;
 	
@@ -75,23 +74,24 @@ public class PajeknetToNWB implements Algorithm {
 						dm = new Data[] {new BasicData(outData, "file:text/nwb")};
 						return dm;
 					}else {
-						guiBuilder.showError("Problem executing transformation from Pajek .net to NWB", "Output file was not created","");
+						logger.log(LogService.LOG_ERROR, "Problem executing transformation from Pajek .net to NWB. Output file was not created");
 						return null;
 					}
 				}else{
-					guiBuilder.showError("Problem executing transformation from Pajek .net to NWB", validator.getErrorMessages(), "");
+					logger.log(LogService.LOG_ERROR,"Problem executing transformation from Pajek .net to NWB" + validator.getErrorMessages());
 					return null;
 				}
 		}
 			catch (FileNotFoundException fnf){
-			guiBuilder.showError("File Not Found Exception", "", fnf);
+			logger.log(LogService.LOG_ERROR, "File Not Found Exception", fnf);
 		}
 			catch (IOException ioe){
-				guiBuilder.showError("IOException", "", ioe);
+				logger.log(LogService.LOG_ERROR, "IOException", ioe);
 			}
 		}
 		else
-			guiBuilder.showError("Unable to convert the file", "Unable to convert from Pajek .net to nwb because input data is not a file", "");
+			logger.log(LogService.LOG_ERROR, "Unable to convert the file. " +
+					"Unable to convert from Pajek .net to nwb because input data is not a file");
 		return null;
     }
     
@@ -128,10 +128,10 @@ public class PajeknetToNWB implements Algorithm {
 			out.close();
 			return nwb;
 		}catch (FileNotFoundException e){
-			guiBuilder.showError("File Not Found Exception", "Got a File Not Found Exception", e);
+			logger.log(LogService.LOG_ERROR, "Got a File Not Found Exception", e);
 			return null;
 		}catch (IOException ioe){
-			guiBuilder.showError("IOException", "Got an IOException", ioe);
+			logger.log(LogService.LOG_ERROR, "Got an IOException", ioe);
 			return null;
 		}
 	}
