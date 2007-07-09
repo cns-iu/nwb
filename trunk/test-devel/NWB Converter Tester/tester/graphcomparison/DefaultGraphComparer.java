@@ -40,8 +40,6 @@ public class DefaultGraphComparer implements GraphComparer {
 		if (idsPreserved) {
 			//tests for when graph IDs are preserved across the conversion	
 			if (! areEqual(g1, g2,  true))  {
-				printTable(g1.getNodeTable());
-				printTable(g2.getNodeTable());
 				return new ComparisonResult(false, "Graphs do not have the " +
 				"same contents.");	
 				
@@ -289,6 +287,10 @@ public class DefaultGraphComparer implements GraphComparer {
 		Sort t2Sort = new Sort(getColumnNames(t2));
 		Table sortedT2 = t2.select(ExpressionParser.predicate("TRUE"), t2Sort);
 		
+//		System.out.println("---sortedT1---");
+//		printTable(sortedT1);
+//		System.out.println("---sortedT2---");
+//		printTable(sortedT2);
 		IntIterator t1Iter = sortedT1.rows();
 		IntIterator t2Iter = sortedT2.rows();
 		
