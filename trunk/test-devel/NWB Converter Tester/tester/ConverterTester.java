@@ -100,7 +100,7 @@ public class ConverterTester {
 		}
 		catch(Exception ex){
 			System.out.println("Could not compare the files. We caught a " + ex.getClass().getName() + " exception");
-			
+			ex.printStackTrace();
 		}
 	}
 	
@@ -151,6 +151,9 @@ public class ConverterTester {
 				if(dm != null){
 					writeAsFile(dm, f.getName());
 					compareFiles(f,(File)dm.getData());
+				}
+				else {
+					System.out.println("Could not test the files. The resulting data was null.");
 				}
 				}catch(Exception ex){
 					System.out.println("Could not test the files.");
@@ -212,6 +215,7 @@ public class ConverterTester {
     }
 	
 	public void printResults(){
+		System.out.println("There are " + this.results.size() + " results");
 		for(String s : this.results.keySet()){
 			System.out.println(s);
 			System.out.println("\t"+this.results.get(s));
