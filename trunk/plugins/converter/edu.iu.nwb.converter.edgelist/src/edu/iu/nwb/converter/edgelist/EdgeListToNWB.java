@@ -17,7 +17,6 @@ import org.cishell.framework.CIShellContext;
 import org.cishell.framework.algorithm.Algorithm;
 import org.cishell.framework.data.BasicData;
 import org.cishell.framework.data.Data;
-import org.cishell.service.guibuilder.GUIBuilderService;
 import org.osgi.service.log.LogService;
 
 import edu.iu.nwb.converter.edgelist.EdgeListValidatorFactory;
@@ -35,7 +34,6 @@ public class EdgeListToNWB implements Algorithm {
     Dictionary parameters;
     CIShellContext ciContext;
     LogService logger;
-    GUIBuilderService guiBuilder;
     
     Map vertexToIdMap;
     
@@ -66,9 +64,7 @@ public class EdgeListToNWB implements Algorithm {
 		
 		try {
 			if (badFormat) {
-				GUIBuilderService guiBuilder =   (GUIBuilderService)ciContext.getService(GUIBuilderService.class.getName());
-				guiBuilder.showError("Bad NWB Format",
-						"Sorry, your file does not comply with edge-list format specifications.",
+				logger.log(org.osgi.service.log.LogService.LOG_ERROR, 
 						"Sorry, your file does not comply with edge-list format specifications.\n"+
 						"Please review the latest edge-list format specification at "+
 						"https://nwb.slis.indiana.edu/community/?n=LoadData.Edgelist, and update your file. \n"
