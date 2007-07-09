@@ -2,7 +2,6 @@ package tester;
 
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.nio.channels.FileChannel;
@@ -19,6 +18,7 @@ import prefuse.data.Graph;
 import service.ConfigurationFileParser;
 import tester.graphcomparison.ComparisonResult;
 import tester.graphcomparison.DefaultGraphComparer;
+import tester.graphcomparison.GraphComparer;
 import converter.ConverterLoaderImpl;
 
 public class ConverterTester {
@@ -26,7 +26,7 @@ public class ConverterTester {
 	private ConfigurationFileParser cfp;
 	private ConverterLoaderImpl cli;
 	private Converter comparisonConverters;
-	private DefaultGraphComparer dgc;
+	private GraphComparer dgc;
 	//private Map<String, Exception> fileErrors;
 	private static final String tempDir = "converterTesterTemp";
 	private File temporaryStorage;
@@ -95,7 +95,7 @@ public class ConverterTester {
 				convertedFile.getName(), 
 				dgc.compare((Graph)convertFile(sourceFile,this.comparisonConverters).getData(), 
 						(Graph)convertFile(convertedFile,this.comparisonConverters).getData(), 
-						cfp.getNodeIDChange()));
+						! cfp.getNodeIDChange()));
 		
 		}
 		catch(Exception ex){
