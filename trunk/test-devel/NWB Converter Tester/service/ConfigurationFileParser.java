@@ -1,3 +1,4 @@
+
 package service;
 
 import java.io.BufferedReader;
@@ -125,8 +126,20 @@ public class ConfigurationFileParser {
 
 	private void processFiles(String...strings) throws FileNotFoundException{
 		for(String s : strings){
-			File f = new File(s);
-				this.comparisonFiles.add(f);
+			if (! (s == null || s.length() == 0)) {
+				
+				System.out.println(s.charAt(0));
+				if (s.charAt(0) != File.separatorChar) {
+					
+					/*
+					 * relative paths are assumed to be relative to ther home
+					 * directory
+					 */
+					s = System.getProperty("user.home") + File.separator + s; 
+				}
+				File f = new File(s);
+					this.comparisonFiles.add(f);
+			} 
 		}
 	}
 
