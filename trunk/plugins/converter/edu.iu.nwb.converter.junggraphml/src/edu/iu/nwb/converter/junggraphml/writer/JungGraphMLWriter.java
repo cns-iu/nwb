@@ -17,7 +17,6 @@ import org.cishell.framework.CIShellContext;
 import org.cishell.framework.algorithm.Algorithm;
 import org.cishell.framework.data.BasicData;
 import org.cishell.framework.data.Data;
-import org.cishell.service.guibuilder.GUIBuilderService;
 import org.osgi.service.log.LogService;
 //Jung
 import edu.uci.ics.jung.graph.Graph;
@@ -33,14 +32,14 @@ public class JungGraphMLWriter implements Algorithm {
     Dictionary parameters;
     CIShellContext context;
     LogService logger;
-    GUIBuilderService guiBuilder;
+
     
     public JungGraphMLWriter(Data[] data, Dictionary parameters, CIShellContext context) {
         this.data = data;
         this.parameters = parameters;
         this.context = context;
         logger = (LogService)context.getService(LogService.class.getName());
-    	guiBuilder = (GUIBuilderService) context.getService(GUIBuilderService.class.getName());
+
 
     }
 
@@ -64,7 +63,7 @@ public class JungGraphMLWriter implements Algorithm {
     		return new Data[]{new BasicData(tempFile, "file:text/graphml+xml")};
     		
     	}catch (FileNotFoundException exception){
-    		logger.log(LogService.LOG_ERROR, "FileNotFoundException", exception);
+    		logger.log(LogService.LOG_ERROR, "Unable to create the temp file for conversion.\n", exception);
     		return null;
     	}catch (Exception e){    	
 	    	try{
@@ -111,12 +110,10 @@ public class JungGraphMLWriter implements Algorithm {
 		    	reader.close();
 				out.close();
 	    	}catch (FileNotFoundException fnfe){
-				guiBuilder.showError("File Not Found Exception", 
-						"Got an File Not Found Exception",e);	
+				logger.log(org.osgi.service.log.LogService.LOG_ERROR, "The given file cannot be found\n",fnfe );
 				return null;
 			}catch (IOException ioe){
-				guiBuilder.showError("IOException", 
-						"Got an IOException",ioe);
+				logger.log(org.osgi.service.log.LogService.LOG_ERROR, "Encountered an IO exception in the conversion.\n", ioe);
 				return null;
 			}    	
 	    	
