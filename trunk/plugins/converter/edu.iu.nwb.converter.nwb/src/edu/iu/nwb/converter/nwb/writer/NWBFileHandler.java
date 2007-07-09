@@ -17,7 +17,7 @@ import org.cishell.framework.algorithm.Algorithm;
 import org.cishell.framework.algorithm.AlgorithmFactory;
 import org.cishell.framework.data.BasicData;
 import org.cishell.framework.data.Data;
-import org.cishell.service.guibuilder.GUIBuilderService;
+
 
 import edu.iu.nwb.converter.nwb.common.ValidateNWBFile;
 import edu.iu.nwb.converter.nwb.common.NWBFileProperty;
@@ -51,16 +51,14 @@ public class NWBFileHandler implements AlgorithmFactory {
         Dictionary parameters;
         CIShellContext ciContext;
         LogService logger;
-        GUIBuilderService guiBuilder;
+      
         
         public NWBFileHandlerAlg(Data[] data, Dictionary parameters, CIShellContext context) {
             this.data = data;
             this.parameters = parameters;
             this.ciContext = context;
             logger = (LogService)ciContext.getService(LogService.class.getName());
-	    	guiBuilder = 
-    			(GUIBuilderService)ciContext.getService(GUIBuilderService.class.getName());
-
+	    
         }
 
         public Data[] execute() {
@@ -82,11 +80,11 @@ public class NWBFileHandler implements AlgorithmFactory {
 					return new Data[]{new BasicData(inData, NWBFileProperty.NWB_FILE_TYPE)};
 
 				}catch (FileNotFoundException e){
-					guiBuilder.showError("File Not Found Exception", 
+					logger.log(LogService.LOG_ERROR, 
 							"Got an File Not Found Exception",e);	
 					return null;
 				}catch (IOException ioe){
-					guiBuilder.showError("IOException", 
+					logger.log(LogService.LOG_ERROR, 
 							"Got an IOException",ioe);
 					return null;
 				}        		        		

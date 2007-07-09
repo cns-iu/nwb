@@ -7,6 +7,7 @@ import java.io.IOException;
 import java.util.Dictionary;
 //OSGi
 import org.osgi.service.component.ComponentContext;
+import org.osgi.service.log.LogService;
 import org.osgi.service.metatype.MetaTypeProvider;
 //CIShell
 import org.cishell.framework.CIShellContext;
@@ -15,7 +16,7 @@ import org.cishell.framework.algorithm.AlgorithmFactory;
 import org.cishell.framework.data.BasicData;
 import org.cishell.framework.data.Data;
 import org.cishell.framework.data.DataProperty;
-import org.cishell.service.guibuilder.GUIBuilderService;
+
 
 import edu.iu.nwb.converter.nwb.common.ValidateNWBFile;
 
@@ -47,16 +48,17 @@ public class NWBValidation implements AlgorithmFactory {
 	    	Data[] data;
 	        Dictionary parameters;
 	        CIShellContext ciContext;
+	        LogService logger;
 	        
 	        public NWBValidationAlg(Data[] dm, Dictionary parameters, CIShellContext context) {
 	        	this.data = dm;
 	            this.parameters = parameters;
 	            this.ciContext = context;
+	            logger = (LogService)context.getService(LogService.class.getName());
 	        }
 
 	        public Data[] execute() {
-		    	GUIBuilderService guiBuilder = 
-		    			(GUIBuilderService)ciContext.getService(GUIBuilderService.class.getName());
+		    	
 
 				String fileHandler = (String) data[0].getData();
 				File inData = new File(fileHandler);
@@ -70,9 +72,8 @@ public class NWBValidation implements AlgorithmFactory {
 	                	return dm;
 
 					}else {
-						System.out.println(">>>wrong format: "+validator.getErrorMessages());
-						guiBuilder.showError("Bad NWB Format", 
-								"Sorry, your file does not comply with the NWB File Format Specification.",
+						//System.out.println(">>>wrong format: "+validator.getErrorMessages());
+						logger.log(org.osgi.service.log.LogService.LOG_ERROR,
 								"Sorry, your file does not comply with the NWB File Format Specification.\n"+
 								"Please review the latest NWB File Format Specification at "+
 								"http://nwb.slis.indiana.edu/software.html, and update your file. \n"+
@@ -81,12 +82,12 @@ public class NWBValidation implements AlgorithmFactory {
 					}
 
 				}catch (FileNotFoundException e){
-					guiBuilder.showError("File Not Found Exception", 
-							"Got an File Not Found Exception",e);	
+					logger.log(org.osgi.service.log.LogService.LOG_ERROR, 
+							"Unable to find the given file.",e);	
 					return null;
 				}catch (IOException ioe){
-					guiBuilder.showError("IOException", 
-							"Got an IOException",ioe);
+					logger.log(org.osgi.service.log.LogService.LOG_ERROR, 
+							"IO Errors while converting.",ioe);
 					return null;
 				}
 	        }
