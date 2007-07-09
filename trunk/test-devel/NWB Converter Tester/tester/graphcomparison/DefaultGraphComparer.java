@@ -39,9 +39,13 @@ public class DefaultGraphComparer implements GraphComparer {
 		//complex tests		
 		if (idsPreserved) {
 			//tests for when graph IDs are preserved across the conversion	
-			if (! areEqual(g1, g2,  true)) 
+			if (! areEqual(g1, g2,  true))  {
+				printTable(g1.getNodeTable());
+				printTable(g2.getNodeTable());
 				return new ComparisonResult(false, "Graphs do not have the " +
-						"same contents.");		
+				"same contents.");	
+				
+			}
 		} else {
 			//tests for when graph IDs are NOT preserved across the conversion
 			if (! nodeDegreeFrequenciesEqual(g1, g2))
@@ -290,10 +294,10 @@ public class DefaultGraphComparer implements GraphComparer {
 		
 		while (t1Iter.hasNext()) {
 			int t1Index = t1Iter.nextInt();
-			Tuple t1Tuple = t1.getTuple(t1Index);
+			Tuple t1Tuple = sortedT1.getTuple(t1Index);
 			
 			int t2Index = t2Iter.nextInt();
-			Tuple t2Tuple = t2.getTuple(t2Index);
+			Tuple t2Tuple = sortedT2.getTuple(t2Index);
 			if (! areEqual(t1Tuple, t2Tuple)) {
 				return false;
 			}
@@ -324,7 +328,7 @@ public class DefaultGraphComparer implements GraphComparer {
 		return tCopy;
 	}
 	
-	private void printTable(Table t) {
+	public static void printTable(Table t) {
 		Iterator ii = t.tuples();
 		while (ii.hasNext()) {
 			System.out.println((Tuple) ii.next());
