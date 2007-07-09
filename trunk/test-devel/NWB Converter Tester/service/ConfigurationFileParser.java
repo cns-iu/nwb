@@ -127,8 +127,7 @@ public class ConfigurationFileParser {
 	private void processFiles(String...strings) throws FileNotFoundException{
 		for(String s : strings){
 			if (! (s == null || s.length() == 0)) {
-				
-				System.out.println(s.charAt(0));
+
 				if (s.charAt(0) != File.separatorChar) {
 					
 					/*
