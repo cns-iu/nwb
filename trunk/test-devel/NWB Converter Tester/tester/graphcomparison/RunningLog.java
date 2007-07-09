@@ -2,7 +2,7 @@ package tester.graphcomparison;
 
 public class RunningLog {
 
-	private String log;
+	private String log = "";
 	
 	/**
 	 * Adds the provided text as a new line to the end of the log.
