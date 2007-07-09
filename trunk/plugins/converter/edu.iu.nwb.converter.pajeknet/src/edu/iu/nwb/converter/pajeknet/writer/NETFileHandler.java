@@ -13,7 +13,6 @@ import org.cishell.framework.algorithm.Algorithm;
 import org.cishell.framework.algorithm.AlgorithmFactory;
 import org.cishell.framework.data.BasicData;
 import org.cishell.framework.data.Data;
-import org.cishell.service.guibuilder.GUIBuilderService;
 import org.osgi.service.component.ComponentContext;
 import org.osgi.service.log.LogService;
 import org.osgi.service.metatype.MetaTypeProvider;
@@ -59,15 +58,12 @@ public class NETFileHandler implements AlgorithmFactory {
         Dictionary parameters;
         CIShellContext ciContext;
         LogService logger;
-        GUIBuilderService guiBuilder;
         
         public NETFileHandlerAlg(Data[] data, Dictionary parameters, CIShellContext context) {
             this.data = data;
             this.parameters = parameters;
             this.ciContext = context;
             logger = (LogService)ciContext.getService(LogService.class.getName());
-	    	guiBuilder = 
-    			(GUIBuilderService)ciContext.getService(GUIBuilderService.class.getName());
 
         }
 
@@ -81,23 +77,23 @@ public class NETFileHandler implements AlgorithmFactory {
 				try{ 
 					validator.validateNETFormat((File)inData);
 					if(validator.getValidationResult()){
-						return new Data[]{new BasicData(inData, NETFileProperty.NET_FILE_TYPE)};  
+						
 					}else {
-						guiBuilder.showError("Bad NET Format", 
-								"Sorry, your file does not comply with the NET File Format Specification.",validator.getErrorMessages()+
-								"\nSorry, your file does not comply with the NET File Format Specification.\n"+
+						logger.log(LogService.LOG_WARNING, 
+								"Sorry, your file does not seem to comply with the Pajek .net File Format Specification." +
+								"We are writing it out anyway.\n"+
 								"Please review the latest NET File Format Specification at "+
-								"http://vlado.fmf.uni-lj.si/pub/networks/pajek/doc/pajekman.pdf, and update your file.");
-						return null;
+								"http://vlado.fmf.uni-lj.si/pub/networks/pajek/doc/pajekman.pdf, and update your file." 
+								+ validator.getErrorMessages());
+						System.err.println(validator.getErrorMessages());
 					}
-
+					return new Data[]{new BasicData(inData, NETFileProperty.NET_FILE_TYPE)};  
 				}catch (FileNotFoundException e){
-					guiBuilder.showError("File Not Found Exception", 
-							"Got an File Not Found Exception",e);	
+					logger.log(LogService.LOG_ERROR,  
+							"Could not find the given .net file to validate",e);	
 					return null;
 				}catch (IOException ioe){
-					guiBuilder.showError("IOException", 
-							"Got an IOException",ioe);
+					logger.log(LogService.LOG_ERROR, "Errors reading the given .net file.", ioe);
 					return null;
 				}        		        		
         	}

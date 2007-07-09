@@ -14,9 +14,9 @@ import org.cishell.framework.algorithm.AlgorithmFactory;
 import org.cishell.framework.data.BasicData;
 import org.cishell.framework.data.Data;
 import org.cishell.framework.data.DataProperty;
-import org.cishell.service.guibuilder.GUIBuilderService;
 import org.osgi.service.component.ComponentContext;
 import org.osgi.service.metatype.MetaTypeProvider;
+import org.osgi.service.log.*;
 
 import edu.iu.nwb.converter.pajeknet.common.NETFileProperty;
 import edu.iu.nwb.converter.pajeknet.common.ValidateNETFile;
@@ -51,16 +51,17 @@ public class NETValidation implements AlgorithmFactory {
     	Data[] data;
         Dictionary parameters;
         CIShellContext ciContext;
+        LogService logger;
         
         public NETValidationAlg(Data[] dm, Dictionary parameters, CIShellContext context) {
         	this.data = dm;
             this.parameters = parameters;
             this.ciContext = context;
+            logger = (LogService)ciContext.getService(LogService.class.getName());
         }
 
         public Data[] execute() {
-	    	GUIBuilderService guiBuilder = 
-	    			(GUIBuilderService)ciContext.getService(GUIBuilderService.class.getName());
+	    
 
 			String fileHandler = (String) data[0].getData();
 			File inData = new File(fileHandler);
@@ -75,9 +76,7 @@ public class NETValidation implements AlgorithmFactory {
 
 				}else {
 					System.out.println(">>>wrong format: "+validator.getErrorMessages());
-					guiBuilder.showError("Bad NET Format", 
-							"Sorry, your file does not comply with the NET File Format Specification.",
-							"Sorry, your file does not comply with the NET File Format Specification.\n"+
+					logger.log(LogService.LOG_ERROR,"Sorry, your file does not comply with the NET File Format Specification.\n"+
 							"Please review the latest NET File Format Specification at "+
 							"http://vlado.fmf.uni-lj.si/pub/networks/pajek/doc/pajekman.pdf, and update your file. \n"+
 							validator.getErrorMessages());
@@ -85,11 +84,10 @@ public class NETValidation implements AlgorithmFactory {
 				}
 
 			}catch (FileNotFoundException e){
-				guiBuilder.showError("File Not Found Exception", 
-						"Got an File Not Found Exception",e);	
+				logger.log(LogService.LOG_ERROR, "Got a File Not Found Exception",e);	
 				return null;
 			}catch (IOException ioe){
-				guiBuilder.showError("IOException", 
+				logger.log(LogService.LOG_ERROR,
 						"Got an IOException",ioe);
 				return null;
 			}
