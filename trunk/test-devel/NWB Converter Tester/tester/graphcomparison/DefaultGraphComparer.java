@@ -10,8 +10,6 @@ import prefuse.data.Graph;
 import prefuse.data.Node;
 import prefuse.data.Table;
 import prefuse.data.Tuple;
-import prefuse.data.expression.parser.ExpressionParser;
-import prefuse.data.util.Sort;
 import prefuse.util.collections.IntIterator;
 
 /**
@@ -21,19 +19,23 @@ import prefuse.util.collections.IntIterator;
  */
 public class DefaultGraphComparer implements GraphComparer {
 
+	RunningLog log;
+	
 	public ComparisonResult compare(Graph g1, Graph g2, boolean idsPreserved) {
+		log = new RunningLog();
+		
 		if (g1 == null || g2 == null) {
 			return new ComparisonResult(false, "At least one of the provided" +
-					" graphs was null.");
+					" graphs was null.", log);
 		}
 		//basic tests	
 		if (! isSameDirectedness(g1, g2)) {
 			return new ComparisonResult(false, "Directedness not of the " +
-					"same type.");
+					"same type.", log);
 		} else if (! isEqualNodeCount(g1, g2)) {
-			return new ComparisonResult(false, "Node counts not equal.");
+			return new ComparisonResult(false, "Node counts not equal.", log);
 		} else if (! isEqualEdgeCount(g1, g2)) {
-			return new ComparisonResult(false, "Edge counts not equal.");
+			return new ComparisonResult(false, "Edge counts not equal.", log);
 		}
 		
 		//complex tests		
@@ -41,7 +43,7 @@ public class DefaultGraphComparer implements GraphComparer {
 			//tests for when graph IDs are preserved across the conversion	
 			if (! areEqual(g1, g2,  true))  {
 				return new ComparisonResult(false, "Graphs do not have the " +
-				"same contents.");	
+				"same contents.", log);	
 				
 			}
 		} else {
@@ -49,7 +51,7 @@ public class DefaultGraphComparer implements GraphComparer {
 			if (! nodeDegreeFrequenciesEqual(g1, g2))
 				return new ComparisonResult(false, "The number of nodes" +
 						"with a certain number of edges is not the same in" +
-						"both graphs.");		
+						"both graphs.", log);		
 			
 			/*
 			 * TODO: we could really use a graph isomorphism comparison right
@@ -59,15 +61,15 @@ public class DefaultGraphComparer implements GraphComparer {
 			
 			if (! haveSameNodeAttributes(g1, g2))
 				return new ComparisonResult(false, "Node attributes are not " +
-						"the same in both graphs.");
+						"the same in both graphs.", log);
 			
 			if (! haveSameEdgeAttributes(g1, g2)) 
 				return new ComparisonResult(false, "Edge attributes are not " +
-						"the same in both graphs.");
+						"the same in both graphs.", log);
 		}
 		
 		//all tests passed
-		return new ComparisonResult(true, "All tests succeeded.");
+		return new ComparisonResult(true, "All tests succeeded.", log);
 	}
 	
 	private boolean isSameDirectedness(Graph g1, Graph g2) {
@@ -165,32 +167,6 @@ public class DefaultGraphComparer implements GraphComparer {
 		return result;
 	}
 	
-	
-	
-	/**
-	 * Removes source and target columns from a copied version of the table.
-	 * 
-	 * Helper method for haveSameEdgeAttributes
-	 * 
-	 * @param t the original table
-	 * @return a stripped copy of the original table
-	 */
-	private Table getStrippedEdgeTable(Table t) {
-		Table tCopy = copyTable(t);
-		tCopy.removeColumn(Graph.DEFAULT_SOURCE_KEY);
-		tCopy.removeColumn(Graph.DEFAULT_TARGET_KEY);
-		return tCopy;
-	}
-	
-	private Table getStrippedNodeTable(Graph g) {
-		Table tCopy = copyTable(g.getNodeTable());
-		String nodeKeyField = g.getNodeKeyField();
-		if (nodeKeyField != null) {
-			tCopy.removeColumn(nodeKeyField);
-		}
-		return tCopy;
-	}
-		
 	/*
 	 * These methods do what .equals() should do for their respective objects:
 	 * Actually compare the contents to see if they are .equals() to each
@@ -224,6 +200,12 @@ public class DefaultGraphComparer implements GraphComparer {
 		return true;
 	}
 	
+	private boolean areEqualWhenSorted(Table t1, Table t2) {	
+		boolean result = areEqual(GraphUtil.getSorted(t1),
+				GraphUtil.getSorted(t2));
+		return result;
+	}
+	
 	/*
 	 * Cares about the order of nodes and edges as well.
 	 */
@@ -244,9 +226,13 @@ public class DefaultGraphComparer implements GraphComparer {
 	}
 	
 	private boolean areEqual(Tuple tu1, Tuple tu2) {
-		if (tu1.getColumnCount() != tu2.getColumnCount()) 
+		if (tu1.getColumnCount() != tu2.getColumnCount()) {
+			log.append("Number of columns in tuples differ.");
+			log.append("First tuple: " + tu1);
+			log.append("Second tuple: " + tu2);
 			return false;
-		
+		}
+			
 		for (int ii = 0; ii < tu1.getColumnCount(); ii++) {
 			Object columnContents1 = tu1.get(ii);
 			Object columnContents2 = tu2.get(ii);
@@ -256,17 +242,17 @@ public class DefaultGraphComparer implements GraphComparer {
 				continue;
 			} else if (columnContents1 == null) {
 				//one is null and the other is not.
-				System.out.println("Bad pair of tuples!");
-				System.out.println(tu1 + " : " + tu2);
+				log.append("Bad pair of tuples!");
+				log.append(tu1 + " : " + tu2);
 				return false;
 			} else if (columnContents2 == null) {
 				//one is null and the other is not.
-				System.out.println("Bad pair of tuples!");
-				System.out.println(tu1 + " : " + tu2);
+				log.append("Bad pair of tuples!");
+				log.append(tu1 + " : " + tu2);
 				return false;
 			} else if (! tu1.get(ii).equals(tu2.get(ii))){
-				System.out.println("Bad pair of tuples!");
-				System.out.println(tu1 + " : " + tu2);
+				log.append("Bad pair of tuples!");
+				log.append(tu1 + " : " + tu2);
 				//neither are null, but they are still not equal.
 				return false;
 			}
@@ -275,67 +261,28 @@ public class DefaultGraphComparer implements GraphComparer {
 		//all column contents are equal.
 		return true;
 	}
-	
-	private boolean areEqualWhenSorted(Table t1, Table t2) {	
-		Sort t1Sort = new Sort(getColumnNames(t1));
-		/*
-		 * Predicates here are always true, because we don't want to remove 
-		 * any rows when we select. We only want to sort them.
-		 */
-		Table sortedT1 = t1.select(ExpressionParser.predicate("TRUE"), t1Sort);
-		
-		Sort t2Sort = new Sort(getColumnNames(t2));
-		Table sortedT2 = t2.select(ExpressionParser.predicate("TRUE"), t2Sort);
-		
-//		System.out.println("---sortedT1---");
-//		printTable(sortedT1);
-//		System.out.println("---sortedT2---");
-//		printTable(sortedT2);
-		IntIterator t1Iter = sortedT1.rows();
-		IntIterator t2Iter = sortedT2.rows();
-		
-		while (t1Iter.hasNext()) {
-			int t1Index = t1Iter.nextInt();
-			Tuple t1Tuple = sortedT1.getTuple(t1Index);
-			
-			int t2Index = t2Iter.nextInt();
-			Tuple t2Tuple = sortedT2.getTuple(t2Index);
-			if (! areEqual(t1Tuple, t2Tuple)) {
-				return false;
-			}
 
-		}
-		//every tuple has an identical tuple in the other table.
-		return true;
-	}
-	
-	//utility methods 
-	
-	private String[] getColumnNames(Table t) {
-		String[] columnNames = new String[t.getColumnCount()];
-		for (int ii = 0; ii < t.getColumnCount(); ii++) {
-			columnNames[ii] = t.getColumnName(ii);
-		}
-		return columnNames;
-	}
-		
-	private Table copyTable(Table t) {
-		Table tCopy = new Table();
-		tCopy.addColumns(t.getSchema());
-		
-		for (Iterator ii = t.tuples(); ii.hasNext();) {
-			Tuple tuple = (Tuple) ii.next();
-			tCopy.addTuple(tuple);
-		}
+	/**
+	 * Removes source and target columns from a copied version of the table.
+	 * 
+	 * Helper method for haveSameEdgeAttributes
+	 * 
+	 * @param t the original table
+	 * @return a stripped copy of the original table
+	 */
+	private Table getStrippedEdgeTable(Table t) {
+		Table tCopy = GraphUtil.copyTable(t);
+		tCopy.removeColumn(Graph.DEFAULT_SOURCE_KEY);
+		tCopy.removeColumn(Graph.DEFAULT_TARGET_KEY);
 		return tCopy;
 	}
 	
-	public static void printTable(Table t) {
-		Iterator ii = t.tuples();
-		while (ii.hasNext()) {
-			System.out.println((Tuple) ii.next());
+	private Table getStrippedNodeTable(Graph g) {
+		Table tCopy = GraphUtil.copyTable(g.getNodeTable());
+		String nodeKeyField = g.getNodeKeyField();
+		if (nodeKeyField != null) {
+			tCopy.removeColumn(nodeKeyField);
 		}
-	}
-	
-	
+		return tCopy;
+	}	
 }
