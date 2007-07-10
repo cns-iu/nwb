@@ -83,11 +83,11 @@ public class EdgeListValidatorFactory implements AlgorithmFactory {
 
 				} catch (FileNotFoundException e){
 					logger.log(org.osgi.service.log.LogService.LOG_ERROR, 
-							"File could not be found.",e);	
+							"Could not find the specified edge list file.",e);	
 					return null;
 				} catch (IOException ioe){
-					logger.log(org.osgi.service.log.LogService.LOG_ERROR, 
-							"IO Errors",ioe);
+					logger.log(LogService.LOG_ERROR, 
+							"IO Errors will reading the specified edge list file.",ioe);
 					return null;
 				} catch (edu.iu.nwb.converter.edgelist.EdgeListValidatorFactory.ValidateEdgeFile.EdgeFormat ef) {
 					//System.out.println(">>>wrong format: "+validator.getErrorMessages());

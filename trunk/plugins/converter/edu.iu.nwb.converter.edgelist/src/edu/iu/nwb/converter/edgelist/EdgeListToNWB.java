@@ -64,7 +64,7 @@ public class EdgeListToNWB implements Algorithm {
 		
 		try {
 			if (badFormat) {
-				logger.log(org.osgi.service.log.LogService.LOG_ERROR, 
+				logger.log(LogService.LOG_ERROR, 
 						"Sorry, your file does not comply with edge-list format specifications.\n"+
 						"Please review the latest edge-list format specification at "+
 						"https://nwb.slis.indiana.edu/community/?n=LoadData.Edgelist, and update your file. \n"
@@ -151,18 +151,14 @@ public class EdgeListToNWB implements Algorithm {
 
 
 		} catch (FileNotFoundException e) {
-			System.out.println(">>>> File not found! "+((File)inFile).getAbsolutePath()+"\n");
+			logger.log(LogService.LOG_ERROR,"Specified Edge list file not found! "+((File)inFile).getAbsolutePath()+"\n", e);
 			return null;
-		} catch (IOException e) {
-			System.out.println(">>>> IO Exception\n");
-			e.printStackTrace();
-			return null;
-		}
+		} 
 		File nwbFile = getTempFile();
 		try {
 			nwb = new BufferedWriter(new FileWriter(nwbFile));
 		} catch (IOException e) {
-			e.printStackTrace();
+			logger.log(LogService.LOG_ERROR,"Error writing from the specified edge list to the specified .nwb file.\n", e);
 			return null;
 		}
 		try {
@@ -178,7 +174,7 @@ public class EdgeListToNWB implements Algorithm {
 			// should there be an else clause here?
 			return new Data[] {new BasicData(nwbFile, "file:text/nwb")};
 		} catch (Exception e ) {
-			e.printStackTrace();
+			logger.log(LogService.LOG_ERROR, "Encountered an error while converting from edge list to .nwb", e);
 			return null;
 		}
 
