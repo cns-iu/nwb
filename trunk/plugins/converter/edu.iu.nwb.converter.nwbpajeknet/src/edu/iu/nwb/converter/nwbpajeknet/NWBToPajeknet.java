@@ -83,23 +83,23 @@ public class NWBToPajeknet implements Algorithm {
 						dm = new Data[] {new BasicData(outData, "file:application/pajek")};
 						return dm;
 					}else {
-						logger.log(LogService.LOG_ERROR,"Problem executing transformation from NWB to Pajek .net Output file was not created");
+						logger.log(LogService.LOG_ERROR, "Problem executing transformation from .nwb to Pajek .net Output file was not created.");
 						return null;
 					}
 				}else{
-					logger.log(LogService.LOG_ERROR,"Problem executing transformation from NWB to Pajek .net" + validator.getErrorMessages());
+					logger.log(LogService.LOG_ERROR, "Problem executing transformation from .nwb to Pajek .net" + validator.getErrorMessages());
 					return null;
 				}
 			}
 			catch (FileNotFoundException fnf){
-				logger.log(LogService.LOG_ERROR,"File Not Found Exception", fnf);
+				logger.log(LogService.LOG_ERROR, "The specified .nwb file could not be found.", fnf);
 			}
 			catch (IOException ioe){
-				logger.log(LogService.LOG_ERROR, "IOException", ioe);
+				logger.log(LogService.LOG_ERROR, "IO Errors while converting from .nwb to Pajek .net.", ioe);
 			}
 		}
 		else
-			logger.log(LogService.LOG_ERROR,"Unable to convert from NWB to Pajek .net because input data is not a file");
+			logger.log(LogService.LOG_ERROR, "Unable to convert from .nwb to Pajek .net because input data is not a file");
 		return null;
 	}
 
