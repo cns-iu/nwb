@@ -75,7 +75,7 @@ public class NETValidation implements AlgorithmFactory {
                 	return dm;
 
 				}else {
-					System.out.println(">>>wrong format: "+validator.getErrorMessages());
+					//System.out.println(">>>wrong format: "+validator.getErrorMessages());
 					logger.log(LogService.LOG_ERROR,"Sorry, your file does not comply with the NET File Format Specification.\n"+
 							"Please review the latest NET File Format Specification at "+
 							"http://vlado.fmf.uni-lj.si/pub/networks/pajek/doc/pajekman.pdf, and update your file. \n"+
@@ -84,11 +84,11 @@ public class NETValidation implements AlgorithmFactory {
 				}
 
 			}catch (FileNotFoundException e){
-				logger.log(LogService.LOG_ERROR, "Got a File Not Found Exception",e);	
+				logger.log(LogService.LOG_ERROR, "Could not find the Pajek .net file to validate.",e);	
 				return null;
 			}catch (IOException ioe){
 				logger.log(LogService.LOG_ERROR,
-						"Got an IOException",ioe);
+						"IO Errors while reading the specified Pajek .net file.",ioe);
 				return null;
 			}
         }
