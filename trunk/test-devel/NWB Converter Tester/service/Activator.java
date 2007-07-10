@@ -20,31 +20,10 @@ public class Activator implements BundleActivator{
 	public void start(BundleContext b){
 		this.b = b;
 		this.c = new LocalCIShellContext(b);
-		//System.out.println("Hello!");
-		//System.out.println(b.getBundles());
-		/*for(Bundle bn : b.getBundles()){
-
-			if(bn.getRegisteredServices() != null){
-				System.out.println(bn.getSymbolicName());
-				for(ServiceReference ref : bn.getRegisteredServices()){
-					System.out.println("\t"+ref);
-				}
-			}
-		}*/
-		while(configFile == null){
 		startUp();
-		try{
-		processConfigurationFile(configFile);
-		configFile = null;
-		ct = null;
-		}
-		catch(FileNotFoundException ex){
-			System.out.println("Could not find the specified file");
-			configFile = null;
-		}
 		}
 
-	}
+	
 
 	public void stop(BundleContext b){
 		System.out.println("Goodbye!");
@@ -75,27 +54,26 @@ public class Activator implements BundleActivator{
 		}
 	}
 
-	public boolean startUp(){
+	public void startUp(){
 		Scanner in = new Scanner(System.in);
-		while(this.configFile == null){
+		for(;;){
 			System.out.println("Welcome to NWB's Converter Tester\n"+
 					"Please enter the name of a configuration file \n"+ 
 			"or a directory of configuration files (Q/q to quit): ");
 			String s = in.nextLine();
 			if(s.trim().equalsIgnoreCase("Q"))
-				return false;
+				break;
 			try{
 				configFile = new File(s);
+				processConfigurationFile(configFile);
 			}
 			catch (NullPointerException ex){
-				System.out.println("Invalid file name");
-				configFile = null;
+				System.out.println("Invalid file name");;
 			}
-
-
+			catch(FileNotFoundException fnfe){
+				System.out.println("Could not find the specified configuration file");
+			}
 		}
-
-		return true;
 	}
 
 }
