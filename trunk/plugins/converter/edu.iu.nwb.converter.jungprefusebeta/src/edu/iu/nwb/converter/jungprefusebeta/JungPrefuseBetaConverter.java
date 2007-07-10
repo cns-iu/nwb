@@ -18,9 +18,9 @@ import edu.uci.ics.jung.utils.UserDataContainer;
 
 public class JungPrefuseBetaConverter {
     
-	private static prefuse.data.Graph prefuseGraph;
+	private prefuse.data.Graph prefuseGraph;
 	
-    public static prefuse.data.Graph getPrefuseGraph( Graph jungGraph ) {
+    public prefuse.data.Graph getPrefuseGraph( Graph jungGraph ) {
         Map jungToPrefuseVertices = new HashMap();
         prefuseGraph = new prefuse.data.Graph(PredicateUtils.enforcesDirected(jungGraph));
         
@@ -44,7 +44,7 @@ public class JungPrefuseBetaConverter {
     }
 
 
-    private static void merge(UserDataContainer jungContainer, Tuple prefuseTuple) {
+    private void merge(UserDataContainer jungContainer, Tuple prefuseTuple) {
 		
 		Iterator keys = jungContainer.getUserDatumKeyIterator();
 		

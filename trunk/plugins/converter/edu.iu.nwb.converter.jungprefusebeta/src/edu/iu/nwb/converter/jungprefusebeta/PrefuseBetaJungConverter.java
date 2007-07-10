@@ -24,9 +24,9 @@ import edu.uci.ics.jung.utils.UserDataContainer;
 
 public class PrefuseBetaJungConverter {
 
-	private static Graph jungGraph;
+	private Graph jungGraph;
 	
-	public static Graph getJungGraph(prefuse.data.Graph prefuseGraph) {
+	public Graph getJungGraph(prefuse.data.Graph prefuseGraph) {
 		Map prefuseToJungVertices = new HashMap();
         boolean directed = prefuseGraph.isDirected();
         Collection constraints = new HashSet();
@@ -68,7 +68,7 @@ public class PrefuseBetaJungConverter {
         return jungGraph;
 	}
 	
-	private static void merge(Tuple prefuseTuple, UserDataContainer jungContainer) {
+	private void merge(Tuple prefuseTuple, UserDataContainer jungContainer) {
 		
 		Schema schema = prefuseTuple.getSchema();
 		int columns = schema.getColumnCount();

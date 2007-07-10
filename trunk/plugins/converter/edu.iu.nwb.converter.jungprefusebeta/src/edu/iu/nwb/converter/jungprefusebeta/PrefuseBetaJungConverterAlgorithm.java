@@ -24,7 +24,7 @@ public class PrefuseBetaJungConverterAlgorithm implements Algorithm, AlgorithmPr
 
 	public Data[] execute() {
 		prefuse.data.Graph prefuseGraph = (prefuse.data.Graph) data[0].getData();
-		Graph jungGraph = PrefuseBetaJungConverter.getJungGraph(prefuseGraph);
+		Graph jungGraph = new PrefuseBetaJungConverter().getJungGraph(prefuseGraph);
 		Data dm = new BasicData(data[0].getMetaData(), jungGraph, Graph.class.getName());
         
         return new Data[]{dm};
