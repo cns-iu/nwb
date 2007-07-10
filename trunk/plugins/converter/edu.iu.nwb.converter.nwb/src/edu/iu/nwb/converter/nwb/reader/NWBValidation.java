@@ -82,12 +82,12 @@ public class NWBValidation implements AlgorithmFactory {
 					}
 
 				}catch (FileNotFoundException e){
-					logger.log(org.osgi.service.log.LogService.LOG_ERROR, 
-							"Unable to find the given file.",e);	
+					logger.log(LogService.LOG_ERROR, 
+							"Unable to find the specified .nwb file for validation.",e);	
 					return null;
 				}catch (IOException ioe){
 					logger.log(org.osgi.service.log.LogService.LOG_ERROR, 
-							"IO Errors while converting.",ioe);
+							"IO errors while validating the specified .nwb file.",ioe);
 					return null;
 				}
 	        }

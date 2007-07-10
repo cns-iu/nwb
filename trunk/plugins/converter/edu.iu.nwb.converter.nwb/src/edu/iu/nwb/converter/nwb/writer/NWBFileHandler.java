@@ -81,11 +81,11 @@ public class NWBFileHandler implements AlgorithmFactory {
 
 				}catch (FileNotFoundException e){
 					logger.log(LogService.LOG_ERROR, 
-							"Got an File Not Found Exception",e);	
+							"Could not find the specified .nwb file to write.",e);	
 					return null;
 				}catch (IOException ioe){
 					logger.log(LogService.LOG_ERROR, 
-							"Got an IOException",ioe);
+							"Errors writing the specified .nwb file.",ioe);
 					return null;
 				}        		        		
         	}
