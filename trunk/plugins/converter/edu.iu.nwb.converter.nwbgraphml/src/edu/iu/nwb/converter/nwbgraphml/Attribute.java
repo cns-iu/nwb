@@ -47,7 +47,11 @@ public class Attribute {
 	}
 	public void setType(String type)
 	{
-		 this.type = type;
+		if("double".equals(type)) {
+			this.type = "float";
+		} else {
+			this.type = type;
+		}
 	}
 	
 	public boolean isForNode() {
