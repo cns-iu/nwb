@@ -63,7 +63,7 @@ public class JungGraphMLWriter implements Algorithm {
     		return new Data[]{new BasicData(tempFile, "file:text/graphml+xml")};
     		
     	}catch (FileNotFoundException exception){
-    		logger.log(LogService.LOG_ERROR, "Unable to create the temp file for conversion.\n", exception);
+    		logger.log(LogService.LOG_ERROR, "Unable to create the temp file for writing to GraphML.\n", exception);
     		return null;
     	}catch (Exception e){    	
 	    	try{
@@ -110,10 +110,11 @@ public class JungGraphMLWriter implements Algorithm {
 		    	reader.close();
 				out.close();
 	    	}catch (FileNotFoundException fnfe){
-				logger.log(org.osgi.service.log.LogService.LOG_ERROR, "The given file cannot be found\n",fnfe );
+	    		logger.log(LogService.LOG_ERROR, "An Exception occured in the processing of the specified file." +
+	    				"Unable to create the temp file for creating the default graphML file.\n", fnfe);
 				return null;
 			}catch (IOException ioe){
-				logger.log(org.osgi.service.log.LogService.LOG_ERROR, "Encountered an IO exception in the conversion.\n", ioe);
+				logger.log(org.osgi.service.log.LogService.LOG_ERROR, "IO Errors in writing to GraphML.\n", ioe);
 				return null;
 			}    	
 	    	

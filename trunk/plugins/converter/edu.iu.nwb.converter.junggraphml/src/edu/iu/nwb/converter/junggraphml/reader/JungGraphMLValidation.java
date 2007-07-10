@@ -1,21 +1,21 @@
 package edu.iu.nwb.converter.junggraphml.reader;
 
-import java.util.Dictionary;
 import java.io.File;
-import java.io.FileReader;
 import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.util.Dictionary;
 
 import org.cishell.framework.CIShellContext;
-import org.cishell.framework.algorithm.AlgorithmFactory;
 import org.cishell.framework.algorithm.Algorithm;
+import org.cishell.framework.algorithm.AlgorithmFactory;
+import org.cishell.framework.data.BasicData;
 import org.cishell.framework.data.Data;
 import org.cishell.framework.data.DataProperty;
-import org.cishell.framework.data.BasicData;
-
 import org.osgi.service.component.ComponentContext;
+import org.osgi.service.log.LogService;
 import org.osgi.service.metatype.MetaTypeProvider;
 
-import edu.uci.ics.jung.io.GraphMLFile; 
+import edu.uci.ics.jung.io.GraphMLFile;
 
 /**
  * @author Weixia(Bonnie) Huang 
@@ -35,9 +35,11 @@ public class JungGraphMLValidation implements AlgorithmFactory {
 
     public class JungGraphMLValidationAlg implements Algorithm {
 	    private Data[] data;
+	    private LogService logger;
 	    
 	    public JungGraphMLValidationAlg(Data[] data, CIShellContext context) {
 	        this.data = data;
+	        this.logger = (LogService)context.getService(LogService.class.getName());
 	    }
 
 		public Data[] execute() {
@@ -51,8 +53,10 @@ public class JungGraphMLValidation implements AlgorithmFactory {
                 
 				return dm;
 			}catch (FileNotFoundException exception){
+				logger.log(LogService.LOG_ERROR, "Could not find the specified GraphML file for validation.", exception);
 				return null;
 			}catch (Exception e){
+				logger.log(LogService.LOG_ERROR, "Something went wrong while validating the specified GraphML file.", e);
 				return null;	
 			}
 			

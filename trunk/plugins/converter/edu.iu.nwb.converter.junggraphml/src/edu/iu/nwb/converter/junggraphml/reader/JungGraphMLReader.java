@@ -42,7 +42,7 @@ public class JungGraphMLReader implements Algorithm {
             
     		return dm;
     	}catch (FileNotFoundException exception){
-    		logger.log(LogService.LOG_ERROR, "FileNotFoundException", exception);
+    		logger.log(LogService.LOG_ERROR, "The specified GraphML file could not be found.", exception);
     		return null;
     	}
     	
