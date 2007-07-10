@@ -78,10 +78,10 @@ public class NWBToGraphML implements Algorithm {
 					return null;
 				}
 			} catch (FileNotFoundException e) {
-				logger.log(LogService.LOG_ERROR, "Unable to find the given file.", e);
+				logger.log(LogService.LOG_ERROR, "Unable to find the given .nwb file.", e);
 				return null;
 			} catch (IOException ioe) {
-				logger.log(LogService.LOG_ERROR, "Got an IOException", ioe);
+				logger.log(LogService.LOG_ERROR, "IO Errors while writing from .nwb to graphML", ioe);
 				return null;
 			}
 		}else {
@@ -114,10 +114,10 @@ public class NWBToGraphML implements Algorithm {
     		return graphml;
     	}catch (FileNotFoundException e){
 			logger.log(LogService.LOG_ERROR, 
-					"Got an File Not Found Exception",e);
+					"Got a File Not Found Exception while converting from .nwb to graphML.",e);
 			return null;
 		}catch (IOException ioe){
-			logger.log(LogService.LOG_ERROR, "IOException",ioe);
+			logger.log(LogService.LOG_ERROR, "IO Errors while converting from .nwb to graphML",ioe);
 			return null;
 		} 	
     	
