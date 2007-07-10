@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<metatype:MetaData xmlns:metatype="http://www.osgi.org/xmlns/metatype/v1.0.0">
+	<OCD name="CSV Model" id="edu.iu.nwb.database.connect.Connection.OCD"
+		 description=" ">
+		<AD name="JDBC Driver" id="driver" type="String" description="Which JDBC driver should be used?" default="org.apache.derby.jdbc.EmbeddedDriver"/>
+		<AD name="Connection URL" id="url" type="String" description=" " default="jdbc:derby:testDB;create=true"/>
+		<AD name="Username" id="username" type="String" description=" " default=""/>
+		<AD name="Password" id="password" type="String" description=" " default=""/>
+	</OCD>
+	<Designate pid="edu.iu.nwb.database.connect.Connection">
+		<Object ocdref="edu.iu.nwb.database.connect.Connection.OCD" />
+	</Designate>
+</metatype:MetaData>
