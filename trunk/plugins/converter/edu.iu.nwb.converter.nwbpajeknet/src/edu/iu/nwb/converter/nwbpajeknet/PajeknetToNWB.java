@@ -74,19 +74,19 @@ public class PajeknetToNWB implements Algorithm {
 						dm = new Data[] {new BasicData(outData, "file:text/nwb")};
 						return dm;
 					}else {
-						logger.log(LogService.LOG_ERROR, "Problem executing transformation from Pajek .net to NWB. Output file was not created");
+						logger.log(LogService.LOG_ERROR, "Problem executing conversion from Pajek .net to .nwb. Output file was not created");
 						return null;
 					}
 				}else{
-					logger.log(LogService.LOG_ERROR,"Problem executing transformation from Pajek .net to NWB" + validator.getErrorMessages());
+					logger.log(LogService.LOG_ERROR,"Problem executing conversion from Pajek .net to .nwb" + validator.getErrorMessages());
 					return null;
 				}
 		}
 			catch (FileNotFoundException fnf){
-			logger.log(LogService.LOG_ERROR, "File Not Found Exception", fnf);
+			logger.log(LogService.LOG_ERROR, "Could not find the specified Pajek .net file.", fnf);
 		}
 			catch (IOException ioe){
-				logger.log(LogService.LOG_ERROR, "IOException", ioe);
+				logger.log(LogService.LOG_ERROR, "IO Error while converting from Pajek .net to nwb.", ioe);
 			}
 		}
 		else
@@ -128,10 +128,10 @@ public class PajeknetToNWB implements Algorithm {
 			out.close();
 			return nwb;
 		}catch (FileNotFoundException e){
-			logger.log(LogService.LOG_ERROR, "Got a File Not Found Exception", e);
+			logger.log(LogService.LOG_ERROR, "Unable to find the temporary .nwb file.", e);
 			return null;
 		}catch (IOException ioe){
-			logger.log(LogService.LOG_ERROR, "Got an IOException", ioe);
+			logger.log(LogService.LOG_ERROR, "IO Errors while writing to the temporary .nwb file.", ioe);
 			return null;
 		}
 	}

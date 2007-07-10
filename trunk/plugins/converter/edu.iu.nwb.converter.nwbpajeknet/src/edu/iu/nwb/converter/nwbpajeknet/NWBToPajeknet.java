@@ -135,10 +135,10 @@ public class NWBToPajeknet implements Algorithm {
 
 			return net;
 		}catch (FileNotFoundException e){
-			logger.log(LogService.LOG_ERROR, "Got a File Not Found Exception", e);
+			logger.log(LogService.LOG_ERROR, "Could not create the temp file for writing from .nwb to Pajek .net.", e);
 			return null;
 		}catch (IOException ioe){
-			logger.log(LogService.LOG_ERROR, "Got an IOException", ioe);
+			logger.log(LogService.LOG_ERROR, "IO Errors while writing from .nwb to Pajek .net.", ioe);
 			return null;
 		}
 	}
