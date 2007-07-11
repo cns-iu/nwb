@@ -44,13 +44,13 @@ public class PrefuseTreeMLReader implements Algorithm {
             dm[0].getMetaData().put(DataProperty.TYPE, DataProperty.NETWORK_TYPE);
     		return dm;
     	}catch (DataIOException dioe){
-    		logger.log(LogService.LOG_ERROR, "DataIOException", dioe);
+    		logger.log(LogService.LOG_ERROR, "A Data IO error occured while reading the specified TreeML file.", dioe);
     		return null;
     	}catch (SecurityException exception){
-    		logger.log(LogService.LOG_ERROR, "SecurityException", exception);
+    		logger.log(LogService.LOG_ERROR, "A security error occured while reading the specified TreeML file.", exception);
     		return null;
     	}catch (FileNotFoundException e){
-    		logger.log(LogService.LOG_ERROR, "FileNotFoundException", e);
+    		logger.log(LogService.LOG_ERROR, "Could not find the specified TreeML file.", e);
     		return null;
     	}
     	

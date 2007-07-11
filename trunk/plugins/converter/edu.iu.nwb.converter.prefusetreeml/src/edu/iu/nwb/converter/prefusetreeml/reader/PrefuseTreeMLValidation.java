@@ -15,11 +15,10 @@ import org.cishell.framework.data.BasicData;
 import org.cishell.framework.data.Data;
 import org.cishell.framework.data.DataProperty;
 import org.osgi.service.component.ComponentContext;
-//import org.osgi.service.log.LogService;
+import org.osgi.service.log.LogService;
 import org.osgi.service.metatype.MetaTypeProvider;
 
 import prefuse.data.io.DataIOException;
-import prefuse.data.io.GraphMLReader;
 import prefuse.data.io.TreeMLReader;
 
 /**
@@ -42,11 +41,13 @@ public class PrefuseTreeMLValidation implements AlgorithmFactory {
         Data[] data;
         Dictionary parameters;
         CIShellContext context;
+        LogService logger;
         
         public PrefuseGraphMLValidationAlg(Data[] data, Dictionary parameters, CIShellContext context) {
             this.data = data;
             this.parameters = parameters;
             this.context = context;
+            logger = (LogService)context.getService(LogService.class.getName());
         }
 
         public Data[] execute() {
@@ -66,15 +67,15 @@ public class PrefuseTreeMLValidation implements AlgorithmFactory {
             		return null;
         		}
         	}catch (DataIOException dioe){
-//				logger.log(LogService.LOG_ERROR, "Might not be a GraphML file. Got the following exception");
+				logger.log(LogService.LOG_ERROR, "Data IO error while validating the specified TreeML file.", dioe);
 //        		logger.log(LogService.LOG_ERROR, "DataIOException", dioe);
         		return null;
         	}catch (SecurityException exception){
-//				logger.log(LogService.LOG_ERROR, "Might not be a GraphML file. Got the following exception");
+				logger.log(LogService.LOG_ERROR, "Security error while validating the specified TreeML file.", exception);
 //        		logger.log(LogService.LOG_ERROR, "SecurityException", exception);
         		return null;
         	}catch (FileNotFoundException e){
-//       		logger.log(LogService.LOG_ERROR, "FileNotFoundException", e);
+        		logger.log(LogService.LOG_ERROR, "Could not find the specified TreeML file.", e);
         		return null;
         	}catch (IOException ioe){
 //       		logger.log(LogService.LOG_ERROR, "IOException", ioe);
