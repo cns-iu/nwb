@@ -55,10 +55,10 @@ public class PrefuseGraphMLWriter implements Algorithm {
     						new BufferedOutputStream(new FileOutputStream(tempFile))) ;
     			return new Data[]{new BasicData(tempFile, "file:text/graphml+xml") };
     		}catch (DataIOException dioe){
-    	   		logger.log(LogService.LOG_ERROR, "DataIOException: " + dioe.toString(), dioe);
+    	   		logger.log(LogService.LOG_ERROR, "Data IO error while writing a GraphML file.", dioe);
     	   		return null;
     		}catch (IOException ioe){
-    	   		logger.log(LogService.LOG_ERROR, "IOException", ioe);
+    	   		logger.log(LogService.LOG_ERROR, "IO error while writing a GraphML file.", ioe);
     	   	 	return null;
     		}
     	}

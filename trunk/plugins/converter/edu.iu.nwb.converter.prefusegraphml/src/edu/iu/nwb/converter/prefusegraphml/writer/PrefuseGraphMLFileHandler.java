@@ -49,9 +49,9 @@ public class PrefuseGraphMLFileHandler implements AlgorithmFactory {
         	}
         	else {
         		if (!(inData instanceof File))        				
-        			logger.log(LogService.LOG_ERROR, "Expect a File, but the input data is "+inData.getClass().getName());
+        			logger.log(LogService.LOG_ERROR, "Expected a File, but the input data is "+inData.getClass().getName());
         		else if (!format.equals("file:text/graphml+xml"))
-        			logger.log(LogService.LOG_ERROR, "Expect file:text/graphml+xml, but the input format is "+format);
+        			logger.log(LogService.LOG_ERROR, "Expected file:text/graphml+xml, but the input format is "+format);
        			return null;
         	}     	
 
