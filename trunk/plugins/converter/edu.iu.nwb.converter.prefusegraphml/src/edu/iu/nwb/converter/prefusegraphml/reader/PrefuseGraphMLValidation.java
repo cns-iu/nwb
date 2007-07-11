@@ -65,21 +65,19 @@ public class PrefuseGraphMLValidation implements AlgorithmFactory {
         		}else 
             		return null;
         	}catch (DataIOException dioe){
-				logger.log(LogService.LOG_ERROR, "Might not be a GraphML file. Got the following exception");
-        		logger.log(LogService.LOG_ERROR, "DataIOException", dioe);
+				logger.log(LogService.LOG_ERROR, "Data IO error while validating the specified graphML file.", dioe);
         		dioe.printStackTrace();
         		return null;
         	}catch (SecurityException exception){
-				logger.log(LogService.LOG_ERROR, "Might not be a GraphML file. Got the following exception");
-        		logger.log(LogService.LOG_ERROR, "SecurityException", exception);
+				logger.log(LogService.LOG_ERROR, "Security error while validating the specified graphML file.", exception);
         		exception.printStackTrace();
         		return null;
         	}catch (FileNotFoundException e){
-        		logger.log(LogService.LOG_ERROR, "FileNotFoundException", e);
+        		logger.log(LogService.LOG_ERROR, "Could not find the specified graphML file for validation.", e);
         		e.printStackTrace();
         		return null;
         	}catch (IOException ioe){
-        		logger.log(LogService.LOG_ERROR, "IOException", ioe);
+        		logger.log(LogService.LOG_ERROR, "IO errors while validating the specified graphML", ioe);
         		ioe.printStackTrace();
         		return null;
         	}
