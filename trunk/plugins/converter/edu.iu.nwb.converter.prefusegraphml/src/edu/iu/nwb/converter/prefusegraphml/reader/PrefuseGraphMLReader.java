@@ -42,7 +42,7 @@ public class PrefuseGraphMLReader implements Algorithm {
             dm[0].getMetaData().put(DataProperty.TYPE, DataProperty.NETWORK_TYPE);
     		return dm;
     	}catch (DataIOException dioe){
-    		logger.log(LogService.LOG_ERROR, "An IO error occurred while reading the specified file into prefuse.data.Graph.", dioe);
+    		logger.log(LogService.LOG_ERROR, "A Data IO error occurred while reading the specified file into prefuse.data.Graph.", dioe);
     		return null;
     	}catch (SecurityException exception){
     		logger.log(LogService.LOG_ERROR, "A security violation occured while reading the specified file into prefuse.data.Graph.", exception);
