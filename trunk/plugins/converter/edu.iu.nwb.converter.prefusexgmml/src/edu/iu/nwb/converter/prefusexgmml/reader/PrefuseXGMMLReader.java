@@ -39,7 +39,7 @@ public class PrefuseXGMMLReader implements Algorithm {
             dm[0].getMetaData().put(DataProperty.TYPE, DataProperty.NETWORK_TYPE);
     		return dm;
     	}catch (IOException ioe){
-       		logger.log(LogService.LOG_ERROR, "IOException", ioe);       	 
+       		logger.log(LogService.LOG_ERROR, "IO errors while reading the specified XGMML file.", ioe);       	 
     		return null;
     	}
 

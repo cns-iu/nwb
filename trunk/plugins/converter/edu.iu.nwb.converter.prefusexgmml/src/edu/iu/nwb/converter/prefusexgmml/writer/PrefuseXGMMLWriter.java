@@ -40,7 +40,7 @@ public class PrefuseXGMMLWriter implements Algorithm {
 	    	tempFile = File.createTempFile("NWB-Session-", ".net", tempDir);
 	    		
 	    }catch (IOException e){
-	    	logger.log(LogService.LOG_ERROR, "Errors creating the temporary file to write the given XGMML file to.", e);
+	    	logger.log(LogService.LOG_ERROR, "Errors creating the temporary file to write the specified XGMML file to.", e);
 	   		tempFile = new File (tempPath+File.separator+"nwbTemp"+File.separator+"temp.nwb");
     	}
     	if (tempFile != null){
@@ -49,7 +49,7 @@ public class PrefuseXGMMLWriter implements Algorithm {
     						tempFile) ;
     			return new Data[]{new BasicData(tempFile, "file:text/xgmml+xml") };
     		}catch (IOException ioe){
-    			logger.log(LogService.LOG_ERROR, "Errors writing the XGMML file", ioe);
+    			logger.log(LogService.LOG_ERROR, "Errors while writing the specified XGMML file", ioe);
     			return null;
     		}
     	}

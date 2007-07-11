@@ -14,7 +14,7 @@ import org.cishell.framework.data.BasicData;
 import org.cishell.framework.data.Data;
 import org.cishell.framework.data.DataProperty;
 import org.osgi.service.component.ComponentContext;
-//import org.osgi.service.log.LogService;
+import org.osgi.service.log.LogService;
 import org.osgi.service.metatype.MetaTypeProvider;
 
 import edu.berkeley.guir.prefuse.graph.io.XMLGraphReader;
@@ -40,15 +40,17 @@ public class PrefuseXGMMLValidation implements AlgorithmFactory {
         Data[] data;
         Dictionary parameters;
         CIShellContext context;
+        LogService logger;
         
         public PrefuseXGMMLValidationAlg(Data[] data, Dictionary parameters, CIShellContext context) {
             this.data = data;
             this.parameters = parameters;
             this.context = context;
+           	logger = (LogService)context.getService(LogService.class.getName());
         }
 
         public Data[] execute() {
-//	    	LogService logger = (LogService)context.getService(LogService.class.getName());
+//	 
 
 			String fileHandler = (String) data[0].getData();
 			File inData = new File(fileHandler);
@@ -62,9 +64,10 @@ public class PrefuseXGMMLValidation implements AlgorithmFactory {
         		}else
         			return null;   
         	}catch (FileNotFoundException e){
+        		logger.log(LogService.LOG_ERROR, "Could not find the specified XGMML file for validation.",e );
         		return null;
         	}catch (IOException ioe){
-//				logger.log(LogService.LOG_ERROR, "Might not be a XGMML file. Got the following exception");
+        		logger.log(LogService.LOG_ERROR, "IO error while validating the specified XGMML file.", ioe);
 //        		logger.log(LogService.LOG_ERROR, "IOException", ioe);
         		return null;
         	}
