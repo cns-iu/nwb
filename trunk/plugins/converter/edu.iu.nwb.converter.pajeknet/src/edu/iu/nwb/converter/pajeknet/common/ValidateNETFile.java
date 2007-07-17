@@ -28,7 +28,7 @@ public class ValidateNETFile {
 	private boolean hasHeader_Vertices = false;
 	private boolean hasHeader_Edges = false;
 	private boolean hasHeader_Arcs = false;
-
+	private boolean isMatrix = false;
 	
 
 	private boolean isFileGood = true;
@@ -36,7 +36,7 @@ public class ValidateNETFile {
 	private boolean inEdgesSection = false;
 	private boolean inArcsSection = false;
 	private boolean hasTotalNumOfNodes = false;
-
+	private boolean skipNodeList;
 
 	private int totalNumOfNodes, currentLine;
 	private StringBuffer errorMessages = new StringBuffer();
@@ -45,6 +45,10 @@ public class ValidateNETFile {
 
 	public void validateNETFormat(File fileHandler) throws FileNotFoundException, IOException {
 		currentLine = 0;
+		String extension = fileHandler.getName();
+		extension = extension.substring(extension.lastIndexOf("."), extension.length()-1);
+		if(extension.equals("mat"))
+			this.isMatrix= true;
 		BufferedReader reader = 
 			new BufferedReader(new FileReader(fileHandler));
 		this.processFile(reader);
@@ -125,10 +129,12 @@ public ArrayList getEdges(){
 			this.inArcsSection = false;
 			this.vertices = new ArrayList();
 			StringTokenizer st= new StringTokenizer(s);
+			//System.out.println(s);
 			if (st.countTokens()>1){
 				st.nextToken();
 				//*****If it is not an integer...
 				this.totalNumOfNodes = new Integer(st.nextToken()).intValue();
+				//System.out.println(this.totalNumOfNodes);
 				this.hasTotalNumOfNodes = true;
 			}
 			else {
@@ -159,6 +165,8 @@ public ArrayList getEdges(){
 			inVerticesSection = false;
 			inEdgesSection = false;
 			this.arcs = new ArrayList();
+			if(this.vertices.isEmpty())
+				this.skipNodeList = true;
 			return true;
 		}
 		return false;
@@ -181,6 +189,8 @@ public ArrayList getEdges(){
 			inVerticesSection = false;
 			inEdgesSection = true;
 			this.edges = new ArrayList();
+			if(this.vertices.isEmpty())
+				this.skipNodeList = true;
 			return true;
 		}
 
@@ -299,34 +309,41 @@ public ArrayList getEdges(){
 
 				continue;
 			}
-
-			if (isFileGood){
-				this.checkFile();			
-			}
+			
 			line = reader.readLine();
 		}
+		if (isFileGood){
+			this.checkFile();			
+		}
+		
 	}
 
 	public void checkFile(){
 		if (!this.hasHeader_Vertices){
 			this.isFileGood = false;
 			this.errorMessages.append("*The file does not specify the Vertex header.\n\n");
-		}/*else if (!hasTotalNumOfNodes && skipNodeList){
+		}else if (!hasTotalNumOfNodes && skipNodeList){
 			this.isFileGood = false;
 			this.errorMessages.append("*The file does not specify the total number of vertices and "+
 			"does not list all vertices.\n\n");
-		}*/else if (!this.hasHeader_Arcs && !this.hasHeader_Edges) {
+		}else if (!this.hasHeader_Arcs && !this.hasHeader_Edges) {
 			isFileGood = false;				
-		} 
-		/*else if (this.hasTotalNumOfNodes && this.skipNodeList){
-			NETAttribute netAttr = new NETAttribute
-			(NETFileProperty.ATTRIBUTE_ID, NETFileProperty.TYPE_INT);
-			
-			this.vertexAttrList.put(netAttr.getAttrName(),netAttr.getDataType());
-			netAttr = new NETAttribute("label", NETFileProperty.TYPE_STRING);
-			this.vertexAttrList.put(netAttr.getAttrName(), netAttr.getDataType());
-			
-		}	*/
+		}
+		else if (this.hasTotalNumOfNodes && this.skipNodeList){
+			for(int i = 0; i < this.totalNumOfNodes; i++){
+				String s = (i+1) + " \"" + (i+1) + "\"";
+				try{
+					NETVertex nv = new NETVertex(s);
+				//	System.out.println(nv);
+				this.vertices.add(nv);
+				}
+				catch(Exception e){
+					e.printStackTrace();
+					isFileGood = false;
+				}
+			}
+		}
+	
 	}
 
 	
