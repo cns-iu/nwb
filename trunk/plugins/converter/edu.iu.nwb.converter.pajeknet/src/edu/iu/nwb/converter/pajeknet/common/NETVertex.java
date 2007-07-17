@@ -115,9 +115,9 @@ public class NETVertex {
 			//	System.out.println("!!"+s+"!!");
 				if((NETFileFunctions.isInList(s,
 						NETFileShape.ATTRIBUTE_SHAPE_LIST) 
-						|| (NETFileFunctions.isInList((String) qs.peek(),
+						|| (NETFileFunctions.isInList(s,
 								NETFileParameter.VERTEX_NUMBER_PARAMETER_LIST)) 
-								|| (NETFileFunctions.isInList((String) qs.peek(),
+								|| (NETFileFunctions.isInList(s,
 										NETFileParameter.VERTEX_STRING_PARAMETER_LIST)))){
 					break;
 				}
@@ -200,7 +200,7 @@ public class NETVertex {
 			else if(s1.equalsIgnoreCase(NETFileParameter.PARAMETER_Q)){
 				this.setDiamondRatio(s2);
 			}
-			else if(s1.equalsIgnoreCase(NETFileParameter.PARAMETER_IC)){
+			else if(s1.equalsIgnoreCase(NETFileParameter.PARAMETER_IC) || s1.equalsIgnoreCase(NETFileParameter.PARAMETER_COLOR)){
 				this.setInternalColor(s2);
 			}
 			else if(s1.equalsIgnoreCase(NETFileParameter.PARAMETER_BC)){
@@ -227,6 +227,8 @@ public class NETVertex {
 			else if(s1.equalsIgnoreCase(NETFileParameter.PARAMETER_LR)){
 				this.setLabelRadius(s2);
 			}
+
+			
 			else if(s1.startsWith(NETFileProperty.PREFIX_COMMENTS)){
 				qs.clear();
 				break;
