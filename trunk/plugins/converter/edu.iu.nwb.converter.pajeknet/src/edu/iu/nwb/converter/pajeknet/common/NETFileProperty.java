@@ -15,8 +15,9 @@ public class NETFileProperty {
     public static final String HEADER_VERTICES = PRESERVED_STAR+"vertices";     
     public static final String HEADER_EDGES = PRESERVED_STAR+"edges";
     public static final String HEADER_ARCS = PRESERVED_STAR+"arcs";
+    public static final String HEADER_MATRIX = PRESERVED_STAR+"matrix";
     
-    public static final String PREFIX_COMMENTS ="//";
+    public static final String PREFIX_COMMENTS ="%";
     public static final String ATTRIBUTE_ID = "id";
     public static final String ATTRIBUTE_LABEL = "label";
     public static final String ATTRIBUTE_SOURCE = "source";
@@ -31,7 +32,8 @@ public class NETFileProperty {
 //    public static final String HEADER_NODE_ATTRIBUTES = "*NodeAttributes";
 //    public static final String HEADER_EDGE_ATTRIBUTES = "*EdgeAttributes";
    
-    public static final String NET_MIME_TYPE = "file:application/pajek";
+    public static final String NET_MIME_TYPE = "file:application/pajeknet";
     public static final String NET_FILE_TYPE = "file-ext:net";
+   // public static final String MAT_FILE_TYPE = "file-ext:net";
     
 }

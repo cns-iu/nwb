@@ -28,13 +28,14 @@ public class ValidateNETFile {
 	private boolean hasHeader_Vertices = false;
 	private boolean hasHeader_Edges = false;
 	private boolean hasHeader_Arcs = false;
-	private boolean isMatrix = false;
 	
 
 	private boolean isFileGood = true;
 	private boolean inVerticesSection = false;
 	private boolean inEdgesSection = false;
 	private boolean inArcsSection = false;
+
+
 	private boolean hasTotalNumOfNodes = false;
 	private boolean skipNodeList;
 
@@ -45,10 +46,11 @@ public class ValidateNETFile {
 
 	public void validateNETFormat(File fileHandler) throws FileNotFoundException, IOException {
 		currentLine = 0;
+		totalNumOfNodes = 0;
 		String extension = fileHandler.getName();
 		extension = extension.substring(extension.lastIndexOf("."), extension.length()-1);
-		if(extension.equals("mat"))
-			this.isMatrix= true;
+	
+		
 		BufferedReader reader = 
 			new BufferedReader(new FileReader(fileHandler));
 		this.processFile(reader);
@@ -95,16 +97,16 @@ public class ValidateNETFile {
 	public boolean getHasTotalNumOfNodes (){
 		return hasTotalNumOfNodes;
 	}
-	
-public ArrayList getVertices(){
-	return this.vertices;
-}
-public ArrayList getArcs(){
-	return this.arcs;
-}
-public ArrayList getEdges(){
-	return this.edges;
-}
+
+	public ArrayList getVertices(){
+		return this.vertices;
+	}
+	public ArrayList getArcs(){
+		return this.arcs;
+	}
+	public ArrayList getEdges(){
+		return this.edges;
+	}
 
 
 	/*
@@ -127,6 +129,7 @@ public ArrayList getEdges(){
 			this.inVerticesSection = true;
 			this.inEdgesSection = false;
 			this.inArcsSection = false;
+		
 			this.vertices = new ArrayList();
 			StringTokenizer st= new StringTokenizer(s);
 			//System.out.println(s);
@@ -164,6 +167,7 @@ public ArrayList getEdges(){
 			inArcsSection = true;
 			inVerticesSection = false;
 			inEdgesSection = false;
+		
 			this.arcs = new ArrayList();
 			if(this.vertices.isEmpty())
 				this.skipNodeList = true;
@@ -171,6 +175,8 @@ public ArrayList getEdges(){
 		}
 		return false;
 	}
+
+
 
 	/*
 	 * validateEdgeHeader
@@ -187,6 +193,7 @@ public ArrayList getEdges(){
 			hasHeader_Edges = true;
 			inArcsSection = false;
 			inVerticesSection = false;
+			
 			inEdgesSection = true;
 			this.edges = new ArrayList();
 			if(this.vertices.isEmpty())
@@ -196,6 +203,7 @@ public ArrayList getEdges(){
 
 		return false;
 	}
+
 
 	/*
 	 * 
@@ -213,49 +221,88 @@ public ArrayList getEdges(){
 
 	public NETVertex processVertices(String s){
 		NETVertex nv = null;
-				try{
-					nv = new NETVertex(s);
-				//	System.out.println(nv);
-			
-				}
-				catch (NumberFormatException nfe){
-					isFileGood = false;
-					errorMessages.append("*Wrong NET format at line "+currentLine+".\n"+
-					"Node id must be an integer and greater than 0.\n\n");
-				}
-				catch (Exception e){
-					isFileGood = false;
-					errorMessages.append("*Wrong NET format at line "+currentLine+".\n"+
-							e.toString()+"\n\n");
-				}
-			
-			return nv;
+		try{
+			nv = new NETVertex(s);
+			//	System.out.println(nv);
+
 		}
-	
+		catch (NumberFormatException nfe){
+			isFileGood = false;
+			errorMessages.append("*Wrong NET format at line "+currentLine+".\n"+
+			"Node id must be an integer and greater than 0.\n\n");
+		}
+		catch (Exception e){
+			isFileGood = false;
+			errorMessages.append("*Wrong NET format at line "+currentLine+".\n"+
+					e.toString()+"\n\n");
+		}
+
+		return nv;
+	}
+
+	public void processMatrix(BufferedReader br, int lineNumber){
+
+		String errorMessage;
+		int internalLineNumber = 0;
+		try{
+			for(int i = 0; i < this.totalNumOfNodes; i++){
+				String[] connections = NETFileFunctions.processTokens(br.readLine());
+				if(connections.length != this.totalNumOfNodes){
+					this.isFileGood = false;
+					errorMessage = "The connection matrix does not match the number of vertices. There are" +
+					this.totalNumOfNodes + " vertices, and the matrix specifies " + connections.length + " connections";
+					errorMessages.append(errorMessage);
+					break;
+				}
+				for(int j = 0; j < connections.length; j++){
+					float f = NETFileFunctions.asAFloat(connections[j]);
+					if(f > 0){
+						String s = new Integer(i+1).toString() + " " + new Integer(j+1).toString() + " " +
+						connections[j];
+						this.arcs.add(new NETArcsnEdges(s));
+					}
+				}
+				lineNumber++;
+				internalLineNumber++;
+			}
+		}catch(IOException ex){
+			isFileGood = false;
+			errorMessage = "Error reading connection matrix at line: " + lineNumber +
+			". Chances are there are not enough rows." +" Read " + internalLineNumber + 
+			" lines, but expected to read " + this.totalNumOfNodes + " lines.";
+			errorMessages.append(errorMessage);
+			ex.printStackTrace();
+		}catch(Exception ex){
+			isFileGood = false;
+			errorMessages.append(ex.getMessage());
+			ex.printStackTrace();
+		}
+	}
+
 	public NETArcsnEdges processArcsnEdges(String s){
 		NETArcsnEdges nae = null;
-	
-	
-			try{
-				nae = new NETArcsnEdges(s);
-				
-				//System.out.println(nae);
-		
-			}
-			catch (NumberFormatException nfe){
-				isFileGood = false;
-				errorMessages.append("*Wrong NET format at line "+currentLine+".\n"+
-				"Node id must be an integer and greater than 0.\n\n");
-			}
-			catch (Exception e){
-				isFileGood = false;
-				errorMessages.append("*Wrong NET format at line "+currentLine+".\n"+
-						e.toString()+"\n\n");
-			}
-		
 
-			return nae;
-		
+
+		try{
+			nae = new NETArcsnEdges(s);
+
+			//System.out.println(nae);
+
+		}
+		catch (NumberFormatException nfe){
+			isFileGood = false;
+			errorMessages.append("*Wrong NET format at line "+currentLine+".\n"+
+			"Node id must be an integer and greater than 0.\n\n");
+		}
+		catch (Exception e){
+			isFileGood = false;
+			errorMessages.append("*Wrong NET format at line "+currentLine+".\n"+
+					e.toString()+"\n\n");
+		}
+
+
+		return nae;
+
 	}
 
 
@@ -263,16 +310,16 @@ public ArrayList getEdges(){
 		String line = reader.readLine();
 		while (line != null && isFileGood){
 			currentLine++;
-		
+
 
 			if(line.startsWith(NETFileProperty.PREFIX_COMMENTS) || (line.length() < 1)){
 				line = reader.readLine();
 				continue;
 			}
-			
+
 			if(this.validateVertexHeader(line)){
 				line = reader.readLine();
-				
+
 				continue;
 			}
 			if(this.validateArcHeader(line)){
@@ -286,11 +333,14 @@ public ArrayList getEdges(){
 
 				continue;
 			}
+
 			//this.errorMessages.append(this.hasHeader_Vertices+"\n");
 
 			if(inVerticesSection && isFileGood){	
 
 				this.vertices.add(processVertices(line));
+				if(!this.hasTotalNumOfNodes)
+					this.totalNumOfNodes++;
 				line = reader.readLine();
 
 				continue;
@@ -309,13 +359,15 @@ public ArrayList getEdges(){
 
 				continue;
 			}
-			
+
+
 			line = reader.readLine();
 		}
+
 		if (isFileGood){
 			this.checkFile();			
 		}
-		
+
 	}
 
 	public void checkFile(){
@@ -326,16 +378,17 @@ public ArrayList getEdges(){
 			this.isFileGood = false;
 			this.errorMessages.append("*The file does not specify the total number of vertices and "+
 			"does not list all vertices.\n\n");
-		}else if (!this.hasHeader_Arcs && !this.hasHeader_Edges) {
-			isFileGood = false;				
+		}else if (!(this.hasHeader_Arcs || this.hasHeader_Edges)) {
+			isFileGood = false;
+			this.errorMessages.append("This file does not have the correct header to specify Arcs or Edges");
 		}
 		else if (this.hasTotalNumOfNodes && this.skipNodeList){
 			for(int i = 0; i < this.totalNumOfNodes; i++){
 				String s = (i+1) + " \"" + (i+1) + "\"";
 				try{
 					NETVertex nv = new NETVertex(s);
-				//	System.out.println(nv);
-				this.vertices.add(nv);
+					//	System.out.println(nv);
+					this.vertices.add(nv);
 				}
 				catch(Exception e){
 					e.printStackTrace();
@@ -343,10 +396,10 @@ public ArrayList getEdges(){
 				}
 			}
 		}
-	
+
 	}
 
-	
+
 
 
 }
