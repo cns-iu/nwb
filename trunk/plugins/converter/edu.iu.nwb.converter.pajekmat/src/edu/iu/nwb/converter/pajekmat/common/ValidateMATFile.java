@@ -30,10 +30,11 @@ public class ValidateMATFile {
 
 
 	private boolean isFileGood = true;
+	private boolean inVertexSection = false;
 	private boolean inMatrixSection = false;
 
 	private boolean hasTotalNumOfNodes = false;
-	private boolean skipNodeList;
+	private boolean skipNodeList = false;
 
 	private int totalNumOfNodes, currentLine;
 	private StringBuffer errorMessages = new StringBuffer();
@@ -102,6 +103,7 @@ public class ValidateMATFile {
 		if(s.startsWith(MATFileProperty.HEADER_VERTICES)){
 			this.hasHeader_Vertices = true;
 			inMatrixSection = false;
+			inVertexSection = true;
 			this.vertices = new ArrayList();
 			StringTokenizer st= new StringTokenizer(s);
 			//System.out.println(s);
@@ -127,8 +129,10 @@ public class ValidateMATFile {
 		if(s.startsWith(MATFileProperty.HEADER_MATRIX)){
 			hasHeader_Matrix = true;
 			inMatrixSection = true;
+			inVertexSection = false;
 			this.arcs = new ArrayList();
-			if(this.vertices.isEmpty())
+			
+			if(this.vertices.isEmpty() && this.hasTotalNumOfNodes)
 				this.skipNodeList = true;
 			return true;
 		}
@@ -220,7 +224,7 @@ public class ValidateMATFile {
 		String line = reader.readLine();
 		while (line != null && isFileGood){
 			currentLine++;
-
+			System.out.println(this.skipNodeList);
 
 			if(line.startsWith(MATFileProperty.PREFIX_COMMENTS) || (line.length() < 1)){
 				line = reader.readLine();
@@ -234,6 +238,12 @@ public class ValidateMATFile {
 			}
 
 			if(this.validateMatrixHeader(line)){
+				line = reader.readLine();
+				continue;
+			}
+			
+			if(inVertexSection && isFileGood){
+				this.vertices.add(processVertices(line));
 				line = reader.readLine();
 				continue;
 			}
