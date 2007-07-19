@@ -80,7 +80,7 @@ public class NWBToPajeknet implements Algorithm {
 				if(validator.getValidationResult()){
 					outData = convertNWBToNet(inData,validator);
 					if(outData != null){
-						dm = new Data[] {new BasicData(outData, "file:application/pajeknet")};
+						dm = new Data[] {new BasicData(outData, NETFileProperty.NET_MIME_TYPE)};
 						return dm;
 					}else {
 						logger.log(LogService.LOG_ERROR, "Problem executing transformation from .nwb to Pajek .net Output file was not created.");
