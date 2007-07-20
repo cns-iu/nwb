@@ -19,6 +19,7 @@ Import-Package: org.cishell.app.service.datamanager,
  org.osgi.service.prefs;version="1.1.0"
 Require-Bundle: edu.uci.ics.jung,
  org.prefuse.lib
+Export-Package: org.cishell.testing.convertertester.core.tester
 
 
 
