@@ -14,7 +14,7 @@ import org.osgi.service.log.LogService;
 
 import prefuse.data.Graph;
 import prefuse.data.io.DataIOException;
-import prefuse.data.io.TreeMLWriter;
+import edu.iu.nwb.converter.prefusetreeml.writer.prefusecode.TreeMLWriter;
 
 /**
  * @author Weixia(Bonnie) Huang 
