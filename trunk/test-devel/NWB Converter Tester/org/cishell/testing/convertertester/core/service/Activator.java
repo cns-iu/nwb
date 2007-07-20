@@ -1,4 +1,4 @@
-package service;
+package org.cishell.testing.convertertester.core.service;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -6,10 +6,10 @@ import java.util.Scanner;
 
 import org.cishell.framework.CIShellContext;
 import org.cishell.framework.LocalCIShellContext;
+import org.cishell.testing.convertertester.core.tester.ConverterTester;
 import org.osgi.framework.BundleActivator;
 import org.osgi.framework.BundleContext;
 
-import tester.ConverterTester;
 
 public class Activator implements BundleActivator{
 	private ConverterTester ct;

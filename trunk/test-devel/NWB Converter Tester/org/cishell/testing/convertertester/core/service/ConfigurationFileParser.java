@@ -1,5 +1,5 @@
 
-package service;
+package org.cishell.testing.convertertester.core.service;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -9,7 +9,8 @@ import java.io.IOException;
 import java.util.LinkedList;
 import java.util.Queue;
 
-import tester.ConfigurationFileConstants;
+import org.cishell.testing.convertertester.core.tester.ConfigurationFileConstants;
+
 
 public class ConfigurationFileParser {
 	private Queue<File> comparisonFiles;

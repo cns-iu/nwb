@@ -1,4 +1,4 @@
-package tester;
+package org.cishell.testing.convertertester.core.tester;
 
 public class ConfigurationFileConstants {
 	public static final String TEST_GRAPHS = "test_graphs=";

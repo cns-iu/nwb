@@ -1,4 +1,4 @@
-package converter;
+package org.cishell.testing.convertertester.core.converter;
 
 import java.util.Dictionary;
 import java.util.Enumeration;

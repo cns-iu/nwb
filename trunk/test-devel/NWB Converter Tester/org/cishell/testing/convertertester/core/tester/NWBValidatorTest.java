@@ -1,7 +1,7 @@
 /**
  * 
  */
-package tester;
+package org.cishell.testing.convertertester.core.tester;
 
 
 import static org.junit.Assert.*;

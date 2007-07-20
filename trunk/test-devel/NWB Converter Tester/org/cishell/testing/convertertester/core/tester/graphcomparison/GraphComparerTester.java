@@ -1,4 +1,4 @@
-package tester.graphcomparison;
+package org.cishell.testing.convertertester.core.tester.graphcomparison;
 
 import java.io.File;
 import java.io.FileInputStream;

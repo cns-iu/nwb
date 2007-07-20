@@ -1,4 +1,4 @@
-package tester;
+package org.cishell.testing.convertertester.core.tester;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -12,14 +12,14 @@ import org.cishell.framework.CIShellContext;
 import org.cishell.framework.data.BasicData;
 import org.cishell.framework.data.Data;
 import org.cishell.service.conversion.Converter;
+import org.cishell.testing.convertertester.core.converter.ConverterLoaderImpl;
+import org.cishell.testing.convertertester.core.service.ConfigurationFileParser;
+import org.cishell.testing.convertertester.core.tester.graphcomparison.ComparisonResult;
+import org.cishell.testing.convertertester.core.tester.graphcomparison.DefaultGraphComparer;
+import org.cishell.testing.convertertester.core.tester.graphcomparison.GraphComparer;
 import org.osgi.framework.BundleContext;
 
 import prefuse.data.Graph;
-import service.ConfigurationFileParser;
-import tester.graphcomparison.ComparisonResult;
-import tester.graphcomparison.DefaultGraphComparer;
-import tester.graphcomparison.GraphComparer;
-import converter.ConverterLoaderImpl;
 
 public class ConverterTester {
 	private CIShellContext cContext;

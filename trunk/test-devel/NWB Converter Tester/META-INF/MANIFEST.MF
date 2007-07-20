@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: NWB_Converter_Tester
 Bundle-SymbolicName: NWB_Converter_Tester
-Bundle-Activator: service.Activator
+Bundle-Activator: org.cishell.testing.convertertester.core.service.Activator
 Bundle-Version: 1.0.0
 Bundle-Localization: plugin
 Import-Package: org.cishell.app.service.datamanager,
