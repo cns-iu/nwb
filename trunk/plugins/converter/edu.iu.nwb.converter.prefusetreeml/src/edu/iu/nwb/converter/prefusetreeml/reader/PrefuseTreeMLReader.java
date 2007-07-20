@@ -1,10 +1,9 @@
 package edu.iu.nwb.converter.prefusetreeml.reader;
 
-import java.util.Dictionary;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
-import java.lang.SecurityException;
+import java.util.Dictionary;
 
 import org.cishell.framework.CIShellContext;
 import org.cishell.framework.algorithm.Algorithm;
@@ -14,8 +13,6 @@ import org.cishell.framework.data.DataProperty;
 import org.osgi.service.log.LogService;
 
 import prefuse.data.Graph;
-import prefuse.data.Tree;
-import prefuse.data.io.GraphMLReader;
 import prefuse.data.io.DataIOException;
 import prefuse.data.io.TreeMLReader;
 

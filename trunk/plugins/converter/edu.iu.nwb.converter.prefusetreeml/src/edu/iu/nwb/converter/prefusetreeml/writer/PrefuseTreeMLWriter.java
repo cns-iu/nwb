@@ -1,13 +1,10 @@
 package edu.iu.nwb.converter.prefusetreeml.writer;
 
-import java.util.Dictionary;
 import java.io.BufferedOutputStream;
-import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.OutputStreamWriter;
-import java.io.Writer;
+import java.util.Dictionary;
 
 import org.cishell.framework.CIShellContext;
 import org.cishell.framework.algorithm.Algorithm;
@@ -16,7 +13,6 @@ import org.cishell.framework.data.Data;
 import org.osgi.service.log.LogService;
 
 import prefuse.data.Graph;
-import prefuse.data.io.GraphMLWriter;
 import prefuse.data.io.DataIOException;
 import prefuse.data.io.TreeMLWriter;
 
