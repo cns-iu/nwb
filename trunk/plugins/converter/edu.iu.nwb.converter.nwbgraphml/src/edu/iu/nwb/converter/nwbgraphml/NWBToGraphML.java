@@ -254,7 +254,8 @@ public class NWBToGraphML implements Algorithm {
   		   			out.println("<node id=\""+columns[0]+"\">");
  		    		for(int i = 1; i<nodeAttrList.size(); i++){
  		    			NWBAttribute attr = (NWBAttribute) nodeAttrList.get(i);
- 		    			String value = columns[i];
+ 		    			String value = escape(columns[i]);
+ 		    			//System.out.println(value);
  		    			if(attr.getDataType().equalsIgnoreCase(NWBFileProperty.TYPE_STRING)){
  		    				if (value.startsWith("\"")){
  		    					value=value.substring(1);
@@ -315,7 +316,8 @@ public class NWBToGraphML implements Algorithm {
  	 				    		if (!(attrName.equalsIgnoreCase(NWBFileProperty.ATTRIBUTE_SOURCE) ||
  	 				    			attrName.equalsIgnoreCase(NWBFileProperty.ATTRIBUTE_TARGET)	||
  	 				    			attrName.equalsIgnoreCase(NWBFileProperty.ATTRIBUTE_ID))){
- 	 				    			String value = columns[i];
+ 	 				    			String value = escape(columns[i]);
+ 	 				    			//System.out.println(value);
  	 		 		    			if(attr.getDataType().equalsIgnoreCase(NWBFileProperty.TYPE_STRING)){
  	 		 		    				if (value.startsWith("\"")){
  	 		 		    					value=value.substring(1);
@@ -357,8 +359,9 @@ public class NWBToGraphML implements Algorithm {
  	 				    			attrName.equalsIgnoreCase(NWBFileProperty.ATTRIBUTE_ID))){
  	 				    			
  	 		 		    			if(! columns[i].equalsIgnoreCase("*")) {
+ 	 		 		    				//System.out.println(escape(columns[i]));
  	 		 		    				out.println("<data key=\""+attr.getAttrName()+
- 	 	 		 		    					"\">"+columns[i]+"</data>"); 	
+ 	 	 		 		    					"\">"+escape(columns[i])+"</data>"); 	
  	 		 		    			} else {
  	 		 		    				/*
  	 		 		    				 * Don't print anything.
@@ -416,5 +419,12 @@ public class NWBToGraphML implements Algorithm {
 		return tempFile;
 	}			
 
+	protected static String escape(String s){
+		String val = s.replaceAll("&", "&amp;");
+		val = val.replaceAll("<", "&lt;");
+		val = val.replaceAll(">", "&gt;");
+		return val;
+		
+	}
 	
 }
