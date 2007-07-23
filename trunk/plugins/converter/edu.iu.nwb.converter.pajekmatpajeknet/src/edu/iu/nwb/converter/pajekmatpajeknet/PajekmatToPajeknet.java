@@ -123,6 +123,10 @@ public class PajekmatToPajeknet implements Algorithm{
 				MATAttribute ma = (MATAttribute)mv.getVertexAttributes().get(j);
 				String attr = ma.getAttrName();
 				String type = ma.getDataType();
+				if(mv.getAttribute(attr) == null){
+					s += "";
+					continue;
+				}
 				if(MATFileFunctions.isInList(attr,noPrintParameters)){
 					if(type.equalsIgnoreCase("string"))
 						s += "\"" + mv.getAttribute(attr) + "\" ";
@@ -149,7 +153,11 @@ public class PajekmatToPajeknet implements Algorithm{
 				MATAttribute ma = (MATAttribute)mv.getArcsnEdgesAttributes().get(j);
 				String attr = ma.getAttrName();
 				String type = ma.getDataType();
-				if(MATFileFunctions.isInList(attr,noPrintParameters)){
+				if(mv.getAttribute(attr) == null){
+					s += "";
+					continue;
+				}
+				else if(MATFileFunctions.isInList(attr,noPrintParameters)){
 					if(type.equalsIgnoreCase("string"))
 						s += "\"" + mv.getAttribute(attr) + "\" ";
 					else
@@ -161,6 +169,7 @@ public class PajekmatToPajeknet implements Algorithm{
 					else
 						s += attr + " " + mv.getAttribute(attr) + " ";
 				}
+				
 			}
 			pw.write(s + "\n");
 		}

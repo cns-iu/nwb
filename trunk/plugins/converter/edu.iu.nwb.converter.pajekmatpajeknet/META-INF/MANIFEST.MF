@@ -16,4 +16,4 @@ Import-Package: edu.iu.nwb.converter.pajekmat.common,
  org.osgi.service.metatype;version="1.1.0",
  org.osgi.service.prefs;version="1.1.0"
 X-AutoStart: true
-Service-Component: OSGI-INF/pajekmattopajeknet.xml
+Service-Component: OSGI-INF/pajekmattopajeknet.xml, OSGI-INF/pajeknettopajekmat.xml
