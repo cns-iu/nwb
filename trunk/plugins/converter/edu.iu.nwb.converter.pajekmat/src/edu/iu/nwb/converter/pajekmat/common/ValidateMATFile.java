@@ -210,7 +210,7 @@ public class ValidateMATFile {
 							source = ((MATVertex)this.vertices.get(i)).getID();
 							target = ((MATVertex)this.vertices.get(j)).getID();
 							String s = source + " " + target + " " + connections[j];
-							System.out.println(s);
+							//System.out.println(s);
 							this.arcs.add(new MATArcs(s));
 						}
 					}
