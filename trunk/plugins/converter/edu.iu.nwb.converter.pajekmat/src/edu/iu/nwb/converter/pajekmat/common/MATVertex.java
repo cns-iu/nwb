@@ -239,6 +239,10 @@ public class MATVertex {
 		return value;
 
 	}
+	
+	public static void clearAttributes(){
+		MATVertex.Attributes.clear();
+	}
 
 	/**********************
 	 * Setters

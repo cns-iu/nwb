@@ -175,24 +175,24 @@ public class ValidateMATFile {
 		return nv;
 	}
 
-	public void processMatrix(BufferedReader br, int lineNumber){
+	public void processMatrix(BufferedReader br, int lineNumber, String initial){
 
 		String errorMessage;
-		String ss;
+		String ss = initial;
 		int i = 0;
-		
 		try{
-			while((ss = br.readLine()) != null){
+			while(ss  != null){
 				//String ss = br.readLine();
 				//System.out.println(ss);
 				String[] connections = MATFileFunctions.processTokens(ss);
 				if(connections.length != this.totalNumOfNodes){
 					this.isFileGood = false;
-					errorMessage = "The connection matrix does not match the number of vertices. There are" +
-					this.totalNumOfNodes + " vertices, and the matrix specifies " + connections.length + " connections";
+					errorMessage = "The connection matrix does not match the number of vertices. There are " +
+					this.totalNumOfNodes + " vertices, and the matrix specifies " + (connections.length-1) + " connections";
 					errorMessages.append(errorMessage);
 					break;
 				}
+				if(this.hasTotalNumOfNodes && this.skipNodeList){
 				for(int j = 0; j < connections.length; j++){
 					float f = MATFileFunctions.asAFloat(connections[j]);
 					if(f > 0){
@@ -201,6 +201,21 @@ public class ValidateMATFile {
 						this.arcs.add(new MATArcs(s));
 					}
 				}
+				}
+				else {
+					int source, target;
+					for(int j = 0; j < connections.length; j++){
+						float f = MATFileFunctions.asAFloat(connections[j]);
+						if(f > 0){
+							source = ((MATVertex)this.vertices.get(i)).getID();
+							target = ((MATVertex)this.vertices.get(j)).getID();
+							String s = source + " " + target + " " + connections[j];
+							System.out.println(s);
+							this.arcs.add(new MATArcs(s));
+						}
+					}
+				}
+				ss = br.readLine();
 				lineNumber++;
 				i++;
 			}
@@ -221,10 +236,12 @@ public class ValidateMATFile {
 
 
 	public void processFile(BufferedReader reader) throws IOException{
+		MATVertex.clearAttributes();
+		MATArcs.clearAttributes();
 		String line = reader.readLine();
 		while (line != null && isFileGood){
 			currentLine++;
-			System.out.println(this.skipNodeList);
+			//System.out.println(this.skipNodeList);
 
 			if(line.startsWith(MATFileProperty.PREFIX_COMMENTS) || (line.length() < 1)){
 				line = reader.readLine();
@@ -249,7 +266,7 @@ public class ValidateMATFile {
 			}
 
 			if(inMatrixSection && isFileGood){
-				processMatrix(reader, currentLine);
+				processMatrix(reader, currentLine, line);
 				line = reader.readLine();
 				continue;
 			}
@@ -261,6 +278,7 @@ public class ValidateMATFile {
 		if (isFileGood){
 			this.checkFile();			
 		}
+		this.totalNumOfNodes = this.vertices.size();
 
 	}
 
