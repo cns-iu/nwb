@@ -204,6 +204,10 @@ private boolean finalTest() throws Exception{
 		throw new Exception("Only one of two polar coordinates has been set");
 }
 	
+	protected static void clearAttributes(){
+		NETArcsnEdges.Attributes.clear();
+	}
+
 	/*************************
 	 * 
 	 * Setters

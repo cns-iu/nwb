@@ -307,6 +307,8 @@ public class ValidateNETFile {
 
 
 	public void processFile(BufferedReader reader) throws IOException{
+		NETVertex.clearAttributes();
+		NETArcsnEdges.clearAttributes();
 		String line = reader.readLine();
 		while (line != null && isFileGood){
 			currentLine++;
@@ -339,8 +341,6 @@ public class ValidateNETFile {
 			if(inVerticesSection && isFileGood){	
 
 				this.vertices.add(processVertices(line));
-				if(!this.hasTotalNumOfNodes)
-					this.totalNumOfNodes++;
 				line = reader.readLine();
 
 				continue;
@@ -367,7 +367,9 @@ public class ValidateNETFile {
 		if (isFileGood){
 			this.checkFile();			
 		}
-
+		
+		this.totalNumOfNodes = this.vertices.size();
+		
 	}
 
 	public void checkFile(){

@@ -632,6 +632,10 @@ public class NETVertex {
 		}
 
 	}
+	
+	protected static void clearAttributes(){
+		NETVertex.Attributes.clear();
+	}
 
 
 
