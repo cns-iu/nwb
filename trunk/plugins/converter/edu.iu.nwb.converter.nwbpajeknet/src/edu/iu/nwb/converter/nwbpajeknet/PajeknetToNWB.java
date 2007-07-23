@@ -173,7 +173,7 @@ public class PajeknetToNWB implements Algorithm {
 	private void writeNodes(ValidateNETFile validator, PrintWriter out){
 		if(!validator.getVertices().isEmpty()){
 			out.flush();
-			writeHeader("Nodes", out);
+			writeHeader("Nodes " + validator.getVertices().size(), out);
 			writeNodeAttributeList(validator, out);
 		
 		for(Iterator ii = validator.getVertices().iterator(); ii.hasNext();){
@@ -205,7 +205,7 @@ public class PajeknetToNWB implements Algorithm {
 	private void writeEdges(ValidateNETFile validator, PrintWriter out){
 		if(!validator.getEdges().isEmpty()){
 			out.flush();
-			writeHeader("UndirectedEdges", out);
+			writeHeader("UndirectedEdges " + validator.getEdges().size(), out);
 			writeUndirectedEdgeAttributeList(validator, out);
 		
 		for(Iterator ii = validator.getEdges().iterator(); ii.hasNext();){
@@ -238,7 +238,7 @@ public class PajeknetToNWB implements Algorithm {
 	private void writeArcs(ValidateNETFile validator, PrintWriter out){
 		if(!validator.getArcs().isEmpty()){
 			out.flush();
-			writeHeader("DirectedEdges", out);
+			writeHeader("DirectedEdges " + validator.getArcs().size(), out);
 			writeDirectedEdgeAttributeList(validator, out);
 		
 		for(Iterator ii = validator.getArcs().iterator(); ii.hasNext();){
