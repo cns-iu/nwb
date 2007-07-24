@@ -254,7 +254,7 @@ public class NWBToGraphML implements Algorithm {
   		   			out.println("<node id=\""+columns[0]+"\">");
  		    		for(int i = 1; i<nodeAttrList.size(); i++){
  		    			NWBAttribute attr = (NWBAttribute) nodeAttrList.get(i);
- 		    			String value = escape(columns[i]);
+ 		    			String value = columns[i];
  		    			//System.out.println(value);
  		    			if(attr.getDataType().equalsIgnoreCase(NWBFileProperty.TYPE_STRING)){
  		    				if (value.startsWith("\"")){
@@ -266,7 +266,7 @@ public class NWBToGraphML implements Algorithm {
  		    			}
  		    			if(! value.equalsIgnoreCase("*")) {
 	 		    				out.println("<data key=\""+attr.getAttrName()+
-		 		    					"\">"+value+"</data>");  	
+		 		    					"\">"+escape(value)+"</data>");  	
 	 		    			} else {
 	 		    				/*
 	 		    				 * Don't print anything.
@@ -316,7 +316,7 @@ public class NWBToGraphML implements Algorithm {
  	 				    		if (!(attrName.equalsIgnoreCase(NWBFileProperty.ATTRIBUTE_SOURCE) ||
  	 				    			attrName.equalsIgnoreCase(NWBFileProperty.ATTRIBUTE_TARGET)	||
  	 				    			attrName.equalsIgnoreCase(NWBFileProperty.ATTRIBUTE_ID))){
- 	 				    			String value = escape(columns[i]);
+ 	 				    			String value = columns[i];
  	 				    			//System.out.println(value);
  	 		 		    			if(attr.getDataType().equalsIgnoreCase(NWBFileProperty.TYPE_STRING)){
  	 		 		    				if (value.startsWith("\"")){
@@ -328,7 +328,7 @@ public class NWBToGraphML implements Algorithm {
  	 		 		    			}
  	 		 		    			if(! value.equalsIgnoreCase("*")) {
  	 		 		    				out.println("<data key=\""+attr.getAttrName()+
- 	 	 		 		    					"\">"+value+"</data>");  	
+ 	 	 		 		    					"\">"+escape(value)+"</data>");  	
  	 		 		    			} else {
  	 		 		    				/*
  	 		 		    				 * Don't print anything.
@@ -420,9 +420,11 @@ public class NWBToGraphML implements Algorithm {
 	}			
 
 	protected static String escape(String s){
-		String val = s.replaceAll("&", "&amp;");
-		val = val.replaceAll("<", "&lt;");
-		val = val.replaceAll(">", "&gt;");
+		String val = s.replaceAll("&amp;|&", "&amp;");
+		val = val.replaceAll("&lt;|<", "&lt;");
+		val = val.replaceAll("&gt;|>", "&gt;");
+		val = val.replaceAll("&quot;|\"", "&quot;");
+		val = val.replaceAll("&apos;|\'", "&apos;");
 		return val;
 		
 	}
