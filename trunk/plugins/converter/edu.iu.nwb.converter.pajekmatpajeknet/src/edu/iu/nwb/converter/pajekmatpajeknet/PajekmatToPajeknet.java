@@ -145,7 +145,7 @@ public class PajekmatToPajeknet implements Algorithm{
 	}
 	
 	private void writeArcs(ValidateMATFile vmf, PrintWriter pw){
-		pw.write(MATFileProperty.HEADER_ARCS + " " + (vmf.getArcs().size()-1) + "\n");
+		pw.write(MATFileProperty.HEADER_ARCS + " " + (vmf.getArcs().size()) + "\n");
 		for(int i = 0; i < vmf.getArcs().size(); i++){
 			MATArcs mv = (MATArcs)vmf.getArcs().get(i);
 			String s = "";
