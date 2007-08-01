@@ -175,7 +175,7 @@ public class NWBToPajeknet implements Algorithm {
 				inNodesSection = true;
 				inDirectededgesSection = false;
 				inUndirectededgesSection = false;
-				writeHeader(line.replace(NWBFileProperty.HEADER_NODE, "Vertices"), out);
+				writeHeader(line.replace(NWBFileProperty.HEADER_NODE, "Vertices " + validator.getTotalNumOfNodes()), out);
 				line = reader.readLine();
 				continue;
 			}
@@ -184,7 +184,7 @@ public class NWBToPajeknet implements Algorithm {
 				inDirectededgesSection = true;
 				inNodesSection = false;
 				inUndirectededgesSection = false;
-				writeHeader(line.replace(NWBFileProperty.HEADER_DIRECTED_EDGES, "Arcs"), out);
+				writeHeader(line.replace(NWBFileProperty.HEADER_DIRECTED_EDGES, "Arcs " + validator.getTotalNumOfDirectedEdges()), out);
 				line = reader.readLine();
 				continue;    				
 			}
@@ -194,7 +194,7 @@ public class NWBToPajeknet implements Algorithm {
 				inUndirectededgesSection =true;
 				inNodesSection = false;
 				inDirectededgesSection = false;
-				writeHeader(line.replace(NWBFileProperty.HEADER_UNDIRECTED_EDGES, "Edges"), out);
+				writeHeader(line.replace(NWBFileProperty.HEADER_UNDIRECTED_EDGES, "Edges " + validator.getTotalNumOfUndirectedEdges()), out);
 				line = reader.readLine();
 				continue;
 			}
