@@ -7,8 +7,6 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.Dictionary;
-import java.util.HashMap;
-import java.util.Map;
 
 import org.cishell.framework.CIShellContext;
 import org.cishell.framework.algorithm.Algorithm;
@@ -114,7 +112,15 @@ public class PajeknetToPajekmat implements Algorithm{
 			File net = getTempFile();
 			PrintWriter out = new PrintWriter(new BufferedWriter(new FileWriter(net)));	
 			writeVertices(vmf, out);
-			writeMatrix(vmf, out);
+			System.out.println(vmf.isDirectedGraph() + " " + vmf.isUndirectedGraph());
+			if(vmf.isDirectedGraph()){
+				System.out.println("Directed");
+				writeDirectedMatrix(vmf, out);
+			}
+			else{
+				System.out.println("Undirected");
+				writeUndirectedMatrix(vmf,out);
+			}
 			out.close();
 			return net;
 		}catch (FileNotFoundException e){
@@ -131,9 +137,9 @@ public class PajeknetToPajekmat implements Algorithm{
 		for(int i = 0; i < vmf.getVertices().size(); i++){
 			NETVertex mv = (NETVertex)vmf.getVertices().get(i);
 			String s = "";
-			for(int j = 0; j < mv.getVertexAttributes().size(); j++){
+			for(int j = 0; j < NETVertex.getVertexAttributes().size(); j++){
 				try{
-					NETAttribute ma = (NETAttribute)mv.getVertexAttributes().get(j);
+					NETAttribute ma = (NETAttribute)NETVertex.getVertexAttributes().get(j);
 					String attr = ma.getAttrName();
 					String type = ma.getDataType();
 					String value = mv.getAttribute(attr).toString();
@@ -164,12 +170,13 @@ public class PajeknetToPajekmat implements Algorithm{
 		//System.out.println("done here");
 	}
 
-	private void writeMatrix(ValidateNETFile vmf, PrintWriter pw){
+	private void writeDirectedMatrix(ValidateNETFile vmf, PrintWriter pw){
 		NETVertex nvi;
 		NETVertex nvj;
 		NETArcsnEdges nae;
 		int source, target;
 		float weight = (float)0.0;
+		//System.out.println(vmf.getEdges().size());
 		pw.println(MATFileProperty.HEADER_MATRIX);
 		for(int i = 0; i < vmf.getVertices().size(); i++){
 			nvi = (NETVertex)vmf.getVertices().get(i);
@@ -179,8 +186,11 @@ public class PajeknetToPajekmat implements Algorithm{
 					nae = (NETArcsnEdges)vmf.getArcs().get(k);
 					target = ((Integer)nae.getAttribute(NETFileProperty.ATTRIBUTE_TARGET)).intValue();
 					source = ((Integer)nae.getAttribute(NETFileProperty.ATTRIBUTE_SOURCE)).intValue();
+					System.out.println(nvi.getID() + ":"+ source + "\t" + nvj.getID()+":"+target);
+					
 					if((nvi.getID() == source) && (nvj.getID() == target)){
 						weight = ((Float)nae.getAttribute(NETFileProperty.ATTRIBUTE_WEIGHT)).floatValue();
+						System.out.println(weight);
 						break;
 					}
 					else {
@@ -193,6 +203,43 @@ public class PajeknetToPajekmat implements Algorithm{
 		}
 		
 		}
+	
+	private void writeUndirectedMatrix(ValidateNETFile vmf, PrintWriter pw){
+		NETVertex nvi;
+		NETVertex nvj;
+		//float[][] matrix = new float[vmf.getVertices().size()][vmf.getVertices().size()];
+		NETArcsnEdges nae;
+		int source, target;
+		float weight = (float)0.0;
+		//System.out.println(vmf.getEdges().size());
+		pw.println(MATFileProperty.HEADER_MATRIX);
+		for(int i = 0; i < vmf.getVertices().size(); i++){
+			nvi = (NETVertex)vmf.getVertices().get(i);
+			for(int j = 0; j < vmf.getVertices().size(); j++){
+				nvj = (NETVertex)vmf.getVertices().get(j);
+				for(int k = 0; k < vmf.getEdges().size(); k++){
+					nae = (NETArcsnEdges)vmf.getEdges().get(k);
+					target = ((Integer)nae.getAttribute(NETFileProperty.ATTRIBUTE_TARGET)).intValue();
+					source = ((Integer)nae.getAttribute(NETFileProperty.ATTRIBUTE_SOURCE)).intValue();
+					//System.out.println(nvi.getID() + ":"+ source + "\t" + nvj.getID()+":"+target);
+					
+					if(((nvi.getID() == source) && (nvj.getID() == target))||
+							((nvi.getID() == target) && (nvj.getID() == source))){
+						weight = ((Float)nae.getAttribute(NETFileProperty.ATTRIBUTE_WEIGHT)).floatValue();
+						//System.out.println(weight);
+						break;
+					}
+					else {
+						weight = (float)0.0;
+					}
+					
+				}
+				pw.print(weight + " ");
+			}
+			pw.println();
+		}
+		
+	}
 			
 		
 		
