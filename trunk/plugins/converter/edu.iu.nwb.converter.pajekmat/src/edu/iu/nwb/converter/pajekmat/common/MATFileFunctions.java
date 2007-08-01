@@ -1,7 +1,6 @@
 package edu.iu.nwb.converter.pajekmat.common;
 
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.StringTokenizer;
 
 public class MATFileFunctions {
