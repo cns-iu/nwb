@@ -34,7 +34,7 @@ public class ValidateNWBFile {
 	//If is useful to parse the attribute line
 	private boolean passHeader = false;
 
-	private int totalNumOfNodes, currentLine;
+	private int totalNumOfNodes, currentLine, totalNumOfDirected, totalNumofUnDirected;
 
 	private StringBuffer errorMessages = new StringBuffer();
 
@@ -55,7 +55,9 @@ public class ValidateNWBFile {
 	private void processFile(BufferedReader reader) throws IOException {
 
 		String line = reader.readLine();
-
+		int nodes = 0;
+		int dedges = 0;
+		int uedges = 0;
 		while (line != null && isFileGood) {
 			currentLine++;
 			
@@ -79,19 +81,23 @@ public class ValidateNWBFile {
 			}
 
 			if (inNodesSection && isFileGood) {
+				
 				processNodes(line);
+				nodes++;
 				line = reader.readLine();
 				continue;
 			}
 
 			if (inDirectededgesSection && isFileGood) {
 				processDirectedEdges(line);
+				dedges++;
 				line = reader.readLine();
 				continue;
 			}
 
 			if (inUndirectededgesSection && isFileGood) {
 				processUndirectedEdges(line);
+				uedges++;
 				line = reader.readLine();
 				continue;
 			}
@@ -101,6 +107,14 @@ public class ValidateNWBFile {
 		if (isFileGood) {
 			checkFile();
 		}
+		if(this.hasTotalNumOfNodes && (nodes != this.totalNumOfNodes)){
+			isFileGood = false; //I'm not sure if we should set this to false or not.
+			errorMessages.append("There was an inconsistency between the specified number of nodes and the" +
+					"number of nodes counted.");  
+		}
+		this.totalNumOfNodes = nodes;
+		this.totalNumOfDirected = dedges;
+		this.totalNumofUnDirected = uedges;
 	}
 
 	private void checkFile() {
@@ -512,6 +526,14 @@ public class ValidateNWBFile {
 
 	public boolean getHasTotalNumOfNodes() {
 		return hasTotalNumOfNodes;
+	}
+	
+	public int getTotalNumOfUndirectedEdges(){
+		return this.totalNumofUnDirected;
+	}
+	
+	public int getTotalNumOfDirectedEdges(){
+		return this.totalNumOfDirected;
 	}
 
 }
