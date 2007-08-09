@@ -112,13 +112,13 @@ public class PajeknetToPajekmat implements Algorithm{
 			File net = getTempFile();
 			PrintWriter out = new PrintWriter(new BufferedWriter(new FileWriter(net)));	
 			writeVertices(vmf, out);
-			System.out.println(vmf.isDirectedGraph() + " " + vmf.isUndirectedGraph());
+			//System.out.println(vmf.isDirectedGraph() + " " + vmf.isUndirectedGraph());
 			if(vmf.isDirectedGraph()){
-				System.out.println("Directed");
+				//System.out.println("Directed");
 				writeDirectedMatrix(vmf, out);
 			}
 			else{
-				System.out.println("Undirected");
+				//System.out.println("Undirected");
 				writeUndirectedMatrix(vmf,out);
 			}
 			out.close();
@@ -186,11 +186,11 @@ public class PajeknetToPajekmat implements Algorithm{
 					nae = (NETArcsnEdges)vmf.getArcs().get(k);
 					target = ((Integer)nae.getAttribute(NETFileProperty.ATTRIBUTE_TARGET)).intValue();
 					source = ((Integer)nae.getAttribute(NETFileProperty.ATTRIBUTE_SOURCE)).intValue();
-					System.out.println(nvi.getID() + ":"+ source + "\t" + nvj.getID()+":"+target);
+					//System.out.println(nvi.getID() + ":"+ source + "\t" + nvj.getID()+":"+target);
 					
 					if((nvi.getID() == source) && (nvj.getID() == target)){
 						weight = ((Float)nae.getAttribute(NETFileProperty.ATTRIBUTE_WEIGHT)).floatValue();
-						System.out.println(weight);
+					//	System.out.println(weight);
 						break;
 					}
 					else {
