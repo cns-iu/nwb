@@ -55,12 +55,13 @@ public class ValidateNWBFile {
 	private void processFile(BufferedReader reader) throws IOException {
 
 		String line = reader.readLine();
+		
 		int nodes = 0;
 		int dedges = 0;
 		int uedges = 0;
 		while (line != null && isFileGood) {
 			currentLine++;
-			
+			line = line.trim();
 			if (line.startsWith(NWBFileProperty.PREFIX_COMMENTS) ||line.length()<=0){
 				line = reader.readLine();
 				continue;				
@@ -107,14 +108,28 @@ public class ValidateNWBFile {
 		if (isFileGood) {
 			checkFile();
 		}
-		if(this.hasTotalNumOfNodes && (nodes != this.totalNumOfNodes)){
+		
+		if(this.hasTotalNumOfNodes && ((nodes-1) != this.totalNumOfNodes)){
 			isFileGood = false; //I'm not sure if we should set this to false or not.
-			errorMessages.append("There was an inconsistency between the specified number of nodes and the" +
-					"number of nodes counted.");  
+			errorMessages.append("There was an inconsistency between the specified number of nodes: " 
+					+ this.totalNumOfNodes + " and the " +
+					"number of nodes counted: " + nodes);  
 		}
-		this.totalNumOfNodes = nodes;
-		this.totalNumOfDirected = dedges;
-		this.totalNumofUnDirected = uedges;
+		assignCount(this.totalNumOfNodes, nodes);
+		assignCount(this.totalNumOfDirected, dedges);
+		assignCount(this.totalNumofUnDirected, uedges);
+		
+	}
+	
+	private void assignCount(int statedValue, int countedValue){
+		if(countedValue > 1){
+			statedValue = countedValue -1;
+			countedValue = countedValue -1;
+		}
+		else{
+			statedValue = 0;
+			countedValue = 0;
+		}
 	}
 
 	private void checkFile() {
@@ -124,6 +139,7 @@ public class ValidateNWBFile {
 					.append("*The file does not specify the node header.\n\n");
 		} else if (!hasHeader_DirectedEdges && !hasHeader_UndirectedEdges) {
 			isFileGood = false;
+			errorMessages.append("This file has not specified a valid edge header.");
 		} 		
 	}
 	
