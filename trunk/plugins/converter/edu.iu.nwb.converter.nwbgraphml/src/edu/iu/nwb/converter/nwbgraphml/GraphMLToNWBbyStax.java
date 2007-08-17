@@ -55,40 +55,49 @@ public class GraphMLToNWBbyStax implements Algorithm {
 		this.logger = (LogService)ciContext.getService(LogService.class.getName());
 	} 
 
-	public Data[] execute(){
+	public Data[] execute() {
 
 		XMLInputFactory inputFactory = XMLInputFactory.newInstance();
-		XMLStreamReader xmlReader;
-
-		try{
-			xmlReader = inputFactory.createXMLStreamReader(new FileInputStream((File) data[0].getData()));
-		}
-		catch(XMLStreamException ex)
-		{
-			logger.log(LogService.LOG_ERROR, "Unable to open XML Stream", ex);
-			ex.printStackTrace();
-			return null;
-		}
-		catch(FileNotFoundException foe)
-		{
-			logger.log(LogService.LOG_ERROR, "GraphML file not found ", foe);
-			foe.printStackTrace();
-			return null;
-		}
-
-
-
+		XMLStreamReader xmlReader = null;
 		File outData;
 		try {
-			outData = this.convert(xmlReader);
-		} catch (Exception e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-			logger.log(LogService.LOG_ERROR, "Unable to convert graphml to NWB", e);
-			return null;
+			try {
+				xmlReader = inputFactory
+						.createXMLStreamReader(new FileInputStream(
+								(File) data[0].getData()));
+			} catch (XMLStreamException ex) {
+				logger.log(LogService.LOG_ERROR, "Unable to open XML Stream",
+						ex);
+				ex.printStackTrace();
+				return null;
+			} catch (FileNotFoundException foe) {
+				logger
+						.log(LogService.LOG_ERROR, "GraphML file not found ",
+								foe);
+				foe.printStackTrace();
+				return null;
+			}
+
+
+			try {
+				outData = this.convert(xmlReader);
+			} catch (Exception e) {
+				e.printStackTrace();
+				logger.log(LogService.LOG_ERROR,
+						"Unable to convert graphml to NWB", e);
+				return null;
+			}
+		} finally {
+			if (xmlReader != null) {
+				try {
+				xmlReader.close();
+				} catch (XMLStreamException e) {
+					logger.log(LogService.LOG_ERROR, "Unable to close XML Stream", e);
+				}
+			}
 		}
 
-		return new Data[] {new BasicData(outData, "file:text/nwb")};
+		return new Data[] { new BasicData(outData, "file:text/nwb") };
 	}
 
 	protected String tmpFileLocation(String base, String extension) {
@@ -124,7 +133,7 @@ public class GraphMLToNWBbyStax implements Algorithm {
 		BufferedWriter nodeWriter = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(nodeFileLocation), "UTF-8"));
 		BufferedWriter undirectedEdgeWriter = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(undirectedEdgeFileLocation), "UTF-8"));
 		BufferedWriter directedEdgeWriter = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(directedEdgeFileLocation), "UTF-8"));
-
+		
 		while (xmlReader.hasNext())
 		{   
 			int eventType = xmlReader.next();
