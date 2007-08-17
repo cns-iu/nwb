@@ -82,7 +82,6 @@ public class GraphMLToNWBbyStax implements Algorithm {
 			try {
 				outData = this.convert(xmlReader);
 			} catch (Exception e) {
-				e.printStackTrace();
 				logger.log(LogService.LOG_ERROR,
 						"Unable to convert graphml to NWB", e);
 				return null;
