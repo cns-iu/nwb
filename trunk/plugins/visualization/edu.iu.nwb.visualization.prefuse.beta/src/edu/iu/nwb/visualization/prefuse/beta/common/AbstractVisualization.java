@@ -132,9 +132,17 @@ public abstract class AbstractVisualization implements PrefuseBetaVisualization 
 		Renderer nodeRenderer = new ShapeLabelRenderer();
 		DefaultRendererFactory rendererFactory = new DefaultRendererFactory(nodeRenderer);
 		
+		EdgeRenderer edgeRenderer;
+		
 		if(graph.isDirected()) {
-			rendererFactory.add(new InGroupPredicate(edges), new EdgeRenderer(prefuse.Constants.EDGE_TYPE_LINE, prefuse.Constants.EDGE_ARROW_FORWARD));
-		} //otherwise the default edge renderer is fine
+			edgeRenderer = new EdgeRenderer(prefuse.Constants.EDGE_TYPE_LINE, prefuse.Constants.EDGE_ARROW_FORWARD);
+			edgeRenderer.setArrowHeadSize(6, 9);
+		} else {
+			edgeRenderer = new EdgeRenderer(prefuse.Constants.EDGE_TYPE_LINE, prefuse.Constants.EDGE_ARROW_NONE);
+		}
+		
+		rendererFactory.setDefaultEdgeRenderer(edgeRenderer);
+		
 		
 		visualization.setRendererFactory(rendererFactory);
 		
@@ -161,6 +169,8 @@ public abstract class AbstractVisualization implements PrefuseBetaVisualization 
 		if(drawActions != null) {
 			draw.add(drawActions);
 		}
+		
+		draw.add(new ColorAction(edges, VisualItem.FILLCOLOR, black));
 		
 		if(!"".equals(nodeColorField)) { //a field is specified
 			/* create an expression that, based on an example datapoint as a heuristic, determines the type and of the nodes and presents them
