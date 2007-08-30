@@ -13,20 +13,20 @@ import org.osgi.service.metatype.MetaTypeProvider;
 import prefuse.data.Graph;
 
 
-public class ConverterAlgorithmFactory implements AlgorithmFactory {
+public class TreeGraphConverterAlgorithmFactory implements AlgorithmFactory {
     public Algorithm createAlgorithm(Data[] data, Dictionary parameters, CIShellContext context) {
-        return new ConverterAlgorithm(data, parameters, context);
+        return new TreeGraphConverterAlgorithm(data, parameters, context);
     }
     public MetaTypeProvider createParameters(Data[] data) {
         return null;
     }
     
-    public class ConverterAlgorithm implements Algorithm, AlgorithmProperty {
+    public class TreeGraphConverterAlgorithm implements Algorithm, AlgorithmProperty {
         Data[] data;
         Dictionary parameters;
         CIShellContext context;
         
-        public ConverterAlgorithm(Data[] data, Dictionary parameters, CIShellContext context) {
+        public TreeGraphConverterAlgorithm(Data[] data, Dictionary parameters, CIShellContext context) {
             this.data = data;
             this.parameters = parameters;
             this.context = context;
