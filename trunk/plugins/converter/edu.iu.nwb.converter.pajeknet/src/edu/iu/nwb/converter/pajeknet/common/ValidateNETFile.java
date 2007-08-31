@@ -223,7 +223,7 @@ public class ValidateNETFile {
 		NETVertex nv = null;
 		try{
 			nv = new NETVertex(s);
-			//	System.out.println(nv);
+			//System.out.println(nv);
 
 		}
 		catch (NumberFormatException nfe){
@@ -286,7 +286,7 @@ public class ValidateNETFile {
 		try{
 			nae = new NETArcsnEdges(s);
 
-			//System.out.println(nae);
+		//	System.out.println(nae);
 
 		}
 		catch (NumberFormatException nfe){

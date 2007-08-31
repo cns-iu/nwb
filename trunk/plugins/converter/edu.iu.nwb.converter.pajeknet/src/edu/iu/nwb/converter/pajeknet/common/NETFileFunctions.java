@@ -100,14 +100,13 @@ public class NETFileFunctions {
 		return i;
 	}
 
-	protected static boolean isAnInteger(String input, String attr) throws NumberFormatException, Exception{
-		Integer value = new Integer (input);    
-		if (attr.equalsIgnoreCase(NETFileProperty.ATTRIBUTE_ID) ||
-				attr.equalsIgnoreCase(NETFileProperty.ATTRIBUTE_SOURCE) ||
-				attr.equalsIgnoreCase(NETFileProperty.ATTRIBUTE_TARGET) ){
-			if (value.intValue()<1)
-				throw new Exception("The node id must be greater than 0.");
-		}    		
+	protected static boolean isAnInteger(String input, String attr){
+		try{
+			Integer value = new Integer (input);    
+		} catch(NumberFormatException ex){
+			return false;
+		}
+		
 		return true;    	
 	}    
 

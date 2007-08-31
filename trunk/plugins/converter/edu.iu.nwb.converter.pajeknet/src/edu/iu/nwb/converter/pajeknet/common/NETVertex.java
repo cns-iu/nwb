@@ -36,7 +36,7 @@ public class NETVertex {
 	}
 
 	public boolean testVertices(String[] strings) throws Exception{
-		boolean value = false;
+		boolean value = true;
 		Queue stringQueue = new ConcurrentLinkedQueue();
 		for(int ii = 0; ii < strings.length; ii++){
 			String s = strings[ii];
@@ -50,52 +50,39 @@ public class NETVertex {
 			}
 			return true;
 		}
-		
+
 		try{
-			
-		this.testVertexID(stringQueue);
-		
-		if(!stringQueue.isEmpty()){
-			
-				this.testVertexPosition(stringQueue);	
-				if(! testVertexShape((String) stringQueue.peek())){
-					testParameters(stringQueue);
-				}
-				else {
-					stringQueue.poll();
-					testParameters(stringQueue);
-				}
+
+			testVertexID(stringQueue);
+
+			if(!stringQueue.isEmpty()){
+
+				testVertexPosition(stringQueue);	
+				testParameters(stringQueue);
+				
 			}
-			
+
 		}catch(Exception ex){
 			throw ex;
 		}
-		value = finalCheck();
+		
 		return value;
 	}
 
 	public boolean testVertexID(Queue qs) throws NETFileFormatException{
 		try
 		{
-			int i = 0;
-			while(!qs.isEmpty()){
-			
-				String s = (String) qs.peek();
-				switch(i){
-				case 0:
-					this.setID(s);
-					break;
-				case 1:
-					this.setLabel(s);
-					break;
-				default:
-					return true;
-				}
-				qs.poll();
-				i++;
-			}
-			if(this.getLabel() == null)
+			if(qs.size() < 2){
 				throw new NETFileFormatException("Vertices must have both ID and Label");
+			}
+
+			String s = (String) qs.poll();
+
+			this.setID(s);
+			s = (String) qs.poll();
+			this.setLabel(s);
+
+
 			return true;
 		}
 		catch(Exception ex){
@@ -105,58 +92,51 @@ public class NETVertex {
 
 	public boolean testVertexPosition(Queue qs) throws NETFileFormatException{
 
-		boolean value = true;
+		boolean value = false;
 		float f = 0;
 		int i = 0;
 		try{
-			while(!qs.isEmpty()){
+			for(;;){
+				if(qs.isEmpty())
+					return false; //no positional data
+
 				String s = (String) qs.peek();
 				
-			//	System.out.println("!!"+s+"!!");
-				if((NETFileFunctions.isInList(s,
-						NETFileShape.ATTRIBUTE_SHAPE_LIST) 
-						|| (NETFileFunctions.isInList(s,
-								NETFileParameter.VERTEX_NUMBER_PARAMETER_LIST)) 
-								|| (NETFileFunctions.isInList(s,
-										NETFileParameter.VERTEX_STRING_PARAMETER_LIST)))){
-					break;
-				}
-				f = new Float((String)qs.poll()).floatValue();
-				
-					value = true;
-					switch (i){
-					case 0:
-						this.setPos("Xpos", f);
-						break;
-					case 1:
-						this.setPos("Ypos", f);
-						break;
-					case 2:
-						this.setPos("Zpos", f);
-						break;
-					}
-				i++;
-			}
+				f = new Float(s).floatValue();
 
+				value = true;
+				switch (i){
+				case 0:
+					this.setPos("Xpos", f);
+					break;
+				case 1:
+					this.setPos("Ypos", f);
+					break;
+				case 2:
+					this.setPos("Zpos", f);
+					break;
+				default:
+					return true;
+				}
+				i++;
+				qs.poll();
+			}
 		}
 		catch(NumberFormatException ex){
-			throw new NETFileFormatException("The file contains an invalid sequence in the positional data.");
+			return value;
 		}
 
-		return value;
+
 	}
 
 
 
-	public boolean testVertexShape(String st) throws NETFileFormatException{
+	public boolean setVertexShape(String st) throws NETFileFormatException{
 		try {
-			for(int ii = 0; ii < NETFileShape.ATTRIBUTE_SHAPE_LIST.length; ii++){
-				String s = NETFileShape.ATTRIBUTE_SHAPE_LIST[ii];
-				if(st.equalsIgnoreCase(s)) {
-					this.setShape(s);
-					return true;
-				}
-			}
+			
+					setShape(st);
+			
+			
 			return false;
 		}
 		catch(Exception ex){
@@ -170,6 +150,11 @@ public class NETVertex {
 
 		while(!qs.isEmpty()){
 			String s1 = (String) qs.poll();
+			
+			if(NETFileFunctions.isInList(s1, NETFileShape.ATTRIBUTE_SHAPE_LIST)){
+				this.setShape(s1);
+				continue;
+			}
 
 			if(qs.isEmpty()){
 				throw new NETFileFormatException("Expected a value for parameter: " + s1);
@@ -211,7 +196,7 @@ public class NETVertex {
 				this.setLabelAngle(s2);
 			}
 			else if(s1.equalsIgnoreCase(NETFileParameter.PARAMETER_FONT)){
-				this.setFont(s2,qs);	
+				this.setFont(s2);	
 			}
 			else if(s1.equalsIgnoreCase(NETFileParameter.PARAMETER_LPHI)){
 				this.setLabelPhi(s2);
@@ -223,13 +208,13 @@ public class NETVertex {
 				this.setLabelRadius(s2);
 			}
 
-			
+
 			else if(s1.startsWith(NETFileProperty.PREFIX_COMMENTS)){
 				qs.clear();
 				break;
 			}
 			else if(s1.startsWith(NETFileParameter.PARAMETER_SHAPE)){
-				this.testVertexShape(s2);
+				this.setVertexShape(s2);
 			}
 
 			else {
@@ -316,8 +301,8 @@ public class NETVertex {
 		case 'Z':
 			this.setZpos(f);
 			break;
-			default :
-				throw new NETFileFormatException("Unknown positional data");
+		default :
+			throw new NETFileFormatException("Unknown positional data");
 		}
 	}
 
@@ -329,8 +314,6 @@ public class NETVertex {
 	 */
 
 	public void setShape(String s) throws NETFileFormatException{
-		if(!NETFileFunctions.isInList(s, NETFileShape.ATTRIBUTE_SHAPE_LIST))
-			throw new NETFileFormatException(s + " is an unknown shape");
 		NETVertex.Attributes.put("shape", "string");
 		this.String_Parameters.put("shape", s);
 	}
@@ -352,7 +335,7 @@ public class NETVertex {
 	}
 	public void setPhi(String s){
 		float f = NETFileFunctions.asAFloat(s);
-			this.setPhi(f);
+		this.setPhi(f);
 	}
 
 	/*
@@ -370,53 +353,13 @@ public class NETVertex {
 	}
 	public void setSize(String s){
 		float f = NETFileFunctions.asAFloat(s);
-			this.setSize(f);
+		this.setSize(f);
 	}
 
 
-
-	/*
-	 * setFont
-	 * setFont takes a string and a queue of strings and compares them with the system font list. If the
-	 * listed font is not found on the system, it throws an exception, otherwise, it sets the font attribute
-	 * in the attribute list and sets the font value for the vertex.
-	 * written by: Tim Kelley
-	 */
-	private TreeSet setFontPrime(String s, TreeSet ss){
-		String compare = s;
-		TreeSet ts = new TreeSet();
-		compare = compare.toLowerCase();
-		for(Iterator ii = ss.iterator(); ii.hasNext();){
-			String st = (String) ii.next();
-			if(st.startsWith(s)){
-				ts.add(st);
-			}
-		}
-		return ts;
-	}
-	public void setFont(String s, Queue qs) throws NETFileFormatException{
-		String[] fonts = GraphicsEnvironment.getLocalGraphicsEnvironment().getAvailableFontFamilyNames();
-		TreeSet compareList = new TreeSet();
-		String compare = s;
-		for(int ii = 0; ii < fonts.length; ii++){
-			String st = fonts[ii];
-			if(st.startsWith(compare)){
-				compareList.add(st);		
-			}
-		}	
-
-		while(!qs.isEmpty()){
-
-			String peekValue = (String) qs.peek();
-			if(compareList.isEmpty())
-				throw new NETFileFormatException(compare + " is not a recognized font on this system");
-			else if(NETFileFunctions.isInList(peekValue, NETFileParameter.VERTEX_NUMBER_PARAMETER_LIST) || NETFileFunctions.isInList(peekValue, NETFileParameter.VERTEX_STRING_PARAMETER_LIST))
-				break;
-			compare = compare + " " + qs.poll();
-			compareList = this.setFontPrime(compare, compareList);
-		}
+	public void setFont(String s) throws NETFileFormatException{
 		NETVertex.Attributes.put(NETFileParameter.PARAMETER_FONT, "string");
-		this.String_Parameters.put(NETFileParameter.PARAMETER_FONT, compare);
+		this.String_Parameters.put(NETFileParameter.PARAMETER_FONT, s);
 	}
 
 	/*
@@ -483,7 +426,7 @@ public class NETVertex {
 	}
 	public void setFontSize(String s){
 		float f = NETFileFunctions.asAFloat(s);
-			this.setFontSize(f);
+		this.setFontSize(f);
 	}
 
 	/*
@@ -500,7 +443,7 @@ public class NETVertex {
 	private void setLabelAngle(String s)  {
 		float f = NETFileFunctions.asAFloat(s);
 
-			this.setLabelAngle(f);
+		this.setLabelAngle(f);
 
 	}
 	/*
@@ -514,7 +457,7 @@ public class NETVertex {
 	}
 	private void setLabelPhi(String s)  {
 		float f = NETFileFunctions.asAFloat(s);
-			this.setLabelPhi(f);
+		this.setLabelPhi(f);
 
 	}
 
@@ -570,8 +513,8 @@ public class NETVertex {
 	}
 	public void setYScaleFactor(String s){	
 		float f = NETFileFunctions.asAFloat(s);
-			this.setYScaleFactor(f);
-	
+		this.setYScaleFactor(f);
+
 	}
 
 	/*
@@ -589,18 +532,12 @@ public class NETVertex {
 		this.Numeric_Parameters.put(NETFileParameter.PARAMETER_R, new Float(f));
 	}
 	private void setCornerRadius(String s) throws NETFileFormatException{
+		try{
 		float f = NETFileFunctions.asAFloat(s);
-		
-			
-
-		try {
-			if(!(this.getShape().equalsIgnoreCase(NETFileShape.SHAPE_BOX) || this.getShape().equalsIgnoreCase(NETFileShape.SHAPE_DIAMOND))){
-				throw new NETFileFormatException("This parameter is not used by this vertex's shape");
-			}
-			this.setCornerRadius(f);
+		setCornerRadius(f);
 		}
-		catch(NullPointerException ex){
-			throw new NETFileFormatException("This parameter is not used by this vertex's shape");
+		catch(NumberFormatException ex){
+			throw new NETFileFormatException(s + " is not a valid value for the parameter " + NETFileParameter.PARAMETER_R);
 		}
 
 	}
@@ -619,20 +556,19 @@ public class NETVertex {
 		this.Numeric_Parameters.put(NETFileParameter.PARAMETER_Q, new Float(f));
 	}
 	public void setDiamondRatio(String s) throws NETFileFormatException{
-		float f = NETFileFunctions.asAFloat(s);
-			
+		
+
 		try {
-			if(!this.getShape().equalsIgnoreCase(NETFileShape.SHAPE_DIAMOND)){
-				throw new NETFileFormatException("This parameter is not used by this vertex's shape");
-			}
+			float f = NETFileFunctions.asAFloat(s);
+			
 			this.setDiamondRatio(f);
 		}
-		catch(NullPointerException ex){
-			throw new NETFileFormatException("This parameter is not used by this vertex's shape");
+		catch(NumberFormatException ex){
+			throw new NETFileFormatException(s + " is not a valid value for parameter " + NETFileParameter.PARAMETER_Q);
 		}
 
 	}
-	
+
 	protected static void clearAttributes(){
 		NETVertex.Attributes.clear();
 	}
@@ -711,17 +647,7 @@ public class NETVertex {
 			return true;
 		return false;
 	}
-	
-	private boolean finalCheck() throws Exception{
-	
-		if((this.getAttribute(NETFileParameter.PARAMETER_LPHI) == null) && (this.getAttribute(NETFileParameter.PARAMETER_LR) == null))
-			return true;
-		else if((this.getAttribute(NETFileParameter.PARAMETER_LPHI) != null) && (this.getAttribute(NETFileParameter.PARAMETER_LR) != null))
-			return true;
-		else
-			throw new Exception("Only one of two polar coordinates has been set");
-		
-	}
+
 
 	/************
 	 *  Output

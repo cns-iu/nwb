@@ -1,13 +1,11 @@
 package edu.iu.nwb.converter.pajeknet.common;
 
-import java.awt.GraphicsEnvironment;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Queue;
-import java.util.TreeSet;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
@@ -27,15 +25,15 @@ public class NETArcsnEdges {
 		this.String_Parameters = new ConcurrentHashMap();	
 	}
 
-	public NETArcsnEdges(String s) throws Exception{
+	public NETArcsnEdges(String s) throws NETFileFormatException{
 		String[] properties = NETFileFunctions.processTokens(s);
 		this.Numeric_Parameters = new ConcurrentHashMap();
 		this.String_Parameters = new ConcurrentHashMap();
 		this.valid = testArcsnEdges(properties);
 	}
 
-	public boolean testArcsnEdges(String[] strings) throws Exception{
-		boolean value = false;
+	public boolean testArcsnEdges(String[] strings) throws NETFileFormatException{
+		boolean value = true;
 		Queue stringQueue = new ConcurrentLinkedQueue();
 		for(int ii = 0; ii < strings.length; ii++){
 			String s = strings[ii];
@@ -61,149 +59,150 @@ public class NETArcsnEdges {
 
 			}
 
-		}catch(Exception ex){
+		}catch(NETFileFormatException ex){
 			throw ex;
 		}
-		value = finalTest();
+
 		return value;
 	}
 
-	public boolean testSourceTargetWeight(Queue qs) throws Exception{
+	public boolean testSourceTargetWeight(Queue qs) throws NETFileFormatException{
 		boolean value = true;
-		int i = 0;
+
 		try{
-			while(!qs.isEmpty()){
-				if((NETFileFunctions.isInList((String) qs.peek(),
-						ARCEDGEParameter.ARCEDGE_NUMERIC_PARAMETER_LIST)) 
-						|| (NETFileFunctions.isInList((String) qs.peek(),
-								ARCEDGEParameter.ARCEDGE_STRING_PARAMETER_LIST))){
+
+			if(qs.size() < 2){
+				value = false;
+				throw new NETFileFormatException("Arcs and edges must contain both source and target values");
+			}
+
+			for(int i = 0; i < 3; i++){
+				String s = (String) qs.poll();
+				value = true;
+				switch (i){
+				case 0:
+					this.setSource(s);
 					break;
+				case 1:
+					this.setTarget(s);
+					break;
+				case 2:
+					this.setWeight(s);
+					break;
+				default:
+					return true;
 				}
-					switch (i){
-					case 0:
-						this.setSource((String) qs.poll());
-						break;
-					case 1:
-						this.setTarget((String) qs.poll());
-						break;
-					case 2:
-						this.setWeight((String) qs.poll());
-						break;
-					default:
-						throw new Exception("Unknown data found");
-					}		
-				i++;
-			}
-			switch(i){
-			case 0:
-			case 1:
-				throw new Exception("Arcs and edges must contain both source and target values");
-			case 2:
-				this.setWeight("1");
-				break;
 			}
 		}
-		catch(NumberFormatException ex){
-			throw new Exception("The file contains an invalid sequence in the positional data.");
+		catch(NullPointerException ex){  //
+			this.setWeight("1");
+			return value;
 		}
 
-		return value;
+		return value;	
+
+
 	}
-	
 
-	public boolean testParameters(Queue qs) throws Exception{
+
+	public boolean testParameters(Queue qs) throws NETFileFormatException{
 		boolean value = false;
 		while(!qs.isEmpty()){
 			String s1 = (String) qs.poll();
 
 			if(qs.isEmpty()){
-				throw new Exception("Expected a value for parameter: " + s1);
+				throw new NETFileFormatException("Expected a value for parameter: " + s1);
 			}
-			String s2 = (String) qs.poll();
+			String s2 = (String) qs.peek();
 
+			try{
 
-			if(s1.equalsIgnoreCase(ARCEDGEParameter.PARAMETER_WIDTH)){
-				this.setWidth(s2);
-			}
-			else if(s1.equalsIgnoreCase(ARCEDGEParameter.PARAMETER_COLOR)){
-				this.setColor(s2);
-			}
-			else if(s1.equalsIgnoreCase(ARCEDGEParameter.PARAMETER_PATTERN)){
-				this.setPattern(s2);
-			}
-			else if(s1.equalsIgnoreCase(ARCEDGEParameter.PARAMETER_SIZE)){
-				this.setSize(s2);
-			}
-			else if(s1.equalsIgnoreCase(ARCEDGEParameter.PARAMETER_ARROW_SHAPE)){
-				this.setArrowShape(s2);
-			}
-			else if(s1.equalsIgnoreCase(ARCEDGEParameter.PARAMETER_ARROW_POSITION)){
-				this.setArrowPosition(s2);
-			}
-			else if(s1.equalsIgnoreCase(ARCEDGEParameter.PARAMETER_LABEL)){
-				this.setLabel(s2);
-			}
-			else if(s1.equalsIgnoreCase(ARCEDGEParameter.PARAMETER_LABEL_POSITION)){
-				this.setLabelPosition(s2);
-			}
-			else if(s1.equalsIgnoreCase(ARCEDGEParameter.PARAMETER_LABEL_RADIUS)){
-				this.setLabelRadius(s2);
-			}
-			else if(s1.equalsIgnoreCase(ARCEDGEParameter.PARAMETER_LABEL_PHI)){
-				this.setLabelPhi(s2);
-			}
-			else if(s1.equalsIgnoreCase(ARCEDGEParameter.PARAMETER_LABEL_COLOR)){
-				this.setLabelColor(s2);
-			}
-			else if(s1.equalsIgnoreCase(ARCEDGEParameter.PARAMETER_LABEL_ANGLE)){
-				this.setLabelAngle(s2);	
-			}
-			else if(s1.equalsIgnoreCase(ARCEDGEParameter.PARAMETER_FONT_SIZE)){
-				this.setFontSize(s2);
-			}
-			else if(s1.equalsIgnoreCase(ARCEDGEParameter.PARAMETER_FONT)){
-				this.setFont(s2,qs);
-			}
-			else if(s1.equalsIgnoreCase(ARCEDGEParameter.PARAMETER_HOOK_ONE)){
-				this.setHook(s2,1);
-			}
-			else if(s1.equalsIgnoreCase(ARCEDGEParameter.PARAMETER_HOOK_TWO)){
-				this.setHook(s2,2);
-			}
-			else if(s1.equalsIgnoreCase(ARCEDGEParameter.PARAMETER_ANGLE_ONE)){
-				this.setAngle(s2,1);
-			}
-			else if(s1.equalsIgnoreCase(ARCEDGEParameter.PARAMETER_ANGLE_TWO)){
-				this.setAngle(s2,2);
-			}
-			else if(s1.equalsIgnoreCase(ARCEDGEParameter.PARAMETER_VELOCITY_ONE)){
-				this.setVelocity(s2,1);
-			}
-			else if(s1.equalsIgnoreCase(ARCEDGEParameter.PARAMETER_VELOCITY_TWO)){
-				this.setVelocity(s2,2);
-			}
-			else if(s1.startsWith(NETFileProperty.PREFIX_COMMENTS)){
-				qs.clear();
-				break;
-			}
+				if(s1.equalsIgnoreCase(ARCEDGEParameter.PARAMETER_WIDTH)){
+					this.setWidth(s2);
+					qs.poll();
+				}
+				else if(s1.equalsIgnoreCase(ARCEDGEParameter.PARAMETER_COLOR)){
+					this.setColor(s2);
+					qs.poll();
+				}
+				else if(s1.equalsIgnoreCase(ARCEDGEParameter.PARAMETER_PATTERN)){
+					this.setPattern(s2);
+					qs.poll();
+				}
+				else if(s1.equalsIgnoreCase(ARCEDGEParameter.PARAMETER_SIZE)){
+					this.setSize(s2);
+					qs.poll();
+				}
+				else if(s1.equalsIgnoreCase(ARCEDGEParameter.PARAMETER_ARROW_SHAPE)){
+					this.setArrowShape(s2);
+					qs.poll();
+				}
+				else if(s1.equalsIgnoreCase(ARCEDGEParameter.PARAMETER_ARROW_POSITION)){
+					this.setArrowPosition(s2);
+					qs.poll();
+				}
+				else if(s1.equalsIgnoreCase(ARCEDGEParameter.PARAMETER_LABEL)){
+					this.setLabel(s2);
+					qs.poll();
+				}
+				else if(s1.equalsIgnoreCase(ARCEDGEParameter.PARAMETER_LABEL_POSITION)){
+					this.setLabelPosition(s2);
+					qs.poll();
+				}
+				else if(s1.equalsIgnoreCase(ARCEDGEParameter.PARAMETER_LABEL_RADIUS)){
+					this.setLabelRadius(s2);
+					qs.poll();
+				}
+				else if(s1.equalsIgnoreCase(ARCEDGEParameter.PARAMETER_LABEL_PHI)){
+					this.setLabelPhi(s2);
+					qs.poll();
+				}
+				else if(s1.equalsIgnoreCase(ARCEDGEParameter.PARAMETER_LABEL_COLOR)){
+					this.setLabelColor(s2);
+					qs.poll();
+				}
+				else if(s1.equalsIgnoreCase(ARCEDGEParameter.PARAMETER_LABEL_ANGLE)){
+					this.setLabelAngle(s2);
+					qs.poll();
+				}
+				else if(s1.equalsIgnoreCase(ARCEDGEParameter.PARAMETER_FONT_SIZE)){
+					this.setFontSize(s2);
+					qs.poll();
+				}
+				else if(s1.equalsIgnoreCase(ARCEDGEParameter.PARAMETER_FONT)){
+					this.setFont(s2);
+					qs.poll();
+				}
+				else if(s1.startsWith(ARCEDGEParameter.PARAMETER_HOOK) && NETFileFunctions.isAnInteger(s1.substring(1), "int")){
+					this.setHook(s1,s2);
+					qs.poll();
+				}
+				else if(s1.startsWith(ARCEDGEParameter.PARAMETER_ANGLE) && NETFileFunctions.isAnInteger(s1.substring(1), "int")){
+					this.setAngle(s1,s2);
+					qs.poll();
+				}
+				else if(s1.startsWith(ARCEDGEParameter.PARAMETER_VELOCITY) && NETFileFunctions.isAnInteger(s1.substring(1),"int")){
+					this.setVelocity(s1,s2);
+					qs.poll();
+				}
+				else if(s1.startsWith(NETFileProperty.PREFIX_COMMENTS)){
+					qs.clear();
+					break;
+				}
 
-			else {
-				throw new Exception("Unknown parameter: " + s1);
+				else {
+					throw new NETFileFormatException("Unknown parameter: " + s1 + " with value: " + s2);
+				}
+			} catch(Exception ex){
+				throw new NETFileFormatException(ex);
 			}
 		}
 		value = true;
 		return value;
 	}
 
-private boolean finalTest() throws Exception{
-	if((this.getAttribute(ARCEDGEParameter.PARAMETER_LABEL_PHI) == null) && (this.getAttribute(ARCEDGEParameter.PARAMETER_LABEL_RADIUS) == null))
-		return true;
-	else if((this.getAttribute(ARCEDGEParameter.PARAMETER_LABEL_PHI) != null) && (this.getAttribute(ARCEDGEParameter.PARAMETER_LABEL_RADIUS) != null))
-		return true;
-	else
-		throw new Exception("Only one of two polar coordinates has been set");
-}
-	
+
+
 	protected static void clearAttributes(){
 		NETArcsnEdges.Attributes.clear();
 	}
@@ -214,246 +213,164 @@ private boolean finalTest() throws Exception{
 	 * 
 	 *************************/
 
-	public void setSource(String s) throws Exception {
+	public void setSource(String s) throws NETFileFormatException {
 		int i = NETFileFunctions.asAnInteger(s);
 		NETArcsnEdges.Attributes.put(NETFileProperty.ATTRIBUTE_SOURCE, NETFileProperty.TYPE_INT);
 		if(!(i > 0))
-			throw new Exception("Source id must be greater than 0");
+			throw new NETFileFormatException("Source id must be greater than 0");
 		this.source = i;
 	}
-	
-	public void setTarget(String s) throws Exception{
+
+	public void setTarget(String s) throws NETFileFormatException{
 		int i = NETFileFunctions.asAnInteger(s);
 		NETArcsnEdges.Attributes.put(NETFileProperty.ATTRIBUTE_TARGET, NETFileProperty.TYPE_INT);
 		if(!(i > 0))
-			throw new Exception("Target id must be greater than 0");
+			throw new NETFileFormatException("Target id must be greater than 0");
 		this.target = i;
 	}
 
-	public void setWeight(String s) throws Exception{
+	public void setWeight(String s) throws NETFileFormatException{
 		float f = NETFileFunctions.asAFloat(s);
 		NETArcsnEdges.Attributes.put(NETFileProperty.ATTRIBUTE_WEIGHT,NETFileProperty.TYPE_FLOAT);
 		this.Numeric_Parameters.put(NETFileProperty.ATTRIBUTE_WEIGHT, new Float(f));
 	}
-	
-	
+
+
 	private void setWidth(float f){
 		NETArcsnEdges.Attributes.put(ARCEDGEParameter.PARAMETER_WIDTH, NETFileProperty.TYPE_FLOAT);
 		this.Numeric_Parameters.put(ARCEDGEParameter.PARAMETER_WIDTH, new Float(f));
 	}
-	public void setWidth(String s) throws Exception {
+	public void setWidth(String s) throws NETFileFormatException {
 		float f = NETFileFunctions.asAFloat(s);
-		if(f > 0)
-			this.setWidth(f);
-		else
-			throw new Exception("Line width must be greater than 0.0");
+		this.setWidth(f);
 	}
-	
-	public void setColor(String s) throws Exception {
-		if(NETFileFunctions.isInList(s, NETFileColor.VERTEX_COLOR_LIST)){
-			NETArcsnEdges.Attributes.put(ARCEDGEParameter.PARAMETER_COLOR, NETFileProperty.TYPE_STRING);
-			this.String_Parameters.put(ARCEDGEParameter.PARAMETER_COLOR, s);
-		}
-		else
-			throw new Exception(s + " is not a valid color selection.");
+
+	public void setColor(String s) throws NETFileFormatException {
+
+		NETArcsnEdges.Attributes.put(ARCEDGEParameter.PARAMETER_COLOR, NETFileProperty.TYPE_STRING);
+		this.String_Parameters.put(ARCEDGEParameter.PARAMETER_COLOR, s);
 	}
-	
-	public void setPattern(String s) throws Exception {
+
+	public void setPattern(String s) throws NETFileFormatException {
 		if(s.equals("Solid") || s.equals("Dots")){
 			NETArcsnEdges.Attributes.put(ARCEDGEParameter.PARAMETER_PATTERN, NETFileProperty.TYPE_STRING);
 			this.String_Parameters.put(ARCEDGEParameter.PARAMETER_PATTERN, s);
 		}
 		else
-			throw new Exception(s + " is an unrecognized pattern.");
+			throw new NETFileFormatException(s + " is an unrecognized pattern.");
 	}
-	
+
 	private void setSize(float f){
 		NETArcsnEdges.Attributes.put(ARCEDGEParameter.PARAMETER_SIZE, NETFileProperty.TYPE_FLOAT);
 		this.Numeric_Parameters.put(ARCEDGEParameter.PARAMETER_SIZE, new Float(f));
 	}
-	public void setSize(String s) throws Exception {
+	public void setSize(String s) throws NETFileFormatException {
 		float f = NETFileFunctions.asAFloat(s);
-		if(!(f>0))
-			throw new Exception("Arrow size must be greater than 0");
 		this.setSize(f);
 	}
-	
-	public void setArrowShape(String s) throws Exception {
-		if(s.equals("A") || s.equals("B")){
-			NETArcsnEdges.Attributes.put(ARCEDGEParameter.PARAMETER_ARROW_SHAPE, NETFileProperty.TYPE_STRING);
-			this.String_Parameters.put(ARCEDGEParameter.PARAMETER_ARROW_SHAPE, s);
-		}
-		else
-			throw new Exception(s + " is an unrecognized arrow shape");
+
+	public void setArrowShape(String s) throws NETFileFormatException {
+
+		NETArcsnEdges.Attributes.put(ARCEDGEParameter.PARAMETER_ARROW_SHAPE, NETFileProperty.TYPE_STRING);
+		this.String_Parameters.put(ARCEDGEParameter.PARAMETER_ARROW_SHAPE, s);
+
 	}
-	
+
 	private void setArrowPosition(float f){
 		NETArcsnEdges.Attributes.put(ARCEDGEParameter.PARAMETER_ARROW_POSITION, NETFileProperty.TYPE_FLOAT);
 		this.Numeric_Parameters.put(ARCEDGEParameter.PARAMETER_ARROW_POSITION, new Float(f));
 	}
-	public void setArrowPosition(String s) throws Exception {
+	public void setArrowPosition(String s) throws NETFileFormatException {
 		float f = NETFileFunctions.asAFloat(s);
-		if(!(f > 0))
-			throw new Exception("Arrow position must be greater than 0.");
 		this.setArrowPosition(f);
 	}
-	
+
 	public void setLabel(String s) {
 		NETArcsnEdges.Attributes.put(ARCEDGEParameter.PARAMETER_LABEL, NETFileProperty.TYPE_STRING);
 		this.String_Parameters.put(ARCEDGEParameter.PARAMETER_LABEL, s);
 	}
-	
+
 	private void setLabelPosition(float f){
 		NETArcsnEdges.Attributes.put(ARCEDGEParameter.PARAMETER_LABEL_POSITION, NETFileProperty.TYPE_STRING);
 		this.Numeric_Parameters.put(ARCEDGEParameter.PARAMETER_LABEL_POSITION, new Float(f));
 	}
-	public void setLabelPosition(String s) throws Exception {
+	public void setLabelPosition(String s) throws NETFileFormatException {
 		float f = NETFileFunctions.asAFloat(s);
-		if(!(f > 0))
-			throw new Exception("Label position must be greater than 0");
 		this.setLabelPosition(f);
 	}
-	
+
 	private void setLabelRadius(float f){
 		NETArcsnEdges.Attributes.put(ARCEDGEParameter.PARAMETER_LABEL_RADIUS, NETFileProperty.TYPE_STRING);
 		this.Numeric_Parameters.put(ARCEDGEParameter.PARAMETER_LABEL_RADIUS, new Float(f));
 	}
-	public void setLabelRadius(String s) throws Exception {
+	public void setLabelRadius(String s) throws NETFileFormatException {
 		float f = NETFileFunctions.asAFloat(s);
-		if(!(f > 0))
-			throw new Exception("Label radius must be greater than 0.");
 		this.setLabelRadius(f);
 	}
-	
+
 	private void setLabelPhi(float f){
 		NETArcsnEdges.Attributes.put(ARCEDGEParameter.PARAMETER_LABEL_PHI, NETFileProperty.TYPE_FLOAT);
 		this.Numeric_Parameters.put(ARCEDGEParameter.PARAMETER_LABEL_PHI, new Float(f));
 	}
-	public void setLabelPhi(String s) throws Exception {
+	public void setLabelPhi(String s) throws NETFileFormatException {
 		float f = NETFileFunctions.asAFloat(s);
-		if(!((f >= 0) && (f <= 360)))
-			throw new Exception("The label phi must be between 0 and 360 inclusive");
 		this.setLabelPhi(f);
 	}
-	
-	public void setLabelColor(String s) throws Exception {
-		if(NETFileFunctions.isInList(s, NETFileColor.VERTEX_COLOR_LIST)){
-			NETArcsnEdges.Attributes.put(ARCEDGEParameter.PARAMETER_LABEL_COLOR, NETFileProperty.TYPE_STRING);
-			this.String_Parameters.put(ARCEDGEParameter.PARAMETER_LABEL_COLOR, s);
-		}
-		else
-			throw new Exception(s + " is not a valid color selection.");
+
+	public void setLabelColor(String s) throws NETFileFormatException {
+
+		NETArcsnEdges.Attributes.put(ARCEDGEParameter.PARAMETER_LABEL_COLOR, NETFileProperty.TYPE_STRING);
+		this.String_Parameters.put(ARCEDGEParameter.PARAMETER_LABEL_COLOR, s);
 	}
 
 	private void setLabelAngle(float f){
 		NETArcsnEdges.Attributes.put(ARCEDGEParameter.PARAMETER_LABEL_ANGLE, NETFileProperty.TYPE_STRING);
 		this.Numeric_Parameters.put(ARCEDGEParameter.PARAMETER_LABEL_ANGLE, new Float(f));
 	}
-	public void setLabelAngle(String s) throws Exception {
+	public void setLabelAngle(String s) throws NETFileFormatException {
 		float f = NETFileFunctions.asAFloat(s);
-		if(!((f >= 0) && (f <= 360)))
-			throw new Exception("The label angle must be between 0 and 360 inclusive");
 		this.setLabelAngle(f);
 	}
-	
-	private void setFontSize(float f) throws Exception {
+
+	private void setFontSize(float f) throws NETFileFormatException {
 		NETArcsnEdges.Attributes.put(ARCEDGEParameter.PARAMETER_FONT_SIZE, NETFileProperty.TYPE_FLOAT);
 		this.Numeric_Parameters.put(ARCEDGEParameter.PARAMETER_FONT_SIZE, new Float(f));
 	}
-	public void setFontSize(String s) throws Exception {
+	public void setFontSize(String s) throws NETFileFormatException {
 		float f = NETFileFunctions.asAFloat(s);
-		if(!(f > 0))
-			throw new Exception("Font size must be greater than 0");
 		this.setFontSize(f);
 	}
-	
-	private TreeSet setFontPrime(String s, TreeSet ss){
-		String compare = s;
-		TreeSet ts = new TreeSet();
-		compare = compare.toLowerCase();
-		for(Iterator ii = ss.iterator(); ii.hasNext();){
-			String st = (String) ii.next();
-			if(st.startsWith(s)){
-				ts.add(st);
-			}
-		}
-		return ts;
-	}
-	public void setFont(String s, Queue qs) throws Exception {
-		String[] fonts = GraphicsEnvironment.getLocalGraphicsEnvironment().getAvailableFontFamilyNames();
-		TreeSet compareList = new TreeSet();
-		String compare = s;
-		for(int ii = 0; ii < fonts.length; ii++){
-			String st = fonts[ii];
-			if(st.startsWith(compare)){
-				compareList.add(st);		
-			}
-		}	
 
-		while(!qs.isEmpty()){
-
-			String peekValue = (String) qs.peek();
-			if(compareList.isEmpty())
-				throw new Exception(compare + " is not a recognized font on this system");
-			else if(NETFileFunctions.isInList(peekValue, ARCEDGEParameter.ARCEDGE_NUMERIC_PARAMETER_LIST) || NETFileFunctions.isInList(peekValue, ARCEDGEParameter.ARCEDGE_STRING_PARAMETER_LIST))
-				break;
-			compare = compare + " " + qs.poll();
-			compareList = this.setFontPrime(compare, compareList);
-		}
+	public void setFont(String s) throws NETFileFormatException {
 		NETArcsnEdges.Attributes.put(ARCEDGEParameter.PARAMETER_FONT, NETFileProperty.TYPE_STRING);
-		this.String_Parameters.put(NETFileParameter.PARAMETER_FONT, compare);
+		this.String_Parameters.put(NETFileParameter.PARAMETER_FONT, s);
 	}
-	
-	public void setHook(String s, int i) throws Exception {
-		switch(i){
-		case 1:
-			NETArcsnEdges.Attributes.put(ARCEDGEParameter.PARAMETER_HOOK_ONE, NETFileProperty.TYPE_FLOAT);
-			this.Numeric_Parameters.put(ARCEDGEParameter.PARAMETER_HOOK_ONE, new Float(NETFileFunctions.asAFloat(s)));
-			break;
-		case 2:
-			NETArcsnEdges.Attributes.put(ARCEDGEParameter.PARAMETER_HOOK_TWO, NETFileProperty.TYPE_FLOAT);
-			this.Numeric_Parameters.put(ARCEDGEParameter.PARAMETER_HOOK_TWO, new Float(NETFileFunctions.asAFloat(s)));
-			default:
-				throw new Exception("Unknown hook h"+i);
-		}
+
+	public void setHook(String s1, String s2) throws NETFileFormatException {
+		NETArcsnEdges.Attributes.put(s1, NETFileProperty.TYPE_FLOAT);
+		this.Numeric_Parameters.put(s1, new Float(NETFileFunctions.asAFloat(s2)));
+
 	}
-	
-	public void setAngle(String s, int i) throws Exception {
-		switch(i){
-		case 1:
-			NETArcsnEdges.Attributes.put(ARCEDGEParameter.PARAMETER_ANGLE_ONE, NETFileProperty.TYPE_FLOAT);
-			this.Numeric_Parameters.put(ARCEDGEParameter.PARAMETER_ANGLE_ONE,
-					new Float(NETFileFunctions.asAFloat(s)));
-			break;
-		case 2:
-			NETArcsnEdges.Attributes.put(ARCEDGEParameter.PARAMETER_ANGLE_TWO, NETFileProperty.TYPE_FLOAT);
-			this.Numeric_Parameters.put(ARCEDGEParameter.PARAMETER_ANGLE_TWO,
-					new Float(NETFileFunctions.asAFloat(s)));
-			default:
-				throw new Exception("Unknown angle a"+i);
-		}
+
+	public void setAngle(String s1, String s2) throws NETFileFormatException {
+			NETArcsnEdges.Attributes.put(s1, NETFileProperty.TYPE_FLOAT);
+			this.Numeric_Parameters.put(s1,
+					new Float(NETFileFunctions.asAFloat(s2)));
+			
 	}
-	
-	public void setVelocity(String s, int i) throws Exception{
-		switch(i){
-		case 1:
-			NETArcsnEdges.Attributes.put(ARCEDGEParameter.PARAMETER_VELOCITY_ONE, NETFileProperty.TYPE_FLOAT);
-			this.Numeric_Parameters.put(ARCEDGEParameter.PARAMETER_VELOCITY_ONE,
-					new Float(NETFileFunctions.asAFloat(s)));
-			break;
-		case 2:
-			NETArcsnEdges.Attributes.put(ARCEDGEParameter.PARAMETER_VELOCITY_TWO, NETFileProperty.TYPE_FLOAT);
-			this.Numeric_Parameters.put(ARCEDGEParameter.PARAMETER_VELOCITY_TWO,
-					new Float(NETFileFunctions.asAFloat(s)));
-			default:
-				throw new Exception("Unknown velocity k"+i);
-		}
+
+	public void setVelocity(String s1, String s2) throws NETFileFormatException{
+		
+			NETArcsnEdges.Attributes.put(s1, NETFileProperty.TYPE_FLOAT);
+			this.Numeric_Parameters.put(s1,
+					new Float(NETFileFunctions.asAFloat(s2)));
+		
 	}
-	
+
 	/******
 	 * Getters
 	 ******/
-	
+
 	public Object getAttribute(String s){
 		String st = (String) NETArcsnEdges.Attributes.get(s);
 		if(st == null)
@@ -467,11 +384,11 @@ private boolean finalTest() throws Exception{
 		else 
 			return this.String_Parameters.get(s);
 	}
-	
+
 	public boolean isValid(){
 		return this.valid;
 	}
-	
+
 	public static List getArcsnEdgesAttributes(){
 		ArrayList attributeList = new ArrayList();
 		for(Iterator ii = NETArcsnEdges.Attributes.keySet().iterator(); ii.hasNext();){
@@ -481,13 +398,13 @@ private boolean finalTest() throws Exception{
 		return attributeList;
 
 	}
-	
+
 	/*****
 	 * 
 	 * Output
 	 * 
 	 */
-	
+
 	public String toString(){
 		String output = "";
 
