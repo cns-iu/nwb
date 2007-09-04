@@ -263,10 +263,15 @@ public class NWBToPajeknet implements Algorithm {
 				continue;
 			}
 			else if(NETFileFunctions.isInList(na.getAttrName(), noPrintParameters)){
-				if(na.getDataType().equalsIgnoreCase(NWBFileProperty.TYPE_STRING))
-					value = "\""+value+"\"";
-				//	System.out.print(value + " ");
-				out.print(value + " ");
+				if(na.getDataType().equalsIgnoreCase(NWBFileProperty.TYPE_STRING)){
+				String[] sa = value.split(" ");
+				if(sa.length > 1)
+					out.print(" \""+value+"\" ");
+				else
+					out.print(value + " ");
+				}
+				else
+					out.print(value + " ");
 			}
 			else if((NETFileFunctions.isInList(na.getAttrName(), NETFileParameter.VERTEX_NUMBER_PARAMETER_LIST))){
 				if(!value.equalsIgnoreCase("")){
@@ -277,11 +282,19 @@ public class NWBToPajeknet implements Algorithm {
 			}
 			else if((NETFileFunctions.isInList(na.getAttrName(), NETFileParameter.VERTEX_STRING_PARAMETER_LIST))){
 				//System.out.println(na.getAttrName() + " ");
+				
 				if(!value.equalsIgnoreCase("")){
 					//		System.out.print(na.getAttrName() + " \"" + value + "\" ");
 
 					out.print(na.getAttrName() + " \"" + value + "\" ");
 				}
+			}
+			else if(na.getAttrName().startsWith("unknown")){
+				String[] sa = value.split(" ");
+				if(sa.length > 1)
+					out.print(" \""+value+"\" ");
+				else
+				out.print(value+ " ");
 			}
 			else;
 
@@ -309,18 +322,16 @@ public class NWBToPajeknet implements Algorithm {
 				continue;
 			}
 			if(na.getAttrName().equals(NETFileProperty.ATTRIBUTE_LABEL) || na.getAttrName().equals(ARCEDGEParameter.PARAMETER_LABEL)){
-				out.println(ARCEDGEParameter.PARAMETER_LABEL + " \"" + value + "\" ");
+				out.print(ARCEDGEParameter.PARAMETER_LABEL + " \"" + value + "\" ");
 			}
-			if((NETFileFunctions.isInList(na.getAttrName(), noPrintParameters)) && !(na.getAttrName().equals(NETFileProperty.ATTRIBUTE_LABEL))){
+			else if((NETFileFunctions.isInList(na.getAttrName(), noPrintParameters)) && !(na.getAttrName().equals(NETFileProperty.ATTRIBUTE_LABEL))){
 				//System.out.print(value + " ");
 				out.print(value + " ");
 			}
-			else if(((NETFileFunctions.isInList(na.getAttrName(), ARCEDGEParameter.ARCEDGE_NUMERIC_PARAMETER_LIST)) || (NETFileFunctions.isInList(na.getAttrName(), ARCEDGEParameter.ARCEDGE_STRING_PARAMETER_LIST))) && 
-					!na.getAttrName().equals(ARCEDGEParameter.PARAMETER_LABEL)){
+			else{
 			//	System.out.print(na.getAttrName() + " " + value + " ");
 				out.print(na.getAttrName() + " " + value + " ");
 			}
-			else;
 			i++;
 		}
 		//	System.out.println();
