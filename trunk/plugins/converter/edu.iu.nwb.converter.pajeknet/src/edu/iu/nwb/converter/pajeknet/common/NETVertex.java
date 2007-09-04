@@ -18,6 +18,7 @@ public class NETVertex {
 	private int id;
 	private String comment = null;
 	private String label = null;
+	private int unknowns = 0;
 
 
 	private boolean valid = false;
@@ -156,56 +157,95 @@ public class NETVertex {
 				continue;
 			}
 
-			if(qs.isEmpty()){
+			/*if(qs.isEmpty()){
 				throw new NETFileFormatException("Expected a value for parameter: " + s1);
-			}
-			String s2 = (String) qs.poll();
+			}*/
+			String s2 = (String) qs.peek();
 
 
 			if(s1.equalsIgnoreCase(NETFileParameter.PARAMETER_X_FACT)){
 				this.setXScaleFactor(s2);
+				qs.poll();
 			}
 			else if(s1.equalsIgnoreCase(NETFileParameter.PARAMETER_Y_FACT)){
 				this.setYScaleFactor(s2);
+				qs.poll();
 			}
 			else if(s1.equalsIgnoreCase(NETFileParameter.PARAMETER_SIZE)){
 				this.setSize(s2);
+				qs.poll();
 			}
 			else if(s1.equalsIgnoreCase(NETFileParameter.PARAMETER_PHI)){
 				this.setPhi(s2);
+				qs.poll();
 			}
 			else if(s1.equalsIgnoreCase(NETFileParameter.PARAMETER_R)){
 				this.setCornerRadius(s2);
+				qs.poll();
 			}
 			else if(s1.equalsIgnoreCase(NETFileParameter.PARAMETER_Q)){
 				this.setDiamondRatio(s2);
+				qs.poll();
 			}
 			else if(s1.equalsIgnoreCase(NETFileParameter.PARAMETER_IC) || s1.equalsIgnoreCase(NETFileParameter.PARAMETER_COLOR)){
+				if(NETFileFunctions.isAFloat(s2, "float") || NETFileFunctions.isAnInteger(s2, "int")){
+					String s = (String)qs.poll();
+					s += " " + qs.poll() + " ";
+					s += " " + qs.poll();
+					this.setInternalColor(s);
+				}
+				else{
 				this.setInternalColor(s2);
+				qs.poll();
+				}
 			}
 			else if(s1.equalsIgnoreCase(NETFileParameter.PARAMETER_BC)){
+				if(NETFileFunctions.isAFloat(s2, "float") || NETFileFunctions.isAnInteger(s2, "int")){
+					String s = (String)qs.poll();
+					s += " " + qs.poll() + " ";
+					s += " " + qs.poll();
+					this.setBorderColor(s);
+				}
+				else{
 				this.setBorderColor(s2);
+				qs.poll();
+				}
 			}
 			else if(s1.equalsIgnoreCase(NETFileParameter.PARAMETER_BW)){
 				this.setBorderWidth(s2);
+				qs.poll();
 			}
 			else if(s1.equalsIgnoreCase(NETFileParameter.PARAMETER_LC)){
+				if(NETFileFunctions.isAFloat(s2, "float") || NETFileFunctions.isAnInteger(s2, "int")){
+					String s = (String)qs.poll();
+					s += " " + qs.poll() + " ";
+					s += " " + qs.poll();
+					this.setLabelColor(s);
+				}
+				else{
 				this.setLabelColor(s2);
+				qs.poll();
+				}
 			}
 			else if(s1.equalsIgnoreCase(NETFileParameter.PARAMETER_LA)){
 				this.setLabelAngle(s2);
+				qs.poll();
 			}
 			else if(s1.equalsIgnoreCase(NETFileParameter.PARAMETER_FONT)){
 				this.setFont(s2);	
+				qs.poll();
 			}
 			else if(s1.equalsIgnoreCase(NETFileParameter.PARAMETER_LPHI)){
 				this.setLabelPhi(s2);
+				qs.poll();
 			}
 			else if(s1.equalsIgnoreCase(NETFileParameter.PARAMETER_FOS)){
 				this.setFontSize(s2);
+				qs.poll();
 			}
 			else if(s1.equalsIgnoreCase(NETFileParameter.PARAMETER_LR)){
 				this.setLabelRadius(s2);
+				qs.poll();
 			}
 
 
@@ -215,10 +255,11 @@ public class NETVertex {
 			}
 			else if(s1.startsWith(NETFileParameter.PARAMETER_SHAPE)){
 				this.setVertexShape(s2);
+				qs.poll();
 			}
 
-			else {
-				throw new NETFileFormatException("Unknown parameter: " + s1);  //to be changed to allow for nonsense parameters.
+			else { //This doesn't match any previously known parameters, we should add it as an unknown string attribute. 
+				setUnknownAttribute(s1);
 			}
 		}
 		value = true;
@@ -257,10 +298,11 @@ public class NETVertex {
 	 */
 
 
-	public void setLabel(String s){
+	public void setLabel(String s) throws NETFileFormatException {
 		NETVertex.Attributes.put(NETFileProperty.ATTRIBUTE_LABEL, NETFileProperty.TYPE_STRING);
 		this.label = s;
-
+		if(s == null || this.label.equals(""))
+			throw new NETFileFormatException("Each vertex must have a label.");
 	}
 
 	/*
@@ -272,6 +314,15 @@ public class NETVertex {
 	 * written by: Tim Kelley
 	 */
 
+	private void setUnknownAttribute(String s){
+		if(s != null){
+		String name = "unknown" + this.unknowns;
+		NETVertex.Attributes.put(name, NETFileProperty.TYPE_STRING);
+		this.String_Parameters.put(name, s);
+		this.unknowns++;
+		}
+	}
+	
 	private void setXpos(float f){
 		NETVertex.Attributes.put("xpos", "float");
 		this.Numeric_Parameters.put("xpos", new Float(f));
@@ -314,8 +365,10 @@ public class NETVertex {
 	 */
 
 	public void setShape(String s) throws NETFileFormatException{
+		if(s != null){
 		NETVertex.Attributes.put("shape", "string");
 		this.String_Parameters.put("shape", s);
+		}
 	}
 
 	/*
@@ -358,8 +411,10 @@ public class NETVertex {
 
 
 	public void setFont(String s) throws NETFileFormatException{
+		if(s != null){
 		NETVertex.Attributes.put(NETFileParameter.PARAMETER_FONT, "string");
 		this.String_Parameters.put(NETFileParameter.PARAMETER_FONT, s);
+		}
 	}
 
 	/*
@@ -371,12 +426,17 @@ public class NETVertex {
 	 */
 
 	public void setBorderColor(String s) throws NETFileFormatException{
-		if(NETFileFunctions.isInList(s, NETFileColor.VERTEX_COLOR_LIST)){
+		if(s != null){
+		String[] number = s.split(" ");
+		if(NETFileFunctions.isAFloat(number[0], "float") || NETFileFunctions.isAnInteger(number[0], "int")){
+			NETVertex.Attributes.put(NETFileParameter.PARAMETER_BC, "float");
+			this.Numeric_Parameters.put(NETFileParameter.PARAMETER_BC, s);
+		}
+		else{
 			NETVertex.Attributes.put(NETFileParameter.PARAMETER_BC, "string");
 			this.String_Parameters.put(NETFileParameter.PARAMETER_BC, s);
 		}
-		else
-			throw new NETFileFormatException(s + " is not a valid color selection");
+		}
 	}
 
 	/*
@@ -404,13 +464,17 @@ public class NETVertex {
 
 
 	private void setInternalColor(String s) throws NETFileFormatException{
-		if(NETFileFunctions.isInList(s, NETFileColor.VERTEX_COLOR_LIST)){
-			NETVertex.Attributes.put(NETFileParameter.PARAMETER_IC, "string");
-			this.String_Parameters.put(NETFileParameter.PARAMETER_IC,s);
+		if(s != null){
+		String[] number = s.split(" ");
+		if(NETFileFunctions.isAFloat(number[0], "float") || NETFileFunctions.isAnInteger(number[0], "int")){
+			NETVertex.Attributes.put(NETFileParameter.PARAMETER_IC, "float");
+			this.Numeric_Parameters.put(NETFileParameter.PARAMETER_IC, s);
 		}
-		else
-			throw new NETFileFormatException(s + " is not a valid color selection");
-
+		else{
+			NETVertex.Attributes.put(NETFileParameter.PARAMETER_IC, "string");
+			this.String_Parameters.put(NETFileParameter.PARAMETER_IC, s);
+		}
+		}
 	}
 
 	/*
@@ -483,13 +547,17 @@ public class NETVertex {
 	 * written by: Tim Kelley
 	 */
 	private void setLabelColor(String s) throws NETFileFormatException{
-		if(NETFileFunctions.isInList(s, NETFileColor.VERTEX_COLOR_LIST)){
+		if(s!= null){
+		String[] number = s.split(" ");
+		if(NETFileFunctions.isAFloat(number[0], "float") || NETFileFunctions.isAnInteger(number[0], "int")){
+			NETVertex.Attributes.put(NETFileParameter.PARAMETER_LC, "float");
+			this.Numeric_Parameters.put(NETFileParameter.PARAMETER_LC, s);
+		}
+		else{
 			NETVertex.Attributes.put(NETFileParameter.PARAMETER_LC, "string");
 			this.String_Parameters.put(NETFileParameter.PARAMETER_LC, s);
 		}
-		else
-			throw new NETFileFormatException(s + " is an invalid color selection");
-
+		}
 	}
 
 	/*

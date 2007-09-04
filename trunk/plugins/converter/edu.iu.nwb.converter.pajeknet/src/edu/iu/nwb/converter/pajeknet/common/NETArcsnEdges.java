@@ -16,6 +16,7 @@ public class NETArcsnEdges {
 	private int source;
 	private int target;
 	private String comment = null;
+	private int unknowns = 0;
 	//private String label = null;
 
 
@@ -110,20 +111,27 @@ public class NETArcsnEdges {
 		while(!qs.isEmpty()){
 			String s1 = (String) qs.poll();
 
-			if(qs.isEmpty()){
+			/*if(qs.isEmpty()){
 				throw new NETFileFormatException("Expected a value for parameter: " + s1);
-			}
+			}*/
 			String s2 = (String) qs.peek();
 
 			try{
-
 				if(s1.equalsIgnoreCase(ARCEDGEParameter.PARAMETER_WIDTH)){
 					this.setWidth(s2);
 					qs.poll();
 				}
 				else if(s1.equalsIgnoreCase(ARCEDGEParameter.PARAMETER_COLOR)){
+					if(NETFileFunctions.isAFloat(s2, "float") || NETFileFunctions.isAnInteger(s2, "int")){
+						String s = (String)qs.poll();
+						s += " " + qs.poll() + " ";
+						s += " " + qs.poll();
+						this.setColor(s);
+					}
+					else{
 					this.setColor(s2);
 					qs.poll();
+					}
 				}
 				else if(s1.equalsIgnoreCase(ARCEDGEParameter.PARAMETER_PATTERN)){
 					this.setPattern(s2);
@@ -158,8 +166,16 @@ public class NETArcsnEdges {
 					qs.poll();
 				}
 				else if(s1.equalsIgnoreCase(ARCEDGEParameter.PARAMETER_LABEL_COLOR)){
+					if(NETFileFunctions.isAFloat(s2, "float") || NETFileFunctions.isAnInteger(s2, "int")){
+						String s = (String)qs.poll();
+						s += " " + qs.poll() + " ";
+						s += " " + qs.poll();
+						this.setLabelColor(s);
+					}
+					else{
 					this.setLabelColor(s2);
 					qs.poll();
+					}
 				}
 				else if(s1.equalsIgnoreCase(ARCEDGEParameter.PARAMETER_LABEL_ANGLE)){
 					this.setLabelAngle(s2);
@@ -189,9 +205,9 @@ public class NETArcsnEdges {
 					qs.clear();
 					break;
 				}
-
-				else {
-					throw new NETFileFormatException("Unknown parameter: " + s1 + " with value: " + s2);
+				
+				else { //add the unknown value as a string parameter.
+					this.setUnknownAttribute(s1);
 				}
 			} catch(Exception ex){
 				throw new NETFileFormatException(ex);
@@ -212,6 +228,15 @@ public class NETArcsnEdges {
 	 * Setters
 	 * 
 	 *************************/
+	
+	public void setUnknownAttribute(String s){
+		if(s != null){
+		String name = "unknown" + this.unknowns;
+		NETArcsnEdges.Attributes.put(name, NETFileProperty.TYPE_STRING);
+		this.String_Parameters.put(name, s);
+		this.unknowns++;
+		}
+	}
 
 	public void setSource(String s) throws NETFileFormatException {
 		int i = NETFileFunctions.asAnInteger(s);
@@ -246,18 +271,24 @@ public class NETArcsnEdges {
 	}
 
 	public void setColor(String s) throws NETFileFormatException {
-
+		if(s != null){
+		String[] number = s.split(" ");
+		if(NETFileFunctions.isAFloat(number[0], "float") || NETFileFunctions.isAnInteger(number[0], "int")){
+			NETArcsnEdges.Attributes.put(ARCEDGEParameter.PARAMETER_COLOR, "float");
+			this.Numeric_Parameters.put(ARCEDGEParameter.PARAMETER_COLOR, s);
+		}
+		else{
 		NETArcsnEdges.Attributes.put(ARCEDGEParameter.PARAMETER_COLOR, NETFileProperty.TYPE_STRING);
 		this.String_Parameters.put(ARCEDGEParameter.PARAMETER_COLOR, s);
+		}
+		}
 	}
 
 	public void setPattern(String s) throws NETFileFormatException {
-		if(s.equals("Solid") || s.equals("Dots")){
+		if(s != null){
 			NETArcsnEdges.Attributes.put(ARCEDGEParameter.PARAMETER_PATTERN, NETFileProperty.TYPE_STRING);
 			this.String_Parameters.put(ARCEDGEParameter.PARAMETER_PATTERN, s);
 		}
-		else
-			throw new NETFileFormatException(s + " is an unrecognized pattern.");
 	}
 
 	private void setSize(float f){
@@ -270,10 +301,10 @@ public class NETArcsnEdges {
 	}
 
 	public void setArrowShape(String s) throws NETFileFormatException {
-
+		if(s != null){
 		NETArcsnEdges.Attributes.put(ARCEDGEParameter.PARAMETER_ARROW_SHAPE, NETFileProperty.TYPE_STRING);
 		this.String_Parameters.put(ARCEDGEParameter.PARAMETER_ARROW_SHAPE, s);
-
+		}
 	}
 
 	private void setArrowPosition(float f){
@@ -286,8 +317,10 @@ public class NETArcsnEdges {
 	}
 
 	public void setLabel(String s) {
+		if(s != null){
 		NETArcsnEdges.Attributes.put(ARCEDGEParameter.PARAMETER_LABEL, NETFileProperty.TYPE_STRING);
 		this.String_Parameters.put(ARCEDGEParameter.PARAMETER_LABEL, s);
+		}
 	}
 
 	private void setLabelPosition(float f){
@@ -318,9 +351,17 @@ public class NETArcsnEdges {
 	}
 
 	public void setLabelColor(String s) throws NETFileFormatException {
-
+		if(s != null){
+		String[] number = s.split(" ");
+		if(NETFileFunctions.isAFloat(number[0], "float") || NETFileFunctions.isAnInteger(number[0], "int")){
+			NETArcsnEdges.Attributes.put(ARCEDGEParameter.PARAMETER_LABEL_COLOR, "float");
+			this.Numeric_Parameters.put(ARCEDGEParameter.PARAMETER_LABEL_COLOR, s);
+		}
+		else{
 		NETArcsnEdges.Attributes.put(ARCEDGEParameter.PARAMETER_LABEL_COLOR, NETFileProperty.TYPE_STRING);
 		this.String_Parameters.put(ARCEDGEParameter.PARAMETER_LABEL_COLOR, s);
+		}
+		}
 	}
 
 	private void setLabelAngle(float f){
@@ -342,8 +383,10 @@ public class NETArcsnEdges {
 	}
 
 	public void setFont(String s) throws NETFileFormatException {
+		if(s != null){
 		NETArcsnEdges.Attributes.put(ARCEDGEParameter.PARAMETER_FONT, NETFileProperty.TYPE_STRING);
 		this.String_Parameters.put(NETFileParameter.PARAMETER_FONT, s);
+		}
 	}
 
 	public void setHook(String s1, String s2) throws NETFileFormatException {

@@ -123,8 +123,12 @@ public class NETFileFunctions {
 		float f = new Float(input).floatValue();
 		return f;
 	}
-	protected static boolean isAFloat (String input, String attr) throws NumberFormatException, Exception {
+	protected static boolean isAFloat (String input, String attr) {
+		try{
 		asAFloat(input);
+		}catch(Exception ex){
+			return false;
+		}
 		return true;
 	}
 
