@@ -47,8 +47,13 @@ public class ValidateNETFile {
 	public void validateNETFormat(File fileHandler) throws FileNotFoundException, IOException {
 		currentLine = 0;
 		totalNumOfNodes = 0;
-		String extension = fileHandler.getName();
-		extension = extension.substring(extension.lastIndexOf("."), extension.length()-1);
+		
+		//TODO: Either remove this or do something with it.
+		//If you do something with it, know that the second line sometimes
+		//causes "invalid string index, - 1" errors.
+//		String fileName = fileHandler.getName();
+//		String extension = 
+//			fileName.substring(fileName.lastIndexOf("."), fileName.length()-1);
 	
 		
 		BufferedReader reader = 
