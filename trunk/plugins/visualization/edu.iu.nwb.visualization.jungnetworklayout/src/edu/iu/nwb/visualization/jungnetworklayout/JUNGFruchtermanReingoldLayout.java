@@ -45,7 +45,7 @@ public class JUNGFruchtermanReingoldLayout implements AlgorithmFactory {
 
 	        public Data[] execute() {
 	            Graph graph = (Graph) dm[0].getData();
-	            JUNGLayoutGUI gui = new JUNGLayoutGUI("Fruchterman-Reingold Layout", new FRLayout(graph)); 
+	            JUNGLayoutGUI gui = new JUNGLayoutGUI("Fruchterman-Reingold (JUNG)", new FRLayout(graph)); 
 	    		//gui.pack();
 	    	    //gui.setSize(400, 400) ;
 	    	    gui.show();

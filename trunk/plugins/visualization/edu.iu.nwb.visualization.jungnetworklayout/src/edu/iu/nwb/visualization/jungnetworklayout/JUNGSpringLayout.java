@@ -46,7 +46,7 @@ public class JUNGSpringLayout implements AlgorithmFactory {
 	        public Data[] execute() {
 	            Graph graph = (Graph) dm[0].getData();
 	            ;
-	            JUNGLayoutGUI gui = new JUNGLayoutGUI("Spring Layout", new SpringLayout(graph)); 
+	            JUNGLayoutGUI gui = new JUNGLayoutGUI("Spring (JUNG)", new SpringLayout(graph)); 
 	    		//gui.pack();
 	    	    //gui.setSize(400, 400) ;
 	    	    gui.show();
