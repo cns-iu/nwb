@@ -116,7 +116,7 @@ public class RadialGraphVisualization {
                 });
 
             // create and display application window
-            frame = new JFrame("Radial Graph Visualization");
+            frame = new JFrame("Radial Tree/Graph (prefuse alpha)");
             frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
             frame.getContentPane().add(display, BorderLayout.CENTER);
             frame.pack();
