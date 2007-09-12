@@ -60,16 +60,16 @@ public class PajeknetToPajekmat implements Algorithm{
 		File inData, outData;
 		Data [] dm = null;
 		ValidateNETFile validator;
-	//	System.out.println("Executing");
+		//System.out.println("Executing PajeknetToPajekMat");
 		Object inFile = data[0].getData();
 
 		if (inFile instanceof File){
 			inData = (File)inFile;
 
 			validator = new ValidateNETFile();
-		//	System.out.println("Before try");
+		//System.out.println("Before try");
 			try {
-		//		System.out.println("Trying");
+		//System.out.println("Trying");
 				validator.validateNETFormat(inData);
 				if(validator.getValidationResult()){
 					outData = convertNetToMat(validator);
@@ -108,7 +108,7 @@ public class PajeknetToPajekmat implements Algorithm{
 
 	private File convertNetToMat(ValidateNETFile vmf){
 		try{
-			//System.out.println("Converting");
+			//System.out.println("Converting net to mat");
 			File net = getTempFile();
 			PrintWriter out = new PrintWriter(new BufferedWriter(new FileWriter(net)));	
 			writeVertices(vmf, out);
@@ -190,7 +190,7 @@ public class PajeknetToPajekmat implements Algorithm{
 					
 					if((nvi.getID() == source) && (nvj.getID() == target)){
 						weight = ((Float)nae.getAttribute(NETFileProperty.ATTRIBUTE_WEIGHT)).floatValue();
-					//	System.out.println(weight);
+					//System.out.println(weight);
 						break;
 					}
 					else {
