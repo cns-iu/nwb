@@ -9,9 +9,9 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Dictionary;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
-
 
 import org.cishell.framework.CIShellContext;
 import org.cishell.framework.algorithm.Algorithm;
@@ -19,10 +19,7 @@ import org.cishell.framework.data.BasicData;
 import org.cishell.framework.data.Data;
 import org.osgi.service.log.LogService;
 
-import edu.iu.nwb.converter.edgelist.EdgeListValidatorFactory;
 import edu.iu.nwb.converter.edgelist.EdgeListValidatorFactory.ValidateEdgeFile;
-
-import java.util.HashMap;
 
 
 /**
@@ -140,7 +137,7 @@ public class EdgeListToNWB implements Algorithm {
     public Data[] execute() {
 		File inFile = (File)data[0].getData();
     	BufferedReader edgelistreader;
-		BufferedWriter nwb;
+		BufferedWriter nwb = null;
 		EdgeListValidatorFactory eLVFact;
 		ValidateEdgeFile validator;
 			
@@ -155,6 +152,7 @@ public class EdgeListToNWB implements Algorithm {
 			return null;
 		} 
 		File nwbFile = getTempFile();
+		try {
 		try {
 			nwb = new BufferedWriter(new FileWriter(nwbFile));
 		} catch (IOException e) {
@@ -176,6 +174,15 @@ public class EdgeListToNWB implements Algorithm {
 		} catch (Exception e ) {
 			logger.log(LogService.LOG_ERROR, "Encountered an error while converting from edge list to .nwb", e);
 			return null;
+		}
+		} finally {
+			if (nwb != null) {
+				try {
+				nwb.close();
+				} catch (IOException e) {
+					logger.log(LogService.LOG_ERROR, "Unable to close file stream.", e);
+				}
+			}
 		}
 
     }
