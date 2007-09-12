@@ -45,7 +45,6 @@ public class GraphMLToNWBbyStax implements Algorithm {
 	 * @param data List of Data objects to convert
 	 * @param parameters Parameters passed to the converter
 	 * @param context Provides access to CIShell services
-	 * @param transformer 
 	 */
 
 	public GraphMLToNWBbyStax(Data[] data, Dictionary parameters, CIShellContext context) {
