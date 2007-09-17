@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: Burst Detection
 Bundle-SymbolicName: edu.iu.nwb.analysis.burst
-Bundle-Version: 0.1.0
+Bundle-Version: 0.7.0
 Bundle-ClassPath: .
 Bundle-Localization: plugin
 Import-Package: cern.colt.function,
