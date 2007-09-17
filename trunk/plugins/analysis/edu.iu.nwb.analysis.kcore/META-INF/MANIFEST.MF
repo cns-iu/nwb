@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: K-Core Analysis
 Bundle-SymbolicName: edu.iu.nwb.analysis.kcore
-Bundle-Version: 0.1.0
+Bundle-Version: 0.7.0
 Bundle-ClassPath: .
 Bundle-Localization: plugin
 Import-Package: cern.colt.function,
