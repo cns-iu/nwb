@@ -1,13 +1,11 @@
 package edu.iu.nwb.converter.pajekmat.common;
 
-import java.awt.GraphicsEnvironment;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Queue;
-import java.util.TreeSet;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
@@ -18,6 +16,7 @@ public class MATVertex {
 	private int id;
 	private String comment = null;
 	private String label = null;
+	private int unknowns = 0;
 
 
 	private boolean valid = false;
@@ -58,7 +57,7 @@ public class MATVertex {
 		if(!stringQueue.isEmpty()){
 			
 				this.testVertexPosition(stringQueue);	
-				if(! testVertexShape((String) stringQueue.peek())){
+				if(! setVertexShape((String) stringQueue.peek())){
 					testParameters(stringQueue);
 				}
 				else {
@@ -77,29 +76,19 @@ public class MATVertex {
 	public boolean testVertexID(Queue qs) throws Exception{
 		try
 		{
-			int i = 0;
-			while(!qs.isEmpty()){
-			
-				String s = (String) qs.peek();
-				switch(i){
-				case 0:
-					this.setID(s);
-					break;
-				case 1:
-					this.setLabel(s);
-					break;
-				default:
-					return true;
-				}
-				qs.poll();
-				i++;
+			if(qs.size() < 2){
+				throw new MATFileFormatException("Vertices must have both ID and Label");
 			}
-			if(this.getLabel() == null)
-				throw new Exception("Vertices must have both ID and Label");
+				String s = (String) qs.poll();
+				
+				this.setID(s);
+				s = (String)qs.poll();
+			
+			
 			return true;
 		}
 		catch(Exception ex){
-			throw ex;
+			throw new MATFileFormatException(ex);
 		}
 	}
 
@@ -109,18 +98,12 @@ public class MATVertex {
 		float f = 0;
 		int i = 0;
 		try{
-			while(!qs.isEmpty()){
+			for(;;){
+				if(qs.isEmpty())
+					return false;  //no positional data
+				
 				String s = (String) qs.peek();
 				
-			//	System.out.println("!!"+s+"!!");
-				if((MATFileFunctions.isInList(s,
-						MATFileShape.ATTRIBUTE_SHAPE_LIST) 
-						|| (MATFileFunctions.isInList(s,
-								MATFileParameter.VERTEX_NUMBER_PARAMETER_LIST)) 
-								|| (MATFileFunctions.isInList(s,
-										MATFileParameter.VERTEX_STRING_PARAMETER_LIST)))){
-					break;
-				}
 				f = new Float((String)qs.poll()).floatValue();
 				
 					value = true;
@@ -136,27 +119,26 @@ public class MATVertex {
 						break;
 					}
 					i++;
+					qs.poll();
 				}
 		}
 		catch(NumberFormatException ex){
-			throw new Exception("The file contains an invalid sequence in the positional data.");
+			return value;
 		}
 
-		return value;
+	
 	}
 
 
 
-	public boolean testVertexShape(String st) throws Exception{
+	public boolean setVertexShape(String st) throws Exception{
 		try {
-			for(int ii = 0; ii < MATFileShape.ATTRIBUTE_SHAPE_LIST.length; ii++){
-				String s = MATFileShape.ATTRIBUTE_SHAPE_LIST[ii];
-				if(st.equalsIgnoreCase(s)) {
-					this.setShape(s);
+			
+					this.setShape(st);
 					return true;
-				}
-			}
-			return false;
+				
+			
+			
 		}
 		catch(Exception ex){
 			return false;
@@ -170,56 +152,97 @@ public class MATVertex {
 		while(!qs.isEmpty()){
 			String s1 = (String) qs.poll();
 
-			if(qs.isEmpty()){
-				throw new Exception("Expected a value for parameter: " + s1);
+			if(MATFileFunctions.isInList(s1,MATFileShape.ATTRIBUTE_SHAPE_LIST)){
+				this.setShape(s1);
+				continue;
 			}
-			String s2 = (String) qs.poll();
+			
+			String s2 = (String) qs.peek();
 
 
 			if(s1.equalsIgnoreCase(MATFileParameter.PARAMETER_X_FACT)){
 				this.setXScaleFactor(s2);
+				qs.poll();
 			}
 			else if(s1.equalsIgnoreCase(MATFileParameter.PARAMETER_Y_FACT)){
 				this.setYScaleFactor(s2);
+				qs.poll();
 			}
 			else if(s1.equalsIgnoreCase(MATFileParameter.PARAMETER_SIZE)){
 				this.setSize(s2);
+				qs.poll();
 			}
 			else if(s1.equalsIgnoreCase(MATFileParameter.PARAMETER_PHI)){
 				this.setPhi(s2);
+				qs.poll();
 			}
 			else if(s1.equalsIgnoreCase(MATFileParameter.PARAMETER_R)){
 				this.setCornerRadius(s2);
+				qs.poll();
 			}
 			else if(s1.equalsIgnoreCase(MATFileParameter.PARAMETER_Q)){
 				this.setDiamondRatio(s2);
+				qs.poll();
 			}
 			else if(s1.equalsIgnoreCase(MATFileParameter.PARAMETER_IC) || s1.equalsIgnoreCase(MATFileParameter.PARAMETER_COLOR)){
-				this.setInternalColor(s2);
+				if(MATFileFunctions.isAFloat(s2, "float") || MATFileFunctions.isAnInteger(s2, "int")){
+					String s = (String)qs.poll();
+					s += " " + qs.poll() + " ";
+					s += " " + qs.poll();
+					this.setInternalColor(s);
+				}
+				else{
+					this.setInternalColor(s2);
+					qs.poll();
+				}
 			}
 			else if(s1.equalsIgnoreCase(MATFileParameter.PARAMETER_BC)){
-				this.setBorderColor(s2);
+				if(MATFileFunctions.isAFloat(s2, "float") || MATFileFunctions.isAnInteger(s2, "int")){
+					String s = (String)qs.poll();
+					s += " " + qs.poll() + " ";
+					s += " " + qs.poll();
+					this.setBorderColor(s);
+				}
+				else{
+					this.setBorderColor(s2);
+					qs.poll();
+				}
 			}
 			else if(s1.equalsIgnoreCase(MATFileParameter.PARAMETER_BW)){
 				this.setBorderWidth(s2);
+				qs.poll();
 			}
 			else if(s1.equalsIgnoreCase(MATFileParameter.PARAMETER_LC)){
-				this.setLabelColor(s2);
+				if(MATFileFunctions.isAFloat(s2, "float") || MATFileFunctions.isAnInteger(s2, "int")){
+					String s = (String)qs.poll();
+					s += " " + qs.poll() + " ";
+					s += " " + qs.poll();
+					this.setLabelColor(s);
+				}
+				else{
+					this.setLabelColor(s2);
+					qs.poll();
+				}
 			}
 			else if(s1.equalsIgnoreCase(MATFileParameter.PARAMETER_LA)){
 				this.setLabelAngle(s2);
+				qs.poll();
 			}
 			else if(s1.equalsIgnoreCase(MATFileParameter.PARAMETER_FONT)){
-				this.setFont(s2,qs);	
+				this.setFont(s2);
+				qs.poll();
 			}
 			else if(s1.equalsIgnoreCase(MATFileParameter.PARAMETER_LPHI)){
 				this.setLabelPhi(s2);
+				qs.poll();
 			}
 			else if(s1.equalsIgnoreCase(MATFileParameter.PARAMETER_FOS)){
 				this.setFontSize(s2);
+				qs.poll();
 			}
 			else if(s1.equalsIgnoreCase(MATFileParameter.PARAMETER_LR)){
 				this.setLabelRadius(s2);
+				qs.poll();
 			}
 
 			
@@ -228,11 +251,12 @@ public class MATVertex {
 				break;
 			}
 			else if(s1.startsWith(MATFileParameter.PARAMETER_SHAPE)){
-				this.testVertexShape(s2);
+				this.setVertexShape(s2);
+				qs.poll();
 			}
 
 			else {
-				throw new Exception("Unknown parameter: " + s1);
+				setUnknownAttribute(s1);
 			}
 		}
 		value = true;
@@ -275,8 +299,11 @@ public class MATVertex {
 	 */
 
 
-	public void setLabel(String s){
+	public void setLabel(String s) throws MATFileFormatException{
+		if(s == null || s.equals(""))
+			throw new MATFileFormatException("Vertices must have both ID and Label");
 		MATVertex.Attributes.put(MATFileProperty.ATTRIBUTE_LABEL, MATFileProperty.TYPE_STRING);
+		
 		this.label = s;
 
 	}
@@ -332,10 +359,10 @@ public class MATVertex {
 	 */
 
 	public void setShape(String s) throws MATFileFormatException{
-		if(!MATFileFunctions.isInList(s, MATFileShape.ATTRIBUTE_SHAPE_LIST))
-			throw new MATFileFormatException(s + " is an unknown shape");
+		if(s != null){
 		MATVertex.Attributes.put("shape", "string");
 		this.String_Parameters.put("shape", s);
+		}
 	}
 
 	/*
@@ -387,41 +414,11 @@ public class MATVertex {
 	 * in the attribute list and sets the font value for the vertex.
 	 * written by: Tim Kelley
 	 */
-	private TreeSet setFontPrime(String s, TreeSet ss){
-		String compare = s;
-		TreeSet ts = new TreeSet();
-		compare = compare.toLowerCase();
-		for(Iterator ii = ss.iterator(); ii.hasNext();){
-			String st = (String) ii.next();
-			if(st.startsWith(s)){
-				ts.add(st);
-			}
-		}
-		return ts;
-	}
-	public void setFont(String s, Queue qs) throws MATFileFormatException{
-		String[] fonts = GraphicsEnvironment.getLocalGraphicsEnvironment().getAvailableFontFamilyNames();
-		TreeSet compareList = new TreeSet();
-		String compare = s;
-		for(int ii = 0; ii < fonts.length; ii++){
-			String st = fonts[ii];
-			if(st.startsWith(compare)){
-				compareList.add(st);		
-			}
-		}	
-
-		while(!qs.isEmpty()){
-
-			String peekValue = (String) qs.peek();
-			if(compareList.isEmpty())
-				throw new MATFileFormatException(compare + " is not a recognized font on this system");
-			else if(MATFileFunctions.isInList(peekValue, MATFileParameter.VERTEX_NUMBER_PARAMETER_LIST) || MATFileFunctions.isInList(peekValue, MATFileParameter.VERTEX_STRING_PARAMETER_LIST))
-				break;
-			compare = compare + " " + qs.poll();
-			compareList = this.setFontPrime(compare, compareList);
-		}
+	
+	public void setFont(String s) throws MATFileFormatException{
+		if(s!=null)
 		MATVertex.Attributes.put(MATFileParameter.PARAMETER_FONT, "string");
-		this.String_Parameters.put(MATFileParameter.PARAMETER_FONT, compare);
+		this.String_Parameters.put(MATFileParameter.PARAMETER_FONT, s);
 	}
 
 	/*
@@ -433,13 +430,20 @@ public class MATVertex {
 	 */
 
 	public void setBorderColor(String s) throws MATFileFormatException{
-		if(MATFileFunctions.isInList(s, MATFileColor.VERTEX_COLOR_LIST)){
+		if(s!= null){
+			String[] number = s.split(" ");
+			if(MATFileFunctions.isAFloat(number[0], "float") || MATFileFunctions.isAnInteger(number[0], "int")){
+			MATVertex.Attributes.put(MATFileParameter.PARAMETER_BC, "float");
+			this.Numeric_Parameters.put(MATFileParameter.PARAMETER_BC, s);
+		}
+		else{
 			MATVertex.Attributes.put(MATFileParameter.PARAMETER_BC, "string");
 			this.String_Parameters.put(MATFileParameter.PARAMETER_BC, s);
 		}
-		else
-			throw new MATFileFormatException(s + " is not a valid color selection");
+			
 	}
+	}
+
 
 	/*
 	 * setBorderWidth
@@ -466,13 +470,17 @@ public class MATVertex {
 
 
 	private void setInternalColor(String s) throws MATFileFormatException{
-		if(MATFileFunctions.isInList(s, MATFileColor.VERTEX_COLOR_LIST)){
-			MATVertex.Attributes.put(MATFileParameter.PARAMETER_IC, "string");
-			this.String_Parameters.put(MATFileParameter.PARAMETER_IC,s);
-		}
-		else
-			throw new MATFileFormatException(s + " is not a valid color selection");
-
+		if(s != null){
+			String[] number = s.split(" ");
+			if(MATFileFunctions.isAFloat(number[0], "float") || MATFileFunctions.isAnInteger(number[0], "int")){
+				MATVertex.Attributes.put(MATFileParameter.PARAMETER_IC, "float");
+				this.Numeric_Parameters.put(MATFileParameter.PARAMETER_IC, s);
+			}
+			else{
+				MATVertex.Attributes.put(MATFileParameter.PARAMETER_IC, "string");
+				this.String_Parameters.put(MATFileParameter.PARAMETER_IC, s);
+			}
+			}
 	}
 
 	/*
@@ -545,12 +553,17 @@ public class MATVertex {
 	 * written by: Tim Kelley
 	 */
 	private void setLabelColor(String s) throws MATFileFormatException{
-		if(MATFileFunctions.isInList(s, MATFileColor.VERTEX_COLOR_LIST)){
-			MATVertex.Attributes.put(MATFileParameter.PARAMETER_LC, "string");
-			this.String_Parameters.put(MATFileParameter.PARAMETER_LC, s);
-		}
-		else
-			throw new MATFileFormatException(s + " is an invalid color selection");
+		if(s!= null){
+			String[] number = s.split(" ");
+			if(MATFileFunctions.isAFloat(number[0], "float") || MATFileFunctions.isAnInteger(number[0], "int")){
+				MATVertex.Attributes.put(MATFileParameter.PARAMETER_LC, "float");
+				this.Numeric_Parameters.put(MATFileParameter.PARAMETER_LC, s);
+			}
+			else{
+				MATVertex.Attributes.put(MATFileParameter.PARAMETER_LC, "string");
+				this.String_Parameters.put(MATFileParameter.PARAMETER_LC, s);
+			}
+			}
 
 	}
 
@@ -593,14 +606,13 @@ public class MATVertex {
 		this.Numeric_Parameters.put(MATFileParameter.PARAMETER_R, new Float(f));
 	}
 	private void setCornerRadius(String s) throws MATFileFormatException{
-		float f = MATFileFunctions.asAFloat(s);
+		
 		try {
-			if(!(this.getShape().equalsIgnoreCase(MATFileShape.SHAPE_BOX) || this.getShape().equalsIgnoreCase(MATFileShape.SHAPE_DIAMOND))){
-				throw new MATFileFormatException("This parameter is not used by this vertex's shape");
-			}
+			float f = MATFileFunctions.asAFloat(s);
+			
 			this.setCornerRadius(f);
 		}
-		catch(NullPointerException ex){
+		catch(NumberFormatException ex){
 			throw new MATFileFormatException("This parameter is not used by this vertex's shape");
 		}
 
@@ -620,17 +632,24 @@ public class MATVertex {
 		this.Numeric_Parameters.put(MATFileParameter.PARAMETER_Q, new Float(f));
 	}
 	public void setDiamondRatio(String s) throws MATFileFormatException{
-		float f = MATFileFunctions.asAFloat(s);
+		
 		try {
-			if(!this.getShape().equalsIgnoreCase(MATFileShape.SHAPE_DIAMOND)){
-				throw new MATFileFormatException("This parameter is not used by this vertex's shape");
-			}
+			float f = MATFileFunctions.asAFloat(s);
 			this.setDiamondRatio(f);
 		}
-		catch(NullPointerException ex){
+		catch(NumberFormatException ex){
 			throw new MATFileFormatException("This parameter is not used by this vertex's shape");
 		}
 
+	}
+	
+	private void setUnknownAttribute(String s){
+		if(s != null){
+		String name = "unknown" + this.unknowns;
+		MATVertex.Attributes.put(name, MATFileProperty.TYPE_STRING);
+		this.String_Parameters.put(name, s);
+		this.unknowns++;
+		}
 	}
 
 

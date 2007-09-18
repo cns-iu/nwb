@@ -99,15 +99,13 @@ public class MATFileFunctions {
 		return i;
 	}
 
-	protected static boolean isAnInteger(String input, String attr) throws NumberFormatException, Exception{
-		Integer value = new Integer (input);    
-		if (attr.equalsIgnoreCase(MATFileProperty.ATTRIBUTE_ID) ||
-				attr.equalsIgnoreCase(MATFileProperty.ATTRIBUTE_SOURCE) ||
-				attr.equalsIgnoreCase(MATFileProperty.ATTRIBUTE_TARGET) ){
-			if (value.intValue()<1)
-				throw new Exception("The node id must be greater than 0.");
-		}    		
-		return true;    	
+	protected static boolean isAnInteger(String input, String attr){
+		try{
+		int i = asAnInteger(input);        		
+		return true;
+		}catch(NumberFormatException nfe){
+			return false;
+		}
 	}    
 
 	protected static boolean isAString(String input, String attr) throws Exception {
@@ -123,9 +121,13 @@ public class MATFileFunctions {
 		float f = new Float(input).floatValue();
 		return f;
 	}
-	protected static boolean isAFloat (String input, String attr) throws NumberFormatException, Exception {
+	protected static boolean isAFloat (String input, String attr){
+		try{
 		asAFloat(input);
 		return true;
+		}catch(NumberFormatException nfe){
+			return false;
+		}
 	}
 
 	public static boolean isInList(String s, String[] strings){
