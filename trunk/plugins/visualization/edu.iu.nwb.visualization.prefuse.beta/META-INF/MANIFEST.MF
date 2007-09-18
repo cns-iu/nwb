@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: Visualization Plug-in using Prefuse Beta
 Bundle-SymbolicName: edu.iu.nwb.visualization.prefuse.beta
-Bundle-Version: 0.5.0
+Bundle-Version: 0.7.0
 Bundle-Localization: plugin
 Service-Component: OSGI-INF/RadialGraph.xml, OSGI-INF/GraphView.xml, OSGI-INF/TreeMap.xml, OSGI-INF/TreeView.xml, OSGI-INF/Specified.xml, OSGI-INF/FruchtermanReingold.xml
 X-AutoStart: true
@@ -48,8 +48,6 @@ Import-Package: org.cishell.framework,
  org.freehep.util.template,
  org.freehep.xml.io,
  org.freehep.xml.menus,
- org.freehep.xml.menus.1.0,
- org.freehep.xml.menus.1.1,
  org.freehep.xml.menus.test,
  org.freehep.xml.menus.test.images,
  org.freehep.xml.util,
