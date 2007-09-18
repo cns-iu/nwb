@@ -91,20 +91,20 @@
     </top_menu>
 
     <top_menu name="Visualization">
- 	<menu name="Circular" pid="edu.iu.nwb.visualization.jungnetworklayout.JUNGCircleLayout"/>
-	<menu name="Specified" pid="edu.iu.nwb.visualization.prefuse.beta.specified.Specified"/>
+ 	<menu name="Circular (JUNG)" pid="edu.iu.nwb.visualization.jungnetworklayout.JUNGCircleLayout"/>
+	<menu name="Pre-defined Positions (prefuse beta)" pid="edu.iu.nwb.visualization.prefuse.beta.specified.Specified"/>
 	<menu type="break"/>
-	<menu name="Radial Tree/Graph" pid="edu.iu.nwb.visualization.radialgraph.RadialGraph"/> 
-	<menu name="Radial Tree/Graph with Annotation" pid="edu.iu.nwb.visualization.prefuse.beta.radialgraph.RadialGraph"/>
-	<menu name="Tree Map" pid="edu.iu.nwb.visualization.prefuse.beta.treemap.TreeMap"/>
-	<menu name="Tree View" pid="edu.iu.nwb.visualization.prefuse.beta.treeview.TreeView"/>
+	<menu name="Radial Tree/Graph (prefuse alpha)" pid="edu.iu.nwb.visualization.radialgraph.RadialGraph"/> 
+	<menu name="Radial Tree/Graph with Annotation (prefuse beta)" pid="edu.iu.nwb.visualization.prefuse.beta.radialgraph.RadialGraph"/>
+	<menu name="Tree Map (prefuse beta)" pid="edu.iu.nwb.visualization.prefuse.beta.treemap.TreeMap"/>
+	<menu name="Tree View (prefuse beta)" pid="edu.iu.nwb.visualization.prefuse.beta.treeview.TreeView"/>
 	<menu type="break"/>
-	<menu name="Force Directed with Annotation" pid="edu.iu.nwb.visualization.prefuse.beta.graphview.GraphView"/> 
-	<menu name="Kamada-Kawai" pid="edu.iu.nwb.visualization.jungnetworklayout.JUNGKamadaKawaiLayout"/>
-	<menu name="Fruchterman-Reingold" pid="edu.iu.nwb.visualization.jungnetworklayout.JUNGFruchtermanReingoldLayout"/> 
-	<menu name="Fruchterman-Reingold with Annotation" pid="edu.iu.nwb.visualization.prefuse.beta.fruchtermanreingold.FruchtermanReingold"/>
-	<menu name="Spring" pid="edu.iu.nwb.visualization.jungnetworklayout.JUNGSpringLayout"/>
-	<menu name="Small World" pid="edu.iu.nwb.visualization.prefuse.alpha.smallworld.app.SmallWorld"/>
+	<menu name="Force Directed with Annotation (prefuse beta)" pid="edu.iu.nwb.visualization.prefuse.beta.graphview.GraphView"/> 
+	<menu name="Kamada-Kawai (JUNG)" pid="edu.iu.nwb.visualization.jungnetworklayout.JUNGKamadaKawaiLayout"/>
+	<menu name="Fruchterman-Reingold (JUNG)" pid="edu.iu.nwb.visualization.jungnetworklayout.JUNGFruchtermanReingoldLayout"/> 
+	<menu name="Fruchterman-Reingold with Annotation (prefuse beta)" pid="edu.iu.nwb.visualization.prefuse.beta.fruchtermanreingold.FruchtermanReingold"/>
+	<menu name="Spring (JUNG)" pid="edu.iu.nwb.visualization.jungnetworklayout.JUNGSpringLayout"/>
+	<menu name="Small World (prefuse beta)" pid="edu.iu.nwb.visualization.prefuse.alpha.smallworld.app.SmallWorld"/>
 	<menu type="break"/>
 	<menu name="Parallel Coordinates (demo)" pid="org.mediavirus.parvis.ParallelCoordinatesAlgorithm"/>
     </top_menu>
