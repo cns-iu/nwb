@@ -1,13 +1,11 @@
 package edu.iu.nwb.converter.pajeknet.common;
 
-import java.awt.GraphicsEnvironment;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Queue;
-import java.util.TreeSet;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
@@ -28,7 +26,7 @@ public class NETVertex {
 		this.String_Parameters = new ConcurrentHashMap();
 	}
 
-	public NETVertex(String s) throws Exception {
+	public NETVertex(String s) throws NETFileFormatException {
 		String[] properties = NETFileFunctions.processTokens(s);
 		this.Numeric_Parameters = new ConcurrentHashMap();
 		this.String_Parameters = new ConcurrentHashMap();
@@ -36,7 +34,7 @@ public class NETVertex {
 
 	}
 
-	public boolean testVertices(String[] strings) throws Exception{
+	public boolean testVertices(String[] strings) throws NETFileFormatException{
 		boolean value = true;
 		Queue stringQueue = new ConcurrentLinkedQueue();
 		for(int ii = 0; ii < strings.length; ii++){
@@ -64,7 +62,7 @@ public class NETVertex {
 			}
 
 		}catch(Exception ex){
-			throw ex;
+			throw new NETFileFormatException(ex);
 		}
 		
 		return value;
@@ -138,7 +136,7 @@ public class NETVertex {
 					setShape(st);
 			
 			
-			return false;
+			return true;
 		}
 		catch(Exception ex){
 			return false;
@@ -299,10 +297,13 @@ public class NETVertex {
 
 
 	public void setLabel(String s) throws NETFileFormatException {
+		System.out.println(s);
+		if(s == null || s.equals(""))
+			throw new NETFileFormatException("Each vertex must have a label.");
+		
 		NETVertex.Attributes.put(NETFileProperty.ATTRIBUTE_LABEL, NETFileProperty.TYPE_STRING);
 		this.label = s;
-		if(s == null || this.label.equals(""))
-			throw new NETFileFormatException("Each vertex must have a label.");
+		
 	}
 
 	/*
