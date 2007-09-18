@@ -297,7 +297,6 @@ public class NETVertex {
 
 
 	public void setLabel(String s) throws NETFileFormatException {
-		System.out.println(s);
 		if(s == null || s.equals(""))
 			throw new NETFileFormatException("Each vertex must have a label.");
 		
