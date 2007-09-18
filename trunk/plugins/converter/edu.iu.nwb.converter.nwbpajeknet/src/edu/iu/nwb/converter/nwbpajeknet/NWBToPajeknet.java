@@ -175,7 +175,10 @@ public class NWBToPajeknet implements Algorithm {
 				inNodesSection = true;
 				inDirectededgesSection = false;
 				inUndirectededgesSection = false;
+				if(!validator.getHasTotalNumOfNodes())
 				writeHeader(line.replace(NWBFileProperty.HEADER_NODE, "Vertices " + validator.getTotalNumOfNodes()), out);
+				else
+					writeHeader(line.replace(NWBFileProperty.HEADER_NODE, "Vertices "), out);
 				line = reader.readLine();
 				continue;
 			}
