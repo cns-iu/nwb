@@ -43,6 +43,7 @@ public class PrefuseGraphMLReader implements Algorithm {
     		return dm;
     	}catch (DataIOException dioe){
     		logger.log(LogService.LOG_ERROR, "A Data IO error occurred while reading the specified file into prefuse.data.Graph.", dioe);
+    		dioe.printStackTrace();
     		return null;
     	}catch (SecurityException exception){
     		logger.log(LogService.LOG_ERROR, "A security violation occured while reading the specified file into prefuse.data.Graph.", exception);
