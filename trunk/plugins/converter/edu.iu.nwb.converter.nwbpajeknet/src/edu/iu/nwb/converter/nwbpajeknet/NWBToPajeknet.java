@@ -255,15 +255,15 @@ public class NWBToPajeknet implements Algorithm {
 	private void writeNodes(String s, PrintWriter out, ValidateNWBFile validator, List nodeAttrList){
 
 		String[] columns = NETFileFunctions.processTokens(s);
-
+	//	System.out.println(s);
 		int i = 0;
 		for(Iterator ii = nodeAttrList.iterator(); ii.hasNext();){
 			NWBAttribute na = (NWBAttribute) ii.next();
 			String value = columns[i];
-			//System.out.print(value+"::");
+		//	System.out.print(value + "::");
 			//value.replace("\"", "");
 			if(value.equalsIgnoreCase("*")){
-				continue;
+				
 			}
 			else if(NETFileFunctions.isInList(na.getAttrName(), noPrintParameters)){
 				if(na.getDataType().equalsIgnoreCase(NWBFileProperty.TYPE_STRING)){
