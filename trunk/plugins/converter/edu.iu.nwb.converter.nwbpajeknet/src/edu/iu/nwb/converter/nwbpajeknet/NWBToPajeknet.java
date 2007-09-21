@@ -283,7 +283,7 @@ public class NWBToPajeknet implements Algorithm {
 					//System.out.println(ss);
 					if(ss.matches("[bil]?c1")){
 					//	System.out.println("Yes");
-						ss.replace("1", "");
+						ss = ss.replace("1", "");
 						ss += " " + value + " ";
 						for(int j = 1; j < 3; j++){
 							ss += columns[j+i] + " ";
