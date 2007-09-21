@@ -687,7 +687,7 @@ public class NETVertex {
 	}
 
 	public Object getAttribute(String s){
-		//System.out.println(s);
+	
 		String st = (String) NETVertex.Attributes.get(s);
 		if(st == null)
 			return null;
