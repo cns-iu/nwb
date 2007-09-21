@@ -137,7 +137,7 @@ public class ValidateNETFile {
 		
 			this.vertices = new ArrayList();
 			StringTokenizer st= new StringTokenizer(s);
-			//System.out.println(s);
+			
 			if (st.countTokens()>1){
 				st.nextToken();
 				//*****If it is not an integer...
@@ -228,7 +228,7 @@ public class ValidateNETFile {
 		NETVertex nv = null;
 		try{
 			nv = new NETVertex(s);
-			//System.out.println(nv);
+		
 
 		}
 		catch (NumberFormatException nfe){
@@ -394,7 +394,7 @@ public class ValidateNETFile {
 				String s = (i+1) + " \"" + (i+1) + "\"";
 				try{
 					NETVertex nv = new NETVertex(s);
-					//	System.out.println(nv);
+				
 					this.vertices.add(nv);
 				}
 				catch(Exception e){
