@@ -276,29 +276,41 @@ public class NWBToPajeknet implements Algorithm {
 				else
 					out.print(value + " ");
 			}
-			else if((NETFileFunctions.isInList(na.getAttrName(), NETFileParameter.VERTEX_NUMBER_PARAMETER_LIST))){
+			else if(na.getDataType().equalsIgnoreCase("float") || na.getDataType().equalsIgnoreCase("int")){
 				if(!value.equalsIgnoreCase("")){
 					//	System.out.print(na.getAttrName() + " " + value + " ");
-
-					out.print(na.getAttrName() + " " + value + " ");
+					String ss = na.getAttrName();
+					//System.out.println(ss);
+					if(ss.matches("[bil]?c1")){
+					//	System.out.println("Yes");
+						ss.replace("1", "");
+						ss += " " + value + " ";
+						for(int j = 1; j < 3; j++){
+							ss += columns[j+i] + " ";
+							ii.next();
+						}
+						i = i+2;
+						out.print(ss);
+					}else
+						out.print(na.getAttrName() + " " + value + " ");
 				}
 			}
-			else if((NETFileFunctions.isInList(na.getAttrName(), NETFileParameter.VERTEX_STRING_PARAMETER_LIST))){
+			else if(na.getDataType().equalsIgnoreCase("string")){
 				//System.out.println(na.getAttrName() + " ");
 				
 				if(!value.equalsIgnoreCase("")){
-					//		System.out.print(na.getAttrName() + " \"" + value + "\" ");
-
-					out.print(na.getAttrName() + " \"" + value + "\" ");
+					if(na.getAttrName().startsWith("unknown")){
+						String[] sa = value.split(" ");
+						if(sa.length > 1)
+							out.print(" \""+value+"\" ");
+						else
+						out.print(value+ " ");
+					}
+					else
+						out.print(na.getAttrName() + " \"" + value + "\" ");
 				}
 			}
-			else if(na.getAttrName().startsWith("unknown")){
-				String[] sa = value.split(" ");
-				if(sa.length > 1)
-					out.print(" \""+value+"\" ");
-				else
-				out.print(value+ " ");
-			}
+			
 			else;
 
 			i++;
@@ -322,19 +334,58 @@ public class NWBToPajeknet implements Algorithm {
 			String value = columns[i];
 			//System.out.print(na.getAttrName()+ " ");
 			if(value.equalsIgnoreCase("*")){
-				continue;
+				
 			}
-			if(na.getAttrName().equals(NETFileProperty.ATTRIBUTE_LABEL) || na.getAttrName().equals(ARCEDGEParameter.PARAMETER_LABEL)){
+			else if(na.getAttrName().equals(NETFileProperty.ATTRIBUTE_LABEL) || na.getAttrName().equals(ARCEDGEParameter.PARAMETER_LABEL)){
 				out.print(ARCEDGEParameter.PARAMETER_LABEL + " \"" + value + "\" ");
 			}
 			else if((NETFileFunctions.isInList(na.getAttrName(), noPrintParameters)) && !(na.getAttrName().equals(NETFileProperty.ATTRIBUTE_LABEL))){
-				//System.out.print(value + " ");
-				out.print(value + " ");
+				if(na.getDataType().equalsIgnoreCase(NWBFileProperty.TYPE_STRING)){
+					String[] sa = value.split(" ");
+					if(sa.length > 1)
+						out.print(" \""+value+"\" ");
+					else
+						out.print(value + " ");
+					}
+					else
+						out.print(value + " ");
 			}
-			else{
-			//	System.out.print(na.getAttrName() + " " + value + " ");
-				out.print(na.getAttrName() + " " + value + " ");
+			else if(na.getDataType().equalsIgnoreCase("float") || na.getDataType().equalsIgnoreCase("int")){
+				if(!value.equalsIgnoreCase("")){
+					//	System.out.print(na.getAttrName() + " " + value + " ");
+					String ss = na.getAttrName();
+					//System.out.println(ss);
+					if(ss.matches("[bil]?c1")){
+					//	System.out.println("Yes");
+						ss = ss.replace("1", "");
+						ss += " " + value + " ";
+						for(int j = 1; j < 3; j++){
+							ss += columns[j+i] + " ";
+							ii.next();
+						}
+						i = i+2;
+						out.print(ss);
+					}else
+						out.print(na.getAttrName() + " " + value + " ");
+				}
 			}
+			else if(na.getDataType().equalsIgnoreCase("string")){
+				//System.out.println(na.getAttrName() + " ");
+				
+				if(!value.equalsIgnoreCase("")){
+					if(na.getAttrName().startsWith("unknown")){
+						String[] sa = value.split(" ");
+						if(sa.length > 1)
+							out.print(" \""+value+"\" ");
+						else
+						out.print(value+ " ");
+					}
+					else
+						out.print(na.getAttrName() + " \"" + value + "\" ");
+				}
+			}
+			
+			else;
 			i++;
 		}
 		//	System.out.println();

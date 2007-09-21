@@ -146,7 +146,14 @@ public class PajeknetToNWB implements Algorithm {
 		String st = "";// = NWBFileProperty.PREFIX_COMMENTS;
 		for(Iterator ii = validator.getVertexAttrList().iterator(); ii.hasNext();){
 			NETAttribute na = (NETAttribute) ii.next();
-			st += na.getAttrName()+NWBFileProperty.PRESERVED_STAR+na.getDataType()+ " ";
+			String s = na.getAttrName();
+			if(s.charAt(s.length()-1) == 'c' && na.getDataType().equalsIgnoreCase("float")){
+				for(int i = 0; i < 3; i++){
+					st += s + (i+1) + NWBFileProperty.PRESERVED_STAR+na.getDataType()+ " ";
+				}
+			}
+			else
+				st += s+NWBFileProperty.PRESERVED_STAR+na.getDataType()+ " ";
 		}
 		//System.out.println(st);
 		out.println(st);
@@ -155,7 +162,15 @@ public class PajeknetToNWB implements Algorithm {
 		String st = "";//NWBFileProperty.PREFIX_COMMENTS;
 		for(Iterator ii = validator.getEdgeAttrList().iterator(); ii.hasNext();){
 			NETAttribute na = (NETAttribute) ii.next();
-			st += na.getAttrName()+NWBFileProperty.PRESERVED_STAR+na.getDataType()+ " ";
+			String s = na.getAttrName();
+			if(s.charAt(s.length()-1) == 'c' && na.getDataType().equalsIgnoreCase("float")){
+				for(int i = 0; i < 3; i++){
+					st += s + (i+1) + NWBFileProperty.PRESERVED_STAR+na.getDataType()+ " ";
+				}
+			}
+			else
+				st += s+NWBFileProperty.PRESERVED_STAR+na.getDataType()+ " ";
+			//st += na.getAttrName()+NWBFileProperty.PRESERVED_STAR+na.getDataType()+ " ";
 			
 		}
 		//System.out.println(st);
@@ -165,7 +180,15 @@ public class PajeknetToNWB implements Algorithm {
 		String st = ""; //NWBFileProperty.PREFIX_COMMENTS;
 		for(Iterator ii = validator.getArcAttrList().iterator(); ii.hasNext();){
 			NETAttribute na = (NETAttribute) ii.next();
-			st += na.getAttrName()+NWBFileProperty.PRESERVED_STAR+na.getDataType()+ " ";
+			String s = na.getAttrName();
+			if(s.charAt(s.length()-1) == 'c' && na.getDataType().equalsIgnoreCase("float")){
+				for(int i = 0; i < 3; i++){
+					st += s + (i+1) + NWBFileProperty.PRESERVED_STAR+na.getDataType()+ " ";
+				}
+			}
+			else
+				st += s+NWBFileProperty.PRESERVED_STAR+na.getDataType()+ " ";
+			
 		}
 	//	System.out.println(st);
 		out.println(st);
@@ -184,14 +207,20 @@ public class PajeknetToNWB implements Algorithm {
 			//	System.out.println(na.getAttrName());
 				try{
 					Object o = nv.getAttribute(na.getAttrName());
-					if(o.toString() == null)
-						st += "* ";
+					if(o.toString() == null){
+						if(na.getDataType().equalsIgnoreCase("float") && na.getAttrName().matches("[bil]?c"))
+							st += "* * * ";
+						else
+							st += "* ";
+					}
 					else
 						if(na.getDataType().equalsIgnoreCase("string")){
 							st +=  "\""+o + "\" ";
 						}
-						else
+						else {
 							st +=  o + " ";
+						}
+							
 					
 				}catch(NullPointerException npe){
 					st += "* ";
@@ -215,9 +244,19 @@ public class PajeknetToNWB implements Algorithm {
 				NETAttribute na = (NETAttribute) jj.next();
 				try{
 					Object o = nae.getAttribute(na.getAttrName());
-					if(o.toString() == null)
-						st += "* ";
-					else
+					//System.out.println(o);
+					if(o.toString() == null){
+						if(na.getDataType().equalsIgnoreCase("float") && na.getAttrName().matches("[bil]?c")){
+							//System.out.println("YES");
+							st += "* * * ";
+						}
+						else{
+							//System.out.println("NO");
+							st += "* ";
+						}
+							
+					}
+					else 
 						if(na.getDataType().equalsIgnoreCase("string")){
 							st +=  "\""+o + "\" ";
 						}
@@ -225,7 +264,15 @@ public class PajeknetToNWB implements Algorithm {
 							st +=  o + " ";
 					
 				}catch(NullPointerException npe){
-					st += "* ";
+					if(na.getDataType().equalsIgnoreCase("float") && na.getAttrName().matches("[bil]?c")){
+						System.out.println("YES");
+						st += "* * * ";
+					}
+					else{
+						System.out.println("NO");
+						st += "* ";
+					}
+						
 				}
 				
 				
@@ -248,9 +295,13 @@ public class PajeknetToNWB implements Algorithm {
 					NETAttribute na = (NETAttribute) jj.next();
 					try{
 						Object o = nae.getAttribute(na.getAttrName());
-						if(o.toString() == null)
-							st += "* ";
-						else
+						if(o.toString() == null){
+							if(na.getDataType().equalsIgnoreCase("float") && na.getAttrName().matches("[bil]?c"))
+								st += "* * * ";
+							else
+								st += "* ";
+						}
+						else 
 							if(na.getDataType().equalsIgnoreCase("string")){
 								st +=  "\""+o + "\" ";
 							}
@@ -258,7 +309,14 @@ public class PajeknetToNWB implements Algorithm {
 								st +=  o + " ";
 						
 					}catch(NullPointerException npe){
-						st += "* ";
+						if(na.getDataType().equalsIgnoreCase("float") && na.getAttrName().matches("[bil]?c")){
+							System.out.println("YES");
+							st += "* * * ";
+						}
+						else{
+							System.out.println("NO");
+							st += "* ";
+						}
 					}
 					
 					
