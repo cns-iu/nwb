@@ -16,7 +16,7 @@
 	<info>
 		<appname>the Network Workbench Tool</appname>
 		<appsubpath>nwb</appsubpath>
-		<appversion>0.6.0</appversion>
+		<appversion>0.7.0</appversion>
 		<authors>
 		    <author name="Weixia (Bonnie) Huang" email="huangb@indiana.edu" />
 		    <author name="Dr. Santo Fortunato" email="santo@indiana.edu" />
@@ -122,6 +122,11 @@
 			<fileset dir=".."
 				targetdir="$INSTALL_PATH">
 				<include name="sampledata/**/*" />
+			</fileset>
+			
+			<fileset dir=".."
+				targetdir="$INSTALL_PATH">
+				<include name="converter_test_files/**/*" />
 			</fileset>
 
 			<fileset dir="../cishell_win32" os="windows"
