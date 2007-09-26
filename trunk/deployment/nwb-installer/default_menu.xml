@@ -29,6 +29,9 @@
 	<menu name="Snowball Sampling (n nodes)" pid="edu.iu.nwb.analysis.sampling.snowball.SnowballAlgorithm"/>
 	<menu name="Node Sampling" pid="edu.iu.nwb.analysis.sampling.node.NodeAlgorithm"/>
 	<menu name="Edge Sampling" pid="edu.iu.nwb.analysis.sampling.edge.EdgeAlgorithm"/>
+    <menu type="break"/>
+    <menu name="K-Core Extraction" pid="edu.iu.nwb.analysis.kcore.Extract"/>
+    <menu name="K-Coreness Annotation" pid="edu.iu.nwb.analysis.kcore.Annotate"/>
     </top_menu>
     <top_menu name="Modeling">
 	<menu name="Random Graph" pid="edu.iu.nwb.modeling.erdosrandomgraph"/>
