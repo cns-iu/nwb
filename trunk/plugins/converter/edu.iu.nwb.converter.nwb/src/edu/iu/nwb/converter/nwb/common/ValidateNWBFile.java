@@ -410,7 +410,8 @@ public class ValidateNWBFile {
 				isAString(columns[i], nwbAttr.getAttrName());
 			} else if (dt.equalsIgnoreCase(NWBFileProperty.TYPE_INT)) {
 				isAnInteger(columns[i], nwbAttr.getAttrName());
-			} else if (dt.equalsIgnoreCase(NWBFileProperty.TYPE_FLOAT)) {
+			} else if (dt.equalsIgnoreCase(NWBFileProperty.TYPE_FLOAT)||
+					dt.equalsIgnoreCase(NWBFileProperty.TYPE_REAL)) {
 				isAFloat(columns[i], nwbAttr.getAttrName());
 			}
 		}
@@ -451,13 +452,14 @@ public class ValidateNWBFile {
 			if (attr_name.startsWith("//"))
 				attr_name = attr_name.substring(2);
 			String attr_type = token.substring(token.indexOf("*") + 1);
-			if (!(attr_type.equalsIgnoreCase(NWBFileProperty.TYPE_FLOAT)
-					|| attr_type.equalsIgnoreCase(NWBFileProperty.TYPE_INT) || attr_type
-					.equalsIgnoreCase(NWBFileProperty.TYPE_STRING))) {
+			if (!(attr_type.equalsIgnoreCase(NWBFileProperty.TYPE_FLOAT)||
+				  attr_type.equalsIgnoreCase(NWBFileProperty.TYPE_REAL)||
+				  attr_type.equalsIgnoreCase(NWBFileProperty.TYPE_INT) || 
+				  attr_type.equalsIgnoreCase(NWBFileProperty.TYPE_STRING))) {
 				throw new Exception(
 						"The data type of the attribute "
 								+ attr_name
-								+ " is not acceptable. Only float, int and string are valid data types in the NWB format.");
+								+ " is not acceptable. Only real, float, int and string are valid data types in the NWB format.");
 			} else
 				return new NWBAttribute(attr_name, attr_type);
 		} else
