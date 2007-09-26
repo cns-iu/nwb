@@ -1,0 +1,178 @@
+//Symmetrized by Maximum ....Cesifoti..:-)..NWB
+*Nodes 168
+1 Prof. Kirk Dombrowski
+2 Dr. Maria Carmen Pin Arias
+3 Prof. Agusti Canals Parera
+4 Mr. Shanon Donnelly
+5 Dr. Krzysztof Krejtz
+6 Dr. Denis Boyer
+7 Mr. Nishith Pathak
+8 Prof. Hawoong Jeong
+9 Ms. Margaret Clements
+10 Mr. Nicholas Altieri
+11 Kimberlie Stephens
+12 David Sloane
+13 Mr. Cesar A Hidalgo
+14 Mr. Maciej Kurant
+15 Mr. Gabor Csardi
+16 Medicine (2)
+17 Ms. Mengxiao Zhu
+18 Mr. Winter Mason
+19 Dr. Carol Choksy
+20 Mr. Kevin Makice
+21 Biology (26)
+22 Mr. Hari Thadakamalla
+23 Mr. Peter Hook
+24 Mr. Dylan Walker
+25 Dr. Filippo Menczer
+26 Sricharan Ayyalasomayajula
+27 Public Health / Epidemiology (7)
+28 Mr. Huafeng Xie
+29 Ecology (9)
+30 Mr. Lev Muchnik
+31 Mr. Benjamin Markines
+32 Dr. Francisco Martin
+33 Ms. Kathryn Clodfelter
+34 Mr. Aaron Clauset
+35 Ms. Ann Mccranie
+36 Mr. Mark R Meiss
+37 Benoy Jacob
+38 Dr. Marc Barthelemy
+39 Kevin Boyack
+40 Mr. Adam Tatarynowicz
+41 Prof. Craig M Allen
+42 Thomas Hills
+43 Mr. Todd Holloway
+44 Mr. Nebiyou Tilahun
+45 Public Policy (20)
+46 Prof. Dimitris G Assimakopoulos
+47 Mr. Wieslaw Bartkowski
+48 Economics (26)
+49 Mr. Srikanth Mudigonda
+50 Mr. Shai Carmi
+51 Dr. Kimberly A Fredericks
+52 Kim B Serota
+53 James Moody
+54 Dr. Dan Horn
+55 Dr. Izabela Krejtz
+56 Management (32)
+57 Prof. Venkat Venkatasubramanian
+58 Dr. Alexander Samukhin
+59 Mrs. Elise Hall
+60 Sociology (52)
+61 Prof. Jeffrey Johnson
+62 Mr. Nobuhiko Oshida
+63 Prof. Noshir Contractor
+64 Dr. Vittoria Colizza
+65 Mr. Chris Nissen
+66 Rosalyn Rael
+67 Mr. Roni Parshani
+68 Political Science (16)
+69 Mr. Nathaniel Bulkley
+70 Mr. Marcelo Lufin
+71 Mr. Domenico Salvatore
+72 Kimberly Johns
+73 Mr. Soong Kang
+74 Prof. Andrzej Nowak
+75 En-Pei Han
+76 Dr. Thimo Rohlf
+77 Dr. Jozsef Baranyi
+78 Mr. Eric R Giannella
+79 Dr. Tsuyoshi Murata
+80 Mr. Bernard Hogan
+81 Donald Fry
+82 Dr. James Scott
+83 Prof. David C Bangert
+84 Computer Sciences (41)
+85 Paul Dwyer
+86 Mr. Liang Jing
+87 Kun Huang
+88 Alessandro Chessa
+89 Dr. Sharon Mastracci
+90 Dr. Daniel Delaurentis
+91 Allessandro Vespignani
+92 Marcello Mezzedimi
+93 Steven Wilcox
+94 Anthony Strathman
+95 Dr. Katy Borner
+96 Ms. Bettina Richards Heiss
+97 Utilities (2)
+98 Telecommunications (other than internet) (11)
+99 Cuauhcihuatl Vital
+100 Mr. Richard Twu
+101 Physics (45)
+102 Ms. Duygu Balcan
+103 Prof. Phillip Bonacich
+104 Dr. Paulette Lloyd
+105 Transportation (17)
+106 Mr. Suresh Pillai
+107 Mr. Justin Donaldson
+108 Information Technology (47)
+109 Dr. Santo Fortunato
+110 Dr. Harold Green
+111 Dr. Ariel Balter
+112 Mr. Armando Razo
+113 James A. Danowsky
+114 Mr. Joseph Cottam
+115 Dr. Soma Sanyal
+116 Prof. Shlomo Havlin
+117 James Leinart
+118 Stephen Uzzo
+119 Dr. Denise Collins
+120 Biochemistry (5)
+121 Dr. Alan Reifman
+122 Dr. Francesca Odella
+123 Portia Iversen
+124 Scientometrics (14)
+125 Dr. Alain Barrat
+126 Mr. Shashikant Penumarthy
+127 Operations Research (9)
+128 Mr. Bruce Herr
+129 Luis Galvis
+130 Prof. Albert-Laszlo Barabasi
+131 Mr. Victor P Corona
+132 Mr. Andreas Rechtsteiner
+133 Mr. John Burgoon
+134 Organizations Theory (39)
+135 Prof. Sergey Dorogovtsev
+136 Prof. Igor Kanovsky
+137 Mr. Jan Zajac
+138 Oleg Sindiy
+139 Mr. Seyed Mussavi Rizi
+140 Randall Landry
+141 Mr. Christian Briggs
+142 Mr. Alex K.S. Ng
+143 Internet (46)
+144 Prof. Stan Wasserman
+145 Andrew Feldstein
+146 Dr. Steven Harper
+147 Juyong Park
+148 Ms. Heather Roinestad
+149 Dr. Nicholas Difonzo
+150 Chemistry (other than biochemistry) (2)
+151 Floriana Gargiulo
+152 Jimi Adams
+153 Dr. Katherine Strandburg
+154 Psychology (30)
+155 Prof. David Levinson
+156 Dr. Naoki Masuda
+157 Dr. Alexei Vazquez
+158 Prof. Manju Ahuja
+159 Mr. Christopher Honey
+160 Mr. Peter Fleck
+161 Mr. Justin Gross
+162 Mr. Jongwon Park
+163 Mr. Jan Scholz
+164 Ms. Jing Wang
+165 Mr. Pu Wang
+166 Dr. Takuya Yamano
+167 Mr. Israel Lederhendler
+168 Dr. Daniel A Newman
+*UndirectedEdges
+8 143 9
+15 84 12
+115 108 7
+12 13 3
+26 45 5
+87 56 5
+124 128 5
