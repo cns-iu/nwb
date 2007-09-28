@@ -33,7 +33,7 @@ public class ToolkitAlgorithm implements Algorithm{
 		Network net = new Network((edu.uci.ics.jung.graph.Graph)data[0].getData());*/
 		prefuse.data.Graph netGraph = (prefuse.data.Graph)data[0].getData();
 		NetworkProperties np = new NetworkProperties(netGraph);
-		System.out.println(np.isConnected());
+		logger.log(LogService.LOG_INFO, np.toString());
 		/*System.out.println(net.getNumEdges());
 		natgui.setNetwork(net);
 		natgui.setLocation(200, 200);
