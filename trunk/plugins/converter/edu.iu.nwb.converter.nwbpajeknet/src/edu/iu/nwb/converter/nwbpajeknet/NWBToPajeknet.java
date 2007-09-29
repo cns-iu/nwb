@@ -250,6 +250,7 @@ public class NWBToPajeknet implements Algorithm {
 		String st = NWBFileProperty.PRESERVED_STAR+s;
 		//System.out.println(st);
 		out.println(st);
+	
 	}
 
 	private void writeNodes(String s, PrintWriter out, ValidateNWBFile validator, List nodeAttrList){

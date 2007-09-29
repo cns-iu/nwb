@@ -265,11 +265,11 @@ public class PajeknetToNWB implements Algorithm {
 					
 				}catch(NullPointerException npe){
 					if(na.getDataType().equalsIgnoreCase("float") && na.getAttrName().matches("[bil]?c")){
-						System.out.println("YES");
+						//System.out.println("YES");
 						st += "* * * ";
 					}
 					else{
-						System.out.println("NO");
+						//System.out.println("NO");
 						st += "* ";
 					}
 						
@@ -310,11 +310,11 @@ public class PajeknetToNWB implements Algorithm {
 						
 					}catch(NullPointerException npe){
 						if(na.getDataType().equalsIgnoreCase("float") && na.getAttrName().matches("[bil]?c")){
-							System.out.println("YES");
+							//System.out.println("YES");
 							st += "* * * ";
 						}
 						else{
-							System.out.println("NO");
+						//	System.out.println("NO");
 							st += "* ";
 						}
 					}
