@@ -26,18 +26,21 @@ public class ToolkitAlgorithm implements Algorithm{
 	
 	public Data[] execute() {
 		// TODO Auto-generated method stub
-/*		
-		System.out.println("I'm just seeing if I work");
-		NetworkAnalysisToolkitGUI natgui = new NetworkAnalysisToolkitGUI();
-		System.out.println(data[0].getFormat());
-		Network net = new Network((edu.uci.ics.jung.graph.Graph)data[0].getData());*/
+
 		prefuse.data.Graph netGraph = (prefuse.data.Graph)data[0].getData();
 		NetworkProperties np = new NetworkProperties(netGraph);
 		logger.log(LogService.LOG_INFO, np.toString());
-		/*System.out.println(net.getNumEdges());
-		natgui.setNetwork(net);
-		natgui.setLocation(200, 200);
-		natgui.setVisible(true);*/
+		StringBuffer warning = new StringBuffer();
+		if(np.hasSelfLoops() && !np.isDirected()){
+			warning.append("This graph claims to be undirected but has self-loops. Please re-examine your data.\n");
+		}
+		if(np.hasParallelEdges() && !np.isDirected()){
+			warning.append("This graph claims to be undirected but has parallel edges. Please re-examine your data.\n");
+		}
+		if((np.hasParallelEdges() || np.hasSelfLoops()) && !np.isDirected())
+			warning.append("Many algorithms will not function correctly with this graph.\n");
+		logger.log(LogService.LOG_WARNING, warning.toString());
+		
 		return null;
 	}
 

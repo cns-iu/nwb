@@ -47,7 +47,7 @@ public class ClusteringCoefficients {
     public double getClusteringCoefficientWS(Network network, int pendantClusteringCoefficient) {
         Graph graph = network.getGraph() ;
         double clusteringCoefficientWS = 0;
-       // System.out.println(network.isDirected());
+     
         if (!network.isDirected()) {
         	System.out.println("Calculating clustering coefficient");
             for (Iterator vertexIterator = graph.getVertices().iterator(); vertexIterator
@@ -67,7 +67,7 @@ public class ClusteringCoefficients {
                                 ++numActualEdges;
                         }
                     }
-                   // System.out.println(clusteringCoefficientWS);
+                
                     clusteringCoefficientWS += (double) numActualEdges
                             / (numNeighbors * (numNeighbors - 1) / 2);
                 }

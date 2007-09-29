@@ -1,12 +1,10 @@
 package edu.iu.nwb.toolkit.networkanalysis.analysis;
 
 import java.math.BigDecimal;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
-import java.util.LinkedList;
-import java.util.Queue;
+import java.util.LinkedHashSet;
 import java.util.TreeSet;
 
 import prefuse.data.Edge;
@@ -62,7 +60,7 @@ public class ComponentForest{
 			Integer i = new Integer(n.getRow());
 			if(!seenNodes.contains(i)){
 
-				ArrayList tree = np.uDFS(grph, i);
+				LinkedHashSet tree = np.uDFS(grph, i);
 		
 					seenNodes.addAll(tree);
 					if(tree.size() > maxNodes)
@@ -79,8 +77,8 @@ public class ComponentForest{
 		this.maxWeakConnectedNodes = maxNodes;
 		return clusters;
 	}
-
-	private void strongComponentAssignment(final Queue connectedNodes){
+/*
+	private void strongComponentAssignment(final LinkedHashSet connectedNodes){
 		for(int ii = 0; ii < connectedNodes.size(); ii++){
 		}
 		if(connectedNodes.size() > this.maxStrongConnectedNodes)
@@ -171,11 +169,11 @@ public class ComponentForest{
 	}
 
 
-
+*/
 	private boolean strongComponentArrayCalc(TreeSet seenNodes,Graph g1,Graph g2){
-		Queue strongTemp;		                    		 
-		Queue secondPass = null;
-		Queue firstPass = null;
+	/*	Queue strongTemp;		                    		 
+		LinkedHashSet secondPass = null;
+		LinkedHashSet firstPass = null;
 
 
 		for(Iterator it = g1.nodes(); it.hasNext();){
@@ -199,12 +197,12 @@ public class ComponentForest{
 
 				}else{
 					while(!firstPass.isEmpty()){
-						Integer ii = (Integer)firstPass.peek();
+						Integer ii = (Integer)firstPass.;
 						if(!seenNodes.contains(ii)){
 							secondPass = NetworkProperties.dDFS(g2,ii);
 							secondPass.removeAll(seenNodes);
-							/*if(!ii.equals(i))
-								secondPass.retainAll(dDFS(g1,ii));*/
+							if(!ii.equals(i))
+								secondPass.retainAll(dDFS(g1,ii));
 							//if(secondPass.size() != firstPass.size()){
 							if(secondPass.size() == 1){
 								//return false;
@@ -228,7 +226,7 @@ public class ComponentForest{
 									strongTemp.retainAll(firstPass);
 
 								}
-								/*//testPrinter(firstPass,secondPass,seenNodes,strongTemp);
+								//testPrinter(firstPass,secondPass,seenNodes,strongTemp);
 								strongComponentAssignment(strongTemp);
 								firstPass.removeAll(strongTemp);
 								secondPass.removeAll(strongTemp);
@@ -243,7 +241,7 @@ public class ComponentForest{
 								}
 
 								this.strongComponentClusters++;
-*/
+
 								if(strongTemp.size() == g1.getNodeCount())
 									return true;
 								else
@@ -254,7 +252,7 @@ public class ComponentForest{
 					}
 				}
 			}
-		}
+		}*/
 		return true;
 	}
 
