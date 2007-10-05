@@ -104,7 +104,7 @@ public class SmallWorldFrame extends JFrame implements ProgressUpdate, Component
 
     
 	public SmallWorldFrame(Graph g) { 
-	    super( "Small World (prefuse beta)" );
+	    super( "Small World (prefuse alpha)" );
 		try {
 		    
             
