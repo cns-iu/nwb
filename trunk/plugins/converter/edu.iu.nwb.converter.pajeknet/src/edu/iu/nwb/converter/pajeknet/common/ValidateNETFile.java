@@ -41,19 +41,17 @@ public class ValidateNETFile {
 
 	private int totalNumOfNodes, currentLine;
 	private StringBuffer errorMessages = new StringBuffer();
-	private ArrayList vertices = new ArrayList();
-	private ArrayList arcs = new ArrayList(), edges = new ArrayList(); 
+	private int numVertices, numArcs, numEdges;
+	//private ArrayList vertices = new ArrayList();
+	//private ArrayList arcs = new ArrayList(), edges = new ArrayList(); 
 
 	public void validateNETFormat(File fileHandler) throws FileNotFoundException, IOException {
 		currentLine = 0;
 		totalNumOfNodes = 0;
-		
-		//TODO: Either remove this or do something with it.
-		//If you do something with it, know that the second line sometimes
-		//causes "invalid string index, - 1" errors.
-//		String fileName = fileHandler.getName();
-//		String extension = 
-//			fileName.substring(fileName.lastIndexOf("."), fileName.length()-1);
+		numVertices = 0;
+		numArcs = 0;
+		numEdges = 0;
+
 	
 		
 		BufferedReader reader = 
@@ -63,7 +61,7 @@ public class ValidateNETFile {
 
 	public boolean isDirectedGraph(){
 		if (hasHeader_Arcs &&
-				arcs.size()>0)
+				numArcs>0)
 			return true;
 		else
 			return false;
@@ -71,7 +69,7 @@ public class ValidateNETFile {
 
 	public boolean isUndirectedGraph(){
 		if(hasHeader_Edges &&
-				edges.size()>0)
+				numEdges>0)
 			return true;
 		else
 			return false;
@@ -103,14 +101,14 @@ public class ValidateNETFile {
 		return hasTotalNumOfNodes;
 	}
 
-	public ArrayList getVertices(){
-		return this.vertices;
+	public int getNumVertices(){
+		return this.numVertices;
 	}
-	public ArrayList getArcs(){
-		return this.arcs;
+	public int getNumArcs(){
+		return this.numArcs;
 	}
-	public ArrayList getEdges(){
-		return this.edges;
+	public int getNumEdges(){
+		return this.numEdges;
 	}
 
 
@@ -135,7 +133,8 @@ public class ValidateNETFile {
 			this.inEdgesSection = false;
 			this.inArcsSection = false;
 		
-			this.vertices = new ArrayList();
+			//this.vertices = new ArrayList();
+			numVertices = 0;
 			StringTokenizer st= new StringTokenizer(s);
 			
 			if (st.countTokens()>1){
@@ -173,8 +172,8 @@ public class ValidateNETFile {
 			inVerticesSection = false;
 			inEdgesSection = false;
 		
-			this.arcs = new ArrayList();
-			if(this.vertices.isEmpty())
+			numArcs = 0;
+			if(numVertices == 0)
 				this.skipNodeList = true;
 			return true;
 		}
@@ -200,8 +199,8 @@ public class ValidateNETFile {
 			inVerticesSection = false;
 			
 			inEdgesSection = true;
-			this.edges = new ArrayList();
-			if(this.vertices.isEmpty())
+			numEdges = 0;
+			if(numVertices == 0)
 				this.skipNodeList = true;
 			return true;
 		}
@@ -245,45 +244,7 @@ public class ValidateNETFile {
 		return nv;
 	}
 
-	public void processMatrix(BufferedReader br, int lineNumber){
-
-		String errorMessage;
-		int internalLineNumber = 0;
-		try{
-			for(int i = 0; i < this.totalNumOfNodes; i++){
-				String[] connections = NETFileFunctions.processTokens(br.readLine());
-				if(connections.length != this.totalNumOfNodes){
-					this.isFileGood = false;
-					errorMessage = "The connection matrix does not match the number of vertices. There are" +
-					this.totalNumOfNodes + " vertices, and the matrix specifies " + connections.length + " connections";
-					errorMessages.append(errorMessage);
-					break;
-				}
-				for(int j = 0; j < connections.length; j++){
-					float f = NETFileFunctions.asAFloat(connections[j]);
-					if(f > 0){
-						String s = new Integer(i+1).toString() + " " + new Integer(j+1).toString() + " " +
-						connections[j];
-						this.arcs.add(new NETArcsnEdges(s));
-					}
-				}
-				lineNumber++;
-				internalLineNumber++;
-			}
-		}catch(IOException ex){
-			isFileGood = false;
-			errorMessage = "Error reading connection matrix at line: " + lineNumber +
-			". Chances are there are not enough rows." +" Read " + internalLineNumber + 
-			" lines, but expected to read " + this.totalNumOfNodes + " lines.";
-			errorMessages.append(errorMessage);
-			ex.printStackTrace();
-		}catch(Exception ex){
-			isFileGood = false;
-			errorMessages.append(ex.getMessage());
-			ex.printStackTrace();
-		}
-	}
-
+	
 	public NETArcsnEdges processArcsnEdges(String s){
 		NETArcsnEdges nae = null;
 
@@ -341,25 +302,27 @@ public class ValidateNETFile {
 				continue;
 			}
 
-			//this.errorMessages.append(this.hasHeader_Vertices+"\n");
 
 			if(inVerticesSection && isFileGood){	
 
-				this.vertices.add(processVertices(line));
+				processVertices(line);
+				numVertices++;
 				line = reader.readLine();
 
 				continue;
 			}
 
 			if(inEdgesSection && isFileGood){
-				this.edges.add(processArcsnEdges(line));
+				processArcsnEdges(line);
+				numEdges++;
 				line = reader.readLine();
 
 				continue;
 			}
 
 			if(inArcsSection && isFileGood){
-				this.arcs.add(processArcsnEdges(line));
+				processArcsnEdges(line);
+				numArcs++;
 				line = reader.readLine();
 
 				continue;
@@ -373,7 +336,15 @@ public class ValidateNETFile {
 			this.checkFile();			
 		}
 		
-		this.totalNumOfNodes = this.vertices.size();
+		if(this.hasTotalNumOfNodes && !this.skipNodeList && (this.totalNumOfNodes != this.numVertices)){
+			this.errorMessages.append("The stated total number of vertices (" +
+					this.totalNumOfNodes+") does not match the calculated number of vertices ("+
+					this.numVertices+")");
+			isFileGood = false;
+		}
+		
+		if(!this.hasTotalNumOfNodes)
+			this.totalNumOfNodes = this.numVertices;
 		
 	}
 
@@ -389,7 +360,7 @@ public class ValidateNETFile {
 			isFileGood = false;
 			this.errorMessages.append("This file does not have the correct header to specify Arcs or Edges");
 		}
-		else if (this.hasTotalNumOfNodes && this.skipNodeList){
+/*		else if (this.hasTotalNumOfNodes && this.skipNodeList){
 			for(int i = 0; i < this.totalNumOfNodes; i++){
 				String s = (i+1) + " \"" + (i+1) + "\"";
 				try{
@@ -402,7 +373,7 @@ public class ValidateNETFile {
 					isFileGood = false;
 				}
 			}
-		}
+		}*/
 
 	}
 
