@@ -203,10 +203,10 @@ public class NetworkProperties {
 	
 	protected String nodeAndEdgeInfo(){
 		StringBuffer sb = new StringBuffer();
+		sb.append(System.getProperty("line.separator")+"Results:\n");
 		sb.append("This graph has " + this.graph.getNodeCount() + " nodes");
 		sb.append(System.getProperty("line.separator"));
 		sb.append("This graph has " + this.graph.getEdgeCount() + " edges");
-		sb.append(System.getProperty("line.separator"));
 		sb.append(System.getProperty("line.separator"));
 		return sb.toString();
 	}
@@ -259,8 +259,8 @@ public class NetworkProperties {
 			sb.append("This graph is not weakly connected.\n");
 		}
 
-		sb.append("There are " + cf.getComponentClusters() + " weakly connected componenets\n");
-		sb.append("The largest connected component consists of " + cf.getMaximumConnectedNodes()+ "\n");
+		sb.append("There are " + cf.getComponentClusters() + " weakly connected components.\n");
+		sb.append("The largest connected component consists of " + cf.getMaximumConnectedNodes()+ " nodes.\n");
 		return sb.toString();
 	}
 	
