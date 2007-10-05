@@ -83,6 +83,7 @@ public class RadialVisualization extends AbstractVisualization {
         overall.add(legend, BorderLayout.SOUTH);
         
         frame.setContentPane(overall);
+        frame.setTitle("Radial Tree/Graph with Annotation (prefuse beta)");
 	}
 
 	protected Action getInitialDrawActions(String everythingGroup,

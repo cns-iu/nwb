@@ -37,7 +37,7 @@ public class FruchtermanReingoldVisualization extends AbstractVisualization {
 	}
 	
 	public void arrangeComponents(JFrame frame, Display display, JComponent legend) {
-		frame.setTitle("Fruchterman-Reingold Visualization");
+		frame.setTitle("Fruchterman-Reingold with Annotation (prefuse beta)");
 		
 		JPanel panel = new JPanel(new BorderLayout());
         panel.add(display, BorderLayout.CENTER);

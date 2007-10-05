@@ -311,7 +311,7 @@ public class SpecifiedVisualization extends JPanel implements PrefuseBetaVisuali
         menubar.add(dataMenu);
         */
         // launch window
-        JFrame frame = new JFrame("p r e f u s e  |  g r a p h v i e w");
+        JFrame frame = new JFrame("Pre-defined Positions (prefuse beta)");
         //frame.setJMenuBar(menubar);
         frame.setContentPane(view);
         frame.pack();

@@ -90,7 +90,7 @@ public class ForceDirectedVisualization extends AbstractVisualization {
         
         frame.setContentPane(panel);
         
-        frame.setTitle("Force-Directed");
+        frame.setTitle("Force Directed with Annotation (prefuse beta)");
 		/* frame.addWindowListener(new WindowAdapter() {
             public void windowActivated(WindowEvent e) {
                 display.getVisualization().run(LAYOUT);
