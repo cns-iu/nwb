@@ -1,8 +1,8 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: Networkanalysis Toolkit
-Bundle-SymbolicName: edu.iv.toolkit.networkanalysis
-Bundle-Version: 1.0.0
+Bundle-SymbolicName: edu.iu.nwb.toolkit.networkanalysis
+Bundle-Version: 0.0.1
 Bundle-ClassPath: .
 Bundle-Localization: plugin
 Import-Package: cern.colt.list,
