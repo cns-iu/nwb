@@ -89,10 +89,6 @@
 	<menu name="Random Breadth First" pid="edu.iu.iv.search.p2p.bfs.BreadthFirstSearchAlgorithm"/> 
     </top_menu>
 
-    <top_menu name="Clustering">
-	<menu name="Weak Component Clustering" pid="edu.iu.nwb.analysis.weakcomponentclustering.ClusteringAlgorithm"/>
-    </top_menu>
-
     <top_menu name="Visualization">
  	<menu name="Circular (JUNG)" pid="edu.iu.nwb.visualization.jungnetworklayout.JUNGCircleLayout"/>
 	<menu name="Pre-defined Positions (prefuse beta)" pid="edu.iu.nwb.visualization.prefuse.beta.specified.Specified"/>
