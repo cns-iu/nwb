@@ -16,6 +16,7 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.Dictionary;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -31,7 +32,6 @@ import edu.iu.nwb.converter.nwb.common.NWBFileProperty;
 import edu.iu.nwb.converter.nwb.common.ValidateNWBFile;
 import edu.iu.nwb.converter.pajeknet.common.ARCEDGEParameter;
 import edu.iu.nwb.converter.pajeknet.common.NETFileFunctions;
-import edu.iu.nwb.converter.pajeknet.common.NETFileParameter;
 import edu.iu.nwb.converter.pajeknet.common.NETFileProperty;
 
 public class NWBToPajeknet implements Algorithm {
@@ -56,6 +56,7 @@ public class NWBToPajeknet implements Algorithm {
 		this.parameters = parameters;
 		this.ciContext = context;
 		this.logger = (LogService)ciContext.getService(LogService.class.getName());
+		this.vertexToIdMap = new HashMap();
 	}
 
 	/**
@@ -130,6 +131,7 @@ public class NWBToPajeknet implements Algorithm {
 		try{
 			File net = getTempFile();
 			PrintWriter out = new PrintWriter(new BufferedWriter(new FileWriter(net)), true);
+			out.flush();
 			BufferedReader reader = new BufferedReader(new FileReader(nwbFile));
 			printGraph(out,validator,reader);
 
@@ -140,20 +142,18 @@ public class NWBToPajeknet implements Algorithm {
 		}catch (IOException ioe){
 			logger.log(LogService.LOG_ERROR, "IO Errors while writing from .nwb to Pajek .net.", ioe);
 			return null;
+		}catch(Exception e){
+			logger.log(LogService.LOG_ERROR, "Errors in translating between .nwb and .net." +
+					"\n"+e.toString(), e);
+			//e.printStackTrace();
+			return null;
 		}
 	}
 
 	private void printGraph (PrintWriter out, ValidateNWBFile validator,
-			BufferedReader reader) throws IOException{
+			BufferedReader reader) throws Exception{
 
-		/*		if (validator.getHasTotalNumOfNodes() && validator.getSkipNodeList()){
-			int totalNumOfNodes = validator.getTotalNumOfNodes();
-			for(int i = 1; i<=totalNumOfNodes; i++){
-				out.println(i+"\""+i+"\"");			
-			}
-		}
-		 */
-		//read from nwb file and write to the graphml file
+		int nodes = 1;
 		boolean inNodesSection = false;
 		boolean inDirectededgesSection = false;
 		boolean inUndirectededgesSection = false;
@@ -161,22 +161,24 @@ public class NWBToPajeknet implements Algorithm {
 
 		while (line != null){
 			
-			if (line.length()==0){
+			
+			if (line.length()==0 || line.startsWith(NWBFileProperty.PREFIX_COMMENTS)){
 				line = reader.readLine();
 				continue;
 			}
-
+			//System.out.println(line.startsWith(NWBFileProperty.HEADER_NODE));
 			//String line_lower = line.toLowerCase();
 
 			//find node section header that looks like
 			//  *nodes   or  *nodes 1000
 			if(line.startsWith(NWBFileProperty.HEADER_NODE)) 
 			{
+			//	System.out.println(line);
 				inNodesSection = true;
 				inDirectededgesSection = false;
 				inUndirectededgesSection = false;
 				if(!validator.getHasTotalNumOfNodes())
-				writeHeader(line.replace(NWBFileProperty.HEADER_NODE, "Vertices " + validator.getTotalNumOfNodes()), out);
+					writeHeader(line.replace(NWBFileProperty.HEADER_NODE, "Vertices " + validator.getTotalNumOfNodes()), out);
 				else
 					writeHeader(line.replace(NWBFileProperty.HEADER_NODE, "Vertices "), out);
 				line = reader.readLine();
@@ -187,7 +189,7 @@ public class NWBToPajeknet implements Algorithm {
 				inDirectededgesSection = true;
 				inNodesSection = false;
 				inUndirectededgesSection = false;
-				writeHeader(line.replace(NWBFileProperty.HEADER_DIRECTED_EDGES, "Arcs " + validator.getTotalNumOfDirectedEdges()), out);
+				writeHeader(line.replace(NWBFileProperty.HEADER_DIRECTED_EDGES, "Arcs "), out);
 				line = reader.readLine();
 				continue;    				
 			}
@@ -214,7 +216,8 @@ public class NWBToPajeknet implements Algorithm {
 				}
 				else
 				{   
-					writeNodes(line,out,validator, validator.getNodeAttrList());
+					writeNodes(line,out,validator, validator.getNodeAttrList(),nodes);
+					nodes++;
 				}
 			}//end if (inNodesSection)
 
@@ -241,49 +244,58 @@ public class NWBToPajeknet implements Algorithm {
 			line = reader.readLine();    		
 
 		}//end while
+		out.flush();
 	}
 
 
 
 
 	private void writeHeader(String s, PrintWriter out){
+		out.flush();
 		String st = NWBFileProperty.PRESERVED_STAR+s;
-		//System.out.println(st);
-		out.println(st);
-	
+		
+		out.print(st+"\r\n");
+
 	}
 
-	private void writeNodes(String s, PrintWriter out, ValidateNWBFile validator, List nodeAttrList){
-
+	private void writeNodes(String s, PrintWriter out, ValidateNWBFile validator, List nodeAttrList, int mapper){
+		out.flush();
 		String[] columns = NETFileFunctions.processTokens(s);
-	//	System.out.println(s);
+		
 		int i = 0;
 		for(Iterator ii = nodeAttrList.iterator(); ii.hasNext();){
 			NWBAttribute na = (NWBAttribute) ii.next();
 			String value = columns[i];
-		//	System.out.print(value + "::");
+			//	System.out.print(value + "::");
 			//value.replace("\"", "");
 			if(value.equalsIgnoreCase("*")){
-				
+
 			}
 			else if(NETFileFunctions.isInList(na.getAttrName(), noPrintParameters)){
 				if(na.getDataType().equalsIgnoreCase(NWBFileProperty.TYPE_STRING)){
-				String[] sa = value.split(" ");
-				if(sa.length > 1)
-					out.print(" \""+value+"\" ");
-				else
-					out.print(value + " ");
+					String[] sa = value.split(" ");
+					if(sa.length > 1)
+						out.print(" \""+value+"\" ");
+					else
+						out.print(value + " ");
 				}
-				else
-					out.print(value + " ");
+				else{
+					if(na.getAttrName().equalsIgnoreCase(NWBFileProperty.ATTRIBUTE_ID)){
+						this.vertexToIdMap.put(new Integer(value), new Integer(mapper));
+						out.print(mapper + " ");
+					}
+					else
+						out.print(value + " ");
+				}
+
 			}
 			else if(na.getDataType().equalsIgnoreCase("float") || na.getDataType().equalsIgnoreCase("int")){
 				if(!value.equalsIgnoreCase("")){
 					//	System.out.print(na.getAttrName() + " " + value + " ");
 					String ss = na.getAttrName();
-					//System.out.println(ss);
+					
 					if(ss.matches("[bil]?c1")){
-					//	System.out.println("Yes");
+						
 						ss = ss.replace("1", "");
 						ss += " " + value + " ";
 						for(int j = 1; j < 3; j++){
@@ -297,33 +309,35 @@ public class NWBToPajeknet implements Algorithm {
 				}
 			}
 			else if(na.getDataType().equalsIgnoreCase("string")){
-				//System.out.println(na.getAttrName() + " ");
-				
+			
+
 				if(!value.equalsIgnoreCase("")){
 					if(na.getAttrName().startsWith("unknown")){
 						String[] sa = value.split(" ");
 						if(sa.length > 1)
 							out.print(" \""+value+"\" ");
 						else
-						out.print(value+ " ");
+							out.print(value+ " ");
 					}
 					else
 						out.print(na.getAttrName() + " \"" + value + "\" ");
 				}
 			}
-			
+
 			else;
 
 			i++;
 
 		}
-		//System.out.println();
-		out.println();
+		
+		out.print("\r\n");
 
 	}
 
-	private void writeEdges(String s, PrintWriter out, ValidateNWBFile validator, List edgeAttrList){
-		//System.out.print(s + " ");
+	private void writeEdges(String s, PrintWriter out, ValidateNWBFile validator, List edgeAttrList) throws Exception{
+		//System.out.println(s);
+		out.flush();
+		
 		int i = 0;
 		String[] columns = NETFileFunctions.processTokens(s);
 		/*if (inDirectededgesSection)
@@ -333,9 +347,10 @@ public class NWBToPajeknet implements Algorithm {
 		for(Iterator ii = edgeAttrList.iterator(); ii.hasNext();){
 			NWBAttribute na = (NWBAttribute) ii.next();
 			String value = columns[i];
+			//System.out.println(value);
 			//System.out.print(na.getAttrName()+ " ");
 			if(value.equalsIgnoreCase("*")){
-				
+
 			}
 			else if(na.getAttrName().equals(NETFileProperty.ATTRIBUTE_LABEL) || na.getAttrName().equals(ARCEDGEParameter.PARAMETER_LABEL)){
 				out.print(ARCEDGEParameter.PARAMETER_LABEL + " \"" + value + "\" ");
@@ -347,17 +362,27 @@ public class NWBToPajeknet implements Algorithm {
 						out.print(" \""+value+"\" ");
 					else
 						out.print(value + " ");
+				}
+				else{
+					if(na.getAttrName().equals(NWBFileProperty.ATTRIBUTE_SOURCE) || na.getAttrName().equals(NWBFileProperty.ATTRIBUTE_TARGET)){
+						try{
+							value = ((Integer)this.vertexToIdMap.get(new Integer(value))).toString();
+						}catch(NullPointerException npe){
+							throw new Exception("Edge references an undefined node " + value);
+						}
 					}
-					else
-						out.print(value + " ");
+					out.print(value + " ");
+
+
+				}
 			}
 			else if(na.getDataType().equalsIgnoreCase("float") || na.getDataType().equalsIgnoreCase("int")){
 				if(!value.equalsIgnoreCase("")){
 					//	System.out.print(na.getAttrName() + " " + value + " ");
 					String ss = na.getAttrName();
-					//System.out.println(ss);
+					
 					if(ss.matches("[bil]?c1")){
-					//	System.out.println("Yes");
+						
 						ss = ss.replace("1", "");
 						ss += " " + value + " ";
 						for(int j = 1; j < 3; j++){
@@ -371,26 +396,26 @@ public class NWBToPajeknet implements Algorithm {
 				}
 			}
 			else if(na.getDataType().equalsIgnoreCase("string")){
-				//System.out.println(na.getAttrName() + " ");
 				
+
 				if(!value.equalsIgnoreCase("")){
 					if(na.getAttrName().startsWith("unknown")){
 						String[] sa = value.split(" ");
 						if(sa.length > 1)
 							out.print(" \""+value+"\" ");
 						else
-						out.print(value+ " ");
+							out.print(value+ " ");
 					}
 					else
 						out.print(na.getAttrName() + " \"" + value + "\" ");
 				}
 			}
-			
+
 			else;
 			i++;
 		}
-		//	System.out.println();
-		out.println();
+	
+		out.print("\r\n");
 	}
 }
 

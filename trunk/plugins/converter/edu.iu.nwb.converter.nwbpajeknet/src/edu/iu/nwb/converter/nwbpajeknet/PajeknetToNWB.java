@@ -1,14 +1,15 @@
 package edu.iu.nwb.converter.nwbpajeknet;
 
+import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.Dictionary;
 import java.util.Iterator;
-import java.util.List;
 import java.util.Map;
 
 import org.cishell.framework.CIShellContext;
@@ -20,6 +21,7 @@ import org.osgi.service.log.LogService;
 import edu.iu.nwb.converter.nwb.common.NWBFileProperty;
 import edu.iu.nwb.converter.pajeknet.common.NETArcsnEdges;
 import edu.iu.nwb.converter.pajeknet.common.NETAttribute;
+import edu.iu.nwb.converter.pajeknet.common.NETFileProperty;
 import edu.iu.nwb.converter.pajeknet.common.NETVertex;
 import edu.iu.nwb.converter.pajeknet.common.ValidateNETFile;
 
@@ -69,7 +71,7 @@ public class PajeknetToNWB implements Algorithm {
 			try {
 				validator.validateNETFormat(inData);
 				if(validator.getValidationResult()){
-					outData = convertNetToNWB(validator);
+					outData = convertNetToNWB(validator,inData);
 					if(outData != null){
 						dm = new Data[] {new BasicData(outData, "file:text/nwb")};
 						return dm;
@@ -118,13 +120,13 @@ public class PajeknetToNWB implements Algorithm {
 		return tempFile;
 	}
 	
-	private File convertNetToNWB(ValidateNETFile validator){
+	private File convertNetToNWB(ValidateNETFile validator, File f){
 		try{
 			File nwb = getTempFile();
-			PrintWriter out = new PrintWriter(new BufferedWriter(new FileWriter(nwb)));	
-			writeNodes(validator, out);
-			writeEdges(validator, out);
-			writeArcs(validator, out);
+			PrintWriter out = new PrintWriter(new BufferedWriter(new FileWriter(nwb)),true);
+		//	out.flush();
+			BufferedReader br = new BufferedReader(new FileReader(f));
+			processFile(validator,br,out);	
 			out.close();
 			return nwb;
 		}catch (FileNotFoundException e){
@@ -136,13 +138,109 @@ public class PajeknetToNWB implements Algorithm {
 		}
 	}
 	
+	private void processFile(ValidateNETFile nv, BufferedReader reader, PrintWriter pw) throws IOException{
+		boolean inVerticesSection = false;
+		boolean inArcsSection = false;
+		boolean inEdgesSection = false;
+		
+		String line = reader.readLine();
+		
+		while (line != null){
+			//currentLine++;
+		
+
+			if(line.startsWith(NETFileProperty.PREFIX_COMMENTS) || (line.length() < 1)){
+				line = reader.readLine();
+				continue;
+			}
+
+			if(line.toLowerCase().startsWith(NETFileProperty.HEADER_VERTICES)){
+				
+				writeHeader("Nodes "+nv.getTotalNumOfNodes(),pw);
+				writeNodeAttributeList(nv,pw);
+				inVerticesSection = true;
+				inArcsSection = false;
+				inEdgesSection = false;
+				/*if((nv.getNumVertices() == 0) && (nv.getTotalNumOfNodes() > 0)){
+					for(int i = 0; i < nv.getTotalNumOfNodes(); i++){
+						String s = (i+1) + " \"" + (i+1) + "\"";
+						try{
+							NETVertex netv = new NETVertex(s);
+							writeNode(nv,pw,netv);
+							
+						}
+						catch(Exception e){
+							e.printStackTrace();
+							
+						}
+					}
+				}*/
+				line = reader.readLine();
+
+				continue;
+			}
+			if(line.toLowerCase().startsWith(NETFileProperty.HEADER_ARCS)){
+				writeHeader("DirectedEdges "+nv.getNumArcs(),pw);
+				writeDirectedEdgeAttributeList(nv,pw);
+				inVerticesSection = false;
+				inArcsSection = true;
+				inEdgesSection = false;
+				line = reader.readLine();
+
+				continue;
+			}
+
+			if(line.toLowerCase().startsWith(NETFileProperty.HEADER_EDGES)){
+				writeHeader("UndirectedEdges "+nv.getNumEdges(),pw);
+				writeUndirectedEdgeAttributeList(nv,pw);
+				inVerticesSection = false;
+				inArcsSection = false;
+				inEdgesSection = true;
+				line = reader.readLine();
+
+				continue;
+			}
+
+
+			if(inVerticesSection){	
+				NETVertex netv = nv.processVertices(line);
+				writeNode(nv,pw,netv);
+				line = reader.readLine();
+
+				continue;
+			}
+
+			if(inEdgesSection){
+				NETArcsnEdges ane = nv.processArcsnEdges(line);
+				writeEdge(nv,pw,ane);
+				line = reader.readLine();
+
+				continue;
+			}
+
+			if(inArcsSection){
+				NETArcsnEdges ane = nv.processArcsnEdges(line);
+				writeArc(nv,pw,ane);
+				line = reader.readLine();
+
+				continue;
+			}
+
+
+			line = reader.readLine();
+		}	
+		
+	}
+	
 	private void writeHeader(String s, PrintWriter out){
+		//out.flush();
 		String st = NWBFileProperty.PRESERVED_STAR+s;
 		//System.out.println(st);
 		out.println(st);
 	}
 	
 	private void writeNodeAttributeList(ValidateNETFile validator, PrintWriter out){
+		//out.flush();
 		String st = "";// = NWBFileProperty.PREFIX_COMMENTS;
 		for(Iterator ii = validator.getVertexAttrList().iterator(); ii.hasNext();){
 			NETAttribute na = (NETAttribute) ii.next();
@@ -159,6 +257,7 @@ public class PajeknetToNWB implements Algorithm {
 		out.println(st);
 	}
 	private void writeUndirectedEdgeAttributeList(ValidateNETFile validator, PrintWriter out){
+		//out.flush();
 		String st = "";//NWBFileProperty.PREFIX_COMMENTS;
 		for(Iterator ii = validator.getEdgeAttrList().iterator(); ii.hasNext();){
 			NETAttribute na = (NETAttribute) ii.next();
@@ -177,6 +276,7 @@ public class PajeknetToNWB implements Algorithm {
 		out.println(st);
 	}
 	private void writeDirectedEdgeAttributeList(ValidateNETFile validator, PrintWriter out){
+		//out.flush();
 		String st = ""; //NWBFileProperty.PREFIX_COMMENTS;
 		for(Iterator ii = validator.getArcAttrList().iterator(); ii.hasNext();){
 			NETAttribute na = (NETAttribute) ii.next();
@@ -193,18 +293,11 @@ public class PajeknetToNWB implements Algorithm {
 	//	System.out.println(st);
 		out.println(st);
 	}
-	private void writeNodes(ValidateNETFile validator, PrintWriter out){
-		if(!validator.getVertices().isEmpty()){
-			out.flush();
-			writeHeader("Nodes " + validator.getVertices().size(), out);
-			writeNodeAttributeList(validator, out);
+	private void writeNode(ValidateNETFile validator, PrintWriter out, NETVertex nv){
 		
-		for(Iterator ii = validator.getVertices().iterator(); ii.hasNext();){
-			NETVertex nv = (NETVertex) ii.next();
 			String st = "";
 			for(Iterator jj = validator.getVertexAttrList().iterator(); jj.hasNext();){
 				NETAttribute na = (NETAttribute) jj.next();
-			//	System.out.println(na.getAttrName());
 				try{
 					Object o = nv.getAttribute(na.getAttrName());
 					if(o.toString() == null){
@@ -223,22 +316,19 @@ public class PajeknetToNWB implements Algorithm {
 							
 					
 				}catch(NullPointerException npe){
-					st += "* ";
+					if(na.getDataType().equalsIgnoreCase("float") && na.getAttrName().matches("[bil]?c"))
+						st += "* * * ";
+					else
+						st += "* ";
 				}
 			} 
-		//	System.out.println(st);
+		
 			out.println(st);
 		}
-		}
-	}
-	private void writeEdges(ValidateNETFile validator, PrintWriter out){
-		if(!validator.getEdges().isEmpty()){
-			out.flush();
-			writeHeader("UndirectedEdges " + validator.getEdges().size(), out);
-			writeUndirectedEdgeAttributeList(validator, out);
 		
-		for(Iterator ii = validator.getEdges().iterator(); ii.hasNext();){
-			NETArcsnEdges nae = (NETArcsnEdges) ii.next();
+	
+	private void writeEdge(ValidateNETFile validator, PrintWriter out, NETArcsnEdges nae){
+	//	out.flush();
 			String st = "";
 			for(Iterator jj = validator.getEdgeAttrList().iterator(); jj.hasNext();){
 				NETAttribute na = (NETAttribute) jj.next();
@@ -280,16 +370,10 @@ public class PajeknetToNWB implements Algorithm {
 		//	System.out.println(st);
 			out.println(st);
 		}
-		}
-	}
-	private void writeArcs(ValidateNETFile validator, PrintWriter out){
-		if(!validator.getArcs().isEmpty()){
-			out.flush();
-			writeHeader("DirectedEdges " + validator.getArcs().size(), out);
-			writeDirectedEdgeAttributeList(validator, out);
 		
-		for(Iterator ii = validator.getArcs().iterator(); ii.hasNext();){
-			NETArcsnEdges nae = (NETArcsnEdges) ii.next();
+	
+	private void writeArc(ValidateNETFile validator, PrintWriter out, NETArcsnEdges nae){
+		//out.flush();
 				String st = "";
 				for(Iterator jj = validator.getEdgeAttrList().iterator(); jj.hasNext();){
 					NETAttribute na = (NETAttribute) jj.next();
@@ -324,7 +408,7 @@ public class PajeknetToNWB implements Algorithm {
 			//	System.out.println(st);
 				out.println(st);
 		}
-	}
-	}
+	
+	
 
 }
