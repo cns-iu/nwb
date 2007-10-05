@@ -107,7 +107,7 @@
 	<menu name="Fruchterman-Reingold (JUNG)" pid="edu.iu.nwb.visualization.jungnetworklayout.JUNGFruchtermanReingoldLayout"/> 
 	<menu name="Fruchterman-Reingold with Annotation (prefuse beta)" pid="edu.iu.nwb.visualization.prefuse.beta.fruchtermanreingold.FruchtermanReingold"/>
 	<menu name="Spring (JUNG)" pid="edu.iu.nwb.visualization.jungnetworklayout.JUNGSpringLayout"/>
-	<menu name="Small World (prefuse beta)" pid="edu.iu.nwb.visualization.prefuse.alpha.smallworld.app.SmallWorld"/>
+	<menu name="Small World (prefuse alpha)" pid="edu.iu.nwb.visualization.prefuse.alpha.smallworld.app.SmallWorld"/>
 	<menu type="break"/>
 	<menu name="Parallel Coordinates (demo)" pid="org.mediavirus.parvis.ParallelCoordinatesAlgorithm"/>
     </top_menu>
