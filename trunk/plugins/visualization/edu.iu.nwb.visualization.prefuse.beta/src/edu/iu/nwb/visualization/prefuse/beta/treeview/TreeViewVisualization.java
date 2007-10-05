@@ -272,7 +272,7 @@ public class TreeViewVisualization extends Display implements PrefuseBetaVisuali
         String label = (String) parameters.get(Constants.label);
 		JComponent treeview = demo((Tree) graph, label);
         
-        JFrame frame = new JFrame("p r e f u s e  |  t r e e v i e w");
+        JFrame frame = new JFrame("Tree View (prefuse beta)");
         frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         frame.setContentPane(treeview);
         frame.pack();

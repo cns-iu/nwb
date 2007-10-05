@@ -172,7 +172,7 @@ public class TreeMapVisualization extends Display implements PrefuseBetaVisualiz
         String label = (String) parameters.get(Constants.label);
 		JComponent treemap = demo((Tree) graph, label);
         
-        JFrame frame = new JFrame("p r e f u s e  |  t r e e m a p");
+        JFrame frame = new JFrame("Tree Map (prefuse beta)");
         frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         frame.setContentPane(treemap);
         frame.pack();
