@@ -78,7 +78,7 @@ public class NETArcsnEdges {
 			}
 
 			for(int i = 0; i < 3; i++){
-				String s = (String) qs.poll();
+				String s = (String) qs.peek();
 				value = true;
 				switch (i){
 				case 0:
@@ -88,11 +88,16 @@ public class NETArcsnEdges {
 					this.setTarget(s);
 					break;
 				case 2:
+					try{
 					this.setWeight(s);
+					}catch(NumberFormatException nfe){
+						return value;
+					}
 					break;
 				default:
 					return true;
 				}
+				qs.poll();
 			}
 		}
 		catch(NullPointerException ex){  //

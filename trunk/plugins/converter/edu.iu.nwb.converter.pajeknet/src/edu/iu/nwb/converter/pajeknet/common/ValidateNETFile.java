@@ -226,12 +226,14 @@ public class ValidateNETFile {
 	public NETVertex processVertices(String s){
 		NETVertex nv = null;
 		try{
+			//System.out.println(s);
 			nv = new NETVertex(s);
-		
+			
 
 		}
 		catch (NumberFormatException nfe){
 			isFileGood = false;
+			//nfe.toString();
 			errorMessages.append("*Wrong NET format at line "+currentLine+".\n"+
 			"Node id must be an integer and greater than 0.\n\n");
 		}
@@ -298,7 +300,7 @@ public class ValidateNETFile {
 
 			if(this.validateEdgeHeader(line)){
 				line = reader.readLine();
-
+				//System.out.println(line);
 				continue;
 			}
 
