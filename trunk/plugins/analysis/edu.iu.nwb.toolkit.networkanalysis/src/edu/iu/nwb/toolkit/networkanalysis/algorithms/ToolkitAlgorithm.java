@@ -31,6 +31,9 @@ public class ToolkitAlgorithm implements Algorithm{
 		NetworkProperties np = new NetworkProperties(netGraph);
 		logger.log(LogService.LOG_INFO, np.toString());
 		StringBuffer warning = new StringBuffer();
+		if(np.densityInfo().length() < 1){
+			warning.append("Could not calculate density due to the presence of self-loops or parallel edges.");
+		}
 		if(np.hasSelfLoops() && !np.isDirected()){
 			warning.append("This graph claims to be undirected but has self-loops. Please re-examine your data.\n");
 		}
