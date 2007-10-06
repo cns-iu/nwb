@@ -83,7 +83,7 @@ public class MATVertex {
 				
 				this.setID(s);
 				s = (String)qs.poll();
-			
+				this.setLabel(s);
 			
 			return true;
 		}
