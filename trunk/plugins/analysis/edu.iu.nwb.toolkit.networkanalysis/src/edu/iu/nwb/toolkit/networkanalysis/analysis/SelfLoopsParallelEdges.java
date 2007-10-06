@@ -5,6 +5,7 @@ import java.util.HashSet;
 import java.util.Iterator;
 
 import prefuse.data.Edge;
+import prefuse.data.Node;
 
 public class SelfLoopsParallelEdges {
 	HashSet selfLoops;
@@ -86,19 +87,27 @@ public class SelfLoopsParallelEdges {
 		StringBuffer sb = new StringBuffer();
 		for(Iterator it1 = this.parallelEdges.iterator();it1.hasNext();){
 			SimpleEdge se = (SimpleEdge)it1.next();
-			for(Iterator it2 = ((HashSet)this.edges.get(se)).iterator(); it2.hasNext();){
+			sb.append("There are " + ((HashSet)this.edges.get(se)).size() + " edges between node: \n\t");
+			Iterator it2 = ((HashSet)this.edges.get(se)).iterator();
 				Edge edg = (Edge)it2.next();
-			
-				int columns = edg.getColumnCount();
+				Node nd = edg.getSourceNode();
+				int columns = nd.getColumnCount();
 				for(int i = 0; i < columns; i++){
-					sb.append(edg.get(i) + " ");
+					sb.append(nd.get(i) + " ");
+				}
+				sb.append(System.getProperty("line.separator"));
+				sb.append("and node: \n\t");
+				nd = edg.getTargetNode();
+				columns = nd.getColumnCount();
+				for(int i = 0; i < columns; i++){
+					sb.append(nd.get(i) + " ");
 				}
 				sb.append(System.getProperty("line.separator"));
 				//columns = edg.getSourceNode().getColumnCount();
 			
 				//sb.append(System.getProperty("line.separator"));
 			
-			}
+			
 		}
 		sb.append(System.getProperty("line.separator"));
 		return sb.toString();
@@ -107,7 +116,16 @@ public class SelfLoopsParallelEdges {
 	public String printSelfLoops(){
 		StringBuffer sb = new StringBuffer();
 		for(Iterator it = this.selfLoops.iterator(); it.hasNext();){
-			sb.append((Edge)it.next());
+			Edge edg = (Edge)it.next();
+			Node nd = edg.getSourceNode();
+			//sb.append((Edge)it.next());
+			sb.append("The node: \n\t");
+			for(int i = 0; i < nd.getColumnCount(); i++){
+				sb.append(nd.get(i) + " ");
+			}
+			sb.append("\nhas an edge with itself.");
+			sb.append(System.getProperty("line.separator"));
+			
 		}
 		sb.append(System.getProperty("line.separator"));
 		return sb.toString();

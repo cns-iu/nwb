@@ -264,7 +264,7 @@ public class NetworkProperties {
 		return sb.toString();
 	}
 	
-	protected String densityInfo(){
+	public String densityInfo(){
 		StringBuffer sb = new StringBuffer();
 		if(density > -1){
 			sb.append("Graph Density (disregarding weights): " + density);
