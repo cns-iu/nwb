@@ -34,7 +34,7 @@ public class ValidateNWBFile {
 	//If is useful to parse the attribute line
 	private boolean passHeader = false;
 
-	private int totalNumOfNodes, currentLine, totalNumOfDirected, totalNumofUnDirected;
+	private int totalNumOfNodes, currentLine, countedNumDirected, countedNumUnDirected, countedNodes;
 
 	private StringBuffer errorMessages = new StringBuffer();
 
@@ -48,6 +48,9 @@ public class ValidateNWBFile {
 	public void validateNWBFormat(File fileHandler)
 			throws FileNotFoundException, IOException {
 		currentLine = 0;
+		countedNumDirected = 0;
+		countedNumUnDirected = 0;
+		countedNodes = 0;
 		BufferedReader reader = new BufferedReader(new FileReader(fileHandler));
 		processFile(reader);
 	}
@@ -56,9 +59,7 @@ public class ValidateNWBFile {
 
 		String line = reader.readLine();
 		
-		int nodes = 0;
-		int dedges = 0;
-		int uedges = 0;
+		
 		while (line != null && isFileGood) {
 			currentLine++;
 			line = line.trim();
@@ -84,21 +85,21 @@ public class ValidateNWBFile {
 			if (inNodesSection && isFileGood) {
 				
 				processNodes(line);
-				nodes++;
+				//nodes++;
 				line = reader.readLine();
 				continue;
 			}
 
 			if (inDirectededgesSection && isFileGood) {
 				processDirectedEdges(line);
-				dedges++;
+				//dedges++;
 				line = reader.readLine();
 				continue;
 			}
 
 			if (inUndirectededgesSection && isFileGood) {
 				processUndirectedEdges(line);
-				uedges++;
+				
 				line = reader.readLine();
 				continue;
 			}
@@ -109,29 +110,19 @@ public class ValidateNWBFile {
 			checkFile();
 		}
 		
-		if(this.hasTotalNumOfNodes && ((nodes-1) != this.totalNumOfNodes)){
+		if(this.hasTotalNumOfNodes && ((this.countedNodes) != this.totalNumOfNodes)){
 			isFileGood = false; //I'm not sure if we should set this to false or not.
 			errorMessages.append("There was an inconsistency between the specified number of nodes: " 
 					+ this.totalNumOfNodes + " and the " +
-					"number of nodes counted: " + nodes);  
+					"number of nodes counted: " + this.countedNodes);  
 		}
-		assignCount(this.totalNumOfNodes, nodes);
-		assignCount(this.totalNumOfDirected, dedges);
-		assignCount(this.totalNumofUnDirected, uedges);
+		
+		this.totalNumOfNodes = this.countedNodes;
+		
 		
 	}
 	
-	private void assignCount(int statedValue, int countedValue){
-		if(countedValue > 1){
-			statedValue = countedValue -1;
-			countedValue = countedValue -1;
-		}
-		else{
-			statedValue = 0;
-			countedValue = 0;
-		}
-	}
-
+	
 	private void checkFile() {
 		if (!hasHeader_Nodes) {
 			isFileGood = false;
@@ -267,7 +258,7 @@ public class ValidateNWBFile {
 					} catch (Exception e) {
 						isFileGood = false;
 						errorMessages.append("*Wrong NWB format at line "
-								+ currentLine + ".\n" + "e.toString()\n\n");
+								+ currentLine + ".\n" + e.toString()+"\n\n");
 						break;
 					}
 
@@ -288,6 +279,7 @@ public class ValidateNWBFile {
 			// quotations.
 			try {
 				validateALine(s, nodeAttrList);
+				this.countedNodes++;
 			} catch (Exception e) {
 				isFileGood = false;
 				errorMessages.append("*Wrong NWB format at line " + currentLine
@@ -335,6 +327,7 @@ public class ValidateNWBFile {
 		} else {
 			try {
 				validateALine(s, directedEdgeAttrList);
+				this.countedNumDirected++;
 			} catch (Exception e) {
 				isFileGood = false;
 				errorMessages.append("*Wrong NWB format at line " + currentLine
@@ -381,6 +374,7 @@ public class ValidateNWBFile {
 		} else {
 			try {
 				validateALine(s, undirectedEdgeAttrList);
+				this.countedNumUnDirected++;
 
 			} catch (Exception e) {
 				isFileGood = false;
@@ -459,7 +453,8 @@ public class ValidateNWBFile {
 				throw new Exception(
 						"The data type of the attribute "
 								+ attr_name
-								+ " is not acceptable. Only real, float, int and string are valid data types in the NWB format.");
+								+ " is not acceptable. Only float, int and string are valid data types in the NWB format.\n" +
+										"You supplied an attribute of " + attr_type);
 			} else
 				return new NWBAttribute(attr_name, attr_type);
 		} else
@@ -547,11 +542,11 @@ public class ValidateNWBFile {
 	}
 	
 	public int getTotalNumOfUndirectedEdges(){
-		return this.totalNumofUnDirected;
+		return this.countedNumUnDirected;
 	}
 	
 	public int getTotalNumOfDirectedEdges(){
-		return this.totalNumOfDirected;
+		return this.countedNumDirected;
 	}
 
 }

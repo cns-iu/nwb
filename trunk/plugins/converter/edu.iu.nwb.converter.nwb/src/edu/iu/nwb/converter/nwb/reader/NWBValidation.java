@@ -72,7 +72,7 @@ public class NWBValidation implements AlgorithmFactory {
 	                	return dm;
 
 					}else {
-						//System.out.println(">>>wrong format: "+validator.getErrorMessages());
+					
 						logger.log(org.osgi.service.log.LogService.LOG_ERROR,
 								"Sorry, your file does not comply with the NWB File Format Specification.\n"+
 								"Please review the latest NWB File Format Specification at "+
