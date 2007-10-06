@@ -148,7 +148,7 @@ public class PajeknetToNWB implements Algorithm {
 		while (line != null){
 			//currentLine++;
 		
-
+			line = line.trim();
 			if(line.startsWith(NETFileProperty.PREFIX_COMMENTS) || (line.length() < 1)){
 				line = reader.readLine();
 				continue;

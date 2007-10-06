@@ -242,7 +242,7 @@ public class ValidateMATFile {
 		while (line != null && isFileGood){
 			currentLine++;
 			//System.out.println(this.skipNodeList);
-
+			line = line.trim();
 			if(line.startsWith(MATFileProperty.PREFIX_COMMENTS) || (line.length() < 1)){
 				line = reader.readLine();
 				continue;

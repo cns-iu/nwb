@@ -160,7 +160,7 @@ public class NWBToPajeknet implements Algorithm {
 		String line = reader.readLine();
 
 		while (line != null){
-			
+			line = line.trim();
 			
 			if (line.length()==0 || line.startsWith(NWBFileProperty.PREFIX_COMMENTS)){
 				line = reader.readLine();

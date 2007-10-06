@@ -70,7 +70,7 @@ public class NWBToGraphML implements Algorithm {
 				else {
 					logger.log(LogService.LOG_ERROR, 
 							"Unable to Make a File Conversion. " +
-							"The input file has a bad NWB format. \n " +
+							"The input file has a bad NWB format. \n " + validator.getErrorMessages() +
 							"Please review the latest NWB File Format Specification at \n" +
 							"http://nwb.slis.indiana.edu/software.html, and update your file."
 							);
@@ -200,9 +200,10 @@ public class NWBToGraphML implements Algorithm {
 		boolean inUndirectededgesSection = false;
     	String line = reader.readLine();
         int edgeID = 0;
-			
+		
     	while (line != null){
-    		if (line.length()==0){
+    		line = line.trim();
+    		if (line.length()==0 || line.startsWith(NWBFileProperty.PREFIX_COMMENTS)){
     			line = reader.readLine();
 				continue;
     		}
@@ -220,6 +221,7 @@ public class NWBToGraphML implements Algorithm {
     		}
     		if(line.startsWith(NWBFileProperty.HEADER_DIRECTED_EDGES)) 
     		{
+    			System.out.println(line);
     				inDirectededgesSection = true;
     				inNodesSection = false;
     				inUndirectededgesSection = false;
@@ -248,6 +250,7 @@ public class NWBToGraphML implements Algorithm {
 				}
  				else
  				{   
+ 					//System.out.println(line);
  					StringTokenizer st = new StringTokenizer(line);
  					String[] columns = validator.processTokens(st);
  				    List nodeAttrList = validator.getNodeAttrList();

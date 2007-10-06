@@ -280,7 +280,7 @@ public class ValidateNETFile {
 		String line = reader.readLine();
 		while (line != null && isFileGood){
 			currentLine++;
-
+			line = line.trim();
 
 			if(line.startsWith(NETFileProperty.PREFIX_COMMENTS) || (line.length() < 1)){
 				line = reader.readLine();
