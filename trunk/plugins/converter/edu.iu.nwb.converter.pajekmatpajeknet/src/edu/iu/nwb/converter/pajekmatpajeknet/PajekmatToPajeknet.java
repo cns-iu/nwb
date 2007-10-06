@@ -119,8 +119,8 @@ public class PajekmatToPajeknet implements Algorithm{
 		for(int i = 0; i < vmf.getVertices().size(); i++){
 			MATVertex mv = (MATVertex)vmf.getVertices().get(i);
 			String s = "";
-			for(int j = 0; j < mv.getVertexAttributes().size(); j++){
-				MATAttribute ma = (MATAttribute)mv.getVertexAttributes().get(j);
+			for(int j = 0; j < MATVertex.getVertexAttributes().size(); j++){
+				MATAttribute ma = (MATAttribute)MATVertex.getVertexAttributes().get(j);
 				String attr = ma.getAttrName();
 				String type = ma.getDataType();
 				if(mv.getAttribute(attr) == null){

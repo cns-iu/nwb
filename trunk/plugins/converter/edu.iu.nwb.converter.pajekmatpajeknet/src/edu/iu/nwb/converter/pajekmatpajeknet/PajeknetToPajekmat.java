@@ -1,11 +1,14 @@
 package edu.iu.nwb.converter.pajekmatpajeknet;
 
+import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.util.ArrayList;
 import java.util.Dictionary;
 
 import org.cishell.framework.CIShellContext;
@@ -72,7 +75,7 @@ public class PajeknetToPajekmat implements Algorithm{
 		//System.out.println("Trying");
 				validator.validateNETFormat(inData);
 				if(validator.getValidationResult()){
-					outData = convertNetToMat(validator);
+					outData = convertNetToMat(validator,inData);
 					if(outData != null){
 						dm = new Data[] {new BasicData(outData, MATFileProperty.MAT_MIME_TYPE)};
 						return dm;
@@ -106,23 +109,15 @@ public class PajeknetToPajekmat implements Algorithm{
 		return null;
 	}
 
-	private File convertNetToMat(ValidateNETFile vmf){
+	private File convertNetToMat(ValidateNETFile vmf, File f){
 		try{
 			//System.out.println("Converting net to mat");
-			File net = getTempFile();
-			PrintWriter out = new PrintWriter(new BufferedWriter(new FileWriter(net)));	
-			writeVertices(vmf, out);
-			//System.out.println(vmf.isDirectedGraph() + " " + vmf.isUndirectedGraph());
-			if(vmf.isDirectedGraph()){
-				//System.out.println("Directed");
-				writeDirectedMatrix(vmf, out);
-			}
-			else{
-				//System.out.println("Undirected");
-				writeUndirectedMatrix(vmf,out);
-			}
+			File mat = getTempFile();
+			PrintWriter out = new PrintWriter(new BufferedWriter(new FileWriter(mat)));
+			BufferedReader br = new BufferedReader(new FileReader(f));
+			processFile(vmf,br,out);
 			out.close();
-			return net;
+			return mat;
 		}catch (FileNotFoundException e){
 			logger.log(LogService.LOG_ERROR, "Unable to find the temporary .mat file.", e);
 			return null;
@@ -131,69 +126,170 @@ public class PajeknetToPajekmat implements Algorithm{
 			return null;
 		}
 	}
+	
+	private void processFile(ValidateNETFile nv, BufferedReader reader, PrintWriter pw) throws IOException{
+		boolean inVerticesSection = false;
+		boolean inArcsSection = false;
+		boolean inEdgesSection = false;
+		
+		String line = reader.readLine();
+		//float[] edges = new float[nv.getTotalNumOfNodes()];
+		while (line != null){
+			//currentLine++;
+		
 
-	private void writeVertices(ValidateNETFile vmf, PrintWriter pw){
-		pw.write(MATFileProperty.HEADER_VERTICES + " " + vmf.getVertices().size() + "\n");
-		for(int i = 0; i < vmf.getVertices().size(); i++){
-			NETVertex mv = (NETVertex)vmf.getVertices().get(i);
+			if(line.startsWith(NETFileProperty.PREFIX_COMMENTS) || (line.length() < 1)){
+				line = reader.readLine();
+				continue;
+			}
+
+			if(line.toLowerCase().startsWith(NETFileProperty.HEADER_VERTICES)){
+				
+				pw.print("*Vertices "+ nv.getTotalNumOfNodes()+"\r\n");
+				inVerticesSection = true;
+				inArcsSection = false;
+				inEdgesSection = false;
+				line = reader.readLine();
+				continue;
+			}
+			if(line.toLowerCase().startsWith(NETFileProperty.HEADER_ARCS)){
+				pw.print("*Matrix "+"\r\n");
+				inVerticesSection = false;
+				inArcsSection = true;
+				inEdgesSection = false;
+				line = reader.readLine();
+
+				continue;
+			}
+
+			if(line.toLowerCase().startsWith(NETFileProperty.HEADER_EDGES)){
+				pw.print("*Matrix "+"\r\n");
+				inVerticesSection = false;
+				inArcsSection = false;
+				inEdgesSection = true;
+				line = reader.readLine();
+
+				continue;
+			}
+
+
+			if(inVerticesSection){	
+				NETVertex netv = nv.processVertices(line);
+				writeVertex(nv,pw,netv);
+				line = reader.readLine();
+
+				continue;
+			}
+
+			if(inEdgesSection){
+				ArrayList connections = new ArrayList();
+					while(line != null){
+						if(!line.startsWith(NETFileProperty.PRESERVED_STAR)){
+					
+						if(!(processLine(line).length() < 1)){
+							NETArcsnEdges ane = nv.processArcsnEdges(line);
+							connections.add(ane);
+						}
+						}
+						line = reader.readLine();
+					}
+					
+				
+				writeUndirectedMatrix(nv,pw,connections);
+				
+				continue;
+			}
+
+			if(inArcsSection){
+				ArrayList connections = new ArrayList();
+				while(line != null){
+					if(!line.startsWith(NETFileProperty.PRESERVED_STAR)){
+					if(!(processLine(line).length() < 1)){
+						NETArcsnEdges ane = nv.processArcsnEdges(line);
+						connections.add(ane);
+					}
+					}
+					line = reader.readLine();
+				}
+				writeDirectedMatrix(nv,pw,connections);
+				continue;
+			}
+
+
+			line = reader.readLine();
+		}	
+		
+	}
+	
+	private static String processLine(String line){
+		if(line.startsWith(NETFileProperty.PREFIX_COMMENTS))
+			return "";
+		else
+			return line;
+	}
+
+	private void writeVertex(ValidateNETFile vmf, PrintWriter pw, NETVertex nv){
+		//pw.write(MATFileProperty.HEADER_VERTICES + " " + vmf.getVertices().size() + "\n");
+			//System.out.println(nv);
 			String s = "";
 			for(int j = 0; j < NETVertex.getVertexAttributes().size(); j++){
 				try{
 					NETAttribute ma = (NETAttribute)NETVertex.getVertexAttributes().get(j);
 					String attr = ma.getAttrName();
 					String type = ma.getDataType();
-					String value = mv.getAttribute(attr).toString();
+					String value = nv.getAttribute(attr).toString();
+					//System.out.println(attr + " " + value);
 					if(value == null){
 						s += "";
 					}
 					else{
 						if(NETFileFunctions.isInList(attr,noPrintParameters)){
 							if(type.equalsIgnoreCase("string"))
-								s += "\"" + mv.getAttribute(attr) + "\" ";
+								s += "\"" + nv.getAttribute(attr) + "\" ";
 							else
-								s += mv.getAttribute(attr)+" ";
+								s += nv.getAttribute(attr)+" ";
 						}
 						else {
 							if(type.equalsIgnoreCase("string")){
 								if(attr.startsWith("unknown"))
-									s += " \"" + mv.getAttribute(attr) + "\" ";
+									s += " \"" + nv.getAttribute(attr) + "\" ";
 								else
-									s += attr + " \"" + mv.getAttribute(attr) + "\" ";
+									s += attr + " \"" + nv.getAttribute(attr) + "\" ";
 							}
 							else
-								s += attr + " " + mv.getAttribute(attr) + " ";
+								s += attr + " " + nv.getAttribute(attr) + " ";
 						}
 					}
 				}catch(NullPointerException ex){
 					s += "";
 				}
 			}
-			//System.out.println(s);
-			pw.println(s);
-		}
-		//System.out.println("done here");
+		 
+	
+		pw.print(s+"\r\n");
+	
 	}
 
-	private void writeDirectedMatrix(ValidateNETFile vmf, PrintWriter pw){
-		NETVertex nvi;
-		NETVertex nvj;
+	private void writeDirectedMatrix(ValidateNETFile vmf, PrintWriter pw, ArrayList arcs){
 		NETArcsnEdges nae;
 		int source, target;
 		float weight = (float)0.0;
 		//System.out.println(vmf.getEdges().size());
-		pw.println(MATFileProperty.HEADER_MATRIX);
-		for(int i = 0; i < vmf.getVertices().size(); i++){
-			nvi = (NETVertex)vmf.getVertices().get(i);
-			for(int j = 0; j < vmf.getVertices().size(); j++){
-				nvj = (NETVertex)vmf.getVertices().get(j);
-				for(int k = 0; k < vmf.getArcs().size(); k++){
-					nae = (NETArcsnEdges)vmf.getArcs().get(k);
+		//pw.println(MATFileProperty.HEADER_MATRIX);
+		for(int i = 0; i < vmf.getTotalNumOfNodes(); i++){
+			for(int j = 0; j < vmf.getTotalNumOfNodes(); j++){
+				for(int k = 0; k < arcs.size(); k++){
+					nae = (NETArcsnEdges)arcs.get(k);
 					target = ((Integer)nae.getAttribute(NETFileProperty.ATTRIBUTE_TARGET)).intValue();
 					source = ((Integer)nae.getAttribute(NETFileProperty.ATTRIBUTE_SOURCE)).intValue();
 					//System.out.println(nvi.getID() + ":"+ source + "\t" + nvj.getID()+":"+target);
 					
-					if((nvi.getID() == source) && (nvj.getID() == target)){
+					if(((i+1) == source) && ((j+1) == target)){
+						try{
 						weight = ((Float)nae.getAttribute(NETFileProperty.ATTRIBUTE_WEIGHT)).floatValue();
+						}catch(NullPointerException npe){
+							weight = 1;
+						}
 					//System.out.println(weight);
 						break;
 					}
@@ -203,33 +299,33 @@ public class PajeknetToPajekmat implements Algorithm{
 				}
 				pw.print(weight + " ");
 			}
-			pw.println();
+			pw.print("\r\n");
 		}
 		
 		}
 	
-	private void writeUndirectedMatrix(ValidateNETFile vmf, PrintWriter pw){
-		NETVertex nvi;
-		NETVertex nvj;
+	private void writeUndirectedMatrix(ValidateNETFile vmf, PrintWriter pw, ArrayList edges){
 		//float[][] matrix = new float[vmf.getVertices().size()][vmf.getVertices().size()];
 		NETArcsnEdges nae;
 		int source, target;
 		float weight = (float)0.0;
 		//System.out.println(vmf.getEdges().size());
-		pw.println(MATFileProperty.HEADER_MATRIX);
-		for(int i = 0; i < vmf.getVertices().size(); i++){
-			nvi = (NETVertex)vmf.getVertices().get(i);
-			for(int j = 0; j < vmf.getVertices().size(); j++){
-				nvj = (NETVertex)vmf.getVertices().get(j);
-				for(int k = 0; k < vmf.getEdges().size(); k++){
-					nae = (NETArcsnEdges)vmf.getEdges().get(k);
+		//pw.println(MATFileProperty.HEADER_MATRIX);
+		for(int i = 0; i < vmf.getTotalNumOfNodes(); i++){
+			for(int j = 0; j < vmf.getTotalNumOfNodes(); j++){
+				for(int k = 0; k < edges.size(); k++){
+					nae = (NETArcsnEdges)edges.get(k);
 					target = ((Integer)nae.getAttribute(NETFileProperty.ATTRIBUTE_TARGET)).intValue();
 					source = ((Integer)nae.getAttribute(NETFileProperty.ATTRIBUTE_SOURCE)).intValue();
 					//System.out.println(nvi.getID() + ":"+ source + "\t" + nvj.getID()+":"+target);
 					
-					if(((nvi.getID() == source) && (nvj.getID() == target))||
-							((nvi.getID() == target) && (nvj.getID() == source))){
+					if((((i+1) == source) && ((j+1) == target))||
+							(((i+1) == target) && ((j+1) == source))){
+						try{
 						weight = ((Float)nae.getAttribute(NETFileProperty.ATTRIBUTE_WEIGHT)).floatValue();
+						}catch(NullPointerException npe){
+							weight = 1;
+						}
 						//System.out.println(weight);
 						break;
 					}
@@ -240,7 +336,7 @@ public class PajeknetToPajekmat implements Algorithm{
 				}
 				pw.print(weight + " ");
 			}
-			pw.println();
+			pw.print("\r\n");
 		}
 		
 	}
