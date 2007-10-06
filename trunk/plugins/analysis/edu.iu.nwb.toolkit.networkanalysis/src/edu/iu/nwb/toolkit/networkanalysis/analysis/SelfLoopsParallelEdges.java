@@ -17,7 +17,7 @@ public class SelfLoopsParallelEdges {
 		selfLoops = new HashSet();
 		parallelEdges = new HashSet();
 		edges = new HashMap();
-		//numberOfParallelEdges = 0;
+		this.directed = directed;
 	
 	}
 	
