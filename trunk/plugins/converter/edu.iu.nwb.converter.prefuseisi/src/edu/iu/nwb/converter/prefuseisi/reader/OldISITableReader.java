@@ -13,10 +13,11 @@ import java.util.Map;
 import prefuse.data.Schema;
 import prefuse.data.Table;
 
-public class ISITableReader {
+public class OldISITableReader {
 	
 	private static Schema schema = new Schema();
 	private static Map separators = new HashMap();
+	private static List multivalueColumns = new ArrayList();
 	
 	static {
 		schema.addColumn("AB", String.class);
@@ -65,7 +66,19 @@ public class ISITableReader {
 		separators.put("DE", ";"); //guessing, since the format does not specify, but the other keyword field is ; separated
 		separators.put("SC", ";");
 	}
-
+	
+	static {
+		multivalueColumns.add("AF");
+		multivalueColumns.add("AU");
+		multivalueColumns.add("C1");
+		multivalueColumns.add("CR");
+		multivalueColumns.add("DE");
+		multivalueColumns.add("ID");
+		multivalueColumns.add("SC");
+		multivalueColumns.add("AF");
+		multivalueColumns.add("AF");
+	}
+	
 	public Table readTable(FileInputStream stream) throws IOException {
 		boolean foldNewlines = true;
 		boolean finishedRecord = true; //this means the first time we run into some stuff for starting a record, we'll do so.
@@ -98,7 +111,7 @@ public class ISITableReader {
 				
 				//since there's always an ER tag, this'll always get called, even on the last tag in a record
 				if(!"".equals(tag)) {
-					if(table.canSet(tag, List.class)) {
+					if(multivalueColumns.contains(tag)) {
 						if(foldNewlines) {
 							String[] values = value.toString().split((String) separators.get(tag));
 							for(int ii = 0; ii < values.length; ii++) {

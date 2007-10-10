@@ -37,7 +37,7 @@ public class PrefuseIsiReader implements Algorithm {
     	File file = (File) data[0].getData();
 
     	try{
-    		ISITableReader tableReader = new ISITableReader();
+    		NewISITableReader tableReader = new NewISITableReader();
 			Table table= tableReader.readTable(new FileInputStream(file));
     		Data[] dm = new Data[] {new BasicData(table, Table.class.getName())};
     		dm[0].getMetaData().put(DataProperty.LABEL, "ISI Data: " + file);
