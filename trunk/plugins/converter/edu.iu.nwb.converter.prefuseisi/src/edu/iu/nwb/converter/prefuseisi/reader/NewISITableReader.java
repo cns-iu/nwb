@@ -173,7 +173,8 @@ public class NewISITableReader {
 			
 		}
 		
-		return tableData.getTable();
+		Table constructedTable = tableData.getTable();
+		return constructedTable;
 	}
 		
 	private String addIntTagData(String currentTag, String currentLine,
