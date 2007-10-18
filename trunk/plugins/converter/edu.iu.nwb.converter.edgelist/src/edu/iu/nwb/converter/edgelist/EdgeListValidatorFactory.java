@@ -265,6 +265,12 @@ public class EdgeListValidatorFactory implements AlgorithmFactory {
 			   while (line != null && isFileGood) {
 				   currentLine++;
 				   
+				   //Remove leading and trailing whitespace;
+				   if (currentLine == 1)
+				   {
+					   line = line.trim();
+				   }
+				   
 				   // When first line matches "directed", graph is directed
 				   if (currentLine == 1 && line.matches("^directed\\s*$")) {
 					   this.isUndirected = false;
