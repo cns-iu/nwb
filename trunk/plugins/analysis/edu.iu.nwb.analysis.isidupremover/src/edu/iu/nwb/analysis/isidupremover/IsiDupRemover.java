@@ -130,13 +130,13 @@ public class IsiDupRemover {
     	String currentPubTitle = currentPubTuple.getString(ISITag.TITLE.name);
     	String savedPubTitle = savedPubTuple.getString(ISITag.TITLE.name);
     	
-    	runningLog.append("Found two publication records with the same ID, '" + commonID + "'\r\n");
+    	runningLog.append("Found a pair of publication records with ID '" + commonID + "'\r\n");
     	if (currentPubTitle.equals(savedPubTitle)) {
     		String commonTitle = currentPubTitle;
-    		runningLog.append("Both publications records are titled '" + commonTitle + "'\r\n");
+    		runningLog.append("Both titled '" + commonTitle + "'\r\n");
     	} else {
-    		runningLog.append("The first publication record is titled '" + currentPubTitle + "'\r\n");
-    		runningLog.append("The second publication record is titled '" + savedPubTitle + "'\r\n");
+    		runningLog.append("The first titled '" + currentPubTitle + "'\r\n");
+    		runningLog.append("The second titled '" + savedPubTitle + "'\r\n");
     	}
     	
     	int compareResult = 
@@ -144,13 +144,13 @@ public class IsiDupRemover {
     	
     	Integer pubToRemoveIndex;
     	if (compareResult > 0) {
-    		runningLog.append("Removing the second publication\r\n");
+    		runningLog.append("Removing second\r\n");
     		pubToRemoveIndex =  savedPubIndex;
     	} else if (compareResult < 0) {
-    		runningLog.append("Removing the first publication\r\n");
+    		runningLog.append("Removing first\r\n");
     		pubToRemoveIndex =  currentPubIndex;
     	} else {
-    		runningLog.append("Arbitrarily removing the first publication\r\n");
+    		runningLog.append("Arbitrarily removing first\r\n");
     		pubToRemoveIndex = currentPubIndex;
     	}
     	
