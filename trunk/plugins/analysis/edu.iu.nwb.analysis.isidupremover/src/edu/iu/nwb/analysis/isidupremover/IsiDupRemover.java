@@ -14,6 +14,7 @@ import prefuse.data.Tuple;
 import prefuse.util.collections.IntIterator;
 import edu.iu.nwb.analysis.isidupremover.tuplecomparison.ISIPubComparer;
 import edu.iu.nwb.analysis.isidupremover.tuplecomparison.MainPubComparer;
+import edu.iu.nwb.shared.isiutil.ISITag;
 
 public class IsiDupRemover {
     Data[] data;
@@ -28,6 +29,7 @@ public class IsiDupRemover {
     		boolean printRunningLogToConsole) {
     	this.log = log;
     	
+    	System.out.println("Let's remove a dup or two!");
     	StringBuilder runningLog = new StringBuilder();
     	
     	Table table;
@@ -37,11 +39,13 @@ public class IsiDupRemover {
     		table = GraphUtil.copyTable(origTable);
     	}
     	
+    	System.out.println("Done copying table...");
+    	
     	Integer savedPubIndex = null;
     	String savedPubID = null;
     	
     	//iterate through the publications by ID
-    	IntIterator publicationsByIDIter = table.rowsSortedBy(ISITag.UNIQUE_ID, true);
+    	IntIterator publicationsByIDIter = table.rowsSortedBy(ISITag.UNIQUE_ID.name, true);
     	
     	/*
     	 * Since we are iterating through the publications by ID, publications
@@ -53,10 +57,11 @@ public class IsiDupRemover {
     	
     	List publicationsToRemove = new ArrayList();
     	
+    	System.out.println("Start marking dups!");
     	//for every publication in order of ID...
     	while (publicationsByIDIter.hasNext()) {
     		Integer currentPubIndex = (Integer) publicationsByIDIter.next();
-    		String currentPubID = table.getString(currentPubIndex.intValue(), ISITag.UNIQUE_ID);
+    		String currentPubID = table.getString(currentPubIndex.intValue(), ISITag.UNIQUE_ID.name);
     		
     		//if this publication has a different ID than the last saved publication...
     		if (! currentPubID.equals(savedPubID)) {
@@ -66,7 +71,7 @@ public class IsiDupRemover {
     			savedPubID = currentPubID;
     		} else { 
     			//we have a pair of publications with the same ID.
-    			
+    			System.out.println("I see a dup!");
     			//choose whether to eliminate our saved publication or this one.
     			Integer pubToRemoveIndex = determineWhichToRemove(
     					table, currentPubIndex, savedPubIndex, runningLog);
@@ -86,27 +91,31 @@ public class IsiDupRemover {
     		}
     	}
     	
+    	System.out.println("About to print log!");
     	if (printRunningLogToConsole) {
     		log.log(LogService.LOG_INFO, runningLog.toString());
     	}
     	
     	//if we have any publications to remove...
     	if (publicationsToRemove.size() > 0) {
+        	log.log(LogService.LOG_INFO,  
+        			publicationsToRemove.size() + " out of " 
+        			+ table.getRowCount() + " publication records were duplicates");
+        	
     		//remove publications we marked as needing to be removed from the table
         	Iterator pubsToRemoveIter = publicationsToRemove.iterator();
         	while (pubsToRemoveIter.hasNext()) {
         		Integer pubToRemoveIndex = (Integer) pubsToRemoveIter.next();
         		table.removeRow(pubToRemoveIndex.intValue());
         	}
-        	
-        	log.log(LogService.LOG_INFO,  
-        			publicationsToRemove.size() + " out of " 
-        			+ table.getRowCount() + " publication records were duplicates");
+
     	} else {
     		//tell the user that we found no duplicates
     		log.log(LogService.LOG_INFO, "No duplicate publication records found");
     	}
     	
+    	
+    	System.out.println("Done removing DUPS!");
     	return table;
     }
     
@@ -117,9 +126,9 @@ public class IsiDupRemover {
     	Tuple currentPubTuple = table.getTuple(currentPubIndex.intValue());
     	Tuple savedPubTuple = table.getTuple(savedPubIndex.intValue());
     	
-    	String commonID = currentPubTuple.getString(ISITag.UNIQUE_ID);
-    	String currentPubTitle = currentPubTuple.getString(ISITag.TITLE);
-    	String savedPubTitle = savedPubTuple.getString(ISITag.TITLE);
+    	String commonID = currentPubTuple.getString(ISITag.UNIQUE_ID.name);
+    	String currentPubTitle = currentPubTuple.getString(ISITag.TITLE.name);
+    	String savedPubTitle = savedPubTuple.getString(ISITag.TITLE.name);
     	
     	runningLog.append("Found two publication records with the same ID, '" + commonID + "'\r\n");
     	if (currentPubTitle.equals(savedPubTitle)) {
@@ -127,7 +136,7 @@ public class IsiDupRemover {
     		runningLog.append("Both publications records are titled '" + commonTitle + "'\r\n");
     	} else {
     		runningLog.append("The first publication record is titled '" + currentPubTitle + "'\r\n");
-    		runningLog.append("The second publication record is title '" + savedPubTitle + "'\r\n");
+    		runningLog.append("The second publication record is titled '" + savedPubTitle + "'\r\n");
     	}
     	
     	int compareResult = 

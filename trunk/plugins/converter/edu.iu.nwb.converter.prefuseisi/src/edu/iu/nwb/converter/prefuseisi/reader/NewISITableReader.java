@@ -4,15 +4,11 @@ import java.io.BufferedReader;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
 
 import prefuse.data.Schema;
 import prefuse.data.Table;
+import edu.iu.nwb.shared.isiutil.ContentType;
+import edu.iu.nwb.shared.isiutil.ISITag;
 
 /**
  * 
@@ -23,110 +19,29 @@ public class NewISITableReader {
 	
 	private static final String NORMALIZED_SEPARATOR = "|";
 	private static final int TAG_LENGTH = 2;
-		
-	private static List multivalueColumnTags = 
-		Arrays.asList(new String[]{
-				"AF",
-				"AU",
-				"C1",
-				"CR",
-				"DE",
-				"ID",
-				"SC",
-				});
-	
-	private static List stringColumnTags = 
-		Arrays.asList(new String[]{
-				"AB",
-				"AR",
-				"BP",
-				"DI",
-				"DT",
-				"EP",
-				"GA",
-				"IS",
-				"J9",
-				"JI",
-				"LA",
-				"PD",
-				"PI",
-				"PN",
-				"PT",
-				"PU",
-				"RP",
-				"SE",
-				"SI",
-				"SN",
-				"SO",
-				"SU",
-				"TI",
-				"VL",
-				"WP",
-				"UT" //looks like ISI:000173979600014. Treating it as a string for now.
-				});
-	
-	private static List intColumnTags = 
-		Arrays.asList(new String[]{
-				"NR",
-				"PG",
-				"PY",
-				"TC"
-				});
-	
-	private static String fileTypeTag = "FN";
-	private static String versionTag = "VR";
-	private static String endRecordTag = "ER";
-	private static String endFileTag = "EF";
-	
-	private static List allColumnTags = new ArrayList();
-	static {
-		allColumnTags.addAll(multivalueColumnTags);
-		allColumnTags.addAll(stringColumnTags);
-		allColumnTags.addAll(intColumnTags);
-		allColumnTags.add(fileTypeTag);
-		allColumnTags.add(versionTag);
-		allColumnTags.add(endRecordTag);
-		allColumnTags.add(endFileTag);
-	}
-	
+
 	private static Schema schema = new Schema();
 	static {
-		Iterator multivalueColumnTagIter = multivalueColumnTags.iterator();
-		while (multivalueColumnTagIter.hasNext()) {
-			String multivalueColumnTag = (String) multivalueColumnTagIter.next();
-			
-			/*
-			 * We represent multiple values in a single column using a string,
-			 * where each value is separated by the special normalized separator.
-			 */
-			schema.addColumn(multivalueColumnTag, String.class);
-		}
 		
-		Iterator stringColumnTagIter = stringColumnTags.iterator();
-		while (stringColumnTagIter.hasNext()) {
-			String stringColumnTag = (String) stringColumnTagIter.next();
+		//for each content type for isi tags..
+		ContentType[] isiTagContentTypes = ContentType.getAllContentTypes();
+		for (int ii = 0; ii < isiTagContentTypes.length; ii++) {
+			ContentType isiTagContentType = isiTagContentTypes[ii];
 			
-			schema.addColumn(stringColumnTag, String.class);
+			//for each tag corresponding to that content type...
+			ISITag[] tagsOfThisContentType = ISITag.getTagsWithContentType(isiTagContentType);
+			for (int jj = 0; jj < tagsOfThisContentType.length; jj++) {
+				ISITag tag = tagsOfThisContentType[jj];
+				
+				Class tagTableDataType = tag.type.getTableDataType();
+				
+				//add that tag to the table schema, with the table storage data type associated with the tags content type
+				//(e.g. Text -> String, Multi-value Text -> String)
+				if (tagTableDataType != null) {
+				schema.addColumn(tag.name, tagTableDataType);
+				}
+			}
 		}
-		
-		Iterator intColumnTagIter = intColumnTags.iterator();
-		while (intColumnTagIter.hasNext()) {
-			String intColumnTag = (String) intColumnTagIter.next();
-			
-			schema.addColumn(intColumnTag, int.class);
-		}
-	}
-	
-	private static Map separators = new HashMap();
-	
-	static {
-		separators.put("AF", "\n");
-		separators.put("AU", "\n");
-		separators.put("CR", "\n");
-		separators.put("C1", "\n");
-		separators.put("ID", ";");
-		separators.put("DE", ";"); //guessing, since the format does not specify, but the other keyword field is ; separated
-		separators.put("SC", ";");
 	}
 	
 	public Table readTable(FileInputStream stream) throws IOException {
@@ -138,37 +53,39 @@ public class NewISITableReader {
 		String currentLine = moveToNextNonEmptyLine(reader);
 		
 		while (currentLine != null) {
-			String currentTag = extractTag(currentLine);
+			String currentTagName = extractTagName(currentLine);
+			ISITag currentTag = ISITag.getTag(currentTagName);
 			
 			if (currentTag == null) {
 				//either we had an error in the program or there is something wrong with the file.
 				currentLine = moveToNextNonEmptyLine(reader);
-			}else if (currentTag.equals(endFileTag)) {
+			}else if (currentTag.equals(ISITag.END_OF_FILE)) {
 				//we're done with the whole file
 				break;
-			} else if (currentTag.equals(endRecordTag)) {
+			} else if (currentTag.equals(ISITag.END_OF_RECORD)) {
 				//we're done with this record
 				tableData.moveOnToNextRow();
 				currentLine = moveToNextNonEmptyLine(reader);
-			} else if (currentTag.equals(fileTypeTag)) {
+			} else if (currentTag.equals(ISITag.FILE_TYPE)) {
 				//tag ignored
 				currentLine = moveToNextNonEmptyLine(reader);
-			} else if (currentTag.equals(versionTag)) {
+			} else if (currentTag.equals(ISITag.VERSION_NUMBER)) {
 				//tag ignored
 				currentLine = moveToNextNonEmptyLine(reader);
-			} else if (intColumnTags.contains(currentTag)) {
+			} else if (currentTag.type.equals(ContentType.INTEGER)) {
 				//side-effects the table data
 				currentLine = addIntTagData(currentTag, currentLine, reader, tableData);
-			} else if (stringColumnTags.contains(currentTag)) {
+			} else if (currentTag.type.equals(ContentType.TEXT)) {
 				//side-effects the table data
 				currentLine = addStringTagData(currentTag, currentLine, reader, tableData);
-			} else if (multivalueColumnTags.contains(currentTag)) {
+			} else if (currentTag.type.equals(ContentType.MULTI_VALUE_TEXT)) {
 				//side-effects the table data
 				currentLine = addMultivalueTagData(currentTag, currentLine, reader, tableData);
 			} else {
+				//side-effects the table data
 				System.err.println("Unrecognized tag '" + currentTag + "'");
-				System.err.println("Attempting to skip it over...");
-				currentLine = moveToNextNonEmptyLine(reader);
+				System.err.println("Treating tag as if it held single-value text data");
+				currentLine = addStringTagData(currentTag, currentLine, reader, tableData);
 			}
 			
 		}
@@ -177,7 +94,7 @@ public class NewISITableReader {
 		return constructedTable;
 	}
 		
-	private String addIntTagData(String currentTag, String currentLine,
+	private String addIntTagData(ISITag currentTag, String currentLine,
 			BufferedReader reader, TableData tableData) throws IOException {
 		currentLine = removeTag(currentLine);
 		
@@ -185,13 +102,13 @@ public class NewISITableReader {
 		String integerPart = parts[1];
 		int intValue = Integer.parseInt(integerPart);
 		
-		tableData.setInt(currentTag, intValue);
+		tableData.setInt(currentTag.name, intValue);
 		
 		String nextLine = moveToNextNonEmptyLine(reader);
 		return nextLine;
 	}
 	
-	private String addStringTagData(String currentTag, String currentLine,
+	private String addStringTagData(ISITag currentTag, String currentLine,
 			BufferedReader reader, TableData tableData) throws IOException {
 		String nextLine;
 		
@@ -201,14 +118,17 @@ public class NewISITableReader {
 		return nextLine;
 	}
 	
-	private String addMultivalueTagData(String currentTag, String currentLine,
+	private String addMultivalueTagData(ISITag currentTag, String currentLine,
 			BufferedReader reader, TableData tableData) throws IOException {
 		
-		String separator = (String) separators.get(currentTag);
+		String separator = currentTag.separator;
 		
 		String nextLine;
 		
-		if (separator.equals("\n")) {
+		if (separator == null) {
+			System.err.println("Programmer error: multi-value text tag not provided with separator");
+			nextLine = moveToNextNonEmptyLine(reader);
+		} else if (separator.equals("\n")) {
 			nextLine = processMultilineTagDataWithNewlineSeparators(
 					currentTag, currentLine, reader, tableData);
 		} else {
@@ -219,21 +139,21 @@ public class NewISITableReader {
 		return nextLine;
 	}
 	
-	private String processMultilineTagDataNormally(String currentTag, 
+	private String processMultilineTagDataNormally(ISITag currentTag, 
 			String currentLine,
 			BufferedReader reader,
 			TableData table) throws IOException {
 		return processMultilineTagData(currentTag, currentLine, reader, table, " ", null);
 	}
 	
-	private String processMultilineTagDataWithNewlineSeparators(String currentTag,
+	private String processMultilineTagDataWithNewlineSeparators(ISITag currentTag,
 			String currentLine,
 			BufferedReader reader,
 			TableData table) throws IOException {
 		return processMultilineTagData(currentTag, currentLine, reader, table, "|", null);
 	}
 	
-	private String processMultilineTagDataWithNonNewlineSeparators(String currentTag,
+	private String processMultilineTagDataWithNonNewlineSeparators(ISITag currentTag,
 			String currentLine,
 			BufferedReader reader,
 			TableData table,
@@ -241,7 +161,7 @@ public class NewISITableReader {
 		return processMultilineTagData(currentTag, currentLine, reader, table, " ", separator);
 	}
 	
-	private String processMultilineTagData(String currentTag,
+	private String processMultilineTagData(ISITag currentTag,
 			String currentLine,
 			BufferedReader reader,
 			TableData tableData,
@@ -268,13 +188,13 @@ public class NewISITableReader {
 			allTagDataString.replace(separatorString, NORMALIZED_SEPARATOR);
 		}
 		
-		tableData.setString(currentTag, allTagDataString);
+		tableData.setString(currentTag.name, allTagDataString);
 		
 		String nextLineAfterThisTag = currentLine;
 		return nextLineAfterThisTag;
 	}
 	
-	private String extractTag(String line) {
+	private String extractTagName(String line) {
 		
 		String tag;
 		if (line != null && line.length() >= TAG_LENGTH) {
