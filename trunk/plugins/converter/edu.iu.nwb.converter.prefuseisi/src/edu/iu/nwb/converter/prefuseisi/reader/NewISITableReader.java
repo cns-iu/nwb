@@ -97,10 +97,9 @@ public class NewISITableReader {
 	private String addIntTagData(ISITag currentTag, String currentLine,
 			BufferedReader reader, TableData tableData) throws IOException {
 		currentLine = removeTag(currentLine);
+		currentLine = currentLine.trim();
 		
-		String[] parts = currentLine.split(" ");
-		String integerPart = parts[1];
-		int intValue = Integer.parseInt(integerPart);
+		int intValue = Integer.parseInt(currentLine);
 		
 		tableData.setInt(currentTag.name, intValue);
 		
@@ -172,6 +171,7 @@ public class NewISITableReader {
 		currentLine = removeTag(currentLine);
 		
 		do {
+			currentLine = currentLine.trim();
 			stringSoFar.append(appendString);
 			stringSoFar.append(currentLine);
 		} while ((currentLine = moveToNextNonEmptyLine(reader)).startsWith("  "));
@@ -185,7 +185,10 @@ public class NewISITableReader {
 		String allTagDataString = stringSoFar.toString();
 		
 		if (separatorString != null) {
-			allTagDataString.replace(separatorString, NORMALIZED_SEPARATOR);
+			System.out.println("Replacing " + separatorString + " with |'s");
+			System.out.println("In '" + allTagDataString + "'");
+			allTagDataString = allTagDataString.replace(separatorString, NORMALIZED_SEPARATOR);
+			System.out.println("Result: " + allTagDataString);
 		}
 		
 		tableData.setString(currentTag.name, allTagDataString);
@@ -224,7 +227,7 @@ public class NewISITableReader {
 	}
 	
 	private String removeTag(String line) {
-		return line.substring(TAG_LENGTH);
+		return line.substring(Math.min(TAG_LENGTH, line.length()));
 	}
 	
 	private class TableData {
