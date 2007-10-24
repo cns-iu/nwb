@@ -82,7 +82,6 @@ public class ISITag {
 	
 	private static void addTagInternal(ISITag newTag, boolean checkForDuplicates) {
 		
-		System.out.println("Adding new tag, with name " + newTag.name);
 		if (checkForDuplicates) {
 			for (int ii = 0; ii < isiTags.size(); ii++) {	
 				ISITag tag = (ISITag) isiTags.get(ii);
@@ -141,7 +140,6 @@ public class ISITag {
 	}
 	
 	private ISITag(String name, ContentType type, String separator, boolean isFileUnique) {
-		System.out.println("Initializing ISITag " + name + ", with ContentType " + type);
 		this.name = name;
 		this.type = type;
 		this.separator = separator;

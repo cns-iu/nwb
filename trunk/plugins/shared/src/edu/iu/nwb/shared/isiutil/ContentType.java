@@ -22,7 +22,6 @@ public class ContentType {
 	private Class tableDataType;
 
 	private ContentType(String name, Class tableDataType) {
-		System.out.println("Initializing ContentType: " + name);
 		this.name = name;
 		this.tableDataType = tableDataType;
 	}

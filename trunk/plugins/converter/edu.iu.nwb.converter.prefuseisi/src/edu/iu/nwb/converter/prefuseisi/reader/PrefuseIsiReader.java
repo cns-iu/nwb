@@ -46,8 +46,7 @@ public class PrefuseIsiReader implements Algorithm {
     public Data[] execute() {
 
     	File file = (File) data[0].getData();
-
-    	System.out.println("Reading .isi in table....");
+    	
     	try{
     		NewISITableReader tableReader = new NewISITableReader();
 			
@@ -74,7 +73,6 @@ public class PrefuseIsiReader implements Algorithm {
 				tableToReturn = tableWithDups;
 			}
 			
-			System.out.println("Done reading isi into table");
 			Data[] tableToReturnData = 
 				new Data[] {new BasicData(tableToReturn, Table.class.getName())};
     		tableToReturnData[0].getMetaData().put(DataProperty.LABEL, "ISI Data: " + file);

@@ -29,7 +29,6 @@ public class IsiDupRemover {
     		boolean printRunningLogToConsole) {
     	this.log = log;
     	
-    	System.out.println("Let's remove a dup or two!");
     	StringBuilder runningLog = new StringBuilder();
     	
     	Table table;
@@ -38,8 +37,6 @@ public class IsiDupRemover {
     	} else {
     		table = GraphUtil.copyTable(origTable);
     	}
-    	
-    	System.out.println("Done copying table...");
     	
     	Integer savedPubIndex = null;
     	String savedPubID = null;
@@ -57,7 +54,6 @@ public class IsiDupRemover {
     	
     	List publicationsToRemove = new ArrayList();
     	
-    	System.out.println("Start marking dups!");
     	//for every publication in order of ID...
     	while (publicationsByIDIter.hasNext()) {
     		Integer currentPubIndex = (Integer) publicationsByIDIter.next();
@@ -71,7 +67,6 @@ public class IsiDupRemover {
     			savedPubID = currentPubID;
     		} else { 
     			//we have a pair of publications with the same ID.
-    			System.out.println("I see a dup!");
     			//choose whether to eliminate our saved publication or this one.
     			Integer pubToRemoveIndex = determineWhichToRemove(
     					table, currentPubIndex, savedPubIndex, runningLog);
@@ -91,7 +86,6 @@ public class IsiDupRemover {
     		}
     	}
     	
-    	System.out.println("About to print log!");
     	if (printRunningLogToConsole) {
     		log.log(LogService.LOG_INFO, runningLog.toString());
     	}
@@ -114,8 +108,6 @@ public class IsiDupRemover {
     		log.log(LogService.LOG_INFO, "No duplicate publication records found");
     	}
     	
-    	
-    	System.out.println("Done removing DUPS!");
     	return table;
     }
     

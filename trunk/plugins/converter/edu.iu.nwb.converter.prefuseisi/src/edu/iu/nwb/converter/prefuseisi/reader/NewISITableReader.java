@@ -187,10 +187,7 @@ public class NewISITableReader {
 		String allTagDataString = stringSoFar.toString();
 		
 		if (separatorString != null) {
-			System.out.println("Replacing " + separatorString + " with |'s");
-			System.out.println("In '" + allTagDataString + "'");
 			allTagDataString = allTagDataString.replace(separatorString, NORMALIZED_SEPARATOR);
-			System.out.println("Result: " + allTagDataString);
 		}
 		
 		tableData.setString(currentTag.name, allTagDataString);
