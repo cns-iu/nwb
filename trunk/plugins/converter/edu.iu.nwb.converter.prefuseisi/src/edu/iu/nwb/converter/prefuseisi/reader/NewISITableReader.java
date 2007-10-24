@@ -50,28 +50,25 @@ public class NewISITableReader {
 		
 		TableData tableData = new TableData(schema);
 		
-		String currentLine = moveToNextNonEmptyLine(reader);
+		String currentLine = moveToNextLineWithTag(reader);
 		
 		while (currentLine != null) {
 			String currentTagName = extractTagName(currentLine);
-			ISITag currentTag = ISITag.getTag(currentTagName);
+			ISITag currentTag = getOrCreateNewTag(currentTagName, tableData);
 			
-			if (currentTag == null) {
-				//either we had an error in the program or there is something wrong with the file.
-				currentLine = moveToNextNonEmptyLine(reader);
-			}else if (currentTag.equals(ISITag.END_OF_FILE)) {
+			 if (currentTag.equals(ISITag.END_OF_FILE)) {
 				//we're done with the whole file
 				break;
 			} else if (currentTag.equals(ISITag.END_OF_RECORD)) {
 				//we're done with this record
 				tableData.moveOnToNextRow();
-				currentLine = moveToNextNonEmptyLine(reader);
+				currentLine = moveToNextLineWithTag(reader);
 			} else if (currentTag.equals(ISITag.FILE_TYPE)) {
 				//tag ignored
-				currentLine = moveToNextNonEmptyLine(reader);
+				currentLine = moveToNextLineWithTag(reader);
 			} else if (currentTag.equals(ISITag.VERSION_NUMBER)) {
 				//tag ignored
-				currentLine = moveToNextNonEmptyLine(reader);
+				currentLine = moveToNextLineWithTag(reader);
 			} else if (currentTag.type.equals(ContentType.INTEGER)) {
 				//side-effects the table data
 				currentLine = addIntTagData(currentTag, currentLine, reader, tableData);
@@ -82,10 +79,8 @@ public class NewISITableReader {
 				//side-effects the table data
 				currentLine = addMultivalueTagData(currentTag, currentLine, reader, tableData);
 			} else {
-				//side-effects the table data
-				System.err.println("Unrecognized tag '" + currentTag + "'");
-				System.err.println("Treating tag as if it held single-value text data");
-				currentLine = addStringTagData(currentTag, currentLine, reader, tableData);
+				//either we had an error in the program or there is something wrong with the file.
+				currentLine = moveToNextLineWithTag(reader);
 			}
 			
 		}
@@ -99,12 +94,19 @@ public class NewISITableReader {
 		currentLine = removeTag(currentLine);
 		currentLine = currentLine.trim();
 		
-		int intValue = Integer.parseInt(currentLine);
+		try {
+			int intValue = Integer.parseInt(currentLine);
 		
-		tableData.setInt(currentTag.name, intValue);
+			tableData.setInt(currentTag.name, intValue);
 		
-		String nextLine = moveToNextNonEmptyLine(reader);
-		return nextLine;
+			String nextLine = moveToNextLineWithTag(reader);
+			return nextLine;
+		} catch (NumberFormatException e) {
+			System.err.println("Tag '" + currentTag + "' " + "with data '" 
+					+ currentLine + "' could not be parsed as an integer.");
+			System.err.println("Treating the data as text instead");
+			return addMultivalueTagData(currentTag, currentLine, reader, tableData);
+		}
 	}
 	
 	private String addStringTagData(ISITag currentTag, String currentLine,
@@ -126,7 +128,7 @@ public class NewISITableReader {
 		
 		if (separator == null) {
 			System.err.println("Programmer error: multi-value text tag not provided with separator");
-			nextLine = moveToNextNonEmptyLine(reader);
+			nextLine = moveToNextLineWithTag(reader);
 		} else if (separator.equals("\n")) {
 			nextLine = processMultilineTagDataWithNewlineSeparators(
 					currentTag, currentLine, reader, tableData);
@@ -212,6 +214,17 @@ public class NewISITableReader {
 		return tag;
 	}
 	
+	private String moveToNextLineWithTag(BufferedReader reader) throws IOException {
+		String nextNonEmptyLine;
+		while ((nextNonEmptyLine = moveToNextNonEmptyLine(reader)) != null) {
+			if (startsWithTag(nextNonEmptyLine)) {
+				return nextNonEmptyLine;
+			}
+		}
+		
+		return null;
+	}
+	
 	private String moveToNextNonEmptyLine(BufferedReader reader) throws IOException {
 		String line = null;
 		while ((line = reader.readLine()) != null) {
@@ -228,6 +241,41 @@ public class NewISITableReader {
 	
 	private String removeTag(String line) {
 		return line.substring(Math.min(TAG_LENGTH, line.length()));
+	}
+	
+	private ISITag getOrCreateNewTag(String tagName, TableData tableData) {
+		
+		Object getTagResult = ISITag.getTag(tagName);
+		
+		ISITag tag;
+		if (getTagResult != null) {
+			tag = (ISITag) getTagResult;
+		} else {
+			//since we have no stored information on this tag...
+			//we attempt to parse the tag data in the most general way possible.
+				
+			System.err.println("Unrecognized tag '" + tagName + "'");
+			System.err.println("Treating tag as if it held single-value text data");
+				
+			ContentType currentTagContentType = ContentType.TEXT;
+			ISITag.addTag(tagName, currentTagContentType);
+			tableData.addColumn(tagName, currentTagContentType.getTableDataType());
+			
+			tag = ISITag.getTag(tagName);
+		}
+		
+		return tag;
+	}
+	
+	private boolean startsWithTag(String potentialTag) {
+		if (potentialTag.length() >= 2 &&
+				(! Character.isWhitespace(potentialTag.charAt(0))) &&
+				(! Character.isWhitespace(potentialTag.charAt(1)))) {
+			return true;
+		} else {
+			return false;
+		}
+				
 	}
 	
 	private class TableData {
@@ -255,6 +303,10 @@ public class NewISITableReader {
 			ensureRowNotFinishedYet();
 			
 			table.setString(currentRow, columnTag, value);
+		}
+		
+		public void addColumn(String columnName, Class columnType) {
+			table.addColumn(columnName, columnType);
 		}
 		
 		public Table getTable() {

@@ -68,55 +68,55 @@ public class ISITag {
 		PUBLISHER_WEB_ADDRESS
 	};
 	
-	public static final List isiTags = Arrays.asList(isiTagArray);
-	
-	private static Dictionary nameToTag;
+	private static List isiTags = new ArrayList();
+	private static Dictionary nameToTag = new Hashtable();
+	private static Dictionary typeToTags = new Hashtable();
+
 	static {
-		System.out.println("Initializing nameToTag");
-		nameToTag = new Hashtable();
-		
-		Iterator isiTagIter = isiTags.iterator();
-		while (isiTagIter.hasNext()) {
-			ISITag tag = (ISITag) isiTagIter.next();
+		for (int ii = 0; ii < isiTagArray.length; ii++) {
+			ISITag tag = isiTagArray[ii];
 			
-			String name = tag.name;
-			
-			nameToTag.put(name, tag);
+			addTagInternal(tag, false);
 		}
 	}
 	
-	private static Dictionary typeToTags = new Hashtable();
-	static {
-		System.out.println("Initializing typeToTags");
-		Iterator isiTagIter = isiTags.iterator();
-		while (isiTagIter.hasNext()) {
-			ISITag tag = (ISITag) isiTagIter.next();
-			
-			if (tag == null) {
-				System.out.println("Tag is null!");
-			} else {
-				System.out.println("Tag name is " + tag.name);
+	private static void addTagInternal(ISITag newTag, boolean checkForDuplicates) {
+		
+		System.out.println("Adding new tag, with name " + newTag.name);
+		if (checkForDuplicates) {
+			for (int ii = 0; ii < isiTags.size(); ii++) {	
+				ISITag tag = (ISITag) isiTags.get(ii);
+				
+				if (newTag.name.equals(tag.name)) {
+					System.err.println("Attempted to add a tag named '" + newTag.name + "'" +
+							" when one with the same name is already known.");
+					System.err.println("Ignoring attempt to add new tag");
+					return;
+				}
 			}
- 			
-			ContentType tagType = tag.type;
-			
-			if (tagType == null) {
-				System.out.println("Tag type is null!!!");
-			}
-			
-			Object typeToTagsResult = typeToTags.get(tagType);
-			List tagsWithThisType;
-			if (typeToTagsResult == null) {
-				tagsWithThisType = new ArrayList();
-			} else {
-				tagsWithThisType = (List) typeToTagsResult;
-			}
-			
-			tagsWithThisType.add(tag);
-			typeToTags.put(tagType, tagsWithThisType);
-			
 		}
-		System.out.println("Done Initializing typeToTags");
+		
+		//add to isiTags
+		
+		isiTags.add(newTag);
+		
+		//add to nameToTag
+		
+		nameToTag.put(newTag.name, newTag);
+		
+		//add to typeToTags
+		
+		ContentType tagType = newTag.type;
+		Object typeToTagsResult = typeToTags.get(tagType);
+		List tagsWithThisType;
+		if (typeToTagsResult == null) {
+			tagsWithThisType = new ArrayList();
+		} else {
+			tagsWithThisType = (List) typeToTagsResult;
+		}
+		
+		tagsWithThisType.add(newTag);
+		typeToTags.put(tagType, tagsWithThisType);
 	}
 	
 	
@@ -152,6 +152,26 @@ public class ISITag {
 		return this.name;
 	}
 	
+	public static void addTag(String name, ContentType type) {
+		ISITag newTag = new ISITag(name, type);
+		addTagInternal(newTag, true);
+	}
+	
+	public static void addTag(String name, ContentType type, boolean isFileUnique) {
+		ISITag newTag = new ISITag(name, type, isFileUnique);
+		addTagInternal(newTag, true);
+	}
+	
+	public static void addTag(String name, ContentType type, String separator) {
+		ISITag newTag = new ISITag(name, type, separator);
+		addTagInternal(newTag, true);
+	}
+	
+	public static void addTag(String name, ContentType type, String separator, boolean isFileUnique) {
+		ISITag newTag = new ISITag(name, type, separator, isFileUnique);
+		addTagInternal(newTag, true);
+	}
+	
 	public static ISITag getTag(String name) {
 		if (name == null) {
 			return null;
@@ -179,7 +199,4 @@ public class ISITag {
 			return new ISITag[0];
 		}
 	}
-	
-	
-	
 }
