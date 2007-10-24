@@ -23,10 +23,13 @@ import edu.iu.nwb.analysis.isidupremover.IsiDupRemover;
 public class PrefuseIsiReader implements Algorithm {
 	
 	private static final boolean REMOVE_DUPLICATE_PUBLICATIONS = true;
+	private static final boolean NORMALIZE_AUTHOR_NAMES = true;
 	
 	//if we do remove duplicate records, should we change the original table?
 	private static final boolean MUTATE_ORIG_TABLE = true;
 	private static final boolean DONT_MUTATE_ORIG_TABLE = false;
+	
+
 	
     Data[] data;
     Dictionary parameters;
@@ -48,8 +51,13 @@ public class PrefuseIsiReader implements Algorithm {
     	File file = (File) data[0].getData();
     	
     	try{
-    		NewISITableReader tableReader = new NewISITableReader();
+    		ISITableReader tableReader = new ISITableReader(this.log, NORMALIZE_AUTHOR_NAMES);
 			
+    		if (NORMALIZE_AUTHOR_NAMES) {
+    			log.log(LogService.LOG_INFO, "");
+    			log.log(LogService.LOG_INFO, "Normalizing author names...");
+    		}
+    		
     		Table tableWithDups = tableReader.readTable(new FileInputStream(file));
 		  	
             Table tableToReturn;     

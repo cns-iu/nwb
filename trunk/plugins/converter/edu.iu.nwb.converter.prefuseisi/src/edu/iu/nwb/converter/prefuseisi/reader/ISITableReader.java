@@ -5,6 +5,8 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
 
+import org.osgi.service.log.LogService;
+
 import prefuse.data.Schema;
 import prefuse.data.Table;
 import edu.iu.nwb.shared.isiutil.ContentType;
@@ -15,9 +17,9 @@ import edu.iu.nwb.shared.isiutil.ISITag;
  * @author mwlinnem
  * based off of code from rduhon
  */
-public class NewISITableReader {
+public class ISITableReader {
 	
-	private static final String NORMALIZED_SEPARATOR = "|";
+	private static final String NORMALIZED_SEPARATOR = "| ";
 	private static final int TAG_LENGTH = 2;
 
 	private static Schema schema = new Schema();
@@ -44,8 +46,20 @@ public class NewISITableReader {
 		}
 	}
 	
-	public Table readTable(FileInputStream stream) throws IOException {
+	private LogService log;
+	private boolean normalizeAuthorNames;
+	
+	public ISITableReader(LogService log, boolean normalizeAuthorNames) {
+		this.log = log;
 		
+		setNormalizeAuthorNames(normalizeAuthorNames);
+	}
+	
+	public void setNormalizeAuthorNames(boolean normalizeAuthorNames) {
+		this.normalizeAuthorNames = normalizeAuthorNames;
+	}
+	
+	public Table readTable(FileInputStream stream) throws IOException {
 		BufferedReader reader = new BufferedReader(new InputStreamReader(stream, "UTF-8"));
 		
 		TableData tableData = new TableData(schema);
@@ -151,7 +165,7 @@ public class NewISITableReader {
 			String currentLine,
 			BufferedReader reader,
 			TableData table) throws IOException {
-		return processMultilineTagData(currentTag, currentLine, reader, table, "|", null);
+		return processMultilineTagData(currentTag, currentLine, reader, table, NORMALIZED_SEPARATOR, null);
 	}
 	
 	private String processMultilineTagDataWithNonNewlineSeparators(ISITag currentTag,
@@ -174,6 +188,8 @@ public class NewISITableReader {
 		
 		do {
 			currentLine = currentLine.trim();
+			currentLine = tagSpecificProcessing(currentTag, currentLine);
+			
 			stringSoFar.append(appendString);
 			stringSoFar.append(currentLine);
 		} while ((currentLine = moveToNextNonEmptyLine(reader)).startsWith("  "));
@@ -273,6 +289,79 @@ public class NewISITableReader {
 			return false;
 		}
 				
+	}
+	
+	private String tagSpecificProcessing(ISITag tag, String line) {
+		String processedLine;
+		
+		if (tag.equals(ISITag.AUTHORS)) {
+			if (normalizeAuthorNames) {
+				processedLine = processAuthorLine(line);
+			} else {
+				processedLine = line;
+			}
+		} else if (tag.equals(ISITag.CITED_REFERENCES)) {
+			if (normalizeAuthorNames) {
+			//same basic idea as authors tag, except each line of 
+			//cited references contains more than just the author name.
+			//everything before the first comma is the (primary?) authors name
+			//(I have never seen more than one author listed per citation
+			//so hopefully that never happens, since this will 
+			//only do its magic on the first name.
+			
+			String[] fields = line.split(",");
+			
+			if (fields.length == 0) {
+				System.err.println("Error in tagSpecificProcessing");
+				return line;
+			}
+			
+			String authorField = fields[0];
+			String processedAuthorField = processAuthorLine(authorField);
+			fields[0] = processedAuthorField;
+			
+			processedLine = joinOver(fields, ",");
+			} else {
+				processedLine = line;
+			}
+		} else {
+			processedLine = line;
+		}
+		
+		return processedLine;
+	}
+	
+	private String processAuthorLine(String line) {
+		//capitalize every word in the author name, except the last
+		//(which is most likely an abbreviation of the authors first and/or middle name)
+		
+		String[] words = line.split(" ");
+		for (int ii = 0; ii < words.length -1; ii++) {
+			words[ii] = capitalizeOnlyFirstLetter(words[ii]);
+		}
+		
+		return joinOver(words, " ");
+	}
+	
+	private String capitalizeOnlyFirstLetter(String s) {
+		if (s.length() > 0) {
+			return Character.toUpperCase(s.charAt(0)) + s.substring(1).toLowerCase();
+		} else {
+			return s;
+		}
+	}
+	
+	private String joinOver(String[] parts, String joiner) {
+		StringBuilder joinBuilder = new StringBuilder();
+		for (int ii = 0; ii < parts.length; ii++) {
+			joinBuilder.append(parts[ii]);
+			
+			if (ii < parts.length - 1) {
+				joinBuilder.append(joiner);
+			}
+		}
+		
+		return joinBuilder.toString();
 	}
 	
 	private class TableData {

@@ -15,7 +15,7 @@ public class ISITag {
 	
 	public static final ISITag FILE_TYPE                          = new ISITag("FN", ContentType.TEXT, true);
 	public static final ISITag VERSION_NUMBER                     = new ISITag("VR", ContentType.TEXT, true);
-	public static final ISITag END_OF_FILE                        = new ISITag("EF", ContentType.NULL  , true);
+	public static final ISITag END_OF_FILE                        = new ISITag("EF", ContentType.NULL, true);
 	public static final ISITag ABSTRACT                           = new ISITag("AB", ContentType.TEXT);
 	public static final ISITag ARTICLE_NUMBER_OF_NEW_APS_JOURNALS = new ISITag("AR", ContentType.TEXT);
 	public static final ISITag AUTHORS                            = new ISITag("AU", ContentType.MULTI_VALUE_TEXT, "\n");
