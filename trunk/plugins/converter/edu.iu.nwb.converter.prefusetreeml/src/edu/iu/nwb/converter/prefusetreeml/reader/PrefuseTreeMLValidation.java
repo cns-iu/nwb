@@ -51,8 +51,6 @@ public class PrefuseTreeMLValidation implements AlgorithmFactory {
         }
 
         public Data[] execute() {
-//	    	LogService logger = (LogService)context.getService(LogService.class.getName());
-			
         	String fileHandler = (String) data[0].getData();
         	File inData = new File(fileHandler);
         	
@@ -64,21 +62,20 @@ public class PrefuseTreeMLValidation implements AlgorithmFactory {
 	                dm[0].getMetaData().put(DataProperty.TYPE, DataProperty.TREE_TYPE);
 	        		return dm;
         		}else {
+        			logger.log(LogService.LOG_ERROR, "TreeML file does not contain a valid header.");
             		return null;
         		}
         	}catch (DataIOException dioe){
 				logger.log(LogService.LOG_ERROR, "Data IO error while validating the specified TreeML file.", dioe);
-//        		logger.log(LogService.LOG_ERROR, "DataIOException", dioe);
         		return null;
         	}catch (SecurityException exception){
 				logger.log(LogService.LOG_ERROR, "Security error while validating the specified TreeML file.", exception);
-//        		logger.log(LogService.LOG_ERROR, "SecurityException", exception);
         		return null;
         	}catch (FileNotFoundException e){
         		logger.log(LogService.LOG_ERROR, "Could not find the specified TreeML file.", e);
         		return null;
         	}catch (IOException ioe){
-//       		logger.log(LogService.LOG_ERROR, "IOException", ioe);
+        		logger.log(LogService.LOG_ERROR, "TreeML validator experienced an unexplained IO Exception", ioe);
         		return null;
         	}
         	
