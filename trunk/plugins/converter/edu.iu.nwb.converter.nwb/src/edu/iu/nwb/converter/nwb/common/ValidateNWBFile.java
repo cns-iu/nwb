@@ -474,7 +474,7 @@ public class ValidateNWBFile {
 					tokens[tokenIndex] = element;
 					tokenIndex++;
 
-				} else if (element.startsWith("\"") && element.endsWith("\"")) {
+				} else if (element.startsWith("\"") && element.endsWith("\"") && !element.equals("\"")) {
 					tokens[tokenIndex] = element;
 					tokenIndex++;
 
