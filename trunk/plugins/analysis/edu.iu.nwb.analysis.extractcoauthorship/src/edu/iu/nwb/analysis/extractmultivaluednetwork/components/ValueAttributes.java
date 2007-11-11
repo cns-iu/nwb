@@ -1,40 +1,33 @@
 package edu.iu.nwb.analysis.extractmultivaluednetwork.components;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
+
 public class ValueAttributes {
-	int numOfWorks;
-	int timesCited;
+	int rowNumber;
+	Map functions;
 	
-	public ValueAttributes(){
-		numOfWorks = 0;
-		timesCited = 0;
+	public ValueAttributes(int rn){
+		rowNumber = rn;
+		functions = new HashMap();
 	}
 	
-	public void addWork(){
-		numOfWorks++;
+	public int getRowNumber(){
+		return rowNumber;
 	}
 	
-	public void newCitations(int i){
-		timesCited += i;
+	public void addFunction(int columnNumber, UtilityFunction uf){
+		//System.out.println(columnNumber + " " + uf);
+		functions.put(new Integer(columnNumber), uf);
 	}
 	
-	public boolean equals(Object o){
-		if(o.getClass().equals(this.getClass())){
-			ValueAttributes a = (ValueAttributes)o;
-			if(this.numOfWorks == a.numOfWorks && this.timesCited == a.timesCited){
-				return true;
-			}
-		}
-			
-		return false;
+	public ArrayList getFunctions(){
+		return new ArrayList(this.functions.values());
 	}
 	
-	public int hashCode(){
-		String s = numOfWorks + " " + timesCited;
-		return s.hashCode();
-	}
-	
-	public String toString(){
-		return numOfWorks + " " + timesCited;
+	public UtilityFunction getFunction(int i){
+		return (UtilityFunction)this.functions.get(new Integer(i));
 	}
 	
 }

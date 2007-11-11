@@ -9,7 +9,8 @@ import org.cishell.framework.data.Data;
 import org.osgi.service.metatype.MetaTypeProvider;
 
 public class ExtractAlgorithmFactory implements AlgorithmFactory{
-	
+	//private BundleContext bContext;
+
 	public Algorithm createAlgorithm(Data[] data, Dictionary parameters, CIShellContext context) {
 		return new ExtractAlgorithm(data,parameters,context);
 	}
