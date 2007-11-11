@@ -106,7 +106,7 @@ class Count implements UtilityFunction{
 		}else {
 			total += 1;
 		}
-		System.out.println(total);
+		//System.out.println(total);
 	}
 
 }
