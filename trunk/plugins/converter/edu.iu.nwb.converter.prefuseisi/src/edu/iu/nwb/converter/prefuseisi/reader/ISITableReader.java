@@ -19,7 +19,7 @@ import edu.iu.nwb.shared.isiutil.ISITag;
  */
 public class ISITableReader {
 	
-	private static final String NORMALIZED_SEPARATOR = "| ";
+	private static final String NORMALIZED_SEPARATOR = "|";
 	private static final int TAG_LENGTH = 2;
 
 	private static Schema schema = new Schema();
