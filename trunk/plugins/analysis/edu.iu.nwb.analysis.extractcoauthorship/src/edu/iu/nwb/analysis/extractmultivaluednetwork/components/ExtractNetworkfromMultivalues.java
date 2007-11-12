@@ -10,6 +10,7 @@ import prefuse.data.Edge;
 import prefuse.data.Graph;
 import prefuse.data.Node;
 import prefuse.data.Schema;
+import prefuse.data.Table;
 
 public class ExtractNetworkfromMultivalues {
 	private static Map edgeMap = new HashMap();
@@ -51,6 +52,40 @@ public class ExtractNetworkfromMultivalues {
 
 		return outputGraph;
 
+	}
+	
+	public static prefuse.data.Table constructTable(prefuse.data.Graph g){
+		Table outputTable = new Table();
+		outputTable = createTableSchema(g.getNodeTable().getSchema(),outputTable);
+		outputTable = populateTable(outputTable,g);
+		return outputTable;
+	}
+	
+	private static Table createTableSchema(Schema graphSchema, Table t){
+		//Schema outputSchema = new Schema();
+		for(int i = 0; i < graphSchema.getColumnCount(); i++){
+			t.addColumn(graphSchema.getColumnName(i), graphSchema.getColumnType(i));
+		}
+		t.addColumn("uniqueIndex", Integer.class);
+		t.addColumn("combineValues", String.class, "*");
+		
+		return t;
+	}
+	
+	private static Table populateTable(Table t, Graph g){
+		
+		for(Iterator it = g.nodes(); it.hasNext();){
+			Node n = (Node)it.next();
+			t.addRow();
+			for(int i = 0; i < n.getColumnCount(); i++){
+				t.set(t.getRowCount()-1, i, n.get(i));
+		
+			}
+			
+			t.set(t.getRowCount()-1, "uniqueIndex", new Integer(t.getRowCount()));
+		}
+		
+		return t;
 	}
 
 
@@ -183,7 +218,7 @@ public class ExtractNetworkfromMultivalues {
 						operateNodeFunctions(va1,g,pdt,h);
 						valueList.put(Objects[j],va1);
 					}
-					//System.out.println(Objects[j] + " " + Objects[i]);
+				
 					CoValued v = new CoValued(Objects[j],Objects[i], directed);
 					va1 = (ValueAttributes)coValueList.get(v);
 					if(va1 == null){
@@ -192,7 +227,7 @@ public class ExtractNetworkfromMultivalues {
 
 						int fv = ((ValueAttributes)valueList.get(v.firstValue)).getRowNumber();
 						int sv = ((ValueAttributes)valueList.get(v.secondValue)).getRowNumber();
-						//System.out.println(fv + " " + sv);
+						
 						Edge e = g.addEdge(g.getNode(fv), g.getNode(sv));
 						for(int k = 0; k < e.getColumnCount(); k++){
 							String cn = e.getColumnName(k);
@@ -200,9 +235,9 @@ public class ExtractNetworkfromMultivalues {
 								int index = e.getColumnIndex(cn);
 								createFunction(va1,(String)edgeMap.get(cn),e.getColumnType(cn),index);
 								String operateColumn = (String)(edgeFunctionMap.get(cn));
-								//System.out.println(pdt.get(fv,operateColumn) + " " + pdt.get(sv,operateColumn));
+								
 								va1.getFunction(index).operate(pdt.get(h, operateColumn));
-								//va1.getFunction(index).operate(pdt.get(sv, operateColumn));
+							
 								e.set(index, va1.getFunction(index).getResult());
 							}
 						}
@@ -230,25 +265,15 @@ public class ExtractNetworkfromMultivalues {
 
 	}
 
-	/*// a tester function to see that I'm getting the correct values;
-	private void printCoValues(){
-		for(Iterator it = coValueList.iterator(); it.hasNext();){
-			System.out.println(it.next());
-		}
-	}
-	 */
-
+	
 	private static ValueAttributes createFunction(ValueAttributes va, String functionName, Class type, int columnNumber){
-		//System.out.println(type);
-
-
-		//System.out.println(va + " " + functionName + " " + type + " " + columnNumber);
+		
 		String name = functionName.toLowerCase();
 		if(name.equals("count")){
 			va.addFunction(columnNumber, new Count());
 		}
 		else{
-			//if(type.isAssignableFrom(Number.class)){
+			
 			if (name.equals("arithmeticmean")){
 
 				if(type.equals(int.class) || type.equals(Integer.class))
@@ -263,15 +288,28 @@ public class ExtractNetworkfromMultivalues {
 					va.addFunction(columnNumber, new IntegerSum());
 				if(type.equals(double.class) || type.equals(Double.class))
 					va.addFunction(columnNumber, new DoubleSum());
+				if(type.equals(float.class) || type.equals(Float.class))
+					va.addFunction(columnNumber, new FloatSum());
 			}
+			else if (name.equals("max")){
+				if(type.equals(int.class) || type.equals(Integer.class))
+					va.addFunction(columnNumber, new IntegerMax());
+				if(type.equals(double.class) || type.equals(Double.class))
+					va.addFunction(columnNumber, new DoubleMax());
+				if(type.equals(float.class) || type.equals(Float.class))
+					va.addFunction(columnNumber, new FloatMax());
+			}
+			else if (name.equals("min")){
+				if(type.equals(int.class) || type.equals(Integer.class))
+					va.addFunction(columnNumber, new IntegerMin());
+				if(type.equals(double.class) || type.equals(Double.class))
+					va.addFunction(columnNumber, new DoubleMin());
+				if(type.equals(float.class) || type.equals(Float.class))
+					va.addFunction(columnNumber, new FloatMin());
+			}
+		
 
-
-			/*}
-			else{//alert user that they are trying to operate numerically on non-Numeric data...
-				System.out.println(functionName + " " + type.toString());
-				System.err.println("Attempting to perform numeric operations on non-numeric data.");
-			}*/
-
+			
 		}
 
 		return va;

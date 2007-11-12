@@ -18,7 +18,7 @@ public class ValueAttributes {
 	}
 	
 	public void addFunction(int columnNumber, UtilityFunction uf){
-		//System.out.println(columnNumber + " " + uf);
+		
 		functions.put(new Integer(columnNumber), uf);
 	}
 	

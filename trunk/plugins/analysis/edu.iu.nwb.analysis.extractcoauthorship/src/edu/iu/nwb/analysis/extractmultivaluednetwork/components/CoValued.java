@@ -21,8 +21,6 @@ public class CoValued {
 		
 		if(o.getClass().equals(this.getClass())){
 			CoValued ca = (CoValued)o;
-			//System.out.println(this.firstValue + " " + this.secondValue);
-			//System.out.println(ca.firstValue + " " + ca.secondValue);
 			if(!directed){
 				//If the values are strings, I don't care about case, but, if we want to trust all data,
 				//this can be changed.
@@ -70,12 +68,12 @@ public class CoValued {
 		for(Iterator it = ts.iterator(); it.hasNext();){
 			s += (String)it.next();
 		}
-		//	System.out.println(s.hashCode());
+	
 			return s.hashCode();
 		}
 		else{
 			String s = firstValue.toString()+secondValue.toString();
-		//	System.out.println(s.hashCode());
+	
 			return s.hashCode();
 		}
 	}

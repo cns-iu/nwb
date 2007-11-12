@@ -55,15 +55,24 @@ public class ExtractAlgorithm implements Algorithm{
 		}catch(IOException ie){
 			logger.log(LogService.LOG_ERROR, ie.getMessage());
 		}
+		prefuse.data.Graph outputGraph = ExtractNetworkfromMultivalues.constructGraph(dataTable,"AU","" +
+				"|",metaData,false);
+		prefuse.data.Table outputTable = ExtractNetworkfromMultivalues.constructTable(outputGraph);
+		Data outputData1 = new BasicData(outputGraph, prefuse.data.Graph.class.getName());
+		Data outputData2 = new BasicData(outputTable, prefuse.data.Table.class.getName());
+		Dictionary graphAttributes = outputData1.getMetaData();
+		graphAttributes.put(DataProperty.MODIFIED, new Boolean(true));
+		graphAttributes.put(DataProperty.PARENT, this.data[0]);
+		graphAttributes.put(DataProperty.TYPE, DataProperty.NETWORK_TYPE);
+		graphAttributes.put(DataProperty.LABEL, "Extracted Co-authorship Network");
 		
-		Data outputData = new BasicData(ExtractNetworkfromMultivalues.constructGraph(dataTable,"AU","" +
-				"|",metaData,false), Graph.class.getName());
-		Dictionary attributes = outputData.getMetaData();
-		attributes.put(DataProperty.MODIFIED, new Boolean(true));
-		attributes.put(DataProperty.PARENT, this.data[0]);
-		attributes.put(DataProperty.TYPE, DataProperty.NETWORK_TYPE);
-		attributes.put(DataProperty.LABEL, "Extracted Co-authorship Network");
-		return new Data[]{outputData};
+		Dictionary tableAttributes = outputData2.getMetaData();
+		tableAttributes.put(DataProperty.MODIFIED, new Boolean(true));
+		tableAttributes.put(DataProperty.PARENT, this.data[0]);
+		tableAttributes.put(DataProperty.TYPE, DataProperty.MATRIX_TYPE);
+		tableAttributes.put(DataProperty.LABEL, "Author information");
+		
+		return new Data[]{outputData1,outputData2};
 		
 	}
 
