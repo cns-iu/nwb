@@ -22,14 +22,8 @@ import edu.iu.nwb.analysis.isidupremover.IsiDupRemover;
  */
 public class PrefuseIsiReader implements Algorithm {
 	
-	private static final boolean REMOVE_DUPLICATE_PUBLICATIONS = true;
+	private static final boolean REMOVE_DUPLICATE_PUBLICATIONS = false;
 	private static final boolean NORMALIZE_AUTHOR_NAMES = true;
-	
-	//if we do remove duplicate records, should we change the original table?
-	private static final boolean MUTATE_ORIG_TABLE = true;
-	private static final boolean DONT_MUTATE_ORIG_TABLE = false;
-	
-
 	
     Data[] data;
     Dictionary parameters;
@@ -73,8 +67,7 @@ public class PrefuseIsiReader implements Algorithm {
 				} 
 				
 				Table tableWithoutDups = 
-					dupRemover.removeDuplicatePublications(tableWithDups,
-							DONT_MUTATE_ORIG_TABLE, log, true);
+					dupRemover.removeDuplicatePublications(tableWithDups, log, true);
 				
 				tableToReturn = tableWithoutDups;
 			} else {
