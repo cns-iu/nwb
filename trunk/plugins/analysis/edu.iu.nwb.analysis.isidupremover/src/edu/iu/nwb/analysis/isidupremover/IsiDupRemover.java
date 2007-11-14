@@ -21,28 +21,22 @@ public class IsiDupRemover {
     Dictionary parameters;
     CIShellContext context;
     
+    private static final String LOG_FILE_NAME = "isiduplicateremoverlog.txt";
     private LogService log;
     private ISIPubComparer mainPubComparer = new MainPubComparer();
 
     public Table removeDuplicatePublications (Table origTable,
-    		boolean shouldMutateOrigTable, LogService log,
-    		boolean printRunningLogToConsole) {
+    		LogService log, boolean printRunningLogToConsole) {
     	this.log = log;
     	
     	StringBuilder runningLog = new StringBuilder();
-    	
-    	Table table;
-    	if (shouldMutateOrigTable) {
-    		table = origTable;	
-    	} else {
-    		table = GraphUtil.copyTable(origTable);
-    	}
+    
     	
     	Integer savedPubIndex = null;
     	String savedPubID = null;
     	
     	//iterate through the publications by ID
-    	IntIterator publicationsByIDIter = table.rowsSortedBy(ISITag.UNIQUE_ID.name, true);
+    	IntIterator publicationsByIDIter = origTable.rowsSortedBy(ISITag.UNIQUE_ID.name, true);
     	
     	/*
     	 * Since we are iterating through the publications by ID, publications
@@ -57,7 +51,7 @@ public class IsiDupRemover {
     	//for every publication in order of ID...
     	while (publicationsByIDIter.hasNext()) {
     		Integer currentPubIndex = (Integer) publicationsByIDIter.next();
-    		String currentPubID = table.getString(currentPubIndex.intValue(), ISITag.UNIQUE_ID.name);
+    		String currentPubID = origTable.getString(currentPubIndex.intValue(), ISITag.UNIQUE_ID.name);
     		
     		//if this publication has a different ID than the last saved publication...
     		if (! currentPubID.equals(savedPubID)) {
@@ -69,7 +63,7 @@ public class IsiDupRemover {
     			//we have a pair of publications with the same ID.
     			//choose whether to eliminate our saved publication or this one.
     			Integer pubToRemoveIndex = determineWhichToRemove(
-    					table, currentPubIndex, savedPubIndex, runningLog);
+    					origTable, currentPubIndex, savedPubIndex, runningLog);
     		 
     			//if the current publication is chosen to be removed...
     			if (pubToRemoveIndex.equals(currentPubIndex)) {
@@ -90,25 +84,34 @@ public class IsiDupRemover {
     		log.log(LogService.LOG_INFO, runningLog.toString());
     	}
     	
-    	//if we have any publications to remove...
-    	if (publicationsToRemove.size() > 0) {
-        	log.log(LogService.LOG_INFO,  
-        			publicationsToRemove.size() + " out of " 
-        			+ table.getRowCount() + " publication records were duplicates");
-        	
-    		//remove publications we marked as needing to be removed from the table
-        	Iterator pubsToRemoveIter = publicationsToRemove.iterator();
-        	while (pubsToRemoveIter.hasNext()) {
-        		Integer pubToRemoveIndex = (Integer) pubsToRemoveIter.next();
-        		table.removeRow(pubToRemoveIndex.intValue());
-        	}
-
-    	} else {
-    		//tell the user that we found no duplicates
-    		log.log(LogService.LOG_INFO, "No duplicate publication records found");
-    	}
     	
-    	return table;
+    	
+        log.log(LogService.LOG_INFO, publicationsToRemove.size() + " out of "
+				+ origTable.getRowCount()
+				+ " publication records were duplicates");
+
+        
+    	//create separate tables, one for unique publications 
+    	Table noDupTable = new Table();
+    	noDupTable.addColumns(origTable.getSchema());
+    	//and the other for duplicates.
+    	Table dupTable = new Table();
+    	dupTable.addColumns(origTable.getSchema());
+    	
+    	//fill each table accordingly
+    	
+		Iterator origTableIndices = origTable.iterator();
+		while (origTableIndices.hasNext()) {
+			Integer pubIndex = (Integer) origTableIndices.next();
+
+			if (! publicationsToRemove.contains(pubIndex)) {
+				noDupTable.addTuple(origTable.getTuple(pubIndex.intValue()));
+			} else {
+				dupTable.addTuple(origTable.getTuple(pubIndex.intValue()));
+			}
+		}
+
+    	return noDupTable;
     }
     
     private Integer determineWhichToRemove(Table table,

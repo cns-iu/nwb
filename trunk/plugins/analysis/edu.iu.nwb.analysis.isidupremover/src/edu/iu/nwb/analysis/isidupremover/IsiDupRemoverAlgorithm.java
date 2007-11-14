@@ -15,9 +15,6 @@ public class IsiDupRemoverAlgorithm implements Algorithm {
     Dictionary parameters;
     CIShellContext context;
     
-    private static final boolean MUTATE_ORIG_TABLE = true;
-    private static final boolean DONT_MUTATE_ORIG_TABLE = false;
-    
     private LogService log;
     private IsiDupRemover dupRemover;
     
@@ -37,8 +34,7 @@ public class IsiDupRemoverAlgorithm implements Algorithm {
     	
     	Table tableWithDups = (Table) data[0].getData();
     	
-    	Table tableWithoutDups = dupRemover.removeDuplicatePublications(tableWithDups,
-    			DONT_MUTATE_ORIG_TABLE, log, true);
+    	Table tableWithoutDups = dupRemover.removeDuplicatePublications(tableWithDups, log, true);
     	
     	BasicData tableWithoutDupsData = new BasicData(tableWithoutDups,
     			tableWithoutDups.getClass().getName());
