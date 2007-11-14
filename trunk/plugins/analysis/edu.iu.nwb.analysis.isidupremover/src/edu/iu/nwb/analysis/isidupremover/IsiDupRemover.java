@@ -1,5 +1,9 @@
 package edu.iu.nwb.analysis.isidupremover;
 
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Dictionary;
 import java.util.Iterator;
@@ -21,17 +25,18 @@ public class IsiDupRemover {
     Dictionary parameters;
     CIShellContext context;
     
+    //TODO: Preferences should tell us where to put temp log file and whatnot
     private static final String LOG_FILE_NAME = "isiduplicateremoverlog.txt";
     private LogService log;
     private ISIPubComparer mainPubComparer = new MainPubComparer();
 
-    public Table removeDuplicatePublications (Table origTable,
+    public TablePair removeDuplicatePublications (Table origTable,
     		LogService log, boolean printRunningLogToConsole) {
     	this.log = log;
     	
     	StringBuilder runningLog = new StringBuilder();
     
-    	
+    	log.log(LogService.LOG_INFO, "Loaded " + origTable.getRowCount() + " records.");
     	Integer savedPubIndex = null;
     	String savedPubID = null;
     	
@@ -84,13 +89,17 @@ public class IsiDupRemover {
     		log.log(LogService.LOG_INFO, runningLog.toString());
     	}
     	
+    	//write log to file
+    	try {
+    	File logFile = File.createTempFile(LOG_FILE_NAME, "");
+    	BufferedWriter writer = new BufferedWriter(new FileWriter(logFile));
+    	writer.write(runningLog.toString());
+    	writer.close();
+    	} catch (IOException e) {
+    		log.log(LogService.LOG_ERROR, "Unable to write removed duplicates log.", e);
+    		e.printStackTrace();
+    	}
     	
-    	
-        log.log(LogService.LOG_INFO, publicationsToRemove.size() + " out of "
-				+ origTable.getRowCount()
-				+ " publication records were duplicates");
-
-        
     	//create separate tables, one for unique publications 
     	Table noDupTable = new Table();
     	noDupTable.addColumns(origTable.getSchema());
@@ -111,7 +120,11 @@ public class IsiDupRemover {
 			}
 		}
 
-    	return noDupTable;
+		log.log(LogService.LOG_INFO, "Removed " + dupTable.getRowCount() + " duplicate records.");
+    	log.log(LogService.LOG_INFO, "Saved " + noDupTable.getRowCount() + " records.");
+
+    	
+    	return new TablePair(noDupTable, dupTable);
     }
     
     private Integer determineWhichToRemove(Table table,
