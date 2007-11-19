@@ -1,9 +1,10 @@
 package edu.iu.nwb.converter.nwb.common;
 
 import java.io.BufferedReader;
+import java.io.FileInputStream;
+import java.io.InputStreamReader;
 import java.io.File;
 import java.io.FileNotFoundException;
-import java.io.FileReader;
 import java.io.IOException;
 import java.util.StringTokenizer;
 import java.util.ArrayList;
@@ -16,8 +17,6 @@ public class ValidateNWBFile {
 
 	private boolean hasHeader_DirectedEdges = false;
 
-	//	private boolean hasHeader_NodeAttributes = false;
-	//	private boolean hasHeader_EdgeAttributes = false;
 	private boolean isFileGood = true;
 
 	private boolean inNodesSection = false;
@@ -26,12 +25,10 @@ public class ValidateNWBFile {
 
 	private boolean inDirectededgesSection = false;
 
-//	private boolean skipNodeList = true;
-
 	private boolean hasTotalNumOfNodes = false;
 
 	//if true, it indicates the previous line is a section header
-	//If is useful to parse the attribute line
+	//It is useful to parse the attribute line
 	private boolean passHeader = false;
 
 	private int totalNumOfNodes, currentLine, countedNumDirected, countedNumUnDirected, countedNodes;
@@ -51,7 +48,9 @@ public class ValidateNWBFile {
 		countedNumDirected = 0;
 		countedNumUnDirected = 0;
 		countedNodes = 0;
-		BufferedReader reader = new BufferedReader(new FileReader(fileHandler));
+		BufferedReader reader = new BufferedReader(
+								 new InputStreamReader(
+								  new FileInputStream(fileHandler),"UTF-8"));
 		processFile(reader);
 	}
 
