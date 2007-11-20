@@ -89,8 +89,8 @@ public class PrefuseGraphMLValidation implements AlgorithmFactory {
         //This is a temporary fix. The problem is after we get rid of LoadDataChooser
         //It seems that prefuse library can load xgmml file(.xml) in as a graphml.
         //but all visualization algs didn't work since it is not a real graphml file.
-        //Here I try to detect if there is "<graphml" header in the file, if not, it 
-        //is not a gramphml file
+        //Here I try to detect if there is "http://graphml.graphdrawing.org/xmlns" namespace
+        //in the file, if not, it is not a gramphml file
         private boolean validateGraphMLHeader(File inData)
         		throws FileNotFoundException, IOException{
         	boolean hasGraphMLHeader = false;
@@ -100,7 +100,7 @@ public class PrefuseGraphMLValidation implements AlgorithmFactory {
     		
     		String line = reader.readLine();
     		while(line != null){
-    			if(line.startsWith("<graphml")){
+    			if(line.indexOf("http://graphml.graphdrawing.org/xmlns")!= -1){
     				hasGraphMLHeader = true;
     				break;
     			}    			
