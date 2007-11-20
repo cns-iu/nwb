@@ -1,10 +1,11 @@
 package edu.iu.nwb.converter.nwbgraphml;
 
 import java.io.BufferedReader;
+import java.io.FileInputStream;
+import java.io.InputStreamReader;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileNotFoundException;
-import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -102,8 +103,12 @@ public class NWBToGraphML implements Algorithm {
     	try{
     		File graphml  = getTempFile();
      		PrintWriter out = new PrintWriter(new BufferedWriter(new FileWriter(graphml)));
-    		BufferedReader reader = new BufferedReader(new FileReader(nwbFile));
-
+    		//BufferedReader reader = new BufferedReader(new FileReader(nwbFile));
+    		
+    		BufferedReader reader = new BufferedReader(
+					 				 new InputStreamReader(
+					 				  new FileInputStream(nwbFile),"UTF-8"));
+    		
     		writeGraphMLHeader (out);
     		writeAttributes(out, validator);
     		printGraph (out, validator, reader);
