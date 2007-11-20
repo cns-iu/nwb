@@ -403,6 +403,7 @@ public class NWBToGraphMLbyStax implements Algorithm {
  		  	      	         xtw.writeAttribute("id", new Integer(edgeID).toString());
  		  	      	         xtw.writeAttribute("source", columns[sourceColumnNumber]);
  		  	      	         xtw.writeAttribute("target", columns[targetColumnNumber]);
+ 		  	      	         xtw.writeEndElement();
  				    	 }
  				    }
  				    else {
@@ -452,6 +453,7 @@ public class NWBToGraphMLbyStax implements Algorithm {
  		  	      	        xtw.writeAttribute("id", columns[idColumnNumber]);
  		  	      	        xtw.writeAttribute("source", columns[sourceColumnNumber]);
  		  	      	        xtw.writeAttribute("target", columns[targetColumnNumber]);
+ 		  	      	        xtw.writeEndElement();
  				    	}
  				    } 		    			
  			    }
