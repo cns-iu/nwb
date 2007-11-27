@@ -16,6 +16,7 @@ import org.osgi.service.log.LogService;
 
 import prefuse.data.Table;
 import edu.iu.nwb.analysis.isidupremover.IsiDupRemover;
+import edu.iu.nwb.analysis.isidupremover.TablePair;
 
 /**
  * @author Russell Duhon
@@ -66,8 +67,9 @@ public class PrefuseIsiReader implements Algorithm {
 				dupRemover = new IsiDupRemover();
 				} 
 				
-				Table tableWithoutDups = 
-					dupRemover.removeDuplicatePublications(tableWithDups, log, true);
+				TablePair noDupandDupTables = 
+					dupRemover.removeDuplicatePublications(tableWithDups, log, false);
+				Table tableWithoutDups = noDupandDupTables.getNoDupTable();
 				
 				tableToReturn = tableWithoutDups;
 			} else {

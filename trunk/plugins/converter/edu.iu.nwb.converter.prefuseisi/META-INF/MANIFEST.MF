@@ -21,3 +21,4 @@ Import-Package: edu.iu.nwb.analysis.isidupremover,
  prefuse.util.io
 X-AutoStart: true
 Service-Component: OSGI-INF/reader.xml, OSGI-INF/validation.xml
+Export-Package: edu.iu.nwb.converter.prefuseisi.reader
