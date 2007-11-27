@@ -15,12 +15,9 @@ import org.cishell.framework.data.DataProperty;
 import org.osgi.service.log.LogService;
 
 import prefuse.data.Table;
-import edu.iu.nwb.analysis.isidupremover.IsiDupRemover;
+import edu.iu.nwb.analysis.isidupremover.ISIDupRemover;
 import edu.iu.nwb.analysis.isidupremover.TablePair;
 
-/**
- * @author Russell Duhon
- */
 public class PrefuseIsiReader implements Algorithm {
 	
 	private static final boolean REMOVE_DUPLICATE_PUBLICATIONS = false;
@@ -31,7 +28,7 @@ public class PrefuseIsiReader implements Algorithm {
     CIShellContext context;
     
     private LogService log;
-    private IsiDupRemover dupRemover;
+    private ISIDupRemover dupRemover;
     
     public PrefuseIsiReader(Data[] data, Dictionary parameters, CIShellContext context) {
         this.data = data;
@@ -64,7 +61,7 @@ public class PrefuseIsiReader implements Algorithm {
 				log.log(LogService.LOG_INFO, "");
 				
 				if (dupRemover == null) {
-				dupRemover = new IsiDupRemover();
+				dupRemover = new ISIDupRemover();
 				} 
 				
 				TablePair noDupandDupTables = 

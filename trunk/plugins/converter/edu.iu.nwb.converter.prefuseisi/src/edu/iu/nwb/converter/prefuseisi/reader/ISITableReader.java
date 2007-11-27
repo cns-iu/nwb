@@ -21,30 +21,6 @@ public class ISITableReader {
 	
 	private static final String NORMALIZED_SEPARATOR = "|";
 	private static final int TAG_LENGTH = 2;
-
-	private static Schema schema = new Schema();
-	static {
-		
-		//for each content type for isi tags..
-		ContentType[] isiTagContentTypes = ContentType.getAllContentTypes();
-		for (int ii = 0; ii < isiTagContentTypes.length; ii++) {
-			ContentType isiTagContentType = isiTagContentTypes[ii];
-			
-			//for each tag corresponding to that content type...
-			ISITag[] tagsOfThisContentType = ISITag.getTagsWithContentType(isiTagContentType);
-			for (int jj = 0; jj < tagsOfThisContentType.length; jj++) {
-				ISITag tag = tagsOfThisContentType[jj];
-				
-				Class tagTableDataType = tag.type.getTableDataType();
-				
-				//add that tag to the table schema, with the table storage data type associated with the tags content type
-				//(e.g. Text -> String, Multi-value Text -> String)
-				if (tagTableDataType != null) {
-				schema.addColumn(tag.name, tagTableDataType);
-				}
-			}
-		}
-	}
 	
 	private LogService log;
 	private boolean normalizeAuthorNames;
@@ -62,7 +38,7 @@ public class ISITableReader {
 	public Table readTable(FileInputStream stream) throws IOException {
 		BufferedReader reader = new BufferedReader(new InputStreamReader(stream, "UTF-8"));
 		
-		TableData tableData = new TableData(schema);
+		TableData tableData = generateEmptyISITable();
 		
 		String currentLine = moveToNextLineWithTag(reader);
 		
@@ -206,7 +182,15 @@ public class ISITableReader {
 			allTagDataString = allTagDataString.replace(separatorString, NORMALIZED_SEPARATOR);
 		}
 		
+		try {
 		tableData.setString(currentTag.name, allTagDataString);
+		} catch (Exception e) {
+			log.log(LogService.LOG_INFO, "currentTag name: " + currentTag.name);
+			log.log(LogService.LOG_INFO, "currentTag type: " + currentTag.type);
+			log.log(LogService.LOG_INFO, "allTagDataString: " + allTagDataString);
+			log.log(LogService.LOG_ERROR, "Error occurred while setting table data", e);
+			e.printStackTrace();
+		}
 		
 		String nextLineAfterThisTag = currentLine;
 		return nextLineAfterThisTag;
@@ -362,6 +346,33 @@ public class ISITableReader {
 		}
 		
 		return joinBuilder.toString();
+	}
+	
+	private TableData generateEmptyISITable() {
+		Schema isiTableSchema = new Schema();
+		
+		//for each content type for isi tags..
+		ContentType[] isiTagContentTypes = ContentType.getAllContentTypes();
+		for (int ii = 0; ii < isiTagContentTypes.length; ii++) {
+			ContentType isiTagContentType = isiTagContentTypes[ii];
+			
+			//for each tag corresponding to that content type...
+			ISITag[] tagsOfThisContentType = ISITag.getTagsWithContentType(isiTagContentType);
+			for (int jj = 0; jj < tagsOfThisContentType.length; jj++) {
+				ISITag tag = tagsOfThisContentType[jj];
+				
+				Class tagTableDataType = tag.type.getTableDataType();
+				
+				//add that tag to the table schema, with the table storage data type associated with the tags content type
+				//(e.g. Text -> String, Multi-value Text -> String)
+				if (tagTableDataType != null) {
+				isiTableSchema.addColumn(tag.name, tagTableDataType);
+				}
+			}
+		}
+		
+		TableData emptyISITable = new TableData(isiTableSchema);
+		return emptyISITable;
 	}
 	
 	private class TableData {
