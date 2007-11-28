@@ -48,7 +48,7 @@ class DoubleArithmeticMean implements UtilityFunction {
 	}
 
 	public void operate(Object o) {
-		if (o instanceof Number) {
+		if (o instanceof Number && o != null) {
 			items += 1;
 			total += ((Number) o).doubleValue();
 		} else {
@@ -65,6 +65,7 @@ class DoubleGeometricMean implements UtilityFunction {
 
 	public DoubleGeometricMean() {
 		items = 0;
+		value = 1.0;
 	}
 
 	public Object getResult() {
@@ -79,12 +80,12 @@ class DoubleGeometricMean implements UtilityFunction {
 	}
 
 	public void operate(Object o) {
-		if (o instanceof Number) {
+		if (o instanceof Number && o != null) {
 			items += 1;
 			value *= ((Number) o).doubleValue();
 		} else {
 			throw new IllegalArgumentException(
-					"FloatArithmeticMean can only operate on Numbers.");
+					"DoubleGeometricMean can only operate on Numbers.");
 		}
 	}
 
@@ -108,16 +109,16 @@ class DoubleMax implements UtilityFunction {
 	}
 
 	public void operate(Object o) {
-		if (o instanceof Number) {
-			try {
+		if (o instanceof Number && o != null) {
+			
 
 				if (((Number) o).doubleValue() > value) {
 					value = ((Number) o).doubleValue();
 				}
-			} catch (final NullPointerException npe) {
-				// value = ((Number)o).doubleValue();
-			}
-		}
+			
+		}else
+			throw new IllegalArgumentException(
+			"DoubleMax can only operate on Numbers.");
 
 	}
 
@@ -141,15 +142,15 @@ class DoubleMin implements UtilityFunction {
 	}
 
 	public void operate(Object o) {
-		if (o instanceof Number) {
-			try {
+		if (o instanceof Number && o != null) {
+			
 				if (((Number) o).doubleValue() < value) {
 					value = ((Number) o).doubleValue();
 				}
-			} catch (final NullPointerException npe) {
-
-			}
-		}
+			
+		}else
+			throw new IllegalArgumentException(
+			"DoubleMin can only operate on Numbers.");
 
 	}
 
@@ -174,7 +175,7 @@ class DoubleSum implements UtilityFunction {
 
 	public void operate(Object o) {
 		// TODO Auto-generated method stub
-		if (o instanceof Number) {
+		if (o instanceof Number && o != null) {
 			total += ((Number) o).doubleValue();
 		} else {
 			throw new IllegalArgumentException(
@@ -205,7 +206,7 @@ class FloatArithmeticMean implements UtilityFunction {
 	}
 
 	public void operate(Object o) {
-		if (o instanceof Number) {
+		if (o instanceof Number && o != null) {
 			items += 1;
 			total += ((Number) o).floatValue();
 		} else {
@@ -221,6 +222,11 @@ class FloatGeometricMean implements UtilityFunction {
 	float value;
 	long items;
 
+	public FloatGeometricMean(){
+		this.value = 1;
+		this.items = 0;
+	}
+	
 	public Object getResult() {
 
 		final float result = (float) Math.pow(value, (1 / items));
@@ -233,7 +239,7 @@ class FloatGeometricMean implements UtilityFunction {
 	}
 
 	public void operate(Object o) {
-		if (o instanceof Number) {
+		if (o instanceof Number && o != null) {
 			items += 1;
 			value *= ((Number) o).floatValue();
 		} else {
@@ -262,15 +268,15 @@ class FloatMax implements UtilityFunction {
 	}
 
 	public void operate(Object o) {
-		if (o instanceof Number) {
-			try {
+		if (o instanceof Number && o != null) {
+			
 				if (((Number) o).floatValue() > value) {
 					value = ((Number) o).floatValue();
 				}
-			} catch (final NullPointerException npe) {
-
-			}
-		}
+		
+		}else
+			throw new IllegalArgumentException(
+			"FloatMax can only operate on Numbers.");
 
 	}
 
@@ -294,15 +300,15 @@ class FloatMin implements UtilityFunction {
 	}
 
 	public void operate(Object o) {
-		if (o instanceof Number) {
-			try {
-
+		if (o instanceof Number && o != null) {
+			
 				if (((Number) o).floatValue() < value) {
 					value = ((Number) o).floatValue();
 				}
-			} catch (final NullPointerException npe) {
-			}
-		}
+			
+		}else
+			throw new IllegalArgumentException(
+			"FloatMin can only operate on Numbers.");
 
 	}
 
@@ -326,7 +332,7 @@ class FloatSum implements UtilityFunction {
 	}
 
 	public void operate(Object o) {
-		if (o instanceof Number) {
+		if (o instanceof Number && o != null) {
 			total += ((Number) o).floatValue();
 		} else {
 			throw new IllegalArgumentException(
@@ -355,16 +361,15 @@ class IntegerMax implements UtilityFunction {
 	}
 
 	public void operate(Object o) {
-		if (o instanceof Number) {
-			try {
-
+		if (o instanceof Number && o != null) {
+			
 				if (((Number) o).intValue() > value) {
 					value = ((Number) o).intValue();
 				}
-			} catch (final NullPointerException npe) {
-
-			}
-		}
+		
+		}else
+			throw new IllegalArgumentException(
+			"IntegerMax can only operate on Numbers.");
 
 	}
 
@@ -388,16 +393,15 @@ class IntegerMin implements UtilityFunction {
 	}
 
 	public void operate(Object o) {
-		if (o instanceof Number) {
-			try {
-
+		if (o instanceof Number && o != null) {
+			
 				if (((Number) o).intValue() < value) {
 					value = ((Number) o).intValue();
 				}
-			} catch (final NullPointerException npe) {
-
-			}
-		}
+			
+		}else
+			throw new IllegalArgumentException(
+			"IntegerMin can only operate on Numbers.");
 
 	}
 
@@ -421,7 +425,7 @@ class IntegerSum implements UtilityFunction {
 	}
 
 	public void operate(Object o) {
-		if (o instanceof Number) {
+		if (o instanceof Number && o != null) {
 			total += ((Number) o).intValue();
 		} else {
 			throw new IllegalArgumentException(
@@ -429,7 +433,7 @@ class IntegerSum implements UtilityFunction {
 		}
 	}
 }
-
+/*
 class Median implements UtilityFunction {
 
 	ArrayList objectList;
@@ -456,20 +460,7 @@ class Median implements UtilityFunction {
 
 	}
 
-}
+}*/
 
 public class OperatorFunctions {
-
-	public static double doubleResult(UtilityFunction uf) {
-		return ((Number) uf.getResult()).doubleValue();
-	}
-
-	public static float floatResult(UtilityFunction uf) {
-		return ((Number) uf.getResult()).floatValue();
-	}
-
-	public static int integerResult(UtilityFunction uf) {
-		return ((Number) uf.getResult()).intValue();
-	}
-
 }

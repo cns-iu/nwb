@@ -1,9 +1,11 @@
 package edu.iu.nwb.analysis.extractmultivaluednetwork.components;
 
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Properties;
+import java.util.Set;
 import java.util.regex.Pattern;
 
 import prefuse.data.Edge;
@@ -15,8 +17,8 @@ import prefuse.data.Table;
 public class ExtractNetworkfromMultivalues {
 	private final Map metaEdgeColumnNameToFunctionMap = new HashMap();
 	private final Map metaNodeColumnNameToFunctionMap = new HashMap();
-	private final Map nodeFunctionMap = new HashMap();
-	private final Map edgeFunctionMap = new HashMap();
+	private final Map originalNodeColumnToFunctionMap = new HashMap();
+	private final Map orginalEdgeColumnToFunctionMap = new HashMap();
 	private final prefuse.data.Table objectTable;
 	private final prefuse.data.Graph coObjectNetwork;
 
@@ -59,7 +61,7 @@ public class ExtractNetworkfromMultivalues {
 	 * Given a Table, create a new Graph with new Columns as defined by metaData.
 	 */
 
-	public prefuse.data.Graph constructGraph(prefuse.data.Table pdt,
+	private prefuse.data.Graph constructGraph(prefuse.data.Table pdt,
 			String columnName, String split, Properties metaData,
 			boolean isDirected) {
 		final Schema inputNodeSchema = pdt.getSchema();
@@ -86,75 +88,75 @@ public class ExtractNetworkfromMultivalues {
 	private void constructNodesandEdges(prefuse.data.Table pdt,
 			String columnName, String split, Properties metaData,
 			prefuse.data.Graph g, boolean directed) {
-		final HashMap valueList = new HashMap();
-		final HashMap coValueList = new HashMap();
+		final HashMap values = new HashMap();
+		final HashMap coValues = new HashMap();
 		Node n;
-		for (int h = 0; h < pdt.getRowCount(); h++) {
-			final String s = (String) pdt.get(h, columnName);
-
+		for (int row = 0; row < pdt.getRowCount(); row++) {
+			final String s = (String) pdt.get(row, columnName);
+			Set seenObject = new HashSet();
 			// Here we ensure that we correctly capture regex metacharacters.
 			// This means we can't split on regex, but I think that is
 			// acceptable.
 			final Pattern p = Pattern.compile("\\Q" + split + "\\E");
-			final Object[] Objects = p.split(s);
-
-			for (int i = Objects.length - 1; i > 0; i--) {
-				ValueAttributes va1 = (ValueAttributes) valueList
-						.get(Objects[i]);
+			final Object[] objects = p.split(s);
+			ValueAttributes va1;
+			for (int i = objects.length - 1; i >= 0; i--) {
+				if(seenObject.add(objects[i])){
+				va1 = (ValueAttributes) values
+						.get(objects[i]);
 				// If we don't find a ValueAttributes object, create one.
 				if (va1 == null) {
 					n = g.addNode();
-					n.set(0, Objects[i]);
+					n.set(0, objects[i]);
 					va1 = new ValueAttributes(g.getNodeCount() - 1);
 					//After creating the object, populate it with the necessary functions
-					createNodeFunctions(n, pdt, h, va1);
-					valueList.put(Objects[i], va1);
+					createNodeFunctions(n, pdt, row, va1);
+					values.put(objects[i], va1);
 
 				} else { 
 					// The ValueAttributes object exists, execute the
 					// functions and associate the modified ValueAttributes object
 					// with original Object.
-					operateNodeFunctions(va1, g, pdt, h);
-					valueList.put(Objects[i], va1);
+					operateNodeFunctions(va1, g, pdt, row);
+					values.put(objects[i], va1);
 				}
-				
+				}
 				// if there is more than one value, create unique edges between each
 				// value.
 				for (int j = 0; j < i; j++) {
-					va1 = (ValueAttributes) valueList.get(Objects[j]);
+					if(seenObject.add(objects[j])){
+					va1 = (ValueAttributes) values.get(objects[j]);
 					// If we don't find a ValueAttributes object, create one.
 					if (va1 == null) {
 						n = g.addNode();
-						n.set(0, Objects[j]);
+						n.set(0, objects[j]);
 						va1 = new ValueAttributes(g.getNodeCount() - 1);
-						createNodeFunctions(n, pdt, h, va1);
-						valueList.put(Objects[j], va1);
+						createNodeFunctions(n, pdt, row, va1);
+						values.put(objects[j], va1);
 						
 					} else {
 						// The ValueAttributes object exists, execute the
 						// functions and associate the modified ValueAttributes object
 						// with original Object.
-						operateNodeFunctions(va1, g, pdt, h);
-						valueList.put(Objects[j], va1);
+						operateNodeFunctions(va1, g, pdt, row);
+						values.put(objects[j], va1);
 					}
-
-					final CoValued v = new CoValued(Objects[j], Objects[i],
+					}
+					final CoValued v = new CoValued(objects[j], objects[i],
 							directed);
 				
-					va1 = (ValueAttributes) coValueList.get(v);
+					va1 = (ValueAttributes) coValues.get(v);
 					
 					if (va1 == null) {
 						// if the edge does not exist, create it and the necessary functions
 						va1 = new ValueAttributes(g.getEdgeCount());
 
-						final int fv = ((ValueAttributes) valueList
-								.get(v.firstValue)).getRowNumber();
-						final int sv = ((ValueAttributes) valueList
-								.get(v.secondValue)).getRowNumber();
+						final int fv = ((ValueAttributes) values.get(v.firstValue)).getRowNumber();
+						final int sv = ((ValueAttributes) values.get(v.secondValue)).getRowNumber();
 
 						final Edge e = g.addEdge(g.getNode(fv), g.getNode(sv));
-						for (int k = 0; k < e.getColumnCount(); k++) {
-							final String cn = e.getColumnName(k);
+						for (int column = 0; column < e.getColumnCount(); column++) {
+							final String cn = e.getColumnName(column);
 							if (metaEdgeColumnNameToFunctionMap.get(cn) != null) {
 								// if the current column name matches one of the column
 								// names specified in the Properties, get the column
@@ -166,25 +168,25 @@ public class ExtractNetworkfromMultivalues {
 								// get the data type of column
 								// create a function and add it to the ValueAttributes object,
 								// associating the column index with the function.
-								final String operateColumn = (String) (edgeFunctionMap
+								final String operateColumn = (String) (orginalEdgeColumnToFunctionMap
 										.get(cn));
 								// Find the column the function is to operate on and operate.
-								va1.getFunction(index).operate(pdt.get(h, operateColumn));
+								va1.getFunction(index).operate(pdt.get(row, operateColumn));
 								// Set that value at index.
 								e.set(index, va1.getFunction(index).getResult());
 							}
 						}
 						// associate the ValueAttributes object with an Edge.
-						coValueList.put(v, va1);
+						coValues.put(v, va1);
 					} else { // the edge and functions exist, operate on the values.
 						final Edge e = g.getEdge(va1.getRowNumber());
-						for (int k = 0; k < e.getColumnCount(); k++) {
-							final String cn = e.getColumnName(k);
+						for (int column = 0; column < e.getColumnCount(); column++) {
+							final String cn = e.getColumnName(column);
 							if (metaEdgeColumnNameToFunctionMap.get(cn) != null) {
 								final int index = e.getColumnIndex(cn);
-								final String operateColumn = (String) edgeFunctionMap
+								final String operateColumn = (String) orginalEdgeColumnToFunctionMap
 										.get(cn);
-								va1.getFunction(index).operate(pdt.get(h, operateColumn));
+								va1.getFunction(index).operate(pdt.get(row, operateColumn));
 								
 								e.set(index, va1.getFunction(index).getResult());
 							}
@@ -198,14 +200,33 @@ public class ExtractNetworkfromMultivalues {
 		}
 
 	}
+	
+	/***
+	 * 
+	 * @param graph
+	 * @return
+	 * A table containing the nodes and node attributes found in the provided
+	 * Graph.
+	 */
 
-	public prefuse.data.Table constructTable(prefuse.data.Graph g) {
+	private prefuse.data.Table constructTable(prefuse.data.Graph graph) {
 		Table outputTable = new Table();
-		outputTable = createTableSchema(g.getNodeTable().getSchema(),
+		outputTable = createTableSchema(graph.getNodeTable().getSchema(),
 				outputTable);
-		outputTable = populateTable(outputTable, g);
+		outputTable = populateTable(outputTable, graph);
 		return outputTable;
 	}
+	
+	/***
+	 * 
+	 * @param newColumnName
+	 * @param calculateColumnName
+	 * @param function
+	 * @param columnType
+	 * @param newSchema
+	 * 
+	 * We add a new column to the 
+	 */
 
 	private void createColumn(String newColumnName, String calculateColumnName,
 			String function, Class columnType, Schema newSchema) {
@@ -243,21 +264,18 @@ public class ExtractNetworkfromMultivalues {
 
 			// need to check against existing column names.
 			if (key.startsWith("edge.")) {
-				String calculateColumnName = metaData.getProperty(key);
-				final int lastIndex = calculateColumnName.lastIndexOf(".");
-				final int firstIndex = key.indexOf(".");
-				final String function = calculateColumnName
-						.substring(lastIndex + 1);
-				calculateColumnName = calculateColumnName.substring(0,
-						lastIndex);
-				final Class columnType = joinSchema
-						.getColumnType(calculateColumnName);
-
-				createColumn(key.substring(firstIndex + 1),
-						calculateColumnName, function, columnType, output);
-				metaEdgeColumnNameToFunctionMap.put(key.substring(firstIndex + 1), function);
-				edgeFunctionMap.put(key.substring(firstIndex + 1),
-						calculateColumnName);
+				String sourceColumnName = metaData.getProperty(key);
+				final int index = sourceColumnName.lastIndexOf(".");
+				final String function = sourceColumnName.substring(index + 1);
+				sourceColumnName = sourceColumnName.substring(0,
+						index);
+				final Class columnType = joinSchema.getColumnType(sourceColumnName);
+				
+				String newColumnName = key.substring(key.indexOf(".")+1);
+				createColumn(newColumnName,sourceColumnName, function, columnType, output);
+				metaEdgeColumnNameToFunctionMap.put(newColumnName, function);
+				orginalEdgeColumnToFunctionMap.put(newColumnName,
+						sourceColumnName);
 
 				// output.addColumn(key.substring(key.indexOf(".")+1),
 				// joinSchema.getColumnType(calculateColumnName));
@@ -331,7 +349,7 @@ public class ExtractNetworkfromMultivalues {
 			if (metaNodeColumnNameToFunctionMap.get(cn) != null) {
 				createFunction(va, (String) metaNodeColumnNameToFunctionMap.get(cn), n
 						.getColumnType(cn), n.getColumnIndex(cn));
-				final String operateColumn = (String) (nodeFunctionMap.get(cn));
+				final String operateColumn = (String) (originalNodeColumnToFunctionMap.get(cn));
 				va.getFunction(n.getColumnIndex(cn)).operate(
 						t.get(rowNumber, operateColumn));
 				n.set(cn, va.getFunction(n.getColumnIndex(cn)).getResult());
@@ -343,24 +361,24 @@ public class ExtractNetworkfromMultivalues {
 		final Schema output = new Schema();
 		output.addColumn("label", String.class);
 		for (final Iterator it = metaData.keySet().iterator(); it.hasNext();) {
-			final String key = (String) it.next();
+			final String newColumnName = (String) it.next();
 
 			// need to add checking against existing column names.
 
-			if (!key.startsWith("edge")) {
-				String calculateColumnName = metaData.getProperty(key);
-				final int lastIndex = calculateColumnName.lastIndexOf(".");
-				final String function = calculateColumnName
-						.substring(lastIndex + 1);
-				calculateColumnName = calculateColumnName.substring(0,
-						lastIndex);
+			if (!newColumnName.startsWith("edge")) {
+				String sourceColumnName = metaData.getProperty(newColumnName);
+				final int index = sourceColumnName.lastIndexOf(".");
+				final String function = sourceColumnName
+						.substring(index + 1);
+				sourceColumnName = sourceColumnName.substring(0,
+						index);
 				final Class columnType = schema
-						.getColumnType(calculateColumnName);
+						.getColumnType(sourceColumnName);
 
-				createColumn(key, calculateColumnName, function, columnType,
+				createColumn(newColumnName, sourceColumnName, function, columnType,
 						output);
-				metaNodeColumnNameToFunctionMap.put(key, function);
-				nodeFunctionMap.put(key, calculateColumnName);
+				metaNodeColumnNameToFunctionMap.put(newColumnName, function);
+				originalNodeColumnToFunctionMap.put(newColumnName, sourceColumnName);
 
 				// output.addColumn(key, schema.getColumnType(newColumnName));
 			}
@@ -396,7 +414,7 @@ public class ExtractNetworkfromMultivalues {
 
 			final UtilityFunction uf = va.getFunction(k);
 			if (uf != null) {
-				final String operateColumn = (String) (nodeFunctionMap.get((n
+				final String operateColumn = (String) (originalNodeColumnToFunctionMap.get((n
 						.getColumnName(k))));
 				uf.operate(t.get(rowNumber, operateColumn));
 				n.set(k, uf.getResult());

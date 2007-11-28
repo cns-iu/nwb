@@ -23,8 +23,8 @@ public class CoValued {
 				// If the values are strings, I don't care about case, but, if
 				// we want to trust all data,
 				// this can be changed.
-				if (ca.firstValue.getClass().equals(String.class)
-						&& ca.secondValue.getClass().equals(String.class)) {
+				if (ca.firstValue instanceof String
+						&& ca.secondValue instanceof String) {
 					final String s1 = (String) firstValue;
 					final String s2 = (String) ca.firstValue;
 					final String s3 = (String) secondValue;
@@ -42,8 +42,8 @@ public class CoValued {
 							.equals(ca.secondValue)));
 				}
 			} else {
-				if (ca.firstValue.getClass().equals(String.class)
-						&& ca.secondValue.getClass().equals(String.class)) {
+				if (ca.firstValue instanceof String
+						&& ca.secondValue instanceof String) {
 					final String s1 = (String) firstValue;
 					final String s2 = (String) ca.firstValue;
 					final String s3 = (String) secondValue;
@@ -63,10 +63,15 @@ public class CoValued {
 
 	public int hashCode() {
 		if (!directed) {
+			// I'm using TreeSet here because it creates a sorted Set, and for undirected
+			// the two values, regardless of order, should result in the same hash code for this class.
 			final TreeSet ts = new TreeSet();
 			ts.add(firstValue);
 			ts.add(secondValue);
 			String s = "";
+			
+			
+			
 			for (final Iterator it = ts.iterator(); it.hasNext();) {
 				s += (String) it.next();
 			}

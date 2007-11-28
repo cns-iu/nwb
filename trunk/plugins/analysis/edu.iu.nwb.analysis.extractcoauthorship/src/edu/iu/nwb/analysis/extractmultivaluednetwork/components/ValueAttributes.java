@@ -1,6 +1,5 @@
 package edu.iu.nwb.analysis.extractmultivaluednetwork.components;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -20,10 +19,6 @@ public class ValueAttributes {
 
 	public UtilityFunction getFunction(int i) {
 		return (UtilityFunction) functions.get(new Integer(i));
-	}
-
-	public ArrayList getFunctions() {
-		return new ArrayList(functions.values());
 	}
 
 	public int getRowNumber() {
