@@ -19,7 +19,8 @@ public class ISIDupRemoverAlgorithmFactory implements AlgorithmFactory {
         //your algorithm does not require parameters and return
         //null in the createParameters() method
         MetaTypeService mts = (MetaTypeService)ctxt.locateService("MTS");
-        provider = mts.getMetaTypeInformation(ctxt.getBundleContext().getBundle());       
+        provider = mts.getMetaTypeInformation(ctxt.getBundleContext().getBundle());   
+        //AlgorithmFactory isiDupRemoverAlgFactory = (AlgorithmFactory) ctxt.locateService("ISIDupRemover");
     }
     protected void deactivate(ComponentContext ctxt) {
         provider = null;

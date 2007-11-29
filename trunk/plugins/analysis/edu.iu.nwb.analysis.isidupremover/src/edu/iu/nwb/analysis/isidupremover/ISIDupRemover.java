@@ -36,6 +36,7 @@ public class ISIDupRemover {
     	
     	StringBuilder runningLog = new StringBuilder();
     
+    	log.log(LogService.LOG_INFO, "");
     	log.log(LogService.LOG_INFO, "Loaded " + origTable.getRowCount() + " records.");
     	Integer savedPubIndex = null;
     	String savedPubID = null;
@@ -123,9 +124,14 @@ public class ISIDupRemover {
 		}
 
 		log.log(LogService.LOG_INFO, "Removed " + dupTable.getRowCount() + " duplicate records.");
-    	log.log(LogService.LOG_INFO, "Saved " + noDupTable.getRowCount() + " records.");
+		log.log(LogService.LOG_INFO, "Author names have been normalized.");
+
     	
+		log.log(LogService.LOG_INFO, "");
+    	log.log(LogService.LOG_INFO, "" + noDupTable.getRowCount() + " records with unique ISI IDs are available via Data Manager.");
+		
     	if (logFile != null) {
+    		log.log(LogService.LOG_INFO, "");
     	log.log(LogService.LOG_INFO, "Wrote log to " + logFile.getAbsolutePath());
     	}
 

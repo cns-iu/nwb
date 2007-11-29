@@ -48,7 +48,7 @@ public class ISIDupRemoverAlgorithm implements Algorithm {
 	    	
 	    	Dictionary dupRemovedMetaData = tableWithoutDupsData.getMetaData();
 	    	dupRemovedMetaData.put(DataProperty.PARENT, data[0]);
-	    	dupRemovedMetaData.put(DataProperty.LABEL, "Cleaned " +  dupRemovedMetaData.get(DataProperty.LABEL));
+	    	dupRemovedMetaData.put(DataProperty.LABEL, tableWithoutDups.getRowCount() + " Unique ISI Records");
 	    	
 	    	return new Data[] {tableWithoutDupsData};
 	    }
