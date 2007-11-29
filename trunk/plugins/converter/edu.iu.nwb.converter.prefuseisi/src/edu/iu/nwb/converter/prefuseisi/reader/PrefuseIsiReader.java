@@ -45,11 +45,6 @@ public class PrefuseIsiReader implements Algorithm {
     	try{
     		ISITableReader tableReader = new ISITableReader(this.log, NORMALIZE_AUTHOR_NAMES);
 			
-    		if (NORMALIZE_AUTHOR_NAMES) {
-    			log.log(LogService.LOG_INFO, "");
-    			log.log(LogService.LOG_INFO, "Normalizing author names...");
-    		}
-    		
     		Table tableWithDups = tableReader.readTable(new FileInputStream(file));
 		  	
             Table tableToReturn;     
