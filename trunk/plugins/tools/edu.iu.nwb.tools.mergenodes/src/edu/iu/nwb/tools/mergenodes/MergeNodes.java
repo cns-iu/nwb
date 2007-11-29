@@ -58,6 +58,11 @@ public class MergeNodes implements Algorithm {
     	//second process nodeList, return a Map, set errorInNodeList flag in the method.  	
         try{
         	processNodeList (nodeList);
+        	if (mergingTable.isEmpty()){
+        		logger.log(LogService.LOG_INFO, "There is no merging instruction in the node list table. \n"+
+				"So there is no merging action. \n");
+        		return null;
+        	}
         	errorInNodeList = isErrorInNodeList();    
         	if (errorInNodeList){
         		//Do not merge node and update the graph, only generate the report
