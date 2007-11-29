@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<metatype:MetaData xmlns:metatype="http://www.osgi.org/xmlns/metatype/v1.0.0">
+	<OCD name="MergeNode" id="edu.iu.nwb.tools.mergenodes.MergeNode.OCD"
+		 description="This algorithm does this and this... ">
+	</OCD>
+	<Designate pid="edu.iu.nwb.tools.mergenodes.MergeNode">
+		<Object ocdref="edu.iu.nwb.tools.mergenodes.MergeNode.OCD" />
+	</Designate>
+</metatype:MetaData>
