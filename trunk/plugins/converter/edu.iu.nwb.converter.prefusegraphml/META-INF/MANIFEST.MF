@@ -17,6 +17,6 @@ Import-Package: org.cishell.framework,
  prefuse.data.io,
  prefuse.util.io
 X-AutoStart: true
-Service-Component: OSGI-INF/reader.xml, OSGI-INF/writer.xml, OSGI-INF/validation.xml, OSGI-INF/filehandler.xml
+Service-Component: OSGI-INF/reader.xml, OSGI-INF/writer.xml, OSGI-INF/validation.xml, OSGI-INF/filehandler.xml, OSGI-INF/validation_graphml.xml
 
 
