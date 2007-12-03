@@ -288,7 +288,7 @@ public class NWBToGraphMLbyStax implements Algorithm {
   		   			//print <node id=\""+columns[0]+"\">
   		   			
   	        		xtw.writeStartElement("node");
-  	      	        xtw.writeAttribute("id", columns[0]);
+  	      	        xtw.writeAttribute("id", "n" + columns[0]);
   	      	          		   			
  		    		for(int i = 1; i<nodeAttrList.size(); i++){
  		    			NWBAttribute attr = (NWBAttribute) nodeAttrList.get(i);
@@ -355,9 +355,9 @@ public class NWBToGraphMLbyStax implements Algorithm {
  				    		 //out.println("<edge id=\""+edgeID+"\" source=\""+columns[sourceColumnNumber]+
  				    		 //	"\" target=\""+columns[targetColumnNumber]+"\">");
   		  	        		 xtw.writeStartElement("edge");
- 		  	      	         xtw.writeAttribute("id", new Integer(edgeID).toString());
- 		  	      	         xtw.writeAttribute("source", columns[sourceColumnNumber]);
- 		  	      	         xtw.writeAttribute("target", columns[targetColumnNumber]);
+ 		  	      	         xtw.writeAttribute("id", "e" + new Integer(edgeID).toString());
+ 		  	      	         xtw.writeAttribute("source", "n" + columns[sourceColumnNumber]);
+ 		  	      	         xtw.writeAttribute("target", "n" + columns[targetColumnNumber]);
   
  				    		 for(int i = 0; i<edgeAttrList.size(); i++){
  	 				    		NWBAttribute attr = (NWBAttribute) edgeAttrList.get(i);
@@ -399,9 +399,9 @@ public class NWBToGraphMLbyStax implements Algorithm {
  				    		 //out.println("<edge id=\""+edgeID+"\" source=\""+columns[sourceColumnNumber]+
  	 				    	 //		"\" target=\""+columns[targetColumnNumber]+"\"/>");
  				    		 xtw.writeStartElement("edge");
- 		  	      	         xtw.writeAttribute("id", new Integer(edgeID).toString());
- 		  	      	         xtw.writeAttribute("source", columns[sourceColumnNumber]);
- 		  	      	         xtw.writeAttribute("target", columns[targetColumnNumber]);
+ 		  	      	         xtw.writeAttribute("id", "e" + new Integer(edgeID).toString());
+ 		  	      	         xtw.writeAttribute("source", "n" + columns[sourceColumnNumber]);
+ 		  	      	         xtw.writeAttribute("target", "n" + columns[targetColumnNumber]);
  		  	      	         xtw.writeEndElement();
  				    	 }
  				    }
@@ -411,9 +411,9 @@ public class NWBToGraphMLbyStax implements Algorithm {
  				    		//		"\" source=\""+columns[sourceColumnNumber]+
  				    		//		"\" target=\""+columns[targetColumnNumber]+"\">");
 				    		xtw.writeStartElement("edge");
- 		  	      	        xtw.writeAttribute("id", columns[idColumnNumber]);
- 		  	      	        xtw.writeAttribute("source", columns[sourceColumnNumber]);
- 		  	      	        xtw.writeAttribute("target", columns[targetColumnNumber]);
+ 		  	      	        xtw.writeAttribute("id", "e" + columns[idColumnNumber]);
+ 		  	      	        xtw.writeAttribute("source", "n" + columns[sourceColumnNumber]);
+ 		  	      	        xtw.writeAttribute("target", "n" + columns[targetColumnNumber]);
  		  	      	        
  				    		for(int i = 0; i<edgeAttrList.size(); i++){
  	 				    		NWBAttribute attr = (NWBAttribute) edgeAttrList.get(i);
@@ -449,9 +449,9 @@ public class NWBToGraphMLbyStax implements Algorithm {
  				    		//		"\" source=\""+columns[sourceColumnNumber]+
  				    		//		"\" target=\""+columns[targetColumnNumber]+"\"/>");
  				    		xtw.writeStartElement("edge");
- 		  	      	        xtw.writeAttribute("id", columns[idColumnNumber]);
- 		  	      	        xtw.writeAttribute("source", columns[sourceColumnNumber]);
- 		  	      	        xtw.writeAttribute("target", columns[targetColumnNumber]);
+ 		  	      	        xtw.writeAttribute("id", "e" + columns[idColumnNumber]);
+ 		  	      	        xtw.writeAttribute("source", "n" + columns[sourceColumnNumber]);
+ 		  	      	        xtw.writeAttribute("target", "n" + columns[targetColumnNumber]);
  		  	      	        xtw.writeEndElement();
  				    	}
  				    } 		    			
