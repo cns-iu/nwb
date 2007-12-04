@@ -7,7 +7,6 @@ import java.util.Map;
 import java.util.HashMap;
 import java.util.ArrayList;
 import java.util.Properties;
-import java.util.Set;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -25,6 +24,7 @@ import org.cishell.framework.data.BasicData;
 import org.cishell.framework.data.Data;
 import org.cishell.framework.data.DataProperty;
 
+import prefuse.data.Edge;
 import prefuse.data.Node;
 import prefuse.data.Table;
 import prefuse.data.Graph;
@@ -51,6 +51,7 @@ public class MergeNodes implements Algorithm {
      * The input original graph.
      */
     private Graph orgGraph = null;
+    private boolean isDirected;
 
     /*
      * The input node list table.
@@ -74,11 +75,20 @@ public class MergeNodes implements Algorithm {
      * in the node table from orgGraph.
      */
     private String nodeLabelField = null;
+    private String edgeSourceField = null;
+	private String edgeTargetField = null;
     
     /*
      * Keep a complete node ids of the original graph and keep them in order
      */
     private List fullNodeIDList = null;
+    
+    private EdgeMap fullEdgeIDMap = null;
+    
+    /*
+     * 
+     */
+    private List removedNodeIDList = new ArrayList();
     
     /*
      * key = NodeID of that merging node existing in the orginal graph.
@@ -86,9 +96,10 @@ public class MergeNodes implements Algorithm {
      */
     private Map mergingNodesMap = null;
     
-    private Map mergingTable = null;
+    private Map mergingTable, nodeFunctions, edgeFunctions;
     private boolean errorInNodeListTable = false;
     private File mergingReport;
+    
     
     public MergeNodes(Data[] data, Dictionary parameters, CIShellContext context) {
         this.data = data;
@@ -98,7 +109,7 @@ public class MergeNodes implements Algorithm {
     }
 
     public Data[] execute() {
-    	Properties metaData = getInputParameters();
+    	Dictionary graphAttributes;
     	
     	//Validate and get the input data for nodeListTable and orgGraph
     	if (!getInputData())
@@ -111,8 +122,9 @@ public class MergeNodes implements Algorithm {
         try{
         	processNodeListTable ();
         	if (mergingTable.isEmpty()){
-        		logger.log(LogService.LOG_INFO, "There is no merging instruction in the node list table. \n"+
-				"So there is no merging action. \n");
+        		logger.log(LogService.LOG_INFO, 
+        			"There is no merging instruction in the node list table. \n"+
+					"So there is no merging action. \n");
         		return null;
         	}
         	if (errorInNodeListTable){
@@ -124,43 +136,30 @@ public class MergeNodes implements Algorithm {
         		//Do not merge node and update the graph, only generate the report
         		logger.log(LogService.LOG_ERROR, "There are errors in the node list table. \n"+
         				"Please view the \"Merging Report\" File for details. \n");
-        		mergingReport = generateReport (mergingTable);
-        		BasicData reportData = new BasicData(mergingReport,
-    				mergingReport.getClass().getName());
-        		Dictionary graphAttributes = reportData.getMetaData();
-        		graphAttributes.put(DataProperty.MODIFIED, new Boolean(true));
-        		graphAttributes.put(DataProperty.PARENT, this.data[graphIndex]);
-        		graphAttributes.put(DataProperty.TYPE, DataProperty.TEXT_TYPE);
-        		graphAttributes.put(DataProperty.LABEL, "Merging Report");
-        	
-        		return new Data[] {reportData};    		
-    		
         	}
-        	else {
-        		newGraph = updateGraphByMergingNodes(metaData);
+        	
+        	mergingReport = generateReport (mergingTable);
+        	BasicData reportData = new BasicData(mergingReport,
+    				mergingReport.getClass().getName());
+        	graphAttributes = reportData.getMetaData();
+        	graphAttributes.put(DataProperty.MODIFIED, new Boolean(true));
+        	graphAttributes.put(DataProperty.PARENT, this.data[graphIndex]);
+        	graphAttributes.put(DataProperty.TYPE, DataProperty.TEXT_TYPE);
+        	graphAttributes.put(DataProperty.LABEL, "Merging Report");
+        	
+        	newGraph = updateGraphByMergingNodes();
+        	if (newGraph!= null){
         		BasicData newGraphData = new BasicData(newGraph,
-        				newGraph.getClass().getName());
-        		Dictionary graphAttributes = newGraphData.getMetaData();
+        			newGraph.getClass().getName());
+        		graphAttributes = newGraphData.getMetaData();
         		graphAttributes.put(DataProperty.MODIFIED, new Boolean(true));
         		graphAttributes.put(DataProperty.PARENT, this.data[graphIndex]);
         		graphAttributes.put(DataProperty.TYPE, DataProperty.NETWORK_TYPE);
         		graphAttributes.put(DataProperty.LABEL, "Updated Network");
-    		
-        		logger.log(LogService.LOG_INFO, "The updated network will come soon... \n"+
-				"Please view the \"Merging Report\" File for details. \n");
-        		mergingReport = generateReport (mergingTable);
-        		BasicData reportData = new BasicData(mergingReport,
-    				mergingReport.getClass().getName());
-        		graphAttributes = reportData.getMetaData();
-        		graphAttributes.put(DataProperty.MODIFIED, new Boolean(true));
-        		graphAttributes.put(DataProperty.PARENT, this.data[graphIndex]);
-        		graphAttributes.put(DataProperty.TYPE, DataProperty.TEXT_TYPE);
-        		graphAttributes.put(DataProperty.LABEL, "Merging Report");
-        		
-    		
         		return new Data[] {newGraphData, reportData}; 
-    		} 
-        	
+        	}
+        	else 
+        		return new Data[] {reportData};         	
         }catch (Exception e){
         	logger.log (LogService.LOG_ERROR, e.toString()+"\n");
         	return null;
@@ -183,6 +182,9 @@ public class MergeNodes implements Algorithm {
     		if (dataFormat.equalsIgnoreCase("prefuse.data.Graph")){
     			orgGraph = (Graph)data[index].getData();
     			graphIndex = index;
+    			isDirected = orgGraph.isDirected();
+    			edgeSourceField = orgGraph.getEdgeSourceField();
+    			edgeTargetField = orgGraph.getEdgeTargetField();
     		}
     		else if (dataFormat.equalsIgnoreCase("prefuse.data.Table"))
     			nodeListTable = (Table)data[index].getData();
@@ -256,9 +258,10 @@ public class MergeNodes implements Algorithm {
 		for (int index =0; index<theTotalCols-2; index++){			
 			String theLabel = theNodeSchema.getColumnName(index); 
 			int colIndex = orgNodeSchema.getColumnIndex(theLabel); 
-			System.out.println (">>colName = "+theLabel);			
+/*			System.out.println (">>colName = "+theLabel);			
 			System.out.println (">>colIndex = "+colIndex);
 			System.out.println(">>orgColName = "+orgNodeSchema.getColumnName(colIndex));
+*/
 			if(colIndex>=0){
 				if (orgNodeSchema.getColumnType(theLabel).getName().equals(
 						theNodeSchema.getColumnType(theLabel).getName())){
@@ -321,8 +324,10 @@ public class MergeNodes implements Algorithm {
      * the value must be “*” or empty (no value).
      * The second last column is used for specifying the node index –-
      * the value must be integers such as 1, 2, 3, 4,… 
+     * 
+     * Output is a mergingTable and mergingNodesMap
      */    
-    private Map processNodeListTable () throws Exception {
+    private void processNodeListTable () throws Exception {
     	/*
     	 * tempTable temperarily hold the row with the value of indexColumn
     	 * that occurs the very first time in the nodeListTable table
@@ -331,8 +336,16 @@ public class MergeNodes implements Algorithm {
     	 * value = Tuple, a row of the table
     	 */
     	Map tempTable = new HashMap();
-    	mergingTable = new HashMap();     	
-    	mergingNodesMap = new HashMap();
+        /*
+         * key = value on the second last column --indexColumn.
+         * value = a NodeGroup Object
+         */
+    	mergingTable = new HashMap(); 
+        /*
+         * key = NodeID of that merging node existing in the orginal graph.
+         * value = merging node index value specifiied in the second last column in the nodeListTable
+         */
+       	mergingNodesMap = new HashMap();
     	Integer nodeID;
     	
        	int totalCols = nodeListTable.getColumnCount();
@@ -381,8 +394,7 @@ public class MergeNodes implements Algorithm {
    	    			mergingTable.put(nodeIndex, nodeGroup);    	    		
    	    		} 	    	
    	    	}
-   	    }    	
-    	return mergingTable;
+   	    }    	    	
     }  
     
     private Integer getNodeIDFromOrgGraph(Tuple nodeRow) throws Exception{    
@@ -396,7 +408,7 @@ public class MergeNodes implements Algorithm {
 				Tuple orgNode = orgNodeTable.getTuple(nodeID);  
 				if (compareTuple(nodeRow, orgNode)){
 					theNodeID= new Integer(nodeID);
-					System.out.println(">>find theNodeID="+theNodeID);
+//					System.out.println(">>find theNodeID="+theNodeID);
 					break;
 				}    				
 			}
@@ -558,58 +570,310 @@ public class MergeNodes implements Algorithm {
 				break;
 			}				
 		}
-		return isError;
-			
+		return isError;			
 	}
 	
-	/*
-	 * Merge node and update the graph, as well as generate the report
-	 * work with orgNetwork, mergingTable, and parameters, output is a new graph
-	 */        		
-	private Graph updateGraphByMergingNodes(Properties metaData){
+	private Graph copyGraphbyRowNumber (){
+		List removingNodeList = new ArrayList();
 		Table orgNodeTable = orgGraph.getNodeTable();
 		Schema nodeSchema = orgNodeTable.getSchema();
 		
 		Table orgEdgeTable = orgGraph.getEdgeTable();
 		Schema edgeSchema = orgEdgeTable.getSchema();
 		
-		boolean isDirected = orgGraph.isDirected(); 
+		fullEdgeIDMap = new EdgeMap(isDirected);
 		
-		final Graph updatedGraph = new Graph(nodeSchema.instantiate(),
+		Graph theNewGraph = new Graph(nodeSchema.instantiate(),
 				edgeSchema.instantiate(), isDirected);
 		
-		Map nodeFunctions = new HashMap();
-		Map edgeFunctions = new HashMap();
-		getNodeEdgeFunctions(metaData, nodeFunctions, edgeFunctions);	
+		//copy nodes
+		int pointer =0;
+		Node newNode;
+		for (int index=0; index<fullNodeIDList.size(); index++){
+			int nodeID = ((Integer) fullNodeIDList.get(index)).intValue();
+						
+			if (nodeID<pointer){
+				logger.log(LogService.LOG_ERROR, 
+						"NodeID has an error during copy original graph to the new one.\n");
+				return null;
+			}
+			while (nodeID>pointer){
+				removingNodeList.add(pointer);
+				newNode = theNewGraph.addNode();
+				pointer++;
+			}
+			newNode = theNewGraph.addNode();
+			Tuple nodeTuple = orgNodeTable.getTuple(nodeID);
+			copyValue(nodeTuple, newNode, nodeSchema, 0);
+			pointer++;
+		}
+		for (int index=0; index<removingNodeList.size(); index++){
+			int emptyRowNumber = ((Integer) removingNodeList.get(index)).intValue();
+			if(!theNewGraph.removeNode(emptyRowNumber)){
+				logger.log(LogService.LOG_ERROR, 
+				"The row number of "+emptyRowNumber+" does not have a node in the orginal graph. \n"+
+				"Fail to remove the empty node from the new graph during copying over nodes.\n");
+				return null;				
+			}				
+		}
 		
-		
-
-		constructNodes(updatedGraph, nodeSchema, nodeFunctions);
-		System.out.println("Org total nodes ="+orgGraph.getNodeCount());
-		System.out.println("total nodes = "+updatedGraph.getNodeCount());
-		System.out.println("total edges = "+updatedGraph.getEdgeCount());
-		constructEdges(updatedGraph,edgeSchema, edgeFunctions);		
-		
-		return updatedGraph;
+		//copy edge row
+/*		IntIterator edgeRows = orgGraph.edgeRows();
+		String sourceField = orgGraph.getEdgeSourceField();
+		String targetField = orgGraph.getEdgeTargetField();
+		System.out.println(">>sourceField="+sourceField+", targetField="+targetField);
+		while (edgeRows.hasNext()){
+			int edgeID = ((Integer)edgeRows.next()).intValue();
+			Edge orgEdge = orgGraph.getEdge(edgeID);
+			int sourceID = ((Integer)orgEdge.get(sourceField)).intValue();
+			int targetID = ((Integer)orgEdge.get(targetField)).intValue();
+			Node sourceNode = theNewGraph.getNode(sourceID);
+			Node targetNode = theNewGraph.getNode(targetID);
+			Edge newEdge = theNewGraph.addEdge(theNewGraph.getNode(sourceID), 
+					theNewGraph.getNode(targetID));
+			fullEdgeIDMap.put(sourceID, targetID);
+			copyValue(orgEdge, newEdge, edgeSchema, 2);			
+		}	
+*/	
+		return theNewGraph;
 	}
 	
-	private void getNodeEdgeFunctions(Properties metaData, Map nodeFunctions, Map edgeFunctions){
-		for (final Iterator it = metaData.keySet().iterator(); it.hasNext();) {
-
-			final String key = (String) it.next();
-			String functionName = metaData.getProperty(key);
-			String columnName = key.substring(key.indexOf(".")+1);
-
-			if (key.startsWith("edge.")) {
-				edgeFunctions.put(columnName, functionName);				
-			}
-
-			if (key.startsWith("node.")) {
-				nodeFunctions.put(columnName, functionName);
-
-			}
+	private void copyValue (Tuple orgTuple, Tuple newTuple, Schema theSchema, int startingIndex){
+		int columnCount = theSchema.getColumnCount();
+		for(startingIndex=0; startingIndex<columnCount; startingIndex++){
+			String columnName = theSchema.getColumnName(startingIndex);
+			Object value = orgTuple.get(startingIndex);
+			newTuple.set(startingIndex, value);
+		}
+	}
+	
+	/*
+	 * Merge node and update the graph.
+	 * Work with orgNetwork, fullNodeIDList, mergingNodesMap,
+	 * mergingTable, and parameters, output is a new graph
+	 */        		
+	private Graph updateGraphByMergingNodes(){
+		createUtilityFunctionMap();
+		if (nodeKeyField == null){
+			/* Deal the graph using row number as the nodeID
+			 * It is possible that some row number does not contain a node tuple
+			 */
+			Graph updatedGraph = copyGraphbyRowNumber();
+			if(mergingNodes(updatedGraph) && updatingEdges(updatedGraph))			
+				removeMergedNodes(updatedGraph);
+			
+			return updatedGraph;
+		}
+		else{
+			//deal the graph using values in a specified nodeKeyField as nodeIDs later
+			logger.log (LogService.LOG_WARNING,
+				"nodeKeyField = "+nodeKeyField+"\n"+	
+				"Can not deal the graph using values in a specified nodeKeyField as nodeIDs yet.\n");	
+			return null;
+		}
+	
+	}
+	
+	private void removeMergedNodes(Graph updatedGraph){
+		Iterator it = removedNodeIDList.iterator();
+		while (it.hasNext()){
+			int nodeID = ((Integer)it.next()).intValue();
+			updatedGraph.removeNode(nodeID);
 		}		
 	}
+	
+	
+	private boolean mergingNodes(Graph updatedGraph){
+		boolean isSuccessful = true;
+		Tuple primaryNode, theNode;
+		int primaryNodeID;
+		Iterator  nodeGroups = mergingTable.values().iterator();
+		while(nodeGroups.hasNext()){
+			NodeGroup nodeGroup = (NodeGroup) nodeGroups.next();
+			if (nodeGroup.getErrorFlag()){
+				logger.log(LogService.LOG_ERROR,
+						"There is an error in the node merging table.");
+				isSuccessful = false;
+				break;
+			}
+			primaryNodeID = nodeGroup.getPrimaryNodeID();
+			if(primaryNodeID == -1){
+				isSuccessful = false;
+				break;
+			}
+			primaryNode = updatedGraph.getNode(primaryNodeID);
+			Map nodesMap = nodeGroup.getNodesMap();
+			Iterator ids = nodesMap.keySet().iterator();
+			while (ids.hasNext()){
+				int theNodeID = ((Integer) ids.next()).intValue();
+				if(theNodeID != primaryNodeID){
+					theNode = updatedGraph.getNode(theNodeID);
+					if (updateValues(primaryNode, theNode, "node")){
+						removedNodeIDList.add(theNodeID);
+					}else {
+						isSuccessful = false;
+						break;
+					}
+					//now update edges
+					/*
+					if(UpdatingEdges (updatedGraph, primaryNodeID, theNodeID)){
+						isSuccessful = false;
+						break;				
+					}
+					*/
+				}
+			}			
+		}		
+		return isSuccessful;
+	}
+	
+	private void addorUpdateAEdge(Graph updatedGraph, int sourceID, int targetID, Edge orgEdge){
+		Table edgeTable = orgGraph.getEdgeTable();
+		Schema edgeSchema = edgeTable.getSchema();
+		
+		Node n1 = updatedGraph.getNode(sourceID);
+		Node n2 = updatedGraph.getNode(targetID);
+		if (isDirected){
+			Edge e = updatedGraph.getEdge(n1, n2);
+			if(e!= null){
+				updateValues (e, orgEdge, "edge");
+			}
+			else{
+				Edge newEdge = updatedGraph.addEdge(n1, n2);
+				copyValue(orgEdge, newEdge, edgeSchema, 2);	
+			}
+		}
+		else{
+			//handle undirected case
+			Edge e = updatedGraph.getEdge(n1, n2);
+			if(e!= null){
+				updateValues (e, orgEdge, "edge");
+			}
+			else{
+				e = updatedGraph.getEdge(n2, n1);
+				if (e!=null){
+					updateValues (e, orgEdge, "edge");
+				}
+				else {
+					Edge newEdge = updatedGraph.addEdge(n1, n2);
+					copyValue(orgEdge, newEdge, edgeSchema, 2);	
+				}
+			}
+		}
+	}
+	
+	private boolean updatingEdges (Graph updatedGraph){
+		boolean isSuccessful = true;
+		Table edgeTable = orgGraph.getEdgeTable();
+		Schema edgeSchema = edgeTable.getSchema();
+		Iterator edges = orgGraph.edges();
+		while(edges.hasNext()){
+			Edge orgEdge = (Edge) edges.next();
+			Integer sourceID = (Integer)orgEdge.get(edgeSourceField);
+			Integer targetID = (Integer)orgEdge.get(edgeTargetField);
+			//also need to handle undirected vs directed
+			if(!mergingNodesMap.containsKey(sourceID) &&
+			   !mergingNodesMap.containsKey(targetID)){
+				//undirected or directed does not matter
+				Edge newEdge = updatedGraph.addEdge(updatedGraph.getNode(sourceID), 
+						updatedGraph.getNode(targetID));
+				copyValue(orgEdge, newEdge, edgeSchema, 2);					
+			}
+			else if( mergingNodesMap.containsKey(sourceID) &&
+					!mergingNodesMap.containsKey(targetID)){
+				Integer nodeIndex = (Integer)mergingNodesMap.get(sourceID);
+				NodeGroup ng = (NodeGroup) mergingTable.get(nodeIndex);
+				int primaryNodeID = ng.getPrimaryNodeID();
+				if (primaryNodeID==-1){
+					logger.log(LogService.LOG_ERROR, "can not get the primary node id for the node group"+
+						" that contains "+updatedGraph.getNode(sourceID).get(nodeLabelField));
+					isSuccessful = false;
+					break;
+				}
+				else {
+					//both (primaryNodeID == sourceID) or (primaryNodeID != sourceID)
+					addorUpdateAEdge(updatedGraph, primaryNodeID, targetID, orgEdge);					
+				}
+				
+			}
+			else if (!mergingNodesMap.containsKey(sourceID) &&
+					  mergingNodesMap.containsKey(targetID)){
+				Integer nodeIndex = (Integer)mergingNodesMap.get(targetID);
+				NodeGroup ng = (NodeGroup) mergingTable.get(nodeIndex);
+				int primaryNodeID = ng.getPrimaryNodeID();
+				if (primaryNodeID==-1){
+					logger.log(LogService.LOG_ERROR, "can not get the primary node id for the node group"+
+						" that contains "+updatedGraph.getNode(targetID).get(nodeLabelField));
+					isSuccessful = false;
+					break;
+				}
+				else {
+					//both (primaryNodeID == targetID) or (primaryNodeID != targetID)
+					addorUpdateAEdge(updatedGraph, sourceID, primaryNodeID, orgEdge);
+				}				
+			}
+			else if (mergingNodesMap.containsKey(sourceID) &&
+					 mergingNodesMap.containsKey(targetID)){
+				Integer nodeIndex = (Integer)mergingNodesMap.get(sourceID);
+				NodeGroup ng = (NodeGroup) mergingTable.get(nodeIndex);
+				int primarySourceNodeID = ng.getPrimaryNodeID();
+				nodeIndex = (Integer)mergingNodesMap.get(targetID);
+				ng = (NodeGroup) mergingTable.get(nodeIndex);
+				int primaryTargetNodeID = ng.getPrimaryNodeID();
+				if (primarySourceNodeID==-1){
+					logger.log(LogService.LOG_ERROR, "can not get the primary node id for the node group"+
+						" that contains "+updatedGraph.getNode(primarySourceNodeID).get(nodeLabelField));
+					isSuccessful = false;
+					break;
+				}
+				if (primaryTargetNodeID==-1){
+					logger.log(LogService.LOG_ERROR, "can not get the primary node id for the node group"+
+						" that contains "+updatedGraph.getNode(primaryTargetNodeID).get(nodeLabelField));
+					isSuccessful = false;
+					break;
+				}
+					addorUpdateAEdge(updatedGraph, primarySourceNodeID, primaryTargetNodeID, orgEdge);
+			}
+		}
+		return isSuccessful;
+	 
+	}
+	
+	private boolean updateValues (Tuple primaryTuple, Tuple theTuple, String tag){
+		boolean isSuccessful = true;
+		Schema theSchema = primaryTuple.getSchema();
+		Map functionMap;
+		int k =0;
+		if (tag.equalsIgnoreCase("node")){
+			k = 1;
+			functionMap=nodeFunctions;
+		}			
+		else {
+			//assume if (tag.equalsIgnoreCase("edge"))
+			k = 2;
+			functionMap=edgeFunctions;
+		}
+		
+		for (; k < theSchema.getColumnCount(); k++) {
+			final String cn = theSchema.getColumnName(k);
+			final Class dt = theSchema.getColumnType(k);
+			final String fn = (String) functionMap.get(cn);
+			try{
+				UtilityFunction theFunction = getFunction(fn, dt);	
+				if (theFunction != null){
+					Object primaryValue = primaryTuple.get(k);
+					Object theValue = theTuple.get(k);
+					Object newValue = theFunction.operate(primaryValue, theValue);
+					primaryTuple.set(k, newValue);	
+				}
+			}catch (Exception e){
+				logger.log(LogService.LOG_ERROR, e.toString());
+				isSuccessful = false;
+				break;
+			}
+		}
+		return isSuccessful;
+	}	
 	
 	private void constructNodes (Graph updatedGraph, Schema nodeSchema, Map nodeFunctions){
 		/*
@@ -622,19 +886,11 @@ public class MergeNodes implements Algorithm {
 		while(nodeTuples.hasNext()){
 			Tuple nodeTuple  = (Tuple) nodeTuples.next();
 			Node newNode = updatedGraph.addNode();
-			copyNodeValue(nodeTuple, newNode, nodeSchema);			
+			copyValue(nodeTuple, newNode, nodeSchema, 0);			
 		}
 			
 	}
 	
-	private void copyNodeValue (Tuple oldNode, Node newNode, Schema nodeSchema){
-		int columnCount = nodeSchema.getColumnCount();
-		for(int index=0; index<columnCount; index++){
-			String columnName = nodeSchema.getColumnName(index);
-			Object value = oldNode.get(index);
-			newNode.set(index, value);
-		}
-	}
 	
 	private void constructEdges(Graph updatedGraph, Schema edgeSchema, Map edgeFunctions){
 		Iterator edgeTuples = orgGraph.getEdges().tuples();
@@ -649,8 +905,9 @@ public class MergeNodes implements Algorithm {
 
 	/*
 	 * This is a temp solution. I will provide a better solution later.
+	 * should use parameters from the ui input.
 	 */
-	private Properties getInputParameters(){
+	private void createUtilityFunctionMap(){
 		final ClassLoader loader = getClass().getClassLoader();
 
 		final InputStream in = loader
@@ -664,9 +921,76 @@ public class MergeNodes implements Algorithm {
 		} catch (final IOException ie) {
 			logger.log(LogService.LOG_ERROR, ie.getMessage());
 		}
-		return metaData;
+		nodeFunctions = new HashMap();
+		edgeFunctions = new HashMap();
+		for (final Iterator it = metaData.keySet().iterator(); it.hasNext();) {
+
+			final String key = (String) it.next();
+			String functionName = metaData.getProperty(key);
+			String columnName = key.substring(key.indexOf(".")+1);
+
+			if (key.startsWith("edge.")) {
+				edgeFunctions.put(columnName, functionName);				
+			}
+			else if (key.startsWith("node.")) {
+				nodeFunctions.put(columnName, functionName);
+			}
+		}
 
 	}
-
+	
+	private UtilityFunction getFunction(String functionName, 
+			Class type) throws Exception{
+		final String errorMsg = "Can not support "+functionName+" for "+
+			type.getName()+" yet.\n";
+		final String name = functionName.toLowerCase();
+		if (name.equals("count")) {
+			return new Count();
+		} else if (name.equals("arithmeticmean")) {
+				throw new Exception(errorMsg);
+				//return new DoubleArithmeticMean();
+		} else if (name.equals("sum")) {
+				if (type.equals(int.class) || type.equals(Integer.class)) {
+					return new IntegerSum();
+				}
+				if (type.equals(double.class) || type.equals(Double.class)) {
+					throw new Exception(errorMsg);
+					//return new DoubleSum();
+				}
+				if (type.equals(float.class) || type.equals(Float.class)) {
+					throw new Exception(errorMsg);
+					//return new FloatSum();
+				}
+		} else if (name.equals("max")) {
+				if (type.equals(int.class) || type.equals(Integer.class)) {
+					throw new Exception(errorMsg);
+					//return new IntegerMax();
+				}
+				if (type.equals(double.class) || type.equals(Double.class)) {
+					throw new Exception(errorMsg);
+					//return new DoubleMax();
+				}
+				if (type.equals(float.class) || type.equals(Float.class)) {
+					throw new Exception(errorMsg);
+					//return new FloatMax();
+				}
+		} else if (name.equals("min")) {
+				if (type.equals(int.class) || type.equals(Integer.class)) {
+					throw new Exception(errorMsg);
+					//return new IntegerMin();
+				}
+				if (type.equals(double.class) || type.equals(Double.class)) {
+					throw new Exception(errorMsg);
+					//return new DoubleMin();
+				}
+				if (type.equals(float.class) || type.equals(Float.class)) {
+					throw new Exception(errorMsg);
+					//return new FloatMin();
+				}
+		}
+		else if (name.equals("ignore"))
+			return null;
+		return null;
+	}
     
 }
