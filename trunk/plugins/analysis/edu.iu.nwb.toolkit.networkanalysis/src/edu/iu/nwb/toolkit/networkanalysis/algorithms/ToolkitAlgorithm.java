@@ -32,7 +32,12 @@ public class ToolkitAlgorithm implements Algorithm{
 		logger.log(LogService.LOG_INFO, np.toString());
 		StringBuffer warning = new StringBuffer();
 		if(np.densityInfo().length() < 1){
-			warning.append("Could not calculate density due to the presence of self-loops or parallel edges.");
+			if(np.hasSelfLoops() && np.hasParallelEdges())
+				warning.append("Did not calculate density due to the presence of self-loops and parallel edges.");
+			if(np.hasSelfLoops() && !np.hasParallelEdges())
+				warning.append("Did not calculate density due to the presence of self-loops.");
+			 if(!np.hasSelfLoops() && np.hasParallelEdges())
+				warning.append("Did not calculate density due to the presence of parallel edges.");
 		}
 		if(np.hasSelfLoops() && !np.isDirected()){
 			warning.append("This graph claims to be undirected but has self-loops. Please re-examine your data.\n");
@@ -40,9 +45,11 @@ public class ToolkitAlgorithm implements Algorithm{
 		if(np.hasParallelEdges() && !np.isDirected()){
 			warning.append("This graph claims to be undirected but has parallel edges. Please re-examine your data.\n");
 		}
-		if((np.hasParallelEdges() || np.hasSelfLoops()) && !np.isDirected())
+		if((np.hasParallelEdges() || np.hasSelfLoops()) && !np.isDirected()){
 			warning.append("Many algorithms will not function correctly with this graph.\n");
+		}
 		logger.log(LogService.LOG_WARNING, warning.toString());
+		
 		
 		return null;
 	}

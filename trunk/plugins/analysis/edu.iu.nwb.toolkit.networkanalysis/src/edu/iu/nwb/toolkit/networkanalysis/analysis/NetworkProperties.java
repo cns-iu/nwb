@@ -1,10 +1,12 @@
 package edu.iu.nwb.toolkit.networkanalysis.analysis;
 
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.LinkedHashSet;
 import java.util.LinkedList;
 import java.util.Queue;
+import java.util.Stack;
 
 import prefuse.data.Edge;
 import prefuse.data.Graph;
@@ -16,7 +18,7 @@ public class NetworkProperties {
 	SelfLoopsParallelEdges slpe;
 	ComponentForest cf;
 	private double density = -1;
-	
+
 
 
 	public NetworkProperties(prefuse.data.Graph graph) {
@@ -25,10 +27,11 @@ public class NetworkProperties {
 		cf = new ComponentForest();
 		//long time = new Date().getTime();
 		calculateConnectedness();
-		if(!(this.hasParallelEdges() && this.hasSelfLoops()))
+		
+		if(!(this.hasParallelEdges() || this.hasSelfLoops()))
 			calculateDensity();
 
-	//	time = new Date().getTime() - time;
+		//	time = new Date().getTime() - time;
 		//System.out.println("Ran in: " + time);
 
 	}
@@ -116,12 +119,14 @@ public class NetworkProperties {
 
 
 
-	protected static LinkedHashSet dDFS(final Graph g, Integer n){
-		LinkedHashSet preOrder = new LinkedHashSet();
-		LinkedHashSet postOrder = new LinkedHashSet();
+	protected LinkedHashSet dDFS(final Graph g, Integer n,boolean isReverse, boolean getPreOrder){
+		LinkedHashSet nodeSet = new LinkedHashSet();
+		//LinkedHashSet postOrder = new LinkedHashSet();
 
-		runDDFS(g,n,preOrder,postOrder);
-		return preOrder;
+		runDDFS(g,n,nodeSet,getPreOrder,isReverse);
+		
+
+		return nodeSet;
 	}
 
 	protected void runUDFS(final Graph g, Integer n, LinkedHashSet pre){
@@ -150,67 +155,99 @@ public class NetworkProperties {
 
 	}
 
-	protected static void runDDFS(final Graph g, Integer n, LinkedHashSet pre, LinkedHashSet post){
+	protected void runDDFS(final Graph g, Integer n, LinkedHashSet nodeSet, boolean isPreOrder, boolean isReverse){
+		boolean done = false;
 
-
-		Queue q = new LinkedList();
-		q.add(g.getNode(n.intValue()));
-		while(!q.isEmpty()){
-			Node nd = (Node) q.poll();
+		boolean[] seen = new boolean[g.getNodeCount()];
+		java.util.Arrays.fill(seen, false);
+		Stack nodeStack = new Stack();
+		nodeStack.add(g.getNode(n.intValue()));
+		while(!nodeStack.isEmpty()){
+			Node nd = (Node) nodeStack.peek();
+			
 			//Node nd = g.getNode(n.intValue());
 			Integer i = new Integer(nd.getRow());
-			if(!pre.contains(i)){
-				pre.add(i);
-				//{
-				//	prepre[i.intValue()] = preCount;
-
+			if(!seen[i.intValue()]){
 				//System.out.println(nd);
-
-				for(Iterator it = nd.neighbors(); it.hasNext();){
-					//Node nd = ((Edge)it.next()).getTargetNode();
-					Node nd2 = ((Node)it.next());
-					runDDFS(g,new Integer(nd2.getRow()),pre, post);
-					//q.add(nd2);
-				}
-
-
-
-
+				if(isPreOrder)
+					nodeSet.add(i);
+				seen[i.intValue()] = true;;
 			}
-			//	post[i.intValue()] = postCount;		
+				done = true;
+			//{
+			//	prepre[i.intValue()] = preCount;
 
-			post.add(i);
+			//System.out.println(nd);
+			if(isReverse){
+				for(Iterator it = nd.inNeighbors(); it.hasNext();){
 
+					Node nd2 = ((Node)it.next());
+					if(!seen[nd2.getRow()]){
+						nodeStack.add(nd2);
+						done = false;
+						break;
+					}
+				}
+			}
+
+			else{
+				for(Iterator it = nd.outNeighbors(); it.hasNext();){
+					Node nd2 = ((Node)it.next());
+					if(!seen[nd2.getRow()]){
+					nodeStack.add(nd2);
+					done = false;
+					break;
+				}
+			}
+			}
+			
+			if(done){
+				if(!isPreOrder)
+					nodeSet.add(i);
+				nodeStack.pop();
+			}
+			//System.out.println(nodeStack.size());
 		}
+		
 
 	}
 
 	private void calculateConnectedness(){
 
 		cf.weakComponentCalculation(this.graph, this);		
+		
+		if(this.graph.isDirected()){
+			cf.strongComponentCalculation(this.graph, this);
+		}
 	}
 
 	public String toString(){
 		StringBuffer sb = new StringBuffer();
-		sb.append(this.nodeAndEdgeInfo());
-		sb.append(this.densityInfo());
 		sb.append(this.directedInfo());
+		sb.append(System.getProperty("line.separator"));
+		sb.append(System.getProperty("line.separator"));
+		sb.append(this.nodeAndEdgeInfo());
+		sb.append(System.getProperty("line.separator"));
+		sb.append(this.densityInfo());
+		
 		sb.append(this.selfLoopInfo());
+		sb.append(System.getProperty("line.separator"));
 		sb.append(this.parallelEdgeInfo());
+		sb.append(System.getProperty("line.separator"));
+		sb.append(System.getProperty("line.separator"));
 		sb.append(this.connectedInfo());
 		return sb.toString();
 	}
-	
+
 	protected String nodeAndEdgeInfo(){
 		StringBuffer sb = new StringBuffer();
-		sb.append(System.getProperty("line.separator")+"Results:\n");
-		sb.append("This graph has " + this.graph.getNodeCount() + " nodes");
+		//sb.append(System.getProperty("line.separator")+"Results:\n");
+		sb.append("nodes: " + this.graph.getNodeCount());
 		sb.append(System.getProperty("line.separator"));
-		sb.append("This graph has " + this.graph.getEdgeCount() + " edges");
-		sb.append(System.getProperty("line.separator"));
+		sb.append("edges " + this.graph.getEdgeCount());
 		return sb.toString();
 	}
-	
+
 	protected String selfLoopInfo(){
 		StringBuffer sb = new StringBuffer();
 		if(slpe.getNumSelfLoops() > 0){
@@ -221,9 +258,13 @@ public class NetworkProperties {
 			sb.append(System.getProperty("line.separator"));
 			//sb.append(System.getProperty("line.separator"));
 		}
+		else{
+			sb.append("No self loops were discovered.");
+			sb.append(System.getProperty("line.separator"));
+		}
 		return sb.toString();
 	}
-	
+
 	protected String parallelEdgeInfo(){
 		StringBuffer sb = new StringBuffer();
 		if(slpe.getNumParallelEdges() > 0){
@@ -233,10 +274,14 @@ public class NetworkProperties {
 			sb.append(slpe.printParallelEdges());
 			sb.append(System.getProperty("line.separator"));
 		}
-		
+		else{
+			sb.append("No parallel edges were discovered.");
+			sb.append(System.getProperty("line.separator"));
+		}
+
 		return sb.toString();
 	}
-	
+
 	protected String directedInfo(){
 		StringBuffer sb = new StringBuffer();
 		if(this.graph.isDirected()){
@@ -245,11 +290,9 @@ public class NetworkProperties {
 		else{
 			sb.append("This graph claims to be undirected.");
 		}
-		sb.append(System.getProperty("line.separator"));
-		sb.append(System.getProperty("line.separator"));
 		return sb.toString();
 	}
-	
+
 	protected String connectedInfo(){
 		StringBuffer sb = new StringBuffer();
 		if(cf.isWeaklyConnected()){
@@ -259,23 +302,42 @@ public class NetworkProperties {
 			sb.append("This graph is not weakly connected.\n");
 		}
 
-		sb.append("There are " + cf.getComponentClusters() + " weakly connected components.\n");
-		sb.append("The largest connected component consists of " + cf.getMaximumConnectedNodes()+ " nodes.\n");
+		sb.append("There are " + cf.getWeakComponentClusters() + " weakly connected components.\n");
+		sb.append("The largest connected component consists of " + cf.getMaximumWeakConnectedNodes()+ " nodes.\n");
+		
+		if(this.isDirected()){
+			sb.append(System.getProperty("line.separator"));
+			if(cf.isStronglyConnected()){
+				sb.append("This graph is strongly connected\n");
+			}
+			else{
+				sb.append("This graph is not strongly connected.\n");
+			}
+			
+			sb.append("There are " + cf.getStrongComponentClusters() + " strongly connected components.\n");
+			sb.append("The largest strongly connected component consists of " + cf.getMaximumStrongConnectedNodes() + " nodes.\n");
+		}
+		else{
+			sb.append("Did not calculate strong connectedness because this graph was not directed.");
+		}
+		
 		return sb.toString();
 	}
-	
+
 	public String densityInfo(){
 		StringBuffer sb = new StringBuffer();
 		if(density > -1){
-			sb.append("Graph Density (disregarding weights): " + density);
+			DecimalFormat densityFormatter = new DecimalFormat("#.#####");
+			String densityString = densityFormatter.format(this.density);
+			sb.append("density (disregarding weights): " + densityString);
 			sb.append(System.getProperty("line.separator"));
 			sb.append(System.getProperty("line.separator"));
 		}
-		
-		
+
+
 		return sb.toString();
 	}
-	
+
 	protected void calculateDensity(){
 		long maxEdges = this.graph.getNodeCount()* (this.graph.getNodeCount()-1);
 		//double density;
