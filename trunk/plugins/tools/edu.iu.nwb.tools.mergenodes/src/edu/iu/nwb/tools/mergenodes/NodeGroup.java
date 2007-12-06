@@ -4,25 +4,26 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 
+import prefuse.data.Node;
 import prefuse.data.Tuple;
 
 public class NodeGroup {
 	/*
-	 * A HashMap contains a list of nodes that should be merged 
-	 * key = nodeID or row number in the original graph, 
-	 * value = a Tuple -- a row in the table
+	 * A list of nodes in the original graph that should be merged 
 	 */
-	private Map nodesMap;
+	private Set nodesSet;
     /*
-     * Contains a list of primary node. Each element is nodeID or 
-     * row number in the original graph.
+     * Contains a list of primary node. Each element a node in the 
+     * original graph.
      * errorFlag = true if primaryNodeList contains no element 
      * or more than one element.
      * errorFlag = false if primaryNodeList only contains one element
      */
-	private List primaryNodeList;
+	private Set primaryNodesSet;
 	/*
 	 * If errorFlag = true, there is no merging action for 
 	 * this group of nodes.
@@ -30,8 +31,8 @@ public class NodeGroup {
 	private boolean errorFlag;
 	
 	public NodeGroup (){
-		nodesMap = new HashMap();
-		primaryNodeList = new ArrayList();
+		nodesSet = new HashSet();
+		primaryNodesSet = new HashSet();
 		errorFlag = true;		
 	}
 
@@ -40,9 +41,9 @@ public class NodeGroup {
 	 *
 	 * @param nodeRow - a row in the Table (node with label and other attributes)
 	 */
-	public void addNodeToGroup (Integer NodeID, Tuple nodeRow){
+	public void addNodeToGroup (Node node){
 	
-		nodesMap.put(NodeID, nodeRow);
+		nodesSet.add(node);
 	}
 	
 	/**
@@ -51,27 +52,30 @@ public class NodeGroup {
 	 * @param nodeRow
 	 * @return the value of errorFlag 
 	 */
-	public void addPrimaryNodeToGroup (Integer NodeID, Tuple nodeRow){
-		nodesMap.put(NodeID, nodeRow);
-		if (primaryNodeList.isEmpty()){
-			primaryNodeList.add(NodeID);
+	public void addPrimaryNodeToGroup (Node primaryNode){
+		nodesSet.add(primaryNode);
+		if (primaryNodesSet.isEmpty()){
+			primaryNodesSet.add(primaryNode);
 			errorFlag = false;
 		}
-		else if (primaryNodeList.size()>=1){
-			primaryNodeList.add(NodeID);
+		else if (primaryNodesSet.size()>=1){
+			primaryNodesSet.add(primaryNode);
 			errorFlag = true;
 		}		
 	}
 	
-	public int getPrimaryNodeID (){
-		if (primaryNodeList.size()>1)
-			return -1;
-		else
-			return ((Integer) primaryNodeList.get(0)).intValue();
+	public Node getPrimaryNode (){
+		if (primaryNodesSet.size()>1 || primaryNodesSet.isEmpty())
+			return null;
+		else{
+			Iterator nodes = primaryNodesSet.iterator();
+			Node theNode = (Node) nodes.next();
+			return theNode;
+		}		
 	}
 	
-	public Map getNodesMap() {
-		return nodesMap;
+	public Set getNodesSet() {
+		return nodesSet;
 	}
 	public boolean getErrorFlag(){
 		return errorFlag;
@@ -83,29 +87,25 @@ public class NodeGroup {
 	
 	public List getColumnValues(int columnIndex){
 		List colValues = new ArrayList();
-		Iterator keys = nodesMap.keySet().iterator();
-		while(keys.hasNext()){
-			Integer key = (Integer)keys.next();
-			Tuple element = (Tuple)nodesMap.get(key);
-			Object value = element.get(columnIndex);
+		Iterator nodes = nodesSet.iterator();
+		while(nodes.hasNext()){
+			Node theNode = (Node) nodes.next();
+			Object value = theNode.get(columnIndex);
 			colValues.add(value);			
 		}		
 		return colValues;		
 	}
 	
 	public List getPrimaryColValues (int columnIndex){
-		List colValues = new ArrayList();		
-		for (int i = 0; i<primaryNodeList.size(); i++){
-			Integer key = (Integer)primaryNodeList.get(i);
-			Tuple element = (Tuple)nodesMap.get(key);
-			Object value = element.get(columnIndex);
+		List colValues = new ArrayList();	
+		Iterator nodes = primaryNodesSet.iterator();
+		while(nodes.hasNext()){
+			Node theNode = (Node) nodes.next();
+			Object value = theNode.get(columnIndex);
 			colValues.add(value);			
-		}
+		}		
 		return colValues;
 	}
-	
-	
-	
 	
 
 }
