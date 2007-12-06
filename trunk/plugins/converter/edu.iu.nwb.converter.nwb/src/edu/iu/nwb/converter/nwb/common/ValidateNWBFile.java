@@ -162,8 +162,9 @@ public class ValidateNWBFile {
 
 		}
 		else{
-			String lower = s.toLowerCase();
-			if(lower.equals(NWBFileProperty.HEADER_NODE.toLowerCase())){
+//			String lower = s.toLowerCase();
+//			if(lower.equals(NWBFileProperty.HEADER_NODE.toLowerCase())){
+			if(s.equalsIgnoreCase(NWBFileProperty.HEADER_NODE)){
 				isFileGood = false;
 				errorMessages
 				.append("The header of the node section in an nwb file should be "+
@@ -192,8 +193,9 @@ public class ValidateNWBFile {
 			return true;
 		}
 		else{
-			String lower = s.toLowerCase();
-			if(lower.equals(NWBFileProperty.HEADER_DIRECTED_EDGES.toLowerCase())){
+//			String lower = s.toLowerCase();
+//			if(lower.equals(NWBFileProperty.HEADER_DIRECTED_EDGES.toLowerCase())){
+			if(s.equalsIgnoreCase(NWBFileProperty.HEADER_DIRECTED_EDGES)){
 				isFileGood = false;
 				errorMessages
 				.append("The header of the directed edge section should be "+
@@ -221,8 +223,9 @@ public class ValidateNWBFile {
 			return true;
 		}
 		else{
-			String lower = s.toLowerCase();
-			if(lower.equals(NWBFileProperty.HEADER_UNDIRECTED_EDGES.toLowerCase())){
+			//String lower = s.toLowerCase();
+			//if(lower.equals(NWBFileProperty.HEADER_UNDIRECTED_EDGES.toLowerCase())){
+			if(s.equalsIgnoreCase(NWBFileProperty.HEADER_UNDIRECTED_EDGES)){
 				isFileGood = false;
 				errorMessages
 				.append("The header of the undirected edge section should be "+
@@ -239,7 +242,7 @@ public class ValidateNWBFile {
 	 * 
 	 */
 	private void processNodes(String s) {
-		s = s.toLowerCase();
+		//s = s.toLowerCase();
 		if (passHeader) {// if previous line is a node header
 			/*
 			 * get attribute line handle only one case: 
@@ -289,7 +292,7 @@ public class ValidateNWBFile {
 	}
 
 	private void processDirectedEdges(String s) {
-		s.toLowerCase();
+		//s.toLowerCase();
 		if (passHeader) {// if previous line is an edge header
 			/*
 			 * get attribute line handle only one case:
@@ -336,7 +339,7 @@ public class ValidateNWBFile {
 	}
 
 	private void processUndirectedEdges(String s) {
-		s.toLowerCase();
+		//s.toLowerCase();
 		if (passHeader) {// if previous line is an edge header
 			/*
 			 * get attribute line handle one cases: 
