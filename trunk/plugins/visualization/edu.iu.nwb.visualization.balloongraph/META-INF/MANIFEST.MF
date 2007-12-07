@@ -1,7 +1,7 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
-Bundle-Name: My Algorithm Bundle
-Bundle-SymbolicName: org.my.bundle.name
+Bundle-Name: Ballongraph Visulization
+Bundle-SymbolicName: edu.iu.nwb.visualization.balloongraph
 Bundle-Version: 0.0.1
 Bundle-ClassPath: .
 Import-Package: 
