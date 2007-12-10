@@ -138,7 +138,7 @@ public class GraphMLWriter extends AbstractGraphWriter {
                          field.equals(graph.getEdgeTargetField()) )
                         continue;
                     
-                    xml.contentTag(Tokens.DATA, Tokens.KEY, field, 
+                    xml.contentTag(Tokens.DATA, Tokens.KEY, field.toLowerCase(), 
                                    e.get(field).toString());
                 }
                 xml.end();
