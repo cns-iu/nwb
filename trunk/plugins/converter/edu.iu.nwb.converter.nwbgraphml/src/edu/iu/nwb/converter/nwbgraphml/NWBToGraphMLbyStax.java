@@ -167,7 +167,7 @@ public class NWBToGraphMLbyStax implements Algorithm {
     			continue;
     		}    		
     		xtw.writeStartElement("key");
-  	        xtw.writeAttribute("id", attr.getAttrName());
+  	        xtw.writeAttribute("id", attr.getAttrName().toLowerCase());
   	        xtw.writeAttribute("for", "node");
   	        xtw.writeAttribute("attr.name", attr.getAttrName());
   	        xtw.writeAttribute("attr.type", attr.getDataType());
@@ -186,7 +186,7 @@ public class NWBToGraphMLbyStax implements Algorithm {
         			continue;
         		}        		
         		xtw.writeStartElement("key");
-      	        xtw.writeAttribute("id", attr.getAttrName());
+      	        xtw.writeAttribute("id", attr.getAttrName().toLowerCase());
       	        xtw.writeAttribute("for", "edge");
       	        xtw.writeAttribute("attr.name", attr.getAttrName());
       	        xtw.writeAttribute("attr.type", attr.getDataType());
@@ -208,7 +208,7 @@ public class NWBToGraphMLbyStax implements Algorithm {
         			continue;
         		}
         		xtw.writeStartElement("key");
-      	        xtw.writeAttribute("id", attr.getAttrName());
+      	        xtw.writeAttribute("id", attr.getAttrName().toLowerCase());
       	        xtw.writeAttribute("for", "edge");
       	        xtw.writeAttribute("attr.name", attr.getAttrName());
       	        xtw.writeAttribute("attr.type", attr.getDataType());
@@ -306,7 +306,7 @@ public class NWBToGraphMLbyStax implements Algorithm {
 	 		    			//out.println("<data key=\""+attr.getAttrName()+
 		 		    		//		"\">"+escape(value)+"</data>");  
  		  	        		xtw.writeStartElement("data");
- 		  	      	        xtw.writeAttribute("key", attr.getAttrName());
+ 		  	      	        xtw.writeAttribute("key", attr.getAttrName().toLowerCase());
  		  	      	        xtw.writeCharacters(value); 
  		  	      	        xtw.writeEndElement();		    				
 	 		    				
@@ -379,7 +379,7 @@ public class NWBToGraphMLbyStax implements Algorithm {
  	 		 		    				//out.println("<data key=\""+attr.getAttrName()+
  	 	 		 		    			//		"\">"+escape(value)+"</data>");  
  	 		 		    				xtw.writeStartElement("data");
- 	 		 		  	      	        xtw.writeAttribute("key", attr.getAttrName());
+ 	 		 		  	      	        xtw.writeAttribute("key", attr.getAttrName().toLowerCase());
  	 		 		  	      	        xtw.writeCharacters(value); 
  	 		 		  	      	        xtw.writeEndElement();
  	 		 		    			} else {
@@ -427,7 +427,7 @@ public class NWBToGraphMLbyStax implements Algorithm {
  	 		 		    				//out.println("<data key=\""+attr.getAttrName()+
  	 	 		 		    			//		"\">"+escape(columns[i])+"</data>");
  	 		 		    				xtw.writeStartElement("data");
- 	 		 		  	      	        xtw.writeAttribute("key", attr.getAttrName());
+ 	 		 		  	      	        xtw.writeAttribute("key", attr.getAttrName().toLowerCase());
  	 		 		  	      	        xtw.writeCharacters(columns[i]); 
  	 		 		  	      	        xtw.writeEndElement();
  	 		 		    			} else {
