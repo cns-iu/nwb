@@ -45,6 +45,10 @@ public class ISILoadAndCleanAlgorithm implements Algorithm {
     public Data[] execute() {
     	
     	Data[] loadedISIData = isiLoader.getISIDataFromUser();
+    	
+    	if (loadedISIData == null || loadedISIData.length == 0) {
+    		return new Data[0];
+    	}
     
     	Data[] validatedISIData = executeAlgorithm(isiValidator, loadedISIData);
     	
