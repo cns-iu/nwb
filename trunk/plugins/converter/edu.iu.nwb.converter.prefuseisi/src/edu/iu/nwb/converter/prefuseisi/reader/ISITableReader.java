@@ -47,8 +47,8 @@ public class ISITableReader {
 			ISITag currentTag = getOrCreateNewTag(currentTagName, tableData);
 			
 			 if (currentTag.equals(ISITag.END_OF_FILE)) {
-				//we're done with the whole file
-				break;
+				//tag ignored
+				currentLine = moveToNextLineWithTag(reader);
 			} else if (currentTag.equals(ISITag.END_OF_RECORD)) {
 				//we're done with this record
 				tableData.moveOnToNextRow();
@@ -70,9 +70,11 @@ public class ISITableReader {
 				currentLine = addMultivalueTagData(currentTag, currentLine, reader, tableData);
 			} else {
 				//either we had an error in the program or there is something wrong with the file.
+				log.log(LogService.LOG_WARNING,
+						"No case in ISITableReader to handle the tag " + currentTag.name + ".");
+				log.log(LogService.LOG_WARNING, "Moving on to next tag.");
 				currentLine = moveToNextLineWithTag(reader);
 			}
-			
 		}
 		
 		Table constructedTable = tableData.getTable();
