@@ -12,7 +12,7 @@
 <project name='CIShell Installer' default='compile' basedir='.'>
 
 	<!--  Properties -->
-	<property name="version" value="0.7.0"/>
+	<property name="version" value="pre-0.8.0-v2"/>
 	<property name="full.xml" value="install.xml"/>
 	<property name="min.xml" value="install.xml"/>
 	<property name="full.jar" value="nwb-installer_${version}.jar"/>
