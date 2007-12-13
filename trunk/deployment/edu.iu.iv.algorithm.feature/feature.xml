@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <feature
-      id="edu.iu.iv.algorithm.feature"
+      id="edu.iu.nwb.javaalgorithm.feature"
       label="Java-based algorithms"
       version="0.7.0"
       provider-name="NWB Team">
