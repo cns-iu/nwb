@@ -2,7 +2,8 @@
 <!-- <?xml version="1.0" encoding="ISO-8859-1" ?> -->
 <menu_layout> 
     <top_menu name="File">
-	<menu name="Load..." pid= "org.cishell.reference.gui.persistence.load.FileLoad "/>
+	<menu name="Load..." pid= "org.cishell.reference.gui.persistence.load.FileLoad"/>
+	<menu name="Load and Clean ISI File" pid="edu.iu.nwb.composite.isiloadandclean.ISILoadAndCleanAlgorithm"/>
 	<menu name="Load CSV Files" pid= "edu.iu.nwb.preprocessing.csv.CsvAlgorithm"/>
 	<menu name="Directory Hierarchy Reader" pid= "edu.iu.nwb.preprocessing.prefuse.beta.directoryhierarchyreader.DirectoryHierarchyReaderAlgorithm"/>
 	<menu name = "Datasets" type="group">
@@ -32,6 +33,10 @@
     <menu type="break"/>
     <menu name="K-Core Extraction" pid="edu.iu.nwb.analysis.kcore.Extract"/>
     <menu name="K-Coreness Annotation" pid="edu.iu.nwb.analysis.kcore.Annotate"/>
+    <menu type="break"/>
+    <menu name="ISI Duplicate Remover" pid="edu.iu.nwb.analysis.isidupremover.ISIDupRemoverAlgorithm"/>
+    <menu name="Extract Co-Authorship Network" pid="edu.iu.nwb.analysis.extractcoauthorship"/>
+    <menu name="Merge Nodes" pid="edu.iu.nwb.tools.mergenodes.MergeNodes"/>
     </top_menu>
     <top_menu name="Modeling">
 	<menu name="Random Graph" pid="edu.iu.nwb.modeling.erdosrandomgraph"/>
@@ -97,6 +102,7 @@
 	<menu name="Radial Tree/Graph with Annotation (prefuse beta)" pid="edu.iu.nwb.visualization.prefuse.beta.radialgraph.RadialGraph"/>
 	<menu name="Tree Map (prefuse beta)" pid="edu.iu.nwb.visualization.prefuse.beta.treemap.TreeMap"/>
 	<menu name="Tree View (prefuse beta)" pid="edu.iu.nwb.visualization.prefuse.beta.treeview.TreeView"/>
+	<menu name="Balloon Graph" pid="edu.iu.nwb.visualization.balloongraph.BalloongraphAlgorithm"/>
 	<menu type="break"/>
 	<menu name="Force Directed with Annotation (prefuse beta)" pid="edu.iu.nwb.visualization.prefuse.beta.graphview.GraphView"/> 
 	<menu name="Kamada-Kawai (JUNG)" pid="edu.iu.nwb.visualization.jungnetworklayout.JUNGKamadaKawaiLayout"/>
