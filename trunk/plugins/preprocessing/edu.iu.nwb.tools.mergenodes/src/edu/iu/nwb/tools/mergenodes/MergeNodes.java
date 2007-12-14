@@ -88,7 +88,7 @@ public class MergeNodes implements Algorithm {
     
     private HashMap edgeMap = new HashMap();
     
-    private EdgeMap fullEdgeIDMap = null;
+ 
     
     /*
      * 
