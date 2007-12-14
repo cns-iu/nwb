@@ -22,7 +22,7 @@ class Count implements UtilityFunction {
 
 	public Object operate(Object v1, Object v2) {
 		total = ((Integer)v1).intValue()+ 1;
-		return total;
+		return new Integer(total);
 
 	}
 
@@ -429,7 +429,7 @@ class IntegerSum implements UtilityFunction {
 			if (v1 instanceof Number && 
 				v2 instanceof Number) {
 					total += ((Number) v1).intValue()+((Number) v2).intValue();
-					return total;
+					return new Integer(total);
 			}
 			else
 				throw new IllegalArgumentException(
