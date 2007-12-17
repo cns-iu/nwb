@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+
+<shortcuts>
+  <programGroup defaultName="Network Workbench Tool"
+                location="startMenu"/>
+  <shortcut
+    name="Network Workbench Tool"
+    target="$INSTALL_PATH\nwb.exe"
+    commandLine=""
+    workingDirectory="$INSTALL_PATH"
+    description="Network Workbench Tool"
+    iconFile="$INSTALL_PATH\nwb.ico"
+    iconIndex="0"
+    initialState="normal"
+    programGroup="yes"
+    desktop="yes"
+    applications="no"
+    startMenu="yes"
+    startup="no">
+
+    <createForPack name="Base"/>
+  </shortcut>
+  
+  <shortcut
+    name="Uninstall NWB"
+    target="$INSTALL_PATH\uninstaller\uninstaller.jar"
+    commandLine=""
+    workingDirectory="$INSTALL_PATH\uninstaller"
+    description="Uninstall CIShell"
+    iconFile="$INSTALL_PATH\nwb.ico"
+    iconIndex="0"
+    initialState="normal"
+    programGroup="yes"
+    desktop="yes"
+    applications="no"
+    startMenu="yes"
+    startup="no">
+
+    <createForPack name="Base"/>
+  </shortcut>
+  
+</shortcuts>
