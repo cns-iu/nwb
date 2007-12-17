@@ -76,6 +76,7 @@
 	<!-- Steps to do before fetching the build elements -->
 	<!-- ===================================================================== -->
 	<target name="preFetch">
+		<mkdir dir="${buildDirectory}/nonpde_plugins"/>
 	</target>
 	<!-- ===================================================================== -->
 	<!-- Steps to do after fetching the build elements -->
@@ -165,9 +166,17 @@
 		</copy>
 		<delete file="${archiveName}" />
 		
-		<zip destfile="${archiveName}" update="true" >
+		<!-- insert the nonpde plugins -->
+		<copy todir="${buildDirectory}/temp.extra-files/${archivePrefix}/plugins" overwrite="true" flatten="true">
+			<fileset dir="${buildDirectory}/nonpde_plugins" includes="**/build/*.jar"/> 
+		</copy>
+		
+		<zip destfile="${archiveName}" update="true">
 			<zipfileset dir="${buildDirectory}/temp.extra-files" includes="**/*" excludes="${archivePrefix}/${archivePrefix}*"/>
 			<zipfileset dir="${buildDirectory}/temp.extra-files" includes="${archivePrefix}/${archivePrefix}*" filemode="755"/>
+			
+			<!-- Set executable bit for Mac binaries -->
+			<zipfileset dir="${buildDirectory}/temp.extra-files" includes="${archivePrefix}/${archivePrefix}.app/Contents/MacOS/${archivePrefix}" filemode="755"/>
 		</zip>
 		<delete dir="${buildDirectory}/temp.extra-files"/>
 	</target>
