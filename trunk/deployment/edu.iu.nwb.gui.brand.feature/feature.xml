@@ -31,6 +31,10 @@ Bruce Herr (bh2@bh2.net)
 Dr. Katy Borner (katy@indiana.edu)
    </license>
 
+   <includes
+         id="org.cishell.reference.gui.feature"
+         version="0.0.0"/>
+
    <plugin
          id="edu.iu.nwb.gui.brand"
          download-size="0"
