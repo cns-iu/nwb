@@ -136,13 +136,6 @@ Dr. Katy Borner (katy@indiana.edu)
          unpack="false"/>
 
    <plugin
-         id="org.my.algorithm.test"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         unpack="false"/>
-
-   <plugin
          id="edu.iu.nwb.analysis.sampling"
          download-size="0"
          install-size="0"
@@ -199,27 +192,6 @@ Dr. Katy Borner (katy@indiana.edu)
 
    <plugin
          id="edu.iu.nwb.analysis.kcore"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         unpack="false"/>
-
-   <plugin
-         id="org.cishell.testing.convertertester.algorithm"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         unpack="false"/>
-
-   <plugin
-         id="org.cishell.testing.convertertester.commandline"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         unpack="false"/>
-
-   <plugin
-         id="org.cishell.testing.convertertester.core.new"
          download-size="0"
          install-size="0"
          version="0.0.0"
