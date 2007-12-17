@@ -348,12 +348,6 @@
     </antcall>
     <antcall target="svn.co">
       <param name="target" value="plugins"/>
-      <param name="element.id" value="org.prefuse.lib"/>
-      <param name="project.name" value="/trunk/plugins/libs/prefuselib"/>
-      <param name="url" value="svn+ssh://cns-nd3.slis.indiana.edu/projects/svn/nwb"/>
-    </antcall>
-    <antcall target="svn.co">
-      <param name="target" value="plugins"/>
       <param name="element.id" value="org.mediavirus.parvis"/>
       <param name="project.name" value="/plugins/visualization/org.mediavirus.parvis"/>
       <param name="url" value="http://nwb.slis.indiana.edu/svn/nwb/trunk"/>
@@ -465,6 +459,6 @@
       <param name="element.id" value="edu.iu.nwb.visualization.balloongraph"/>
       <param name="project.name" value="/plugins/visualization/edu.iu.nwb.visualization.balloongraph"/>
       <param name="url" value="http://nwb.slis.indiana.edu/svn/nwb/trunk"/>
-    </antcall>
+    </antcall>  	
   </target>
 </project>
