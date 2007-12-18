@@ -1,7 +1,7 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
-Bundle-Name: Stax_Library Plug-in
-Bundle-SymbolicName: Stax_Library
+Bundle-Name: stax
+Bundle-SymbolicName: stax
 Bundle-Version: 1.0.0
 Bundle-ClassPath: stax-1.2.0_rc2-dev.jar,stax-api-1.0.1.jar
 Bundle-Localization: plugin
