@@ -7,7 +7,7 @@
 	<menu name="Load CSV Files" pid= "edu.iu.nwb.preprocessing.csv.CsvAlgorithm"/>
 	<menu name="Directory Hierarchy Reader" pid= "edu.iu.nwb.preprocessing.prefuse.beta.directoryhierarchyreader.DirectoryHierarchyReaderAlgorithm"/>
 	<menu name = "Datasets" type="group">
-		<menu name="Parallel Coordinates (demo) STF Dataset" pid="org.mediavirus.parvis.sampledata/pcvis_data.txt"/>									  
+		<menu name="Parallel Coordinates (demo) STF Dataset" pid="org.mediavirus.parvis.sampledata.pcvis_data.txt"/>									  
 	</menu>
 	<menu type="break"/>
 	<menu name="Save..." pid= "org.cishell.reference.gui.persistence.save.Save"/>
