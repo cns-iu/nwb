@@ -77,14 +77,12 @@ public class SWTISILoader implements SpecialISILoader {
 			if (currentDir == null) {
 				currentDir = new File(System.getProperty("osgi.install.area")
 						.replace("file:", "")
-						+ "sampledata" + File.separator + "Network");
+						+ "sampledata");
 
 				if (!currentDir.exists()) {
 					currentDir = new File(System.getProperty(
 							"osgi.install.area").replace("file:", "")
 							+ "sampledata"
-							+ File.separator
-							+ "Network"
 							+ File.separator + "anything");
 				}
 			}
