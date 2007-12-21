@@ -1,6 +1,5 @@
 package edu.iu.nwb.toolkit.networkanalysis.analysis;
 
-import java.math.BigDecimal;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -19,8 +18,8 @@ public class ComponentForest{
 	int maxStrongConnectedNodes = 0;
 
 
-	public ComponentForest(){
-
+	public ComponentForest(final Graph graph){
+		this.calculateConnectedness(graph);
 	}
 
 	public int getMaximumStrongConnectedNodes(){
@@ -44,10 +43,6 @@ public class ComponentForest{
 		return this.maxWeakConnectedNodes;
 	}
 
-	/*public double getAverageConnectedness(){
-		return averageWeakConnectedness.doubleValue();
-	}*/
-
 	public int getWeakComponentClusters(){
 		return this.weakComponentClusters;
 	}
@@ -60,7 +55,7 @@ public class ComponentForest{
 			return false;
 	}
 
-	public void weakComponentCalculation(final Graph grph, NetworkProperties np){
+	public void weakComponentCalculation(final Graph grph){
 		HashMap clusters = new HashMap();
 		HashSet seenNodes = new HashSet();
 		int maxNodes = 0;
@@ -70,7 +65,7 @@ public class ComponentForest{
 			Integer i = new Integer(n.getRow());
 			if(!seenNodes.contains(i)){
 
-				LinkedHashSet tree = np.uDFS(grph, i);
+				LinkedHashSet tree = NetworkProperties.uDFS(grph, i);
 		
 					seenNodes.addAll(tree);
 					if(tree.size() > maxNodes)
@@ -88,7 +83,7 @@ public class ComponentForest{
 		
 	}
 	
-	public void strongComponentCalculation(final Graph grph, NetworkProperties np){
+	public void strongComponentCalculation(final Graph grph){
 		//HashMap clusters = new HashMap();
 		boolean[] seenNodes = new boolean[grph.getNodeCount()];
 		java.util.Arrays.fill(seenNodes, false);
@@ -100,10 +95,10 @@ public class ComponentForest{
 			Integer nodeRow = new Integer(n.getRow());
 			if(!seenNodes[nodeRow.intValue()]){
 				seenNodes[nodeRow.intValue()] = true;
-				LinkedList preOrderSearch = new LinkedList(np.dDFS(grph, nodeRow, true, false));
+				LinkedList preOrderSearch = new LinkedList(NetworkProperties.dDFS(grph, nodeRow, true, false));
 				
 				while(!preOrderSearch.isEmpty()){
-				LinkedHashSet postOrderSearch = np.dDFS(grph, (Integer)preOrderSearch.get(preOrderSearch.size()-1), false, false);
+				LinkedHashSet postOrderSearch = NetworkProperties.dDFS(grph, (Integer)preOrderSearch.get(preOrderSearch.size()-1), false, false);
 				LinkedHashSet component = new LinkedHashSet(postOrderSearch);
 				component.retainAll(preOrderSearch);
 				
@@ -134,6 +129,14 @@ public class ComponentForest{
 		
 	}
 
+	private void calculateConnectedness(final Graph graph){
 
+		this.weakComponentCalculation(graph);		
+		
+		if(graph.isDirected()){
+			this.strongComponentCalculation(graph);
+		}
+	}
+	
 	
 }

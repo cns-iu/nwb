@@ -13,20 +13,25 @@ import prefuse.data.Node;
 
 
 public class NetworkProperties {
-	private Graph graph;
-	///SelfLoopsParallelEdges slpe;
+
 	ComponentForest cf;
 	EdgeStats edgeStats;
+	
+	int numberOfNodes;
+	int numberOfEdges;
+	boolean isDirectedGraph;
 	private double density = -1;
 	
 
 
 	public NetworkProperties(final prefuse.data.Graph graph) {
-		this.graph = graph ;
-		//slpe = new SelfLoopsParallelEdges(graph.isDirected());
-		cf = new ComponentForest();
+		this.numberOfEdges = graph.getEdgeCount();
+		this.numberOfNodes = graph.getNodeCount();
+		this.isDirectedGraph = graph.isDirected();
+		
+		cf = new ComponentForest(graph);
+		
 		edgeStats = new EdgeStats(graph);
-		calculateConnectedness();
 		
 		if(!(this.hasParallelEdges() || this.hasSelfLoops()))
 			calculateDensity();
@@ -36,12 +41,9 @@ public class NetworkProperties {
 
 
 
-	public Graph getGraph() {
-		return this.graph;
-	}
 
 	public int getNumNodes() {
-		return this.graph.getNodeCount();
+		return this.numberOfNodes;
 	}
 
 	public boolean isConnected() {
@@ -50,7 +52,7 @@ public class NetworkProperties {
 
 	public boolean isDirected() {
 		
-		return this.graph.isDirected();
+		return this.isDirectedGraph;
 	}
 
 	public boolean hasSelfLoops() {
@@ -64,12 +66,12 @@ public class NetworkProperties {
 	}
 
 	public int getNumEdges() {
-		return this.graph.getEdgeCount();
+		return this.numberOfEdges;
 	}
 	
 	
 
-	protected LinkedHashSet uDFS(final Graph g, Integer n){
+	protected static LinkedHashSet uDFS(final Graph g, Integer n){
 
 		LinkedHashSet preOrder = new LinkedHashSet();
 
@@ -83,7 +85,7 @@ public class NetworkProperties {
 
 
 
-	protected LinkedHashSet dDFS(final Graph g, Integer n, boolean getPreOrder, boolean isReverse){
+	protected static LinkedHashSet dDFS(final Graph g, Integer n, boolean getPreOrder, boolean isReverse){
 		LinkedHashSet nodeSet = new LinkedHashSet();
 		
 
@@ -93,7 +95,7 @@ public class NetworkProperties {
 		return nodeSet;
 	}
 
-	protected void runUDFS(final Graph g, Integer n, LinkedHashSet pre){
+	protected static void runUDFS(final Graph g, Integer n, LinkedHashSet pre){
 		Queue q = new LinkedList();
 		q.add(g.getNode(n.intValue()));
 
@@ -106,7 +108,6 @@ public class NetworkProperties {
 
 				for(Iterator it = nd.edges(); it.hasNext();){
 					Edge edg = (Edge)it.next();
-					edgeStats.addEdge(edg, g.getEdgeTable());
 					Node nd2 = edg.getTargetNode();
 					q.add(nd2);
 					nd2 = edg.getSourceNode();
@@ -118,7 +119,7 @@ public class NetworkProperties {
 
 	}
 
-	protected void runDDFS(final Graph g, Integer n, LinkedHashSet nodeSet, boolean isPreOrder, boolean isReverse){
+	protected static void runDDFS(final Graph g, Integer n, LinkedHashSet nodeSet, boolean isPreOrder, boolean isReverse){
 		boolean done = false;
 
 		boolean[] seen = new boolean[g.getNodeCount()];
@@ -171,14 +172,7 @@ public class NetworkProperties {
 
 	}
 
-	private void calculateConnectedness(){
-
-		cf.weakComponentCalculation(this.graph, this);		
-		
-		if(this.graph.isDirected()){
-			cf.strongComponentCalculation(this.graph, this);
-		}
-	}
+	
 
 	public String toString(){
 		StringBuffer sb = new StringBuffer();
@@ -200,9 +194,9 @@ public class NetworkProperties {
 
 	protected String nodeAndEdgeInfo(){
 		StringBuffer sb = new StringBuffer();
-		sb.append("nodes: " + this.graph.getNodeCount());
+		sb.append("nodes: " + this.getNumNodes());
 		sb.append(System.getProperty("line.separator"));
-		sb.append("edges " + this.graph.getEdgeCount());
+		sb.append("edges " + this.getNumEdges());
 		return sb.toString();
 	}
 
@@ -242,7 +236,7 @@ public class NetworkProperties {
 
 	protected String directedInfo(){
 		StringBuffer sb = new StringBuffer();
-		if(this.graph.isDirected()){
+		if(this.isDirected()){
 			sb.append("This graph is directed.");
 		}
 		else{
@@ -297,7 +291,7 @@ public class NetworkProperties {
 	}
 
 	protected void calculateDensity(){
-		long maxEdges = this.graph.getNodeCount()* (this.graph.getNodeCount()-1);
+		long maxEdges = this.getNumNodes()* (this.getNumNodes()-1);
 		if(this.isDirected()){
 			density = (double)this.getNumEdges()/(maxEdges);
 		}

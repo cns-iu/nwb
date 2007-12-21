@@ -1,5 +1,6 @@
 package edu.iu.nwb.toolkit.networkanalysis.analysis;
 
+import java.util.Iterator;
 import java.util.Vector;
 
 import prefuse.data.Edge;
@@ -29,9 +30,14 @@ public class EdgeStats{
 		
 
 			if(this.numAdditionalNumericAttributes > 0){
-				this.meanValues = new double[this.numAdditionalNumericAttributes];			
+				this.meanValues = new double[this.numAdditionalNumericAttributes];
+				this.maxValues = new double[this.numAdditionalNumericAttributes];
+				this.minValues = new double[this.numAdditionalNumericAttributes];
+				java.util.Arrays.fill(this.maxValues, Double.MIN_VALUE);
+				java.util.Arrays.fill(this.minValues, Double.MAX_VALUE);
+				
 			}
-		
+		this.calculateEdgeStats(graph);
 	}
 	
 	private void initializeAdditionalAttributes(final Graph graph){
@@ -61,17 +67,28 @@ public class EdgeStats{
 		
 	}
 
-	public void addEdge(final Edge e, final Table t){
+	public void addEdge(final Edge e){
 		if(!this.seenEdges[e.getRow()]){
 			this.seenEdges[e.getRow()] = true;
 			this.selfLoopsParallelEdges.addEdge(e);
 			if(this.numAdditionalNumericAttributes > 0){
 				for(int i = 0; i < this.additionalNumericAttributes.size(); i++){
 					String columnName = (String)this.additionalNumericAttributes.get(i);
-					Number n = (java.lang.Number)t.get(e.getRow(), columnName);
-					this.meanValues[i] += (n.doubleValue())/e.getGraph().getEdgeCount();
+					double value = ((java.lang.Number)e.get(columnName)).doubleValue();
+					this.meanValues[i] += (value)/e.getGraph().getEdgeCount();
+					if(value > this.maxValues[i])
+						this.maxValues[i] = value;
+					if(value < this.minValues[i])
+						this.minValues[i] = value;
 				}
 			}
+		}
+	}
+	
+	public void calculateEdgeStats(final Graph graph){
+		for(Iterator it = graph.edges(); it.hasNext();){
+			Edge e = (Edge)it.next();
+			this.addEdge(e);
 		}
 	}
 	
