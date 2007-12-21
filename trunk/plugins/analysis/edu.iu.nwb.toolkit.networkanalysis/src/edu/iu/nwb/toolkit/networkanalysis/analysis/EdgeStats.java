@@ -58,7 +58,7 @@ public class EdgeStats{
 				}
 			}
 		}
-		System.out.println(this.numAdditionalNumericAttributes);
+		
 	}
 
 	public void addEdge(final Edge e, final Table t){
