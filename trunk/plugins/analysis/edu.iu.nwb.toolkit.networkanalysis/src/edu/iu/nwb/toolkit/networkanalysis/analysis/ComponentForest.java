@@ -100,7 +100,7 @@ public class ComponentForest{
 			Integer nodeRow = new Integer(n.getRow());
 			if(!seenNodes[nodeRow.intValue()]){
 				seenNodes[nodeRow.intValue()] = true;
-				LinkedList preOrderSearch = new LinkedList(np.dDFS(grph, nodeRow, false, true));
+				LinkedList preOrderSearch = new LinkedList(np.dDFS(grph, nodeRow, true, false));
 				
 				while(!preOrderSearch.isEmpty()){
 				LinkedHashSet postOrderSearch = np.dDFS(grph, (Integer)preOrderSearch.get(preOrderSearch.size()-1), false, false);
@@ -118,14 +118,12 @@ public class ComponentForest{
 				if(component.size() > maxNodes)
 					maxNodes = component.size();
 				
-			//	clusters.put(new Integer(numberOfClusters), component);
+		
 				numberOfClusters++;
-				
-				//seenNodes.addAll(preOrderSearch);
-				//seenNodes.addAll(reverseSearch);
+		
 			}
 			
-			//System.out.println("\n\n"+ seenNodes.size() + ' ' + grph.getNodeCount()+ "\n");
+		
 		}
 		}
 		

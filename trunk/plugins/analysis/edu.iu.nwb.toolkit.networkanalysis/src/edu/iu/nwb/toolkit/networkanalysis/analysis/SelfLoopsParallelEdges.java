@@ -11,7 +11,7 @@ public class SelfLoopsParallelEdges {
 	HashSet selfLoops;
 	HashSet parallelEdges;
 	HashMap edges;
-	//int numberOfParallelEdges;
+	
 	boolean directed = false;
 
 	public SelfLoopsParallelEdges(boolean directed){
@@ -23,11 +23,10 @@ public class SelfLoopsParallelEdges {
 	}
 
 	/***
-	 * 
-	 * @param e
 	 * Here we take an Edge e, create a SimpleEdge object, which only stores
 	 * the source and target ids. We create a HashSet to hold edges.
 	 * We then link the SimpleEdge to the HashSet of real edges.
+	 * @param e the edge to check
 	 */
 	
 	
@@ -77,6 +76,15 @@ public class SelfLoopsParallelEdges {
 		if(e.getSourceNode().getRow() == e.getTargetNode().getRow()){
 			selfLoops.add(e);
 		}
+	}
+	/***
+	 * 
+	 * @param n
+	 * @comment
+	 * Do statistical calculations on n's edges.
+	 */
+	public void addNode(Node n){
+		
 	}
 
 	public int getNumSelfLoops(){

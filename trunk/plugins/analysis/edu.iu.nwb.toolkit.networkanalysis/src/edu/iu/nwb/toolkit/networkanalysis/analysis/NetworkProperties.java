@@ -1,7 +1,6 @@
 package edu.iu.nwb.toolkit.networkanalysis.analysis;
 
 import java.text.DecimalFormat;
-import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.LinkedHashSet;
 import java.util.LinkedList;
@@ -15,24 +14,23 @@ import prefuse.data.Node;
 
 public class NetworkProperties {
 	private Graph graph;
-	SelfLoopsParallelEdges slpe;
+	///SelfLoopsParallelEdges slpe;
 	ComponentForest cf;
+	EdgeStats edgeStats;
 	private double density = -1;
+	
 
 
-
-	public NetworkProperties(prefuse.data.Graph graph) {
+	public NetworkProperties(final prefuse.data.Graph graph) {
 		this.graph = graph ;
-		slpe = new SelfLoopsParallelEdges(graph.isDirected());
+		//slpe = new SelfLoopsParallelEdges(graph.isDirected());
 		cf = new ComponentForest();
-		//long time = new Date().getTime();
+		edgeStats = new EdgeStats(graph);
 		calculateConnectedness();
 		
 		if(!(this.hasParallelEdges() || this.hasSelfLoops()))
 			calculateDensity();
 
-		//	time = new Date().getTime() - time;
-		//System.out.println("Ran in: " + time);
 
 	}
 
@@ -51,59 +49,25 @@ public class NetworkProperties {
 	}
 
 	public boolean isDirected() {
-		//return PredicateUtils.enforcesDirected(this.graph);
+		
 		return this.graph.isDirected();
 	}
 
 	public boolean hasSelfLoops() {
-		//return GraphProperties.containsSelfLoops(this.graph);
-		return (slpe.getNumSelfLoops() > 0);
+		
+		return (edgeStats.getNumberOfSelfLoops() > 0);
 	}
 
 	public boolean hasParallelEdges() {
-		//return GraphProperties.containsParallelEdges(this.graph);
-		return slpe.getNumParallelEdges() > 0;
+	
+		return edgeStats.getNumberOfParallelEdges() > 0;
 	}
 
 	public int getNumEdges() {
 		return this.graph.getEdgeCount();
 	}
-
-	public int getNumLoops() {
-		int numLoops = 0;
-		for (Iterator iterator = this.graph.edges(); iterator
-		.hasNext();) {
-			Edge e = (Edge) iterator.next();
-			Node source = e.getSourceNode();
-			Node target = e.getTargetNode();
-			if (source.equals(target))
-				++numLoops;
-		}
-		return numLoops;
-	}
-
-	public int getNumParallelEdges(){
-		return 1;
-	}
-
-	public Edge[] getSelfLoops(){
-		ArrayList edges = new ArrayList();
-
-		for(Iterator it = this.graph.edges(); it.hasNext();){
-			Edge edg = (Edge)it.next();
-
-			if(edg.getSourceNode().getRow() == edg.getTargetNode().getRow()){
-				edges.add(edg);
-			}
-		}
-
-
-		Edge[] edgs = new Edge[edges.size()];
-
-		return (Edge[])edges.toArray(edgs);
-	}
-
-	//private static Tree[] 
+	
+	
 
 	protected LinkedHashSet uDFS(final Graph g, Integer n){
 
@@ -119,9 +83,9 @@ public class NetworkProperties {
 
 
 
-	protected LinkedHashSet dDFS(final Graph g, Integer n,boolean isReverse, boolean getPreOrder){
+	protected LinkedHashSet dDFS(final Graph g, Integer n, boolean getPreOrder, boolean isReverse){
 		LinkedHashSet nodeSet = new LinkedHashSet();
-		//LinkedHashSet postOrder = new LinkedHashSet();
+		
 
 		runDDFS(g,n,nodeSet,getPreOrder,isReverse);
 		
@@ -137,13 +101,12 @@ public class NetworkProperties {
 			Node nd = (Node)q.poll();
 			Integer i = new Integer(nd.getRow());
 			if(!pre.contains(i)){
-				//  System.out.println(nd);
+		
 				pre.add(i);
-
 
 				for(Iterator it = nd.edges(); it.hasNext();){
 					Edge edg = (Edge)it.next();
-					slpe.addEdge(edg);
+					edgeStats.addEdge(edg, g.getEdgeTable());
 					Node nd2 = edg.getTargetNode();
 					q.add(nd2);
 					nd2 = edg.getSourceNode();
@@ -165,19 +128,16 @@ public class NetworkProperties {
 		while(!nodeStack.isEmpty()){
 			Node nd = (Node) nodeStack.peek();
 			
-			//Node nd = g.getNode(n.intValue());
+		
 			Integer i = new Integer(nd.getRow());
 			if(!seen[i.intValue()]){
-				//System.out.println(nd);
+				
 				if(isPreOrder)
 					nodeSet.add(i);
 				seen[i.intValue()] = true;;
 			}
 				done = true;
-			//{
-			//	prepre[i.intValue()] = preCount;
-
-			//System.out.println(nd);
+			
 			if(isReverse){
 				for(Iterator it = nd.inNeighbors(); it.hasNext();){
 
@@ -206,7 +166,6 @@ public class NetworkProperties {
 					nodeSet.add(i);
 				nodeStack.pop();
 			}
-			//System.out.println(nodeStack.size());
 		}
 		
 
@@ -241,7 +200,6 @@ public class NetworkProperties {
 
 	protected String nodeAndEdgeInfo(){
 		StringBuffer sb = new StringBuffer();
-		//sb.append(System.getProperty("line.separator")+"Results:\n");
 		sb.append("nodes: " + this.graph.getNodeCount());
 		sb.append(System.getProperty("line.separator"));
 		sb.append("edges " + this.graph.getEdgeCount());
@@ -250,13 +208,12 @@ public class NetworkProperties {
 
 	protected String selfLoopInfo(){
 		StringBuffer sb = new StringBuffer();
-		if(slpe.getNumSelfLoops() > 0){
-			sb.append("There are: " + slpe.getNumSelfLoops() + " self-loops. \n" + 
+		if(edgeStats.getNumberOfSelfLoops() > 0){
+			sb.append("There are: " + edgeStats.getNumberOfSelfLoops() + " self-loops. \n" + 
 			"They are as follows:");
 			sb.append(System.getProperty("line.separator"));
-			sb.append(slpe.printSelfLoops());
+			sb.append(edgeStats.getSelfLoopsParallelEdges().printSelfLoops());
 			sb.append(System.getProperty("line.separator"));
-			//sb.append(System.getProperty("line.separator"));
 		}
 		else{
 			sb.append("No self loops were discovered.");
@@ -267,11 +224,12 @@ public class NetworkProperties {
 
 	protected String parallelEdgeInfo(){
 		StringBuffer sb = new StringBuffer();
-		if(slpe.getNumParallelEdges() > 0){
-			sb.append("There are: " + slpe.getNumParallelEdges() + " parallel edges.\n" + 
+		int parallelEdges = edgeStats.getNumberOfParallelEdges();
+		if(parallelEdges > 0){
+			sb.append("There are: " + parallelEdges + " parallel edges.\n" + 
 			"They are as follows:");
 			sb.append(System.getProperty("line.separator"));
-			sb.append(slpe.printParallelEdges());
+			sb.append(edgeStats.getSelfLoopsParallelEdges().printParallelEdges());
 			sb.append(System.getProperty("line.separator"));
 		}
 		else{
@@ -340,14 +298,12 @@ public class NetworkProperties {
 
 	protected void calculateDensity(){
 		long maxEdges = this.graph.getNodeCount()* (this.graph.getNodeCount()-1);
-		//double density;
 		if(this.isDirected()){
 			density = (double)this.getNumEdges()/(maxEdges);
 		}
 		else{
 			density = (double)this.getNumEdges()/(maxEdges/2);
 		}
-		//System.out.println(density);
 	}
 
 
