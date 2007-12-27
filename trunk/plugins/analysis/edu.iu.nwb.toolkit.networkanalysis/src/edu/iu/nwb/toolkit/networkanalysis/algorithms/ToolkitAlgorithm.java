@@ -48,7 +48,11 @@ public class ToolkitAlgorithm implements Algorithm{
 		if((np.hasParallelEdges() || np.hasSelfLoops()) && !np.isDirected()){
 			warning.append("Many algorithms will not function correctly with this graph.\n");
 		}
+		
+		logger.log(LogService.LOG_INFO, np.testPrint());
+		
 		logger.log(LogService.LOG_WARNING, warning.toString());
+		
 		
 		
 		return null;

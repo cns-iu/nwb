@@ -13,6 +13,8 @@ public class EdgeStats{
 	double[] minValues;
 	boolean[] seenEdges;
 	
+	int numberOfEdges;
+	
 	int numAdditionalAttributes;
 	int numAdditionalNumericAttributes;
 	
@@ -22,6 +24,7 @@ public class EdgeStats{
 	SelfLoopsParallelEdges selfLoopsParallelEdges;
 
 	public EdgeStats(final Graph graph){
+		this.numberOfEdges = graph.getEdgeCount();
 		this.selfLoopsParallelEdges = new SelfLoopsParallelEdges(graph.isDirected());
 		seenEdges = new boolean[graph.getEdgeCount()];
 		java.util.Arrays.fill(seenEdges, false);
@@ -104,7 +107,17 @@ public class EdgeStats{
 		return this.selfLoopsParallelEdges.getNumParallelEdges();
 	}
 
+	public int getNumberOfEdges(){
+		return this.numberOfEdges;
+	}
 	
+	public String printEdgeAttributes(){
+		StringBuffer sb = new StringBuffer();
+		for(int i = 0; i < this.additionalAttributes.size(); i++){
+			sb.append((String) this.additionalAttributes.get(i) + " ");
+		}
+		return sb.toString();
+	}
 	
 
 }

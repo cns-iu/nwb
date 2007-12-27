@@ -16,22 +16,23 @@ public class NetworkProperties {
 
 	ComponentForest cf;
 	EdgeStats edgeStats;
+	NodeStats nodeStats;
 	
-	int numberOfNodes;
-	int numberOfEdges;
+
 	boolean isDirectedGraph;
 	private double density = -1;
 	
 
 
 	public NetworkProperties(final prefuse.data.Graph graph) {
-		this.numberOfEdges = graph.getEdgeCount();
-		this.numberOfNodes = graph.getNodeCount();
 		this.isDirectedGraph = graph.isDirected();
+		
+		nodeStats = new NodeStats(graph);
+		edgeStats = new EdgeStats(graph);
 		
 		cf = new ComponentForest(graph);
 		
-		edgeStats = new EdgeStats(graph);
+		
 		
 		if(!(this.hasParallelEdges() || this.hasSelfLoops()))
 			calculateDensity();
@@ -43,11 +44,15 @@ public class NetworkProperties {
 
 
 	public int getNumNodes() {
-		return this.numberOfNodes;
+		return this.nodeStats.getNumerOfNodes();
 	}
 
 	public boolean isConnected() {
 		return this.cf.isWeaklyConnected();
+	}
+	
+	public double getMeanNumberofNodes(){
+		return this.getNumEdges()/this.getNumNodes();
 	}
 
 	public boolean isDirected() {
@@ -66,7 +71,7 @@ public class NetworkProperties {
 	}
 
 	public int getNumEdges() {
-		return this.numberOfEdges;
+		return this.edgeStats.getNumberOfEdges();
 	}
 	
 	
@@ -300,5 +305,12 @@ public class NetworkProperties {
 		}
 	}
 
+	
+	public String testPrint(){
+		StringBuffer sb = new StringBuffer();
+		sb.append(this.edgeStats.printEdgeAttributes());
+		sb.append(this.nodeStats.printNumberOfIsolatedNodes());
+		return sb.toString();
+	}
 
 }
