@@ -49,7 +49,7 @@ public class ToolkitAlgorithm implements Algorithm{
 			warning.append("Many algorithms will not function correctly with this graph.\n");
 		}
 		
-		logger.log(LogService.LOG_INFO, np.testPrint());
+		//logger.log(LogService.LOG_INFO, np.testPrint());
 		
 		logger.log(LogService.LOG_WARNING, warning.toString());
 		

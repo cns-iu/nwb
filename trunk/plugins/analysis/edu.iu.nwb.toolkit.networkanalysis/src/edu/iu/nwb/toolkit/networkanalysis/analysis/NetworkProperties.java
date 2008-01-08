@@ -184,24 +184,49 @@ public class NetworkProperties {
 		sb.append(this.directedInfo());
 		sb.append(System.getProperty("line.separator"));
 		sb.append(System.getProperty("line.separator"));
-		sb.append(this.nodeAndEdgeInfo());
+		sb.append(this.nodeInfo());
+		
+		sb.append(System.getProperty("line.separator"));
+		
+		sb.append(this.edgeInfo());
 		sb.append(System.getProperty("line.separator"));
 		sb.append(this.densityInfo());
 		
-		sb.append(this.selfLoopInfo());
-		sb.append(System.getProperty("line.separator"));
-		sb.append(this.parallelEdgeInfo());
 		sb.append(System.getProperty("line.separator"));
 		sb.append(System.getProperty("line.separator"));
 		sb.append(this.connectedInfo());
 		return sb.toString();
 	}
-
-	protected String nodeAndEdgeInfo(){
+	
+	protected String nodeInfo(){
 		StringBuffer sb = new StringBuffer();
 		sb.append("nodes: " + this.getNumNodes());
 		sb.append(System.getProperty("line.separator"));
-		sb.append("edges " + this.getNumEdges());
+		sb.append(this.isolatedNodeInfo());
+		sb.append(System.getProperty("line.separator"));
+		sb.append("Node Attributes Present");
+		sb.append(System.getProperty("line.separator"));
+		int numAttributes = this.nodeStats.getNumberOfAttributes();
+		for(int i = 0; i < numAttributes; i++){
+			sb.append(this.nodeStats.getNodeAttributes()[i]);
+			sb.append(System.getProperty("line.separator"));
+		}
+		return sb.toString();
+	}
+
+	protected String edgeInfo(){
+		StringBuffer sb = new StringBuffer();
+		sb.append("edges: " + this.getNumEdges());
+		sb.append(System.getProperty("line.separator"));
+		sb.append(this.selfLoopInfo());
+		sb.append(this.parallelEdgeInfo());
+		sb.append("Edge Attributes Present");
+		sb.append(System.getProperty("line.separator"));
+		int numAttributes = this.edgeStats.numAdditionalAttributes;
+		for(int i = 0; i < numAttributes; i++){
+			sb.append(this.edgeStats.getAdditionalAttributes()[i]);
+			sb.append(System.getProperty("line.separator"));
+		}
 		return sb.toString();
 	}
 
@@ -286,12 +311,57 @@ public class NetworkProperties {
 		if(density > -1){
 			DecimalFormat densityFormatter = new DecimalFormat("#.#####");
 			String densityString = densityFormatter.format(this.density);
+			
 			sb.append("density (disregarding weights): " + densityString);
 			sb.append(System.getProperty("line.separator"));
+			sb.append(this.weightedDensityInfo());
 			sb.append(System.getProperty("line.separator"));
+			sb.append(System.getProperty("line.separator"));
+			
+			
 		}
 
+		
 
+		return sb.toString();
+	}
+	
+	protected String isolatedNodeInfo(){
+		StringBuffer sb = new StringBuffer();
+		sb.append("isolated nodes: " + this.nodeStats.getNumberOfIsolatedNodes());
+		return sb.toString();
+	}
+	
+	
+	protected String weightedDensityInfo(){
+		StringBuffer sb = new StringBuffer();
+		double weightedSum,maxObservedValue,weightedDensity;
+		DecimalFormat densityFormatter = new DecimalFormat("#.#####");
+		
+		if(this.edgeStats.numAdditionalNumericAttributes > 0){
+			sb.append(System.getProperty("line.separator"));
+		sb.append("Additional Densities by Numeric Attribute");
+		sb.append(System.getProperty("line.separator"));
+		
+		sb.append("densities (weighted against observed max)");
+		sb.append(System.getProperty("line.separator"));
+		for(int i = 0; i < this.edgeStats.getAdditionalNumericAttributes().length; i++){
+			sb.append(this.edgeStats.getAdditionalNumericAttributes()[i]+": ");
+		
+		
+			weightedSum = this.edgeStats.getWeightedDensitySumArray()[i];
+			maxObservedValue = this.edgeStats.getMaxValueArray()[i];
+			if(this.isDirectedGraph){
+				weightedDensity = weightedSum/(maxObservedValue*(this.getNumNodes()*(this.getNumNodes()-1)));
+			}
+			else{
+				double maxConnections = .5 * (this.getNumNodes()*(this.getNumNodes()-1));
+				weightedDensity = weightedSum/(maxObservedValue*maxConnections);
+			}
+			sb.append(densityFormatter.format(weightedDensity));
+			sb.append(System.getProperty("line.separator"));
+		}
+		}
 		return sb.toString();
 	}
 
@@ -312,5 +382,7 @@ public class NetworkProperties {
 		sb.append(this.nodeStats.printNumberOfIsolatedNodes());
 		return sb.toString();
 	}
+	
+	
 
 }
