@@ -65,7 +65,7 @@ public class ComponentForest{
 			Integer i = new Integer(n.getRow());
 			if(!seenNodes.contains(i)){
 
-				LinkedHashSet tree = NetworkProperties.uDFS(grph, i);
+				LinkedHashSet tree = GraphSearchAlgorithms.undirectedDepthFirstSearch(grph, i);
 		
 					seenNodes.addAll(tree);
 					if(tree.size() > maxNodes)
@@ -95,10 +95,10 @@ public class ComponentForest{
 			Integer nodeRow = new Integer(n.getRow());
 			if(!seenNodes[nodeRow.intValue()]){
 				seenNodes[nodeRow.intValue()] = true;
-				LinkedList preOrderSearch = new LinkedList(NetworkProperties.dDFS(grph, nodeRow, true, false));
+				LinkedList preOrderSearch = new LinkedList(GraphSearchAlgorithms.directedDepthFirstSearch(grph, nodeRow, true, false));
 				
 				while(!preOrderSearch.isEmpty()){
-				LinkedHashSet postOrderSearch = NetworkProperties.dDFS(grph, (Integer)preOrderSearch.get(preOrderSearch.size()-1), false, false);
+				LinkedHashSet postOrderSearch = GraphSearchAlgorithms.directedDepthFirstSearch(grph, (Integer)preOrderSearch.get(preOrderSearch.size()-1), false, false);
 				LinkedHashSet component = new LinkedHashSet(postOrderSearch);
 				component.retainAll(preOrderSearch);
 				
