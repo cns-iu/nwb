@@ -73,14 +73,14 @@ public class EdgeStats{
 					}
 				}
 			}
-		}
+		
 
 		this.additionalNonNumericAttributes.removeAll(this.additionalNumericAttributes);
 		this.numAdditionalNonNumericAttributes = this.additionalNonNumericAttributes.size();
 		if(this.numAdditionalNonNumericAttributes > 0){
 			this.characteristicValues = new StringBuffer[this.numAdditionalNonNumericAttributes];
 		}
-		
+		}
 		if(this.numAdditionalNumericAttributes > 1)
 			this.isValuedNetwork = true;
 
