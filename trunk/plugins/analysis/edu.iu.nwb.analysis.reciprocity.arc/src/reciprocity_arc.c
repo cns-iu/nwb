@@ -80,8 +80,11 @@ void determineReciprocityByArcMethod(int *sourcenodeid, int *targetnodeid, int n
   numberofarcs=numberofedges-numberofselfloops;
   printf("Number of arcs: %d\n", numberofarcs);
   printf("Number of arcs involved in reciprocal relations: %d\n", reciprocity);
-  prevalence=(double)reciprocity/(double)numberofarcs;
-  printf("Reciprocity based on arc method: %lf\n", prevalence);
+  if(numberofarcs > 0)
+    {
+      prevalence=(double)reciprocity/(double)numberofarcs;
+      printf("Reciprocity based on arc method: %lf\n", prevalence);
+    }
 }
 
 void determineNumberOfSelfLoops()
