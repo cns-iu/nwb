@@ -14,7 +14,8 @@
 		<copy todir="/tmp/pluginbuilder/edu.iu.nwb.releng/features" overwrite="true">
 			<fileset dir="/home/bherr/cishell-workspace">
 				<include name="*feature/**/*"/>
-				<exclude name="*feature"/>
+				<exclude name="*
+"/>
 			</fileset>
 	    </copy>
   	-->
@@ -289,7 +290,7 @@
     <antcall target="svn.co">
       <param name="target" value="features"/>
       <param name="element.id" value="edu.iu.nwb.javaalgorithm.feature"/>
-      <param name="project.name" value="/deployment/edu.iu.iv.algorithm.feature"/>
+      <param name="project.name" value="/deployment/edu.iu.nwb.javaalgorithm.feature"/>
       <param name="url" value="http://nwb.slis.indiana.edu/svn/nwb/trunk"/>
     </antcall>
     <antcall target="svn.co">
@@ -308,6 +309,18 @@
       <param name="target" value="plugins"/>
       <param name="element.id" value="org.cishell.tests.ProgressTrackableAlgorithm"/>
       <param name="project.name" value="/examples/org.cishell.tests.ProgressTrackableAlgorithm"/>
+      <param name="url" value="https://cishell.svn.sourceforge.net/svnroot/cishell/trunk"/>
+    </antcall>
+    <antcall target="svn.co">
+      <param name="target" value="plugins"/>
+      <param name="element.id" value="org.cishell.testing.convertertester.algorithm"/>
+      <param name="project.name" value="/examples/org.cishell.testing.convertertester.algorithm"/>
+      <param name="url" value="https://cishell.svn.sourceforge.net/svnroot/cishell/trunk"/>
+    </antcall>
+    <antcall target="svn.co">
+      <param name="target" value="plugins"/>
+      <param name="element.id" value="org.cishell.testing.convertertester.core.new"/>
+      <param name="project.name" value="/examples/org.cishell.testing.convertertester.core.new"/>
       <param name="url" value="https://cishell.svn.sourceforge.net/svnroot/cishell/trunk"/>
     </antcall>
     <antcall target="svn.co">
@@ -599,6 +612,27 @@
       <param name="url" value="http://nwb.slis.indiana.edu/svn/nwb/trunk/plugins"/>
     </antcall>
     <ant dir="${buildDirectory}/nonpde_plugins/edu.iu.nwb.analysis.undirectedknn"/>
+    <antcall target="svn.co">
+      <param name="target" value="nonpde_plugins"/>
+      <param name="element.id" value="edu.iu.nwb.analysis.reciprocity.arc"/>
+      <param name="project.name" value="/analysis/edu.iu.nwb.analysis.reciprocity.arc"/>
+      <param name="url" value="http://nwb.slis.indiana.edu/svn/nwb/trunk/plugins"/>
+    </antcall>
+    <ant dir="${buildDirectory}/nonpde_plugins/edu.iu.nwb.analysis.reciprocity.arc"/>
+    <antcall target="svn.co">
+      <param name="target" value="nonpde_plugins"/>
+      <param name="element.id" value="edu.iu.nwb.analysis.reciprocity.dyad"/>
+      <param name="project.name" value="/analysis/edu.iu.nwb.analysis.reciprocity.dyad"/>
+      <param name="url" value="http://nwb.slis.indiana.edu/svn/nwb/trunk/plugins"/>
+    </antcall>
+    <ant dir="${buildDirectory}/nonpde_plugins/edu.iu.nwb.analysis.reciprocity.dyad"/>
+    <antcall target="svn.co">
+      <param name="target" value="nonpde_plugins"/>
+      <param name="element.id" value="edu.iu.nwb.analysis.transitivity.adjacency"/>
+      <param name="project.name" value="/analysis/edu.iu.nwb.analysis.transitivity.adjacency"/>
+      <param name="url" value="http://nwb.slis.indiana.edu/svn/nwb/trunk/plugins"/>
+    </antcall>
+    <ant dir="${buildDirectory}/nonpde_plugins/edu.iu.nwb.analysis.transitivity.adjacency"/>
     <antcall target="svn.co">
       <param name="target" value="nonpde_plugins"/>
       <param name="element.id" value="edu.iu.nwb.modeling.barabasialbert"/>
