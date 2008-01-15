@@ -81,8 +81,11 @@ void determineReciprocityByDyadMethod(int *sourcenodeid, int *targetnodeid, int 
   numberofpairs=numberofedges-numberofselfloops-reciprocity;
   printf("Number of pairs: %d\n", numberofpairs);
   printf("Number of pairs with reciprocated relation: %d\n", reciprocity);
-  prevalence=(double)reciprocity/(double)numberofpairs;
-  printf("Reciprocity (ratio) based on dyad method: %lf\n", prevalence);
+  if(numberofpairs > 0)
+    {
+      prevalence=(double)reciprocity/(double)numberofpairs;
+      printf("Reciprocity (ratio) based on dyad method: %lf\n", prevalence);
+    }
 }
 
 void determineNumberOfSelfLoops()
