@@ -118,8 +118,11 @@ void determineTransitivityByAdjacency(char **w)
     }
   printf("Number of ordered triples (i->j and j->k): %d\n", numberoftriples);
   printf("Number of transitive ordered triples (i->j and j->k and i->k): %d\n", transitivity);
-  prevalence=(double)transitivity/(double)numberoftriples;
-  printf("Transitivity (ratio): %lf\n", prevalence);
+  if(numberoftriples > 0)
+    {
+      prevalence=(double)transitivity/(double)numberoftriples;
+      printf("Transitivity (ratio): %lf\n", prevalence);
+    }
 }
 
 void determineNodeOutDegree(char **w)
