@@ -323,6 +323,31 @@
       <param name="project.name" value="/testing/org.cishell.testing.convertertester.core.new"/>
       <param name="url" value="https://cishell.svn.sourceforge.net/svnroot/cishell/trunk"/>
     </antcall>
+  	
+    <antcall target="svn.co">
+      <param name="target" value="plugins"/>
+      <param name="element.id" value="edu.iu.nwb.analysis.dichotomize"/>
+      <param name="project.name" value="/plugins/analysis/edu.iu.nwb.analysis.dichotomize"/>
+      <param name="url" value="http://nwb.slis.indiana.edu/svn/nwb/trunk"/>
+    </antcall>
+    <antcall target="svn.co">
+      <param name="target" value="plugins"/>
+      <param name="element.id" value="edu.iu.nwb.analysis.isolates"/>
+      <param name="project.name" value="/plugins/analysis/edu.iu.nwb.analysis.isolates"/>
+      <param name="url" value="http://nwb.slis.indiana.edu/svn/nwb/trunk"/>
+    </antcall>
+    <antcall target="svn.co">
+      <param name="target" value="plugins"/>
+      <param name="element.id" value="edu.iu.nwb.analysis.selfloops"/>
+      <param name="project.name" value="/plugins/analysis/edu.iu.nwb.analysis.selfloops"/>
+      <param name="url" value="http://nwb.slis.indiana.edu/svn/nwb/trunk"/>
+    </antcall>
+    <antcall target="svn.co">
+      <param name="target" value="plugins"/>
+      <param name="element.id" value="edu.iu.nwb.analysis.symmetrize"/>
+      <param name="project.name" value="/plugins/analysis/edu.iu.nwb.analysis.symmetrize"/>
+      <param name="url" value="http://nwb.slis.indiana.edu/svn/nwb/trunk"/>
+    </antcall>	  	
     <antcall target="svn.co">
       <param name="target" value="plugins"/>
       <param name="element.id" value="edu.iu.iv.modeling.p2p.can"/>
