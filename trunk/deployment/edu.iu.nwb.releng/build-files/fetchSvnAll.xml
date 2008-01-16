@@ -314,13 +314,13 @@
     <antcall target="svn.co">
       <param name="target" value="plugins"/>
       <param name="element.id" value="org.cishell.testing.convertertester.algorithm"/>
-      <param name="project.name" value="/examples/org.cishell.testing.convertertester.algorithm"/>
+      <param name="project.name" value="/testing/org.cishell.testing.convertertester.algorithm"/>
       <param name="url" value="https://cishell.svn.sourceforge.net/svnroot/cishell/trunk"/>
     </antcall>
     <antcall target="svn.co">
       <param name="target" value="plugins"/>
       <param name="element.id" value="org.cishell.testing.convertertester.core.new"/>
-      <param name="project.name" value="/examples/org.cishell.testing.convertertester.core.new"/>
+      <param name="project.name" value="/testing/org.cishell.testing.convertertester.core.new"/>
       <param name="url" value="https://cishell.svn.sourceforge.net/svnroot/cishell/trunk"/>
     </antcall>
     <antcall target="svn.co">
