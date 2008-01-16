@@ -69,23 +69,26 @@ public class NodeStats {
 	
 	protected String nodeInfo(){
 		StringBuffer sb = new StringBuffer();
-		sb.append("nodes: " + this.numberOfNodes);
+		sb.append("Nodes: " + this.numberOfNodes);
 		sb.append(System.getProperty("line.separator"));
 		sb.append(this.isolatedNodeInfo());
 		sb.append(System.getProperty("line.separator"));
-		sb.append("Node Attributes Present");
-		sb.append(System.getProperty("line.separator"));
+		sb.append("Node attributes present: ");
 		int numAttributes = this.numberOfAttributes;
 		for(int i = 0; i < numAttributes; i++){
 			sb.append(this.nodeAttributes[i]);
-			sb.append(System.getProperty("line.separator"));
+			if(i != numAttributes-1){
+				sb.append(", ");
+			}
+			
 		}
+		sb.append(System.getProperty("line.separator"));
 		return sb.toString();
 	}
 	
 	protected String isolatedNodeInfo(){
 		StringBuffer sb = new StringBuffer();
-		sb.append("isolated nodes: " + this.numberOfIsolatedNodes);
+		sb.append("Isolated nodes: " + this.numberOfIsolatedNodes);
 		return sb.toString();
 	}
 

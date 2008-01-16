@@ -1,10 +1,9 @@
 package edu.iu.nwb.toolkit.networkanalysis.analysis;
 
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedHashSet;
-import java.util.LinkedList;
+import java.util.Stack;
 
 import prefuse.data.Graph;
 import prefuse.data.Node;
@@ -56,7 +55,7 @@ public class ComponentForest{
 	}
 
 	public void weakComponentCalculation(final Graph grph){
-		HashMap clusters = new HashMap();
+		
 		HashSet seenNodes = new HashSet();
 		int maxNodes = 0;
 		int cluster = 0;
@@ -71,7 +70,7 @@ public class ComponentForest{
 					if(tree.size() > maxNodes)
 						maxNodes = tree.size();
 					
-					clusters.put(new Integer(cluster), new HashSet(tree)); 
+					
 					cluster++;
 				}
 			
@@ -84,43 +83,34 @@ public class ComponentForest{
 	}
 	
 	public void strongComponentCalculation(final Graph grph){
-		//HashMap clusters = new HashMap();
-		boolean[] seenNodes = new boolean[grph.getNodeCount()];
-		java.util.Arrays.fill(seenNodes, false);
+		
+		
+		Stack finishedNodes = new Stack();
+		finishedNodes.addAll(GraphSearchAlgorithms.directedDepthFirstSearch(grph, null, false, false));
+		
+		Graph g2 = GraphSearchAlgorithms.reverseGraph(grph);
+		
+		while(!finishedNodes.isEmpty()){
+			int nodeNumber = ((Integer)finishedNodes.pop()).intValue();
+		
+			LinkedHashSet component = GraphSearchAlgorithms.directedDepthFirstSearch(g2, new Integer(nodeNumber), false, false);
+			for(Iterator it = component.iterator(); it.hasNext();){
+				Integer discoveredNode = (Integer)it.next();
+				g2.removeNode(discoveredNode.intValue());
+			}
+			
+			finishedNodes.removeAll(component);
+		}
+		
+		
 		int maxNodes = 0;
 		
 		int numberOfClusters = 0;
-		for(Iterator it = grph.nodes(); it.hasNext();){
-			Node n = (Node)it.next();
-			Integer nodeRow = new Integer(n.getRow());
-			if(!seenNodes[nodeRow.intValue()]){
-				seenNodes[nodeRow.intValue()] = true;
-				LinkedList preOrderSearch = new LinkedList(GraphSearchAlgorithms.directedDepthFirstSearch(grph, nodeRow, true, false));
-				
-				while(!preOrderSearch.isEmpty()){
-				LinkedHashSet postOrderSearch = GraphSearchAlgorithms.directedDepthFirstSearch(grph, (Integer)preOrderSearch.get(preOrderSearch.size()-1), false, false);
-				LinkedHashSet component = new LinkedHashSet(postOrderSearch);
-				component.retainAll(preOrderSearch);
-				
-				
-			
-				
-				preOrderSearch.removeAll(component);
-				for(Iterator componentIT = component.iterator(); componentIT.hasNext();){
-					seenNodes[((Integer)componentIT.next()).intValue()] = true;
-				}
-				
-				if(component.size() > maxNodes)
-					maxNodes = component.size();
+		
+		
 				
 		
-				numberOfClusters++;
 		
-			}
-			
-		
-		}
-		}
 		
 		this.strongComponentClusters = numberOfClusters;
 		this.maxStrongConnectedNodes = maxNodes;

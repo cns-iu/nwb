@@ -227,45 +227,45 @@ public class EdgeStats{
 	protected String edgeInfo(){
 		StringBuffer sb = new StringBuffer();
 		
-		sb.append("edges: " + this.numberOfEdges);
+		sb.append("Edges: " + this.numberOfEdges);
 		sb.append(System.getProperty("line.separator"));
 		sb.append(this.selfLoopInfo());
 		sb.append(this.parallelEdgeInfo());
-		sb.append(System.getProperty("line.separator"));
+		
 		if((this.numAdditionalNonNumericAttributes+this.numAdditionalNumericAttributes) > 0){
-		sb.append("Edge Attributes Present");
+		sb.append("Edge attributes:");
 		sb.append(System.getProperty("line.separator"));
 		if(this.numAdditionalNonNumericAttributes > 0){
-			sb.append("Nonnumeric Attributes");
+			sb.append("\tNonnumeric attributes:");
 			sb.append(System.getProperty("line.separator"));
 			sb.append(printEdgeAttributes(this.additionalNonNumericAttributes,false));
 		}
 		else{
-			sb.append("Did not detect any nonnumeric attributes");
+			sb.append("\tDid not detect any nonnumeric attributes");
 		}
 		sb.append(System.getProperty("line.separator"));
 		
 		if(this.numAdditionalNumericAttributes > 0){
-			sb.append("Numeric Attributes");
+			sb.append("\tNumeric attributes:");
 			sb.append(System.getProperty("line.separator"));
 			sb.append(printEdgeAttributes(this.additionalNumericAttributes,true));
 		}
 		else{
-			sb.append("Did not detect any numeric attributes");
+			sb.append("\tDid not detect any numeric attributes");
 		}
 		
 		sb.append(System.getProperty("line.separator"));
 		}
 		else{
-			sb.append("Did not detect any edge attributes");
+			sb.append("\tDid not detect any edge attributes");
 			sb.append(System.getProperty("line.separator"));
 		}
 		if(this.isValuedNetwork){
-			sb.append("This network seems to be valued.");
+			sb.append("\tThis network seems to be valued.");
 			sb.append(System.getProperty("line.separator"));
 		}
 		else{
-			sb.append("This network does not seem to be a valued network.");
+			sb.append("\tThis network does not seem to be a valued network.");
 			sb.append(System.getProperty("line.separator"));
 		}
 		return sb.toString();
@@ -275,12 +275,12 @@ public class EdgeStats{
 			StringBuffer sb = new StringBuffer();
 			DecimalFormat densityFormatter = null;
 			if(isNumeric){
-				sb.append("                     min     max    mean");
+				sb.append("\t\t\t\tmin\tmax\tmean");
 				sb.append(System.getProperty("line.separator"));
 				densityFormatter = new DecimalFormat("#.#####");
 			}
 			else{
-				sb.append("               characteristic value");
+				sb.append("\t\t\t\tExample value");
 				sb.append(System.getProperty("line.separator"));
 			}
 			for(int i = 0; i < attributeNames.size(); i++){
@@ -293,11 +293,11 @@ public class EdgeStats{
 					String spacer = "          ";
 					attributeName += spacer.substring(0,1+spacer.length()-attributeName.length());
 				}
-				sb.append(attributeName+"     ");
+				sb.append("\t\t"+attributeName+"\t");
 				if(isNumeric){
 					sb.append(densityFormatter.format(this.minValues[i])
-							+ "     " + densityFormatter.format(this.maxValues[i])
-							+ "     " + densityFormatter.format(this.meanValues[i]));
+							+ "\t" + densityFormatter.format(this.maxValues[i])
+							+ "\t" + densityFormatter.format(this.meanValues[i]));
 				}
 				else{
 					sb.append(this.characteristicValues[i].toString());

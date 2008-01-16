@@ -39,11 +39,12 @@ public class SelfLoopsParallelEdges {
 				HashSet temp = new HashSet(); //create the HashSet to hold real edges.
 				temp.add(e);
 				edges.put(se, temp); //link real edges to source and target.
+				
 			}
 			else{ //we've seen this source and target so we have a parallel edge.
 				if(((HashSet)edges.get(se)).add(e)){ //add the real edge to the mapping, 
 													//only if it is unique.
-
+					
 					parallelEdges.add(se); 
 				}
 
@@ -74,7 +75,11 @@ public class SelfLoopsParallelEdges {
 		}
 		//if the source and target are the same, add a selfLoop.
 		if(e.getSourceNode().getRow() == e.getTargetNode().getRow()){
-			selfLoops.add(e);
+			
+			this.selfLoops.add(e);
+			
+			
+			
 		}
 	}
 	/***
@@ -128,15 +133,18 @@ public class SelfLoopsParallelEdges {
 
 
 		}
-		sb.append(System.getProperty("line.separator"));
+		
 		return sb.toString();
 	}
 
 	public String printSelfLoops(){
+		
 		StringBuffer sb = new StringBuffer();
 		for(Iterator it = this.selfLoops.iterator(); it.hasNext();){
 			Edge edg = (Edge)it.next();
+			
 			Node nd = edg.getSourceNode();
+			
 			//sb.append((Edge)it.next());
 			sb.append("The node: \n\t");
 			for(int i = 0; i < nd.getColumnCount(); i++){
@@ -146,7 +154,7 @@ public class SelfLoopsParallelEdges {
 			sb.append(System.getProperty("line.separator"));
 
 		}
-		sb.append(System.getProperty("line.separator"));
+		
 		return sb.toString();
 	}
 
