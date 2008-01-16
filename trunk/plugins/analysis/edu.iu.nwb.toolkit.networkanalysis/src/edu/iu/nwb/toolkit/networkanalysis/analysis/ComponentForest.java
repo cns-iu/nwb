@@ -83,7 +83,8 @@ public class ComponentForest{
 	}
 	
 	public void strongComponentCalculation(final Graph grph){
-		
+		int maxNodes = 0;
+		int numberOfClusters = 0;
 		
 		Stack finishedNodes = new Stack();
 		finishedNodes.addAll(GraphSearchAlgorithms.directedDepthFirstSearch(grph, null, false, false));
@@ -99,13 +100,12 @@ public class ComponentForest{
 				g2.removeNode(discoveredNode.intValue());
 			}
 			
+			if(component.size() > maxNodes){
+				maxNodes = component.size();
+			}
+			numberOfClusters++;
 			finishedNodes.removeAll(component);
 		}
-		
-		
-		int maxNodes = 0;
-		
-		int numberOfClusters = 0;
 		
 		
 				
