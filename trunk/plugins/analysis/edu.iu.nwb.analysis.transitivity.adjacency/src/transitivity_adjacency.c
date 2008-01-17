@@ -15,8 +15,8 @@ Number of transitive ordered triples (i->j and j->k and i->k) is determined
 #include<stdlib.h>
 #include<string.h>
 
-#define LINELENGTH 1000
-#define NAMELENGTH 100
+#define LINELENGTH 10000
+#define NAMELENGTH 10000
 #define SINGLE 1
 #define HEADER 100
 
@@ -36,7 +36,7 @@ char **adjacencymatrix;
 int *nodeoutdegree;
 int *nodeindegree;
 int numberofselfloops;
-int numberoftriples, transitivity;
+double numberoftriples, transitivity;
 
 void determineTransitivityByAdjacency(char **);
 void determineNodeOutDegree(char **);
@@ -62,7 +62,7 @@ int main(int argc, char **argv)
   
   if(argc > 1)
     {
-      sscanf(argv[1], "%s", input_filename);      
+      sprintf(input_filename, "%s", argv[1]);
       scanInputFile(input_filename);
       readNodeSection(input_filename);
       readEdgeSection(input_filename);
@@ -86,8 +86,8 @@ void determineTransitivityByAdjacency(char **w)
 
   if(numberofselfloops > 0)
     printf("Self-loops are going to be ignored during calculations\n");
-  numberoftriples=0;
-  transitivity=0;
+  numberoftriples=0.0;
+  transitivity=0.0;
   for(j=0; j < numberofnodes; j++)
     {
       outneighbor=(int *) calloc(nodeoutdegree[j], sizeof(int));
@@ -110,17 +110,17 @@ void determineTransitivityByAdjacency(char **w)
 	for(k=0; k < nodeoutdegree[j]; k++)
 	  if(inneighbor[i]!=outneighbor[k])
 	    {
-	      numberoftriples++;
-	      transitivity=transitivity+w[inneighbor[i]][outneighbor[k]];
+	      numberoftriples=numberoftriples+1.0;
+	      transitivity=transitivity+(double)w[inneighbor[i]][outneighbor[k]];
 	    }
       free(outneighbor);
       free(inneighbor);
     }
-  printf("Number of ordered triples (i->j and j->k): %d\n", numberoftriples);
-  printf("Number of transitive ordered triples (i->j and j->k and i->k): %d\n", transitivity);
-  if(numberoftriples > 0)
+  printf("Number of ordered triples (i->j and j->k): %.0lf\n", numberoftriples);
+  printf("Number of transitive ordered triples (i->j and j->k and i->k): %.0lf\n", transitivity);
+  if(numberoftriples > 0.0)
     {
-      prevalence=(double)transitivity/(double)numberoftriples;
+      prevalence=transitivity/numberoftriples;
       printf("Transitivity (ratio): %lf\n", prevalence);
     }
 }
