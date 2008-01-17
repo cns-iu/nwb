@@ -15,8 +15,8 @@ Number of arcs involved in reciprocal relation is determined
 #include<stdlib.h>
 #include<string.h>
 
-#define LINELENGTH 1000
-#define NAMELENGTH 100
+#define LINELENGTH 10000
+#define NAMELENGTH 10000
 #define SINGLE 1
 #define HEADER 100
 
@@ -52,12 +52,12 @@ int main(int argc, char **argv)
   
   if(argc > 1)
     {
-      sscanf(argv[1], "%s", input_filename);      
+      sprintf(input_filename, "%s", argv[1]);
       scanInputFile(input_filename);
       readNodeSection(input_filename);
       readEdgeSection(input_filename);
       determineNumberOfSelfLoops();
-      determineReciprocityByArcMethod(sourcenodeid, targetnodeid, numberofedges);      
+      determineReciprocityByArcMethod(sourcenodeid, targetnodeid, numberofedges);
     }
   else
     printf("Error: No file has been specified\n");
