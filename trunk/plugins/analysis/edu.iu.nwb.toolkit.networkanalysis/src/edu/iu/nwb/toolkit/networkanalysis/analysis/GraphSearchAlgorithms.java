@@ -1,6 +1,5 @@
 package edu.iu.nwb.toolkit.networkanalysis.analysis;
 
-import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedHashSet;
 import java.util.LinkedList;
@@ -13,14 +12,21 @@ import prefuse.data.Node;
 
 public class GraphSearchAlgorithms {
 	protected static LinkedHashSet undirectedDepthFirstSearch(final Graph g, Integer n){
+		
+		LinkedHashSet nodeSet = new LinkedHashSet();
+		Integer nodeNumber;
+		if(n == null){  //If no node number is presented, search the whole graph.
+			for(Iterator it = g.nodes(); it.hasNext();){
+				nodeNumber = new Integer(((Node)it.next()).getRow());
+				runUDFS(g,nodeNumber,nodeSet);
+			}
+		}
+		else{  //Otherwise, just search the specific node.
+			nodeNumber = new Integer(n.intValue());
+			runUDFS(g,nodeNumber, nodeSet);
+		}
 
-		LinkedHashSet preOrder = new LinkedHashSet();
-
-
-		runUDFS(g,n, preOrder);
-
-
-		return preOrder;
+		return nodeSet;
 	}
 
 
@@ -57,25 +63,40 @@ public class GraphSearchAlgorithms {
 
 	private static void runUDFS(final Graph g, Integer n, LinkedHashSet pre){
 		Queue q = new LinkedList();
-		q.add(g.getNode(n.intValue()));
-
+		//q.add(g.getNode(n.intValue()));
+		Node nd;
+		Integer nodeRow;
+		Integer nodeNumber;
+		Edge edg;
+		Node nd2;
+			q.add(new Integer(n.intValue()));
 		while(!q.isEmpty()){
-			Node nd = (Node)q.poll();
-			Integer i = new Integer(nd.getRow());
-			if(!pre.contains(i)){
-		
-				pre.add(i);
+			//Node nd = (Node)q.poll();
+			//Integer nodeRow = new Integer(nd.getRow());
+			nodeRow = new Integer(((Integer)q.poll()).intValue());
+			if(!pre.contains(nodeRow)){
+				nd = g.getNode(nodeRow.intValue());
+				pre.add(nodeRow);
 
 				for(Iterator it = nd.edges(); it.hasNext();){
-					Edge edg = (Edge)it.next();
-					Node nd2 = edg.getTargetNode();
-					q.add(nd2);
+					edg = (Edge)it.next();
+					nd2 = edg.getTargetNode();
+					nodeNumber = new Integer(nd2.getRow());
+					if(!pre.contains(nodeNumber))
+						q.add(nodeNumber);
 					nd2 = edg.getSourceNode();
-					q.add(nd2);
+					nodeNumber = new Integer(nd2.getRow());
+					if(!pre.contains(nodeNumber))
+						q.add(nodeNumber);
 
 				}
 			}
 		}
+		nodeRow = null;
+		nodeNumber = null;
+		q = null;
+		edg = null;
+		nd2 = null;
 
 	}
 	
@@ -105,31 +126,36 @@ public class GraphSearchAlgorithms {
 	private static void runDDFS(final Graph g, Integer n, LinkedHashSet nodeSet, boolean isPreOrder){
 		boolean done = false;
 		
-		
-		
-		HashSet seen = new HashSet();
-		seen.addAll(nodeSet);
+		Node nd;
+		Node nd2;
+		Integer nodeRow;
+		Integer nodeNumber;
+	
+		//HashSet seen = new HashSet();
+		//seen.addAll(nodeSet);
 		
 		Stack nodeStack = new Stack();
-		nodeStack.add(g.getNode(n.intValue()));
-		while(!nodeStack.isEmpty()){
-			Node nd = (Node) nodeStack.peek();
-			
 		
-			Integer i = new Integer(nd.getRow());
-			if(!seen.contains(i)){
+		nodeStack.add(new Integer(n.intValue()));
+		while(!nodeStack.isEmpty()){
+			
+			nodeRow = (Integer)nodeStack.peek();
+			nd = g.getNode(nodeRow.intValue());
+			
+			if(!nodeSet.contains(nodeRow)){
 				
 				if(isPreOrder)
-					nodeSet.add(i);
-				seen.add(i);
+					nodeSet.add(nodeRow);
+				nodeSet.add(nodeRow);
 			}
 				done = true;
 			
 			
 				for(Iterator it = nd.outNeighbors(); it.hasNext();){
-					Node nd2 = ((Node)it.next());
-					if(!seen.contains(new Integer(nd2.getRow()))){
-					nodeStack.add(nd2);
+					nd2 = ((Node)it.next());
+					nodeNumber = new Integer(nd2.getRow());
+					if(!nodeSet.contains(nodeNumber)){
+						nodeStack.add(nodeNumber);
 					done = false;
 					break;
 				}
@@ -138,10 +164,18 @@ public class GraphSearchAlgorithms {
 			
 			if(done){
 				if(!isPreOrder)
-					nodeSet.add(i);
+					nodeSet.add(nodeRow);
 				nodeStack.pop();
 			}
 		}
+
+		nodeStack = null;
+		nd = null;
+		nd2 = null;
+		nodeRow = null;
+		nodeNumber = null;
+		//seen = null;
+		
 		
 
 	}

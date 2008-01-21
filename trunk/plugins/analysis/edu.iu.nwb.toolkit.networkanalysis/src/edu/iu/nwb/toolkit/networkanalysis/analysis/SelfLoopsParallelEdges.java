@@ -5,20 +5,41 @@ import java.util.HashSet;
 import java.util.Iterator;
 
 import prefuse.data.Edge;
+import prefuse.data.Graph;
 import prefuse.data.Node;
 
 public class SelfLoopsParallelEdges {
-	HashSet selfLoops;
-	HashSet parallelEdges;
-	HashMap edges;
+	
+	
+	int numberOfSelfLoops = 0;
+	int numberOfParallelEdges = 0;
 	
 	boolean directed = false;
+	
+	String selfLoopInfo;
+	String parallelEdgeInfo;
+	
 
-	public SelfLoopsParallelEdges(boolean directed){
-		selfLoops = new HashSet();
-		parallelEdges = new HashSet();
-		edges = new HashMap();
-		this.directed = directed;
+	public SelfLoopsParallelEdges(final Graph g){
+		HashSet selfLoops = new HashSet();
+		HashSet parallelEdges = new HashSet();
+		HashMap edges = new HashMap();
+		boolean directed = g.isDirected();
+		Edge edg;
+		
+		for(Iterator it = g.edges(); it.hasNext();){
+			edg = (Edge)it.next();
+			
+			this.addEdge(edg, directed, selfLoops, parallelEdges, edges);
+		}
+		
+		selfLoopInfo = this.calculateSelfLoops(selfLoops);
+		parallelEdgeInfo = this.calculateParallelEdges(parallelEdges, edges);
+		
+		selfLoops = null;
+		edges = null;
+		parallelEdges = null;
+		edg = null;
 
 	}
 
@@ -30,10 +51,10 @@ public class SelfLoopsParallelEdges {
 	 */
 	
 	
-	public void addEdge(Edge e){
+	public void addEdge(Edge e, boolean isDirected, HashSet selfLoops, HashSet parallelEdges, HashMap edges){
 		SimpleEdge se = new SimpleEdge(e);
 
-		if(directed){
+		if(isDirected){
 
 			if(edges.get(se) == null){ //We haven't seen this source and target
 				HashSet temp = new HashSet(); //create the HashSet to hold real edges.
@@ -46,6 +67,7 @@ public class SelfLoopsParallelEdges {
 													//only if it is unique.
 					
 					parallelEdges.add(se); 
+					this.numberOfParallelEdges++;
 				}
 
 			}	
@@ -63,11 +85,12 @@ public class SelfLoopsParallelEdges {
 				if(((HashSet)edges.get(se)).add(e)){
 
 					parallelEdges.add(se);
+					this.numberOfParallelEdges++;
 				}
 			}
 			else{
 				if(((HashSet)edges.get(se2)).add(e)){
-
+					this.numberOfParallelEdges++;
 					parallelEdges.add(se2);
 				}
 			}
@@ -76,43 +99,32 @@ public class SelfLoopsParallelEdges {
 		//if the source and target are the same, add a selfLoop.
 		if(e.getSourceNode().getRow() == e.getTargetNode().getRow()){
 			
-			this.selfLoops.add(e);
-			
+			selfLoops.add(e);
+			this.numberOfSelfLoops++;
 			
 			
 		}
 	}
-	/***
-	 * 
-	 * @param n
-	 * @comment
-	 * Do statistical calculations on n's edges.
-	 */
-	public void addNode(Node n){
-		
-	}
+
 
 	public int getNumSelfLoops(){
-		return selfLoops.size();
+		return this.numberOfSelfLoops;
 	}
 
 	public int getNumParallelEdges(){
-		int numParallelEdges = 0;
 
-		for(Iterator it1 = this.parallelEdges.iterator();it1.hasNext();){
-			SimpleEdge se = (SimpleEdge)it1.next();
-			numParallelEdges += ((HashSet)this.edges.get(se)).size();
-		}
 
-		return numParallelEdges;
+		return this.numberOfParallelEdges;
+		
+	
 	}
 
-	public String printParallelEdges(){
+	private String calculateParallelEdges(HashSet parallelEdges, HashMap edges){
 		StringBuffer sb = new StringBuffer();
-		for(Iterator it1 = this.parallelEdges.iterator();it1.hasNext();){
+		for(Iterator it1 = parallelEdges.iterator();it1.hasNext();){
 			SimpleEdge se = (SimpleEdge)it1.next();
-			sb.append("There are " + ((HashSet)this.edges.get(se)).size() + " edges between node: \n\t");
-			Iterator it2 = ((HashSet)this.edges.get(se)).iterator();
+			sb.append("There are " + ((HashSet)edges.get(se)).size() + " edges between node: \n\t");
+			Iterator it2 = ((HashSet)edges.get(se)).iterator();
 			Edge edg = (Edge)it2.next();
 			Node nd = edg.getSourceNode();
 			int columns = nd.getColumnCount();
@@ -137,10 +149,10 @@ public class SelfLoopsParallelEdges {
 		return sb.toString();
 	}
 
-	public String printSelfLoops(){
+	private String calculateSelfLoops(HashSet selfLoops){
 		
 		StringBuffer sb = new StringBuffer();
-		for(Iterator it = this.selfLoops.iterator(); it.hasNext();){
+		for(Iterator it = selfLoops.iterator(); it.hasNext();){
 			Edge edg = (Edge)it.next();
 			
 			Node nd = edg.getSourceNode();
@@ -157,5 +169,14 @@ public class SelfLoopsParallelEdges {
 		
 		return sb.toString();
 	}
+	
+	public String printSelfLoops(){
+		return this.selfLoopInfo;
+	}
+	
+	public String printParallelEdges(){
+		return this.parallelEdgeInfo;
+	}
+	
 
 }

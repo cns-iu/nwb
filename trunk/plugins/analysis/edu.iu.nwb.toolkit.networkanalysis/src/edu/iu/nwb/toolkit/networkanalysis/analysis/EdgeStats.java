@@ -32,7 +32,7 @@ public class EdgeStats{
 
 	public EdgeStats(final Graph graph){
 		this.numberOfEdges = graph.getEdgeCount();
-		this.selfLoopsParallelEdges = new SelfLoopsParallelEdges(graph.isDirected());
+		this.selfLoopsParallelEdges = new SelfLoopsParallelEdges(graph);
 
 		this.initializeAdditionalAttributes(graph);
 
@@ -91,7 +91,7 @@ public class EdgeStats{
 	public void addEdge(final Edge e, boolean[] seenEdges, HashSet observedValues){
 		if(!seenEdges[e.getRow()]){
 			seenEdges[e.getRow()] = true;
-			this.selfLoopsParallelEdges.addEdge(e);
+			
 			if(this.numAdditionalNonNumericAttributes > 0){
 				processEdgeAttributes(e,this.additionalNonNumericAttributes,observedValues,false);
 			}
@@ -144,7 +144,8 @@ public class EdgeStats{
 				this.isValuedNetwork = true;
 			}
 		}
-		
+		observedValues = null;
+		seenEdges = null;
 	}
 
 	public SelfLoopsParallelEdges getSelfLoopsParallelEdges(){

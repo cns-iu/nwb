@@ -72,13 +72,17 @@ public class ComponentForest{
 					
 					
 					cluster++;
+					tree = null;
 				}
 			
-			
+				
 			}
 		
 		this.weakComponentClusters = cluster;
 		this.maxWeakConnectedNodes = maxNodes;
+		
+		seenNodes = null;
+		
 		
 	}
 	
@@ -105,6 +109,7 @@ public class ComponentForest{
 			}
 			numberOfClusters++;
 			finishedNodes.removeAll(component);
+			component = null;
 		}
 		
 		
@@ -115,7 +120,9 @@ public class ComponentForest{
 		this.strongComponentClusters = numberOfClusters;
 		this.maxStrongConnectedNodes = maxNodes;
 		
+		finishedNodes = null;
 		
+		g2 = null;
 		
 	}
 

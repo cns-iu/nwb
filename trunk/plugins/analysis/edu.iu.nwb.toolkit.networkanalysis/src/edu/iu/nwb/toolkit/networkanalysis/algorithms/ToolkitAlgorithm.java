@@ -86,7 +86,7 @@ public class ToolkitAlgorithm implements Algorithm{
 				"Graph and Network Analysis Log");
 		
 		
-		
+		np = null;
 		return new Data[] {outputData};
 	}
 	
