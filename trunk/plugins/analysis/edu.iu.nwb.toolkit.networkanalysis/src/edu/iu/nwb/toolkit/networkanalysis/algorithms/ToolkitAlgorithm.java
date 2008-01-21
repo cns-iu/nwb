@@ -49,15 +49,19 @@ public class ToolkitAlgorithm implements Algorithm{
 				warning.append("Did not calculate density due to the presence of self-loops.");
 			 if(!np.hasSelfLoops() && np.hasParallelEdges())
 				warning.append("Did not calculate density due to the presence of parallel edges.");
+			 warning.append(System.getProperty("line.separator"));
 		}
 		if(np.hasSelfLoops() && !np.isDirected()){
-			warning.append("This graph claims to be undirected but has self-loops. Please re-examine your data.\n");
+			warning.append("This graph claims to be undirected but has self-loops. Please re-examine your data.");
+			warning.append(System.getProperty("line.separator"));
 		}
 		if(np.hasParallelEdges() && !np.isDirected()){
-			warning.append("This graph claims to be undirected but has parallel edges. Please re-examine your data.\n");
+			warning.append("This graph claims to be undirected but has parallel edges. Please re-examine your data.");
+			warning.append(System.getProperty("line.separator"));
 		}
 		if((np.hasParallelEdges() || np.hasSelfLoops()) && !np.isDirected()){
-			warning.append("Many algorithms will not function correctly with this graph.\n");
+			warning.append("Many algorithms will not function correctly with this graph.");
+			warning.append(System.getProperty("line.separator"));
 		}
 		
 		//logger.log(LogService.LOG_INFO, np.testPrint());
@@ -72,6 +76,7 @@ public class ToolkitAlgorithm implements Algorithm{
 		
 		if(logFile == null){
 			logger.log(LogService.LOG_ERROR, "Unable to generate a log file.");
+			warning.append(System.getProperty("line.separator"));
 			return null;
 		}
 		

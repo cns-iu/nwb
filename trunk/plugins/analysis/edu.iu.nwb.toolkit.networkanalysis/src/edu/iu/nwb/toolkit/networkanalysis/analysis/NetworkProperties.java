@@ -118,30 +118,39 @@ public class NetworkProperties {
 	protected String connectedInfo(){
 		StringBuffer sb = new StringBuffer();
 		if(cf.isWeaklyConnected()){
-			sb.append("This graph is weakly connected.\n");
+			sb.append("This graph is weakly connected.");
+			sb.append(System.getProperty("line.separator"));
 		}
 		else{
-			sb.append("This graph is not weakly connected.\n");
+			sb.append("This graph is not weakly connected.");
+			sb.append(System.getProperty("line.separator"));
 		}
 
 		sb.append("There are " + cf.getWeakComponentClusters() + " weakly connected components. (" + this.nodeStats.getNumberOfIsolatedNodes() +
-				" isolates)\n");
-		sb.append("The largest connected component consists of " + cf.getMaximumWeakConnectedNodes()+ " nodes.\n");
+				" isolates)");
+		sb.append(System.getProperty("line.separator"));
+		sb.append("The largest connected component consists of " + cf.getMaximumWeakConnectedNodes()+ " nodes.");
+		sb.append(System.getProperty("line.separator"));
 		
 		if(this.isDirected()){
-			sb.append(System.getProperty("line.separator"));
+			
 			if(cf.isStronglyConnected()){
-				sb.append("This graph is strongly connected\n");
+				sb.append("This graph is strongly connected");
+				sb.append(System.getProperty("line.separator"));
 			}
 			else{
-				sb.append("This graph is not strongly connected.\n");
+				sb.append("This graph is not strongly connected.");
+				sb.append(System.getProperty("line.separator"));
 			}
 			
-			sb.append("There are " + cf.getStrongComponentClusters() + " strongly connected components.\n");
+			sb.append("There are " + cf.getStrongComponentClusters() + " strongly connected components.");
+			sb.append(System.getProperty("line.separator"));
 			sb.append("The largest strongly connected component consists of " + cf.getMaximumStrongConnectedNodes() + " nodes.");
+			sb.append(System.getProperty("line.separator"));
 		}
 		else{
 			sb.append("Did not calculate strong connectedness because this graph was not directed.");
+			sb.append(System.getProperty("line.separator"));
 		}
 		
 		return sb.toString();
