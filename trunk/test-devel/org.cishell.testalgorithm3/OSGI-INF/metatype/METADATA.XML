@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<metatype:MetaData xmlns:metatype="http://www.osgi.org/xmlns/metatype/v1.0.0">
+	<OCD name="Test Algorithm 3" id="org.cishell.testalgorithm3.TestAlgorithm.OCD"
+		 description="Tests preference stuff ">
+		 <AD name="NEWNAME" id="NEWID" type="String" default="NEW DEFAULT VALUUUUU"/>
+	</OCD>
+	
+	<OCD name="Test Algorithm 3 Prefs" id="org.cishell.testalgorithm3.prefs.OCD"
+		description="Test Algorithm 3 Preferences">
+		<AD name="boolName" id="boolID" type="Boolean" default="true"/>
+	</OCD>
+	
+	<OCD name="Global Prefs" id="org.cishell.testalgorithm3.global_prefs.OCD"
+		description="GLOORB">
+		<AD name="Enable Logging" id="logging" type="Boolean" default="true"/>
+	</OCD>
+	
+	<OCD name="Global Prefs" id="org.cishell.testalgorithm3.global_prefs2.OCD"
+		description="GLOOReeeeeeeeB">
+		<AD name="Enable widget" id="widgetOn" type="Boolean" default="true"/>
+	</OCD>
+	
+	<Designate pid="org.cishell.testalgorithm3.TestAlgorithm">
+		<Object ocdref="org.cishell.testalgorithm3.TestAlgorithm.OCD" />
+	</Designate>
+	
+	<Designate pid="org.cishell.testalgorithm3.TestAlgorithm.prefs">
+		<Object ocdref="org.cishell.testalgorithm3.prefs.OCD"/>
+	</Designate>
+	
+	<Designate pid="org.cishell.testalgorithm3.TestAlgorithm.global_prefs">
+		<Object ocdref="org.cishell.testalgorithm3.global_prefs.OCD"/>
+	</Designate>
+	
+	<Designate pid="org.cishell.testalgorithm3.TestAlgorithm.global_prefs2">
+		<Object ocdref="org.cishell.testalgorithm3.global_prefs2.OCD"/>
+	</Designate>
+</metatype:MetaData>
