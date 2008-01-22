@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<component name="org.cishell.service.prefadmin.internal.PrefAdmin.component" immediate="true">
+	<implementation class="org.cishell.service.prefadmin.internal.PrefAdminImpl"/>
+	<properties entry="OSGI-INF/algorithm.properties"/>
+	<reference name="LOG" interface="org.osgi.service.log.LogService"/>
+	<reference name="MTS" interface="org.osgi.service.metatype.MetaTypeService"/>
+	<reference name="CS"  interface="org.osgi.service.cm.ConfigurationAdmin"/>
+	
+	<reference name="PREF_HOLDERS"
+		interface="org.osgi.service.cm.ManagedService"
+		target="(prefs=true)"
+		cardinality="0..n"
+		policy="dynamic"
+		bind="prefHolderRegistered"
+		unbind="prefHolderUnregistered"
+		/>
+		
+	<service>
+		<provide interface=
+			"org.cishell.service.prefadmin.PrefAdmin"/>
+		<provide interface=
+			"org.osgi.service.cm.ConfigurationPlugin"/>
+	</service>
+</component>
