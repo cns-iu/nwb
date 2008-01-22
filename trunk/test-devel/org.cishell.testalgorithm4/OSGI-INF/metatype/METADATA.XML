@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<metatype:MetaData xmlns:metatype="http://www.osgi.org/xmlns/metatype/v1.0.0">
+	<OCD name="Test Algorithm 4" id="org.cishell.testalgorithm4.TestAlgorithm4.prefs.OCD"
+		 description="sdpfkspofk ">
+		 <AD name="stringName" id="stringID" type="String" default="string default"/>
+	</OCD>
+	<Designate pid="org.cishell.testalgorithm4.TestAlgorithm4.prefs">
+		<Object ocdref="org.cishell.testalgorithm4.TestAlgorithm4.prefs.OCD" />
+	</Designate>
+</metatype:MetaData>
