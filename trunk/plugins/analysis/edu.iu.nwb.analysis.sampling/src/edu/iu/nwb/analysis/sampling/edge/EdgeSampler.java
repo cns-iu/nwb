@@ -35,7 +35,7 @@ public class EdgeSampler implements JungSampler {
 	}
 
 	public String getSampleName() {
-		return "Node Sample";
+		return "Edge Sample";
 	}
 
 }
