@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<component name="org.cishell.gui.prefgui.PrefenceGuiAlgorithm.component" immediate="true">
+	<implementation class="org.cishell.gui.prefgui.PrefenceGuiAlgorithmFactory"/>
+	<properties entry="OSGI-INF/algorithm.properties"/>
+	<reference name="LOG" interface="org.osgi.service.log.LogService"/>
+	<reference name="MTS" interface="org.osgi.service.metatype.MetaTypeService"/>
+	<reference name="PREF_ADMIN" interface="org.cishell.service.prefadmin.PrefAdmin"/>
+	
+	<service>
+		<provide interface=
+			"org.cishell.framework.algorithm.AlgorithmFactory"/>
+	</service>
+</component>
