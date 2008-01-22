@@ -92,6 +92,8 @@ public class Symmetrize implements Algorithm {
 		attributes.put(sourceField, oldSchema.getColumnType(sourceField));
 		attributes.put(targetField, oldSchema.getColumnType(targetField));
 		
+		
+		
 		//we'll keep any attributes that are not dropped
 		Enumeration keys = parameters.keys();
 		while(keys.hasMoreElements()) {
@@ -111,6 +113,11 @@ public class Symmetrize implements Algorithm {
 			String column = (String) columns.next();
 			Class klass = (Class) attributes.get(column);
 			schema.addColumn(column, klass);
+		}
+		
+		if(matrix && bare) {
+			schema.addColumn("weight", Integer.class, new Integer(1));
+			this.parameters.put(PREFIX + "weight", parameters.get("bare"));
 		}
 		
 		//empty tables
@@ -210,15 +217,24 @@ public class Symmetrize implements Algorithm {
 			}
 		}
 		
+		
+		Table realEdgeTable = edgeTable.getSchema().instantiate();
+		
 		if(matrix) {
-			
+			Iterator iter = edgeTable.tuples();
+			while(iter.hasNext()) {
+				Tuple tuple = (Tuple) iter.next();
+				if(!isEmptyTuple(tuple)) {
+					realEdgeTable.addTuple(tuple);
+				}
+			}
 		}
 		
 		
 		
 		Graph resultGraph = new Graph(
 				nodeTable,
-				edgeTable,
+				realEdgeTable,
 				false,
 				graph.getNodeKeyField(),
 				graph.getEdgeSourceField(),
@@ -242,9 +258,13 @@ public class Symmetrize implements Algorithm {
 			String name = schema.getColumnName(attribute);
 			Object aggregate = this.parameters.get(PREFIX + name);
 			if(aggregate != null) {
-				if(row.canGet(name, Number.class) && row.canSet(name, Integer.class)) {
-					row.setInt(name, 0);
-				} else if(row.canSet(name, String.class)){
+				if(row.canGet(name, Number.class)) {
+					if(row.canSetInt(name)) {
+						row.setInt(name, 0);
+					} else if(row.canSetFloat(name)) {
+						row.setFloat(name, 0);
+					}
+				} else if(row.canSetString(name)){
 					row.set(name, "");
 				}
 			}
