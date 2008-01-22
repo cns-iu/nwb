@@ -37,15 +37,17 @@ public class SymmetrizeFactory implements AlgorithmFactory {
 		
 		String[] numericChoices = new String[] {"drop", "max", "min", "average", "sum"};
 		String[] stringChoices = new String[] {"drop", "first alphabetically", "last alphabetically"};
+		String[] bareChoices = new String[] {"max", "min"};
 		
-		boolean needed = false;
+		
+		boolean bare = true;
 		
 		for(int attribute = 0; attribute < graph.getEdgeTable().getColumnCount(); attribute++) {
 			String columnName = graph.getEdgeTable().getColumnName(attribute);
 			if(columnName.equals(graph.getEdgeSourceField()) || columnName.equals(graph.getEdgeTargetField())) {
 				continue;
 			}
-			needed = true;
+			bare = false;
 			if(graph.getEdgeTable().canGet(columnName, Number.class)) {
 				definition.addAttributeDefinition(ObjectClassDefinition.REQUIRED,
 					new BasicAttributeDefinition(Symmetrize.PREFIX + columnName, columnName, "How to aggregate this attribute", AttributeDefinition.STRING, numericChoices, numericChoices));
@@ -54,10 +56,23 @@ public class SymmetrizeFactory implements AlgorithmFactory {
 					new BasicAttributeDefinition(Symmetrize.PREFIX + columnName, columnName, "How to aggregate this attribute", AttributeDefinition.STRING, stringChoices, stringChoices));
 			}
 		}
-		if(needed) {
-			return new BasicMetaTypeProvider(definition);
-		} else {
-			return null;
+		
+		
+		
+		definition.addAttributeDefinition(ObjectClassDefinition.REQUIRED,
+				new BasicAttributeDefinition("matrix", "Treat graph as a matrix (instead of an edgelist)", "Attributes on non-existent edges " +
+						"will be treated as zero or the empty string. " +
+						"Any edges set to entirely zero or the empty string will be removed.",
+						AttributeDefinition.BOOLEAN));
+		if(bare) {
+			definition.addAttributeDefinition(ObjectClassDefinition.REQUIRED,
+					new BasicAttributeDefinition("bare", "Rule for present/not present (only used if treated as a matrix)",
+							"Present edges are treated as having an attribute with weight 1; non-present edges are treated as " +
+							"having weight zero.",
+							AttributeDefinition.STRING, bareChoices, bareChoices));
 		}
+		
+		
+		return new BasicMetaTypeProvider(definition);
     }
 }

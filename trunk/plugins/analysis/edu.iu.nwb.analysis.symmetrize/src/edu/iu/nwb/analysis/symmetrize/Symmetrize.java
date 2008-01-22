@@ -57,13 +57,22 @@ public class Symmetrize implements Algorithm {
     	Graph graph = (Graph) data[0].getData();
 		
     	LogService logger = (LogService)context.getService(LogService.class.getName());
+    	
+    	boolean matrix = ((Boolean) parameters.get("matrix")).booleanValue();
+    	boolean bare = parameters.get("bare") != null;
+    	
+    	
+    	if(matrix) {
+    		logger.log(LogService.LOG_INFO, "You requested this graph be treated as a matrix. Missing directed edges will " +
+    				"be treated as edges with zero and empty string-valued attributes");
+    	}
 		
     	if(!graph.isDirected()) {
     		logger.log(LogService.LOG_WARNING, "The graph is already undirected. Parallel edges will still be merged, but " +
     				"check your data if you expected this graph to be directed\n\n");
     	}
     	
-    	if(parameters.size() == 0) {
+    	if(!matrix && bare) {
     		logger.log(LogService.LOG_INFO, "No edge attributes to symmetrize. " +
     				"Edges (directed or undirected) between the same pair of nodes will still be " +
     				"replaced with a single undirected edge");
@@ -164,6 +173,23 @@ public class Symmetrize implements Algorithm {
 			
 			List group = (List) groupings.get(key);
 			
+			if(!source.equals(target) && matrix) {
+				boolean left = false;
+				boolean right = false;
+				Iterator tuples = group.iterator();
+				while(tuples.hasNext()) {
+					Tuple tuple = (Tuple) tuples.next();
+					if(source.equals(tuple.get(sourceField))) {
+						left = true;
+					} else {
+						right = true;
+					}
+				}
+				if(!left || !right) {
+					group.add(emptyTuple(schema));
+				}
+			}
+			
 			int row = edgeTable.addRow();
 			edgeTable.set(row, sourceField, source);
 			edgeTable.set(row, targetField, target);
@@ -182,6 +208,10 @@ public class Symmetrize implements Algorithm {
 					edgeTable.set(row, attribute, newValue);
 				}
 			}
+		}
+		
+		if(matrix) {
+			
 		}
 		
 		
@@ -204,4 +234,41 @@ public class Symmetrize implements Algorithm {
 		
 		return new Data[] { result };
     }
+
+	private Tuple emptyTuple(Schema schema) {
+		Table table = schema.instantiate();
+		Tuple row = table.getTuple(table.addRow());
+		for(int attribute = 0; attribute < schema.getColumnCount(); attribute++) {
+			String name = schema.getColumnName(attribute);
+			Object aggregate = this.parameters.get(PREFIX + name);
+			if(aggregate != null) {
+				if(row.canGet(name, Number.class) && row.canSet(name, Integer.class)) {
+					row.setInt(name, 0);
+				} else if(row.canSet(name, String.class)){
+					row.set(name, "");
+				}
+			}
+		}
+		return row;
+	}
+	
+	private boolean isEmptyTuple(Tuple tuple) {
+		Schema schema = tuple.getSchema();
+		for(int attribute = 0; attribute < schema.getColumnCount(); attribute++) {
+			String name = schema.getColumnName(attribute);
+			Object aggregate = this.parameters.get(PREFIX + name);
+			if(aggregate != null) {
+				if(tuple.canGet(name, Number.class)) {
+					if(((Number) tuple.get(name)).doubleValue() != 0.0) {
+						return false;
+					}
+				} else if(tuple.canGetString(name) && "".equals(tuple.getString(name))){
+					return false;
+				}
+			}
+		}
+		
+		
+		return true;
+	}
 }
