@@ -301,4 +301,18 @@ Dr. Katy Borner (katy@indiana.edu)
          version="0.0.0"
          unpack="false"/>
 
+   <plugin
+         id="edu.iu.nwb.preprocessing.tablefilter"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+   <plugin
+         id="edu.iu.nwb.preprocessing.trimedges"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
 </feature>
