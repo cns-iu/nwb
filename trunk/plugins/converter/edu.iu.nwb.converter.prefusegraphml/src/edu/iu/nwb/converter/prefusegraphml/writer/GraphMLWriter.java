@@ -73,8 +73,8 @@ public class GraphMLWriter extends AbstractGraphWriter {
     public void writeGraph(Graph graph, OutputStream os) throws DataIOException
     {
         // first, check the schemas to ensure GraphML compatibility
-        Schema ns = graph.getNode(0).getSchema();//graph.getNodeTable().getSchema();
-        Schema es = graph.getEdge(0).getSchema();//graph.getEdgeTable().getSchema();
+        Schema ns = ((Node) graph.nodes().next()).getSchema();//graph.getNodeTable().getSchema();
+        Schema es = ((Edge) graph.edges().next()).getSchema();//graph.getEdgeTable().getSchema();
         checkGraphMLSchema(ns);
         checkGraphMLSchema(es);
         
