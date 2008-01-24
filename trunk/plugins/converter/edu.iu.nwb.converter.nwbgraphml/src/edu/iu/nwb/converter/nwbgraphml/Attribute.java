@@ -1,5 +1,7 @@
 package edu.iu.nwb.converter.nwbgraphml;
 
+import edu.iu.nwb.converter.nwb.common.NWBFileProperty;
+
 /* KeyDO class set 
  * attributes of key element of Graphml File */
  
@@ -48,7 +50,7 @@ public class Attribute {
 	public void setType(String type)
 	{
 		if("double".equals(type)) {
-			this.type = "float";
+			this.type = NWBFileProperty.TYPE_REAL;
 		} else {
 			this.type = type;
 		}

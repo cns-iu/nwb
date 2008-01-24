@@ -153,7 +153,7 @@ public class NWBToGraphMLbyStax implements Algorithm {
 		"http://graphml.graphdrawing.org/xmlns http://graphml.graphdrawing.org/xmlns/1.0/graphml.xsd");
     
      }
-    
+        
     // write GraphML-Attributes
     private void writeAttributes(XMLStreamWriter xtw, ValidateNWBFile validator)
     					throws XMLStreamException{
@@ -170,7 +170,7 @@ public class NWBToGraphMLbyStax implements Algorithm {
   	        xtw.writeAttribute("id", attr.getAttrName().toLowerCase());
   	        xtw.writeAttribute("for", "node");
   	        xtw.writeAttribute("attr.name", attr.getAttrName());
-  	        xtw.writeAttribute("attr.type", attr.getDataType());
+  	        xtw.writeAttribute("attr.type", getGraphmlType(attr));
   	        xtw.writeEndElement();  	      
     	}
     	
@@ -189,7 +189,7 @@ public class NWBToGraphMLbyStax implements Algorithm {
       	        xtw.writeAttribute("id", attr.getAttrName().toLowerCase());
       	        xtw.writeAttribute("for", "edge");
       	        xtw.writeAttribute("attr.name", attr.getAttrName());
-      	        xtw.writeAttribute("attr.type", attr.getDataType());
+      	        xtw.writeAttribute("attr.type", getGraphmlType(attr));
       	        xtw.writeEndElement(); 
         		
         	}
@@ -503,4 +503,13 @@ public class NWBToGraphMLbyStax implements Algorithm {
 		
 	}
 	
+    private String getGraphmlType(NWBAttribute attr) {
+    	String type = attr.getDataType();
+    	
+    	if (NWBFileProperty.TYPE_REAL.equals(type)) {
+    		type = "double";
+    	}
+    	
+    	return type;
+    }	
 }
