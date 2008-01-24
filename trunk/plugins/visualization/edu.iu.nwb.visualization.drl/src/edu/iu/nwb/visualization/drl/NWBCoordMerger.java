@@ -63,8 +63,8 @@ public class NWBCoordMerger implements NWBFileParserHandler {
 			
 			if (st.countTokens() > 1) {
 				int id = Integer.parseInt(st.nextToken());
-				float x = Float.parseFloat(st.nextToken());
-				float y = Float.parseFloat(st.nextToken());
+				double x = Double.parseDouble(st.nextToken());
+				double y = Double.parseDouble(st.nextToken());
 				
 				idToXMap.put(id, x);
 				idToYMap.put(id, y);
@@ -81,8 +81,8 @@ public class NWBCoordMerger implements NWBFileParserHandler {
 	}
 	
 	public void setNodeSchema(LinkedHashMap schema) {
-		schema.put(xpos, NWBFileProperty.TYPE_FLOAT);
-		schema.put(ypos, NWBFileProperty.TYPE_FLOAT);
+		schema.put(xpos, NWBFileProperty.TYPE_REAL);
+		schema.put(ypos, NWBFileProperty.TYPE_REAL);
 		
 		out.setNodeSchema(schema);
 		
