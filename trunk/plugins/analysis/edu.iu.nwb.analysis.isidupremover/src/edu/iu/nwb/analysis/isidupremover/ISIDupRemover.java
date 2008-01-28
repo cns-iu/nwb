@@ -32,6 +32,12 @@ public class ISIDupRemover {
 
     public TablePair removeDuplicatePublications (Table origTable,
     		LogService log, boolean printRunningLogToConsole) {
+    	
+    	if (! tableSanityCheckPasses(origTable)) {
+    		this.log.log(LogService.LOG_WARNING, "Unable to remove duplicates from table. Returning original table.");
+    		return new TablePair(origTable, origTable);
+    	}
+    	
     	this.log = log;
     	
     	StringBuilder runningLog = new StringBuilder();
@@ -40,6 +46,8 @@ public class ISIDupRemover {
     	log.log(LogService.LOG_INFO, "Loaded " + origTable.getRowCount() + " records.");
     	Integer savedPubIndex = null;
     	String savedPubID = null;
+    	
+    	int recordsWithoutUIDs = 0;
     	
     	//iterate through the publications by ID
     	IntIterator publicationsByIDIter = origTable.rowsSortedBy(ISITag.UNIQUE_ID.name, true);
@@ -57,7 +65,15 @@ public class ISIDupRemover {
     	//for every publication in order of ID...
     	while (publicationsByIDIter.hasNext()) {
     		Integer currentPubIndex = (Integer) publicationsByIDIter.next();
+    		
     		String currentPubID = origTable.getString(currentPubIndex.intValue(), ISITag.UNIQUE_ID.name);
+    		
+    		//if this publication has no ID...
+    		if (currentPubID == null) {
+    			//skip it
+    			recordsWithoutUIDs++;
+    			continue;
+    		}
     		
     		//if this publication has a different ID than the last saved publication...
     		if (! currentPubID.equals(savedPubID)) {
@@ -130,6 +146,12 @@ public class ISIDupRemover {
 		log.log(LogService.LOG_INFO, "");
     	log.log(LogService.LOG_INFO, "" + noDupTable.getRowCount() + " records with unique ISI IDs are available via Data Manager.");
 		
+    	if (recordsWithoutUIDs > 0) {
+    	log.log(LogService.LOG_WARNING, "" + recordsWithoutUIDs + 
+    			" records did not have unique IDs (specified with the UT tag in ISI format)," +
+    			" so we were unable to determine whether there were duplicates of these records. " +
+    			"The absence of a unique ID is most likely a flaw in the original data.");
+    	}
     	if (logFile != null) {
     		log.log(LogService.LOG_INFO, "");
     	log.log(LogService.LOG_INFO, "Wrote log to " + logFile.getAbsolutePath());
@@ -180,4 +202,19 @@ public class ISIDupRemover {
     	
 		return pubToRemoveIndex;
 	}
+    
+    private boolean tableSanityCheckPasses(Table isiTable) {
+
+    	boolean hasAUniqueIDColumn = isiTable.canGetString(ISITag.UNIQUE_ID.name);
+
+    	if (! hasAUniqueIDColumn) {
+    		this.log.log(LogService.LOG_WARNING, "ISI Table does not have a unique ID column (abbreviated UT)." +
+    				"It is possible that no records (a.k.a papers) in the original ISI file specified a unique ID." +
+    				"Therefore, we are unable to determine which papers are duplicates.");
+    		return false;
+    	}
+    	
+    	
+    	return true;
+    }
 }
