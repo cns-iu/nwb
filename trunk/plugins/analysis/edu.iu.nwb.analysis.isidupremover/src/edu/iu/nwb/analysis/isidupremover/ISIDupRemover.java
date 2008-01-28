@@ -173,6 +173,22 @@ public class ISIDupRemover {
     	String savedPubTitle = savedPubTuple.getString(ISITag.TITLE.name);
     	
     	runningLog.append("Found a pair of publication records with ID '" + commonID + "'\r\n");
+    	
+    	//check to see that both have a title before attempting to announce their titles.
+    	//if one does not have a title, preemptively choose to remove it.
+    	
+    	if (currentPubTitle == null && savedPubTitle == null) {
+    		runningLog.append("Neither have a title specified (Very unusual).");
+    	} else if (currentPubTitle == null) {
+    		runningLog.append("The first does not have a title.");
+    		runningLog.append("Removing first.");
+    		return currentPubIndex;
+    	} else if (savedPubTitle == null) {
+    		runningLog.append("The second does not have a title.");
+    		runningLog.append("Removing second.");
+    		return savedPubIndex;
+    	}
+    	
     	if (currentPubTitle.equals(savedPubTitle)) {
     		String commonTitle = currentPubTitle;
     		runningLog.append("Both titled '" + commonTitle + "'\r\n");
@@ -184,7 +200,9 @@ public class ISIDupRemover {
     	int compareResult = 
     		mainPubComparer.compare(currentPubTuple, savedPubTuple, runningLog);
     	
+
     	Integer pubToRemoveIndex;
+    	
     	if (compareResult > 0) {
     		runningLog.append("Removing second\r\n");
     		pubToRemoveIndex =  savedPubIndex;
