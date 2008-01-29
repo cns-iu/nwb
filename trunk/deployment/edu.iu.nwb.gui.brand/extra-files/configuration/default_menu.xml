@@ -32,18 +32,20 @@
 	<menu name="Snowball Sampling (n nodes)" pid="edu.iu.nwb.analysis.sampling.snowball.SnowballAlgorithm"/>
 	<menu name="Node Sampling" pid="edu.iu.nwb.analysis.sampling.node.NodeAlgorithm"/>
 	<menu name="Edge Sampling" pid="edu.iu.nwb.analysis.sampling.edge.EdgeAlgorithm"/>
-   	<menu type="break"/>
+	<menu name="Trim by Degree" pid="edu.iu.nwb.preprocessing.trimedges.Trim"/>
+	<menu name="Filter by Number" pid="edu.iu.nwb.preprocessing.tablefilter.Filter"/>
+	<menu type="break"/>
 	<menu name="Remove Self Loops" pid="edu.iu.nwb.analysis.selfloops.Remove"/>
 	<menu name="Delete Isolates" pid="edu.iu.nwb.analysis.isolates.Delete"/>
 	<menu name="Symmetrize" pid="edu.iu.nwb.analysis.symmetrize.Symmetrize"/>
 	<menu name="Dichotomize" pid="edu.iu.nwb.analysis.dichotomize.Dichotomize"/>
 	<menu type="break"/>
-    	<menu name="K-Core Extraction" pid="edu.iu.nwb.analysis.kcore.Extract"/>
-    	<menu name="K-Coreness Annotation" pid="edu.iu.nwb.analysis.kcore.Annotate"/>
-    	<menu type="break"/>
-    	<menu name="ISI Duplicate Remover" pid="edu.iu.nwb.analysis.isidupremover.ISIDupRemoverAlgorithm"/>
-    	<menu name="Extract Co-Authorship Network" pid="edu.iu.nwb.analysis.extractcoauthorship"/>
-    	<menu name="Merge Nodes" pid="edu.iu.nwb.tools.mergenodes.MergeNodes"/>
+    <menu name="K-Core Extraction" pid="edu.iu.nwb.analysis.kcore.Extract"/>
+    <menu name="K-Coreness Annotation" pid="edu.iu.nwb.analysis.kcore.Annotate"/>
+    <menu type="break"/>
+    <menu name="ISI Duplicate Remover" pid="edu.iu.nwb.analysis.isidupremover.ISIDupRemoverAlgorithm"/>
+    <menu name="Extract Co-Authorship Network" pid="edu.iu.nwb.analysis.extractcoauthorship"/>
+    <menu name="Merge Nodes" pid="edu.iu.nwb.tools.mergenodes.MergeNodes"/>
     </top_menu>
     <top_menu name="Modeling">
 	<menu name="Random Graph" pid="edu.iu.nwb.modeling.erdosrandomgraph"/>
@@ -109,6 +111,8 @@
 
     <top_menu name="Visualization">
  	<menu name="Circular (JUNG)" pid="edu.iu.nwb.visualization.jungnetworklayout.JUNGCircleLayout"/>
+ 	<menu type="break"/>
+	<menu name="DrL (VxOrd)" pid="edu.iu.nwb.visualization.drl.VxOrdAlgorithm"/> 	
 	<menu name="Pre-defined Positions (prefuse beta)" pid="edu.iu.nwb.visualization.prefuse.beta.specified.Specified"/>
 	<menu type="break"/>
 	<menu name="Radial Tree/Graph (prefuse alpha)" pid="edu.iu.nwb.visualization.radialgraph.RadialGraph"/> 
@@ -125,6 +129,11 @@
 	<menu name="Small World (prefuse alpha)" pid="edu.iu.nwb.visualization.prefuse.alpha.smallworld.app.SmallWorld"/>
 	<menu type="break"/>
 	<menu name="Parallel Coordinates (demo)" pid="org.mediavirus.parvis.ParallelCoordinatesAlgorithm"/>
+	<menu type="break"/>
+	<menu name="LaNet" pid="nwb.visualization.lanet"/>
+	<menu type="break"/>
+	<menu name="GUESS" pid="edu.iu.nwb.visualization.guess"/>
+	
     </top_menu>
 
     <top_menu name="Tools">
