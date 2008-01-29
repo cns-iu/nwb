@@ -10,6 +10,7 @@ public interface PreferenceAD extends AttributeDefinition {
 	public static final int FONT = 22;
 	public static final int PATH = 23;
 	public static final int CHOICE = 24;
+	public static final int COLOR = 25;
 
 	public abstract int getCardinality();
 

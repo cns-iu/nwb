@@ -3,21 +3,26 @@
 	<OCD name="Test Algorithm 3" id="org.cishell.testalgorithm3.TestAlgorithm.OCD"
 		 description="Tests preference stuff ">
 		 <AD name="NEWNAME" id="NEWID" type="String" default="NEW DEFAULT VALUUUUU"/>
+		  
 	</OCD>
 	
-	<OCD name="Test Algorithm 3 Prefs" id="org.cishell.testalgorithm3.prefs.OCD"
-		description="Test Algorithm 3 Preferences">
-		<AD name="boolName" id="boolID" type="Boolean" default="true"/>
+	<OCD name="General" id="org.cishell.testalgorithm3.global_prefs.OCD"
+		description=" ">
+		<AD name="Save data files to" id="saveDataDir" type="String" default="directory:/home/mwlinnem/"/>
+		<AD name="Open .txt files with" id="txtFileProg" type="String" default="file:"/>
+		<AD name="Open .csv files with" id="csvFileProg"  type="String" default="file:"/>
+		<AD name="Prompt to save on exit?" id="promptSave" type="Boolean" default="true"/>
 	</OCD>
 	
-	<OCD name="Global Prefs" id="org.cishell.testalgorithm3.global_prefs.OCD"
-		description="GLOORB">
-		<AD name="Enable Logging" id="logging" type="Boolean" default="true"/>
-	</OCD>
-	
-	<OCD name="Global Prefs" id="org.cishell.testalgorithm3.global_prefs2.OCD"
-		description="GLOOReeeeeeeeB">
-		<AD name="Enable widget" id="widgetOn" type="Boolean" default="true"/>
+	<OCD name="Logging" id="org.cishell.testalgorithm3.global_prefs2.OCD"
+		description=" ">
+		 <AD name="Set default logging level" id="logLevel" type="String" default="">
+		 	<Option label="Minimal" value="Minimal"/>
+		 	<Option label="Normal" value="Normal"/>
+		 	<Option label="Verbose" value="Verbose"/>
+		 </AD>
+		 
+		 <AD name="Save log files to" id="logFileSaveDir" type="String" default="directory:/tmp/"/>
 	</OCD>
 	
 	<Designate pid="org.cishell.testalgorithm3.TestAlgorithm">

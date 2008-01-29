@@ -1,11 +1,11 @@
 package org.cishell.gui.prefgui;
 
 import java.io.IOException;
-import java.util.Dictionary;
 
 import org.cishell.service.prefadmin.PreferenceAD;
 import org.cishell.service.prefadmin.PreferenceOCD;
 import org.eclipse.jface.preference.BooleanFieldEditor;
+import org.eclipse.jface.preference.ColorFieldEditor;
 import org.eclipse.jface.preference.DirectoryFieldEditor;
 import org.eclipse.jface.preference.FieldEditorPreferencePage;
 import org.eclipse.jface.preference.FileFieldEditor;
@@ -75,7 +75,6 @@ public class CIShellPreferencePage extends FieldEditorPreferencePage {
     					getFieldEditorParent(),
     					true);
     			addField(rgField);
-    			
     		} else if (attrType == PreferenceAD.FONT) {
     			
     			FontFieldEditor foField = 
@@ -85,11 +84,13 @@ public class CIShellPreferencePage extends FieldEditorPreferencePage {
     			
     			DirectoryFieldEditor dField = 
     				new DirectoryFieldEditor(prefAD.getID(), prefAD.getName(), getFieldEditorParent());
+    			dField.setEmptyStringAllowed(true);
     			addField(dField);
     		} else if (attrType == PreferenceAD.FILE) {
     			
     			FileFieldEditor fiField = 
     				new FileFieldEditor(prefAD.getID(), prefAD.getName(), getFieldEditorParent());
+    			fiField.setEmptyStringAllowed(true);
     			addField(fiField);
     		} else if (attrType == PreferenceAD.PATH) {
     			
@@ -111,6 +112,11 @@ public class CIShellPreferencePage extends FieldEditorPreferencePage {
     			FloatFieldEditor fField = 
     				new FloatFieldEditor(prefAD.getID(), prefAD.getName(), getFieldEditorParent());
     			addField(fField);
+    		} else if (attrType == PreferenceAD.COLOR) {
+    			
+    			ColorFieldEditor cField = 
+    				new ColorFieldEditor(prefAD.getID(), prefAD.getName(), getFieldEditorParent());
+    			addField(cField);
     		}
     	}
 	}

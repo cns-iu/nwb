@@ -17,12 +17,16 @@ public class PreferenceADImpl implements AttributeDefinition, PreferenceAD {
 	private int preferenceType;
 	private String[] interpretedDefaultValue;
 	
+	private String platformIndepInstallDirPath;
+	
 	public PreferenceADImpl(LogService log, AttributeDefinition realAD) {
 		this.log = log;
 		
 		this.realAD = realAD;
 		
 		this.preferenceType = inferPreferenceType(realAD);
+		
+		this.platformIndepInstallDirPath = generateIndepInstallDirPath();
 		this.interpretedDefaultValue = interpretDefaultValue(this.realAD.getDefaultValue());
 	}
 	
@@ -41,6 +45,8 @@ public class PreferenceADImpl implements AttributeDefinition, PreferenceAD {
 				preferenceType = PATH;
 			} else if (realAD.getOptionLabels() != null) {
 				preferenceType = CHOICE;
+			} else if (defaultVal.startsWith(TypePrefixes.COLOR_PREFIX)) {
+				preferenceType = COLOR;
 			} else {
 				preferenceType = TEXT;
 			}
@@ -66,6 +72,14 @@ public class PreferenceADImpl implements AttributeDefinition, PreferenceAD {
 		return interpretedDefaultValue;
 	}
 	
+	private String generateIndepInstallDirPath() {
+		String installDirPath = System.getProperty("osgi.install.area").replace("file:", "");
+		File installDirFile = new File(installDirPath);
+		URI platformIndependentFile = installDirFile.toURI();
+		String platformIndepInstallDirPath = platformIndependentFile.toString();
+		return platformIndepInstallDirPath;
+	}
+	
 	private String[] interpretDefaultValue(String[] rawDefaultValues) {
 		String[] interpretedDefaultValues = new String[rawDefaultValues.length];
 		for (int i = 0; i < rawDefaultValues.length; i++) {
@@ -81,9 +95,40 @@ public class PreferenceADImpl implements AttributeDefinition, PreferenceAD {
 		
 		if (preferenceType == DIRECTORY) {
 			String uriFormattedDefaultValue = rawDefaultValue.replace(TypePrefixes.DIRECTORY_PREFIX, "file:");
-			
-			try {
-			URI uriInterpretation = new URI(uriFormattedDefaultValue);
+			return makePlatformSpecificPath(uriFormattedDefaultValue);
+		} else if (preferenceType == FILE) {
+			if (rawDefaultValue.equals("file:")) {
+				//allows empty values
+				return "";
+			}
+			String uriFormattedDefaultValue = rawDefaultValue; //already in URI form, semi-coincidentally 
+			return makePlatformSpecificPath(uriFormattedDefaultValue);
+		} else if (preferenceType == FONT) {
+			return rawDefaultValue.replace(TypePrefixes.FONT_PREFIX, "");
+		} else if (preferenceType == PATH) {
+			return rawDefaultValue.replace(TypePrefixes.PATH_PREFIX, "");
+		} else if (preferenceType == TEXT) {
+			return rawDefaultValue;
+		} else if (preferenceType == COLOR) {
+			return rawDefaultValue.replace(TypePrefixes.COLOR_PREFIX, "");
+		}else { 
+			return rawDefaultValue;
+		}	
+	}
+	
+	private String makePlatformSpecificPath(String platformIndependentPath) {
+		//if the original platformIndependentPath is relative, stick the home directory on to it.
+		
+		if (! platformIndependentPath.startsWith("file:/")) {
+			//it's a relative path
+			//make it absolute
+			 platformIndependentPath = platformIndepInstallDirPath + platformIndependentPath.replace("file:", "");
+		}
+		//make the whole platformIndependentPath platform specific
+		
+		try {
+			URI uriInterpretation = new URI(platformIndependentPath);
+			System.out.println("uriInterpretation: " + uriInterpretation.toString());
 			File platformSpecificInterpretation = new File(uriInterpretation); 
 			
 			/*
@@ -94,35 +139,11 @@ public class PreferenceADImpl implements AttributeDefinition, PreferenceAD {
 			System.out.println("platformSpecificDirectory: " + platformSpecificDirectory);
 			return platformSpecificDirectory;
 			} catch (URISyntaxException e) {
-				this.log.log(LogService.LOG_WARNING, "Invalid syntax " + rawDefaultValue + " in preference AD " + realAD.getName());
+				this.log.log(LogService.LOG_WARNING, "Invalid syntax  in preference AD " + realAD.getName());
 				return System.getProperty("osgi.install.area").replace("file:", "");
 			}	
-		} else if (preferenceType == FILE) {
-			String uriFormattedDefaultValue = rawDefaultValue; //already in URI form, semi-coincidentally 
 			
-			try {
-			URI uriInterpretation = new URI(uriFormattedDefaultValue);
-			File platformSpecificInterpretation = new File(uriInterpretation); 
-			
-			/*
-			* may need to change to canonical path at some point, but that throws an IOException 
-		    * (and may cause performance problems), so skipping for now
-		     */
-			String platformSpecificDirectory = platformSpecificInterpretation.getAbsolutePath(); 
-			return platformSpecificDirectory;
-			} catch (URISyntaxException e) {
-				this.log.log(LogService.LOG_WARNING, "Invalid Syntax " + rawDefaultValue + " in preference OCD " +realAD.getName());
-				return System.getProperty("osgi.install.area").replace("file:", "");
-			}	
-		} else if (preferenceType == FONT) {
-			return rawDefaultValue.replace(TypePrefixes.FONT_PREFIX, "");
-		} else if (preferenceType == PATH) {
-			return rawDefaultValue.replace(TypePrefixes.PATH_PREFIX, "");
-		} else if (preferenceType == TEXT) {
-			return rawDefaultValue;
-		} else {
-			return rawDefaultValue;
-		}	
+		//return it
 	}
 
 	/* (non-Javadoc)
