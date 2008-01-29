@@ -5,23 +5,29 @@ import java.util.Dictionary;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.cishell.service.prefadmin.PreferenceAD;
+import org.cishell.service.prefadmin.PreferenceOCD;
 import org.eclipse.jface.preference.IPersistentPreferenceStore;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.osgi.service.cm.Configuration;
-import org.osgi.service.metatype.AttributeDefinition;
+import org.osgi.service.log.LogService;
 import org.osgi.service.metatype.ObjectClassDefinition;
 
 public class CIShellPreferenceStore implements IPersistentPreferenceStore {
 
-	private ObjectClassDefinition prefOCD; //could be useful if we implement some new features
+	private LogService log;
+	
+	private PreferenceOCD prefOCD; //could be useful if we implement some new features
 	private Configuration prefConf;
 	private Dictionary prefDict;
 	private Map prefDefaults;
-	private Map prefTypes;
+	//private Map prefTypes;
 	
 	private boolean needsSaving = false;
 	
-	public CIShellPreferenceStore(ObjectClassDefinition prefOCD, Configuration prefConf) {
+	public CIShellPreferenceStore(LogService log, PreferenceOCD prefOCD, Configuration prefConf) {
+		this.log = log;
+		
 		this.prefOCD = prefOCD;
 		this.prefConf = prefConf;
 		this.prefDict = prefConf.getProperties();
@@ -78,14 +84,10 @@ public class CIShellPreferenceStore implements IPersistentPreferenceStore {
 	}
 
 	public String getString(String name) {
-		System.out.println("Get string is being called!");
-		System.out.println("Looking for values for field " + name);
 		
 		Object result = this.prefDict.get(name);
 		if (result == null) {
-			System.out.println("Result is null");
 		} else {
-			System.out.println("result is " + result.toString());
 		}
 		return (String) this.prefDict.get(name);
 	}
@@ -154,23 +156,22 @@ public class CIShellPreferenceStore implements IPersistentPreferenceStore {
 		this.prefConf.update(this.prefDict);
 	}
 	
-	private void generatePrefDefaultsAndTypes(ObjectClassDefinition prefOCD) {
+	private void generatePrefDefaultsAndTypes(PreferenceOCD prefOCD) {
 
 		
-		AttributeDefinition[] prefADs = prefOCD.getAttributeDefinitions(ObjectClassDefinition.ALL);
+		PreferenceAD[] prefADs = prefOCD.getPreferenceAttributeDefinitions(ObjectClassDefinition.ALL);
 		
 		Map prefDefaults = new HashMap(prefADs.length);
 		Map prefTypes = new HashMap(prefADs.length);
 		
 		for (int ii = 0; ii < prefADs.length; ii++) {
-			AttributeDefinition prefAD = prefADs[ii];
+			PreferenceAD prefAD = prefADs[ii];
+			System.out.println("SETTING UP PREFERENCE DEFAULTS");
 			
 			prefDefaults.put(prefAD.getID(), prefAD.getDefaultValue()[0]);
-			prefTypes.put(prefAD.getID(), new Integer(prefAD.getType()));
 		}
 		
 		this.prefDefaults = prefDefaults;
-		this.prefTypes = prefTypes;
 	}
 	
 	//We don't set defaults like this

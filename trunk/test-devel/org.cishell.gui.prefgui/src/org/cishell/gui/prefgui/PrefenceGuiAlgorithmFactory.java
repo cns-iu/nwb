@@ -21,18 +21,16 @@ public class PrefenceGuiAlgorithmFactory implements AlgorithmFactory {
 	private PrefAdmin prefAdmin;
 	
     protected void activate(ComponentContext ctxt) {
-    	System.out.println("PREF GUI ACTIVATION BEGIN!");
     	this.log = (LogService) ctxt.locateService("LOG");
         this.mts = (MetaTypeService)ctxt.locateService("MTS");
         this.prefAdmin = (PrefAdmin) ctxt.locateService("PREF_ADMIN");
-    	System.out.println("PREF GUI ACTIVATION END!");
     }
     
     protected void deactivate(ComponentContext ctxt) {
     }
 
     public Algorithm createAlgorithm(Data[] data, Dictionary parameters, CIShellContext context) {
-        return new PrefenceGuiAlgorithm(data, parameters, context, prefAdmin);
+        return new PrefenceGuiAlgorithm(data, parameters, context, prefAdmin, this.log);
     }
     
     public MetaTypeProvider createParameters(Data[] data) {

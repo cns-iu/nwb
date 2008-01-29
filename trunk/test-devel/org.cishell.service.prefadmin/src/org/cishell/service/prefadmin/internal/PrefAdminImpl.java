@@ -1,5 +1,6 @@
 package org.cishell.service.prefadmin.internal;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Dictionary;
 import java.util.Enumeration;
@@ -11,12 +12,14 @@ import org.osgi.framework.ServiceReference;
 import org.osgi.service.cm.Configuration;
 import org.osgi.service.cm.ConfigurationAdmin;
 import org.osgi.service.cm.ConfigurationEvent;
+import org.osgi.service.cm.ConfigurationListener;
+import org.osgi.service.cm.ConfigurationPlugin;
 import org.osgi.service.component.ComponentContext;
 import org.osgi.service.log.LogService;
+import org.osgi.service.metatype.AttributeDefinition;
 import org.osgi.service.metatype.MetaTypeService;
-import org.osgi.service.cm.ConfigurationPlugin;
 
-public class PrefAdminImpl implements PrefAdmin, ConfigurationPlugin {
+public class PrefAdminImpl implements PrefAdmin, ConfigurationPlugin, ConfigurationListener {
 
 	
 	private LogService log;
@@ -25,6 +28,8 @@ public class PrefAdminImpl implements PrefAdmin, ConfigurationPlugin {
 	
 	private PrefReferenceProcessor prefProcessor;
 	private List prefReferencesToBeProcessed = new ArrayList();
+	
+	private List prefHolderReferences = new ArrayList();
 	
 	private boolean hasBeenActivated = false;
 
@@ -45,7 +50,6 @@ public class PrefAdminImpl implements PrefAdmin, ConfigurationPlugin {
 	}
 	
     protected void activate(ComponentContext ctxt) {
-    	System.out.println("PrefAdminImpl activated");
     	
     	this.log = (LogService) ctxt.locateService("LOG");
     	this.mts = (MetaTypeService) ctxt.locateService("MTS");
@@ -63,18 +67,18 @@ public class PrefAdminImpl implements PrefAdmin, ConfigurationPlugin {
     }
     
     protected void deactivate(ComponentContext ctxt) {
-    	System.out.println("PrefAdminImpl deactivated");
     }
     
     protected void prefHolderRegistered(ServiceReference prefHolder) {
-    	System.out.println("PrefAdminImpl prefHolderRegistered called, with service " + prefHolder.getProperty("service.pid").toString());
-    	
+    	System.out.println("ServiceReference " + prefHolder.getProperty("service.pid") + " beginning registration");
     	this.prefReferencesToBeProcessed.add(prefHolder);
     	
     	if (this.hasBeenActivated == true) {
     		this.prefProcessor.processPrefReferences((ServiceReference[]) this.prefReferencesToBeProcessed.toArray(new ServiceReference[0]));
     		this.prefReferencesToBeProcessed.clear();
     	}
+    	
+    	this.prefHolderReferences.add(prefHolder);
     }
     
     protected void prefHolderUnregistered(ServiceReference prefHolder) {
@@ -83,15 +87,19 @@ public class PrefAdminImpl implements PrefAdmin, ConfigurationPlugin {
 
 	public void modifyConfiguration(ServiceReference reference,
 			Dictionary properties) {
-		System.out.println("My my! the Config Dictionary for " + reference.getProperty("service.pid") + "has landed upon my doorstep!");
+		
+		System.out.println("Injecting global preferences into " + reference.getProperty("service.pid"));
+
 		//inject global preferences into configuration objects headed for ManagedServices
-		System.out.println("  Modifying a configuration, adding global stuff");
 		PrefPage[] globalPrefPages = getGlobalPrefPages();
 		for (int ii = 0; ii < globalPrefPages.length; ii++) {
 			PrefPage globalPrefPage = globalPrefPages[ii];
 			Configuration globalPrefConf = globalPrefPage.getPrefConf();
 			
+			System.out.println("  Injecting " + globalPrefConf.getPid());
+			
 			String namespace = globalPrefConf.getPid();
+			AttributeDefinition d;
 			
 			Dictionary globalPrefDict = globalPrefConf.getProperties();
 			
@@ -103,20 +111,47 @@ public class PrefAdminImpl implements PrefAdmin, ConfigurationPlugin {
 			
 				String keyForConfiguration = namespace + "." + id;
 				
-				System.out.println("Adding " + keyForConfiguration + ": " + value);
 				properties.put(keyForConfiguration, value);
 			}
 		}
 	}
 
 	public void configurationEvent(ConfigurationEvent event) {
-		System.out.println("EVENT: " + event.toString());
 		if (event.getType() == event.CM_UPDATED) {
-			System.out.println("Updated!");
+			System.out.println("UPDATED event received for " + event.getPid());
+			if (isGlobalConf(event.getPid())) {
+				System.out.println("  Sending global preferences");
+				sendGlobalPreferences();
+			} else {
+				System.out.println("  NOT sending global preferences");
+			}
 		} else if (event.getType() == event.CM_DELETED) {
-			System.out.println("Deleted!");
 		}
-		
-		System.out.println("PID is: " + event.getPid());
+	}
+	
+	/**
+	 * Call when a global preference object is created or updated.
+	 * Necessary because changes to global preference do not
+	 * cause an update event for every ManagedService.
+	 */
+	public void sendGlobalPreferences() {
+		try {
+		for (int ii = 0; ii < this.prefHolderReferences.size(); ii++) {
+			ServiceReference prefHolder = (ServiceReference) this.prefHolderReferences.get(ii);
+			Configuration localPrefConf = ca.getConfiguration((String) prefHolder.getProperty("service.pid"));
+			try {
+			localPrefConf.update();
+			} catch (IOException e) {
+				this.log.log(LogService.LOG_ERROR, "Unable to update configuration for " + localPrefConf.getPid(), e);
+			}
+		}
+		} catch (IOException e) {
+			this.log.log(LogService.LOG_ERROR, "Unable to obtain all configuration objects", e);
+		}
+	}
+	
+	private boolean isGlobalConf(String pid) {
+		return (pid.substring(0, pid.length() - 1).endsWith("global_prefs")
+				|| pid.endsWith("global_prefs"));
 	}
 }

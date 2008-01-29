@@ -27,54 +27,42 @@ public class TestAlgorithm4Factory implements AlgorithmFactory, ManagedService {
     String pid;
 
     protected void activate(ComponentContext ctxt) {
+    	System.out.println("TestAlgorithm 4 beginning activation");
         //You may delete all references to metatype service if 
         //your algorithm does not require parameters and return
         //null in the createParameters() method
-    	System.out.println("Algorithm 4 started activating");
         MetaTypeService mts = (MetaTypeService)ctxt.locateService("MTS");
         
         this.log = (LogService) ctxt.locateService("LOG");
         this.ca = (ConfigurationAdmin) ctxt.locateService("CA");
         provider = mts.getMetaTypeInformation(ctxt.getBundleContext().getBundle());       
         this.pid = (String) ctxt.getProperties().get("service.pid");
-        System.out.println("Algorithm 4 done activating");
+        System.out.println("TestAlgorithm 4 done activating");
     }
     protected void deactivate(ComponentContext ctxt) {
         provider = null;
     }
 
     public Algorithm createAlgorithm(Data[] data, Dictionary parameters, CIShellContext context) {
-//    	this.log.log(LogService.LOG_WARNING, "We are probably fucked!");
-//    	try {
-//    	Configuration conf = ca.getConfiguration(pid, null);
-//    	Dictionary dict = conf.getProperties();
-//    	if (dict == null) {
-//    		dict = new Hashtable();
-//    	}
-//    	dict.put("YEE", "HAW");
-//    	this.properties = dict;
-//    	conf.update(dict);
-//    	} catch (IOException e) {
-//    		e.printStackTrace();
-//    		System.out.println("BLURG!");
-//    	}
+
+    	System.out.println("TestAlgorithm4 executed!");
+    	printProperties(this.properties);
         return new TestAlgorithm4(data, parameters, context);
     }
     public MetaTypeProvider createParameters(Data[] data) {
         return provider;
     }
 	public void updated(Dictionary properties) throws ConfigurationException {
-		System.out.println("TestAlgorithm4 updated!");
 		
 		this.properties = properties;
-		printProperties();
+		System.out.println("TestAlgorithm4 updated!");
+		printProperties(this.properties);
 	}
 	
-	private void printProperties() {
-		System.out.println("  Keys and values in ConfigurationAdmin properties dictionary:");
-			
+	 private void printProperties(Dictionary properties) {
+			System.out.println("  Properties are as follows:");
 			if (properties == null) {
-				System.out.println("    properties was null");
+				System.out.println("    Dictionary is null!");
 			} else {
 				Enumeration propertiesKeys = properties.keys();
 				
@@ -82,9 +70,8 @@ public class TestAlgorithm4Factory implements AlgorithmFactory, ManagedService {
 					String propertiesKey = (String) propertiesKeys.nextElement();
 					
 					Object propertiesValue = properties.get(propertiesKey);
-					
-					System.out.println("    " + propertiesKey + ": " + propertiesValue.toString());
+					System.out.println("    " + propertiesKey + ":" + propertiesValue);
 				}
 			}
-		}
+	}
 }

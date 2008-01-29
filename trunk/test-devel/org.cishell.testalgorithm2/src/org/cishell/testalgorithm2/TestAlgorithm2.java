@@ -18,37 +18,22 @@ public class TestAlgorithm2 implements Algorithm {
     
     private BundleContext bContext;
     private ConfigurationAdmin configAdmin;
+    private Dictionary prefs;
     
     
     public TestAlgorithm2(Data[] data, Dictionary parameters, CIShellContext context,
-    		BundleContext bContext, ConfigurationAdmin configAdmin) {
+    		BundleContext bContext, ConfigurationAdmin configAdmin, Dictionary prefs) {
         this.data = data;
         this.parameters = parameters;
         this.context = context;
         this.bContext = bContext;
         this.configAdmin = configAdmin;
+        
+        this.prefs = prefs;
     }
 
     public Data[] execute() {
-//    	try {
-//        Configuration config = 
-//        	configAdmin.getConfiguration("org.cishell.testalgorithm2.TestAlgorithm2");
-//        
-//        Dictionary originalDict = config.getProperties();
-//        System.out.println("ORIGINALDICT: " + originalDict.toString());
-//        
-//        Dictionary newDict = new Hashtable();
-//        System.out.println("NEWDICT: " + newDict.toString());
-//        newDict.put("New key", "New valuuuuue");
-//        config.update(newDict);
-//        
-//        System.out.println("WHAT COMES OUT!?!?: " + config.getProperties().toString());
-//        System.out.println("WHAT COMES OUT VALUES!!!!?: " + config.getProperties().get("New key").toString());
-//        
-//    	} catch (IOException e) {
-//    		e.printStackTrace();
-//    	}
-//    	
-    	return null;        
+    	System.out.println("stringID is " + prefs.get("stringID"));
+    	return null;
     }
 }

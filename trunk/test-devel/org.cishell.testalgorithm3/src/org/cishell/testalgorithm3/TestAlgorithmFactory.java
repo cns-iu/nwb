@@ -16,15 +16,16 @@ import org.osgi.service.metatype.MetaTypeService;
 
 public class TestAlgorithmFactory implements AlgorithmFactory, ManagedService {
     private MetaTypeProvider provider;
+    private Dictionary properties;
 
     protected void activate(ComponentContext ctxt) {
+    	System.out.println("TestAlgorithm 3 beginning activation");
         //You may delete all references to metatype service if 
         //your algorithm does not require parameters and return
         //null in the createParameters() method
         MetaTypeService mts = (MetaTypeService)ctxt.locateService("MTS");
         provider = mts.getMetaTypeInformation(ctxt.getBundleContext().getBundle());       
-       
-        System.out.println("TestAlgorithm 3 properties in activate!_!_!_!_!_!_");
+        
   Dictionary properties = ctxt.getProperties();
         
         Enumeration propertiesKeys = properties.keys();
@@ -34,21 +35,43 @@ public class TestAlgorithmFactory implements AlgorithmFactory, ManagedService {
 			
 			Object propertiesValue = properties.get(propertiesKey);
 			
-			System.out.println("    " + propertiesKey + ": " + propertiesValue.toString());
 		}
+		
+		System.out.println("TestAlgorithm 3 done activating");
     }
     protected void deactivate(ComponentContext ctxt) {
         provider = null;
     }
 
     public Algorithm createAlgorithm(Data[] data, Dictionary parameters, CIShellContext context) {
+    	System.out.println("TestAlgorithm3 executed!");
+    	printProperties(this.properties);
         return new TestAlgorithm(data, parameters, context);
     }
     public MetaTypeProvider createParameters(Data[] data) {
         return provider;
     }
+    
+    private void printProperties(Dictionary properties) {
+		System.out.println("  Properties are as follows:");
+		if (properties == null) {
+			System.out.println("    Dictionary is null!");
+		} else {
+			Enumeration propertiesKeys = properties.keys();
+			
+			while (propertiesKeys.hasMoreElements()) {
+				String propertiesKey = (String) propertiesKeys.nextElement();
+				
+				Object propertiesValue = properties.get(propertiesKey);
+				System.out.println("    " + propertiesKey + ":" + propertiesValue);
+			}
+		}
+	}
+    
 	public void updated(Dictionary properties) throws ConfigurationException {
-		// TODO Auto-generated method stub
-		
+
+		this.properties = properties;
+		System.out.println("TestAlgorithm 3 updated!");
+		printProperties(properties);
 	}
 }

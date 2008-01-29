@@ -25,14 +25,12 @@ public class TestAlgorithm2Factory implements AlgorithmFactory, ManagedService, 
     private Dictionary properties;
     
     protected void activate(ComponentContext ctxt) {
+    	System.out.println("TestAlgorithm 2 beginning activation");
         //You may delete all references to metatype service if 
         //your algorithm does not require parameters and return
         //null in the createParameters() method
         MetaTypeService mts = (MetaTypeService)ctxt.locateService("MTS");
         provider = mts.getMetaTypeInformation(ctxt.getBundleContext().getBundle()); 
-        
-        System.out.println("TestAlgorithm2Factory activate method:");
-        System.out.println("  Keys and values in ComponentContext properties dictionary:");
         
         Dictionary properties = ctxt.getProperties();
         
@@ -42,12 +40,12 @@ public class TestAlgorithm2Factory implements AlgorithmFactory, ManagedService, 
 			String propertiesKey = (String) propertiesKeys.nextElement();
 			
 			Object propertiesValue = properties.get(propertiesKey);
-			
-			System.out.println("    " + propertiesKey + ": " + propertiesValue.toString());
 		}
 		
 		this.bContext = ctxt.getBundleContext();
 		this.configAdmin = (ConfigurationAdmin) ctxt.locateService("CM");
+		
+		System.out.println("TestAlgorithm 2 done activating");
     }
     
     protected void deactivate(ComponentContext ctxt) {
@@ -55,45 +53,37 @@ public class TestAlgorithm2Factory implements AlgorithmFactory, ManagedService, 
     }
 
     public Algorithm createAlgorithm(Data[] data, Dictionary parameters, CIShellContext context) {
-    	System.out.println("TestAlgorithm2Factory createAlgorithm method:");
-    	System.out.println("  Keys and values in parameters dictionary:");
         
-    	//not renaming everything parametersX for sake of ease
+//    	//not renaming everything parametersX for sake of ease
+//    	
+//    	Enumeration propertiesKeys = parameters.keys();
+//		
+//		while (propertiesKeys.hasMoreElements()) {
+//			String propertiesKey = (String) propertiesKeys.nextElement();
+//			
+//			Object propertiesValue = parameters.get(propertiesKey);
+//		}
     	
-    	Enumeration propertiesKeys = parameters.keys();
-		
-		while (propertiesKeys.hasMoreElements()) {
-			String propertiesKey = (String) propertiesKeys.nextElement();
-			
-			Object propertiesValue = parameters.get(propertiesKey);
-			
-			System.out.println("    " + propertiesKey + ": " + propertiesValue.toString());
-		}
-		
-		System.out.println("Here's the lowdown on the properties while we're at it");
-		
-		printProperties();
-    	
-    	return new TestAlgorithm2(data, parameters, context, this.bContext, this.configAdmin);
+    	System.out.println("TestAlgorithm 2 executing!");
+    	printProperties(this.properties);
+    	return new TestAlgorithm2(data, parameters, context, this.bContext, this.configAdmin, this.properties);
     }
     public MetaTypeProvider createParameters(Data[] data) {
         return provider;
     }
 	public void updated(Dictionary properties) throws ConfigurationException {
-		System.out.println("^^^^TestAlgorithm2Factory updated method^^^^:");
-		
+		System.out.println("TestAlgorithm 2 updated!");
 	
 		
 		this.properties = properties;
 		
-		printProperties();
+		printProperties(this.properties);
 	}
 	
-	private void printProperties() {
-	System.out.println("  Keys and values in ConfigurationAdmin properties dictionary:");
-		
+	private void printProperties(Dictionary properties) {
+		System.out.println("  Properties are as follows:");
 		if (properties == null) {
-			System.out.println("    properties was null");
+			System.out.println("    Dictionary is null!");
 		} else {
 			Enumeration propertiesKeys = properties.keys();
 			
@@ -101,14 +91,12 @@ public class TestAlgorithm2Factory implements AlgorithmFactory, ManagedService, 
 				String propertiesKey = (String) propertiesKeys.nextElement();
 				
 				Object propertiesValue = properties.get(propertiesKey);
-				
-				System.out.println("    " + propertiesKey + ": " + propertiesValue.toString());
+				System.out.println("    " + propertiesKey + ":" + propertiesValue);
 			}
 		}
 	}
 
 	public String[] getLocales() {
-		// TODO Auto-generated method stub
 		return null;
 	}
 

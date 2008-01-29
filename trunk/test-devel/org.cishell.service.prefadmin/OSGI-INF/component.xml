@@ -20,5 +20,7 @@
 			"org.cishell.service.prefadmin.PrefAdmin"/>
 		<provide interface=
 			"org.osgi.service.cm.ConfigurationPlugin"/>
+		<provide interface=
+			"org.osgi.service.cm.ConfigurationListener"/>
 	</service>
 </component>

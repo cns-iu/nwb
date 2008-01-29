@@ -8,6 +8,9 @@ import java.util.Hashtable;
 import java.util.List;
 
 import org.cishell.service.prefadmin.PrefPage;
+import org.cishell.service.prefadmin.PreferenceAD;
+import org.cishell.service.prefadmin.PreferenceOCD;
+import org.cishell.service.prefadmin.shouldbeelsewhere.PreferenceOCDImpl;
 import org.osgi.framework.Bundle;
 import org.osgi.framework.ServiceReference;
 import org.osgi.service.cm.Configuration;
@@ -45,18 +48,20 @@ public class PrefReferenceProcessor {
     	//for each service that purports to hold preference information...
     	for (int ii = 0; ii < prefReferences.length; ii++) {
     		ServiceReference prefReference = prefReferences[ii];
-        	System.out.println("LET THE PROCESSING OF " + prefReference.getProperty("service.pid") + " BEGIN!");
+    		System.out.println("Processing service reference " + prefReference.getProperty("service.pid"));
     		//get all the OCD PIDs belonging to this service (from the bundle's METADATA.xml file)
     		String[] ocdPIDs = getOCDPIDs(prefReference);
     		
     		PrefPage localPrefPage = getLocalPrefPage(prefReference, ocdPIDs);
     		if (localPrefPage != null) {
+    			System.out.println("  Found local preference page");
     			initializeConfiguration(localPrefPage);
     			this.localPrefPages.add(localPrefPage);
     		}
     		
     		PrefPage[] globalPrefPages = getGlobalPrefPages(prefReference, ocdPIDs);
     		if (globalPrefPages != null) {
+    			System.out.println("  Found global preference pages");
     			initializeConfigurations(globalPrefPages);
     			Collections.addAll(this.globalPrefPages, globalPrefPages);
     		}
@@ -127,7 +132,7 @@ public class PrefReferenceProcessor {
 		// if we now have a single preference PID...
 		if (localPID != null) {
 			// get the corresponding OCD object
-			ObjectClassDefinition prefOCD = getLocalPrefOCD(prefReference);
+			PreferenceOCD prefOCD = getLocalPrefOCD(prefReference);
 			// get the corresponding Configuration object
 			Configuration prefConf = getLocalPrefConf(prefReference);
 			// make a PreferencePage out of these two
@@ -146,7 +151,7 @@ public class PrefReferenceProcessor {
     private void initializeConfiguration(PrefPage prefPage) {
     	Configuration prefConf = prefPage.getPrefConf();
     	Dictionary prefDict = prefConf.getProperties();
-    	ObjectClassDefinition prefOCD = prefPage.getPrefOCD();
+    	PreferenceOCD prefOCD = prefPage.getPrefOCD();
 
     	
 		//if there are no properties defined for this prefPages configuration...
@@ -155,7 +160,7 @@ public class PrefReferenceProcessor {
     		//create configuration properties for this prePage based on the default values in its OCD.
     		prefDict = new Hashtable();
     		
-    		AttributeDefinition[] prefADs = prefOCD.getAttributeDefinitions(ObjectClassDefinition.ALL);
+    		PreferenceAD[] prefADs = prefOCD.getPreferenceAttributeDefinitions(ObjectClassDefinition.ALL);
     		for (int ii = 0; ii < prefADs.length; ii++) {
     			AttributeDefinition prefAD = prefADs[ii];
     			
@@ -163,27 +168,30 @@ public class PrefReferenceProcessor {
     			String id = prefAD.getID();
     			String val = prefAD.getDefaultValue()[0];
     			
-    			System.out.println("Adding attribute " + id + " with value " + val + " to prefDict.");
-    			System.out.println("This certainly is being called");
     			try {
     			prefDict.put(id, val);
-    			} catch (Throwable e) {
-    				System.out.println("Something is amiss");
+    			} catch (Throwable e) {;
     				e.printStackTrace();
     			}
     			
-    			System.out.println("I have survived the put call to prefDict");
     		}
     		
-    		System.out.println("About to update prefConf!");
     		try {
     		prefConf.update(prefDict);
     		} catch (IOException e) {
     			this.log.log(LogService.LOG_ERROR, "Unable to update configuration with PID " + prefConf.getPid(), e);
     		}
-    	} 
+    	} else {
+    		//update it anyway, because if it is a global conf it needs to be propogated.
+    		try {
+    			System.out.println("Updating configuration for " + prefConf.getPid() + ", even though nothing changed");
+        		prefConf.update(prefDict);
+        		} catch (IOException e) {
+        			this.log.log(LogService.LOG_ERROR, "Unable to update configuration with PID " + prefConf.getPid(), e);
+        		}
+    	}
     	
-    	//does not worry about old version of bundles for now
+    	//TODO: does not worry about old version of bundles for now
     }
     
     private PrefPage[] getGlobalPrefPages(ServiceReference prefReference, String[] ocdPIDs) {
@@ -206,7 +214,7 @@ public class PrefReferenceProcessor {
 		List globalPrefPageList = new ArrayList();
 		for (int ii = 0; ii < globalPIDs.length; ii++) {
 			String globalPID = globalPIDs[ii];
-			ObjectClassDefinition prefOCD = getGlobalPrefOCD(prefReference, globalPID);
+			PreferenceOCD prefOCD = getGlobalPrefOCD(prefReference, globalPID);
 			//get the corresponding Configuration object
 			Configuration prefConf = getGlobalPrefConf(globalPID);
 			//make a PreferencePage out of these two
@@ -237,6 +245,7 @@ public class PrefReferenceProcessor {
 			if (pid.endsWith(LOCAL_PREFS_SUFFIX)
 					&& (!pid.substring(0, pid.length() - 1).endsWith(
 							GLOBAL_PREFS_SUFFIX))) {
+				System.out.println("    " + pid + " is a local preference PID");
 				localPIDList.add(pid);
 			}
 		}
@@ -245,17 +254,16 @@ public class PrefReferenceProcessor {
 		return localPIDs;
 	}
 
-	private ObjectClassDefinition getLocalPrefOCD(ServiceReference prefReference) {
+	private PreferenceOCD getLocalPrefOCD(ServiceReference prefReference) {
 		Bundle bundle = prefReference.getBundle();
 		MetaTypeInformation metatypeInfo = this.mts
 				.getMetaTypeInformation(bundle);
 		Object result = prefReference.getProperty("service.pid");
 		String servicePID = (String) result;
-		System.out.println("Attempting to get local OCD for "
-				+ servicePID);
 		ObjectClassDefinition ocd = metatypeInfo.getObjectClassDefinition(
 				servicePID + LOCAL_PREFS_SUFFIX, null);
-		return ocd;
+		PreferenceOCD prefOCD = new PreferenceOCDImpl(this.log, ocd);
+		return prefOCD;
 	}
 
 	private Configuration getLocalPrefConf(ServiceReference prefReference) {
@@ -278,7 +286,9 @@ public class PrefReferenceProcessor {
 			String pid = allPIDs[ii];
 
 			if (pid.substring(0, pid.length() - 1)
-					.endsWith(GLOBAL_PREFS_SUFFIX)) {
+					.endsWith(GLOBAL_PREFS_SUFFIX)
+					|| pid.endsWith(GLOBAL_PREFS_SUFFIX)) {
+				System.out.println("    " + pid + " is a global preference PID");
 				globalPIDList.add(pid);
 			}
 		}
@@ -287,10 +297,10 @@ public class PrefReferenceProcessor {
 		return globalPIDs;
 	}
 
-	private ObjectClassDefinition getGlobalPrefOCD(
+	private PreferenceOCD getGlobalPrefOCD(
 			ServiceReference prefReference, String globalPID) {
-		return this.mts.getMetaTypeInformation(prefReference.getBundle())
-				.getObjectClassDefinition(globalPID, null);
+		return new PreferenceOCDImpl(this.log, this.mts.getMetaTypeInformation(prefReference.getBundle())
+				.getObjectClassDefinition(globalPID, null));
 	}
 
 	private Configuration getGlobalPrefConf(String globalPID) {

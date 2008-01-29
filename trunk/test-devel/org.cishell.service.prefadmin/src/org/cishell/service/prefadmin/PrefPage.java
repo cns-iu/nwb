@@ -7,6 +7,6 @@ public interface PrefPage {
 
 	public abstract Configuration getPrefConf();
 
-	public abstract ObjectClassDefinition getPrefOCD();
+	public abstract PreferenceOCD getPrefOCD();
 
 }

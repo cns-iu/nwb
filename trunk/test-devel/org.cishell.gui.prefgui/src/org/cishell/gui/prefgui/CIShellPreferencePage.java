@@ -1,7 +1,10 @@
 package org.cishell.gui.prefgui;
 
+import java.io.IOException;
 import java.util.Dictionary;
 
+import org.cishell.service.prefadmin.PreferenceAD;
+import org.cishell.service.prefadmin.PreferenceOCD;
 import org.eclipse.jface.preference.BooleanFieldEditor;
 import org.eclipse.jface.preference.DirectoryFieldEditor;
 import org.eclipse.jface.preference.FieldEditorPreferencePage;
@@ -11,20 +14,17 @@ import org.eclipse.jface.preference.IntegerFieldEditor;
 import org.eclipse.jface.preference.PathEditor;
 import org.eclipse.jface.preference.RadioGroupFieldEditor;
 import org.eclipse.jface.preference.StringFieldEditor;
-import org.osgi.service.metatype.AttributeDefinition;
+import org.osgi.service.log.LogService;
 import org.osgi.service.metatype.ObjectClassDefinition;
 
 public class CIShellPreferencePage extends FieldEditorPreferencePage {
 
-	private static final String FONT_PREFIX = "_font";
-	private static final String DIRECTORY_PREFIX = "_directory";
-	private static final String FILE_PREFIX = "_file";
-	private static final String PATH_PREFIX = "_path";
-	
-	private ObjectClassDefinition prefOCD;
+	private PreferenceOCD prefOCD;
 	private Dictionary prefValues;
 	
-    public CIShellPreferencePage(ObjectClassDefinition prefOCD, Dictionary prefValues,
+	private LogService log;
+	
+    public CIShellPreferencePage(LogService log, PreferenceOCD prefOCD, Dictionary prefValues,
     		CIShellPreferenceStore prefStore) {
     	super(FieldEditorPreferencePage.FLAT);
     	this.setTitle(prefOCD.getName());
@@ -34,35 +34,29 @@ public class CIShellPreferencePage extends FieldEditorPreferencePage {
     	
     	this.setPreferenceStore(prefStore);
 	}
-    
-    private boolean hasPrefix(AttributeDefinition prefAD, String prefix) {
-    	return prefAD.getID().startsWith(prefix);
-    }
 	
 	protected void createFieldEditors() {
 		
-		AttributeDefinition[] prefADs = 
-    		prefOCD.getAttributeDefinitions(ObjectClassDefinition.ALL);
+		PreferenceAD[] prefADs = 
+    		prefOCD.getPreferenceAttributeDefinitions(ObjectClassDefinition.ALL);
     	
     	for (int ii = 0; ii < prefADs.length; ii++) {
-    		System.out.println("Creating field " + ii);
     		
-    		AttributeDefinition prefAD = prefADs[ii];
+    		PreferenceAD prefAD = prefADs[ii];
     		
-    		int attrType = prefAD.getType();
+    		int attrType = prefAD.getPreferenceType();
     		
-    		if (attrType == AttributeDefinition.BOOLEAN) {
+    		if (attrType == PreferenceAD.BOOLEAN) {
     			
     			BooleanFieldEditor bField = 
     				new BooleanFieldEditor(prefAD.getID(), prefAD.getName(), getFieldEditorParent());
     			addField(bField);
-    		} else if (attrType == AttributeDefinition.INTEGER) {
+    		} else if (attrType == PreferenceAD.INTEGER) {
     			
     			IntegerFieldEditor iField =
     				new IntegerFieldEditor(prefAD.getID(), prefAD.getName(), getFieldEditorParent());
     			addField(iField);
-    		} else if (attrType == AttributeDefinition.STRING &&
-    				prefAD.getOptionLabels() != null && prefAD.getOptionLabels().length > 0) {
+    		} else if (attrType == PreferenceAD.CHOICE) {
     			
     			String[] optionLabels = prefAD.getOptionLabels();
     			String[] optionValues = prefAD.getOptionValues();
@@ -84,36 +78,55 @@ public class CIShellPreferencePage extends FieldEditorPreferencePage {
     					true);
     			addField(rgField);
     			
-    		} else if (attrType == AttributeDefinition.STRING &&
-    				hasPrefix(prefAD, FONT_PREFIX)) {
+    		} else if (attrType == PreferenceAD.FONT) {
     			
     			FontFieldEditor foField = 
     				new FontFieldEditor(prefAD.getID(), prefAD.getName(), getFieldEditorParent());
     			addField(foField);
-    		} else if (attrType == AttributeDefinition.STRING &&
-    				hasPrefix(prefAD, DIRECTORY_PREFIX)) {
+    		} else if (attrType == PreferenceAD.DIRECTORY) {
     			
     			DirectoryFieldEditor dField = 
     				new DirectoryFieldEditor(prefAD.getID(), prefAD.getName(), getFieldEditorParent());
     			addField(dField);
-    		} else if (attrType == AttributeDefinition.STRING &&
-    				hasPrefix(prefAD, FILE_PREFIX)) {
+    		} else if (attrType == PreferenceAD.FILE) {
     			
     			FileFieldEditor fiField = 
     				new FileFieldEditor(prefAD.getID(), prefAD.getName(), getFieldEditorParent());
     			addField(fiField);
-    		} else if (attrType == AttributeDefinition.STRING && 
-    				hasPrefix(prefAD, PATH_PREFIX)) {
+    		} else if (attrType == PreferenceAD.PATH) {
     			
     			PathEditor pField = 
     				new PathEditor(prefAD.getID(), prefAD.getName(), prefAD.getName(), getFieldEditorParent());
     			addField(pField);
-    		} else if (attrType == AttributeDefinition.STRING) {
+    		} else if (attrType == PreferenceAD.TEXT) {
     			
     			StringFieldEditor sField = 
     				new StringFieldEditor(prefAD.getID(), prefAD.getName(), getFieldEditorParent());
     			addField(sField);
+    		} else if (attrType == PreferenceAD.DOUBLE) {
+    			
+    			DoubleFieldEditor dField = 
+    				new DoubleFieldEditor(prefAD.getID(), prefAD.getName(), getFieldEditorParent());
+    			addField(dField);
+    		} else if (attrType == PreferenceAD.FLOAT) {
+    			
+    			FloatFieldEditor fField = 
+    				new FloatFieldEditor(prefAD.getID(), prefAD.getName(), getFieldEditorParent());
+    			addField(fField);
     		}
     	}
+	}
+	
+	public void performApply() {
+		super.performApply(); 
+		//TODO: WARNING, HACK ALERT, HACK ALERT!
+		try {
+			CIShellPreferenceStore realPrefStore = (CIShellPreferenceStore) this.getPreferenceStore();
+			realPrefStore.save();
+		} catch (ClassCastException e) {
+			super.performApply(); 
+		} catch (IOException e) {
+			this.log.log(LogService.LOG_WARNING, "Unable to save preferences due to I/O Exception", e);
+		}
 	}
 }

@@ -5,10 +5,9 @@ import java.util.Dictionary;
 import org.cishell.framework.CIShellContext;
 import org.cishell.framework.algorithm.Algorithm;
 import org.cishell.framework.data.Data;
-import org.cishell.service.guibuilder.GUIBuilderService;
 import org.cishell.service.prefadmin.PrefAdmin;
 import org.cishell.service.prefadmin.PrefPage;
-import org.eclipse.jface.preference.IPreferenceNode;
+import org.cishell.service.prefadmin.PreferenceOCD;
 import org.eclipse.jface.preference.PreferenceDialog;
 import org.eclipse.jface.preference.PreferenceManager;
 import org.eclipse.jface.preference.PreferenceNode;
@@ -17,7 +16,7 @@ import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PlatformUI;
 import org.osgi.service.cm.Configuration;
-import org.osgi.service.metatype.ObjectClassDefinition;
+import org.osgi.service.log.LogService;
 
 public class PrefenceGuiAlgorithm implements Algorithm {
     Data[] data;
@@ -25,12 +24,16 @@ public class PrefenceGuiAlgorithm implements Algorithm {
     CIShellContext context;
     PrefAdmin prefAdmin;
     
+    private LogService log;
+    
     public PrefenceGuiAlgorithm(Data[] data, Dictionary parameters, CIShellContext context,
-    		PrefAdmin prefAdmin) {
+    		PrefAdmin prefAdmin, LogService log) {
         this.data = data;
         this.parameters = parameters;
         this.context = context;
         this.prefAdmin = prefAdmin;
+        
+        this.log = log;
     }
 
     public Data[] execute() {
@@ -68,11 +71,11 @@ public class PrefenceGuiAlgorithm implements Algorithm {
 		for (int ii = 0; ii < prefPages.length; ii++) {
 			PrefPage prefPage = prefPages[ii];
 			
-			ObjectClassDefinition prefOCD = prefPage.getPrefOCD();
+			PreferenceOCD prefOCD = prefPage.getPrefOCD();
 			Configuration prefConf = prefPage.getPrefConf();
 			
-			CIShellPreferenceStore prefStore = new CIShellPreferenceStore(prefOCD, prefConf);
-			CIShellPreferencePage guiPrefPage = new CIShellPreferencePage(prefOCD, prefConf.getProperties(), prefStore);
+			CIShellPreferenceStore prefStore = new CIShellPreferenceStore(this.log, prefOCD, prefConf);
+			CIShellPreferencePage guiPrefPage = new CIShellPreferencePage(this.log, prefOCD, prefConf.getProperties(), prefStore);
 			
 			prefManager.addToRoot(new PreferenceNode(prefConf.getPid(), guiPrefPage));
 		}
