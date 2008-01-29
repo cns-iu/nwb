@@ -21,7 +21,6 @@ public class CIShellPreferenceStore implements IPersistentPreferenceStore {
 	private Configuration prefConf;
 	private Dictionary prefDict;
 	private Map prefDefaults;
-	//private Map prefTypes;
 	
 	private boolean needsSaving = false;
 	
@@ -32,7 +31,7 @@ public class CIShellPreferenceStore implements IPersistentPreferenceStore {
 		this.prefConf = prefConf;
 		this.prefDict = prefConf.getProperties();
 		
-		generatePrefDefaultsAndTypes(prefOCD);
+		generatePrefDefaults(prefOCD);
 	}
 	
 	public boolean contains(String name) {
@@ -156,17 +155,15 @@ public class CIShellPreferenceStore implements IPersistentPreferenceStore {
 		this.prefConf.update(this.prefDict);
 	}
 	
-	private void generatePrefDefaultsAndTypes(PreferenceOCD prefOCD) {
+	private void generatePrefDefaults(PreferenceOCD prefOCD) {
 
 		
 		PreferenceAD[] prefADs = prefOCD.getPreferenceAttributeDefinitions(ObjectClassDefinition.ALL);
 		
 		Map prefDefaults = new HashMap(prefADs.length);
-		Map prefTypes = new HashMap(prefADs.length);
 		
 		for (int ii = 0; ii < prefADs.length; ii++) {
 			PreferenceAD prefAD = prefADs[ii];
-			System.out.println("SETTING UP PREFERENCE DEFAULTS");
 			
 			prefDefaults.put(prefAD.getID(), prefAD.getDefaultValue()[0]);
 		}

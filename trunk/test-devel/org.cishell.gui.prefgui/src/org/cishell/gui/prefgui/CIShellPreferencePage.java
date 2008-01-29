@@ -20,17 +20,15 @@ import org.osgi.service.metatype.ObjectClassDefinition;
 public class CIShellPreferencePage extends FieldEditorPreferencePage {
 
 	private PreferenceOCD prefOCD;
-	private Dictionary prefValues;
 	
 	private LogService log;
 	
-    public CIShellPreferencePage(LogService log, PreferenceOCD prefOCD, Dictionary prefValues,
+    public CIShellPreferencePage(LogService log, PreferenceOCD prefOCD,
     		CIShellPreferenceStore prefStore) {
     	super(FieldEditorPreferencePage.FLAT);
     	this.setTitle(prefOCD.getName());
     	
     	this.prefOCD = prefOCD;
-    	this.prefValues = prefValues;
     	
     	this.setPreferenceStore(prefStore);
 	}
@@ -119,7 +117,14 @@ public class CIShellPreferencePage extends FieldEditorPreferencePage {
 	
 	public void performApply() {
 		super.performApply(); 
-		//TODO: WARNING, HACK ALERT, HACK ALERT!
+		//WARNING: this will break if the PreferenceStore is ever not the CISHellPreferenceStore
+		
+		/*
+		 * necessary because we need the preference store to actually save in order to
+		 * distribute the changes we have made, unlike the usual way a preferenceStore operates
+		 * where you can simply set the changes to the preference store and they propagate correctly.
+		 */
+		
 		try {
 			CIShellPreferenceStore realPrefStore = (CIShellPreferenceStore) this.getPreferenceStore();
 			realPrefStore.save();

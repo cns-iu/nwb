@@ -14,16 +14,10 @@ public class PrefPageImpl implements PrefPage {
 		this.prefOCD = prefOCD;
 	}
 	
-	/* (non-Javadoc)
-	 * @see org.cishell.service.prefadmin.internal.PrefPage#getPrefConf()
-	 */
 	public Configuration getPrefConf() {
 		return this.prefConf;
 	}
 	
-	/* (non-Javadoc)
-	 * @see org.cishell.service.prefadmin.internal.PrefPage#getPrefOCD()
-	 */
 	public PreferenceOCD getPrefOCD() {
 		return this.prefOCD;
 	}

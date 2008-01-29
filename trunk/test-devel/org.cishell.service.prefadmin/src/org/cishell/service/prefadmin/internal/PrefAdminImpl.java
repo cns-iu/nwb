@@ -21,18 +21,20 @@ import org.osgi.service.metatype.MetaTypeService;
 
 public class PrefAdminImpl implements PrefAdmin, ConfigurationPlugin, ConfigurationListener {
 
-	
 	private LogService log;
 	private MetaTypeService mts;
 	private ConfigurationAdmin ca;
 	
 	private PrefReferenceProcessor prefProcessor;
+	
 	private List prefReferencesToBeProcessed = new ArrayList();
 	
 	private List prefHolderReferences = new ArrayList();
 	
 	private boolean hasBeenActivated = false;
 
+	//PrefAdmin interface 
+	
 	public PrefPage[] getLocalPrefPages() {
 		if (this.prefProcessor != null) {
 		return this.prefProcessor.getLocalPrefPages();
@@ -48,6 +50,8 @@ public class PrefAdminImpl implements PrefAdmin, ConfigurationPlugin, Configurat
 				return new PrefPage[0];
 		}
 	}
+	
+	//Service Component Interface 
 	
     protected void activate(ComponentContext ctxt) {
     	
@@ -69,12 +73,20 @@ public class PrefAdminImpl implements PrefAdmin, ConfigurationPlugin, Configurat
     protected void deactivate(ComponentContext ctxt) {
     }
     
+    /**
+     * This method is called whenever a Service which potentially has preference 
+     * information is registered. 
+     * 
+     * @param prefHolder The service reference for the service with preference information
+     */
     protected void prefHolderRegistered(ServiceReference prefHolder) {
-    	System.out.println("ServiceReference " + prefHolder.getProperty("service.pid") + " beginning registration");
     	this.prefReferencesToBeProcessed.add(prefHolder);
     	
+    	//(we must wait until this service is activated before we can properly process the preference holders)
+    	
     	if (this.hasBeenActivated == true) {
-    		this.prefProcessor.processPrefReferences((ServiceReference[]) this.prefReferencesToBeProcessed.toArray(new ServiceReference[0]));
+    		this.prefProcessor.processPrefReferences(
+    				(ServiceReference[]) this.prefReferencesToBeProcessed.toArray(new ServiceReference[0]));
     		this.prefReferencesToBeProcessed.clear();
     	}
     	
@@ -82,9 +94,11 @@ public class PrefAdminImpl implements PrefAdmin, ConfigurationPlugin, Configurat
     }
     
     protected void prefHolderUnregistered(ServiceReference prefHolder) {
-    	//ignore for now
+    	this.prefHolderReferences.remove(prefHolder);
     }
 
+    // ConfigurationPlugin interface
+    
 	public void modifyConfiguration(ServiceReference reference,
 			Dictionary properties) {
 		
@@ -116,6 +130,8 @@ public class PrefAdminImpl implements PrefAdmin, ConfigurationPlugin, Configurat
 		}
 	}
 
+	//ConfigurationListener interface
+	
 	public void configurationEvent(ConfigurationEvent event) {
 		if (event.getType() == event.CM_UPDATED) {
 			System.out.println("UPDATED event received for " + event.getPid());
@@ -134,7 +150,7 @@ public class PrefAdminImpl implements PrefAdmin, ConfigurationPlugin, Configurat
 	 * Necessary because changes to global preference do not
 	 * cause an update event for every ManagedService.
 	 */
-	public void sendGlobalPreferences() {
+	private void sendGlobalPreferences() {
 		try {
 		for (int ii = 0; ii < this.prefHolderReferences.size(); ii++) {
 			ServiceReference prefHolder = (ServiceReference) this.prefHolderReferences.get(ii);

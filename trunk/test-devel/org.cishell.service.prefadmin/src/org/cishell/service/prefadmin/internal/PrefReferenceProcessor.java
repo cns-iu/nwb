@@ -35,7 +35,7 @@ public class PrefReferenceProcessor {
 	private List globalPrefPages = new ArrayList();
 	
 	
-	//level 0 methods
+	//public methods
 	
 	public PrefReferenceProcessor(LogService log, MetaTypeService mts, ConfigurationAdmin ca) {
 		this.log = log;
@@ -48,20 +48,17 @@ public class PrefReferenceProcessor {
     	//for each service that purports to hold preference information...
     	for (int ii = 0; ii < prefReferences.length; ii++) {
     		ServiceReference prefReference = prefReferences[ii];
-    		System.out.println("Processing service reference " + prefReference.getProperty("service.pid"));
-    		//get all the OCD PIDs belonging to this service (from the bundle's METADATA.xml file)
+    		
     		String[] ocdPIDs = getOCDPIDs(prefReference);
     		
     		PrefPage localPrefPage = getLocalPrefPage(prefReference, ocdPIDs);
     		if (localPrefPage != null) {
-    			System.out.println("  Found local preference page");
     			initializeConfiguration(localPrefPage);
     			this.localPrefPages.add(localPrefPage);
     		}
     		
     		PrefPage[] globalPrefPages = getGlobalPrefPages(prefReference, ocdPIDs);
     		if (globalPrefPages != null) {
-    			System.out.println("  Found global preference pages");
     			initializeConfigurations(globalPrefPages);
     			Collections.addAll(this.globalPrefPages, globalPrefPages);
     		}
@@ -76,7 +73,7 @@ public class PrefReferenceProcessor {
     	return (PrefPage[]) this.globalPrefPages.toArray(new PrefPage[0]);
     }
     
-    //level 1 methods
+    //level 1 methods (1 level deep in call heirarchy)
    
     private String[] getOCDPIDs(ServiceReference prefReference) {
     	Bundle bundle = prefReference.getBundle();
@@ -183,8 +180,9 @@ public class PrefReferenceProcessor {
     		}
     	} else {
     		//update it anyway, because if it is a global conf it needs to be propogated.
+    		//(if it is a global preference, this update will be caught by our ConfigurationListener,
+    		//and the global preference data will be propagated.
     		try {
-    			System.out.println("Updating configuration for " + prefConf.getPid() + ", even though nothing changed");
         		prefConf.update(prefDict);
         		} catch (IOException e) {
         			this.log.log(LogService.LOG_ERROR, "Unable to update configuration with PID " + prefConf.getPid(), e);
@@ -234,7 +232,7 @@ public class PrefReferenceProcessor {
     	}
     }
 
-    //level 2 methods
+    //level 2 methods (2 levels deep in call heirarchy)
 	   
 	    
     private String[] filterLocalPIDs(String[] allPIDs) {

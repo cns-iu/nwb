@@ -22,15 +22,17 @@ public class PrefenceGuiAlgorithm implements Algorithm {
     Data[] data;
     Dictionary parameters;
     CIShellContext context;
+    
     PrefAdmin prefAdmin;
     
-    private LogService log;
+    LogService log;
     
     public PrefenceGuiAlgorithm(Data[] data, Dictionary parameters, CIShellContext context,
     		PrefAdmin prefAdmin, LogService log) {
         this.data = data;
         this.parameters = parameters;
         this.context = context;
+        
         this.prefAdmin = prefAdmin;
         
         this.log = log;
@@ -51,6 +53,7 @@ public class PrefenceGuiAlgorithm implements Algorithm {
 		PreferenceGUIRunnable prefGUIRunnable = new PreferenceGUIRunnable(parentShell, prefManager);
 		Thread preferenceGUIThread = new Thread(prefGUIRunnable);
     
+		//We must tell SWT to run the preference dialog, instead of running it directly ourselves
 		parentShell.getDisplay().asyncExec(preferenceGUIThread);
     	
     	return null;
@@ -60,7 +63,7 @@ public class PrefenceGuiAlgorithm implements Algorithm {
     	IWorkbench workbench = PlatformUI.getWorkbench();
     	IWorkbenchWindow[] windows = workbench.getWorkbenchWindows();
     	
-    	//TODO: possibly a better, less seamingly arbitrary way to do this
+    	//possibly a better, less seamingly arbitrary way to do this
     	IWorkbenchWindow window = windows[0];
     	Shell parentShell = window.getShell();
     	
@@ -75,7 +78,8 @@ public class PrefenceGuiAlgorithm implements Algorithm {
 			Configuration prefConf = prefPage.getPrefConf();
 			
 			CIShellPreferenceStore prefStore = new CIShellPreferenceStore(this.log, prefOCD, prefConf);
-			CIShellPreferencePage guiPrefPage = new CIShellPreferencePage(this.log, prefOCD, prefConf.getProperties(), prefStore);
+			CIShellPreferencePage guiPrefPage = new CIShellPreferencePage(this.log,
+					prefOCD, prefStore);
 			
 			prefManager.addToRoot(new PreferenceNode(prefConf.getPid(), guiPrefPage));
 		}
@@ -90,6 +94,7 @@ public class PrefenceGuiAlgorithm implements Algorithm {
     		this.parentShell = parentShell;
     		this.prefManager = prefManager;
     	}
+    	
 		public void run() {
 			PreferenceDialog prefDialog = new PreferenceDialog(parentShell, prefManager);
 			prefDialog.open();
