@@ -2,6 +2,7 @@ package org.cishell.testalgorithm2;
 
 import java.io.IOException;
 import java.util.Dictionary;
+import java.util.Enumeration;
 import java.util.Hashtable;
 
 import org.cishell.framework.CIShellContext;
@@ -12,28 +13,37 @@ import org.osgi.service.cm.Configuration;
 import org.osgi.service.cm.ConfigurationAdmin;
 
 public class TestAlgorithm2 implements Algorithm {
-    private Data[] data;
-    private Dictionary parameters;
-    private CIShellContext context;
+	Data[] data;
+    Dictionary parameters;
+    CIShellContext context;
     
-    private BundleContext bContext;
-    private ConfigurationAdmin configAdmin;
-    private Dictionary prefs;
+    private Dictionary preferences;
     
-    
-    public TestAlgorithm2(Data[] data, Dictionary parameters, CIShellContext context,
-    		BundleContext bContext, ConfigurationAdmin configAdmin, Dictionary prefs) {
+    public TestAlgorithm2(Data[] data, Dictionary parameters, CIShellContext context, Dictionary preferences) {
         this.data = data;
         this.parameters = parameters;
         this.context = context;
-        this.bContext = bContext;
-        this.configAdmin = configAdmin;
-        
-        this.prefs = prefs;
+        this.preferences = preferences;
     }
 
     public Data[] execute() {
-    	System.out.println("stringID is " + prefs.get("stringID"));
-    	return null;
+    	printPreferences(this.preferences);
+        return null;
     }
+    
+    private void printPreferences(Dictionary preferences) {
+		System.out.println("  Preferences are as follows:");
+		if (preferences == null) {
+			System.out.println("    Dictionary is null!");
+		} else {
+			Enumeration propertiesKeys = preferences.keys();
+			
+			while (propertiesKeys.hasMoreElements()) {
+				String propertiesKey = (String) propertiesKeys.nextElement();
+				
+				Object propertiesValue = preferences.get(propertiesKey);
+				System.out.println("    " + propertiesKey + ":" + propertiesValue);
+			}
+		}
+}
 }

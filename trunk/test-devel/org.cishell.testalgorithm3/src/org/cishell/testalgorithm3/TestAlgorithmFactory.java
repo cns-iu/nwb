@@ -16,7 +16,7 @@ import org.osgi.service.metatype.MetaTypeService;
 
 public class TestAlgorithmFactory implements AlgorithmFactory, ManagedService {
     private MetaTypeProvider provider;
-    private Dictionary properties;
+    private Dictionary preferences;
 
     protected void activate(ComponentContext ctxt) {
     	System.out.println("TestAlgorithm 3 beginning activation");
@@ -45,15 +45,14 @@ public class TestAlgorithmFactory implements AlgorithmFactory, ManagedService {
 
     public Algorithm createAlgorithm(Data[] data, Dictionary parameters, CIShellContext context) {
     	System.out.println("TestAlgorithm3 executed!");
-    	printProperties(this.properties);
-        return new TestAlgorithm(data, parameters, context);
+        return new TestAlgorithm(data, parameters, context, this.preferences);
     }
     public MetaTypeProvider createParameters(Data[] data) {
         return provider;
     }
     
-    private void printProperties(Dictionary properties) {
-		System.out.println("  Properties are as follows:");
+    private void printPreferences(Dictionary properties) {
+		System.out.println("  Preferences are as follows:");
 		if (properties == null) {
 			System.out.println("    Dictionary is null!");
 		} else {
@@ -70,8 +69,8 @@ public class TestAlgorithmFactory implements AlgorithmFactory, ManagedService {
     
 	public void updated(Dictionary properties) throws ConfigurationException {
 
-		this.properties = properties;
+		this.preferences = properties;
 		System.out.println("TestAlgorithm 3 updated!");
-		printProperties(properties);
+		printPreferences(properties);
 	}
 }

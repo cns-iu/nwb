@@ -17,12 +17,12 @@ import org.osgi.service.metatype.MetaTypeService;
 import org.osgi.service.metatype.ObjectClassDefinition;
 
 
-public class TestAlgorithm2Factory implements AlgorithmFactory, ManagedService, MetaTypeProvider {
+public class TestAlgorithm2Factory implements AlgorithmFactory, ManagedService {
     private MetaTypeProvider provider;
 
     private BundleContext bContext;
     private ConfigurationAdmin configAdmin;
-    private Dictionary properties;
+    private Dictionary preferences;
     
     protected void activate(ComponentContext ctxt) {
     	System.out.println("TestAlgorithm 2 beginning activation");
@@ -65,8 +65,7 @@ public class TestAlgorithm2Factory implements AlgorithmFactory, ManagedService, 
 //		}
     	
     	System.out.println("TestAlgorithm 2 executing!");
-    	printProperties(this.properties);
-    	return new TestAlgorithm2(data, parameters, context, this.bContext, this.configAdmin, this.properties);
+    	return new TestAlgorithm2(data, parameters, context, this.preferences);
     }
     public MetaTypeProvider createParameters(Data[] data) {
         return provider;
@@ -75,13 +74,13 @@ public class TestAlgorithm2Factory implements AlgorithmFactory, ManagedService, 
 		System.out.println("TestAlgorithm 2 updated!");
 	
 		
-		this.properties = properties;
+		this.preferences = properties;
 		
-		printProperties(this.properties);
+		printPreferences(this.preferences);
 	}
 	
-	private void printProperties(Dictionary properties) {
-		System.out.println("  Properties are as follows:");
+	private void printPreferences(Dictionary properties) {
+		System.out.println("  Preferences are as follows:");
 		if (properties == null) {
 			System.out.println("    Dictionary is null!");
 		} else {
@@ -98,11 +97,5 @@ public class TestAlgorithm2Factory implements AlgorithmFactory, ManagedService, 
 
 	public String[] getLocales() {
 		return null;
-	}
-
-	public ObjectClassDefinition getObjectClassDefinition(String id,
-			String locale) {
-		ObjectClassDefinition ocd = provider.getObjectClassDefinition("org.cishell.testalgorithm2.TestAlgorithm2.prefs", null);
-		return ocd;
 	}
 }

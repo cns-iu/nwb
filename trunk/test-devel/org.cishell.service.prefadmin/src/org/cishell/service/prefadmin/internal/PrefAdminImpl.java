@@ -101,16 +101,11 @@ public class PrefAdminImpl implements PrefAdmin, ConfigurationPlugin, Configurat
     
 	public void modifyConfiguration(ServiceReference reference,
 			Dictionary properties) {
-		
-		System.out.println("Injecting global preferences into " + reference.getProperty("service.pid"));
-
 		//inject global preferences into configuration objects headed for ManagedServices
 		PrefPage[] globalPrefPages = getGlobalPrefPages();
 		for (int ii = 0; ii < globalPrefPages.length; ii++) {
 			PrefPage globalPrefPage = globalPrefPages[ii];
 			Configuration globalPrefConf = globalPrefPage.getPrefConf();
-			
-			System.out.println("  Injecting " + globalPrefConf.getPid());
 			
 			String namespace = globalPrefConf.getPid();
 			AttributeDefinition d;

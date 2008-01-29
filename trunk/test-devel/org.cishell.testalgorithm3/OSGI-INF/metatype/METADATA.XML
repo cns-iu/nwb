@@ -2,7 +2,7 @@
 <metatype:MetaData xmlns:metatype="http://www.osgi.org/xmlns/metatype/v1.0.0">
 	<OCD name="Test Algorithm 3" id="org.cishell.testalgorithm3.TestAlgorithm.OCD"
 		 description="Tests preference stuff ">
-		 <AD name="NEWNAME" id="NEWID" type="String" default="NEW DEFAULT VALUUUUU"/>
+		 <AD name="Standard Parameter Name" id="paramID" type="String" default="default val"/>
 		  
 	</OCD>
 	
@@ -27,10 +27,6 @@
 	
 	<Designate pid="org.cishell.testalgorithm3.TestAlgorithm">
 		<Object ocdref="org.cishell.testalgorithm3.TestAlgorithm.OCD" />
-	</Designate>
-	
-	<Designate pid="org.cishell.testalgorithm3.TestAlgorithm.prefs">
-		<Object ocdref="org.cishell.testalgorithm3.prefs.OCD"/>
 	</Designate>
 	
 	<Designate pid="org.cishell.testalgorithm3.TestAlgorithm.global_prefs">

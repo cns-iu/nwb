@@ -22,7 +22,7 @@ import org.osgi.service.metatype.MetaTypeService;
 public class TestAlgorithm4Factory implements AlgorithmFactory, ManagedService {
     private MetaTypeProvider provider;
     private ConfigurationAdmin ca;
-    private Dictionary properties;
+    private Dictionary preferences;
     private LogService log;
     String pid;
 
@@ -46,21 +46,20 @@ public class TestAlgorithm4Factory implements AlgorithmFactory, ManagedService {
     public Algorithm createAlgorithm(Data[] data, Dictionary parameters, CIShellContext context) {
 
     	System.out.println("TestAlgorithm4 executed!");
-    	printProperties(this.properties);
-        return new TestAlgorithm4(data, parameters, context);
+        return new TestAlgorithm4(data, parameters, context, this.preferences);
     }
     public MetaTypeProvider createParameters(Data[] data) {
         return provider;
     }
-	public void updated(Dictionary properties) throws ConfigurationException {
+	public void updated(Dictionary preferences) throws ConfigurationException {
 		
-		this.properties = properties;
+		this.preferences = preferences;
 		System.out.println("TestAlgorithm4 updated!");
-		printProperties(this.properties);
+		printProperties(this.preferences);
 	}
 	
 	 private void printProperties(Dictionary properties) {
-			System.out.println("  Properties are as follows:");
+			System.out.println("  Preferences are as follows:");
 			if (properties == null) {
 				System.out.println("    Dictionary is null!");
 			} else {

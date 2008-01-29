@@ -128,7 +128,6 @@ public class PreferenceADImpl implements AttributeDefinition, PreferenceAD {
 		
 		try {
 			URI uriInterpretation = new URI(platformIndependentPath);
-			System.out.println("uriInterpretation: " + uriInterpretation.toString());
 			File platformSpecificInterpretation = new File(uriInterpretation); 
 			
 			/*
@@ -136,7 +135,6 @@ public class PreferenceADImpl implements AttributeDefinition, PreferenceAD {
 		    * (and may cause performance problems), so skipping for now
 		     */
 			String platformSpecificDirectory = platformSpecificInterpretation.getAbsolutePath(); 
-			System.out.println("platformSpecificDirectory: " + platformSpecificDirectory);
 			return platformSpecificDirectory;
 			} catch (URISyntaxException e) {
 				this.log.log(LogService.LOG_WARNING, "Invalid syntax  in preference AD " + realAD.getName());

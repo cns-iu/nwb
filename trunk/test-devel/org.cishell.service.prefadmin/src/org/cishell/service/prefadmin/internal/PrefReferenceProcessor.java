@@ -243,7 +243,6 @@ public class PrefReferenceProcessor {
 			if (pid.endsWith(LOCAL_PREFS_SUFFIX)
 					&& (!pid.substring(0, pid.length() - 1).endsWith(
 							GLOBAL_PREFS_SUFFIX))) {
-				System.out.println("    " + pid + " is a local preference PID");
 				localPIDList.add(pid);
 			}
 		}
