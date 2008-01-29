@@ -271,6 +271,12 @@
     </antcall>
     <antcall target="svn.co">
       <param name="target" value="plugins"/>
+      <param name="element.id" value="edu.iu.nwb.util"/>
+      <param name="project.name" value="/plugins/shared/edu.iu.nwb.util"/>
+      <param name="url" value="http://nwb.slis.indiana.edu/svn/nwb/trunk"/>
+    </antcall>
+    <antcall target="svn.co">
+      <param name="target" value="plugins"/>
       <param name="element.id" value="edu.iu.nwb.converter.prefuseTreeBetaAlpha"/>
       <param name="project.name" value="/plugins/converter/edu.iu.nwb.converter.prefuseTreeBetaAlpha"/>
       <param name="url" value="http://nwb.slis.indiana.edu/svn/nwb/trunk"/>
