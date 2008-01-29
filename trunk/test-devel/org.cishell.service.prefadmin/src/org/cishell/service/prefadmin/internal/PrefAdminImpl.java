@@ -129,12 +129,9 @@ public class PrefAdminImpl implements PrefAdmin, ConfigurationPlugin, Configurat
 	
 	public void configurationEvent(ConfigurationEvent event) {
 		if (event.getType() == event.CM_UPDATED) {
-			System.out.println("UPDATED event received for " + event.getPid());
 			if (isGlobalConf(event.getPid())) {
-				System.out.println("  Sending global preferences");
 				sendGlobalPreferences();
 			} else {
-				System.out.println("  NOT sending global preferences");
 			}
 		} else if (event.getType() == event.CM_DELETED) {
 		}

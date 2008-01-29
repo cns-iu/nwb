@@ -55,6 +55,11 @@ public class PrefReferenceProcessor {
     		if (localPrefPage != null) {
     			initializeConfiguration(localPrefPage);
     			this.localPrefPages.add(localPrefPage);
+    		} else {
+    			//we still need to make an empty configuratio dictionary
+    			//so we can inject global preferences into it.
+    			
+    			makeEmptyConfigurationDictionary(prefReference);
     		}
     		
     		PrefPage[] globalPrefPages = getGlobalPrefPages(prefReference, ocdPIDs);
@@ -121,8 +126,9 @@ public class PrefReferenceProcessor {
 									+ ". Choosing the first local preference, and ignoring the others.");
 		} // if there are no preference PIDs...
 		else if (localPIDs.length == 0) {
-			// this is okay. This service probably has global preferences, and
-			// is thus not wasting our time.
+			// this is okay. We will make a dummy configuration object, so
+			// global preferences can be injected into it.
+			
 		}
 
 		PrefPage localPrefPage = null;
@@ -285,7 +291,6 @@ public class PrefReferenceProcessor {
 			if (pid.substring(0, pid.length() - 1)
 					.endsWith(GLOBAL_PREFS_SUFFIX)
 					|| pid.endsWith(GLOBAL_PREFS_SUFFIX)) {
-				System.out.println("    " + pid + " is a global preference PID");
 				globalPIDList.add(pid);
 			}
 		}
@@ -308,6 +313,18 @@ public class PrefReferenceProcessor {
 					"Error occurred while trying to get global configuration object "
 							+ globalPID, e);
 			return null;
+		}
+	}
+	
+	private void makeEmptyConfigurationDictionary(ServiceReference ref) {
+		try {
+			Configuration conf = ca.getConfiguration((String) ref.getProperty("service.pid"), null);
+		Dictionary properties = conf.getProperties();
+		if (properties == null) {
+			conf.update(new Hashtable());
+		}
+		} catch (IOException e) {
+			return;
 		}
 	}
 }

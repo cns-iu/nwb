@@ -2,9 +2,9 @@
 <metatype:MetaData xmlns:metatype="http://www.osgi.org/xmlns/metatype/v1.0.0">
 	<OCD name="Imaginary Visualization Algorithm" id="org.cishell.testalgorithm4.TestAlgorithm4.prefs.OCD"
 		 description=" ">
-		 <AD name="Default background color" id="backgroundColor" type="String" default="color:130,220,130"/>
-		 <AD name="Default label font" id="labelFont" type="String" default="font:"/>
-		 <AD name="Default made up numeric value" id="numericVal" type="Double" default="1.234"/>
+		 <AD name="Background color" id="backgroundColor" type="String" default="color:130,220,130"/>
+		 <AD name="Label font" id="labelFont" type="String" default="font:"/>
+		 <AD name="Made up numeric value" id="numericVal" type="Double" default="1.234"/>
 	</OCD>
 	<Designate pid="org.cishell.testalgorithm4.TestAlgorithm4.prefs">
 		<Object ocdref="org.cishell.testalgorithm4.TestAlgorithm4.prefs.OCD" />

@@ -27,7 +27,7 @@ public class TestAlgorithm4Factory implements AlgorithmFactory, ManagedService {
     String pid;
 
     protected void activate(ComponentContext ctxt) {
-    	System.out.println("TestAlgorithm 4 beginning activation");
+    	//System.out.println("TestAlgorithm 4 beginning activation");
         //You may delete all references to metatype service if 
         //your algorithm does not require parameters and return
         //null in the createParameters() method
@@ -37,7 +37,7 @@ public class TestAlgorithm4Factory implements AlgorithmFactory, ManagedService {
         this.ca = (ConfigurationAdmin) ctxt.locateService("CA");
         provider = mts.getMetaTypeInformation(ctxt.getBundleContext().getBundle());       
         this.pid = (String) ctxt.getProperties().get("service.pid");
-        System.out.println("TestAlgorithm 4 done activating");
+       // System.out.println("TestAlgorithm 4 done activating");
     }
     protected void deactivate(ComponentContext ctxt) {
         provider = null;
@@ -54,8 +54,8 @@ public class TestAlgorithm4Factory implements AlgorithmFactory, ManagedService {
 	public void updated(Dictionary preferences) throws ConfigurationException {
 		
 		this.preferences = preferences;
-		System.out.println("TestAlgorithm4 updated!");
-		printProperties(this.preferences);
+//		//System.out.println("TestAlgorithm4 updated!");
+//		printProperties(this.preferences);
 	}
 	
 	 private void printProperties(Dictionary properties) {

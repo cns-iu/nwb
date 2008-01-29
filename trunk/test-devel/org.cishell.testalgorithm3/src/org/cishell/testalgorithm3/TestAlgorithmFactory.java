@@ -19,7 +19,7 @@ public class TestAlgorithmFactory implements AlgorithmFactory, ManagedService {
     private Dictionary preferences;
 
     protected void activate(ComponentContext ctxt) {
-    	System.out.println("TestAlgorithm 3 beginning activation");
+    //	System.out.println("TestAlgorithm 3 beginning activation");
         //You may delete all references to metatype service if 
         //your algorithm does not require parameters and return
         //null in the createParameters() method
@@ -37,7 +37,7 @@ public class TestAlgorithmFactory implements AlgorithmFactory, ManagedService {
 			
 		}
 		
-		System.out.println("TestAlgorithm 3 done activating");
+	//	System.out.println("TestAlgorithm 3 done activating");
     }
     protected void deactivate(ComponentContext ctxt) {
         provider = null;
@@ -70,7 +70,7 @@ public class TestAlgorithmFactory implements AlgorithmFactory, ManagedService {
 	public void updated(Dictionary properties) throws ConfigurationException {
 
 		this.preferences = properties;
-		System.out.println("TestAlgorithm 3 updated!");
-		printPreferences(properties);
+		//System.out.println("TestAlgorithm 3 updated!");
+		//printPreferences(properties);
 	}
 }

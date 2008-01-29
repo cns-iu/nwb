@@ -25,7 +25,7 @@ public class TestAlgorithm2Factory implements AlgorithmFactory, ManagedService {
     private Dictionary preferences;
     
     protected void activate(ComponentContext ctxt) {
-    	System.out.println("TestAlgorithm 2 beginning activation");
+    	//System.out.println("TestAlgorithm 2 beginning activation");
         //You may delete all references to metatype service if 
         //your algorithm does not require parameters and return
         //null in the createParameters() method
@@ -45,7 +45,7 @@ public class TestAlgorithm2Factory implements AlgorithmFactory, ManagedService {
 		this.bContext = ctxt.getBundleContext();
 		this.configAdmin = (ConfigurationAdmin) ctxt.locateService("CM");
 		
-		System.out.println("TestAlgorithm 2 done activating");
+		//System.out.println("TestAlgorithm 2 done activating");
     }
     
     protected void deactivate(ComponentContext ctxt) {
@@ -71,12 +71,12 @@ public class TestAlgorithm2Factory implements AlgorithmFactory, ManagedService {
         return provider;
     }
 	public void updated(Dictionary properties) throws ConfigurationException {
-		System.out.println("TestAlgorithm 2 updated!");
+	//	System.out.println("TestAlgorithm 2 updated!");
 	
 		
 		this.preferences = properties;
 		
-		printPreferences(this.preferences);
+	//	printPreferences(this.preferences);
 	}
 	
 	private void printPreferences(Dictionary properties) {
