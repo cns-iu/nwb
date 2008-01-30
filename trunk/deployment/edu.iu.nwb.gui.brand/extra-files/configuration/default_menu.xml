@@ -139,7 +139,7 @@
     <top_menu name="Tools">
       	<menu name="GnuPlot" pid="edu.iu.nwb.visualization.gnuplot"/>
       	<menu name="Scheduler" pid=""/>
-      	<menu name="Graph and Network Analysis Toolkit" pid="edu.iu.nwb.toolkit.networkanalysis"/>	
+      	<menu name="Network Analysis Toolkit (NAT)" pid="edu.iu.nwb.toolkit.networkanalysis"/>	
     </top_menu>
 
     <top_menu name="Help">      
