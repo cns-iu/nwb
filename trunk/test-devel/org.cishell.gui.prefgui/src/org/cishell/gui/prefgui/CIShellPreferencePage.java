@@ -2,6 +2,10 @@ package org.cishell.gui.prefgui;
 
 import java.io.IOException;
 
+import net.sf.commonclipse.preferences.SpacerFieldEditor;
+import net.sf.commonclipse.preferences.LabelFieldEditor;
+
+
 import org.cishell.service.prefadmin.PreferenceAD;
 import org.cishell.service.prefadmin.PreferenceOCD;
 import org.eclipse.jface.preference.BooleanFieldEditor;
