@@ -15,6 +15,9 @@ public class ComponentForest{
 
 	int strongComponentClusters = 0;
 	int maxStrongConnectedNodes = 0;
+	
+	int count = 0;
+	
 
 
 	public ComponentForest(final Graph graph){
@@ -82,49 +85,37 @@ public class ComponentForest{
 		this.maxWeakConnectedNodes = maxNodes;
 		
 		seenNodes = null;
+
 		
 		
 	}
 	
+
+
 	public void strongComponentCalculation(final Graph grph){
-		int maxNodes = 0;
-		int numberOfClusters = 0;
-		
-		Stack finishedNodes = new Stack();
-		finishedNodes.addAll(GraphSearchAlgorithms.directedDepthFirstSearch(grph, null, false, false));
-		
-		Graph g2 = GraphSearchAlgorithms.reverseGraph(grph);
-		
-		while(!finishedNodes.isEmpty()){
-			int nodeNumber = ((Integer)finishedNodes.pop()).intValue();
-		
-			LinkedHashSet component = GraphSearchAlgorithms.directedDepthFirstSearch(g2, new Integer(nodeNumber), false, false);
-			for(Iterator it = component.iterator(); it.hasNext();){
-				Integer discoveredNode = (Integer)it.next();
-				g2.removeNode(discoveredNode.intValue());
+		int nodeCount = grph.getNodeCount();
+		Stack firstStack = new Stack();
+		firstStack.setSize(nodeCount);
+		Stack secondStack = new Stack();
+		secondStack = new Stack();
+		secondStack.setSize(nodeCount);
+
+		count = 0;
+		this.strongComponentClusters = 0;
+
+		int[] id = new int[nodeCount];
+		int[] pre = new int[nodeCount];
+
+		java.util.Arrays.fill(id, -1);
+		java.util.Arrays.fill(pre, -1);
+
+		for (int v = nodeCount-1; v >= 0; v--){
+			if (pre[v] == -1){ 
+				scR(grph,v,pre,id,firstStack,secondStack);
 			}
-			
-			if(component.size() > maxNodes){
-				maxNodes = component.size();
-			}
-			numberOfClusters++;
-			finishedNodes.removeAll(component);
-			component = null;
 		}
-		
-		
-				
-		
-		
-		
-		this.strongComponentClusters = numberOfClusters;
-		this.maxStrongConnectedNodes = maxNodes;
-		
-		finishedNodes = null;
-		
-		g2 = null;
-		
 	}
+	
 
 	private void calculateConnectedness(final Graph graph){
 
@@ -133,6 +124,47 @@ public class ComponentForest{
 		if(graph.isDirected()){
 			this.strongComponentCalculation(graph);
 		}
+	}
+	
+
+	private void scR(final Graph g, int vertex,int[] preOrder, int[] scID, Stack fs, Stack ss){
+		int v;
+		
+		preOrder[vertex] = count++;
+		fs.push(new Integer(vertex));
+		ss.push(new Integer(vertex));
+
+		for(Iterator it = g.getNode(vertex).outNeighbors(); it.hasNext();){
+			int outNode = ((Node)it.next()).getRow();
+			if(preOrder[outNode] == -1) 
+				scR(g, outNode,preOrder, scID,fs,ss);
+			else if (scID[outNode]  == -1){
+				
+				while (preOrder[((Integer)ss.peek()).intValue()] > preOrder[outNode]){ 
+					ss.pop();
+					
+				}
+				
+			}
+		}
+		if(((Integer)ss.peek()).intValue() == vertex){ 
+			ss.pop();
+		}
+		else{
+			return;
+		}
+		int size = 0;
+		do {
+			size++;
+			scID[v = ((Integer)fs.pop()).intValue()] = this.strongComponentClusters; 	
+		} while (vertex != v);
+		
+		if(size > this.maxStrongConnectedNodes){
+			this.maxStrongConnectedNodes = size;
+		}
+		
+		this.strongComponentClusters++;
+
 	}
 	
 	

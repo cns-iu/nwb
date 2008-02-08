@@ -11,8 +11,12 @@ import prefuse.data.Graph;
 import prefuse.data.Node;
 
 public class GraphSearchAlgorithms {
+	private static int count;
+	private static int scCount;
+
+
 	protected static LinkedHashSet undirectedDepthFirstSearch(final Graph g, Integer n){
-		
+
 		LinkedHashSet nodeSet = new LinkedHashSet();
 		Integer nodeNumber;
 		if(n == null){  //If no node number is presented, search the whole graph.
@@ -36,8 +40,8 @@ public class GraphSearchAlgorithms {
 		LinkedHashSet nodeSet = new LinkedHashSet();
 		Graph g2 = g;
 		if(isReverse){
-			
-			
+
+
 			if(isReverse){
 				g2 = reverseGraph(g);
 			}
@@ -52,11 +56,11 @@ public class GraphSearchAlgorithms {
 		else{
 			runDDFS(g2,n,nodeSet,getPreOrder);
 		}
-		
-		
-		
-		
-		
+
+
+
+
+
 
 		return nodeSet;
 	}
@@ -69,7 +73,7 @@ public class GraphSearchAlgorithms {
 		Integer nodeNumber;
 		Edge edg;
 		Node nd2;
-			q.add(new Integer(n.intValue()));
+		q.add(new Integer(n.intValue()));
 		while(!q.isEmpty()){
 			//Node nd = (Node)q.poll();
 			//Integer nodeRow = new Integer(nd.getRow());
@@ -99,69 +103,71 @@ public class GraphSearchAlgorithms {
 		nd2 = null;
 
 	}
-	
+
 	public static Graph reverseGraph(final Graph g){
 		Graph g2 = g;
 		for(Iterator it = g.edges(); it.hasNext();){
-			
+
 			Edge e = (Edge)it.next();
-			
+
 			int edgeRow = e.getRow();
 			e = g2.getEdge(edgeRow);
 			int newTarget = e.getSourceNode().getRow();
 			int newSource = e.getTargetNode().getRow();
-			
-			
+
+
 			e.set(0, new Integer(newSource));
 			e.set(1, new Integer(newTarget));
-		
-			
+
+
 		}
-		
+
 		return g2;
-		
+
 	}
+
 	
+
 
 	private static void runDDFS(final Graph g, Integer n, LinkedHashSet nodeSet, boolean isPreOrder){
 		boolean done = false;
-		
+
 		Node nd;
 		Node nd2;
 		Integer nodeRow;
 		Integer nodeNumber;
-	
+
 		//HashSet seen = new HashSet();
 		//seen.addAll(nodeSet);
-		
+
 		Stack nodeStack = new Stack();
-		
+
 		nodeStack.add(new Integer(n.intValue()));
 		while(!nodeStack.isEmpty()){
-			
+
 			nodeRow = (Integer)nodeStack.peek();
 			nd = g.getNode(nodeRow.intValue());
-			
+
 			if(!nodeSet.contains(nodeRow)){
-				
+
 				if(isPreOrder)
 					nodeSet.add(nodeRow);
 				nodeSet.add(nodeRow);
 			}
-				done = true;
-			
-			
-				for(Iterator it = nd.outNeighbors(); it.hasNext();){
-					nd2 = ((Node)it.next());
-					nodeNumber = new Integer(nd2.getRow());
-					if(!nodeSet.contains(nodeNumber)){
-						nodeStack.add(nodeNumber);
+			done = true;
+
+
+			for(Iterator it = nd.outNeighbors(); it.hasNext();){
+				nd2 = ((Node)it.next());
+				nodeNumber = new Integer(nd2.getRow());
+				if(!nodeSet.contains(nodeNumber)){
+					nodeStack.add(nodeNumber);
 					done = false;
 					break;
 				}
 			}
-			
-			
+
+
 			if(done){
 				if(!isPreOrder)
 					nodeSet.add(nodeRow);
@@ -175,8 +181,8 @@ public class GraphSearchAlgorithms {
 		nodeRow = null;
 		nodeNumber = null;
 		//seen = null;
-		
-		
+
+
 
 	}
 }
