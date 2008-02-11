@@ -184,7 +184,7 @@
        close(20)
 
        if(n_edges==0)then
-          write(*,*)'Error! The program should be applied on undirected networks'
+          write(*,*)'Error! The program should be applied on directed networks'
           stop
        endif
 
