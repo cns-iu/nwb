@@ -2,23 +2,35 @@ package org.cishell.service.prefadmin.internal;
 
 import org.cishell.service.prefadmin.PrefPage;
 import org.cishell.service.prefadmin.PreferenceOCD;
+import org.osgi.framework.ServiceReference;
 import org.osgi.service.cm.Configuration;
-import org.osgi.service.metatype.ObjectClassDefinition;
 
 public class PrefPageImpl implements PrefPage {
+	private ServiceReference prefHolder;
 	private Configuration prefConf;
 	private PreferenceOCD prefOCD;
+	private int type;
 	
-	public PrefPageImpl(Configuration prefConf, PreferenceOCD prefOCD) {
-		this.prefConf = prefConf;
+	public PrefPageImpl(ServiceReference prefHolder,PreferenceOCD prefOCD,  Configuration prefConf, int type) {
+		this.prefHolder = prefHolder;
 		this.prefOCD = prefOCD;
+		this.prefConf = prefConf;
+		this.type = type;
 	}
 	
-	public Configuration getPrefConf() {
-		return this.prefConf;
+	public ServiceReference getServiceReference() {
+		return this.prefHolder;
+	}
+	
+	public int getType() {
+		return this.type;
 	}
 	
 	public PreferenceOCD getPrefOCD() {
 		return this.prefOCD;
+	}
+	
+	public Configuration getPrefConf() {
+		return this.prefConf;
 	}
 }

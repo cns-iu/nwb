@@ -43,13 +43,11 @@ public class PrefenceGuiAlgorithm implements Algorithm {
     	Shell parentShell = getParentShell();
     	
     	PreferenceManager prefManager = new PreferenceManager();
+
+    	addGlobalPreferences(prefManager);
+    	addLocalPreferences(prefManager);
+    	addParamPreferences(prefManager);
     	
-    	PrefPage[] globalPrefPages = prefAdmin.getGlobalPrefPages();
-    	addPrefPages(prefManager, globalPrefPages);
-    	
-      	PrefPage[] localPrefPages = prefAdmin.getLocalPrefPages();
-    	addPrefPages(prefManager, localPrefPages);
- 
 		PreferenceGUIRunnable prefGUIRunnable = new PreferenceGUIRunnable(parentShell, prefManager);
 		Thread preferenceGUIThread = new Thread(prefGUIRunnable);
     
@@ -57,6 +55,43 @@ public class PrefenceGuiAlgorithm implements Algorithm {
 		parentShell.getDisplay().asyncExec(preferenceGUIThread);
     	
     	return null;
+    }
+    
+    private void addGlobalPreferences(PreferenceManager prefManager) {
+    	PrefPage[] globalPrefPages = prefAdmin.getGlobalPrefPages();
+    	
+    	//make global preference root
+    	
+    	BlankPreferencePage globalPrefPageRoot = new BlankPreferencePage(1, "General Preferences", "Contains non-algorithm preferences");
+    	PreferenceNode rootNode = new PreferenceNode("General Preferences Root", globalPrefPageRoot);
+    	prefManager.addToRoot(rootNode);
+    	
+    	addPrefPages(globalPrefPages, rootNode);
+    }
+    
+    private void addLocalPreferences(PreferenceManager prefManager) {
+
+    	PrefPage[] localPrefPages = prefAdmin.getLocalPrefPages();
+    	
+    	//make local preference root
+    	BlankPreferencePage localPrefPageRoot = new BlankPreferencePage(1,
+    			"Algorithm Preferences", "Contains preferences that modify how particular algorithms work.");
+    	PreferenceNode rootNode = new PreferenceNode("Algorithm Preferences Root", localPrefPageRoot);
+    	prefManager.addToRoot(rootNode);
+    	
+    	addPrefPages(localPrefPages, rootNode);
+    }
+ 
+    private void addParamPreferences(PreferenceManager prefManager) {
+    	PrefPage[] paramPrefPages = prefAdmin.getParamPrefPages();
+    	
+    	//make param preference root
+    	BlankPreferencePage paramPrefPageRoot = new BlankPreferencePage(1, "Algorithm Parameter Preferences",
+    			"Contains preferences that allow you to to modify the default values for the fields that appear when an algorithm runs.");
+    	PreferenceNode rootNode = new PreferenceNode("General Preferences Root", paramPrefPageRoot);
+    	prefManager.addToRoot(rootNode);
+    	
+    	addPrefPages(paramPrefPages, rootNode);
     }
     
     private Shell getParentShell() {
@@ -70,19 +105,23 @@ public class PrefenceGuiAlgorithm implements Algorithm {
     	return parentShell;
     }
     
-    private void addPrefPages(PreferenceManager prefManager, PrefPage[] prefPages) {
-		for (int ii = 0; ii < prefPages.length; ii++) {
-			PrefPage prefPage = prefPages[ii];
-			
-			PreferenceOCD prefOCD = prefPage.getPrefOCD();
-			Configuration prefConf = prefPage.getPrefConf();
-			
-			CIShellPreferenceStore prefStore = new CIShellPreferenceStore(this.log, prefOCD, prefConf);
-			CIShellPreferencePage guiPrefPage = new CIShellPreferencePage(this.log,
-					prefOCD, prefStore);
-			
-			prefManager.addToRoot(new PreferenceNode(prefConf.getPid(), guiPrefPage));
-		}
+    private void addPrefPages(PrefPage[] prefPages, PreferenceNode rootNode) {
+    	for (int ii = 0; ii < prefPages.length; ii++) {
+    		PreferenceNode prefNode = makePreferenceNode(prefPages[ii]);
+    		rootNode.add(prefNode);
+    	}
+    }
+    
+    private PreferenceNode makePreferenceNode(PrefPage prefPage) {
+ 
+		
+		PreferenceOCD prefOCD = prefPage.getPrefOCD();
+		Configuration prefConf = prefPage.getPrefConf();
+		
+		CIShellPreferenceStore prefStore = new CIShellPreferenceStore(this.log, prefOCD, prefConf);
+		CIShellPreferencePage guiPrefPage = new CIShellPreferencePage(this.log,
+				prefOCD, prefStore);
+		return new PreferenceNode(prefConf.getPid(), guiPrefPage);
     }
     
     private class PreferenceGUIRunnable implements Runnable {

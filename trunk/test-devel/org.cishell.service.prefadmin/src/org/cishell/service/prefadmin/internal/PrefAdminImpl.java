@@ -6,8 +6,11 @@ import java.util.Dictionary;
 import java.util.Enumeration;
 import java.util.List;
 
+import org.cishell.framework.preference.PreferenceProperty;
 import org.cishell.service.prefadmin.PrefAdmin;
 import org.cishell.service.prefadmin.PrefPage;
+import org.cishell.service.prefadmin.PrefsByService;
+import org.osgi.framework.Constants;
 import org.osgi.framework.ServiceReference;
 import org.osgi.service.cm.Configuration;
 import org.osgi.service.cm.ConfigurationAdmin;
@@ -16,7 +19,6 @@ import org.osgi.service.cm.ConfigurationListener;
 import org.osgi.service.cm.ConfigurationPlugin;
 import org.osgi.service.component.ComponentContext;
 import org.osgi.service.log.LogService;
-import org.osgi.service.metatype.AttributeDefinition;
 import org.osgi.service.metatype.MetaTypeService;
 
 public class PrefAdminImpl implements PrefAdmin, ConfigurationPlugin, ConfigurationListener {
@@ -32,23 +34,26 @@ public class PrefAdminImpl implements PrefAdmin, ConfigurationPlugin, Configurat
 	private List prefHolderReferences = new ArrayList();
 	
 	private boolean hasBeenActivated = false;
-
+	
+	private PrefInfoGrabber prefInfoGrabber;
+	
 	//PrefAdmin interface 
 	
 	public PrefPage[] getLocalPrefPages() {
-		if (this.prefProcessor != null) {
-		return this.prefProcessor.getLocalPrefPages();
-		} else {
-			return new PrefPage[0];
-		}
+		return prefProcessor.getAllLocalPrefPages();
 	}
 	
+
 	public PrefPage[] getGlobalPrefPages() {
-		if (this.prefProcessor != null) {
-			return this.prefProcessor.getGlobalPrefPages();
-			} else {
-				return new PrefPage[0];
-		}
+		return prefProcessor.getAllGlobalPrefPages();
+	}
+
+	public PrefPage[] getParamPrefPages() {
+		return prefProcessor.getAllParamPrefPages();
+	}
+
+	public PrefsByService[] getPrefsByService() {
+		return prefProcessor.getAllPrefsByService();
 	}
 	
 	//Service Component Interface 
@@ -59,12 +64,14 @@ public class PrefAdminImpl implements PrefAdmin, ConfigurationPlugin, Configurat
     	this.mts = (MetaTypeService) ctxt.locateService("MTS");
     	this.ca = (ConfigurationAdmin) ctxt.locateService("CS");
     	
-    	this.prefProcessor = new PrefReferenceProcessor(log, mts, ca);
+    	this.prefInfoGrabber = new PrefInfoGrabber(log, mts, ca);
+    	this.prefProcessor = new PrefReferenceProcessor(log, prefInfoGrabber);
     	
     	this.hasBeenActivated = true;
     	
     	//takes care of any prefHolders that may have been registered
     	//before the rest of these services were registered.
+    	System.out.println("Processing from activator");
     	this.prefProcessor.processPrefReferences(
     			(ServiceReference[]) prefReferencesToBeProcessed.toArray(new ServiceReference[0]));
     	this.prefReferencesToBeProcessed.clear();
@@ -80,11 +87,18 @@ public class PrefAdminImpl implements PrefAdmin, ConfigurationPlugin, Configurat
      * @param prefHolder The service reference for the service with preference information
      */
     protected void prefHolderRegistered(ServiceReference prefHolder) {
+    	System.out.println("Adding " + prefHolder.getProperty("service.pid") + " to registration queue");
     	this.prefReferencesToBeProcessed.add(prefHolder);
     	
     	//(we must wait until this service is activated before we can properly process the preference holders)
     	
     	if (this.hasBeenActivated == true) {
+    		System.out.println("Processing from registration");
+    		System.out.println("About to process " + prefReferencesToBeProcessed.size() + " service references");
+    		System.out.println("They are...");
+    		for (int ii = 0; ii < prefReferencesToBeProcessed.size(); ii++) {
+    			System.out.println("  " + ((ServiceReference)prefReferencesToBeProcessed.get(ii)).getProperty("service.pid"));
+    		}
     		this.prefProcessor.processPrefReferences(
     				(ServiceReference[]) this.prefReferencesToBeProcessed.toArray(new ServiceReference[0]));
     		this.prefReferencesToBeProcessed.clear();
@@ -99,16 +113,15 @@ public class PrefAdminImpl implements PrefAdmin, ConfigurationPlugin, Configurat
 
     // ConfigurationPlugin interface
     
+    //injects global preferences into local preferences as they go from configuration service to the managed service
 	public void modifyConfiguration(ServiceReference reference,
 			Dictionary properties) {
-		//inject global preferences into configuration objects headed for ManagedServices
 		PrefPage[] globalPrefPages = getGlobalPrefPages();
 		for (int ii = 0; ii < globalPrefPages.length; ii++) {
 			PrefPage globalPrefPage = globalPrefPages[ii];
 			Configuration globalPrefConf = globalPrefPage.getPrefConf();
 			
 			String namespace = globalPrefConf.getPid();
-			AttributeDefinition d;
 			
 			Dictionary globalPrefDict = globalPrefConf.getProperties();
 			
@@ -128,12 +141,12 @@ public class PrefAdminImpl implements PrefAdmin, ConfigurationPlugin, Configurat
 	//ConfigurationListener interface
 	
 	public void configurationEvent(ConfigurationEvent event) {
-		if (event.getType() == event.CM_UPDATED) {
-			if (isGlobalConf(event.getPid())) {
+		if (event.getType() == ConfigurationEvent.CM_UPDATED) {
+			if (isFromGlobalConf(event.getPid())) {
 				sendGlobalPreferences();
 			} else {
 			}
-		} else if (event.getType() == event.CM_DELETED) {
+		} else if (event.getType() == ConfigurationEvent.CM_DELETED) {
 		}
 	}
 	
@@ -146,20 +159,25 @@ public class PrefAdminImpl implements PrefAdmin, ConfigurationPlugin, Configurat
 		try {
 		for (int ii = 0; ii < this.prefHolderReferences.size(); ii++) {
 			ServiceReference prefHolder = (ServiceReference) this.prefHolderReferences.get(ii);
-			Configuration localPrefConf = ca.getConfiguration((String) prefHolder.getProperty("service.pid"));
+			if (prefHolder.getProperty(PreferenceProperty.RECEIVE_PREFS_KEY) != null &&
+				prefHolder.getProperty(PreferenceProperty.RECEIVE_PREFS_KEY).equals("true")) {
+			Configuration localPrefConf = ca.getConfiguration((String) prefHolder.getProperty(Constants.SERVICE_PID));
 			try {
 			localPrefConf.update();
 			} catch (IOException e) {
 				this.log.log(LogService.LOG_ERROR, "Unable to update configuration for " + localPrefConf.getPid(), e);
 			}
 		}
+		}
 		} catch (IOException e) {
 			this.log.log(LogService.LOG_ERROR, "Unable to obtain all configuration objects", e);
 		}
 	}
 	
-	private boolean isGlobalConf(String pid) {
-		return (pid.substring(0, pid.length() - 1).endsWith("global_prefs")
-				|| pid.endsWith("global_prefs"));
+	private boolean isFromGlobalConf(String pid) {
+		return (pid.substring(0, pid.length() - 1).endsWith(PreferenceProperty.GLOBAL_PREFS_CONF_SUFFIX)
+				|| pid.endsWith(PreferenceProperty.GLOBAL_PREFS_CONF_SUFFIX));
 	}
+
+	
 }

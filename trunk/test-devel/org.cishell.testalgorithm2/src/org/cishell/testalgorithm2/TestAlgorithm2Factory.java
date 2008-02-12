@@ -21,7 +21,6 @@ public class TestAlgorithm2Factory implements AlgorithmFactory, ManagedService {
     private MetaTypeProvider provider;
 
     private BundleContext bContext;
-    private ConfigurationAdmin configAdmin;
     private Dictionary preferences;
     
     protected void activate(ComponentContext ctxt) {
@@ -43,7 +42,6 @@ public class TestAlgorithm2Factory implements AlgorithmFactory, ManagedService {
 		}
 		
 		this.bContext = ctxt.getBundleContext();
-		this.configAdmin = (ConfigurationAdmin) ctxt.locateService("CM");
 		
 		//System.out.println("TestAlgorithm 2 done activating");
     }

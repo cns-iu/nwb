@@ -31,6 +31,11 @@ public class CIShellPreferenceStore implements IPersistentPreferenceStore {
 		this.prefConf = prefConf;
 		this.prefDict = prefConf.getProperties();
 		
+		if (this.prefDict == null) {
+			this.log.log(LogService.LOG_WARNING, "The configuration dictionary for the configuration object " + prefConf.getPid() + "is null. \r\n" +
+					"This may be due to an error in a bundles metadata, or may be an internal error. This will likely cause errors related to preferences.");
+		}
+		
 		generatePrefDefaults(prefOCD);
 	}
 	

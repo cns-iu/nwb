@@ -24,6 +24,7 @@
 		 <AD name="floatName" id="floatID" type="Float" default="1.23"/>
 		 <Ad name="doubleName" id="doubleID" type="Double" default="1.2345678675442"/>
 	</OCD>
+	
 	<Designate pid="org.cishell.testalgorithm2.TestAlgorithm2.prefs">
 		<Object ocdref="org.cishell.testalgorithm2.TestAlgorithm2.prefs.OCD" />
 	</Designate>

@@ -1,16 +1,11 @@
 package org.cishell.testalgorithm2;
 
-import java.io.IOException;
 import java.util.Dictionary;
 import java.util.Enumeration;
-import java.util.Hashtable;
 
 import org.cishell.framework.CIShellContext;
 import org.cishell.framework.algorithm.Algorithm;
 import org.cishell.framework.data.Data;
-import org.osgi.framework.BundleContext;
-import org.osgi.service.cm.Configuration;
-import org.osgi.service.cm.ConfigurationAdmin;
 
 public class TestAlgorithm2 implements Algorithm {
 	Data[] data;
