@@ -1,12 +1,12 @@
-package org.cishell.gui.prefgui;
+package org.cishell.gui.prefgui.customfields;
 
 import org.eclipse.jface.preference.StringFieldEditor;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Text;
 
-public class DoubleFieldEditor extends StringFieldEditor {
+public class FloatFieldEditor extends StringFieldEditor {
 	
-	public DoubleFieldEditor(String name, String labelText, Composite parent) {
+	public FloatFieldEditor(String name, String labelText, Composite parent) {
 		super(name, labelText, parent);
 		 setEmptyStringAllowed(false);
 	}
@@ -14,17 +14,15 @@ public class DoubleFieldEditor extends StringFieldEditor {
 	protected void doLoad() {
 		  Text text = getTextControl();
 	        if (text != null) {
-	            double value = getPreferenceStore().getDouble(getPreferenceName());
+	            float value = getPreferenceStore().getFloat(getPreferenceName());
 	            text.setText("" + value);
 	        }
-
-		
 	}
 	
 	protected void doLoadDefault() {
 		  Text text = getTextControl();
 	        if (text != null) {
-	            double value = getPreferenceStore().getDefaultDouble(getPreferenceName());
+	            float value = getPreferenceStore().getDefaultFloat(getPreferenceName());
 	            text.setText("" + value);//$NON-NLS-1$
 	        }
 	        valueChanged();
@@ -33,18 +31,18 @@ public class DoubleFieldEditor extends StringFieldEditor {
 	protected void doStore() {
 		 Text text = getTextControl();
 	        if (text != null) {
-	            Double i = Double.valueOf(text.getText());
-	            getPreferenceStore().setValue(getPreferenceName(), i.doubleValue());
+	        	Float i = Float.valueOf(text.getText());
+	            getPreferenceStore().setValue(getPreferenceName(), i.floatValue());
 	        }
 	}
 	
-	public double getDoubleValue() {
-		return Double.parseDouble(this.getStringValue());
+	public float getFloatValue() {
+		return Float.parseFloat(this.getStringValue());
 	}
 	
 	public boolean checkState() {
 		try {
-		Double.parseDouble(this.getStringValue());
+		Float.parseFloat(this.getStringValue());
 		return true;
 		} catch (NumberFormatException e) {
 			//if parsing throws an error, it's invalid.

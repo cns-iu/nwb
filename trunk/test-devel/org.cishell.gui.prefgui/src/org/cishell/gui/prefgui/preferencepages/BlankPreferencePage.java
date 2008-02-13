@@ -1,4 +1,4 @@
-package org.cishell.gui.prefgui;
+package org.cishell.gui.prefgui.preferencepages;
 
 import net.sf.commonclipse.preferences.LabelFieldEditor;
 
@@ -10,9 +10,7 @@ public class BlankPreferencePage extends FieldEditorPreferencePage {
 	
 	public BlankPreferencePage(int style, String title, String description) {
 		super(style);
-		
 		this.setTitle(title);
-		
 		this.description = description;
 	}
 	

@@ -5,6 +5,8 @@ import java.util.Dictionary;
 import org.cishell.framework.CIShellContext;
 import org.cishell.framework.algorithm.Algorithm;
 import org.cishell.framework.data.Data;
+import org.cishell.gui.prefgui.preferencepages.BlankPreferencePage;
+import org.cishell.gui.prefgui.preferencepages.CIShellPreferencePage;
 import org.cishell.service.prefadmin.PrefAdmin;
 import org.cishell.service.prefadmin.PrefPage;
 import org.cishell.service.prefadmin.PreferenceOCD;
@@ -33,21 +35,18 @@ public class PrefenceGuiAlgorithm implements Algorithm {
         this.parameters = parameters;
         this.context = context;
         
-        this.prefAdmin = prefAdmin;
-        
+        this.prefAdmin = prefAdmin;    
         this.log = log;
     }
 
     public Data[] execute() {
-    	
-    	Shell parentShell = getParentShell();
-    	
     	PreferenceManager prefManager = new PreferenceManager();
-
+    	
     	addGlobalPreferences(prefManager);
     	addLocalPreferences(prefManager);
     	addParamPreferences(prefManager);
     	
+    	Shell parentShell = getParentShell();
 		PreferenceGUIRunnable prefGUIRunnable = new PreferenceGUIRunnable(parentShell, prefManager);
 		Thread preferenceGUIThread = new Thread(prefGUIRunnable);
     
@@ -59,7 +58,6 @@ public class PrefenceGuiAlgorithm implements Algorithm {
     
     private void addGlobalPreferences(PreferenceManager prefManager) {
     	PrefPage[] globalPrefPages = prefAdmin.getGlobalPrefPages();
-    	//make global preference root
     	
     	BlankPreferencePage globalPrefPageRoot = new BlankPreferencePage(1, "General Preferences", "Contains non-algorithm preferences");
     	PreferenceNode rootNode = new PreferenceNode("General Preferences Root", globalPrefPageRoot);
@@ -69,10 +67,8 @@ public class PrefenceGuiAlgorithm implements Algorithm {
     }
     
     private void addLocalPreferences(PreferenceManager prefManager) {
-
     	PrefPage[] localPrefPages = prefAdmin.getLocalPrefPages();
     	
-    	//make local preference root
     	BlankPreferencePage localPrefPageRoot = new BlankPreferencePage(1,
     			"Algorithm Preferences", "Contains preferences that modify how particular algorithms work.");
     	PreferenceNode rootNode = new PreferenceNode("Algorithm Preferences Root", localPrefPageRoot);
@@ -84,7 +80,6 @@ public class PrefenceGuiAlgorithm implements Algorithm {
     private void addParamPreferences(PreferenceManager prefManager) {
     	PrefPage[] paramPrefPages = prefAdmin.getParamPrefPages();
     	
-    	//make param preference root
     	BlankPreferencePage paramPrefPageRoot = new BlankPreferencePage(1, "Algorithm Parameter Preferences",
     			"Contains preferences that allow you to to modify the default values for the fields that appear when an algorithm runs.");
     	PreferenceNode rootNode = new PreferenceNode("General Preferences Root", paramPrefPageRoot);
@@ -112,8 +107,6 @@ public class PrefenceGuiAlgorithm implements Algorithm {
     }
     
     private PreferenceNode makePreferenceNode(PrefPage prefPage) {
- 
-		
 		PreferenceOCD prefOCD = prefPage.getPrefOCD();
 		Configuration prefConf = prefPage.getPrefConf();
 		

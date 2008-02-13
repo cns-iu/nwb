@@ -1,4 +1,4 @@
-package org.cishell.gui.prefgui;
+package org.cishell.gui.prefgui.preferencepages;
 
 import java.io.IOException;
 
@@ -6,6 +6,9 @@ import net.sf.commonclipse.preferences.SpacerFieldEditor;
 import net.sf.commonclipse.preferences.LabelFieldEditor;
 
 
+import org.cishell.gui.prefgui.CIShellPreferenceStore;
+import org.cishell.gui.prefgui.customfields.DoubleFieldEditor;
+import org.cishell.gui.prefgui.customfields.FloatFieldEditor;
 import org.cishell.service.prefadmin.PreferenceAD;
 import org.cishell.service.prefadmin.PreferenceOCD;
 import org.eclipse.jface.preference.BooleanFieldEditor;
@@ -38,31 +41,24 @@ public class CIShellPreferencePage extends FieldEditorPreferencePage {
 	}
 	
 	protected void createFieldEditors() {
-		
 		PreferenceAD[] prefADs = 
     		prefOCD.getPreferenceAttributeDefinitions(ObjectClassDefinition.ALL);
     	
     	for (int ii = 0; ii < prefADs.length; ii++) {
-    		
     		PreferenceAD prefAD = prefADs[ii];
     		
     		int attrType = prefAD.getPreferenceType();
-    		
     		if (attrType == PreferenceAD.BOOLEAN) {
-    			
     			BooleanFieldEditor bField = 
     				new BooleanFieldEditor(prefAD.getID(), prefAD.getName(), getFieldEditorParent());
     			addField(bField);
-    		} else if (attrType == PreferenceAD.INTEGER) {
-    			
+    		} else if (attrType == PreferenceAD.INTEGER) {			
     			IntegerFieldEditor iField =
     				new IntegerFieldEditor(prefAD.getID(), prefAD.getName(), getFieldEditorParent());
     			addField(iField);
-    		} else if (attrType == PreferenceAD.CHOICE) {
-    			
+    		} else if (attrType == PreferenceAD.CHOICE) {   			
     			String[] optionLabels = prefAD.getOptionLabels();
-    			String[] optionValues = prefAD.getOptionValues();
-    			
+    			String[] optionValues = prefAD.getOptionValues();		
     			String [][] labelAndValues = new String[optionLabels.length][2];
     			
     			for (int jj = 0; jj < labelAndValues.length; jj++) {
@@ -79,45 +75,37 @@ public class CIShellPreferencePage extends FieldEditorPreferencePage {
     					getFieldEditorParent(),
     					true);
     			addField(rgField);
-    		} else if (attrType == PreferenceAD.FONT) {
-    			
+    		} else if (attrType == PreferenceAD.FONT) {		
     			FontFieldEditor foField = 
     				new FontFieldEditor(prefAD.getID(), prefAD.getName(), getFieldEditorParent());
     			addField(foField);
-    		} else if (attrType == PreferenceAD.DIRECTORY) {
-    			
+    		} else if (attrType == PreferenceAD.DIRECTORY) {		
     			DirectoryFieldEditor dField = 
     				new DirectoryFieldEditor(prefAD.getID(), prefAD.getName(), getFieldEditorParent());
     			dField.setEmptyStringAllowed(true);
     			addField(dField);
-    		} else if (attrType == PreferenceAD.FILE) {
-    			
+    		} else if (attrType == PreferenceAD.FILE) {			
     			FileFieldEditor fiField = 
     				new FileFieldEditor(prefAD.getID(), prefAD.getName(), getFieldEditorParent());
     			fiField.setEmptyStringAllowed(true);
     			addField(fiField);
-    		} else if (attrType == PreferenceAD.PATH) {
-    			
+    		} else if (attrType == PreferenceAD.PATH) {			
     			PathEditor pField = 
     				new PathEditor(prefAD.getID(), prefAD.getName(), prefAD.getName(), getFieldEditorParent());
     			addField(pField);
-    		} else if (attrType == PreferenceAD.TEXT) {
-    			
+    		} else if (attrType == PreferenceAD.TEXT) {		
     			StringFieldEditor sField = 
     				new StringFieldEditor(prefAD.getID(), prefAD.getName(), getFieldEditorParent());
     			addField(sField);
-    		} else if (attrType == PreferenceAD.DOUBLE) {
-    			
+    		} else if (attrType == PreferenceAD.DOUBLE) {		
     			DoubleFieldEditor dField = 
     				new DoubleFieldEditor(prefAD.getID(), prefAD.getName(), getFieldEditorParent());
     			addField(dField);
-    		} else if (attrType == PreferenceAD.FLOAT) {
-    			
+    		} else if (attrType == PreferenceAD.FLOAT) {			
     			FloatFieldEditor fField = 
     				new FloatFieldEditor(prefAD.getID(), prefAD.getName(), getFieldEditorParent());
     			addField(fField);
-    		} else if (attrType == PreferenceAD.COLOR) {
-    			
+    		} else if (attrType == PreferenceAD.COLOR) {			
     			ColorFieldEditor cField = 
     				new ColorFieldEditor(prefAD.getID(), prefAD.getName(), getFieldEditorParent());
     			addField(cField);
@@ -127,7 +115,7 @@ public class CIShellPreferencePage extends FieldEditorPreferencePage {
 	
 	public void performApply() {
 		super.performApply(); 
-		//WARNING: this will break if the PreferenceStore is ever not the CISHellPreferenceStore
+		//WARNING: this will not work if the PreferenceStore is ever not the CIShellPreferenceStore
 		
 		/*
 		 * necessary because we need the preference store to actually save in order to
@@ -136,8 +124,10 @@ public class CIShellPreferencePage extends FieldEditorPreferencePage {
 		 */
 		
 		try {
-			CIShellPreferenceStore realPrefStore = (CIShellPreferenceStore) this.getPreferenceStore();
-			realPrefStore.save();
+			if (this.getPreferenceStore() instanceof CIShellPreferenceStore) {
+				CIShellPreferenceStore realPrefStore = (CIShellPreferenceStore) this.getPreferenceStore();
+				realPrefStore.save();
+			}
 		} catch (ClassCastException e) {
 			super.performApply(); 
 		} catch (IOException e) {

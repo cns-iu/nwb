@@ -26,14 +26,14 @@ public class CIShellPreferenceStore implements IPersistentPreferenceStore {
 	
 	public CIShellPreferenceStore(LogService log, PreferenceOCD prefOCD, Configuration prefConf) {
 		this.log = log;
-		
 		this.prefOCD = prefOCD;
 		this.prefConf = prefConf;
 		this.prefDict = prefConf.getProperties();
 		
 		if (this.prefDict == null) {
-			this.log.log(LogService.LOG_WARNING, "The configuration dictionary for the configuration object " + prefConf.getPid() + "is null. \r\n" +
-					"This may be due to an error in a bundles metadata, or may be an internal error. This will likely cause errors related to preferences.");
+			this.log.log(LogService.LOG_WARNING, "The configuration dictionary for the configuration object " + 
+					prefConf.getPid() + "is null. \r\n" + "This may be due to an error in a bundles metadata, or may" +
+							" be an internal error. This will likely cause errors related to preferences.");
 		}
 		
 		generatePrefDefaults(prefOCD);
@@ -87,13 +87,9 @@ public class CIShellPreferenceStore implements IPersistentPreferenceStore {
 		return Long.parseLong(((String) this.prefDict.get(name)));
 	}
 
-	public String getString(String name) {
-		
-		Object result = this.prefDict.get(name);
-		if (result == null) {
-		} else {
-		}
-		return (String) this.prefDict.get(name);
+	public String getString(String name) {	
+		String result = (String) this.prefDict.get(name);
+		return result;
 	}
 
 	public boolean isDefault(String name) {
@@ -111,7 +107,6 @@ public class CIShellPreferenceStore implements IPersistentPreferenceStore {
 
 	public void setToDefault(String name) {
 		this.needsSaving = true;	
-		
 		String defaultVal = (String) this.prefDefaults.get(name);
 		this.prefDict.put(name, defaultVal);
 	}
@@ -119,32 +114,25 @@ public class CIShellPreferenceStore implements IPersistentPreferenceStore {
 	public void setValue(String name, double value) {
 		this.needsSaving = true;		
 		this.prefDict.put(name, String.valueOf(value));
-
 	}
 
 	public void setValue(String name, float value) {
 		this.needsSaving = true;
-		
 		this.prefDict.put(name, String.valueOf(value));
-
 	}
 
 	public void setValue(String name, int value) {
 		this.needsSaving = true;
-		
 		this.prefDict.put(name, String.valueOf(value));
-
 	}
 
 	public void setValue(String name, long value) {
 		this.needsSaving = true;
-
 		this.prefDict.put(name,String.valueOf(value));
 	}
 
 	public void setValue(String name, String value) {
 		this.needsSaving = true;
-		
 		this.prefDict.put(name, value);
 	}
 
@@ -156,27 +144,20 @@ public class CIShellPreferenceStore implements IPersistentPreferenceStore {
 
 	public void save() throws IOException {
 		this.needsSaving = false;
-		
 		this.prefConf.update(this.prefDict);
 	}
 	
 	private void generatePrefDefaults(PreferenceOCD prefOCD) {
-
-		
 		PreferenceAD[] prefADs = prefOCD.getPreferenceAttributeDefinitions(ObjectClassDefinition.ALL);
-		
 		Map prefDefaults = new HashMap(prefADs.length);
-		
 		for (int ii = 0; ii < prefADs.length; ii++) {
 			PreferenceAD prefAD = prefADs[ii];
-			
 			prefDefaults.put(prefAD.getID(), prefAD.getDefaultValue()[0]);
 		}
-		
 		this.prefDefaults = prefDefaults;
 	}
 	
-	//We don't set defaults like this
+	//We don't set defaults like this (they are defined by the default field in MetaType Attribute Definitions)
 
 	public void setDefault(String name, double value) {
 	}
