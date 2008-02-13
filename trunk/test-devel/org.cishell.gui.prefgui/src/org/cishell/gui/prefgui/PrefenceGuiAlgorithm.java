@@ -59,7 +59,6 @@ public class PrefenceGuiAlgorithm implements Algorithm {
     
     private void addGlobalPreferences(PreferenceManager prefManager) {
     	PrefPage[] globalPrefPages = prefAdmin.getGlobalPrefPages();
-    	
     	//make global preference root
     	
     	BlankPreferencePage globalPrefPageRoot = new BlankPreferencePage(1, "General Preferences", "Contains non-algorithm preferences");

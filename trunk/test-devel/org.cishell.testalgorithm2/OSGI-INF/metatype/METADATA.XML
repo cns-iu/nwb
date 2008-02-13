@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <metatype:MetaData xmlns:metatype="http://www.osgi.org/xmlns/metatype/v1.0.0">
 
-	<OCD name="Imaginary Load Algorithm" id="org.cishell.testalgorithm2.TestAlgorithm2.prefs.OCD"
+	<OCD name="Imaginary Load Algorithm" id="org.cishell.testalgorithm2.TestAlgorithm2.prefs.local.OCD"
 		 description="tests various things">
 		<AD name="Default load directory" id="loadDir" type="String" default="directory:"/>
 		<AD name="Default separator characters" id="sepChars" type="String" default=",;"/>
@@ -25,8 +25,8 @@
 		 <Ad name="doubleName" id="doubleID" type="Double" default="1.2345678675442"/>
 	</OCD>
 	
-	<Designate pid="org.cishell.testalgorithm2.TestAlgorithm2.prefs">
-		<Object ocdref="org.cishell.testalgorithm2.TestAlgorithm2.prefs.OCD" />
+	<Designate pid="org.cishell.testalgorithm2.TestAlgorithm2.prefs.local">
+		<Object ocdref="org.cishell.testalgorithm2.TestAlgorithm2.prefs.local.OCD" />
 	</Designate>
 
 </metatype:MetaData>

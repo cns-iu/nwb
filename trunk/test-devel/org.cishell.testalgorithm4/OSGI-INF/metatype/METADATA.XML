@@ -6,14 +6,14 @@
 		 <AD name="Made up param number go!" id="madeUpNum" type="Double" default="33.33"/>
 	</OCD>
 	
-	<OCD name="Imaginary Visualization Algorithm" id="org.cishell.testalgorithm4.TestAlgorithm4.prefs.OCD"
+	<OCD name="Imaginary Visualization Algorithm" id="org.cishell.testalgorithm4.TestAlgorithm4.prefs.local.OCD"
 		 description=" ">
 		 <AD name="Background color" id="backgroundColor" type="String" default="color:130,220,130"/>
 		 <AD name="Label font" id="labelFont" type="String" default="font:"/>
 		 <AD name="Made up numeric value" id="numericVal" type="Double" default="1.234"/>
 	</OCD>
-	<Designate pid="org.cishell.testalgorithm4.TestAlgorithm4.prefs">
-		<Object ocdref="org.cishell.testalgorithm4.TestAlgorithm4.prefs.OCD" />
+	<Designate pid="org.cishell.testalgorithm4.TestAlgorithm4.prefs.local">
+		<Object ocdref="org.cishell.testalgorithm4.TestAlgorithm4.prefs.local.OCD" />
 	</Designate>
 		<Designate pid="org.cishell.testalgorithm4.TestAlgorithm4">
 		<Object ocdref="org.cishell.testalgorithm4.TestAlgorithm4.OCD" />
