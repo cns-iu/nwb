@@ -59,7 +59,7 @@ public class PrefenceGuiAlgorithm implements Algorithm {
     private void addGlobalPreferences(PreferenceManager prefManager) {
     	PrefPage[] globalPrefPages = prefAdmin.getGlobalPrefPages();
     	
-    	BlankPreferencePage globalPrefPageRoot = new BlankPreferencePage(1, "General Preferences", "Contains non-algorithm preferences");
+    	BlankPreferencePage globalPrefPageRoot = new BlankPreferencePage(1, "General Preferences", "Contains preferences that change the workbench's functionality.");
     	PreferenceNode rootNode = new PreferenceNode("General Preferences Root", globalPrefPageRoot);
     	prefManager.addToRoot(rootNode);
     	
@@ -81,7 +81,7 @@ public class PrefenceGuiAlgorithm implements Algorithm {
     	PrefPage[] paramPrefPages = prefAdmin.getParamPrefPages();
     	
     	BlankPreferencePage paramPrefPageRoot = new BlankPreferencePage(1, "Algorithm Parameter Preferences",
-    			"Contains preferences that allow you to to modify the default values for the fields that appear when an algorithm runs.");
+    			"Contains preferences that specify the default values for algorithm menus");
     	PreferenceNode rootNode = new PreferenceNode("General Preferences Root", paramPrefPageRoot);
     	prefManager.addToRoot(rootNode);
     	
