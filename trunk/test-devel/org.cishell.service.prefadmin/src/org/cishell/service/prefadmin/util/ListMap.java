@@ -1,4 +1,4 @@
-package org.cishell.service.prefadmin;
+package org.cishell.service.prefadmin.util;
 
 import java.util.ArrayList;
 import java.util.Hashtable;

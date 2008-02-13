@@ -71,7 +71,6 @@ public class PrefAdminImpl implements PrefAdmin, ConfigurationPlugin, Configurat
     	
     	//takes care of any prefHolders that may have been registered
     	//before the rest of these services were registered.
-    	System.out.println("Processing from activator");
     	this.prefProcessor.processPrefReferences(
     			(ServiceReference[]) prefReferencesToBeProcessed.toArray(new ServiceReference[0]));
     	this.prefReferencesToBeProcessed.clear();
@@ -87,18 +86,11 @@ public class PrefAdminImpl implements PrefAdmin, ConfigurationPlugin, Configurat
      * @param prefHolder The service reference for the service with preference information
      */
     protected void prefHolderRegistered(ServiceReference prefHolder) {
-    	System.out.println("Adding " + prefHolder.getProperty("service.pid") + " to registration queue");
     	this.prefReferencesToBeProcessed.add(prefHolder);
     	
     	//(we must wait until this service is activated before we can properly process the preference holders)
     	
     	if (this.hasBeenActivated == true) {
-    		System.out.println("Processing from registration");
-    		System.out.println("About to process " + prefReferencesToBeProcessed.size() + " service references");
-    		System.out.println("They are...");
-    		for (int ii = 0; ii < prefReferencesToBeProcessed.size(); ii++) {
-    			System.out.println("  " + ((ServiceReference)prefReferencesToBeProcessed.get(ii)).getProperty("service.pid"));
-    		}
     		this.prefProcessor.processPrefReferences(
     				(ServiceReference[]) this.prefReferencesToBeProcessed.toArray(new ServiceReference[0]));
     		this.prefReferencesToBeProcessed.clear();

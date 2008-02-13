@@ -9,7 +9,6 @@ import java.util.List;
 import org.cishell.framework.algorithm.AlgorithmProperty;
 import org.cishell.framework.preference.PreferenceProperty;
 import org.cishell.service.prefadmin.PreferenceOCD;
-import org.cishell.service.prefadmin.shouldbeelsewhere.PreferenceOCDImpl;
 import org.osgi.framework.Bundle;
 import org.osgi.framework.Constants;
 import org.osgi.framework.ServiceReference;
@@ -32,6 +31,7 @@ public class PrefInfoGrabber implements PreferenceProperty, AlgorithmProperty {
 	public PrefInfoGrabber(LogService log, MetaTypeService mts, ConfigurationAdmin ca) {
 		this.log = log;
 		this.mts = mts;
+		this.ca = ca;
 	}
 	
 	public PreferenceOCD[] getLocalPrefOCDs(ServiceReference prefHolder) {
@@ -134,6 +134,7 @@ public class PrefInfoGrabber implements PreferenceProperty, AlgorithmProperty {
 	public void ensurePrefsCanBeSentTo(ServiceReference serviceRef) {
 		try {
 			Configuration conf = ca.getConfiguration((String) serviceRef.getProperty(Constants.SERVICE_PID), null);
+
 			Dictionary properties = conf.getProperties();
 		if (properties == null) {
 			conf.update(new Hashtable());
@@ -154,12 +155,11 @@ public class PrefInfoGrabber implements PreferenceProperty, AlgorithmProperty {
 		if (prefOCDs.length == 0) {
 			return new Configuration[0];
 		}
-		
 		List extractedConfList = new ArrayList();
 		Configuration prefConf = extractConf(confPID);
 		if (prefConf != null) {
 			extractedConfList.add(prefConf);
-			for (int ii =2; ii < prefOCDs.length; ii++) {
+			for (int ii =2; ii < prefOCDs.length + 1; ii++) {
 				prefConf = extractConf(confPID + ii);
 				if (prefConf != null) {
 					extractedConfList.add(prefConf);
@@ -167,7 +167,7 @@ public class PrefInfoGrabber implements PreferenceProperty, AlgorithmProperty {
 					break;
 				}
 			}
-		}
+		} 
 		
 		return (Configuration[]) extractedConfList.toArray(new Configuration[extractedConfList.size()]);
 	}

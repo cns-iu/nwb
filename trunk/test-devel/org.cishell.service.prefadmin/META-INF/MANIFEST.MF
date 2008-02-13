@@ -17,5 +17,4 @@ Import-Package: org.cishell.framework,
  org.osgi.service.prefs;version="1.1.0"
 X-AutoStart: true
 Service-Component: OSGI-INF/component.xml
-Export-Package: org.cishell.service.prefadmin,
- org.cishell.service.prefadmin.shouldbeelsewhere
+Export-Package: org.cishell.service.prefadmin

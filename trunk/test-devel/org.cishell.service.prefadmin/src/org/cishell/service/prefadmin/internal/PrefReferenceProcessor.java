@@ -2,7 +2,7 @@ package org.cishell.service.prefadmin.internal;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Collections;
+import java.util.Arrays;
 import java.util.Dictionary;
 import java.util.Hashtable;
 import java.util.List;
@@ -16,10 +16,8 @@ import org.osgi.framework.Bundle;
 import org.osgi.framework.Constants;
 import org.osgi.framework.ServiceReference;
 import org.osgi.service.cm.Configuration;
-import org.osgi.service.cm.ConfigurationAdmin;
 import org.osgi.service.log.LogService;
 import org.osgi.service.metatype.AttributeDefinition;
-import org.osgi.service.metatype.MetaTypeService;
 import org.osgi.service.metatype.ObjectClassDefinition;
 
 public class PrefReferenceProcessor{
@@ -46,28 +44,27 @@ public class PrefReferenceProcessor{
     	//for each service that purports to hold preference information...
     	for (int ii = 0; ii < prefReferences.length; ii++) {
     		ServiceReference prefReference = prefReferences[ii];
-    		
         	//get all preference pages from this service by type, and save them by type
     		
         	PrefPage[] localPrefPages = null;
         	if(isTurnedOn(prefReference, PreferenceProperty.PUBLISH_LOCAL_PREF_VALUE)) {
         		localPrefPages = getLocalPrefPages(prefReference);
         		initializeConfigurations(localPrefPages);
-        		Collections.addAll(this.allLocalPrefPages, localPrefPages);
+        		this.allLocalPrefPages.addAll(Arrays.asList(localPrefPages));
         	}
         	
         	PrefPage[] globalPrefPages = null;
-        	if (isTurnedOn(prefReference, PreferenceProperty.PUBLISH_LOCAL_PREF_VALUE)) {
+        	if (isTurnedOn(prefReference, PreferenceProperty.PUBLISH_GLOBAL_PREF_VALUE)) {
         	    globalPrefPages = getGlobalPrefPages(prefReference);
         		initializeConfigurations(globalPrefPages);
-        		Collections.addAll(this.allGlobalPrefPages, globalPrefPages);
+        	    this.allGlobalPrefPages.addAll(Arrays.asList(globalPrefPages));
         	}
         	
         	PrefPage[] paramPrefPages = null;
-        	if (isTurnedOn(prefReference,PreferenceProperty.PUBLISH_LOCAL_PREF_VALUE)) {
+        	if (isTurnedOn(prefReference,PreferenceProperty.PUBLISH_PARAM_DEFAULT_PREF_VALUE)) {
         		paramPrefPages = getParamPrefPages(prefReference);
         		initializeConfigurations(paramPrefPages);
-        		Collections.addAll(this.allParamPrefPages, paramPrefPages);
+        		this.allParamPrefPages.addAll(Arrays.asList(paramPrefPages));
         	}
         	
         	//save all the preferences by service as well
@@ -120,10 +117,11 @@ public class PrefReferenceProcessor{
     	return paramPrefPages;
     }
     
-    //assumes prefOCD.length == prefConfs.length
+    //prefOCD.length should == prefConfs.length
     private PrefPage[] composePrefPages(ServiceReference prefHolder, PreferenceOCD[] prefOCDs, Configuration[] prefConfs, int type) {
+    	int minLength = Math.min(prefOCDs.length, prefConfs.length);
     	List composedPrefPageList = new ArrayList(prefOCDs.length);
-    	for (int ii = 0; ii < prefOCDs.length; ii++) {
+    	for (int ii = 0; ii < minLength; ii++) {
     		PrefPage composedPrefPage = new PrefPageImpl(prefHolder, prefOCDs[ii], prefConfs[ii], type);
     		composedPrefPageList.add(composedPrefPage);
     	}
@@ -158,7 +156,7 @@ public class PrefReferenceProcessor{
     			
     		}
     		
-    		prefDict.put(BUNDLE_VERSION_KEY, getBundleVersion(prefPage));
+    		prefDict.put(BUNDLE_VERSION_KEY, getCurrentBundleVersion(prefPage));
     		
     		try {
     		prefConf.update(prefDict);
@@ -194,31 +192,25 @@ public class PrefReferenceProcessor{
     		return receivePrefsValue != null && receivePrefsValue.equals("true");
     	} else {
     		String unparsedPublishedPrefsValues = (String) prefReference.getProperty(PreferenceProperty.PREFS_PUBLISHED_KEY);
+    		if (unparsedPublishedPrefsValues == null) {
+    			return false;
+    		}
     		String[] publishedPrefsValues = unparsedPublishedPrefsValues.split(",");
     		for (int ii = 0; ii < publishedPrefsValues.length; ii++) {
-    			if (publishedPrefsValues.equals(processingKey)) {
+    			if (publishedPrefsValues[ii].equals(processingKey)) {
     				return true;
     			}
     		}
-    		String value = (String) prefReference.getProperty(processingKey);
-    		return (value != null && value.equals("true"));
+    		return false;
     	}
     }
     
     private boolean bundleHasBeenUpdated(PrefPage prefPage) {
-    	Bundle b = prefPage.getServiceReference().getBundle();
+    	String currentBundleVersion = getCurrentBundleVersion(prefPage);
+    	String savedBundleVersion = getSavedBundleVersion(prefPage);
     	
-    	String currentBundleVersion = getBundleVersion(prefPage);
-    	
-    	Dictionary confDict = prefPage.getPrefConf().getProperties();
-    	if (confDict == null) {
-    		logBundleWasUpdated(prefPage);
-    		return true; //maybe should be false
-    	}
-    	String savedBundleVersion = (String) b.getHeaders().get(BUNDLE_VERSION_KEY);
     	if (savedBundleVersion == null) {
-    		logBundleWasUpdated(prefPage);
-    		return true;
+    		return false;
     	} 
     	
     	if (currentBundleVersion.equals(savedBundleVersion)) {
@@ -229,10 +221,32 @@ public class PrefReferenceProcessor{
     	}
     }
 
-    private String getBundleVersion(PrefPage prefPage) {
+    private String getCurrentBundleVersion(PrefPage prefPage) {
     	Bundle b = prefPage.getServiceReference().getBundle();	
     	String currentBundleVersion = (String) b.getHeaders().get(BUNDLE_VERSION_KEY);
     	return currentBundleVersion;
+    }
+    
+    private String getSavedBundleVersion(PrefPage prefPage) {
+    	Dictionary prefDict = prefPage.getPrefConf().getProperties();
+    	if (prefDict == null) {
+    		return null;
+    	}
+    	//no namespace in front of bundle version
+    	String bundleVersionForLocalsAndParams = (String) prefDict.get(PreferenceProperty.BUNDLE_VERSION_KEY);
+    	if (bundleVersionForLocalsAndParams != null) {
+    		return bundleVersionForLocalsAndParams;
+    	} else {
+    		//try global kind, with namespace in front
+    		String servicePID = (String) prefPage.getServiceReference().getProperty(Constants.SERVICE_PID);
+    		String bundleVersionForGlobals  = (String) prefDict.get(servicePID + "." + PreferenceProperty.BUNDLE_VERSION_KEY);
+    		
+    		if (bundleVersionForGlobals != null) {
+    			return bundleVersionForGlobals;
+    		} else {
+    			return null;
+    		}
+    	}
     }
     
     private void logBundleWasUpdated(PrefPage prefPage) {

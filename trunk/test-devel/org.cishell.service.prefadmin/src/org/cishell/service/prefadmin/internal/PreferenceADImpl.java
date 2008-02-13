@@ -1,4 +1,4 @@
-package org.cishell.service.prefadmin.shouldbeelsewhere;
+package org.cishell.service.prefadmin.internal;
 
 import java.io.File;
 import java.net.URI;
