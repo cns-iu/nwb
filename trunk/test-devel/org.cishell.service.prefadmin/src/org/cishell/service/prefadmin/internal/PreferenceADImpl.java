@@ -10,6 +10,8 @@ import org.osgi.service.metatype.AttributeDefinition;
 
 public class PreferenceADImpl implements AttributeDefinition, PreferenceAD {
 		
+	private static final String URI_FILE_PREFIX = "file:";
+	
 	private LogService log;
 	
 	private AttributeDefinition realAD;
@@ -73,7 +75,7 @@ public class PreferenceADImpl implements AttributeDefinition, PreferenceAD {
 	}
 	
 	private String generateIndepInstallDirPath() {
-		String installDirPath = System.getProperty("osgi.install.area").replace("file:", "");
+		String installDirPath = System.getProperty("osgi.install.area").replace(URI_FILE_PREFIX, "");
 		File installDirFile = new File(installDirPath);
 		URI platformIndependentFile = installDirFile.toURI();
 		String platformIndepInstallDirPath = platformIndependentFile.toString();
@@ -94,7 +96,7 @@ public class PreferenceADImpl implements AttributeDefinition, PreferenceAD {
 		int preferenceType = getPreferenceType();
 		
 		if (preferenceType == DIRECTORY) {
-			String uriFormattedDefaultValue = rawDefaultValue.replace(TypePrefixes.DIRECTORY_PREFIX, "file:");
+			String uriFormattedDefaultValue = rawDefaultValue.replace(TypePrefixes.DIRECTORY_PREFIX, URI_FILE_PREFIX);
 			return makePlatformSpecificPath(uriFormattedDefaultValue);
 		} else if (preferenceType == FILE) {
 			if (rawDefaultValue.equals("file:")) {
@@ -122,7 +124,7 @@ public class PreferenceADImpl implements AttributeDefinition, PreferenceAD {
 		if (! platformIndependentPath.startsWith("file:/")) {
 			//it's a relative path
 			//make it absolute
-			 platformIndependentPath = platformIndepInstallDirPath + platformIndependentPath.replace("file:", "");
+			 platformIndependentPath = platformIndepInstallDirPath + platformIndependentPath.replace(URI_FILE_PREFIX, "");
 		}
 		//make the whole platformIndependentPath platform specific
 		
@@ -138,7 +140,7 @@ public class PreferenceADImpl implements AttributeDefinition, PreferenceAD {
 			return platformSpecificDirectory;
 			} catch (URISyntaxException e) {
 				this.log.log(LogService.LOG_WARNING, "Invalid syntax  in preference AD " + realAD.getName());
-				return System.getProperty("osgi.install.area").replace("file:", "");
+				return System.getProperty("osgi.install.area").replace(URI_FILE_PREFIX, "");
 			}	
 			
 		//return it

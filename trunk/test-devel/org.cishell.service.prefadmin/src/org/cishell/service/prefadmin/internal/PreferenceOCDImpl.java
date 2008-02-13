@@ -12,17 +12,19 @@ import org.osgi.service.metatype.ObjectClassDefinition;
 public class PreferenceOCDImpl implements ObjectClassDefinition, PreferenceOCD {
 	
 	private ObjectClassDefinition realOCD;
-	private PreferenceAD[] wrappedADs;
+	private PreferenceAD[] allWrappedADs;
+	private PreferenceAD[] optionalWrappedADs;
+	private PreferenceAD[] requiredWrappedADs;
 	
 	private LogService log;
 	
 	public PreferenceOCDImpl(LogService log, ObjectClassDefinition realOCD) {
 		this.log = log;
-		
 		this.realOCD = realOCD;
-		
 		//TODO: don't always return all attributeDefinitions, regardless of filter
-		this.wrappedADs = wrapAttributeDefinitions(realOCD.getAttributeDefinitions(ObjectClassDefinition.ALL));
+		this.allWrappedADs = wrapAttributeDefinitions(realOCD.getAttributeDefinitions(ObjectClassDefinition.ALL));
+		this.optionalWrappedADs = wrapAttributeDefinitions(realOCD.getAttributeDefinitions(ObjectClassDefinition.OPTIONAL));
+		this.requiredWrappedADs =  wrapAttributeDefinitions(realOCD.getAttributeDefinitions(ObjectClassDefinition.REQUIRED));
 	}
 	
 	private PreferenceAD[] wrapAttributeDefinitions(AttributeDefinition[] realAttributeDefinitions) {
@@ -40,19 +42,24 @@ public class PreferenceOCDImpl implements ObjectClassDefinition, PreferenceOCD {
 
 
 	//use in standard way
-	/* (non-Javadoc)
-	 * @see org.cishell.service.prefadmin.shouldbeelsewhere.PreferenceObjectClassDefinition#getAttributeDefinitions(int)
-	 */
 	public AttributeDefinition[] getAttributeDefinitions(int filter) {
 		return this.realOCD.getAttributeDefinitions(filter);
+
 	}
 	
 	//use to get at the special preference attribute goodness.
-	/* (non-Javadoc)
-	 * @see org.cishell.service.prefadmin.shouldbeelsewhere.PreferenceObjectClassDefinition#getPreferenceAttributeDefinitions(int)
-	 */
 	public PreferenceAD[] getPreferenceAttributeDefinitions(int filter) {
-		return this.wrappedADs;
+		if (filter == ObjectClassDefinition.ALL) {
+			return this.allWrappedADs;
+		} else if (filter == ObjectClassDefinition.OPTIONAL) {
+			return this.optionalWrappedADs;
+		} else if (filter == ObjectClassDefinition.REQUIRED) {
+			return this.requiredWrappedADs;
+		} else {
+			log.log(LogService.LOG_WARNING,
+					"Programmer Error: attempted to get preference attribute definitions with invalid filter " + filter);
+			return new PreferenceAD[0];
+		}
 	}
 
 	/* (non-Javadoc)

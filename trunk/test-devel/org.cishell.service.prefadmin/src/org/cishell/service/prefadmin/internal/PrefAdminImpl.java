@@ -27,16 +27,14 @@ public class PrefAdminImpl implements PrefAdmin, ConfigurationPlugin, Configurat
 	private MetaTypeService mts;
 	private ConfigurationAdmin ca;
 	
+	private PrefInfoGrabber prefInfoGrabber;
 	private PrefReferenceProcessor prefProcessor;
 	
 	private List prefReferencesToBeProcessed = new ArrayList();
-	
 	private List prefHolderReferences = new ArrayList();
 	
 	private boolean hasBeenActivated = false;
-	
-	private PrefInfoGrabber prefInfoGrabber;
-	
+
 	//PrefAdmin interface 
 	
 	public PrefPage[] getLocalPrefPages() {
@@ -86,16 +84,14 @@ public class PrefAdminImpl implements PrefAdmin, ConfigurationPlugin, Configurat
      * @param prefHolder The service reference for the service with preference information
      */
     protected void prefHolderRegistered(ServiceReference prefHolder) {
-    	this.prefReferencesToBeProcessed.add(prefHolder);
-    	
+    	this.prefReferencesToBeProcessed.add(prefHolder);	
     	//(we must wait until this service is activated before we can properly process the preference holders)
-    	
     	if (this.hasBeenActivated == true) {
     		this.prefProcessor.processPrefReferences(
     				(ServiceReference[]) this.prefReferencesToBeProcessed.toArray(new ServiceReference[0]));
     		this.prefReferencesToBeProcessed.clear();
     	}
-    	
+    
     	this.prefHolderReferences.add(prefHolder);
     }
     

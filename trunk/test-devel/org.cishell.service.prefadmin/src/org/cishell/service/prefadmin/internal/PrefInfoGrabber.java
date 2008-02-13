@@ -55,7 +55,8 @@ public class PrefInfoGrabber implements PreferenceProperty, AlgorithmProperty {
 			return localPrefOCDID;
 		} else {
 			//no name defined. Use default name.
-			String defaultLocalPrefOCDID = (String) prefHolder.getProperty(Constants.SERVICE_PID) + PreferenceProperty.LOCAL_PREFS_OCD_SUFFIX;
+			String defaultLocalPrefOCDID = (String) prefHolder.getProperty(Constants.SERVICE_PID)
+				+ PreferenceProperty.LOCAL_PREFS_OCD_SUFFIX;
 			return defaultLocalPrefOCDID;
 		} 
 	}
@@ -66,14 +67,16 @@ public class PrefInfoGrabber implements PreferenceProperty, AlgorithmProperty {
 		return globalPrefOCDID;
 		} else {
 			//no names defined. Use default names.
-			String defaultGlobalPrefOCDID =  (String) prefHolder.getProperty(Constants.SERVICE_PID) + PreferenceProperty.GLOBAL_PREFS_OCD_SUFFIX;
+			String defaultGlobalPrefOCDID =  (String) prefHolder.getProperty(Constants.SERVICE_PID) 
+				+ PreferenceProperty.GLOBAL_PREFS_OCD_SUFFIX;
 			return defaultGlobalPrefOCDID;
 		}
 	}
 	
 	private String getParamPrefOCDID(ServiceReference prefHolder) {
 		//no support for overriding parameter OCD name. Always use default.
-		String defaultGlobalPrefPID = (String) prefHolder.getProperty(Constants.SERVICE_PID) + PreferenceProperty.PARAM_PREFS_OCD_SUFFIX;
+		String defaultGlobalPrefPID = (String) prefHolder.getProperty(Constants.SERVICE_PID) 
+			+ PreferenceProperty.PARAM_PREFS_OCD_SUFFIX;
 		return defaultGlobalPrefPID;
 	}
 	

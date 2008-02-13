@@ -21,8 +21,7 @@ import org.osgi.service.metatype.AttributeDefinition;
 import org.osgi.service.metatype.ObjectClassDefinition;
 
 public class PrefReferenceProcessor{
-
-	public static final String BUNDLE_VERSION_KEY  = "Bundle-Version";
+	
 	private LogService log;
 	
 	private PrefInfoGrabber prefInfoGrabber;
@@ -51,6 +50,7 @@ public class PrefReferenceProcessor{
         		localPrefPages = getLocalPrefPages(prefReference);
         		initializeConfigurations(localPrefPages);
         		this.allLocalPrefPages.addAll(Arrays.asList(localPrefPages));
+        		warnIfReceivePrefsIsNotOn(prefReference);
         	}
         	
         	PrefPage[] globalPrefPages = null;
@@ -156,7 +156,7 @@ public class PrefReferenceProcessor{
     			
     		}
     		
-    		prefDict.put(BUNDLE_VERSION_KEY, getCurrentBundleVersion(prefPage));
+    		prefDict.put(PreferenceProperty.BUNDLE_VERSION_KEY, getCurrentBundleVersion(prefPage));
     		
     		try {
     		prefConf.update(prefDict);
@@ -223,7 +223,7 @@ public class PrefReferenceProcessor{
 
     private String getCurrentBundleVersion(PrefPage prefPage) {
     	Bundle b = prefPage.getServiceReference().getBundle();	
-    	String currentBundleVersion = (String) b.getHeaders().get(BUNDLE_VERSION_KEY);
+    	String currentBundleVersion = (String) b.getHeaders().get(PreferenceProperty.BUNDLE_VERSION_KEY);
     	return currentBundleVersion;
     }
     
@@ -260,4 +260,16 @@ public class PrefReferenceProcessor{
     private PrefPage[] getPrefPages(List prefPageList) {
     	return (PrefPage[]) prefPageList.toArray(new PrefPage[prefPageList.size()]);
      }
+    
+    private void warnIfReceivePrefsIsNotOn(ServiceReference prefHolder) {
+    	if (! isTurnedOn(prefHolder, PreferenceProperty.RECEIVE_PREFS_KEY)) {
+    		String servicePID = (String) prefHolder.getProperty(Constants.SERVICE_PID);
+    		log.log(LogService.LOG_WARNING, "Algorithm Developer Error: \r\n" +
+    				"The algorithm " + servicePID + " has published local preferences without requested to receive preferences. \r\n" +
+    				"  Algorithms that want to see preferences (both local and global) " +
+    				"need to set receive_prefs=true in their .properties file, but since there is no purpose in defining local preferences " +
+    				"without being able to receive preferences, we will turn it on for you. You must also implement the ManagedService" +
+    				"interface for the AlgorithmFactory if you have not already done so.");
+    	}
+    }
 }
