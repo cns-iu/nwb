@@ -16,6 +16,7 @@
        logical, allocatable, dimension(:):: nodelist
        character*256 filename,fileout,fileout1,fileout2,sn_bins,str1,str2
        real*8 binsize,avdeg,avkinkout
+       character*2000 headerdump
 
 !      Here the program reads the input parameters
        
@@ -36,6 +37,7 @@
        do 
           read(20,106,err=8103,end=8103)str1
           if(str1(1:1)=='*'.AND.str1(2:2)=='N')then
+             read(20,108,err=8103,end=8103)headerdump
              n_vert=0
              do 
                 read(20,*,err=8103,end=8103)i1
@@ -43,7 +45,8 @@
                 if(maxind<i1)maxind=i1
                 n_vert=n_vert+1  
              enddo
-          else if(str1(1:1)=='*'.AND.str1(2:2)=='D')then 
+          else if(str1(1:1)=='*'.AND.str1(2:2)=='D')then
+             read(20,108,err=9103,end=9103)headerdump
              do 
                 read(20,*,err=9103,end=9103)i1,i2
                 if(minind>i1)minind=i1
@@ -59,6 +62,7 @@
        do
           read(20,106,err=9103,end=9103)str1
           if(str1(1:1)=='*'.AND.str1(2:2)=='D')then
+             read(20,108,err=9103,end=9103)headerdump
              do 
                 read(20,*,err=9103,end=9103)i1,i2
                 if(minind>i1)minind=i1
@@ -81,13 +85,15 @@
        do 
           read(20,106,err=9203,end=9203)str1
           if(str1(1:1)=='*'.AND.str1(2:2)=='N')then
-             n_vert=0
+            read(20,108,err=9203,end=9203)headerdump
+            n_vert=0
              do 
                 read(20,*,err=9203,end=9203)i1
                 nodelist(i1)=.true.
                 n_vert=n_vert+1
              enddo
           else if(str1(1:1)=='*'.AND.str1(2:2)=='D')then
+             read(20,108,err=9203,end=9203)headerdump
              n_vert=0
              do i=1,n_edges
                 read(20,*)i1,i2
@@ -110,6 +116,7 @@
        do
           read(20,106,err=9303,end=9303)str1
           if(str1(1:1)=='*'.AND.str1(2:2)=='D')then
+             read(20,108,err=9303,end=9303)headerdump
              do i=1,n_edges
                 read(20,*)i1,i2
                 if(nodelist(i1).eqv..false.)then
@@ -250,6 +257,7 @@
 105    format(a40,e15.6)
 106    format(a256)
 107    format(i12,e15.6)
+108    format(a2000)
        
        stop
      end program One_point_correlations
