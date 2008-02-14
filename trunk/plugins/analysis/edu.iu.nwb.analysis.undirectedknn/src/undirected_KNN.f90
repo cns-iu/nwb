@@ -19,7 +19,7 @@
        logical, allocatable, dimension(:):: nodelist
        real*8 binsize,avk,avk2
        character*256 filename,fileout1,fileout2,fileout3,sn_bins
-       character*25 str(1:20),headattrN(1:20),headattrE(1:20),str1,str2,str3
+       character*50 str(1:20),headattrN(1:20),headattrE(1:20),str1,str2,str3
        character*25,allocatable,dimension(:,:):: attrN,attrE
        
        logical quoteit
@@ -146,6 +146,11 @@
              read(20,*)(headattrE(i),i=1,nattrE)
              do k=1,n_edges_E
                 read(20,*,err=9114,end=9114)indc(n_edges+1),ind(n_edges+1),(attrE(j,n_edges+1),j=1,nattrE-2)
+                do i = 1, nattrE -1, 1
+                	if(quoteit(headattrE(i+2), attrE(i, n_edges+1))) then
+                		attrE(i, n_edges+1) = addquotes(attrE(i, n_edges+1))
+                	endif
+                enddo
                 n_edges=n_edges+1
                 if(minind>indc(n_edges))minind=indc(n_edges)
                 if(minind>ind(n_edges))minind=ind(n_edges)
@@ -164,6 +169,11 @@
              read(20,*)(headattrE(i),i=1,nattrE)
              do k=1,n_edges_E
                 read(20,*,err=9214,end=9214)indc(n_edges+1),ind(n_edges+1),(attrE(j,n_edges+1),j=1,nattrE-2)
+                do i = 1, nattrE -1, 1
+                	if(quoteit(headattrE(i+2), attrE(i, n_edges+1))) then
+                		attrE(i, n_edges+1) = addquotes(attrE(i, n_edges+1))
+                	endif
+                enddo
                 n_edges=n_edges+1
                 if(minind>indc(n_edges))minind=indc(n_edges)
                 if(minind>ind(n_edges))minind=ind(n_edges)
@@ -384,7 +394,7 @@
 105    format(a40,e15.6)
 106    format(a25)
 107    format(i12,e15.6)
-109    format(20a20)      
+109    format(20a50)      
 110    format(i10,8x,i10,1x,18a25)
 111    format(i10,10x,20a25)
 112    format(a6)
