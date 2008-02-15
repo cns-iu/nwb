@@ -7,26 +7,24 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.util.Dictionary;
-import java.util.StringTokenizer;
-import java.util.List;
 import java.util.ArrayList;
- 
+import java.util.Dictionary;
+import java.util.List;
+import java.util.StringTokenizer;
 
-import javax.xml.stream.XMLOutputFactory;  
-import javax.xml.stream.XMLStreamWriter; 
+import javax.xml.stream.XMLOutputFactory;
 import javax.xml.stream.XMLStreamException;
+import javax.xml.stream.XMLStreamWriter;
 
 import org.cishell.framework.CIShellContext;
 import org.cishell.framework.algorithm.Algorithm;
 import org.cishell.framework.data.BasicData;
 import org.cishell.framework.data.Data;
-
 import org.osgi.service.log.LogService;
 
-import edu.iu.nwb.converter.nwb.common.ValidateNWBFile;
-import edu.iu.nwb.converter.nwb.common.NWBFileProperty;
 import edu.iu.nwb.converter.nwb.common.NWBAttribute;
+import edu.iu.nwb.converter.nwb.common.NWBFileProperty;
+import edu.iu.nwb.converter.nwb.common.ValidateNWBFile;
 
 /**
  * @author Weixia(Bonnie) Huang 
@@ -135,6 +133,8 @@ public class NWBToGraphMLbyStax implements Algorithm {
 		}catch (XMLStreamException xmlse){
 			logger.log(LogService.LOG_ERROR, "XMLStreamException while converting from .nwb to graphML",xmlse);
 			return null;
+		} catch (Exception e) {
+			return null;
 		}
     	
     }
@@ -156,7 +156,7 @@ public class NWBToGraphMLbyStax implements Algorithm {
         
     // write GraphML-Attributes
     private void writeAttributes(XMLStreamWriter xtw, ValidateNWBFile validator)
-    					throws XMLStreamException{
+    					throws XMLStreamException, Exception {
     	
     	//first handle node attributes
     	List array = validator.getNodeAttrList();
@@ -174,7 +174,7 @@ public class NWBToGraphMLbyStax implements Algorithm {
   	        xtw.writeEndElement();  	      
     	}
     	
-    	if (validator.isDirectedGraph() && !validator.isUndirectedGraph()){
+    	if (validator.isDirectedGraph() && (!validator.isUndirectedGraph() || validator.getTotalNumOfUndirectedEdges() == 0)){
     		//this is a directed graph
     		array = validator.getDirectedEdgeAttrList();
         	for (int i=0; i<array.size(); i++){
@@ -196,7 +196,7 @@ public class NWBToGraphMLbyStax implements Algorithm {
         	xtw.writeStartElement("graph");
   	        xtw.writeAttribute("edgedefault", "directed");
     	}
-    	else if (!validator.isDirectedGraph() && validator.isUndirectedGraph()){
+    	else if ((!validator.isDirectedGraph() || validator.getTotalNumOfDirectedEdges() == 0) && validator.isUndirectedGraph()){
     		//this is a undirected graph
     		array = validator.getUndirectedEdgeAttrList();
         	for (int i=0; i<array.size(); i++){
@@ -219,7 +219,11 @@ public class NWBToGraphMLbyStax implements Algorithm {
     	}
     	else if (validator.isDirectedGraph() && validator.isUndirectedGraph()){
     		//hybrid graph, don't know how to handle it???
-    	}    	
+    		logger.log(LogService.LOG_WARNING, "Unable to convert hybrid NWB graph file to GraphML.");
+    		//TODO: Make this some kind of real exception.
+    		throw new Exception("Unable to convert hybrid NWB graph file to GraphML."){
+    		};
+    	}   	
     }
 
     private void printGraph (XMLStreamWriter xtw, ValidateNWBFile validator,
