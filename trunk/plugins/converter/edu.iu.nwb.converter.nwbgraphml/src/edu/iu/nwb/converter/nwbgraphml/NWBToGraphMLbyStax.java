@@ -116,8 +116,12 @@ public class NWBToGraphMLbyStax implements Algorithm {
     		printGraph (xtw, validator, reader);
     		
     		//write </graph></graphml>
+    		try {
     		xtw.writeEndElement();	
-    		xtw.writeEndElement();
+    		xtw.writeEndElement();    	
+    		} catch (Exception e) {
+    			e.printStackTrace();
+    		}
     		
 			reader.close();
 			xtw.flush();  
@@ -223,7 +227,12 @@ public class NWBToGraphMLbyStax implements Algorithm {
     		//TODO: Make this some kind of real exception.
     		throw new Exception("Unable to convert hybrid NWB graph file to GraphML."){
     		};
-    	}   	
+    	} else {
+    		//graph is neither directed nor undirected. Must have no edges. Strange case.
+    		xtw.writeStartElement("graph");
+    		//since you must specify edgedefault, let's just call it undirected
+    		xtw.writeAttribute("edgedefault", "undirected");
+    	}
     }
 
     private void printGraph (XMLStreamWriter xtw, ValidateNWBFile validator,
