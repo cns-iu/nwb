@@ -45,6 +45,8 @@
     <menu type="break"/>
     <menu name="ISI Duplicate Remover" pid="edu.iu.nwb.analysis.isidupremover.ISIDupRemoverAlgorithm"/>
     <menu name="Extract Co-Authorship Network" pid="edu.iu.nwb.analysis.extractcoauthorship"/>
+    <menu name="Extract Bibliographic Coupling Similarity Network" pid="edu.iu.nwb.preprocessing.bibcouplingsimilarity.BibCouplingSimilarityAlgorithm"/>
+    <menu name="Extract Co-Citation Similarity Network" pid="edu.iu.nwb.preprocessing.cocitationsimilarity.CoCitationSimilarityAlgorithm"/>
     <menu name="Merge Nodes" pid="edu.iu.nwb.tools.mergenodes.MergeNodes"/>
     </top_menu>
     <top_menu name="Modeling">
