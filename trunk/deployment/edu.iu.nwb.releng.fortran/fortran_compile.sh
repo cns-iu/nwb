@@ -52,7 +52,6 @@ if [ -e build/g95-install ]; then
     rm -rf build/g95-install
 fi
 
-if [ $PLATFORM_TO_USE != "win32" ]; then
 mkdir -p build
 cd build
 tar zxf ../g95/$ARCHIVE
