@@ -48,10 +48,6 @@ if [ $PLATFORM_TO_USE == "macosx.ppc" ]; then
 fi
 
 
-if [ -e build/g95-install ]; then
-    rm -rf build/g95-install
-fi
-
 mkdir -p build
 cd build
 tar zxf ../g95/$ARCHIVE
