@@ -15,6 +15,7 @@ import org.osgi.service.log.LogService;
 
 import prefuse.data.Schema;
 import prefuse.data.Table;
+import bibtex.dom.BibtexAbstractEntry;
 import bibtex.dom.BibtexAbstractValue;
 import bibtex.dom.BibtexEntry;
 import bibtex.dom.BibtexFile;
@@ -46,6 +47,8 @@ public class BibtexReaderAlgorithm implements Algorithm {
     	File bibtexFile = (File) data[0].getData();
     	String bibtexFilePath = bibtexFile.getAbsolutePath();
     	//parse bibtex File
+    	bibtex.Main.main(new String[] {"-expandStringDefinitions", bibtexFilePath});
+    	
     	BibtexFile parsedBibtex = parseBibtex(bibtexFilePath);
     	if (parsedBibtex == null) {
     		return null;
@@ -70,18 +73,23 @@ public class BibtexReaderAlgorithm implements Algorithm {
     	TableData table = createDefaultEmptyTable();
     	
     	for (Iterator entryIt = bibtex.getEntries().iterator(); entryIt.hasNext();) {
-    		BibtexEntry entry = (BibtexEntry) entryIt.next();
-    		
-    		table.moveOnToNextRow();
-    		table.setString(ENTRY_TYPE_KEY, entry.getEntryType());
-    		table.setString(ENTRY_KEY_KEY, entry.getEntryKey());
-   
-    		Map entryFields = entry.getFields();
-    		for (Iterator fieldIt = entryFields.keySet().iterator(); fieldIt.hasNext();) {
+    		BibtexAbstractEntry abstractEntry = (BibtexAbstractEntry) entryIt.next();
+    		if (abstractEntry instanceof BibtexEntry) {
+    			BibtexEntry entry = (BibtexEntry) abstractEntry;
     			
-    			String fieldKey = (String) fieldIt.next();
-    			BibtexAbstractValue fieldVal = (BibtexAbstractValue) entryFields.get(fieldKey);
-    			table.setString(fieldKey, this.valueFormatter.formatFieldValue(fieldVal));
+    			table.moveOnToNextRow();
+    			table.setString(ENTRY_TYPE_KEY, entry.getEntryType());
+    			table.setString(ENTRY_KEY_KEY, entry.getEntryKey());
+   
+    			Map entryFields = entry.getFields();
+    			for (Iterator fieldIt = entryFields.keySet().iterator(); fieldIt.hasNext();) {
+    			
+    				String fieldKey = (String) fieldIt.next();
+    				BibtexAbstractValue fieldVal = (BibtexAbstractValue) entryFields.get(fieldKey);
+    				table.setString(fieldKey, this.valueFormatter.formatFieldValue(fieldVal));
+    			}
+    		} else {
+    			//ignore other weird entry types, like macros (which we should be removing anyway).
     		}
     	}
     	
@@ -95,11 +103,14 @@ public class BibtexReaderAlgorithm implements Algorithm {
     	parser.parse(bibtexFile, new FileReader(bibtexFilePath));
     	} catch (Exception e) {
     		log.log(LogService.LOG_ERROR, "Fatal exception occurred while parsing bibtex file.", e);
+    		
     		return null;
+    	} finally {
+    		printNonFatalExceptions(parser.getExceptions());
     	}
     	try {
     	MacroReferenceExpander macroExpander = 
-    		new MacroReferenceExpander(true, true, true, false);
+    		new MacroReferenceExpander(true, true, false, false);
     	macroExpander.expand(bibtexFile);
     	} catch (ExpansionException e) {
     		log.log(LogService.LOG_WARNING, "Error occurred while parsing bibtex file. Check command line for details.");
@@ -146,6 +157,16 @@ public class BibtexReaderAlgorithm implements Algorithm {
     private void add(Schema schema, String column) {
     	schema.addColumn(column, String.class);
     }
+    
+	private static void printNonFatalExceptions(Exception[] exceptions) {
+		if (exceptions.length > 0) {
+			System.err.println("Non-fatal exceptions: ");
+			for (int i = 0; i < exceptions.length; i++) {
+				exceptions[i].printStackTrace();
+				System.err.println("===================");
+			}
+		}
+	}
     
     private class TableData {
 		private Table table;

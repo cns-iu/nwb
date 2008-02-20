@@ -7,15 +7,9 @@ import org.osgi.service.log.LogService;
 
 import bibtex.dom.BibtexAbstractValue;
 import bibtex.dom.BibtexConcatenatedValue;
+import bibtex.dom.BibtexMacroReference;
 import bibtex.dom.BibtexMultipleValues;
 import bibtex.dom.BibtexString;
-/*
- * BibtexAbstractValue :: BibtexString | BibtexConcatenatedValue | BibtexMultipleValues
- * BibtexString :: String
- * BibtexConcatenatedValue :: BibtexAbstractValue + BibtexAbstractValue
- * BibtexMultipleValues :: [BibtexAbstractValue + Multi_Valued_Sep_Char]* //(no sep char on last instance)
- * Multi_Valued_Sep_Char = ","
- */
 
 public class BibtexValueFormatter {
 	private static final String MULTI_VALUED_SEP_CHAR = ",";
@@ -32,6 +26,8 @@ public class BibtexValueFormatter {
 			return formatFieldValue((BibtexConcatenatedValue) value);
 		} else if (value instanceof BibtexMultipleValues) {
 			return formatFieldValue((BibtexMultipleValues) value) ;
+		} else if (value instanceof BibtexMacroReference){
+			return formatFieldValue((BibtexMacroReference) value);
 		} else {
 			this.log.log(LogService.LOG_WARNING, "Unexpected bibtex field value " + 
 					value.toString() + " of type " + value.getClass().getName() + ". Parsing contents in a generic fashion.");
@@ -60,5 +56,9 @@ public class BibtexValueFormatter {
 	private String formatFieldValue(BibtexString value) {
 		String content = value.getContent();
 		return content;
+	}
+	
+	private String formatFieldValue(BibtexMacroReference value) {
+		return value.getKey();
 	}
 }
