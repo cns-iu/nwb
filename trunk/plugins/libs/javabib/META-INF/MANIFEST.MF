@@ -1,0 +1,9 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: Javabib Plug-in
+Bundle-SymbolicName: javabib
+Bundle-Version: 1.0.0
+Export-Package: bibtex,
+ bibtex.dom,
+ bibtex.expansions,
+ bibtex.parser
