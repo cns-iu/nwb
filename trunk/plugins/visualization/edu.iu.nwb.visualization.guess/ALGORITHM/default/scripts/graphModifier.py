@@ -161,10 +161,10 @@ def initializeGlobalVariables():
 				# find all the values for that edge property if property is a string
 				if edgeProperties[i] == type("string"):
 					for j in range(len(g.edges)):
-						value = evalu("g.edges[" + str(j) + "]." + i)
+						value = eval("g.edges[" + str(j) + "]." + i)
 						
 						# if we don't have the value, add it to the list
-						if not value in edgePRopertyValues[i]:
+						if not value in edgePropertyValues[i]:
 							edgePropertyValues[i].append(value)
 				
 				# find the range of values for an edge if it is an integer or float
