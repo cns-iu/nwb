@@ -4,7 +4,12 @@ Bundle-Name: Prefuse-Bibtex Conversion
 Bundle-SymbolicName: edu.iu.nwb.converter.prefusebibtex
 Bundle-Version: 0.0.1
 Bundle-ClassPath: .
-Import-Package: org.cishell.framework,
+Import-Package: 
+ bibtex,
+ bibtex.dom,
+ bibtex.expansions,
+ bibtex.parser,
+ org.cishell.framework,
  org.cishell.framework.algorithm,
  org.cishell.framework.data,
  org.osgi.framework;version="1.3.0",
