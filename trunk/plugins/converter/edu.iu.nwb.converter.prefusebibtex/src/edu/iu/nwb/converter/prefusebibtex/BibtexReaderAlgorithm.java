@@ -23,8 +23,12 @@ import bibtex.expansions.MacroReferenceExpander;
 import bibtex.parser.BibtexParser;
 
 public class BibtexReaderAlgorithm implements Algorithm {
+	//TODO: what if they have fields with these names?
 	private static final String ENTRY_TYPE_KEY = "ENTRY_TYPE";
 	private static final String ENTRY_KEY_KEY = "ENTRY_KEY";
+		
+	private BibtexValueFormatter valueFormatter;
+	
     Data[] data;
     Dictionary parameters;
     CIShellContext context;
@@ -35,6 +39,7 @@ public class BibtexReaderAlgorithm implements Algorithm {
         this.parameters = parameters;
         this.context = context;
         this.log = log;
+        this.valueFormatter = new BibtexValueFormatter(log);
     }
 
     public Data[] execute() {
@@ -76,7 +81,7 @@ public class BibtexReaderAlgorithm implements Algorithm {
     			
     			String fieldKey = (String) fieldIt.next();
     			BibtexAbstractValue fieldVal = (BibtexAbstractValue) entryFields.get(fieldKey);
-    			table.setString(fieldKey, fieldVal.toString());
+    			table.setString(fieldKey, this.valueFormatter.formatFieldValue(fieldVal));
     		}
     	}
     	
@@ -188,5 +193,7 @@ public class BibtexReaderAlgorithm implements Algorithm {
 				currentRowIsFinished = false;
 			}
 		}
+		
+		
 	}
 }
