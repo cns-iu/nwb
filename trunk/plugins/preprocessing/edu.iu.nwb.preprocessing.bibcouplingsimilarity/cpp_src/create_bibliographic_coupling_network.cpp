@@ -8,12 +8,13 @@
 //============================================================================
 
 #include <iostream>
-#include <vector>
+#include <set>
 #include <map>
 #include <string>
 #include <sstream>
 #include <fstream>
-#include <stdlib.h>
+#include <iomanip>
+#include <math.h>
 using namespace std;
 
 int main(int argc, char *argv[]) {
@@ -38,8 +39,8 @@ int main(int argc, char *argv[]) {
 		return -1;
 	}
 	
-	map< int, vector<int> > n2citations;
-	map< int, vector<int> > n2reverseCitations;
+	map< int, set<int> > n2citations;
+	map< int, set<int> > n2reverseCitations;
 	
 	//read in article network
 	ifstream in(ARTICLE_NETWORK);
@@ -54,8 +55,8 @@ int main(int argc, char *argv[]) {
 
 		linestream >> n1 >> n2;
 		
-		n2citations[n1].push_back(n2);
-		n2reverseCitations[n2].push_back(n1);
+		n2citations[n1].insert(n2);
+		n2reverseCitations[n2].insert(n1);
 		numEdges++;
 	}
 	cout << n2citations.size() << " nodes, "<< numEdges << " edges read from network." << endl;
@@ -64,15 +65,15 @@ int main(int argc, char *argv[]) {
 	//compute and output bibliographically coupled similarity network
 	ofstream out(SIMILARITY_NETWORK);
 	
-	map< int, vector<int> >::iterator i;
-	vector<int>::iterator j;
-	vector<int>::iterator k;
+	map< int, set<int> >::iterator i;
+	set<int>::iterator j;
+	set<int>::iterator k;
 	map<int,int>::iterator l;
 	multimap<double,int>::reverse_iterator m;
-	char formatted_sim [10];
 	double sim;
 	int node1, node2, citedNode, citationCount1, citationCount2, sharedCitations, edges_written;
-	
+		
+	map< int, set<int> > seen;
 	int num = 0, num_scores = 0;
 	unsigned long int total_edges = 0;
 	for (i = n2citations.begin(); i != n2citations.end(); i++) {
@@ -111,11 +112,13 @@ int main(int argc, char *argv[]) {
 			if (node1 != node2) {
 				citationCount2 = n2citations[node2].size();
 				sharedCitations = l->second;
-				sim = ((double)(2*sharedCitations)) / (double)(citationCount1 + citationCount2);
+				//sim = ((double)(2*sharedCitations)) / (double)(citationCount1 + citationCount2);
+				sim = ((double)sharedCitations) / sqrt((double)citationCount1*citationCount2);
 				
-				if (sim >= (double)0.001) {
-				    simScores.insert(pair<double,int>(sim,node2));
-				    
+				if (sim >= (double)0.001 && seen[node1].erase(node2) == 0) {
+					simScores.insert(pair<double,int>(sim,node2));
+					seen[node2].insert(node1);
+									    
 					num_scores++;
 				}
 			}
@@ -127,8 +130,7 @@ int main(int argc, char *argv[]) {
 		    sim = m->first;
 		    node2 = m->second;
 		    
-			sprintf(formatted_sim,"%.3f",sim);			
-			out << node1 << '\t' << node2 << '\t' << formatted_sim << endl;
+			out << node1 << '\t' << node2 << '\t' << fixed << setprecision(3) << sim << endl;
 			edges_written++;
 		}
 		total_edges += edges_written;
@@ -139,6 +141,3 @@ int main(int argc, char *argv[]) {
 	
 	return 0;
 }
-
-
-
