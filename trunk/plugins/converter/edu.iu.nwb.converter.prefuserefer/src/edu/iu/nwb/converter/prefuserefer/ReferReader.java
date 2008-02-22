@@ -65,6 +65,7 @@ public class ReferReader implements Algorithm {
     private static final int ERROR = 5;
     private static final int END = 6; 
     
+    private static final String MULTI_LINE_SEP_CHAR = " ";
     /*
      * NOTE: As there is no standard format for refer, this is based on several examples that I currently have access to. 
      * Unexpected format changes may lead to lost or mangled data.
@@ -133,6 +134,7 @@ public class ReferReader implements Algorithm {
     			} else if (isBlank(line)) {
     				state = READ_BLANK_LINE_AFTER_FIELD_DATA;
     			}  else {
+    				fieldContents += MULTI_LINE_SEP_CHAR;
     				state = READ_MORE_OF_FIELD;
     			}
     			break;
@@ -154,6 +156,7 @@ public class ReferReader implements Algorithm {
     			} else if (isBlank(line)) {
     				state = READ_BLANK_LINE_AFTER_FIELD_DATA;
     			}  else {
+    				fieldContents += MULTI_LINE_SEP_CHAR;
     				state = READ_MORE_OF_FIELD;
     			}
     			break;
@@ -178,7 +181,7 @@ public class ReferReader implements Algorithm {
     				state = READ_BLANK_LINE;
     			}  else {
     				//blank line was part of multi-line field data (part of multi-paragraph abstract, for instance)
-    				line += getBlankLine();
+    				fieldContents += getBlankLine();
     				state = READ_MORE_OF_FIELD;
     			}
     			break;
@@ -282,10 +285,8 @@ public class ReferReader implements Algorithm {
     }
     
     private String extractContentsFromLine(String line) {
-    	//adds extra space, as many if not all multi-line fields appear to treat the newline as a space in the text
-    	return " " + line;
-    	//example: "and seven years ago"
-    	//result is:  " and seven years ago"
+    	//returns exact same line (may want to change this later)
+    	return line;
     }
     
     private String getBlankLine() {
