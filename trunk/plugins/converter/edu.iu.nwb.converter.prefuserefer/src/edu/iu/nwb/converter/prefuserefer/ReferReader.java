@@ -58,11 +58,27 @@ public class ReferReader implements Algorithm {
     
     //states for state machine
     private static final int START = 0;
-    private static final int READ_NEW_FIELD = 1;
-    private static final int READ_MORE_OF_FIELD = 2;
-    private static final int READ_BLANK_LINE = 3;
-    private static final int ERROR = 4;
-    private static final int END = 5;
+    private static final int READ_NEW_FIELD = 1; 
+    private static final int READ_MORE_OF_FIELD = 2; 
+    private static final int READ_BLANK_LINE_AFTER_FIELD_DATA = 3;
+    private static final int READ_BLANK_LINE = 4; 
+    private static final int ERROR = 5;
+    private static final int END = 6; 
+    
+    /*
+     * NOTE: As there is no standard format for refer, this is based on several examples that I currently have access to. 
+     * Unexpected format changes may lead to lost or mangled data.
+     * 
+     * Assumptions for table extraction:
+     * 1) Each record is separated by TWO lines. If records are separated by one line, we will treat the second are part of the first record.
+     * 2) Fields may have a single blank line inside of them, but no more. If a field (such as an abstract) has more than one blank line
+     * 	inside it, we will treat the extra lines as junk until we come upon a new field start marker (%)
+     * 3) Field start markers always occur as first character. A line with anything before the % will be treated as either a continuation of
+     *     the previous field, or junk.
+     * 4) Field contents start with 3rd character of a line with a %. If it starts earlier, it will be chopped off. If it starts later
+     *    extra blanks will be added.
+     * 5) Probably more that I am not thinking of
+     */
     
     private Table extractTable(BufferedReader referReader) {
     	TableData table = createEmptyTable(); // the table we are filling with reference records
@@ -84,7 +100,7 @@ public class ReferReader implements Algorithm {
     	while (! doneParsing) {
     		switch (state) {
     	
-    		case START: {
+    		case START: {  //we start the file
     			//get first line
     			line = getNextLine(referReader);
     			//go to next state
@@ -100,7 +116,7 @@ public class ReferReader implements Algorithm {
     			break;
     		}
     		
-    		case READ_NEW_FIELD: {
+    		case READ_NEW_FIELD: { // we come upon a new field
     			//make and fill new field
     			field = extractFieldName(line);
     			fieldContents = extractContentsFromFirstLineOfField(line);
@@ -115,16 +131,14 @@ public class ReferReader implements Algorithm {
     				commitFieldToRecord(table, field, fieldContents);
     				state = READ_NEW_FIELD;
     			} else if (isBlank(line)) {
-    				commitFieldToRecord(table, field, fieldContents);
-    				commitRecordToTable(table);
-    				state = READ_BLANK_LINE;
+    				state = READ_BLANK_LINE_AFTER_FIELD_DATA;
     			}  else {
     				state = READ_MORE_OF_FIELD;
     			}
     			break;
     		} 
     		
-    		case READ_MORE_OF_FIELD: {
+    		case READ_MORE_OF_FIELD: { //we continue getting data from a multi-line field
     			//add line to contents of current field
     			fieldContents += extractContentsFromLine(line);
     			//get next line
@@ -138,16 +152,39 @@ public class ReferReader implements Algorithm {
     				commitFieldToRecord(table, field, fieldContents);
     				state = READ_NEW_FIELD;
     			} else if (isBlank(line)) {
-    				commitFieldToRecord(table, field, fieldContents);
-    				commitRecordToTable(table);
-    				state = READ_BLANK_LINE;
+    				state = READ_BLANK_LINE_AFTER_FIELD_DATA;
     			}  else {
     				state = READ_MORE_OF_FIELD;
     			}
     			break;
     		}
     		
-    		case READ_BLANK_LINE: {
+    		case READ_BLANK_LINE_AFTER_FIELD_DATA: {  //we read a blank line directly after a data field (may be part of field data or not)
+    			//get next line
+    			line = getNextLine(referReader);
+    			if (isEndOfFile(line)) {
+    				//blank line was just extra space at the end of the file
+    				commitFieldToRecord(table, field, fieldContents);
+    				commitRecordToTable(table);
+    				state = END;
+    			}else if (startsWithFieldMarker(line)) {
+    				//blank line was for the end of a field
+    				commitFieldToRecord(table, field, fieldContents);
+    				state = READ_NEW_FIELD;
+    			} else if (isBlank(line)) {
+    				//blank line was for the end of a record
+      				commitFieldToRecord(table, field, fieldContents);
+    				commitRecordToTable(table);
+    				state = READ_BLANK_LINE;
+    			}  else {
+    				//blank line was part of multi-line field data (part of multi-paragraph abstract, for instance)
+    				line += getBlankLine();
+    				state = READ_MORE_OF_FIELD;
+    			}
+    			break;
+    		}
+    		
+    		case READ_BLANK_LINE: { //we read a blank line in any other circumstances
     			//get next line
     			line = getNextLine(referReader);
     			//go to next state
@@ -163,7 +200,7 @@ public class ReferReader implements Algorithm {
     			break;
     		}
     		
-    		case ERROR: {
+    		case ERROR: {  //we see a line which we do not know how to handle
     			//print error
     			printError(line);
     			//get next line
@@ -181,7 +218,7 @@ public class ReferReader implements Algorithm {
     			break;
     		}
     		
-    		case END: {
+    		case END: { //we end the file
     			doneParsing = true;
     			break;
     		}
@@ -251,6 +288,10 @@ public class ReferReader implements Algorithm {
     	//result is:  " and seven years ago"
     }
     
+    private String getBlankLine() {
+    	return "\r\n";
+    }
+    
     private void commitFieldToRecord(TableData table, String field, String fieldContents) {
     	//will create the column if it does not already exist
     	table.setString(field, fieldContents);
@@ -274,6 +315,17 @@ public class ReferReader implements Algorithm {
     	this.log.log(LogService.LOG_WARNING,
     			"Programmer error: attempted to enter invalid state for state machine in ReferReader.");
     }
+    
+//    private boolean singleLineSepWarningHasBeenPrinted = false;
+//    
+//    private void printSingleLineRecordSeparationWarning() {
+//    	if (! singleLineSepWarningHasBeenPrinted) {
+//    		this.log.log(LogService.LOG_WARNING, "WARNING:" +
+//    				" This file contains references which are separated by a single line, instead of the standard two." +
+//    		" This may cause errors for fields which contain data with line breaks, such as the abstracts of papers.");
+//    		singleLineSepWarningHasBeenPrinted = true;
+//    	} 
+//    }
     
     private class TableData {
 		private Table table;
