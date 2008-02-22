@@ -245,10 +245,10 @@ public class ReferReader implements Algorithm {
     }
     
     private String extractContentsFromLine(String line) {
-    	//extract the entire line (may want to trim whitespace or something later)
-    	return line;
+    	//adds extra space, as many if not all multi-line fields appear to treat the newline as a space in the text
+    	return " " + line;
     	//example: "and seven years ago"
-    	//result is:  "and seven years ago"
+    	//result is:  " and seven years ago"
     }
     
     private void commitFieldToRecord(TableData table, String field, String fieldContents) {
@@ -264,7 +264,7 @@ public class ReferReader implements Algorithm {
     private Data[] formatAsData(Table referTable, String referFilePath) {
     	Data[] tableToReturnData = 
 			new Data[] {new BasicData(referTable, Table.class.getName())};
-		tableToReturnData[0].getMetaData().put(DataProperty.LABEL, "EndNote refer file: " + referFilePath);
+		tableToReturnData[0].getMetaData().put(DataProperty.LABEL, "EndNote reference file: " + referFilePath);
 		//TODO: should this really be a text_type?
         tableToReturnData[0].getMetaData().put(DataProperty.TYPE, DataProperty.TEXT_TYPE);
         return tableToReturnData;
