@@ -253,7 +253,7 @@ public class ReferReader implements Algorithm {
     
     private void printError(String line, int lineNum) {
     	this.log.log(LogService.LOG_WARNING,
-				"Format error at line " + lineNum + " of reference file. The line '" + line 
+				"Format error on line " + lineNum + " of reference file. The line '" + line 
 				+ "' was not inside of a field. Ignoring line and moving on.");
     }
     
