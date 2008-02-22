@@ -66,6 +66,8 @@ public class ReferReader implements Algorithm {
     private static final int END = 6; 
     
     private static final String MULTI_LINE_SEP_CHAR = " ";
+    
+    private int linesRead = 0;
     /*
      * NOTE: As there is no standard format for refer, this is based on several examples that I currently have access to. 
      * Unexpected format changes may lead to lost or mangled data.
@@ -205,7 +207,7 @@ public class ReferReader implements Algorithm {
     		
     		case ERROR: {  //we see a line which we do not know how to handle
     			//print error
-    			printError(line);
+    			printError(line, getLinesRead());
     			//get next line
     			line = getNextLine(referReader);
     			//go to next state
@@ -249,15 +251,16 @@ public class ReferReader implements Algorithm {
     	return line == null;
     }
     
-    private void printError(String line) {
+    private void printError(String line, int lineNum) {
     	this.log.log(LogService.LOG_WARNING,
-				"Error reading reference file. The line '" + line 
+				"Format error at line " + lineNum + " of reference file. The line '" + line 
 				+ "' was not inside of a field. Ignoring line and moving on.");
     }
     
     private String getNextLine(BufferedReader reader) {
     	try {
     	String line = reader.readLine();
+    	linesRead++;
     	return line;
     	} catch (IOException e1) {
     		this.log.log(LogService.LOG_ERROR, "Unable to read the next line from file. Treating this as the end of the file", e1);
@@ -315,6 +318,10 @@ public class ReferReader implements Algorithm {
     private void printProgrammerErrorMessage() {
     	this.log.log(LogService.LOG_WARNING,
     			"Programmer error: attempted to enter invalid state for state machine in ReferReader.");
+    }
+    
+    private int getLinesRead() {
+    	return this.linesRead;
     }
     
 //    private boolean singleLineSepWarningHasBeenPrinted = false;
