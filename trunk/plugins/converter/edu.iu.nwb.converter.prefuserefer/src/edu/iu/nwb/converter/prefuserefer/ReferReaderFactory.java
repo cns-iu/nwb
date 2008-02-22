@@ -26,7 +26,7 @@ public class ReferReaderFactory implements AlgorithmFactory {
     }
 
     public Algorithm createAlgorithm(Data[] data, Dictionary parameters, CIShellContext context) {
-        return new ReferValidation(data, parameters, context);
+        return new ReferReader(data, parameters, context);
     }
     public MetaTypeProvider createParameters(Data[] data) {
         return provider;
