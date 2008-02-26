@@ -20,8 +20,7 @@ public class BibtexReaderAlgorithmFactory implements AlgorithmFactory {
     }
 
     public Algorithm createAlgorithm(Data[] data, Dictionary parameters, CIShellContext context) {
-        return new BibtexReaderAlgorithm(data, parameters, context, (LogService) context.getService("org.osgi.service.LogService"));
-        
+        return new BibtexReaderAlgorithm(data, parameters, context, (LogService) context.getService("org.osgi.service.log.LogService"));
     }
     
     public MetaTypeProvider createParameters(Data[] data) {

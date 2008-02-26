@@ -46,8 +46,8 @@ public class BibtexReaderAlgorithm implements Algorithm {
     public Data[] execute() {
     	File bibtexFile = (File) data[0].getData();
     	String bibtexFilePath = bibtexFile.getAbsolutePath();
-    	//parse bibtex File
-    	bibtex.Main.main(new String[] {"-expandStringDefinitions", bibtexFilePath});
+//    	//parse bibtex File
+//    	bibtex.Main.main(new String[] {"-expandStringDefinitions", bibtexFilePath});
     	
     	BibtexFile parsedBibtex = parseBibtex(bibtexFilePath);
     	if (parsedBibtex == null) {
@@ -63,7 +63,7 @@ public class BibtexReaderAlgorithm implements Algorithm {
     private Data[] formatAsData(Table bibtex, String bibtexFilePath) {
     	Data[] tableToReturnData = 
 			new Data[] {new BasicData(bibtex, Table.class.getName())};
-		tableToReturnData[0].getMetaData().put(DataProperty.LABEL, "BibTeX file: " + bibtexFilePath);
+		tableToReturnData[0].getMetaData().put(DataProperty.LABEL, "Parsed BibTeX file: " + bibtexFilePath);
 		//TODO: should this really be a text_type?
         tableToReturnData[0].getMetaData().put(DataProperty.TYPE, DataProperty.TEXT_TYPE);
         return tableToReturnData;
@@ -106,7 +106,7 @@ public class BibtexReaderAlgorithm implements Algorithm {
     		
     		return null;
     	} finally {
-    		printNonFatalExceptions(parser.getExceptions());
+    		printNonFatalExceptions(parser.getExceptions(), bibtexFile.getEntries().size());
     	}
     	try {
     	MacroReferenceExpander macroExpander = 
@@ -158,13 +158,30 @@ public class BibtexReaderAlgorithm implements Algorithm {
     	schema.addColumn(column, String.class);
     }
     
-	private static void printNonFatalExceptions(Exception[] exceptions) {
+	private void printNonFatalExceptions(Exception[] exceptions, int numTotalEntries) {
 		if (exceptions.length > 0) {
+		
 			System.err.println("Non-fatal exceptions: ");
+			try {
+			Thread.sleep(200); 
+			} catch (Exception e) {};
+			
 			for (int i = 0; i < exceptions.length; i++) {
 				exceptions[i].printStackTrace();
+				String message = exceptions[i].getMessage();
+				if (message == null) {
+					message = "";
+				}
+				this.log.log(LogService.LOG_ERROR, "" + message, exceptions[i]);
 				System.err.println("===================");
 			}
+			float percentFlawed = ((float) exceptions.length) / ((float) numTotalEntries);
+			String percentFlawedAsString = String.valueOf(percentFlawed * 100);
+			percentFlawedAsString = percentFlawedAsString.substring(0, 4);
+			this.log.log(LogService.LOG_ERROR, "" + exceptions.length + 
+					" non-fatal errors were found out of  " + numTotalEntries +
+					" entries (%" + percentFlawedAsString +
+					" flawed). Each will cause one or more fields to be lost for a single entry. Check the command line log for details.");
 		}
 	}
     
