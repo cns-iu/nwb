@@ -163,7 +163,6 @@ public class BibtexReaderAlgorithm implements Algorithm {
 		
 			System.err.println("Non-fatal exceptions: ");
 			try {
-			Thread.sleep(200); 
 			} catch (Exception e) {};
 			
 			for (int i = 0; i < exceptions.length; i++) {
@@ -180,10 +179,9 @@ public class BibtexReaderAlgorithm implements Algorithm {
 			percentFlawedAsString = percentFlawedAsString.substring(0, 4);
 			this.log.log(LogService.LOG_WARNING, "" + exceptions.length + 
 					" non-fatal errors were found out of  " + numTotalEntries +
-					" entries (%" + percentFlawedAsString +
-					" flawed). Each will cause one or more fields to be lost for a single entry. Check the command line log for details.");
+					" entries. Each will usually cause one or more fields to be lost for a single entry.");
 		} else {
-			this.log.log(LogService.LOG_INFO, "File successfully parsed (0 errors.");
+			this.log.log(LogService.LOG_INFO, "File successfully parsed (0 errors).");
 		}
 	}
     
