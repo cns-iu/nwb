@@ -89,6 +89,7 @@ public class ReferReader implements Algorithm {
     	String field = null; //the field we are currently reading ("Author", "Year", etc...)
     	String fieldContents = null; //the content of the field we have read so far (Nikola Tesla, 1899, etc...)
     	String line = null; //the current line of the file we are parsing
+    	int numBlankLinesInARowAfterField = 0; //used to determine whether blank lines are part of field data, or are separating two records
     	
     
     	boolean doneParsing = false;
@@ -164,26 +165,42 @@ public class ReferReader implements Algorithm {
     			break;
     		}
     		
-    		case READ_BLANK_LINE_AFTER_FIELD_DATA: {  //we read a blank line directly after a data field (may be part of field data or not)
+    		case READ_BLANK_LINE_AFTER_FIELD_DATA: {  //we read a blank line directly after a data field (blank line may be part of field data or not)
+    			numBlankLinesInARowAfterField++;
     			//get next line
     			line = getNextLine(referReader);
     			if (isEndOfFile(line)) {
     				//blank line was just extra space at the end of the file
     				commitFieldToRecord(table, field, fieldContents);
     				commitRecordToTable(table);
+    				//reset blank line in a row counter
+    				numBlankLinesInARowAfterField = 0;
     				state = END;
-    			}else if (startsWithFieldMarker(line)) {
-    				//blank line was for the end of a field
+    			}else if (startsWithFieldMarker(line) && numBlankLinesInARowAfterField == 1 && (! startsThisFieldType(line, "0"))) {
+    				//blank line was separating fields in the same record
     				commitFieldToRecord(table, field, fieldContents);
+    				//reset blank line in a row counter
+    				numBlankLinesInARowAfterField = 0;
+    				state = READ_NEW_FIELD;
+    			} else if (startsWithFieldMarker(line) && (numBlankLinesInARowAfterField >= 2 || startsThisFieldType(line, "0"))) {
+    				//blank lines were separating two records
+    				commitFieldToRecord(table, field, fieldContents);
+    				commitRecordToTable(table);
+    				//reset blank line in a row counter
+    				numBlankLinesInARowAfterField = 0;
     				state = READ_NEW_FIELD;
     			} else if (isBlank(line)) {
-    				//blank line was for the end of a record
-      				commitFieldToRecord(table, field, fieldContents);
-    				commitRecordToTable(table);
-    				state = READ_BLANK_LINE;
+    				//yet another blank line...
+    				//either these blank lines separate two records (most likely), or there are two blank lines in the content of a field (freak circumstance)
+    				state = READ_BLANK_LINE_AFTER_FIELD_DATA;
     			}  else {
     				//blank line was part of multi-line field data (part of multi-paragraph abstract, for instance)
-    				fieldContents += getBlankLine();
+    				//add blank lines to field contents for each blank line we just saw
+    				for (int i = 0; i < numBlankLinesInARowAfterField; i++) {
+    					fieldContents += getBlankLine();
+    				}
+    				//reset blank line in a row counter
+    				numBlankLinesInARowAfterField = 0;
     				state = READ_MORE_OF_FIELD;
     			}
     			break;
@@ -240,6 +257,11 @@ public class ReferReader implements Algorithm {
     
     private boolean startsWithFieldMarker(String line) {
     	return line.startsWith("%");
+    }
+    
+    private boolean startsThisFieldType(String line, String fieldType) {
+    	//after %, the line starts with fieldType
+    	return line.startsWith(fieldType, 1);
     }
     
     private boolean isBlank(String line) {
@@ -340,6 +362,7 @@ public class ReferReader implements Algorithm {
 		
 		private int currentRow;
 		private boolean currentRowIsFinished;
+		private String DEFAULT_MULTI_VAL_SEPARATOR = ";";
 		
 		public TableData(Schema schema) {
 			table = schema.instantiate();
@@ -350,12 +373,23 @@ public class ReferReader implements Algorithm {
 			currentRowIsFinished = true;
 		}
 		
-		//will create the column if it does not already exist
 		public void setString(String columnTag, String value) {
+			setString(columnTag, value, DEFAULT_MULTI_VAL_SEPARATOR);
+		}
+		
+		//will create the column if it does not already exist
+		public void setString(String columnTag, String value, String multiValSeparator) {
 			ensureRowNotFinishedYet();
 			
 			try {
-			table.setString(currentRow, columnTag, value);
+				String currentContents = table.getString(currentRow, columnTag);
+				if (currentContents == null || currentContents == "") {
+					//this is first value for field
+					table.setString(currentRow, columnTag, value);
+				} else {
+					//already has contents. Add value on to current contents
+					table.setString(currentRow , columnTag, currentContents + multiValSeparator + value);
+				}
 			} catch (Exception e1) {
 				//maybe column does not yet exist. Add it and try again.
 				addColumn(columnTag, String.class);
