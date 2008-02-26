@@ -127,7 +127,7 @@ public final class BibtexParser {
             BibtexAbstractValue value = parseValue();
             bibtexFile.addEntry(bibtexFile.makePreamble(value));
         } else { // all others
-            lexer.skipWhitespace();
+            lexer.skipWhitespaceAndLatexComments();
             String bibkey = (lexer.currentInputChar() == ',') ? "" : lexer.scanLiteral(new char[] { ',' }, true, true);
             final BibtexEntry entry = bibtexFile.makeEntry(entryType, bibkey);
             bibtexFile.addEntry(entry);

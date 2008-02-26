@@ -48,7 +48,7 @@ final class PseudoLexer {
 	 * @return Token
 	 */
 	public Token scanTopLevelCommentOrAtOrEOF() throws IOException {
-		skipWhitespace();
+		skipWhitespaceAndLatexComments();
 		if (eofToken != null) {
 			return new Token(2, eofToken.content, eofToken.line, eofToken.column);
 		}
@@ -75,7 +75,7 @@ final class PseudoLexer {
 	 */
 	public final int scanAlternatives(char[] alternatives, boolean lookAhead)
 		throws IOException, ParseException {
-		skipWhitespace();
+		skipWhitespaceAndLatexComments();
 		if (eofToken != null)
 			throw new ParseException(
 				eofToken.line,
@@ -161,7 +161,7 @@ final class PseudoLexer {
 		StringBuffer resultTargetBuffer)
 		throws ParseException, IOException {
 		if (excludeWhitespace) {
-			skipWhitespace();
+			skipWhitespaceAndLatexComments();
 
 			if (eofToken != null)
 				throw new ParseException(
@@ -251,7 +251,7 @@ final class PseudoLexer {
 	}
 
 	public String scanEntryTypeName() throws ParseException, IOException {
-		skipWhitespace();
+		skipWhitespaceAndLatexComments();
 		if (eofToken != null)
 			throw new ParseException(eofToken.line, eofToken.column, "[EOF]", "[a..z,A..Z]");
 		final int line = input.getLine(), column = input.getColumn();
@@ -275,7 +275,7 @@ final class PseudoLexer {
 	}
 
 	public void scan(char expected) throws ParseException, IOException {
-		skipWhitespace();
+		skipWhitespaceAndLatexComments();
 		if (eofToken != null)
 			throw new ParseException(eofToken.line, eofToken.column, "[EOF]", "" + expected);
 		final char encountered = input.getCurrent();
@@ -286,10 +286,29 @@ final class PseudoLexer {
 		} else input.step();
 	}
 
-	public void skipWhitespace() throws IOException {
+	public void skipWhitespaceAndLatexComments() throws IOException {
 		if (eofToken != null)
 			return;
-		while (!input.eof() && Character.isWhitespace(input.getCurrent()))
+		
+		while (true) {
+			if (input.eof()) { //if end of file
+				//make note of it, and stop.
+				eofToken = new Token(-1, null, input.getLine(), input.getColumn());
+				break;
+		} else if (input.getCurrent() == '%') { //if it's a comment...
+				//step until we reach the end of the line
+				do {
+					input.step();
+				} while (input.getCurrent() != '\n');
+			} else if (Character.isWhitespace(input.getCurrent())) { //if it's whitespace
+				//step ahead once
+				input.step();
+			} else { //if it's anything else...
+				//stop
+				break;
+			}
+		}
+		while (!input.eof() && Character.isWhitespace(input.getCurrent())) 
 			input.step();
 		if (input.eof()) {
 			eofToken = new Token(-1, null, input.getLine(), input.getColumn());
@@ -303,7 +322,7 @@ final class PseudoLexer {
 	 */
 	public void enforceNoEof(String expected, boolean skipWhiteSpace) throws ParseException, IOException {
 		if (skipWhiteSpace)
-			skipWhitespace();
+			skipWhitespaceAndLatexComments();
 		else if (input.eof()) {
 			eofToken = new Token(-1, null, input.getLine(), input.getColumn());
 		}
