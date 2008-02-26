@@ -6,8 +6,6 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.UnsupportedEncodingException;
 import java.util.Dictionary;
 
 import org.cishell.framework.CIShellContext;
@@ -19,6 +17,7 @@ import org.osgi.service.log.LogService;
 
 import prefuse.data.Schema;
 import prefuse.data.Table;
+import edu.iu.nwb.converter.prefuserefer.util.UnicodeReader;
 
 public class ReferReader implements Algorithm {
     Data[] data;
@@ -44,16 +43,18 @@ public class ReferReader implements Algorithm {
     private BufferedReader makeReader(File file) {
     	try {
     	InputStream stream = new FileInputStream(file);
-    	InputStreamReader streamReader = new InputStreamReader(stream, "UTF-8");
-    	BufferedReader reader = new BufferedReader(streamReader);
+    	/*
+    	 * UnicodeReader contains a hack for eating funny encoding characters that are 
+    	 * sometimes stuck onto the beginning of files. Necessary
+    	 *  due to bug in standard reader.
+    	 */
+    	UnicodeReader unicodeReader = new UnicodeReader(stream, "UTF-8"); 
+    	BufferedReader reader = new BufferedReader(unicodeReader);
     	return reader;
     	} catch (FileNotFoundException e1) {
     		this.log.log(LogService.LOG_ERROR, "ReferReader could not find a file at " + file.getAbsolutePath(), e1);
     		return null;
-    	} catch (UnsupportedEncodingException e2) {
-    		this.log.log(LogService.LOG_ERROR, "the UTF-8 encoding is not supported on this machine.", e2);
-    		return null;
-    	}
+    	} 
     }
     
     //states for state machine
