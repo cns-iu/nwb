@@ -172,16 +172,18 @@ public class BibtexReaderAlgorithm implements Algorithm {
 				if (message == null) {
 					message = "";
 				}
-				this.log.log(LogService.LOG_ERROR, "" + message, exceptions[i]);
+				this.log.log(LogService.LOG_WARNING, "" + message, exceptions[i]);
 				System.err.println("===================");
 			}
 			float percentFlawed = ((float) exceptions.length) / ((float) numTotalEntries);
 			String percentFlawedAsString = String.valueOf(percentFlawed * 100);
 			percentFlawedAsString = percentFlawedAsString.substring(0, 4);
-			this.log.log(LogService.LOG_ERROR, "" + exceptions.length + 
+			this.log.log(LogService.LOG_WARNING, "" + exceptions.length + 
 					" non-fatal errors were found out of  " + numTotalEntries +
 					" entries (%" + percentFlawedAsString +
 					" flawed). Each will cause one or more fields to be lost for a single entry. Check the command line log for details.");
+		} else {
+			this.log.log(LogService.LOG_INFO, "File successfully parsed (0 errors.");
 		}
 	}
     
