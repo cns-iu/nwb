@@ -36,7 +36,7 @@ public class ISITableReader {
 	}
 	
 	public Table readTable(FileInputStream stream) throws IOException {
-		BufferedReader reader = new BufferedReader(new InputStreamReader(stream, "UTF-8"));
+		BufferedReader reader = new BufferedReader(new InputStreamReader(stream));
 		
 		TableData tableData = generateEmptyISITable();
 		
