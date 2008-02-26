@@ -1,0 +1,748 @@
+<project name="Generated">
+  <target name="fetch.svn.all">
+  	<!-- If you want to pull from a local filesystem, do something like this:
+  	  	<copydir src="/home/bherr/cishell-workspace/org.cishell.environment.equinox.feature" dest="/tmp/pluginbuilder/org.cishell.reference.releng/features/org.cishell.environment.equinox.feature" />
+  	  	<copydir src="/home/bherr/cishell-workspace/org.cishell.reference.feature" dest="/tmp/pluginbuilder/org.cishell.reference.releng/features/org.cishell.reference.feature" />
+  	  	<copydir src="/home/bherr/cishell-workspace/org.cishell.reference.gui.brand.cishell" dest="/tmp/pluginbuilder/org.cishell.reference.releng/plugins/org.cishell.reference.gui.brand.cishell" />
+		<copy todir="/tmp/pluginbuilder/edu.iu.nwb.releng/plugins" overwrite="true">
+			<fileset dir="/home/bherr/cishell-workspace">
+				<include name="**/*"/>
+				<exclude name="*database*"/>
+				<exclude name="*feature"/>
+			</fileset>
+	    </copy>
+		<copy todir="/tmp/pluginbuilder/edu.iu.nwb.releng/features" overwrite="true">
+			<fileset dir="/home/bherr/cishell-workspace">
+				<include name="*feature/**/*"/>
+				<exclude name="*
+"/>
+			</fileset>
+	    </copy>
+  	-->
+
+  	<!-- CIShell plugins -->
+    <antcall target="svn.co">
+      <param name="target" value="features"/>
+      <param name="element.id" value="org.cishell.feature"/>
+      <param name="project.name" value="/deployment/org.cishell.feature"/>
+      <param name="url" value="https://cishell.svn.sourceforge.net/svnroot/cishell/trunk"/>
+    </antcall>
+    <antcall target="svn.co">
+      <param name="target" value="plugins"/>
+      <param name="element.id" value="org.cishell.framework"/>
+      <param name="project.name" value="/core/org.cishell.framework"/>
+      <param name="url" value="https://cishell.svn.sourceforge.net/svnroot/cishell/trunk"/>
+    </antcall>
+    <antcall target="svn.co">
+      <param name="target" value="features"/>
+      <param name="element.id" value="org.cishell.environment.equinox.feature"/>
+      <param name="project.name" value="/deployment/org.cishell.environment.equinox.feature"/>
+      <param name="url" value="https://cishell.svn.sourceforge.net/svnroot/cishell/trunk"/>
+    </antcall>
+    <antcall target="svn.co">
+      <param name="target" value="features"/>
+      <param name="element.id" value="org.cishell.reference.feature"/>
+      <param name="project.name" value="/deployment/org.cishell.reference.feature"/>
+      <param name="url" value="https://cishell.svn.sourceforge.net/svnroot/cishell/trunk"/>
+    </antcall>
+    <antcall target="svn.co">
+      <param name="target" value="plugins"/>
+      <param name="element.id" value="org.cishell.reference"/>
+      <param name="project.name" value="/core/org.cishell.reference"/>
+      <param name="url" value="https://cishell.svn.sourceforge.net/svnroot/cishell/trunk"/>
+    </antcall>
+    <antcall target="svn.co">
+      <param name="target" value="plugins"/>
+      <param name="element.id" value="org.cishell.reference.services"/>
+      <param name="project.name" value="/core/org.cishell.reference.services"/>
+      <param name="url" value="https://cishell.svn.sourceforge.net/svnroot/cishell/trunk"/>
+    </antcall>
+    <antcall target="svn.co">
+      <param name="target" value="plugins"/>
+      <param name="element.id" value="org.cishell.service.autostart"/>
+      <param name="project.name" value="/core/org.cishell.service.autostart"/>
+      <param name="url" value="https://cishell.svn.sourceforge.net/svnroot/cishell/trunk"/>
+    </antcall>
+    <antcall target="svn.co">
+      <param name="target" value="plugins"/>
+      <param name="element.id" value="org.cishell.templates"/>
+      <param name="project.name" value="/templates/org.cishell.templates"/>
+      <param name="url" value="https://cishell.svn.sourceforge.net/svnroot/cishell/trunk"/>
+    </antcall>
+    <antcall target="svn.co">
+      <param name="target" value="plugins"/>
+      <param name="element.id" value="org.cishell.templates.jythonrunner"/>
+      <param name="project.name" value="/templates/org.cishell.templates.jythonrunner"/>
+      <param name="url" value="https://cishell.svn.sourceforge.net/svnroot/cishell/trunk"/>
+    </antcall>
+    <antcall target="svn.co">
+      <param name="target" value="plugins"/>
+      <param name="element.id" value="edu.uci.ics.jung"/>
+      <param name="project.name" value="/libs/edu.uci.ics.jung"/>
+      <param name="url" value="https://cishell.svn.sourceforge.net/svnroot/cishell/trunk"/>
+    </antcall>
+    <antcall target="svn.co">
+      <param name="target" value="plugins"/>
+      <param name="element.id" value="org.apache.commons.collections"/>
+      <param name="project.name" value="/libs/org.apache.commons.collections"/>
+      <param name="url" value="https://cishell.svn.sourceforge.net/svnroot/cishell/trunk"/>
+    </antcall>
+    <antcall target="svn.co">
+      <param name="target" value="plugins"/>
+      <param name="element.id" value="cern.colt"/>
+      <param name="project.name" value="/libs/cern.colt"/>
+      <param name="url" value="https://cishell.svn.sourceforge.net/svnroot/cishell/trunk"/>
+    </antcall>
+    <antcall target="svn.co">
+      <param name="target" value="features"/>
+      <param name="element.id" value="org.cishell.reference.gui.feature"/>
+      <param name="project.name" value="/deployment/org.cishell.reference.gui.feature"/>
+      <param name="url" value="https://cishell.svn.sourceforge.net/svnroot/cishell/trunk"/>
+    </antcall>
+    <antcall target="svn.co">
+      <param name="target" value="plugins"/>
+      <param name="element.id" value="org.cishell.reference.gui.brand.cishell"/>
+      <param name="project.name" value="/clients/gui/org.cishell.reference.gui.brand.cishell"/>
+      <param name="url" value="https://cishell.svn.sourceforge.net/svnroot/cishell/trunk"/>
+    </antcall>
+    <antcall target="svn.co">
+      <param name="target" value="plugins"/>
+      <param name="element.id" value="org.cishell.reference.gui.datamanager"/>
+      <param name="project.name" value="/clients/gui/org.cishell.reference.gui.datamanager"/>
+      <param name="url" value="https://cishell.svn.sourceforge.net/svnroot/cishell/trunk"/>
+    </antcall>
+    <antcall target="svn.co">
+      <param name="target" value="plugins"/>
+      <param name="element.id" value="org.cishell.reference.gui.log"/>
+      <param name="project.name" value="/clients/gui/org.cishell.reference.gui.log"/>
+      <param name="url" value="https://cishell.svn.sourceforge.net/svnroot/cishell/trunk"/>
+    </antcall>
+    <antcall target="svn.co">
+      <param name="target" value="plugins"/>
+      <param name="element.id" value="org.cishell.reference.gui.menumanager"/>
+      <param name="project.name" value="/clients/gui/org.cishell.reference.gui.menumanager"/>
+      <param name="url" value="https://cishell.svn.sourceforge.net/svnroot/cishell/trunk"/>
+    </antcall>
+    <antcall target="svn.co">
+      <param name="target" value="plugins"/>
+      <param name="element.id" value="org.cishell.reference.gui.workspace"/>
+      <param name="project.name" value="/clients/gui/org.cishell.reference.gui.workspace"/>
+      <param name="url" value="https://cishell.svn.sourceforge.net/svnroot/cishell/trunk"/>
+    </antcall>
+    <antcall target="svn.co">
+      <param name="target" value="plugins"/>
+      <param name="element.id" value="org.cishell.reference.gui.guibuilder.swt"/>
+      <param name="project.name" value="/clients/gui/org.cishell.reference.gui.guibuilder.swt"/>
+      <param name="url" value="https://cishell.svn.sourceforge.net/svnroot/cishell/trunk"/>
+    </antcall>
+    <antcall target="svn.co">
+      <param name="target" value="plugins"/>
+      <param name="element.id" value="org.cishell.reference.gui.persistence"/>
+      <param name="project.name" value="/clients/gui/org.cishell.reference.gui.persistence"/>
+      <param name="url" value="https://cishell.svn.sourceforge.net/svnroot/cishell/trunk"/>
+    </antcall>
+    <antcall target="svn.co">
+      <param name="target" value="plugins"/>
+      <param name="element.id" value="org.cishell.reference.gui.scheduler"/>
+      <param name="project.name" value="/clients/gui/org.cishell.reference.gui.scheduler"/>
+      <param name="url" value="https://cishell.svn.sourceforge.net/svnroot/cishell/trunk"/>
+    </antcall>
+	<antcall target="svn.co">
+      <param name="target" value="plugins"/>
+      <param name="element.id" value="org.prefuse.lib"/>
+      <param name="project.name" value="/plugins/libs/prefuselib"/>
+      <param name="url" value="http://nwb.slis.indiana.edu/svn/nwb/trunk"/>
+    </antcall>
+	<antcall target="svn.co">
+      <param name="target" value="plugins"/>
+      <param name="element.id" value="jythonlib"/>
+      <param name="project.name" value="/libs/jythonlib"/>
+      <param name="url" value="https://cishell.svn.sourceforge.net/svnroot/cishell/trunk"/>
+    </antcall>
+  	
+  	<!-- NWB Plugins -->
+    <antcall target="svn.co">
+      <param name="target" value="features"/>
+      <param name="element.id" value="edu.iu.nwb.converter.feature"/>
+      <param name="project.name" value="/deployment/edu.iu.nwb.converter.feature"/>
+      <param name="url" value="http://nwb.slis.indiana.edu/svn/nwb/trunk"/>
+    </antcall>
+    <antcall target="svn.co">
+      <param name="target" value="plugins"/>
+      <param name="element.id" value="edu.iu.nwb.converter.edgelist"/>
+      <param name="project.name" value="/plugins/converter/edu.iu.nwb.converter.edgelist"/>
+      <param name="url" value="http://nwb.slis.indiana.edu/svn/nwb/trunk"/>
+    </antcall>
+    <antcall target="svn.co">
+      <param name="target" value="plugins"/>
+      <param name="element.id" value="edu.iu.nwb.converter.jungprefuse"/>
+      <param name="project.name" value="/plugins/converter/edu.iu.nwb.converter.jungprefuse"/>
+      <param name="url" value="http://nwb.slis.indiana.edu/svn/nwb/trunk"/>
+    </antcall>
+    <antcall target="svn.co">
+      <param name="target" value="plugins"/>
+      <param name="element.id" value="edu.iu.nwb.converter.jungprefusebeta"/>
+      <param name="project.name" value="/plugins/converter/edu.iu.nwb.converter.jungprefusebeta"/>
+      <param name="url" value="http://nwb.slis.indiana.edu/svn/nwb/trunk"/>
+    </antcall>
+    <antcall target="svn.co">
+      <param name="target" value="plugins"/>
+      <param name="element.id" value="edu.iu.nwb.converter.nwb"/>
+      <param name="project.name" value="/plugins/converter/edu.iu.nwb.converter.nwb"/>
+      <param name="url" value="http://nwb.slis.indiana.edu/svn/nwb/trunk"/>
+    </antcall>
+    <antcall target="svn.co">
+      <param name="target" value="plugins"/>
+      <param name="element.id" value="edu.iu.nwb.converter.nwbgraphml"/>
+      <param name="project.name" value="/plugins/converter/edu.iu.nwb.converter.nwbgraphml"/>
+      <param name="url" value="http://nwb.slis.indiana.edu/svn/nwb/trunk"/>
+    </antcall>
+    <antcall target="svn.co">
+      <param name="target" value="plugins"/>
+      <param name="element.id" value="edu.iu.nwb.converter.nwbpajeknet"/>
+      <param name="project.name" value="/plugins/converter/edu.iu.nwb.converter.nwbpajeknet"/>
+      <param name="url" value="http://nwb.slis.indiana.edu/svn/nwb/trunk"/>
+    </antcall>
+    <antcall target="svn.co">
+      <param name="target" value="plugins"/>
+      <param name="element.id" value="edu.iu.nwb.converter.pajekmat"/>
+      <param name="project.name" value="/plugins/converter/edu.iu.nwb.converter.pajekmat"/>
+      <param name="url" value="http://nwb.slis.indiana.edu/svn/nwb/trunk"/>
+    </antcall>
+    <antcall target="svn.co">
+      <param name="target" value="plugins"/>
+      <param name="element.id" value="edu.iu.nwb.converter.pajekmatpajeknet"/>
+      <param name="project.name" value="/plugins/converter/edu.iu.nwb.converter.pajekmatpajeknet"/>
+      <param name="url" value="http://nwb.slis.indiana.edu/svn/nwb/trunk"/>
+    </antcall>
+    <antcall target="svn.co">
+      <param name="target" value="plugins"/>
+      <param name="element.id" value="edu.iu.nwb.converter.pajeknet"/>
+      <param name="project.name" value="/plugins/converter/edu.iu.nwb.converter.pajeknet"/>
+      <param name="url" value="http://nwb.slis.indiana.edu/svn/nwb/trunk"/>
+    </antcall>
+    <antcall target="svn.co">
+      <param name="target" value="plugins"/>
+      <param name="element.id" value="edu.iu.nwb.converter.prefusecsv"/>
+      <param name="project.name" value="/plugins/converter/edu.iu.nwb.converter.prefusecsv"/>
+      <param name="url" value="http://nwb.slis.indiana.edu/svn/nwb/trunk"/>
+    </antcall>
+    <antcall target="svn.co">
+      <param name="target" value="plugins"/>
+      <param name="element.id" value="edu.iu.nwb.converter.prefusegraphml"/>
+      <param name="project.name" value="/plugins/converter/edu.iu.nwb.converter.prefusegraphml"/>
+      <param name="url" value="http://nwb.slis.indiana.edu/svn/nwb/trunk"/>
+    </antcall>
+    <antcall target="svn.co">
+      <param name="target" value="plugins"/>
+      <param name="element.id" value="edu.iu.nwb.converter.prefusetreeml"/>
+      <param name="project.name" value="/plugins/converter/edu.iu.nwb.converter.prefusetreeml"/>
+      <param name="url" value="http://nwb.slis.indiana.edu/svn/nwb/trunk"/>
+    </antcall>
+    <antcall target="svn.co">
+      <param name="target" value="plugins"/>
+      <param name="element.id" value="edu.iu.nwb.converter.prefusexgmml"/>
+      <param name="project.name" value="/plugins/converter/edu.iu.nwb.converter.prefusexgmml"/>
+      <param name="url" value="http://nwb.slis.indiana.edu/svn/nwb/trunk"/>
+    </antcall>
+    <antcall target="svn.co">
+      <param name="target" value="plugins"/>
+      <param name="element.id" value="edu.iu.nwb.converter.tablegraph"/>
+      <param name="project.name" value="/plugins/converter/edu.iu.nwb.converter.tablegraph"/>
+      <param name="url" value="http://nwb.slis.indiana.edu/svn/nwb/trunk"/>
+    </antcall>
+    <antcall target="svn.co">
+      <param name="target" value="plugins"/>
+      <param name="element.id" value="edu.iu.nwb.converter.treegraph"/>
+      <param name="project.name" value="/plugins/converter/edu.iu.nwb.converter.treegraph"/>
+      <param name="url" value="http://nwb.slis.indiana.edu/svn/nwb/trunk"/>
+    </antcall>
+    <antcall target="svn.co">
+      <param name="target" value="plugins"/>
+      <param name="element.id" value="edu.iu.nwb.converter.prefuseisi"/>
+      <param name="project.name" value="/plugins/converter/edu.iu.nwb.converter.prefuseisi"/>
+      <param name="url" value="http://nwb.slis.indiana.edu/svn/nwb/trunk"/>
+    </antcall>
+    <antcall target="svn.co">
+      <param name="target" value="plugins"/>
+      <param name="element.id" value="edu.iu.nwb.shared.isiutil"/>
+      <param name="project.name" value="/plugins/shared/edu.iu.nwb.shared.isiutil"/>
+      <param name="url" value="http://nwb.slis.indiana.edu/svn/nwb/trunk"/>
+    </antcall>
+    <antcall target="svn.co">
+      <param name="target" value="plugins"/>
+      <param name="element.id" value="edu.iu.nwb.util"/>
+      <param name="project.name" value="/plugins/shared/edu.iu.nwb.util"/>
+      <param name="url" value="http://nwb.slis.indiana.edu/svn/nwb/trunk"/>
+    </antcall>
+    <antcall target="svn.co">
+      <param name="target" value="plugins"/>
+      <param name="element.id" value="edu.iu.nwb.converter.prefuseTreeBetaAlpha"/>
+      <param name="project.name" value="/plugins/converter/edu.iu.nwb.converter.prefuseTreeBetaAlpha"/>
+      <param name="url" value="http://nwb.slis.indiana.edu/svn/nwb/trunk"/>
+    </antcall>
+    <antcall target="svn.co">
+      <param name="target" value="features"/>
+      <param name="element.id" value="edu.iu.nwb.gui.brand.feature"/>
+      <param name="project.name" value="/deployment/edu.iu.nwb.gui.brand.feature"/>
+      <param name="url" value="http://nwb.slis.indiana.edu/svn/nwb/trunk"/>
+    </antcall>
+    <antcall target="svn.co">
+      <param name="target" value="plugins"/>
+      <param name="element.id" value="edu.iu.nwb.gui.brand"/>
+      <param name="project.name" value="/deployment/edu.iu.nwb.gui.brand"/>
+      <param name="url" value="http://nwb.slis.indiana.edu/svn/nwb/trunk"/>
+    </antcall>
+    <antcall target="svn.co">
+      <param name="target" value="features"/>
+      <param name="element.id" value="edu.iu.nwb.javaalgorithm.feature"/>
+      <param name="project.name" value="/deployment/edu.iu.nwb.javaalgorithm.feature"/>
+      <param name="url" value="http://nwb.slis.indiana.edu/svn/nwb/trunk"/>
+    </antcall>
+    <antcall target="svn.co">
+      <param name="target" value="plugins"/>
+      <param name="element.id" value="edu.iu.iv.attacktolerance"/>
+      <param name="project.name" value="/plugins/analysis/edu.iu.iv.attacktolerance"/>
+      <param name="url" value="http://nwb.slis.indiana.edu/svn/nwb/trunk"/>
+    </antcall>
+    <antcall target="svn.co">
+      <param name="target" value="plugins"/>
+      <param name="element.id" value="edu.iu.iv.errortolerance"/>
+      <param name="project.name" value="/plugins/analysis/edu.iu.iv.errortolerance"/>
+      <param name="url" value="http://nwb.slis.indiana.edu/svn/nwb/trunk"/>
+    </antcall>
+    <antcall target="svn.co">
+      <param name="target" value="plugins"/>
+      <param name="element.id" value="org.cishell.tests.ProgressTrackableAlgorithm"/>
+      <param name="project.name" value="/examples/org.cishell.tests.ProgressTrackableAlgorithm"/>
+      <param name="url" value="https://cishell.svn.sourceforge.net/svnroot/cishell/trunk"/>
+    </antcall>
+    <antcall target="svn.co">
+      <param name="target" value="plugins"/>
+      <param name="element.id" value="org.cishell.testing.convertertester.algorithm"/>
+      <param name="project.name" value="/testing/org.cishell.testing.convertertester.algorithm"/>
+      <param name="url" value="https://cishell.svn.sourceforge.net/svnroot/cishell/trunk"/>
+    </antcall>
+    <antcall target="svn.co">
+      <param name="target" value="plugins"/>
+      <param name="element.id" value="org.cishell.testing.convertertester.core.new"/>
+      <param name="project.name" value="/testing/org.cishell.testing.convertertester.core.new"/>
+      <param name="url" value="https://cishell.svn.sourceforge.net/svnroot/cishell/trunk"/>
+    </antcall>
+  	
+    <antcall target="svn.co">
+      <param name="target" value="plugins"/>
+      <param name="element.id" value="edu.iu.nwb.analysis.dichotomize"/>
+      <param name="project.name" value="/plugins/analysis/edu.iu.nwb.analysis.dichotomize"/>
+      <param name="url" value="http://nwb.slis.indiana.edu/svn/nwb/trunk"/>
+    </antcall>
+    <antcall target="svn.co">
+      <param name="target" value="plugins"/>
+      <param name="element.id" value="edu.iu.nwb.analysis.isolates"/>
+      <param name="project.name" value="/plugins/analysis/edu.iu.nwb.analysis.isolates"/>
+      <param name="url" value="http://nwb.slis.indiana.edu/svn/nwb/trunk"/>
+    </antcall>
+    <antcall target="svn.co">
+      <param name="target" value="plugins"/>
+      <param name="element.id" value="edu.iu.nwb.analysis.selfloops"/>
+      <param name="project.name" value="/plugins/analysis/edu.iu.nwb.analysis.selfloops"/>
+      <param name="url" value="http://nwb.slis.indiana.edu/svn/nwb/trunk"/>
+    </antcall>
+    <antcall target="svn.co">
+      <param name="target" value="plugins"/>
+      <param name="element.id" value="edu.iu.nwb.analysis.symmetrize"/>
+      <param name="project.name" value="/plugins/analysis/edu.iu.nwb.analysis.symmetrize"/>
+      <param name="url" value="http://nwb.slis.indiana.edu/svn/nwb/trunk"/>
+    </antcall>	  	
+    <antcall target="svn.co">
+      <param name="target" value="plugins"/>
+      <param name="element.id" value="edu.iu.iv.modeling.p2p.can"/>
+      <param name="project.name" value="/plugins/modeling/edu.iu.iv.modeling.p2p.can"/>
+      <param name="url" value="http://nwb.slis.indiana.edu/svn/nwb/trunk"/>
+    </antcall>
+    <antcall target="svn.co">
+      <param name="target" value="plugins"/>
+      <param name="element.id" value="edu.iu.iv.modeling.p2p.chord"/>
+      <param name="project.name" value="/plugins/modeling/edu.iu.iv.modeling.p2p.chord"/>
+      <param name="url" value="http://nwb.slis.indiana.edu/svn/nwb/trunk"/>
+    </antcall>
+    <antcall target="svn.co">
+      <param name="target" value="plugins"/>
+      <param name="element.id" value="edu.iu.iv.modeling.p2p.hypergrid"/>
+      <param name="project.name" value="/plugins/modeling/edu.iu.iv.modeling.p2p.hypergrid"/>
+      <param name="url" value="http://nwb.slis.indiana.edu/svn/nwb/trunk"/>
+    </antcall>
+    <antcall target="svn.co">
+      <param name="target" value="plugins"/>
+      <param name="element.id" value="edu.iu.iv.modeling.p2p.pru"/>
+      <param name="project.name" value="/plugins/modeling/edu.iu.iv.modeling.p2p.pru"/>
+      <param name="url" value="http://nwb.slis.indiana.edu/svn/nwb/trunk"/>
+    </antcall>
+    <antcall target="svn.co">
+      <param name="target" value="plugins"/>
+      <param name="element.id" value="edu.iu.iv.search.p2p.bfs"/>
+      <param name="project.name" value="/plugins/analysis/edu.iu.iv.search.p2p.bfs"/>
+      <param name="url" value="http://nwb.slis.indiana.edu/svn/nwb/trunk"/>
+    </antcall>
+    <antcall target="svn.co">
+      <param name="target" value="plugins"/>
+      <param name="element.id" value="edu.iu.iv.search.p2p.randomwalk"/>
+      <param name="project.name" value="/plugins/analysis/edu.iu.iv.search.p2p.randomwalk"/>
+      <param name="url" value="http://nwb.slis.indiana.edu/svn/nwb/trunk"/>
+    </antcall>
+    <antcall target="svn.co">
+      <param name="target" value="plugins"/>
+      <param name="element.id" value="edu.iu.nwb.visualization.drl"/>
+      <param name="project.name" value="/plugins/visualization/edu.iu.nwb.visualization.drl"/>
+      <param name="url" value="http://nwb.slis.indiana.edu/svn/nwb/trunk"/>
+    </antcall>
+    <antcall target="svn.co">
+      <param name="target" value="plugins"/>
+      <param name="element.id" value="edu.iu.nwb.visualization.jungnetworklayout"/>
+      <param name="project.name" value="/plugins/visualization/edu.iu.nwb.visualization.jungnetworklayout"/>
+      <param name="url" value="http://nwb.slis.indiana.edu/svn/nwb/trunk"/>
+    </antcall>
+    <antcall target="svn.co">
+      <param name="target" value="plugins"/>
+      <param name="element.id" value="edu.iu.nwb.visualization.radialgraph"/>
+      <param name="project.name" value="/plugins/visualization/edu.iu.nwb.visualization.radialgraph"/>
+      <param name="url" value="http://nwb.slis.indiana.edu/svn/nwb/trunk"/>
+    </antcall>
+    <antcall target="svn.co">
+      <param name="target" value="plugins"/>
+      <param name="element.id" value="org.mediavirus.parvis"/>
+      <param name="project.name" value="/plugins/visualization/org.mediavirus.parvis"/>
+      <param name="url" value="http://nwb.slis.indiana.edu/svn/nwb/trunk"/>
+    </antcall>
+    <antcall target="svn.co">
+      <param name="target" value="plugins"/>
+      <param name="element.id" value="edu.iu.iv.modeling.tarl"/>
+      <param name="project.name" value="/plugins/modeling/edu.iu.iv.modeling.tarl"/>
+      <param name="url" value="http://nwb.slis.indiana.edu/svn/nwb/trunk"/>
+    </antcall>
+    <antcall target="svn.co">
+      <param name="target" value="plugins"/>
+      <param name="element.id" value="edu.iu.nwb.analysis.pathfindergraphnetworkscaling"/>
+      <param name="project.name" value="/plugins/analysis/edu.iu.nwb.analysis.pathfindergraphnetworkscaling"/>
+      <param name="url" value="http://nwb.slis.indiana.edu/svn/nwb/trunk"/>
+    </antcall>
+    <antcall target="svn.co">
+      <param name="target" value="plugins"/>
+      <param name="element.id" value="edu.iu.nwb.preprocessing.prefuse.beta.directoryhierarchyreader"/>
+      <param name="project.name" value="/plugins/preprocessing/edu.iu.nwb.preprocessing.prefuse.beta.directoryhierarchyreader"/>
+      <param name="url" value="http://nwb.slis.indiana.edu/svn/nwb/trunk"/>
+    </antcall>  	
+    <antcall target="svn.co">
+      <param name="target" value="plugins"/>
+      <param name="element.id" value="edu.iu.nwb.preprocessing.bibcouplingsimilarity"/>
+      <param name="project.name" value="/plugins/preprocessing/edu.iu.nwb.preprocessing.bibcouplingsimilarity"/>
+      <param name="url" value="http://nwb.slis.indiana.edu/svn/nwb/trunk"/>
+    </antcall>
+    <antcall target="svn.co">
+      <param name="target" value="plugins"/>
+      <param name="element.id" value="edu.iu.nwb.preprocessing.cocitationsimilarity"/>
+      <param name="project.name" value="/plugins/preprocessing/edu.iu.nwb.preprocessing.cocitationsimilarity"/>
+      <param name="url" value="http://nwb.slis.indiana.edu/svn/nwb/trunk"/>
+    </antcall>  	
+  	<antcall target="svn.co">
+  	  <param name="target" value="plugins"/>
+  	  <param name="element.id" value="edu.iu.nwb.preprocessing.tablefilter"/>
+  	  <param name="project.name" value="/plugins/preprocessing/edu.iu.nwb.preprocessing.tablefilter"/>
+  	  <param name="url" value="http://nwb.slis.indiana.edu/svn/nwb/trunk"/>
+  	</antcall>
+  	<antcall target="svn.co">
+  	  <param name="target" value="plugins"/>
+  	  <param name="element.id" value="edu.iu.nwb.preprocessing.trimedges"/>
+  	  <param name="project.name" value="/plugins/preprocessing/edu.iu.nwb.preprocessing.trimedges"/>
+  	  <param name="url" value="http://nwb.slis.indiana.edu/svn/nwb/trunk"/>
+  	</antcall>
+  	
+    <antcall target="svn.co">
+      <param name="target" value="plugins"/>
+      <param name="element.id" value="edu.iu.nwb.analysis.sampling"/>
+      <param name="project.name" value="/plugins/analysis/edu.iu.nwb.analysis.sampling"/>
+      <param name="url" value="http://nwb.slis.indiana.edu/svn/nwb/trunk"/>
+    </antcall>
+    <antcall target="svn.co">
+      <param name="target" value="plugins"/>
+      <param name="element.id" value="edu.iu.nwb.analysis.weakcomponentclustering"/>
+      <param name="project.name" value="/plugins/analysis/edu.iu.nwb.analysis.weakcomponentclustering"/>
+      <param name="url" value="http://nwb.slis.indiana.edu/svn/nwb/trunk"/>
+    </antcall>
+    <antcall target="svn.co">
+      <param name="target" value="plugins"/>
+      <param name="element.id" value="edu.iu.nwb.visualization.prefuse.alpha.smallworld"/>
+      <param name="project.name" value="/plugins/visualization/edu.iu.nwb.visualization.prefuse.alpha.smallworld"/>
+      <param name="url" value="http://nwb.slis.indiana.edu/svn/nwb/trunk"/>
+    </antcall>
+    <antcall target="svn.co">
+      <param name="target" value="plugins"/>
+      <param name="element.id" value="edu.iu.nwb.preprocessing.csv"/>
+      <param name="project.name" value="/plugins/preprocessing/edu.iu.nwb.preprocessing.csv"/>
+      <param name="url" value="http://nwb.slis.indiana.edu/svn/nwb/trunk"/>
+    </antcall>
+    <antcall target="svn.co">
+      <param name="target" value="plugins"/>
+      <param name="element.id" value="edu.iu.nwb.visualization.prefuse.beta"/>
+      <param name="project.name" value="/plugins/visualization/edu.iu.nwb.visualization.prefuse.beta"/>
+      <param name="url" value="http://nwb.slis.indiana.edu/svn/nwb/trunk"/>
+    </antcall>
+    <antcall target="svn.co">
+      <param name="target" value="plugins"/>
+      <param name="element.id" value="FreeHEP_VectorGraphics"/>
+      <param name="project.name" value="/plugins/libs/VectorGraphics"/>
+      <param name="url" value="http://nwb.slis.indiana.edu/svn/nwb/trunk"/>
+    </antcall>
+    <antcall target="svn.co">
+      <param name="target" value="plugins"/>
+      <param name="element.id" value="stax"/>
+      <param name="project.name" value="/plugins/libs/staxlib"/>
+      <param name="url" value="http://nwb.slis.indiana.edu/svn/nwb/trunk"/>
+    </antcall>
+    <antcall target="svn.co">
+      <param name="target" value="plugins"/>
+      <param name="element.id" value="edu.iu.nwb.analysis.multipartitejoining"/>
+      <param name="project.name" value="/plugins/analysis/edu.iu.nwb.analysis.multipartitejoining"/>
+      <param name="url" value="http://nwb.slis.indiana.edu/svn/nwb/trunk"/>
+    </antcall>
+    <antcall target="svn.co">
+      <param name="target" value="plugins"/>
+      <param name="element.id" value="edu.iu.nwb.analysis.burst"/>
+      <param name="project.name" value="/plugins/analysis/edu.iu.nwb.analysis.burst"/>
+      <param name="url" value="http://nwb.slis.indiana.edu/svn/nwb/trunk"/>
+    </antcall>
+    <antcall target="svn.co">
+      <param name="target" value="plugins"/>
+      <param name="element.id" value="edu.iu.nwb.analysis.kcore"/>
+      <param name="project.name" value="/plugins/analysis/edu.iu.nwb.analysis.kcore"/>
+      <param name="url" value="http://nwb.slis.indiana.edu/svn/nwb/trunk"/>
+    </antcall>
+    <antcall target="svn.co">
+      <param name="target" value="plugins"/>
+      <param name="element.id" value="edu.iu.nwb.analysis.isidupremover"/>
+      <param name="project.name" value="/plugins/analysis/edu.iu.nwb.analysis.isidupremover"/>
+      <param name="url" value="http://nwb.slis.indiana.edu/svn/nwb/trunk"/>
+    </antcall>
+    <antcall target="svn.co">
+      <param name="target" value="plugins"/>
+      <param name="element.id" value="edu.iu.nwb.analysis.extractcoauthorship"/>
+      <param name="project.name" value="/plugins/analysis/edu.iu.nwb.analysis.extractcoauthorship"/>
+      <param name="url" value="http://nwb.slis.indiana.edu/svn/nwb/trunk"/>
+    </antcall>
+    <antcall target="svn.co">
+      <param name="target" value="plugins"/>
+      <param name="element.id" value="edu.iu.nwb.toolkit.networkanalysis"/>
+      <param name="project.name" value="/plugins/analysis/edu.iu.nwb.toolkit.networkanalysis"/>
+      <param name="url" value="http://nwb.slis.indiana.edu/svn/nwb/trunk"/>
+    </antcall>
+    <antcall target="svn.co">
+      <param name="target" value="plugins"/>
+      <param name="element.id" value="edu.iu.nwb.tools.mergenodes"/>
+      <param name="project.name" value="/plugins/preprocessing/edu.iu.nwb.tools.mergenodes"/>
+      <param name="url" value="http://nwb.slis.indiana.edu/svn/nwb/trunk"/>
+    </antcall>
+    <antcall target="svn.co">
+      <param name="target" value="plugins"/>
+      <param name="element.id" value="edu.iu.nwb.composite.isiloadandclean"/>
+      <param name="project.name" value="/plugins/composite/edu.iu.nwb.composite.isiloadandclean"/>
+      <param name="url" value="http://nwb.slis.indiana.edu/svn/nwb/trunk"/>
+    </antcall>
+    <antcall target="svn.co">
+      <param name="target" value="plugins"/>
+      <param name="element.id" value="edu.iu.nwb.visualization.balloongraph"/>
+      <param name="project.name" value="/plugins/visualization/edu.iu.nwb.visualization.balloongraph"/>
+      <param name="url" value="http://nwb.slis.indiana.edu/svn/nwb/trunk"/>
+    </antcall>
+  	
+  	<!-- Non-PDE-based NWB Plugins -->
+    <antcall target="svn.co">
+      <param name="target" value="nonpde_plugins"/>
+      <param name="element.id" value="edu.iu.nwb.analysis.averageshortestpath"/>
+      <param name="project.name" value="/analysis/edu.iu.nwb.analysis.averageshortestpath"/>
+      <param name="url" value="http://nwb.slis.indiana.edu/svn/nwb/trunk/plugins"/>
+    </antcall>
+    <ant dir="${buildDirectory}/nonpde_plugins/edu.iu.nwb.analysis.averageshortestpath"/>
+    <antcall target="svn.co">
+      <param name="target" value="nonpde_plugins"/>
+      <param name="element.id" value="edu.iu.nwb.analysis.clustering"/>
+      <param name="project.name" value="/analysis/edu.iu.nwb.analysis.clustering"/>
+      <param name="url" value="http://nwb.slis.indiana.edu/svn/nwb/trunk/plugins"/>
+    </antcall>
+    <ant dir="${buildDirectory}/nonpde_plugins/edu.iu.nwb.analysis.clustering"/>
+    <antcall target="svn.co">
+      <param name="target" value="nonpde_plugins"/>
+      <param name="element.id" value="edu.iu.nwb.analysis.clustering_vs_k"/>
+      <param name="project.name" value="/analysis/edu.iu.nwb.analysis.clustering_vs_k"/>
+      <param name="url" value="http://nwb.slis.indiana.edu/svn/nwb/trunk/plugins"/>
+    </antcall>
+    <ant dir="${buildDirectory}/nonpde_plugins/edu.iu.nwb.analysis.clustering_vs_k"/>
+    <antcall target="svn.co">
+      <param name="target" value="nonpde_plugins"/>
+      <param name="element.id" value="edu.iu.nwb.analysis.connectedcomponents"/>
+      <param name="project.name" value="/analysis/edu.iu.nwb.analysis.connectedcomponents"/>
+      <param name="url" value="http://nwb.slis.indiana.edu/svn/nwb/trunk/plugins"/>
+    </antcall>
+    <ant dir="${buildDirectory}/nonpde_plugins/edu.iu.nwb.analysis.connectedcomponents"/>
+    <antcall target="svn.co">
+      <param name="target" value="nonpde_plugins"/>
+      <param name="element.id" value="edu.iu.nwb.analysis.diameter"/>
+      <param name="project.name" value="/analysis/edu.iu.nwb.analysis.diameter"/>
+      <param name="url" value="http://nwb.slis.indiana.edu/svn/nwb/trunk/plugins"/>
+    </antcall>
+    <ant dir="${buildDirectory}/nonpde_plugins/edu.iu.nwb.analysis.diameter"/>
+    <antcall target="svn.co">
+      <param name="target" value="nonpde_plugins"/>
+      <param name="element.id" value="edu.iu.nwb.analysis.directedknn"/>
+      <param name="project.name" value="/analysis/edu.iu.nwb.analysis.directedknn"/>
+      <param name="url" value="http://nwb.slis.indiana.edu/svn/nwb/trunk/plugins"/>
+    </antcall>
+    <ant dir="${buildDirectory}/nonpde_plugins/edu.iu.nwb.analysis.directedknn"/>
+    <antcall target="svn.co">
+      <param name="target" value="nonpde_plugins"/>
+      <param name="element.id" value="edu.iu.nwb.analysis.indegreedistribution"/>
+      <param name="project.name" value="/analysis/edu.iu.nwb.analysis.indegreedistribution"/>
+      <param name="url" value="http://nwb.slis.indiana.edu/svn/nwb/trunk/plugins"/>
+    </antcall>
+    <ant dir="${buildDirectory}/nonpde_plugins/edu.iu.nwb.analysis.indegreedistribution"/>
+    <antcall target="svn.co">
+      <param name="target" value="nonpde_plugins"/>
+      <param name="element.id" value="edu.iu.nwb.analysis.indegreesequence"/>
+      <param name="project.name" value="/analysis/edu.iu.nwb.analysis.indegreesequence"/>
+      <param name="url" value="http://nwb.slis.indiana.edu/svn/nwb/trunk/plugins"/>
+    </antcall>
+    <ant dir="${buildDirectory}/nonpde_plugins/edu.iu.nwb.analysis.indegreesequence"/>
+    <antcall target="svn.co">
+      <param name="target" value="nonpde_plugins"/>
+      <param name="element.id" value="edu.iu.nwb.analysis.onepointcorrelations"/>
+      <param name="project.name" value="/analysis/edu.iu.nwb.analysis.onepointcorrelations"/>
+      <param name="url" value="http://nwb.slis.indiana.edu/svn/nwb/trunk/plugins"/>
+    </antcall>
+    <ant dir="${buildDirectory}/nonpde_plugins/edu.iu.nwb.analysis.onepointcorrelations"/>
+    <antcall target="svn.co">
+      <param name="target" value="nonpde_plugins"/>
+      <param name="element.id" value="edu.iu.nwb.analysis.outdegreedistribution"/>
+      <param name="project.name" value="/analysis/edu.iu.nwb.analysis.outdegreedistribution"/>
+      <param name="url" value="http://nwb.slis.indiana.edu/svn/nwb/trunk/plugins"/>
+    </antcall>
+    <ant dir="${buildDirectory}/nonpde_plugins/edu.iu.nwb.analysis.outdegreedistribution"/>
+    <antcall target="svn.co">
+      <param name="target" value="nonpde_plugins"/>
+      <param name="element.id" value="edu.iu.nwb.analysis.outdegreesequence"/>
+      <param name="project.name" value="/analysis/edu.iu.nwb.analysis.outdegreesequence"/>
+      <param name="url" value="http://nwb.slis.indiana.edu/svn/nwb/trunk/plugins"/>
+    </antcall>
+    <ant dir="${buildDirectory}/nonpde_plugins/edu.iu.nwb.analysis.outdegreesequence"/>
+    <antcall target="svn.co">
+      <param name="target" value="nonpde_plugins"/>
+      <param name="element.id" value="edu.iu.nwb.analysis.pagerank"/>
+      <param name="project.name" value="/analysis/edu.iu.nwb.analysis.pagerank"/>
+      <param name="url" value="http://nwb.slis.indiana.edu/svn/nwb/trunk/plugins"/>
+    </antcall>
+    <ant dir="${buildDirectory}/nonpde_plugins/edu.iu.nwb.analysis.pagerank"/>
+    <antcall target="svn.co">
+      <param name="target" value="nonpde_plugins"/>
+      <param name="element.id" value="edu.iu.nwb.analysis.shortestpathdistr"/>
+      <param name="project.name" value="/analysis/edu.iu.nwb.analysis.shortestpathdistr"/>
+      <param name="url" value="http://nwb.slis.indiana.edu/svn/nwb/trunk/plugins"/>
+    </antcall>
+    <ant dir="${buildDirectory}/nonpde_plugins/edu.iu.nwb.analysis.shortestpathdistr"/>
+    <antcall target="svn.co">
+      <param name="target" value="nonpde_plugins"/>
+      <param name="element.id" value="edu.iu.nwb.analysis.sitebetweenness"/>
+      <param name="project.name" value="/analysis/edu.iu.nwb.analysis.sitebetweenness"/>
+      <param name="url" value="http://nwb.slis.indiana.edu/svn/nwb/trunk/plugins"/>
+    </antcall>
+    <ant dir="${buildDirectory}/nonpde_plugins/edu.iu.nwb.analysis.sitebetweenness"/>
+    <antcall target="svn.co">
+      <param name="target" value="nonpde_plugins"/>
+      <param name="element.id" value="edu.iu.nwb.analysis.totaldegreedistribution"/>
+      <param name="project.name" value="/analysis/edu.iu.nwb.analysis.totaldegreedistribution"/>
+      <param name="url" value="http://nwb.slis.indiana.edu/svn/nwb/trunk/plugins"/>
+    </antcall>
+    <ant dir="${buildDirectory}/nonpde_plugins/edu.iu.nwb.analysis.totaldegreedistribution"/>
+    <antcall target="svn.co">
+      <param name="target" value="nonpde_plugins"/>
+      <param name="element.id" value="edu.iu.nwb.analysis.totaldegreesequence"/>
+      <param name="project.name" value="/analysis/edu.iu.nwb.analysis.totaldegreesequence"/>
+      <param name="url" value="http://nwb.slis.indiana.edu/svn/nwb/trunk/plugins"/>
+    </antcall>
+    <ant dir="${buildDirectory}/nonpde_plugins/edu.iu.nwb.analysis.totaldegreesequence"/>
+    <antcall target="svn.co">
+      <param name="target" value="nonpde_plugins"/>
+      <param name="element.id" value="edu.iu.nwb.analysis.undirectedknn"/>
+      <param name="project.name" value="/analysis/edu.iu.nwb.analysis.undirectedknn"/>
+      <param name="url" value="http://nwb.slis.indiana.edu/svn/nwb/trunk/plugins"/>
+    </antcall>
+    <ant dir="${buildDirectory}/nonpde_plugins/edu.iu.nwb.analysis.undirectedknn"/>
+    <antcall target="svn.co">
+      <param name="target" value="nonpde_plugins"/>
+      <param name="element.id" value="edu.iu.nwb.analysis.reciprocity.arc"/>
+      <param name="project.name" value="/analysis/edu.iu.nwb.analysis.reciprocity.arc"/>
+      <param name="url" value="http://nwb.slis.indiana.edu/svn/nwb/trunk/plugins"/>
+    </antcall>
+    <ant dir="${buildDirectory}/nonpde_plugins/edu.iu.nwb.analysis.reciprocity.arc"/>
+    <antcall target="svn.co">
+      <param name="target" value="nonpde_plugins"/>
+      <param name="element.id" value="edu.iu.nwb.analysis.reciprocity.dyad"/>
+      <param name="project.name" value="/analysis/edu.iu.nwb.analysis.reciprocity.dyad"/>
+      <param name="url" value="http://nwb.slis.indiana.edu/svn/nwb/trunk/plugins"/>
+    </antcall>
+    <ant dir="${buildDirectory}/nonpde_plugins/edu.iu.nwb.analysis.reciprocity.dyad"/>
+    <antcall target="svn.co">
+      <param name="target" value="nonpde_plugins"/>
+      <param name="element.id" value="edu.iu.nwb.analysis.transitivity.adjacency"/>
+      <param name="project.name" value="/analysis/edu.iu.nwb.analysis.transitivity.adjacency"/>
+      <param name="url" value="http://nwb.slis.indiana.edu/svn/nwb/trunk/plugins"/>
+    </antcall>
+    <ant dir="${buildDirectory}/nonpde_plugins/edu.iu.nwb.analysis.transitivity.adjacency"/>
+    <antcall target="svn.co">
+      <param name="target" value="nonpde_plugins"/>
+      <param name="element.id" value="edu.iu.nwb.modeling.barabasialbert"/>
+      <param name="project.name" value="/modeling/edu.iu.nwb.modeling.barabasialbert"/>
+      <param name="url" value="http://nwb.slis.indiana.edu/svn/nwb/trunk/plugins"/>
+    </antcall>
+    <ant dir="${buildDirectory}/nonpde_plugins/edu.iu.nwb.modeling.barabasialbert"/>
+    <antcall target="svn.co">
+      <param name="target" value="nonpde_plugins"/>
+      <param name="element.id" value="edu.iu.nwb.modeling.erdosrandomgraph"/>
+      <param name="project.name" value="/modeling/edu.iu.nwb.modeling.erdosrandomgraph"/>
+      <param name="url" value="http://nwb.slis.indiana.edu/svn/nwb/trunk/plugins"/>
+    </antcall>
+    <ant dir="${buildDirectory}/nonpde_plugins/edu.iu.nwb.modeling.erdosrandomgraph"/>
+    <antcall target="svn.co">
+      <param name="target" value="nonpde_plugins"/>
+      <param name="element.id" value="edu.iu.nwb.modeling.smallworld"/>
+      <param name="project.name" value="/modeling/edu.iu.nwb.modeling.smallworld"/>
+      <param name="url" value="http://nwb.slis.indiana.edu/svn/nwb/trunk/plugins"/>
+    </antcall>
+    <ant dir="${buildDirectory}/nonpde_plugins/edu.iu.nwb.modeling.smallworld"/>
+    <antcall target="svn.co">
+      <param name="target" value="nonpde_plugins"/>
+      <param name="element.id" value="edu.iu.nwb.visualization.gnuplot"/>
+      <param name="project.name" value="/visualization/edu.iu.nwb.visualization.gnuplot"/>
+      <param name="url" value="http://nwb.slis.indiana.edu/svn/nwb/trunk/plugins"/>
+    </antcall>
+    <ant dir="${buildDirectory}/nonpde_plugins/edu.iu.nwb.visualization.gnuplot"/>
+    <antcall target="svn.co">
+      <param name="target" value="nonpde_plugins"/>
+      <param name="element.id" value="edu.iu.nwb.visualization.guess"/>
+      <param name="project.name" value="/visualization/edu.iu.nwb.visualization.guess"/>
+      <param name="url" value="http://nwb.slis.indiana.edu/svn/nwb/trunk/plugins"/>
+    </antcall>
+    <ant dir="${buildDirectory}/nonpde_plugins/edu.iu.nwb.visualization.guess"/>
+    <antcall target="svn.co">
+      <param name="target" value="nonpde_plugins"/>
+      <param name="element.id" value="nwb.visualization.lanet"/>
+      <param name="project.name" value="/visualization/nwb.visualization.lanet"/>
+      <param name="url" value="http://nwb.slis.indiana.edu/svn/nwb/trunk/plugins"/>
+    </antcall>
+    <ant dir="${buildDirectory}/nonpde_plugins/nwb.visualization.lanet"/>
+    <antcall target="svn.co">
+      <param name="target" value="nonpde_plugins"/>
+      <param name="element.id" value="org.mediavirus.parvis.sampledata"/>
+      <param name="project.name" value="/datasets/org.mediavirus.parvis.sampledata"/>
+      <param name="url" value="http://nwb.slis.indiana.edu/svn/nwb/trunk/plugins"/>
+    </antcall>
+    <ant dir="${buildDirectory}/nonpde_plugins/org.mediavirus.parvis.sampledata"/>
+  </target>
+</project>
