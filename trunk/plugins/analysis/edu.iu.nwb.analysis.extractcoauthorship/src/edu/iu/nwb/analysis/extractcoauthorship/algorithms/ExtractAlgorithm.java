@@ -37,10 +37,9 @@ public class ExtractAlgorithm implements Algorithm {
 				.getData();
 
 		final ClassLoader loader = getClass().getClassLoader();
-
 		final InputStream in = loader
 				.getResourceAsStream("/edu/iu/nwb/analysis/extractcoauthorship/metadata/Operations.properties");
-
+		
 		final Properties metaData = new Properties();
 		try {
 			metaData.load(in);
@@ -49,8 +48,11 @@ public class ExtractAlgorithm implements Algorithm {
 		} catch (final IOException ie) {
 			logger.log(LogService.LOG_ERROR, ie.getMessage());
 		}
-		final ExtractNetworkfromMultivalues enfmv = new ExtractNetworkfromMultivalues(
-				dataTable, "AU", "" + "|", metaData, false);
+		
+		final ExtractNetworkfromMultivalues enfmv = new ExtractNetworkfromMultivalues(logger,
+				dataTable, "AU", "|", metaData, false);
+		
+		
 		final prefuse.data.Graph outputGraph = enfmv.getGraph();
 		final prefuse.data.Table outputTable = enfmv.getTable();
 		final Data outputData1 = new BasicData(outputGraph,

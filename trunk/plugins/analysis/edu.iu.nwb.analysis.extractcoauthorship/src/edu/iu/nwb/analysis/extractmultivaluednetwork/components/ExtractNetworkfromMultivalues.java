@@ -6,7 +6,10 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
+import java.util.TreeSet;
 import java.util.regex.Pattern;
+
+import org.osgi.service.log.LogService;
 
 import prefuse.data.Edge;
 import prefuse.data.Graph;
@@ -23,7 +26,8 @@ public class ExtractNetworkfromMultivalues {
 	private final prefuse.data.Graph coObjectNetwork;
 	private Properties functionDefinitions;
 	private String splitString;
-
+	private LogService log;
+	
 	/***
 	 * 
 	 * Creates a network from a the provided table. If the value in
@@ -43,9 +47,10 @@ public class ExtractNetworkfromMultivalues {
 	 * 
 	 */
 
-	public ExtractNetworkfromMultivalues(prefuse.data.Table pdt,
+	public ExtractNetworkfromMultivalues(LogService log, prefuse.data.Table pdt,
 			String columnName, String split, Properties metaData,
 			boolean isDirected) {
+		this.log = log;
 		this.functionDefinitions = metaData;
 		this.splitString = split;
 		coObjectNetwork = constructGraph(pdt, columnName,isDirected);
@@ -80,6 +85,7 @@ public class ExtractNetworkfromMultivalues {
 		final Graph outputGraph = new Graph(nodeSchema.instantiate(),
 				edgeSchema.instantiate(), isDirected);
 
+
 		constructNodesandEdges(pdt, columnName, outputGraph, isDirected);
 
 		return outputGraph;
@@ -88,22 +94,29 @@ public class ExtractNetworkfromMultivalues {
 
 	private void constructNodesandEdges(prefuse.data.Table pdt,
 			String columnName, prefuse.data.Graph g, boolean directed) {
-
+		boolean dupAuthors = false;
+		String error;
+		
+		final HashMap dupAuthorErrorMessages = new HashMap();
 		final HashMap values = new HashMap();
 		final HashMap coValues = new HashMap();
 
 		for (int row = 0; row < pdt.getRowCount(); row++) {
 			final String s = (String) pdt.get(row, columnName);
-
+			
+			
 			Set seenObject = new HashSet();
 
 			// Here we ensure that we correctly capture regex metacharacters.
 			// This means we can't split on regex, but I think that is
 			// acceptable.
 
+			
+			if(s != null){
+			
 			final Pattern p = Pattern.compile("\\Q" + this.splitString + "\\E");
-			final Object[] objects = p.split(s);
-
+			final String[] objects = p.split(s);
+			
 
 			for (int i = objects.length - 1; i >= 0; i--) {
 				if(seenObject.add(objects[i])){
@@ -113,17 +126,60 @@ public class ExtractNetworkfromMultivalues {
 				// if there is more than one value, create unique edges between each
 				// value.
 				for (int j = 0; j < i; j++) {
-					if(seenObject.add(objects[j])){
-						constructAndModifyNode(objects[j],g,pdt,row,values);
+					if(!objects[j].equals(objects[i])){
+
+						if(seenObject.add(objects[j])){
+							constructAndModifyNode(objects[j],g,pdt,row,values);
+						}
+						//create or modify an edge as necesary
+						constructAndModifyEdge(objects[j],objects[i],g,pdt,row,values,coValues,directed);
+					}else{
+					
+						dupAuthors = true;
 					}
-					//create or modify an edge as necesary
-					constructAndModifyEdge(objects[j],objects[i],g,pdt,row,values,coValues,directed);
 				}
 			}
+			if(dupAuthors){
+				String title = (String)pdt.get(row,pdt.getColumnNumber("TI"));
+				
+				error = "The work:"+
+				System.getProperty("line.separator")+
+				"\t"+title+
+				System.getProperty("line.separator")+
+				"contains duplicate authors."+
+				System.getProperty("line.separator")+
+				"The work has been added with duplicates considered as a single author."+
+				System.getProperty("line.separator")+
+				"This may affect the accuracy of your data."+
+				System.getProperty("line.separator")+
+				System.getProperty("line.separator");;
+				dupAuthorErrorMessages.put(title, error);	
+				dupAuthors = false;
+			}
 		}
+			else{
+				error = "The work:"+
+					System.getProperty("line.separator")+
+					"\t"+pdt.get(row,pdt.getColumnNumber("TI"))+
+					System.getProperty("line.separator")+
+					"contains no authors."+
+					System.getProperty("line.separator")+
+					"The work has not been added."+
+					System.getProperty("line.separator")+
+					System.getProperty("line.separator");
+				this.log.log(LogService.LOG_WARNING, error);
+				
+			}
+			
+			
+		}
+		for(Iterator dupIter = dupAuthorErrorMessages.keySet().iterator(); dupIter.hasNext();){
+			this.log.log(LogService.LOG_WARNING, (String)dupAuthorErrorMessages.get(dupIter.next()));
+		}
+		
 	}
 
-	private Node createNode(Object labelObject, prefuse.data.Graph graph, prefuse.data.Table table, int rowNumber, Map nodeValues){
+	private Node createNode(String labelObject, prefuse.data.Graph graph, prefuse.data.Table table, int rowNumber, Map nodeValues){
 		Node n = graph.addNode();
 		n.set(0, labelObject);
 		ValueAttributes va = new ValueAttributes(graph.getNodeCount()-1);
@@ -369,7 +425,7 @@ public class ExtractNetworkfromMultivalues {
 		return t;
 	}
 
-	private void constructAndModifyNode(Object tableValue, prefuse.data.Graph graph, prefuse.data.Table table, int rowNumber, HashMap objectToFunctionMap){
+	private void constructAndModifyNode(String tableValue, prefuse.data.Graph graph, prefuse.data.Table table, int rowNumber, Map objectToFunctionMap){
 		ValueAttributes va = (ValueAttributes)objectToFunctionMap.get(tableValue);
 		// If we don't find a ValueAttributes object, create one.
 		if(va == null){
@@ -380,10 +436,13 @@ public class ExtractNetworkfromMultivalues {
 		}
 	}
 
-	private void constructAndModifyEdge(Object tableValue1, Object tableValue2, prefuse.data.Graph graph, prefuse.data.Table table, int rowNumber, HashMap objectToFunctionMap, HashMap coObjecttoFunctionMap, boolean isDirected){
-		final CoValued v = new CoValued(tableValue1, tableValue2,
-				isDirected);
+	private void constructAndModifyEdge(String tableValue1, String tableValue2, prefuse.data.Graph graph, prefuse.data.Table table, int rowNumber, Map objectToFunctionMap, Map coObjecttoFunctionMap, boolean isDirected){
+		final TreeSet v = new TreeSet();
+		v.add(tableValue1);
+		v.add(tableValue2);
 
+		
+		
 		ValueAttributes va = (ValueAttributes) coObjecttoFunctionMap.get(v);
 
 		if (va == null) {
@@ -394,15 +453,26 @@ public class ExtractNetworkfromMultivalues {
 		}
 	}
 
-	private void constructEdge(CoValued cv, prefuse.data.Graph graph, prefuse.data.Table table, int rowNumber, HashMap objectToFunctionMap, HashMap coObjecttoFunctionMap){
+	private void constructEdge(TreeSet cv, prefuse.data.Graph graph, prefuse.data.Table table, int rowNumber, Map objectToFunctionMap, Map coObjecttoFunctionMap){
 
 
 		ValueAttributes va = new ValueAttributes(graph.getEdgeCount());
+		
+		//System.out.println(va+"\t"+va.getRowNumber());
 
-		final int fv = ((ValueAttributes) objectToFunctionMap.get(cv.firstValue)).getRowNumber();
-		final int sv = ((ValueAttributes) objectToFunctionMap.get(cv.secondValue)).getRowNumber();
+		int[] valueArray = new int[cv.size()];
+		int i = 0;
+		for(Iterator it = cv.iterator(); it.hasNext();){
+			Object o = it.next();
+			ValueAttributes va2 = (ValueAttributes) objectToFunctionMap.get(o);
+		
+			valueArray[i] = (va2).getRowNumber();
+			i++;
+		}
+		int firstValue = valueArray[0];
+		int secondValue = valueArray[1];
 
-		final Edge e = graph.addEdge(graph.getNode(fv), graph.getNode(sv));
+		final Edge e = graph.addEdge(graph.getNode(firstValue), graph.getNode(secondValue));
 		for (int column = 0; column < e.getColumnCount(); column++) {
 			final String cn = e.getColumnName(column);
 			if (metaEdgeColumnNameToFunctionMap.get(cn) != null) {
@@ -435,5 +505,6 @@ public class ExtractNetworkfromMultivalues {
 	public Properties getMetaData(){
 		return this.functionDefinitions;
 	}
-
+	
+	
 }
