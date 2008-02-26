@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<metatype:MetaData xmlns:metatype="http://www.osgi.org/xmlns/metatype/v1.0.0">
+	<OCD name="Random Graph" id="edu.iu.nwb.modeling.erdosrandomgraph.gui"
+		 description="Random Graph">
+		<AD name="Number of nodes" id="NumNodes" 
+			type="Integer" default="1000" min="10"
+                        description="Number of nodes of the network"/> 
+<!-- Put extremes of range, if unknown leave blank -->
+<!-- Can be required from users for information -->
+		<AD name="Linking probability" id="LinkProb" 
+			type="Double" default="0.001" min="0.0" max="1.0"                        
+                        description="Linking probability, must be in [0,1]"/> 
+		<AD name="Seed of random number generator" id="RandomSeed" 
+			type="Integer" default="1" min="1"                        
+                        description="Seed of random number generator, must be at least 1"/> 
+	</OCD>
+	<Designate pid="edu.iu.nwb.modeling.erdosrandomgraph">
+		<Object ocdref="edu.iu.nwb.modeling.erdosrandomgraph.gui" />
+	</Designate>
+</metatype:MetaData>

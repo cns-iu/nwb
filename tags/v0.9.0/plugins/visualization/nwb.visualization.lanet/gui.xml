@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<metatype:MetaData xmlns:metatype="http://www.osgi.org/xmlns/metatype/v1.0.0">
+	<OCD name="LaNet Visualizer" id="nwb.visualization.lanet.gui"
+		 description="LaNet">
+		 
+		 <AD name="Background color" id="bckgnd" type="String" description="Background color. Possible values: 'black' and 'white'." default="black">
+		 </AD>
+		 <AD name="Graph color" id="color" type="String" description="Graph color. Possible values: 'col', 'bw' (black and white, one scale) and 'bwi' (black and white, interlaced scale)" default="col">
+		 </AD>
+		 <AD name="Epsilon" id="eps" type="Float" description="Controls the possibility of rings overlapping. Used to tune image's rendering." default="0.18" min="0" max="1"/>
+		 <AD name="Delta" id="delta" type="Float" description="Controls distance between components in graphical visualization." default="1.3" min="0"/>
+		 <AD name="Gamma" id="gamma" type="Float" description="Controls the component's diameter." default="1.5" min="0"/>
+		 <AD name="Edges" id="edges" type="Float" description="Percent of visible edges. Value: 0.0 - 1.0." default="0.001" min="0" max="1"/>
+		 <AD name="Width" id="width" type="Integer" description="Image resolution" default="4000" min="0"/>
+		 <AD name="Height" id="height" type="Integer" description="Image resolution" default="3000" min="0"/>
+		 <AD name="Length unit" id="u" type="Float" description="Length unit" default="1.0" min="0"/>
+	</OCD>
+	<Designate pid="nwb.visualization.lanet">
+		<Object ocdref="nwb.visualization.lanet.gui" />
+	</Designate>
+</metatype:MetaData>
+ 
