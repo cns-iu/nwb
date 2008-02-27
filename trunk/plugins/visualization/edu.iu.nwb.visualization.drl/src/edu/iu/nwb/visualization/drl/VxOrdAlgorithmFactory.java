@@ -13,6 +13,7 @@ import java.util.Map;
 import org.cishell.framework.CIShellContext;
 import org.cishell.framework.algorithm.Algorithm;
 import org.cishell.framework.algorithm.AlgorithmFactory;
+import org.cishell.framework.algorithm.DataValidator;
 import org.cishell.framework.data.Data;
 import org.cishell.reference.service.metatype.BasicAttributeDefinition;
 import org.cishell.reference.service.metatype.BasicMetaTypeProvider;
@@ -31,7 +32,7 @@ import edu.iu.nwb.util.nwbfile.NWBFileProperty;
 import edu.iu.nwb.util.nwbfile.ParsingException;
 
 
-public class VxOrdAlgorithmFactory implements AlgorithmFactory {
+public class VxOrdAlgorithmFactory implements AlgorithmFactory, DataValidator {
     private MetaTypeInformation provider;
     private BundleContext bContext;
     private String pid;
@@ -49,6 +50,26 @@ public class VxOrdAlgorithmFactory implements AlgorithmFactory {
     public Algorithm createAlgorithm(Data[] data, Dictionary parameters, CIShellContext context) {
         return new VxOrdAlgorithm(data, parameters, context, bContext);
     }
+    
+	public String validate(Data[] data) {
+		File nwbFile = (File) data[0].getData();
+		GetNWBFileMetadata handler = new GetNWBFileMetadata();
+		
+		try {
+			NWBFileParser parser = new NWBFileParser(nwbFile);
+			parser.parse(handler);
+		} catch (IOException e1) {
+			return "Invalid nwb file";
+		} catch (ParsingException e) {
+			return "Invalid nwb file";
+		}
+		
+		if (handler.getUndirectedEdgeSchema() != null) {
+			return "";
+		} else {
+			return "DrL can only process undirected networks."; 
+		}
+	}
     
 	//Adapted from edu.iu.nwb.visualization.prefuse.beta.common.PrefuseBetaAlgorithmFactory
 	public MetaTypeProvider createParameters(Data[] dm) {
