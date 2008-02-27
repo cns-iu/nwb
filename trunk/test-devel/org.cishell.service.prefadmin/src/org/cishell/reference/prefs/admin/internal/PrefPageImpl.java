@@ -1,7 +1,7 @@
-package org.cishell.service.prefadmin.internal;
+package org.cishell.reference.prefs.admin.internal;
 
-import org.cishell.service.prefadmin.PrefPage;
-import org.cishell.service.prefadmin.PreferenceOCD;
+import org.cishell.reference.prefs.admin.PrefPage;
+import org.cishell.reference.prefs.admin.PreferenceOCD;
 import org.osgi.framework.ServiceReference;
 import org.osgi.service.cm.Configuration;
 

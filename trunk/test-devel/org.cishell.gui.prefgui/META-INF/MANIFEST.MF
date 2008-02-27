@@ -1,14 +1,14 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: Preference GUI
-Bundle-SymbolicName: org.cishell.gui.prefgui
+Bundle-SymbolicName: org.cishell.reference.gui.prefs.swt
 Bundle-Version: 0.0.1
 Bundle-ClassPath: .
 Import-Package: org.cishell.framework,
  org.cishell.framework.algorithm,
  org.cishell.framework.data,
  org.cishell.service.guibuilder,
- org.cishell.service.prefadmin,
+ org.cishell.reference.prefs.admin,
  org.eclipse.jface.dialogs,
  org.eclipse.jface.preference,
  org.eclipse.jface.resource,

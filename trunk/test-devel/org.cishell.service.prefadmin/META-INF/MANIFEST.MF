@@ -1,7 +1,7 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: CIShell Pref Admin
-Bundle-SymbolicName: org.cishell.service.prefadmin
+Bundle-SymbolicName: org.cishell.reference.prefs.admin
 Bundle-Version: 0.0.1
 Bundle-ClassPath: .
 Import-Package: org.cishell.framework,
@@ -17,4 +17,4 @@ Import-Package: org.cishell.framework,
  org.osgi.service.prefs;version="1.1.0"
 X-AutoStart: true
 Service-Component: OSGI-INF/component.xml
-Export-Package: org.cishell.service.prefadmin
+Export-Package: org.cishell.reference.prefs.admin

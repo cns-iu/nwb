@@ -6,11 +6,11 @@ import net.sf.commonclipse.preferences.SpacerFieldEditor;
 import net.sf.commonclipse.preferences.LabelFieldEditor;
 
 
-import org.cishell.gui.prefgui.CIShellPreferenceStore;
 import org.cishell.gui.prefgui.customfields.DoubleFieldEditor;
 import org.cishell.gui.prefgui.customfields.FloatFieldEditor;
-import org.cishell.service.prefadmin.PreferenceAD;
-import org.cishell.service.prefadmin.PreferenceOCD;
+import org.cishell.reference.gui.prefs.swt.CIShellPreferenceStore;
+import org.cishell.reference.prefs.admin.PreferenceAD;
+import org.cishell.reference.prefs.admin.PreferenceOCD;
 import org.eclipse.jface.preference.BooleanFieldEditor;
 import org.eclipse.jface.preference.ColorFieldEditor;
 import org.eclipse.jface.preference.DirectoryFieldEditor;

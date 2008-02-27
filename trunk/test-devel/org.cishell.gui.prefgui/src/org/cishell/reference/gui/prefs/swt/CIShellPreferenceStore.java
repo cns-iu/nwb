@@ -1,12 +1,12 @@
-package org.cishell.gui.prefgui;
+package org.cishell.reference.gui.prefs.swt;
 
 import java.io.IOException;
 import java.util.Dictionary;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.cishell.service.prefadmin.PreferenceAD;
-import org.cishell.service.prefadmin.PreferenceOCD;
+import org.cishell.reference.prefs.admin.PreferenceAD;
+import org.cishell.reference.prefs.admin.PreferenceOCD;
 import org.eclipse.jface.preference.IPersistentPreferenceStore;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.osgi.service.cm.Configuration;

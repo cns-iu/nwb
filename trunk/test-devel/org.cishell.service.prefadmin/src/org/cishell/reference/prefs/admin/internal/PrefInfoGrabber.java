@@ -1,4 +1,4 @@
-package org.cishell.service.prefadmin.internal;
+package org.cishell.reference.prefs.admin.internal;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -8,7 +8,7 @@ import java.util.List;
 
 import org.cishell.framework.algorithm.AlgorithmProperty;
 import org.cishell.framework.preference.PreferenceProperty;
-import org.cishell.service.prefadmin.PreferenceOCD;
+import org.cishell.reference.prefs.admin.PreferenceOCD;
 import org.osgi.framework.Bundle;
 import org.osgi.framework.Constants;
 import org.osgi.framework.ServiceReference;
@@ -99,7 +99,9 @@ public class PrefInfoGrabber implements PreferenceProperty, AlgorithmProperty {
 	private PreferenceOCD extractOCD(MetaTypeInformation bundleMetaTypeInfo, String ocdID) {
 		try {
 			ObjectClassDefinition requestedOCD = bundleMetaTypeInfo.getObjectClassDefinition(ocdID, null);
+			if (requestedOCD == null) return null;
 			PreferenceOCD wrappedOCD = new PreferenceOCDImpl(this.log, requestedOCD);
+			
 			return wrappedOCD;
 		} catch (IllegalArgumentException e) {
 			//requested OCD does not exist

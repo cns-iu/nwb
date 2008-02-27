@@ -1,10 +1,10 @@
-package org.cishell.service.prefadmin.internal;
+package org.cishell.reference.prefs.admin.internal;
 
 import java.io.IOException;
 import java.io.InputStream;
 
-import org.cishell.service.prefadmin.PreferenceAD;
-import org.cishell.service.prefadmin.PreferenceOCD;
+import org.cishell.reference.prefs.admin.PreferenceAD;
+import org.cishell.reference.prefs.admin.PreferenceOCD;
 import org.osgi.service.log.LogService;
 import org.osgi.service.metatype.AttributeDefinition;
 import org.osgi.service.metatype.ObjectClassDefinition;

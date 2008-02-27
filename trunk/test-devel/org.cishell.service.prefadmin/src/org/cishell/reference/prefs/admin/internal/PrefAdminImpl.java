@@ -1,4 +1,4 @@
-package org.cishell.service.prefadmin.internal;
+package org.cishell.reference.prefs.admin.internal;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -7,9 +7,9 @@ import java.util.Enumeration;
 import java.util.List;
 
 import org.cishell.framework.preference.PreferenceProperty;
-import org.cishell.service.prefadmin.PrefAdmin;
-import org.cishell.service.prefadmin.PrefPage;
-import org.cishell.service.prefadmin.PrefsByService;
+import org.cishell.reference.prefs.admin.PrefAdmin;
+import org.cishell.reference.prefs.admin.PrefPage;
+import org.cishell.reference.prefs.admin.PrefsByService;
 import org.osgi.framework.Constants;
 import org.osgi.framework.ServiceReference;
 import org.osgi.service.cm.Configuration;

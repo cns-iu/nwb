@@ -1,5 +1,6 @@
-package org.cishell.gui.prefgui;
+package org.cishell.reference.gui.prefs.swt;
 
+import java.util.Arrays;
 import java.util.Dictionary;
 
 import org.cishell.framework.CIShellContext;
@@ -7,9 +8,10 @@ import org.cishell.framework.algorithm.Algorithm;
 import org.cishell.framework.data.Data;
 import org.cishell.gui.prefgui.preferencepages.BlankPreferencePage;
 import org.cishell.gui.prefgui.preferencepages.CIShellPreferencePage;
-import org.cishell.service.prefadmin.PrefAdmin;
-import org.cishell.service.prefadmin.PrefPage;
-import org.cishell.service.prefadmin.PreferenceOCD;
+import org.cishell.reference.prefs.admin.PrefAdmin;
+import org.cishell.reference.prefs.admin.PrefPage;
+import org.cishell.reference.prefs.admin.PrefPageComparator;
+import org.cishell.reference.prefs.admin.PreferenceOCD;
 import org.eclipse.jface.preference.PreferenceDialog;
 import org.eclipse.jface.preference.PreferenceManager;
 import org.eclipse.jface.preference.PreferenceNode;
@@ -20,7 +22,8 @@ import org.eclipse.ui.PlatformUI;
 import org.osgi.service.cm.Configuration;
 import org.osgi.service.log.LogService;
 
-public class PrefenceGuiAlgorithm implements Algorithm {
+
+public class PreferenceGuiAlgorithm implements Algorithm {
     Data[] data;
     Dictionary parameters;
     CIShellContext context;
@@ -29,7 +32,7 @@ public class PrefenceGuiAlgorithm implements Algorithm {
     
     LogService log;
     
-    public PrefenceGuiAlgorithm(Data[] data, Dictionary parameters, CIShellContext context,
+    public PreferenceGuiAlgorithm(Data[] data, Dictionary parameters, CIShellContext context,
     		PrefAdmin prefAdmin, LogService log) {
         this.data = data;
         this.parameters = parameters;
@@ -100,6 +103,7 @@ public class PrefenceGuiAlgorithm implements Algorithm {
     }
     
     private void addPrefPages(PrefPage[] prefPages, PreferenceNode rootNode) {
+    	Arrays.sort(prefPages, new PrefPageComparator());
     	for (int ii = 0; ii < prefPages.length; ii++) {
     		PreferenceNode prefNode = makePreferenceNode(prefPages[ii]);
     		rootNode.add(prefNode);

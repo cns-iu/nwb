@@ -1,4 +1,4 @@
-package org.cishell.service.prefadmin.internal;
+package org.cishell.reference.prefs.admin.internal;
 
 import org.osgi.service.metatype.AttributeDefinition;
 

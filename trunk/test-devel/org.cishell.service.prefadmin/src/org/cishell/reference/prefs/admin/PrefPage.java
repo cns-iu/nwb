@@ -1,7 +1,10 @@
-package org.cishell.service.prefadmin;
+package org.cishell.reference.prefs.admin;
+
+import java.util.Comparator;
 
 import org.osgi.framework.ServiceReference;
 import org.osgi.service.cm.Configuration;
+import org.osgi.service.metatype.ObjectClassDefinition;
 
 public interface PrefPage {
 	
@@ -15,5 +18,4 @@ public interface PrefPage {
 	
 	public abstract Configuration getPrefConf();
 	public abstract PreferenceOCD getPrefOCD();
-
 }

@@ -1,10 +1,10 @@
-package org.cishell.service.prefadmin.internal;
+package org.cishell.reference.prefs.admin.internal;
 
 import java.io.File;
 import java.net.URI;
 import java.net.URISyntaxException;
 
-import org.cishell.service.prefadmin.PreferenceAD;
+import org.cishell.reference.prefs.admin.PreferenceAD;
 import org.osgi.service.log.LogService;
 import org.osgi.service.metatype.AttributeDefinition;
 

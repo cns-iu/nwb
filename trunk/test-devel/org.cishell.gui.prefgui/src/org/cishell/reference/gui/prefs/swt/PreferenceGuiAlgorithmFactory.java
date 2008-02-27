@@ -1,4 +1,4 @@
-package org.cishell.gui.prefgui;
+package org.cishell.reference.gui.prefs.swt;
 
 import java.util.Dictionary;
 
@@ -6,15 +6,14 @@ import org.cishell.framework.CIShellContext;
 import org.cishell.framework.algorithm.Algorithm;
 import org.cishell.framework.algorithm.AlgorithmFactory;
 import org.cishell.framework.data.Data;
-import org.cishell.service.guibuilder.GUIBuilderService;
-import org.cishell.service.prefadmin.PrefAdmin;
+import org.cishell.reference.prefs.admin.PrefAdmin;
 import org.osgi.service.component.ComponentContext;
 import org.osgi.service.log.LogService;
 import org.osgi.service.metatype.MetaTypeProvider;
 import org.osgi.service.metatype.MetaTypeService;
 
 
-public class PrefenceGuiAlgorithmFactory implements AlgorithmFactory {
+public class PreferenceGuiAlgorithmFactory implements AlgorithmFactory {
 	
 	private LogService log;
 	private MetaTypeService mts;
@@ -30,7 +29,7 @@ public class PrefenceGuiAlgorithmFactory implements AlgorithmFactory {
     }
 
     public Algorithm createAlgorithm(Data[] data, Dictionary parameters, CIShellContext context) {
-        return new PrefenceGuiAlgorithm(data, parameters, context, prefAdmin, this.log);
+        return new PreferenceGuiAlgorithm(data, parameters, context, prefAdmin, this.log);
     }
     
     public MetaTypeProvider createParameters(Data[] data) {

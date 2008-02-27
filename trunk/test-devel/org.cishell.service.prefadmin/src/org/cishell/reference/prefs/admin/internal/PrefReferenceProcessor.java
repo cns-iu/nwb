@@ -1,4 +1,4 @@
-package org.cishell.service.prefadmin.internal;
+package org.cishell.reference.prefs.admin.internal;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -8,10 +8,10 @@ import java.util.Hashtable;
 import java.util.List;
 
 import org.cishell.framework.preference.PreferenceProperty;
-import org.cishell.service.prefadmin.PrefPage;
-import org.cishell.service.prefadmin.PreferenceAD;
-import org.cishell.service.prefadmin.PreferenceOCD;
-import org.cishell.service.prefadmin.PrefsByService;
+import org.cishell.reference.prefs.admin.PrefPage;
+import org.cishell.reference.prefs.admin.PreferenceAD;
+import org.cishell.reference.prefs.admin.PreferenceOCD;
+import org.cishell.reference.prefs.admin.PrefsByService;
 import org.osgi.framework.Bundle;
 import org.osgi.framework.Constants;
 import org.osgi.framework.ServiceReference;
@@ -43,6 +43,7 @@ public class PrefReferenceProcessor{
     	//for each service that purports to hold preference information...
     	for (int ii = 0; ii < prefReferences.length; ii++) {
     		ServiceReference prefReference = prefReferences[ii];
+    		System.out.println("Processing " + prefReference.getProperty("service.pid"));
         	//get all preference pages from this service by type, and save them by type
     		
         	PrefPage[] localPrefPages = null;
@@ -62,6 +63,7 @@ public class PrefReferenceProcessor{
         	
         	PrefPage[] paramPrefPages = null;
         	if (isTurnedOn(prefReference,PreferenceProperty.PUBLISH_PARAM_DEFAULT_PREF_VALUE)) {
+        		System.out.println("  Attempting to publish param default prefs for " + prefReference.getProperty("service.pid"));
         		paramPrefPages = getParamPrefPages(prefReference);
         		initializeConfigurations(paramPrefPages);
         		this.allParamPrefPages.addAll(Arrays.asList(paramPrefPages));
@@ -193,14 +195,25 @@ public class PrefReferenceProcessor{
     	} else {
     		String unparsedPublishedPrefsValues = (String) prefReference.getProperty(PreferenceProperty.PREFS_PUBLISHED_KEY);
     		if (unparsedPublishedPrefsValues == null) {
-    			return false;
+    			if (processingKey ==PreferenceProperty.PUBLISH_PARAM_DEFAULT_PREF_VALUE) {
+    				return true;
+    			} else {
+    				return false;
+    			}
     		}
+ 
     		String[] publishedPrefsValues = unparsedPublishedPrefsValues.split(",");
     		for (int ii = 0; ii < publishedPrefsValues.length; ii++) {
     			if (publishedPrefsValues[ii].equals(processingKey)) {
     				return true;
     			}
     		}
+    		
+    		//makes it so parameter prefs are published by default
+    		if (publishedPrefsValues.length == 0 && processingKey ==PreferenceProperty.PUBLISH_PARAM_DEFAULT_PREF_VALUE) {
+    			return true;
+    		}
+    		
     		return false;
     	}
     }
