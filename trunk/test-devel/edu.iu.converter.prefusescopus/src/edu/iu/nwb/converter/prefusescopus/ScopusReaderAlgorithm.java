@@ -54,7 +54,6 @@ public class ScopusReaderAlgorithm implements Algorithm {
     }
     
     private Table normalizeAuthorNames(Table scopusTable) {
-    	System.out.println("Normalizing Author Names...");
     	Column authorColumn = scopusTable.getColumn(AUTHOR_COLUMN_NAME);
     	if (authorColumn == null) {
     		printNoAuthorColumnWarning();
@@ -64,10 +63,8 @@ public class ScopusReaderAlgorithm implements Algorithm {
     	for (int rowIndex = scopusTable.getMinimumRow(); rowIndex < scopusTable.getMaximumRow(); rowIndex++) {
     		String authors = authorColumn.getString(rowIndex);
     		if (authors != null && ! authors.equals("")) {
-    			System.out.println("  normalizing:" + authors);
     			String normalizedAuthors = normalizeAuthorNames(authors);
     			authorColumn.setString(normalizedAuthors, rowIndex);
-    			System.out.println("  result         :" + normalizedAuthors);
     		}
     	}
     	} catch (DataTypeException e1) {
