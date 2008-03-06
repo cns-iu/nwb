@@ -49,7 +49,7 @@ public class ScopusReaderAlgorithm implements Algorithm {
 		 
 		//printTable((Table) inputData.getData());
 		Data formatChangedData = new BasicData(inputData.getMetaData(), (File) inputData.getData(), "file:text/csv");
-		Data convertedData = converter.convert(formatChangedData, "prefuse.data.Table");
+		Data convertedData = converter.convert(formatChangedData, Table.class.getName());
 		return convertedData;
     }
     
@@ -92,7 +92,7 @@ public class ScopusReaderAlgorithm implements Algorithm {
     
     private Data[] formatAsData(Table scopusTable) {
     	try{
-			Data[] dm = new Data[] {new BasicData(scopusTable, "prefuse.data.Table")};
+			Data[] dm = new Data[] {new BasicData(scopusTable, Table.class.getName())};
 			dm[0].getMetaData().put(DataProperty.LABEL, "Normalized Scopus table");
 			dm[0].getMetaData().put(DataProperty.TYPE, DataProperty.TEXT_TYPE);
 			return dm;
