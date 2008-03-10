@@ -223,7 +223,7 @@ public class ExtractNetworkFromTable {
 	private void createColumn(String newColumnName, String calculateColumnName,
 			String function, Class columnType, Schema newSchema) {
 		Class finalType = null;
-		if (function.equalsIgnoreCase("count")) {
+		/*if (function.equalsIgnoreCase("count")) {
 			finalType = int.class;
 		} else if (function.equalsIgnoreCase("sum")) {
 			finalType = columnType;
@@ -241,7 +241,9 @@ public class ExtractNetworkFromTable {
 			} else {
 				finalType = columnType;
 			}
-		}
+		}*/
+		
+		finalType = this.abstractAFF.getAggregateFunction(function, columnType).getType();
 
 		newSchema.addColumn(newColumnName, finalType);
 	}
@@ -250,6 +252,7 @@ public class ExtractNetworkFromTable {
 		nodeSchema.addColumn("label", String.class);
 		edgeSchema.addColumn("source", int.class);
 		edgeSchema.addColumn("target",int.class);
+		if(this.functionDefinitions != null){
 
 		for (final Iterator it = this.functionDefinitions.keySet().iterator(); it.hasNext();) {
 
@@ -283,7 +286,7 @@ public class ExtractNetworkFromTable {
 
 			}
 		}
-
+		}
 
 	}
 
