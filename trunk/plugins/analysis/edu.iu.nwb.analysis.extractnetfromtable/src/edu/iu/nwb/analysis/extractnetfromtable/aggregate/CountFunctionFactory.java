@@ -22,19 +22,16 @@ class Count extends AggregateFunction {
 		total = 0;
 	}
 
-	@Override
 	public Object getResult() {
 		// TODO Auto-generated method stub
 		return new Integer(total);
 	}
 
-	@Override
 	public Class getType() {
 		// TODO Auto-generated method stub
 		return Integer.class;
 	}
 
-	@Override
 	public void operate(Object o) {
 		// TODO Auto-generated method stub
 		total += 1;
