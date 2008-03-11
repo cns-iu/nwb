@@ -24,8 +24,12 @@ public class AssembleAggregateFunctions {
 	}
 	
 	public AggregateFunction getAggregateFunction(String name, Class type){
-		AggregateFunction af = ((AggregateFunctionFactory)nameToFunctionFactory.get(name)).getFunction(type);
-		
+		AggregateFunction af = null;
+		try{
+			af = ((AggregateFunctionFactory)nameToFunctionFactory.get(name)).getFunction(type);
+		}catch(NullPointerException npe){
+			af = null;
+		}
 		return af;
 	}
 	
