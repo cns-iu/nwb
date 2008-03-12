@@ -3,7 +3,7 @@
 	<OCD name="Extract Network from Table" id="edu.iu.nwb.analysis.extractnetfromtable.algorithms.ExtractNetFromTableAlgorithm.OCD"
 		 description="Extracts a network from a delimited table ">
 		<AD name="Column Name" id="colName" type="String" description="The column to use for extracting the network." default=""></AD>
-		<AD name="Aggregation Function File" id="aff" type="String" description="The name of the file which contains optional aggregation functions." default="file:"/>
+		<AD name="Aggregation Function File" id="aff" type="String" description="The name of the file which contains optional aggregation functions." default="file:" required="false"/>
 		<AD name="Text Delimiter" id="delimiter" type="String" description="The character used to separate values in the column." default="|"/>
 	</OCD>
 	<Designate pid="edu.iu.nwb.analysis.extractnetfromtable.algorithms.ExtractNetFromTableAlgorithm">

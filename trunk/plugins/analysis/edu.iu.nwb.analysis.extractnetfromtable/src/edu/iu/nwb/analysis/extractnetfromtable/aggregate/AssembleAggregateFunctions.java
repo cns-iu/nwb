@@ -1,6 +1,7 @@
 package edu.iu.nwb.analysis.extractnetfromtable.aggregate;
 
 import java.util.HashMap;
+import java.util.Set;
 
 
 public class AssembleAggregateFunctions {
@@ -51,6 +52,10 @@ public class AssembleAggregateFunctions {
 	
 	public AggregateFunctionFactory removeAggregateFunctionFactory(String functionName){
 		return (AggregateFunctionFactory)this.nameToFunctionFactory.get(functionName);
+	}
+	
+	public Set getFunctionNames(){
+		return this.nameToFunctionFactory.keySet();
 	}
 
 }

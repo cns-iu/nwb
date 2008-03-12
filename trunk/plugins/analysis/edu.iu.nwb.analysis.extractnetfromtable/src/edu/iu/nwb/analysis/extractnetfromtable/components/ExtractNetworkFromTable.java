@@ -22,14 +22,14 @@ import edu.iu.nwb.analysis.extractnetfromtable.aggregate.AssembleAggregateFuncti
 public class ExtractNetworkFromTable {
 	private final AggregateFunctionMappings nodeFunctionMappings = new AggregateFunctionMappings();
 	private final AggregateFunctionMappings edgeFunctionMappings = new AggregateFunctionMappings();
-	
+
 	private final prefuse.data.Table objectTable;
 	private final prefuse.data.Graph coObjectNetwork;
 	private Properties functionDefinitions;
 	private String splitString;
 	private AssembleAggregateFunctions abstractAFF;
 	private LogService log;
-	
+
 	/***
 	 * 
 	 * Creates a network from a the provided table. If the value in
@@ -98,88 +98,88 @@ public class ExtractNetworkFromTable {
 			String columnName, prefuse.data.Graph g) {
 		boolean dupValues = false;
 		String error;
-		
+
 		final HashMap dupValuesErrorMessages = new HashMap();
 
 		for (int row = 0; row < pdt.getRowCount(); row++) {
 			final String s = (String) pdt.get(row, columnName);
-			
-			
+
+
 			Set seenObject = new HashSet();
 
 			// Here we ensure that we correctly capture regex metacharacters.
 			// This means we can't split on regex, but I think that is
 			// acceptable.
-			
+
 			if(s != null){
-			
-			final Pattern p = Pattern.compile("\\Q" + this.splitString + "\\E");
-			final String[] objects = p.split(s);
-			
 
-			for (int i = objects.length - 1; i >= 0; i--) {
-				if(seenObject.add(objects[i])){
+				final Pattern p = Pattern.compile("\\Q" + this.splitString + "\\E");
+				final String[] objects = p.split(s);
 
-					constructAndModifyNode(objects[i],g,pdt,row);
-				}
-				// if there is more than one value, create unique edges between each
-				// value.
-				for (int j = 0; j < i; j++) {
-					if(!objects[j].equals(objects[i])){
 
-						if(seenObject.add(objects[j])){
-							constructAndModifyNode(objects[j],g,pdt,row);
+				for (int i = objects.length - 1; i >= 0; i--) {
+					if(seenObject.add(objects[i])){
+
+						constructAndModifyNode(objects[i],g,pdt,row);
+					}
+					// if there is more than one value, create unique edges between each
+					// value.
+					for (int j = 0; j < i; j++) {
+						if(!objects[j].equals(objects[i])){
+
+							if(seenObject.add(objects[j])){
+								constructAndModifyNode(objects[j],g,pdt,row);
+							}
+							//create or modify an edge as necesary
+							constructAndModifyEdge(objects[j],objects[i],g,pdt,row);
+						}else{
+
+							dupValues = true;
 						}
-						//create or modify an edge as necesary
-						constructAndModifyEdge(objects[j],objects[i],g,pdt,row);
-					}else{
-					
-						dupValues = true;
 					}
 				}
+				if(dupValues){
+					String title = (String)pdt.get(row,pdt.getColumnNumber("TI"));
+
+					error = "The work:"+
+					System.getProperty("line.separator")+
+					"\t"+title+
+					System.getProperty("line.separator")+
+					"contains duplicate values."+
+					System.getProperty("line.separator")+
+					"The work has been added with duplicates considered as a single value."+
+					System.getProperty("line.separator")+
+					"This may affect the accuracy of your data."+
+					System.getProperty("line.separator")+
+					System.getProperty("line.separator");;
+					dupValuesErrorMessages.put(title, error);	
+					dupValues = false;
+				}
 			}
-			if(dupValues){
-				String title = (String)pdt.get(row,pdt.getColumnNumber("TI"));
-				
-				error = "The work:"+
-				System.getProperty("line.separator")+
-				"\t"+title+
-				System.getProperty("line.separator")+
-				"contains duplicate values."+
-				System.getProperty("line.separator")+
-				"The work has been added with duplicates considered as a single value."+
-				System.getProperty("line.separator")+
-				"This may affect the accuracy of your data."+
-				System.getProperty("line.separator")+
-				System.getProperty("line.separator");;
-				dupValuesErrorMessages.put(title, error);	
-				dupValues = false;
-			}
-		}
 			else{
 				error = "The work:"+
-					System.getProperty("line.separator")+
-					"\t"+pdt.get(row,pdt.getColumnNumber("TI"))+
-					System.getProperty("line.separator")+
-					"contains no values."+
-					System.getProperty("line.separator")+
-					"The work has not been added."+
-					System.getProperty("line.separator")+
-					System.getProperty("line.separator");
+				System.getProperty("line.separator")+
+				"\t"+pdt.get(row,pdt.getColumnNumber("TI"))+
+				System.getProperty("line.separator")+
+				"contains no values."+
+				System.getProperty("line.separator")+
+				"The work has not been added."+
+				System.getProperty("line.separator")+
+				System.getProperty("line.separator");
 				this.log.log(LogService.LOG_WARNING, error);
-				
+
 			}
-			
-			
+
+
 		}
 		for(Iterator dupIter = dupValuesErrorMessages.keySet().iterator(); dupIter.hasNext();){
 			this.log.log(LogService.LOG_WARNING, (String)dupValuesErrorMessages.get(dupIter.next()));
 		}
-		
+
 	}
 
 	private Node createNode(String label, prefuse.data.Graph graph, prefuse.data.Table table, int rowNumber){
-		
+
 		int nodeNumber = graph.addNodeRow();
 		Node n = graph.getNode(nodeNumber);
 		n.set(0, label);
@@ -217,13 +217,13 @@ public class ExtractNetworkFromTable {
 	 * @param function
 	 * @param columnType
 	 * @param newSchema
-	
+
 	 */
 
 	private void createColumn(String newColumnName, String calculateColumnName,
 			String function, Class columnType, Schema newSchema) {
 		Class finalType = null;
-		
+
 		finalType = this.abstractAFF.getAggregateFunction(function, columnType).getType();
 
 		newSchema.addColumn(newColumnName, finalType);
@@ -233,40 +233,47 @@ public class ExtractNetworkFromTable {
 		nodeSchema.addColumn("label", String.class);
 		edgeSchema.addColumn("source", int.class);
 		edgeSchema.addColumn("target",int.class);
+		
 		if(this.functionDefinitions != null){
+			HashSet functionNames = new HashSet(this.abstractAFF.getFunctionNames());
+			for (final Iterator it = this.functionDefinitions.keySet().iterator(); it.hasNext();) {
 
-		for (final Iterator it = this.functionDefinitions.keySet().iterator(); it.hasNext();) {
-
-			final String key = (String) it.next();
-			String sourceColumnName = this.functionDefinitions.getProperty(key);
-			final int index = sourceColumnName.lastIndexOf(".");
-			final String function = sourceColumnName.substring(index + 1);
-			sourceColumnName = sourceColumnName.substring(0,
-					index);
-			final Class columnType = inputSchema.getColumnType(sourceColumnName);
-			String newColumnName = key.substring(key.indexOf(".")+1);
-
-			// need to check against existing column names.
-
-
-			if (key.startsWith("edge.")) {
-				createColumn(newColumnName,sourceColumnName, function, columnType, edgeSchema);
+				final String key = (String) it.next();
 				
-				this.edgeFunctionMappings.addFunctionMapping(newColumnName, sourceColumnName, function);
-			}
-			if (key.startsWith("node.")) {
-				createColumn(newColumnName, sourceColumnName, function, columnType,
-						nodeSchema);
-				
-				this.nodeFunctionMappings.addFunctionMapping(newColumnName, sourceColumnName, function);
+				String sourceColumnName = this.functionDefinitions.getProperty(key);
+				final int index = sourceColumnName.lastIndexOf(".");
+				final String function = sourceColumnName.substring(index + 1);
+				sourceColumnName = sourceColumnName.substring(0,
+						index);
+				final Class columnType = inputSchema.getColumnType(sourceColumnName);
+				String newColumnName = key.substring(key.indexOf(".")+1);
 
+				
+				// need to check against existing column names.
+				if(functionNames.contains(function)){
+
+					if (key.startsWith("edge.")) {
+						createColumn(newColumnName,sourceColumnName, function, columnType, edgeSchema);
+
+						this.edgeFunctionMappings.addFunctionMapping(newColumnName, sourceColumnName, function);
+					}
+					if (key.startsWith("node.")) {
+						createColumn(newColumnName, sourceColumnName, function, columnType,
+								nodeSchema);
+
+						this.nodeFunctionMappings.addFunctionMapping(newColumnName, sourceColumnName, function);
+
+					}
+				}else{
+					this.log.log(LogService.LOG_WARNING, "Unrecognized function: "+ function + ".\nContinuing with " +
+							"extraction, but ignoring this specific analysis.");
+				}
 			}
-		}
 		}
 
 	}
 
-	
+
 	private ValueAttributes createFunctions(Tuple tup, prefuse.data.Table t, int rowNumber, ValueAttributes va){
 		AggregateFunction af;
 		boolean isEdge = false;
@@ -281,7 +288,7 @@ public class ExtractNetworkFromTable {
 				af = this.abstractAFF.getAggregateFunction(this.nodeFunctionMappings.getFunctionFromColumnName(colName), tup.getColumnType(k));
 				isEdge = false;
 			}
-			
+
 			if(af != null){
 				if(isEdge){
 					operateColumn = this.edgeFunctionMappings.getOriginalColumnFromFunctionColumn(colName);
@@ -293,9 +300,9 @@ public class ExtractNetworkFromTable {
 				tup.set(k, af.getResult());
 				va.addFunction(k, af);
 			}
-			
+
 		}
-		
+
 		return va;
 	}
 
@@ -319,7 +326,7 @@ public class ExtractNetworkFromTable {
 		return objectTable;
 	}
 
-	
+
 	private void operateFunctions(ValueAttributes va, prefuse.data.Graph graph, prefuse.data.Table table, Tuple tup, int rowNumber){
 		AggregateFunction af = null;
 		String operateColumn;
@@ -329,7 +336,7 @@ public class ExtractNetworkFromTable {
 			if(af != null){
 				if(tup instanceof Edge){
 					operateColumn = this.edgeFunctionMappings.getOriginalColumnFromFunctionColumn(colName);
-					
+
 				}
 				else {
 					operateColumn = this.nodeFunctionMappings.getOriginalColumnFromFunctionColumn(colName);
@@ -373,7 +380,7 @@ public class ExtractNetworkFromTable {
 		final TreeSet v = new TreeSet();
 		v.add(tableValue1);
 		v.add(tableValue2);
-	
+
 		ValueAttributes va = this.edgeFunctionMappings.getFunctionRow(v);
 
 		if (va == null) {
@@ -390,12 +397,12 @@ public class ExtractNetworkFromTable {
 		Object[] valueArray = cv.toArray();
 		String firstValue = valueArray[0].toString();
 		String secondValue = valueArray[1].toString();
-		
+
 		int fv = this.nodeFunctionMappings.getFunctionRow(firstValue).getRowNumber();
 		int sv = this.nodeFunctionMappings.getFunctionRow(secondValue).getRowNumber();
-		
+
 		final int edgeRow = graph.addEdge(fv,sv);
-		
+
 		ValueAttributes va = new ValueAttributes(edgeRow);
 		va = this.createFunctions(graph.getEdge(edgeRow), table, rowNumber, va);
 		this.edgeFunctionMappings.addFunctionRow(cv, va);
@@ -408,5 +415,5 @@ public class ExtractNetworkFromTable {
 	public Properties getMetaData(){
 		return this.functionDefinitions;
 	}
-	
+
 }
