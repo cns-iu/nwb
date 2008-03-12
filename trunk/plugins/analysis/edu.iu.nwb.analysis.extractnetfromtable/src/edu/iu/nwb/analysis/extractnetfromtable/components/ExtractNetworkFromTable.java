@@ -25,9 +25,12 @@ public class ExtractNetworkFromTable {
 
 	private final prefuse.data.Table objectTable;
 	private final prefuse.data.Graph coObjectNetwork;
+	
 	private Properties functionDefinitions;
+	
 	private String splitString;
 	private AssembleAggregateFunctions abstractAFF;
+	
 	private LogService log;
 
 	/***
@@ -53,10 +56,10 @@ public class ExtractNetworkFromTable {
 			String columnName, String split, Properties metaData,
 			boolean isDirected) {
 		this.log = log;
-		this.functionDefinitions = metaData;
+		//this.functionDefinitions = metaData;
 		this.splitString = split;
 		this.abstractAFF = AssembleAggregateFunctions.defaultAssembly();
-		coObjectNetwork = constructGraph(pdt, columnName);
+		coObjectNetwork = constructGraph(pdt, columnName, metaData);
 		objectTable = constructTable(coObjectNetwork);
 	}
 
@@ -75,14 +78,14 @@ public class ExtractNetworkFromTable {
 	 */
 
 	private prefuse.data.Graph constructGraph(prefuse.data.Table pdt,
-			String columnName) {
+			String columnName, Properties p) {
 
 		final Schema inputSchema = pdt.getSchema();
 
 		final Schema nodeSchema = new Schema();
 		final Schema edgeSchema = new Schema();
 
-		createNodeAndEdgeSchema(inputSchema, nodeSchema,edgeSchema);
+		createNodeAndEdgeSchema(inputSchema, nodeSchema,edgeSchema, p);
 
 		final Graph outputGraph = new Graph(nodeSchema.instantiate(),
 				edgeSchema.instantiate(), false);
@@ -229,18 +232,25 @@ public class ExtractNetworkFromTable {
 		newSchema.addColumn(newColumnName, finalType);
 	}
 
-	private void createNodeAndEdgeSchema(Schema inputSchema, Schema nodeSchema, Schema edgeSchema){
+	private void createNodeAndEdgeSchema(Schema inputSchema, Schema nodeSchema, Schema edgeSchema, Properties p){
 		nodeSchema.addColumn("label", String.class);
 		edgeSchema.addColumn("source", int.class);
 		edgeSchema.addColumn("target",int.class);
 		
-		if(this.functionDefinitions != null){
+		
+		if(p != null){
 			HashSet functionNames = new HashSet(this.abstractAFF.getFunctionNames());
-			for (final Iterator it = this.functionDefinitions.keySet().iterator(); it.hasNext();) {
+			HashSet columnNames = new HashSet();
+			
+			for(int i = 0; i < inputSchema.getColumnCount(); i++){
+				columnNames.add(inputSchema.getColumnName(i));
+			}
+			
+			for (final Iterator it = p.keySet().iterator(); it.hasNext();) {
 
 				final String key = (String) it.next();
 				
-				String sourceColumnName = this.functionDefinitions.getProperty(key);
+				String sourceColumnName = p.getProperty(key);
 				final int index = sourceColumnName.lastIndexOf(".");
 				final String function = sourceColumnName.substring(index + 1);
 				sourceColumnName = sourceColumnName.substring(0,
@@ -250,7 +260,9 @@ public class ExtractNetworkFromTable {
 
 				
 				// need to check against existing column names.
-				if(functionNames.contains(function)){
+				
+				
+				if(functionNames.contains(function) && columnNames.contains(sourceColumnName) && !columnNames.contains(newColumnName)){
 
 					if (key.startsWith("edge.")) {
 						createColumn(newColumnName,sourceColumnName, function, columnType, edgeSchema);
@@ -264,9 +276,20 @@ public class ExtractNetworkFromTable {
 						this.nodeFunctionMappings.addFunctionMapping(newColumnName, sourceColumnName, function);
 
 					}
-				}else{
+				}
+				
+				if(!functionNames.contains(function)){
 					this.log.log(LogService.LOG_WARNING, "Unrecognized function: "+ function + ".\nContinuing with " +
 							"extraction, but ignoring this specific analysis.");
+				}
+				if(!columnNames.contains(sourceColumnName)){
+					this.log.log(LogService.LOG_WARNING, "Unrecognized column: "+ sourceColumnName + ".\nContinuing with " +
+					"extraction, but ignoring this specific analysis.");
+				}
+				if(columnNames.contains(newColumnName)){
+					this.log.log(LogService.LOG_WARNING, "The column: "+ newColumnName + " already exists." +
+							"\nContinuing with " +
+					"extraction, but ignoring this specific analysis.");
 				}
 			}
 		}

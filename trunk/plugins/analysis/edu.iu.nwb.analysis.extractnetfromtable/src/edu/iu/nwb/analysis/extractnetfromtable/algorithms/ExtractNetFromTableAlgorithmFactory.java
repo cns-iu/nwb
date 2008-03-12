@@ -1,7 +1,6 @@
 package edu.iu.nwb.analysis.extractnetfromtable.algorithms;
 
 import java.io.IOException;
-import java.util.Arrays;
 import java.util.Dictionary;
 
 import org.cishell.framework.CIShellContext;
@@ -18,7 +17,6 @@ import org.osgi.service.metatype.MetaTypeProvider;
 import org.osgi.service.metatype.MetaTypeService;
 import org.osgi.service.metatype.ObjectClassDefinition;
 
-import prefuse.data.Graph;
 import prefuse.data.Schema;
 import prefuse.data.Table;
 
