@@ -4,15 +4,12 @@ public class CountFunctionFactory implements AggregateFunctionFactory{
 	private static final String type = AggregateFunctionNames.COUNT;
 
 	public AggregateFunction getFunction(Class c) {
-		// TODO Auto-generated method stub
 		return new Count();
 	}
 
 	public String getType() {
-		// TODO Auto-generated method stub
 		return CountFunctionFactory.type;
 	}
-
 }
 
 class Count extends AggregateFunction {
@@ -23,20 +20,14 @@ class Count extends AggregateFunction {
 	}
 
 	public Object getResult() {
-		// TODO Auto-generated method stub
 		return new Integer(total);
 	}
 
 	public Class getType() {
-		// TODO Auto-generated method stub
 		return Integer.class;
 	}
 
 	public void operate(Object o) {
-		// TODO Auto-generated method stub
 		total += 1;
 	}
-
-
-
 }

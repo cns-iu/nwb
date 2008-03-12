@@ -3,8 +3,7 @@ package edu.iu.nwb.analysis.extractnetfromtable.aggregate;
 
 public class ArithmeticMeanFunctionFactory implements AggregateFunctionFactory{
 	private final static String type = AggregateFunctionNames.ARITHMETICMEAN;
-	
-	
+
 	public AggregateFunction getFunction(Class c){
 		if (c.equals(int.class) || c.equals(Integer.class)) {
 			return new DoubleArithmeticMean();
@@ -18,13 +17,11 @@ public class ArithmeticMeanFunctionFactory implements AggregateFunctionFactory{
 		return null; //throw some sort of error to let them know that the class is not handled.
 	}
 
-	
 	public String getType() {
-		// TODO Auto-generated method stub
 		return ArithmeticMeanFunctionFactory.type;
 	}
-	
-	
+
+
 }
 
 class DoubleArithmeticMean extends AggregateFunction {
@@ -37,12 +34,10 @@ class DoubleArithmeticMean extends AggregateFunction {
 	}
 
 	public Object getResult() {
-		// TODO Auto-generated method stub
 		return new Double(total / (items));
 	}
 
 	public Class getType() {
-		// TODO Auto-generated method stub
 		return Double.class;
 	}
 
@@ -52,9 +47,8 @@ class DoubleArithmeticMean extends AggregateFunction {
 			total += ((Number) o).doubleValue();
 		} else {
 			throw new IllegalArgumentException(
-					"DoubleArithmeticMean can only operate on Numbers.");
+			"DoubleArithmeticMean can only operate on Numbers.");
 		}
-
 	}
 }
 
@@ -68,12 +62,10 @@ class FloatArithmeticMean extends AggregateFunction {
 	}
 
 	public Object getResult() {
-		// TODO Auto-generated method stub
 		return new Float(total / (items));
 	}
 
 	public Class getType() {
-		// TODO Auto-generated method stub
 		return Float.class;
 	}
 
@@ -83,9 +75,7 @@ class FloatArithmeticMean extends AggregateFunction {
 			total += ((Number) o).floatValue();
 		} else {
 			throw new IllegalArgumentException(
-					"FloatArithmeticMean can only operate on Numbers.");
+			"FloatArithmeticMean can only operate on Numbers.");
 		}
-
 	}
-
 }

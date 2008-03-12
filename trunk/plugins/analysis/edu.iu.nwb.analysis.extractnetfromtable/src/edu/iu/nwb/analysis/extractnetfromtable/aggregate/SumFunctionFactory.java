@@ -3,8 +3,8 @@ package edu.iu.nwb.analysis.extractnetfromtable.aggregate;
 
 public class SumFunctionFactory implements AggregateFunctionFactory{
 	public static final String type = AggregateFunctionNames.SUM;
-	
-	
+
+
 	public AggregateFunction getFunction(Class c) {
 		if (c.equals(int.class) || c.equals(Integer.class)) {
 			return new IntegerSum();
@@ -15,15 +15,12 @@ public class SumFunctionFactory implements AggregateFunctionFactory{
 		if (c.equals(float.class) || c.equals(Float.class)) {
 			return new FloatSum();
 		}
-		return null;
+		return null; //can't handle class error.
 	}
-
 
 	public String getType() {
-		// TODO Auto-generated method stub
 		return SumFunctionFactory.type;
 	}
-
 }
 
 class DoubleSum extends AggregateFunction {
@@ -34,26 +31,21 @@ class DoubleSum extends AggregateFunction {
 	}
 
 	public Object getResult() {
-		// TODO Auto-generated method stub
 		return new Double(total);
 	}
 
 	public Class getType() {
-		// TODO Auto-generated method stub
 		return Double.class;
 	}
 
 	public void operate(Object o) {
-		// TODO Auto-generated method stub
 		if (o instanceof Number && o != null) {
 			total += ((Number) o).doubleValue();
 		} else {
 			throw new IllegalArgumentException(
-					"DoubleSum can only operate on Numbers.");
+			"DoubleSum can only operate on Numbers.");
 		}
-
 	}
-
 }
 
 
@@ -65,12 +57,10 @@ class FloatSum extends AggregateFunction {
 	}
 
 	public Object getResult() {
-		// TODO Auto-generated method stub
 		return new Float(total);
 	}
 
 	public Class getType() {
-		// TODO Auto-generated method stub
 		return Float.class;
 	}
 
@@ -79,11 +69,9 @@ class FloatSum extends AggregateFunction {
 			total += ((Number) o).floatValue();
 		} else {
 			throw new IllegalArgumentException(
-					"FloatSum can only operate on Numbers.");
+			"FloatSum can only operate on Numbers.");
 		}
-
 	}
-
 }
 
 
@@ -100,7 +88,6 @@ class IntegerSum extends AggregateFunction {
 	}
 
 	public Class getType() {
-		// TODO Auto-generated method stub
 		return Integer.class;
 	}
 
@@ -109,7 +96,7 @@ class IntegerSum extends AggregateFunction {
 			total += ((Number) o).intValue();
 		} else {
 			throw new IllegalArgumentException(
-					"IntegerSum can only operate on Numbers.");
+			"IntegerSum can only operate on Numbers.");
 		}
 	}
 }

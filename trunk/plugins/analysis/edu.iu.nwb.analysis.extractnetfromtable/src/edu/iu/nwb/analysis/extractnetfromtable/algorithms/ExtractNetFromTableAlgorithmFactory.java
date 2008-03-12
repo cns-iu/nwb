@@ -26,13 +26,9 @@ public class ExtractNetFromTableAlgorithmFactory implements AlgorithmFactory {
     private String pid;
 
     protected void activate(ComponentContext ctxt) {
-        //You may delete all references to metatype service if 
-        //your algorithm does not require parameters and return
-        //null in the createParameters() method
         MetaTypeService mts = (MetaTypeService)ctxt.locateService("MTS");
         originalProvider = mts.getMetaTypeInformation(ctxt.getBundleContext().getBundle());
-        pid = (String) ctxt.getServiceReference().getProperty(org.osgi.framework.Constants.SERVICE_PID);
-        
+        pid = (String) ctxt.getServiceReference().getProperty(org.osgi.framework.Constants.SERVICE_PID);      
     }
     protected void deactivate(ComponentContext ctxt) {
         originalProvider = null;
@@ -72,7 +68,6 @@ public class ExtractNetFromTableAlgorithmFactory implements AlgorithmFactory {
 
 			for(int ii = 0; ii < definitions.length; ii++) {
 				String id = definitions[ii].getID();
-				//System.err.println(id);
 				if(id.equals("colName")) {
 					definition.addAttributeDefinition(ObjectClassDefinition.REQUIRED,
 							new BasicAttributeDefinition("colName", "Column Name", "The label for the node size property", AttributeDefinition.STRING, columnNames, columnNames));
@@ -84,7 +79,6 @@ public class ExtractNetFromTableAlgorithmFactory implements AlgorithmFactory {
 			}
 
 			MetaTypeProvider provider = new BasicMetaTypeProvider(definition);
-			return provider;
-		
+			return provider;	
     }
 }

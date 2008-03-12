@@ -35,33 +35,34 @@ public class ExtractNetFromTableAlgorithm implements Algorithm {
 	
 	public boolean validateProperties(final FileInputStream fis) throws IOException{
 		final BufferedReader br = new BufferedReader(new InputStreamReader(fis));
+		
+		boolean wellFormed = true;
 		String line;
 		Pattern p = Pattern.compile("^.*\\..*=.*\\..*");
 		Matcher m;
-		while((line = br.readLine()) != null){
 		
-			
-			if(line.startsWith("node.") || line.startsWith("edge.")){
-				
+		while((line = br.readLine()) != null){		
+			if(line.startsWith("node.") || line.startsWith("edge.")){				
 				m = p.matcher(line.subSequence(0, line.length())).reset();
 				if(!m.find()){
-					return false;
+					wellFormed = false;	
 				}
-				
-			}
+			}	
 		}
-		br.close();
-		return true;
-		
+		br.close();	
+		return wellFormed;		
 	}
 
 	public Properties getProperties(String fileName){
 		final Properties aggregateDefs = new Properties();
 		boolean wellFormed = true;
+		
 		try {
 			File f = new File(fileName);
 			FileInputStream in = new FileInputStream(f);
+			
 			wellFormed = validateProperties(in);
+			
 			if(wellFormed){
 				in = new FileInputStream(f);
 				aggregateDefs.load(in);
@@ -69,14 +70,16 @@ public class ExtractNetFromTableAlgorithm implements Algorithm {
 			else{
 				logger.log(LogService.LOG_WARNING, "Your Aggregate Function File did not follow the specified format.\n" +
 						"Continuing the extraction without additional analysis.");
+				//need to add a documentation link about how to specify the aggregate function file.
 			}
-		} catch (final FileNotFoundException fnfe) {
+		} 
+		catch (final FileNotFoundException fnfe) {
 			logger.log(LogService.LOG_ERROR, fnfe.getMessage());
 			return null;
 		} catch (final IOException ie) {
 			logger.log(LogService.LOG_ERROR, ie.getMessage());
 			return null;
-		}
+		}	
 		return aggregateDefs;
 	}
 	
@@ -90,11 +93,12 @@ public class ExtractNetFromTableAlgorithm implements Algorithm {
 		
 		split = this.parameters.get("delimiter").toString();
 		extractColumn = this.parameters.get("colName").toString();
+		
 		try{
 		aggregateFunctions = this.parameters.get("aff").toString();
-		}catch(NullPointerException npe){
-			
+		}catch(NullPointerException npe){	
 		}
+		
 		if(aggregateFunctions != null){
 			p = this.getProperties(aggregateFunctions);
 		}
@@ -102,13 +106,9 @@ public class ExtractNetFromTableAlgorithm implements Algorithm {
 		final ExtractNetworkFromTable enft = new ExtractNetworkFromTable(logger,
 				dataTable, extractColumn, split, p, false);
 
-
 		final prefuse.data.Graph outputGraph = enft.getGraph();
-		final prefuse.data.Table outputTable = enft.getTable();
 		final Data outputData1 = new BasicData(outputGraph,
 				prefuse.data.Graph.class.getName());
-		final Data outputData2 = new BasicData(outputTable,
-				prefuse.data.Table.class.getName());
 		final Dictionary graphAttributes = outputData1.getMetaData();
 		graphAttributes.put(DataProperty.MODIFIED, new Boolean(true));
 		graphAttributes.put(DataProperty.PARENT, data[0]);
@@ -116,6 +116,10 @@ public class ExtractNetFromTableAlgorithm implements Algorithm {
 		graphAttributes.put(DataProperty.LABEL,
 				"Extracted Network on Column "+extractColumn);
 
+		
+		final prefuse.data.Table outputTable = enft.getTable();
+		final Data outputData2 = new BasicData(outputTable,
+				prefuse.data.Table.class.getName());	
 		final Dictionary tableAttributes = outputData2.getMetaData();
 		tableAttributes.put(DataProperty.MODIFIED, new Boolean(true));
 		tableAttributes.put(DataProperty.PARENT, data[0]);

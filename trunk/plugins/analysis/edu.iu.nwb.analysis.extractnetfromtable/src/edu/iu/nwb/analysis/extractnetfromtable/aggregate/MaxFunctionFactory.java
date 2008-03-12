@@ -4,31 +4,25 @@ package edu.iu.nwb.analysis.extractnetfromtable.aggregate;
 public class MaxFunctionFactory implements AggregateFunctionFactory{
 	public static final String type = AggregateFunctionNames.MAX;
 
-	
-	public AggregateFunction getFunction(Class c) {
-		
-			if (c.equals(int.class) || c.equals(Integer.class)) {
-				return new IntegerMax();
-			}
-			if (c.equals(double.class) || c.equals(Double.class)) {
-				return new DoubleMax();
-			}
-			if (c.equals(float.class) || c.equals(Float.class)) {
-				return new FloatMax();
-			}
-	
-			return null; //can't handle that class;
-	
-	}
 
+	public AggregateFunction getFunction(Class c) {
+
+		if (c.equals(int.class) || c.equals(Integer.class)) {
+			return new IntegerMax();
+		}
+		if (c.equals(double.class) || c.equals(Double.class)) {
+			return new DoubleMax();
+		}
+		if (c.equals(float.class) || c.equals(Float.class)) {
+			return new FloatMax();
+		}
+
+		return null; //can't handle that class;
+	}
 
 	public String getType() {
-		// TODO Auto-generated method stub
 		return MaxFunctionFactory.type;
 	}
-	
-	
-
 }
 
 class IntegerMax extends AggregateFunction{
@@ -39,28 +33,22 @@ class IntegerMax extends AggregateFunction{
 	}
 
 	public Object getResult() {
-		// TODO Auto-generated method stub
 		return new Integer(value);
 	}
 
 	public Class getType() {
-		// TODO Auto-generated method stub
 		return Integer.class;
 	}
 
 	public void operate(Object o) {
-		if (o instanceof Number && o != null) {
-			
-				if (((Number) o).intValue() > value) {
-					value = ((Number) o).intValue();
-				}
-		
+		if (o instanceof Number && o != null) {		
+			if (((Number) o).intValue() > value) {
+				value = ((Number) o).intValue();
+			}		
 		}else
 			throw new IllegalArgumentException(
-			"IntegerMax can only operate on Numbers.");
-
+					"IntegerMax can only operate on Numbers.");
 	}
-
 }
 
 class FloatMax extends AggregateFunction {
@@ -71,28 +59,22 @@ class FloatMax extends AggregateFunction {
 	}
 
 	public Object getResult() {
-		// TODO Auto-generated method stub
 		return new Float(value);
 	}
 
 	public Class getType() {
-		// TODO Auto-generated method stub
 		return Float.class;
 	}
 
 	public void operate(Object o) {
-		if (o instanceof Number && o != null) {
-			
-				if (((Number) o).floatValue() > value) {
-					value = ((Number) o).floatValue();
-				}
-		
+		if (o instanceof Number && o != null) {		
+			if (((Number) o).floatValue() > value) {
+				value = ((Number) o).floatValue();
+			}		
 		}else
 			throw new IllegalArgumentException(
-			"FloatMax can only operate on Numbers.");
-
+					"FloatMax can only operate on Numbers.");
 	}
-
 }
 
 class DoubleMax extends AggregateFunction {
@@ -103,27 +85,20 @@ class DoubleMax extends AggregateFunction {
 	}
 
 	public Object getResult() {
-		// TODO Auto-generated method stub
 		return new Double(value);
 	}
 
 	public Class getType() {
-		// TODO Auto-generated method stub
 		return Double.class;
 	}
 
 	public void operate(Object o) {
 		if (o instanceof Number && o != null) {
-			
-
-				if (((Number) o).doubleValue() > value) {
-					value = ((Number) o).doubleValue();
-				}
-			
+			if (((Number) o).doubleValue() > value) {
+				value = ((Number) o).doubleValue();
+			}		
 		}else
 			throw new IllegalArgumentException(
-			"DoubleMax can only operate on Numbers.");
-
+					"DoubleMax can only operate on Numbers.");
 	}
-
 }

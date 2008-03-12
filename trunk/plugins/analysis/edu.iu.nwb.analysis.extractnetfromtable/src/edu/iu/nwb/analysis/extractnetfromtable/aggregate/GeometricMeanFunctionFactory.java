@@ -3,7 +3,7 @@ package edu.iu.nwb.analysis.extractnetfromtable.aggregate;
 public class GeometricMeanFunctionFactory implements AggregateFunctionFactory{
 	private static final String type = AggregateFunctionNames.GEOMETRICMEAN;
 
-	
+
 	public AggregateFunction getFunction(Class c) {
 		if (c.equals(int.class) || c.equals(Integer.class)) {
 			return new DoubleGeometricMean();
@@ -15,17 +15,12 @@ public class GeometricMeanFunctionFactory implements AggregateFunctionFactory{
 			return new FloatGeometricMean();
 		}
 		return null; //throw some sort of error to let them know that the class is not handled.
-		
-	}
 
+	}
 
 	public String getType() {
-		// TODO Auto-generated method stub
 		return GeometricMeanFunctionFactory.type;
-	}
-	
-	
-	
+	}		
 }
 
 class DoubleGeometricMean extends AggregateFunction {
@@ -38,13 +33,11 @@ class DoubleGeometricMean extends AggregateFunction {
 	}
 
 	public Object getResult() {
-		// TODO Auto-generated method stub
 		final double result = Math.pow(value, (1.0 / items));
 		return new Double(result);
 	}
 
 	public Class getType() {
-		// TODO Auto-generated method stub
 		return Double.class;
 	}
 
@@ -53,11 +46,9 @@ class DoubleGeometricMean extends AggregateFunction {
 			items += 1;
 			value *= ((Number) o).doubleValue();
 		} else {
-			throw new IllegalArgumentException(
-					"DoubleGeometricMean can only operate on Numbers.");
+			throw new IllegalArgumentException("DoubleGeometricMean can only operate on Numbers.");
 		}
 	}
-
 }
 
 class FloatGeometricMean extends AggregateFunction {
@@ -68,15 +59,13 @@ class FloatGeometricMean extends AggregateFunction {
 		this.value = 1;
 		this.items = 0;
 	}
-	
-	public Object getResult() {
 
+	public Object getResult() {
 		final float result = (float) Math.pow(value, (1 / items));
 		return new Float(result);
 	}
 
 	public Class getType() {
-		// TODO Auto-generated method stub
 		return Float.class;
 	}
 
@@ -89,5 +78,4 @@ class FloatGeometricMean extends AggregateFunction {
 					"FloatArithmeticMean can only operate on Numbers.");
 		}
 	}
-
 }

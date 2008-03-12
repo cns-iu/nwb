@@ -3,10 +3,9 @@ package edu.iu.nwb.analysis.extractnetfromtable.aggregate;
 
 public class MinFunctionFactory implements AggregateFunctionFactory{
 	public static final String type = AggregateFunctionNames.MIN;
-	
-	
+
+
 	public String getType() {
-		// TODO Auto-generated method stub
 		return MinFunctionFactory.type;
 	}
 
@@ -34,28 +33,22 @@ class DoubleMin extends AggregateFunction {
 	}
 
 	public Object getResult() {
-		// TODO Auto-generated method stub
 		return new Double(value);
 	}
 
 	public Class getType() {
-		// TODO Auto-generated method stub
 		return Double.class;
 	}
 
 	public void operate(Object o) {
-		if (o instanceof Number && o != null) {
-			
-				if (((Number) o).doubleValue() < value) {
-					value = ((Number) o).doubleValue();
-				}
-			
+		if (o instanceof Number && o != null) {			
+			if (((Number) o).doubleValue() < value) {
+				value = ((Number) o).doubleValue();
+			}			
 		}else
 			throw new IllegalArgumentException(
-			"DoubleMin can only operate on Numbers.");
-
+					"DoubleMin can only operate on Numbers.");
 	}
-
 }
 
 class FloatMin extends AggregateFunction {
@@ -66,28 +59,22 @@ class FloatMin extends AggregateFunction {
 	}
 
 	public Object getResult() {
-		// TODO Auto-generated method stub
 		return new Float(value);
 	}
 
 	public Class getType() {
-		// TODO Auto-generated method stub
 		return Float.class;
 	}
 
 	public void operate(Object o) {
-		if (o instanceof Number && o != null) {
-			
-				if (((Number) o).floatValue() < value) {
-					value = ((Number) o).floatValue();
-				}
-			
+		if (o instanceof Number && o != null) {			
+			if (((Number) o).floatValue() < value) {
+				value = ((Number) o).floatValue();
+			}			
 		}else
 			throw new IllegalArgumentException(
-			"FloatMin can only operate on Numbers.");
-
+					"FloatMin can only operate on Numbers.");
 	}
-
 }
 
 class IntegerMin extends AggregateFunction {
@@ -98,26 +85,20 @@ class IntegerMin extends AggregateFunction {
 	}
 
 	public Object getResult() {
-		// TODO Auto-generated method stub
 		return new Integer(value);
 	}
 
 	public Class getType() {
-		// TODO Auto-generated method stub
 		return Integer.class;
 	}
 
 	public void operate(Object o) {
 		if (o instanceof Number && o != null) {
-			
-				if (((Number) o).intValue() < value) {
-					value = ((Number) o).intValue();
-				}
-			
+			if (((Number) o).intValue() < value) {
+				value = ((Number) o).intValue();
+			}		
 		}else
 			throw new IllegalArgumentException(
-			"IntegerMin can only operate on Numbers.");
-
+					"IntegerMin can only operate on Numbers.");
 	}
-
 }
