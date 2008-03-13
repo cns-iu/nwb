@@ -11,6 +11,8 @@ import java.io.InputStream;
 import java.util.Dictionary;
 import java.util.Iterator;
 
+import javax.xml.stream.events.Characters;
+
 import org.cishell.framework.CIShellContext;
 import org.cishell.framework.algorithm.Algorithm;
 import org.cishell.framework.data.BasicData;
@@ -48,22 +50,33 @@ public class NSFReaderAlgorithm implements Algorithm {
 		  Data inputTableData = convertInputData(data[0]);
 		  Table table = copyTable((Table) inputTableData.getData());
 		  //normalize co-pis
-		  table = normalizeCoPIs(table); if (table == null) return null;
+		 table = normalizeCoPIs(table); if (table == null) return null;
 		  //normalize primary pi
-		  table = normalizePrimaryPIs(table); if (table == null) return null;
+		 table = normalizePrimaryPIs(table); if (table == null) return null;
 		  //make co-pi/primary pi joined column
 		  table = addPIColumn(table); if (table == null) return null;
 		  //format as data
-		  Data[] outputTableData = formatAsData(table);
+		  Data[] outputTableData = formatAsData(data[0],table);
+		  if (outputTableData == null) {
+			  System.out.println("outputTableData is null!");
+		  } else if (outputTableData[0] == null) {
+			  System.out.println("outputTableData[0] is null!");
+		  } else if (outputTableData[0].getData() == null){
+			  System.out.println("outputTableData[0].getData() is null!");
+		  } else {
+			  System.out.println("" + ((Table)outputTableData[0].getData()).getRowCount() + "," +  ((Table)outputTableData[0].getData()).getMaximumRow() + " rows in outputTable!");
+			  System.out.println("outputTableData looks fine to me!");
+		  }
 		  return outputTableData;
     }
     
 	private Table normalizeCoPIs(Table nsfTable) {
+		System.out.println("Normalizing CoPIs...");
 		Column coPIColumn = nsfTable.getColumn(CO_PI_COLUMN_NAME);
-		for (int rowIndex = 0; rowIndex < nsfTable.getMaximumRow(); rowIndex++) {
+		for (int rowIndex = 0; rowIndex < nsfTable.getRowCount(); rowIndex++) {
 			String contents = (String) coPIColumn.getString(rowIndex);
 			if (contents != null && (! contents.equals(""))) {
-				String[] coPINames = contents.split(INPUT_NAME_SEPARATOR);
+				String[] coPINames = contents.split("\\" + INPUT_NAME_SEPARATOR);
 				String[] normalizedCOPINames = new String[coPINames.length];
 				for (int coPIIndex = 0; coPIIndex < coPINames.length; coPIIndex++) {
 					String coPIName = coPINames[coPIIndex];
@@ -80,8 +93,9 @@ public class NSFReaderAlgorithm implements Algorithm {
 
 	
 	private Table normalizePrimaryPIs(Table nsfTable) {
+		System.out.println("Normalizing Primary PIs...");
 		Column coPIColumn = nsfTable.getColumn(PRIMARY_PI_COLUMN_NAME);
-		for (int rowIndex = 0; rowIndex < nsfTable.getMaximumRow(); rowIndex++) {
+		for (int rowIndex = 0; rowIndex < nsfTable.getRowCount(); rowIndex++) {
 			String primaryPIName = (String) coPIColumn.getString(rowIndex);
 			if (primaryPIName != null  && (! primaryPIName.equals(""))) {
 				String normalizedPIName = normalizePrimaryPIName(primaryPIName);
@@ -92,17 +106,39 @@ public class NSFReaderAlgorithm implements Algorithm {
 	}
 	
 	private Table addPIColumn(Table normalizedNSFTable) {
+		System.out.println("Adding PI Column...");
 		//add extra column made up of primary pi name + OUTPUT_NAME_SEPARATOR + all the co-pi names
-		normalizedNSFTable.addColumn(ALL_PI_COLUMN_NAME, 
-				"CONCAT_WS('" + OUTPUT_NAME_SEPARATOR + "',[" + PRIMARY_PI_COLUMN_NAME + "],[" + CO_PI_COLUMN_NAME + "])");
+		normalizedNSFTable.addColumn(ALL_PI_COLUMN_NAME, String.class);
+		Column allPIColumn = normalizedNSFTable.getColumn(ALL_PI_COLUMN_NAME);
+		Column primaryPIColumn = normalizedNSFTable.getColumn(PRIMARY_PI_COLUMN_NAME);
+		Column coPIColumn = normalizedNSFTable.getColumn(CO_PI_COLUMN_NAME);
+		for (int rowIndex = 0; rowIndex < normalizedNSFTable.getRowCount(); rowIndex++) {
+			String primaryPI = primaryPIColumn.getString(rowIndex);
+			String coPIs = coPIColumn.getString(rowIndex);
+			String allPIs = null;
+			if (primaryPI != null && coPIs != null) {
+				allPIs = primaryPI + OUTPUT_NAME_SEPARATOR + coPIs;
+			} else if (primaryPI == null && allPIs == null) {
+				allPIs = "";
+			} else if (primaryPI == null) {
+				allPIs = coPIs;
+			} else if (coPIs == null) {
+				allPIs = primaryPI;
+			}
+			allPIColumn.setString(allPIs, rowIndex);
+		}
+//		normalizedNSFTable.addColumn(ALL_PI_COLUMN_NAME, 
+//				"CONCAT_WS('" + OUTPUT_NAME_SEPARATOR + "',[" + PRIMARY_PI_COLUMN_NAME + "],[" + CO_PI_COLUMN_NAME + "])");
 		return normalizedNSFTable;
 	}
 	
-	private Data[] formatAsData(Table normalizedNSFTable) {
+	private Data[] formatAsData(Data originalData, Table normalizedNSFTable) {
+		System.out.println("Formatting output data...");
 		try{
 			Data[] dm = new Data[] {new BasicData(normalizedNSFTable, "prefuse.data.Table")};
 			dm[0].getMetaData().put(DataProperty.LABEL, "Normalized NSF table");
-			dm[0].getMetaData().put(DataProperty.TYPE, DataProperty.TEXT_TYPE);
+			dm[0].getMetaData().put(DataProperty.TYPE, DataProperty.MATRIX_TYPE);
+			dm[0].getMetaData().put(DataProperty.PARENT, originalData);
 			return dm;
 		}catch (SecurityException exception){
 			log.log(LogService.LOG_ERROR, "SecurityException", exception);
@@ -112,10 +148,9 @@ public class NSFReaderAlgorithm implements Algorithm {
 	}
 	
 	private String normalizeCOPIName(String coPIName) {
-		//remove all excessive whitespace between characters, then reform with a space between each token.
-		String anyWhitespace = "\\s";
-		String[] nameTokens = coPIName.split(anyWhitespace);
-		String normalizedCoPIName = join(nameTokens, " ");
+		//remove all excessive whitespace between characters.
+		String oneOrMoreWhitespaces = "[\\s]+";
+		String normalizedCoPIName = coPIName.replaceAll(oneOrMoreWhitespaces, " ").trim();
 		return normalizedCoPIName;
 	}
 	
@@ -127,10 +162,10 @@ public class NSFReaderAlgorithm implements Algorithm {
 			return primaryPIName;
 		}
 		
-		String beforeComma = primaryPIName.substring(0, lastCommaIndex);
-		String afterComma = primaryPIName.substring(lastCommaIndex + 1);
+		String beforeComma = primaryPIName.substring(0, lastCommaIndex).trim();
+		String afterComma = primaryPIName.substring(lastCommaIndex + 1).trim();
 		
-		String normalizedPrimaryPIName = beforeComma + afterComma;
+		String normalizedPrimaryPIName = afterComma + " " + beforeComma;
 		return normalizedPrimaryPIName;
 	}
 	
@@ -150,7 +185,7 @@ public class NSFReaderAlgorithm implements Algorithm {
 		StringBuilder joinedTokens = new StringBuilder();
 		for (int i = 0; i < tokens.length; i++) {
 			joinedTokens.append(tokens[i]);
-			//add comma to end of all but last token
+			//add separator to end of all but last token
 			if (i < tokens.length - 1) {
 				joinedTokens.append(separator);
 			}
@@ -165,13 +200,14 @@ public class NSFReaderAlgorithm implements Algorithm {
 	}
 	
 	private Data convertInputData(Data inputData) {
+		System.out.println("Converting input data...");
 		 DataConversionService converter = (DataConversionService)
          context.getService(DataConversionService.class.getName());
 		//this is a bit like a cast. We know the nsf format is also a csv, so we change the format to csv so
 		//the Conversion service knows it is a csv when it tries to convert it to a prefuse.data.Table
 		 
 		//printTable((Table) inputData.getData());
-		Data formatChangedData = new BasicData(inputData.getMetaData(), changeEscapedQuotes((File) inputData.getData()), "file:text/csv");
+		Data formatChangedData = new BasicData(inputData.getMetaData(), cleanNSFCSVFormat((File) inputData.getData()), "file:text/csv");
 		Data convertedData = converter.convert(formatChangedData, "prefuse.data.Table");
 		return convertedData;
 	}
@@ -204,28 +240,100 @@ public class NSFReaderAlgorithm implements Algorithm {
 	    	}
 	}
 	
-	private File changeEscapedQuotes(File escapedQuoteFile) {
-		//change \" style quote escapes to "" style quote escapes in file
+	private static final String AWARD_NUMBER_COLUMN_NAME = "Award Number";
+	private static final int READ_AHEAD_LIMIT = 2;
+	
+	private File cleanNSFCSVFormat(File escapedQuoteFile) {
+		BufferedReader in = null;
+		BufferedWriter out = null;
+		
 		try {
 	    	InputStream stream = new FileInputStream(escapedQuoteFile);
 	    	/*
 	    	 * UnicodeReader contains a hack for eating funny encoding characters that are 
-	    	 * sometimes stuck onto the beginning of files. Necessary
+	    	 * sometimes stuck onto the beginning of files (BOMs). Necessary
 	    	 *  due to bug in standard reader.
 	    	 */
 	    	UnicodeReader unicodeReader = new UnicodeReader(stream, "UTF-8"); 
-	    	BufferedReader reader = new BufferedReader(unicodeReader);
+	    	in = new BufferedReader(unicodeReader);
 	    	
-	    	File outFile = File.createTempFile("quotesAlteredCSV", "csv");
+	    	File outFile = File.createTempFile("cleanedNSFCSV", "csv");
 	    	FileWriter fstream = new FileWriter(outFile);
-	    	BufferedWriter out = new BufferedWriter(fstream);
-	    	String line = null;
-	    	while ((line = reader.readLine()) != null) {
-	    		String slashAndQuote = "\\\"";
-	    		String twoQuotes = "\"\"";
-	    		String newLine = line.replace(slashAndQuote, twoQuotes);
-	    		writeLine(out, newLine);
+	    	out = new BufferedWriter(fstream);
+	    	
+	    	String headerLine = in.readLine();
+	    	if (headerLine != null) {
+	    		if (hasTwoAwardNumberColumns(headerLine)) {
+	    			headerLine = renameDuplicateAwardNumberColumn(headerLine);
+	    		}
+	    		out.write(headerLine + "\r\n");
 	    	}
+	    	
+	    	int c;
+	    	while ((c =  in.read()) != -1) {
+	    		//if we see \". write "" instead
+	    		if (c == '\\') {
+	    			in.mark(READ_AHEAD_LIMIT);
+	    			int nextC = in.read();
+	    			if (nextC == '\"') {
+	    				out.write('\"');
+	    			}
+	    			in.reset();
+	    		} 
+	    		//if we see \r then something other than \n, don't write the \r
+	    		else if (c == '\r') {
+	    			in.mark(READ_AHEAD_LIMIT);
+	    			int nextC = in.read();
+	    			if (nextC != '\n') {
+	    				//don't write the \r
+	    			} else {
+	    				//write the \r
+	    				out.write('\r');
+	    			}
+	    			in.reset();
+	    		} else {
+	    			out.write((char) c);
+	    		}
+	    	}
+//	    	boolean hasReadHeader = false;
+//	    	String firstLine = reader.readLine();
+//	    	if (firstLine != null) {
+//	    		if (firstLine.indexOf( AWARD_NUMBER_COLUMN_NAME) != firstLine.lastIndexOf( AWARD_NUMBER_COLUMN_NAME)) {
+//    				System.out.println("Changing award name!");
+//    				//there are two award number columns.
+//    				firstLine = renameDuplicateAwardNumberColumn(firstLine);
+//    				out.write(firstLine + "\r\n");
+//    			}
+//	    	}
+//	    	int prevC = '\0';
+//	    	int c;
+//	    	int chars = 0;
+//	    	c = reader.read();
+//	    	while (c  != -1) {
+//	    		
+//	    		chars++;
+//	    		if (! hasReadHeader) {
+//	    		
+//	    			hasReadHeader = true;
+//	    		}
+//	    		if (prevC == '\\' && c == '\"') {
+//	    		out.write('\"');
+//	    		} else if (prevC =='\r') {
+//	    			//write nothing
+//	    		} else if (chars != 1){
+//		    		out.write(prevC);
+//	    		}
+//
+//	    		
+//	    		if (chars % 500 == 0) {
+//	    			out.flush();
+//	    		}
+//	    		prevC = c;
+//	    		c = reader.read();
+//	    	}
+//	    	out.write(prevC);
+//	    	out.flush();
+//	    	out.close();
 	    	return outFile;
 	    	} catch (FileNotFoundException e1) {
 	    		this.log.log(LogService.LOG_ERROR, "NSFReader could not find a file at " +  escapedQuoteFile.getAbsolutePath(), e1);
@@ -233,11 +341,27 @@ public class NSFReaderAlgorithm implements Algorithm {
 	    	}  catch (IOException e2) {
 	    		this.log.log(LogService.LOG_ERROR, "Unable to remove slash escaped quotes from nsf csv file due to IO Exception", e2);
 	    		return escapedQuoteFile;
+	    	} finally {
+	    		try {
+	    			if (in != null) {
+	    				in.close();
+	    			}
+	    			if (out != null) {
+	    				out.flush();
+	    				out.close();
+	    			}
+	    		} catch (IOException e3) {
+	    			this.log.log(LogService.LOG_ERROR, "Could not close file.", e3);
+	    		}
 	    	}
 	}
 	
-	private void writeLine(BufferedWriter out, String line) throws IOException {
-        out.write(line, 0, line.length());
-        out.newLine();
-    }
+	private boolean hasTwoAwardNumberColumns(String headerLine) {
+		return headerLine.indexOf( AWARD_NUMBER_COLUMN_NAME) != headerLine.lastIndexOf( AWARD_NUMBER_COLUMN_NAME);
+	}
+	
+	private String renameDuplicateAwardNumberColumn(String line) {
+		return line.replaceAll( AWARD_NUMBER_COLUMN_NAME, AWARD_NUMBER_COLUMN_NAME + " Duplicate")
+			.replaceFirst(AWARD_NUMBER_COLUMN_NAME + " Duplicate",  AWARD_NUMBER_COLUMN_NAME);
+	}
 }
