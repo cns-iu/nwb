@@ -41,6 +41,10 @@ final class PseudoLexer {
 	Token getNextToken() {
 		return null;
 	}
+	
+	public void setCurrentForCheatingPurposes(char c) {
+		this.input.setCurrentForCheatingPurposes(c);
+	}
 
 	/**
 	 * if it's a top level comment, result.choice will be 0, for @ 1, for EOF 2.
@@ -310,6 +314,36 @@ final class PseudoLexer {
 		}
 		while (!input.eof() && Character.isWhitespace(input.getCurrent())) 
 			input.step();
+		if (input.eof()) {
+			eofToken = new Token(-1, null, input.getLine(), input.getColumn());
+		}
+	}
+	
+	public void skipNonNewlineWhitespaceAndLatexComments() throws IOException {
+		if (eofToken != null)
+			return;
+		
+		while (true) {
+			if (input.eof()) { //if end of file
+				//make note of it, and stop.
+				eofToken = new Token(-1, null, input.getLine(), input.getColumn());
+				break;
+		} else if (input.getCurrent() == '%') { //if it's a comment...
+				//step until we reach the end of the line
+				do {
+					input.step();
+				} while (input.getCurrent() != '\n');
+				input.step();
+			} else if (Character.isWhitespace(input.getCurrent()) && input.getCurrent() != '\n') { //if it's whitespace
+				//step ahead once
+				input.step();
+				
+			} else { //if it's anything else...
+				//stop
+				break;
+			}
+		}
+		
 		if (input.eof()) {
 			eofToken = new Token(-1, null, input.getLine(), input.getColumn());
 		}

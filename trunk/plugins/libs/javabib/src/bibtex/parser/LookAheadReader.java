@@ -54,6 +54,10 @@ final class LookAheadReader {
 	public char getCurrent() {
 		return this.buffer[this.bufferPos];
 	}
+	
+	public void setCurrentForCheatingPurposes(char c) {
+		this.buffer[this.bufferPos] = c;
+	}
 	public boolean eof() {
 		return this.eof;
 	}

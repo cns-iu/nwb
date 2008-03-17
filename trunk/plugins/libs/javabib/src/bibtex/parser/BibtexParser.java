@@ -127,8 +127,13 @@ public final class BibtexParser {
             BibtexAbstractValue value = parseValue();
             bibtexFile.addEntry(bibtexFile.makePreamble(value));
         } else { // all others
-            lexer.skipWhitespaceAndLatexComments();
-            String bibkey = (lexer.currentInputChar() == ',') ? "" : lexer.scanLiteral(new char[] { ',' }, true, true);
+            lexer.skipNonNewlineWhitespaceAndLatexComments();
+            String bibkey = (lexer.currentInputChar() == ',' || lexer.currentInputChar() == '\n') ? "" : lexer.scanLiteral(new char[] { ',' ,'\n' }, true, true);
+            if (bibkey.equals("")) {
+            	bibkey = "";
+            	//lexer.skipWhitespaceAndLatexComments();
+            	lexer.setCurrentForCheatingPurposes(',');
+            }
             final BibtexEntry entry = bibtexFile.makeEntry(entryType, bibkey);
             bibtexFile.addEntry(entry);
             while (true) {
@@ -161,10 +166,12 @@ public final class BibtexParser {
             }
         }
 
-        if (bracketChoice == 0)
+        if (bracketChoice == 0) {
             lexer.scan('}');
-        else
+        }
+        else {
             lexer.scan(')');
+        }
     }
 
     private static boolean isNumber(String string) {
