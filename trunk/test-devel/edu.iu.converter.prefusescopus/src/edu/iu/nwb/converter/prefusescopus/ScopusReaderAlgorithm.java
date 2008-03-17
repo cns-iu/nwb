@@ -13,7 +13,9 @@ import org.osgi.service.log.LogService;
 
 import prefuse.data.DataTypeException;
 import prefuse.data.Table;
+import prefuse.data.Tuple;
 import prefuse.data.column.Column;
+import prefuse.util.collections.IntIterator;
 
 public class ScopusReaderAlgorithm implements Algorithm {
     Data[] data;
@@ -34,8 +36,8 @@ public class ScopusReaderAlgorithm implements Algorithm {
     public Data[] execute() {
     	Data inputData = convertInputData(data[0]);
     	Table scopusTable = (Table) inputData.getData();
-    	//normalize author names
     	scopusTable = normalizeAuthorNames(scopusTable);
+    	scopusTable = addSelfReferences(scopusTable);
         Data[] outputData = formatAsData(scopusTable);
         return outputData;
     }
@@ -82,7 +84,7 @@ public class ScopusReaderAlgorithm implements Algorithm {
     		String authorName = eachAuthorName[i];
     		String normalizedAuthorName = authorName.trim();
     		normalizedAuthorNames.append(normalizedAuthorName);
-    		if (i < eachAuthorName.length) {
+    		if (i < eachAuthorName.length - 1) {
     			//append separator to the end all but the last author name
     			normalizedAuthorNames.append(AUTHOR_COLUMN_NAME_SEPARATOR);
     		}
@@ -90,7 +92,126 @@ public class ScopusReaderAlgorithm implements Algorithm {
     	return normalizedAuthorNames.toString();
     }
     
-    private Data[] formatAsData(Table scopusTable) {
+    private static final String SELF_REFERENCE_COLUMN_NAME = "Self Reference";
+    
+    private Table addSelfReferences(Table scopusTable) {
+    	System.out.println("Adding self references!");
+    		//create the self-reference column
+    		scopusTable.addColumn(SELF_REFERENCE_COLUMN_NAME, String.class);
+    		//for each record in the table...
+    		for (IntIterator tableIt = scopusTable.rows(); tableIt.hasNext();) {
+    			int rowIndex = tableIt.nextInt();
+    			Tuple row = scopusTable.getTuple(rowIndex);
+    			//calculate the self-reference based on the contents of other fields
+    			String selfReference = createSelfReference(row);
+    			System.out.println("  self reference: " + selfReference);
+    			//add the self-reference to the current record
+    			scopusTable.setString(rowIndex, SELF_REFERENCE_COLUMN_NAME, selfReference);
+    		}
+    		
+    		return scopusTable;
+    	}
+    
+    private static final String AUTHORS_COLUMN_NAME = "Authors";
+    private static final String TITLE_COLUMN_NAME = "Title";
+    private static final String YEAR_COLUMN_NAME = "Year";
+    private static final String SOURCE_TITLE_COLUMN_NAME = "Source title";
+    private static final String VOLUME_COLUMN_NAME = "Volume";
+    private static final String ISSUE_COLUMN_NAME = "Issue";
+    private static final String PAGE_START_COLUMN_NAME = "Page start";
+    private static final String PAGE_END_COLUMN_NAME = "Page end";
+    
+   private String createSelfReference(Tuple isiRow) {
+	   StringBuilder selfReference = new StringBuilder();
+	   try {
+		   String authors = extractAuthors(isiRow);
+		   if (authors == null) {printNoAuthorColumnWarning(); return "";}
+		   selfReference.append(authors);
+		   selfReference.append(", ");
+		   String title = extractTitle(isiRow);
+		   if (title == null) {printNoTitleColumnWarning(); return "";}
+		   selfReference.append(title);
+		   selfReference.append(" ");
+		   
+		   String year = extractYear(isiRow);
+		   if (year != null) {
+			   selfReference.append(" (");
+			   selfReference.append(year);
+			   selfReference.append(")");
+		   }
+		   String sourceTitle = extractSourceTitle(isiRow);
+		   if (sourceTitle != null) {
+			   selfReference.append(" ");
+			   selfReference.append(sourceTitle);
+		   }
+		   String volume = extractVolume(isiRow);
+		   if (volume != null) {
+			   selfReference.append(", ");
+			   selfReference.append(volume);
+		   }
+		   String issue = extractIssue(isiRow);
+		   if (issue != null) {
+			   selfReference.append(" (");
+			   selfReference.append(issue);
+			   selfReference.append(")");
+		   }
+		   String pageStart = extractPageStart(isiRow);
+		   if (pageStart != null) {
+			   selfReference.append(", pp. ");
+			   selfReference.append(pageStart);
+		   } 
+		   String pageEnd = extractPageEnd(isiRow);
+		   if (pageEnd != null) {
+			   selfReference.append("-");
+			   selfReference.append(pageEnd);
+		   }
+		} catch (ArrayIndexOutOfBoundsException e1) {
+			//column requested does not exist (for entire table or just this field?)
+			//Fail silently. This will happen normally. The remainder of the self reference will be returned.
+		} catch (DataTypeException e2) {
+			//column type cannot be interpreted as a string (?)
+			//this should only happen if the column is of some bizarre unexpected type
+			printWrongColumnTypeError(e2, isiRow);
+		}
+		
+		return selfReference.toString();
+   }
+    
+    
+    private String extractPageEnd(Tuple isiRow) {
+    	return isiRow.getString(PAGE_END_COLUMN_NAME);
+}
+
+	private String extractPageStart(Tuple isiRow) {
+		return isiRow.getString(PAGE_START_COLUMN_NAME);
+}
+
+	private String extractIssue(Tuple isiRow) {
+		return isiRow.getString(ISSUE_COLUMN_NAME);
+}
+
+	private String extractVolume(Tuple isiRow) {
+		return isiRow.getString(VOLUME_COLUMN_NAME);
+}
+
+	private String extractSourceTitle(Tuple isiRow) {
+		return isiRow.getString(SOURCE_TITLE_COLUMN_NAME);
+}
+
+	private String extractYear(Tuple isiRow) {
+	return isiRow.getString(YEAR_COLUMN_NAME);
+}
+
+	private String extractTitle(Tuple isiRow) {
+		return isiRow.getString(TITLE_COLUMN_NAME);
+}
+
+	private String extractAuthors(Tuple isiRow) {
+		String authors = isiRow.getString(AUTHORS_COLUMN_NAME);
+		return authors;
+}
+
+	private Data[] formatAsData(Table scopusTable) {
     	try{
 			Data[] dm = new Data[] {new BasicData(scopusTable, Table.class.getName())};
 			dm[0].getMetaData().put(DataProperty.LABEL, "Normalized Scopus table");
@@ -109,8 +230,20 @@ public class ScopusReaderAlgorithm implements Algorithm {
     					"We will continue on without attempting to normalize this column");
     }
     
+    private void printNoTitleColumnWarning() {
+    	this.log.log(LogService.LOG_WARNING, "Unable to find column with the name '" +
+    			TITLE_COLUMN_NAME + "' in scopus file. " +
+    					"We will continue on without attempting to normalize this column");
+    }
+    
     private void printColumnNotOfTypeStringWarning() {
     	this.log.log(LogService.LOG_WARNING, "The column '" + AUTHOR_COLUMN_NAME + 
     			"' in the scopus file cannot be normalized, because it cannot be interpreted as text. Skipping normalization of authors");
     }
+    
+    private void printWrongColumnTypeError(DataTypeException e, Tuple row) {
+		this.log.log(LogService.LOG_ERROR, "Some elements in the tuple '" + row + "' cannot be converted to a String (apparently)", e);
+	}
+    
+
 }
