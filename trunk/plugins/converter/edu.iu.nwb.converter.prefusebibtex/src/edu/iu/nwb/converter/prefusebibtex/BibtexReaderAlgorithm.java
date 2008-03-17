@@ -25,8 +25,8 @@ import bibtex.parser.BibtexParser;
 
 public class BibtexReaderAlgorithm implements Algorithm {
 	//TODO: what if they have fields with these names?
-	private static final String ENTRY_TYPE_KEY = "ENTRY_TYPE";
-	private static final String ENTRY_KEY_KEY = "ENTRY_KEY";
+	private static final String ENTRY_TYPE_KEY = "entry type";
+	private static final String ENTRY_KEY_KEY = "entry key";
 		
 	private BibtexValueFormatter valueFormatter;
 	
