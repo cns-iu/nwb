@@ -29,6 +29,7 @@ public class PrefuseIsiReader implements Algorithm {
     
     private LogService log;
     private ISIDupRemover dupRemover;
+    private ISICitationExtractionPreparer citationExtractionPreparer;
     
     public PrefuseIsiReader(Data[] data, Dictionary parameters, CIShellContext context) {
         this.data = data;
@@ -36,6 +37,7 @@ public class PrefuseIsiReader implements Algorithm {
         this.context = context;
         
      	this.log = (LogService)context.getService(LogService.class.getName());
+     	this.citationExtractionPreparer = new ISICitationExtractionPreparer(log);
     }
 
     public Data[] execute() {
@@ -47,7 +49,7 @@ public class PrefuseIsiReader implements Algorithm {
 			
     		Table tableWithDups = tableReader.readTable(new FileInputStream(file));
 		  	
-            Table tableToReturn;     
+            Table table;     
 			if (REMOVE_DUPLICATE_PUBLICATIONS) {
 			
 				log.log(LogService.LOG_INFO, "");
@@ -63,13 +65,15 @@ public class PrefuseIsiReader implements Algorithm {
 					dupRemover.removeDuplicatePublications(tableWithDups, log, false);
 				Table tableWithoutDups = noDupandDupTables.getNoDupTable();
 				
-				tableToReturn = tableWithoutDups;
+				table = tableWithoutDups;
 			} else {
-				tableToReturn = tableWithDups;
+				table = tableWithDups;
 			}
 			
+			Table preparedTable = citationExtractionPreparer.prepareForCitationExtraction(table);
+			
 			Data[] tableToReturnData = 
-				new Data[] {new BasicData(tableToReturn, Table.class.getName())};
+				new Data[] {new BasicData(preparedTable, Table.class.getName())};
     		tableToReturnData[0].getMetaData().put(DataProperty.LABEL, "ISI Data: " + file);
             tableToReturnData[0].getMetaData().put(DataProperty.TYPE, DataProperty.TEXT_TYPE);
 			
