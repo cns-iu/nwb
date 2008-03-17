@@ -71,7 +71,7 @@ public class ISITableReader {
 			} else {
 				//either we had an error in the program or there is something wrong with the file.
 				log.log(LogService.LOG_WARNING,
-						"No case in ISITableReader to handle the tag " + currentTag.name + ".");
+						"No case in ISITableReader to handle the tag " + currentTag.columnName + ".");
 				log.log(LogService.LOG_WARNING, "Moving on to next tag.");
 				currentLine = moveToNextLineWithTag(reader);
 			}
@@ -89,7 +89,7 @@ public class ISITableReader {
 		try {
 			int intValue = Integer.parseInt(currentLine);
 		
-			tableData.setInt(currentTag.name, intValue);
+			tableData.setInt(currentTag.columnName, intValue);
 		
 			String nextLine = moveToNextLineWithTag(reader);
 			return nextLine;
@@ -185,9 +185,9 @@ public class ISITableReader {
 		}
 		
 		try {
-		tableData.setString(currentTag.name, allTagDataString);
+		tableData.setString(currentTag.columnName, allTagDataString);
 		} catch (Exception e) {
-			log.log(LogService.LOG_INFO, "currentTag name: " + currentTag.name);
+			log.log(LogService.LOG_INFO, "currentTag name: " + currentTag.columnName);
 			log.log(LogService.LOG_INFO, "currentTag type: " + currentTag.type);
 			log.log(LogService.LOG_INFO, "allTagDataString: " + allTagDataString);
 			log.log(LogService.LOG_ERROR, "Error occurred while setting table data", e);
@@ -257,8 +257,8 @@ public class ISITableReader {
 			System.err.println("Treating tag as if it held single-value text data");
 				
 			ContentType currentTagContentType = ContentType.TEXT;
-			ISITag.addTag(tagName, currentTagContentType);
-			tableData.addColumn(tagName, currentTagContentType.getTableDataType());
+			ISITag.addTag(tagName, tagName,  currentTagContentType);
+			tableData.addColumn(ISITag.getColumnName(tagName), currentTagContentType.getTableDataType());
 			
 			tag = ISITag.getTag(tagName);
 		}
@@ -368,7 +368,7 @@ public class ISITableReader {
 				//add that tag to the table schema, with the table storage data type associated with the tags content type
 				//(e.g. Text -> String, Multi-value Text -> String)
 				if (tagTableDataType != null) {
-				isiTableSchema.addColumn(tag.name, tagTableDataType);
+				isiTableSchema.addColumn(tag.columnName, tagTableDataType);
 				}
 			}
 		}

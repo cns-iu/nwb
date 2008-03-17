@@ -50,7 +50,7 @@ public class ISIDupRemover {
     	int recordsWithoutUIDs = 0;
     	
     	//iterate through the publications by ID
-    	IntIterator publicationsByIDIter = origTable.rowsSortedBy(ISITag.UNIQUE_ID.name, true);
+    	IntIterator publicationsByIDIter = origTable.rowsSortedBy(ISITag.UNIQUE_ID.columnName, true);
     	
     	/*
     	 * Since we are iterating through the publications by ID, publications
@@ -66,7 +66,7 @@ public class ISIDupRemover {
     	while (publicationsByIDIter.hasNext()) {
     		Integer currentPubIndex = (Integer) publicationsByIDIter.next();
     		
-    		String currentPubID = origTable.getString(currentPubIndex.intValue(), ISITag.UNIQUE_ID.name);
+    		String currentPubID = origTable.getString(currentPubIndex.intValue(), ISITag.UNIQUE_ID.columnName);
     		
     		//if this publication has no ID...
     		if (currentPubID == null) {
@@ -168,9 +168,9 @@ public class ISIDupRemover {
     	Tuple currentPubTuple = table.getTuple(currentPubIndex.intValue());
     	Tuple savedPubTuple = table.getTuple(savedPubIndex.intValue());
     	
-    	String commonID = currentPubTuple.getString(ISITag.UNIQUE_ID.name);
-    	String currentPubTitle = currentPubTuple.getString(ISITag.TITLE.name);
-    	String savedPubTitle = savedPubTuple.getString(ISITag.TITLE.name);
+    	String commonID = currentPubTuple.getString(ISITag.UNIQUE_ID.columnName);
+    	String currentPubTitle = currentPubTuple.getString(ISITag.TITLE.columnName);
+    	String savedPubTitle = savedPubTuple.getString(ISITag.TITLE.columnName);
     	
     	runningLog.append("Found a pair of publication records with ID '" + commonID + "'\r\n");
     	
@@ -223,7 +223,7 @@ public class ISIDupRemover {
     
     private boolean tableSanityCheckPasses(Table isiTable) {
 
-    	boolean hasAUniqueIDColumn = isiTable.canGetString(ISITag.UNIQUE_ID.name);
+    	boolean hasAUniqueIDColumn = isiTable.canGetString(ISITag.UNIQUE_ID.columnName);
 
     	if (! hasAUniqueIDColumn) {
     		this.log.log(LogService.LOG_WARNING, "ISI Table does not have a unique ID column (abbreviated UT)." +

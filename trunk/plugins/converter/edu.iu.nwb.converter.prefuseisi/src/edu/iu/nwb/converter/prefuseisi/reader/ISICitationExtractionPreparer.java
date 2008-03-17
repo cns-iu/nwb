@@ -132,12 +132,12 @@ public class ISICitationExtractionPreparer {
 			int rowIndex = tableIt.nextInt();
 			Tuple row = isiTable.getTuple(rowIndex);
 			//for each journal name...
-			String journalName = row.getString(ISITag.TWENTY_NINE_CHAR_JOURNAL_ABBREV.name);
+			String journalName = row.getString(ISITag.TWENTY_NINE_CHAR_JOURNAL_ABBREV.columnName);
 			if (journalName == null) {continue;};
 			//replace it with the cited journal name, it there is a known replacement
 			String citedJournalName = (String) journalNameToCitedJournalName.get(journalName);
 			if (citedJournalName != null) {
-				row.setString(ISITag.TWENTY_NINE_CHAR_JOURNAL_ABBREV.name, citedJournalName);
+				row.setString(ISITag.TWENTY_NINE_CHAR_JOURNAL_ABBREV.columnName, citedJournalName);
 			}
 		}
 		return isiTable;
@@ -150,7 +150,7 @@ public class ISICitationExtractionPreparer {
 			int rowIndex = tableIt.nextInt();
 			Tuple row = isiTable.getTuple(rowIndex);
 			//for each cited reference...
-			String citedReferences = row.getString(ISITag.CITED_REFERENCES.name);
+			String citedReferences = row.getString(ISITag.CITED_REFERENCES.columnName);
 			if (citedReferences == null) {continue;};
 			String[] eachCitedReference = citedReferences.split("\\" + ISI_CITATION_SEPARATOR);
 			for (int i = 0; i < eachCitedReference.length; i++) {
@@ -176,7 +176,7 @@ public class ISICitationExtractionPreparer {
 			int rowIndex = tableIt.nextInt();
 			Tuple row = isiTable.getTuple(rowIndex);
 			//add the journal name to our set map
-			String journalName = row.getString(ISITag.TWENTY_NINE_CHAR_JOURNAL_ABBREV.name);
+			String journalName = row.getString(ISITag.TWENTY_NINE_CHAR_JOURNAL_ABBREV.columnName);
 			if (journalName == null) {continue;};
 			String firstLetter = extractFirstLetter(journalName);
 			if (firstLetter != null) {
@@ -402,7 +402,7 @@ public class ISICitationExtractionPreparer {
 	}
 	
 	private String extractFirstAndLastNameOfFirstAuthor(Tuple isiRow) {
-		String authors = isiRow.getString(ISITag.AUTHORS.name); 
+		String authors = isiRow.getString(ISITag.AUTHORS.columnName); 
 		if (authors == null) return null;
 		String[] eachAuthor = authors.split("\\" + ISI_AUTHOR_SEPARATOR); //since it's a regex, we have to escape the pipe 
 		if (eachAuthor.length == 0) return handleNoAuthors();
@@ -414,24 +414,24 @@ public class ISICitationExtractionPreparer {
 	}
 	
 	private String extractPublicationYear(Tuple isiRow) {
-		String publicationYear = isiRow.getString(ISITag.PUBLICATION_YEAR.name);
+		String publicationYear = isiRow.getString(ISITag.PUBLICATION_YEAR.columnName);
 		return publicationYear;
 	}
 	
 	private String extractAbbreviatedJournalName(Tuple isiRow) {
-		String abbreviatedJournalName = isiRow.getString(ISITag.TWENTY_NINE_CHAR_JOURNAL_ABBREV.name);
+		String abbreviatedJournalName = isiRow.getString(ISITag.TWENTY_NINE_CHAR_JOURNAL_ABBREV.columnName);
 		return abbreviatedJournalName;
 		
 	}
 	
 	private String extractVolume(Tuple isiRow) {
-		String volume = isiRow.getString(ISITag.VOLUME.name);
+		String volume = isiRow.getString(ISITag.VOLUME.columnName);
 		if (volume == null) {return null;}
 		return "V" + volume;
 	}
 	
 	private String extractFirstPage(Tuple isiRow) {
-		String firstPage = isiRow.getString(ISITag.BEGINNING_PAGE.name);
+		String firstPage = isiRow.getString(ISITag.BEGINNING_PAGE.columnName);
 		if (firstPage == null) {return null;}
 		String startsWithALetter = "^[a-zA-Z].*$";
 		if (firstPage.matches(startsWithALetter)) {
