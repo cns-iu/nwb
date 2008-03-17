@@ -1,5 +1,7 @@
 package edu.iu.nwb.converter.prefuserefer.util;
 
+import java.util.Map;
+
 import prefuse.data.Schema;
 import prefuse.data.Table;
 
@@ -8,10 +10,13 @@ public class TableData {
 	
 	private int currentRow;
 	private boolean currentRowIsFinished;
+	private Map colNameToReadableColName;
+	
 	private String DEFAULT_MULTI_VAL_SEPARATOR = ";";
 	
-	public TableData(Schema schema) {
+	public TableData(Schema schema, Map colNameToReadableColName) {
 		table = schema.instantiate();
+		this.colNameToReadableColName = colNameToReadableColName;
 		currentRowIsFinished = true; //will cause first row to be created
 	}
 	
@@ -27,20 +32,21 @@ public class TableData {
 	public void setString(String columnTag, String value, String multiValSeparator) {
 		ensureRowNotFinishedYet();
 		
+		String readableColumnTag = getReadableColName(columnTag);
 		try {
-			String currentContents = table.getString(currentRow, columnTag);
+			String currentContents = table.getString(currentRow, readableColumnTag);
 			if (currentContents == null || currentContents == "") {
 				//this is first value for field
-				table.setString(currentRow, columnTag, value);
+				table.setString(currentRow, readableColumnTag, value);
 			} else {
 				//already has contents. Add value on to current contents
-				table.setString(currentRow , columnTag, currentContents + multiValSeparator + value);
+				table.setString(currentRow , readableColumnTag, currentContents + multiValSeparator + value);
 			}
 		} catch (Exception e1) {
 			//maybe column does not yet exist. Add it and try again.
-			addColumn(columnTag, String.class);
+			addColumn(readableColumnTag, String.class);
 			try {
-			table.setString(currentRow, columnTag, value);
+			table.setString(currentRow, readableColumnTag, value);
 			} catch (Exception e2) {
 				//something else must be wrong.
 				throw new Error(e2);
@@ -49,11 +55,21 @@ public class TableData {
 	}
 	
 	public void addColumn(String columnName, Class columnType) {
-		table.addColumn(columnName, columnType);
+		String readableColumnName = getReadableColName(columnName);
+		table.addColumn(readableColumnName, columnType);
 	}
 	
 	public Table getPrefuseTable() {
 		return table;
+	}
+	
+	private String getReadableColName(String colName) {
+		String readableColName = (String) colNameToReadableColName.get(colName);
+		if (readableColName != null) {
+			return readableColName;
+		} else {
+			return colName;
+		}
 	}
 	
 	private void ensureRowNotFinishedYet() {
