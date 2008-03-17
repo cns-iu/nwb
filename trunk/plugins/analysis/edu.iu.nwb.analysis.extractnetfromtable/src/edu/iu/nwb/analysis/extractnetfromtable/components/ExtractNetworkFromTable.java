@@ -163,13 +163,15 @@ public class ExtractNetworkFromTable {
 					}
 				}
 				if(dupValues){
-					String title = (String)pdt.get(row,pdt.getColumnNumber("TI"));
+					//String title = (String)pdt.get(row,pdt.getColumnNumber("TI"));
+					String title = "unknown";
 					ExtractNetworkFromTable.addDuplicateValueErrorMessage(title, columnName, dupValuesErrorMessages);
 					dupValues = false;
 				}
 			}
 			else{
-				String title = (String)pdt.get(row,pdt.getColumnNumber("TI"));
+				//String title = (String)pdt.get(row,pdt.getColumnNumber("TI"));
+				String title = "unknown";
 				ExtractNetworkFromTable.printNoValueToExtractError(title, columnName, this.log);
 			}
 		}
