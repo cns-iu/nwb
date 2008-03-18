@@ -88,7 +88,7 @@ public class EdgeStats{
 		
 	}
 
-	public void addEdge(final Edge e, boolean[] seenEdges, HashSet observedValues){
+	public void addEdge(final Edge e, boolean[] seenEdges, HashSet observedValues, Integer maxSoFar){
 		if(!seenEdges[e.getRow()]){
 			seenEdges[e.getRow()] = true;
 			
@@ -130,13 +130,14 @@ public class EdgeStats{
 
 	public void calculateEdgeStats(final Graph graph){
 		boolean[] seenEdges;
-		seenEdges = new boolean[graph.getEdgeCount()];
+		seenEdges = new boolean[graph.getEdgeTable().getMaximumRow() + 1];
 		HashSet observedValues = null;
 		if(this.numAdditionalNumericAttributes == 1)
 			observedValues = new HashSet();
+		Integer maxSoFar = new Integer(-1);
 		for(Iterator it = graph.edges(); it.hasNext();){
 			Edge e = (Edge)it.next();
-			this.addEdge(e, seenEdges, observedValues);
+			this.addEdge(e, seenEdges, observedValues, maxSoFar);
 		}
 		
 		if(this.numAdditionalNumericAttributes == 1){
