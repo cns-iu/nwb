@@ -16,6 +16,7 @@ import prefuse.data.Table;
 import prefuse.data.Tuple;
 import prefuse.data.column.Column;
 import prefuse.util.collections.IntIterator;
+import edu.iu.nwb.converter.prefusescopus.util.StringUtil;
 
 public class ScopusReaderAlgorithm implements Algorithm {
     Data[] data;
@@ -24,7 +25,12 @@ public class ScopusReaderAlgorithm implements Algorithm {
     LogService log;
     
     private static final String AUTHOR_COLUMN_NAME = "Authors";
-    private static final String AUTHOR_COLUMN_NAME_SEPARATOR = ",";
+    private static final String ORIG_AUTHOR_COLUMN_NAME_SEPARATOR = ", ";
+    private static final String NEW_AUTHOR_COLUMN_NAME_SEPARATOR = "|";
+    
+    private static final String REFERENCE_COLUMN_NAME = "References";
+    private static final String ORIG_REFERENCE_COLUMN_NAME_SEPARATOR = "; ";
+    private static final String NEW_REFERENCE_COLUMN_NAME_SEPARATOR = "|";
     
     public ScopusReaderAlgorithm(Data[] data, Dictionary parameters, CIShellContext context) {
         this.data = data;
@@ -37,6 +43,7 @@ public class ScopusReaderAlgorithm implements Algorithm {
     	Data inputData = convertInputData(data[0]);
     	Table scopusTable = (Table) inputData.getData();
     	scopusTable = normalizeAuthorNames(scopusTable);
+    	scopusTable = normalizeReferences(scopusTable);
     	scopusTable = addSelfReferences(scopusTable);
         Data[] outputData = formatAsData(scopusTable);
         return outputData;
@@ -78,18 +85,37 @@ public class ScopusReaderAlgorithm implements Algorithm {
     
     private String normalizeAuthorNames(String authorNames) {
     	//trim leading and trailing whitespace from each author name.
-    	StringBuilder normalizedAuthorNames = new StringBuilder();
-    	String[] eachAuthorName = authorNames.split(AUTHOR_COLUMN_NAME_SEPARATOR);
-    	for (int i = 0; i < eachAuthorName.length; i++) {
-    		String authorName = eachAuthorName[i];
-    		String normalizedAuthorName = authorName.trim();
-    		normalizedAuthorNames.append(normalizedAuthorName);
-    		if (i < eachAuthorName.length - 1) {
-    			//append separator to the end all but the last author name
-    			normalizedAuthorNames.append(AUTHOR_COLUMN_NAME_SEPARATOR);
+    	String[] eachAuthorName = authorNames.split(ORIG_AUTHOR_COLUMN_NAME_SEPARATOR);
+    	String normalizedAuthorNames = StringUtil.join(eachAuthorName, NEW_AUTHOR_COLUMN_NAME_SEPARATOR);
+    	return normalizedAuthorNames;
+    }
+    
+    private Table normalizeReferences(Table scopusTable) {
+    	Column referenceColumn = scopusTable.getColumn(REFERENCE_COLUMN_NAME);
+    	if (referenceColumn == null) {
+    		printNoReferenceColumnWarning();
+    		return scopusTable;
+    	}
+    try {
+		for (IntIterator tableIt = scopusTable.rows(); tableIt.hasNext();) {
+			int rowIndex = tableIt.nextInt();
+    		String references = referenceColumn.getString(rowIndex);
+    		if (references != null && ! references.equals("")) {
+    			String normalizedReferences = normalizeReferences(references);
+    			referenceColumn.setString(normalizedReferences, rowIndex);
     		}
     	}
-    	return normalizedAuthorNames.toString();
+    	} catch (DataTypeException e1) {
+    		printColumnNotOfTypeStringWarning();
+    		return scopusTable;
+    	}
+    	return scopusTable;
+    }
+    
+    private String normalizeReferences(String references) {
+    	String[] eachReference = references.split(ORIG_REFERENCE_COLUMN_NAME_SEPARATOR);
+    	String normalizedReferences = StringUtil.join(eachReference, NEW_REFERENCE_COLUMN_NAME_SEPARATOR);
+    	return normalizedReferences;
     }
     
     private static final String SELF_REFERENCE_COLUMN_NAME = "Self Reference";
@@ -104,7 +130,6 @@ public class ScopusReaderAlgorithm implements Algorithm {
     			Tuple row = scopusTable.getTuple(rowIndex);
     			//calculate the self-reference based on the contents of other fields
     			String selfReference = createSelfReference(row);
-    			System.out.println("  self reference: " + selfReference);
     			//add the self-reference to the current record
     			scopusTable.setString(rowIndex, SELF_REFERENCE_COLUMN_NAME, selfReference);
     		}
@@ -227,6 +252,12 @@ public class ScopusReaderAlgorithm implements Algorithm {
     private void printNoAuthorColumnWarning() {
     	this.log.log(LogService.LOG_WARNING, "Unable to find column with the name '" +
     			AUTHOR_COLUMN_NAME + "' in scopus file. " +
+    					"We will continue on without attempting to normalize this column");
+    }
+    
+    private void printNoReferenceColumnWarning() {
+    	this.log.log(LogService.LOG_WARNING, "Unable to find column with the name '" +
+    			REFERENCE_COLUMN_NAME + "' in scopus file. " +
     					"We will continue on without attempting to normalize this column");
     }
     
