@@ -13,8 +13,10 @@ import org.cishell.framework.data.Data;
 import org.cishell.framework.data.DataProperty;
 import org.osgi.service.log.LogService;
 
+import prefuse.data.DataTypeException;
 import prefuse.data.Schema;
 import prefuse.data.Table;
+import prefuse.data.column.Column;
 import bibtex.dom.BibtexAbstractEntry;
 import bibtex.dom.BibtexAbstractValue;
 import bibtex.dom.BibtexEntry;
@@ -22,11 +24,16 @@ import bibtex.dom.BibtexFile;
 import bibtex.expansions.ExpansionException;
 import bibtex.expansions.MacroReferenceExpander;
 import bibtex.parser.BibtexParser;
+import edu.iu.nwb.converter.prefusebibtex.util.StringUtil;
 
 public class BibtexReaderAlgorithm implements Algorithm {
 	//TODO: what if they have fields with these names?
 	private static final String ENTRY_TYPE_KEY = "entry type";
 	private static final String ENTRY_KEY_KEY = "entry key";
+	
+	private static final String AUTHOR_COLUMN_NAME = "author";
+	private static final String ORIG_AUTHOR_COLUMN_SEPARATOR = " and ";
+	private static final String NEW_AUTHOR_COLUMN_SEPARATOR = "|";
 		
 	private BibtexValueFormatter valueFormatter;
 	
@@ -55,6 +62,8 @@ public class BibtexReaderAlgorithm implements Algorithm {
     	}
     	//write parsed bibtex File to table
     	Table bibtexTable = makeTable(parsedBibtex);
+    	//normalize author names
+    	bibtexTable = normalizeAuthorNames(bibtexTable);
     	//return bibtex table data
     	Data[] bibtexReturnData = formatAsData(bibtexTable, bibtexFilePath);
 		return bibtexReturnData;
@@ -158,6 +167,34 @@ public class BibtexReaderAlgorithm implements Algorithm {
     	schema.addColumn(column, String.class);
     }
     
+    private Table normalizeAuthorNames(Table bibtexTable) {
+    	Column authorColumn = bibtexTable.getColumn(AUTHOR_COLUMN_NAME);
+    	if (authorColumn == null) {
+    		printNoAuthorColumnWarning();
+    		return bibtexTable;
+    	}
+    	try {
+    	for (int rowIndex = bibtexTable.getMinimumRow(); rowIndex < bibtexTable.getMaximumRow(); rowIndex++) {
+    		String authors = authorColumn.getString(rowIndex);
+    		if (authors != null && ! authors.equals("")) {
+    			String normalizedAuthors = normalizeAuthorNames(authors);
+    			authorColumn.setString(normalizedAuthors, rowIndex);
+    		}
+    	}
+    	} catch (DataTypeException e1) {
+    		printColumnNotOfTypeStringWarning();
+    		return bibtexTable;
+    	}
+    	return bibtexTable;
+    }
+    
+    private String normalizeAuthorNames(String authorNames) {
+    	//trim leading and trailing whitespace from each author name.
+    	String[] eachAuthorName = authorNames.split(ORIG_AUTHOR_COLUMN_SEPARATOR);
+    	String normalizedAuthorNames = StringUtil.join(eachAuthorName, NEW_AUTHOR_COLUMN_SEPARATOR);
+    	return normalizedAuthorNames;
+    }
+    
 	private void printNonFatalExceptions(Exception[] exceptions, int numTotalEntries) {
 		if (exceptions.length > 0) {
 		
@@ -234,4 +271,15 @@ public class BibtexReaderAlgorithm implements Algorithm {
 		
 		
 	}
+    
+    private void printColumnNotOfTypeStringWarning() {
+    	this.log.log(LogService.LOG_WARNING, "The column '" + AUTHOR_COLUMN_NAME + 
+    			"' in the bibtex file cannot be normalized, because it cannot be interpreted as text.");
+    }
+    
+    private void printNoAuthorColumnWarning() {
+    	this.log.log(LogService.LOG_WARNING, "Unable to find column with the name '" +
+    			AUTHOR_COLUMN_NAME + "' in bibtex file. " +
+    					"We will continue on without attempting to normalize this column");
+    }
 }
