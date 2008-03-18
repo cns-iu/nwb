@@ -12,7 +12,7 @@ public class TableData {
 	private boolean currentRowIsFinished;
 	private Map colNameToReadableColName;
 	
-	private String DEFAULT_MULTI_VAL_SEPARATOR = ";";
+	private String DEFAULT_MULTI_VAL_SEPARATOR = "|";
 	
 	public TableData(Schema schema, Map colNameToReadableColName) {
 		table = schema.instantiate();
