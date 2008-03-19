@@ -75,7 +75,7 @@ public class PrefuseIsiReader implements Algorithm {
 			Data[] tableToReturnData = 
 				new Data[] {new BasicData(preparedTable, Table.class.getName())};
     		tableToReturnData[0].getMetaData().put(DataProperty.LABEL, "ISI Data: " + file);
-            tableToReturnData[0].getMetaData().put(DataProperty.TYPE, DataProperty.TEXT_TYPE);
+            tableToReturnData[0].getMetaData().put(DataProperty.TYPE, DataProperty.MATRIX_TYPE);
 			
     		return tableToReturnData;
     		

@@ -240,7 +240,7 @@ public class ScopusReaderAlgorithm implements Algorithm {
     	try{
 			Data[] dm = new Data[] {new BasicData(scopusTable, Table.class.getName())};
 			dm[0].getMetaData().put(DataProperty.LABEL, "Normalized Scopus table");
-			dm[0].getMetaData().put(DataProperty.TYPE, DataProperty.TEXT_TYPE);
+			dm[0].getMetaData().put(DataProperty.TYPE, DataProperty.MATRIX_TYPE);
 			return dm;
 		}catch (SecurityException exception){
 			log.log(LogService.LOG_ERROR, "SecurityException", exception);

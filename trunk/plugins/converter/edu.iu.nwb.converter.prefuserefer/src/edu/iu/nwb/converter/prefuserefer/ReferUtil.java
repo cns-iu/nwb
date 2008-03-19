@@ -111,7 +111,7 @@ public class ReferUtil {
 			new Data[] {new BasicData(referTable, Table.class.getName())};
 		tableToReturnData[0].getMetaData().put(DataProperty.LABEL, "Parsed EndNote reference file: " + referFilePath);
 		//TODO: should this really be a text_type?
-        tableToReturnData[0].getMetaData().put(DataProperty.TYPE, DataProperty.TEXT_TYPE);
+        tableToReturnData[0].getMetaData().put(DataProperty.TYPE, DataProperty.MATRIX_TYPE);
         return tableToReturnData;
     }
     

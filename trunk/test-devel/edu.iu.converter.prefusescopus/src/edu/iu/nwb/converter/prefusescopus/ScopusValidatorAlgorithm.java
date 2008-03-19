@@ -30,7 +30,7 @@ public class ScopusValidatorAlgorithm implements Algorithm {
 		try{
 			Data[] dm = new Data[] {new BasicData(inData, "file:text/scopus")};
 			dm[0].getMetaData().put(DataProperty.LABEL, "Scopus csv file: " + fileHandler);
-			dm[0].getMetaData().put(DataProperty.TYPE, DataProperty.TEXT_TYPE);
+			dm[0].getMetaData().put(DataProperty.TYPE, DataProperty.MATRIX_TYPE);
 			return dm;
 		}catch (SecurityException exception){
 			logger.log(LogService.LOG_ERROR, "SecurityException", exception);
