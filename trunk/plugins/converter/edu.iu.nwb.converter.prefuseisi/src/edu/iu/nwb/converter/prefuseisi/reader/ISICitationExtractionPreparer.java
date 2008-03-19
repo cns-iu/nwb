@@ -274,6 +274,7 @@ public class ISICitationExtractionPreparer {
 	private static final String VOWEL = "[aeiouyAEIOUY]";
 	private static final String ALL_NUMBERS = "^[0-9]+$";
 
+	//TODO: maybe expose some of these through preferences.
 	private float calculateWordSimilarity(String word1, String word2, StringBuilder log) {
 		// TODO: This needs to be refactored.
 		log.append("  comparing '" + word1 + "' with '" + word2 + "'\r\n");
