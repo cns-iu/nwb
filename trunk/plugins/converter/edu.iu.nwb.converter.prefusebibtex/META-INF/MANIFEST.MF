@@ -19,6 +19,9 @@ Import-Package:
  org.osgi.service.prefs;version="1.1.0",
  prefuse,
  prefuse.data,
- prefuse.data.column
+ prefuse.data.column,
+ prefuse.data.util,
+ prefuse.util,
+ prefuse.util.collections
 X-AutoStart: true
 Service-Component: OSGI-INF/reader.xml, OSGI-INF/validator.xml

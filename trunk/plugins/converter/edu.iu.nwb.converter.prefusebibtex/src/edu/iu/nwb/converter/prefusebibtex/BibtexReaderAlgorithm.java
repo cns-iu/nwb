@@ -17,6 +17,7 @@ import prefuse.data.DataTypeException;
 import prefuse.data.Schema;
 import prefuse.data.Table;
 import prefuse.data.column.Column;
+import prefuse.util.collections.IntIterator;
 import bibtex.dom.BibtexAbstractEntry;
 import bibtex.dom.BibtexAbstractValue;
 import bibtex.dom.BibtexEntry;
@@ -174,7 +175,8 @@ public class BibtexReaderAlgorithm implements Algorithm {
     		return bibtexTable;
     	}
     	try {
-    	for (int rowIndex = bibtexTable.getMinimumRow(); rowIndex < bibtexTable.getMaximumRow(); rowIndex++) {
+    		for (IntIterator tableIt = bibtexTable.rows(); tableIt.hasNext();) {
+    			int rowIndex = tableIt.nextInt();
     		String authors = authorColumn.getString(rowIndex);
     		if (authors != null && ! authors.equals("")) {
     			String normalizedAuthors = normalizeAuthorNames(authors);
