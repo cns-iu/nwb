@@ -43,7 +43,7 @@ public class GraphUtil {
 		for (int ii = 0; ii < columnNames.length; ii++) {
 			String columnName = columnNames[ii];
 			if (t.getColumn(columnName) == null) {
-				System.out.println("WTF, cannot find column " + columnName);
+				System.out.println("Cannot find column " + columnName);
 			}
 		}
 		Sort tSort = new Sort(columnNames);
