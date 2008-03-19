@@ -258,7 +258,7 @@ public class ISICitationExtractionPreparer {
 		}
 
 		float finalScore = scoreCounter / (float) oneWithMoreWords.length;
-		if (finalScore > -.5f && finalScore < .9) {
+		if (finalScore > -.5f && finalScore < .5) {
 			System.out.println("" + jn + " == " + cjn + ": " + finalScore);
 			System.out.println(log.toString());
 		}

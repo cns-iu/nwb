@@ -57,21 +57,10 @@ public class NSFReaderAlgorithm implements Algorithm {
 		  table = addPIColumn(table); if (table == null) return null;
 		  //format as data
 		  Data[] outputTableData = formatAsData(data[0],table);
-		  if (outputTableData == null) {
-			  System.out.println("outputTableData is null!");
-		  } else if (outputTableData[0] == null) {
-			  System.out.println("outputTableData[0] is null!");
-		  } else if (outputTableData[0].getData() == null){
-			  System.out.println("outputTableData[0].getData() is null!");
-		  } else {
-			  System.out.println("" + ((Table)outputTableData[0].getData()).getRowCount() + "," +  ((Table)outputTableData[0].getData()).getMaximumRow() + " rows in outputTable!");
-			  System.out.println("outputTableData looks fine to me!");
-		  }
 		  return outputTableData;
     }
     
 	private Table normalizeCoPIs(Table nsfTable) {
-		System.out.println("Normalizing CoPIs...");
 		Column coPIColumn = nsfTable.getColumn(CO_PI_COLUMN_NAME);
 		for (int rowIndex = 0; rowIndex < nsfTable.getRowCount(); rowIndex++) {
 			String contents = (String) coPIColumn.getString(rowIndex);
@@ -93,7 +82,6 @@ public class NSFReaderAlgorithm implements Algorithm {
 
 	
 	private Table normalizePrimaryPIs(Table nsfTable) {
-		System.out.println("Normalizing Primary PIs...");
 		Column coPIColumn = nsfTable.getColumn(PRIMARY_PI_COLUMN_NAME);
 		for (int rowIndex = 0; rowIndex < nsfTable.getRowCount(); rowIndex++) {
 			String primaryPIName = (String) coPIColumn.getString(rowIndex);
@@ -106,7 +94,6 @@ public class NSFReaderAlgorithm implements Algorithm {
 	}
 	
 	private Table addPIColumn(Table normalizedNSFTable) {
-		System.out.println("Adding PI Column...");
 		//add extra column made up of primary pi name + OUTPUT_NAME_SEPARATOR + all the co-pi names
 		normalizedNSFTable.addColumn(ALL_PI_COLUMN_NAME, String.class);
 		Column allPIColumn = normalizedNSFTable.getColumn(ALL_PI_COLUMN_NAME);
@@ -133,7 +120,6 @@ public class NSFReaderAlgorithm implements Algorithm {
 	}
 	
 	private Data[] formatAsData(Data originalData, Table normalizedNSFTable) {
-		System.out.println("Formatting output data...");
 		try{
 			Data[] dm = new Data[] {new BasicData(normalizedNSFTable, "prefuse.data.Table")};
 			dm[0].getMetaData().put(DataProperty.LABEL, "Normalized NSF table");
@@ -200,7 +186,6 @@ public class NSFReaderAlgorithm implements Algorithm {
 	}
 	
 	private Data convertInputData(Data inputData) {
-		System.out.println("Converting input data...");
 		 DataConversionService converter = (DataConversionService)
          context.getService(DataConversionService.class.getName());
 		//this is a bit like a cast. We know the nsf format is also a csv, so we change the format to csv so

@@ -122,7 +122,6 @@ public class ScopusReaderAlgorithm implements Algorithm {
     private static final String SELF_REFERENCE_COLUMN_NAME = "Self Reference";
     
     private Table addSelfReferences(Table scopusTable) {
-    	System.out.println("Adding self references!");
     		//create the self-reference column
     		scopusTable.addColumn(SELF_REFERENCE_COLUMN_NAME, String.class);
     		//for each record in the table...
