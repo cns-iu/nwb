@@ -280,45 +280,7 @@ public class NSFReaderAlgorithm implements Algorithm {
 	    			out.write((char) c);
 	    		}
 	    	}
-//	    	boolean hasReadHeader = false;
-//	    	String firstLine = reader.readLine();
-//	    	if (firstLine != null) {
-//	    		if (firstLine.indexOf( AWARD_NUMBER_COLUMN_NAME) != firstLine.lastIndexOf( AWARD_NUMBER_COLUMN_NAME)) {
-//    				System.out.println("Changing award name!");
-//    				//there are two award number columns.
-//    				firstLine = renameDuplicateAwardNumberColumn(firstLine);
-//    				out.write(firstLine + "\r\n");
-//    			}
-//	    	}
-//	    	int prevC = '\0';
-//	    	int c;
-//	    	int chars = 0;
-//	    	c = reader.read();
-//	    	while (c  != -1) {
-//	    		
-//	    		chars++;
-//	    		if (! hasReadHeader) {
-//	    		
-//	    			hasReadHeader = true;
-//	    		}
-//	    		if (prevC == '\\' && c == '\"') {
-//	    		out.write('\"');
-//	    		} else if (prevC =='\r') {
-//	    			//write nothing
-//	    		} else if (chars != 1){
-//		    		out.write(prevC);
-//	    		}
-//
-//	    		
-//	    		if (chars % 500 == 0) {
-//	    			out.flush();
-//	    		}
-//	    		prevC = c;
-//	    		c = reader.read();
-//	    	}
-//	    	out.write(prevC);
-//	    	out.flush();
-//	    	out.close();
+	    	
 	    	return outFile;
 	    	} catch (FileNotFoundException e1) {
 	    		this.log.log(LogService.LOG_ERROR, "NSFReader could not find a file at " +  escapedQuoteFile.getAbsolutePath(), e1);
