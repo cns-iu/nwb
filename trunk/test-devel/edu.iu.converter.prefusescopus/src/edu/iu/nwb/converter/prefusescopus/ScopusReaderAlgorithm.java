@@ -69,7 +69,8 @@ public class ScopusReaderAlgorithm implements Algorithm {
     		return scopusTable;
     	}
     	try {
-    	for (int rowIndex = scopusTable.getMinimumRow(); rowIndex < scopusTable.getMaximumRow(); rowIndex++) {
+    	for (IntIterator tableIt = scopusTable.rows(); tableIt.hasNext();) {
+			int rowIndex = tableIt.nextInt();
     		String authors = authorColumn.getString(rowIndex);
     		if (authors != null && ! authors.equals("")) {
     			String normalizedAuthors = normalizeAuthorNames(authors);
