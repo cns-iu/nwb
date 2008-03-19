@@ -276,7 +276,7 @@ public class ISICitationExtractionPreparer {
 
 	//TODO: maybe expose some of these through preferences.
 	private float calculateWordSimilarity(String word1, String word2, StringBuilder log) {
-		// TODO: This needs to be refactored.
+		// TODO: This needs to be refactored, a.k.a this code is horrible and I know it.
 		log.append("  comparing '" + word1 + "' with '" + word2 + "'\r\n");
 		if (word1 == null && word2 == null) {
 			log.append("    both null. returning 0\r\n");
