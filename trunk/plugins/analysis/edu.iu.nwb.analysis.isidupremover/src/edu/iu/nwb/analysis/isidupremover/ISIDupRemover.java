@@ -25,6 +25,7 @@ public class ISIDupRemover {
     Dictionary parameters;
     CIShellContext context;
     
+    
     //TODO: Preferences should tell us where to put temp log file and whatnot
     private static final String LOG_FILE_NAME = "isiduplicateremoverlog";
     private LogService log;
