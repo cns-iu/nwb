@@ -31,14 +31,13 @@ public class NetworkProperties {
 		
 		if(!(this.hasParallelEdges() || this.hasSelfLoops())){
 			calculateDensity();
+			
+		this.assembleAverageDegreeInfo();
 		
 		this.assembleDensityInfo();
 		}
 
 	}
-
-
-
 
 	public int getNumNodes() {
 		return this.nodeStats.getNumerOfNodes();
@@ -95,6 +94,11 @@ public class NetworkProperties {
 		
 	}
 	
+	private void assembleAverageDegreeInfo(){
+		output.append(this.averageDegreeInfo());
+		output.append(System.getProperty("line.separator"));
+	}
+	
 	private void assembleConnectedInfo(){
 		output.append(this.connectedInfo());
 		output.append(System.getProperty("line.separator"));
@@ -102,7 +106,16 @@ public class NetworkProperties {
 	
 	
 
-
+	protected String averageDegreeInfo(){
+		StringBuffer sb = new StringBuffer();
+		double averageDegree = calculateAverageDegree();
+		if (this.isDirected()) {
+			sb.append("average total degree: " + averageDegree);
+		} else { //is undirected
+			sb.append("average degree: " + averageDegree);
+		}
+		return sb.toString();
+	}
 
 	protected String directedInfo(){
 		StringBuffer sb = new StringBuffer();
@@ -238,10 +251,12 @@ public class NetworkProperties {
 			density = (double)this.getNumEdges()/(maxEdges/2);
 		}
 	}
-
 	
-
-	
-	
-
+	protected double calculateAverageDegree() {
+		int numEdges = getNumEdges();
+		int numNodes = getNumNodes();
+		//for each edge we have, two nodes have their degree increase by one.
+		double averageDegree = 2 * (double) numEdges / (double) numNodes;
+		return averageDegree;
+	}
 }
