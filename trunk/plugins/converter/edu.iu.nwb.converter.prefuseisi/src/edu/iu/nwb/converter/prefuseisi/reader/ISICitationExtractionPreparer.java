@@ -285,7 +285,7 @@ public class ISICitationExtractionPreparer {
 			if (word2.matches(ALL_NUMBERS)) {
 				return -.5f;
 			}
-			log.append("    word1 is null. returning " + word1.length() * EXTRA_LETTER_PENALTY + "\r\n");
+			log.append("    word1 is null. returning " + word2.length() * EXTRA_LETTER_PENALTY + "\r\n");
 			return word2.length() * EXTRA_LETTER_PENALTY + -5.0f;
 		} else if (word2 == null) {
 			if (word1.matches(ALL_NUMBERS)) {
