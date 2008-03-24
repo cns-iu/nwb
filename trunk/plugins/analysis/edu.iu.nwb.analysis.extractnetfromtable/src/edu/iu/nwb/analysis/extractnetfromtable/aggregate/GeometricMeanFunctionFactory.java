@@ -61,7 +61,7 @@ class FloatGeometricMean extends AggregateFunction {
 	}
 
 	public Object getResult() {
-		final float result = (float) Math.pow(value, (1 / items));
+		final float result = (float) Math.pow(value, (1 / (float) items));
 		return new Float(result);
 	}
 
