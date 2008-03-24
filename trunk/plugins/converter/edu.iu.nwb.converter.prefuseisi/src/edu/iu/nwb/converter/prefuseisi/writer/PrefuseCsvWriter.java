@@ -37,8 +37,13 @@ public class PrefuseCsvWriter implements Algorithm {
         
 	    String tempPath = System.getProperty("java.io.tmpdir");
 	    File tempDir = new File(tempPath+File.separator+"temp");
-	    if(!tempDir.exists())
-	    	tempDir.mkdir();
+	    if(!tempDir.exists()) {
+	    	boolean successful = tempDir.mkdir();
+	    	if (! successful) {
+	    		this.logger.log(LogService.LOG_ERROR, "Unable to create temporary directory " + tempDir.toString());
+	    		return null;
+	    	}
+	    }
 	    try{
 	    	tempFile = File.createTempFile("NWB-Session-", ".csv", tempDir);
 	    		
