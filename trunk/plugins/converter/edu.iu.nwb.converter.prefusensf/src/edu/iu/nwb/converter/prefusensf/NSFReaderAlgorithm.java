@@ -105,7 +105,7 @@ public class NSFReaderAlgorithm implements Algorithm {
 			String allPIs = null;
 			if (primaryPI != null && coPIs != null) {
 				allPIs = primaryPI + OUTPUT_NAME_SEPARATOR + coPIs;
-			} else if (primaryPI == null && allPIs == null) {
+			} else if (primaryPI == null && coPIs == null) {
 				allPIs = "";
 			} else if (primaryPI == null) {
 				allPIs = coPIs;
