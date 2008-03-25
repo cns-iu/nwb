@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: edu.iu.nwb.converter.edgelist
 Bundle-SymbolicName: edu.iu.nwb.converter.edgelist
-Bundle-Version: 0.7.0
+Bundle-Version: 1.0.0
 Bundle-ClassPath: .
 Bundle-Localization: plugin
 Import-Package: 
@@ -15,4 +15,4 @@ Import-Package:
  org.osgi.service.metatype;version="1.1.0",
  org.osgi.service.prefs;version="1.1.0"
 X-AutoStart: true
-Service-Component: OSGI-INF/validation.xml, OSGI-INF/filehandler.xml
+Service-Component: OSGI-INF/validation.xml, OSGI-INF/edgelisttonwb.xml
