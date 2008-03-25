@@ -1,0 +1,24 @@
+//Randomized by Cesifoti.... :-) .... NWB
+*Nodes 10
+1 Jose
+2 Paula
+3 Macarena
+4 Gustavo
+5 Cristina
+6 Eduardo
+7 Sergio
+8 Maria
+9 Alejandra
+10 Ignacia
+*DirectedEdges
+1 2 6
+1 3 5
+1 4 8
+6 10 1
+9 7 2
+*UndirectedEdges
+4 6 9
+5 10 1
+6 10 9
+8 5 1
+8 9 1

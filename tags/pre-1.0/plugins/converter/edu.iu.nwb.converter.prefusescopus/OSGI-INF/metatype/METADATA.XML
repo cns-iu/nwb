@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<metatype:MetaData xmlns:metatype="http://www.osgi.org/xmlns/metatype/v1.0.0">
+	<OCD name="Scopus Reader" id="edu.iu.nwb.converter.prefusescopus.ScopusReaderAlgorithm.OCD"
+		 description="Validates, Reads, and Cleans Scopus Data ">
+	</OCD>
+	<Designate pid="edu.iu.nwb.converter.prefusescopus.ScopusReaderAlgorithm">
+		<Object ocdref="edu.iu.nwb.converter.prefusescopus.ScopusReaderAlgorithm.OCD" />
+	</Designate>
+</metatype:MetaData>

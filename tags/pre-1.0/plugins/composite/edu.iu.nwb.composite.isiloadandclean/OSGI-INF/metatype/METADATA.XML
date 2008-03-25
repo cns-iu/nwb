@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<metatype:MetaData xmlns:metatype="http://www.osgi.org/xmlns/metatype/v1.0.0">
+	<OCD name="Load and Clean ISI File" id="edu.iu.nwb.composite.isiloadandclean.ISILoadAndCleanAlgorithm.OCD"
+		 description="Loads and then removed duplicates from an ISI file">
+	</OCD>
+	<Designate pid="edu.iu.nwb.composite.isiloadandclean.ISILoadAndCleanAlgorithm">
+		<Object ocdref="edu.iu.nwb.composite.isiloadandclean.ISILoadAndCleanAlgorithm.OCD" />
+	</Designate>
+</metatype:MetaData>

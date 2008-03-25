@@ -1,0 +1,6 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: NWB Utility Classes
+Bundle-SymbolicName: edu.iu.nwb.util
+Bundle-Version: 0.9.0
+Export-Package: edu.iu.nwb.util.nwbfile

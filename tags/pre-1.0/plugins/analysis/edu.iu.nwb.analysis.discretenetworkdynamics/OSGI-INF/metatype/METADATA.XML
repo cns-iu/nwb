@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<metatype:MetaData xmlns:metatype="http://www.osgi.org/xmlns/metatype/v1.0.0">
+	<OCD name="Discrete Network Dynamics" id="edu.iu.nwb.analysis.discretenetworkdynamics.DVDAlgorithm.OCD"
+		 description="">
+		<AD name="Node File" id="nff" type="String" description="A file containing the node information." default="file:"/>
+		<AD name="Number of States per Node" id="noStates" type="Integer" description="This represents the number os sates a node can be in." default="2"/>
+		<AD name="Polynomial" id="ispolynomial" type="String" description="Whether this analysis should use polynomial evaulations, or boolean functions." default="false"/>
+	</OCD>
+	<Designate pid="edu.iu.nwb.analysis.discretenetworkdynamics.DVDAlgorithm">
+		<Object ocdref="edu.iu.nwb.analysis.discretenetworkdynamics.DVDAlgorithm.OCD" />
+	</Designate>
+</metatype:MetaData>
