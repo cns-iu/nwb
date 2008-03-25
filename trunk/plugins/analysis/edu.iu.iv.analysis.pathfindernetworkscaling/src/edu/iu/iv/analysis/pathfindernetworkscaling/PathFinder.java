@@ -43,18 +43,18 @@ public class PathFinder {
      * @throws IllegalArgumentException
      */
     public PathFinder(int q, int r, DoubleMatrix2D matrix)
-            throws IllegalArgumentException {
+            throws PathFinderParameterException {
         if (matrix.rows() != matrix.columns())
-            throw new IllegalArgumentException("Matrix must be square!");
+            throw new PathFinderParameterException("Matrix must be square!");
         this.weightMatrix = matrix;
 
         if (r < 0)
-            throw new IllegalArgumentException(
+            throw new PathFinderParameterException(
                     "r parameter must be non-negative.");
         this.r = r;
 
         if (q > matrix.rows() - 1)
-            throw new IllegalArgumentException(
+            throw new PathFinderParameterException(
                     "q parameter cannot be greater than number of rows/columns of matrix minus 1.");
         this.q = q;
 
