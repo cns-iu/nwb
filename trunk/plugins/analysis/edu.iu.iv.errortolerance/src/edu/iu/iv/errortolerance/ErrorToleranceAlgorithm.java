@@ -23,16 +23,14 @@ public class ErrorToleranceAlgorithm implements Algorithm {
 
     public Data[] execute() {
     	
-    	int numNodes = getInt("numNodes");	   
+    	int numNodes = ((Integer)parameters.get("numNodes")).intValue();	   
     	Graph graph = (Graph)data[0].getData();
-        graph = (Graph)graph.copy();
         
-		ErrorTolerance et = new ErrorTolerance(graph, numNodes);
-		boolean isDone = et.testErrorTolerance();
+		
 		Data[] newdata=null;
-		if (isDone) {
+		
 
-		    Data model = new BasicData(et.getGraph(),Graph.class.getName());
+		    Data model = new BasicData(ErrorTolerance.testErrorTolerance(graph, numNodes),Graph.class.getName());
 		    Dictionary map = model.getMetadata();
 		    map.put(DataProperty.MODIFIED, new Boolean(true));
 		    map.put(DataProperty.PARENT, data[0]);
@@ -40,12 +38,8 @@ public class ErrorToleranceAlgorithm implements Algorithm {
 		    map.put(DataProperty.LABEL, "Random Node Deletion (Error Tolerance)");
 		    newdata=new Data[]{model};
 				
-		}
+		
 		return newdata;
     
     }
-    
-    private int getInt(String mystring) {
-		return ((Integer) parameters.get(mystring)).intValue();
-	}
 }
