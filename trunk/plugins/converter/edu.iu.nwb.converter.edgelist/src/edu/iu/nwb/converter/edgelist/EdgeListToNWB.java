@@ -161,6 +161,7 @@ public class EdgeListToNWB implements Algorithm {
 						"Error writing from the specified edge list to the specified .nwb file.\n", e);				
 			}
 			try {
+				//why validate the format again???
 				eLVFact = new EdgeListValidatorFactory();
 				// validate the file.  file information is given by various methods
 				// of the validator.
