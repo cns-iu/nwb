@@ -9,6 +9,7 @@ import java.util.Dictionary;
 
 import org.cishell.framework.CIShellContext;
 import org.cishell.framework.algorithm.Algorithm;
+import org.cishell.framework.algorithm.AlgorithmExecutionException;
 import org.cishell.framework.data.BasicData;
 import org.cishell.framework.data.Data;
 import org.cishell.framework.data.DataProperty;
@@ -40,7 +41,7 @@ public class PrefuseIsiReader implements Algorithm {
      	this.citationExtractionPreparer = new ISICitationExtractionPreparer(log);
     }
 
-    public Data[] execute() {
+    public Data[] execute() throws AlgorithmExecutionException{
 
     	File file = (File) data[0].getData();
     	
@@ -80,20 +81,17 @@ public class PrefuseIsiReader implements Algorithm {
     		return tableToReturnData;
     		
     	}catch (SecurityException exception){
-    		log.log(LogService.LOG_ERROR, "SecurityException", exception);
+    		throw new AlgorithmExecutionException("Security Exception", exception);
     		
     	}catch (FileNotFoundException e){
-    		log.log(LogService.LOG_ERROR, "FileNotFoundException", e);
+    		throw new AlgorithmExecutionException("FileNotFoundException", e);
     		
     	} catch (UnsupportedEncodingException e) {
 			// UTF-8 wasn't good
-    		log.log(LogService.LOG_ERROR, "UTF-8 is not supported.", e);
+    		throw new AlgorithmExecutionException("UTF-8 is not supported.", e);
 			
 		} catch (IOException e) {
-			log.log(LogService.LOG_ERROR, "Problem reading data from file.", e);
+			throw new AlgorithmExecutionException("Problem reading data from file.", e);
 		}
-		
-		return null;
-    	
     }
 }
