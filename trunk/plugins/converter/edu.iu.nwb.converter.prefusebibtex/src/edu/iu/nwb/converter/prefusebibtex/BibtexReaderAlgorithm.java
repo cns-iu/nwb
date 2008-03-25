@@ -8,6 +8,7 @@ import java.util.Map;
 
 import org.cishell.framework.CIShellContext;
 import org.cishell.framework.algorithm.Algorithm;
+import org.cishell.framework.algorithm.AlgorithmExecutionException;
 import org.cishell.framework.data.BasicData;
 import org.cishell.framework.data.Data;
 import org.cishell.framework.data.DataProperty;
@@ -51,16 +52,13 @@ public class BibtexReaderAlgorithm implements Algorithm {
         this.valueFormatter = new BibtexValueFormatter(log);
     }
 
-    public Data[] execute() {
+    public Data[] execute() throws AlgorithmExecutionException {
     	File bibtexFile = (File) data[0].getData();
     	String bibtexFilePath = bibtexFile.getAbsolutePath();
 //    	//parse bibtex File
 //    	bibtex.Main.main(new String[] {"-expandStringDefinitions", bibtexFilePath});
     	
     	BibtexFile parsedBibtex = parseBibtex(bibtexFilePath);
-    	if (parsedBibtex == null) {
-    		return null;
-    	}
     	//write parsed bibtex File to table
     	Table bibtexTable = makeTable(parsedBibtex);
     	//normalize author names
@@ -74,7 +72,6 @@ public class BibtexReaderAlgorithm implements Algorithm {
     	Data[] tableToReturnData = 
 			new Data[] {new BasicData(bibtex, Table.class.getName())};
 		tableToReturnData[0].getMetadata().put(DataProperty.LABEL, "Parsed BibTeX file: " + bibtexFilePath);
-		//TODO: should this really be a text_type?
         tableToReturnData[0].getMetadata().put(DataProperty.TYPE, DataProperty.MATRIX_TYPE);
         return tableToReturnData;
     }
@@ -106,15 +103,13 @@ public class BibtexReaderAlgorithm implements Algorithm {
     	return table.getPrefuseTable();
     }
     
-    private BibtexFile parseBibtex(String bibtexFilePath) {
+    private BibtexFile parseBibtex(String bibtexFilePath)throws AlgorithmExecutionException {
     	BibtexFile bibtexFile = new BibtexFile();
     	BibtexParser parser = new BibtexParser(false);
     	try {
     	parser.parse(bibtexFile, new FileReader(bibtexFilePath));
     	} catch (Exception e) {
-    		log.log(LogService.LOG_ERROR, "Fatal exception occurred while parsing bibtex file.", e);
-    		
-    		return null;
+    		throw new AlgorithmExecutionException("Fatal exception occurred while parsing bibtex file.", e);
     	} finally {
     		printNonFatalExceptions(parser.getExceptions(), bibtexFile.getEntries().size());
     	}
@@ -123,9 +118,7 @@ public class BibtexReaderAlgorithm implements Algorithm {
     		new MacroReferenceExpander(true, true, false, false);
     	macroExpander.expand(bibtexFile);
     	} catch (ExpansionException e) {
-    		log.log(LogService.LOG_WARNING, "Error occurred while parsing bibtex file. Check command line for details.");
-    		e.printStackTrace();
-    		return null;
+    		throw new AlgorithmExecutionException("Error occurred while parsing bibtex file.", e);
     	}
     	return bibtexFile;
     }

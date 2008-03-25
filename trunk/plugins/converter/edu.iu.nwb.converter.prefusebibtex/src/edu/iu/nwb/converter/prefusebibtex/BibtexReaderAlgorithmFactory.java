@@ -12,18 +12,7 @@ import org.osgi.service.metatype.MetaTypeProvider;
 
 
 public class BibtexReaderAlgorithmFactory implements AlgorithmFactory {
-	
-    protected void activate(ComponentContext ctxt) { 
-    }
-     
-    protected void deactivate(ComponentContext ctxt) {
-    }
-
     public Algorithm createAlgorithm(Data[] data, Dictionary parameters, CIShellContext context) {
         return new BibtexReaderAlgorithm(data, parameters, context, (LogService) context.getService("org.osgi.service.log.LogService"));
-    }
-    
-    public MetaTypeProvider createParameters(Data[] data) {
-        return null;
     }
 }
