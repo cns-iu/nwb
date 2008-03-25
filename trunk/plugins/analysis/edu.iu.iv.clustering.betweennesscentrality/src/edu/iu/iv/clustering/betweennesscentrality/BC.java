@@ -38,8 +38,7 @@ public class BC {
                 int n = graph.getVertices().size();
                 maxCentrality = maxCentrality / ((n - 1) * (n - 2) / 2);
             }
-            //            System.out.println("Iteration: " + iter + " Max Centrality: " +
-            // maxCentrality);
+
             iter++;
             // remove the edge with the highest betweenness
             graph.removeEdge(er.edge);
