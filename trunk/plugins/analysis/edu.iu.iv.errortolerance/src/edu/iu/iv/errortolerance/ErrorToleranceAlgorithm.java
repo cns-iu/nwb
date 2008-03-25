@@ -33,7 +33,7 @@ public class ErrorToleranceAlgorithm implements Algorithm {
 		if (isDone) {
 
 		    Data model = new BasicData(et.getGraph(),Graph.class.getName());
-		    Dictionary map = model.getMetaData();
+		    Dictionary map = model.getMetadata();
 		    map.put(DataProperty.MODIFIED, new Boolean(true));
 		    map.put(DataProperty.PARENT, data[0]);
 		    map.put(DataProperty.TYPE, DataProperty.NETWORK_TYPE);

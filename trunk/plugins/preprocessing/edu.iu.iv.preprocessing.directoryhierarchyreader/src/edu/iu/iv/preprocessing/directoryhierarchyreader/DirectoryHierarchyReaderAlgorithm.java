@@ -35,8 +35,8 @@ public class DirectoryHierarchyReaderAlgorithm implements Algorithm {
 	    Graph g = DirectoryHierarchyReader.readDirectory(rootFile,numLevels,!doSkipFiles);
 	    
 	    Data dm = new BasicData(g, Graph.class.getName());
-	    dm.getMetaData().put(DataProperty.LABEL,"Directory Tree - Prefuse Graph");
-	    dm.getMetaData().put(DataProperty.TYPE,DataProperty.TREE_TYPE);
+	    dm.getMetadata().put(DataProperty.LABEL,"Directory Tree - Prefuse Graph");
+	    dm.getMetadata().put(DataProperty.TYPE,DataProperty.TREE_TYPE);
 	    
 	    return new Data[]{dm};
     }

@@ -198,7 +198,7 @@ public class Burst implements Algorithm {
 		}
 		
 		Data output = new BasicData(results, Table.class.getName());
-		Dictionary metadata = output.getMetaData();
+		Dictionary metadata = output.getMetadata();
 		metadata.put(DataProperty.LABEL, "Burst detection analysis (" + dateColumn + ", " + textColumn + "): maximum burst level " + inputLevels);
 		metadata.put(DataProperty.PARENT, this.data[0]);
 		metadata.put(DataProperty.TYPE, DataProperty.TEXT_TYPE);

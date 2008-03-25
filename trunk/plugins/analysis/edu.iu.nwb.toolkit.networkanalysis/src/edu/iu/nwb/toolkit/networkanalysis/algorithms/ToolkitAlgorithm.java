@@ -82,7 +82,7 @@ public class ToolkitAlgorithm implements Algorithm{
 		
 		final Data outputData = new BasicData(logFile,logFile.getClass().getName());
 		
-		final Dictionary logAttributes = outputData.getMetaData();
+		final Dictionary logAttributes = outputData.getMetadata();
 		
 		logAttributes.put(DataProperty.MODIFIED, new Boolean(true));
 		logAttributes.put(DataProperty.PARENT, data[0]);

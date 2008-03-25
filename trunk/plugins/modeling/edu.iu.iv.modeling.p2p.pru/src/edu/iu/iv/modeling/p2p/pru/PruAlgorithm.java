@@ -38,8 +38,8 @@ public class PruAlgorithm implements Algorithm {
 		boolean is_done = c.buildPruNetwork();
 		if (is_done) {
 			Data dm = new BasicData(c.getGraph(), Graph.class.getName());
-		    dm.getMetaData().put(DataProperty.LABEL,"PRU Network Model");
-		    dm.getMetaData().put(DataProperty.TYPE,DataProperty.NETWORK_TYPE);
+		    dm.getMetadata().put(DataProperty.LABEL,"PRU Network Model");
+		    dm.getMetadata().put(DataProperty.TYPE,DataProperty.NETWORK_TYPE);
 		    
 			println("Input Parameter: " + c.getGraph().numVertices() + " nodes");
 			println("Network Properties: " + c.getGraph().numEdges() + " edges, " + 

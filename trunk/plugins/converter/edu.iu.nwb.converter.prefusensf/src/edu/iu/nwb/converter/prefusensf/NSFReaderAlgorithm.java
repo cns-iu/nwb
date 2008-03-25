@@ -122,9 +122,9 @@ public class NSFReaderAlgorithm implements Algorithm {
 	private Data[] formatAsData(Data originalData, Table normalizedNSFTable) {
 		try{
 			Data[] dm = new Data[] {new BasicData(normalizedNSFTable, "prefuse.data.Table")};
-			dm[0].getMetaData().put(DataProperty.LABEL, "Normalized NSF table");
-			dm[0].getMetaData().put(DataProperty.TYPE, DataProperty.MATRIX_TYPE);
-			dm[0].getMetaData().put(DataProperty.PARENT, originalData);
+			dm[0].getMetadata().put(DataProperty.LABEL, "Normalized NSF table");
+			dm[0].getMetadata().put(DataProperty.TYPE, DataProperty.MATRIX_TYPE);
+			dm[0].getMetadata().put(DataProperty.PARENT, originalData);
 			return dm;
 		}catch (SecurityException exception){
 			log.log(LogService.LOG_ERROR, "SecurityException", exception);
@@ -192,7 +192,7 @@ public class NSFReaderAlgorithm implements Algorithm {
 		//the Conversion service knows it is a csv when it tries to convert it to a prefuse.data.Table
 		 
 		//printTable((Table) inputData.getData());
-		Data formatChangedData = new BasicData(inputData.getMetaData(), cleanNSFCSVFormat((File) inputData.getData()), "file:text/csv");
+		Data formatChangedData = new BasicData(inputData.getMetadata(), cleanNSFCSVFormat((File) inputData.getData()), "file:text/csv");
 		Data convertedData = converter.convert(formatChangedData, "prefuse.data.Table");
 		return convertedData;
 	}

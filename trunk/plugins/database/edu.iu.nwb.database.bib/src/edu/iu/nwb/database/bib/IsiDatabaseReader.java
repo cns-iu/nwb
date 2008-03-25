@@ -88,7 +88,7 @@ public class IsiDatabaseReader implements Algorithm {
 		
 		//Data outputData = new BasicData(output, Connection.class.getName());
 		
-		//Dictionary metadata = outputData.getMetaData();
+		//Dictionary metadata = outputData.getMetadata();
         //metadata.put(DataProperty.LABEL, "Derby Database with ISI data from " + file.getName());
         //metadata.put(DataProperty.TYPE,DataProperty.NETWORK_TYPE); //really this is wrong
     	

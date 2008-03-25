@@ -31,7 +31,7 @@ public class CanAlgorithm implements Algorithm {
 		boolean is_done = c.buildCanNetwork();		
 		if (is_done) {
 			    BasicData dm = new BasicData(c.getGraph(),Graph.class.getName());
-			    Dictionary map = dm.getMetaData();
+			    Dictionary map = dm.getMetadata();
 			    map.put(DataProperty.LABEL,"CAN Network Model");
 			    map.put(DataProperty.TYPE,DataProperty.NETWORK_TYPE);
 			

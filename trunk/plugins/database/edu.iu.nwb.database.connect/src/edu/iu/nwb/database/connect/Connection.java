@@ -102,7 +102,7 @@ public class Connection implements Algorithm {
 		} */
     	
     	Data data = new BasicData(dataSource, DataSource.class.getName());
-    	Dictionary metadata = data.getMetaData();
+    	Dictionary metadata = data.getMetadata();
         metadata.put(DataProperty.LABEL, "SQL DataSource to " + url);
         //metadata.put(DataProperty.TYPE,DataProperty.NETWORK_TYPE); //really this is wrong
     	

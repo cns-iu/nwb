@@ -32,7 +32,7 @@ public class AttackToleranceAlgorithm implements Algorithm {
          if (isDone) {
              
              Data model = new BasicData(at.getGraph(), Graph.class.getName());
-             Dictionary map = model.getMetaData();
+             Dictionary map = model.getMetadata();
              map.put(DataProperty.MODIFIED,
                  new Boolean(true));
              map.put(DataProperty.PARENT, data[0]);

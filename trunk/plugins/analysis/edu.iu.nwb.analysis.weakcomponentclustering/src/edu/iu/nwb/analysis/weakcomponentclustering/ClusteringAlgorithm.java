@@ -62,7 +62,7 @@ public class ClusteringAlgorithm implements Algorithm {
     	for(int clusterIndex = 0; clusterIndex < totalClusters; clusterIndex++) {
     		Graph cluster = clusters.getClusterAsNewSubGraph(clusterIndex);
 			output[clusterIndex] = new BasicData(cluster, Graph.class.getName());
-    		Dictionary attributes = output[clusterIndex].getMetaData();
+    		Dictionary attributes = output[clusterIndex].getMetadata();
     		
     		attributes.put(DataProperty.MODIFIED, new Boolean(true));
     		attributes.put(DataProperty.PARENT, data[0]);

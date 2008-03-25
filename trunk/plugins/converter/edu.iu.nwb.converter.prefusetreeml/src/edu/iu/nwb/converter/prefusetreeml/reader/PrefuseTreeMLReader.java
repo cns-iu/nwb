@@ -37,8 +37,8 @@ public class PrefuseTreeMLReader implements Algorithm {
     	try{
     		Graph graph= (new TreeMLReader()).readGraph(new FileInputStream(fileHandler));
     		Data[] dm = new Data[] {new BasicData(graph, graph.getClass().getName())};
-    		dm[0].getMetaData().put(DataProperty.LABEL, "Prefuse Tree: " + fileHandler);
-            dm[0].getMetaData().put(DataProperty.TYPE, DataProperty.NETWORK_TYPE);
+    		dm[0].getMetadata().put(DataProperty.LABEL, "Prefuse Tree: " + fileHandler);
+            dm[0].getMetadata().put(DataProperty.TYPE, DataProperty.NETWORK_TYPE);
     		return dm;
     	}catch (DataIOException dioe){
     		logger.log(LogService.LOG_ERROR, "A Data IO error occured while reading the specified TreeML file.", dioe);

@@ -52,8 +52,8 @@ public class PrefuseCsvValidation implements AlgorithmFactory {
 
 			try{
 				Data[] dm = new Data[] {new BasicData(inData, "file:text/csv")};
-				dm[0].getMetaData().put(DataProperty.LABEL, "Prefuse CSV file: " + fileHandler);
-				dm[0].getMetaData().put(DataProperty.TYPE, DataProperty.TEXT_TYPE);
+				dm[0].getMetadata().put(DataProperty.LABEL, "Prefuse CSV file: " + fileHandler);
+				dm[0].getMetadata().put(DataProperty.TYPE, DataProperty.TEXT_TYPE);
 				return dm;
 			}catch (SecurityException exception){
 				logger.log(LogService.LOG_ERROR, "Might not be a CSV file. Got the following security exception");

@@ -26,7 +26,7 @@ public class JungPrefuseConverterAlgorithm implements Algorithm, AlgorithmProper
             (edu.uci.ics.jung.graph.Graph) data[0].getData();
         
         Graph prefuseGraph = JungPrefuseConverter.getPrefuseGraph(g);
-        Data dm = new BasicData(data[0].getMetaData(), prefuseGraph, Graph.class.getName());
+        Data dm = new BasicData(data[0].getMetadata(), prefuseGraph, Graph.class.getName());
         
         return new Data[]{dm};
     }

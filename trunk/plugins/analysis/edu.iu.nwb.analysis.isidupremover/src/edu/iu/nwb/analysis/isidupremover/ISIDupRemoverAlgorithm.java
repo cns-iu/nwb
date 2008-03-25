@@ -46,7 +46,7 @@ public class ISIDupRemoverAlgorithm implements Algorithm {
 	    			tableWithoutDups.getClass().getName());
 	    	copyOverMetaData(data[0], tableWithoutDupsData);
 	    	
-	    	Dictionary dupRemovedMetaData = tableWithoutDupsData.getMetaData();
+	    	Dictionary dupRemovedMetaData = tableWithoutDupsData.getMetadata();
 	    	dupRemovedMetaData.put(DataProperty.PARENT, data[0]);
 	    	dupRemovedMetaData.put(DataProperty.LABEL, tableWithoutDups.getRowCount() + " Unique ISI Records");
 	    	
@@ -54,8 +54,8 @@ public class ISIDupRemoverAlgorithm implements Algorithm {
 	    }
 	    
 	    private void copyOverMetaData(Data sourceData, Data targetData) {
-	    	Dictionary sourceMetaData = sourceData.getMetaData();
-	    	Dictionary targetMetaData = targetData.getMetaData();
+	    	Dictionary sourceMetaData = sourceData.getMetadata();
+	    	Dictionary targetMetaData = targetData.getMetadata();
 	    	
 	    	Enumeration keyEnum = sourceMetaData.keys();
 	    	while (keyEnum.hasMoreElements()) {

@@ -70,8 +70,8 @@ public class MATValidation implements AlgorithmFactory {
 				validator.validateMATFormat(inData);
 				if(validator.getValidationResult()){						
 					Data[] dm = new Data[] {new BasicData(inData, MATFileProperty.MAT_MIME_TYPE)};
-					dm[0].getMetaData().put(DataProperty.LABEL, "Pajek .mat file: " + fileHandler);
-					dm[0].getMetaData().put(DataProperty.TYPE, DataProperty.NETWORK_TYPE);
+					dm[0].getMetadata().put(DataProperty.LABEL, "Pajek .mat file: " + fileHandler);
+					dm[0].getMetadata().put(DataProperty.TYPE, DataProperty.NETWORK_TYPE);
                 	return dm;
 
 				}else {

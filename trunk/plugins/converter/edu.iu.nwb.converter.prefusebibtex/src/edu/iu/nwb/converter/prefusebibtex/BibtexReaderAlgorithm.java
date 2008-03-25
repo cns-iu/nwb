@@ -73,9 +73,9 @@ public class BibtexReaderAlgorithm implements Algorithm {
     private Data[] formatAsData(Table bibtex, String bibtexFilePath) {
     	Data[] tableToReturnData = 
 			new Data[] {new BasicData(bibtex, Table.class.getName())};
-		tableToReturnData[0].getMetaData().put(DataProperty.LABEL, "Parsed BibTeX file: " + bibtexFilePath);
+		tableToReturnData[0].getMetadata().put(DataProperty.LABEL, "Parsed BibTeX file: " + bibtexFilePath);
 		//TODO: should this really be a text_type?
-        tableToReturnData[0].getMetaData().put(DataProperty.TYPE, DataProperty.MATRIX_TYPE);
+        tableToReturnData[0].getMetadata().put(DataProperty.TYPE, DataProperty.MATRIX_TYPE);
         return tableToReturnData;
     }
     

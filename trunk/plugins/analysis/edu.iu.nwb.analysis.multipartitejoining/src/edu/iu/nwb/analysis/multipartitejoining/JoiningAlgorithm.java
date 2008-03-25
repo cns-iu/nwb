@@ -193,7 +193,7 @@ public class JoiningAlgorithm implements Algorithm {
 		
 		
 		Data outputData = new BasicData(outputGraph, Graph.class.getName());
-		Dictionary attributes = outputData.getMetaData();
+		Dictionary attributes = outputData.getMetadata();
 		attributes.put(DataProperty.MODIFIED, new Boolean(true));
 		attributes.put(DataProperty.PARENT, this.data[0]);
 		attributes.put(DataProperty.TYPE, DataProperty.NETWORK_TYPE);

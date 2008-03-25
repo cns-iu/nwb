@@ -50,8 +50,8 @@ public class BarabasiAlbertModelAlgorithm implements Algorithm {
 	    
 		
 	    Data dm = new BasicData(graph, Graph.class.getName());
-	    dm.getMetaData().put(DataProperty.LABEL,"Barabasi Albert Scale-Free Network Model");
-	    dm.getMetaData().put(DataProperty.TYPE,DataProperty.NETWORK_TYPE);
+	    dm.getMetadata().put(DataProperty.LABEL,"Barabasi Albert Scale-Free Network Model");
+	    dm.getMetadata().put(DataProperty.TYPE,DataProperty.NETWORK_TYPE);
 	
     
 	    return new Data[]{dm};

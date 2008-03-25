@@ -58,8 +58,8 @@ public class PrefuseTreeMLValidation implements AlgorithmFactory {
         		if (validateTreeMLHeader(inData)){
 	        		(new TreeMLReader()).readGraph(new FileInputStream(fileHandler));
 	        		Data[] dm = new Data[] {new BasicData(inData, "file:text/treeml+xml")};
-	        		dm[0].getMetaData().put(DataProperty.LABEL, "Prefuse TreeML file: " + fileHandler);
-	                dm[0].getMetaData().put(DataProperty.TYPE, DataProperty.TREE_TYPE);
+	        		dm[0].getMetadata().put(DataProperty.LABEL, "Prefuse TreeML file: " + fileHandler);
+	                dm[0].getMetadata().put(DataProperty.TYPE, DataProperty.TREE_TYPE);
 	        		return dm;
         		}else {
         			logger.log(LogService.LOG_ERROR, "TreeML file does not contain a valid header.");

@@ -48,8 +48,8 @@ public class PrefuseIsiValidation implements AlgorithmFactory {
 
 			try{
 				Data[] dm = new Data[] {new BasicData(inData, "file:text/isi")};
-				dm[0].getMetaData().put(DataProperty.LABEL, "Prefuse ISI file: " + fileHandler);
-				dm[0].getMetaData().put(DataProperty.TYPE, DataProperty.MATRIX_TYPE);
+				dm[0].getMetadata().put(DataProperty.LABEL, "Prefuse ISI file: " + fileHandler);
+				dm[0].getMetadata().put(DataProperty.TYPE, DataProperty.MATRIX_TYPE);
 				return dm;
 			}catch (SecurityException exception){
 				logger.log(LogService.LOG_ERROR, "SecurityException", exception);

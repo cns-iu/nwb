@@ -57,9 +57,9 @@ public class CoCitationSimilarityAlgorithm implements Algorithm {
 			
 			//If all has gone well, return the new nwb file
 			Data outNWBData = new BasicData(outputNWBFile,"file:text/nwb");
-			outNWBData.getMetaData().put(DataProperty.LABEL, "Co-Citation Similarity Network");
-			outNWBData.getMetaData().put(DataProperty.TYPE, DataProperty.NETWORK_TYPE);
-			outNWBData.getMetaData().put(DataProperty.PARENT, data[0]);
+			outNWBData.getMetadata().put(DataProperty.LABEL, "Co-Citation Similarity Network");
+			outNWBData.getMetadata().put(DataProperty.TYPE, DataProperty.NETWORK_TYPE);
+			outNWBData.getMetadata().put(DataProperty.PARENT, data[0]);
 			return new Data[]{outNWBData};
 			
 		} catch (IOException e) {

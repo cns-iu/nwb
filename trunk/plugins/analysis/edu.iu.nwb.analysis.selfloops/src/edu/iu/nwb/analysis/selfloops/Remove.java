@@ -61,7 +61,7 @@ public class Remove implements Algorithm {
 		
 		
 		Data result = new BasicData(resultGraph, Graph.class.getName());
-		Dictionary metadata = result.getMetaData();
+		Dictionary metadata = result.getMetadata();
 		metadata.put(DataProperty.LABEL, "Without self loops");
 		metadata.put(DataProperty.PARENT, this.data[0]);
 		metadata.put(DataProperty.TYPE, DataProperty.NETWORK_TYPE);

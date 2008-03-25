@@ -67,8 +67,8 @@ public class NWBValidation implements AlgorithmFactory {
 					validator.validateNWBFormat(inData);
 					if(validator.getValidationResult()){						
 						Data[] dm = new Data[] {new BasicData(inData, "file:text/nwb")};
-						dm[0].getMetaData().put(DataProperty.LABEL, "NWB file: " + fileHandler);
-						dm[0].getMetaData().put(DataProperty.TYPE, DataProperty.NETWORK_TYPE);
+						dm[0].getMetadata().put(DataProperty.LABEL, "NWB file: " + fileHandler);
+						dm[0].getMetadata().put(DataProperty.TYPE, DataProperty.NETWORK_TYPE);
 	                	return dm;
 
 					}else {

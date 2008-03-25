@@ -43,7 +43,7 @@ public class Filter implements Algorithm {
     	
     	Data output = new BasicData(table, Table.class.getName());
     	
-    	Dictionary metadata = output.getMetaData();
+    	Dictionary metadata = output.getMetadata();
 		metadata.put(DataProperty.LABEL, "Rows with less than " + cutoff + " in column " + column);
 		metadata.put(DataProperty.PARENT, this.data[0]);
 		metadata.put(DataProperty.TYPE, DataProperty.TEXT_TYPE);

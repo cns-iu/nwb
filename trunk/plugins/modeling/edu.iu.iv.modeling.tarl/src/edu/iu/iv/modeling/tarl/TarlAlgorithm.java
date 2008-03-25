@@ -76,7 +76,7 @@ public class TarlAlgorithm implements Algorithm {
     }
     private Data addModel(Object model, String desc) {
         BasicData dm = new BasicData(model,Graph.class.getName());
-        Dictionary map = dm.getMetaData();
+        Dictionary map = dm.getMetadata();
         map.put(DataProperty.LABEL,desc);
         map.put(DataProperty.TYPE,DataProperty.NETWORK_TYPE);
         return dm;

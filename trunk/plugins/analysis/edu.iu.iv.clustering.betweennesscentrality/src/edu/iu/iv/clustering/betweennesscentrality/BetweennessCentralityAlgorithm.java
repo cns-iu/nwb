@@ -38,9 +38,9 @@ public class BetweennessCentralityAlgorithm implements Algorithm {
         
         	    
         Data dm = new BasicData(graph, Graph.class.getName());
-		dm.getMetaData().put(DataProperty.LABEL,"Betweenness Centrality");
-		dm.getMetaData().put(DataProperty.TYPE,DataProperty.NETWORK_TYPE);
-		dm.getMetaData().put(DataProperty.PARENT,data[0]);
+		dm.getMetadata().put(DataProperty.LABEL,"Betweenness Centrality");
+		dm.getMetadata().put(DataProperty.TYPE,DataProperty.NETWORK_TYPE);
+		dm.getMetadata().put(DataProperty.PARENT,data[0]);
 		    
         
         

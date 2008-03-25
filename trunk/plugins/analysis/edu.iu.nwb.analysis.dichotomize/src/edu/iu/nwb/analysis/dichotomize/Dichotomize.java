@@ -67,7 +67,7 @@ public class Dichotomize implements Algorithm {
 		
 		
 		Data result = new BasicData(resultGraph, Graph.class.getName());
-		Dictionary metadata = result.getMetaData();
+		Dictionary metadata = result.getMetadata();
 		metadata.put(DataProperty.LABEL, "Only edges with " + attribute + " " + comparator + " " + cutoff);
 		metadata.put(DataProperty.PARENT, this.data[0]);
 		metadata.put(DataProperty.TYPE, DataProperty.NETWORK_TYPE);

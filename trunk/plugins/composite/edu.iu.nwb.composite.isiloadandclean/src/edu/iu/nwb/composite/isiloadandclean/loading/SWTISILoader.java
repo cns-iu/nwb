@@ -97,7 +97,7 @@ public class SWTISILoader implements SpecialISILoader {
 			}
 
 			BasicData fileData = new BasicData(fileName, "file-ext:isi");
-			fileData.getMetaData().put(DataProperty.LABEL, fileName);
+			fileData.getMetadata().put(DataProperty.LABEL, fileName);
 
 			returnList.add(fileData);
 		}

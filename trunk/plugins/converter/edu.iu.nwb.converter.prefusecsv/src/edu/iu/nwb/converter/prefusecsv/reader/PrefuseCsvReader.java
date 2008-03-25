@@ -39,8 +39,8 @@ public class PrefuseCsvReader implements Algorithm {
     		tableReader.setHasHeader(true);
 			Table table= tableReader.readTable(new FileInputStream(file));
     		Data[] dm = new Data[] {new BasicData(table, Table.class.getName())};
-    		dm[0].getMetaData().put(DataProperty.LABEL, "Prefuse Table: " + file);
-            dm[0].getMetaData().put(DataProperty.TYPE, DataProperty.TEXT_TYPE);
+    		dm[0].getMetadata().put(DataProperty.LABEL, "Prefuse Table: " + file);
+            dm[0].getMetadata().put(DataProperty.TYPE, DataProperty.TEXT_TYPE);
     		return dm;
     	}catch (DataIOException dioe){
     		logger.log(LogService.LOG_ERROR, "DataIOException", dioe);

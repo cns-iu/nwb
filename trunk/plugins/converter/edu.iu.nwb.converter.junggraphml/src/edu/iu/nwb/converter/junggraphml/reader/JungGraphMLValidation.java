@@ -48,8 +48,8 @@ public class JungGraphMLValidation implements AlgorithmFactory {
 			try {
 				(new GraphMLFile()).load(new FileReader(inData));
 				Data[] dm = new Data[] {new BasicData(inData, "file:text/graphml+xml")};
-				dm[0].getMetaData().put(DataProperty.LABEL, "Jung GraphML file: " + fileHandler);
-                dm[0].getMetaData().put(DataProperty.TYPE, DataProperty.NETWORK_TYPE);
+				dm[0].getMetadata().put(DataProperty.LABEL, "Jung GraphML file: " + fileHandler);
+                dm[0].getMetadata().put(DataProperty.TYPE, DataProperty.NETWORK_TYPE);
                 
 				return dm;
 			}catch (FileNotFoundException exception){

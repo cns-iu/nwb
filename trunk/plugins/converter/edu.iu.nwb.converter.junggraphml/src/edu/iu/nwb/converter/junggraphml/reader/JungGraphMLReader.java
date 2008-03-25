@@ -37,8 +37,8 @@ public class JungGraphMLReader implements Algorithm {
     	try {
     		Graph graph = (new GraphMLFile()).load(new FileReader(fileHandler));
     		Data[] dm = new Data[] {new BasicData(graph, Graph.class.getName())};
-    		dm[0].getMetaData().put(DataProperty.LABEL, "Jung Graph: " + fileHandler.getAbsolutePath());
-            dm[0].getMetaData().put(DataProperty.TYPE, DataProperty.NETWORK_TYPE);
+    		dm[0].getMetadata().put(DataProperty.LABEL, "Jung Graph: " + fileHandler.getAbsolutePath());
+            dm[0].getMetadata().put(DataProperty.TYPE, DataProperty.NETWORK_TYPE);
             
     		return dm;
     	}catch (FileNotFoundException exception){

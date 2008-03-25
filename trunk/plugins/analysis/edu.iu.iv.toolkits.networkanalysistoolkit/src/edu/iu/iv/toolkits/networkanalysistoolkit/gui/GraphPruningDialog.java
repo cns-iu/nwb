@@ -271,7 +271,7 @@ public class GraphPruningDialog extends javax.swing.JDialog {
                         dodmin, dodmax);
                 
                     BasicData dm = new BasicData(graph,Graph.class.getName());
-                    Dictionary map = dm.getMetaData();
+                    Dictionary map = dm.getMetadata();
                     map.put(DataProperty.LABEL,"Vertex Thresholded Graph");
                     map.put(DataProperty.TYPE,DataProperty.NETWORK_TYPE);
                 
@@ -351,7 +351,7 @@ public class GraphPruningDialog extends javax.swing.JDialog {
                         udmin, udmax);
                 
                     BasicData dm = new BasicData(graph,Graph.class.getName());
-                    Dictionary map = dm.getMetaData();
+                    Dictionary map = dm.getMetadata();
                     map.put(DataProperty.LABEL,"Vertex Thresholded Graph");
                     map.put(DataProperty.TYPE,DataProperty.NETWORK_TYPE);
                     

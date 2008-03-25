@@ -32,7 +32,7 @@ public class ChordAlgorithm implements Algorithm {
 		if (is_done) {
 			
 			    BasicData dm = new BasicData(c.getGraph(),Graph.class.getName());
-			    Dictionary map = dm.getMetaData();
+			    Dictionary map = dm.getMetadata();
 			    map.put(DataProperty.LABEL,"The CHORD Network Modeling");
 			    map.put(DataProperty.TYPE,DataProperty.NETWORK_TYPE);
 		

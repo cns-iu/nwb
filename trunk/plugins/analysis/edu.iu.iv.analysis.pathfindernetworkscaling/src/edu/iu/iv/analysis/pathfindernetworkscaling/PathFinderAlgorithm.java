@@ -28,7 +28,7 @@ public class PathFinderAlgorithm implements Algorithm {
         pathFinder.applyScaling();
         
 		    BasicData dm = new BasicData(pathFinder.getResultMatrix(),PathFinder.class.getName());
-		    Dictionary map = dm.getMetaData();
+		    Dictionary map = dm.getMetadata();
 		    map.put(DataProperty.LABEL,"Path Finder Network Scaled Model");
 		    map.put(DataProperty.TYPE,DataProperty.MATRIX_TYPE);
 		    map.put(DataProperty.PARENT,DataProperty.PARENT);

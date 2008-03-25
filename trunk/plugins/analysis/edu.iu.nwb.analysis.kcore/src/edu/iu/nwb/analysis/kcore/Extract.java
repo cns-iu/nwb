@@ -86,7 +86,7 @@ public class Extract implements Algorithm {
 		
 		Data output = new BasicData(outputGraph, Graph.class.getName());
 		
-		Dictionary metadata = output.getMetaData();
+		Dictionary metadata = output.getMetadata();
 		metadata.put(DataProperty.LABEL, "k-Core # " + core + ", with " + outputGraph.numVertices() + " of " + inputGraph.numVertices() + " nodes");
 		metadata.put(DataProperty.PARENT, this.data[0]);
 		metadata.put(DataProperty.TYPE, DataProperty.NETWORK_TYPE);

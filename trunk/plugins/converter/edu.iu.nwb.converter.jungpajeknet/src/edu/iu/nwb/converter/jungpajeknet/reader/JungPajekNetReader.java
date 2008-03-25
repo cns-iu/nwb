@@ -52,8 +52,8 @@ public class JungPajekNetReader implements Algorithm {
             fixLabels(graph);
             
     		Data[] dm = new Data[] {new BasicData(graph, Graph.class.getName())};
-    		dm[0].getMetaData().put(DataProperty.LABEL, "Jung Graph: " + fileHandler.getAbsolutePath());
-            dm[0].getMetaData().put(DataProperty.TYPE, DataProperty.NETWORK_TYPE);
+    		dm[0].getMetadata().put(DataProperty.LABEL, "Jung Graph: " + fileHandler.getAbsolutePath());
+            dm[0].getMetadata().put(DataProperty.TYPE, DataProperty.NETWORK_TYPE);
     		return dm;
     	}catch (FileNotFoundException exception){
     		logger.log(LogService.LOG_ERROR, "FileNotFoundException", exception);

@@ -27,7 +27,7 @@ public class PrefuseTreeBetaAlphaAlgorithm implements Algorithm {
     	
         
         Tree AlphaTree = new PrefuseTreeBetaAlphaConverter().getPrefuseBetaTree(BetaTree);
-        Data dm = new BasicData(data[0].getMetaData(), AlphaTree, Tree.class.getName());
+        Data dm = new BasicData(data[0].getMetadata(), AlphaTree, Tree.class.getName());
         
         return new Data[]{dm};
          

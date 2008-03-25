@@ -109,7 +109,7 @@ public class ExtractNetFromTableAlgorithm implements Algorithm {
 		final prefuse.data.Graph outputGraph = enft.getGraph();
 		final Data outputData1 = new BasicData(outputGraph,
 				prefuse.data.Graph.class.getName());
-		final Dictionary graphAttributes = outputData1.getMetaData();
+		final Dictionary graphAttributes = outputData1.getMetadata();
 		graphAttributes.put(DataProperty.MODIFIED, new Boolean(true));
 		graphAttributes.put(DataProperty.PARENT, data[0]);
 		graphAttributes.put(DataProperty.TYPE, DataProperty.NETWORK_TYPE);
@@ -120,7 +120,7 @@ public class ExtractNetFromTableAlgorithm implements Algorithm {
 		final prefuse.data.Table outputTable = enft.getTable();
 		final Data outputData2 = new BasicData(outputTable,
 				prefuse.data.Table.class.getName());	
-		final Dictionary tableAttributes = outputData2.getMetaData();
+		final Dictionary tableAttributes = outputData2.getMetadata();
 		tableAttributes.put(DataProperty.MODIFIED, new Boolean(true));
 		tableAttributes.put(DataProperty.PARENT, data[0]);
 		tableAttributes.put(DataProperty.TYPE, DataProperty.MATRIX_TYPE);

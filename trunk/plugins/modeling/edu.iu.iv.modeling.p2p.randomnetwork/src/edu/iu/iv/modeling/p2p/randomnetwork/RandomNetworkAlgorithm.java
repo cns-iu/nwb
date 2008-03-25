@@ -33,8 +33,8 @@ public class RandomNetworkAlgorithm implements Algorithm {
 		rn.buildRandomNetwork();
 		
 		Data dm = new BasicData(rn.getGraph(), Graph.class.getName());
-	    dm.getMetaData().put(DataProperty.LABEL,"Random Network");
-	    dm.getMetaData().put(DataProperty.TYPE,DataProperty.NETWORK_TYPE);
+	    dm.getMetadata().put(DataProperty.LABEL,"Random Network");
+	    dm.getMetadata().put(DataProperty.TYPE,DataProperty.NETWORK_TYPE);
 		
 		println("Input Parameter: " + rn.getGraph().numVertices() + " nodes, " +
 				"Wiring Probability = " + rn.getWiringProbability()	);

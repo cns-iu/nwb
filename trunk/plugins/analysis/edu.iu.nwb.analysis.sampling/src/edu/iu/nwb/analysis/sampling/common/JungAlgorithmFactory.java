@@ -68,7 +68,7 @@ private MetaTypeProvider provider;
 			Data outputData = new BasicData(outputGraph, Graph.class.getName());
 			
 			
-			Dictionary map = outputData.getMetaData();
+			Dictionary map = outputData.getMetadata();
     		map.put(DataProperty.MODIFIED,
                     new Boolean(true));
             map.put(DataProperty.PARENT, dm[0]);

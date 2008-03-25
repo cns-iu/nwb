@@ -58,7 +58,7 @@ public class PathfinderGraphAlgorithm implements Algorithm {
     		Graph outputGraph = memory.reconstructMetadata((DoubleMatrix2D) outputMatrix.getData());
     		outputData = new BasicData(outputGraph, Graph.class.getName());
     		
-    		Dictionary map = outputData.getMetaData();
+    		Dictionary map = outputData.getMetadata();
     		map.put(DataProperty.MODIFIED,
                     new Boolean(true));
             map.put(DataProperty.PARENT, data[0]);

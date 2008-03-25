@@ -59,14 +59,14 @@ public class ExtractAlgorithm implements Algorithm {
 				prefuse.data.Graph.class.getName());
 		final Data outputData2 = new BasicData(outputTable,
 				prefuse.data.Table.class.getName());
-		final Dictionary graphAttributes = outputData1.getMetaData();
+		final Dictionary graphAttributes = outputData1.getMetadata();
 		graphAttributes.put(DataProperty.MODIFIED, new Boolean(true));
 		graphAttributes.put(DataProperty.PARENT, data[0]);
 		graphAttributes.put(DataProperty.TYPE, DataProperty.NETWORK_TYPE);
 		graphAttributes.put(DataProperty.LABEL,
 				"Extracted Co-Authorship Network");
 
-		final Dictionary tableAttributes = outputData2.getMetaData();
+		final Dictionary tableAttributes = outputData2.getMetadata();
 		tableAttributes.put(DataProperty.MODIFIED, new Boolean(true));
 		tableAttributes.put(DataProperty.PARENT, data[0]);
 		tableAttributes.put(DataProperty.TYPE, DataProperty.MATRIX_TYPE);

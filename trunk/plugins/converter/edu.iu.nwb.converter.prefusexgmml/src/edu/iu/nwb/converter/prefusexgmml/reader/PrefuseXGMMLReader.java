@@ -35,8 +35,8 @@ public class PrefuseXGMMLReader implements Algorithm {
     	try{
     		Graph graph = (new XMLGraphReader()).loadGraph(fileHandler.getAbsoluteFile());
     		Data[] dm = new Data[] {new BasicData(graph, Graph.class.getName())};
-    		dm[0].getMetaData().put(DataProperty.LABEL, "Old Prefuse Graph: " + fileHandler);
-            dm[0].getMetaData().put(DataProperty.TYPE, DataProperty.NETWORK_TYPE);
+    		dm[0].getMetadata().put(DataProperty.LABEL, "Old Prefuse Graph: " + fileHandler);
+            dm[0].getMetadata().put(DataProperty.TYPE, DataProperty.NETWORK_TYPE);
     		return dm;
     	}catch (IOException ioe){
        		logger.log(LogService.LOG_ERROR, "IO errors while reading the specified XGMML file.", ioe);       	 

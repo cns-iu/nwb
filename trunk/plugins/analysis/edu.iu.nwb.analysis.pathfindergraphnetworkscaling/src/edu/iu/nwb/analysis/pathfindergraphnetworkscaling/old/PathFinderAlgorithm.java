@@ -39,7 +39,7 @@ public class PathFinderAlgorithm implements Algorithm {
 		
         DoubleMatrix2D outputMatrix = pathFinder.getResultMatrix();
 		BasicData dm = new BasicData(outputMatrix,DoubleMatrix2D.class.getName());
-        Dictionary map = dm.getMetaData();
+        Dictionary map = dm.getMetadata();
 		map.put(DataProperty.LABEL,"Path Finder Network Scaled Model");
 		map.put(DataProperty.TYPE,DataProperty.MATRIX_TYPE);
 		map.put(DataProperty.PARENT,DataProperty.PARENT);

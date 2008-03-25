@@ -147,7 +147,7 @@ public class MergeNodes implements Algorithm {
         	mergingReport = generateReport (mergingTable);
         	BasicData reportData = new BasicData(mergingReport,
     				mergingReport.getClass().getName());
-        	graphAttributes = reportData.getMetaData();
+        	graphAttributes = reportData.getMetadata();
         	graphAttributes.put(DataProperty.MODIFIED, new Boolean(true));
         	graphAttributes.put(DataProperty.PARENT, this.data[graphIndex]);
         	graphAttributes.put(DataProperty.TYPE, DataProperty.TEXT_TYPE);
@@ -158,7 +158,7 @@ public class MergeNodes implements Algorithm {
         	
         		BasicData newGraphData = new BasicData(newGraph,
         			newGraph.getClass().getName());
-        		graphAttributes = newGraphData.getMetaData();
+        		graphAttributes = newGraphData.getMetadata();
         		graphAttributes.put(DataProperty.MODIFIED, new Boolean(true));
         		graphAttributes.put(DataProperty.PARENT, this.data[graphIndex]);
         		graphAttributes.put(DataProperty.TYPE, DataProperty.NETWORK_TYPE);

@@ -57,7 +57,7 @@ public class ScopusReaderAlgorithm implements Algorithm {
 		//the Conversion service knows it is a csv when it tries to convert it to a prefuse.data.Table
 		 
 		//printTable((Table) inputData.getData());
-		Data formatChangedData = new BasicData(inputData.getMetaData(), (File) inputData.getData(), "file:text/csv");
+		Data formatChangedData = new BasicData(inputData.getMetadata(), (File) inputData.getData(), "file:text/csv");
 		Data convertedData = converter.convert(formatChangedData, Table.class.getName());
 		return convertedData;
     }
@@ -239,8 +239,8 @@ public class ScopusReaderAlgorithm implements Algorithm {
 	private Data[] formatAsData(Table scopusTable) {
     	try{
 			Data[] dm = new Data[] {new BasicData(scopusTable, Table.class.getName())};
-			dm[0].getMetaData().put(DataProperty.LABEL, "Normalized Scopus table");
-			dm[0].getMetaData().put(DataProperty.TYPE, DataProperty.MATRIX_TYPE);
+			dm[0].getMetadata().put(DataProperty.LABEL, "Normalized Scopus table");
+			dm[0].getMetadata().put(DataProperty.TYPE, DataProperty.MATRIX_TYPE);
 			return dm;
 		}catch (SecurityException exception){
 			log.log(LogService.LOG_ERROR, "SecurityException", exception);

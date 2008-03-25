@@ -71,7 +71,7 @@ public class Delete implements Algorithm {
 
 		Data output = new BasicData(outputGraph, Graph.class.getName());
 
-		Dictionary metadata = output.getMetaData();
+		Dictionary metadata = output.getMetadata();
 		metadata.put(DataProperty.LABEL, "After removing isolates");
 		metadata.put(DataProperty.PARENT, this.data[0]);
 		metadata.put(DataProperty.TYPE, DataProperty.NETWORK_TYPE);

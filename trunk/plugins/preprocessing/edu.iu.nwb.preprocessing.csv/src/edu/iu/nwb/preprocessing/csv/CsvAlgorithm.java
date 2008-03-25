@@ -114,7 +114,7 @@ public class CsvAlgorithm implements Algorithm {
 		Graph graph = new Graph(nodes, edges, false, nwbId, nwbFirst, nwbSecond);
     	
     	Data data = new BasicData(graph, Graph.class.getName());
-    	Dictionary metadata = data.getMetaData();
+    	Dictionary metadata = data.getMetadata();
         metadata.put(DataProperty.LABEL, "Prefuse Beta Graph from CSV");
         metadata.put(DataProperty.TYPE,DataProperty.NETWORK_TYPE);
     	
