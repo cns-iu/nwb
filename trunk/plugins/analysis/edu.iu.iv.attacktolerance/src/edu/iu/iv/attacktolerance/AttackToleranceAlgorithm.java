@@ -23,29 +23,18 @@ public class AttackToleranceAlgorithm implements Algorithm {
 
     public Data[] execute() {
     	 Graph graph = (Graph)(data[0].getData());
-         graph = (Graph) graph.copy();
          
-    	 int numNodes = getInt("numNodes");
-         AttackTolerance at = new AttackTolerance(graph, numNodes);
-         boolean isDone = at.testAttackTolerance();
-         Data[] out_data = null;
-         if (isDone) {
-             
-             Data model = new BasicData(at.getGraph(), Graph.class.getName());
+    	 int numNodes = ((Integer) parameters.get("numNodes")).intValue();
+         Data[] out_data;   
+             Data model = new BasicData(AttackTolerance.testAttackTolerance(graph,numNodes), Graph.class.getName());
              Dictionary map = model.getMetadata();
-             map.put(DataProperty.MODIFIED,
-                 new Boolean(true));
+             map.put(DataProperty.MODIFIED,new Boolean(true));
              map.put(DataProperty.PARENT, data[0]);
              map.put(DataProperty.TYPE, DataProperty.NETWORK_TYPE);
              map.put(DataProperty.LABEL, "High Degree Node Deletion (Attack Tolerance)");
              
              out_data = new Data[]{model};
+             
+             return out_data;
          }
- 
-        return out_data;
-    }
-
-	private int getInt(String mystring) {
-		return ((Integer) parameters.get(mystring)).intValue();
-	}
 }
