@@ -8,8 +8,8 @@ Bundle-Localization: plugin
 Import-Package: edu.uci.ics.jung.algorithms,
  edu.uci.ics.jung.algorithms.importance,
  edu.uci.ics.jung.graph,
- org.cishell.framework,
- org.cishell.framework.algorithm,
- org.cishell.framework.data
+ org.cishell.framework;version="1.0.0",
+ org.cishell.framework.algorithm;version="1.0.0",
+ org.cishell.framework.data;version="1.0.0"
 X-AutoStart: true
 Service-Component: OSGI-INF/component.xml
