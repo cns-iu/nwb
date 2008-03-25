@@ -12,6 +12,7 @@ import org.osgi.service.metatype.MetaTypeProvider;
 //CIShell
 import org.cishell.framework.CIShellContext;
 import org.cishell.framework.algorithm.Algorithm;
+import org.cishell.framework.algorithm.AlgorithmExecutionException;
 import org.cishell.framework.algorithm.AlgorithmFactory;
 import org.cishell.framework.data.BasicData;
 import org.cishell.framework.data.Data;
@@ -24,17 +25,7 @@ import edu.iu.nwb.converter.nwb.common.ValidateNWBFile;
  * @author Weixia(Bonnie) Huang 
  */
 public class NWBValidation implements AlgorithmFactory {
-	   
-	   protected void activate(ComponentContext ctxt) {}
-	   protected void deactivate(ComponentContext ctxt) { }
-	
-	   /**
-	    * @see org.cishell.framework.algorithm.AlgorithmFactory#createParameters(org.cishell.framework.data.Data[])
-	    */
-	   public MetaTypeProvider createParameters(Data[] dm) {
-	        return null;
-	   }
-	    
+   
 	   /**
 	    * @see org.cishell.framework.algorithm.AlgorithmFactory#createAlgorithm(org.cishell.framework.data.Data[], java.util.Dictionary, org.cishell.framework.CIShellContext)
 	    */
@@ -57,7 +48,7 @@ public class NWBValidation implements AlgorithmFactory {
 	            logger = (LogService)context.getService(LogService.class.getName());
 	        }
 
-	        public Data[] execute() {
+	        public Data[] execute() throws AlgorithmExecutionException {
 		    	
 
 				String fileHandler = (String) data[0].getData();
@@ -72,23 +63,19 @@ public class NWBValidation implements AlgorithmFactory {
 	                	return dm;
 
 					}else {
-					
-						logger.log(org.osgi.service.log.LogService.LOG_ERROR,
+						throw new AlgorithmExecutionException(
 								"Sorry, your file does not comply with the NWB File Format Specification.\n"+
 								"Please review the latest NWB File Format Specification at "+
 								"http://nwb.slis.indiana.edu/software.html, and update your file. \n"+
-								validator.getErrorMessages());
-						return null;
+								validator.getErrorMessages());						
 					}
 
 				}catch (FileNotFoundException e){
-					logger.log(LogService.LOG_ERROR, 
-							"Unable to find the specified .nwb file for validation.",e);	
-					return null;
+					throw new AlgorithmExecutionException(
+							"Unable to find the specified .nwb file for validation.",e);						
 				}catch (IOException ioe){
-					logger.log(org.osgi.service.log.LogService.LOG_ERROR, 
-							"IO errors while validating the specified .nwb file.",ioe);
-					return null;
+					throw new AlgorithmExecutionException(
+							"IO errors while validating the specified .nwb file.",ioe);					
 				}
 	        }
 	      
