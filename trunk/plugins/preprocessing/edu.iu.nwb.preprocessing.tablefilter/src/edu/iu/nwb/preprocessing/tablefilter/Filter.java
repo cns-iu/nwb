@@ -9,12 +9,9 @@ import org.cishell.framework.data.BasicData;
 import org.cishell.framework.data.Data;
 import org.cishell.framework.data.DataProperty;
 
-import prefuse.data.Schema;
 import prefuse.data.Table;
 import prefuse.data.Tuple;
 import prefuse.data.expression.ColumnExpression;
-import prefuse.data.expression.ExpressionVisitor;
-import prefuse.data.expression.Predicate;
 
 public class Filter implements Algorithm {
     Data[] data;
@@ -28,7 +25,6 @@ public class Filter implements Algorithm {
     }
 
     public Data[] execute() {
-    	
     	Table original = (Table) this.data[0].getData();
     	
     	String column = (String) this.parameters.get("column");

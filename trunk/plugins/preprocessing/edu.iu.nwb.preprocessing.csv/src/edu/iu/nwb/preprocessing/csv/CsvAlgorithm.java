@@ -6,32 +6,28 @@ import java.util.Map;
 
 import org.cishell.framework.CIShellContext;
 import org.cishell.framework.algorithm.Algorithm;
+import org.cishell.framework.algorithm.AlgorithmExecutionException;
 import org.cishell.framework.data.BasicData;
 import org.cishell.framework.data.Data;
 import org.cishell.framework.data.DataProperty;
-import org.osgi.service.log.LogService;
 
 import prefuse.data.Graph;
-import prefuse.data.Schema;
 import prefuse.data.Table;
 import prefuse.data.Tuple;
-import prefuse.data.expression.ColumnExpression;
 import prefuse.data.io.DataIOException;
 
 public class CsvAlgorithm implements Algorithm {
     Data[] data;
     Dictionary parameters;
     CIShellContext context;
-	private LogService logger;
     
     public CsvAlgorithm(Data[] data, Dictionary parameters, CIShellContext context) {
         this.data = data;
         this.parameters = parameters;
         this.context = context;
-        logger=(LogService)context.getService(LogService.class.getName());
     }
 
-    public Data[] execute() {
+    public Data[] execute() throws AlgorithmExecutionException {
     	
     	CSVTableReader tableReader = new CSVTableReader();
     	tableReader.setHasHeader(true);
@@ -42,12 +38,9 @@ public class CsvAlgorithm implements Algorithm {
 			nodes = tableReader.readTable((String) parameters.get("nodes"));
 			edges = tableReader.readTable((String) parameters.get("edges"));
 		} catch (DataIOException e) {
-			e.printStackTrace();
-			return null;
+			throw new AlgorithmExecutionException("Error reading tables: "+e.getMessage(),e);
 		}
 		
-		
-    	
 		/* class ToIntegerExpression extends ColumnExpression {
 			
 			ToIntegerExpression(String name) {
@@ -107,8 +100,6 @@ public class CsvAlgorithm implements Algorithm {
 			edge.setInt(nwbFirst, ((Integer) newIds.get(edge.get(first))).intValue());
 			edge.setInt(nwbSecond, ((Integer) newIds.get(edge.get(second))).intValue());
 		}
-		
-		
 		
 		
 		Graph graph = new Graph(nodes, edges, false, nwbId, nwbFirst, nwbSecond);

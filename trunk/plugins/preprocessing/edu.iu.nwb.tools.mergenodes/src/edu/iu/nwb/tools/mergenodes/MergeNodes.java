@@ -1,13 +1,5 @@
 package edu.iu.nwb.tools.mergenodes;
 
-import java.util.Dictionary;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.ArrayList;
-import java.util.Properties;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -15,23 +7,29 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.PrintWriter;
-
-
-import org.osgi.service.log.LogService;
+import java.util.ArrayList;
+import java.util.Dictionary;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.Properties;
 
 import org.cishell.framework.CIShellContext;
 import org.cishell.framework.algorithm.Algorithm;
+import org.cishell.framework.algorithm.AlgorithmExecutionException;
 import org.cishell.framework.data.BasicData;
 import org.cishell.framework.data.Data;
 import org.cishell.framework.data.DataProperty;
+import org.osgi.service.log.LogService;
 
 import prefuse.data.Edge;
-import prefuse.data.Node;
-import prefuse.data.Table;
 import prefuse.data.Graph;
+import prefuse.data.Node;
 import prefuse.data.Schema;
+import prefuse.data.Table;
 import prefuse.data.Tuple;
-import prefuse.util.collections.IntIterator;
 
 
 public class MergeNodes implements Algorithm {
@@ -113,7 +111,7 @@ public class MergeNodes implements Algorithm {
         logger = (LogService)context.getService(LogService.class.getName());
     }
 
-    public Data[] execute() {
+    public Data[] execute() throws AlgorithmExecutionException {
     	Dictionary graphAttributes;
     	
     	//Validate and get the input data for nodeListTable and orgGraph
@@ -170,10 +168,8 @@ public class MergeNodes implements Algorithm {
         	}
         	return new Data[] {reportData};         	
         }catch (Exception e){
-        	logger.log (LogService.LOG_ERROR, e.toString()+"\n");
-        	return null;
-        }   	
-        
+        	throw new AlgorithmExecutionException(e.getMessage(),e);
+        }
     }
           
     /*  
@@ -300,9 +296,9 @@ public class MergeNodes implements Algorithm {
     /*
      * By default, take the last two columns in the table. 
      * The last column is used for specifying the primary row --
-     * the value must be “*” or empty (no value).
-     * The second last column is used for specifying the node index –-
-     * the value must be integers such as 1, 2, 3, 4,… 
+     * the value must be ï¿½*ï¿½ or empty (no value).
+     * The second last column is used for specifying the node index ï¿½-
+     * the value must be integers such as 1, 2, 3, 4,ï¿½ 
      * 
      * Output is a mergingTable and mergingNodesMap
      */    

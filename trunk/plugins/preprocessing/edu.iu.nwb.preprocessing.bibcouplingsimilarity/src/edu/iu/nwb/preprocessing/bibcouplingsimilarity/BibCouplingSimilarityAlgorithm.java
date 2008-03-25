@@ -7,6 +7,7 @@ import java.util.Dictionary;
 
 import org.cishell.framework.CIShellContext;
 import org.cishell.framework.algorithm.Algorithm;
+import org.cishell.framework.algorithm.AlgorithmExecutionException;
 import org.cishell.framework.data.BasicData;
 import org.cishell.framework.data.Data;
 import org.cishell.framework.data.DataProperty;
@@ -31,7 +32,7 @@ public class BibCouplingSimilarityAlgorithm implements Algorithm {
         }
     }
 
-    public Data[] execute() {
+    public Data[] execute() throws AlgorithmExecutionException {
     	try {
     		File tmpEdgeFile = File.createTempFile("nwb-", ".edge");
 			File inputNWBFile = (File)data[0].getData();
@@ -63,11 +64,9 @@ public class BibCouplingSimilarityAlgorithm implements Algorithm {
 			return new Data[]{outNWBData};
 			
 		} catch (IOException e) {
-			e.printStackTrace();
+			throw new AlgorithmExecutionException(e.getMessage(),e);
 		} catch (ParsingException e) {
-			e.printStackTrace();
+			throw new AlgorithmExecutionException(e.getMessage(),e);
 		}
-    	
-        return null;
     }
 }
