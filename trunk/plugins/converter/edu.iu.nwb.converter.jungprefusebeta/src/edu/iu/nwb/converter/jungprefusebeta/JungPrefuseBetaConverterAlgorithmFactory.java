@@ -13,7 +13,4 @@ public class JungPrefuseBetaConverterAlgorithmFactory implements AlgorithmFactor
     public Algorithm createAlgorithm(Data[] data, Dictionary parameters, CIShellContext context) {
         return new JungPrefuseBetaConverterAlgorithm(data, parameters, context);
     }
-    public MetaTypeProvider createParameters(Data[] data) {
-        return null;
-    }
 }

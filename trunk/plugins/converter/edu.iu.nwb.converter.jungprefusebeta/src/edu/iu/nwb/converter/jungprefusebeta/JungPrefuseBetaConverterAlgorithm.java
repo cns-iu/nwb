@@ -4,6 +4,7 @@ import java.util.Dictionary;
 
 import org.cishell.framework.CIShellContext;
 import org.cishell.framework.algorithm.Algorithm;
+import org.cishell.framework.algorithm.AlgorithmExecutionException;
 import org.cishell.framework.algorithm.AlgorithmProperty;
 import org.cishell.framework.data.BasicData;
 import org.cishell.framework.data.Data;
@@ -22,7 +23,7 @@ public class JungPrefuseBetaConverterAlgorithm implements Algorithm, AlgorithmPr
         this.context = context;
     }
 
-    public Data[] execute() {
+    public Data[] execute() throws AlgorithmExecutionException{
         edu.uci.ics.jung.graph.Graph g = 
             (edu.uci.ics.jung.graph.Graph) data[0].getData();
         
