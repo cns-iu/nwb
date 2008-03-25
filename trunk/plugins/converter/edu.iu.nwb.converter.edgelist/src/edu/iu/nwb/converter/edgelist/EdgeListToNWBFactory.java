@@ -9,20 +9,7 @@ import org.cishell.framework.data.Data;
 import org.osgi.service.component.ComponentContext;
 import org.osgi.service.metatype.MetaTypeProvider;
 
-/**
- * Algorithm factory for GraphML to NWB converter
- * 
- * @author bmarkine
- */
 public class EdgeListToNWBFactory implements AlgorithmFactory {
-	
-
-    protected void activate(ComponentContext ctxt) {
-    	
-    }
-    protected void deactivate(ComponentContext ctxt) { }
-    
-    
 
     /**
      * Create an converter
@@ -36,13 +23,5 @@ public class EdgeListToNWBFactory implements AlgorithmFactory {
 		
         
     }
-    
-    /**
-     * This converter accepts no parameters
-     */
-    public MetaTypeProvider createParameters(Data[] data) {
-        return null;
-    }
-
-    
+     
 }

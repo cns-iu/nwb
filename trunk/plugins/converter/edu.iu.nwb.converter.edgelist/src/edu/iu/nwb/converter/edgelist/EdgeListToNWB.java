@@ -15,6 +15,7 @@ import java.util.Map;
 
 import org.cishell.framework.CIShellContext;
 import org.cishell.framework.algorithm.Algorithm;
+import org.cishell.framework.algorithm.AlgorithmExecutionException;
 import org.cishell.framework.data.BasicData;
 import org.cishell.framework.data.Data;
 import org.osgi.service.log.LogService;
@@ -134,7 +135,7 @@ public class EdgeListToNWB implements Algorithm {
      * 
      * @return A single java file object
      */
-    public Data[] execute() {
+    public Data[] execute() throws AlgorithmExecutionException {
 		File inFile = (File)data[0].getData();
     	BufferedReader edgelistreader;
 		BufferedWriter nwb = null;
@@ -148,39 +149,39 @@ public class EdgeListToNWB implements Algorithm {
 
 
 		} catch (FileNotFoundException e) {
-			logger.log(LogService.LOG_ERROR,"Specified Edge list file not found! "+((File)inFile).getAbsolutePath()+"\n", e);
-			return null;
+			throw new AlgorithmExecutionException(
+					"Specified Edge list file not found! "+((File)inFile).getAbsolutePath()+"\n", e);			
 		} 
 		File nwbFile = getTempFile();
 		try {
-		try {
-			nwb = new BufferedWriter(new FileWriter(nwbFile));
-		} catch (IOException e) {
-			logger.log(LogService.LOG_ERROR,"Error writing from the specified edge list to the specified .nwb file.\n", e);
-			return null;
-		}
-		try {
-			eLVFact = new EdgeListValidatorFactory();
-			// validate the file.  file information is given by various methods
-			// of the validator.
-			validator = eLVFact.new ValidateEdgeFile();
-			validator.validateEdgeFormat(inFile);
-			if (validator.getValidationResult()) {
-				// if it's a valid edgelist, go ahead with conversion 
-				transform(edgelistreader, nwb, validator);
+			try {
+				nwb = new BufferedWriter(new FileWriter(nwbFile));
+			} catch (IOException e) {
+				throw new AlgorithmExecutionException (
+						"Error writing from the specified edge list to the specified .nwb file.\n", e);				
 			}
-			// should there be an else clause here?
-			return new Data[] {new BasicData(nwbFile, "file:text/nwb")};
-		} catch (Exception e ) {
-			logger.log(LogService.LOG_ERROR, "Encountered an error while converting from edge list to .nwb", e);
-			return null;
-		}
+			try {
+				eLVFact = new EdgeListValidatorFactory();
+				// validate the file.  file information is given by various methods
+				// of the validator.
+				validator = eLVFact.new ValidateEdgeFile();
+				validator.validateEdgeFormat(inFile);
+				if (validator.getValidationResult()) {
+					// if it's a valid edgelist, go ahead with conversion 
+					transform(edgelistreader, nwb, validator);
+				}
+				// should there be an else clause here?
+				return new Data[] {new BasicData(nwbFile, "file:text/nwb")};
+			} catch (Exception e ) {
+				throw new AlgorithmExecutionException(
+						"Encountered an error while converting from edge list to .nwb", e);				
+			}
 		} finally {
 			if (nwb != null) {
 				try {
 				nwb.close();
 				} catch (IOException e) {
-					logger.log(LogService.LOG_ERROR, "Unable to close file stream.", e);
+					throw new AlgorithmExecutionException("Unable to close file stream.", e);
 				}
 			}
 		}

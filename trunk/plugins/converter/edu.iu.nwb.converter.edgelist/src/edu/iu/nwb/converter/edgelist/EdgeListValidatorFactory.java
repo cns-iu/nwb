@@ -12,6 +12,7 @@ import java.util.HashMap;
 
 import org.cishell.framework.CIShellContext;
 import org.cishell.framework.algorithm.Algorithm;
+import org.cishell.framework.algorithm.AlgorithmExecutionException;
 import org.cishell.framework.algorithm.AlgorithmFactory;
 import org.cishell.framework.data.BasicData;
 import org.cishell.framework.data.Data;
@@ -27,17 +28,7 @@ import org.osgi.service.metatype.MetaTypeProvider;
  * @author Weixia(Bonnie) Huang 
  */
 public class EdgeListValidatorFactory implements AlgorithmFactory {
-	
-	   protected void activate(ComponentContext ctxt) {}
-	   protected void deactivate(ComponentContext ctxt) { }
-	
-	   /**
-	    * @see org.cishell.framework.algorithm.AlgorithmFactory#createParameters(org.cishell.framework.data.Data[])
-	    */
-	   public MetaTypeProvider createParameters(Data[] dm) {
-	        return null;
-	   }
-	    
+		    
 	   /**
 	    * @see org.cishell.framework.algorithm.AlgorithmFactory#createAlgorithm(org.cishell.framework.data.Data[], java.util.Dictionary, org.cishell.framework.CIShellContext)
 	    */
@@ -60,8 +51,7 @@ public class EdgeListValidatorFactory implements AlgorithmFactory {
 	            logger = (LogService)context.getService(LogService.class.getName());
 	        }
 
-	        public Data[] execute() {
-
+	        public Data[] execute() throws AlgorithmExecutionException {
 	   
 				String fileHandler = (String) data[0].getData();
 				
@@ -78,25 +68,23 @@ public class EdgeListValidatorFactory implements AlgorithmFactory {
 						return dm;
 
 					} else {
-						return null;
+						throw new AlgorithmExecutionException(validator.getErrorMessages());
 					}
 
 				} catch (FileNotFoundException e){
-					logger.log(org.osgi.service.log.LogService.LOG_ERROR, 
-							"Could not find the specified edge list file.",e);	
-					return null;
+					throw new AlgorithmExecutionException( 
+							"Could not find the specified edge list file.",e);						
 				} catch (IOException ioe){
-					logger.log(LogService.LOG_ERROR, 
+					throw new AlgorithmExecutionException( 
 							"IO Errors will reading the specified edge list file.",ioe);
-					return null;
+					
 				} catch (edu.iu.nwb.converter.edgelist.EdgeListValidatorFactory.ValidateEdgeFile.EdgeFormat ef) {
 					//System.out.println(">>>wrong format: "+validator.getErrorMessages());
-					logger.log(org.osgi.service.log.LogService.LOG_ERROR, 
+					throw new AlgorithmExecutionException(  
 							"Sorry, your file does not comply with the edgelist file format specification.\n"+
 							"Please review the latest edgelist file format Specification at "+
 							"https://nwb.slis.indiana.edu/community/?n=LoadData.Edgelist, and update your file. \n"+
-							validator.getErrorMessages());
-					return null;	
+							validator.getErrorMessages());					
 				}
 				
 				
