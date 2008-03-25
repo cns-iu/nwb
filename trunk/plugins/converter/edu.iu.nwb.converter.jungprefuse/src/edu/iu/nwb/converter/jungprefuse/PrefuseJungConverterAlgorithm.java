@@ -4,6 +4,7 @@ import java.util.Dictionary;
 
 import org.cishell.framework.CIShellContext;
 import org.cishell.framework.algorithm.Algorithm;
+import org.cishell.framework.algorithm.AlgorithmExecutionException;
 import org.cishell.framework.algorithm.AlgorithmProperty;
 import org.cishell.framework.data.BasicData;
 import org.cishell.framework.data.Data;
@@ -22,7 +23,7 @@ public class PrefuseJungConverterAlgorithm  implements Algorithm, AlgorithmPrope
 		this.context = context;
 	}
 
-	public Data[] execute() {
+	public Data[] execute() throws AlgorithmExecutionException {
 		Graph prefuseGraph = (Graph) data[0].getData();
 		edu.uci.ics.jung.graph.Graph jungGraph = PrefuseJungConverter.getJungGraph(prefuseGraph);
 		Data dm = new BasicData(data[0].getMetadata(), //might this include now-incorrect information?

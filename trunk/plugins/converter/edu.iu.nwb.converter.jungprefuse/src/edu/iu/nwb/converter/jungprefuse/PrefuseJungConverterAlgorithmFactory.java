@@ -14,8 +14,4 @@ public class PrefuseJungConverterAlgorithmFactory  implements AlgorithmFactory {
 		return new PrefuseJungConverterAlgorithm(data, parameters, context);
 	}
 
-	public MetaTypeProvider createParameters(Data[] arg0) {
-		return null;
-	}
-
 }
