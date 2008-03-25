@@ -2,8 +2,8 @@
 <feature
       id="edu.iu.nwb.gui.brand.feature"
       label="NWB Brand "
-      version="0.6.0"
-      provider-name="Weixia Huang">
+      version="1.0.0"
+      provider-name="NWB Team">
 
    <description>
       Network Workbench Tool (NWB Tool)

@@ -2,7 +2,7 @@
 <feature
       id="edu.iu.nwb.javaalgorithm.feature"
       label="Java-based algorithms"
-      version="0.7.0"
+      version="1.0.0"
       provider-name="NWB Team">
 
    <description>

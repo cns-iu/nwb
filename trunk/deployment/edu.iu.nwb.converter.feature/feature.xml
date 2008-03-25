@@ -2,8 +2,8 @@
 <feature
       id="edu.iu.nwb.converter.feature"
       label="NWB Data Format Converters"
-      version="0.8.0"
-      provider-name="Weixia Huang, Ben Markines, Bruce Herr, Russell Duhon">
+      version="1.0.0"
+      provider-name="NWB Team">
 
    <description>
       The tool supports the following data/file formats:
