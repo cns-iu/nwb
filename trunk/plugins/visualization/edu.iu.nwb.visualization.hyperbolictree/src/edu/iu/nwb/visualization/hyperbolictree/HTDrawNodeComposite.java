@@ -8,9 +8,9 @@
 package edu.iu.nwb.visualization.hyperbolictree;
 
 import java.awt.Graphics;
-import java.util.Iterator;
-import java.util.HashMap;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Iterator;
 
 
 /**
@@ -21,7 +21,7 @@ import java.util.ArrayList;
 public class HTDrawNodeComposite
     extends HTDrawNode {
 
-    private HTModelNodeComposite node      = null; // encapsulated HTModelNode
+//    private HTModelNodeComposite node      = null; // encapsulated HTModelNode
     private ArrayList              children  = null; // children of this node
     private HashMap            geodesics = null; // geodesics linking the children
 
@@ -38,7 +38,6 @@ public class HTDrawNodeComposite
     HTDrawNodeComposite(HTDrawNodeComposite father, 
                         HTModelNodeComposite node, HTDraw model) {
         super(father, node, model);
-        this.node = node;
         this.children = new ArrayList();
         this.geodesics = new HashMap();
 

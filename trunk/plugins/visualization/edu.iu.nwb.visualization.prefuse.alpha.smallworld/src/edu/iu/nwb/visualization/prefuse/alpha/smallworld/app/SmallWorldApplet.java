@@ -20,7 +20,6 @@ import java.io.FileInputStream;
 import javax.swing.ButtonGroup;
 import javax.swing.JApplet;
 import javax.swing.JCheckBox;
-import javax.swing.JComboBox;
 import javax.swing.JFileChooser;
 import javax.swing.JPanel;
 import javax.swing.JProgressBar;
@@ -64,7 +63,11 @@ import edu.iu.nwb.visualization.prefuse.alpha.smallworld.types.SmallWorldCompara
 public class SmallWorldApplet extends JApplet implements ComponentListener,
         ChangeListener, ActionListener, ItemListener, ProgressUpdate {
 
-    public static final String GRAPH_FRIENDSTER = "/friendster.xml";
+    /**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
+	public static final String GRAPH_FRIENDSTER = "/friendster.xml";
     public static final String GRAPH_TERROR     = "/terror.xml";
     public static final int PASSES = 10;    
 
@@ -289,14 +292,14 @@ public class SmallWorldApplet extends JApplet implements ComponentListener,
         if( e.getSource( ) == slider_inner ) {
             
             if( m_registry != null ) {
-                m_doa_layout.ZERO_RADIUS = slider_inner.getValue();
+                DOALayout.ZERO_RADIUS = slider_inner.getValue();
                 m_layout.runNow();
             }
         }
         if( e.getSource( ) == slider_outer ) {
             
             if( m_registry != null ) {
-                m_doa_layout.DOA_RADIUS = slider_outer.getValue();
+                DOALayout.DOA_RADIUS = slider_outer.getValue();
                 m_layout.runNow();
             }
         }

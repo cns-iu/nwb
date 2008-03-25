@@ -17,15 +17,16 @@ package edu.iu.nwb.visualization.prefuse.alpha.smallworld.action;
 //Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA 
 
 
-import javax.swing.JFrame;
-import javax.swing.JComponent;
-import javax.swing.JLabel;
+import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Graphics;
-import java.awt.BorderLayout;
-import java.awt.event.MouseMotionAdapter;
 import java.awt.event.MouseEvent;
+import java.awt.event.MouseMotionAdapter;
 import java.util.Map;
+
+import javax.swing.JComponent;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
 
 /**
  * Dialog with a simple graph visualization, displaying graph nodes
@@ -35,6 +36,11 @@ import java.util.Map;
  * @version 28.09.2005
  */
 public class GraphFrame extends JFrame {
+
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
 
 	/**
 	 * Constructs the dialog.
@@ -62,6 +68,10 @@ public class GraphFrame extends JFrame {
  * @author Andreas Noack
  */
 class GraphCanvas extends JComponent {
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
 	/** Minimum and maximum positions of the nodes. */
 	private float minX, maxX, minY, maxY;
 	/** Node whose name is displayed. */

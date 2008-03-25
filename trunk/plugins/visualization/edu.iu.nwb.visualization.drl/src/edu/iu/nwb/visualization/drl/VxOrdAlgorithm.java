@@ -7,6 +7,7 @@ import java.util.Dictionary;
 
 import org.cishell.framework.CIShellContext;
 import org.cishell.framework.algorithm.Algorithm;
+import org.cishell.framework.algorithm.AlgorithmExecutionException;
 import org.cishell.framework.data.BasicData;
 import org.cishell.framework.data.Data;
 import org.cishell.framework.data.DataProperty;
@@ -31,7 +32,7 @@ public class VxOrdAlgorithm implements Algorithm {
         }
     }
 
-    public Data[] execute() {
+    public Data[] execute() throws AlgorithmExecutionException {
     	try {
     		String weightAttr = (String)parameters.get("edgeWeight");
     		String xposAttr = (String)parameters.get("xpos");
@@ -48,7 +49,12 @@ public class VxOrdAlgorithm implements Algorithm {
 			
 			//Run DRL (VxOrd) on SIM File
 			Algorithm layoutAlg = staticAlgorithmFactory.createAlgorithm(new Data[]{simData}, parameters, context);
-			Data[] coordData = layoutAlg.execute();
+			Data[] coordData;
+			try {
+				coordData = layoutAlg.execute();
+			} catch (AlgorithmExecutionException e) {
+				throw new AlgorithmExecutionException("Unable to execute the DrL layout algorithm.", e);
+			}
 			File coordFile = (File) coordData[0].getData();
 			
 			//Create a new NWB file w/ injected layout coordinates
@@ -67,11 +73,9 @@ public class VxOrdAlgorithm implements Algorithm {
 			return new Data[]{outNWBData};
 			
 		} catch (IOException e) {
-			e.printStackTrace();
+			throw new AlgorithmExecutionException("There was a problem parsing the input data.", e);
 		} catch (ParsingException e) {
-			e.printStackTrace();
+			throw new AlgorithmExecutionException("There was a problem parsing the input data.", e);
 		}
-    	
-        return null;
     }
 }

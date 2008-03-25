@@ -14,7 +14,7 @@ package edu.iu.nwb.visualization.hyperbolictree;
  */
 class HTCoordE {
 
-    private static final double EPSILON = 1.0E-10; // epsilon
+    //private static final double EPSILON = 1.0E-10; // epsilon
 
     double x = 0.0; // x coord
     double y = 0.0; // y coord

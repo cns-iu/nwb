@@ -19,10 +19,6 @@ import javax.swing.JPanel;
 import javax.swing.KeyStroke;
 import javax.swing.SwingConstants;
 
-import edu.iu.nwb.visualization.prefuse.beta.common.Constants;
-import edu.iu.nwb.visualization.prefuse.beta.common.PrefuseBetaVisualization;
-
-
 import prefuse.Display;
 import prefuse.Visualization;
 import prefuse.action.Action;
@@ -49,12 +45,11 @@ import prefuse.data.Graph;
 import prefuse.data.Tree;
 import prefuse.data.Tuple;
 import prefuse.data.event.TupleSetListener;
-import prefuse.data.io.TreeMLReader;
 import prefuse.data.search.PrefixSearchTupleSet;
 import prefuse.data.tuple.TupleSet;
+import prefuse.render.AbstractShapeRenderer;
 import prefuse.render.DefaultRendererFactory;
 import prefuse.render.EdgeRenderer;
-import prefuse.render.AbstractShapeRenderer;
 import prefuse.render.LabelRenderer;
 import prefuse.util.ColorLib;
 import prefuse.util.FontLib;
@@ -63,6 +58,8 @@ import prefuse.util.ui.JSearchPanel;
 import prefuse.visual.VisualItem;
 import prefuse.visual.expression.InGroupPredicate;
 import prefuse.visual.sort.TreeDepthItemSorter;
+import edu.iu.nwb.visualization.prefuse.beta.common.Constants;
+import edu.iu.nwb.visualization.prefuse.beta.common.PrefuseBetaVisualization;
 
 
 /**
@@ -73,7 +70,12 @@ import prefuse.visual.sort.TreeDepthItemSorter;
  */
 public class TreeViewVisualization extends Display implements PrefuseBetaVisualization {
 
-    public static final String TREE_CHI = "/chi-ontology.xml.gz";
+    /**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
+
+	public static final String TREE_CHI = "/chi-ontology.xml.gz";
     
     private static final String tree = "tree";
     private static final String treeNodes = "tree.nodes";
@@ -337,7 +339,11 @@ public class TreeViewVisualization extends Display implements PrefuseBetaVisuali
     // ------------------------------------------------------------------------
    
     public class OrientAction extends AbstractAction {
-        private int orientation;
+        /**
+		 * 
+		 */
+		private static final long serialVersionUID = 1L;
+		private int orientation;
         
         public OrientAction(int orientation) {
             this.orientation = orientation;

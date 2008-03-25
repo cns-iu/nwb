@@ -8,9 +8,7 @@
 package edu.iu.nwb.visualization.hyperbolictree;
 
 import java.awt.Graphics;
-import java.awt.Color;
 import java.awt.Insets;
-
 import java.util.HashMap;
 import java.util.Map;
 
@@ -24,7 +22,7 @@ public class HTDraw {
 
     private final static int NBR_FRAMES = 10; // number of intermediates animation frames
 
-    private HTModel    model    = null;  // the tree model
+    //private HTModel    model    = null;  // the tree model
     private HTView     view     = null;  // the view using this drawing model
     private HTDrawNode drawRoot = null;  // the root of the drawing tree 
 
@@ -53,7 +51,7 @@ public class HTDraw {
 	drawToHTNodeMap = new HashMap();
 
         this.view = view;
-        this.model = model;
+        //this.model = model;
         HTModelNode root = model.getRoot();
         sOrigin = new HTCoordS();
         sMax = new HTCoordS();
@@ -274,7 +272,7 @@ public class HTDraw {
             HTCoordE zf = new HTCoordE();
 
             int frames = NBR_FRAMES;
-            int nodes = model.getNumberOfNodes();
+            //int nodes = model.getNumberOfNodes();
             
             double d = zn.d();
             for (int i = 0; i < ray.length; i++) {

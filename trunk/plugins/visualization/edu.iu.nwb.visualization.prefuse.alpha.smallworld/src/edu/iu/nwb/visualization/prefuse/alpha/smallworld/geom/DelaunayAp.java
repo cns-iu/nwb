@@ -19,12 +19,25 @@
  */
 
 package edu.iu.nwb.visualization.prefuse.alpha.smallworld.geom;
-import java.awt.*;
-import java.awt.event.*;
-import javax.swing.*;
-//import java.util.HashSet;
+import java.awt.BorderLayout;
+import java.awt.Color;
+import java.awt.Container;
+import java.awt.Graphics;
+import java.awt.Label;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
 import java.util.Iterator;
 import java.util.Set;
+
+import javax.swing.ButtonGroup;
+import javax.swing.JButton;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JRadioButton;
+import javax.swing.SwingUtilities;
 
 /**
  * The Delauany applet.
@@ -38,6 +51,11 @@ import java.util.Set;
 public class DelaunayAp extends javax.swing.JApplet implements Runnable {
     
     /**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
+
+	/**
      * Initialize the applet.
      * As recommended, the actual use of Swing components takes place in the
      * event-dispatching thread.
@@ -130,7 +148,11 @@ public class DelaunayAp extends javax.swing.JApplet implements Runnable {
  */
 class DelaunayPanel extends JPanel implements ActionListener, MouseListener {
     
-    private DelaunayTriangulation dt;     // The Delaunay triangulation
+    /**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
+	private DelaunayTriangulation dt;     // The Delaunay triangulation
     private Simplex initialTriangle;      // The large initial triangle
     private int initialSize = 10000;      // Controls size of initial triangle
     //private int initialSize = 1000;      // Controls size of initial triangle

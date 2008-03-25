@@ -1,12 +1,10 @@
 package edu.iu.nwb.visualization.prefuse.beta.common.action;
 
-import java.awt.Canvas;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
-import java.awt.LayoutManager;
 import java.awt.Polygon;
 
 import javax.swing.Box;
@@ -15,18 +13,15 @@ import javax.swing.JComponent;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 
-import edu.iu.nwb.visualization.prefuse.beta.common.Constants;
-
 import prefuse.action.assignment.DataSizeAction;
 import prefuse.data.DataTypeException;
-import prefuse.data.Tuple;
-import prefuse.data.parser.DataParseException;
 import prefuse.data.tuple.TupleSet;
 import prefuse.util.DataLib;
+import edu.iu.nwb.visualization.prefuse.beta.common.Constants;
 
 public class LegendDataSizeAction extends DataSizeAction implements LegendAction {
 
-	private String realColumn;
+	//private String realColumn;
 	private String context;
 	private String fakeColumn;
 	private String column;
@@ -63,6 +58,11 @@ public class LegendDataSizeAction extends DataSizeAction implements LegendAction
 		final boolean badNumbers = bad;
 		
 		JPanel canvas = new JPanel() {
+			/**
+			 * 
+			 */
+			private static final long serialVersionUID = 1L;
+
 			public void paint(Graphics g) {
 				Graphics2D graphics = (Graphics2D) g;
 				int startSize;

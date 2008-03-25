@@ -6,7 +6,6 @@ package edu.iu.nwb.visualization.prefuse.alpha.smallworld.layout;
 
 import java.util.Iterator;
 
-
 import edu.berkeley.guir.prefuse.ItemRegistry;
 import edu.berkeley.guir.prefuse.action.assignment.Layout;
 import edu.iu.nwb.visualization.prefuse.alpha.smallworld.geom.DelaunayTriangulation;

@@ -6,11 +6,9 @@ package edu.iu.nwb.visualization.prefuse.alpha.smallworld.layout;
 
 import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
-import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
-
 
 import edu.berkeley.guir.prefuse.ItemRegistry;
 import edu.berkeley.guir.prefuse.action.assignment.Layout;

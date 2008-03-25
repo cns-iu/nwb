@@ -1,9 +1,5 @@
 package edu.iu.nwb.visualization.prefuse.alpha.smallworld.action;
 
-import javax.swing.JProgressBar;
-import javax.swing.SwingUtilities;
-
-import edu.iu.nwb.visualization.prefuse.alpha.smallworld.app.SmallWorldFrame;
 import edu.iu.nwb.visualization.prefuse.alpha.smallworld.types.ProgressUpdate;
 
 
@@ -488,43 +484,6 @@ public class MinimizerBarnesHut {
 	        baryCenter[2] /= repuWeightSum;
 		}
     }
-
-	/**
-	 * Computes and outputs some statistics. 
-	 */
-	private void printStatistics(final OctTree octTree) {
-		float attrSum = 0.0f;
-		for (int i = 0; i < attrWeights.length; i++) {
-			for (int j = 0; j < attrWeights[i].length; j++) {
-				attrSum += attrWeights[i][j];
-			}
-		}
-		System.out.println("Number of attracting nodes: " + attrWeights.length);
-		System.out.println("Overall attraction: " + attrSum);
-		float meanAttrEnergy = 0.0f;
-		for (int i = 0; i < nodeNr; i++) meanAttrEnergy += getAttractionEnergy(i);
-		meanAttrEnergy = (float)Math.pow(meanAttrEnergy * attrExponent / attrSum, 1.0f / attrExponent); 
-		System.out.println("Weighted mean of attraction energy: " + meanAttrEnergy);
-		
-		float repuSum = 0.0f, repuSquareSum = 0.0f;
-		for (int i = 0; i < repuWeights.length; i++) {
-			repuSum += repuWeights[i];
-			repuSquareSum += repuWeights[i] * repuWeights[i];
-		}
-		repuSum = repuSum*repuSum - repuSquareSum;
-		System.out.println("Number of repulsing nodes: " + repuWeights.length);
-		System.out.println("Overall repulsion: " + repuSum);
-		float meanRepuEnergy = 0.0f;
-		for (int i = 0; i < nodeNr; i++) meanRepuEnergy += getRepulsionEnergy(i, octTree);
-		meanRepuEnergy /= repuFactor; 
-		meanRepuEnergy = (repuExponent == 0.0f) 
-			? (float)Math.exp(-meanRepuEnergy / repuSum)
-			: (float)Math.pow(-meanRepuEnergy * repuExponent / repuSum, 1.0f / repuExponent); 
-		System.out.println("Weighted mean of repulsion energy: " + meanRepuEnergy);
-		
-		System.out.println("Mean attraction / mean repulsion: " + meanAttrEnergy / meanRepuEnergy);
-	}
-
 
 	/**
 	 * Octtree for graph nodes with positions in 3D space.

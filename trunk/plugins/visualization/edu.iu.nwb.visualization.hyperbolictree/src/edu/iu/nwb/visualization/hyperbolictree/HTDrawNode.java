@@ -10,7 +10,6 @@ package edu.iu.nwb.visualization.hyperbolictree;
 import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.Image;
-import java.awt.FontMetrics;
 
 
 /**
@@ -20,7 +19,7 @@ import java.awt.FontMetrics;
  */
 class HTDrawNode {
 
-    private   HTDraw              model    = null;  // drawing model
+    //private   HTDraw              model    = null;  // drawing model
     private   HTModelNode         node     = null;  // encapsulated HTModelNode
  
     private   HTCoordE            ze       = null;  // current euclidian coordinates
@@ -47,7 +46,7 @@ class HTDrawNode {
     HTDrawNode(HTDrawNodeComposite father, HTModelNode node, HTDraw model) {
         this.father = father;
         this.node = node;
-        this.model = model;
+        //this.model = model;
 
         label = new HTNodeLabel(this);
 

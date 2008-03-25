@@ -1,15 +1,11 @@
 package edu.iu.nwb.visualization.prefuse.beta.common;
 
-import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
-import java.awt.geom.Rectangle2D;
-import java.io.File;
 import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -18,42 +14,24 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Properties;
 
-import javax.print.DocPrintJob;
-import javax.print.PrintService;
-import javax.print.PrintServiceLookup;
-import javax.print.SimpleDoc;
 import javax.swing.Box;
 import javax.swing.BoxLayout;
 import javax.swing.JComponent;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
-import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JSeparator;
-import javax.swing.filechooser.FileFilter;
 
 import org.freehep.graphics2d.VectorGraphics;
 import org.freehep.graphicsio.ps.PSGraphics2D;
-import org.freehep.util.export.ExportDialog;
-
-import edu.iu.nwb.visualization.prefuse.beta.common.action.LegendAction;
-import edu.iu.nwb.visualization.prefuse.beta.common.action.LegendDataColorAction;
-import edu.iu.nwb.visualization.prefuse.beta.common.action.LegendDataShapeAction;
-import edu.iu.nwb.visualization.prefuse.beta.common.action.LegendDataSizeAction;
-import edu.iu.nwb.visualization.prefuse.beta.common.expression.SmartValueExpression;
-import edu.iu.nwb.visualization.prefuse.beta.common.expression.ToDoubleExpression;
-import edu.iu.nwb.visualization.prefuse.beta.common.renderer.ShapeLabelRenderer;
 
 import prefuse.Display;
 import prefuse.Visualization;
 import prefuse.action.Action;
 import prefuse.action.ActionList;
-import prefuse.action.RepaintAction;
 import prefuse.action.assignment.ColorAction;
 import prefuse.action.assignment.FontAction;
 import prefuse.action.assignment.ShapeAction;
-import prefuse.action.layout.Layout;
-import prefuse.action.layout.graph.FruchtermanReingoldLayout;
 import prefuse.controls.Control;
 import prefuse.controls.DragControl;
 import prefuse.controls.FocusControl;
@@ -68,10 +46,15 @@ import prefuse.render.DefaultRendererFactory;
 import prefuse.render.EdgeRenderer;
 import prefuse.render.Renderer;
 import prefuse.util.ColorLib;
-import prefuse.util.FontLib;
 import prefuse.util.ui.UILib;
 import prefuse.visual.VisualItem;
-import prefuse.visual.expression.InGroupPredicate;
+import edu.iu.nwb.visualization.prefuse.beta.common.action.LegendAction;
+import edu.iu.nwb.visualization.prefuse.beta.common.action.LegendDataColorAction;
+import edu.iu.nwb.visualization.prefuse.beta.common.action.LegendDataShapeAction;
+import edu.iu.nwb.visualization.prefuse.beta.common.action.LegendDataSizeAction;
+import edu.iu.nwb.visualization.prefuse.beta.common.expression.SmartValueExpression;
+import edu.iu.nwb.visualization.prefuse.beta.common.expression.ToDoubleExpression;
+import edu.iu.nwb.visualization.prefuse.beta.common.renderer.ShapeLabelRenderer;
 
 public abstract class AbstractVisualization implements PrefuseBetaVisualization {
 	

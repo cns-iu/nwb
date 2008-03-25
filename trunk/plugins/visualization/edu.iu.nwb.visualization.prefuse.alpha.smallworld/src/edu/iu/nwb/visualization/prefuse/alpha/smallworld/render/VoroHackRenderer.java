@@ -4,24 +4,15 @@
  */
 package edu.iu.nwb.visualization.prefuse.alpha.smallworld.render;
 
+import java.awt.Color;
 import java.awt.Graphics2D;
+import java.awt.Stroke;
 import java.awt.geom.Ellipse2D;
 import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
 
-import edu.berkeley.guir.prefuse.ItemRegistry;
 import edu.berkeley.guir.prefuse.VisualItem;
-import edu.berkeley.guir.prefuse.action.AbstractAction;
-import edu.berkeley.guir.prefuse.action.RepaintAction;
-import edu.berkeley.guir.prefuse.activity.ActionList;
-import edu.berkeley.guir.prefuse.render.Renderer;
 import edu.iu.nwb.visualization.prefuse.alpha.smallworld.types.VoroNode;
-
-import java.awt.Color;
-import java.awt.Paint;
-import java.awt.Point;
-import java.awt.Shape;
-import java.awt.Stroke;
 
 
 /**

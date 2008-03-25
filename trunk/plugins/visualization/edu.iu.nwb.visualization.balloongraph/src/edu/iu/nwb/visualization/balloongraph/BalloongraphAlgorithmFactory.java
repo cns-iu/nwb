@@ -12,19 +12,7 @@ import org.osgi.service.metatype.MetaTypeService;
 
 
 public class BalloongraphAlgorithmFactory implements AlgorithmFactory {
- 
-
-    protected void activate(ComponentContext ctxt) {
-       
-    }
-    protected void deactivate(ComponentContext ctxt) {
-   
-    }
-
     public Algorithm createAlgorithm(Data[] data, Dictionary parameters, CIShellContext context) {
         return new BalloongraphAlgorithm(data, parameters, context);
-    }
-    public MetaTypeProvider createParameters(Data[] data) {
-        return null;
     }
 }

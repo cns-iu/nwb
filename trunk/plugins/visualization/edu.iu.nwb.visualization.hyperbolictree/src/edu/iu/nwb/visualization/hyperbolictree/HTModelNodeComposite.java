@@ -151,7 +151,6 @@ public class HTModelNodeComposite
         }
 
         HTModelNode child = null;
-        HTCoordE dump = new HTCoordE();
 
         int nbrChild = children.size();
         double l1 = (0.95 - model.getLength());

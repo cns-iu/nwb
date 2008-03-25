@@ -25,7 +25,11 @@ import edu.iu.nwb.visualization.prefuse.alpha.smallworld.types.VoroNode;
  */
 public class LensDisplay extends MultipassDisplay {
 
-    private Ellipse2D m_lens = null;
+    /**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
+	private Ellipse2D m_lens = null;
 
     public LensDisplay( ItemRegistry registry, int passes ) {
         super(registry, passes);

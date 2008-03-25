@@ -14,9 +14,6 @@ import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.SwingConstants;
 
-import edu.iu.nwb.visualization.prefuse.beta.common.Constants;
-import edu.iu.nwb.visualization.prefuse.beta.common.PrefuseBetaVisualization;
-
 import prefuse.Display;
 import prefuse.Visualization;
 import prefuse.action.ActionList;
@@ -43,27 +40,25 @@ import prefuse.controls.ZoomControl;
 import prefuse.controls.ZoomToFitControl;
 import prefuse.data.Graph;
 import prefuse.data.Node;
-import prefuse.data.Table;
 import prefuse.data.Tuple;
 import prefuse.data.event.TupleSetListener;
-import prefuse.data.io.GraphMLReader;
-import prefuse.data.query.SearchQueryBinding;
 import prefuse.data.search.PrefixSearchTupleSet;
 import prefuse.data.search.SearchTupleSet;
 import prefuse.data.tuple.DefaultTupleSet;
 import prefuse.data.tuple.TupleSet;
 import prefuse.render.DefaultRendererFactory;
 import prefuse.render.EdgeRenderer;
-import prefuse.render.ShapeRenderer;
 import prefuse.render.LabelRenderer;
+import prefuse.render.ShapeRenderer;
 import prefuse.util.ColorLib;
 import prefuse.util.FontLib;
 import prefuse.util.ui.JFastLabel;
-import prefuse.util.ui.JSearchPanel;
 import prefuse.util.ui.UILib;
 import prefuse.visual.VisualItem;
 import prefuse.visual.expression.InGroupPredicate;
 import prefuse.visual.sort.TreeDepthItemSorter;
+import edu.iu.nwb.visualization.prefuse.beta.common.Constants;
+import edu.iu.nwb.visualization.prefuse.beta.common.PrefuseBetaVisualization;
 
 
 /**
@@ -74,7 +69,12 @@ import prefuse.visual.sort.TreeDepthItemSorter;
  */
 public class RadialGraphVisualization extends Display implements PrefuseBetaVisualization {
 
-    public static final String DATA_FILE = "/socialnet.xml";
+    /**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
+
+	public static final String DATA_FILE = "/socialnet.xml";
     
     private static final String tree = "tree";
     private static final String treeNodes = "tree.nodes";
@@ -268,7 +268,7 @@ public class RadialGraphVisualization extends Display implements PrefuseBetaVisu
     public JPanel demo(Graph g, final String label) {        
         // create a new radial tree view
         final RadialGraphVisualization gview = new RadialGraphVisualization(g, label);
-        Visualization vis = gview.getVisualization();
+        //Visualization vis = gview.getVisualization();
         
         
         final JFastLabel title = new JFastLabel("                 ");

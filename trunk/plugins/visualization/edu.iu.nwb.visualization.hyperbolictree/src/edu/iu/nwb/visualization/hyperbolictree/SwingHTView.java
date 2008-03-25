@@ -26,9 +26,16 @@
 
 package edu.iu.nwb.visualization.hyperbolictree;
 
-import java.awt.*;
+import java.awt.BorderLayout;
+import java.awt.Color;
+import java.awt.Dimension;
+import java.awt.Graphics;
+import java.awt.Graphics2D;
+import java.awt.Image;
+import java.awt.RenderingHints;
 import java.awt.event.MouseEvent;
-import javax.swing.*;
+
+import javax.swing.JPanel;
 
 
 /**
@@ -44,14 +51,18 @@ public class SwingHTView
     extends JPanel implements HTView {
 
 
-    private HTModel    model  = null; // the tree model represented
+    /**
+	 * 
+	 */
+	private static final long serialVersionUID = -7527027016171424904L;
+	//private HTModel    model  = null; // the tree model represented
     private HTDraw     draw   = null; // the drawing model
     private HTAction   action = null; // action manager
-    private boolean    fastMode = false;
-    private boolean    longNameMode = false;
-    private boolean    circleMode = false;
-    private boolean    transNotCorrected = false;
-    private boolean    quadMode = true;
+    //private boolean    fastMode = false;
+    //private boolean    longNameMode = false;
+    //private boolean    circleMode = false;
+    //private boolean    transNotCorrected = false;
+    //private boolean    quadMode = true;
 
 
     private Image image = null;
@@ -69,7 +80,7 @@ public class SwingHTView
 
         setBackground(Color.white);
 
-        this.model = model; 
+        //this.model = model; 
         draw = new HTDraw(model, this);
         action = new HTAction(draw);
         startMouseListening();

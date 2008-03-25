@@ -12,16 +12,10 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 
-import javax.swing.JProgressBar;
-
-
-
 import edu.berkeley.guir.prefuse.ItemRegistry;
 import edu.berkeley.guir.prefuse.action.AbstractAction;
 import edu.berkeley.guir.prefuse.graph.Edge;
 import edu.berkeley.guir.prefuse.graph.Graph;
-import edu.iu.nwb.visualization.prefuse.alpha.smallworld.app.SmallWorldApplet;
-import edu.iu.nwb.visualization.prefuse.alpha.smallworld.app.SmallWorldFrame;
 import edu.iu.nwb.visualization.prefuse.alpha.smallworld.types.BasicGraphReader;
 import edu.iu.nwb.visualization.prefuse.alpha.smallworld.types.Cluster;
 import edu.iu.nwb.visualization.prefuse.alpha.smallworld.types.ProgressUpdate;

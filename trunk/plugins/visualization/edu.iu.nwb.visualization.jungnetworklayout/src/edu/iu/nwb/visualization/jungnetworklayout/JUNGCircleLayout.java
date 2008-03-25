@@ -6,7 +6,6 @@ import org.cishell.framework.CIShellContext;
 import org.cishell.framework.algorithm.Algorithm;
 import org.cishell.framework.algorithm.AlgorithmFactory;
 import org.cishell.framework.data.Data;
-import org.osgi.service.metatype.MetaTypeProvider;
 
 import edu.uci.ics.jung.graph.Graph;
 import edu.uci.ics.jung.visualization.contrib.CircleLayout;
@@ -15,13 +14,6 @@ import edu.uci.ics.jung.visualization.contrib.CircleLayout;
  * @author Weixia(Bonnie) Huang 
  */
 public class JUNGCircleLayout implements AlgorithmFactory {
-
-	    /**
-	     * @see org.cishell.framework.algorithm.AlgorithmFactory#createParameters(org.cishell.framework.data.Data[])
-	     */
-	    public MetaTypeProvider createParameters(Data[] dm) {
-	        return null;
-	    }
 	    
 	    /**
 	     * @see org.cishell.framework.algorithm.AlgorithmFactory#createAlgorithm(org.cishell.framework.data.Data[], java.util.Dictionary, org.cishell.framework.CIShellContext)

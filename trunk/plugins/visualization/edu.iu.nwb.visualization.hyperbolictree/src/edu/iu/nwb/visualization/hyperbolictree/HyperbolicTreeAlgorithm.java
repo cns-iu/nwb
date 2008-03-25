@@ -1,13 +1,13 @@
 package edu.iu.nwb.visualization.hyperbolictree;
 
 import java.io.File;
-import java.io.IOException;
 import java.util.Dictionary;
 
 import javax.swing.JFrame;
 
 import org.cishell.framework.CIShellContext;
 import org.cishell.framework.algorithm.Algorithm;
+import org.cishell.framework.algorithm.AlgorithmExecutionException;
 import org.cishell.framework.data.Data;
 
 
@@ -26,7 +26,7 @@ public class HyperbolicTreeAlgorithm implements Algorithm {
         this.context = context;
     }
 
-    public Data[] execute() {
+    public Data[] execute() throws AlgorithmExecutionException {
         String myregex = "[a-zA-Z]:";
         String rootParam = (String)parameters.get("rootDirectory");
         // compensate for windows users possibly entering "C:", "d:", etc... 
@@ -35,27 +35,16 @@ public class HyperbolicTreeAlgorithm implements Algorithm {
     	}
     
     	File rootFile = new File(rootParam);
-        
-        try {
-            System.out.println("Starting the hyperbolic tree from " +
-                                rootFile.getCanonicalPath());
-        } catch (IOException e) {
-            e.printStackTrace();
-            return null;
-        }
 
         if (! rootFile.exists()) {
-            System.out.println("Can't start hypertree : " + rootFile.getName() +
-                               " does not exist.");
-            return null;
+        	throw new AlgorithmExecutionException("Can't start hypertree : " + rootFile.getName() +
+                    " does not exist.");
         }
 
 
         root = new HTFileNode(rootFile);
         if (root == null) {
-            System.err.println("Error : can't start hypertree from " +
-                                rootFile.getAbsolutePath());
-            return null;
+        	throw new AlgorithmExecutionException("Problem starting hypertree with " + rootFile.getAbsolutePath());
         }
 
         hypertree = new HyperTree(root);

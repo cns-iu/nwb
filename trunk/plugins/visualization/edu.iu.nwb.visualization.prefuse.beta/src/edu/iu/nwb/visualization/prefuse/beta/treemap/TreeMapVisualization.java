@@ -18,9 +18,6 @@ import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.SwingConstants;
 
-import edu.iu.nwb.visualization.prefuse.beta.common.Constants;
-import edu.iu.nwb.visualization.prefuse.beta.common.PrefuseBetaVisualization;
-
 import prefuse.Display;
 import prefuse.Visualization;
 import prefuse.action.ActionList;
@@ -35,7 +32,6 @@ import prefuse.data.Schema;
 import prefuse.data.Tree;
 import prefuse.data.expression.Predicate;
 import prefuse.data.expression.parser.ExpressionParser;
-import prefuse.data.io.TreeMLReader;
 import prefuse.data.query.SearchQueryBinding;
 import prefuse.render.AbstractShapeRenderer;
 import prefuse.render.DefaultRendererFactory;
@@ -54,6 +50,8 @@ import prefuse.visual.VisualItem;
 import prefuse.visual.VisualTree;
 import prefuse.visual.expression.InGroupPredicate;
 import prefuse.visual.sort.TreeDepthItemSorter;
+import edu.iu.nwb.visualization.prefuse.beta.common.Constants;
+import edu.iu.nwb.visualization.prefuse.beta.common.PrefuseBetaVisualization;
 
 
 /**
@@ -65,7 +63,12 @@ import prefuse.visual.sort.TreeDepthItemSorter;
  */
 public class TreeMapVisualization extends Display implements PrefuseBetaVisualization {
 
-    public static final String TREE_CHI = "/chi-ontology.xml.gz";
+    /**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
+
+	public static final String TREE_CHI = "/chi-ontology.xml.gz";
     
     // create data description of labels, setting colors, fonts ahead of time
     private static final Schema LABEL_SCHEMA = PrefuseLib.getVisualItemSchema();

@@ -8,20 +8,13 @@ import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Graphics2D;
 import java.awt.Paint;
-import java.awt.Point;
-import java.awt.geom.Ellipse2D;
 import java.awt.geom.Rectangle2D;
 import java.util.Iterator;
-
-
 
 import edu.berkeley.guir.prefuse.Display;
 import edu.berkeley.guir.prefuse.ItemRegistry;
 import edu.berkeley.guir.prefuse.VisualItem;
 import edu.berkeley.guir.prefuse.render.Renderer;
-import edu.iu.nwb.visualization.prefuse.alpha.smallworld.layout.DOALayout;
-import edu.iu.nwb.visualization.prefuse.alpha.smallworld.types.Cluster;
-import edu.iu.nwb.visualization.prefuse.alpha.smallworld.types.VoroNode;
 
 
 /**
@@ -34,7 +27,11 @@ import edu.iu.nwb.visualization.prefuse.alpha.smallworld.types.VoroNode;
  */
 public class MultipassDisplay extends Display {
 
-    protected int FONT_SIZE = 20;
+    /**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
+	protected int FONT_SIZE = 20;
     protected Paint font_color = new Color(128,32,32);
     protected int m_passes = 5;
     

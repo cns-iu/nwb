@@ -1,26 +1,17 @@
 package edu.iu.nwb.visualization.prefuse.beta.common.action;
 
 import java.awt.BorderLayout;
-import java.awt.Canvas;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
-import java.awt.Font;
 import java.awt.GradientPaint;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
-import java.awt.LayoutManager;
-import java.awt.image.BufferedImage;
-import java.util.Iterator;
-import java.util.Map;
 
 import javax.swing.Box;
-import javax.swing.BoxLayout;
 import javax.swing.JComponent;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
-
-import edu.iu.nwb.visualization.prefuse.beta.common.Constants;
 
 import prefuse.action.assignment.DataColorAction;
 import prefuse.data.DataTypeException;
@@ -28,7 +19,7 @@ import prefuse.data.tuple.TupleSet;
 import prefuse.util.ColorLib;
 import prefuse.util.ColorMap;
 import prefuse.util.DataLib;
-import prefuse.util.FontLib;
+import edu.iu.nwb.visualization.prefuse.beta.common.Constants;
 
 public class LegendDataColorAction extends DataColorAction implements LegendAction {
 
@@ -75,6 +66,11 @@ public class LegendDataColorAction extends DataColorAction implements LegendActi
 				final ColorMap colorMap = new ColorMap(palette, 0, 1);
 
 				canvas = new JPanel() {
+					/**
+					 * 
+					 */
+					private static final long serialVersionUID = 1L;
+
 					public void paint(Graphics g) {
 						Graphics2D graphics = (Graphics2D) g;
 
@@ -90,6 +86,11 @@ public class LegendDataColorAction extends DataColorAction implements LegendActi
 				};
 			} else {
 				canvas = new JPanel() {
+					/**
+					 * 
+					 */
+					private static final long serialVersionUID = 1L;
+
 					public void paint(Graphics g) {
 						Graphics2D graphics = (Graphics2D) g;
 						Color startColor = ColorLib.getColor(palette[0]);
@@ -155,6 +156,11 @@ public class LegendDataColorAction extends DataColorAction implements LegendActi
 				size += 1;
 				final int tempIndex = valueIndex;
 				JPanel canvas = new JPanel() {
+					/**
+					 * 
+					 */
+					private static final long serialVersionUID = 1L;
+
 					public void paint(Graphics g) {
 						Graphics2D graphics = (Graphics2D) g;
 						Color color = ColorLib.getColor(colorMap.getColor(tempIndex));

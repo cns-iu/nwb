@@ -4,23 +4,16 @@
  */
 package edu.iu.nwb.visualization.prefuse.alpha.smallworld.render;
 
-import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.Paint;
-import java.awt.Point;
 import java.awt.Shape;
 import java.awt.Stroke;
-import java.awt.geom.Ellipse2D;
 import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
-
-
 
 import edu.berkeley.guir.prefuse.ItemRegistry;
 import edu.berkeley.guir.prefuse.VisualItem;
 import edu.berkeley.guir.prefuse.render.Renderer;
-import edu.iu.nwb.visualization.prefuse.alpha.smallworld.layout.DOALayout;
-import edu.iu.nwb.visualization.prefuse.alpha.smallworld.types.Cluster;
 import edu.iu.nwb.visualization.prefuse.alpha.smallworld.types.VoroNode;
 
 
@@ -38,14 +31,14 @@ public class VoroNetRenderer implements Renderer {
     public ItemRegistry m_registry = null;
     private Stroke m_node_stroke = null; 
     private Stroke m_outline_stroke = null; 
-    private Ellipse2D m_lens = null;
+    //private Ellipse2D m_lens = null;
     
     public VoroNetRenderer( ) {
         
         // setup default strokes
-        m_lens = new Ellipse2D.Double( 0,0, 
-                (DOALayout.DOA_RADIUS+DOALayout.ZERO_RADIUS)*2, 
-                (DOALayout.DOA_RADIUS+DOALayout.ZERO_RADIUS)*2);
+        //m_lens = new Ellipse2D.Double( 0,0, 
+        //        (DOALayout.DOA_RADIUS+DOALayout.ZERO_RADIUS)*2, 
+        //        (DOALayout.DOA_RADIUS+DOALayout.ZERO_RADIUS)*2);
 
         
     }

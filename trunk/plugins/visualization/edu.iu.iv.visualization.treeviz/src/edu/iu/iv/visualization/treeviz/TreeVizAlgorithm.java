@@ -3,11 +3,12 @@ package edu.iu.iv.visualization.treeviz;
 import java.util.Dictionary;
 
 import javax.swing.tree.TreeModel;
-import edu.berkeley.guir.prefuse.graph.Tree;
 
 import org.cishell.framework.CIShellContext;
 import org.cishell.framework.algorithm.Algorithm;
 import org.cishell.framework.data.Data;
+
+import edu.berkeley.guir.prefuse.graph.Tree;
 
 public class TreeVizAlgorithm implements Algorithm {
     Data[] data;
@@ -21,8 +22,6 @@ public class TreeVizAlgorithm implements Algorithm {
     }
 
     public Data[] execute() {
-    	if (data[0] == null) return null;
-        
         TreeConverter converter = new TreeConverter() ;
         TreeModel treeModel = converter.convert((Tree)data[0].getData()) ;        
         TreeVizGUI gui = new TreeVizGUI(treeModel,"Tree Visualization");

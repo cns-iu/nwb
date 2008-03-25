@@ -1,41 +1,20 @@
 package edu.iu.nwb.visualization.prefuse.beta.graphview;
 
-import java.awt.BorderLayout;
 import java.awt.Color;
-import java.awt.Component;
 import java.awt.Dimension;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
-import java.awt.geom.Rectangle2D;
 import java.util.Dictionary;
 
-import javax.swing.AbstractAction;
 import javax.swing.BorderFactory;
 import javax.swing.Box;
 import javax.swing.BoxLayout;
-import javax.swing.JButton;
-import javax.swing.JDialog;
 import javax.swing.JFrame;
-import javax.swing.JLabel;
-import javax.swing.JList;
-import javax.swing.JMenu;
-import javax.swing.JMenuBar;
 import javax.swing.JPanel;
-import javax.swing.JScrollPane;
 import javax.swing.JSplitPane;
-import javax.swing.KeyStroke;
-import javax.swing.ListSelectionModel;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
-import javax.swing.event.ListSelectionEvent;
-import javax.swing.event.ListSelectionListener;
-
-import edu.iu.nwb.visualization.prefuse.beta.common.Constants;
-import edu.iu.nwb.visualization.prefuse.beta.common.PrefuseBetaVisualization;
-import edu.iu.nwb.visualization.prefuse.beta.radialgraph.RadialGraphVisualization;
 
 import prefuse.Display;
 import prefuse.Visualization;
@@ -45,7 +24,6 @@ import prefuse.action.assignment.ColorAction;
 import prefuse.action.assignment.SizeAction;
 import prefuse.action.filter.GraphDistanceFilter;
 import prefuse.action.layout.graph.ForceDirectedLayout;
-//import prefuse.action.layout.graph.ForceDirectedLayout;
 import prefuse.activity.Activity;
 import prefuse.controls.DragControl;
 import prefuse.controls.FocusControl;
@@ -55,32 +33,31 @@ import prefuse.controls.WheelZoomControl;
 import prefuse.controls.ZoomControl;
 import prefuse.controls.ZoomToFitControl;
 import prefuse.data.Graph;
-import prefuse.data.Table;
 import prefuse.data.Tuple;
 import prefuse.data.event.TupleSetListener;
-import prefuse.data.io.GraphMLReader;
 import prefuse.data.tuple.TupleSet;
 import prefuse.render.DefaultRendererFactory;
 import prefuse.render.LabelRenderer;
 import prefuse.util.ColorLib;
-import prefuse.util.GraphLib;
-import prefuse.util.GraphicsLib;
-import prefuse.util.display.DisplayLib;
-import prefuse.util.display.ItemBoundsListener;
 import prefuse.util.force.ForceSimulator;
-import prefuse.util.io.IOLib;
 import prefuse.util.ui.JForcePanel;
 import prefuse.util.ui.JValueSlider;
 import prefuse.util.ui.UILib;
 import prefuse.visual.VisualGraph;
 import prefuse.visual.VisualItem;
+import edu.iu.nwb.visualization.prefuse.beta.common.Constants;
+import edu.iu.nwb.visualization.prefuse.beta.common.PrefuseBetaVisualization;
 
 /**
  * @author <a href="http://jheer.org">jeffrey heer</a>
  */
 public class GraphViewVisualization extends JPanel implements PrefuseBetaVisualization {
 
-    private static final String graph = "graph";
+    /**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
+	private static final String graph = "graph";
     private static final String nodes = "graph.nodes";
     private static final String edges = "graph.edges";
 

@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: DrL Visualizations
 Bundle-SymbolicName: edu.iu.nwb.visualization.drl
-Bundle-Version: 0.9.0
+Bundle-Version: 1.0.0
 Bundle-ClassPath: .
 Import-Package: cern.colt.map,
  edu.iu.nwb.util.nwbfile,

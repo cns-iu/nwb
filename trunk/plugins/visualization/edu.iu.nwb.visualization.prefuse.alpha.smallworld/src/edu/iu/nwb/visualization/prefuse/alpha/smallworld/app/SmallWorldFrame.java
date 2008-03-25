@@ -14,17 +14,9 @@ import java.awt.event.ComponentListener;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 import java.awt.geom.Point2D;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.io.InputStream;
-import java.net.URL;
 
 import javax.swing.ButtonGroup;
 import javax.swing.JCheckBox;
-import javax.swing.JComboBox;
-import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.JProgressBar;
@@ -34,13 +26,11 @@ import javax.swing.SwingUtilities;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
-
 import edu.berkeley.guir.prefuse.Display;
 import edu.berkeley.guir.prefuse.ItemRegistry;
 import edu.berkeley.guir.prefuse.action.RepaintAction;
 import edu.berkeley.guir.prefuse.activity.ActionList;
 import edu.berkeley.guir.prefuse.graph.Graph;
-import edu.berkeley.guir.prefuse.graph.io.GraphReader;
 import edu.berkeley.guir.prefuse.render.DefaultRendererFactory;
 import edu.iu.nwb.visualization.prefuse.alpha.smallworld.action.ClusterBounds;
 import edu.iu.nwb.visualization.prefuse.alpha.smallworld.action.DendroLayout;
@@ -49,14 +39,10 @@ import edu.iu.nwb.visualization.prefuse.alpha.smallworld.action.LinLogAction;
 import edu.iu.nwb.visualization.prefuse.alpha.smallworld.action.SWClusterAction;
 import edu.iu.nwb.visualization.prefuse.alpha.smallworld.control.AnchorAlwaysUpdateControl;
 import edu.iu.nwb.visualization.prefuse.alpha.smallworld.layout.DOALayout;
-import edu.iu.nwb.visualization.prefuse.alpha.smallworld.layout.VoroNetLayout;
 import edu.iu.nwb.visualization.prefuse.alpha.smallworld.render.MultipassDisplay;
 import edu.iu.nwb.visualization.prefuse.alpha.smallworld.render.TubeRenderer;
 import edu.iu.nwb.visualization.prefuse.alpha.smallworld.render.VoroHackRenderer;
-import edu.iu.nwb.visualization.prefuse.alpha.smallworld.render.VoroNetRenderer;
-import edu.iu.nwb.visualization.prefuse.alpha.smallworld.types.BasicGraphReader;
 import edu.iu.nwb.visualization.prefuse.alpha.smallworld.types.DefaultVoroNode;
-import edu.iu.nwb.visualization.prefuse.alpha.smallworld.types.GMLGraphReader;
 import edu.iu.nwb.visualization.prefuse.alpha.smallworld.types.ProgressUpdate;
 import edu.iu.nwb.visualization.prefuse.alpha.smallworld.types.SmallWorldComparator;
 
@@ -68,6 +54,10 @@ import edu.iu.nwb.visualization.prefuse.alpha.smallworld.types.SmallWorldCompara
  */
 public class SmallWorldFrame extends JFrame implements ProgressUpdate, ComponentListener, ChangeListener, ActionListener, ItemListener {
 
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 114441427888390574L;
 	public static final String GRAPH_FRIENDSTER = "/friendster.xml";
 	public static final String GRAPH_TERROR     = "/terror.xml";
 	public static final int PASSES = 10;	
@@ -75,7 +65,7 @@ public class SmallWorldFrame extends JFrame implements ProgressUpdate, Component
     private KillYourParents m_patricide = null;
     private LinLogAction m_linlog = null;
     private SWClusterAction m_clust = null;
-    private JComboBox m_graphs = null;
+    //private JComboBox m_graphs = null;
     private JCheckBox m_quality = null;
     private TubeRenderer m_tube = null;
     private LoadThread m_lt = null;
@@ -89,7 +79,7 @@ public class SmallWorldFrame extends JFrame implements ProgressUpdate, Component
     private ActionList m_implicit;
     private ActionList m_refit;
     private ActionList m_layout;
-    private ActionList preproc;
+    //private ActionList preproc;
     
 
     public void startSetup( ) {
@@ -277,14 +267,14 @@ public class SmallWorldFrame extends JFrame implements ProgressUpdate, Component
         if( e.getSource( ) == slider_inner ) {
             
             if( m_registry != null ) {
-                m_doa_layout.ZERO_RADIUS = slider_inner.getValue();
+                DOALayout.ZERO_RADIUS = slider_inner.getValue();
                 m_layout.runNow();
             }
         }
         if( e.getSource( ) == slider_outer ) {
             
             if( m_registry != null ) {
-                m_doa_layout.DOA_RADIUS = slider_outer.getValue();
+                DOALayout.DOA_RADIUS = slider_outer.getValue();
                 m_layout.runNow();
             }
         }

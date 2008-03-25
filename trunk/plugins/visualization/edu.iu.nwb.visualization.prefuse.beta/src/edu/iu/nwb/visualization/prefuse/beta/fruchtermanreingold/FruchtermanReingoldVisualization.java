@@ -12,9 +12,7 @@ import prefuse.Visualization;
 import prefuse.action.Action;
 import prefuse.action.ActionList;
 import prefuse.action.RepaintAction;
-import prefuse.action.layout.Layout;
 import prefuse.action.layout.graph.FruchtermanReingoldLayout;
-import prefuse.activity.Activity;
 import edu.iu.nwb.visualization.prefuse.beta.common.AbstractVisualization;
 
 

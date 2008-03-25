@@ -2,7 +2,6 @@ package edu.iu.nwb.visualization.prefuse.beta.radialgraph;
 
 import java.awt.BorderLayout;
 import java.awt.Dimension;
-import java.awt.Font;
 import java.awt.event.MouseEvent;
 import java.util.Dictionary;
 
@@ -20,7 +19,6 @@ import prefuse.action.Action;
 import prefuse.action.ActionList;
 import prefuse.action.GroupAction;
 import prefuse.action.RepaintAction;
-import prefuse.action.animate.ColorAnimator;
 import prefuse.action.animate.PolarLocationAnimator;
 import prefuse.action.animate.QualityControlAnimator;
 import prefuse.action.animate.VisibilityAnimator;
@@ -35,7 +33,6 @@ import prefuse.data.Tuple;
 import prefuse.data.event.TupleSetListener;
 import prefuse.data.tuple.DefaultTupleSet;
 import prefuse.data.tuple.TupleSet;
-import prefuse.util.FontLib;
 import prefuse.util.ui.JFastLabel;
 import prefuse.visual.VisualItem;
 import edu.iu.nwb.visualization.prefuse.beta.common.AbstractVisualization;

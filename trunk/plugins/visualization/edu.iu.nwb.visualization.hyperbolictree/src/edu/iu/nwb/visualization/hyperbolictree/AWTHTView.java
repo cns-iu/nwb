@@ -26,15 +26,19 @@
 
 package edu.iu.nwb.visualization.hyperbolictree;
 
-import java.awt.*;
+import java.awt.BorderLayout;
+import java.awt.Color;
+import java.awt.Dimension;
+import java.awt.FontMetrics;
+import java.awt.Graphics;
+import java.awt.Graphics2D;
+import java.awt.Image;
+import java.awt.Panel;
+import java.awt.RenderingHints;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseMotionListener;
-
 import java.util.Timer;
 import java.util.TimerTask;
-//PDA
-import javax.swing.*;
-//PDA
 
 
 /**
@@ -50,14 +54,18 @@ public class AWTHTView
     extends Panel implements HTView {
 
 
-    private HTModel    model  = null; // the tree model represented
+    /**
+	 * 
+	 */
+	private static final long serialVersionUID = -8913546160205283088L;
+	//private HTModel    model  = null; // the tree model represented
     private HTDraw     draw   = null; // the drawing model
     private HTAction   action = null; // action manager
-    private boolean    fastMode = false;
-    private boolean    longNameMode = false;
-    private boolean    circleMode = false;
-    private boolean    transNotCorrected = false;
-    private boolean    quadMode = true;
+    //private boolean    fastMode = false;
+    //private boolean    longNameMode = false;
+    //private boolean    circleMode = false;
+    //private boolean    transNotCorrected = false;
+    //private boolean    quadMode = true;
 
 
     private Image image = null;
@@ -87,7 +95,7 @@ public class AWTHTView
         setSize(new Dimension(250, 250));
         setBackground(Color.white);
 
-        this.model = model; 
+        //this.model = model; 
         draw = new HTDraw(model, this);
         action = new HTAction(draw);
         startMouseListening();
@@ -211,7 +219,7 @@ public class AWTHTView
 	    && ((System.currentTimeMillis() - lastMoved) > 500)) {
 
 	    char[] chars = tooltipText.toCharArray();
-	    FontMetrics fontMetrics = fontMetrics = g.getFontMetrics();
+	    FontMetrics fontMetrics = g.getFontMetrics();
 	    int width = fontMetrics.charsWidth(chars, 0, chars.length);
 	    int height = fontMetrics.getHeight();
 

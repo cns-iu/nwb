@@ -7,8 +7,9 @@
 
 package edu.iu.nwb.visualization.hyperbolictree;
 
-import java.awt.*;
-import java.awt.event.*;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseMotionListener;
 
 
 /**

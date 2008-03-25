@@ -1,8 +1,6 @@
 package edu.iu.nwb.visualization.prefuse.beta.common.action;
 
-import java.awt.Canvas;
 import java.awt.Color;
-import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
@@ -14,11 +12,10 @@ import javax.swing.JComponent;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 
-import edu.iu.nwb.visualization.prefuse.beta.common.Constants;
-
 import prefuse.action.assignment.DataShapeAction;
 import prefuse.render.ShapeRenderer;
 import prefuse.util.DataLib;
+import edu.iu.nwb.visualization.prefuse.beta.common.Constants;
 
 public class LegendDataShapeAction extends DataShapeAction implements LegendAction {
 	
@@ -49,6 +46,11 @@ public class LegendDataShapeAction extends DataShapeAction implements LegendActi
 			size += 1;
 			final int tempIndex = valueIndex;
 			JPanel canvas = new JPanel() {
+				/**
+				 * 
+				 */
+				private static final long serialVersionUID = 1L;
+
 				public void paint(Graphics g) {
 					Graphics2D graphics = (Graphics2D) g;
 					Shape shape = getSpecifiedShape(m_palette[tempIndex % m_palette.length], 1, 1, this.getWidth() - 3);

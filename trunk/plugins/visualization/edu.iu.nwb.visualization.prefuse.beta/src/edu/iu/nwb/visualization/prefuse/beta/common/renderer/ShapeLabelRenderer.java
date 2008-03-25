@@ -9,13 +9,11 @@ import java.awt.geom.Point2D;
 import java.util.HashMap;
 import java.util.Map;
 
-import edu.iu.nwb.visualization.prefuse.beta.common.Constants;
-
-import prefuse.action.assignment.FontAction;
 import prefuse.render.LabelRenderer;
 import prefuse.render.Renderer;
 import prefuse.render.ShapeRenderer;
 import prefuse.visual.VisualItem;
+import edu.iu.nwb.visualization.prefuse.beta.common.Constants;
 
 public class ShapeLabelRenderer implements Renderer {
 		
