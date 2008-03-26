@@ -11,13 +11,13 @@ import java.io.InputStream;
 import java.util.Dictionary;
 import java.util.Iterator;
 
-import javax.xml.stream.events.Characters;
-
 import org.cishell.framework.CIShellContext;
 import org.cishell.framework.algorithm.Algorithm;
+import org.cishell.framework.algorithm.AlgorithmExecutionException;
 import org.cishell.framework.data.BasicData;
 import org.cishell.framework.data.Data;
 import org.cishell.framework.data.DataProperty;
+import org.cishell.service.conversion.ConversionException;
 import org.cishell.service.conversion.DataConversionService;
 import org.osgi.service.log.LogService;
 
@@ -46,15 +46,15 @@ public class NSFReaderAlgorithm implements Algorithm {
         this.log = (LogService) context.getService(LogService.class.getName());
     }
 
-    public Data[] execute() {
+    public Data[] execute() throws AlgorithmExecutionException {
 		  Data inputTableData = convertInputData(data[0]);
 		  Table table = copyTable((Table) inputTableData.getData());
 		  //normalize co-pis
-		 table = normalizeCoPIs(table); if (table == null) return null;
+		 table = normalizeCoPIs(table);
 		  //normalize primary pi
-		 table = normalizePrimaryPIs(table); if (table == null) return null;
+		 table = normalizePrimaryPIs(table);
 		  //make co-pi/primary pi joined column
-		  table = addPIColumn(table); if (table == null) return null;
+		  table = addPIColumn(table);
 		  //format as data
 		  Data[] outputTableData = formatAsData(data[0],table);
 		  return outputTableData;
@@ -119,7 +119,7 @@ public class NSFReaderAlgorithm implements Algorithm {
 		return normalizedNSFTable;
 	}
 	
-	private Data[] formatAsData(Data originalData, Table normalizedNSFTable) {
+	private Data[] formatAsData(Data originalData, Table normalizedNSFTable) throws AlgorithmExecutionException {
 		try{
 			Data[] dm = new Data[] {new BasicData(normalizedNSFTable, "prefuse.data.Table")};
 			dm[0].getMetadata().put(DataProperty.LABEL, "Normalized NSF table");
@@ -127,9 +127,7 @@ public class NSFReaderAlgorithm implements Algorithm {
 			dm[0].getMetadata().put(DataProperty.PARENT, originalData);
 			return dm;
 		}catch (SecurityException exception){
-			log.log(LogService.LOG_ERROR, "SecurityException", exception);
-			exception.printStackTrace();
-			return null;
+			throw new AlgorithmExecutionException(exception);
 		}
 	}
 	
@@ -185,7 +183,7 @@ public class NSFReaderAlgorithm implements Algorithm {
 				" We will not normalize this name, and will instead leave it as it is.");
 	}
 	
-	private Data convertInputData(Data inputData) {
+	private Data convertInputData(Data inputData) throws AlgorithmExecutionException {
 		 DataConversionService converter = (DataConversionService)
          context.getService(DataConversionService.class.getName());
 		//this is a bit like a cast. We know the nsf format is also a csv, so we change the format to csv so
@@ -193,8 +191,12 @@ public class NSFReaderAlgorithm implements Algorithm {
 		 
 		//printTable((Table) inputData.getData());
 		Data formatChangedData = new BasicData(inputData.getMetadata(), cleanNSFCSVFormat((File) inputData.getData()), "file:text/csv");
+		try {
 		Data convertedData = converter.convert(formatChangedData, "prefuse.data.Table");
 		return convertedData;
+		} catch (ConversionException e1) {
+			throw new AlgorithmExecutionException("Could not convert format to prefuse.data.Table", e1);
+		}
 	}
 	
 	private void printTable(Table t) {
@@ -283,10 +285,10 @@ public class NSFReaderAlgorithm implements Algorithm {
 	    	
 	    	return outFile;
 	    	} catch (FileNotFoundException e1) {
-	    		this.log.log(LogService.LOG_ERROR, "NSFReader could not find a file at " +  escapedQuoteFile.getAbsolutePath(), e1);
+	    		this.log.log(LogService.LOG_WARNING, "NSFReader could not find a file at " +  escapedQuoteFile.getAbsolutePath());
 	    		return escapedQuoteFile;
 	    	}  catch (IOException e2) {
-	    		this.log.log(LogService.LOG_ERROR, "Unable to remove slash escaped quotes from nsf csv file due to IO Exception", e2);
+	    		this.log.log(LogService.LOG_WARNING, "Unable to remove slash escaped quotes from nsf csv file due to IO Exception");
 	    		return escapedQuoteFile;
 	    	} finally {
 	    		try {
