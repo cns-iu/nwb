@@ -5,6 +5,7 @@ import java.util.Dictionary;
 
 import org.cishell.framework.CIShellContext;
 import org.cishell.framework.algorithm.Algorithm;
+import org.cishell.framework.algorithm.AlgorithmExecutionException;
 import org.cishell.framework.data.BasicData;
 import org.cishell.framework.data.Data;
 import org.cishell.framework.data.DataProperty;
@@ -38,7 +39,7 @@ public class TarlAlgorithm implements Algorithm {
         this.context = context;
     }
 
-    public Data[] execute() {
+    public Data[] execute() throws AlgorithmExecutionException {
         inputScriptFile = new File((String)parameters.get("inputScriptFile"));
 		agingFunctionFile = new File((String)parameters.get("agingFunctionFile"));
 
@@ -50,7 +51,7 @@ public class TarlAlgorithm implements Algorithm {
 			initialize(inputScriptFile);
 			tarlHelper.runModel();
 		} catch (TarlException e) {
-			e.printStackTrace();
+			throw new AlgorithmExecutionException(e);
 		}
 
 		AuthorManager am = tarlHelper.getTarlExecuter().getAuthorManager();
