@@ -4,6 +4,7 @@ import java.util.Dictionary;
 
 import org.cishell.framework.CIShellContext;
 import org.cishell.framework.algorithm.Algorithm;
+import org.cishell.framework.algorithm.AlgorithmExecutionException;
 import org.cishell.framework.algorithm.AlgorithmFactory;
 import org.cishell.framework.data.Data;
 import org.osgi.service.log.LogService;
@@ -42,12 +43,12 @@ public class ISILoadAndCleanAlgorithm implements Algorithm {
         
     }
 
-    public Data[] execute() {
+    public Data[] execute() throws AlgorithmExecutionException {
     	
     	Data[] loadedISIData = isiLoader.getISIDataFromUser();
     	
     	if (loadedISIData == null || loadedISIData.length == 0) {
-    		return new Data[0];
+    		throw new AlgorithmExecutionException("input data was either null or empty");
     	}
     
     	Data[] validatedISIData = executeAlgorithm(isiValidator, loadedISIData);
@@ -61,7 +62,7 @@ public class ISILoadAndCleanAlgorithm implements Algorithm {
     	return origAndDupRemovedISIData;
     }
     
-    private Data[] executeAlgorithm(AlgorithmFactory algFactory, Data[] data) {
+    private Data[] executeAlgorithm(AlgorithmFactory algFactory, Data[] data) throws AlgorithmExecutionException{
     	Algorithm alg = algFactory.createAlgorithm(data, parameters, context);
     	Data[] result = alg.execute();
     	return result;

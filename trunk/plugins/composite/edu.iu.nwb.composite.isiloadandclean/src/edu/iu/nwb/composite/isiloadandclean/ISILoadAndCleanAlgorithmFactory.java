@@ -29,10 +29,7 @@ public class ISILoadAndCleanAlgorithmFactory implements AlgorithmFactory {
     	
         bContext = ctxt.getBundleContext();
     }
-    protected void deactivate(ComponentContext ctxt) {
-        provider = null;
-    }
-
+    
     public Algorithm createAlgorithm(Data[] data, Dictionary parameters, CIShellContext context) {
     	String filter = "";
         try {
@@ -51,9 +48,6 @@ public class ISILoadAndCleanAlgorithmFactory implements AlgorithmFactory {
 		
         return new ISILoadAndCleanAlgorithm(data, parameters, context,
         		isiValidator, isiToPrefuseConverter, isiDupRemover);
-    }
-    public MetaTypeProvider createParameters(Data[] data) {
-        return null;
     }
     
     private AlgorithmFactory getAlgorithmFactory (String filter) 

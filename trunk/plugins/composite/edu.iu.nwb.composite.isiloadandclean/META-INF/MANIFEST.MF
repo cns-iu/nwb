@@ -4,10 +4,10 @@ Bundle-Name: ISI Load and Clean
 Bundle-SymbolicName: edu.iu.nwb.composite.isiloadandclean
 Bundle-Version: 0.0.1
 Bundle-ClassPath: .
-Import-Package: org.cishell.framework,
- org.cishell.framework.algorithm,
- org.cishell.framework.data,
- org.cishell.service.conversion,
+Import-Package: org.cishell.framework;version="1.0.0",
+ org.cishell.framework.algorithm;version="1.0.0",
+ org.cishell.framework.data;version="1.0.0",
+ org.cishell.service.conversion;version="1.0.0",
  org.eclipse.swt,
  org.eclipse.swt.widgets,
  org.eclipse.ui,
