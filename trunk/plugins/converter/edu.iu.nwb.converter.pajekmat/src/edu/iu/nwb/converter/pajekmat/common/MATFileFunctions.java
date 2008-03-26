@@ -95,13 +95,12 @@ public class MATFileFunctions {
 	}
 	
 	protected static int asAnInteger(String input) throws NumberFormatException{
-		int i = new Integer(input).intValue();
-		return i;
+		return new Integer(input).intValue();
 	}
 
 	protected static boolean isAnInteger(String input, String attr){
 		try{
-		int i = asAnInteger(input);        		
+		asAnInteger(input);        		
 		return true;
 		}catch(NumberFormatException nfe){
 			return false;

@@ -23,6 +23,7 @@ import java.util.Map;
 
 import org.cishell.framework.CIShellContext;
 import org.cishell.framework.algorithm.Algorithm;
+import org.cishell.framework.algorithm.AlgorithmExecutionException;
 import org.cishell.framework.data.BasicData;
 import org.cishell.framework.data.Data;
 import org.osgi.service.log.LogService;
@@ -63,47 +64,38 @@ public class NWBToPajeknet implements Algorithm {
 	 * Executes the conversion
 	 * 
 	 * @return A single java file object
+	 * @throws AlgorithmExecutionException 
 	 */
-	public Data[] execute() {
+	public Data[] execute() throws AlgorithmExecutionException {
 		File inData, outData;
 		Data [] dm = null;
 		ValidateNWBFile validator;
 
 		Object inFile = data[0].getData();
-		String format = data[0].getFormat();
-		if (inFile instanceof File && 
-				format.equalsIgnoreCase(NWBFileProperty.NWB_MIME_TYPE)){
 
-			inData = (File)inFile;
-			validator = new ValidateNWBFile();
-			try {
-				validator.validateNWBFormat(inData);
-				if(validator.getValidationResult()){
-					outData = convertNWBToNet(inData,validator);
-					if(outData != null){
-						dm = new Data[] {new BasicData(outData, NETFileProperty.NET_MIME_TYPE)};
-						return dm;
-					}else {
-						logger.log(LogService.LOG_ERROR, "Problem executing transformation from .nwb to Pajek .net Output file was not created.");
-						return null;
-					}
-				}else{
-					logger.log(LogService.LOG_ERROR, "Problem executing transformation from .nwb to Pajek .net" + validator.getErrorMessages());
-					return null;
+		inData = (File)inFile;
+		validator = new ValidateNWBFile();
+		try {
+			validator.validateNWBFormat(inData);
+			if(validator.getValidationResult()){
+				outData = convertNWBToNet(inData,validator);
+				if(outData != null){
+					dm = new Data[] {new BasicData(outData, NETFileProperty.NET_MIME_TYPE)};
+					return dm;
+				}else {
+					throw new AlgorithmExecutionException("Problem executing transformation from .nwb to Pajek .net Output file was not created.");
 				}
-			}
-			catch (FileNotFoundException fnf){
-				logger.log(LogService.LOG_ERROR, "The specified .nwb file could not be found.", fnf);
-			}
-			catch (IOException ioe){
-				logger.log(LogService.LOG_ERROR, "IO Errors while converting from .nwb to Pajek .net.", ioe);
+			}else{
+				throw new AlgorithmExecutionException("Problem executing transformation from .nwb to Pajek .net" + validator.getErrorMessages());
 			}
 		}
-		else
-			logger.log(LogService.LOG_ERROR, "Unable to convert from .nwb to Pajek .net because input data is not a file");
-		return null;
+		catch (FileNotFoundException fnf){
+			throw new AlgorithmExecutionException("The specified .nwb file could not be found.", fnf);
+		}
+		catch (IOException ioe){
+			throw new AlgorithmExecutionException("IO Errors while converting from .nwb to Pajek .net.", ioe);
+		}
 	}
-
 
 	/**
 	 * Creates a temporary file for the NWB file
@@ -161,7 +153,7 @@ public class NWBToPajeknet implements Algorithm {
 
 		while (line != null){
 			line = line.trim();
-			
+
 			if (line.length()==0 || line.startsWith(NWBFileProperty.PREFIX_COMMENTS)){
 				line = reader.readLine();
 				continue;
@@ -173,7 +165,7 @@ public class NWBToPajeknet implements Algorithm {
 			//  *nodes   or  *nodes 1000
 			if(line.startsWith(NWBFileProperty.HEADER_NODE)) 
 			{
-			//	System.out.println(line);
+				//	System.out.println(line);
 				inNodesSection = true;
 				inDirectededgesSection = false;
 				inUndirectededgesSection = false;
@@ -253,7 +245,7 @@ public class NWBToPajeknet implements Algorithm {
 	private void writeHeader(String s, PrintWriter out){
 		out.flush();
 		String st = NWBFileProperty.PRESERVED_STAR+s;
-		
+
 		out.print(st+"\r\n");
 
 	}
@@ -261,7 +253,7 @@ public class NWBToPajeknet implements Algorithm {
 	private void writeNodes(String s, PrintWriter out, ValidateNWBFile validator, List nodeAttrList, int mapper){
 		out.flush();
 		String[] columns = NETFileFunctions.processTokens(s);
-		
+
 		int i = 0;
 		for(Iterator ii = nodeAttrList.iterator(); ii.hasNext();){
 			NWBAttribute na = (NWBAttribute) ii.next();
@@ -293,9 +285,9 @@ public class NWBToPajeknet implements Algorithm {
 				if(!value.equalsIgnoreCase("")){
 					//	System.out.print(na.getAttrName() + " " + value + " ");
 					String ss = na.getAttrName();
-					
+
 					if(ss.matches("[bil]?c1")){
-						
+
 						ss = ss.replace("1", "");
 						ss += " " + value + " ";
 						for(int j = 1; j < 3; j++){
@@ -309,7 +301,7 @@ public class NWBToPajeknet implements Algorithm {
 				}
 			}
 			else if(na.getDataType().equalsIgnoreCase("string")){
-			
+
 
 				if(!value.equalsIgnoreCase("")){
 					if(na.getAttrName().startsWith("unknown")){
@@ -329,7 +321,7 @@ public class NWBToPajeknet implements Algorithm {
 			i++;
 
 		}
-		
+
 		out.print("\r\n");
 
 	}
@@ -337,7 +329,7 @@ public class NWBToPajeknet implements Algorithm {
 	private void writeEdges(String s, PrintWriter out, ValidateNWBFile validator, List edgeAttrList) throws Exception{
 		//System.out.println(s);
 		out.flush();
-		
+
 		int i = 0;
 		String[] columns = NETFileFunctions.processTokens(s);
 		/*if (inDirectededgesSection)
@@ -380,9 +372,9 @@ public class NWBToPajeknet implements Algorithm {
 				if(!value.equalsIgnoreCase("")){
 					//	System.out.print(na.getAttrName() + " " + value + " ");
 					String ss = na.getAttrName();
-					
+
 					if(ss.matches("[bil]?c1")){
-						
+
 						ss = ss.replace("1", "");
 						ss += " " + value + " ";
 						for(int j = 1; j < 3; j++){
@@ -396,7 +388,7 @@ public class NWBToPajeknet implements Algorithm {
 				}
 			}
 			else if(na.getDataType().equalsIgnoreCase("string")){
-				
+
 
 				if(!value.equalsIgnoreCase("")){
 					if(na.getAttrName().startsWith("unknown")){
@@ -414,7 +406,7 @@ public class NWBToPajeknet implements Algorithm {
 			else;
 			i++;
 		}
-	
+
 		out.print("\r\n");
 	}
 }

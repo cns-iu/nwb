@@ -10,13 +10,12 @@ import java.util.Dictionary;
 
 import org.cishell.framework.CIShellContext;
 import org.cishell.framework.algorithm.Algorithm;
+import org.cishell.framework.algorithm.AlgorithmExecutionException;
 import org.cishell.framework.algorithm.AlgorithmFactory;
 import org.cishell.framework.data.BasicData;
 import org.cishell.framework.data.Data;
 import org.cishell.framework.data.DataProperty;
-import org.osgi.service.component.ComponentContext;
 import org.osgi.service.log.LogService;
-import org.osgi.service.metatype.MetaTypeProvider;
 
 import edu.iu.nwb.converter.pajekmat.common.MATFileProperty;
 import edu.iu.nwb.converter.pajekmat.common.ValidateMATFile;
@@ -27,24 +26,12 @@ import edu.iu.nwb.converter.pajekmat.common.ValidateMATFile;
  */
 public class MATValidation implements AlgorithmFactory {
 
-	 protected void activate(ComponentContext ctxt) {}
-	 protected void deactivate(ComponentContext ctxt) { }
-	/* (non-Javadoc)
-	 * @see org.cishell.framework.algorithm.AlgorithmFactory#createAlgorithm(org.cishell.framework.data.Data[], java.util.Dictionary, org.cishell.framework.CIShellContext)
-	 */
 	public Algorithm createAlgorithm(Data[] data, Dictionary parameters,
 			CIShellContext context) {
 		// TODO Auto-generated method stub
 		return new MATValidationAlg(data, parameters, context);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.cishell.framework.algorithm.AlgorithmFactory#createParameters(org.cishell.framework.data.Data[])
-	 */
-	public MetaTypeProvider createParameters(Data[] data) {
-		// TODO Auto-generated method stub
-		return null;
-	}
 	
 	public class MATValidationAlg implements Algorithm {
         
@@ -60,7 +47,7 @@ public class MATValidation implements AlgorithmFactory {
             logger = (LogService)ciContext.getService(LogService.class.getName());
         }
 
-        public Data[] execute() {
+        public Data[] execute() throws AlgorithmExecutionException {
 	    
 
 			String fileHandler = (String) data[0].getData();
@@ -78,18 +65,15 @@ public class MATValidation implements AlgorithmFactory {
 					//System.out.println(">>>wrong format: "+validator.getErrorMessages());
 					logger.log(LogService.LOG_ERROR,"Sorry, your file does not comply with the .mat File Format Specification.\n"+
 							"Please review the latest NET File Format Specification at "+
-							"http://vlado.fmf.uni-lj.si/pub/networks/pajek/doc/pajekman.pdf, and update your file. \n"+
+							"http://vlado.fmf.uni-lj.si/pub/networks/pajek/doc/pajekman.pdf, and update your file. \n\n"+
 							validator.getErrorMessages());
 					return null;
 				}
 
 			}catch (FileNotFoundException e){
-				logger.log(LogService.LOG_ERROR, "Could not find the Pajek .mat file to validate.",e);	
-				return null;
+				throw new AlgorithmExecutionException("Could not find the Pajek .mat file to validate.",e);	
 			}catch (IOException ioe){
-				logger.log(LogService.LOG_ERROR,
-						"IO Errors while reading the specified Pajek .mat file.",ioe);
-				return null;
+				throw new AlgorithmExecutionException("IO Errors while reading the specified Pajek .mat file.",ioe);
 			}
         }
       

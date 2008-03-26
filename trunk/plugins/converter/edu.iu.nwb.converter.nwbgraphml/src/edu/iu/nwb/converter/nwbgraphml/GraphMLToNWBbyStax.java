@@ -22,6 +22,7 @@ import javax.xml.stream.events.XMLEvent;
 
 import org.cishell.framework.CIShellContext;
 import org.cishell.framework.algorithm.Algorithm;
+import org.cishell.framework.algorithm.AlgorithmExecutionException;
 import org.cishell.framework.data.BasicData;
 import org.cishell.framework.data.Data;
 import org.osgi.service.log.LogService;
@@ -54,7 +55,7 @@ public class GraphMLToNWBbyStax implements Algorithm {
 		this.logger = (LogService)ciContext.getService(LogService.class.getName());
 	} 
 
-	public Data[] execute() {
+	public Data[] execute() throws AlgorithmExecutionException {
 
 		XMLInputFactory inputFactory = XMLInputFactory.newInstance();
 		XMLStreamReader xmlReader = null;
@@ -62,35 +63,30 @@ public class GraphMLToNWBbyStax implements Algorithm {
 		try {
 			try {
 				xmlReader = inputFactory
-						.createXMLStreamReader(new FileInputStream(
-								(File) data[0].getData()));
+				.createXMLStreamReader(new FileInputStream(
+						(File) data[0].getData()));
 			} catch (XMLStreamException ex) {
-				logger.log(LogService.LOG_ERROR, "Unable to open XML Stream",
-						ex);
-				ex.printStackTrace();
-				return null;
+				throw new AlgorithmExecutionException("Unable to open XML Stream", ex);
 			} catch (FileNotFoundException foe) {
-				logger
-						.log(LogService.LOG_ERROR, "GraphML file not found ",
-								foe);
-				foe.printStackTrace();
-				return null;
+				throw new AlgorithmExecutionException("GraphML file not found ", foe);
 			}
+
 
 
 			try {
 				outData = this.convert(xmlReader);
-			} catch (Exception e) {
-				logger.log(LogService.LOG_ERROR,
-						"Unable to convert graphml to NWB", e);
-				return null;
+			} catch (XMLStreamException e) {
+				throw new AlgorithmExecutionException("Unable to convert graphml to NWB", e);
+			} catch (IOException e) {
+				throw new AlgorithmExecutionException("Unable to convert graphml to NWB", e);
 			}
+
 		} finally {
 			if (xmlReader != null) {
 				try {
-				xmlReader.close();
+					xmlReader.close();
 				} catch (XMLStreamException e) {
-					logger.log(LogService.LOG_ERROR, "Unable to close XML Stream", e);
+					throw new AlgorithmExecutionException("Unable to close XML Stream", e);
 				}
 			}
 		}
@@ -131,7 +127,7 @@ public class GraphMLToNWBbyStax implements Algorithm {
 		BufferedWriter nodeWriter = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(nodeFileLocation), "UTF-8"));
 		BufferedWriter undirectedEdgeWriter = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(undirectedEdgeFileLocation), "UTF-8"));
 		BufferedWriter directedEdgeWriter = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(directedEdgeFileLocation), "UTF-8"));
-		
+
 		while (xmlReader.hasNext())
 		{   
 			int eventType = xmlReader.next();

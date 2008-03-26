@@ -99,10 +99,9 @@ public class MATVertex {
 		int i = 0;
 		try{
 			for(;;){
-				if(qs.isEmpty())
+				if(qs.isEmpty()) {
 					return false;  //no positional data
-				
-				String s = (String) qs.peek();
+				}
 				
 				f = new Float((String)qs.poll()).floatValue();
 				

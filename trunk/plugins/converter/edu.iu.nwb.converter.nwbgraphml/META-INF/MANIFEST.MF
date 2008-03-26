@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: edu.iu.nwb.converter.nwbgraphml
 Bundle-SymbolicName: edu.iu.nwb.converter.nwbgraphml
-Bundle-Version: 0.7.0
+Bundle-Version: 1.0.0
 Bundle-ClassPath: .,
  stax-1.2.0_rc2-dev.jar,
  stax-api-1.0.1.jar
