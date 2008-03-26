@@ -8,6 +8,7 @@ import java.util.Dictionary;
 
 import org.cishell.framework.CIShellContext;
 import org.cishell.framework.algorithm.Algorithm;
+import org.cishell.framework.algorithm.AlgorithmExecutionException;
 import org.cishell.framework.data.BasicData;
 import org.cishell.framework.data.Data;
 import org.osgi.service.log.LogService;
@@ -31,7 +32,7 @@ public class PrefuseCsvWriter implements Algorithm {
         logger=(LogService)context.getService(LogService.class.getName());
     }
 
-    public Data[] execute() {
+    public Data[] execute() throws AlgorithmExecutionException {
 		File tempFile;
         
 	    String tempPath = System.getProperty("java.io.tmpdir");
@@ -41,7 +42,7 @@ public class PrefuseCsvWriter implements Algorithm {
 	    try{
 	    	tempFile = File.createTempFile("NWB-Session-", ".csv", tempDir);
 	    		
-	    }catch (IOException e){
+	    } catch (IOException e) {
 	    	logger.log(LogService.LOG_ERROR, e.toString());
 	   		tempFile = new File (tempPath+File.separator+"nwbTemp"+File.separator+"temp.csv");
     	}
@@ -52,17 +53,13 @@ public class PrefuseCsvWriter implements Algorithm {
     						new BufferedOutputStream(new FileOutputStream(tempFile))) ;
     			return new Data[]{new BasicData(tempFile, "file:text/csv") };
     		}catch (DataIOException dioe){
-    	   		logger.log(LogService.LOG_ERROR, "DataIOException: " + dioe.toString(), dioe);
-    	   		dioe.printStackTrace();
-    	   		return null;
+    			throw new AlgorithmExecutionException("DataIOException: " + dioe.toString(), dioe);
     		}catch (IOException ioe){
-    	   		logger.log(LogService.LOG_ERROR, "IOException", ioe);
-    	   	 	return null;
+    			throw new AlgorithmExecutionException("IOException", ioe);
     		}
     	}
     	else{
-       		logger.log(LogService.LOG_ERROR, "Fail to generate a file in the temporary directory.");
-       	 	return null;
+    		throw new AlgorithmExecutionException("Fail to generate a file in the temporary directory.");
     	}
     	
     }

@@ -1,38 +1,25 @@
 package edu.iu.nwb.converter.prefusecsv.reader;
 
-import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileReader;
-import java.io.IOException;
 import java.util.Dictionary;
 
 import org.cishell.framework.CIShellContext;
 import org.cishell.framework.algorithm.Algorithm;
+import org.cishell.framework.algorithm.AlgorithmExecutionException;
 import org.cishell.framework.algorithm.AlgorithmFactory;
 import org.cishell.framework.data.BasicData;
 import org.cishell.framework.data.Data;
 import org.cishell.framework.data.DataProperty;
-import org.osgi.service.component.ComponentContext;
 import org.osgi.service.log.LogService;
-import org.osgi.service.metatype.MetaTypeProvider;
 
 /**
  * @author Weixia(Bonnie) Huang 
  */
 public class PrefuseCsvValidation implements AlgorithmFactory {
-	protected void activate(ComponentContext ctxt) {
-	}
-	protected void deactivate(ComponentContext ctxt) {
-	}
-
 	public Algorithm createAlgorithm(Data[] data, Dictionary parameters, CIShellContext context) {
 		return new PrefuseCsvValidationAlg(data, parameters, context);
 	}
-	public MetaTypeProvider createParameters(Data[] data) {
-		return null;
-	}
-
+	
 	public class PrefuseCsvValidationAlg implements Algorithm {
 		Data[] data;
 		Dictionary parameters;
@@ -44,7 +31,7 @@ public class PrefuseCsvValidation implements AlgorithmFactory {
 			this.context = context;
 		}
 
-		public Data[] execute() {
+		public Data[] execute() throws AlgorithmExecutionException {
 			LogService logger = (LogService)context.getService(LogService.class.getName());
 
 			String fileHandler = (String) data[0].getData();
@@ -56,9 +43,7 @@ public class PrefuseCsvValidation implements AlgorithmFactory {
 				dm[0].getMetadata().put(DataProperty.TYPE, DataProperty.TEXT_TYPE);
 				return dm;
 			}catch (SecurityException exception){
-				logger.log(LogService.LOG_ERROR, "Might not be a CSV file. Got the following security exception");
-				exception.printStackTrace();
-				return null;
+				throw new AlgorithmExecutionException("Might not be a CSV file. Got the following security exception");
 			}
 
 

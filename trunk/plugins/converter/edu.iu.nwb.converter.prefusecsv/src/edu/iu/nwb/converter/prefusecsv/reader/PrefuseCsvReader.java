@@ -7,6 +7,7 @@ import java.util.Dictionary;
 
 import org.cishell.framework.CIShellContext;
 import org.cishell.framework.algorithm.Algorithm;
+import org.cishell.framework.algorithm.AlgorithmExecutionException;
 import org.cishell.framework.data.BasicData;
 import org.cishell.framework.data.Data;
 import org.cishell.framework.data.DataProperty;
@@ -30,8 +31,7 @@ public class PrefuseCsvReader implements Algorithm {
         this.context = context;
     }
 
-    public Data[] execute() {
-     	LogService logger = (LogService)context.getService(LogService.class.getName());
+    public Data[] execute() throws AlgorithmExecutionException {
     	File file = (File) data[0].getData();
 
     	try{
@@ -42,16 +42,12 @@ public class PrefuseCsvReader implements Algorithm {
     		dm[0].getMetadata().put(DataProperty.LABEL, "Prefuse Table: " + file);
             dm[0].getMetadata().put(DataProperty.TYPE, DataProperty.TEXT_TYPE);
     		return dm;
-    	}catch (DataIOException dioe){
-    		logger.log(LogService.LOG_ERROR, "DataIOException", dioe);
-    		return null;
-    	}catch (SecurityException exception){
-    		logger.log(LogService.LOG_ERROR, "SecurityException", exception);
-    		return null;
-    	}catch (FileNotFoundException e){
-    		logger.log(LogService.LOG_ERROR, "FileNotFoundException", e);
-    		return null;
+    	} catch (DataIOException dioe){
+    		throw new AlgorithmExecutionException("DataIOException", dioe);
+    	} catch (SecurityException exception){
+    		throw new AlgorithmExecutionException("SecurityException", exception);
+    	} catch (FileNotFoundException e){
+    		throw new AlgorithmExecutionException("FileNotFoundException", e);
     	}
-    	
     }
 }
