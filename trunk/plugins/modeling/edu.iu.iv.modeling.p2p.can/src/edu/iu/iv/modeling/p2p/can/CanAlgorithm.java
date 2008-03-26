@@ -4,9 +4,10 @@ import java.util.Dictionary;
 
 import org.cishell.framework.CIShellContext;
 import org.cishell.framework.algorithm.Algorithm;
+import org.cishell.framework.algorithm.AlgorithmExecutionException;
+import org.cishell.framework.data.BasicData;
 import org.cishell.framework.data.Data;
 import org.cishell.framework.data.DataProperty;
-import org.cishell.framework.data.BasicData;
 import org.osgi.service.log.LogService;
 
 import edu.uci.ics.jung.graph.Graph;
@@ -23,7 +24,7 @@ public class CanAlgorithm implements Algorithm {
         this.context = context;
     }
 
-    public Data[] execute() {
+    public Data[] execute() throws AlgorithmExecutionException {
     	Object size = parameters.get("Number of nodes");
 
 		CanNetwork c = new CanNetwork(((Integer) size).intValue(),logger);
@@ -35,7 +36,6 @@ public class CanAlgorithm implements Algorithm {
 			    map.put(DataProperty.LABEL,"CAN Network Model");
 			    map.put(DataProperty.TYPE,DataProperty.NETWORK_TYPE);
 			
-	
 			println("");
 			println("Network Properties: " + c.getGraph().numEdges() + " edges, " + 
 			        "min degree = " + c.getMinDegree() +
@@ -44,8 +44,7 @@ public class CanAlgorithm implements Algorithm {
 			
 			return new Data[]{dm};
 		} else {			
-			println("CAN Network not built. "+c.getFailReason());
-			return null;
+			throw new AlgorithmExecutionException("CAN Network not built. "+c.getFailReason());
 		}
     }
     private void println(String string) {
