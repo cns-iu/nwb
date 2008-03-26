@@ -8,6 +8,7 @@ import java.util.Dictionary;
 
 import org.cishell.framework.CIShellContext;
 import org.cishell.framework.algorithm.Algorithm;
+import org.cishell.framework.algorithm.AlgorithmExecutionException;
 import org.cishell.framework.data.BasicData;
 import org.cishell.framework.data.Data;
 import org.osgi.service.log.LogService;
@@ -32,7 +33,7 @@ public class PrefuseTreeMLWriter implements Algorithm {
         logger=(LogService)context.getService(LogService.class.getName());
     }
 
-    public Data[] execute() {
+    public Data[] execute() throws AlgorithmExecutionException {
 		File tempFile;
         
 	    String tempPath = System.getProperty("java.io.tmpdir");
@@ -41,29 +42,23 @@ public class PrefuseTreeMLWriter implements Algorithm {
 	    	tempDir.mkdir();
 	    try{
 	    	tempFile = File.createTempFile("NWB-Session-", ".treeml.xml", tempDir);
-	    		
 	    }catch (IOException e){
-	    	logger.log(LogService.LOG_ERROR, e.toString());
+	    	logger.log(LogService.LOG_DEBUG, e.toString());
 	   		tempFile = new File (tempPath+File.separator+"nwbTemp"+File.separator+"temp.treeml.xml");
     	}
     	if (tempFile != null){
     		try{
-    			
     			(new TreeMLWriter()).writeGraph((Graph)(data[0].getData()), 
     						new BufferedOutputStream(new FileOutputStream(tempFile))) ;
     			return new Data[]{new BasicData(tempFile, "file:text/treeml+xml") };
     		}catch (DataIOException dioe){
-    	   		logger.log(LogService.LOG_ERROR, "DataIOException: " + dioe.toString(), dioe);
-    	   		return null;
+    			throw new AlgorithmExecutionException(dioe.getMessage(),dioe);
     		}catch (IOException ioe){
-    	   		logger.log(LogService.LOG_ERROR, "IOException", ioe);
-    	   	 	return null;
+    			throw new AlgorithmExecutionException(ioe.getMessage(),ioe);
     		}
     	}
     	else{
-       		logger.log(LogService.LOG_ERROR, "Fail to generate a file in the temporary directory.");
-       	 	return null;
+       		throw new AlgorithmExecutionException("Fail to generate a file in the temporary directory.");
     	}
-    	
     }
 }

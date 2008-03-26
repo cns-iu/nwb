@@ -10,13 +10,12 @@ import java.util.Dictionary;
 
 import org.cishell.framework.CIShellContext;
 import org.cishell.framework.algorithm.Algorithm;
+import org.cishell.framework.algorithm.AlgorithmExecutionException;
 import org.cishell.framework.algorithm.AlgorithmFactory;
 import org.cishell.framework.data.BasicData;
 import org.cishell.framework.data.Data;
 import org.cishell.framework.data.DataProperty;
-import org.osgi.service.component.ComponentContext;
 import org.osgi.service.log.LogService;
-import org.osgi.service.metatype.MetaTypeProvider;
 
 import prefuse.data.io.DataIOException;
 import prefuse.data.io.TreeMLReader;
@@ -25,32 +24,24 @@ import prefuse.data.io.TreeMLReader;
  * @author Weixia(Bonnie) Huang 
  */
 public class PrefuseTreeMLValidation implements AlgorithmFactory {
-    protected void activate(ComponentContext ctxt) {
-    }
-    protected void deactivate(ComponentContext ctxt) {
-    }
-
     public Algorithm createAlgorithm(Data[] data, Dictionary parameters, CIShellContext context) {
-        return new PrefuseGraphMLValidationAlg(data, parameters, context);
-    }
-    public MetaTypeProvider createParameters(Data[] data) {
-        return null;
+        return new PrefuseTreeMLValidationAlg(data, parameters, context);
     }
     
-    public class PrefuseGraphMLValidationAlg implements Algorithm {
+    public class PrefuseTreeMLValidationAlg implements Algorithm {
         Data[] data;
         Dictionary parameters;
         CIShellContext context;
         LogService logger;
         
-        public PrefuseGraphMLValidationAlg(Data[] data, Dictionary parameters, CIShellContext context) {
+        public PrefuseTreeMLValidationAlg(Data[] data, Dictionary parameters, CIShellContext context) {
             this.data = data;
             this.parameters = parameters;
             this.context = context;
             logger = (LogService)context.getService(LogService.class.getName());
         }
 
-        public Data[] execute() {
+        public Data[] execute() throws AlgorithmExecutionException {
         	String fileHandler = (String) data[0].getData();
         	File inData = new File(fileHandler);
         	
@@ -66,20 +57,14 @@ public class PrefuseTreeMLValidation implements AlgorithmFactory {
             		return null;
         		}
         	}catch (DataIOException dioe){
-				logger.log(LogService.LOG_ERROR, "Data IO error while validating the specified TreeML file.", dioe);
-        		return null;
+				throw new AlgorithmExecutionException("Data IO error while validating the specified TreeML file.", dioe);
         	}catch (SecurityException exception){
-				logger.log(LogService.LOG_ERROR, "Security error while validating the specified TreeML file.", exception);
-        		return null;
+        		throw new AlgorithmExecutionException("Security error while validating the specified TreeML file.", exception);
         	}catch (FileNotFoundException e){
-        		logger.log(LogService.LOG_ERROR, "Could not find the specified TreeML file.", e);
-        		return null;
+        		throw new AlgorithmExecutionException("Could not find the specified TreeML file.", e);
         	}catch (IOException ioe){
-        		logger.log(LogService.LOG_ERROR, "TreeML validator experienced an unexplained IO Exception", ioe);
-        		return null;
+        		throw new AlgorithmExecutionException("TreeML validator experienced an unexplained IO Exception", ioe);
         	}
-        	
-        	
         }
         
         //TODO
@@ -104,7 +89,6 @@ public class PrefuseTreeMLValidation implements AlgorithmFactory {
     			line = reader.readLine();	
     		}
     		return hasTreeMLHeader;
-    		
         }
     }
 }

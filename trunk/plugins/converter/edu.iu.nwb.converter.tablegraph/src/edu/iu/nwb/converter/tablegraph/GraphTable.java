@@ -21,19 +21,10 @@ public class GraphTable implements Algorithm {
 		this.data = data;
 		this.parameters = parameters;
 		this.context = context;
-
 	}
 
 	public Data[] execute() {
-
-		//LogService logger = (LogService)context.getService(LogService.class.getName());
-		
 		Graph graph = (Graph) this.data[0].getData();
-		
-		
-		
-		
-
 		Data nodeData = new BasicData(graph.getNodeTable(), Table.class.getName());
 		
 		Dictionary nodeMetadata = nodeData.getMetadata();
@@ -48,7 +39,6 @@ public class GraphTable implements Algorithm {
 		edgeMetadata.put(DataProperty.PARENT, this.data[0]);
 		edgeMetadata.put(DataProperty.TYPE, DataProperty.TEXT_TYPE);
 		
-
 		return new Data[]{nodeData, edgeData};
 	}
 }

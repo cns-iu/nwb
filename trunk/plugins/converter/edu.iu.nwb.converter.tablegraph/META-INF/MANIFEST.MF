@@ -2,17 +2,16 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: Table <-> Graph converter
 Bundle-SymbolicName: edu.iu.nwb.converter.tablegraph
-Bundle-Version: 0.7.0
+Bundle-Version: 1.0.0
 Bundle-ClassPath: .
-Bundle-Localization: plugin
 Import-Package: cern.colt.function,
  cern.colt.matrix,
  cern.colt.matrix.impl,
  cern.colt.matrix.linalg,
  cern.jet.math,
- org.cishell.framework,
- org.cishell.framework.algorithm,
- org.cishell.framework.data,
+ org.cishell.framework;version="1.0.0",
+ org.cishell.framework.algorithm;version="1.0.0",
+ org.cishell.framework.data;version="1.0.0",
  org.osgi.framework;version="1.3.0",
  org.osgi.service.component;version="1.0.0",
  org.osgi.service.log;version="1.3.0",
