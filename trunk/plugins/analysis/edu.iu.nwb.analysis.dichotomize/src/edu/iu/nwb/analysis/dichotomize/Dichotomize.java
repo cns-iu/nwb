@@ -30,7 +30,6 @@ public class Dichotomize implements Algorithm {
 		String comparator = (String) parameters.get("comparator");
 		double cutoff = ((Double) parameters.get("cutoff")).doubleValue();
 		
-		
 		//empty tables with the same schemas as the originals
 		Table nodeTable = graph.getNodeTable().getSchema().instantiate();
 		Table edgeTable = graph.getEdgeTable().getSchema().instantiate();
@@ -39,7 +38,6 @@ public class Dichotomize implements Algorithm {
 		Iterator nodes = graph.getNodeTable().iterator();
 		while(nodes.hasNext()) {
 			nodeTable.addTuple(graph.getNodeTable().getTuple(((Integer) nodes.next()).intValue()));
-			
 		}
 		
 		//keep all edges matching the criteria
@@ -53,7 +51,6 @@ public class Dichotomize implements Algorithm {
 				}
 			}
 		}
-		
 		
 		
 		Graph resultGraph = new Graph(

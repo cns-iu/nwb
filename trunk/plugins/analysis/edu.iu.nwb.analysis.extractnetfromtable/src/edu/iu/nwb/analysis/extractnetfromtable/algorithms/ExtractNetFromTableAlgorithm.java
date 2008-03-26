@@ -13,6 +13,7 @@ import java.util.regex.Pattern;
 
 import org.cishell.framework.CIShellContext;
 import org.cishell.framework.algorithm.Algorithm;
+import org.cishell.framework.algorithm.AlgorithmExecutionException;
 import org.cishell.framework.data.BasicData;
 import org.cishell.framework.data.Data;
 import org.cishell.framework.data.DataProperty;
@@ -53,7 +54,7 @@ public class ExtractNetFromTableAlgorithm implements Algorithm {
 		return wellFormed;		
 	}
 
-	public Properties getProperties(String fileName){
+	public Properties getProperties(String fileName) throws AlgorithmExecutionException {
 		final Properties aggregateDefs = new Properties();
 		boolean wellFormed = true;
 		
@@ -74,33 +75,25 @@ public class ExtractNetFromTableAlgorithm implements Algorithm {
 			}
 		} 
 		catch (final FileNotFoundException fnfe) {
-			logger.log(LogService.LOG_ERROR, fnfe.getMessage());
-			return null;
+			throw new AlgorithmExecutionException(fnfe.getMessage(), fnfe);
 		} catch (final IOException ie) {
-			logger.log(LogService.LOG_ERROR, ie.getMessage());
-			return null;
-		}	
+			throw new AlgorithmExecutionException(ie.getMessage(), ie);
+		}
 		return aggregateDefs;
 	}
 	
-	public Data[] execute() {
+	public Data[] execute() throws AlgorithmExecutionException {
 		final prefuse.data.Table dataTable = (prefuse.data.Table) data[0].getData();
 
 		String split = null;
-		String aggregateFunctions = null;
 		String extractColumn = null;
 		Properties p = null;
 		
 		split = this.parameters.get("delimiter").toString();
 		extractColumn = this.parameters.get("colName").toString();
-		
-		try{
-		aggregateFunctions = this.parameters.get("aff").toString();
-		}catch(NullPointerException npe){	
-		}
-		
-		if(aggregateFunctions != null){
-			p = this.getProperties(aggregateFunctions);
+
+		if(this.parameters.get("aff") != null){
+			p = this.getProperties((String)this.parameters.get("aff"));
 		}
 
 		final ExtractNetworkFromTable enft = new ExtractNetworkFromTable(logger,

@@ -27,12 +27,9 @@ public class ExtractAlgorithm implements Algorithm {
 		this.parameters = parameters;
 		ciContext = cContext;
 		logger = (LogService) ciContext.getService(LogService.class.getName());
-
 	}
 
 	public Data[] execute() {
-		// TODO Auto-generated method stub
-
 		final prefuse.data.Table dataTable = (prefuse.data.Table) data[0]
 				.getData();
 
@@ -73,7 +70,5 @@ public class ExtractAlgorithm implements Algorithm {
 		tableAttributes.put(DataProperty.LABEL, "Author information");
 
 		return new Data[] { outputData1, outputData2 };
-
 	}
-
 }
