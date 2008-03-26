@@ -10,6 +10,7 @@ import java.util.Iterator;
 import java.util.List;
 
 import org.cishell.framework.CIShellContext;
+import org.cishell.framework.algorithm.AlgorithmExecutionException;
 import org.cishell.framework.data.Data;
 import org.osgi.service.log.LogService;
 
@@ -32,7 +33,7 @@ public class ISIDupRemover {
     private ISIPubComparer mainPubComparer = new MainPubComparer();
 
     public TablePair removeDuplicatePublications (Table origTable,
-    		LogService log, boolean printRunningLogToConsole) {
+    		LogService log, boolean printRunningLogToConsole) throws AlgorithmExecutionException {
     	
     	if (! tableSanityCheckPasses(origTable)) {
     		this.log.log(LogService.LOG_WARNING, "Unable to remove duplicates from table. Returning original table.");
@@ -116,8 +117,7 @@ public class ISIDupRemover {
     	writer.write(runningLog.toString());
     	writer.close();
     	} catch (IOException e) {
-    		log.log(LogService.LOG_ERROR, "Unable to write removed duplicates log.", e);
-    		e.printStackTrace();
+    		throw new AlgorithmExecutionException("Unable to write removed duplicates log.", e);
     	}
     	
     	//create separate tables, one for unique publications 

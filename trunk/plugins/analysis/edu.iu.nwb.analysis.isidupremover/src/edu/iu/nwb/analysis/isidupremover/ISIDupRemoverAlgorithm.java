@@ -5,6 +5,7 @@ import java.util.Enumeration;
 
 import org.cishell.framework.CIShellContext;
 import org.cishell.framework.algorithm.Algorithm;
+import org.cishell.framework.algorithm.AlgorithmExecutionException;
 import org.cishell.framework.data.BasicData;
 import org.cishell.framework.data.Data;
 import org.cishell.framework.data.DataProperty;
@@ -34,11 +35,12 @@ public class ISIDupRemoverAlgorithm implements Algorithm {
 	    }
 
 	    
-	    public Data[] execute() {
+	    public Data[] execute()throws AlgorithmExecutionException {
 	    	
 	    	Table tableWithDups = (Table) data[0].getData();
 	    	TablePair dupAndNoDupTables = dupRemover.removeDuplicatePublications(tableWithDups, log, false);
 	    	
+	    	//unpack multiple value return
 	    	Table tableWithoutDups = dupAndNoDupTables.getNoDupTable();
 	    	Table duplicates = dupAndNoDupTables.getDupTable();
 	    	
