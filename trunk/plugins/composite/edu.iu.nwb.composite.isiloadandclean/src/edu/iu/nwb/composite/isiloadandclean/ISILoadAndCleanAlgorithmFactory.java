@@ -15,7 +15,6 @@ import org.osgi.service.metatype.MetaTypeProvider;
 
 
 public class ISILoadAndCleanAlgorithmFactory implements AlgorithmFactory {
-    private MetaTypeProvider provider;
     private BundleContext bContext;
     
     private LogService log;
