@@ -4,6 +4,7 @@ import java.util.Dictionary;
 
 import org.cishell.framework.CIShellContext;
 import org.cishell.framework.algorithm.Algorithm;
+import org.cishell.framework.algorithm.AlgorithmExecutionException;
 import org.cishell.framework.data.BasicData;
 import org.cishell.framework.data.Data;
 import org.cishell.framework.data.DataProperty;
@@ -28,7 +29,7 @@ public class PruAlgorithm implements Algorithm {
         
     }
 
-    public Data[] execute() {
+    public Data[] execute() throws AlgorithmExecutionException {
     	int networkSize = getInt("networkSize");
 	    int cacheSize = getInt("cacheSize");
 	    int lowerBound = getInt("lowerBound");
@@ -48,8 +49,7 @@ public class PruAlgorithm implements Algorithm {
 					", average degree = " + c.getAvgDegree());
 			return new Data[]{dm};
 		} else {
-			println("PRU Network not built. "+c.getFailReason());
-			return null;
+			throw new AlgorithmExecutionException("PRU Network not built. "+c.getFailReason());
 		}	
 		
 			

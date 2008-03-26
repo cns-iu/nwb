@@ -4,7 +4,6 @@ import java.io.IOException;
 import java.util.Iterator;
 import java.util.Random;
 import java.util.Set;
-import java.util.logging.Logger;
 
 import org.osgi.service.log.LogService;
 
