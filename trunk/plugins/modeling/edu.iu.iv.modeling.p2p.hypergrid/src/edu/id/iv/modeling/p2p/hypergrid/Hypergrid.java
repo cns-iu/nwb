@@ -4,6 +4,7 @@ import java.util.Dictionary;
 
 import org.cishell.framework.CIShellContext;
 import org.cishell.framework.algorithm.Algorithm;
+import org.cishell.framework.algorithm.AlgorithmExecutionException;
 import org.cishell.framework.data.BasicData;
 import org.cishell.framework.data.Data;
 import org.cishell.framework.data.DataProperty;
@@ -27,7 +28,7 @@ public class Hypergrid implements Algorithm {
         this.log = (LogService)context.getService(LogService.class.getName());
     }
 
-    public Data[] execute() {
+    public Data[] execute() throws AlgorithmExecutionException {
     	int networkSize = getInt("networkSize");
 	    int degree = getInt("degree");
 	    
@@ -49,8 +50,8 @@ public class Hypergrid implements Algorithm {
 			return new Data[]{dm};
 		   
 		} else {
-			println("Hypergrid Network not built. "+c.getFailReason());
-			return null;
+			throw new AlgorithmExecutionException("Hypergrid Network not built. "+c.getFailReason());
+			
 		}		
 		
 	}
