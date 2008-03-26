@@ -5,9 +5,11 @@ import java.util.Dictionary;
 
 import org.cishell.framework.CIShellContext;
 import org.cishell.framework.algorithm.Algorithm;
+import org.cishell.framework.algorithm.AlgorithmExecutionException;
 import org.cishell.framework.data.BasicData;
 import org.cishell.framework.data.Data;
 import org.cishell.framework.data.DataProperty;
+import org.cishell.service.conversion.ConversionException;
 import org.cishell.service.conversion.DataConversionService;
 import org.osgi.service.log.LogService;
 
@@ -39,7 +41,7 @@ public class ScopusReaderAlgorithm implements Algorithm {
         this.log = (LogService) context.getService(LogService.class.getName());
     }
 
-    public Data[] execute() {
+    public Data[] execute() throws AlgorithmExecutionException {
     	Data inputData = convertInputData(data[0]);
     	Table scopusTable = (Table) inputData.getData();
     	scopusTable = normalizeAuthorNames(scopusTable);
@@ -50,7 +52,7 @@ public class ScopusReaderAlgorithm implements Algorithm {
     }
     
     
-    private Data convertInputData(Data inputData) {
+    private Data convertInputData(Data inputData) throws AlgorithmExecutionException {
     	 DataConversionService converter = (DataConversionService)
          context.getService(DataConversionService.class.getName());
 		//this is a bit like a cast. We know the nsf format is also a csv, so we change the format to csv so
@@ -58,8 +60,12 @@ public class ScopusReaderAlgorithm implements Algorithm {
 		 
 		//printTable((Table) inputData.getData());
 		Data formatChangedData = new BasicData(inputData.getMetadata(), (File) inputData.getData(), "file:text/csv");
+		try {
 		Data convertedData = converter.convert(formatChangedData, Table.class.getName());
 		return convertedData;
+		} catch (ConversionException e1){
+			throw new AlgorithmExecutionException(e1);
+		}
     }
     
     private Table normalizeAuthorNames(Table scopusTable) {
@@ -236,16 +242,14 @@ public class ScopusReaderAlgorithm implements Algorithm {
 		return authors;
 }
 
-	private Data[] formatAsData(Table scopusTable) {
+	private Data[] formatAsData(Table scopusTable) throws AlgorithmExecutionException {
     	try{
 			Data[] dm = new Data[] {new BasicData(scopusTable, Table.class.getName())};
 			dm[0].getMetadata().put(DataProperty.LABEL, "Normalized Scopus table");
 			dm[0].getMetadata().put(DataProperty.TYPE, DataProperty.MATRIX_TYPE);
 			return dm;
 		}catch (SecurityException exception){
-			log.log(LogService.LOG_ERROR, "SecurityException", exception);
-			exception.printStackTrace();
-			return null;
+			throw new AlgorithmExecutionException(exception);
 		}
     }
     

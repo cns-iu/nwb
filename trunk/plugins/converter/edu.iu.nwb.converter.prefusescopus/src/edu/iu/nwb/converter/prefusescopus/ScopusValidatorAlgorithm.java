@@ -5,6 +5,7 @@ import java.util.Dictionary;
 
 import org.cishell.framework.CIShellContext;
 import org.cishell.framework.algorithm.Algorithm;
+import org.cishell.framework.algorithm.AlgorithmExecutionException;
 import org.cishell.framework.data.BasicData;
 import org.cishell.framework.data.Data;
 import org.cishell.framework.data.DataProperty;
@@ -21,9 +22,7 @@ public class ScopusValidatorAlgorithm implements Algorithm {
         this.context = context;
     }
 
-    public Data[] execute() {
-    	LogService logger = (LogService) context.getService(LogService.class.getName());
-
+    public Data[] execute() throws AlgorithmExecutionException {
 		String fileHandler = (String) data[0].getData();
 		File inData = new File(fileHandler);
 
@@ -33,9 +32,7 @@ public class ScopusValidatorAlgorithm implements Algorithm {
 			dm[0].getMetadata().put(DataProperty.TYPE, DataProperty.MATRIX_TYPE);
 			return dm;
 		}catch (SecurityException exception){
-			logger.log(LogService.LOG_ERROR, "SecurityException", exception);
-			exception.printStackTrace();
-			return null;
+			throw new AlgorithmExecutionException(exception);
 		}
     }
 }
