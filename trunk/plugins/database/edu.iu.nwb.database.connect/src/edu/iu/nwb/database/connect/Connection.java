@@ -18,6 +18,7 @@ import org.apache.commons.pool.impl.GenericKeyedObjectPoolFactory;
 import org.apache.commons.pool.impl.GenericObjectPool;
 import org.cishell.framework.CIShellContext;
 import org.cishell.framework.algorithm.Algorithm;
+import org.cishell.framework.algorithm.AlgorithmExecutionException;
 import org.cishell.framework.data.BasicData;
 import org.cishell.framework.data.Data;
 import org.cishell.framework.data.DataProperty;
@@ -72,9 +73,7 @@ public class Connection implements Algorithm {
 			try {
 				dataSource.getConnection().close();
 			} catch (SQLException e) {
-				// TODO Auto-generated catch block
-				logger.log(LogService.LOG_ERROR, "Problem opening test connection.", e);
-				e.printStackTrace();
+				logger.log(LogService.LOG_WARNING, "Problem opening test connection.", e);
 			}
 			
 			//prefuseConnection = prefuse.data.io.sql.ConnectionFactory.getDatabaseConnection(connection);
@@ -82,9 +81,7 @@ public class Connection implements Algorithm {
 			
 			
 		} catch (ClassNotFoundException e) {
-			logger.log(LogService.LOG_ERROR, "Database driver not found: " + driver, e);
-			e.printStackTrace();
-			return null;
+			throw new AlgorithmExecutionException("Database driver not found: " + driver, e);
 		}
 		
     	
