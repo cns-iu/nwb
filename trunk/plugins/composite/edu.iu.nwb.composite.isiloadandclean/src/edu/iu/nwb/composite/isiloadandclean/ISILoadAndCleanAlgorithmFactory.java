@@ -11,7 +11,6 @@ import org.osgi.framework.InvalidSyntaxException;
 import org.osgi.framework.ServiceReference;
 import org.osgi.service.component.ComponentContext;
 import org.osgi.service.log.LogService;
-import org.osgi.service.metatype.MetaTypeProvider;
 
 
 public class ISILoadAndCleanAlgorithmFactory implements AlgorithmFactory {
