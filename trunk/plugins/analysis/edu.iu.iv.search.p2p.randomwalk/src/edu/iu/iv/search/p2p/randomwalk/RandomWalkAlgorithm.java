@@ -15,7 +15,6 @@ public class RandomWalkAlgorithm implements Algorithm {
     CIShellContext context;
     LogService log;
     
-    
     public RandomWalkAlgorithm(Data[] data, Dictionary parameters, CIShellContext context) {
         this.data = data;
         this.parameters = parameters;
@@ -24,7 +23,7 @@ public class RandomWalkAlgorithm implements Algorithm {
     }
 
     public Data[] execute() {
-//    	must minus 1 to source and target since nodes are zero-based
+    	// must minus 1 to source and target since nodes are zero-based
 	    int sourceNode = ((Integer) getValue("sourceNode")).intValue() -1;
 	    int targetNode = ((Integer) getValue("targetNode")).intValue() -1;
 	    int numWalkers = ((Integer) getValue("walkers")).intValue() -1;
@@ -42,7 +41,7 @@ public class RandomWalkAlgorithm implements Algorithm {
 			println("Search failed: "+rw.getFailReason());
 		}		
 		
-		return new Data[]{};
+		return null;
 	}
 	
     private Object getValue(String key) {
@@ -52,5 +51,4 @@ public class RandomWalkAlgorithm implements Algorithm {
 	private void println(String string) {
 		log.log(LogService.LOG_INFO, string);
     }
-        
 }
