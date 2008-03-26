@@ -15,7 +15,6 @@ import org.osgi.service.log.LogService;
 import edu.uci.ics.jung.graph.Graph;
 import edu.uci.ics.jung.graph.Vertex;
 import edu.uci.ics.jung.utils.GraphUtils;
-import edu.uci.ics.jung.utils.UserData;
 
 public class Delete implements Algorithm {
 	Data[] data;
@@ -36,10 +35,6 @@ public class Delete implements Algorithm {
 
 		Graph inputGraph = (Graph) this.data[0].getData();
 		logger.log(LogService.LOG_INFO, "" + inputGraph.numVertices() + " input nodes");
-
-		int core = 1;
-
-
 
 		Graph outputGraph = (Graph) inputGraph.copy(); //chaining these calls should mean getEqualEdge works
 

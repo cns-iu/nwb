@@ -4,15 +4,12 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
 import java.util.Dictionary;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Iterator;
-import java.util.List;
-import java.util.ListIterator;
 import java.util.Map;
 import java.util.Properties;
 import java.util.Stack;
@@ -20,17 +17,11 @@ import java.util.Vector;
 
 import org.cishell.framework.CIShellContext;
 import org.cishell.framework.algorithm.Algorithm;
+import org.cishell.framework.algorithm.AlgorithmExecutionException;
 import org.cishell.framework.data.BasicData;
 import org.cishell.framework.data.Data;
 import org.cishell.framework.data.DataProperty;
 import org.osgi.service.log.LogService;
-
-import cern.colt.function.ObjectObjectFunction;
-import cern.colt.matrix.ObjectMatrix1D;
-import cern.colt.matrix.ObjectMatrix2D;
-import cern.colt.matrix.ObjectMatrix3D;
-import cern.colt.matrix.impl.SparseObjectMatrix2D;
-import cern.colt.matrix.impl.SparseObjectMatrix3D;
 
 import prefuse.data.Edge;
 import prefuse.data.Graph;
@@ -40,6 +31,11 @@ import prefuse.data.Tuple;
 import prefuse.data.expression.parser.ExpressionParser;
 import prefuse.data.tuple.TableTuple;
 import prefuse.data.tuple.TupleSet;
+import cern.colt.matrix.ObjectMatrix1D;
+import cern.colt.matrix.ObjectMatrix2D;
+import cern.colt.matrix.ObjectMatrix3D;
+import cern.colt.matrix.impl.SparseObjectMatrix2D;
+import cern.colt.matrix.impl.SparseObjectMatrix3D;
 
 /**
  * @author Russell Duhon
@@ -80,7 +76,7 @@ public class JoiningAlgorithm implements Algorithm {
         this.transferred = new HashMap();
     }
 
-    public Data[] execute() {
+    public Data[] execute() throws AlgorithmExecutionException {
     	
     	log = (LogService) context.getService(LogService.class.getName());
     	
@@ -95,11 +91,9 @@ public class JoiningAlgorithm implements Algorithm {
     	try {
 			metadata.load(new FileInputStream(metadataFile));
 		} catch (FileNotFoundException e) {
-			log.log(LogService.LOG_ERROR, "The file " + metadataFile.getAbsolutePath() + " was not found.");
-			return null;
+			throw new AlgorithmExecutionException("The file " + metadataFile.getAbsolutePath() + " was not found.", e);
 		} catch (IOException e) {
-			log.log(LogService.LOG_ERROR, "There was a problem loading the file " + metadataFile.getAbsolutePath(), e);
-			return null;
+			throw new AlgorithmExecutionException("There was a problem loading the file " + metadataFile.getAbsolutePath(), e);
 		}
 		
 		Schema inputNodeSchema = inputGraph.getNodeTable().getSchema();

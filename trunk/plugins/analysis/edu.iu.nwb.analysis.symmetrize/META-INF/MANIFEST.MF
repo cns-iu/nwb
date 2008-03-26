@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: Symmetrize
 Bundle-SymbolicName: edu.iu.nwb.analysis.symmetrize
-Bundle-Version: 0.0.1
+Bundle-Version: 1.0.0
 Bundle-ClassPath: .
 Bundle-Localization: plugin
 Import-Package: org.cishell.framework,

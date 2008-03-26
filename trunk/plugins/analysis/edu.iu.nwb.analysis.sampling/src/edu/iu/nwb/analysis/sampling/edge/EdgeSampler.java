@@ -3,14 +3,12 @@ package edu.iu.nwb.analysis.sampling.edge;
 import java.util.ArrayList;
 import java.util.Dictionary;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Random;
 import java.util.Set;
 
 import edu.iu.nwb.analysis.sampling.common.JungSampler;
 import edu.uci.ics.jung.graph.Graph;
-import edu.uci.ics.jung.graph.Vertex;
 import edu.uci.ics.jung.utils.GraphUtils;
 
 public class EdgeSampler implements JungSampler {

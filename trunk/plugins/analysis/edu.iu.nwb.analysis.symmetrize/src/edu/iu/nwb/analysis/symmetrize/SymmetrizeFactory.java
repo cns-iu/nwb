@@ -1,37 +1,28 @@
 package edu.iu.nwb.analysis.symmetrize;
 
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Dictionary;
 
 import org.cishell.framework.CIShellContext;
 import org.cishell.framework.algorithm.Algorithm;
 import org.cishell.framework.algorithm.AlgorithmFactory;
+import org.cishell.framework.algorithm.ParameterMutator;
 import org.cishell.framework.data.Data;
 import org.cishell.reference.service.metatype.BasicAttributeDefinition;
-import org.cishell.reference.service.metatype.BasicMetaTypeProvider;
 import org.cishell.reference.service.metatype.BasicObjectClassDefinition;
-import org.osgi.service.component.ComponentContext;
 import org.osgi.service.metatype.AttributeDefinition;
-import org.osgi.service.metatype.MetaTypeInformation;
-import org.osgi.service.metatype.MetaTypeProvider;
-import org.osgi.service.metatype.MetaTypeService;
 import org.osgi.service.metatype.ObjectClassDefinition;
 
 import prefuse.data.Graph;
-import prefuse.data.Schema;
-import prefuse.data.Table;
 
 
-public class SymmetrizeFactory implements AlgorithmFactory {
+public class SymmetrizeFactory implements AlgorithmFactory, ParameterMutator {
 
     public Algorithm createAlgorithm(Data[] data, Dictionary parameters, CIShellContext context) {
         return new Symmetrize(data, parameters, context);
     }
-    
-    public MetaTypeProvider createParameters(Data[] data) {
-    	Graph graph = (Graph) data[0].getData();
+
+	public ObjectClassDefinition mutateParameters(Data[] data, ObjectClassDefinition parameters) {
+		Graph graph = (Graph) data[0].getData();
 
 		BasicObjectClassDefinition definition = new BasicObjectClassDefinition("stuff", "Symmetrize Using", "Pick the aggregation functions to symmetrize using.", null);
 		
@@ -72,7 +63,6 @@ public class SymmetrizeFactory implements AlgorithmFactory {
 							AttributeDefinition.STRING, bareChoices, bareChoices));
 		}
 		
-		
-		return new BasicMetaTypeProvider(definition);
-    }
+		return definition;
+	}
 }

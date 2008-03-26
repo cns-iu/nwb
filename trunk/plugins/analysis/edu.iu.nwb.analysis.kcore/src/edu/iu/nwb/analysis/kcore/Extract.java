@@ -15,15 +15,13 @@ import org.osgi.service.log.LogService;
 import edu.uci.ics.jung.graph.Graph;
 import edu.uci.ics.jung.graph.Vertex;
 import edu.uci.ics.jung.utils.GraphUtils;
-import edu.uci.ics.jung.utils.UserData;
 
 public class Extract implements Algorithm {
 	Data[] data;
 	Dictionary parameters;
 	CIShellContext context;
 	
-	private String attributeName = "nwb_coreness";
-
+	
 	public Extract(Data[] data, Dictionary parameters, CIShellContext context) {
 		this.data = data;
 		this.parameters = parameters;
