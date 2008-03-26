@@ -76,7 +76,7 @@ public class BibtexReaderAlgorithm implements Algorithm {
         return tableToReturnData;
     }
     
-    private Table makeTable(BibtexFile bibtex) {
+    private Table makeTable(BibtexFile bibtex) throws AlgorithmExecutionException {
     	TableData table = createDefaultEmptyTable();
     	
     	for (Iterator entryIt = bibtex.getEntries().iterator(); entryIt.hasNext();) {
@@ -228,11 +228,11 @@ public class BibtexReaderAlgorithm implements Algorithm {
 			currentRowIsFinished = true; //will cause first row to be created
 		}
 		
-		public void moveOnToNextRow() {
+		public void moveOnToNextRow() { 
 			currentRowIsFinished = true;
 		}
 		
-		public void setString(String columnTag, String value) {
+		public void setString(String columnTag, String value) throws AlgorithmExecutionException {
 			ensureRowNotFinishedYet();
 			
 			try {
@@ -244,7 +244,7 @@ public class BibtexReaderAlgorithm implements Algorithm {
 				table.setString(currentRow, columnTag, value);
 				} catch (Exception e2) {
 					//something else must be wrong.
-					throw new Error(e2);
+					throw new AlgorithmExecutionException(e2);
 				}
 			}
 		}
