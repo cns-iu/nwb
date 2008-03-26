@@ -7,33 +7,18 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.Dictionary;
 import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import java.util.SortedMap;
-import java.util.SortedSet;
-import java.util.Stack;
 import java.util.TreeMap;
-import java.util.TreeSet;
-import javax.swing.tree.DefaultMutableTreeNode;
-import javax.swing.tree.MutableTreeNode;
-import javax.swing.tree.TreeNode;
 
 import org.cishell.framework.CIShellContext;
 import org.cishell.framework.algorithm.Algorithm;
+import org.cishell.framework.algorithm.AlgorithmExecutionException;
 import org.cishell.framework.data.BasicData;
 import org.cishell.framework.data.Data;
 import org.cishell.framework.data.DataProperty;
 import org.osgi.service.log.LogService;
-
-import cern.colt.function.DoubleDoubleFunction;
-import cern.colt.matrix.DoubleMatrix1D;
-import cern.colt.matrix.DoubleMatrix2D;
-import cern.colt.matrix.impl.DenseDoubleMatrix1D;
-import cern.colt.matrix.impl.DenseDoubleMatrix2D;
-import cern.jet.math.Functions;
 
 import prefuse.data.Schema;
 import prefuse.data.Table;
@@ -65,7 +50,7 @@ public class Burst implements Algorithm {
 
 	}
 
-	public Data[] execute() {
+	public Data[] execute() throws AlgorithmExecutionException {
 
 		logger = (LogService)context.getService(LogService.class.getName());
 		/* double gamma = ((Double) parameters.get("gamma")).doubleValue();
@@ -85,12 +70,8 @@ public class Burst implements Algorithm {
 		
 		Table data = (Table) this.data[0].getData();
 		
-		if(checkColumns(data, dateColumn, textColumn)) {
-			return null;
-		}
+		checkColumns(data, dateColumn, textColumn);
 		
-		
-
 		Map<Date, String> datePairs = new HashMap<Date, String>();
 		SortedMap<Date, List<String>> wordsMap = new TreeMap<Date, List<String>>();
 		SortedMap<Date, Integer> dates = new TreeMap<Date, Integer>();
@@ -186,15 +167,8 @@ public class Burst implements Algorithm {
 					
 				}
 			} catch (BurstException e) {
-				logger.log(LogService.LOG_ERROR, e.getMessage(), e);
-				e.printStackTrace();
-				return null;
+				throw new AlgorithmExecutionException(e.getMessage(), e);
 			}
-			
-			
-			
-			
-			
 		}
 		
 		Data output = new BasicData(results, Table.class.getName());
@@ -204,33 +178,18 @@ public class Burst implements Algorithm {
 		metadata.put(DataProperty.TYPE, DataProperty.TEXT_TYPE);
 		
 		return new Data[]{ output };
-		
 	}
 
-	private boolean checkColumns(Table data, String dateColumn, String textColumn) {
-		boolean columnsBad = false;
-		
+	private void checkColumns(Table data, String dateColumn, String textColumn) throws AlgorithmExecutionException {
 		if(!data.canGetString(dateColumn)) {
-			logger.log(LogService.LOG_ERROR, "The column '" + dateColumn + "' does not exist or cannot be accessed as a string.");
-			columnsBad = true;
+			throw new AlgorithmExecutionException("The column '" + dateColumn + "' does not exist or cannot be accessed as a string.");
 		}
 		if(!data.canGetString(textColumn)) {
-			logger.log(LogService.LOG_ERROR, "The column '" + textColumn + "' does not exist or cannot be accessed as a string.");
-			columnsBad = true;
-		}
-		if(columnsBad) {
-			return true;
-		} else {
-			return false;
+			throw new AlgorithmExecutionException("The column '" + textColumn + "' does not exist or cannot be accessed as a string.");
 		}
 	}
 	
 	private Cell[] computeStates(int n, int[] entry, int[] binBase) throws BurstException {
-		
-		
-		
-		
-		
 		//logger.log(LogService.LOG_INFO, "## " + bin_k + " " + bin_n + " " + expected);
 		
 		
