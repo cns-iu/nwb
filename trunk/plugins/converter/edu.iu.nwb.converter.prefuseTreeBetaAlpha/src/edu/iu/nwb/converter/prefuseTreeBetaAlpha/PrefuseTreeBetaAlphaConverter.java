@@ -13,8 +13,6 @@ import prefuse.data.Tuple;
 import java.util.*;
 
 
-
-
 class NodePair
 {
 	private TreeNode nodeAlhpha;

@@ -10,6 +10,7 @@ import java.util.Dictionary;
 
 import org.cishell.framework.CIShellContext;
 import org.cishell.framework.algorithm.Algorithm;
+import org.cishell.framework.algorithm.AlgorithmExecutionException;
 import org.cishell.framework.data.BasicData;
 import org.cishell.framework.data.Data;
 import org.osgi.service.log.LogService;
@@ -36,27 +37,16 @@ public class PajekmatToPajeknet implements Algorithm{
          this.logger = (LogService)ciContext.getService(LogService.class.getName());
     }
     
-    
-	
-	private File getTempFile(){
-		File tempFile;
-    
+	private File getTempFile() throws IOException{
 		String tempPath = System.getProperty("java.io.tmpdir");
 		File tempDir = new File(tempPath+File.separator+"temp");
 		if(!tempDir.exists())
 			tempDir.mkdir();
-		try{
-			tempFile = File.createTempFile("NWB-Session-", ".net", tempDir);
 		
-		}catch (IOException e){
-			logger.log(LogService.LOG_ERROR, e.toString());
-			tempFile = new File (tempPath+File.separator+"netTemp"+File.separator+"temp.net");
-
-		}
-		return tempFile;
+		return File.createTempFile("NWB-Session-", ".net", tempDir);
 	}
 
-	public Data[] execute() {
+	public Data[] execute() throws AlgorithmExecutionException {
 		File inData, outData;
     	Data [] dm = null;
     	ValidateMATFile validator;
@@ -76,28 +66,25 @@ public class PajekmatToPajeknet implements Algorithm{
 						dm = new Data[] {new BasicData(outData, NETFileProperty.NET_MIME_TYPE)};
 						return dm;
 					}else {
-						logger.log(LogService.LOG_ERROR, "Problem executing conversion from Pajek .mat to .net. Output file was not created");
-						return null;
+						throw new AlgorithmExecutionException("Problem executing conversion from Pajek .mat to .net. Output file was not created");
 					}
 				}else{
-					logger.log(LogService.LOG_ERROR,"Problem executing conversion from Pajek .mat to .net" + validator.getErrorMessages());
-					return null;
+					throw new AlgorithmExecutionException("Problem executing conversion from Pajek .mat to .net" + validator.getErrorMessages());
 				}
 		}
 			catch (FileNotFoundException fnf){
-			logger.log(LogService.LOG_ERROR, "Could not find the specified Pajek .mat file.", fnf);
+				throw new AlgorithmExecutionException("Could not find the specified Pajek .mat file.", fnf);
 		}
 			catch (IOException ioe){
-				logger.log(LogService.LOG_ERROR, "IO Error while converting from Pajek .mat to .net.", ioe);
+				throw new AlgorithmExecutionException("IO Error while converting from Pajek .mat to .net.", ioe);
 			}
 		}
 		else
-			logger.log(LogService.LOG_ERROR, "Unable to convert the file. " +
+			throw new AlgorithmExecutionException("Unable to convert the file. " +
 					"Unable to convert from Pajek .mat to .net because input data is not a file");
-		return null;
 	}
 	
-	private File convertMatToNet(ValidateMATFile vmf){
+	private File convertMatToNet(ValidateMATFile vmf) throws AlgorithmExecutionException {
 		try{
 			File net = getTempFile();
 			PrintWriter out = new PrintWriter(new BufferedWriter(new FileWriter(net)));	
@@ -106,11 +93,9 @@ public class PajekmatToPajeknet implements Algorithm{
 			out.close();
 			return net;
 		}catch (FileNotFoundException e){
-			logger.log(LogService.LOG_ERROR, "Unable to find the temporary .net file.", e);
-			return null;
+			throw new AlgorithmExecutionException("Unable to find the temporary .net file.", e);
 		}catch (IOException ioe){
-			logger.log(LogService.LOG_ERROR, "IO Errors while writing to the temporary .net file.", ioe);
-			return null;
+			throw new AlgorithmExecutionException("IO Errors while writing to the temporary .net file.", ioe);
 		}
 	}
 	
@@ -155,8 +140,8 @@ public class PajekmatToPajeknet implements Algorithm{
 		for(int i = 0; i < vmf.getArcs().size(); i++){
 			MATArcs mv = (MATArcs)vmf.getArcs().get(i);
 			String s = "";
-			for(int j = 0; j < mv.getArcsnEdgesAttributes().size(); j++){
-				MATAttribute ma = (MATAttribute)mv.getArcsnEdgesAttributes().get(j);
+			for(int j = 0; j < MATArcs.getArcsnEdgesAttributes().size(); j++){
+				MATAttribute ma = (MATAttribute)MATArcs.getArcsnEdgesAttributes().get(j);
 				String attr = ma.getAttrName();
 				String type = ma.getDataType();
 				if(mv.getAttribute(attr) == null){
@@ -180,6 +165,4 @@ public class PajekmatToPajeknet implements Algorithm{
 			pw.write(s + "\n");
 		}
 	}
-	
-
 }

@@ -22,14 +22,11 @@ public class PrefuseTreeBetaAlphaAlgorithm implements Algorithm {
     }
 
     public Data[] execute() {
-    	prefuse.data.Tree BetaTree = 
-            (prefuse.data.Tree) data[0].getData();
-    	
-        
+    	prefuse.data.Tree BetaTree = (prefuse.data.Tree) data[0].getData();
+    
         Tree AlphaTree = new PrefuseTreeBetaAlphaConverter().getPrefuseBetaTree(BetaTree);
         Data dm = new BasicData(data[0].getMetadata(), AlphaTree, Tree.class.getName());
         
         return new Data[]{dm};
-         
     }
 }
