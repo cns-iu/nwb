@@ -4,10 +4,10 @@ import java.util.Dictionary;
 
 import org.cishell.framework.CIShellContext;
 import org.cishell.framework.algorithm.Algorithm;
+import org.cishell.framework.algorithm.AlgorithmExecutionException;
 import org.cishell.framework.data.Data;
 import org.osgi.service.log.LogService;
 
-import edu.iu.iv.search.p2p.chord.ChordSearch;
 import edu.uci.ics.jung.graph.Graph;
 
 public class ChordSearchAlgorithm implements Algorithm {
@@ -21,7 +21,7 @@ public class ChordSearchAlgorithm implements Algorithm {
         this.parameters = parameters;
         this.context = context;
     }
-	public Data[] execute() {
+	public Data[] execute() throws AlgorithmExecutionException {
 		int sourceNode = ((Integer) parameters.get("source")).intValue()-1;
         int targetNode = ((Integer) parameters.get("target")).intValue()-1;
         

@@ -4,6 +4,7 @@ import java.util.Dictionary;
 
 import org.cishell.framework.CIShellContext;
 import org.cishell.framework.algorithm.Algorithm;
+import org.cishell.framework.algorithm.AlgorithmExecutionException;
 import org.cishell.framework.data.BasicData;
 import org.cishell.framework.data.Data;
 import org.cishell.framework.data.DataProperty;
@@ -23,7 +24,7 @@ public class ChordAlgorithm implements Algorithm {
         this.context = context;
     }
 
-    public Data[] execute() {
+    public Data[] execute() throws AlgorithmExecutionException {
     	Integer networkSize = (Integer) parameters.get("networkSize");
 	    Integer fingerTableSize = (Integer) parameters.get("fingerTableSize");
 
@@ -43,8 +44,7 @@ public class ChordAlgorithm implements Algorithm {
 					", average degree = " + c.getAvgDegree() );
 			return new Data[]{dm};
 		} else {			
-			println("CHORD Network not built. "+c.getFailReason());
-			return null;
+			throw new AlgorithmExecutionException("CHORD Network not built. "+c.getFailReason());
 		}
 	        
     }
