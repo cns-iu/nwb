@@ -2,6 +2,8 @@ package edu.iu.nwb.converter.prefuserefer.util;
 
 import java.util.Map;
 
+import org.cishell.framework.algorithm.AlgorithmExecutionException;
+
 import prefuse.data.Schema;
 import prefuse.data.Table;
 
@@ -24,12 +26,12 @@ public class TableData {
 		currentRowIsFinished = true;
 	}
 	
-	public void setString(String columnTag, String value) {
+	public void setString(String columnTag, String value) throws AlgorithmExecutionException {
 		setString(columnTag, value, DEFAULT_MULTI_VAL_SEPARATOR);
 	}
 	
 	//will create the column if it does not already exist
-	public void setString(String columnTag, String value, String multiValSeparator) {
+	public void setString(String columnTag, String value, String multiValSeparator) throws AlgorithmExecutionException {
 		ensureRowNotFinishedYet();
 		
 		String readableColumnTag = getReadableColName(columnTag);
@@ -49,7 +51,7 @@ public class TableData {
 			table.setString(currentRow, readableColumnTag, value);
 			} catch (Exception e2) {
 				//something else must be wrong.
-				throw new Error(e2);
+				throw new AlgorithmExecutionException("Error occurred while adding the value " + value + " to the column " + readableColumnTag + " on row " + currentRow, e2);
 			}
 		}
 	}

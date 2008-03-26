@@ -5,10 +5,9 @@ import java.io.File;
 import java.io.IOException;
 import java.util.Dictionary;
 
-import javax.xml.stream.events.Characters;
-
 import org.cishell.framework.CIShellContext;
 import org.cishell.framework.algorithm.Algorithm;
+import org.cishell.framework.algorithm.AlgorithmExecutionException;
 import org.cishell.framework.data.BasicData;
 import org.cishell.framework.data.Data;
 import org.cishell.framework.data.DataProperty;
@@ -31,7 +30,7 @@ public class ReferValidation implements Algorithm {
         this.util = new ReferUtil(log);
     }
 
-    public Data[] execute() {
+    public Data[] execute() throws AlgorithmExecutionException {
     	
 
 		String fileHandler = (String) data[0].getData();
@@ -44,9 +43,7 @@ public class ReferValidation implements Algorithm {
 				dm[0].getMetadata().put(DataProperty.TYPE, DataProperty.MATRIX_TYPE);
 				return dm;
 			}catch (SecurityException exception){
-				log.log(LogService.LOG_ERROR, "SecurityException", exception);
-				exception.printStackTrace();
-				return null;
+				throw new AlgorithmExecutionException(exception);
 			}
 		} else {
 			return null;
@@ -56,7 +53,7 @@ public class ReferValidation implements Algorithm {
     //not fool-proof. No smoking gun for validating the file without basically reading the whole thing.
     //if the file has 0 or more empty lines followed by a line starting with %, it's good.
     //else, it's not good.
-    private boolean isValid(File referFile) {
+    private boolean isValid(File referFile) throws AlgorithmExecutionException {
     	BufferedReader fileReader = util.makeReader(referFile);
     	try {
     		while (true) {

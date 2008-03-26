@@ -2,23 +2,17 @@ package edu.iu.nwb.converter.prefuserefer;
 
 import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.io.InputStream;
 import java.util.Dictionary;
 
 import org.cishell.framework.CIShellContext;
 import org.cishell.framework.algorithm.Algorithm;
-import org.cishell.framework.data.BasicData;
+import org.cishell.framework.algorithm.AlgorithmExecutionException;
 import org.cishell.framework.data.Data;
-import org.cishell.framework.data.DataProperty;
 import org.osgi.service.log.LogService;
 
-import prefuse.data.Schema;
 import prefuse.data.Table;
 import edu.iu.nwb.converter.prefuserefer.util.TableData;
-import edu.iu.nwb.converter.prefuserefer.util.UnicodeReader;
 
 public class ReferReader implements Algorithm {
     Data[] data;
@@ -37,9 +31,9 @@ public class ReferReader implements Algorithm {
         this.util = new ReferUtil(log);
     }
 
-    public Data[] execute() {
+    public Data[] execute() throws AlgorithmExecutionException {
     	File referFile = (File) data[0].getData();
-    	BufferedReader referReader = util.makeReader(referFile); if (referReader == null) return null;
+    	BufferedReader referReader = util.makeReader(referFile);
     	Table referTable = extractTable(referReader);
     	Data[] referData = util.formatAsData(referTable, referFile.getAbsolutePath());
     	return referData;
@@ -70,7 +64,7 @@ public class ReferReader implements Algorithm {
      * 5) Probably more that I am not thinking of
      */
     
-    private Table extractTable(BufferedReader referReader) {
+    private Table extractTable(BufferedReader referReader) throws AlgorithmExecutionException {
     	TableData table = util.createEmptyTable(); // the table we are filling with reference records
     	
     	String field = null; //the field we are currently reading ("Author", "Year", etc...)
@@ -243,13 +237,13 @@ public class ReferReader implements Algorithm {
     }
     
     
-    public String getNextLine(BufferedReader reader) {
+    public String getNextLine(BufferedReader reader){
     	try {
     	String line = reader.readLine();
     	linesRead++;
     	return line;
     	} catch (IOException e1) {
-    		this.log.log(LogService.LOG_ERROR, "Unable to read the next line from file. Treating this as the end of the file", e1);
+    		this.log.log(LogService.LOG_WARNING, "Unable to read the next line from file. Treating this as the end of the file", e1);
     		return null;
     	}
     }

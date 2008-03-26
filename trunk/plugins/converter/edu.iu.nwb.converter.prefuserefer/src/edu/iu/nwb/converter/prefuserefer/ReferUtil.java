@@ -8,6 +8,7 @@ import java.io.InputStream;
 import java.util.Hashtable;
 import java.util.Map;
 
+import org.cishell.framework.algorithm.AlgorithmExecutionException;
 import org.cishell.framework.data.BasicData;
 import org.cishell.framework.data.Data;
 import org.cishell.framework.data.DataProperty;
@@ -26,7 +27,7 @@ public class ReferUtil {
 		this.log = log;
 	}
 	
-	public BufferedReader makeReader(File file) {
+	public BufferedReader makeReader(File file) throws AlgorithmExecutionException {
 	    	try {
 	    	InputStream stream = new FileInputStream(file);
 	    	/*
@@ -38,8 +39,7 @@ public class ReferUtil {
 	    	BufferedReader reader = new BufferedReader(unicodeReader);
 	    	return reader;
 	    	} catch (FileNotFoundException e1) {
-	    		this.log.log(LogService.LOG_ERROR, "ReferReader could not find a file at " + file.getAbsolutePath(), e1);
-	    		return null;
+	    		throw new AlgorithmExecutionException("ReferReader could not find a file at " + file.getAbsolutePath(), e1);
 	    	} 
 	    }
 	
@@ -96,7 +96,7 @@ public class ReferUtil {
     	return "\r\n";
     }
     
-    public void commitFieldToRecord(TableData table, String field, String fieldContents) {
+    public void commitFieldToRecord(TableData table, String field, String fieldContents) throws AlgorithmExecutionException {
     	//will create the column if it does not already exist
     	table.setString(field, fieldContents);
     }
