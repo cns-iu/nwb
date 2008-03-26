@@ -6,11 +6,11 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.io.Writer;
-import java.nio.charset.Charset;
 import java.util.Dictionary;
 
 import org.cishell.framework.CIShellContext;
 import org.cishell.framework.algorithm.Algorithm;
+import org.cishell.framework.algorithm.AlgorithmExecutionException;
 import org.cishell.framework.data.BasicData;
 import org.cishell.framework.data.Data;
 import org.osgi.service.log.LogService;
@@ -37,8 +37,7 @@ public class JungPajekNetWriter implements Algorithm, VertexStringer {
         logger = (LogService) context.getService(LogService.class.getName());
     }
 
-    public Data[] execute() {
- 	
+    public Data[] execute() throws AlgorithmExecutionException{
 		File tempFile;
 	        
 	    String tempPath = System.getProperty("java.io.tmpdir");
@@ -47,9 +46,7 @@ public class JungPajekNetWriter implements Algorithm, VertexStringer {
 	    	tempDir.mkdir();
 	    try{
 	    	tempFile = File.createTempFile("NWB-Session-", ".net", tempDir);
-	    		
 	    }catch (IOException e){
-	    	logger.log(LogService.LOG_ERROR, "IOException", e);
 	   		tempFile = new File (tempPath+File.separator+"nwbTemp"+File.separator+"temp.net");
     	}
     	if (tempFile != null){
@@ -60,15 +57,12 @@ public class JungPajekNetWriter implements Algorithm, VertexStringer {
     						writer, this, new UserDatumNumberEdgeValue("weight")) ;
     			return new Data[]{new BasicData(tempFile, "file:application/pajek") };
     		}catch (IOException ioe){
-    			logger.log(LogService.LOG_ERROR, "IOException", ioe);
-    			return null;
+    			throw new AlgorithmExecutionException("IOException", ioe);
     		}
     	}
     	else{
-    		logger.log(LogService.LOG_ERROR, "Fail to generate a file in the temporary directory.");
-    		return null;
+    		throw new AlgorithmExecutionException("Failed to generate a file in the temporary directory.");
     	}
-
     }
 
     public String getLabel(ArchetypeVertex v) {

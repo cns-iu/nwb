@@ -4,7 +4,6 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
-import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.Reader;
@@ -13,18 +12,16 @@ import java.util.Iterator;
 
 import org.cishell.framework.CIShellContext;
 import org.cishell.framework.algorithm.Algorithm;
+import org.cishell.framework.algorithm.AlgorithmExecutionException;
 import org.cishell.framework.data.BasicData;
 import org.cishell.framework.data.Data;
 import org.cishell.framework.data.DataProperty;
-import org.osgi.service.log.LogService;
 
 import edu.uci.ics.jung.graph.Graph;
 import edu.uci.ics.jung.graph.Vertex;
 import edu.uci.ics.jung.graph.decorators.UserDatumNumberEdgeValue;
 import edu.uci.ics.jung.io.PajekNetReader;
 import edu.uci.ics.jung.utils.UserData;
-import edu.uci.ics.jung.utils.UserDataContainer;
-import edu.uci.ics.jung.utils.UserDataContainer.CopyAction;
 
 /**
  * @author Weixia(Bonnie) Huang 
@@ -40,8 +37,7 @@ public class JungPajekNetReader implements Algorithm {
         this.context = context;
     }
 
-    public Data[] execute() {
-    	LogService logger = (LogService)context.getService(LogService.class.getName());
+    public Data[] execute() throws AlgorithmExecutionException {
     	File fileHandler = (File) data[0].getData();
     	try{
     		Reader reader = new BufferedReader(new InputStreamReader(new FileInputStream(fileHandler), "UTF8"));
@@ -56,11 +52,9 @@ public class JungPajekNetReader implements Algorithm {
             dm[0].getMetadata().put(DataProperty.TYPE, DataProperty.NETWORK_TYPE);
     		return dm;
     	}catch (FileNotFoundException exception){
-    		logger.log(LogService.LOG_ERROR, "FileNotFoundException", exception);
-    		return null;
+    		throw new AlgorithmExecutionException(exception.getMessage(),exception);
     	}catch (IOException ioe){
-    		logger.log(LogService.LOG_ERROR, "IOException", ioe);
-    		return null;
+    		throw new AlgorithmExecutionException(ioe.getMessage(),ioe);
     	}
     }
     
@@ -73,6 +67,5 @@ public class JungPajekNetReader implements Algorithm {
                 v.addUserDatum("label", label, UserData.SHARED);
             }
         }
-        
     }
 }

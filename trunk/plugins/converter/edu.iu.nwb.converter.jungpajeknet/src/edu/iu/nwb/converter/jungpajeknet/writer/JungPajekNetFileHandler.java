@@ -1,32 +1,21 @@
 package edu.iu.nwb.converter.jungpajeknet.writer;
 
-import java.io.File;
 import java.util.Dictionary;
-//OSGi
-import org.osgi.service.component.ComponentContext;
-import org.osgi.service.log.LogService;
-import org.osgi.service.metatype.MetaTypeProvider;
-//CIShell
+
 import org.cishell.framework.CIShellContext;
 import org.cishell.framework.algorithm.Algorithm;
 import org.cishell.framework.algorithm.AlgorithmFactory;
 import org.cishell.framework.data.BasicData;
 import org.cishell.framework.data.Data;
+import org.osgi.service.log.LogService;
 
 /**
  * @author Weixia(Bonnie) Huang 
  */
 public class JungPajekNetFileHandler implements AlgorithmFactory {
-
-    protected void activate(ComponentContext ctxt) {  }
-    protected void deactivate(ComponentContext ctxt) {   }
-
     public Algorithm createAlgorithm(Data[] data, Dictionary parameters, CIShellContext context) {
         return new JungPajekNetFileHandlerAlg(data, parameters, context);
     }
-    public MetaTypeProvider createParameters(Data[] data) {
-        return null;
-    }    
 
     public class JungPajekNetFileHandlerAlg implements Algorithm {
         Data[] data;
@@ -42,18 +31,7 @@ public class JungPajekNetFileHandler implements AlgorithmFactory {
         }
 
         public Data[] execute() {
-        	Object inData = data[0].getData();
-        	String format = data[0].getFormat();
-        	if(inData instanceof File && format.equals("file:application/pajek")){
-        		return new Data[]{new BasicData(inData, "file-ext:net")};          		
-        	}
-        	else {
-        		if (!(inData instanceof File))        				
-        			logger.log(LogService.LOG_ERROR, "Expect a File, but the input data is "+inData.getClass().getName());
-        		else if (!format.equals("file:application/pajek"))
-        			logger.log(LogService.LOG_ERROR, "Expect file:application/pajek, but the input format is "+format);
-       			return null;
-        	}     	
+        	return new Data[]{new BasicData(data[0].getMetadata(),data[0].getData(),data[0].getFormat())};        
         }
     }
 }
