@@ -10,14 +10,12 @@ import java.util.Dictionary;
 
 import org.cishell.framework.CIShellContext;
 import org.cishell.framework.algorithm.Algorithm;
+import org.cishell.framework.algorithm.AlgorithmExecutionException;
 import org.cishell.framework.algorithm.AlgorithmFactory;
 import org.cishell.framework.data.BasicData;
 import org.cishell.framework.data.Data;
 import org.cishell.framework.data.DataProperty;
-import org.osgi.service.component.ComponentContext;
-//import org.osgi.service.log.LogService;
 import org.osgi.service.log.LogService;
-import org.osgi.service.metatype.MetaTypeProvider;
 
 import prefuse.data.io.DataIOException;
 import prefuse.data.io.GraphMLReader;
@@ -26,16 +24,8 @@ import prefuse.data.io.GraphMLReader;
  * @author Weixia(Bonnie) Huang 
  */
 public class PrefuseGraphMLValidation implements AlgorithmFactory {
-    protected void activate(ComponentContext ctxt) {
-    }
-    protected void deactivate(ComponentContext ctxt) {
-    }
-
     public Algorithm createAlgorithm(Data[] data, Dictionary parameters, CIShellContext context) {
         return new PrefuseGraphMLValidationAlg(data, parameters, context);
-    }
-    public MetaTypeProvider createParameters(Data[] data) {
-        return null;
     }
     
     public class PrefuseGraphMLValidationAlg implements Algorithm {
@@ -49,9 +39,7 @@ public class PrefuseGraphMLValidation implements AlgorithmFactory {
             this.context = context;
         }
 
-        public Data[] execute() {
-	    	LogService logger = (LogService)context.getService(LogService.class.getName());
-			
+        public Data[] execute() throws AlgorithmExecutionException {
         	String fileHandler = (String) data[0].getData();
         	File inData = new File(fileHandler);
         	
@@ -65,21 +53,13 @@ public class PrefuseGraphMLValidation implements AlgorithmFactory {
         		}else 
             		return null;
         	}catch (DataIOException dioe){
-				logger.log(LogService.LOG_ERROR, "Data IO error while validating the specified graphML file.", dioe);
-        		dioe.printStackTrace();
-        		return null;
+				throw new AlgorithmExecutionException("Data IO error while validating the specified graphML file.", dioe);
         	}catch (SecurityException exception){
-				logger.log(LogService.LOG_ERROR, "Security error while validating the specified graphML file.", exception);
-        		exception.printStackTrace();
-        		return null;
+        		throw new AlgorithmExecutionException( "Security error while validating the specified graphML file.", exception);
         	}catch (FileNotFoundException e){
-        		logger.log(LogService.LOG_ERROR, "Could not find the specified graphML file for validation.", e);
-        		e.printStackTrace();
-        		return null;
+        		throw new AlgorithmExecutionException("Could not find the specified graphML file for validation.", e);
         	}catch (IOException ioe){
-        		logger.log(LogService.LOG_ERROR, "IO errors while validating the specified graphML", ioe);
-        		ioe.printStackTrace();
-        		return null;
+        		throw new AlgorithmExecutionException("IO errors while validating the specified graphML", ioe);
         	}
         	
         	

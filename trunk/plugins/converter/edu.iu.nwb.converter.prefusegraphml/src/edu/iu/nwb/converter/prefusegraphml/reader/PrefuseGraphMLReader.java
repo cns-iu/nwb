@@ -1,21 +1,20 @@
 package edu.iu.nwb.converter.prefusegraphml.reader;
 
-import java.util.Dictionary;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
-import java.lang.SecurityException;
+import java.util.Dictionary;
 
 import org.cishell.framework.CIShellContext;
 import org.cishell.framework.algorithm.Algorithm;
+import org.cishell.framework.algorithm.AlgorithmExecutionException;
 import org.cishell.framework.data.BasicData;
 import org.cishell.framework.data.Data;
 import org.cishell.framework.data.DataProperty;
-import org.osgi.service.log.LogService;
 
 import prefuse.data.Graph;
-import prefuse.data.io.GraphMLReader;
 import prefuse.data.io.DataIOException;
+import prefuse.data.io.GraphMLReader;
 
 /**
  * @author Weixia(Bonnie) Huang 
@@ -31,8 +30,7 @@ public class PrefuseGraphMLReader implements Algorithm {
         this.context = context;
     }
 
-    public Data[] execute() {
-     	LogService logger = (LogService)context.getService(LogService.class.getName());
+    public Data[] execute() throws AlgorithmExecutionException {
     	File fileHandler = (File) data[0].getData();
 
     	try{
@@ -42,16 +40,11 @@ public class PrefuseGraphMLReader implements Algorithm {
             dm[0].getMetadata().put(DataProperty.TYPE, DataProperty.NETWORK_TYPE);
     		return dm;
     	}catch (DataIOException dioe){
-    		logger.log(LogService.LOG_ERROR, "A Data IO error occurred while reading the specified file into prefuse.data.Graph.", dioe);
-    		dioe.printStackTrace();
-    		return null;
+    		throw new AlgorithmExecutionException("A Data IO error occurred while reading the specified file into prefuse.data.Graph.", dioe);
     	}catch (SecurityException exception){
-    		logger.log(LogService.LOG_ERROR, "A security violation occured while reading the specified file into prefuse.data.Graph.", exception);
-    		return null;
+    		throw new AlgorithmExecutionException("A security violation occured while reading the specified file into prefuse.data.Graph.", exception);
     	}catch (FileNotFoundException e){
-    		logger.log(LogService.LOG_ERROR, "Could not find the specified file to convert to prefuse.data.Graph.", e);
-    		return null;
+    		throw new AlgorithmExecutionException("Could not find the specified file to convert to prefuse.data.Graph.", e);
     	}
-    	
     }
 }

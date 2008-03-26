@@ -1,16 +1,14 @@
 package edu.iu.nwb.converter.prefusegraphml.writer;
 
-import java.util.Dictionary;
 import java.io.BufferedOutputStream;
-import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.OutputStreamWriter;
-import java.io.Writer;
+import java.util.Dictionary;
 
 import org.cishell.framework.CIShellContext;
 import org.cishell.framework.algorithm.Algorithm;
+import org.cishell.framework.algorithm.AlgorithmExecutionException;
 import org.cishell.framework.data.BasicData;
 import org.cishell.framework.data.Data;
 import org.osgi.service.log.LogService;
@@ -34,7 +32,7 @@ public class PrefuseGraphMLWriter implements Algorithm {
         logger=(LogService)context.getService(LogService.class.getName());
     }
 
-    public Data[] execute() {
+    public Data[] execute() throws AlgorithmExecutionException {
 		File tempFile;
         
 	    String tempPath = System.getProperty("java.io.tmpdir");
@@ -55,17 +53,13 @@ public class PrefuseGraphMLWriter implements Algorithm {
     						new BufferedOutputStream(new FileOutputStream(tempFile))) ;
     			return new Data[]{new BasicData(tempFile, "file:text/graphml+xml") };
     		}catch (DataIOException dioe){
-    	   		logger.log(LogService.LOG_ERROR, "Data IO error while writing a GraphML file.", dioe);
-    	   		return null;
+    	   		throw new AlgorithmExecutionException("Data IO error while writing a GraphML file.", dioe);
     		}catch (IOException ioe){
-    	   		logger.log(LogService.LOG_ERROR, "IO error while writing a GraphML file.", ioe);
-    	   	 	return null;
+    	   		throw new AlgorithmExecutionException("IO error while writing a GraphML file.", ioe);
     		}
     	}
-    	else{
-       		logger.log(LogService.LOG_ERROR, "Fail to generate a file in the temporary directory.");
-       	 	return null;
+    	else {
+       		throw new AlgorithmExecutionException("Fail to generate a file in the temporary directory.");
     	}
-    	
     }
 }
