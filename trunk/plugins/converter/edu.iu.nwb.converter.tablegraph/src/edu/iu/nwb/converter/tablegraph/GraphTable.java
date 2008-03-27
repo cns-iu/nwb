@@ -10,7 +10,10 @@ import org.cishell.framework.data.DataProperty;
 //import org.osgi.service.log.LogService;
 
 import prefuse.data.Graph;
+import prefuse.data.Schema;
 import prefuse.data.Table;
+import prefuse.data.Tuple;
+import prefuse.data.expression.AbstractExpression;
 
 public class GraphTable implements Algorithm {
 	Data[] data;
@@ -25,7 +28,25 @@ public class GraphTable implements Algorithm {
 
 	public Data[] execute() {
 		Graph graph = (Graph) this.data[0].getData();
-		Data nodeData = new BasicData(graph.getNodeTable(), Table.class.getName());
+		Table nodeTable = graph.getNodeTable();
+		if(graph.getNodeKeyField() == null) {
+			nodeTable.addColumn("id", new AbstractExpression() {
+
+				public Class getType(Schema arg0) {
+					return int.class;
+				}
+				
+				public int getInt(Tuple t) {
+					return t.getRow();
+				}
+				
+				public Object get(Tuple t) {
+					return new Integer(getInt(t));
+				}
+			});
+		}
+		
+		Data nodeData = new BasicData(nodeTable, Table.class.getName());
 		
 		Dictionary nodeMetadata = nodeData.getMetadata();
 		nodeMetadata.put(DataProperty.LABEL, "Node Table from Graph");
