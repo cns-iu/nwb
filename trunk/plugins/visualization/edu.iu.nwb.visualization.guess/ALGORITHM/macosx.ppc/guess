@@ -8,6 +8,6 @@ export GCLASSPATH="$GUESS_LIB/guess.jar:$GUESS_LIB/piccolo.jar:$GUESS_LIB/piccol
 
 # echo $GCLASSPATH
 
-java -Xmx1500m -DgHome=$GUESS_HOME -classpath $GCLASSPATH "-Dpython.home=$GUESS_HOME/src" com.hp.hpl.guess.Guess $@
+java -Xms256m -Xmx1500m -DgHome=$GUESS_HOME -classpath $GCLASSPATH "-Dpython.home=$GUESS_HOME/src" com.hp.hpl.guess.Guess $@
 
 echo $?
