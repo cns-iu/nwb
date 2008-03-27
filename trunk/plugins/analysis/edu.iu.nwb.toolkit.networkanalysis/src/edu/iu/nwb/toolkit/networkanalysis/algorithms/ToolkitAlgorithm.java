@@ -10,6 +10,7 @@ import java.util.Dictionary;
 
 import org.cishell.framework.CIShellContext;
 import org.cishell.framework.algorithm.Algorithm;
+import org.cishell.framework.algorithm.AlgorithmExecutionException;
 import org.cishell.framework.data.BasicData;
 import org.cishell.framework.data.Data;
 import org.cishell.framework.data.DataProperty;
@@ -32,55 +33,21 @@ public class ToolkitAlgorithm implements Algorithm{
 		logger = (LogService)ciContext.getService(LogService.class.getName());
 	}
 	
-	public Data[] execute() {
-		// TODO Auto-generated method stub
-		
+	public Data[] execute() throws AlgorithmExecutionException{
 		prefuse.data.Graph netGraph = (prefuse.data.Graph)data[0].getData();
 		
+		StringBuffer log = NetworkProperties.calculateNetworkProperties(netGraph);
 		
-		NetworkProperties np = new NetworkProperties(netGraph);
+		logger.log(LogService.LOG_INFO, log.toString());
 		
-		logger.log(LogService.LOG_INFO, np.toString());
-		StringBuffer warning = new StringBuffer();
-		if(np.densityInfo().length() < 1){
-			if(np.hasSelfLoops() && np.hasParallelEdges())
-				warning.append("Did not calculate density due to the presence of self-loops and parallel edges.");
-			if(np.hasSelfLoops() && !np.hasParallelEdges())
-				warning.append("Did not calculate density due to the presence of self-loops.");
-			 if(!np.hasSelfLoops() && np.hasParallelEdges())
-				warning.append("Did not calculate density due to the presence of parallel edges.");
-			 warning.append(System.getProperty("line.separator"));
-		}
-		if(np.hasSelfLoops() && !np.isDirected()){
-			warning.append("This graph claims to be undirected but has self-loops. Please re-examine your data.");
-			warning.append(System.getProperty("line.separator"));
-		}
-		if(np.hasParallelEdges() && !np.isDirected()){
-			warning.append("This graph claims to be undirected but has parallel edges. Please re-examine your data.");
-			warning.append(System.getProperty("line.separator"));
-		}
-		if((np.hasParallelEdges() || np.hasSelfLoops()) && !np.isDirected()){
-			warning.append("Many algorithms will not function correctly with this graph.");
-			warning.append(System.getProperty("line.separator"));
-		}
-		
-		//logger.log(LogService.LOG_INFO, np.testPrint());
-		
-		logger.log(LogService.LOG_WARNING, warning.toString());
-		
-		StringBuffer logFileInfo = new StringBuffer();
-		logFileInfo.append(np.toString());
-		logFileInfo.append(warning.toString());
-		
-		File logFile = this.logToFile(logFileInfo);
-		
-		if(logFile == null){
-			logger.log(LogService.LOG_ERROR, "Unable to generate a log file.");
-			warning.append(System.getProperty("line.separator"));
-			return null;
-		}
-		
-		final Data outputData = new BasicData(logFile,logFile.getClass().getName());
+		File logFile = this.logToFile(log);
+	
+		Data outputData = createOutputData(logFile);
+		return new Data[] {outputData};
+	}
+	
+	private Data createOutputData(File logFile) {
+		Data outputData = new BasicData(logFile,logFile.getClass().getName());
 		
 		final Dictionary logAttributes = outputData.getMetadata();
 		
@@ -89,10 +56,7 @@ public class ToolkitAlgorithm implements Algorithm{
 		logAttributes.put(DataProperty.TYPE, DataProperty.TEXT_TYPE);
 		logAttributes.put(DataProperty.LABEL,
 				"Graph and Network Analysis Log");
-		
-		
-		np = null;
-		return new Data[] {outputData};
+		return outputData;
 	}
 	
 	private File getTempFile(){
@@ -113,7 +77,7 @@ public class ToolkitAlgorithm implements Algorithm{
 		return tempFile;
 	}
 	
-	private File logToFile(StringBuffer logInfo){
+	private File logToFile(final StringBuffer logInfo) throws AlgorithmExecutionException {
 		File logFile;
 		logFile = this.getTempFile();
 		try{
@@ -122,14 +86,10 @@ public class ToolkitAlgorithm implements Algorithm{
 			pw.close();
 			return logFile;
 		}catch (FileNotFoundException e){
-			logger.log(LogService.LOG_ERROR, "Unable to find the temporary log file.", e);
-			return null;
+			throw new AlgorithmExecutionException("Unable to generate a log file.");
 		}catch (IOException ioe){
-			logger.log(LogService.LOG_ERROR, "IO Errors while writing to the temporary log file.", ioe);
-			return null;
+			throw new AlgorithmExecutionException("Unable to generate a log file.");
 		}
-		
-		
 		
 	}
 

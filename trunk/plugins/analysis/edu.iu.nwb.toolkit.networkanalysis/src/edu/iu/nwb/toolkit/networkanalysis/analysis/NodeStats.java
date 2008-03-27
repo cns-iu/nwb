@@ -40,9 +40,6 @@ public class NodeStats {
 		
 	}
 	
-	public int getNumerOfNodes(){
-		return this.numberOfNodes;
-	}
 
 	
 	public int getNumberOfIsolatedNodes(){

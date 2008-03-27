@@ -1,135 +1,99 @@
 package edu.iu.nwb.toolkit.networkanalysis.analysis;
 
+import java.io.File;
 import java.text.DecimalFormat;
 
 
 public class NetworkProperties {
 
-	ComponentForest cf;
-	EdgeStats edgeStats;
-	NodeStats nodeStats;
-	
+	private static final String LINE_SEP = System.getProperty("line.separator");
 
-	boolean isDirectedGraph;
-	private double density = -1;
-	StringBuffer output = new StringBuffer();
+	public static StringBuffer calculateNetworkProperties(final prefuse.data.Graph graph){
+		boolean isDirectedGraph = graph.isDirected();
+		StringBuffer output = new StringBuffer();
 
 
-	public NetworkProperties(final prefuse.data.Graph graph) {
-		this.isDirectedGraph = graph.isDirected();
-		
-		
-		
-		nodeStats = new NodeStats(graph);
-		edgeStats = new EdgeStats(graph);
-		this.assembleNodeAndEdgeStats();
-		
-		
-		cf = new ComponentForest(graph);
-		
-		this.assembleConnectedInfo();
-		
-		if(!(this.hasParallelEdges() || this.hasSelfLoops())){
-			calculateDensity();
-			
-		this.assembleAverageDegreeInfo();
-		
-		this.assembleDensityInfo();
+		NodeStats nodeStats = new NodeStats(graph);
+		EdgeStats edgeStats = new EdgeStats(graph);
+
+		output = directedInfo(output, isDirectedGraph);
+		output = outputNodeAndEdgeStats(output, nodeStats, edgeStats, isDirectedGraph);
+
+		ComponentForest cf = new ComponentForest(graph);
+
+		output = connectedInfo(output, cf, nodeStats,isDirectedGraph);
+
+		if(!(edgeStats.getNumberOfParallelEdges() > 0 || edgeStats.getNumberOfSelfLoops() > 0)){
+
+			output = averageDegreeInfo(output, graph.getNodeCount(),graph.getEdgeCount(),isDirectedGraph);
+
+			output = densityInfo(output, edgeStats, graph.getNodeCount(), graph.getEdgeCount(),isDirectedGraph);
+		}else{
+			output = addWarningMessages(output, edgeStats, isDirectedGraph);
 		}
 
+		return output;
 	}
 
-	public int getNumNodes() {
-		return this.nodeStats.getNumerOfNodes();
+	private static StringBuffer addWarningMessages(StringBuffer sb, EdgeStats es, boolean isDirected){
+		if(es.getNumberOfSelfLoops() > 0 && es.getNumberOfParallelEdges() > 0)
+			sb.append("Did not calculate density due to the presence of self-loops and parallel edges.");
+		if(es.getNumberOfSelfLoops() > 0 && es.getNumberOfParallelEdges() == 0)
+			sb.append("Did not calculate density due to the presence of self-loops.");
+		if(es.getNumberOfSelfLoops() == 0 && es.getNumberOfParallelEdges() > 0)
+			sb.append("Did not calculate density due to the presence of parallel edges.");
+		sb.append(System.getProperty("line.separator"));
+
+		if(es.getNumberOfSelfLoops() > 0 && !isDirected){
+			sb.append("This graph claims to be undirected but has self-loops. Please re-examine your data.");
+			sb.append(System.getProperty("line.separator"));
+		}
+		if(es.getNumberOfParallelEdges() > 0 && !isDirected){
+			sb.append("This graph claims to be undirected but has parallel edges. Please re-examine your data.");
+			sb.append(System.getProperty("line.separator"));
+		}
+		sb.append("Many algorithms will not function correctly with this graph.");
+		sb.append(System.getProperty("line.separator"));
+
+
+		return sb;
 	}
 
-	public boolean isConnected() {
-		return this.cf.isWeaklyConnected();
+
+	private static StringBuffer outputNodeAndEdgeStats(StringBuffer sb, NodeStats ns, EdgeStats es, boolean isDirectedGraph){
+		sb.append(System.getProperty("line.separator"));
+		sb.append(ns.nodeInfo());
+		sb.append(System.getProperty("line.separator"));
+		sb.append(es.edgeInfo());
+		sb.append(System.getProperty("line.separator"));
+
+		return sb;
 	}
 
-	public boolean isDirected() {
-		
-		return this.isDirectedGraph;
-	}
 
-	public boolean hasSelfLoops() {
-		
-		return (edgeStats.getNumberOfSelfLoops() > 0);
-	}
-
-	public boolean hasParallelEdges() {
-	
-		return edgeStats.getNumberOfParallelEdges() > 0;
-	}
-
-	public int getNumEdges() {
-		return this.edgeStats.getNumberOfEdges();
-	}	
-
-	public String toString(){
-		
-		
-		
-		
-		
-		
-		return output.toString();
-	}
-	
-	private void assembleNodeAndEdgeStats(){
-		output.append(this.directedInfo());
-		output.append(System.getProperty("line.separator"));
-		output.append(System.getProperty("line.separator"));
-		output.append(this.nodeStats.nodeInfo());
-		output.append(System.getProperty("line.separator"));
-		output.append(this.edgeStats.edgeInfo());
-		output.append(System.getProperty("line.separator"));
-		
-	}
-	
-	private void assembleDensityInfo(){
-		output.append(System.getProperty("line.separator"));
-		output.append(this.densityInfo());
-		output.append(System.getProperty("line.separator"));
-		
-	}
-	
-	private void assembleAverageDegreeInfo(){
-		output.append(this.averageDegreeInfo());
-		output.append(System.getProperty("line.separator"));
-	}
-	
-	private void assembleConnectedInfo(){
-		output.append(this.connectedInfo());
-		output.append(System.getProperty("line.separator"));
-	}
-	
-	
-
-	protected String averageDegreeInfo(){
-		StringBuffer sb = new StringBuffer();
-		double averageDegree = calculateAverageDegree();
-		if (this.isDirected()) {
+	protected static StringBuffer averageDegreeInfo(StringBuffer sb, int numNodes, int numEdges, boolean isDirected){
+		double averageDegree = calculateAverageDegree(numNodes,numEdges);
+		if (isDirected) {
 			sb.append("average total degree: " + averageDegree);
 		} else { //is undirected
 			sb.append("average degree: " + averageDegree);
 		}
-		return sb.toString();
+		sb.append(System.getProperty("line.separator"));
+		return sb;
 	}
 
-	protected String directedInfo(){
-		StringBuffer sb = new StringBuffer();
-		if(this.isDirected()){
+	protected static StringBuffer directedInfo(StringBuffer sb, boolean isDirected){
+		if(isDirected){
 			sb.append("This graph claims to be directed.");
 		}
 		else{
 			sb.append("This graph claims to be undirected.");
 		}
-		return sb.toString();
+		sb.append(System.getProperty("line.separator"));
+		return sb;
 	}
 
-	protected String connectedInfo(){
-		StringBuffer sb = new StringBuffer();
+	protected static StringBuffer connectedInfo(StringBuffer sb, ComponentForest cf, NodeStats ns, boolean isDirected){
 		if(cf.isWeaklyConnected()){
 			sb.append("This graph is weakly connected.");
 			sb.append(System.getProperty("line.separator"));
@@ -139,14 +103,14 @@ public class NetworkProperties {
 			sb.append(System.getProperty("line.separator"));
 		}
 
-		sb.append("There are " + cf.getWeakComponentClusters() + " weakly connected components. (" + this.nodeStats.getNumberOfIsolatedNodes() +
-				" isolates)");
+		sb.append("There are " + cf.getWeakComponentClusters() + " weakly connected components. (" + ns.getNumberOfIsolatedNodes() +
+		" isolates)");
 		sb.append(System.getProperty("line.separator"));
 		sb.append("The largest connected component consists of " + cf.getMaximumWeakConnectedNodes()+ " nodes.");
 		sb.append(System.getProperty("line.separator"));
-		
-		if(this.isDirected()){
-			
+
+		if(isDirected){
+
 			if(cf.isStronglyConnected()){
 				sb.append("This graph is strongly connected");
 				sb.append(System.getProperty("line.separator"));
@@ -155,7 +119,7 @@ public class NetworkProperties {
 				sb.append("This graph is not strongly connected.");
 				sb.append(System.getProperty("line.separator"));
 			}
-			
+
 			sb.append("There are " + cf.getStrongComponentClusters() + " strongly connected components.");
 			sb.append(System.getProperty("line.separator"));
 			sb.append("The largest strongly connected component consists of " + cf.getMaximumStrongConnectedNodes() + " nodes.");
@@ -165,54 +129,41 @@ public class NetworkProperties {
 			sb.append("Did not calculate strong connectedness because this graph was not directed.");
 			sb.append(System.getProperty("line.separator"));
 		}
-		
-		return sb.toString();
-	}
-
-	public String densityInfo(){
-		StringBuffer sb = new StringBuffer();
-		if(density > -1){
-			DecimalFormat densityFormatter = new DecimalFormat("#.#####");
-			String densityString = densityFormatter.format(this.density);
-			
-			sb.append("density (disregarding weights): " + densityString);
-			sb.append(this.weightedDensityInfo());
-			sb.append(System.getProperty("line.separator"));
-			sb.append(System.getProperty("line.separator"));
-			
-			
-		}
-
-		
-
-		return sb.toString();
-	}
-	
-	
-	
-	
-	protected String weightedDensityInfo(){
-		StringBuffer sb = new StringBuffer();
-		
-		
-		if(this.edgeStats.numAdditionalNumericAttributes > 0){
-			sb.append(System.getProperty("line.separator"));
-		sb.append("Additional Densities by Numeric Attribute");
 		sb.append(System.getProperty("line.separator"));
-		sb.append(printWeightedDensities(false));
-		sb.append(printWeightedDensities(true));
-		
-		
-		
-		}
-		return sb.toString();
+		return sb;
 	}
-	
-	private String printWeightedDensities(boolean useObservedMax){
+
+	public static StringBuffer densityInfo(StringBuffer sb, EdgeStats es,int numNodes,int numEdges,boolean isDirected){
+		sb.append(System.getProperty("line.separator"));
+		double density = calculateDensity(numNodes, numEdges, isDirected);
+		DecimalFormat densityFormatter = new DecimalFormat("#.#####");
+		String densityString = densityFormatter.format(density);
+
+		sb.append("density (disregarding weights): " + densityString);
+
+		if(es.numAdditionalNumericAttributes > 0){
+			sb.append(System.getProperty("line.separator"));
+			sb.append("Additional Densities by Numeric Attribute");
+			sb.append(System.getProperty("line.separator"));
+			sb.append(printWeightedDensities(false,es,numNodes,isDirected));
+			sb.append(printWeightedDensities(true,es,numNodes,isDirected));
+
+		}
+
+		sb.append(System.getProperty("line.separator"));
+		sb.append(System.getProperty("line.separator"));
+
+
+
+		return sb;
+	}
+
+
+	private static String printWeightedDensities(boolean useObservedMax,EdgeStats es, int numNodes,boolean isDirected){
 		double weightedSum,maxObservedValue,weightedDensity, maxConnections;
 		DecimalFormat densityFormatter = new DecimalFormat("#.#####");
 		StringBuffer sb = new StringBuffer();
-		maxConnections = (this.getNumNodes()*(this.getNumNodes()-1));
+		maxConnections = (numNodes*(numNodes-1));
 		if(useObservedMax){
 			sb.append("densities (weighted against observed max)");
 		}
@@ -220,41 +171,39 @@ public class NetworkProperties {
 			sb.append("densities (weighted against standard max)");
 		}
 		sb.append(System.getProperty("line.separator"));
-		for(int i = 0; i < this.edgeStats.getAdditionalNumericAttributes().length; i++){
-			sb.append(this.edgeStats.getAdditionalNumericAttributes()[i]+": ");
-		
-		
-			weightedSum = this.edgeStats.getWeightedDensitySumArray()[i];
-			maxObservedValue = this.edgeStats.getMaxValueArray()[i];
-			if(this.isDirectedGraph){
+		for(int i = 0; i < es.getAdditionalNumericAttributes().length; i++){
+			sb.append(es.getAdditionalNumericAttributes()[i]+": ");
+
+
+			weightedSum = es.getWeightedDensitySumArray()[i];
+			maxObservedValue = es.getMaxValueArray()[i];
+			if(isDirected){
 				weightedDensity = weightedSum/maxConnections;
 			}
 			else{
-				
+
 				weightedDensity = weightedSum/(.5*maxConnections);
 			}
 			if(useObservedMax)
 				weightedDensity = weightedDensity/maxObservedValue;
-			
+
 			sb.append(densityFormatter.format(weightedDensity));
 			sb.append(System.getProperty("line.separator"));
 		}
 		return sb.toString();
 	}
 
-	protected void calculateDensity(){
-		long maxEdges = this.getNumNodes()* (this.getNumNodes()-1);
-		if(this.isDirected()){
-			density = (double)this.getNumEdges()/(maxEdges);
+	protected static double calculateDensity(int numberOfNodes, int numberOfEdges, boolean isDirected){
+		long maxEdges = numberOfNodes* (numberOfNodes-1);
+		if(isDirected){
+			return (double)numberOfEdges/(maxEdges);
 		}
 		else{
-			density = (double)this.getNumEdges()/(maxEdges/2);
+			return(double)numberOfEdges/(maxEdges/2);
 		}
 	}
-	
-	protected double calculateAverageDegree() {
-		int numEdges = getNumEdges();
-		int numNodes = getNumNodes();
+
+	protected static double calculateAverageDegree(int numNodes, int numEdges) {
 		//for each edge we have, two nodes have their degree increase by one.
 		double averageDegree = 2 * (double) numEdges / (double) numNodes;
 		return averageDegree;
