@@ -8,9 +8,21 @@ z=`which xterm`
 if [ -n "$x" ]; then
 	echo "plot \"$*\"">gnuplotstart.txt
 	if [ -n "$y" ]; then
-	  gnome-terminal -e "gnuplot -persist gnuplotstart.txt -" 
+	  gnome-terminal -e "gnuplot -persist gnuplotstart.txt -" &
+	  
+	  PID=$!
+	  clean(){ kill $PID  
+	  }
+	  trap clean INT TERM
+	  wait $PID 
 	elif [ -n "$z" ]; then
-	  xterm -e "gnuplot -persist gnuplotstart.txt -"
+	  xterm -e "gnuplot -persist gnuplotstart.txt -" &
+	  
+	  PID=$!
+	  clean(){ kill $PID  
+	  }
+	  trap clean INT TERM
+	  wait $PID
 	else
 	  echo "You need to have either gnome-terminal or xterm installed"
 	  echo "on this machine and available in your PATH in order to call"
