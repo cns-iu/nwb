@@ -20,6 +20,7 @@ import org.cishell.framework.data.DataProperty;
 import org.osgi.service.log.LogService;
 
 import edu.iu.nwb.analysis.extractnetfromtable.components.ExtractNetworkFromTable;
+import edu.iu.nwb.analysis.extractnetfromtable.components.InvalidColumnNameException;
 
 public class ExtractNetFromTableAlgorithm implements Algorithm {
 	Data[] data;
@@ -96,6 +97,7 @@ public class ExtractNetFromTableAlgorithm implements Algorithm {
 			p = this.getProperties((String)this.parameters.get("aff"));
 		}
 
+		try{
 		final ExtractNetworkFromTable enft = new ExtractNetworkFromTable(logger,
 				dataTable, extractColumn, split, p, false);
 
@@ -120,5 +122,8 @@ public class ExtractNetFromTableAlgorithm implements Algorithm {
 		tableAttributes.put(DataProperty.LABEL, "Unique Values from Column "+extractColumn);
 
 		return new Data[] { outputData1, outputData2 };
+		}catch(InvalidColumnNameException ex){
+			throw new AlgorithmExecutionException(ex.getMessage(),ex);
+		}
 	}
 }

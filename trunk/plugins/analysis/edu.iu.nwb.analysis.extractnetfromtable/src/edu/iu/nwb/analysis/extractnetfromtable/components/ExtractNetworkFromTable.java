@@ -54,7 +54,7 @@ public class ExtractNetworkFromTable {
 
 	public ExtractNetworkFromTable(LogService log, prefuse.data.Table pdt,
 			String columnName, String split, Properties metaData,
-			boolean isDirected) {
+			boolean isDirected) throws InvalidColumnNameException{
 
 		this.log = log;
 		this.splitString = split;
@@ -79,9 +79,14 @@ public class ExtractNetworkFromTable {
 	 */
 
 	private prefuse.data.Graph constructGraph(prefuse.data.Table pdt,
-			String columnName, Properties p) {
+			String columnName, Properties p) throws InvalidColumnNameException{
 
 		final Schema inputSchema = pdt.getSchema();
+		try{
+			inputSchema.getColumnIndex(columnName);
+		}catch(ArrayIndexOutOfBoundsException ex){
+			throw new InvalidColumnNameException(columnName + "was not a column in this table.\n");
+		}
 
 		final Schema nodeSchema = new Schema();
 		final Schema edgeSchema = new Schema();
@@ -98,6 +103,7 @@ public class ExtractNetworkFromTable {
 	}
 
 	private static void addDuplicateValueErrorMessage(String title, String col, HashMap errorMessages){
+		//This needs to be generalized.
 		String error = "The work:"+
 		System.getProperty("line.separator")+
 		"\t"+title+
@@ -113,6 +119,7 @@ public class ExtractNetworkFromTable {
 	}
 
 	private static void printNoValueToExtractError(String title, String col, LogService ls){
+		//This needs to be generalized.
 		String error = "The work:"+
 		System.getProperty("line.separator")+
 		"\t"+title+
