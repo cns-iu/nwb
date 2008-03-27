@@ -20,10 +20,10 @@ public class ErrorTolerance {
 		Random randNum = new Random(); //Probably want to be able to take a seed for repeatability.
 		Graph errorGraph = (Graph) graph.copy();
 		Indexer indxr = Indexer.newIndexer(errorGraph, 0);
-		int cnt = 0;
+		int count = 0;
 		int nodeNumber;
 		
-		while (cnt < numberOfDeletedNodes) {
+		while (count < numberOfDeletedNodes) {
 			/* Select a random node. Deletes all its edges and then delete the node. */
             
             //ran out of nodes
@@ -40,7 +40,7 @@ public class ErrorTolerance {
             indxr.updateIndex();
             
 			/* Increment count if node deleted from the graph */
-			cnt++;
+			count++;
 		}
 		
 		return errorGraph;
