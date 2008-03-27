@@ -8,12 +8,14 @@ import java.util.Properties;
 
 import org.cishell.framework.CIShellContext;
 import org.cishell.framework.algorithm.Algorithm;
+import org.cishell.framework.algorithm.AlgorithmExecutionException;
 import org.cishell.framework.data.BasicData;
 import org.cishell.framework.data.Data;
 import org.cishell.framework.data.DataProperty;
 import org.osgi.service.log.LogService;
 
-import edu.iu.nwb.analysis.extractmultivaluednetwork.components.ExtractNetworkfromMultivalues;
+import edu.iu.nwb.analysis.extractnetfromtable.components.ExtractNetworkFromTable;
+import edu.iu.nwb.analysis.extractnetfromtable.components.InvalidColumnNameException;
 
 public class ExtractAlgorithm implements Algorithm {
 	Data[] data;
@@ -29,7 +31,7 @@ public class ExtractAlgorithm implements Algorithm {
 		logger = (LogService) ciContext.getService(LogService.class.getName());
 	}
 
-	public Data[] execute() {
+	public Data[] execute() throws AlgorithmExecutionException{
 		final prefuse.data.Table dataTable = (prefuse.data.Table) data[0]
 				.getData();
 
@@ -45,13 +47,13 @@ public class ExtractAlgorithm implements Algorithm {
 		} catch (final IOException ie) {
 			logger.log(LogService.LOG_ERROR, ie.getMessage());
 		}
+		try{
+		final ExtractNetworkFromTable enft = new ExtractNetworkFromTable(logger,
+				dataTable, "Authors", "|", metaData, false);
 		
-		final ExtractNetworkfromMultivalues enfmv = new ExtractNetworkfromMultivalues(logger,
-				dataTable, "AU", "|", metaData, false);
 		
-		
-		final prefuse.data.Graph outputGraph = enfmv.getGraph();
-		final prefuse.data.Table outputTable = enfmv.getTable();
+		final prefuse.data.Graph outputGraph = enft.getGraph();
+		final prefuse.data.Table outputTable = enft.getTable();
 		final Data outputData1 = new BasicData(outputGraph,
 				prefuse.data.Graph.class.getName());
 		final Data outputData2 = new BasicData(outputTable,
@@ -70,5 +72,8 @@ public class ExtractAlgorithm implements Algorithm {
 		tableAttributes.put(DataProperty.LABEL, "Author information");
 
 		return new Data[] { outputData1, outputData2 };
+		}catch(InvalidColumnNameException ex){
+			throw new AlgorithmExecutionException(ex.getMessage(),ex);
+		}
 	}
 }
