@@ -10,7 +10,7 @@ import org.cishell.framework.data.Data;
 
 public class PathFinderAlgorithmFactory implements AlgorithmFactory {
 
-    public Algorithm createAlgorithm(Data[] data, Dictionary parameters, CIShellContext context) {
+	public Algorithm createAlgorithm(Data[] data, Dictionary parameters, CIShellContext context) {
         return new PathFinderAlgorithm(data, parameters, context);
     }
     
