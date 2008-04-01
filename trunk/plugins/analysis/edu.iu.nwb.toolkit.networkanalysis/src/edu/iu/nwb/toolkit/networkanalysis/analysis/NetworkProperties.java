@@ -19,7 +19,7 @@ public class NetworkProperties {
 		output = directedInfo(output, isDirectedGraph);
 		output = outputNodeAndEdgeStats(output, nodeStats, edgeStats, isDirectedGraph);
 
-		ComponentForest cf = new ComponentForest(graph);
+		ConnectedComponents cf = ConnectedComponents.constructConnectedComponents(graph);
 
 		output = connectedInfo(output, cf, nodeStats,isDirectedGraph);
 
@@ -42,18 +42,18 @@ public class NetworkProperties {
 			sb.append("Did not calculate density due to the presence of self-loops.");
 		if(es.getNumberOfSelfLoops() == 0 && es.getNumberOfParallelEdges() > 0)
 			sb.append("Did not calculate density due to the presence of parallel edges.");
-		sb.append(System.getProperty("line.separator"));
+		sb.append(LINE_SEP);
 
 		if(es.getNumberOfSelfLoops() > 0 && !isDirected){
 			sb.append("This graph claims to be undirected but has self-loops. Please re-examine your data.");
-			sb.append(System.getProperty("line.separator"));
+			sb.append(LINE_SEP);
 		}
 		if(es.getNumberOfParallelEdges() > 0 && !isDirected){
 			sb.append("This graph claims to be undirected but has parallel edges. Please re-examine your data.");
-			sb.append(System.getProperty("line.separator"));
+			sb.append(LINE_SEP);
 		}
 		sb.append("Many algorithms will not function correctly with this graph.");
-		sb.append(System.getProperty("line.separator"));
+		sb.append(LINE_SEP);
 
 
 		return sb;
@@ -61,11 +61,11 @@ public class NetworkProperties {
 
 
 	private static StringBuffer outputNodeAndEdgeStats(StringBuffer sb, NodeStats ns, EdgeStats es, boolean isDirectedGraph){
-		sb.append(System.getProperty("line.separator"));
+		sb.append(LINE_SEP);
 		sb.append(ns.nodeInfo());
-		sb.append(System.getProperty("line.separator"));
+		sb.append(LINE_SEP);
 		sb.append(es.appendEdgeInfo());
-		sb.append(System.getProperty("line.separator"));
+		sb.append(LINE_SEP);
 
 		return sb;
 	}
@@ -74,11 +74,11 @@ public class NetworkProperties {
 	protected static StringBuffer averageDegreeInfo(StringBuffer sb, int numNodes, int numEdges, boolean isDirected){
 		double averageDegree = calculateAverageDegree(numNodes,numEdges);
 		if (isDirected) {
-			sb.append("average total degree: " + averageDegree);
+			sb.append("Average total degree: " + averageDegree);
 		} else { //is undirected
-			sb.append("average degree: " + averageDegree);
+			sb.append("Average degree: " + averageDegree);
 		}
-		sb.append(System.getProperty("line.separator"));
+		sb.append(LINE_SEP);
 		return sb;
 	}
 
@@ -89,69 +89,69 @@ public class NetworkProperties {
 		else{
 			sb.append("This graph claims to be undirected.");
 		}
-		sb.append(System.getProperty("line.separator"));
+		sb.append(LINE_SEP);
 		return sb;
 	}
 
-	protected static StringBuffer connectedInfo(StringBuffer sb, ComponentForest cf, NodeStats ns, boolean isDirected){
+	protected static StringBuffer connectedInfo(StringBuffer sb, ConnectedComponents cf, NodeStats ns, boolean isDirected){
 		if(cf.isWeaklyConnected()){
 			sb.append("This graph is weakly connected.");
-			sb.append(System.getProperty("line.separator"));
+			sb.append(LINE_SEP);
 		}
 		else{
 			sb.append("This graph is not weakly connected.");
-			sb.append(System.getProperty("line.separator"));
+			sb.append(LINE_SEP);
 		}
 
 		sb.append("There are " + cf.getWeakComponentClusters() + " weakly connected components. (" + ns.getNumberOfIsolatedNodes() +
 		" isolates)");
-		sb.append(System.getProperty("line.separator"));
+		sb.append(LINE_SEP);
 		sb.append("The largest connected component consists of " + cf.getMaximumWeakConnectedNodes()+ " nodes.");
-		sb.append(System.getProperty("line.separator"));
+		sb.append(LINE_SEP);
 
 		if(isDirected){
 
 			if(cf.isStronglyConnected()){
 				sb.append("This graph is strongly connected");
-				sb.append(System.getProperty("line.separator"));
+				sb.append(LINE_SEP);
 			}
 			else{
 				sb.append("This graph is not strongly connected.");
-				sb.append(System.getProperty("line.separator"));
+				sb.append(LINE_SEP);
 			}
 
 			sb.append("There are " + cf.getStrongComponentClusters() + " strongly connected components.");
-			sb.append(System.getProperty("line.separator"));
+			sb.append(LINE_SEP);
 			sb.append("The largest strongly connected component consists of " + cf.getMaximumStrongConnectedNodes() + " nodes.");
-			sb.append(System.getProperty("line.separator"));
+			sb.append(LINE_SEP);
 		}
 		else{
 			sb.append("Did not calculate strong connectedness because this graph was not directed.");
-			sb.append(System.getProperty("line.separator"));
+			sb.append(LINE_SEP);
 		}
-		sb.append(System.getProperty("line.separator"));
+		sb.append(LINE_SEP);
 		return sb;
 	}
 
 	public static StringBuffer densityInfo(StringBuffer sb, EdgeStats es,int numNodes,int numEdges,boolean isDirected){
-		sb.append(System.getProperty("line.separator"));
+		sb.append(LINE_SEP);
 		double density = calculateDensity(numNodes, numEdges, isDirected);
 		DecimalFormat densityFormatter = new DecimalFormat("#.#####");
 		String densityString = densityFormatter.format(density);
 
-		sb.append("density (disregarding weights): " + densityString);
+		sb.append("Density (disregarding weights): " + densityString);
 		int numberOfAdditionalNumericAttributes = es.numericAttributes.size();
 		if(numberOfAdditionalNumericAttributes > 0){
-			sb.append(System.getProperty("line.separator"));
+			sb.append(LINE_SEP);
 			sb.append("Additional Densities by Numeric Attribute");
-			sb.append(System.getProperty("line.separator"));
+			sb.append(LINE_SEP);
 			sb.append(printWeightedDensities(false,es,numNodes,isDirected));
 			sb.append(printWeightedDensities(true,es,numNodes,isDirected));
 
 		}
 
-		sb.append(System.getProperty("line.separator"));
-		sb.append(System.getProperty("line.separator"));
+		sb.append(LINE_SEP);
+		sb.append(LINE_SEP);
 
 
 
@@ -170,7 +170,7 @@ public class NetworkProperties {
 		else{
 			sb.append("densities (weighted against standard max)");
 		}
-		sb.append(System.getProperty("line.separator"));
+		sb.append(LINE_SEP);
 		for(int i = 0; i < es.getAdditionalNumericAttributes().length; i++){
 			sb.append(es.getAdditionalNumericAttributes()[i]+": ");
 
@@ -188,7 +188,7 @@ public class NetworkProperties {
 				weightedDensity = weightedDensity/maxObservedValue;
 
 			sb.append(densityFormatter.format(weightedDensity));
-			sb.append(System.getProperty("line.separator"));
+			sb.append(LINE_SEP);
 		}
 		return sb.toString();
 	}

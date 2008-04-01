@@ -11,9 +11,6 @@ import prefuse.data.Graph;
 import prefuse.data.Node;
 
 public class GraphSearchAlgorithms {
-	private static int count;
-	private static int scCount;
-
 
 	protected static LinkedHashSet undirectedDepthFirstSearch(final Graph g, Integer n){
 
@@ -40,13 +37,10 @@ public class GraphSearchAlgorithms {
 		LinkedHashSet nodeSet = new LinkedHashSet();
 		Graph g2 = g;
 		if(isReverse){
-
-
 			if(isReverse){
 				g2 = reverseGraph(g);
 			}
 		}
-
 		if(n == null){
 			for(Iterator it = g2.nodes(); it.hasNext();){
 				Integer nodeNumber = new Integer(((Node)it.next()).getRow());
@@ -56,18 +50,12 @@ public class GraphSearchAlgorithms {
 		else{
 			runDDFS(g2,n,nodeSet,getPreOrder);
 		}
-
-
-
-
-
-
 		return nodeSet;
 	}
 
 	private static void runUDFS(final Graph g, Integer n, LinkedHashSet pre){
 		Queue q = new LinkedList();
-		//q.add(g.getNode(n.intValue()));
+		
 		Node nd;
 		Integer nodeRow;
 		Integer nodeNumber;
@@ -75,8 +63,6 @@ public class GraphSearchAlgorithms {
 		Node nd2;
 		q.add(new Integer(n.intValue()));
 		while(!q.isEmpty()){
-			//Node nd = (Node)q.poll();
-			//Integer nodeRow = new Integer(nd.getRow());
 			nodeRow = new Integer(((Integer)q.poll()).intValue());
 			if(!pre.contains(nodeRow)){
 				nd = g.getNode(nodeRow.intValue());
@@ -137,26 +123,18 @@ public class GraphSearchAlgorithms {
 		Integer nodeRow;
 		Integer nodeNumber;
 
-		//HashSet seen = new HashSet();
-		//seen.addAll(nodeSet);
-
 		Stack nodeStack = new Stack();
 
 		nodeStack.add(new Integer(n.intValue()));
 		while(!nodeStack.isEmpty()){
-
 			nodeRow = (Integer)nodeStack.peek();
 			nd = g.getNode(nodeRow.intValue());
-
 			if(!nodeSet.contains(nodeRow)){
-
 				if(isPreOrder)
 					nodeSet.add(nodeRow);
 				nodeSet.add(nodeRow);
 			}
 			done = true;
-
-
 			for(Iterator it = nd.outNeighbors(); it.hasNext();){
 				nd2 = ((Node)it.next());
 				nodeNumber = new Integer(nd2.getRow());
@@ -166,23 +144,16 @@ public class GraphSearchAlgorithms {
 					break;
 				}
 			}
-
-
 			if(done){
 				if(!isPreOrder)
 					nodeSet.add(nodeRow);
 				nodeStack.pop();
 			}
 		}
-
 		nodeStack = null;
 		nd = null;
 		nd2 = null;
 		nodeRow = null;
 		nodeNumber = null;
-		//seen = null;
-
-
-
 	}
 }

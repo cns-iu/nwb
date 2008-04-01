@@ -5,10 +5,13 @@ import java.util.Iterator;
 import java.util.LinkedHashSet;
 import java.util.Stack;
 
+import prefuse.data.CascadedTable;
 import prefuse.data.Graph;
 import prefuse.data.Node;
 
-public class ComponentForest{
+public class ConnectedComponents{
+	private static final String preOrderColumn = "preOrder";
+	private static final String strongComponentColumn = "strongComponentID";
 
 	int weakComponentClusters = 0;
 	int maxWeakConnectedNodes = 0;
@@ -20,8 +23,12 @@ public class ComponentForest{
 	
 
 
-	public ComponentForest(final Graph graph){
+	private ConnectedComponents(final Graph graph){
 		this.calculateConnectedness(graph);
+	}
+	
+	public static ConnectedComponents constructConnectedComponents(final Graph graph){
+		return new ConnectedComponents(graph);
 	}
 
 	public int getMaximumStrongConnectedNodes(){
@@ -72,22 +79,15 @@ public class ComponentForest{
 					seenNodes.addAll(tree);
 					if(tree.size() > maxNodes)
 						maxNodes = tree.size();
-					
-					
+						
 					cluster++;
 					tree = null;
-				}
-			
-				
+				}			
 			}
 		
 		this.weakComponentClusters = cluster;
 		this.maxWeakConnectedNodes = maxNodes;
-		
-		seenNodes = null;
-
-		
-		
+				
 	}
 	
 
@@ -97,24 +97,79 @@ public class ComponentForest{
 		Stack firstStack = new Stack();
 		firstStack.setSize(nodeCount);
 		Stack secondStack = new Stack();
-		secondStack = new Stack();
 		secondStack.setSize(nodeCount);
+		
+		CascadedTable ct = new CascadedTable(grph.getNodeTable());
+		ct.addColumn(strongComponentColumn, int.class, new Integer(-1));
+		ct.addColumn(preOrderColumn, int.class, new Integer(-1));
+		
 
 		count = 0;
 		this.strongComponentClusters = 0;
 
+		Integer testCount = new Integer(0);
+		
 		int[] id = new int[nodeCount];
 		int[] pre = new int[nodeCount];
 
 		java.util.Arrays.fill(id, -1);
 		java.util.Arrays.fill(pre, -1);
-
+/*
 		for (int v = nodeCount-1; v >= 0; v--){
 			if (pre[v] == -1){ 
 				scR(grph,v,pre,id,firstStack,secondStack);
 			}
+		}*/
+		
+		for (int v = nodeCount-1; v >= 0; v--){
+			if(ct.getInt(v, preOrderColumn) == -1){
+				recursiveStrongComponentCalculation(grph,grph.getNode(v),ct,firstStack,secondStack,testCount);
+			}
 		}
 	}
+	
+	private void recursiveStrongComponentCalculation(final Graph g, Node n, CascadedTable ct, Stack firstStack, Stack secondStack, Integer count){
+		int v;
+		count = new Integer(count.intValue()+1);
+		ct.setInt(n.getRow(), preOrderColumn, count.intValue());
+		//preOrder[vertex] = count++;
+		firstStack.push(new Integer(n.getRow()));
+		secondStack.push(new Integer(n.getRow()));
+
+		for(Iterator it = n.outNeighbors(); it.hasNext();){
+			int outNode = ((Node)it.next()).getRow();
+			if(ct.getInt(outNode, preOrderColumn) == -1) 
+				recursiveStrongComponentCalculation(g, g.getNode(outNode),ct,firstStack,secondStack, count);
+			else if (ct.getInt(outNode, strongComponentColumn)  == -1){
+				while (ct.getInt(((Integer)secondStack.peek()).intValue(),preOrderColumn) > ct.getInt(outNode, preOrderColumn)){ 
+					secondStack.pop();
+					
+				}
+				
+			}
+		}
+		
+		if(((Integer)secondStack.peek()).intValue() == n.getRow()){ 
+			secondStack.pop();
+		}
+		else{
+			return;
+		}
+		int size = 0;
+		do {
+			size++;
+			v = ((Integer)firstStack.pop()).intValue();
+			ct.setInt(v, strongComponentColumn, this.strongComponentClusters);
+		} while (n.getRow() != v);
+		
+		if(size > this.maxStrongConnectedNodes){
+			this.maxStrongConnectedNodes = size;
+		}
+		
+		this.strongComponentClusters++;
+
+	}
+	
 	
 
 	private void calculateConnectedness(final Graph graph){

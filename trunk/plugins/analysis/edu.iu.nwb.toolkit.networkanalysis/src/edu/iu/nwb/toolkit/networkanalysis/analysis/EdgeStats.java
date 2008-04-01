@@ -39,7 +39,7 @@ public class EdgeStats{
 		edgeStats = initializeAdditionalAttributes(graph.getEdgeTable(),edgeStats);
 		
 		CascadedTable derivativeTable = new CascadedTable(graph.getEdgeTable());
-		derivativeTable.addColumn("visited", Boolean.class, new Boolean(false));
+		derivativeTable.addColumn("visited", boolean.class, new Boolean(false));
 		
 		
 		int additionalNumericAttributes = edgeStats.numericAttributes.size();
@@ -60,11 +60,10 @@ public class EdgeStats{
 	}
 	
 	private static EdgeStats initializeAdditionalAttributes(final Table edgeTable, EdgeStats es){
-		
+		es.nonNumericAttributes = new Vector();
+		es.numericAttributes = new Vector();
 		int numberOfAdditionalAttributes = edgeTable.getColumnCount()-2;
 		if(numberOfAdditionalAttributes > 0){
-			es.nonNumericAttributes = new Vector();
-			es.numericAttributes = new Vector();
 			for(int i = 0; i < edgeTable.getColumnCount(); i++){
 				String columnName = edgeTable.getColumnName(i);
 				if(!(columnName.equals("source") || columnName.equals("target"))){
