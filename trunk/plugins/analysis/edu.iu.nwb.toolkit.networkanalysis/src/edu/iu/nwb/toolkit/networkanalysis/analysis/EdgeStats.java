@@ -5,6 +5,7 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Vector;
 
+import prefuse.data.CascadedTable;
 import prefuse.data.Edge;
 import prefuse.data.Graph;
 import prefuse.data.Table;
@@ -15,89 +16,81 @@ public class EdgeStats{
 	double[] minValues;
 	double[] weightedDensitySum;
 	StringBuffer[] characteristicValues;
-
-
-
+	
 	boolean isValuedNetwork = false;
 
 	int numberOfEdges;
 
-	int numAdditionalNonNumericAttributes;
-	int numAdditionalNumericAttributes;
-
-	Vector additionalNonNumericAttributes;
-	Vector additionalNumericAttributes;
+	Vector nonNumericAttributes;
+	Vector numericAttributes;
 
 	SelfLoopsParallelEdges selfLoopsParallelEdges;
-
-	public EdgeStats(final Graph graph){
-		this.numberOfEdges = graph.getEdgeCount();
-		this.selfLoopsParallelEdges = new SelfLoopsParallelEdges(graph);
-
-		this.initializeAdditionalAttributes(graph);
-
-		if(this.numAdditionalNumericAttributes > 0){
-
-			this.weightedDensitySum = new double[this.numAdditionalNumericAttributes];
-			this.meanValues = new double[this.numAdditionalNumericAttributes];
-			this.maxValues = new double[this.numAdditionalNumericAttributes];
-			this.minValues = new double[this.numAdditionalNumericAttributes];
-
-			java.util.Arrays.fill(this.maxValues, Double.MIN_VALUE);
-			java.util.Arrays.fill(this.minValues, Double.MAX_VALUE);
-
+	
+	private EdgeStats(){
+		
+	}
+	
+	public static EdgeStats constructEdgeStats(final Graph graph){
+		EdgeStats edgeStats = new EdgeStats();
+		
+		edgeStats.numberOfEdges = graph.getEdgeCount();
+		edgeStats.selfLoopsParallelEdges = new SelfLoopsParallelEdges(graph);
+		
+		edgeStats = initializeAdditionalAttributes(graph.getEdgeTable(),edgeStats);
+		
+		CascadedTable derivativeTable = new CascadedTable(graph.getEdgeTable());
+		derivativeTable.addColumn("visited", Boolean.class, new Boolean(false));
+		
+		
+		int additionalNumericAttributes = edgeStats.numericAttributes.size();
+		
+		if(additionalNumericAttributes > 0){
+		  edgeStats.weightedDensitySum = new double[additionalNumericAttributes];
+		  edgeStats.meanValues = new double[additionalNumericAttributes];
+		  edgeStats.maxValues = new double[additionalNumericAttributes];
+		  edgeStats.minValues = new double[additionalNumericAttributes];
+		  
+		  java.util.Arrays.fill(edgeStats.maxValues, Double.MIN_VALUE);
+		  java.util.Arrays.fill(edgeStats.minValues, Double.MAX_VALUE);
 		}
 		
-		this.calculateEdgeStats(graph);
+		edgeStats.calculateEdgeStats(graph,derivativeTable, edgeStats,edgeStats.numericAttributes.size());
+		
+		return edgeStats;
 	}
-
-	private void initializeAdditionalAttributes(final Graph graph){
-		numAdditionalNonNumericAttributes = graph.getEdgeTable().getColumnCount()-2;
-		numAdditionalNumericAttributes = 0;
-
-		if(numAdditionalNonNumericAttributes > 0){
-			additionalNonNumericAttributes = new Vector(numAdditionalNonNumericAttributes);
-			additionalNumericAttributes = new Vector();
-			Table t = graph.getEdgeTable();
-
-			for(int i = 0; i < t.getColumnCount(); i++){
-				if(!(t.getColumnName(i).equalsIgnoreCase("source") || t.getColumnName(i).equalsIgnoreCase("target"))){
-					additionalNonNumericAttributes.add(t.getColumnName(i));
-					try{
-						if(graph.getEdge(0).get(i) instanceof Number){
-							numAdditionalNumericAttributes += 1;
-							additionalNumericAttributes.add(t.getColumnName(i));
-						}
-					}catch(Exception e){
-						e.printStackTrace();
+	
+	private static EdgeStats initializeAdditionalAttributes(final Table edgeTable, EdgeStats es){
+		
+		int numberOfAdditionalAttributes = edgeTable.getColumnCount()-2;
+		if(numberOfAdditionalAttributes > 0){
+			es.nonNumericAttributes = new Vector();
+			es.numericAttributes = new Vector();
+			for(int i = 0; i < edgeTable.getColumnCount(); i++){
+				String columnName = edgeTable.getColumnName(i);
+				if(!(columnName.equals("source") || columnName.equals("target"))){
+					if(edgeTable.getColumn(i).canGet(Number.class)){
+						es.numericAttributes.add(columnName);
+					}else{
+						es.nonNumericAttributes.add(columnName);
 					}
 				}
 			}
-		
-
-		this.additionalNonNumericAttributes.removeAll(this.additionalNumericAttributes);
-		this.numAdditionalNonNumericAttributes = this.additionalNonNumericAttributes.size();
-		if(this.numAdditionalNonNumericAttributes > 0){
-			this.characteristicValues = new StringBuffer[this.numAdditionalNonNumericAttributes];
 		}
-		}
-		if(this.numAdditionalNumericAttributes > 1)
-			this.isValuedNetwork = true;
-
-		//if this is not the case, then we do futher calculations in calculateEdgeStats
 		
+		if(es.nonNumericAttributes.size() > 0){
+			es.characteristicValues = new StringBuffer[es.nonNumericAttributes.size()];
+		}
+		if(es.numericAttributes.size() > 0){
+			es.isValuedNetwork = true;
+		}
+		
+		return es;
 	}
 
-	public void addEdge(final Edge e, boolean[] seenEdges, HashSet observedValues, Integer maxSoFar){
-		if(!seenEdges[e.getRow()]){
-			seenEdges[e.getRow()] = true;
-			
-			if(this.numAdditionalNonNumericAttributes > 0){
-				processEdgeAttributes(e,this.additionalNonNumericAttributes,observedValues,false);
-			}
-			if(this.numAdditionalNumericAttributes > 0){
-				processEdgeAttributes(e,this.additionalNumericAttributes,observedValues,true);
-			}
+	private void addEdge(final Edge e, CascadedTable derivativeTable, HashSet observedValues){
+		if(derivativeTable.getBoolean(e.getRow(), derivativeTable.getColumnNumber("visited"))){
+				processEdgeAttributes(e,this.nonNumericAttributes,observedValues,false);
+				processEdgeAttributes(e,this.numericAttributes,observedValues,true);
 		}
 	}
 	
@@ -113,7 +106,7 @@ public class EdgeStats{
 				if(value < this.minValues[i])
 					this.minValues[i] = value;
 				
-				if(this.numAdditionalNumericAttributes == 1){
+				if(attributeNames.size() == 1){
 					
 					observedValues.add(e.get(columnName));
 				}
@@ -128,25 +121,21 @@ public class EdgeStats{
 	}
 
 
-	public void calculateEdgeStats(final Graph graph){
-		boolean[] seenEdges;
-		seenEdges = new boolean[graph.getEdgeTable().getMaximumRow() + 1];
+	public void calculateEdgeStats(final Graph graph, CascadedTable visitedTable, EdgeStats es, int numberOfNumericAttributes){
 		HashSet observedValues = null;
-		if(this.numAdditionalNumericAttributes == 1)
+		if(numberOfNumericAttributes == 1)
 			observedValues = new HashSet();
-		Integer maxSoFar = new Integer(-1);
 		for(Iterator it = graph.edges(); it.hasNext();){
 			Edge e = (Edge)it.next();
-			this.addEdge(e, seenEdges, observedValues, maxSoFar);
+			es.addEdge(e, visitedTable, observedValues);
 		}
 		
-		if(this.numAdditionalNumericAttributes == 1){
+		if(numberOfNumericAttributes == 1){
 			if(observedValues.size() > 1){
 				this.isValuedNetwork = true;
 			}
 		}
-		observedValues = null;
-		seenEdges = null;
+		
 	}
 
 	public SelfLoopsParallelEdges getSelfLoopsParallelEdges(){
@@ -161,18 +150,6 @@ public class EdgeStats{
 		return this.selfLoopsParallelEdges.getNumParallelEdges();
 	}
 
-	public int getNumberOfEdges(){
-		return this.numberOfEdges;
-	}
-
-	public String printEdgeAttributes(){
-		StringBuffer sb = new StringBuffer();
-		for(int i = 0; i < this.numAdditionalNonNumericAttributes; i++){
-			sb.append((String) this.additionalNonNumericAttributes.get(i) + " ");
-		}
-		return sb.toString();
-	}
-
 	public double[] getWeightedDensitySumArray(){
 		return this.weightedDensitySum;
 	}
@@ -183,16 +160,11 @@ public class EdgeStats{
 	
 	
 	protected String[] getAdditionalNumericAttributes(){
-		String[] numericAttributeNames = new String[this.additionalNumericAttributes.size()];
-		return (String[])this.additionalNumericAttributes.toArray(numericAttributeNames);
+		String[] numericAttributeNames = new String[this.numericAttributes.size()];
+		return (String[])this.numericAttributes.toArray(numericAttributeNames);
 	}
 
-
-	protected boolean getIsValued(){
-		return this.isValuedNetwork;
-	}
-
-	protected String parallelEdgeInfo(){
+	protected String appendParallelEdgeInfo(){
 		StringBuffer sb = new StringBuffer();
 		int parallelEdges = this.getNumberOfParallelEdges();
 		if(parallelEdges > 0){
@@ -226,31 +198,32 @@ public class EdgeStats{
 		return sb.toString();
 	}
 
-	protected String edgeInfo(){
+	protected String appendEdgeInfo(){
 		StringBuffer sb = new StringBuffer();
 		
 		sb.append("Edges: " + this.numberOfEdges);
 		sb.append(System.getProperty("line.separator"));
 		sb.append(this.selfLoopInfo());
-		sb.append(this.parallelEdgeInfo());
-		
-		if((this.numAdditionalNonNumericAttributes+this.numAdditionalNumericAttributes) > 0){
+		sb.append(this.appendParallelEdgeInfo());
+		int nonNumericAttributesSize = this.nonNumericAttributes.size();
+		int numericAttributesSize = this.numericAttributes.size();
+		if((nonNumericAttributesSize+numericAttributesSize) > 0){
 		sb.append("Edge attributes:");
 		sb.append(System.getProperty("line.separator"));
-		if(this.numAdditionalNonNumericAttributes > 0){
+		if(nonNumericAttributesSize > 0){
 			sb.append("\tNonnumeric attributes:");
 			sb.append(System.getProperty("line.separator"));
-			sb.append(printEdgeAttributes(this.additionalNonNumericAttributes,false));
+			sb.append(printEdgeAttributes(this.nonNumericAttributes,false));
 		}
 		else{
 			sb.append("\tDid not detect any nonnumeric attributes");
 		}
 		sb.append(System.getProperty("line.separator"));
 		
-		if(this.numAdditionalNumericAttributes > 0){
+		if(numericAttributesSize > 0){
 			sb.append("\tNumeric attributes:");
 			sb.append(System.getProperty("line.separator"));
-			sb.append(printEdgeAttributes(this.additionalNumericAttributes,true));
+			sb.append(printEdgeAttributes(this.numericAttributes,true));
 		}
 		else{
 			sb.append("\tDid not detect any numeric attributes");

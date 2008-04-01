@@ -14,7 +14,7 @@ public class NetworkProperties {
 
 
 		NodeStats nodeStats = new NodeStats(graph);
-		EdgeStats edgeStats = new EdgeStats(graph);
+		EdgeStats edgeStats = EdgeStats.constructEdgeStats(graph);
 
 		output = directedInfo(output, isDirectedGraph);
 		output = outputNodeAndEdgeStats(output, nodeStats, edgeStats, isDirectedGraph);
@@ -64,7 +64,7 @@ public class NetworkProperties {
 		sb.append(System.getProperty("line.separator"));
 		sb.append(ns.nodeInfo());
 		sb.append(System.getProperty("line.separator"));
-		sb.append(es.edgeInfo());
+		sb.append(es.appendEdgeInfo());
 		sb.append(System.getProperty("line.separator"));
 
 		return sb;
@@ -140,8 +140,8 @@ public class NetworkProperties {
 		String densityString = densityFormatter.format(density);
 
 		sb.append("density (disregarding weights): " + densityString);
-
-		if(es.numAdditionalNumericAttributes > 0){
+		int numberOfAdditionalNumericAttributes = es.numericAttributes.size();
+		if(numberOfAdditionalNumericAttributes > 0){
 			sb.append(System.getProperty("line.separator"));
 			sb.append("Additional Densities by Numeric Attribute");
 			sb.append(System.getProperty("line.separator"));
