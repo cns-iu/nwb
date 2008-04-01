@@ -27,15 +27,15 @@ public class ErrorTolerance {
 			/* Select a random node. Deletes all its edges and then delete the node. */
             
             //ran out of nodes
-            if (graph.numVertices() == 0) break;
+            if (errorGraph.numVertices() == 0) break;
             
-			nodeNumber = randNum.nextInt(graph.numVertices());	
+			nodeNumber = randNum.nextInt(errorGraph.numVertices());	
 			Vertex v = (Vertex) indxr.getVertex(nodeNumber);
 			
             //Note: graph.removeVertex does this
 			//graph.removeEdges(v.getIncidentEdges());
 			
-            graph.removeVertex(v);
+            errorGraph.removeVertex(v);
 			
             indxr.updateIndex();
             
