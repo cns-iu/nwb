@@ -23,14 +23,14 @@ public class NSFValidatorAlgorithm implements Algorithm {
     }
 
     public Data[] execute() throws AlgorithmExecutionException {
-		String fileHandler = (String) data[0].getData();
-		File inData = new File(fileHandler);
+		String nsfFileName = (String) data[0].getData();
+		File nsfFile = new File(nsfFileName);
 
 		try{
-			Data[] dm = new Data[] {new BasicData(inData, "file:text/nsf")};
-			dm[0].getMetadata().put(DataProperty.LABEL, "NSF csv File: " + fileHandler);
-			dm[0].getMetadata().put(DataProperty.TYPE, DataProperty.MATRIX_TYPE);
-			return dm;
+			Data[] returnData = new Data[] {new BasicData(nsfFile, "file:text/nsf")};
+			returnData[0].getMetadata().put(DataProperty.LABEL, "NSF csv file: " + nsfFileName);
+			returnData[0].getMetadata().put(DataProperty.TYPE, DataProperty.MATRIX_TYPE);
+			return returnData;
 		}catch (SecurityException exception){
 			throw new AlgorithmExecutionException(exception);
 		}

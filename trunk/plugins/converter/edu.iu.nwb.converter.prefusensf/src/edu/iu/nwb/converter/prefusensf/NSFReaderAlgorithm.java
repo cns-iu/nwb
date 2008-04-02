@@ -190,9 +190,13 @@ public class NSFReaderAlgorithm implements Algorithm {
 		//the Conversion service knows it is a csv when it tries to convert it to a prefuse.data.Table
 		 
 		//printTable((Table) inputData.getData());
-		Data formatChangedData = new BasicData(inputData.getMetadata(), cleanNSFCSVFormat((File) inputData.getData()), "file:text/csv");
+		 Dictionary metadata = inputData.getMetadata();
+		Data formatChangedData = new BasicData(metadata, cleanNSFCSVFormat((File) inputData.getData()), "file:text/csv");
 		try {
 		Data convertedData = converter.convert(formatChangedData, "prefuse.data.Table");
+		if (! (convertedData.getData() instanceof Table)) {
+			throw new ConversionException("Output of conversion was not a prefuse.data.Table");
+		}
 		return convertedData;
 		} catch (ConversionException e1) {
 			throw new AlgorithmExecutionException("Could not convert format to prefuse.data.Table", e1);
