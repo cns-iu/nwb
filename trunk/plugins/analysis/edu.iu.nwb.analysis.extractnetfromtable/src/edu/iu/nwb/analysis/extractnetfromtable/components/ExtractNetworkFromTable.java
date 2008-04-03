@@ -82,11 +82,9 @@ public class ExtractNetworkFromTable {
 			String columnName, Properties p) throws InvalidColumnNameException{
 
 		final Schema inputSchema = pdt.getSchema();
-		try{
-			inputSchema.getColumnIndex(columnName);
-		}catch(ArrayIndexOutOfBoundsException ex){
-			throw new InvalidColumnNameException(columnName + "was not a column in this table.\n");
-		}
+		
+			if(inputSchema.getColumnIndex(columnName) < 0)
+				throw new InvalidColumnNameException(columnName + " was not a column in this table.\n");
 
 		final Schema nodeSchema = new Schema();
 		final Schema edgeSchema = new Schema();
@@ -137,8 +135,8 @@ public class ExtractNetworkFromTable {
 		boolean dupValues = false;
 		String error;
 		final HashMap dupValuesErrorMessages = new HashMap();
-
-		for (int row = 0; row < pdt.getRowCount(); row++) {
+		for (Iterator it = pdt.rows(); it.hasNext();){
+			int row = ((Integer)it.next()).intValue();
 			final String s = (String) pdt.get(row, columnName);
 
 			Set seenObject = new HashSet();
