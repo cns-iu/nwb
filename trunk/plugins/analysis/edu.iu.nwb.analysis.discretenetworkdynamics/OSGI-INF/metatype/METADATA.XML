@@ -19,19 +19,19 @@
 			name="Input Function Format" 
 			type="String"
 			description="This determines whether the function should be considered Polynomial or Boolean."
-			default="0" 
+			default="1" 
 			required="true">
-			<Option label="Polynomial" value="0" />
-			<Option label="Boolean" value="1" />
+			<Option label="Polynomial" value="1" />
+			<Option label="Boolean" value="0" />
 		</AD>
 		<AD name="Updating Scheme" 
 			id="udateScheme" 
 			description="Select whether you will update functions in a Synchronous or Sequential manner." 
-			default="0" 
+			default="1" 
 			required="true"
 			type="String">
-			<Option label="Synchronous" value="0"></Option>
-			<Option label="Sequential" value="1"></Option>
+			<Option label="Synchronous" value="1"></Option>
+			<Option label="Sequential" value="0"></Option>
 		</AD>
 		<AD default='' 
 			description="If you have chose sequential updating, specify the update Schedule separated by spaces. Use each number 1...N, where N is number of Nodes, once." 

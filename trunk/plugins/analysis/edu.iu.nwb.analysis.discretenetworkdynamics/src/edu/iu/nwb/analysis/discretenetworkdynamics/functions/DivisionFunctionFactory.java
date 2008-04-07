@@ -5,8 +5,9 @@ public class DivisionFunctionFactory implements FunctionFactory{
 	private static final String type = FunctionTypes.DIV;
 
 	public AbstractFunction getFunction(boolean isPoly) {
-		
-		return new PolyDivision();
+		if(isPoly)
+			return new PolyDivision();
+		return null;
 	}
 
 	public String getType() {

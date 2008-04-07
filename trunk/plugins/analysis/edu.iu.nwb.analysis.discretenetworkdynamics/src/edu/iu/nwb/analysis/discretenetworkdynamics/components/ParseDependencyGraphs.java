@@ -139,11 +139,11 @@ public class ParseDependencyGraphs {
 
 		s = s.replaceAll("\\s","");
 		s = s.replace("^f\\d*=", "");
-		System.out.println(s);
 		String[] functionArray = s.split("=");
 
 		if(functionArray.length != 2){
-			//some sort of error
+			throw new FunctionFormatException("Your expression must begin with \"f\" followed by a row number followed by \"=\". " +
+					"The malformed expression looked like this: " + func);
 		}
 
 		s = functionArray[1];
@@ -164,7 +164,6 @@ public class ParseDependencyGraphs {
 	}
 
 	private static Graph createPseudoEdges(final String functionLabel, final Table functionTable, Graph g) throws FunctionFormatException{
-		int functionColumn = functionTable.getSchema().getColumnIndex(functionLabel);
 		
 		for(int i = 0; i < functionTable.getRowCount(); i++){
 			Node n = g.addNode();

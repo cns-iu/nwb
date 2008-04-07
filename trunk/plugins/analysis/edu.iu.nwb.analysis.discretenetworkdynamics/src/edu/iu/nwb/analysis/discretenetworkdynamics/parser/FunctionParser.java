@@ -10,35 +10,36 @@ import edu.iu.nwb.analysis.discretenetworkdynamics.functions.AbstractFunction;
 import edu.iu.nwb.analysis.discretenetworkdynamics.functions.AbstractFunctionFactory;
 
 public class FunctionParser {
-	private static String variables = "x\\d+|\\d+";
-	private static String operators = "[-+~\\*/\\^]";
-	private static String parenthesis = "[\\(\\)]";
-	private static String functionTokens = variables+"|"+operators+"|"+parenthesis;
-
-	public static LinkedList parseFunction(String functionString,boolean isPolynomialFunction)throws FunctionFormatException{
+	public static FunctionContainer parseFunction(String functionString,boolean isPolynomialFunction)throws FunctionFormatException{
 		Stack functionStack = new Stack();
 		LinkedList outputQueue = new LinkedList();
 		String token;
 
 		AbstractFunctionFactory aff = AbstractFunctionFactory.getDefaultFunctionFactory();
 
-		Pattern tokenPattern = Pattern.compile(functionTokens);
+		Pattern tokenPattern = Pattern.compile(FunctionTokens.tokens);
 		Matcher tokenMatcher = tokenPattern.matcher(functionString);
 
 		while(tokenMatcher.find()){
 			token = tokenMatcher.group();
 
-			System.out.print(token+"\t");
-			if(token.matches(variables)){
+			if(token.matches(FunctionTokens.variables)){
 				outputQueue.add(token);
-				System.out.println("variable or number");
 			}
-			else if(token.matches(operators)){
-				System.out.print("operator\t");
+			else if(token.matches(FunctionTokens.literals)){
+				if(!isPolynomialFunction){
+					int checkValue = new Integer(token).intValue();
+					if(checkValue > 1 || checkValue < 0){
+						throw new FunctionFormatException("The value: " + checkValue + " is not recognized for Boolean expressions.\n");
+					}
+				}
+				outputQueue.add(token);
+			}
+			else if(token.matches(FunctionTokens.operators)){
 				AbstractFunction operator1 = aff.getFunction(token, isPolynomialFunction);
-				
+				try{
 				int associativity = operator1.getAssociativity();
-				System.out.println(operator1.toString());
+				
 				AbstractFunction operator2;
 					try{
 						
@@ -49,7 +50,6 @@ public class FunctionParser {
 						if((associativity == 0 || (associativity < 0 && precedence <= 0)) || (associativity > 0 && precedence < 0)){
 							outputQueue.add(operator2);
 							functionStack.pop();
-							System.out.println("\t"+operator2.toString());
 						}else{
 							break;
 						}
@@ -58,11 +58,16 @@ public class FunctionParser {
 						
 					}
 				
-				
 				functionStack.push(operator1);	
+				}catch(NullPointerException npe){
+					String message = "Unknown operator " + token+ " found in expression: " + functionString;
+					if(!isPolynomialFunction)
+						message += ".  Most likely, this operator is not defined for Boolean expressions.\n";
+					throw new FunctionFormatException(message);
+				}
 			}
-			else if(token.matches(parenthesis)){
-				System.out.println();
+			else if(token.matches(FunctionTokens.parenthesis)){
+				
 				if(token.matches("\\(")){
 					functionStack.push(token);
 				}
@@ -76,18 +81,20 @@ public class FunctionParser {
 					}
 					functionStack.pop();
 				}
+			}else{
+				throw new FunctionFormatException("Unrecognized symbol " + token + " found in your expression.");
 			}
 		}
 
 		while(!functionStack.isEmpty()){
 			Object functionObject = functionStack.pop();
-			if(functionObject.toString().matches(FunctionParser.parenthesis))
+			if(functionObject.toString().matches(FunctionTokens.parenthesis))
 				throw new FunctionFormatException("Mismatched Parenthesis");
 			outputQueue.add(functionObject);
 		}
 
 
-		return outputQueue;
+		return new FunctionContainer(outputQueue);
 	}
 
 

@@ -29,13 +29,14 @@ class PolyNegation extends NegationFunction{
 		if(arguments.length != super.getNumberOfArguments()){
 			return null;
 		}else{
+			
 			BigInteger value = arguments[0];
-			int isPositive = value.compareTo(BigInteger.ZERO);
-			if(isPositive >= 0){
+			
+				value = value.negate();
+				value = value.mod(numberOfStates);
+				
 				return value;
-			}else{
-				return value.negate().mod(numberOfStates);
-			}
+			
 		}
 	}
 	

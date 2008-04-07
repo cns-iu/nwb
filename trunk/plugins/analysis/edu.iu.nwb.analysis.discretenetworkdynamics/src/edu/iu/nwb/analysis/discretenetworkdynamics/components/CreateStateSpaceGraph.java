@@ -7,14 +7,18 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.math.BigInteger;
+import java.util.Iterator;
 
 import prefuse.data.Graph;
-import edu.iu.nwb.analysis.discretenetworkdynamics.functions.AbstractFunction;
+import prefuse.data.Node;
+import edu.iu.nwb.analysis.discretenetworkdynamics.parser.FunctionContainer;
+import edu.iu.nwb.analysis.discretenetworkdynamics.parser.FunctionFormatException;
+import edu.iu.nwb.analysis.discretenetworkdynamics.parser.FunctionParser;
 import edu.iu.nwb.util.nwbfile.NWBFileWriter;
 
 public class CreateStateSpaceGraph {
 	
-	public static File createStateSpace(final Graph dependencyGraph, int nodeStates, boolean isPolynomial){
+	public static File createStateSpace(final Graph dependencyGraph, int nodeStates, String functionLabel, boolean isPolynomial) throws FunctionFormatException{
 		try{
 			File tempNodeFile = File.createTempFile("NWB-Session-StateSpace-Nodes-", ".nwb");
 			File tempEdgeFile = File.createTempFile("NWB-Session-StateSpace-Edges-", ".nwb");
@@ -29,11 +33,15 @@ public class CreateStateSpaceGraph {
 		int numberOfNodes = dependencyGraph.getNodeCount();
 		int[] currentState;
 		int[] nextState;
+		FunctionContainer[] updateExpressions = CreateStateSpaceGraph.createUpdateExpressions(dependencyGraph,
+				numberOfNodes, isPolynomial, functionLabel);
+		BigInteger radix = new BigInteger(new Integer(nodeStates).toString());
+		
 		String currentStateString;
 		String nextStateString;
 		
 	
-		BigInteger totalSpace = new BigInteger(new Integer(nodeStates).toString());	
+		BigInteger totalSpace = radix;	
 		totalSpace = totalSpace.pow(numberOfNodes);
 		
 		
@@ -43,7 +51,7 @@ public class CreateStateSpaceGraph {
 			nodeFileWriter.addNode(enumerate.add(BigInteger.ONE).intValue(), currentStateString, null);
 			
 			
-			nextState = evaluateFunctions(null,currentState,null);
+			nextState = evaluateFunctions(updateExpressions,currentState,null,radix);
 			nextStateString = convertIntArrayToString(nextState);
 			edgeFileWriter.addDirectedEdge(convertStringToInt(currentStateString,nodeStates)+1, convertStringToInt(nextStateString,nodeStates)+1, null);
 		}
@@ -92,7 +100,6 @@ public class CreateStateSpaceGraph {
 	
 	private static int[] convertBigIntToIntArray(BigInteger bi, int numberOfNodes, int nodeStates){
 		int[] stateSpace = new int[numberOfNodes];
-		int val;
 		int pos = stateSpace.length;
 		String biAsString = bi.toString(nodeStates);
 		biAsString = biAsString.trim();
@@ -125,19 +132,28 @@ public class CreateStateSpaceGraph {
 		return integerRepresentation;
 	}
 	
-	private static int evaluateFunction(AbstractFunction f){
-		
-		return 0;
-	}
-	
-	private static int[] evaluateFunctions(final AbstractFunction[] functions, final int[] stateSpace, final int[] order){
+	private static int[] evaluateFunctions(final FunctionContainer[] functions, final int[] stateSpace, final int[] order, BigInteger numberOfStates){
 		int[] nextState = new int[stateSpace.length];
 		
 		for(int i = 0; i < stateSpace.length; i++){
-			nextState[i] = evaluateFunction(null);
+			nextState[i] = functions[i].evaluate(stateSpace, numberOfStates);
+		}	
+		return nextState;
+	}
+	
+	
+	private static FunctionContainer[] createUpdateExpressions(final Graph g, int numberOfNodes, boolean isPolynomial, final String columnName) throws FunctionFormatException{
+		FunctionContainer[] updateExpressions = new FunctionContainer[numberOfNodes];
+		
+		int i = 0;
+		for(Iterator it = g.nodes(); it.hasNext();){
+			Node n = (Node)it.next();
+			String expression = n.getString(columnName);
+			updateExpressions[i] = FunctionParser.parseFunction(expression, isPolynomial);
+			i++;
 		}
 		
-		return nextState;
+		return updateExpressions;
 	}
 
 }

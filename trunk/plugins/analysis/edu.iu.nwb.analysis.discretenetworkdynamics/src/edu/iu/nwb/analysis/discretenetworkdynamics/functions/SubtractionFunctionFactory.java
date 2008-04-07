@@ -5,9 +5,9 @@ public class SubtractionFunctionFactory implements FunctionFactory{
 	private static final String type = FunctionTypes.SUB;
 
 	public AbstractFunction getFunction(boolean isPoly) {
-
-		return new PolySub();
-
+		if(isPoly)
+			return new PolySub();
+		return null;
 	}
 
 	public String getType() {
