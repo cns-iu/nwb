@@ -21,6 +21,8 @@ public class NetworkProperties {
 
 		ConnectedComponents cf = ConnectedComponents.constructConnectedComponents(graph);
 
+		output = averageDegreeInfo(output, nodeStats, edgeStats, isDirectedGraph);
+		
 		output = connectedInfo(output, cf, nodeStats,isDirectedGraph);
 
 		if(!(edgeStats.getNumberOfParallelEdges() > 0 || edgeStats.getNumberOfSelfLoops() > 0)){
@@ -82,6 +84,17 @@ public class NetworkProperties {
 		return sb;
 	}
 
+	protected static StringBuffer averageDegreeInfo(StringBuffer sb, NodeStats nodeStats, EdgeStats edgeStats, boolean isDirected){
+		double averageDegree = ((double) edgeStats.numberOfEdges) /  (double) nodeStats.numberOfNodes;
+		if(isDirected){
+			sb.append("total average degree: " + averageDegree);
+		} else{
+			sb.append("average degree: " + averageDegree);
+		}
+		sb.append(System.getProperty("line.separator"));
+		return sb;
+	}
+	
 	protected static StringBuffer directedInfo(StringBuffer sb, boolean isDirected){
 		if(isDirected){
 			sb.append("This graph claims to be directed.");
