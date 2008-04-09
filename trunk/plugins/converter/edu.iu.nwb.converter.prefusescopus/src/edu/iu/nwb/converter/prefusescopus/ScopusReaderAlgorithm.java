@@ -210,15 +210,15 @@ public class ScopusReaderAlgorithm implements Algorithm {
     
     
     private String extractPageEnd(Tuple isiRow) {
-    	return isiRow.getString(PAGE_END_COLUMN_NAME);
+    	return trimBrackets(isiRow.getString(PAGE_END_COLUMN_NAME));
 }
 
 	private String extractPageStart(Tuple isiRow) {
-		return isiRow.getString(PAGE_START_COLUMN_NAME);
+		return trimBrackets(isiRow.getString(PAGE_START_COLUMN_NAME));
 }
 
 	private String extractIssue(Tuple isiRow) {
-		return isiRow.getString(ISSUE_COLUMN_NAME);
+		return trimBrackets(isiRow.getString(ISSUE_COLUMN_NAME));
 }
 
 	private String extractVolume(Tuple isiRow) {
@@ -238,8 +238,14 @@ public class ScopusReaderAlgorithm implements Algorithm {
 }
 
 	private String extractAuthors(Tuple isiRow) {
-		String authors = isiRow.getString(AUTHORS_COLUMN_NAME);
-		return authors;
+		String authorsWithNewSeparator = isiRow.getString(AUTHORS_COLUMN_NAME);
+		String[] eachAuthor = authorsWithNewSeparator.split("\\" + NEW_AUTHOR_COLUMN_NAME_SEPARATOR);
+		//we need to use the original separator, because the reference column
+		//we are constructing needs to look like the raw references that other
+		//papers will use.
+		String authorsWithOriginalSeparator = 
+			StringUtil.join(eachAuthor, ORIG_AUTHOR_COLUMN_NAME_SEPARATOR);
+		return authorsWithOriginalSeparator;
 }
 
 	private Data[] formatAsData(Table scopusTable) throws AlgorithmExecutionException {
@@ -252,6 +258,21 @@ public class ScopusReaderAlgorithm implements Algorithm {
 			throw new AlgorithmExecutionException(exception);
 		}
     }
+	
+	private String trimBrackets(String s) {
+		if (s == null) return null;
+		
+		String tempS = s;
+		if (tempS.startsWith("[")) {
+			tempS = tempS.substring(1);
+		}
+		if (tempS.endsWith("]")) {
+			tempS = tempS.substring(0, tempS.length() - 1);
+		}
+		
+		String result = tempS;
+		return result;
+	}
     
     private void printNoAuthorColumnWarning() {
     	this.log.log(LogService.LOG_WARNING, "Unable to find column with the name '" +
