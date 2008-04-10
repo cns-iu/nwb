@@ -18,6 +18,7 @@ import org.cishell.framework.data.Data;
 import org.cishell.reference.service.metatype.BasicAttributeDefinition;
 import org.cishell.reference.service.metatype.BasicObjectClassDefinition;
 import org.osgi.framework.BundleContext;
+import org.osgi.service.component.ComponentContext;
 import org.osgi.service.metatype.AttributeDefinition;
 import org.osgi.service.metatype.ObjectClassDefinition;
 
