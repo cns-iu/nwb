@@ -30,6 +30,10 @@ import edu.iu.nwb.util.nwbfile.ParsingException;
 public class VxOrdAlgorithmFactory implements AlgorithmFactory, DataValidator, ParameterMutator {
     private BundleContext bContext;
     
+    protected void activate(ComponentContext ctxt) {
+    	bContext = ctxt.getBundleContext();
+    }
+    
     public Algorithm createAlgorithm(Data[] data, Dictionary parameters, CIShellContext context) {
         return new VxOrdAlgorithm(data, parameters, context, bContext);
     }
