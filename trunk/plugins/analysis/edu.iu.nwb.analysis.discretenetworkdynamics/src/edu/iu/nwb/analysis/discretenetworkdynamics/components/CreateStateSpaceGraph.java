@@ -9,142 +9,129 @@ import java.io.PrintWriter;
 import java.math.BigInteger;
 import java.util.Iterator;
 
+import org.cishell.framework.algorithm.ProgressMonitor;
+
 import prefuse.data.Graph;
 import prefuse.data.Node;
+import prefuse.data.Schema;
 import edu.iu.nwb.analysis.discretenetworkdynamics.parser.FunctionContainer;
 import edu.iu.nwb.analysis.discretenetworkdynamics.parser.FunctionFormatException;
 import edu.iu.nwb.analysis.discretenetworkdynamics.parser.FunctionParser;
-import edu.iu.nwb.util.nwbfile.NWBFileWriter;
 
 public class CreateStateSpaceGraph {
+	int statesProcessed = 0;
+	ProgressMonitor progMonitor;
 	
-	public static File createStateSpace(final Graph dependencyGraph, int nodeStates, String functionLabel, boolean isPolynomial) throws FunctionFormatException{
-		try{
-			File tempNodeFile = File.createTempFile("NWB-Session-StateSpace-Nodes-", ".nwb");
-			File tempEdgeFile = File.createTempFile("NWB-Session-StateSpace-Edges-", ".nwb");
-			
-			File stateSpaceFile;
-			NWBFileWriter nodeFileWriter = new NWBFileWriter(tempNodeFile);
-			nodeFileWriter.setNodeSchema(NWBFileWriter.getDefaultNodeSchema());
-			
-			NWBFileWriter edgeFileWriter = new NWBFileWriter(tempEdgeFile);
-			edgeFileWriter.setDirectedEdgeSchema(NWBFileWriter.getDefaultEdgeSchema());
-			
+	public CreateStateSpaceGraph(ProgressMonitor pm){
+		this.progMonitor = pm;
+	}
+	
+	public Graph createStateSpace(final Graph dependencyGraph, int nodeStates, String functionLabel, boolean isPolynomial) throws FunctionFormatException, InterruptedException{		
+		final int numProcessors = Runtime.getRuntime().availableProcessors();
 		int numberOfNodes = dependencyGraph.getNodeCount();
 		int[] currentState;
 		int[] nextState;
 		FunctionContainer[] updateExpressions = CreateStateSpaceGraph.createUpdateExpressions(dependencyGraph,
 				numberOfNodes, isPolynomial, functionLabel);
 		BigInteger radix = new BigInteger(new Integer(nodeStates).toString());
-		
+
 		String currentStateString;
 		String nextStateString;
-		
-	
+
 		BigInteger totalSpace = radix;	
 		totalSpace = totalSpace.pow(numberOfNodes);
 		
+		int division;
+		int remainder;
+		BigInteger start;
+		BigInteger end;
+		Thread[] pool = new Thread[numProcessors];
 		
-		for(BigInteger enumerate = BigInteger.ZERO; enumerate.compareTo(totalSpace) < 0; enumerate = enumerate.add(BigInteger.ONE)){
-			currentState = convertBigIntToIntArray(enumerate,numberOfNodes,nodeStates);
-			currentStateString = convertIntArrayToString(currentState);
-			nodeFileWriter.addNode(enumerate.add(BigInteger.ONE).intValue(), currentStateString, null);
-			
-			
-			nextState = evaluateFunctions(updateExpressions,currentState,null,radix);
-			nextStateString = convertIntArrayToString(nextState);
-			edgeFileWriter.addDirectedEdge(convertStringToInt(currentStateString,nodeStates)+1, convertStringToInt(nextStateString,nodeStates)+1, null);
+		division = totalSpace.divideAndRemainder(new BigInteger(new Integer(numProcessors).toString()))[0].intValue();
+		remainder = totalSpace.divideAndRemainder(new BigInteger(new Integer(numProcessors).toString()))[1].intValue();
+		
+		
+		
+		Graph stateSpaceGraph = initializeStateSpaceGraph(totalSpace.intValue());
+		
+		
+		for(int i = 0; i < numProcessors; i++){
+				start = new BigInteger(new Integer(i*division).toString());
+				end = new BigInteger(new Integer(((i+1)*division)-1).toString());
+				if(i == numProcessors-1)
+					end = end.add(new BigInteger(new Integer(remainder).toString()));
+				
+				
+				pool[i] = new GraphFillerThread(this, start,end,stateSpaceGraph,numberOfNodes,nodeStates,updateExpressions);
+				pool[i].start();			
 		}
 		
-		edgeFileWriter.finishedParsing();
-		nodeFileWriter.finishedParsing();
-		
-		stateSpaceFile = mergeEdgesAndNodes(tempNodeFile,tempEdgeFile);
-		
-		
-		return stateSpaceFile;
-		
-		}catch(IOException ioe){
-			return null;  //throw runtime exception here.
+	
+		for(int i = 0; i < numProcessors; i++){
+			pool[i].join();
 		}
+	
+		
+		return stateSpaceGraph;
+
+		
 	}
 	
+	public static void updateCalculatedStates(CreateStateSpaceGraph cssg, int calculatedStates){
+		cssg.statesProcessed += calculatedStates;
+		cssg.progMonitor.worked(cssg.statesProcessed);
+	}
+	
+
+	private static Graph initializeStateSpaceGraph(int numberOfNodes){
+		Schema nodeSchema = new Schema();
+		//nodeSchema.addColumn("id", int.class);
+		nodeSchema.addColumn("label", String.class);
+		nodeSchema.addColumn("weakCluster", int.class,-1);
+		nodeSchema.addColumn("attractor",int.class,-1);
+
+		Schema edgeSchema = new Schema();
+		edgeSchema.addColumn("source", int.class);
+		edgeSchema.addColumn("target", int.class);
+
+		return new Graph(nodeSchema.instantiate(numberOfNodes),edgeSchema.instantiate(numberOfNodes),true);
+	}
+
 	public static File mergeEdgesAndNodes(File nodeFile, final File edgeFile) throws IOException{
 		PrintWriter mergeFile = null;
 		BufferedReader inputStream = null;
 		try{
-		mergeFile = new PrintWriter(new FileWriter(nodeFile,true));
-		inputStream = new BufferedReader(new FileReader(edgeFile));
-		
-		String line;
-		while((line = inputStream.readLine()) != null){
-			mergeFile.println(line);
-		}
+			mergeFile = new PrintWriter(new FileWriter(nodeFile,true));
+			inputStream = new BufferedReader(new FileReader(edgeFile));
+
+			String line;
+			while((line = inputStream.readLine()) != null){
+				mergeFile.println(line);
+			}
 		}finally{
 			if(mergeFile != null)
 				mergeFile.close();
 			if(inputStream != null)
 				inputStream.close();
 		}
-		
+
 		return nodeFile;
 	}
-	
+
 	public static Graph createStateSpace(final Graph dependencyGraph, int nodeStates, final int[] initialCondition, boolean isPolynomial){
 		Graph ssg = new Graph();
 		int[] currentState = initialCondition;		
 		return ssg;
 	}
+
+
+
 	
-	
-	
-	private static int[] convertBigIntToIntArray(BigInteger bi, int numberOfNodes, int nodeStates){
-		int[] stateSpace = new int[numberOfNodes];
-		int pos = stateSpace.length;
-		String biAsString = bi.toString(nodeStates);
-		biAsString = biAsString.trim();
-		
-		String[] biToStateSpace = biAsString.split("");
-		pos = stateSpace.length - (biToStateSpace.length-1);
-		for(int i = 0; i < pos; i++){
-			stateSpace[i] = 0;
-		}
-		
-		for(int i = 1; i < biToStateSpace.length; i++){
-			stateSpace[(pos-1)+i] = new Integer(biToStateSpace[i]).intValue();
-		}
-		
-		return stateSpace;
-	}
-	
-	private static String convertIntArrayToString(final int[] stateSpace){
-		String s = "";
-		for(int i = 0; i < stateSpace.length; i++){
-			s += stateSpace[i];
-		}
-		return s;
-	}
-	
-	private static int convertStringToInt(final String stateSpace, int nodeStates){
-	
-		int integerRepresentation = new BigInteger(stateSpace,nodeStates).intValue();
-		
-		return integerRepresentation;
-	}
-	
-	private static int[] evaluateFunctions(final FunctionContainer[] functions, final int[] stateSpace, final int[] order, BigInteger numberOfStates){
-		int[] nextState = new int[stateSpace.length];
-		
-		for(int i = 0; i < stateSpace.length; i++){
-			nextState[i] = functions[i].evaluate(stateSpace, numberOfStates);
-		}	
-		return nextState;
-	}
-	
-	
+
+
 	private static FunctionContainer[] createUpdateExpressions(final Graph g, int numberOfNodes, boolean isPolynomial, final String columnName) throws FunctionFormatException{
 		FunctionContainer[] updateExpressions = new FunctionContainer[numberOfNodes];
-		
+
 		int i = 0;
 		for(Iterator it = g.nodes(); it.hasNext();){
 			Node n = (Node)it.next();
@@ -152,8 +139,13 @@ public class CreateStateSpaceGraph {
 			updateExpressions[i] = FunctionParser.parseFunction(expression, isPolynomial);
 			i++;
 		}
-		
+
 		return updateExpressions;
 	}
-
+	
+	
 }
+
+
+
+

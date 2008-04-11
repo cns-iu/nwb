@@ -34,7 +34,7 @@ class PolyDivision extends DivisionFunction {
 		}else{
 			BigInteger val1 = arguments[0].mod(numberOfStates);
 			BigInteger val2 = arguments[1].mod(numberOfStates);
-			return (val1.divide(val2)).mod(numberOfStates);
+			return (val1.multiply(val2.modInverse(numberOfStates)).mod(numberOfStates));
 		}
 	}
 	

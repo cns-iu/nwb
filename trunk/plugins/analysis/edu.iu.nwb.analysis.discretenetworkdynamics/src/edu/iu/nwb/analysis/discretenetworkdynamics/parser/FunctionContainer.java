@@ -45,6 +45,7 @@ public class FunctionContainer {
 		}
 	
 		int returnValue = ((BigInteger)executionStack.pop()).intValue();
+		
 		return returnValue;
 	}
 	
