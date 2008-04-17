@@ -55,7 +55,11 @@ class BoolNegation extends NegationFunction{
 		if(arguments.length != super.getNumberOfArguments()){
 		return null;
 		}else{
-			return arguments[0].not();
+			if(arguments[0].compareTo(BigInteger.ZERO) == 0)
+				return BigInteger.ONE;
+			else{
+				return BigInteger.ZERO;
+			}
 		}
 	}
 	

@@ -82,7 +82,8 @@ public class DVDAlgorithm implements Algorithm, ProgressTrackable {
 			dependencyGraph = ParseDependencyGraphs.constructDependencyGraph(functionLabel,nodeLabel,functionTable);
 			monitor.start(ProgressMonitor.WORK_TRACKABLE, (int)Math.pow(numberOfStates,dependencyGraph.getNodeCount()));
 			pseudoGraph = ParseDependencyGraphs.constructPseudoGraph(functionLabel, nodeLabel, functionTable);
-			stateSpace = new CreateStateSpaceGraph(this.getProgressMonitor()).createStateSpace(dependencyGraph, numberOfStates, functionLabel, isPolynomial);
+			stateSpace = new CreateStateSpaceGraph(this.getProgressMonitor()).createStateSpace(dependencyGraph, numberOfStates, functionLabel, 
+					isPolynomial,intArrayFromStringArray(initCondition),intArrayFromStringArray(schedule));
 			monitor.done();
 		}catch(FunctionFormatException ffe){
 			throw new AlgorithmExecutionException(ffe.getMessage());
@@ -132,6 +133,12 @@ public class DVDAlgorithm implements Algorithm, ProgressTrackable {
 			returnValue = s.split("\\s+");
 		}
 		return returnValue;
+	}
+
+	private static int[] intArrayFromStringArray(String[] stringArray){
+
+
+		return null;
 	}
 
 }

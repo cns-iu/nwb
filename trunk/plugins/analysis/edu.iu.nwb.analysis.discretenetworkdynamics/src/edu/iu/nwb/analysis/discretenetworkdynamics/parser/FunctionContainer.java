@@ -23,7 +23,7 @@ public class FunctionContainer {
 		for(Iterator it = this.parsedExpression.iterator(); it.hasNext();){
 			token = it.next();
 			tokenString = token.toString();
-			
+		
 			if(tokenString.matches(FunctionTokens.variables)){
 				int index = new Integer(tokenString.substring(1)).intValue()-1;
 				Integer value = new Integer(stateSpace[index]);
@@ -44,7 +44,9 @@ public class FunctionContainer {
 			
 		}
 	
+	
 		int returnValue = ((BigInteger)executionStack.pop()).intValue();
+	
 		
 		return returnValue;
 	}
