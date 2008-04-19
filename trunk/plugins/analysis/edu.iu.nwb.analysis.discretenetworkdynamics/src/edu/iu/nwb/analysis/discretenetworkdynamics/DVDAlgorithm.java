@@ -1,6 +1,11 @@
 package edu.iu.nwb.analysis.discretenetworkdynamics;
 
+import java.io.File;
+import java.io.IOException;
 import java.util.Dictionary;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.LinkedHashMap;
 
 import org.cishell.framework.CIShellContext;
 import org.cishell.framework.algorithm.Algorithm;
@@ -12,11 +17,14 @@ import org.cishell.framework.data.Data;
 import org.cishell.framework.data.DataProperty;
 import org.osgi.service.log.LogService;
 
+import prefuse.data.Edge;
 import prefuse.data.Graph;
+import prefuse.data.Node;
 import prefuse.data.Table;
 import edu.iu.nwb.analysis.discretenetworkdynamics.components.CreateStateSpaceGraph;
 import edu.iu.nwb.analysis.discretenetworkdynamics.components.ParseDependencyGraphs;
 import edu.iu.nwb.analysis.discretenetworkdynamics.parser.FunctionFormatException;
+import edu.iu.nwb.util.nwbfile.NWBFileWriter;
 
 
 public class DVDAlgorithm implements Algorithm, ProgressTrackable {
@@ -82,26 +90,43 @@ public class DVDAlgorithm implements Algorithm, ProgressTrackable {
 			dependencyGraph = ParseDependencyGraphs.constructDependencyGraph(functionLabel,nodeLabel,functionTable);
 			monitor.start(ProgressMonitor.WORK_TRACKABLE, (int)Math.pow(numberOfStates,dependencyGraph.getNodeCount()));
 			pseudoGraph = ParseDependencyGraphs.constructPseudoGraph(functionLabel, nodeLabel, functionTable);
-			stateSpace = new CreateStateSpaceGraph(this.getProgressMonitor()).createStateSpace(dependencyGraph, numberOfStates, functionLabel, 
-					isPolynomial,intArrayFromStringArray(initCondition),intArrayFromStringArray(schedule));
-			monitor.done();
+			
+			final Data outputData1 = constructData(this.data[0],dependencyGraph,prefuse.data.Graph.class.getName(),DataProperty.NETWORK_TYPE,"Created Dependency Graph");
+			final Data outputData2 = constructData(this.data[0],pseudoGraph,prefuse.data.Graph.class.getName(),DataProperty.NETWORK_TYPE,"Created Dependency Graph with Function Pseudonodes");
+			
+			if(DVDAlgorithm.verifyInitialConditions(initCondition,dependencyGraph.getNodeCount(),numberOfStates)){
+				stateSpace = new CreateStateSpaceGraph(this.getProgressMonitor()).createStateSpace(dependencyGraph, numberOfStates, functionLabel, 
+						isPolynomial,initCondition,intArrayFromStringArray(schedule));
+				
+				if(stateSpace.getNodeCount() < (int)Math.pow(numberOfStates,dependencyGraph.getNodeCount())){
+					final Data outputData3 = constructData(this.data[0],generateStateSpaceFile(stateSpace),"file:text/nwb",DataProperty.NETWORK_TYPE, "Generated State Space Graph");
+					monitor.done();
+					return new Data[] {outputData1,outputData2, outputData3};
+				}else{
+					final Data outputData3 = constructData(this.data[0],stateSpace,prefuse.data.Graph.class.getName(),DataProperty.NETWORK_TYPE,"Generated State Space Graph");
+					monitor.done();
+					return new Data[] {outputData1, outputData2, outputData3};
+				}
+			}else{
+				stateSpace = null;
+				this.logger.log(LogService.LOG_WARNING, "The provided initial condition is invalid. Please provide a series of numbers or *'s separated" +
+						" by spaces. There should be as many numbers or *'s as functions in your function file. Each number provided must be at least 0 and no greater" +
+				" than the number of states less one. The state space has not been generated.");
+				monitor.done();
+				return new Data[] {outputData1,outputData2};
+			}
 		}catch(FunctionFormatException ffe){
 			throw new AlgorithmExecutionException(ffe.getMessage());
 		}catch(InterruptedException ie){
 			throw new AlgorithmExecutionException("Creation of state space graph was interrupted",ie);
-		}
-
-		final Data outputData1 = constructData(dependencyGraph,prefuse.data.Graph.class.getName(),DataProperty.NETWORK_TYPE,"Created Dependency Graph");
-		final Data outputData2 = constructData(pseudoGraph,prefuse.data.Graph.class.getName(),DataProperty.NETWORK_TYPE,"Created Dependency Graph with Function Pseudonodes");
-		final Data outputData3 = constructData(stateSpace,prefuse.data.Graph.class.getName(),DataProperty.NETWORK_TYPE,"Generated State Space Graph");
-
-		return new Data[] {outputData1, outputData2, outputData3};
+		}		
 	}
 
-	private static Data constructData(Object obj, String className, String type, String label){
+	private static Data constructData(Data d, Object obj, String className, String type, String label){
 		Data outputData = new BasicData(obj,className);
 		Dictionary dataAttributes = outputData.getMetadata();
 		dataAttributes.put(DataProperty.MODIFIED, new Boolean(true));
+		dataAttributes.put(DataProperty.PARENT, d);
 		dataAttributes.put(DataProperty.TYPE, type);
 		dataAttributes.put(DataProperty.LABEL,label);
 
@@ -135,10 +160,92 @@ public class DVDAlgorithm implements Algorithm, ProgressTrackable {
 		return returnValue;
 	}
 
+	private static boolean verifyInitialConditions(String[] s, int numberOfNodes, int nodeStates) throws AlgorithmExecutionException{
+		String numbers = "\\d+";
+		String wildcard = "\\*";
+		int value;
+		
+		if(s == null)
+			return true;
+
+		if(s.length != numberOfNodes){
+			return false;
+		}
+		for(int i = 0; i < s.length; i++){
+			if(s[i].matches(numbers)){
+				System.out.println("Number!!!");
+				value = new Integer(s[i]).intValue();
+				if(value < 0 || value > (nodeStates-1)){
+					System.out.println("NO!!!!!");
+					return false;
+				}
+			}
+			else{
+				System.out.println("BOOO!!!");
+				return false;
+			}
+		}
+		return true;
+	}
+
 	private static int[] intArrayFromStringArray(String[] stringArray){
 
 
 		return null;
+	}
+	
+	private static File generateStateSpaceFile(final Graph g) throws AlgorithmExecutionException{
+		try{
+			File stateSpaceFile = File.createTempFile("NWB-Session-StateSpace-", ".nwb");
+			NWBFileWriter stateSpaceWriter = new NWBFileWriter(stateSpaceFile);
+			LinkedHashMap nodeSchema = NWBFileWriter.getDefaultNodeSchema();
+			LinkedHashMap edgeSchema = NWBFileWriter.getDefaultEdgeSchema();
+			
+			nodeSchema = generateSchema(g.getNodeTable(),nodeSchema);
+			edgeSchema = generateSchema(g.getEdgeTable(),edgeSchema);
+			
+			stateSpaceWriter.setNodeSchema(nodeSchema);
+			writeNodes(g,stateSpaceWriter);
+			stateSpaceWriter.setDirectedEdgeSchema(edgeSchema);
+			writeEdges(g,stateSpaceWriter);
+			
+			stateSpaceWriter.haltParsingNow();
+			return stateSpaceFile;
+		}catch(IOException ioe){
+			throw new AlgorithmExecutionException("Error creating and writing the state space graph file.\n",ioe);
+		}
+	}
+	
+	private static LinkedHashMap generateSchema(final Table t, LinkedHashMap schema){
+		for(int i = 0; i < t.getColumnCount(); i++){
+			if(schema.get(t.getColumnName(i)) == null){
+				schema.put(t.getColumnName(i), t.getColumnType(i).toString().toLowerCase());
+			}
+		}
+		
+		return schema;
+	}
+	
+	private static void writeNodes(final Graph g, NWBFileWriter nfw){
+	
+		for(Iterator it = g.nodes(); it.hasNext();){
+			HashMap columnValues = new HashMap();
+			Node n = (Node)it.next();
+			
+			columnValues.put("attractor", n.get("attractor"));
+			nfw.addNode(n.getRow()+1, n.getString("label"), columnValues);
+			
+		}
+	}
+	
+	private static void writeEdges(final Graph g, NWBFileWriter nfw){
+		for(Iterator it = g.edges(); it.hasNext();){
+			
+			Edge e = (Edge)it.next();
+			
+		
+			nfw.addDirectedEdge(e.getInt("source")+1, e.getInt("target")+1,null);
+		}
 	}
 
 }

@@ -2,6 +2,7 @@ package edu.iu.nwb.analysis.discretenetworkdynamics.components;
 
 import java.math.BigInteger;
 
+import prefuse.data.CascadedTable;
 import prefuse.data.Graph;
 import prefuse.data.Node;
 import edu.iu.nwb.analysis.discretenetworkdynamics.parser.FunctionContainer;
@@ -15,8 +16,9 @@ public class GraphFillerThread extends Thread{
 	int nodeStates;
 	FunctionContainer[] updateExpressions;
 	final int[] updateScheme;
+	final String[] initialCondition;
 
-	public GraphFillerThread(CreateStateSpaceGraph cssg, BigInteger startIndex, BigInteger endIndex, Graph stateGraph, int numberOfNodes, int numberOfStates, FunctionContainer[] updateRules, final int[] updateSchedule){
+	public GraphFillerThread(CreateStateSpaceGraph cssg, BigInteger startIndex, BigInteger endIndex, Graph stateGraph, int numberOfNodes, int numberOfStates, FunctionContainer[] updateRules, final String[] ic,final int[] updateSchedule){
 		super();
 		this.threadListener = cssg;
 		this.Start = startIndex;
@@ -26,6 +28,7 @@ public class GraphFillerThread extends Thread{
 		this.nodeStates = numberOfStates;
 		this.updateExpressions = updateRules;
 		this.updateScheme = updateSchedule;
+		this.initialCondition = ic;
 	}
 
 
@@ -40,61 +43,63 @@ public class GraphFillerThread extends Thread{
 		int onePercent;
 		Node n1;
 		Node n2;
+		CascadedTable visited = new CascadedTable(this.g.getNodeTable());
+		visited.addColumn("visited", int.class, new Integer(-1));
 
 		if((onePercent = (End.subtract(Start)).intValue()/100) == 0)
 			onePercent = 1;
 
 
 		for(BigInteger enumerate = Start; enumerate.compareTo(End) <= 0; enumerate = enumerate.add(BigInteger.ONE)){	
-			currentState = convertBigIntToIntArray(enumerate,currentState,nodeStates);
-			
+			currentState = convertBigIntToIntArray(enumerate,currentState,nodeStates);			
+			if(checkInitialCondition(currentState)){
+				n1 = g.getNode(enumerate.intValue());
 
+				synchronized(n1){
+					while(n1.getString("label") == null){
+						currentStateString = convertIntArrayToString(currentState,this.nodeStates);
+						calculated++;
+						if(calculated%onePercent == 0){
+							CreateStateSpaceGraph.updateCalculatedStates(this.threadListener, calculated);
+							calculated = 0;
+						}
+						n1.set("label", currentStateString);
+						
 
+						nextState = evaluateFunctions(updateExpressions,currentState,this.updateScheme,radix);
+						nextStateString = convertIntArrayToString(nextState,this.nodeStates);
 
-			
-			n1 = g.getNode(enumerate.intValue());
+						try{
+							nextStateValue = new BigInteger(nextStateString,this.nodeStates);
+						}catch(NumberFormatException nfe){
+							System.err.println(nextStateString+ " " + this.nodeStates);
+							nfe.printStackTrace(System.err);
+							return;
+						}
 
+						if(currentStateString.equals(nextStateString)){
+							n1.setInt("attractor", 10);
+						}
+						n2 = g.getNode(nextStateValue.intValue());
+						
+							if(g.getEdge(n1, n2) == null){
+								g.addEdge(n1, n2);
+							}
 
-			synchronized(n1){
-				while(n1.get("label") == null){
-					currentStateString = convertIntArrayToString(currentState,this.nodeStates);
-					calculated++;
-					if(calculated%onePercent == 0){
-						CreateStateSpaceGraph.updateCalculatedStates(this.threadListener, calculated);
-						calculated = 0;
+						
+						if(g.getEdge(n2, n1) != null && n1.getRow() != n2.getRow()){
+							n1.setInt("attractor", 7);
+							n2.setInt("attractor", 7);
+						}
+
+						currentState = nextState;
+						n1 = g.getNode(nextStateValue.intValue());
 					}
-					n1.set("label", currentStateString);
-
-
-					nextState = evaluateFunctions(updateExpressions,currentState,this.updateScheme,radix);
-					nextStateString = convertIntArrayToString(nextState,this.nodeStates);
-				
-					try{
-					nextStateValue = new BigInteger(nextStateString,this.nodeStates);
-					}catch(NumberFormatException nfe){
-						System.err.println(nextStateString+ " " + this.nodeStates);
-						nfe.printStackTrace(System.err);
-						return;
-					}
-					
-					if(currentStateString.equals(nextStateString)){
-						n1.setInt("attractor", 10);
-					}
-					g.getEdgeTable().set(n1.getRow(), "source", n1.getRow());
-					g.getEdgeTable().set(n1.getRow(),"target",nextStateValue.intValue());
-					
-					n2 = g.getNode(nextStateValue.intValue());
-					if(g.getEdge(n2, n1) != null && n1.getRow() != n2.getRow()){
-						n1.setInt("attractor", 7);
-						n2.setInt("attractor", 7);
-					}
-					
-					currentState = nextState;
-					n1 = g.getNode(nextStateValue.intValue());
 				}
 			}
+			System.out.println(g.getNodeCount()+ " " + g.getEdgeCount());
 		}
-
+		
 
 		CreateStateSpaceGraph.updateCalculatedStates(this.threadListener,calculated);
 	}
@@ -135,8 +140,8 @@ public class GraphFillerThread extends Thread{
 		StringBuffer s = new StringBuffer();
 		for(int i = 0; i < stateSpace.length; i++){
 			s.append(Character.forDigit(stateSpace[i], numberOfStates));
-	
-			
+
+
 		}
 		return s.toString();
 	}
@@ -148,6 +153,21 @@ public class GraphFillerThread extends Thread{
 			nextState[i] = functions[i].evaluate(stateSpace, numberOfStates);
 		}	
 		return nextState;
+	}
+
+	private boolean checkInitialCondition(int[] currentState){
+		if(this.initialCondition == null)
+			return true;
+		int value;
+
+		for(int i = 0; i < this.initialCondition.length; i++){
+			if(!this.initialCondition[i].equals("*")){
+				value = new Integer(this.initialCondition[i]).intValue();
+				if(currentState[i] != value)
+					return false;	
+			}
+		}
+		return true;
 	}
 
 }

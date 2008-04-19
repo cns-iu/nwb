@@ -26,7 +26,7 @@ public class CreateStateSpaceGraph {
 		this.progMonitor = pm;
 	}
 
-	public Graph createStateSpace(final Graph dependencyGraph, int nodeStates, String functionLabel, boolean isPolynomial, final int[] ic, final int[] updateSchedule) throws FunctionFormatException, InterruptedException{		
+	public Graph createStateSpace(final Graph dependencyGraph, int nodeStates, String functionLabel, boolean isPolynomial, final String[] ic, final int[] updateSchedule) throws FunctionFormatException, InterruptedException{		
 		final int numProcessors = Runtime.getRuntime().availableProcessors();
 		int numberOfNodes = dependencyGraph.getNodeCount();
 
@@ -51,7 +51,7 @@ public class CreateStateSpaceGraph {
 			if(i == numProcessors-1)
 				end = end.add(new BigInteger(new Integer(remainder).toString()));
 
-			pool[i] = new GraphFillerThread(this, start,end,stateSpaceGraph,numberOfNodes,nodeStates,updateExpressions,updateSchedule);
+			pool[i] = new GraphFillerThread(this, start,end,stateSpaceGraph,numberOfNodes,nodeStates,updateExpressions,ic,updateSchedule);
 			pool[i].start();			
 		}
 
@@ -59,6 +59,10 @@ public class CreateStateSpaceGraph {
 			pool[i].join();
 		}
 
+		NodeCleaningThread nct = new NodeCleaningThread(stateSpaceGraph);
+		nct.run();
+		nct.join();
+		
 		return stateSpaceGraph;	
 	}
 
@@ -71,16 +75,14 @@ public class CreateStateSpaceGraph {
 
 	private static Graph initializeStateSpaceGraph(int numberOfNodes){
 		Schema nodeSchema = new Schema();
-		//nodeSchema.addColumn("id", int.class);
 		nodeSchema.addColumn("label", String.class);
-		nodeSchema.addColumn("weakCluster", int.class,1);
 		nodeSchema.addColumn("attractor",int.class,1);
 
 		Schema edgeSchema = new Schema();
 		edgeSchema.addColumn("source", int.class);
 		edgeSchema.addColumn("target", int.class);
 
-		return new Graph(nodeSchema.instantiate(numberOfNodes),edgeSchema.instantiate(numberOfNodes),true);
+		return new Graph(nodeSchema.instantiate(numberOfNodes),edgeSchema.instantiate(),true);
 	}
 
 	public static File mergeEdgesAndNodes(File nodeFile, final File edgeFile) throws IOException{
