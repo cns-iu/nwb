@@ -6,6 +6,7 @@ import java.util.Dictionary;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
+import java.util.LinkedHashSet;
 
 import org.cishell.framework.CIShellContext;
 import org.cishell.framework.algorithm.Algorithm;
@@ -85,36 +86,41 @@ public class DVDAlgorithm implements Algorithm, ProgressTrackable {
 		boolean evaluateAll = intStringToBoolean(stateSpaceSpec);
 		String[] initCondition = handleOptionalData(evaluateAll,initialCondition,"Evaluating a single trajectory requires an initial condition to be specified.\n");
 
+		
 
 		try{
 			dependencyGraph = ParseDependencyGraphs.constructDependencyGraph(functionLabel,nodeLabel,functionTable);
 			monitor.start(ProgressMonitor.WORK_TRACKABLE, (int)Math.pow(numberOfStates,dependencyGraph.getNodeCount()));
 			pseudoGraph = ParseDependencyGraphs.constructPseudoGraph(functionLabel, nodeLabel, functionTable);
-			
 			final Data outputData1 = constructData(this.data[0],dependencyGraph,prefuse.data.Graph.class.getName(),DataProperty.NETWORK_TYPE,"Created Dependency Graph");
 			final Data outputData2 = constructData(this.data[0],pseudoGraph,prefuse.data.Graph.class.getName(),DataProperty.NETWORK_TYPE,"Created Dependency Graph with Function Pseudonodes");
 			
-			if(DVDAlgorithm.verifyInitialConditions(initCondition,dependencyGraph.getNodeCount(),numberOfStates)){
-				stateSpace = new CreateStateSpaceGraph(this.getProgressMonitor()).createStateSpace(dependencyGraph, numberOfStates, functionLabel, 
-						isPolynomial,initCondition,intArrayFromStringArray(schedule));
-				
-				if(stateSpace.getNodeCount() < (int)Math.pow(numberOfStates,dependencyGraph.getNodeCount())){
-					final Data outputData3 = constructData(this.data[0],generateStateSpaceFile(stateSpace),"file:text/nwb",DataProperty.NETWORK_TYPE, "Generated State Space Graph");
-					monitor.done();
-					return new Data[] {outputData1,outputData2, outputData3};
-				}else{
-					final Data outputData3 = constructData(this.data[0],stateSpace,prefuse.data.Graph.class.getName(),DataProperty.NETWORK_TYPE,"Generated State Space Graph");
-					monitor.done();
-					return new Data[] {outputData1, outputData2, outputData3};
-				}
-			}else{
-				stateSpace = null;
+			
+			if(!DVDAlgorithm.verifyInitialConditions(initCondition, dependencyGraph.getNodeCount(), numberOfStates)){
 				this.logger.log(LogService.LOG_WARNING, "The provided initial condition is invalid. Please provide a series of numbers or *'s separated" +
 						" by spaces. There should be as many numbers or *'s as functions in your function file. Each number provided must be at least 0 and no greater" +
 				" than the number of states less one. The state space has not been generated.");
 				monitor.done();
 				return new Data[] {outputData1,outputData2};
 			}
+			
+			if(!DVDAlgorithm.verifyUpdateSchedule(schedule, dependencyGraph.getNodeCount())){
+				this.logger.log(LogService.LOG_WARNING, "The provided update schedule is invalid. Please provide a series of unique numbers, separated by spaces, " +
+						"corresponding to the function rows in your file.\n");
+				return new Data[] {outputData1,outputData2};
+			}
+			
+
+			
+				stateSpace = new CreateStateSpaceGraph(this.getProgressMonitor()).createStateSpace(dependencyGraph, numberOfStates, functionLabel, 
+						isPolynomial,initCondition,intArrayFromStringArray(schedule));
+				
+				
+					final Data outputData3 = constructData(this.data[0],generateStateSpaceFile(stateSpace),"file:text/nwb",DataProperty.NETWORK_TYPE, "Generated State Space Graph");
+					monitor.done();
+					return new Data[] {outputData1, outputData2, outputData3};
+				
+			
 		}catch(FunctionFormatException ffe){
 			throw new AlgorithmExecutionException(ffe.getMessage());
 		}catch(InterruptedException ie){
@@ -173,25 +179,60 @@ public class DVDAlgorithm implements Algorithm, ProgressTrackable {
 		}
 		for(int i = 0; i < s.length; i++){
 			if(s[i].matches(numbers)){
-				System.out.println("Number!!!");
 				value = new Integer(s[i]).intValue();
 				if(value < 0 || value > (nodeStates-1)){
-					System.out.println("NO!!!!!");
 					return false;
 				}
 			}
+			else if(s[i].matches(wildcard)){
+	
+			}
 			else{
-				System.out.println("BOOO!!!");
+			
 				return false;
 			}
 		}
 		return true;
 	}
+	
+	private static boolean verifyUpdateSchedule(String[] s, int numberOfNodes){
+		Integer value;
+		LinkedHashSet seenValues = new LinkedHashSet();
+		if(s == null)
+			return true;
+		if(s.length != numberOfNodes){
+			return false;
+		}
+		for(int i = 0; i < s.length; i++){
+			try{
+				value = new Integer(s[i]);
+				if(seenValues.add(value)){
+					
+				if(value.intValue() < 1 || value.intValue() > numberOfNodes)
+					return false;
+				}
+				else{
+					return false;
+				}
+			
+			}catch(NumberFormatException nfe){
+				return false;
+			}
+		}
+		
+		return true;
+	}
 
 	private static int[] intArrayFromStringArray(String[] stringArray){
+		if(stringArray == null)
+			return null;
+		int[] returnValue = new int[stringArray.length];
 
-
-		return null;
+		for(int i = 0; i < stringArray.length; i++){
+			returnValue[i] = new Integer(stringArray[i]).intValue();
+		}
+		
+		return returnValue;
 	}
 	
 	private static File generateStateSpaceFile(final Graph g) throws AlgorithmExecutionException{
@@ -244,7 +285,7 @@ public class DVDAlgorithm implements Algorithm, ProgressTrackable {
 			Edge e = (Edge)it.next();
 			
 		
-			nfw.addDirectedEdge(e.getInt("source")+1, e.getInt("target")+1,null);
+			nfw.addDirectedEdge(e.getSourceNode().getRow()+1, e.getTargetNode().getRow()+1,null);
 		}
 	}
 

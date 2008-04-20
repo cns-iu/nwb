@@ -63,7 +63,7 @@ public class GraphFillerThread extends Thread{
 							CreateStateSpaceGraph.updateCalculatedStates(this.threadListener, calculated);
 							calculated = 0;
 						}
-						n1.set("label", currentStateString);
+						n1.set("label", convertIntArrayToString(currentState));
 						
 
 						nextState = evaluateFunctions(updateExpressions,currentState,this.updateScheme,radix);
@@ -77,27 +77,22 @@ public class GraphFillerThread extends Thread{
 							return;
 						}
 
-						if(currentStateString.equals(nextStateString)){
-							n1.setInt("attractor", 10);
-						}
 						n2 = g.getNode(nextStateValue.intValue());
 						
-							if(g.getEdge(n1, n2) == null){
-								g.addEdge(n1, n2);
-							}
-
-						
-						if(g.getEdge(n2, n1) != null && n1.getRow() != n2.getRow()){
-							n1.setInt("attractor", 7);
-							n2.setInt("attractor", 7);
+						if(n1.equals(n2)){
+							n1.set("attractor", 10);
 						}
+						
+							g.getEdgeTable().set(n1.getRow(), "source", n1.getRow());
+							g.getEdgeTable().set(n1.getRow(), "target", n2.getRow());
+
 
 						currentState = nextState;
 						n1 = g.getNode(nextStateValue.intValue());
 					}
 				}
 			}
-			System.out.println(g.getNodeCount()+ " " + g.getEdgeCount());
+			
 		}
 		
 
@@ -149,9 +144,19 @@ public class GraphFillerThread extends Thread{
 
 	protected static int[] evaluateFunctions(final FunctionContainer[] functions, final int[] stateSpace, final int[] order, BigInteger numberOfStates){
 		int[] nextState = new int[stateSpace.length];
+		java.util.Arrays.fill(nextState, -1);
+		int pos;
+		if(order == null){
 		for(int i = 0; i < stateSpace.length; i++){
-			nextState[i] = functions[i].evaluate(stateSpace, numberOfStates);
+			nextState[i] = functions[i].evaluate(stateSpace, nextState, numberOfStates);
 		}	
+		}
+		else{
+			for(int i = 0; i < order.length; i++){
+				pos = order[i]-1;
+				nextState[pos] = functions[pos].evaluate(stateSpace, nextState, numberOfStates);
+			}
+		}
 		return nextState;
 	}
 

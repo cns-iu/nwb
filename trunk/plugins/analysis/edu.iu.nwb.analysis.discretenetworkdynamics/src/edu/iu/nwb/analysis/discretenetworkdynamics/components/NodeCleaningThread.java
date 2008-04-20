@@ -94,7 +94,19 @@ public class NodeCleaningThread extends Thread{
 		if(componentMembers.size() > 2){
 			while(!componentMembers.isEmpty()){
 				Node n1 = this.stateGraph.getNode(((Integer)componentMembers.pop()).intValue());
-				n1.set("attractor", 5);
+				n1.set("attractor", 7);
+			}
+		}
+		if(componentMembers.size() == 1){
+			Node n1 = this.stateGraph.getNode(((Integer)componentMembers.pop()).intValue());
+			if(n1.getInt("attractor") == 1){
+				n1.set("attractor", 2);
+			}
+		}
+		if(componentMembers.size() == 2){
+			while(!componentMembers.isEmpty()){
+				Node n1 = this.stateGraph.getNode(((Integer)componentMembers.pop()).intValue());
+				n1.set("attractor", 9);
 			}
 		}
 

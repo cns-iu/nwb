@@ -1,11 +1,5 @@
 package edu.iu.nwb.analysis.discretenetworkdynamics.components;
 
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileReader;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.io.PrintWriter;
 import java.math.BigInteger;
 import java.util.Iterator;
 
@@ -60,8 +54,11 @@ public class CreateStateSpaceGraph {
 		}
 
 		NodeCleaningThread nct = new NodeCleaningThread(stateSpaceGraph);
+		EdgeCleaningThread ect = new EdgeCleaningThread(stateSpaceGraph);
 		nct.run();
+		ect.run();
 		nct.join();
+		ect.join();
 		
 		return stateSpaceGraph;	
 	}
@@ -82,28 +79,7 @@ public class CreateStateSpaceGraph {
 		edgeSchema.addColumn("source", int.class);
 		edgeSchema.addColumn("target", int.class);
 
-		return new Graph(nodeSchema.instantiate(numberOfNodes),edgeSchema.instantiate(),true);
-	}
-
-	public static File mergeEdgesAndNodes(File nodeFile, final File edgeFile) throws IOException{
-		PrintWriter mergeFile = null;
-		BufferedReader inputStream = null;
-		try{
-			mergeFile = new PrintWriter(new FileWriter(nodeFile,true));
-			inputStream = new BufferedReader(new FileReader(edgeFile));
-
-			String line;
-			while((line = inputStream.readLine()) != null){
-				mergeFile.println(line);
-			}
-		}finally{
-			if(mergeFile != null)
-				mergeFile.close();
-			if(inputStream != null)
-				inputStream.close();
-		}
-
-		return nodeFile;
+		return new Graph(nodeSchema.instantiate(numberOfNodes),edgeSchema.instantiate(numberOfNodes),true);
 	}
 
 
