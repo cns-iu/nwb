@@ -59,39 +59,65 @@ public class DuplicateNodeDetectorAlgorithm implements Algorithm {
     	Graph inputGraph = (Graph) data[0].getData();
     	//make copy of its node table, with added unique index column
     	Table nodeTable = constructAlteredNodeTable(inputGraph);
-    	//keep track of nodes we intend to merge, in a graph containing the original input nodes
-    	Graph mergeGraph = makeMergeGraph(nodeTable);
+    	
     	//keep track of noteworthy similarities between nodes that we find
     	StringBuffer noteLog = new StringBuffer();
-    	//for each group of nodes with a common attribute prefix... (with row #)
-    	ListMap groupedNodes = sortNodesByAttributePrefix(nodeTable, this.compareAttributeName, this.numPrefixLetters);
-    	for (Iterator groupIt = groupedNodes.values().iterator(); groupIt.hasNext();) {
-    		List nodeGroup = (List) groupIt.next();
-    		//for each pair of nodes in the group...
-    			for (int i = 0; i < nodeGroup.size(); i++) {
-    				Integer firstNodeIndex = (Integer) nodeGroup.get(i);
-    				for (int j = i; j < nodeGroup.size(); j++) {
-    					Integer secondNodeIndex = (Integer) nodeGroup.get(j);
-    					//test how similar the two nodes are
-    					float similarity = compareNodesBy(this.compareAttributeName, firstNodeIndex, secondNodeIndex, nodeTable);
-    	    		
-    					//if their similarity is uncanny (or something) ...
-    	    			if (similarity >= this.mergeOnSimilarity) {
-    	    				//link the nodes in the merge graph  (nodes have node table row #, edges have similarities)
-    	    				mergeGraph.addEdge(firstNodeIndex.intValue(), secondNodeIndex.intValue());
-    	    			}
-    	    			//else if their similarity is noteworthy...
-    	    			else if (similarity >= this.makeNoteOnSimilarity) {
-        	    				//record it.
-        				    	String nodeOneAttribute = (String) nodeTable.getString(firstNodeIndex.intValue(), this.compareAttributeName);
-        				     	String nodeTwoAttribute = (String) nodeTable.getString(secondNodeIndex.intValue(), this.compareAttributeName);
-        						noteLog.append("" + similarity + " similarity: \"" + nodeOneAttribute + "\" \"" + nodeTwoAttribute + "\"" + "\r\n");
-        					}
-    				}
-    			}
-    	}
-    	StringBuffer mergeLog = new StringBuffer();
+    	//keep track of nodes we intend to merge, in a graph containing the original input nodes
+    	Graph mergeGraph = makeMergeGraph(nodeTable, noteLog);
+      	StringBuffer mergeLog = new StringBuffer();
   		//extract clusters from the merge graph
+    	Table mergeTable = makeMergeTable(nodeTable, mergeGraph, mergeLog);
+  
+    	Data[] mergeTableAndLogData = formatAsData(mergeTable, noteLog, mergeLog);
+    	return mergeTableAndLogData;
+    	//return node table with merges and unique index column
+    	//AND return log that looks like... (needs clusters and table for name lookup)
+    	/*
+    	 * for "Andrew W.K"...
+    	 * 	merging in "Andow W.K"
+    	 * 	merging in "Andrew W."
+    	 * 	merging in "Andrew WK"
+    	 * .
+    	 * .
+    	 * .
+    	 * 
+    	 * Other noteworthy similarities:
+    	 * 	NOT merging "Captain Kirk" and "Captain Korp" (needs special report list)
+    	 * 	NOT merging "Admiral Ackbar" and "Anvil Ackbar"
+    	 * 	.
+    	 * 	.
+    	 * 	.
+    	 */
+    }
+    
+    private Data[] formatAsData(Table nodeTable, StringBuffer noteLog, StringBuffer mergeLog) throws AlgorithmExecutionException {
+    	final File nodeLogFile = this.stringToFile(noteLog.toString(), "nodeLog.txt");
+    	final File mergeLogFile = this.stringToFile(mergeLog.toString(), "mergeLog.txt");
+    	final Data nodeLogData = new BasicData(nodeLogFile, "file:text/txt");
+    	final Data mergeLogData = new BasicData(mergeLogFile, "file:text/txt");
+    	
+    	final prefuse.data.Table outputTable = nodeTable;
+		final Data outputData2 = new BasicData(outputTable,
+				prefuse.data.Table.class.getName());	
+		final Dictionary tableAttributes = outputData2.getMetadata();
+		tableAttributes.put(DataProperty.MODIFIED, new Boolean(true));
+		tableAttributes.put(DataProperty.PARENT, data[0]);
+		tableAttributes.put(DataProperty.TYPE, DataProperty.MATRIX_TYPE);
+		tableAttributes.put(DataProperty.LABEL, "Unique Values from Column "+ this.compareAttributeName);
+		
+		return new Data[] {nodeLogData, mergeLogData, outputData2};
+
+    }
+    
+    private float compareNodesBy(String attributeColumn, Integer nodeOneIndex, Integer nodeTwoIndex, Table nodeTable) {
+    	String nodeOneAttribute = (String) nodeTable.getString(nodeOneIndex.intValue(), attributeColumn);
+     	String nodeTwoAttribute = (String) nodeTable.getString(nodeTwoIndex.intValue(), attributeColumn);
+     	float similarity = this.similarityChecker.getSimilarity(nodeOneAttribute, nodeTwoAttribute);
+     	return similarity;
+    }
+    
+    //side-effects nodeTable
+    private Table makeMergeTable(Table nodeTable, Graph mergeGraph, StringBuffer mergeLog) {
     	List clusters = extractWeakComponentClusters(mergeGraph);
 		//for each cluster...
     	for (Iterator clusterIt = clusters.iterator(); clusterIt.hasNext();) {
@@ -122,54 +148,12 @@ public class DuplicateNodeDetectorAlgorithm implements Algorithm {
     				mergeLog.append("  merging in \"" + nodeOneAttribute + "\"" + "\r\n"); 
     			}
     		}
-    		
-    		//record our actions in the log
     	}
-
-    	final File nodeLogFile = this.stringToFile(noteLog.toString(), "nodeLog.txt");
-    	final File mergeLogFile = this.stringToFile(mergeLog.toString(), "mergeLog.txt");
-    	final Data nodeLogData = new BasicData(nodeLogFile, "file:text/txt");
-    	final Data mergeLogData = new BasicData(mergeLogFile, "file:text/txt");
     	
-    	final prefuse.data.Table outputTable = nodeTable;
-		final Data outputData2 = new BasicData(outputTable,
-				prefuse.data.Table.class.getName());	
-		final Dictionary tableAttributes = outputData2.getMetadata();
-		tableAttributes.put(DataProperty.MODIFIED, new Boolean(true));
-		tableAttributes.put(DataProperty.PARENT, data[0]);
-		tableAttributes.put(DataProperty.TYPE, DataProperty.MATRIX_TYPE);
-		tableAttributes.put(DataProperty.LABEL, "Unique Values from Column "+ this.compareAttributeName);
-		
-		return new Data[] {nodeLogData, mergeLogData, outputData2};
-
-    	//return node table with merges and unique index column
-    	//AND return log that looks like... (needs clusters and table for name lookup)
-    	/*
-    	 * for "Andrew W.K"...
-    	 * 	merging in "Andow W.K"
-    	 * 	merging in "Andrew W."
-    	 * 	merging in "Andrew WK"
-    	 * .
-    	 * .
-    	 * .
-    	 * 
-    	 * Other noteworthy similarities:
-    	 * 	NOT merging "Captain Kirk" and "Captain Korp" (needs special report list)
-    	 * 	NOT merging "Admiral Ackbar" and "Anvil Ackbar"
-    	 * 	.
-    	 * 	.
-    	 * 	.
-    	 */
+    	return nodeTable;
     }
     
-    private float compareNodesBy(String attributeColumn, Integer nodeOneIndex, Integer nodeTwoIndex, Table nodeTable) {
-    	String nodeOneAttribute = (String) nodeTable.getString(nodeOneIndex.intValue(), attributeColumn);
-     	String nodeTwoAttribute = (String) nodeTable.getString(nodeTwoIndex.intValue(), attributeColumn);
-     	float similarity = this.similarityChecker.getSimilarity(nodeOneAttribute, nodeTwoAttribute);
-     	return similarity;
-    }
-    
-    private Graph makeMergeGraph(Table nodeTable) {
+    private Graph makeEmptyMergeGraph(Table nodeTable) {
     	//same nodes as original graph, but we will build different edges to show which nodes we intend to merge
     	
     	Table edgeTable = new Table();
@@ -180,6 +164,39 @@ public class DuplicateNodeDetectorAlgorithm implements Algorithm {
     	
     	boolean isDirected = false;
     	Graph mergeGraph = new Graph(nodeTable, edgeTable, isDirected);
+    	
+    	return mergeGraph;
+    }
+    
+    private Graph makeMergeGraph(Table nodeTable, StringBuffer noteLog) {
+    	Graph mergeGraph = makeEmptyMergeGraph(nodeTable);
+    	//for each group of nodes with a common attribute prefix... (with row #)
+    	ListMap groupedNodes = sortNodesByAttributePrefix(nodeTable, this.compareAttributeName, this.numPrefixLetters);
+    	for (Iterator groupIt = groupedNodes.values().iterator(); groupIt.hasNext();) {
+    		List nodeGroup = (List) groupIt.next();
+    		//for each pair of nodes in the group...
+    			for (int i = 0; i < nodeGroup.size(); i++) {
+    				Integer firstNodeIndex = (Integer) nodeGroup.get(i);
+    				for (int j = i; j < nodeGroup.size(); j++) {
+    					Integer secondNodeIndex = (Integer) nodeGroup.get(j);
+    					//test how similar the two nodes are
+    					float similarity = compareNodesBy(this.compareAttributeName, firstNodeIndex, secondNodeIndex, nodeTable);
+    	    		
+    					//if their similarity is uncanny (or something) ...
+    	    			if (similarity >= this.mergeOnSimilarity) {
+    	    				//link the nodes in the merge graph  (nodes have node table row #, edges have similarities)
+    	    				mergeGraph.addEdge(firstNodeIndex.intValue(), secondNodeIndex.intValue());
+    	    			}
+    	    			//else if their similarity is noteworthy...
+    	    			else if (similarity >= this.makeNoteOnSimilarity) {
+        	    				//record it.
+        				    	String nodeOneAttribute = (String) nodeTable.getString(firstNodeIndex.intValue(), this.compareAttributeName);
+        				     	String nodeTwoAttribute = (String) nodeTable.getString(secondNodeIndex.intValue(), this.compareAttributeName);
+        						noteLog.append("" + similarity + " similarity: \"" + nodeOneAttribute + "\" \"" + nodeTwoAttribute + "\"" + "\r\n");
+        					}
+    				}
+    			}
+    	}
     	
     	return mergeGraph;
     }
