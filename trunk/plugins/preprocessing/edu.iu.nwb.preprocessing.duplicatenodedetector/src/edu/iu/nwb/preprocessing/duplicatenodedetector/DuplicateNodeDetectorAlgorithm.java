@@ -1,16 +1,18 @@
 package edu.iu.nwb.preprocessing.duplicatenodedetector;
 
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Dictionary;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedHashSet;
 import java.util.List;
-import java.util.Map;
 
 import org.cishell.framework.CIShellContext;
 import org.cishell.framework.algorithm.Algorithm;
+import org.cishell.framework.algorithm.AlgorithmExecutionException;
 import org.cishell.framework.data.BasicData;
 import org.cishell.framework.data.Data;
 import org.cishell.framework.data.DataProperty;
@@ -22,7 +24,7 @@ import prefuse.data.Table;
 import prefuse.data.Tuple;
 import prefuse.util.collections.IntIterator;
 import uk.ac.shef.wit.simmetrics.similaritymetrics.AbstractStringMetric;
-import uk.ac.shef.wit.simmetrics.similaritymetrics.JaroWinkler;
+import uk.ac.shef.wit.simmetrics.similaritymetrics.Jaro;
 import edu.iu.nwb.preprocessing.duplicatenodedetector.util.GraphSearchAlgorithms;
 import edu.iu.nwb.preprocessing.duplicatenodedetector.util.ListMap;
 
@@ -34,7 +36,7 @@ public class DuplicateNodeDetectorAlgorithm implements Algorithm {
     private static final String SIMILARITY_COLUMN_NAME = "similarity";
     private static final String UNIQUE_INDEX_COLUMN_NAME = "uniqueIndex";
     private static final String COMBINE_VALUES_COLUMN_NAME = "combineValues";
-    private final AbstractStringMetric similarityChecker = new JaroWinkler();
+    private final AbstractStringMetric similarityChecker = new Jaro();
     private String compareAttributeName;
     private float mergeOnSimilarity;
     private float makeNoteOnSimilarity;
@@ -52,7 +54,7 @@ public class DuplicateNodeDetectorAlgorithm implements Algorithm {
         this.numPrefixLetters = ((Integer) parameters.get("numPrefixLetters")).intValue();
     }
 
-    public Data[] execute() {
+    public Data[] execute() throws AlgorithmExecutionException {
     	//take our input graph graph
     	Graph inputGraph = (Graph) data[0].getData();
     	//make copy of its node table, with added unique index column
@@ -60,7 +62,7 @@ public class DuplicateNodeDetectorAlgorithm implements Algorithm {
     	//keep track of nodes we intend to merge, in a graph containing the original input nodes
     	Graph mergeGraph = makeMergeGraph(nodeTable);
     	//keep track of noteworthy similarities between nodes that we find
-    	List notableNodeSimilarities = new ArrayList();
+    	StringBuffer noteLog = new StringBuffer();
     	//for each group of nodes with a common attribute prefix... (with row #)
     	ListMap groupedNodes = sortNodesByAttributePrefix(nodeTable, this.compareAttributeName, this.numPrefixLetters);
     	for (Iterator groupIt = groupedNodes.values().iterator(); groupIt.hasNext();) {
@@ -72,19 +74,23 @@ public class DuplicateNodeDetectorAlgorithm implements Algorithm {
     					Integer secondNodeIndex = (Integer) nodeGroup.get(j);
     					//test how similar the two nodes are
     					float similarity = compareNodesBy(this.compareAttributeName, firstNodeIndex, secondNodeIndex, nodeTable);
-    	    			//if their similarity is noteworthy...
-    					if (similarity >= this.makeNoteOnSimilarity) {
-    	    				//record it.
-    						//DO IT!
-    					}
+    	    		
     					//if their similarity is uncanny (or something) ...
     	    			if (similarity >= this.mergeOnSimilarity) {
     	    				//link the nodes in the merge graph  (nodes have node table row #, edges have similarities)
     	    				mergeGraph.addEdge(firstNodeIndex.intValue(), secondNodeIndex.intValue());
     	    			}
+    	    			//else if their similarity is noteworthy...
+    	    			else if (similarity >= this.makeNoteOnSimilarity) {
+        	    				//record it.
+        				    	String nodeOneAttribute = (String) nodeTable.getString(firstNodeIndex.intValue(), this.compareAttributeName);
+        				     	String nodeTwoAttribute = (String) nodeTable.getString(secondNodeIndex.intValue(), this.compareAttributeName);
+        						noteLog.append("" + similarity + " similarity: \"" + nodeOneAttribute + "\" \"" + nodeTwoAttribute + "\"" + "\r\n");
+        					}
     				}
     			}
     	}
+    	StringBuffer mergeLog = new StringBuffer();
   		//extract clusters from the merge graph
     	List clusters = extractWeakComponentClusters(mergeGraph);
 		//for each cluster...
@@ -94,11 +100,17 @@ public class DuplicateNodeDetectorAlgorithm implements Algorithm {
     		//(this step could be made smarter, but is ok for now. Will need user intervention in some cases)
     		Integer[] eachNodeInCluster = (Integer[]) cluster.toArray(new Integer[cluster.size()]);
     		Integer firstNode = null;
+    		
+    		if (eachNodeInCluster.length <= 1) continue;
+    		
     		for (int ii = 0; ii < eachNodeInCluster.length; ii++) {
     			Integer node  = eachNodeInCluster[ii];
     			if (firstNode == null) {
     				//(we arbitrarily choose the first node as the node to merge other nodes into)
     				firstNode = node;
+    				String nodeOneAttribute = (String) nodeTable.getString(firstNode.intValue(), this.compareAttributeName);
+    				mergeLog.append("for \"" + nodeOneAttribute + "\"..." + "\r\n");
+   
     			} else {
     				Integer nodeBeyondFirst = node;
     				//(we merge nodes beyond the first into the first node)
@@ -106,12 +118,19 @@ public class DuplicateNodeDetectorAlgorithm implements Algorithm {
     				nodeTable.setInt(nodeBeyondFirst.intValue(), UNIQUE_INDEX_COLUMN_NAME, firstNode.intValue() + 1);
     				String iAmNotThePrimaryNode = "";
     				nodeTable.setString(nodeBeyondFirst.intValue(), COMBINE_VALUES_COLUMN_NAME, iAmNotThePrimaryNode);
+    				String nodeOneAttribute = (String) nodeTable.getString(nodeBeyondFirst.intValue(), this.compareAttributeName);
+    				mergeLog.append("  merging in \"" + nodeOneAttribute + "\"" + "\r\n"); 
     			}
     		}
     		
     		//record our actions in the log
     	}
 
+    	final File nodeLogFile = this.stringToFile(noteLog.toString(), "nodeLog.txt");
+    	final File mergeLogFile = this.stringToFile(mergeLog.toString(), "mergeLog.txt");
+    	final Data nodeLogData = new BasicData(nodeLogFile, "file:text/txt");
+    	final Data mergeLogData = new BasicData(mergeLogFile, "file:text/txt");
+    	
     	final prefuse.data.Table outputTable = nodeTable;
 		final Data outputData2 = new BasicData(outputTable,
 				prefuse.data.Table.class.getName());	
@@ -121,7 +140,7 @@ public class DuplicateNodeDetectorAlgorithm implements Algorithm {
 		tableAttributes.put(DataProperty.TYPE, DataProperty.MATRIX_TYPE);
 		tableAttributes.put(DataProperty.LABEL, "Unique Values from Column "+ this.compareAttributeName);
 		
-		return new Data[] {outputData2};
+		return new Data[] {nodeLogData, mergeLogData, outputData2};
 
     	//return node table with merges and unique index column
     	//AND return log that looks like... (needs clusters and table for name lookup)
@@ -173,47 +192,6 @@ public class DuplicateNodeDetectorAlgorithm implements Algorithm {
 		return outputTable;
 	}
     
-//    public Data[] execute() {
-//    	//get the node information from the input table 
-//    	Graph inputGraph = (Graph) data[0].getData();
-//    	Table nodeTable = inputGraph.getNodeTable();
-//    	//sort the nodes by the first 'numPrefixLetters' letters in specified attribute
-//    	ListMap nodesByAttrPrefix = sortNodesByAttributePrefix(nodeTable, this.compareAttributeName, this.numPrefixLetters);
-//        AbstractStringMetric similarityChecker = new JaroWinkler();
-//    	MergesAndMergeNotes allMergesAndMergeNotes = new MergesAndMergeNotes();
-//    	//for each group of attributes sorted by prefix...
-//    	for (Iterator nodesByAttrIt = nodesByAttrPrefix.keySet().iterator(); nodesByAttrIt.hasNext();) {
-//    		//compare each node's attribute with everyone other node's attribute
-//    		String nodeKey = (String) nodesByAttrIt.next();
-//    		List nodesWithCommonAttrPrefix = nodesByAttrPrefix.get(nodeKey);
-//    		
-//    		for (int ii = 0; ii < nodesWithCommonAttrPrefix.size(); ii++) {
-//    			Integer node = (Integer) nodesWithCommonAttrPrefix.get(ii);
-//    			MergesAndMergeNotes mergesAndMergeNotes = recordSimilarNodes(similarityChecker, nodeTable, node, nodesWithCommonAttrPrefix);
-//    			allMergesAndMergeNotes.addAll(mergesAndMergeNotes);
-//    		}	
-//    		
-//    		List merges = allMergesAndMergeNotes.merges;
-//    		Table mergeTable = makeMergeTable(nodeTable, merges);
-//    	}
-//    	
-//    	//Make a note in our output log, if two are above the "makeNoteOnSimilarity" threshold.
-//    	
-//        return null;
-//    }
-    
-//    private Table makeMergeTable(Table nodeTable, List merges) {
-//    	Graph mergeGraph = makeMergeGraph(merges);
-//    	List clusters = extractWeakComponentClusters(mergeGraph);
-//    	Table mergeTable = new Table();
-//    	for (int ii = 0; ii < clusters.size(); ii++) {
-//    		LinkedHashSet cluster = (LinkedHashSet) clusters.get(ii);
-//    		for (int jj = 0; jj < cluster.size(); jj++) {
-//    			
-//    		}
-//    	}
-//    }
-    
     private Table createTableSchema(Schema graphSchema, Table t) {
 		for (int i = 0; i < graphSchema.getColumnCount(); i++) {
 			t.addColumn(graphSchema.getColumnName(i), graphSchema.getColumnType(i));
@@ -236,35 +214,6 @@ public class DuplicateNodeDetectorAlgorithm implements Algorithm {
 		return t;
 	}
     
-    private Graph makeMergeGraph(List merges) {
-    	Graph mergeGraph = new Graph();
-    	Map idToRow = new HashMap();
-    	for (int ii = 0; ii < merges.size(); ii++) {
-    		SimilarityInfo mergeLink = (SimilarityInfo) merges.get(ii);
-    		Integer startNodeRow = (Integer) idToRow.get(new Integer(mergeLink.node1)); 
-    		if (startNodeRow == null) {
-    			//isn't in the graph already
-    			startNodeRow = new Integer(mergeGraph.addNodeRow());
-    		
-    			idToRow.put(new Integer(mergeLink.node1), startNodeRow);
-    		}
-    		
-    		Integer endNodeRow = (Integer) idToRow.get(new Integer(mergeLink.node2));
-    		if (endNodeRow == null) {
-    			//isn't in the graph already
-    			endNodeRow = new Integer(mergeGraph.addNodeRow());
-    			idToRow.put(new Integer(mergeLink.node2), endNodeRow);
-    		}
-    		
-    		int existingEdge = mergeGraph.getEdge(startNodeRow.intValue(), endNodeRow.intValue());
-    		if (existingEdge == -1) {
-    			mergeGraph.addEdge(startNodeRow.intValue(), endNodeRow.intValue());
-    		}
-    	}
-    	
-    	return mergeGraph;
-    }
-    
 	public List extractWeakComponentClusters(final Graph grph){
 		List clusters = new ArrayList();
 		
@@ -281,35 +230,7 @@ public class DuplicateNodeDetectorAlgorithm implements Algorithm {
 		}
 		return clusters;
 	}
-    
-    private MergesAndMergeNotes recordSimilarNodes(
-    		AbstractStringMetric similarityChecker, Table nodeTable, Integer node, List nodesWithCommonPrefix) {
-    	List merges = new ArrayList();
-    	List mergeNotes = new ArrayList();
-    	
-    	String nodeLabel = (String) nodeTable.get(node.intValue(), compareAttributeName);
-    	for (int ii = 0; ii < nodesWithCommonPrefix.size(); ii++) {
-    		Integer otherNode = (Integer) nodesWithCommonPrefix.get(ii);
-    		if (node == otherNode) continue;
-    		String otherNodeLabel = (String) nodeTable.get(otherNode.intValue(), compareAttributeName);
-    		float similarity = similarityChecker.getSimilarity(nodeLabel, otherNodeLabel);
-    		if (similarity > mergeOnSimilarity) {
-    			System.out.println("MERGING: (" + similarity + ")");
-    			System.out.println("  " + nodeLabel);
-    			System.out.println("  " + otherNodeLabel);
-    			SimilarityInfo similarityInfo = new SimilarityInfo(node.intValue(), otherNode.intValue(), similarity);
-    			merges.add(similarityInfo);
-    			mergeNotes.add(similarityInfo);
-    		} else if (similarity > makeNoteOnSimilarity) {
-    			System.out.println("NOTE: (" + similarity + ")");
-    			System.out.println("  " + nodeLabel);
-    			System.out.println("  " + otherNodeLabel);
-    			mergeNotes.add(new SimilarityInfo(node.intValue(), otherNode.intValue(), similarity));
-    		}
-    	}
-    	
-    	return new MergesAndMergeNotes(merges, mergeNotes);
-    }
+   
     
 	private ListMap sortNodesByAttributePrefix(Table nodeTable, String compareAttributeName, int numPrefixLetters) {
 		ListMap nodesByAttributePrefix = new ListMap();
@@ -338,29 +259,6 @@ public class DuplicateNodeDetectorAlgorithm implements Algorithm {
 		}
 	}
 	
-	//sad result of not having support for tuples or multiple return values
-	
-	private class MergesAndMergeNotes {
-		//lists of merge
-		public List merges;
-		public List notes;
-		
-		public MergesAndMergeNotes() {
-			this.merges = new ArrayList();
-			this.notes = new ArrayList();
-		}
-		
-		public MergesAndMergeNotes(List merges, List notes) {
-			this.merges = merges;
-			this.notes = notes;
-		}
-		
-		public void addAll(MergesAndMergeNotes otherOne) {
-			merges.addAll(otherOne.merges);
-			notes.addAll(otherOne.notes);
-		}
-	}
-	
 	private class  SimilarityInfo {
     	public int node1;
     	public int node2;
@@ -372,4 +270,16 @@ public class DuplicateNodeDetectorAlgorithm implements Algorithm {
     		this.similarity = similarity;
     	}
     }
+	
+	private File stringToFile(String s, String fileName) throws AlgorithmExecutionException {
+		try {
+			File outFile = new File(fileName);
+			FileWriter out = new FileWriter(outFile);
+			out.write(s);
+			out.close();
+			return outFile;
+		} catch (IOException e) {
+			throw new AlgorithmExecutionException("Could not create file from string", e);
+		}
+	}
 }
