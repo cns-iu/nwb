@@ -172,6 +172,20 @@ public class NWBFileWriter implements NWBFileParserHandler {
 			}
 		}
 	}
+	
+	public static LinkedHashMap getDefaultNodeSchema(){
+		LinkedHashMap defaultNodeSchema = new LinkedHashMap();
+		defaultNodeSchema.put(NWBFileProperty.ATTRIBUTE_ID, NWBFileProperty.TYPE_INT);
+		defaultNodeSchema.put(NWBFileProperty.ATTRIBUTE_LABEL, NWBFileProperty.TYPE_STRING);
+		return defaultNodeSchema;
+	}
+	
+	public static LinkedHashMap getDefaultEdgeSchema(){
+		LinkedHashMap defaultEdgeSchema = new LinkedHashMap();
+		defaultEdgeSchema.put(NWBFileProperty.ATTRIBUTE_SOURCE, NWBFileProperty.TYPE_INT);
+		defaultEdgeSchema.put(NWBFileProperty.ATTRIBUTE_TARGET, NWBFileProperty.TYPE_INT);
+		return defaultEdgeSchema;
+	}
 
 	public void setUndirectedEdgeSchema(LinkedHashMap schema) {
 		undirectedEdgeSchema = schema;
