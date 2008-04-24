@@ -87,9 +87,10 @@ public class EdgeStats{
 	}
 
 	private void addEdge(final Edge e, CascadedTable derivativeTable, HashSet observedValues){
-		if(derivativeTable.getBoolean(e.getRow(), derivativeTable.getColumnNumber("visited"))){
+		if(!derivativeTable.getBoolean(e.getRow(), derivativeTable.getColumnNumber("visited"))){
 				processEdgeAttributes(e,this.nonNumericAttributes,observedValues,false);
 				processEdgeAttributes(e,this.numericAttributes,observedValues,true);
+				derivativeTable.setBoolean(e.getRow(), derivativeTable.getColumnNumber("visited"), true);
 		}
 	}
 	
@@ -98,6 +99,7 @@ public class EdgeStats{
 			String columnName = (String)attributeNames.get(i);
 			if(isNumeric){
 				double value = ((java.lang.Number)e.get(columnName)).doubleValue();
+				System.out.println(value);
 				this.meanValues[i] += (value)/e.getGraph().getEdgeCount();
 				this.weightedDensitySum[i] += value;
 				if(value > this.maxValues[i])
