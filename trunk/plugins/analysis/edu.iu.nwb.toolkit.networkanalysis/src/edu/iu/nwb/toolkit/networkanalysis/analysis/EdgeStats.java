@@ -99,7 +99,6 @@ public class EdgeStats{
 			String columnName = (String)attributeNames.get(i);
 			if(isNumeric){
 				double value = ((java.lang.Number)e.get(columnName)).doubleValue();
-				System.out.println(value);
 				this.meanValues[i] += (value)/e.getGraph().getEdgeCount();
 				this.weightedDensitySum[i] += value;
 				if(value > this.maxValues[i])
