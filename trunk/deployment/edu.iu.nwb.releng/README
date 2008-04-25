@@ -34,6 +34,9 @@ cishell.product
 build-files/build.properties
 
 ==
+NOTE: New Windows icons should be created as described here:
+http://tom-eclipse-dev.blogspot.com/2007_06_01_archive.html
+
 NOTE: pluginbuilder.config is basically useless now that I have customized 
 the project.
 
