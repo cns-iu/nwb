@@ -1,6 +1,5 @@
 package edu.iu.nwb.toolkit.networkanalysis.analysis;
 
-import java.io.File;
 import java.text.DecimalFormat;
 
 
@@ -173,10 +172,14 @@ public class NetworkProperties {
 
 
 	private static String printWeightedDensities(boolean useObservedMax,EdgeStats es, int numNodes,boolean isDirected){
-		double weightedSum,maxObservedValue,weightedDensity, maxConnections;
+		double weightedSum,maxObservedValue,weightedDensity;
+		long maxConnections;
 		DecimalFormat densityFormatter = new DecimalFormat("#.#####");
+		
 		StringBuffer sb = new StringBuffer();
-		maxConnections = (numNodes*(numNodes-1));
+		
+		maxConnections = ((long)numNodes*((long)numNodes-1));
+		
 		if(useObservedMax){
 			sb.append("densities (weighted against observed max)");
 		}
@@ -191,14 +194,14 @@ public class NetworkProperties {
 			weightedSum = es.getWeightedDensitySumArray()[i];
 			maxObservedValue = es.getMaxValueArray()[i];
 			if(isDirected){
-				weightedDensity = weightedSum/maxConnections;
+				weightedDensity = (double)weightedSum/maxConnections;
 			}
 			else{
 
-				weightedDensity = weightedSum/(.5*maxConnections);
+				weightedDensity = (double)weightedSum/(.5*maxConnections);
 			}
 			if(useObservedMax)
-				weightedDensity = weightedDensity/maxObservedValue;
+				weightedDensity = (double)weightedDensity/maxObservedValue;
 
 			sb.append(densityFormatter.format(weightedDensity));
 			sb.append(LINE_SEP);
@@ -207,12 +210,12 @@ public class NetworkProperties {
 	}
 
 	protected static double calculateDensity(int numberOfNodes, int numberOfEdges, boolean isDirected){
-		long maxEdges = numberOfNodes* (numberOfNodes-1);
+		long maxEdges = (long)numberOfNodes* (long)(numberOfNodes-1);
 		if(isDirected){
-			return (double)numberOfEdges/(maxEdges);
+			return (double)((long)numberOfEdges)/(maxEdges);
 		}
 		else{
-			return(double)numberOfEdges/(maxEdges/2);
+			return(double)((long)numberOfEdges)/(maxEdges/2);
 		}
 	}
 
