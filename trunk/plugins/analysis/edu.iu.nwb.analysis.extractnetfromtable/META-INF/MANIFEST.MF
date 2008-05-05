@@ -16,4 +16,5 @@ Import-Package: org.cishell.framework;version="1.0.0",
  prefuse.data
 X-AutoStart: true
 Service-Component: OSGI-INF/component.xml
-Export-Package: edu.iu.nwb.analysis.extractnetfromtable.components
+Export-Package: edu.iu.nwb.analysis.extractnetfromtable.aggregate,
+ edu.iu.nwb.analysis.extractnetfromtable.components
