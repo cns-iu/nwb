@@ -10,7 +10,7 @@ import prefuse.data.Edge;
 import prefuse.data.Graph;
 import prefuse.data.Table;
 
-public class EdgeStats{	
+public class EdgeStats extends Thread{	
 	double[] meanValues;
 	double[] maxValues;
 	double[] minValues;
@@ -26,8 +26,33 @@ public class EdgeStats{
 
 	SelfLoopsParallelEdges selfLoopsParallelEdges;
 	
+	private Graph edgeGraph;
+	
 	private EdgeStats(){
 		
+	}
+	
+	public void run(){
+		
+		initializeAdditionalAttributes(this.edgeGraph.getEdgeTable(),this);
+		
+		CascadedTable derivativeTable = new CascadedTable(this.edgeGraph.getEdgeTable());
+		derivativeTable.addColumn("visited", boolean.class, new Boolean(false));
+		
+		
+		int additionalNumericAttributes = this.numericAttributes.size();
+		
+		if(additionalNumericAttributes > 0){
+		  this.weightedDensitySum = new double[additionalNumericAttributes];
+		  this.meanValues = new double[additionalNumericAttributes];
+		  this.maxValues = new double[additionalNumericAttributes];
+		  this.minValues = new double[additionalNumericAttributes];
+		  
+		  java.util.Arrays.fill(this.maxValues, Double.MIN_VALUE);
+		  java.util.Arrays.fill(this.minValues, Double.MAX_VALUE);
+		}
+		
+		this.calculateEdgeStats(derivativeTable);
 	}
 	
 	public static EdgeStats constructEdgeStats(final Graph graph){
@@ -35,26 +60,8 @@ public class EdgeStats{
 		
 		edgeStats.numberOfEdges = graph.getEdgeCount();
 		edgeStats.selfLoopsParallelEdges = new SelfLoopsParallelEdges(graph);
-		
-		edgeStats = initializeAdditionalAttributes(graph.getEdgeTable(),edgeStats);
-		
-		CascadedTable derivativeTable = new CascadedTable(graph.getEdgeTable());
-		derivativeTable.addColumn("visited", boolean.class, new Boolean(false));
-		
-		
-		int additionalNumericAttributes = edgeStats.numericAttributes.size();
-		
-		if(additionalNumericAttributes > 0){
-		  edgeStats.weightedDensitySum = new double[additionalNumericAttributes];
-		  edgeStats.meanValues = new double[additionalNumericAttributes];
-		  edgeStats.maxValues = new double[additionalNumericAttributes];
-		  edgeStats.minValues = new double[additionalNumericAttributes];
-		  
-		  java.util.Arrays.fill(edgeStats.maxValues, Double.MIN_VALUE);
-		  java.util.Arrays.fill(edgeStats.minValues, Double.MAX_VALUE);
-		}
-		
-		edgeStats.calculateEdgeStats(graph,derivativeTable, edgeStats,edgeStats.numericAttributes.size());
+		edgeStats.edgeGraph = graph;
+	
 		
 		return edgeStats;
 	}
@@ -121,16 +128,16 @@ public class EdgeStats{
 	}
 
 
-	public void calculateEdgeStats(final Graph graph, CascadedTable visitedTable, EdgeStats es, int numberOfNumericAttributes){
+	public void calculateEdgeStats(CascadedTable visitedTable){
 		HashSet observedValues = null;
-		if(numberOfNumericAttributes == 1)
+		if(this.numericAttributes.size() == 1)
 			observedValues = new HashSet();
-		for(Iterator it = graph.edges(); it.hasNext();){
+		for(Iterator it = this.edgeGraph.edges(); it.hasNext();){
 			Edge e = (Edge)it.next();
-			es.addEdge(e, visitedTable, observedValues);
+			this.addEdge(e, visitedTable, observedValues);
 		}
 		
-		if(numberOfNumericAttributes == 1){
+		if(this.numericAttributes.size() == 1){
 			if(observedValues.size() > 1){
 				this.isValuedNetwork = true;
 			}

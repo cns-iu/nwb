@@ -2,38 +2,64 @@ package edu.iu.nwb.toolkit.networkanalysis.analysis;
 
 import java.text.DecimalFormat;
 
+import org.cishell.framework.algorithm.AlgorithmExecutionException;
+
 
 public class NetworkProperties {
 
 	private static final String LINE_SEP = System.getProperty("line.separator");
 
-	public static StringBuffer calculateNetworkProperties(final prefuse.data.Graph graph){
+	public static StringBuffer calculateNetworkProperties(final prefuse.data.Graph graph) throws AlgorithmExecutionException {
 		boolean isDirectedGraph = graph.isDirected();
 		StringBuffer output = new StringBuffer();
 
 
-		NodeStats nodeStats = new NodeStats(graph);
+		NodeStats nodeStats = NodeStats.constructNodeStats(graph);
 		EdgeStats edgeStats = EdgeStats.constructEdgeStats(graph);
-
-		output = directedInfo(output, isDirectedGraph);
-		output = outputNodeAndEdgeStats(output, nodeStats, edgeStats, isDirectedGraph);
-
-		ConnectedComponents cf = ConnectedComponents.constructConnectedComponents(graph);
-
-		output = averageDegreeInfo(output, nodeStats, edgeStats, isDirectedGraph);
+		WeakComponentClusteringThread weakComponents = new WeakComponentClusteringThread(graph);
+		StrongComponentClusteringThread strongComponents = new StrongComponentClusteringThread(graph);
+		//ConnectedComponents cf = ConnectedComponents.constructConnectedComponents(graph);
 		
-		output = connectedInfo(output, cf, nodeStats,isDirectedGraph);
+		nodeStats.run();
+		edgeStats.run();
+		weakComponents.run();
+		if(isDirectedGraph){
+			strongComponents.run();
+		}
+		
+		try{
+		
+		nodeStats.join();
+		edgeStats.join();
+		weakComponents.join();
+		strongComponents.join();
+
+		
+		
+		output = directedInfo(output, isDirectedGraph);
+		output = outputNodeAndEdgeStats(output, nodeStats, edgeStats, isDirectedGraph);	
+
+		output = averageDegreeInfo(output, nodeStats,isDirectedGraph);
+		
+		output = weakConnectedInfo(output, weakComponents, nodeStats);
+		if(isDirectedGraph){
+			output = strongConnectedInfo(output,strongComponents);
+		}else{	
+				output.append("Did not calculate strong connectedness because this graph was not directed.");
+				output.append(LINE_SEP);	
+		}
 
 		if(!(edgeStats.getNumberOfParallelEdges() > 0 || edgeStats.getNumberOfSelfLoops() > 0)){
-
-			output = averageDegreeInfo(output, graph.getNodeCount(),graph.getEdgeCount(),isDirectedGraph);
-
 			output = densityInfo(output, edgeStats, graph.getNodeCount(), graph.getEdgeCount(),isDirectedGraph);
 		}else{
 			output = addWarningMessages(output, edgeStats, isDirectedGraph);
 		}
 
 		return output;
+		}catch(InterruptedException ie){
+			throw new AlgorithmExecutionException("There were errors completing the evaluation. One of the threads has died.", ie);
+		}
+		
 	}
 
 	private static StringBuffer addWarningMessages(StringBuffer sb, EdgeStats es, boolean isDirected){
@@ -72,28 +98,22 @@ public class NetworkProperties {
 	}
 
 
-	protected static StringBuffer averageDegreeInfo(StringBuffer sb, int numNodes, int numEdges, boolean isDirected){
-		double averageDegree = calculateAverageDegree(numNodes,numEdges);
+	protected static StringBuffer averageDegreeInfo(StringBuffer sb, NodeStats ns, boolean isDirected){
+		
 		if (isDirected) {
-			sb.append("Average total degree: " + averageDegree);
+			sb.append("Average total degree: " + ns.averageDegree);
+			sb.append(LINE_SEP);
+			sb.append("Average in degree: " + ns.averageInDegree);
+			sb.append(LINE_SEP);
+			sb.append("Average out degree: " + ns.averageOutDegree);
 		} else { //is undirected
-			sb.append("Average degree: " + averageDegree);
+			sb.append("Average degree: " + ns.averageDegree);
 		}
 		sb.append(LINE_SEP);
 		return sb;
 	}
 
-	protected static StringBuffer averageDegreeInfo(StringBuffer sb, NodeStats nodeStats, EdgeStats edgeStats, boolean isDirected){
-		double averageDegree = ((double) edgeStats.numberOfEdges) /  (double) nodeStats.numberOfNodes;
-		if(isDirected){
-			sb.append("total average degree: " + averageDegree);
-		} else{
-			sb.append("average degree: " + averageDegree);
-		}
-		sb.append(System.getProperty("line.separator"));
-		return sb;
-	}
-	
+
 	protected static StringBuffer directedInfo(StringBuffer sb, boolean isDirected){
 		if(isDirected){
 			sb.append("This graph claims to be directed.");
@@ -104,9 +124,9 @@ public class NetworkProperties {
 		sb.append(LINE_SEP);
 		return sb;
 	}
-
-	protected static StringBuffer connectedInfo(StringBuffer sb, ConnectedComponents cf, NodeStats ns, boolean isDirected){
-		if(cf.isWeaklyConnected()){
+	
+	protected static StringBuffer weakConnectedInfo(StringBuffer sb, WeakComponentClusteringThread wcct, NodeStats ns){
+		if(wcct.getClusters()==1){
 			sb.append("This graph is weakly connected.");
 			sb.append(LINE_SEP);
 		}
@@ -115,36 +135,36 @@ public class NetworkProperties {
 			sb.append(LINE_SEP);
 		}
 
-		sb.append("There are " + cf.getWeakComponentClusters() + " weakly connected components. (" + ns.getNumberOfIsolatedNodes() +
+		sb.append("There are " + wcct.getClusters() + " weakly connected components. (" + ns.getNumberOfIsolatedNodes() +
 		" isolates)");
 		sb.append(LINE_SEP);
-		sb.append("The largest connected component consists of " + cf.getMaximumWeakConnectedNodes()+ " nodes.");
+		sb.append("The largest connected component consists of " + wcct.getMaxSize() + " nodes.");
 		sb.append(LINE_SEP);
-
-		if(isDirected){
-
-			if(cf.isStronglyConnected()){
-				sb.append("This graph is strongly connected");
-				sb.append(LINE_SEP);
-			}
-			else{
-				sb.append("This graph is not strongly connected.");
-				sb.append(LINE_SEP);
-			}
-
-			sb.append("There are " + cf.getStrongComponentClusters() + " strongly connected components.");
-			sb.append(LINE_SEP);
-			sb.append("The largest strongly connected component consists of " + cf.getMaximumStrongConnectedNodes() + " nodes.");
+		
+		return sb;
+	}
+	
+	protected static StringBuffer strongConnectedInfo(StringBuffer sb, StrongComponentClusteringThread scct){
+		if(scct.getClusters()==1){
+			sb.append("This graph is strongly connected");
 			sb.append(LINE_SEP);
 		}
 		else{
-			sb.append("Did not calculate strong connectedness because this graph was not directed.");
+			sb.append("This graph is not strongly connected.");
 			sb.append(LINE_SEP);
 		}
+
+		sb.append("There are " + scct.getClusters() + " strongly connected components.");
 		sb.append(LINE_SEP);
-		return sb;
+		sb.append("The largest strongly connected component consists of " + scct.getMaxSize() + " nodes.");
+		sb.append(LINE_SEP);
+	
+	
+	sb.append(LINE_SEP);
+	return sb;
 	}
 
+	
 	public static StringBuffer densityInfo(StringBuffer sb, EdgeStats es,int numNodes,int numEdges,boolean isDirected){
 		sb.append(LINE_SEP);
 		double density = calculateDensity(numNodes, numEdges, isDirected);
@@ -224,4 +244,5 @@ public class NetworkProperties {
 		double averageDegree = 2 * (double) numEdges / (double) numNodes;
 		return averageDegree;
 	}
+	
 }

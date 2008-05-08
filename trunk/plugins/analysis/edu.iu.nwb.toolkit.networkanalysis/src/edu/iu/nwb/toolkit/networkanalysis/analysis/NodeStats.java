@@ -6,26 +6,39 @@ import prefuse.data.Graph;
 import prefuse.data.Node;
 import prefuse.data.Table;
 
-public class NodeStats {
+public class NodeStats extends Thread{
 	int numberOfNodes;
 	int numberOfAttributes;
 	String[] nodeAttributes;
 	
-	int numberOfIsolatedNodes;
+	double averageDegree = 0;
+	double averageInDegree = 0;
+	double averageOutDegree = 0;
 	
-	public NodeStats(final Graph graph){
-		this.numberOfNodes = graph.getNodeCount();
-		initializeAttributes(graph);
-		
-		this.numberOfIsolatedNodes = 0;
-		this.findIsolatedNodes(graph);
+	int numberOfIsolatedNodes = 0;
+	private Graph nodeGraph;
+	
+	private NodeStats(final Graph graph){
+		this.nodeGraph = graph;	
+	}
+	
+	public static NodeStats constructNodeStats(final Graph graph){
+		return new NodeStats(graph);
 	}
 	
 	private void findIsolatedNodes(final Graph graph){
 		for(Iterator it = graph.nodes(); it.hasNext();){
 			Node n = (Node)it.next();
-			if(n.getDegree() == 0){
+			int degree = n.getDegree();
+			if(degree == 0){
 				this.numberOfIsolatedNodes++;
+			}
+			this.averageDegree+= (double) degree/ (double) this.numberOfNodes;
+			if(graph.isDirected()){
+				int inDegree = n.getInDegree();
+				int outDegree = n.getOutDegree();
+				this.averageInDegree += (double)n.getInDegree()/(double)this.numberOfNodes;
+				this.averageOutDegree += (double)n.getOutDegree()/(double)this.numberOfNodes;				
 			}
 		}
 	}
@@ -39,7 +52,14 @@ public class NodeStats {
 		}
 		
 	}
-	
+
+	public void run(){
+		this.numberOfNodes = this.nodeGraph.getNodeCount();
+		initializeAttributes(this.nodeGraph);
+		
+		this.numberOfIsolatedNodes = 0;
+		this.findIsolatedNodes(this.nodeGraph);
+	}
 
 	
 	public int getNumberOfIsolatedNodes(){
