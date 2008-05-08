@@ -1,6 +1,5 @@
 package edu.iu.nwb.toolkit.networkanalysis.analysis;
 
-import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Stack;
 
