@@ -1,6 +1,5 @@
 package edu.iu.nwb.analysis.discretenetworkdynamics.components;
 
-import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.Stack;
 
@@ -94,7 +93,7 @@ public class NodeCleaningThread extends Thread{
 		if(componentMembers.size() > 2){
 			while(!componentMembers.isEmpty()){
 				Node n1 = this.stateGraph.getNode(((Integer)componentMembers.pop()).intValue());
-				n1.set("attractor", 7);
+				n1.set("attractor", 11);
 			}
 		}
 		if(componentMembers.size() == 1){
@@ -106,7 +105,7 @@ public class NodeCleaningThread extends Thread{
 		if(componentMembers.size() == 2){
 			while(!componentMembers.isEmpty()){
 				Node n1 = this.stateGraph.getNode(((Integer)componentMembers.pop()).intValue());
-				n1.set("attractor", 9);
+				n1.set("attractor", 13);
 			}
 		}
 

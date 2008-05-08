@@ -35,33 +35,30 @@ public class GraphFillerThread extends Thread{
 	public void run(){
 		int[] currentState = new int[this.numNodes];
 		int[] nextState = new int[this.numNodes];
-		String currentStateString;
+		//String currentStateString;
 		String nextStateString;
 		BigInteger nextStateValue;
 		BigInteger radix = new BigInteger(new Integer(nodeStates).toString());
 		int calculated = 0;
-		int onePercent;
+		int tenPercent;
 		Node n1;
 		Node n2;
-		CascadedTable visited = new CascadedTable(this.g.getNodeTable());
-		visited.addColumn("visited", int.class, new Integer(-1));
+		
 
-		if((onePercent = (End.subtract(Start)).intValue()/100) == 0)
-			onePercent = 1;
-
+		if((tenPercent = (End.subtract(Start)).intValue()/10) == 0)
+			tenPercent = 1;
 
 		for(BigInteger enumerate = Start; enumerate.compareTo(End) <= 0; enumerate = enumerate.add(BigInteger.ONE)){	
 			currentState = convertBigIntToIntArray(enumerate,currentState,nodeStates);			
 			if(checkInitialCondition(currentState)){
 				n1 = g.getNode(enumerate.intValue());
 
-				synchronized(n1){
+				//synchronized(n1){
 					while(n1.getString("label") == null){
-						currentStateString = convertIntArrayToString(currentState,this.nodeStates);
+					
 						calculated++;
-						if(calculated%onePercent == 0){
-							CreateStateSpaceGraph.updateCalculatedStates(this.threadListener, calculated);
-							calculated = 0;
+						if(calculated%tenPercent == 0){
+							CreateStateSpaceGraph.updateCalculatedStates(this.threadListener, tenPercent/2);
 						}
 						n1.set("label", convertIntArrayToString(currentState));
 						
@@ -80,7 +77,7 @@ public class GraphFillerThread extends Thread{
 						n2 = g.getNode(nextStateValue.intValue());
 						
 						if(n1.equals(n2)){
-							n1.set("attractor", 10);
+							n1.set("attractor", 17);
 						}
 						
 							g.getEdgeTable().set(n1.getRow(), "source", n1.getRow());
@@ -90,13 +87,13 @@ public class GraphFillerThread extends Thread{
 						currentState = nextState;
 						n1 = g.getNode(nextStateValue.intValue());
 					}
-				}
+				//}
 			}
 			
 		}
 		
 
-		CreateStateSpaceGraph.updateCalculatedStates(this.threadListener,calculated);
+		CreateStateSpaceGraph.updateCalculatedStates(this.threadListener,tenPercent/2);
 	}
 
 
@@ -146,15 +143,17 @@ public class GraphFillerThread extends Thread{
 		int[] nextState = new int[stateSpace.length];
 		java.util.Arrays.fill(nextState, -1);
 		int pos;
+		
 		if(order == null){
 		for(int i = 0; i < stateSpace.length; i++){
-			nextState[i] = functions[i].evaluate(stateSpace, nextState, numberOfStates);
+			nextState[i] = functions[i].evaluate(stateSpace, nextState, numberOfStates, false);
 		}	
+	
 		}
 		else{
 			for(int i = 0; i < order.length; i++){
 				pos = order[i]-1;
-				nextState[pos] = functions[pos].evaluate(stateSpace, nextState, numberOfStates);
+				nextState[pos] = functions[pos].evaluate(stateSpace, nextState, numberOfStates,true);
 			}
 		}
 		return nextState;

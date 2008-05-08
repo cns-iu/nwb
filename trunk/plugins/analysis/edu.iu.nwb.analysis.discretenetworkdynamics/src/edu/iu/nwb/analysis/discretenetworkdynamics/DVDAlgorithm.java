@@ -53,6 +53,7 @@ public class DVDAlgorithm implements Algorithm, ProgressTrackable {
 
 	public Data[] execute() throws AlgorithmExecutionException{
 		final Table functionTable = (Table)this.data[0].getData();
+		CreateStateSpaceGraph cssg;
 		Graph dependencyGraph;
 		Graph pseudoGraph;
 		Graph stateSpace;
@@ -90,7 +91,7 @@ public class DVDAlgorithm implements Algorithm, ProgressTrackable {
 
 		try{
 			dependencyGraph = ParseDependencyGraphs.constructDependencyGraph(functionLabel,nodeLabel,functionTable);
-			monitor.start(ProgressMonitor.WORK_TRACKABLE, (int)Math.pow(numberOfStates,dependencyGraph.getNodeCount()));
+			monitor.start(ProgressMonitor.WORK_TRACKABLE, (int)(Math.pow(numberOfStates,dependencyGraph.getNodeCount())));
 			pseudoGraph = ParseDependencyGraphs.constructPseudoGraph(functionLabel, nodeLabel, functionTable);
 			final Data outputData1 = constructData(this.data[0],dependencyGraph,prefuse.data.Graph.class.getName(),DataProperty.NETWORK_TYPE,"Created Dependency Graph");
 			final Data outputData2 = constructData(this.data[0],pseudoGraph,prefuse.data.Graph.class.getName(),DataProperty.NETWORK_TYPE,"Created Dependency Graph with Function Pseudonodes");
@@ -111,12 +112,12 @@ public class DVDAlgorithm implements Algorithm, ProgressTrackable {
 			}
 			
 
-			
-				stateSpace = new CreateStateSpaceGraph(this.getProgressMonitor()).createStateSpace(dependencyGraph, numberOfStates, functionLabel, 
+				cssg = new CreateStateSpaceGraph(this.getProgressMonitor());
+				stateSpace = cssg.createStateSpace(dependencyGraph, numberOfStates, functionLabel, 
 						isPolynomial,initCondition,intArrayFromStringArray(schedule));
 				
 				
-					final Data outputData3 = constructData(this.data[0],generateStateSpaceFile(stateSpace),"file:text/nwb",DataProperty.NETWORK_TYPE, "Generated State Space Graph");
+					final Data outputData3 = constructData(this.data[0],generateStateSpaceFile(stateSpace,cssg),"file:text/nwb",DataProperty.NETWORK_TYPE, "Generated State Space Graph");
 					monitor.done();
 					return new Data[] {outputData1, outputData2, outputData3};
 				
@@ -235,7 +236,7 @@ public class DVDAlgorithm implements Algorithm, ProgressTrackable {
 		return returnValue;
 	}
 	
-	private static File generateStateSpaceFile(final Graph g) throws AlgorithmExecutionException{
+	private static File generateStateSpaceFile(final Graph g, CreateStateSpaceGraph cssg) throws AlgorithmExecutionException{
 		try{
 			File stateSpaceFile = File.createTempFile("NWB-Session-StateSpace-", ".nwb");
 			NWBFileWriter stateSpaceWriter = new NWBFileWriter(stateSpaceFile);
@@ -246,9 +247,9 @@ public class DVDAlgorithm implements Algorithm, ProgressTrackable {
 			edgeSchema = generateSchema(g.getEdgeTable(),edgeSchema);
 			
 			stateSpaceWriter.setNodeSchema(nodeSchema);
-			writeNodes(g,stateSpaceWriter);
+			writeNodes(g,stateSpaceWriter, cssg);
 			stateSpaceWriter.setDirectedEdgeSchema(edgeSchema);
-			writeEdges(g,stateSpaceWriter);
+			writeEdges(g,stateSpaceWriter,cssg);
 			
 			stateSpaceWriter.haltParsingNow();
 			return stateSpaceFile;
@@ -267,25 +268,31 @@ public class DVDAlgorithm implements Algorithm, ProgressTrackable {
 		return schema;
 	}
 	
-	private static void writeNodes(final Graph g, NWBFileWriter nfw){
-	
+	private static void writeNodes(final Graph g, NWBFileWriter nfw, CreateStateSpaceGraph cssg){
+		int i = 0;
 		for(Iterator it = g.nodes(); it.hasNext();){
+			i++;
 			HashMap columnValues = new HashMap();
 			Node n = (Node)it.next();
 			
 			columnValues.put("attractor", n.get("attractor"));
 			nfw.addNode(n.getRow()+1, n.getString("label"), columnValues);
-			
+			if(i%80==0){
+				CreateStateSpaceGraph.updateCalculatedStates(cssg, 20);
+			}
 		}
 	}
 	
-	private static void writeEdges(final Graph g, NWBFileWriter nfw){
+	private static void writeEdges(final Graph g, NWBFileWriter nfw, CreateStateSpaceGraph cssg){
+		int i = 0;
 		for(Iterator it = g.edges(); it.hasNext();){
-			
+			i++;
 			Edge e = (Edge)it.next();
 			
 		
 			nfw.addDirectedEdge(e.getSourceNode().getRow()+1, e.getTargetNode().getRow()+1,null);
+			if(i%80==0)
+				CreateStateSpaceGraph.updateCalculatedStates(cssg, 20);
 		}
 	}
 

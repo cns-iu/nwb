@@ -15,8 +15,9 @@ public class FunctionContainer {
 		this.parsedExpression = expression;
 	}
 	
-	public int evaluate(final int[] stateSpace, final int[] nextState, BigInteger radix){
+	public int evaluate(final int[] stateSpace, final int[] nextState, BigInteger radix, boolean isSequential){
 		Stack executionStack = new Stack();
+		Integer value;
 		Object token;
 		String tokenString;
 		AbstractFunction operator;
@@ -26,9 +27,16 @@ public class FunctionContainer {
 		
 			if(tokenString.matches(FunctionTokens.variables)){
 				int index = new Integer(tokenString.substring(1)).intValue()-1;
-				Integer value = new Integer(nextState[index]);
-				if(value.intValue() < 0)
+				
+				if(!isSequential){
 					value = new Integer(stateSpace[index]);
+				}else{
+					value = new Integer(nextState[index]);
+					if(value < 0){
+						value = new Integer(stateSpace[index]);
+					}
+				}
+					
 				executionStack.push(new BigInteger(value.toString()));
 			}
 			else if(tokenString.matches(FunctionTokens.literals)){
@@ -49,6 +57,7 @@ public class FunctionContainer {
 	
 		int returnValue = ((BigInteger)executionStack.pop()).intValue();
 	
+		
 		
 		return returnValue;
 	}

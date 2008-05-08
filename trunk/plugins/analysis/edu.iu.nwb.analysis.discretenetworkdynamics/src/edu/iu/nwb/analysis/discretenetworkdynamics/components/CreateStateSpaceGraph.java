@@ -21,7 +21,8 @@ public class CreateStateSpaceGraph {
 	}
 
 	public Graph createStateSpace(final Graph dependencyGraph, int nodeStates, String functionLabel, boolean isPolynomial, final String[] ic, final int[] updateSchedule) throws FunctionFormatException, InterruptedException{		
-		final int numProcessors = Runtime.getRuntime().availableProcessors();
+		
+		final int numProcessors = Math.max(Runtime.getRuntime().availableProcessors(),10);
 		int numberOfNodes = dependencyGraph.getNodeCount();
 
 		FunctionContainer[] updateExpressions = CreateStateSpaceGraph.createUpdateExpressions(dependencyGraph,
@@ -66,6 +67,7 @@ public class CreateStateSpaceGraph {
 	
 	public static void updateCalculatedStates(CreateStateSpaceGraph cssg, int calculatedStates){
 		cssg.statesProcessed += calculatedStates;
+		
 		cssg.progMonitor.worked(cssg.statesProcessed);
 	}
 
