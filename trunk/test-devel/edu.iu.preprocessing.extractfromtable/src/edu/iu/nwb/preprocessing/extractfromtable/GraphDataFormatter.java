@@ -1,0 +1,21 @@
+package edu.iu.nwb.preprocessing.extractfromtable;
+
+import java.util.Dictionary;
+
+import org.cishell.framework.data.BasicData;
+import org.cishell.framework.data.Data;
+import org.cishell.framework.data.DataProperty;
+
+import prefuse.data.Graph;
+
+public class GraphDataFormatter {
+
+	public static Data[] formatExtractedGraphAsData(Graph extractedGraph, String label,  Data parent) {
+		Data graphData = new BasicData(extractedGraph,  extractedGraph.getClass().getName());
+		Dictionary metadata = graphData.getMetadata();
+		metadata.put(DataProperty.PARENT, parent);
+		metadata.put(DataProperty.TYPE, DataProperty.NETWORK_TYPE);
+		metadata.put(DataProperty.LABEL, label);
+		return new Data[]{graphData};
+	}
+}
