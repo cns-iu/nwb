@@ -32,7 +32,7 @@ public class FunctionContainer {
 					value = new Integer(stateSpace[index]);
 				}else{
 					value = new Integer(nextState[index]);
-					if(value < 0){
+					if(value.intValue() < 0){
 						value = new Integer(stateSpace[index]);
 					}
 				}

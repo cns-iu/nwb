@@ -156,7 +156,7 @@ public class DVDAlgorithm implements Algorithm, ProgressTrackable {
 		return false;
 	}
 
-	private static String[] handleOptionalData(Boolean b, String s, String errorMessage) throws AlgorithmExecutionException{
+	private static String[] handleOptionalData(boolean b, String s, String errorMessage) throws AlgorithmExecutionException{
 		String[] returnValue = null;
 		if(!b){
 			if(s.trim().equals("") || s == null){

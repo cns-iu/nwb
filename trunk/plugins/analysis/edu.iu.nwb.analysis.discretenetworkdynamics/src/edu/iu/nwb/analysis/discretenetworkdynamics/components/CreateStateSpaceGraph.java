@@ -75,7 +75,7 @@ public class CreateStateSpaceGraph {
 	private static Graph initializeStateSpaceGraph(int numberOfNodes){
 		Schema nodeSchema = new Schema();
 		nodeSchema.addColumn("label", String.class);
-		nodeSchema.addColumn("attractor",int.class,1);
+		nodeSchema.addColumn("attractor",int.class,new Integer(1));
 
 		Schema edgeSchema = new Schema();
 		edgeSchema.addColumn("source", int.class);
