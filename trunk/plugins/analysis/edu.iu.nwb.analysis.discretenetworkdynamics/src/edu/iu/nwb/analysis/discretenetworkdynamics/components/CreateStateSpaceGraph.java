@@ -53,13 +53,13 @@ public class CreateStateSpaceGraph {
 		for(int i = 0; i < numProcessors; i++){
 			pool[i].join();
 		}
-
+/*
 		NodeCleaningThread nct = new NodeCleaningThread(stateSpaceGraph);
 		EdgeCleaningThread ect = new EdgeCleaningThread(stateSpaceGraph);
 		nct.run();
 		ect.run();
 		nct.join();
-		ect.join();
+		ect.join();*/
 		
 		return stateSpaceGraph;	
 	}
@@ -75,7 +75,7 @@ public class CreateStateSpaceGraph {
 	private static Graph initializeStateSpaceGraph(int numberOfNodes){
 		Schema nodeSchema = new Schema();
 		nodeSchema.addColumn("label", String.class);
-		nodeSchema.addColumn("attractor",int.class,new Integer(1));
+		//nodeSchema.addColumn("attractor",int.class,new Integer(1));
 
 		Schema edgeSchema = new Schema();
 		edgeSchema.addColumn("source", int.class);

@@ -32,66 +32,9 @@ public class GraphFillerThread extends Thread{
 
 
 	public void run(){
-		/*		int[] currentState = new int[this.numNodes];
-		int[] nextState = new int[this.numNodes];
-		//String currentStateString;
-		String nextStateString;
-		BigInteger nextStateValue;
-		BigInteger radix = new BigInteger(new Integer(nodeStates).toString());
-		int calculated = 0;
+	
+		 
 		int tenPercent;
-		Node n1;
-		Node n2;
-		 */
-		int tenPercent;
-
-		/*
-		for(BigInteger enumerate = Start; enumerate.compareTo(End) <= 0; enumerate = enumerate.add(BigInteger.ONE)){	
-			currentState = convertBigIntToIntArray(enumerate,currentState,nodeStates);			
-			if(checkInitialCondition(currentState)){
-				n1 = g.getNode(enumerate.intValue());
-
-				//synchronized(n1){
-				while(n1.getString("label") == null){
-
-					calculated++;
-					if(calculated%tenPercent == 0){
-						CreateStateSpaceGraph.updateCalculatedStates(this.threadListener, tenPercent/2);
-					}
-					n1.set("label", convertIntArrayToString(currentState));
-
-
-					nextState = evaluateFunctions(updateExpressions,currentState,this.updateScheme,radix);
-					nextStateString = convertIntArrayToString(nextState,this.nodeStates);
-
-					try{
-						nextStateValue = new BigInteger(nextStateString,this.nodeStates);
-					}catch(NumberFormatException nfe){
-						System.err.println(nextStateString+ " " + this.nodeStates);
-						nfe.printStackTrace(System.err);
-						return;
-					}
-
-					n2 = g.getNode(nextStateValue.intValue());
-
-					if(n1.equals(n2)){
-						n1.set("attractor", new Integer(17));
-					}
-
-					g.getEdgeTable().set(n1.getRow(), "source", new Integer(n1.getRow()));
-					g.getEdgeTable().set(n1.getRow(), "target", new Integer(n2.getRow()));
-
-
-					currentState = nextState;
-					n1 = g.getNode(nextStateValue.intValue());
-				}
-				//}
-			}
-
-		}
-
-
-		CreateStateSpaceGraph.updateCalculatedStates(this.threadListener,tenPercent/2);*/
 
 		if(this.initialCondition==null){
 			if((tenPercent = (End.subtract(Start)).intValue()/10) == 0)
@@ -139,10 +82,6 @@ public class GraphFillerThread extends Thread{
 			}
 
 			n2 = g.getNode(nextStateValue.intValue());
-
-			if(n1.equals(n2)){
-				n1.set("attractor", new Integer(17));
-			}
 
 			g.getEdgeTable().set(n1.getRow(), "source", new Integer(n1.getRow()));
 			g.getEdgeTable().set(n1.getRow(), "target", new Integer(n2.getRow()));
@@ -192,10 +131,6 @@ public class GraphFillerThread extends Thread{
 					}
 
 					n2 = g.getNode(nextStateValue.intValue());
-
-					if(n1.equals(n2)){
-						n1.set("attractor", new Integer(17));
-					}
 
 					g.getEdgeTable().set(n1.getRow(), "source", new Integer(n1.getRow()));
 					g.getEdgeTable().set(n1.getRow(), "target", new Integer(n2.getRow()));

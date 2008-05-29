@@ -274,9 +274,9 @@ public class DVDAlgorithm implements Algorithm, ProgressTrackable {
 			i++;
 			HashMap columnValues = new HashMap();
 			Node n = (Node)it.next();
-			
-			columnValues.put("attractor", n.get("attractor"));
-			nfw.addNode(n.getRow()+1, n.getString("label"), columnValues);
+			if(n.getString("label") != null){
+				nfw.addNode(n.getRow()+1, n.getString("label"), columnValues);
+			}
 			if(i%80==0){
 				CreateStateSpaceGraph.updateCalculatedStates(cssg, 20);
 			}
@@ -288,9 +288,10 @@ public class DVDAlgorithm implements Algorithm, ProgressTrackable {
 		for(Iterator it = g.edges(); it.hasNext();){
 			i++;
 			Edge e = (Edge)it.next();
-			
+			if(e.getInt(0) > -1 && e.getInt(1) > -1){
 		
 			nfw.addDirectedEdge(e.getSourceNode().getRow()+1, e.getTargetNode().getRow()+1,null);
+			}
 			if(i%80==0)
 				CreateStateSpaceGraph.updateCalculatedStates(cssg, 20);
 		}
