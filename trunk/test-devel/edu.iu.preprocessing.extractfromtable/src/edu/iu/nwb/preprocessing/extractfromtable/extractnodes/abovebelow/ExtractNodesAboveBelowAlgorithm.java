@@ -14,14 +14,24 @@ public class ExtractNodesAboveBelowAlgorithm implements Algorithm {
     Data[] data;
     Dictionary parameters;
     CIShellContext context;
+    
     private Double fromThisNum;
     private Boolean invert;
     private String numericAttribute;
+    
+    boolean noParams = false;
     
     public ExtractNodesAboveBelowAlgorithm(Data[] data, Dictionary parameters, CIShellContext context) {
         this.data = data;
         this.parameters = parameters;
         this.context = context;
+        
+        //if parameter values are not defined...
+        if (parameters.get("fromThisNum") == null) {
+        	//skip initialization and prepare to not execute
+        	noParams = true;
+        	return; 
+        }
         
         this.fromThisNum = (Double) parameters.get("fromThisNum");
         this.invert = (Boolean) parameters.get("invert");
@@ -29,6 +39,8 @@ public class ExtractNodesAboveBelowAlgorithm implements Algorithm {
     }
 
     public Data[] execute() {
+    	if (noParams) return null;
+    	
     	//get the input graph
     	Graph originalGraph = (Graph) data[0].getData();
     	

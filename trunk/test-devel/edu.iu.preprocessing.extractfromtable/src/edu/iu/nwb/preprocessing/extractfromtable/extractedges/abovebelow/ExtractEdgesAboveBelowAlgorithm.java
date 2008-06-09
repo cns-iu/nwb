@@ -6,57 +6,76 @@ import org.cishell.framework.CIShellContext;
 import org.cishell.framework.algorithm.Algorithm;
 import org.cishell.framework.data.Data;
 
-import prefuse.data.Graph;
-import prefuse.data.Table;
-import edu.iu.nwb.preprocessing.extractfromtable.Extract;
 import edu.iu.nwb.preprocessing.extractfromtable.GraphDataFormatter;
-import edu.iu.nwb.preprocessing.extractfromtable.GraphUtil;
-import edu.iu.nwb.preprocessing.extractfromtable.NewExtract;
+import edu.uci.ics.jung.graph.Graph;
 
 public class ExtractEdgesAboveBelowAlgorithm implements Algorithm {
-    Data[] data;
+	Data[] data;
     Dictionary parameters;
     CIShellContext context;
+
     private Double fromThisNum;
-    private Boolean aboveOrBelow;
+    private Boolean invert;
     private String numericAttribute;
+    
+    private boolean noParams = false;
     
     public ExtractEdgesAboveBelowAlgorithm(Data[] data, Dictionary parameters, CIShellContext context) {
         this.data = data;
         this.parameters = parameters;
         this.context = context;
         
+        //if parameter values are not defined...
+        if (parameters.get("fromThisNum") == null) {
+        	//skip initialization and prepare to not execute
+        	noParams = true;
+        	return; 
+        }
         this.fromThisNum = (Double) parameters.get("fromThisNum");
-        this.aboveOrBelow = (Boolean) parameters.get("aboveOrBelow");
+        this.invert = (Boolean) parameters.get("invert");
         this.numericAttribute = (String) parameters.get("numericAttribute");
     }
 
     public Data[] execute() {
-     	Graph graph = (Graph) data[0].getData();
-    	Graph extractedGraph = NewExtract.extractEdgesAbove(graph, this.fromThisNum.intValue(), this.numericAttribute, this.aboveOrBelow.booleanValue());
-    	Data[] extractedGraphData = formatAsData(extractedGraph);
-    	return extractedGraphData;
-//    	
-//    	Graph graph = (Graph) data[0].getData();
-//		Table edgeTable = graph.getEdgeTable();
-//		GraphUtil.printTable(edgeTable);
-//    	Table extractedEdgeTable = Extract.extractAboveOrBelowEdges(edgeTable, fromThisNum.intValue(), this.numericAttribute, this.aboveOrBelow.booleanValue());  
-//    	Graph extractedGraph = GraphUtil.copyAndMakeGraph(graph.getNodeTable(), extractedEdgeTable, graph.isDirected());
-//    	Data[] extractedGraphData = formatAsData(extractedGraph);
-//    	return extractedGraphData;
+    	if (noParams) return null;
+    	
+    	//get the input graph
+    	Graph originalGraph = (Graph) data[0].getData();
+    	
+    	//make a new graph by filtering out nodes from the original graph
+    	Graph newGraph = filter(originalGraph);
+    	
+    	//format the resulting graph
+    	Data[] newGraphData = formatAsData(newGraph);
+    	
+    	//return the resulting graph
+    	return newGraphData;
     }
-  
+    
+    //returns a new graph that contains all the nodes whose attribute is either above or below a given threshold
+    private Graph filter(Graph originalGraph) {
+    	EdgeNumericDecorationFilter filter = null;
+    	if (invert.booleanValue() == false) {
+    		filter = new EdgeNumericDecorationFilter();
+    	} else {
+    		filter = new InverseEdgeNumericDecorationFilter();
+    	}
+    	
+    	filter.setDecorationKey(numericAttribute);
+    	filter.setThreshold(fromThisNum.doubleValue());
+    	Graph newGraph = filter.filter(originalGraph).assemble();
+    	return newGraph;
+    }
     
     private Data[] formatAsData(Graph extractedGraph) {
     	StringBuilder label = new StringBuilder();
-    	label.append ("all edges ");
-    	if (this.aboveOrBelow.booleanValue()) {
-    		label.append("above ");
+    	label.append ("all edges with " + this.numericAttribute);
+    	if (this.invert.booleanValue() == false) {
+    		label.append(" above ");
     	} else {
-    		label.append("below ");
+    		label.append(" below or equal to ");
     	}
     	label.append("" + this.fromThisNum);
-    	label.append(" by " + this.numericAttribute);
     	Data[] data = 
     		GraphDataFormatter.formatExtractedGraphAsData(extractedGraph, label.toString(), this.data[0]);
     	return data;

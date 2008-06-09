@@ -13,15 +13,19 @@ import org.osgi.service.metatype.AttributeDefinition;
 import org.osgi.service.metatype.ObjectClassDefinition;
 
 import prefuse.data.Table;
+import edu.uci.ics.jung.graph.Edge;
 import edu.uci.ics.jung.graph.Graph;
 import edu.uci.ics.jung.graph.Vertex;
 
 public class AddNumericAttributeParamMutator {
 
-	public static ObjectClassDefinition mutateForTopNodesOrEdges(Graph graph, ObjectClassDefinition ocd) throws AlgorithmExecutionException {
-		String[] numericAttributes = extractNumericAttributes(graph);
-		System.out.println("EXTRACTED NUMERIC ATTRIBUTES");
-		
+	public static ObjectClassDefinition mutateForAboveNodes(Graph graph, ObjectClassDefinition ocd) throws NoNumericAttributesException {
+		String[] numericAttributes = extractNodeNumericAttributes(graph);
+		return mutateForAbove(numericAttributes, ocd);
+	}
+	
+	
+	private static ObjectClassDefinition mutateForAbove(String[] numericAttributes, ObjectClassDefinition ocd) {
 		BasicObjectClassDefinition newOCD;
 		try {
 			newOCD = new BasicObjectClassDefinition(ocd.getID(), ocd.getName(), ocd.getDescription(), ocd.getIcon(16));
@@ -48,16 +52,28 @@ public class AddNumericAttributeParamMutator {
 		return newOCD;
 	}
 	
-	private static String[] extractNumericAttributes(Graph g) throws AlgorithmExecutionException {
+	public static ObjectClassDefinition mutateForAboveEdges(Graph graph, ObjectClassDefinition ocd) throws NoNumericAttributesException {
+		String[] numericAttributes = extractEdgeNumericAttributes(graph);
+		return mutateForAbove(numericAttributes, ocd);
+	}
+	
+	private static String[] extractNodeNumericAttributes(Graph g) throws NoNumericAttributesException {
 		//obtain a vertex to extract attribute information from
 		Vertex exemplaryVertex = extractExemplaryVertex(g);
 		
-		//get the attributes from the vertex
+		//get the attributes from the vertex which are numeric
 		Iterator numericAttributesIt = exemplaryVertex.getUserDatumKeyIterator();
 		List attributeList = new ArrayList();
 		while (numericAttributesIt.hasNext()) {
-			attributeList.add(numericAttributesIt.next());
+			Object key = numericAttributesIt.next();
+			//make sure value is numeric before we add it
+			Object value = exemplaryVertex.getUserDatum(key);
+			if (value instanceof Number) {
+				attributeList.add(key);
+			}
 		}
+		
+		if (attributeList.size() == 0) throw new NoNumericAttributesException();
 		
 		//convert the attributes to Strings
 		String[] numericAttributes = new String[attributeList.size()];
@@ -69,14 +85,56 @@ public class AddNumericAttributeParamMutator {
 		return numericAttributes;
 	}
 	
-	private static Vertex extractExemplaryVertex(Graph g) throws AlgorithmExecutionException {
+	private static String[] extractEdgeNumericAttributes(Graph g) throws NoNumericAttributesException {
+		//obtain a vertex to extract attribute information from
+		Edge exemplaryEdge = extractExemplaryEdge(g);
+		System.out.println("Got the edge");
+		//get the attributes from the edges which are numeric, and not "target" or "source"
+		Iterator numericAttributesIt = exemplaryEdge.getUserDatumKeyIterator();
+		List attributeList = new ArrayList();
+		while (numericAttributesIt.hasNext()) {
+			Object key = numericAttributesIt.next();
+			if (! (key.equals("target") || key.equals("source"))) {
+			//make sure value is numeric before we add it
+			Object value = exemplaryEdge.getUserDatum(key);
+			if (value instanceof Number) {
+				attributeList.add(key);
+			}
+			}
+		}
+		System.out.println("attributeListSize: " + attributeList.size());
+		if (attributeList.size() == 0) throw new NoNumericAttributesException();
+		//convert the attributes to Strings
+		String[] numericAttributes = new String[attributeList.size()];
+		for (int ii = 0; ii < attributeList.size(); ii++) {
+			numericAttributes[ii] = attributeList.get(ii).toString();
+		}
+		
+		//return the attributes
+		return numericAttributes;
+	}
+	
+	private static Vertex extractExemplaryVertex(Graph g) throws NoNumericAttributesException {
 		Vertex exemplaryVertex = null;
 		Iterator vertexIt = g.getVertices().iterator();
 		if (vertexIt.hasNext()) {
 			exemplaryVertex = (Vertex) vertexIt.next();
 			return exemplaryVertex;
 		} else {
-			throw new AlgorithmExecutionException("Cannot determine node attributes if there are no attributes in the graph.");
+			throw new NoNumericAttributesException();
+		}
+		
+	}
+	
+	
+	private static Edge extractExemplaryEdge(Graph g) throws NoNumericAttributesException {
+		Edge exemplaryEdge = null;
+		Iterator edgeIt = g.getEdges().iterator();
+		if (edgeIt.hasNext()) {
+			exemplaryEdge = (Edge) edgeIt.next();
+			return exemplaryEdge;
+		} else {
+			throw new NoNumericAttributesException();
 		}
 		
 	}
