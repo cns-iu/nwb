@@ -26,7 +26,7 @@ public class ExtractTopEdgesAlgorithm implements Algorithm {
         this.parameters = parameters;
         this.context = context;
         
-        this.numTopEdges = ((Integer) parameters.get("numTopEdges")).intValue();
+        this.numTopEdges = ((Double) parameters.get("numTopEdges")).intValue();
         this.ascendingOrDescending = ((Boolean) parameters.get("ascendingOrDescending")).booleanValue();
         this.numericAttribute = (String) parameters.get("numericAttribute");
     }

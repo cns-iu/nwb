@@ -17,7 +17,7 @@ public class ExtractEdgesAboveBelowAlgorithm implements Algorithm {
     Data[] data;
     Dictionary parameters;
     CIShellContext context;
-    private Integer fromThisNum;
+    private Double fromThisNum;
     private Boolean aboveOrBelow;
     private String numericAttribute;
     
@@ -26,7 +26,7 @@ public class ExtractEdgesAboveBelowAlgorithm implements Algorithm {
         this.parameters = parameters;
         this.context = context;
         
-        this.fromThisNum = (Integer) parameters.get("fromThisNum");
+        this.fromThisNum = (Double) parameters.get("fromThisNum");
         this.aboveOrBelow = (Boolean) parameters.get("aboveOrBelow");
         this.numericAttribute = (String) parameters.get("numericAttribute");
     }

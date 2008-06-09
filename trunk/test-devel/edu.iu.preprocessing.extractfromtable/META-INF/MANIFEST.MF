@@ -4,7 +4,13 @@ Bundle-Name: Extract Top Nodes
 Bundle-SymbolicName: edu.iu.nwb.preprocessing.extractfromtable
 Bundle-Version: 0.0.1
 Bundle-ClassPath: .
-Import-Package: org.cishell.framework,
+Import-Package: edu.uci.ics.jung.graph,
+ edu.uci.ics.jung.graph.filters,
+ edu.uci.ics.jung.graph.filters.impl,
+ edu.uci.ics.jung.graph.impl,
+ edu.uci.ics.jung.graph.predicates,
+ edu.uci.ics.jung.utils,
+ org.cishell.framework,
  org.cishell.framework.algorithm,
  org.cishell.framework.data,
  org.cishell.reference.service.metatype,

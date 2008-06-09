@@ -25,7 +25,7 @@ public class ExtractTopNodesAlgorithm implements Algorithm {
         this.data = data;
         this.parameters = parameters;
         this.context = context;
- 	   this.numTopNodes = ((Integer) parameters.get("numTopNodes")).intValue();
+ 	   this.numTopNodes = ((Double) parameters.get("numTopNodes")).intValue();
        this.ascendingOrDescending = ((Boolean) parameters.get("ascendingOrDescending")).booleanValue();
        this.numericAttribute = (String) parameters.get("numericAttribute");
     }
