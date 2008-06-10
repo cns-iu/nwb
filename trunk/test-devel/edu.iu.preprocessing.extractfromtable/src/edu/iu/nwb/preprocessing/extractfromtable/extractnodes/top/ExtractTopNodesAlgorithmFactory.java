@@ -16,7 +16,6 @@ import edu.uci.ics.jung.graph.Graph;
 
 public class ExtractTopNodesAlgorithmFactory implements AlgorithmFactory, ParameterMutator {
     public Algorithm createAlgorithm(Data[] data, Dictionary parameters, CIShellContext context) {
-    	System.out.println("Creating top nodes algorithm");
         return new ExtractTopNodesAlgorithm(data, parameters, context);
     }
 
@@ -28,7 +27,7 @@ public class ExtractTopNodesAlgorithmFactory implements AlgorithmFactory, Parame
 		return newParameters;
 		} catch (Exception e) {
 			return new BasicObjectClassDefinition("No Usable Numeric Attributes", "No Usable Numeric Attributes", 
-					"Edges must have some numeric attribute (other than source and target) as a basis for filtering/extraction", null);
+					"Nodes must have some numeric attribute (other than source and target) as a basis for filtering/extraction", null);
 		}
 	}
 
