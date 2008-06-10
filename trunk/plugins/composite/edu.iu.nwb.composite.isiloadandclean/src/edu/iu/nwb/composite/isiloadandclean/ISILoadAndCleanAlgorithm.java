@@ -48,7 +48,8 @@ public class ISILoadAndCleanAlgorithm implements Algorithm {
     	Data[] loadedISIData = isiLoader.getISIDataFromUser();
     	
     	if (loadedISIData == null || loadedISIData.length == 0) {
-    		throw new AlgorithmExecutionException("input data was either null or empty");
+    		log.log(LogService.LOG_WARNING, "File loading canceled");
+    		return new Data[0];
     	}
     
     	Data[] validatedISIData = executeAlgorithm(isiValidator, loadedISIData);
