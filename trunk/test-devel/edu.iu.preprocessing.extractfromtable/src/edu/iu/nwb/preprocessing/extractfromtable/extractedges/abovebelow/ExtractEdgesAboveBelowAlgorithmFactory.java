@@ -21,11 +21,10 @@ public class ExtractEdgesAboveBelowAlgorithmFactory implements AlgorithmFactory,
     }
 
 	public ObjectClassDefinition mutateParameters(Data[] data, ObjectClassDefinition parameters) {
-		System.out.println("Mutatin!");
 		Graph graph = (Graph) data[0].getData();
 		try {
 		ObjectClassDefinition newParameters =
-			AddNumericAttributeParamMutator.mutateForAboveEdges(graph, parameters);
+			AddNumericAttributeParamMutator.mutateForEdges(graph, parameters);
 		return newParameters;
 		} catch (Exception e) {
 			return new BasicObjectClassDefinition("No Usable Numeric Attributes", "No Usable Numeric Attributes", 

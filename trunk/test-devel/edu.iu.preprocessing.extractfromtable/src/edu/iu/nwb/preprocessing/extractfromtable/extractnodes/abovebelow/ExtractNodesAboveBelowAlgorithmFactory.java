@@ -25,7 +25,7 @@ public class ExtractNodesAboveBelowAlgorithmFactory implements AlgorithmFactory,
 		Graph graph = (Graph) data[0].getData();
 		try {
 		ObjectClassDefinition newParameters =
-			AddNumericAttributeParamMutator.mutateForAboveNodes(graph, parameters);
+			AddNumericAttributeParamMutator.mutateForNodes(graph, parameters);
 		return newParameters;
 		} catch (NoNumericAttributesException e) {
 			return new BasicObjectClassDefinition("No Numeric Attributes", "No Numeric Attributes", "Nodes must have some numeric attribute as a basis for filtering/extraction", null);

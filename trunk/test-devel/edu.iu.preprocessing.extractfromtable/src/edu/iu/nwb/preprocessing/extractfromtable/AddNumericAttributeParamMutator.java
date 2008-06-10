@@ -19,13 +19,15 @@ import edu.uci.ics.jung.graph.Vertex;
 
 public class AddNumericAttributeParamMutator {
 
-	public static ObjectClassDefinition mutateForAboveNodes(Graph graph, ObjectClassDefinition ocd) throws NoNumericAttributesException {
+	public static ObjectClassDefinition mutateForNodes(Graph graph, ObjectClassDefinition ocd) throws NoNumericAttributesException {
 		String[] numericAttributes = extractNodeNumericAttributes(graph);
-		return mutateForAbove(numericAttributes, ocd);
+		return genericMutate(numericAttributes, ocd);
 	}
 	
 	
-	private static ObjectClassDefinition mutateForAbove(String[] numericAttributes, ObjectClassDefinition ocd) {
+	
+	
+	private static ObjectClassDefinition genericMutate(String[] numericAttributes, ObjectClassDefinition ocd) {
 		BasicObjectClassDefinition newOCD;
 		try {
 			newOCD = new BasicObjectClassDefinition(ocd.getID(), ocd.getName(), ocd.getDescription(), ocd.getIcon(16));
@@ -52,9 +54,9 @@ public class AddNumericAttributeParamMutator {
 		return newOCD;
 	}
 	
-	public static ObjectClassDefinition mutateForAboveEdges(Graph graph, ObjectClassDefinition ocd) throws NoNumericAttributesException {
+	public static ObjectClassDefinition mutateForEdges(Graph graph, ObjectClassDefinition ocd) throws NoNumericAttributesException {
 		String[] numericAttributes = extractEdgeNumericAttributes(graph);
-		return mutateForAbove(numericAttributes, ocd);
+		return genericMutate(numericAttributes, ocd);
 	}
 	
 	private static String[] extractNodeNumericAttributes(Graph g) throws NoNumericAttributesException {
