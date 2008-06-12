@@ -239,6 +239,30 @@
       <param name="project.name" value="/plugins/converter/edu.iu.nwb.converter.prefusecsv"/>
       <param name="url" value="http://nwb.slis.indiana.edu/svn/nwb/trunk"/>
     </antcall>
+  	<antcall target="svn.co">
+      <param name="target" value="plugins"/>
+      <param name="element.id" value="edu.iu.nwb.converter.prefusebibtex"/>
+      <param name="project.name" value="/plugins/converter/edu.iu.nwb.converter.prefusebibtex"/>
+      <param name="url" value="http://nwb.slis.indiana.edu/svn/nwb/trunk"/>
+    </antcall>
+    <antcall target="svn.co">
+      <param name="target" value="plugins"/>
+      <param name="element.id" value="edu.iu.nwb.converter.prefusensf"/>
+      <param name="project.name" value="/plugins/converter/edu.iu.nwb.converter.prefusensf"/>
+      <param name="url" value="http://nwb.slis.indiana.edu/svn/nwb/trunk"/>
+    </antcall>
+    <antcall target="svn.co">
+      <param name="target" value="plugins"/>
+      <param name="element.id" value="edu.iu.nwb.converter.prefusescopus"/>
+      <param name="project.name" value="/plugins/converter/edu.iu.nwb.converter.prefusescopus"/>
+      <param name="url" value="http://nwb.slis.indiana.edu/svn/nwb/trunk"/>
+    </antcall>
+    <antcall target="svn.co">
+      <param name="target" value="plugins"/>
+      <param name="element.id" value="edu.iu.nwb.converter.prefuserefer"/>
+      <param name="project.name" value="/plugins/converter/edu.iu.nwb.converter.prefuserefer"/>
+      <param name="url" value="http://nwb.slis.indiana.edu/svn/nwb/trunk"/>
+    </antcall>  
     <antcall target="svn.co">
       <param name="target" value="plugins"/>
       <param name="element.id" value="edu.iu.nwb.converter.prefusegraphml"/>
@@ -374,6 +398,12 @@
     </antcall>
     <antcall target="svn.co">
       <param name="target" value="plugins"/>
+      <param name="element.id" value="edu.iu.nwb.modeling.discretenetworkdynamics"/>
+      <param name="project.name" value="/plugins/modeling/edu.iu.nwb.modeling.discretenetworkdynamics"/>
+      <param name="url" value="http://nwb.slis.indiana.edu/svn/nwb/trunk"/>
+    </antcall>
+    <antcall target="svn.co">
+      <param name="target" value="plugins"/>
       <param name="element.id" value="edu.iu.iv.modeling.p2p.chord"/>
       <param name="project.name" value="/plugins/modeling/edu.iu.iv.modeling.p2p.chord"/>
       <param name="url" value="http://nwb.slis.indiana.edu/svn/nwb/trunk"/>
@@ -395,7 +425,13 @@
       <param name="element.id" value="edu.iu.iv.search.p2p.bfs"/>
       <param name="project.name" value="/plugins/analysis/edu.iu.iv.search.p2p.bfs"/>
       <param name="url" value="http://nwb.slis.indiana.edu/svn/nwb/trunk"/>
-    </antcall>
+    </antcall>  	
+    <antcall target="svn.co">
+      <param name="target" value="plugins"/>
+      <param name="element.id" value="edu.iu.nwb.analysis.extractattractors"/>
+      <param name="project.name" value="/plugins/analysis/edu.iu.nwb.analysis.extractattractors"/>
+      <param name="url" value="http://nwb.slis.indiana.edu/svn/nwb/trunk"/>
+    </antcall>  	
     <antcall target="svn.co">
       <param name="target" value="plugins"/>
       <param name="element.id" value="edu.iu.iv.search.p2p.randomwalk"/>
@@ -507,6 +543,18 @@
     </antcall>
     <antcall target="svn.co">
       <param name="target" value="plugins"/>
+      <param name="element.id" value="javabib.orig"/>
+      <param name="project.name" value="/plugins/libs/javabib"/>
+      <param name="url" value="http://nwb.slis.indiana.edu/svn/nwb/trunk"/>
+    </antcall>  	
+    <antcall target="svn.co">
+      <param name="target" value="plugins"/>
+      <param name="element.id" value="uk.ac.shef.wit.simmetrics"/>
+      <param name="project.name" value="/plugins/libs/uk.ac.shef.wit.simmetrics"/>
+      <param name="url" value="http://nwb.slis.indiana.edu/svn/nwb/trunk"/>
+    </antcall>  	
+    <antcall target="svn.co">
+      <param name="target" value="plugins"/>
       <param name="element.id" value="stax"/>
       <param name="project.name" value="/plugins/libs/staxlib"/>
       <param name="url" value="http://nwb.slis.indiana.edu/svn/nwb/trunk"/>
@@ -543,6 +591,12 @@
     </antcall>
     <antcall target="svn.co">
       <param name="target" value="plugins"/>
+      <param name="element.id" value="edu.iu.nwb.analysis.extractdirectednetfromtable"/>
+      <param name="project.name" value="/plugins/analysis/edu.iu.nwb.analysis.extractdirectednetfromtable"/>
+      <param name="url" value="http://nwb.slis.indiana.edu/svn/nwb/trunk"/>
+    </antcall>
+    <antcall target="svn.co">
+      <param name="target" value="plugins"/>
       <param name="element.id" value="edu.iu.nwb.analysis.extractnetfromtable"/>
       <param name="project.name" value="/plugins/analysis/edu.iu.nwb.analysis.extractnetfromtable"/>
       <param name="url" value="http://nwb.slis.indiana.edu/svn/nwb/trunk"/>
@@ -559,6 +613,18 @@
       <param name="project.name" value="/plugins/preprocessing/edu.iu.nwb.tools.mergenodes"/>
       <param name="url" value="http://nwb.slis.indiana.edu/svn/nwb/trunk"/>
     </antcall>
+    <antcall target="svn.co">
+      <param name="target" value="plugins"/>
+      <param name="element.id" value="edu.iu.nwb.preprocessing.extractnodesandedges"/>
+      <param name="project.name" value="/plugins/preprocessing/edu.iu.nwb.preprocessing.extractnodesandedges"/>
+      <param name="url" value="http://nwb.slis.indiana.edu/svn/nwb/trunk"/>
+    </antcall>  	
+    <antcall target="svn.co">
+      <param name="target" value="plugins"/>
+      <param name="element.id" value="edu.iu.nwb.preprocessing.duplicatenodedetector"/>
+      <param name="project.name" value="/plugins/preprocessing/edu.iu.nwb.preprocessing.duplicatenodedetector"/>
+      <param name="url" value="http://nwb.slis.indiana.edu/svn/nwb/trunk"/>
+    </antcall>  	
     <antcall target="svn.co">
       <param name="target" value="plugins"/>
       <param name="element.id" value="edu.iu.nwb.composite.isiloadandclean"/>
