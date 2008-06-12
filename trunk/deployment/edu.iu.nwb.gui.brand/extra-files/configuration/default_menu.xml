@@ -24,10 +24,10 @@
     </top_menu>
     
     <top_menu name="Preprocessing">
-    <menu name="Extract Nodes Above or Below Value" pid="edu.iu.nwb.preprocessing.extractfromtable.extractnodes.abovebelow.ExtractNodesAboveBelowAlgorithm"/>	
-	<menu name="Extract Edges Above or Below Value" pid="edu.iu.nwb.preprocessing.extractfromtable.extractedges.abovebelow.ExtractEdgesAboveBelowAlgorithm"/>
-	<menu name="Extract Top Nodes" pid="edu.iu.nwb.preprocessing.extractfromtable.extractnodes.top.ExtractTopNodesAlgorithm"/>
-	<menu name="Extract Top Edges" pid="edu.iu.nwb.preprocessing.extractfromtable.extractedges.top.ExtractTopEdgesAlgorithm"/>
+    <menu name="Extract Nodes Above or Below Value" pid="edu.iu.nwb.preprocessing.extractnodesandedges.extractnodes.abovebelow.ExtractNodesAboveBelowAlgorithm"/>	
+	<menu name="Extract Edges Above or Below Value" pid="edu.iu.nwb.preprocessing.extractnodesandedges.extractedges.abovebelow.ExtractEdgesAboveBelowAlgorithm"/>
+	<menu name="Extract Top Nodes" pid="edu.iu.nwb.preprocessing.extractnodesandedges.extractnodes.top.ExtractTopNodesAlgorithm"/>
+	<menu name="Extract Top Edges" pid="edu.iu.nwb.preprocessing.extractnodesandedges.extractedges.top.ExtractTopEdgesAlgorithm"/>
     <menu type="break"/>
 	<menu name="Random Node Deletion" pid="edu.iu.iv.errortolerance.ErrorToleranceAlgorithm"/>	
 	<menu name="High Degree Node Deletion" pid="edu.iu.iv.attacktolerance.AttackToleranceAlgorithm"/>
