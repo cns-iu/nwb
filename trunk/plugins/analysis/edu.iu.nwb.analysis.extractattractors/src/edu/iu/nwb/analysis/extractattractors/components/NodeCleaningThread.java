@@ -7,17 +7,24 @@ import prefuse.data.CascadedTable;
 import prefuse.data.Edge;
 import prefuse.data.Graph;
 import prefuse.data.Node;
+import prefuse.data.Table;
 
 public class NodeCleaningThread extends Thread{
 	private static final String preOrderColumn = "preOrder";
 	private static final String strongComponentColumn = "strongComponentID";
 	private Graph stateGraph;
+	private final Table originalTable;
+	private Table attractorTable;
+	private final String columnName;
 	private int strongComponents = 0;
 	private Stack componentMembers = new Stack();
 
-	public NodeCleaningThread(Graph stateGraph){
+	public NodeCleaningThread(Graph stateGraph, final Table originalTable, final String columnName){
 
 		this.stateGraph = stateGraph;
+		this.originalTable =originalTable;
+		this.columnName = columnName;
+		constructAttractorTable(originalTable,columnName,true);
 
 	}
 
@@ -89,12 +96,13 @@ public class NodeCleaningThread extends Thread{
 			ct.setInt(v, strongComponentColumn, this.strongComponents);
 		} while (n.getRow() != v);
 
-		
+
 		if(componentMembers.size() > 1){
 			int componentSize = componentMembers.size();
 			while(!componentMembers.isEmpty()){
 				Node n1 = this.stateGraph.getNode(((Integer)componentMembers.pop()).intValue());
 				n1.setInt("attractor", componentSize);
+				annotateAttractorTable(n1.getString("label"),true);
 			}
 		}
 		if(componentMembers.size() == 1){
@@ -103,14 +111,56 @@ public class NodeCleaningThread extends Thread{
 				Edge e = (Edge)edges.next();
 				if(e.getSourceNode() == e.getTargetNode()){
 					n1.setInt("attractor", 1);
+					annotateAttractorTable(n1.getString("label"),true);
 				}
 			}
 		}
-		
 		componentMembers = new Stack();
-
-		
 		this.strongComponents++;
+	}
+
+	private void constructAttractorTable(Table orgTable, String labelColumn, boolean isHorizontal){
+		this.attractorTable = new Table();
+		if(!isHorizontal){
+			attractorTable.addColumn("Label", String.class);
+		}
+		for(int i = 0; i < orgTable.getRowCount(); i++){
+			if(isHorizontal){
+				if(labelColumn == null){
+					attractorTable.addColumn("x" + (i+1), int.class);
+				}else{
+					attractorTable.addColumn(orgTable.getString(i, labelColumn), int.class);
+				}
+			}else{
+				int rowNumber = attractorTable.addRow();
+				if(labelColumn == null){
+					attractorTable.setString(rowNumber, "Label", "x"+(i+1));
+				}
+				else{
+					attractorTable.setString(rowNumber, "Label", orgTable.getString(i, labelColumn));
+				}
+			}
+		}
 
 	}
+	
+	private void annotateAttractorTable(String value, boolean isHorizontal){
+		String[] discreteValues = value.split("\\s+");
+		if(isHorizontal){
+			int rowNumber = this.attractorTable.addRow();
+			for(int i = 0; i < discreteValues.length; i++){
+				this.attractorTable.setInt(rowNumber, i, new Integer(discreteValues[i]).intValue());
+			}
+		}else{
+			this.attractorTable.addColumn(new Integer(this.attractorTable.getColumnCount()).toString(), int.class);
+			for(int i = 0; i < discreteValues.length; i++){
+				this.attractorTable.setInt(0, this.attractorTable.getColumnCount()-1, new Integer(discreteValues[i]).intValue());
+			}
+		}
+	}
+	
+	public Table getAttractorTable(){
+		return this.attractorTable;
+	}
+	
 }

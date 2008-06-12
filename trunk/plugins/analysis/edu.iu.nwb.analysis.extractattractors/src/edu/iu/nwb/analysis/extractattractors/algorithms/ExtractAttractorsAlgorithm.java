@@ -56,7 +56,12 @@ public class ExtractAttractorsAlgorithm implements Algorithm, ProgressTrackable 
 		if(numberOfStates < 2){
 			throw new AlgorithmExecutionException("There must be at least two states to correctly analyze these expressions.\n");
 		}	
+		
+		
 */
+		
+		String labelColumn = this.parameters.get("labelColumn").toString();
+		
 		if(graphIndex > -1){
 			stateSpace = (Graph)data[0];
 			nameTable = (Table)data[1];
@@ -64,14 +69,19 @@ public class ExtractAttractorsAlgorithm implements Algorithm, ProgressTrackable 
 			
 			monitor.start(ProgressMonitor.WORK_TRACKABLE, stateSpace.getNodeCount());
 			ExtractAttractorBasins eab = new ExtractAttractorBasins();
-			eab.extractAttractorBasins(stateSpace, 0, true);
+			eab.extractAttractorBasins(stateSpace, 0, true,nameTable,labelColumn);
 			File[] attractorBasins = eab.getBasins();
+			Table[] attractorTables = eab.getAttractors();
 			int[] attractorSizes = eab.getBasinSizes();
-			Data[] returnData = new Data[attractorBasins.length];
+			Data[] returnData = new Data[2*attractorBasins.length];
 			for(int i = 0; i < attractorBasins.length; i++){
-				returnData[i] = constructData(0,attractorBasins[i],"file:text/nwb",DataProperty.NETWORK_TYPE,"Attractor Basin " + i + " of " + attractorSizes[i] + " nodes");
-			}
+				returnData[2*i] = constructData(this.data[0],attractorBasins[i],"file:text/nwb",DataProperty.NETWORK_TYPE,"Attractor Basin " + (i+1) + " of " + attractorSizes[i] + " nodes");
+				returnData[(2*i)+1] = constructData(this.data[0],attractorTables[i],prefuse.data.Table.class.toString(),DataProperty.MATRIX_TYPE,"Table view of Attractor " + (i+1));
+				}
+			
 			return returnData;
+			
+			
 		}catch(InterruptedException ie){
 			throw new AlgorithmExecutionException("There was an error in calculating the basins of attraction.",ie);
 		}			
@@ -82,11 +92,11 @@ public class ExtractAttractorsAlgorithm implements Algorithm, ProgressTrackable 
 	}
 	}
 
-	private Data constructData(int index, Object obj, String className, String type, String label){
+	private Data constructData(Data parent, Object obj, String className, String type, String label){
 		Data outputData = new BasicData(obj,className);
 		Dictionary dataAttributes = outputData.getMetadata();
 		dataAttributes.put(DataProperty.MODIFIED, new Boolean(true));
-		dataAttributes.put(DataProperty.PARENT, this.data[index]);
+		dataAttributes.put(DataProperty.PARENT, parent);
 		dataAttributes.put(DataProperty.TYPE, type);
 		dataAttributes.put(DataProperty.LABEL,label);
 

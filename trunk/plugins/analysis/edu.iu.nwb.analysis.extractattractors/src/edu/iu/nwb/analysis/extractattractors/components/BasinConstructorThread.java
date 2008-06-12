@@ -18,13 +18,18 @@ import edu.iu.nwb.util.nwbfile.NWBFileWriter;
 
 public class BasinConstructorThread extends Thread{
 	File basinGraph;
+	Table attractorTable;
 	int basinSize;
 	LinkedHashSet nodes;
 	Graph stateGraph;
+	final Table originalTable;
+	final String labelColumn;
 	
-	public BasinConstructorThread(Graph stateGraph,LinkedHashSet nodes){
+	public BasinConstructorThread(Graph stateGraph,final Table originalTable,final String labelColumn, LinkedHashSet nodes){
 		this.stateGraph = stateGraph;
 		this.nodes = nodes;
+		this.originalTable = originalTable;
+		this.labelColumn = labelColumn;
 	}
 	
 	public void run() {
@@ -49,12 +54,13 @@ public class BasinConstructorThread extends Thread{
 			}	
 		}
 		
-		NodeCleaningThread nct = new NodeCleaningThread(basinGraph);
+		NodeCleaningThread nct = new NodeCleaningThread(basinGraph,this.originalTable,this.labelColumn);
 		nct.run();
 		try{
 			nct.join();
 			this.basinGraph = generateStateSpaceFile(basinGraph);
 			this.basinSize = basinGraph.getNodeCount();
+			this.attractorTable = nct.getAttractorTable();
 		}catch(InterruptedException ie){
 			
 		}catch(AlgorithmExecutionException aee){
@@ -69,6 +75,10 @@ public class BasinConstructorThread extends Thread{
 	
 	public int getBasinSize(){
 		return this.basinSize;
+	}
+	
+	public Table getAttractorTable(){
+		return this.attractorTable;
 	}
 	
 	private Graph initializeBasinGraph(){

@@ -10,6 +10,7 @@ import java.util.LinkedList;
 import prefuse.data.Edge;
 import prefuse.data.Graph;
 import prefuse.data.Node;
+import prefuse.data.Table;
 
 public class ExtractAttractorBasins {
 
@@ -18,9 +19,9 @@ public class ExtractAttractorBasins {
 	ArrayList attractorTables = new ArrayList();
 	ArrayList attractorRobustnessFiles = new ArrayList();
 
-	public ExtractAttractorBasins extractAttractorBasins(Graph stateSpaceGraph, int nodeStates, boolean isBoolean) throws InterruptedException{
+	public ExtractAttractorBasins extractAttractorBasins(Graph stateSpaceGraph, int nodeStates, boolean isBoolean, final Table originalTable, final String labelColumn) throws InterruptedException{
 
-		weakComponentCalculation(stateSpaceGraph);
+		weakComponentCalculation(stateSpaceGraph,originalTable,labelColumn);
 
 		return this;
 	}
@@ -38,8 +39,13 @@ public class ExtractAttractorBasins {
 		}
 		return sizes;
 	}
+	
+	public Table[] getAttractors(){
+		Table[] attractors = new Table[this.attractorTables.size()];
+		return (Table[])this.attractorTables.toArray(attractors);
+	}
 
-	public void weakComponentCalculation(final Graph grph) throws InterruptedException{
+	public void weakComponentCalculation(final Graph grph, Table table, String label) throws InterruptedException{
 
 		HashSet seenNodes = new HashSet();
 		for(Iterator it = grph.nodes(); it.hasNext();){
@@ -48,7 +54,7 @@ public class ExtractAttractorBasins {
 			if(!seenNodes.contains(i) && n.getString("label") != null){
 				LinkedHashSet tree = undirectedDepthFirstSearch(grph, i);
 				seenNodes.addAll(tree);
-				BasinConstructorThread bct = new BasinConstructorThread(grph,tree);
+				BasinConstructorThread bct = new BasinConstructorThread(grph,table,label,tree);
 				bct.start();
 				attractorBasins.add(bct);
 			}			
@@ -59,6 +65,7 @@ public class ExtractAttractorBasins {
 			bct.join();
 			this.attractorBasins.set(i, bct.getAttractorBasin());
 			this.attractorSizes.add(new Integer(bct.getBasinSize()));
+			this.attractorTables.add(bct.getAttractorTable());
 		}
 
 	}
