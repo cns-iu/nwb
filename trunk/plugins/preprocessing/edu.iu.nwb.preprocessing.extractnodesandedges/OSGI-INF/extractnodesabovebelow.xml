@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<component name="edu.iu.nwb.preprocessing.extractfromtable.extractnodes.abovebelow.ExtractNodesAboveBelow.component" immediate="false">
-	<implementation class="edu.iu.nwb.preprocessing.extractfromtable.extractnodes.abovebelow.ExtractNodesAboveBelowAlgorithmFactory"/>
+<component name="edu.iu.nwb.preprocessing.extractnodesandedges.extractnodes.abovebelow.ExtractNodesAboveBelow.component" immediate="false">
+	<implementation class="edu.iu.nwb.preprocessing.extractnodesandedges.extractnodes.abovebelow.ExtractNodesAboveBelowAlgorithmFactory"/>
 	<properties entry="OSGI-INF/extractnodesabovebelow.properties"/>
 	<reference name="LOG" interface="org.osgi.service.log.LogService"/>
 	<reference name="MTS" interface="org.osgi.service.metatype.MetaTypeService"/>
