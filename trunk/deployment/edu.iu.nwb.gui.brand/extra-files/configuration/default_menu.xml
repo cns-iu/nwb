@@ -76,7 +76,7 @@
 	<menu type="break"/>
 	<menu name="TARL" pid="edu.iu.iv.modeling.tarl.TarlAlgorithm"/>
 	<menu type="break"/>
-	<menu name="Discrete Network Dynamics" pid="edu.iu.nwb.modeling.discretenetworkdynamics.DVDAlgorithm"/>
+	<menu name="Discrete Network Dynamics (DND)" pid="edu.iu.nwb.modeling.discretenetworkdynamics.DVDAlgorithm"/>
     </top_menu>
     
     <top_menu name="Analysis">
