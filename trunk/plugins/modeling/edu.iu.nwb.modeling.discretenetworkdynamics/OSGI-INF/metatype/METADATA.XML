@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <metatype:MetaData xmlns:metatype="http://www.osgi.org/xmlns/metatype/v1.0.0">
 	<OCD name="Network Description"
-		id="edu.iu.nwb.analysis.discretenetworkdynamics.DVDAlgorithm.network.OCD"
+		id="edu.iu.nwb.modeling.discretenetworkdynamics.DVDAlgorithm.network.OCD"
 		description="A tool for enumerating the state space of discrete network models.">
 		<AD default="function"
 			description="The column name of the functions." id="functionLabel"
@@ -46,7 +46,7 @@
 
 
 	</OCD>
-	<Designate pid="edu.iu.nwb.analysis.discretenetworkdynamics.DVDAlgorithm">
-		<Object ocdref="edu.iu.nwb.analysis.discretenetworkdynamics.DVDAlgorithm.network.OCD" />
+	<Designate pid="edu.iu.nwb.modeling.discretenetworkdynamics.DVDAlgorithm">
+		<Object ocdref="edu.iu.nwb.modeling.discretenetworkdynamics.DVDAlgorithm.network.OCD" />
 	</Designate>
 </metatype:MetaData>
