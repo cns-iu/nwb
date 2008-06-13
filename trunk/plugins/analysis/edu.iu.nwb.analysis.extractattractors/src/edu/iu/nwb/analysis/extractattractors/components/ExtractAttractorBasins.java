@@ -7,6 +7,8 @@ import java.util.Iterator;
 import java.util.LinkedHashSet;
 import java.util.LinkedList;
 
+import org.cishell.framework.algorithm.ProgressMonitor;
+
 import prefuse.data.Edge;
 import prefuse.data.Graph;
 import prefuse.data.Node;
@@ -18,9 +20,11 @@ public class ExtractAttractorBasins {
 	ArrayList attractorSizes = new ArrayList();
 	ArrayList attractorTables = new ArrayList();
 	ArrayList attractorRobustnessFiles = new ArrayList();
+	ProgressMonitor progMonitor;
+	int progress = 0;
 
-	public ExtractAttractorBasins extractAttractorBasins(Graph stateSpaceGraph, int nodeStates, boolean isBoolean, final Table originalTable, final String labelColumn) throws InterruptedException{
-
+	public ExtractAttractorBasins extractAttractorBasins(Graph stateSpaceGraph, int nodeStates, boolean isBoolean, final Table originalTable, final String labelColumn,ProgressMonitor pm) throws InterruptedException{
+		this.progMonitor=pm;
 		weakComponentCalculation(stateSpaceGraph,originalTable,labelColumn);
 
 		return this;
@@ -40,9 +44,9 @@ public class ExtractAttractorBasins {
 		return sizes;
 	}
 	
-	public Table[] getAttractors(){
-		Table[] attractors = new Table[this.attractorTables.size()];
-		return (Table[])this.attractorTables.toArray(attractors);
+	public File[] getAttractors(){
+		File[] attractors = new File[this.attractorTables.size()];
+		return (File[])this.attractorTables.toArray(attractors);
 	}
 
 	public void weakComponentCalculation(final Graph grph, Table table, String label) throws InterruptedException{
@@ -57,12 +61,14 @@ public class ExtractAttractorBasins {
 				BasinConstructorThread bct = new BasinConstructorThread(grph,table,label,tree);
 				bct.start();
 				attractorBasins.add(bct);
+				
 			}			
 		}
 		
 		for(int i = 0; i < attractorBasins.size(); i++){
 			BasinConstructorThread bct = (BasinConstructorThread)attractorBasins.get(i);
 			bct.join();
+			ExtractAttractorBasins.updateProgress(this,bct.getBasinSize());
 			this.attractorBasins.set(i, bct.getAttractorBasin());
 			this.attractorSizes.add(new Integer(bct.getBasinSize()));
 			this.attractorTables.add(bct.getAttractorTable());
@@ -117,6 +123,11 @@ public class ExtractAttractorBasins {
 		edg = null;
 		nd2 = null;
 
+	}
+	
+	public static void updateProgress(ExtractAttractorBasins eab, int progress){
+		eab.progress+=progress;
+		eab.progMonitor.worked(eab.progress);
 	}
 
 }

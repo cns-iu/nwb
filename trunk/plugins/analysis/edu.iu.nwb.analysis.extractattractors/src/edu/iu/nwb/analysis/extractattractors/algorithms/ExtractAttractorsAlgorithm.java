@@ -69,16 +69,16 @@ public class ExtractAttractorsAlgorithm implements Algorithm, ProgressTrackable 
 			
 			monitor.start(ProgressMonitor.WORK_TRACKABLE, stateSpace.getNodeCount());
 			ExtractAttractorBasins eab = new ExtractAttractorBasins();
-			eab.extractAttractorBasins(stateSpace, 0, true,nameTable,labelColumn);
+			eab.extractAttractorBasins(stateSpace, 0, true,nameTable,labelColumn,this.monitor);
 			File[] attractorBasins = eab.getBasins();
-			Table[] attractorTables = eab.getAttractors();
+			File[] attractorTables = eab.getAttractors();
 			int[] attractorSizes = eab.getBasinSizes();
 			Data[] returnData = new Data[2*attractorBasins.length];
 			for(int i = 0; i < attractorBasins.length; i++){
 				returnData[2*i] = constructData(this.data[0],attractorBasins[i],"file:text/nwb",DataProperty.NETWORK_TYPE,"Attractor Basin " + (i+1) + " of " + attractorSizes[i] + " nodes");
-				returnData[(2*i)+1] = constructData(this.data[0],attractorTables[i],prefuse.data.Table.class.toString(),DataProperty.MATRIX_TYPE,"Table view of Attractor " + (i+1));
+				returnData[(2*i)+1] = constructData(this.data[0],attractorTables[i],"file:text/csv",DataProperty.MATRIX_TYPE,"Table view of Attractor " + (i+1));
 				}
-			
+			monitor.done();
 			return returnData;
 			
 			

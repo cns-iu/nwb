@@ -20,7 +20,7 @@ public class NodeCleaningThread extends Thread{
 	private Stack componentMembers = new Stack();
 
 	public NodeCleaningThread(Graph stateGraph, final Table originalTable, final String columnName){
-
+		super();
 		this.stateGraph = stateGraph;
 		this.originalTable =originalTable;
 		this.columnName = columnName;
@@ -126,14 +126,14 @@ public class NodeCleaningThread extends Thread{
 		}
 		for(int i = 0; i < orgTable.getRowCount(); i++){
 			if(isHorizontal){
-				if(labelColumn == null){
+				if(labelColumn == null || labelColumn.equals("")){
 					attractorTable.addColumn("x" + (i+1), int.class);
 				}else{
 					attractorTable.addColumn(orgTable.getString(i, labelColumn), int.class);
 				}
 			}else{
 				int rowNumber = attractorTable.addRow();
-				if(labelColumn == null){
+				if(labelColumn == null || labelColumn.equals("")){
 					attractorTable.setString(rowNumber, "Label", "x"+(i+1));
 				}
 				else{

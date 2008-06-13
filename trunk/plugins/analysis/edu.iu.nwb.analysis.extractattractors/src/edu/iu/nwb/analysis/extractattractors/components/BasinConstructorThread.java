@@ -1,7 +1,9 @@
 package edu.iu.nwb.analysis.extractattractors.components;
 
 import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.PrintWriter;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
@@ -18,18 +20,21 @@ import edu.iu.nwb.util.nwbfile.NWBFileWriter;
 
 public class BasinConstructorThread extends Thread{
 	File basinGraph;
-	Table attractorTable;
+	File attractorTable;
 	int basinSize;
 	LinkedHashSet nodes;
 	Graph stateGraph;
 	final Table originalTable;
 	final String labelColumn;
 	
+	
 	public BasinConstructorThread(Graph stateGraph,final Table originalTable,final String labelColumn, LinkedHashSet nodes){
+		super();
 		this.stateGraph = stateGraph;
 		this.nodes = nodes;
 		this.originalTable = originalTable;
 		this.labelColumn = labelColumn;
+		
 	}
 	
 	public void run() {
@@ -58,9 +63,11 @@ public class BasinConstructorThread extends Thread{
 		nct.run();
 		try{
 			nct.join();
+			
 			this.basinGraph = generateStateSpaceFile(basinGraph);
 			this.basinSize = basinGraph.getNodeCount();
-			this.attractorTable = nct.getAttractorTable();
+			this.attractorTable = generateAttractorCSV(nct.getAttractorTable());
+			
 		}catch(InterruptedException ie){
 			
 		}catch(AlgorithmExecutionException aee){
@@ -77,7 +84,7 @@ public class BasinConstructorThread extends Thread{
 		return this.basinSize;
 	}
 	
-	public Table getAttractorTable(){
+	public File getAttractorTable(){
 		return this.attractorTable;
 	}
 	
@@ -136,6 +143,30 @@ public class BasinConstructorThread extends Thread{
 		}catch(IOException ioe){
 			throw new AlgorithmExecutionException("Error creating and writing the state space graph file.\n",ioe);
 		}
+	}
+	
+	private static File generateAttractorCSV(final Table t) throws AlgorithmExecutionException{
+		try{
+			File attractorTableFile = File.createTempFile("NWB-Session-StateSpace-", ".csv");
+			FileOutputStream fis = new FileOutputStream(attractorTableFile);
+			PrintWriter pw = new PrintWriter(fis);
+			for(int i = 0; i < t.getColumnCount(); i++){
+				pw.print("\""+t.getColumnName(i)+"\",");
+			}
+				pw.println();
+			for(int i = 0; i < t.getRowCount(); i++){
+				for(int j = 0; j < t.getColumnCount();j++){
+					pw.print("\""+t.get(i,j)+"\",");
+				}
+				pw.println();
+			}
+			pw.flush();
+			pw.close();
+			
+			return attractorTableFile;
+		}catch(IOException ioe){
+			throw new AlgorithmExecutionException("Error creating and writing the attractor table file.\n",ioe);
+		}	
 	}
 	
 	private static LinkedHashMap generateSchema(final Table t, LinkedHashMap schema){
