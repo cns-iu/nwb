@@ -4,7 +4,7 @@
     <top_menu name="File">
 	<menu name="Load..." pid= "org.cishell.reference.gui.persistence.load.FileLoad"/>
 	<menu name="Load and Clean ISI File" pid="edu.iu.nwb.composite.isiloadandclean.ISILoadAndCleanAlgorithm"/>
-	<menu name="Load CSV Files" pid= "edu.iu.nwb.preprocessing.csv.CsvAlgorithm"/>
+	<menu name="Merge Node File and Edge File" pid= "edu.iu.nwb.preprocessing.csv.CsvAlgorithm"/>
 	<menu name="Directory Hierarchy Reader" pid= "edu.iu.nwb.preprocessing.prefuse.beta.directoryhierarchyreader.DirectoryHierarchyReaderAlgorithm"/>
 	<menu name = "Datasets" type="group">
 		<menu name="Parallel Coordinates (demo) STF Dataset" pid="org.mediavirus.parvis.sampledata.pcvis_data.txt"/>									  
@@ -32,7 +32,7 @@
 	<menu name="Random Node Deletion" pid="edu.iu.iv.errortolerance.ErrorToleranceAlgorithm"/>	
 	<menu name="High Degree Node Deletion" pid="edu.iu.iv.attacktolerance.AttackToleranceAlgorithm"/>
 	<menu name="Trim by Degree" pid="edu.iu.nwb.preprocessing.trimedges.Trim"/>
-	<menu name="Filter by Number" pid="edu.iu.nwb.preprocessing.tablefilter.Filter"/>	
+	<menu name="Remove Rows with Multitudinous Fields" pid="edu.iu.nwb.preprocessing.tablefilter.Filter"/>	
 	<menu type="break"/>
 	<menu name="Pathfinder Network Scaling" pid="edu.iu.nwb.analysis.pathfindergraphnetworkscaling.PathfinderGraphAlgorithm"/>
 	<menu name="Multipartite Joining" pid="edu.iu.nwb.analysis.multipartitejoining.JoiningAlgorithm"/>
@@ -128,6 +128,8 @@
     </top_menu>
 
     <top_menu name="Visualization">
+    <menu name="GUESS" pid="edu.iu.nwb.visualization.guess"/>
+    <menu type="break"/>	
  	<menu name="Circular (JUNG)" pid="edu.iu.nwb.visualization.jungnetworklayout.JUNGCircleLayout"/>
  	<menu type="break"/>
 	<menu name="DrL (VxOrd)" pid="edu.iu.nwb.visualization.drl.VxOrdAlgorithm"/> 	
@@ -149,9 +151,7 @@
 	<menu name="Parallel Coordinates (demo)" pid="org.mediavirus.parvis.ParallelCoordinatesAlgorithm"/>
 	<menu type="break"/>
 	<menu name="LaNet" pid="nwb.visualization.lanet"/>
-	<menu type="break"/>
-	<menu name="GUESS" pid="edu.iu.nwb.visualization.guess"/>	
-    </top_menu>
+	</top_menu>
 
     <top_menu name="Tools">
       	<menu name="GnuPlot" pid="edu.iu.nwb.visualization.gnuplot"/>
