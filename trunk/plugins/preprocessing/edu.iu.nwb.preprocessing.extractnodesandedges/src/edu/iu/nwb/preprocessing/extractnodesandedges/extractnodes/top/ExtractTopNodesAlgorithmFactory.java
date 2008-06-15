@@ -20,10 +20,12 @@ public class ExtractTopNodesAlgorithmFactory implements AlgorithmFactory, Parame
     }
 
 	public ObjectClassDefinition mutateParameters(Data[] data, ObjectClassDefinition parameters) {
+		System.out.println("Extracting top nodes");
 		Graph graph = (Graph) data[0].getData();
 		try {
 		ObjectClassDefinition newParameters =
 			AddNumericAttributeParamMutator.mutateForNodes(graph, parameters);
+		System.out.println("Done extracting top nodes");
 		return newParameters;
 		} catch (Exception e) {
 			return new BasicObjectClassDefinition("No Usable Numeric Attributes", "No Usable Numeric Attributes", 

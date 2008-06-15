@@ -6,7 +6,6 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
-import org.cishell.framework.algorithm.AlgorithmExecutionException;
 import org.cishell.reference.service.metatype.BasicAttributeDefinition;
 import org.cishell.reference.service.metatype.BasicObjectClassDefinition;
 import org.osgi.service.metatype.AttributeDefinition;
