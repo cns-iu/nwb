@@ -29,10 +29,9 @@
 	<menu name="Extract Top Nodes" pid="edu.iu.nwb.preprocessing.extractnodesandedges.extractnodes.top.ExtractTopNodesAlgorithm"/>
 	<menu name="Extract Top Edges" pid="edu.iu.nwb.preprocessing.extractnodesandedges.extractedges.top.ExtractTopEdgesAlgorithm"/>
     <menu type="break"/>
-	<menu name="Random Node Deletion" pid="edu.iu.iv.errortolerance.ErrorToleranceAlgorithm"/>	
-	<menu name="High Degree Node Deletion" pid="edu.iu.iv.attacktolerance.AttackToleranceAlgorithm"/>
+	<menu name="Delete Random Nodes" pid="edu.iu.iv.errortolerance.ErrorToleranceAlgorithm"/>	
+	<menu name="Delete High Degree Nodes" pid="edu.iu.iv.attacktolerance.AttackToleranceAlgorithm"/>
 	<menu name="Trim by Degree" pid="edu.iu.nwb.preprocessing.trimedges.Trim"/>
-	<menu name="Remove Rows with Multitudinous Fields" pid="edu.iu.nwb.preprocessing.tablefilter.Filter"/>	
 	<menu type="break"/>
 	<menu name="Pathfinder Network Scaling" pid="edu.iu.nwb.analysis.pathfindergraphnetworkscaling.PathfinderGraphAlgorithm"/>
 	<menu name="Multipartite Joining" pid="edu.iu.nwb.analysis.multipartitejoining.JoiningAlgorithm"/>
@@ -50,20 +49,6 @@
     <menu name="K-Coreness Annotation" pid="edu.iu.nwb.analysis.kcore.Annotate"/>
     </top_menu>   
      
-    <top_menu name="Scientometrics">    
-    <menu name="ISI Duplicate Remover" pid="edu.iu.nwb.analysis.isidupremover.ISIDupRemoverAlgorithm"/>
-    <menu name="Duplicate Node Detector" pid="edu.iu.nwb.preprocessing.duplicatenodedetector.DuplicateNodeDetectorAlgorithm"/>    
-    <menu type="break"/>
-    <menu name="Extract Co-Authorship Network" pid="edu.iu.nwb.analysis.extractcoauthorship"/>
-    <menu name="Extract Co-occurrence Network from Table" pid="edu.iu.nwb.analysis.extractnetfromtable.algorithms.ExtractNetFromTableAlgorithm"/>
-    <menu name="Extract Directed Network from Table" pid="edu.iu.nwb.analysis.extractdirectednetfromtable.algorithms.ExtractDirectedNetworkAlgorithm"/>
-    <menu type="break"/>    
-    <menu name="Extract Bibliographic Coupling Similarity Network" pid="edu.iu.nwb.preprocessing.bibcouplingsimilarity.BibCouplingSimilarityAlgorithm"/>
-    <menu name="Extract Co-Citation Similarity Network" pid="edu.iu.nwb.preprocessing.cocitationsimilarity.CoCitationSimilarityAlgorithm"/>
-    <menu type="break"/>
-    <menu name="Merge Nodes" pid="edu.iu.nwb.tools.mergenodes.MergeNodes"/>    
-    </top_menu>    
-    
     <top_menu name="Modeling">
 	<menu name="Random Graph" pid="edu.iu.nwb.modeling.erdosrandomgraph"/>
 	<menu name="Watts-Strogatz Small World" pid="edu.iu.nwb.modeling.smallworld"/>
@@ -159,6 +144,21 @@
       	<menu name="Network Analysis Toolkit (NAT)" pid="edu.iu.nwb.toolkit.networkanalysis"/>	
     </top_menu>
 
+    <top_menu name="Scientometrics">    
+    <menu name="Extract Co-Authorship Network" pid="edu.iu.nwb.analysis.extractcoauthorship"/>
+    <menu name="Extract Co-Occurrence Network from Table" pid="edu.iu.nwb.analysis.extractnetfromtable.algorithms.ExtractNetFromTableAlgorithm"/>
+    <menu name="Extract Directed Network from Table" pid="edu.iu.nwb.analysis.extractdirectednetfromtable.algorithms.ExtractDirectedNetworkAlgorithm"/>
+    <menu type="break"/>    
+    <menu name="Extract Bibliographic Coupling Similarity Network" pid="edu.iu.nwb.preprocessing.bibcouplingsimilarity.BibCouplingSimilarityAlgorithm"/>
+    <menu name="Extract Co-Citation Similarity Network" pid="edu.iu.nwb.preprocessing.cocitationsimilarity.CoCitationSimilarityAlgorithm"/>
+    <menu type="break"/>
+    <menu name="Detect Duplicate Nodes" pid="edu.iu.nwb.preprocessing.duplicatenodedetector.DuplicateNodeDetectorAlgorithm"/>    
+    <menu name="Update Network by Merging Nodes" pid="edu.iu.nwb.tools.mergenodes.MergeNodes"/>
+    <menu type="break"/>  
+    <menu name="Remove ISI Duplicate Records" pid="edu.iu.nwb.analysis.isidupremover.ISIDupRemoverAlgorithm"/>
+    <menu name="Remove Rows with Multitudinous Fields" pid="edu.iu.nwb.preprocessing.tablefilter.Filter"/>	
+    </top_menu>
+    
     <top_menu name="Help">      
 	<menu name="Dataset Details" pid=""/>
 	<menu name="Algorithm Details" pid=""/>
