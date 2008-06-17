@@ -15,7 +15,7 @@ public class FunctionContainer {
 		this.parsedExpression = expression;
 	}
 	
-	public int evaluate(final int[] stateSpace, final int[] nextState, BigInteger radix, boolean isSequential){
+	public int evaluate(final int[] stateSpace, final int[] nextState, BigInteger radix, boolean isSequential) throws ArithmeticException{
 		Stack executionStack = new Stack();
 		Integer value;
 		Object token;
@@ -24,7 +24,7 @@ public class FunctionContainer {
 		for(Iterator it = this.parsedExpression.iterator(); it.hasNext();){
 			token = it.next();
 			tokenString = token.toString();
-		
+			
 			if(tokenString.matches(FunctionTokens.variables)){
 				int index = new Integer(tokenString.substring(1)).intValue()-1;
 				
@@ -36,18 +36,22 @@ public class FunctionContainer {
 						value = new Integer(stateSpace[index]);
 					}
 				}
-					
+				
 				executionStack.push(new BigInteger(value.toString()));
 			}
 			else if(tokenString.matches(FunctionTokens.literals)){
+				
 				executionStack.push(new BigInteger(tokenString));
 			}
 			else{
 				operator = (AbstractFunction)token;
 				BigInteger[] operands = new BigInteger[operator.getNumberOfArguments()];
-				for(int i = 0; i < operands.length; i++){
+				for(int i = (operands.length-1); i >= 0; i--){
 					operands[i] = (BigInteger)executionStack.pop();
 				}
+				
+				
+				
 				executionStack.push(operator.operate(operands, radix));
 			}
 			

@@ -38,7 +38,7 @@ class PolyAdd extends AdditionFunction{
 }
 
 class BoolAdd extends AdditionFunction{
-	private static boolean isPoly = true;
+	private static boolean isPoly = false;
 	
 	public boolean getIsPolynomial() {
 		return BoolAdd.isPoly;
@@ -49,6 +49,7 @@ class BoolAdd extends AdditionFunction{
 			return null;
 		}
 		else{
+
 			return (arguments[0].or(arguments[1])).mod(numberOfStates);
 		}
 	}

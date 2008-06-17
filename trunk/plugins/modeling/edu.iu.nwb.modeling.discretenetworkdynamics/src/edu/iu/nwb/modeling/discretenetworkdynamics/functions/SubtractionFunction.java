@@ -29,7 +29,7 @@ class PolySub extends SubtractionFunction{
 		}else{
 			BigInteger val1 = arguments[0].mod(numberOfStates);
 			BigInteger val2 = arguments[1].mod(numberOfStates);
-			return (val1.add(val2)).mod(numberOfStates);
+			return (val1.subtract(val2)).mod(numberOfStates);
 		}
 	}
 	

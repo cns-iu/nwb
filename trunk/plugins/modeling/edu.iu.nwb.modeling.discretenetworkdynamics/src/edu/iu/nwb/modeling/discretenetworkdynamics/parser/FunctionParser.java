@@ -46,8 +46,7 @@ public class FunctionParser {
 					while(functionStack.peek() instanceof AbstractFunction){
 						operator2 = (AbstractFunction)functionStack.peek();
 						int precedence = operator1.comparePrecedence(operator2);
-						
-						if((associativity == 0 || (associativity < 0 && precedence <= 0)) || (associativity > 0 && precedence < 0)){
+						if(associativity == 0 || (associativity < 0 && precedence <= 0) || (associativity > 0 && precedence < 0)){
 							outputQueue.add(operator2);
 							functionStack.pop();
 						}else{
@@ -92,7 +91,6 @@ public class FunctionParser {
 				throw new FunctionFormatException("Mismatched Parenthesis");
 			outputQueue.add(functionObject);
 		}
-
 
 		return new FunctionContainer(outputQueue);
 	}
