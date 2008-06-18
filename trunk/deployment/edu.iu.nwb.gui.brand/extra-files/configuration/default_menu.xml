@@ -122,11 +122,11 @@
     <menu type="break"/>
     <menu name="GnuPlot" pid="edu.iu.nwb.visualization.gnuplot"/>
     <menu type="break"/>	
- 	<menu name="Circular (JUNG)" pid="edu.iu.nwb.visualization.jungnetworklayout.JUNGCircleLayout"/>
- 	<menu type="break"/>
-	<menu name="DrL (VxOrd)" pid="edu.iu.nwb.visualization.drl.VxOrdAlgorithm"/> 	
+ 	<menu name="DrL (VxOrd)" pid="edu.iu.nwb.visualization.drl.VxOrdAlgorithm"/> 	
 	<menu name="Pre-defined Positions (prefuse beta)" pid="edu.iu.nwb.visualization.prefuse.beta.specified.Specified"/>
 	<menu type="break"/>
+	<menu name="Circular (JUNG)" pid="edu.iu.nwb.visualization.jungnetworklayout.JUNGCircleLayout"/>
+ 	<menu type="break"/>
 	<menu name="Radial Tree/Graph (prefuse alpha)" pid="edu.iu.nwb.visualization.radialgraph.RadialGraph"/> 
 	<menu name="Radial Tree/Graph with Annotation (prefuse beta)" pid="edu.iu.nwb.visualization.prefuse.beta.radialgraph.RadialGraph"/>
 	<menu name="Tree Map (prefuse beta)" pid="edu.iu.nwb.visualization.prefuse.beta.treemap.TreeMap"/>
