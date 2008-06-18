@@ -106,7 +106,7 @@ public class GraphMLWriter extends AbstractGraphWriter {
                 for ( int i=0; i<ns.getColumnCount(); ++i ) {
                     String field = ns.getColumnName(i);
                     if(n.get(field) != null) {
-                    	xml.contentTag(Tokens.DATA, Tokens.KEY, field, n.get(field).toString());
+                    	xml.contentTag(Tokens.DATA, Tokens.KEY, field.toLowerCase(), n.get(field).toString());
                     }
                 }
                 xml.end();
@@ -138,7 +138,7 @@ public class GraphMLWriter extends AbstractGraphWriter {
                          field.equals(graph.getEdgeTargetField()) )
                         continue;
                     
-                    xml.contentTag(Tokens.DATA, Tokens.KEY, field, 
+                    xml.contentTag(Tokens.DATA, Tokens.KEY, field.toLowerCase(), 
                                    e.get(field).toString());
                 }
                 xml.end();
@@ -174,7 +174,7 @@ OUTER:
                     continue OUTER;
             }
             
-            vals[0] = vals[0];
+            vals[0] = vals[0].toLowerCase();
             vals[1] = group;
             vals[2] = vals[0];
             vals[3] = (String)TYPES.get(s.getColumnType(i));
