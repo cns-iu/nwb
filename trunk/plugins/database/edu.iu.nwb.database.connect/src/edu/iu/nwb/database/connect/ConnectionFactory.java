@@ -8,8 +8,6 @@ import org.cishell.framework.algorithm.AlgorithmFactory;
 import org.cishell.framework.data.Data;
 import org.osgi.framework.Bundle;
 import org.osgi.service.component.ComponentContext;
-import org.osgi.service.metatype.MetaTypeProvider;
-import org.osgi.service.metatype.MetaTypeService;
 
 
 public class ConnectionFactory implements AlgorithmFactory {

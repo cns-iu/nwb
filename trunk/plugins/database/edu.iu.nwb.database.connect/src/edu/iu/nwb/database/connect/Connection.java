@@ -46,7 +46,7 @@ public class Connection implements Algorithm {
         logger=(LogService)context.getService(LogService.class.getName());
     }
 
-    public Data[] execute() {
+    public Data[] execute() throws AlgorithmExecutionException {
     	
     	String driver = (String) parameters.get("driver");
     	String url = (String) parameters.get("url");
