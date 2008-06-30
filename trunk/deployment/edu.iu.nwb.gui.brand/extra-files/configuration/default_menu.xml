@@ -17,7 +17,7 @@
 	<menu name="Merge Node and Edge Files" pid= "edu.iu.nwb.preprocessing.csv.CsvAlgorithm"/>
 	<menu name="Split Graph to Node and Edge Files" pid= "edu.iu.nwb.converter.tablegraph.GraphTable"/>
 	<menu type="break"/>	
-	<menu name = "Test" type="group">
+	<menu name = "Tests" type="group">
 		<menu name="Scheduler Tester" pid= "org.cishell.tests.ProgressTrackableAlgorithm.AlgorithmTest"/>
 		<menu name="Converter Tester" pid= "org.cishell.testing.convertertester.algorithm.ConverterTesterAlgorithm"/>
 	</menu>
