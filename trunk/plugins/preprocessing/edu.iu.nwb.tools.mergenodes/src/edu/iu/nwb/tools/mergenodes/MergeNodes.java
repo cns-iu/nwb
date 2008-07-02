@@ -261,10 +261,6 @@ public class MergeNodes implements Algorithm {
 		for (int index =0; index<theTotalCols-2; index++){			
 			String theLabel = theNodeSchema.getColumnName(index); 
 			int colIndex = orgNodeSchema.getColumnIndex(theLabel); 
-/*			System.out.println (">>colName = "+theLabel);			
-			System.out.println (">>colIndex = "+colIndex);
-			System.out.println(">>orgColName = "+orgNodeSchema.getColumnName(colIndex));
-*/
 			if(colIndex>=0){
 				if (orgNodeSchema.getColumnType(theLabel).getName().equals(
 						theNodeSchema.getColumnType(theLabel).getName())){
@@ -272,15 +268,13 @@ public class MergeNodes implements Algorithm {
 						nodeLabelField = theLabel;
 				}					
 				else {
-					logger.log (LogService.LOG_ERROR, "The data types of "+theLabel+
+					logger.log (LogService.LOG_WARNING, "The data types of "+theLabel+
 							" do not match. \n "+
 							"The data type of "+theLabel+ " in the node list table is "+ 
 							theNodeSchema.getColumnType(theLabel).getName()+".\n"+
 					        "But the data type of "+theLabel+ 
 					        " in the node schema of the original input graph is "+ 
 					        orgNodeSchema.getColumnType(theLabel).getName()+".\n");
-					isMatched = false;
-					break;
 				}
 			}
 			else {
