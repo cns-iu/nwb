@@ -14,10 +14,12 @@ import org.cishell.framework.data.Data;
 import org.cishell.framework.data.DataProperty;
 import org.osgi.service.log.LogService;
 
+import edu.iu.nwb.analysis.extractcoauthorship.metadata.SupportedFileTypes;
+import edu.iu.nwb.analysis.extractcoauthorship.metadata.SupportedFileTypes.CitationFormat;
 import edu.iu.nwb.analysis.extractnetfromtable.components.ExtractNetworkFromTable;
 import edu.iu.nwb.analysis.extractnetfromtable.components.InvalidColumnNameException;
 
-public class ExtractAlgorithm implements Algorithm {
+public class ExtractAlgorithm implements Algorithm, SupportedFileTypes {
 	Data[] data;
 	Dictionary parameters;
 	CIShellContext ciContext;
@@ -35,13 +37,17 @@ public class ExtractAlgorithm implements Algorithm {
 		final prefuse.data.Table dataTable = (prefuse.data.Table) data[0]
 				.getData();
 
+		
+		String fileFormat = this.parameters.get("fileFormat").toString();
+		String fileFormatPropertiesFile = this.getFileTypeProperties(fileFormat);
+		
 		final ClassLoader loader = getClass().getClassLoader();
-		final InputStream in = loader
-				.getResourceAsStream("/edu/iu/nwb/analysis/extractcoauthorship/metadata/Operations.properties");
+		final InputStream fileTypePropertiesFile = loader
+				.getResourceAsStream(fileFormatPropertiesFile);
 		
 		final Properties metaData = new Properties();
 		try {
-			metaData.load(in);
+			metaData.load(fileTypePropertiesFile);
 		} catch (final FileNotFoundException fnfe) {
 			logger.log(LogService.LOG_ERROR, fnfe.getMessage());
 		} catch (final IOException ie) {
@@ -49,7 +55,7 @@ public class ExtractAlgorithm implements Algorithm {
 		}
 		try{
 		final ExtractNetworkFromTable enft = new ExtractNetworkFromTable(logger,
-				dataTable, "Authors", "|", metaData, false);
+				dataTable, CitationFormat.getAuthorColumnByName(fileFormat), "|", metaData, false);
 		
 		
 		final prefuse.data.Graph outputGraph = enft.getGraph();
@@ -75,5 +81,11 @@ public class ExtractAlgorithm implements Algorithm {
 		}catch(InvalidColumnNameException ex){
 			throw new AlgorithmExecutionException(ex.getMessage(),ex);
 		}
+	}
+	
+	private String getFileTypeProperties(String fileType){
+		String propertiesFileName = "/edu/iu/nwb/analysis/extractcoauthorship/metadata/";
+		
+		return propertiesFileName+fileType+".properties";
 	}
 }
