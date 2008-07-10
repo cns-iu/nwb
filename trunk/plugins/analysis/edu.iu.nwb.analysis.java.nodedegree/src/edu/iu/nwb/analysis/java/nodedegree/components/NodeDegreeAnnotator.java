@@ -1,16 +1,20 @@
 package edu.iu.nwb.analysis.java.nodedegree.components;
 
+import org.cishell.framework.algorithm.AlgorithmExecutionException;
 import org.cishell.framework.algorithm.ProgressMonitor;
 
 import prefuse.data.Graph;
+import prefuse.data.Schema;
 import prefuse.data.Table;
 
 public class NodeDegreeAnnotator {
 	private ProgressMonitor progMonitor;
 	private int progress = 0;
+	private int degreeType;
 	
-	public NodeDegreeAnnotator(ProgressMonitor pm){
+	public NodeDegreeAnnotator(ProgressMonitor pm, int degreeType){
 		this.progMonitor = pm;
+		this.degreeType = degreeType;	
 	}
 	
 	
@@ -61,6 +65,77 @@ public class NodeDegreeAnnotator {
 	public static void updateProgress(NodeDegreeAnnotator na, int work){
 		na.progress+=work;
 		na.progMonitor.worked(na.progress);
+	}
+	
+	public Graph createAnnotatedGraph(final Graph originalGraph) throws AlgorithmExecutionException{
+		final Schema originalGraphNodeSchema = originalGraph.getNodeTable().getSchema();
+		final Schema originalGraphEdgeSchema = originalGraph.getEdgeTable().getSchema();
+
+		Schema annotatedGraphNodeSchema = copySchema(originalGraphNodeSchema);
+		if(annotatedGraphNodeSchema == null){
+			if(this.degreeType == DegreeType.totalDegree)
+				throwException("totalDegree");
+			if(this.degreeType == DegreeType.inDegree)
+				throwException("inDegree");
+			if(this.degreeType == DegreeType.outDegree)
+				throwException("outDegree");
+		}
+			annotatedGraphNodeSchema = appendDegreeAnnotation(annotatedGraphNodeSchema, this.degreeType);
+		Schema annotatedGraphEdgeSchema = copySchema(originalGraphEdgeSchema);
+
+		Table newNodeTable = annotatedGraphNodeSchema.instantiate(originalGraph.getNodeTable().getRowCount());
+		Table newEdgeTable = annotatedGraphEdgeSchema.instantiate(originalGraph.getEdgeTable().getRowCount());
+
+		Graph annotatedGraph = new Graph(newNodeTable,newEdgeTable,originalGraph.isDirected());
+
+		return annotatedGraph;
+
+	}
+
+	private static Schema copySchema(final Schema original){
+		Schema copy = new Schema();
+
+		for(int i = 0; i < original.getColumnCount(); i++){
+			copy.addColumn(original.getColumnName(i), original.getColumnType(i));
+		}
+
+		return copy;
+	}
+
+	private Schema appendDegreeAnnotation(Schema targetSchema, int degreeType){
+		int index = -1;
+		
+		
+		
+		if(degreeType == DegreeType.totalDegree)
+			index = targetSchema.getColumnIndex("totalDegree");
+		if(degreeType == DegreeType.inDegree)
+			index = targetSchema.getColumnIndex("inDegree");
+		if(degreeType == DegreeType.outDegree)
+			index = targetSchema.getColumnIndex("outDegree");
+
+		if(index < 0){
+			if(degreeType == DegreeType.totalDegree)
+				targetSchema.addColumn("totalDegree", int.class);
+			if(degreeType == DegreeType.inDegree)
+				targetSchema.addColumn("inDegree", int.class);
+			if(degreeType == DegreeType.outDegree)
+				targetSchema.addColumn("outDegree",int.class);
+			
+		}
+		else{
+			return null;
+		}
+
+		return targetSchema;
+	}
+	
+	private static void throwException(String type) throws AlgorithmExecutionException{
+		throw new AlgorithmExecutionException("Attribute: " + type + " already exists. Please rename the attribute before rerunning this algorithm.");
+	}
+	
+	public int getDegreeType(){
+		return this.getDegreeType();
 	}
 
 }

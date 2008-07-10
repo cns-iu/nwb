@@ -13,8 +13,7 @@ import org.cishell.framework.data.DataProperty;
 import org.osgi.service.log.LogService;
 
 import prefuse.data.Graph;
-import prefuse.data.Schema;
-import prefuse.data.Table;
+import edu.iu.nwb.analysis.java.nodedegree.components.DegreeType;
 import edu.iu.nwb.analysis.java.nodedegree.components.NodeDegreeAnnotator;
 
 public class NodeDegree implements Algorithm, ProgressTrackable {
@@ -34,10 +33,12 @@ public class NodeDegree implements Algorithm, ProgressTrackable {
 	public Data[] execute() throws AlgorithmExecutionException {
 
 		Graph originalGraph = (Graph)this.data[0].getData();
+		
+		NodeDegreeAnnotator nodeAnnotator = new NodeDegreeAnnotator(this.getProgressMonitor(),DegreeType.totalDegree);
 
-		Graph annotatedGraph = createAnnotatedGraph(originalGraph);
+		Graph annotatedGraph = nodeAnnotator.createAnnotatedGraph(originalGraph);
 
-		NodeDegreeAnnotator nodeAnnotator = new NodeDegreeAnnotator(this.getProgressMonitor());
+		
 
 		try {
 			monitor.start(ProgressMonitor.WORK_TRACKABLE, 2*originalGraph.getNodeCount());
@@ -53,49 +54,7 @@ public class NodeDegree implements Algorithm, ProgressTrackable {
 		return new Data[]{returnData};
 	}
 
-	private Graph createAnnotatedGraph(final Graph originalGraph) throws AlgorithmExecutionException{
-		final Schema originalGraphNodeSchema = originalGraph.getNodeTable().getSchema();
-		final Schema originalGraphEdgeSchema = originalGraph.getEdgeTable().getSchema();
-
-		Schema annotatedGraphNodeSchema = copySchema(originalGraphNodeSchema);
-		if(annotatedGraphNodeSchema == null)
-			throw new AlgorithmExecutionException("Attribute: degree, already exists. Please rename the attribute before rerunning this algorithm.");
-		annotatedGraphNodeSchema = appendDegreeAnnotation(annotatedGraphNodeSchema);
-		Schema annotatedGraphEdgeSchema = copySchema(originalGraphEdgeSchema);
-
-		Table newNodeTable = annotatedGraphNodeSchema.instantiate(originalGraph.getNodeTable().getRowCount());
-		Table newEdgeTable = annotatedGraphEdgeSchema.instantiate(originalGraph.getEdgeTable().getRowCount());
-
-		Graph annotatedGraph = new Graph(newNodeTable,newEdgeTable,originalGraph.isDirected());
-
-		return annotatedGraph;
-
-	}
-
-	private static Schema copySchema(final Schema original){
-		boolean degreeColumnExists = false;
-		Schema copy = new Schema();
-		String columnName;
-
-		for(int i = 0; i < original.getColumnCount(); i++){
-			copy.addColumn(original.getColumnName(i), original.getColumnType(i));
-		}
-
-		return copy;
-	}
-
-	private Schema appendDegreeAnnotation(Schema targetSchema){
-		int index = targetSchema.getColumnIndex("degree");
-
-		if(index < 0){
-			targetSchema.addColumn("degree", int.class);
-		}
-		else{
-			return null;
-		}
-
-		return targetSchema;
-	}
+	
 
 	private static Data constructData(Data parent, Object obj, String className, String type, String label){
 		Data outputData = new BasicData(obj,className);

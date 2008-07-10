@@ -17,3 +17,4 @@ Import-Package: org.cishell.framework;version="1.0.0",
  prefuse.data
 X-AutoStart: true
 Service-Component: OSGI-INF/component.xml
+Export-Package: edu.iu.nwb.analysis.java.nodedegree.components

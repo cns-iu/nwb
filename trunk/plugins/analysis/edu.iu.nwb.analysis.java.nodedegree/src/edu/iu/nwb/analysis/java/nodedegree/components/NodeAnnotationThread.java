@@ -21,6 +21,17 @@ public class NodeAnnotationThread extends Thread{
 
 	public void run() {
 		super.run();
+		int degreeType = na.getDegreeType();
+		String label = null;
+		if(degreeType == DegreeType.inDegree){
+			label = "inDegree";
+		}
+		if(degreeType == DegreeType.outDegree){
+			label = "outDegree";
+		}
+		if(degreeType == DegreeType.totalDegree){
+			label = "totalDegree";
+		}
 		Table sourceNodeTable = this.originalGraph.getNodeTable();
 		Table targetNodeTable = this.targetGraph.getNodeTable();
 		
@@ -35,7 +46,7 @@ public class NodeAnnotationThread extends Thread{
 				targetNodeTable.set(i, j, sourceNodeTable.get(i, j));
 			}
 			
-			targetNodeTable.setInt(i, "degree", originalGraph.getDegree(i));
+			targetNodeTable.setInt(i, label, originalGraph.getDegree(i));
 			counter++;
 		}
 		
