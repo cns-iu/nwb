@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<metatype:MetaData xmlns:metatype="http://www.osgi.org/xmlns/metatype/v1.0.0">
+	<OCD name="NodeOutdegree" id="edu.iu.nwb.analysis.java.nodeoutdegree.algorithms.NodeOutdegree.OCD"
+		 description="This algorithm annotates a graph with the outdegree of each node. ">
+	</OCD>
+	<Designate pid="edu.iu.nwb.analysis.java.nodeoutdegree.algorithms.NodeOutdegree">
+		<Object ocdref="edu.iu.nwb.analysis.java.nodeoutdegree.algorithms.NodeOutdegree.OCD" />
+	</Designate>
+</metatype:MetaData>
