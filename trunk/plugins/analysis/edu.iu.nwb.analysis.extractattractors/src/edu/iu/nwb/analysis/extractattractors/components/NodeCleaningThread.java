@@ -40,15 +40,7 @@ public class NodeCleaningThread extends Thread{
 		ct.addColumn(strongComponentColumn, int.class, new Integer(-1));
 		ct.addColumn(preOrderColumn, int.class, new Integer(-1));
 
-
-
 		Integer testCount = new Integer(0);
-
-		int[] id = new int[nodeCount];
-		int[] pre = new int[nodeCount];
-
-		java.util.Arrays.fill(id, -1);
-		java.util.Arrays.fill(pre, -1);
 
 		for (int v = nodeCount-1; v >= 0; v--){
 			n = this.stateGraph.getNode(v);
