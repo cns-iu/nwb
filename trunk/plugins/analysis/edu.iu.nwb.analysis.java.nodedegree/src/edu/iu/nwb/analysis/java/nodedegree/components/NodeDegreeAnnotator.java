@@ -19,7 +19,7 @@ public class NodeDegreeAnnotator {
 	
 	
 	public Graph annotateGraph(final Graph orgGraph, Graph targetGraph) throws InterruptedException {
-		final int numProcessors = Math.max(Runtime.getRuntime().availableProcessors(),10);
+		final int numProcessors = Math.min(orgGraph.getNodeCount(),Math.max(Runtime.getRuntime().availableProcessors(),10));
 		int start;
 		int end;
 		
@@ -32,7 +32,7 @@ public class NodeDegreeAnnotator {
 		
 		for(int i = 0; i < numProcessors; i++){
 			start = (i*nodesPerThread);
-			end = ((i+1)*nodesPerThread)-1;
+			end = ((i+1)*nodesPerThread);
 			
 			if(i== numProcessors-1){
 				end += remainingNodes;
@@ -135,7 +135,7 @@ public class NodeDegreeAnnotator {
 	}
 	
 	public int getDegreeType(){
-		return this.getDegreeType();
+		return this.degreeType;
 	}
 
 }

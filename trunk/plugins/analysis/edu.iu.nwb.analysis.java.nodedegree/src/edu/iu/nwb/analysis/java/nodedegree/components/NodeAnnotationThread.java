@@ -22,6 +22,7 @@ public class NodeAnnotationThread extends Thread{
 	public void run() {
 		super.run();
 		int degreeType = na.getDegreeType();
+		
 		String label = null;
 		if(degreeType == DegreeType.inDegree){
 			label = "inDegree";
@@ -36,6 +37,9 @@ public class NodeAnnotationThread extends Thread{
 		Table targetNodeTable = this.targetGraph.getNodeTable();
 		
 		int tenPercent = (int)Math.ceil((end-start)/10);
+		if(tenPercent == 0){
+			tenPercent = 1;
+		}
 		int counter = 1;
 		for(int i = start; i < end; i++){
 			if(counter % tenPercent == 0){
