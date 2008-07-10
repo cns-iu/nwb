@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<component name="edu.iu.nwb.analysis.java.nodeindegree.NodeIndegree.component" immediate="false">
+	<implementation class="edu.iu.nwb.analysis.java.nodeindegree.NodeIndegreeFactory"/>
+	<properties entry="OSGI-INF/algorithm.properties"/>
+	
+	<service>
+		<provide interface=
+			"org.cishell.framework.algorithm.AlgorithmFactory"/>
+	</service>
+</component>
