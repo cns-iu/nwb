@@ -61,9 +61,9 @@ public class TarlAlgorithm implements Algorithm {
 
 		Data[] d = new Data[3];
 		d[0] =(Data) addModel(gg.generateCoAuthorGraph(), "TARL Co-author graph");
-		d[1] = (Data) addModel(gg.generateCitationGraph(), "TARL Co-citation graph");
+		d[1] = (Data) addModel(gg.generateCitationGraph(), "TARL Paper-citation graph");
 		d[2] = (Data) addModel(gg.generateAuthorPublicationGraph(),
-				"TARL Author-Publication graph");
+				"TARL Author-Paper graph");
 
 		tarlHelper.cleanUpSystem();
 		println("done.");
