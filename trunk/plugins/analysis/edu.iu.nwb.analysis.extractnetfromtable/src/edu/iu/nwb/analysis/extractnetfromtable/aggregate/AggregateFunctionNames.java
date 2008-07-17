@@ -7,4 +7,5 @@ public interface AggregateFunctionNames {
 	final String GEOMETRICMEAN = "geometricmean";
 	final String MAX = "max";
 	final String MIN = "min";
+	final String LIST = "list";
 }

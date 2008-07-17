@@ -79,7 +79,7 @@ public class ExtractNetworkFromTable {
 	 */
 
 	private prefuse.data.Graph constructGraph(prefuse.data.Table pdt,
-			String columnName, Properties p) throws InvalidColumnNameException{
+			String columnName, Properties properties) throws InvalidColumnNameException{
 
 		final Schema inputSchema = pdt.getSchema();
 		
@@ -89,7 +89,7 @@ public class ExtractNetworkFromTable {
 		final Schema nodeSchema = new Schema();
 		final Schema edgeSchema = new Schema();
 
-		createNodeAndEdgeSchema(inputSchema, nodeSchema,edgeSchema, p);
+		createNodeAndEdgeSchema(inputSchema, nodeSchema,edgeSchema, properties);
 
 		final Graph outputGraph = new Graph(nodeSchema.instantiate(),
 				edgeSchema.instantiate(), false);
@@ -231,12 +231,12 @@ public class ExtractNetworkFromTable {
 		newSchema.addColumn(newColumnName, finalType);
 	}
 
-	private void createNodeAndEdgeSchema(Schema inputSchema, Schema nodeSchema, Schema edgeSchema, Properties p){
+	private void createNodeAndEdgeSchema(Schema inputSchema, Schema nodeSchema, Schema edgeSchema, Properties properties){
 		nodeSchema.addColumn("label", String.class);
 		edgeSchema.addColumn("source", int.class);
 		edgeSchema.addColumn("target",int.class);
 
-		if(p != null){
+		if(properties != null){
 			HashSet functionNames = new HashSet(this.abstractAFF.getFunctionNames());
 			HashSet columnNames = new HashSet();
 
@@ -244,10 +244,10 @@ public class ExtractNetworkFromTable {
 				columnNames.add(inputSchema.getColumnName(i));
 			}
 
-			for (final Iterator it = p.keySet().iterator(); it.hasNext();) {
+			for (final Iterator it = properties.keySet().iterator(); it.hasNext();) {
 				final String key = (String) it.next();
 
-				String sourceColumnName = p.getProperty(key);
+				String sourceColumnName = properties.getProperty(key);
 				final int index = sourceColumnName.lastIndexOf(".");
 				final String function = sourceColumnName.substring(index + 1);
 				sourceColumnName = sourceColumnName.substring(0,
