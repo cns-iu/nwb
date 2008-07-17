@@ -95,7 +95,7 @@ public class MergeNodes implements Algorithm {
     
     /*
      * key = node in the original graph that should be merged.
-     * value = merging node index value specifiied in the second last column in the nodeListTable
+     * value = merging node index value specified in the second last column in the nodeListTable
      */
     private Map mergingNodesMap = null;
     
@@ -269,7 +269,7 @@ public class MergeNodes implements Algorithm {
 				}					
 				else {
 					logger.log (LogService.LOG_WARNING, "The data types of "+theLabel+
-							" do not match. \n "+
+							" do not match. \n"+
 							"The data type of "+theLabel+ " in the node list table is "+ 
 							theNodeSchema.getColumnType(theLabel).getName()+".\n"+
 					        "But the data type of "+theLabel+ 
