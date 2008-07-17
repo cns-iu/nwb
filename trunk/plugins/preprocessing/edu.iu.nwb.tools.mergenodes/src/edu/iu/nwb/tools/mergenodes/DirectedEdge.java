@@ -24,9 +24,10 @@ public class DirectedEdge {
 		return target;
 	}
 	
-	public boolean equals(DirectedEdge edge){
-		if (source == edge.getSouceNode() && 
-			target == edge.getTargetNode())
+	public boolean equals(Object obj){
+		DirectedEdge edge=(DirectedEdge)obj;
+		if (source.equals(edge.getSouceNode() )&& 
+			target.equals(edge.getTargetNode()))
 			return true;
 		else
 			return false;
