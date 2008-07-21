@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <metatype:MetaData xmlns:metatype="http://www.osgi.org/xmlns/metatype/v1.0.0">
-	<OCD name="Duplicate Node Detector" id="edu.iu.nwb.preprocessing.duplicatenodedetector.DuplicateNodeDetectorAlgorithm.OCD"
+	<OCD name="Detect Duplicate Nodes" id="edu.iu.nwb.preprocessing.duplicatenodedetector.DuplicateNodeDetectorAlgorithm.OCD"
 		 description="Detects duplicate nodes by comparing their attributes ">
 		<AD name="Attribute to compare on" id="compareAttribute" type="String" description="Compare the similarity of each node based on the contents of this attribute" default=""></AD>
 		<AD name="Merge when this similar" id="mergeOnSimilarity" type="Float" description="Nodes whose labels are this similar are set up to be merged" default=".95"/>
