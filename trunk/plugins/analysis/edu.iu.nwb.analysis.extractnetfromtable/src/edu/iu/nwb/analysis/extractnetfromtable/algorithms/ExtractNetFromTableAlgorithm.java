@@ -66,7 +66,7 @@ public class ExtractNetFromTableAlgorithm implements Algorithm {
 		tableAttributes.put(DataProperty.MODIFIED, new Boolean(true));
 		tableAttributes.put(DataProperty.PARENT, data[0]);
 		tableAttributes.put(DataProperty.TYPE, DataProperty.MATRIX_TYPE);
-		tableAttributes.put(DataProperty.LABEL, "Unique Values from Column "+extractColumn);
+		tableAttributes.put(DataProperty.LABEL, "Merge Table: based on "+extractColumn);
 
 		return new Data[] { outputData1, outputData2 };
 		}catch(InvalidColumnNameException ex){
