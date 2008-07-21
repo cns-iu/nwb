@@ -1,6 +1,7 @@
 package edu.iu.nwb.analysis.extractdirectednetfromtable.algorithms;
 
 import java.io.IOException;
+import java.util.Arrays;
 import java.util.Dictionary;
 
 import org.cishell.framework.CIShellContext;
@@ -39,7 +40,7 @@ public class ExtractDirectedNetworkAlgorithmFactory implements AlgorithmFactory,
 		}
 
 		String[] columnNames = createKeyArray(t.getSchema());
-		
+		Arrays.sort(columnNames);
 
 		AttributeDefinition[] definitions = oldDefinition.getAttributeDefinitions(ObjectClassDefinition.ALL);
 

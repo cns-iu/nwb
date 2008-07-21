@@ -353,25 +353,40 @@ public class ISITableReader {
 	private TableData generateEmptyISITable() {
 		Schema isiTableSchema = new Schema();
 		
-		//for each content type for isi tags..
-		ContentType[] isiTagContentTypes = ContentType.getAllContentTypes();
-		for (int ii = 0; ii < isiTagContentTypes.length; ii++) {
-			ContentType isiTagContentType = isiTagContentTypes[ii];
+		//for each isi tag, alphabetically
+		ISITag[] isiTagsAlphabetically = ISITag.getTagsAlphabetically();
+		for (int i = 0; i < isiTagsAlphabetically.length; i++) {
+			ISITag tag = isiTagsAlphabetically[i];
 			
-			//for each tag corresponding to that content type...
-			ISITag[] tagsOfThisContentType = ISITag.getTagsWithContentType(isiTagContentType);
-			for (int jj = 0; jj < tagsOfThisContentType.length; jj++) {
-				ISITag tag = tagsOfThisContentType[jj];
-				
-				Class tagTableDataType = tag.type.getTableDataType();
-				
-				//add that tag to the table schema, with the table storage data type associated with the tags content type
-				//(e.g. Text -> String, Multi-value Text -> String)
-				if (tagTableDataType != null) {
-				isiTableSchema.addColumn(tag.columnName, tagTableDataType);
-				}
+			//add that tag to the table schema, with the table storage data type associated with the tags content type
+			//(e.g. Text -> String, Multi-value Text -> String)
+
+			Class tagTableDataType = tag.type.getTableDataType();
+			
+			if (tagTableDataType != null) {
+			isiTableSchema.addColumn(tag.columnName, tagTableDataType);
 			}
 		}
+
+//		//for each content type for isi tags..
+//		ContentType[] isiTagContentTypes = ContentType.getAllContentTypes();
+//		for (int ii = 0; ii < isiTagContentTypes.length; ii++) {
+//			ContentType isiTagContentType = isiTagContentTypes[ii];
+//			
+//			//for each tag corresponding to that content type...
+//			ISITag[] tagsOfThisContentType = ISITag.getTagsWithContentType(isiTagContentType);
+//			for (int jj = 0; jj < tagsOfThisContentType.length; jj++) {
+//				ISITag tag = tagsOfThisContentType[jj];
+//				
+//				Class tagTableDataType = tag.type.getTableDataType();
+//				
+//				//add that tag to the table schema, with the table storage data type associated with the tags content type
+//				//(e.g. Text -> String, Multi-value Text -> String)
+//				if (tagTableDataType != null) {
+//				isiTableSchema.addColumn(tag.columnName, tagTableDataType);
+//				}
+//			}
+//		}
 		
 		TableData emptyISITable = new TableData(isiTableSchema);
 		return emptyISITable;

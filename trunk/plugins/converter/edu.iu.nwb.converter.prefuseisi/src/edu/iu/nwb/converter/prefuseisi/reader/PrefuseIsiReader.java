@@ -41,7 +41,7 @@ public class PrefuseIsiReader implements Algorithm {
      	this.citationExtractionPreparer = new ISICitationExtractionPreparer(log);
     }
 
-    public Data[] execute() throws AlgorithmExecutionException{
+    public Data[] execute() throws AlgorithmExecutionException {
 
     	File file = (File) data[0].getData();
     	

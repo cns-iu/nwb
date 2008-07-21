@@ -1,6 +1,7 @@
 package edu.iu.nwb.analysis.extractnetfromtable.algorithms;
 
 import java.io.IOException;
+import java.util.Arrays;
 import java.util.Dictionary;
 
 import org.cishell.framework.CIShellContext;
@@ -38,6 +39,7 @@ public class ExtractNetFromTableAlgorithmFactory implements AlgorithmFactory, Pa
 		}
 
 		String[] columnNames = createKeyArray(t.getSchema());
+		Arrays.sort(columnNames);
 		
 
 		AttributeDefinition[] definitions = oldDefinition.getAttributeDefinitions(ObjectClassDefinition.ALL);
