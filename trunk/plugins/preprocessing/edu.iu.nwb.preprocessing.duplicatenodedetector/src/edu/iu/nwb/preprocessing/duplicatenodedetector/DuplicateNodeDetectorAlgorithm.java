@@ -92,7 +92,7 @@ public class DuplicateNodeDetectorAlgorithm implements Algorithm {
     				for (int j = i; j < nodeGroup.size(); j++) {
     					Integer secondNodeIndex = (Integer) nodeGroup.get(j);
     					//test how similar the two nodes are
-    					float similarity = compareNodesBy(this.compareAttributeName, firstNodeIndex, secondNodeIndex, nodeTable);
+    					float similarity = compareNodesCaseInsensitiveBy(this.compareAttributeName, firstNodeIndex, secondNodeIndex, nodeTable);
     	    		
     					//if their similarity is high enough to merge...
     	    			if (similarity >= this.mergeOnSimilarity) {
@@ -184,10 +184,17 @@ public class DuplicateNodeDetectorAlgorithm implements Algorithm {
 
     }
     
-    private float compareNodesBy(String attributeColumn, Integer nodeOneIndex, Integer nodeTwoIndex, Table nodeTable) {
+    private float compareNodesCaseSensitiveBy(String attributeColumn, Integer nodeOneIndex, Integer nodeTwoIndex, Table nodeTable) {
     	String nodeOneAttribute = (String) nodeTable.getString(nodeOneIndex.intValue(), attributeColumn);
      	String nodeTwoAttribute = (String) nodeTable.getString(nodeTwoIndex.intValue(), attributeColumn);
      	float similarity = this.similarityChecker.getSimilarity(nodeOneAttribute, nodeTwoAttribute);
+     	return similarity;
+    }
+    
+    private float compareNodesCaseInsensitiveBy(String attributeColumn, Integer nodeOneIndex, Integer nodeTwoIndex, Table nodeTable) {
+    	String nodeOneAttribute = (String) nodeTable.getString(nodeOneIndex.intValue(), attributeColumn);
+     	String nodeTwoAttribute = (String) nodeTable.getString(nodeTwoIndex.intValue(), attributeColumn);
+     	float similarity = this.similarityChecker.getSimilarity(nodeOneAttribute.toLowerCase(), nodeTwoAttribute.toLowerCase());
      	return similarity;
     }
     
