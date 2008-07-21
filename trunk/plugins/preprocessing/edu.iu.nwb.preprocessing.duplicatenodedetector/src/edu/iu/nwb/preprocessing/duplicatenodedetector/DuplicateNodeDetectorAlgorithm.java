@@ -161,7 +161,7 @@ public class DuplicateNodeDetectorAlgorithm implements Algorithm {
 		tableAttributes.put(DataProperty.MODIFIED, new Boolean(true));
 		tableAttributes.put(DataProperty.PARENT, data[0]);
 		tableAttributes.put(DataProperty.TYPE, DataProperty.MATRIX_TYPE);
-		tableAttributes.put(DataProperty.LABEL, "Unique Values from Column "+ this.compareAttributeName);
+		tableAttributes.put(DataProperty.LABEL, "Merge Table: based on "+ this.compareAttributeName);
 		
     	//format nodeLog
     	final File nodeLogFile = this.stringToFile(noteLog.toString(), "nodeLog");
@@ -169,7 +169,7 @@ public class DuplicateNodeDetectorAlgorithm implements Algorithm {
     	final Dictionary nodeAttr = nodeLogData.getMetadata();
     	 nodeAttr.put(DataProperty.PARENT, data[0]);
     	 nodeAttr.put(DataProperty.TYPE, DataProperty.TEXT_TYPE);
-    	 nodeAttr.put(DataProperty.LABEL, "Log: Unmerged but similar nodes");
+    	 nodeAttr.put(DataProperty.LABEL, "Text Log: Noteworthy nodes that will NOT be merged");
     	 
     	//format mergeLog	 
     	final File mergeLogFile = this.stringToFile(mergeLog.toString(), "mergeLog");
@@ -177,7 +177,7 @@ public class DuplicateNodeDetectorAlgorithm implements Algorithm {
     	final Dictionary mergeAttr = mergeLogData.getMetadata();    	
     	mergeAttr.put(DataProperty.PARENT, data[0]);
     	mergeAttr.put(DataProperty.TYPE, DataProperty.TEXT_TYPE);
-    	mergeAttr.put(DataProperty.LABEL, "Log: Merged Nodes");
+    	mergeAttr.put(DataProperty.LABEL, "Text Log: Nodes that will be merged");
     	
 		
 		return new Data[] {nodeTableData, mergeLogData, nodeLogData};
