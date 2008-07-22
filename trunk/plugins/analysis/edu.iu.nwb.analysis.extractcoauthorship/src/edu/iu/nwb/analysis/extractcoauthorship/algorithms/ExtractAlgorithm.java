@@ -17,6 +17,7 @@ import org.osgi.service.log.LogService;
 import edu.iu.nwb.analysis.extractcoauthorship.metadata.SupportedFileTypes;
 import edu.iu.nwb.analysis.extractcoauthorship.metadata.SupportedFileTypes.CitationFormat;
 import edu.iu.nwb.analysis.extractnetfromtable.components.ExtractNetworkFromTable;
+import edu.iu.nwb.analysis.extractnetfromtable.components.GraphContainer;
 import edu.iu.nwb.analysis.extractnetfromtable.components.InvalidColumnNameException;
 
 public class ExtractAlgorithm implements Algorithm, SupportedFileTypes {
@@ -54,22 +55,24 @@ public class ExtractAlgorithm implements Algorithm, SupportedFileTypes {
 			logger.log(LogService.LOG_ERROR, ie.getMessage());
 		}
 		try{
-		final ExtractNetworkFromTable enft = new ExtractNetworkFromTable(logger,
-				dataTable, CitationFormat.getAuthorColumnByName(fileFormat), "|", metaData, false);
+			String authorColumn = CitationFormat.getAuthorColumnByName(fileFormat);
+			GraphContainer gc = GraphContainer.initializeGraph(dataTable, authorColumn, authorColumn, false, metaData, this.logger);
+			final prefuse.data.Graph outputGraph = gc.buildGraph(authorColumn, authorColumn, "|", this.logger);
+			final Data outputData1 = new BasicData(outputGraph,
+					prefuse.data.Graph.class.getName());
+			final Dictionary graphAttributes = outputData1.getMetadata();
+			graphAttributes.put(DataProperty.MODIFIED, new Boolean(true));
+			graphAttributes.put(DataProperty.PARENT, data[0]);
+			graphAttributes.put(DataProperty.TYPE, DataProperty.NETWORK_TYPE);
+			graphAttributes.put(DataProperty.LABEL,
+					"Extracted Co-authorship network");
 		
 		
-		final prefuse.data.Graph outputGraph = enft.getGraph();
-		final prefuse.data.Table outputTable = enft.getTable();
-		final Data outputData1 = new BasicData(outputGraph,
-				prefuse.data.Graph.class.getName());
+		
+		final prefuse.data.Table outputTable = ExtractNetworkFromTable.constructTable(outputGraph);
+	
 		final Data outputData2 = new BasicData(outputTable,
 				prefuse.data.Table.class.getName());
-		final Dictionary graphAttributes = outputData1.getMetadata();
-		graphAttributes.put(DataProperty.MODIFIED, new Boolean(true));
-		graphAttributes.put(DataProperty.PARENT, data[0]);
-		graphAttributes.put(DataProperty.TYPE, DataProperty.NETWORK_TYPE);
-		graphAttributes.put(DataProperty.LABEL,
-				"Extracted Co-Authorship Network");
 
 		final Dictionary tableAttributes = outputData2.getMetadata();
 		tableAttributes.put(DataProperty.MODIFIED, new Boolean(true));
