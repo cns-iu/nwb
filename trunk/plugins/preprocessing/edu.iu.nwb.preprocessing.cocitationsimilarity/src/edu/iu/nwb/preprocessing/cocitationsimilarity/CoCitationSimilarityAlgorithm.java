@@ -39,26 +39,32 @@ public class CoCitationSimilarityAlgorithm implements Algorithm {
 			File outputNWBFile = File.createTempFile("nwb-", ".nwb");
 			
 			//create the network File
+			
+			//EdgeCounter counter = new EdgeCounter();
+			//new NWBFileParser(inputNWBFile).parse(counter);
+			//int edges = 
+			
+			
 			NWBFileParser parser = new NWBFileParser(inputNWBFile);
-			parser.parse(new NWBToEdgeFileHandler(new FileOutputStream(tmpEdgeFile)));
-			Data simData = new BasicData(tmpEdgeFile,"file:text/edge");
+			parser.parse(new CocitationComputation(outputNWBFile));
+			//Data simData = new BasicData(tmpEdgeFile,"file:text/edge");
 			
 			//Run cocitation on network File
-			Algorithm coCitationAlg = staticAlgorithmFactory.createAlgorithm(new Data[]{simData}, parameters, context);
-			Data[] edgeData = coCitationAlg.execute();
-			File edgeFile = (File) edgeData[0].getData();
+			//Algorithm coCitationAlg = staticAlgorithmFactory.createAlgorithm(new Data[]{simData}, parameters, context);
+			//Data[] edgeData = coCitationAlg.execute();
+			//File edgeFile = (File) edgeData[0].getData();
 			
 			//Create a new NWB file w/ new similarity edges
-			if (edgeData != null) {
-				NWBEdgeMerger merger = new NWBEdgeMerger(edgeFile,inputNWBFile,outputNWBFile);
-				merger.merge();
-			} else {
-				throw new ParsingException("Co-Citation Failed!");
-			}
+			//if (edgeData != null) {
+			//	NWBEdgeMerger merger = new NWBEdgeMerger(edgeFile,inputNWBFile,outputNWBFile);
+			//	merger.merge();
+			//} else {
+			//	throw new ParsingException("Co-Citation Failed!");
+			//}
 			
 			//If all has gone well, return the new nwb file
 			Data outNWBData = new BasicData(outputNWBFile,"file:text/nwb");
-			outNWBData.getMetadata().put(DataProperty.LABEL, "Co-Citation Similarity Network");
+			outNWBData.getMetadata().put(DataProperty.LABEL, "Bibliographic Coupling Similarity Network");
 			outNWBData.getMetadata().put(DataProperty.TYPE, DataProperty.NETWORK_TYPE);
 			outNWBData.getMetadata().put(DataProperty.PARENT, data[0]);
 			return new Data[]{outNWBData};

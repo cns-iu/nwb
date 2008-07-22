@@ -4,7 +4,11 @@ Bundle-Name: Co-Citation Similarity Network Extraction
 Bundle-SymbolicName: edu.iu.nwb.preprocessing.cocitationsimilarity
 Bundle-Version: 1.0.0
 Bundle-ClassPath: .
-Import-Package: edu.iu.nwb.util.nwbfile,
+Import-Package: cern.colt.matrix,
+ cern.colt.matrix.doublealgo,
+ cern.colt.matrix.impl,
+ cern.colt.matrix.linalg,
+ edu.iu.nwb.util.nwbfile,
  org.cishell.framework;version="1.0.0",
  org.cishell.framework.algorithm;version="1.0.0",
  org.cishell.framework.data;version="1.0.0",
