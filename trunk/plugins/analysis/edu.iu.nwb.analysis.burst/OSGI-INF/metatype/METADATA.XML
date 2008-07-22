@@ -9,7 +9,7 @@
 		<AD name="Date Column" id="date" type="String" description="The column containing date values." default="date"/>
 		<AD name="Date Format" id="format" type="String" description="The format of the date column, conforming to the description at http://java.sun.com/j2se/1.4.2/docs/api/java/text/SimpleDateFormat.html ." default="yyyy"/>
 		<AD name="Text Column" id="text" type="String" description="The column containing text." default="text"/>
-		<AD name="Text Separator" id="separator" type="String" description="The separator between the strings." default=","/>
+		<AD name="Text Separator" id="separator" type="String" description="The separator between the strings." default="|"/>
 	</OCD>
 	<Designate pid="edu.iu.nwb.analysis.burst.Burst">
 		<Object ocdref="edu.iu.nwb.analysis.burst.Burst.OCD" />
