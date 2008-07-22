@@ -12,8 +12,7 @@ import org.cishell.framework.data.DataProperty;
 import org.osgi.service.log.LogService;
 
 import prefuse.data.Graph;
-import edu.iu.nwb.analysis.extractdirectednetfromtable.components.ExtractDirectedNetworkFromTable;
-import edu.iu.nwb.analysis.extractdirectednetfromtable.components.GraphContainer;
+import edu.iu.nwb.analysis.extractnetfromtable.components.GraphContainer;
 import edu.iu.nwb.analysis.extractnetfromtable.components.InvalidColumnNameException;
 import edu.iu.nwb.analysis.extractnetfromtable.components.PropertyHandler;
 
@@ -49,7 +48,7 @@ public class ExtractDirectedNetworkAlgorithm implements Algorithm {
     	}
     	
     	try{
-    	GraphContainer gc = ExtractDirectedNetworkFromTable.initializeGraph(dataTable, sourceColumn, targetColumn, functions, this.logger);
+    	GraphContainer gc = GraphContainer.initializeGraph(dataTable, sourceColumn, targetColumn, true,functions, this.logger);
     	Graph directedNetwork = gc.buildGraph(sourceColumn, targetColumn, split, this.logger);
     	
     	Data network = ExtractDirectedNetworkAlgorithm.constructData(data[0],(Object)directedNetwork,prefuse.data.Graph.class.toString(),DataProperty.NETWORK_TYPE, 
