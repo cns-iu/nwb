@@ -20,7 +20,7 @@ public class AssembleAggregateFunctions {
 		aaf.addAggregateFunctionFactory(AggregateFunctionNames.MAX, new MaxFunctionFactory());
 		aaf.addAggregateFunctionFactory(AggregateFunctionNames.MIN, new MinFunctionFactory());
 		aaf.addAggregateFunctionFactory(AggregateFunctionNames.SUM, new SumFunctionFactory());
-		aaf.addAggregateFunctionFactory(AggregateFunctionNames.LIST, new ListHackFunctionFactory());
+		aaf.addAggregateFunctionFactory(AggregateFunctionNames.MODE, new ModeFunctionFactory());
 
 		return aaf;
 	}
