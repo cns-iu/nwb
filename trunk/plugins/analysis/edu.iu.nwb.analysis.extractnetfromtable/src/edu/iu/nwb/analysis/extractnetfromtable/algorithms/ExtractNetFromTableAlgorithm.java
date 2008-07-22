@@ -11,6 +11,7 @@ import org.cishell.framework.data.Data;
 import org.cishell.framework.data.DataProperty;
 import org.osgi.service.log.LogService;
 
+import edu.iu.nwb.analysis.extractnetfromtable.components.ExtractNetworkFromTable;
 import edu.iu.nwb.analysis.extractnetfromtable.components.GraphContainer;
 import edu.iu.nwb.analysis.extractnetfromtable.components.InvalidColumnNameException;
 import edu.iu.nwb.analysis.extractnetfromtable.components.PropertyHandler;
@@ -56,8 +57,8 @@ public class ExtractNetFromTableAlgorithm implements Algorithm {
 		graphAttributes.put(DataProperty.LABEL,
 				"Extracted Network on Column "+extractColumn);
 
-		/*
-		final prefuse.data.Table outputTable = enft.getTable();
+		
+		final prefuse.data.Table outputTable = ExtractNetworkFromTable.constructTable(outputGraph);
 		final Data outputData2 = new BasicData(outputTable,
 				prefuse.data.Table.class.getName());	
 		final Dictionary tableAttributes = outputData2.getMetadata();
@@ -67,8 +68,7 @@ public class ExtractNetFromTableAlgorithm implements Algorithm {
 		tableAttributes.put(DataProperty.LABEL, "Merge Table: based on "+extractColumn);
 
 		return new Data[] { outputData1, outputData2 };
-		*/
-		return new Data[] {outputData1};
+		
 		}catch(InvalidColumnNameException ex){
 			throw new AlgorithmExecutionException(ex.getMessage(),ex);
 		}
