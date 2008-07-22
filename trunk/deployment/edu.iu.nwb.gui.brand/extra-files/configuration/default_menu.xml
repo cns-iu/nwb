@@ -150,8 +150,8 @@
     <menu name="Extract Co-Occurrence Network from Table" pid="edu.iu.nwb.analysis.extractnetfromtable.algorithms.ExtractNetFromTableAlgorithm"/>
     <menu name="Extract Directed Network from Table" pid="edu.iu.nwb.analysis.extractdirectednetfromtable.algorithms.ExtractDirectedNetworkAlgorithm"/>
     <menu type="break"/>    
-    <menu name="Extract Bibliographic Coupling Similarity Network" pid="edu.iu.nwb.preprocessing.bibcouplingsimilarity.BibCouplingSimilarityAlgorithm"/>
-    <menu name="Extract Co-Citation Similarity Network" pid="edu.iu.nwb.preprocessing.cocitationsimilarity.CoCitationSimilarityAlgorithm"/>
+    <menu name="Extract Co-citation Similarity Network" pid="edu.iu.nwb.preprocessing.bibcouplingsimilarity.BibCouplingSimilarityAlgorithm"/>
+    <menu name="Extract Bibliographic Coupling Similarity Network" pid="edu.iu.nwb.preprocessing.cocitationsimilarity.CoCitationSimilarityAlgorithm"/>
     <menu type="break"/>
     <menu name="Remove ISI Duplicate Records" pid="edu.iu.nwb.analysis.isidupremover.ISIDupRemoverAlgorithm"/>
     <menu name="Remove Rows with Multitudinous Fields" pid="edu.iu.nwb.preprocessing.tablefilter.Filter"/>	
