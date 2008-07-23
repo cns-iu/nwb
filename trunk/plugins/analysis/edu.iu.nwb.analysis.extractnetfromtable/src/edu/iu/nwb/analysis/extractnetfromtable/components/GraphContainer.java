@@ -9,7 +9,6 @@ import java.util.regex.Pattern;
 
 import org.osgi.service.log.LogService;
 
-import prefuse.data.Edge;
 import prefuse.data.Graph;
 import prefuse.data.Node;
 import prefuse.data.Schema;
