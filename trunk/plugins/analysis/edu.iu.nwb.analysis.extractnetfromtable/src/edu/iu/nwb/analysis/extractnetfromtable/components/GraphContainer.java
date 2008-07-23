@@ -16,6 +16,7 @@ import prefuse.data.Table;
 import prefuse.data.column.Column;
 
 public class GraphContainer {
+	
 	private Graph graph;
 	private Table table;
 	private AggregateFunctionMappings nodeMap;
