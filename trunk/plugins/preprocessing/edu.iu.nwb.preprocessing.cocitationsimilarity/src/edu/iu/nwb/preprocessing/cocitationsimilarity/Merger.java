@@ -48,7 +48,7 @@ public class Merger implements NWBFileParserHandler {
 	}
 	
 	public void setNodeSchema(LinkedHashMap schema) {
-		schema.put("cited", NWBFileProperty.TYPE_INT);
+		schema.put("references", NWBFileProperty.TYPE_INT);
 		out.setNodeSchema(schema);
 	}
 	
@@ -57,7 +57,7 @@ public class Merger implements NWBFileParserHandler {
 		if(citations == null) {
 			citations = new Integer(0);
 		}
-		attributes.put("cited", citations);
+		attributes.put("references", citations);
 		out.addNode(id, label, attributes);
 	}
 	
