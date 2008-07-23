@@ -34,7 +34,7 @@ public class CoCitationSimilarityAlgorithm implements Algorithm {
 
     public Data[] execute() throws AlgorithmExecutionException {
     	try {
-    		File tmpEdgeFile = File.createTempFile("nwb-", ".edge");
+    		//File tmpEdgeFile = File.createTempFile("nwb-", ".edge");
 			File inputNWBFile = (File)data[0].getData();
 			File outputNWBFile = File.createTempFile("nwb-", ".nwb");
 			
@@ -46,7 +46,11 @@ public class CoCitationSimilarityAlgorithm implements Algorithm {
 			
 			
 			NWBFileParser parser = new NWBFileParser(inputNWBFile);
-			parser.parse(new CocitationComputation(outputNWBFile));
+			CocitationComputation computation = new CocitationComputation();
+			parser.parse(computation);
+			
+			parser = new NWBFileParser(inputNWBFile);
+			parser.parse(new Merger(computation, outputNWBFile));
 			//Data simData = new BasicData(tmpEdgeFile,"file:text/edge");
 			
 			//Run cocitation on network File

@@ -1,4 +1,4 @@
-package edu.iu.nwb.preprocessing.cocitationsimilarity;
+package edu.iu.nwb.preprocessing.bibcouplingsimilarity;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -69,11 +69,11 @@ public class CocitationComputation implements NWBFileParserHandler {
 	public void addDirectedEdge(int sourceNode, int targetNode, Map attributes) {
 		Integer source = new Integer(sourceNode);
 		Integer target = new Integer(targetNode);
-		updateCiteCount(target);
-		if(!adjacencyList.containsKey(source)) {
-			adjacencyList.put(source, new HashSet());
+		updateCiteCount(source);
+		if(!adjacencyList.containsKey(target)) {
+			adjacencyList.put(target, new HashSet());
 		}
-		((Set) adjacencyList.get(source)).add(target);
+		((Set) adjacencyList.get(target)).add(source);
 	}
 	public void addUndirectedEdge(int node1, int node2, Map attributes) {}
 	public void setDirectedEdgeCount(int numberOfEdges) {}

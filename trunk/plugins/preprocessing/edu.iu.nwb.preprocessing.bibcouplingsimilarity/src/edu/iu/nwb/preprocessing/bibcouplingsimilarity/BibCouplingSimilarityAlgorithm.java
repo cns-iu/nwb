@@ -14,6 +14,8 @@ import org.cishell.framework.data.DataProperty;
 import org.cishell.templates.staticexecutable.StaticExecutableAlgorithmFactory;
 import org.osgi.framework.BundleContext;
 
+import edu.iu.nwb.preprocessing.bibcouplingsimilarity.CocitationComputation;
+import edu.iu.nwb.preprocessing.bibcouplingsimilarity.Merger;
 import edu.iu.nwb.util.nwbfile.NWBFileParser;
 import edu.iu.nwb.util.nwbfile.ParsingException;
 
@@ -34,27 +36,37 @@ public class BibCouplingSimilarityAlgorithm implements Algorithm {
 
     public Data[] execute() throws AlgorithmExecutionException {
     	try {
-    		File tmpEdgeFile = File.createTempFile("nwb-", ".edge");
+    		//File tmpEdgeFile = File.createTempFile("nwb-", ".edge");
 			File inputNWBFile = (File)data[0].getData();
 			File outputNWBFile = File.createTempFile("nwb-", ".nwb");
 			
 			//create the network File
+			
+			//EdgeCounter counter = new EdgeCounter();
+			//new NWBFileParser(inputNWBFile).parse(counter);
+			//int edges = 
+			
+			
 			NWBFileParser parser = new NWBFileParser(inputNWBFile);
-			parser.parse(new NWBToEdgeFileHandler(new FileOutputStream(tmpEdgeFile)));
-			Data simData = new BasicData(tmpEdgeFile,"file:text/edge");
+			CocitationComputation computation = new CocitationComputation();
+			parser.parse(computation);
+			
+			parser = new NWBFileParser(inputNWBFile);
+			parser.parse(new Merger(computation, outputNWBFile));
+			//Data simData = new BasicData(tmpEdgeFile,"file:text/edge");
 			
 			//Run cocitation on network File
-			Algorithm bibCouplingAlg = staticAlgorithmFactory.createAlgorithm(new Data[]{simData}, parameters, context);
-			Data[] edgeData = bibCouplingAlg.execute();
-			File edgeFile = (File) edgeData[0].getData();
+			//Algorithm coCitationAlg = staticAlgorithmFactory.createAlgorithm(new Data[]{simData}, parameters, context);
+			//Data[] edgeData = coCitationAlg.execute();
+			//File edgeFile = (File) edgeData[0].getData();
 			
 			//Create a new NWB file w/ new similarity edges
-			if (edgeData != null) {
-				NWBEdgeMerger merger = new NWBEdgeMerger(edgeFile,inputNWBFile,outputNWBFile);
-				merger.merge();
-			} else {
-				throw new ParsingException("Bibliographic Coupling Failed!");
-			}
+			//if (edgeData != null) {
+			//	NWBEdgeMerger merger = new NWBEdgeMerger(edgeFile,inputNWBFile,outputNWBFile);
+			//	merger.merge();
+			//} else {
+			//	throw new ParsingException("Co-Citation Failed!");
+			//}
 			
 			//If all has gone well, return the new nwb file
 			Data outNWBData = new BasicData(outputNWBFile,"file:text/nwb");
