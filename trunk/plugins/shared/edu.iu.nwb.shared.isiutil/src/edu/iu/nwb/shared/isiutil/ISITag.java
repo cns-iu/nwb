@@ -1,10 +1,9 @@
 package edu.iu.nwb.shared.isiutil;
 
 import java.util.ArrayList;
-import java.util.Arrays;
+import java.util.Collections;
 import java.util.Dictionary;
 import java.util.Hashtable;
-import java.util.Iterator;
 import java.util.List;
 
 public class ISITag {
@@ -28,7 +27,7 @@ public class ISITag {
 	public static final ISITag DOCUMENT_TYPE                      = new ISITag("DT", "Document Type", ContentType.TEXT);
 	public static final ISITag EMAIL_PRIMARY_AUTHOR                        = new ISITag("EM", "E-mail Address", ContentType.TEXT);
 	public static final ISITag ENDING_PAGE                        = new ISITag("EP", "Ending Page", ContentType.TEXT);
-	public static final ISITag END_OF_RECORD                      = new ISITag("ER", "End of Record", ContentType.NULL);
+	public static final ISITag END_OF_RECORD                      = new ISITag("ER", "End of RecordtagName", ContentType.NULL);
 	public static final ISITag ISI_DOCUMENT_DELIVERY_NUMBER       = new ISITag("GA", "ISI Document Delivery Number", ContentType.TEXT);
 	public static final ISITag NEW_KEYWORDS_GIVEN_BY_ISI          = new ISITag("ID", "New ISI Keywords", ContentType.MULTI_VALUE_TEXT,  ";");
 	public static final ISITag ISSUE                              = new ISITag("IS", "Issue", ContentType.TEXT);
@@ -101,7 +100,6 @@ public class ISITag {
 		//add to isiTags
 		
 		isiTags.add(newTag);
-		
 		//add to tagNameToTag
 		
 		tagNameToTag.put(newTag.tagName, newTag);
@@ -154,6 +152,10 @@ public class ISITag {
 		this.separator = separator;
 		this.isFileUnique = isFileUnique;
 	}
+	
+	public String getColumnName() {
+		return this.columnName;
+	}
 
 	public String toString() {
 		return this.tagName;
@@ -190,6 +192,11 @@ public class ISITag {
 		} else {
 			return null;
 		}
+	}
+	
+	public static ISITag[] getTagsAlphabetically() {
+		Collections.sort(isiTags, new ISITagAlphabeticalComparator());
+		return (ISITag[]) isiTags.toArray(new ISITag[0]);
 	}
 	
 	public static ISITag[] getTagsWithContentType(ContentType tagType) {
