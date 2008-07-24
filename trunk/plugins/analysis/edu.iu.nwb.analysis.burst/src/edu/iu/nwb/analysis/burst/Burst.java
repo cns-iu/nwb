@@ -120,7 +120,7 @@ public class Burst implements Algorithm {
 		
 		Date[] dateArray = dates.keySet().toArray(new Date[0]);
 		
-		Schema resultsSchema = new Schema(new String[]{"word", "length", "weight", "total power", "start", "end"}, new Class[]{String.class, int.class, double.class, double.class, String.class, String.class});
+		Schema resultsSchema = new Schema(new String[]{"Word", "Length", "Weight", "Strength", "Start", "End"}, new Class[]{String.class, int.class, double.class, double.class, String.class, String.class});
 		Table results = resultsSchema.instantiate();
 		
 		for(String word : entryMap.keySet()) {
@@ -156,12 +156,12 @@ public class Burst implements Algorithm {
 							}
 							logger.log(LogService.LOG_INFO,word + " starts: " + start + " ends: " + end);
 							int row = results.addRow();
-							results.setString(row, "word", word);
-							results.setInt(row, "length", endIndex - startIndex + 1);
-							results.setDouble(row, "weight", currentCell.totalPower[k]);
-							results.setDouble(row, "total power", totalPower);
-							results.setString(row, "start", start);
-							results.setString(row, "end", end);
+							results.setString(row, "Word", word);
+							results.setInt(row, "Length", endIndex - startIndex + 1);
+							results.setDouble(row, "Weight", currentCell.totalPower[k]);
+							results.setDouble(row, "Strength", totalPower);
+							results.setString(row, "Start", start);
+							results.setString(row, "End", end);
 						}
 					}
 					
@@ -188,6 +188,7 @@ public class Burst implements Algorithm {
 			throw new AlgorithmExecutionException("The column '" + textColumn + "' does not exist or cannot be accessed as a string.");
 		}
 	}
+	
 	
 	private Cell[] computeStates(int n, int[] entry, int[] binBase) throws BurstException {
 		//logger.log(LogService.LOG_INFO, "## " + bin_k + " " + bin_n + " " + expected);
