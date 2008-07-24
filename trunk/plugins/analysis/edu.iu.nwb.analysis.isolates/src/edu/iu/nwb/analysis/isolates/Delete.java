@@ -20,61 +20,68 @@ public class Delete implements Algorithm {
 	Data[] data;
 	Dictionary parameters;
 	CIShellContext context;
+	LogService logger;
 
 	public Delete(Data[] data, Dictionary parameters, CIShellContext context) {
 		this.data = data;
 		this.parameters = parameters;
 		this.context = context;
+		this.logger = (LogService) context.getService(LogService.class.getName());
 
 	}
 
 	public Data[] execute() {
+		Graph inputGraphOriginal = (Graph) this.data[0].getData();
 
-		LogService logger = (LogService)context.getService(LogService.class.getName());
+		logNumberOfInputNodes(inputGraphOriginal.numVertices()); 
 
-
-		Graph inputGraph = (Graph) this.data[0].getData();
-		logger.log(LogService.LOG_INFO, "" + inputGraph.numVertices() + " input nodes");
-
-		Graph outputGraph = (Graph) inputGraph.copy(); //chaining these calls should mean getEqualEdge works
-
-
-
-
-
-
-		Iterator checking = outputGraph.getVertices().iterator();
+		Graph inputGraphCopy = (Graph) inputGraphOriginal.copy(); // (chaining these calls should mean getEqualEdge works)
 
 		Set toRemove = new HashSet();
 
-		while(checking.hasNext()) {
-			Vertex vertex = (Vertex) checking.next();
-
-			if(vertex.degree() == 0) {
-
+		// for each vertex in the inputGraph..
+		Iterator vertexIt = inputGraphCopy.getVertices().iterator();
+		while (vertexIt.hasNext()) {
+			Vertex vertex = (Vertex) vertexIt.next();
+			// if the vertex has degree zero...
+			if (vertex.degree() == 0) {
+				// mark it for removal
 				toRemove.add(vertex);
 
 			}
 		}
 
+		// remove all vertices marked for removal
+		GraphUtils.removeVertices(inputGraphCopy, toRemove);
+		Graph outputGraph = inputGraphCopy;
 
-		GraphUtils.removeVertices(outputGraph, toRemove);
-
-
-
-
-
-		Data output = new BasicData(outputGraph, Graph.class.getName());
-
+		logNumberOfOutputNodes(outputGraph.numVertices(), toRemove.size());
+		
+		//format and return output
+		
+		Data output = new BasicData(inputGraphCopy, Graph.class.getName());
 		Dictionary metadata = output.getMetadata();
 		metadata.put(DataProperty.LABEL, "After removing isolates");
 		metadata.put(DataProperty.PARENT, this.data[0]);
 		metadata.put(DataProperty.TYPE, DataProperty.NETWORK_TYPE);
 
-		return new Data[]{output};
+		return new Data[] { output };
+	}
+	
+	private void logNumberOfInputNodes(int numInputNodes) {
+		logger.log(LogService.LOG_INFO, "" + numInputNodes + " input nodes");
+	}
+	
+	private void logNumberOfOutputNodes(int numOutputNodes, int numRemoved) {
+		
+		String wasOrWere;
+		if (numRemoved == 1) {
+			wasOrWere = "was";
+		} else {
+			wasOrWere = "were";
+		}
 
-
-
-
+		logger.log(LogService.LOG_INFO, "" + numOutputNodes + " output nodes, " + numRemoved + " "
+				+ wasOrWere + " deleted");
 	}
 }
