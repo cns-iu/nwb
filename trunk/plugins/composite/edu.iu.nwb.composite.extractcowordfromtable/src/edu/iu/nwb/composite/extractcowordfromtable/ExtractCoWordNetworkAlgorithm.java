@@ -7,10 +7,14 @@ import org.cishell.framework.CIShellContext;
 import org.cishell.framework.algorithm.Algorithm;
 import org.cishell.framework.algorithm.AlgorithmExecutionException;
 import org.cishell.framework.algorithm.AlgorithmFactory;
+import org.cishell.framework.data.BasicData;
 import org.cishell.framework.data.Data;
+import org.cishell.framework.data.DataProperty;
 import org.cishell.service.conversion.ConversionException;
 import org.cishell.service.conversion.DataConversionService;
 import org.osgi.service.log.LogService;
+
+import prefuse.data.Table;
 
 public class ExtractCoWordNetworkAlgorithm implements Algorithm {
 	Data[] data;
@@ -45,9 +49,17 @@ public class ExtractCoWordNetworkAlgorithm implements Algorithm {
 					new Hashtable(), context);
 			Data[] coWordNetworkData = bibCouplingAlg.execute();
 			//return undirected similarity network
+			addCorrectMetadata(coWordNetworkData[0], data[0]);
 			return coWordNetworkData;
 		} catch (ConversionException e) {
 			throw new AlgorithmExecutionException(e.getMessage(), e);
 		}
 	}
+	
+	 private Data addCorrectMetadata(Data networkData, Data parentData) {
+			networkData.getMetadata().put(DataProperty.LABEL, "Co-Word Occurrence network");
+	        networkData.getMetadata().put(DataProperty.TYPE, DataProperty.NETWORK_TYPE);
+	        networkData.getMetadata().put(DataProperty.PARENT, parentData);
+	        return networkData;
+	    }
 }
