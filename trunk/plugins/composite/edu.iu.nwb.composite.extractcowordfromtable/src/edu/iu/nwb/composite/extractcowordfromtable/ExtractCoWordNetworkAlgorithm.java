@@ -35,20 +35,15 @@ public class ExtractCoWordNetworkAlgorithm implements Algorithm {
 
 	public Data[] execute() throws AlgorithmExecutionException {
 		try {
-			System.out.println("Starting coword");
 			//turn scientometrics data table into prefuse Graph of directed network
 			Algorithm extractAlg = extractDirectedNetwork.createAlgorithm(data, parameters, context);
 			Data[] directedNetworkData = extractAlg.execute();
-			System.out.println("Done extracting directed");
 			//converter prefuse Graph of directed network into nwb graph file of directed network
 			Data convertedNetworkData = converter.convert(directedNetworkData[0], "file:text/nwb");
-			System.out.println("Done converting");
 			//turn nwb graph file of directed network into undirected similarity network
 			Algorithm bibCouplingAlg = bibliographicCoupling.createAlgorithm(new Data[] { convertedNetworkData },
 					new Hashtable(), context);
 			Data[] coWordNetworkData = bibCouplingAlg.execute();
-			System.out.println("Done with coupling");
-			System.out.println("coWord length:" + coWordNetworkData.length);
 			//return undirected similarity network
 			return coWordNetworkData;
 		} catch (ConversionException e) {
