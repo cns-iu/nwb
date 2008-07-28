@@ -146,17 +146,21 @@
 	</top_menu>
 
     <top_menu name="Scientometrics">    
-    <menu name="Extract Co-Authorship Network" pid="edu.iu.nwb.analysis.extractcoauthorship"/>
-    <menu name="Extract Co-Occurrence Network from Table" pid="edu.iu.nwb.analysis.extractnetfromtable.algorithms.ExtractNetFromTableAlgorithm"/>
-    <menu name="Extract Directed Network from Table" pid="edu.iu.nwb.analysis.extractdirectednetfromtable.algorithms.ExtractDirectedNetworkAlgorithm"/>
-    <menu type="break"/>    
-    <menu name="Extract Co-citation Similarity Network" pid="edu.iu.nwb.preprocessing.bibcouplingsimilarity.BibCouplingSimilarityAlgorithm"/>
-    <menu name="Extract Bibliographic Coupling Similarity Network" pid="edu.iu.nwb.preprocessing.cocitationsimilarity.CoCitationSimilarityAlgorithm"/>
-    <menu type="break"/>
     <menu name="Remove ISI Duplicate Records" pid="edu.iu.nwb.analysis.isidupremover.ISIDupRemoverAlgorithm"/>
     <menu name="Remove Rows with Multitudinous Fields" pid="edu.iu.nwb.preprocessing.tablefilter.Filter"/>	
     <menu name="Detect Duplicate Nodes" pid="edu.iu.nwb.preprocessing.duplicatenodedetector.DuplicateNodeDetectorAlgorithm"/>    
     <menu name="Update Network by Merging Nodes" pid="edu.iu.nwb.tools.mergenodes.MergeNodes"/>
+    <menu type="break"/>
+    <menu name="Extract Directed Network" pid="edu.iu.nwb.analysis.extractdirectednetfromtable.algorithms.ExtractDirectedNetworkAlgorithm"/>
+    <menu type="break"/>
+    <menu name="Extract Co-Occurrence Network" pid="edu.iu.nwb.analysis.extractnetfromtable.algorithms.ExtractNetFromTableAlgorithm"/>
+    <menu name="Extract Word Co-Occurrence Network" pid="edu.iu.nwb.composite.extractcowordfromtable.ExtractCoWordNetworkAlgorithm"/>
+    <menu name="Extract Co-Author Network" pid="edu.iu.nwb.analysis.extractcoauthorship"/>
+    <menu name="Extract Reference Co-Occurrence (Bibliographic Coupling) Network" pid="edu.iu.nwb.preprocessing.cocitationsimilarity.CoCitationSimilarityAlgorithm"/>
+    <menu type="break"/>    
+    <menu name="Extract Document Co-citation Network" pid="edu.iu.nwb.preprocessing.bibcouplingsimilarity.BibCouplingSimilarityAlgorithm"/>
+    <menu name="Extract Author Co-citation Network" pid="edu.iu.nwb.preprocessing.bibcouplingsimilarity.BibCouplingSimilarityAlgorithm"/>
+    
     </top_menu>
     
     <top_menu name="Help">      
