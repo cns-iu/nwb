@@ -1,0 +1,2269 @@
+FN ISI Export Format
+VR 1.0
+PT J
+AU Pomfret, JC
+   Knell, RJ
+AF Pomfret, Joanne C.
+   Knell, Robert J.
+TI Crowding, sex ratio and horn evolution in a South African beetle
+   community
+SO PROCEEDINGS OF THE ROYAL SOCIETY B-BIOLOGICAL SCIENCES
+LA English
+DT Article
+DE sexual selection; mean crowding; population density; sexual weaponry;
+   Onthophagini; operational sex ratio
+ID ONTHOPHAGUS-ACUMINATUS COLEOPTERA; ALTERNATIVE REPRODUCTIVE TACTICS;
+   MATE-LOCATING BEHAVIOR; MALE-MALE COMPETITION; POPULATION-DENSITY;
+   CALOGLYPHUS-BERLESEI; MATING SYSTEMS; ACARID MITE; DIMORPHISM; SELECTION
+AB Sexually selected ornaments and weapons are exceptionally variable,
+   even between closely related species. It has long been recognized that
+   some of this diversity can be explained by differences in mating
+   systems between species, but there remains substantial variation
+   between species with similar mating systems. We investigated the roles
+   of sex ratio (measured as operational sex ratio, OSR) and population
+   density (measured as mean male crowding, a measure indicating the
+   average number of conspecific males that an individual male animal will
+   encounter) in determining horn presence in a community of South African
+   dung beetles. Analysis of data from 14 species using a generalized
+   least-squares model incorporating phylogenetic influences found that
+   both OSR and mean crowding were significant predictors of horn
+   presence, with hornless species tending to show female-biased sex
+   ratios and high levels of crowding. The influence of mean crowding on
+   horn diversity between species probably reflects the difficulty of
+   guarding and monopolizing females when many competitors are present,
+   meaning that males who adopt 'scramble' tactics tend to be favoured.
+C1 Univ London Queen Mary Coll, Sch Biol & Chem Sci, London E1 4NS, England.
+RP Knell, RJ, Univ London Queen Mary Coll, Sch Biol & Chem Sci, Mile End
+   Rd, London E1 4NS, England.
+EM r.knell@qmul.ac.uk
+CR ALCOCK J, 1986, J ZOOL, V209, P105
+   ANDERSSON M, 1994, SEXUAL SELECTION
+   ARAK A, 1983, MATE CHOICE, P181
+   BERTIN A, 2005, J ZOOL 4, V265, P333, DOI 10.1017/S0952836905006400
+   BORGIA G, 1980, BEHAVIOUR, V75, P185
+   CLUTTONBROCK TH, 1992, Q REV BIOL, V67, P437
+   CONNER J, 1989, EVOLUTION, V43, P1378
+   DARWIN C, 1871, DESCENT MAN SELECTIO
+   DAVIS ALV, 1996, AGR ECOSYST ENVIRON, V58, P157
+   EBERHARD WG, 1991, EVOLUTION, V45, P18
+   EMLEN DJ, 1994, P ROY SOC LOND B BIO, V256, P131
+   EMLEN DJ, 1997, BEHAV ECOL SOCIOBIOL, V41, P335
+   EMLEN DJ, 2000, ANNU REV ENTOMOL, V45, P661
+   EMLEN DJ, 2005, EVOLUTION, V59, P1060
+   EMLEN ST, 1976, BEHAV ECOL SOCIOBIOL, V1, P285, DOI 10.1007/BF00300069
+   EMLEN ST, 1977, SCIENCE, V197, P215
+   FRECKLETON RP, 2002, AM NAT, V160, P712
+   GWYNNE DT, 1990, NATURE, V346, P172
+   HAMILTON WD, 1979, REPROD COMPETITION S, P167
+   HARDY ICW, 2002, 2002 SEX RATIOS CONC
+   JIROTKUL M, 1999, ANIM BEHAV 2, V58, P287
+   JIROTKUL M, 1999, ANIM BEHAV 6, V58, P1169
+   KEMP DJ, 2001, J INSECT BEHAV, V14, P129
+   KOKKO H, 2006, PHILOS T ROY SOC B, V361, P319, DOI
+   10.1098/rstb.2005.1784
+   KVARNEMO C, 1996, TRENDS ECOL EVOL, V11, P404
+   KVARNEMO C, 2002, SEX RATIOS CONCEPTS, P366
+   LLOYD M, 1967, J ANIM ECOL, V36, P1
+   MILLS SC, 2003, BEHAV ECOL SOCIOBIOL, V54, P98, DOI
+   10.1007/s00265-003-0616-1
+   MOCZEK AP, 2000, ANIM BEHAV 2, V59, P459
+   MOCZEK AP, 2003, BEHAV ECOL, V14, P841, DOI 10.1093/beheco/arg062
+   ORD TJ, 2006, J EVOLUTION BIOL, V19, P797, DOI
+   10.1111/j.1420-9101.2005.01050.x
+   OTTE D, 1975, J ANIM ECOL, V44, P29
+   PAGEL M, 1997, ZOOL SCR, V26, P331
+   PAGEL M, 1999, NATURE, V401, P877
+   PARKER GA, 1998, SPERM COMPETITION SE, P3
+   RADWAN J, 1993, ANIM BEHAV, V45, P200
+   RADWAN J, 1993, BEHAV ECOL SOCIOBIOL, V33, P201
+   REYNOLDS JD, 1996, TRENDS ECOL EVOL, V11, P68
+   RUTOWSKI RL, 1991, AM NAT, V138, P1121
+   SHUSTER SM, 2003, MATING SYSTEMS STRAT
+   SIMMONS LW, 2001, SPERM COMPETITION EV
+   SIMMONS LW, 2006, P NATL ACAD SCI USA, V103, P16346, DOI
+   10.1073/pnas.0603474103
+   SIMMONS LW, 2007, EVOLUTION, V61, P2684, DOI
+   10.1111/j.1558-5646.2007.00243.x
+   STUARTFOX DM, 2004, P ROY SOC LOND B BIO, V271, P2249, DOI
+   10.1098/rspb.2004.2802
+   TIMMS S, 1980, INT J ACAROL, V6, P91
+   TOMKINS JL, 2004, NATURE, V431, P1099, DOI 10.1038/nature02918
+   WARNER RR, 1980, ECOLOGY, V61, P772
+   WIENS JJ, 2001, TRENDS ECOL EVOL, V16, P517
+   ZEH DW, 1987, EVOLUTION, V41, P1072
+NR 49
+TC 0
+PU ROYAL SOC
+PI LONDON
+PA 6-9 CARLTON HOUSE TERRACE, LONDON SW1Y 5AG, ENGLAND
+SN 0962-8452
+J9 PROC R SOC B
+JI Proc. R. Soc. B-Biol. Sci.
+PD FEB 7
+PY 2008
+VL 275
+IS 1632
+BP 315
+EP 321
+PG 7
+SC Biology
+GA 242KS
+UT ISI:000251724600010
+ER
+
+PT J
+AU Madewell, R
+   Moczek, AP
+AF Madewell, Richard
+   Moczek, Armin P.
+TI Horn possession reduces maneuverability in the horn-polyphenic beetle,
+   Onthophagus nigriventris
+SO JOURNAL OF INSECT SCIENCE
+LA English
+DT Article
+DE alternative reproductive tactics; horned beetle; phenotypic plasticity;
+   polyphenism; sexual selection
+ID ALTERNATIVE REPRODUCTIVE TACTICS; GIANT RHINOCEROS BEETLES; SECONDARY
+   SEXUAL TRAITS; DIMORPHIC MALE BEETLES; ACUMINATUS COLEOPTERA; SCARAB
+   BEETLE; COMPETITION; EVOLUTION; TAURUS; BEHAVIOR
+AB Alternative male morphologies are common in a wide range of organisms
+   and particularly extreme in horned beetles. Here, large males ( majors)
+   commonly develop extravagant weaponry such as horns or enlarged
+   mandibles, whereas small males ( minors) develop only rudimentary
+   traits. In some taxa, including the genus Onthophagus, the transition
+   from minors to majors occurs over a very small range of body sizes
+   causing intermediate morphologies to be rare or absent from natural
+   populations. Several studies have shown that majors use horns as
+   weapons during male combat over females and that the possession of
+   horns increases male fighting success, and presumably fitness. However,
+   the advantages of a hornless morphology, if any, have remained elusive.
+   Here the alternative male morphs are examined in the horn-polyphenic
+   beetle Onthophagus nigriventris. In particular, the hypothesis was
+   tested that lack of horns in minors increases their maneuverability
+   inside tunnel systems in which these males sneak matings from major
+   males. Using a simple behavioral assay the effects of horn possession
+   on maneuverability were quantified inside an artificial tunnel. Minors
+   were found to be significantly more mobile compared to majors. No such
+   differences were found in mobility between similarly small and large
+   females, which always lack horns. This suggests that mobility
+   differences observed among male morphs are due to the presence or
+   absence of horns rather than differences in body size. This notion was
+   further supported in a second experiment in which surgical removal of
+   horns significantly improved maneuverability, while subsequent
+   re-attachment of horns reversed this effect. These results suggest that
+   lack of horns increases male maneuverability inside tunnels and may
+   thus be advantageous in the context of the particular social niche
+   inhabited by minor males. The results are discussed in the context of
+   the evolutionary ecology of horn-polyphenic beetles.
+C1 Indiana Univ, Dept Biol, Bloomington, IN 47405 USA.
+RP Madewell, R, Indiana Univ, Dept Biol, Bloomington, IN 47405 USA.
+EM rmadewel@indiana.edu
+   armin@indiana.edu
+CR ARROW GH, 1951, HORNED BEETLES
+   COOK DF, 1990, ANIM BEHAV, V40, P428
+   EBERHARD WG, 1978, PSYCHE, V83, P292
+   EBERHARD WG, 1979, SEXUAL SELECTION REP, P231
+   EBERHARD WG, 1982, AM NAT, V119, P420
+   EBERHARD WG, 2000, P ROY SOC LOND B BIO, V267, P1129
+   EBERHARD WG, 2000, PSYCHE, V103, P55
+   EMLEN DJ, 1994, P ROY SOC LOND B BIO, V256, P131
+   EMLEN DJ, 1997, BEHAV ECOL SOCIOBIOL, V41, P335
+   EMLEN DJ, 2000, ANNU REV ENTOMOL, V45, P661
+   EMLEN DJ, 2001, SCIENCE, V291, P1534
+   HUNT J, 1997, BEHAV ECOL SOCIOBIOL, V41, P109
+   HUNT J, 2001, P ROY SOC LOND B BIO, V268, P2409
+   KAWANO K, 1995, ANN ENTOMOL SOC AM, V88, P92
+   KAWANO K, 2002, AM NAT, V159, P255
+   MIZUNUMA T, 1999, GIANT BEETLES
+   MOCZEK AP, 1999, J EVOLUTION BIOL, V12, P27
+   MOCZEK AP, 2000, ANIM BEHAV 2, V59, P459
+   MOCZEK AP, 2002, EVOL ECOL RES, V4, P587
+   MOCZEK AP, 2004, AM NAT, V163, P184
+   MOCZEK AP, 2004, BIOL J LINN SOC, V83, P473
+   MOCZEK AP, 2005, BIOSCIENCE, V11, P935
+   MOCZEK AP, 2005, EVOL DEV, V7, P175
+   MOCZEK AP, 2006, IN PRESS HEREDITY
+   NIJHOUT HF, 1998, P NATL ACAD SCI USA, V95, P3685
+   OTRONEN M, 1988, ANIM BEHAV, V36, P741
+   RASMUSSEN JL, 1994, J INSECT BEHAV, V7, P67
+   SHUSTER SM, 2003, MATING SYSTEMS STRAT
+   SIMMONS LW, 1999, P ROY SOC LOND B BIO, V266, P145
+   SIVAJOTHY MT, 1987, J ETHOL, V5, P165
+   TOMKINS JL, 2000, P ROY SOC LOND B BIO, V267, P1547
+   WESTEBERHARD MJ, 2003, DEV PLASTICITY EVOLU
+NR 32
+TC 2
+PU UNIV ARIZONA
+PI TUCSON
+PA LIBRARY C327, TUCSON, AZ 85721 USA
+SN 1536-2442
+J9 J INSECT SCI
+JI J Insect Sci.
+PD SEP 22
+PY 2006
+VL 6
+AR 21
+DI ARTN 21
+PG 10
+SC Entomology
+GA 096YY
+UT ISI:000241414100002
+ER
+
+PT J
+AU Pomfret, JC
+   Knell, RJ
+TI Sexual selection and horn allometry in the dung beetle Euoniticellus
+   intermedius
+SO ANIMAL BEHAVIOUR
+LA English
+DT Article
+ID ONTHOPHAGUS-TAURUS COLEOPTERA; ALTERNATIVE REPRODUCTIVE TACTICS; LENGTH
+   DIMORPHISM; BODY-SIZE; ACUMINATUS COLEOPTERA; POSITIVE ALLOMETRY;
+   HORMONAL-CONTROL; SCARAB BEETLE; EVOLUTION; INSECTS
+AB Secondary sexual characters are often positively allometric, such that
+   larger individuals of a species have proportionally larger traits. The
+   sexually selected weapons found on many insect species, however, show
+   declining allometric slopes with body size. Previous work on these
+   curved allometric relations has focused on the role of competition for
+   limited resources between growing body parts within pupae, but there is
+   an alternative explanation that has received little attention: changes
+   in the allometric slope may reflect changes in the fitness benefits
+   associated with increases in horn size and body size change as an
+   animal gets larger. The allometric curve of the horn of the male dung
+   beetle Euoniticellus intermedius shows one of the largest declines in
+   slope known and by setting up contests between males of similar, or
+   different, sizes over access to females we were able to investigate the
+   importance of horn and body size for males of different sizes and horn
+   lengths. Both body size and horn size were important in determining
+   contest outcome in small males, but horn size became more important as
+   body size increased, so that in contests between large males it was by
+   far the most important predictor of victory. These findings are
+   consistent with theoretical predictions of how fitness functions can
+   affect allometry and offer an alternative to some of the previous
+   verbal arguments made to explain positive allometry. (c) 2006 The
+   Association for the Study of Animal Behaviour. Published by Elsevier
+   Ltd. All rights reserved.
+C1 Univ London Queen Mary Coll, Sch Biol Sci, London E1 4NS, England.
+RP Knell, RJ, Univ London Queen Mary Coll, Sch Biol Sci, Mile End Rd,
+   London E1 4NS, England.
+EM r.knell@qmul.ac.uk
+CR ALATALO RV, 1988, BIOL J LINN SOC, V34, P363
+   BAKER RH, 2001, EVOLUTION, V55, P1373
+   BLUME RR, 1984, ENVIRON ENTOMOL, V13, P1064
+   BONDURIANSKY R, 2003, EVOLUTION, P2450
+   CLUTTONBROCK TH, 1982, BEHAVIOUR, V79, P108
+   COOK DF, 1990, ANIM BEHAV, V40, P428
+   CRAWLEY MJ, 1993, GLIM ECOLOGISTS
+   EBERHARD WG, 1978, PSYCHE, V83, P292
+   EBERHARD WG, 1991, EVOLUTION, V45, P18
+   EMLEN DJ, 1994, P ROY SOC LOND B BIO, V256, P131
+   EMLEN DJ, 1997, BEHAV ECOL SOCIOBIOL, V41, P335
+   EMLEN DJ, 1999, J INSECT PHYSIOL, V45, P45
+   EMLEN DJ, 2000, ANNU REV ENTOMOL, V45, P661
+   EMLEN DJ, 2000, BIOSCIENCE, V50, P403
+   EMLEN DJ, 2001, J INSECT PHYSIOL, V47, P1045
+   EMLEN DJ, 2004, INTEGR COMP BIOL, V43, P617
+   GOBERDHAN DCI, 2003, DIFFERENTIATION, V71, P375
+   GOULD SJ, 1966, BIOL REV CAMBRIDGE P, V41, P587
+   GOULD SJ, 1973, NATURE, V244, P375
+   GREEN AJ, 1992, ANIM BEHAV, V43, P170
+   HARDY ICW, 1998, ANIM BEHAV 3, V56, P787
+   HUNT J, 1997, BEHAV ECOL SOCIOBIOL, V41, P109
+   HUNT J, 2001, P ROY SOC LOND B BIO, V268, P2409
+   HUXLEY JS, 1932, PROBLEMS RELATIVE GR
+   KNELL RJ, 1999, ECOL ENTOMOL, V24, P323
+   KNELL RJ, 2004, P ROY SOC LOND B BIO, V271, P523, DOI
+   10.1098/rspb.2003.2641
+   KOTIAHO JS, 2001, BEHAV ECOL, V12, P553
+   LAILVAUX SP, 2005, FUNCT ECOL, V19, P632, DOI
+   10.1111/j.1365-2435.2005.01024.x
+   LESSELLS CM, 1987, AUK, V104, P116
+   MOCZEK AP, 1999, J EVOLUTION BIOL, V12, P27
+   MOCZEK AP, 2000, ANIM BEHAV 2, V59, P459
+   MOCZEK AP, 2004, AM NAT, V163, P184
+   MOLLER AP, 1993, BEHAV ECOL SOCIOBIOL, V32, P167
+   NIJHOUT H, 2003, DEV BIOL, V261, P1, DOI 10.1016/S0012-1606(03)00276-8
+   NIJHOUT HF, 1994, INSECT HORMONES
+   NIJHOUT HF, 1996, AM NAT, V148, P40
+   OTTE D, 1979, BEETLE HORNS SAME PA
+   PALESTRINI C, 2000, CAN J ZOOL, V78, P1199
+   PETRIE M, 1988, ANIM BEHAV, V36, P1174
+   PETRIE M, 1992, ANIM BEHAV, V43, P173
+   POMFRET JC, IN PRESS BEHAV ECOLO
+   RASMUSSEN JL, 1994, J INSECT BEHAV, V7, P67
+   SIMMONS LW, 1996, EVOL ECOL, V10, P97
+   SNEDDON LU, 1997, BEHAV ECOL SOCIOBIOL, V41, P237
+   WILKINSON GS, 1997, FUNCTION EVOLUTION E
+   ZAHAVI A, 1975, J THEOR BIOL, V53, P205
+NR 46
+TC 8
+PU ACADEMIC PRESS LTD ELSEVIER SCIENCE LTD
+PI LONDON
+PA 24-28 OVAL RD, LONDON NW1 7DX, ENGLAND
+SN 0003-3472
+J9 ANIM BEHAV
+JI Anim. Behav.
+PD MAR
+PY 2006
+VL 71
+PN Part 3
+BP 567
+EP 576
+PG 10
+SC Behavioral Sciences; Zoology
+GA 027QO
+UT ISI:000236430400011
+ER
+
+PT J
+AU Lailvaux, SP
+   Hathway, J
+   Pomfret, J
+   Knell, RJ
+TI Horn size predicts physical performance in the beetle Euoniticellus
+   intermedius (Coleoptera : Scarabaeidae)
+SO FUNCTIONAL ECOLOGY
+LA English
+DT Article
+DE dung beetles; male combat; signalling; whole-organism performance
+ID ONTHOPHAGUS-ACUMINATUS COLEOPTERA; ALTERNATIVE REPRODUCTIVE TACTICS;
+   DIMORPHIC MALE BEETLES; HERMIT-CRAB FIGHTS; LOCOMOTOR PERFORMANCE;
+   ENERGY-METABOLISM; SOCIAL-DOMINANCE; ANOLIS LIZARDS; MALE MORPHS;
+   BODY-SIZE
+AB 1. In many animals, the size of secondary sexual ornaments is known to
+   be related to the probability of victory in fights between males, and
+   hence to fighting ability. However, few studies have attempted to link
+   fighting ability to any physical performance measures.
+   2. Here we show that horn size in the dung beetle Euoniticellus
+   intermedius accurately predicts two types of whole-organism
+   performance, independent of body size, that are likely to play an
+   important role in male contests: the force required to pull a beetle
+   out of a tunnel, and the distance the beetle was able to run before
+   exhaustion (maximum exertion).
+   3. Body length is also a statistically significant predictor of pulling
+   force, but not of exertion, suggesting that horn size is a more
+   reliable predictor of performance than body size alone, a result that
+   is consistent with a previous finding that horn size becomes more
+   important in determining victory in male-male contests as body size
+   increases.
+   4. This study is the first to establish direct links between
+   whole-organism performance abilities, male armaments and fighting
+   ability in the same species. Our findings suggest that physiological
+   performance capacities are important factors underlying the evolution
+   of signal expression in E. intermedius, and should be considered in
+   future studies of the evolution of animal signalling.
+C1 Queen Mary Univ London, Sch Biol Sci, London E1 4NS, England.
+   Tulane Univ, Dept Ecol & Evolutionary Biol, New Orleans, LA 70118 USA.
+RP Knell, RJ, Queen Mary Univ London, Sch Biol Sci, Mile End Rd, London E1
+   4NS, England.
+EM r.knell@qmul.ac.uk
+CR ALCOCK J, 1996, J ZOOL 4, V239, P663
+   ANDERSSON M, 1994, SEXUAL SELECTION
+   BEAN D, 2001, ANIM BEHAV 3, V62, P535
+   BENNETT AF, 1989, COMPLEX ORGANISMAL F, P191
+   BRIFFA M, 2001, P ROY SOC LOND B BIO, V268, P1841
+   BRIFFA M, 2002, P ROY SOC LOND B BIO, V269, P2331, DOI
+   10.1098/rspb.2002.2158
+   BRIFFA M, 2004, P ROY SOC LOND B BIO, V271, P373, DOI
+   10.1098/rspb.2003.2633
+   CLUTTONBROCK TH, 1988, REPROD SUCCESS, P325
+   COOK DF, 1990, ANIM BEHAV, V40, P428
+   CRAWLEY MJ, 1993, GLIM ECOLOGISTS
+   CULLUM AJ, 1998, PHYSIOL ZOOL, V71, P541
+   DARLINGTON RB, 2001, ANIM BEHAV 3, V62, P599
+   DARWIN C, 1871, DESCENT MAN SELECTIO
+   DOHM MR, 1996, EVOLUTION, V50, P1688
+   EMLEN DJ, 1994, P ROY SOC LOND B BIO, V256, P131
+   EMLEN DJ, 1997, BEHAV ECOL SOCIOBIOL, V41, P335
+   EMLEN DJ, 2000, ANNU REV ENTOMOL, V45, P661
+   EMLEN DJ, 2000, BIOSCIENCE, V50, P403
+   ESBJORNSSON M, 1993, INT J SPORTS MED, V14, P257
+   GARCIABERTHOU E, 2001, J ANIM ECOL, V70, P708
+   GARLAND T, 1988, EVOLUTION, V42, P335
+   GARLAND T, 1990, FUNCT ECOL, V4, P243
+   HUNT J, 2001, P ROY SOC LOND B BIO, V268, P2409
+   IRSCHICK DJ, 2001, ANNU REV ECOL SYST, V32, P367
+   KACHIGAN SK, 1991, MULTIVARIATE STAT AN
+   KRAM R, 1996, J EXP BIOL, V199, P609
+   LADICH F, 1998, ETHOLOGY, V104, P517
+   LAILVAUX SP, 2003, PHYSIOL BIOCHEM ZOOL, V76, P511
+   LAILVAUX SP, 2004, P ROY SOC LOND B BIO, V271, P2501, DOI
+   10.1098/rspb.2004.2891
+   LOSOS JB, 2002, J ZOOL 1, V258, P57, DOI 10.1017/S0952836902001206
+   MARDEN JH, 1989, PHYSIOL ZOOL, V62, P505
+   MARDEN JH, 1990, ANIM BEHAV, V39, P954
+   MARDEN JH, 1994, ANIM BEHAV, V48, P1023
+   MOCZEK AP, 2000, ANIM BEHAV 2, V59, P459
+   NEAT FC, 1998, ANIM BEHAV 4, V55, P875
+   PANHUIS TM, 1999, BEHAV ECOL SOCIOBIOL, V46, P221
+   PARKER GA, 1974, J THEOR BIOL, V47, P223
+   PERRY G, 2004, ANIM BEHAV 1, V67, P37, DOI 10.1016/j.anbehav.2003.02.003
+   PETRIE M, 1988, ANIM BEHAV, V36, P1174
+   PLAISTOW S, 1996, P R SOC B, V263, P1233
+   POMFRET J, 2004, THESIS U LONDON LOND
+   POMFRET JC, 2005, IN PRESS ANIMAL BEHA
+   QUINN GP, 2002, EXPT DESIGN DATA ANA
+   REIDY SP, 2000, J EXP BIOL, V203, P347
+   ROBSON MA, 2000, FUNCT ECOL, V14, P338
+   SIMMONS LW, 1999, P ROY SOC LOND B BIO, V266, P145
+   SIMMONS LW, 2002, EVOLUTION, V56, P1622
+   SNEDDON LU, 1997, BEHAV ECOL SOCIOBIOL, V41, P237
+   SNEDDON LU, 1999, ANIM BEHAV 2, V57, P353
+   THORPE KE, 1995, ANIM BEHAV 6, V50, P1657
+   TOKARZ RR, 2003, COPEIA          0905, P502
+   TOMKINS JL, 2000, P ROY SOC LOND B BIO, V267, P1547
+   TORO E, 2003, J EXP BIOL, V206, P2641, DOI 10.1242/jeb.00473
+   VANDAMME R, 2002, NATURE, V415, P755
+   VANHOOYDONCK B, 2001, EVOLUTION, V55, P1040
+   VANHOOYDONCK B, 2005, FUNCT ECOL, V19, P38
+   WEINSTEIN RB, 1992, AM J PHYSIOL 2, V262, R852
+   WEINSTEIN RB, 1998, PHYSIOL ZOOL, V71, P274
+   WHITING MJ, 2003, LIZARD SOCIAL BEHAV, P47
+   ZERA AJ, 2001, ANNU REV ECOL SYST, V32, P95
+NR 60
+TC 13
+PU BLACKWELL PUBLISHING
+PI OXFORD
+PA 9600 GARSINGTON RD, OXFORD OX4 2DQ, OXON, ENGLAND
+SN 0269-8463
+J9 FUNCT ECOL
+JI Funct. Ecol.
+PD AUG
+PY 2005
+VL 19
+IS 4
+BP 632
+EP 639
+PG 8
+SC Ecology
+GA 957TX
+UT ISI:000231397300011
+ER
+
+PT J
+AU Emlen, DJ
+   Marangelo, J
+   Ball, B
+   Cunningham, CW
+TI Diversity in the weapons of sexual selection: Horn evolution in the
+   beetle genus Onthophagus (Coleoptera : Scarabaeidae)
+SO EVOLUTION
+LA English
+DT Review
+DE adaptive radiation; beetle horns; character divergence; male
+   competition; Onthophagus; phylogeny; sexual selection; weapons
+ID ALTERNATIVE REPRODUCTIVE TACTICS; BINODIS THUNBERG COLEOPTERA; ADULT
+   BODY-SIZE; DUNG BEETLES; SYMPATRIC SPECIATION; HAWAIIAN DROSOPHILA;
+   BURYING BEETLES; PHYLOGENETIC INFERENCE; FEMALE PREFERENCES;
+   MALE-DIMORPHISM
+AB Both ornaments and weapons of sexual selection frequently exhibit
+   prolific interspecific diversity of form. Yet, most studies of this
+   diversity have focused on ornaments involved with female mate choice,
+   rather than on the weapons of male competition. With few exceptions,
+   the mechanisms of divergence in weapon morphology remain largely
+   unexplored. Here, we characterize the evolutionary radiation of one
+   type of weapon: beetle horns. We use partial sequences from four
+   nuclear and three mitochondrial genes to develop a phylogenetic
+   hypothesis for a worldwide sample of 48 species from the dung beetle
+   genus Onthophagus (Coleoptera: Scarabaeidae). We then use these data to
+   test for multiple evolutionary origins of horns and to characterize the
+   evolutionary radiation of horns. Although our limited sampling of one
+   of the world's most species-rich genera almost certainly underestimates
+   the number of evolutionary events, our phylogeny reveals prolific
+   evolutionary lability of these exaggerated sexually selected weapons
+   (more than 25 separate gains and losses of five different horn types).
+   We discuss these results in the context of the natural history of these
+   beetles and explore ways that sexual selection and ecology may have
+   interacted to generate this extraordinary diversity of weapon
+   morphology.
+C1 Univ Montana, Div Biol Sci, Missoula, MT 59812 USA.
+   Duke Univ, Dept Biol, Durham, NC 27708 USA.
+RP Emlen, DJ, Univ Montana, Div Biol Sci, Missoula, MT 59812 USA.
+EM doug.emlem@mso.umt.edu
+CR ANDERSSON M, 1994, SEXUAL SELECTION
+   ARROW GJ, 1899, T ENTOMOL SOC LOND, P255
+   ARROW GJ, 1944, P ZOOL SOC LOND 3-4, V113, P113
+   ARROW GJ, 1951, HORNED BEETLES
+   BALMFORD A, 1994, EVOLUTION, V48, P1062
+   BALTHASAR V, 1963, MONOGRAPHIE SCARABAE
+   BARRETTE C, 1986, BEHAVIOUR, V97, P118
+   BATES E, 1986, DEV NEUROPSYCHOL, V2, P1
+   BATES HW, 1863, NATURALIST RIVER AMA
+   BEEBE W, 1944, ZOOLOGICA, V29, P53
+   BEEBE W, 1953, MONOGRAPH PHEASANTS
+   BLACKBURN T, 2003, T ROY SOC SOUTH AUST, V27, P262
+   BLATCHLEY WS, 1910, NATURE
+   BOAKE CRB, 2000, BIOSCIENCE, V50, P501
+   BOUCOMONT A, 1932, ANN SOC ENTOMOLOGIQU, V101, P293
+   BOUGHMAN JW, 2001, NATURE, V411, P944
+   BROWN L, 1986, AM NAT, V127, P565
+   BURMEISTER H, 1847, HDB ENTOMOLOGIE, V5
+   CAMBEFORT Y, 1991, DUNG BEETLE ECOLOGY, P22
+   CAMBEFORT Y, 1991, DUNG BEETLE ECOLOGY, P36
+   CAMBEFORT Y, 1991, DUNG BEETLE ECOLOGY, P51
+   CARSON HL, 1979, INTERFACE GENETICS E, P93
+   CASTELNAU FL, 1840, HIST NATURELLE INSEC, V1
+   CASTELNAU FL, 1840, HIST NATURELLE INSEC, V2
+   CAVENEY S, 1981, PHILOS T ROY SOC B, V294, P589
+   CLARK JT, 1977, SYST ENTOMOL, V2, P9
+   COLBERT EH, 1955, EVOLUTION VERTEBRATE
+   COLBERT EH, 1965, AGE REPTILES
+   COLEMAN SW, 2004, NATURE, V428, P742, DOI 10.1038/nature02419
+   CONNER J, 1988, EVOLUTION, V42, P736
+   COOK D, 1987, AUST J ZOOL, V35, P123
+   COOK D, 1988, AUST J ZOOL, V36, P521
+   COOK DF, 1990, ANIM BEHAV, V40, P428
+   COOK DF, 1993, J AUST ENTOMOL SOC, V32, P45
+   CUNNINGHAM CW, 1997, SYST BIOL, V46, P464
+   CUNNINGHAM CW, 1999, SYST BIOL, V48, P665
+   DARLINGTON PJ, 1957, ZOOGEOGRAPHY GEOGRAP
+   DARWIN C, 1871, DESCENT MAN SELECTIO
+   DAVIS AJ, 1997, J TROP ECOL 5, V13, P759
+   DAVIS ALV, 2002, J BIOGEOGR, V29, P1217
+   DAWSON RW, 1924, NE U STUD, V22, P163
+   DAY T, 2000, EVOLUTION, V54, P715
+   DEUTSCH JC, 1997, BIOL J LINN SOC, V62, P1
+   DIAMOND J, 1986, ANNU REV ECOL SYST, V17, P17
+   DODSON GN, 2000, FRUIT FLIES TEPHRITI, P175
+   DOMINEY WJ, 1984, EVOLUTION FISH SPECI, P385
+   DORBIGNY H, 1913, ANN SOC ENTOMOLOGIQU, V132, P1
+   DRURY D, 1770, ILLUSTRATIONS NATURA, V1, P80
+   EBERHARD WG, 1978, PSYCHE, V83, P292
+   EBERHARD WG, 1979, SEXUAL SELECTION REP, P231
+   EBERHARD WG, 1980, SCI AM, V242, P166
+   EBERHARD WG, 1981, ANN ENTOMOLOGICAL SO, V74, P445
+   EBERHARD WG, 1982, AM NAT, V119, P420
+   EBERHARD WG, 1987, J KANSAS ENTOMOL SOC, V60, P504
+   EBERHARD WG, 2000, PSYCHE, V103, P55
+   EGGERT AK, 1992, BEHAV ECOL SOCIOBIOL, V31, P237
+   EMERSON SB, 1992, FUNCT ECOL, V6, P654
+   EMERSON SB, 1994, AM NAT, V143, P848
+   EMERSON SB, 2000, AM NAT, V156, P84
+   EMLEN DJ, 1994, THESIS PRINCETON U P
+   EMLEN DJ, 1997, BEHAV ECOL SOCIOBIOL, V41, P335
+   EMLEN DJ, 2000, BIOSCIENCE, V50, P403
+   EMLEN DJ, 2001, SCIENCE, V291, P1534
+   ENDLER JA, 1980, EVOLUTION, V34, P76
+   ENDLER JA, 1983, ENVIRON BIOL FISH, V9, P173
+   ENDLER JA, 1992, AM NAT, V139, S125
+   ENDLER JA, 1995, EVOLUTION, V49, P456
+   ENRODI S, 1985, DYNASTINAE WORLD
+   ERMEIJ GJ, 1987, EVOLUTION ESCALATION
+   ESPMARK Y, 1964, ANIM BEHAV, V12, P420
+   FABRE JH, 1899, SOUVENIRS ENTOMOLOGI, V6
+   FARRELL BD, 1998, SCIENCE, V281, P555
+   FINCHER GT, 1975, COLEOPT B, V29, P349
+   FISCHER GV, 1823, MEM SOC NAT MOSC, V6, P254
+   FISHER RA, 1930, GENETICAL THEORY NAT
+   FOLMER O, 1994, MOL MAR BIOL BIOTECH, V3, P294
+   FORSYTH A, 1990, BEHAV ECOL SOCIOBIOL, V26, P325
+   FRITH CB, 1998, BIRDS PARADISE
+   GEIST V, 1966, BEHAVIOUR, V27, P175
+   GEIST V, 1978, AGGRESSION DOMINANCE, P1
+   GILLIARD ET, 1969, BIRDS PARADISE BOWER
+   GOKAN N, 1990, NZ ENTOMOL, V13, P7
+   GOLDMAN N, 2000, SYST BIOL, V49, P652
+   GOLDSMITH SK, 1987, BEHAV ECOL SOCIOBIOL, V20, P111
+   GU X, 1995, MOL BIOL EVOL, V12, P546
+   HALFFTER G, 1966, FOLIA ENTOMOL MEXICO, V12, P1
+   HALFFTER G, 1982, NESTING BEHAV DUNG B
+   HANLEY RS, 2001, BIOL J LINN SOC, V72, P451
+   HANSKI I, 1991, DUNG BEETLE ECOLOGY
+   HARVEY PH, 1991, COMP METHOD EVOLUTIO
+   HELGESEN RG, 1967, N DAKOTA INSECTS PUB, V7
+   HIGASHI M, 1999, NATURE, V402, P523
+   HOEBEKE ER, 1997, ENTOMOL NEWS, V108, P345
+   HORN GH, 1875, T AM ENTOMOL SOC, V5, P126
+   HOWDEN HF, 1963, P US NAT MUS, V114, P1
+   HOWDEN HF, 1975, BIOTROPICA, V7, P77
+   HOWDEN HF, 1981, CONTRIBUTIONS AM ENT, V18, P1
+   HOWDEN HF, 1993, CAN ENTOMOL, V125, P1091
+   HOY RR, 1988, SCIENCE, V240, P217
+   HUELSENBECK JP, 2000, MYBAYES BAYESIAN INF
+   HUELSENBECK JP, 2001, BIOINFORMATICS, V17, P754
+   HUNT J, 1997, BEHAV ECOL SOCIOBIOL, V41, P109
+   HUNT J, 1998, BEHAV ECOL SOCIOBIOL, V42, P447
+   HUNT J, 2000, EVOLUTION, V54, P936
+   HUNT J, 2001, P ROY SOC LOND B BIO, V268, P2409
+   HUNT J, 2002, J EVOLUTION BIOL, V15, P57
+   HURLEY DE, 1977, NZ OCEANOGRAPHIC I M, V63, P1
+   IWASA Y, 1994, EVOLUTION, V48, P853
+   JANDER U, 2002, ARTHROPOD STRUCT DEV, V30, P179
+   JOHNSON KP, 1999, BEHAV ECOL, V10, P63
+   KAMBYSELLIS MP, 1995, CURR BIOL, V5, P1129
+   KANESHIRO KY, 1983, ANNU REV ENTOMOL, V28, P161
+   KANESHIRO KY, 1987, TRENDS ECOL EVOL, V2, P207
+   KANESHIRO KY, 1988, BIOSCIENCE, V38, P258
+   KAWANO K, 1995, ANN ENTOMOL SOC AM, V88, P92
+   KAWANO K, 1997, ANN ENTOMOL SOC AM, V90, P453
+   KIRKPATRICK M, 1996, EVOLUTION, V50, P2125
+   KITCHENER A, 1985, J ZOOL, V205, P191
+   KOHLMANN B, 2001, ITAL ENTOMOL, V49, P1
+   KRIKKEN J, 1987, ZOOL MEDEDEL, V61, P123
+   LANDE R, 1981, P NATL ACAD SCI USA, V78, P3721
+   LANDE R, 1982, EVOLUTION, V36, P213
+   LANDE R, 1988, J THEOR BIOL, V133, P85
+   LEA AM, 1923, RECORDS S AUSTR MUSE, V2, P353
+   LINCOLN GA, 1994, DIFFERENCES SEXES, P131
+   LINDQUIST AW, 1933, J KANSAS ENTOMOL SOC, V6, P109
+   LULL RS, 1933, MEMOIRS PEABODY MUSE, V3
+   LUNDRIGAN B, 1996, J MAMMAL, V77, P462
+   MADDISON WP, 1990, EVOLUTION, V44, P539
+   MADDISON WP, 1999, MACCLADE ANAL PHYLOG
+   MAIN H, 1922, P ENTOMOLOGICAL SOC, P14
+   MASTA SE, 2002, P NATL ACAD SCI USA, V99, P4442
+   MATTHEWS EG, 1972, AUSTR J ZOOLOGY S, V9, P3
+   MAU B, 1999, BIOMETRICS, V55, P1
+   MCINTYRE P, 1998, J COMP PHYSIOL A, V183, P45
+   MENDELSON TC, 2003, EVOLUTION, V57, P317
+   MITTER C, 1991, TRENDS ECOL EVOL, V6, P290
+   MOCZEK AP, 1998, BEHAV ECOL, V9, P636
+   MOCZEK AP, 2000, ANIM BEHAV 2, V59, P459
+   MOLLER AP, 1995, J EVOLUTION BIOL, V8, P3
+   MOLLER AP, 1999, J EVOLUTION BIOL, V12, P296
+   MULLER JK, 1990, ANIM BEHAV, V40, P491
+   NIJHOUT HF, 1998, P NATL ACAD SCI USA, V95, P3685
+   OLIVEIRA RF, 1998, ETHOL ECOL EVOL, V10, P241
+   OTRONEN M, 1988, ANIM BEHAV, V36, P741
+   OTTE D, 1979, SEXUAL SELECTION REP, P259
+   PACE AE, 1967, OCCAS PAP MUS ZOOL U, V653, P1
+   PALESTRINI C, 1989, ELYTRON, V3, P79
+   PALMER TJ, 1978, NATURE, V274, P583
+   PARKER GA, 1979, SEXUAL SELECTION REP, P123
+   PARKER GA, 1983, J THEOR BIOL, V101, P619
+   PAULIAN R, 1935, EXPOSES BIOMETRIE ST, P1
+   PAULIAN R, 1941, FAUNE FRANCE, V38
+   PAULIAN R, 1945, FAUNE EMPIRE FRANCAI, V3
+   PAULIAN R, 1960, INSECTES COLEOPTERES, P15
+   PECK SB, 1982, CAN J ZOOL, V60, P1624
+   POMIANKOWSKI A, 1998, P NATL ACAD SCI USA, V95, P5106
+   POSADA D, 1998, BIOINFORMATICS, V14, P817
+   PRICE T, 1998, PHILOS T ROY SOC B, V353, P251
+   PRUM RO, 1997, AM NAT, V149, P668
+   PUKOWSKI E, 1933, Z MORPHOL OKOL TIERE, V27, P518
+   PURVIS A, 1995, COMPUT APPL BIOSCI, V11, P247
+   QUESTIAU S, 1999, ETHOL ECOL EVOL, V11, P313
+   RANNALA B, 1996, J MOL EVOL, V43, P304
+   RASMUSSEN JL, 1994, J INSECT BEHAV, V7, P67
+   RATCLIFFE BC, 1977, ACTA AMAZONICA, V7, P429
+   RATCLIFFE BC, 1991, B U NEBRASKA STATE M, V12, P1
+   RENSCH B, 1959, EVOLUTION SPECIES LE
+   RICHARDS OW, 1927, BIOL REV, V2, P298
+   RIDSDILLSMITH TJ, 1989, J R SOC W AUST, V71, P49
+   RITCHER PO, 1945, KENTUCKY AGR EXPT ST, V477
+   ROTENBERRY JT, 1996, EVOL ECOL, V10, P233
+   SAMBROOK J, 1989, MOL CLONING LAB MANU
+   SCHAEFFER C, 1914, J NY ENTOMOL SOC, V22, P290
+   SCHLUTER D, 1993, P ROY SOC LOND B BIO, V253, P117
+   SCOTT MP, 1990, BEHAV ECOL SOCIOBIOL, V26, P31
+   SHIMODAIRA H, 1999, MOL BIOL EVOL, V16, P1114
+   SHINE R, 1979, COPEIA, P297
+   SHUSTER S, 2003, MATING SYSTEMS STRAT
+   SIMON C, 1994, ANN ENTOMOL SOC AM, V87, P651
+   SIMPSON GG, 1949, MEANING EVOLUTION
+   SIMPSON GG, 1953, MAJOR FEATURES EVOLU
+   SIVAJOTHY MT, 1987, J ETHOL, V5, P165
+   SOWIG P, 1996, ECOL ENTOMOL, V21, P81
+   STANGERHALL K, 1998, MOL BIOL EVOL, V15, P1572
+   STEEL M, 1993, NEW ZEAL J BOT, V31, P289
+   STURM J, 1843, CATALOG KAEFER SAMML
+   SWOFFORD DL, 1996, MOL SYSTEMATICS, P407
+   SWOFFORD DL, 2002, PAUP OTHER METHODS
+   TAKIMOTO G, 2000, EVOLUTION, V54, P1870
+   TAVARE S, 1986, LECTURES MATH LIFE S, V17, P57
+   TEMPLETON AR, 1979, EVOLUTION, V33, P513
+   THOMPSON JD, 1994, NUCLEIC ACIDS RES, V22, P4673
+   THORNHILL R, 1983, EVOLUTION INSECT MAT
+   TRIVERS RL, 1972, SEXUAL SELECTION DES, P136
+   TRUMBO ST, 1990, ECOL ENTOMOL, V15, P347
+   TURNER GF, 1994, ARCH HYDROBIOL, V44, P139
+   TURNER GF, 1995, P ROY SOC LOND B BIO, V260, P287
+   TYNDALEBISCOE M, 1990, COMMON DUNG BEETLES
+   UY JAC, 2000, EVOLUTION, V54, P273
+   VANDOORN GS, 1998, P ROY SOC LOND B BIO, V265, P1915
+   VANOPPEN MJH, 1998, MOL ECOL, V7, P991
+   VILLALBA S, 2002, J MOL EVOL, V55, P116
+   VONHAROLD E, 1869, COL HEFTE, V5, P78
+   VONHAROLD E, 1880, STETTINER ENTOMOLOGI, V41, P13
+   VRBA ES, 1984, LIVING FOSSILS, P62
+   VRBA ES, 1994, SYST BIOL, V43, P92
+   WADDELL PJ, 1996, HDB HUMAN SYMBOLIC E, P53
+   WALLACE AR, 1869, MALAY ARCHIPELAGO
+   WALSH BD, 1864, P ENTOMOL SOC PHILA, P228
+   WESTEBERHARD MJ, 1983, Q REV BIOL, V58, P155
+   WIENS JJ, 1999, P ROY SOC LOND B BIO, V266, P1529
+   WIENS JJ, 2000, BIOL J LINN SOC, V70, P597
+   WIENS JJ, 2001, TRENDS ECOL EVOL, V16, P517
+   WILEY RH, 1996, EVOLUTION, V50, P1371
+   WILLIAMS PL, 1990, METHOD ENZYMOL, V183, P615
+   WILSON DS, 1984, ECOL ENTOMOL, V9, P195
+   WU CI, 1985, EVOLUTION, V39, P66
+   ZEH DW, 1992, BIOTROPICA, V24, P86
+   ZUK M, 1993, BEHAV ECOL SOCIOBIOL, V33, P339
+   ZUK M, 1998, EVOLUTION, V52, P166
+   ZUK M, 1998, Q REV BIOL, V73, P415
+   ZUNINO M, 1981, BOL MUS ZOOL, V15, P75
+   ZUNINO M, 1997, ELYTRON, V11, P157
+NR 224
+TC 27
+PU SOC STUDY EVOLUTION
+PI LAWRENCE
+PA 810 E 10TH STREET, LAWRENCE, KS 66044 USA
+SN 0014-3820
+J9 EVOLUTION
+JI Evolution
+PD MAY
+PY 2005
+VL 59
+IS 5
+BP 1060
+EP 1084
+PG 25
+SC Ecology; Evolutionary Biology; Genetics & Heredity
+GA 930ZY
+UT ISI:000229456800013
+ER
+
+PT J
+AU Ward, MA
+   Collins, JM
+   Morgan, SM
+TI First record of the flightless carrion beetle Necrophilus pettitii horn
+   in New England (Coleoptera : Agyrtidae)
+SO COLEOPTERISTS BULLETIN
+LA English
+DT Editorial Material
+C1 Massachusetts Audubon Soc, Ecol Extens Serv, Lincoln, MA 01773 USA.
+   Vermont Inst Nat Sci, Woodstock, VT 05091 USA.
+RP Ward, MA, Massachusetts Audubon Soc, Ecol Extens Serv, 208 S Great Rd,
+   Lincoln, MA 01773 USA.
+CR HORN GH, 1880, T AM ENTOMOL SOC, V8, P219
+   LAPIN M, 1999, ECOLOGICAL SIGNIFICA
+   NEWTON AF, 1997, ANN ZOOL, V47, P111
+   PECK SB, 1981, ENTOMOL NEWS, V92, P181
+   PECK SB, 1990, SOIL BIOL GUIDE, P1113
+   PECK SB, 2001, AM BEETLES ARCHOSTEM, V1, P247
+   PIRONE D, 1974, THESIS FORDHAM U NEW
+NR 7
+TC 0
+PU COLEOPTERISTS SOC
+PI NATCHEZ
+PA PO BOX 767, NATCHEZ, MS 39121 USA
+SN 0010-065X
+J9 COLEOPTS BULL
+JI Coleopt. Bull.
+PD MAR
+PY 2005
+VL 59
+IS 1
+BP 151
+EP 152
+PG 2
+SC Entomology
+GA 922HJ
+UT ISI:000228827200018
+ER
+
+PT J
+AU Warriner, MD
+TI Occurence and conservation status of the milkweed beetle Tetraopes
+   texanus Horn (Coleoptera : Cerambyeidae) in Arkansas
+SO COLEOPTERISTS BULLETIN
+LA English
+DT Editorial Material
+ID CERAMBYCIDAE COLEOPTERA
+C1 Arkansas Nat Heritage Commiss, Little Rock, AR 72201 USA.
+RP Warriner, MD, Arkansas Nat Heritage Commiss, 1500 Tower Bldg,323 Ctr
+   St, Little Rock, AR 72201 USA.
+EM michaelw@arkansasheritage.org
+CR CHEMSAK JA, 1963, U CALIFORNIA PUBLICA, V30
+   FARRELL BD, 1998, BIOL J LINN SOC, V63, P553
+   HUBER RL, 2002, J KANSAS ENTOMOL SOC, V75, P341
+   LAWRENCE WS, 1988, J ANIM ECOL, V57, P1
+   LINSLEY EG, 1995, U CALIF PUBL ENTOMOL, V114
+   MACRAE TC, 1993, INSECTA MUNDI, V7, P223
+   NOSS RF, 1995, 28 US DEP INT NAT BI
+   RICE MR, 1988, J KANSAS ENTOMOLOGIC, V61, P412
+   SCHIEFER TL, 1998, COLEOPTS BULL, V52, P278
+   YANEGA D, 1996, MANUAL, V6
+NR 10
+TC 0
+PU COLEOPTERISTS SOC
+PI NATCHEZ
+PA PO BOX 767, NATCHEZ, MS 39121 USA
+SN 0010-065X
+J9 COLEOPTS BULL
+JI Coleopt. Bull.
+PD DEC
+PY 2004
+VL 58
+IS 4
+BP 567
+EP 568
+PG 2
+SC Entomology
+GA 894CZ
+UT ISI:000226769200010
+ER
+
+PT J
+AU Emlen, DJ
+TI Endocrine regulation of beetle horn expression: insights for horn
+   evolution
+SO INTEGRATIVE AND COMPARATIVE BIOLOGY
+LA English
+DT Meeting Abstract
+C1 Univ Montana, Missoula, MT 59812 USA.
+NR 0
+TC 0
+PU SOC INTEGRATIVE COMPARATIVE BIOLOGY
+PI MCLEAN
+PA 1313 DOLLEY MADISON BLVD, NO 402, MCLEAN, VA 22101 USA
+SN 1540-7063
+J9 INTEGR COMP BIOL
+JI Integr. Comp. Biol.
+PD DEC
+PY 2002
+VL 42
+IS 6
+BP 1226
+EP 1226
+PG 1
+SC Zoology
+GA 669ND
+UT ISI:000182356600229
+ER
+
+PT J
+AU Fleenor, SB
+   Taber, SW
+TI A new long-lipped beetle from Texas and a review of the genus
+   Telegeusis Horn (Coleoptera : Telegeusidae)
+SO COLEOPTERISTS BULLETIN
+LA English
+DT Article
+AB The long-lipped beetle family Telegeusidae is reported for the first
+   time from Texas and is represented in that state by the new species
+   Telegeusis texensis Fleenor and Taber. The biology and literature of
+   this rare genus are reviewed.
+RP Fleenor, SB, 305 W 35th St 204, Austin, TX 78705 USA.
+CR ALLEN RT, 1969, COLEOPTERISTS B, V23, P109
+   BARBER HS, 1952, PANPACIFIC ENTOMOLOG, V28, P163
+   HORN GH, 1895, P CALIFORNIA ACAD 2, V5, P225
+   MARTINJO, 1931, PANPACIFIC ENTOMOLOG, V8, P91
+   ZARAGOSA CS, 1975, ANALES I BIOL U NA Z, V46, P63
+   ZARAGOSA CS, 1990, U NACL AUTONOMA ME Z, V61, P307
+NR 6
+TC 1
+PU COLEOPTERISTS SOC
+PI NATCHEZ
+PA PO BOX 767, NATCHEZ, MS 39121 USA
+SN 0010-065X
+J9 COLEOPTS BULL
+JI Coleopt. Bull.
+PD DEC
+PY 2001
+VL 55
+IS 4
+BP 481
+EP 484
+PG 4
+SC Entomology
+GA 511GN
+UT ISI:000173256400011
+ER
+
+PT J
+AU Moczek, AP
+   Emlen, DJ
+TI Male horn dimorphism in the scarab beetle, Onthophagus taurus: do
+   alternative reproductive tactics favour alternative phenotypes? (vol
+   59, pg 459, 2000)
+SO ANIMAL BEHAVIOUR
+LA English
+DT Correction
+CR MOCZEK AP, 2000, ANIM BEHAV 2, V59, P459
+NR 1
+TC 0
+PU ACADEMIC PRESS LTD
+PI LONDON
+PA 24-28 OVAL RD, LONDON NW1 7DX, ENGLAND
+SN 0003-3472
+J9 ANIM BEHAV
+JI Anim. Behav.
+PD JUN
+PY 2000
+VL 59
+PN Part 6
+BP 1273
+EP 1273
+PG 1
+SC Behavioral Sciences; Zoology
+GA 335AN
+UT ISI:000088220000023
+ER
+
+PT J
+AU Moczek, AP
+   Emlen, DJ
+TI Male horn dimorphism in the scarab beetle, Onthophagus taurus: do
+   alternative reproductive tactics favour alternative phenotypes?
+SO ANIMAL BEHAVIOUR
+LA English
+DT Article
+ID ACUMINATUS COLEOPTERA; MORPHOLOGY; EVOLUTION; BEHAVIOR; PATTERNS
+AB In a variety of organisms morphological variation is discrete rather
+   than continuous. Discrete variation within a sex has attracted
+   particular interest as it is thought to reflect the existence of
+   alternative adaptations to a heterogeneous selection environment. The
+   beetle Onthophagus taurus shows a dimorphism for male horns: males that
+   exceed a critical body size develop a pair of long, curved horns on
+   their heads, while smaller males remain hornless. In this study we
+   report on the alternative reproductive tactics used by males with these
+   two morphologies, and present-experimental and behavioural data
+   suggesting that these alternative tactics selectively favour discretely
+   different male phenotypes. Horned marks aggressively defended tunnel
+   entrances containing breeding females. Fights involved the use of
+   horns, and males with longer horns were more likely to win fights. In
+   contrast, hornless males employed nonaggressive sneaking behaviours
+   when faced with competitively superior males. Sneaking behaviours
+   appeared to require high degrees of manoeuvrability inside tunnels to
+   access and mate with females despite the presence of a guarding male.
+   Comparisons of running performances of males with identical body sizes
+   but different horn lengths suggest that the possession of horns reduces
+   male agility inside tunnels. Thus, horn possession confers a clear
+   advantage to males using fighting behaviours to access females, whereas
+   hornlessness may be favoured in males that rely primarily on sneaking
+   behaviours. Combined, the two alternative reproductive tactics used by
+   male O. taurus appear to favour opposite horn phenotypes, which may
+   explain the paucity of intermediate morphologies in natural populations
+   of O. taurus. (C) 2000 The Association for the Study of Animal
+   Behaviour.
+C1 Duke Univ, Dept Zool, Durham, NC 27708 USA.
+   Univ Wurzburg, Theordor Boveri Biozentrum, Lehrstuhl Zool 2, D-97070 Wurzburg, Germany.
+RP Moczek, AP, Duke Univ, Dept Zool, Durham, NC 27708 USA.
+CR ANDERSON M, 1994, SEXUAL SELECTION
+   ARROW GH, 1951, HOMED BEETLES
+   BEEBE W, 1944, ZOOLOGICA, V29, P53
+   BEEBE W, 1947, ZOOLOGICA, V32, P109
+   BROWN L, 1983, ANN ENTOMOLOGICAL SO, V76, P253
+   COOK DF, 1990, ANIM BEHAV, V40, P428
+   DARWIN C, 1871, ORIGIN SPECIES DESCE
+   DOANE RW, 1913, J ECON ENTOMOL, V6, P437
+   EBERHARD WG, 1978, PSYCHE, V83, P292
+   EBERHARD WG, 1979, SEXUAL SELECTION REP, P231
+   EBERHARD WG, 1981, ANN ENTOMOLOGICAL SO, V74, P445
+   EBERHARD WG, 1982, AM NAT, V119, P420
+   EBERHARD WG, 1987, J KANSAS ENTOMOL SOC, V60, P504
+   EBERHARD WG, 1991, EVOLUTION, V45, P18
+   EMLEN DJ, 1994, P ROY SOC LOND B BIO, V256, P131
+   EMLEN DJ, 1994, THESIS PRINCETON U N
+   EMLEN DJ, 1997, BEHAV ECOL SOCIOBIOL, V41, P335
+   EMLEN DJ, 1999, J INSECT PHYSIOL, V45, P45
+   FABRE JH, 1899, MORE BEETLES
+   GOIDANICH A, 1962, ATTI ACCAD SCI TORIN, V96, P575
+   GOIDANICH A, 1964, ANN FAC SC AGR U TOR, V2, P213
+   GROSS MR, 1996, TRENDS ECOL EVOL, V11, P92
+   HALFFTER G, 1982, NESTING BEHAV DUNG B
+   HAZEL WN, 1990, P ROY SOC LOND B BIO, V242, P181
+   HUNT J, 1997, BEHAV ECOL SOCIOBIOL, V41, P109
+   HUNT J, 1998, BEHAV ECOL SOCIOBIOL, V42, P447
+   HUNT J, 1999, ECOL ENTOMOL, V24, P174
+   HUXLEY JS, 1932, PROBLEMS RELATIVE GR
+   KAWANO K, 1995, ANN ENTOMOL SOC AM, V88, P92
+   LAMEERE A, 1904, B ACAD BELGIQUE, P1324
+   LIVELY CM, 1986, AM NAT, V128, P561
+   MOCZEK AP, IN PRESS BEHAV ECOLO
+   MOCZEK AP, 1996, MALE DIMORPHISM SCRA
+   MOCZEK AP, 1998, BEHAV ECOL, V9, P636
+   MOCZEK AP, 1999, J EVOLUTION BIOL, V12, P27
+   NIJHOUT HF, 1998, P NATL ACAD SCI USA, V95, P3685
+   OTRONEN M, 1988, ANIM BEHAV, V36, P741
+   PALMER TJ, 1978, NATURE, V274, P583
+   PAULIAN R, 1935, EXPOSES BIOMETRIE ST, P1
+   RASMUSSEN JL, 1994, J INSECT BEHAV, V7, P67
+   SACHS L, 1992, ANGEW STAT
+   SIVAJOTHY MT, 1987, J ETHOL, V5, P165
+   TRAVIS J, 1994, ECOLOGICAL MORPHOLOG, P99
+   WALLACE AR, 1878, TROPICAL NATURE OTHE
+   WESTEBERHARD MJ, 1989, ANNU REV ECOL SYST, V20, P249
+NR 45
+TC 83
+PU ACADEMIC PRESS LTD
+PI LONDON
+PA 24-28 OVAL RD, LONDON NW1 7DX, ENGLAND
+SN 0003-3472
+J9 ANIM BEHAV
+JI Anim. Behav.
+PD FEB
+PY 2000
+VL 59
+PN Part 2
+BP 459
+EP 466
+PG 8
+SC Behavioral Sciences; Zoology
+GA 293MM
+UT ISI:000085855900022
+ER
+
+PT J
+AU Halstead, JA
+   Oldham, JA
+TI New distribution records for the elderberry longhorn beetle Desmocerus
+   californicus Horn (Coleoptera : Cerambycidae)
+SO PAN-PACIFIC ENTOMOLOGIST
+LA English
+DT Article
+C1 Kings River Conservat Dist, Environm Div, Fresno, CA 93725 USA.
+RP Halstead, JA, Kings River Conservat Dist, Environm Div, 4886 E Jensen
+   Ave, Fresno, CA 93725 USA.
+NR 0
+TC 0
+PU PACIFIC COAST ENTOMOL SOC
+PI SAN FRANCISCO
+PA CALIFORNIA ACAD OF SCIENCES GOLDEN GATE PARK, SAN FRANCISCO, CA 94118
+   USA
+SN 0031-0603
+J9 PAN-PAC ENTOMOL
+JI Pan-Pacific Entomol.
+PD JAN
+PY 2000
+VL 76
+IS 1
+BP 74
+EP 76
+PG 3
+SC Entomology
+GA 286QF
+UT ISI:000085456100010
+ER
+
+PT J
+AU Moczek, AP
+TI Horn polyphenism in the beetle Onthophagus taurus: larval diet quality
+   and plasticity in parental investment determine adult body size and
+   male horn morphology
+SO BEHAVIORAL ECOLOGY
+LA English
+DT Article
+DE alternative phenotypes; facultative parental investment; Onthophagus;
+   phenotypic plasticity; polyphenism
+ID ACUMINATUS COLEOPTERA; PHENOTYPIC PLASTICITY; SOLDIER DETERMINATION;
+   SHELL DIMORPHISM; BURYING BEETLES; BROOD SIZE; POLYMORPHISM;
+   STRATEGIES; SCARABAEIDAE; MAINTENANCE
+AB In a wide range of taxa, individuals are able to express strikingly
+   different morphologies in response to environmental conditions
+   encountered during development. Such polyphenisms have received
+   particular attention from evolutionary biologists because the
+   condition-dependent expression of alternative morphologies is believed
+   to reflect the existence of discrete sets of adaptations to
+   heterogeneous ecological or social conditions, which preclude the
+   evolution of a single, optimal phenotype. Correct interpretation of the
+   adaptive significance, if any, of facultative trait development
+   requires a solid understanding of the determinative regime governing
+   morph expression. Here I explore the environmental variables
+   determining male morphology in the horn-dimorphic beetle Onthophagus
+   taurus. I demonstrate that natural variation in both the quantity and
+   quality of food that larvae receive from their parents determines body
+   size in males and females, and, by means of a threshold response, the
+   presence or absence of horns in males. In addition, results suggest
+   that parent beetles adjust the amount of food they provision for their
+   offspring according to diet quality, which may help to compensate for
+   environmental variation induced by differential resource quality in the
+   wild. I use these results to further characterize the selective regime
+   responsible for the evolution of male polyphenism in onthophagine
+   beetles and discuss its significance for understanding the origin and
+   maintenance of morphological variation in the genus Onthophagus.
+C1 Duke Univ, Dept Zool, Durham, NC 27708 USA.
+   Theodor Boveri Biozentrum Univ, Lehrstuhl Zool 2, D-97074 Wurzburg, Germany.
+RP Moczek, AP, Duke Univ, Dept Zool, Durham, NC 27708 USA.
+CR ANDERSSON M, 1994, SEXUAL SELECTION
+   ANDERSSON M, 1996, TRENDS ECOL EVOL, V11, P53
+   BALTHASAR V, 1963, MONOGRAPHIE SCARABAE, V2
+   BARTLETT J, 1987, BEHAV ECOL SOCIOBIOL, V21, P179
+   CHOE JC, 1997, EVOLUTION SOCIAL BEH
+   CLUTTONBROCK TH, 1991, EVOLUTON PARENTAL CA
+   COLLINS JP, 1983, AM ZOOL, V23, P77
+   CRESPI BJ, 1988, BEHAV ECOL SOCIOBIOL, V23, P93
+   DIJKSTRA LJ, 1986, NETH J ZOOL, V36, P177
+   DOMINEY WJ, 1984, AM ZOOL, V24, P385
+   EMLEN DJ, 1994, P ROY SOC LOND B BIO, V256, P131
+   EMLEN DJ, 1996, EVOLUTION, V50, P1219
+   EMLEN DJ, 1997, P ROY SOC LOND B BIO, V264, P567
+   FABRE JH, 1899, SOUVENIERS ENTOMOLOG
+   FINCHER GT, 1975, COLEOPT B, V29, P349
+   GILBERT JJ, 1984, LIMNOL OCEANOGR, V29, P1309
+   GOIDANICH A, 1962, ATTI ACCAD SCI TORIN, V96, P575
+   GOIDANICH A, 1964, ANN FAC SC AGR U TOR, V2, P213
+   GRANT JWG, 1981, LIMNOL OCEANOGR, V26, P201
+   GREENE E, 1989, SCIENCE, V243, P643
+   GROSS MR, 1996, TRENDS ECOL EVOL, V11, P92
+   HALFFTER G, 1982, NESTING BEHAV DUNG B
+   HANSKI I, 1991, DUNG BEETLE ECOLOGY
+   HARDIE J, 1985, COMPREHENSIVE INSECT, V8, P441
+   HAZEL W, 1998, ECOL ENTOMOL, V23, P41
+   HAZEL WN, 1982, HEREDITY, V49, P295
+   HAZEL WN, 1990, P ROY SOC LOND B BIO, V242, P181
+   HUNT J, 1997, BEHAV ECOL SOCIOBIOL, V41, P109
+   JAMES CD, 1994, OIKOS, V70, P49
+   KENNEDY JS, 1961, INSECT POLYMORPHISM, P80
+   KOCH PB, 1987, J INSECT PHYSIOL, V33, P823
+   LEVINS R, 1968, EVOLUTION CHANGING E
+   LIVELY CM, 1986, ECOLOGY, V67, P858
+   LIVELY CM, 1986, EVOLUTION, V40, P232
+   LLOYD DG, 1984, BIOL J LINN SOC, V21, P357
+   LUSCHER M, 1960, ANN NY ACAD SCI, V89, P549
+   MARINELLI L, 1995, CAN J ZOOL, V73, P1503
+   MILLER EM, 1969, BIOL TERMITES, V1, P283
+   MOCZEK AP, IN PRESS J EVOL BIOL
+   MOCZEK AP, 1996, THESIS J MAXIMILIANS
+   MORAN NA, 1992, AM NAT, V139, P971
+   NIJHOUT HF, 1982, Q REV BIOL, V57, P109
+   NIJHOUT HF, 1994, INSECT HORMONES
+   PENER MP, 1991, ADV INSECT PHYSL, V23, P1
+   RADWAN J, 1993, BEHAV ECOL SOCIOBIOL, V33, P201
+   SCOTT MP, 1998, ANNU REV ENTOMOL, V43, P595
+   SCOTT MP, 1998, J INSECT BEHAV, V11, P597
+   SHAPIRO A, 1976, EVOL BIOL, V9, P259
+   STAAL GB, 1961, LOCUSTA MIGRATORIA M, V40, P1
+   TAUBER MJ, 1986, SEASONAL ADAPTATIONS
+   THORNHILL R, 1983, EVOLUTION INSECT MAT
+   TIMMS S, 1981, ACAROLOGIA, V22, P391
+   TRUMBO ST, 1990, J INSECT BEHAV, V3, P491
+   TRUMBO ST, 1995, ETHOL ECOL EVOL, V7, P313
+   WEAVER N, 1957, ANN ENTOMOLOGICAL SO, V50, P283
+   WESTEBERHARD MJ, 1989, ANNU REV ECOL SYST, V20, P249
+   WESTEBERHARD MJ, 1992, MOLDS MOL METAZOA GR, P57
+   WHEELER DE, 1983, J INSECT PHYSIOL, V29, P847
+   WHEELER DE, 1984, J INSECT PHYSIOL, V30, P127
+   WILCOXON F, 1964, SOME RAPID APPROXIMA
+NR 60
+TC 44
+PU OXFORD UNIV PRESS INC
+PI CARY
+PA JOURNALS DEPT, 2001 EVANS RD, CARY, NC 27513 USA
+SN 1045-2249
+J9 BEHAV ECOL
+JI Behav. Ecol.
+PD NOV-DEC
+PY 1998
+VL 9
+IS 6
+BP 636
+EP 641
+PG 6
+SC Behavioral Sciences; Ecology; Zoology
+GA 167KF
+UT ISI:000078631200013
+ER
+
+PT J
+AU Moczek, AP
+   Emlen, DJ
+TI Proximate determination of male horn dimorphism in the beetle
+   Onthophagus taurus (Coleoptera : Scarabaeidae)
+SO JOURNAL OF EVOLUTIONARY BIOLOGY
+LA English
+DT Article
+DE allometry; male dimorphism; Onthophagus; plasticity; polyphenism
+ID ALTERNATIVE REPRODUCTIVE TACTICS; PUPAL COLOR DIMORPHISM; ACUMINATUS
+   COLEOPTERA; FLUCTUATING ASYMMETRY; XIPHOPHORUS-NIGRENSIS; ADAPTIVE
+   SIGNIFICANCE; SOLDIER DETERMINATION; ARTIFICIAL SELECTION;
+   AMBYSTOMA-TALPOIDEUM; SEXUAL SELECTION
+AB The existence of discrete phenotypic variation within one sex poses
+   interesting questions regarding how such intrasexual polymorphisms are
+   produced and modified during the course of evolution. Approaching these
+   kinds of questions requires insights into the genetic architecture
+   underlying a polymorphism and an understanding of the proximate
+   mechanisms determining phenotype expression. Here we explore the
+   genetic underpinnings and proximate factors influencing the expression
+   of beetle horns - a dramatic sexually selected trait exhibiting
+   intramale dimorphism in many species. Two relatively discrete male
+   morphs are present in natural populations of the dung beetle
+   Onthophagus taurus (Scarabaeidae, Onthophagini). Males exceeding a
+   critical body size develop a pair of long, curved horns on their heads,
+   while those smaller than this critical body size remain essentially
+   hornless. We present results from laboratory breeding experiments
+   designed to assess the relative importance of inherited and
+   environmental factors as determinants of male morphology. Using
+   father-son regressions, our findings demonstrate that horn length and
+   body size of male progeny are not predicted from paternal morphology.
+   Instead, natural variation in an environmental factor, the amount of
+   food available to larvae, determined both the body sizes exhibited by
+   males as adults and the presence or absence of horns. The nonlinear
+   scaling relationship between the body size and horn length of males
+   bred in the laboratory did not differ from the pattern of variation
+   present in natural populations, suggesting that nutritional conditions
+   account for variation in male morphology in natural populations as
+   well. We discuss our results by extending ideas proposed to explain the
+   evolution of conditional expression of alternative phenotypes in
+   physically heterogeneous environments toward incorporating facultative
+   expression of secondary sexual traits. We use this synthesis to begin
+   characterizing the potential origin and subsequent evolution of
+   facultative horn expression in onthophagine beetles.
+C1 Duke Univ, Dept Zool, Durham, NC 27708 USA.
+   Theodor Boveri Biozentrum Univ, Lehrstuhl Zool 2, Wurzburg, Germany.
+RP Moczek, AP, Duke Univ, Dept Zool, Box 90325, Durham, NC 27708 USA.
+EM armin@acpub.duke.edu
+CR ARROW GH, 1951, HORNED BEETLES
+   BALTHASAR V, 1963, MONOGRAPHIE SCARABAE, V2
+   CHARNOV EL, 1977, NATURE, V266, P828
+   CLARKE CA, 1972, J ENTOMOLOGY, V46, P123
+   COOK D, 1987, AUST J ZOOL, V35, P123
+   COOK DF, 1990, ANIM BEHAV, V40, P428
+   DARWIN C, 1871, ORIGIN SPECIES DESCE
+   DENT JN, 1968, METAMORPHOSIS PROBLE, P271
+   DOANE RW, 1913, J ECON ENTOMOL, V6, P437
+   DOMINEY WJ, 1984, AM ZOOL, V24, P385
+   EBERHARD WG, 1978, PSYCHE, V83, P292
+   EBERHARD WG, 1979, SEXUAL SELECTION REP, P231
+   EBERHARD WG, 1981, ANN ENTOMOLOGICAL SO, V74, P445
+   EBERHARD WG, 1982, AM NAT, V119, P420
+   EBERHARD WG, 1987, J KANSAS ENTOMOL SOC, V60, P504
+   EBERHARD WG, 1991, EVOLUTION, V45, P18
+   EMLEN DJ, 1994, P ROY SOC LOND B BIO, V256, P131
+   EMLEN DJ, 1994, THESIS PRINCETON U P
+   EMLEN DJ, 1996, EVOLUTION, V50, P1219
+   EMLEN DJ, 1997, BEHAV ECOL SOCIOBIOL, V41, P335
+   FABRE JH, 1899, MORE BEETLES 1922
+   FALCONER DS, 1989, INTRO QUANTITATIVE G
+   FINCHER GT, 1975, COLEOPT B, V29, P349
+   GADGIL M, 1972, AM NAT, V106, P574
+   GOIDANICH A, 1962, ATTI ACCAD SCI TORIN, V96, P575
+   GOIDANICH A, 1964, ANN FAC SC AGR U TOR, V2, P213
+   GREENE E, 1989, SCIENCE, V243, P643
+   GROSS MR, 1996, TRENDS ECOL EVOL, V11, P92
+   GRUNER C, 1988, OECOLOGIA, V74, P515
+   HALLFFTER G, 1982, NESTING BEHAV DUNG B
+   HAMILTON WD, 1979, SEXUAL SELECTION REP, P167
+   HANSKI I, 1991, DUNG BEETLE ECOLOGY
+   HARRIS RN, 1987, ECOLOGY, V68, P705
+   HARRISON RG, 1979, OECOLOGIA, V40, P125
+   HARTL DL, 1981, PRIMER POPULATION GE
+   HARVELL CD, 1986, AM NAT, V128, P810
+   HAZEL WN, 1982, HEREDITY, V49, P295
+   HAZEL WN, 1990, P ROY SOC LOND B BIO, V242, P181
+   HOLLDOBLER B, 1990, ANTS
+   HOWDEN HF, 1963, P US NAT MUS, V114, P1
+   HUNT J, 1997, BEHAV ECOL SOCIOBIOL, V41, P109
+   HUXLEY JS, 1932, PROBLEMS RELATIVE GR
+   KALLMAN KD, 1983, COPEIA, P733
+   KALLMAN KD, 1984, EVOL GENET, P95
+   KALLMAN KD, 1989, ECOLOGY EVOLUTION LI, P163
+   KAWANO K, 1995, TROP ASIA AM ENT SOC, V88, P92
+   LAMEERE A, 1904, B ACAD BELG, P1327
+   LANK DB, 1995, NATURE, V378, P59
+   LEVINS R, 1968, EVOLUTION CHANGING E
+   LIVELY CM, 1986, ECOLOGY, V67, P858
+   LIVELY CM, 1986, EVOLUTION, V40, P232
+   LLOYD DG, 1984, BIOL J LINN SOC, V21, P357
+   MAIN H, 1922, P ENTOMOLOGICAL SOC, P14
+   MATTHEWS EG, 1972, AUST J ZOOL S, V9, P1
+   MOCZEK AP, 1996, THESIS JULIUS MAXIMI
+   MORAN NA, 1992, AM NAT, V139, P971
+   OTRONEN M, 1988, ANIM BEHAV, V36, P741
+   PALMER TJ, 1978, NATURE, V274, P583
+   PFENNIG D, 1990, OECOLOGIA, V85, P101
+   PFENNIG DW, 1992, EVOLUTION, V46, P1408
+   PFENNIG DW, 1992, FUNCT ECOL, V6, P167
+   RASMUSSEN JL, 1994, J INSECT BEHAV, V7, P67
+   ROFF DA, 1994, GENETICS, V136, P395
+   ROFF DA, 1994, HEREDITY, V71, P36
+   RYAN MJ, 1987, SCIENCE, V236, P595
+   RYAN MJ, 1989, BEHAV ECOL SOCIOBIOL, V24, P341
+   RYAN MJ, 1992, AM NAT, V139, P21
+   SCHLICHTING CD, 1995, EVOL ECOL, V9, P154
+   SCHMALHAUSEN II, 1949, FACTORS EVOLUTION
+   SEMLITSCH RD, 1989, EVOLUTION, V43, P105
+   SEMLITSCH RD, 1990, EVOLUTION, V44, P1604
+   SHAPIRO A, 1976, EVOL BIOL, V9, P259
+   SHUSTER SM, 1989, EVOLUTION, V43, P1683
+   SHUSTER SM, 1991, NATURE, V350, P608
+   SIMS SR, 1983, HEREDITY, V50, P159
+   SIVAJOTHY MT, 1987, J ETHOL, V5, P165
+   SMITH JM, 1982, EVOLUTION THEORY GAM
+   SMITH TB, 1993, NATURE, V363, P616
+   STEARNS SC, 1982, EVOL DEV, P237
+   TAUBER MJ, 1986, SEASONAL ADAPTATIONS
+   TAYLOR F, 1986, EVOLUTION INSECT LIF, P236
+   THORNHILL R, 1981, ANNU REV ECOL SYST, V12, P355
+   TOMKINS JL, 1996, J EVOLUTION BIOL, V9, P753
+   TYNDALEBISCOE M, 1990, COMMON DUNG BEETLES
+   WALLACE AR, 1878, TROPICAL NATURE OTHE
+   WESTEBERHARD MJ, 1989, ANNU REV ECOL SYST, V20, P249
+   WESTEBERHARD MJ, 1992, GROWING POINTS EVOLU, P57
+   WHEELER DE, 1983, J INSECT PHYSIOL, V29, P847
+   WHEELER DE, 1984, J INSECT PHYSIOL, V30, P127
+   WHITEMAN HH, 1994, Q REV BIOL, V69, P205
+   WIGGLESWORTH VB, 1984, INSECT PHYSL
+   WILBUR HM, 1973, SCIENCE, V182, P1305
+   WILSON EO, 1971, INSECT SOC
+   ZAR JH, 1984, BIOSTATISTICAL ANAL
+   ZERA AJ, 1996, J INSECT PHYSIOL, V42, P909
+   ZIMMERER EJ, 1989, EVOLUTION, V43, P1298
+NR 96
+TC 66
+PU BLACKWELL SCIENCE LTD
+PI OXFORD
+PA P O BOX 88, OSNEY MEAD, OXFORD OX2 0NE, OXON, ENGLAND
+SN 1010-061X
+J9 J EVOLUTION BIOL
+JI J. Evol. Biol.
+PD JAN
+PY 1999
+VL 12
+IS 1
+BP 27
+EP 37
+PG 11
+SC Ecology; Evolutionary Biology; Genetics & Heredity
+GA 161KU
+UT ISI:000078288500003
+ER
+
+PT J
+AU Emlen, DJ
+   Nijhout, HF
+TI Hormonal control of male horn length dimorphism in the dung beetle
+   Onthophagus taurus (Coleoptera : Scarabaeidae)
+SO JOURNAL OF INSECT PHYSIOLOGY
+LA English
+DT Article
+DE horned beetle; polyphenism; male dimorphism; threshold; juvenile hormone
+ID MANDUCA-SEXTA L; SEASONAL-MORPH DETERMINATION; TENEBRIO-MOLITOR L;
+   JUVENILE-HORMONE; TOBACCO HORNWORM; ACUMINATUS COLEOPTERA;
+   SEXUAL-SELECTION; SOLDIER DETERMINATION; INSECTA-COLEOPTERA; MOLTING
+   HORMONE
+AB Male dung beetles (Onthaphagus taurus) facultatively produce a pair of
+   horns that extend from the base of the head: males growing larger than
+   a threshold body size develop long horns, whereas males that do not
+   achieve this size grow only rudimentary hems or no hems at all. Here we
+   characterize the postembryonic development of these beetles, and begin
+   to explore the hormonal regulation of horn growth. Using radioimmune
+   assays to compare the ecdysteroid titers of horned males, hornless
+   males, and females, we identify a small pulse of ecdysteroid which is
+   present in both hornless males and females, but not in horned males. In
+   addition, we identify a brief period near the end of the final (third)
+   larval instar when topical applications of the juvenile hormone analog
+   methoprene can switch the morphology of developing males. Small,
+   normally hornless, males receiving methoprene during this sensitive
+   period were induced to produce horns in 80% of the cases. We summarize
+   this information in two models for the hormonal control of male
+   dimorphism in horn length. (C) 1998 Elsevier Science Ltd. All rights
+   reserved.
+C1 Duke Univ, Dept Zool, Durham, NC 27708 USA.
+   Univ Montana, Div Biol Sci, Missoula, MT 59812 USA.
+RP Emlen, DJ, Duke Univ, Dept Zool, Box 90325, Durham, NC 27708 USA.
+CR BEEBE W, 1944, ZOOLOGICA, V29, P53
+   BESSONLAVOIGNET MT, 1981, DEV BIOL, V83, P255
+   BOLLENBACHER WE, 1981, GEN COMP ENDOCR, V44, P302
+   BOLLENBACHER WE, 1988, J INSECT PHYSIOL, V34, P941
+   BORST DW, 1972, SCIENCE, V178, P418
+   CAMBEFORT Y, 1991, DUNG BEETLE ECOLOGY
+   CONNAT JL, 1984, J INSECT PHYSIOL, V30, P413
+   CONNAT JL, 1991, J INSECT PHYSIOL, V37, P653
+   CONNER J, 1988, EVOLUTION, V42, P736
+   COOK DF, 1990, ANIM BEHAV, V40, P428
+   DELBECQUE JP, 1978, DEV BIOL, V64, P11
+   EBERHARD WG, 1979, SEXUAL SELECTION REP
+   EBERHARD WG, 1982, AM NAT, V119, P420
+   EBERHARD WG, 1987, J KANSAS ENTOMOL SOC, V60, P504
+   EMLEN DJ, 1994, P ROY SOC LOND B BIO, V256, P131
+   EMLEN DJ, 1997, BEHAV ECOL SOCIOBIOL, V41, P335
+   EMLEN DJ, 1997, P ROY SOC LOND B BIO, V264, P567
+   ENDO K, 1985, J INSECT PHYSIOL, V31, P669
+   ENDO K, 1985, J INSECT PHYSIOL, V31, P701
+   FABRE JH, 1899, SOUVENIRS ENTOMOLOGI
+   GILBERT LI, 1996, METAMORPHOSIS POSTEM, P60
+   GOLDSTEIN SA, 1987, J BIOMECH, V20, P1
+   HALFFTER G, 1982, NESTING BEHAV DUNG B
+   HARDIE J, 1980, NATURE, V286, P602
+   HARDIE J, 1987, J INSECT PHYSIOL, V33, P201
+   HUNT J, 1997, BEHAV ECOL SOCIOBIOL, V41, P109
+   KOCH PB, 1987, J INSECT PHYSIOL, V33, P823
+   KODRICBROWN A, 1984, AM NAT, V124, P309
+   LEES AD, 1977, NATURE, V267, P46
+   LENZ M, 1985, CASTE DIFFERENTIATIO, P251
+   MAIN H, 1922, P ENTOMOLOGICAL SOC, P14
+   MOCZEK AP, IN PRESS J EVOLUTION
+   MOCZEK P, 1996, THESIS U WURZBURG
+   NIJHOUT HF, 1974, J EXP BIOL, V61, P481
+   NIJHOUT HF, 1974, J EXP BIOL, V61, P493
+   NIJHOUT HF, 1975, BIOL BULL, V149, P214
+   NIJHOUT HF, 1981, AM ZOOL, V21, P631
+   NIJHOUT HF, 1994, INSECT HORMONES
+   NUR N, 1984, J THEOR BIOL, V110, P275
+   PALMER TJ, 1978, NATURE, V274, P583
+   QUENNEDEY A, 1995, J INSECT PHYSIOL, V41, P143
+   RACHINSKY A, 1990, J INSECT PHYSIOL, V36, P189
+   RASMUSSEN JL, 1994, J INSECT BEHAV, V7, P67
+   ROUNTREE DB, 1986, J EXP BIOL, V120, P41
+   ROUNTREE DB, 1995, J INSECT PHYSIOL, V41, P987
+   SIVAJOTHY MT, 1987, J ETHOL, V5, P165
+   TANAKA S, 1994, J INSECT PHYSIOL, V40, P483
+   THORNHILL R, 1983, EVOLUTION INSECT MAT
+   TRUMAN JW, 1974, DEV BIOL, V39, P247
+   WARREN JT, 1984, EXPERIENTIA, V40, P393
+   WHEELER DE, 1981, SCIENCE, V213, P361
+   WHEELER DE, 1983, J INSECT PHYSIOL, V29, P847
+   WHEELER DE, 1986, AM NAT, V128, P13
+   WHEELER DE, 1991, AM NAT, V138, P1218
+   WIGGLESWORTH VB, 1970, INSECT HORMONES
+   WIRTZ P, 1973, MEDED LANDBOUWHOGESC, V73, P1
+   ZEH DW, 1988, AM NAT, V132, P454
+   ZERA AJ, 1989, J INSECT PHYSIOL, V35, P7
+   ZERA AJ, 1990, J INSECT PHYSIOL, V36, P271
+NR 59
+TC 71
+PU PERGAMON-ELSEVIER SCIENCE LTD
+PI OXFORD
+PA THE BOULEVARD, LANGFORD LANE, KIDLINGTON, OXFORD OX5 1GB, ENGLAND
+SN 0022-1910
+J9 J INSECT PHYSIOL
+JI J. Insect Physiol.
+PD JAN
+PY 1999
+VL 45
+IS 1
+BP 45
+EP 53
+PG 9
+SC Entomology; Physiology
+GA 154DL
+UT ISI:000077873300007
+ER
+
+PT J
+AU Emlen, DJ
+TI Diet alters male horn allometry in the beetle Onthophagus acuminatus
+   (Coleoptera: Scarabaeidae)
+SO PROCEEDINGS OF THE ROYAL SOCIETY OF LONDON SERIES B-BIOLOGICAL SCIENCES
+LA English
+DT Article
+ID DEPENDENT SEX ORNAMENTS; WILD HOWLER MONKEYS; FEMALE CHOICE; SELECTION;
+   VIABILITY; SIZE
+AB Darwin considered the horns of male beetles to be among the most
+   striking examples of sexual selection. As with antlers in deer or elk,
+   beetle horns scale positively with male body size, with the result that
+   large males have disproportionately longer horns than small males. It
+   is generally assumed that such scaling relationships ('static
+   allometries') are insensitive to short-term changes in the environment,
+   and for this reason they are regularly used as diagnostic attributes of
+   populations or species. Here I report breeding experiments on horned
+   beetles that demonstrate that the scaling relationship between male
+   horn length and body size changes when larval nutrition changes. Males
+   reared on a low-quality diet had longer horn lengths at any given body
+   size than sibling males reared on a high-quality diet. Such 'allometry
+   plasticity' may explain seasonal changes observed in this same scaling
+   relationship in a natural population. These experiments demonstrate
+   that scaling relationships of sexually selected traits can respond
+   facultatively to variation in the environment, thereby revealing a new
+   mechanism by which males regulate the production of exaggerated
+   secondary sexual traits.
+C1 PRINCETON UNIV,DEPT ECOL & EVOLUT BIOL,PRINCETON,NJ 08544.
+CR ANDERSSON M, 1986, EVOLUTION, V40, P804
+   ANDERSSON M, 1994, SEXUAL SELECTION
+   ANDERSSON S, 1989, BEHAV ECOL SOCIOBIOL, V25, P493
+   ARROW GH, 1951, HORNED BETTLES
+   COCK AG, 1966, Q REV BIOL, V41, P131
+   EBERHARD WG, 1979, SEXUAL SELECTION REP, P231
+   EBERHARD WG, 1991, EVOLUTION, V45, P18
+   EMLEN DJ, 1994, P ROY SOC LOND B BIO, V256, P131
+   EMLEN DJ, 1994, THESIS PRINCETON U
+   EMLEN DJ, 1996, EVOLUTION, V50, P1219
+   EMLEN DJ, 1997, UNPUB BEHAV ECOL SOC
+   GILL BD, 1991, DUNG BEETLE ECOLOGY, P211
+   GORANSSON G, 1990, ANIM BEHAV, V40, P89
+   GOULD SJ, 1966, BIOL REV CAMBRIDGE P, V41, P587
+   HALFFTER G, 1982, NESTING BEHAV DUNG B
+   HILL GE, 1990, ANIM BEHAV, V40, P563
+   HILTON K, 1982, FORAGING STRATEBY HO
+   HOWDEN HF, 1981, CONTRIBUTIONS AM ENT, V18, P1
+   HUXLEY JS, 1932, PROBLEMS RELATIVE GR
+   KODRICBROWN A, 1989, BEHAV ECOL SOCIOBIOL, V25, P393
+   LIGON JD, 1990, ANIM BEHAV, V40, P367
+   MILTON K, 1980, PHYSIOL ZOOL, V53, P402
+   MILTON K, 1991, J ECOL, V79, P1
+   MOLLER AP, 1991, EVOLUTION, V45, P1823
+   NAGY KA, 1979, ECOLOGY, V60, P475
+   PETRIE M, 1993, P ROY SOC LOND B BIO, V251, P127
+   PRUETTJONES SG, 1990, EVOLUTION, V44, P486
+   SIMPSON GG, 1953, MAJOR FEATURES EVOLU
+   SUTTIE JM, 1983, ANTLER DEV CERVIDAE, P61
+   WHEELER DE, 1981, SCIENCE, V213, P361
+   WILSON EO, 1971, INSECT SOCIETIES
+   ZAR JH, 1984, BIOSTATISTICAL ANAL
+   ZEH DW, 1988, AM NAT, V132, P454
+NR 33
+TC 46
+PU ROYAL SOC LONDON
+PI LONDON
+PA 6 CARLTON HOUSE TERRACE, LONDON, ENGLAND SW1Y 5AG
+SN 0962-8452
+J9 PROC ROY SOC LONDON SER B
+JI Proc. R. Soc. Lond. Ser. B-Biol. Sci.
+PD APR 22
+PY 1997
+VL 264
+IS 1381
+BP 567
+EP 574
+PG 8
+SC Biology
+GA WW533
+UT ISI:A1997WW53300015
+ER
+
+PT J
+AU Rogers, DC
+TI Aphodius alternatus Horn (Aphodiinae: Scarabaeidae), first record of a
+   semiaquatic scarab beetle
+SO PAN-PACIFIC ENTOMOLOGIST
+LA English
+DT Article
+RP Rogers, DC, JONES & STOKES ASSOCIATES INC,2600 V ST,SACRAMENTO,CA 95818.
+NR 0
+TC 1
+PU PACIFIC COAST ENTOMOL SOC
+PI SAN FRANCISCO
+PA CALIFORNIA ACAD OF SCIENCES GOLDEN GATE PARK, SAN FRANCISCO, CA 94118
+SN 0031-0603
+J9 PAN-PAC ENTOMOL
+JI Pan-Pacific Entomol.
+PD APR
+PY 1997
+VL 73
+IS 2
+BP 135
+EP 136
+PG 2
+SC Entomology
+GA WV975
+UT ISI:A1997WV97500010
+ER
+
+PT J
+AU Emlen, DJ
+TI Artificial selection on horn length body size allometry in the horned
+   beetle Onthophagus acuminatus (Coleoptera: Scarabaeidae)
+SO EVOLUTION
+LA English
+DT Article
+DE allometry; artificial selection; dimorphism; horned beetle; Onthophagus
+   acuminatus; threshold
+ID PUPAL COLOR DIMORPHISM; SEXUAL SELECTION; BOLITOTHERUS-CORNUTUS;
+   AMBYSTOMA-TALPOIDEUM; FUNGUS BEETLE; EVOLUTION; PEDOMORPHOSIS;
+   ORNAMENTS; POLYMORPHISM; HERITABILITY
+AB Males of the horned beetle Onthophagus acuminatus Har. (Coleoptera:
+   Scarabaeidae) exhibit horn length dimorphism due to a sigmoidal
+   allometric relationship between horn length and body size: the steep
+   slope of the allometry around I-he inflection of the sigmoid curve
+   separates males into two groups; those larger than this inflection
+   possess long horns, and those smaller than this inflection have short
+   horns or lack horns. I examined the genetic basis of the allometric
+   relationship between horn length and body size by selecting males that
+   produced unusually long horns, and males that produced unusually short
+   horns, for their respective body sizes. After seven generations of
+   selection, lines selected for relatively long horns had significantly
+   longer horn lengths for a given body size than lines selected for
+   relatively short horns, indicating a heritable component to variation
+   in the allometry. The sigmoidal shape of the allometry was not affected
+   by this selection regime. Rather, selected lines differed in the
+   position of the allometry along the body size axis. One consequence of
+   lateral shifts in this allometric relationship was that the body size
+   separating horned from hornless males (the point of inflection of the
+   sigmoid curve) differed between selection lines: lines in which males
+   were selected for relatively long horns began horn production at
+   smaller body sizes than lines selected for relatively short horns.
+   These results suggest that populations can evolve in response to
+   selection on male horn length through modification of the growth
+   relationship between horn length and body size.
+C1 PRINCETON UNIV,DEPT ECOL & EVOLUT BIOL,PRINCETON,NJ 08544.
+CR ANDERSSON M, 1986, EVOLUTION, V40, P804
+   ARROW GH, 1951, HORNED BEETLES
+   BALMFORD A, 1992, BEHAV ECOL, V3, P112
+   BATES HW, 1989, NATURALIST RIVER AMA
+   BEEBE W, 1944, ZOOLOGICA, V29, P53
+   BRADSHAW AD, 1965, ADV GENET, V13, P115
+   CLARKE CA, 1972, J ENTOMOLOGY, V46, P123
+   CLUTTONBROCK TH, 1989, NATURE, V340, P463
+   CONNER J, 1988, EVOLUTION, V42, P736
+   CONNER J, 1989, EVOLUTION, V43, P1378
+   COOK D, 1987, AUST J ZOOL, V35, P123
+   COOK DF, 1990, ANIM BEHAV, V40, P428
+   DARWIN C, 1871, DESCENT MAN SELECTIO
+   EBERHARD WG, 1977, PSYCHE, V83, P292
+   EBERHARD WG, 1979, SEXUAL SELECTION REP, P231
+   EBERHARD WG, 1981, ANN ENTOMOLOGICAL SO, V74, P445
+   EBERHARD WG, 1982, AM NAT, V119, P420
+   EBERHARD WG, 1991, EVOLUTION, V45, P18
+   EMLEN DJ, 1994, P ROY SOC LOND B BIO, V256, P131
+   EMLEN DJ, 1994, THESIS PRINCETON U P
+   ENRODI S, 1985, DYNASTINAE WORLD
+   FABRE JH, 1922, MORE BEETLES
+   FALCONER DS, 1989, INTRO QUANTITATIVE G
+   GILL BD, 1991, DUNG BEETLE ECOLOGY, P211
+   GOLDSMITH SK, 1987, BEHAV ECOL SOCIOBIOL, V20, P111
+   GRUNER C, 1988, OECOLOGIA, V74, P515
+   HALFFTER G, 1982, NESTING BEHAV DUNG B
+   HARRIS RN, 1987, ECOLOGY, V68, P705
+   HARRISON RG, 1979, OECOLOGIA, V40, P125
+   HAZEL WN, 1982, HEREDITY, V49, P295
+   HAZEL WN, 1990, P ROY SOC LOND B BIO, V242, P181
+   HOWDEN HF, 1981, CONTRIBUTIONS AM ENT, V18, P1
+   HUXLEY JS, 1993, PROBLEMS RELATIVE GR
+   JOHNSON K, 1993, BEHAV ECOL, V4, P254
+   LEE JM, 1981, ENVIRON ENTOMOL, V10, P626
+   LEES AD, 1966, ADV INSECT PHYSL, V3, P207
+   METROPOLIS N, 1953, J CHEM PHYS, V21, P1087
+   MOLLER AP, 1991, EVOLUTION, V45, P1823
+   NICOLETTO PF, 1993, ANIM BEHAV, V46, P441
+   PALMER TJ, 1978, NATURE, V274, P583
+   PAREJKO K, 1991, EVOLUTION, V45, P1665
+   RASMUSSEN JL, 1994, J INSECT BEHAV, V7, P67
+   RISDILLSMITH TJ, 1982, ENTOMOL EXP APPL, V32, P80
+   ROFF DA, 1986, EVOLUTION, V40, P1009
+   ROFF DA, 1994, HEREDITY, V72, P36
+   SEMLITSCH RD, 1989, EVOLUTION, V43, P105
+   SEMLITSCH RD, 1990, EVOLUTION, V44, P1604
+   SHUSTER SM, 1989, EVOLUTION, V43, P1683
+   SIMS SR, 1983, HEREDITY, V50, P159
+   SIVAJOTHY MT, 1987, J ETHOL, V5, P165
+   SZYMURA JM, 1986, EVOLUTION, V40, P1141
+   VEPSALAINEN K, 1974, HEREDITAS, V77, P163
+   WALLACE AR, 1878, TROPICAL NATURE OTHE
+   WEBER KE, 1990, GENETICS, V126, P975
+   WESTEBERHARD MJ, 1992, MOLDS MOL METAZOA GR, P57
+   WHEELER DE, 1991, AM NAT, V138, P1218
+   WILKINSON GS, 1993, GENET RES, V62, P213
+   WILSON EO, 1971, INSECT SOCIETIES
+   ZAR JH, 1984, BIOSTATISTICAL ANAL
+NR 59
+TC 99
+PU SOC STUDY EVOLUTION
+PI LAWRENCE
+PA 810 E 10TH STREET, LAWRENCE, KS 66044
+SN 0014-3820
+J9 EVOLUTION
+JI Evolution
+PD JUN
+PY 1996
+VL 50
+IS 3
+BP 1219
+EP 1230
+PG 12
+SC Ecology; Evolutionary Biology; Genetics & Heredity
+GA UY555
+UT ISI:A1996UY55500024
+ER
+
+PT J
+AU EMLEN, DJ
+TI ENVIRONMENTAL-CONTROL OF HORN LENGTH DIMORPHISM IN THE BEETLE
+   ONTHOPHAGUS-ACUMINATUS (COLEOPTERA, SCARABAEIDAE)
+SO PROCEEDINGS OF THE ROYAL SOCIETY OF LONDON SERIES B-BIOLOGICAL SCIENCES
+LA English
+DT Article
+ID SEXUAL SELECTION; XIPHOPHORUS-NIGRENSIS; POLYMORPHISM; STRATEGIES;
+   EVOLUTION; ORNAMENTS; PREFERENCES; SWORDTAIL; HANDICAP; SUCCESS
+AB Impressive examples of male ornamentation occur in horned beetles. Many
+   beetle species are characterized by substantial amounts of phenotypic
+   variation in horn length, and in some species this variation is
+   biomodally distributed so that males may be separated into two groups
+   on the basis of horn length. Two discrete male morphs are present in
+   natural populations of Onthophagus acuminatus (Coleoptera:
+   Scarabaeidae), a dung beetle common to lowland tropical forests of
+   Panama. Large males possess a pair of frontal horns, which in small
+   males are greatly reduced in length or are lacking. This paper presents
+   results from experiments designed to assess the relative importance of
+   genetic and environmental factors as determinants of male horn
+   morphology. Experimental manipulation of food quantity, a factor known
+   to influence body size, showed that male horn length variation in O.
+   acuminalus was influenced primarily by environmental factors. Horn
+   lengths of male progeny were a function of individual differences in
+   body size (the manipulated variable) and not of the horn lengths of
+   their fathers, in both experimental and control populations. These
+   results support recent theories on sexual selection which predict that
+   male ornaments will evolve to be reliable indicators of male quality.
+   The utility of incorporating studies of developmental mechanism into
+   analyses of morphological evolution is discussed.
+RP EMLEN, DJ, PRINCETON UNIV,DEPT ECOL & EVOLUT BIOL,PRINCETON,NJ 08544.
+CR ANDERSSON M, 1986, EVOLUTION, V40, P804
+   ARROW GH, 1951, HORNED BEETLES
+   BALMFORD A, 1992, BEHAV ECOL, V3, P112
+   BEEBE W, 1944, ZOOLOGICA, V29, P53
+   BROWN L, 1986, AM NAT, V127, P565
+   CHARNOV EL, 1977, NATURE, V266, P828
+   CLUTTONBROCK TH, 1989, NATURE, V340, P463
+   COLLINS JP, 1983, AM ZOOL, V23, P77
+   CONNER J, 1989, EVOLUTION, V43, P1378
+   COOK DF, 1987, AUST J ZOOL, V36, P123
+   COOK DF, 1990, ANIM BEHAV, V40, P428
+   CRESPI BJ, 1988, BEHAV ECOL SOCIOBIOL, V23, P93
+   DARWIN C, 1871, DESCENT MAN SELECTIO
+   DENNO RF, 1986, ECOLOGY, V67, P116
+   DOMINEY WJ, 1983, J THEOR BIOL, V101, P495
+   DOMINEY WJ, 1984, AM ZOOL, V24, P385
+   EBERHARD WG, 1982, AM NAT, V119, P420
+   EBERHARD WG, 1987, J KANSAS ENTOMOL SOC, V60, P504
+   EBERHARD WG, 1991, EVOLUTION, V45, P18
+   FALCONER DS, 1989, INTRO QUANTITATIVE G
+   GADGIL M, 1972, AM NAT, V106, P574
+   GRANT JWG, 1981, LIMNOL OCEANOGR, V26, P201
+   GREENE E, 1989, SCIENCE, V243, P643
+   GROSS MR, 1985, NATURE, V313, P47
+   HALFFTER G, 1982, NESTING BEHAVIOR DUN
+   HAMILTON WD, 1982, SCIENCE, V218, P384
+   HARRISON RG, 1980, ANNU REV ECOL SYST, V11, P95
+   HAZEL WN, 1979, ECOLOGICAL ENTOMOLOG, V4, P393
+   HAZEL WN, 1990, P ROY SOC LOND B BIO, V242, P181
+   JOHNSON K, 1993, BEHAV ECOL, V4, P254
+   KODRICBROWN A, 1984, AM NAT, V124, P309
+   LEVINS R, 1968, EVOLUTION CHANGING E
+   LIVELY CM, 1986, AM NAT, V128, P561
+   LIVELY CM, 1986, EVOLUTION, V40, P232
+   MOLLER AP, 1991, EVOLUTION, V45, P1823
+   MOLLER AP, 1992, P ROY SOC LOND B BIO, V248, P199
+   NICOLETTO PF, 1993, ANIM BEHAV, V46, P441
+   NUR N, 1984, J THEOR BIOL, V110, P275
+   PALMER TJ, 1978, NATURE, V274, P583
+   ROFF DA, 1986, EVOLUTION, V40, P1009
+   RYAN MJ, 1992, AM NAT, V139, P21
+   SHUSTER SM, 1989, EVOLUTION, V43, P1683
+   SHUSTER SM, 1991, NATUURE LOND, V350, P698
+   SIMS SR, 1983, HEREDITY, V50, P159
+   SMITH AG, 1978, P ROY SOC LOND B BIO, V200, P295
+   SMITH TB, 1993, NATURE, V363, P616
+   STEARNS SC, 1982, EVOL DEV, P237
+   WALLACE AR, 1878, TROPICAL NATURE OTHE
+   WESTEBERHARD MJ, 1992, MOLDS MOL METAZOA GR, P57
+   WHEELER DE, 1991, AM NAT, V138, P1218
+   ZIMMERER EJ, 1989, EVOLUTION, V43, P1298
+NR 51
+TC 131
+PU ROYAL SOC LONDON
+PI LONDON
+PA 6 CARLTON HOUSE TERRACE, LONDON, ENGLAND SW1Y 5AG
+SN 0962-8452
+J9 PROC ROY SOC LONDON SER B
+JI Proc. R. Soc. Lond. Ser. B-Biol. Sci.
+PD MAY 23
+PY 1994
+VL 256
+IS 1346
+BP 131
+EP 136
+PG 6
+SC Biology
+GA NN672
+UT ISI:A1994NN67200005
+ER
+
+PT J
+AU RASMUSSEN, JL
+TI THE INFLUENCE OF HORN AND BODY-SIZE ON THE REPRODUCTIVE-BEHAVIOR OF THE
+   HORNED RAINBOW SCARAB BEETLE PHANAEUS-DIFFORMIS (COLEOPTERA,
+   SCARABAEIDAE)
+SO JOURNAL OF INSECT BEHAVIOR
+LA English
+DT Article
+DE PHANAEUS; REPRODUCTIVE BEHAVIOR; ALTERNATIVE MATING TACTICS; BODY SIZE;
+   HORN SIZE; INTRASEXUAL COMPETITION
+AB The reproductive behavior of homed rainbow scarab beetles, Phanaeus
+   difformis, was studied to determine the influence of morphological
+   traits on intersexual and intrasexual interactions. Phanaeus difformis
+   is a sexually dimorphic dung beetle in which males possess much larger
+   hems than females, and males can be grouped into ''major'' and
+   ''minor'' male morph categories based on horn size. Male-female pairs
+   cooperated in nest construction and provisioning. In the laboratory,
+   males of both morphs assisted females and were equally successful at
+   copulating. However, in the field larger individuals had a pairing
+   advantage due to greater success in intrasexual competition. Some males
+   used an alternative mating tactic which involved sneaking copulations
+   with paired females. In most cases the sneak male was smaller than the
+   paired male.
+RP RASMUSSEN, JL, SCH FIELD STUDIES,POB 47272,NAIROBI,KENYA.
+NR 0
+TC 51
+PU PLENUM PUBL CORP
+PI NEW YORK
+PA 233 SPRING ST, NEW YORK, NY 10013
+SN 0892-7553
+J9 J INSECT BEHAV
+JI J. Insect Behav.
+PD JAN
+PY 1994
+VL 7
+IS 1
+BP 67
+EP 82
+PG 16
+SC Entomology
+GA MU534
+UT ISI:A1994MU53400006
+ER
+
+PT J
+AU JENSEN, JC
+   ZACHARUK, RY
+TI THE FINE-STRUCTURE OF THE MULTIPOROUS SENSILLA ON THE ANTENNA OF THE
+   DIVING BEETLE GRAPHODERUS-OCCIDENTALIS HORN (COLEOPTERA, DYTISCIDAE)
+SO CANADIAN JOURNAL OF ZOOLOGY-REVUE CANADIENNE DE ZOOLOGIE
+LA English
+DT Article
+AB The antenna of the diving beetle Graphoderus occidentalis Horn has a
+   cluster of multiporous (MP) sensilla on the anteromedial aspect of each
+   flagellomere. These sensilla are modified basiconic pegs that are sunk
+   in longitudinal sockets and flattened to a platelike surface
+   externally. On the terminal flagellomere, approximately 15 multiporous
+   pitted sensilla (MPp) have a pitted external surface and each is
+   innervated by one or two morphologically similar neurons. In addition,
+   eight multiporous grooved sensilla (MPg) have longitudinal surface
+   grooves with pores opening at the bottom of each groove; each sensillum
+   is innervated by two neurons that differ in electron density. In both
+   sensillar types the pores open into channels that traverse the sensory
+   cuticle. The branched dendritic terminations in the underlying chamber
+   are bathed in an electron-dense sensillar liquor that extends into the
+   channels leading to the surface pores. The neuronal perikarya in both
+   types, and the proximal portion of the dendrites in the MPg, are
+   unsheathed and exposed to the hemolymph. The putative function of these
+   sensilla as odor detectors is discussed.
+C1 UNIV REGINA,DEPT BIOL,REGINA S4S 0A2,SASKATCHEWAN,CANADA.
+CR ALTNER H, 1976, CELL TISSUE RES, V167, P97
+   ALTNER H, 1977, OLFACTION TASTE, V6, P295
+   BEHREND K, 1971, Z VERGL PHYSIOL, V75, P108
+   CORBIEREG, 1969, J INSECT PHYSL, V15, P1759
+   FOELIX RF, 1975, TISSUE CELL, V7, P331
+   HGODGSON ES, 1951, PHYSIOL ZOOL, V24, P131
+   HODGSON ES, 1953, BIOL BULL, V105, P115
+   IVANOV VP, 1966, ZH EVOL BIOKHIM FIZ, V2, P461
+   IVANOV VP, 1969, TR VSES ENTOMOL OBVA, V53, P301
+   JENSEN JC, 1991, CAN J ZOOL, V69, P334
+   KORSCHELT E, 1924, ERSTE MONOGRPAHIE GE, V1
+   SCHALLER A, 1926, Z VERGL PHYSIOL, V4, P370
+   ZACHARUK RY, 1971, J MORPHOL, V135, P433
+   ZACHARUK RY, 1980, ANNU REV ENTOMOL, V25, P27
+   ZACHARUK RY, 1985, COMPREHENSIVE INSECT, V6, P1
+NR 15
+TC 5
+PU NATL RESEARCH COUNCIL CANADA
+PI OTTAWA
+PA RESEARCH JOURNALS, MONTREAL RD, OTTAWA ON K1A 0R6, CANADA
+SN 0008-4301
+J9 CAN J ZOOL
+JI Can. J. Zool.-Rev. Can. Zool.
+PD APR
+PY 1992
+VL 70
+IS 4
+BP 825
+EP 832
+PG 8
+SC Zoology
+GA JB043
+UT ISI:A1992JB04300023
+ER
+
+PT J
+AU JENSEN, JC
+   ZACHARUK, RY
+TI THE FINE-STRUCTURE OF UNIPOROUS AND NONPOROUS PEGS ON THE DISTAL
+   ANTENNAL SEGMENT OF THE DIVING BEETLE GRAPHODERUS-OCCIDENTALIS HORN
+   (COLEOPTERA, DYTISCIDAE)
+SO CANADIAN JOURNAL OF ZOOLOGY-REVUE CANADIENNE DE ZOOLOGIE
+LA English
+DT Article
+ID MUSCA-DOMESTICA L; EXTERNAL MORPHOLOGY; STONEFLY NYMPH; SPINY LOBSTER;
+   SENSILLA; ULTRASTRUCTURE; PLECOPTERA; ORGANS; TOPOGRAPHY; CRUSTACEA
+AB The terminal segment of the antenna of the predaceous diving beetle
+   Graphoderus occidentalis Horn bears approximately 50 sensilla of nine
+   different types.  There are six types of uniporous chemosensilla, one
+   type of nonporous mechanosensitive peg, and two types of multiporous
+   pegs.  Two types of uniporous pegs, which occur only at the antennal
+   tip, have features of both contact chemosensilla and thermo- and
+   hygro-sensilla.  Three other types that occur only on the terminal
+   segment below the apex also exhibit some features of chemosensilla and
+   thermo- and hygro-sensilla.  The sensilla are innervated by one to four
+   neurons and most are ensheathed by two accessory cells.  Four types of
+   sensilla exhibit elaborate sheath cell configurations and secretions
+   associated with their sinus that may reflect an adaptation to an
+   aquatic or a dual aquatic-terrestrial habitat.  All are atypical of
+   generalized insect sensilla in having portions of the proximal
+   dendrites and axons as well as the entire neuronal perikarya unsheathed
+   and exposed to the hemocoel.  The neuronal perikarya of two sensillar
+   types contain virus-like particles.
+C1 UNIV REGINA,DEPT BIOL,REGINA S4S 0A2,SASKATCHEWAN,CANADA.
+CR ALTNER H, 1977, OLFACTION TASTE, V6, P295
+   ALTNER H, 1983, CELL TISSUE RES, V234, P279
+   ALTNER I, 1983, CELL TISSUE RES, V228, P357
+   BELLAMY F, 1973, THESIS U REGINA SASK
+   BLANEY WM, 1971, Z ZELLFORSCH MIKROSK, V121, P48
+   BLOOM JW, 1982, CAN J ZOOL, V60, P1528
+   BRADLEY TJ, 1984, AM ZOOL, V24, P157
+   CHUWANG IW, 1972, Z ZELLFORSCH, V127, P287
+   GNATZY W, 1984, ZOOMORPHOLOGY, V104, P11
+   GRUNERT U, 1988, CELL TISSUE RES, V251, P95
+   GUSE GW, 1980, PROTOPLASMA, V103, P55
+   HALLBERG E, 1982, PROTOPLASMA, V111, P206
+   HEIMANN P, 1984, CELL TISSUE RES, V235, P117
+   IVANOV VP, 1966, ZH EVOL BIOKHIM FIZ, V2, P464
+   IVANOV VP, 1969, TR VSES ENTOMOL OBVA, V53, P301
+   JEZ DH, 1980, INT J INSECT MORPHOL, V9, P147
+   KAPOOR NN, 1984, INT J INSECT MORPHOL, V13, P177
+   KAPOOR NN, 1985, INT J INSECT MORPHOL, V14, P273
+   KAPOOR NN, 1987, CAN J ZOOL, V65, P1827
+   KEIL TA, 1984, INSECT ULTRASTRUCTUR, V2, P477
+   LEUNG ES, 1986, CAN J ZOOL, V64, P2788
+   MCIVER SB, 1976, INT J INSECT MORPHOL, V5, P319
+   MITCHELL BK, 1974, J INSECT PHYSIOL, V20, P1787
+   NACHTIGALL W, 1985, COMPREHENSIVE INSECT, P467
+   RICHERSON JV, 1972, CAN J ZOOL, V50, P909
+   SPENCER M, 1986, CELL TISSUE RES, V245, P69
+   STEINBRECHT RA, 1976, TISSUE CELL, V8, P615
+   VANDERWOLK FM, 1978, J MORPHOL, V157, P201
+   WOLFE GW, 1984, INT J INSECT MORPHOL, V13, P373
+   YOKOHARI F, 1981, CELL TISSUE RES, V216, P525
+   ZACHARUK RY, 1971, J MORPHOL, V135, P433
+   ZACHARUK RY, 1978, CAN J ZOOL, V56, P246
+   ZACHARUK RY, 1980, ANNU REV ENTOMOL, V25, P27
+   ZACHARUK RY, 1985, COMPREHENSIVE INSECT, V6, P1
+NR 34
+TC 5
+PU NATL RESEARCH COUNCIL CANADA
+PI OTTAWA
+PA RESEARCH JOURNALS, MONTREAL RD, OTTAWA ON K1A 0R6, CANADA
+SN 0008-4301
+J9 CAN J ZOOL
+JI Can. J. Zool.-Rev. Can. Zool.
+PD FEB
+PY 1991
+VL 69
+IS 2
+BP 334
+EP 352
+PG 19
+SC Zoology
+GA FC982
+UT ISI:A1991FC98200014
+ER
+
+PT J
+AU COOPER, KW
+TI HORN,GEORGE,H., WRIGHT,WILLIAM,G., AND THE PECULIAR PROBLEMS CREATED BY
+   THE DISCOVERY OF THE WORLDS LARGEST BOSTRICHID BEETLE,
+   DINAPATE-WRIGHTII (COLEOPTERA, BOSTRICHIDAE)
+SO ENTOMOLOGICAL NEWS
+LA English
+DT Article
+RP COOPER, KW, UNIV CALIF RIVERSIDE,DEPT BIOL,RIVERSIDE,CA 92521.
+NR 0
+TC 0
+PU AMER ENTOMOL SOC
+PI PHILADELPHIA
+PA 1900 BENJ FRANKLIN PARKWAY, PHILADELPHIA, PA 19103-1195
+SN 0013-872X
+J9 ENTOMOL NEWS
+JI Entomol. News
+PD NOV-DEC
+PY 1989
+VL 100
+IS 5
+BP 228
+EP 244
+PG 17
+SC Entomology
+GA CF783
+UT ISI:A1989CF78300007
+ER
+
+PT J
+AU YOUNG, DK
+TI NOTES ON THE BIONOMICS OF XENOMYCETES-MORRISONI HORN (COLEOPTERA,
+   ENDOMYCHIDAE), ANOTHER CANTHARIDIN-ORIENTING FUNGUS BEETLE
+SO PAN-PACIFIC ENTOMOLOGIST
+LA English
+DT Note
+RP YOUNG, DK, UNIV WISCONSIN,DEPT ENTOMOL,MADISON,WI 53706.
+NR 0
+TC 2
+PU PACIFIC COAST ENTOMOL SOC
+PI SAN FRANCISCO
+PA CALIFORNIA ACAD OF SCIENCES GOLDEN GATE PARK, SAN FRANCISCO, CA 94118
+SN 0031-0603
+J9 PAN-PAC ENTOMOL
+JI Pan-Pacific Entomol.
+PD OCT
+PY 1989
+VL 65
+IS 4
+BP 447
+EP 448
+PG 2
+SC Entomology
+GA CB377
+UT ISI:A1989CB37700015
+ER
+
+PT J
+AU VULINEC, K
+TI HORN SIZE IN THE MINUTE TREE-FUNGUS BEETLE (COLEOPTERA, FAMILY CIIDAE)
+SO OHIO JOURNAL OF SCIENCE
+LA English
+DT Meeting Abstract
+C1 CINCINNATI MUSEUM NAT HIST,CINCINNATI,OH 45202.
+NR 0
+TC 0
+PU OHIO ACAD SCIENCE
+PI COLUMBUS
+PA 1500 W 3RD AVE SUITE 223, COLUMBUS, OH 43212-2817
+SN 0030-0950
+J9 OHIO J SCI
+JI Ohio J. Sci.
+PY 1985
+VL 85
+IS 2
+BP 5
+EP 5
+PG 1
+SC Multidisciplinary Sciences
+GA AET10
+UT ISI:A1985AET1000013
+ER
+
+PT J
+AU BROWN, L
+   SIEGFRIED, BD
+TI EFFECTS OF MALE HORN SIZE ON COURTSHIP ACTIVITY IN THE FORKED FUNGUS
+   BEETLE, BOLITOTHERUS-CORNUTUS (COLEOPTERA, TENEBRIONIDAE)
+SO ANNALS OF THE ENTOMOLOGICAL SOCIETY OF AMERICA
+LA English
+DT Article
+C1 UNIV VIRGINIA,MT LAKE BIOL STN,PEMBROKE,VA 24136.
+RP BROWN, L, GEORGE MASON UNIV,DEPT BIOL,FAIRFAX,VA 22030.
+CR ARROW GJ, 1951, HORNED BEETLES
+   BEEBE W, 1944, ZOOLOGICA, V29, P53
+   BEEBE W, 1947, ZOOLOGICA, V32, P109
+   BROWN L, 1980, P ENTOMOL SOC WASH, V82, P430
+   EBERHARD WG, 1977, PSYCHE, V83, P292
+   EBERHARD WG, 1979, SEXUAL SELECTION REP, P231
+   EBERHARD WG, 1980, SCI AM, V242, P166
+   EBERHARD WG, 1981, ANN ENTOMOL SOC AM, V74, P455
+   EBERHARD WG, 1982, AM NAT, V119, P420
+   GEIST V, 1971, MOUNTAIN SHEEP
+   LILES MP, 1956, OHIO J SCI, V56, P329
+   LINCOLN GA, 1972, J EXP ZOOL, V182, P233
+   OTTE D, 1979, SEXUAL SELECTION REP, P259
+   PACE A, 1967, MICH U MUS ZOOL OCCA, V653, P1
+   PALMER TJ, 1978, NATURE, V274, P583
+   SOKAL RR, 1969, BIOMETRY
+NR 16
+TC 15
+PU ENTOMOL SOC AMER
+PI LANHAM
+PA 9301 ANNAPOLIS RD, LANHAM, MD 20706
+SN 0013-8746
+J9 ANN ENTOMOL SOC AMER
+JI Ann. Entomol. Soc. Am.
+PY 1983
+VL 76
+IS 2
+BP 253
+EP 255
+PG 3
+SC Entomology
+GA QE091
+UT ISI:A1983QE09100019
+ER
+
+PT J
+AU EBERHARD, WG
+TI BEETLE HORN DIMORPHISM - MAKING THE BEST OF A BAD LOT
+SO AMERICAN NATURALIST
+LA English
+DT Note
+RP EBERHARD, WG, UNIV COSTA RICA,ESCUELA BIOL,SMITHSONIAN TROP RES
+   INST,SAN JOSE,COSTA RICA.
+CR ALCOCK J, 1979, SEXUAL SELECTION REP, P381
+   ARROW GH, 1951, HORNED BEETLES
+   BRIAN MV, 1979, SOCIAL INSECTS, V1, P121
+   BROCKMAN HJ, 1979, FLA ENTOMOL, V63, P53
+   BROCKMANN HJ, 1979, J THEOR BIOL, V77, P473
+   CADE W, 1980, FLORIDA ENT, V63, P30
+   CADE WH, 1979, SEXUAL SELECTION REP, P343
+   DAWKINS R, 1980, SOCIOBIOLOGY NATURE, P231
+   EBERHARD WG, 1977, PSYCHE, V83, P292
+   EBERHARD WG, 1977, REV COLOMBIANA ENTOM, V3, P17
+   EBERHARD WG, 1979, SEXUAL SELECTION REP, P231
+   EBERHARD WG, 1980, SCI AM, V242, P166
+   EMLEN ST, 1976, BEHAV ECOL SOCIOBIOL, V1, P283
+   GADGIL M, 1972, AM NAT, V106, P574
+   GUAGLIUMI P, 1962, CTR INVEST AGRON M 2, V1
+   HAMILTON WD, 1979, SEXUAL SELECTION REP, P167
+   KUHL W, 1928, Z MORPHOLOGIE OKOLOG, V12, P299
+   MAYNARDSMITH J, 1976, AM SCI, V64, P41
+   PALMER TJ, 1978, NATURE, V274, P583
+   THORNHILL R, 1979, FLORIDA ENTOMOLOGIST, V63, P5
+   WARNER RR, 1975, SCIENCE, V190, P633
+   WESTEBERHARD MJ, 1979, P PHIL SOC AM, V123, P222
+   WIGGLESWORTH V, 1965, INSECT PHYSL
+NR 23
+TC 147
+PU UNIV CHICAGO PRESS
+PI CHICAGO
+PA 5720 S WOODLAWN AVE, CHICAGO, IL 60637
+SN 0003-0147
+J9 AMER NATURALIST
+JI Am. Nat.
+PY 1982
+VL 119
+IS 3
+BP 420
+EP 426
+PG 7
+SC Ecology; Evolutionary Biology
+GA NC804
+UT ISI:A1982NC80400010
+ER
+
+PT J
+AU COWLEY, RJ
+   HOWARD, DC
+   SMITH, RH
+TI THE EFFECT OF GRAIN STABILITY ON DAMAGE CAUSED BY
+   PROSTEPHANUS-TRUNCATUS (HORN) AND 3 OTHER BEETLE PESTS OF STORED MAIZE
+SO JOURNAL OF STORED PRODUCTS RESEARCH
+LA English
+DT Article
+C1 UNIV READING,DEPT ZOOL,READING RG6 2AJ,BERKSHIRE,ENGLAND.
+CR BACK EA, 1922, 1260 US DEP AGR FRMR
+   CALDERON M, 1962, PLANT PROT B FAO, V10, P43
+   CHITTENDEN FH, 1911, B US BUR ENT, V96, P29
+   COOMBS CW, 1956, B ENTOMOL RES, V47, P737
+   DOBIE P, 1974, J STORED PROD RES, V10, P183
+   DOBIE P, 1977, TROP STORED PROD INF, V34, P7
+   FISHER WS, 1950, 698 US DEP AGR MISC
+   GENEL MR, 1960, AGR TEC MEX, V10, P32
+   GILES PH, 1975, ANNUAL REPORT 1974 A
+   HOWE RW, 1953, ANN APPL BIOL, V40, P134
+   KULASH WM, 1954, 389 N CAR AGR EXP ST
+   SHIRES SW, J STORED PROD RES
+   SHIRES SW, 1977, J STORED PROD RES, V13, P205
+   ZACHER F, 1926, MITT GES VORRATSSCHU, V2, P45
+NR 14
+TC 14
+PU PERGAMON-ELSEVIER SCIENCE LTD
+PI OXFORD
+PA THE BOULEVARD, LANGFORD LANE, KIDLINGTON, OXFORD, ENGLAND OX5 1GB
+SN 0022-474X
+J9 J STORED PROD RES
+JI J. Stored Prod. Res.
+PY 1980
+VL 16
+IS 2
+BP 75
+EP 78
+PG 4
+SC Entomology
+GA KA890
+UT ISI:A1980KA89000005
+ER
+
+PT J
+AU EVANS, WG
+TI CIRCADIAN AND CIRCATIDAL LOCOMOTORY RHYTHMS IN INTERTIDAL BEETLE
+   THALASSOTRECHUS-BARBARAE (HORN) - CARABIDAE
+SO JOURNAL OF EXPERIMENTAL MARINE BIOLOGY AND ECOLOGY
+LA English
+DT Article
+C1 UNIV ALBERTA,DEPT ENTOMOL,EDMONTON,ALBERTA,CANADA.
+CR BRADY J, 1974, ADV INSECT PHYSL, V10, P1
+   DARLINGTON PJ, 1953, COL B, V7, P12
+   ENRIGHT JT, 1963, Z VERGL PHYSIOL, V46, P276
+   ENRIGHT JT, 1965, J THEOR BIOL, V8, P426
+   EVANS PD, 1971, J MAR BIOL ASSOC UK, V51, P375
+   EVANS WG, 1968, PANPACIF ENT, V44, P236
+   EVANS WG, 1970, PANPACIFIC ENTOMOLOG, V46, P233
+   EVANS WG, 1972, QUAESTIONES ENTOMOLO, V8, P351
+   GLYNNEWILLIAMS J, 1952, P ZOOL SOC LOND, V122, P795
+   GREENSLADE PJM, 1963, ENTOMOL EXP APPL, V6, P171
+   JEANNEL R, 1926, ABEILLE, V32, P221
+   JOHNS PM, 1974, J ROYAL SOC NZ, V4, P283
+   JONES DA, 1970, J EXP MAR BIOL ECOL, V4, P188
+   KENSLER CB, 1967, J ANIM ECOL, V36, P391
+   NAYLOR E, 1958, J EXP BIOL, V35, P602
+   NEUMANN D, 1962, VERH DT ZOOL GES, P275
+   NEUMANN D, 1971, CAN ENTOMOL, V103, P315
+   NEWELL RC, 1970, BIOLOGY INTERTIDAL A
+   RODRIGUEZ G, 1972, J MAR BIOL ASSOC UK, V52, P81
+   TAIT RV, 1968, ELEMENTS MARINE ECOL
+   VERDIER P, 1951, VIE MILIEU, V2, P69
+   WHITEHEAD DR, 1969, J NY ENT SOC, V78, P36
+   WILDISH DJ, 1970, J MAR BIOL ASSOC UK, V50, P241
+   ZANN LP, 1973, J EXPT MARINE BIOL E, V11, P249
+NR 24
+TC 8
+PU ELSEVIER SCIENCE BV
+PI AMSTERDAM
+PA PO BOX 211, 1000 AE AMSTERDAM, NETHERLANDS
+SN 0022-0981
+J9 J EXP MAR BIOL ECOL
+JI J. Exp. Mar. Biol. Ecol.
+PY 1976
+VL 22
+IS 1
+BP 79
+EP 90
+PG 12
+SC Ecology; Marine & Freshwater Biology
+GA BQ595
+UT ISI:A1976BQ59500005
+ER
+
+PT J
+AU BAKER, NW
+TI OBSERVATIONS ON BIOLOGY OF GIANT PALM-BORING BEETLE, DINAPATE-WRIGHTI
+   HORN (COLEOPTERA-BOSTRICHIDAE)
+SO JOURNAL OF THE NEW YORK ENTOMOLOGICAL SOCIETY
+LA English
+DT Article
+CR ALDRICH JM, 1915, J ECON ENTOMOL
+   ANDERSON WH, 1939, US NAT MUS J WASHING, V29, P382
+   AXELROD DL, 1950, 590 CARN I WASH PUB
+   CAMPBELL RE, 1923, J ENTOMOL ZOOL POMON, V15, P61
+   COMSTOCK JA, 1922, B S CALIFORNIA ACAD, V21, P5
+   DAVIS AC, 1940, P ENTOMOL SOC WASHIN, V42, P129
+   ELMER HS, 43 UC CITR RES CTR A, P9
+   FISHER WS, 1950, USDA698 B, P1
+   GARNETT RT, 1918, ENTOMOL NEWS, V29, P41
+   HORN GH, 1886, T AM ENTOMOL SOC, V13, P1
+   HUBBARD HG, 1899, ENTOMOL NEWS, V10, P83
+   MARTIN JO, 1917, B BROOKLYN ENTOMOL S, V12, P107
+   MARTIN JO, 1928, P PACIFIC COAST ENTO, V2
+   MICHELBACHER AE, 1939, B CALIFORNIA STATE D, V28, P166
+   NELSON EW, 1921, MEMOIRS NATL ACAD SC, V16, P1
+   SMITH LM, 1932, 64 U CAL COLL AG CAL
+   STICKNEY FS, 1950, USDA846 CIRC
+   WYMORE FH, 1928, PAN PACIFIC ENTOMOL, V4, P143
+NR 18
+TC 1
+PU NEW YORK ENTOMOLOGICAL SOC INC
+PI NEW YORK
+PA C/O AMER MUSEUM NAT HIST 79TH & CENTRAL PARK WEST, NEW YORK, NY 10024
+SN 0028-7199
+J9 J N Y ENTOMOL SOC
+JI J. N.Y. Entomol. Soc.
+PY 1971
+VL 79
+IS 1
+BP 31
+EP &
+PG 0
+SC Entomology
+GA J1576
+UT ISI:A1971J157600005
+ER
+
+EF
