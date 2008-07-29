@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <metatype:MetaData xmlns:metatype="http://www.osgi.org/xmlns/metatype/v1.0.0">
-	<OCD name="Extract Directed Network from Table" id="edu.iu.nwb.analysis.extractdirectednetfromtable.algorithms.ExtractDirectedNetworkAlgorithm.OCD"
+	<OCD name="Extract Directed Network" id="edu.iu.nwb.analysis.extractdirectednetfromtable.algorithms.ExtractDirectedNetworkAlgorithm.OCD"
 		 description="Given a table, this algorithm creates a directed network by placing a directed edge between the values in a given column to the values of a different column. ">
 		<AD name="Source Column" id="sourceColumn" type="String" description="The column to draw the source information from" default=""/>
 		<AD name="Target Column" id="targetColumn" type="String" description="The column to which the source column creates edges to." default=""/>
