@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <metatype:MetaData xmlns:metatype="http://www.osgi.org/xmlns/metatype/v1.0.0">
-	<OCD name="Extract Network from Table" id="edu.iu.nwb.analysis.extractnetfromtable.algorithms.ExtractNetFromTableAlgorithm.OCD"
+	<OCD name="Extract Co-Occurrence Network" id="edu.iu.nwb.analysis.extractnetfromtable.algorithms.ExtractNetFromTableAlgorithm.OCD"
 		 description="Extracts a network from a delimited table ">
 		<AD name="Column Name" id="colName" type="String" description="The column to use for extracting the network." default=""></AD>
 		<AD name="Aggregation Function File" id="aff" type="String" description="The name of the file which contains optional aggregation functions." default="file:" required="false"/>
