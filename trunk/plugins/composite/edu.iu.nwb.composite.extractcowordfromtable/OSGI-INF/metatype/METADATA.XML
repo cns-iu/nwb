@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <metatype:MetaData xmlns:metatype="http://www.osgi.org/xmlns/metatype/v1.0.0">
-	<OCD name="Extract Co-Word Network from Table" id="edu.iu.nwb.composite.extractcowordfromtable.ExtractCoWordNetworkAlgorithm.OCD"
+	<OCD name="Extract Word Co-Occurrence Network" id="edu.iu.nwb.composite.extractcowordfromtable.ExtractCoWordNetworkAlgorithm.OCD"
 		 description="Given a table, this algorithm creates a co-word occurrence network, where the strength of edges between papers represents the similarity of their abstracts">
 		<AD name="Node Identifier Column" id="sourceColumn" type="String" description="The column whose contents identify each paper, for instance the title column" default=""/>
 		<AD name="Text Source Column" id="targetColumn" type="String" description="The column identifying the text which is used to determine the similarity between papers" default=""/>
