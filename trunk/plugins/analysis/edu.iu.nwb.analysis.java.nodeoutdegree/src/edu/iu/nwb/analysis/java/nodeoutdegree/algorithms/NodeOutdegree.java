@@ -36,7 +36,7 @@ public class NodeOutdegree implements Algorithm, ProgressTrackable {
 
     		Graph originalGraph = (Graph)this.data[0].getData();
     		
-    		NodeDegreeAnnotator nodeAnnotator = new NodeDegreeAnnotator(this.getProgressMonitor(),DegreeType.inDegree);
+    		NodeDegreeAnnotator nodeAnnotator = new NodeDegreeAnnotator(this.getProgressMonitor(),DegreeType.outDegree);
 
     		Graph annotatedGraph = nodeAnnotator.createAnnotatedGraph(originalGraph);
 
@@ -50,7 +50,7 @@ public class NodeOutdegree implements Algorithm, ProgressTrackable {
     		}
 
     		Data returnData = constructData(data[0],annotatedGraph,prefuse.data.Graph.class.toString(),
-    				DataProperty.NETWORK_TYPE,"Network with degree attribute added to node list");
+    				DataProperty.NETWORK_TYPE,"Network with outdegree attribute added to node list");
 
     		monitor.done();
     		return new Data[]{returnData};
