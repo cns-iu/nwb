@@ -50,7 +50,12 @@ public class NodeAnnotationThread extends Thread{
 				targetNodeTable.set(i, j, sourceNodeTable.get(i, j));
 			}
 			
-			targetNodeTable.setInt(i, label, originalGraph.getDegree(i));
+			if(degreeType == DegreeType.totalDegree)
+				targetNodeTable.setInt(i, label, originalGraph.getDegree(i));
+			else if(degreeType == DegreeType.inDegree)
+				targetNodeTable.setInt(i, label, originalGraph.getInDegree(i));
+			else if(degreeType == DegreeType.outDegree)
+				targetNodeTable.setInt(i, label, originalGraph.getOutDegree(i));
 			counter++;
 		}
 		

@@ -33,7 +33,7 @@ public class NodeDegree implements Algorithm, ProgressTrackable {
 	public Data[] execute() throws AlgorithmExecutionException {
 
 		Graph originalGraph = (Graph)this.data[0].getData();
-		
+		monitor.start(ProgressMonitor.WORK_TRACKABLE, 2*originalGraph.getNodeCount());
 		NodeDegreeAnnotator nodeAnnotator = new NodeDegreeAnnotator(this.getProgressMonitor(),DegreeType.totalDegree);
 
 		Graph annotatedGraph = nodeAnnotator.createAnnotatedGraph(originalGraph);
@@ -41,7 +41,7 @@ public class NodeDegree implements Algorithm, ProgressTrackable {
 		
 
 		try {
-			monitor.start(ProgressMonitor.WORK_TRACKABLE, 2*originalGraph.getNodeCount());
+			
 			nodeAnnotator.annotateGraph(originalGraph, annotatedGraph);
 		} catch (InterruptedException e) {
 			throw new AlgorithmExecutionException("Execution was unexpectedly interrupted.",e);

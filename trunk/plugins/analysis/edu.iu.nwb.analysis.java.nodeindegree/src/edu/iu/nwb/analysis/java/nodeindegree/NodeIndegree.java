@@ -49,7 +49,7 @@ public class NodeIndegree implements Algorithm, ProgressTrackable {
     		}
 
     		Data returnData = constructData(data[0],annotatedGraph,prefuse.data.Graph.class.toString(),
-    				DataProperty.NETWORK_TYPE,"Network with degree attribute added to node list");
+    				DataProperty.NETWORK_TYPE,"Network with indegree attribute added to node list");
 
     		monitor.done();
     		return new Data[]{returnData};
