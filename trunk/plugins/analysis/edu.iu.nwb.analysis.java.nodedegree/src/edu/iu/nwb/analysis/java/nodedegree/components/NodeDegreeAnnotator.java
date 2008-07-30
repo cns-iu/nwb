@@ -102,17 +102,23 @@ public class NodeDegreeAnnotator {
 		return copy;
 	}
 
-	private Schema appendDegreeAnnotation(Schema targetSchema, int degreeType){
+	private Schema appendDegreeAnnotation(Schema targetSchema, int degreeType) throws AlgorithmExecutionException{
 		int index = -1;
+		String label = null;
 		
 		
-		
-		if(degreeType == DegreeType.totalDegree)
+		if(degreeType == DegreeType.totalDegree){
 			index = targetSchema.getColumnIndex("totalDegree");
-		if(degreeType == DegreeType.inDegree)
+			label = "totalDegree";
+		}
+		if(degreeType == DegreeType.inDegree){
 			index = targetSchema.getColumnIndex("inDegree");
-		if(degreeType == DegreeType.outDegree)
+			label = "inDegree";
+		}
+		if(degreeType == DegreeType.outDegree){
 			index = targetSchema.getColumnIndex("outDegree");
+			label = "outDegree";	
+		}
 
 		if(index < 0){
 			if(degreeType == DegreeType.totalDegree)
@@ -124,7 +130,8 @@ public class NodeDegreeAnnotator {
 			
 		}
 		else{
-			return null;
+			
+			throw new AlgorithmExecutionException("This graph already has an attribute named " + label +". Rename this attribute if you wish to continue.");
 		}
 
 		return targetSchema;
