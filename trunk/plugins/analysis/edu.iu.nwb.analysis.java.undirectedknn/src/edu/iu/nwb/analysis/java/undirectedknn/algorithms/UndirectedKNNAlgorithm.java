@@ -1,5 +1,8 @@
 package edu.iu.nwb.analysis.java.undirectedknn.algorithms;
 
+import java.io.File;
+import java.io.IOException;
+import java.util.Date;
 import java.util.Dictionary;
 
 import org.cishell.framework.CIShellContext;
@@ -33,18 +36,23 @@ public class UndirectedKNNAlgorithm implements Algorithm, ProgressTrackable {
     	
     	final Graph originalData = (Graph)this.data[0].getData();
     	this.monitor.start(ProgressMonitor.WORK_TRACKABLE, 2*originalData.getNodeCount());
+    	
     	KNNCalculator knnCalc = new KNNCalculator(this.getProgressMonitor());
     	Graph annotatedGraph = knnCalc.createAnnotatedGraph(originalData);
     	
     	try{
-    		knnCalc.calculateKNN(originalData, annotatedGraph);
-    		Data returnData = constructData(data[0],annotatedGraph,prefuse.data.Graph.class.toString(),
+    		Date d = new Date();
+    		File degreeDegreeCorrelationFile = File.createTempFile(new Long(d.getTime()).toString(), ".txt");
+    		knnCalc.calculateKNN(originalData, annotatedGraph,degreeDegreeCorrelationFile);
+    		Data returnData1 = constructData(data[0],annotatedGraph,prefuse.data.Graph.class.toString(),
     				DataProperty.NETWORK_TYPE,"Network with knn attribute added to node list");
-
+    		Data returnData2 = constructData(data[0],degreeDegreeCorrelationFile,"file:text/grace",DataProperty.PLOT_TYPE,"Degree-degree correlation normalized to expected value of total degree for uncorrelated network");
     		monitor.done();
-    		return new Data[]{returnData};
+    		return new Data[]{returnData1,returnData2};
     	}catch(InterruptedException ie){
     		throw new AlgorithmExecutionException("Execution was unexpectedly interrupted.",ie);
+    	}catch(IOException ioe){
+    		throw new AlgorithmExecutionException("Error creating the file for Degee-Degree Correlation.",ioe);
     	}
     
     }

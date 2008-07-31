@@ -80,6 +80,7 @@ public class KNNCalculatorThread extends Thread{
 			this.degreeToCountDegree.put(new Integer(degree), new Integer(1));
 		}else{
 			knnValue = new Float(knnValue.floatValue()+neighborsDegreeCalculation);
+			this.degreeToKNN.put(new Integer(degree), knnValue);
 			int count = ((Integer)this.degreeToCountDegree.get(new Integer(degree))).intValue();
 			this.degreeToCountDegree.put(new Integer(degree), new Integer(count+1));
 		}
