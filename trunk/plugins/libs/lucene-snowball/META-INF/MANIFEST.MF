@@ -1,0 +1,11 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: Lucene snowball Plug-in
+Bundle-SymbolicName: lucene_snowball
+Bundle-Version: 1.0.0
+Bundle-ClassPath: lucene-snowball-2.3.2.jar
+Export-Package: net.sf.snowball,
+ net.sf.snowball.ext,
+ org.apache.lucene.analysis.snowball
+Import-Package: org.apache.lucene.analysis.standard,
+ org.apache.lucene.analysis
