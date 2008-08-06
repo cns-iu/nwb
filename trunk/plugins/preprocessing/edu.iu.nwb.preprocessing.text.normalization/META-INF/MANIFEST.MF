@@ -1,10 +1,11 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: Text Normalization
-Bundle-SymbolicName: edu.iu.nwb.preprocessing.text.normalization
+Bundle-SymbolicName: edu.iu.nwb.preprocessing.text.normalization2
 Bundle-Version: 1.0.0
 Bundle-ClassPath: .
 Import-Package: org.apache.lucene.analysis,
+ org.apache.lucene.analysis.snowball,
  org.apache.lucene.analysis.standard,
  org.cishell.framework,
  org.cishell.framework.algorithm,

@@ -11,9 +11,10 @@ import java.util.List;
 import java.util.Set;
 import java.util.TreeSet;
 
+import org.apache.lucene.analysis.Analyzer;
 import org.apache.lucene.analysis.Token;
 import org.apache.lucene.analysis.TokenStream;
-import org.apache.lucene.analysis.standard.StandardAnalyzer;
+import org.apache.lucene.analysis.snowball.SnowballAnalyzer;
 import org.cishell.framework.CIShellContext;
 import org.cishell.framework.algorithm.Algorithm;
 import org.cishell.framework.algorithm.AlgorithmExecutionException;
@@ -30,13 +31,13 @@ public class StandardNormalyzer implements Algorithm {
     Dictionary parameters;
     CIShellContext context;
 	private LogService log;
-	private StandardAnalyzer analyzer;
+	private Analyzer analyzer;
     
     public StandardNormalyzer(Data[] data, Dictionary parameters, CIShellContext context) {
         this.data = data;
         this.parameters = parameters;
         this.context = context;
-        this.analyzer = new StandardAnalyzer();
+        this.analyzer = new SnowballAnalyzer("English");
     }
 
     public Data[] execute() throws AlgorithmExecutionException {
