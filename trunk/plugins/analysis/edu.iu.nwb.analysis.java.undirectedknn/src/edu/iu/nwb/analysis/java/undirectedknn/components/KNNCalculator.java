@@ -122,7 +122,7 @@ public class KNNCalculator {
 	}
 	
 	private static File writeDegreeDegreeCorrelations(Map degreeToKNNSum, Map degreeToDegreeCounts, File outputFile, int numberOfNodes) throws AlgorithmExecutionException{
-		long sum = (numberOfNodes*(numberOfNodes+1))/2;
+		long sum = ((numberOfNodes-1)*(numberOfNodes))/2;
 		double expected = (double)sum/(double)numberOfNodes;
 		
 		try{
