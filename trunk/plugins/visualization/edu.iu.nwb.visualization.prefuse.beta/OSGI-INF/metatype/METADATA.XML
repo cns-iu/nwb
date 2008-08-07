@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <metatype:MetaData xmlns:metatype="http://www.osgi.org/xmlns/metatype/v1.0.0">
-	<OCD name="Specified Layout" id="edu.iu.nwb.visualization.prefuse.beta.specified.Specified.OCD"
+	<OCD name="Pre-defined Positions (prefuse beta)" id="edu.iu.nwb.visualization.prefuse.beta.specified.Specified.OCD"
 		 description="Enter the parameter labels.">
 		<AD name="x" id="x" type="String" description="The label of the X dimension" default="X" />
 		<AD name="y" id="y" type="String" description="The label of the Y dimension" default="Y" />
