@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <metatype:MetaData xmlns:metatype="http://www.osgi.org/xmlns/metatype/v1.0.0">
-	<OCD name="The CAN Network Model" id="edu.iu.iv.modeling.p2p.can.CanAlgorithm.OCD"
+	<OCD name="Can" id="edu.iu.iv.modeling.p2p.can.CanAlgorithm.OCD"
 		 description="Enter source node number, must be ( &gt; 1 )">
 		<AD name="Number of nodes" id="Number of nodes" type="Integer" description="The size of the network (must be &gt; 1)" default="2" min="2"/>
 	</OCD>
