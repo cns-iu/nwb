@@ -673,6 +673,12 @@
   	  <param name="project.name" value="/plugins/composite/edu.iu.nwb.composite.extractcowordfromtable"/>
   	  <param name="url" value="http://nwb.slis.indiana.edu/svn/nwb/trunk"/>
   	</antcall>
+  	<antcall target="svn.co">
+  	  <param name="target" value="plugins"/>
+  	  <param name="element.id" value="edu.iu.nwb.preprocessing.timeslice"/>
+  	  <param name="project.name" value="/plugins/preprocessing/edu.iu.nwb.preprocessing.timeslice"/>
+  	  <param name="url" value="http://nwb.slis.indiana.edu/svn/nwb/trunk"/>
+  	</antcall>
   	
   	
   	<!-- Non-PDE-based NWB Plugins -->
