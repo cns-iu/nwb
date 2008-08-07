@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <metatype:MetaData xmlns:metatype="http://www.osgi.org/xmlns/metatype/v1.0.0">
-	<OCD name="Node outdegree (directed)" id="edu.iu.nwb.analysis.outdegreesequence.gui"
+	<OCD name="Node Outdegree" id="edu.iu.nwb.analysis.outdegreesequence.gui"
 		 description="Node outdegree (directed)">
 	</OCD>
 	<Designate pid="edu.iu.nwb.analysis.outdegreesequence">
