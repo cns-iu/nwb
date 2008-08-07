@@ -845,6 +845,45 @@
       <param name="project.name" value="/datasets/org.mediavirus.parvis.sampledata"/>
       <param name="url" value="http://nwb.slis.indiana.edu/svn/nwb/trunk/plugins"/>
     </antcall>
+  	<antcall target="svn.co">
+  	  <param name="target" value="plugins"/>
+  	  <param name="element.id" value="edu.iu.nwb.composite.extractcowordfromtable"/>
+  	  <param name="project.name" value="/plugins/composite/edu.iu.nwb.composite.extractcowordfromtable"/>
+  	  <param name="url" value="http://nwb.slis.indiana.edu/svn/nwb/trunk"/>
+  	</antcall>
+	<antcall target="svn.co">
+  	  <param name="target" value="plugins"/>
+  	  <param name="element.id" value="joda-time"/>
+  	  <param name="project.name" value="/plugins/libs/joda-time"/>
+  	  <param name="url" value="http://nwb.slis.indiana.edu/svn/nwb/trunk"/>
+  	</antcall>
+	<antcall target="svn.co">
+  	  <param name="target" value="plugins"/>
+  	  <param name="element.id" value="edu.iu.nwb.preprocessing.timeslice"/>
+  	  <param name="project.name" value="/plugins/preprocessing/edu.iu.nwb.preprocessing.timeslice"/>
+  	  <param name="url" value="http://nwb.slis.indiana.edu/svn/nwb/trunk"/>
+  	</antcall>
+  	<antcall target="svn.co">
+  	  <param name="target" value="plugins"/>
+  	  <param name="element.id" value="lucene"/>
+  	  <param name="project.name" value="/plugins/libs/lucene"/>
+  	  <param name="url" value="http://nwb.slis.indiana.edu/svn/nwb/trunk"/>
+  	</antcall>
+  	<antcall target="svn.co">
+  	  <param name="target" value="plugins"/>
+  	  <param name="element.id" value="lucene-snowball"/>
+  	  <param name="project.name" value="/plugins/libs/lucene-snowball"/>
+  	  <param name="url" value="http://nwb.slis.indiana.edu/svn/nwb/trunk"/>
+  	</antcall>
+  	<antcall target="svn.co">
+  	  <param name="target" value="plugins"/>
+  	  <param name="element.id" value="edu.iu.nwb.preprocessing.text.normalization"/>
+  	  <param name="project.name" value="/plugins/preprocessing/edu.iu.nwb.preprocessing.text.normalization"/>
+  	  <param name="url" value="http://nwb.slis.indiana.edu/svn/nwb/trunk"/>
+  	</antcall>  	
+  	
+  	
+  	
     <ant dir="${buildDirectory}/nonpde_plugins/org.mediavirus.parvis.sampledata"/>
   </target>
 </project>
