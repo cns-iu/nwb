@@ -8,7 +8,7 @@
 		<Object ocdref="edu.iu.iv.modeling.p2p.can.CanAlgorithm.OCD" />
 	</Designate>
 	
-	<OCD name="Search in CAN P2P network" id="edu.iu.iv.search.p2p.can.CanSearchAlgorithm.OCD"
+	<OCD name="Can (Search)" id="edu.iu.iv.search.p2p.can.CanSearchAlgorithm.OCD"
 		 description="Enter source and target nodes">
 		<AD name="Source Node" id="source" type="Integer" description="Enter source node number, must be &gt; 0" default="1" min="1"/>
 		<AD name="Target Node" id="target" type="Integer" description="Enter target node number, must be &gt; 0" default="1" min="1"/>		
