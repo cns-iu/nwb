@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <metatype:MetaData xmlns:metatype="http://www.osgi.org/xmlns/metatype/v1.0.0">
-	<OCD name="Network Description"
+	<OCD name="Extract and Annotate Attractors"
 		id="edu.iu.nwb.analysis.extractattractors.algorithms.ExtractAttractorsAlgorithm.network.OCD"
 		description="A tool for analyzing the attractors of a state space.">
 		
