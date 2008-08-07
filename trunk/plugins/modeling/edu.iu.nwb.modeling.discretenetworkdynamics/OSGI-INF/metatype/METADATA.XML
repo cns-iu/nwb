@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <metatype:MetaData xmlns:metatype="http://www.osgi.org/xmlns/metatype/v1.0.0">
-	<OCD name="Network Description"
+	<OCD name="Discrete Network Dynamics (DND)"
 		id="edu.iu.nwb.modeling.discretenetworkdynamics.DVDAlgorithm.network.OCD"
 		description="A tool for enumerating the state space of discrete network models.">
 		<AD default="function"
