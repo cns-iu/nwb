@@ -396,7 +396,7 @@ Dr. Katy Borner (katy@indiana.edu)
          id="lucene"
          download-size="0"
          install-size="0"
-         version="0.0.0"/>
+         version="2.3.2"/>
 
    <plugin
          id="edu.iu.nwb.composite.extractcowordfromtable"
@@ -409,20 +409,20 @@ Dr. Katy Borner (katy@indiana.edu)
          id="joda_time"
          download-size="0"
          install-size="0"
-         version="0.0.0"/>
+         version="1.0.0"/>
 
    <plugin
          id="edu.iu.nwb.preprocessing.timeslice"
          download-size="0"
          install-size="0"
-         version="0.0.0"
+         version="1.0.0"
          unpack="false"/>
 
    <plugin
          id="lucene_snowball"
          download-size="0"
          install-size="0"
-         version="0.0.0"/>
+         version="1.0.0"/>
 
    <plugin
          id="edu.iu.nwb.preprocessing.text.normalization"
