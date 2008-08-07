@@ -8,7 +8,7 @@
 		<Object ocdref="edu.iu.iv.modeling.p2p.chord.ChordAlgorithm.OCD" />
 	</Designate>
 	
-	<OCD name="Search in CHORD P2P network" id="edu.iu.iv.search.p2p.chord.ChordSearchAlgorithm.OCD"
+	<OCD name="Chord (Search)" id="edu.iu.iv.search.p2p.chord.ChordSearchAlgorithm.OCD"
 		 description="Enter source and target nodes">
 		<AD name="Source Node" id="source" type="Integer" description="Enter source node number, must be &gt; 0" default="1" min="1"/>
 		<AD name="Target Node" id="target" type="Integer" description="Enter target node number, must be &gt; 0" default="1" min="1"/>		
