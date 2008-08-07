@@ -15,6 +15,9 @@ import prefuse.data.Table;
 import prefuse.data.Tuple;
 import prefuse.data.expression.AbstractExpression;
 
+//TODO: This thing isn't a converter in the CIShell sense.
+//TODO: It shouldn't have converter in its project or package names, nor should it be in the converters folder in the repository.
+
 public class GraphTable implements Algorithm {
 	Data[] data;
 	Dictionary parameters;
