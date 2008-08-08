@@ -47,7 +47,7 @@
 	<menu name="Multipartite Joining" pid="edu.iu.nwb.analysis.multipartitejoining.JoiningAlgorithm"/>
 	<menu type="break"/>
 	<menu name="Normalize Text" pid="edu.iu.nwb.preprocessing.text.normalization.StandardNormalyzer"/>
-	<menu name="Slice Table by Time" pid = "edu.iu.nwb.preprocessing.timeslice"/>
+	<menu name="Slice Table by Time" pid = "edu.iu.nwb.preprocessing.timeslice.Slice"/>
     </top_menu>   
      
     <top_menu name="Modeling">
