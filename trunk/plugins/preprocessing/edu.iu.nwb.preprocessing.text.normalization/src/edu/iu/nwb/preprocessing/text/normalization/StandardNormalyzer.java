@@ -115,7 +115,7 @@ public class StandardNormalyzer implements Algorithm {
 		Dictionary metadata = outputData.getMetadata();
 		metadata.put(DataProperty.LABEL, "with normalized " + join(columns, ", "));
 		metadata.put(DataProperty.PARENT, this.data[0]);
-		metadata.put(DataProperty.TYPE, DataProperty.TEXT_TYPE);
+		metadata.put(DataProperty.TYPE, DataProperty.MATRIX_TYPE);
 		
 		return new Data[]{ outputData };
 	}
