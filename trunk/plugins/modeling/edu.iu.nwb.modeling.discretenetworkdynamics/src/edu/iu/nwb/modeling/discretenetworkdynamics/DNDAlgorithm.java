@@ -28,7 +28,7 @@ import edu.iu.nwb.modeling.discretenetworkdynamics.parser.FunctionFormatExceptio
 import edu.iu.nwb.util.nwbfile.NWBFileWriter;
 
 
-public class DVDAlgorithm implements Algorithm, ProgressTrackable {
+public class DNDAlgorithm implements Algorithm, ProgressTrackable {
 	Data[] data;
 	Dictionary parameters;
 	CIShellContext context;
@@ -44,7 +44,7 @@ public class DVDAlgorithm implements Algorithm, ProgressTrackable {
 		this.monitor = monitor;
 	}
 
-	public DVDAlgorithm(Data[] data, Dictionary parameters, CIShellContext context) {
+	public DNDAlgorithm(Data[] data, Dictionary parameters, CIShellContext context) {
 		this.data = data;
 		this.parameters = parameters;
 		this.context = context;
@@ -97,7 +97,7 @@ public class DVDAlgorithm implements Algorithm, ProgressTrackable {
 			final Data outputData2 = constructData(this.data[0],pseudoGraph,prefuse.data.Graph.class.getName(),DataProperty.NETWORK_TYPE,"Created Dependency Graph with Function Pseudonodes");
 			
 			
-			if(!DVDAlgorithm.verifyInitialConditions(initCondition, dependencyGraph.getNodeCount(), numberOfStates)){
+			if(!DNDAlgorithm.verifyInitialConditions(initCondition, dependencyGraph.getNodeCount(), numberOfStates)){
 				this.logger.log(LogService.LOG_WARNING, "The provided initial condition is invalid. Please provide a series of numbers or *'s separated" +
 						" by spaces. There should be as many numbers or *'s as functions in your function file. Each number provided must be at least 0 and no greater" +
 				" than the number of states less one. The state space has not been generated.");
@@ -105,7 +105,7 @@ public class DVDAlgorithm implements Algorithm, ProgressTrackable {
 				return new Data[] {outputData1,outputData2};
 			}
 			
-			if(!DVDAlgorithm.verifyUpdateSchedule(schedule, dependencyGraph.getNodeCount())){
+			if(!DNDAlgorithm.verifyUpdateSchedule(schedule, dependencyGraph.getNodeCount())){
 				this.logger.log(LogService.LOG_WARNING, "The provided update schedule is invalid. Please provide a series of unique numbers, separated by spaces, " +
 						"corresponding to the function rows in your file.\n");
 				return new Data[] {outputData1,outputData2};
@@ -119,6 +119,7 @@ public class DVDAlgorithm implements Algorithm, ProgressTrackable {
 				
 					final Data outputData3 = constructData(this.data[0],generateStateSpaceFile(stateSpace,cssg),"file:text/nwb",DataProperty.NETWORK_TYPE, "Generated State Space Graph");
 					monitor.done();
+					System.gc();
 					return new Data[] {outputData1, outputData2, outputData3};
 				
 			

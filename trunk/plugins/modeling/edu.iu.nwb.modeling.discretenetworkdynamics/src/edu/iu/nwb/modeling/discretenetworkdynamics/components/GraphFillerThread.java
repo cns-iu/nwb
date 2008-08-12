@@ -28,6 +28,7 @@ public class GraphFillerThread extends Thread{
 		this.updateExpressions = updateRules;
 		this.updateScheme = updateSchedule;
 		this.initialCondition = ic;
+		
 	}
 
 

@@ -136,11 +136,11 @@ public class ParseDependencyGraphs {
 
 	private static String parseFunctionString(String func)throws FunctionFormatException{
 		String s = func;
-
+	
 		s = s.replaceAll("\\s","");
-		s = s.replace("^f\\d*=", "");
+		//s = s.replace("^f\\d*=", "");
 		String[] functionArray = s.split("=");
-
+		
 		if(functionArray.length != 2){
 			throw new FunctionFormatException("Your expression must begin with \"f\" followed by a row number followed by \"=\". " +
 					"The malformed expression looked like this: " + func);

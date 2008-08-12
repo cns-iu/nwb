@@ -33,6 +33,7 @@ class PolyNegation extends NegationFunction{
 			BigInteger value = arguments[0];
 			
 				value = value.negate();
+				value = value.add(numberOfStates);
 				value = value.mod(numberOfStates);
 				
 				return value;

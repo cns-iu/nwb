@@ -33,7 +33,7 @@ public class CreateStateSpaceGraph {
 		totalSpace = totalSpace.pow(numberOfNodes);
 		BigInteger start;
 		BigInteger end;
-		final int numProcessors = Math.min(totalSpace.intValue(),Math.max(Runtime.getRuntime().availableProcessors(),10));
+		final int numProcessors = Math.min(totalSpace.intValue(),Runtime.getRuntime().availableProcessors());
 		Thread[] pool = new Thread[numProcessors];
 
 		int division = totalSpace.divideAndRemainder(new BigInteger(new Integer(numProcessors).toString()))[0].intValue();
@@ -54,13 +54,15 @@ public class CreateStateSpaceGraph {
 		for(int i = 0; i < numProcessors; i++){
 			pool[i].join();
 		}
-/*
+
+		/*
 		NodeCleaningThread nct = new NodeCleaningThread(stateSpaceGraph);
 		EdgeCleaningThread ect = new EdgeCleaningThread(stateSpaceGraph);
 		nct.run();
 		ect.run();
 		nct.join();
-		ect.join();*/
+		ect.join();
+		*/
 		
 		return stateSpaceGraph;	
 	}

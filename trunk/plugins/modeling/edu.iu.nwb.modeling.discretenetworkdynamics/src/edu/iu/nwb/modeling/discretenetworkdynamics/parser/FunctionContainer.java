@@ -30,6 +30,7 @@ public class FunctionContainer {
 				
 				if(!isSequential){
 					value = new Integer(stateSpace[index]);
+					
 				}else{
 					value = new Integer(nextState[index]);
 					if(value.intValue() < 0){
@@ -61,8 +62,6 @@ public class FunctionContainer {
 	
 		int returnValue = ((BigInteger)executionStack.pop()).intValue();
 	
-		
-		
 		return returnValue;
 	}
 	

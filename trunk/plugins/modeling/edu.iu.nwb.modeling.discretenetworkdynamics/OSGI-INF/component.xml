@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<component name="edu.iu.nwb.modeling.discretenetworkdynamics.DVDAlgorithm.component" immediate="false">
-	<implementation class="edu.iu.nwb.modeling.discretenetworkdynamics.DVDAlgorithmFactory"/>
+<component name="edu.iu.nwb.modeling.discretenetworkdynamics.DNDAlgorithm.component" immediate="false">
+	<implementation class="edu.iu.nwb.modeling.discretenetworkdynamics.DNDAlgorithmFactory"/>
 	<properties entry="OSGI-INF/algorithm.properties"/>
 	<reference name="LOG" interface="org.osgi.service.log.LogService"/>
 	<reference name="MTS" interface="org.osgi.service.metatype.MetaTypeService"/>

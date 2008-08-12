@@ -20,7 +20,7 @@ import prefuse.data.Schema;
 import prefuse.data.Table;
 
 
-public class DVDAlgorithmFactory implements AlgorithmFactory,ParameterMutator {
+public class DNDAlgorithmFactory implements AlgorithmFactory,ParameterMutator {
 
 	private MetaTypeInformation originalProvider;
 	private String pid;
@@ -74,7 +74,7 @@ public class DVDAlgorithmFactory implements AlgorithmFactory,ParameterMutator {
     }
 
     public Algorithm createAlgorithm(Data[] data, Dictionary parameters, CIShellContext context) {
-        return new DVDAlgorithm(data, parameters, context);
+        return new DNDAlgorithm(data, parameters, context);
     }
     
     private String[] createKeyArray(Schema schema) {
