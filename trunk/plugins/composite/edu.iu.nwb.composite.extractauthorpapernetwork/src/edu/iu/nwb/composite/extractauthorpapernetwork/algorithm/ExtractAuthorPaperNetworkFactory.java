@@ -1,4 +1,4 @@
-package edu.iu.nwb.analysis.extractcoauthorship.algorithms;
+package edu.iu.nwb.composite.extractauthorpapernetwork.algorithm;
 
 import java.io.IOException;
 import java.util.Dictionary;
@@ -16,12 +16,13 @@ import org.osgi.service.metatype.MetaTypeInformation;
 import org.osgi.service.metatype.MetaTypeService;
 import org.osgi.service.metatype.ObjectClassDefinition;
 
-import edu.iu.nwb.analysis.extractcoauthorship.metadata.SupportedFileTypes;
+import edu.iu.nwb.composite.extractauthorpapernetwork.metadata.SupportedFileTypes;
 
-public class ExtractAlgorithmFactory implements AlgorithmFactory, ParameterMutator, SupportedFileTypes {
+public class ExtractAuthorPaperNetworkFactory implements AlgorithmFactory, ParameterMutator,SupportedFileTypes {
 	private MetaTypeInformation originalProvider;
 	private String pid;
 
+	
 	public ObjectClassDefinition mutateParameters(Data[] data,
 			ObjectClassDefinition parameters) {
 
@@ -39,14 +40,11 @@ public class ExtractAlgorithmFactory implements AlgorithmFactory, ParameterMutat
 		definition.addAttributeDefinition(ObjectClassDefinition.REQUIRED,
 				new BasicAttributeDefinition("fileFormat", "File Format", "The file format of the original data.", AttributeDefinition.STRING, supportedFormats, supportedFormats));
 
-		
-		
+
+
 		return definition;	
 	}
-
-
-
-
+	
 	protected void activate(ComponentContext ctxt) {
 		MetaTypeService mts = (MetaTypeService)ctxt.locateService("MTS");
 		originalProvider = mts.getMetaTypeInformation(ctxt.getBundleContext().getBundle());
@@ -57,8 +55,10 @@ public class ExtractAlgorithmFactory implements AlgorithmFactory, ParameterMutat
 	protected void deactivate(ComponentContext ctxt) {
 		originalProvider = null;
 	}
-	public Algorithm createAlgorithm(Data[] data, Dictionary parameters,
-			CIShellContext context) {
-		return new ExtractAlgorithm(data, parameters, context);
+	
+
+
+	public Algorithm createAlgorithm(Data[] data, Dictionary parameters, CIShellContext context) {
+		return new ExtractAuthorPaperNetwork(data, parameters, context);
 	}
 }

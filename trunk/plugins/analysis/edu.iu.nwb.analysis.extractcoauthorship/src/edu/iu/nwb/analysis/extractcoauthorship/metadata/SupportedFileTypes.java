@@ -11,24 +11,12 @@ public interface SupportedFileTypes {
 	static final String[] supportedFormats = CitationFormat.getSupportedFormats();
 	
 	public class CitationFormat{
-		String name;
-		String authorColumn;
 		private static HashMap nameToColumn = new HashMap();
 		
 		public CitationFormat(String name, String authorColumn){
-			this.name = name;
-			this.authorColumn = authorColumn;
-			CitationFormat.nameToColumn.put(this.name, this.authorColumn);
+			CitationFormat.nameToColumn.put(name, authorColumn);
 		}
 
-		public String getName(){
-			return this.name;
-		}
-		
-		public String getAuthorColumn(){
-			return this.authorColumn;
-		}
-		
 		public static String getAuthorColumnByName(String name){
 			return CitationFormat.nameToColumn.get(name).toString();
 		}

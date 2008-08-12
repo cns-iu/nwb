@@ -6,6 +6,8 @@ import java.util.Properties;
 import org.cishell.framework.CIShellContext;
 import org.cishell.framework.algorithm.Algorithm;
 import org.cishell.framework.algorithm.AlgorithmExecutionException;
+import org.cishell.framework.algorithm.ProgressMonitor;
+import org.cishell.framework.algorithm.ProgressTrackable;
 import org.cishell.framework.data.BasicData;
 import org.cishell.framework.data.Data;
 import org.cishell.framework.data.DataProperty;
@@ -16,13 +18,25 @@ import edu.iu.nwb.analysis.extractnetfromtable.components.GraphContainer;
 import edu.iu.nwb.analysis.extractnetfromtable.components.InvalidColumnNameException;
 import edu.iu.nwb.analysis.extractnetfromtable.components.PropertyHandler;
 
-public class ExtractDirectedNetworkAlgorithm implements Algorithm {
+public class ExtractDirectedNetworkAlgorithm implements Algorithm, ProgressTrackable {
     Data[] data;
     Dictionary parameters;
     CIShellContext context;
     LogService logger;
+    ProgressMonitor progressMonitor;
     
-    public ExtractDirectedNetworkAlgorithm(Data[] data, Dictionary parameters, CIShellContext context) {
+    
+    
+    public ProgressMonitor getProgressMonitor() {
+		// TODO Auto-generated method stub
+		return this.progressMonitor;
+	}
+
+	public void setProgressMonitor(ProgressMonitor monitor) {
+		this.progressMonitor = monitor;
+	}
+
+	public ExtractDirectedNetworkAlgorithm(Data[] data, Dictionary parameters, CIShellContext context) {
         this.data = data;
         this.parameters = parameters;
         this.context = context;
@@ -48,7 +62,7 @@ public class ExtractDirectedNetworkAlgorithm implements Algorithm {
     	}
     	
     	try{
-    	GraphContainer gc = GraphContainer.initializeGraph(dataTable, sourceColumn, targetColumn, true,functions, this.logger);
+    	GraphContainer gc = GraphContainer.initializeGraph(dataTable, sourceColumn, targetColumn, true,functions, this.logger,this.progressMonitor);
     	Graph directedNetwork = gc.buildGraph(sourceColumn, targetColumn, split, this.logger);
     	
     	Data network = ExtractDirectedNetworkAlgorithm.constructData(data[0],(Object)directedNetwork,prefuse.data.Graph.class.toString(),DataProperty.NETWORK_TYPE, 

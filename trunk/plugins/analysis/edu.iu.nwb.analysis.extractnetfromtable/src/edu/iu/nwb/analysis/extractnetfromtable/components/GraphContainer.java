@@ -7,6 +7,7 @@ import java.util.Properties;
 import java.util.Set;
 import java.util.regex.Pattern;
 
+import org.cishell.framework.algorithm.ProgressMonitor;
 import org.osgi.service.log.LogService;
 
 import prefuse.data.Graph;
@@ -21,12 +22,21 @@ public class GraphContainer {
 	private Table table;
 	private AggregateFunctionMappings nodeMap;
 	private AggregateFunctionMappings edgeMap;
+	private ProgressMonitor progMonitor = null;
 
 	public GraphContainer(Graph g, Table t, AggregateFunctionMappings nodeFunctionMap, AggregateFunctionMappings edgeFunctionMap){
 		this.graph = g;
 		this.table = t;
 		this.nodeMap = nodeFunctionMap;
 		this.edgeMap = edgeFunctionMap;
+	}
+
+	public GraphContainer(Graph g, Table t, AggregateFunctionMappings nodeFunctionMap, AggregateFunctionMappings edgeFunctionMap, ProgressMonitor pm){
+		this.graph = g;
+		this.table = t;
+		this.nodeMap = nodeFunctionMap;
+		this.edgeMap = edgeFunctionMap;
+		this.progMonitor = pm;
 	}
 
 	public Graph buildGraph(String sourceColumnName, String targetColumnName, String splitString, LogService log){
@@ -36,13 +46,17 @@ public class GraphContainer {
 			return buildUndirectedGraph(sourceColumnName,targetColumnName,splitString,log);
 		}
 	}
-	
+
 	private Graph buildUndirectedGraph(String sourceColumnName, String targetColumnName, String splitString, LogService log){
 		boolean dupValues = false;
 		final HashMap dupValuesErrorMessages = new HashMap();
-		
-		
-		
+		int rows = this.table.getRowCount();
+		int count = 0;
+
+		if(this.progMonitor != null){
+			this.progMonitor.start(ProgressMonitor.WORK_TRACKABLE, rows);
+		}
+
 		for (Iterator it = this.table.rows(); it.hasNext();){
 			Node node1 = null;
 			Node node2 = null;
@@ -64,7 +78,7 @@ public class GraphContainer {
 						if(!objects[j].equals(objects[i])){
 							if(seenObject.add(objects[j])){ //no duplicate nodes.
 								node2 = NodeContainer.mutateNode(objects[j], this.graph, this.table, row, this.nodeMap, AggregateFunctionMappings.SOURCEANDTARGET);
-								
+
 							}
 							//create or modify an edge as necessary
 							node2 = this.graph.getNode(this.nodeMap.getFunctionRow(objects[j]).getRowNumber());
@@ -86,14 +100,18 @@ public class GraphContainer {
 				String title = "unknown";
 				//ExtractNetworkFromTable.printNoValueToExtractError(title, columnName, this.log);
 			}
+			count = count+1;
+			if(this.progMonitor != null)
+				this.progMonitor.worked(count);
+
 		}
 		for(Iterator dupIter = dupValuesErrorMessages.keySet().iterator(); dupIter.hasNext();){
 			log.log(LogService.LOG_WARNING, (String)dupValuesErrorMessages.get(dupIter.next()));
 		}
-		
+
 		return this.graph;
 	}
-	
+
 	private Graph buildDirectedGraph(String sourceColumnName, String targetColumnName, String splitString, LogService log){
 		final Pattern p = Pattern.compile("\\Q" + splitString + "\\E");
 		final HashMap dupValuesErrorMessages = new HashMap();
@@ -101,6 +119,14 @@ public class GraphContainer {
 		Column targetColumn = this.table.getColumn(targetColumnName);
 		Node node1;
 		Node node2;
+
+		int rows = this.table.getRowCount();
+		int count = 0;
+
+		if(this.progMonitor != null){
+			this.progMonitor.start(ProgressMonitor.WORK_TRACKABLE, rows);
+		}
+
 		for (Iterator it = this.table.rows(); it.hasNext();){
 
 			int row = ((Integer)it.next()).intValue();
@@ -118,23 +144,26 @@ public class GraphContainer {
 				for (int i = 0; i < sources.length; i++) {
 					if(seenSource.add(sources[i])){ 
 						node1 = NodeContainer.mutateNode(sources[i],this.graph,this.table,row,this.nodeMap,AggregateFunctionMappings.SOURCE);
-							seenTarget = new HashSet();
-						
+						seenTarget = new HashSet();
+
 						for (int j = 0; j < targets.length; j++) {
-								if(seenTarget.add(targets[j])){
-									node2 = NodeContainer.mutateNode(targets[j],this.graph,this.table,row,this.nodeMap,AggregateFunctionMappings.TARGET);
-								
-									EdgeContainer.mutateEdge(node1,node2,this.graph,this.table,row,this.edgeMap);
+							if(seenTarget.add(targets[j])){
+								node2 = NodeContainer.mutateNode(targets[j],this.graph,this.table,row,this.nodeMap,AggregateFunctionMappings.TARGET);
+
+								EdgeContainer.mutateEdge(node1,node2,this.graph,this.table,row,this.edgeMap);
 							}
 						}
 					}
 				}
-		}
-		else{
+			}
+			else{
 				//String title = (String)pdt.get(row,pdt.getColumnNumber("TI"));
 				String title = "unknown";
 				//ExtractNetworkFromTable.printNoValueToExtractError(title, sourceColumnName, log);
 			}
+			count = count+1;
+			if(this.progMonitor != null)
+				this.progMonitor.worked(count);
 		}
 		for(Iterator dupIter = dupValuesErrorMessages.keySet().iterator(); dupIter.hasNext();){
 			log.log(LogService.LOG_WARNING, (String)dupValuesErrorMessages.get(dupIter.next()));
@@ -143,32 +172,60 @@ public class GraphContainer {
 
 		return this.graph;
 	}
-	
+
 	public static GraphContainer initializeGraph(Table pdt,String sourceColumnName, String targetColumnName, boolean isDirected,Properties p, LogService log) throws InvalidColumnNameException{
 
 		final Schema inputSchema = pdt.getSchema();
 
 		if(inputSchema.getColumnIndex(sourceColumnName) < 0)
 			throw new InvalidColumnNameException(sourceColumnName + " was not a column in this table.\n");
-		
+
 		if(inputSchema.getColumnIndex(targetColumnName) < 0)
 			throw new InvalidColumnNameException(targetColumnName + " was not a column in this table.\n");
 
 		Schema nodeSchema = createNodeSchema();
 		Schema edgeSchema = createEdgeSchema();
-		
+
 		AggregateFunctionMappings nodeAggregateFunctionMap = new AggregateFunctionMappings();
 		AggregateFunctionMappings edgeAggregateFunctionMap = new AggregateFunctionMappings();
-		
+
 		AggregateFunctionMappings.parseProperties(inputSchema, nodeSchema, edgeSchema, p, 
 				nodeAggregateFunctionMap, edgeAggregateFunctionMap, log);	
 
 		Graph outputGraph = new Graph(nodeSchema.instantiate(),
 				edgeSchema.instantiate(), isDirected);
-		
-		
+
+
 
 		return new GraphContainer(outputGraph,pdt,nodeAggregateFunctionMap,edgeAggregateFunctionMap);
+
+	}
+	
+	public static GraphContainer initializeGraph(Table pdt,String sourceColumnName, String targetColumnName, boolean isDirected,Properties p, LogService log, ProgressMonitor pm) throws InvalidColumnNameException{
+
+		final Schema inputSchema = pdt.getSchema();
+
+		if(inputSchema.getColumnIndex(sourceColumnName) < 0)
+			throw new InvalidColumnNameException(sourceColumnName + " was not a column in this table.\n");
+
+		if(inputSchema.getColumnIndex(targetColumnName) < 0)
+			throw new InvalidColumnNameException(targetColumnName + " was not a column in this table.\n");
+
+		Schema nodeSchema = createNodeSchema();
+		Schema edgeSchema = createEdgeSchema();
+
+		AggregateFunctionMappings nodeAggregateFunctionMap = new AggregateFunctionMappings();
+		AggregateFunctionMappings edgeAggregateFunctionMap = new AggregateFunctionMappings();
+
+		AggregateFunctionMappings.parseProperties(inputSchema, nodeSchema, edgeSchema, p, 
+				nodeAggregateFunctionMap, edgeAggregateFunctionMap, log);	
+
+		Graph outputGraph = new Graph(nodeSchema.instantiate(),
+				edgeSchema.instantiate(), isDirected);
+
+
+
+		return new GraphContainer(outputGraph,pdt,nodeAggregateFunctionMap,edgeAggregateFunctionMap,pm);
 
 	}
 
