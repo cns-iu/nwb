@@ -260,13 +260,13 @@ public class EdgeListValidatorFactory implements AlgorithmFactory {
 				   }
 				   
 				   // When first line matches "directed", graph is directed
-				   if (currentLine == 1 && line.matches("^directed\\s*$")) {
+				   if (currentLine == 1 && line.matches("^\\s*directed\\s*$")) {
 					   this.isUndirected = false;
 					   line = reader.readLine();
 					   continue;
 				   }
 				   // Can also specify "undirected" for undirected graph
-				   if (currentLine == 1 && line.matches("^undirected\\s*$")) {
+				   if (currentLine == 1 && line.matches("^\\s*undirected\\s*$")) {
 					   this.isUndirected = true;
 					   line = reader.readLine();
 					   continue;
