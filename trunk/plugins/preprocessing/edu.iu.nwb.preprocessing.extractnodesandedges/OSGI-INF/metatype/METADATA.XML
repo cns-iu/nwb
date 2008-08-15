@@ -13,7 +13,7 @@
 	<OCD name="Extract Nodes Above or Below Value" id="edu.iu.nwb.preprocessing.extractnodesandedges.extractnodes.abovebelow.ExtractNodesAboveBelowAlgorithm.OCD"
 		 description="Extract all nodes with an attribute above a certain number">
 		<AD name="Extract from this number" id="fromThisNum" type="Double" description="Extracts all nodes above or below this attribute value" default="1"/>
-		<AD name="Invert?" id="invert" type="Boolean" description="Extract nodes below or equal to this value instead?" default="false" />
+		<AD name="Below?" id="belowInstead" type="Boolean" description="Extract nodes below this value instead of above?" default="false" />
 		<AD name="Numeric Attribute" id="numericAttribute" type="String" description="The attribute which the nodes will be sorted by" default=""/>
 	</OCD>
 	<Designate pid="edu.iu.nwb.preprocessing.extractnodesandedges.extractnodes.abovebelow.ExtractNodesAboveBelowAlgorithm">
