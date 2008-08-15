@@ -15,7 +15,7 @@ public class ExtractEdgesAboveBelowAlgorithm implements Algorithm {
     CIShellContext context;
 
     private Double fromThisNum;
-    private Boolean invert;
+    private Boolean belowInstead;
     private String numericAttribute;
     
     private boolean noParams = false;
@@ -32,7 +32,7 @@ public class ExtractEdgesAboveBelowAlgorithm implements Algorithm {
         	return; 
         }
         this.fromThisNum = (Double) parameters.get("fromThisNum");
-        this.invert = (Boolean) parameters.get("invert");
+        this.belowInstead = (Boolean) parameters.get("belowInstead");
         this.numericAttribute = (String) parameters.get("numericAttribute");
     }
 
@@ -54,8 +54,8 @@ public class ExtractEdgesAboveBelowAlgorithm implements Algorithm {
     
     //returns a new graph that contains all the nodes whose attribute is either above or below a given threshold
     private Graph filter(Graph originalGraph) {
-    	EdgeNumericDecorationFilter filter = null;
-    	if (invert.booleanValue() == false) {
+    	EdgeThresholdFilter filter = null;
+    	if (belowInstead.booleanValue() == false) {
     		filter = new EdgeNumericDecorationFilter();
     	} else {
     		filter = new InverseEdgeNumericDecorationFilter();
@@ -70,10 +70,10 @@ public class ExtractEdgesAboveBelowAlgorithm implements Algorithm {
     private Data[] formatAsData(Graph extractedGraph) {
     	StringBuilder label = new StringBuilder();
     	label.append ("all edges with " + this.numericAttribute);
-    	if (this.invert.booleanValue() == false) {
+    	if (this.belowInstead.booleanValue() == false) {
     		label.append(" above ");
     	} else {
-    		label.append(" below or equal to ");
+    		label.append(" below ");
     	}
     	label.append("" + this.fromThisNum);
     	Data[] data = 
