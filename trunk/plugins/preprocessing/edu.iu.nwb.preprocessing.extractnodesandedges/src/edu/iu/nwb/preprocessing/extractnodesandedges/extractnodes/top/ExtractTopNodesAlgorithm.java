@@ -17,14 +17,12 @@ import edu.uci.ics.jung.graph.Vertex;
 import edu.uci.ics.jung.utils.GraphUtils;
 
 public class ExtractTopNodesAlgorithm implements Algorithm {
-	private static final boolean ASCENDING = true;
-	private static final boolean DESCENDING = false;
 	
     Data[] data;
     Dictionary parameters;
     CIShellContext context;
     private int numTopNodes;
-    private boolean ascendingOrDescending;
+    private boolean fromBottomInstead;
     private String numericAttribute;
     
     private boolean noParams = false;
@@ -42,7 +40,7 @@ public class ExtractTopNodesAlgorithm implements Algorithm {
         }
         
         this.numTopNodes = ((Integer) parameters.get("numTopNodes")).intValue();
-        this.ascendingOrDescending = ((Boolean) parameters.get("ascendingOrDescending")).booleanValue();
+        this.fromBottomInstead = ((Boolean) parameters.get("fromBottomInstead")).booleanValue();
         this.numericAttribute = (String) parameters.get("numericAttribute");
     }
 
@@ -66,7 +64,7 @@ public class ExtractTopNodesAlgorithm implements Algorithm {
     
     	Set nodesToRemove = new HashSet();
     	//if we want to keep the top X...
-    	if (ascendingOrDescending == ASCENDING) {
+    	if (fromBottomInstead != true) {
     		//delete from the bottom up, until we have X left
     		while (nodesByRank.size() > numTopNodes) {
     			Vertex v =  ((ComparableNode) nodesByRank.findMin()).getNode();
@@ -93,10 +91,10 @@ public class ExtractTopNodesAlgorithm implements Algorithm {
     
     private Data[] formatAsData(Graph extractedGraph) {
     	StringBuilder label = new StringBuilder();
-    	if (this.ascendingOrDescending) {
-    		label.append("top ");
-    	} else {
+    	if (this.fromBottomInstead) {
     		label.append("bottom ");
+    	} else {
+    		label.append("top ");
     	}
     	label.append("" + this.numTopNodes);
     	label.append(" nodes by " + this.numericAttribute);

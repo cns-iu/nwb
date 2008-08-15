@@ -3,7 +3,7 @@
 	<OCD name="Extract Top Nodes" id="edu.iu.nwb.preprocessing.extractnodesandedges.extractnodes.top.ExtractTopNodesAlgorithm.OCD"
 		 description="Extract the top N nodes from a graph, based on a given attribute ">
 		<AD name="Extract N top nodes" id="numTopNodes" type="Integer" description="Extracts this many of the top nodes from the graph" default="1"/>
-		<AD name="Descending?" id="ascendingOrDescending" type="Boolean" description="Extract from the bottom up or from the top down?" default="true"/>
+		<AD name="Extract bottom nodes instead?" id="fromBottomInstead" type="Boolean" description="Extract the bottom nodes instead of the top" default="false"/>
 		<AD name="Numeric Attribute" id="numericAttribute" type="String" description="The attribute which the nodes will be sorted by" default=""/>
 	</OCD>
 	<Designate pid="edu.iu.nwb.preprocessing.extractnodesandedges.extractnodes.top.ExtractTopNodesAlgorithm">
@@ -22,7 +22,7 @@
 	<OCD name="Extract Top Edges " id="edu.iu.nwb.preprocessing.extractnodesandedges.extractedges.top.ExtractTopEdgesAlgorithm.OCD"
 		 description="Extract the top N edges from a graph, based on a given attribute ">
 		<AD name="Extract N top edges" id="numTopEdges" type="Integer" description="Extracts this many of the top edges from the graph" default="1"/>
-		<AD name="Descending?" id="ascendingOrDescending" type="Boolean" description="Extract from the bottom up or from the top down?" default="true"/>
+		<AD name="Extract bottom edges instead?" id="fromBottomInstead" type="Boolean" description="Extract the bottom edges instead of the top" default="false"/>
 		<AD name="Numeric Attribute" id="numericAttribute" type="String" description="The attribute which the edges will be sorted by" default=""/>
 	</OCD>
 	<Designate pid="edu.iu.nwb.preprocessing.extractnodesandedges.extractedges.top.ExtractTopEdgesAlgorithm">

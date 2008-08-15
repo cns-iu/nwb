@@ -16,16 +16,12 @@ import edu.uci.ics.jung.graph.Edge;
 import edu.uci.ics.jung.graph.Graph;
 import edu.uci.ics.jung.utils.GraphUtils;
 
-public class ExtractTopEdgesAlgorithm implements Algorithm {
-	
-	private static final boolean ASCENDING = true;
-	private static final boolean DESCENDING = false;
-	
+public class ExtractTopEdgesAlgorithm implements Algorithm {	
     Data[] data;
     Dictionary parameters;
     CIShellContext context;
     private int numTopEdges;
-    private boolean ascendingOrDescending;
+    private boolean fromBottomInstead;
     private String numericAttribute;
     
     private boolean noParams = false;
@@ -43,7 +39,7 @@ public class ExtractTopEdgesAlgorithm implements Algorithm {
         }
         
         this.numTopEdges = ((Integer) parameters.get("numTopEdges")).intValue();
-        this.ascendingOrDescending = ((Boolean) parameters.get("ascendingOrDescending")).booleanValue();
+        this.fromBottomInstead = ((Boolean) parameters.get("fromBottomInstead")).booleanValue();
         this.numericAttribute = (String) parameters.get("numericAttribute");
     }
 
@@ -67,7 +63,7 @@ public class ExtractTopEdgesAlgorithm implements Algorithm {
     
     	Set edgesToRemove = new HashSet();
     	//if we want to keep the top X...
-    	if (ascendingOrDescending == ASCENDING) {
+    	if (! fromBottomInstead) {
     		//delete from the bottom up, until we have X left
     		while (edgesByRank.size() > numTopEdges) {
     			Edge e =  ((ComparableEdge) edgesByRank.findMin()).getEdge();
@@ -75,7 +71,7 @@ public class ExtractTopEdgesAlgorithm implements Algorithm {
     			edgesByRank.deleteMin();
     		}
     	} //else if want to keep the bottom X...
-    	else {
+    	else {//bottomInstead == FROM_BOTTOM
     		//skip the first X from the bottom up
     		for (int ii = 0; ii < numTopEdges && (!edgesByRank.isEmpty()); ii++) {
     			edgesByRank.deleteMin();
@@ -94,10 +90,10 @@ public class ExtractTopEdgesAlgorithm implements Algorithm {
     
     private Data[] formatAsData(Graph extractedGraph) {
     	StringBuilder label = new StringBuilder();
-    	if (this.ascendingOrDescending) {
-    		label.append("top ");
-    	} else {
+    	if (this.fromBottomInstead) {
     		label.append("bottom ");
+    	} else {
+    		label.append("top ");
     	}
     	label.append("" + this.numTopEdges);
     	label.append(" edges by " + this.numericAttribute);
