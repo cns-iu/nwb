@@ -58,7 +58,7 @@
 	<menu pid="edu.iu.iv.modeling.p2p.pru.PruAlgorithm"/>
 	<menu type="break"/>
 	<menu pid="edu.iu.iv.modeling.tarl.TarlAlgorithm"/>
-	<menu pid="edu.iu.nwb.modeling.discretenetworkdynamics.DVDAlgorithm"/>
+	<menu pid="edu.iu.nwb.modeling.discretenetworkdynamics.DNDAlgorithm"/>
     </top_menu>
     
     <top_menu name="Analysis">
