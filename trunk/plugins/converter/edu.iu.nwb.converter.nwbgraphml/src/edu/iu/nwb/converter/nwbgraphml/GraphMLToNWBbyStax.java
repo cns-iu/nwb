@@ -127,6 +127,9 @@ public class GraphMLToNWBbyStax implements Algorithm {
 		BufferedWriter nodeWriter = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(nodeFileLocation), "UTF-8"));
 		BufferedWriter undirectedEdgeWriter = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(undirectedEdgeFileLocation), "UTF-8"));
 		BufferedWriter directedEdgeWriter = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(directedEdgeFileLocation), "UTF-8"));
+		
+		boolean wroteNodeHeader = false;
+		boolean wroteEdgeHeader = false;
 
 		while (xmlReader.hasNext())
 		{   
@@ -147,6 +150,7 @@ public class GraphMLToNWBbyStax implements Algorithm {
 					nodeIds.put( xmlReader.getAttributeValue(null, "id"), Integer.valueOf(nodeCount));
 					if (nodeCount == 1) {
 						nodeWriter.write(createNodeHeader(nodeAttributes));
+						wroteNodeHeader = true;
 					}
 
 
@@ -165,6 +169,7 @@ public class GraphMLToNWBbyStax implements Algorithm {
 						directedEdgeCount++;
 						if(directedEdgeCount==1) {
 							directedEdgeWriter.write(createDirectedEdgeHeader(edgeAttributes));
+							wroteEdgeHeader = true;
 						}
 
 
@@ -174,6 +179,7 @@ public class GraphMLToNWBbyStax implements Algorithm {
 						undirectedEdgeCount++;
 						if(undirectedEdgeCount==1) {
 							undirectedEdgeWriter.write(createUndirectedEdgeHeader(edgeAttributes));
+							wroteEdgeHeader = true;
 						}
 						undirectedEdgeWriter.write(createEdge(source.intValue(), target.intValue(), weightKey,  attributeValues, edgeAttributes));
 					}
@@ -199,6 +205,13 @@ public class GraphMLToNWBbyStax implements Algorithm {
 
 
 			}
+		}
+		
+		if (! wroteNodeHeader) {
+			nodeWriter.write(createNodeHeader(nodeAttributes));
+		}
+		if (! wroteEdgeHeader) {
+			undirectedEdgeWriter.write(createUndirectedEdgeHeader(edgeAttributes));
 		}
 
 		xmlReader.close();
