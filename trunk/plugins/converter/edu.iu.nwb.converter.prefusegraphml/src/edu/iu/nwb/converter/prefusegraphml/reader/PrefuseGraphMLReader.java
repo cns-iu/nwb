@@ -34,7 +34,7 @@ public class PrefuseGraphMLReader implements Algorithm {
     	File fileHandler = (File) data[0].getData();
 
     	try{
-    		Graph graph= (new GraphMLReader()).readGraph(new FileInputStream(fileHandler));
+    		Graph graph= (new GraphMLReaderModified()).readGraph(new FileInputStream(fileHandler));
     		Data[] dm = new Data[] {new BasicData(graph, Graph.class.getName())};
     		dm[0].getMetadata().put(DataProperty.LABEL, "Prefuse Graph: " + fileHandler);
             dm[0].getMetadata().put(DataProperty.TYPE, DataProperty.NETWORK_TYPE);

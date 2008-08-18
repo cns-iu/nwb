@@ -45,7 +45,7 @@ public class PrefuseGraphMLValidation implements AlgorithmFactory {
         	
         	try{
         		if (validateGraphMLHeader(inData)){
-	        		(new GraphMLReader()).readGraph(new FileInputStream(fileHandler));
+	        		(new GraphMLReaderModified()).readGraph(new FileInputStream(fileHandler));
 	        		Data[] dm = new Data[] {new BasicData(inData, "file:text/graphml+xml")};
 	        		dm[0].getMetadata().put(DataProperty.LABEL, "Prefuse GraphML file: " + fileHandler);
 	                dm[0].getMetadata().put(DataProperty.TYPE, DataProperty.NETWORK_TYPE);
