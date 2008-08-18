@@ -72,11 +72,24 @@ public class GraphMLWriter extends AbstractGraphWriter {
      */
     public void writeGraph(Graph graph, OutputStream os) throws DataIOException
     {
+    	boolean graphHasNodes = graph.nodes().hasNext();
+    	boolean graphHasEdges = graph.edges().hasNext();
+    	
+
         // first, check the schemas to ensure GraphML compatibility
-        Schema ns = ((Node) graph.nodes().next()).getSchema();//graph.getNodeTable().getSchema();
-        Schema es = ((Edge) graph.edges().next()).getSchema();//graph.getEdgeTable().getSchema();
-        checkGraphMLSchema(ns);
-        checkGraphMLSchema(es);
+    	Schema ns = null;
+    	Schema es = null;
+    	
+    	if (graphHasNodes) {
+    		ns = ((Node) graph.nodes().next()).getSchema();//graph.getNodeTable().getSchema();
+    		checkGraphMLSchema(ns);
+    	}
+        
+    	if (graphHasEdges) {
+    		es = ((Edge) graph.edges().next()).getSchema();//graph.getEdgeTable().getSchema();
+    		checkGraphMLSchema(es);
+    	}
+
         
         XMLWriter xml = new XMLWriter(new PrintWriter(os));
         xml.begin(Tokens.GRAPHML_HEADER, 2);
@@ -85,10 +98,16 @@ public class GraphMLWriter extends AbstractGraphWriter {
                 + new Date(System.currentTimeMillis()));
         
         // print the graph schema
-        printSchema(xml, Tokens.NODE, ns, null);
-        printSchema(xml, Tokens.EDGE, es, new String[] {
-            graph.getEdgeSourceField(), graph.getEdgeTargetField()
-        });
+      
+        if (graphHasNodes) {
+        	printSchema(xml, Tokens.NODE, ns, null);
+        }
+        
+        if (graphHasEdges) {
+        	printSchema(xml, Tokens.EDGE, es, new String[] {
+        			graph.getEdgeSourceField(), graph.getEdgeTargetField()
+        	});
+        }
         xml.println();
         
         // print graph contents
@@ -96,55 +115,58 @@ public class GraphMLWriter extends AbstractGraphWriter {
             graph.isDirected() ? Tokens.DIRECTED : Tokens.UNDIRECTED);
         
         // print the nodes
-        xml.comment("nodes");
-        Iterator nodes = graph.nodes();
-        while ( nodes.hasNext() ) {
-            Node n = (Node)nodes.next();
+        if (graphHasNodes) {
+        	xml.comment("nodes");
+        	Iterator nodes = graph.nodes();
+        	while ( nodes.hasNext() ) {
+        		Node n = (Node)nodes.next();
             
-            if ( ns.getColumnCount() > 0 ) {
-                xml.start(Tokens.NODE, Tokens.ID, "n" + String.valueOf(n.getRow()));
-                for ( int i=0; i<ns.getColumnCount(); ++i ) {
-                    String field = ns.getColumnName(i);
-                    if(n.get(field) != null) {
-                    	xml.contentTag(Tokens.DATA, Tokens.KEY, field.toLowerCase(), n.get(field).toString());
-                    }
-                }
+        		if ( ns.getColumnCount() > 0 ) {
+        			xml.start(Tokens.NODE, Tokens.ID, "n" + String.valueOf(n.getRow()));
+        			for ( int i=0; i<ns.getColumnCount(); ++i ) {
+        				String field = ns.getColumnName(i);
+        				if(n.get(field) != null) {
+        					xml.contentTag(Tokens.DATA, Tokens.KEY, field.toLowerCase(), n.get(field).toString());
+        				}
+        		}
                 xml.end();
-            } else {
+        		} else {
                 xml.tag(Tokens.NODE, Tokens.ID, "n" + String.valueOf(n.getRow()));
-            }
+            	}
+        	}
         }
-        
         // add a blank line
         xml.println();
         
         // print the edges
-        String[] attr = new String[]{Tokens.ID, Tokens.SOURCE, Tokens.TARGET};
-        String[] vals = new String[3];
+        if (graphHasEdges) {
+        	String[] attr = new String[]{Tokens.ID, Tokens.SOURCE, Tokens.TARGET};
+        	String[] vals = new String[3];
         
-        xml.comment("edges");
-        Iterator edges = graph.edges();
-        while ( edges.hasNext() ) {
-            Edge e = (Edge)edges.next();
-            vals[0] = "e" + String.valueOf(e.getRow());
-            vals[1] = "n" + String.valueOf(e.getSourceNode().getRow());
-            vals[2] = "n" + String.valueOf(e.getTargetNode().getRow());
+        	xml.comment("edges");
+        	Iterator edges = graph.edges();
+        	while ( edges.hasNext() ) {
+        		Edge e = (Edge)edges.next();
+        		vals[0] = "e" + String.valueOf(e.getRow());
+        		vals[1] = "n" + String.valueOf(e.getSourceNode().getRow());
+        		vals[2] = "n" + String.valueOf(e.getTargetNode().getRow());
             
-            if ( es.getColumnCount() > 2 ) {
-                xml.start(Tokens.EDGE, attr, vals, 3);
-                for ( int i=0; i<es.getColumnCount(); ++i ) {
-                    String field = es.getColumnName(i);
-                    if ( field.equals(graph.getEdgeSourceField()) ||
-                         field.equals(graph.getEdgeTargetField()) )
-                        continue;
+        		if ( es.getColumnCount() > 2 ) {
+        			xml.start(Tokens.EDGE, attr, vals, 3);
+        			for ( int i=0; i<es.getColumnCount(); ++i ) {
+        				String field = es.getColumnName(i);
+        				if ( field.equals(graph.getEdgeSourceField()) ||
+        						field.equals(graph.getEdgeTargetField()) )
+        					continue;
                     
-                    xml.contentTag(Tokens.DATA, Tokens.KEY, field.toLowerCase(), 
+        				xml.contentTag(Tokens.DATA, Tokens.KEY, field.toLowerCase(), 
                                    e.get(field).toString());
-                }
+        			}
                 xml.end();
-            } else {
+        		} else {
                 xml.tag(Tokens.EDGE, attr, vals, 3);
-            }
+        		}
+        	}
         }
         xml.end();
         
