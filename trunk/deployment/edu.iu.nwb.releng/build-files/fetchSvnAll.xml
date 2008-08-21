@@ -618,7 +618,19 @@
       <param name="element.id" value="edu.iu.nwb.composite.extractcowordfromtable"/>
       <param name="project.name" value="/plugins/composite/edu.iu.nwb.composite.extractcowordfromtable"/>
       <param name="url" value="http://nwb.slis.indiana.edu/svn/nwb/trunk"/>
+    </antcall>  	
+    <antcall target="svn.co">
+      <param name="target" value="plugins"/>
+      <param name="element.id" value="edu.iu.nwb.composite.extractpapercitationnetwork"/>
+      <param name="project.name" value="/plugins/composite/edu.iu.nwb.composite.extractpapercitationnetwork"/>
+      <param name="url" value="http://nwb.slis.indiana.edu/svn/nwb/trunk"/>
     </antcall>
+    <antcall target="svn.co">
+      <param name="target" value="plugins"/>
+      <param name="element.id" value="edu.iu.nwb.composite.extractauthorpapernetwork"/>
+      <param name="project.name" value="/plugins/composite/edu.iu.nwb.composite.extractauthorpapernetwork"/>
+      <param name="url" value="http://nwb.slis.indiana.edu/svn/nwb/trunk"/>
+    </antcall>  	
     <antcall target="svn.co">
       <param name="target" value="plugins"/>
       <param name="element.id" value="edu.iu.nwb.analysis.extractdirectednetfromtable"/>
