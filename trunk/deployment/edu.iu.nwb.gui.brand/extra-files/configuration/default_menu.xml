@@ -154,6 +154,8 @@
     <menu pid="edu.iu.nwb.tools.mergenodes.MergeNodes"/>
     <menu type="break"/>
     <menu pid="edu.iu.nwb.analysis.extractdirectednetfromtable.algorithms.ExtractDirectedNetworkAlgorithm"/>
+    <menu pid="edu.iu.nwb.composite.extractpapercitationnetwork.algorithm.ExtractPaperCitationNetwork"/>
+    <menu pid="edu.iu.nwb.composite.extractauthorpapernetwork.algorithm.ExtractAuthorPaperNetwork"/>
     <menu type="break"/>
     <menu pid="edu.iu.nwb.analysis.extractnetfromtable.algorithms.ExtractNetFromTableAlgorithm"/>
     <menu pid="edu.iu.nwb.composite.extractcowordfromtable.ExtractCoWordNetworkAlgorithm"/>
