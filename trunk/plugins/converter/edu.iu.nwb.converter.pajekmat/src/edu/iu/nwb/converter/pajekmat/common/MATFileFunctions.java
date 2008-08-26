@@ -15,15 +15,17 @@ public class MATFileFunctions {
 			String st = tokens[ii];
 			if(!append){
 				if(!st.startsWith("\"")){
-					st = st.replace("\"", "");
+					//st.replaceFirst("\"", "");
 					sl.add(st);
 				}
 				else if (st.startsWith("\"") && st.endsWith("\"")){
-					st = st.replace("\"", "");
-					sl.add(st);
+					st = st.replaceFirst("\"", "");
+					int lastIndex = st.lastIndexOf("\"");
+					sl.add(st.substring(0,lastIndex));
 				}
 				else {
 					append = true;
+					st.replaceFirst("\"", "");
 					bf.append(st);
 				}
 			}
@@ -33,8 +35,9 @@ public class MATFileFunctions {
 					bf.append(" "+st);
 				}
 				else if (st.endsWith("\"")){    				
-					bf.append(" "+st);
-					sl.add(bf.toString().replace("\"", ""));
+					int lastIndex = st.lastIndexOf("\"");
+					bf.append(" "+st.substring(0,lastIndex));
+					sl.add(bf.toString());
 					bf = new StringBuffer();
 					append=false;
 				}
@@ -87,8 +90,6 @@ public class MATFileFunctions {
 			}
 		}
 
-		//	System.out.println();
-
 		return tokens;
 
 
@@ -108,9 +109,6 @@ public class MATFileFunctions {
 	}    
 
 	protected static boolean isAString(String input, String attr) throws Exception {
-		/*if (!input.startsWith("\"") || !input.endsWith("\"")) {
-			
-		}   */ 	
 		if(input.getClass().toString().endsWith("String"))
 		return true;
 		throw new Exception("Not a String value.");

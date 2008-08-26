@@ -124,7 +124,7 @@ public class PajekmatToPajeknet implements Algorithm{
 						s += " \"" + mv.getAttribute(attr) + "\" ";
 						}
 						else{
-							s += attr + " " + mv.getAttribute(attr) + "\" ";
+							s += attr + " \"" + mv.getAttribute(attr) + "\" ";
 						}
 				}
 						else

@@ -1,13 +1,13 @@
 package edu.iu.nwb.converter.pajekmat.common;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-import java.util.Queue;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.ConcurrentLinkedQueue;
+
 
 public class MATArcs {
 	private static Map Attributes = new LinkedHashMap();
@@ -21,25 +21,25 @@ public class MATArcs {
 
 	private boolean valid = false;
 	public MATArcs(){	
-		this.Numeric_Parameters = new ConcurrentHashMap();
-		this.String_Parameters = new ConcurrentHashMap();	
+		this.Numeric_Parameters = new HashMap();
+		this.String_Parameters = new HashMap();	
 	}
 
 	public MATArcs(String s) throws Exception{
 		String[] properties = MATFileFunctions.processTokens(s);
-		this.Numeric_Parameters = new ConcurrentHashMap();
-		this.String_Parameters = new ConcurrentHashMap();
+		this.Numeric_Parameters = new HashMap();
+		this.String_Parameters = new HashMap();
 		this.valid = testArcsnEdges(properties);
 	}
 
 	public boolean testArcsnEdges(String[] strings) throws Exception{
 		boolean value = false;
-		Queue stringQueue = new ConcurrentLinkedQueue();
+		LinkedList stringQueue = new LinkedList();
 		for(int ii = 0; ii < strings.length; ii++){
 			String s = strings[ii];
 			stringQueue.add(s);
 		}
-		if(((String)stringQueue.peek()).startsWith(MATFileProperty.PREFIX_COMMENTS)){
+		if(((String)stringQueue.getFirst()).startsWith(MATFileProperty.PREFIX_COMMENTS)){
 			comment = "";
 			for(int ii = 0; ii < strings.length; ii++){
 				String s = strings[ii];
@@ -62,7 +62,7 @@ public class MATArcs {
 		return value;
 	}
 
-	public boolean testSourceTargetWeight(Queue qs) throws Exception{
+	public boolean testSourceTargetWeight(LinkedList qs) throws Exception{
 		boolean value = false;
 		int i = 0;
 		try{
@@ -70,13 +70,13 @@ public class MATArcs {
 			
 					switch (i){
 					case 0:
-						this.setSource((String) qs.poll());
+						this.setSource((String) qs.removeFirst());
 						break;
 					case 1:
-						this.setTarget((String) qs.poll());
+						this.setTarget((String) qs.removeFirst());
 						break;
 					case 2:
-						this.setWeight((String) qs.poll());
+						this.setWeight((String) qs.removeFirst());
 						break;
 					default:
 						throw new Exception("Unknown data found");
