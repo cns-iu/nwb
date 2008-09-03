@@ -77,7 +77,7 @@ public class ExtractAlgorithm implements Algorithm, SupportedFileTypes,ProgressT
 			graphAttributes.put(DataProperty.PARENT, data[0]);
 			graphAttributes.put(DataProperty.TYPE, DataProperty.NETWORK_TYPE);
 			graphAttributes.put(DataProperty.LABEL,
-					"Extracted Co-authorship network");
+					"Extracted Co-Authorship Network");
 		
 		
 		
