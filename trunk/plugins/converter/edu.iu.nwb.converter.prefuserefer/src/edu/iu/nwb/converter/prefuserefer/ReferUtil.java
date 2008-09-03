@@ -122,7 +122,7 @@ public class ReferUtil {
     
     private Map createColumnNameMap() {
     	Map columnNameMap = new Hashtable();
-    	columnNameMap.put("A", "Author");
+    	columnNameMap.put("A", "Authors");
 		columnNameMap.put("B", "Secondary Title");
 		columnNameMap.put("C", "Place Published");
 		columnNameMap.put("D", "Year");
