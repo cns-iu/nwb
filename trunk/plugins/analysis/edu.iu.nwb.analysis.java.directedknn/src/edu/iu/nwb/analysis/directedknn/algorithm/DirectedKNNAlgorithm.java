@@ -18,18 +18,21 @@ import java.util.TreeSet;
 import org.cishell.framework.CIShellContext;
 import org.cishell.framework.algorithm.Algorithm;
 import org.cishell.framework.algorithm.AlgorithmExecutionException;
+import org.cishell.framework.algorithm.ProgressMonitor;
+import org.cishell.framework.algorithm.ProgressTrackable;
 import org.cishell.framework.data.BasicData;
 import org.cishell.framework.data.Data;
 import org.cishell.framework.data.DataProperty;
 
 import edu.iu.nwb.analysis.java.directedknn.components.DirectedKNNArrayAndMapContainer;
 
-public class DirectedKNNAlgorithm implements Algorithm {
+public class DirectedKNNAlgorithm implements Algorithm,ProgressTrackable {
 	private Data[] data;
 	private Dictionary parameters;
 	private CIShellContext context;
 	private static String LINE_SEP = "line.separator";
-
+	private ProgressMonitor progMonitor;
+	
 	public DirectedKNNAlgorithm(Data[] data, Dictionary parameters, CIShellContext context) {
 		this.data = data;
 		this.parameters = parameters;
@@ -41,17 +44,20 @@ public class DirectedKNNAlgorithm implements Algorithm {
 			File inData = (File)this.data[0].getData();
 			FileReader fr = new FileReader(inData);
 			BufferedReader nwbFileReader = new BufferedReader(fr);
+			this.progMonitor.start(ProgressMonitor.WORK_TRACKABLE, 350);
 			int totalNodes = preProcessNWBFileNodes(nwbFileReader);
+			this.progMonitor.worked(100);
 			Map nodeToInNeighbors = new HashMap(totalNodes);
 			Map nodeToOutNeighbors = new HashMap(totalNodes);
 			DirectedKNNArrayAndMapContainer knnMapContainer = new DirectedKNNArrayAndMapContainer();
 			knnMapContainer = preProcessNWBFileEdges(nwbFileReader,knnMapContainer, nodeToInNeighbors,nodeToOutNeighbors,totalNodes);
+			this.progMonitor.worked(200);
 			nwbFileReader.close();
 			fr = new FileReader(inData);
 			nwbFileReader = new BufferedReader(fr);
 			Map inDegreeTotals = knnMapContainer.getInDegreeTotals();
 			Map outDegreeTotals = knnMapContainer.getOutDegreeTotals();
-			File returnNetworkFile = processNWBFile(nwbFileReader,nodeToInNeighbors,nodeToOutNeighbors,knnMapContainer,totalNodes);
+			File returnNetworkFile = processNWBFile(nwbFileReader,nodeToInNeighbors,nodeToOutNeighbors,knnMapContainer,totalNodes,this.progMonitor,200);
 			File returnKInInFile = createPlotFile(knnMapContainer.getKInInMap(),inDegreeTotals,totalNodes,"Indegree\t|\tK_In_In");
 			File returnKInOutFile = createPlotFile(knnMapContainer.getKInOutMap(),inDegreeTotals,totalNodes,"Indegree\t|\tK_In_Out");
 			File returnKOutInFile = createPlotFile(knnMapContainer.getKOutInMap(),outDegreeTotals,totalNodes,"Outdegree\t|\tK_Out_In");
@@ -62,7 +68,7 @@ public class DirectedKNNAlgorithm implements Algorithm {
 			Data kInOutData = constructData(this.data[0],returnKInOutFile,"file:text/grace",DataProperty.PLOT_TYPE,"Indegree of nodes correlated with outdegree of in-neighbors normalized by expected outdegree");
 			Data kOutInData = constructData(this.data[0],returnKOutInFile,"file:text/grace",DataProperty.PLOT_TYPE,"Outdegree of nodes correlated with indegree of out-neighbors normalized by expected indegree");
 			Data kOutOutData = constructData(this.data[0],returnKOutOutFile,"file:text/grace",DataProperty.PLOT_TYPE,"Outdegree of nodes correlated with outdegree of out-neighbors normalized by expected outdegree");
-			
+			this.progMonitor.done();
 			return new Data[] {networkData,kInInData,kInOutData,kOutInData,kOutOutData};
 		}catch(FileNotFoundException fnfe){
 			throw new AlgorithmExecutionException("Unable to find the file.",fnfe);
@@ -82,8 +88,11 @@ public class DirectedKNNAlgorithm implements Algorithm {
 		return outputData;
 	}
 
-	private static File processNWBFile(BufferedReader sourceFileReader, Map nodeToInNeighbors, Map nodeToOutNeighbors,DirectedKNNArrayAndMapContainer dkaamc, int totalNodes) throws AlgorithmExecutionException{
+	private static File processNWBFile(BufferedReader sourceFileReader, Map nodeToInNeighbors, Map nodeToOutNeighbors,DirectedKNNArrayAndMapContainer dkaamc, int totalNodes, ProgressMonitor monitor,int worked) throws AlgorithmExecutionException{
 		File targetFile = null;
+		int workDone = 200;
+		int workToDo = 2*dkaamc.getUndirectedDegree();
+		int step = Math.max(1, workToDo/100);
 		try{
 			targetFile = File.createTempFile(new Long(new Date().getTime()).toString(), ".nwb");
 		}catch(IOException ioe){
@@ -115,6 +124,8 @@ public class DirectedKNNAlgorithm implements Algorithm {
 					Integer id = new Integer(attributeValues[0]);
 					double[] kNNs = calculateKNNs(id,dkaamc,nodeToInNeighbors, nodeToOutNeighbors,totalNodes);
 					targetNWBFileWriter.write(sourceLine+"\t"+kNNs[0]+"\t"+kNNs[1]+"\t"+kNNs[2]+"\t"+kNNs[3]+System.getProperty(LINE_SEP));
+					if((worked-workDone) % step == 0)
+						monitor.worked(workDone++);
 				}	
 			}
 			
@@ -270,6 +281,7 @@ public class DirectedKNNAlgorithm implements Algorithm {
 					Integer source = new Integer(sourceTargetArray[0]);
 					Integer target = new Integer(sourceTargetArray[1]);
 					addEdge(source,target,nodeToInNeighbors,nodeToOutNeighbors);
+					mapContainer.updateDegree();
 				}
 			}
 
@@ -330,5 +342,15 @@ public class DirectedKNNAlgorithm implements Algorithm {
 			}
 
 		}
+	}
+
+	public ProgressMonitor getProgressMonitor() {
+		// TODO Auto-generated method stub
+		return this.progMonitor;
+	}
+
+	public void setProgressMonitor(ProgressMonitor monitor) {
+		this.progMonitor = monitor;
+		
 	}
 }

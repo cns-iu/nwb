@@ -9,6 +9,8 @@ public class DirectedKNNArrayAndMapContainer {
 	private Map outDegreeToKOutIn;
 	private Map outDegreeToKOutOut;
 	
+	int undirectedDegree = 0;
+	
 	private Map inDegreeTotals;
 	private Map	outDegreeTotals;
 	
@@ -20,6 +22,14 @@ public class DirectedKNNArrayAndMapContainer {
 		this.outDegreeToKOutOut = new HashMap();
 		this.inDegreeTotals = new HashMap();
 		this.outDegreeTotals = new HashMap();
+	}
+	
+	public void updateDegree(){
+		this.undirectedDegree++;
+	}
+	
+	public int getUndirectedDegree(){
+		return this.undirectedDegree;
 	}
 	
 	public void addKNNValues(int inDegree, int outDegree, double kInIn, double kInOut, double kOutIn, double kOutOut){
