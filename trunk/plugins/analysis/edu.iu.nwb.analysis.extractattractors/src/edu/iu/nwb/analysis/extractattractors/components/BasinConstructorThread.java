@@ -78,7 +78,7 @@ public class BasinConstructorThread extends Thread{
 			}
 		}
 		stateSpaceFileWriter.setDirectedEdgeSchema(NWBFileWriter.getDefaultEdgeSchema());
-		writeEdges(simpleStateGraph.outNeighbor,stateSpaceFileWriter);
+		writeEdges(simpleStateGraph.outNeighbor,this.nodes,stateSpaceFileWriter);
 		stateSpaceFileWriter.haltParsingNow();
 		
 			this.basinGraph = stateSpaceFile;
@@ -349,13 +349,14 @@ public class BasinConstructorThread extends Thread{
 		
 	}
 
-	private static void writeEdges(int[] targets, NWBFileWriter nfw){
+	private static void writeEdges(HashMap outNeighbors, LinkedHashSet sources, NWBFileWriter nfw){
 
-		for(int i = 0; i < targets.length; i++){
-			int target = targets[i];
+		for(Iterator it = sources.iterator(); it.hasNext();){
+			int source = ((Integer)it.next()).intValue();
+			int target = ((Integer)outNeighbors.get(new Integer(source))).intValue();
 
 
-			nfw.addDirectedEdge(i+1, target+1,null);
+			nfw.addDirectedEdge(source+1, target+1,null);
 
 		}
 	}

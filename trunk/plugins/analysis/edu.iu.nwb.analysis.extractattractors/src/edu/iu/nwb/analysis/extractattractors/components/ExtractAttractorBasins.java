@@ -107,7 +107,7 @@ public class ExtractAttractorBasins {
 				if(!componentNodes.contains(target)){
 					queue.add(target);
 				}
-				LinkedHashSet inNodes = originalGraph.inNeighbors[originalNodeNumber.intValue()];
+				LinkedHashSet inNodes = originalGraph.getInNeighbors(originalNodeNumber.intValue());
 				if(inNodes != null){
 					for(Iterator it = inNodes.iterator(); it.hasNext();){
 						Integer source = (Integer)it.next();
