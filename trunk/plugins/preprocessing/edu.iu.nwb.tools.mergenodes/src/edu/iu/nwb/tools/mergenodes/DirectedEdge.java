@@ -1,6 +1,5 @@
 package edu.iu.nwb.tools.mergenodes;
 
-import java.util.ArrayList;
 import prefuse.data.Node;
 
 public class DirectedEdge {
@@ -13,6 +12,7 @@ public class DirectedEdge {
 	}
 	
 	public int hashCode(){
+		//???
 		return source.hashCode()+ 66*target.hashCode();
 	}
 	
@@ -24,6 +24,9 @@ public class DirectedEdge {
 		return target;
 	}
 	
+	/* 
+     * Overwrite equals(Object obj) method in the Object class
+     */
 	public boolean equals(Object obj){
 		DirectedEdge edge=(DirectedEdge)obj;
 		if (source.equals(edge.getSouceNode() )&& 
