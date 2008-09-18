@@ -11,7 +11,6 @@ import org.cishell.framework.algorithm.AlgorithmExecutionException;
 import org.cishell.framework.data.BasicData;
 import org.cishell.framework.data.Data;
 import org.cishell.framework.data.DataProperty;
-import org.osgi.service.log.LogService;
 
 import prefuse.data.Table;
 import prefuse.data.io.CSVTableReader;
@@ -40,7 +39,7 @@ public class PrefuseCsvReader implements Algorithm {
 			Table table= tableReader.readTable(new FileInputStream(file));
     		Data[] dm = new Data[] {new BasicData(table, Table.class.getName())};
     		dm[0].getMetadata().put(DataProperty.LABEL, "Prefuse Table: " + file);
-            dm[0].getMetadata().put(DataProperty.TYPE, DataProperty.TEXT_TYPE);
+            dm[0].getMetadata().put(DataProperty.TYPE, DataProperty.TABLE_TYPE);
     		return dm;
     	} catch (DataIOException dioe){
     		throw new AlgorithmExecutionException("DataIOException", dioe);
