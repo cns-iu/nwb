@@ -24,7 +24,10 @@ public class DocumentationDialog extends Dialog {
 
 	private static final String ALL_SUPPORTED_FORMATS_DOC_TEXT = "<A>All Supported Formats Documentation</A>";
 	private static final String ALL_SUPPORTED_FORMATS_DOC_URL = "https://nwb.slis.indiana.edu/community/?n=DataFormats.HomePage";
-
+	
+	private static final String TUTORIALS_DOC_TEXT = "<A>Network Workbench Tutorials on our Wiki</A>";
+	private static final String TUTORIALS_DOC_URL = "https://nwb.slis.indiana.edu/community/?n=Tutorials.HomePage";
+	
 	Shell shell = null;
 
 	public DocumentationDialog(Shell parent) {
@@ -46,21 +49,31 @@ public class DocumentationDialog extends Dialog {
 		group.setLayout(new GridLayout(1, true));
 		   	
 		try {
+			//main page link
 			URL mainDocPageURL = new URL(MAIN_DOC_PAGE_URL);
 			WebsiteLink mainDocPageLink = new WebsiteLink(group, SWT.BORDER, MAIN_DOC_PAGE_TEXT, mainDocPageURL);
 			mainDocPageLink.setSize(180, 40);
 			mainDocPageLink.setLayoutData(new GridData(GridData.FILL_VERTICAL));
 			
+			//all algorithms docs link
 			WebsiteLink allAlgorithmsDocLink = new WebsiteLink(group, SWT.BORDER, ALL_ALGORITHMS_DOC_TEXT, new URL(
 					ALL_ALGORITHMS_DOC_URL));
 			allAlgorithmsDocLink.setSize(180, 40);
 			allAlgorithmsDocLink.setLayoutData(new GridData(GridData.FILL_VERTICAL));
 			
+			//all supported formats doc link
 			WebsiteLink allSupportedFormatsDocLink = new WebsiteLink(group, SWT.BORDER,
 					ALL_SUPPORTED_FORMATS_DOC_TEXT, new URL(ALL_SUPPORTED_FORMATS_DOC_URL));
 			allSupportedFormatsDocLink.setSize(180, 40);
 			allSupportedFormatsDocLink.setLayoutData(new GridData(GridData.FILL_VERTICAL));
 			
+			//tutorials doc link
+			WebsiteLink tutorialsDocLink = new WebsiteLink(group, SWT.BORDER,
+					TUTORIALS_DOC_TEXT, new URL(TUTORIALS_DOC_URL));
+			tutorialsDocLink.setSize(180, 40);
+			tutorialsDocLink.setLayoutData(new GridData(GridData.FILL_VERTICAL));
+			
+			//explanation of how browser opens these links
 			String labelText = "Documentation should open in your default web browser." +
 				" It may open in its own tab or in a separate window, depending on your" + 
 				" browser settings.";
