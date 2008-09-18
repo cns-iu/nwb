@@ -63,7 +63,7 @@ public class DocumentationDialog extends Dialog {
 			
 			String labelText = "Documentation should open in your default web browser." +
 				" It may open in its own tab or in a separate window, depending on your" + 
-				" web browser settings.";
+				" browser settings.";
 			Label browserBehaviourExplanation = new Label(group, SWT.WRAP);
 			browserBehaviourExplanation.setText(labelText);
 			browserBehaviourExplanation.setSize(180, 120);
