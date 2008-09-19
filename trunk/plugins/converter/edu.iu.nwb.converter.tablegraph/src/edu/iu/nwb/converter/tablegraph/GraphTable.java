@@ -54,14 +54,14 @@ public class GraphTable implements Algorithm {
 		Dictionary nodeMetadata = nodeData.getMetadata();
 		nodeMetadata.put(DataProperty.LABEL, "Node Table from Graph");
 		nodeMetadata.put(DataProperty.PARENT, this.data[0]);
-		nodeMetadata.put(DataProperty.TYPE, DataProperty.TEXT_TYPE);
+		nodeMetadata.put(DataProperty.TYPE, DataProperty.TABLE_TYPE);
 		
 		Data edgeData = new BasicData(graph.getEdgeTable(), Table.class.getName());
 		
 		Dictionary edgeMetadata = edgeData.getMetadata();
 		edgeMetadata.put(DataProperty.LABEL, "Edge Table from Graph");
 		edgeMetadata.put(DataProperty.PARENT, this.data[0]);
-		edgeMetadata.put(DataProperty.TYPE, DataProperty.TEXT_TYPE);
+		edgeMetadata.put(DataProperty.TYPE, DataProperty.TABLE_TYPE);
 		
 		return new Data[]{nodeData, edgeData};
 	}
