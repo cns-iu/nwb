@@ -9,11 +9,11 @@ New releases will be announced on nwb-announce@googlegroups.com.
 Please feel free to sign up NWB mailing lists at 
 http://nwb.slis.indiana.edu/mailing.html.
 
-Please go to http://nwb.slis.indiana.edu or http://cishell.org for more 
+Please go to http://nwb.slis.indiana.edu for more 
 information and breaking news.
 
 If you use the Network Workbench Tool or information contained in 
 the http://nwb.slis.indiana.edu website for any publication, please cite as follows:
 NWB Team. (2006). Network Workbench Tool. Indiana University and Northeastern University, 
-http://nwb.slis.indiana.edu 
+http://nwb.slis.indiana.edu. 
 
