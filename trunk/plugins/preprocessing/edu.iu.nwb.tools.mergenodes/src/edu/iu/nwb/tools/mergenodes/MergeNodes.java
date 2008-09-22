@@ -2,10 +2,8 @@ package edu.iu.nwb.tools.mergenodes;
 
 import java.io.BufferedWriter;
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.Dictionary;
@@ -83,8 +81,6 @@ public class MergeNodes implements Algorithm {
      */
     private String nodeLabelField = null;
     
-    //key= node in the input original graph
-    //value = node in the output new graph
     private HashMap nodeMap = new HashMap();    
     private HashMap edgeMap = new HashMap();
         
@@ -117,7 +113,8 @@ public class MergeNodes implements Algorithm {
     	Properties aggFunctionKeyValuePairs = null;
     	
 		if(parameters.get("aff") != null){
-			aggFunctionKeyValuePairs = PropertyHandler.getProperties((String)parameters.get("aff"),this.logger);
+			aggFunctionKeyValuePairs = PropertyHandler.getProperties(
+								(String)parameters.get("aff"),this.logger);			
 		}
 
     	//First, validate and assign the input data to inputNodeListTable 
@@ -137,15 +134,13 @@ public class MergeNodes implements Algorithm {
 					"So there is no merging action. \n");
         		return null;
         	}
-        	//???Why check hasErrorInNodleListTable twice?
-        	if (hasErrorInNodleListTable){
-        		//should figure out what error
-        		return null;
-        	}
-        	else{        	
+        		
+        	if (!hasErrorInNodleListTable)
+        	{
         		hasErrorInNodleListTable = isErrorInNodleListTable();
         	}
-        	if (hasErrorInNodleListTable){
+        	if (hasErrorInNodleListTable)
+        	{
         		//Do not merge node and update the graph, only generate the report
         		logger.log(LogService.LOG_ERROR, "There are errors in the node list table. \n"+
         				"Please view the \"Merging Report\" File for details. \n");
@@ -565,7 +560,7 @@ public class MergeNodes implements Algorithm {
 	 */        		
 	private Graph updateGraphByMergingNodes(Graph theInputGraph, Properties aggFunctionKeyValuePairs) throws Exception {
 		createUtilityFunctionMap(aggFunctionKeyValuePairs);
-		Graph updatedGraph = createAoutputGraph(theInputGraph);
+		Graph updatedGraph = createOutputGraph(theInputGraph);
 		copyAndMergeNodes(updatedGraph);
 		copyAndMergeEdges(updatedGraph);
 			
@@ -576,7 +571,7 @@ public class MergeNodes implements Algorithm {
 	 * Create an empty output Graph with the same nodeSchema 
 	 * and edgeSchem of the original input Graph
 	 */
-	private Graph createAoutputGraph(Graph theInputGraph){
+	private Graph createOutputGraph(Graph theInputGraph){
 		Table orgNodeTable = theInputGraph.getNodeTable();
 		Schema nodeSchema = orgNodeTable.getSchema();
 		
@@ -714,20 +709,18 @@ public class MergeNodes implements Algorithm {
 		return isSuccessful;
 	}	
 	
-	/*
-	 * This is a temp solution. I will provide a better solution later.
-	 * should use parameters from the ui input.
-	 */
 	private void createUtilityFunctionMap(Properties aggFunctionKeyValuePairs){
-		nodeFunctions = new HashMap();
+	    //key= the column/attribute name for nodes or edges
+	    //value = function name such as sum, max, ignore, etc.
+	 	nodeFunctions = new HashMap();
 		edgeFunctions = new HashMap();
 		Enumeration names = aggFunctionKeyValuePairs.propertyNames();
 		while (names.hasMoreElements()) {
 
-			final String key = (String) names.nextElement();
-			String functionName = aggFunctionKeyValuePairs.getProperty(key);
+			final String key = (String) names.nextElement();			
+			String value = aggFunctionKeyValuePairs.getProperty(key);
 			String columnName = key.substring(key.indexOf(".")+1);
-
+			String functionName = value.substring(value.indexOf(".")+1);
 			if (key.startsWith("edge.")) {
 				edgeFunctions.put(columnName, functionName);				
 			}
