@@ -123,7 +123,7 @@ public class NSFReaderAlgorithm implements Algorithm {
 		try{
 			Data[] dm = new Data[] {new BasicData(normalizedNSFTable, "prefuse.data.Table")};
 			dm[0].getMetadata().put(DataProperty.LABEL, "Normalized NSF table");
-			dm[0].getMetadata().put(DataProperty.TYPE, DataProperty.MATRIX_TYPE);
+			dm[0].getMetadata().put(DataProperty.TYPE, DataProperty.TABLE_TYPE);
 			dm[0].getMetadata().put(DataProperty.PARENT, originalData);
 			return dm;
 		}catch (SecurityException exception){

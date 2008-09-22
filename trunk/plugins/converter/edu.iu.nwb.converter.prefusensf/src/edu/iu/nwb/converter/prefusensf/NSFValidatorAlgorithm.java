@@ -29,7 +29,7 @@ public class NSFValidatorAlgorithm implements Algorithm {
 		try{
 			Data[] returnData = new Data[] {new BasicData(nsfFile, "file:text/nsf")};
 			returnData[0].getMetadata().put(DataProperty.LABEL, "NSF csv file: " + nsfFileName);
-			returnData[0].getMetadata().put(DataProperty.TYPE, DataProperty.MATRIX_TYPE);
+			returnData[0].getMetadata().put(DataProperty.TYPE, DataProperty.TABLE_TYPE);
 			return returnData;
 		}catch (SecurityException exception){
 			throw new AlgorithmExecutionException(exception);
