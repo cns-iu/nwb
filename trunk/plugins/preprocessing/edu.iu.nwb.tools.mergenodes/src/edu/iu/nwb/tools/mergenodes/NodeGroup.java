@@ -17,7 +17,7 @@ public class NodeGroup {
 	 */
 	private Set nodesSet;
     /*
-     * Contains a list of primary node. Each element a node in the 
+     * Contains a list of primary node. Each element is a node in the 
      * original graph.
      * errorFlag = true if primaryNodeList contains no element 
      * or more than one element.
