@@ -37,7 +37,7 @@ public class BibtexValidation implements AlgorithmFactory {
 			try{
 				Data[] dm = new Data[] {new BasicData(inData, "file:text/bibtex")};
 				dm[0].getMetadata().put(DataProperty.LABEL, "BibTeX File: " + fileHandler);
-				dm[0].getMetadata().put(DataProperty.TYPE, DataProperty.MATRIX_TYPE);
+				dm[0].getMetadata().put(DataProperty.TYPE, DataProperty.TABLE_TYPE);
 				return dm;
 			}catch (SecurityException exception){
 				throw new AlgorithmExecutionException(exception);
