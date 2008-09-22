@@ -278,9 +278,16 @@ public class MergeNodes implements Algorithm {
     	
 		for (int index =0; index<theTotalCols-2; index++){			
 			String theLabel = theNodeSchema.getColumnName(index); 
-			int colIndex = orgNodeSchema.getColumnIndex(theLabel); 
+			String graphLabel = theLabel;
+			int colIndex = orgNodeSchema.getColumnIndex(theLabel); 			
+			if (colIndex==-1) 
+			{
+				graphLabel = theLabel.toLowerCase();
+				colIndex = orgNodeSchema.getColumnIndex(graphLabel);				
+				
+			}
 			if(colIndex>=0){
-				if (orgNodeSchema.getColumnType(theLabel).getName().equals(
+				if (orgNodeSchema.getColumnType(graphLabel).getName().equalsIgnoreCase(
 						theNodeSchema.getColumnType(theLabel).getName())){
 					if (index ==0)
 						nodeLabelField = theLabel;
@@ -295,7 +302,7 @@ public class MergeNodes implements Algorithm {
 					        orgNodeSchema.getColumnType(theLabel).getName()+".\n");
 				}
 			}
-			else {
+			else {				
 				logger.log (LogService.LOG_ERROR, theLabel+
 						" does not exist in the node schema of the orginal input graph. \n");
 				isMatched = false;
@@ -308,15 +315,15 @@ public class MergeNodes implements Algorithm {
     /*
      * By default, take the last two columns in the table. 
      * The last column is used for specifying the primary row --
-     * the value must be �*� or empty (no value).
-     * The second last column is used for specifying the node index �-
-     * the value must be integers such as 1, 2, 3, 4,� 
+     * the value must be * or empty (no value).
+     * The second last column is used for specifying the node index
+     * the value must be integers such as 1, 2, 3, 4, etc. 
      * 
      * Output is a mergingTable and mergingNodesMap
      */    
     private void processInputNodeListTable () throws Exception {
     	/*
-    	 * tempTable temperarily hold the row with the value of indexColumn
+    	 * tempTable temporarily hold the row with the value of indexColumn
     	 * that occurs the very first time in the inputNodeListTable table
     	 * 
     	 * key = value on the second last column --indexColumn
@@ -330,7 +337,7 @@ public class MergeNodes implements Algorithm {
     	mergingTable = new HashMap(); 
         /*
          * key = node in the original graph
-         * value = merging node index value specifiied in the second last column in the inputNodeListTable
+         * value = merging node index value specified in the second last column in the inputNodeListTable
          */
        	mergingNodesMap = new HashMap();
     	Node node;
@@ -341,7 +348,6 @@ public class MergeNodes implements Algorithm {
    	    	Tuple nodeRow = inputNodeListTable.getTuple(rowIndex);
    	    	Integer nodeIndex = (Integer)nodeRow.get(totalCols-2);
    	    	String starValue = ((String)nodeRow.get(totalCols-1)).trim();
-
    	    	if (!tempTable.containsKey(nodeIndex)){
    	    		tempTable.put(nodeIndex, nodeRow);    	    		
    	    	}
@@ -404,14 +410,34 @@ public class MergeNodes implements Algorithm {
     private boolean compareTuple(Tuple nodeRow, Tuple orgNode){
     	boolean isSame = true;    	
     	Schema theNodeSchema = nodeRow.getSchema();
+    	Schema orgNodeSchema = orgNode.getSchema();
+    	
 		int theTotalCols = theNodeSchema.getColumnCount();
 		for (int index =0; index<theTotalCols-2; index++){			
 			String colName = theNodeSchema.getColumnName(index); 
+			
 			Object theValue = nodeRow.get(colName);
-			Object orgValue = orgNode.get(colName);
+			Object orgValue = null;
+			
+			int colIndex = orgNodeSchema.getColumnIndex(colName); 			
+			if (colIndex==-1) 
+			{
+				colIndex = orgNodeSchema.getColumnIndex(colName.toLowerCase());		
+				
+			}
+			
+			if(colIndex ==-1){
+				//log
+			}
+			else {
+				orgValue = orgNode.get(colIndex);
+			}
+	
 //			System.out.println(">>>theValue="+theValue.toString()+"  orgValue="+orgValue);
+			//compare if the values of each column between the table and 
+			//the original graph are same. 
 			if (!isSameValue(theValue, orgValue,  
-					theNodeSchema.getColumnType(index).getName())){		
+					theNodeSchema.getColumnType(index).getName())){	
 				isSame = false;
 				break;
 			}
@@ -597,6 +623,8 @@ public class MergeNodes implements Algorithm {
 		Iterator nodes = inputGraph.nodes();
 		while(nodes.hasNext()){
 			Node orgNode = (Node)nodes.next();
+			//if the node is not in the mergingNodeMap, 
+			//add the node to the updated graph.
 			if(!mergingNodesMap.containsKey(orgNode)){
 				Node newNode = updatedGraph.addNode();
 				copyValue(orgNode, newNode, orgNodeSchema, 0);
@@ -676,6 +704,7 @@ public class MergeNodes implements Algorithm {
 	private boolean updateValues (Tuple primaryTuple, Tuple theTuple, String tag){
 		boolean isSuccessful = true;
 		Schema theSchema = primaryTuple.getSchema();
+//		Schema theSchema = theTuple.getSchema();
 		Map functionMap;
 		int k =0;
 		if (tag.equalsIgnoreCase("node")){
@@ -691,7 +720,8 @@ public class MergeNodes implements Algorithm {
 		for (; k < theSchema.getColumnCount(); k++) {
 			final String cn = theSchema.getColumnName(k);
 			final Class dt = theSchema.getColumnType(k);
-			final String fn = (String) functionMap.get(cn);
+			final String fn = (String) functionMap.get(cn.toLowerCase());
+//			System.out.println(">>>>columnName="+cn+", functionName="+fn);
 			try{
 				UtilityFunction theFunction = getFunction(fn, dt);	
 				if (theFunction != null){
@@ -721,11 +751,12 @@ public class MergeNodes implements Algorithm {
 			String value = aggFunctionKeyValuePairs.getProperty(key);
 			String columnName = key.substring(key.indexOf(".")+1);
 			String functionName = value.substring(value.indexOf(".")+1);
+//			System.out.println(">>functionName="+functionName+", columnName="+columnName);
 			if (key.startsWith("edge.")) {
-				edgeFunctions.put(columnName, functionName);				
+				edgeFunctions.put(columnName.toLowerCase(), functionName);				
 			}
 			else if (key.startsWith("node.")) {
-				nodeFunctions.put(columnName, functionName);
+				nodeFunctions.put(columnName.toLowerCase(), functionName);
 			}
 		}
 	}
@@ -788,7 +819,7 @@ public class MergeNodes implements Algorithm {
 		Iterator keys = mergingNodesMap.keySet().iterator();
 		while (keys.hasNext()){
 			Node node = (Node)keys.next();
-			System.out.println(">>node ="+node.get(nodeLabelField));
+//			System.out.println(">>node ="+node.get(nodeLabelField));
 		}
 	}
 	
