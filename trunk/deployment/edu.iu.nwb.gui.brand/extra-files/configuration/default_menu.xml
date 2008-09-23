@@ -166,9 +166,7 @@
     </top_menu>
     
     <top_menu name="Help">      
-	<menu name="Dataset Details" pid=""/>
-	<menu name="Algorithm Details" pid=""/>
-	<menu name="Tutorials" pid=""/>
+	<menu name="Documentation" pid=""/>
 	<menu type="break"/>
 	<menu name="Update" pid=""/>
 	<menu name="Manage Configuration" pid=""/>
