@@ -18,6 +18,7 @@ import org.cishell.framework.algorithm.AlgorithmExecutionException;
 import org.cishell.framework.data.BasicData;
 import org.cishell.framework.data.Data;
 import org.cishell.framework.data.DataProperty;
+
 import org.joda.time.DateTime;
 import org.joda.time.DateTimeConstants;
 import org.joda.time.DateTimeFieldType;
@@ -164,21 +165,21 @@ public class Slice implements Algorithm {
     	
     	LocalDateTime max = realMax(byDateTime);	
     	
-    	LocalDateTime current = min;
+    	LocalDateTime current = max;
     	
     	
     	
     	List starts = new ArrayList();
     	
-    	while(current.compareTo(max) < 0) {
-    		LocalDateTime currentPlus = current.plus(period);
+    	while(current.compareTo(min) >= 0) {
+    		LocalDateTime currentMinus = current.minus(period);
     		tables.addTable(schema.instantiate());
     		
     		//[a,b)
-			Collection rowSets = byDateTime.subMap(current, currentPlus).values();
+			Collection rowSets = byDateTime.subMap(currentMinus, current).values();
 			addRowSets(tables, rowSets, table);
 			starts.add(current);
-    		current = currentPlus;
+    		current = currentMinus;
     	}
 		return starts;
 	}

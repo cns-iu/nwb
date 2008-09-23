@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <metatype:MetaData xmlns:metatype="http://www.osgi.org/xmlns/metatype/v1.0.0">
 	<OCD name="Slice Table by Time" id="edu.iu.nwb.preprocessing.timeslice.Slice.OCD"
-		 description=" ">
+		 description="Slice a table into groups of rows by time.">
 		<AD name="Date/Time Column" id="column" type="String" description="Column with date/time information for the row." default="date"/>
 		<AD name="Date/Time Format" id="format" type="String" description="The format of the date/time. See http://joda-time.sourceforge.net/api-release/org/joda/time/format/DateTimeFormat.html for details." default="yyyy"/>
 		<AD name="Slice Into" id="interval" type="String" description="What time interval should the data be sliced into?" default="days">

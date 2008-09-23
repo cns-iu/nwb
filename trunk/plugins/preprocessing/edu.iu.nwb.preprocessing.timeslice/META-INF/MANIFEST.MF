@@ -7,6 +7,7 @@ Bundle-ClassPath: .
 Import-Package: org.cishell.framework,
  org.cishell.framework.algorithm,
  org.cishell.framework.data,
+ org.cishell.reference.service.metatype,
  org.joda.time,
  org.joda.time.base,
  org.joda.time.chrono,
