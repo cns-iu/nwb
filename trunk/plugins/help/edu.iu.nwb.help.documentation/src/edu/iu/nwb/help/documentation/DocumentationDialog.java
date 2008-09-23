@@ -25,7 +25,7 @@ public class DocumentationDialog extends Dialog {
 	private static final String ALL_SUPPORTED_FORMATS_DOC_TEXT = "<A>All Supported Formats Documentation</A>";
 	private static final String ALL_SUPPORTED_FORMATS_DOC_URL = "https://nwb.slis.indiana.edu/community/?n=DataFormats.HomePage";
 	
-	private static final String TUTORIALS_DOC_TEXT = "<A>Network Workbench Tutorials on our Wiki</A>";
+	private static final String TUTORIALS_DOC_TEXT = "<A>Network Workbench Tutorials on NWB Community Wiki</A>";
 	private static final String TUTORIALS_DOC_URL = "https://nwb.slis.indiana.edu/community/?n=Tutorials.HomePage";
 	
 	Shell shell = null;
