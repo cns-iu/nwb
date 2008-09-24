@@ -13,6 +13,7 @@ import org.osgi.service.metatype.AttributeDefinition;
 import org.osgi.service.metatype.ObjectClassDefinition;
 
 import prefuse.data.Graph;
+import prefuse.data.Table;
 
 
 public class SymmetrizeFactory implements AlgorithmFactory, ParameterMutator {
@@ -33,13 +34,14 @@ public class SymmetrizeFactory implements AlgorithmFactory, ParameterMutator {
 		
 		boolean bare = true;
 		
-		for(int attribute = 0; attribute < graph.getEdgeTable().getColumnCount(); attribute++) {
-			String columnName = graph.getEdgeTable().getColumnName(attribute);
+		Table edgeTable = graph.getEdgeTable();
+		for(int attribute = 0; attribute < edgeTable.getColumnCount(); attribute++) {
+			String columnName = edgeTable.getColumnName(attribute);
 			if(columnName.equals(graph.getEdgeSourceField()) || columnName.equals(graph.getEdgeTargetField())) {
 				continue;
 			}
 			bare = false;
-			if(graph.getEdgeTable().canGet(columnName, Number.class)) {
+			if(edgeAttributeIsNumeric(graph, columnName)) {
 				definition.addAttributeDefinition(ObjectClassDefinition.REQUIRED,
 					new BasicAttributeDefinition(Symmetrize.PREFIX + columnName, columnName, "How to aggregate this attribute", AttributeDefinition.STRING, numericChoices, numericChoices));
 			} else {
@@ -64,5 +66,10 @@ public class SymmetrizeFactory implements AlgorithmFactory, ParameterMutator {
 		}
 		
 		return definition;
+	}
+
+	private boolean edgeAttributeIsNumeric(Graph graph, String columnName) {
+		Table edgeTable = graph.getEdgeTable();
+		return edgeTable.canGet(columnName, Number.class) || edgeTable.canGetDouble(columnName);
 	}
 }

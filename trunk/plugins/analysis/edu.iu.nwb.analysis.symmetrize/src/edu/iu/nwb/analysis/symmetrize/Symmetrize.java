@@ -87,24 +87,7 @@ public class Symmetrize implements Algorithm {
 		
 		
 		
-		//we'll keep the source and target for the new schema
-		Map attributes = new HashMap();
-		attributes.put(sourceField, oldSchema.getColumnType(sourceField));
-		attributes.put(targetField, oldSchema.getColumnType(targetField));
-		
-		
-		
-		//we'll keep any attributes that are not dropped
-		Enumeration keys = parameters.keys();
-		while(keys.hasMoreElements()) {
-			String key = (String) keys.nextElement();
-			if(key.startsWith(PREFIX) && !"drop".equals(parameters.get(key))) {
-				String attribute = key.substring(PREFIX.length());
-				Aggregator aggregator = (Aggregator) aggregators.get(parameters.get(key));
-				//the type will depend on the aggregation used and the original type
-				attributes.put(attribute, aggregator.getType(oldSchema.getColumnType(attribute)));
-			}
-		}
+		Map attributes = makeAggregatorMap(oldSchema, sourceField, targetField);
 		
 		//construct the new schema
 		Schema schema = new Schema();
@@ -161,8 +144,10 @@ public class Symmetrize implements Algorithm {
 			
 			logger.log(LogService.LOG_WARNING, "This graph is already symmetrized. No new graph will be returned.");
 			
-			return null;
+			return new Data[]{};
 		}
+		
+		System.err.println("There are " + groupings.size() + " groups");
 		
 		Iterator groups = groupings.keySet().iterator();
 		while(groups.hasNext()) {
@@ -217,7 +202,6 @@ public class Symmetrize implements Algorithm {
 			}
 		}
 		
-		
 		Table realEdgeTable = edgeTable.getSchema().instantiate();
 		
 		if(matrix) {
@@ -229,6 +213,7 @@ public class Symmetrize implements Algorithm {
 				}
 			}
 		}
+		
 		
 		
 		
@@ -250,6 +235,29 @@ public class Symmetrize implements Algorithm {
 		
 		return new Data[] { result };
     }
+
+	private Map makeAggregatorMap(Schema oldSchema, String sourceField,
+			String targetField) {
+		//we'll keep the source and target for the new schema
+		Map attributes = new HashMap();
+		attributes.put(sourceField, oldSchema.getColumnType(sourceField));
+		attributes.put(targetField, oldSchema.getColumnType(targetField));
+		
+		
+		
+		//we'll keep any attributes that are not dropped
+		Enumeration keys = parameters.keys();
+		while(keys.hasMoreElements()) {
+			String key = (String) keys.nextElement();
+			if(key.startsWith(PREFIX) && !"drop".equals(parameters.get(key))) {
+				String attribute = key.substring(PREFIX.length());
+				Aggregator aggregator = (Aggregator) aggregators.get(parameters.get(key));
+				//the type will depend on the aggregation used and the original type
+				attributes.put(attribute, aggregator.getType(oldSchema.getColumnType(attribute)));
+			}
+		}
+		return attributes;
+	}
 
 	private Tuple emptyTuple(Schema schema) {
 		Table table = schema.instantiate();
@@ -278,7 +286,7 @@ public class Symmetrize implements Algorithm {
 			String name = schema.getColumnName(attribute);
 			Object aggregate = this.parameters.get(PREFIX + name);
 			if(aggregate != null) {
-				if(tuple.canGet(name, Number.class)) {
+				if(tuple.canGet(name, Number.class) || tuple.canGet(name, double.class)) {
 					if(((Number) tuple.get(name)).doubleValue() != 0.0) {
 						return false;
 					}
