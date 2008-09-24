@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<metatype:MetaData xmlns:metatype="http://www.osgi.org/xmlns/metatype/v1.0.0">
+	<OCD name="Pathfinder Network Scaling" id="edu.iu.nwb.analysis.pathfindergraphnetworkscaling.PathfinderGraphAlgorithm.OCD"
+		 description="Prunes a graph using Pathfinder Network Scaling">
+		<AD name="q" id="q" type="Integer" description="Number of links in alternative paths up to which triangle inequality must be maintained." default="2"/>
+		<AD name="r" id="r" type="Integer" description="Influences the weight of a path based on the Minkowski metric" default="0"/>
+	</OCD>
+	<Designate pid="edu.iu.nwb.analysis.pathfindergraphnetworkscaling.PathfinderGraphAlgorithm">
+		<Object ocdref="edu.iu.nwb.analysis.pathfindergraphnetworkscaling.PathfinderGraphAlgorithm.OCD" />
+	</Designate>
+</metatype:MetaData>

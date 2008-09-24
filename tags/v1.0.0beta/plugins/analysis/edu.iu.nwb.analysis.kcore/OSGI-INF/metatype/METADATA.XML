@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<metatype:MetaData xmlns:metatype="http://www.osgi.org/xmlns/metatype/v1.0.0">
+	<OCD name="Extract K-Core" id="edu.iu.nwb.analysis.kcore.Extract.OCD"
+		 description="Extract the kth K-Core from a network">
+		<AD name="k" id="k" type="Integer" description="The core to extract" default="2"/>
+	</OCD>
+	<Designate pid="edu.iu.nwb.analysis.kcore.Extract">
+		<Object ocdref="edu.iu.nwb.analysis.kcore.Extract.OCD" />
+	</Designate>
+</metatype:MetaData>

@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<metatype:MetaData xmlns:metatype="http://www.osgi.org/xmlns/metatype/v1.0.0">
+	<OCD name="Chord" id="edu.iu.iv.modeling.p2p.chord.ChordAlgorithm.OCD">
+		<AD name="Number of Nodes" id="networkSize" type="Integer" description="Enter  number of nodes in network,must be &gt; 0" default="3"/>
+		<AD name="Minimum Degree of Each Node" id="fingerTableSize" type="Integer" description="Enter minimum degree of each node in the network, must be &gt; 0" default="1" min="1" />
+	</OCD>
+	<Designate pid="edu.iu.iv.modeling.p2p.chord.ChordAlgorithm">
+		<Object ocdref="edu.iu.iv.modeling.p2p.chord.ChordAlgorithm.OCD" />
+	</Designate>
+	
+	<OCD name="Chord (Search)" id="edu.iu.iv.search.p2p.chord.ChordSearchAlgorithm.OCD"
+		 description="Enter source and target nodes">
+		<AD name="Source Node" id="source" type="Integer" description="Enter source node number, must be &gt; 0" default="1" min="1"/>
+		<AD name="Target Node" id="target" type="Integer" description="Enter target node number, must be &gt; 0" default="1" min="1"/>		
+	</OCD>
+	<Designate pid="edu.iu.iv.search.p2p.chord.ChordSearchAlgorithm">
+		<Object ocdref="edu.iu.iv.search.p2p.chord.ChordSearchAlgorithm.OCD" />
+	</Designate>
+</metatype:MetaData>

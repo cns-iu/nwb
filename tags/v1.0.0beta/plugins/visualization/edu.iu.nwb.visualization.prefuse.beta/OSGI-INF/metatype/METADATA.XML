@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<metatype:MetaData xmlns:metatype="http://www.osgi.org/xmlns/metatype/v1.0.0">
+	<OCD name="Pre-defined Positions (prefuse beta)" id="edu.iu.nwb.visualization.prefuse.beta.specified.Specified.OCD"
+		 description="Enter the parameter labels.">
+		<AD name="x" id="x" type="String" description="The label of the X dimension" default="X" />
+		<AD name="y" id="y" type="String" description="The label of the Y dimension" default="Y" />
+	</OCD>
+	<Designate pid="edu.iu.nwb.visualization.prefuse.beta.specified.Specified">
+		<Object ocdref="edu.iu.nwb.visualization.prefuse.beta.specified.Specified.OCD" />
+	</Designate>
+	
+	<OCD name="Layout Parameters" id="edu.iu.nwb.visualization.prefuse.beta.common.parameters.OCD"
+		 description="Select the property labels. NOTE: Node and Edge properties may appear together, and not all properties are suitable for all values. Numeric properties work in all cases, and non-numeric properties should only be used with shape and color options">
+		<!-- <AD name="Label" id="label" type="String" description="The label for the identifier property" default="label" /> -->
+		<AD name="Node Size" id="nodeSize" type="String" description="Defines chosen source for the node size property" default="" />
+		<AD name="Node Color" id="nodeColor" type="String" description="Defines chosen source for the node color property" default="" />
+		<AD name="Node Shape" id="nodeShape" type="String" description="Defines chosen source for the node shape property" default="" />
+		<AD name="Ring Color" id="ringColor" type="String" description="Defines chosen source for the ring color property" default="" />
+		<AD name="Edge Size" id="edgeSize" type="String" description="Defines chosen source for the edge size property" default="" />
+		<AD name="Edge Color" id="edgeColor" type="String" description="Defines chosen source for the edge color property" default="" />
+		
+		
+	</OCD>
+	<Designate pid="edu.iu.nwb.visualization.prefuse.beta.fruchtermanreingold.FruchtermanReingold">
+		<Object ocdref="edu.iu.nwb.visualization.prefuse.beta.common.parameters.OCD" />
+	</Designate>
+	<Designate pid="edu.iu.nwb.visualization.prefuse.beta.graphview.GraphView">
+		<Object ocdref="edu.iu.nwb.visualization.prefuse.beta.common.parameters.OCD" />
+	</Designate>
+	<Designate pid="edu.iu.nwb.visualization.prefuse.beta.radialgraph.RadialGraph">
+		<Object ocdref="edu.iu.nwb.visualization.prefuse.beta.common.parameters.OCD" />
+	</Designate>
+	
+</metatype:MetaData>

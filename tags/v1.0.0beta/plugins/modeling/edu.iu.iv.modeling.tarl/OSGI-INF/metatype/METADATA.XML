@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<metatype:MetaData xmlns:metatype="http://www.osgi.org/xmlns/metatype/v1.0.0">
+	<OCD name="TARL" id="edu.iu.iv.modeling.tarl.TarlAlgorithm.OCD"
+		 description=" ">
+		<AD name="Input Script File" id="inputScriptFile" type="String" description="Provide the (.tarl) Input Script File" default="file:"/>
+		<AD name="Aging Function File" id="agingFunctionFile" type="String" description="Provide the Aging Function File" default="file:"/>
+	</OCD>
+	<Designate pid="edu.iu.iv.modeling.tarl.TarlAlgorithm">
+		<Object ocdref="edu.iu.iv.modeling.tarl.TarlAlgorithm.OCD" />
+	</Designate>
+</metatype:MetaData>

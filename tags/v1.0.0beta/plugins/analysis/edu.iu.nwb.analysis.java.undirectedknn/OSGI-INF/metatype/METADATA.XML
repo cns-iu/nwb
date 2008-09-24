@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<metatype:MetaData xmlns:metatype="http://www.osgi.org/xmlns/metatype/v1.0.0">
+	<OCD name="K-Nearest Neighbor" id="edu.iu.nwb.analysis.java.undirectedknn.algorithms.UndirectedKNNAlgorithm.OCD"
+		 description="This algorithm calculates the correlation between the degree of a node and that of its neighbors. ">
+	</OCD>
+	<Designate pid="edu.iu.nwb.analysis.java.undirectedknn.algorithms.UndirectedKNNAlgorithm">
+		<Object ocdref="edu.iu.nwb.analysis.java.undirectedknn.algorithms.UndirectedKNNAlgorithm.OCD" />
+	</Designate>
+</metatype:MetaData>

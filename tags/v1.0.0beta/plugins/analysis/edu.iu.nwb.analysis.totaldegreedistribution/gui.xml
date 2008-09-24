@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<metatype:MetaData xmlns:metatype="http://www.osgi.org/xmlns/metatype/v1.0.0">
+	<OCD name="Degree Distribution" id="edu.iu.nwb.analysis.totaldegreedistribution.gui"
+		 description="Undirected degree distribution">
+		<AD name="Number of bins" id="NumBins" 
+			type="Integer" default="10" min="8"
+                        description="Number of bins for the degree distribution, must be at least 8"/>
+	</OCD>
+	<Designate pid="edu.iu.nwb.analysis.totaldegreedistribution">
+		<Object ocdref="edu.iu.nwb.analysis.totaldegreedistribution.gui" />
+	</Designate>
+</metatype:MetaData>

@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<metatype:MetaData xmlns:metatype="http://www.osgi.org/xmlns/metatype/v1.0.0">
+	<OCD name="Hyperbolic Tree" id="edu.iu.nwb.visualization.hyperbolictree.HyperbolicTreeAlgorithm.OCD"
+		 description=" ">
+		 	<AD name="Root directory" description="Choose a root directory to read in" id="rootDirectory" type="String" default="directory:"/>
+	</OCD>
+	<Designate pid="edu.iu.nwb.visualization.hyperbolictree.HyperbolicTreeAlgorithm">
+		<Object ocdref="edu.iu.nwb.visualization.hyperbolictree.HyperbolicTreeAlgorithm.OCD" />
+	</Designate>
+</metatype:MetaData>

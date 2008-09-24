@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<metatype:MetaData xmlns:metatype="http://www.osgi.org/xmlns/metatype/v1.0.0">
+	<OCD name="Update Network by Merging Nodes" id="edu.iu.nwb.tools.mergenodes.MergeNodes.OCD"
+		 description="Update a network by merging nodes">
+		<AD name="Aggregation Function File" id="aff" type="String" description="The name of the file which contains optional aggregation functions." default="file:" required="false"/>
+	</OCD>
+	<Designate pid="edu.iu.nwb.tools.mergenodes.MergeNodes">
+		<Object ocdref="edu.iu.nwb.tools.mergenodes.MergeNodes.OCD" />
+	</Designate>
+</metatype:MetaData>

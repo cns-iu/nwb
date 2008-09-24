@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<metatype:MetaData xmlns:metatype="http://www.osgi.org/xmlns/metatype/v1.0.0">
+	<OCD name="Delete Random Nodes" id="edu.iu.iv.errortolerance.ErrorToleranceAlgorithm.OCD">
+		<AD name="Number of Nodes" id="numNodes" type="Integer" description="Enter number of nodes to delete randomly (&gt;0)" default="1" min="1" />
+	</OCD>
+	<Designate pid="edu.iu.iv.errortolerance.ErrorToleranceAlgorithm">
+		<Object ocdref="edu.iu.iv.errortolerance.ErrorToleranceAlgorithm.OCD" />
+	</Designate>
+</metatype:MetaData>

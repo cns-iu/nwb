@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<metatype:MetaData xmlns:metatype="http://www.osgi.org/xmlns/metatype/v1.0.0">
+	<OCD name="Remove ISI Duplicate Records" id="edu.iu.nwb.analysis.isidupremover.ISIDupRemoverAlgorithm.OCD">
+	</OCD>
+	<Designate pid="edu.iu.nwb.analysis.isidupremover.ISIDupRemoverAlgorithm">
+		<Object ocdref="edu.iu.nwb.analysis.isidupremover.ISIDupRemoverAlgorithm.OCD" />
+	</Designate>
+</metatype:MetaData>

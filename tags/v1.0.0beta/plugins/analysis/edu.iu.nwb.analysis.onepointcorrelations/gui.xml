@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<metatype:MetaData xmlns:metatype="http://www.osgi.org/xmlns/metatype/v1.0.0">
+	<OCD name="Single Node In-Out Degree Correlations" id="edu.iu.nwb.analysis.onepointcorrelations.gui"
+		 description="One-point degree correlations">
+		<AD name="Number of bins" id="NumBins" 
+			type="Integer" default="10" min="8"
+                        description="Number of bins for the one-point degree correlation plot, must be at least 8"/>
+	</OCD>
+	<Designate pid="edu.iu.nwb.analysis.onepointcorrelations">
+		<Object ocdref="edu.iu.nwb.analysis.onepointcorrelations.gui" />
+	</Designate>
+</metatype:MetaData>

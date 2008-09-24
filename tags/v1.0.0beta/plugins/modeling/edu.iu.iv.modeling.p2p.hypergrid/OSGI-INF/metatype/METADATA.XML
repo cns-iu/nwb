@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<metatype:MetaData xmlns:metatype="http://www.osgi.org/xmlns/metatype/v1.0.0">
+	<OCD name="Hypergrid" id="edu.id.iv.modeling.p2p.hypergrid.Hypergrid.OCD"
+		 description="Enter number and degree of nodes">
+		<AD name="Number of nodes" description="Enter number of nodes in the network, must be &gt; 0" id="networkSize" type="Integer" default="16" min="1" />
+		<AD name="Maximum degree of each node" description="Enter maximum degree of each node in the network, must be &gt; 1" id="degree" type="Integer" default="2" min="2"/>
+	</OCD>
+	<Designate pid="edu.id.iv.modeling.p2p.hypergrid.Hypergrid">
+		<Object ocdref="edu.id.iv.modeling.p2p.hypergrid.Hypergrid.OCD" />
+	</Designate>
+</metatype:MetaData>

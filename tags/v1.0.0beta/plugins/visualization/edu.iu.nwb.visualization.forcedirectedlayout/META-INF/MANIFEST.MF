@@ -1,0 +1,26 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: Force Directed Layout Visualization Plug-in
+Bundle-SymbolicName: edu.iu.nwb.visualization.forcedirectedlayout
+Bundle-Version: 1.0.0
+Bundle-Localization: plugin
+Service-Component: OSGI-INF/ForceDirectedLayout.xml
+X-AutoStart: true
+Import-Package: edu.berkeley.guir.prefuse,
+ edu.berkeley.guir.prefuse.action,
+ edu.berkeley.guir.prefuse.action.assignment,
+ edu.berkeley.guir.prefuse.action.filter,
+ edu.berkeley.guir.prefuse.activity,
+ edu.berkeley.guir.prefuse.event,
+ edu.berkeley.guir.prefuse.graph,
+ edu.berkeley.guir.prefuse.render,
+ edu.berkeley.guir.prefusex.controls,
+ edu.berkeley.guir.prefusex.force,
+ edu.berkeley.guir.prefusex.layout,
+ org.cishell.framework,
+ org.cishell.framework.algorithm,
+ org.cishell.framework.data,
+ org.osgi.framework;version="1.3.0",
+ org.osgi.service.component;version="1.0.0",
+ org.osgi.service.log;version="1.3.0"
+

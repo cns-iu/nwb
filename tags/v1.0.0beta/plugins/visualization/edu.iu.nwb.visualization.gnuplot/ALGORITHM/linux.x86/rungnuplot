@@ -1,0 +1,36 @@
+#!/bin/bash
+
+
+x=`which gnuplot`
+y=`which gnome-terminal`
+z=`which xterm`
+
+if [ -n "$x" ]; then
+	echo "plot \"$*\"">gnuplotstart.txt
+	if [ -n "$y" ]; then
+	  gnome-terminal -e "gnuplot -persist gnuplotstart.txt -" &
+	  
+	  PID=$!
+	  clean(){ kill $PID  
+	  }
+	  trap clean INT TERM
+	  wait $PID 
+	elif [ -n "$z" ]; then
+	  xterm -e "gnuplot -persist gnuplotstart.txt -" &
+	  
+	  PID=$!
+	  clean(){ kill $PID  
+	  }
+	  trap clean INT TERM
+	  wait $PID
+	else
+	  echo "You need to have either gnome-terminal or xterm installed"
+	  echo "on this machine and available in your PATH in order to call"
+	  echo "gnuplot from Network Workbench." 
+	fi
+else
+  echo "gnuplot not found in default PATH environment variable.  "
+  echo "Please include the directory containing gnuplot in the PATH variable.  "
+  echo "Download and documentation is also available at http://www.gnuplot.info/."
+fi
+exit 0

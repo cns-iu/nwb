@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<metatype:MetaData xmlns:metatype="http://www.osgi.org/xmlns/metatype/v1.0.0">
+	<OCD name="Random Breadth First" id="edu.iu.iv.search.p2p.bfs.BreadthFirstSearchAlgorithm.OCD">
+		<AD name="Source Node" description="Enter source node number, must be &gt; 0" id="source" type="Integer" default="1" min="1" />
+		<AD name="Target Node" description="Enter target node number, must be &gt; 0" id="target" type="Integer" default="1" min="1" />
+		<AD name="Threshold" description="Enter threshold(0.0 &lt;= threshold &lt; 1.0)" id="threshold" type="Double" default="0.0" min="0.0" max="1.0" />
+	</OCD>
+	<Designate pid="edu.iu.iv.search.p2p.bfs.BreadthFirstSearchAlgorithm">
+		<Object ocdref="edu.iu.iv.search.p2p.bfs.BreadthFirstSearchAlgorithm.OCD" />
+	</Designate>
+</metatype:MetaData>

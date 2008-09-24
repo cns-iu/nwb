@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<metatype:MetaData xmlns:metatype="http://www.osgi.org/xmlns/metatype/v1.0.0">
+	<OCD name="Create Bibliographic Coupling Similarity Network" id="edu.iu.nwb.preprocessing.bibcouplingsimilarity.BibCouplingSimilarityAlgorithm.OCD"
+		 description="This algorithm extracts a bibliographic coupling similarity network from an existing network">
+		<!-- <AD name="Max Edges Per Node" id="maxEdges" type="Double" description="Sets the maximum number of top edges per node to keep. Set to zero to keep all edges." default="0" min="0"/> --> 
+	</OCD>
+	<Designate pid="edu.iu.nwb.preprocessing.bibcouplingsimilarity.BibCouplingSimilarityAlgorithm">
+		<Object ocdref="edu.iu.nwb.preprocessing.bibcouplingsimilarity.BibCouplingSimilarityAlgorithm.OCD" />
+	</Designate>
+</metatype:MetaData>

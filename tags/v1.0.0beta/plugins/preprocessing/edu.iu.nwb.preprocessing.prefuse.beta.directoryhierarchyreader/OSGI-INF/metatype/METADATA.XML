@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<metatype:MetaData xmlns:metatype="http://www.osgi.org/xmlns/metatype/v1.0.0">
+	<OCD name="Read Directory Hierarchy" id="edu.iu.nwb.preprocessing.prefuse.beta.directoryhierarchyreader.DirectoryHierarchyReaderAlgorithm.OCD"
+		 description=" ">
+		<AD name="Root directory" description="Choose a root directory to read in" id="rootDirectory" type="String" default="directory:"/>
+		<AD name="Levels to recurse" description="Choose the number of levels to read from root the directory (must be &gt;=0)" id="level" type="Integer" default="1"/>
+		<AD name="Recurse the entire tree" description="This overrides the levels option" id="doRecurse" type="Boolean" default="false"/>
+		<AD name="Read directories only (skips files)" description="Choose whether to include files when reading from the root directory" id="readDirectories" type="Boolean" default="true"/>
+	</OCD>
+	<Designate pid="edu.iu.nwb.preprocessing.prefuse.beta.directoryhierarchyreader.DirectoryHierarchyReaderAlgorithm">
+		<Object ocdref="edu.iu.nwb.preprocessing.prefuse.beta.directoryhierarchyreader.DirectoryHierarchyReaderAlgorithm.OCD" />
+	</Designate>
+</metatype:MetaData>

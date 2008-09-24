@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<metatype:MetaData xmlns:metatype="http://www.osgi.org/xmlns/metatype/v1.0.0">
+	<OCD name="Normalize Text" id="edu.iu.nwb.preprocessing.text.normalization.StandardNormalyzer.OCD"
+		 description=" ">
+		 <AD name="New Separator" id="separator" type="String" description="The separator to use for the normalized text" default="|"/>
+	</OCD>
+	<Designate pid="edu.iu.nwb.preprocessing.text.normalization.StandardNormalyzer">
+		<Object ocdref="edu.iu.nwb.preprocessing.text.normalization.StandardNormalyzer.OCD" />
+	</Designate>
+</metatype:MetaData>

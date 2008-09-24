@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<metatype:MetaData xmlns:metatype="http://www.osgi.org/xmlns/metatype/v1.0.0">
+	<OCD name="Extract Author Paper Network" id="edu.iu.nwb.composite.extractauthorpapernetwork.algorithm.ExtractAuthorPaperNetwork.OCD"
+		 description="This algorithm extracts a network where authors and papers are nodes. Edges represent the fact that an author worked on the target node. ">
+		 <AD type="String" name="File Format" id="fileFormat" default="isi" description="The file format of the original data"></AD>
+	</OCD>
+	<Designate pid="edu.iu.nwb.composite.extractauthorpapernetwork.algorithm.ExtractAuthorPaperNetwork">
+		<Object ocdref="edu.iu.nwb.composite.extractauthorpapernetwork.algorithm.ExtractAuthorPaperNetwork.OCD" />
+	</Designate>
+</metatype:MetaData>
