@@ -1,5 +1,5 @@
 The Network Workbench (NWB) Tool
-Version: 1.0.0-beta
+Version: 1.0.0 beta
 
 (c)Copyright 2006-2008 Indiana University
 Licensed under the Apache License, Version 2.0 (the "License"); 
@@ -16,4 +16,4 @@ permissions and limitations under the License.
 Project Contacts:
 Micah Linnemeier (mwlinnem@indiana.edu)
 Weixia Huang (huangb@indiana.edu)
-Katy Börner (katy@indiana.edu)
+Katy Borner (katy@indiana.edu)
