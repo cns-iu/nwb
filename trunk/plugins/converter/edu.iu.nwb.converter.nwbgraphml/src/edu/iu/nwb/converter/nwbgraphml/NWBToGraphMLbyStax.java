@@ -500,6 +500,9 @@ public class NWBToGraphMLbyStax implements Algorithm {
 
 		if (NWBFileProperty.TYPE_REAL.equals(type)) {
 			type = "double";
+		} else if (NWBFileProperty.TYPE_FLOAT.equals(type)) {
+			//TODO: GUESS can't handle the float type for unknown reasons. If we ever have a converter from GraphML to GUESS, move this into that code.
+			type = "double";
 		}
 
 		return type;
