@@ -85,21 +85,21 @@
 		<appversion>@{version}</appversion>
 		<authors>
 		    <author name="Weixia (Bonnie) Huang" email="huangb@indiana.edu" />
-			<author name="Micah Walter Linnemeier" email="mwlinnem@indiana.edu"/>
-			<author name="Russell Jackson Duhon" email="rduhon@indiana.edu" />
+			<author name="Micah W. Linnemeier" email="mwlinnem@indiana.edu"/>
+			<author name="Russell J. Duhon" email="rduhon@indiana.edu" />
 			<author name="Timothy Kelley" email="kelleyt@indiana.edu"/>
 			<author name="Duygu Balcan" email="duygu.balcan@gmail.com"/>
 			<author name="Katy Börner" email="katy@indiana.edu" />
 			<author name="Alessandro Vespignani" email="alexv@indiana.edu" />
-			<author name="Bruce Herr" email="bh2@bh2.net" />			    
+			<author name="Bruce W. Herr II" email="bh2@bh2.net" />			    
 			<author name="Santo Fortunato" email="santo@indiana.edu" />
-			<author name="Cesar Augusto Hidalgo Ramaciotti" email="cesifoti@gmail.com" />
 			<author name="Ben Markines" email="bmarkine@indiana.edu" />
+			<author name="Felix Terkhorn" email="masterkh@indiana.edu"/>
+			<author name="Heng Zhang" email="zhang45@indiana.edu"/>
 			<author name="Megha Ramawat" email="mramawat@indiana.edu"/>
-			<author name="M. Felix Terkhorn" email="terkhorn@gmail.com"/>
+			<author name="Cesar A. Hidalgo" email="cesifoti@gmail.com"/>
 			<author name="Ramya Sabbineni" email="rsabbine@indiana.edu" />
 			<author name="Vivek S. Thakres" email="vsthakre@indiana.edu" />
-			<author name="Heng (Michael) Zhang" email="zhang45@indiana.edu"/>
 			<author name="Mariano Beiró" email="marbeiro@yahoo.com.ar"/>			
 		    <author name="Ann McCranie" email="amccrani@indiana.edu" />
 		</authors>
