@@ -16,4 +16,4 @@ permissions and limitations under the License.
 Project Contacts:
 Micah W. Linnemeier (mwlinnem@indiana.edu)
 Weixia (Bonnie) Huang (huangb@indiana.edu)
-Katy Borner (katy@indiana.edu)
+Katy Börner (katy@indiana.edu)
