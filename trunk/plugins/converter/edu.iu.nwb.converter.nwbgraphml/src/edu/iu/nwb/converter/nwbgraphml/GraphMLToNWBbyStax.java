@@ -56,10 +56,10 @@ public class GraphMLToNWBbyStax implements Algorithm {
 	} 
 
 	public Data[] execute() throws AlgorithmExecutionException {
-
 		XMLInputFactory inputFactory = XMLInputFactory.newInstance();
 		XMLStreamReader xmlReader = null;
-		File outData;
+		File outData = null;
+		
 		try {
 			try {
 				xmlReader = inputFactory
@@ -114,7 +114,6 @@ public class GraphMLToNWBbyStax implements Algorithm {
 		int undirectedEdgeCount = 0;
 
 		String labelKey = null;
-		String weightKey = null;
 
 		Map nodeIds = new Hashtable();
 		List nodeAttributes = new ArrayList();
@@ -173,7 +172,7 @@ public class GraphMLToNWBbyStax implements Algorithm {
 						}
 
 
-						directedEdgeWriter.write(createEdge(source.intValue(), target.intValue(), weightKey, attributeValues, edgeAttributes));
+						directedEdgeWriter.write(createEdge(source.intValue(), target.intValue(), attributeValues, edgeAttributes));
 					}else
 					{
 						undirectedEdgeCount++;
@@ -181,7 +180,7 @@ public class GraphMLToNWBbyStax implements Algorithm {
 							undirectedEdgeWriter.write(createUndirectedEdgeHeader(edgeAttributes));
 							wroteEdgeHeader = true;
 						}
-						undirectedEdgeWriter.write(createEdge(source.intValue(), target.intValue(), weightKey,  attributeValues, edgeAttributes));
+						undirectedEdgeWriter.write(createEdge(source.intValue(), target.intValue(), attributeValues, edgeAttributes));
 					}
 				}
 
@@ -198,12 +197,7 @@ public class GraphMLToNWBbyStax implements Algorithm {
 					if(attribute.isForNode() && attribute.isForLabel()) {
 						labelKey = attribute.getId();
 					}
-					if(attribute.isForEdge() && attribute.isForWeight()) {
-						weightKey = attribute.getId();
-					}
 				}
-
-
 			}
 		}
 		
@@ -260,15 +254,15 @@ public class GraphMLToNWBbyStax implements Algorithm {
 	}
 
 	protected String createUndirectedEdgeHeader(List edgeAttributes) {
-		return "*UndirectedEdges\nsource*int target*int weight*float" + attributesHeader(edgeAttributes) + "\n";
+		return "*UndirectedEdges\nsource*int target*int" + attributesHeader(edgeAttributes) + "\n";
 	}
 
 	protected String createDirectedEdgeHeader(List edgeAttributes) {
-		return "*DirectedEdges\nsource*int target*int weight*float" + attributesHeader(edgeAttributes) + "\n";
+		return "*DirectedEdges\nsource*int target*int" + attributesHeader(edgeAttributes) + "\n";
 	}
 
-	protected String createEdge(int source, int target, String weightKey, Map attributeValues, List edgeAttributes) throws XMLStreamException {
-		return "" + source + "\t" + target + "\t" + edgeAttributes(weightKey, attributeValues, edgeAttributes) + "\n";
+	protected String createEdge(int source, int target, Map attributeValues, List edgeAttributes) throws XMLStreamException {
+		return "" + source + "\t" + target + "\t" + edgeAttributes(attributeValues, edgeAttributes) + "\n";
 	}
 
 	protected Attribute readAttribute(XMLStreamReader xmlReader) throws XMLStreamException {
@@ -373,21 +367,8 @@ public class GraphMLToNWBbyStax implements Algorithm {
 		return attributeValues;
 	}
 
-	protected String edgeAttributes(String weightKey, Map attributeValues, List edgeAttributes) throws XMLStreamException {
-
-		String weight = "" + 1;
-
-		if(weightKey != null && attributeValues.containsKey(weightKey)) {
-			weight = (String) attributeValues.get(weightKey);
-			if("null".equals(weight)) {
-				weight = "*";
-			}
-		}
-
-		String value = attributesString(edgeAttributes, attributeValues);
-
-
-		return weight + value;
+	protected String edgeAttributes(Map attributeValues, List edgeAttributes) throws XMLStreamException {
+		return attributesString(edgeAttributes, attributeValues);
 	}
 
 	protected String attributesString(List attributeTypes, Map attributeValues) {

@@ -75,7 +75,7 @@ public class Attribute {
 	public boolean isReservedForEdge() {
 		boolean reserved = false;
 		if(isForEdge()) {
-			reserved = reserved || "source".equals(name) || "target".equals(name) || "weight".equals(name);
+			reserved = reserved || "source".equals(name) || "target".equals(name);
 		}
 		return reserved;
 	}
