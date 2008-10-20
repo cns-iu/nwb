@@ -189,7 +189,6 @@ def initializeGlobalVariables():
 										
 			# there is an attribute error => i is not a property of an edge
 			except AttributeError:
-				print sys.exc_info()
 				print i + " is not a property of a node or an edge"
 
 	# sort the node list
@@ -321,8 +320,6 @@ class objectBoxFilter(java.awt.event.ActionListener):
 	def actionPerformed(obfSelf, e):
 		# get the current element in object box
 		currentIndex = obfSelf.dock.objectBox.getSelectedIndex()
-		print "current index: " + str(currentIndex)
-		print "length " + str(currentIndex - len(general))
 		
 		# disable other boxes if nodes or edges is not selected
 		if (currentIndex >= 0 and currentIndex <=2) or currentIndex > len(general) - 1:
