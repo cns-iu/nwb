@@ -69,50 +69,96 @@ public abstract class PrefuseBetaAlgorithmFactory implements AlgorithmFactory, P
 			return null;
 		}
 	}
-
-	public ObjectClassDefinition mutateParameters(Data[] data, ObjectClassDefinition parameters) {
-		Graph graph = (prefuse.data.Graph) data[0].getData();
+	
+	protected AttributeDefinition[] createAttributeDefinitions(AttributeDefinition[] oldAttributeDefinitions,
+			   												   String[] nodeAttributesArray,
+			   												   String[] edgeAttributesArray)
+	{
+		final int numAttributeDefinitions = oldAttributeDefinitions.length;
+		AttributeDefinition[] newAttributeDefinitions = new AttributeDefinition [numAttributeDefinitions];
 		
-		BasicObjectClassDefinition definition;
-		try {
-			definition = new BasicObjectClassDefinition(parameters.getID(), parameters.getName(), parameters.getDescription(), parameters.getIcon(16));
-		} catch (IOException e) {
-			definition = new BasicObjectClassDefinition(parameters.getID(), parameters.getName(), parameters.getDescription(), null);
+		for (int ii = 0; ii < numAttributeDefinitions; ii++)
+		{
+			String id = oldAttributeDefinitions[ii].getID();
+			
+			if(id.equals(Constants.nodeSizeField))
+			{
+				newAttributeDefinitions[ii] = new BasicAttributeDefinition(Constants.nodeSizeField,
+					"Node Size", "The label for the node size property", AttributeDefinition.STRING,
+					nodeAttributesArray, nodeAttributesArray);
+			}
+			else if(id.equals(Constants.edgeSizeField))
+			{
+				newAttributeDefinitions[ii] = new BasicAttributeDefinition(Constants.edgeSizeField,
+					"Edge Size", "The label for the edge size property",
+					AttributeDefinition.STRING, edgeAttributesArray, edgeAttributesArray);
+			}
+			else if(id.equals(Constants.nodeColorField))
+			{
+				newAttributeDefinitions[ii] = new BasicAttributeDefinition(Constants.nodeColorField,
+					"Node Color", "The label for the node color property",
+					AttributeDefinition.STRING, nodeAttributesArray, nodeAttributesArray);
+			}
+			else if(id.equals(Constants.edgeColorField))
+			{
+				newAttributeDefinitions[ii] = new BasicAttributeDefinition(Constants.edgeColorField,
+					"Edge Color", "The label for the edge color property",
+					AttributeDefinition.STRING, edgeAttributesArray, edgeAttributesArray);
+			}
+			else if(id.equals(Constants.ringColorField))
+			{
+				newAttributeDefinitions[ii] = new BasicAttributeDefinition(Constants.ringColorField,
+					"Ring Color", "The label for the ring color property",
+					AttributeDefinition.STRING, nodeAttributesArray, nodeAttributesArray);
+			}
+			else if(id.equals(Constants.nodeShapeField))
+			{
+				newAttributeDefinitions[ii] = new BasicAttributeDefinition(Constants.nodeShapeField,
+					"Node Shape", "The label for the node shape property",
+					AttributeDefinition.STRING, nodeAttributesArray, nodeAttributesArray);
+			}
+			else
+				newAttributeDefinitions[ii] = oldAttributeDefinitions[ii];
+		}
+		
+		return newAttributeDefinitions;
+	}
+
+	public ObjectClassDefinition mutateParameters(Data[] data, ObjectClassDefinition parameters)
+	{
+		Graph graph = (prefuse.data.Graph) data[0].getData();
+		BasicObjectClassDefinition objectClassDefinition;
+		
+		try
+		{
+			objectClassDefinition = new BasicObjectClassDefinition(parameters.getID(),
+					parameters.getName(), parameters.getDescription(), parameters.getIcon(16));
+		}
+		catch (IOException e)
+		{
+			objectClassDefinition = new BasicObjectClassDefinition(parameters.getID(),
+					parameters.getName(), parameters.getDescription(), null);
 		}
 
 		String[] nodeAttributesArray = createKeyArray(graph.getNodeTable().getSchema());
 		String[] edgeAttributesArray = createKeyArray(graph.getEdgeTable().getSchema());
 
-		//System.err.println(oldDefinition.getID());
+		AttributeDefinition[] oldRequiredAttributes =
+			parameters.getAttributeDefinitions(ObjectClassDefinition.REQUIRED);	
+		AttributeDefinition[] newRequiredAttributes =
+			createAttributeDefinitions(oldRequiredAttributes, nodeAttributesArray, edgeAttributesArray);
+		
+		AttributeDefinition[] oldOptionalAttributes =
+			parameters.getAttributeDefinitions(ObjectClassDefinition.OPTIONAL);
+		AttributeDefinition[] newOptionalAttributes =
+			createAttributeDefinitions(oldOptionalAttributes, nodeAttributesArray, edgeAttributesArray);
+		
+		for (int ii = 0; ii < newRequiredAttributes.length; ii++)
+			objectClassDefinition.addAttributeDefinition(ObjectClassDefinition.REQUIRED, newRequiredAttributes[ii]);
+		
+		for (int ii = 0; ii < newOptionalAttributes.length; ii++)
+			objectClassDefinition.addAttributeDefinition(ObjectClassDefinition.OPTIONAL, newOptionalAttributes[ii]);
 
-		AttributeDefinition[] definitions = parameters.getAttributeDefinitions(ObjectClassDefinition.ALL);
-
-		for(int ii = 0; ii < definitions.length; ii++) {
-			String id = definitions[ii].getID();
-			//System.err.println(id);
-			if(id.equals("nodeSize")) {
-				definition.addAttributeDefinition(ObjectClassDefinition.REQUIRED,
-						new BasicAttributeDefinition("nodeSize", "Node Size", "The label for the node size property", AttributeDefinition.STRING, nodeAttributesArray, nodeAttributesArray));
-			} else if(id.equals("edgeSize")) {
-				definition.addAttributeDefinition(ObjectClassDefinition.REQUIRED,
-						new BasicAttributeDefinition("edgeSize", "Edge Size", "The label for the edge size property", AttributeDefinition.STRING, edgeAttributesArray, edgeAttributesArray));
-			} else if(id.equals("nodeColor")) {
-				definition.addAttributeDefinition(ObjectClassDefinition.REQUIRED,
-						new BasicAttributeDefinition("nodeColor", "Node Color", "The label for the node color property", AttributeDefinition.STRING, nodeAttributesArray, nodeAttributesArray));
-			} else if(id.equals("edgeColor")) {
-				definition.addAttributeDefinition(ObjectClassDefinition.REQUIRED,
-						new BasicAttributeDefinition("edgeColor", "Edge Color", "The label for the edge color property", AttributeDefinition.STRING, edgeAttributesArray, edgeAttributesArray));
-			} else if(id.equals("ringColor")) {
-				definition.addAttributeDefinition(ObjectClassDefinition.REQUIRED,
-						new BasicAttributeDefinition("ringColor", "Ring Color", "The label for the ring color property", AttributeDefinition.STRING, nodeAttributesArray, nodeAttributesArray));
-			} else if(id.equals("nodeShape")) {
-				definition.addAttributeDefinition(ObjectClassDefinition.REQUIRED,
-						new BasicAttributeDefinition("nodeShape", "Node Shape", "The label for the node shape property", AttributeDefinition.STRING, nodeAttributesArray, nodeAttributesArray));
-			} else {
-				definition.addAttributeDefinition(ObjectClassDefinition.REQUIRED, definitions[ii]);
-			}
-		}
-
-		return definition;
+		return objectClassDefinition;
 	}
 }
