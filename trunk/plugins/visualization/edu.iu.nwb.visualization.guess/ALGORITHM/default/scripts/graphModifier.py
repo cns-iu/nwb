@@ -66,6 +66,7 @@ allow_write_in_field = None # shows that a String property should be written in,
 
 # the colors available
 colorInfo = [(apricot, 251, 213, 184), (aquamarine, 115, 253, 217), \
+	     (black, 0, 0, 0), (blue, 0, 0, 255), (lightgreen, 228, 253, 216), \
 (bittersweet, 223, 45, 2), (bluegreen, 106, 253, 212), (blueviolet, 76, 66, 249), \
 (brickred, 218, 1, 2), (brown, 168, 0, 1), (burntorange, 253, 184, 7), \
 (cadetblue, 161, 174, 226), (canary, 251, 252, 187), (carnationpink, 250, 163, 253), \
