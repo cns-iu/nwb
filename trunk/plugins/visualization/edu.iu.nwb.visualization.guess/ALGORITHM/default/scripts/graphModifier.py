@@ -10,6 +10,7 @@ from java.lang import String
 import com
 import java.util.regex
 import sys
+import math
 
 # Graph Modifier
 # By: Jeffrey Wong and Bernie Hogan
@@ -27,7 +28,11 @@ import sys
 general = ["everything","all nodes", "all edges", "nodes based on ->", "edges based on ->"]
 
 # constant variables of nodes and edges
-defaultProperties = ["__edgeid", "color", "directed", "fixed", "height", "image", "label", "labelvisible", "name", "style", "visible", "weight", "width", "x", "y"]
+defaultProperties = ["__edgeid", "color", "directed", "fixed", "height", "image", "label", "labelcolor", "strokecolor", "labelvisible", "name", "style", "visible", "weight", "width", "x", "y"]
+
+doNotIncludeProperties = ["__edgeid", "image", "node1", "node2"]
+
+enumeratedStringFieldMaxSize = 20
 
 # keep track of the changes while using the panel
 changeHistory = []
@@ -56,6 +61,8 @@ edgeProperties = {} # stores the edge property name and type
 edgePropertiesList = [] # stores the node property names
 edgePropertyValues = {} # stores all the values for an edge property
 edgeIndex = [] # stores the edge and it's index in g.edges (via tuples)
+
+allow_write_in_field = None # shows that a String property should be written in, instead of providing a combo box
 
 # the colors available
 colorInfo = [(apricot, 251, 213, 184), (aquamarine, 115, 253, 217), \
@@ -103,17 +110,24 @@ def initializeGlobalVariables():
 		colorList.append(i[0])
 	
 	gStuff = globals() # all variables that have been declared
-	
 	# the properties of nodes and edges specified in the gdf file
-	wantedProperties = []
-	
+	originalGraphProperties = []
+	wantedDefaultProperties = []
 	# get all methods and variables
 	for i in globalDir:
-		if gStuff.has_key(i) and not i == "Edge" and not i == "Node" and not i in colorList and not i in defaultProperties:
+		if gStuff.has_key(i) and not i == "Edge" and not i == "Node" and not i in colorList:
 			# check to see if it is a variable
 			if str(gStuff[i]) == i:
-				wantedProperties.append(i)
-				
+				if i in doNotIncludeProperties:
+					#ignore it
+					foo = 2
+				elif i in defaultProperties: 				
+					wantedDefaultProperties.append(i)				
+				else:
+					originalGraphProperties.append(i)
+		
+	#makes it so original graph properties appear first
+	wantedProperties = originalGraphProperties + wantedDefaultProperties
 	# check to see which properties belong to what
 	for i in wantedProperties:
 		# check to see if it's a node property
@@ -128,23 +142,19 @@ def initializeGlobalVariables():
 			
 			# find all the values for that node property if it is a string
 			if nodeProperties[i] == type("string"):
-				for j in g.nodes:
-					value = eval("j." + i) # the value of the property
-					
-					# if we don't have the value, add it to the list
-					if not value in nodePropertyValues[i]:
-						nodePropertyValues[i].append(value)
+				allvalues = eval("g.nodes."+ i)
+				alluniquevalues = unique(allvalues)
+				nodePropertyValues[i] = alluniquevalues
 			
 			# else find the range if the property is a flot or an integer
 			elif nodeProperties[i] == type(1) or nodeProperties[i] == type(1.5):
-				largest = eval("g.nodes[0]." + i)
-				smallest = eval("g.nodes[0]." + i)
-				for j in g.nodes:
-					value = eval("j." + i)
-					if value > largest:
-						largest = value
-					elif value < smallest:
-						smallest = value
+				all_values = eval("g.nodes." + i)
+				if len(all_values) > 0:
+					smallest = min(all_values)
+					largest  = max(all_values)
+				else:
+					smallest = 0
+					largest  = 0
 				nodePropertyValues[i].append(smallest)
 				nodePropertyValues[i].append(largest)
 			
@@ -160,30 +170,27 @@ def initializeGlobalVariables():
 				
 				# find all the values for that edge property if property is a string
 				if edgeProperties[i] == type("string"):
-					for j in range(len(g.edges)):
-						value = eval("g.edges[" + str(j) + "]." + i)
-						
-						# if we don't have the value, add it to the list
-						if not value in edgePropertyValues[i]:
-							edgePropertyValues[i].append(value)
-				
+					allvalues = eval("g.edges."+ i)
+					alluniquevalues = unique(allvalues)
+					edgePropertyValues[i] = alluniquevalues
+									
 				# find the range of values for an edge if it is an integer or float
 				elif edgeProperties[i] == type(1) or edgeProperties[i] == type(1.5):
-					largest = eval("g.edges[0]." + i)
-					smallest = eval("g.edges[0]." + i)
-					for j in range(len(g.edges)):
-						value = eval("g.edges[" + str(j) + "]." + i)
-						if value > largest:
-							largest = value
-						elif value < smallest:
-							smallest = value
+					all_values = eval("g.edges." + i)
+					if len(all_values) > 0:
+						smallest = min(all_values)
+						largest  = max(all_values)
+					else:
+						smallest = 0
+						largest  = 0
 					edgePropertyValues[i].append(smallest)
 					edgePropertyValues[i].append(largest)
-					
+										
 			# there is an attribute error => i is not a property of an edge
 			except AttributeError:
+				print sys.exc_info()
 				print i + " is not a property of a node or an edge"
-	
+
 	# sort the node list
 	counter = 0
 	for i in g.nodes:
@@ -333,13 +340,16 @@ class objectBoxFilter(java.awt.event.ActionListener):
 				obfSelf.dock.heightSlider.setEnabled(false)
 				obfSelf.dock.sameWidthHeightCheck.setEnabled(false)
 			
-		else:
-			# check to see if it's nodes or edges selected
+		else:# check to see if it's nodes or edges selected
+
+			#if we are filtering on nodes...
 			if currentIndex == 3:
 				# change property box to display node properties
 				if obfSelf.dock.propertiesShown == "edges":
-					obfSelf.dock.propertyBox.removeAllItems()
 					obfSelf.dock.propertiesShown = "nodes"
+
+				#clear out the property box before we populate it with the correct items
+				obfSelf.dock.propertyBox.removeAllItems()
 				
 				# insert node properties
 				for i in obfSelf.dock.nodeProperties:
@@ -349,13 +359,15 @@ class objectBoxFilter(java.awt.event.ActionListener):
 				obfSelf.dock.heightSlider.setEnabled(true)
 				obfSelf.dock.sameWidthHeightCheck.setEnabled(true)
 				
-			# check to see if it's an edge property selected
+			# if we are filtering on edges...
 			elif currentIndex == 4:
 				# change property box to display edge properties
 				if obfSelf.dock.propertiesShown == "nodes":
-					obfSelf.dock.propertyBox.removeAllItems()
 					obfSelf.dock.propertiesShown = "edges"
 				
+				#clear out the property box before we populate it with the correct items
+				obfSelf.dock.propertyBox.removeAllItems()
+
 				# insert edge properties
 				for i in obfSelf.dock.edgeProperties:
 					obfSelf.dock.propertyBox.addItem(i)
@@ -368,6 +380,7 @@ class objectBoxFilter(java.awt.event.ActionListener):
 			obfSelf.dock.propertyBox.setEnabled(true)
 			obfSelf.dock.operatorBox.setEnabled(true)
 			obfSelf.dock.valueBox.setEnabled(true)
+
 
 # property box listener
 # defines what goes into the operator box and value box depending on what is selected
@@ -882,7 +895,13 @@ def changeAttribute(o):
 			currentOperator = o.numberOperators[currentOperatorIndex]
 			currentValue = ""
 			if propertyType == type("string"):
-				currentValue = nodePropertyValues[property][o.valueBox.getSelectedIndex()]
+				if nodePropertyValues.has_key(property):				
+					currentValue = nodePropertyValues[property][o.valueBox.getSelectedIndex()]
+				elif edgePropertyValues.has_key(property):
+					currentValue = edgePropertyValues[property][o.valueBox.getSelectedIndex()]
+				else:
+					raise AttributeError
+
 			elif propertyType == type(1) or propertyType == type(1.5):
 				currentValue = float(o.valueBoxValue.theText())
 			value = currentValue
@@ -1135,9 +1154,80 @@ def exportGDFFile():
 			JOptionPane.showMessageDialog(GraphModifier.self.buttonPanel, "Error in exporting GDF")
 	GraphModifier.self.bottomPanel.setVisible(false)
 
+
+#from code.activestate.com/recipes/52560
+def unique(s):
+    """Return a list of the elements in s, but without duplicates.
+
+    For example, unique([1,2,3,1,2,3]) is some permutation of [1,2,3],
+    unique("abcabc") some permutation of ["a", "b", "c"], and
+    unique(([1, 2], [2, 3], [1, 2])) some permutation of
+    [[2, 3], [1, 2]].
+
+    For best speed, all sequence elements should be hashable.  Then
+    unique() will usually work in linear time.
+
+    If not possible, the sequence elements should enjoy a total
+    ordering, and if list(s).sort() doesn't raise TypeError it's
+    assumed that they do enjoy a total ordering.  Then unique() will
+    usually work in O(N*log2(N)) time.
+
+    If that's not possible either, the sequence elements must support
+    equality-testing.  Then unique() will usually work in quadratic
+    time.
+    """
+
+    n = len(s)
+    if n == 0:
+        return []
+
+    # Try using a dict first, as that's the fastest and will usually
+    # work.  If it doesn't work, it will usually fail quickly, so it
+    # usually doesn't cost much to *try* it.  It requires that all the
+    # sequence elements be hashable, and support equality comparison.
+    u = {}
+    try:
+        for x in s:
+            u[x] = 1
+    except TypeError:
+        del u  # move on to the next method
+    else:
+        return u.keys()
+
+    # We can't hash all the elements.  Second fastest is to sort,
+    # which brings the equal elements together; then duplicates are
+    # easy to weed out in a single pass.
+    # NOTE:  Python's list.sort() was designed to be efficient in the
+    # presence of many duplicate elements.  This isn't true of all
+    # sort functions in all languages or libraries, so this approach
+    # is more effective in Python than it may be elsewhere.
+    try:
+        t = list(s)
+        t.sort()
+    except TypeError:
+        del t  # move on to the next method
+    else:
+        assert n > 0
+        last = t[0]
+        lasti = i = 1
+        while i < n:
+            if t[i] != last:
+                t[lasti] = last = t[i]
+                lasti += 1
+            i += 1
+        return t[:lasti]
+
+    # Brute force is all that's left.
+    u = []
+    for x in s:
+        if x not in u:
+            u.append(x)
+    return u
+
+
 ######################## BEGIN FUNCTION CALLS ##################################
-print "Starting GUESS (this may take a while)"
+print "Starting GUESS GraphModifier (this may take a while)"
 initializeGlobalVariables()
 GraphModifier()
-print "Done"
+print "Finished loading GUESS GraphModifier"
 ######################### END FUNCTION CALLS ###################################
