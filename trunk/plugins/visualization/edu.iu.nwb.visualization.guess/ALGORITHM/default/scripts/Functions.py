@@ -8,7 +8,7 @@ def addNode(_name,**_extra):
 
 def copyNode(_template,_name,**_extra):
 	if not isinstance(_template,Class.forName("com.hp.hpl.guess.Node")):
-		raise TypeError,'First argument nust be a template Node'
+		raise TypeError,'First argument must be a template Node'
 	if not isinstance(_name,Class.forName("org.python.core.PyString")):
 		raise TypeError,'Second argument must be a name'
 	_temp = g.addNode(_name)
