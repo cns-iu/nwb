@@ -3,8 +3,11 @@ package edu.iu.nwb.visualization.prefuse.beta.common;
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.Dimension;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
+import java.awt.BorderLayout;
 import java.io.FileNotFoundException;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -19,8 +22,13 @@ import javax.swing.BoxLayout;
 import javax.swing.JComponent;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
+import javax.swing.JMenu;
+import javax.swing.JMenuBar;
+import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JSeparator;
+import javax.swing.JButton;
+
 
 import org.freehep.graphics2d.VectorGraphics;
 import org.freehep.graphicsio.ps.PSGraphics2D;
@@ -353,14 +361,12 @@ public abstract class AbstractVisualization implements PrefuseBetaVisualization 
 
 		
 		//start things going
-		visualization.run(DRAW);
-		
-		
-		
+		visualization.run(DRAW);	
 		
 		//create a frame to stick everything in
         final JFrame frame = new JFrame();
-        KeyAdapter keyAdapter = new KeyAdapter() {
+
+       KeyAdapter keyAdapter = new KeyAdapter() {
 		        	
 
 					public void keyTyped(KeyEvent e) {
@@ -401,18 +407,58 @@ public abstract class AbstractVisualization implements PrefuseBetaVisualization 
 		        		}
 		        	}
 		        };
+
 		frame.addKeyListener(keyAdapter);
 		display.addKeyListener(keyAdapter);
-        
+
+        JButton exportButton = new JButton ("Export Image to .eps File");
+    	exportButton.setMnemonic(KeyEvent.VK_E);
+        exportButton.setActionCommand("export");
+
+    	exportButton.addActionListener(new ActionListener() {
+    		public void actionPerformed(ActionEvent e) {
+    			if ("export".equals(e.getActionCommand())) {
+        			int option = chooser.showSaveDialog(frame);
+        			if(option == JFileChooser.APPROVE_OPTION) {
+        				Properties properties = new Properties();
+	        			properties.setProperty("PageSize", "A5");
+	        			
+	        			try {	        				
+	        				
+	        				
+	        				//display.saveImage(new FileOutputStream(chooser.getSelectedFile()), "eps", 1.0);
+	        				
+	        				
+							//Rectangle2D bounds = visualization.getBounds(all);
+	        				
+							VectorGraphics graphics = new PSGraphics2D(chooser.getSelectedFile(), display.getSize());
+							graphics.setProperties(properties);
+							graphics.startExport();
+							display.printAll(graphics);
+							graphics.endExport();
+						} catch (FileNotFoundException e1) {
+							// TODO Auto-generated catch block
+							e1.printStackTrace();
+						}
+        			}
+
+    			}
+
+    		}
+
+    	});
+
         JScrollPane scrollPane = new JScrollPane(legends);
         scrollPane.setPreferredSize(new Dimension(100, Math.min(180, maxHeight * 2)));
         display.setOpaque(true);
-        //JPanel wrapper = new JPanel(new BorderLayout());
-        //wrapper.add(scrollPane, BorderLayout.CENTER);
-        
-		//let the given visualization layout the frame as desired
-		this.arrangeComponents(frame, display, scrollPane);
-		
+        JPanel wrapper = new JPanel(new BorderLayout());
+        wrapper.add(exportButton, BorderLayout.NORTH);
+        wrapper.add(scrollPane, BorderLayout.CENTER); 
+        wrapper.addKeyListener(keyAdapter);  
+
+        //let the given visualization layout the frame as desired
+//		this.arrangeComponents(frame, display, scrollPane);
+        this.arrangeComponents(frame, display, wrapper);
 		
 		//standard boilerplate
 		frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
