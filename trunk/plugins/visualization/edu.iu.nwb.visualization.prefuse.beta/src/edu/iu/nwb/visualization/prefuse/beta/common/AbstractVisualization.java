@@ -370,40 +370,8 @@ public abstract class AbstractVisualization implements PrefuseBetaVisualization 
 		        	
 
 					public void keyTyped(KeyEvent e) {
-		        		if(e.getKeyChar() == 'e') {
-		        			
-		        			int option = chooser.showSaveDialog(frame);
-		        			if(option == JFileChooser.APPROVE_OPTION) {
-		        				Properties properties = new Properties();
-			        			properties.setProperty("PageSize", "A5");
-			        			
-			        			try {
-			        				
-			        				
-			        				
-			        				
-			        				//display.saveImage(new FileOutputStream(chooser.getSelectedFile()), "eps", 1.0);
-			        				
-			        				
-									//Rectangle2D bounds = visualization.getBounds(all);
-			        				
-									VectorGraphics graphics = new PSGraphics2D(chooser.getSelectedFile(), display.getSize());
-									graphics.setProperties(properties);
-									graphics.startExport();
-									display.printAll(graphics);
-									graphics.endExport();
-								} catch (FileNotFoundException e1) {
-									// TODO Auto-generated catch block
-									e1.printStackTrace();
-								}
-		        			}
-		        			
-							
-		        			
-		        			
-		        			
-		        			//ExportDialog export = new ExportDialog();
-		        			//export.showExportDialog(frame, "Export visualization as . . .", display, "export");
+		        		if(e.getKeyChar() == 'e') {	        			
+		        			exportGraphToFile(frame, display);		        			
 		        		}
 		        	}
 		        };
@@ -418,34 +386,9 @@ public abstract class AbstractVisualization implements PrefuseBetaVisualization 
     	exportButton.addActionListener(new ActionListener() {
     		public void actionPerformed(ActionEvent e) {
     			if ("export".equals(e.getActionCommand())) {
-        			int option = chooser.showSaveDialog(frame);
-        			if(option == JFileChooser.APPROVE_OPTION) {
-        				Properties properties = new Properties();
-	        			properties.setProperty("PageSize", "A5");
-	        			
-	        			try {	        				
-	        				
-	        				
-	        				//display.saveImage(new FileOutputStream(chooser.getSelectedFile()), "eps", 1.0);
-	        				
-	        				
-							//Rectangle2D bounds = visualization.getBounds(all);
-	        				
-							VectorGraphics graphics = new PSGraphics2D(chooser.getSelectedFile(), display.getSize());
-							graphics.setProperties(properties);
-							graphics.startExport();
-							display.printAll(graphics);
-							graphics.endExport();
-						} catch (FileNotFoundException e1) {
-							// TODO Auto-generated catch block
-							e1.printStackTrace();
-						}
-        			}
-
-    			}
-
-    		}
-
+    				exportGraphToFile(frame, display);
+        		}
+    		}  		
     	});
 
         JScrollPane scrollPane = new JScrollPane(legends);
@@ -468,4 +411,31 @@ public abstract class AbstractVisualization implements PrefuseBetaVisualization 
 
 		return null;
 	}
+	
+	private void exportGraphToFile (JFrame frame, Display display){
+		int option = chooser.showSaveDialog(frame);
+		if(option == JFileChooser.APPROVE_OPTION) {
+			Properties properties = new Properties();
+			properties.setProperty("PageSize", "A5");
+			
+			try {				
+				//display.saveImage(new FileOutputStream(chooser.getSelectedFile()), "eps", 1.0);				
+				//Rectangle2D bounds = visualization.getBounds(all);
+				
+				VectorGraphics graphics = new PSGraphics2D(chooser.getSelectedFile(), display.getSize());
+				graphics.setProperties(properties);
+				graphics.startExport();
+				display.printAll(graphics);
+				graphics.endExport();
+			} catch (FileNotFoundException e1) {
+				// TODO Auto-generated catch block
+				e1.printStackTrace();
+			}
+			//ExportDialog export = new ExportDialog();
+			//export.showExportDialog(frame, "Export visualization as . . .", display, "export");
+
+		}
+		
+	}
+	
 }
