@@ -533,6 +533,11 @@ class GraphModifier(com.hp.hpl.guess.ui.DockableAdapter):
 		dockSelf.buttonPanel = JPanel() # the panel for the buttons
 		dockSelf.buttonPanel.setPreferredSize(Dimension(dimWidth, dimHeight))
 		dockSelf.layoutPanel.add(dockSelf.buttonPanel)
+		
+		dockSelf.buttonPanel2 = JPanel()
+		dockSelf.buttonPanel2.setPreferredSize(Dimension(dimWidth, dimHeight))
+		dockSelf.layoutPanel.add(dockSelf.buttonPanel2)
+		
 		dockSelf.bottomPanel = JPanel() # the bottom panel
 		dockSelf.bottomPanel.setPreferredSize(Dimension(900, 280))
 		dockSelf.layoutPanel.add(dockSelf.bottomPanel)
@@ -733,9 +738,9 @@ class GraphModifier(com.hp.hpl.guess.ui.DockableAdapter):
 		dockSelf.buttonPanel.add(dockSelf.showLabelButton)
 		dockSelf.buttonPanel.add(dockSelf.hideLabelButton)
 		dockSelf.buttonPanel.add(dockSelf.changeLabelButton)
-		dockSelf.buttonPanel.add(dockSelf.nodeStyleButton)
-		dockSelf.buttonPanel.add(dockSelf.centerButton)
-		dockSelf.buttonPanel.add(dockSelf.changeHistoryButton)
+		dockSelf.buttonPanel2.add(dockSelf.nodeStyleButton)
+		dockSelf.buttonPanel2.add(dockSelf.centerButton)
+		dockSelf.buttonPanel2.add(dockSelf.changeHistoryButton)
 		
 		# set intial value of object box to all
 		dockSelf.objectBox.setSelectedIndex(0)
