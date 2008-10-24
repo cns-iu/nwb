@@ -7,8 +7,11 @@ public class ModeFunctionFactory implements AggregateFunctionFactory{
 		// TODO Auto-generated method stub
 		if(c.equals(int.class) || c.equals(Integer.class))
 			return new IntegerMode();
-		else
+		else if(c.equals(String.class)) {
+			return new StringMode();
+		} else {
 			return new BooleanMode();
+		}
 	}
 
 	public String getType() {
@@ -17,6 +20,8 @@ public class ModeFunctionFactory implements AggregateFunctionFactory{
 	}
 
 }
+
+//TODO: These do not fit my understanding of "mode"...
 
 class IntegerMode extends AggregateFunction{
 	int value;
@@ -35,6 +40,24 @@ class IntegerMode extends AggregateFunction{
 			value = ((Number)o).intValue();
 	}
 	
+}
+
+class StringMode extends AggregateFunction{
+	String value = "";
+	
+	public Object getResult() {
+		return value;
+	}
+	
+	public Class getType() {
+		return String.class;
+	}
+	
+	public void operate(Object o) {
+		if (o != null && o instanceof String) {
+			value = (String) o;
+		} 
+	}
 }
 
 class BooleanMode extends AggregateFunction{
