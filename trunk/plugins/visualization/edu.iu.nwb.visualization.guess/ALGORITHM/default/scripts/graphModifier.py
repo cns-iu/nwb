@@ -43,6 +43,7 @@ t = [1,2]
 # graph manipulation methods
 method = {}
 method["color"] = lambda x: changeColor(x) # x is a tuple (dataTuple)
+method["node_style"] = lambda x: changeNodeStyle(x)
 method["show"] = lambda x: showIt(x)
 method["hide"] = lambda x: hideIt(x)
 method["size"] = lambda x: setSize(x)
@@ -93,8 +94,21 @@ colorInfo = [(apricot, 251, 213, 184), (aquamarine, 115, 253, 217), \
 (violetred, 250, 121, 253), (white, 255, 255, 255), (wildstrawberry, 251, 59, 203), \
 (yellow, 255, 255, 0), (yellowgreen, 196, 252, 139), (yelloworange, 253, 198, 8)]
 
+
 # list of just the color names
 colorList = []
+
+#node styles available
+displayedNodeStyleIndexes = [1,2,3,4,5,6,8,9,10]
+
+nodeStyleIndexToFileName = {1 : "nodestyle1.gif", 2 : "nodestyle2.gif", 3 : "nodestyle3.gif", \
+                            4 : "nodestyle4.gif", 5 : "nodestyle5.gif", 6 : "nodestyle6.gif", \
+                            7 : "nodestyle7.gif", 8 : "nodestyle8.gif", 9 : "nodestyle9.gif", \
+                            10 :"nodestyle10.gif"}
+                            
+nodeStyleImageDirectory = "images/"
+
+image_style = 7
 
 # dummy component to fulfill some parameters
 dummyComponent = JComboBox()
@@ -502,11 +516,13 @@ class GraphModifier(com.hp.hpl.guess.ui.DockableAdapter):
 		# layout panel
 		dockSelf.layoutPanel = JPanel() # top: main controls bottom: hidden controls
 		dockSelf.layoutPanel.setLayout(BoxLayout(dockSelf.layoutPanel, BoxLayout.Y_AXIS))
+		
 		dockSelf.topPanel = JPanel() # the top panel
+		
 		macDimH = 40
-		winDimH = 30
+		winDimH = 50
 		macDimW = 900
-		winDimW = 800
+		winDimW = 570
 		# Here we assume people are using either mac or windows. 
 		# If I had a way to test for linux and tweak the sizes I'd do it here.
 		if System.getProperty("os.name") == "Mac OS X":
@@ -518,11 +534,11 @@ class GraphModifier(com.hp.hpl.guess.ui.DockableAdapter):
 			dimHeight = winDimH
 		dockSelf.topPanel.setPreferredSize(Dimension(dimWidth, dimHeight))
 		dockSelf.layoutPanel.add(dockSelf.topPanel)
-		dockSelf.buttonPanel = JPanel() # the panel for the buttons
+		dockSelf.buttonPanel = JPanel(GridLayout(2, 5)) # the panel for the buttons
 		dockSelf.buttonPanel.setPreferredSize(Dimension(dimWidth, dimHeight))
 		dockSelf.layoutPanel.add(dockSelf.buttonPanel)
 		dockSelf.bottomPanel = JPanel() # the bottom panel
-		dockSelf.bottomPanel.setPreferredSize(Dimension(900, 280))
+		dockSelf.bottomPanel.setPreferredSize(Dimension(dimWidth, dimHeight))
 		dockSelf.layoutPanel.add(dockSelf.bottomPanel)
 		
 		# object box
@@ -532,6 +548,7 @@ class GraphModifier(com.hp.hpl.guess.ui.DockableAdapter):
 		dockSelf.objectEditor.setDocument(EDoc(dockSelf.objectBox, dockSelf.objectBox.getModel(), dockSelf))
 		obf = objectBoxFilter(dockSelf)
 		dockSelf.objectBox.addActionListener(obf)
+	
 		
 		# color panel
 		dockSelf.colorPanel = JPanel(GridLayout(2, 40))
@@ -544,15 +561,33 @@ class GraphModifier(com.hp.hpl.guess.ui.DockableAdapter):
 		
 		# create the color buttons
 		for theColor in dockSelf.colorInfo:
-	 		dockSelf.colors[theColor[0]] = JButton("#")
-			dockSelf.colors[theColor[0]].setBackground(Color(theColor[1], theColor[2], theColor[3]))
-			dockSelf.colors[theColor[0]].setForeground(Color(theColor[1], theColor[2], theColor[3]))
-			dockSelf.colors[theColor[0]].setPreferredSize(Dimension(15,15))
- 			dockSelf.colors[theColor[0]].actionPerformed = lambda event: setColor(event, GraphModifier.self)
-			dockSelf.colorPanel.add(dockSelf.colors[theColor[0]])
-			
+			colorName = theColor[0]
+			dockSelf.colors[colorName] = JButton("#")
+			dockSelf.colors[colorName].setBackground(Color(theColor[1], theColor[2], theColor[3]))
+			dockSelf.colors[colorName].setForeground(Color(theColor[1], theColor[2], theColor[3]))
+			dockSelf.colors[colorName].setPreferredSize(Dimension(14, 14))
+			dockSelf.colors[colorName].actionPerformed = lambda event: setColor(event, GraphModifier.self)
+			dockSelf.colorPanel.add(dockSelf.colors[theColor[0]])			
+					
+		#node style panel
+		dockSelf.nodeStylePanel = JPanel(GridLayout(1, 8))
+		dockSelf.nodeStylePanel.setVisible(false)
+		
+		#node styles
+		dockSelf.nodeStyleIndexToButton = {}
+		
+		#create the node style buttons
+		dockSelf.nodeStylePanelButtons = {}
+		for nodeStyleIndex in displayedNodeStyleIndexes:
+		    iconFileName = nodeStyleIndexToFileName[nodeStyleIndex]
+		    nodeStyleIcon = ImageIcon(nodeStyleImageDirectory + iconFileName)
+		    dockSelf.nodeStylePanelButtons[nodeStyleIndex] = JButton(nodeStyleIcon)
+		    dockSelf.nodeStylePanelButtons[nodeStyleIndex].setPreferredSize(Dimension(32,32))
+		    dockSelf.nodeStylePanelButtons[nodeStyleIndex].actionPerformed = lambda event: setNodeStyle(event, GraphModifier.self)
+		    dockSelf.nodeStylePanel.add(dockSelf.nodeStylePanelButtons[nodeStyleIndex])
+		
 		# size panel
-		dockSelf.sizePanel = JPanel(GridLayout(2,4))
+		dockSelf.sizePanel = JPanel(GridLayout(20,20))
 		
 		# assuming this is for a node, do edges later
 		dockSelf.widthSlider = JSlider(1, 100, int(g.nodes[0].width))
@@ -644,6 +679,10 @@ class GraphModifier(com.hp.hpl.guess.ui.DockableAdapter):
 		dockSelf.changeLabelButton = JButton("Change Label")
 		dockSelf.changeLabelButton.actionPerformed = lambda event: updateBottomPanel(GraphModifier.self, GraphModifier.self.changeLabelPanel)
 		
+		#node style
+		dockSelf.nodeStyleButton = JButton("Node Shape")
+		dockSelf.nodeStyleButton.actionPerformed = lambda event: updateBottomPanel(GraphModifier.self, GraphModifier.self.nodeStylePanel)
+		
 		# center button
 		dockSelf.centerButton = JButton("Center")
 		dockSelf.centerButton.actionPerformed = lambda event: centerGraph(GraphModifier.self)
@@ -695,6 +734,7 @@ class GraphModifier(com.hp.hpl.guess.ui.DockableAdapter):
 		dockSelf.buttonPanel.add(dockSelf.showLabelButton)
 		dockSelf.buttonPanel.add(dockSelf.hideLabelButton)
 		dockSelf.buttonPanel.add(dockSelf.changeLabelButton)
+		dockSelf.buttonPanel.add(dockSelf.nodeStyleButton)
 		dockSelf.buttonPanel.add(dockSelf.centerButton)
 		dockSelf.buttonPanel.add(dockSelf.changeHistoryButton)
 		
@@ -732,6 +772,19 @@ def setColor(b, o):
 	t[1] = o.currentColor
 	changeAttribute(o)
 	o.colorPanel.setVisible(false)
+	
+# set the node style to change	
+def setNodeStyle(b, o):
+    o.currentAction = "node_style"
+    #figure out which button was pressed
+    for nodeStyleIndex in displayedNodeStyleIndexes:
+       if b.getSource() == o.nodeStylePanelButtons[nodeStyleIndex]:
+           o.currentNodeStyle = nodeStyleIndex
+           break
+    t[1] = o.currentNodeStyle
+    changeAttribute(o)
+    o.nodeStylePanel.setVisible(false)
+    
 
 # shows the specified objects
 # b the boolean variable to see whether it's to show or hide
@@ -791,6 +844,9 @@ def changeAttribute(o):
 				
 				# change all edge colors
 				g.edges.color = o.currentColor
+			elif o.currentAction == "node_style":
+			    g.nodes.style = image_style # a hack to fix problem in switching between styles in GUESS
+			    g.nodes.style = o.currentNodeStyle
 			elif o.currentAction == "show":
 				# show all nodes
 				g.nodes.visible = true
@@ -837,6 +893,9 @@ def changeAttribute(o):
 			objects = "all nodes"
 			if o.currentAction == "color":
 				g.nodes.color = o.currentColor
+			elif o.currentAction == "node_style":
+			    g.nodes.style = image_style
+			    g.nodes.style = o.currentNodeStyle
 			elif o.currentAction == "show":
 				g.nodes.visible = true
 			elif o.currentAction == "hide":
@@ -857,6 +916,9 @@ def changeAttribute(o):
 			objects = "all edges"
 			if o.currentAction == "color":
 				g.edges.color = o.currentColor
+			elif o.currentAction == "node_style":
+			    g.nodes.style = image_style
+			    g.nodes.style = o.currentNodeStyle
 			elif o.currentAction == "show":
 				g.edges.visible = true
 			elif o.currentAction == "hide":
@@ -956,6 +1018,11 @@ def changeColor(tup):
 	#theObject.color = theColor
 	tup[0].color = tup[1]
 
+#change the style of the specified node
+def changeNodeStyle(tup):
+    tup[0].style = image_style
+    tup[0].style = tup[1]
+
 # show the specified object
 def showIt(tup):
 	tup[0].visible = true
@@ -1027,6 +1094,8 @@ def saveHistory(o, action, objects, property, operator, compareValue):
 			historyCode = historyCode + "\tif i." + property + " " + str(operator) + " " + str(compareValue) + ":\n\t"
 		if action == "color":
 			historyCode = historyCode + "\ti.color = " + str(o.currentColor) + "\n"
+		if action == "node_style":
+		    historyCode = historyCode + "\ti.style = " + str(o.currentNodeStyle) + "\n"
 		elif action == "hide":
 			historyCode = historyCode + "\ti.visible = false\n"
 		elif action == "show":
