@@ -2,6 +2,7 @@ package edu.iu.nwb.visualization.prefuse.beta.radialgraph;
 
 import java.awt.BorderLayout;
 import java.awt.Dimension;
+import java.awt.Component;
 import java.awt.event.MouseEvent;
 import java.util.Dictionary;
 
@@ -43,7 +44,7 @@ public class RadialVisualization extends AbstractVisualization {
 	private String linear = "linear";
 
 
-	protected void arrangeComponents(JFrame frame, Display display,
+	protected Component arrangeComponents(Display display,
 			JComponent legend) {
 		
 		display.getVisualization().alwaysRunAfter("retree", LAYOUT);
@@ -79,10 +80,13 @@ public class RadialVisualization extends AbstractVisualization {
         overall.add(panel, BorderLayout.CENTER);
         overall.add(legend, BorderLayout.SOUTH);
         
-        frame.setContentPane(overall);
-        frame.setTitle("Radial Tree/Graph with Annotation (prefuse beta)");
+        return overall; 
 	}
 
+	protected void setTitle (JFrame frame){
+		frame.setTitle("Radial Tree/Graph with Annotation (prefuse beta)");
+	}
+	
 	protected Action getInitialDrawActions(String everythingGroup,
 			Visualization visualization, Dictionary parameters) {
 		

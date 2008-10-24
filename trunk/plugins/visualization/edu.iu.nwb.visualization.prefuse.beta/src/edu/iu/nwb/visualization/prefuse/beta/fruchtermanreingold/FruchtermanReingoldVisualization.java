@@ -2,6 +2,7 @@ package edu.iu.nwb.visualization.prefuse.beta.fruchtermanreingold;
 
 import java.awt.BorderLayout;
 import java.util.Dictionary;
+import java.awt.Component;
 
 import javax.swing.JComponent;
 import javax.swing.JFrame;
@@ -14,8 +15,6 @@ import prefuse.action.ActionList;
 import prefuse.action.RepaintAction;
 import prefuse.action.layout.graph.FruchtermanReingoldLayout;
 import edu.iu.nwb.visualization.prefuse.beta.common.AbstractVisualization;
-
-
 
 
 public class FruchtermanReingoldVisualization extends AbstractVisualization {
@@ -34,14 +33,18 @@ public class FruchtermanReingoldVisualization extends AbstractVisualization {
 		return actions;
 	}
 	
-	public void arrangeComponents(JFrame frame, Display display, JComponent legend) {
-		frame.setTitle("Fruchterman-Reingold with Annotation (prefuse beta)");
+	protected Component arrangeComponents(Display display, JComponent legend) {
+		
 		
 		JPanel panel = new JPanel(new BorderLayout());
         panel.add(display, BorderLayout.CENTER);
         panel.add(legend, BorderLayout.SOUTH);
-        
-        frame.setContentPane(panel);
+        return panel;
+
+	}
+	
+	protected void setTitle (JFrame frame){
+		frame.setTitle("Fruchterman-Reingold with Annotation (prefuse beta)");
 	}
 
 	protected Action getInitialDrawActions(String everythingGroup, Visualization visualization, Dictionary parameters) {

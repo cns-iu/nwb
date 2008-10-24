@@ -3,6 +3,7 @@ package edu.iu.nwb.visualization.prefuse.beta.graphview;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
+import java.awt.Component;
 import java.util.Dictionary;
 
 import javax.swing.BorderFactory;
@@ -36,10 +37,8 @@ public class ForceDirectedVisualization extends AbstractVisualization {
 	private GraphDistanceFilter filter;
 	private int hops = 30;;
 
-	protected void arrangeComponents(JFrame frame, final Display display,
+	protected Component arrangeComponents(final Display display,
 			JComponent legend) {
-		
-		
 		
 		display.pan(350, 350);
 		display.setForeground(Color.GRAY);
@@ -80,17 +79,7 @@ public class ForceDirectedVisualization extends AbstractVisualization {
         panel.add(split, BorderLayout.CENTER);
         panel.add(legend, BorderLayout.SOUTH);
         
-        frame.setContentPane(panel);
-        
-        frame.setTitle("Force Directed with Annotation (prefuse beta)");
-		/* frame.addWindowListener(new WindowAdapter() {
-            public void windowActivated(WindowEvent e) {
-                display.getVisualization().run(LAYOUT);
-            }
-            public void windowDeactivated(WindowEvent e) {
-            	display.getVisualization().cancel(LAYOUT);
-            }
-        }); */
+        return panel;     
 
 	}
 
@@ -135,6 +124,10 @@ public class ForceDirectedVisualization extends AbstractVisualization {
 	    //animate.add(new QualityControlAnimator());
 	    animate.add(new RepaintAction());
 		return animate;
+	}
+	
+	protected void setTitle (JFrame frame){
+	       frame.setTitle("Force Directed with Annotation (prefuse beta)");
 	}
 
 }

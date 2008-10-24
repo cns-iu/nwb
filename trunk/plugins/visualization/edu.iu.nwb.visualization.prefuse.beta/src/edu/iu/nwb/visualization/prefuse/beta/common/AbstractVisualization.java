@@ -103,7 +103,9 @@ public abstract class AbstractVisualization implements PrefuseBetaVisualization 
 	protected abstract Action getLayoutActions(String everythingGroup, Visualization visualization, Dictionary parameters);
 	
 	//	guaranteed to be called after getLayoutActions and getInitialDrawActions
-	protected abstract void arrangeComponents(JFrame frame, Display display, JComponent legend);
+	protected abstract Component arrangeComponents(Display display, JComponent legend);
+	
+	protected abstract void setTitle(JFrame frame);
 	
 	//right now everything should return null; the return parameter is a remainder of experiments in getting graphs out of visualizations
 	public Graph create(Graph graph, Dictionary parameters) {
@@ -365,8 +367,9 @@ public abstract class AbstractVisualization implements PrefuseBetaVisualization 
 		
 		//create a frame to stick everything in
         final JFrame frame = new JFrame();
-
-       KeyAdapter keyAdapter = new KeyAdapter() {
+        JPanel contentPane = new JPanel(new BorderLayout());
+        
+        KeyAdapter keyAdapter = new KeyAdapter() {
 		        	
 
 					public void keyTyped(KeyEvent e) {
@@ -394,14 +397,13 @@ public abstract class AbstractVisualization implements PrefuseBetaVisualization 
         JScrollPane scrollPane = new JScrollPane(legends);
         scrollPane.setPreferredSize(new Dimension(100, Math.min(180, maxHeight * 2)));
         display.setOpaque(true);
-        JPanel wrapper = new JPanel(new BorderLayout());
-        wrapper.add(exportButton, BorderLayout.NORTH);
-        wrapper.add(scrollPane, BorderLayout.CENTER); 
-        wrapper.addKeyListener(keyAdapter);  
-
-        //let the given visualization layout the frame as desired
-//		this.arrangeComponents(frame, display, scrollPane);
-        this.arrangeComponents(frame, display, wrapper);
+        
+        Component thePanel = this.arrangeComponents(display, scrollPane);
+        contentPane.add(exportButton, BorderLayout.NORTH);
+        contentPane.add(thePanel, BorderLayout.CENTER);
+        
+        this.setTitle(frame);
+        frame.setContentPane(contentPane);
 		
 		//standard boilerplate
 		frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
