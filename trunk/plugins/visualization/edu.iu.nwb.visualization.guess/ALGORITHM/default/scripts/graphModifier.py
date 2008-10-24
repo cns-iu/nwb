@@ -32,8 +32,6 @@ defaultProperties = ["__edgeid", "color", "directed", "fixed", "height", "image"
 
 doNotIncludeProperties = ["__edgeid", "image", "node1", "node2"]
 
-enumeratedStringFieldMaxSize = 20
-
 # keep track of the changes while using the panel
 changeHistory = []
 
@@ -516,13 +514,11 @@ class GraphModifier(com.hp.hpl.guess.ui.DockableAdapter):
 		# layout panel
 		dockSelf.layoutPanel = JPanel() # top: main controls bottom: hidden controls
 		dockSelf.layoutPanel.setLayout(BoxLayout(dockSelf.layoutPanel, BoxLayout.Y_AXIS))
-		
 		dockSelf.topPanel = JPanel() # the top panel
-		
 		macDimH = 40
-		winDimH = 50
+		winDimH = 30
 		macDimW = 900
-		winDimW = 570
+		winDimW = 800
 		# Here we assume people are using either mac or windows. 
 		# If I had a way to test for linux and tweak the sizes I'd do it here.
 		if System.getProperty("os.name") == "Mac OS X":
@@ -534,12 +530,13 @@ class GraphModifier(com.hp.hpl.guess.ui.DockableAdapter):
 			dimHeight = winDimH
 		dockSelf.topPanel.setPreferredSize(Dimension(dimWidth, dimHeight))
 		dockSelf.layoutPanel.add(dockSelf.topPanel)
-		dockSelf.buttonPanel = JPanel(GridLayout(2, 5)) # the panel for the buttons
+		dockSelf.buttonPanel = JPanel() # the panel for the buttons
 		dockSelf.buttonPanel.setPreferredSize(Dimension(dimWidth, dimHeight))
 		dockSelf.layoutPanel.add(dockSelf.buttonPanel)
 		dockSelf.bottomPanel = JPanel() # the bottom panel
-		dockSelf.bottomPanel.setPreferredSize(Dimension(dimWidth, dimHeight))
+		dockSelf.bottomPanel.setPreferredSize(Dimension(900, 280))
 		dockSelf.layoutPanel.add(dockSelf.bottomPanel)
+		
 		
 		# object box
 		dockSelf.objectBox = JComboBox(dockSelf.objects)
@@ -587,7 +584,8 @@ class GraphModifier(com.hp.hpl.guess.ui.DockableAdapter):
 		    dockSelf.nodeStylePanel.add(dockSelf.nodeStylePanelButtons[nodeStyleIndex])
 		
 		# size panel
-		dockSelf.sizePanel = JPanel(GridLayout(20,20))
+		dockSelf.sizePanel = JPanel(GridLayout(2,4))
+		dockSelf.sizePanel.setVisible(false)
 		
 		# assuming this is for a node, do edges later
 		dockSelf.widthSlider = JSlider(1, 100, int(g.nodes[0].width))
@@ -650,6 +648,7 @@ class GraphModifier(com.hp.hpl.guess.ui.DockableAdapter):
 		dockSelf.changeHistoryRightPanel.add(dockSelf.exportGDFButton)
 		dockSelf.changeHistoryPanel.add(dockSelf.changeHistoryLeftPanel)
 		dockSelf.changeHistoryPanel.add(dockSelf.changeHistoryRightPanel)
+		dockSelf.changeHistoryPanel.setVisible(false)
 		
 		# colour button
 		dockSelf.colourButton = JButton("Colour")
