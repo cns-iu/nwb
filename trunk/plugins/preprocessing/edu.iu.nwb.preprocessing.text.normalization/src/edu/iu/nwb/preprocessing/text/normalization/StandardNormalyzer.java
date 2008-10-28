@@ -1,11 +1,16 @@
 package edu.iu.nwb.preprocessing.text.normalization;
 
+import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.io.StringReader;
+import java.io.File;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Dictionary;
 import java.util.Enumeration;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
@@ -15,6 +20,7 @@ import org.apache.lucene.analysis.Analyzer;
 import org.apache.lucene.analysis.Token;
 import org.apache.lucene.analysis.TokenStream;
 import org.apache.lucene.analysis.snowball.SnowballAnalyzer;
+import org.apache.lucene.analysis.WordlistLoader;
 import org.cishell.framework.CIShellContext;
 import org.cishell.framework.algorithm.Algorithm;
 import org.cishell.framework.algorithm.AlgorithmExecutionException;
@@ -37,7 +43,13 @@ public class StandardNormalyzer implements Algorithm {
         this.data = data;
         this.parameters = parameters;
         this.context = context;
-        this.analyzer = new SnowballAnalyzer("English");
+        try {
+        	String[] stopWords = getStopWords();
+        	this.analyzer = new SnowballAnalyzer("English", stopWords);
+        }catch (IOException ioe) {
+        	System.out.println (">>>got IOException, do not apply stopwords.txt. "+ioe.toString());       
+        	this.analyzer = new SnowballAnalyzer("English");
+        }
     }
 
     public Data[] execute() throws AlgorithmExecutionException {
@@ -59,6 +71,42 @@ public class StandardNormalyzer implements Algorithm {
         return prepareOutputData(output, columns);
     }
 
+    private String[] getStopWords() throws IOException{
+    	String filePath = "/edu/iu/nwb/preprocessing/text/normalization/stopwords.txt";
+    	InputStream is = null;
+    	BufferedReader br = null;
+    	String line;
+    	ArrayList list = new ArrayList();
+
+    	try {
+    		final ClassLoader loader = getClass().getClassLoader();
+        	is = loader.getResourceAsStream (filePath);
+    		br = new BufferedReader(new InputStreamReader(is));
+    	    while (null != (line = br.readLine())) {
+    	         list.add(line);
+    	    }
+    	}
+    	catch (Exception e) {
+    		e.printStackTrace();
+    	}
+    	finally {
+    		try {
+    			if (br != null) br.close();
+    	        if (is != null) is.close();
+    	    }
+    	    catch (IOException e) {
+    	        e.printStackTrace();
+    	    }
+    	}
+    	
+    	String[]stopWords = new String[list.size()];
+    	for (int ii=0; ii<list.size(); ii++){
+    		stopWords[ii] = (String) list.get(ii);
+    		System.out.println("index = "+ii+", value = "+stopWords[ii]);
+    	}    	
+    	return stopWords;
+    }    	
+    	
 	private void copyAndNormalize(Table input, Table output, Set columns, String separator) throws AlgorithmExecutionException {
 		for(int ii = 0; ii < input.getColumnCount(); ii++) {
         	Column fromColumn = input.getColumn(ii);
