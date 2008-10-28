@@ -43,13 +43,17 @@ public class StandardNormalyzer implements Algorithm {
         this.data = data;
         this.parameters = parameters;
         this.context = context;
-        try {
-        	String[] stopWords = getStopWords();
+        
+        String[] stopWords = null;
+        stopWords = getStopWords();
+        if (stopWords != null) {
         	this.analyzer = new SnowballAnalyzer("English", stopWords);
-        }catch (IOException ioe) {
-        	System.out.println (">>>got IOException, do not apply stopwords.txt. "+ioe.toString());       
-        	this.analyzer = new SnowballAnalyzer("English");
         }
+        else {
+        	System.out.println(">>>no stopwords. ");      
+        	this.analyzer = new SnowballAnalyzer("English");
+        }       	
+        
     }
 
     public Data[] execute() throws AlgorithmExecutionException {
@@ -71,12 +75,13 @@ public class StandardNormalyzer implements Algorithm {
         return prepareOutputData(output, columns);
     }
 
-    private String[] getStopWords() throws IOException{
+    private String[] getStopWords() {
     	String filePath = "/edu/iu/nwb/preprocessing/text/normalization/stopwords.txt";
     	InputStream is = null;
     	BufferedReader br = null;
     	String line;
     	ArrayList list = new ArrayList();
+    	String[]stopWords = null;
 
     	try {
     		final ClassLoader loader = getClass().getClassLoader();
@@ -85,6 +90,11 @@ public class StandardNormalyzer implements Algorithm {
     	    while (null != (line = br.readLine())) {
     	         list.add(line);
     	    }
+        	stopWords = new String[list.size()];
+        	for (int ii=0; ii<list.size(); ii++){
+        		stopWords[ii] = (String) list.get(ii);
+        		System.out.println("index = "+ii+", value = "+stopWords[ii]);
+        	}
     	}
     	catch (Exception e) {
     		e.printStackTrace();
@@ -98,13 +108,8 @@ public class StandardNormalyzer implements Algorithm {
     	        e.printStackTrace();
     	    }
     	}
-    	
-    	String[]stopWords = new String[list.size()];
-    	for (int ii=0; ii<list.size(); ii++){
-    		stopWords[ii] = (String) list.get(ii);
-    		System.out.println("index = "+ii+", value = "+stopWords[ii]);
-    	}    	
     	return stopWords;
+    	
     }    	
     	
 	private void copyAndNormalize(Table input, Table output, Set columns, String separator) throws AlgorithmExecutionException {
