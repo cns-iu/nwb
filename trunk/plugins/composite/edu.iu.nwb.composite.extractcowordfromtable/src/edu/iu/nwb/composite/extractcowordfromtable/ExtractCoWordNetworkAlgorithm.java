@@ -2,6 +2,7 @@ package edu.iu.nwb.composite.extractcowordfromtable;
 
 import java.util.Dictionary;
 import java.util.Hashtable;
+import java.util.Enumeration;
 
 import org.cishell.framework.CIShellContext;
 import org.cishell.framework.algorithm.Algorithm;
@@ -38,9 +39,54 @@ public class ExtractCoWordNetworkAlgorithm implements Algorithm {
 	}
 
 	public Data[] execute() throws AlgorithmExecutionException {
-		try {
+		this.logger.log (LogService.LOG_INFO, "Class: " + extractDirectedNetwork.getClass().getName());
+		
+		try
+		{
+			// Form a new parameters object which contains the target column as the combined string of
+			// chosen columns.
+			StringBuilder targetColumn = new StringBuilder();
+			boolean firstColumnHasBeenAdded = false;
+			Dictionary newParameters = new Hashtable();
+			
+			for (Enumeration parameterKeys = parameters.keys(); parameterKeys.hasMoreElements();)
+	    	{
+	    		String parameterKey = (String)parameterKeys.nextElement();
+	    		Object parameterValue = parameters.get(parameterKey);
+	    		// Explode the current key based on "_" to separate the "column" and original_name.
+	    		String[] explodedParameterKey = parameterKey.split("\\_");
+	    		
+	    		// Does the key start with "column_"?  (Is this a parameter meant for the target
+	    		// column?) Is it checked?
+	    		if (isAColumnCheckBoxParameter(explodedParameterKey)) 
+	    		{
+	    			if (columnCheckBoxWasSelected(parameterValue)) {
+	    			//add column to list of columns we want to be part of the target.
+	    			
+	    			//If this is not the first column added, append a delimiter first as well.
+	    				if (firstColumnHasBeenAdded) 
+	    				{
+	    					targetColumn.append(",");
+	    				}
+	    				targetColumn.append(explodedParameterKey[1]);
+	    				firstColumnHasBeenAdded = true;
+	    			} else 
+	    			{
+	    				//ignore check box if it was not selected
+	    			}
+	    		}	
+	    		else //it was just a normal parameter
+	    		{	
+	    			//so add it to the new dictionary.
+	    			newParameters.put(parameterKey, parameterValue);
+	    		}
+	    	}
+			
+			// Add the target column.
+			newParameters.put("targetColumn", targetColumn.toString());
+			
 			//turn scientometrics data table into prefuse Graph of directed network
-			Algorithm extractAlg = extractDirectedNetwork.createAlgorithm(data, parameters, context);
+			Algorithm extractAlg = extractDirectedNetwork.createAlgorithm(data, newParameters, context);
 			Data[] directedNetworkData = extractAlg.execute();
 			//converter prefuse Graph of directed network into nwb graph file of directed network
 			Data convertedNetworkData = converter.convert(directedNetworkData[0], "file:text/nwb");
@@ -62,4 +108,17 @@ public class ExtractCoWordNetworkAlgorithm implements Algorithm {
 	        networkData.getMetadata().put(DataProperty.PARENT, parentData);
 	        return networkData;
 	    }
+	 
+	 
+	 private boolean isAColumnCheckBoxParameter(String[] explodedParameterKey) {
+		 return (explodedParameterKey.length > 1) && (explodedParameterKey[0].equals("column"));
+	 }
+	 
+	 private boolean columnCheckBoxWasSelected(Object parameterValue) 
+	 {
+		//parameter represents whether a certain column is selected or not
+		 boolean columnWasSelected = ((Boolean) parameterValue).booleanValue();
+		 return columnWasSelected;
+	 }
+		 
 }

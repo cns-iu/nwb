@@ -26,45 +26,152 @@ import prefuse.data.Table;
 
 
 
-public class ExtractCoWordNetworkAlgorithmFactory implements AlgorithmFactory,ParameterMutator {
+public class ExtractCoWordNetworkAlgorithmFactory implements AlgorithmFactory, ParameterMutator {
+	protected static final String PREFIX = "column_";
+	
+	protected static final String UNFILTERED_COLUMNS[] =
+	{
+		"abstract", "keyword", "title", "field of application", "chemicals/cas",
+	};
+	/* {
+		"", "City of Publisher", "DOI", "Document Type", "E-mail Address", "Ending Page",
+		"File Type", "ISI Document Delivery Number", "ISSN", "New Article Number",
+		"PA", "Part Number", "Publication Date", "Publication Type", "Publication Year",
+		"Publisher Web Address", "Reprint Address", "Research Addresses", "SC", "Special Issue",
+		"Times Cited", "Unique ID", "Version Number", "Volume"
+	}; */
+	
 	private AlgorithmFactory extractDirectedNetwork;
 	private AlgorithmFactory bibliographicCoupling;
 	private LogService log;
 	private BundleContext bContext;
 	
 	public ObjectClassDefinition mutateParameters(Data[] data, ObjectClassDefinition parameters) {
-		Table t = (Table) data[0].getData();
+		Table dataTable = (Table) data[0].getData();
 
-		ObjectClassDefinition oldDefinition = parameters;
-
-		BasicObjectClassDefinition definition;
-		try {
-			definition = new BasicObjectClassDefinition(oldDefinition.getID(), oldDefinition.getName(), oldDefinition.getDescription(), oldDefinition.getIcon(16));
-		} catch (IOException e) {
-			definition = new BasicObjectClassDefinition(oldDefinition.getID(), oldDefinition.getName(), oldDefinition.getDescription(), null);
+		ObjectClassDefinition oldObjectClassDefinition = parameters;
+		BasicObjectClassDefinition newObjectClassDefinition;
+		
+		try
+		{
+			newObjectClassDefinition = new BasicObjectClassDefinition(oldObjectClassDefinition.getID(),
+				oldObjectClassDefinition.getName(), oldObjectClassDefinition.getDescription(),
+				oldObjectClassDefinition.getIcon(16));
+		}
+		catch (IOException e)
+		{
+			newObjectClassDefinition = new BasicObjectClassDefinition(oldObjectClassDefinition.getID(),
+				oldObjectClassDefinition.getName(), oldObjectClassDefinition.getDescription(), null);
 		}
 
-		String[] columnNames = createKeyArray(t.getSchema());
+		String[] columnNames = createKeyArray(dataTable.getSchema());
 		Arrays.sort(columnNames);
 
-		AttributeDefinition[] definitions = oldDefinition.getAttributeDefinitions(ObjectClassDefinition.ALL);
+		AttributeDefinition[] attributeDefinitions =
+			oldObjectClassDefinition.getAttributeDefinitions(ObjectClassDefinition.ALL);
 
-		for(int ii = 0; ii < definitions.length; ii++) {
-			String id = definitions[ii].getID();
-			if((id.equals("sourceColumn") || id.equals("targetColumn"))){
-				definition.addAttributeDefinition(ObjectClassDefinition.REQUIRED,
-						new BasicAttributeDefinition(id, definitions[ii].getName(), definitions[ii].getDescription(), definitions[ii].getType(), columnNames, columnNames));
+		for(int ii = 0; ii < attributeDefinitions.length; ii++)
+		{
+			String id = attributeDefinitions[ii].getID();
+			
+			if(id.equals("sourceColumn"))
+			{
+				newObjectClassDefinition.addAttributeDefinition(ObjectClassDefinition.REQUIRED,
+					new BasicAttributeDefinition(id, attributeDefinitions[ii].getName(),
+						attributeDefinitions[ii].getDescription(), attributeDefinitions[ii].getType(),
+						columnNames, columnNames));
 			}
-			else if(id.equals("delimiter")){
-				definition.addAttributeDefinition(ObjectClassDefinition.REQUIRED, definitions[ii]);
+			else if(id.equals("delimiter"))
+			{
+				newObjectClassDefinition.addAttributeDefinition(ObjectClassDefinition.REQUIRED,
+					attributeDefinitions[ii]);
 			}
-			else{
-				definition.addAttributeDefinition(ObjectClassDefinition.OPTIONAL, definitions[ii]);
+			else if(id.equals("targetColumn"))
+			{
+			}
+			else
+			{
+				newObjectClassDefinition.addAttributeDefinition(ObjectClassDefinition.OPTIONAL,
+					attributeDefinitions[ii]);
 			}
 		}
 
 		
-		return definition;	
+		// return newObjectClassDefinition;
+		return addBooleanOptions (newObjectClassDefinition, columnNames, PREFIX);
+	}
+
+	private ObjectClassDefinition addBooleanOptions(ObjectClassDefinition oldObjectClassDefinition,
+													String[] columnNames, String prefix)
+	{
+		BasicObjectClassDefinition newObjectClassDefinition;
+		
+		try
+		{
+			newObjectClassDefinition = new BasicObjectClassDefinition(oldObjectClassDefinition.getID(),
+				oldObjectClassDefinition.getName(), oldObjectClassDefinition.getDescription(),
+				oldObjectClassDefinition.getIcon(16));
+		}
+		catch (IOException e)
+		{
+			newObjectClassDefinition = new BasicObjectClassDefinition(oldObjectClassDefinition.getID(),
+				oldObjectClassDefinition.getName(), oldObjectClassDefinition.getDescription(), null);
+		}
+		
+		AttributeDefinition[] attributeDefinitions =
+			oldObjectClassDefinition.getAttributeDefinitions(ObjectClassDefinition.REQUIRED);
+		
+		for(int ii = 0; ii < attributeDefinitions.length; ii++)
+		{
+			newObjectClassDefinition.addAttributeDefinition(ObjectClassDefinition.REQUIRED,
+				attributeDefinitions[ii]);
+		}
+		
+		attributeDefinitions =
+			oldObjectClassDefinition.getAttributeDefinitions(ObjectClassDefinition.OPTIONAL);
+		
+		for(int ii = 0; ii < attributeDefinitions.length; ii++)
+		{
+			newObjectClassDefinition.addAttributeDefinition(ObjectClassDefinition.OPTIONAL,
+				attributeDefinitions[ii]);
+		}
+		
+		attributeDefinitions =
+			oldObjectClassDefinition.getAttributeDefinitions(ObjectClassDefinition.ALL);
+
+		for(int ii = 0; ii < columnNames.length; ii++)
+		{
+			String name = columnNames[ii];
+			
+			// Ugh, there has to be a library for this.
+			final int numFilteredColumns = UNFILTERED_COLUMNS.length;
+			
+			// We're white listing, so we're filtering by default.
+			boolean filtered = true;
+			
+			for (int jj = 0; jj < numFilteredColumns; jj++)
+			{
+				// If the column contains one of our white listed items, let it through.
+				if (name.toLowerCase().indexOf(UNFILTERED_COLUMNS[jj]) != -1)
+				{
+					filtered = false;
+					
+					break;
+				}
+			}
+			
+			// If the column was filtered (determined in the prior loop), continue on with the next
+			// loop iteration.
+			if (filtered)
+				continue;
+			 
+			newObjectClassDefinition.addAttributeDefinition(ObjectClassDefinition.REQUIRED,
+				new BasicAttributeDefinition(prefix + name, name, "Normalize column " + name + "?",
+											 AttributeDefinition.BOOLEAN));
+		}
+
+		
+		return newObjectClassDefinition;
 	}
 
 
@@ -86,7 +193,7 @@ public class ExtractCoWordNetworkAlgorithmFactory implements AlgorithmFactory,Pa
         	bibliographicCoupling = getAlgorithmFactory(filter);
 			
         	DataConversionService converter = (DataConversionService)
-            context.getService(DataConversionService.class.getName());
+            	context.getService(DataConversionService.class.getName());
         	
         	 return new ExtractCoWordNetworkAlgorithm(data, parameters, context,
              		extractDirectedNetwork, converter, bibliographicCoupling);
@@ -99,8 +206,8 @@ public class ExtractCoWordNetworkAlgorithmFactory implements AlgorithmFactory,Pa
     
     private AlgorithmFactory getAlgorithmFactory (String filter) 
     throws InvalidSyntaxException {
-    	ServiceReference[] algFactoryRefs = bContext
-    	.getServiceReferences(AlgorithmFactory.class.getName(), filter);
+    	ServiceReference[] algFactoryRefs =
+    		bContext.getServiceReferences(AlgorithmFactory.class.getName(), filter);
     	
     	if (algFactoryRefs != null && algFactoryRefs.length != 0) {
     		ServiceReference algFactoryRef = algFactoryRefs[0];

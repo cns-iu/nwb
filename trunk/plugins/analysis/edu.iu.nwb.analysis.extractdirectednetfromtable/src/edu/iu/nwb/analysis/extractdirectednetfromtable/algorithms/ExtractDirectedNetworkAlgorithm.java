@@ -1,6 +1,7 @@
 package edu.iu.nwb.analysis.extractdirectednetfromtable.algorithms;
 
 import java.util.Dictionary;
+import java.util.Enumeration;
 import java.util.Properties;
 
 import org.cishell.framework.CIShellContext;
@@ -46,31 +47,39 @@ public class ExtractDirectedNetworkAlgorithm implements Algorithm, ProgressTrack
     public Data[] execute() throws AlgorithmExecutionException{
     	final prefuse.data.Table dataTable = (prefuse.data.Table) data[0].getData();
     	
-    	String split = null;
+    	String delimiter = null;
     	String sourceColumn = null;
-    	String targetColumn = null;
+    	String  targetColumn = null;
     	Object functionFile = null;
     	Properties functions = null;
     	
-    	split = this.parameters.get("delimiter").toString();
+    	delimiter = this.parameters.get("delimiter").toString();
     	sourceColumn = this.parameters.get("sourceColumn").toString();
     	targetColumn = this.parameters.get("targetColumn").toString();
     	functionFile = this.parameters.get("aff");
     	
-    	if(functionFile != null){
-    		functions = PropertyHandler.getProperties(functionFile.toString(),this.logger);
+    	if(functionFile != null)
+    	{
+    		functions = PropertyHandler.getProperties(functionFile.toString(), this.logger);
     	}
     	
-    	try{
-    	GraphContainer gc = GraphContainer.initializeGraph(dataTable, sourceColumn, targetColumn, true,functions, this.logger,this.progressMonitor);
-    	Graph directedNetwork = gc.buildGraph(sourceColumn, targetColumn, split, this.logger);
+    	try
+    	{
+    		GraphContainer gc = GraphContainer.initializeGraph(dataTable, sourceColumn,
+    			targetColumn, true, functions, this.logger, this.progressMonitor);
+    		
+    		Graph directedNetwork =
+    			gc.buildGraph(sourceColumn, targetColumn, delimiter, this.logger);
     	
-    	Data network = ExtractDirectedNetworkAlgorithm.constructData(data[0],(Object)directedNetwork,prefuse.data.Graph.class.toString(),DataProperty.NETWORK_TYPE, 
+    		Data network = ExtractDirectedNetworkAlgorithm.constructData(data[0],
+    			(Object)directedNetwork, prefuse.data.Graph.class.toString(), DataProperty.NETWORK_TYPE, 
     			"Network with directed edges from " + sourceColumn + " to " + targetColumn+ ".");
     	
-    	return new Data[] {network};
-    	}catch(InvalidColumnNameException ice){
-    		throw new AlgorithmExecutionException(ice.getMessage(),ice);
+    		return new Data[] {network};
+    	}
+    	catch(InvalidColumnNameException ice)
+    	{
+    		throw new AlgorithmExecutionException(ice.getMessage(), ice);
     	}
     	
     }
