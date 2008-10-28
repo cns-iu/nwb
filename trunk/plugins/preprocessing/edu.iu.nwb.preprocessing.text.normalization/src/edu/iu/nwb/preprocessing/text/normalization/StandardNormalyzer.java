@@ -76,7 +76,7 @@ public class StandardNormalyzer implements Algorithm {
     }
 
     private String[] getStopWords() {
-    	String filePath = "/edu/iu/nwb/preprocessing/text/normalization/stopwords-2.txt";
+    	String filePath = "/edu/iu/nwb/preprocessing/text/normalization/stopwords.txt";
     	InputStream is = null;
     	BufferedReader br = null;
     	String line;
