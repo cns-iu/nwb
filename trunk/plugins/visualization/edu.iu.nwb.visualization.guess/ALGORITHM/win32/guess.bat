@@ -7,6 +7,8 @@ set GUESS_HOME=%CD%
 echo 
 echo Starting GUESS...
 echo 
+echo The initial layout for your visualization is random.  For a clearer visualization, please run a layout from the Layout menu.  (We recommend GEM.)
+echo 
 echo GUESS log file for this session can be found in %GUESS_HOME%/guesslog.txt
 
 set GUESS_LIB=%GUESS_HOME%\lib
