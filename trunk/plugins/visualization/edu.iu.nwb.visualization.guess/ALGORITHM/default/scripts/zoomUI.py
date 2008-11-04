@@ -6,7 +6,9 @@ from edu.umd.cs.piccolo.event import *
 # "Constants"
 MOUSE_CLICK_DOWN = 501
 MOUSE_CLICK_UP = 500
+
 ZOOM_AMOUNT = 0.25
+
 BUTTON_SPACING = 15
 SPACE_IN_BETWEEN_BUTTONS = 25
 
