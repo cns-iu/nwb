@@ -184,22 +184,29 @@ public class NSFReaderAlgorithm implements Algorithm {
 	}
 	
 	private Data convertInputData(Data inputData) throws AlgorithmExecutionException {
-		 DataConversionService converter = (DataConversionService)
-         context.getService(DataConversionService.class.getName());
-		//this is a bit like a cast. We know the nsf format is also a csv, so we change the format to csv so
-		//the Conversion service knows it is a csv when it tries to convert it to a prefuse.data.Table
-		 
-		//printTable((Table) inputData.getData());
-		 Dictionary metadata = inputData.getMetadata();
-		Data formatChangedData = new BasicData(metadata, cleanNSFCSVFormat((File) inputData.getData()), "file:text/csv");
 		try {
-		Data convertedData = converter.convert(formatChangedData, "prefuse.data.Table");
-		if (! (convertedData.getData() instanceof Table)) {
-			throw new ConversionException("Output of conversion was not a prefuse.data.Table");
-		}
-		return convertedData;
-		} catch (ConversionException e1) {
-			throw new AlgorithmExecutionException("Could not convert format to prefuse.data.Table", e1);
+			DataConversionService converter = (DataConversionService)
+				context.getService(DataConversionService.class.getName());
+			// This is a bit like a cast. We know the nsf format is also a csv, so we change the format to csv so
+			// the Conversion service knows it is a csv when it tries to convert it to a prefuse.data.Table
+		 
+			// PrintTable((Table) inputData.getData());
+			Dictionary metadata = inputData.getMetadata();
+			Data formatChangedData = new BasicData(metadata, cleanNSFCSVFormat((File) inputData.getData()), "file:text/csv");
+			
+			try {
+				Data convertedData = converter.convert(formatChangedData, "prefuse.data.Table");
+
+				if (!(convertedData.getData() instanceof Table)) {
+					throw new ConversionException("Output of conversion was not a prefuse.data.Table");
+				}
+
+				return convertedData;
+			} catch (ConversionException e1) {
+				throw new AlgorithmExecutionException("Could not convert format to prefuse.data.Table", e1);
+			}
+		} catch (Throwable e) {
+			throw new AlgorithmExecutionException("An error occurred while converting NSF data.", e);
 		}
 	}
 	
