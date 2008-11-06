@@ -37,6 +37,29 @@ def isPointInBounds(testPoint, upperLeftBoundingPoint, lowerRightBoundingPoint):
 	       ((testPoint.getX() <= lowerRightBoundingPoint.getX()) and \
 		(testPoint.getY() <= lowerRightBoundingPoint.getY()))
 
+# A toggleable-image node class.
+class TogglingPImage(PImage):
+	baseImageFileName = None
+	imageExtension = None
+	toggleState = 0
+	
+	def __init__(self, baseImageFileName, imageExtension):
+		# Default to off.
+		self.baseImageFileName = baseImageFileName
+		self.imageExtension = imageExtension
+		
+		PImage.__init__(self, baseImageFileName + imageExtension)
+
+	def toggle(self):
+		if (self.toggleState):
+			# We're turning off.
+			self.toggleState = 0
+			self.setImage(self.baseImageFileName + self.imageExtension)
+		else:
+			# We're turning on.
+			self.toggleState = 1
+			self.setImage(self.baseImageFileName + "On" + self.imageExtension)
+
 # Generic tool button event listener class.
 class ToolButtonInputEventListener(PInputEventListener):
 	# nodeButton is a reference up to the node button that we're listening for.
@@ -78,82 +101,85 @@ class ToolButtonInputEventListener(PInputEventListener):
 				if (isPointInBounds(mouseEventPosition, upperLeftBoundingPoint, lowerRightBoundingPoint)):
 					# This line switches the handler for events in the display.
 					VisFactory.getFactory().getDisplay().switchHandler(self.toolButtonType - 1)
-					# Reset the previous tool in use. (TODO: change image, but for now transparency will do.)
-					currentToolNodeButton.setTransparency(1.0)
+					# Reset the previous tool in use.
+					currentToolNodeButton.toggle()
 					# Set the current tool in use to this.
 					currentToolNodeButton = self.nodeButton
-					# Set the transparency for the current tool in use to reflect that it's not a valid button.
-					# (TODO: change image.)
-					currentToolNodeButton.setTransparency(0.5)
+					# Toggle the new current tool node button.
+					currentToolNodeButton.toggle()
 				
 				return
 		elif (type == MOUSE_OVER):
 			# Scale up a little bit to provide some visual feedback that the mouse is over
 			self.nodeButton.setScale(MOUSE_OVER_SCALE)
 
-		return
-
 # Get rid of the status bar (with the broken buttons).
-# First, get the main UI window.
-mainUIWindow = Guess.getMainUIWindow()
-# Get the content pane of the main UI window.
-mainUIWindowContentPane = mainUIWindow.getContentPane()
-# Get the actual components of the content pain.
-mainUIWindowContentPaneComponents = mainUIWindowContentPane.getComponents()
-
-# Reflect in the components to find the status bar so we can remove it.
-for i in range(0, mainUIWindowContentPaneComponents.size()):
-	# The current component.
-	component = mainUIWindowContentPaneComponents[i]
+def removeStatusBar():
+	# First, get the main UI window.
+	mainUIWindow = Guess.getMainUIWindow()
+	# Get the content pane of the main UI window.
+	mainUIWindowContentPane = mainUIWindow.getContentPane()
+	# Get the actual components of the content pain.
+	mainUIWindowContentPaneComponents = mainUIWindowContentPane.getComponents()
 	
-	if (component.getClass() == StatusBar):
-		# Remove it from the content pane.
-		mainUIWindowContentPane.remove(component)
-		# Nullify our local array.
-		mainUIWindowContentPaneComponents[i] = None
-		# Repaint the content pane.
-		mainUIWindowContentPane.repaint()
-		
-		# Break out of the loop (since there should only be one status bar).
-		break
+	# Reflect in the components to find the status bar so we can remove it.
+	for component in mainUIWindowContentPaneComponents:
+		if (isinstance(component, StatusBar)):
+			# Remove it from the content pane.
+			mainUIWindowContentPane.remove(component)
+			# Repaint the content pane.
+			mainUIWindowContentPane.repaint()
 			
-# Get the camera.
-camera = vf.getDisplay().getCamera()
+			# Break out of the loop (since there should only be one status bar).
+			break
+
+# Create and position a tool node button and its corresponding event listener.
+# Return the newly created node button.
+def createNodeButton(buttonType, baseImageFileName, fileExtension, xTranslation, yTranslation):
+	# Create the node button.
+	nodeButton = TogglingPImage(baseImageFileName, fileExtension)
+	# Create its event listener.
+	nodeButtonEventListener = ToolButtonInputEventListener(nodeButton, buttonType)
+	# Add the event listener to the node button.
+	nodeButton.addInputEventListener(nodeButtonEventListener)
+	# Position the node button.
+	nodeButton.translate(xTranslation, yTranslation)
+	
+	# Return the node button.
+	return nodeButton
 
 # Create the tool node buttons.
-browseToolNodeButton = PImage("images/browseTool.jpg")	# TODO: Actually default the image to the in-use version.
-manipulateNodesToolNodeButton = PImage("images/manipulateNodesTool.jpg")
-manipulateEdgesToolNodeButton = PImage("images/manipulateEdgesTool.jpg")
-manipulateHullsToolNodeButton = PImage("images/manipulateHullsTool.jpg")
-drawToolNodeButton = PImage("images/drawTool.jpg")
-# This is just a reference to the node button that corresponds to the tool currently in use.
-currentToolNodeButton = browseToolNodeButton
-currentToolNodeButton.setTransparency(0.5)
+# Return the default node button.
+def createNodeButtons():
+	# Get the camera.
+	camera = vf.getDisplay().getCamera()
+	
+	# We need to store the first node so we can use its height for positioning the future node buttons.
+	# The first node button will also be the default node button, so it needs to be returned.
+	defaultNodeButton = createNodeButton(BUTTON_TYPE_BROWSE, "images/browseTool", ".jpg", \
+		BUTTON_SPACING, TOOL_BUTTON_TOP)
+		
+	# Add the default node button to the camera, then create and add the rest of them...
+	camera.addChild(defaultNodeButton)
+	
+	camera.addChild(createNodeButton(BUTTON_TYPE_MANIPULATE_NODES, "images/manipulateNodesTool", ".jpg", \
+		BUTTON_SPACING, TOOL_BUTTON_TOP + SPACE_IN_BETWEEN_BUTTONS + defaultNodeButton.getHeight()))
+	
+	camera.addChild(createNodeButton(BUTTON_TYPE_MANIPULATE_EDGES, "images/manipulateEdgesTool", ".jpg", \
+		BUTTON_SPACING, TOOL_BUTTON_TOP + (SPACE_IN_BETWEEN_BUTTONS + defaultNodeButton.getHeight()) * 2))
+	
+	camera.addChild(createNodeButton(BUTTON_TYPE_MANIPULATE_HULLS, "images/manipulateHullsTool", ".jpg", \
+		BUTTON_SPACING, TOOL_BUTTON_TOP + (SPACE_IN_BETWEEN_BUTTONS + defaultNodeButton.getHeight()) * 3))
+	
+	camera.addChild(createNodeButton(BUTTON_TYPE_DRAW, "images/drawTool", ".jpg", BUTTON_SPACING, \
+		TOOL_BUTTON_TOP + (SPACE_IN_BETWEEN_BUTTONS + defaultNodeButton.getHeight()) * 4))
+	
+	return defaultNodeButton
 
-# Position the node buttons.
-browseToolNodeButton.translate(BUTTON_SPACING, TOOL_BUTTON_TOP)
-manipulateNodesToolNodeButton.translate(BUTTON_SPACING, TOOL_BUTTON_TOP + SPACE_IN_BETWEEN_BUTTONS + browseToolNodeButton.getHeight())
-manipulateEdgesToolNodeButton.translate(BUTTON_SPACING, TOOL_BUTTON_TOP + (SPACE_IN_BETWEEN_BUTTONS + manipulateNodesToolNodeButton.getHeight()) * 2)
-manipulateHullsToolNodeButton.translate(BUTTON_SPACING, TOOL_BUTTON_TOP + (SPACE_IN_BETWEEN_BUTTONS + manipulateEdgesToolNodeButton.getHeight()) * 3)
-drawToolNodeButton.translate(BUTTON_SPACING, TOOL_BUTTON_TOP + (SPACE_IN_BETWEEN_BUTTONS + manipulateHullsToolNodeButton.getHeight()) * 4)
+# Remove the status bar.
+removeStatusBar()
 
-# Add the nodes to the camera.
-camera.addChild(browseToolNodeButton)
-camera.addChild(manipulateNodesToolNodeButton)
-camera.addChild(manipulateEdgesToolNodeButton)
-camera.addChild(manipulateHullsToolNodeButton)
-camera.addChild(drawToolNodeButton)
-
-# Create the event listeners.
-browseToolNodeButtonEventListener = ToolButtonInputEventListener(browseToolNodeButton, BUTTON_TYPE_BROWSE)
-manipulateNodesToolNodeButtonEventListener = ToolButtonInputEventListener(manipulateNodesToolNodeButton, BUTTON_TYPE_MANIPULATE_NODES)
-manipulateEdgesToolNodeButtonEventListener = ToolButtonInputEventListener(manipulateEdgesToolNodeButton, BUTTON_TYPE_MANIPULATE_EDGES)
-manipulateHullsToolNodeButtonEventListener = ToolButtonInputEventListener(manipulateHullsToolNodeButton, BUTTON_TYPE_MANIPULATE_HULLS)
-drawToolNodeButtonEventListener = ToolButtonInputEventListener(drawToolNodeButton, BUTTON_TYPE_DRAW)
-
-# Finally, add the event listeners.
-browseToolNodeButton.addInputEventListener(browseToolNodeButtonEventListener)
-manipulateNodesToolNodeButton.addInputEventListener(manipulateNodesToolNodeButtonEventListener)
-manipulateEdgesToolNodeButton.addInputEventListener(manipulateEdgesToolNodeButtonEventListener)
-manipulateHullsToolNodeButton.addInputEventListener(manipulateHullsToolNodeButtonEventListener)
-drawToolNodeButton.addInputEventListener(drawToolNodeButtonEventListener)
+# Create the node buttons and store the reference to the one that corresponds to the default tool.
+currentToolNodeButton = createNodeButtons()
+# Toggle it on by default.
+currentToolNodeButton.toggle()
