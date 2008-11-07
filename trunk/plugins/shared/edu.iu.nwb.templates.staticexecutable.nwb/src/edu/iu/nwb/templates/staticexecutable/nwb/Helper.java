@@ -38,8 +38,9 @@ public class Helper implements Algorithm {
 
 	public Data[] execute() throws AlgorithmExecutionException {
 		File nwbFile = (File) this.data[0].getData();
-		GetNWBFileMetadata handler = new GetNWBFileMetadata();
-
+		GetMetadataAndCounts handler = new GetMetadataAndCounts();
+		String weightAttribute = (String) this.parameters.get("weightAttribute");
+		
 		try {
 			NWBFileParser parser = new NWBFileParser(nwbFile);
 			parser.parse(handler);
@@ -58,11 +59,18 @@ public class Helper implements Algorithm {
 					"That combination is not allowed by this algorithm. " +
 			"Consider transforming the network into one that is all directed or all undirected, perhaps with symmetrize.");
 		}
+		
+		if(undirectedEdgeCount == 0 && directedEdgeCount == 0) {
+			throw new AlgorithmExecutionException("This network has no edges. " +
+					"This algorithm only works on networks with edges.");
+		}
+		
 		try {
 			File simpleFormat = File.createTempFile("nwb-", ".simple");
 			FileOutputStream simpleOutputStream = new FileOutputStream(simpleFormat);
-			NWBFileParserHandler simplifier = new NWBSimplifier(simpleOutputStream, nodeCount, undirectedEdgeCount + directedEdgeCount); //one of the edge counts is guaranteed to be zero
+			NWBFileParserHandler simplifier = new NWBSimplifier(simpleOutputStream, nodeCount, undirectedEdgeCount + directedEdgeCount, weightAttribute); //one of the edge counts is guaranteed to be zero
 			new NWBFileParser(nwbFile).parse(simplifier);
+			simpleOutputStream.flush();
 			simpleOutputStream.close();
 
 			Data simpleData = new BasicData(simpleFormat, null);
@@ -72,16 +80,17 @@ public class Helper implements Algorithm {
 			List forNodes = new ArrayList();
 			List forEdges = new ArrayList();
 			Data[] output = realAlgorithm.execute(); //let any exceptions bubble up, they're already real exceptions
+			System.err.println("SEA Length is: " + output.length);
 			Data firstAttributeData = null;
 			for(int ii = 0; ii < output.length; ii++) {
 				Data outputData = output[ii];
-				String label = (String) outputData.getMetadata().get(DataProperty.LABEL);
-				if(label.endsWith(".nodes")) {
+				String fileName = ((File) outputData.getData()).getName();
+				if(fileName.endsWith(".nodes")) {
 					forNodes.add(outputData.getData()); //always a file object
 					if(firstAttributeData == null) {
 						firstAttributeData = outputData;
 					}
-				} else if(label.endsWith(".edges")) {
+				} else if(fileName.endsWith(".edges")) {
 					forEdges.add(outputData.getData()); //ditto
 					if(firstAttributeData == null) {
 						firstAttributeData = outputData;
@@ -90,22 +99,24 @@ public class Helper implements Algorithm {
 					transformedOutput.add(outputData);
 				}
 			}
-			File realFormat = File.createTempFile("nwb-", ".nwb");
-			FileOutputStream realOutputStream = new FileOutputStream(realFormat);
-			try {
-				NWBFileParserHandler integrator = new NWBIntegrator(realOutputStream, forNodes, forEdges);
-				new NWBFileParser(nwbFile).parse(integrator);
-			} catch(IllegalArgumentException e) {
-				//quite awful, but the handler methods can't have throws added
-				throw new AlgorithmExecutionException(e.getMessage(), e.getCause());
+
+			if(firstAttributeData != null) {
+				File realFormat = File.createTempFile("nwb-", ".nwb");
+				FileOutputStream realOutputStream = new FileOutputStream(realFormat);
+				try {
+					NWBFileParserHandler integrator = new NWBIntegrator(realOutputStream, forNodes, forEdges);
+					new NWBFileParser(nwbFile).parse(integrator);
+				} catch(IllegalArgumentException e) {
+					//quite awful, but the handler methods can't have throws added
+					throw new AlgorithmExecutionException(e.getMessage(), e.getCause());
+				}
+				realOutputStream.close();
+				//make data of realFormat, stick at beginning of transformedOutput, turn into array, and give it back
+
+				Data nwbOutput = new BasicData(firstAttributeData.getMetadata(), realFormat, "text/nwb");
+
+				transformedOutput.add(0, nwbOutput);
 			}
-			realOutputStream.close();
-			//make data of realFormat, stick at beginning of transformedOutput, turn into array, and give it back
-			
-			Data nwbOutput = new BasicData(firstAttributeData.getMetadata(), realFormat, "text/nwb");
-			
-			transformedOutput.add(0, nwbOutput);
-			
 			return (Data[]) transformedOutput.toArray(new Data[]{});
 
 		} catch(IOException e) {

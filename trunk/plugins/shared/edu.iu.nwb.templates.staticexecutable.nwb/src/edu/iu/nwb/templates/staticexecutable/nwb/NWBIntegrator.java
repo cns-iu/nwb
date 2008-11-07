@@ -23,6 +23,7 @@ public class NWBIntegrator implements NWBFileParserHandler {
 		this.output = new NWBFileWriter(outputStream);
 		
 		this.nodeAttributeAdder = new AttributeAdder(forNodes, ".nodes");
+		System.err.println("New attributes for nodes: " + forNodes.size());
 		this.edgeAttributeAdder = new AttributeAdder(forEdges, ".edges");
 		
 		

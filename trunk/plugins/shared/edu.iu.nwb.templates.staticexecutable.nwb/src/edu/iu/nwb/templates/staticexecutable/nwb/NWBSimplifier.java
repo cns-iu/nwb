@@ -12,10 +12,12 @@ public class NWBSimplifier extends NWBFileParserAdapter {
 	private int nodeCount = 0;
 	private PrintWriter output;
 	private Map nodeIds = new HashMap();
+	private String weightAttribute;
 	
-	public NWBSimplifier(OutputStream outputStream, int numberOfNodes, int numberOfEdges) {
-		this.output = new PrintWriter(outputStream);
+	public NWBSimplifier(OutputStream outputStream, int numberOfNodes, int numberOfEdges, String weightAttribute) {
+		this.output = new PrintWriter(outputStream, true);
 		this.writeHeader(this.output, numberOfNodes, numberOfEdges);
+		this.weightAttribute = weightAttribute;
 	}
 	
 	public void addNode(int id, String label, Map attributes) {
@@ -24,27 +26,30 @@ public class NWBSimplifier extends NWBFileParserAdapter {
 	}
 	
 	private void writeHeader(PrintWriter output, int numberOfNodes, int numberOfEdges) {
-		output.println(numberOfNodes);
-		output.println(numberOfEdges);
+		this.output.println(numberOfNodes);
+		this.output.println(numberOfEdges);
 	}
 	
-	private void writeEdge(PrintWriter output, int source, int target) {
-		output.print(source);
-		output.print(" ");
-		output.println(target);
+	private void writeEdge(PrintWriter output, int source, int target, double value) {
+		this.output.print(source);
+		this.output.print(" ");
+		this.output.print(target);
+		this.output.print(" ");
+		this.output.println(value);
 	}
 	
-	private void addEdge(int source, int target) {
+	private void addEdge(int source, int target, double value) {
 		int fakeSource = ((Integer) this.nodeIds.get(new Integer(source))).intValue();
 		int fakeTarget = ((Integer) this.nodeIds.get(new Integer(target))).intValue();
-		this.writeEdge(output, fakeSource, fakeTarget);
+		this.writeEdge(output, fakeSource, fakeTarget, value);
 	}
 	
 	public void addDirectedEdge(int sourceNode, int targetNode, Map attributes) {
-		addEdge(sourceNode, targetNode);
+		double weight = ((Number) attributes.get(weightAttribute)).doubleValue();
+		addEdge(sourceNode, targetNode, weight);
 	}
 	
 	public void addUndirectedEdge(int node1, int node2, Map attributes) {
-		addEdge(node1, node2);
+		addDirectedEdge(node1, node2, attributes);
 	}
 }

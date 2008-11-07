@@ -37,7 +37,7 @@ public class AttributeAdder {
 		for(int ii = 0; ii < this.attributeExtractors.length; ii++) {
 			updatedAttributes.put(this.attributeNames[ii], this.attributeExtractors[ii].nextValue());
 		}
-		return attributes;
+		return updatedAttributes;
 	}
 
 	public LinkedHashMap updateSchema(LinkedHashMap schema) {
