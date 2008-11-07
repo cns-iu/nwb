@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <component name="${component.id}" immediate="false">
-	<implementation class="edu.iu.nwb.templates.staticexecutable.nwb.Helper"/>
+	<implementation class="edu.iu.nwb.templates.staticexecutable.nwb.HelperFactory"/>
 	<properties entry="${service.properties}"/>
 	<property name="Algorithm-Directory" value="${alg.dir}"/>
 	<reference name="LOG" interface="org.osgi.service.log.LogService"/>
