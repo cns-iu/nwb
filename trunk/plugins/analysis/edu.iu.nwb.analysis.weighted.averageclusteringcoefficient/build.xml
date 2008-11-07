@@ -45,8 +45,8 @@
 
 	<target name="tasks.init" description="Initialize TaskDefinitions">
 		<taskdef name="createManifest" 
-		 classname="org.cishell.templates.staticexecutable.StaticExecutableIntegrationTask"
-		 classpath="${lib.dir}/cishell_templates.jar"/>
+		 classname="org.cishell.templates.staticexecutable.nwb.IntegrationTask"
+		 classpath="${lib.dir}/nwb_templates.jar"/>
 	</target>
 
 	<target name="clean" description="Clean build directory">
