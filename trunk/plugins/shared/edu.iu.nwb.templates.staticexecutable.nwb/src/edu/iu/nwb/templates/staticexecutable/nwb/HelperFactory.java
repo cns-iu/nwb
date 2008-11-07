@@ -105,7 +105,9 @@ public class HelperFactory implements AlgorithmFactory, DataValidator, Parameter
 		
 		
 		for(int ii = 0; ii < definitions.length; ii++) {
-			definition.addAttributeDefinition(ObjectClassDefinition.REQUIRED, definitions[ii]);
+			if(!"DROPALWAYS".equals(definitions[ii].getName())) {
+				definition.addAttributeDefinition(ObjectClassDefinition.REQUIRED, definitions[ii]);
+			}
 		}
 
 		return definition;
