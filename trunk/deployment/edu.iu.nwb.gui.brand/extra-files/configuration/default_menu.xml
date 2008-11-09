@@ -84,6 +84,15 @@
 		<menu pid="edu.iu.nwb.analysis.kcore.Extract"/>
         <menu pid="edu.iu.nwb.analysis.kcore.Annotate"/>
 	</menu>
+	<menu name = "Weighted &amp;&amp; Undirected" type="group">
+		<menu pid="edu.iu.nwb.analysis.weighted.averageclusteringcoefficient"/>
+		<menu pid="edu.iu.nwb.analysis.weighted.averagenearestneighbor"/>
+		<menu pid="edu.iu.nwb.analysis.weighted.degreeaveragestrength"/>
+		<menu pid="edu.iu.nwb.analysis.weighted.degreestrength"/>
+		<menu pid="edu.iu.nwb.analysis.weighted.endpointdegree"/>
+		<menu pid="edu.iu.nwb.analysis.weighted.strengthdistribution"/>
+		<menu pid="edu.iu.nwb.analysis.weighted.weightdistribution"/>
+	</menu>
 	<menu name = "Unweighted &amp;&amp; Directed" type="group">
 		<menu pid="edu.iu.nwb.analysis.indegreesequence"/>
         <menu pid="edu.iu.nwb.analysis.outdegreesequence"/>
