@@ -712,18 +712,23 @@
   	      <param name="project.name" value="/analysis/edu.iu.nwb.analysis.weighted.averageclusteringcoefficient"/>
   	      <param name="url" value="http://nwb.slis.indiana.edu/svn/nwb/trunk/plugins"/>
   	</antcall>
+  	<ant dir="${buildDirectory}/nonpde_plugins/edu.iu.nwb.analysis.weighted.averageclusteringcoefficient"/>
+  	
   	<antcall target="svn.co">
   	  	      <param name="target" value="nonpde_plugins"/>
   	  	      <param name="element.id" value="edu.iu.nwb.analysis.weighted.averagenearestneighbor"/>
   	  	      <param name="project.name" value="/analysis/edu.iu.nwb.analysis.weighted.averagenearestneighbor"/>
   	  	      <param name="url" value="http://nwb.slis.indiana.edu/svn/nwb/trunk/plugins"/>
   	</antcall>
+  	<ant dir="${buildDirectory}/nonpde_plugins/edu.iu.nwb.analysis.weighted.averagenearestneighbor"/>
+  	
     <antcall target="svn.co">
   		  	  <param name="target" value="nonpde_plugins"/>
   		  	  <param name="element.id" value="edu.iu.nwb.analysis.weighted.degreeaveragestrength"/>
   		  	  <param name="project.name" value="/analysis/edu.iu.nwb.analysis.weighted.degreeaveragestrength"/>
   		  	  <param name="url" value="http://nwb.slis.indiana.edu/svn/nwb/trunk/plugins"/>
     </antcall>
+  	<ant dir="${buildDirectory}/nonpde_plugins/edu.iu.nwb.analysis.weighted.degreeaveragestrength"/>
 
     <antcall target="svn.co">
   		  	  <param name="target" value="nonpde_plugins"/>
@@ -731,6 +736,7 @@
   		  	  <param name="project.name" value="/analysis/edu.iu.nwb.analysis.weighted.degreestrength"/>
   		  	  <param name="url" value="http://nwb.slis.indiana.edu/svn/nwb/trunk/plugins"/>
     </antcall>
+  	<ant dir="${buildDirectory}/nonpde_plugins/edu.iu.nwb.analysis.weighted.degreestrength"/>
   	
 
     <antcall target="svn.co">
@@ -739,6 +745,7 @@
   		  	  <param name="project.name" value="/analysis/edu.iu.nwb.analysis.weighted.endpointdegree"/>
   		  	  <param name="url" value="http://nwb.slis.indiana.edu/svn/nwb/trunk/plugins"/>
     </antcall>
+  	<ant dir="${buildDirectory}/nonpde_plugins/edu.iu.nwb.analysis.weighted.endpointdegree"/>
   	
 
     <antcall target="svn.co">
@@ -747,6 +754,7 @@
   		  	  <param name="project.name" value="/analysis/edu.iu.nwb.analysis.weighted.strengthdistribution"/>
   		  	  <param name="url" value="http://nwb.slis.indiana.edu/svn/nwb/trunk/plugins"/>
     </antcall>
+  	<ant dir="${buildDirectory}/nonpde_plugins/edu.iu.nwb.analysis.weighted.strengthdistribution"/>
   	
 
     <antcall target="svn.co">
@@ -755,6 +763,7 @@
   		  	  <param name="project.name" value="/analysis/edu.iu.nwb.analysis.weighted.weightdistribution"/>
   		  	  <param name="url" value="http://nwb.slis.indiana.edu/svn/nwb/trunk/plugins"/>
     </antcall>
+  	<ant dir="${buildDirectory}/nonpde_plugins/edu.iu.nwb.analysis.weighted.weightdistribution"/>
 
     <antcall target="svn.co">
   		  	  <param name="target" value="nonpde_plugins"/>
@@ -762,6 +771,7 @@
   		  	  <param name="project.name" value="/analysis/edu.iu.nwb.analysis.weighted.averagenearestneighbor"/>
   		  	  <param name="url" value="http://nwb.slis.indiana.edu/svn/nwb/trunk/plugins"/>
     </antcall>
+  	<ant dir="${buildDirectory}/nonpde_plugins/edu.iu.nwb.analysis.weighted.averagenearestneighbor"/>
   	
     <antcall target="svn.co">
       <param name="target" value="nonpde_plugins"/>
