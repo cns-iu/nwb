@@ -225,6 +225,7 @@ public class NWBToGraphMLbyStax implements Algorithm {
 	private void printGraph (XMLStreamWriter xtw, ValidateNWBFile validator,
 			BufferedReader reader) throws XMLStreamException, IOException{
 
+		
 		//read from nwb file and write to the graphml file
 		boolean inNodesSection = false;
 		boolean inDirectededgesSection = false;
