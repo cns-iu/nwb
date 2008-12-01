@@ -1,15 +1,15 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <metatype:MetaData xmlns:metatype="http://www.osgi.org/xmlns/metatype/v1.0.0">
-	<OCD name="Endpoint Degree" id="edu.iu.nwb.analysis.weighted.endpointdegree.gui"
-		 description="Weighted Average Endpoint Degree">
-		<AD name="Number of linear bins" id="NumBins" 
-			type="Integer" default="10" min="8"
-                        description="Number of bins for linear binning, must be at least 8"/>
-        <AD name="Number of log bins" id="NumBinsLog" 
-			type="Integer" default="10" min="8"
-                        description="Number of bins for log binning, must be at least 8"/>
+	<OCD name="Randomize Weights" id="edu.iu.nwb.analysis.weighted.randomweight.gui"
+		 description="Randomize Weights While Preserving Network Structure">
+		<AD name="Factor of Shuffling" id="Shuffling" 
+			type="Double" default="1" min="0" max="1"
+                        description="Factor of Shuffling, between 0 and 1"/>
+        <AD name="Seed of random number generator" id="Seed" 
+			type="Integer" default="1" min="1"
+                        description="Seed of the random number generation. Must be at least 1."/>
 	</OCD>
-	<Designate pid="edu.iu.nwb.analysis.weighted.endpointdegree">
-		<Object ocdref="edu.iu.nwb.analysis.weighted.endpointdegree.gui" />
+	<Designate pid="edu.iu.nwb.analysis.weighted.randomweight">
+		<Object ocdref="edu.iu.nwb.analysis.weighted.randomweight.gui" />
 	</Designate>
 </metatype:MetaData>
