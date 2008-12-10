@@ -1,7 +1,6 @@
 package edu.iu.nwb.analysis.extractdirectednetfromtable.algorithms;
 
 import java.util.Dictionary;
-import java.util.Enumeration;
 import java.util.Properties;
 
 import org.cishell.framework.CIShellContext;
@@ -29,7 +28,6 @@ public class ExtractDirectedNetworkAlgorithm implements Algorithm, ProgressTrack
     
     
     public ProgressMonitor getProgressMonitor() {
-		// TODO Auto-generated method stub
 		return this.progressMonitor;
 	}
 
@@ -84,11 +82,11 @@ public class ExtractDirectedNetworkAlgorithm implements Algorithm, ProgressTrack
     	
     }
     
-    private static Data constructData(Data d, Object obj, String className, String type, String label){
-    	Data outputData = new BasicData(obj,className);
+    private static Data constructData(Data parentData, Object resultData, String className, String type, String label){
+    	Data outputData = new BasicData(resultData,className);
 		Dictionary dataAttributes = outputData.getMetadata();
 		dataAttributes.put(DataProperty.MODIFIED, new Boolean(true));
-		dataAttributes.put(DataProperty.PARENT, d);
+		dataAttributes.put(DataProperty.PARENT, parentData);
 		dataAttributes.put(DataProperty.TYPE, type);
 		dataAttributes.put(DataProperty.LABEL,label);
 
