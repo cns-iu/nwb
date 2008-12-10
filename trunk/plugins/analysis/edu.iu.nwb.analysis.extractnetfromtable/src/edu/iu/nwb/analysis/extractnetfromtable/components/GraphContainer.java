@@ -42,27 +42,29 @@ public class GraphContainer {
 	public Graph buildGraph(String sourceColumnName, String targetColumnName, String splitString, LogService log){
 		String[] targetColumnNames = targetColumnName.split("\\,");
 		
-		if(this.graph.isDirected())
+		if(this.graph.isDirected()) {
 			return buildDirectedGraph(sourceColumnName, targetColumnNames, splitString, log);
-		// else
+		} else {
 		return buildUndirectedGraph(sourceColumnName, targetColumnNames, splitString, log);
+		}
 	}
 
 	private Graph buildUndirectedGraph(String sourceColumnName, String[] targetColumnNames,
 									   String delimiter, LogService log) {
 		boolean dupValues = false;
 		final HashMap dupValuesErrorMessages = new HashMap();
-		int rows = this.table.getRowCount();
-		int count = 0;
+		int numTotalRows = this.table.getRowCount();
+		int numRowsProcessedSoFar = 0;
 
 		if(this.progMonitor != null) {
-			this.progMonitor.start(ProgressMonitor.WORK_TRACKABLE, rows);
+			this.progMonitor.start(ProgressMonitor.WORK_TRACKABLE, numTotalRows);
 		}
 
-		for (Iterator it = this.table.rows(); it.hasNext();){
+		for (Iterator rowIt = this.table.rows(); rowIt.hasNext();){
+			int row = ((Integer)rowIt.next()).intValue();
+			
 			Node node1 = null;
 			Node node2 = null;
-			int row = ((Integer)it.next()).intValue();
 			
 			final String targetString =
 				buildRowTargetStringFromColumnNames(row, targetColumnNames, this.table, delimiter);
@@ -75,7 +77,7 @@ public class GraphContainer {
 
 				for (int i = splitTargetStringArray.length - 1; i >= 0; i--) {
 					if(seenObject.add(splitTargetStringArray[i])) { // No duplicate nodes.
-						node1 = NodeContainer.mutateNode(splitTargetStringArray[i], this.graph,
+						node1 = NodeUtilities.mutateNode(splitTargetStringArray[i], this.graph,
 							this.table, row, this.nodeMap, AggregateFunctionMappings.SOURCEANDTARGET);
 					}
 					
@@ -84,7 +86,7 @@ public class GraphContainer {
 					for (int j = 0; j < i; j++) {
 						if(!splitTargetStringArray[j].equals(splitTargetStringArray[i])) {
 							if(seenObject.add(splitTargetStringArray[j])) { //No duplicate nodes.
-								node2 = NodeContainer.mutateNode(splitTargetStringArray[j],
+								node2 = NodeUtilities.mutateNode(splitTargetStringArray[j],
 									this.graph, this.table, row, this.nodeMap,
 									AggregateFunctionMappings.SOURCEANDTARGET);
 
@@ -110,9 +112,9 @@ public class GraphContainer {
 				String title = "unknown";
 				//ExtractNetworkFromTable.printNoValueToExtractError(title, columnName, this.log);
 			}
-			count = count+1;
+			numRowsProcessedSoFar = numRowsProcessedSoFar+1;
 			if(this.progMonitor != null)
-				this.progMonitor.worked(count);
+				this.progMonitor.worked(numRowsProcessedSoFar);
 
 		}
 		for(Iterator dupIter = dupValuesErrorMessages.keySet().iterator(); dupIter.hasNext();){
@@ -129,15 +131,15 @@ public class GraphContainer {
 		Node node1;
 		Node node2;
 
-		int rows = this.table.getRowCount();
-		int count = 0;
+		int numTotalRows = this.table.getRowCount();
+		int numRowsProcessedSoFar = 0;
 
 		if(this.progMonitor != null){
-			this.progMonitor.start(ProgressMonitor.WORK_TRACKABLE, rows);
+			this.progMonitor.start(ProgressMonitor.WORK_TRACKABLE, numTotalRows);
 		}
 			
-		for (Iterator it = this.table.rows(); it.hasNext();) {
-			int row = ((Integer)it.next()).intValue();
+		for (Iterator rowIt = this.table.rows(); rowIt.hasNext();) {
+			int row = ((Integer)rowIt.next()).intValue();
 			final String sourceString = (String) sourceColumn.get(row);
 			
 			final String targetString =
@@ -152,14 +154,14 @@ public class GraphContainer {
 
 				for (int i = 0; i < sources.length; i++) {
 					if(seenSource.add(sources[i])) { 
-						node1 = NodeContainer.mutateNode(sources[i], this.graph, this.table, row,
+						node1 = NodeUtilities.mutateNode(sources[i], this.graph, this.table, row,
 							this.nodeMap, AggregateFunctionMappings.SOURCE);
 							
 						seenTarget = new HashSet();
 
 						for (int j = 0; j < targets.length; j++) {
 							if(seenTarget.add(targets[j])) {
-								node2 = NodeContainer.mutateNode(targets[j], this.graph,
+								node2 = NodeUtilities.mutateNode(targets[j], this.graph,
 									this.table, row, this.nodeMap, AggregateFunctionMappings.TARGET);
 
 								EdgeContainer.mutateEdge(node1,node2,this.graph,this.table,row,this.edgeMap);
@@ -174,10 +176,10 @@ public class GraphContainer {
 				// ExtractNetworkFromTable.printNoValueToExtractError(title, sourceColumnName, log);
 			}
 
-			count = count + 1;
+			numRowsProcessedSoFar = numRowsProcessedSoFar + 1;
 
 			if(this.progMonitor != null)
-				this.progMonitor.worked(count);
+				this.progMonitor.worked(numRowsProcessedSoFar);
 		}
 				
 		for(Iterator dupIter = dupValuesErrorMessages.keySet().iterator(); dupIter.hasNext();){

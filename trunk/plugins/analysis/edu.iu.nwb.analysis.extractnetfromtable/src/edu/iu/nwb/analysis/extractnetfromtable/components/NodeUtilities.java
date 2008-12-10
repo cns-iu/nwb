@@ -6,7 +6,7 @@ import prefuse.data.Table;
 import prefuse.data.Tuple;
 
 
-public class NodeContainer {
+public class NodeUtilities {
 	protected static Node createNode(String label, prefuse.data.Graph graph, prefuse.data.Table table, int rowNumber, 
 			AggregateFunctionMappings nodeFunctionMappings,int nodeType){
 		int nodeNumber = graph.addNodeRow();
