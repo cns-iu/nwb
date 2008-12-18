@@ -61,6 +61,8 @@
 	<menu type="break"/>
 	<menu pid="edu.iu.iv.modeling.tarl.TarlAlgorithm"/>
 	<menu pid="edu.iu.nwb.modeling.discretenetworkdynamics.DNDAlgorithm"/>
+	<menu type="break"/>
+	<menu pid="edu.iu.nwb.modeling.weighted.evolvingnetwork"/>
     </top_menu>
     
     <top_menu name="Analysis">
