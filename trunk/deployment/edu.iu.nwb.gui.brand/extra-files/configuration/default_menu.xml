@@ -94,6 +94,7 @@
 		<menu pid="edu.iu.nwb.analysis.weighted.endpointdegree"/>
 		<menu pid="edu.iu.nwb.analysis.weighted.strengthdistribution"/>
 		<menu pid="edu.iu.nwb.analysis.weighted.weightdistribution"/>
+		<menu pid="edu.iu.nwb.analysis.weighted.randomweight"/>
 	</menu>
 	<menu name = "Unweighted &amp;&amp; Directed" type="group">
 		<menu pid="edu.iu.nwb.analysis.indegreesequence"/>
