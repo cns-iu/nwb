@@ -113,7 +113,7 @@ public class Helper implements Algorithm {
 				realOutputStream.close();
 				//make data of realFormat, stick at beginning of transformedOutput, turn into array, and give it back
 
-				Data nwbOutput = new BasicData(firstAttributeData.getMetadata(), realFormat, "text/nwb");
+				Data nwbOutput = new BasicData(firstAttributeData.getMetadata(), realFormat, "file:text/nwb");
 
 				transformedOutput.add(0, nwbOutput);
 			}
