@@ -6,8 +6,6 @@ import org.cishell.framework.CIShellContext;
 import org.cishell.framework.algorithm.Algorithm;
 import org.cishell.framework.algorithm.AlgorithmFactory;
 import org.cishell.framework.data.Data;
-import org.osgi.framework.Bundle;
-import org.osgi.service.component.ComponentContext;
 
 
 public class ConnectionFactory implements AlgorithmFactory {
