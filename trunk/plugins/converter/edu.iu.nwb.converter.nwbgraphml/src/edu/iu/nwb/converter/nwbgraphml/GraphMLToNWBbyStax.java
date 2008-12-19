@@ -146,7 +146,7 @@ public class GraphMLToNWBbyStax implements Algorithm {
 				if (xmlReader.getLocalName().equals("node")&& xmlReader.getAttributeCount() > 0)
 				{
 					nodeCount++;
-					nodeIds.put( xmlReader.getAttributeValue(null, "id"), Integer.valueOf(nodeCount));
+					nodeIds.put( xmlReader.getAttributeValue(null, "id"), new Integer(nodeCount));
 					if (nodeCount == 1) {
 						nodeWriter.write(createNodeHeader(nodeAttributes));
 						wroteNodeHeader = true;
