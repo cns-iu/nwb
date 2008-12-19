@@ -8,8 +8,8 @@ import org.cishell.framework.algorithm.AlgorithmFactory;
 import org.cishell.framework.data.Data;
 
 
-public class ConnectionFactory implements AlgorithmFactory {
+public class ConnectionCreatorFactory implements AlgorithmFactory {
     public Algorithm createAlgorithm(Data[] data, Dictionary parameters, CIShellContext context) {
-        return new Connection(data, parameters, context);
+        return new ConnectionCreator(data, parameters, context);
     }
 }

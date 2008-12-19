@@ -19,13 +19,13 @@ import org.cishell.framework.data.Data;
 import org.cishell.framework.data.DataProperty;
 import org.osgi.service.log.LogService;
 
-public class Connection implements Algorithm {
+public class ConnectionCreator implements Algorithm {
     Data[] data;
     Dictionary parameters;
     CIShellContext context;
 	private LogService logger;
     
-    public Connection(Data[] data, Dictionary parameters, CIShellContext context) {
+    public ConnectionCreator(Data[] data, Dictionary parameters, CIShellContext context) {
         this.data = data;
         this.parameters = parameters;
         this.context = context;
