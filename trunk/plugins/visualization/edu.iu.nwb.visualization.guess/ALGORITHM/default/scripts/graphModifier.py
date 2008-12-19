@@ -14,6 +14,7 @@ import math
 
 # Graph Modifier
 # By: Jeffrey Wong and Bernie Hogan
+# Modified by: Micah Linnemeier, Russell Duhon, and Patrick Phillips
 # Version: 1.0 Release
 # Date: March 15, 2006
 # An extension to GUESS that enables the user to modify the graph via a GUI instead
