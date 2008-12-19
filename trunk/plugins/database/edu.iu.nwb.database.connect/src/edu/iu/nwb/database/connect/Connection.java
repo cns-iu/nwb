@@ -1,11 +1,7 @@
 package edu.iu.nwb.database.connect;
 
-import java.sql.Driver;
-import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.util.Dictionary;
-import java.util.HashMap;
-import java.util.Map;
 
 import javax.sql.DataSource;
 
@@ -13,7 +9,6 @@ import org.apache.commons.dbcp.DriverManagerConnectionFactory;
 import org.apache.commons.dbcp.PoolableConnectionFactory;
 import org.apache.commons.dbcp.PoolingDataSource;
 import org.apache.commons.pool.KeyedObjectPoolFactory;
-import org.apache.commons.pool.PoolableObjectFactory;
 import org.apache.commons.pool.impl.GenericKeyedObjectPoolFactory;
 import org.apache.commons.pool.impl.GenericObjectPool;
 import org.cishell.framework.CIShellContext;
@@ -22,16 +17,7 @@ import org.cishell.framework.algorithm.AlgorithmExecutionException;
 import org.cishell.framework.data.BasicData;
 import org.cishell.framework.data.Data;
 import org.cishell.framework.data.DataProperty;
-import org.osgi.framework.Bundle;
 import org.osgi.service.log.LogService;
-
-import prefuse.data.Graph;
-import prefuse.data.Schema;
-import prefuse.data.Table;
-import prefuse.data.Tuple;
-import prefuse.data.expression.ColumnExpression;
-import prefuse.data.io.DataIOException;
-import prefuse.data.io.sql.DatabaseDataSource;
 
 public class Connection implements Algorithm {
     Data[] data;
