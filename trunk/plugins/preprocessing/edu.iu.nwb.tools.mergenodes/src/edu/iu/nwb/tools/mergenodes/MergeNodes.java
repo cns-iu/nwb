@@ -34,7 +34,7 @@ import prefuse.data.Tuple;
 
 
 public class MergeNodes implements Algorithm {
-    Data[] data;
+    Data[] inData;
     Dictionary parameters;
     CIShellContext context;
     
@@ -101,7 +101,7 @@ public class MergeNodes implements Algorithm {
     
     
     public MergeNodes(Data[] data, Dictionary parameters, CIShellContext context) {
-        this.data = data;
+        this.inData = data;
         this.parameters = parameters;
         this.context = context;
         logger = (LogService)context.getService(LogService.class.getName());
@@ -119,15 +119,16 @@ public class MergeNodes implements Algorithm {
 
     	//First, validate and assign the input data to inputNodeListTable 
     	//and inputGraph separately.
-    	if (!getInputData())
+    	if (!getInputData(inData))
     		return null;
-    	if(!checkAndCompareNodeSchema())
+    	if(!checkAndCompareNodeSchema(inputGraph, inputNodeListTable)){
     		return null;
-    	
+    	}
+   	
     	//Process inputNodeListTable, return a Map, set hasErrorInNodleListTable 
     	//flag in the method.  	
         try{
-        	processInputNodeListTable ();
+        	processInputNodeListTable (inputNodeListTable);
         	if (mergingTable.isEmpty()){
         		logger.log(LogService.LOG_INFO, 
         			"There is no merging instruction in the node list table. \n"+
@@ -151,7 +152,7 @@ public class MergeNodes implements Algorithm {
     				mergingReport.getClass().getName());
         	graphAttributes = reportData.getMetadata();
         	graphAttributes.put(DataProperty.MODIFIED, new Boolean(true));
-        	graphAttributes.put(DataProperty.PARENT, this.data[graphIndex]);
+        	graphAttributes.put(DataProperty.PARENT, this.inData[graphIndex]);
         	graphAttributes.put(DataProperty.TYPE, DataProperty.TEXT_TYPE);
         	graphAttributes.put(DataProperty.LABEL, "Merging Report");
         	
@@ -162,7 +163,7 @@ public class MergeNodes implements Algorithm {
         			outputGraph.getClass().getName());
         		graphAttributes = outputGraphData.getMetadata();
         		graphAttributes.put(DataProperty.MODIFIED, new Boolean(true));
-        		graphAttributes.put(DataProperty.PARENT, this.data[graphIndex]);
+        		graphAttributes.put(DataProperty.PARENT, this.inData[graphIndex]);
         		graphAttributes.put(DataProperty.TYPE, DataProperty.NETWORK_TYPE);
         		graphAttributes.put(DataProperty.LABEL, "Updated Network");
         		return new Data[] {outputGraphData, reportData}; 
@@ -183,11 +184,11 @@ public class MergeNodes implements Algorithm {
      * 		from the graph that contains the instructions about which 
      * 		nodes should be merged.
      */
-    private boolean getInputData(){
+    private boolean getInputData(Data[] inputData){
     	inputNodeListTable = null;
     	inputGraph = null;
     	//Make sure there are two input data
-    	if (data.length != 2) {
+    	if (inputData.length != 2) {
       	  logger.log (LogService.LOG_ERROR, 
 				"Error: This algorithm requires two datasets as inputs: a graph/network "+
 				"and a node list with the instruction of merging nodes. \n");
@@ -197,14 +198,14 @@ public class MergeNodes implements Algorithm {
     	//Make sure that the input data are either prefuse.data.Graph or prefuse.data.Table.
     	//Can not be any other data type.
     	for (int index =0; index<2; index++){
-    		String dataFormat = data[index].getData().getClass().getName();    		
+    		String dataFormat = inputData[index].getData().getClass().getName();    		
     		if (dataFormat.equalsIgnoreCase("prefuse.data.Graph")){
-    			inputGraph = (Graph)data[index].getData();
+    			inputGraph = (Graph)inputData[index].getData();
     			graphIndex = index;
     			isDirected = inputGraph.isDirected();
     		}
     		else if (dataFormat.equalsIgnoreCase("prefuse.data.Table"))
-    			inputNodeListTable = (Table)data[index].getData();
+    			inputNodeListTable = (Table)inputData[index].getData();
     		else {
     			logger.log (LogService.LOG_ERROR, 
   				"Error: the data format of the input dataset is "+dataFormat+",\n"+
@@ -241,11 +242,11 @@ public class MergeNodes implements Algorithm {
 	 * If find any additional column in the first N-2 columns in inputNodeListTable, 
 	 * report errors and return false.
 	 */
-	private boolean checkAndCompareNodeSchema(){
+	private boolean checkAndCompareNodeSchema(Graph theInputGraph, Table theInputNodeListTable){
 		boolean isMatched = true;
-		Table orgNodeTable = inputGraph.getNodeTable();
+		Table orgNodeTable = theInputGraph.getNodeTable();
 		Schema orgNodeSchema = orgNodeTable.getSchema();
-		Schema theNodeSchema = inputNodeListTable.getSchema();
+		Schema theNodeSchema = theInputNodeListTable.getSchema();
 		int theTotalCols = theNodeSchema.getColumnCount();
 		    	
     	if (theTotalCols<3){
@@ -254,7 +255,7 @@ public class MergeNodes implements Algorithm {
     		return isMatched = false;
     	}
     	
-    	//check the data type of the last column in the inputNodeListTable
+    	//check the data type of the last column in the inputNodeListTable, and it must be String
     	String cn_starColumn = theNodeSchema.getColumnName(theTotalCols-1);
     	String dt_starColumn = theNodeSchema. getColumnType(theTotalCols-1).getName();
     	if (!dt_starColumn.equalsIgnoreCase("java.lang.String")){
@@ -265,7 +266,8 @@ public class MergeNodes implements Algorithm {
     		return isMatched = false;
     	}
 
-    	//check the data type of the second last column in the inputNodeListTable
+    	//check the data type of the second last column in the inputNodeListTable, and it must be
+    	//Integer.
     	String cn_indexColumn = theNodeSchema.getColumnName(theTotalCols-2); 
     	String dt_indexColumn = theNodeSchema. getColumnType(theTotalCols-2).getName();
        	if (!dt_indexColumn.equalsIgnoreCase("java.lang.Integer")&&
@@ -299,7 +301,7 @@ public class MergeNodes implements Algorithm {
 							theNodeSchema.getColumnType(theLabel).getName()+".\n"+
 					        "But the data type of "+theLabel+ 
 					        " in the node schema of the original input graph is "+ 
-					        orgNodeSchema.getColumnType(theLabel).getName()+".\n");
+					        orgNodeSchema.getColumnType(graphLabel).getName()+".\n");
 				}
 			}
 			else {				
@@ -321,7 +323,7 @@ public class MergeNodes implements Algorithm {
      * 
      * Output is a mergingTable and mergingNodesMap
      */    
-    private void processInputNodeListTable () throws Exception {
+    private void processInputNodeListTable (Table theInputNodeListTable) throws Exception {
     	/*
     	 * tempTable temporarily hold the row with the value of indexColumn
     	 * that occurs the very first time in the inputNodeListTable table
@@ -342,18 +344,18 @@ public class MergeNodes implements Algorithm {
        	mergingNodesMap = new HashMap();
     	Node node;
     	
-       	int totalCols = inputNodeListTable.getColumnCount();
-
-    	for (int rowIndex=0; rowIndex<inputNodeListTable.getRowCount(); rowIndex++){
-   	    	Tuple nodeRow = inputNodeListTable.getTuple(rowIndex);
+       	int totalCols = theInputNodeListTable.getColumnCount();
+    	for (int rowIndex=0; rowIndex<theInputNodeListTable.getRowCount(); rowIndex++){
+   	    	Tuple nodeRow = theInputNodeListTable.getTuple(rowIndex);
    	    	Integer nodeIndex = (Integer)nodeRow.get(totalCols-2);
    	    	String starValue = ((String)nodeRow.get(totalCols-1)).trim();
    	    	if (!tempTable.containsKey(nodeIndex)){
+   	    		
    	    		tempTable.put(nodeIndex, nodeRow);    	    		
    	    	}
    	    	else {
    	    		//some nodes need to be merged
-   	    		node = getNodeFrominputGraph(nodeRow);
+   	    		node = getNodeFromInputGraph(nodeRow);
 	    	    if (node == null){
 	    	    	logger.log(LogService.LOG_ERROR, "Fail to find "+nodeRow.toString()+
 	 	    			"in the orginal graph. \n");	
@@ -367,13 +369,14 @@ public class MergeNodes implements Algorithm {
    	    			addANode(nodeGroup, starValue, node);   	    			
    	    		}
    	    		else {
-   	    			NodeGroup nodeGroup = new NodeGroup();
+   	    			NodeGroup nodeGroup = new NodeGroup();   	    			
    	    			mergingNodesMap.put(node, nodeIndex);
+//   	    			printMergingNodesMap();
    	    			addANode(nodeGroup, starValue, node);
    	    			
    	    			//need to add the row in tempTable to mergingTable
    	    			nodeRow = (Tuple) tempTable.get(nodeIndex);
-   	    			node = getNodeFrominputGraph(nodeRow);
+   	    			node = getNodeFromInputGraph(nodeRow);
    	    			if (node == null){
    	    	    		logger.log(LogService.LOG_ERROR, "Fail to find "+nodeRow.toString()+
    	 	    				"in the orginal graph. \n");	
@@ -381,6 +384,7 @@ public class MergeNodes implements Algorithm {
    	    	    		break;
    	    	    	}
    	    			mergingNodesMap.put(node, nodeIndex);
+//   	    			printMergingNodesMap();
    	    			starValue = ((String)nodeRow.get(totalCols-1)).trim();
    	    			addANode(nodeGroup, starValue, node);
    	    			   	    			
@@ -390,7 +394,8 @@ public class MergeNodes implements Algorithm {
    	    }    	    	
     }  
     
-    private Node getNodeFrominputGraph(Tuple nodeRow) throws Exception{    
+    private Node getNodeFromInputGraph(Tuple nodeRow) throws Exception{
+    	
     	Node orgNode = null;
 		Iterator nodes = inputGraph.nodes();
 		while(nodes.hasNext()){
@@ -432,8 +437,6 @@ public class MergeNodes implements Algorithm {
 			else {
 				orgValue = orgNode.get(colIndex);
 			}
-	
-//			System.out.println(">>>theValue="+theValue.toString()+"  orgValue="+orgValue);
 			//compare if the values of each column between the table and 
 			//the original graph are same. 
 			if (!isSameValue(theValue, orgValue,  
@@ -446,29 +449,47 @@ public class MergeNodes implements Algorithm {
     }
     
     private boolean isSameValue (Object v1, Object v2, String dataType){
-    	if (dataType.equalsIgnoreCase("java.lang.String")){
-    		String theValue = ((String)v1).trim();
-    		String orgValue = ((String)v2).trim();
-    		if (!theValue.equals(orgValue))
-    			return false;
-    		else 
-    			return true;
-    	}
-    	else if (dataType.equalsIgnoreCase("java.lang.Integer") ||
-    			 dataType.equalsIgnoreCase("int")){
-    		int theValue = ((Integer)v1).intValue();
-    		int orgValue = ((Integer)v2).intValue();
-    		if (theValue != orgValue)
-    			return false;
-    		else
-    			return true;    			
-    		
-    	}
-    	else {
-    		logger.log(LogService.LOG_WARNING, "Can not handle "+dataType+" yet. \n");
-    		return false;
-    	}
-    }				
+        
+        //handle case of one or both values being null
+        
+        boolean v1IsNull = v1 == null;
+        boolean v2IsNull = v2 == null;
+        
+        if (v1IsNull && v2IsNull) {
+            //two nulls are equal
+            return true;
+        } 
+        if (v1IsNull || v2IsNull) {
+            //null never equals non-null
+            return false;
+        }
+        
+        // handle normal case where neither is null
+        
+        if (dataType.equalsIgnoreCase("java.lang.String")){
+            String theValue = ((String)v1).trim();
+            String orgValue = ((String)v2).trim();
+            if (!theValue.equals(orgValue))
+                return false;
+            else 
+                return true;
+        }
+        else if (dataType.equalsIgnoreCase("java.lang.Integer") ||
+                 dataType.equalsIgnoreCase("int")){
+            int theValue = ((Integer)v1).intValue();
+            int orgValue = ((Integer)v2).intValue();
+            if (theValue != orgValue)
+                return false;
+            else
+                return true;                
+            
+        }
+        else {
+            logger.log(LogService.LOG_WARNING, "Can not handle "+dataType+" yet. \n");
+            return false;
+        }
+    }         
+
     
     private void addANode(NodeGroup nodeGroup, String starValue, Node node){
     	if (starValue.equals("*"))
@@ -585,7 +606,9 @@ public class MergeNodes implements Algorithm {
 	 * mergingTable, and parameters, output is a new graph
 	 */        		
 	private Graph updateGraphByMergingNodes(Graph theInputGraph, Properties aggFunctionKeyValuePairs) throws Exception {
-		createUtilityFunctionMap(aggFunctionKeyValuePairs);
+		if (aggFunctionKeyValuePairs != null){
+			createUtilityFunctionMap(aggFunctionKeyValuePairs);
+		}
 		Graph updatedGraph = createOutputGraph(theInputGraph);
 		copyAndMergeNodes(updatedGraph);
 		copyAndMergeEdges(updatedGraph);
@@ -662,8 +685,8 @@ public class MergeNodes implements Algorithm {
 	}
 	
 	private void copyAndMergeEdges(Graph updatedGraph) throws Exception {
-		//printMergingNodesMap(updatedGraph);
-		//printNodeMap();
+//		printMergingNodesMap();
+//		printNodeMap();
 		Table edgeTable = inputGraph.getEdgeTable();
 		Schema edgeSchema = edgeTable.getSchema();
 		
@@ -705,7 +728,7 @@ public class MergeNodes implements Algorithm {
 		boolean isSuccessful = true;
 		Schema theSchema = primaryTuple.getSchema();
 //		Schema theSchema = theTuple.getSchema();
-		Map functionMap;
+		Map functionMap = null;
 		int k =0;
 		if (tag.equalsIgnoreCase("node")){
 			k = 1;
@@ -716,24 +739,30 @@ public class MergeNodes implements Algorithm {
 			k = 2;
 			functionMap=edgeFunctions;
 		}
-		
-		for (; k < theSchema.getColumnCount(); k++) {
-			final String cn = theSchema.getColumnName(k);
-			final Class dt = theSchema.getColumnType(k);
-			final String fn = (String) functionMap.get(cn.toLowerCase());
-//			System.out.println(">>>>columnName="+cn+", functionName="+fn);
-			try{
-				UtilityFunction theFunction = getFunction(fn, dt);	
-				if (theFunction != null){
-					Object primaryValue = primaryTuple.get(k);
-					Object theValue = theTuple.get(k);
-					Object newValue = theFunction.operate(primaryValue, theValue);
-					primaryTuple.set(k, newValue);	
+		/*
+		 * Note: aggregationFunctions are not always required if there's no node 
+		 * and edge attributes in the network.
+		 */
+		if (functionMap != null){
+			
+			for (; k < theSchema.getColumnCount(); k++) {
+				final String cn = theSchema.getColumnName(k);
+				final Class dt = theSchema.getColumnType(k);
+				
+				final String fn = (String) functionMap.get(cn.toLowerCase());
+				try{
+					UtilityFunction theFunction = getFunction(fn, dt);	
+					if (theFunction != null){
+						Object primaryValue = primaryTuple.get(k);
+						Object theValue = theTuple.get(k);
+						Object newValue = theFunction.operate(primaryValue, theValue);
+						primaryTuple.set(k, newValue);	
+					}
+				}catch (Exception e){
+					logger.log(LogService.LOG_ERROR, e.toString());
+					isSuccessful = false;
+					break;
 				}
-			}catch (Exception e){
-				logger.log(LogService.LOG_ERROR, e.toString());
-				isSuccessful = false;
-				break;
 			}
 		}
 		return isSuccessful;
@@ -751,7 +780,6 @@ public class MergeNodes implements Algorithm {
 			String value = aggFunctionKeyValuePairs.getProperty(key);
 			String columnName = key.substring(key.indexOf(".")+1);
 			String functionName = value.substring(value.indexOf(".")+1);
-//			System.out.println(">>functionName="+functionName+", columnName="+columnName);
 			if (key.startsWith("edge.")) {
 				edgeFunctions.put(columnName.toLowerCase(), functionName);				
 			}
@@ -815,7 +843,7 @@ public class MergeNodes implements Algorithm {
 		return null;
 	}
 	
-	private void printMergingNodesMap(Graph updatedGraph){
+	private void printMergingNodesMap(){
 		Iterator keys = mergingNodesMap.keySet().iterator();
 		while (keys.hasNext()){
 			Node node = (Node)keys.next();
@@ -829,20 +857,20 @@ public class MergeNodes implements Algorithm {
 			Edge edge = (Edge)edges.next();
 			int source = edge.getSourceNode().getRow();
 			int target = edge.getTargetNode().getRow();
-			System.out.println(""+source+"\t"+target);
+//			System.out.println(""+source+"\t"+target);
 		}
 		
 	}
 	
 	private void printNodeMap(){
-		System.out.println(">>in print nodeMap, size="+nodeMap.size());
+//		System.out.println(">>in print nodeMap, size="+nodeMap.size());
 		
 		Iterator keys = nodeMap.keySet().iterator();
 		while(keys.hasNext()){
 			Node orgNode = (Node)keys.next();
 			Node newNode = (Node)nodeMap.get(orgNode);
-			System.out.println("orgNode= "+orgNode.get(nodeLabelField)+
-					",  newNode = "+newNode.get(nodeLabelField));
+//			System.out.println("orgNode= "+orgNode.get(nodeLabelField)+
+//					",  newNode = "+newNode.get(nodeLabelField));
 		}
 	}
 }
