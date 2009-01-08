@@ -7,13 +7,13 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.Dictionary;
+import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
-import java.util.Enumeration;
 
 import org.cishell.framework.CIShellContext;
 import org.cishell.framework.algorithm.Algorithm;
@@ -23,14 +23,13 @@ import org.cishell.framework.data.Data;
 import org.cishell.framework.data.DataProperty;
 import org.osgi.service.log.LogService;
 
-import edu.iu.nwb.analysis.extractnetfromtable.components.PropertyHandler;
-
 import prefuse.data.Edge;
 import prefuse.data.Graph;
 import prefuse.data.Node;
 import prefuse.data.Schema;
 import prefuse.data.Table;
 import prefuse.data.Tuple;
+import edu.iu.nwb.analysis.extractnetfromtable.components.PropertyHandler;
 
 
 public class MergeNodes implements Algorithm {
@@ -169,7 +168,7 @@ public class MergeNodes implements Algorithm {
         		return new Data[] {outputGraphData, reportData}; 
         	}
         	catch (Exception e){
-        		logger.log (LogService.LOG_ERROR, e.toString()+"\n");
+        		logger.log (LogService.LOG_ERROR, e.toString() + "\n", e);
         	}
         	return new Data[] {reportData};         	
         }catch (Exception e){
@@ -570,7 +569,7 @@ public class MergeNodes implements Algorithm {
 			tempFile = File.createTempFile("NWB-Session-", ".txt", tempDir);
 		
 		}catch (IOException e){
-			logger.log(LogService.LOG_ERROR, e.toString());
+			logger.log(LogService.LOG_ERROR, e.toString(), e);
 			tempFile = new File (tempPath+File.separator+"nwbTemp"+File.separator+
 					"temp"+System.currentTimeMillis()+".txt");
 		}
@@ -759,7 +758,7 @@ public class MergeNodes implements Algorithm {
 						primaryTuple.set(k, newValue);	
 					}
 				}catch (Exception e){
-					logger.log(LogService.LOG_ERROR, e.toString());
+					logger.log(LogService.LOG_ERROR, e.toString(), e);
 					isSuccessful = false;
 					break;
 				}
