@@ -62,9 +62,9 @@ public class ExtractAlgorithm implements Algorithm, SupportedFileTypes,ProgressT
 		try {
 			metaData.load(fileTypePropertiesFile);
 		} catch (final FileNotFoundException fnfe) {
-			logger.log(LogService.LOG_ERROR, fnfe.getMessage());
+			logger.log(LogService.LOG_ERROR, fnfe.getMessage(), fnfe);
 		} catch (final IOException ie) {
-			logger.log(LogService.LOG_ERROR, ie.getMessage());
+			logger.log(LogService.LOG_ERROR, ie.getMessage(), ie);
 		}
 		try{
 			String authorColumn = CitationFormat.getAuthorColumnByName(fileFormat);

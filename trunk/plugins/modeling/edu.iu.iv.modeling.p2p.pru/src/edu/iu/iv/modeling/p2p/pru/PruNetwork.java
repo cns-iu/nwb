@@ -366,9 +366,9 @@ public class PruNetwork {
 	   PajekNetWriter pnw = new PajekNetWriter() ;
 	   try {
         pnw.save(this.graph, filename) ;
-    } catch (IOException e) {
+	   } catch (IOException e) {
        String msg = "I/O exception occurred while saving file: " + filename ;
-       logger.log(LogService.LOG_ERROR,msg);
+       logger.log(LogService.LOG_ERROR, msg, e);
     }
    }
 	

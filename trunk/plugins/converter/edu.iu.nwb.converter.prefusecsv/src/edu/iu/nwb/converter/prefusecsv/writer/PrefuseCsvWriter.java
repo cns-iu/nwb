@@ -43,7 +43,7 @@ public class PrefuseCsvWriter implements Algorithm {
 	    	tempFile = File.createTempFile("NWB-Session-", ".csv", tempDir);
 	    		
 	    } catch (IOException e) {
-	    	logger.log(LogService.LOG_ERROR, e.toString());
+	    	logger.log(LogService.LOG_ERROR, e.toString(), e);
 	   		tempFile = new File (tempPath+File.separator+"nwbTemp"+File.separator+"temp.csv");
     	}
     	if (tempFile != null){

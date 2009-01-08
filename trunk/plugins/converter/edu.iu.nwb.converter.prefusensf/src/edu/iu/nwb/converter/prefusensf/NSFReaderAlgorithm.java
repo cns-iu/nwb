@@ -232,9 +232,9 @@ public class NSFReaderAlgorithm implements Algorithm {
 	    		System.out.println(line);
 	    	}
 	    	} catch (FileNotFoundException e1) {
-	    		this.log.log(LogService.LOG_WARNING, "ReferReader could not find a file at " + file.getAbsolutePath());
+	    		this.log.log(LogService.LOG_WARNING, "ReferReader could not find a file at " + file.getAbsolutePath(), e1);
 	    	}  catch (IOException e2) {
-	    		this.log.log(LogService.LOG_WARNING, "Unable to print file contents due to IO Exception.");
+	    		this.log.log(LogService.LOG_WARNING, "Unable to print file contents due to IO Exception.", e2);
 	    	}
 	}
 	
@@ -296,10 +296,10 @@ public class NSFReaderAlgorithm implements Algorithm {
 	    	
 	    	return outFile;
 	    	} catch (FileNotFoundException e1) {
-	    		this.log.log(LogService.LOG_WARNING, "NSFReader could not find a file at " +  escapedQuoteFile.getAbsolutePath());
+	    		this.log.log(LogService.LOG_WARNING, "NSFReader could not find a file at " +  escapedQuoteFile.getAbsolutePath(), e1);
 	    		return escapedQuoteFile;
 	    	}  catch (IOException e2) {
-	    		this.log.log(LogService.LOG_WARNING, "Unable to remove slash escaped quotes from nsf csv file due to IO Exception");
+	    		this.log.log(LogService.LOG_WARNING, "Unable to remove slash escaped quotes from nsf csv file due to IO Exception", e2);
 	    		return escapedQuoteFile;
 	    	} finally {
 	    		try {

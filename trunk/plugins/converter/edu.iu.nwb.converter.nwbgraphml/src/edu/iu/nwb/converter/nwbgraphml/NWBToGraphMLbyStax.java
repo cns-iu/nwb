@@ -495,7 +495,7 @@ public class NWBToGraphMLbyStax implements Algorithm {
 			tempFile = File.createTempFile("NWB-Session-", ".xml", tempDir);
 
 		}catch (IOException e){
-			logger.log(LogService.LOG_ERROR, e.toString());
+			logger.log(LogService.LOG_ERROR, e.toString(), e);
 			tempFile = new File (tempPath+File.separator+"nwbTemp"+File.separator+"temp.nwb");
 
 		}

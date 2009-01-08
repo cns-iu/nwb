@@ -93,7 +93,7 @@ public class Burst implements Algorithm {
 						dates.put(rowDate, new Integer(1));
 					}
 				} catch (ParseException e) {
-					logger.log(LogService.LOG_WARNING, "Problems parsing value " + dateString + ", verify chosen date format " + formatString + " matches format in file.");
+					logger.log(LogService.LOG_WARNING, "Problems parsing value " + dateString + ", verify chosen date format " + formatString + " matches format in file.", e);
 				}
 			}
 		}

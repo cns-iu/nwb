@@ -240,10 +240,10 @@ public class HypergridNetwork {
    public void writePajekFile(String filename) {
        PajekNetWriter pnw = new PajekNetWriter() ;
 	   try {
-        pnw.save(g, filename) ;
-    } catch (IOException e) {
+        pnw.save(g, filename);
+       } catch (IOException e) {
        String msg = "I/O exception occurred while saving file: " + filename ;
-       logger.log(LogService.LOG_ERROR,msg);
+       logger.log(LogService.LOG_ERROR, msg, e);
        
     }
    }

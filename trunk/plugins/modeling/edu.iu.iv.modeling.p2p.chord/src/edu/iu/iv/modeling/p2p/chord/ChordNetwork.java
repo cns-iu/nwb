@@ -199,7 +199,7 @@ public class ChordNetwork {
            pnf.save(g, filename);
        } catch (IOException e) {
            String msg = "I/O Error while writing file: " + filename ;
-           logger.log(LogService.LOG_WARNING, msg);
+           logger.log(LogService.LOG_WARNING, msg, e);
        }			
    }
 	

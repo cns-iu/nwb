@@ -41,7 +41,7 @@ public class ISILoadAndCleanAlgorithmFactory implements AlgorithmFactory {
         	isiDupRemover = getAlgorithmFactory(filter);
 			
 		} catch (InvalidSyntaxException e) {
-			log.log(LogService.LOG_ERROR, "Invalid syntax in filter " + filter);
+			log.log(LogService.LOG_ERROR, "Invalid syntax in filter " + filter, e);
 		}
 		
         return new ISILoadAndCleanAlgorithm(data, parameters, context,

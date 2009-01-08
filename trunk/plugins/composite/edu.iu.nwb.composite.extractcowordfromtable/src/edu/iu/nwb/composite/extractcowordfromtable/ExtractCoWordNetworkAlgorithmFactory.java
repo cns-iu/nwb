@@ -199,7 +199,7 @@ public class ExtractCoWordNetworkAlgorithmFactory implements AlgorithmFactory, P
              		extractDirectedNetwork, converter, bibliographicCoupling);
              
 		} catch (InvalidSyntaxException e) {
-			log.log(LogService.LOG_ERROR, "Invalid syntax in filter " + filter);
+			log.log(LogService.LOG_ERROR, "Invalid syntax in filter " + filter, e);
 			return null;
 		}
     }

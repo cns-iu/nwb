@@ -51,9 +51,9 @@ public class ExtractAuthorPaperNetwork implements Algorithm,ProgressTrackable,Su
 		try {
 			metaData.load(fileTypePropertiesFile);
 		} catch (final FileNotFoundException fnfe) {
-			logger.log(LogService.LOG_ERROR, fnfe.getMessage());
+			logger.log(LogService.LOG_ERROR, fnfe.getMessage(), fnfe);
 		} catch (final IOException ie) {
-			logger.log(LogService.LOG_ERROR, ie.getMessage());
+			logger.log(LogService.LOG_ERROR, ie.getMessage(), ie);
 		}
 		try{
 			String authorColumn = AuthorPaperFormat.getAuthorColumnByName(fileFormat);

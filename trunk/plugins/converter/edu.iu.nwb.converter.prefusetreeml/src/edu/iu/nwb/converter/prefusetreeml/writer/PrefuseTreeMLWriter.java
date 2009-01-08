@@ -43,7 +43,7 @@ public class PrefuseTreeMLWriter implements Algorithm {
 	    try{
 	    	tempFile = File.createTempFile("NWB-Session-", ".treeml.xml", tempDir);
 	    }catch (IOException e){
-	    	logger.log(LogService.LOG_DEBUG, e.toString());
+	    	logger.log(LogService.LOG_DEBUG, e.toString(), e);
 	   		tempFile = new File (tempPath+File.separator+"nwbTemp"+File.separator+"temp.treeml.xml");
     	}
     	if (tempFile != null){
