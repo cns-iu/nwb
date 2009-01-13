@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<component name="edu.iu.scipolicy.converter.psraster.jpg.jpgreader.JPGReader.component" immediate="false">
+	<implementation class="edu.iu.scipolicy.converter.psraster.jpg.jpgreader.JPGReaderFactory"/>
+	<properties entry="OSGI-INF/jpg-reader/jpgreader.properties"/>
+	
+	<service>
+		<provide interface=
+			"org.cishell.framework.algorithm.AlgorithmFactory"/>
+	</service>
+</component>
