@@ -1,8 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <projectDescription>
-	<name>edu.iu.scipolicy.visualization.psviewer</name>
+	<name>edu.iu.scipolicy.visualization.imageviewer</name>
 	<comment></comment>
 	<projects>
+		<project>freehep-psviewer</project>
 	</projects>
 	<buildSpec>
 		<buildCommand>
