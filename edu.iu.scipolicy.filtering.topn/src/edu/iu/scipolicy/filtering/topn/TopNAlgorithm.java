@@ -37,7 +37,7 @@ public class TopNAlgorithm implements Algorithm {
 
     public Data[] execute() throws AlgorithmExecutionException {
 		
-		//unpack table data
+		//unpack input table data
 		
     	DataSource tableDB = (DataSource) data[0].getData();
 		String tableName = (String) data[0].getMetadata().get("table_name"); //TODO: Ensure these always have this metadata
@@ -57,7 +57,7 @@ public class TopNAlgorithm implements Algorithm {
 			"ORDER BY " + columnToSortBy + " " + ascendingOrDescending + "" +
 		    "LIMIT " + topN; //TODO: How to do this with standard SQL?
 		
-		//execute SQL query to retrieve top n rows
+		//actually execute SQL query to retrieve top n rows
 		
 		ResultSet topNRowsResult;	
 		try {
@@ -68,11 +68,11 @@ public class TopNAlgorithm implements Algorithm {
 			throw new AlgorithmExecutionException(e);
 		}
 		
-		//turn query results in new database
+		//turn query results into a new database
 		
 		DataSource topRowsResult = convertQueryResultsToDatabase(topNRowsResult);
 		
-		//prepare the result's metadata
+		//wrap new database as Data object, and prepare the result's metadata
 	
 		Data topRowsResultData = prepareMetadata(topRowsResult, this.data[0]);
 		
