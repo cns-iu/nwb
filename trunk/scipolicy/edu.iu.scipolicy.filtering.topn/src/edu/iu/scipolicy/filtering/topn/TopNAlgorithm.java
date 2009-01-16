@@ -10,23 +10,20 @@ import java.util.Enumeration;
 import javax.sql.DataSource;
 
 import org.cishell.framework.CIShellContext;
-import org.cishell.framework.algorithm.Algorithm;
 import org.cishell.framework.algorithm.AlgorithmExecutionException;
 import org.cishell.framework.data.BasicData;
 import org.cishell.framework.data.Data;
 import org.cishell.framework.data.DataProperty;
+import org.cishell.templates.database.SQLExecutionAlgorithm;
+import org.cishell.templates.database.SQLFormationException;
 
-public class TopNAlgorithm implements Algorithm {
-    private Data[] data;
-    private CIShellContext context;
-    
+public class TopNAlgorithm extends SQLExecutionAlgorithm {
     private int topN;
     private String columnToSortBy;
     private boolean isFromHighestToLowest;
     
     public TopNAlgorithm(Data[] data, Dictionary parameters, CIShellContext context) {
-        this.data = data;
-        this.context = context;
+    	super(data, parameters, context);
         
         //unpack parameters that user specified
         
@@ -34,78 +31,34 @@ public class TopNAlgorithm implements Algorithm {
 		this.columnToSortBy = ((String) parameters.get("columnToSortBy"));
 		this.isFromHighestToLowest = ((Boolean) parameters.get("isFromHighestToLowest")).booleanValue();
     }
-
-    public Data[] execute() throws AlgorithmExecutionException {
-		
-		//unpack input table data
-		
-    	DataSource tableDB = (DataSource) data[0].getData();
-		String tableName = (String) data[0].getMetadata().get("table_name"); //TODO: Ensure these always have this metadata
-		
-		//construct SQL query for retrieving top n rows
-		
-		String ascendingOrDescending = null;
-		if (isFromHighestToLowest) {
+    
+    public String formSQL() throws SQLFormationException {
+    	// TODO: Ensure these always have this metadata.
+    	String tableName = (String)data[0].getMetadata().get("table_name");
+    	String ascendingOrDescending = null;
+    	
+		if (isFromHighestToLowest)
 			ascendingOrDescending = "ASC";
-		} else {
+		else
 			ascendingOrDescending = "DESC";
-		}
-		
-		String getTopNSQLQuery = 
-			"SELECT *" +
-			"FROM " + tableName +
-			"ORDER BY " + columnToSortBy + " " + ascendingOrDescending + "" +
-		    "LIMIT " + topN; //TODO: How to do this with standard SQL?
-		
-		//actually execute SQL query to retrieve top n rows
-		
-		ResultSet topNRowsResult;	
-		try {
-			Connection tableDBConnection = tableDB.getConnection();
-			Statement sqlStatement = tableDBConnection.createStatement();
-			topNRowsResult = sqlStatement.executeQuery(getTopNSQLQuery);
-		} catch (SQLException e) {
-			throw new AlgorithmExecutionException(e);
-		}
-		
-		//turn query results into a new database
-		
-		DataSource topRowsResult = convertQueryResultsToDatabase(topNRowsResult);
-		
-		//wrap new database as Data object, and prepare the result's metadata
-	
-		Data topRowsResultData = prepareMetadata(topRowsResult, this.data[0]);
-		
-		//return result
-		
-		return new Data[]{ topRowsResultData };
+    	
+    	return "SELECT * FROM (SELECT ROW_NUMBER() OVER(ORDER BY " +
+    		this.columnToSortBy + ascendingOrDescending + ") AS rowNumber, " +
+    		"COLUMNS FROM " + tableName + ") AS tempTable WHERE rowNumber <= " +
+    		this.topN;
     }
     
-    private DataSource convertQueryResultsToDatabase(ResultSet queryResults) {
-    	//TODO: Make this work foo (make it part of DBService?)!
-    	return null;
-    }
-    
-    private Data prepareMetadata(DataSource resultDB, Data originalData) {
-    	Data resultData = new BasicData(resultDB, resultDB.getClass().getName());
-    	copyOverMetaData(originalData, resultData);
+    public Data createOutDataFromDataSource(DataSource dataSource) {
+    	// Use super to create the base data.
+    	Data outData = super.createOutDataFromDataSource(dataSource);
+    	// Get the metadata.
+    	Dictionary outMetadata = outData.getMetadata();
     	
-    	Dictionary resultMetadata = resultData.getMetadata();
-    	resultMetadata.put(DataProperty.PARENT, data[0]); //TODO: Algorithm writers shouldn't have to do this
-    	resultMetadata.put(DataProperty.LABEL, "top " + topN + " rows by " + columnToSortBy);
+    	// TODO: Algorithm writers shouldn't have to do this.
+    	outMetadata.put(DataProperty.PARENT, data[0]);
+    	outMetadata.put(DataProperty.LABEL,
+    					"top " + this.topN + " rows by " + this.columnToSortBy);
     	
-    	return resultData;
-    }
-    
-    private void copyOverMetaData(Data sourceData, Data targetData) {
-    	Dictionary sourceMetaData = sourceData.getMetadata();
-    	Dictionary targetMetaData = targetData.getMetadata();
-    	
-    	Enumeration keyEnum = sourceMetaData.keys();
-    	while (keyEnum.hasMoreElements()) {
-    		Object key = keyEnum.nextElement();
-    		
-    		targetMetaData.put(key, sourceMetaData.get(key));
-    	}
+    	return outData;
     }
 }

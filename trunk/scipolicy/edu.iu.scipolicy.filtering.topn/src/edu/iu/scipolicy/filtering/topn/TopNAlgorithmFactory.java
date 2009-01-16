@@ -12,15 +12,16 @@ import javax.sql.DataSource;
 import org.cishell.framework.CIShellContext;
 import org.cishell.framework.algorithm.Algorithm;
 import org.cishell.framework.algorithm.AlgorithmFactory;
+import org.cishell.framework.algorithm.ParameterMutator;
 import org.cishell.framework.data.Data;
 import org.cishell.reference.service.metatype.BasicAttributeDefinition;
 import org.cishell.reference.service.metatype.BasicObjectClassDefinition;
 import org.osgi.service.metatype.AttributeDefinition;
 import org.osgi.service.metatype.ObjectClassDefinition;
 
-//TODO: This algorithm needs to be able to enforce a stronger contract. Specifically, that the input DB is a single table
-//TODO: Also make metadata note that this alg modifies its input 
-public class TopNAlgorithmFactory implements AlgorithmFactory {
+//TODO: This algorithm needs to be able to enforce a stronger contract. Specifically, that the input DB is a single table.
+//TODO: Also make metadata note that this alg modifies its input.
+public class TopNAlgorithmFactory implements AlgorithmFactory, ParameterMutator {
 	public Algorithm createAlgorithm(Data[] data, Dictionary parameters, CIShellContext context) {
 		return new TopNAlgorithm(data, parameters, context);
 	}
@@ -61,14 +62,14 @@ public class TopNAlgorithmFactory implements AlgorithmFactory {
 				String id = attribute.getID();
 				if (COLUMN_TO_SORT_BY_ID.equals(id)) {
 					newDefinition.addAttributeDefinition(ObjectClassDefinition.REQUIRED, new BasicAttributeDefinition(
-							"date", attribute.getName(), attribute.getDescription(), AttributeDefinition.STRING,
+							id, attribute.getName(), attribute.getDescription(), AttributeDefinition.STRING,
 							tableColumnNames, tableColumnNames));
 				} else {
 					newDefinition.addAttributeDefinition(ObjectClassDefinition.REQUIRED, attribute);
 				}
 			}
 
-			// //determine the name of the DB's table by inspecting metadata
+			// Determine the name of the DB's table by inspecting metadata.
 			// DatabaseMetaData tableDBMetadata = tableDBConnection.getMetaData();
 			// ResultSet tableDescriptions = tableDBMetadata.getTables(null, null, null, null); //get all tables
 			// System.out.println(tableDescriptions.toString()); //TODO: START HERE LATER (Make DB real also)
