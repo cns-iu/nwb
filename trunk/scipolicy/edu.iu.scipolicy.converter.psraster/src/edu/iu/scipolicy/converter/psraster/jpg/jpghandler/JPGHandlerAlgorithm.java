@@ -17,12 +17,12 @@ import org.osgi.service.log.LogService;
 
 import edu.iu.scipolicy.converter.psraster.psrasterproperties.PSRasterProperties;
 
-public class JPGHandler implements Algorithm {
+public class JPGHandlerAlgorithm implements Algorithm {
     private Data[] data;
     private Dictionary parameters;
     private CIShellContext context;
     
-    public JPGHandler(Data[] data, Dictionary parameters, CIShellContext context) {
+    public JPGHandlerAlgorithm(Data[] data, Dictionary parameters, CIShellContext context) {
         this.data = data;
         this.parameters = parameters;
         this.context = context;

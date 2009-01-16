@@ -12,12 +12,12 @@ import org.cishell.framework.data.DataProperty;
 
 import edu.iu.scipolicy.converter.psraster.psrasterproperties.PSRasterProperties;
 
-public class PSValidator implements Algorithm {
+public class PSValidatorAlgorithm implements Algorithm {
     private Data[] data;
     private Dictionary parameters;
     private CIShellContext context;
     
-    public PSValidator(Data[] data, Dictionary parameters, CIShellContext context) {
+    public PSValidatorAlgorithm(Data[] data, Dictionary parameters, CIShellContext context) {
         this.data = data;
         this.parameters = parameters;
         this.context = context;

@@ -1,7 +1,6 @@
 package edu.iu.scipolicy.converter.psraster.jpg.jpgreader;
 
 import java.awt.Color;
-import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.FileWriter;
@@ -17,14 +16,11 @@ import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
-import edu.iu.scipolicy.converter.psraster.fileutilities.FileUtilities;
 import edu.iu.scipolicy.converter.psraster.psrasterproperties.PSRasterProperties;
+import edu.iu.scipolicy.utilities.FileUtilities;
+import edu.iu.scipolicy.utilities.ImageUtilities;
 
-public class JPGReaderTest extends TestCase {
-	// Constants.
-	private static final int TEMPORARY_IMAGE_WIDTH = 640;
-	private static final int TEMPORARY_IMAGE_HEIGHT = 480;
-	
+public class JPGReaderAlgorithmTest extends TestCase {
 	private File temporaryInvalidJPGFileToBeRead;
 	private File temporaryValidJPGFileToBeRead;
 	
@@ -51,13 +47,11 @@ public class JPGReaderTest extends TestCase {
 		this.temporaryInvalidJPGFileToBeRead.delete();
 		this.temporaryValidJPGFileToBeRead.delete();
 	}
-	
-	// TODO: Test for invalid input image file (not just one that doesn't exist)?
 
 	@Test
 	public void testExecuteWithNonExistentFile() {
 		// Create a JPGReader with invalid (file) in-data.
-		JPGReader jpgReader =
+		JPGReaderAlgorithm jpgReader =
 			createJPGReader("gobildy_gook" + File.separator + "file1234abcd.jpg");
 		
 		// This test succeeds if an exception is thrown when calling
@@ -78,7 +72,7 @@ public class JPGReaderTest extends TestCase {
 	@Test
 	public void testExecuteWithInvalidJPGFile() {
 		// Create a JPGReader with valid (file) in-data that isn't a valid JPG file.
-		JPGReader jpgReader = createJPGReader(this.temporaryInvalidJPGFileToBeRead);
+		JPGReaderAlgorithm jpgReader = createJPGReader(this.temporaryInvalidJPGFileToBeRead);
 		
 		// This test succeeds if an exception is NOT thrown when calling
 		// jpgReader.execute().  This is to keep track of whether or not that
@@ -99,7 +93,7 @@ public class JPGReaderTest extends TestCase {
 	@Test
 	public void testExecuteWithValidJPGFile() {
 		// Create a JPGReader with valid (file) in-data.
-		JPGReader jpgReader = createJPGReader(this.temporaryValidJPGFileToBeRead);
+		JPGReaderAlgorithm jpgReader = createJPGReader(this.temporaryValidJPGFileToBeRead);
 		
 		// This test succeeds if an exception is NOT thrown when calling
 		// jpgReader.execute().  This is to keep track of whether or not that
@@ -118,37 +112,22 @@ public class JPGReaderTest extends TestCase {
 	}
 	
 	// Create a JPGReader given a file to be used as in-data.
-	private JPGReader createJPGReader(File inDataFile) {
+	private JPGReaderAlgorithm createJPGReader(File inDataFile) {
 		// Create in-data containing the file.
 		Data fileData = new BasicData(inDataFile, PSRasterProperties.JPG_MIME_TYPE);
 		
 		// Create a JPGReader with the file in-data.
-		JPGReader jpgReader = new JPGReader(new Data[] { fileData }, null, null);
+		JPGReaderAlgorithm jpgReader = new JPGReaderAlgorithm(new Data[] { fileData }, null, null);
 		
 		return jpgReader;
 	}
 	
 	// Create a JPGReader given the file name of a file to be used as in-data.
-	private JPGReader createJPGReader(String inDataFileName) {
+	private JPGReaderAlgorithm createJPGReader(String inDataFileName) {
 		// Create the file to be used as in-data.
 		File inDataFile = new File(inDataFileName);
 		
 		return createJPGReader(inDataFile);
-	}
-	
-	private BufferedImage createBufferedImageFilledWithColor(Color fillColor) {
-		// Create the image (that we will fill and output).
-		BufferedImage bufferedImage = new BufferedImage(TEMPORARY_IMAGE_WIDTH,
-														TEMPORARY_IMAGE_HEIGHT,
-														BufferedImage.TYPE_INT_RGB);
-		
-		// Get the image's graphics context so we can paint to/fill the image.
-		Graphics2D bufferedImageGraphics2D = bufferedImage.createGraphics();
-		
-		// Fill the image with the color passed in.
-		bufferedImageGraphics2D.setBackground(fillColor);
-		
-		return bufferedImage;
 	}
 	
 	private File createTemporaryInvalidJPGFile() throws Exception {
@@ -170,12 +149,12 @@ public class JPGReaderTest extends TestCase {
 	
 	private File createTemporaryValidJPGFile() throws Exception {
 		BufferedImage imageForTemporaryFileToBeRead =
-			createBufferedImageFilledWithColor(Color.RED);
+			ImageUtilities.createBufferedImageFilledWithColor(Color.RED);
 		
 	    // Attempt to create the temporary directory if necessary and our temporary
 	    // file inside of it.
 	    File temporaryValidJPGFileToBeRead =
-	    	FileUtilities.writeBufferedImageToTemporaryFileInTemporaryDirectory
+	    	FileUtilities.writeBufferedImageIntoTemporaryDirectory
 	    		(imageForTemporaryFileToBeRead, "jpg");
 	    
 	    return temporaryValidJPGFileToBeRead;

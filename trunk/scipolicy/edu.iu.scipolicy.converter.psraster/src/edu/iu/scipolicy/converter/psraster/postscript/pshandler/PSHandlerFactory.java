@@ -9,6 +9,6 @@ import org.cishell.framework.data.Data;
 
 public class PSHandlerFactory implements AlgorithmFactory {
     public Algorithm createAlgorithm(Data[] data, Dictionary parameters, CIShellContext context) {
-        return new PSHandler(data, parameters, context);
+        return new PSHandlerAlgorithm(data, parameters, context);
     }
 }

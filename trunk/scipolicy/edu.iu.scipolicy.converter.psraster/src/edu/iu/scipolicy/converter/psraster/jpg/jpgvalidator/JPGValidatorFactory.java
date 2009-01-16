@@ -9,6 +9,6 @@ import org.cishell.framework.data.Data;
 
 public class JPGValidatorFactory implements AlgorithmFactory {
     public Algorithm createAlgorithm(Data[] data, Dictionary parameters, CIShellContext context) {
-        return new JPGValidator(data, parameters, context);
+        return new JPGValidatorAlgorithm(data, parameters, context);
     }
 }

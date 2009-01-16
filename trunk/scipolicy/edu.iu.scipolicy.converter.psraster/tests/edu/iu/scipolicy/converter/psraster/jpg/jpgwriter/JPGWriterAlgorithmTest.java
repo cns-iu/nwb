@@ -16,10 +16,10 @@ import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
-import edu.iu.scipolicy.converter.psraster.jpg.jpgreader.JPGReader;
+import edu.iu.scipolicy.converter.psraster.jpg.jpgreader.JPGReaderAlgorithm;
 import edu.iu.scipolicy.converter.psraster.psrasterproperties.PSRasterProperties;
 
-public class JPGWriterTest {
+public class JPGWriterAlgorithmTest {
 	// Constants.
 	private static final int TEMPORARY_IMAGE_WIDTH = 1024;
 	private static final int TEMPORARY_IMAGE_HEIGHT = 768;
@@ -47,7 +47,7 @@ public class JPGWriterTest {
 			createBufferedImageFilledWithColor(Color.GREEN);
 		
 		// Create a JPGWriter with (image) in-data to test writing out to.
-		JPGWriter jpgWriter = createJPGWriter(bufferedImage);
+		JPGWriterAlgorithm jpgWriter = createJPGWriter(bufferedImage);
 		
 		// This test succeeds if an exception is NOT thrown when calling
 		// jpgReader.execute().  This is to keep track of whether or not that
@@ -80,14 +80,14 @@ public class JPGWriterTest {
 	}
 	
 	// Create a JPGWriter given an image to be used as in-data.
-	private JPGWriter createJPGWriter(BufferedImage inDataBufferedImage) {
+	private JPGWriterAlgorithm createJPGWriter(BufferedImage inDataBufferedImage) {
 		// Create in-data containing the file.
 		Data bufferedImageData = new BasicData(inDataBufferedImage,
 										PSRasterProperties.IMAGE_OBJECT_MIME_TYPE);
 		
 		// Create a JPGWriter with the file in-data.
-		JPGWriter jpgWriter =
-			new JPGWriter(new Data[] { bufferedImageData }, null, null);
+		JPGWriterAlgorithm jpgWriter =
+			new JPGWriterAlgorithm(new Data[] { bufferedImageData }, null, null);
 		
 		return jpgWriter;
 	}

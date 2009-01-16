@@ -9,6 +9,6 @@ import org.cishell.framework.data.Data;
 
 public class PSValidatorFactory implements AlgorithmFactory {
     public Algorithm createAlgorithm(Data[] data, Dictionary parameters, CIShellContext context) {
-        return new PSValidator(data, parameters, context);
+        return new PSValidatorAlgorithm(data, parameters, context);
     }
 }

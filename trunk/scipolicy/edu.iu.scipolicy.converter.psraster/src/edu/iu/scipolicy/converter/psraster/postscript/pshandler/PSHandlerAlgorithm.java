@@ -12,12 +12,12 @@ import org.cishell.framework.data.DataProperty;
 
 import edu.iu.scipolicy.converter.psraster.psrasterproperties.PSRasterProperties;
 
-public class PSHandler implements Algorithm {
+public class PSHandlerAlgorithm implements Algorithm {
     private Data[] data;
     private Dictionary parameters;
     private CIShellContext context;
     
-    public PSHandler(Data[] data, Dictionary parameters, CIShellContext context) {
+    public PSHandlerAlgorithm(Data[] data, Dictionary parameters, CIShellContext context) {
         this.data = data;
         this.parameters = parameters;
         this.context = context;

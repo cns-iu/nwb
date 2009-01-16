@@ -18,12 +18,12 @@ import org.cishell.framework.data.DataProperty;
 import edu.iu.scipolicy.converter.psraster.psrasterproperties.PSRasterProperties;
 
 
-public class JPGReader implements Algorithm {
+public class JPGReaderAlgorithm implements Algorithm {
     private Data[] data;
     private Dictionary parameters;
     private CIShellContext context;
     
-    public JPGReader(Data[] data, Dictionary parameters, CIShellContext context) {
+    public JPGReaderAlgorithm(Data[] data, Dictionary parameters, CIShellContext context) {
         this.data = data;
         this.parameters = parameters;
         this.context = context;

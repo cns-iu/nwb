@@ -18,7 +18,7 @@ import org.osgi.service.log.LogService;
 
 import edu.iu.scipolicy.converter.psraster.psrasterproperties.PSRasterProperties;
 
-public class PostScriptRenderer implements Algorithm {
+public class PostScriptRendererAlgorithm implements Algorithm {
 	private static int IMAGE_WIDTH = 800;
 	private static int IMAGE_HEIGHT = 600;
 	
@@ -27,7 +27,7 @@ public class PostScriptRenderer implements Algorithm {
     private CIShellContext context;
     LogService logger;
     
-    public PostScriptRenderer(Data[] data, Dictionary parameters, CIShellContext context) {
+    public PostScriptRendererAlgorithm(Data[] data, Dictionary parameters, CIShellContext context) {
         this.data = data;
         this.parameters = parameters;
         this.context = context;

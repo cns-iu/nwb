@@ -5,25 +5,22 @@ import java.io.File;
 import java.io.IOException;
 import java.util.Dictionary;
 
-import javax.imageio.ImageIO;
-
 import org.cishell.framework.CIShellContext;
 import org.cishell.framework.algorithm.Algorithm;
 import org.cishell.framework.algorithm.AlgorithmExecutionException;
 import org.cishell.framework.data.BasicData;
 import org.cishell.framework.data.Data;
-import org.osgi.service.log.LogService;
 
-import edu.iu.scipolicy.converter.psraster.fileutilities.FileUtilities;
 import edu.iu.scipolicy.converter.psraster.psrasterproperties.PSRasterProperties;
+import edu.iu.scipolicy.utilities.FileUtilities;
 
 
-public class JPGWriter implements Algorithm {
+public class JPGWriterAlgorithm implements Algorithm {
     private Data[] data;
     private Dictionary parameters;
     private CIShellContext context;
     
-    public JPGWriter(Data[] data, Dictionary parameters, CIShellContext context) {
+    public JPGWriterAlgorithm(Data[] data, Dictionary parameters, CIShellContext context) {
         this.data = data;
         this.parameters = parameters;
         this.context = context;
@@ -41,7 +38,7 @@ public class JPGWriter implements Algorithm {
     	
     	try {
     		temporaryJPGFile =
-    			FileUtilities.writeBufferedImageToTemporaryFileInTemporaryDirectory
+    			FileUtilities.writeBufferedImageIntoTemporaryDirectory
     				(imageToWriteToDisk, "jpg");
     	}
     	catch (IOException e) {

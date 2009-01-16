@@ -9,6 +9,6 @@ import org.cishell.framework.data.Data;
 
 public class JPGWriterFactory implements AlgorithmFactory {
     public Algorithm createAlgorithm(Data[] data, Dictionary parameters, CIShellContext context) {
-        return new JPGWriter(data, parameters, context);
+        return new JPGWriterAlgorithm(data, parameters, context);
     }
 }

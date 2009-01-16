@@ -10,6 +10,6 @@ import org.cishell.framework.data.Data;
 
 public class PostScriptRendererFactory implements AlgorithmFactory {
     public Algorithm createAlgorithm(Data[] data, Dictionary parameters, CIShellContext context) {
-        return new PostScriptRenderer(data, parameters, context);
+        return new PostScriptRendererAlgorithm(data, parameters, context);
     }
 }

@@ -9,6 +9,6 @@ import org.cishell.framework.data.Data;
 
 public class JPGReaderFactory implements AlgorithmFactory {
     public Algorithm createAlgorithm(Data[] data, Dictionary parameters, CIShellContext context) {
-        return new JPGReader(data, parameters, context);
+        return new JPGReaderAlgorithm(data, parameters, context);
     }
 }
