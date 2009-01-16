@@ -32,7 +32,7 @@ public class TopNAlgorithm implements Algorithm {
         
 		this.topN = ((Integer) parameters.get("topN")).intValue();
 		this.columnToSortBy = ((String) parameters.get("columnToSortBy"));
-		this.isFromHighestToLowest = ((Boolean) parameters.get("isFromHighestToLowest"));
+		this.isFromHighestToLowest = ((Boolean) parameters.get("isFromHighestToLowest")).booleanValue();
     }
 
     public Data[] execute() throws AlgorithmExecutionException {
