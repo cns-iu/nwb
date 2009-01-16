@@ -1,0 +1,27 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: Freehep_psviewer Plug-in
+Bundle-SymbolicName: freehep_psviewer
+Bundle-Version: 1.0.0
+Export-Package: org.freehep.graphics2d,
+ org.freehep.graphics2d.font,
+ org.freehep.postscript,
+ org.freehep.swing,
+ org.freehep.swing.event,
+ org.freehep.swing.graphics,
+ org.freehep.swing.images,
+ org.freehep.swing.layout,
+ org.freehep.swing.plaf.metal,
+ org.freehep.swing.popup,
+ org.freehep.swing.print.table,
+ org.freehep.swing.table,
+ org.freehep.swing.test,
+ org.freehep.swing.treetable,
+ org.freehep.swing.undo,
+ org.freehep.swing.wizard,
+ org.freehep.util,
+ org.freehep.util.argv,
+ org.freehep.util.export,
+ org.freehep.util.images,
+ org.freehep.util.io,
+ org.freehep.util.template
