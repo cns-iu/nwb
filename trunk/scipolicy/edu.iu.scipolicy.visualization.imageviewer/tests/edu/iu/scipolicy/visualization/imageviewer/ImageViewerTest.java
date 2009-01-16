@@ -14,7 +14,7 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 
 import edu.iu.scipolicy.converter.psraster.psrasterproperties.PSRasterProperties;
-import edu.iu.scipolicy.converter.psraster.utilities.ImageUtilities;
+import edu.iu.scipolicy.utilities.ImageUtilities;
 
 public class ImageViewerTest extends TestCase {
 
