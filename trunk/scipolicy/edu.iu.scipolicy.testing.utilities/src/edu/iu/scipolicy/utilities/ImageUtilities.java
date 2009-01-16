@@ -1,4 +1,4 @@
-package edu.iu.scipolicy.testing.utilities;
+package edu.iu.scipolicy.utilities;
 
 import java.awt.Color;
 import java.awt.Graphics2D;

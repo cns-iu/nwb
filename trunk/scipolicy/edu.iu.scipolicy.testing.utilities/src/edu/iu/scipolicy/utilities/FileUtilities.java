@@ -1,4 +1,5 @@
-package edu.iu.scipolicy.testing.utilities;
+package edu.iu.scipolicy.utilities;
+
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
@@ -8,12 +9,14 @@ import javax.imageio.ImageIO;
 public class FileUtilities {
 	// Return a File pointing to the directory specified in temporaryDirectoryPath,
     // creating the directory if it doesn't already exist.
-    public static File createTemporaryDirectory(String temporaryDirectoryPath) {
+    private static File createTemporaryDirectory(String temporaryDirectoryPath) {
     	File temporaryDirectory =
     		new File(temporaryDirectoryPath + File.separator + "temp");
     	
-    	if (!temporaryDirectory.exists())
+    	if (!temporaryDirectory.exists()) {
     		temporaryDirectory.mkdir();
+    		temporaryDirectory.deleteOnExit();
+    	}
     	
     	return temporaryDirectory;
     }
@@ -52,7 +55,7 @@ public class FileUtilities {
     	// Get/create the temporary directory.
     	File temporaryDirectory = createTemporaryDirectory(temporaryDirectoryPath);
     	
-    	// Attempt to create the temporary file now.
+    	// Attempt to create the temporary file in our temporary directory now.
     	File temporaryFile = createTemporaryFile(temporaryDirectory,
     											 temporaryDirectoryPath,
     											 temporaryFileName,
@@ -67,7 +70,7 @@ public class FileUtilities {
     	return temporaryFile;
     }
     
-    public static File writeBufferedImageToTemporaryFileInTemporaryDirectory
+    public static File writeBufferedImageIntoTemporaryDirectory
     		(BufferedImage bufferedImage,
     		 String imageType) throws IOException, Exception {
     	// Get the system-wide temporary directory path.
