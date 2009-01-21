@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<metatype:MetaData xmlns:metatype="http://www.osgi.org/xmlns/metatype/v1.0.0">
+	<OCD name="edu.iu.scipolicy.extraction.nsf" id="edu.iu.scipolicy.extraction.nsf.NSFGrantExtractor.OCD"
+		 description="This algorithm performs extractions on NSF data. ">
+	</OCD>
+	<Designate pid="edu.iu.scipolicy.extraction.nsf.NSFGrantExtractor">
+		<Object ocdref="edu.iu.scipolicy.extraction.nsf.NSFGrantExtractor.OCD" />
+	</Designate>
+</metatype:MetaData>
