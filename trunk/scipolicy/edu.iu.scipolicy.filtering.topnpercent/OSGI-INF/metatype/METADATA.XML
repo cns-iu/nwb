@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<metatype:MetaData xmlns:metatype="http://www.osgi.org/xmlns/metatype/v1.0.0">
+	<OCD name="edu.iu.scipolicy.filtering.topnpercent" id="edu.iu.scipolicy.filtering.topnpercent.TopNPercentAlgorithm.OCD"
+		 description="This algorithm extracts the top n% results from a result set. ">
+		 <AD name="Percentage of rows to keep (N%)" id="topNPercent" type="Float" description="What percentage of the top rows should we keep (first 10%, 20%?)" default="0.1"/>
+		<AD name="Column to sort by" id="columnToSortBy" type="String" description="Which column should the rows be sorted by?" default=""/>
+		<AD name="Sort from highest to lowest" id="isFromHighestToLowest" type="Boolean" description="When choosing the top n% rows, should the rows be ranked from highest to lowest (descending), or lowest to highest (ascending). Default (checked) is descending." default="true"/>
+	</OCD>
+	<Designate pid="edu.iu.scipolicy.filtering.topnpercent.TopNPercentAlgorithm">
+		<Object ocdref="edu.iu.scipolicy.filtering.topnpercent.TopNPercentAlgorithm.OCD" />
+	</Designate>
+</metatype:MetaData>
