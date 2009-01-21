@@ -7,8 +7,6 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.Dictionary;
 
-import javax.sql.DataSource;
-
 import org.cishell.framework.CIShellContext;
 import org.cishell.framework.algorithm.Algorithm;
 import org.cishell.framework.algorithm.AlgorithmFactory;
@@ -16,6 +14,7 @@ import org.cishell.framework.algorithm.ParameterMutator;
 import org.cishell.framework.data.Data;
 import org.cishell.reference.service.metatype.BasicAttributeDefinition;
 import org.cishell.reference.service.metatype.BasicObjectClassDefinition;
+import org.cishell.service.database.DataSourceWithID;
 import org.osgi.service.metatype.AttributeDefinition;
 import org.osgi.service.metatype.ObjectClassDefinition;
 
@@ -46,9 +45,10 @@ public class TopNAlgorithmFactory implements AlgorithmFactory, ParameterMutator 
 		// fill the new object class definition with the old definition's attributes
 		// as we pass old attributes into the new definition, modify as desired
 
-		// TODO: Determine good way to know things about DataSource, such as names of tables (using metadata?)
-		// determine the names of all the columns in the table of this DataSource
-		DataSource tableDB = (DataSource) data[0].getData();
+		// TODO: Determine good way to know things about DataSourceWithID, such as
+		// names of tables (using metadata?) determine the names of all the columns
+		// in the table of this DataSourceWithID.
+		DataSourceWithID tableDB = (DataSourceWithID)data[0].getData();
 		try {
 			// TODO: Confirm this is correct
 			Connection tableDBConnection = tableDB.getConnection();
