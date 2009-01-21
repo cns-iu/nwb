@@ -45,7 +45,7 @@ public class JPGValidatorAlgorithm implements Algorithm {
     	jpgFileMetadata.put(DataProperty.LABEL,
     								   "JPG file: " + jpgFileName);
     	jpgFileMetadata.put(DataProperty.TYPE,
-    								   DataProperty.JPG_FILE_TYPE);
+    								   DataProperty.IMAGE_OBJECT_TYPE);
     	
         return new Data[] { jpgFileData };
     }
