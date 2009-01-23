@@ -5,8 +5,12 @@ import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 import java.sql.Connection;
+import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.Arrays;
 import java.util.Dictionary;
 import java.util.HashMap;
@@ -54,7 +58,7 @@ public class CSVtoDBAlgorithm implements Algorithm {
 			DataSourceWithID emptyDB = dbService.createDatabase();
 
 			// (begin reading nsf-csv file header)
-			CSVReader nsfCSVReader = new CSVReader(new FileReader(nsfCSV));
+			CSVReader nsfCSVReader = new CSVReader(new FileReader(nsfCSV), ',', '"', 0, '\\');
 
 			String[] headerLine = nsfCSVReader.readNext();
 			if (headerLine == null || headerLine.length == 0) {
@@ -118,8 +122,15 @@ public class CSVtoDBAlgorithm implements Algorithm {
 		// TODO: treat some columns as optional and others as mandatory (or is this too much of a hassle)
 		// TODO: Tie this in with constants that control the names of NSF columns and their corresponding db column
 		// names
-		String createAwardTableSQL = "" + "CREATE TABLE AWARD" + dbID + "(" + "AWARD_NUMBER INTEGER," + "START_DATE DATE,"
-				+ "EXPIRATION_DATE DATE," + "AWARDED_AMOUNT_TO_DATE INTEGER," + "PRIMARY KEY (AWARD_NUMBER)" + ")";
+		String createAwardTableSQL = "" + "CREATE TABLE AWARD" + dbID + 
+		"(" + 
+		"AWARD_NUMBER INTEGER," +
+		"TITLE VARCHAR(500)," +
+		"START_DATE DATE," + 
+		"EXPIRATION_DATE DATE," +
+		"AWARDED_AMOUNT_TO_DATE INTEGER," + 
+		"PRIMARY KEY (AWARD_NUMBER)" + 
+		")";
 
 		// execute the award table creation SQL
 		try {
@@ -138,42 +149,77 @@ public class CSVtoDBAlgorithm implements Algorithm {
 		// TODO: Put data from every column (not just those currently needed) into nsf-db
 		// TODO: Tie column names of csv AND db to constants file
 		int awardNumberIndex = columnNameToColumnIndex.get("Award Number");
+		int awardTitleIndex = columnNameToColumnIndex.get("Title");
 		int startDateIndex = columnNameToColumnIndex.get("Start Date");
 		int expirationDateIndex = columnNameToColumnIndex.get("Expiration Date");
-		int awardMoneyToDateIndex = columnNameToColumnIndex.get("Awarded Amount to Date");
+		int awardAmountToDateIndex = columnNameToColumnIndex.get("Awarded Amount to Date");
+		
+		String insertIntoAwardSql = "INSERT INTO AWARD" + dbID + " (AWARD_NUMBER, TITLE, START_DATE, EXPIRATION_DATE, AWARDED_AMOUNT_TO_DATE)" +
+		"VALUES " 
+		+ "("
+		+ "?," //awardNumber
+		+ "?," //awardTitle
+		+ "?," //startDate
+		+ "?," //expirationDate
+		+ "?" //awardAmountToDate
+		+ ")";
+//		+ "'" + awardTitleString + "',"
+//		+ "'" + startDateString + "'," 
+//		+ "'" + expirationDateString + "'," 
+//		+ awardMoneyToDateString 
+//		+ ")";
+	
 		
 		try {
-			//TODO: Maybe a prepared statement here would improve performance?
-			Statement fillDBStatement = nsfDbConnection.createStatement();
+			PreparedStatement insertIntoAward = nsfDbConnection.prepareStatement(insertIntoAwardSql);
 			String[] nextAwardLine = null;
 			int currentRowNumber = 1; //We read the header row earlier (kind of a hack)
 			while ((nextAwardLine = nsfCSVReader.readNext()) != null) {
 				//TODO: Maybe in the future we can be more lenient with improper formatting, but for now it's either all perfect or we abort.
 				String awardNumberString = nextAwardLine[awardNumberIndex];
+				int awardNumber = Integer.parseInt(awardNumberString);
+				insertIntoAward.setInt(1, awardNumber);
+				
+				String awardTitleString = nextAwardLine[awardTitleIndex];
+				String awardTitle = awardTitleString;
+				insertIntoAward.setString(2, awardTitle);
+				
 				String startDateString = nextAwardLine[startDateIndex];
+				java.util.Date startDate = DateFormat.getDateInstance().parse(startDateString);
+				java.sql.Date startDateForSQL = new java.sql.Date(startDate.getTime());
+				insertIntoAward.setDate(3, startDateForSQL);
+				
 				String expirationDateString = nextAwardLine[expirationDateIndex];
-				String awardMoneyToDateString = nextAwardLine[awardMoneyToDateIndex];
+				java.util.Date expirationDate = DateFormat.getDateInstance().parse(expirationDateString);
+				java.sql.Date expirationDateForSQL = new java.sql.Date(expirationDate.getTime());
+				insertIntoAward.setDate(4, expirationDateForSQL);
+				
+				
+				String awardAmountToDateString = nextAwardLine[awardAmountToDateIndex];
+				int awardAmountToDate = Integer.parseInt(awardAmountToDateString);
+				insertIntoAward.setInt(5, awardAmountToDate);
 				
 				//(This would be a huge no-no if we cared about security at all, but I'm assuming we don't have anything to secure)
-				fillDBStatement.addBatch("INSERT INTO AWARD" + dbID + " (AWARD_NUMBER, START_DATE, EXPIRATION_DATE, AWARDED_AMOUNT_TO_DATE)" +
-					"VALUES ("
-						+ awardNumberString + "," 
-						+ "'" + startDateString + "'," 
-						+ "'" + expirationDateString + "'," 
-						+ awardMoneyToDateString 
-						+ ")");
-
+				
+				insertIntoAward.addBatch();
+				
 				currentRowNumber++;
 				System.out.println("Putting CSV row " + currentRowNumber + " into database");
 			}
 			
 			//TODO: Check for errors 
-			fillDBStatement.executeBatch();
+			insertIntoAward.executeBatch();
 			
 		} catch (IOException e) {
 			throw new AlgorithmExecutionException("An error occurred while loading nsf data into the database", e);
 		} catch (SQLException e) {
 			throw new AlgorithmExecutionException("An error occurred while loading nsf data into the database", e);
+		} catch (ParseException e) {
+			//TODO: This should probably say which date was wrong
+			throw new AlgorithmExecutionException("An error occurred while parsing a date from the nsf csv file", e);
+		} catch (NumberFormatException e) {
+			//TODO: Should say which number failed.
+			throw new AlgorithmExecutionException("An error occurred while attempting to parse a number from the nsf csv file", e);
 		}
 	}
 	
