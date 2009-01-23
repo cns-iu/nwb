@@ -143,6 +143,7 @@ public class CSVtoDBAlgorithm implements Algorithm {
 		int awardMoneyToDateIndex = columnNameToColumnIndex.get("Awarded Amount to Date");
 		
 		try {
+			//TODO: Maybe a prepared statement here would improve performance?
 			Statement fillDBStatement = nsfDbConnection.createStatement();
 			String[] nextAwardLine = null;
 			int currentRowNumber = 1; //We read the header row earlier (kind of a hack)
