@@ -102,6 +102,7 @@ public class DbToPrefuseAlgorithm implements Algorithm {
 			Dictionary awardTableMetadata = awardTableData.getMetadata();
 			awardTableMetadata.put(DataProperty.LABEL, "NSF Awards Information");
 			awardTableMetadata.put(DataProperty.PARENT, data[0]);
+			awardTableMetadata.put(DataProperty.TYPE, DataProperty.TABLE_TYPE);
 			
 			return awardTableData;
 		}
