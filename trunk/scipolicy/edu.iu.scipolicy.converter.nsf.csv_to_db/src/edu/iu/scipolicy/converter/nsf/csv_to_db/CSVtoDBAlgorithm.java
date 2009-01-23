@@ -235,6 +235,7 @@ public class CSVtoDBAlgorithm implements Algorithm {
 		
 		//TODO: Get more information and use it to create better label
 	  	dbMetadata.put(DataProperty.LABEL, "NSF award data");
+	  	//TODO: Make a database icon?
 	  	
 	  	return dbData;
 	}
