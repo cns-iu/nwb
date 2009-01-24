@@ -3,7 +3,11 @@ package edu.iu.scipolicy.converter.psraster.postscript.postscriptrenderer;
 import java.awt.Dimension;
 import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
+import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.io.IOException;
 import java.util.Dictionary;
 
 import org.cishell.framework.CIShellContext;
@@ -16,11 +20,11 @@ import org.freehep.postscript.PSInputFile;
 import org.freehep.postscript.Processor;
 import org.osgi.service.log.LogService;
 
+import edu.iu.scipolicy.converter.psraster.postscript.postscriptrenderer.utility.DimensionExtractor;
 import edu.iu.scipolicy.converter.psraster.psrasterproperties.PSRasterProperties;
 
 public class PostScriptRendererAlgorithm implements Algorithm {
-	private static int IMAGE_WIDTH = 800;
-	private static int IMAGE_HEIGHT = 600;
+	private static Dimension DEFAULT_IMAGE_DIMENSIONS = new Dimension(800, 600);
 	
     private Data[] data;
     private Dictionary parameters;
@@ -46,11 +50,18 @@ public class PostScriptRendererAlgorithm implements Algorithm {
     	logger.log(LogService.LOG_INFO,
     			   "Rendering PostScript.  May take a few moments...");
     	
+    	// Determine the PostScript image's dimensions.
+    	
+    	Dimension imageDimensions = 
+    		DimensionExtractor.determineImageDimensions(postScriptFile, logger);
+    	
+    	
     	// Render the PostScript.
+    	
     	BufferedImage bufferedImage =
     		renderPostScriptFileToBufferedImage(postScriptFileName,
-    											IMAGE_WIDTH,
-    											IMAGE_HEIGHT);
+    											imageDimensions.width,
+    											imageDimensions.height);
     	
     	// Wrap the rendered image in a Data object.
         Data bufferedImageData =
@@ -103,4 +114,5 @@ public class PostScriptRendererAlgorithm implements Algorithm {
 		// method, so return it.
 		return bufferedImage;
     }
+ 
 }
