@@ -56,19 +56,24 @@ public class DimensionExtractor {
 		        		throwExceptionForInvalidBoundingBoxLine(boundingBoxLine);
 		        	}
 					
-					int bottomLeftX = Integer.parseInt(lineMatcher.group(1));
-					int bottomLeftY = Integer.parseInt(lineMatcher.group(2));
-					int topRightX = Integer.parseInt(lineMatcher.group(3));
-					int topRightY = Integer.parseInt(lineMatcher.group(4));
+					float bottomLeftX = Float.parseFloat(lineMatcher.group(1));
+					float bottomLeftY = Integer.parseInt(lineMatcher.group(2));
+					float topRightX = Integer.parseInt(lineMatcher.group(3));
+					float topRightY = Integer.parseInt(lineMatcher.group(4));
 					
-					int imageWidth = topRightX - bottomLeftX;
-					int imageHeight = topRightY - bottomLeftY;
+					float imageWidth = topRightX - bottomLeftX;
+					float imageHeight = topRightY - bottomLeftY;
 					
-					if (imageWidth < 0 || imageHeight < 0) {
-						throwExceptionForNegativeBoundingBoxDimensions(imageWidth, imageHeight);
+					int roundedImageWidth = roundUp(imageWidth);
+					int roundedImageHeight = roundUp(imageHeight);
+					
+					if (roundedImageWidth < 0 || roundedImageHeight < 0) {
+						throwExceptionForNegativeBoundingBoxDimensions(
+								roundedImageWidth, roundedImageHeight);
 					}
 					
-					Dimension boundingBoxDimensions = new Dimension(imageWidth, imageHeight);
+					Dimension boundingBoxDimensions = 
+						new Dimension(roundedImageWidth, roundedImageHeight);
 					
 					//SUCCESS!
 					return boundingBoxDimensions;
@@ -136,7 +141,7 @@ public class DimensionExtractor {
 		
 	}
 	
-	private static void throwExceptionForNegativeBoundingBoxDimensions(int imageWidth, int imageHeight)
+	private static void throwExceptionForNegativeBoundingBoxDimensions(float imageWidth, float imageHeight)
 		throws DimensionDeterminingException {
 		String message = 
 			"Postscript file contains invalid negative image dimensions " +
@@ -167,16 +172,15 @@ public class DimensionExtractor {
 		
 		//Bounding Box line should look like %%BoundingBox: 10 23 40 219
 		
-		//(regex is "^.*BoundingBox\\S*\\s*([-+]?[0-9]*\\.?[0-9]+)\\s+([-+]?[0-9]*\\.?[0-9]+)\\s+([-+]?[0-9]*\\.?[0-9]+)\\s+([-+]?[0-9]*\\.?[0-9]+).*$"
+		//(regex is "^.*BoundingBox:\\s*([-+]?[0-9]*\\.?[0-9]+)\\s+([-+]?[0-9]*\\.?[0-9]+)\\s+([-+]?[0-9]*\\.?[0-9]+)\\s+([-+]?[0-9]*\\.?[0-9]+).*$"
 		
 		String lineStart = "^";
 		String anything = ".*";
-		String anyNonWhitespace = "\\S*";
 		String oneOrMoreWhitespace = "\\s+";
 		String zeroOrMoreWhitespace = "\\s*";
 		String lineEnd = "$";
 		
-		String boundingBoxToken = lineStart + anything + "BoundingBox" + anyNonWhitespace;
+		String boundingBoxToken = lineStart + anything + "BoundingBox:";
 		
 		String optionalPlusOrMinus = "[-+]?";
 		String zeroOrMoreDigits = "[0-9]*";
@@ -194,12 +198,26 @@ public class DimensionExtractor {
 			anything +
 			lineEnd;
 		
-		Pattern localBoundingBoxLinePattern = Pattern.compile(boundingBoxLineRegex);
+		Pattern localBoundingBoxLinePattern = Pattern.compile(boundingBoxLineRegex, Pattern.CASE_INSENSITIVE);
 	
 		return localBoundingBoxLinePattern;
 	}
 	
 	private static String captureGroup(String regex) {
 		return "(" + regex + ")";
+	}
+	
+	private static int roundUp(float number) {
+		return Math.round(number + .5f);
+	}
+	
+	public static void main(String[] args) {
+		Pattern p = createBoundingBoxLineRegexPattern();
+		Matcher m = p.matcher("%%BoundingBox: -300 +300.0 +3210 11874.993");
+		if (m.matches()) {
+			System.out.println("Matches");
+		} else {
+			System.out.println("No match");
+		}
 	}
 }
