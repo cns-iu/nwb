@@ -186,11 +186,23 @@ public class CSVtoDBAlgorithm implements Algorithm {
 				
 				String startDateString = nextAwardLine[startDateIndex];
 				java.util.Date startDate = DateFormat.getDateInstance().parse(startDateString);
+				
+				// The year in dates should be full (so 1984 instead 84).
+				// Unfortunately, the Date class is pretty stupid about this, so
+				// fix it if necessary.
+				if (startDate.getYear() < 1900)
+					startDate.setYear(startDate.getYear() + 1900);
+
 				java.sql.Date startDateForSQL = new java.sql.Date(startDate.getTime());
 				insertIntoAward.setDate(3, startDateForSQL);
 				
 				String expirationDateString = nextAwardLine[expirationDateIndex];
 				java.util.Date expirationDate = DateFormat.getDateInstance().parse(expirationDateString);
+				
+				// Fix the year on the expiration date as well.
+				if (expirationDate.getYear() < 1900)
+					expirationDate.setYear(expirationDate.getYear() + 1900);
+				
 				java.sql.Date expirationDateForSQL = new java.sql.Date(expirationDate.getTime());
 				insertIntoAward.setDate(4, expirationDateForSQL);
 				
