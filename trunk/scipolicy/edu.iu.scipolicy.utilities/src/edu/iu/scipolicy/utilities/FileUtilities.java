@@ -31,7 +31,7 @@ public class FileUtilities {
     	
     	try {
     		temporaryFile = File.createTempFile("NWB-Session-" + temporaryFileName,
-    											temporaryFileExtension,
+    											"." + temporaryFileExtension,
     											temporaryDirectory);
     	}
     	catch (IOException e) {
