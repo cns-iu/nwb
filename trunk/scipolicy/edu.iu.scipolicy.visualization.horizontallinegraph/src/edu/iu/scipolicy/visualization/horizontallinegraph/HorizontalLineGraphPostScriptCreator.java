@@ -1,38 +1,42 @@
 package edu.iu.scipolicy.visualization.horizontallinegraph;
 
 import java.io.StringWriter;
+import java.util.Arrays;
 import java.util.Date;
 
+import prefuse.data.Table;
 import edu.iu.scipolicy.utilities.DateUtilities;
 
+/**
+ * To my understanding, the drawing "canvas" is given a default size that is used
+   as part of the scaling factor when forming the grant bar lines.
+ * In the original implementation of this visualization, this default size was large
+   enough to fit all of the elements of the visualization, so it was also used as
+   the bounding box for the Encapsulated PostScript.
+ * Since we are dealing with larger datasets than the original implementation of
+   this visualization intended, we actually have to dynamically calculate the
+   bounding box size based on the generated PostScript elements (e.g. the grant bar
+   lines) so none of them are clipped.
+ * Right now, the CALCULATED bounding box size is updated every time a grant bar is
+   generated, which is poor design because it's a side effect.  Eventually, grant
+   bars will probably be represented by objects of a class, and an array of them
+   will be produced instead of the raw PostScript code for displaying them.  This
+   array of grant bars could then be used to calculate the bounding box size
+   "properly".
+ */
 public class HorizontalLineGraphPostScriptCreator {
+	private float calculatedBoundingBoxWidth = 0.0f;
+	private float calculatedBoundingBoxHeight = 0.0f;
+	
 	public HorizontalLineGraphPostScriptCreator() {
 	}
-	
-	/* TODO: Year labels and grant bar lines are NOT getting offset correctly if the
-	   start date is NOT January 1st of any year.
-	 * As per Russell's original code, the year line/label for the starting YEAR of
-	   all of the grants was NOT getting drawn, which is most likely a bug.  As a
-	   work-around, the method that generates the New Year's dates-to-be-drawn
-	   (which is DateUtilities.generateNewYearsDatesBetweenDates) adds the New
-	   Year's date by default.
-	 * Using that first (possibly defaultly-generated) New Year's date as the
-	   starting date may just be the easiest solution.
-	 * The user could still specify a full start date, which would be used to
-	   exclude grants, but it should be notably different than the GRAPH start date. 
-	 */
-	/* TODO: The EPS bounding box should be calculated based off of what is drawn,
-	   not preset?
-	 */
-	/* TODO: The scaling is off?
-	 */
-	public String createPostScript
-		(Table grantTable,
-		 Date grantStartDate,
-		 Date grantEndDate,
-		 int minNumberOfDaysForBar) throws PostScriptCreationException
+
+	public String createPostScript(Table grantTable, int minNumberOfDaysForBar) 
+		throws PostScriptCreationException
 	{
 		// The canvas size, in inches.
+		// (NOTE: These could be constants right now, but they may eventually be
+		// user-settable.)
 		final float canvasWidth = 11.7f;
 		final float canvasHeight = 4.75f;
 		
@@ -40,125 +44,114 @@ public class HorizontalLineGraphPostScriptCreator {
 		// how many dots there are on the canvas.
 		final int resolutionInDPI = 300;
 		
-		// The (encapsulated) bounding box dimenions.  (Note: These need to be
-		// calculated based off the drawn contents?)
+		// The default (encapsulated) bounding box dimenions.
 		final float boundingBoxTop = 300.0f;
 		final float boundingBoxBottom = 300.0f;
 		final float boundingBoxLeft = 300.0f;
 		final float boundingBoxRight = 300.0f;
 
-		final float scaledCanvasWidth =
+		final float defaultBoundingBoxWidth =
 			((canvasWidth * resolutionInDPI) - boundingBoxLeft - boundingBoxRight);
-		final float scaledCanvasHeight =
+		final float defaultBoundingBoxHeight =
 			((canvasHeight * resolutionInDPI) - boundingBoxTop - boundingBoxBottom);
 		final float grantBarMargin = 10.0f;
-		final int tickHeight = -5;
-		
-		// Create the grants from the table.
-		Grant[] grants = null;
-		
-		try {
-			grants = readGrantsFromTable(grantTable);
-		}
-		catch (GrantCreationException e) {
-			throw new PostScriptCreationException(e);
-		}
-		
+		// Part of this visualization is to display vertical dashed lines for
+		// every year in the grant date span.  This is the height of the dashes for
+		// those lines.
+		// (NOTE: This could be a constant, but we may eventually want it to be
+		// user-settable?)
+		final int yearLineDashHeight = -5;
+
+		Grant[] grants = readGrantsFromTable(grantTable);
+
 		// No grants?  Cya.
 		if (grants.length == 0) {
 			throw new PostScriptCreationException
 				("No grants to create PostScript from!");
 		}
 		
-		// Sort the grants.
 		Grant[] sortedGrants = sortGrants(grants);
 		
 		// Sum the total (monitary) amount across all grants.
-		float totalGrantAmount = calculateTotalGrantAmount(grants);
+		float totalGrantMoney = calculateTotalGrantAmount(sortedGrants);
 		
 		// Calculate the total height for all grants (all of their heights
 		// together?)  This is used to scale the grants appropriately, I think.
-		float grantHeight =
-			(scaledCanvasHeight - (grantBarMargin * (sortedGrants.length + 1)));
+		float totalGrantHeightSpan =
+			Math.abs(defaultBoundingBoxHeight - (grantBarMargin * (sortedGrants.length + 1)));
 		
-		// Used to put the formed PostScript in to.
-		StringWriter postScriptInProgress = new StringWriter();
+		// Get the first and last dates any of these grants exist.
+		Date graphStartDate = formGraphStartDateBasedOnGrants(sortedGrants);
+		Date graphEndDate = formGraphEndDateBasedOnGrants(sortedGrants);
 		
-		// Generate dates.
+		// Generate a date for every day between the given (graph) start and end
+		// dates.  These (day) dates are used to generate the New Year's Day
+		// (so, January 1st) dates, which are subsequently necessary for drawing the
+		// vertical year tick lines.
+		// Eventually, if we enhance this visualization to display the per-day total
+		// grant dollar amount, we'll actually need every single (day) date between
+		// the start and end dates, which is why I'm leaving this in place.
 		Date[] allDatesBetween =
-			DateUtilities.generateDaysBetweenDates(grantStartDate, grantEndDate);
+			DateUtilities.generateDaysBetweenDates(graphStartDate, graphEndDate);
 		Date[] newYearsDatesForGraph =
 			DateUtilities.generateNewYearsDatesBetweenDates(allDatesBetween);
 		
-		// Start and end dates for the graph (based off of the grant start and end
-		// dates).
-		Date graphStartDate = newYearsDatesForGraph[0];
-		Date graphEndDate = newYearsDatesForGraph[newYearsDatesForGraph.length - 1];
+		// (NOTE: This side effects the calculated canvas width and height.)
+		final String postScriptGrantBars =
+			formPostScriptGrantBars(sortedGrants,
+									graphStartDate,
+									graphEndDate,
+									grantBarMargin,
+									totalGrantMoney,
+									totalGrantHeightSpan,
+									defaultBoundingBoxWidth);
 		
-		// Form the PostScript header.
-		postScriptInProgress.append(formPostScriptHeader(boundingBoxTop,
-														 boundingBoxBottom,
-														 boundingBoxLeft,
-														 boundingBoxRight,
-														 scaledCanvasWidth,
-														 scaledCanvasHeight));
+		final String postScriptHeader =
+			formPostScriptHeader(boundingBoxTop,
+								 boundingBoxBottom,
+								 boundingBoxLeft,
+								 boundingBoxRight,
+								 defaultBoundingBoxWidth,
+								 defaultBoundingBoxHeight);
 		
-		// Form the PostScript year labels (for the graph).
-		postScriptInProgress.append(formPostScriptYearLabels(newYearsDatesForGraph,
-															 graphStartDate,
-															 graphEndDate,
-															 scaledCanvasWidth,
-															 tickHeight,
-															 grantHeight));
+		final String postScriptYearLabels = 
+			formPostScriptYearLabels(newYearsDatesForGraph,
+									 graphStartDate,
+									 graphEndDate,
+									 defaultBoundingBoxWidth,
+									 yearLineDashHeight);
 		
-		// Form the actual PostScript grant bars.
-		postScriptInProgress.append(formPostScriptGrantBars(grants,
-															graphStartDate,
-															graphEndDate,
-															grantBarMargin,
-															totalGrantAmount,
-															grantHeight,
-															scaledCanvasWidth));
+		final String postScriptBackground = formPostScriptBackground();
 		
-		// Form the PostScript background setup.
-		postScriptInProgress.append(formPostScriptBackground());
-		
-		// Form the PostScript vertical tick marks.
-		// (No, actually, don't.)
-		
-		return postScriptInProgress.toString();
+		return postScriptHeader +
+			   postScriptYearLabels +
+			   postScriptGrantBars +
+			   postScriptBackground;
 	}
 	
 	private Grant[] readGrantsFromTable(Table grantTable)
-			throws GrantCreationException
 	{
 		// Get the number of rows from the table so we know how many elements to
 		// allocate our working/resulting grant set for.
-		int numGrants = grantTable.getNumRowsLeft();
+		int numGrants = grantTable.getRowCount();
 		// Allocate our working/resulting grant set.
 		Grant[] grantSet = new Grant [numGrants];
 		
-		try {
-			for (int ii = 0; ii < numGrants; ii++) {
-				grantSet[ii] = new Grant(grantTable.getNextRow());
-			}
-		}
-		catch (NoMoreRowsException e) {
-			throw new GrantCreationException
-				("This exception should NEVER be thrown.", e);
-		}
+		for (int ii = 0; ii < numGrants; ii++)
+			grantSet[ii] = new Grant(grantTable.getTuple(ii));
 		
 		return grantSet;
 	}
 	
 	private Grant[] sortGrants(Grant[] originalGrantSet) {
-		// TODO: Actually sort them into a new array.
 		final int numGrants = originalGrantSet.length;
 		Grant[] sortedGrantSet = new Grant [numGrants];
 		
 		for (int ii = 0; ii < numGrants; ii++) {
 			sortedGrantSet[ii] = originalGrantSet[ii];
 		}
+		
+		Arrays.sort(sortedGrantSet);
 		
 		return sortedGrantSet;
 	}
@@ -172,7 +165,6 @@ public class HorizontalLineGraphPostScriptCreator {
 		return calculatedTotalGrantAmount;
 	}
 	
-	// TODO: Eventually make this do something?
 	private float calculateGrantBarHeight(float dollarAmount,
 								  float totalDollarAmount,
 								  float grantHeight) {
@@ -192,14 +184,14 @@ public class HorizontalLineGraphPostScriptCreator {
 										float boundingBoxBottom,
 										float boundingBogLeft,
 										float boundingBoxRight,
-										float scaledCanvasWidth,
-										float scaledCanvasHeight)
+										float defaultBoundingBoxWidth,
+										float defaultBoundingBoxHeight)
 	{
 		return
 			line("%!PS-Adobe-2.0 EPSF-2.0") +
 			line("%%BoundingBox:-" + boundingBogLeft + " -" + boundingBoxBottom +
-				 " " + (scaledCanvasWidth + boundingBoxRight) + " " +
-				 (scaledCanvasHeight + boundingBoxTop)) +
+				 " " + (defaultBoundingBoxWidth + boundingBoxRight) + " " +
+				 (this.calculatedBoundingBoxHeight + boundingBoxTop)) +
 			line("%%Pages: 1") +
 			line("%%Title: Horizontal Line Graph (NSF Grant Data)") +
 			line("%%Creator: SciPolicy") +
@@ -297,28 +289,25 @@ public class HorizontalLineGraphPostScriptCreator {
 	private String formPostScriptYearLabels(Date[] newYearsDates,
 											Date graphStartDate,
 											Date graphEndDate,
-											float scaledCanvasWidth,
-											int tickHeight,
-											float grantHeight)
+											float defaultBoundingBoxWidth,
+											int tickHeight)
 	{
-		StringWriter postScriptStringWriter = new StringWriter();
+		StringWriter yearLabelPostScript = new StringWriter();
 		
-		for (int ii = 0; ii < newYearsDates.length; ii++) {
-			Date currentNewYearsDate = newYearsDates[ii];
-			
+		for (Date currentNewYearsDate : newYearsDates) {
 			float xCoordinate = calculateXCoordinate(currentNewYearsDate,
 													 graphStartDate,
 													 graphEndDate,
-													 scaledCanvasWidth);
+													 defaultBoundingBoxWidth);
 			
-			postScriptStringWriter.append
-				(line("(" + currentNewYearsDate.getYear() + ") " + xCoordinate +
-					  " " + tickHeight + " ticklabel") +
-				 line("" + xCoordinate + " " + tickHeight + " " + grantHeight +
-					  " vertical"));
+			yearLabelPostScript.append
+				(line("(" + currentNewYearsDate.getYear() + ") " + 
+						xCoordinate + " " + tickHeight + " ticklabel") +
+				 line("" + xCoordinate + " " + tickHeight + " " +
+					  this.calculatedBoundingBoxHeight + " vertical"));
 		}
 		
-		return postScriptStringWriter.toString();
+		return yearLabelPostScript.toString();
 	}
 	
 	private String formPostScriptGrantBars(Grant[] grants,
@@ -327,14 +316,12 @@ public class HorizontalLineGraphPostScriptCreator {
 										   float grantBarMargin,
 										   float totalGrantAmount,
 										   float grantHeight,
-										   float scaledCanvasWidth)
+										   float defaultBoundingBoxWidth)
 	{
-		final int numGrants = grants.length;
 		float cursorYCoordinate = 0.0f;
-		StringWriter postScriptStringWriter = new StringWriter();
+		StringWriter grantBarPostScript = new StringWriter();
 		
-		for (int ii = 0; ii < numGrants; ii++) {
-			Grant currentGrant = grants[ii];
+		for (Grant currentGrant : grants) {
 			String currentGrantName = currentGrant.getGrantLabel();
 			Date currentGrantStartDate = currentGrant.getStartDate();
 			Date currentGrantEndDate = currentGrant.getEndDate();
@@ -347,28 +334,33 @@ public class HorizontalLineGraphPostScriptCreator {
 				calculateXCoordinate(currentGrantStartDate,
 									 graphStartDate,
 									 graphEndDate,
-									 scaledCanvasWidth);
+									 defaultBoundingBoxWidth);
 			
 			float grantBarEndXCoordinate = calculateXCoordinate(currentGrantEndDate,
 																graphStartDate,
 																graphEndDate,
-																scaledCanvasWidth);
+																defaultBoundingBoxWidth);
 			
 			float grantBarWidth = (grantBarEndXCoordinate - grantBarStartXCoordinate);
 			
 			cursorYCoordinate += grantBarMargin;
 			
-			postScriptStringWriter.append
+			grantBarPostScript.append
 				(line("(" + currentGrantName + ") " + grantBarStartXCoordinate +
 					  " " + cursorYCoordinate + " " + grantBarWidth + " " +
 					  calculatedGrantBarHeight + " grant"));
 			
 			cursorYCoordinate += calculatedGrantBarHeight;
+			
+			updateCanvasSize(grantBarEndXCoordinate,
+							 (cursorYCoordinate + grantBarMargin));
 		}
 		
-		return postScriptStringWriter.toString();
+		return grantBarPostScript.toString();
 	}
 	
+	// TODO: Give this a more accurate name?  I'm not sure if this is actually
+	// changing the background.
 	private String formPostScriptBackground() {
 		return line("0 0 1 setrgbcolor");
 	}
@@ -380,4 +372,45 @@ public class HorizontalLineGraphPostScriptCreator {
 	private String tabbed(String str) {
 		return "\t" + str;
 	}
+	
+	private Date formGraphStartDateBasedOnGrants(Grant[] grants) {
+		// Get the first grant and its start date.
+		Grant firstGrant = grants[0];
+		Date firstGrantStartDate = firstGrant.getStartDate();
+		// Form the GRAPH start date based on the first grant's start date.
+		Date graphStartDate = new Date((firstGrantStartDate.getYear() - 1), 0, 1);
+		
+		return graphStartDate;
+	}
+	
+	private Date formGraphEndDateBasedOnGrants(Grant[] grants) {
+		// Form the GRAPH end date based on the determined last year of the grants.
+		Date graphEndDate = new Date((determineLastYearOfGrants(grants) + 1), 0, 1);
+		
+		return graphEndDate;
+	}
+	
+	private int determineLastYearOfGrants(Grant[] grants) {
+		int lastYear = 0;
+		
+		for (int ii = 0; ii < grants.length; ii++) {
+			Date grantEndDate = grants[ii].getEndDate();
+			int grantEndDateYear = grantEndDate.getYear();
+			
+			if (grantEndDateYear > lastYear)
+				lastYear = grantEndDateYear;
+		}
+		
+		return lastYear;
+	}
+	
+	private void updateCanvasSize(float xCoordinate, float yCoordinate) {
+		if (xCoordinate > this.calculatedBoundingBoxWidth)
+			this.calculatedBoundingBoxWidth = xCoordinate;
+		
+		if (yCoordinate > this.calculatedBoundingBoxHeight)
+			this.calculatedBoundingBoxHeight = yCoordinate;
+	}
+	
+	
 }

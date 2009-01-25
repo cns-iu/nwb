@@ -2,11 +2,15 @@ package edu.iu.scipolicy.visualization.horizontallinegraph;
 
 import java.util.Date;
 
-public class Grant {
-	public static String GRANT_LABEL_KEY = "label";
-	public static String GRANT_START_DATE_KEY = "start date";
-	public static String GRANT_END_DATE_KEY = "end date";
-	public static String GRANT_AMOUNT = "amount";
+import prefuse.data.Tuple;
+
+public class Grant implements Comparable {
+	// TODO: Make these point to NSFConstants plugin eventually (when it exists).
+	public static String GRANT_AWARD_LABEL_KEY = "TITLE";
+	public static String GRANT_AWARD_START_DATE_KEY = "START_DATE";
+	public static String GRANT_AWARD_END_DATE_KEY = "EXPIRATION_DATE";
+	public static String GRANT_AWARD_AMOUNT = "AWARDED_AMOUNT_TO_DATE";
+	public static String GRANT_AWARD_NUMBER = "AWARD_NUMBER";
 	
 	private String label;
 	private Date startDate;
@@ -14,7 +18,6 @@ public class Grant {
 	private float amount;
 	
 	public Grant(String label, Date startDate, Date endDate, float amount)
-		throws GrantCreationException
 	{
 		this.label = label;
 		this.startDate = startDate;
@@ -22,16 +25,11 @@ public class Grant {
 		this.amount = amount;
 	}
 	
-	public Grant(TableRow tableRow) throws GrantCreationException {
-		try {
-			this.label = (String)tableRow.getValue(GRANT_LABEL_KEY);
-			this.startDate = (Date)tableRow.getValue(GRANT_START_DATE_KEY);
-			this.endDate = (Date)tableRow.getValue(GRANT_END_DATE_KEY);
-			this.amount = ((Float)tableRow.getValue(GRANT_AMOUNT)).floatValue();
-		}
-		catch (NoSuchKeyValueException e) {
-			throw new GrantCreationException(e);
-		}
+	public Grant(Tuple tableRow) {
+		this.label = (String)tableRow.get(GRANT_AWARD_LABEL_KEY);
+		this.startDate = (Date)tableRow.get(GRANT_AWARD_START_DATE_KEY);
+		this.endDate = (Date)tableRow.get(GRANT_AWARD_END_DATE_KEY);
+		this.amount = ((Integer)tableRow.get(GRANT_AWARD_AMOUNT)).floatValue();
 	}
 	
 	public String getGrantLabel() {
@@ -48,5 +46,11 @@ public class Grant {
 	
 	public float getAmount() {
 		return this.amount;
+	}
+	
+	public int compareTo(Object otherObject) {
+		Grant otherGrant = (Grant)otherObject;
+		
+		return getStartDate().compareTo(otherGrant.getStartDate());
 	}
 }
