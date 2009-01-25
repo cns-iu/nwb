@@ -57,9 +57,9 @@ public class DimensionExtractor {
 		        	}
 					
 					float bottomLeftX = Float.parseFloat(lineMatcher.group(1));
-					float bottomLeftY = Integer.parseInt(lineMatcher.group(2));
-					float topRightX = Integer.parseInt(lineMatcher.group(3));
-					float topRightY = Integer.parseInt(lineMatcher.group(4));
+					float bottomLeftY = Float.parseFloat(lineMatcher.group(2));
+					float topRightX = Float.parseFloat(lineMatcher.group(3));
+					float topRightY = Float.parseFloat(lineMatcher.group(4));
 					
 					float imageWidth = topRightX - bottomLeftX;
 					float imageHeight = topRightY - bottomLeftY;

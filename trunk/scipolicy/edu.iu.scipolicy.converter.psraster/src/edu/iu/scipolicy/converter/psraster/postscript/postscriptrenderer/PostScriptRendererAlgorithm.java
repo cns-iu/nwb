@@ -55,6 +55,7 @@ public class PostScriptRendererAlgorithm implements Algorithm {
     	Dimension imageDimensions = 
     		DimensionExtractor.determineImageDimensions(postScriptFile, logger);
     	
+    	System.out.println("Using dimensions " + imageDimensions.width + ", " + imageDimensions.height);
     	
     	// Render the PostScript.
     	
