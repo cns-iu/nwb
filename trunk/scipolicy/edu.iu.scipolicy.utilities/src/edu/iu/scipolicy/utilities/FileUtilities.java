@@ -25,7 +25,8 @@ public class FileUtilities {
     public static File createTemporaryFile(File temporaryDirectory,
     								 String temporaryDirectoryPath,
     								 String temporaryFileName,
-    								 String temporaryFileExtension) {
+    								 String temporaryFileExtension)
+    {
     	File temporaryFile;
     	
     	try {
@@ -49,9 +50,10 @@ public class FileUtilities {
     // Attempt to create a temporary file on disk in a temporary directory (that may
     // also be created, if necessary).
     public static File createTemporaryFileInTemporaryDirectory
-    		(String temporaryDirectoryPath,
-    		 String temporaryFileName,
-    	 	 String temporaryFileExtension) throws IOException {
+    	(String temporaryDirectoryPath,
+    	 String temporaryFileName,
+     	 String temporaryFileExtension) throws IOException
+    {
     	// Get/create the temporary directory.
     	File temporaryDirectory = createTemporaryDirectory(temporaryDirectoryPath);
     	
@@ -70,11 +72,26 @@ public class FileUtilities {
     	return temporaryFile;
     }
     
+    public static String getDefaultTemporaryDirectory() {
+    	return System.getProperty("java.io.tmpdir");
+    }
+    
+    public static File createTemporaryFileInDefaultTemporaryDirectory
+    	(String temporaryFileName,
+    	 String temporaryFileExtension) throws IOException
+    {
+    	return createTemporaryFileInTemporaryDirectory
+    		(getDefaultTemporaryDirectory(),
+    		 temporaryFileName,
+    		 temporaryFileExtension);
+    }
+    
     public static File writeBufferedImageIntoTemporaryDirectory
-    		(BufferedImage bufferedImage,
-    		 String imageType) throws IOException, Exception {
+    	(BufferedImage bufferedImage,
+    	 String imageType) throws IOException, Exception
+    {
     	// Get the system-wide temporary directory path.
-	    String temporaryDirectoryPath = System.getProperty("java.io.tmpdir");
+	    String temporaryDirectoryPath = getDefaultTemporaryDirectory();
 	    File temporaryImageFile =
 	    	createTemporaryFileInTemporaryDirectory(temporaryDirectoryPath,
 	    											"nwb-temp",
