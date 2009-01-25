@@ -12,6 +12,7 @@ import org.cishell.framework.algorithm.AlgorithmExecutionException;
 import org.cishell.framework.data.BasicData;
 import org.cishell.framework.data.Data;
 import org.cishell.framework.data.DataProperty;
+import org.osgi.service.log.LogService;
 
 import prefuse.data.Table;
 import prefuse.data.tuple.TableTuple;
@@ -21,6 +22,7 @@ public class HorizontalLineGraphAlgorithm implements Algorithm {
     private Data[] data;
     private Dictionary parameters;
     private CIShellContext context;
+    private LogService logger;
     
     public HorizontalLineGraphAlgorithm(Data[] data,
     									Dictionary parameters,
@@ -28,6 +30,8 @@ public class HorizontalLineGraphAlgorithm implements Algorithm {
         this.data = data;
         this.parameters = parameters;
         this.context = context;
+        
+        this.logger = (LogService)context.getService(LogService.class.getName());
     }
 
     public Data[] execute() throws AlgorithmExecutionException {
@@ -37,6 +41,10 @@ public class HorizontalLineGraphAlgorithm implements Algorithm {
     	
     	// "Get" the input parameters.
         int minNumberOfDaysForGrantBar = 15;
+        
+        // Inform the user that creating the PostScript may take a little while.
+    	logger.log(LogService.LOG_INFO,
+    			   "Creating PostScript.  May take a few moments...");
     	
     	String postScriptCode =
     		createPostScriptCode(inTable, minNumberOfDaysForGrantBar);
