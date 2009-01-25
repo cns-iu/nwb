@@ -167,20 +167,27 @@ public class DimensionExtractor {
 		
 		//Bounding Box line should look like %%BoundingBox: 10 23 40 219
 		
-		//(regex is "^.*BoundingBox\\S*\\s+(\\d+)\\s+(\\d+)\\s+(\\d+)\\s+(\\d+).*$"
+		//(regex is "^.*BoundingBox\\S*\\s*([-+]?[0-9]*\\.?[0-9]+)\\s+([-+]?[0-9]*\\.?[0-9]+)\\s+([-+]?[0-9]*\\.?[0-9]+)\\s+([-+]?[0-9]*\\.?[0-9]+).*$"
 		
 		String lineStart = "^";
 		String anything = ".*";
 		String anyNonWhitespace = "\\S*";
-		String oneOrMoreDigit = "\\d+";
 		String oneOrMoreWhitespace = "\\s+";
+		String zeroOrMoreWhitespace = "\\s*";
 		String lineEnd = "$";
 		
 		String boundingBoxToken = lineStart + anything + "BoundingBox" + anyNonWhitespace;
-		String aNumber = oneOrMoreDigit;
+		
+		String optionalPlusOrMinus = "[-+]?";
+		String zeroOrMoreDigits = "[0-9]*";
+		String oneOrMoreDigits = "[0-9]+";
+		String optionalDecimalPoint = "\\.?";
+		
+		//[-+]?[0-9]*\\.?[0-9]+
+		String aNumber = optionalPlusOrMinus + zeroOrMoreDigits + optionalDecimalPoint + oneOrMoreDigits;
 		
 		String boundingBoxLineRegex = boundingBoxToken + 
-			oneOrMoreWhitespace + captureGroup(aNumber) + //bottomLeftX
+			zeroOrMoreWhitespace + captureGroup(aNumber) + //bottomLeftX
 			oneOrMoreWhitespace + captureGroup(aNumber) + //bottomLeftY
 			oneOrMoreWhitespace + captureGroup(aNumber) + //topRightX
 			oneOrMoreWhitespace + captureGroup(aNumber) + //topRightY
