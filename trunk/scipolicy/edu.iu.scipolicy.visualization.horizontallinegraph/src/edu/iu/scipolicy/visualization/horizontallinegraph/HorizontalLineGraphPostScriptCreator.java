@@ -25,10 +25,23 @@ import edu.iu.scipolicy.utilities.DateUtilities;
    "properly".
  */
 public class HorizontalLineGraphPostScriptCreator {
+	String labelKey;
+	String startDateKey;
+	String endDateKey;
+	String sizeByKey;
+	
 	private float calculatedBoundingBoxWidth = 0.0f;
 	private float calculatedBoundingBoxHeight = 0.0f;
 	
-	public HorizontalLineGraphPostScriptCreator() {
+	public HorizontalLineGraphPostScriptCreator(String labelKey,
+												String startDateKey,
+												String endDateKey,
+												String sizeByKey)
+	{
+		this.labelKey = labelKey;
+		this.startDateKey = startDateKey;
+		this.endDateKey = endDateKey;
+		this.sizeByKey = sizeByKey;
 	}
 
 	public String createPostScript(Table grantTable, int minNumberOfDaysForBar) 
@@ -100,16 +113,17 @@ public class HorizontalLineGraphPostScriptCreator {
 		
 		final String postScriptHeader =
 			formPostScriptHeader(0,
-								 0,
-								 boundingBoxRight,
-								 defaultBoundingBoxWidth);
+								 grantBarMargin,
+								 defaultBoundingBoxWidth,
+								 grantBarMargin);
 		
 		final String postScriptYearLabels = 
 			formPostScriptYearLabels(newYearsDatesForGraph,
 									 graphStartDate,
 									 graphEndDate,
 									 defaultBoundingBoxWidth,
-									 yearLabelYPosition);
+									 yearLabelYPosition,
+									 grantBarMargin);
 		
 		final String postScriptBackground = formPostScriptBackground();
 		
@@ -127,8 +141,13 @@ public class HorizontalLineGraphPostScriptCreator {
 		// Allocate our working/resulting grant set.
 		Grant[] grantSet = new Grant [numGrants];
 		
-		for (int ii = 0; ii < numGrants; ii++)
-			grantSet[ii] = new Grant(grantTable.getTuple(ii));
+		for (int ii = 0; ii < numGrants; ii++) {
+			grantSet[ii] = new Grant(grantTable.getTuple(ii),
+									 this.labelKey,
+									 this.startDateKey,
+									 this.endDateKey,
+									 this.sizeByKey);
+		}
 		
 		return grantSet;
 	}
@@ -164,22 +183,23 @@ public class HorizontalLineGraphPostScriptCreator {
 	private float calculateXCoordinate(Date date,
 									   Date startDate,
 									   Date endDate,
-									   float wide)
+									   float defaultBoundingBoxWidth,
+									   float margin)
 	{
-		return (DateUtilities.calculateDaysBetween(startDate, date) * wide) /
-			DateUtilities.calculateDaysBetween(startDate, endDate);
+		return ((DateUtilities.calculateDaysBetween(startDate, date) * defaultBoundingBoxWidth) /
+			DateUtilities.calculateDaysBetween(startDate, endDate) + margin);
 	}
 	
 	private String formPostScriptHeader(float boundingBoxBottom,
 										float boundingBogLeft,
-										float boundingBoxRight,
-										float defaultBoundingBoxWidth)
+										float defaultBoundingBoxWidth,
+										float grantBarMargin)
 	{
 		return
 			line("%!PS-Adobe-2.0 EPSF-2.0") +
 			line("%%BoundingBox:" + boundingBogLeft + " " + boundingBoxBottom +
-				 " " + this.calculatedBoundingBoxWidth + " " +
-				 this.calculatedBoundingBoxHeight) +
+				 " " + (this.calculatedBoundingBoxWidth + (grantBarMargin * 2)) +
+				 " " + this.calculatedBoundingBoxHeight) +
 			line("%%Pages: 1") +
 			line("%%Title: Horizontal Line Graph (NSF Grant Data)") +
 			line("%%Creator: SciPolicy") +
@@ -278,7 +298,8 @@ public class HorizontalLineGraphPostScriptCreator {
 											Date graphStartDate,
 											Date graphEndDate,
 											float defaultBoundingBoxWidth,
-											int yearLabelYPosition)
+											int yearLabelYPosition,
+											float margin)
 	{
 		StringWriter yearLabelPostScript = new StringWriter();
 		
@@ -286,7 +307,8 @@ public class HorizontalLineGraphPostScriptCreator {
 			float xCoordinate = calculateXCoordinate(currentNewYearsDate,
 													 graphStartDate,
 													 graphEndDate,
-													 defaultBoundingBoxWidth);
+													 defaultBoundingBoxWidth,
+													 margin);
 			
 			yearLabelPostScript.append
 				(line("(" + currentNewYearsDate.getYear() + ") " + 
@@ -323,12 +345,14 @@ public class HorizontalLineGraphPostScriptCreator {
 				calculateXCoordinate(currentGrantStartDate,
 									 graphStartDate,
 									 graphEndDate,
-									 defaultBoundingBoxWidth);
+									 defaultBoundingBoxWidth,
+									 grantBarMargin);
 			
 			float grantBarEndXCoordinate = calculateXCoordinate(currentGrantEndDate,
 																graphStartDate,
 																graphEndDate,
-																defaultBoundingBoxWidth);
+																defaultBoundingBoxWidth,
+																grantBarMargin);
 			
 			float grantBarWidth = (grantBarEndXCoordinate - grantBarStartXCoordinate);
 			

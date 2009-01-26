@@ -27,11 +27,16 @@ public class Grant implements Comparable {
 		fixDateYears();
 	}
 	
-	public Grant(Tuple tableRow) {
-		this.label = (String)tableRow.get(GRANT_AWARD_LABEL_KEY);
-		this.startDate = (Date)tableRow.get(GRANT_AWARD_START_DATE_KEY);
-		this.endDate = (Date)tableRow.get(GRANT_AWARD_END_DATE_KEY);
-		this.amount = ((Integer)tableRow.get(GRANT_AWARD_AMOUNT)).floatValue();
+	public Grant(Tuple tableRow,
+				 String labelKey,
+				 String startDateKey,
+				 String endDateKey,
+				 String sizeByKey)
+	{
+		this.label = (String)tableRow.get(labelKey);
+		this.startDate = (Date)tableRow.get(startDateKey);
+		this.endDate = (Date)tableRow.get(endDateKey);
+		this.amount = ((Integer)tableRow.get(sizeByKey)).floatValue();
 		
 		fixDateYears();
 	}

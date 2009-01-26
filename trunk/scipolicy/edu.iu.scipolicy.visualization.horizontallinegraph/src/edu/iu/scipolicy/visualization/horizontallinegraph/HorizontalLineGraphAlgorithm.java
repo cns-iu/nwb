@@ -19,6 +19,11 @@ import prefuse.data.tuple.TableTuple;
 import edu.iu.scipolicy.utilities.FileUtilities;
 
 public class HorizontalLineGraphAlgorithm implements Algorithm {
+	public static String LABEL_FIELD_ID = "label";
+	public static String START_DATE_FIELD_ID = "start_date";
+	public static String END_DATE_FIELD_ID = "end_date";
+	public static String SIZE_BY_FIELD_ID = "size_by";
+	
     private Data[] data;
     private Dictionary parameters;
     private CIShellContext context;
@@ -61,9 +66,16 @@ public class HorizontalLineGraphAlgorithm implements Algorithm {
     									int minNumberOfDaysForGrantBar)
     	throws AlgorithmExecutionException
     {
+    	// Get user-inputted parameters.
+    	final String labelKey = this.parameters.get(LABEL_FIELD_ID).toString();
+    	final String startDateKey = this.parameters.get(START_DATE_FIELD_ID).toString();
+    	final String endDateKey = this.parameters.get(END_DATE_FIELD_ID).toString();
+    	final String sizeByKey = this.parameters.get(SIZE_BY_FIELD_ID).toString();
+    	
     	// Create the PostScript... creator.
     	HorizontalLineGraphPostScriptCreator horizontalLineGraphPostScriptCreator =
-    		new HorizontalLineGraphPostScriptCreator();
+    		new HorizontalLineGraphPostScriptCreator
+    			(labelKey, startDateKey, endDateKey, sizeByKey);
     	
     	String postScriptCode = null;
     	
