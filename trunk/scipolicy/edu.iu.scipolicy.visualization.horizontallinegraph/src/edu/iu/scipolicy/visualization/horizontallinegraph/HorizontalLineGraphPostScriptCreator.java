@@ -84,17 +84,11 @@ public class HorizontalLineGraphPostScriptCreator {
 		Date graphStartDate = formGraphStartDateBasedOnGrants(sortedGrants);
 		Date graphEndDate = formGraphEndDateBasedOnGrants(sortedGrants);
 		
-		// Generate a date for every day between the given (graph) start and end
-		// dates.  These (day) dates are used to generate the New Year's Day
-		// (so, January 1st) dates, which are subsequently necessary for drawing the
-		// vertical year tick lines.
-		// Eventually, if we enhance this visualization to display the per-day total
-		// grant dollar amount, we'll actually need every single (day) date between
-		// the start and end dates, which is why I'm leaving this in place.
-		Date[] allDatesBetween =
-			DateUtilities.generateDaysBetweenDates(graphStartDate, graphEndDate);
+		// We need a Date for every New Year's Day (so, January 1st) between the
+		// start and end dates to use for drawing the date dash lines.
 		Date[] newYearsDatesForGraph =
-			DateUtilities.generateNewYearsDatesBetweenDates(allDatesBetween);
+			DateUtilities.generateNewYearsDatesBetweenDates(graphStartDate,
+															graphEndDate);
 		
 		// (NOTE: This side effects the calculated canvas width and height.)
 		final String postScriptGrantBars =
