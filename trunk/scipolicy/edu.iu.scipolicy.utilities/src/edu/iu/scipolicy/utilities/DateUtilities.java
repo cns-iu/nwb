@@ -70,12 +70,19 @@ public class DateUtilities {
 	
 	// Holy crap this blows!
 	public static int calculateDaysBetween(Date startDate, Date endDate) {
-		return calculateDaysBetween(generateDaysBetweenDates(startDate, endDate));
+		FAQCalendar startDateCalendar = new FAQCalendar(startDate.getYear(),
+														startDate.getMonth(),
+														startDate.getDate());
+		
+		FAQCalendar endDateCalendar = new FAQCalendar(endDate.getYear(),
+													  endDate.getMonth(),
+													  endDate.getDate());
+		
+		return (int)startDateCalendar.diffDayPeriods(endDateCalendar);
 	}
 	
-	// TODO: This could REALLY be improved.
 	// Assumes dateSet is sorted from earliest to latest.
-	public static Date[] generateNewYearsDatesBetweenDates(Date[] dateSet) {
+	public static Date[] getNewYearsDatesFromDateSet(Date[] dateSet) {
 		ArrayList workingNewYearsDates = new ArrayList();
 		
 		// Return an empty set if there are no dates.
@@ -94,22 +101,29 @@ public class DateUtilities {
 				workingNewYearsDates.add(dateSet[ii]);
 		}
 		
-		// Make sure the year after the last date gets added as well.
-		workingNewYearsDates.add
-			(new Date((dateSet[dateSet.length - 1].getYear() + 1), 0, 1));
-		
 		Date[] finalNewYearsDates = new Date [workingNewYearsDates.size()];
 		
 		return (Date[])workingNewYearsDates.toArray(finalNewYearsDates);
 	}
 	
-	// Holy crap this blows again!
 	public static Date[] generateNewYearsDatesBetweenDates(Date startDate,
 														   Date endDate)
 	{
-		Date[] allDaysBetweenDates = generateDaysBetweenDates(startDate, endDate);
-
-		return generateNewYearsDatesBetweenDates(allDaysBetweenDates);
+		final int startDateYear = startDate.getYear();
+		final int endDateYear = endDate.getYear();
+		// The number of years between the two years (inclusive).
+		final int numYearsBetween = ((endDateYear - startDateYear) + 1);
+		
+		// Return an empty array if the start date is after the end date.
+		if (numYearsBetween == 0)
+			return new Date[] { };
+		
+		Date[] newYearsDatesBetween = new Date [numYearsBetween];
+		
+		for (int ii = 0; ii < numYearsBetween; ii++)
+			newYearsDatesBetween[ii] = new Date((startDateYear + ii), 0, 1);
+		
+		return newYearsDatesBetween;
 	}
 	
 	// TODO: This could also REALLY be improved.
@@ -140,10 +154,11 @@ public class DateUtilities {
 	public static void main(String[] args) {
 		Date[] datesBetween = generateDaysBetweenDates(new Date(1984, 0, 1), new Date(2003, 11, 31));
 		
-		Date[] newYearsDates = generateNewYearsDatesBetweenDates(datesBetween);
+		Date[] newYearsDates = getNewYearsDatesFromDateSet(datesBetween);
+		Date[] newYearsDates2 = generateNewYearsDatesBetweenDates(new Date(1984, 0, 1), new Date(2003, 11, 31));
 		Date[] firstOfTheMonthDates = generateFirstOfTheMonthDatesBetweenDates(datesBetween);
 		
-		Date[] outputDates = newYearsDates;
+		Date[] outputDates = newYearsDates2;
 		
 		System.err.println("Dates (" + outputDates.length + "):");
 		
