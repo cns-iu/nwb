@@ -274,6 +274,7 @@ public class CSVtoDBAlgorithm implements Algorithm  {
 		return columnNameToColumnIndex;
 	}
 	
+	//TODO: These should be sorted so the first format checked is the most likely format, etc...
 	private static final DateFormat[] ACCEPTED_DATE_FORMATS = { 
 		DateFormat.getDateInstance(DateFormat.FULL),
 		new SimpleDateFormat("dd/MM/yy"),
