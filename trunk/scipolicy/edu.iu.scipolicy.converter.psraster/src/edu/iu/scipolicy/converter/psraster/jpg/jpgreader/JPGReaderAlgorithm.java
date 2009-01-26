@@ -54,7 +54,7 @@ public class JPGReaderAlgorithm implements Algorithm {
     	Dictionary loadedImageMetadata = loadedImageData.getMetadata();
     	
     	loadedImageMetadata.put(DataProperty.LABEL, "Image: " + jpgFile.getAbsolutePath());
-    	loadedImageMetadata.put(DataProperty.TYPE, DataProperty.IMAGE_OBJECT_TYPE);
+    	loadedImageMetadata.put(DataProperty.TYPE, DataProperty.RASTER_IMAGE_TYPE);
     	
     	return new Data[] { loadedImageData };
     }

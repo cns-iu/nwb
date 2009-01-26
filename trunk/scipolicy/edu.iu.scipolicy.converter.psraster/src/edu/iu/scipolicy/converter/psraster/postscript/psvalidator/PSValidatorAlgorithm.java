@@ -45,7 +45,7 @@ public class PSValidatorAlgorithm implements Algorithm {
     	postScriptFileDataMetadata.put(DataProperty.LABEL,
     								   "PostScript file: " + postScriptFileName);
     	postScriptFileDataMetadata.put(DataProperty.TYPE,
-    								   DataProperty.POST_SCRIPT_TYPE);
+    								   DataProperty.VECTOR_IMAGE_TYPE);
     	
         return new Data[] { postScriptFileData };
     }
