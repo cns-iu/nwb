@@ -73,7 +73,7 @@ public class CSVtoDBAlgorithm implements Algorithm  {
 		nsfDBConnection = nsfDBInProgress.getConnection();
 		
 		//(side-effects the nsf database to contain all the tables we have to fill.)
-		createDbTables(nsfDBConnection, nsfDBInProgress.getID());
+		createNsfDbTables(nsfDBConnection, nsfDBInProgress.getID());
 
 		//(side-effects the nsf database to fill the tables using the nsf csv contents.)
 		fillNsfDbQuickly(nsfDBConnection, nsfDBInProgress.getID(), nsfCsvReader, columnNameToColumnIndex);
@@ -120,7 +120,7 @@ public class CSVtoDBAlgorithm implements Algorithm  {
 		}
 	}		
 	
-	private void createDbTables(Connection dbConnection, int dbID)
+	private void createNsfDbTables(Connection dbConnection, int dbID)
 			throws AlgorithmExecutionException {
 		try {
 		// TODO: treat some columns as optional and others as mandatory (or is this too much of a hassle)
@@ -200,18 +200,18 @@ public class CSVtoDBAlgorithm implements Algorithm  {
 			String expirationDateString = nextAwardLine[expirationDateIndex];
 			java.sql.Date expirationDate = parseDate(expirationDateString);
 			insertIntoAward.setDate(4, expirationDate);
-				
-				
+					
 			String awardAmountToDateString = nextAwardLine[awardedAmountToDateIndex];
 			int awardAmountToDate = Integer.parseInt(awardAmountToDateString);
 			insertIntoAward.setInt(5, awardAmountToDate);
 
 			insertIntoAward.addBatch();
-			//TODO: Check warnings
-			insertIntoAward.executeBatch();
-			
+				
 			currentRowNumber++;
 		}
+		
+		//TODO: Check warnings
+		insertIntoAward.executeBatch();
 		
 		int numRows = currentRowNumber;
 		System.out.println("Successfully loaded " + numRows + " rows into the NSF database");
