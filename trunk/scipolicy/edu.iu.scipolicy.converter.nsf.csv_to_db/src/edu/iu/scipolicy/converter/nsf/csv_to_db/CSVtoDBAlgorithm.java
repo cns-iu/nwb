@@ -72,7 +72,7 @@ public class CSVtoDBAlgorithm implements Algorithm  {
 		DataSourceWithID nsfDBInProgress = emptyDb;	
 		nsfDBConnection = nsfDBInProgress.getConnection();
 		
-		//(side-effects the nsf database to contain all the tables we have to fill.)
+		//(side-effects the nsf database to contain all the tables we need to fill.)
 		createNsfDbTables(nsfDBConnection, nsfDBInProgress.getID());
 
 		//(side-effects the nsf database to fill the tables using the nsf csv contents.)
