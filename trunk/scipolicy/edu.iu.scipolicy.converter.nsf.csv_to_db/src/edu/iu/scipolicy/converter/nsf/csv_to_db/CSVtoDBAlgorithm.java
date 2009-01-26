@@ -29,6 +29,7 @@ import org.osgi.service.log.LogService;
 import au.com.bytecode.opencsv.CSVReader;
 import edu.iu.scipolicy.utilities.nsf.NsfNames;
 
+//TODO: Expand to support a fuller more sophisticated representation of NSF data in the database
 public class CSVtoDBAlgorithm implements Algorithm  {
 	private Data[] data;
 
@@ -123,8 +124,7 @@ public class CSVtoDBAlgorithm implements Algorithm  {
 			throws AlgorithmExecutionException {
 		try {
 		// TODO: treat some columns as optional and others as mandatory (or is this too much of a hassle)
-		// TODO: Tie this in with constants that control the names of NSF columns and their corresponding db column
-		// names
+		// TODO: Create tables for all nsf data, not just the ones we use right now
 		String createAwardTableSQL = "" + "CREATE TABLE " + NsfNames.DB.AWARD_TABLE + dbID + 
 		"(" + 
 		NsfNames.DB.AWARD_NUMBER + " INTEGER," +
@@ -135,10 +135,8 @@ public class CSVtoDBAlgorithm implements Algorithm  {
 		"PRIMARY KEY (" + NsfNames.DB.AWARD_NUMBER + ")" + 
 		")";
 
-		// execute the award table creation SQL
-
-			Statement createAwardTableStatement = dbConnection.createStatement();
-			createAwardTableStatement.execute(createAwardTableSQL);
+		Statement createAwardTableStatement = dbConnection.createStatement();
+		createAwardTableStatement.execute(createAwardTableSQL);
 		} catch (SQLException e) {
 			throw new AlgorithmExecutionException("Error occurred while interacting with database", e);
 		}
@@ -230,9 +228,9 @@ public class CSVtoDBAlgorithm implements Algorithm  {
 	}
 	
 	private Data annotateAndWrapAsData(DataSourceWithID nsfDB) {
+		
 		//create data object
 		
-		//TODO: Will need to be more clear as to what metadata we put in this
 		Data dbData = new BasicData(nsfDB, nsfDB.getClass().getName());
 		
 		//annotate data
@@ -275,15 +273,6 @@ public class CSVtoDBAlgorithm implements Algorithm  {
 		
 		return columnNameToColumnIndex;
 	}
-	
-//	private void handleParsingException(int row, String columnName, String cellContents, String parseTypeName, Exception e) 
-//		throws AlgorithmExecutionException {
-//		String errorMessage = "" +
-//		"Encountered a formatting error in row " + row + ", in the '" + columnName + "' column. '" +
-//		cellContents + "' cannot be parsed as type '" + parseTypeName + "'. " + 
-//		"Aborting loading process.";
-//		throw new AlgorithmExecutionException(errorMessage, e);
-//	}
 	
 	private static final DateFormat[] ACCEPTED_DATE_FORMATS = { 
 		DateFormat.getDateInstance(DateFormat.FULL),
