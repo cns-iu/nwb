@@ -138,7 +138,7 @@ public class HorizontalLineGraphAlgorithm implements Algorithm {
 		postScriptMetaData.put(DataProperty.LABEL,
 							   "PostScript: " + inMetaData.get(DataProperty.LABEL));
 		postScriptMetaData.put(DataProperty.PARENT, singleInData);
-		postScriptMetaData.put(DataProperty.TYPE, DataProperty.POST_SCRIPT_TYPE);
+		postScriptMetaData.put(DataProperty.TYPE, DataProperty.VECTOR_IMAGE_TYPE);
     	
         return new Data[] { postScriptData };
     }
