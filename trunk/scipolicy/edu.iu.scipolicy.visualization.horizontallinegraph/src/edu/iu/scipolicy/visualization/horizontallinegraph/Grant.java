@@ -23,6 +23,8 @@ public class Grant implements Comparable {
 		this.startDate = startDate;
 		this.endDate = endDate;
 		this.amount = amount;
+		
+		fixDateYears();
 	}
 	
 	public Grant(Tuple tableRow) {
@@ -30,6 +32,8 @@ public class Grant implements Comparable {
 		this.startDate = (Date)tableRow.get(GRANT_AWARD_START_DATE_KEY);
 		this.endDate = (Date)tableRow.get(GRANT_AWARD_END_DATE_KEY);
 		this.amount = ((Integer)tableRow.get(GRANT_AWARD_AMOUNT)).floatValue();
+		
+		fixDateYears();
 	}
 	
 	public String getGrantLabel() {
@@ -52,5 +56,13 @@ public class Grant implements Comparable {
 		Grant otherGrant = (Grant)otherObject;
 		
 		return getStartDate().compareTo(otherGrant.getStartDate());
+	}
+	
+	private void fixDateYears() {
+		if (this.startDate.getYear() < 1900)
+			this.startDate.setYear(this.startDate.getYear() + 1900);
+		
+		if (this.endDate.getYear() < 1900)
+			this.endDate.setYear(this.endDate.getYear() + 1900);
 	}
 }
