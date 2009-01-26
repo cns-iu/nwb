@@ -174,7 +174,7 @@ public class CSVtoDBAlgorithm implements Algorithm  {
 	
 		PreparedStatement insertIntoAward = nsfDbConnection.prepareStatement(insertIntoAwardSql);
 		String[] nextAwardLine = null;
-		int currentRowNumber = 1;
+		int rowsProcessedSoFar = 0;
 		while ((nextAwardLine = nsfCSVReader.readNext()) != null) {
 			
 			//TODO: Maybe in the future we can be more lenient with improper formatting, but for now it's either all perfect or we abort.
@@ -207,14 +207,14 @@ public class CSVtoDBAlgorithm implements Algorithm  {
 
 			insertIntoAward.addBatch();
 				
-			currentRowNumber++;
+			rowsProcessedSoFar++;
 		}
 		
 		//TODO: Check warnings
 		insertIntoAward.executeBatch();
 		
-		int numRows = currentRowNumber;
-		System.out.println("Successfully loaded " + numRows + " rows into the NSF database");
+		int totalRowsProcessed = rowsProcessedSoFar;
+		System.out.println("Successfully loaded " + totalRowsProcessed + " rows into the NSF database");
 		
 		} catch (IOException e) {
 			throw new AlgorithmExecutionException("An error occurred while loading nsf data into the database", e);
