@@ -55,12 +55,9 @@ public class HorizontalLineGraphPostScriptCreator {
 		final float defaultBoundingBoxHeight =
 			((canvasHeight * resolutionInDPI) - boundingBoxTop - boundingBoxBottom);
 		final float grantBarMargin = 10.0f;
-		// Part of this visualization is to display vertical dashed lines for
-		// every year in the grant date span.  This is the height of the dashes for
-		// those lines.
 		// (NOTE: This could be a constant, but we may eventually want it to be
 		// user-settable?)
-		final int yearLineDashHeight = -5;
+		final int yearLabelYPosition = 5;
 
 		Grant[] grants = readGrantsFromTable(grantTable);
 
@@ -98,22 +95,21 @@ public class HorizontalLineGraphPostScriptCreator {
 									grantBarMargin,
 									totalGrantMoney,
 									totalGrantHeightSpan,
-									defaultBoundingBoxWidth);
+									defaultBoundingBoxWidth,
+									yearLabelYPosition);
 		
 		final String postScriptHeader =
-			formPostScriptHeader(boundingBoxTop,
-								 boundingBoxBottom,
-								 boundingBoxLeft,
+			formPostScriptHeader(0,
+								 0,
 								 boundingBoxRight,
-								 defaultBoundingBoxWidth,
-								 defaultBoundingBoxHeight);
+								 defaultBoundingBoxWidth);
 		
 		final String postScriptYearLabels = 
 			formPostScriptYearLabels(newYearsDatesForGraph,
 									 graphStartDate,
 									 graphEndDate,
 									 defaultBoundingBoxWidth,
-									 yearLineDashHeight);
+									 yearLabelYPosition);
 		
 		final String postScriptBackground = formPostScriptBackground();
 		
@@ -174,18 +170,16 @@ public class HorizontalLineGraphPostScriptCreator {
 			DateUtilities.calculateDaysBetween(startDate, endDate);
 	}
 	
-	private String formPostScriptHeader(float boundingBoxTop,
-										float boundingBoxBottom,
+	private String formPostScriptHeader(float boundingBoxBottom,
 										float boundingBogLeft,
 										float boundingBoxRight,
-										float defaultBoundingBoxWidth,
-										float defaultBoundingBoxHeight)
+										float defaultBoundingBoxWidth)
 	{
 		return
 			line("%!PS-Adobe-2.0 EPSF-2.0") +
-			line("%%BoundingBox:-" + boundingBogLeft + " -" + boundingBoxBottom +
-				 " " + (defaultBoundingBoxWidth + boundingBoxRight) + " " +
-				 (this.calculatedBoundingBoxHeight + boundingBoxTop)) +
+			line("%%BoundingBox:" + boundingBogLeft + " " + boundingBoxBottom +
+				 " " + this.calculatedBoundingBoxWidth + " " +
+				 this.calculatedBoundingBoxHeight) +
 			line("%%Pages: 1") +
 			line("%%Title: Horizontal Line Graph (NSF Grant Data)") +
 			line("%%Creator: SciPolicy") +
@@ -284,7 +278,7 @@ public class HorizontalLineGraphPostScriptCreator {
 											Date graphStartDate,
 											Date graphEndDate,
 											float defaultBoundingBoxWidth,
-											int tickHeight)
+											int yearLabelYPosition)
 	{
 		StringWriter yearLabelPostScript = new StringWriter();
 		
@@ -296,8 +290,8 @@ public class HorizontalLineGraphPostScriptCreator {
 			
 			yearLabelPostScript.append
 				(line("(" + currentNewYearsDate.getYear() + ") " + 
-						xCoordinate + " " + tickHeight + " ticklabel") +
-				 line("" + xCoordinate + " " + tickHeight + " " +
+						xCoordinate + " " + yearLabelYPosition + " ticklabel") +
+				 line("" + xCoordinate + " " + yearLabelYPosition + " " +
 					  this.calculatedBoundingBoxHeight + " vertical"));
 		}
 		
@@ -310,9 +304,10 @@ public class HorizontalLineGraphPostScriptCreator {
 										   float grantBarMargin,
 										   float totalGrantAmount,
 										   float grantHeight,
-										   float defaultBoundingBoxWidth)
+										   float defaultBoundingBoxWidth,
+										   float startYPosition)
 	{
-		float cursorYCoordinate = 0.0f;
+		float cursorYCoordinate = startYPosition;
 		StringWriter grantBarPostScript = new StringWriter();
 		
 		for (Grant currentGrant : grants) {
