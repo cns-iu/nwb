@@ -10,6 +10,6 @@ import org.cishell.framework.data.Data;
 
 public class ImageViewerFactory implements AlgorithmFactory {
     public Algorithm createAlgorithm(Data[] data, Dictionary parameters, CIShellContext context) {
-        return new ImageViewer(data, parameters, context);
+        return new ImageViewerAlgorithm(data, parameters, context);
     }
 }

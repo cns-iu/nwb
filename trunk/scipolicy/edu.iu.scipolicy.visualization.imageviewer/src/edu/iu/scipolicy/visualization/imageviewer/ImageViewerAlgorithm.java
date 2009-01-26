@@ -1,8 +1,10 @@
 package edu.iu.scipolicy.visualization.imageviewer;
 
+import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.GridLayout;
+import java.awt.Toolkit;
 import java.awt.image.BufferedImage;
 import java.util.Dictionary;
 
@@ -13,27 +15,35 @@ import org.cishell.framework.CIShellContext;
 import org.cishell.framework.algorithm.Algorithm;
 import org.cishell.framework.algorithm.AlgorithmExecutionException;
 import org.cishell.framework.data.Data;
-
-import edu.iu.scipolicy.converter.psraster.psrasterproperties.PSRasterProperties;
+import org.osgi.service.log.LogService;
 
 //
 
-public class ImageViewer implements Algorithm {
+public class ImageViewerAlgorithm implements Algorithm {
 	// Constants.
 	private static final String EXAMPLE_POST_SCRIPT_RESOURCE_FILE_NAME = "example.ps";
 	
     private Data[] data;
     private Dictionary parameters;
     private CIShellContext context;
+    LogService logger;
     
-    public ImageViewer(Data[] data, Dictionary parameters, CIShellContext context) {
+    public ImageViewerAlgorithm(Data[] data, Dictionary parameters, CIShellContext context) {
         this.data = data;
         this.parameters = parameters;
         this.context = context;
+        
+        this.logger = (LogService)context.getService(LogService.class.getName());
     }
 
     public Data[] execute() throws AlgorithmExecutionException {
     	BufferedImage imageToBeDisplayed = (BufferedImage)data[0].getData();
+    	
+    	logger.log(LogService.LOG_INFO,
+    			   "Your image may be scaled to fit the screen if it does not " +
+    			   "already.  If you wish to view it in full resolution, you may " +
+    			   "save it out from the Data Manager.");
+    	
     	// Create the frame (window) used to display the image.
     	JFrame imageDisplayFrame = createImageDisplayFrame(imageToBeDisplayed);
     	
@@ -45,6 +55,8 @@ public class ImageViewer implements Algorithm {
     
     // Create the window to display the image.
     private JFrame createImageDisplayFrame(BufferedImage bufferedImage) {
+    	Dimension windowSize = determineDisplayFrameSize(bufferedImage);
+    	
     	// Create and setup the panel that we'll blit the image to.
     	JPanel imagePanel = new ImageDisplayPanel(bufferedImage);
     	
@@ -55,9 +67,26 @@ public class ImageViewer implements Algorithm {
     	
     	displayFrame.getContentPane().add(imagePanel);
     	displayFrame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-    	displayFrame.setSize(bufferedImage.getWidth(), bufferedImage.getHeight());
+    	displayFrame.setSize(windowSize);
     	
     	return displayFrame;
+    }
+    
+    private Dimension determineDisplayFrameSize(BufferedImage bufferedImage) {
+    	final int bufferedImageWidth = bufferedImage.getWidth();
+    	final int bufferedImageHeight = bufferedImage.getHeight();
+    	final Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
+    	final int screenWidth = screenSize.width;
+    	final int screenHeight = screenSize.height;
+    	
+    	final double xScale = ((double)screenWidth / (double)bufferedImageWidth);
+    	final double yScale = ((double)screenHeight / (double)bufferedImageHeight);
+    	final double scaleUsed = Math.min(xScale, yScale);
+    	
+    	final int determinedWidth = (int)(scaleUsed * bufferedImageWidth);
+    	final int determinedHeight = (int)(scaleUsed * bufferedImageHeight);
+    	
+    	return new Dimension(determinedWidth, determinedHeight);
     }
     
     // We needed to extend JPanel to handle the proper (re)drawing/blitting of an
@@ -78,7 +107,9 @@ public class ImageViewer implements Algorithm {
     		Graphics2D graphics2D = (Graphics2D)graphics;
     		
     		// Draw our buffered image on to the passed-in graphics.
-    		graphics2D.drawImage(this.displayImage, 0, 0, null);
+    		// graphics2D.drawImage(this.displayImage, 0, 0, null);
+    		graphics2D.drawImage
+    			(this.displayImage, 0, 0, getWidth(), getHeight(), this); 
     	}
     }
 }

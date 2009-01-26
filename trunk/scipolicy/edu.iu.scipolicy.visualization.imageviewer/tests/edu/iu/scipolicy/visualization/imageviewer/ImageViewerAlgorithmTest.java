@@ -16,7 +16,7 @@ import org.junit.Test;
 import edu.iu.scipolicy.converter.psraster.psrasterproperties.PSRasterProperties;
 import edu.iu.scipolicy.utilities.ImageUtilities;
 
-public class ImageViewerTest extends TestCase {
+public class ImageViewerAlgorithmTest extends TestCase {
 
 	@BeforeClass
 	public static void setUpBeforeClass() throws Exception {
@@ -45,8 +45,8 @@ public class ImageViewerTest extends TestCase {
 										PSRasterProperties.IMAGE_OBJECT_MIME_TYPE);
 		
 		// Create the image viewer.
-		ImageViewer imageViewer =
-			new ImageViewer(new Data[] { bufferedImageToViewData }, null, null);
+		ImageViewerAlgorithm imageViewer =
+			new ImageViewerAlgorithm(new Data[] { bufferedImageToViewData }, null, null);
 		
 		try {
 			if (imageViewer.execute() != null)
