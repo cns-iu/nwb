@@ -19,3 +19,4 @@ X-AutoStart: true
 Service-Component: OSGI-INF/ps-validator/psvalidator.xml, OSGI-INF/ps-validator/epsvalidator.xml, OSGI-INF/ps-handler/pshandler.xml, OSGI-INF/jpg-validator/jpegvalidator.xml, OSGI-INF/jpg-validator/jpgvalidator.xml, OSGI-INF/jpg-reader/jpgreader.xml, OSGI-INF/jpg-writer/jpgwriter.xml, OSGI-INF/jpg-handler/jpghandler.xml, OSGI-INF/postscript-renderer/postscriptrenderer.xml
 Require-Bundle: freehep_psviewer;bundle-version="1.0.0"
 Export-Package: edu.iu.scipolicy.converter.psraster.psrasterproperties
+Bundle-RequiredExecutionEnvironment: J2SE-1.5
