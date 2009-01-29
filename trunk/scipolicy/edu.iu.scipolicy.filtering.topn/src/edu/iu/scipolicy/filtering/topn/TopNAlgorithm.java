@@ -1,64 +1,81 @@
 package edu.iu.scipolicy.filtering.topn;
 
-import java.sql.Connection;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Statement;
 import java.util.Dictionary;
-import java.util.Enumeration;
-
-import javax.sql.DataSource;
 
 import org.cishell.framework.CIShellContext;
+import org.cishell.framework.algorithm.Algorithm;
 import org.cishell.framework.algorithm.AlgorithmExecutionException;
 import org.cishell.framework.data.BasicData;
 import org.cishell.framework.data.Data;
 import org.cishell.framework.data.DataProperty;
-import org.cishell.templates.database.SQLExecutionAlgorithm;
-import org.cishell.templates.database.SQLFormationException;
 
-public class TopNAlgorithm extends SQLExecutionAlgorithm {
+import prefuse.data.Table;
+
+public class TopNAlgorithm implements Algorithm {
+	private Data[] data;
+    private Dictionary parameters;
+    private CIShellContext context;
+    
     private int topN;
     private String columnToSortBy;
-    private boolean isFromHighestToLowest;
+    private boolean isDescending;
     
-    public TopNAlgorithm(Data[] data, Dictionary parameters, CIShellContext context) {
-    	super(data, parameters, context);
-        
-        //unpack parameters that user specified
-        
-		this.topN = ((Integer) parameters.get("topN")).intValue();
-		this.columnToSortBy = ((String) parameters.get("columnToSortBy"));
-		this.isFromHighestToLowest = ((Boolean) parameters.get("isFromHighestToLowest")).booleanValue();
+    public TopNAlgorithm(Data[] data,
+    					 Dictionary parameters,
+    					 CIShellContext context)
+    {
+    	this.data = data;
+    	this.parameters = parameters;
+    	this.context = context;
+    	
+        // Unpack parameters that user specified.
+		this.topN = ((Integer)parameters.get(TopNUtilities.TOP_N_ID)).intValue();
+		
+		this.columnToSortBy =
+			((String)parameters.get(TopNUtilities.COLUMN_TO_SORT_BY_ID));
+		
+		this.isDescending =
+			((Boolean)parameters.get(TopNUtilities.IS_DESCENDING_ID)).booleanValue();
     }
     
-    public String formSQL() throws SQLFormationException {
-    	// TODO: Ensure these always have this metadata.
-    	String tableName = (String)data[0].getMetadata().get("table_name");
-    	String ascendingOrDescending = null;
+    public Data[] execute() throws AlgorithmExecutionException {
+    	Data inData = this.data[0];
+    	Table table = (Table)inData.getData();
     	
-		if (isFromHighestToLowest)
-			ascendingOrDescending = "ASC";
-		else
-			ascendingOrDescending = "DESC";
+    	Table sortedTable =
+    		TopNUtilities.sortTableWithOnlyTopN(table,
+    									   this.columnToSortBy,
+    									   this.isDescending,
+    									   this.topN);
     	
-    	return "SELECT * FROM (SELECT ROW_NUMBER() OVER(ORDER BY " +
-    		this.columnToSortBy + ascendingOrDescending + ") AS rowNumber, " +
-    		"COLUMNS FROM " + tableName + ") AS tempTable WHERE rowNumber <= " +
-    		this.topN;
-    }
-    
-    public Data createOutDataFromDataSource(DataSource dataSource) {
-    	// Use super to create the base data.
-    	Data outData = super.createOutDataFromDataSource(dataSource);
-    	// Get the metadata.
-    	Dictionary outMetadata = outData.getMetadata();
-    	
-    	// TODO: Algorithm writers shouldn't have to do this.
-    	outMetadata.put(DataProperty.PARENT, data[0]);
-    	outMetadata.put(DataProperty.LABEL,
-    					"top " + this.topN + " rows by " + this.columnToSortBy);
+    	Data[] outData = prepareOutData(sortedTable, inData);
     	
     	return outData;
     }
+    
+    private Data[] prepareOutData(Table outTable, Data inData) {
+		Data outData = new BasicData(outTable, outTable.getClass().getName());
+		Dictionary outMetaData = outData.getMetadata();
+		Dictionary inMetaData = inData.getMetadata();
+		
+		final String baseLabelString =
+			"Top " + outTable.getRowCount() + " row(s) (";
+		
+		String sortingLabelString = null;
+		
+		if (this.isDescending)
+			sortingLabelString = "descending order";
+		else
+			sortingLabelString = "ascending order";
+		
+		outMetaData.put(DataProperty.LABEL,
+						baseLabelString + sortingLabelString +
+						") (based on " + this.columnToSortBy + ") of " +
+						inMetaData.get(DataProperty.LABEL));
+		
+		outMetaData.put(DataProperty.PARENT, inData);
+		outMetaData.put(DataProperty.TYPE, DataProperty.TABLE_TYPE);
+		
+		return new Data[] { outData };
+	}
 }
