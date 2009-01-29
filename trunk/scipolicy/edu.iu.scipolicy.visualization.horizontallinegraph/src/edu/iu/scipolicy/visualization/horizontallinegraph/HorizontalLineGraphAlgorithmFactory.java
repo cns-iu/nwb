@@ -1,8 +1,6 @@
 package edu.iu.scipolicy.visualization.horizontallinegraph;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Date;
 import java.util.Dictionary;
 
 import org.cishell.framework.CIShellContext;
@@ -10,13 +8,12 @@ import org.cishell.framework.algorithm.Algorithm;
 import org.cishell.framework.algorithm.AlgorithmFactory;
 import org.cishell.framework.algorithm.ParameterMutator;
 import org.cishell.framework.data.Data;
-import org.cishell.reference.service.metatype.BasicAttributeDefinition;
 import org.cishell.reference.service.metatype.BasicObjectClassDefinition;
 import org.osgi.service.metatype.AttributeDefinition;
 import org.osgi.service.metatype.ObjectClassDefinition;
 
-import prefuse.data.Schema;
 import prefuse.data.Table;
+import edu.iu.scipolicy.utilities.MutateParameterUtilities;
 
 public class HorizontalLineGraphAlgorithmFactory implements AlgorithmFactory, ParameterMutator {
     public Algorithm createAlgorithm(Data[] data,
@@ -58,7 +55,8 @@ public class HorizontalLineGraphAlgorithmFactory implements AlgorithmFactory, Pa
 				(HorizontalLineGraphAlgorithm.LABEL_FIELD_ID))
 			{
 				newAttributeDefinition =
-					formLabelAttributeDefinition(oldAttributeDefinition, table);
+					MutateParameterUtilities.formLabelAttributeDefinition
+						(oldAttributeDefinition, table);
 			}
 			else if (oldAttributeDefinitionID.equals
 				(HorizontalLineGraphAlgorithm.START_DATE_FIELD_ID) ||
@@ -66,13 +64,15 @@ public class HorizontalLineGraphAlgorithmFactory implements AlgorithmFactory, Pa
 				(HorizontalLineGraphAlgorithm.END_DATE_FIELD_ID))
 			{
 				newAttributeDefinition =
-					formDateAttributeDefinition(oldAttributeDefinition, table);
+					MutateParameterUtilities.formDateAttributeDefinition
+						(oldAttributeDefinition, table);
 			}
 			else if (oldAttributeDefinitionID.equals
 				(HorizontalLineGraphAlgorithm.SIZE_BY_FIELD_ID))
 			{
 				newAttributeDefinition =
-					formIntegerAttributeDefinition(oldAttributeDefinition, table);
+					MutateParameterUtilities.formIntegerAttributeDefinition
+						(oldAttributeDefinition, table);
 			}
 			
 			newParameters.addAttributeDefinition(ObjectClassDefinition.REQUIRED,
@@ -81,80 +81,4 @@ public class HorizontalLineGraphAlgorithmFactory implements AlgorithmFactory, Pa
 		
     	return newParameters;
     }
-    
-    private String[] filterSchemaColumnNamesByClass(Schema schema, Class objectClass) {
-    	ArrayList workingColumnNames = new ArrayList();
-    	
-    	for (int ii = 0; ii < schema.getColumnCount(); ii++) {
-    		if (objectClass.isAssignableFrom(schema.getColumnType(ii)))
-    			workingColumnNames.add(schema.getColumnName(ii));
-    	}
-    	
-    	String[] finalColumnNames = new String [workingColumnNames.size()];
-    	
-    	return (String[])workingColumnNames.toArray(finalColumnNames);
-    }
-    
-    private String[] getValidStringColumnNamesInTable(Table table) {
-    	return filterSchemaColumnNamesByClass(table.getSchema(), String.class);
-    }
-    
-    private String[] getValidDateColumnNamesInTable(Table table) {
-    	return filterSchemaColumnNamesByClass(table.getSchema(), Date.class);
-    }
-    
-    private String[] getValidIntegerColumnNamesInTable(Table table) {
-    	return filterSchemaColumnNamesByClass(table.getSchema(), int.class);
-    }
-    
-    private AttributeDefinition formLabelAttributeDefinition
-    	(AttributeDefinition oldAttributeDefinition, Table table)
-    {
-    	String[] validStringColumnsInTable =
-    		getValidStringColumnNamesInTable(table);
-    	
-    	AttributeDefinition labelAttributeDefinition =
-    		new BasicAttributeDefinition(oldAttributeDefinition.getID(),
-    									 oldAttributeDefinition.getName(),
-    									 oldAttributeDefinition.getDescription(),
-    									 AttributeDefinition.STRING,
-    									 validStringColumnsInTable,
-    									 validStringColumnsInTable);
-    	
-    	return labelAttributeDefinition;
-    }
-    
-    private AttributeDefinition formDateAttributeDefinition
-		(AttributeDefinition oldAttributeDefinition, Table table)
-    {
-    	String[] validDateColumnsInTable =
-    		getValidDateColumnNamesInTable(table);
-	
-    	AttributeDefinition dateAttributeDefinition =
-    		new BasicAttributeDefinition(oldAttributeDefinition.getID(),
-    									 oldAttributeDefinition.getName(),
-    									 oldAttributeDefinition.getDescription(),
-    									 AttributeDefinition.STRING,
-    									 validDateColumnsInTable,
-    									 validDateColumnsInTable);
-	
-    	return dateAttributeDefinition;
-    }
-    
-    private AttributeDefinition formIntegerAttributeDefinition
-		(AttributeDefinition oldAttributeDefinition, Table table)
-    {
-    	String[] validIntegerColumnsInTable =
-    		getValidIntegerColumnNamesInTable(table);
-
-    	AttributeDefinition integerAttributeDefinition =
-    		new BasicAttributeDefinition(oldAttributeDefinition.getID(),
-    									 oldAttributeDefinition.getName(),
-    									 oldAttributeDefinition.getDescription(),
-    									 AttributeDefinition.STRING,
-    									 validIntegerColumnsInTable,
-    									 validIntegerColumnsInTable);
-
-    	return integerAttributeDefinition;
-}
 }
