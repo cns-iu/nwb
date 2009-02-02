@@ -222,7 +222,7 @@ public class CSVtoDBAlgorithm implements Algorithm  {
 			e.printStackTrace();
 			throw new AlgorithmExecutionException("An error occurred while loading nsf data into the database", e);
 		} catch (NumberFormatException e) {
-			//TODO: Should say which number failed.
+			//TODO: Should say which number failed. This should actually never occur if the regexp works correctly.
 			throw new AlgorithmExecutionException("An error occurred while attempting to parse a number from the nsf csv file", e);
 		}
 	}
