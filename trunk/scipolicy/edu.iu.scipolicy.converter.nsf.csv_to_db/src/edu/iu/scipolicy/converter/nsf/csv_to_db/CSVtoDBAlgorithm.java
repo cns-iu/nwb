@@ -214,7 +214,7 @@ public class CSVtoDBAlgorithm implements Algorithm  {
 		insertIntoAward.executeBatch();
 		
 		int totalRowsProcessed = rowsProcessedSoFar;
-		System.out.println("Successfully loaded " + totalRowsProcessed + " rows into the NSF database");
+		System.out.println("Successfully loaded all " + totalRowsProcessed + " rows into the NSF database");
 		
 		} catch (IOException e) {
 			throw new AlgorithmExecutionException("An error occurred while loading nsf data into the database", e);
