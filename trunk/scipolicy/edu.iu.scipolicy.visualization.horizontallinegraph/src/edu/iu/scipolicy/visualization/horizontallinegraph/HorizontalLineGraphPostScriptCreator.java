@@ -67,10 +67,10 @@ public class HorizontalLineGraphPostScriptCreator {
 			((canvasWidth * resolutionInDPI) - boundingBoxLeft - boundingBoxRight);
 		final float defaultBoundingBoxHeight =
 			((canvasHeight * resolutionInDPI) - boundingBoxTop - boundingBoxBottom);
-		final float grantBarMargin = 10.0f;
+		final float grantBarMargin = 24.0f;
 		// (NOTE: This could be a constant, but we may eventually want it to be
 		// user-settable?)
-		final int yearLabelYPosition = 5;
+		final int startYPosition = 5;
 
 		Grant[] grants = readGrantsFromTable(grantTable);
 
@@ -109,7 +109,7 @@ public class HorizontalLineGraphPostScriptCreator {
 									totalGrantMoney,
 									totalGrantHeightSpan,
 									defaultBoundingBoxWidth,
-									yearLabelYPosition);
+									startYPosition);
 		
 		final String postScriptHeader =
 			formPostScriptHeader(0,
@@ -122,7 +122,7 @@ public class HorizontalLineGraphPostScriptCreator {
 									 graphStartDate,
 									 graphEndDate,
 									 defaultBoundingBoxWidth,
-									 yearLabelYPosition,
+									 startYPosition,
 									 grantBarMargin);
 		
 		final String postScriptBackground = formPostScriptBackground();
@@ -175,9 +175,19 @@ public class HorizontalLineGraphPostScriptCreator {
 	}
 	
 	private float calculateGrantBarHeight(float dollarAmount,
-								  float totalDollarAmount,
-								  float grantHeight) {
-		return grantHeight * dollarAmount / totalDollarAmount;
+								  		  float totalDollarAmount,
+								  		  float grantHeight,
+								  		  double scale)
+	{
+		float grantBarHeight =
+			(float)(grantHeight * scale * dollarAmount / totalDollarAmount);
+		
+		if (grantBarHeight < 0.0f) {
+			System.err.println("SOMETHING IS NEGATIVE! " + dollarAmount + " " + totalDollarAmount + " " + grantHeight + " " + scale);
+		}
+		
+		return grantBarHeight;
+			
 	}
 	
 	private float calculateXCoordinate(Date date,
@@ -187,7 +197,7 @@ public class HorizontalLineGraphPostScriptCreator {
 									   float margin)
 	{
 		return ((DateUtilities.calculateDaysBetween(startDate, date) * defaultBoundingBoxWidth) /
-			DateUtilities.calculateDaysBetween(startDate, endDate) + margin);
+			DateUtilities.calculateDaysBetween(startDate, endDate) + 1000);
 	}
 	
 	private String formPostScriptHeader(float boundingBoxBottom,
@@ -196,11 +206,13 @@ public class HorizontalLineGraphPostScriptCreator {
 										float grantBarMargin)
 	{
 		return
+			// TODO: The bounding box is a big fat hack. (It needs to take into account text size and shit.)
 			line("%!PS-Adobe-2.0 EPSF-2.0") +
-			line("%%BoundingBox:" + boundingBogLeft + " " + boundingBoxBottom +
-				 " " + (this.calculatedBoundingBoxWidth + (grantBarMargin * 2)) +
-				 " " + this.calculatedBoundingBoxHeight) +
-			line("%%Pages: 1") +
+			line("%%BoundingBox:" + Math.round(boundingBogLeft) + " " +
+				 Math.round(boundingBoxBottom) + " " +
+				 Math.round(this.calculatedBoundingBoxWidth + 600) + " " +
+				 Math.round(this.calculatedBoundingBoxHeight)) +
+			// line("%%Pages: 1") +
 			line("%%Title: Horizontal Line Graph (NSF Grant Data)") +
 			line("%%Creator: SciPolicy") +
 			line("%%EndComments") +
@@ -278,7 +290,7 @@ public class HorizontalLineGraphPostScriptCreator {
 				line(tabbed("gsave")) +
 				line(tabbed("[15] 0 setdash")) +
 				line(tabbed("1 setlinewidth")) +
-				line(tabbed(".5 setgray")) +
+				line(tabbed("0.0039 0.4509 0.5843 setrgbcolor")) +
 				line(tabbed("2 index")) +
 				line(tabbed("newpath")) +
 				line(tabbed("exch")) +
@@ -289,16 +301,16 @@ public class HorizontalLineGraphPostScriptCreator {
 			line("} def") +
 			line("") +
 			
-			line("0 setgray") +
+			line("0.0039 0.4509 0.5843 setrgbcolor") +
 			line("1.5 setlinewidth") +
-			line("/Helvetica findfont 12 scalefont setfont");
+			line("/Helvetica findfont 32 scalefont setfont");
 	}
 	
 	private String formPostScriptYearLabels(Date[] newYearsDates,
 											Date graphStartDate,
 											Date graphEndDate,
 											float defaultBoundingBoxWidth,
-											int yearLabelYPosition,
+											int startYPosition,
 											float margin)
 	{
 		StringWriter yearLabelPostScript = new StringWriter();
@@ -311,9 +323,10 @@ public class HorizontalLineGraphPostScriptCreator {
 													 margin);
 			
 			yearLabelPostScript.append
-				(line("(" + currentNewYearsDate.getYear() + ") " + 
-						xCoordinate + " " + yearLabelYPosition + " ticklabel") +
-				 line("" + xCoordinate + " " + yearLabelYPosition + " " +
+				(line("0 setgray") +
+				 line("(" + currentNewYearsDate.getYear() + ") " + 
+						xCoordinate + " " + startYPosition + " ticklabel") +
+				 line("" + xCoordinate + " " + startYPosition + " " +
 					  this.calculatedBoundingBoxHeight + " vertical"));
 		}
 		
@@ -338,9 +351,6 @@ public class HorizontalLineGraphPostScriptCreator {
 			Date currentGrantEndDate = currentGrant.getEndDate();
 			float currentGrantAmount = currentGrant.getAmount();
 			
-			float calculatedGrantBarHeight = calculateGrantBarHeight
-				(currentGrantAmount, totalGrantAmount, grantHeight);
-			
 			float grantBarStartXCoordinate =
 				calculateXCoordinate(currentGrantStartDate,
 									 graphStartDate,
@@ -348,13 +358,22 @@ public class HorizontalLineGraphPostScriptCreator {
 									 defaultBoundingBoxWidth,
 									 grantBarMargin);
 			
-			float grantBarEndXCoordinate = calculateXCoordinate(currentGrantEndDate,
-																graphStartDate,
-																graphEndDate,
-																defaultBoundingBoxWidth,
-																grantBarMargin);
+			float grantBarEndXCoordinate =
+				calculateXCoordinate(currentGrantEndDate,
+									 graphStartDate,
+									 graphEndDate,
+									 defaultBoundingBoxWidth,
+									 grantBarMargin);
 			
-			float grantBarWidth = (grantBarEndXCoordinate - grantBarStartXCoordinate);
+			float grantBarWidth =
+				(grantBarEndXCoordinate - grantBarStartXCoordinate);
+			
+			double scale = (12 /
+				DateUtilities.calculateMonthsBetween
+					(currentGrantStartDate, currentGrantEndDate));
+			
+			float calculatedGrantBarHeight = calculateGrantBarHeight
+				(currentGrantAmount, totalGrantAmount, grantHeight, scale);
 			
 			cursorYCoordinate += grantBarMargin;
 			
