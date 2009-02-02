@@ -7,6 +7,9 @@ import java.util.GregorianCalendar;
 
 // TODO: Fix this class.
 public class DateUtilities {
+	public final static double AVERAGE_MILLIS_PER_MONTH =
+		(365.24 * 24 * 60 * 60 * 1000 / 12);
+	
 	// TODO: Is this actually necessary?
 	public static Date[] generateDaysBetweenDates(Date startDate, Date endDate) {
 		GregorianCalendar startDateCalendar =
@@ -68,7 +71,6 @@ public class DateUtilities {
 		return dateSet.length;
 	}
 	
-	// Holy crap this blows!
 	public static int calculateDaysBetween(Date startDate, Date endDate) {
 		FAQCalendar startDateCalendar = new FAQCalendar(startDate.getYear(),
 														startDate.getMonth(),
@@ -79,6 +81,11 @@ public class DateUtilities {
 													  endDate.getDate());
 		
 		return (int)startDateCalendar.diffDayPeriods(endDateCalendar);
+	}
+	
+	public static int calculateMonthsBetween(Date startDate, Date endDate) {
+		return (int)Math.round
+			((endDate.getTime() - startDate.getTime()) / AVERAGE_MILLIS_PER_MONTH);
 	}
 	
 	// Assumes dateSet is sorted from earliest to latest.
