@@ -1,17 +1,15 @@
-package edu.iu.scipolicy.filtering.topn;
+package edu.iu.scipolicy.filtering.topncommon;
 
 import java.io.IOException;
-import java.util.Dictionary;
 
-import org.cishell.framework.data.BasicData;
 import org.cishell.framework.data.Data;
-import org.cishell.framework.data.DataProperty;
 import org.cishell.reference.service.metatype.BasicObjectClassDefinition;
 import org.osgi.service.metatype.AttributeDefinition;
 import org.osgi.service.metatype.ObjectClassDefinition;
 
 import prefuse.data.Table;
 import prefuse.util.collections.IntIterator;
+import edu.iu.scipolicy.utilities.ColumnNotFoundException;
 import edu.iu.scipolicy.utilities.MutateParameterUtilities;
 import edu.iu.scipolicy.utilities.TableUtilities;
 
@@ -80,7 +78,20 @@ public class TopNUtilities {
 											  String columnToSortBy,
 											  boolean isDescending,
 											  int topN)
+		throws ColumnNotFoundException
 	{
+		// Prefuse doesn't handle columns not being found well, so let's do it
+		// ourselves.
+		if (originalTable.getColumnNumber(columnToSortBy) == -1) {
+			throw new ColumnNotFoundException("The column \'" + columnToSortBy +
+				"\' could not be found in table: " + originalTable);
+		}
+		
+		// If the original table has no rows, just return a new empty table with the
+		// original table's schema.
+		if ((originalTable.getRowCount() == 0) || (topN <= 0))
+			return TableUtilities.createTableUsingSchema(originalTable.getSchema());
+		
 		// Prefuse has a bug where it only returns one row if the second value
 		// passed in to rowsSortedBy is false, so we have to pass in true and take
 		// care of the ascending/descending issue elsewhere.

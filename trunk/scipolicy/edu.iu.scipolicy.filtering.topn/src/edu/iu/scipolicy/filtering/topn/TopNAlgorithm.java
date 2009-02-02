@@ -10,6 +10,8 @@ import org.cishell.framework.data.Data;
 import org.cishell.framework.data.DataProperty;
 
 import prefuse.data.Table;
+import edu.iu.scipolicy.filtering.topncommon.TopNUtilities;
+import edu.iu.scipolicy.utilities.ColumnNotFoundException;
 
 public class TopNAlgorithm implements Algorithm {
 	private Data[] data;
@@ -42,11 +44,17 @@ public class TopNAlgorithm implements Algorithm {
     	Data inData = this.data[0];
     	Table table = (Table)inData.getData();
     	
-    	Table sortedTable =
-    		TopNUtilities.sortTableWithOnlyTopN(table,
-    									   this.columnToSortBy,
-    									   this.isDescending,
-    									   this.topN);
+    	Table sortedTable = null;
+    	
+    	try {
+    		sortedTable = TopNUtilities.sortTableWithOnlyTopN(table,
+    														  this.columnToSortBy,
+    														  this.isDescending,
+    														  this.topN);
+    	}
+    	catch (ColumnNotFoundException e) {
+    		throw new AlgorithmExecutionException(e);
+    	}
     	
     	Data[] outData = prepareOutData(sortedTable, inData);
     	

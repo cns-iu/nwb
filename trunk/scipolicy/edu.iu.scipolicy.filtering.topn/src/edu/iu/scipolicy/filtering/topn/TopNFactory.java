@@ -17,6 +17,7 @@ import org.osgi.service.metatype.AttributeDefinition;
 import org.osgi.service.metatype.ObjectClassDefinition;
 
 import prefuse.data.Table;
+import edu.iu.scipolicy.filtering.topncommon.TopNUtilities;
 import edu.iu.scipolicy.utilities.MutateParameterUtilities;
 
 public class TopNFactory implements AlgorithmFactory, ParameterMutator {

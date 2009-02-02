@@ -1,4 +1,4 @@
-package edu.iu.scipolicy.filtering.topn;
+package edu.iu.scipolicy.filtering.topnpercent;
 
 import java.util.Dictionary;
 
@@ -10,6 +10,8 @@ import org.cishell.framework.data.Data;
 import org.cishell.framework.data.DataProperty;
 
 import prefuse.data.Table;
+import edu.iu.scipolicy.filtering.topncommon.TopNUtilities;
+import edu.iu.scipolicy.utilities.ColumnNotFoundException;
 
 public class TopNPercentAlgorithm implements Algorithm {
 	private Data[] data;
@@ -66,11 +68,17 @@ public class TopNPercentAlgorithm implements Algorithm {
     	if ((double)flooredCalculatedTopNRows != calculatedTopNRows)
     		finalTopN = (int)Math.round(calculatedTopNRows + 0.5);
     	
-    	Table sortedTable =
-    		TopNUtilities.sortTableWithOnlyTopN(table,
-    									   this.columnToSortBy,
-    									   this.isDescending,
-    									   finalTopN);
+    	Table sortedTable = null;
+    	
+    	try {
+    		sortedTable = TopNUtilities.sortTableWithOnlyTopN(table,
+    														  this.columnToSortBy,
+    														  this.isDescending,
+    														  finalTopN);
+    	}
+    	catch (ColumnNotFoundException e) {
+    		throw new AlgorithmExecutionException(e);
+    	}
     	
     	Data[] outData = prepareOutData(sortedTable, inData);
     	
