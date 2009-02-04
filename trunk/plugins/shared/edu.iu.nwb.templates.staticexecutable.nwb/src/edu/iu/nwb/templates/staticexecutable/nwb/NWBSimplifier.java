@@ -13,11 +13,15 @@ public class NWBSimplifier extends NWBFileParserAdapter {
 	private PrintWriter output;
 	private Map nodeIds = new HashMap();
 	private String weightAttribute;
+	private boolean ignoreWeightAttribute;
+	private String reason = "";
+	private boolean haltParsing = false;
 	
-	public NWBSimplifier(OutputStream outputStream, int numberOfNodes, int numberOfEdges, String weightAttribute) {
+	public NWBSimplifier(OutputStream outputStream, int numberOfNodes, int numberOfEdges, String weightAttribute, boolean ignoreWeightAttribute) {
 		this.output = new PrintWriter(outputStream, true);
 		this.writeHeader(this.output, numberOfNodes, numberOfEdges);
 		this.weightAttribute = weightAttribute;
+		this.ignoreWeightAttribute = ignoreWeightAttribute;
 	}
 	
 	public void addNode(int id, String label, Map attributes) {
@@ -45,11 +49,34 @@ public class NWBSimplifier extends NWBFileParserAdapter {
 	}
 	
 	public void addDirectedEdge(int sourceNode, int targetNode, Map attributes) {
-		double weight = ((Number) attributes.get(weightAttribute)).doubleValue();
-		addEdge(sourceNode, targetNode, weight);
+		double weight;
+		if(ignoreWeightAttribute) {
+			weight = 1;
+		} else {
+			weight = ((Number) attributes.get(weightAttribute)).doubleValue();
+		}
+		
+		if(weight == 0) { //TODO: fix the NWB parser so this crap isn't necessary, and I can throw a real exception.
+			reason = "Zero weights are not allowed. To use this algorithm, preprocess your network further.";
+			haltParsing = true;
+		} else {
+			addEdge(sourceNode, targetNode, weight);
+		}
 	}
 	
 	public void addUndirectedEdge(int node1, int node2, Map attributes) {
 		addDirectedEdge(node1, node2, attributes);
+	}
+	
+	public boolean haltParsingNow() {
+		return haltParsing;
+	}
+	
+	public boolean hadIssue() {
+		return !"".equals(reason);
+	}
+	
+	public String getReason() {
+		return reason;
 	}
 }

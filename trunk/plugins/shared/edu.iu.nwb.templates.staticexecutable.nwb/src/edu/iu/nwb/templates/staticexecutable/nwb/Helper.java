@@ -4,7 +4,6 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Dictionary;
 import java.util.List;
 
@@ -13,12 +12,9 @@ import org.cishell.framework.algorithm.Algorithm;
 import org.cishell.framework.algorithm.AlgorithmExecutionException;
 import org.cishell.framework.data.BasicData;
 import org.cishell.framework.data.Data;
-import org.cishell.framework.data.DataProperty;
 import org.cishell.templates.staticexecutable.StaticExecutableAlgorithmFactory;
-import org.osgi.framework.BundleContext;
 import org.osgi.service.component.ComponentContext;
 
-import edu.iu.nwb.util.nwbfile.GetNWBFileMetadata;
 import edu.iu.nwb.util.nwbfile.NWBFileParser;
 import edu.iu.nwb.util.nwbfile.NWBFileParserHandler;
 import edu.iu.nwb.util.nwbfile.ParsingException;
@@ -40,6 +36,8 @@ public class Helper implements Algorithm {
 		File nwbFile = (File) this.data[0].getData();
 		GetMetadataAndCounts handler = new GetMetadataAndCounts();
 		String weightAttribute = (String) this.parameters.get("weightAttribute");
+		
+		boolean ignoreWeightAttribute = HelperFactory.DEFAULT_WEIGHT.equals(weightAttribute);
 		
 		try {
 			NWBFileParser parser = new NWBFileParser(nwbFile);
@@ -68,8 +66,13 @@ public class Helper implements Algorithm {
 		try {
 			File simpleFormat = File.createTempFile("nwb-", ".simple");
 			FileOutputStream simpleOutputStream = new FileOutputStream(simpleFormat);
-			NWBFileParserHandler simplifier = new NWBSimplifier(simpleOutputStream, nodeCount, undirectedEdgeCount + directedEdgeCount, weightAttribute); //one of the edge counts is guaranteed to be zero
+			NWBSimplifier simplifier = new NWBSimplifier(simpleOutputStream, nodeCount, undirectedEdgeCount + directedEdgeCount, weightAttribute, ignoreWeightAttribute); //one of the edge counts is guaranteed to be zero
 			new NWBFileParser(nwbFile).parse(simplifier);
+			if(simplifier.hadIssue()) {
+				throw new AlgorithmExecutionException(simplifier.getReason());
+			}
+			
+			
 			simpleOutputStream.flush();
 			simpleOutputStream.close();
 
@@ -80,7 +83,7 @@ public class Helper implements Algorithm {
 			List forNodes = new ArrayList();
 			List forEdges = new ArrayList();
 			Data[] output = realAlgorithm.execute(); //let any exceptions bubble up, they're already real exceptions
-			System.err.println("SEA Length is: " + output.length);
+			//System.err.println("SEA Length is: " + output.length);
 			Data firstAttributeData = null;
 			for(int ii = 0; ii < output.length; ii++) {
 				Data outputData = output[ii];

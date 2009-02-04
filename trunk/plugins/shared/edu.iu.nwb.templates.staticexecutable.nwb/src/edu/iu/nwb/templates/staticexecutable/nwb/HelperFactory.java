@@ -29,6 +29,7 @@ import edu.iu.nwb.util.nwbfile.ParsingException;
 
 
 public class HelperFactory implements AlgorithmFactory, DataValidator, ParameterMutator {
+	protected static final String DEFAULT_WEIGHT = "Treat all edges as weight one.";
 	private ComponentContext bundleContext;
 
     protected void activate(ComponentContext ctxt) {
@@ -59,10 +60,14 @@ public class HelperFactory implements AlgorithmFactory, DataValidator, Parameter
 		
 		for (Iterator keys = schema.keySet().iterator(); keys.hasNext(); ) {
 			String key = ""+keys.next();
-			if (!schema.get(key).equals(NWBFileProperty.TYPE_STRING)) {
+			if (!schema.get(key).equals(NWBFileProperty.TYPE_STRING) &&
+				!"source".equals(key) &&
+				!"target".equals(key)) {
 				goodkeys.add(key);
 			}
 		}
+		
+		goodkeys.add(DEFAULT_WEIGHT);
 		
 		Collections.reverse(goodkeys);
 		
