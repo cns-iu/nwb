@@ -308,12 +308,10 @@ public class NWBFileParser {
 			// quotations.
 			try {
 				Map attr = validateALine(s, nodeAttrList);
-				if (attr != null) {
-					int id = ((Integer)attr.remove(NWBFileProperty.ATTRIBUTE_ID)).intValue();
-					String label = (String) attr.remove(NWBFileProperty.ATTRIBUTE_LABEL);
+				int id = ((Integer)attr.remove(NWBFileProperty.ATTRIBUTE_ID)).intValue();
+				String label = (String) attr.remove(NWBFileProperty.ATTRIBUTE_LABEL);
 					
-					handler.addNode(id, label, attr);
-				}
+				handler.addNode(id, label, attr);
 				
 				this.countedNodes++;
 			} catch (Exception e) {
@@ -373,14 +371,13 @@ public class NWBFileParser {
 		} else {
 			try {
 				Map attr = validateALine(s, directedEdgeAttrList);
-				if (attr != null) {
-					int src = ((Integer)attr.remove(NWBFileProperty.ATTRIBUTE_SOURCE)).intValue();
-					int target = ((Integer)attr.remove(NWBFileProperty.ATTRIBUTE_TARGET)).intValue();
+				int src = ((Integer)attr.remove(NWBFileProperty.ATTRIBUTE_SOURCE)).intValue();
+				int target = ((Integer)attr.remove(NWBFileProperty.ATTRIBUTE_TARGET)).intValue();
 					
-					handler.addDirectedEdge(src, target, attr);
-				}
+				handler.addDirectedEdge(src, target, attr);
 				
 				this.countedNumDirected++;
+			//TODO: make this not catch everything as an error with the NWB format, because it should be possible to throw Exceptions in an implementation to reflect other issues and handle them yourself.
 			} catch (Exception e) {
 				isFileGood = false;
 				errorMessages.append("*Wrong NWB format at line " + currentLine
@@ -436,12 +433,10 @@ public class NWBFileParser {
 		} else {
 			try {
 				Map attr = validateALine(s, undirectedEdgeAttrList);
-				if (attr != null) {
-					int src = ((Integer)attr.remove(NWBFileProperty.ATTRIBUTE_SOURCE)).intValue();
-					int target = ((Integer)attr.remove(NWBFileProperty.ATTRIBUTE_TARGET)).intValue();
+				int src = ((Integer)attr.remove(NWBFileProperty.ATTRIBUTE_SOURCE)).intValue();
+				int target = ((Integer)attr.remove(NWBFileProperty.ATTRIBUTE_TARGET)).intValue();
 					
-					handler.addUndirectedEdge(src, target, attr);
-				}
+				handler.addUndirectedEdge(src, target, attr);
 				
 				this.countedNumUnDirected++;
 
@@ -454,13 +449,10 @@ public class NWBFileParser {
 	}
 
 	private Map validateALine(String line, List attrList) throws Exception {
-		if (line.length() <= 0 || line.startsWith(NWBFileProperty.PREFIX_COMMENTS))
-			return null;
 		StringTokenizer st = new StringTokenizer(line);
 		int totalTokens = st.countTokens();
-		if (totalTokens <= 0)
-			return null;
 		if (totalTokens < attrList.size())
+			//TODO: don't throw generic exceptions
 			throw new Exception(
 					"Did not specify all values for defined attributes!");
 		Map entity = new HashMap();
