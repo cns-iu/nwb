@@ -14,6 +14,7 @@ import org.cishell.framework.data.BasicData;
 import org.cishell.framework.data.Data;
 import org.cishell.templates.staticexecutable.StaticExecutableAlgorithmFactory;
 import org.osgi.service.component.ComponentContext;
+import org.osgi.service.log.LogService;
 
 import edu.iu.nwb.util.nwbfile.NWBFileParser;
 import edu.iu.nwb.util.nwbfile.NWBFileParserHandler;
@@ -24,12 +25,14 @@ public class Helper implements Algorithm {
 	Dictionary parameters;
 	CIShellContext context;
 	private StaticExecutableAlgorithmFactory staticAlgorithmFactory;
+	private LogService logger;
 
 	public Helper(Data[] data, Dictionary parameters, CIShellContext context, ComponentContext componentContext) {
 		this.data = data;
 		this.parameters = parameters;
 		this.context = context;
 		this.staticAlgorithmFactory = new StaticExecutableAlgorithmFactory((String) componentContext.getProperties().get("Algorithm-Directory"), componentContext.getBundleContext());
+		this.logger = (LogService) context.getService(LogService.class.getName());
 	}
 
 	public Data[] execute() throws AlgorithmExecutionException {
@@ -38,6 +41,9 @@ public class Helper implements Algorithm {
 		String weightAttribute = (String) this.parameters.get("weightAttribute");
 		
 		boolean ignoreWeightAttribute = HelperFactory.DEFAULT_WEIGHT.equals(weightAttribute);
+		
+		//TODO: consider making this message only display for algorithms with some metadata asserting this.
+		logger.log(LogService.LOG_INFO, "NOTE: the behavior of this algorithm has not been verified for networks with isolates. For correctness, please remove isolates before running the algorithm.");
 		
 		try {
 			NWBFileParser parser = new NWBFileParser(nwbFile);
@@ -61,6 +67,10 @@ public class Helper implements Algorithm {
 		if(undirectedEdgeCount == 0 && directedEdgeCount == 0) {
 			throw new AlgorithmExecutionException("This network has no edges. " +
 					"This algorithm only works on networks with edges.");
+		}
+		
+		if(directedEdgeCount != 0) { //TODO: if this is ever used with directed networks, add metadata to each algorithm indicating intended type of network, and check the metadata to determine what to reject.
+			throw new AlgorithmExecutionException("This network is directed, but this algorithm only works on undirected networks. Consider using symmetrize or another method to transform the network into an undirected one.");
 		}
 		
 		try {
