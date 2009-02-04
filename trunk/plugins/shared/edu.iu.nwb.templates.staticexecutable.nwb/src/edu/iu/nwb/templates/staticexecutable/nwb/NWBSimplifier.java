@@ -9,6 +9,8 @@ import java.util.Map;
 import edu.iu.nwb.util.nwbfile.NWBFileParserAdapter;
 
 public class NWBSimplifier extends NWBFileParserAdapter {
+	private static final String ZERO_WEIGHT_REASON = "Zero weights are not allowed. To use this algorithm, preprocess your network further.";
+	private static final String ISOLATES_REASON = "This algorithm doesn't work on networks with isolates. To use this algorithm, please remove the isolates.";
 	private int nodeCount = 0;
 	private PrintWriter output;
 	private Map nodeIds = new HashMap();
@@ -16,12 +18,14 @@ public class NWBSimplifier extends NWBFileParserAdapter {
 	private boolean ignoreWeightAttribute;
 	private String reason = "";
 	private boolean haltParsing = false;
+	private boolean[] nodesParticipating;
 	
 	public NWBSimplifier(OutputStream outputStream, int numberOfNodes, int numberOfEdges, String weightAttribute, boolean ignoreWeightAttribute) {
 		this.output = new PrintWriter(outputStream, true);
 		this.writeHeader(this.output, numberOfNodes, numberOfEdges);
 		this.weightAttribute = weightAttribute;
 		this.ignoreWeightAttribute = ignoreWeightAttribute;
+		this.nodesParticipating = new boolean[numberOfNodes];
 	}
 	
 	public void addNode(int id, String label, Map attributes) {
@@ -45,6 +49,8 @@ public class NWBSimplifier extends NWBFileParserAdapter {
 	private void addEdge(int source, int target, double value) {
 		int fakeSource = ((Integer) this.nodeIds.get(new Integer(source))).intValue();
 		int fakeTarget = ((Integer) this.nodeIds.get(new Integer(target))).intValue();
+		this.nodesParticipating[fakeSource] = true;
+		this.nodesParticipating[fakeTarget] = true;
 		this.writeEdge(output, fakeSource, fakeTarget, value);
 	}
 	
@@ -57,7 +63,7 @@ public class NWBSimplifier extends NWBFileParserAdapter {
 		}
 		
 		if(weight == 0) { //TODO: fix the NWB parser so this crap isn't necessary, and I can throw a real exception.
-			reason = "Zero weights are not allowed. To use this algorithm, preprocess your network further.";
+			reason = ZERO_WEIGHT_REASON;
 			haltParsing = true;
 		} else {
 			addEdge(sourceNode, targetNode, weight);
@@ -66,6 +72,14 @@ public class NWBSimplifier extends NWBFileParserAdapter {
 	
 	public void addUndirectedEdge(int node1, int node2, Map attributes) {
 		addDirectedEdge(node1, node2, attributes);
+	}
+	
+	public void finishedParsing() {
+		for(int ii = 0; ii < nodesParticipating.length; ii++) {
+			if(!nodesParticipating[ii]) {
+				reason = ISOLATES_REASON;
+			}
+		}
 	}
 	
 	public boolean haltParsingNow() {

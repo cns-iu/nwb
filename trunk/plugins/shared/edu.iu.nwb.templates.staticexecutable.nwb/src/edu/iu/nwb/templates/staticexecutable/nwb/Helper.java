@@ -42,9 +42,6 @@ public class Helper implements Algorithm {
 		
 		boolean ignoreWeightAttribute = HelperFactory.DEFAULT_WEIGHT.equals(weightAttribute);
 		
-		//TODO: consider making this message only display for algorithms with some metadata asserting this.
-		logger.log(LogService.LOG_INFO, "NOTE: the behavior of this algorithm has not been verified for networks with isolates. For correctness, please remove isolates before running the algorithm.");
-		
 		try {
 			NWBFileParser parser = new NWBFileParser(nwbFile);
 			parser.parse(handler);
