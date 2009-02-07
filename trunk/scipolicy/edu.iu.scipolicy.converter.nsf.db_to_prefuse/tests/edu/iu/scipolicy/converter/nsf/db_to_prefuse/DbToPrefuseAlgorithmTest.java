@@ -2,13 +2,11 @@ package edu.iu.scipolicy.converter.nsf.db_to_prefuse;
 
 import static org.junit.Assert.fail;
 
-import java.io.File;
+import java.util.Dictionary;
+import java.util.Hashtable;
 
-import org.cishell.framework.CIShellContext;
 import org.cishell.framework.algorithm.Algorithm;
 import org.cishell.framework.algorithm.AlgorithmExecutionException;
-import org.cishell.framework.algorithm.AlgorithmFactory;
-import org.cishell.framework.data.BasicData;
 import org.cishell.framework.data.Data;
 import org.cishell.service.database.DatabaseService;
 import org.junit.After;
@@ -34,21 +32,22 @@ public class DbToPrefuseAlgorithmTest {
 
 	@Before
 	public void setUp() throws Exception {
-		ciShellContext = TestUtilities.createFakeCIShellContext();
-		ciShellContext.start();
+		this.ciShellContext = TestUtilities.createFakeCIShellContext();
+		this.ciShellContext.start();
 	}
 
 	@After
 	public void tearDown() throws Exception {
-		ciShellContext.stop();
+		this.ciShellContext.stop();
 	}
 
 	@Test
 	public void testExecuteWithDatabase() {
+		NSFHeader nsfHeader = formNSFHeader();
 		String[][] nsfTable = formNSFTable();
 		
 		try {
-			genericTestExecute(nsfTable);
+			genericTestExecute(nsfHeader, nsfTable);
 		}
 		catch (Exception e) {
 			e.printStackTrace();
@@ -56,13 +55,21 @@ public class DbToPrefuseAlgorithmTest {
 		}
 	}
 	
-	private void genericTestExecute(String[][] nsfTable) throws Exception {
+	// This is generic in case we want to eventually test invalid
+	// headers/table data.
+	private void genericTestExecute(NSFHeader nsfHeader, String[][] nsfTable)
+		throws Exception
+	{
 		DatabaseService databaseService =
 			(DatabaseService)this.ciShellContext.getService
 				(DatabaseService.class.getName());
 		
-		Data[] nsfDatabaseData =
-			TestUtilities.createDatabaseFromNSFTable(nsfTable, databaseService);
+		Data[] nsfDatabaseData = TestUtilities.createAndFillTestDatabase
+			(NsfNames.DB.AWARD_TABLE,
+			 nsfHeader.nsfHeader,
+			 nsfHeader.primaryKey,
+			 nsfTable,
+			 databaseService);
 		
 		Algorithm dbToPrefuseAlgorithm =
 			new DbToPrefuseAlgorithm(nsfDatabaseData, null, this.ciShellContext);
@@ -77,6 +84,19 @@ public class DbToPrefuseAlgorithmTest {
 			throw new Exception
 				("An error occurred in the DB to Prefuse algorithm.");
 		}
+	}
+	
+	private NSFHeader formNSFHeader() {
+		String[][] nsfHeader = new String[][]
+		{
+			{ NsfNames.DB.AWARD_NUMBER, "INTEGER" },
+			{ NsfNames.DB.AWARD_TITLE, "VARCHAR(500)" },
+			{ NsfNames.DB.AWARD_START_DATE, "DATE" },
+			{ NsfNames.DB.AWARD_EXPIRATION_DATE, "DATE" },
+			{ NsfNames.DB.AWARDED_AMOUNT_TO_DATE, "INTEGER" }
+		};
+		
+		return new NSFHeader(nsfHeader, NsfNames.DB.AWARD_NUMBER);
 	}
 	
 	private String[][] formNSFTable() {
@@ -101,5 +121,15 @@ public class DbToPrefuseAlgorithmTest {
 		};
 		
 		return nsfTable;
+	}
+	
+	private class NSFHeader {
+		public String[][] nsfHeader;
+		public String primaryKey;
+		
+		public NSFHeader(String[][] nsfHeader, String primaryKey) {
+			this.nsfHeader = nsfHeader;
+			this.primaryKey = primaryKey;
+		}
 	}
 }
