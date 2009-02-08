@@ -2,6 +2,7 @@ package edu.iu.scipolicy.utilities;
 
 import java.awt.image.BufferedImage;
 import java.io.File;
+import java.io.FileWriter;
 import java.io.IOException;
 
 import javax.imageio.ImageIO;
@@ -95,7 +96,7 @@ public class FileUtilities {
 	    File temporaryImageFile =
 	    	createTemporaryFileInTemporaryDirectory(temporaryDirectoryPath,
 	    											"nwb-temp",
-	    											"jpg");
+	    											imageType);
 
 	    // Attempt to write the image to the temporary file on disk.
    		if (!ImageIO.write(bufferedImage, imageType, temporaryImageFile)) {
@@ -104,5 +105,24 @@ public class FileUtilities {
    		}
    		
    		return temporaryImageFile;
+    }
+    
+    public static File writeTextIntoTemporaryDirectory(String text,
+    												   String fileExtension)
+    	throws IOException, Exception
+    {
+    	// Get the system-wide temporary directory path.
+	    String temporaryDirectoryPath = getDefaultTemporaryDirectory();
+	    File temporaryTextFile =
+	    	createTemporaryFileInTemporaryDirectory(temporaryDirectoryPath,
+	    											"nwb-temp",
+	    											fileExtension);
+
+	    FileWriter textFileWriter = new FileWriter(temporaryTextFile);
+	    
+	    textFileWriter.write(text);
+	    textFileWriter.flush();
+   		
+   		return temporaryTextFile;
     }
 }
