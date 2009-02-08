@@ -88,7 +88,8 @@ public class HorizontalLineGraphPostScriptCreator {
 		// Calculate the total height for all grants (all of their heights
 		// together?)  This is used to scale the grants appropriately, I think.
 		float totalGrantHeightSpan =
-			Math.abs(defaultBoundingBoxHeight - (grantBarMargin * (sortedGrants.length + 1)));
+			Math.abs(defaultBoundingBoxHeight -
+					 (grantBarMargin * (sortedGrants.length + 1)));
 		
 		// Get the first and last dates any of these grants exist.
 		Date graphStartDate = formGraphStartDateBasedOnGrants(sortedGrants);
@@ -290,7 +291,7 @@ public class HorizontalLineGraphPostScriptCreator {
 				line(tabbed("gsave")) +
 				line(tabbed("[15] 0 setdash")) +
 				line(tabbed("1 setlinewidth")) +
-				line(tabbed("0.0039 0.4509 0.5843 setrgbcolor")) +
+				line(tabbed("0.5 0.5 0.5 setrgbcolor")) +
 				line(tabbed("2 index")) +
 				line(tabbed("newpath")) +
 				line(tabbed("exch")) +
@@ -303,7 +304,7 @@ public class HorizontalLineGraphPostScriptCreator {
 			
 			line("0.0039 0.4509 0.5843 setrgbcolor") +
 			line("1.5 setlinewidth") +
-			line("/Helvetica findfont 32 scalefont setfont");
+			line("/Garamond findfont 25 scalefont setfont");
 	}
 	
 	private String formPostScriptYearLabels(Date[] newYearsDates,
