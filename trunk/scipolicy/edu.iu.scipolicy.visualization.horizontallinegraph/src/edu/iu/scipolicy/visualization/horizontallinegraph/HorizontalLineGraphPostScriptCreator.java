@@ -30,8 +30,8 @@ public class HorizontalLineGraphPostScriptCreator {
 	String endDateKey;
 	String sizeByKey;
 	
-	private float calculatedBoundingBoxWidth = 0.0f;
-	private float calculatedBoundingBoxHeight = 0.0f;
+	private double calculatedBoundingBoxWidth = 0.0;
+	private double calculatedBoundingBoxHeight = 0.0;
 	
 	public HorizontalLineGraphPostScriptCreator(String labelKey,
 												String startDateKey,
@@ -50,24 +50,24 @@ public class HorizontalLineGraphPostScriptCreator {
 		// The canvas size, in inches.
 		// (NOTE: These could be constants right now, but they may eventually be
 		// user-settable.)
-		final float canvasWidth = 11.7f;
-		final float canvasHeight = 4.75f;
+		final double canvasWidth = 11.7;
+		final double canvasHeight = 4.75;
 		
 		// DPI stands for dots per inch, so it multiplied by the canvas size gives
 		// how many dots there are on the canvas.
 		final int resolutionInDPI = 300;
 		
 		// The default (encapsulated) bounding box dimenions.
-		final float boundingBoxTop = 300.0f;
-		final float boundingBoxBottom = 300.0f;
-		final float boundingBoxLeft = 300.0f;
-		final float boundingBoxRight = 300.0f;
+		final double boundingBoxTop = 300.0;
+		final double boundingBoxBottom = 300.0;
+		final double boundingBoxLeft = 300.0;
+		final double boundingBoxRight = 300.0;
 
-		final float defaultBoundingBoxWidth =
+		final double defaultBoundingBoxWidth =
 			((canvasWidth * resolutionInDPI) - boundingBoxLeft - boundingBoxRight);
-		final float defaultBoundingBoxHeight =
+		final double defaultBoundingBoxHeight =
 			((canvasHeight * resolutionInDPI) - boundingBoxTop - boundingBoxBottom);
-		final float grantBarMargin = 24.0f;
+		final double grantBarMargin = 24.0;
 		// (NOTE: This could be a constant, but we may eventually want it to be
 		// user-settable?)
 		final int startYPosition = 5;
@@ -83,11 +83,11 @@ public class HorizontalLineGraphPostScriptCreator {
 		Grant[] sortedGrants = sortGrants(grants);
 		
 		// Sum the total (monitary) amount across all grants.
-		float totalGrantMoney = calculateTotalGrantAmount(sortedGrants);
+		double totalGrantMoney = calculateTotalGrantAmount(sortedGrants);
 		
 		// Calculate the total height for all grants (all of their heights
 		// together?)  This is used to scale the grants appropriately, I think.
-		float totalGrantHeightSpan =
+		double totalGrantHeightSpan =
 			Math.abs(defaultBoundingBoxHeight -
 					 (grantBarMargin * (sortedGrants.length + 1)));
 		
@@ -166,8 +166,8 @@ public class HorizontalLineGraphPostScriptCreator {
 		return sortedGrantSet;
 	}
 	
-	private float calculateTotalGrantAmount(Grant[] grants) {
-		float calculatedTotalGrantAmount = 0.0f;
+	private double calculateTotalGrantAmount(Grant[] grants) {
+		double calculatedTotalGrantAmount = 0.0;
 		
 		for (int ii = 0; ii < grants.length; ii++)
 			calculatedTotalGrantAmount += grants[ii].getAmount();
@@ -175,39 +175,35 @@ public class HorizontalLineGraphPostScriptCreator {
 		return calculatedTotalGrantAmount;
 	}
 	
-	private float calculateGrantBarHeight(float dollarAmount,
-								  		  float totalDollarAmount,
-								  		  float grantHeight,
-								  		  double scale)
+	private double calculateGrantBarHeight(double dollarAmount,
+								  		   double totalDollarAmount,
+								  		   double grantHeight,
+								  		   double scale)
 	{
-		float grantBarHeight =
-			(float)(grantHeight * scale * dollarAmount / totalDollarAmount);
-		
-		if (grantBarHeight < 0.0f) {
-			System.err.println("SOMETHING IS NEGATIVE! " + dollarAmount + " " + totalDollarAmount + " " + grantHeight + " " + scale);
-		}
+		double grantBarHeight =
+			(grantHeight * scale * dollarAmount / totalDollarAmount);
 		
 		return grantBarHeight;
 			
 	}
 	
-	private float calculateXCoordinate(Date date,
+	private double calculateXCoordinate(Date date,
 									   Date startDate,
 									   Date endDate,
-									   float defaultBoundingBoxWidth,
-									   float margin)
+									   double defaultBoundingBoxWidth,
+									   double margin)
 	{
 		return ((DateUtilities.calculateDaysBetween(startDate, date) * defaultBoundingBoxWidth) /
 			DateUtilities.calculateDaysBetween(startDate, endDate) + 1000);
 	}
 	
-	private String formPostScriptHeader(float boundingBoxBottom,
-										float boundingBogLeft,
-										float defaultBoundingBoxWidth,
-										float grantBarMargin)
+	private String formPostScriptHeader(double boundingBoxBottom,
+										double boundingBogLeft,
+										double defaultBoundingBoxWidth,
+										double grantBarMargin)
 	{
 		return
-			// TODO: The bounding box is a big fat hack. (It needs to take into account text size and shit.)
+			// TODO: The bounding box is a big fat hack. (It needs to take into account text size and stuff.)
 			line("%!PS-Adobe-2.0 EPSF-2.0") +
 			line("%%BoundingBox:" + Math.round(boundingBogLeft) + " " +
 				 Math.round(boundingBoxBottom) + " " +
@@ -310,18 +306,18 @@ public class HorizontalLineGraphPostScriptCreator {
 	private String formPostScriptYearLabels(Date[] newYearsDates,
 											Date graphStartDate,
 											Date graphEndDate,
-											float defaultBoundingBoxWidth,
+											double defaultBoundingBoxWidth,
 											int startYPosition,
-											float margin)
+											double margin)
 	{
 		StringWriter yearLabelPostScript = new StringWriter();
 		
 		for (Date currentNewYearsDate : newYearsDates) {
-			float xCoordinate = calculateXCoordinate(currentNewYearsDate,
-													 graphStartDate,
-													 graphEndDate,
-													 defaultBoundingBoxWidth,
-													 margin);
+			double xCoordinate = calculateXCoordinate(currentNewYearsDate,
+													  graphStartDate,
+													  graphEndDate,
+													  defaultBoundingBoxWidth,
+													  margin);
 			
 			yearLabelPostScript.append
 				(line("0 setgray") +
@@ -337,43 +333,43 @@ public class HorizontalLineGraphPostScriptCreator {
 	private String formPostScriptGrantBars(Grant[] grants,
 										   Date graphStartDate,
 										   Date graphEndDate,
-										   float grantBarMargin,
-										   float totalGrantAmount,
-										   float grantHeight,
-										   float defaultBoundingBoxWidth,
-										   float startYPosition)
+										   double grantBarMargin,
+										   double totalGrantAmount,
+										   double grantHeight,
+										   double defaultBoundingBoxWidth,
+										   double startYPosition)
 	{
-		float cursorYCoordinate = startYPosition;
+		double cursorYCoordinate = startYPosition;
 		StringWriter grantBarPostScript = new StringWriter();
 		
 		for (Grant currentGrant : grants) {
 			String currentGrantName = currentGrant.getGrantLabel();
 			Date currentGrantStartDate = currentGrant.getStartDate();
 			Date currentGrantEndDate = currentGrant.getEndDate();
-			float currentGrantAmount = currentGrant.getAmount();
+			double currentGrantAmount = currentGrant.getAmount();
 			
-			float grantBarStartXCoordinate =
+			double grantBarStartXCoordinate =
 				calculateXCoordinate(currentGrantStartDate,
 									 graphStartDate,
 									 graphEndDate,
 									 defaultBoundingBoxWidth,
 									 grantBarMargin);
 			
-			float grantBarEndXCoordinate =
+			double grantBarEndXCoordinate =
 				calculateXCoordinate(currentGrantEndDate,
 									 graphStartDate,
 									 graphEndDate,
 									 defaultBoundingBoxWidth,
 									 grantBarMargin);
 			
-			float grantBarWidth =
+			double grantBarWidth =
 				(grantBarEndXCoordinate - grantBarStartXCoordinate);
 			
 			double scale = (12 /
 				DateUtilities.calculateMonthsBetween
 					(currentGrantStartDate, currentGrantEndDate));
 			
-			float calculatedGrantBarHeight = calculateGrantBarHeight
+			double calculatedGrantBarHeight = calculateGrantBarHeight
 				(currentGrantAmount, totalGrantAmount, grantHeight, scale);
 			
 			cursorYCoordinate += grantBarMargin;
@@ -437,7 +433,7 @@ public class HorizontalLineGraphPostScriptCreator {
 		return lastYear;
 	}
 	
-	private void updateCanvasSize(float xCoordinate, float yCoordinate) {
+	private void updateCanvasSize(double xCoordinate, double yCoordinate) {
 		if (xCoordinate > this.calculatedBoundingBoxWidth)
 			this.calculatedBoundingBoxWidth = xCoordinate;
 		

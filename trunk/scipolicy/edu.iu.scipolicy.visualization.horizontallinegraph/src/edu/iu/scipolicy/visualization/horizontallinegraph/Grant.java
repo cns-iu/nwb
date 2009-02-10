@@ -15,9 +15,9 @@ public class Grant implements Comparable {
 	private String label;
 	private Date startDate;
 	private Date endDate;
-	private float amount;
+	private double amount;
 	
-	public Grant(String label, Date startDate, Date endDate, float amount)
+	public Grant(String label, Date startDate, Date endDate, double amount)
 	{
 		this.label = label;
 		this.startDate = startDate;
@@ -53,7 +53,7 @@ public class Grant implements Comparable {
 		return this.endDate;
 	}
 	
-	public float getAmount() {
+	public double getAmount() {
 		return this.amount;
 	}
 	

@@ -3,7 +3,6 @@ package edu.iu.scipolicy.visualization.horizontallinegraph;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.util.Date;
 import java.util.Dictionary;
 
 import org.cishell.framework.CIShellContext;
@@ -15,7 +14,6 @@ import org.cishell.framework.data.DataProperty;
 import org.osgi.service.log.LogService;
 
 import prefuse.data.Table;
-import prefuse.data.tuple.TableTuple;
 import edu.iu.scipolicy.utilities.FileUtilities;
 
 public class HorizontalLineGraphAlgorithm implements Algorithm {
@@ -141,52 +139,5 @@ public class HorizontalLineGraphAlgorithm implements Algorithm {
 		postScriptMetaData.put(DataProperty.TYPE, DataProperty.VECTOR_IMAGE_TYPE);
     	
         return new Data[] { postScriptData };
-    }
-    
-    public static void main(String[] args) {
-    	String[] columnNames =
-    		new String[] { "label", "start date", "end date", "amount" };
-    	
-    	Table table = new Table();
-    	
-    	// Set the table columns.
-    	table.addColumn(Grant.GRANT_AWARD_LABEL_KEY, String.class);
-    	table.addColumn(Grant.GRANT_AWARD_START_DATE_KEY, Date.class);
-    	table.addColumn(Grant.GRANT_AWARD_END_DATE_KEY, Date.class);
-    	table.addColumn(Grant.GRANT_AWARD_AMOUNT, Integer.class);
-    	
-    	// Add some rows and fill them in.
-    	table.addRow();
-    	table.set(0, Grant.GRANT_AWARD_LABEL_KEY, "Micah");
-    	table.set(0, Grant.GRANT_AWARD_START_DATE_KEY, new Date(1985, 6, 3));
-    	table.set(0, Grant.GRANT_AWARD_END_DATE_KEY, new Date(2009, 6, 4));
-    	table.set(0, Grant.GRANT_AWARD_AMOUNT, new Integer(1000));
-    	// ----
-    	table.addRow();
-    	table.set(1, Grant.GRANT_AWARD_LABEL_KEY, "Patrick");
-    	table.set(1, Grant.GRANT_AWARD_START_DATE_KEY, new Date(1984, 2, 15));
-    	table.set(1, Grant.GRANT_AWARD_END_DATE_KEY, new Date(1985, 2, 15));
-    	table.set(1, Grant.GRANT_AWARD_AMOUNT, new Integer(100));
-    	// ----
-    	table.addRow();
-    	table.set(2, Grant.GRANT_AWARD_LABEL_KEY, "Elisha");
-    	table.set(2, Grant.GRANT_AWARD_START_DATE_KEY, new Date(1985, 10, 19));
-    	table.set(2, Grant.GRANT_AWARD_END_DATE_KEY, new Date(1994, 9, 20));
-    	table.set(2, Grant.GRANT_AWARD_AMOUNT, new Integer(500));
-    	
-    	Data dataItem = new BasicData(table, "file:text/table");
-    	Data[] data = new Data[] { dataItem };
-    	HorizontalLineGraphAlgorithm hlga = new HorizontalLineGraphAlgorithm(data, null, null);
-    	
-    	try {
-    		hlga.execute();
-    	}
-    	catch (AlgorithmExecutionException e) {
-    		System.err.println("AlgorithmExecutionException: " + e.getMessage());
-    	}
-    	catch (Exception e) {
-    		System.err.println("Exception (" + e.getClass().getName() + "): " + e.getMessage());
-    		e.printStackTrace();
-    	}
     }
 }
