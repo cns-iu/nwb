@@ -7,15 +7,14 @@ import java.sql.Statement;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.Dictionary;
-import java.util.Enumeration;
+import java.util.Date;
 
 import org.cishell.framework.data.BasicData;
 import org.cishell.framework.data.Data;
 import org.cishell.service.database.DataSourceWithID;
 import org.cishell.service.database.DatabaseService;
 
-import edu.iu.scipolicy.utilities.nsf.NsfNames;
+import prefuse.data.Table;
 
 public class TestUtilities {
 	public static int HEADER_COLUMN_NAME_INDEX = 0;
@@ -73,6 +72,47 @@ public class TestUtilities {
 		catch (Exception e) {
 			throw e;
 		}
+	}
+	
+	public static Table createEmptyPrefuseTable(String[] columnNames, Class[] columnTypes) {
+		Table table = new Table();
+		
+		for (int ii = 0; ii < columnNames.length; ii++)
+			table.addColumn(columnNames[ii], columnTypes[ii]);
+		
+		return table;
+	}
+	
+	public static Table createPrefuseTableAndFillItWithTestGrantData
+		(String labelKey, String startDateKey, String endDateKey, String amountKey)
+	{
+		String[] columnNames =
+    		new String[] { labelKey, startDateKey, endDateKey, amountKey };
+		
+		Class[] columnTypes =
+			new Class[] { String.class, Date.class, Date.class, Integer.class };
+		
+		Table table = createEmptyPrefuseTable(columnNames, columnTypes);
+		
+		table.addRow();
+    	table.set(0, labelKey, "Micah");
+    	table.set(0, startDateKey, new Date(1985, 6, 3));
+    	table.set(0, endDateKey, new Date(2009, 6, 4));
+    	table.set(0, amountKey, new Integer(1000));
+    	// ----
+    	table.addRow();
+    	table.set(1, labelKey, "Patrick");
+    	table.set(1, startDateKey, new Date(1984, 2, 15));
+    	table.set(1, endDateKey, new Date(1985, 2, 15));
+    	table.set(1, amountKey, new Integer(100));
+    	// ----
+    	table.addRow();
+    	table.set(2, labelKey, "Elisha");
+    	table.set(2, startDateKey, new Date(1985, 10, 19));
+    	table.set(2, endDateKey, new Date(1994, 9, 20));
+    	table.set(2, amountKey, new Integer(500));
+		
+		return table;
 	}
 	
 	private static void createEmptyDatabaseTable(String tableName,
