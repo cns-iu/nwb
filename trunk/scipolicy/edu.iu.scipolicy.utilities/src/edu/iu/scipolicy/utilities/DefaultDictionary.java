@@ -8,8 +8,9 @@ public class DefaultDictionary extends Dictionary {
 	Object defaultValue;
 	Dictionary wrappedDictionary;
 	
-	public DefaultDictionary(Object defaultValue,
-							 Dictionary wrappedDictionary) {
+	public DefaultDictionary
+		(Object defaultValue, Dictionary wrappedDictionary)
+	{
 		this.defaultValue = defaultValue;
 		this.wrappedDictionary = wrappedDictionary;
 	}

@@ -97,15 +97,4 @@ public class FAQCalendar extends GregorianCalendar {
         long startL = this.getTimeInMillis() + this.getTimeZone().getOffset( this.getTimeInMillis() );
         return (endL - startL) / MILLISECS_PER_DAY;
     }
-    /**
-     * DO NOT USE THIS Method it does not work across daylight savings boundaries for 
-     * all difference intervals which include a day which has lost an hour and is only 23 hours long.
-     * @param end - any Calendar representing the moment of time at the end of the interval for calculation.
-     * @deprecated 
-     */
-    public long diff24HourPeriods(Calendar end) {
-        long endL   =  end.getTimeInMillis();
-        long startL = this.getTimeInMillis();
-        return (endL -startL) / MILLISECS_PER_DAY;
-    }
 }

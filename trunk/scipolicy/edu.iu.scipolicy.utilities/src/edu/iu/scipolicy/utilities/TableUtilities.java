@@ -64,7 +64,7 @@ public class TableUtilities {
 										   int topN,
 										   boolean isDescending)
 	{
-		//TODO: Add a couple comments in this method
+		// TODO: Add a couple comments in this method
 		
 		Schema tableSchema = originalTable.getSchema();
 		final int numTableRows = originalTable.getRowCount();
@@ -77,7 +77,7 @@ public class TableUtilities {
 		for (int ii = 0; ii < numTableRows; ii++)
 			originalTableRowsToCopy[ii] = iterator.nextInt();
 
-		//TODO: Comment the side-effects here
+		// TODO: Comment the side-effects here
 		
 		if (!isDescending) {
 			for (int ii = 0; ii < numRowsToCopy; ii++) {

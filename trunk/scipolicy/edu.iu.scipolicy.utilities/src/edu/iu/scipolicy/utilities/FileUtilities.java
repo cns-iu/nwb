@@ -11,23 +11,17 @@ public class FileUtilities {
 	// Return a File pointing to the directory specified in temporaryDirectoryPath,
     // creating the directory if it doesn't already exist.
     private static File createTemporaryDirectory(String temporaryDirectoryPath) {
-    	File temporaryDirectory =
-    		new File(temporaryDirectoryPath + File.separator + "temp");
-    	
-    	if (!temporaryDirectory.exists()) {
-    		temporaryDirectory.mkdir();
-    		temporaryDirectory.deleteOnExit();
-    	}
-    	
-    	return temporaryDirectory;
+    	return ensureDirectoryExists(temporaryDirectoryPath + File.separator + "temp");
     }
     
     // Attempt to create a temporary file on disk whose name is passed in.
     public static File createTemporaryFile(File temporaryDirectory,
-    								 String temporaryDirectoryPath,
-    								 String temporaryFileName,
-    								 String temporaryFileExtension)
+    								 	   String temporaryDirectoryPath,
+    								 	   String temporaryFileName,
+    								 	   String temporaryFileExtension)
     {
+    	ensureDirectoryExists(temporaryDirectoryPath);
+    	
     	File temporaryFile;
     	
     	try {
@@ -40,9 +34,20 @@ public class FileUtilities {
 	    	// using the standard Java File temporary file scheme (?), so we're
     		// coming up with our own temporary file (that we hope doesn't already
     		// exist).
-	    	temporaryFile = new File (temporaryDirectoryPath + File.separator +
-	    		temporaryFileName + File.separator + "temp." +
+	    	temporaryFile = new File(temporaryDirectoryPath + File.separator +
+	    		temporaryFileName + "temp." +
 	    		temporaryFileExtension);
+	    	
+	    	if (!temporaryFile.exists()) {
+	    		try {
+	    			temporaryFile.createNewFile();
+	    		}
+	    		catch (IOException e2) {
+	    			throw new RuntimeException(e2);
+	    		}
+	    		
+	    		temporaryFile.deleteOnExit();
+	    	}
     	}
     	
     	return temporaryFile;
@@ -124,5 +129,16 @@ public class FileUtilities {
 	    textFileWriter.flush();
    		
    		return temporaryTextFile;
+    }
+    
+    private static File ensureDirectoryExists(String directoryPath) {
+    	File directory = new File(directoryPath);
+    	
+    	if (!directory.exists()) {
+    		directory.mkdir();
+    		directory.deleteOnExit();
+    	}
+    	
+    	return directory;
     }
 }

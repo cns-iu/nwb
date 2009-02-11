@@ -35,7 +35,6 @@ public class DateUtilities {
 			(GregorianCalendar)startDateCalendar.clone();
 		final Date actualEndDateAccordingToCalendar = endDateCalendar.getTime();
 		boolean shouldKeepGeneratingDaysBetweenDates = true;
-		int b = 0;
 		
 		// This is the meat of the Date generation.
 		while (shouldKeepGeneratingDaysBetweenDates) {
@@ -94,7 +93,7 @@ public class DateUtilities {
 		
 		// Return an empty set if there are no dates.
 		if (dateSet.length == 0)
-			return new Date[] {};
+			return new Date [0];
 		
 		// If the first date is not a new year's date, add a new year's date for
 		// that date's year.
