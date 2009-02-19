@@ -45,10 +45,9 @@ public class ExtractCoWordNetworkAlgorithm implements Algorithm {
 		{
 			// Form a new parameters object which contains the target column as the combined string of
 			// chosen columns.
-			StringBuilder targetColumn = new StringBuilder();
+			String targetColumn = ""; //removed use of StringBuild for 1.4 compliance.
 			boolean firstColumnHasBeenAdded = false;
 			Dictionary newParameters = new Hashtable();
-			
 			for (Enumeration parameterKeys = parameters.keys(); parameterKeys.hasMoreElements();)
 	    	{
 	    		String parameterKey = (String)parameterKeys.nextElement();
@@ -66,9 +65,9 @@ public class ExtractCoWordNetworkAlgorithm implements Algorithm {
 	    			//If this is not the first column added, append a delimiter first as well.
 	    				if (firstColumnHasBeenAdded) 
 	    				{
-	    					targetColumn.append(",");
+	    					targetColumn += ",";
 	    				}
-	    				targetColumn.append(explodedParameterKey[1]);
+	    				targetColumn += explodedParameterKey[1];
 	    				firstColumnHasBeenAdded = true;
 	    			} else 
 	    			{
