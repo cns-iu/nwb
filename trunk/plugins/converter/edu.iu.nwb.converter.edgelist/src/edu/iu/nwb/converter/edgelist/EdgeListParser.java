@@ -17,6 +17,23 @@ import edu.iu.nwb.converter.edgelist.nwbwritable.UnweightedEdge;
 import edu.iu.nwb.converter.edgelist.nwbwritable.WeightedEdge;
 
 public class EdgeListParser {
+	private static String NODE_WITH_NO_QUOTES_REGEX = "[\\w_]+";
+	private static String NODE_WITH_QUOTES_REGEX = "(\"[^\"]+\")|(\'[^\']+\')";
+	
+	private static String ANY_NODE_REGEX =
+		"(" + NODE_WITH_NO_QUOTES_REGEX + "|" + NODE_WITH_QUOTES_REGEX + ")";
+	
+	private static String OPTIONAL_WEIGHT_REGEX =
+		"(\\s+[+-]?(([0-9]+)?\\.)?[0-9]+)?";
+	
+	private static String EDGE_PATTERN_REGEX = ANY_NODE_REGEX + "\\s+" +
+		ANY_NODE_REGEX + OPTIONAL_WEIGHT_REGEX;
+	
+	// Group indexes for EDGE_PATTERN_REGEX.
+	private static int SOURCE_NODE_INDEX = 1;
+	private static int TARGET_NODE_INDEX = 4;
+	private static int EDGE_WEIGHT_INDEX = 7;
+	
 	private int totalNumOfNodes = 0;
 
 	private List edges = new ArrayList();
@@ -94,30 +111,23 @@ public class EdgeListParser {
 			}
 			line = edgeReader.readLine();
 		}
-		
-		
 	}
 
 	/*
 	 * This method saves information about the edge in this object
 	 */
 	private void processEdge(String line) {
-		
-		String nodeNoQuotes = "[\\w_]+";
-		String nodeWithQuotes = "(\"[^\"]+\")";
-		String anyNode = "(" + nodeNoQuotes + "|" + nodeWithQuotes + ")";
-		String optionalWeight = "(\\s+[+-]?(([0-9]+)?\\.)?[0-9]+)?";
-		Pattern edgePattern = Pattern.compile(anyNode + "\\s+" + anyNode + optionalWeight);
+		Pattern edgePattern = Pattern.compile(EDGE_PATTERN_REGEX);
 		Matcher tokens = edgePattern.matcher(line);	
-		tokens.matches(); 
+		tokens.matches();
 		
-		int sourceIndex = 1;
-		int targetIndex = 3;
-		int weightIndex = 5;
+		String possiblyQuotedSource = tokens.group(SOURCE_NODE_INDEX);
+		String possiblyQuotedTarget = tokens.group(TARGET_NODE_INDEX);
+		String weight = tokens.group(EDGE_WEIGHT_INDEX);
 		
-		String source = tokens.group(sourceIndex);
-		String target = tokens.group(targetIndex);
-		String weight = tokens.group(weightIndex);
+		// Strip all single- and double-quotes from the source and target.
+		String source = stripAllQuotesFromString(possiblyQuotedSource);
+		String target = stripAllQuotesFromString(possiblyQuotedTarget);
 		
 		//add nodes into map
 		
@@ -153,13 +163,13 @@ public class EdgeListParser {
 	}
 
 	private boolean isValidEdgeLine(String line) {
-		//regex parts
-		String nodeNoQuotes = "[\\w_]+";
-		String nodeWithQuotes = "(\"[^\"]+\")";
-		String anyNode = "(" + nodeNoQuotes + "|" + nodeWithQuotes + ")";
-		String optionalWeight = "(\\s+[+-]?(([0-9]+)?\\.)?[0-9]+)?";
-		Pattern edgePattern = Pattern.compile(anyNode + "\\s+" + anyNode + optionalWeight);
+		Pattern edgePattern = Pattern.compile(EDGE_PATTERN_REGEX);
 		boolean isValid = edgePattern.matcher(line).matches();
+		
 		return isValid;
+	}
+	
+	private String stripAllQuotesFromString(String originalString) {
+		return originalString.replaceAll("[\'\"]", "");
 	}
 }
