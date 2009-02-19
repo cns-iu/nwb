@@ -9,13 +9,13 @@
 	<Designate pid="edu.iu.scipolicy.filtering.topn.TopNAlgorithm">
 		<Object ocdref="edu.iu.scipolicy.filtering.topn.TopNAlgorithm.OCD" />
 	</Designate>
-	<OCD name="Extract Top N% Results" id="edu.iu.scipolicy.filtering.topn.TopNPercentAlgorithm.OCD"
+	<OCD name="Extract Top N% Results" id="edu.iu.scipolicy.filtering.topnpercent.TopNPercentAlgorithm.OCD"
 		 description="Takes a table and returns the top n rows by some sorting criteria ">
 		<AD name="Percentage of rows to keep (N%)" id="topNPercent" type="Float" description="What percentage of the top rows should we keep (first 0.1, 0.2?)" default="0.1"/>
 		<AD name="Column to sort by" id="columnToSortBy" type="String" description="Which column should the rows be sorted by?" default="AWARDED_AMOUNT_TO_DATE"/>
 		<AD name="Sort in descending order" id="isDescending" type="Boolean" description="When choosing the top n rows, should the rows be ranked in descending or ascending order? Default (checked) is descending." default="true"/>
 	</OCD>
-	<Designate pid="edu.iu.scipolicy.filtering.topn.TopNPercentAlgorithm">
-		<Object ocdref="edu.iu.scipolicy.filtering.topn.TopNPercentAlgorithm.OCD" />
+	<Designate pid="edu.iu.scipolicy.filtering.topnpercent.TopNPercentAlgorithm">
+		<Object ocdref="edu.iu.scipolicy.filtering.topnpercent.TopNPercentAlgorithm.OCD" />
 	</Designate>
 </metatype:MetaData>
