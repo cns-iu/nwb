@@ -146,8 +146,7 @@ public class GraphContainer {
 				buildRowTargetStringFromColumnNames(row, targetColumnNames, this.table, delimiter);
 
 			Set seenSource = new HashSet();
-			Set seenTarget;// = seenSource;
-
+			Set seenTarget;// = seenSource;www
 			if(sourceString != null && targetString != null) { //ensure we have values to extract
 				final String[] sources = splitPattern.split(sourceString);
 				final String[] targets = splitPattern.split(targetString);
@@ -232,7 +231,7 @@ public class GraphContainer {
 
 	}
 	
-	public static GraphContainer initializeGraph(Table pdt,String sourceColumnName, String targetColumnName, boolean isDirected,Properties p, LogService log, ProgressMonitor pm) throws InvalidColumnNameException{
+	public static GraphContainer initializeGraph(Table pdt, String sourceColumnName, String targetColumnName, boolean isDirected,Properties functions, LogService log, ProgressMonitor pm) throws InvalidColumnNameException{
 
 		final Schema inputSchema = pdt.getSchema();
 
@@ -263,7 +262,7 @@ public class GraphContainer {
 		AggregateFunctionMappings nodeAggregateFunctionMap = new AggregateFunctionMappings();
 		AggregateFunctionMappings edgeAggregateFunctionMap = new AggregateFunctionMappings();
 
-		AggregateFunctionMappings.parseProperties(inputSchema, nodeSchema, edgeSchema, p, 
+		AggregateFunctionMappings.parseProperties(inputSchema, nodeSchema, edgeSchema, functions, 
 				nodeAggregateFunctionMap, edgeAggregateFunctionMap, log);	
 
 		Graph outputGraph = new Graph(nodeSchema.instantiate(),
@@ -290,18 +289,18 @@ public class GraphContainer {
 	
 	private static String buildRowTargetStringFromColumnNames(int row, String[] targetColumnNames,
 															  Table table, String delimiter) {
-		StringBuilder targetStringBuilder = new StringBuilder();
+		String targetString = "";
 		
 		// This is outside of the proceeding for loop because that loop appends the delmiter first.
 		Column targetColumn = table.getColumn(targetColumnNames[0]);
-		targetStringBuilder.append((String)targetColumn.getString(row));
+		targetString += ((String)targetColumn.getString(row));
 		
 		for (int iColumn = 1; iColumn < targetColumnNames.length; iColumn++) {
 			targetColumn = table.getColumn(targetColumnNames[iColumn]);
-			targetStringBuilder.append(delimiter);
-			targetStringBuilder.append((String)targetColumn.getString(row));
+			targetString += (delimiter);
+			targetString += ((String)targetColumn.getString(row));
 		}
 		
-		return targetStringBuilder.toString();
+		return targetString;
 	}
 }
