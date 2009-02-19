@@ -39,8 +39,10 @@ public class JungPajekNetReader implements Algorithm {
 
     public Data[] execute() throws AlgorithmExecutionException {
     	File fileHandler = (File) data[0].getData();
-    	try{
-    		Reader reader = new BufferedReader(new InputStreamReader(new FileInputStream(fileHandler), "UTF8"));
+    	try {
+    		Reader reader =
+    			new BufferedReader(new InputStreamReader
+    				(new FileInputStream(fileHandler), "UTF8"));
     		
     		UserDatumNumberEdgeValue weightValues = new UserDatumNumberEdgeValue("weight");
     		weightValues.setCopyAction(UserData.SHARED);
