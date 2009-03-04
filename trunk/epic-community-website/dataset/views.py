@@ -3,7 +3,6 @@ from epic_community_website.dataset.models import File
 from django.shortcuts import render_to_response, get_object_or_404
 from django.http import HttpResponseRedirect
 from django.core.urlresolvers import reverse
-from django.contrib.contenttypes.models import ContentType
 
 from epic_community_website.dataset.models import File, Dataset
 
@@ -15,8 +14,7 @@ def index(request):
 
 def view_dataset(request, dataset_id):
     dataset = Dataset.objects.get(pk=dataset_id)
-    dataset_type = ContentType.objects.get_for_model(dataset)
-    files = File.objects.filter(content_type__pk=dataset_type.id, object_id=dataset.id)
+    files = File.objects.filter(dataset=dataset)
     return render_to_response('dataset/view_dataset.html', {'dataset': dataset, 'files':files,})
 
 def upload(request, dataset_id):
@@ -24,13 +22,12 @@ def upload(request, dataset_id):
         form = UploadFileForm(request.POST, request.FILES)
         if form.is_valid():
             ds = Dataset.objects.get(pk=dataset_id)
-            dataset_type = ContentType.objects.get_for_model(ds)
             data_file = request.FILES['file']
             owner = request.user
             title = form.cleaned_data['title']
             description = form.cleaned_data['description']
             upload_date = datetime.now()
-            f = File(owner=owner, title=title, description=description,upload_date=upload_date,file=data_file,content_type=dataset_type, object_id=ds.id)
+            f = File(owner=owner, title=title, description=description,upload_date=upload_date,file=data_file,dataset=ds)
             f.save()
             print "title: %s" % (title)
             return HttpResponseRedirect(reverse('epic_community_website.dataset.views.view_dataset', args=(ds.id,)))
