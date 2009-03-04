@@ -1,7 +1,7 @@
 from django import forms
 from django.forms import ModelForm
 
-from epic.dataset.models import Dataset
+from epic.datasets.models import Dataset
 
 
 
