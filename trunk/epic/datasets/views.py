@@ -30,7 +30,7 @@ def upload(request, dataset_id):
             description = form.cleaned_data['description']
             f = File(owner=owner, title=title, description=description, upload_date=datetime.now(), file=data_file, dataset=ds)
             f.save()
-            return HttpResponseRedirect(reverse('epic_community_website.dataset.views.view_dataset', args=(ds.id,)))
+            return HttpResponseRedirect(reverse('epic.datasets.views.view_dataset', args=(ds.id,)))
         else:
             print request.POST
             print form.errors
@@ -48,7 +48,7 @@ def new_dataset(request):
             upload_date = datetime.now()
             dataset = Dataset(owner=owner, title=title, description=description, upload_date=upload_date)
             dataset.save()
-            return HttpResponseRedirect(reverse('epic_community_website.dataset.views.view_dataset', args=(dataset.id,)))
+            return HttpResponseRedirect(reverse('epic.datasets.views.view_dataset', args=(dataset.id,)))
         else:
             print request.POST
             print form.errors

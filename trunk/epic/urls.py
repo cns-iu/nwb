@@ -5,9 +5,9 @@ from django.contrib import admin
 admin.autodiscover()
 
 urlpatterns = patterns('',
-    (r'^$', 'epic_community_website.views.index'),
+    (r'^$', 'epic.views.index'),
     (r'^login/$', 'django.contrib.auth.views.login', {'template_name': 'login.html'}),
-    (r'^datasets/', include('epic_community_website.dataset.urls')),
+    (r'^datasets/', include('epic.datasets.urls')),
     # Example:
     # (r'^epic_community_website/', include('epic_community_website.foo.urls')),
 
