@@ -16,31 +16,31 @@ import org.osgi.service.log.LogService;
  */
 public class PrefuseCsvFileHandler implements AlgorithmFactory {
     public Algorithm createAlgorithm(Data[] data, Dictionary parameters, CIShellContext context) {
-        return new PrefuseGraphMLFileHandlerAlg(data, parameters, context);
+        return new PrefuseCSVFileHandlerAlgorithm(data, parameters, context);
     }
     
-    public class PrefuseGraphMLFileHandlerAlg implements Algorithm {
+    public class PrefuseCSVFileHandlerAlgorithm implements Algorithm {
         Data[] data;
         Dictionary parameters;
         CIShellContext context;
         LogService logger;
         
-        public PrefuseGraphMLFileHandlerAlg(Data[] data, Dictionary parameters, CIShellContext context) {
-            this.data = data;
+        public PrefuseCSVFileHandlerAlgorithm(Data[] inputData, Dictionary parameters, CIShellContext ciShellContext) {
+            this.data = inputData;
             this.parameters = parameters;
-            this.context = context;
-            logger=(LogService)context.getService(LogService.class.getName());
+            this.context = ciShellContext;
+            logger=(LogService)ciShellContext.getService(LogService.class.getName());
         }
 
         public Data[] execute() throws AlgorithmExecutionException {
-        	Object inData = data[0].getData();
+        	Object inputData = data[0].getData();
         	String format = data[0].getFormat();
-        	if(inData instanceof File && format.equals("file:text/csv")){
-        		return new Data[]{new BasicData(inData, "file-ext:csv")};          		
+        	if(inputData instanceof File && format.equals("file:text/csv")){
+        		return new Data[]{new BasicData(inputData, "file-ext:csv")};          		
         	}
         	else {
-        		if (!(inData instanceof File))        				
-        			throw new AlgorithmExecutionException("Expect a File, but the input data is "+inData.getClass().getName());
+        		if (!(inputData instanceof File))        				
+        			throw new AlgorithmExecutionException("Expect a File, but the input data is "+inputData.getClass().getName());
         		else if (!format.equals("file:text/csv"))
         			throw new AlgorithmExecutionException("Expect file:text/csv, but the input format is "+format);
         		throw new AlgorithmExecutionException("");

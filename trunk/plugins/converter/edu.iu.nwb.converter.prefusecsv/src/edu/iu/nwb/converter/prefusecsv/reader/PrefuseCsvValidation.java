@@ -12,41 +12,67 @@ import org.cishell.framework.data.Data;
 import org.cishell.framework.data.DataProperty;
 import org.osgi.service.log.LogService;
 
+import prefuse.data.Table;
+import prefuse.data.io.CSVTableReader;
+import prefuse.data.io.DataIOException;
+
 /**
  * @author Weixia(Bonnie) Huang 
  */
 public class PrefuseCsvValidation implements AlgorithmFactory {
 	public Algorithm createAlgorithm(Data[] data, Dictionary parameters, CIShellContext context) {
-		return new PrefuseCsvValidationAlg(data, parameters, context);
+		return new PrefuseCsvValidationAlgorithm(data, parameters, context);
 	}
-	
-	public class PrefuseCsvValidationAlg implements Algorithm {
+
+	public class PrefuseCsvValidationAlgorithm implements Algorithm {
 		Data[] data;
 		Dictionary parameters;
 		CIShellContext context;
 
-		public PrefuseCsvValidationAlg(Data[] data, Dictionary parameters, CIShellContext context) {
-			this.data = data;
+		public PrefuseCsvValidationAlgorithm(Data[] inputData, Dictionary parameters, CIShellContext ciShellContext) {
+			this.data = inputData;
 			this.parameters = parameters;
-			this.context = context;
+			this.context = ciShellContext;
 		}
 
 		public Data[] execute() throws AlgorithmExecutionException {
 			LogService logger = (LogService)context.getService(LogService.class.getName());
 
 			String fileHandler = (String) data[0].getData();
-			File inData = new File(fileHandler);
+			File inputData = new File(fileHandler);
 
 			try{
-				Data[] dm = new Data[] {new BasicData(inData, "file:text/csv")};
-				dm[0].getMetadata().put(DataProperty.LABEL, "Prefuse CSV file: " + fileHandler);
-				dm[0].getMetadata().put(DataProperty.TYPE, DataProperty.TABLE_TYPE);
-				return dm;
+				/*
+				 * validator function is used to validate the data & only if the input file has valid CSV data 
+				 * then its loaded into the workbench for further manipulations by the user. 
+				 * */
+				validateSelectedFileforCSVFormat(fileHandler);
+				Data[] validationData = new Data[] {new BasicData(inputData, "file:text/csv")};
+				validationData[0].getMetadata().put(DataProperty.LABEL, "Prefuse CSV file: " + fileHandler);
+				validationData[0].getMetadata().put(DataProperty.TYPE, DataProperty.TABLE_TYPE);
+				return validationData;
 			}catch (SecurityException exception){
-				throw new AlgorithmExecutionException("Might not be a CSV file. Got the following security exception");
+				throw new AlgorithmExecutionException("Improper CSV file selected. Got the following security exception ",exception);
 			}
 
+		}
 
+		/*
+		 * Validation Function 
+		 * */
+		private void validateSelectedFileforCSVFormat(String fileHandler)
+		throws AlgorithmExecutionException {
+			CSVTableReader csvValidator = new CSVTableReader();
+
+			Table nodes = null;
+			Table edges = null;
+
+			try {
+				nodes = csvValidator.readTable(fileHandler);
+				edges = csvValidator.readTable(fileHandler);
+			} catch (DataIOException e) {
+				throw new AlgorithmExecutionException("Error reading tables: "+e.getMessage(),e);
+			}
 		}
 	}
 }
