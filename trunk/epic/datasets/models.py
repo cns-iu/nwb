@@ -11,7 +11,7 @@ class Dataset(models.Model):
         pass
     
     def __unicode__(self):
-        return "%s's Dataset '%s' uploaded %s" % (self.owner, self.title, self.upload_date)
+        return "Dataset: %s owned by %s" % (self.title, self.owner)
     
     def get_absolute_url(self):
         return "/datasets/%i" % self.id
@@ -28,5 +28,5 @@ class File(models.Model):
         pass
     
     def __unicode__(self):
-        return "%s's file '%s'[%s] attached to %s" % (self.owner, self.title, self.file, self.dataset)
+        return "File: %s[%s] owned by %s attached to %s" % (self.title, self.file, self.owner, self.dataset)
     
