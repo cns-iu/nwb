@@ -1,12 +1,14 @@
-from epic_community_website.dataset.forms import UploadFileForm
-from epic_community_website.dataset.models import File
+#############################################################
+from epic_community_website.dataset.forms import UploadFileForm, NewDatasetForm
+from epic_community_website.dataset.models import File, Dataset
+
 from django.shortcuts import render_to_response, get_object_or_404
 from django.http import HttpResponseRedirect
 from django.core.urlresolvers import reverse
 
-from epic_community_website.dataset.models import File, Dataset
-
 from datetime import datetime
+
+#############################################################
 
 def index(request):
     dataset_list = Dataset.objects.all().order_by('-upload_date')
@@ -26,10 +28,8 @@ def upload(request, dataset_id):
             owner = request.user
             title = form.cleaned_data['title']
             description = form.cleaned_data['description']
-            upload_date = datetime.now()
-            f = File(owner=owner, title=title, description=description,upload_date=upload_date,file=data_file,dataset=ds)
+            f = File(owner=owner, title=title, description=description, upload_date=datetime.now(), file=data_file, dataset=ds)
             f.save()
-            print "title: %s" % (title)
             return HttpResponseRedirect(reverse('epic_community_website.dataset.views.view_dataset', args=(ds.id,)))
         else:
             print request.POST
@@ -39,4 +39,19 @@ def upload(request, dataset_id):
     return render_to_response('dataset/upload.html', {'form':form, })
 
 def new_dataset(request):
-    pass
+    if request.method == 'POST':
+        form = NewDatasetForm(request.POST)
+        if form.is_valid():
+            title = form.cleaned_data['title']
+            description = form.cleaned_data['description']
+            owner = request.user
+            upload_date = datetime.now()
+            dataset = Dataset(owner=owner, title=title, description=description, upload_date=upload_date)
+            dataset.save()
+            return HttpResponseRedirect(reverse('epic_community_website.dataset.views.view_dataset', args=(dataset.id,)))
+        else:
+            print request.POST
+            print form.errors
+    else:
+        form = NewDatasetForm()
+    return render_to_response('dataset/new.html', {'form':form, })
