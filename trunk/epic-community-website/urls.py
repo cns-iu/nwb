@@ -7,7 +7,7 @@ admin.autodiscover()
 urlpatterns = patterns('',
     (r'^$', 'epic_community_website.views.index'),
     (r'^login/$', 'django.contrib.auth.views.login', {'template_name': 'login.html'}),
-    (r'^upload/$', 'epic_community_website.dataset.views.upload'),
+    (r'^datasets/', include('epic_community_website.dataset.urls')),
     # Example:
     # (r'^epic_community_website/', include('epic_community_website.foo.urls')),
 

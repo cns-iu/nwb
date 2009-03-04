@@ -9,12 +9,21 @@ from epic_community_website.dataset.models import File, Dataset
 
 from datetime import datetime
 
-def upload(request):
+def index(request):
+    dataset_list = Dataset.objects.all().order_by('-upload_date')
+    return render_to_response('dataset/index.html', {'dataset_list': dataset_list,})
+
+def view_dataset(request, dataset_id):
+    dataset = Dataset.objects.get(pk=dataset_id)
+    dataset_type = ContentType.objects.get_for_model(dataset)
+    files = File.objects.filter(content_type__pk=dataset_type.id, object_id=dataset.id)
+    return render_to_response('dataset/view_dataset.html', {'dataset': dataset, 'files':files,})
+
+def upload(request, dataset_id):
     if request.method == 'POST':
         form = UploadFileForm(request.POST, request.FILES)
         if form.is_valid():
-            ds = Dataset(owner=request.user, title="blah", description="blah", upload_date=datetime.now())
-            ds.save()
+            ds = Dataset.objects.get(pk=dataset_id)
             dataset_type = ContentType.objects.get_for_model(ds)
             data_file = request.FILES['file']
             owner = request.user
@@ -24,10 +33,13 @@ def upload(request):
             f = File(owner=owner, title=title, description=description,upload_date=upload_date,file=data_file,content_type=dataset_type, object_id=ds.id)
             f.save()
             print "title: %s" % (title)
-            return HttpResponseRedirect('/thanks/')
+            return HttpResponseRedirect(reverse('epic_community_website.dataset.views.view_dataset', args=(ds.id,)))
         else:
             print request.POST
             print form.errors
     else:
         form = UploadFileForm()
     return render_to_response('dataset/upload.html', {'form':form, })
+
+def new_dataset(request):
+    pass

@@ -1,0 +1,18 @@
+{% extends "base.html" %}
+{% block content %}
+	<h3>All datasets:</h3>
+	<table>
+	<tr>
+	  <th>Title</th>
+	  <th>Owner</th>
+	  <th>Date Uploaded</th>
+	</tr>
+	{% for dataset in dataset_list %}
+		<tr>
+		  <td><a href="{{ dataset.get_absolute_url }}">{{ dataset.title }}</a></td>
+		  <td>{{ dataset.owner }}</td>
+		  <td>{{ dataset.upload_date }}</td>
+		</tr>
+	{% endfor %}
+	</table>
+{% endblock %}

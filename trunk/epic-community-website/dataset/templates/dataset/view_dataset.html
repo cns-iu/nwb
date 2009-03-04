@@ -1,0 +1,14 @@
+{% extends "base.html" %}
+{% block content %}
+	<h3>Dataset {{ dataset.title }}</h3>
+	<p>Owned by {{ dataset.owner }} and uploaded {{ dataset.upload_date }}</p>
+	<p>{{ dataset.description }}</p>
+	{% if files %}
+	  {% for file in files %}
+	    <p>{{ file }}</p>
+	  {% endfor %}
+	{% else %}
+	  <p>No attached files</p>
+	{% endif %}
+	<a href="upload/">Upload a file for this dataset</a>
+{% endblock %}
