@@ -1,0 +1,7 @@
+{% extends "base.html" %}
+{% block content %}
+	<h3>Welcome to the testing site!</h3>
+	{% if not Request.User.is_authenticated %}
+		<p>Please <a href="/login">login</a>.</p>
+	{% endif %}
+{% endblock %}

@@ -70,6 +70,7 @@ TEMPLATE_DIRS = (
     # Always use forward slashes, even on Windows.
     # Don't forget to use absolute paths, not relative paths.
     "templates/core/",
+    "dataset/templates/dataset/",
 )
 LOGIN_REDIRECT_URL = '/'
 
@@ -79,4 +80,5 @@ INSTALLED_APPS = (
     'django.contrib.sessions',
     'django.contrib.sites',
     'django.contrib.admin',
+    'epic_community_website.dataset',
 )
