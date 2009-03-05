@@ -45,22 +45,26 @@ def view_dataset(request, dataset_id):
 def new_dataset(request):
     u = request.user
     if u.is_authenticated():
-        if request.method == 'POST':
-            form = NewDataSetForm(request.POST)
+        if request.method != 'POST':
+            #show them the upload form
+              form = NewDataSetForm()
+        else:
+            # handle the submission of their upload form
+            form = NewDataSetForm(request.POST, request.FILES)
             if form.is_valid():
                 item_name = form.cleaned_data['item_name']
                 item_description = form.cleaned_data['item_description']
-                #remove item stuff
-                item = Item(creator=u, name=item_name, description=item_description)
-                item.save()
-                dataset = DataSet()
+                uploaded_file = form.cleaned_data['file']
+                
+                dataset = DataSet(creator=u, name=item_name, description=item_description)
                 dataset.save()
+                
+                
                 return HttpResponseRedirect(reverse('epic.datasets.views.view_dataset', args=(dataset.id,)))
             else:
                 print request.POST
                 print form.errors
-        else:
-            form = NewDataSetForm()
+                
         return render_to_response('datasets/new.html', {'form':form, })
     else:
         print "user not logged in"
