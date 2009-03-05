@@ -7,5 +7,11 @@ from models import Profile
 @login_required
 def index(request):
 	user = request.user
-	profile = Profile.objects.get(user=user)
-	return render_to_response('core/user/index.html', { "profile": profile })
+	
+	try:
+		profile = user.get_profile()
+	except:
+		profile = Profile(user=user)
+		profile.save()
+	
+	return render_to_response('core/user/index.html', { "profile": profile, "user": user })

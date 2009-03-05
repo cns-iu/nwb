@@ -1,10 +1,10 @@
 {% extends "core/base.html" %}
 {% block content %}
-	<a href="datasets/">View Datasets</a>
 	<h3>Displaying profile of {{ profile.user.first_name }} {{ profile.user.last_name }}.</h3>
 	<p><b>Username:</b> {{ profile.user.username }}</p>
 	<p><b>First Name:</b> {{ profile.user.first_name }}</p>
 	<p><b>Last Name:</b> {{ profile.user.last_name }}</p>
 	<p><b>Affiliation:</b> {{ profile.affiliation }}</p>
 	<p><b>Date Joined:</b> {{ profile.user.date_joined }}</p>
+	<a href="datasets/">View Datasets</a>
 {% endblock %}
