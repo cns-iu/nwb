@@ -1,0 +1,17 @@
+from django.test import TestCase
+
+from epic.datasets.models import DataSet
+
+class IndexTestCase(TestCase):
+	fixtures = ['initial_data', 'single_dataset']
+	
+	def setUp(self):
+		self.data_set = DataSet.objects.all()[0]
+	
+	def testIndex(self):
+		response = self.client.get('/datasets/')
+		self.failUnlessEqual(response.status_code, 200, "Error listing datasets!")
+		data = response.context[0]['datasets'] #due to template inheritance
+		self.failUnlessEqual(len(data), 1, "We don't have as many datasets as we expect!")
+		self.failUnlessEqual(data[0].name, "Important Data", "The data is named incorrectly!")
+		self.failUnless("Important Data" in response.content, "Data set names aren't displayed on the list page!")
