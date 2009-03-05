@@ -12,7 +12,6 @@ from django.contrib.auth.decorators import login_required
 from datetime import datetime
 
 
-
 def index(request):
     datasets = DataSet.objects.all().order_by('-created_at')
     return render_to_response('datasets/index.html', {'datasets': datasets,})
@@ -41,7 +40,7 @@ def view_dataset(request, dataset_id):
 #        return render_to_response('datasets/upload.html', {'form':form, })
 
     
-@login_required    
+@login_required
 def new_dataset(request):
     u = request.user
     if u.is_authenticated():
