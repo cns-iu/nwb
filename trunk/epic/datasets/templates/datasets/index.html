@@ -1,4 +1,4 @@
-{% extends "base.html" %}
+{% extends "core/base.html" %}
 {% block content %}
 	<h3>All datasets:</h3>
 	<table>
@@ -10,7 +10,7 @@
 	{% for dataset in datasets %}
 		<tr>
 		  <td><a href="{{ dataset.get_absolute_url }}">{{ dataset.item.name }}</a></td>
-		  <td>{{ dataset.item.user }}</td>
+		  <td>{{ dataset.item.creator }}</td>
 		  <td>{{ dataset.timestamp }}</td>
 		</tr>
 	{% endfor %}

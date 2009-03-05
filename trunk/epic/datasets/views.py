@@ -47,7 +47,7 @@ def new_dataset(request):
             if form.is_valid():
                 item_name = form.cleaned_data['item_name']
                 item_description = form.cleaned_data['item_description']
-                item = Item(user=u, name=item_name, description=item_description, timestamp=datetime.now())
+                item = Item(creator=u, name=item_name, description=item_description, created_at=datetime.now())
                 item.save()
                 dataset = DataSet(item=item, timestamp=datetime.now())
                 dataset.save()
