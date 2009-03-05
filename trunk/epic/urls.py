@@ -8,6 +8,7 @@ urlpatterns = patterns('',
     (r'^$', 'epic.core.views.index'),
     (r'^login/$', 'django.contrib.auth.views.login', {'template_name': 'core/login.html'}),
     (r'^datasets/', include('epic.datasets.urls')),
+    (r'^datarequests/', include('epic.datarequests.urls')),
     # Example:
     # (r'^epic_community_website/', include('epic_community_website.foo.urls')),
 
