@@ -1,10 +1,10 @@
 {% extends "base.html" %}
 {% block content %}
-	<h3>Dataset {{ dataset.title }}</h3>
-	<p>Owned by {{ dataset.owner }} and uploaded {{ dataset.upload_date }}</p>
-	<p>{{ dataset.description }}</p>
-	{% if files %}
-	  {% for file in files %}
+	<h3>Dataset {{ dataset.item.name }}</h3>
+	<p>Owned by {{ dataset.item.user }} and uploaded {{ dataset.timestamp }}</p>
+	<p>{{ dataset.item.description }}</p>
+	{% if datasetfiles %}
+	  {% for file in datasetfiles %}
 	    <p>{{ file }}</p>
 	  {% endfor %}
 	{% else %}

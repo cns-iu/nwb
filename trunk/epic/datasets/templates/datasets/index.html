@@ -7,11 +7,11 @@
 	  <th>Owner</th>
 	  <th>Date Uploaded</th>
 	</tr>
-	{% for dataset in dataset_list %}
+	{% for dataset in datasets %}
 		<tr>
-		  <td><a href="{{ dataset.get_absolute_url }}">{{ dataset.title }}</a></td>
-		  <td>{{ dataset.owner }}</td>
-		  <td>{{ dataset.upload_date }}</td>
+		  <td><a href="{{ dataset.get_absolute_url }}">{{ dataset.item.name }}</a></td>
+		  <td>{{ dataset.item.user }}</td>
+		  <td>{{ dataset.timestamp }}</td>
 		</tr>
 	{% endfor %}
 	</table>
