@@ -22,6 +22,7 @@ class DataSet(Item):
     
     """
     
+    #supposedly better to do this some other newer way where it's not nested
     class Admin:
         pass
     
