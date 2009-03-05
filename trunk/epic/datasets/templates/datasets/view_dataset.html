@@ -4,7 +4,7 @@
 	<p>Owned by {{ dataset.creator }} and uploaded {{ dataset.created_at }}</p>
 	<p>{{ dataset.description }}</p>
 	{% if dataset.files %}
-	  {% for file in dataset.files %}
+	  {% for file in dataset.files.all() %}
 	    <p>{{ file }}</p>
 	  {% endfor %}
 	{% else %}
