@@ -1,3 +1,12 @@
+"""
+These are the data request models. You work with them as follows:
+
+>>> data_request = DataRequest()
+>>> data_request.get_status_display()
+u'unfulfilled'
+
+"""
+
 from django.db import models
 from epic.core.models import Item
 
@@ -7,5 +16,30 @@ REQUEST_STATUS = (
     ('C' , 'canceled'),
 )
 
+class DataRequestManager(models.Manager):
+	def unfulfilled(self):
+		return self.get_query_set().filter(status='U')
+	def fulfilled(self):
+		return self.get_query_set().filter(status='F')
+	def canceled(self):
+		return self.get_query_set().filter(status='C')
+
 class DataRequest(Item):
-    status = models.CharField(max_length=1, choices=REQUEST_STATUS)
+	"""
+	A data request.
+	
+	>>> data_request = DataRequest()
+	>>> data_request.get_status_display()
+	u'unfulfilled'
+	>>> data_request.fulfill()
+	>>> data_request.get_status_display()
+	u'fulfilled'
+	"""
+	objects = DataRequestManager()
+	status = models.CharField(max_length=1, choices=REQUEST_STATUS, db_index=True, default='U')
+	
+	def fulfill(self):
+		self.status = 'F'
+	
+	def cancel(self):
+		self.status = 'C'
