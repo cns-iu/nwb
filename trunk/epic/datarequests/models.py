@@ -7,6 +7,5 @@ REQUEST_STATUS = (
     ('C' , 'canceled'),
 )
 
-class DataRequest(models.Model):
-    item = models.OneToOneField(Item, primary_key=true)
+class DataRequest(Item):
     status = models.CharField(max_length=1, choices=REQUEST_STATUS)
