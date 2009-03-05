@@ -6,7 +6,7 @@ class Profile(models.Model):
 	affiliation = models.CharField(max_length=512)
 
 class Item(models.Model):
-	user = models.ForeignKey(User)
+	creator = models.ForeignKey(User)
 	name = models.CharField(max_length=256)
 	description = models.TextField()
 	created_at = models.DateTimeField(auto_now_add=True)
