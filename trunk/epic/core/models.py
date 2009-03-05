@@ -9,4 +9,4 @@ class Item(models.Model):
 	creator = models.ForeignKey(User)
 	name = models.CharField(max_length=256)
 	description = models.TextField()
-	created_at = models.DateTimeField(auto_now_add=True)
+	created_at = models.DateTimeField(auto_now_add=True, db_index=True)
