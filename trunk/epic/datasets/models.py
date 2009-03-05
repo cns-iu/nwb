@@ -17,31 +17,28 @@ class DataSet(Item):
     >>> user
     <User: bob>
     
-    >>> from datetime import datetime 
-    >>> dataset = DataSet(creator=user, name="Item #1", description="This is the first item", created_at=datetime.now(),timestamp=datetime.now())
+    >>> dataset = DataSet(creator=user, name="Item #1", description="This is the first item")
     >>> dataset.save()
     
     """
-    
-    timestamp = models.DateTimeField('timestamp')
     
     class Admin:
         pass
     
     def __unicode__(self):
-        return "Dataset %s created at %s" % (self.name, self.timestamp)
+        return "Dataset %s created at %s" % (self.name, self.created_at)
     
+    @models.permalink
     def get_absolute_url(self):
-        return "/datasets/%i" % self.id
+        return ("epic.datasets.views.view_dataset", [self.id])
     
 class DataSetFile(models.Model):
-    dataset = models.ForeignKey(DataSet)
+    parent_dataset = models.ForeignKey(DataSet, related_name="files")
     file = models.FileField(upload_to="files")
-    timestamp = models.DateTimeField('timestamp')
     
     class Admin:
         pass
 
     def __unicode__(self):
-        return "%s created at %s" % (self.file, self.timestamp)
+        return "%s created at %s" % (self.file, self.created_at)
     

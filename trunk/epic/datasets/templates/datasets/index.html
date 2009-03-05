@@ -9,9 +9,9 @@
 	</tr>
 	{% for dataset in datasets %}
 		<tr>
-		  <td><a href="{{ dataset.get_absolute_url }}">{{ dataset.item.name }}</a></td>
-		  <td>{{ dataset.item.creator }}</td>
-		  <td>{{ dataset.timestamp }}</td>
+		  <td><a href="{{ dataset.get_absolute_url }}">{{ dataset.name }}</a></td>
+		  <td>{{ dataset.creator }}</td>
+		  <td>{{ dataset.created_at }}</td>
 		</tr>
 	{% endfor %}
 	</table>

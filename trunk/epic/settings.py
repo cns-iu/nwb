@@ -72,6 +72,12 @@ TEMPLATE_DIRS = (
     #"core/templates/core/",
     #"datasets/templates/datasets/",
 )
+
+#where you go TO log in
+
+LOGIN_URL = '/'
+
+#where you go after you log in
 LOGIN_REDIRECT_URL = '/'
 
 AUTH_PROFILE_MODULE = 'core.profile'
