@@ -9,4 +9,4 @@ class UploadDataSetFileForm(forms.Form):
     
 class NewDataSetForm(forms.Form):
     item_name = forms.CharField(max_length=256)
-    item_description = forms.CharField(max_length=1024)
+    item_description = forms.CharField(max_length=1024, widget=forms.Textarea())
