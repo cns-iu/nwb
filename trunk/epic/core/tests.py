@@ -8,6 +8,7 @@ class LoginoutTestCase(TestCase):
     def setUp(self):
         pass
     
+    #works
     def testLoginSuccess(self):
         response = self.client.get('/login/')
         self.failUnlessEqual(response.status_code, 200, "Error reaching login!")
@@ -16,12 +17,14 @@ class LoginoutTestCase(TestCase):
         #TODO Once the follow=true actually works it should be used here.
         self.assertRedirects(response, '/')
         
+    #(not tested?)
     def testLoginFailure(self):
         response = self.client.post("/login/", {'username': 'bob', 'password':'bob2',})
         self.failUnlessEqual(response.status_code, 200)
         response = self.client.post("/login/", {'username': 'bob', 'password':'bob2',})
         self.failUnless("Your username and password didn't match. Please try again." in response.content)
         
+    #works
     def testLogout(self):
         response = self.client.get('/logout/')
         self.failUnlessEqual(response.status_code, 302)
@@ -34,6 +37,7 @@ class PasswordChangeTestCast(TestCase):
     def setUp(self):
         pass
     
+    #error on test
     def testPage(self):
         #Login first
         login = self.client.login(username='bob', password='bob')
@@ -42,6 +46,7 @@ class PasswordChangeTestCast(TestCase):
         response = self.client.get('/user/change_password/')
         self.assertEqual(response.status_code, 200)
     
+    #error on test
     def testPageNotLoggedIn(self):
         response = self.client.get('/user/change_password/')
         self.assertRedirects(response, '/login/?next=/user/change_password/')
@@ -70,6 +75,7 @@ class PasswordChangeTestCast(TestCase):
         self.failUnless(response.status_code, 200)
         self.failUnless("Your old password was entered incorrectly. Please enter it again." in response.content)
         
+    #error on test
     def testChangePasswordSuccess(self):
         login = self.client.login(username='bob', password='bob')
         self.failUnless(login, 'Could not login')
@@ -112,6 +118,7 @@ class ProfileDatasetTestCase(TestCase):
         self.failUnless(response.status_code, 200)
         self.failIf("Your Datasets" in response.content)
         
+    #fails
     def testForDataSets(self):
         login = self.client.login(username='bill', password='bill')
         self.failUnless(login, 'Could not login')
@@ -127,3 +134,21 @@ class ProfileDatasetTestCase(TestCase):
         self.failUnless(response.status_code, 200)
         #This is a datarequest object and should not be here
         self.failIf("Item 3" in response.content)
+
+class ViewBasicUserProfileTestCase(TestCase):
+	fixtures = ['initial_users']
+	
+	def setUp(self):
+		pass
+	
+	def testViewProfileNotLoggedIn(self):
+		user_response = self.client.get("/user/")
+		self.failUnlessEqual(user_response.status_code, 302, "Did not redirect to login!")
+	
+	def testViewProfileLoggedIn(self):
+		self.client.login(username="bob", password="bob")
+		
+		user_response = self.client.get("/user/")
+		self.failUnlessEqual(user_response.status_code, 200, "Error reaching user!")
+		
+		self.failUnless("<h3>Displaying profile of  .</h3>" in user_response.content)
