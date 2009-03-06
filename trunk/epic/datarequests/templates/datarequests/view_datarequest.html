@@ -1,0 +1,8 @@
+{% extends "core/base.html" %}
+{% block content %}
+	<h3>Data Request {{ datarequest.name }}</h3>
+	<p> Created by {{ datarequest.creator }} at {{ datarequest.created_at }}</p>
+	<p>{{ datarequest.description }}</p>
+	<a href="/">Home</a>
+	<a href="/datarequests/">Data Requests</a>
+{% endblock %}

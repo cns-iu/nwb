@@ -36,3 +36,22 @@ class DataRequestTestCase(TestCase):
 		self.assertEqual(1, DataRequest.objects.unfulfilled().count())
 		self.assertEqual(1, DataRequest.objects.fulfilled().count())
 		self.assertEqual(data_request.name, DataRequest.objects.fulfilled()[0].name)
+
+	def testIndex(self):
+		data_request = DataRequest(creator=self.data_request.creator, name="Amazing request", description="Spectacular request indeed")
+		data_request.save()
+		response = self.client.get('/datarequests/')
+		self.failUnlessEqual(response.status_code, 200, "Error listing Data Requests!")
+		self.failUnless("Amazing request" in response.content)
+		
+	def testDataRequestsPage(self):
+		data_request = DataRequest(creator=self.data_request.creator, name="Amazing request", description="Spectacular request indeed")
+		data_request.save()
+		datarequest_location = '/datarequests/%s/' % (data_request.id)
+		response = self.client.get(datarequest_location)
+		self.failUnlessEqual(response.status_code, 200, "Error viewing Data Requests!")
+		self.failUnless("Spectacular request indeed" in response.content)
+	
+	def test404NonExistant(self):
+		response = self.client.get('/datarequests/10000000000/')
+		self.failUnlessEqual(response.status_code , 404)

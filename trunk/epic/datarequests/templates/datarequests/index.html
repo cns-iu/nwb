@@ -1,0 +1,20 @@
+{% extends "core/base.html" %}
+{% block content %}
+	<h3>All Data Requests:</h3>
+	<table>
+	<tr>
+	  <th>Title</th>
+	  <th>Owner</th>
+	  <th>Date Uploaded</th>
+	</tr>
+	{% for datarequest in datarequests %}
+		<tr>
+		  <td><a href="{{ datarequest.get_absolute_url }}">{{ datarequest.name }}</a></td>
+		  <td>{{ datarequest.creator }}</td>
+		  <td>{{ datarequest.created_at }}</td>
+		</tr>
+	{% endfor %}
+	</table>
+	<a href="/">Home</a>
+	<a href="/datarequests/new/">Add New Data Request</a>
+{% endblock %}

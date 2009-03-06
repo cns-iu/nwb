@@ -37,9 +37,17 @@ class DataRequest(Item):
 	"""
 	objects = DataRequestManager()
 	status = models.CharField(max_length=1, choices=REQUEST_STATUS, db_index=True, default='U')
-	
+
 	def fulfill(self):
 		self.status = 'F'
-	
+        
 	def cancel(self):
 		self.status = 'C'
+		
+	@models.permalink
+	def get_absolute_url(self):
+		return ("epic.datarequests.views.view_datarequest", [self.id])
+	
+	def __unicode__(self):
+		return "%s %s %s" % (self.status, self.name, self.creator)
+		
