@@ -18,7 +18,7 @@ def index(request):
 
 
 def view_dataset(request, dataset_id):
-    dataset = DataSet.objects.get(pk=dataset_id)
+    dataset = get_object_or_404(DataSet,pk=dataset_id)
     return render_to_response('datasets/view_dataset.html', {'dataset': dataset, 'user':request.user})
 
 
