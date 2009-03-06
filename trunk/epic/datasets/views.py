@@ -14,12 +14,12 @@ from datetime import datetime
 
 def index(request):
     datasets = DataSet.objects.all().order_by('-created_at')
-    return render_to_response('datasets/index.html', {'datasets': datasets,})
+    return render_to_response('datasets/index.html', {'datasets': datasets,'user':request.user})
 
 
 def view_dataset(request, dataset_id):
     dataset = DataSet.objects.get(pk=dataset_id)
-    return render_to_response('datasets/view_dataset.html', {'dataset': dataset})
+    return render_to_response('datasets/view_dataset.html', {'dataset': dataset, 'user':request.user})
 
 
 #@login_required
@@ -64,7 +64,7 @@ def new_dataset(request):
                 print request.POST
                 print form.errors
                 
-        return render_to_response('datasets/new.html', {'form':form, })
+        return render_to_response('datasets/new.html', {'form':form, 'user':request.user,})
     else:
         print "user not logged in"
         return HttpResponseRedirect('/login/?next=%s' % request.path)
