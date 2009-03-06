@@ -1,6 +1,7 @@
 from django.test import TestCase
 
 from epic.datarequests.models import DataRequest
+from django.contrib.auth.models import User
 
 class DataRequestTestCase(TestCase):
 	fixtures = ['initial_data', 'single_request', 'initial_users']
@@ -75,8 +76,9 @@ class DataRequestTestCase(TestCase):
 		self.failUnlessEqual(response.status_code, 200)
 		
 		post_data = {
-                     'item_name': 'This is a new datarequest that is asdf983205',
-                     'item_description': 'Jump, Jump, Jump Around!',
+                     'name': 'This is a new datarequest that is asdf983205',
+                     'description': 'Jump, Jump, Jump Around!',
+                     'status': 'U',
         }
 		
 		response = self.client.post('/datarequests/new/', post_data)
@@ -101,3 +103,193 @@ class DataRequestTestCase(TestCase):
 		data_request.save()
 		response = self.client.get('/datarequests/')
 		self.failIf("canceled" in response.content)
+		
+class DataRequestCancelEditFulfillIndexTestCase(TestCase):
+	fixtures = ['initial_users']
+	
+	def testDataRequestIndexUnOwned(self):
+		creator = User.objects.get(username="bob")
+		data_request = DataRequest(creator=creator, name="Amazing request", description="Spectacular request indeed", status='U')
+		data_request.save()
+		login = self.client.login(username='bob2', password='bob2')
+		self.failUnless(login, 'Could not login')
+		response = self.client.get('/datarequests/')
+		self.failUnlessEqual(response.status_code, 200)
+		self.failIf('Edit</a>' in response.content, response.content)
+		self.failIf('Cancel</a>' in response.content)
+		self.failIf('Fulfill</a>' in response.content)
+	
+	def testDataRequestIndexUnOwnedCanceled(self):
+		creator = User.objects.get(username="bob")
+		data_request = DataRequest(creator=creator, name="Amazing request", description="Spectacular request indeed", status='C')
+		data_request.save()
+		login = self.client.login(username='bob2', password='bob2')
+		self.failUnless(login, 'Could not login')
+		response = self.client.get('/datarequests/')
+		self.failUnlessEqual(response.status_code, 200)
+		self.failIf('Amazing request' in response.content, response.content)
+		
+	def testDataRequestIndexOwned(self):
+		creator = User.objects.get(username="bob")
+		data_request = DataRequest(creator=creator, name="Amazing request", description="Spectacular request indeed", status='U')
+		data_request.save()
+		login = self.client.login(username='bob2', password='bob2')
+		self.failUnless(login, 'Could not login')
+		response = self.client.get('/datarequests/')
+		self.failUnlessEqual(response.status_code, 200)
+	
+	def testDataRequestIndexOwnedCanceled(self):
+		creator = User.objects.get(username="bob")
+		data_request = DataRequest(creator=creator, name="Amazing request", description="Spectacular request indeed", status='C')
+		data_request.save()
+		login = self.client.login(username='bob', password='bob')
+		self.failUnless(login, 'Could not login')
+		response = self.client.get('/datarequests/')
+		self.failUnlessEqual(response.status_code, 200)
+		self.failIf('Amazing request' in response.content, response.content)
+	
+	def testDataRequestIndexOwnedFulfilled(self):
+		creator = User.objects.get(username="bob")
+		data_request = DataRequest(creator=creator, name="Amazing request", description="Spectacular request indeed", status='F')
+		data_request.save()
+		login = self.client.login(username='bob', password='bob')
+		self.failUnless(login, 'Could not login')
+		response = self.client.get('/datarequests/')
+		self.failUnlessEqual(response.status_code, 200)
+		self.failUnless('Amazing request' in response.content, response.content)
+		self.failIf('Edit</a>' in response.content, response.content)
+		self.failIf('Cancel</a>' in response.content)
+		self.failIf('Fulfill</a>' in response.content)
+	
+	def testDataRequestIndexOwnedUnFulfilled(self):
+		creator = User.objects.get(username="bob")
+		data_request = DataRequest(creator=creator, name="Amazing request", description="Spectacular request indeed", status='U')
+		data_request.save()
+		login = self.client.login(username='bob', password='bob')
+		self.failUnless(login, 'Could not login')
+		response = self.client.get('/datarequests/')
+		self.failUnlessEqual(response.status_code, 200)
+		self.failUnless('Amazing request' in response.content, response.content)
+		self.failUnless('Edit</a>' in response.content, response.content)
+		self.failUnless('Cancel</a>' in response.content)
+		self.failUnless('Fulfill</a>' in response.content)
+
+class DataRequestCancelEditFulfillPageTestCase(TestCase):
+	fixtures = ['initial_users']
+	
+	def testDataRequestPageUnOwned(self):
+		creator = User.objects.get(username="bob")
+		data_request = DataRequest(creator=creator, name="Amazing request", description="Spectacular request indeed", status='U')
+		data_request.save()
+		login = self.client.login(username='bob2', password='bob2')
+		self.failUnless(login, 'Could not login')
+		datarequesturl = '/datarequests/%s/' % (data_request.id)
+		response = self.client.get(datarequesturl)
+		self.failUnlessEqual(response.status_code, 200)
+		self.failUnless('Amazing request' in response.content, response.content)
+		self.failIf('Edit</a>' in response.content, response.content)
+		self.failIf('Cancel</a>' in response.content)
+	
+	def testDataRequestPageOwnedU(self):
+		creator = User.objects.get(username="bob")
+		data_request = DataRequest(creator=creator, name="Amazing request", description="Spectacular request indeed", status='U')
+		data_request.save()
+		login = self.client.login(username='bob', password='bob')
+		self.failUnless(login, 'Could not login')
+		datarequesturl = '/datarequests/%s/' % (data_request.id)
+		response = self.client.get(datarequesturl)
+		self.failUnlessEqual(response.status_code, 200)
+		self.failUnless('Amazing request' in response.content, response.content)
+		self.failUnless('Edit</a>' in response.content, response.content)
+		self.failUnless('Cancel</a>' in response.content)
+		self.failUnless('Fulfilled</a>' in response.content, response.content)
+	
+	def testDataRequestPageOwnedF(self):
+		creator = User.objects.get(username="bob")
+		data_request = DataRequest(creator=creator, name="Amazing request", description="Spectacular request indeed", status='F')
+		data_request.save()
+		login = self.client.login(username='bob', password='bob')
+		self.failUnless(login, 'Could not login')
+		datarequesturl = '/datarequests/%s/' % (data_request.id)
+		response = self.client.get(datarequesturl)
+		self.failUnlessEqual(response.status_code, 200)
+		self.failUnless('Amazing request' in response.content, response.content)
+		self.failIf('Edit</a>' in response.content, response.content)
+		self.failIf('Cancel</a>' in response.content)
+		self.failIf('Fulfilled</a>' in response.content)
+	
+	def testDataRequestPageOwnedC(self):
+		creator = User.objects.get(username="bob")
+		data_request = DataRequest(creator=creator, name="Amazing request", description="Spectacular request indeed", status='C')
+		data_request.save()
+		login = self.client.login(username='bob', password='bob')
+		self.failUnless(login, 'Could not login')
+		datarequesturl = '/datarequests/%s/' % (data_request.id)
+		response = self.client.get(datarequesturl)
+		self.failUnlessEqual(response.status_code, 200)
+		self.failUnless('Amazing request' in response.content, response.content)
+		self.failIf('Edit</a>' in response.content, response.content)
+		self.failIf('Cancel</a>' in response.content)
+		self.failIf('Fulfilled</a>' in response.content)
+class DataRequestCancelEditFulfillActionsTestCase(TestCase):
+	fixtures = ['initial_users']
+	
+	def testDataRequestCancelUnOwned(self):
+		creator = User.objects.get(username="bob")
+		data_request = DataRequest(creator=creator, name="Amazing request", description="Spectacular request indeed", status='U')
+		data_request.save()
+		login = self.client.login(username='bob2', password='bob2')
+		self.failUnless(login, 'Could not login')
+		datarequesturl = '/datarequests/%s/cancel/' % (data_request.id)
+		response = self.client.get(datarequesturl)
+		self.failUnlessEqual(response.status_code, 302)
+		response = self.client.get('/datarequests/')
+		self.failUnlessEqual(response.status_code, 200)
+		self.failUnless("Amazing request" in response.content)
+		
+	def testDataRequestCancelOwned(self):
+		creator = User.objects.get(username="bob")
+		data_request = DataRequest(creator=creator, name="Amazing request", description="Spectacular request indeed", status='U')
+		data_request.save()
+		login = self.client.login(username='bob', password='bob')
+		self.failUnless(login, 'Could not login')
+		datarequesturl = '/datarequests/%s/cancel/' % (data_request.id)
+		response = self.client.get(datarequesturl)
+		self.failUnlessEqual(response.status_code, 302)
+		response = self.client.get('/datarequests/')
+		self.failUnlessEqual(response.status_code, 200)
+		self.failIf("Amazing request" in response.content)
+	
+	def testDataRequestFulfillUnOwned(self):
+		creator = User.objects.get(username="bob")
+		data_request = DataRequest(creator=creator, name="Amazing request", description="Spectacular request indeed", status='U')
+		data_request.save()
+		login = self.client.login(username='bob2', password='bob2')
+		self.failUnless(login, 'Could not login')
+		datarequesturl = '/datarequests/%s/fulfill/' % (data_request.id)
+		response = self.client.get(datarequesturl)
+		self.failUnlessEqual(response.status_code, 302)
+		response = self.client.get('/datarequests/')
+		self.failUnlessEqual(response.status_code, 200)
+		self.failUnless("Amazing request" in response.content)
+		
+	def testDataRequestFulfillOwned(self):
+		creator = User.objects.get(username="bob")
+		data_request = DataRequest(creator=creator, name="Amazing request", description="Spectacular request indeed", status='U')
+		data_request.save()
+		login = self.client.login(username='bob', password='bob')
+		self.failUnless(login, 'Could not login')
+		datarequesturl = '/datarequests/%s/fulfill/' % (data_request.id)
+		response = self.client.get(datarequesturl)
+		self.failUnlessEqual(response.status_code, 302)
+		response = self.client.get('/datarequests/')
+		self.failUnlessEqual(response.status_code, 200)
+		self.failUnless("Amazing request" in response.content)
+		datarequesturl = '/datarequests/%s/' % (data_request.id)
+		response = self.client.get(datarequesturl)
+		self.failUnlessEqual(response.status_code, 200)
+		self.failUnless('Amazing request' in response.content, response.content)
+		self.failIf('Edit</a>' in response.content, response.content)
+		self.failIf('Cancel</a>' in response.content)
+		self.failIf('Fulfilled</a>' in response.content)
+		

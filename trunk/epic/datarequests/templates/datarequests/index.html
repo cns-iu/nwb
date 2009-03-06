@@ -7,6 +7,9 @@
 	  <th>Owner</th>
 	  <th>Date Uploaded</th>
 	  <th>Status</th>
+	  <th>Cancel Request</th>
+	  <th>Request Fulfilled</th>
+	  <th>Edit</th>
 	</tr>
 	{% for datarequest in datarequests %}
 		<tr>
@@ -14,6 +17,19 @@
 		  <td>{{ datarequest.creator }}</td>
 		  <td>{{ datarequest.created_at }}</td>
 		  <td>{{ datarequest.get_status_display }}</td>
+		  {% ifequal user datarequest.creator %}
+			  {% ifnotequal datarequest.status 'C'%}
+			  {% ifnotequal datarequest.status 'F' %}
+			    <td><a href="{{ datarequest.get_absolute_url }}cancel">Cancel</a></td>
+			    <td><a href="{{ datarequest.get_absolute_url }}complete">Fulfill</a></td>
+			    <td><a href="{{ datarequest.get_absolute_url }}edit">Edit</a></td>
+			  {% endifnotequal %}
+			  {% endifnotequal %}
+		  {% else %}
+		  <td></td>
+		  <td></td>
+		  <td></td>
+		  {% endifequal %}
 		</tr>
 	{% endfor %}
 	</table>
