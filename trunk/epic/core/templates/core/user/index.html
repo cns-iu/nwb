@@ -14,11 +14,13 @@
 	  <tr>
 	    <th>Name</th>
 	    <th>Uploaded</th>
+	    <th></th>
 	  </tr>
 	  {% for dataset in datasets %}
 	  <tr>
 	    <td><a href="{{ dataset.get_absolute_url }}">{{ dataset.name }}</a></td>
 	    <td>{{ dataset.created_at }}</td>
+	    <td><a href="#">(edit)</a></td>
 	  </tr>
 	  {% endfor %}
 	  </table>

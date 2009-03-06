@@ -118,6 +118,7 @@ class ProfileDatasetTestCase(TestCase):
         response = self.client.get('/user/')
         self.failUnless(response.status_code, 200)
         self.failUnless("Your Datasets" in response.content, response.content)
+        self.failUnless("edit" in response.content, response.content)
     
     def testForOnlyDataSets(self):
         login = self.client.login(username='bill', password='bill')
