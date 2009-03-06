@@ -4,7 +4,8 @@ Bundle-Name: NSF Reader/Validator
 Bundle-SymbolicName: edu.iu.nwb.converter.prefusensf
 Bundle-Version: 0.0.1
 Bundle-ClassPath: .
-Import-Package: org.cishell.framework,
+Import-Package: edu.iu.nwb.converter.prefusecsv.validator,
+ org.cishell.framework,
  org.cishell.framework.algorithm;version="1.0.0",
  org.cishell.framework.data;version="1.0.0",
  org.cishell.service.conversion;version="1.0.0",

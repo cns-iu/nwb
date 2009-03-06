@@ -9,7 +9,8 @@ import org.cishell.framework.algorithm.AlgorithmExecutionException;
 import org.cishell.framework.data.BasicData;
 import org.cishell.framework.data.Data;
 import org.cishell.framework.data.DataProperty;
-import org.osgi.service.log.LogService;
+
+import edu.iu.nwb.converter.prefusecsv.validator.PrefuseCsvValidationAlgorithm;
 
 public class ScopusValidatorAlgorithm implements Algorithm {
     Data[] data;
@@ -23,14 +24,27 @@ public class ScopusValidatorAlgorithm implements Algorithm {
     }
 
     public Data[] execute() throws AlgorithmExecutionException {
-		String fileHandler = (String) data[0].getData();
-		File inData = new File(fileHandler);
+		String scopusFileName = (String) data[0].getData();
+		File inData = new File(scopusFileName);
 
 		try{
-			Data[] dm = new Data[] {new BasicData(inData, "file:text/scopus")};
-			dm[0].getMetadata().put(DataProperty.LABEL, "Scopus csv file: " + fileHandler);
-			dm[0].getMetadata().put(DataProperty.TYPE, DataProperty.MATRIX_TYPE);
-			return dm;
+			
+			/*
+			 * Use the CSV Validator Algorithm for both NSF & SCOPUS Files. Since both are CSV based File Formats.
+			 * */
+			PrefuseCsvValidationAlgorithm csvValidator = new PrefuseCsvValidationAlgorithm();
+
+			/*
+			 * validateSelectedFileforCSVFormat throws an exception if the file
+			 * path provided to it does not point to valid csv file. Else it
+			 * will not throw any error.
+			 */			
+			csvValidator.validateSelectedFileforCSVFormat(scopusFileName);
+			
+			Data[] validationData = new Data[] {new BasicData(inData, "file:text/scopus")};
+			validationData[0].getMetadata().put(DataProperty.LABEL, "Scopus csv file: " + scopusFileName);
+			validationData[0].getMetadata().put(DataProperty.TYPE, DataProperty.MATRIX_TYPE);
+			return validationData;
 		}catch (SecurityException exception){
 			throw new AlgorithmExecutionException(exception);
 		}
