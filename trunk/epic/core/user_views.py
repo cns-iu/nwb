@@ -10,11 +10,7 @@ from epic.datasets.models import DataSet
 @login_required
 def index(request):
 	user = request.user
-	try:
-		profile = user.get_profile()
-	except:
-		profile = Profile(user=user)
-		profile.save()
+	profile = Profile.objects.for_user(user)
 
 	datasets = DataSet.objects.filter(creator=user).order_by('-created_at')
 	

@@ -41,6 +41,19 @@ class Item(models.Model):
 	description = models.TextField()
 	created_at = models.DateTimeField(auto_now_add=True, db_index=True)
 
+class ProfileManager(models.Manager):
+	def for_user(self, user):
+		try:
+			profile = user.get_profile()
+		except:
+			profile = Profile(user=user)
+			try:
+				profile.save()
+			except:
+				profile = user.get_profile()
+		return profile
+
 class Profile(models.Model):
+	objects = ProfileManager()
 	user = models.ForeignKey(User, unique=True)
 	affiliation = models.CharField(max_length=512)
