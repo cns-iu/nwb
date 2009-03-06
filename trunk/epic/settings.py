@@ -74,7 +74,6 @@ TEMPLATE_DIRS = (
 )
 
 #where you go TO log in
-
 LOGIN_URL = '/login/'
 
 #where you go after you log in
