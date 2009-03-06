@@ -14,7 +14,7 @@ from datetime import datetime
 
 
 def index(request):
-    datarequests = DataRequest.objects.all().order_by('-created_at')
+    datarequests = DataRequest.objects.exclude(status='C').order_by('-created_at')
     return render_to_response('datarequests/index.html', {'datarequests': datarequests,'user':request.user})
 
 def view_datarequest(request, datarequest_id=None):

@@ -6,12 +6,14 @@
 	  <th>Title</th>
 	  <th>Owner</th>
 	  <th>Date Uploaded</th>
+	  <th>Status</th>
 	</tr>
 	{% for datarequest in datarequests %}
 		<tr>
 		  <td><a href="{{ datarequest.get_absolute_url }}">{{ datarequest.name }}</a></td>
 		  <td>{{ datarequest.creator }}</td>
 		  <td>{{ datarequest.created_at }}</td>
+		  <td>{{ datarequest.get_status_display }}</td>
 		</tr>
 	{% endfor %}
 	</table>

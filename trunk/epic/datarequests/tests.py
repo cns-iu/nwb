@@ -83,3 +83,15 @@ class DataRequestTestCase(TestCase):
 		self.failUnlessEqual(response.status_code, 302)
 		response = self.client.get('/datarequests/')
 		self.failUnless("asdf983205" in response.content)
+	
+	def testStatusExistsAtIndex(self):
+		data_request = DataRequest(creator=self.data_request.creator, name="Amazing request", description="Spectacular request indeed", status='F')
+		data_request.save()
+		datarequest_location = '/datarequests/%s/' % (data_request.id)
+		response = self.client.get(datarequest_location)
+		self.failUnlessEqual(response.status_code, 200, "Error viewing Data Requests!")
+		self.failUnless("Spectacular request indeed" in response.content)
+		self.failUnless("fulfilled" in response.content)
+		response = self.client.get('/datarequests/')
+		self.failUnlessEqual(response.status_code, 200, "Error listing Data Requests!")
+		self.failUnless("fulfilled" in response.content)
