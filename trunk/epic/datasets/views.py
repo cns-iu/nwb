@@ -57,8 +57,8 @@ def new_dataset(request):
                 
                 dataset = DataSet(creator=u, name=item_name, description=item_description)
                 dataset.save()
-                
-                
+                f = DataSetFile(parent_dataset=dataset, file=uploaded_file)
+                f.save()
                 return HttpResponseRedirect(reverse('epic.datasets.views.view_dataset', args=(dataset.id,)))
             else:
                 print request.POST

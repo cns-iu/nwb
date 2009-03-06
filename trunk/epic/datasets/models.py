@@ -41,5 +41,5 @@ class DataSetFile(models.Model):
         pass
 
     def __unicode__(self):
-        return "%s created at %s" % (self.file, self.created_at)
+        return "%s" % (self.file)
     
