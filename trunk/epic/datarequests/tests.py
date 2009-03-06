@@ -95,3 +95,9 @@ class DataRequestTestCase(TestCase):
 		response = self.client.get('/datarequests/')
 		self.failUnlessEqual(response.status_code, 200, "Error listing Data Requests!")
 		self.failUnless("fulfilled" in response.content)
+	
+	def testCanceledNotViewableAtIndex(self):
+		data_request = DataRequest(creator=self.data_request.creator, name="Amazing request", description="Spectacular request indeed", status='C')
+		data_request.save()
+		response = self.client.get('/datarequests/')
+		self.failIf("canceled" in response.content)
