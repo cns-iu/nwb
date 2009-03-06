@@ -7,5 +7,21 @@
 	<p><b>Affiliation:</b> {{ profile.affiliation }}</p>
 	<p><b>Date Joined:</b> {{ profile.user.date_joined }}</p>
 	<p><b><a href="/user/change_password">Change Password</a></b></p>
-	<a href="/datasets/">View Datasets</a>
+	<hr>
+	{% if datasets %}
+	  <h3>Your Datasets</h3>
+	  <table>
+	  <tr>
+	    <th>Name</th>
+	    <th>Uploaded</th>
+	  </tr>
+	  {% for dataset in datasets %}
+	  <tr>
+	    <td><a href="{{ dataset.get_absolute_url }}">{{ dataset.name }}</a></td>
+	    <td>{{ dataset.created_at }}</td>
+	  </tr>
+	  {% endfor %}
+	  </table>
+	{% endif %}
+	<a href="/datasets/">View All Datasets</a>
 {% endblock %}

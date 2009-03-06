@@ -83,7 +83,7 @@ class PasswordChangeTestCast(TestCase):
         self.failUnless(response.status_code, 302)
         self.assertRedirects(response, '/user/')
 
-class ProfileLinkTestCast(TestCase):
+class ProfileLinkTestCase(TestCase):
     fixtures = ['initial_users']
     
     def setUp(self):
@@ -98,3 +98,31 @@ class ProfileLinkTestCast(TestCase):
     def testLinkForNotLoggedIn(self):
         response = self.client.get('/')
         self.failIf('<a href="/user/">Profile</a>' in response.content)
+
+class ProfileDatasetTestCase(TestCase):
+    fixtures = ['profile_datasets']
+    
+    def setUp(self):
+        pass
+    
+    def testForNoDataSets(self):
+        login = self.client.login(username='bob', password='bob')
+        self.failUnless(login, 'Could not login')
+        response = self.client.get('/user/')
+        self.failUnless(response.status_code, 200)
+        self.failIf("Your Datasets" in response.content)
+        
+    def testForDataSets(self):
+        login = self.client.login(username='bill', password='bill')
+        self.failUnless(login, 'Could not login')
+        response = self.client.get('/user/')
+        self.failUnless(response.status_code, 200)
+        self.failUnless("Your Datasets" in response.content, response.content)
+    
+    def testForOnlyDataSets(self):
+        login = self.client.login(username='bill', password='bill')
+        self.failUnless(login, 'Could not login')
+        response = self.client.get('/user/')
+        self.failUnless(response.status_code, 200)
+        #This is a datarequest object and should not be here
+        self.failIf("Item 3" in response.content)

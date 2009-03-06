@@ -4,6 +4,9 @@ from django.shortcuts import render_to_response, get_object_or_404
 from django.contrib.auth.decorators import login_required
 from models import Profile
 
+from epic.core.models import Item
+from epic.datasets.models import DataSet
+
 @login_required
 def index(request):
 	user = request.user
@@ -12,8 +15,10 @@ def index(request):
 	except:
 		profile = Profile(user=user)
 		profile.save()
+
+	datasets = DataSet.objects.filter(creator=user).order_by('-created_at')
 	
-	return render_to_response('core/user/index.html', { "profile": profile, "user": user })
+	return render_to_response('core/user/index.html', { "profile": profile, "user": user, "datasets":datasets})
 
 @login_required
 def change_password(request):
