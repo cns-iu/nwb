@@ -3,7 +3,7 @@ from django.test import TestCase
 from epic.datarequests.models import DataRequest
 
 class DataRequestTestCase(TestCase):
-	fixtures = ['initial_data', 'single_request']
+	fixtures = ['initial_data', 'single_request', 'initial_users']
 	
 	def setUp(self):
 		self.data_request = DataRequest.objects.unfulfilled()[0]
@@ -55,3 +55,31 @@ class DataRequestTestCase(TestCase):
 	def test404NonExistant(self):
 		response = self.client.get('/datarequests/10000000000/')
 		self.failUnlessEqual(response.status_code , 404)
+	
+	def testAddDataRequestPageNotLoggedIn(self):
+		response = self.client.get('/datarequests/new/')
+		self.failUnlessEqual(response.status_code, 302)
+	
+	def testAddDataRequestPageLoggedIn(self):
+		login = self.client.login(username='bob', password='bob')
+		self.failUnless(login, 'Could not login')
+        
+		response = self.client.get('/datarequests/new/')
+		self.failUnlessEqual(response.status_code, 200)
+	
+	def testAddDataRequest(self):
+		login = self.client.login(username='bob', password='bob')
+		self.failUnless(login, 'Could not login')
+        
+		response = self.client.get('/datarequests/new/')
+		self.failUnlessEqual(response.status_code, 200)
+		
+		post_data = {
+                     'item_name': 'This is a new datarequest that is asdf983205',
+                     'item_description': 'Jump, Jump, Jump Around!',
+        }
+		
+		response = self.client.post('/datarequests/new/', post_data)
+		self.failUnlessEqual(response.status_code, 302)
+		response = self.client.get('/datarequests/')
+		self.failUnless("asdf983205" in response.content)

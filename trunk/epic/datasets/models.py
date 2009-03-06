@@ -31,7 +31,7 @@ class DataSet(Item):
     
     @models.permalink
     def get_absolute_url(self):
-        return ("epic.datasets.views.view_dataset", [self.id])
+        return ("epic.datasets.views.view_dataset", [], {'dataset_id':self.id})
     
 class DataSetFile(models.Model):
     parent_dataset = models.ForeignKey(DataSet, related_name="files")

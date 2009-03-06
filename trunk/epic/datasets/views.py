@@ -17,7 +17,7 @@ def index(request):
     return render_to_response('datasets/index.html', {'datasets': datasets,'user':request.user})
 
 
-def view_dataset(request, dataset_id):
+def view_dataset(request, dataset_id=None):
     dataset = get_object_or_404(DataSet,pk=dataset_id)
     return render_to_response('datasets/view_dataset.html', {'dataset': dataset, 'user':request.user})
 
@@ -59,7 +59,7 @@ def new_dataset(request):
                 dataset.save()
                 f = DataSetFile(parent_dataset=dataset, file=uploaded_file)
                 f.save()
-                return HttpResponseRedirect(reverse('epic.datasets.views.view_dataset', args=(dataset.id,)))
+                return HttpResponseRedirect(reverse('epic.datasets.views.view_dataset', kwargs={'dataset_id':dataset.id,}))
             else:
                 print request.POST
                 print form.errors

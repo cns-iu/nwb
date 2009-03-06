@@ -46,7 +46,7 @@ class DataRequest(Item):
 		
 	@models.permalink
 	def get_absolute_url(self):
-		return ("epic.datarequests.views.view_datarequest", [self.id])
+		return ('epic.datarequests.views.view_datarequest', [], {'datarequest_id':self.id})
 	
 	def __unicode__(self):
 		return "%s %s %s" % (self.status, self.name, self.creator)
