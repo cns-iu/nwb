@@ -52,7 +52,7 @@ class DataRequestTestCase(TestCase):
 		self.failUnlessEqual(response.status_code, 200, "Error viewing Data Requests!")
 		self.failUnless("Spectacular request indeed" in response.content)
 	
-	def test404NonExistant(self):
+	def test404NonExistent(self):
 		response = self.client.get('/datarequests/10000000000/')
 		self.failUnlessEqual(response.status_code , 404)
 	
