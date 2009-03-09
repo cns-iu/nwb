@@ -134,8 +134,12 @@ def forgot_password(request):
 		
 		try:
 			if username_or_email.count("@") > 0:
+				username = ""
+				email = username_or_email
 				user = User.objects.get(email=username_or_email)
 			else:
+				username = username_or_email
+				email = ""
 				user = User.objects.get(username=username_or_email)
 		except:
 			# No username could be found.
@@ -143,7 +147,8 @@ def forgot_password(request):
 				"not_found": True,
 				"form": forgot_password_form,
 				"next": next_page,
-				"username": username
+				"username": username,
+				"email": email
 			})
 		
 		username = user.username
@@ -165,8 +170,6 @@ def forgot_password(request):
 			"password": new_random_password,
 			"login_url": "http://localhost:8000/login/"
 		})
-		
-		print email_body_template.render(template_context)
 		
 		# Email the user with the new password.
 		user.email_user("EpiC Account Password Reset", email_body_template.render(template_context))
