@@ -3,22 +3,22 @@ Core models: models that the entire EpiC project will (probably) use.
 
 Let's just test out a few aspects of our models...
 
->>> user = User.objects.create_user("testuser", "testing@epicproject.com", "testpassword")
+>>> user = User.objects.create_user("testuser22", "testing@epicproject.com", "testpassword")
 >>> user
-<User: testuser>
+<User: testuser22>
 >>> user.first_name
 ''
 >>> user.last_name
 ''
 >>> user.username
-'testuser'
+'testuser22'
 >>> user.email
 'testing@epicproject.com'
 >>> item = Item(creator=user, name="test item", description="test description")
 >>> item
 <Item: Item object>
 >>> item.creator
-<User: testuser>
+<User: testuser22>
 >>> item.name
 'test item'
 >>> item.description
@@ -27,7 +27,7 @@ Let's just test out a few aspects of our models...
 >>> profile
 <Profile: Profile object>
 >>> profile.user
-<User: testuser>
+<User: testuser22>
 >>> profile.affiliation
 'CNS Core'
 """

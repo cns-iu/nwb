@@ -87,7 +87,8 @@ INSTALLED_APPS = (
     'django.contrib.sessions',
     'django.contrib.sites',
     'django.contrib.admin',
-    'epic.datasets',
+    'epic.core',
     'epic.datarequests',
-    'epic.core'
+    'epic.datasets',
+    'epic.djangoratings',
 )

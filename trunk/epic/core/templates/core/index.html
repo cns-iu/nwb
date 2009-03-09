@@ -9,12 +9,18 @@
 	  <th>Title</th>
 	  <th>Owner</th>
 	  <th>Date Uploaded</th>
+	  <th>Rating</th>
 	</tr>
 	{% for dataset in datasets %}
 		<tr>
 		  <td><a href="{{ dataset.get_absolute_url }}">{{ dataset.name }}</a></td>
 		  <td>{{ dataset.creator }}</td>
 		  <td>{{ dataset.created_at }}</td>
+		  {% if dataset.rating.get_average %}
+		  <td><a href="{{ dataset.get_absolute_url }}rate/">{{ dataset.rating.get_average }}</a></td>
+		  {% else %}
+		  <td>--</td>
+		  {% endif %}
 		</tr>
 	{% endfor %}
 	</table>

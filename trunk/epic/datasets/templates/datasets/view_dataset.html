@@ -2,6 +2,18 @@
 {% block content %}
 	<h3>Dataset {{ dataset.name }}</h3>
 	<p>Owned by {{ dataset.creator }} and uploaded {{ dataset.created_at }}</p>
+	{% if dataset.rating.get_average %}
+	<p>Rating: {{ dataset.rating.get_average }} with {{ dataset.rating.votes }} votes.</p>
+	{% endif %}
+	{% if user.is_authenticated %}
+	<p>Rate!: 
+	<a href="rate/1/">Star1</a>
+	<a href="rate/2/">Star2</a>
+	<a href="rate/3/">Star3</a>
+	<a href="rate/4/">Star4</a>
+	<a href="rate/5/">Star5</a>
+	</p>
+	{% endif %}
 	<p>{{ dataset.description }}</p>
 	{% if dataset.files %}
       <hr>

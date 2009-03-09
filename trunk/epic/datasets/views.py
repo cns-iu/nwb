@@ -1,6 +1,6 @@
 from epic.core.models import Item
-from epic.datasets.forms import NewDataSetForm
-from epic.datasets.models import DataSetFile, DataSet
+from epic.datasets.forms import NewDataSetForm, RatingDataSetForm
+from epic.datasets.models import DataSetFile, DataSet, RATING_SCALE
 
 from django.contrib.auth.models import User
 from django.core.urlresolvers import reverse
@@ -13,58 +13,93 @@ from datetime import datetime
 
 
 def index(request):
-    datasets = DataSet.objects.all().order_by('-created_at')
-    return render_to_response('datasets/index.html', {'datasets': datasets,'user':request.user})
+	datasets = DataSet.objects.all().order_by('-created_at')
+	return render_to_response('datasets/index.html', {'datasets': datasets,'user':request.user})
 
 
 def view_dataset(request, dataset_id=None):
-    dataset = get_object_or_404(DataSet,pk=dataset_id)
-    return render_to_response('datasets/view_dataset.html', {'dataset': dataset, 'user':request.user})
+	dataset = get_object_or_404(DataSet,pk=dataset_id)
+	return render_to_response('datasets/view_dataset.html', {'dataset': dataset, 'user':request.user})
 
 
 #@login_required
 #def upload(request, dataset_id):
-#    if request.method == 'POST':
-#        form = NewDataSetForm(request.POST, request.FILES)
-#        if form.is_valid():
-#            dataset = DataSet.objects.get(pk=dataset_id)
-#            data_file = form.cleaned_data['file']
-#            f = DataSetFile(dataset=dataset, file=data_file)
-#            f.save()
-#            return HttpResponseRedirect(reverse('epic.datasets.views.view_dataset', args=(dataset.id,)))
-#        else:
-#            print request.POST
-#            print form.errors
-#    else:
-#        form = NewDataSetForm()
-#        return render_to_response('datasets/upload.html', {'form':form, })
+#	if request.method == 'POST':
+#		form = NewDataSetForm(request.POST, request.FILES)
+#		if form.is_valid():
+#			dataset = DataSet.objects.get(pk=dataset_id)
+#			data_file = form.cleaned_data['file']
+#			f = DataSetFile(dataset=dataset, file=data_file)
+#			f.save()
+#			return HttpResponseRedirect(reverse('epic.datasets.views.view_dataset', args=(dataset.id,)))
+#		else:
+#			print request.POST
+#			print form.errors
+#	else:
+#		form = NewDataSetForm()
+#		return render_to_response('datasets/upload.html', {'form':form, })
 
-    
+	
 @login_required
 def new_dataset(request):
-    u = request.user
-    if u.is_authenticated():
-        if request.method != 'POST':
-            #show them the upload form
-              form = NewDataSetForm()
-        else:
-            # handle the submission of their upload form
-            form = NewDataSetForm(request.POST, request.FILES)
-            if form.is_valid():
-                item_name = form.cleaned_data['item_name']
-                item_description = form.cleaned_data['item_description']
-                uploaded_file = form.cleaned_data['file']
-                
-                dataset = DataSet(creator=u, name=item_name, description=item_description)
-                dataset.save()
-                f = DataSetFile(parent_dataset=dataset, file=uploaded_file)
-                f.save()
-                return HttpResponseRedirect(reverse('epic.datasets.views.view_dataset', kwargs={'dataset_id':dataset.id,}))
-            else:
-                print request.POST
-                print form.errors
-                
-        return render_to_response('datasets/new.html', {'form':form, 'user':request.user,})
-    else:
-        print "user not logged in"
-        return HttpResponseRedirect('/login/?next=%s' % request.path)
+	u = request.user
+	if u.is_authenticated():
+		if request.method != 'POST':
+			#show them the upload form
+  			form = NewDataSetForm()
+		else:
+			# handle the submission of their upload form
+			form = NewDataSetForm(request.POST, request.FILES)
+			if form.is_valid():
+				item_name = form.cleaned_data['item_name']
+				item_description = form.cleaned_data['item_description']
+				uploaded_file = form.cleaned_data['file']
+				
+				dataset = DataSet(creator=u, name=item_name, description=item_description)
+				dataset.save()
+				f = DataSetFile(parent_dataset=dataset, file=uploaded_file)
+				f.save()
+				return HttpResponseRedirect(reverse('epic.datasets.views.view_dataset', kwargs={'dataset_id':dataset.id,}))
+			else:
+				print request.POST
+				print form.errors
+				
+		return render_to_response('datasets/new.html', {'form':form, 'user':request.user,})
+	else:
+		print "user not logged in"
+		return HttpResponseRedirect('/login/?next=%s' % request.path)
+   	
+@login_required
+def rate_dataset(request, dataset_id, input_rating=None):
+	#TODO: Make commenting ajaxified.
+	if input_rating:
+		dataset = DataSet.objects.get(pk = dataset_id)
+		user = request.user
+		ip_address = request.META['REMOTE_ADDR']
+		#Rely on the rating.add to make sure the that rating is valid
+		rating = int(input_rating) 
+		dataset.rating.add(rating, user, ip_address)
+		dataset.save()
+		return HttpResponseRedirect(reverse('epic.datasets.views.view_dataset', kwargs={'dataset_id':dataset.id,}))
+	else:
+		if request.method != 'POST':
+			#show them the rate form
+	  		form = RatingDataSetForm()
+		else:
+			# handle the submission of their rate form
+			form = RatingDataSetForm(request.POST)
+			if form.is_valid():
+				rating = int(form.cleaned_data['rating']) #TODO: why doesn't it just return an int?
+				ip_address = request.META['REMOTE_ADDR']
+				user = request.user
+				
+				dataset = DataSet.objects.get(pk = dataset_id)
+				dataset.rating.add(rating, user, ip_address)
+				dataset.save()
+				
+				return HttpResponseRedirect(reverse('epic.datasets.views.view_dataset', kwargs={'dataset_id':dataset.id,}))
+			else:
+				print request.POST
+				print form.errors
+				
+		return render_to_response('datasets/rate_dataset.html', {'form':form, 'user':request.user,})
