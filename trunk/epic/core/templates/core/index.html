@@ -1,28 +1,6 @@
 {% extends "core/base.html" %}
 {% block content %}
-<a href="/datasets">View Data Sets</a>
-<a href="/datarequests">View Data Requests</a>
-{% if datasets %}
-	<h3>All datasets (newest first):</h3>
-	<table>
-	<tr>
-	  <th>Title</th>
-	  <th>Owner</th>
-	  <th>Date Uploaded</th>
-	  <th>Rating</th>
-	</tr>
-	{% for dataset in datasets %}
-		<tr>
-		  <td><a href="{{ dataset.get_absolute_url }}">{{ dataset.name }}</a></td>
-		  <td>{{ dataset.creator }}</td>
-		  <td>{{ dataset.created_at }}</td>
-		  {% if dataset.rating.get_average %}
-		  <td><a href="{{ dataset.get_absolute_url }}rate/">{{ dataset.rating.get_average }}</a></td>
-		  {% else %}
-		  <td>--</td>
-		  {% endif %}
-		</tr>
-	{% endfor %}
-	</table>
-{% endif %}
+<p>Welcome to Epic!</p>
+{% load dataset_templatetags %}
+{% list_datasets %}
 {% endblock %}
