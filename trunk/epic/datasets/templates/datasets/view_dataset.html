@@ -19,7 +19,7 @@
       <hr>
 	  <h3>Attached Files</h3>
 	  {% for file in dataset.files.all %}
-	    <p>{{ file }}</p>
+	    <p><a href="{{file.file_contents.url}}">{{ file.get_short_name }} (Download)</a></p>
 	  {% endfor %}
 	{% else %}
 	  <p>No attached files</p>

@@ -11,6 +11,9 @@ urlpatterns = patterns('',
     (r'^user/', include('epic.core.user_urls')),
     (r'^datasets/', include('epic.datasets.urls')),
     (r'^datarequests/', include('epic.datarequests.urls')),
+    #TODO: must change static media serving for security and performance reasons later on
+    (r'^media/(?P<path>.*)$', 'django.views.static.serve',
+     {'document_root': '/tmp/django_uploads'}),
     # Example:
     # (r'^epic_community_website/', include('epic_community_website.foo.urls')),
 

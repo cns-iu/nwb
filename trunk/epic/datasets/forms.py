@@ -5,8 +5,8 @@ from epic.datasets.models import DataSet, RATING_SCALE
 from epic.djangoratings.forms import RatingField
 
 class NewDataSetForm(forms.Form):
-    item_name = forms.CharField(max_length=256)
-    item_description = forms.CharField(max_length=1024, widget=forms.Textarea())
+    name = forms.CharField(max_length=256)
+    description = forms.CharField(max_length=1024, widget=forms.Textarea())
     file  = forms.FileField()
     
 class RatingDataSetForm(forms.Form):

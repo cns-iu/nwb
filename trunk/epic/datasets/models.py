@@ -37,13 +37,19 @@ class DataSet(Item):
 	def get_absolute_url(self):
 		return ("epic.datasets.views.view_dataset", [], {'dataset_id':self.id})
 	
+    
 class DataSetFile(models.Model):
-	parent_dataset = models.ForeignKey(DataSet, related_name="files")
-	file = models.FileField(upload_to="files")
-	
-	class Admin:
+    parent_dataset = models.ForeignKey(DataSet, related_name="files")
+    file_contents = models.FileField(upload_to="dataset_files")
+    
+    class Admin:
 		pass
 
-	def __unicode__(self):
-		return "%s" % (self.file)
-	
+    def __unicode__(self):
+        return self.get_short_name()
+       
+    #returns the non-path component of the file name (the real name)
+    def get_short_name(self):
+    	before_last_slash, slash, after_last_slash = self.file_contents.name.rpartition('/')
+    	short_name = after_last_slash
+    	return short_name
