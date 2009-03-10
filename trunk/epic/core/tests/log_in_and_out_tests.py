@@ -27,3 +27,9 @@ class LogInAndOutTestCase(TestCase):
 		self.failUnlessEqual(response.status_code, 302)
 		response = self.client.get('/')
 		self.failUnless("login" in response.content)
+		
+	def testLoginFrontPage(self):
+		response = self.client.get('/')
+		self.failUnless('username' in response.content)
+		self.failUnless('password' in response.content)
+		
