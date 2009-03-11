@@ -31,7 +31,7 @@ class DataSet(Item):
 		pass
 	
 	def __unicode__(self):
-		return "Dataset %s created at %s" % (self.name, self.created_at)
+		return "Dataset %s" % (self.name)
 	
 	@models.permalink
 	def get_absolute_url(self):
