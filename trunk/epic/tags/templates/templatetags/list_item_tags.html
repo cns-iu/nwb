@@ -1,0 +1,6 @@
+{% if tags %}
+	<p>{{ item_name }} was tagged as: {{ tags }}</p>
+	<a href="add_tags">Add tags</a>
+{% else %}
+	<a href="add_tags">Be the first to tag!</a>
+{% endif %}

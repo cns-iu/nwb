@@ -96,4 +96,5 @@ INSTALLED_APPS = (
     'epic.core',
     'epic.comments',
     'epic.djangoratings',
+    'epic.tags',
 )

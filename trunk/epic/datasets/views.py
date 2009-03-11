@@ -1,5 +1,5 @@
 from epic.core.models import Item
-from epic.datasets.forms import NewDataSetForm, RatingDataSetForm
+from epic.datasets.forms import NewDataSetForm, RatingDataSetForm, TagDataSetForm
 from epic.datasets.models import DataSetFile, DataSet, RATING_SCALE
 
 from django.contrib.auth.models import User
@@ -80,10 +80,12 @@ def create_dataset(request):
         	name = form.cleaned_data['name']
         	description = form.cleaned_data['description']
         	uploaded_file = form.cleaned_data['file']
+        	tags = form.cleaned_data['tags']
         	
         	#create a dataset with no files (yet), with metadata provided by the user
         	new_dataset = DataSet(creator=request.user, name=name, description=description)
         	new_dataset.save()
+        	new_dataset.tags.update_tags(tags, user=request.user)
         	
         	#create file model objects for each file the user uploaded, and set their parent to be the new dataset
         	#TODO: add support for multiple files
@@ -136,3 +138,20 @@ def rate_dataset(request, dataset_id, input_rating=None):
 				print form.errors
 				
 		return render_to_response('datasets/rate_dataset.html', {'form':form, 'user':request.user,})
+
+@login_required
+def tag_dataset(request, dataset_id):
+	dataset = DataSet.objects.get(pk = dataset_id)
+	if request.method != 'POST':
+		current_tags = dataset.tags.get_edit_string(user=request.user)
+		form = TagDataSetForm(initial={'tags': current_tags})
+		return render_to_response('datasets/tag_dataset.html', {'form':form, 'user':request.user,})
+	else:
+		form = TagDataSetForm(request.POST)
+		print request.POST
+		if form.is_valid():
+			tags = form.cleaned_data['tags']
+			dataset.tags.update_tags(tags, user=request.user)
+			return HttpResponseRedirect(reverse('epic.datasets.views.view_dataset', kwargs={'dataset_id':dataset.id,}))
+		else:
+			return render_to_response('datasets/tag_dataset.html', {'form':form, 'user':request.user,})

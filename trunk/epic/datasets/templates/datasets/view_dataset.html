@@ -5,6 +5,8 @@
 	{% if dataset.rating.get_average %}
 	<p>Rating: {{ dataset.rating.get_average }} with {{ dataset.rating.votes }} votes.</p>
 	{% endif %}
+	{% load tags_templatetags %}
+	{% list_item_tags dataset "DataSet" %}
 	{% if user.is_authenticated %}
 	<p>Rate!: 
 	<a href="rate/1/">Star1</a>
