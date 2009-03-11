@@ -12,6 +12,14 @@
 		  {% endifnotequal %}
 		{% endifnotequal %}
 	{% endifequal %}
+	
+	<p>
+		{% load comment_templatetags %}
+		{% list_comments datarequest %}
+		<hr>
+		{% display_post_comment_form user "datarequests" datarequest.id post_comment_form %}
+	</p>
+	
 	<p>{{ datarequest.description }}</p>
 	<a href="/">Home</a>
 	<a href="/datarequests/">Data Requests</a>

@@ -24,6 +24,14 @@
 	{% else %}
 	  <p>No attached files</p>
 	{% endif %}
+	
+	<p>
+		{% load comment_templatetags %}
+		{% list_comments dataset %}
+		<hr>
+		{% display_post_comment_form user "datasets" dataset.id post_comment_form %}
+	</p>
+	
 	<a href="/">Home</a>
 	<a href="/datasets/">Datasets</a>
 {% endblock %}

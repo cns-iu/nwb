@@ -9,17 +9,59 @@ from django.shortcuts import render_to_response, get_object_or_404
 
 from django.contrib.auth.decorators import login_required
 
+from epic.comments.models import Comment
+from epic.comments.forms import PostCommentForm
+from epic.comments.views import make_comment_view
+
 from datetime import datetime
 
 
 def index(request):
-	datasets = DataSet.objects.all().order_by('-created_at')
-	return render_to_response('datasets/index.html', {'datasets': datasets,'user':request.user})
-
+    datasets = DataSet.objects.all().order_by('-created_at')
+    return render_to_response('datasets/index.html', {'datasets': datasets, 'user': request.user})
 
 def view_dataset(request, dataset_id=None):
-	dataset = get_object_or_404(DataSet,pk=dataset_id)
-	return render_to_response('datasets/view_dataset.html', {'dataset': dataset, 'user':request.user})
+	dataset = get_object_or_404(DataSet, pk=dataset_id)
+	post_comment_form = PostCommentForm()
+	user = request.user
+	
+	return render_to_response('datasets/view_dataset.html', {
+		'dataset': dataset,
+		'user': user,
+		'post_comment_form': post_comment_form
+	})
+
+post_dataset_comment = make_comment_view(
+	DataSet,
+	"epic.datasets.views.view_dataset",
+	"datasets/view_dataset.html",
+	"dataset")
+#@login_required
+#def post_dataset_comment(request, dataset_id):
+#	user = request.user
+#	
+#	if user.is_authenticated():
+#		dataset = get_object_or_404(DataSet, pk=dataset_id)
+#		
+#		if request.method != "POST":
+#			return HttpResponseRedirect(reverse("epic.datasets.views.view_dataset", args=(dataset_id)))
+#		else:
+#			post_comment_form = PostCommentForm(request.POST)
+#			
+#			if post_comment_form.is_valid():
+#				comment_value = post_comment_form.cleaned_data["comment"]
+#				comment = Comment(posting_user=user, parent_item=dataset, value=comment_value)
+#				comment.save()
+#				
+#				return HttpResponseRedirect(reverse("epic.datasets.views.view_dataset", args=(dataset_id)))
+#			else:
+#				return render_to_response("datasets/view_dataset.html", {
+#					"dataset": dataset,
+#					"user": user,
+#					"post_comment_form": post_comment_form
+#				})
+#	
+#	return HttpResponseRedirect("/login/?next=%s" % request.path)
 
 @login_required
 def create_dataset(request):

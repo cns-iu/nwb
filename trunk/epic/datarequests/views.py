@@ -10,6 +10,10 @@ from django.shortcuts import render_to_response, get_object_or_404
 
 from django.contrib.auth.decorators import login_required
 
+from epic.comments.models import Comment
+from epic.comments.forms import PostCommentForm
+from epic.comments.views import make_comment_view
+
 from datetime import datetime
 
 
@@ -18,8 +22,47 @@ def index(request):
     return render_to_response('datarequests/index.html', {'datarequests': datarequests,'user':request.user})
 
 def view_datarequest(request, datarequest_id=None):
-	datarequest = get_object_or_404(DataRequest,pk=datarequest_id)
-	return render_to_response('datarequests/view_datarequest.html', {'datarequest':datarequest, 'user':request.user})
+	datarequest = get_object_or_404(DataRequest, pk=datarequest_id)
+	post_comment_form = PostCommentForm()
+	user = request.user
+	
+	return render_to_response('datarequests/view_datarequest.html', {
+		'datarequest': datarequest,
+		'user': user,
+		'post_comment_form': post_comment_form
+	})
+
+post_datarequest_comment = make_comment_view(
+	DataRequest,
+	"epic.datarequests.views.view_datarequest",
+	"datarequests/view_datarequest.html",
+	"datarequest")
+#@login_required
+#def post_datarequest_comment(request, datarequest_id):
+#	user = request.user
+#	
+#	if user.is_authenticated():
+#		datarequest = get_object_or_404(DataRequest, pk=datarequest_id)
+#		
+#		if request.method != "POST":
+#			return HttpResponseRedirect(reverse("epic.datarequests.views.view_datarequest", args=(datarequest_id)))
+#		else:
+#			post_comment_form = PostCommentForm(request.POST)
+#			
+#			if post_comment_form.is_valid():
+#				comment_value = post_comment_form.cleaned_data["comment"]
+#				comment = Comment(posting_user=user, parent_item=datarequest, value=comment_value)
+#				comment.save()
+#				
+#				return HttpResponseRedirect(reverse("epic.datarequests.views.view_datarequest", args=(datarequest_id)))
+#			else:
+#				return render_to_response("datarequests/view_datarequest.html", {
+#					"datarequest": datarequest,
+#					"user": user,
+#					"post_comment_form": post_comment_form
+#				})
+#	
+#	return HttpResponseRedirect("/login/?next=%s" % request.path)
 
 @login_required
 def new_datarequest(request):

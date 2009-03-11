@@ -93,5 +93,7 @@ INSTALLED_APPS = (
     'epic.core',
     'epic.datarequests',
     'epic.datasets',
+    'epic.core',
+    'epic.comments',
     'epic.djangoratings',
 )

@@ -1,0 +1,17 @@
+<h3>
+	Comments:
+</h3>
+
+<table border="1">
+	{% for comment in comments %}
+		<tr>
+			<td>
+				Posted by: {{ comment.posting_user.username }}
+			</td>
+			
+			<td>
+				{{ comment }}
+			</td>
+		</tr>
+	{% endfor %}
+</table>
