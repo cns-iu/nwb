@@ -16,11 +16,24 @@ class CommentOnDataSetTestCase(TestCase):
 		
 		self.user = User.objects.get(username="peebs")
 		self.comment = Comment(posting_user=self.user, parent_item=self.data_set, contents="abcd")
-		
-		pass
 	
 	def tearDown(self):
 		pass
+	
+	def testUserViewDataSetAndNotLoggedIn(self):
+		get_dataset_page_response = self.client.get("/datasets/1/")
+		self.failUnlessEqual(get_dataset_page_response.status_code, 200, "Error displaying dataset!")
+		
+		self.assertContains(get_dataset_page_response, "You must be logged in to comment.", 1)
+	
+	def testUserViewDataSetAndLoggedIn(self):
+		# Log the user in.
+		self.client.login(username="peebs", password="map")
+		
+		get_dataset_page_response = self.client.get("/datasets/1/")
+		self.failUnlessEqual(get_dataset_page_response.status_code, 200, "Error displaying dataset!")
+		
+		self.assertContains(get_dataset_page_response, '<form action="/datasets/1/comment/" method="POST">', 1)
 	
 	def testNotLoggedInUserPostComment(self):
 		post_comment_response = self.client.post("/datasets/1/comment/",
@@ -43,26 +56,25 @@ class CommentOnDataSetTestCase(TestCase):
 		post_comment_response = self.client.post("/datasets/1/comment/",
 			post_comment_form_data)
 		
+		# The posted-to URL should have redirected back here.
 		self.assertRedirects(post_comment_response, "/datasets/1/")
 		
+		# Verify that the comment is properly in the database.
 		self.failUnlessEqual(Comment.objects.all()[0].contents, "abcd")
 		
+		# Delete the test comment.
 		Comment.objects.all().delete()
 	
-	def testViewDataSetWithNoCommentsAndNotLoggedIn(self):
+	def testViewDataSetWithNoComments(self):
 		# Make sure there are no comments.
 		Comment.objects.all().delete()
 		
 		get_dataset_page_response = self.client.get("/datasets/1/")
 		self.failUnlessEqual(get_dataset_page_response.status_code, 200, "Error displaying dataset!")
 		
-		self.failUnless('Comments:\r\n</h3>\r\n\r\n<table border="1">\r\n\t\r\n</table>' in get_dataset_page_response.content,
-			"The comments should be empty!")
-		
-		self.failUnless("You must be logged in to comment." in get_dataset_page_response.content,
-			"The user should have to be logged in to even see the post comment form!")
+		self.assertContains(get_dataset_page_response, "There are no comments yet.", 1)
 	
-	def testViewDataSetWithACommentAndNotLoggedIn(self):
+	def testViewDataSetWithAComment(self):
 		# Make sure there are no prior comments.
 		Comment.objects.all().delete()
 		
@@ -73,29 +85,12 @@ class CommentOnDataSetTestCase(TestCase):
 		self.failUnlessEqual(get_dataset_page_response.status_code, 200, "Error displaying dataset!")
 		
 		# Make sure the posted comment is display.
-		self.failUnless("<td>\r\n\t\t\t\tPosted by: peebs\r\n\t\t\t</td>\r\n\t\t\t\r\n\t\t\t<td>\r\n\t\t\t\tabcd\r\n\t\t\t</td>\r\n\t\t</tr>\r\n\t\r\n</table>" in get_dataset_page_response.content,
-			"There should be a single comment, and it should have been posted by peebs!")
-		
-		self.failUnless("You must be logged in to comment." in get_dataset_page_response.content,
-			"The user should have to be logged in to even see the post comment form!")
+		self.assertContains(get_dataset_page_response, "Posted by:", 1)
+		self.assertContains(get_dataset_page_response, "Posted by: peebs", 1)
+		self.assertContains(get_dataset_page_response, "abcd", 1)
 		
 		# Delete the test comment.
 		Comment.objects.all().delete()
-	
-	def testViewDataSetWithNoCommentsAndLoggedIn(self):
-		# Make sure there are no comments.
-		Comment.objects.all().delete()
-		
-		self.client.login(username="peebs", password="map")
-		
-		get_dataset_page_response = self.client.get("/datasets/1/")
-		self.failUnlessEqual(get_dataset_page_response.status_code, 200, "Error displaying dataset!")
-		
-		self.failUnless('Comments:\r\n</h3>\r\n\r\n<table border="1">\r\n\t\r\n</table>' in get_dataset_page_response.content,
-			"The comments should be empty!")
-		
-		self.failUnless('<form action="/datasets/1/comment/" method="POST">' in get_dataset_page_response.content,
-			"Logged in users should be able to see the post comment form!")
 	
 	def testNotLoggedInUserAccessCommentURL(self):
 		get_dataset_comment_page_response = self.client.get("/datasets/1/comment/")

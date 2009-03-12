@@ -3,15 +3,23 @@
 </h3>
 
 <table border="1">
-	{% for comment in comments %}
+	{% if comments %}
+		{% for comment in comments %}
+			<tr>
+				<td>
+					Posted by: {{ comment.posting_user.username }}
+				</td>
+				
+				<td>
+					{{ comment }}
+				</td>
+			</tr>
+		{% endfor %}
+	{% else %}
 		<tr>
 			<td>
-				Posted by: {{ comment.posting_user.username }}
-			</td>
-			
-			<td>
-				{{ comment }}
+				There are no comments yet.
 			</td>
 		</tr>
-	{% endfor %}
+	{% endif %}
 </table>
