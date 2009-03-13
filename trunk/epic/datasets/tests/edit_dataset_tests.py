@@ -151,18 +151,18 @@ class EditDataSetTestCase(TestCase):
 		
 		self.assertEqual(updated_peebs_data_set.description,
 			self.post_edited_metadata_form_data["description"])
-		
+
+		# If you check for a number here, be aware that there will be two, one for the link and one for the text tag itself
 		self.assertContains(get_view_dataset_page_response,
-			"%s" % self.post_edited_metadata_form_data["tags"],
-			1)
+			"%s" % self.post_edited_metadata_form_data["tags"])
 		
 		# Verify that all of the dataset's new metadata is displayed in the form.
 		
-#		self.assertContains(get_view_dataset_page_response,
-#			"%s" % self.peebs_data_set.name,
-#			1)
-#		
-#		self.assertContains(get_view_dataset_page_response,
-#			"%s" % self.peebs_data_set.description,
-#			1)
-#		
+		self.assertContains(get_view_dataset_page_response,
+			"%s" % self.peebs_data_set.name,
+			1)
+		
+		self.assertContains(get_view_dataset_page_response,
+			"%s" % self.peebs_data_set.description,
+			1)
+		
