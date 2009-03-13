@@ -34,6 +34,14 @@
 		{% display_post_comment_form user "datasets" dataset.id post_comment_form %}
 	</p>
 	
+	{% ifequal user dataset.creator %}
+		<p>
+			<a href="/datasets/{{ dataset.id }}/edit/">
+				Edit this data set
+			</a>
+		</p>
+	{% endifequal %}
+	
 	<a href="/">Home</a>
 	<a href="/datasets/">Datasets</a>
 {% endblock %}

@@ -84,7 +84,7 @@ class Tagging(models.Model):
 	"""
 	objects = TagManager()
 	
-	tag = models.CharField(max_length=50)
+	tag = models.CharField(max_length=Item.MAX_ITEM_INDIVIDUAL_TAG_LENGTH)
 	user = models.ForeignKey(User, related_name="tags")
 	item = models.ForeignKey(Item, related_name="tags")
 	created_at = models.DateTimeField(auto_now_add=True)

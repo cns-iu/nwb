@@ -1,0 +1,13 @@
+<form action="/datasets/{{ dataset.id }}/edit/" method="POST">
+	<table>
+		{{ edit_dataset_metadata_form.as_table }}
+	</table>
+	
+	<input type="submit" value="Submit Metadata Changes" />
+	
+	<br />
+	
+	<a href = "/datasets/{{ dataset.id }}/">
+		Cancel Metadata Changes
+	</a>
+</form>

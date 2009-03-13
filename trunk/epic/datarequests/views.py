@@ -1,7 +1,7 @@
 from epic.core.models import Item
 
 from epic.datarequests.models import DataRequest
-from epic.datarequests.forms import DataRequestForm
+from epic.datarequests.forms import NewDataRequestForm
 
 from django.contrib.auth.models import User
 from django.core.urlresolvers import reverse
@@ -37,41 +37,15 @@ post_datarequest_comment = make_comment_view(
 	"epic.datarequests.views.view_datarequest",
 	"datarequests/view_datarequest.html",
 	"datarequest")
-#@login_required
-#def post_datarequest_comment(request, datarequest_id):
-#	user = request.user
-#	
-#	if user.is_authenticated():
-#		datarequest = get_object_or_404(DataRequest, pk=datarequest_id)
-#		
-#		if request.method != "POST":
-#			return HttpResponseRedirect(reverse("epic.datarequests.views.view_datarequest", args=(datarequest_id)))
-#		else:
-#			post_comment_form = PostCommentForm(request.POST)
-#			
-#			if post_comment_form.is_valid():
-#				comment_value = post_comment_form.cleaned_data["comment"]
-#				comment = Comment(posting_user=user, parent_item=datarequest, value=comment_value)
-#				comment.save()
-#				
-#				return HttpResponseRedirect(reverse("epic.datarequests.views.view_datarequest", args=(datarequest_id)))
-#			else:
-#				return render_to_response("datarequests/view_datarequest.html", {
-#					"datarequest": datarequest,
-#					"user": user,
-#					"post_comment_form": post_comment_form
-#				})
-#	
-#	return HttpResponseRedirect("/login/?next=%s" % request.path)
 
 @login_required
 def new_datarequest(request):
 	user = request.user
 	if request.method != 'POST':
 		#New form needed
-		form = DataRequestForm()
+		form = NewDataRequestForm()
 	else:
-		form = DataRequestForm(request.POST)
+		form = NewDataRequestForm(request.POST)
 		if form.is_valid():
 			# The request instance from from.save() would not have an creator since we don't let the user set this
 			#   It is therefore necessary that we do not commit and handle setting the creator here. 

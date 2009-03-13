@@ -36,9 +36,14 @@ from django.db import models
 from django.contrib.auth.models import User
 
 class Item(models.Model):
+	MAX_ITEM_NAME_LENGTH = 256
+	MAX_ITEM_DESCRIPTION_LENGTH = 16384
+	MAX_ITEM_TAGS_LENGTH = 1024
+	MAX_ITEM_INDIVIDUAL_TAG_LENGTH = 64
+	
 	creator = models.ForeignKey(User)
-	name = models.CharField(max_length=256)
-	description = models.TextField()
+	name = models.CharField(max_length=MAX_ITEM_NAME_LENGTH)
+	description = models.CharField(max_length=MAX_ITEM_DESCRIPTION_LENGTH)
 	created_at = models.DateTimeField(auto_now_add=True, db_index=True)
 									
 	@models.permalink
@@ -68,6 +73,11 @@ class ProfileManager(models.Manager):
 		return profile
 
 class Profile(models.Model):
+	MAX_USERNAME_LENGTH = 16
+	MAX_USER_PASSWORD_LENGTH = 256
+	MAX_USER_EMAIL_LENGTH = 256
+	MAX_USER_PROFILE_LENGTH = 512
+
 	objects = ProfileManager()
 	user = models.ForeignKey(User, unique=True)
-	affiliation = models.CharField(max_length=512)
+	affiliation = models.CharField(max_length=MAX_USER_PROFILE_LENGTH)

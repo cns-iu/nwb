@@ -1,5 +1,5 @@
 from epic.core.models import Item
-from epic.datasets.forms import NewDataSetForm, RatingDataSetForm, TagDataSetForm
+from epic.datasets.forms import NewDataSetForm, EditDataSetForm, RatingDataSetForm, TagDataSetForm
 from epic.datasets.models import DataSetFile, DataSet, RATING_SCALE
 
 from django.contrib.auth.models import User
@@ -36,32 +36,6 @@ post_dataset_comment = make_comment_view(
 	"epic.datasets.views.view_dataset",
 	"datasets/view_dataset.html",
 	"dataset")
-#@login_required
-#def post_dataset_comment(request, dataset_id):
-#	user = request.user
-#	
-#	if user.is_authenticated():
-#		dataset = get_object_or_404(DataSet, pk=dataset_id)
-#		
-#		if request.method != "POST":
-#			return HttpResponseRedirect(reverse("epic.datasets.views.view_dataset", args=(dataset_id)))
-#		else:
-#			post_comment_form = PostCommentForm(request.POST)
-#			
-#			if post_comment_form.is_valid():
-#				comment_value = post_comment_form.cleaned_data["comment"]
-#				comment = Comment(posting_user=user, parent_item=dataset, value=comment_value)
-#				comment.save()
-#				
-#				return HttpResponseRedirect(reverse("epic.datasets.views.view_dataset", args=(dataset_id)))
-#			else:
-#				return render_to_response("datasets/view_dataset.html", {
-#					"dataset": dataset,
-#					"user": user,
-#					"post_comment_form": post_comment_form
-#				})
-#	
-#	return HttpResponseRedirect("/login/?next=%s" % request.path)
 
 @login_required
 def create_dataset(request):
@@ -101,9 +75,46 @@ def create_dataset(request):
         	#form wasn't filled out correctly
             #show them the form again (modified to show which fields weren't filled out correctly)
             return render_to_response('datasets/create_dataset.html', {'form':form, 'user':request.user,})
-              
-    
-   	
+
+@login_required
+def edit_dataset(request, dataset_id):
+	dataset = get_object_or_404(DataSet, pk=dataset_id)
+	user = request.user
+	
+	# Make sure the current user is the creator of the dataset.
+	if user != dataset.creator:
+		return HttpResponseRedirect(reverse("epic.datasets.views.view_dataset",
+			kwargs={ "dataset_id": dataset.id }))
+	
+	if request.method != "POST":
+		current_tags = dataset.tags.get_edit_string(user=request.user)
+		initial_data_dictionary = {
+			"name": dataset.name,
+			"description": dataset.description,
+			"tags": current_tags
+		}
+		
+		edit_dataset_metadata_form = EditDataSetForm(initial=initial_data_dictionary)
+	else:
+		edit_dataset_metadata_form = EditDataSetForm(request.POST)
+		
+		if edit_dataset_metadata_form.is_valid():
+			dataset.name = edit_dataset_metadata_form.cleaned_data["name"]
+			dataset.description = edit_dataset_metadata_form.cleaned_data["description"]
+			dataset.save()
+			
+			tags = edit_dataset_metadata_form.cleaned_data["tags"]
+			dataset.tags.update_tags(tags, user=user)
+			
+			return HttpResponseRedirect(reverse("epic.datasets.views.view_dataset",
+				kwargs={ "dataset_id": dataset.id }))
+	
+	return render_to_response("datasets/edit_dataset.html", {
+		"dataset": dataset,
+		"user": user,
+		"edit_dataset_metadata_form": edit_dataset_metadata_form
+	})
+
 @login_required
 def rate_dataset(request, dataset_id, input_rating=None):
 	#TODO: Make commenting ajaxified?
