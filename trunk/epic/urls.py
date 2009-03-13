@@ -15,4 +15,5 @@ urlpatterns = patterns('',
 	(r'^comments/', include('epic.comments.urls')),
 	# TODO: Must change static media serving for security and performance reasons later on.
     (r'^media/(?P<path>.*)$', 'django.views.static.serve', {'document_root': '/tmp/django_uploads'}),
+    (r'^tags/', include('epic.tags.urls')),
 )

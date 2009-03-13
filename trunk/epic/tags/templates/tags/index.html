@@ -1,0 +1,8 @@
+{% extends "core/base.html" %}
+{% block content %}
+<h3>Tags (sorted by frequency)</h3>
+{% for count, tag in count_tag_list %}
+{% load tags_templatetags %}
+<p><a href="{% get_tag_url tag %}">{{ tag }}</a> - {{ count }}</p>
+{% endfor %}
+{% endblock %}

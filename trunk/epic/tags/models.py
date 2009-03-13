@@ -7,6 +7,9 @@ from django.db import IntegrityError
 from epic.core.models import Item
 from epic.tags.utils import parse_tag_input, edit_string_for_tags
 
+from django.db import connection, models
+from django.db.models.query import QuerySet
+qn = connection.ops.quote_name
 
 class TagManager(models.Manager):
 	"""
@@ -42,6 +45,25 @@ class TagManager(models.Manager):
 		list_of_tags = [value['tag'] for value in self.filter(**filters).order_by('tag').values('tag')]
 		return ", ".join(list_of_tags)
 	
+	def get_frequency_list(self):
+		model = Tagging
+		model_table = qn(model._meta.db_table)
+		model_pk = '%s.%s' % (model_table, qn(model._meta.pk.column))
+		query = """
+			SELECT tag, COUNT(tag)
+			FROM %s
+			GROUP BY tag
+			ORDER BY COUNT(tag) DESC
+			""" % (model_table)
+		cursor = connection.cursor()
+		cursor.execute(query)
+		count_tag = []
+		for row in cursor.fetchall():
+			count = row[1]
+			tag_name = row[0]
+			count_tag.append([count, tag_name])
+		return count_tag
+	
 	def get_edit_string(self, item=None, user=None):
 		filters = {}
 		if item is not None:
@@ -50,6 +72,10 @@ class TagManager(models.Manager):
 			filters['user'] = user
 		list_of_tags = self.filter(**filters).order_by('tag')
 		return edit_string_for_tags(list_of_tags)
+	
+	@models.permalink
+	def get_url_for_tag(self, tag_name):
+		return ('epic.tags.views.view_items_for_tag', [], {'tag_name':tag_name})
 	
 #TODO: Make it possible to view a tag(?? or not)
 class Tagging(models.Model):
@@ -68,3 +94,6 @@ class Tagging(models.Model):
 
 	def __unicode__(self):
 		return "%s tagged %s as %s" % (self.user.username, self.item, self.tag)
+	
+	def get_absolute_url(self):
+		return Tagging.objects.get_url_for_tag(self.tag)

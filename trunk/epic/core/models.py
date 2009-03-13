@@ -40,7 +40,21 @@ class Item(models.Model):
 	name = models.CharField(max_length=256)
 	description = models.TextField()
 	created_at = models.DateTimeField(auto_now_add=True, db_index=True)
-
+									
+	@models.permalink
+	def get_absolute_url(self):
+		return self.specific.get_absolute_url()
+	
+	# TODO: Fix this terrible hack
+	def _specific(self):
+		possibilities = ['dataset', 'datarequest']
+		for possibility in possibilities:
+			if hasattr(self, possibility):
+				return getattr(self, possibility)
+		raise Exception("No subclass found for %s" % (self))
+	
+	specific = property(_specific)
+	
 class ProfileManager(models.Manager):
 	def for_user(self, user):
 		try:
