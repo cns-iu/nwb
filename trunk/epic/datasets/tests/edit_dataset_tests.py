@@ -157,12 +157,9 @@ class EditDataSetTestCase(TestCase):
 			"%s" % self.post_edited_metadata_form_data["tags"])
 		
 		# Verify that all of the dataset's new metadata is displayed in the form.
+		self.assertContains(get_view_dataset_page_response,
+			"%s" % self.peebs_data_set.name)
 		
 		self.assertContains(get_view_dataset_page_response,
-			"%s" % self.peebs_data_set.name,
-			1)
-		
-		self.assertContains(get_view_dataset_page_response,
-			"%s" % self.peebs_data_set.description,
-			1)
+			"%s" % self.peebs_data_set.description)
 		
