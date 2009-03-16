@@ -4,9 +4,12 @@ These are the DataSet and DataSetFile models.
 """
 from epic.core.models import Item
 from epic.djangoratings import RatingField
+from epic.core.util.customfilefield import CustomFileField
 
+from epic.core.util.multifile import MultiFileField
 from django.db import models
 from django.contrib.auth.models import User
+
 
 RATING_SCALE = [(n, str(n)) for n in range(1, 6)]
 
@@ -23,7 +26,6 @@ class DataSet(Item):
 	>>> dataset.save()
 	
 	"""
-	
 	rating = RatingField(choices=RATING_SCALE)
 	
 	#supposedly better to do this some other newer way where it's not nested
@@ -39,17 +41,23 @@ class DataSet(Item):
 	
     
 class DataSetFile(models.Model):
-    parent_dataset = models.ForeignKey(DataSet, related_name="files")
-    file_contents = models.FileField(upload_to="dataset_files")
-    
-    class Admin:
-		pass
+	
+	parent_dataset = models.ForeignKey(DataSet, related_name="files")
+	file_contents = CustomFileField()
+	uploaded_at = models.DateTimeField(auto_now_add=True, db_index=True)
 
-    def __unicode__(self):
-        return self.get_short_name()
+	class Admin:
+		pass
+	
+	def __unicode__(self):
+		return self.get_short_name()
        
-    #returns the non-path component of the file name (the real name)
-    def get_short_name(self):
-    	before_last_slash, slash, after_last_slash = self.file_contents.name.rpartition('/')
-    	short_name = after_last_slash
-    	return short_name
+
+	def get_short_name(self):
+		#returns the non-path component of the file name (the real name)
+		before_last_slash, slash, after_last_slash = self.file_contents.name.rpartition('/')
+		short_name = after_last_slash
+		return short_name
+	
+	def get_upload_to(self, attrname=None):
+		return str("dataset_files/%d/" % self.parent_dataset.id)

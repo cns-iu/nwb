@@ -41,21 +41,28 @@ post_dataset_comment = make_comment_view(
 def create_dataset(request):
     if request.method != 'POST':
         #user has not filled out the upload form yet
-        
-        #show them the upload form
         form = NewDataSetForm()
-        return render_to_response('datasets/create_dataset.html', {'form':form, 'user':request.user,})
+        return render_to_response('datasets/create_dataset.html', {'form': form, 'user':request.user,})
     else:
     	#user has filled out the upload form
-        #handle the submission of their upload form  
+    	
         form = NewDataSetForm(request.POST, request.FILES)
         
         if form.is_valid():
         	name = form.cleaned_data['name']
         	description = form.cleaned_data['description']
-        	uploaded_file = form.cleaned_data['file']
+        	uploaded_files = form.cleaned_data['files']
+        	tags = form.cleaned_data['tags']
         	tags = form.cleaned_data['tags']
         	
+        	new_dataset = DataSet.objects.create(creator=request.user, name=name, description=description)
+        	new_dataset.tags.update_tags(tags, user=request.user)
+			
+        	for uploaded_file in uploaded_files:
+        	 	new_datasetfile = DataSetFile(parent_dataset=new_dataset, file_contents=uploaded_file)
+        		new_datasetfile.file_contents.save(uploaded_file.name, uploaded_file, save=True)
+        		new_datasetfile.save()
+
         	#create a dataset with no files (yet), with metadata provided by the user
         	new_dataset = DataSet(creator=request.user, name=name, description=description)
         	new_dataset.save()
@@ -73,7 +80,6 @@ def create_dataset(request):
         	return HttpResponseRedirect(reverse('epic.datasets.views.view_dataset', kwargs={'dataset_id':new_dataset.id,}))
         else:
         	#form wasn't filled out correctly
-            #show them the form again (modified to show which fields weren't filled out correctly)
             return render_to_response('datasets/create_dataset.html', {'form':form, 'user':request.user,})
 
 @login_required
