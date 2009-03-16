@@ -1,0 +1,24 @@
+{% extends "core/base.html" %}
+{% block content %}
+<h3>Sent Messages</h3>
+{% if sent_messages %}
+  <ul>
+    {% for message in sent_messages %}
+      <li><a href="{{ message.get_absolute_url }}">{{ message.subject }}</a></li>
+    {% endfor %}
+  </ul>
+{% else %}
+  <p>No messages yet.</p>
+{% endif %}
+<h3>Received Messages</h3>
+{% if received_messages %}
+  <ul>
+    {% for message in received_messages %}
+      <li><a href="{{ message.get_absolute_url }}">{{ message.subject }}</a></li>
+    {% endfor %}
+  </ul>
+{% else %}
+  <p>No messages yet.</p>
+{% endif %}
+<a href="/">Home</a>
+{% endblock %}

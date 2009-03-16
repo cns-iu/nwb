@@ -8,7 +8,7 @@
             <ul class="messagelist">{% for message in messages %}<li>{{ message }}</li>{% endfor %}</ul>
         {% endif %}
 		{% if user.is_authenticated %}
-            <div id="user-tools">Welcome, <strong>{% if user.first_name %}{{ user.first_name }}{% else %}{{ user.username }}{% endif %}</strong>. <br />{% block userlinks %}<a href="/user/">Profile</a> | <a href="/logout/">Log out</a>{% endblock %}</div>
+            <div id="user-tools">Welcome, <strong>{% if user.first_name %}{{ user.first_name }}{% else %}{{ user.username }}{% endif %}</strong>. <br />{% block userlinks %}<a href="/user/">Profile</a> | <a href="/user/messages">Messages</a> | <a href="/logout/">Log out</a>{% endblock %}</div>
         {% else %}
 			<div id="user-tools">
             {% block login_box %}

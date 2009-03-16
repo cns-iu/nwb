@@ -16,6 +16,9 @@ DATABASE_PASSWORD = ''         # Not used with sqlite3.
 DATABASE_HOST = ''             # Set to empty string for localhost. Not used with sqlite3.
 DATABASE_PORT = ''             # Set to empty string for default. Not used with sqlite3.
 
+EMAIL_HOST = 'localhost'
+EMAIL_PORT = '1025'
+
 # Local time zone for this installation. Choices can be found here:
 # http://en.wikipedia.org/wiki/List_of_tz_zones_by_name
 # although not all choices may be available on all operating systems.
@@ -97,4 +100,5 @@ INSTALLED_APPS = (
     'epic.comments',
     'epic.djangoratings',
     'epic.tags',
+    'epic.messages',
 )
