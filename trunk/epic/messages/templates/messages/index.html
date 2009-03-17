@@ -1,19 +1,25 @@
 {% extends "core/base.html" %}
 {% block content %}
-<h3>Sent Messages</h3>
-{% if sent_messages %}
+<br />
+<a href="/user/{{ user.id }}/messages/new">Send a new message</a>
+<h3>Received Messages</h3>
+{% if received_messages %}
   <ul>
-    {% for message in sent_messages %}
+    {% for message in received_messages %}
+      {% if message.read %}
       <li><a href="{{ message.get_absolute_url }}">{{ message.subject }}</a></li>
+      {% else %}
+      <li><blink><a href="{{ message.get_absolute_url }}">{{ message.subject }}</a></blink></li>
+      {% endif %}
     {% endfor %}
   </ul>
 {% else %}
   <p>No messages yet.</p>
 {% endif %}
-<h3>Received Messages</h3>
-{% if received_messages %}
+<h3>Sent Messages</h3>
+{% if sent_messages %}
   <ul>
-    {% for message in received_messages %}
+    {% for message in sent_messages %}
       <li><a href="{{ message.get_absolute_url }}">{{ message.subject }}</a></li>
     {% endfor %}
   </ul>
