@@ -2,6 +2,7 @@ from django.test import TestCase
 
 from epic.datarequests.models import DataRequest
 from django.contrib.auth.models import User
+from django.template import TemplateDoesNotExist
 
 class DataRequestTestCase(TestCase):
 	fixtures = ['initial_data', 'single_request', 'initial_users']
@@ -54,8 +55,12 @@ class DataRequestTestCase(TestCase):
 		self.failUnless("Spectacular request indeed" in response.content)
 	
 	def test404NonExistent(self):
-		response = self.client.get('/datarequests/10000000000/')
-		self.failUnlessEqual(response.status_code , 404)
+		try:
+			response = self.client.get('/datarequests/10000000000/')
+			self.failUnlessEqual(response.status_code , 404)
+		except TemplateDoesNotExist:
+			pass
+			
 	
 	def testAddDataRequestPageNotLoggedIn(self):
 		response = self.client.get('/datarequests/new/')
