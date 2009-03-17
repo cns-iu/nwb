@@ -30,12 +30,12 @@ def view_sent_message(request, user_id, sentmessage_id):
 	
 	# Sent user to their page if they try to find another user's page...
 	if (user != user_from_id):
-		print "Users didn't match, sending to correct page."
+		#print "Users didn't match, sending to correct page."
 		return HttpResponseRedirect(reverse('epic.messages.views.view_sent_message', kwargs={'user_id':user.id, 'sentmessage_id':sentmessage_id}))
 
 	# Sent the user to the index if they are not the sender or receiver of this message
 	if (user.id != sent_message.sender.id) and (user.id != sent_message.recipient.id):
-		print "User shouldn't be allowed to view this message: %s != (%s | %s)" % (user.id, sent_message.sender.id, sent_message.recipient.id)
+		#print "User shouldn't be allowed to view this message: %s != (%s | %s)" % (user.id, sent_message.sender.id, sent_message.recipient.id)
 		return HttpResponseRedirect(reverse('epic.messages.views.index', kwargs={'user_id':user.id,}))
 	
 	return render_to_response('messages/view_sent_message.html', {'user':user, 'sent_message':sent_message,})
@@ -48,12 +48,12 @@ def view_received_message(request, user_id, receivedmessage_id):
 	
 	# Sent user to their page if they try to find another user's page...
 	if (user != user_from_id):
-		print "Users didn't match, sending to correct page."
+		#print "Users didn't match, sending to correct page."
 		return HttpResponseRedirect(reverse('epic.messages.views.view_received_message', kwargs={'user_id':user.id, 'receivedmessage_id':receivedmessage_id}))
 
 	# Sent the user to the index if they are not the sender or receiver of this message
 	if (user.id != received_message.sender.id) and (user.id != received_message.recipient.id):
-		print "User shouldn't be allowed to view this message: %s != (%s | %s)" % (user.id, received_message.sender.id, received_message.recipient.id)
+		#print "User shouldn't be allowed to view this message: %s != (%s | %s)" % (user.id, received_message.sender.id, received_message.recipient.id)
 		return HttpResponseRedirect(reverse('epic.messages.views.index', kwargs={'user_id':user.id,}))
 	
 	received_message.read = True
@@ -68,12 +68,12 @@ def reply_received_message(request, user_id, receivedmessage_id):
 
 	# Sent user to their page if they try to find another user's page...
 	if (user != user_from_id):
-		print "Users didn't match, sending to correct page."
+		#print "Users didn't match, sending to correct page."
 		return HttpResponseRedirect(reverse('epic.messages.views.reply_received_message', kwargs={'user_id':user.id, 'receivedmessage_id':receivedmessage_id}))
 
 	# Sent the user to the index if they are not the sender or receiver of this message
 	if (user.id != received_message.sender.id) and (user.id != received_message.recipient.id):
-		print "User shouldn't be allowed to view this message: %s != (%s | %s)" % (user.id, received_message.sender.id, received_message.recipient.id)
+		#print "User shouldn't be allowed to view this message: %s != (%s | %s)" % (user.id, received_message.sender.id, received_message.recipient.id)
 		return HttpResponseRedirect(reverse('epic.messages.views.index', kwargs={'user_id':user.id,}))
 	
 	if request.method != 'POST':
@@ -100,7 +100,7 @@ def reply_received_message(request, user_id, receivedmessage_id):
 			
 			return HttpResponseRedirect(reverse('epic.messages.views.view_sent_message', kwargs={'user_id':sender.id, 'sentmessage_id':new_sent_message.id,}))
 		else:
-			print "invalid reply form"
+			#print "invalid reply form"
 			return render_to_response('messages/reply_message.html', {'form':form, 'user':request.user,})
 	
 @login_required
@@ -110,7 +110,7 @@ def create_new_message(request, user_id):
 	
 	# Sent user to their page if they try to find another user's page...
 	if (sender != user_from_id):
-		print "Users didn't match, sending to correct page."
+		#print "Users didn't match, sending to correct page."
 		return HttpResponseRedirect(reverse('epic.messages.views.create_new_message', kwargs={'user_id':user.id}))
 	
 	if request.method != 'POST':
