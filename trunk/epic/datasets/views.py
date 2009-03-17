@@ -62,19 +62,6 @@ def create_dataset(request):
         	 	new_datasetfile = DataSetFile(parent_dataset=new_dataset, file_contents=uploaded_file)
         		new_datasetfile.file_contents.save(uploaded_file.name, uploaded_file, save=True)
         		new_datasetfile.save()
-
-        	#create a dataset with no files (yet), with metadata provided by the user
-        	new_dataset = DataSet(creator=request.user, name=name, description=description)
-        	new_dataset.save()
-        	new_dataset.tags.update_tags(tags, user=request.user)
-        	
-        	#create file model objects for each file the user uploaded, and set their parent to be the new dataset
-        	#TODO: add support for multiple files
-        	new_datasetfile = DataSetFile(parent_dataset=new_dataset, file_contents=uploaded_file)
-        	#(in addition to saving the uploaded file on the file system, with the save=True option this saves the model as well)
-        	#TODO: put this in a directory specific to this dataset
-        	new_datasetfile.file_contents.save(uploaded_file.name, uploaded_file, save=True)
-        	#f.save() #this is redundant because of the save=True
         	
         	#show them the page for the dataset we just created
         	return HttpResponseRedirect(reverse('epic.datasets.views.view_dataset', kwargs={'dataset_id':new_dataset.id,}))
