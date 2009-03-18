@@ -25,6 +25,23 @@ class IndexTestCase(TestCase):
 		self.failUnlessEqual(data[0].name, "Important Data", "The default data we loaded is named incorrectly!")
 		self.failUnless("Important Data" in response.content, "Data set names aren't displayed on the list page!")
 		
+class ViewDataSetTestCase(TestCase):
+	fistures = ['initial_data']
+	
+	def testExistance(self):
+		admin = User.objects.get(username="admin")
+		peebs = User.objects.get(username="peebs")
+		ds1 = DataSet.objects.create(name="Important Data", description="A very important piece of data", slug="important-data", creator=admin)
+		
+		# Go to the page
+		response = self.client.get(ds1.get_absolute_url())
+		self.failUnlessEqual(response.status_code, 200)
+		
+		# Check for the values on the page
+		self.assertTrue(ds1.name in response.content)
+		self.assertTrue(ds1.description in response.content)
+		self.assertTrue("Permanent URL:" in response.content)
+		
 class SlugTestCase(TestCase):
 	fixtures = ['initial_data']
 	

@@ -63,7 +63,9 @@ class ActionEditDataSetPageTestCase(TestCase):
 		pass
 	
 	def testLoggedOut(self):
-		# Make sure that logged out users can't edit the data
+		"""
+		Make sure that logged out users can't edit the data
+		"""
 		
 		# Create objects to be used for this test
 		admin = User.objects.get(username="admin")
@@ -83,7 +85,9 @@ class ActionEditDataSetPageTestCase(TestCase):
 		self.assertRedirects(response, "/login/?next=%sedit/" % (ds1.get_absolute_url()))
 		
 	def testLoggedInNotCreator(self):
-		# Verify that only the creator can edit data
+		""" 
+		Verify that only the creator can edit data
+		"""
 		
 		# Create objects to be used for this test
 		admin = User.objects.get(username="admin")
@@ -107,7 +111,9 @@ class ActionEditDataSetPageTestCase(TestCase):
 		self.assertRedirects(response, ds1.get_absolute_url())
 
 	def testLoggedInCreator(self):
-		# Verify that the creator can edit data
+		"""
+		Verify that the creator can edit data.
+		"""
 		
 		# Create objects to be used for this test
 		admin = User.objects.get(username="admin")
@@ -125,8 +131,18 @@ class ActionEditDataSetPageTestCase(TestCase):
 		login = self.client.login(username='admin', password='admin')
 		self.failUnless(login, 'Could not login')
 		
+		# Check that the slug will change
+		old_slug = ds1.slug
+		
 		# Edit the dataset
+		# TODO: make this a reverse
 		response = self.client.post('%sedit/' % (ds1.get_absolute_url()), post_data)
+		
+		# Grad the dataset again since it has hopfully changed in the database
+		ds1 = DataSet.objects.get(pk=ds1.id)
+		
+		new_slug = ds1.slug
+		self.assertFalse(old_slug == new_slug)
 		
 		# Verify that the changes were made
 		response = self.client.get(ds1.get_absolute_url())

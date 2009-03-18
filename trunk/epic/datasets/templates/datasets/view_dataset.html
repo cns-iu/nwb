@@ -2,6 +2,7 @@
 {% block content %}
 	<h3>Dataset {{ dataset.name }}</h3>
 	<p>Owned by {{ dataset.creator }} and uploaded {{ dataset.created_at }}</p>
+	<p>Permanent URL: {{ dataset.get_absolute_url }}
 	{% load djangoratings_templatetags %}
 	{% show_rating dataset %}
 	{% if user.is_authenticated %}
