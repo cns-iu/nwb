@@ -3,17 +3,17 @@
 <div id="column1"> 
 	{% if user.is_authenticated %}
 		<div id="requestbox">
-		<h1>Make a Request</h1>
-	   	<br />
-		<form enctype="multipart/form-data" action="/datarequests/new/" method="POST">
-	    {{ datarequest_form.name }}
-	    <br />
-	    <br />
-	    {{ datarequest_form.description }}
-	    <p><input type="submit" value="Upload" /></p>
-		</form>
+			<h1>Make a Request</h1>
+		   	<br />
+			<form enctype="multipart/form-data" action="/datarequests/new/" method="POST">
+		    {{ datarequest_form.name }}
+		    <br />
+		    <br />
+		    {{ datarequest_form.description }}
+		    <p><input type="submit" value="Upload" /></p>
+			</form>
+		</div>
 	{% endif %}
-	</div>
 	{% load datarequest_templatetags %}
 	{% display_recently_fulfilled_requests %}
 </div>
