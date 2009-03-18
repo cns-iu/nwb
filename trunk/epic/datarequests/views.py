@@ -21,8 +21,8 @@ def index(request):
     datarequests = DataRequest.objects.exclude(status='C').order_by('-created_at')
     return render_to_response('datarequests/index.html', {'datarequests': datarequests,'user':request.user})
 
-def view_datarequest(request, datarequest_id=None):
-	datarequest = get_object_or_404(DataRequest, pk=datarequest_id)
+def view_datarequest(request, item_id=None):
+	datarequest = get_object_or_404(DataRequest, pk=item_id)
 	post_comment_form = PostCommentForm()
 	user = request.user
 	
@@ -52,19 +52,19 @@ def new_datarequest(request):
 			datarequest = form.save(commit=False)
 			datarequest.creator = user
 			datarequest.save()
-			return HttpResponseRedirect(reverse('epic.datarequests.views.view_datarequest', kwargs={'datarequest_id':datarequest.id,}))
+			return HttpResponseRedirect(reverse('epic.datarequests.views.view_datarequest', kwargs={'item_id':datarequest.id,}))
 		else:
 			#Form will have errors which will be displayed by the new_datarequest.html page
 			pass
 	return render_to_response('datarequests/new_datarequest.html', {'form':form, 'user':user,})
 
 @login_required
-def edit_datarequest(request, datarequest_id=None):
+def edit_datarequest(request, item_id=None):
 	user = request.user
-	datarequest = get_object_or_404(DataRequest,pk=datarequest_id)
+	datarequest = get_object_or_404(DataRequest,pk=item_id)
 	if datarequest.creator != user:
 		#only a request's owner should be able to change it
-		return HttpResponseRedirect(reverse('epic.datarequests.views.view_datarequest', kwargs={'datarequest_id':datarequest.id,}))
+		return HttpResponseRedirect(reverse('epic.datarequests.views.view_datarequest', kwargs={'item_id':datarequest.id,}))
 	else:
 		if request.method != 'POST':
 			#User hasn't seen the form yet, so fill in what we know
@@ -73,32 +73,32 @@ def edit_datarequest(request, datarequest_id=None):
 			form = DataRequestForm(request.POST, instance=datarequest)
 			if form.is_valid():
 				form.save()
-				return HttpResponseRedirect(reverse('epic.datarequests.views.view_datarequest', kwargs={'datarequest_id':datarequest.id,}))
+				return HttpResponseRedirect(reverse('epic.datarequests.views.view_datarequest', kwargs={'item_id':datarequest.id,}))
 			else:
 				#Form will have errors which will be displayed by the new_datarequest.html page
 				pass
 		return render_to_response('datarequests/edit_datarequest.html', {'form':form, 'user':user, 'datarequest':datarequest})
 	
 @login_required
-def cancel_datarequest(request, datarequest_id=None):
+def cancel_datarequest(request, item_id=None):
 	user = request.user
-	datarequest = get_object_or_404(DataRequest,pk=datarequest_id)
+	datarequest = get_object_or_404(DataRequest,pk=item_id)
 	if datarequest.creator != user:
 		#only a request's owner should be able to change it
-		return HttpResponseRedirect(reverse('epic.datarequests.views.view_datarequest', kwargs={'datarequest_id':datarequest.id,}))
+		return HttpResponseRedirect(reverse('epic.datarequests.views.view_datarequest', kwargs={'item_id':datarequest.id,}))
 	else:
 		datarequest.cancel()
 		datarequest.save()
-		return HttpResponseRedirect(reverse('epic.datarequests.views.view_datarequest', kwargs={'datarequest_id':datarequest.id,}))
+		return HttpResponseRedirect(reverse('epic.datarequests.views.view_datarequest', kwargs={'item_id':datarequest.id,}))
 
 @login_required
-def fulfill_datarequest(request, datarequest_id=None):
+def fulfill_datarequest(request, item_id=None):
 	user = request.user
-	datarequest = get_object_or_404(DataRequest,pk=datarequest_id)
+	datarequest = get_object_or_404(DataRequest,pk=item_id)
 	if datarequest.creator != user:
 		#only a request's owner should be able to change it
-		return HttpResponseRedirect(reverse('epic.datarequests.views.view_datarequest', kwargs={'datarequest_id':datarequest.id,}))
+		return HttpResponseRedirect(reverse('epic.datarequests.views.view_datarequest', kwargs={'item_id':datarequest.id,}))
 	else:
 		datarequest.fulfill()
 		datarequest.save()
-		return HttpResponseRedirect(reverse('epic.datarequests.views.view_datarequest', kwargs={'datarequest_id':datarequest.id,}))	
+		return HttpResponseRedirect(reverse('epic.datarequests.views.view_datarequest', kwargs={'item_id':datarequest.id,}))	

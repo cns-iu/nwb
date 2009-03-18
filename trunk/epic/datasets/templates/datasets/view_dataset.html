@@ -1,18 +1,37 @@
 {% extends "core/base.html" %}
 {% block content %}
-	<h3>Dataset {{ dataset.name }}</h3>
-	<p>Owned by {{ dataset.creator }} and uploaded {{ dataset.created_at }}</p>
-	<p>Permanent URL: {{ dataset.get_absolute_url }}
+
+{% if messages %}
+	<div class="highlight" id="message">
+		<ul>
+		{% for message in messages %}
+			<li>{{ message }}</li>
+		{% endfor %}
+		</ul>
+	</div>
+{% endif %}
+	
+<div id="tagbox">
+  		<a href="links.html">Tag </a><a href="links.html"></a>
+  		<a href="links.html">Tag </a><a href="links.html"></a>
+</div>
+
+<div id="databox">
+	<div class="downloadicon"> </div>
 	{% load djangoratings_templatetags %}
-	{% show_rating dataset %}
-	{% if user.is_authenticated %}
-		{% rate_box dataset user %}
-	{% endif %}
-	{% load tags_templatetags %}
+	{% rate_box dataset user %}
+	<h1> <a href="{{ dataset.get_absolute_url }}">{{ dataset.name|escape }}</a></h1>
+	<ul class="datainfo">
+ 		<li id="first">{{ dataset.creator|escape }}</li>
+ 		<li>{{ dataset.created_at|date:"F d, Y - P" }}</li>
+ 		<a href="#">[Contact User]</a>
+	</ul>
+	<p>{{ dataset.description|escape }}
+
+   	{% load tags_templatetags %}
 	{% list_item_tags dataset %}
-	<p>{{ dataset.description }}</p>
-	{% if dataset.files %}
-      <hr>
+ 	
+ 	{% if dataset.files %}
 	  <h3>Attached Files</h3>
 	  {% for file in dataset.files.all %}
 	    <p><a href="{{file.file_contents.url}}">{{ file.get_short_name }} (Download)</a></p>
@@ -20,22 +39,13 @@
 	{% else %}
 	  <p>No attached files</p>
 	{% endif %}
-	
-	<p>
+ 	<div class="comments"> </a> 
+   		<h3> Comments </h3>
 		{% load comment_templatetags %}
-		{% list_comments dataset %}
-		<hr>
 		{% display_post_comment_form user "datasets" dataset.id post_comment_form %}
-	</p>
-	
-	{% ifequal user dataset.creator %}
-		<p>
-			<a href="/datasets/{{ dataset.id }}/edit/">
-				Edit this data set
-			</a>
-		</p>
-	{% endifequal %}
-	
-	<a href="/">Home</a>
-	<a href="/datasets/">Datasets</a>
+ 		{% list_comments dataset %}
+ 	</div>
+	<p>Reference:<br/>"{{ dataset.name|escape }}." <span class="source_name">EpiC Community Website.</span> {{ dataset.created_at|date:"d M Y" }}. {% now "d M Y" %} &lt;{{ dataset.get_absolute_url }}&gt;</p>
+	</div>
+</div>
 {% endblock %}

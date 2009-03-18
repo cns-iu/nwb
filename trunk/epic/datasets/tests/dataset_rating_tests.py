@@ -35,7 +35,7 @@ class RatingTestCase(TestCase):
 		# Make sure there is no rating
 		dataset_location = '/datasets/%s/' % (self.data_set.id)
 		response = c.get(dataset_location)
-		self.failIf("Rating:" in response.content)
+		self.failUnless("Average: None" in response.content)
 		# Rate
 		rate_location = dataset_location + "rate/3/"
 		response = c.get(rate_location)
@@ -43,7 +43,7 @@ class RatingTestCase(TestCase):
 		# Make sure there still no rating because anon people can't rate
 		dataset_location = '/datasets/%s/' % (self.data_set.id)
 		response = c.get(dataset_location)
-		self.failIf("Rating:" in response.content)
+		self.failUnless("Average: None" in response.content)
 		# Log in
 		login = c.login(username='bob', password='bob')
 		self.failUnless(login, 'Could not login')
@@ -54,7 +54,7 @@ class RatingTestCase(TestCase):
 		# Make sure bob's rating counted
 		dataset_location = '/datasets/%s/' % (self.data_set.id)
 		response = c.get(dataset_location)
-		self.failUnless("Rating:" in response.content)
+		self.failUnless("Average:" in response.content)
 		self.failUnless("3" in response.content)
 		# Log in as bob2
 		login = c.login(username='bob2', password='bob2')
@@ -66,7 +66,7 @@ class RatingTestCase(TestCase):
 		# Make sure bob2's rating counted
 		dataset_location = '/datasets/%s/' % (self.data_set.id)
 		response = c.get(dataset_location)
-		self.failUnless("Rating:" in response.content)
+		self.failUnless("Average:" in response.content)
 		self.failUnless("4" in response.content)
 		# Rate AGIAN!
 		rate_location = dataset_location + "rate/5/"
@@ -75,5 +75,5 @@ class RatingTestCase(TestCase):
 		# Make sure bob2's second rating didn't count
 		dataset_location = '/datasets/%s/' % (self.data_set.id)
 		response = c.get(dataset_location)
-		self.failUnless("Rating:" in response.content)
+		self.failUnless("Average:" in response.content)
 		self.failUnless("4" in response.content)

@@ -1,25 +1,9 @@
-<h3>
-	Comments:
-</h3>
-
-<table border="1">
-	{% if comments %}
-		{% for comment in comments %}
-			<tr>
-				<td>
-					Posted by: {{ comment.posting_user.username }}
-				</td>
-				
-				<td>
-					{{ comment }}
-				</td>
-			</tr>
-		{% endfor %}
-	{% else %}
-		<tr>
-			<td>
-				There are no comments yet.
-			</td>
-		</tr>
-	{% endif %}
-</table>
+{% if comments %}
+	{% for comment in comments %}
+		{{ comment.posting_user.username }} |
+		{{ comment.created_at|date:"F d, Y - P"  }} |
+	 	{{ comment|escape }} <br/>
+	{% endfor %}
+{% else %}
+	<p>There are no comments yet.</p>
+{% endif %}

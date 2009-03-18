@@ -9,7 +9,7 @@
 		    <li id="first">{{ dataset.creator|escape }}</li>
 		    <li>{{ dataset.created_at|date:"F d, Y - P" }}</li>
 		  </ul>
-		  <p>{{ dataset.description|escape }}</p>     
+		  <p>{{ dataset.description|escape|truncatewords:100 }}</p>     
 		  {% load tags_templatetags %}
 		  {% list_item_tags dataset %}
 		</div>

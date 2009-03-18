@@ -28,7 +28,7 @@ def make_comment_view(model, reverse_function_name, render_to_response_template,
 		item = get_object_or_404(model, pk=item_id)
 		
 		if request.method != "POST":
-			return HttpResponseRedirect(reverse(reverse_function_name, args=(item_id)))
+			return HttpResponseRedirect(reverse(reverse_function_name, kwargs={'item_id':item_id,}))
 		else:
 			post_comment_form = PostCommentForm(request.POST)
 			
@@ -37,7 +37,7 @@ def make_comment_view(model, reverse_function_name, render_to_response_template,
 				comment = Comment(posting_user=user, parent_item=item, contents=comment_contents)
 				comment.save()
 				
-				return HttpResponseRedirect(reverse(reverse_function_name, args=(item_id)))
+				return HttpResponseRedirect(reverse(reverse_function_name, kwargs={'item_id':item_id,}))
 			else:
 				return render_to_response(render_to_response_template, {
 					template_item_name: item,

@@ -64,7 +64,7 @@ class UploadTestCase(TestCase):
 		our_datasetfile2 = datasetfiles_like_our_upload[1]
 	
 		#go to the page that displays the uploaded dataset, and check that it has the right name, description, and files
-		view_dataset_response = client.get(reverse('epic.datasets.views.view_dataset', kwargs={'dataset_id':our_dataset.id,}))
+		view_dataset_response = client.get(reverse('epic.datasets.views.view_dataset', kwargs={'item_id':our_dataset.id,}))
 		self.assertContains(view_dataset_response, "Dataset123")
 		self.assertContains(view_dataset_response, "This is a pretty swell dataset")
 		self.assertContains(view_dataset_response, our_datasetfile1.__unicode__())

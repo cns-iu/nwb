@@ -33,14 +33,14 @@ class ViewDataSetTestCase(TestCase):
 		ds1 = DataSet.objects.create(name="Important Data", description="A very important piece of data", slug="important-data", creator=admin)
 		
 		# Go to the page
-		view_dataset_url = reverse("epic.datasets.views.view_dataset", args=[], kwargs={'dataset_id':ds1.id, 'slug':ds1.slug})
+		view_dataset_url = reverse("epic.datasets.views.view_dataset", args=[], kwargs={'item_id':ds1.id, 'slug':ds1.slug})
 		response = self.client.get(view_dataset_url)
 		self.failUnlessEqual(response.status_code, 200)
 		
 		# Check for the values on the page
 		self.assertTrue(ds1.name in response.content)
 		self.assertTrue(ds1.description in response.content)
-		self.assertTrue("Permanent URL:" in response.content)
+		self.assertTrue("Reference:" in response.content)
 		
 class SlugTestCase(TestCase):
 	fixtures = ['initial_data']
@@ -58,7 +58,7 @@ class SlugTestCase(TestCase):
 		ds1 = DataSet.objects.create(name="Important Data", description="A very important piece of data", slug="important-data", creator=admin)
 		ds2 = DataSet.objects.create(name="dataset", description="description", creator=peebs)
 		
-		view_dataset_url = reverse("epic.datasets.views.view_dataset", args=[], kwargs={'dataset_id':ds2.id})
+		view_dataset_url = reverse("epic.datasets.views.view_dataset", args=[], kwargs={'item_id':ds2.id})
 		response = self.client.get(view_dataset_url)
 		self.failUnlessEqual(response.status_code, 200)
 		
@@ -68,7 +68,7 @@ class SlugTestCase(TestCase):
 		ds1 = DataSet.objects.create(name="Important Data", description="A very important piece of data", slug="important-data", creator=admin)
 		ds2 = DataSet.objects.create(name="dataset", description="description", creator=peebs)
 		
-		view_dataset_url = reverse("epic.datasets.views.view_dataset", args=[], kwargs={'dataset_id':ds1.id, 'slug':ds1.slug})
+		view_dataset_url = reverse("epic.datasets.views.view_dataset", args=[], kwargs={'item_id':ds1.id, 'slug':ds1.slug})
 		response = self.client.get(view_dataset_url)
 		self.failUnlessEqual(response.status_code, 200)
 	
@@ -78,6 +78,6 @@ class SlugTestCase(TestCase):
 		ds1 = DataSet.objects.create(name="Important Data", description="A very important piece of data", slug="important-data", creator=admin)
 		ds2 = DataSet.objects.create(name="dataset", description="description", creator=peebs)
 		
-		view_dataset_url = reverse("epic.datasets.views.view_dataset", args=[], kwargs={'dataset_id':ds2.id, 'slug':'this-could-be-any-slug',})
+		view_dataset_url = reverse("epic.datasets.views.view_dataset", args=[], kwargs={'item_id':ds2.id, 'slug':'this-could-be-any-slug',})
 		response = self.client.get(view_dataset_url)
 		self.failUnlessEqual(response.status_code, 200)

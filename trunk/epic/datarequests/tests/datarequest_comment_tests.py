@@ -21,19 +21,19 @@ class CommentOnDataRequestTestCase(TestCase):
 		pass
 	
 	def testUserViewDataRequestAndNotLoggedIn(self):
-		get_datarequest_page_response = self.client.get("/datarequests/1/")
-		self.failUnlessEqual(get_datarequest_page_response.status_code, 200, "Error displaying datarequest!")
+		response = self.client.get("/datarequests/1/")
+		self.failUnlessEqual(response.status_code, 200, "Error displaying datarequest!")
 		
-		self.assertContains(get_datarequest_page_response, "You must be logged in to comment.", 1)
+		self.assertContains(response, "You must be logged in to comment.", 1)
 	
 	def testUserViewDataRequestAndLoggedIn(self):
 		# Log the user in.
 		self.client.login(username="peebs", password="map")
 		
-		get_datarequest_page_response = self.client.get("/datarequests/1/")
-		self.failUnlessEqual(get_datarequest_page_response.status_code, 200, "Error displaying datarequest!")
+		response = self.client.get("/datarequests/1/")
+		self.failUnlessEqual(response.status_code, 200, "Error displaying datarequest!")
 		
-		self.assertContains(get_datarequest_page_response, '<form action="/datarequests/1/comment/" method="POST">', 1)
+		self.assertContains(response, '<form action="/datarequests/1/comment/" method="POST">', 1)
 	
 	def testNotLoggedInUserPostComment(self):
 		post_comment_response = self.client.post("/datarequests/1/comment/",
@@ -69,10 +69,10 @@ class CommentOnDataRequestTestCase(TestCase):
 		# Make sure there are no comments.
 		Comment.objects.all().delete()
 		
-		get_datarequest_page_response = self.client.get("/datarequests/1/")
-		self.failUnlessEqual(get_datarequest_page_response.status_code, 200, "Error displaying datarequest!")
+		response = self.client.get("/datarequests/1/")
+		self.failUnlessEqual(response.status_code, 200, "Error displaying datarequest!")
 		
-		self.assertContains(get_datarequest_page_response, "There are no comments yet.", 1)
+		self.assertContains(response, "There are no comments yet.", 1)
 	
 	def testViewDataRequestWithAComment(self):
 		# Make sure there are no prior comments.
@@ -81,13 +81,12 @@ class CommentOnDataRequestTestCase(TestCase):
 		# Directly put a comment on the datarequest.
 		self.comment.save()
 		
-		get_datarequest_page_response = self.client.get("/datarequests/1/")
-		self.failUnlessEqual(get_datarequest_page_response.status_code, 200, "Error displaying datarequest!")
+		response = self.client.get("/datarequests/1/")
+		self.failUnlessEqual(response.status_code, 200, "Error displaying datarequest!")
 		
 		# Make sure the posted comment is display.
-		self.assertContains(get_datarequest_page_response, "Posted by:", 1)
-		self.assertContains(get_datarequest_page_response, "Posted by: peebs", 1)
-		self.assertContains(get_datarequest_page_response, "abcd", 1)
+		self.assertTrue(self.comment.posting_user.username in response.content)
+		self.assertTrue(self.comment.contents in response.content)
 		
 		# Delete the test comment.
 		Comment.objects.all().delete()

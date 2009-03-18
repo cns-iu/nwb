@@ -38,9 +38,9 @@ class DataSet(Item):
 	@models.permalink
 	def get_absolute_url(self):
 		if self.slug:
-			kwargs = {'dataset_id':self.id, 'slug':self.slug,}
+			kwargs = {'item_id':self.id, 'slug':self.slug,}
 		else:
-			kwargs = {'dataset_id':self.id,}
+			kwargs = {'item_id':self.id,}
 		return ("epic.datasets.views.view_dataset", [], kwargs)
 	
     

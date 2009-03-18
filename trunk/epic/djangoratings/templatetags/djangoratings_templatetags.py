@@ -12,7 +12,7 @@ def show_rating(dataset):
 
 @register.inclusion_tag('templatetags/rate_box.html')
 def rate_box(dataset, user):
-	baseurl = reverse("epic.datasets.views.rate_dataset", args=[], kwargs={'dataset_id': dataset.id})
+	baseurl = reverse("epic.datasets.views.rate_dataset", args=[], kwargs={'item_id': dataset.id})
 	user_rating = dataset.rating.get_rating(user=user, ip_address='127.0.0.1') #TODO: ip_address is kind of a hack
 	rating = dataset.rating.get_average()
 	votes = dataset.rating.votes

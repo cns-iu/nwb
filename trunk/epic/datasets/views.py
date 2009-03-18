@@ -24,8 +24,8 @@ def index(request):
 							  {'datasets': datasets, 'user': request.user},
 							  context_instance=RequestContext(request))
 
-def view_dataset(request, dataset_id=None, slug=None):
-	dataset = get_object_or_404(DataSet, pk=dataset_id)
+def view_dataset(request, item_id=None, slug=None):
+	dataset = get_object_or_404(DataSet, pk=item_id)
 	post_comment_form = PostCommentForm()
 	user = request.user
 	
@@ -67,20 +67,20 @@ def create_dataset(request):
         		new_datasetfile.save()
         	
         	#show them the page for the dataset we just created
-        	return HttpResponseRedirect(reverse('epic.datasets.views.view_dataset', kwargs={'dataset_id':new_dataset.id,'slug':new_dataset.slug}))
+        	return HttpResponseRedirect(reverse('epic.datasets.views.view_dataset', kwargs={'item_id':new_dataset.id,'slug':new_dataset.slug}))
         else:
         	#form wasn't filled out correctly
             return render_to_response('datasets/create_dataset.html', {'form':form, 'user':request.user,})
 
 @login_required
-def edit_dataset(request, dataset_id, slug=None):
-	dataset = get_object_or_404(DataSet, pk=dataset_id)
+def edit_dataset(request, item_id, slug=None):
+	dataset = get_object_or_404(DataSet, pk=item_id)
 	user = request.user
 	
 	# Make sure the current user is the creator of the dataset.
 	if user != dataset.creator:
 		return HttpResponseRedirect(reverse("epic.datasets.views.view_dataset",
-			kwargs={ "dataset_id": dataset.id, "slug":slug, }))
+			kwargs={ "item_id": dataset.id, "slug":slug, }))
 	
 	if request.method != "POST":
 		current_tags = dataset.tags.get_edit_string(user=request.user)
@@ -104,7 +104,7 @@ def edit_dataset(request, dataset_id, slug=None):
 			dataset.tags.update_tags(tags, user=user)
 			
 			return HttpResponseRedirect(reverse("epic.datasets.views.view_dataset",
-				kwargs={ "dataset_id": dataset.id, 'slug':slug, }))
+				kwargs={ "item_id": dataset.id, 'slug':slug, }))
 	
 	return render_to_response("datasets/edit_dataset.html", {
 		"dataset": dataset,
@@ -113,17 +113,17 @@ def edit_dataset(request, dataset_id, slug=None):
 	})
 
 @login_required
-def rate_dataset(request, dataset_id, input_rating=None, slug=None):
+def rate_dataset(request, item_id, input_rating=None, slug=None):
 	#TODO: Make commenting ajaxified?
 	if input_rating:
-		dataset = DataSet.objects.get(pk = dataset_id)
+		dataset = DataSet.objects.get(pk = item_id)
 		user = request.user
 		ip_address = request.META['REMOTE_ADDR']
 		#Rely on the rating.add to make sure the that rating is valid
 		rating = int(input_rating) 
 		dataset.rating.add(rating, user, ip_address)
 		dataset.save()
-		return HttpResponseRedirect(reverse('epic.datasets.views.view_dataset', kwargs={'dataset_id':dataset.id, 'slug':slug,}))
+		return HttpResponseRedirect(reverse('epic.datasets.views.view_dataset', kwargs={'item_id':dataset.id, 'slug':slug,}))
 	else:
 		if request.method != 'POST':
 			#show them the rate form
@@ -136,11 +136,11 @@ def rate_dataset(request, dataset_id, input_rating=None, slug=None):
 				ip_address = request.META['REMOTE_ADDR']
 				user = request.user
 				
-				dataset = DataSet.objects.get(pk = dataset_id)
+				dataset = DataSet.objects.get(pk = item_id)
 				dataset.rating.add(rating, user, ip_address)
 				dataset.save()
 				
-				return HttpResponseRedirect(reverse('epic.datasets.views.view_dataset', kwargs={'dataset_id':dataset.id, 'slug':slug,}))
+				return HttpResponseRedirect(reverse('epic.datasets.views.view_dataset', kwargs={'item_id':dataset.id, 'slug':slug,}))
 			else:
 				print request.POST
 				print form.errors
@@ -148,8 +148,8 @@ def rate_dataset(request, dataset_id, input_rating=None, slug=None):
 		return render_to_response('datasets/rate_dataset.html', {'form':form, 'user':request.user,})
 
 @login_required
-def tag_dataset(request, dataset_id, slug=None):
-	dataset = DataSet.objects.get(pk = dataset_id)
+def tag_dataset(request, item_id, slug=None):
+	dataset = DataSet.objects.get(pk = item_id)
 	if request.method != 'POST':
 		current_tags = dataset.tags.get_edit_string(user=request.user)
 		form = TagDataSetForm(initial={'tags': current_tags})
@@ -160,6 +160,6 @@ def tag_dataset(request, dataset_id, slug=None):
 		if form.is_valid():
 			tags = form.cleaned_data['tags']
 			dataset.tags.update_tags(tags, user=request.user)
-			return HttpResponseRedirect(reverse('epic.datasets.views.view_dataset', kwargs={'dataset_id':dataset.id, 'slug':slug,}))
+			return HttpResponseRedirect(reverse('epic.datasets.views.view_dataset', kwargs={'item_id':dataset.id, 'slug':slug,}))
 		else:
 			return render_to_response('datasets/tag_dataset.html', {'form':form, 'user':request.user,})
