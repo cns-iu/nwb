@@ -1,0 +1,7 @@
+{% if datarequests %}
+	<h1>Recently fulfilled requests</h1>
+	{% for datarequest in datarequests %}
+		<h2><a href="{{ datarequest.get_absolute_url }}">{{ datarequest.name|escape }}</a> (links to dataset page)</h2>
+		<p>{{ datarequest.description|escape }}</p>
+	{% endfor %}
+{% endif %}

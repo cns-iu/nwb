@@ -1,44 +1,26 @@
 {% extends "core/base.html" %}
-{% block nav %}
-<a class="deactivenav" href="/datasets">Browse</a>
-<a class="deactivenav" href="/datasets/new/">Upload</a>
-<a class="activenav" href="/datarequests">Request</a>
-<a class="deactivenav" href="#">About</a>
-{% endblock %}
 {% block content %}
-	<h3>All Data Requests:</h3>
-	<table>
-	<tr>
-	  <th>Title</th>
-	  <th>Owner</th>
-	  <th>Date Uploaded</th>
-	  <th>Status</th>
-	  <th>Cancel Request</th>
-	  <th>Request Fulfilled</th>
-	  <th>Edit</th>
-	</tr>
-	{% for datarequest in datarequests %}
-		<tr>
-		  <td><a href="{{ datarequest.get_absolute_url }}">{{ datarequest.name }}</a></td>
-		  <td>{{ datarequest.creator }}</td>
-		  <td>{{ datarequest.created_at }}</td>
-		  <td>{{ datarequest.get_status_display }}</td>
-		  {% ifequal user datarequest.creator %}
-			  {% ifnotequal datarequest.status 'C'%}
-			  {% ifnotequal datarequest.status 'F' %}
-			    <td><a href="{{ datarequest.get_absolute_url }}cancel">Cancel</a></td>
-			    <td><a href="{{ datarequest.get_absolute_url }}complete">Fulfill</a></td>
-			    <td><a href="{{ datarequest.get_absolute_url }}edit">Edit</a></td>
-			  {% endifnotequal %}
-			  {% endifnotequal %}
-		  {% else %}
-		  <td></td>
-		  <td></td>
-		  <td></td>
-		  {% endifequal %}
-		</tr>
-	{% endfor %}
-	</table>
-	<a href="/">Home</a>
-	<a href="/datarequests/new/">Add New Data Request</a>
+<div id="column1"> 
+	{% if user.is_authenticated %}
+		<div id="requestbox">
+		<h1>Make a Request</h1>
+	   	<br />
+		<form enctype="multipart/form-data" action="/datarequests/new/" method="POST">
+	    {{ datarequest_form.name }}
+	    <br />
+	    <br />
+	    {{ datarequest_form.description }}
+	    <p><input type="submit" value="Upload" /></p>
+		</form>
+	{% endif %}
+	</div>
+	{% load datarequest_templatetags %}
+	{% display_recently_fulfilled_requests %}
+</div>
+
+<div id="column2">
+{% load datarequest_templatetags %}
+{% display_recent_requests %}
+</div> 
+
 {% endblock %}

@@ -19,7 +19,8 @@ from datetime import datetime
 
 def index(request):
     datarequests = DataRequest.objects.exclude(status='C').order_by('-created_at')
-    return render_to_response('datarequests/index.html', {'datarequests': datarequests,'user':request.user})
+    datarequest_form = NewDataRequestForm()
+    return render_to_response('datarequests/index.html', {'datarequests': datarequests,'user':request.user, 'datarequest_form':datarequest_form,})
 
 def view_datarequest(request, item_id=None):
 	datarequest = get_object_or_404(DataRequest, pk=item_id)
