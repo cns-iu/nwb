@@ -1,6 +1,6 @@
 from django.test import TestCase
 from django.contrib.auth.models import User
-
+from django.core.urlresolvers import reverse
 from epic.datasets.models import DataSet
 from epic.datasets.models import DataSetFile
 
@@ -10,15 +10,14 @@ class IndexTestCase(TestCase):
 	TEST_FILE_NAME = "test_file.txt"
 	def setUp(self):
 		self.data_set = DataSet.objects.all()[0]
-		
-		
-		
+
 	def tearDown(self):
 		pass
 		
 	
 	def testIndex(self):
-		response = self.client.get('/datasets/')
+		index_url = reverse("epic.datasets.views.index")
+		response = self.client.get(index_url)
 		self.failUnlessEqual(response.status_code, 200, "Error listing datasets!")
 		data = response.context[0]['datasets'] #due to template inheritance
 		self.failUnlessEqual(len(data), 1, "We don't have as many datasets as we expect!")
@@ -34,7 +33,8 @@ class ViewDataSetTestCase(TestCase):
 		ds1 = DataSet.objects.create(name="Important Data", description="A very important piece of data", slug="important-data", creator=admin)
 		
 		# Go to the page
-		response = self.client.get(ds1.get_absolute_url())
+		view_dataset_url = reverse("epic.datasets.views.view_dataset", args=[], kwargs={'dataset_id':ds1.id, 'slug':ds1.slug})
+		response = self.client.get(view_dataset_url)
 		self.failUnlessEqual(response.status_code, 200)
 		
 		# Check for the values on the page
@@ -58,7 +58,8 @@ class SlugTestCase(TestCase):
 		ds1 = DataSet.objects.create(name="Important Data", description="A very important piece of data", slug="important-data", creator=admin)
 		ds2 = DataSet.objects.create(name="dataset", description="description", creator=peebs)
 		
-		response = self.client.get(ds2.get_absolute_url())
+		view_dataset_url = reverse("epic.datasets.views.view_dataset", args=[], kwargs={'dataset_id':ds2.id})
+		response = self.client.get(view_dataset_url)
 		self.failUnlessEqual(response.status_code, 200)
 		
 	def testNavigationWithSlug(self):
@@ -67,7 +68,8 @@ class SlugTestCase(TestCase):
 		ds1 = DataSet.objects.create(name="Important Data", description="A very important piece of data", slug="important-data", creator=admin)
 		ds2 = DataSet.objects.create(name="dataset", description="description", creator=peebs)
 		
-		response = self.client.get(ds1.get_absolute_url())
+		view_dataset_url = reverse("epic.datasets.views.view_dataset", args=[], kwargs={'dataset_id':ds1.id, 'slug':ds1.slug})
+		response = self.client.get(view_dataset_url)
 		self.failUnlessEqual(response.status_code, 200)
 	
 	def testNavigationWithAnySlug(self):
@@ -76,6 +78,6 @@ class SlugTestCase(TestCase):
 		ds1 = DataSet.objects.create(name="Important Data", description="A very important piece of data", slug="important-data", creator=admin)
 		ds2 = DataSet.objects.create(name="dataset", description="description", creator=peebs)
 		
-		url = '%sanything-could-go-here-and-be-a-slug/' % (ds2.get_absolute_url())
-		response = self.client.get(url)
+		view_dataset_url = reverse("epic.datasets.views.view_dataset", args=[], kwargs={'dataset_id':ds2.id, 'slug':'this-could-be-any-slug',})
+		response = self.client.get(view_dataset_url)
 		self.failUnlessEqual(response.status_code, 200)
