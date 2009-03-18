@@ -3,163 +3,135 @@ from django.test import TestCase
 from django.contrib.auth.models import User
 from epic.datasets.models import DataSet
 
-class EditDataSetTestCase(TestCase):
-	fixtures = [ "initial_data", "single_dataset" ]
+class ViewEditDataSetPageTestCase(TestCase):
+	fixtures = [ "initial_data"]
 	
 	def setUp(self):
-		self.data_set = DataSet.objects.all()[0]
+		pass
+	
+	def tearDown(self):
+		pass
+	
+	def testLoggedOut(self):
+		# Create objects to be used for this test
+		admin = User.objects.get(username="admin")
+		peebs = User.objects.get(username="peebs")
+		ds1 = DataSet.objects.create(name="Important Data", description="A very important piece of data", slug="important-data", creator=admin)
+		ds2 = DataSet.objects.create(name="dataset", description="description", slug="dataset", creator=peebs)
 		
-		self.post_edited_metadata_form_data = {
+		# Verify that log in is required to view the edit page
+		response = self.client.get('%sedit/' % (ds1.get_absolute_url()))
+		self.assertRedirects(response, "/login/?next=%sedit/" % (ds1.get_absolute_url()))
+	def testLoggedInNotCreator(self):
+		# Create objects to be used for this test
+		admin = User.objects.get(username="admin")
+		peebs = User.objects.get(username="peebs")
+		ds1 = DataSet.objects.create(name="Important Data", description="A very important piece of data", slug="important-data", creator=admin)
+		ds2 = DataSet.objects.create(name="dataset", description="description", slug="dataset", creator=peebs)
+		
+		# Verify that only the owner can view the edit page and that they'll be redirected to the dataset page
+		login = self.client.login(username='peebs', password='map')
+		self.failUnless(login, 'Could not login')
+		response = self.client.get('%sedit/' % (ds1.get_absolute_url()))
+		self.assertRedirects(response, ds1.get_absolute_url())
+		
+	def testLoggedInCreator(self):
+		# Create objects to be used for this test
+		admin = User.objects.get(username="admin")
+		peebs = User.objects.get(username="peebs")
+		ds1 = DataSet.objects.create(name="Important Data", description="A very important piece of data", slug="important-data", creator=admin)
+		ds2 = DataSet.objects.create(name="dataset", description="description", slug="dataset", creator=peebs)
+		
+		# Verify that the owner can view the edit page
+		login = self.client.login(username='admin', password='admin')
+		self.failUnless(login, 'Could not login')
+		response = self.client.get('%sedit/' % (ds1.get_absolute_url()))
+		self.assertEqual(response.status_code, 200)
+
+		# Check that the correct stuff is on the page
+		self.assertTrue('description' in response.content)
+		self.assertTrue('name' in response.content)
+		self.assertTrue('Cancel Metadata Changes' in response.content)
+		
+class ActionEditDataSetPageTestCase(TestCase):
+	fixtures = [ "initial_data"]
+	
+	def setUp(self):
+		pass
+	
+	def tearDown(self):
+		pass
+	
+	def testLoggedOut(self):
+		# Make sure that logged out users can't edit the data
+		
+		# Create objects to be used for this test
+		admin = User.objects.get(username="admin")
+		peebs = User.objects.get(username="peebs")
+		ds1 = DataSet.objects.create(name="Important Data", description="A very important piece of data", slug="important-data", creator=admin)
+		ds2 = DataSet.objects.create(name="dataset", description="description", slug="dataset", creator=peebs)
+		
+		# The changes to the data
+		post_data = {
 			"name": "dataset2",
 			"description": "description2",
 			"tags": "slashdotted"
 		}
 		
-		self.user = User.objects.get(username="peebs")
+		# Edit the dataset
+		response = self.client.post('%sedit/' % (ds1.get_absolute_url()), post_data)
+		self.assertRedirects(response, "/login/?next=%sedit/" % (ds1.get_absolute_url()))
 		
-		# Create a dataset by peebs so we can test user privileges for editing it.
+	def testLoggedInNotCreator(self):
+		# Verify that only the creator can edit data
 		
-		self.peebs_data_set = DataSet(creator=self.user, name="dataset",
-			description="description")
+		# Create objects to be used for this test
+		admin = User.objects.get(username="admin")
+		peebs = User.objects.get(username="peebs")
+		ds1 = DataSet.objects.create(name="Important Data", description="A very important piece of data", slug="important-data", creator=admin)
+		ds2 = DataSet.objects.create(name="dataset", description="description", slug="dataset", creator=peebs)
 		
-		self.peebs_data_set.save()
+		# The changes to the data
+		post_data = {
+			"name": "dataset2",
+			"description": "description2",
+			"tags": "slashdotted"
+		}
 		
-		# The URL to peebs' data set page.
-		self.peebs_view_data_set_url = "/datasets/%s/" % self.peebs_data_set.id
-		# The URL to peebs' edit data set page.
-		self.peebs_edit_data_set_url = "/datasets/%s/edit/" % self.peebs_data_set.id
-	
-	def tearDown(self):
-		pass
-	
-	def testUserViewEditDataSetPageAndNotLoggedIn(self):
-		get_edit_dataset_page_response = self.client.get("/datasets/1/edit/")
-		self.assertRedirects(get_edit_dataset_page_response, "/login/?next=/datasets/1/edit/")
-	
-	def testUserViewEditDataSetPageAndLoggedInAndNotDataSetCreator(self):
-		self.client.login(username="admin", password="admin")
+		# Log in as NOT the creator
+		login = self.client.login(username='peebs', password='map')
+		self.failUnless(login, 'Could not login')
 		
-		get_edit_dataset_page_response = self.client.get(self.peebs_edit_data_set_url)
-		
-		self.assertRedirects(get_edit_dataset_page_response, self.peebs_view_data_set_url)
-	
-	def testUserViewEditDataSetPageAndLoggedInAndDataSetCreator(self):
-		self.client.login(username="peebs", password="map")
-		
-		get_edit_dataset_page_response = self.client.get(self.peebs_edit_data_set_url)
-		
-		# Verify that all of the dataset's metadata is displayed in the form.
-		
-		self.assertContains(get_edit_dataset_page_response,
-			'<input id="id_name" type="text" name="name" value="%s"' % self.peebs_data_set.name,
-			1)
-		
-		self.assertContains(get_edit_dataset_page_response,
-			'<textarea id="id_description" rows="10" cols="40" name="description">%s</textarea>' % self.peebs_data_set.description,
-			1)
-		
-		self.assertContains(get_edit_dataset_page_response,
-			'<input id="id_tags" type="text" name="tags"',
-			1)
-	
-	def testUserGetToEditDataSetPageFromViewDataSetPageAndNotLoggedIn(self):
-		# Verify that the not-logged-in user does NOT see an "Edit this dataset"
-		# link on the view dataset page.
-		
-		get_view_dataset_page_response = self.client.get(self.peebs_view_data_set_url)
-		
-		self.assertNotContains(get_view_dataset_page_response, '<a href="/datasets/1/edit/">')
-	
-	def testUserGetToEditDataSetPageFromViewDataSetPageAndNotDataSetCreator(self):
-		# Verify that the logged-in-but-not-dataset-creator user does NOT see an
-		# "Edit this dataset" link on the view dataset page.
-		
-		self.client.login(username="admin", password="admin")
-		
-		get_view_dataset_page_response = self.client.get(self.peebs_view_data_set_url)
-		
-		self.assertNotContains(get_view_dataset_page_response, '<a href="/datasets/1/edit/">')
-	
-	def testUserGetToEditDataSetPageFromViewDataSetPageAndDataSetCreator(self):
-		# Verify that the logged-in-and-is-dataset-creator user DOES see an
-		# "Edit this dataset" link on the view dataset page.
-		
-		self.client.login(username="peebs", password="map")
-		
-		get_view_dataset_page_response = self.client.get(self.peebs_view_data_set_url)
-		
-		self.assertContains(get_view_dataset_page_response,
-			'<a href="%s">' % self.peebs_edit_data_set_url)
-	
-	def testUserEditDataSetOnPageButCancel(self):
-		# Verify that the "Cancel Changes" button is on the edit dataset page.
-		# (Only the dataset creator should be able to get to this page, so there
-		# only needs to be one test for this.)
-		self.client.login(username="peebs", password="map")
-		
-		get_edit_dataset_page_response = self.client.get(self.peebs_edit_data_set_url)
-		
-		self.assertContains(get_edit_dataset_page_response,
-			'<a href = "%s">' % self.peebs_view_data_set_url)
-		
-		self.assertContains(get_edit_dataset_page_response,
-			"Cancel Metadata Changes")
-	
-	def testUserEditDataSetOnPageAndSaveAndNotLoggedIn(self):
-		# Since we can't actually simulate interaction with the page directly, we
-		# must test this functionality (here in Python) by posting directly to the
-		# appropriate URL.  This means we DO need the separate tests for this.
-		post_edited_dataset_response = self.client.post(self.peebs_edit_data_set_url,
-			self.post_edited_metadata_form_data)
-		
-		self.assertRedirects(post_edited_dataset_response,
-			"login/?next=%s" % self.peebs_edit_data_set_url)
-		
-		pass
-	
-	def testUserEditDataSetOnPageAndSaveAndNotDataSetCreator(self):
-		# Verify that the logged-in-and-not-dataset-creator user CANNOT post data to
-		# the edit dataset page.
-		self.client.login(username="admin", password="admin")
-		
-		post_edited_dataset_response = self.client.post(self.peebs_edit_data_set_url,
-			self.post_edited_metadata_form_data)
-		
-		self.assertRedirects(post_edited_dataset_response,
-			self.peebs_view_data_set_url)
-		
-		pass
-	
-	def testUserEditDataSetOnPageAndSaveAndDataSetCreator(self):
-		# Verify that the logged-in-and-is-dataset-creator user CAN post data to the
-		# edit dataset page.
-		self.client.login(username="peebs", password="map")
-		
-		post_edited_dataset_response = self.client.post(self.peebs_edit_data_set_url,
-			self.post_edited_metadata_form_data)
-		
-		self.assertRedirects(post_edited_dataset_response,
-			self.peebs_view_data_set_url)
-		
-		get_view_dataset_page_response = self.client.get(self.peebs_view_data_set_url)
-		self.assertEqual(get_view_dataset_page_response.status_code, 200)
-		
-		updated_peebs_data_set = DataSet.objects.get(pk=self.peebs_data_set.id)
-		
-		self.assertEqual(updated_peebs_data_set.name,
-			self.post_edited_metadata_form_data["name"])
-		
-		self.assertEqual(updated_peebs_data_set.description,
-			self.post_edited_metadata_form_data["description"])
+		# Edit the dataset
+		response = self.client.post('%sedit/' % (ds1.get_absolute_url()), post_data)
+		self.assertRedirects(response, ds1.get_absolute_url())
 
-		# If you check for a number here, be aware that there will be two, one for the link and one for the text tag itself
-		self.assertContains(get_view_dataset_page_response,
-			"%s" % self.post_edited_metadata_form_data["tags"])
+	def testLoggedInCreator(self):
+		# Verify that the creator can edit data
 		
-		# Verify that all of the dataset's new metadata is displayed in the form.
-		self.assertContains(get_view_dataset_page_response,
-			"%s" % self.peebs_data_set.name)
+		# Create objects to be used for this test
+		admin = User.objects.get(username="admin")
+		peebs = User.objects.get(username="peebs")
+		ds1 = DataSet.objects.create(name="Important Data", description="A very important piece of data", slug="important-data", creator=admin)
+		ds2 = DataSet.objects.create(name="dataset", description="description", slug="dataset", creator=peebs)
 		
-		self.assertContains(get_view_dataset_page_response,
-			"%s" % self.peebs_data_set.description)
+		# The changes to the data
+		post_data = {
+			"name": "dataset2",
+			"description": "description2",
+			"tags": "slashdotted"
+		}
+		# log in as creator
+		login = self.client.login(username='admin', password='admin')
+		self.failUnless(login, 'Could not login')
 		
+		# Edit the dataset
+		response = self.client.post('%sedit/' % (ds1.get_absolute_url()), post_data)
+		
+		# Verify that the changes were made
+		response = self.client.get(ds1.get_absolute_url())
+		self.assertTrue('dataset2' in response.content)
+		self.assertTrue('description2' in response.content)
+		self.assertTrue('slashdotted' in response.content)
+		self.assertFalse('Important Data' in response.content)
+		self.assertFalse('piece' in response.content)		

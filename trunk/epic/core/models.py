@@ -44,6 +44,7 @@ class Item(models.Model):
 	creator = models.ForeignKey(User)
 	name = models.CharField(max_length=MAX_ITEM_NAME_LENGTH)
 	description = models.CharField(max_length=MAX_ITEM_DESCRIPTION_LENGTH)
+	slug = models.SlugField()
 	created_at = models.DateTimeField(auto_now_add=True, db_index=True)
 									
 	@models.permalink

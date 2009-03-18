@@ -8,4 +8,4 @@ class NewDataRequestForm(ModelForm):
 	description = forms.CharField(max_length=Item.MAX_ITEM_DESCRIPTION_LENGTH, widget=forms.Textarea())
 	class Meta:
 		model = DataRequest
-		exclude = ['creator', 'status']
+		exclude = ['creator', 'status', 'slug']
