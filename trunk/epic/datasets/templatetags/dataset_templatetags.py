@@ -3,9 +3,8 @@ from epic.datasets.models import DataSet
 
 register = template.Library()
 
-@register.inclusion_tag('templatetags/list_datasets.html', takes_context=True)
-def list_datasets(context):
-	datasets = DataSet.objects.all().order_by('-created_at')
+@register.inclusion_tag('templatetags/list_datasets.html')
+def list_datasets(datasets):
 	return {'datasets':datasets}
 
 @register.inclusion_tag("templatetags/show_edit_dataset_metadata_form.html")
