@@ -1,21 +1,17 @@
-<h3>All datasets(newest first):</h3>
-	<table>
-	<tr>
-	  <th>Title</th>
-	  <th>Owner</th>
-	  <th>Date Uploaded</th>
-	  <th>Rating</th>
-	</tr>
-	{% for dataset in datasets %}
-		<tr>
-		  <td><a href="{{ dataset.get_absolute_url }}">{{ dataset.name }}</a></td>
-		  <td>{{ dataset.creator }}</td>
-		  <td>{{ dataset.created_at }}</td>
-		  {% if dataset.rating.get_average %}
-		  <td><a href="{{ dataset.get_absolute_url }}rate/">{{ dataset.rating.get_average }}</a></td>
-		  {% else %}
-		  <td>--</td>
-		  {% endif %}
-		</tr>
+{% if datasets %}
+ 	{% for dataset in datasets %}
+		<div id="databox">
+		  <div class="downloadicon"></div>
+		  {% load djangoratings_templatetags %}
+		  {% rate_box dataset user %}
+		  <h1> <a href="{{ dataset.get_absolute_url }}">{{ dataset.name|escape }}</a></h1> 
+		  <ul class="datainfo">
+		    <li id="first">{{ dataset.creator|escape }}</li>
+		    <li>{{ dataset.created_at|date:"F d, Y - P" }}</li>
+		  </ul>
+		  <p>{{ dataset.description|escape }}</p>     
+		  {% load tags_templatetags %}
+		  {% list_item_tags dataset %}
+		</div>
 	{% endfor %}
-	</table>
+{% endif %}

@@ -1,11 +1,12 @@
 {% if user_rating %}
-<p>You already rated this as {{ user_rating }}.</p>
+<div class="ratingsbox">{{ user_rating }} | Average: {{ rating }} | Total: {{ votes }}</div>
 {% else %}
-<p>Rate!: 
-	<a href="{{ baseurl }}1/">Star1</a>
-	<a href="{{ baseurl }}2/">Star2</a>
-	<a href="{{ baseurl }}3/">Star3</a>
-	<a href="{{ baseurl }}4/">Star4</a>
-	<a href="{{ baseurl }}5/">Star5</a>
-</p>
+<div class="ratingsbox">
+	<a href="{{ ratebaseurl }}1/">Star1</a>
+	<a href="{{ ratebaseurl }}2/">Star2</a>
+	<a href="{{ ratebaseurl }}3/">Star3</a>
+	<a href="{{ ratebaseurl }}4/">Star4</a>
+	<a href="{{ ratebaseurl }}5/">Star5</a>
+	| Average: {{ rating }} | Total: {{ votes }}
+</div>
 {% endif %}

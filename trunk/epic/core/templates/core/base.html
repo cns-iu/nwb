@@ -1,29 +1,48 @@
-<html>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
 <head>
-<title>{% block title %}EpiC Community Website{% endblock %}</title>
+  {% block head %}
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+  <title>{% block title %}EpiC Community Website{% endblock %}</title>
+  <link href="/core_media/css/epic.css" rel="stylesheet" type="text/css" />
+  {% endblock %}
 </head>
-
 <body>
-		{% if messages %}
-            <ul class="messagelist">{% for message in messages %}<li>{{ message }}</li>{% endfor %}</ul>
-        {% endif %}
-		{% if user.is_authenticated %}
-            <div id="user-tools">Welcome, <strong>{% if user.first_name %}{{ user.first_name }}{% else %}{{ user.username }}{% endif %}</strong>. <br />{% block userlinks %}<a href="/user/">Profile</a> | <a href="/user/{{ user.id }}/messages">Messages</a> | <a href="/logout/">Log out</a>{% endblock %}</div>
+<div id="container">
+  {% block container %}
+  <div id="header">
+    {% block header %} 
+    <div id="logo">{% block logo %}{% endblock %}</div>
+    <div id="login">
+      {% block login %}
+        {% if user.is_authenticated %}
+          <a href="/user/">Profile</a> | 
+          <a href="/user/{{ user.id }}/mesages">Messages</a> | 
+          <a href="/logout/">Log Out</a>
         {% else %}
-			<div id="user-tools">
-            {% block login_box %}
-            {% load core_templatetags %}
-            {% login_box %}
-            {% endblock %}
-			</div>
+          {% load core_templatetags %}
+          {% login_box %}
         {% endif %}
-        {% block nav %}
-        	<a class="deactivenav" href="/datasets">Browse</a>
-			<a class="deactivenav" href="/datasets/new/">Upload</a>
-			<a class="deactivenav" href="/datarequests">Request</a>
-			<a class="deactivenav" href="#">About</a>
-		{% endblock %}
-        {% block content %}{% endblock %}
+      {% endblock %}
+    </div>
+    <div id="nav">
+      {% block nav %}
+      <ul>   
+        <li><a href="/" class="pageon"><span>Browse</span></a></li>
+        <li><a href="/datasets/new/"><span>Share</span></a></li>
+        <li><a href="/datarequests/new/"><span>Request</span></a></li>
+        <li><a href="#"><span>About</span></a></li>
+      </ul> 
+      {% endblock %}
+    </div>
+    {% endblock %}
+  </div>
+  <div id="content">
+    {% block content %}
+    {% endblock %}
+  </div> 
+  {% endblock %}
+</div>
 
 </body>
 </html>

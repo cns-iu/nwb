@@ -1,3 +1,4 @@
+from django.template import RequestContext
 from django.contrib.auth.models import User
 from django.contrib.auth import logout
 from django.core.urlresolvers import reverse
@@ -9,7 +10,9 @@ from epic.datasets.models import DataSet
 
 def index(request):
 	datasets = DataSet.objects.all().order_by('-created_at')
-	return render_to_response('core/index.html', {'user':request.user, 'datasets':datasets,})
+	return render_to_response('core/index.html',
+							  {'user':request.user, 'datasets':datasets,},
+							  context_instance=RequestContext(request))
 
 def logout_view(request):
 	logout(request)

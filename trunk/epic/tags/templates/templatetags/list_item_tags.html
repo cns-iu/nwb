@@ -1,10 +1,8 @@
+{% load tags_templatetags %}
 {% if tags %}
-	<p>{{ item_name }} was tagged as: 
-    	{% for tag in tags %}
-    	<a href="{{ tag.get_absolute_url }}">{{ tag.tag }}</a>
-    	{% endfor %}
-    </p>
-	<a href="add_tags">Add tags</a>
-{% else %}
-	<a href="add_tags">Be the first to tag!</a>
+	<ul class="taglist">
+		{% for tag in tags %}
+		<li><a href="{% get_tag_url tag.tag %}">{{ tag.tag }}</a></li>
+		{% endfor %}
+	</ul>
 {% endif %}

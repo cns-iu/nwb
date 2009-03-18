@@ -19,11 +19,11 @@ class RatingTestCase(TestCase):
 	def testRatingView(self):
 		response = self.client.get('/datasets/')
 		self.failUnlessEqual(response.status_code, 200, "Error listing datasets!")
-		self.failUnless("--" in response.content, "There should be unrated data")
+		self.failUnless("Total: 0" in response.content, "There should be unrated data")
 		response = self.client.post("/login/", {'username': 'bob', 'password':'bob2',})
 		response = self.client.get('/datasets/')
 		self.failUnlessEqual(response.status_code, 200, "Error listing datasets!")
-		self.failUnless("--" in response.content, "There should be unrated data")
+		self.failUnless("Total: 0" in response.content, "There should be unrated data")
 	
 	
 	def testRating(self):

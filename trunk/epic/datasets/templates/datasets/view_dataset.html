@@ -9,7 +9,7 @@
 		{% rate_box dataset user %}
 	{% endif %}
 	{% load tags_templatetags %}
-	{% list_item_tags dataset "DataSet" %}
+	{% list_item_tags dataset %}
 	<p>{{ dataset.description }}</p>
 	{% if dataset.files %}
       <hr>

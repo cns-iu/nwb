@@ -1,6 +1,9 @@
 {% extends "core/base.html" %}
 {% block content %}
-<p>Welcome to Epic!</p>
-{% load dataset_templatetags %}
-{% list_datasets datasets%}
+  <div id="trail"> Tag result trail goes here </div>
+  <div id="tagbox">
+    <a href="links.html">Tag </a><a href="links.html">Tag </a><a href="links.html"></a>
+  </div>
+  {% load dataset_templatetags %}
+  {% list_datasets datasets %}
 {% endblock %}
