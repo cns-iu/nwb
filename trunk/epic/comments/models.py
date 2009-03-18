@@ -32,6 +32,7 @@ class Comment(models.Model):
 	parent_item = models.ForeignKey(Item, related_name="comments")
 	# parent_comment = models.ForeignKey(Comment, related_name="children")
 	contents = models.TextField()
+	created_at = models.DateTimeField(auto_now_add=True, db_index=True)
 	
 	class Admin:
 		pass
