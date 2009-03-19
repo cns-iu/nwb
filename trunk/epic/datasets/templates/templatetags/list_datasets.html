@@ -2,13 +2,8 @@
  	{% for dataset in datasets %}
 		<div id="databox">
 		  <div class="downloadicon"></div>
-		  {% load djangoratings_templatetags %}
-		  {% rate_box dataset user %}
-		  <h1> <a href="{{ dataset.get_absolute_url }}">{{ dataset.name|escape }}</a></h1> 
-		  <ul class="datainfo">
-		    <li id="first">{{ dataset.creator|escape }}</li>
-		    <li>{{ dataset.created_at|date:"F d, Y - P" }}</li>
-		  </ul>
+		  {% load dataset_templatetags %}
+		  {% show_dataset_title_ratebox_and_datainfo dataset %}
 		  <p>{{ dataset.description|escape|truncatewords:100 }}</p>     
 		  {% load tags_templatetags %}
 		  {% list_item_tags dataset %}

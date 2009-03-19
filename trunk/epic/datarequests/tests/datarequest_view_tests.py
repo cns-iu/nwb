@@ -175,9 +175,6 @@ class DataRequestCancelEditFulfillIndexTestCase(TestCase):
 		response = self.client.get('/datarequests/')
 		self.failUnlessEqual(response.status_code, 200)
 		self.failUnless('Amazing request' in response.content, response.content)
-		self.failUnless('Edit</a>' in response.content, response.content)
-		self.failUnless('Cancel</a>' in response.content)
-		self.failUnless('Fulfill</a>' in response.content)
 
 class DataRequestCancelEditFulfillPageTestCase(TestCase):
 	fixtures = ['initial_users']
@@ -236,6 +233,7 @@ class DataRequestCancelEditFulfillPageTestCase(TestCase):
 		self.failIf('Edit</a>' in response.content, response.content)
 		self.failIf('Cancel</a>' in response.content)
 		self.failIf('Fulfilled</a>' in response.content)
+		
 class DataRequestCancelEditFulfillActionsTestCase(TestCase):
 	fixtures = ['initial_users']
 	

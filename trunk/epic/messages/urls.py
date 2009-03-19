@@ -6,4 +6,6 @@ urlpatterns = patterns('epic.messages.views',
 	(r'^received/(?P<receivedmessage_id>\d+)/$', 'view_received_message'),
 	(r'^received/(?P<receivedmessage_id>\d+)/reply/$', 'reply_received_message'),
 	(r'^new/$', 'create_new_message'),
+	(r'^new/(?P<recipient_id>\d+)/$', 'create_new_message'),
+	
 )

@@ -1,12 +1,12 @@
 from django.test import TestCase
 
 from django.contrib.auth.models import User
+from django.core.urlresolvers import reverse
 from epic.messages.models import ReceivedMessage, SentMessage
+from epic.datasets.models import DataSet
 
 class ViewTests(TestCase):
 	fixtures = ['initial_data']
-	
-	
 	
 	def setUp(self):
 		pass
@@ -133,4 +133,101 @@ class ViewTests(TestCase):
 		response = self.client.get('/user/%s/messages/sent/%s/' % (peebs.id, m2s.id))
 		#TODO: when using upgraded django, follow this redirect and verify you are sent the right place
 		self.failUnlessEqual(response.status_code, 302)
+
+class ContactUserLinkTests(TestCase):
+	fixtures = ['initial_data']
+	
+	def setUp(self):
+		pass
+	
+	def tearDown(self):
+		pass
+	
+	def testSendingMessageLinkAnnon(self):
+		admin = User.objects.get(username="admin")
+		peebs   = User.objects.get(username="peebs")
+	
+		ds1 = DataSet.objects.create(name='ds1', description='this is dataset one', creator=admin, slug='blah')
 		
+		# Verify that login is required to view the contact link
+		dataset_url = reverse("epic.datasets.views.view_dataset", args=[], kwargs={'item_id':ds1.id, 'slug':ds1.slug})
+		response = self.client.get(dataset_url)
+		self.assertEqual(response.status_code, 200)
+		
+		contact_url = reverse("epic.messages.views.create_new_message", args=[], kwargs={'user_id':peebs.id, 'recipient_id':ds1.creator.id})
+		self.assertTrue(contact_url not in response.content)
+		
+	def testSendingMessageLinkLoggedIn(self):
+		admin = User.objects.get(username="admin")
+		peebs   = User.objects.get(username="peebs")
+	
+		ds1 = DataSet.objects.create(name='ds1', description='this is dataset one', creator=admin, slug='blah')
+		
+		# Make sure that you can see the contact link
+		login = self.client.login(username='peebs', password='map')
+		self.failUnless(login, 'Could not login')
+		
+		dataset_url = reverse("epic.datasets.views.view_dataset", args=[], kwargs={'item_id':ds1.id, 'slug':ds1.slug})
+		response = self.client.get(dataset_url)
+		self.assertEqual(response.status_code, 200)		
+		
+		contact_url = reverse("epic.messages.views.create_new_message", args=[], kwargs={'user_id':peebs.id, 'recipient_id':ds1.creator.id})
+		self.assertTrue(contact_url in response.content, response.content)
+	
+	def testUsingSendingMessageLinkAnnon(self):
+		admin = User.objects.get(username="admin")
+		peebs   = User.objects.get(username="peebs")
+	
+		ds1 = DataSet.objects.create(name='ds1', description='this is dataset one', creator=admin, slug='blah')	
+		
+		contact_url = reverse("epic.messages.views.create_new_message", args=[], kwargs={'user_id':peebs.id, 'recipient_id':ds1.creator.id})
+		response = self.client.get(contact_url)
+		self.assertEqual(response.status_code, 302)
+	
+	def testUsingSendingMessageLinkLoggedIn(self):
+		admin = User.objects.get(username="admin")
+		peebs   = User.objects.get(username="peebs")
+	
+		ds1 = DataSet.objects.create(name='ds1', description='this is dataset one', creator=admin, slug='blah')	
+		
+		# Make sure that you can see the contact link
+		login = self.client.login(username='peebs', password='map')
+		self.failUnless(login, 'Could not login')
+		
+		contact_url = reverse("epic.messages.views.create_new_message", args=[], kwargs={'user_id':peebs.id, 'recipient_id':ds1.creator.id})
+		response = self.client.get(contact_url)
+		self.assertEqual(response.status_code, 200)
+		self.assertTrue(ds1.creator.username in response.content, "The username of the dataset was not put into the form for the user")
+		
+		post_data = {
+			"recipient":"admin",
+			"subject":"this is a measdf asdfssage",
+			"message":"hello admin -peebs",
+		}
+		
+		response = self.client.post(contact_url, post_data)
+		self.assertEqual(response.status_code, 302)
+		
+		# Log in as the admin and check for the message
+		login = self.client.login(username='admin', password='admin')
+		self.failUnless(login, 'Could not login')
+		
+		message_url = reverse("epic.messages.views.index", args=[], kwargs={'user_id':admin.id,})
+		response = self.client.get(message_url)
+		
+		self.assertTrue(post_data['subject'] in response.content)
+	
+	def testUsingSendingToNonExistantPerson(self):
+		admin = User.objects.get(username="admin")
+		peebs   = User.objects.get(username="peebs")
+	
+		ds1 = DataSet.objects.create(name='ds1', description='this is dataset one', creator=admin, slug='blah')	
+		
+		# Make sure that you can see the contact link
+		login = self.client.login(username='peebs', password='map')
+		self.failUnless(login, 'Could not login')
+		
+		# The contact url to a fake person
+		contact_url = reverse("epic.messages.views.create_new_message", args=[], kwargs={'user_id':1501518, 'recipient_id':ds1.creator.id})
+		response = self.client.get(contact_url)
+		self.assertEqual(response.status_code, 404)

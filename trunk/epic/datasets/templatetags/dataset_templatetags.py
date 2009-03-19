@@ -14,3 +14,8 @@ def show_edit_dataset_metadata_form(dataset, edit_dataset_metadata_form):
 		"dataset": dataset,
 		"edit_dataset_metadata_form": edit_dataset_metadata_form
 	}
+
+@register.inclusion_tag("templatetags/dataset_title_ratebox_and_datainfo.html", takes_context=True)
+def show_dataset_title_ratebox_and_datainfo(context, dataset):
+	user = context['user']
+	return {'dataset':dataset, 'user':user}

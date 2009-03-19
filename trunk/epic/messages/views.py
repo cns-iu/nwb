@@ -20,7 +20,8 @@ def index(request, user_id):
 	# Grab the messages this user would want
 	sent_messages = SentMessage.objects.filter(sender=user).order_by('-created_at')
 	received_messages = ReceivedMessage.objects.filter(recipient=user).order_by('-created_at')
-	return render_to_response('messages/index.html', {'user':user, 'sent_messages':sent_messages, 'received_messages':received_messages})
+	return render_to_response('messages/index.html', 
+							  {'user':user, 'sent_messages':sent_messages, 'received_messages':received_messages})
 
 @login_required
 def view_sent_message(request, user_id, sentmessage_id):
@@ -104,7 +105,7 @@ def reply_received_message(request, user_id, receivedmessage_id):
 			return render_to_response('messages/reply_message.html', {'form':form, 'user':request.user,})
 	
 @login_required
-def create_new_message(request, user_id):
+def create_new_message(request, user_id, recipient_id=None):
 	sender = request.user
 	user_from_id = get_object_or_404(User, pk=user_id)
 	
@@ -114,7 +115,12 @@ def create_new_message(request, user_id):
 		return HttpResponseRedirect(reverse('epic.messages.views.create_new_message', kwargs={'user_id':user.id}))
 	
 	if request.method != 'POST':
-		form = NewMessageForm()
+		# if the recipient is known, fill in the form, otherwise give a blank form to be filled out
+		if recipient_id is not None:
+			recipient_from_id = get_object_or_404(User, pk=recipient_id)
+			form = NewMessageForm(initial={'recipient':recipient_from_id.username,})
+		else:
+			form = NewMessageForm()
 		return render_to_response('messages/new_message.html', {'form':form, 'user':request.user,})
 	else:
 		form = NewMessageForm(request.POST)
