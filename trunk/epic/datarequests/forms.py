@@ -4,7 +4,7 @@ from django.forms import ModelForm
 from epic.datarequests.models import DataRequest
 from epic.core.models import Item
 
-class NewDataRequestForm(ModelForm):
+class DataRequestForm(ModelForm):
 	name = forms.CharField(max_length=Item.MAX_ITEM_NAME_LENGTH, widget=forms.TextInput(attrs={'size':42}))
 	description = forms.CharField(max_length=Item.MAX_ITEM_DESCRIPTION_LENGTH, widget=forms.Textarea(attrs={'rows':6, 'cols':42,}))
 	class Meta:

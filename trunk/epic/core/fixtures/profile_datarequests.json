@@ -463,7 +463,8 @@
             "created_at": "2009-03-06 11:25:40",
             "description": "This is the first item (by bill)",
             "name": "Item 1",
-            "creator": 4
+            "creator": 4, 
+            "slug": "whatever"
         }
     },
     {
@@ -473,7 +474,8 @@
             "created_at": "2009-03-06 11:27:19",
             "description": "This is a datarequest which is cancelled and it should be on the profile page <- by bill ",
             "name": "Data Request Item 3",
-            "creator": 4
+            "creator": 4, 
+            "slug": "whatever"
         }
     },
     {
@@ -483,7 +485,8 @@
             "created_at": "2009-03-06 11:27:19",
             "description": "This is a datarequest and it should be on the profile page <- by bill ",
             "name": "Data Request Item 4",
-            "creator": 4
+            "creator": 4, 
+            "slug": "whatever"
         }
     },
     {

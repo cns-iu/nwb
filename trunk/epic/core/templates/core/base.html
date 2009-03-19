@@ -16,9 +16,9 @@
     <div id="login">
       {% block login %}
         {% if user.is_authenticated %}
-          <a href="/user/">Profile</a> | 
+          <a href="{% url core.views.view_profile %}">Profile</a> | 
           <a href="{% url messages.views.index user_id=user.id %}">Messages</a> | 
-          <a href="/logout/">Log Out</a>
+          <a href="{% url core.views.logout_view %}">Log Out</a>
         {% else %}
           {% load core_templatetags %}
           {% login_box %}
@@ -28,6 +28,8 @@
     <div id="nav">
       {% block nav %}
       <ul>   
+        {# TODO:  set the pageon based on the actual page #}
+        {# TODO: use the url tag once the actual navigation tags have been decided on #}
         <li><a href="/" class="pageon"><span>Browse</span></a></li>
         <li><a href="/datasets/new/"><span>Share</span></a></li>
         <li><a href="/datarequests/"><span>Request</span></a></li>
@@ -43,6 +45,5 @@
   </div> 
   {% endblock %}
 </div>
-
 </body>
 </html>

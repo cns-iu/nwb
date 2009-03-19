@@ -3,10 +3,10 @@ from epic.datarequests.models import DataRequest
 
 register = template.Library()
 
-@register.inclusion_tag('templatetags/list_datasets.html', takes_context=True)
-def list_datasets(context, datasets):
-	request = context['request']
-	return {'datasets':datasets, 'user':request.user}
+@register.inclusion_tag('templatetags/display_datarequests.html', takes_context=True)
+def display_datarequests(context, datarequests):
+	user = context['user']
+	return {'datarequests':datarequests, 'user':user}
 
 @register.inclusion_tag("templatetags/display_recent_requests.html")
 def display_recent_requests(limit=4):

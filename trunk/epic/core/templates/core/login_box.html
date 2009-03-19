@@ -1,5 +1,5 @@
-<form method="post" action="/login/">
-{{ login_form.as_table }}
+<form method="post" action="{% url django.contrib.auth.views.login %}">
+	{{ login_form.as_table }}
 <input type="submit" value="login" />
 <input type="hidden" name="next" value="{{ next }}" />
 </form>

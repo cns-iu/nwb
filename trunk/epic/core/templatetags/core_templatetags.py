@@ -6,7 +6,7 @@ from epic.datasets.models import DataSet
 
 register = template.Library()
 
-@register.inclusion_tag('core/login_box.html', takes_context=True)
-def login_box(context):
+@register.inclusion_tag('core/login_box.html')
+def login_box():
 	form = AuthenticationForm()
 	return {'login_form':form}
