@@ -17,7 +17,7 @@
       {% block login %}
         {% if user.is_authenticated %}
           <a href="/user/">Profile</a> | 
-          <a href="/user/{{ user.id }}/mesages">Messages</a> | 
+          <a href="/user/{{ user.id }}/messages">Messages</a> | 
           <a href="/logout/">Log Out</a>
         {% else %}
           {% load core_templatetags %}
