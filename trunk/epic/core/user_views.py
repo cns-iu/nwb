@@ -5,18 +5,31 @@ from django.shortcuts import render_to_response, get_object_or_404
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User, UserManager
 from epic.datasets.models import DataSet
+from epic.datarequests.models import DataRequest
 
 from models import Profile
 from user_forms import ForgotUsernameForm, ForgotEmailForm, ForgotPasswordForm
 
 @login_required
 def index(request):
+	''' Used to display the basic/home page for logged in user. '''
 	user = request.user
 	profile = Profile.objects.for_user(user)
 
 	datasets = DataSet.objects.filter(creator=user).order_by('-created_at')
 	
-	return render_to_response('core/user/index.html', { "profile": profile, "user": user, "datasets":datasets})
+	datarequests = DataRequest.objects.filter(creator=user).exclude(status='C').order_by('-created_at')
+	
+# 	HTML content relating to user, it's profile, datasets uploaded & data requests made 
+#	is fetched. 
+	return render_to_response('core/user/index.html', 
+								{ 
+									"profile": profile, 
+									"user": user, 
+									"datasets":datasets, 
+									"datarequests":datarequests 
+								}
+							)
 
 @login_required
 def change_password(request):
