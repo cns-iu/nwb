@@ -1,4 +1,4 @@
-<form action="/datasets/{{ dataset.id }}/edit/" method="POST">
+<form action="{% url datasets.views.edit_dataset item_id=dataset.id %}" method="POST">
 	<table>
 		{{ edit_dataset_metadata_form.as_table }}
 	</table>
@@ -7,7 +7,7 @@
 	
 	<br />
 	
-	<a href = "/datasets/{{ dataset.id }}/">
+	<a href = "{% url datasets.views.view_dataset item_id=dataset.id slug=dataset.slug %}/">
 		Cancel Metadata Changes
 	</a>
 </form>
