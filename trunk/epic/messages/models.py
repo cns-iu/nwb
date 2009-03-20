@@ -1,5 +1,6 @@
 from django.db import models
 from django.contrib.auth.models import User
+from django.core.urlresolvers import reverse
 
 class Message(models.Model):
 	MAX_SUBJECT_LENGTH = 128
@@ -19,14 +20,12 @@ class ReceivedMessage(Message):
 	replied = models.BooleanField()
 	deleted = models.BooleanField()
 	
-	#TODO: this is stupid, but the reverse didn't work for the permalink.  FIX THIS!
 	def get_absolute_url(self):
-		return ('/user/%s/messages/received/%s/' % (self.recipient.id, self.id))
+		return reverse('epic.messages.views.view_received_message', kwargs={'user_id':self.recipient.id, 'receivedmessage_id':self.id})
 	
 class SentMessage(Message):
 	deleted = models.BooleanField()
-	
-	#TODO: this is stupid, but the reverse didn't work for the permalink.  FIX THIS!
+
 	def get_absolute_url(self):
-		return ('/user/%s/messages/sent/%s/' % (self.sender.id, self.id))
+		return reverse('epic.messages.views.view_sent_message', kwargs={'user_id':self.sender.id, 'sentmessage_id':self.id})		
 	

@@ -9,6 +9,6 @@
 		<li><a href="{% url datasets.views.edit_dataset item_id=dataset.id, slug=dataset.slug %}">Edit</a></li>
 	{% endifequal %}
 	{% if user.is_authenticated %}
-		<li><a href="{% url messages.views.create_new_message user_id=user.id, recipient_id=dataset.creator.id %}">Contact Creator</a></li>
+		<li><a href="{% url messages.views.send_message user_id=user.id, recipient_id=dataset.creator.id %}">Contact Creator</a></li>
 	{% endif %}
 </ul>

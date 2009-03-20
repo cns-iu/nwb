@@ -5,7 +5,6 @@ from django.forms.util import ErrorList
 from epic.messages.models import Message
 from django.contrib.auth.models import User
 
-#TODO: Catch error where recipient is empty
 class NewMessageForm(ModelForm):
 	recipient = forms.CharField(max_length=1024)
 	message = forms.CharField(max_length=Message.MAX_MESSAGE_LENGTH, widget=forms.Textarea())
@@ -22,5 +21,5 @@ class NewMessageForm(ModelForm):
 			raise forms.ValidationError("%s is not a valid username" % (recipient))
 		return recipient
 
-#TODO: not do this.			 
+# TODO: not do this.			 
 NewMessageForm.base_fields.keyOrder = ["recipient"] + NewMessageForm.base_fields.keyOrder[:-1] 

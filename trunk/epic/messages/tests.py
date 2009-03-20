@@ -154,7 +154,7 @@ class ContactUserLinkTests(TestCase):
 		response = self.client.get(dataset_url)
 		self.assertEqual(response.status_code, 200)
 		
-		contact_url = reverse("epic.messages.views.create_new_message", args=[], kwargs={'user_id':peebs.id, 'recipient_id':ds1.creator.id})
+		contact_url = reverse("epic.messages.views.send_message", args=[], kwargs={'user_id':peebs.id, 'recipient_id':ds1.creator.id})
 		self.assertTrue(contact_url not in response.content)
 		
 	def testSendingMessageLinkLoggedIn(self):
@@ -171,7 +171,7 @@ class ContactUserLinkTests(TestCase):
 		response = self.client.get(dataset_url)
 		self.assertEqual(response.status_code, 200)		
 		
-		contact_url = reverse("epic.messages.views.create_new_message", args=[], kwargs={'user_id':peebs.id, 'recipient_id':ds1.creator.id})
+		contact_url = reverse("epic.messages.views.send_message", args=[], kwargs={'user_id':peebs.id, 'recipient_id':ds1.creator.id})
 		self.assertTrue(contact_url in response.content, response.content)
 	
 	def testUsingSendingMessageLinkAnnon(self):
@@ -180,7 +180,7 @@ class ContactUserLinkTests(TestCase):
 	
 		ds1 = DataSet.objects.create(name='ds1', description='this is dataset one', creator=admin, slug='blah')	
 		
-		contact_url = reverse("epic.messages.views.create_new_message", args=[], kwargs={'user_id':peebs.id, 'recipient_id':ds1.creator.id})
+		contact_url = reverse("epic.messages.views.send_message", args=[], kwargs={'user_id':peebs.id, 'recipient_id':ds1.creator.id})
 		response = self.client.get(contact_url)
 		self.assertEqual(response.status_code, 302)
 	
@@ -194,7 +194,7 @@ class ContactUserLinkTests(TestCase):
 		login = self.client.login(username='peebs', password='map')
 		self.failUnless(login, 'Could not login')
 		
-		contact_url = reverse("epic.messages.views.create_new_message", args=[], kwargs={'user_id':peebs.id, 'recipient_id':ds1.creator.id})
+		contact_url = reverse("epic.messages.views.send_message", args=[], kwargs={'user_id':peebs.id, 'recipient_id':ds1.creator.id})
 		response = self.client.get(contact_url)
 		self.assertEqual(response.status_code, 200)
 		self.assertTrue(ds1.creator.username in response.content, "The username of the dataset was not put into the form for the user")
@@ -228,6 +228,6 @@ class ContactUserLinkTests(TestCase):
 		self.failUnless(login, 'Could not login')
 		
 		# The contact url to a fake person
-		contact_url = reverse("epic.messages.views.create_new_message", args=[], kwargs={'user_id':1501518, 'recipient_id':ds1.creator.id})
+		contact_url = reverse("epic.messages.views.send_message", args=[], kwargs={'user_id':1501518, 'recipient_id':ds1.creator.id})
 		response = self.client.get(contact_url)
 		self.assertEqual(response.status_code, 404)

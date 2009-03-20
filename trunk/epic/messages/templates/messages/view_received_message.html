@@ -16,7 +16,7 @@
     <td>{{ received_message.subject }}</td>
   </tr>
   <tr>
-    <td colspan="2">{{ received_message.message|escape|linebreaks }}</td>
+    <td colspan="2">{{ received_message.message|linebreaks }}</td>
   </tr>
 </table>
 <hr>
@@ -25,5 +25,5 @@
 <p>There was a problem finding the message.</p>
 {% endif %}
 <a href="/">Home</a>
-<a href="reply">Reply</a>
+<a href="{% url messages.views.send_message user_id=user.id, in_reply_to_message_id=received_message.id %}">Reply</a>
 {% endblock %}

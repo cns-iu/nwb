@@ -60,68 +60,32 @@ def view_received_message(request, user_id, receivedmessage_id):
 	received_message.read = True
 	received_message.save()
 	return render_to_response('messages/view_received_message.html', {'user':user, 'received_message':received_message,})
-
-@login_required	
-def reply_received_message(request, user_id, receivedmessage_id):
-	user = request.user
-	user_from_id = get_object_or_404(User, pk=user_id)
-	received_message = get_object_or_404(ReceivedMessage, pk=receivedmessage_id)
-
-	# Sent user to their page if they try to find another user's page...
-	if (user != user_from_id):
-		#print "Users didn't match, sending to correct page."
-		return HttpResponseRedirect(reverse('epic.messages.views.reply_received_message', kwargs={'user_id':user.id, 'receivedmessage_id':receivedmessage_id}))
-
-	# Sent the user to the index if they are not the sender or receiver of this message
-	if (user.id != received_message.sender.id) and (user.id != received_message.recipient.id):
-		#print "User shouldn't be allowed to view this message: %s != (%s | %s)" % (user.id, received_message.sender.id, received_message.recipient.id)
-		return HttpResponseRedirect(reverse('epic.messages.views.index', kwargs={'user_id':user.id,}))
-	
-	if request.method != 'POST':
-		form = NewMessageForm(initial={'recipient':received_message.sender.username,'subject':'RE:%s' % (received_message.subject), 'message':'------\n%s said:\n%s' % (received_message.sender, received_message.message)})
-		return render_to_response('messages/reply_message.html', {'form':form, 'user':request.user,})
-	else:
-		form = NewMessageForm(request.POST)
-		if form.is_valid():
-			subject = form.cleaned_data['subject']
-			message = form.cleaned_data['message']
-			recipient_name = form.cleaned_data['recipient']
-			recipient = User.objects.get(username=recipient_name)
-			sender = user
-			new_received_message = ReceivedMessage.objects.create(recipient=recipient, sender=sender, subject=subject, message=message, read=False, replied=False, deleted=False)
-			new_sent_message = SentMessage.objects.create(recipient=recipient, sender=sender, subject=subject, message=message, deleted=False)
-			
-			email_subject = "New mail at EpiC from %s" % (new_received_message.sender.username)
-			#TODO: Set the get_absolute_url to actually return the domain (www.epic.org or what not)
-			email_message = "%s has sent you a message:\n\n-----------\n%s\n-----------\n\nTo view this email or reply please visit %s\n" % (new_received_message.sender.username, new_received_message.message, new_received_message.get_absolute_url())
-			send_mail(email_subject, email_message, 'email@epic.com', [recipient.email])
-			
-			received_message.replied=True
-			received_message.save()
-			
-			return HttpResponseRedirect(reverse('epic.messages.views.view_sent_message', kwargs={'user_id':sender.id, 'sentmessage_id':new_sent_message.id,}))
-		else:
-			#print "invalid reply form"
-			return render_to_response('messages/reply_message.html', {'form':form, 'user':request.user,})
 	
 @login_required
-def create_new_message(request, user_id, recipient_id=None):
+def send_message(request, user_id, recipient_id=None, in_reply_to_message_id=None):
 	sender = request.user
 	user_from_id = get_object_or_404(User, pk=user_id)
 	
 	# Sent user to their page if they try to find another user's page...
 	if (sender != user_from_id):
 		#print "Users didn't match, sending to correct page."
-		return HttpResponseRedirect(reverse('epic.messages.views.create_new_message', kwargs={'user_id':user.id}))
+		return HttpResponseRedirect(reverse('epic.messages.views.send_message', kwargs={'user_id':user.id}))
 	
 	if request.method != 'POST':
-		# if the recipient is known, fill in the form, otherwise give a blank form to be filled out
-		if recipient_id is not None:
+		# If this is a reply, fill in the subject, recipient and message
+		if in_reply_to_message_id is not None:
+			in_reply_to_message=get_object_or_404(ReceivedMessage, pk=in_reply_to_message_id)
+			form = NewMessageForm(initial={'recipient':in_reply_to_message.sender.username,
+										   'subject':'RE:%s' % (in_reply_to_message.subject), 
+										   'message':'------\n%s said:\n%s' % (in_reply_to_message.sender, in_reply_to_message.message)})
+			return render_to_response('messages/send_message.html', {'form':form, 'user':request.user,})
+		# If the recipient was supplied by id, fill in the username for the user
+		elif recipient_id is not None:
 			recipient_from_id = get_object_or_404(User, pk=recipient_id)
 			form = NewMessageForm(initial={'recipient':recipient_from_id.username,})
 		else:
 			form = NewMessageForm()
-		return render_to_response('messages/new_message.html', {'form':form, 'user':request.user,})
+		return render_to_response('messages/send_message.html', {'form':form, 'user':request.user,})
 	else:
 		form = NewMessageForm(request.POST)
 		if form.is_valid():
@@ -138,4 +102,4 @@ def create_new_message(request, user_id, recipient_id=None):
 			send_mail(email_subject, email_message, 'email@epic.com', [recipient.email])
 			return HttpResponseRedirect(reverse('epic.messages.views.view_sent_message', kwargs={'user_id':sender.id, 'sentmessage_id':new_sent_message.id,}))
 		else:
-			return render_to_response('messages/new_message.html', {'form':form, 'user':request.user,})
+			return render_to_response('messages/send_message.html', {'form':form, 'user':request.user,})
