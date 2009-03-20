@@ -1,12 +1,12 @@
 {% extends "core/base.html" %}
 {% block content %}
 <h2>Start a new Data Request</h2>
-<form action="/datarequests/new/" method="POST">
+<form action="{% url datarequests.views.new_datarequest %}" method="POST">
     <table>
         {{ form.as_table }}
     </table>
     <p><input type="submit" value="Upload" /></p>
 </form>
 <a href="/">Home</a>
-<a href="/datarequests/">DataRequests</a>
+<a href="{% url datarequests.views.index %}">DataRequests</a>
 {% endblock %}

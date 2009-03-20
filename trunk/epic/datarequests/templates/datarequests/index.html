@@ -5,7 +5,7 @@
 		<div id="requestbox">
 			<h1>Make a Request</h1>
 		   	<br />
-			<form enctype="multipart/form-data" action="/datarequests/new/" method="POST">
+			<form enctype="multipart/form-data" action="{% url datarequests.views.new_datarequest %}" method="POST">
 		    {{ datarequest_form.name }}
 		    <br />
 		    <br />

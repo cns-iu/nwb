@@ -1,12 +1,12 @@
 {% extends "core/base.html" %}
 {% block content %}
 <h2>Edit Data Request</h2>
-<form enctype="multipart/form-data" action="{{ datarequest.get_absolute_url }}edit/" method="POST">
+<form enctype="multipart/form-data" action="{% url datarequests.views.edit_datarequest item_id=datarequest.id %}" method="POST">
     <table>
         {{ form.as_table }}
     </table>
     <p><input type="submit" value="Save" /></p>
 </form>
 <a href="/">Home</a>
-<a href="/datarequests/">DataRequests</a>
+<a href="{% url datarequests.views.index %}">DataRequests</a>
 {% endblock %}
