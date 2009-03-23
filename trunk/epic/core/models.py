@@ -81,4 +81,4 @@ class Profile(models.Model):
 
 	objects = ProfileManager()
 	user = models.ForeignKey(User, unique=True)
-	affiliation = models.CharField(max_length=MAX_USER_PROFILE_LENGTH)
+	affiliation = models.CharField(max_length=MAX_USER_PROFILE_LENGTH, blank=True)

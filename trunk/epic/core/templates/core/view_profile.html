@@ -6,6 +6,9 @@
 	<p><b>Last Name:</b> {{ profile.user.last_name }}</p>
 	<p><b>Affiliation:</b> {{ profile.affiliation }}</p>
 	<p><b>Date Joined:</b> {{ profile.user.date_joined|date:"F d, Y - P" }}</p>
+	{% ifequal profile.user user %}
+	<p><b><a href="{% url core.views.edit_profile %}">Edit Profile</a></b></p>
+	{% endifequal %}
 	<p><b><a href="{% url core.views.change_password %}">Change Password</a></b></p>
 	<hr>
 	{% if datasets %}

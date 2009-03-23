@@ -1,15 +1,18 @@
 from django.template import RequestContext, Context, loader
 from django.core.urlresolvers import reverse
-from django.http import HttpResponseRedirect
+from django.http import HttpResponseRedirect, HttpResponse
 from django.shortcuts import render_to_response, get_object_or_404
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User, UserManager
 from django.contrib.auth import logout
+from django.utils import simplejson
+from django.forms.formsets import formset_factory
+
 from epic.datasets.models import DataSet
 from epic.datarequests.models import DataRequest
 
 from models import Profile
-from forms import ForgotUsernameForm, ForgotEmailForm, ForgotPasswordForm
+from forms import ForgotUsernameForm, ForgotEmailForm, ForgotPasswordForm, ProfileForm, UserForm
 
 # This is the index for the entire site
 def index(request):
@@ -38,6 +41,30 @@ def view_profile(request):
 									"datarequests":datarequests 
 								}
 							)
+@login_required
+def edit_profile(request):
+	''' Used to allow a user to edit their own profile '''
+	# Get the user and profile objects.
+	user = request.user
+	profile = Profile.objects.for_user(user)
+	if request.method != 'POST':
+		# New form needed, set the fields to their current values
+		profile_form = ProfileForm(instance=profile)
+		user_form = UserForm(instance=user)
+	else:
+		# Create the form based on the filled out fields.  Include the old instance to get the required fields that we will not be showing, (e.g. the user)
+		profile_form = ProfileForm(request.POST, instance=profile)
+		user_form = UserForm(request.POST, instance=user)
+		# Check to make sure that all the fields were filled out correctly
+		if profile_form.is_valid() and user_form.is_valid():
+			# Save the profile
+			profile_form.save()
+			user_form.save()
+			return HttpResponseRedirect(reverse('epic.core.views.view_profile', kwargs={}))
+		else:
+			# Form will have errors which will be displayed by page
+			pass
+	return render_to_response('core/edit_profile.html', {'profile_form':profile_form, 'user_form':user_form, 'user':user,})
 
 def logout_view(request):
 	logout(request)

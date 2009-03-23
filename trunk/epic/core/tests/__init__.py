@@ -7,3 +7,4 @@ from log_in_and_out_tests import *
 from profile_dataset_tests import *
 from profile_datarequests_tests import *
 from profile_link_tests import *
+from edit_profile_tests import *
