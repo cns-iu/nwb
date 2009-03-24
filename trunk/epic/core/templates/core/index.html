@@ -1,10 +1,8 @@
 {% extends "core/base.html" %}
 {% block content %}
-  {# TODO: Add the tag cloud here #}
   <div id="trail"> Tag result trail goes here </div>
-  <div id="tagbox">
-    <a href="links.html">Tag </a><a href="links.html">Tag </a><a href="links.html"></a>
-  </div>
+  {% load tags_templatetags %}
+  {% show_tag_cloud %}
   {% load dataset_templatetags %}
   {% list_datasets datasets %}
 {% endblock %}

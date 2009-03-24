@@ -11,10 +11,8 @@
 	</div>
 {% endif %}
 	
-<div id="tagbox">
-  		<a href="links.html">Tag </a><a href="links.html"></a>
-  		<a href="links.html">Tag </a><a href="links.html"></a>
-</div>
+{% load tags_templatetags %}
+{% show_tag_cloud %}
 
 <div id="databox">
 	{% load dataset_templatetags %}

@@ -1,4 +1,5 @@
 from django.conf.urls.defaults import *
+
 urlpatterns = patterns('epic.core.views',
 	(r'^$', 'view_profile'),
 	(r'^edit_profile/$', 'edit_profile'),

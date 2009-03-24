@@ -22,5 +22,6 @@ if settings.DEBUG:
 	# NOT SECURE NOT FOR POST_DEVELOPMENT!
 	# http://docs.djangoproject.com/en/1.0/howto/static-files/
 	urlpatterns += patterns('',
-		(r'^core_media/(?P<path>.*)$', 'django.views.static.serve', {'document_root': 'core/media/'}),					
+		(r'^core_media/(?P<path>.*)$', 'django.views.static.serve', {'document_root': 'core/media/'}),
+		(r'^tags_media/(?P<path>.*)$', 'django.views.static.serve', { 'document_root': 'tags/media/' }),				
 	)

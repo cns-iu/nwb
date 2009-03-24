@@ -21,8 +21,8 @@ from datetime import datetime
 def index(request):
     datasets = DataSet.objects.all().order_by('-created_at')
     return render_to_response('datasets/index.html',
-							  {'datasets': datasets, 'user': request.user},
-							  context_instance=RequestContext(request))
+    	{ 'datasets': datasets, 'user': request.user },
+    	context_instance=RequestContext(request))
 
 def view_dataset(request, item_id=None, slug=None):
 	dataset = get_object_or_404(DataSet, pk=item_id)
@@ -30,8 +30,8 @@ def view_dataset(request, item_id=None, slug=None):
 	user = request.user
 	
 	return render_to_response('datasets/view_dataset.html', 
-							  {'dataset': dataset, 'user': user, 'post_comment_form': post_comment_form},
-							  context_instance=RequestContext(request))
+		{ 'dataset': dataset, 'user': user, 'post_comment_form': post_comment_form },
+		context_instance=RequestContext(request))
 
 post_dataset_comment = make_comment_view(
 	DataSet,

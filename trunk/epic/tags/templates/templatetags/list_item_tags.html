@@ -2,7 +2,7 @@
 {% if tags %}
 	<ul class="taglist">
 		{% for tag in tags %}
-		<li><a href="{% get_tag_url tag.tag %}">{{ tag.tag }}</a></li>
+			<li><a href="{{ tag.get_tag_url }}">{{ tag.tag }}</a></li>
 		{% endfor %}
 	</ul>
 {% endif %}

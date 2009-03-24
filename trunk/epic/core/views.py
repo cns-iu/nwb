@@ -18,8 +18,8 @@ from forms import ForgotUsernameForm, ForgotEmailForm, ForgotPasswordForm, Profi
 def index(request):
 	datasets = DataSet.objects.all().order_by('-created_at')
 	return render_to_response('core/index.html',
-							  {'user':request.user, 'datasets':datasets,},
-							  context_instance=RequestContext(request))
+		{ 'user': request.user, 'datasets': datasets, },
+		context_instance=RequestContext(request))
 
 @login_required
 def view_profile(request):
@@ -34,13 +34,7 @@ def view_profile(request):
 # 	HTML content relating to user, it's profile, datasets uploaded & data requests made 
 #	is fetched. 
 	return render_to_response('core/view_profile.html', 
-								{ 
-									"profile": profile, 
-									"user": user, 
-									"datasets":datasets, 
-									"datarequests":datarequests 
-								}
-							)
+		{ "profile": profile, "user": user, "datasets":datasets, "datarequests":datarequests })
 @login_required
 def edit_profile(request):
 	''' Used to allow a user to edit their own profile '''

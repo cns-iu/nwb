@@ -146,9 +146,9 @@ p { font-size:77%;
 #tagbox {font-size:85%;
 	background-color: #ececec;
 	float:left;
-	margin-left:20px;
-	padding:10px;
-	width:125px;
+	margin-left:10px;
+	padding:5px;
+	width:165px;
 	border: 1px solid #09bac4;
 }
 
@@ -168,6 +168,30 @@ p { font-size:77%;
 	color: #333333;
 }
 
+li.tagbox-base {
+	font-size: 24px;
+	display: inline;
+}
+
+a.tagbox-anchor {
+	text-decoration: none;
+}
+
+a.tagbox-earliest {
+	color: #ccc;
+}
+
+a.tagbox-earlier {
+	color: #99c;
+}
+
+a.tagbox-later {
+	color: #99f;
+}
+
+a.tagbox-latest {
+	color: #00f;
+}
 
 .taglist {margin:0; padding-bottom:5px; padding-left:0;font-size:85%; } 
 
