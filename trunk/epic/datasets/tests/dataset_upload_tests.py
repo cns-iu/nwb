@@ -9,13 +9,12 @@ import os
 
 class UploadTestCase(TestCase):
 	fixtures = ['initial_data', 'single_dataset', 'initial_users']
-
+		
 	def testUploadingDatasetsRequiresLogin(self):
 		response = self.client.get(reverse('epic.datasets.views.create_dataset'))
 		#fail if no redirect
 		self.failIf(response.status_code != 302)
 		
-
 	def testUploadingDatasets(self):		
 		client = self.client
 		
@@ -75,8 +74,8 @@ class UploadTestCase(TestCase):
 		download_response_1 = client.get(our_datasetfile1.file_contents.url)
 		download_response_2 = client.get(our_datasetfile2.file_contents.url)
 		
-		self.assertTrue(str(download_response_1).find("This is a test file1") != -1)
-		self.assertTrue(str(download_response_2).find("This is a test file2") != -1)
+		self.assertTrue("This is a test file1" in str(download_response_1))
+		self.assertTrue("This is a test file2" in str(download_response_2))
 
 		#remove files we uploaded (or throw an exception if they aren't in the right place)
 		
@@ -87,10 +86,16 @@ class UploadTestCase(TestCase):
 		upload_subdir = our_datasetfile1.get_upload_to()
 		upload_directory = os.path.join(root, upload_subdir)
 	
-		os.remove(os.path.join(upload_directory, "test_file.txt"))
-		os.remove(os.path.join(upload_directory, "test_file2.txt"))
+		try:
+			os.remove(os.path.join(upload_directory, "test_file.txt"))
+			os.remove(os.path.join(upload_directory, "test_file2.txt"))
+			
+			os.rmdir(upload_directory)
+		except OSError:
+			#try and remove them if you can, but if not no biggie (names might be different)
+			pass
 	
-		os.rmdir(upload_directory)
+		
 			
 			
 	#TODO: eventually test simultaneous upload/download speeds on multiple big files
