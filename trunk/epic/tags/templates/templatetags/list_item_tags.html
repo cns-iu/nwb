@@ -6,7 +6,7 @@
 			{% if not forloop.last %}
 				<a href="{{ tag.get_tag_url }}">
 			{% else %}
-				<a href"{{ tag.get_tag_url }}" class="lasttag">
+				<a href="{{ tag.get_tag_url }}" class="lasttag">
 			{% endif %}
 			{{ tag.tag }}</a></li>
 		{% endfor %}
