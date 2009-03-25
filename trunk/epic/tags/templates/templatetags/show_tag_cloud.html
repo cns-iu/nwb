@@ -27,13 +27,15 @@
 		// TODO: Comment this code.
 		
 		var tagCloud = TagCloud.create();
+		var currentDate = Date();
+		var parsedDate = Date.parse(currentDate);
 		
 		{% for tag in tags %}
-			tagCloud.add("{{ tag.tag_name }}", {{ tag.font_size }}, "{{ tag.get_tag_url }}", Date.parse("{{ tag.created_at }}"));
+			tagCloud.add("{{ tag.tag_name }}", {{ tag.font_size }}, "{{ tag.get_tag_url }}", parsedDate);
 		{% endfor %}
 		
 		tagCloud.loadEffector('CountSize').base(10).range(10);
-		tagCloud.loadEffector('DateTimeColor');
+		// tagCloud.loadEffector('DateTimeColor');
 		
 		function setup()
 		{
