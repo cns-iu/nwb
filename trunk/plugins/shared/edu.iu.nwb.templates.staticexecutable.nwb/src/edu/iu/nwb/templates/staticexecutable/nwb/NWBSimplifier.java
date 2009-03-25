@@ -9,7 +9,7 @@ import java.util.Map;
 import edu.iu.nwb.util.nwbfile.NWBFileParserAdapter;
 
 public class NWBSimplifier extends NWBFileParserAdapter {
-	private static final String ZERO_WEIGHT_REASON = "Zero weights are not allowed. To use this algorithm, preprocess your network further.";
+	private static final String NON_POSITIVE_WEIGHT_REASON = "Non-positive weights are not allowed. To use this algorithm, preprocess your network further.";
 	private static final String ISOLATES_REASON = "This algorithm doesn't work on networks with isolates. To use this algorithm, please remove the isolates.";
 	private int nodeCount = 0;
 	private PrintWriter output;
@@ -62,8 +62,8 @@ public class NWBSimplifier extends NWBFileParserAdapter {
 			weight = ((Number) attributes.get(weightAttribute)).doubleValue();
 		}
 		
-		if(weight == 0) { //TODO: fix the NWB parser so this crap isn't necessary, and I can throw a real exception.
-			reason = ZERO_WEIGHT_REASON;
+		if(weight <= 0) { //TODO: fix the NWB parser so this crap isn't necessary, and I can throw a real exception.
+			reason = NON_POSITIVE_WEIGHT_REASON;
 			haltParsing = true;
 		} else {
 			addEdge(sourceNode, targetNode, weight);
