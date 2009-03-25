@@ -198,14 +198,15 @@ a.tagbox-latest {
 
 #tag_hover
 {
-	border: 1px;
-	border-style: dashed;
-	color: red;
-	width: auto;
-	height: auto;
-	overflow: auto;
-	position: absolute;
-	visibility: hidden;
+    border: 1px solid #09bac4;
+    background-color: #FFFFFF;
+    width: auto;
+    height: auto;
+    overflow: auto;
+    position: absolute;
+    visibility: hidden;
+    color: #09bac4;
+    padding: 3px;
 }
 
 .taglist {margin:0; padding-bottom:5px; padding-left:0;font-size:85%; } 
