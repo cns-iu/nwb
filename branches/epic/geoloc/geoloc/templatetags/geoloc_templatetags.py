@@ -15,7 +15,7 @@ def display_map_for_datasets():
 			location_list.append(location)
 	return {'location_list':location_list,}
 
-@register.inclusion_tag("templatetags/display_map_for_dataset.html")
+@register.inclusion_tag("templatetags/display_map_for_datasets.html")
 def display_map_for_dataset(item_id):
 	dataset = get_object_or_404(DataSet, pk=item_id)
 	location_list = GeoLoc.objects.filter(datasets=item_id)
