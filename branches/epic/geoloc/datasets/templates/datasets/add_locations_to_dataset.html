@@ -1,0 +1,80 @@
+{% extends "core/base.html" %}
+{% block head_javascript %}
+{{ block.super }}
+<script src="http://maps.google.com/maps?file=api&amp;v=2&amp;key={{ GOOGLE_KEY }}" type="text/javascript"></script>
+{% endblock %}
+{% block content %}
+<div id="contentbox">
+	<script type="text/javascript">
+		window.onUnload = GUnload();
+	</script>
+	<div id="map" style="width: 400px; height: 300px"></div>
+</div>
+{% endblock %}
+{% block tail_javascript %}
+{{ block.super }}
+<script type="text/javascript">
+	//Bloomington IN
+	var map_long = -86.516755;
+	var map_lat = 39.171594;
+	var map_zoom = 12;
+	var locations = [{% for location in location_list %}[{{location.longitude}},{{ location.latitude }},'{{ location.canonical_name }}', [{% for dataset in location.datasets.all %}['{{ dataset.name }}','{{ dataset.get_absolute_url }}']{% if not forloop.last %},{% endif %}{% endfor %}]]{% if not forloop.last %},{% endif %}{% endfor %}];
+</script>
+<script type="text/javascript">
+	var geocoder = new GClientGeocoder();
+
+	function addLocationMarker(lng, lat, canonical_name, url_list) {
+		var markerpt = new GPoint(lng, lat);
+	    var marker = new GMarker(markerpt);
+		var html = '<b>' + canonical_name + '</b>';
+		for( var i=0; i < url_list.length ; i++) {
+			html += '<br /><a href="' + url_list[i][1] + '">' + url_list[i][0] + '</a>'
+		}
+		GEvent.addListener(marker, "click", function() { marker.openInfoWindowHtml(html); });
+		map.addOverlay(marker);
+	}
+	function addNewLocation(id, lat, lng){
+		var value = document.getElementById(id).value
+		var data = {};
+		data.lat = lat;
+		data.lng = lng;
+		data.canonical_name = value;
+	    jQuery.post('http://localhost:8282/datasets/'+ {{ dataset.id }}+'/view-asdf/geoloc/?xhr', data, 
+	    	    	function(responseData){
+						locLng = responseData.locLng;
+						locLat = responseData.locLat;
+						loccanonical_name = responseData.loccanonical_name;
+						locUrlList = responseData.locUrlList;
+						addLocationMarker(locLng, locLat, loccanonical_name, locUrlList)
+						map.getInfoWindow().hide()
+					}
+    				, 'json');
+	}
+	
+	function drawLocationMarkers(locations){
+		map.clearOverlays();
+		for (var i=0; i < locations.length; i++){
+			addLocationMarker(locations[i][0], locations[i][1], locations[i][2], locations[i][3]);
+		}
+	}
+	if (GBrowserIsCompatible()) {
+		var map_div = document.getElementById("map");
+		var map = new GMap2(map_div);
+		
+		map.addControl(new GSmallMapControl());
+		map.addControl(new GMapTypeControl());
+		
+		var pt = new GLatLng(top.map_lat, top.map_long);
+		map.setCenter(pt, 17 - top.map_zoom);
+
+		GEvent.addListener(map, "click", function(overlay, latlng) {     
+			  if (latlng) { 
+					var html = '<br />Location Name: <input type="text" id="canonical_name" \><br><input type="submit" value="Add Location" onclick="addNewLocation(\'canonical_name\','+ latlng.lat() +','+ latlng.lng() +') />'
+					map.openInfoWindow(latlng, html);
+				  }
+				});
+		
+		drawLocationMarkers(locations);
+	}
+</script>
+{% endblock %}

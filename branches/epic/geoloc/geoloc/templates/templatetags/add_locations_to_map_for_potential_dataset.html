@@ -1,0 +1,109 @@
+{% block head_javascript %}
+{{ block.super }}
+<script src="http://maps.google.com/maps?file=api&amp;v=2&amp;key={{ GOOGLE_KEY }}" type="text/javascript"></script>
+{% endblock %}
+
+<script type="text/javascript">
+	window.onUnload = GUnload();
+</script>
+<h3>Click on the map to add locations to the dataset</h3>
+<div class="messages" id="map_messages"></div>
+<div class="map_location_bar">
+     <p>
+       <b>Add a location:</b>
+       <input type="text" size="30" id="location_input"/>
+       <input type="hidden" id="map_points" name="MapPoints" value="" />
+       <input type="submit" value="Search" name="find" onclick="lookupLocation('location_input'); return false;"/>
+     </p>
+</div>
+<div id="map" style="width: 400px; height: 300px"></div>
+
+{% block tail_javascript %}
+{{ block.super }}
+<script type="text/javascript">
+	//Bloomington IN
+	var map_long = -86.516755;
+	var map_lat = 39.171594;
+	var map_zoom = 16;
+	var locations = [{% for location in location_list %}[{{location.longitude}},{{ location.latitude }},'{{ location.canonical_name }}', [{% for dataset in location.datasets.all %}['{{ dataset.name }}','{{ dataset.get_absolute_url }}']{% if not forloop.last %},{% endif %}{% endfor %}]]{% if not forloop.last %},{% endif %}{% endfor %}];
+</script>
+<script type="text/javascript">
+	var geocoder = new GClientGeocoder();
+
+	function addLocationMarker(lng, lat, canonical_name, url_list) {
+		var markerpt = new GPoint(lng, lat);
+	    var marker = new GMarker(markerpt);
+		var html = '<b>' + canonical_name + '</b>';
+		for( var i=0; i < url_list.length ; i++) {
+			html += '<br /><a href="' + url_list[i][1] + '">' + url_list[i][0] + '</a>'
+		}
+		GEvent.addListener(marker, "click", function() { marker.openInfoWindowHtml(html); });
+		map.addOverlay(marker);
+	}
+
+	
+	function lookupLocation(id){
+		var location_string = document.getElementById(id).value
+		var data = {};
+		data.location_string = location_string;
+		jQuery.post('{% url geoloc.views.geoloc_get_best_location %}', data, 
+				    function(responseData){
+						if (responseData.success) {
+							lng = responseData.lng;
+							lat = responseData.lat;
+							canonical_name = responseData.canonical_name;
+							addNewLocation(canonical_name, lat, lng);
+							jQuery("#map_messages").html(responseData.success)
+							var pt = new GLatLng(lat, lng);
+							map.setCenter(pt);
+						}else{
+							jQuery("#map_messages").html(responseData.failure)
+						}						
+					}, 'json');
+	}
+
+	function addNewLocation(canonical_name, lat, lng){
+		var otherPoints = jQuery('#map_points').attr('value');
+		
+		if (otherPoints != ''){
+			var newPoints = otherPoints + ',[[' + lat + ',' + lng + '],\'' + canonical_name + '\']';
+		}else {
+			var newPoints = otherPoints + '[[' + lat + ',' + lng + '],\'' + canonical_name + '\']';
+		}
+		
+		jQuery('#map_points').attr('value', newPoints);
+		addLocationMarker(lng, lat, canonical_name, '');
+		map.getInfoWindow().hide();
+	}
+	
+	function addNewLocationId(id, lat, lng){
+		var canonical_name = document.getElementById(id).value
+		addNewLocation(canonical_name, lat, lng);
+	}
+	
+	function drawLocationMarkers(locations){
+		map.clearOverlays();
+		for (var i=0; i < locations.length; i++){
+			addLocationMarker(locations[i][0], locations[i][1], locations[i][2], locations[i][3]);
+		}
+	}
+	
+	if (GBrowserIsCompatible()) {
+		var map_div = document.getElementById("map");
+		var map = new GMap2(map_div);
+		
+		map.addControl(new GSmallMapControl());
+		map.addControl(new GMapTypeControl());
+		
+		var pt = new GLatLng(top.map_lat, top.map_long);
+		map.setCenter(pt, 17 - top.map_zoom);
+
+		GEvent.addListener(map, "click", function(overlay, latlng) {     
+			  if (latlng) { 
+					var html = '<br />Location Name: <input type="text" id="canonical_name" \><br><input type="submit" value="Add Location" onclick="addNewLocationId(\'canonical_name\','+ latlng.lat() +','+ latlng.lng() +'); return false;" />'
+					map.openInfoWindow(latlng, html);
+				  }
+				});
+	}
+</script>
+{% endblock %}
