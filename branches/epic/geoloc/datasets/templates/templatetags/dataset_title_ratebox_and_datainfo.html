@@ -1,0 +1,14 @@
+<div class="downloadicon"> </div>
+{% load djangoratings_templatetags %}
+{% rate_box dataset user %}
+<h1> <a href="{% url datasets.views.view_dataset item_id=dataset.id %}">{{ dataset.name|escape }}</a></h1>
+<ul class="datainfo">
+	<li id="first">{{ dataset.creator|escape }}</li>
+	<li>{{ dataset.created_at|date:"F d, Y - P" }}</li>
+	{% ifequal user dataset.creator %}
+		<li><a href="{% url datasets.views.edit_dataset item_id=dataset.id, slug=dataset.slug %}">Edit</a></li>
+	{% endifequal %}
+	{% if user.is_authenticated %}
+		<li><a href="{% url messages.views.send_message user_id=user.id, recipient_id=dataset.creator.id %}">Contact Creator</a></li>
+	{% endif %}
+</ul>

@@ -1,0 +1,14 @@
+{% extends "core/base.html" %}
+{% block content %}
+<div id="contentbox">
+	<h1>Share Your Data</h1>
+	<form enctype="multipart/form-data" action="{% url datasets.views.create_dataset %}" method="POST">
+	    <table>
+	        {{ form.as_table }}
+	    </table>
+		{% load geoloc_templatetags %}
+		{% add_locations_to_map_for_potential_dataset %}
+	    <input type="submit" value="Upload" />
+	</form>
+</div>
+{% endblock %}

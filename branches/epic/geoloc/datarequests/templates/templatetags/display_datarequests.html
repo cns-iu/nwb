@@ -1,0 +1,20 @@
+{% if datarequests %}
+ 	{% for datarequest in datarequests %}
+		<div id="databox">
+		  <h1> <a href="{% url datarequests.views.view_datarequest item_id=datarequest.id %}">{{ datarequest.name }}</a></h1>
+		  <ul class="datainfo">
+		  	<li id="first">{{ datarequest.creator|escape }}</li>
+			<li>{{ datarequest.created_at|date:"F d, Y - P" }}</li>
+			{% ifequal user datarequest.creator %}
+				<li><a href="{% url datarequests.views.edit_datarequest item_id=datarequest.id %}">Edit</a></li>
+			{% endifequal %}
+			{% if user.is_authenticated %}
+			{% ifnotequal user datarequest.creator %}
+				<li><a href="{% url messages.views.send_message user_id=user.id, recipient_id=datarequest.creator.id %}">Contact Creator</a></li>
+			{% endifnotequal %}
+			{% endif %}
+		  </ul>
+		  <p>{{ datarequest.description }}</p>     
+		</div>
+	{% endfor %}
+{% endif %}

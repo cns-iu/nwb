@@ -1,0 +1,25 @@
+{% extends "core/base.html" %}
+{% block content %}
+	<p>
+	
+	{% if email %}
+		Your email is {{ email  }}.
+		
+		{% if next %}
+			Return to your <a href = "{{ next }}">destination</a>.
+		{% else %}
+			Go back <a href = "/">home</a>.
+		{% endif %}
+	{% else %}
+		{% if not_found %}
+			<p>No email was found tied to the username {{ username }}.  Please try again.</p>
+		{% endif %}
+		
+		<form action="{% url core.views.forgot_email %}" method="POST">
+			{{ form.as_table }}
+			<input type="submit" value="Submit">
+		</form>
+	{% endif %}
+	
+	</p>
+{% endblock %}

@@ -1,0 +1,12 @@
+{% if user_rating %}
+<div class="ratingsbox">{{ user_rating }} | Average: {{ rating }} | Total: {{ votes }}</div>
+{% else %}
+<div class="ratingsbox">
+	<a href="{{ ratebaseurl }}1/">Star1</a>
+	<a href="{{ ratebaseurl }}2/">Star2</a>
+	<a href="{{ ratebaseurl }}3/">Star3</a>
+	<a href="{{ ratebaseurl }}4/">Star4</a>
+	<a href="{{ ratebaseurl }}5/">Star5</a>
+	| Average: {{ rating }} | Total: {{ votes }}
+</div>
+{% endif %}

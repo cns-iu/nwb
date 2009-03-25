@@ -1,0 +1,10 @@
+{% extends "core/base.html" %}
+{% block content %}
+	<h3>
+		Edit data set {{ dataset.name }}:
+	</h3>
+	{% load dataset_templatetags %}
+	{% show_edit_dataset_metadata_form dataset edit_dataset_metadata_form %}
+	{% load geoloc_templatetags %}
+	{% add_locations_to_dataset_map dataset.id %}
+{% endblock %}

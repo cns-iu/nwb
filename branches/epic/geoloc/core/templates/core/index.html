@@ -1,0 +1,10 @@
+{% extends "core/base.html" %}
+{% block content %}
+  <div id="trail"> Tag result trail goes here </div>
+  {% load tags_templatetags %}
+  {% show_tag_cloud %}
+  {% load dataset_templatetags %}
+  {% list_datasets datasets %}
+  {% load geoloc_templatetags %}
+  {% display_map_for_datasets %}
+{% endblock %}
