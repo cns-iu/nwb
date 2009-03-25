@@ -2,7 +2,13 @@
 {% if tags %}
 	<ul class="taglist">
 		{% for tag in tags %}
-			<li><a href="{{ tag.get_tag_url }}">{{ tag.tag }}</a></li>
+			<li>
+			{% if not forloop.last %}
+				<a href="{{ tag.get_tag_url }}">
+			{% else %}
+				<a href"{{ tag.get_tag_url }}" class="lasttag">
+			{% endif %}
+			{{ tag.tag }}</a></li>
 		{% endfor %}
 	</ul>
 {% endif %}

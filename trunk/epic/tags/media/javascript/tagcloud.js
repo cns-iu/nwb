@@ -34,7 +34,7 @@ TagCloud.Tag.prototype.initClasses = function ()
 
 TagCloud.Tag.prototype.initAnchorClasses = function ()
 {
-	this.anchorClasses = [ 'tagbox-anchor' ];
+	this.anchorClasses = [ 'tagbox' ];
 }
 
 TagCloud.Tag.prototype.attachClass = function (className)
@@ -47,22 +47,7 @@ TagCloud.Tag.prototype.attachAnchorClass = function (className)
 	this.anchorClasses.push(className);
 }
 
-TagCloud.Tag.prototype.toElement = function()
-{
-	var element = document.createElement('li');
-	var linkElement = document.createElement('a');
-	
-	linkElement.setAttribute('href', this.url);
-	
-	var text = document.createTextNode(this.name);
-	
-	linkElement.appendChild(text);
-	element.appendChild(linkElement);
-	
-	return element;
-}
-
-TagCloud.Tag.prototype.toElement = function()
+TagCloud.Tag.prototype.toElement = function(isLastTag)
 {
 	var element = document.createElement('li');
 	var linkElement = document.createElement('a');
@@ -78,7 +63,12 @@ TagCloud.Tag.prototype.toElement = function()
 	var text = document.createTextNode(tagDisplayText);
 	
 	linkElement.appendChild(text);
-	linkElement.className = this.anchorClasses.join(" ");
+	
+	if (!isLastTag)
+		linkElement.className = this.anchorClasses.join(" ");
+	else
+		linkElement.className = "lasttag";
+	
 	element.appendChild(linkElement);
 	element.className = this.classes.join(" ");
 	
@@ -132,7 +122,11 @@ TagCloud.Container.prototype.toElement = function (filter)
 
 		if (!(filter && !filter(tag)))
 		{
-			list.appendChild(tag.toElement());
+			if (i == (this.tags.length - 1))
+				list.appendChild(tag.toElement(true));
+			else
+				list.appendChild(tag.toElement(false));
+			
 			list.appendChild(document.createTextNode("\n"));
 		}
 	}

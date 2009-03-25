@@ -161,8 +161,11 @@ p { font-size:77%;
 	border-right-color: #999999; padding-right:2px; padding-left:2px; 
 }
 
-
-
+#tagbox a.lasttag {
+	border-right-width: 0px;
+	border-right-style: none;
+	border: none;
+}
 
 #tagbox a:hover {
 	color: #333333;
@@ -193,16 +196,36 @@ a.tagbox-latest {
 	color: #00f;
 }
 
+#tag_hover
+{
+	border: 1px;
+	border-style: dashed;
+	color: red;
+	width: auto;
+	height: auto;
+	overflow: auto;
+	position: absolute;
+	visibility: hidden;
+}
+
 .taglist {margin:0; padding-bottom:5px; padding-left:0;font-size:85%; } 
 
 .taglist li {display:inline; }
 
 
 
-.taglist a, .taglist a:visited {color: #09bac4;
+.taglist a, .taglist a:visited {
+	color: #09bac4;
 	border-right-width: 1px;
 	border-right-style: dotted;
-	border-right-color: #999999; padding-right:2px; padding-left:2px; }
+	border-right-color: #999999; padding-right:2px; padding-left:2px;
+}
+
+.taglist a.lasttag {
+	border-right-width: 0px;
+	border-right-style: none;
+	border: none;
+}
 	
 .taglist a:hover {color: #333333;}
 
