@@ -25,19 +25,52 @@
 	var map_long = -86.516755;
 	var map_lat = 39.171594;
 	var map_zoom = 16;
-	var locations = [{% for location in location_list %}[{{ location.longitude }},{{ location.latitude }},'{{ location.canonical_name }}', [{% for dataset in location.datasets.all %}['{{ dataset.name }}','{{ dataset.get_absolute_url }}']{% if not forloop.last %},{% endif %}{% endfor %}]]{% if not forloop.last %},{% endif %}{% endfor %}];
+	var locations = new Array();
+
+	UrlNameListPair = function(name, url) {
+		this.name = name;
+		this.url = url;
+	}
+	
+	Location = function (lat, lng, canonicalName, urlNameList) {
+		this.lat = lat;
+		this.lng = lng;
+		this.canonicalName = canonicalName;
+		this.urlNameList = urlNameList;
+	}
+	
+	{% for location in location_list %}
+
+		urlNameList = new Array();
+		
+		{% for dataset in location.datasets.all %}
+			urlNameListPair = new UrlNameListPair('{{ dataset.name }}', '{{ dataset.get_absolute_url }}');
+			urlNameList = urlNameList.concat(urlNameListPair);
+		{% endfor %}
+
+		geolocation = new Location({{ location.latitude }},
+				                   {{ location.longitude }}, 
+				                   '{{ location.canonical_name }}', 
+				                   urlNameList);
+		
+		locations = locations.concat(geolocation);
+
+	{% endfor %}	
+
 </script>
 
 <script type="text/javascript">
 	var geocoder = new GClientGeocoder();
 
-	function addLocationMarker(lng, lat, canonical_name, url_list) {
-		var markerpt = new GPoint(lng, lat);
+	function addLocationMarker(location) {
+		var markerpt = new GPoint(location.lng, location.lat);
 	    var marker = new GMarker(markerpt);
-		var html = '<b>' + canonical_name + '</b>';
-		for( var i=0; i < url_list.length ; i++) {
-			html += '<br /><a href="' + url_list[i][1] + '">' + url_list[i][0] + '</a>'
+		var html = '<b>' + location.canonicalName + '</b>';
+
+		for each ( pair in location.urlNameList ){
+			html += '<br /><a href="' + pair.url + '">' + pair.name + '</a>';
 		}
+
 		GEvent.addListener(marker, "click", function() { marker.openInfoWindowHtml(html); });
 		map.addOverlay(marker);
 	}
@@ -49,12 +82,10 @@
 		jQuery.post('{% url geoloc.views.geoloc_get_best_location %}', data, 
 				    function(responseData){
 						if (responseData.success) {
-							lng = responseData.lng;
-							lat = responseData.lat;
-							canonical_name = responseData.canonical_name;
-							addNewLocation(canonical_name, lat, lng);
+							loc = new Location(responseData.lat, responseData.lng, responseData.canonical_name, '');
+							addNewLocation(loc);
 							jQuery("#map_messages").html(responseData.success)
-							var pt = new GLatLng(lat, lng);
+							var pt = new GLatLng(loc.lat, loc.lng);
 							map.setCenter(pt);
 						}else{
 							jQuery("#map_messages").html(responseData.failure)
@@ -62,30 +93,34 @@
 					}, 'json');
 	}
 
-	function addNewLocation(canonical_name, lat, lng){
+	function addNewLocation(location){
 		var otherPoints = jQuery('#map_points').attr('value');
 		
 		if (otherPoints != ''){
-			var newPoints = otherPoints + ',[[' + lat + ',' + lng + '],\'' + canonical_name + '\']';
+			var newPoints = otherPoints + ',[[' + location.lat + ',' + location.lng + '],\'' + location.canonicalName + '\']';
 		}else {
-			var newPoints = otherPoints + '[[' + lat + ',' + lng + '],\'' + canonical_name + '\']';
+			var newPoints = otherPoints + '[[' + location.lat + ',' + location.lng + '],\'' + location.canonicalName + '\']';
 		}
 		
 		jQuery('#map_points').attr('value', newPoints);
-		addLocationMarker(lng, lat, canonical_name, '');
+		addLocationMarker(location);
 		map.getInfoWindow().hide();
 	}
 	
 	function addNewLocationId(id, lat, lng){
-		var canonical_name = document.getElementById(id).value
-		addNewLocation(canonical_name, lat, lng);
+		var canonicalName = document.getElementById(id).value
+		loc = new Location(lat, lng, canonicalName, '');
+		addNewLocation(loc);
 	}
 	
 	function drawLocationMarkers(locations){
 		map.clearOverlays();
-		for (var i=0; i < locations.length; i++){
-			addLocationMarker(locations[i][0], locations[i][1], locations[i][2], locations[i][3]);
+
+		// TODO: figure out why I can't call loc location
+		for each (loc in locations){
+			addLocationMarker(loc);
 		}
+
 	}
 	
 	if (GBrowserIsCompatible()) {
