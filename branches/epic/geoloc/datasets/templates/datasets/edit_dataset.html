@@ -1,10 +1,16 @@
 {% extends "core/base.html" %}
 {% block content %}
-	<h3>
-		Edit data set {{ dataset.name }}:
-	</h3>
-	{% load dataset_templatetags %}
-	{% show_edit_dataset_metadata_form dataset edit_dataset_metadata_form %}
-	{% load geoloc_templatetags %}
-	{% add_locations_to_dataset_map dataset.id %}
+	<h3>Edit {{ dataset.name }}:</h3>
+	<form action="{% url datasets.views.edit_dataset item_id=dataset.id %}" method="POST">
+		<table>
+			{{ form.as_table }}
+		</table>
+		
+		{% load geoloc_templatetags %}
+		{% add_locations_to_map_for_dataset dataset.id %}
+		
+		<input type="submit" value="Submit Changes" />
+		<a href = "{% url datasets.views.view_dataset item_id=dataset.id slug=dataset.slug%}">Cancel Changes</a>
+	</form>
+	
 {% endblock %}

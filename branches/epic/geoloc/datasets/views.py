@@ -42,117 +42,7 @@ post_dataset_comment = make_comment_view(
 	"epic.datasets.views.view_dataset",
 	"datasets/view_dataset.html",
 	"dataset")
-
-@login_required
-def remove_location_from_dataset(request, item_id, slug=None):
-	dataset = get_object_or_404(DataSet, pk=item_id)
-	user = request.user
-	xhr = request.GET.has_key('xhr')
-	responseData = {}
 	
-	# Make sure the current user is the creator of the dataset.
-	if user != dataset.creator:
-		return HttpResponseRedirect(reverse('epic.datasets.views.view_dataset',
-										     kwargs={ 'item_id': dataset.id, 'slug':slug, }))
-
-	if request.method != 'POST':
-		return HttpResponseRedirect(reverse('epic.datasets.views.view_dataset',
-										     kwargs={ 'item_id': dataset.id, 'slug':slug, }))
-	else:
-		if not xhr:
-			return HttpResponseRedirect(reverse('epic.datasets.views.view_dataset',
-											     kwargs={ 'item_id': dataset.id, 'slug':slug, }))
-		else:
-			lat = Decimal(request.POST['lat'])
-			lng = Decimal(request.POST['lng'])
-			canonical_name = request.POST['canonical_name']	
-			geoloc = GeoLoc.objects.get(longitude=lng, latitude=lat, canonical_name=canonical_name)
-			dataset.geolocations.remove(geoloc)
-			
-			# TODO: Document what is going on here in detail.
-			query_list = GeoLoc.objects.filter(datasets=item_id)
-			locations = []
-			for location in query_list:
-				location_name_urls = []
-				for dataset in location.datasets.all():
-					location_name_urls.append( [ dataset.name, dataset.get_absolute_url() ])
-				locations.append([ str(location.longitude), str(location.latitude), location.canonical_name, location_name_urls])
-			print locations
-			responseData['success'] = '%s was successfully removed from the dataset' % geoloc.canonical_name
-			responseData['locations'] = locations
-			json = simplejson.dumps(responseData)
-			return HttpResponse(json, mimetype='application/json')
-	
-# TODO: Also document this very well.
-@login_required
-def add_location_to_dataset(request, item_id, slug=None):
-	dataset = get_object_or_404(DataSet, pk=item_id)
-	location_list = GeoLoc.objects.filter(datasets=item_id)
-	user = request.user
-	xhr = request.GET.has_key('xhr')
-	responseData = {}
-	# Make sure the current user is the creator of the dataset.
-	if user != dataset.creator:
-		return HttpResponseRedirect(reverse("epic.datasets.views.view_dataset",
-			kwargs={ "item_id": dataset.id, "slug":slug, }))
-	
-	if request.method == "POST":
-		if xhr:
-			try:
-				location_string = request.POST['location_string']
-			except:
-				location_string = None
-				
-			if location_string is not None:
-				try:
-					# TODO: does the location_string need to be cleaned somehow?
-					location = get_best_location(location_string)
-					lng = Decimal(str(location[1][1]))
-					lat = Decimal(str(location[1][0]))
-					canonical_name=location[0]	
-				except CouldNotFindLocation:
-					responseData['failure'] = "%s could not be resolved to a location" % location_string
-					json = simplejson.dumps(responseData)
-					return HttpResponse(json, mimetype='application/json')
-			else:
-				lat = Decimal(request.POST['lat'])
-				lng = Decimal(request.POST['lng'])
-				try:
-					canonical_name = request.POST['canonical_name']
-					if not canonical_name:
-						canonical_name = 'Unknown Location'
-				except:
-					canonical_name = 'Unknown Location'
-				
-			try:
-				geoloc = GeoLoc.objects.get(longitude=lng,latitude=lat)
-			except:
-				geoloc = GeoLoc(longitude=lng, latitude=lat, canonical_name=canonical_name)
-				geoloc.save()
-			
-			dataset.geolocations.add(geoloc)
-			responseData['success'] = 'A marker was added for %s' % geoloc.canonical_name
-			responseData['locLng'] = str(geoloc.longitude)
-			responseData['locLat'] = str(geoloc.latitude)
-			responseData['loccanonical_name'] = geoloc.canonical_name
-			
-			loc_url_list = []
-			for dataset in geoloc.datasets.all():
-				loc_url_list.append( [ dataset.name, dataset.get_absolute_url() ])
-			responseData['locUrlList'] = loc_url_list
-
-			json = simplejson.dumps(responseData)
-			return HttpResponse(json, mimetype='application/json')
-		
-	return render_to_response("datasets/add_locations_to_dataset.html", 
-							  {
-							  	"dataset": dataset,
-								"user": user,
-								"GOOGLE_KEY":settings.GOOGLE_KEY,
-								"location_list":location_list,
-							  }
-							 )
-
 @login_required
 def create_dataset(request):
 	if request.method != 'POST':
@@ -233,25 +123,55 @@ def edit_dataset(request, item_id, slug=None):
 			"tags": current_tags,
 		}
 		
-		edit_dataset_metadata_form = EditDataSetForm(initial=initial_data_dictionary)
+		form = EditDataSetForm(initial=initial_data_dictionary)
 	else:
-		edit_dataset_metadata_form = EditDataSetForm(request.POST)
+		form = EditDataSetForm(request.POST)
 		
-		if edit_dataset_metadata_form.is_valid():
-			dataset.name = edit_dataset_metadata_form.cleaned_data["name"]
-			dataset.description = edit_dataset_metadata_form.cleaned_data["description"]
+		if form.is_valid():
+			dataset.name = form.cleaned_data["name"]
+			dataset.description = form.cleaned_data["description"]
 			dataset.slug = slugify(dataset.name)
 			dataset.save()
 			
-			tags = edit_dataset_metadata_form.cleaned_data["tags"]
+			tags = form.cleaned_data["tags"]
 			dataset.tags.update_tags(tags, user=user)
+			
+			try:
+				# TODO: Make this so Baby Patrick does not cry.
+				locations = request.POST['MapPoints']
+				locations = locations.split('[[')
+				locations.remove("")
+	
+				for location in locations:
+					location = location.replace("'],", '')
+					location = location.replace("],'", ',')
+					location = location.replace("']", "")
+					location = location.split(',')
+					print location
+					lat = location[0]
+					lng = location[1]
+					canonical_name = location[2]
+					print "%s, %s = %s" % (lng, lat, canonical_name)
+					
+					try:
+						geoloc = GeoLoc.objects.get(longitude=lng,latitude=lat)
+					except:
+						geoloc = GeoLoc(longitude=lng, latitude=lat, canonical_name=canonical_name)
+						geoloc.save()
+					
+					dataset.geolocations.add(geoloc)
+			
+			except MultiValueDictKeyError:
+				# The user didn't post any locations
+				pass
+			
 			return HttpResponseRedirect(reverse("epic.datasets.views.view_dataset",
 				kwargs={ "item_id": dataset.id, 'slug':slug, }))
-	
+			
 	return render_to_response("datasets/edit_dataset.html", {
 		"dataset": dataset,
 		"user": user,
-		"edit_dataset_metadata_form": edit_dataset_metadata_form
+		"form": form
 	})
 
 @login_required

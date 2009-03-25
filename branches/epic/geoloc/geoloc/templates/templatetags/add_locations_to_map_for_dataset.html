@@ -17,16 +17,17 @@
      </p>
 </div>
 <div id="map" style="width: 400px; height: 300px"></div>
-
 {% block tail_javascript %}
 {{ block.super }}
+
 <script type="text/javascript">
 	//Bloomington IN
 	var map_long = -86.516755;
 	var map_lat = 39.171594;
 	var map_zoom = 16;
-	var locations = [{% for location in location_list %}[{{location.longitude}},{{ location.latitude }},'{{ location.canonical_name }}', [{% for dataset in location.datasets.all %}['{{ dataset.name }}','{{ dataset.get_absolute_url }}']{% if not forloop.last %},{% endif %}{% endfor %}]]{% if not forloop.last %},{% endif %}{% endfor %}];
+	var locations = [{% for location in location_list %}[{{ location.longitude }},{{ location.latitude }},'{{ location.canonical_name }}', [{% for dataset in location.datasets.all %}['{{ dataset.name }}','{{ dataset.get_absolute_url }}']{% if not forloop.last %},{% endif %}{% endfor %}]]{% if not forloop.last %},{% endif %}{% endfor %}];
 </script>
+
 <script type="text/javascript">
 	var geocoder = new GClientGeocoder();
 
@@ -41,7 +42,6 @@
 		map.addOverlay(marker);
 	}
 
-	
 	function lookupLocation(id){
 		var location_string = document.getElementById(id).value
 		var data = {};
@@ -104,6 +104,7 @@
 					map.openInfoWindow(latlng, html);
 				  }
 				});
+		drawLocationMarkers(locations);
 	}
 </script>
 {% endblock %}
