@@ -5,9 +5,7 @@
 		<table>
 			{{ form.as_table }}
 		</table>
-		<table>
-			{{ formset }}
-		</table>
+		{{ formset }}
 		{% load geoloc_templatetags %}
 		{% add_locations_map_for_dataset %}
 		

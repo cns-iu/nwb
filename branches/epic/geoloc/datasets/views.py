@@ -141,11 +141,11 @@ def edit_dataset(request, item_id, slug=None):
 			
 			tags = form.cleaned_data["tags"]
 			dataset.tags.update_tags(tags, user=user)
-			if formset.is_valid():
+			if not formset.is_valid():
+				print 'The formset for the geolocations for the edit dataset page was not valid'
+			else:
 				for geoloc in formset.forms:
 					print geoloc.cleaned_data['location']
-			else:
-				print 'The formset for the geolocations for the edit dataset page was not valid'
 				
 			try:
 				# TODO: Make this so Baby Patrick does not cry.
