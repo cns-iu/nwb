@@ -148,16 +148,22 @@ def rate_dataset(request, item_id, input_rating=None, slug=None):
 @login_required
 def tag_dataset(request, item_id, slug=None):
 	dataset = DataSet.objects.get(pk = item_id)
+	
 	if request.method != 'POST':
 		current_tags = dataset.tags.get_edit_string(user=request.user)
 		form = TagDataSetForm(initial={'tags': current_tags})
-		return render_to_response('datasets/tag_dataset.html', {'form':form, 'user':request.user,})
+		
+		return render_to_response('datasets/tag_dataset.html',
+			{ 'item_id': dataset.id, 'form': form, 'user': request.user, })
 	else:
 		form = TagDataSetForm(request.POST)
-		print request.POST
+		
 		if form.is_valid():
 			tags = form.cleaned_data['tags']
 			dataset.tags.update_tags(tags, user=request.user)
-			return HttpResponseRedirect(reverse('epic.datasets.views.view_dataset', kwargs={'item_id':dataset.id, 'slug':slug,}))
+			
+			return HttpResponseRedirect(reverse('epic.datasets.views.view_dataset',
+				kwargs={ 'item_id': dataset.id, 'slug': slug, }))
 		else:
-			return render_to_response('datasets/tag_dataset.html', {'form':form, 'user':request.user, 'item':dataset})
+			return render_to_response('datasets/tag_dataset.html',
+				{ 'form': form, 'user': request.user, 'item': dataset })
