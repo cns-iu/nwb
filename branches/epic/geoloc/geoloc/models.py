@@ -10,4 +10,7 @@ class GeoLoc(models.Model):
 		unique_together = (('latitude', 'longitude', 'canonical_name'),)
 		
 	def __unicode__(self):
-		return '[[%s, %s], %s' % (self.latitude, self.longitude, self.canonical_name)
+		urlNameList = []
+		for dataset in self.datasets.all():
+			urlNameList.append([dataset.name, dataset.get_absolute_url()])
+		return '[[%s, %s], %s, %s]' % (self.latitude, self.longitude, self.canonical_name, urlNameList)

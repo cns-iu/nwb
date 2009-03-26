@@ -38,24 +38,37 @@
 		this.canonicalName = canonicalName;
 		this.urlNameList = urlNameList;
 	}
+	geolocations = jQuery('input:hidden').filter(function(){ return this.id.match(/id_form-\d+-location/); });
 	
-	{% for location in location_list %}
+	for (var i = 0; i < geolocations.length ; i ++){
+		re = /^\[\[(-?\d*.\d*), (-?\d*.\d*)\], (\S*), (\[(?:\[u'\S*', '\S*'\](?:, )?)+\])]$/i; //Yeah, just try to think about that one!
+		//console.log(geolocFragments);
+		geolocFragments = geolocations[i].value.split(re);
+
+		lat = geolocFragments[1];
+		lng = geolocFragments[2];
+		cName = geolocFragments[3];
 
 		urlNameList = new Array();
+
+		fragmentUrlNameList = geolocFragments[4];
+		fragmentUrlNameList = fragmentUrlNameList.split('], ');
 		
-		{% for dataset in location.datasets.all %}
-			urlNameListPair = new UrlNameListPair('{{ dataset.name }}', '{{ dataset.get_absolute_url }}');
+		for(var j = 0; j < fragmentUrlNameList.length; j++){
+			re = /^\[(?:\[)?u'(\S*)', '(\S*)'/i;
+			//console.log(fragmentUrlNameList[j].split(re));
+			urlNameFragment = fragmentUrlNameList[j].split(re);
+
+			url = urlNameFragment[2];
+			name = urlNameFragment[1];
+
+			urlNameListPair = new UrlNameListPair(name, url);
 			urlNameList = urlNameList.concat(urlNameListPair);
-		{% endfor %}
+		}
 
-		geolocation = new Location({{ location.latitude }},
-				                   {{ location.longitude }}, 
-				                   '{{ location.canonical_name }}', 
-				                   urlNameList);
-		
+		geolocation = new Location(lat, lng, cName, urlNameList);
 		locations = locations.concat(geolocation);
-
-	{% endfor %}	
+	}
 
 </script>
 

@@ -1,23 +1,23 @@
-from epic.core.models import Item
-from epic.datasets.forms import NewDataSetForm, EditDataSetForm, RatingDataSetForm, TagDataSetForm
-from epic.datasets.models import DataSetFile, DataSet, RATING_SCALE
-
 from django.conf import settings
+from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
 from django.core.urlresolvers import reverse
 from django.http import HttpResponseRedirect, HttpResponse
+from django.forms.formsets import formset_factory
 from django.shortcuts import render_to_response, get_object_or_404, get_list_or_404
 from django.template.defaultfilters import slugify
 from django.template import RequestContext
 from django.utils import simplejson
 from django.utils.datastructures import MultiValueDictKeyError
-from django.contrib.auth.decorators import login_required
 
-from epic.comments.models import Comment
 from epic.comments.forms import PostCommentForm
+from epic.comments.models import Comment
 from epic.comments.views import make_comment_view
-from epic.geoloc.utils import get_best_location, CouldNotFindLocation
+from epic.core.models import Item
+from epic.datasets.forms import NewDataSetForm, EditDataSetForm, RatingDataSetForm, TagDataSetForm, GeoLocationHiddenFieldForm, GeoLocationFormSet
+from epic.datasets.models import DataSetFile, DataSet, RATING_SCALE
 from epic.geoloc.models import GeoLoc
+from epic.geoloc.utils import get_best_location, CouldNotFindLocation
 
 from datetime import datetime
 from decimal import Decimal
@@ -48,12 +48,12 @@ def create_dataset(request):
 	if request.method != 'POST':
 		#user has not filled out the upload form yet
 		form = NewDataSetForm()
-		return render_to_response('datasets/create_dataset.html', {'form': form, 'user':request.user})
+		formset = GeoLocationFormSet()
+		return render_to_response('datasets/create_dataset.html', {'form': form, 'formset': formset, 'user':request.user,})
 	else:
 		#user has filled out the upload form
-		
 		form = NewDataSetForm(request.POST, request.FILES)
-		
+
 		if form.is_valid():
 			name = form.cleaned_data['name']
 			description = form.cleaned_data['description']
@@ -74,11 +74,11 @@ def create_dataset(request):
 					location = location.replace("],'", ',')
 					location = location.replace("']", "")
 					location = location.split(',')
-					print location
+
 					lat = location[0]
 					lng = location[1]
 					canonical_name = location[2]
-					print "%s, %s = %s" % (lng, lat, canonical_name)
+
 					
 					try:
 						geoloc = GeoLoc.objects.get(longitude=lng,latitude=lat)
@@ -124,8 +124,14 @@ def edit_dataset(request, item_id, slug=None):
 		}
 		
 		form = EditDataSetForm(initial=initial_data_dictionary)
+		initial_location_data = []
+		geolocs = GeoLoc.objects.filter(datasets=dataset.id)
+		for geoloc in geolocs:
+			initial_location_data.append({'location':geoloc,})
+		formset = GeoLocationFormSet(initial=initial_location_data)
 	else:
 		form = EditDataSetForm(request.POST)
+		formset = GeoLocationFormSet(request.POST)
 		
 		if form.is_valid():
 			dataset.name = form.cleaned_data["name"]
@@ -135,7 +141,12 @@ def edit_dataset(request, item_id, slug=None):
 			
 			tags = form.cleaned_data["tags"]
 			dataset.tags.update_tags(tags, user=user)
-			
+			if formset.is_valid():
+				for geoloc in formset.forms:
+					print geoloc.cleaned_data['location']
+			else:
+				print 'The formset for the geolocations for the edit dataset page was not valid'
+				
 			try:
 				# TODO: Make this so Baby Patrick does not cry.
 				locations = request.POST['MapPoints']
@@ -171,7 +182,8 @@ def edit_dataset(request, item_id, slug=None):
 	return render_to_response("datasets/edit_dataset.html", {
 		"dataset": dataset,
 		"user": user,
-		"form": form
+		"form": form,
+		'formset': formset,
 	})
 
 @login_required

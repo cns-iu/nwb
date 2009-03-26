@@ -23,14 +23,6 @@ def display_map_for_datasets(item_id=None):
 	
 	return {'location_list':location_list,}
 
-@register.inclusion_tag("templatetags/add_locations_to_map_for_dataset.html")
-def add_locations_to_map_for_dataset(item_id=None):
-	
-	if item_id:
-		dataset = get_object_or_404(DataSet, pk=item_id)
-		location_list = GeoLoc.objects.filter(datasets=item_id)
-	else:
-		dataset = None
-		location_list = None
-		
-	return {'dataset':dataset, 'location_list':location_list,}
+@register.inclusion_tag("templatetags/add_locations_map_for_dataset.html")
+def add_locations_map_for_dataset():
+	return

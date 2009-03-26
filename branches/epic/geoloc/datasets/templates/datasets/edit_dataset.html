@@ -5,9 +5,11 @@
 		<table>
 			{{ form.as_table }}
 		</table>
-		
+		<table>
+			{{ formset }}
+		</table>
 		{% load geoloc_templatetags %}
-		{% add_locations_to_map_for_dataset dataset.id %}
+		{% add_locations_map_for_dataset %}
 		
 		<input type="submit" value="Submit Changes" />
 		<a href = "{% url datasets.views.view_dataset item_id=dataset.id slug=dataset.slug%}">Cancel Changes</a>
