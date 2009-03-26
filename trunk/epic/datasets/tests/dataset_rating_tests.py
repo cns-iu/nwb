@@ -19,12 +19,23 @@ class RatingTestCase(TestCase):
 	def testRatingView(self):
 		response = self.client.get('/datasets/')
 		self.failUnlessEqual(response.status_code, 200, "Error listing datasets!")
-		self.failUnless("Total: 0" in response.content, "There should be unrated data")
+		
+		totalVotes = "Total Votes:"
+		numberVotes = "<span id=\"votes-value\">0</span>"
+		
+		self.failUnless(totalVotes in response.content, "There should be unrated data specifically the token 'Total Votes:'")
+		self.failUnless(numberVotes in response.content, "There should be unrated data specifically the token '0' for votes")
+		
 		response = self.client.post("/login/", {'username': 'bob', 'password':'bob2',})
 		response = self.client.get('/datasets/')
+		
 		self.failUnlessEqual(response.status_code, 200, "Error listing datasets!")
-		self.failUnless("Total: 0" in response.content, "There should be unrated data")
-	
+		
+		totalVotes = "Total Votes:"
+		numberVotes = "<span id=\"votes-value\">0</span>"
+		
+		self.failUnless(totalVotes in response.content, "There should be unrated data specifically the token 'Total Votes:'")
+		self.failUnless(numberVotes in response.content, "There should be unrated data specifically the token '0' for votes")
 	
 	def testRating(self):
 		from django.test.client import Client
@@ -32,48 +43,72 @@ class RatingTestCase(TestCase):
 		# http://code.djangoproject.com/changeset/9847
 		# http://code.djangoproject.com/ticket/8551
 		c = Client(REMOTE_ADDR='127.0.0.1')
+		
 		# Make sure there is no rating
 		dataset_location = '/datasets/%s/' % (self.data_set.id)
 		response = c.get(dataset_location)
-		self.failUnless("Average: None" in response.content)
+
+		avgVotes = "Avg:"
+		averageValue = "<span id=\"average-value\">None</span>"
+		
+		self.failUnless(avgVotes in response.content, "There should be unrated data specifically the token 'Avg:'")
+		self.failUnless(averageValue in response.content, "There should be unrated data specifically the token 'None' for votes")
+		
 		# Rate
 		rate_location = dataset_location + "rate/3/"
 		response = c.get(rate_location)
 		self.failUnlessEqual(response.status_code, 302)
+		
 		# Make sure there still no rating because anon people can't rate
 		dataset_location = '/datasets/%s/' % (self.data_set.id)
 		response = c.get(dataset_location)
-		self.failUnless("Average: None" in response.content)
+		
+		self.failUnless(avgVotes in response.content, "There should be unrated data specifically the token 'Avg:'")
+		self.failUnless(averageValue in response.content, "There should be unrated data specifically the token 'None' for votes")
+		
 		# Log in
 		login = c.login(username='bob', password='bob')
 		self.failUnless(login, 'Could not login')
+		
 		# Rate
 		rate_location = dataset_location + "rate/3/"
 		response = c.get(rate_location)
-		self.failUnlessEqual(response.status_code, 302)
+		self.failUnlessEqual(response.status_code, 200)
+		
 		# Make sure bob's rating counted
 		dataset_location = '/datasets/%s/' % (self.data_set.id)
 		response = c.get(dataset_location)
-		self.failUnless("Average:" in response.content)
-		self.failUnless("3" in response.content)
+		
+		averageValue = "<span id=\"average-value\">3.0</span>"
+		self.failUnless(avgVotes in response.content, "There should be rated data specifically the token 'Avg:'")
+		self.failUnless(averageValue in response.content, "There should be rated data specifically the token '3' for votes")
+		
 		# Log in as bob2
 		login = c.login(username='bob2', password='bob2')
 		self.failUnless(login, 'Could not login')
+		
 		# Rate
 		rate_location = dataset_location + "rate/5/"
 		response = c.get(rate_location)
-		self.failUnlessEqual(response.status_code, 302)
+		self.failUnlessEqual(response.status_code, 200)
+		
 		# Make sure bob2's rating counted
 		dataset_location = '/datasets/%s/' % (self.data_set.id)
 		response = c.get(dataset_location)
-		self.failUnless("Average:" in response.content)
-		self.failUnless("4" in response.content)
-		# Rate AGIAN!
+		
+		averageValue = "<span id=\"average-value\">4.0</span>"
+		
+		self.failUnless(avgVotes in response.content, "There should be rated data specifically the token 'Avg:'")
+		self.failUnless(averageValue in response.content, "There should be rated data specifically the token '4' for votes")
+		
+		# Rate AGAIN!
 		rate_location = dataset_location + "rate/5/"
 		response = c.get(rate_location)
-		self.failUnlessEqual(response.status_code, 302)
+		self.failUnlessEqual(response.status_code, 200)
+		
 		# Make sure bob2's second rating didn't count
 		dataset_location = '/datasets/%s/' % (self.data_set.id)
 		response = c.get(dataset_location)
-		self.failUnless("Average:" in response.content)
-		self.failUnless("4" in response.content)
+
+		self.failUnless(avgVotes in response.content, "There should be rated data specifically the token 'Avg:'")
+		self.failUnless(averageValue in response.content, "There should be rated data specifically the token '4' for votes")

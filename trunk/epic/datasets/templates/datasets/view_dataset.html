@@ -1,6 +1,20 @@
 {% extends "core/base.html" %}
-{% block content %}
+{% block css %}
+{{ block.super }}
+<link href="/core_media/css/star_rating.css" rel="stylesheet" type="text/css" />
+{% endblock %}
 
+
+{% block content %}
+<div id="error-message">
+ {% block messages %}
+ {% for message in messages %}
+         {{ message }}
+ {%endfor%}
+ {% endblock %}
+ </div>
+
+ 
 {% if messages %}
 	<div class="highlight" id="message">
 		<ul>
@@ -10,13 +24,13 @@
 		</ul>
 	</div>
 {% endif %}
-	
+
 {% load tags_templatetags %}
 {% show_tag_cloud %}
 
 <div id="databox">
 	{% load dataset_templatetags %}
-	{% show_dataset_title_ratebox_and_datainfo dataset %}
+	{% show_dataset_title_vote_ratebox_datainfo dataset %}
 	<p>{{ dataset.description|escape }}
 
    	{% load tags_templatetags %}
@@ -24,7 +38,7 @@
  	
  	{% if dataset.files %}
 	  <h3>Attached Files</h3>
-	  {% for file in dataset.files.all %}
+	  {% for file in dataset.files.all %}      
 	    {# TODO: this should be a reverse? #}
 	    <p><a href="{{ file.file_contents.url }}">{{ file.get_short_name }} (Download)</a></p>
 	  {% endfor %}

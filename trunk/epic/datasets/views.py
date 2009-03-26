@@ -4,10 +4,11 @@ from epic.datasets.models import DataSetFile, DataSet, RATING_SCALE
 
 from django.contrib.auth.models import User
 from django.core.urlresolvers import reverse
-from django.http import HttpResponseRedirect
+from django.http import HttpResponse, HttpResponseRedirect
 from django.shortcuts import render_to_response, get_object_or_404
 from django.template.defaultfilters import slugify
 from django.template import RequestContext
+from django.utils import simplejson
 
 from django.contrib.auth.decorators import login_required
 
@@ -21,23 +22,31 @@ from datetime import datetime
 def index(request):
     datasets = DataSet.objects.all().order_by('-created_at')
     return render_to_response('datasets/index.html',
-    	{ 'datasets': datasets, 'user': request.user },
-    	context_instance=RequestContext(request))
+							  {'datasets': datasets, 'user': request.user},
+							  context_instance=RequestContext(request))
 
 def view_dataset(request, item_id=None, slug=None):
 	dataset = get_object_or_404(DataSet, pk=item_id)
 	post_comment_form = PostCommentForm()
 	user = request.user
-	
+
 	return render_to_response('datasets/view_dataset.html', 
-		{ 'dataset': dataset, 'user': user, 'post_comment_form': post_comment_form },
-		context_instance=RequestContext(request))
+							  {'dataset': dataset, 'user': user, 'post_comment_form': post_comment_form},
+							  context_instance=RequestContext(request))
 
 post_dataset_comment = make_comment_view(
 	DataSet,
 	"epic.datasets.views.view_dataset",
 	"datasets/view_dataset.html",
 	"dataset")
+
+def view_user_dataset_list(request, user_id=None):
+
+	requested_user = get_object_or_404(User, pk=user_id)
+	datasets = DataSet.objects.filter(creator=user_id).order_by('-created_at')
+	return render_to_response('datasets/view_user_dataset_list.html', 
+							  {'datasets': datasets, 'user': request.user, 'requested_user':requested_user},
+							  context_instance=RequestContext(request))
 
 @login_required
 def create_dataset(request):
@@ -112,16 +121,9 @@ def edit_dataset(request, item_id, slug=None):
 
 @login_required
 def rate_dataset(request, item_id, input_rating=None, slug=None):
-	#TODO: Make commenting ajaxified?
+
 	if input_rating:
-		dataset = DataSet.objects.get(pk = item_id)
-		user = request.user
-		ip_address = request.META['REMOTE_ADDR']
-		#Rely on the rating.add to make sure the that rating is valid
-		rating = int(input_rating) 
-		dataset.rating.add(rating, user, ip_address)
-		dataset.save()
-		return HttpResponseRedirect(reverse('epic.datasets.views.view_dataset', kwargs={'item_id':dataset.id, 'slug':slug,}))
+		pass
 	else:
 		if request.method != 'POST':
 			#show them the rate form
@@ -144,7 +146,25 @@ def rate_dataset(request, item_id, input_rating=None, slug=None):
 				print form.errors
 				
 		return render_to_response('datasets/rate_dataset.html', {'form':form, 'user':request.user, 'item':dataset,})
-
+	
+@login_required
+def rate_dataset_using_input_rating(request, item_id, input_rating=None, slug=None):
+	'''
+	Used specifically when the input_ratings field is provided. Mainly used 
+	when voting from the UI for datasets. 
+	'''
+	if input_rating:
+		dataset = DataSet.objects.get(pk = item_id)
+		user = request.user
+		ip_address = request.META['REMOTE_ADDR']
+		#Rely on the rating.add to make sure the that rating is valid
+		rating = int(input_rating) 
+		dataset.rating.add(rating, user, ip_address)
+		dataset.save()
+		return HttpResponse(simplejson.dumps("TRUE"), mimetype="application/javascript")
+	else:
+		pass
+	
 @login_required
 def tag_dataset(request, item_id, slug=None):
 	dataset = DataSet.objects.get(pk = item_id)

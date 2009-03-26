@@ -1,0 +1,207 @@
+<script type="text/javascript">
+
+	/*
+	*	Method to fill up the stars.
+	*/	
+
+	function renderAvgVoteBox(avgRating){
+	
+		var avgVoteBlockFillPercent = ( avgRating / 5.0 ) * 100.0; 
+		$("#{{ item_id }}-average-vote .current-rating")
+			.css({'width':''+ avgVoteBlockFillPercent + '%'})
+			.text(avgRating + ' Star(s).' );
+	
+	}
+
+	function renderUserVoteBox(userRating){
+	
+		var userVoteBlockFillPercent = ( userRating / 5.0 ) * 100.0;
+		$("#{{ item_id }}-user-vote .current-rating")
+			.css({'width':''+ userVoteBlockFillPercent + '%'})
+			.text(userRating + ' Star(s).' );
+	
+	}
+
+</script>
+
+<div class="ratingsbox">Avg: <span id="average-value">{{ rating }}</span> | Total Votes: <span id="votes-value">{{ votes }}</span>
+	
+	<span class="average-voting">
+	
+	
+	<span class="inline-rating">
+		<ul class="star-rating" id="{{ item_id }}-average-vote">
+			<li class="current-rating" style="width:0%;">0 Star</li>
+			<li><a id="1" title="Very Bad" class="one-star">1</a></li>
+			<li><a id="2" title="Bad" class="two-stars">2</a></li>
+			<li><a id="3" title="Average" class="three-stars">3</a></li>
+			<li><a id="4" title="Good" class="four-stars">4</a></li>
+			<li><a id="5" title="Very Good" class="five-stars">5</a></li>
+		</ul>
+    </span>
+	
+	</span>
+
+
+	
+	<span id="rating-saving">
+		Saving
+		<img src="/core_media/images/ajax-loader-2.gif" alt="Saving your vote, please wait...">
+	</span>
+	
+	<br />
+	
+	<span class="user-voting">
+	Your Vote: <span id="user-vote-value">{{ user_rating }}</span> 
+				
+		<span class="inline-rating">
+			<ul class="star-rating" id="{{ item_id }}-user-vote">
+				<li class="current-rating" style="width:0%;">0 Star</li>
+				<li><a title="Very Bad" class="one-star">1</a></li>
+				<li><a title="Bad" class="two-stars">2</a></li>
+				<li><a title="Average" class="three-stars">3</a></li>
+				<li><a title="Good" class="four-stars">4</a></li>
+				<li><a title="Very Good" class="five-stars">5</a></li>
+			</ul>
+	    </span>
+	
+	</span>
+
+</div>
+
+{% if user_rating %}
+
+	<script>
+
+		$(document).ready(function(){
+
+			/*
+			*	Hide the Saving Vote Icon.
+			*/
+
+			$('#rating-saving').hide();
+
+			/*
+			*	These methods basically render the fill the stars according to the rating.
+			*	These methods are defined in the rate_view_box_helper to avoid multiple 
+			*	copies of the same function when more than 1 dataset is displayed. 
+			*
+			*/
+			
+			renderAvgVoteBox({{ rating }});
+			renderUserVoteBox({{ user_rating }});
+
+			/*
+			*	Disable user interaction with the stars.
+			*
+			*/
+			
+			$("#{{ item_id }}-average-vote").addClass("star-rating-readonly");
+			$("#{{ item_id }}-user-vote").addClass("star-rating-readonly");
+			
+		});
+	
+	</script>
+
+{% else %}
+
+	<script>
+
+	console.log('{{is_authenticated}}');
+
+	$(document).ready(function(){
+
+		$('.user-voting').hide();
+		$('#rating-saving').hide();
+		
+
+		var inputRatingString = '{{ rating }}';
+
+		/*
+		*	To handle the cases when there is no average because 
+		*	of no voting done resulting in  rating = None
+		*
+		*/
+		
+		if(inputRatingString == 'None') {
+			inputRatingString = 0;
+		}
+		else {
+			inputRatingString = {{ rating }};
+		}
+		
+		renderAvgVoteBox(inputRatingString);
+
+		{% if is_authenticated %} 
+
+		$("#{{ item_id }}-average-vote li a").click(function(){
+
+			$("#rating-saving").show();
+
+				$("#{{ item_id }}-average-vote li a").unbind('click');
+			
+				var userVote = parseInt(this.id);
+				var urlVote = "{{ ratebaseurl }}" + userVote + "/";
+
+				$.post(urlVote, function(data){
+					if(data == '"TRUE"') {
+
+						var newAverage = ((inputRatingString * {{ votes }}) + userVote) / ( {{ votes }} + 1 ); 
+
+						$('#average-value').text(newAverage);
+						$('#votes-value').text(({{ votes }} + 1));
+						$('#user-vote-value').text(userVote);
+
+						renderAvgVoteBox(newAverage);
+						renderUserVoteBox(userVote);
+
+						$("#{{ item_id }}-average-vote").addClass("star-rating-readonly");
+						$("#{{ item_id }}-user-vote").addClass("star-rating-readonly");
+
+						$("#rating-saving").fadeOut("fast"); 
+						
+						$('.user-voting').fadeIn();
+						
+					}
+					else {
+
+						try {
+							window.location = "{% url django.contrib.auth.views.login %}";							
+						}
+						catch(error) {
+							var notificationContent = "ERROR: You should be logged in before you can rate.";
+							$("#error-message").fadeIn().text(notificationContent);
+						}
+						
+						
+					}
+				});
+
+			});
+
+		{% else %}
+
+			$("#{{ item_id }}-average-vote").addClass("star-rating-readonly");
+
+			$("#{{ item_id }}-average-vote li a").click(function(){
+
+				try {
+					window.location = "{% url django.contrib.auth.views.login %}";							
+				}
+				catch(error) {
+					var notificationContent = "ERROR: You should be logged in before you can rate.";
+					$("#error-message").fadeIn().text(notificationContent);
+				}
+
+			});
+
+			
+		{% endif %}
+
+		
+
+		});
+
+	</script>	
+		
+{% endif %}
