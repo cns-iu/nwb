@@ -16,5 +16,6 @@ a template of how the algorithm executable can be run and what it returns.
 6. Add parameter information into the gui.xml file if it takes any user-provided
 parameters.
 7. Update the manifest.properties for bundle-wide properties.
-8. Run 'ant' to compile a jar file that will be available in the build directory.
+8. Run 'ant' to compile a jar file that will be available in the build directory. 
+
 9. Copy the jar file to a CIShell/OSGi installation to use.
