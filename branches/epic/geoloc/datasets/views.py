@@ -14,7 +14,7 @@ from epic.comments.forms import PostCommentForm
 from epic.comments.models import Comment
 from epic.comments.views import make_comment_view
 from epic.core.models import Item
-from epic.datasets.forms import NewDataSetForm, EditDataSetForm, RatingDataSetForm, TagDataSetForm, GeoLocationHiddenFieldForm, GeoLocationFormSet
+from epic.datasets.forms import NewDataSetForm, EditDataSetForm, RatingDataSetForm, TagDataSetForm, GeoLocationFormSet, RemoveGeoLocationFormSet
 from epic.datasets.models import DataSetFile, DataSet, RATING_SCALE
 from epic.geoloc.models import GeoLoc
 from epic.geoloc.utils import get_best_location, CouldNotFindLocation
@@ -48,12 +48,15 @@ def create_dataset(request):
 	if request.method != 'POST':
 		#user has not filled out the upload form yet
 		form = NewDataSetForm()
-		formset = GeoLocationFormSet()
-		return render_to_response('datasets/create_dataset.html', {'form': form, 'formset': formset, 'user':request.user,})
+		add_formset = GeoLocationFormSet(prefix='add')
+		remove_formset = RemoveGeoLocationFormSet(prefix='remove')
+		return render_to_response('datasets/create_dataset.html', {'form': form, 'add_formset': add_formset, 'remove_formset':remove_formset, 'user':request.user,})
 	else:
 		#user has filled out the upload form
 		form = NewDataSetForm(request.POST, request.FILES)
-
+		add_formset = GeoLocationFormSet(request.POST, prefix='add')
+		remove_formset = RemoveGeoLocationFormSet(request.POST, prefix='remove')
+		
 		if form.is_valid():
 			name = form.cleaned_data['name']
 			description = form.cleaned_data['description']
@@ -63,21 +66,20 @@ def create_dataset(request):
 			new_dataset = DataSet.objects.create(creator=request.user, name=name, description=description, slug=slugify(name))
 			new_dataset.tags.update_tags(tags, user=request.user)
 			
-			formset = GeoLocationFormSet(request.POST)
-			if not formset.is_valid():
-				print 'The formset for the geolocations for the create dataset page was not valid'
+			
+			if not add_formset.is_valid():
+				print 'The add formset for the geolocations for the edit dataset page was not valid'
 			else:
-				for geolocation in formset.forms:
+				for geolocation in add_formset.forms:
 					try:
-						location = geolocation.cleaned_data['location']
-						print location 
+						location = geolocation.cleaned_data['add_location']
 						import re
 						location_pattern = re.compile(r"""^\[\[(?P<lat>-?\d+\.\d+), (?P<lng>-?\d+\.\d+)\], '(?P<name>.+)'.*""")
 						location_match = location_pattern.match(location)
 						location_dict = location_match.groupdict()
 						lat = location_dict['lat']
 						lng = location_dict['lng']
-						canonical_name = location_dict['name']
+						canonical_name = unicode(location_dict['name'])
 						try:
 							geoloc = GeoLoc.objects.get(longitude=lng,latitude=lat)
 						except:
@@ -86,7 +88,30 @@ def create_dataset(request):
 						
 						new_dataset.geolocations.add(geoloc)
 					except:
-						print 'There was a problem in adding the location from the hidden field to the database'		
+						print 'There was a problem in adding the location from the hidden field to the database'
+			
+			
+			if not remove_formset.is_valid():
+				print 'The remove formset for the geolocations for the edit dataset page was not valid'
+			else:
+				for geolocation in remove_formset.forms:
+					try:
+						location = geolocation.cleaned_data['remove_location']
+						import re
+						location_pattern = re.compile(r"""^\[\[(?P<lat>-?\d+\.\d+), (?P<lng>-?\d+\.\d+)\], '(?P<name>.+)'.*""")
+						location_match = location_pattern.match(location)
+						location_dict = location_match.groupdict()
+						lat = location_dict['lat']
+						lng = location_dict['lng']
+						canonical_name = unicode(location_dict['name'])
+						try:
+							geoloc = GeoLoc.objects.get(longitude=lng,latitude=lat, canonical_name=canonical_name)
+						except:
+							print "The geolocation to be removed does not appear to have been attached to this dataset"
+						
+						new_dataset.geolocations.remove(geoloc)
+					except:
+						print 'There was a problem in removing the location from the dataset'
 			
 			for uploaded_file in uploaded_files:
 			 	new_datasetfile = DataSetFile(parent_dataset=new_dataset, file_contents=uploaded_file)
@@ -97,7 +122,7 @@ def create_dataset(request):
 			return HttpResponseRedirect(reverse('epic.datasets.views.view_dataset', kwargs={'item_id':new_dataset.id,'slug':new_dataset.slug}))
 		else:
 			#form wasn't filled out correctly
-			return render_to_response('datasets/create_dataset.html', {'form':form, 'user':request.user})
+			return render_to_response('datasets/create_dataset.html', {'form':form, 'add_formset': add_formset, 'remove_formset':remove_formset, 'user':request.user})
 
 @login_required
 def edit_dataset(request, item_id, slug=None):
@@ -121,11 +146,14 @@ def edit_dataset(request, item_id, slug=None):
 		initial_location_data = []
 		geolocs = GeoLoc.objects.filter(datasets=dataset.id)
 		for geoloc in geolocs:
-			initial_location_data.append({'location':geoloc,})
-		formset = GeoLocationFormSet(initial=initial_location_data)
+			initial_location_data.append({'add_location':geoloc,})
+		add_formset = GeoLocationFormSet(prefix='add', initial=initial_location_data)
+		remove_formset = RemoveGeoLocationFormSet(prefix='remove')
 	else:
 		form = EditDataSetForm(request.POST)
-				
+		add_formset = GeoLocationFormSet(request.POST, prefix='add')
+		remove_formset = RemoveGeoLocationFormSet(request.POST, prefix='remove')
+			
 		if form.is_valid():
 			dataset.name = form.cleaned_data["name"]
 			dataset.description = form.cleaned_data["description"]
@@ -135,13 +163,12 @@ def edit_dataset(request, item_id, slug=None):
 			tags = form.cleaned_data["tags"]
 			dataset.tags.update_tags(tags, user=user)
 			
-			formset = GeoLocationFormSet(request.POST)
-			if not formset.is_valid():
-				print 'The formset for the geolocations for the edit dataset page was not valid'
+			if not add_formset.is_valid():
+				print 'The add formset for the geolocations for the edit dataset page was not valid'
 			else:
-				for geolocation in formset.forms:
+				for geolocation in add_formset.forms:
 					try:
-						location = geolocation.cleaned_data['location']
+						location = geolocation.cleaned_data['add_location']
 						import re
 						location_pattern = re.compile(r"""^\[\[(?P<lat>-?\d+\.\d+), (?P<lng>-?\d+\.\d+)\], '(?P<name>.+)'.*""")
 						location_match = location_pattern.match(location)
@@ -159,15 +186,39 @@ def edit_dataset(request, item_id, slug=None):
 					except:
 						print 'There was a problem in adding the location from the hidden field to the database'
 			
+			if not remove_formset.is_valid():
+				print 'The remove formset for the geolocations for the edit dataset page was not valid'
+			else:
+				for geolocation in remove_formset.forms:
+					try:
+						location = geolocation.cleaned_data['remove_location']
+						import re
+						location_pattern = re.compile(r"""^\[\[(?P<lat>-?\d+\.\d+), (?P<lng>-?\d+\.\d+)\], '(?P<name>.+)'.*""")
+						location_match = location_pattern.match(location)
+						location_dict = location_match.groupdict()
+						lat = location_dict['lat']
+						lng = location_dict['lng']
+						canonical_name = unicode(location_dict['name'])
+						try:
+							geoloc = GeoLoc.objects.get(longitude=lng,latitude=lat, canonical_name=canonical_name)
+						except:
+							print "The geolocation to be removed does not appear to have been attached to this dataset"
+						
+						dataset.geolocations.remove(geoloc)
+					except:
+						print 'There was a problem in removing the location from the dataset'
+			
 			return HttpResponseRedirect(reverse("epic.datasets.views.view_dataset",
 				kwargs={ "item_id": dataset.id, 'slug':slug, }))
 			
-	return render_to_response("datasets/edit_dataset.html", {
-		"dataset": dataset,
-		"user": user,
-		"form": form,
-		'formset': formset,
-	})
+	return render_to_response("datasets/edit_dataset.html", 
+							  {
+							  	'dataset': dataset,
+								'user': user,
+								'form': form,
+								'add_formset': add_formset,
+								'remove_formset':remove_formset,
+							  })
 
 @login_required
 def rate_dataset(request, item_id, input_rating=None, slug=None):

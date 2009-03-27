@@ -24,5 +24,5 @@ def display_map_for_datasets(item_id=None):
 	return {'location_list':location_list,}
 
 @register.inclusion_tag("templatetags/add_locations_map_for_dataset.html")
-def add_locations_map_for_dataset():
-	return
+def add_locations_map_for_dataset(add_formset, remove_formset):
+	return ({'add_formset':add_formset, 'remove_formset':remove_formset,})

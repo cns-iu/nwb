@@ -6,6 +6,8 @@
 <script type="text/javascript">
 	window.onUnload = GUnload();
 </script>
+{{ add_formset }}
+{{ remove_formset }}
 <h3>Click on the map to add locations to the dataset</h3>
 <div class="messages" id="map_messages"></div>
 <div class="map_location_bar">
@@ -39,30 +41,47 @@
 		this.urlNameList = urlNameList;
 	}
 	
-	geolocations = jQuery('input:hidden').filter(function(){ return this.id.match(/id_form-\d+-location/); });
-	
 	function insertLocation(location){
-		number = jQuery('input:hidden').filter(function(){ return this.id.match(/id_form-\d+-location/); }).length;
+		number = jQuery('input:hidden').filter(function(){ return this.id.match(/id_add-\d+-add_location/); }).length;
 		value = '[[' + location.lat + ', ' + location.lng + '], \'' + location.canonicalName + '\', [' + location.urlNameList + ']]';
-		html = '<input type="hidden" id="id_form-' + number + '-location" value="' + value + '" name="form-' + number + '-location"/>';
+		html = '<input type="hidden" id="id_add-' + number + '-add_location" value="' + value + '" name="add-' + number + '-add_location"/>';
 		if (number == 0){
 			jQuery('form').prepend(html);
 		}else{
-			jQuery('#id_form-0-location').parent().prepend(html);
+			jQuery('#id_add-0-add_location').parent().prepend(html);
 		}
-		jQuery('#id_form-TOTAL_FORMS').attr('value', number+1);
+		jQuery('#id_add-TOTAL_FORMS').attr('value', number+1);
+		locations = locations.concat(location);
+	}
 	
-	} 
+	function removeLocation(location){
+		number = jQuery('input:hidden').filter(function(){ return this.id.match(/id_remove-\d+-remove_location/); }).length;
+		value = '[[' + location.lat + ', ' + location.lng + '], \'' + location.canonicalName + '\', [' + location.urlNameList + ']]';
+		html = '<input type="hidden" id="id_remove-' + number + '-remove_location" value="' + value + '" name="remove-' + number + '-remove_location"/>';
+		if (number == 0){
+			jQuery('form').prepend(html);
+		}else{
+			jQuery('#id_remove-0-remove_location').parent().prepend(html);
+		}
+		jQuery('#id_remove-TOTAL_FORMS').attr('value', number+1);
+		for(var i = 0; i < locations.length; i++){
+			if ((locations[i].lat == location.lat) && (locations[i].lng == location.lng) && (locations[i].canonicalName == location.canonicalName)){
+				locations.splice(i, 1);
+				jQuery('#id_remove-TOTAL_FORMS').attr('value', number-1);
+				number = number - 1;
+			}
+		}
+	}
 	
+	geolocations = jQuery('input:hidden').filter(function(){ return this.id.match(/id_add-\d+-add_location/); });
 	for (var i = 0; i < geolocations.length ; i ++){
-		console.log(geolocations[i]);
 		re = /^\[\[(-?\d*.\d*), (-?\d*.\d*)\], '(.+)', (\[(?:\[u'\S+', '\S+'\](?:, )?)+\])]$/i;
 		geolocFragments = geolocations[i].value.split(re);
 		//console.log(geolocFragments);
 
 		lat = geolocFragments[1];
 		lng = geolocFragments[2];
-		cName = geolocFragments[3];
+		canonicalName = geolocFragments[3];
 
 		urlNameList = new Array();
 
@@ -80,8 +99,8 @@
 			urlNameListPair = new UrlNameListPair(name, url);
 			urlNameList = urlNameList.concat(urlNameListPair);
 		}
-
-		geolocation = new Location(lat, lng, cName, urlNameList);
+		
+		geolocation = new Location(lat, lng, canonicalName, urlNameList);
 		locations = locations.concat(geolocation);
 	}
 
@@ -98,7 +117,7 @@
 		for each ( pair in location.urlNameList ){
 			html += '<br /><a href="' + pair.url + '">' + pair.name + '</a>';
 		}
-
+		html += '<br /><br /><input type="submit" value="Remove this Location" onclick="removeLoc(\'' +  location.canonicalName  + '\','+ location.lat +','+ location.lng +'); return false;" />';
 		GEvent.addListener(marker, "click", function() { marker.openInfoWindowHtml(html); });
 		map.addOverlay(marker);
 	}
@@ -122,9 +141,7 @@
 	}
 
 	function addNewLocation(location){
-		
 		insertLocation(location);
-		
 		addLocationMarker(location);
 		map.getInfoWindow().hide();
 	}
@@ -133,6 +150,13 @@
 		var canonicalName = document.getElementById(id).value
 		loc = new Location(lat, lng, canonicalName, '');
 		addNewLocation(loc);
+	}
+	
+	function removeLoc(canonicalName, lat, lng){
+		loc = new Location(lat, lng, canonicalName, '');
+		removeLocation(loc);
+				
+		drawLocationMarkers(locations)
 	}
 	
 	function drawLocationMarkers(locations){
@@ -161,6 +185,7 @@
 					map.openInfoWindow(latlng, html);
 				  }
 				});
+				
 		drawLocationMarkers(locations);
 	}
 </script>

@@ -6,9 +6,8 @@
     <table>
         {{ form.as_table }}
     </table>
-    {{ formset }}
-	{% load geoloc_templatetags %}
-	{% add_locations_map_for_dataset %}
+	{% load geoloc_templatetags%}
+	{% add_locations_map_for_dataset add_formset remove_formset %}
     <input type="submit" value="Upload" />
 </form>
 

@@ -27,9 +27,13 @@ class TagDataSetForm(forms.Form):
 	tags = forms.CharField(max_length=Item.MAX_ITEM_TAGS_LENGTH, required=False)
 	
 class GeoLocationHiddenFieldForm(forms.Form):
-	location = forms.CharField(required=False, widget=forms.HiddenInput)
-		
+	add_location = forms.CharField(required=False, widget=forms.HiddenInput)
+
+class RemoveGeoLocationHiddenFieldForm(forms.Form):
+	remove_location = forms.CharField(required=False, widget=forms.HiddenInput)
+	
 GeoLocationFormSet = formset_factory(GeoLocationHiddenFieldForm, extra=0)
+RemoveGeoLocationFormSet = formset_factory(RemoveGeoLocationHiddenFieldForm, extra=0)
 
 class GeoLocField(Field):
 	count = 1

@@ -51,7 +51,7 @@ class ViewEditDataSetPageTestCase(TestCase):
 		# Check that the correct stuff is on the page
 		self.assertTrue('description' in response.content)
 		self.assertTrue('name' in response.content)
-		self.assertTrue('Cancel Metadata Changes' in response.content)
+		self.assertContains(response,'Cancel Changes')
 		
 class ActionEditDataSetPageTestCase(TestCase):
 	fixtures = [ "initial_data"]
