@@ -14,7 +14,6 @@
      <p>
        <b>Add a location:</b>
        <input type="text" size="30" id="location_input"/>
-       <input type="hidden" id="map_points" name="MapPoints" value="" />
        <input type="submit" value="Search" name="find" onclick="lookupLocation('location_input'); return false;"/>
      </p>
 </div>
@@ -67,8 +66,7 @@
 		for(var i = 0; i < locations.length; i++){
 			if ((locations[i].lat == location.lat) && (locations[i].lng == location.lng) && (locations[i].canonicalName == location.canonicalName)){
 				locations.splice(i, 1);
-				jQuery('#id_remove-TOTAL_FORMS').attr('value', number-1);
-				number = number - 1;
+				jQuery('#id_remove-TOTAL_FORMS').attr('value', number+1);
 			}
 		}
 	}

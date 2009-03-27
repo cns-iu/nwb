@@ -35,11 +35,16 @@ class UploadTestCase(TestCase):
 		#create post data (file and metadata)
 		test_file_to_read = open("test_file.txt", "r") #this time we open for reading
 		test_file_to_read2 = open("test_file2.txt", "r")
+		# The junk at the bottom is need for the geoloc-formsets
 		upload_form_data = {
 				   'name': 'Dataset123', 
 				   'description' : 'This is a pretty swell dataset',
-				   'files[]' : [test_file_to_read, test_file_to_read2]}
-		
+				   'files[]' : [test_file_to_read, test_file_to_read2],
+				   'remove-INITIAL_FORMS': 0,
+				   'add-INITIAL_FORMS': 0,
+				   'add-TOTAL_FORMS': 0,
+				   'remove-TOTAL_FORMS': 0,				   
+				   }
 		#upload file with basic metadata
 		upload_response = client.post(reverse('epic.datasets.views.create_dataset'), upload_form_data)
 		

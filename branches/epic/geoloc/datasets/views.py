@@ -52,7 +52,7 @@ def create_dataset(request):
 		remove_formset = RemoveGeoLocationFormSet(prefix='remove')
 		return render_to_response('datasets/create_dataset.html', {'form': form, 'add_formset': add_formset, 'remove_formset':remove_formset, 'user':request.user,})
 	else:
-		#user has filled out the upload form
+		# Create all the forms and formsets from the post data
 		form = NewDataSetForm(request.POST, request.FILES)
 		add_formset = GeoLocationFormSet(request.POST, prefix='add')
 		remove_formset = RemoveGeoLocationFormSet(request.POST, prefix='remove')
@@ -66,26 +66,31 @@ def create_dataset(request):
 			new_dataset = DataSet.objects.create(creator=request.user, name=name, description=description, slug=slugify(name))
 			new_dataset.tags.update_tags(tags, user=request.user)
 			
-			
+			# Add all the locations specified in the add_formset
 			if not add_formset.is_valid():
 				print 'The add formset for the geolocations for the edit dataset page was not valid'
 			else:
-				for geolocation in add_formset.forms:
+				# Get all of the geolocations
+				for add_form in add_formset.forms:
 					try:
-						location = geolocation.cleaned_data['add_location']
+						location = add_form.cleaned_data['add_location']
 						import re
+						# This pattern will match on [[-#.#, -#.#], '*', *
 						location_pattern = re.compile(r"""^\[\[(?P<lat>-?\d+\.\d+), (?P<lng>-?\d+\.\d+)\], '(?P<name>.+)'.*""")
 						location_match = location_pattern.match(location)
 						location_dict = location_match.groupdict()
 						lat = location_dict['lat']
 						lng = location_dict['lng']
 						canonical_name = unicode(location_dict['name'])
+						
+						# If the location already exists, use it otherwise create a new one
 						try:
-							geoloc = GeoLoc.objects.get(longitude=lng,latitude=lat)
+							geoloc = GeoLoc.objects.get(longitude=lng, latitude=lat, canonical_name=canonical_name)
 						except:
 							geoloc = GeoLoc(longitude=lng, latitude=lat, canonical_name=canonical_name)
 							geoloc.save()
 						
+						# Add the found/created location to the dataset
 						new_dataset.geolocations.add(geoloc)
 					except:
 						print 'There was a problem in adding the location from the hidden field to the database'
@@ -94,9 +99,9 @@ def create_dataset(request):
 			if not remove_formset.is_valid():
 				print 'The remove formset for the geolocations for the edit dataset page was not valid'
 			else:
-				for geolocation in remove_formset.forms:
+				for remove_form in remove_formset.forms:
 					try:
-						location = geolocation.cleaned_data['remove_location']
+						location = remove_form.cleaned_data['remove_location']
 						import re
 						location_pattern = re.compile(r"""^\[\[(?P<lat>-?\d+\.\d+), (?P<lng>-?\d+\.\d+)\], '(?P<name>.+)'.*""")
 						location_match = location_pattern.match(location)
@@ -104,11 +109,13 @@ def create_dataset(request):
 						lat = location_dict['lat']
 						lng = location_dict['lng']
 						canonical_name = unicode(location_dict['name'])
+
 						try:
 							geoloc = GeoLoc.objects.get(longitude=lng,latitude=lat, canonical_name=canonical_name)
 						except:
 							print "The geolocation to be removed does not appear to have been attached to this dataset"
 						
+						# Remove the geoloc from the dataset.  Note that the geoloc will still be in the database incase other things were attached.
 						new_dataset.geolocations.remove(geoloc)
 					except:
 						print 'There was a problem in removing the location from the dataset'
@@ -163,37 +170,44 @@ def edit_dataset(request, item_id, slug=None):
 			tags = form.cleaned_data["tags"]
 			dataset.tags.update_tags(tags, user=user)
 			
+						# Add all the locations specified in the add_formset
 			if not add_formset.is_valid():
 				print 'The add formset for the geolocations for the edit dataset page was not valid'
 			else:
-				for geolocation in add_formset.forms:
+				# Get all of the geolocations
+				for add_form in add_formset.forms:
 					try:
-						location = geolocation.cleaned_data['add_location']
+						location = add_form.cleaned_data['add_location']
 						import re
-						location_pattern = re.compile(r"""^\[\[(?P<lat>-?\d+\.\d+), (?P<lng>-?\d+\.\d+)\], '(?P<name>.+)'.*""")
+						# This pattern will match on [[-#.#, -#.#], '*', *
+						location_pattern = re.compile(r"""^\[\[(?P<lat>-?\d+\.\d+), (?P<lng>-?\d+\.\d+)\], '(?P<name>.+)',.*""")
 						location_match = location_pattern.match(location)
 						location_dict = location_match.groupdict()
 						lat = location_dict['lat']
 						lng = location_dict['lng']
 						canonical_name = unicode(location_dict['name'])
+						
+						# If the location already exists, use it otherwise create a new one
 						try:
-							geoloc = GeoLoc.objects.get(longitude=lng,latitude=lat)
+							geoloc = GeoLoc.objects.get(longitude=lng, latitude=lat, canonical_name=canonical_name)
 						except:
 							geoloc = GeoLoc(longitude=lng, latitude=lat, canonical_name=canonical_name)
 							geoloc.save()
 						
+						# Add the found/created location to the dataset
 						dataset.geolocations.add(geoloc)
 					except:
 						print 'There was a problem in adding the location from the hidden field to the database'
 			
+			
 			if not remove_formset.is_valid():
 				print 'The remove formset for the geolocations for the edit dataset page was not valid'
 			else:
-				for geolocation in remove_formset.forms:
+				for remove_form in remove_formset.forms:
 					try:
-						location = geolocation.cleaned_data['remove_location']
+						location = remove_form.cleaned_data['remove_location']
 						import re
-						location_pattern = re.compile(r"""^\[\[(?P<lat>-?\d+\.\d+), (?P<lng>-?\d+\.\d+)\], '(?P<name>.+)'.*""")
+						location_pattern = re.compile(r"""^\[\[(?P<lat>-?\d+\.\d+), (?P<lng>-?\d+\.\d+)\], '(?P<name>.+)',.*""")
 						location_match = location_pattern.match(location)
 						location_dict = location_match.groupdict()
 						lat = location_dict['lat']
@@ -204,6 +218,7 @@ def edit_dataset(request, item_id, slug=None):
 						except:
 							print "The geolocation to be removed does not appear to have been attached to this dataset"
 						
+						# Remove the geoloc from the dataset.  Note that the geoloc will still be in the database incase other things were attached.
 						dataset.geolocations.remove(geoloc)
 					except:
 						print 'There was a problem in removing the location from the dataset'
