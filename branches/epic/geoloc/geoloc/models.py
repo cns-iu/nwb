@@ -13,4 +13,4 @@ class GeoLoc(models.Model):
 		urlNameList = []
 		for dataset in self.datasets.all():
 			urlNameList.append([dataset.name, dataset.get_absolute_url()])
-		return '[[%s, %s], %s, %s]' % (self.latitude, self.longitude, self.canonical_name, urlNameList)
+		return """[[%s, %s], '%s', %s]""" % (self.latitude, self.longitude, self.canonical_name, urlNameList)

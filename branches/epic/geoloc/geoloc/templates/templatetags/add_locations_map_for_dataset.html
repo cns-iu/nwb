@@ -55,7 +55,8 @@
 	} 
 	
 	for (var i = 0; i < geolocations.length ; i ++){
-		re = /^\[\[(-?\d*.\d*), (-?\d*.\d*)\], (\S*), (\[(?:\[u'\S+', '\S+'\](?:, )?)+\])]$/i;
+		console.log(geolocations[i]);
+		re = /^\[\[(-?\d*.\d*), (-?\d*.\d*)\], '(.+)', (\[(?:\[u'\S+', '\S+'\](?:, )?)+\])]$/i;
 		geolocFragments = geolocations[i].value.split(re);
 		//console.log(geolocFragments);
 

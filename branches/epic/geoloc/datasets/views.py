@@ -72,7 +72,7 @@ def create_dataset(request):
 						location = geolocation.cleaned_data['location']
 						print location 
 						import re
-						location_pattern = re.compile(r"""^\[\[(?P<lat>-?\d+\.\d+), (?P<lng>-?\d+\.\d+)\], (?P<name>.+).*""")
+						location_pattern = re.compile(r"""^\[\[(?P<lat>-?\d+\.\d+), (?P<lng>-?\d+\.\d+)\], '(?P<name>.+)'.*""")
 						location_match = location_pattern.match(location)
 						location_dict = location_match.groupdict()
 						lat = location_dict['lat']
@@ -143,12 +143,12 @@ def edit_dataset(request, item_id, slug=None):
 					try:
 						location = geolocation.cleaned_data['location']
 						import re
-						location_pattern = re.compile(r"""^\[\[(?P<lat>-?\d+\.\d+), (?P<lng>-?\d+\.\d+)\], (?P<name>.+).*""")
+						location_pattern = re.compile(r"""^\[\[(?P<lat>-?\d+\.\d+), (?P<lng>-?\d+\.\d+)\], '(?P<name>.+)'.*""")
 						location_match = location_pattern.match(location)
 						location_dict = location_match.groupdict()
 						lat = location_dict['lat']
 						lng = location_dict['lng']
-						canonical_name = location_dict['name']
+						canonical_name = unicode(location_dict['name'])
 						try:
 							geoloc = GeoLoc.objects.get(longitude=lng,latitude=lat)
 						except:
