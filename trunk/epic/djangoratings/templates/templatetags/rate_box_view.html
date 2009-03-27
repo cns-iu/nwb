@@ -74,7 +74,19 @@
 
 		$(document).ready(function(){
 
-			renderAvgVoteBox({{ rating }},{{ item_id }});
+			var inputRatingString = '{{ rating }}';
+
+			if(inputRatingString.toLowerCase() == 'none') {
+
+				inputRatingString = 0;
+	
+			}
+			else {
+				inputRatingString = {{ rating }};
+
+				}
+			
+			renderAvgVoteBox(inputRatingString,{{ item_id }});
 			$("#{{ item_id }}-average-vote").addClass("small-star-rating-readonly");
 			
 		});
