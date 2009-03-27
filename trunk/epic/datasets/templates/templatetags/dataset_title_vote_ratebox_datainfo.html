@@ -3,7 +3,7 @@
 {% rate_box_vote dataset user %}
 <h1> <a href="{% url datasets.views.view_dataset item_id=dataset.id %}">{{ dataset.name|escape }}</a></h1>
 <ul class="datainfo">
-	<li id="first">{{ dataset.creator|escape }}</li>
+	<li id="first"><a href="{% url datasets.views.view_user_dataset_list user_id=dataset.creator.id %}">{{ dataset.creator|escape }}</a></li>
 	<li>{{ dataset.created_at|date:"F d, Y - P" }}</li>
 	{% ifequal user dataset.creator %}
 		<li><a href="{% url datasets.views.edit_dataset item_id=dataset.id, slug=dataset.slug %}">Edit</a></li>

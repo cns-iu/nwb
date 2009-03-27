@@ -55,6 +55,7 @@
 	width:100%;
 	z-index:2;
 }
+
 .star-rating .current-rating{
 	z-index:1;
 	background-position: left center;
@@ -63,7 +64,7 @@
 .star-rating-readonly a:hover,
 .star-rating-readonly a:active,
 .star-rating-readonly a:focus{
-	background:none;
+	background: none;
 	z-index:-999;
 }
 
@@ -88,4 +89,4 @@
 	background-image: url(/core_media/images/star_rating_small.gif);
 	line-height: 10px;
 	height: 10px;
-}
+}

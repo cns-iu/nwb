@@ -18,10 +18,8 @@
 {% endif %}
 
 
-<div id="tagbox">
-  		<a href="links.html">Tag </a><a href="links.html"></a>
-  		<a href="links.html">Tag </a><a href="links.html"></a>
-</div>
+{% load tags_templatetags %}
+{% show_tag_cloud %}
 
 {% if datasets %}
 
@@ -73,7 +71,8 @@
 	{% load djangoratings_templatetags %}
 	{% rate_box_view dataset user %}
 	
-	<p>{{ dataset.description|escape|truncatewords:100 }}
+	<h1><a href="{% url datasets.views.view_dataset item_id=dataset.id %}">{{ dataset.name|escape }}</a></h1>
+	<p>{{ dataset.description|escape|truncatewords:100 }}</p>
 
    	{% load tags_templatetags %}
 	{% list_item_tags dataset %}
@@ -91,4 +90,5 @@
 </div>
 	{% endfor %}
 {% endif %}
+
 {% endblock %}

@@ -31,7 +31,7 @@
 <div id="databox">
 	{% load dataset_templatetags %}
 	{% show_dataset_title_vote_ratebox_datainfo dataset %}
-	<p>{{ dataset.description|escape }}
+	<p>{{ dataset.description|escape }}</p>
 
    	{% load tags_templatetags %}
 	{% list_item_tags dataset %}
@@ -52,6 +52,5 @@
 		{% display_post_comment_form user "datasets" dataset.id post_comment_form %}
  		{% list_comments dataset %}
  	</div>
-	</div>
 </div>
 {% endblock %}
