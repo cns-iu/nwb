@@ -63,36 +63,30 @@ def create_dataset(request):
 			new_dataset = DataSet.objects.create(creator=request.user, name=name, description=description, slug=slugify(name))
 			new_dataset.tags.update_tags(tags, user=request.user)
 			
-			try:
-				# TODO: Make this so Baby Patrick does not cry.
-				locations = request.POST['MapPoints']
-				locations = locations.split('[[')
-				locations.remove("")
-	
-				for location in locations:
-					location = location.replace("'],", '')
-					location = location.replace("],'", ',')
-					location = location.replace("']", "")
-					location = location.split(',')
-
-					lat = location[0]
-					lng = location[1]
-					canonical_name = location[2]
-
-					
+			formset = GeoLocationFormSet(request.POST)
+			if not formset.is_valid():
+				print 'The formset for the geolocations for the create dataset page was not valid'
+			else:
+				for geolocation in formset.forms:
 					try:
-						geoloc = GeoLoc.objects.get(longitude=lng,latitude=lat)
+						location = geolocation.cleaned_data['location']
+						print location 
+						import re
+						location_pattern = re.compile(r"""^\[\[(?P<lat>-?\d+\.\d+), (?P<lng>-?\d+\.\d+)\], (?P<name>.+).*""")
+						location_match = location_pattern.match(location)
+						location_dict = location_match.groupdict()
+						lat = location_dict['lat']
+						lng = location_dict['lng']
+						canonical_name = location_dict['name']
+						try:
+							geoloc = GeoLoc.objects.get(longitude=lng,latitude=lat)
+						except:
+							geoloc = GeoLoc(longitude=lng, latitude=lat, canonical_name=canonical_name)
+							geoloc.save()
+						
+						new_dataset.geolocations.add(geoloc)
 					except:
-						geoloc = GeoLoc(longitude=lng, latitude=lat, canonical_name=canonical_name)
-						geoloc.save()
-					
-					new_dataset.geolocations.add(geoloc)
-			
-			except MultiValueDictKeyError:
-				# The user didn't post any locations
-				pass
-
-			
+						print 'There was a problem in adding the location from the hidden field to the database'		
 			
 			for uploaded_file in uploaded_files:
 			 	new_datasetfile = DataSetFile(parent_dataset=new_dataset, file_contents=uploaded_file)
@@ -131,8 +125,7 @@ def edit_dataset(request, item_id, slug=None):
 		formset = GeoLocationFormSet(initial=initial_location_data)
 	else:
 		form = EditDataSetForm(request.POST)
-		formset = GeoLocationFormSet(request.POST)
-		
+				
 		if form.is_valid():
 			dataset.name = form.cleaned_data["name"]
 			dataset.description = form.cleaned_data["description"]
@@ -141,40 +134,30 @@ def edit_dataset(request, item_id, slug=None):
 			
 			tags = form.cleaned_data["tags"]
 			dataset.tags.update_tags(tags, user=user)
+			
+			formset = GeoLocationFormSet(request.POST)
 			if not formset.is_valid():
 				print 'The formset for the geolocations for the edit dataset page was not valid'
 			else:
-				for geoloc in formset.forms:
-					print geoloc.cleaned_data['location']
-				
-			try:
-				# TODO: Make this so Baby Patrick does not cry.
-				locations = request.POST['MapPoints']
-				locations = locations.split('[[')
-				locations.remove("")
-	
-				for location in locations:
-					location = location.replace("'],", '')
-					location = location.replace("],'", ',')
-					location = location.replace("']", "")
-					location = location.split(',')
-					print location
-					lat = location[0]
-					lng = location[1]
-					canonical_name = location[2]
-					print "%s, %s = %s" % (lng, lat, canonical_name)
-					
+				for geolocation in formset.forms:
 					try:
-						geoloc = GeoLoc.objects.get(longitude=lng,latitude=lat)
+						location = geolocation.cleaned_data['location']
+						import re
+						location_pattern = re.compile(r"""^\[\[(?P<lat>-?\d+\.\d+), (?P<lng>-?\d+\.\d+)\], (?P<name>.+).*""")
+						location_match = location_pattern.match(location)
+						location_dict = location_match.groupdict()
+						lat = location_dict['lat']
+						lng = location_dict['lng']
+						canonical_name = location_dict['name']
+						try:
+							geoloc = GeoLoc.objects.get(longitude=lng,latitude=lat)
+						except:
+							geoloc = GeoLoc(longitude=lng, latitude=lat, canonical_name=canonical_name)
+							geoloc.save()
+						
+						dataset.geolocations.add(geoloc)
 					except:
-						geoloc = GeoLoc(longitude=lng, latitude=lat, canonical_name=canonical_name)
-						geoloc.save()
-					
-					dataset.geolocations.add(geoloc)
-			
-			except MultiValueDictKeyError:
-				# The user didn't post any locations
-				pass
+						print 'There was a problem in adding the location from the hidden field to the database'
 			
 			return HttpResponseRedirect(reverse("epic.datasets.views.view_dataset",
 				kwargs={ "item_id": dataset.id, 'slug':slug, }))

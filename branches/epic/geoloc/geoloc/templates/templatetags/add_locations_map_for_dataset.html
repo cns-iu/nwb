@@ -43,21 +43,21 @@
 	
 	function insertLocation(location){
 		number = jQuery('input:hidden').filter(function(){ return this.id.match(/id_form-\d+-location/); }).length;
-		value = '[[' + location.lat + ',' + location.lng + '], ' + location.canonicalName + ', [' + location.urlNameList + ']]';
-		console.log(value);
+		value = '[[' + location.lat + ', ' + location.lng + '], \'' + location.canonicalName + '\', [' + location.urlNameList + ']]';
 		html = '<input type="hidden" id="id_form-' + number + '-location" value="' + value + '" name="form-' + number + '-location"/>';
 		if (number == 0){
 			jQuery('form').prepend(html);
 		}else{
 			jQuery('#id_form-0-location').parent().prepend(html);
 		}
+		jQuery('#id_form-TOTAL_FORMS').attr('value', number+1);
 	
 	} 
 	
 	for (var i = 0; i < geolocations.length ; i ++){
-		re = /^\[\[(-?\d*.\d*), (-?\d*.\d*)\], (\S*), (\[(?:\[u'\S*', '\S*'\](?:, )?)+\])]$/i; //Yeah, just try to think about that one!
-		//console.log(geolocFragments);
+		re = /^\[\[(-?\d*.\d*), (-?\d*.\d*)\], (\S*), (\[(?:\[u'\S+', '\S+'\](?:, )?)+\])]$/i;
 		geolocFragments = geolocations[i].value.split(re);
+		//console.log(geolocFragments);
 
 		lat = geolocFragments[1];
 		lng = geolocFragments[2];
