@@ -65,7 +65,6 @@
 .star-rating-readonly a:active,
 .star-rating-readonly a:focus{
 	background: none;
-	z-index:-999;
 }
 
 /* for an inline rater */
@@ -89,4 +88,9 @@
 	background-image: url(/core_media/images/star_rating_small.gif);
 	line-height: 10px;
 	height: 10px;
+}
+.small-star-rating-readonly a:hover,
+.small-star-rating-readonly a:active,
+.small-star-rating-readonly a:focus{
+	background: none;
 }

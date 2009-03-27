@@ -61,8 +61,8 @@
 			*
 			*/
 
-			$("#{{ item_id }}-average-vote").addClass("star-rating-readonly");
-			$("#{{ item_id }}-user-vote").addClass("star-rating-readonly");
+			$("#{{ item_id }}-average-vote").addClass("small-star-rating-readonly");
+			$("#{{ item_id }}-user-vote").addClass("small-star-rating-readonly");
 
 		});
 	
@@ -75,7 +75,7 @@
 		$(document).ready(function(){
 
 			renderAvgVoteBox({{ rating }},{{ item_id }});
-			$("#{{ item_id }}-average-vote").addClass("star-rating-readonly");
+			$("#{{ item_id }}-average-vote").addClass("small-star-rating-readonly");
 			
 		});
 	
