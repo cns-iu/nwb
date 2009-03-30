@@ -26,6 +26,8 @@
 
 <div class="ratingsbox">Avg: <span id="average-value">{{ rating }}</span> | Total Votes: <span id="votes-value">{{ votes }}</span>
 	
+	
+	
 	<span class="average-voting">
 	
 	
@@ -204,7 +206,7 @@
 			$("#{{ item_id }}-average-vote").click(function(){
 
 				try {
-					window.location = "{% url django.contrib.auth.views.login %}";							
+					window.location = "{% url django.contrib.auth.views.login %}?next={% url epic.datasets.views.view_dataset item_id=item_id %}";							
 				}
 				catch(error) {
 					var notificationContent = "ERROR: You should be logged in before you can rate.";
