@@ -14,6 +14,7 @@ def geoloc_get_best_location(request):
 	
 	responseData = {}
 	
+	# Get the location string out of the post data, or send back a failure message
 	try:
 		location_string = request.POST['location_string']
 	except:
@@ -21,7 +22,7 @@ def geoloc_get_best_location(request):
 		json = simplejson.dumps(responseData)
 		return HttpResponse(json, mimetype='application/json')
 		
-
+	# Get the best location and return it and a success message or return a failure
 	try:
 		# TODO: does the location_string need to be cleaned somehow?
 		location = get_best_location(location_string)

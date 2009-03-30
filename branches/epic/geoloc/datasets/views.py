@@ -103,6 +103,7 @@ def create_dataset(request):
 					try:
 						location = remove_form.cleaned_data['remove_location']
 						import re
+						# This pattern will match on [[-#.#, -#.#], '*', *
 						location_pattern = re.compile(r"""^\[\[(?P<lat>-?\d+\.\d+), (?P<lng>-?\d+\.\d+)\], '(?P<name>.+?)',(?:.*)""")
 						location_match = location_pattern.match(location)
 						location_dict = location_match.groupdict()
@@ -170,7 +171,7 @@ def edit_dataset(request, item_id, slug=None):
 			tags = form.cleaned_data["tags"]
 			dataset.tags.update_tags(tags, user=user)
 			
-						# Add all the locations specified in the add_formset
+			# add all the locations from the add_formset if the add_formset is valid
 			if not add_formset.is_valid():
 				print 'The add formset for the geolocations for the edit dataset page was not valid'
 			else:
@@ -198,7 +199,9 @@ def edit_dataset(request, item_id, slug=None):
 					except:
 						print 'There was a problem in adding the location from the hidden field to the database'
 			
-			
+			# Remove all the locations from the remove_formset if the remove_formset is valid.  it is important that
+			# this step happens after the add because if the user edited a page and added a location then removed it 
+			# before saving there is both an add and a remove for that location in the same page.
 			if not remove_formset.is_valid():
 				print 'The remove formset for the geolocations for the edit dataset page was not valid'
 			else:
@@ -206,6 +209,7 @@ def edit_dataset(request, item_id, slug=None):
 					try:
 						location = remove_form.cleaned_data['remove_location']
 						import re
+						# This pattern will match on [[-#.#, -#.#], '*', *
 						location_pattern = re.compile(r"""^\[\[(?P<lat>-?\d+\.\d+), (?P<lng>-?\d+\.\d+)\], '(?P<name>.+?)',(?:.*)""")
 						location_match = location_pattern.match(location)
 						location_dict = location_match.groupdict()

@@ -9,6 +9,7 @@
 {{ add_formset }}
 {{ remove_formset }}
 <h3>Click on the map to add locations to the dataset</h3>
+{# TODO: Style this #}
 <div class="messages" id="map_messages"></div>
 <div class="map_location_bar">
      <p>
@@ -38,30 +39,62 @@
 		this.canonicalName = canonicalName;
 		this.urlNameList = urlNameList;
 	}
-	
+
+	/**
+		Insert a location into the array of locations and add an 'add' form to the html
+	**/
 	function insertLocation(location){
+		/* 
+		   Because we are using formsets, we need to use the right name and id for the hidden field.
+		   There is also a magical field that has the number of forms on the page.  When we add more
+		   this field needs to be updated. 
+		*/
+		// The number of add forms in the page currently
 		number = jQuery('input:hidden').filter(function(){ return this.id.match(/id_add-\d+-add_location/); }).length;
+		// the format for locations is [[lat, lng], name, [[dataset-name, dataset-url],...]]
 		value = '[[' + location.lat + ', ' + location.lng + '], \'' + location.canonicalName + '\', [' + location.urlNameList + ']]';
+		// Setup the html for the hidden input field that will be caught by the formset
 		html = '<input type="hidden" id="id_add-' + number + '-add_location" value="' + value + '" name="add-' + number + '-add_location"/>';
+
+		// If there are no other hidden fields yet, the parent will be the form, other wise the parent will
+		//  be whatever the parent of the other locations are
 		if (number == 0){
 			jQuery('form').prepend(html);
 		}else{
 			jQuery('#id_add-0-add_location').parent().prepend(html);
 		}
+		// The totalforms is used by formset and needs to be incremented since we've added one.
 		jQuery('#id_add-TOTAL_FORMS').attr('value', number+1);
+		// Add to the list of all locations
 		locations = locations.concat(location);
 	}
 	
+	/**
+		Remove a location from the array of locations and add an 'remove' form to the html
+	**/
 	function removeLocation(location){
+		/* 
+		   Because we are using formsets, we need to use the right name and id for the hidden field.
+		   There is also a magical field that has the number of forms on the page.  When we add more
+		   this field needs to be updated. 
+		*/
+		// the number of remove forms currently around
 		number = jQuery('input:hidden').filter(function(){ return this.id.match(/id_remove-\d+-remove_location/); }).length;
+		// the format for locations is [[lat, lng], name, [[dataset-name, dataset-url],...]]
 		value = '[[' + location.lat + ', ' + location.lng + '], \'' + location.canonicalName + '\', [' + location.urlNameList + ']]';
+		// Setup the html for the hidden input field that will be caught by the formset
 		html = '<input type="hidden" id="id_remove-' + number + '-remove_location" value="' + value + '" name="remove-' + number + '-remove_location"/>';
+		// If there are no other hidden fields yet, the parent will be the form, other wise the parent will
+		//  be whatever the parent of the other locations are
 		if (number == 0){
 			jQuery('form').prepend(html);
 		}else{
 			jQuery('#id_remove-0-remove_location').parent().prepend(html);
 		}
+
+		// The totalforms is used by formset and needs to be incremented since we've added one.
 		jQuery('#id_remove-TOTAL_FORMS').attr('value', number+1);
+		// Pull the location out of the locations list
 		for(var i = 0; i < locations.length; i++){
 			if ((locations[i].lat == location.lat) && (locations[i].lng == location.lng) && (locations[i].canonicalName == location.canonicalName)){
 				locations.splice(i, 1);
@@ -69,12 +102,15 @@
 			}
 		}
 	}
-	
+
+	// Get all the locations that the formsets have added to the html
 	geolocations = jQuery('input:hidden').filter(function(){ return this.id.match(/id_add-\d+-add_location/); });
+
+	// Add each of these locations to the map and the array of locations
 	for (var i = 0; i < geolocations.length ; i ++){
+		// Split the locations up into their parts [[lat, lng], name, [[dataset-name, dataset-url], ...]]
 		re = /^\[\[(-?\d*.\d*), (-?\d*.\d*)\], '(.+?)', (\[(?:\[u'(.+?)', '(.+?)'\](?:, )?)+\])]$/i;
 		geolocFragments = geolocations[i].value.split(re);
-		console.log(geolocations[i].value);
 
 		lat = geolocFragments[1];
 		lng = geolocFragments[2];
@@ -86,17 +122,18 @@
 		fragmentUrlNameList = fragmentUrlNameList.split('], ');
 		
 		for(var j = 0; j < fragmentUrlNameList.length; j++){
+			// Get out the url and the name
 			re = /^\[(?:\[)?u'(\S*)', '(\S*)'/i;
-			//console.log(fragmentUrlNameList[j].split(re));
 			urlNameFragment = fragmentUrlNameList[j].split(re);
 
-			url = urlNameFragment[2];
 			name = urlNameFragment[1];
+			url = urlNameFragment[2];
 
 			urlNameListPair = new UrlNameListPair(name, url);
+			// Add the new pair to the array of all pairs
 			urlNameList = urlNameList.concat(urlNameListPair);
 		}
-		
+		// Add the new location to the array of all locations.  Don't call insert location because this would add to the html, but these are already in the html
 		geolocation = new Location(lat, lng, canonicalName, urlNameList);
 		locations = locations.concat(geolocation);
 	}
@@ -107,21 +144,30 @@
 	var geocoder = new GClientGeocoder();
 
 	function addLocationMarker(location) {
+		// Create the marker.
 		var markerpt = new GPoint(location.lng, location.lat);
 	    var marker = new GMarker(markerpt);
+
 		var html = '<b>' + location.canonicalName + '</b>';
 
 		for each ( pair in location.urlNameList ){
 			html += '<br /><a href="' + pair.url + '">' + pair.name + '</a>';
 		}
 		html += '<br /><br /><input type="submit" value="Remove this Location" onclick="removeLoc(\'' +  location.canonicalName  + '\','+ location.lat +','+ location.lng +'); return false;" />';
+		// The info window will have the name, all the datasets names as links and a remove button.  Clicking the marker will open this infowindow
 		GEvent.addListener(marker, "click", function() { marker.openInfoWindowHtml(html); });
+		// Add the marker to the map
 		map.addOverlay(marker);
 	}
 
 	function lookupLocation(id){
+		// The location_string is given by the user
 		var location_string = document.getElementById(id).value
 		var data = {};
+		// Make a json request so the page doesn't have to be refreshed to get what google thinks is the most
+		// likely lat, lng, name for the given location_string.  If this json returns a success, print that message
+		// to the user and add the marker to the map and the form html to the page.  If the json returns a failure,
+		// show that message to the user.
 		data.location_string = location_string;
 		jQuery.post('{% url geoloc.views.geoloc_get_best_location %}', data, 
 				    function(responseData){
@@ -140,22 +186,25 @@
 	function addNewLocation(location){
 		insertLocation(location);
 		addLocationMarker(location);
+		// The user doesn't want to see the add location info window anymore so hide it
 		map.getInfoWindow().hide();
 	}
 	
 	function addNewLocationId(id, lat, lng){
+		// Strip ' and " because they mess up the regex
 		re_quote = /\'/gi;
 		re_double_quote = /\"/gi;
 		var canonicalName = document.getElementById(id).value.replace(re_quote, "").replace(re_double_quote, "");
-		
+		// Create the location and add it to the html and array
 		loc = new Location(lat, lng, canonicalName, '');
 		addNewLocation(loc);
 	}
 	
 	function removeLoc(canonicalName, lat, lng){
+		// Create the location to be removed.  The url-name pairs really don't matter so let's not bother
 		loc = new Location(lat, lng, canonicalName, '');
 		removeLocation(loc);
-				
+		// Draw all the markers for the locations left in the array
 		drawLocationMarkers(locations)
 	}
 	
@@ -170,6 +219,7 @@
 	}
 	
 	if (GBrowserIsCompatible()) {
+		// Create a map for the given map div.  Add the controls, set the center point and setup needed listners then draw all the markers for all the locations
 		var map_div = document.getElementById("map");
 		var map = new GMap2(map_div);
 		
@@ -181,6 +231,8 @@
 
 		GEvent.addListener(map, "click", function(overlay, latlng) {     
 			  if (latlng) { 
+				    // If you click on the map, a infowindow will open that will allow you to add the name of a location
+				    // This needs to return false, or the page would be submitted.
 					var html = '<br />Location Name: <input type="text" id="canonical_name" \><br><input type="submit" value="Add Location" onclick="addNewLocationId(\'canonical_name\','+ latlng.lat() +','+ latlng.lng() +'); return false;" />'
 					map.openInfoWindow(latlng, html);
 				  }

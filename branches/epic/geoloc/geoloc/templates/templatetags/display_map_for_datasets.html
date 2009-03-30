@@ -15,23 +15,28 @@
 	var map_long = 0;
 	var map_lat = 45;
 	var map_zoom = 16;
+	// The locations are set by the template.  They should be passed in as the location_list
 	var locations = [{% for location in location_list %}[{{ location.longitude }},{{ location.latitude }},'{{ location.canonical_name }}', [{% for dataset in location.datasets.all %}['{{ dataset.name }}','{{ dataset.get_absolute_url }}']{% if not forloop.last %},{% endif %}{% endfor %}]]{% if not forloop.last %},{% endif %}{% endfor %}];
 </script>
 <script type="text/javascript">
 	var geocoder = new GClientGeocoder();
 
 	function addLocationMarker(lng, lat, canonical_name, url_list) {
+		// Create a marker.
 		var markerpt = new GPoint(lng, lat);
 	    var marker = new GMarker(markerpt);
 		var html = '<b>' + canonical_name + '</b>';
 		for( var i=0; i < url_list.length ; i++) {
 			html += '<br /><a href="' + url_list[i][1] + '">' + url_list[i][0] + '</a>'
 		}
+		// The info window will had the name of the marker and a list of dataset names as links to the datasets
+		// If the marker is clicked this infowindow will open
 		GEvent.addListener(marker, "click", function() { marker.openInfoWindowHtml(html); });
 		map.addOverlay(marker);
 	}
 	
 	function drawLocationMarkers(locations){
+		// Clear all the current markers and draw all the markers from the locations array.
 		map.clearOverlays();
 		for (var i=0; i < locations.length; i++){
 			addLocationMarker(locations[i][0], locations[i][1], locations[i][2], locations[i][3]);
@@ -39,6 +44,7 @@
 	}
 	
 	if (GBrowserIsCompatible()) {
+		// Create a map for the given map div.  Add the controls, set the center point and setup needed listners then draw all the markers for all the locations
 		var map_div = document.getElementById("map");
 		var map = new GMap2(map_div);
 		
