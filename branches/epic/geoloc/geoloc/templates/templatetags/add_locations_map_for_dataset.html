@@ -17,14 +17,13 @@
        <input type="submit" value="Search" name="find" onclick="lookupLocation('location_input'); return false;"/>
      </p>
 </div>
-<div id="map" style="width: 400px; height: 300px"></div>
+<div id="map" style="width: 500px; height: 360px"></div>
 {% block tail_javascript %}
 {{ block.super }}
 
 <script type="text/javascript">
-	//Bloomington IN
-	var map_long = -86.516755;
-	var map_lat = 39.171594;
+	var map_long = 0;
+	var map_lat = 45;
 	var map_zoom = 16;
 	var locations = new Array();
 	
@@ -73,9 +72,9 @@
 	
 	geolocations = jQuery('input:hidden').filter(function(){ return this.id.match(/id_add-\d+-add_location/); });
 	for (var i = 0; i < geolocations.length ; i ++){
-		re = /^\[\[(-?\d*.\d*), (-?\d*.\d*)\], '(.+)', (\[(?:\[u'\S+', '\S+'\](?:, )?)+\])]$/i;
+		re = /^\[\[(-?\d*.\d*), (-?\d*.\d*)\], '(.+?)', (\[(?:\[u'(.+?)', '(.+?)'\](?:, )?)+\])]$/i;
 		geolocFragments = geolocations[i].value.split(re);
-		//console.log(geolocFragments);
+		console.log(geolocations[i].value);
 
 		lat = geolocFragments[1];
 		lng = geolocFragments[2];
@@ -145,7 +144,10 @@
 	}
 	
 	function addNewLocationId(id, lat, lng){
-		var canonicalName = document.getElementById(id).value
+		re_quote = /\'/gi;
+		re_double_quote = /\"/gi;
+		var canonicalName = document.getElementById(id).value.replace(re_quote, "").replace(re_double_quote, "");
+		
 		loc = new Location(lat, lng, canonicalName, '');
 		addNewLocation(loc);
 	}
