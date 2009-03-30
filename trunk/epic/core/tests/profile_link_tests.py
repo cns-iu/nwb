@@ -12,8 +12,8 @@ class ProfileLinkTestCase(TestCase):
 		login = self.client.login(username='bob', password='bob')
 		self.failUnless(login, 'Could not login')
 		response = self.client.get('/')
-		self.failUnless('<a href="/user/">Profile</a>' in response.content)
+		self.failUnless('<span id="logged-in-user"><a href="/user/">' in response.content)
 	
 	def testLinkForNotLoggedIn(self):
 		response = self.client.get('/')
-		self.failIf('<a href="/user/">Profile</a>' in response.content)
+		self.failIf('<span id="logged-in-user"><a href="/user/">' in response.content)
