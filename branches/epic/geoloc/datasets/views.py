@@ -76,7 +76,7 @@ def create_dataset(request):
 						location = add_form.cleaned_data['add_location']
 						import re
 						# This pattern will match on [[-#.#, -#.#], '*', *
-						location_pattern = re.compile(r"""^\[\[(?P<lat>-?\d+\.\d+), (?P<lng>-?\d+\.\d+)\], '(?P<name>.+)'.*""")
+						location_pattern = re.compile(r"""^\[\[(?P<lat>-?\d+\.\d+), (?P<lng>-?\d+\.\d+)\], '(?P<name>.+?)',(?:.*)""")
 						location_match = location_pattern.match(location)
 						location_dict = location_match.groupdict()
 						lat = location_dict['lat']
@@ -103,7 +103,7 @@ def create_dataset(request):
 					try:
 						location = remove_form.cleaned_data['remove_location']
 						import re
-						location_pattern = re.compile(r"""^\[\[(?P<lat>-?\d+\.\d+), (?P<lng>-?\d+\.\d+)\], '(?P<name>.+)'.*""")
+						location_pattern = re.compile(r"""^\[\[(?P<lat>-?\d+\.\d+), (?P<lng>-?\d+\.\d+)\], '(?P<name>.+?)',(?:.*)""")
 						location_match = location_pattern.match(location)
 						location_dict = location_match.groupdict()
 						lat = location_dict['lat']
@@ -185,9 +185,7 @@ def edit_dataset(request, item_id, slug=None):
 						location_dict = location_match.groupdict()
 						lat = location_dict['lat']
 						lng = location_dict['lng']
-						print location_match.groups()
 						canonical_name = unicode(location_dict['name'])
-						print "add: %s" % (canonical_name)
 						# If the location already exists, use it otherwise create a new one
 						try:
 							geoloc = GeoLoc.objects.get(longitude=lng, latitude=lat, canonical_name=canonical_name)
@@ -214,7 +212,6 @@ def edit_dataset(request, item_id, slug=None):
 						lat = location_dict['lat']
 						lng = location_dict['lng']
 						canonical_name = unicode(location_dict['name'])
-						print "remove: %s" % (canonical_name)
 						try:
 							geoloc = GeoLoc.objects.get(longitude=lng,latitude=lat, canonical_name=canonical_name)
 						except:
