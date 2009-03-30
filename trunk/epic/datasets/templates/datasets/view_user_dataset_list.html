@@ -27,21 +27,7 @@
 	
 	Datasets for 
 	
-	{% ifequal  requested_user.last_name "" %}
-	
-	{% else %}
-	
-		{{ requested_user.last_name }} 
-		
-	{% endifequal %}
-	
-	{% ifequal  requested_user.first_name "" %}
-	
-	{% else %}
-	
-		&nbsp;{{ requested_user.first_name }} 
-		
-	{% endifequal %}
+	{{ requested_user.get_full_name }}
 	
 	[ {{ requested_user.username }} ]
 	
