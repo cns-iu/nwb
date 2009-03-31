@@ -1,0 +1,10 @@
+{% if user.is_authenticated %}
+	<form action="/{{ post_to_url }}/{{ item_id }}/comment/" method="POST">
+		<table>
+			{{ post_comment_form.as_table }}
+		</table>
+		<input type="submit" value="Post comment" />
+	</form>
+{% else %}
+	<p>You must be logged in to comment.</p>
+{% endif %}

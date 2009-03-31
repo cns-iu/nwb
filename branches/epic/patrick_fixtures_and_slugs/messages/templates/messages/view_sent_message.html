@@ -1,0 +1,28 @@
+{% extends "core/base.html" %}
+{% block content %}
+{% if sent_message %}
+<h3>Your sent message.</h3>
+<table>
+  <tr>
+    <td>To:</td>
+    <td>{{ sent_message.recipient }}</td>
+  </tr>
+  <tr>
+    <td>From:</td>
+    <td>{{ sent_message.sender }}</td>
+  </tr>
+  <tr>
+    <td>Subject:</td>
+    <td>{{ sent_message.subject }}</td>
+  </tr>
+  <tr>
+    <td colspan="2">{{ sent_message.message|linebreaks }}</td>
+  </tr>
+</table>
+<hr>
+
+{% else %}
+<p>There was a problem finding the message.</p>
+{% endif %}
+<a href="/">Home</a>
+{% endblock %}

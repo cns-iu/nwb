@@ -1,0 +1,11 @@
+{% extends "core/base.html" %}
+{% block content %}
+<h2>Send a new message</h2>
+<form action="{% url messages.views.send_message user_id=user.id %}" method="POST">
+    <table>
+        {{ form.as_table }}
+    </table>
+    <p><input type="submit" value="Send Message" /></p>
+</form>
+<a href="/">Home</a>
+{% endblock %}

@@ -1,0 +1,10 @@
+{% if datarequests %}
+	<h1>Recent Requests</h1> 
+	{% for datarequest in datarequests %}
+	<h2><a href="{% url datarequests.views.view_datarequest item_id=datarequest.id %}">{{ datarequest.name|escape }}</a></h2> 
+	<p>{{ datarequest.description|escape }}</p>
+	<div class="comments">
+		<a href="link">Comments / Suggest a Dataset</a>
+	</div> 
+	{% endfor %}
+{% endif %}

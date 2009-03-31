@@ -1,0 +1,27 @@
+{% extends "core/base.html" %}
+{% block content %}
+	<h3>Data Request {{ datarequest.name }}</h3>
+	<p> Created by {{ datarequest.creator }} at {{ datarequest.created_at|date:"F d, Y - P" }}</p>
+	<p> Status: {{ datarequest.get_status_display }}</p>
+	{% ifequal user datarequest.creator %}
+		{% ifnotequal datarequest.status 'C'%}
+		  {% ifnotequal datarequest.status 'F' %}
+		  <a href="{% url datarequests.views.cancel_datarequest item_id=datarequest.id %}">Mark Cancel</a>
+		  <a href="{% url datarequests.views.fulfill_datarequest item_id=datarequest.id %}">Mark Fulfilled</a>
+		  <a href="{% url datarequests.views.edit_datarequest item_id=datarequest.id %}">Edit</a>
+		  {% endifnotequal %}
+		{% endifnotequal %}
+	{% endifequal %}
+	
+	<p>{{ datarequest.description }}</p>
+	
+	<p>
+		{% load comment_templatetags %}
+		{% list_comments datarequest %}
+		<hr>
+		{% display_post_comment_form user "datarequests" datarequest.id post_comment_form %}
+	</p>
+	
+	<a href="/">Home</a>
+	<a href="{% url datarequests.views.index %}">Data Requests</a>
+{% endblock %}
