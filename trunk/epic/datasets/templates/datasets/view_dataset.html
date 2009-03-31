@@ -46,6 +46,8 @@
 	  <p>No attached files</p>
 	{% endif %}
  	<p>Reference:<br/>"{{ dataset.name|escape }}." <span class="source_name">EpiC Community Website.</span> {{ dataset.created_at|date:"d M Y" }}. {% now "d M Y" %} &lt;<a>{{ dataset.get_absolute_url }}</a>&gt; </p>
+ 	{% load geoloc_templatetags %}
+    {% display_map_for_datasets dataset.id %}
  	<div class="comments">  
    		<h3> Comments </h3>
 		{% load comment_templatetags %}

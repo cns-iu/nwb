@@ -14,9 +14,9 @@
  	{% for dataset in datasets %}
 		<div id="databox">
 		  <div class="downloadicon"></div>
-		  {% load dataset_templatetags %}
+		  {% load dataset_templatetags %}    
 		  {% show_dataset_title_view_ratebox_datainfo dataset %}
-		  <p>{{ dataset.description|escape|truncatewords:100 }}</p>     
+		  <p>{{ dataset.description|linebreaks|truncatewords:100 }}</p>     
 		  {% load tags_templatetags %}
 		  {% list_item_tags dataset %}
 		</div>

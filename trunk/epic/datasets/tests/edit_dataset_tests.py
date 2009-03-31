@@ -51,7 +51,7 @@ class ViewEditDataSetPageTestCase(TestCase):
 		# Check that the correct stuff is on the page
 		self.assertTrue('description' in response.content)
 		self.assertTrue('name' in response.content)
-		self.assertTrue('Cancel Metadata Changes' in response.content)
+		self.assertContains(response,'Cancel Changes')
 		
 class ActionEditDataSetPageTestCase(TestCase):
 	fixtures = [ "initial_data"]
@@ -95,11 +95,15 @@ class ActionEditDataSetPageTestCase(TestCase):
 		ds1 = DataSet.objects.create(name="Important Data", description="A very important piece of data", slug="important-data", creator=admin)
 		ds2 = DataSet.objects.create(name="dataset", description="description", slug="dataset", creator=peebs)
 		
-		# The changes to the data
+		# The changes to the data The junk at the bottom is need for the geoloc-formsets
 		post_data = {
 			"name": "dataset2",
 			"description": "description2",
-			"tags": "slashdotted"
+			"tags": "slashdotted",
+			'remove-INITIAL_FORMS': 0,
+			'add-INITIAL_FORMS': 0,
+			'add-TOTAL_FORMS': 0,
+			'remove-TOTAL_FORMS': 0,				   
 		}
 		
 		# Log in as NOT the creator
@@ -121,11 +125,15 @@ class ActionEditDataSetPageTestCase(TestCase):
 		ds1 = DataSet.objects.create(name="Important Data", description="A very important piece of data", slug="important-data", creator=admin)
 		ds2 = DataSet.objects.create(name="dataset", description="description", slug="dataset", creator=peebs)
 		
-		# The changes to the data
+		# The changes to the data The junk at the bottom is need for the geoloc-formsets
 		post_data = {
 			"name": "dataset2",
 			"description": "description2",
-			"tags": "slashdotted"
+			"tags": "slashdotted",
+			'remove-INITIAL_FORMS': 0,
+			'add-INITIAL_FORMS': 0,
+			'add-TOTAL_FORMS': 0,
+			'remove-TOTAL_FORMS': 0,				   
 		}
 		# log in as creator
 		login = self.client.login(username='admin', password='admin')

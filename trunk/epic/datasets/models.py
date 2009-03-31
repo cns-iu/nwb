@@ -6,6 +6,7 @@ from epic.core.models import Item
 from epic.djangoratings import RatingField
 from epic.core.util.customfilefield import CustomFileField
 
+from epic.geoloc.models import GeoLoc
 from epic.core.util.multifile import MultiFileField
 from django.db import models
 from django.contrib.auth.models import User
@@ -27,7 +28,7 @@ class DataSet(Item):
 	
 	"""
 	rating = RatingField(choices=RATING_SCALE)
-	
+	geolocations = models.ManyToManyField(GeoLoc, related_name='datasets')
 	#supposedly better to do this some other newer way where it's not nested
 	class Admin:
 		pass

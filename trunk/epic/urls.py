@@ -16,6 +16,7 @@ urlpatterns = patterns('',
     (r'^admin/(.*)', admin.site.root),
     (r'^comments/', include('epic.comments.urls')),
     (r'^tags/', include('epic.tags.urls')),
+    (r'^geoloc/', include('epic.geoloc.urls')),
 )
 
 if settings.DEBUG:

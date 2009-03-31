@@ -110,4 +110,7 @@ INSTALLED_APPS = (
     'epic.djangoratings',
     'epic.tags',
     'epic.messages',
+    'epic.geoloc',
 )
+
+GOOGLE_KEY = 'ABQIAAAA_nCXPZ8LuIeeo7WwioikORQgz-4lV129Gb6RmcYlAWs2FINo4xQC9fAh76x7NI05hOaFBXreklShsg'
