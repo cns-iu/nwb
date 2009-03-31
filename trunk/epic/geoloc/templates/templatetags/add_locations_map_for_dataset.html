@@ -11,7 +11,7 @@
 {{ add_formset }}
 {{ remove_formset }}
 
-<h3>Click on the map to add locations to the dataset</h3>
+<h4>Click on the map to add locations to the dataset</h4>
 
 {# TODO: Style this #}
 <div class="messages" id="map_messages"></div>
@@ -82,7 +82,7 @@
 
 		// add existing location markers to map
 
-		var locations = getAllLocations(getForms('add'));
+		var locations = getInitialLocations(getForms('add'));
 		drawLocationMarkers(locations);
 	}
 
