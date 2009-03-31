@@ -1,5 +1,5 @@
 {% extends "core/base.html" %}
-{% block content %}
+{% block container %}
 
 <h1>Share Your Data</h1>
 <form enctype="multipart/form-data" action="{% url datasets.views.create_dataset %}" method="POST">

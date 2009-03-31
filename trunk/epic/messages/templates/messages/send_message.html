@@ -1,5 +1,5 @@
 {% extends "core/base.html" %}
-{% block content %}
+{% block container %}
 <h2>Send a new message</h2>
 <form action="{% url messages.views.send_message user_id=user.id %}" method="POST">
     <table>

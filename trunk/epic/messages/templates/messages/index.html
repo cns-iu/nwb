@@ -1,5 +1,5 @@
 {% extends "core/base.html" %}
-{% block content %}
+{% block container %}
 <br />
 <a href="{% url messages.views.send_message user_id=user.id %}">Send a new message</a>
 <h3>Received Messages</h3>

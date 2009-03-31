@@ -1,5 +1,5 @@
 {% extends "core/base.html" %}
-{% block content %}
+{% block container %}
 	<h3>Edit {{ dataset.name }}:</h3>
 	<form action="{% url datasets.views.edit_dataset item_id=dataset.id %}" method="POST">
 		<table>

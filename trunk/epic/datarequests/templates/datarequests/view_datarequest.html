@@ -1,5 +1,5 @@
 {% extends "core/base.html" %}
-{% block content %}
+{% block container %}
 	<h3>Data Request {{ datarequest.name }}</h3>
 	<p> Created by {{ datarequest.creator.get_profile }} at {{ datarequest.created_at|date:"F d, Y - P" }}</p>
 	<p> Status: {{ datarequest.get_status_display }}</p>
