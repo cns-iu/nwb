@@ -4,12 +4,14 @@ from epic.datarequests.models import DataRequest
 register = template.Library()
 
 @register.inclusion_tag('templatetags/display_datarequests.html', takes_context=True)
-def display_datarequests(context, datarequests):
+def display_datarequests(context, datarequests=None):
 	user = context['user']
+	if not datarequests:
+		datarequests = DataRequest.objects.exclude(status='C').order_by('-created_at')
 	return {'datarequests':datarequests, 'user':user}
 
 @register.inclusion_tag("templatetags/display_recent_requests.html")
-def display_recent_requests(limit=4):
+def display_recent_requests(limit=3):
 	datarequests = DataRequest.objects.exclude(status='C').order_by('-created_at')[:limit]
 	return {'datarequests':datarequests}
 
