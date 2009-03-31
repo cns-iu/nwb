@@ -29,7 +29,8 @@
 	<div id="browsecontent">
 		<div class="{# TODO: what style?#}">
 			<h1>Top 3 Data Requests</h1>
-			{# TODO: get top three datarequests here #}
+			{% load datarequest_templatetags %}
+			{% display_recent_requests 3 %}
 		</div>
 		<div class="{# TODO: what style? #}">
 			<h1>Datasets</h1>

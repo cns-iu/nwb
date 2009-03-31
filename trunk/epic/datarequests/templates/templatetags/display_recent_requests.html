@@ -1,10 +1,12 @@
+{# TODO: what to display if no datarequests #}
 {% if datarequests %}
-	<h1>Recent Requests</h1> 
-	{% for datarequest in datarequests %}
-	<h2><a href="{% url datarequests.views.view_datarequest item_id=datarequest.id %}">{{ datarequest.name|escape }}</a></h2> 
-	<p>{{ datarequest.description|escape }}</p>
-	<div class="comments">
-		<a href="link">Comments / Suggest a Dataset</a>
-	</div> 
-	{% endfor %}
+  {% for datarequest in datarequests %}
+	<div class="requests">
+		<h2><a href="{% url datarequests.views.view_datarequest item_id=datarequest.id %}">{{ datarequest.name }}</a></h2>
+		<p>{{ datarequest.description|linebreaks|truncatewords:30 }}</p>
+		<div class="comments">
+			<a href="{% url datarequests.views.view_datarequest item_id=datarequest.id %}">{{ datarequest.comments.all|length }} comment{{ datarequest.comments.all|length|pluralize }}.</a>
+		</div>
+	</div>
+  {% endfor %}
 {% endif %}
