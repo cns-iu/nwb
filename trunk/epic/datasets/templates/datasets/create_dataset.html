@@ -1,4 +1,8 @@
 {% extends "core/base.html" %}
+{% block scripts_header %}
+	{{ block.super }}
+	<script type="text/javascript" src="/core_media/scripts/image_swap.js"></script>
+{% endblock %}
 {% block container %}
 
 <h1>Share Your Data</h1>
@@ -8,7 +12,7 @@
     </table>
 	{% load geoloc_templatetags%}
 	{% add_locations_map_for_dataset add_formset remove_formset %}
-    <input type="submit" value="Upload" />
+    <input type="image" alt="Submit New Dataset" src="/core_media/images/submit.jpg" value="Upload" />
 </form>
 
 {% endblock %}

@@ -174,7 +174,6 @@ p { font-size:77%;
 
 #message {float:left; width:95%; border: 1px dotted #999999; padding:5px; margin-left:20px; margin-right:20px; margin-bottom:10px;  }
 
-
 #tagbox {font-size:85%; position:absolute;
 	background-color: #ececec;
  	 top:10px; 
@@ -532,5 +531,14 @@ h4 {
     border-right-width: 0px;
     border-right-style: none;
     border: none;
+}
+
+th label {
+	background-color:#ECECEC;
+	color:#666666;
+	display:block;
+	font-size:93%;
+	margin:0;
+	padding:5px 0;
 }
 

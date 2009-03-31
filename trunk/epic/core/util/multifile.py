@@ -57,7 +57,7 @@ class MultiFileInput(FileInput):
         """
         Renders a link to add more file input boxes.
         """
-        return u"<a onclick=\"javascript:new_%(name)s()\"><button type='button'>Upload More Files </button></a>" % {'name':name}
+        return u"""<a onclick=\"javascript:new_%(name)s(); return false;\"><input type='image' id='Image3' src='/core_media/images/upload-add.jpg' alt="Upload More Files" onmouseover="%(button_over)s" onmouseout="%(button_out)s"></button></a>""" % {'name':name, 'button_over':"MM_swapImage('Image3','','/core_media/images/upload-add-hover_21.jpg',1); return false;", 'button_out':"MM_swapImgRestore(); return false;",}
         
     #TODO: new upload fields should only be added when the user fills in all the existing file fields (like in Gmail)
     def js(self, name, value, count, attrs=None):
