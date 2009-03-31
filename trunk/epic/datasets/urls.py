@@ -1,7 +1,7 @@
 from django.conf.urls.defaults import *
 
 urlpatterns = patterns('epic.datasets.views',
-    (r'^$', 'index'),
+    (r'^$', 'view_datasets'),
     (r'^(?P<item_id>\d+)/$', 'view_dataset'),
 	(r'^list/(?P<user_id>.+)/$', 'view_user_dataset_list'),
     (r'^(?P<item_id>\d+)/comment/$', 'post_dataset_comment'),

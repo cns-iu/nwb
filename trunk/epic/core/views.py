@@ -14,12 +14,15 @@ from epic.datarequests.models import DataRequest
 from models import Profile
 from forms import ForgotUsernameForm, ForgotEmailForm, ForgotPasswordForm, ProfileForm, UserForm
 
-# This is the index for the entire site
-def index(request):
+
+def browse(request):
 	datasets = DataSet.objects.all().order_by('-created_at')
-	return render_to_response('core/index.html',
+	return render_to_response('core/browse.html',
 		{ 'user': request.user, 'datasets': datasets, },
 		context_instance=RequestContext(request))
+
+def about (request):
+	pass
 
 @login_required
 def view_profile(request):
@@ -62,7 +65,7 @@ def edit_profile(request):
 
 def logout_view(request):
 	logout(request)
-	return HttpResponseRedirect(reverse('epic.core.views.index',))
+	return HttpResponseRedirect(reverse('epic.core.views.browse',))
 
 @login_required
 def change_password(request):

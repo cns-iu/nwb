@@ -22,9 +22,9 @@ from epic.geoloc.utils import get_best_location, CouldNotFindLocation
 from datetime import datetime
 from decimal import Decimal
 
-def index(request):
+def view_datasets(request):
     datasets = DataSet.objects.all().order_by('-created_at')
-    return render_to_response('datasets/index.html',
+    return render_to_response('datasets/view_datasets.html',
 							  {'datasets': datasets, 'user': request.user},
 							  context_instance=RequestContext(request))
 

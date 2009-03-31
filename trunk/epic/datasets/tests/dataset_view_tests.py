@@ -16,7 +16,7 @@ class IndexTestCase(TestCase):
 		
 	
 	def testIndex(self):
-		index_url = reverse("epic.datasets.views.index")
+		index_url = reverse("epic.datasets.views.view_datasets")
 		response = self.client.get(index_url)
 		self.failUnlessEqual(response.status_code, 200, "Error listing datasets!")
 		data = response.context[0]['datasets'] #due to template inheritance

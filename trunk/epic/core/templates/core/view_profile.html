@@ -22,7 +22,7 @@
 	  {% list_datasets datasets %}
 	{% endif %}
 	{# TODO: Clean up the styling here #}
-	<a style="clear:both; float:left" href="{% url datasets.views.index %}">View All Datasets</a>
+	<a style="clear:both; float:left" href="{% url datasets.views.view_datasets %}">View All Datasets</a>
 	{# Listing all the un-cancelled data requests made by the user. #}
 	<hr style="clear:both;">
 	{% if datarequests %}
