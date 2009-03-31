@@ -30,6 +30,6 @@
 	  	{% load datarequest_templatetags %}
 	  	{% display_datarequests datarequests %}
 	{% endif %}
-	<a style="clear:both; float:left" href="{% url datarequests.views.index %}">View All Data Requests</a>
+	<a style="clear:both; float:left" href="{% url datarequests.views.view_datarequests %}">View All Data Requests</a>
 	
 {% endblock %}

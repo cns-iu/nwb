@@ -18,10 +18,10 @@ from epic.comments.views import make_comment_view
 from datetime import datetime
 
 
-def index(request):
+def view_datarequests(request):
     datarequests = DataRequest.objects.exclude(status='C').order_by('-created_at')
     datarequest_form = DataRequestForm()
-    return render_to_response('datarequests/index.html', {'datarequests': datarequests,'user':request.user, 'datarequest_form':datarequest_form,})
+    return render_to_response('datarequests/view_datarequests.html', {'datarequests': datarequests,'user':request.user, 'datarequest_form':datarequest_form,})
 
 def view_datarequest(request, item_id=None):
 	datarequest = get_object_or_404(DataRequest, pk=item_id)
