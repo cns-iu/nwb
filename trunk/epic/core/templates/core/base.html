@@ -16,51 +16,52 @@
 
 {% endblock %}
 </head>
-<body>
-<div id="container">
-  {% block container %}
-  <div id="header">
-    {% block header %} 
-    <div id="logo">{% block logo %}{% endblock %}</div>
-    <div id="login">
-      {% block login %}
-        {% if user.is_authenticated %}
-       	<span id="logged-in-user"><a href="{% url core.views.view_profile %}">
-       		{% if user.get_full_name %}
-       		{{ user.get_full_name }}
-       		{% else %}
-       		{{ user.username }}
-       		{% endif%}
-       		</a> | </span>
-          <a href="{% url messages.views.index user_id=user.id %}">Messages</a> | 
-          <a href="{% url core.views.logout_view %}">Log Out</a>
-        {% else %}
-          {% load core_templatetags %}
-          {% login_box %}
-        {% endif %}
-      {% endblock %}
-    </div>
-    <div id="nav">
-      {% block nav %}
-      <ul>   
-        {# TODO:  set the pageon based on the actual page #}
-        {# TODO: use the url tag once the actual navigation tags have been decided on #}
-        <li><a href="/" class="pageon"><span>Browse</span></a></li>
-        <li><a href="/datasets/new/"><span>Share</span></a></li>
-        <li><a href="/datarequests/"><span>Request</span></a></li>
-        <li><a href="#"><span>About</span></a></li>
-      </ul> 
-      {% endblock %}
-    </div>
+<body onload="{% block body_onload %}{% endblock %}">
+<div id="header">
+  {% block header %} 
+  <div id="logo">{% block logo %}{% endblock %}</div>
+  <div id="login">
+    {% block login %}
+      {% if user.is_authenticated %}
+     	<span id="logged-in-user"><a href="{% url core.views.view_profile %}">
+     		{% if user.get_full_name %}
+     		{{ user.get_full_name }}
+     		{% else %}
+     		{{ user.username }}
+     		{% endif%}
+     		</a> | </span>
+        <a href="{% url messages.views.index user_id=user.id %}">Messages</a> | 
+        <a href="{% url core.views.logout_view %}">Log Out</a>
+      {% else %}
+        {% load core_templatetags %}
+        {% login_box %}
+      {% endif %}
     {% endblock %}
   </div>
-  <div id="content">
-    {% block content %}
+  <div id="nav">
+    {% block nav %}
+    <ul>   
+      <li><a href="{% url core.views.browse %}" ><span>Browse</span></a></li>
+      <li><a href="{% url datasets.views.create_dataset %}"><span>Share</span></a></li>
+      <li><a href="{% url datarequests.views.new_datarequest %}"><span>Request</span></a></li>
+      <li><a href="{% url core.views.about %}"><span>About</span></a></li>
+    </ul> 
     {% endblock %}
-  </div> 
+  </div>
   {% endblock %}
 </div>
+
+<div id="content">
+  <div id="submenu">
+    {% block submenu %}
+    {% endblock %}
+  </div>
+  {% block content %}
+  {% endblock %}
+</div> 
+
 {% block scripts_footer %}
 {% endblock %}
+
 </body>
 </html>
