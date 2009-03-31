@@ -3,6 +3,10 @@
   {{ block.super }}
   <link href="/core_media/css/star_rating.css" rel="stylesheet" type="text/css" />
 {% endblock %}
+{% block scripts_header %}
+	{{ block.super }}
+	<script type="text/javascript" src="/core_media/scripts/image_swap.js"></script>
+{% endblock %}
 {% block nav %}
 	<div id="nav"> 
 		<ul>   
@@ -27,8 +31,24 @@
 			<h1>Top 3 Data Requests</h1>
 			{# TODO: get top three datarequests here #}
 		</div>
-		<div class="
-		{# TODO: tagbox #}
-		{# TODO: databox #}
+		<div class="{# TODO: what style? #}">
+			<h1>Datasets</h1>
+			{# TODO: load the datasets here #}
+		</div>
+		<div class="{# TODO: what style? #}">
+			<h1>Can't Find what you're looking for?
+				<a href="{% url datarequests.views.new_datarequest %}" 
+				   onmouseout="MM_swapImgRestore()" 
+				   onmouseover="MM_swapImage('Image3','','/core_media/images/request_hover_27.jpg',1)">
+				   		<img src="/core_media/images/request_27.jpg" 
+				   			 alt="makerequest" 
+				   			 name="Image3" 
+				   			 width="150" 
+				   			 height="35" 
+				   			 border="0" 
+				   			 id="Image3" />
+				</a>
+			</h1>
+		</div>
 	</div>
 {% endblock %}
