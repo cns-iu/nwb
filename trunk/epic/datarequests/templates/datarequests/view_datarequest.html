@@ -1,7 +1,7 @@
 {% extends "core/base.html" %}
 {% block content %}
 	<h3>Data Request {{ datarequest.name }}</h3>
-	<p> Created by {{ datarequest.creator }} at {{ datarequest.created_at|date:"F d, Y - P" }}</p>
+	<p> Created by {{ datarequest.creator.get_profile }} at {{ datarequest.created_at|date:"F d, Y - P" }}</p>
 	<p> Status: {{ datarequest.get_status_display }}</p>
 	{% ifequal user datarequest.creator %}
 		{% ifnotequal datarequest.status 'C'%}

@@ -85,7 +85,6 @@ class CommentOnDataSetTestCase(TestCase):
 		self.failUnlessEqual(response.status_code, 200, "Error displaying dataset!")
 		
 		# Make sure the posted comment is display.
-		self.assertTrue(self.comment.posting_user.username in response.content)
 		self.assertTrue(self.comment.contents in response.content)
 		
 		# Delete the test comment.

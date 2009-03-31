@@ -1,6 +1,6 @@
 {% if comments %}
 	{% for comment in comments %}
-		{{ comment.posting_user.username }} |
+		{{ comment.posting_user.first_name }} {{comment.posting_user.last_name}} |
 		{{ comment.created_at|date:"F d, Y - P"  }} |
 	 	{{ comment|escape }} <br/>
 	{% endfor %}

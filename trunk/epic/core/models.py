@@ -24,8 +24,6 @@ Let's just test out a few aspects of our models...
 >>> item.description
 'test description'
 >>> profile = Profile(user=user, affiliation="CNS Core")
->>> profile
-<Profile: Profile object>
 >>> profile.user
 <User: testuser22>
 >>> profile.affiliation
@@ -82,3 +80,6 @@ class Profile(models.Model):
 	objects = ProfileManager()
 	user = models.ForeignKey(User, unique=True)
 	affiliation = models.CharField(max_length=MAX_USER_PROFILE_LENGTH, blank=True)
+	
+	def __unicode__(self):
+		return self.user.first_name + " " + self.user.last_name
