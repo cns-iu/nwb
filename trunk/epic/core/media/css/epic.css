@@ -16,7 +16,7 @@ html, body {
 
 
 
-#content { height:100%; position:relative; width:auto; 
+#container { height:100%; position:relative; width:auto; 
  margin-left:2em; margin-right:2em;  top:0; margin-top:0;
 
 	background-color: #FFFFFF; padding-top:20px; 
@@ -260,7 +260,7 @@ a.tagbox-latest {
 img { vertical-align:middle; } 
 a img {border:none;}
 
-#browsecontent { position:relative; margin-left:15em; top:0; width:auto; margin-right:2em; height:inherit;
+#content { position:relative; margin-left:15em; top:0; width:auto; margin-right:2em; height:inherit;
 	}
 
 

@@ -44,6 +44,10 @@ class DataSet(Item):
 			kwargs = {'item_id':self.id,}
 		return ("epic.datasets.views.view_dataset", [], kwargs)
 	
+	# TODO: Implement this for real.
+	def get_download_all_files_url(self):
+		return "http://www.PLACEHOLDER_FOR_DOWNLOAD_ALL_FILES_URL.com"
+	
     
 class DataSetFile(models.Model):
 	
