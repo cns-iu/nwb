@@ -31,33 +31,33 @@
 {% endblock %}{# block submenu #}
 
 {% block content %}
-    <div class="databox">
-      <h1>Top 3 Data Requests</h1>
-    </div>
+  <div class="databox">
+    <h1>Top 3 Data Requests</h1>
+  </div>
+  
+  {% load datarequest_templatetags %}
+  {% display_recent_requests 3 %}
     
-    {% load datarequest_templatetags %}
-    {% display_recent_requests 3 %}
-      
-    <div class="databox">
-      <h1>Datasets</h1>
-    </div>
-    
-    {% load dataset_templatetags %}
-    {% list_datasets datasets %}
-    
-    <div class="databox">
-      <h1>Can't Find what you're looking for?
-        <a href="{% url datarequests.views.new_datarequest %}" 
-           onmouseout="MM_swapImgRestore()" 
-           onmouseover="MM_swapImage('Image3','','/core_media/images/request_hover_27.jpg',1)">
-               <img src="/core_media/images/request_27.jpg" 
-                  alt="makerequest" 
-                  name="Image3" 
-                  width="150" 
-                  height="35" 
-                  border="0" 
-                  id="Image3" />
-        </a>
-      </h1>
-    </div>
+  <div class="databox">
+    <h1>Datasets</h1>
+  </div>
+  
+  {% load dataset_templatetags %}
+  {% list_datasets datasets %}
+  
+  <div class="databox">
+    <h1>Can't Find what you're looking for?
+      <a href="{% url datarequests.views.new_datarequest %}" 
+         onmouseout="MM_swapImgRestore()" 
+         onmouseover="MM_swapImage('Image3','','/core_media/images/request_hover_27.jpg',1)">
+             <img src="/core_media/images/request_27.jpg" 
+                alt="makerequest" 
+                name="Image3" 
+                width="150" 
+                height="35" 
+                border="0" 
+                id="Image3" />
+      </a>
+    </h1>
+  </div>
 {% endblock %}{# block content #}
