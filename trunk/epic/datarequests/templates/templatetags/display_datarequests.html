@@ -5,13 +5,18 @@
 		  <ul class="datainfo">
 		  	<li id="first">{{ datarequest.creator.get_profile }}</li>
 			<li>{{ datarequest.created_at|date:"F d, Y - P" }}</li>
-			{% if user.is_authenticated %}
-				{% ifequal user datarequest.creator %}
-					<li><a href="{% url datarequests.views.edit_datarequest item_id=datarequest.id %}">Edit</a></li>
-				{% else %}
-					<li><a href="{% url messages.views.send_message user_id=user.id, recipient_id=datarequest.creator.id %}">Contact Creator</a></li>
-				{% endifequal %}
-			{% endif %}
+			{% ifequal user datarequest.creator %}
+			  {% ifnotequal datarequest.status 'C'%}
+		        {% ifnotequal datarequest.status 'F' %}
+		  		  <li><a href="{% url datarequests.views.cancel_datarequest item_id=datarequest.id %}">Mark Canceled</a></li>
+		  		  <li><a href="{% url datarequests.views.fulfill_datarequest item_id=datarequest.id %}">Mark Fulfilled</a></li>
+		  	      <li><a href="{% url datarequests.views.edit_datarequest item_id=datarequest.id %}">Edit</a></li>
+		  		{% endifnotequal %}
+			  {% endifnotequal %}
+            {% endifequal %}
+	  		{% if user.is_authenticated %}
+			  <li><a href="{% url messages.views.send_message user_id=user.id, recipient_id=datarequest.creator.id %}">Contact Creator</a></li>
+	  		{% endif %}
 		  </ul>
 		  <p>{{ datarequest.description|linebreaks|truncatewords:50 }}</p>  
 		  <div class="comments">

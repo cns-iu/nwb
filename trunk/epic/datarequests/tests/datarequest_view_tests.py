@@ -101,7 +101,7 @@ class DataRequestTestCase(TestCase):
 		self.failUnless("fulfilled" in response.content)
 		response = self.client.get('/datarequests/')
 		self.failUnlessEqual(response.status_code, 200, "Error listing Data Requests!")
-		self.failUnless("fulfilled" in response.content)
+		self.failIf("fulfilled" in response.content)
 	
 	def testCanceledNotViewableAtIndex(self):
 		data_request = DataRequest(creator=self.data_request.creator, name="Amazing request", description="Spectacular request indeed", status='C')
@@ -121,7 +121,7 @@ class DataRequestCancelEditFulfillIndexTestCase(TestCase):
 		response = self.client.get('/datarequests/')
 		self.failUnlessEqual(response.status_code, 200)
 		self.failIf('Edit</a>' in response.content, response.content)
-		self.failIf('Cancel</a>' in response.content)
+		self.failIf('Canceled</a>' in response.content)
 		self.failIf('Fulfill</a>' in response.content)
 	
 	def testDataRequestIndexUnOwnedCanceled(self):
@@ -162,9 +162,9 @@ class DataRequestCancelEditFulfillIndexTestCase(TestCase):
 		response = self.client.get('/datarequests/')
 		self.failUnlessEqual(response.status_code, 200)
 		self.failUnless('Amazing request' in response.content, "Just-created request not on request page")
-		self.failUnless('Edit</a>' in response.content, "request owner has no link to edit the request on request page")
-		self.failUnless('Cancel</a>' in response.content, "request owner has no link to cancel the request on request page")
-		self.failUnless('Fulfill</a>' in response.content, "request owner has no link to fulfill the request on request page")
+		self.failIf('Edit</a>' in response.content, "request owner has a link to edit the request on request page")
+		self.failIf('Canceled</a>' in response.content, "request owner has a link to cancel the request on request page")
+		self.failIf('Fulfill</a>' in response.content, "request owner has a link to fulfill the request on request page")
 	
 	def testDataRequestIndexOwnedUnFulfilled(self):
 		creator = User.objects.get(username="bob")
@@ -190,7 +190,7 @@ class DataRequestCancelEditFulfillPageTestCase(TestCase):
 		self.failUnlessEqual(response.status_code, 200)
 		self.failUnless('Amazing request' in response.content, response.content)
 		self.failIf('Edit</a>' in response.content, response.content)
-		self.failIf('Cancel</a>' in response.content)
+		self.failIf('Canceled</a>' in response.content)
 	
 	def testDataRequestPageOwnedU(self):
 		creator = User.objects.get(username="bob")
@@ -203,7 +203,7 @@ class DataRequestCancelEditFulfillPageTestCase(TestCase):
 		self.failUnlessEqual(response.status_code, 200)
 		self.failUnless('Amazing request' in response.content, response.content)
 		self.failUnless('Edit</a>' in response.content, response.content)
-		self.failUnless('Cancel</a>' in response.content)
+		self.failUnless('Canceled</a>' in response.content)
 		self.failUnless('Fulfilled</a>' in response.content, response.content)
 	
 	def testDataRequestPageOwnedF(self):
@@ -217,7 +217,7 @@ class DataRequestCancelEditFulfillPageTestCase(TestCase):
 		self.failUnlessEqual(response.status_code, 200)
 		self.failUnless('Amazing request' in response.content, response.content)
 		self.failIf('Edit</a>' in response.content, response.content)
-		self.failIf('Cancel</a>' in response.content)
+		self.failIf('Canceled</a>' in response.content)
 		self.failIf('Fulfilled</a>' in response.content)
 	
 	def testDataRequestPageOwnedC(self):
@@ -231,7 +231,7 @@ class DataRequestCancelEditFulfillPageTestCase(TestCase):
 		self.failUnlessEqual(response.status_code, 200)
 		self.failUnless('Amazing request' in response.content, response.content)
 		self.failIf('Edit</a>' in response.content, response.content)
-		self.failIf('Cancel</a>' in response.content)
+		self.failIf('Canceled</a>' in response.content)
 		self.failIf('Fulfilled</a>' in response.content)
 		
 class DataRequestCancelEditFulfillActionsTestCase(TestCase):
@@ -293,6 +293,6 @@ class DataRequestCancelEditFulfillActionsTestCase(TestCase):
 		self.failUnlessEqual(response.status_code, 200)
 		self.failUnless('Amazing request' in response.content, response.content)
 		self.failIf('Edit</a>' in response.content, response.content)
-		self.failIf('Cancel</a>' in response.content)
+		self.failIf('Canceled</a>' in response.content)
 		self.failIf('Fulfilled</a>' in response.content)
 		
