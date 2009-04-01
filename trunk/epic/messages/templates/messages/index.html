@@ -1,4 +1,4 @@
-{% extends "core/base.html" %}
+{% extends "core/bases/simple_base.html" %}
 {% block container %}
 <br />
 <a href="{% url messages.views.send_message user_id=user.id %}">Send a new message</a>

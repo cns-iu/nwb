@@ -1,4 +1,4 @@
-{% extends "core/base.html" %}
+{% extends "core/bases/simple_base.html" %}
 {% block container %}
 <h2>Tag the Data Set</h2>
 <form enctype="multipart/form-data" action="{% url datasets.views.tag_dataset item_id=item_id %}" method="POST">
