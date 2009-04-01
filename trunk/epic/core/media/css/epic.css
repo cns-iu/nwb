@@ -22,7 +22,9 @@ html, body {
 	background-color: #FFFFFF; padding-top:20px; 
 }
 
-#maincontent { padding:20px; }
+#maincontent { position:relative; margin-left:2em; top:0; width:auto; margin-right:2em; height:inherit; }
+#browsecontent { position:relative; margin-left:13em; top:0; width:auto;  height:inherit;
+	}
 
 
 
@@ -241,15 +243,16 @@ a.tagbox-latest {
 .datainfo {margin:0; padding:0}
 
 .datainfo li {
-	font-size:77%;
-	display:inline;
-	padding-right:5px;
-	padding-left:5px;
-	border-right-width: 1px;
-	border-right-style: dotted;
-	border-right-color: #999999;
-	color: #999999;
-	font-weight: normal; margin:0; 
+       font-size:77%;
+       display:inline;
+       padding-right:5px;
+       padding-left:5px;
+       color: #999999;
+       font-weight: normal;
+       margin:0;
+       border-left-width: 1px;
+       border-left-style: dotted;
+       border-left-color: #999999;
 }
 
 .datainfo li.first {padding-left:0; border-left-width:0; margin:0;  }
@@ -259,9 +262,6 @@ a.tagbox-latest {
 
 img { vertical-align:middle; } 
 a img {border:none;}
-
-#content { position:relative; margin-left:15em; top:0; width:auto; margin-right:2em; height:inherit;
-	}
 
 
 .databox {
