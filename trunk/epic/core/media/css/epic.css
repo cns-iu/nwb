@@ -303,6 +303,7 @@ a img {border:none;}
 	
 
 .requests {
+	
 	margin-bottom:10px;
 	border-bottom-width: 1px;
 	border-bottom-style: solid;
@@ -458,15 +459,15 @@ h4 {
 	
 }
 
-
 #loginbox
 
 {
-	background-image: url(/core_media/images/login_18.gif);
+	background-image: url(/core_media/images/login-button-top.gif);
 	background-repeat: no-repeat;
-	height: 222px;
-	width: 475px; margin-left:auto; margin-right:auto; margin-top:30px; 
+	height: 148px;
+	width: 475px; margin-left:auto; margin-right:auto; 
 }
+
 #username {float:left; margin-left:75px; margin-top:50px; }
 #password {float:right; margin-right:75px;margin-top:50px;  }
 
