@@ -22,7 +22,7 @@ def browse(request):
 		context_instance=RequestContext(request))
 
 def about (request):
-	pass
+	return render_to_response('core/about.html')
 
 @login_required
 def view_profile(request):
@@ -38,6 +38,7 @@ def view_profile(request):
 #	is fetched. 
 	return render_to_response('core/view_profile.html', 
 		{ "profile": profile, "user": user, "datasets":datasets, "datarequests":datarequests })
+	
 @login_required
 def edit_profile(request):
 	''' Used to allow a user to edit their own profile '''
