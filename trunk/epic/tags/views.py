@@ -12,4 +12,7 @@ def index(request):
 
 def view_items_for_tag(request, tag_name):
 	tags = Tagging.objects.filter(tag=tag_name)
-	return render_to_response('tags/tag_view.html', {'user':request.user, 'tags':tags, 'tag_name':tag_name})
+	datasets = []
+	for tag in tags:
+		datasets.append(tag.item.specific)
+	return render_to_response('tags/tag_view.html', {'user':request.user, 'tags':tags, 'tag_name':tag_name, 'datasets':datasets})

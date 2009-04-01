@@ -1,7 +1,6 @@
 {% extends "core/bases/simple_base.html" %}
 {% block content %}
 <h3>Items tagged as {{ tag_name }}</h3>
-{% for tag in tags %}
-<p><a href="{{ tag.item.specific.get_absolute_url }}">{{ tag.item.specific }}</a></p>
-{% endfor %}
+{% load dataset_templatetags %}
+{% list_datasets datasets %}
 {% endblock %}
