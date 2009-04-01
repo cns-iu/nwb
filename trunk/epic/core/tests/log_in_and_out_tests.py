@@ -1,6 +1,7 @@
 from django.test import TestCase
-
 from django.contrib.auth.models import User
+
+from epic.settings import LOGIN_REDIRECT_URL
 
 class LogInAndOutTestCase(TestCase):
 	fixtures = ['initial_users']
@@ -14,7 +15,7 @@ class LogInAndOutTestCase(TestCase):
 		response = self.client.post("/login/", data={'username': 'bob', 'password':'bob',})
 		self.failUnlessEqual(response.status_code, 302, "Error logging in!")
 		#TODO Once the follow=true actually works it should be used here.
-		self.assertRedirects(response, '/')
+		self.assertRedirects(response, LOGIN_REDIRECT_URL)
 	
 	def testLoginFailure(self):
 		response = self.client.post("/login/", {'username': 'bob', 'password':'bob2',})
