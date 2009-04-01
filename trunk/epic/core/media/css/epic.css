@@ -303,7 +303,6 @@ a img {border:none;}
 	
 
 .requests {
-	
 	margin-bottom:10px;
 	border-bottom-width: 1px;
 	border-bottom-style: solid;
@@ -317,7 +316,22 @@ a img {border:none;}
 	font-weight: bold;
 	background: none;
 }
-
+.recent_dataset {
+	margin-bottom:10px;
+	border-bottom-width: 1px;
+	border-bottom-style: solid;
+	border-bottom-color:  #CCCCCC;
+	background-color: #FFFFFF;
+}
+.recent_dataset h2 {
+	font-size: 90%;
+	display: inline;
+	font-weight: bold;
+	background: none;
+}
+.recent_dataset p {
+	display:inline;
+}
 
 .requestspage {
 
@@ -502,18 +516,15 @@ h4 {
 }
 
 
-
-#homebox {position:relative; left:15px; width:825px; }
-
 #homecolumn2 { float:left; margin-left:20px; width:420px;  }
 #homecolumn3 {
 	float:right;
-	width:185px;
 	font-size:85%;
 	background-color: #ececec;
 	padding:5px;
 	width:165px;
 	border: 1px solid #333333;
+	margin-right: 15px;
 }
 
 

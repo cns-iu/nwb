@@ -15,6 +15,9 @@ from models import Profile
 from forms import ForgotUsernameForm, ForgotEmailForm, ForgotPasswordForm, ProfileForm, UserForm
 
 
+def site_index(request):
+	return render_to_response('core/site_index.html', {'user':request.user,})
+
 def browse(request):
 	datasets = DataSet.objects.all().order_by('-created_at')
 	return render_to_response('core/browse.html',
@@ -22,7 +25,7 @@ def browse(request):
 		context_instance=RequestContext(request))
 
 def about (request):
-	return render_to_response('core/about.html')
+	return render_to_response('core/about.html',{'user':request.user,})
 
 @login_required
 def view_profile(request):

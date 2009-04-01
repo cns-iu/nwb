@@ -4,7 +4,8 @@ from django.contrib import admin
 admin.autodiscover()
 
 urlpatterns = patterns('',
-    (r'^$', 'epic.core.views.browse'),
+    (r'^$', 'epic.core.views.site_index'),
+    (r'^browse/$', 'epic.core.views.browse'),
     (r'^about/$', 'epic.core.views.about'),
     (r'^login/$', 'django.contrib.auth.views.login', {'template_name': 'core/login.html'}),
     (r'^logout/$', 'epic.core.views.logout_view'),

@@ -26,7 +26,7 @@
 <body onload="{% block body_onload %}{% endblock %}">
   <div id="header">
     {% block header %} 
-      <a href="{% url epic.core.views.browse %}">
+      <a href="{% url epic.core.views.site_index %}">
       	<div id="logo">
           {% block logo %}
           {% endblock %}
@@ -67,6 +67,10 @@
   
   <div id="container">
     {% block container %}
+      <div id="maincontent">
+        {% block maincontent %}
+        {% endblock %}
+      </div>
     {% endblock %}{# block container #}
     <div class="clear" style="clear:both" />
   </div>
