@@ -161,10 +161,10 @@ class DataRequestCancelEditFulfillIndexTestCase(TestCase):
 		self.failUnless(login, 'Could not login')
 		response = self.client.get('/datarequests/')
 		self.failUnlessEqual(response.status_code, 200)
-		self.failUnless('Amazing request' in response.content, response.content)
-		self.failIf('Edit</a>' in response.content, response.content)
-		self.failIf('Cancel</a>' in response.content)
-		self.failIf('Fulfill</a>' in response.content)
+		self.failUnless('Amazing request' in response.content, "Just-created request not on request page")
+		self.failUnless('Edit</a>' in response.content, "request owner has no link to edit the request on request page")
+		self.failUnless('Cancel</a>' in response.content, "request owner has no link to cancel the request on request page")
+		self.failUnless('Fulfill</a>' in response.content, "request owner has no link to fulfill the request on request page")
 	
 	def testDataRequestIndexOwnedUnFulfilled(self):
 		creator = User.objects.get(username="bob")
