@@ -4,5 +4,5 @@
 		<input type="image" value="Post comment" src="/core_media/images/post-button_26.jpg" alt="Post Comment" />
 	</form>
 {% else %}
-	<p>You must be logged in to comment.</p>
+	<p>You must be logged in to comment. Please login <a href="{% url django.contrib.auth.views.login %}">here.</a></p>
 {% endif %}
