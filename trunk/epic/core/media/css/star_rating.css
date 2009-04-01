@@ -1,3 +1,9 @@
+#rating-saving {
+		position:fixed;
+		z-index:999;
+		margin-top:5px;
+}
+
 .star-rating,
 .star-rating a:hover,
 .star-rating a:active,
@@ -18,6 +24,7 @@
 .star-rating li{
 	display: inline;
 }
+
 .star-rating a, 
 .star-rating .current-rating{
 	position:absolute;

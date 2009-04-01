@@ -20,7 +20,7 @@ class RatingTestCase(TestCase):
 		response = self.client.get('/datasets/')
 		self.failUnlessEqual(response.status_code, 200, "Error listing datasets!")
 		
-		totalVotes = "Total Votes:"
+		totalVotes = "Votes"
 		numberVotes = "<span id=\"votes-value\">0</span>"
 		
 		self.failUnless(totalVotes in response.content, "There should be unrated data specifically the token 'Total Votes:'")
@@ -30,9 +30,6 @@ class RatingTestCase(TestCase):
 		response = self.client.get('/datasets/')
 		
 		self.failUnlessEqual(response.status_code, 200, "Error listing datasets!")
-		
-		totalVotes = "Total Votes:"
-		numberVotes = "<span id=\"votes-value\">0</span>"
 		
 		self.failUnless(totalVotes in response.content, "There should be unrated data specifically the token 'Total Votes:'")
 		self.failUnless(numberVotes in response.content, "There should be unrated data specifically the token '0' for votes")
@@ -48,7 +45,7 @@ class RatingTestCase(TestCase):
 		dataset_location = '/datasets/%s/' % (self.data_set.id)
 		response = c.get(dataset_location)
 
-		avgVotes = "Avg:"
+		avgVotes = "Average"
 		averageValue = "<span id=\"average-value\">None</span>"
 		
 		self.failUnless(avgVotes in response.content, "There should be unrated data specifically the token 'Avg:'")

@@ -24,14 +24,16 @@
 
 </script>
 
-<div class="ratingsbox">Avg: <span id="average-value">{{ rating }}</span> | Total Votes: <span id="votes-value">{{ votes }}</span>
+<div class="ratingsbox">
 	
 	
 	
 	<span class="average-voting">
 	
+	<span id="rating-saving"></span>
 	
 	<span class="inline-rating">
+	
 		<ul class="star-rating" id="{{ item_id }}-average-vote">
 			<li class="current-rating" style="width:0%;">0 Star</li>
 			<li><a href="" id="1" title="Very Bad" class="one-star">1</a></li>
@@ -44,14 +46,10 @@
 	
 	</span>
 
-
-	
-	<span id="rating-saving">
-		Saving
-		<img src="/core_media/images/ajax-loader-2.gif" alt="Saving your vote, please wait...">
-	</span>
-	
+	<p><span id="average-value">{{ rating }}</span> Average | <span id="votes-value">{{ votes }}</span> Votes</p>
+	<!-- Turned off the "User Vote Display" 
 	<br />
+	
 	
 	<span class="user-voting">
 	Your Vote: <span id="user-vote-value">{{ user_rating }}</span> 
@@ -68,6 +66,8 @@
 	    </span>
 	
 	</span>
+	
+	-->
 
 </div>
 
@@ -77,11 +77,6 @@
 
 		$(document).ready(function(){
 
-			/*
-			*	Hide the Saving Vote Icon.
-			*/
-
-			$('#rating-saving').hide();
 
 			/*
 			*	These methods basically render the fill the stars according to the rating.
@@ -91,7 +86,10 @@
 			*/
 			
 			renderAvgVoteBox({{ rating }});
+
+			/*
 			renderUserVoteBox({{ user_rating }});
+			*/
 
 			/*
 			*	Disable user interaction with the stars.
@@ -99,8 +97,11 @@
 			*/
 			
 			$("#{{ item_id }}-average-vote").addClass("star-rating-readonly");
-			$("#{{ item_id }}-user-vote").addClass("star-rating-readonly");
 
+			/*
+			$("#{{ item_id }}-user-vote").addClass("star-rating-readonly");
+			*/
+			
 			$(".star-rating-readonly").live('click', function(){
 				return false;
 			});
@@ -115,10 +116,10 @@
 
 	$(document).ready(function(){
 
+		/*
 		$('.user-voting').hide();
-		$('#rating-saving').hide();
+		*/
 		
-
 		var inputRatingString = '{{ rating }}';
 
 		/*
@@ -140,6 +141,12 @@
 
 		$("#{{ item_id }}-average-vote li a").click(function(){
 
+			var savingImage = document.createElement('img');
+			savingImage.src = "/core_media/images/ajax-loader-3.gif";
+			savingImage.alt = "Saving your vote, please wait...";
+
+			$("#rating-saving").append(savingImage);
+			$(".inline-rating").animate({opacity:0.3});
 			$("#rating-saving").show();
 
 				$("#{{ item_id }}-average-vote li a").unbind('click');
@@ -157,19 +164,28 @@
 						$('#user-vote-value').text(userVote);
 
 						renderAvgVoteBox(newAverage);
+
+						/*	
 						renderUserVoteBox(userVote);
-
+						*/
+						
 						$("#{{ item_id }}-average-vote").addClass("star-rating-readonly");
-						$("#{{ item_id }}-user-vote").addClass("star-rating-readonly");
 
+						/*
+						$("#{{ item_id }}-user-vote").addClass("star-rating-readonly");
+						*/
+						
 						$(".star-rating-readonly").live('click', function(){
 							return false;
 						});
 
+						$(".inline-rating").animate({opacity:1.0});
 						$("#rating-saving").fadeOut("fast"); 
 						
+
+						/*
 						$('.user-voting').fadeIn();
-						
+						*/
 					}
 					else {
 
@@ -185,6 +201,8 @@
 					}
 				});
 
+				return false;
+
 			});
 
 		{% else %}
@@ -198,11 +216,6 @@
 			*	if href is not present.
 			*/
 
-			$("#{{ item_id }}-average-vote li a").each(function(){
-						$(this).removeAttr('href');
-				});
-
-
 			$("#{{ item_id }}-average-vote").click(function(){
 
 				try {
@@ -212,6 +225,8 @@
 					var notificationContent = "ERROR: You should be logged in before you can rate.";
 					$("#error-message").fadeIn().text(notificationContent);
 				}
+
+				return false;
 
 			});
 

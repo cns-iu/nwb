@@ -6,11 +6,11 @@
 		
 	 -->
 
-<div class="ratingsbox">Avg: <span id="average-value">{{ rating }}</span> | Total Votes: <span id="votes-value">{{ votes }}</span>
+<div class="ratingsbox">
 	
 	<span class="average-voting">
 	<span class="inline-rating">
-		<ul class="star-rating  small-star" id="{{ item_id }}-average-vote">
+		<ul class="star-rating" id="{{ item_id }}-average-vote">
 			<li class="current-rating" style="width:0%;">0 Star</li>
 			<li><a href="" id="1" title="Very Bad" class="one-star">1</a></li>
 			<li><a href="" id="2" title="Bad" class="two-stars">2</a></li>
@@ -20,12 +20,19 @@
 		</ul>
     </span>
 	</span>
+	
+	<p><span id="average-value">{{ rating }}</span> Average | <span id="votes-value">{{ votes }}</span> Votes</p>
 
-	<br />
+	
 	
 {% if user_rating %}
 
 	<!-- If the user rating is provided then render the star box. -->
+	
+	<!-- Turned off the "User Vote Display" 
+	
+	<br />
+	
 	<span class="user-voting">
 	Your Vote: <span id="user-vote-value">{{ user_rating }}</span> 
 				
@@ -41,6 +48,7 @@
 	    </span>
 	
 	</span>
+	-->
 	
 	<script>
 
@@ -54,17 +62,21 @@
 			*/
 
 			renderAvgVoteBox({{ rating }},{{ item_id }});
+
+			/*
 			renderUserVoteBox({{ user_rating }},{{ item_id }});
+			*/
 
 			/*
 			*	Disable user interaction with the stars.
 			*
 			*/
 
-			$("#{{ item_id }}-average-vote").addClass("small-star-rating-readonly");
+			$("#{{ item_id }}-average-vote").addClass("star-rating-readonly");
 
-				
-			$("#{{ item_id }}-user-vote").addClass("small-star-rating-readonly");
+			/*	
+			$("#{{ item_id }}-user-vote").addClass("star-rating-readonly");
+			*/
 
 
 		});
@@ -90,7 +102,7 @@
 				}
 			
 			renderAvgVoteBox(inputRatingString,{{ item_id }});
-			$("#{{ item_id }}-average-vote").addClass("small-star-rating-readonly");
+			$("#{{ item_id }}-average-vote").addClass("star-rating-readonly");
 			
 		});
 	
