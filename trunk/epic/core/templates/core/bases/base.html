@@ -26,11 +26,12 @@
 <body onload="{% block body_onload %}{% endblock %}">
   <div id="header">
     {% block header %} 
-      <div id="logo">
-        {% block logo %}
-        {% endblock %}
-      </div>
-      
+      <a href="{% url epic.core.views.browse %}">
+      	<div id="logo">
+          {% block logo %}
+          {% endblock %}
+      	</div>
+      </a>
       <div id="login">
         {% block login %}
           {% if user.is_authenticated %}
