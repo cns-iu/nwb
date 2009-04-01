@@ -1,12 +1,41 @@
-{% extends "core/base.html" %}
-{% block container %}
-<h2>Start a new Data Request</h2>
-<form action="{% url datarequests.views.new_datarequest %}" method="POST">
-    <table>
-        {{ form.as_table }}
-    </table>
-    <p><input type="submit" value="Upload" /></p>
-</form>
-<a href="/">Home</a>
-<a href="{% url datarequests.views.view_datarequests %}">DataRequests</a>
+{% extends "core/bases/simple_base.html" %}
+{% block content %}
+<div class="requestbox">
+   <h1>Make a Request</h1>
+   <br/>
+   <form action="{% url datarequests.views.new_datarequest %}" method="POST">
+      <br/>
+      <label> {{ form.name }} </label>
+      <br/>
+      <label> {{ form.description }} </label>
+      <br/>
+      <!--TODO: have data requests be taggable -->
+      <input type="image" src="/core_media/images/makerequest_button.jpg" value="Make Request" alt="Make Request" />
+      <br/>
+   </form>
+</div>
+<h1> Recently fulfilled requests <h1>
+{% load datarequest_templatetags %}
+{% display_recently_fulfilled_requests %}
+
+
+<script type="text/javascript">
+window.onload = startForm;
+
+function startForm()
+{	
+	//TODO: make default text go away when user clicks into the field
+	
+	//Apparently you can't default contents for a textarea in Django...
+	//so you have to copy the value into the textarea like this
+	description = jQuery('#id_description')
+	description.val(description.attr("default_value"))
+	
+}
+
+
+</script>
+
 {% endblock %}
+
+
