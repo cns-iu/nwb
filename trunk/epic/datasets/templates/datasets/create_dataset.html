@@ -1,9 +1,11 @@
-{% extends "core/base.html" %}
+{% extends "core/bases/simple_base.html" %}
+
 {% block scripts_header %}
 	{{ block.super }}
 	<script type="text/javascript" src="/core_media/scripts/image_swap.js"></script>
 {% endblock %}
-{% block container %}
+
+{% block content %}
 
 <h1>Share Your Data</h1>
 <form enctype="multipart/form-data" action="{% url datasets.views.create_dataset %}" method="POST">
