@@ -1,9 +1,7 @@
 {% if user.is_authenticated %}
-	<form action="/{{ post_to_url }}/{{ item_id }}/comment/" method="POST">
-		<table>
-			{{ post_comment_form.as_table }}
-		</table>
-		<input type="submit" value="Post comment" />
+	<form action="{{ post_comment_url }}" method="POST">
+		{{ post_comment_form.as_p }}
+		<input type="image" value="Post comment" src="/core_media/images/post-button_26.jpg" alt="Post Comment" />
 	</form>
 {% else %}
 	<p>You must be logged in to comment.</p>

@@ -23,17 +23,19 @@ def view_datarequests(request):
     datarequest_form = DataRequestForm()
     return render_to_response('datarequests/view_datarequests.html', {'datarequests': datarequests,'user':request.user, 'datarequest_form':datarequest_form,})
 
-def view_datarequest(request, item_id=None):
+def view_datarequest(request, item_id):
 	datarequest = get_object_or_404(DataRequest, pk=item_id)
 	post_comment_form = PostCommentForm()
 	user = request.user
-	
-	return render_to_response('datarequests/view_datarequest.html', {
-		'datarequest': datarequest,
-		'user': user,
-		'post_comment_form': post_comment_form
-	})
+	return render_to_response('datarequests/view_datarequest.html', 
+							  {
+							    # This required that view_datarequest MUST NOT pass in any template arguments but datarequest, user and postcommentform
+		 				  		'datarequest': datarequest,
+				 				'user': user,
+						 		'post_comment_form': post_comment_form,
+							   })
 
+# This required that view_datarequest MUST NOT pass in any template arguments but datarequest, user and postcommentform
 post_datarequest_comment = make_comment_view(
 	DataRequest,
 	"epic.datarequests.views.view_datarequest",

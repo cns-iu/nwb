@@ -41,8 +41,8 @@ def make_comment_view(model, reverse_function_name, render_to_response_template,
 			else:
 				return render_to_response(render_to_response_template, {
 					template_item_name: item,
-					"user": user,
-					"post_comment_form": post_comment_form
+					'user': user,
+					'post_comment_form': post_comment_form,
 				})
 		
 		return HttpResponseRedirect("/login/?next=%s" % request.path)
