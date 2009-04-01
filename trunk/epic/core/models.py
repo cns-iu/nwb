@@ -82,4 +82,7 @@ class Profile(models.Model):
 	affiliation = models.CharField(max_length=MAX_USER_PROFILE_LENGTH, blank=True)
 	
 	def __unicode__(self):
-		return self.user.first_name + " " + self.user.last_name
+		if self.user.first_name and self.user.last_name:
+			return self.user.first_name + " " + self.user.last_name
+		else:
+			return self.user.username
