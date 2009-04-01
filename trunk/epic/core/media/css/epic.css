@@ -16,10 +16,17 @@ html, body {
 
 
 
-#container { height:100%; position:relative; width:auto; 
- margin-left:2em; margin-right:2em;  top:0; margin-top:0;
-
-	background-color: #FFFFFF; padding-top:20px; 
+#container {
+	// height: 100%;
+	margin-bottom: 0;
+	position: relative;
+	width: auto; 
+	margin-left:  2em;
+	margin-right: 2em;
+	top: 0;
+	margin-top: 0;
+	background-color: #FFFFFF;
+	padding-top: 20px; 
 }
 
 #maincontent { position:relative; margin-left:2em; top:0; width:auto; margin-right:2em; height:inherit; }
@@ -305,9 +312,10 @@ a img {border:none;}
 }
 
 .requests h2 {
-	font-size:90%;
-	display:inline;
-	font-weight: bold;  background:none; 
+	font-size: 90%;
+	display: inline;
+	font-weight: bold;
+	background: none;
 }
 
 

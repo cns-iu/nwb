@@ -1,13 +1,17 @@
 {% extends "core/bases/base.html" %}
 
-{% block maincontent %}
+{% block container %}
   <div id="submenu">
     {% block submenu %}
     {% endblock %}
   </div>
   
-  <div id="content">
-    {% block content %}
+  <div id="maincontent">
+    {% block maincontent %}
+      <div id="content">
+        {% block content %}
+        {% endblock %}
+      </div>
     {% endblock %}
   </div>
   

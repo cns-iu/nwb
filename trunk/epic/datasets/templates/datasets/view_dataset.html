@@ -1,4 +1,4 @@
-{% extends "core/bases/simple_base.html" %}
+{% extends "core/bases/browse_base.html" %}
 
 {% block css %}
   {{ block.super }}
@@ -6,81 +6,80 @@
   <link href="/core_media/css/star_rating.css" rel="stylesheet" type="text/css" />
 {% endblock %}
 
+{% load tags_templatetags %}
 
-{% block container %}
-  {% load tags_templatetags %}
+{% block content %}
+  <div id="error-message">
+    {% block messages %}
+      {% for message in messages %}
+        {{ message }}
+      {%endfor%}
+    {% endblock %}
+  </div>
   
-  {% block leftsidebar %}
-    {% show_tag_cloud %}
-    {{ block.super }}
-  {% endblock %}
-  
-  {% block content %}
-    <div id="error-message">
-      {% block messages %}
+  {% if messages %}
+    <div class="highlight" id="message">
+      <ul>
         {% for message in messages %}
-          {{ message }}
-        {%endfor%}
-      {% endblock %}
+          <li>{{ message }}</li>
+        {% endfor %}
+      </ul>
     </div>
+  {% endif %}
+  
+  <div class="databox">
+    {% load dataset_templatetags %}
     
-    {% if messages %}
-      <div class="highlight" id="message">
-        <ul>
-          {% for message in messages %}
-            <li>{{ message }}</li>
-          {% endfor %}
-        </ul>
-      </div>
-    {% endif %}
+    {% show_dataset_title_vote_ratebox_datainfo dataset %}
     
-    <div id="databox">
-      {% load dataset_templatetags %}
-      
-      {% show_dataset_title_vote_ratebox_datainfo dataset %}
-      
-      <p>{{ dataset.description|escape }}</p>
-      
-      {% list_item_tags dataset %}
-      
+    <p>{{ dataset.description|escape }}</p>
+    
+    {% list_item_tags dataset %}
+    {# TODO: list_item_references dataset #}
+    <h4>
+      References<br />
+      will go here . . .
+    </h4>
+  </div>
+  
+  {% if user and user.is_authenticated %}
+    <h3>Dataset Files</h3>
+    
+    <p>
       {% if dataset.files %}
-        <h3>Dataset Files</h3>
-        
         {% for file in dataset.files.all %}      
           {# TODO: this should be a reverse? #}
-          <p>
             <a href="{{ file.file_contents.url }}">
               <img src="/core_media/images/download-icon_30.jpg" width="69" height="17" align="texttop" />
-              {{ file.get_short_name }}
             </a>
-          </p>
+            
+            {{ file.get_short_name }}
+            <br />
         {% endfor %}
         
         {# TODO: Implement Download All functionality. #}
         {% ifnotequal dataset.files.all|length 0 %}
-          <p>
-            <a href="{{ dataset.get_download_all_files_url }}">
-              <img src="/core_media/images/download-all_19.jpg" width="87" height="18" />
-              Download All Files
-            </a>
-          </p>
+          <br />
+          <a href="{{ dataset.get_download_all_files_url }}">
+            <img src="/core_media/images/download-all_19.jpg" width="87" height="18" />
+          </a>
+          
+          Download All Files
         {% endifnotequal %}
       {% else %}
-        <p>No attached files</p>
+        No attached files
       {% endif %}
-      
-      <p>Reference:<br/>"{{ dataset.name|escape }}." <span class="source_name">EpiC Community Website.</span> {{ dataset.created_at|date:"d M Y" }}. {% now "d M Y" %} &lt;<a>{{ dataset.get_absolute_url }}</a>&gt;</p>
-      
-      {% load geoloc_templatetags %}
-      {% display_map_for_datasets dataset.id %}
-      
-      <div class="comments">  
-        <h3> Comments </h3>
-        
-        {% load comment_templatetags %}
-        {% display_post_comment_form user "datasets" dataset.id post_comment_form %}
-        {% list_comments dataset %}
-      </div>
-    </div>
-  {% endblock %}{# block content #}
-{% endblock %}{# block container #}
+    </p>
+  {% endif %}
+  
+  <h4>
+    Reference:<br/>"{{ dataset.name|escape }}." <span class="source_name">EpiC Community Website.</span> {{ dataset.created_at|date:"d M Y" }}. {% now "d M Y" %} &lt;<a>{{ dataset.get_absolute_url }}</a>&gt;
+  </h4>
+  
+  {% load geoloc_templatetags %}
+  {% display_map_for_datasets dataset.id %}
+  
+  {% load comment_templatetags %}
+  {% display_post_comment_form_and_list_comments dataset user post_comment_form "epic.datasets.views.post_dataset_comment" %}
+</div>
+{% endblock %}{# block content #}
