@@ -1,8 +1,17 @@
 {% extends "core/bases/simple_base.html" %} 
 
-{% block container %}
+{% block nav %}
+  <div id="nav"> 
+    <ul>   
+      <li class="navfirst"><a href="{% url core.views.browse %}">Browse</a></li>
+      <li><a href="{% url datasets.views.create_dataset %}">Upload</a></li>
+      <li><a href="{% url datarequests.views.new_datarequest %}">Request</a></li>
+      <li><a href="{% url core.views.about %}" class="pageon">About</a></li>
+    </ul> 
+  </div>
+{% endblock %}{# block nav #}
 
- {% block content %}
+{% block content %}
 <h3>Goal</h3>
 <h2>EpiC: A Computational Infrastructure for Epidemics Research</h2>
 <p>Epidemic and diffusion processes are of great importance in the
@@ -77,5 +86,4 @@ and do not necessarily reflect the views of the National Institutes of Health (<
 </span>
 </div>
 </div>
-{% endblock %}
 {% endblock %}
