@@ -33,7 +33,7 @@
 		function showHoveringTag(event)
 		{
 			var eventTarget = event.target;
-			$('#tag_hover').html($(eventTarget).attr('tagname'));
+			$('#tag_hover').html(eventTarget.name);
 			
 			$('#tag_hover').css(
 				{

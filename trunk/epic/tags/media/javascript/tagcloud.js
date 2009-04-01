@@ -52,7 +52,7 @@ TagCloud.Tag.prototype.toElement = function(isLastTag)
 	var element = document.createElement('li');
 	var linkElement = document.createElement('a');
 	
-	linkElement.setAttribute('tagname', this.name);
+	linkElement.setAttribute('name', this.name);
 	linkElement.setAttribute('href', this.url);
 	
 	var tagDisplayText = this.name;
