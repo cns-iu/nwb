@@ -18,7 +18,7 @@
       <p>{{ dataset.description|linebreaks|truncatewords:100 }}</p>
            
       {% load tags_templatetags %}
-      {% list_item_tags dataset %}
+      {% list_item_tags dataset user %}
     </div>
   {% endfor %}
 {% endif %}

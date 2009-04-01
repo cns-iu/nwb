@@ -60,7 +60,7 @@
 	<p>{{ dataset.description|escape|truncatewords:100 }}</p>
 
    	{% load tags_templatetags %}
-	{% list_item_tags dataset %}
+	{% list_item_tags dataset user %}
  	
  	{% if user and user.is_authenticated %}
     <h3>Dataset Files</h3>

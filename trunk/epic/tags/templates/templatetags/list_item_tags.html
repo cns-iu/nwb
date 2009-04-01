@@ -2,23 +2,37 @@
 
 <ul class="taglist">
   {% if tags %}
-    {% for tag in tags %}
-      <li>
-      {% if not forloop.last %}
-        <a href="{{ tag.get_tag_url }}">
-      {% else %}
-        <a href="{{ tag.get_tag_url }}" class="lasttag">
-      {% endif %}
+    {# TODO: Better logic here?  Or rather, left-bordered CSS instead of right-bordered! #}
+    {% if user and user.is_authenticated %}
+      {% for tag in tags %}
+        <li>
+          <a href="{{ tag.get_tag_url }}">
+            {{ tag.tag }}
+          </a>
+        </li>
+      {% endfor %}
       
-      {{ tag.tag }}</a></li>
-    {% endfor %}
-  {% endif %}
-  
-  {% if user and user.is_authenticated %}
-    {# TODO: Add Tag button.
-    <li class="lasttag">
-      
-    </li>
-    #}
+      <li class="lasttag">
+        <a href="{{ item.get_add_tags_url }}" class="lasttag">
+          <img src="/core_media/images/add-transparent_34_34.gif" width"49" height="21" />
+        </a>
+      </li>
+    {% else %}{# user and user.is_authenticated #}
+      {% for tag in tags %}
+        {% if not forloop.last %}
+          <li>
+            <a href="{{ tag.get_tag_url }}">
+              {{ tag.tag }}
+            </a>
+          </li>
+        {% else %}
+          <li>
+            <a href="{{ tag.get_tag_url }}" class="lasttag">
+              {{ tag.tag }}
+            </a>
+          </li>
+        {% endif %}
+      {% endfor %}
+    {% endif %}
   {% endif %}
 </ul>

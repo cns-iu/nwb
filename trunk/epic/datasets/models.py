@@ -5,7 +5,7 @@ These are the DataSet and DataSetFile models.
 from epic.core.models import Item
 from epic.djangoratings import RatingField
 from epic.core.util.customfilefield import CustomFileField
-
+from django.core.urlresolvers import reverse
 from epic.geoloc.models import GeoLoc
 from epic.core.util.multifile import MultiFileField
 from django.db import models
@@ -47,6 +47,10 @@ class DataSet(Item):
 	# TODO: Implement this for real.
 	def get_download_all_files_url(self):
 		return "http://www.PLACEHOLDER_FOR_DOWNLOAD_ALL_FILES_URL.com"
+	
+	def get_add_tags_url(self):
+		return reverse("epic.datasets.views.tag_dataset",
+					   kwargs={ "item_id": self.id, "slug": self.slug })
 	
     
 class DataSetFile(models.Model):
