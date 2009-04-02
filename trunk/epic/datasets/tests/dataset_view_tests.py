@@ -3,6 +3,7 @@ from django.contrib.auth.models import User
 from django.core.urlresolvers import reverse
 from epic.datasets.models import DataSet
 from epic.datasets.models import DataSetFile
+from epic.tags.models import Tagging
 
 class IndexTestCase(TestCase):
 	fixtures = ['initial_data', 'single_dataset', 'initial_users']
@@ -41,7 +42,35 @@ class ViewDataSetTestCase(TestCase):
 		self.assertTrue(ds1.name in response.content)
 		self.assertTrue(ds1.description in response.content)
 		self.assertTrue("Reference:" in response.content)
+
+class AddTagsTestCase(TestCase):
+
+	def setUp(self):
+		self.peebs = User.objects.get(username="peebs")
+		self.ds1 = DataSet.objects.create(creator=self.peebs, description="dataset one", name="ds1", slug="ds1")
+		self.t1 = Tagging.objects.create(tag="tag_1", item=self.ds1, user=self.peebs)
 		
+	def tearDown(self):
+		pass
+	
+	def testViewDatasets(self):
+		view_datasets_url = reverse('epic.datasets.views.view_datasets')
+		add_tag_url = reverse('epic.datasets.views.tag_dataset', kwargs={'item_id':self.ds1.id,})
+		
+		response = self.client.get(view_datasets_url)
+		self.assertEqual(response.status_code, 200)
+		self.assertContains(response, self.t1.tag)
+		self.assertNotContains(response, add_tag_url)
+	
+	def testViewDataset(self):
+		view_dataset_url = reverse('epic.datasets.views.view_dataset', kwargs={'item_id':self.ds1.id,'slug':self.ds1.slug})
+		add_tag_url = reverse('epic.datasets.views.tag_dataset', kwargs={'item_id':self.ds1.id,})
+		
+		response = self.client.get(view_dataset_url)
+		self.assertEqual(response.status_code, 200)
+		self.assertContains(response, self.t1.tag)
+		self.assertNotContains(response, add_tag_url)
+
 class SlugTestCase(TestCase):
 	fixtures = ['initial_data']
 	
