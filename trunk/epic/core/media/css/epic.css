@@ -582,3 +582,7 @@ th label {
 	padding:5px 0;
 }
 
+/* Aligns the top of the labels for forms at the top */
+table.form tr th {
+	vertical-align:top;
+}

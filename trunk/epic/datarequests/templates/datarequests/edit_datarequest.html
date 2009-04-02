@@ -2,7 +2,7 @@
 {% block content %}
 <h2>Edit Data Request</h2>
 <form enctype="multipart/form-data" action="{% url datarequests.views.edit_datarequest item_id=datarequest.id %}" method="POST">
-    <table>
+    <table class="form">
         {{ form.as_table }}
     </table>
     <p><input type="submit" value="Save" /></p>

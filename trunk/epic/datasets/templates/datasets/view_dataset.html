@@ -26,7 +26,7 @@
     
     {% show_dataset_title_vote_ratebox_datainfo dataset %}
     
-    <p>{{ dataset.description|linebreak }}</p>
+    <p>{{ dataset.description|linebreaksbr }}</p>
     
     {% list_item_tags dataset user 'True' %}
     {# TODO: list_item_references dataset #}

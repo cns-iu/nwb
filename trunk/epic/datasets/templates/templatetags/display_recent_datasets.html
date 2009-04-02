@@ -2,10 +2,10 @@
 {% if datasets %}
   {% for dataset in datasets %}
 	<div class="recent_dataset">
-		<h2><a href="{% url datasets.views.view_dataset item_id=dataset.id %}">{{ dataset.name }}</a></h2>
+		<h2><a href="{{ dataset.get_absolute_url }}">{{ dataset.name }}</a></h2>
 		<p>{{ dataset.description|truncatewords:15 }}</p>
 		<div class="comments">
-			<a href="{% url datasets.views.view_dataset item_id=dataset.id %}">{{ dataset.comments.all|length }} comment{{ dataset.comments.all|length|pluralize }}.</a>
+			<a href="{{ dataset.get_absolute_url }}">{{ dataset.comments.all|length }} comment{{ dataset.comments.all|length|pluralize }}.</a>
 		</div>
 	</div>
   {% endfor %}

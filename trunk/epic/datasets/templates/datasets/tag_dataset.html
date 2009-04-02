@@ -2,7 +2,7 @@
 {% block content %}
 <h2>Tag the Data Set</h2>
 <form enctype="multipart/form-data" action="{% url datasets.views.tag_dataset item_id=item_id %}" method="POST">
-    <table>
+    <table class="form">
         {{ form.as_table }}
     </table>
     <p><input type="submit" value="Tag" /></p>

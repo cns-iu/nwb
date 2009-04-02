@@ -2,7 +2,7 @@
 {% block content %}
 <h2>Rate the Data Set</h2>
 <form enctype="multipart/form-data" action="{% url datasets.rate_dataset item_id=item.id %}" method="POST">
-    <table>
+    <table class="form">
         {{ form.as_table }}
     </table>
     <p><input type="submit" value="Rate" /></p>

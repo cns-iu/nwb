@@ -2,7 +2,7 @@
 {% block content %}
 	<h3>Edit {{ dataset.name }}:</h3>
 	<form action="{% url datasets.views.edit_dataset item_id=dataset.id %}" method="POST">
-		<table>
+		<table class="form">
 			{{ form.as_table }}
 		</table>
 		{% load geoloc_templatetags %}
