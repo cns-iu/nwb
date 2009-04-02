@@ -19,6 +19,9 @@
            
       {% load tags_templatetags %}
       {% list_item_tags dataset user %}
+      <div class="comments">
+			<a href="{{ dataset.get_absolute_url }}">{{ dataset.comments.all|length }} comment{{ dataset.comments.all|length|pluralize }}.</a>
+		</div>
     </div>
   {% endfor %}
 {% endif %}
