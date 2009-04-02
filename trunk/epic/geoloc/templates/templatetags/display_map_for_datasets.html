@@ -75,7 +75,7 @@
 	    //(the info window will have the name of the marker and a list of dataset names as links to the datasets)
 		var infoHtml = '<b>' + canonical_name + '</b>';
 		for( var i=0; i < url_list.length ; i++) {
-			infoHtml += '<br /><a href="' + url_list[i][1] + '">' + url_list[i][0] + '</a>'
+			infoHtml += '<br /><a href="' + url_list[i][1] + '">' + url_list[i][0] + '</a>';
 		}
 		//When you click a marker, its info window appears
 		GEvent.addListener(marker, "click", function() { marker.openInfoWindowHtml(infoHtml); });
