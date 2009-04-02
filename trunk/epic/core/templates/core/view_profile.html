@@ -20,16 +20,20 @@
 	  <h3>Your Datasets</h3>
 	  {% load dataset_templatetags %}
 	  {% list_datasets datasets %}
+	{% else %}
+	  <p>You have not uploaded any datasets.</p>
 	{% endif %}
 	{# TODO: Clean up the styling here #}
-	<a style="clear:both; float:left" href="{% url datasets.views.view_datasets %}">View All Datasets</a>
+	<a href="{% url datasets.views.view_datasets %}">View All Datasets</a>
 	{# Listing all the un-cancelled data requests made by the user. #}
-	<hr style="clear:both;">
+	<hr>
 	{% if datarequests %}
 		<h3>Your Data Requests</h3>
 	  	{% load datarequest_templatetags %}
 	  	{% display_datarequests datarequests %}
+	{% else %}
+		<p>You have not made any data requests.</p>
 	{% endif %}
-	<a style="clear:both; float:left" href="{% url datarequests.views.view_datarequests %}">View All Data Requests</a>
+	<a href="{% url datarequests.views.view_datarequests %}">View All Data Requests</a>
 	
 {% endblock %}
