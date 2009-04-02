@@ -115,5 +115,3 @@ INSTALLED_APPS = (
 )
 
 GOOGLE_KEY = 'ABQIAAAA_nCXPZ8LuIeeo7WwioikORQgz-4lV129Gb6RmcYlAWs2FINo4xQC9fAh76x7NI05hOaFBXreklShsg'
-
-TEST_RUNNER = 'xmlrunner.extra.djangotestrunner.run_tests'
