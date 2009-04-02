@@ -46,10 +46,10 @@ class RatingTestCase(TestCase):
 		response = c.get(dataset_location)
 
 		avgVotes = "Average"
-		averageValue = "<span id=\"average-value\">None</span>"
+		averageValue = "<span id=\"average-value\">No</span>"
 		
 		self.failUnless(avgVotes in response.content, "There should be unrated data specifically the token 'Avg:'")
-		self.failUnless(averageValue in response.content, "There should be unrated data specifically the token 'None' for votes")
+		self.failUnless(averageValue in response.content, "There should be unrated data specifically the token 'No' for votes")
 		
 		# Rate
 		rate_location = dataset_location + "rate/3/"
