@@ -2,6 +2,6 @@
 	<h1>Recently fulfilled requests</h1>
 	{% for datarequest in datarequests %}
 		<h2><a href="{% url datarequests.views.view_datarequest item_id=datarequest.id %}">{{ datarequest.name|escape }}</a> (links to dataset page)</h2>
-		<p>{{ datarequest.description|linebreaks|truncatewords:50 }}</p>
+		<p>{{ datarequest.description|truncatewords:50 }}</p>
 	{% endfor %}
 {% endif %}

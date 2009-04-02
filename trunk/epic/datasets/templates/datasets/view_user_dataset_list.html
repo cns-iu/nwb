@@ -57,7 +57,7 @@
 	{% rate_box_view dataset user %}
 	
 	<h1><a href="{% url datasets.views.view_dataset item_id=dataset.id %}">{{ dataset.name|escape }}</a></h1>
-	<p>{{ dataset.description|escape|truncatewords:100 }}</p>
+	<p>{{ dataset.description|truncatewords:50 }}</p>
 
    	{% load tags_templatetags %}
 	{% list_item_tags dataset user %}

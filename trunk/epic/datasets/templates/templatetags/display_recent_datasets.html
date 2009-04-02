@@ -3,7 +3,7 @@
   {% for dataset in datasets %}
 	<div class="recent_dataset">
 		<h2><a href="{% url datasets.views.view_dataset item_id=dataset.id %}">{{ dataset.name }}</a></h2>
-		<p>{{ dataset.description|linebreaks|truncatewords:30 }}</p>
+		<p>{{ dataset.description|truncatewords:15 }}</p>
 		<div class="comments">
 			<a href="{% url datasets.views.view_dataset item_id=dataset.id %}">{{ dataset.comments.all|length }} comment{{ dataset.comments.all|length|pluralize }}.</a>
 		</div>

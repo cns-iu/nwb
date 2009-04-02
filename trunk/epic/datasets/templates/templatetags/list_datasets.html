@@ -15,7 +15,7 @@
       {% load dataset_templatetags %}    
       {% show_dataset_title_view_ratebox_datainfo dataset %}
       
-      <p>{{ dataset.description|linebreaks|truncatewords:100 }}</p>
+      <p>{{ dataset.description|truncatewords:50 }}</p>
            
       {% load tags_templatetags %}
       {% list_item_tags dataset user %}

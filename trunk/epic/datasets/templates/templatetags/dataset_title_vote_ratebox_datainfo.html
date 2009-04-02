@@ -2,7 +2,7 @@
 {% rate_box_vote dataset user %}
 
 <h2>
-  <a href="{% url datasets.views.view_dataset item_id=dataset.id %}">{{ dataset.name|escape }}</a>
+  <a href="{% url datasets.views.view_dataset item_id=dataset.id %}">{{ dataset.name }}</a>
 </h2>
 
 <ul class="datainfo">

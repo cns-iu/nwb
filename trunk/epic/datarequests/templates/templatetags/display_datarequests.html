@@ -18,7 +18,7 @@
 			  <li><a href="{% url messages.views.send_message user_id=user.id, recipient_id=datarequest.creator.id %}">Contact Creator</a></li>
 	  		{% endif %}
 		  </ul>
-		  <p>{{ datarequest.description|linebreaks|truncatewords:50 }}</p>  
+		  <p>{{ datarequest.description|truncatewords:50 }}</p>  
 		  <div class="comments">
 			<a href="{% url datarequests.views.view_datarequest item_id=datarequest.id %}">{{ datarequest.comments.all|length }} comment{{ datarequest.comments.all|length|pluralize }}.</a>
 		  </div>   
