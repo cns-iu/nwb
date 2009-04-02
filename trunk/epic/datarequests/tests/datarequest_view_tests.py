@@ -98,16 +98,16 @@ class DataRequestTestCase(TestCase):
 		response = self.client.get(datarequest_location)
 		self.failUnlessEqual(response.status_code, 200, "Error viewing Data Requests!")
 		self.failUnless("Spectacular request indeed" in response.content)
-		self.failUnless("fulfilled" in response.content)
+		self.failUnless("Fulfilled" in response.content)
 		response = self.client.get('/datarequests/')
 		self.failUnlessEqual(response.status_code, 200, "Error listing Data Requests!")
-		self.failIf("fulfilled" in response.content)
+		self.failIf("Fulfilled" in response.content)
 	
 	def testCanceledNotViewableAtIndex(self):
 		data_request = DataRequest(creator=self.data_request.creator, name="Amazing request", description="Spectacular request indeed", status='C')
 		data_request.save()
 		response = self.client.get('/datarequests/')
-		self.failIf("canceled" in response.content)
+		self.failIf("Canceled" in response.content)
 		
 class DataRequestCancelEditFulfillIndexTestCase(TestCase):
 	fixtures = ['initial_users']
