@@ -32,8 +32,8 @@ class ShortAuthenticationForm(forms.Form):
     Base class for authenticating users. Extend this to get a form that accepts
     username/password logins.
     """
-    username = forms.CharField(label=("Username"), max_length=30, widget=forms.TextInput(attrs={'size':15}));
-    password = forms.CharField(label=("Password"), widget=forms.PasswordInput(attrs={'size': 15}));
+    username = forms.CharField(label=("Username"), max_length=30, widget=forms.TextInput(attrs={'size':11}));
+    password = forms.CharField(label=("Password"), widget=forms.PasswordInput(attrs={'size': 11}));
 
     def __init__(self, request=None, *args, **kwargs):
         """
