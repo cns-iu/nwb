@@ -27,8 +27,6 @@ def rate_box_view(dataset, user):
 	except:
 		user_rating = None
 	rating = dataset.rating.get_average()
-	if rating is None:
-		rating = 'No' # If this is not set the template will render 'None Average'
 	votes = dataset.rating.votes
 	return {
 			'user_rating':user_rating, 

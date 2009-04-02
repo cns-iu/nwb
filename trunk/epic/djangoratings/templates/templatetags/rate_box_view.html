@@ -21,7 +21,7 @@
     </span>
 	</span>
 	
-	<p><span id="average-value">{{ rating }}</span> Average | <span id="votes-value">{{ votes }}</span> Vote{{ votes|pluralize }}</p>
+	<p><span id="average-value">{{ rating|default_if_none:"No" }}</span> Average | <span id="votes-value">{{ votes }}</span> Vote{{ votes|pluralize }}</p>
 
 	
 	
