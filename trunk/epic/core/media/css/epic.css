@@ -586,3 +586,7 @@ th label {
 table.form tr th {
 	vertical-align:top;
 }
+a.new_message {
+	font-weight: bold;
+	font-style: italic;
+}

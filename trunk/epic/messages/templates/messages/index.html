@@ -9,7 +9,7 @@
       {% if message.read %}
       <li><a href="{% url messages.views.view_received_message user_id=user.id, receivedmessage_id=message.id %}">{{ message.subject }}</a></li>
       {% else %}
-      <li><blink><a href="{% url messages.views.view_received_message user_id=user.id, receivedmessage_id=message.id %}">{{ message.subject }}</a></blink></li>
+      <li><a class="new_message" href="{% url messages.views.view_received_message user_id=user.id, receivedmessage_id=message.id %}">{{ message.subject }}</a></li>
       {% endif %}
     {% endfor %}
   </ul>
