@@ -15,7 +15,7 @@
 <div class="requestbox">
    <h1>Make a Request</h1>
    <br/>
-   <form action="{% url datarequests.views.new_datarequest %}" method="POST">
+   <form id="request_form" name="request_form" action="{% url datarequests.views.new_datarequest %}" method="POST">
       <br/>
       <label> {{ form.name }} </label>
       <br/>
@@ -26,27 +26,58 @@
       <br/>
    </form>
 </div>
-{% load datarequest_templatetags %}
-{% display_recently_fulfilled_requests %}
-
 
 <script type="text/javascript">
-window.onload = startForm;
+var thisForm = "request_form";
+var defaultVals = new Array();
+defaultVals[0] = new Array("name", "Name this data request.");
+defaultVals[1] = new Array("description", "Describe the data you are requesting.");
 
-function startForm()
-{	
-	//TODO: make default text go away when user clicks into the field
-	
-	//Apparently you can't default contents for a textarea in Django...
-	//so you have to copy the value into the textarea like this
-	description = jQuery('#id_description')
-	description.val(description.attr("default_value"))
-	
-}
+window.onload = MPLoadDefaults();
 
+// specify the name of your form
+
+
+// load field names and default values into list
+
+
+// populate fields with default values on page load
+function MPLoadDefaults() {
+with (document.forms[thisForm]) {
+for (var n=0; n<defaultVals.length; n++) {
+var thisField = defaultVals[n][0];
+var thisDefault = defaultVals[n][1];
+if (elements[thisField].value == '')
+elements[thisField].value = thisDefault;
+}}}
+
+// clear default value from field when selected
+function MPClearField(field) {
+var fieldName = field.name;
+for (var n=0; n<defaultVals.length; n++) {
+var thisField = defaultVals[n][0];
+var thisDefault = defaultVals[n][1];
+if (thisField == fieldName) {
+if (field.value == thisDefault) field.value = '';
+break;
+}}}
+
+// clear all defaults when form is submitted
+function MPClearAll() {
+with (document.forms[thisForm]) {
+for (var n=0; n<defaultVals.length; n++) {
+var thisField = defaultVals[n][0];
+var thisDefault = defaultVals[n][1];
+if (elements[thisField].value == thisDefault)
+elements[thisField].value = '';
+}}}
 
 </script>
 
+{% load datarequest_templatetags %}
+{% display_recently_fulfilled_requests %}
 {% endblock %}
+
+
 
 

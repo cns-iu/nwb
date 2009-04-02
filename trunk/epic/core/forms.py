@@ -26,14 +26,14 @@ class ProfileForm(ModelForm):
 		model = Profile
 		exclude = ['user']
 		
-#TODO: This is a copy and paste of Django's AuthenticationForm, with a different max_length. Make this extend AuthenticationForm or something other than this hack
+#TODO: This is a copy and paste of Django's AuthenticationForm, with a few tweaks. Hopefully we can make this extend AuthenticationForm or something instead
 class ShortAuthenticationForm(forms.Form):
     """
     Base class for authenticating users. Extend this to get a form that accepts
     username/password logins.
     """
-    username = forms.CharField(label=("Username"), max_length=30, widget=forms.TextInput(attrs={'size':15}))
-    password = forms.CharField(label=("Password"), widget=forms.PasswordInput(attrs={'size': 15}))
+    username = forms.CharField(label=("Username"), max_length=30, widget=forms.TextInput(attrs={'size':15}));
+    password = forms.CharField(label=("Password"), widget=forms.PasswordInput(attrs={'size': 15}));
 
     def __init__(self, request=None, *args, **kwargs):
         """
