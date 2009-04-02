@@ -41,7 +41,7 @@ class ViewDataSetTestCase(TestCase):
 		# Check for the values on the page
 		self.assertTrue(ds1.name in response.content)
 		self.assertTrue(ds1.description in response.content)
-		self.assertTrue("Reference:" in response.content)
+		self.assertTrue("Reference This Dataset:" in response.content)
 
 class AddTagsTestCase(TestCase):
 

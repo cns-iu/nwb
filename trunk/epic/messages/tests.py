@@ -31,20 +31,20 @@ class ViewTests(TestCase):
 		response = self.client.get('/user/%s/messages/' % (peebs.id))
 		self.assertEqual(response.status_code, 200)
 		# Peebs can only see m1r, none of the ohters
-		self.assertFalse('<a href="/user/%s/messages/sent/%s/">%s</a>' % (peebs.id, m1s.id, m1s.subject) in response.content, response.content)
-		self.assertFalse('<a href="/user/%s/messages/sent/%s/">%s</a>' % (peebs.id, m2s.id, m2s.subject) in response.content, response.content)
-		self.assertTrue('<a href="/user/%s/messages/received/%s/">%s</a>' % (peebs.id, m1r.id, m1r.subject) in response.content, response.content)
-		self.assertFalse('<a href="/user/%s/messages/received/%s/">%s</a>' % (peebs.id, m2r.id, m2r.subject) in response.content, response.content)
+		self.assertFalse('href="/user/%s/messages/sent/%s/">%s</a>' % (peebs.id, m1s.id, m1s.subject) in response.content, response.content)
+		self.assertFalse('href="/user/%s/messages/sent/%s/">%s</a>' % (peebs.id, m2s.id, m2s.subject) in response.content, response.content)
+		self.assertTrue('href="/user/%s/messages/received/%s/">%s</a>' % (peebs.id, m1r.id, m1r.subject) in response.content, response.content)
+		self.assertFalse('href="/user/%s/messages/received/%s/">%s</a>' % (peebs.id, m2r.id, m2r.subject) in response.content, response.content)
 		
 		# log in as admin 
 		login = self.client.login(username='admin', password='admin')
 		self.failUnless(login, 'Could not login as admin')
 		response = self.client.get('/user/%s/messages/' % (admin.id))
 		# admin should see the opposite of peebs, that is only m1r is not visable.
-		self.assertTrue('<a href="/user/%s/messages/sent/%s/">%s</a>' % (admin.id, m1s.id, m1s.subject) in response.content, response.content)
-		self.assertTrue('<a href="/user/%s/messages/sent/%s/">%s</a>' % (admin.id, m2s.id, m2s.subject) in response.content, response.content)
-		self.assertFalse('<a href="/user/%s/messages/received/%s/">%s</a>' % (admin.id, m1r.id, m1r.subject) in response.content, response.content)
-		self.assertTrue('<a href="/user/%s/messages/received/%s/">%s</a>' % (admin.id, m2r.id, m2r.subject) in response.content, response.content)
+		self.assertTrue('href="/user/%s/messages/sent/%s/">%s</a>' % (admin.id, m1s.id, m1s.subject) in response.content, response.content)
+		self.assertTrue('href="/user/%s/messages/sent/%s/">%s</a>' % (admin.id, m2s.id, m2s.subject) in response.content, response.content)
+		self.assertFalse('href="/user/%s/messages/received/%s/">%s</a>' % (admin.id, m1r.id, m1r.subject) in response.content, response.content)
+		self.assertTrue('href="/user/%s/messages/received/%s/">%s</a>' % (admin.id, m2r.id, m2r.subject) in response.content, response.content)
 	
 	def testSendMessage(self):
 		admin = User.objects.get(username="admin")
