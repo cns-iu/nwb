@@ -69,7 +69,7 @@ def edit_profile(request):
 
 def logout_view(request):
 	logout(request)
-	return HttpResponseRedirect(reverse('epic.core.views.browse',))
+	return HttpResponseRedirect(reverse('epic.core.views.site_index',))
 
 @login_required
 def change_password(request):
