@@ -218,6 +218,10 @@
 
 	function lookupLocation(id){
 		var location_string = document.getElementById(id).value;
+		if (location_string === ''){
+			jQuery('#map_messages').html('You must provide a location.');
+			return false;
+		}
 		var data = {};
 		data.location_string = location_string;
 		jQuery.post('{% url geoloc.views.geoloc_get_best_location %}', data, 
