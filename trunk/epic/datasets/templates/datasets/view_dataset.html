@@ -30,10 +30,12 @@
     
     {% list_item_tags dataset user 'True' %}
     {# TODO: list_item_references dataset #}
+    {% comment %}
     <h4>
       References<br />
       will go here . . .
     </h4>
+    {% endcomment %}
   </div>
   
   {% if user and user.is_authenticated %}
@@ -62,9 +64,19 @@
          -->
         {% endifnotequal %}
       {% else %}
-        No attached files
+        <p>
+          There are no attached files.
+        </p>
       {% endif %}
     </p>
+  {% else %}
+    {% if dataset.files %}
+      <p>
+        {# TODO: Make this not a big fat hack. #}
+        {# We should be using the url template tag instead of the hardcoded url. #}
+        Please <a href="/login/?next={{ dataset.get_absolute_url }}">login</a> to download this dataset.
+      </p>
+    {% endif %}
   {% endif %}
   
   <h4>
