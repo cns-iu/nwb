@@ -1,5 +1,5 @@
 {% extends "core/bases/simple_base.html" %}
-{% block container %}
+{% block content %}
 <h2>Edit Data Request</h2>
 <form enctype="multipart/form-data" action="{% url datarequests.views.edit_datarequest item_id=datarequest.id %}" method="POST">
     <table>

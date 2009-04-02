@@ -4,21 +4,21 @@
 
 
 html, body {
+	height: auto;
+	// height: 100%;
+	margin-bottom: 20px;
 	background-image: url(/core_media/images/BG-pattern.jpg);
-	margin:0;
-	padding:0;
-	font-family: Georgia, "Times New Roman", Times, serif; height:100%; 
-	
-
+	margin: 0;
+	padding: 0;
+	font-family: Georgia, "Times New Roman", Times, serif;
+	// height: 100%;
 	color: #333333;
 }
 
-
-
-
 #container {
+	height: auto;
 	// height: 100%;
-	margin-bottom: 0;
+	margin-bottom: 20px;
 	position: relative;
 	width: auto; 
 	margin-left:  2em;
@@ -29,11 +29,31 @@ html, body {
 	padding-top: 20px; 
 }
 
-#maincontent { position:relative; margin-left:2em; top:0; width:auto; margin-right:2em; height:inherit; }
-#browsecontent { position:relative; margin-left:13em; top:0; width:auto;  height:inherit;
-	}
+#maincontent {
+	margin-bottom: 20px;
+	position: relative;
+	margin-left: 2em;
+	top: 0;
+	width: auto;
+	margin-right: 2em;
+	// height: inherit;
+	height: auto;
+}
 
+#browsecontent {
+	position: relative;
+	margin-left: 13em;
+	top: 0;
+	width: auto;
+	// height: inherit;
+	height: auto;
+	margin-bottom: 20px;
+}
 
+#content {
+	height: auto;
+	margin-bottom: 20px;
+}
 
 #logo {
 	background-image: url(/core_media/images/top_01_03.gif); margin-top:0; 
