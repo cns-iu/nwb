@@ -20,10 +20,6 @@
 	</div>
 {% endif %}
 
-
-
-
-
 {% if datasets %}
 
 	<div class="datasets-authorname">
@@ -35,68 +31,8 @@
 	[ {{ requested_user.username }} ]
 	
 	</div>
-	
-	{% comment %}
-		'''
-		"rate_box_view_helper" has to be always loaded whenever we are loading the 
-		"rate_box_view" because of a dependecy JavaScript code that will be required 
-		by this template.
-		'''
-	{% endcomment %}
-	
-	{% load djangoratings_templatetags %}
-	{% rate_box_view_helper %}
-	
- 	{% for dataset in datasets %}
-		<div id="databox">
-
-
-  <div class="downloadicon"></div>
-	
-	{% load djangoratings_templatetags %}
-	{% rate_box_view dataset user %}
-	
-	<h1><a href="{% url datasets.views.view_dataset item_id=dataset.id %}">{{ dataset.name|escape }}</a></h1>
-	<p>{{ dataset.description|truncatewords:50 }}</p>
-
-   	{% load tags_templatetags %}
-	{% list_item_tags dataset user %}
- 	
- 	{% if user and user.is_authenticated %}
-    <h3>Dataset Files</h3>
-    
-    <p>
-      {% if dataset.files %}
-        {% for file in dataset.files.all %}      
-          {# TODO: this should be a reverse? #}
-            <a href="{{ file.file_contents.url }}">
-              <img src="/core_media/images/download-icon_30.jpg" width="69" height="17" align="texttop" />
-            </a>
-            
-            {{ file.get_short_name }}
-            <br />
-        {% endfor %}
-        
-        {# TODO: Implement Download All functionality. #}
-        {% ifnotequal dataset.files.all|length 0 %}
-          <br />
-          <a href="{{ dataset.get_download_all_files_url }}">
-            <img src="/core_media/images/download-all_19.jpg" width="87" height="18" />
-          </a>
-          
-          Download All Files
-        {% endifnotequal %}
-      {% else %}
-        No attached files
-      {% endif %}
-    </p>
-  {% endif %}
-  
- 	
- 	 
-</div>
-	{% endfor %}
-
+	{% load dataset_templatetags %}
+	{% list_datasets datasets %}
 {% endif %}
 
 {% endblock %}
