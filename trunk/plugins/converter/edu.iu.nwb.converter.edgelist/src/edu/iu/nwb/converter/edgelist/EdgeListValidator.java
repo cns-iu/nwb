@@ -20,8 +20,8 @@ public class EdgeListValidator implements Algorithm {
     CIShellContext ciContext;
     LogService logger;
     
-    public EdgeListValidator(Data[] dm, Dictionary parameters, CIShellContext context) {
-    	this.data = dm;
+    public EdgeListValidator(Data[] validationData, Dictionary parameters, CIShellContext context) {
+    	this.data = validationData;
         this.parameters = parameters;
         this.ciContext = context;
         logger = (LogService)context.getService(LogService.class.getName());
@@ -36,10 +36,10 @@ public class EdgeListValidator implements Algorithm {
 		try{ 
 			parser = new EdgeListParser(edgeFile);
 
-			Data[] dm = new Data[] {new BasicData(edgeFile, "file:text/edge")};
-			dm[0].getMetadata().put(DataProperty.LABEL, "edge file: " + edgeFileName);
-			dm[0].getMetadata().put(DataProperty.TYPE, DataProperty.NETWORK_TYPE);
-			return dm;
+			Data[] validationData = new Data[] {new BasicData(edgeFile, "file:text/edge")};
+			validationData[0].getMetadata().put(DataProperty.LABEL, "edge file: " + edgeFileName);
+			validationData[0].getMetadata().put(DataProperty.TYPE, DataProperty.NETWORK_TYPE);
+			return validationData;
 		} catch (FileNotFoundException e){
 			throw new AlgorithmExecutionException( 
 					"Could not find the specified edge list file.",e);						
@@ -47,8 +47,13 @@ public class EdgeListValidator implements Algorithm {
 			throw new AlgorithmExecutionException(
 					"There were IO Errors while reading the specified edge list file.",ioe);
 		} catch (InvalidEdgeListFormatException e) {
+			logger.log(LogService.LOG_ERROR,
+						"The File selected as .edge is not a valid EdgeList File.\n" + 
+						"Please review the EdgeList File Format Specification at \n" +
+						"https://nwb.slis.indiana.edu/community/?n=LoadData.Edgelist\n"
+						);
 			throw new AlgorithmExecutionException(e.getMessage(), e);					
-		}
+		} 
 		
 		
 
