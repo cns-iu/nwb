@@ -9,14 +9,18 @@ class ProfileDataRequestTestCase(TestCase):
 	fixtures = ['profile_datarequests']
 	
 	def setUp(self):
-		pass
+		self.profile_url = reverse('epic.core.views.view_profile')
 
+	def tearDown(self):
+		pass
+	
 	def testForNoDataRequests(self):
 		''' Test if data requests are published even though not belonging to that user. Bob has no data requests. '''
 		
 		login = self.client.login(username='bob', password='bob')
-		self.assertTrue(login)
-		response = self.client.get('/user/')
+		self.failUnless(login, 'Could not login')
+		
+		response = self.client.get(self.profile_url)
 		self.failUnless(response.status_code, 200)
 		self.failIf("Your Data Requests" in response.content)
 
@@ -40,7 +44,7 @@ class ProfileDataRequestTestCase(TestCase):
 								)
 		datarequest.save()
 		
-		response = self.client.get('/user/')
+		response = self.client.get(self.profile_url)
 
 		self.failUnless(response.status_code, 200)
 		self.failUnless("Your Data Requests" in response.content, response.content)
@@ -60,7 +64,7 @@ class ProfileDataRequestTestCase(TestCase):
 								)
 		datarequest.save()
 		
-		response = self.client.get('/user/')
+		response = self.client.get(self.profile_url)
 		
 		self.failUnless(response.status_code, 200)
 		self.failUnless("Your Data Requests" in response.content, response.content)

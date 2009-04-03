@@ -74,8 +74,8 @@ def logout_view(request):
 @login_required
 def change_password(request):
 	from django.contrib.auth.views import password_change
-	return password_change(request, post_change_redirect="/user/", template_name='core/change_password.html')
-
+	redirect_url = reverse('epic.core.views.view_profile')
+	return password_change(request, post_change_redirect=redirect_url, template_name='core/change_password.html')
 
 def forgot_username(request):
 	FORGOT_USERNAME_TEMPLATE = "core/forgot_username.html"
@@ -150,11 +150,10 @@ def forgot_email(request):
 			user = User.objects.get(username=username)
 		except:
 			# No email could be found.
+			forgot_email_form.errors['username'] = ["No email was found tied to the username %s." % username]
 			return render_to_response(FORGOT_EMAIL_TEMPLATE, {
-				"not_found": True,
 				"form": forgot_email_form,
 				"next": next_page,
-				"username": username
 			})
 		
 		# Email could be found (success).

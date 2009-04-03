@@ -4,7 +4,7 @@
 {% block content %}
 
 {% if form.errors %}
-<p>Your username and password didn't match. Please try again.</p>
+{{ form.non_field_errors }}
 {% endif %}
 
 <center>
@@ -13,7 +13,7 @@
 		<tbody>
 			<tr>
 				<td>
-					<div id="loginbox">   
+					<div id="loginbox">
 				  	<h1 id="username">
 					  	Username 
 					  	<br/>

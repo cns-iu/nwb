@@ -1,47 +1,73 @@
 from django.test import TestCase
-
+from django.core.urlresolvers import reverse
 from django.contrib.auth.models import User
 
 class ForgotEmailTestCase(TestCase):
 	fixtures = [ "just_users" ]
 	
 	def setUp(self):
+		self.bob = User.objects.get(username="bob")
+		self.forgot_email_url = reverse('epic.core.views.forgot_email')
+	
+	def tearDown(self):
 		pass
 	
 	def testForgotEmailLoggedIn(self):
-		login = self.client.login(username="peebs", password="map")
+		"""
+		Test that logged in users will be shown their email
+		"""
+		login = self.client.login(username="bob", password="bob")
 		self.failUnless(login, "Could not login")
 		
-		forgot_email_response = self.client.get("/user/forgotemail/")
-		self.failUnlessEqual(forgot_email_response.status_code, 200, "Error reaching forgotemail!")
-		
-		self.failUnless("Your email is markispeebs@gmail.com." in forgot_email_response.content)
-		
-		self.client.logout()
+		response = self.client.get(self.forgot_email_url)
+		self.failUnlessEqual(response.status_code, 200)
+		self.assertContains(response, "Your email is %s." % self.bob.email)
+
 	
 	def testForgotEmailNotLoggedInButSubmittingBlankUsername(self):
-		forgot_email_response = self.client.get("/user/forgotemail/")
-		self.failUnlessEqual(forgot_email_response.status_code, 200, "Error reaching forgotemail!")
+		"""
+		Test that users who are not logged in cannot submit a blank username
+		"""
+		response = self.client.get(self.forgot_email_url)
+		self.failUnlessEqual(response.status_code, 200)
 		
-		submit_blank_username_response = self.client.post("/user/forgotemail/", data={ "username": "" })
-		self.failUnlessEqual(submit_blank_username_response.status_code, 200, "Error reaching forgotemail!")
+		post_data = {
+			'username': '',
+		}
 		
-		self.failUnless("This field is required." in submit_blank_username_response.content)
+		response = self.client.post(self.forgot_email_url, post_data)
+		self.failUnlessEqual(response.status_code, 200)
+		self.assertFormError(response, 'form', 'username', "This field is required.")
 	
 	def testForgotEmailNotLoggedInButSubmittingUnboundEmail(self):
-		forgot_email_response = self.client.get("/user/forgotemail/")
-		self.failUnlessEqual(forgot_email_response.status_code, 200, "Error reaching forgotemail!")
+		"""
+		Test that submiting an invalid username displays an error to the user
+		"""
+		response = self.client.get(self.forgot_email_url)
+		self.failUnlessEqual(response.status_code, 200)
 		
-		submit_unbound_username_response = self.client.post("/user/forgotemail/", data={ "username": "abcd" })
-		self.failUnlessEqual(submit_unbound_username_response.status_code, 200, "Error reaching forgotemail!")
+		post_data = {
+			'username': 'invalidusername',
+		}
 		
-		self.failUnless("No email was found tied to the username abcd." in submit_unbound_username_response.content)
+		response = self.client.post(self.forgot_email_url, post_data)
+		self.failUnlessEqual(response.status_code, 200)
+		
+		self.assertFormError(response, 'form', 'username', "No email was found tied to the username %s." % post_data['username'])
 	
 	def testForgotEmailSuccess(self):
-		forgot_email_response = self.client.get("/user/forgotemail/")
-		self.failUnlessEqual(forgot_email_response.status_code, 200, "Error reaching forgotemail!")
+		"""
+		Test that submiting a valid username will yeild an email address for that user
+		TODO: this is a terrible, terrible idea.
+		"""
+		response = self.client.get(self.forgot_email_url)
+		self.failUnlessEqual(response.status_code, 200)
 		
-		submit_bound_username_response = self.client.post("/user/forgotemail/", data={ "username": "peebs" })
-		self.failUnlessEqual(submit_bound_username_response.status_code, 200, "Error reaching forgotemail!")
+		post_data = {
+			'username': self.bob.username,
+		}
 		
-		self.failUnless("Your email is markispeebs@gmail.com." in submit_bound_username_response.content)
+		response = self.client.post(self.forgot_email_url, post_data)
+		self.failUnlessEqual(response.status_code, 200)
+
+		self.assertContains(response, "Your email is %s." % self.bob.email)

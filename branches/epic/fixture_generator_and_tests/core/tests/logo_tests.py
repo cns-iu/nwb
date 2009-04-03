@@ -1,8 +1,5 @@
 from django.test import TestCase
 
-from epic.datarequests.models import DataRequest
-from django.contrib.auth.models import User
-from django.template import TemplateDoesNotExist
 from django.core.urlresolvers import reverse
 
 class LogoTestCase(TestCase):
@@ -14,6 +11,9 @@ class LogoTestCase(TestCase):
 		pass
 	
 	def testLogoShouldBeLink(self):
+		"""
+		Test that the site_index link appears on several pages to hopefully determine that the logo can be clicked.
+		"""
 		# setup the links
 		logo_link = reverse('epic.core.views.site_index')
 		browse_url = reverse('epic.core.views.browse')

@@ -1,18 +1,19 @@
 from django.test import TestCase
 
-from epic.datarequests.models import DataRequest
-from django.contrib.auth.models import User
-from django.template import TemplateDoesNotExist
 from django.core.urlresolvers import reverse
 
 class SiteIndexTestCase(TestCase):
 	
 	def setUp(self):
 		pass
+	
 	def tearDown(self):
 		pass
 	
 	def testIndexPageExists(self):
+		"""
+		Test that the site_index exists
+		"""
 		# setup the links
 		logo_link = reverse('epic.core.views.site_index')
 		

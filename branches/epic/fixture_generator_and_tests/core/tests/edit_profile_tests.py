@@ -8,7 +8,9 @@ class ViewEditProfilePageCase(TestCase):
 	fixtures = ['just_users']
 	
 	def setUp(self):
-		pass
+		self.edit_profile_url = reverse("epic.core.views.edit_profile")
+		self.login_url = reverse('django.contrib.auth.views.login')
+		
 	def tearDown(self):
 		pass
 	
@@ -17,11 +19,16 @@ class ViewEditProfilePageCase(TestCase):
 		Verify that logged out users can't reach the edit profile page 
 		"""
 		
-		# Verify that log in is required to view the edit page
-		edit_profile_url = reverse("epic.core.views.edit_profile")
-		response = self.client.get(edit_profile_url)
-		self.assertRedirects(response, "/login/?next=%s" % (edit_profile_url))
-	
+		response = self.client.get(self.edit_profile_url)
+		# TODO: this should not set next this way.
+		redirect_url = "%(base_url)s?next=%(next_url)s" % {'base_url': self.login_url, 'next_url':self.edit_profile_url}
+		self.assertRedirects(response, redirect_url, 302)
+		
+		response = self.client.post(self.edit_profile_url)
+		# TODO: this should not set next this way.
+		redirect_url = "%(base_url)s?next=%(next_url)s" % {'base_url': self.login_url, 'next_url':self.edit_profile_url}
+		self.assertRedirects(response, redirect_url, 302)
+		
 	def testLoggedInView(self):
 		""" 
 		Verify that logged in users can reach the edit profile page 
@@ -30,21 +37,22 @@ class ViewEditProfilePageCase(TestCase):
 		# Log in and view the edit page
 		login = self.client.login(username='admin', password='admin')
 		self.failUnless(login, 'Could not login')
-		edit_profile_url = reverse("epic.core.views.edit_profile")
-		response = self.client.get(edit_profile_url)
+		
+		response = self.client.get(self.edit_profile_url)
 		self.assertEqual(response.status_code, 200)
 
 		# Check that the correct stuff is on the page
-		self.assertTrue('First name' in response.content, response.content)
-		self.assertTrue('Last name' in response.content)
-		self.assertTrue('E-mail address' in response.content)
-		self.assertTrue('Affiliation' in response.content)
+		self.assertContains(response, 'First name')
+		self.assertContains(response, 'Last name')
+		self.assertContains(response, 'E-mail address')
+		self.assertContains(response, 'Affiliation')
 		
 class ActionEditProfilePageCase(TestCase):
-	fixtures = ['initial_users']
+	fixtures = ['just_users']
 	
 	def setUp(self):
-		pass
+		self.edit_profile_url = reverse("epic.core.views.edit_profile")
+		self.login_url = reverse('django.contrib.auth.views.login')
 	
 	def tearDown(self):
 		pass
@@ -63,14 +71,16 @@ class ActionEditProfilePageCase(TestCase):
 		}
 		
 		# Attempt to edit the dataset
-		edit_profile_url = reverse("epic.core.views.edit_profile")
-		response = self.client.get(edit_profile_url)
-		self.assertRedirects(response, "/login/?next=%s" % (edit_profile_url))
+		
+		response = self.client.get(self.edit_profile_url)
+		redirect_url = "%(base_url)s?next=%(next_url)s" % {'base_url': self.login_url, 'next_url':self.edit_profile_url}
+		self.assertRedirects(response, redirect_url, 302)
 		
 	def testLoggedInEdit(self):
 		""" 
 		Verify that only the creator can edit data
 		"""
+		
 		# Get the objects to be used for this test
 		user = User.objects.get(username="admin")
 		profile = Profile.objects.for_user(user)
@@ -94,8 +104,8 @@ class ActionEditProfilePageCase(TestCase):
 		self.failUnless(login, 'Could not login')
 		
 		# Edit the dataset
-		edit_profile_url = reverse("epic.core.views.edit_profile")
-		response = self.client.post(edit_profile_url, post_data)
+		
+		response = self.client.post(self.edit_profile_url, post_data)
 		self.assertEqual(response.status_code, 302)
 		
 		# Get the objects to be used for this test again
