@@ -3,6 +3,7 @@ from django.test import TestCase
 from epic.datarequests.models import DataRequest
 from django.contrib.auth.models import User
 from django.template import TemplateDoesNotExist
+from django.core.urlresolvers import reverse
 
 class SiteIndexTestCase(TestCase):
 	
@@ -11,10 +12,10 @@ class SiteIndexTestCase(TestCase):
 	def tearDown(self):
 		pass
 	
-	def index_page_exists(self):
+	def testIndexPageExists(self):
 		# setup the links
 		logo_link = reverse('epic.core.views.site_index')
 		
-		# Check that the logo_link is on each page.  Best I can do.
-		response = self.client.get(browse_url)
+		# Check that the index page exists
+		response = self.client.get(logo_link)
 		self.assertEquals(response.status_code, 200)
