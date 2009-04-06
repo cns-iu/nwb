@@ -146,7 +146,7 @@ def _create_bill():
 # Generate the actual fixtures here. #
 ######################################
 
-#admin = _create_admin()
+admin = _create_admin()
 peebs = _create_peebs()
 bob = _create_bob()
 bob2 = _create_bob2()
