@@ -42,6 +42,9 @@ public class HorizontalLineGraphAlgorithm implements Algorithm {
     	// Unpack the in-data table.
     	Table inTable = (Table)inData.getData();
     	
+    	// This will throw an exception with an appropriate message if it fails.
+    	verifyThatTableHasAppropriateFields(inTable);
+    	
     	// "Get" the input parameters.
         int minNumberOfDaysForGrantBar = 15;
         
@@ -60,13 +63,22 @@ public class HorizontalLineGraphAlgorithm implements Algorithm {
 		return outData;
     }
     
+    private void verifyThatTableHasAppropriateFields(Table table)
+    	throws AlgorithmExecutionException
+    {
+    	// TODO: Something here?
+    }
+    
     private String createPostScriptCode(Table grantsTable,
     									int minNumberOfDaysForGrantBar)
     	throws AlgorithmExecutionException
     {
     	// Get user-inputted parameters.
     	final String labelKey = this.parameters.get(LABEL_FIELD_ID).toString();
-    	final String startDateKey = this.parameters.get(START_DATE_FIELD_ID).toString();
+    	
+    	final String startDateKey =
+    		this.parameters.get(START_DATE_FIELD_ID).toString();
+    	
     	final String endDateKey = this.parameters.get(END_DATE_FIELD_ID).toString();
     	final String sizeByKey = this.parameters.get(SIZE_BY_FIELD_ID).toString();
     	

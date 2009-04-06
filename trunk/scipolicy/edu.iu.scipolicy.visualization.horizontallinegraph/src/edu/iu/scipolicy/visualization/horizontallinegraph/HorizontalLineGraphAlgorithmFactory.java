@@ -13,9 +13,12 @@ import org.osgi.service.metatype.AttributeDefinition;
 import org.osgi.service.metatype.ObjectClassDefinition;
 
 import prefuse.data.Table;
+import edu.iu.scipolicy.utilities.ColumnNotFoundException;
 import edu.iu.scipolicy.utilities.MutateParameterUtilities;
 
-public class HorizontalLineGraphAlgorithmFactory implements AlgorithmFactory, ParameterMutator {
+public class HorizontalLineGraphAlgorithmFactory
+	implements AlgorithmFactory, ParameterMutator
+{
     public Algorithm createAlgorithm(Data[] data,
     								 Dictionary parameters,
     								 CIShellContext context)
@@ -23,8 +26,8 @@ public class HorizontalLineGraphAlgorithmFactory implements AlgorithmFactory, Pa
         return new HorizontalLineGraphAlgorithm(data, parameters, context);
     }
     
-    public ObjectClassDefinition mutateParameters(Data[] data,
-    											  ObjectClassDefinition oldParameters)
+    public ObjectClassDefinition mutateParameters
+    	(Data[] data, ObjectClassDefinition oldParameters)
     {
     	Data inData = data[0];
     	Table table = (Table)inData.getData();
@@ -38,10 +41,10 @@ public class HorizontalLineGraphAlgorithmFactory implements AlgorithmFactory, Pa
 											   oldParameters.getIcon(16));
 		}
 		catch (IOException e) {
-			newParameters =
-				new BasicObjectClassDefinition(oldParameters.getID(),
-											   oldParameters.getName(),
-											   oldParameters.getDescription(), null);
+			newParameters = new BasicObjectClassDefinition
+				(oldParameters.getID(),
+				 oldParameters.getName(),
+				 oldParameters.getDescription(), null);
 		}
 		
 		AttributeDefinition[] oldAttributeDefinitions =

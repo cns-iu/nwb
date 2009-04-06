@@ -202,6 +202,10 @@ public class HorizontalLineGraphPostScriptCreator {
 										double defaultBoundingBoxWidth,
 										double grantBarMargin)
 	{
+		String TICK_COLOR_STRING = "0.75 0.75 0.75";
+		String GRANT_LABEL_COLOR_STRING = "0.4 0.4 0.4";
+		String GRANT_BAR_COLOR_STRING = "0.0 0.0 0.0";
+		
 		return
 			// TODO: The bounding box is a big fat hack. (It needs to take into account text size and stuff.)
 			line("%!PS-Adobe-2.0 EPSF-2.0") +
@@ -278,7 +282,9 @@ public class HorizontalLineGraphPostScriptCreator {
 			line("/grant {") +
 				line(tabbed("5 -1 roll")) +
 				line(tabbed("4 index 4 index 3 index 2 div add")) +
+				line(tabbed(setrgbcolor(GRANT_LABEL_COLOR_STRING))) +
 				line(tabbed("personlabel")) +
+				line(tabbed(setrgbcolor(GRANT_BAR_COLOR_STRING))) +
 				line(tabbed("period")) +
 			line("} def") +
 			line("") +
@@ -287,7 +293,7 @@ public class HorizontalLineGraphPostScriptCreator {
 				line(tabbed("gsave")) +
 				line(tabbed("[15] 0 setdash")) +
 				line(tabbed("1 setlinewidth")) +
-				line(tabbed("0.5 0.5 0.5 setrgbcolor")) +
+				line(tabbed(setrgbcolor(TICK_COLOR_STRING))) +
 				line(tabbed("2 index")) +
 				line(tabbed("newpath")) +
 				line(tabbed("exch")) +
@@ -365,7 +371,7 @@ public class HorizontalLineGraphPostScriptCreator {
 			double grantBarWidth =
 				(grantBarEndXCoordinate - grantBarStartXCoordinate);
 			
-			double scale = (12 /
+			double scale = (12.0 /
 				DateUtilities.calculateMonthsBetween
 					(currentGrantStartDate, currentGrantEndDate));
 			
@@ -400,6 +406,10 @@ public class HorizontalLineGraphPostScriptCreator {
 	
 	private String tabbed(String str) {
 		return "\t" + str;
+	}
+	
+	private String setrgbcolor(String str) {
+		return str + " setrgbcolor";
 	}
 	
 	private Date formGraphStartDateBasedOnGrants(Grant[] grants) {
