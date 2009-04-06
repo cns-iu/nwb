@@ -153,20 +153,19 @@ class ViewDatarequestsTestCase(TestCase):
 	
 	def setUp(self):
 		self.bob = User.objects.get(username="bob")
-		self.admin = User.objects.get(username="admin")
 		
-		dr1 = DataRequest.objects.get(creator=self.bob, name='drU1', description='The first unfulfilled datarequest', status='U')
+		self.dr1 = DataRequest.objects.get(creator=self.bob, name='drU1', description='The first unfulfilled datarequest', status='U')
 	
-		self.index_url = reverse('epic.datarequests.views.view_datarequests')
-		self.edit_url = reverse('epic.datarequests.views.edit_datarequest', kwargs={'item_id': dr1.id,})
-		self.cancel_url = reverse('epic.datarequests.views.cancel_datarequest', kwargs={'item_id': dr1.id,})
-		self.fulfill_url = reverse('epic.datarequests.views.fulfill_datarequest', kwargs={'item_id': dr1.id,})
+		self.datarequests_url = reverse('epic.datarequests.views.view_datarequests')
+		self.edit_url = reverse('epic.datarequests.views.edit_datarequest', kwargs={'item_id': self.dr1.id,})
+		self.cancel_url = reverse('epic.datarequests.views.cancel_datarequest', kwargs={'item_id': self.dr1.id,})
+		self.fulfill_url = reverse('epic.datarequests.views.fulfill_datarequest', kwargs={'item_id': self.dr1.id,})
 		
 	def tearDown(self):
 		pass
 	
 	def testIndexLoggedOut(self):
-		response = self.client.get(self.index_url)
+		response = self.client.get(self.datarequests_url)
 		self.assertEqual(response.status_code, 200)
 		
 		for dr in DataRequest.objects.fulfilled():
@@ -186,7 +185,7 @@ class ViewDatarequestsTestCase(TestCase):
 		login = self.client.login(username='admin', password='admin')
 		self.failUnless(login, 'Could not login')
 		
-		response = self.client.get(self.index_url)
+		response = self.client.get(self.datarequests_url)
 		self.assertEqual(response.status_code, 200)
 		
 		for dr in DataRequest.objects.fulfilled():
@@ -206,7 +205,7 @@ class ViewDatarequestsTestCase(TestCase):
 		login = self.client.login(username='bob', password='bob')
 		self.failUnless(login, 'Could not login')
 		
-		response = self.client.get(self.index_url)
+		response = self.client.get(self.datarequests_url)
 		self.assertEqual(response.status_code, 200)
 		
 		for dr in DataRequest.objects.fulfilled():
@@ -229,21 +228,24 @@ class ViewDatarequestTestCase(TestCase):
 	
 	def setUp(self):
 		self.bob = User.objects.get(username="bob")
-		self.admin = User.objects.get(username="admin")
 		
-		dr1 = DataRequest.objects.get(creator=self.bob, name='drU1', description='The first unfulfilled datarequest', status='U')
+		self.dr1 = DataRequest.objects.get(creator=self.bob, name='drU1', description='The first unfulfilled datarequest', status='U')
 	
-		self.view_url = reverse('epic.datarequests.views.view_datarequest', kwargs={'item_id': dr1.id,})
-		self.edit_url = reverse('epic.datarequests.views.edit_datarequest', kwargs={'item_id': dr1.id,})
-		self.cancel_url = reverse('epic.datarequests.views.cancel_datarequest', kwargs={'item_id': dr1.id,})
-		self.fulfill_url = reverse('epic.datarequests.views.fulfill_datarequest', kwargs={'item_id': dr1.id,})
+		self.datarequest_url = reverse('epic.datarequests.views.view_datarequest', kwargs={'item_id': self.dr1.id,})
+		self.edit_url = reverse('epic.datarequests.views.edit_datarequest', kwargs={'item_id': self.dr1.id,})
+		self.cancel_url = reverse('epic.datarequests.views.cancel_datarequest', kwargs={'item_id': self.dr1.id,})
+		self.fulfill_url = reverse('epic.datarequests.views.fulfill_datarequest', kwargs={'item_id': self.dr1.id,})
 		
 	def tearDown(self):
 		pass
 	
 	def testLoggedOut(self):
-		response = self.client.get(self.view_url)
+		response = self.client.get(self.datarequest_url)
 		self.assertEqual(response.status_code, 200)
+		
+		self.assertContains(response, self.dr1.name)
+		self.assertContains(response, self.dr1.description)
+		self.assertContains(response, self.dr1.get_status_display())
 		
 		self.assertNotContains(response, self.edit_url)
 		self.assertNotContains(response, self.cancel_url)
@@ -253,8 +255,12 @@ class ViewDatarequestTestCase(TestCase):
 		login = self.client.login(username='admin', password='admin')
 		self.failUnless(login, 'Could not login')
 		
-		response = self.client.get(self.view_url)
+		response = self.client.get(self.datarequest_url)
 		self.assertEqual(response.status_code, 200)
+		
+		self.assertContains(response, self.dr1.name)
+		self.assertContains(response, self.dr1.description)
+		self.assertContains(response, self.dr1.get_status_display())
 		
 		self.assertNotContains(response, self.edit_url)
 		self.assertNotContains(response, self.cancel_url)
@@ -264,9 +270,205 @@ class ViewDatarequestTestCase(TestCase):
 		login = self.client.login(username='bob', password='bob')
 		self.failUnless(login, 'Could not login')
 		
-		response = self.client.get(self.view_url)
+		response = self.client.get(self.datarequest_url)
 		self.assertEqual(response.status_code, 200)
+		
+		self.assertContains(response, self.dr1.name)
+		self.assertContains(response, self.dr1.description)
+		self.assertContains(response, self.dr1.get_status_display())
 		
 		self.assertContains(response, self.edit_url)
 		self.assertContains(response, self.cancel_url)
 		self.assertContains(response, self.fulfill_url)
+		
+	def testNonExistentPage(self):
+		response = self.client.get(reverse('epic.datarequests.views.view_datarequest', kwargs={'item_id': 10000000000000000,}))
+		self.failUnless(response.status_code, 404)
+		
+class NewDataRequestTestCase(TestCase):
+	""" Test the new datarequest page/view """
+	
+	fixtures = ['just_users', 'datarequests']
+	
+	def setUp(self):
+		self.new_datarequest_url = reverse('epic.datarequests.views.new_datarequest')	
+		self.datarequests_url = reverse('epic.datarequests.views.view_datarequests')
+		
+		self.post_data = {
+			'name': 'This is a new datarequest that is asdf983205',
+			'description': 'Jump, Jump, Jump Around!',
+		}
+		
+	def tearDown(self):
+		pass
+	
+	def testLoggedOut(self):
+		response = self.client.get(self.new_datarequest_url)
+		self.assertEqual(response.status_code, 302)
+		
+		response = self.client.post(self.new_datarequest_url, self.post_data)
+		self.assertEqual(response.status_code, 302)
+		
+		response = self.client.get(self.datarequests_url)
+		self.assertNotContains(response, self.post_data['name'])
+		self.assertNotContains(response, self.post_data['description'])
+	
+	def testLogged(self):
+		login = self.client.login(username='bob', password='bob')
+		self.failUnless(login, 'Could not login')
+		
+		response = self.client.get(self.new_datarequest_url)
+		self.assertEqual(response.status_code, 200)
+		
+		response = self.client.post(self.new_datarequest_url, self.post_data)
+		self.assertEqual(response.status_code, 302)
+		
+		response = self.client.get(self.datarequests_url)
+		self.assertContains(response, self.post_data['name'])
+		self.assertContains(response, self.post_data['description'])
+		
+class CancelDatarequestsTestCase(TestCase):
+	""" Test the cancel datarequests page/view """
+	
+	fixtures = ['just_users', 'datarequests']
+	
+	def setUp(self):
+		self.bob = User.objects.get(username="bob")
+		
+		self.dr1 = DataRequest.objects.get(creator=self.bob, name='drU1', description='The first unfulfilled datarequest')
+
+		self.cancel_url = reverse('epic.datarequests.views.cancel_datarequest', kwargs={'item_id': self.dr1.id,})
+		
+	def tearDown(self):
+		pass
+	
+	def testLoggedOut(self):
+		response = self.client.get(self.cancel_url)
+		self.assertEqual(response.status_code, 302)
+		
+		self.dr1 = DataRequest.objects.get(creator=self.bob, name='drU1', description='The first unfulfilled datarequest')
+		
+		self.assertEqual(self.dr1.status, 'U')
+
+			
+	def testUnOwned(self):
+		login = self.client.login(username='admin', password='admin')
+		self.failUnless(login, 'Could not login')
+		
+		response = self.client.get(self.cancel_url)
+		self.assertEqual(response.status_code, 302)
+		
+		self.assertEqual(self.dr1.status, 'U')
+			
+	def testOwned(self):
+		login = self.client.login(username='bob', password='bob')
+		self.failUnless(login, 'Could not login')
+		
+		response = self.client.get(self.cancel_url)
+		self.assertEqual(response.status_code, 302)
+
+		self.dr1 = DataRequest.objects.get(creator=self.bob, name='drU1', description='The first unfulfilled datarequest')
+		
+		self.assertEqual(self.dr1.status, 'C')
+
+class FulfillDatarequestsTestCase(TestCase):
+	""" Test the fulfill datarequests page/view """
+	
+	fixtures = ['just_users', 'datarequests']
+	
+	def setUp(self):
+		self.bob = User.objects.get(username="bob")
+		
+		self.dr1 = DataRequest.objects.get(creator=self.bob, name='drU1', description='The first unfulfilled datarequest')
+		
+		self.fulfill_url = reverse('epic.datarequests.views.fulfill_datarequest', kwargs={'item_id': self.dr1.id,})
+		
+	def tearDown(self):
+		pass
+	
+	def testLoggedOut(self):
+		response = self.client.get(self.fulfill_url)
+		self.assertEqual(response.status_code, 302)
+		
+		self.dr1 = DataRequest.objects.get(creator=self.bob, name='drU1', description='The first unfulfilled datarequest')
+		
+		self.assertEqual(self.dr1.status, 'U')
+
+			
+	def testUnOwned(self):
+		login = self.client.login(username='admin', password='admin')
+		self.failUnless(login, 'Could not login')
+		
+		response = self.client.get(self.fulfill_url)
+		self.assertEqual(response.status_code, 302)
+		
+		self.dr1 = DataRequest.objects.get(creator=self.bob, name='drU1', description='The first unfulfilled datarequest')
+		
+		self.assertEqual(self.dr1.status, 'U')
+			
+	def testOwned(self):
+		login = self.client.login(username='bob', password='bob')
+		self.failUnless(login, 'Could not login')
+		
+		response = self.client.get(self.fulfill_url)
+		self.assertEqual(response.status_code, 302)
+		
+		self.dr1 = DataRequest.objects.get(creator=self.bob, name='drU1', description='The first unfulfilled datarequest')
+		
+		self.assertEqual(self.dr1.status, 'F')
+
+class EditDatarequestsTestCase(TestCase):
+	""" Test the edit datarequests page/view """
+	
+	fixtures = ['just_users', 'datarequests']
+	
+	def setUp(self):
+		self.bob = User.objects.get(username="bob")
+		self.admin = User.objects.get(username="admin")
+		self.dr1 = DataRequest.objects.get(creator=self.bob, name='drU1', description='The first unfulfilled datarequest', status='U')
+		self.edit_url = reverse('epic.datarequests.views.edit_datarequest', kwargs={'item_id': self.dr1.id,})
+		
+		self.post_data = {
+			'name': 'new nameasdf 2589w',
+			'description': 'I have changed!',
+		}
+		
+	def tearDown(self):
+		pass
+	
+	def testLoggedOut(self):
+		response = self.client.get(self.edit_url)
+		self.assertEqual(response.status_code, 302)
+		
+		response = self.client.post(self.edit_url, self.post_data)
+		self.assertEqual(response.status_code, 302)
+	
+		self.dr1 = DataRequest.objects.get(creator=self.bob, name='drU1', description='The first unfulfilled datarequest', status='U')
+		
+	def testUnOwned(self):
+		login = self.client.login(username='admin', password='admin')
+		self.failUnless(login, 'Could not login')
+		
+		response = self.client.get(self.edit_url)
+		self.assertEqual(response.status_code, 302)
+		
+		response = self.client.post(self.edit_url, self.post_data)
+		self.assertEqual(response.status_code, 302)
+		
+		self.dr1 = DataRequest.objects.get(creator=self.bob, name='drU1', description='The first unfulfilled datarequest', status='U')
+		
+	def testOwned(self):
+		login = self.client.login(username='bob', password='bob')
+		self.failUnless(login, 'Could not login')
+		
+		response = self.client.get(self.edit_url)
+		self.assertEqual(response.status_code, 200)
+		
+		self.assertNotContains(response, self.post_data['name'])
+		self.assertNotContains(response, self.post_data['description'])
+		
+		response = self.client.post(self.edit_url, self.post_data)
+		self.assertEqual(response.status_code, 302)
+	
+		self.dr1 = DataRequest.objects.get(creator=self.bob, name=self.post_data['name'], description=self.post_data['description'], status='U')
+		
