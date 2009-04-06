@@ -2,7 +2,6 @@ from django.test import TestCase
 from django.core.urlresolvers import reverse
 from epic.datarequests.models import DataRequest
 from django.contrib.auth.models import User
-from django.template import TemplateDoesNotExist
 
 class DataRequestTestCase(TestCase):
 	""" Test that the model for datarequests is working correctly """
