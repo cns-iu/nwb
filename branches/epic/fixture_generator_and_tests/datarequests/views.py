@@ -2,7 +2,7 @@ from epic.core.models import Item
 
 from epic.datarequests.models import DataRequest
 from epic.datarequests.forms import DataRequestForm
-
+from django.template import RequestContext
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
 from django.core.urlresolvers import reverse
@@ -25,17 +25,20 @@ def view_datarequests(request):
 
 def view_datarequest(request, item_id):
 	datarequest = get_object_or_404(DataRequest, pk=item_id)
-	post_comment_form = PostCommentForm()
+	form = PostCommentForm()
 	user = request.user
-	return render_to_response('datarequests/view_datarequest.html', 
-							  {
-							    # This required that view_datarequest MUST NOT pass in any template arguments but datarequest, user and postcommentform
-		 				  		'datarequest': datarequest,
-				 				'user': user,
-						 		'post_comment_form': post_comment_form,
-							   })
+	
+	return render_to_response("datarequests/view_datarequest.html", 
+							  { # This required that view_datarequest MUST NOT pass
+							    # in any template arguments but datarequest, user
+							    # and postcommentform.
+		 				  		"datarequest": datarequest,
+						 		"form": form,
+							   },
+							   context_instance=RequestContext(request))
 
-# This required that view_datarequest MUST NOT pass in any template arguments but datarequest, user and postcommentform
+# This required that view_datarequest MUST NOT pass in any template arguments but
+# datarequest, user and postcommentform.
 post_datarequest_comment = make_comment_view(
 	DataRequest,
 	"epic.datarequests.views.view_datarequest",

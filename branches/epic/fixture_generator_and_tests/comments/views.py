@@ -3,6 +3,7 @@ from django.contrib.auth import logout
 from django.core.urlresolvers import reverse
 from django.http import HttpResponseRedirect
 from django.shortcuts import render_to_response, get_object_or_404
+from django.template import RequestContext
 
 from django.contrib.auth.decorators import login_required
 
@@ -20,7 +21,10 @@ from epic.comments.forms import PostCommentForm
 # template_item_name refers to the name of the item OBJECT used in the template
 # (ie "dataset" for the DataSet templates or "datarequest" for the DataRequest
 # templates).
-def make_comment_view(model, reverse_function_name, render_to_response_template, template_item_name):
+def make_comment_view(model,
+					  reverse_function_name,
+					  render_to_response_template,
+					  template_item_name):
 	
 	@login_required
 	def post_comment_view(request, item_id):
@@ -28,23 +32,26 @@ def make_comment_view(model, reverse_function_name, render_to_response_template,
 		item = get_object_or_404(model, pk=item_id)
 		
 		if request.method != "POST":
-			return HttpResponseRedirect(reverse(reverse_function_name, kwargs={'item_id':item_id,}))
+			return HttpResponseRedirect(reverse(reverse_function_name,
+												kwargs={ "item_id": item_id, }))
 		else:
-			post_comment_form = PostCommentForm(request.POST)
+			form = PostCommentForm(request.POST)
 			
-			if post_comment_form.is_valid():
-				comment_contents = post_comment_form.cleaned_data["comment"]
-				comment = Comment(posting_user=user, parent_item=item, contents=comment_contents)
+			if form.is_valid():
+				comment_contents = form.cleaned_data["comment"]
+				
+				comment = Comment(posting_user=user,
+								  parent_item=item,
+								  contents=comment_contents)
+				
 				comment.save()
 				
-				return HttpResponseRedirect(reverse(reverse_function_name, kwargs={'item_id':item_id,}))
+				return HttpResponseRedirect(reverse(reverse_function_name,
+													kwargs={ "item_id": item_id, }))
 			else:
-				return render_to_response(render_to_response_template, {
-					template_item_name: item,
-					'user': user,
-					'post_comment_form': post_comment_form,
-				})
-		
-		return HttpResponseRedirect("/login/?next=%s" % request.path)
+				return render_to_response(render_to_response_template,
+										  { template_item_name: item,
+										    "form": form, },
+										  context_instance=RequestContext(request))
 	
 	return post_comment_view

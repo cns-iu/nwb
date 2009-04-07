@@ -1,4 +1,4 @@
-from django.template import RequestContext, Context, loader
+from django.template import RequestContext, Context, loader, RequestContext
 from django.core.urlresolvers import reverse
 from django.http import HttpResponseRedirect, HttpResponse
 from django.shortcuts import render_to_response, get_object_or_404
@@ -39,8 +39,11 @@ def view_profile(request):
 	
 # 	HTML content relating to user, it's profile, datasets uploaded & data requests made 
 #	is fetched. 
-	return render_to_response('core/view_profile.html', 
-		{ "profile": profile, "user": user, "datasets":datasets, "datarequests":datarequests })
+	return render_to_response("core/view_profile.html",
+							  { "profile": profile,
+							    "datasets": datasets,
+							    "datarequests": datarequests },
+							  context_instance=RequestContext(request))
 	
 @login_required
 def edit_profile(request):

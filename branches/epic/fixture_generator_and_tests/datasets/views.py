@@ -30,11 +30,11 @@ def view_datasets(request):
 
 def view_dataset(request, item_id=None, slug=None):
 	dataset = get_object_or_404(DataSet, pk=item_id)
-	post_comment_form = PostCommentForm()
+	form = PostCommentForm()
 	user = request.user
 	
-	return render_to_response('datasets/view_dataset.html', 
-							  {'dataset': dataset, 'user': user, 'post_comment_form': post_comment_form},
+	return render_to_response("datasets/view_dataset.html", 
+							  { "dataset": dataset, "form": form },
 							  context_instance=RequestContext(request))
 
 post_dataset_comment = make_comment_view(
