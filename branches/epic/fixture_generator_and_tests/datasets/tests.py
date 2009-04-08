@@ -12,7 +12,7 @@ class UrlsTestCaseTestCase(TestCase):
 		self.bob = User.objects.get(username='bob')
 		self.ds1 = DataSet.objects.get(creator=self.bob, name='ds1', description='this is the first dataset', slug='ds1')
 		self.error_page_codes = [404, 500]
-		
+	
 	def tearDown(self):
 		pass
 	
