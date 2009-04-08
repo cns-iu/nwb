@@ -3,7 +3,7 @@
 {% block content %}
   <div class="requestspage">
 	<h1>
-	  <a href="{% url datarequests.views.view_datarequest item_id=datarequest.id %}">
+	  <a href="{% url datarequests.views.view_datarequest item_id=datarequest.id slug=datarequest.slug%}">
 	    {{ datarequest.name }}
 	  </a>
 	</h1>
@@ -18,19 +18,19 @@
 		{% ifnotequal datarequest.status 'C'%}
 		  {% ifnotequal datarequest.status 'F' %}
 		    <li>
-		      <a href="{% url datarequests.views.cancel_datarequest item_id=datarequest.id %}">
+		      <a href="{% url datarequests.views.cancel_datarequest item_id=datarequest.id slug=datarequest.slug %}">
 		        Mark Canceled
 		      </a>
 		    </li>
 		    
 		    <li>
-		      <a href="{% url datarequests.views.fulfill_datarequest item_id=datarequest.id %}">
+		      <a href="{% url datarequests.views.fulfill_datarequest item_id=datarequest.id slug=datarequest.slug %}">
 		        Mark Fulfilled
 		      </a>
 		    </li>
 		    
 		    <li>
-		      <a href="{% url datarequests.views.edit_datarequest item_id=datarequest.id %}">
+		      <a href="{% url datarequests.views.edit_datarequest item_id=datarequest.id slug=datarequest.slug %}">
 		        Edit
 		      </a>
 		    </li>

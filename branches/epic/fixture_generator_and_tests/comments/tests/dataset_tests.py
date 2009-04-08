@@ -17,12 +17,12 @@ def setUp(self):
 						   contents="abcd")
 	
 	self.VIEW_URL = reverse("epic.datasets.views.view_dataset",
-							kwargs={ "item_id": self.item.id })
+							kwargs={ "item_id": self.item.id, "slug": self.item.slug, })
 	
 	self.POST_TO_COMMENT_URL = reverse("epic.datasets.views.post_dataset_comment",
-									   kwargs={ "item_id": self.item.id })
+									   kwargs={ "item_id": self.item.id, "slug": self.item.slug, })
 	
 	self.ITEM_TYPE_STRING = "dataset"
 
 DataSetCommentTestCase = create_comment_test_case(setUp,
-												  [ "just_users", "datasets" ])
+												  [ "comments_just_users", "comments_datasets" ])

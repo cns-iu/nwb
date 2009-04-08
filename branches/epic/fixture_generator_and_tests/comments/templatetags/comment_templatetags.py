@@ -21,7 +21,7 @@ def display_post_comment_form_and_list_comments(
 	comments = item.comments.all()
 	
 	post_comment_url = reverse(post_comment_reverse_view,
-							   kwargs={ "item_id": item.id })
+							   kwargs={ 'item_id': item.id, 'slug': item.slug })
 	
 	return { "comments": comments,
 			 "user": user,

@@ -27,13 +27,13 @@ def make_comment_view(model,
 					  template_item_name):
 	
 	@login_required
-	def post_comment_view(request, item_id):
+	def post_comment_view(request, item_id, slug):
 		user = request.user
 		item = get_object_or_404(model, pk=item_id)
 		
 		if request.method != "POST":
 			return HttpResponseRedirect(reverse(reverse_function_name,
-												kwargs={ "item_id": item_id, }))
+												kwargs={ "item_id": item_id, 'slug': item.slug}))
 		else:
 			form = PostCommentForm(request.POST)
 			
@@ -47,7 +47,7 @@ def make_comment_view(model,
 				comment.save()
 				
 				return HttpResponseRedirect(reverse(reverse_function_name,
-													kwargs={ "item_id": item_id, }))
+													kwargs={ "item_id": item_id, 'slug': item.slug }))
 			else:
 				return render_to_response(render_to_response_template,
 										  { template_item_name: item,

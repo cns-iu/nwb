@@ -6,7 +6,7 @@ from django.contrib.auth.models import User
 class DataRequestTestCase(TestCase):
 	""" Test that the model for datarequests is working correctly """
 	
-	fixtures = ['just_users', 'datarequests']
+	fixtures = ['datarequests_just_users', 'datarequests_datarequests']
 	
 	def setUp(self):
 		self.admin = User.objects.get(username='admin')
@@ -70,7 +70,7 @@ class DataRequestTestCase(TestCase):
 class UrlsTestCase(TestCase):
 	""" Test all the urls to make sure that the view for each works """
 	
-	fixtures = ['just_users', 'datarequests'] # TODO: I just need one datarequest and a user
+	fixtures = ['datarequests_just_users', 'datarequests_datarequests'] # TODO: I just need one datarequest and a user
 	
 	def setUp(self):
 		self.bob = User.objects.get(username='bob')
@@ -102,7 +102,7 @@ class UrlsTestCase(TestCase):
 		self.failUnlessEqual(response.status_code, 200)
 		
 	def testCommentDataReqeusts(self):
-		url = reverse('epic.datarequests.views.post_datarequest_comment', kwargs={'item_id':self.dr1.id})
+		url = reverse('epic.datarequests.views.post_datarequest_comment', kwargs={'item_id':self.dr1.id, 'slug':self.dr1.slug })
 		response = self.client.get(url)
 		self.failUnlessEqual(response.status_code, 302)
 		
@@ -113,7 +113,7 @@ class UrlsTestCase(TestCase):
 		self.failUnlessEqual(response.status_code, 302)
 		
 	def testEditDataReqeusts(self):
-		url = reverse('epic.datarequests.views.edit_datarequest', kwargs={'item_id':self.dr1.id})
+		url = reverse('epic.datarequests.views.edit_datarequest', kwargs={'item_id':self.dr1.id, 'slug':self.dr1.slug })
 		response = self.client.get(url)
 		self.failUnlessEqual(response.status_code, 302)
 		
@@ -124,7 +124,7 @@ class UrlsTestCase(TestCase):
 		self.failUnlessEqual(response.status_code, 200)
 		
 	def testCancelDataRequests(self):
-		url = reverse('epic.datarequests.views.cancel_datarequest', kwargs={'item_id':self.dr1.id})
+		url = reverse('epic.datarequests.views.cancel_datarequest', kwargs={'item_id':self.dr1.id, 'slug':self.dr1.slug })
 		response = self.client.get(url)
 		self.failUnlessEqual(response.status_code, 302)
 		
@@ -135,7 +135,7 @@ class UrlsTestCase(TestCase):
 		self.failUnlessEqual(response.status_code, 302)
 		
 	def testFulfillDataReqeusts(self):
-		url = reverse('epic.datarequests.views.fulfill_datarequest', kwargs={'item_id':self.dr1.id})
+		url = reverse('epic.datarequests.views.fulfill_datarequest', kwargs={'item_id':self.dr1.id, 'slug':self.dr1.slug })
 		response = self.client.get(url)
 		self.failUnlessEqual(response.status_code, 302)
 		
@@ -148,7 +148,7 @@ class UrlsTestCase(TestCase):
 class ViewDatarequestsTestCase(TestCase):
 	""" Test the view datarequests page/view """
 	
-	fixtures = ['just_users', 'datarequests']
+	fixtures = ['datarequests_just_users', 'datarequests_datarequests']
 	
 	def setUp(self):
 		self.bob = User.objects.get(username="bob")
@@ -156,9 +156,9 @@ class ViewDatarequestsTestCase(TestCase):
 		self.dr1 = DataRequest.objects.get(creator=self.bob, name='drU1', description='The first unfulfilled datarequest', status='U')
 	
 		self.datarequests_url = reverse('epic.datarequests.views.view_datarequests')
-		self.edit_url = reverse('epic.datarequests.views.edit_datarequest', kwargs={'item_id': self.dr1.id,})
-		self.cancel_url = reverse('epic.datarequests.views.cancel_datarequest', kwargs={'item_id': self.dr1.id,})
-		self.fulfill_url = reverse('epic.datarequests.views.fulfill_datarequest', kwargs={'item_id': self.dr1.id,})
+		self.edit_url = reverse('epic.datarequests.views.edit_datarequest', kwargs={'item_id': self.dr1.id, 'slug':self.dr1.slug })
+		self.cancel_url = reverse('epic.datarequests.views.cancel_datarequest', kwargs={'item_id': self.dr1.id, 'slug':self.dr1.slug })
+		self.fulfill_url = reverse('epic.datarequests.views.fulfill_datarequest', kwargs={'item_id': self.dr1.id, 'slug':self.dr1.slug })
 		
 	def tearDown(self):
 		pass
@@ -220,20 +220,20 @@ class ViewDatarequestsTestCase(TestCase):
 		self.assertContains(response, self.cancel_url)
 		self.assertContains(response, self.fulfill_url)
 		
-class ViewDatarequestTestCase(TestCase):
+class ViewDataRequestTestCase(TestCase):
 	""" Test the view datarequest page/view """
 	
-	fixtures = ['just_users', 'datarequests']
+	fixtures = ['datarequests_just_users', 'datarequests_datarequests']
 	
 	def setUp(self):
 		self.bob = User.objects.get(username="bob")
 		
-		self.dr1 = DataRequest.objects.get(creator=self.bob, name='drU1', description='The first unfulfilled datarequest', status='U')
-	
-		self.datarequest_url = reverse('epic.datarequests.views.view_datarequest', kwargs={'item_id': self.dr1.id,})
-		self.edit_url = reverse('epic.datarequests.views.edit_datarequest', kwargs={'item_id': self.dr1.id,})
-		self.cancel_url = reverse('epic.datarequests.views.cancel_datarequest', kwargs={'item_id': self.dr1.id,})
-		self.fulfill_url = reverse('epic.datarequests.views.fulfill_datarequest', kwargs={'item_id': self.dr1.id,})
+		self.dr1 = DataRequest.objects.get(creator=self.bob, name='drU1', description='The first unfulfilled datarequest', status='U', slug='drU1')
+		
+		self.datarequest_url = reverse('epic.datarequests.views.view_datarequest', kwargs={'item_id': self.dr1.id, 'slug':self.dr1.slug })
+		self.edit_url = reverse('epic.datarequests.views.edit_datarequest', kwargs={'item_id': self.dr1.id, 'slug':self.dr1.slug })
+		self.cancel_url = reverse('epic.datarequests.views.cancel_datarequest', kwargs={'item_id': self.dr1.id, 'slug':self.dr1.slug })
+		self.fulfill_url = reverse('epic.datarequests.views.fulfill_datarequest', kwargs={'item_id': self.dr1.id, 'slug':self.dr1.slug })
 		
 	def tearDown(self):
 		pass
@@ -281,13 +281,13 @@ class ViewDatarequestTestCase(TestCase):
 		self.assertContains(response, self.fulfill_url)
 		
 	def testNonExistentPage(self):
-		response = self.client.get(reverse('epic.datarequests.views.view_datarequest', kwargs={'item_id': 10000000000000000,}))
+		response = self.client.get(reverse('epic.datarequests.views.view_datarequest', kwargs={'item_id': 10000000000000000, 'slug': 'fake-slug',}))
 		self.failUnless(response.status_code, 404)
 		
 class NewDataRequestTestCase(TestCase):
 	""" Test the new datarequest page/view """
 	
-	fixtures = ['just_users', 'datarequests']
+	fixtures = ['datarequests_just_users', 'datarequests_datarequests']
 	
 	def setUp(self):
 		self.new_datarequest_url = reverse('epic.datarequests.views.new_datarequest')	
@@ -329,14 +329,14 @@ class NewDataRequestTestCase(TestCase):
 class CancelDatarequestsTestCase(TestCase):
 	""" Test the cancel datarequests page/view """
 	
-	fixtures = ['just_users', 'datarequests']
+	fixtures = ['datarequests_just_users', 'datarequests_datarequests']
 	
 	def setUp(self):
 		self.bob = User.objects.get(username="bob")
 		
 		self.dr1 = DataRequest.objects.get(creator=self.bob, name='drU1', description='The first unfulfilled datarequest')
 
-		self.cancel_url = reverse('epic.datarequests.views.cancel_datarequest', kwargs={'item_id': self.dr1.id,})
+		self.cancel_url = reverse('epic.datarequests.views.cancel_datarequest', kwargs={'item_id': self.dr1.id, 'slug':self.dr1.slug })
 		
 	def tearDown(self):
 		pass
@@ -373,14 +373,14 @@ class CancelDatarequestsTestCase(TestCase):
 class FulfillDatarequestsTestCase(TestCase):
 	""" Test the fulfill datarequests page/view """
 	
-	fixtures = ['just_users', 'datarequests']
+	fixtures = ['datarequests_just_users', 'datarequests_datarequests']
 	
 	def setUp(self):
 		self.bob = User.objects.get(username="bob")
 		
 		self.dr1 = DataRequest.objects.get(creator=self.bob, name='drU1', description='The first unfulfilled datarequest')
 		
-		self.fulfill_url = reverse('epic.datarequests.views.fulfill_datarequest', kwargs={'item_id': self.dr1.id,})
+		self.fulfill_url = reverse('epic.datarequests.views.fulfill_datarequest', kwargs={'item_id': self.dr1.id, 'slug':self.dr1.slug })
 		
 	def tearDown(self):
 		pass
@@ -419,13 +419,13 @@ class FulfillDatarequestsTestCase(TestCase):
 class EditDatarequestsTestCase(TestCase):
 	""" Test the edit datarequests page/view """
 	
-	fixtures = ['just_users', 'datarequests']
+	fixtures = ['datarequests_just_users', 'datarequests_datarequests']
 	
 	def setUp(self):
 		self.bob = User.objects.get(username="bob")
 		self.admin = User.objects.get(username="admin")
 		self.dr1 = DataRequest.objects.get(creator=self.bob, name='drU1', description='The first unfulfilled datarequest', status='U')
-		self.edit_url = reverse('epic.datarequests.views.edit_datarequest', kwargs={'item_id': self.dr1.id,})
+		self.edit_url = reverse('epic.datarequests.views.edit_datarequest', kwargs={'item_id': self.dr1.id, 'slug':self.dr1.slug })
 		
 		self.post_data = {
 			'name': 'new nameasdf 2589w',

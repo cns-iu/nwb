@@ -32,14 +32,16 @@ class ProfileDataRequestTestCase(TestCase):
 		datarequest = DataRequest(creator = user, 
 									name = 'Inbuilt Data request Object with Status U', 
 									description = 'Inbuilt Data request Object with Status U for Bill',
-									status = 'U'
+									status = 'U',
+									slug = 'whatever'
 								)
 		datarequest.save()
 		
 		datarequest = DataRequest(creator = user, 
 									name = 'Inbuilt Data request Object with Status F', 
 									description = 'Inbuilt Data request Object with Status F for Bill',
-									status = 'F'
+									status = 'F',
+									slug = 'whatever'
 								)
 		datarequest.save()
 		
@@ -59,7 +61,8 @@ class ProfileDataRequestTestCase(TestCase):
 		datarequest = DataRequest(creator = user, 
 									name = 'Inbuilt Data request Object with Status C <- should not be shown', 
 									description = 'Inbuilt Data request Object with Status C for Bill',
-									status = 'C'
+									status = 'C',
+									slug = 'whatever'
 								)
 		datarequest.save()
 		

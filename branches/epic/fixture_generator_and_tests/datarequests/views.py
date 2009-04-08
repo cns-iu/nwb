@@ -23,7 +23,7 @@ def view_datarequests(request):
     datarequest_form = DataRequestForm()
     return render_to_response('datarequests/view_datarequests.html', {'datarequests': datarequests,'user':request.user, 'datarequest_form':datarequest_form,})
 
-def view_datarequest(request, item_id):
+def view_datarequest(request, item_id, slug):
 	datarequest = get_object_or_404(DataRequest, pk=item_id)
 	form = PostCommentForm()
 	user = request.user
@@ -60,19 +60,19 @@ def new_datarequest(request):
 			datarequest.creator = user
 			datarequest.slug = slugify(datarequest.name)
 			datarequest.save()
-			return HttpResponseRedirect(reverse('epic.datarequests.views.view_datarequest', kwargs={'item_id':datarequest.id,}))
+			return HttpResponseRedirect(reverse('epic.datarequests.views.view_datarequest', kwargs={'item_id':datarequest.id, 'slug':datarequest.slug, }))
 		else:
 			#Form will have errors which will be displayed by the new_datarequest.html page
 			pass
 	return render_to_response('datarequests/new_datarequest.html', {'form':form, 'user':user,})
 
 @login_required
-def edit_datarequest(request, item_id=None):
+def edit_datarequest(request, item_id, slug):
 	user = request.user
 	datarequest = get_object_or_404(DataRequest,pk=item_id)
 	if datarequest.creator != user:
 		#only a request's owner should be able to change it
-		return HttpResponseRedirect(reverse('epic.datarequests.views.view_datarequest', kwargs={'item_id':datarequest.id,}))
+		return HttpResponseRedirect(reverse('epic.datarequests.views.view_datarequest', kwargs={'item_id':datarequest.id, 'slug':datarequest.slug, }))
 	else:
 		if request.method != 'POST':
 			#User hasn't seen the form yet, so fill in what we know
@@ -85,32 +85,32 @@ def edit_datarequest(request, item_id=None):
 				datarequest.slug = slugify(datarequest.name)  
 				datarequest.save()
 				
-				return HttpResponseRedirect(reverse('epic.datarequests.views.view_datarequest', kwargs={'item_id':datarequest.id,}))
+				return HttpResponseRedirect(reverse('epic.datarequests.views.view_datarequest', kwargs={'item_id':datarequest.id, 'slug':datarequest.slug, }))
 			else:
 				#Form will have errors which will be displayed by the new_datarequest.html page
 				pass
 		return render_to_response('datarequests/edit_datarequest.html', {'form':form, 'user':user, 'datarequest':datarequest})
 	
 @login_required
-def cancel_datarequest(request, item_id=None):
+def cancel_datarequest(request, item_id, slug):
 	user = request.user
 	datarequest = get_object_or_404(DataRequest,pk=item_id)
 	if datarequest.creator != user:
 		#only a request's owner should be able to change it
-		return HttpResponseRedirect(reverse('epic.datarequests.views.view_datarequest', kwargs={'item_id':datarequest.id,}))
+		return HttpResponseRedirect(reverse('epic.datarequests.views.view_datarequest', kwargs={'item_id':datarequest.id, 'slug':datarequest.slug, }))
 	else:
 		datarequest.cancel()
 		datarequest.save()
-		return HttpResponseRedirect(reverse('epic.datarequests.views.view_datarequest', kwargs={'item_id':datarequest.id,}))
+		return HttpResponseRedirect(reverse('epic.datarequests.views.view_datarequest', kwargs={'item_id':datarequest.id, 'slug':datarequest.slug, }))
 
 @login_required
-def fulfill_datarequest(request, item_id=None):
+def fulfill_datarequest(request, item_id, slug):
 	user = request.user
 	datarequest = get_object_or_404(DataRequest,pk=item_id)
 	if datarequest.creator != user:
 		#only a request's owner should be able to change it
-		return HttpResponseRedirect(reverse('epic.datarequests.views.view_datarequest', kwargs={'item_id':datarequest.id,}))
+		return HttpResponseRedirect(reverse('epic.datarequests.views.view_datarequest', kwargs={'item_id':datarequest.id, 'slug':datarequest.slug, }))
 	else:
 		datarequest.fulfill()
 		datarequest.save()
-		return HttpResponseRedirect(reverse('epic.datarequests.views.view_datarequest', kwargs={'item_id':datarequest.id,}))	
+		return HttpResponseRedirect(reverse('epic.datarequests.views.view_datarequest', kwargs={'item_id':datarequest.id, 'slug':datarequest.slug, }))	

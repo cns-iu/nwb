@@ -1,16 +1,16 @@
 {% if datarequests %}
  	{% for datarequest in datarequests %}
 		<div class="databox">
-		  <h1> <a href="{% url datarequests.views.view_datarequest item_id=datarequest.id %}">{{ datarequest.name }}</a></h1>
+		  <h1> <a href="{% url datarequests.views.view_datarequest item_id=datarequest.id  slug=datarequest.slug%}">{{ datarequest.name }}</a></h1>
 		  <ul class="datainfo">
 		  	<li id="first">{{ datarequest.creator.get_profile }}</li>
 			<li>{{ datarequest.created_at|date:"F d, Y - P" }}</li>
 			{% ifequal user datarequest.creator %}
 			  {% ifnotequal datarequest.status 'C'%}
 		        {% ifnotequal datarequest.status 'F' %}
-		  		  <li><a href="{% url datarequests.views.cancel_datarequest item_id=datarequest.id %}">Mark Canceled</a></li>
-		  		  <li><a href="{% url datarequests.views.fulfill_datarequest item_id=datarequest.id %}">Mark Fulfilled</a></li>
-		  	      <li><a href="{% url datarequests.views.edit_datarequest item_id=datarequest.id %}">Edit</a></li>
+		  		  <li><a href="{% url datarequests.views.cancel_datarequest item_id=datarequest.id slug=datarequest.slug %}">Mark Canceled</a></li>
+		  		  <li><a href="{% url datarequests.views.fulfill_datarequest item_id=datarequest.id slug=datarequest.slug %}">Mark Fulfilled</a></li>
+		  	      <li><a href="{% url datarequests.views.edit_datarequest item_id=datarequest.id slug=datarequest.slug %}">Edit</a></li>
 		  		{% endifnotequal %}
 			  {% endifnotequal %}
             {% endifequal %}
@@ -20,7 +20,7 @@
 		  </ul>
 		  <p>{{ datarequest.description|truncatewords:50 }}</p>  
 		  <div class="comments">
-			<a href="{% url datarequests.views.view_datarequest item_id=datarequest.id %}">{{ datarequest.comments.all|length }} comment{{ datarequest.comments.all|length|pluralize }}.</a>
+			<a href="{% url datarequests.views.view_datarequest item_id=datarequest.id slug=datarequest.slug %}">{{ datarequest.comments.all|length }} comment{{ datarequest.comments.all|length|pluralize }}.</a>
 		  </div>   
 		</div>
 	{% endfor %}

@@ -17,12 +17,12 @@ def setUp(self):
 						   contents="abcd")
 	
 	self.VIEW_URL = reverse("epic.datarequests.views.view_datarequest",
-							kwargs={ "item_id": self.item.id })
+							kwargs={ "item_id": self.item.id, "slug": self.item.slug })
 	
 	self.POST_TO_COMMENT_URL = reverse("epic.datarequests.views.post_datarequest_comment",
-									   kwargs={ "item_id": self.item.id })
+									   kwargs={ "item_id": self.item.id, "slug": self.item.slug })
 	
 	self.ITEM_TYPE_STRING = "datarequest"
 
 DataRequestCommentTestCase = create_comment_test_case(setUp,
-													  [ "just_users", "datarequests" ])
+													  [ "comments_just_users", "comments_datarequests" ])
