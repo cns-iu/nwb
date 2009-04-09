@@ -15,7 +15,9 @@
 			  {% endifnotequal %}
             {% endifequal %}
 	  		{% if user.is_authenticated %}
+	  		{% ifnotequal user datarequest.creator %}
 			  <li><a href="{% url messages.views.send_message user_id=user.id, recipient_id=datarequest.creator.id %}">Contact Creator</a></li>
+	  		{% endifnotequal %}
 	  		{% endif %}
 		  </ul>
 		  <p>{{ datarequest.description|truncatewords:50 }}</p>  
