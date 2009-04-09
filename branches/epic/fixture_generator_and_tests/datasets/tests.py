@@ -269,16 +269,21 @@ class CreateDatasetTestCase(TestCase):
 		
 		self.create_dataset_url = reverse('epic.datasets.views.create_dataset')
 		
-		import os, tempfile
+		import tempfile
 		#make files for us to upload 
-		(fd1, fname1) = tempfile.mkstemp()
-		test_file1 = os.fdopen(fd1, "w")
-		(fd2, fname2) = tempfile.mkstemp()
-		test_file2 = os.fdopen(fd2, "w")
+
+		test_file1 = tempfile.TemporaryFile()
+		test_file2 = tempfile.TemporaryFile()
 		
 		test_file1.write("This is a test file1")
 		test_file2.write("This is a test file2")
 		
+		test_file1.flush()
+		test_file2.flush()
+
+		test_file1.seek(0)
+		test_file2.seek(0)
+
 		self.post_data = {
 			'name': 'This is a new dataset 209u359hdfg',
 			'description': '20y5hdfg ahi3hoh348t3948t5hsdfigh',
@@ -311,7 +316,7 @@ class CreateDatasetTestCase(TestCase):
 		self.assertEqual(response.status_code, 200)
 		
 		response = self.client.post(self.create_dataset_url, self.post_data)
-		self.assertEqual(response.status_code, 302)
+		self.assertEqual(response.status_code, 302, response.content)
 		
 		ds = DataSet.objects.get(name=self.post_data['name'], description=self.post_data['description'])
 
