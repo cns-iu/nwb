@@ -44,8 +44,8 @@
                 {{ user.username }}
               {% endif%}
             </a> | </span>
-            
-            <a href="{% url messages.views.index user_id=user.id %}">Messages</a> | 
+            {% load messages_templatetags %}
+            <a href="{% url messages.views.index user_id=user.id %}">Messages ({% num_unread_messages user %})</a> | 
             <a href="{% url core.views.logout_view %}">Log Out</a>
           {% else %}
             {% load core_templatetags %}
