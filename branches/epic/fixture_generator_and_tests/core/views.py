@@ -1,31 +1,30 @@
-from django.template import RequestContext, Context, loader, RequestContext
-from django.core.urlresolvers import reverse
-from django.http import HttpResponseRedirect, HttpResponse
-from django.shortcuts import render_to_response, get_object_or_404
+from django.contrib.auth import logout
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User, UserManager
-from django.contrib.auth import logout
-from django.utils import simplejson
+from django.core.urlresolvers import reverse
 from django.forms.formsets import formset_factory
+from django.http import HttpResponseRedirect, HttpResponse
+from django.shortcuts import render_to_response, get_object_or_404
+from django.template import RequestContext, Context, loader
+from django.utils import simplejson
 
-from epic.datasets.models import DataSet
+from epic.core.forms import ForgotUsernameForm, ForgotEmailForm, ForgotPasswordForm, ProfileForm, UserForm
+from epic.core.models import Profile
 from epic.datarequests.models import DataRequest
-
-from models import Profile
-from forms import ForgotUsernameForm, ForgotEmailForm, ForgotPasswordForm, ProfileForm, UserForm
+from epic.datasets.models import DataSet
 
 
 def site_index(request):
-	return render_to_response('core/site_index.html', {'user':request.user,})
+	return render_to_response('core/site_index.html', context_instance=RequestContext(request))
 
 def browse(request):
 	datasets = DataSet.objects.all().order_by('-created_at')
 	return render_to_response('core/browse.html',
-		{ 'user': request.user, 'datasets': datasets, },
+		{'datasets': datasets, },
 		context_instance=RequestContext(request))
 
 def about (request):
-	return render_to_response('core/about.html',{'user':request.user,})
+	return render_to_response('core/about.html', context_instance=RequestContext(request))
 
 @login_required
 def view_profile(request):
@@ -68,7 +67,7 @@ def edit_profile(request):
 		else:
 			# Form will have errors which will be displayed by page
 			pass
-	return render_to_response('core/edit_profile.html', {'profile_form':profile_form, 'user_form':user_form, 'user':user,})
+	return render_to_response('core/edit_profile.html', {'profile_form':profile_form, 'user_form':user_form,}, context_instance=RequestContext(request))
 
 def logout_view(request):
 	logout(request)

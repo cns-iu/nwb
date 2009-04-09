@@ -1,19 +1,17 @@
-from epic.core.models import Item
-
-from epic.datarequests.models import DataRequest
-from epic.datarequests.forms import DataRequestForm
-from django.template import RequestContext
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
 from django.core.urlresolvers import reverse
 from django.http import HttpResponseRedirect
 from django.shortcuts import render_to_response, get_object_or_404
+from django.template import RequestContext
 from django.template.defaultfilters import slugify
 
-
-from epic.comments.models import Comment
 from epic.comments.forms import PostCommentForm
+from epic.comments.models import Comment
 from epic.comments.views import make_comment_view
+from epic.core.models import Item
+from epic.datarequests.forms import DataRequestForm
+from epic.datarequests.models import DataRequest
 
 from datetime import datetime
 
@@ -21,7 +19,7 @@ from datetime import datetime
 def view_datarequests(request):
     datarequests = DataRequest.objects.exclude(status='C').order_by('-created_at')
     datarequest_form = DataRequestForm()
-    return render_to_response('datarequests/view_datarequests.html', {'datarequests': datarequests,'user':request.user, 'datarequest_form':datarequest_form,})
+    return render_to_response('datarequests/view_datarequests.html', {'datarequests': datarequests,'datarequest_form':datarequest_form,}, context_instance=RequestContext(request))
 
 def view_datarequest(request, item_id, slug):
 	datarequest = get_object_or_404(DataRequest, pk=item_id)
@@ -64,7 +62,7 @@ def new_datarequest(request):
 		else:
 			#Form will have errors which will be displayed by the new_datarequest.html page
 			pass
-	return render_to_response('datarequests/new_datarequest.html', {'form':form, 'user':user,})
+	return render_to_response('datarequests/new_datarequest.html', {'form':form}, context_instance=RequestContext(request))
 
 @login_required
 def edit_datarequest(request, item_id, slug):
@@ -89,7 +87,7 @@ def edit_datarequest(request, item_id, slug):
 			else:
 				#Form will have errors which will be displayed by the new_datarequest.html page
 				pass
-		return render_to_response('datarequests/edit_datarequest.html', {'form':form, 'user':user, 'datarequest':datarequest})
+		return render_to_response('datarequests/edit_datarequest.html', {'form':form, 'datarequest':datarequest}, context_instance=RequestContext(request))
 	
 @login_required
 def cancel_datarequest(request, item_id, slug):

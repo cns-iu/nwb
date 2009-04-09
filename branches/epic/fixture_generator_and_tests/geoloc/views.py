@@ -1,10 +1,10 @@
-from django.template import RequestContext, Context, loader
+from django.contrib.auth import logout
+from django.contrib.auth.decorators import login_required
+from django.contrib.auth.models import User, UserManager
 from django.core.urlresolvers import reverse
 from django.http import HttpResponseRedirect, HttpResponse
 from django.shortcuts import render_to_response, get_object_or_404, get_list_or_404
-from django.contrib.auth.decorators import login_required
-from django.contrib.auth.models import User, UserManager
-from django.contrib.auth import logout
+from django.template import RequestContext, Context, loader
 from django.utils import simplejson
 
 from epic.geoloc.utils import get_best_location, CouldNotFindLocation

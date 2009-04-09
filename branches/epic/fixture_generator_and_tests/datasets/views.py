@@ -25,7 +25,7 @@ from decimal import Decimal
 def view_datasets(request):
     datasets = DataSet.objects.all().order_by('-created_at')
     return render_to_response('datasets/view_datasets.html',
-							  {'datasets': datasets, 'user': request.user},
+							  {'datasets': datasets,},
 							  context_instance=RequestContext(request))
 
 def view_dataset(request, item_id=None, slug=None):
@@ -49,7 +49,7 @@ def view_user_dataset_list(request, user_id=None):
 	requested_user = get_object_or_404(User, pk=user_id)
 	datasets = DataSet.objects.filter(creator=user_id).order_by('-created_at')
 	return render_to_response('datasets/view_user_dataset_list.html', 
-							  {'datasets': datasets, 'user': request.user, 'requested_user':requested_user},
+							  {'datasets': datasets, 'requested_user':requested_user},
 							  context_instance=RequestContext(request))
 
 @login_required
@@ -59,7 +59,7 @@ def create_dataset(request):
 		form = NewDataSetForm()
 		add_formset = GeoLocationFormSet(prefix='add')
 		remove_formset = RemoveGeoLocationFormSet(prefix='remove')
-		return render_to_response('datasets/create_dataset.html', {'form': form, 'add_formset': add_formset, 'remove_formset':remove_formset, 'user':request.user,})
+		return render_to_response('datasets/create_dataset.html', {'form': form, 'add_formset': add_formset, 'remove_formset':remove_formset,}, context_instance=RequestContext(request))
 	else:
 		# Create all the forms and formsets from the post data
 		form = NewDataSetForm(request.POST, request.FILES)
@@ -139,7 +139,7 @@ def create_dataset(request):
 			return HttpResponseRedirect(reverse('epic.datasets.views.view_dataset', kwargs={'item_id':new_dataset.id,'slug':new_dataset.slug}))
 		else:
 			#form wasn't filled out correctly
-			return render_to_response('datasets/create_dataset.html', {'form':form, 'add_formset': add_formset, 'remove_formset':remove_formset, 'user':request.user})
+			return render_to_response('datasets/create_dataset.html', {'form':form, 'add_formset': add_formset, 'remove_formset':remove_formset,}, context_instance=RequestContext(request))
 
 @login_required
 def edit_dataset(request, item_id, slug=None):
@@ -241,11 +241,11 @@ def edit_dataset(request, item_id, slug=None):
 	return render_to_response("datasets/edit_dataset.html", 
 							  {
 							  	'dataset': dataset,
-								'user': user,
 								'form': form,
 								'add_formset': add_formset,
 								'remove_formset':remove_formset,
-							  })
+							  },
+							  context_instance=RequestContext(request))
 
 @login_required
 def rate_dataset(request, item_id, input_rating=None, slug=None):
@@ -274,7 +274,7 @@ def rate_dataset(request, item_id, input_rating=None, slug=None):
 				# form.errors
 				pass
 				
-		return render_to_response('datasets/rate_dataset.html', {'form':form, 'user':request.user, 'item':dataset,})
+		return render_to_response('datasets/rate_dataset.html', {'form':form, 'item':dataset,}, context_instance=RequestContext(request))
 	
 @login_required
 def rate_dataset_using_input_rating(request, item_id, input_rating=None, slug=None):
@@ -303,7 +303,7 @@ def tag_dataset(request, item_id, slug=None):
 		form = TagDataSetForm(initial={'tags': current_tags})
 		
 		return render_to_response('datasets/tag_dataset.html',
-			                      {'item_id': dataset.id, 'form': form, 'user': request.user,})
+			                      {'item_id': dataset.id, 'form': form,}, context_instance=RequestContext(request))
 	else:
 		form = TagDataSetForm(request.POST)
 
@@ -316,4 +316,4 @@ def tag_dataset(request, item_id, slug=None):
 				                                kwargs={'item_id': dataset.id, 'slug': slug,}))
 		else:
 			return render_to_response('datasets/tag_dataset.html', 
-			                          {'form':form, 'user':request.user, 'item':dataset})
+			                          {'form':form,'item':dataset}, context_instance=RequestContext(request))
