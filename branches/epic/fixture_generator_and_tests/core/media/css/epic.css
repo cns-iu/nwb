@@ -71,7 +71,7 @@ html, body {
 }
 	
 #login a, a:visited {
-	font-weight: bold;
+	font-weight: normal;
 	color: #FFFFFF;
 }
 #login a:hover, a:active {
