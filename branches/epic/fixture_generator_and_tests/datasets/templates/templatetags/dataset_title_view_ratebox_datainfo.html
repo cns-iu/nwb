@@ -34,7 +34,7 @@
   {% if user.is_authenticated %}
     {% ifnotequal user dataset.creator %}
       [<a href="{% url messages.views.send_message user_id=user.id, recipient_id=dataset.creator.id %}">
-        Contact User
+        Contact Creator
       </a>]
     {% endifnotequal %}
   {% endif %}
