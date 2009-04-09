@@ -4,155 +4,168 @@ from django.contrib.auth.models import User
 from epic.tags.models import Tagging
 from epic.datasets.models import DataSet
 
+def common_setUp(self):
+	# DS1 is created by bob.
+	self.bob = User.objects.get(username="bob")
+	
+	# TODO: Put this in a fixture.
+	self.ds1 = DataSet.objects.get(creator=self.bob,
+								   name="ds1",
+								   slug="ds1",
+								   description="dataset number one")
+
+	# DS2 is created by bill.
+	self.bill = User.objects.get(username="bill")
+	
+	self.ds2 = DataSet.objects.get(creator=self.bill,
+								   name="ds2",
+								   slug="ds2",
+								   description="dataset number two")
+	
+	self.TAG1 = "tag1"
+	self.TAG2 = "tag2"
+	self.TAG3 = "tag3"
+	self.TAG4 = "tag4"
+	
+	self.TAG_INDEX_URL = reverse("epic.tags.views.index")
+	
+	self.TAG1_URL = reverse("epic.tags.views.view_items_for_tag",
+							kwargs={ "tag_name": self.TAG1 })
+	
+	self.TAG2_URL = reverse("epic.tags.views.view_items_for_tag",
+							kwargs={ "tag_name": self.TAG2 })
+	
+	self.TAG3_URL = reverse("epic.tags.views.view_items_for_tag",
+							kwargs={ "tag_name": self.TAG3 })
+	
+	self.TAG4_URL = reverse("epic.tags.views.view_items_for_tag",
+							kwargs={ "tag_name": self.TAG4 })
+	
+	self.DS1_URL = reverse("epic.datasets.views.view_dataset",
+						   kwargs={ "item_id": self.ds1.id,
+						   			"slug": self.ds1.slug, })
+	
+	self.DS2_URL = reverse("epic.datasets.views.view_dataset",
+						   kwargs={ "item_id": self.ds2.id,
+						   			"slug": self.ds2.slug, })
+
 class ViewTestCase(TestCase):
+	fixtures = [ "tags_just_users", "tags_tags" ]
 	
 	def setUp(self):
-		# DS1 is created by peebs and is tagged tag1-peebs, tag2-peebs
-		self.peebs = User.objects.get(username="peebs")
-		self.ds1 = DataSet.objects.create(creator=self.peebs, name="ds1", slug="ds1", description="dataset number one")
-
-		# DS2 is created by admin and is tagged tag3-admin, tag4-peebs
-		self.admin = User.objects.get(username="admin")
-		self.ds2 = DataSet.objects.create(creator=self.admin, name="ds2", slug="ds2", description="dataset number two")
-		
-		self.tag1 = Tagging.objects.create(item=self.ds1, tag="tag1", user=self.peebs)
-		self.tag2 = Tagging.objects.create(item=self.ds1, tag="tag2", user=self.peebs)
-		self.tag3 = Tagging.objects.create(item=self.ds2, tag="tag3", user=self.admin)
-		self.tag4 = Tagging.objects.create(item=self.ds2, tag="tag4", user=self.peebs)
-		
-		self.tag_index_url = reverse('epic.tags.views.index')
-		self.tag1_url = reverse('epic.tags.views.view_items_for_tag', kwargs={'tag_name': self.tag1.tag})
-		self.tag2_url = reverse('epic.tags.views.view_items_for_tag', kwargs={'tag_name': self.tag2.tag})
-		self.tag3_url = reverse('epic.tags.views.view_items_for_tag', kwargs={'tag_name': self.tag3.tag})
-		self.tag4_url = reverse('epic.tags.views.view_items_for_tag', kwargs={'tag_name': self.tag4.tag})
-	
-		self.ds1 = DataSet.objects.get(pk=1)
-		self.ds2 = DataSet.objects.get(pk=2)
-		self.ds1_url = reverse('epic.datasets.views.view_dataset', kwargs={'item_id': self.ds1.id, 'slug': self.ds1.slug,})
-		self.ds2_url = reverse('epic.datasets.views.view_dataset', kwargs={'item_id': self.ds2.id, 'slug': self.ds2.slug,})
+		common_setUp(self)
 	
 	def tearDown(self):
 		pass
 	
 	def testTagsIndex(self):
 		# Verify that all the tags show up on the index page
-		response = self.client.get(self.tag_index_url)
+		response = self.client.get(self.TAG_INDEX_URL)
 		self.assertEqual(response.status_code, 200)
 		
-		self.assertContains(response, 'href="' + self.tag1_url)
-		self.assertContains(response, 'href="' + self.tag2_url)
-		self.assertContains(response, 'href="' + self.tag3_url)
-		self.assertContains(response, 'href="' + self.tag4_url)
+		self.assertContains(response, 'href="%s' % self.TAG1_URL)
+		self.assertContains(response, 'href="%s' % self.TAG2_URL)
+		self.assertContains(response, 'href="%s' % self.TAG3_URL)
+		self.assertContains(response, 'href="%s' % self.TAG4_URL)
 		
 	
 	def testTagsPage(self):
 		# Test the page for tag 1
-		response = self.client.get(self.tag1_url)
+		response = self.client.get(self.TAG1_URL)
 		self.assertEqual(response.status_code, 200)
-		self.assertContains(response,'href="' + self.ds1_url)
-		self.assertNotContains(response,'href="' + self.ds2_url)
+		self.assertContains(response,'href="%s' % self.DS1_URL)
+		self.assertNotContains(response,'href="%s' % self.DS2_URL)
 		
 		# Test the page for tag 2
-		response = self.client.get(self.tag2_url)
+		response = self.client.get(self.TAG2_URL)
 		self.assertEqual(response.status_code, 200)
-		self.assertContains(response,'href="' + self.ds1_url)
-		self.assertNotContains(response,'href="' + self.ds2_url)
+		self.assertContains(response,'href="%s' % self.DS1_URL)
+		self.assertNotContains(response,'href="%s' % self.DS2_URL)
 		
 		# Test the page for tag 3
-		response = self.client.get(self.tag3_url)
+		response = self.client.get(self.TAG3_URL)
 		self.assertEqual(response.status_code, 200)
-		self.assertNotContains(response,'href="' + self.ds1_url)
-		self.assertContains(response,'href="' + self.ds2_url)
+		self.assertContains(response,'href="%s' % self.DS1_URL)
+		self.assertContains(response,'href="%s' % self.DS2_URL)
 		
 		# Test the page for tag 4
-		response = self.client.get(self.tag4_url)
+		response = self.client.get(self.TAG4_URL)
 		self.assertEqual(response.status_code, 200)
-		self.assertNotContains(response,'href="' + self.ds1_url)
-		self.assertContains(response,'href="' + self.ds2_url)
+		self.assertNotContains(response,'href="%s' % self.DS1_URL)
+		self.assertContains(response,'href="%s' % self.DS2_URL)
 		
 	def testDataSetPage(self):
 		# Test the page for dataset 1
-		response = self.client.get(self.ds1_url)
+		response = self.client.get(self.DS1_URL)
 		self.assertEqual(response.status_code, 200)
 		
-		self.assertContains(response,'href="' + self.tag1_url)
-		self.assertContains(response,'href="' + self.tag2_url)
-		self.assertNotContains(response,'href="' + self.tag3_url)
-		self.assertNotContains(response,'href="' + self.tag4_url)
+		self.assertContains(response,'href="%s' % self.TAG1_URL)
+		self.assertContains(response,'href="%s' % self.TAG2_URL)
+		self.assertContains(response,'href="%s' % self.TAG3_URL)
+		self.assertNotContains(response,'href="%s' % self.TAG4_URL)
 		
 		# Test the page for dataset2
-		response = self.client.get(self.ds2_url)
+		response = self.client.get(self.DS2_URL)
 		self.assertEqual(response.status_code, 200)
 		
-		self.assertNotContains(response,'href="' + self.tag1_url)
-		self.assertNotContains(response,'href="' + self.tag2_url)
-		self.assertContains(response,'href="' + self.tag3_url)
-		self.assertContains(response,'href="' + self.tag4_url)
+		self.assertNotContains(response,'href="%s' % self.TAG1_URL)
+		self.assertNotContains(response,'href="%s' % self.TAG2_URL)
+		self.assertContains(response,'href="%s' % self.TAG3_URL)
+		self.assertContains(response,'href="%s' % self.TAG4_URL)
 		
 class ViewAddTagsTestCase(TestCase):
-	def setUp(self):
-		# DS1 is created by peebs and is tagged tag1-peebs, tag2-peebs
-		self.peebs = User.objects.get(username="peebs")
-		self.ds1 = DataSet.objects.create(creator=self.peebs, name="ds1", slug="ds1", description="dataset number one")
-
-		# DS2 is created by admin and is tagged tag3-admin, tag4-peebs
-		self.admin = User.objects.get(username="admin")
-		self.ds2 = DataSet.objects.create(creator=self.admin, name="ds2", slug="ds2", description="dataset number two")
-		
-		self.tag1 = Tagging.objects.create(item=self.ds1, tag="tag1", user=self.peebs)
-		self.tag2 = Tagging.objects.create(item=self.ds1, tag="tag2", user=self.peebs)
-
-		
-		self.tag_index_url = reverse('epic.tags.views.index')
-		self.tag1_url = reverse('epic.tags.views.view_items_for_tag', kwargs={'tag_name': self.tag1.tag})
-		self.tag2_url = reverse('epic.tags.views.view_items_for_tag', kwargs={'tag_name': self.tag2.tag})
-		
-		self.ds1 = DataSet.objects.get(pk=1)
-		self.ds2 = DataSet.objects.get(pk=2)
-		self.ds1_url = reverse('epic.datasets.views.view_dataset', kwargs={'item_id': self.ds1.id, 'slug': self.ds1.slug,})
-		self.ds2_url = reverse('epic.datasets.views.view_dataset', kwargs={'item_id': self.ds2.id, 'slug': self.ds2.slug,})
+	fixtures = [ "tags_just_users", "tags_tags" ]
 	
-		self.datasets_url = reverse('epic.datasets.views.view_datasets')
-		self.ds_tagged_url = self.ds1_url
-		self.ds_nottagged_url = self.ds2_url
-		self.ds_tagged_addtags_url = reverse('epic.datasets.views.tag_dataset', kwargs={'item_id': self.ds1.id, 'slug':self.ds1.slug,})
-		self.ds_nottagged_addtags_url = reverse('epic.datasets.views.tag_dataset', kwargs={'item_id': self.ds2.id, 'slug':self.ds2.slug,})
+	def setUp(self):
+		common_setUp(self)
+	
+		self.DATASETS_URL = reverse("epic.datasets.views.view_datasets")
+		self.DS_TAGGED_URL = self.DS1_URL
+		self.DS_NOT_TAGGED_URL = self.DS2_URL
+		
+		self.DS_TAGGED_ADD_TAGS_URL = reverse("epic.datasets.views.tag_dataset",
+											  kwargs={ "item_id": self.ds1.id,
+											  		   "slug":self.ds1.slug, })
+		
+		self.DS_NOT_TAGGED_ADD_TAGS_URL = reverse("epic.datasets.views.tag_dataset",
+												  kwargs={ "item_id": self.ds2.id,
+												  		   "slug":self.ds2.slug, })
 	
 	def tearDown(self):
 		pass
 	
 	def testNoAddTagsOnDataSets(self):
-		response = self.client.get(self.datasets_url)
+		response = self.client.get(self.DATASETS_URL)
 		
-		self.assertNotContains(response, self.ds_nottagged_addtags_url)
-		self.assertNotContains(response, self.ds_tagged_addtags_url)
+		self.assertNotContains(response, self.DS_NOT_TAGGED_ADD_TAGS_URL)
+		self.assertNotContains(response, self.DS_TAGGED_ADD_TAGS_URL)
 		
 	def testAddTagsOnTaggedDataSetNotLoggedIn(self):
-		response = self.client.get(self.ds_tagged_url)
+		response = self.client.get(self.DS_TAGGED_URL)
 		
-		self.assertNotContains(response, self.ds_nottagged_addtags_url)
-		self.assertNotContains(response, self.ds_tagged_addtags_url)
+		self.assertNotContains(response, self.DS_NOT_TAGGED_ADD_TAGS_URL)
+		self.assertNotContains(response, self.DS_TAGGED_ADD_TAGS_URL)
 		
 	def testAddTagsOnNotTaggedDataSetNotLoggedIn(self):
-		response = self.client.get(self.ds_nottagged_url)
+		response = self.client.get(self.DS_NOT_TAGGED_URL)
 		
-		self.assertNotContains(response, self.ds_nottagged_addtags_url)
-		self.assertNotContains(response, self.ds_tagged_addtags_url)
+		self.assertNotContains(response, self.DS_NOT_TAGGED_ADD_TAGS_URL)
+		self.assertNotContains(response, self.DS_TAGGED_ADD_TAGS_URL)
 	
 	def testAddTagsOnTaggedDataSet(self):
-		login = self.client.login(username='peebs', password='map')
-		self.failUnless(login, 'Could not login')
+		login = self.client.login(username="bob", password="bob")
+		self.failUnless(login, "Could not login")
 		
-		response = self.client.get(self.ds_tagged_url)
+		response = self.client.get(self.DS_TAGGED_URL)
 		
-		self.assertNotContains(response, self.ds_nottagged_addtags_url)
-		self.assertContains(response, self.ds_tagged_addtags_url)
+		self.assertNotContains(response, self.DS_NOT_TAGGED_ADD_TAGS_URL)
+		self.assertContains(response, self.DS_TAGGED_ADD_TAGS_URL)
 		
 	def testAddTagsOnNotTaggedDataSet(self):
-		login = self.client.login(username='peebs', password='map')
-		self.failUnless(login, 'Could not login')
+		login = self.client.login(username="bob", password="bob")
+		self.failUnless(login, "Could not login")
 		
-		response = self.client.get(self.ds_nottagged_url)
+		response = self.client.get(self.DS_NOT_TAGGED_URL)
 		
-		self.assertContains(response, self.ds_nottagged_addtags_url)
-		self.assertNotContains(response, self.ds_tagged_addtags_url)
+		self.assertContains(response, self.DS_NOT_TAGGED_ADD_TAGS_URL)
+		self.assertNotContains(response, self.DS_TAGGED_ADD_TAGS_URL)
