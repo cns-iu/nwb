@@ -51,7 +51,7 @@ class ProfileDataRequestTestCase(TestCase):
 		self.failUnless("Your Data Requests" in response.content, response.content)
 		self.failUnless("edit" in response.content, response.content)
 
-	def testForNoCancelledDataRequests(self):
+	def testForNoCanceledDataRequests(self):
 		''' Test if canceled data requests are published for the logged in user. In this case,
  		Bill has 1 canceled data request which should not be published. '''
 		login = self.client.login(username='bill', password='bill')

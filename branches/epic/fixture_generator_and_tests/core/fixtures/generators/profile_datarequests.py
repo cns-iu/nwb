@@ -7,7 +7,7 @@ from datarequests.models import DataRequest
 def _create_datarequest1():
 	datarequest1 = DataRequest(creator=bill,
 		name="Data Request Item 3",
-		description="This is a datarequest which is cancelled and it should be on the profile page <- by bill ",
+		description="This is a datarequest which is canceled and it should be on the profile page <- by bill ",
 		status="C",
 		slug="data-request-item-3")
 	
