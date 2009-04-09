@@ -8,7 +8,7 @@ from django.conf import settings
 import os
 
 class RatingTestCase(TestCase):
-	fixtures = ['initial_data', 'single_dataset', 'initial_users']
+	fixtures = ['common_data']
 	
 	def setUp(self):
 		self.data_set = DataSet.objects.all()[0]
@@ -26,7 +26,7 @@ class RatingTestCase(TestCase):
 		self.failUnless(totalVotes in response.content, "There should be unrated data specifically the token 'Total Votes:'")
 		self.failUnless(numberVotes in response.content, "There should be unrated data specifically the token '0' for votes")
 		
-		response = self.client.post("/login/", {'username': 'bob', 'password':'bob2',})
+		response = self.client.post("/login/", {'username': 'bob', 'password':'bob',})
 		response = self.client.get('/datasets/')
 		
 		self.failUnlessEqual(response.status_code, 200, "Error listing datasets!")

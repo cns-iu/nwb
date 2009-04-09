@@ -10,16 +10,16 @@ def commonMessageSetUp(test_case):
 	test_case.user_admin = User.objects.get(username='admin')
 	
 	# Get the messages from the fixtures
-	test_case.first_received_message = ReceivedMessage.objects.create(recipient=test_case.user_bob, sender=test_case.user_admin, subject="m1r", message="this is the first received message", read=False, replied=False, deleted=False)
-	test_case.first_sent_message = SentMessage.objects.create(recipient=test_case.user_bob, sender=test_case.user_admin, subject="m1s", message="this is the first sent message", deleted=False)
-	test_case.second_received_message = ReceivedMessage.objects.create(recipient=test_case.user_admin, sender=test_case.user_admin, subject="m2r", message="this is the second received message", read=False, replied=False, deleted=False)
-	test_case.second_sent_message = SentMessage.objects.create(recipient=test_case.user_admin, sender=test_case.user_admin, subject="m2s", message="this is the second sent message", deleted=False)
+	test_case.first_received_message = ReceivedMessage.objects.get(recipient=test_case.user_bob, sender=test_case.user_admin, subject="m1r", message="this is the first received message", read=False, replied=False, deleted=False)
+	test_case.first_sent_message = SentMessage.objects.get(recipient=test_case.user_bob, sender=test_case.user_admin, subject="m1s", message="this is the first sent message", deleted=False)
+	test_case.second_received_message = ReceivedMessage.objects.get(recipient=test_case.user_admin, sender=test_case.user_admin, subject="m2r", message="this is the second received message", read=False, replied=False, deleted=False)
+	test_case.second_sent_message = SentMessage.objects.get(recipient=test_case.user_admin, sender=test_case.user_admin, subject="m2s", message="this is the second sent message", deleted=False)
 	
 
 class UrlsTestCase(CustomTestCase):
 	""" Test all the urls to make sure that the view for each works """
 	
-	fixtures = ['just_users', 'datasets']
+	fixtures = ['messages_just_users', 'messages_datasets', 'messages_messages']
 	
 	def setUp(self):
 		commonMessageSetUp(self)
@@ -51,7 +51,7 @@ class UrlsTestCase(CustomTestCase):
 class IndexTestCase(CustomTestCase):
 	""" Test the view 'index' """
 	
-	fixtures = ['just_users', 'messages']
+	fixtures = ['messages_just_users', 'messages_messages']
 	
 	def setUp(self):
 		commonMessageSetUp(self)
@@ -95,7 +95,7 @@ class IndexTestCase(CustomTestCase):
 class ViewSentMessageTestCase(CustomTestCase):
 	""" Test the view 'view_sent_message' """
 	
-	fixtures = ['just_users', 'messages']
+	fixtures = ['messages_just_users', 'messages_messages']
 	
 	def setUp(self):
 		commonMessageSetUp(self)
@@ -134,7 +134,7 @@ class ViewSentMessageTestCase(CustomTestCase):
 class ViewReceivedMessageTestCase(CustomTestCase):
 	""" Test the view view_received_message for messages """
 	
-	fixtures = ['just_users', 'messages']
+	fixtures = ['messages_just_users', 'messages_messages']
 	
 	def setUp(self):
 		commonMessageSetUp(self)
@@ -170,7 +170,7 @@ class ViewReceivedMessageTestCase(CustomTestCase):
 class SendMessageTestCase(CustomTestCase):
 	""" Test the view send_message for messages """
 	
-	fixtures = ['just_users', 'messages']
+	fixtures = ['messages_just_users', 'messages_messages']
 	
 	def setUp(self):
 		commonMessageSetUp(self)
@@ -425,7 +425,7 @@ class SendMessageTestCase(CustomTestCase):
 from epic.datasets.models import DataSet
 class ContactUserLinkDataSetTestCase(CustomTestCase):
 	
-	fixtures = ['just_users','datasets', 'messages']
+	fixtures = ['messages_just_users','messages_datasets', 'messages_messages']
 	
 	def setUp(self):
 		commonMessageSetUp(self)
@@ -500,7 +500,7 @@ class ContactUserLinkDataSetTestCase(CustomTestCase):
 from epic.datarequests.models import DataRequest
 class ContactUserLinkDataRequestTestCase(CustomTestCase):
 	
-	fixtures = ['just_users','datarequests', 'messages']
+	fixtures = ['messages_just_users','messages_datarequests', 'messages_messages']
 	
 	def setUp(self):
 		commonMessageSetUp(self)
@@ -514,7 +514,7 @@ class ContactUserLinkDataRequestTestCase(CustomTestCase):
 		recipient = self.first_data_request.creator
 		
 		contact_user_url = reverse("epic.messages.views.send_message", kwargs={'user_id':sender.id, 'recipient_id':recipient.id})
-		view_datarequests_url = reverse('epic.datarequests.views.view_datarequests', kwargs={'user_id':sender.id, 'recipient_id':recipient.id})
+		view_datarequests_url = reverse('epic.datarequests.views.view_datarequests')
 		
 		response = self.client.get(view_datarequests_url)
 		self.assertNotContains(response, contact_user_url)
