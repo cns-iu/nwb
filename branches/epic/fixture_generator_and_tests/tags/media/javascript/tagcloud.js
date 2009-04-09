@@ -8,7 +8,7 @@
 
 var TagCloud =
 {
-	Version: '1.1.2',
+	Version: "1.1.2",
 	
 	create: function()
 	{
@@ -34,7 +34,7 @@ TagCloud.Tag.prototype.initClasses = function ()
 
 TagCloud.Tag.prototype.initAnchorClasses = function ()
 {
-	this.anchorClasses = [ 'tagbox' ];
+	this.anchorClasses = [ "tagbox" ];
 }
 
 TagCloud.Tag.prototype.attachClass = function (className)
@@ -49,11 +49,11 @@ TagCloud.Tag.prototype.attachAnchorClass = function (className)
 
 TagCloud.Tag.prototype.toElement = function(isLastTag)
 {
-	var element = document.createElement('li');
-	var linkElement = document.createElement('a');
+	var element = document.createElement("li");
+	var linkElement = document.createElement("a");
 	
-	linkElement.setAttribute('name', this.name);
-	linkElement.setAttribute('href', this.url);
+	linkElement.setAttribute("name", this.name);
+	linkElement.setAttribute("href", this.url);
 	
 	var tagDisplayText = this.name;
 	
@@ -84,7 +84,7 @@ TagCloud.Container = function ()
 	
 	this.classes =
 	{
-		list: 'taglist'
+		list: "taglist"
 	};
 }
 
@@ -114,7 +114,7 @@ TagCloud.Container.prototype.createTag = function (name, count, url, epoch)
 
 TagCloud.Container.prototype.toElement = function (filter)
 {
-	var list = document.createElement('ul');
+	var list = document.createElement("ul");
 	
 	for (var i = 0; i < this.tags.length; i++)
 	{
@@ -140,9 +140,6 @@ TagCloud.Container.prototype.setElementsTo = function (element)
 {
 	var target = document.getElementById(element);
 
-	//while (target.childNodes.length > 0)
-	//	target.removeChild(target.firstChild);
-
 	target.appendChild(this.toElement());
 }
 
@@ -153,18 +150,18 @@ TagCloud.Container.prototype.searchAndDisplay = function (element, name)
 	while (target.childNodes.length > 0)
 		target.removeChild(target.firstChild);
 
-	var re = new RegExp(name, 'i');
+	var re = new RegExp(name, "i");
 	
 	target.appendChild(this.toElement(
-	function(tag)
-	{
-		return tag.name.match(re);
-	}));
+		function(tag)
+		{
+			return tag.name.match(re);
+		}));
 }
 
 TagCloud.Container.prototype.toHTML = function ()
 {
-	var temp = document.createElement('div');
+	var temp = document.createElement("div");
 	
 	temp.appendChild(this.toElement());
 	
@@ -215,7 +212,7 @@ TagCloud.Effector.CountSize = function ()
 	this.baseFontSize = 24;
 	this.fontSizeRange = 12;
 	this._suffix = "px";
-	this.suffixTypes = [ 'px', 'pt', 'pc', 'in', 'mm', 'cm' ];
+	this.suffixTypes = [ "px", "pt", "pc", "in", "mm", "cm" ];
 }
 
 TagCloud.Effector.CountSize.prototype.base = function (size)
@@ -283,14 +280,14 @@ TagCloud.Effector.CountSize.prototype.affect = function (tags)
 
 TagCloud.Effector.DateTimeColor = function()
 {
-	this.types = [ 'earliest', 'earlier', 'later', 'latest' ];
+	this.types = [ "earliest", "earlier", "later", "latest" ];
 
 	this.styles =
 	{
-		earliest: 'tagbox-earliest',
-		earlier: 'tagbox-earlier',
-		later: 'tagbox-later',
-		latest: 'tagbox-latest'
+		earliest: "tagbox-earliest",
+		earlier: "tagbox-earlier",
+		later: "tagbox-later",
+		latest: "tagbox-latest"
 	};
 }
 
@@ -334,7 +331,7 @@ TagCloud.Effector.DateTimeColor.prototype.affect = function (tags)
 TagCloud.Effector.HotWord = function ()
 {
 	this.hotWords = new Array();
-	this.className = 'tagbox-hotword';
+	this.className = "tagbox-hotword";
 }
 
 TagCloud.Effector.HotWord.prototype.words = function ()
@@ -371,6 +368,33 @@ TagCloud.Effector.HotWord.prototype.affect = function (tags)
 			}
 		}
 	}
+}
+
+TagCloud.Effector.Alphabetize = function ()
+{
+}
+
+TagCloud.Effector.Alphabetize.prototype.setClass = function (className)
+{
+	this.className = className;
+}
+
+TagCloud.Effector.Alphabetize.prototype.affect = function (tags)
+{
+	var sortTagFunction = function (tagA, tagB)
+	{
+		var tagAName = tagA.name.toLowerCase();
+		var tagBName = tagB.name.toLowerCase();
+		
+		if (tagAName < tagBName)
+			return -1;
+		else if (tagAName > tagBName)
+			return 1;
+		
+		return 0;
+	}
+	
+	tags.sort(sortTagFunction);
 }
 
 TagCloud.Calculator = function (min, max, range)
