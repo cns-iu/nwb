@@ -1,19 +1,41 @@
 from django import forms
-from django.forms import ModelForm
 from django.contrib.auth.models import User
+from django.forms import ModelForm
+from django.forms.util import ErrorList
 from django.utils.translation import ugettext_lazy
 
 from epic.core.models import Item, Profile
 
-class ForgotUsernameForm(forms.Form):
-	email = forms.EmailField(max_length=Profile.MAX_USER_EMAIL_LENGTH)
-
-class ForgotEmailForm(forms.Form):
-	username = forms.CharField(max_length=Profile.MAX_USERNAME_LENGTH)
-
 class ForgotPasswordForm(forms.Form):
 	username_or_email = forms.CharField(max_length=Profile.MAX_USER_EMAIL_LENGTH, label="Username or e-mail address")
-
+	
+	def clean(self):
+		try:
+			cleaned_data = self.cleaned_data
+			username_or_email = cleaned_data['username_or_email']
+		except:
+			return self.cleaned_data
+		
+		# TODO: abstract this out
+		if username_or_email.count('@') > 0:
+			try:
+				user = User.objects.get(email=username_or_email)
+				cleaned_data['user'] = user
+			except:
+				msg = u"There is no user registered with the email address '%(email)s'." % {'email': username_or_email,}
+				self._errors['username_or_email'] = ErrorList([msg])
+				del cleaned_data['username_or_email']
+		else:
+			try:
+				user = User.objects.get(username=username_or_email)
+				cleaned_data['user'] = user
+			except:
+				msg = u"'%(username)s' is not a valid username." % {'username':username_or_email,}
+				self._errors['username_or_email'] = ErrorList([msg])
+				del cleaned_data['username_or_email']
+			
+		return cleaned_data
+	
 class UserForm(ModelForm):
 	# this overwrites the email from the model.  It is important that email is NOT in the exclude list though...
 	email = forms.EmailField(label='E-mail address')
@@ -32,7 +54,7 @@ class ShortAuthenticationForm(forms.Form):
     Base class for authenticating users. Extend this to get a form that accepts
     username/password logins.
     """
-    username = forms.CharField(label=("Username"), max_length=30, widget=forms.TextInput(attrs={'size':11}));
+    username = forms.CharField(label=("Username"), max_length=30, widget=forms.TextInput(attrs={'size': 11}));
     password = forms.CharField(label=("Password"), widget=forms.PasswordInput(attrs={'size': 11}));
 
     def __init__(self, request=None, *args, **kwargs):
@@ -53,6 +75,7 @@ class ShortAuthenticationForm(forms.Form):
         if username and password:
             self.user_cache = authenticate(username=username, password=password)
             if self.user_cache is None:
+            	# TODO: is the variable _ actually defined anywhere?
                 raise forms.ValidationError(_("Please enter a correct username and password. Note that both fields are case-sensitive."))
             elif not self.user_cache.is_active:
                 raise forms.ValidationError(_("This account is inactive."))

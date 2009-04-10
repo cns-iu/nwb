@@ -33,34 +33,48 @@ class ForgotPasswordTestCase(TestCase):
 		response = self.client.get(self.forgot_password_url)
 		self.failUnlessEqual(response.status_code,200)
 		
-		submit_unbound_username_response = self.client.post(self.forgot_password_url, data={ "username_or_email": "abcd" })
-		self.failUnlessEqual(submit_unbound_username_response.status_code, 200)
+		post_data = {
+			'username_or_email': 'asdf0 jw35yj[ j0q2rj',
+		}
 		
-		self.failUnless("The username abcd is not valid." in submit_unbound_username_response.content)
+		response = self.client.post(self.forgot_password_url, post_data)
+		self.failUnlessEqual(response.status_code, 200)
+		
+		self.assertFormError(response, 'form', 'username_or_email', "'%s' is not a valid username." % post_data['username_or_email'])
 	
 	def testForgotPasswordSubmittingUnboundEmail(self):
 		response = self.client.get(self.forgot_password_url)
 		self.failUnlessEqual(response.status_code,200)
 		
-		submit_unbound_email_response = self.client.post(self.forgot_password_url, data={ "username_or_email": "a@b.com" })
-		self.failUnlessEqual(submit_unbound_email_response.status_code, 200)
+		post_data = {
+			'username_or_email': 'asdf323@asdf.com',
+		}
 		
-		self.failUnless("The email a@b.com is not valid." in submit_unbound_email_response.content)
+		response = self.client.post(self.forgot_password_url, post_data)
+		self.failUnlessEqual(response.status_code, 200)
+		
+		self.assertFormError(response, 'form', 'username_or_email', "There is no user registered with the email address '%s'." % post_data['username_or_email'])
 	
 	def testForgotUsernameSuccessWithBoundUsername(self):
 		response = self.client.get(self.forgot_password_url)
 		self.failUnlessEqual(response.status_code,200)
 		
-		submit_bound_username_response = self.client.post(self.forgot_password_url, data={ "username_or_email": "peebs" })
-		self.failUnlessEqual(submit_bound_username_response.status_code, 200)
+		post_data = {
+			'username_or_email': self.bob.username,
+		}
 		
-		self.failUnless("The password for <b>peebs</b> has been reset and e-mailed to <b>markispeebs@gmail.com" in submit_bound_username_response.content)
-	
+		response = self.client.post(self.forgot_password_url, post_data)
+		self.failUnlessEqual(response.status_code, 200)
+		self.assertContains(response, "An email has been sent to your &#39;%s&#39; address with a new password." % self.bob.email.split('@')[1])	
+
 	def testForgotUsernameSuccessWithBoundEmail(self):
 		response = self.client.get(self.forgot_password_url)
 		self.failUnlessEqual(response.status_code,200)
 		
-		submit_bound_email_response = self.client.post(self.forgot_password_url, data={ "username_or_email": "markispeebs@gmail.com" })
-		self.failUnlessEqual(submit_bound_email_response.status_code, 200)
+		post_data = {
+			'username_or_email': self.bob.email,
+		}
 		
-		self.failUnless("The password for <b>peebs</b> has been reset and e-mailed to <b>markispeebs@gmail.com" in submit_bound_email_response.content)
+		response = self.client.post(self.forgot_password_url, post_data)
+		self.failUnlessEqual(response.status_code, 200)
+		self.assertContains(response, "An email has been sent to your &#39;%s&#39; address with a new password." % self.bob.email.split('@')[1])

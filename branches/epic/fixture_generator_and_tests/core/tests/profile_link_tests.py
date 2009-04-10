@@ -12,8 +12,10 @@ class ProfileLinkTestCase(TestCase):
 		login = self.client.login(username='bob', password='bob')
 		self.failUnless(login, 'Could not login')
 		response = self.client.get('/')
-		self.assertContains(response, self.profile_url)
+		self.assertContains(response, 'href="%(profile_link)s"' % 
+						              {'profile_link':self.profile_url})
 	
 	def testLinkForNotLoggedIn(self):
 		response = self.client.get('/')
-		self.assertNotContains(response, self.profile_url)
+		self.assertNotContains(response, 'href="%(profile_link)s"' % 
+								         {'profile_link':self.profile_url})
