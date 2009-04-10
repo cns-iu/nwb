@@ -6,17 +6,14 @@ from epic.core.models import Item
 from epic.core.util.multifile import MultiFileField
 from epic.datasets.models import DataSet, RATING_SCALE
 from epic.djangoratings.forms import RatingField
-
-class NewDataSetForm(forms.Form):
-	name = forms.CharField(max_length=Item.MAX_ITEM_NAME_LENGTH)
-	description = forms.CharField(max_length=Item.MAX_ITEM_DESCRIPTION_LENGTH, widget=forms.Textarea())
-	files = MultiFileField(required=True)
-	tags = forms.CharField(max_length=Item.MAX_ITEM_TAGS_LENGTH, required=False)
 	
 class EditDataSetForm(forms.Form):
 	name = forms.CharField(max_length=Item.MAX_ITEM_NAME_LENGTH)
 	description = forms.CharField(max_length=Item.MAX_ITEM_DESCRIPTION_LENGTH, widget=forms.Textarea())
 	tags = forms.CharField(max_length=Item.MAX_ITEM_TAGS_LENGTH, required=False)
+
+class NewDataSetForm(EditDataSetForm):
+	files = MultiFileField(required=True)
 	
 class RatingDataSetForm(forms.Form):
 	rating = RatingField(RATING_SCALE)
