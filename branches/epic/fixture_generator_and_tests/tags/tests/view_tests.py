@@ -134,6 +134,14 @@ class ViewAddTagsTestCase(TestCase):
 	def tearDown(self):
 		pass
 	
+	def testHelpTextOnDataSets(self):
+		login = self.client.login(username="bob", password="bob")
+		self.failUnless(login, "Could not login")
+		
+		response = self.client.get(self.DS_TAGGED_ADD_TAGS_URL)
+
+		self.assertContains(response, 'Type your tags in the input field.')
+	
 	def testNoAddTagsOnDataSets(self):
 		response = self.client.get(self.DATASETS_URL)
 		
