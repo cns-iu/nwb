@@ -51,13 +51,13 @@ class MultiFileInput(FileInput):
         """
         Renders the necessary number of file input boxes.
         """
-        return u''.join([u'<input%s />\n' % flatatt(dict(attrs, id=attrs['id']+str(i))) for i in range(count)])
+        return u''.join([u'<input%s /><br />\n' % flatatt(dict(attrs, id=attrs['id']+str(i))) for i in range(count)])
         
     def link(self, name, value, count, attrs=None):
         """
         Renders a link to add more file input boxes.
         """
-        return u"""<a onclick=\"javascript:new_%(name)s(); return false;\"><input type='image' id='Image3' src='/core_media/images/upload-add.jpg' alt="Upload More Files" onmouseover="%(button_over)s" onmouseout="%(button_out)s"></button></a>""" % {'name':name, 'button_over':"MM_swapImage('Image3','','/core_media/images/upload-add-hover_21.jpg',1); return false;", 'button_out':"MM_swapImgRestore(); return false;",}
+        return u"""<p><a onclick="javascript:new_%(name)s(); return false;">Attach another file.</a></p>""" % {'name': name,}
         
     #TODO: new upload fields should only be added when the user fills in all the existing file fields (like in Gmail)
     def js(self, name, value, count, attrs=None):
@@ -69,20 +69,14 @@ class MultiFileInput(FileInput):
         <!--
         %(id)s_counter=%(count)d;
         function new_%(name)s() {
-        	
-        	tr = document.createElement('tr')
-            
-            td = document.createElement('td')
-            
-            b=document.getElementById('%(id)s0');
-            c=document.createElement("input")
-            c.type="file"
-            c.name="files[]"
+            b=document.getElementById('%(id)s' + (%(id)s_counter - 1));
+            c=document.createElement("input");
+            c.type="file";
+            c.name="files[]";
             c.id='%(id)s'+(%(id)s_counter++);
-            
-            td.appendChild(c)
-            tr.appendChild(td)
-            b.parentNode.insertBefore(tr,b.parentNode.lastChild.nextSibling);
+            br=document.createElement("br");
+            b.parentNode.insertBefore(c,b.parentNode.lastChild);
+            b.parentNode.insertBefore(br,b.parentNode.lastChild);
         }
         -->
         </script>
