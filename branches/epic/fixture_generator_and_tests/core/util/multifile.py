@@ -74,9 +74,24 @@ class MultiFileInput(FileInput):
             c.type="file";
             c.name="files[]";
             c.id='%(id)s'+(%(id)s_counter++);
+            removeLink = document.createElement("a");
+            removeLink.id='remove_' + c.id;
+            removeLink.setAttribute('onclick', "javascript:remove_%(name)s('" + c.id + "'); return false;");
+            removeLink.innerHTML = '&nbsp;&nbsp;Remove this file.'; /** TODO: style this instead of using nbsp **/
             br=document.createElement("br");
+            br.id = 'break_' + c.id;
             b.parentNode.insertBefore(c,b.parentNode.lastChild);
+            b.parentNode.insertBefore(removeLink, b.parentNode.lastChild);
             b.parentNode.insertBefore(br,b.parentNode.lastChild);
+        }
+        function remove_%(name)s(id) {
+			removeNode = document.getElementById(id);
+			removeNode.parentNode.removeChild(removeNode);
+			removeText = document.getElementById('remove_' + removeNode.id);
+			removeText.parentNode.removeChild(removeText);
+			removeBreak = document.getElementById('break_' + removeNode.id);
+			removeBreak.parentNode.removeChild(removeBreak);
+			%(id)s_counter--;
         }
         -->
         </script>
