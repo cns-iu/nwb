@@ -12,7 +12,7 @@ class Comment(models.Model):
 	
 	>>> from epic.datasets.models import DataSet
 	>>> from epic.comments.models import Comment
-	>>> user = User.objects.create_user("testuser1337", "leethax0r@epicproject.com", "3y3r1337")
+	>>> user = User.objects.create_user("testuser1337", "leethax0r@epic.edu", "3y3r1337")
 	>>> user.save()
 	>>> dataset = DataSet(creator=user, name="Item #1", description="This is the first item")
 	>>> dataset.save()

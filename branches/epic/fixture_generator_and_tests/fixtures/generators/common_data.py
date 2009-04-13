@@ -9,7 +9,7 @@ from core.models import Profile
 
 def _create_admin_user():
 	admin_user = User.objects.create_user(username="admin",
-		email="admin@example.com",
+		email="admin@epic.edu",
 		password="admin")
 	
 	admin_user.save()
