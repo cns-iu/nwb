@@ -78,11 +78,11 @@
       </p>
     {% endif %}
   {% endif %}
-  {% if user.is_authenticated %}
+
   <h4>
     Please Cite This Dataset As:<br/>"{{ dataset.name|escape }}." <span class="source_name">EpiC Community Website.</span> {{ dataset.created_at|date:"d M Y" }}. {% now "d M Y" %} &lt;<a>{{ dataset.get_absolute_url }}</a>&gt;
   </h4>
-  {% endif %}
+
   
   {% load geoloc_templatetags %}
   {% display_map_for_datasets dataset.id %}
