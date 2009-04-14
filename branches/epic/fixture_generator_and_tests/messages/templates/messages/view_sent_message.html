@@ -16,11 +16,10 @@
     <td>{{ sent_message.subject }}</td>
   </tr>
   <tr>
-    <td colspan="2">{{ sent_message.message|linebreaksbr }}</td>
+  	{# TODO: Add css styling rather than inlining it here #}
+    <td colspan="2" style="border-top: thin solid black;">{{ sent_message.message|linebreaksbr }}</td>
   </tr>
 </table>
-<hr>
-
 {% else %}
 <p>There was a problem finding the message.</p>
 {% endif %}
