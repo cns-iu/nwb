@@ -217,7 +217,7 @@ p { font-size:77%;
 	color: #09bac4;font-size:85%;
 	border-right-width: 1px;
 	border-right-style: dotted;
-	border-right-color: #999999; padding-right:2px; padding-left:2px; 
+	border-right-color: #999999; padding-right:4px; padding-left:2px; 
 }
 
 
@@ -260,7 +260,7 @@ a.tagbox-latest {
 .taglist a, .taglist a:visited {color: #09bac4;
 	border-right-width: 1px;
 	border-right-style: dotted;
-	border-right-color: #999999; padding-right:2px; padding-left:2px; }
+	border-right-color: #999999; padding-right:2px; padding-left:4px; }
 	
 .taglist a:hover {color: #333333;}
 
