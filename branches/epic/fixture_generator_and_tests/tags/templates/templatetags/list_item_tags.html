@@ -1,20 +1,49 @@
 {% load tags_templatetags %}
-
+<script type="text/javascript">
+  function delete_confirm(tag_name, dataset_id){
+	var answer = confirm("Delete selected tag?")
+	if(answer){
+	  delete_tag(tag_name, dataset_id);
+    }
+	return false;
+  }
+  function delete_tag(tag_name, dataset_id){
+	var url = '{% url tags.views.delete_tag %}';
+	var data = {};
+	data.tag_name = tag_name;
+	data.dataset_id = dataset_id;
+	jQuery.post(url, data, 
+	    	function(responseData){
+				if (responseData.success) {
+					jQuery('#taglist_name_' + data.tag_name).parent().hide()
+				}else{
+					jQuery('#error-message').html(responseData.failure + jQuery('#error-message').html());
+				}
+			}
+			, 'json');
+  }
+</script>
 <ul class="taglist">
   {% if tags %}
     {# TODO: Better logic here?  Or rather, left-bordered CSS instead of right-bordered! #}
       {% for tag in tags %}
         {% if not forloop.last %}
           <li>
-            <a href="{{ tag.get_tag_url }}">
+            <a href="{{ tag.get_tag_url }}" id="taglist_name_{{ tag.tag }}">
               {{ tag.tag }}
             </a>
+            {% ifequal user item.creator %}
+            <a class="removelink" id="taglist_remove_{{ tag.tag }}" href="." onclick="javascript:delete_confirm('{{ tag.tag }}', '{{ item.id }}'); return false;">x</a>
+            {% endifequal %}
           </li>
         {% else %}
-          <li>
-            <a href="{{ tag.get_tag_url }}" class="lasttag">
+          <li class="lasttag">
+            <a href="{{ tag.get_tag_url }}" id="taglist_name_{{ tag.tag }}">
               {{ tag.tag }}
             </a>
+            {% ifequal user item.creator %}
+            <a class="removelink" id="taglist_remove_{{ tag.tag }}" href="." onclick="javascript:delete_confirm('{{ tag.tag }}', '{{ item.id }}'); return false;">x</a>
+            {% endifequal %}
           </li>
         {% endif %}
       {% endfor %}

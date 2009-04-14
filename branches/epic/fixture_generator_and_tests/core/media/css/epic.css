@@ -251,16 +251,33 @@ a.tagbox-latest {
 	color: #00f;
 }
 
-.taglist {margin:0; padding-bottom:5px; padding-left:0;font-size:85%; } 
+.taglist {
+	margin:0; 
+	padding-bottom:5px; 
+	padding-left:0;
+	font-size:85%; 
+} 
 
-.taglist li {display:inline; }
-
-
-
-.taglist a, .taglist a:visited {color: #09bac4;
+.taglist li {
+	display:inline;
 	border-right-width: 1px;
 	border-right-style: dotted;
-	border-right-color: #999999; padding-right:2px; padding-left:4px; }
+	border-right-color: #999999;
+	padding-left:2px;
+}
+
+.taglist li a.removelink {
+	color: red;
+	font-size: 10px;
+	padding-left: 0px;
+	padding-right: 0px;
+}
+
+.taglist a, .taglist a:visited {
+	color: #09bac4;	
+	padding-right:2px;
+	padding-left:2px; 
+}
 	
 .taglist a:hover {color: #333333;}
 
@@ -567,7 +584,7 @@ h4 {
     visibility: hidden;color: #09bac4;
 }
 
-.taglist a.lasttag {
+.taglist li.lasttag {
     border-right-width: 0px;
     border-right-style: none;
     border: none;
