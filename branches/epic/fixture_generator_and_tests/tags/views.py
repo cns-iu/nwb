@@ -8,6 +8,7 @@ from django.utils import simplejson
 from django.utils.datastructures import MultiValueDictKeyError
 
 from epic.core.models import Item
+from epic.datasets.models import DataSet
 from epic.tags.models import Tagging
 
 def index(request):
@@ -27,15 +28,21 @@ def delete_tag(request):
     responseData = {}
     try:
         tag_name = request.POST['tag_name']
-        dataset = request.POST['dataset_id']
-        try:
-            Tagging.objects.delete_tag(tag_name, dataset)
-            responseData['success'] = 'The tag "%(tag_name)s" was removed.' % {'tag_name': tag_name,}
-        except Tagging.DoesNotExist:
-            responseData['failure'] = 'The tag "%(tag_name)s" on dataset "%(dataset)s" does not exist.' % {'tag_name': tag_name, 'dataset': dataset,}
-
+        dataset_id = request.POST['dataset_id']
+        dataset = DataSet.objects.get(pk=dataset_id)
+        if (user == dataset.creator):
+            try:
+                Tagging.objects.delete_tag(tag_name, dataset.id)
+                responseData['success'] = 'The tag "%(tag_name)s" was removed.' % {'tag_name': tag_name,}
+            except Tagging.DoesNotExist:
+                responseData['failure'] = 'The tag "%(tag_name)s" on dataset "%(dataset)s" does not exist.' % {'tag_name': tag_name, 'dataset': dataset,}
+        else:
+            responseData['failure'] = 'You do not have permission to remove the tag "%(tag_name)s" on dataset "%(dataset)s".' % {'tag_name': tag_name, 'dataset': dataset,}
+    
     except MultiValueDictKeyError:
-        responseData['failure'] = 'No tag name was provided'
+        responseData['failure'] = 'Either the tag_name or the dataset_id was not given.'
+    except DataSet.DoesNotExist:
+        responseData['failure'] = 'The dataset_id %s was invalid.' % (dataset_id)
     
     json = simplejson.dumps(responseData)
     return HttpResponse(json, mimetype='application/json')
