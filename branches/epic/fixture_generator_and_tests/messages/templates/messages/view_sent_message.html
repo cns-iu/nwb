@@ -23,5 +23,5 @@
 {% else %}
 <p>There was a problem finding the message.</p>
 {% endif %}
-<a href="/">Home</a>
+<a href="{% url messages.views.index user_id=user.id%}">Inbox</a>
 {% endblock %}

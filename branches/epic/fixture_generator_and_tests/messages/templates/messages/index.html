@@ -1,7 +1,5 @@
 {% extends "core/bases/simple_base.html" %}
 {% block content %}
-<br />
-<a href="{% url messages.views.send_message user_id=user.id %}">Send a new message</a>
 <h3>Received Messages</h3>
 {% if received_messages %}
   <ul>
@@ -26,5 +24,7 @@
 {% else %}
   <p>No messages yet.</p>
 {% endif %}
-<a href="/">Home</a>
+
+{# TODO: have this styled #}
+<a href="{% url messages.views.send_message user_id=user.id %}"><button>Send a new message</button></a>
 {% endblock %}
