@@ -71,11 +71,11 @@
     </p>
   {% else %}
     {% if dataset.files %}
-      <p>
+      <h2>
         {# TODO: Make this not a big fat hack. #}
         {# We should be using the url template tag instead of the hardcoded url. #}
         Please <a href="/login/?next={{ dataset.get_absolute_url }}">login</a> to download this dataset.
-      </p>
+      </h2>
     {% endif %}
   {% endif %}
 
