@@ -10,6 +10,7 @@ from django.utils.datastructures import MultiValueDictKeyError
 from epic.core.models import Item
 from epic.datasets.models import DataSet
 from epic.tags.models import Tagging
+from epic.tags.utils import parse_tag_input
 
 def index(request):
     count_tag_list = Tagging.objects.get_tags()
@@ -24,29 +25,71 @@ def view_items_for_tag(request, tag_name):
 
 @login_required
 def delete_tag(request):
+    """Remove a tag from the database.
+    
+    Post variables:
+    tag_name -- the name of the tag to be removed
+    dataset_id -- the dataset the tag is attached to
+    
+    """
+    
     user = request.user
     responseData = {}
     try:
-        tag_name = request.POST['tag_name']
         dataset_id = request.POST['dataset_id']
         dataset = DataSet.objects.get(pk=dataset_id)
-        if (user == dataset.creator):
-            try:
-                Tagging.objects.delete_tag(tag_name, dataset.id)
-                responseData['success'] = 'The tag "%(tag_name)s" was removed.' % {'tag_name': tag_name,}
-            except Tagging.DoesNotExist:
-                responseData['failure'] = 'The tag "%(tag_name)s" on dataset "%(dataset)s" does not exist.' % {'tag_name': tag_name, 'dataset': dataset,}
+        
+        tag_name = request.POST['tag_name']
+        tag = Tagging.objects.get(tag=tag_name, item=dataset)
+        
+        if (user == tag.user):
+            tag.remove()
+            responseData['success'] = 'The tag "%(tag)s" was removed.' % {'tag': tag,}
         else:
-            responseData['failure'] = 'You do not have permission to remove the tag "%(tag_name)s" on dataset "%(dataset)s".' % {'tag_name': tag_name, 'dataset': dataset,}
+            responseData['failure'] = 'You do not have permission to remove the tag "%(tag)s" on dataset "%(dataset)s".' % {'tag': tag, 'dataset': dataset,}
     
     except MultiValueDictKeyError:
         responseData['failure'] = 'Either the tag_name or the dataset_id was not given.'
     except DataSet.DoesNotExist:
         responseData['failure'] = 'The dataset_id %s was invalid.' % (dataset_id)
-    
+    except Tagging.DoesNotExist:
+        responseData['failure'] = 'The tag %s for dataset %s was invalid.' % (tag_name, dataset_id)
+
     json = simplejson.dumps(responseData)
     return HttpResponse(json, mimetype='application/json')
     
+@login_required
+def add_tags_and_return_successful_tag_names(request):
+    """Add tags to the database and return the name of the successfully added tags in a success response.
     
+    Post variables:
+    unparsed_tag_names -- the raw string containing the tags to be added
+    dataset_id -- the dataset the tags are to be added to
+    
+    """
+    
+    user = request.user
+    responseData = {}
+    try:
+        unparsed_tag_names = request.POST['unparsed_tag_names']
+        clean_tag_names = parse_tag_input(unparsed_tag_names)
+
+        dataset_id = request.POST['dataset_id']
+        dataset = DataSet.objects.get(pk=dataset_id)
         
+        added_tags = []
+        for tag_name in clean_tag_names:
+            tag, created = Tagging.objects.get_or_create(tag=tag_name, item=dataset, user=user)
+            if created:
+                added_tags.append(tag.tag)
+
+            
+        responseData['success'] = added_tags
+
+    except MultiValueDictKeyError:
+        responseData['failure'] = 'Either the unparsed_tag_names or the dataset_id was not given.'
+    except DataSet.DoesNotExist:
+        responseData['failure'] = 'The dataset_id %s was invalid.' % (dataset_id)
     
+    json = simplejson.dumps(responseData)
+    return HttpResponse(json, mimetype='application/json')

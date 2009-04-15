@@ -22,12 +22,7 @@ class TagManager(models.Manager):
     """
     
     use_for_related_fields = True
-    
-    def delete_tag(self, tag_name, tagged_item):
-        print self.get(item=tagged_item, tag=tag_name)
-        tag_to_delete = self.get(item=tagged_item, tag=tag_name)
-        tag_to_delete.delete()
-            
+     
     def update_tags(self, tag_names, item=None, user=None):
         if item is None and user is None:
             raise Exception("User and item must not be none together. That deletes all tags.")
@@ -161,3 +156,6 @@ class Tagging(models.Model):
     
     def get_tag_url(self):
         return Tagging.objects.get_url_for_tag(self.tag)
+    
+    def remove(self):
+        self.delete()
