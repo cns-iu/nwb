@@ -54,7 +54,7 @@ class TagManager(models.Manager):
         
         added_tags = []
         for tag_name in parsed_tag_names:
-            tag, created = Tagging.objects.get_or_create(tag=tag_name, item=item, user=user)
+            tag, created = Tagging.objects.get_or_create(tag_name=tag_name, item=item, user=user)
             if created:
                 added_tags.append(tag.tag)
         return added_tags
@@ -74,11 +74,14 @@ class TagManager(models.Manager):
         clean_tag_names = parse_tag_input(tag_names)
  
         # Remove tags from the database that aren't in tag names.
-        self.filter(item=item).exclude(tag__in=clean_tag_names).delete()
+        if user == item.creator:
+            self.filter(item=item).exclude(tag__in=clean_tag_names).delete()
+        else:
+            self.filter(item=item, user=user).exclude(tag__in=clean_tag_names).delete()
         
         # Add new tags to the database.
         for tag in clean_tag_names:
-            self.get_or_create(tag=tag, item=item, user=user)
+            self.get_or_create(tag_name=tag, item=item, user=user)
 
     
     def get_tag_list(self, item, user):
