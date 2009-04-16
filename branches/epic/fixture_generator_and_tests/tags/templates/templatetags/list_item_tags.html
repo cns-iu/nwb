@@ -8,18 +8,30 @@
             <a href="{{ tag.get_tag_url }}" id="taglist_name_{{ tag.tag }}">
               {{ tag.tag }}
             </a>
-            {% ifequal user tag.user %}
-            <a class="removelink" id="taglist_remove_{{ tag.tag }}" href="#" onclick="javascript:deleteTagWithConfirmation('{{ tag.tag }}'); return false;">x</a>
-            {% endifequal %}
+            {% if show_addtag %}
+              {% ifequal user tag.user %}
+                <a class="removelink" id="taglist_remove_{{ tag.tag }}" href="#" onclick="javascript:deleteTagWithConfirmation('{{ tag.tag }}'); return false;">x</a>
+              {% else %}
+                {% ifequal user item.creator %}
+                  <a class="removelink" id="taglist_remove_{{ tag.tag }}" href="#" onclick="javascript:deleteTagWithConfirmation('{{ tag.tag }}'); return false;">x</a>
+                {% endifequal %}
+              {% endifequal %}
+            {% endif %}
           </li>
         {% else %}
           <li class="lasttag">
             <a href="{{ tag.get_tag_url }}" id="taglist_name_{{ tag.tag }}">
               {{ tag.tag }}
             </a>
-            {% ifequal user tag.user %}
-            <a class="removelink" id="taglist_remove_{{ tag.tag }}" href="#" onclick="javascript:deleteTagWithConfirmation('{{ tag.tag }}'); return false;">x</a>
-            {% endifequal %}
+            {% if show_addtag %}
+              {% ifequal user tag.user %}
+                <a class="removelink" id="taglist_remove_{{ tag.tag }}" href="#" onclick="javascript:deleteTagWithConfirmation('{{ tag.tag }}'); return false;">x</a>
+              {% else %}
+                {% ifequal user item.creator %}
+                  <a class="removelink" id="taglist_remove_{{ tag.tag }}" href="#" onclick="javascript:deleteTagWithConfirmation('{{ tag.tag }}'); return false;">x</a>
+                {% endifequal %}
+              {% endifequal %}
+            {% endif %}
           </li>
         {% endif %}
       {% endfor %}

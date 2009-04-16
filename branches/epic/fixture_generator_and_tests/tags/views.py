@@ -42,7 +42,7 @@ def delete_tag(request):
         tag_name = request.POST['tag_name']
         tag = Tagging.objects.get(tag=tag_name, item=dataset)
         
-        if (user == tag.user):
+        if (user == tag.user or user == dataset.creator):
             tag.remove()
             responseData['success'] = 'The tag "%(tag)s" was removed.' % {'tag': tag,}
         else:
@@ -71,19 +71,13 @@ def add_tags_and_return_successful_tag_names(request):
     user = request.user
     responseData = {}
     try:
-        unparsed_tag_names = request.POST['unparsed_tag_names']
-        clean_tag_names = parse_tag_input(unparsed_tag_names)
-
         dataset_id = request.POST['dataset_id']
         dataset = DataSet.objects.get(pk=dataset_id)
         
-        added_tags = []
-        for tag_name in clean_tag_names:
-            tag, created = Tagging.objects.get_or_create(tag=tag_name, item=dataset, user=user)
-            if created:
-                added_tags.append(tag.tag)
+        unparsed_tag_names = request.POST['unparsed_tag_names']
 
-            
+        added_tags = Tagging.objects.add_tags_and_return_added_tag_names(unparsed_tag_names, dataset, user)
+        
         responseData['success'] = added_tags
 
     except MultiValueDictKeyError:

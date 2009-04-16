@@ -1,61 +1,88 @@
-from django.db import models
 from django.contrib.auth.models import User
-
-from django.db import models
-from django.contrib.auth.models import User
-from django.db import IntegrityError
-
-from epic.core.models import Item
-from epic.tags.utils import parse_tag_input, edit_string_for_tags
-from common import LOGARITHMIC, LINEAR, Tag
-
-from django.db import connection, models
+from django.db import connection, models, IntegrityError
 from django.db.models.query import QuerySet
-qn = connection.ops.quote_name
 
 from epic.core.models import Item
+from epic.tags.common import LOGARITHMIC, LINEAR, Tag
+from epic.tags.utils import parse_tag_input, edit_string_for_tags
+
+qn = connection.ops.quote_name
 
 class TagManager(models.Manager):
     """
     This will replace the standard Tagging.objects to allow several Tagging related
     functions to be added.
     """
-    
-    use_for_related_fields = True
-     
-    def update_tags(self, tag_names, item=None, user=None):
-        if item is None and user is None:
-            raise Exception("User and item must not be none together. That deletes all tags.")
+
+    def get_or_create(self, tag_name, item, user):
+        """Get or create a tag given a tag(name), item and a user.
+        Tags are a special case so this first check for the most specific tag first (tag, item, user), then
+        it checks for a less specific version to return (tag, item) before finally creating the (tag, item, user)
+        tagging if nothing else was found.  It returns the tagging and a boolean indicating if it was created.
         
-        filters = {}
+        Arguments:
+        tag_name -- the tag(name) for the tagging
+        item -- the item that the tagging is connected to
+        user -- the user doing the tagging
         
-        if item is not None:
-            filters['item'] = item
+        """
         
-        if user is not None:
-            filters['user'] = user
+        try:
+            tag = Tagging.objects.get(tag=tag_name, item=item, user=user)
+            created = False
+        except Tagging.DoesNotExist:
+            try:
+                tag = Tagging.objects.get(tag=tag_name, item=item)
+                created = False
+            except Tagging.DoesNotExist:
+                tag = Tagging.objects.create(tag=tag_name, item=item, user=user)
+                created = True
+        return tag, created
+            
+
+    def add_tags_and_return_added_tag_names(self, tag_names, item, user):
+        """Add tags to the database and return the names of tags that were added.
         
+        Arguments:
+        tag_names -- the unparsed string representation of the tags to be added to the database
+        item -- the item the tags are related to
+        user -- the user adding the tags
+        
+        """
+        
+        parsed_tag_names = parse_tag_input(tag_names)
+        
+        added_tags = []
+        for tag_name in parsed_tag_names:
+            tag, created = Tagging.objects.get_or_create(tag=tag_name, item=item, user=user)
+            if created:
+                added_tags.append(tag.tag)
+        return added_tags
+            
+    def update_tags(self, tag_names, item, user):
+        """Add tags from the tag_names that are not already in the database and remove those that are in the
+        database but are not in tag_names.
+        
+        Arguments:
+        tag_names -- the unparsed string representation of the tags that should be the only ones attached to an item
+        item -- the item the tagging is related to
+        user -- the user adding the taggings
+        
+        """
+        
+        #clean the tag names
         clean_tag_names = parse_tag_input(tag_names)
-        self.filter(**filters).exclude(tag__in=clean_tag_names).delete()
-        current_tags = [value['tag'] for value in self.filter(**filters).values('tag')]
+ 
+        # Remove tags from the database that aren't in tag names.
+        self.filter(item=item).exclude(tag__in=clean_tag_names).delete()
         
+        # Add new tags to the database.
         for tag in clean_tag_names:
-            if tag not in current_tags:
-                try:
-                    self.get_or_create(tag=tag, **filters)
-                except IntegrityError:
-                    pass
+            self.get_or_create(tag=tag, item=item, user=user)
+
     
-    def get_tag_list(self, item=None, user=None):
-        filters = {}
-        
-        if item is not None:
-            filters['item'] = item
-        
-        if user is not None:
-            filters['user'] = user
-        
-        list_of_tags = [value['tag'] for value in self.filter(**filters).order_by('tag').values('tag')]
+    def get_tag_list(self, item, user):
+        list_of_tags = [value['tag'] for value in self.filter(item=item, user=user).order_by('tag').values('tag')]
         
         return ", ".join(list_of_tags)
     
@@ -87,16 +114,11 @@ class TagManager(models.Manager):
         
         return tags
     
-    def get_edit_string(self, item=None, user=None):
-        filters = {}
-        
-        if item is not None:
-            filters['item'] = item
-        
-        if user is not None:
-            filters['user'] = user
-        
-        list_of_tags = self.filter(**filters).order_by('tag')
+    def get_edit_string(self, item, user):
+        if item.creator == user:
+            list_of_tags = self.filter(item=item).order_by('tag')
+        else:
+            list_of_tags = self.filter(item=item, user=user).order_by('tag')
         
         return edit_string_for_tags(list_of_tags)
     
@@ -141,8 +163,8 @@ class Tagging(models.Model):
     objects = TagManager()
     
     tag = models.CharField(max_length=Item.MAX_ITEM_INDIVIDUAL_TAG_LENGTH)
-    user = models.ForeignKey(User, related_name="tags")
-    item = models.ForeignKey(Item, related_name="tags")
+    user = models.ForeignKey(User)
+    item = models.ForeignKey(Item)
     created_at = models.DateTimeField(auto_now_add=True)
                              
     class Meta:
