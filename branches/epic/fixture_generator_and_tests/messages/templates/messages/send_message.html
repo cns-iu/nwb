@@ -3,7 +3,8 @@
 <h2>Send a new message</h2>
 <form action="{% url messages.views.send_message user_id=user.id %}" method="POST">
     <table>
-        {{ form.as_table }}
+        {% load core_templatetags %}
+        {% include_form_as_table form 'True' %}
     </table>
     <p><input type="submit" value="Send Message" /></p>
 </form>

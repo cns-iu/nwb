@@ -10,4 +10,9 @@ register = template.Library()
 @register.inclusion_tag('core/login_box.html')
 def login_box():
 	form = ShortAuthenticationForm()
-	return {'login_form':form}
+	return {'login_form': form,}
+
+@register.inclusion_tag('templatetags/include_form_as_table.html')
+def include_form_as_table(form, style_required=False):
+    return {'form': form, 'style_required': style_required,}
+    

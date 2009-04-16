@@ -607,3 +607,19 @@ a.new_message {
 	font-weight: bold;
 	font-style: italic;
 }
+
+.required_field label {
+	color: #D13165;
+}
+
+ul.errorlist {
+	margin-top: 0px;
+	margin-bottom: 1px;
+	padding-left: 0px;
+}
+
+ul.errorlist li {
+	color: #D13165;
+	list-style: none;
+}
+
