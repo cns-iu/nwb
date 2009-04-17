@@ -28,10 +28,10 @@ public class EdgeContainer {
 		source = (Node)edgeVector.get(0);
 		target = (Node)edgeVector.get(1);	
 		
-		final Edge edg = graph.addEdge(source,target);
+		final Edge edge = graph.addEdge(source,target);
 
-		ValueAttributes va = new ValueAttributes(edg.getRow());
-		va = FunctionContainer.mutateFunctions(edg, table, rowNumber, va, afm,AggregateFunctionMappings.SOURCEANDTARGET);
+		ValueAttributes va = new ValueAttributes(edge.getRow());
+		va = FunctionContainer.mutateFunctions(edge, table, rowNumber, va, afm,AggregateFunctionMappings.SOURCEANDTARGET);
 		afm.addFunctionRow(edgeVector, va);
 	}
 	
@@ -54,6 +54,7 @@ public class EdgeContainer {
 		}
 
 		ValueAttributes va = afm.getFunctionRow(edgeVector);
+		
 		// If we don't find a ValueAttributes object, we haven't seen this edge before; create a new one.
 		if (va == null) {
 			createEdge(edgeVector,graph,table,rowNumber,afm);

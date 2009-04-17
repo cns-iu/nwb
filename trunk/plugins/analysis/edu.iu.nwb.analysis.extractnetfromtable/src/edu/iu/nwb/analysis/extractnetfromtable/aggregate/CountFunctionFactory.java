@@ -24,7 +24,12 @@ class Count extends AggregateFunction {
 	}
 
 	public Class getType() {
-		return Integer.class;
+		
+		/*
+		 * the return data type has to be *int* & not *Integer*. It changes the behavior of 
+		 * nwb system drastically.
+		 * */
+		return int.class;
 	}
 
 	public void operate(Object o) {
