@@ -1,7 +1,7 @@
 from doc_tests import *
 from view_tests import *
 
-class MagicTestCase(TestCase):
+class MagicTestCase(CustomTestCase):
 	def testHttp(self):
 		from urllib2 import urlopen
 		import socket

@@ -1,8 +1,8 @@
 from django.contrib.auth.models import User
 from django.core.urlresolvers import reverse
-from django.test import TestCase
+from epic.core.test import CustomTestCase
 
-from epic.core.tests.CustomTestCase import CustomTestCase
+from epic.core.test import CustomTestCase
 from epic.datasets.models import DataSet
 from epic.tags.models import Tagging
 
@@ -51,7 +51,7 @@ def common_setUp(self):
                            kwargs={ "item_id": self.dataset2.id,
                                        "slug": self.dataset2.slug, })
 
-class ViewTestCase(TestCase):
+class ViewTestCase(CustomTestCase):
     fixtures = [ "tags_just_users", "tags_tags" ]
     
     def setUp(self):
@@ -115,7 +115,7 @@ class ViewTestCase(TestCase):
         self.assertContains(response,'href="%s' % self.TAG3_URL)
         self.assertContains(response,'href="%s' % self.TAG4_URL)
         
-class ViewAddTagsTestCase(TestCase):
+class ViewAddTagsTestCase(CustomTestCase):
     fixtures = [ "tags_just_users", "tags_tags" ]
     
     def setUp(self):

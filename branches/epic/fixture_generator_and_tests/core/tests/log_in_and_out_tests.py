@@ -1,6 +1,6 @@
 from django.core.urlresolvers import reverse
 from django.contrib.auth.models import User
-from django.test import TestCase
+from epic.core.test import CustomTestCase
 
 from epic.settings import LOGIN_REDIRECT_URL
 
@@ -13,7 +13,7 @@ BOB2_USER_PASSWORD = 'bob2'
 USERNAME_KEY = 'username'
 PASSWORD_KEY = 'password'
 
-class LogInAndOutTestCase(TestCase):
+class LogInAndOutTestCase(CustomTestCase):
     fixtures = ['core_just_users']
     
     def setUp(self):

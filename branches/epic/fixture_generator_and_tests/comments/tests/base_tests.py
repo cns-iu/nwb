@@ -1,6 +1,6 @@
 from django.contrib.auth.models import User
 from django.core.urlresolvers import reverse
-from django.test import TestCase
+from epic.core.test import CustomTestCase
 
 from epic.comments.models import Comment
 from epic.datarequests.models import DataRequest
@@ -15,7 +15,7 @@ TEST_USER_USERNAME = 'peebs'
 TEST_USER_PASSWORD = 'map'
 
 def create_comment_test_case(_setUp, _fixtures):
-    class CommentTestCase(TestCase):
+    class CommentTestCase(CustomTestCase):
         fixtures = _fixtures
         
         def setUp(self):

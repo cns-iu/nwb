@@ -1,9 +1,9 @@
-from django.test import TestCase
+from epic.core.test import CustomTestCase
 from django.core.urlresolvers import reverse
 from epic.datasets.models import DataSet
 from django.contrib.auth.models import User
 
-class UrlsTestCaseTestCase(TestCase):
+class UrlsTestCaseTestCase(CustomTestCase):
 	""" Test all the urls to make sure that the view for each works """
 	
 	fixtures = ['just_users', 'datasets']
@@ -95,7 +95,7 @@ class UrlsTestCaseTestCase(TestCase):
 		for code in self.error_page_codes:
 			self.assertNotEqual(code, response.status_code)
 
-class ViewDatasetsTestCase(TestCase):
+class ViewDatasetsTestCase(CustomTestCase):
 	""" Test the view_datasets view """
 	
 	fixtures = ['just_users', 'datasets']
@@ -139,7 +139,7 @@ class ViewDatasetsTestCase(TestCase):
 		for ds in DataSet.objects.all():
 			self.assertContains(response, ds.name)
 	
-class ViewDatasetTestCase(TestCase):
+class ViewDatasetTestCase(CustomTestCase):
 	""" Test the view_dataset view """
 	
 	fixtures = ['just_users', 'datasets']
@@ -202,7 +202,7 @@ class ViewDatasetTestCase(TestCase):
 		self.assertContains(response, self.dataset1.name)
 		self.assertContains(response, self.dataset1.description)
 
-class ViewUserDatasetListTestCase(TestCase):
+class ViewUserDatasetListTestCase(CustomTestCase):
 	""" Test the view_user_dataset_list view """
 	
 	fixtures = ['just_users', 'datasets']
@@ -255,7 +255,7 @@ class ViewUserDatasetListTestCase(TestCase):
 		self.assertNotContains(response, self.dataset2.name)
 		self.assertNotContains(response, self.dataset2.name)
 		
-class CreateDatasetTestCase(TestCase):
+class CreateDatasetTestCase(CustomTestCase):
 	""" Test the create_dataset view """
 	
 	fixtures = ['just_users', 'datasets']
@@ -320,7 +320,7 @@ class CreateDatasetTestCase(TestCase):
 		
 		ds = DataSet.objects.get(name=self.post_data['name'], description=self.post_data['description'])
 
-class EditDatasetTestCase(TestCase):
+class EditDatasetTestCase(CustomTestCase):
 	""" Test the edit_dataset view """
 	
 	fixtures = ['just_users', 'datasets']

@@ -9,7 +9,7 @@ from multifile import *
 import unittest
 
 from django import newforms as forms
-from django.test import TestCase
+from epic.core.test import CustomTestCase
 from django.test.client import Client
 from django.utils.datastructures import MultiValueDict
 

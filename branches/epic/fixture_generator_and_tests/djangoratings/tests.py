@@ -1,4 +1,4 @@
-from django.test import TestCase
+from epic.core.test import CustomTestCase
 
 from epic.datasets.models import DataSet
 from epic.datasets.models import DataSetFile
@@ -7,7 +7,7 @@ from django.core.urlresolvers import reverse
 from django.conf import settings
 import os
 
-class RatingTestCase(TestCase):
+class RatingTestCase(CustomTestCase):
 	fixtures = ['common_data']
 	
 	def setUp(self):

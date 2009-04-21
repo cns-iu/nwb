@@ -1,9 +1,9 @@
-from django.test import TestCase
+from epic.core.test import CustomTestCase
 from django.core.urlresolvers import reverse
 from django.contrib.auth.models import User
 from epic.datarequests.models import DataRequest
 
-class ProfileDataRequestTestCase(TestCase):
+class ProfileDataRequestTestCase(CustomTestCase):
 	
 	fixtures = ['core_profile_datarequests']
 	

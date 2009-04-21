@@ -1,8 +1,8 @@
-from django.test import TestCase
+from epic.core.test import CustomTestCase
 
 from django.contrib.auth.models import User
 
-class ProfileDatasetTestCase(TestCase):
+class ProfileDatasetTestCase(CustomTestCase):
 	fixtures = ['core_profile_datasets']
 	
 	def setUp(self):

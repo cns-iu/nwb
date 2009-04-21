@@ -1,6 +1,6 @@
 from django.core.urlresolvers import reverse
 
-from epic.core.tests.CustomTestCase import CustomTestCase
+from epic.core.test import CustomTestCase
 
 
 BOB_USERNAME = 'bob'

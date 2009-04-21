@@ -1,9 +1,9 @@
-from django.test import TestCase
+from epic.core.test import CustomTestCase
 from django.core.urlresolvers import reverse
 from epic.datarequests.models import DataRequest
 from django.contrib.auth.models import User
 
-class DataRequestTestCase(TestCase):
+class DataRequestTestCase(CustomTestCase):
 	""" Test that the model for datarequests is working correctly """
 	
 	fixtures = ['datarequests_just_users', 'datarequests_datarequests']
@@ -67,7 +67,7 @@ class DataRequestTestCase(TestCase):
 		self.assertEqual(DataRequest.objects.fulfilled().count(), 7)
 		self.assertTrue(dr in DataRequest.objects.fulfilled())
 		
-class UrlsTestCase(TestCase):
+class UrlsTestCase(CustomTestCase):
 	""" Test all the urls to make sure that the view for each works """
 	
 	fixtures = ['datarequests_just_users', 'datarequests_datarequests'] # TODO: I just need one datarequest and a user
@@ -145,7 +145,7 @@ class UrlsTestCase(TestCase):
 		response = self.client.get(url)
 		self.failUnlessEqual(response.status_code, 302)
 		
-class ViewDatarequestsTestCase(TestCase):
+class ViewDatarequestsTestCase(CustomTestCase):
 	""" Test the view datarequests page/view """
 	
 	fixtures = ['datarequests_just_users', 'datarequests_datarequests']
@@ -220,7 +220,7 @@ class ViewDatarequestsTestCase(TestCase):
 		self.assertContains(response, self.cancel_url)
 		self.assertContains(response, self.fulfill_url)
 		
-class ViewDataRequestTestCase(TestCase):
+class ViewDataRequestTestCase(CustomTestCase):
 	""" Test the view datarequest page/view """
 	
 	fixtures = ['datarequests_just_users', 'datarequests_datarequests']
@@ -284,7 +284,7 @@ class ViewDataRequestTestCase(TestCase):
 		response = self.client.get(reverse('epic.datarequests.views.view_datarequest', kwargs={'item_id': 10000000000000000, 'slug': 'fake-slug',}))
 		self.failUnless(response.status_code, 404)
 		
-class NewDataRequestTestCase(TestCase):
+class NewDataRequestTestCase(CustomTestCase):
 	""" Test the new datarequest page/view """
 	
 	fixtures = ['datarequests_just_users', 'datarequests_datarequests']
@@ -326,7 +326,7 @@ class NewDataRequestTestCase(TestCase):
 		self.assertContains(response, self.post_data['name'])
 		self.assertContains(response, self.post_data['description'])
 		
-class CancelDatarequestsTestCase(TestCase):
+class CancelDatarequestsTestCase(CustomTestCase):
 	""" Test the cancel datarequests page/view """
 	
 	fixtures = ['datarequests_just_users', 'datarequests_datarequests']
@@ -370,7 +370,7 @@ class CancelDatarequestsTestCase(TestCase):
 		
 		self.assertEqual(self.dr1.status, 'C')
 
-class FulfillDatarequestsTestCase(TestCase):
+class FulfillDatarequestsTestCase(CustomTestCase):
 	""" Test the fulfill datarequests page/view """
 	
 	fixtures = ['datarequests_just_users', 'datarequests_datarequests']
@@ -416,7 +416,7 @@ class FulfillDatarequestsTestCase(TestCase):
 		
 		self.assertEqual(self.dr1.status, 'F')
 
-class EditDatarequestsTestCase(TestCase):
+class EditDatarequestsTestCase(CustomTestCase):
 	""" Test the edit datarequests page/view """
 	
 	fixtures = ['datarequests_just_users', 'datarequests_datarequests']

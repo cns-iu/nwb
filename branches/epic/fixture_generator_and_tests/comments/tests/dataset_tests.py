@@ -1,5 +1,5 @@
 from django.core.urlresolvers import reverse
-from django.test import TestCase
+from epic.core.test import CustomTestCase
 
 from epic.comments.tests.base_tests import *
 from epic.datasets.models import DataSet

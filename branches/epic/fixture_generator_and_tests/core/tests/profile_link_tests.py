@@ -1,8 +1,8 @@
-from django.test import TestCase
+from epic.core.test import CustomTestCase
 from django.contrib.auth.models import User
 from django.core.urlresolvers import reverse
 
-class ProfileLinkTestCase(TestCase):
+class ProfileLinkTestCase(CustomTestCase):
 	fixtures = ['core_just_users']
 	
 	def setUp(self):

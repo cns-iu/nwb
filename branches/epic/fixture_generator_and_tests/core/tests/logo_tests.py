@@ -1,11 +1,11 @@
 from django.core.urlresolvers import reverse
-from django.test import TestCase
+from epic.core.test import CustomTestCase
 
 
 BOB_USER_USERNAME = 'bob'
 BOB_USER_PASSWORD = 'bob'
 
-class LogoTestCase(TestCase):
+class LogoTestCase(CustomTestCase):
     fixtures = ['core_just_users']
     
     def setUp(self):

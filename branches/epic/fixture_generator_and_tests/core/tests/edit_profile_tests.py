@@ -1,6 +1,6 @@
 from django.contrib.auth.models import User
 from django.core.urlresolvers import reverse
-from django.test import TestCase
+from epic.core.test import CustomTestCase
 
 from epic.core.models import Profile
 
@@ -13,7 +13,7 @@ LAST_NAME_KEY = 'last_name'
 EMAIL_KEY = 'email'
 AFFILIATION_KEY = 'affiliation'
 
-class ViewEditProfilePageCase(TestCase):
+class ViewEditProfilePageCase(CustomTestCase):
     fixtures = ['core_just_users']
     
     def setUp(self):
@@ -53,7 +53,7 @@ class ViewEditProfilePageCase(TestCase):
         self.assertContains(response, 'E-mail address')
         self.assertContains(response, AFFILIATION_KEY)
         
-class ActionEditProfilePageCase(TestCase):
+class ActionEditProfilePageCase(CustomTestCase):
     fixtures = ['core_just_users']
     
     def setUp(self):
