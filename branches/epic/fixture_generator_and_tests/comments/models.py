@@ -1,6 +1,4 @@
-'''
-Comment models: models relating to comments (on things).
-'''
+"""Comment models: models relating to comments (on things)."""
 
 from django.contrib.auth.models import User
 from django.db import models
@@ -9,9 +7,9 @@ from epic.core.models import Item
 
 
 class Comment(models.Model):
-    '''
-    Usage as follows:
+    """
     
+    Usage as follows:
     >>> from epic.datasets.models import DataSet
     >>> from epic.comments.models import Comment
     >>> user = User.objects.create_user( \
@@ -32,7 +30,7 @@ class Comment(models.Model):
     <Comment: 3y3 4m t0t4lly h4x0ring j00r sit3!>
     >>> dataset.comments.all()[0] == comment
     True
-    '''
+    """
     
     posting_user = models.ForeignKey(User)
     parent_item = models.ForeignKey(Item, related_name='comments')
