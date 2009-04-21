@@ -27,7 +27,7 @@ def setUp(self):
                             kwargs=kwargs_for_url_reverses)
     
     self.POST_TO_COMMENT_URL = reverse(
-        'epic.datasets.views.post_dataset_comment',
+        'epic.comments.views.post_comment',
         kwargs=kwargs_for_url_reverses)
     
     self.ITEM_TYPE_STRING = 'dataset'

@@ -39,12 +39,6 @@ class UrlsTestCaseTestCase(CustomTestCase):
 		for code in self.error_page_codes:
 			self.assertNotEqual(code, response.status_code)
 		
-	def test_post_dataset_comment(self):
-		url = reverse('epic.datasets.views.post_dataset_comment', kwargs={'item_id':self.dataset1.id,})
-		response = self.client.get(url)
-		for code in self.error_page_codes:
-			self.assertNotEqual(code, response.status_code)
-		
 	def create_dataset(self):
 		url = reverse('epic.datasets.views.create_dataset')
 		response = self.client.get(url)

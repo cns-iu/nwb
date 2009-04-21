@@ -11,8 +11,6 @@ from django.utils import simplejson
 from django.utils.datastructures import MultiValueDictKeyError
 
 from epic.comments.forms import PostCommentForm
-from epic.comments.models import Comment
-from epic.comments.views import make_comment_view
 from epic.core.models import Item
 from epic.datasets.forms import NewDataSetForm, EditDataSetForm, RatingDataSetForm, TagDataSetForm, GeoLocationFormSet, RemoveGeoLocationFormSet
 from epic.datasets.models import DataSetFile, DataSet, RATING_SCALE
@@ -37,13 +35,6 @@ def view_dataset(request, item_id=None, slug=None):
     return render_to_response('datasets/view_dataset.html', 
                               {'dataset': dataset, 'form': form},
                               context_instance=RequestContext(request))
-
-post_dataset_comment = make_comment_view(
-    DataSet,
-    'epic.datasets.views.view_dataset',
-    'datasets/view_dataset.html',
-    'dataset')
-    
 
 def view_user_dataset_list(request, user_id=None):
 

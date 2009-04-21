@@ -99,16 +99,6 @@ class UrlsTestCase(CustomTestCase):
 		response = self.client.get(url)
 		self.failUnlessEqual(response.status_code, 200)
 		
-	def testCommentDataReqeusts(self):
-		url = reverse('epic.datarequests.views.post_datarequest_comment', kwargs={'item_id':self.dr1.id, 'slug':self.dr1.slug })
-		response = self.client.get(url)
-		self.failUnlessEqual(response.status_code, 302)
-		
-		self.tryLogin(username='bob', password='bob')
-		
-		response = self.client.get(url)
-		self.failUnlessEqual(response.status_code, 302)
-		
 	def testEditDataReqeusts(self):
 		url = reverse('epic.datarequests.views.edit_datarequest', kwargs={'item_id':self.dr1.id, 'slug':self.dr1.slug })
 		response = self.client.get(url)
