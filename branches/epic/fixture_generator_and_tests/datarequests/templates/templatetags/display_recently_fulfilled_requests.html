@@ -1,9 +1,0 @@
-{% if datarequests %}
-	<h1>Recently fulfilled requests</h1>
-	{% for datarequest in datarequests %}
-		<h2><a href="{% url datarequests.views.view_datarequest item_id=datarequest.id slug=datarequest.slug %}">{{ datarequest.name|escape }}</a> (links to dataset page)</h2>
-		<p>{{ datarequest.description|truncatewords:50 }}</p>
-	{% endfor %}
-{% else %}
-<p>There are not datarequests.</p>
-{% endif %}
