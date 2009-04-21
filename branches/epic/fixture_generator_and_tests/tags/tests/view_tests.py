@@ -149,8 +149,7 @@ class ViewAddTagsTestCase(CustomTestCase):
         self.assertNotContains(response, self.ADD_TAGS_URL)
     
     def testAddTagsOnTaggedDataSet(self):
-        login = self.client.login(username="bob", password="bob")
-        self.failUnless(login, "Could not login")
+        self.tryLogin(username="bob", password="bob")
         
         response = self.client.get(self.DATASET_TAGGED_URL)
         
@@ -161,8 +160,7 @@ class ViewAddTagsTestCase(CustomTestCase):
         
         
     def testAddTagsOnNotTaggedDataSet(self):
-        login = self.client.login(username="bob", password="bob")
-        self.failUnless(login, "Could not login")
+        self.tryLogin(username="bob", password="bob")
         
         response = self.client.get(self.DATASET_NOT_TAGGED_URL)
         

@@ -30,9 +30,7 @@ class LogoTestCase(CustomTestCase):
         self.assertContains(response, logo_link)
         
         # You must be logged in to see the upload page.
-        login = self.client.login(username=BOB_USER_USERNAME,
-                                  password=BOB_USER_PASSWORD)
-        self.failUnless(login, 'Could not login')
+        self.tryLogin(username=BOB_USER_USERNAME, password=BOB_USER_PASSWORD)
         
         response = self.client.get(upload_url)
         self.assertContains(response, logo_link)

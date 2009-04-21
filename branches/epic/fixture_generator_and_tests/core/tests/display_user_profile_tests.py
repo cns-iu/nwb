@@ -23,8 +23,7 @@ class ViewBasicUserProfileTestCase(CustomTestCase):
         self.assertRedirects(response, redirect_url, 302)
     
     def testViewProfileLoggedIn(self):
-        login = self.client.login(username=BOB_USER_USERNAME, password=BOB_USER_PASSWORD)
-        self.failUnless(login, 'Could not login')
+        self.tryLogin(username=BOB_USER_USERNAME, password=BOB_USER_PASSWORD)
         
         response = self.client.get(self.profile_url)
         self.failUnlessEqual(response.status_code, 200)

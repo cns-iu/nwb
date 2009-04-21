@@ -91,9 +91,7 @@ class ChangePasswordTestCase(CustomTestCase):
         Test that entering an incorrect old password causes an error in the
         form.
         """
-        login = self.client.login(username=BOB_USERNAME,
-                                  password=BOB_PASSWORD)
-        self.failUnless(login, 'Could not login')
+        self.tryLogin(username=BOB_USERNAME, password=BOB_PASSWORD)
         
         post_data = {
             OLD_PASSWORD_KEY: 'incorrectOldPassword',
@@ -114,9 +112,7 @@ class ChangePasswordTestCase(CustomTestCase):
         Test that the form will actually change a user's password if used
         correctly.
         """
-        login = self.client.login(username=BOB_USERNAME,
-                                  password=BOB_PASSWORD)
-        self.failUnless(login, 'Could not login')
+        self.tryLogin(username=BOB_USERNAME, password=BOB_PASSWORD)
         
         post_data = {
             OLD_PASSWORD_KEY: BOB_PASSWORD,
@@ -136,6 +132,5 @@ class ChangePasswordTestCase(CustomTestCase):
             username=BOB_USERNAME, password=post_data[OLD_PASSWORD_KEY])
         self.failIf(login)
         
-        login = self.client.login(
-            username=BOB_USERNAME, password=post_data[NEW_PASSWORD_KEY])
-        self.failUnless(login)
+        self.tryLogin(username=BOB_USERNAME, 
+                      password=post_data[NEW_PASSWORD_KEY])

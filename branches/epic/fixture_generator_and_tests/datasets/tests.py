@@ -120,8 +120,7 @@ class ViewDatasetsTestCase(CustomTestCase):
 			self.assertContains(response, ds.name)
 		
 	def testLoggedInNotOwner(self):
-		login = self.client.login(username='admin', password='admin')
-		self.failUnless(login, 'Could not login')
+		self.tryLogin(username='admin', password='admin')
 		
 		response = self.client.get(self.view_datasets_url)
 		self.assertEqual(response.status_code, 200)
@@ -130,8 +129,7 @@ class ViewDatasetsTestCase(CustomTestCase):
 			self.assertContains(response, ds.name)
 	
 	def testLoggedInOwner(self):
-		login = self.client.login(username='bob', password='bob')
-		self.failUnless(login, 'Could not login')
+		self.tryLogin(username='bob', password='bob')
 		
 		response = self.client.get(self.view_datasets_url)
 		self.assertEqual(response.status_code, 200)
@@ -171,8 +169,7 @@ class ViewDatasetTestCase(CustomTestCase):
 		self.assertContains(response, self.dataset1.description)
 		
 	def testLoggedInNotOwner(self):
-		login = self.client.login(username='admin', password='admin')
-		self.failUnless(login, 'Could not login')
+		self.tryLogin(username='admin', password='admin')
 	
 		response = self.client.get(self.view_dataset_url_1)
 		self.assertEqual(response.status_code, 200)
@@ -187,8 +184,7 @@ class ViewDatasetTestCase(CustomTestCase):
 		self.assertContains(response, self.dataset1.description)
 		
 	def testLoggedInOwner(self):
-		login = self.client.login(username='bob', password='bob')
-		self.failUnless(login, 'Could not login')
+		self.tryLogin(username='bob', password='bob')
 		
 		response = self.client.get(self.view_dataset_url_1)
 		self.assertEqual(response.status_code, 200)
@@ -230,8 +226,7 @@ class ViewUserDatasetListTestCase(CustomTestCase):
 		self.assertNotContains(response, self.dataset2.name)
 	
 	def testLoggedInNotOwner(self):
-		login = self.client.login(username='admin', password='admin')
-		self.failUnless(login, 'Could not login')
+		self.tryLogin(username='admin', password='admin')
 		
 		response = self.client.get(self.view_user_dataset_list_url)
 		self.assertEqual(response.status_code, 200)
@@ -243,8 +238,7 @@ class ViewUserDatasetListTestCase(CustomTestCase):
 		self.assertNotContains(response, self.dataset2.name)
 		
 	def testLoggedInOwner(self):
-		login = self.client.login(username='bob', password='bob')
-		self.failUnless(login, 'Could not login')
+		self.tryLogin(username='bob', password='bob')
 	
 		response = self.client.get(self.view_user_dataset_list_url)
 		self.assertEqual(response.status_code, 200)
@@ -309,8 +303,7 @@ class CreateDatasetTestCase(CustomTestCase):
 			self.assertNotEqual(ds.description,self.post_data['description'])
 	
 	def testLoggedIn(self):
-		login = self.client.login(username='bob', password='bob')
-		self.failUnless(login, 'Could not login')
+		self.tryLogin(username='bob', password='bob')
 
 		response = self.client.get(self.create_dataset_url)
 		self.assertEqual(response.status_code, 200)
@@ -369,8 +362,7 @@ class EditDatasetTestCase(CustomTestCase):
 			self.assertNotEqual(ds.description,self.post_data['description'])
 		
 	def testLoggedInNotOwner(self):
-		login = self.client.login(username='admin', password='admin')
-		self.failUnless(login, 'Could not login')
+		self.tryLogin(username='admin', password='admin')
 		
 		response = self.client.get(self.edit_url_1)
 		self.assertEqual(response.status_code, 302)
@@ -393,8 +385,7 @@ class EditDatasetTestCase(CustomTestCase):
 			self.assertNotEqual(ds.description,self.post_data['description'])
 	
 	def testLoggedInOwner(self):
-		login = self.client.login(username='bob', password='bob')
-		self.failUnless(login, 'Could not login')
+		self.tryLogin(username='bob', password='bob')
 		
 		response = self.client.get(self.edit_url_1)
 		self.assertEqual(response.status_code, 200)

@@ -84,8 +84,7 @@ class UrlsTestCase(CustomTestCase):
 		response = self.client.get(url)
 		self.failUnlessEqual(response.status_code, 200)
 		
-		login = self.client.login(username='bob', password='bob')
-		self.failUnless(login, 'Could not login')
+		self.tryLogin(username='bob', password='bob')
 		
 		response = self.client.get(url)
 		self.failUnlessEqual(response.status_code, 200)
@@ -95,8 +94,7 @@ class UrlsTestCase(CustomTestCase):
 		response = self.client.get(url)
 		self.failUnlessEqual(response.status_code, 302)
 		
-		login = self.client.login(username='bob', password='bob')
-		self.failUnless(login, 'Could not login')
+		self.tryLogin(username='bob', password='bob')
 		
 		response = self.client.get(url)
 		self.failUnlessEqual(response.status_code, 200)
@@ -106,8 +104,7 @@ class UrlsTestCase(CustomTestCase):
 		response = self.client.get(url)
 		self.failUnlessEqual(response.status_code, 302)
 		
-		login = self.client.login(username='bob', password='bob')
-		self.failUnless(login, 'Could not login')
+		self.tryLogin(username='bob', password='bob')
 		
 		response = self.client.get(url)
 		self.failUnlessEqual(response.status_code, 302)
@@ -117,8 +114,7 @@ class UrlsTestCase(CustomTestCase):
 		response = self.client.get(url)
 		self.failUnlessEqual(response.status_code, 302)
 		
-		login = self.client.login(username='bob', password='bob')
-		self.failUnless(login, 'Could not login')
+		self.tryLogin(username='bob', password='bob')
 		
 		response = self.client.get(url)
 		self.failUnlessEqual(response.status_code, 200)
@@ -128,8 +124,7 @@ class UrlsTestCase(CustomTestCase):
 		response = self.client.get(url)
 		self.failUnlessEqual(response.status_code, 302)
 		
-		login = self.client.login(username='bob', password='bob')
-		self.failUnless(login, 'Could not login')
+		self.tryLogin(username='bob', password='bob')
 		
 		response = self.client.get(url)
 		self.failUnlessEqual(response.status_code, 302)
@@ -139,8 +134,7 @@ class UrlsTestCase(CustomTestCase):
 		response = self.client.get(url)
 		self.failUnlessEqual(response.status_code, 302)
 		
-		login = self.client.login(username='bob', password='bob')
-		self.failUnless(login, 'Could not login')
+		self.tryLogin(username='bob', password='bob')
 		
 		response = self.client.get(url)
 		self.failUnlessEqual(response.status_code, 302)
@@ -181,8 +175,7 @@ class ViewDatarequestsTestCase(CustomTestCase):
 		self.assertNotContains(response, self.fulfill_url)
 			
 	def testIndexUnOwned(self):
-		login = self.client.login(username='admin', password='admin')
-		self.failUnless(login, 'Could not login')
+		self.tryLogin(username='admin', password='admin')
 		
 		response = self.client.get(self.datarequests_url)
 		self.assertEqual(response.status_code, 200)
@@ -201,8 +194,7 @@ class ViewDatarequestsTestCase(CustomTestCase):
 		self.assertNotContains(response, self.fulfill_url)
 			
 	def testIndexOwned(self):
-		login = self.client.login(username='bob', password='bob')
-		self.failUnless(login, 'Could not login')
+		self.tryLogin(username='bob', password='bob')
 		
 		response = self.client.get(self.datarequests_url)
 		self.assertEqual(response.status_code, 200)
@@ -251,8 +243,7 @@ class ViewDataRequestTestCase(CustomTestCase):
 		self.assertNotContains(response, self.fulfill_url)
 	
 	def testLoggedInNotOwner(self):
-		login = self.client.login(username='admin', password='admin')
-		self.failUnless(login, 'Could not login')
+		self.tryLogin(username='admin', password='admin')
 		
 		response = self.client.get(self.datarequest_url)
 		self.assertEqual(response.status_code, 200)
@@ -266,8 +257,7 @@ class ViewDataRequestTestCase(CustomTestCase):
 		self.assertNotContains(response, self.fulfill_url)
 	
 	def testLoggedInOwner(self):
-		login = self.client.login(username='bob', password='bob')
-		self.failUnless(login, 'Could not login')
+		self.tryLogin(username='bob', password='bob')
 		
 		response = self.client.get(self.datarequest_url)
 		self.assertEqual(response.status_code, 200)
@@ -313,8 +303,7 @@ class NewDataRequestTestCase(CustomTestCase):
 		self.assertNotContains(response, self.post_data['description'])
 	
 	def testLogged(self):
-		login = self.client.login(username='bob', password='bob')
-		self.failUnless(login, 'Could not login')
+		self.tryLogin(username='bob', password='bob')
 		
 		response = self.client.get(self.new_datarequest_url)
 		self.assertEqual(response.status_code, 200)
@@ -351,8 +340,7 @@ class CancelDatarequestsTestCase(CustomTestCase):
 
 			
 	def testUnOwned(self):
-		login = self.client.login(username='admin', password='admin')
-		self.failUnless(login, 'Could not login')
+		self.tryLogin(username='admin', password='admin')
 		
 		response = self.client.get(self.cancel_url)
 		self.assertEqual(response.status_code, 302)
@@ -360,8 +348,7 @@ class CancelDatarequestsTestCase(CustomTestCase):
 		self.assertEqual(self.dr1.status, 'U')
 			
 	def testOwned(self):
-		login = self.client.login(username='bob', password='bob')
-		self.failUnless(login, 'Could not login')
+		self.tryLogin(username='bob', password='bob')
 		
 		response = self.client.get(self.cancel_url)
 		self.assertEqual(response.status_code, 302)
@@ -395,8 +382,7 @@ class FulfillDatarequestsTestCase(CustomTestCase):
 
 			
 	def testUnOwned(self):
-		login = self.client.login(username='admin', password='admin')
-		self.failUnless(login, 'Could not login')
+		self.tryLogin(username='admin', password='admin')
 		
 		response = self.client.get(self.fulfill_url)
 		self.assertEqual(response.status_code, 302)
@@ -406,8 +392,7 @@ class FulfillDatarequestsTestCase(CustomTestCase):
 		self.assertEqual(self.dr1.status, 'U')
 			
 	def testOwned(self):
-		login = self.client.login(username='bob', password='bob')
-		self.failUnless(login, 'Could not login')
+		self.tryLogin(username='bob', password='bob')
 		
 		response = self.client.get(self.fulfill_url)
 		self.assertEqual(response.status_code, 302)
@@ -445,8 +430,7 @@ class EditDatarequestsTestCase(CustomTestCase):
 		self.dr1 = DataRequest.objects.get(creator=self.bob, name='unfulfilled_datarequest1', description='The first unfulfilled datarequest', status='U')
 		
 	def testUnOwned(self):
-		login = self.client.login(username='admin', password='admin')
-		self.failUnless(login, 'Could not login')
+		self.tryLogin(username='admin', password='admin')
 		
 		response = self.client.get(self.edit_url)
 		self.assertEqual(response.status_code, 302)
@@ -457,8 +441,7 @@ class EditDatarequestsTestCase(CustomTestCase):
 		self.dr1 = DataRequest.objects.get(creator=self.bob, name='unfulfilled_datarequest1', description='The first unfulfilled datarequest', status='U')
 		
 	def testOwned(self):
-		login = self.client.login(username='bob', password='bob')
-		self.failUnless(login, 'Could not login')
+		self.tryLogin(username='bob', password='bob')
 		
 		response = self.client.get(self.edit_url)
 		self.assertEqual(response.status_code, 200)

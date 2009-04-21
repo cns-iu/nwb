@@ -40,9 +40,7 @@ class ViewEditProfilePageCase(CustomTestCase):
         """ 
         
         # Log in and view the edit page
-        login = self.client.login(username=BOB_USER_USERNAME,
-                                  password=BOB_USER_PASSWORD)
-        self.failUnless(login, 'Could not login')
+        self.tryLogin(username=BOB_USER_USERNAME, password=BOB_USER_PASSWORD)
         
         response = self.client.get(self.edit_profile_url)
         self.assertEqual(response.status_code, 200)
@@ -106,9 +104,7 @@ class ActionEditProfilePageCase(CustomTestCase):
             AFFILIATION_KEY: 'Harvard',
         }
         
-        login = self.client.login(username=BOB_USER_USERNAME,
-                                  password=BOB_USER_PASSWORD)
-        self.failUnless(login, 'Could not login')
+        self.tryLogin(username=BOB_USER_USERNAME, password=BOB_USER_PASSWORD)
         
         # Edit the dataset.
         

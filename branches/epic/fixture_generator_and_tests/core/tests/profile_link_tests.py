@@ -9,8 +9,7 @@ class ProfileLinkTestCase(CustomTestCase):
 		self.profile_url = reverse('epic.core.views.view_profile')
 	
 	def testLinkForLoggedIn(self):
-		login = self.client.login(username='bob', password='bob')
-		self.failUnless(login, 'Could not login')
+		self.tryLogin(username='bob', password='bob')
 		response = self.client.get('/')
 		self.assertContains(response, 'href="%(profile_link)s"' % 
 						              {'profile_link':self.profile_url})

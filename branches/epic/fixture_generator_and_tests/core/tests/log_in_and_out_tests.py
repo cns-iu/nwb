@@ -66,9 +66,8 @@ class LogInAndOutTestCase(CustomTestCase):
         Test that logging out using the view works correctly.
         """
         
-        login = self.client.login(username=BOB2_USER_USERNAME,
-                                  password=BOB2_USER_PASSWORD)
-        self.failUnless(login, 'Could not login')
+        self.tryLogin(username=BOB2_USER_USERNAME, 
+                      password=BOB2_USER_PASSWORD)
         
         response = self.client.get(self.logout_url)
         self.failUnlessEqual(response.status_code, 302)
@@ -88,9 +87,8 @@ class LogInAndOutTestCase(CustomTestCase):
         """
         Test that the logout link appears for logged in users
         """        
-        login = self.client.login(username=BOB2_USER_USERNAME,
-                                  password=BOB2_USER_PASSWORD)
-        self.failUnless(login, 'Could not login')
+        self.tryLogin(username=BOB2_USER_USERNAME,
+                      password=BOB2_USER_PASSWORD)
         
         response = self.client.get('/')
         
