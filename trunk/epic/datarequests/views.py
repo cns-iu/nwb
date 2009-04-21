@@ -16,7 +16,8 @@ def view_datarequests(request):
     datarequests = DataRequest.objects.exclude(status='C').order_by('-created_at')
     datarequest_form = DataRequestForm()
     return render_to_response('datarequests/view_datarequests.html', 
-                              {'datarequests': datarequests,'datarequest_form':datarequest_form,}, 
+                              {'datarequests': datarequests,
+                               'datarequest_form':datarequest_form,}, 
                               context_instance=RequestContext(request))
 
 def view_datarequest(request, item_id, slug):
@@ -24,13 +25,8 @@ def view_datarequest(request, item_id, slug):
 	form = PostCommentForm()
 	user = request.user
 	
-	return render_to_response("datarequests/view_datarequest.html", 
-							  { # This required that view_datarequest MUST NOT pass
-							    # in any template arguments but datarequest, user
-							    # and postcommentform.
-		 				  		"datarequest": datarequest,
-						 		"form": form,
-							   },
+	return render_to_response('datarequests/view_datarequest.html', 
+							  {'datarequest': datarequest, 'form': form},
 							   context_instance=RequestContext(request))
 
 @login_required
@@ -49,7 +45,8 @@ def new_datarequest(request):
 			datarequest.slug = slugify(datarequest.name)
 			datarequest.save()
 			return HttpResponseRedirect(reverse('epic.datarequests.views.view_datarequest', 
-                                                kwargs={'item_id':datarequest.id, 'slug':datarequest.slug, }))
+                                                kwargs={'item_id':datarequest.id, 
+                                                        'slug':datarequest.slug}))
 		else:
 			#Form will have errors which will be displayed by the new_datarequest.html page
 			pass
@@ -64,7 +61,8 @@ def edit_datarequest(request, item_id, slug):
 	if datarequest.creator != user:
 		#only a request's owner should be able to change it
 		return HttpResponseRedirect(reverse('epic.datarequests.views.view_datarequest', 
-                                            kwargs={'item_id':datarequest.id, 'slug':datarequest.slug, }))
+                                            kwargs={'item_id':datarequest.id, 
+                                                    'slug':datarequest.slug}))
 	else:
 		if request.method != 'POST':
 			#User hasn't seen the form yet, so fill in what we know
@@ -78,7 +76,8 @@ def edit_datarequest(request, item_id, slug):
 				datarequest.save()
 				
 				return HttpResponseRedirect(reverse('epic.datarequests.views.view_datarequest', 
-                                                    kwargs={'item_id':datarequest.id, 'slug':datarequest.slug, }))
+                                                    kwargs={'item_id':datarequest.id, 
+                                                            'slug':datarequest.slug}))
 			else:
 				#Form will have errors which will be displayed by the new_datarequest.html page
 				pass
@@ -93,12 +92,14 @@ def cancel_datarequest(request, item_id, slug):
 	if datarequest.creator != user:
 		#only a request's owner should be able to change it
 		return HttpResponseRedirect(reverse('epic.datarequests.views.view_datarequest', 
-                                            kwargs={'item_id':datarequest.id, 'slug':datarequest.slug, }))
+                                            kwargs={'item_id':datarequest.id, 
+                                                    'slug':datarequest.slug}))
 	else:
 		datarequest.cancel()
 		datarequest.save()
 		return HttpResponseRedirect(reverse('epic.datarequests.views.view_datarequest', 
-                                            kwargs={'item_id':datarequest.id, 'slug':datarequest.slug, }))
+                                            kwargs={'item_id':datarequest.id, 
+                                                    'slug':datarequest.slug}))
 
 @login_required
 def fulfill_datarequest(request, item_id, slug):
@@ -107,9 +108,11 @@ def fulfill_datarequest(request, item_id, slug):
 	if datarequest.creator != user:
 		#only a request's owner should be able to change it
 		return HttpResponseRedirect(reverse('epic.datarequests.views.view_datarequest', 
-                                            kwargs={'item_id':datarequest.id, 'slug':datarequest.slug, }))
+                                            kwargs={'item_id':datarequest.id, 
+                                                    'slug':datarequest.slug}))
 	else:
 		datarequest.fulfill()
 		datarequest.save()
 		return HttpResponseRedirect(reverse('epic.datarequests.views.view_datarequest', 
-                                            kwargs={'item_id':datarequest.id, 'slug':datarequest.slug, }))	
+                                            kwargs={'item_id':datarequest.id, 
+                                                    'slug':datarequest.slug}))	
