@@ -1,6 +1,7 @@
+from django.core.urlresolvers import reverse
+
 from epic.core.test import CustomTestCase
 
-from django.core.urlresolvers import reverse
 
 class SiteIndexTestCase(CustomTestCase):
 	def setUp(self):
