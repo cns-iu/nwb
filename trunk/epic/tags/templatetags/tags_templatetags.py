@@ -1,13 +1,13 @@
 from django import template
 from epic.tags.models import Tagging
 from tags.utils import LOGARITHMIC, LINEAR
-from core.models import Item
+from epic.tags.models import Tagging
 
 register = template.Library()
 
 @register.inclusion_tag('templatetags/list_item_tags.html')
 def list_item_tags(item, user, show_addtag=None):
-	tags = item.tags.all()
+	tags = Tagging.objects.filter(item=item)
 	return { 'tags': tags, 'user': user, 'item': item, 'show_addtag':show_addtag, }
 
 @register.inclusion_tag("templatetags/show_tag_cloud.html")

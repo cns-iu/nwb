@@ -36,11 +36,11 @@
 	
 		<ul class="star-rating" id="{{ item_id }}-average-vote">
 			<li class="current-rating" style="width:0%;">0 Star</li>
-			<li><a href="" id="1" title="Very Bad" class="one-star">1</a></li>
-			<li><a href="" id="2" title="Bad" class="two-stars">2</a></li>
-			<li><a href="" id="3" title="Average" class="three-stars">3</a></li>
-			<li><a href="" id="4" title="Good" class="four-stars">4</a></li>
-			<li><a href="" id="5" title="Very Good" class="five-stars">5</a></li>
+			<li><a href="" id="1" title="Very Poor Quality" class="one-star">1</a></li>
+			<li><a href="" id="2" title="Poor Quality" class="two-stars">2</a></li>
+			<li><a href="" id="3" title="Average Quality" class="three-stars">3</a></li>
+			<li><a href="" id="4" title="High Quality" class="four-stars">4</a></li>
+			<li><a href="" id="5" title="Very High Quality" class="five-stars">5</a></li>
 		</ul>
     </span>
 	
@@ -219,7 +219,7 @@
 			$("#{{ item_id }}-average-vote").click(function(){
 
 				try {
-					window.location = "{% url django.contrib.auth.views.login %}?next={% url epic.datasets.views.view_dataset item_id=item_id %}";							
+					window.location = "{% url django.contrib.auth.views.login %}?next={% url datasets.views.view_dataset item_id=item_id %}";							
 				}
 				catch(error) {
 					var notificationContent = "ERROR: You should be logged in before you can rate.";

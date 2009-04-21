@@ -16,14 +16,15 @@
     <td>{{ received_message.subject }}</td>
   </tr>
   <tr>
-    <td colspan="2">{{ received_message.message|linebreaksbr }}</td>
+  	{# TODO: Add css styling rather than inlining it here #}	
+    <td colspan="2" style="border-top: thin solid black;">{{ received_message.message|linebreaksbr }}</td>
   </tr>
 </table>
+<a href="{% url messages.views.send_message user_id=user.id, in_reply_to_message_id=received_message.id %}"><button>Reply</button></a>
 <hr>
 
 {% else %}
 <p>There was a problem finding the message.</p>
 {% endif %}
-<a href="/">Home</a>
-<a href="{% url messages.views.send_message user_id=user.id, in_reply_to_message_id=received_message.id %}">Reply</a>
+<a href="{% url messages.views.index user_id=user.id %}">Inbox</a>
 {% endblock %}

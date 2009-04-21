@@ -1,54 +1,106 @@
-from django.test import TestCase
-
 from django.contrib.auth.models import User
+from django.core.urlresolvers import reverse
+from epic.core.test import CustomTestCase
 
-class ForgotPasswordTestCase(TestCase):
-	fixtures = [ "initial_data" ]
-	
-	def setUp(self):
-		pass
-	
-	def testForgotPasswordSubmittingBlankForm(self):
-		forgot_password_response = self.client.get("/user/forgotpassword/")
-		self.failUnlessEqual(forgot_password_response.status_code, 200, "Error reaching forgotpassword!")
-		
-		submit_blank_username_or_email_response = self.client.post("/user/forgotpassword/", data={ "username_or_email": "" })
-		self.failUnlessEqual(submit_blank_username_or_email_response.status_code, 200, "Error reaching forgotpassword!")
-		
-		self.failUnless("This field is required." in submit_blank_username_or_email_response.content)
-	
-	def testForgotPasswordSubmittingUnboundUsername(self):
-		forgot_password_response = self.client.get("/user/forgotpassword/")
-		self.failUnlessEqual(forgot_password_response.status_code, 200, "Error reaching forgotusername!")
-		
-		submit_unbound_username_response = self.client.post("/user/forgotpassword/", data={ "username_or_email": "abcd" })
-		self.failUnlessEqual(submit_unbound_username_response.status_code, 200, "Error reaching forgotpassword!")
-		
-		self.failUnless("The username abcd is not valid." in submit_unbound_username_response.content)
-	
-	def testForgotPasswordSubmittingUnboundEmail(self):
-		forgot_password_response = self.client.get("/user/forgotpassword/")
-		self.failUnlessEqual(forgot_password_response.status_code, 200, "Error reaching forgotusername!")
-		
-		submit_unbound_email_response = self.client.post("/user/forgotpassword/", data={ "username_or_email": "a@b.com" })
-		self.failUnlessEqual(submit_unbound_email_response.status_code, 200, "Error reaching forgotpassword!")
-		
-		self.failUnless("The email a@b.com is not valid." in submit_unbound_email_response.content)
-	
-	def testForgotUsernameSuccessWithBoundUsername(self):
-		forgot_password_response = self.client.get("/user/forgotpassword/")
-		self.failUnlessEqual(forgot_password_response.status_code, 200, "Error reaching forgotusername!")
-		
-		submit_bound_username_response = self.client.post("/user/forgotpassword/", data={ "username_or_email": "peebs" })
-		self.failUnlessEqual(submit_bound_username_response.status_code, 200, "Error reaching forgotpassword!")
-		
-		self.failUnless("The password for <b>peebs</b> has been reset and e-mailed to <b>markispeebs@gmail.com" in submit_bound_username_response.content)
-	
-	def testForgotUsernameSuccessWithBoundEmail(self):
-		forgot_password_response = self.client.get("/user/forgotpassword/")
-		self.failUnlessEqual(forgot_password_response.status_code, 200, "Error reaching forgotusername!")
-		
-		submit_bound_email_response = self.client.post("/user/forgotpassword/", data={ "username_or_email": "markispeebs@gmail.com" })
-		self.failUnlessEqual(submit_bound_email_response.status_code, 200, "Error reaching forgotpassword!")
-		
-		self.failUnless("The password for <b>peebs</b> has been reset and e-mailed to <b>markispeebs@gmail.com" in submit_bound_email_response.content)
+
+BOB_USER_USERNAME = 'bob'
+BOB_USER_PASSWORD = 'bob'
+
+FORM_KEY = 'form'
+USERNAME_OR_EMAIL_KEY = 'username_or_email'
+
+class ForgotPasswordTestCase(CustomTestCase):
+    fixtures = ['core_just_users']
+    
+    def setUp(self):
+        self.bob = User.objects.get(username=BOB_USER_USERNAME)
+        self.forgot_password_url = reverse('epic.core.views.forgot_password')
+    
+    def tearDown(self):
+        pass
+    
+    def testForgotPasswordSubmittingBlankForm(self):
+        """
+        Test that submitting a blank form yeilds an error.
+        """
+        
+        response = self.client.get(self.forgot_password_url)
+        self.failUnlessEqual(response.status_code, 200)
+        
+        post_data = {
+            USERNAME_OR_EMAIL_KEY: '',
+        }
+        
+        response = self.client.post(self.forgot_password_url, post_data)
+        self.failUnlessEqual(response.status_code, 200)
+        
+        self.assertFormError(response,
+                             FORM_KEY,
+                             USERNAME_OR_EMAIL_KEY,
+                             'This field is required.')
+    
+    #TODO: I stopped cleaning core here.
+    def testForgotPasswordSubmittingUnboundUsername(self):
+        response = self.client.get(self.forgot_password_url)
+        self.failUnlessEqual(response.status_code,200)
+        
+        post_data = {
+            USERNAME_OR_EMAIL_KEY: 'asdf0 jw35yj[ j0q2rj',
+        }
+        
+        response = self.client.post(self.forgot_password_url, post_data)
+        self.failUnlessEqual(response.status_code, 200)
+        
+        self.assertFormError(response,
+                             FORM_KEY,
+                             USERNAME_OR_EMAIL_KEY,
+                             "'%s' is not a valid username." % \
+                                post_data[USERNAME_OR_EMAIL_KEY])
+    
+    def testForgotPasswordSubmittingUnboundEmail(self):
+        response = self.client.get(self.forgot_password_url)
+        self.failUnlessEqual(response.status_code,200)
+        
+        post_data = {
+            USERNAME_OR_EMAIL_KEY: 'asdf323@asdf.com',
+        }
+        
+        response = self.client.post(self.forgot_password_url, post_data)
+        self.failUnlessEqual(response.status_code, 200)
+        
+        self.assertFormError(response,
+                             FORM_KEY,
+                             USERNAME_OR_EMAIL_KEY,
+                             "There is no user registered with the " + \
+                                "email address '%s'." % \
+                                post_data[USERNAME_OR_EMAIL_KEY])
+    
+    def testForgotUsernameSuccessWithBoundUsername(self):
+        response = self.client.get(self.forgot_password_url)
+        self.failUnlessEqual(response.status_code,200)
+        
+        post_data = {
+            USERNAME_OR_EMAIL_KEY: self.bob.username,
+        }
+        
+        response = self.client.post(self.forgot_password_url, post_data)
+        self.failUnlessEqual(response.status_code, 200)
+        self.assertContains(
+            response, ('An email has been sent to your &#39;%s&#39; ' + \
+                      'address with a new password.') % \
+                      self.bob.email.split('@')[1])    
+
+    def testForgotUsernameSuccessWithBoundEmail(self):
+        response = self.client.get(self.forgot_password_url)
+        self.failUnlessEqual(response.status_code,200)
+        
+        post_data = {
+            USERNAME_OR_EMAIL_KEY: self.bob.email,
+        }
+        
+        response = self.client.post(self.forgot_password_url, post_data)
+        self.failUnlessEqual(response.status_code, 200)
+        self.assertContains(
+            response, ('An email has been sent to your &#39;%s&#39; ' + \
+                      'address with a new password.') % \
+                      self.bob.email.split('@')[1])

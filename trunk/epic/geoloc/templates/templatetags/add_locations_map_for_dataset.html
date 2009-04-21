@@ -104,18 +104,18 @@
 	}
 
 	function createLocationFromLocationString(locationString){
-		var re = /^\[\[(-?\d*.\d*), (-?\d*.\d*)\], '(.+?)', (\[(?:\[u'(.+?)', '(.+?)'\](?:, )?)+\])\]$/i;
+		var re = /^\[\[(-?\d*.\d*), (-?\d*.\d*)\], '(.+?)', (\[(?:\[u'(.+?)', '(.+?)'\](?:, )?)*\])\]$/i;
 		var splitLocationString = locationString.split(re);
 
 		var lat = splitLocationString[1];
 		var lng = splitLocationString[2];
+		console.log(lat, lng);
 		var canonicalName = splitLocationString[3];
 		var unprocessedUrlNameList = splitLocationString[4];
 		var urlNameList = [];
 
-
 		var splitUrlNameList = unprocessedUrlNameList.split('], ');
-		
+			
 		for(var j = 0; j < splitUrlNameList.length; j++){
 			re = /^\[(?:)\[?u'(.+)', '(.+)'/i;
 			var unprocessedUrlName = splitUrlNameList[j].split(re);
@@ -126,6 +126,7 @@
 			var urlNamePair = new UrlNamePair(name, url);
 			urlNameList = urlNameList.concat(urlNamePair);
 		}
+
 		return new Location(lat, lng, canonicalName, urlNameList);
 	}
 

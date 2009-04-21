@@ -20,8 +20,9 @@
 			tagCloud.add("{{ tag.tag_name }}", {{ tag.font_size }}, "{{ tag.get_tag_url }}", parsedDate);
 		{% endfor %}
 		
-		tagCloud.loadEffector('CountSize').base(10).range(10);
-		// tagCloud.loadEffector('DateTimeColor');
+		tagCloud.loadEffector("CountSize").base(10).range(10);
+		tagCloud.loadEffector("DateTimeColor");
+		tagCloud.loadEffector("Alphabetize");
 		
 		function setup()
 		{
@@ -33,35 +34,35 @@
 		function showHoveringTag(event)
 		{
 			var eventTarget = event.target;
-			$('#tag_hover').html(eventTarget.name);
+			$("#tag_hover").html(eventTarget.name);
 			
-			$('#tag_hover').css(
+			$("#tag_hover").css(
 				{
 					top: event.clientY - 125,
 					left: event.clientX - 200,
-					visibility: 'visible'
+					visibility: "visible"
 				}
 			);
 		}
 		
 		function hideHoveringTag(event)
 		{
-			$('#tag_hover').css(
+			$("#tag_hover").css(
 				{
 					top: 0,
 					left: 0,
-					visibility: 'hidden'
+					visibility: "hidden"
 				}
 			);
 			
-			$('#tag_hover').html('');
+			$("#tag_hover").html("");
 		}
 		
 		$(document).ready(
 			function()
 			{
-				$('#tagbox li').hover(showHoveringTag, hideHoveringTag);
-				$('#tagbox li').mousemove(showHoveringTag);
+				$("#tagbox li").hover(showHoveringTag, hideHoveringTag);
+				$("#tagbox li").mousemove(showHoveringTag);
 			}
 		);
 	//-->

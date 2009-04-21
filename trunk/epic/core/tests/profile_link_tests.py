@@ -1,19 +1,20 @@
-from django.test import TestCase
+from epic.core.test import CustomTestCase
 from django.contrib.auth.models import User
 from django.core.urlresolvers import reverse
 
-class ProfileLinkTestCase(TestCase):
-	fixtures = ['initial_users']
+class ProfileLinkTestCase(CustomTestCase):
+	fixtures = ['core_just_users']
 	
 	def setUp(self):
 		self.profile_url = reverse('epic.core.views.view_profile')
 	
 	def testLinkForLoggedIn(self):
-		login = self.client.login(username='bob', password='bob')
-		self.failUnless(login, 'Could not login')
+		self.tryLogin(username='bob', password='bob')
 		response = self.client.get('/')
-		self.assertContains(response, self.profile_url)
+		self.assertContains(response, 'href="%(profile_link)s"' % 
+						              {'profile_link':self.profile_url})
 	
 	def testLinkForNotLoggedIn(self):
 		response = self.client.get('/')
-		self.assertNotContains(response, self.profile_url)
+		self.assertNotContains(response, 'href="%(profile_link)s"' % 
+								         {'profile_link':self.profile_url})

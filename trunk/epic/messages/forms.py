@@ -18,7 +18,7 @@ class NewMessageForm(ModelForm):
 		try:
 			User.objects.get(username=recipient)
 		except:
-			raise forms.ValidationError("%s is not a valid username" % (recipient))
+			raise forms.ValidationError("%s is not a valid username." % (recipient))
 		return recipient
 
 # TODO: not do this.			 

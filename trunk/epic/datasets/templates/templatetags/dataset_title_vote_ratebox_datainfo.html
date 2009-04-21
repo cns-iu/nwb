@@ -2,12 +2,16 @@
 {% rate_box_vote dataset user %}
 
 <h2>
-  <a href="{{ dataset.get_absolute_url }}">{{ dataset.name }}</a>
+  <a href="{{ dataset.get_absolute_url }}">
+    {{ dataset.name }}
+  </a>
 </h2>
 
 <ul class="datainfo">
   <li class="first">
-    <a href="{% url datasets.views.view_user_dataset_list user_id=dataset.creator.id %}">{{ dataset.creator.get_profile }}</a>
+    <a href="{% url datasets.views.view_user_dataset_list user_id=dataset.creator.id %}">
+      {{ dataset.creator.get_profile }}
+    </a>
   </li>
   
   <li>
@@ -16,11 +20,17 @@
   
   {% ifequal user dataset.creator %}
     <li>
-      <a href="{% url datasets.views.edit_dataset item_id=dataset.id, slug=dataset.slug %}">Edit</a>
+      <a href="{% url datasets.views.edit_dataset item_id=dataset.id, slug=dataset.slug %}">
+        Edit
+      </a>
     </li>
   {% endifequal %}
   
   {% if user.is_authenticated %}
-    [<a href="{% url messages.views.send_message user_id=user.id, recipient_id=dataset.creator.id %}">Contact User</a>]
+    {% ifnotequal user dataset.creator %}
+      [<a href="{% url messages.views.send_message user_id=user.id, recipient_id=dataset.creator.id %}">
+        Contact Creator
+      </a>]
+    {% endifnotequal %}
   {% endif %}
 </ul>

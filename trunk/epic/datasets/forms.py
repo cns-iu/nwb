@@ -6,24 +6,27 @@ from epic.core.models import Item
 from epic.core.util.multifile import MultiFileField
 from epic.datasets.models import DataSet, RATING_SCALE
 from epic.djangoratings.forms import RatingField
-
-
-class NewDataSetForm(forms.Form):
-	name = forms.CharField(max_length=Item.MAX_ITEM_NAME_LENGTH)
-	description = forms.CharField(max_length=Item.MAX_ITEM_DESCRIPTION_LENGTH, widget=forms.Textarea())
-	files = MultiFileField(required=True)
-	tags = forms.CharField(max_length=Item.MAX_ITEM_TAGS_LENGTH, required=False)
 	
 class EditDataSetForm(forms.Form):
 	name = forms.CharField(max_length=Item.MAX_ITEM_NAME_LENGTH)
 	description = forms.CharField(max_length=Item.MAX_ITEM_DESCRIPTION_LENGTH, widget=forms.Textarea())
 	tags = forms.CharField(max_length=Item.MAX_ITEM_TAGS_LENGTH, required=False)
+
+class NewDataSetForm(EditDataSetForm):
+	files = MultiFileField(required=True)
 	
 class RatingDataSetForm(forms.Form):
 	rating = RatingField(RATING_SCALE)
 
 class TagDataSetForm(forms.Form):
-	tags = forms.CharField(max_length=Item.MAX_ITEM_TAGS_LENGTH, required=False)
+	# TODO: Seriously write this.  An example would be good. tag1, tag 3 is equivalent to tag1 "tag 3"?
+	help_text = """
+				Type your tags in the input field.
+				To remove your existing tags from the dataset, remove the tags from the field.
+				Tags are comma or space separated.
+				Double quotes can be used to allow multiword tags.
+				"""
+	tags = forms.CharField(max_length=Item.MAX_ITEM_TAGS_LENGTH, required=False, help_text=help_text)
 	
 class GeoLocationHiddenFieldForm(forms.Form):
 	add_location = forms.CharField(required=False, widget=forms.HiddenInput)
