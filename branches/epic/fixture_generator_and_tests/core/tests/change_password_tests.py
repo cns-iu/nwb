@@ -6,11 +6,6 @@ from epic.core.test import CustomTestCase
 BOB_USERNAME = 'bob'
 BOB_PASSWORD = 'bob'
 
-CHANGE_PASSWORD_FORM_NAME = 'form'
-OLD_PASSWORD_KEY = 'old_password'
-NEW_PASSWORD_KEY = 'new_password1'
-NEW_PASSWORD_CONFIRMATION_KEY = 'new_password2'
-
 VALID_NEW_PASSWORD = 'blah'
 INVALID_NEW_PASSWORD = 'b' 
 
@@ -55,9 +50,9 @@ class ChangePasswordTestCase(CustomTestCase):
         response = self.client.get(self.change_password_url)
 
         post_data = {
-            OLD_PASSWORD_KEY: 'incorrectOldPassword',
-            NEW_PASSWORD_KEY: VALID_NEW_PASSWORD,
-            NEW_PASSWORD_CONFIRMATION_KEY: VALID_NEW_PASSWORD
+            'old_password': 'incorrectOldPassword',
+            'new_password1': VALID_NEW_PASSWORD,
+            'new_password2': VALID_NEW_PASSWORD
         }
         
         response = self.client.post(self.change_password_url, post_data)
@@ -74,16 +69,16 @@ class ChangePasswordTestCase(CustomTestCase):
         self.tryLogin(BOB_USERNAME)
         
         post_data = {
-            OLD_PASSWORD_KEY: BOB_PASSWORD,
-            NEW_PASSWORD_KEY: INVALID_NEW_PASSWORD,
-            NEW_PASSWORD_CONFIRMATION_KEY: VALID_NEW_PASSWORD
+            'old_password': BOB_PASSWORD,
+            'new_password1': INVALID_NEW_PASSWORD,
+            'new_password2': VALID_NEW_PASSWORD
         }
         
         response = self.client.post(self.change_password_url, post_data)
         self.failUnless(response.status_code, 200)
         self.assertFormError(response,
-                             CHANGE_PASSWORD_FORM_NAME,
-                             NEW_PASSWORD_CONFIRMATION_KEY,
+                             'form',
+                             'new_password2',
                              "The two password fields didn't match.")
     
     def testFailToChangeOldPasswordProblem(self):
@@ -91,19 +86,19 @@ class ChangePasswordTestCase(CustomTestCase):
         Test that entering an incorrect old password causes an error in the
         form.
         """
-        self.tryLogin(username=BOB_USERNAME, password=BOB_PASSWORD)
+        self.tryLogin(BOB_USERNAME)
         
         post_data = {
-            OLD_PASSWORD_KEY: 'incorrectOldPassword',
-            NEW_PASSWORD_KEY: VALID_NEW_PASSWORD,
-            NEW_PASSWORD_CONFIRMATION_KEY: VALID_NEW_PASSWORD
+            'old_password': 'incorrectOldPassword',
+            'new_password1': VALID_NEW_PASSWORD,
+            'new_password2': VALID_NEW_PASSWORD
         }
         
         response = self.client.post(self.change_password_url, post_data)
         self.failUnless(response.status_code, 200)
         self.assertFormError(response,
-                             CHANGE_PASSWORD_FORM_NAME,
-                             OLD_PASSWORD_KEY,
+                             'form',
+                             'old_password',
                              'Your old password was entered incorrectly. ' + \
                                 'Please enter it again.')
     
@@ -112,12 +107,12 @@ class ChangePasswordTestCase(CustomTestCase):
         Test that the form will actually change a user's password if used
         correctly.
         """
-        self.tryLogin(username=BOB_USERNAME, password=BOB_PASSWORD)
+        self.tryLogin(BOB_USERNAME)
         
         post_data = {
-            OLD_PASSWORD_KEY: BOB_PASSWORD,
-            NEW_PASSWORD_KEY: VALID_NEW_PASSWORD,
-            NEW_PASSWORD_CONFIRMATION_KEY: VALID_NEW_PASSWORD
+            'old_password': BOB_PASSWORD,
+            'new_password1': VALID_NEW_PASSWORD,
+            'new_password2': VALID_NEW_PASSWORD
         }
         
         response = self.client.post(self.change_password_url, post_data)
@@ -129,8 +124,7 @@ class ChangePasswordTestCase(CustomTestCase):
         logout = self.client.logout()
         
         login = self.client.login(
-            username=BOB_USERNAME, password=post_data[OLD_PASSWORD_KEY])
+            username=BOB_USERNAME, password=post_data['old_password'])
         self.failIf(login)
         
-        self.tryLogin(username=BOB_USERNAME, 
-                      password=post_data[NEW_PASSWORD_KEY])
+        self.tryLogin(BOB_USERNAME, post_data['new_password1'])

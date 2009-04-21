@@ -1,9 +1,10 @@
 from django.core.urlresolvers import reverse
+
 from epic.core.test import CustomTestCase
 
-#TODO: Refactor these, and use "tryLogin"
-BOB_USER_USERNAME = 'bob'
-BOB_USER_PASSWORD = 'bob'
+
+BOB_USERNAME = 'bob'
+BOB_PASSWORD = 'bob'
 
 class ViewBasicUserProfileTestCase(CustomTestCase):
     fixtures = ['core_just_users']
@@ -23,7 +24,7 @@ class ViewBasicUserProfileTestCase(CustomTestCase):
         self.assertRedirects(response, redirect_url, 302)
     
     def testViewProfileLoggedIn(self):
-        self.tryLogin(username=BOB_USER_USERNAME, password=BOB_USER_PASSWORD)
+        self.tryLogin(BOB_USERNAME)
         
         response = self.client.get(self.profile_url)
         self.failUnlessEqual(response.status_code, 200)

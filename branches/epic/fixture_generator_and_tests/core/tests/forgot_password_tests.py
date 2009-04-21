@@ -1,19 +1,17 @@
 from django.contrib.auth.models import User
 from django.core.urlresolvers import reverse
+
 from epic.core.test import CustomTestCase
 
 
-BOB_USER_USERNAME = 'bob'
-BOB_USER_PASSWORD = 'bob'
-
-FORM_KEY = 'form'
-USERNAME_OR_EMAIL_KEY = 'username_or_email'
+BOB_USERNAME = 'bob'
+BOB_PASSWORD = 'bob'
 
 class ForgotPasswordTestCase(CustomTestCase):
     fixtures = ['core_just_users']
     
     def setUp(self):
-        self.bob = User.objects.get(username=BOB_USER_USERNAME)
+        self.bob = User.objects.get(username=BOB_USERNAME)
         self.forgot_password_url = reverse('epic.core.views.forgot_password')
     
     def tearDown(self):
@@ -28,15 +26,15 @@ class ForgotPasswordTestCase(CustomTestCase):
         self.failUnlessEqual(response.status_code, 200)
         
         post_data = {
-            USERNAME_OR_EMAIL_KEY: '',
+            'username_or_email': '',
         }
         
         response = self.client.post(self.forgot_password_url, post_data)
         self.failUnlessEqual(response.status_code, 200)
         
         self.assertFormError(response,
-                             FORM_KEY,
-                             USERNAME_OR_EMAIL_KEY,
+                             'form',
+                             'username_or_email',
                              'This field is required.')
     
     #TODO: I stopped cleaning core here.
@@ -45,42 +43,42 @@ class ForgotPasswordTestCase(CustomTestCase):
         self.failUnlessEqual(response.status_code,200)
         
         post_data = {
-            USERNAME_OR_EMAIL_KEY: 'asdf0 jw35yj[ j0q2rj',
+            'username_or_email': 'asdf0 jw35yj[ j0q2rj',
         }
         
         response = self.client.post(self.forgot_password_url, post_data)
         self.failUnlessEqual(response.status_code, 200)
         
         self.assertFormError(response,
-                             FORM_KEY,
-                             USERNAME_OR_EMAIL_KEY,
+                             'form',
+                             'username_or_email',
                              "'%s' is not a valid username." % \
-                                post_data[USERNAME_OR_EMAIL_KEY])
+                                post_data['username_or_email'])
     
     def testForgotPasswordSubmittingUnboundEmail(self):
         response = self.client.get(self.forgot_password_url)
         self.failUnlessEqual(response.status_code,200)
         
         post_data = {
-            USERNAME_OR_EMAIL_KEY: 'asdf323@asdf.com',
+            'username_or_email': 'asdf323@asdf.com',
         }
         
         response = self.client.post(self.forgot_password_url, post_data)
         self.failUnlessEqual(response.status_code, 200)
         
         self.assertFormError(response,
-                             FORM_KEY,
-                             USERNAME_OR_EMAIL_KEY,
+                             'form',
+                             'username_or_email',
                              "There is no user registered with the " + \
                                 "email address '%s'." % \
-                                post_data[USERNAME_OR_EMAIL_KEY])
+                                post_data['username_or_email'])
     
     def testForgotUsernameSuccessWithBoundUsername(self):
         response = self.client.get(self.forgot_password_url)
         self.failUnlessEqual(response.status_code,200)
         
         post_data = {
-            USERNAME_OR_EMAIL_KEY: self.bob.username,
+            'username_or_email': self.bob.username,
         }
         
         response = self.client.post(self.forgot_password_url, post_data)
@@ -95,7 +93,7 @@ class ForgotPasswordTestCase(CustomTestCase):
         self.failUnlessEqual(response.status_code,200)
         
         post_data = {
-            USERNAME_OR_EMAIL_KEY: self.bob.email,
+            'username_or_email': self.bob.email,
         }
         
         response = self.client.post(self.forgot_password_url, post_data)

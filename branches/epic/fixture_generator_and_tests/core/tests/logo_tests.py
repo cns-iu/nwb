@@ -1,9 +1,10 @@
 from django.core.urlresolvers import reverse
+
 from epic.core.test import CustomTestCase
 
 
-BOB_USER_USERNAME = 'bob'
-BOB_USER_PASSWORD = 'bob'
+BOB_USERNAME = 'bob'
+BOB_PASSWORD = 'bob'
 
 class LogoTestCase(CustomTestCase):
     fixtures = ['core_just_users']
@@ -30,7 +31,7 @@ class LogoTestCase(CustomTestCase):
         self.assertContains(response, logo_link)
         
         # You must be logged in to see the upload page.
-        self.tryLogin(username=BOB_USER_USERNAME, password=BOB_USER_PASSWORD)
+        self.tryLogin(BOB_USERNAME)
         
         response = self.client.get(upload_url)
         self.assertContains(response, logo_link)

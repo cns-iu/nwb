@@ -14,22 +14,10 @@ from django.test.client import Client
 from django.utils.datastructures import MultiValueDict
 
 
-INPUT_NAME = 'files'
-MULTI_FILE_INPUT_VALUE = 'testinput'
-INPUT_ID = 'id_files'
-
-COUNT_KEY = 'count'
-ID_KEY = 'id'
-
 class MultiFileInputTest(unittest.TestCase):
     """
     Tests for the widget itself.
     """
-    
-    def setUp(self):
-        self.multi_file_input_attributes = {
-            ID_KEY: INPUT_ID
-        }
     
     def testBasics(self):
         """
@@ -73,11 +61,11 @@ class MultiFileInputTest(unittest.TestCase):
         if count is None:
             multi_file_input = MultiFileInput()
         else:
-            multi_file_input = MultiFileInput({COUNT_KEY: 2})
+            multi_file_input = MultiFileInput({'count': 2})
             
         multi_file_input_html = multi_file_input.render(
-            name=INPUT_NAME,
-            value=MULTI_FILE_INPUT_VALUE,
+            name='files',
+            value='testinput',
             attrs=self.multi_file_input_attributes)
         
         return multi_file_input_html
@@ -218,13 +206,11 @@ class MultiFileFieldTest(unittest.TestCase):
     
     def _make_input_html(self, id_index):
         input_attributes_dictionary = {
-            'name': INPUT_NAME,
-            'id': INPUT_ID,
             'id_index': id_index
         }
         
-        input_html = '<input type="file" name="%(name)s[]" ' + \
-                'id="%(id)s%(id_index)s" />' % \
+        input_html = '<input type="file" name="files[]" ' + \
+                'id="id_files" />' % \
             input_attributes_dictionary
         
         return input_html
@@ -266,13 +252,11 @@ class FixedMultiFileTest(unittest.TestCase):
 #TODO: Rename or add comments to clarify
 def _assertHTMLContainsFileInput(html, id_index):
     file_input_html_dictionary = {
-        'name': INPUT_NAME,
-        'id': INPUT_ID,
         'id_index': id_index
     }
     
-    file_input_html = ('<input type="file" name="%(name)s[]" ' + \
-            'id="%(id)s%(id_index)s" />') % \
+    file_input_html = ('<input type="file" name="files[]" ' + \
+            'id="id_files" />') % \
         file_input_html_dictionary
     
     self.assert_(file_input_html in html)
