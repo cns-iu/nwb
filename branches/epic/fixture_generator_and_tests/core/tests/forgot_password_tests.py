@@ -20,9 +20,9 @@ class ForgotPasswordTestCase(TestCase):
         pass
     
     def testForgotPasswordSubmittingBlankForm(self):
-        '''
+        """
         Test that submitting a blank form yeilds an error.
-        '''
+        """
         
         response = self.client.get(self.forgot_password_url)
         self.failUnlessEqual(response.status_code, 200)

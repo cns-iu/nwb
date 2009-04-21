@@ -25,9 +25,9 @@ class LogInAndOutTestCase(TestCase):
         pass
     
     def testLoginSuccess(self):
-        '''
+        """
         Test that a user can successfully login.
-        '''
+        """
         
         response = self.client.get(self.login_url)
         self.failUnlessEqual(response.status_code, 200)
@@ -43,9 +43,9 @@ class LogInAndOutTestCase(TestCase):
         self.assertRedirects(response, LOGIN_REDIRECT_URL)
     
     def testLoginFailure(self):
-        '''
+        """
         Test that a user must give correct the username/password to log in.
-        '''
+        """
         
         post_data = {
             USERNAME_KEY: self.bob.username,
@@ -62,9 +62,9 @@ class LogInAndOutTestCase(TestCase):
                                 'case-sensitive.')
     
     def testLogout(self):
-        '''
+        """
         Test that logging out using the view works correctly.
-        '''
+        """
         
         login = self.client.login(username=BOB2_USER_USERNAME,
                                   password=BOB2_USER_PASSWORD)
@@ -77,17 +77,17 @@ class LogInAndOutTestCase(TestCase):
         self.assertContains(response, self.login_url)
         
     def testLoginFrontPage(self):
-        '''
+        """
         Verify that the login url appears somewhere on the front page.
-        '''
+        """
         
         response = self.client.get('/')
         self.assertContains(response, self.login_url)
         
     def testLogoutFrontPage(self):
-        '''
+        """
         Test that the logout link appears for logged in users
-        '''        
+        """        
         login = self.client.login(username=BOB2_USER_USERNAME,
                                   password=BOB2_USER_PASSWORD)
         self.failUnless(login, 'Could not login')

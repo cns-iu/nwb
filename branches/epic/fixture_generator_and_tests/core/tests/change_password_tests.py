@@ -25,10 +25,10 @@ class ChangePasswordTestCase(CustomTestCase):
         pass
     
     def testPage(self):
-        '''
+        """
         Test to make sure the change password page is visible for logged in
         users.
-        '''
+        """
         
         self.tryLogin(BOB_USERNAME)
         
@@ -37,10 +37,10 @@ class ChangePasswordTestCase(CustomTestCase):
         self.assertEqual(response.status_code, 200)
     
     def testPageNotLoggedInGet(self):
-        '''
+        """
         Test that non logged in users are redirected to login if they try to
         get the page.
-        '''
+        """
         response = self.client.get(self.change_password_url)
         # TODO: This should not just append the next variable.
         redirect_url = '%(base_url)s?next=%(next_url)s' % \
@@ -48,10 +48,10 @@ class ChangePasswordTestCase(CustomTestCase):
         self.assertRedirects(response, redirect_url, 302)
         
     def testPageNotLoggedInPost(self):
-        '''
+        """
         Test that non logged in users are redirected to login if they try to
         post to the page.
-        '''
+        """
         response = self.client.get(self.change_password_url)
 
         post_data = {
@@ -67,10 +67,10 @@ class ChangePasswordTestCase(CustomTestCase):
         self.assertRedirects(response, redirect_url, 302)
     
     def testFailToChangeMatchProblem(self):
-        '''
+        """
         Test that entering non-matching new passwords causes an error in the
         form.
-        '''
+        """
         self.tryLogin(BOB_USERNAME)
         
         post_data = {
@@ -87,10 +87,10 @@ class ChangePasswordTestCase(CustomTestCase):
                              "The two password fields didn't match.")
     
     def testFailToChangeOldPasswordProblem(self):
-        '''
+        """
         Test that entering an incorrect old password causes an error in the
         form.
-        '''
+        """
         login = self.client.login(username=BOB_USERNAME,
                                   password=BOB_PASSWORD)
         self.failUnless(login, 'Could not login')
@@ -110,10 +110,10 @@ class ChangePasswordTestCase(CustomTestCase):
                                 'Please enter it again.')
     
     def testChangePasswordSuccess(self):
-        '''
+        """
         Test that the form will actually change a user's password if used
         correctly.
-        '''
+        """
         login = self.client.login(username=BOB_USERNAME,
                                   password=BOB_PASSWORD)
         self.failUnless(login, 'Could not login')

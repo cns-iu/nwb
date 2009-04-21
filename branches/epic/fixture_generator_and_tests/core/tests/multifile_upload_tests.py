@@ -1,9 +1,9 @@
-'''
+"""
 Tests for the multiple file upload widget and field.
 
 Created by Edward Dale (www.scompt.com)
 Released into the Public Domain
-'''
+"""
 
 from multifile import *
 import unittest
@@ -22,9 +22,9 @@ COUNT_KEY = 'count'
 ID_KEY = 'id'
 
 class MultiFileInputTest(unittest.TestCase):
-    '''
+    """
     Tests for the widget itself.
-    '''
+    """
     
     def setUp(self):
         self.multi_file_input_attributes = {
@@ -32,9 +32,9 @@ class MultiFileInputTest(unittest.TestCase):
         }
     
     def testBasics(self):
-        '''
+        """
         Make sure the basics are correct (needs_multipart_form & is_hidden).
-        '''
+        """
         
         multi_file_input = MultiFileInput()
         
@@ -42,26 +42,26 @@ class MultiFileInputTest(unittest.TestCase):
         self.assertFalse(multi_file_input.is_hidden)
     
     def testNoRender(self):
-        '''
+        """
         Makes sure we show a minimum of 1 input box.
-        '''
+        """
         
         multi_file_input_html = _make_multi_file_input_html(0)
         _assertHTMLContainsFileInput(multi_file_input_html, 0)
         
     def testSingleRender(self):
-        '''
+        """
         Test the output of a single field being rendered.
-        '''
+        """
         
         multi_file_input_html = _make_multi_file_input_html()
         
         _assertHTMLContainsFileInput(multi_file_input_html, 0)
     
     def testMultiRender(self):
-        '''
+        """
         Tests that two input boxes are rendered when given a count of 2.
-        '''
+        """
         
         multi_file_input_html = _make_multi_file_input_html(2)
         
@@ -83,14 +83,14 @@ class MultiFileInputTest(unittest.TestCase):
         return multi_file_input_html
 
 class MultiFileFieldTest(unittest.TestCase):
-    '''
+    """
     Tests the MultiFileField field.
-    '''
+    """
     
     def testOneRender(self):
-        '''
+        """
         Test the rendering of a MultiFileField with 1 input box.
-        '''
+        """
         
         form = self._RequiredForm()
         form_html = form.as_p()
@@ -98,9 +98,9 @@ class MultiFileFieldTest(unittest.TestCase):
         self.assert_(input0_html in form_html)
     
     def testTwoRender(self):
-        '''
+        """
         Test the rendering of a MultiFileField with 2 input boxes.
-        '''
+        """
         
         form = self._MultiForm()
         form_html = form.as_p()
@@ -110,9 +110,9 @@ class MultiFileFieldTest(unittest.TestCase):
         self.assert_(input1_html in form_html)
         
     def testNoFiles(self):
-        '''
+        """
         Tests binding a Form with required and optional MultiFileFields.
-        '''
+        """
         
         required_form = self._RequiredForm({}, {})
         self.assertTrue(required_form.is_bound)
@@ -123,9 +123,9 @@ class MultiFileFieldTest(unittest.TestCase):
         self.assertTrue(optional_form.is_valid())
     
     def testOneFile(self):
-        '''
+        """
         Tests the binding of a Form with a single file attached.
-        '''
+        """
         
         file_data = MultiValueDict({'files[]': [{'filename': 'face.jpg', 'content': 'www'}]})
         f = self._RequiredForm({}, file_data)
@@ -141,9 +141,9 @@ class MultiFileFieldTest(unittest.TestCase):
         self.assertTrue(f.is_valid())
     
     def testTwoFile(self):
-        '''
+        """
         Tests the binding of a Form with two files attached.
-        '''
+        """
         file_data = MultiValueDict({'files[]': [{'filename':'face.jpg', 'content': 'www'},{'filename':'lah.jpg', 'content': 'woop'}]})
         f = self._RequiredForm({}, file_data)
         self.assertTrue(f.is_bound)
@@ -157,9 +157,9 @@ class MultiFileFieldTest(unittest.TestCase):
             self.assertTrue(found)
     
     def testEmptyFile(self):
-        '''
+        """
         Tests the binding of a Form with 1 empty file.
-        '''
+        """
         file_data = MultiValueDict({'files[]': [{'filename':'face.jpg', 'content': ''}]})
         f = self._RequiredForm({}, file_data)
         self.assertTrue(f.is_bound)
@@ -170,9 +170,9 @@ class MultiFileFieldTest(unittest.TestCase):
         self.assertFalse(f.is_valid())
     
     def testOneEmptyFile(self):
-        '''
+        """
         If any file is empty, then the whole form is invalid.
-        '''
+        """
         file_data = MultiValueDict({'files[]': [{'filename':'face.jpg', 'content': 'www'},{'filename':'lah.jpg', 'content': ''}]})
         f = self._RequiredForm({}, file_data)
         self.assertTrue(f.is_bound)
@@ -183,9 +183,9 @@ class MultiFileFieldTest(unittest.TestCase):
         self.assertFalse(f.is_valid())
     
     def testStrict(self):
-        '''
+        """
         Tests whether the strict attribute works to force a user to upload n files.
-        '''
+        """
         
         # 1 file is no good, we want 2
         file_data = MultiValueDict({'files[]': [{'filename':'face.jpg', 'content': 'www'}]})
@@ -206,9 +206,9 @@ class MultiFileFieldTest(unittest.TestCase):
         self.assertFalse(f.is_valid())        
     
     def testBind(self):
-        '''
+        """
         Tests the binding of the form.  Probably not necessary.
-        '''
+        """
         file_data = {'files': {'filename':'face.jpg', 'content': ''}}
         f = self._RequiredForm()
         self.assertFalse(f.is_bound)
@@ -230,23 +230,23 @@ class MultiFileFieldTest(unittest.TestCase):
         return input_html
     
     class _OptionalForm(forms.Form):
-        '''
+        """
         A simple Form that has an optional MultiFileField.
-        '''
+        """
         
         files = MultiFileField(required=False)
     
     class _RequiredForm(forms.Form):
-        '''
+        """
         A simple Form that has an required MultiFileField.
-        '''
+        """
         
         files = MultiFileField(required=True)
     
     class _MultiForm(forms.Form):
-        '''
+        """
         A simple Form with a MultiFileField with 2 input boxes.
-        '''
+        """
         
         files = MultiFileField(count=2)
     
@@ -255,9 +255,9 @@ class MultiFileFieldTest(unittest.TestCase):
 
 class FixedMultiFileTest(unittest.TestCase):
     def testSingleRender(self):
-        '''
+        """
         Test the output of a single field being rendered.
-        '''
+        """
         m=FixedMultiFileInput()
         r=m.render(name='blah', value='bla', attrs={'id':'test'})
 

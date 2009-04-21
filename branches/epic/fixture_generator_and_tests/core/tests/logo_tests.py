@@ -14,10 +14,10 @@ class LogoTestCase(TestCase):
         pass
     
     def testLogoShouldBeLink(self):
-        '''
+        """
         Test that the site_index link appears on several pages to hopefully
         determine that the logo can be clicked.
-        '''
+        """
         
         # Setup the links.
         

@@ -24,9 +24,9 @@ class ViewEditProfilePageCase(TestCase):
         pass
     
     def testLoggedOutView(self):
-        ''' 
+        """ 
         Verify that logged out users can't reach the edit profile page.
-        '''
+        """
         
         response = self.client.get(self.edit_profile_url)
         # TODO: This should not set next this way.
@@ -35,9 +35,9 @@ class ViewEditProfilePageCase(TestCase):
         self.assertRedirects(response, redirect_url, 302)
         
     def testLoggedInView(self):
-        ''' 
+        """ 
         Verify that logged in users can reach the edit profile page.
-        ''' 
+        """ 
         
         # Log in and view the edit page
         login = self.client.login(username=BOB_USER_USERNAME,
@@ -64,9 +64,9 @@ class ActionEditProfilePageCase(TestCase):
         pass
     
     def testLoggedOutEdit(self):
-        '''
+        """
         Make sure that logged out users can't edit the data.
-        '''
+        """
 
         # The changes to the data.
         post_data = {
@@ -84,9 +84,9 @@ class ActionEditProfilePageCase(TestCase):
         self.assertRedirects(response, redirect_url, 302)
         
     def testLoggedInEdit(self):
-        ''' 
+        """ 
         Verify that only the creator can edit data
-        '''
+        """
         
         # Get the objects to be used for this test.
         user = User.objects.get(username=BOB_USER_USERNAME)

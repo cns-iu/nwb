@@ -28,7 +28,7 @@ def about (request):
 
 @login_required
 def view_profile(request):
-	''' Used to display the basic/home page for logged in user. '''
+	""" Used to display the basic/home page for logged in user. """
 	user = request.user
 	profile = Profile.objects.for_user(user)
 
@@ -46,7 +46,7 @@ def view_profile(request):
 	
 @login_required
 def edit_profile(request):
-	''' Used to allow a user to edit their own profile '''
+	""" Used to allow a user to edit their own profile """
 	# Get the user and profile objects.
 	user = request.user
 	profile = Profile.objects.for_user(user)

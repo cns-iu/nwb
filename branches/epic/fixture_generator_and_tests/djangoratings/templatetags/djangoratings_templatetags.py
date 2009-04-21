@@ -12,11 +12,11 @@ def show_rating(dataset):
 
 @register.inclusion_tag('templatetags/rate_box_view_helper.html')
 def rate_box_view_helper():
-	'''
+	"""
 	Always include this template whenever loading 'rate_box_view' 
 	template since it contains javascript function required for 
 	rate_box_view 
-	'''
+	"""
 	return
 
 @register.inclusion_tag('templatetags/rate_box_view.html')

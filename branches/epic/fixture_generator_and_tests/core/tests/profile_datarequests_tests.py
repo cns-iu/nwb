@@ -14,7 +14,7 @@ class ProfileDataRequestTestCase(TestCase):
 		pass
 	
 	def testForNoDataRequests(self):
-		''' Test if data requests are published even though not belonging to that user. Bob has no data requests. '''
+		""" Test if data requests are published even though not belonging to that user. Bob has no data requests. """
 		
 		login = self.client.login(username='bob', password='bob')
 		self.failUnless(login, 'Could not login')
@@ -24,7 +24,7 @@ class ProfileDataRequestTestCase(TestCase):
 		self.failIf("Your Data Requests" in response.content)
 
 	def testForDataRequests(self):
-		''' Test if a User's Data Request is shown in that User's profile. In this case Bill has 4 data requests. '''
+		""" Test if a User's Data Request is shown in that User's profile. In this case Bill has 4 data requests. """
 		login = self.client.login(username='bill', password='bill')
 		self.assertTrue(login)
 		
@@ -52,8 +52,8 @@ class ProfileDataRequestTestCase(TestCase):
 		self.failUnless("edit" in response.content, response.content)
 
 	def testForNoCanceledDataRequests(self):
-		''' Test if canceled data requests are published for the logged in user. In this case,
- 		Bill has 1 canceled data request which should not be published. '''
+		""" Test if canceled data requests are published for the logged in user. In this case,
+ 		Bill has 1 canceled data request which should not be published. """
 		login = self.client.login(username='bill', password='bill')
 		self.assertTrue(login)
 

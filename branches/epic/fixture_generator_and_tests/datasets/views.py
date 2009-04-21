@@ -177,10 +177,10 @@ def rate_dataset(request, item_id, input_rating=None, slug=None):
     
 @login_required
 def rate_dataset_using_input_rating(request, item_id, input_rating=None, slug=None):
-    '''
+    """
     Used specifically when the input_ratings field is provided. Mainly used 
     when voting from the UI for datasets. 
-    '''
+    """
     if input_rating:
         dataset = DataSet.objects.get(pk = item_id)
         user = request.user
