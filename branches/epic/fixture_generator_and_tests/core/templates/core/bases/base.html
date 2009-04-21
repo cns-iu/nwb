@@ -14,7 +14,7 @@
   
   {% block css %}
     <link href="/core_media/css/epic.css" rel="stylesheet" type="text/css" />
-    {# we could include this only as needed #}
+    {# We could include this only as needed. #}
     <link href="/core_media/css/star_rating.css" rel="stylesheet" type="text/css" />
   {% endblock %}
   	
@@ -62,9 +62,9 @@
             <li><a href="{% url datarequests.views.new_datarequest %}"><span>Request</span></a></li>
             <li><a href="{% url core.views.about %}"><span>About</span></a></li>
           </ul> 
-        {% endblock %}{# block nav #}
+        {% endblock %}
       </div>
-    {% endblock %}{# block header #}
+    {% endblock %}
   </div>
   
   <div id="container">
@@ -73,7 +73,7 @@
         {% block maincontent %}
         {% endblock %}
       </div>
-    {% endblock %}{# block container #}
+    {% endblock %}
     <div class="clear" style="clear:both" />
   </div>
   

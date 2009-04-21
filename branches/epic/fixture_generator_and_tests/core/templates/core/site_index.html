@@ -1,4 +1,5 @@
 {% extends "core/bases/home_base.html" %}
+
 {% block nav %}
   <div id="nav"> 
     <ul>   
@@ -9,15 +10,38 @@
     </ul> 
   </div>
 {% endblock %}
+
 {% block homecolumn2 %}
-  <h1> The EpiC Marketplace </h1> <p> Browse, request, and share epidemics data. </p><p> <a href="{% url core.views.about %}"><strong>Learn more</strong></a> about the Epic Project.</p>
+  <h1> The EpiC Marketplace </h1>
+  
+  <p>Browse, request, and share epidemics data.</p>
+  
+  <p><a href="{% url core.views.about %}"><strong>Learn more</strong></a> about the Epic Project.</p>
+  
   <br/>
-  <h1><a href="{% url core.views.browse %}">Browse</a></h1> 
-  <p>View datasets and requests by tag; rate and comment<br /><br /></p> 
-  <h1><a href="{% url datarequests.views.view_datarequests %}">Request</a></h1> 
-  <p>Make a request, see recent requests, and fulfulled requests<p> 
-  <h1><a href="{% url datasets.views.create_dataset %}">Upload</a></h1> 
-  <p>Upload your dataset</p><br />
+  
+  <h1><a href="{% url core.views.browse %}">Browse</a></h1>
+   
+  <p>
+    View datasets and requests by tag; rate and comment
+    <br />
+    <br />
+  </p>
+  
+  <h1>
+    <a href="{% url datarequests.views.view_datarequests %}">Request</a>
+  </h1>
+   
+  <p>Make a request, see recent requests, and fulfulled requests<p>
+   
+  <h1>
+    <a href="{% url datasets.views.create_dataset %}">Upload</a>
+  </h1>
+   
+  <p>Upload your dataset</p>
+  
+  <br />
+  
   {% load geoloc_templatetags %}
   {% display_map_for_datasets %}
 {% endblock %}

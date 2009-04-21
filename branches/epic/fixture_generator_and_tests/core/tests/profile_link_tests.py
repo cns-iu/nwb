@@ -3,7 +3,7 @@ from django.contrib.auth.models import User
 from django.core.urlresolvers import reverse
 
 class ProfileLinkTestCase(TestCase):
-	fixtures = ['just_users']
+	fixtures = ['core_just_users']
 	
 	def setUp(self):
 		self.profile_url = reverse('epic.core.views.view_profile')

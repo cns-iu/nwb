@@ -3,7 +3,7 @@ from django.test import TestCase
 from django.contrib.auth.models import User
 
 class ProfileDatasetTestCase(TestCase):
-	fixtures = ['profile_datasets']
+	fixtures = ['core_profile_datasets']
 	
 	def setUp(self):
 		pass

@@ -3,7 +3,6 @@ from django.test import TestCase
 from django.core.urlresolvers import reverse
 
 class SiteIndexTestCase(TestCase):
-	
 	def setUp(self):
 		pass
 	

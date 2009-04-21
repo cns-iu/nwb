@@ -12,47 +12,47 @@ class DataRequestTestCase(TestCase):
 		self.admin = User.objects.get(username='admin')
 		self.bob = User.objects.get(username='bob')
 		
-		self.drC1 = DataRequest.objects.get(creator=self.bob, name='drC1', description='The first canceled datarequest', status='C')
-		self.drC2 = DataRequest.objects.get(creator=self.admin, name='drC2', description='The second canceled datarequest', status='C')
-		self.drC3 = DataRequest.objects.get(creator=self.bob, name='drC3', description='The third canceled datarequest', status='C')
-		self.drC4 = DataRequest.objects.get(creator=self.admin, name='drC4', description='The fourth canceled datarequest', status='C')
-		self.drC5 = DataRequest.objects.get(creator=self.bob, name='drC5', description='The fifth canceled datarequest', status='C')
+		self.canceled_datarequest1 = DataRequest.objects.get(creator=self.bob, name='canceled_datarequest1', description='The first canceled datarequest', status='C')
+		self.canceled_datarequest2 = DataRequest.objects.get(creator=self.admin, name='canceled_datarequest2', description='The second canceled datarequest', status='C')
+		self.canceled_datarequest3 = DataRequest.objects.get(creator=self.bob, name='canceled_datarequest3', description='The third canceled datarequest', status='C')
+		self.canceled_datarequest4 = DataRequest.objects.get(creator=self.admin, name='canceled_datarequest4', description='The fourth canceled datarequest', status='C')
+		self.canceled_datarequest5 = DataRequest.objects.get(creator=self.bob, name='canceled_datarequest5', description='The fifth canceled datarequest', status='C')
 		
-		self.drF1 = DataRequest.objects.get(creator=self.bob, name='drF1', description='The first fulfilled datarequest', status='F')
-		self.drF2 = DataRequest.objects.get(creator=self.admin, name='drF2', description='The second fulfilled datarequest', status='F')
-		self.drF3 = DataRequest.objects.get(creator=self.bob, name='drF3', description='The third fulfilled datarequest', status='F')
-		self.drF4 = DataRequest.objects.get(creator=self.admin, name='drF4', description='The fourth fulfilled datarequest', status='F')
-		self.drF5 = DataRequest.objects.get(creator=self.bob, name='drF5', description='The fifth fulfilled datarequest', status='F')
-		self.drF6 = DataRequest.objects.get(creator=self.admin, name='drF6', description='The sixth fulfilled datarequest', status='F')
+		self.fulfilled_datarequest1 = DataRequest.objects.get(creator=self.bob, name='fulfilled_datarequest1', description='The first fulfilled datarequest', status='F')
+		self.fulfilled_datarequest2 = DataRequest.objects.get(creator=self.admin, name='fulfilled_datarequest2', description='The second fulfilled datarequest', status='F')
+		self.fulfilled_datarequest3 = DataRequest.objects.get(creator=self.bob, name='fulfilled_datarequest3', description='The third fulfilled datarequest', status='F')
+		self.fulfilled_datarequest4 = DataRequest.objects.get(creator=self.admin, name='fulfilled_datarequest4', description='The fourth fulfilled datarequest', status='F')
+		self.fulfilled_datarequest5 = DataRequest.objects.get(creator=self.bob, name='fulfilled_datarequest5', description='The fifth fulfilled datarequest', status='F')
+		self.fulfilled_datarequest6 = DataRequest.objects.get(creator=self.admin, name='fulfilled_datarequest6', description='The sixth fulfilled datarequest', status='F')
 	
-		self.drU1 = DataRequest.objects.get(creator=self.bob, name='drU1', description='The first unfulfilled datarequest', status='U')
-		self.drU2 = DataRequest.objects.get(creator=self.admin, name='drU2', description='The second unfulfilled datarequest', status='U')
-		self.drU3 = DataRequest.objects.get(creator=self.bob, name='drU3', description='The third unfulfilled datarequest', status='U')
-		self.drU4 = DataRequest.objects.get(creator=self.admin, name='drU4', description='The fourth unfulfilled datarequest', status='U')
+		self.unfulfilled_datarequest1 = DataRequest.objects.get(creator=self.bob, name='unfulfilled_datarequest1', description='The first unfulfilled datarequest', status='U')
+		self.unfulfilled_datarequest2 = DataRequest.objects.get(creator=self.admin, name='unfulfilled_datarequest2', description='The second unfulfilled datarequest', status='U')
+		self.unfulfilled_datarequest3 = DataRequest.objects.get(creator=self.bob, name='unfulfilled_datarequest3', description='The third unfulfilled datarequest', status='U')
+		self.unfulfilled_datarequest4 = DataRequest.objects.get(creator=self.admin, name='unfulfilled_datarequest4', description='The fourth unfulfilled datarequest', status='U')
 	
 	def tearDown(self):
 		pass
 	
 	def testUnfulfilled(self):
 		self.assertEqual(DataRequest.objects.unfulfilled().count(), 4)
-		self.drU1.cancel()
-		self.drU1.save()
+		self.unfulfilled_datarequest1.cancel()
+		self.unfulfilled_datarequest1.save()
 		self.assertEqual(DataRequest.objects.unfulfilled().count(), 3)
 		for dr in DataRequest.objects.unfulfilled():
 			self.assertEqual('unfulfilled', dr.get_status_display())
 		
 	def testFulfilled(self):
 		self.assertEqual(DataRequest.objects.fulfilled().count(), 6)
-		self.drU1.fulfill()
-		self.drU1.save()
+		self.unfulfilled_datarequest1.fulfill()
+		self.unfulfilled_datarequest1.save()
 		self.assertEqual(DataRequest.objects.fulfilled().count(), 7)
 		for dr in DataRequest.objects.fulfilled():
 			self.assertEqual('fulfilled', dr.get_status_display())
 	
 	def testCanceled(self):
 		self.assertEqual(DataRequest.objects.canceled().count(), 5)
-		self.drU1.cancel()
-		self.drU1.save()
+		self.unfulfilled_datarequest1.cancel()
+		self.unfulfilled_datarequest1.save()
 		self.assertEqual(DataRequest.objects.canceled().count(), 6)
 		for dr in DataRequest.objects.canceled():
 			self.assertEqual('canceled', dr.get_status_display())
@@ -74,7 +74,7 @@ class UrlsTestCase(TestCase):
 	
 	def setUp(self):
 		self.bob = User.objects.get(username='bob')
-		self.dr1 = DataRequest.objects.get(creator=self.bob, name='drU1', description='The first unfulfilled datarequest', status='U')
+		self.dr1 = DataRequest.objects.get(creator=self.bob, name='unfulfilled_datarequest1', description='The first unfulfilled datarequest', status='U')
 	
 	def tearDown(self):
 		pass
@@ -153,7 +153,7 @@ class ViewDatarequestsTestCase(TestCase):
 	def setUp(self):
 		self.bob = User.objects.get(username="bob")
 		
-		self.dr1 = DataRequest.objects.get(creator=self.bob, name='drU1', description='The first unfulfilled datarequest', status='U')
+		self.dr1 = DataRequest.objects.get(creator=self.bob, name='unfulfilled_datarequest1', description='The first unfulfilled datarequest', status='U')
 	
 		self.datarequests_url = reverse('epic.datarequests.views.view_datarequests')
 		self.edit_url = reverse('epic.datarequests.views.edit_datarequest', kwargs={'item_id': self.dr1.id, 'slug':self.dr1.slug })
@@ -228,7 +228,7 @@ class ViewDataRequestTestCase(TestCase):
 	def setUp(self):
 		self.bob = User.objects.get(username="bob")
 		
-		self.dr1 = DataRequest.objects.get(creator=self.bob, name='drU1', description='The first unfulfilled datarequest', status='U', slug='drU1')
+		self.dr1 = DataRequest.objects.get(creator=self.bob, name='unfulfilled_datarequest1', description='The first unfulfilled datarequest', status='U', slug='unfulfilled_datarequest1')
 		
 		self.datarequest_url = reverse('epic.datarequests.views.view_datarequest', kwargs={'item_id': self.dr1.id, 'slug':self.dr1.slug })
 		self.edit_url = reverse('epic.datarequests.views.edit_datarequest', kwargs={'item_id': self.dr1.id, 'slug':self.dr1.slug })
@@ -334,7 +334,7 @@ class CancelDatarequestsTestCase(TestCase):
 	def setUp(self):
 		self.bob = User.objects.get(username="bob")
 		
-		self.dr1 = DataRequest.objects.get(creator=self.bob, name='drU1', description='The first unfulfilled datarequest')
+		self.dr1 = DataRequest.objects.get(creator=self.bob, name='unfulfilled_datarequest1', description='The first unfulfilled datarequest')
 
 		self.cancel_url = reverse('epic.datarequests.views.cancel_datarequest', kwargs={'item_id': self.dr1.id, 'slug':self.dr1.slug })
 		
@@ -345,7 +345,7 @@ class CancelDatarequestsTestCase(TestCase):
 		response = self.client.get(self.cancel_url)
 		self.assertEqual(response.status_code, 302)
 		
-		self.dr1 = DataRequest.objects.get(creator=self.bob, name='drU1', description='The first unfulfilled datarequest')
+		self.dr1 = DataRequest.objects.get(creator=self.bob, name='unfulfilled_datarequest1', description='The first unfulfilled datarequest')
 		
 		self.assertEqual(self.dr1.status, 'U')
 
@@ -366,7 +366,7 @@ class CancelDatarequestsTestCase(TestCase):
 		response = self.client.get(self.cancel_url)
 		self.assertEqual(response.status_code, 302)
 
-		self.dr1 = DataRequest.objects.get(creator=self.bob, name='drU1', description='The first unfulfilled datarequest')
+		self.dr1 = DataRequest.objects.get(creator=self.bob, name='unfulfilled_datarequest1', description='The first unfulfilled datarequest')
 		
 		self.assertEqual(self.dr1.status, 'C')
 
@@ -378,7 +378,7 @@ class FulfillDatarequestsTestCase(TestCase):
 	def setUp(self):
 		self.bob = User.objects.get(username="bob")
 		
-		self.dr1 = DataRequest.objects.get(creator=self.bob, name='drU1', description='The first unfulfilled datarequest')
+		self.dr1 = DataRequest.objects.get(creator=self.bob, name='unfulfilled_datarequest1', description='The first unfulfilled datarequest')
 		
 		self.fulfill_url = reverse('epic.datarequests.views.fulfill_datarequest', kwargs={'item_id': self.dr1.id, 'slug':self.dr1.slug })
 		
@@ -389,7 +389,7 @@ class FulfillDatarequestsTestCase(TestCase):
 		response = self.client.get(self.fulfill_url)
 		self.assertEqual(response.status_code, 302)
 		
-		self.dr1 = DataRequest.objects.get(creator=self.bob, name='drU1', description='The first unfulfilled datarequest')
+		self.dr1 = DataRequest.objects.get(creator=self.bob, name='unfulfilled_datarequest1', description='The first unfulfilled datarequest')
 		
 		self.assertEqual(self.dr1.status, 'U')
 
@@ -401,7 +401,7 @@ class FulfillDatarequestsTestCase(TestCase):
 		response = self.client.get(self.fulfill_url)
 		self.assertEqual(response.status_code, 302)
 		
-		self.dr1 = DataRequest.objects.get(creator=self.bob, name='drU1', description='The first unfulfilled datarequest')
+		self.dr1 = DataRequest.objects.get(creator=self.bob, name='unfulfilled_datarequest1', description='The first unfulfilled datarequest')
 		
 		self.assertEqual(self.dr1.status, 'U')
 			
@@ -412,7 +412,7 @@ class FulfillDatarequestsTestCase(TestCase):
 		response = self.client.get(self.fulfill_url)
 		self.assertEqual(response.status_code, 302)
 		
-		self.dr1 = DataRequest.objects.get(creator=self.bob, name='drU1', description='The first unfulfilled datarequest')
+		self.dr1 = DataRequest.objects.get(creator=self.bob, name='unfulfilled_datarequest1', description='The first unfulfilled datarequest')
 		
 		self.assertEqual(self.dr1.status, 'F')
 
@@ -424,7 +424,7 @@ class EditDatarequestsTestCase(TestCase):
 	def setUp(self):
 		self.bob = User.objects.get(username="bob")
 		self.admin = User.objects.get(username="admin")
-		self.dr1 = DataRequest.objects.get(creator=self.bob, name='drU1', description='The first unfulfilled datarequest', status='U')
+		self.dr1 = DataRequest.objects.get(creator=self.bob, name='unfulfilled_datarequest1', description='The first unfulfilled datarequest', status='U')
 		self.edit_url = reverse('epic.datarequests.views.edit_datarequest', kwargs={'item_id': self.dr1.id, 'slug':self.dr1.slug })
 		
 		self.post_data = {
@@ -442,7 +442,7 @@ class EditDatarequestsTestCase(TestCase):
 		response = self.client.post(self.edit_url, self.post_data)
 		self.assertEqual(response.status_code, 302)
 	
-		self.dr1 = DataRequest.objects.get(creator=self.bob, name='drU1', description='The first unfulfilled datarequest', status='U')
+		self.dr1 = DataRequest.objects.get(creator=self.bob, name='unfulfilled_datarequest1', description='The first unfulfilled datarequest', status='U')
 		
 	def testUnOwned(self):
 		login = self.client.login(username='admin', password='admin')
@@ -454,7 +454,7 @@ class EditDatarequestsTestCase(TestCase):
 		response = self.client.post(self.edit_url, self.post_data)
 		self.assertEqual(response.status_code, 302)
 		
-		self.dr1 = DataRequest.objects.get(creator=self.bob, name='drU1', description='The first unfulfilled datarequest', status='U')
+		self.dr1 = DataRequest.objects.get(creator=self.bob, name='unfulfilled_datarequest1', description='The first unfulfilled datarequest', status='U')
 		
 	def testOwned(self):
 		login = self.client.login(username='bob', password='bob')

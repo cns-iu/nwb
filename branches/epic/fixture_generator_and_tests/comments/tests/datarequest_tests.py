@@ -1,28 +1,41 @@
-from django.test import TestCase
 from django.core.urlresolvers import reverse
+from django.test import TestCase
+
+from epic.comments.tests.base_tests import *
 from epic.datasets.models import DataSet
-from base_tests import *
+
 
 def setUp(self):
-	self.item = DataRequest.objects.all()[0]
-	
-	self. post_comment_form_data = {
-		"comment": "abcd"
-	}
-	
-	self.user = User.objects.get(username="peebs")
-	
-	self.comment = Comment(posting_user=self.user,
-						   parent_item=self.item,
-						   contents="abcd")
-	
-	self.VIEW_URL = reverse("epic.datarequests.views.view_datarequest",
-							kwargs={ "item_id": self.item.id, "slug": self.item.slug })
-	
-	self.POST_TO_COMMENT_URL = reverse("epic.datarequests.views.post_datarequest_comment",
-									   kwargs={ "item_id": self.item.id, "slug": self.item.slug })
-	
-	self.ITEM_TYPE_STRING = "datarequest"
+    self.item = DataRequest.objects.all()[0]
+    
+    self. post_comment_form_data = {
+        COMMENT_KEY: 'abcd'
+    }
+    
+    self.user = User.objects.get(username=TEST_USER_USERNAME)
+    
+    self.comment = Comment(posting_user=self.user,
+                           parent_item=self.item,
+                           contents='abcd')
+    
+    kwargs_for_url_reverses = {
+        ITEM_ID_KEY: self.item.id,
+        SLUG_KEY: self.item.slug
+    }
+    
+    self.VIEW_URL = reverse('epic.datarequests.views.view_datarequest',
+                            kwargs=kwargs_for_url_reverses)
+    
+    self.POST_TO_COMMENT_URL = reverse(
+        'epic.datarequests.views.post_datarequest_comment',
+        kwargs=kwargs_for_url_reverses)
+    
+    self.ITEM_TYPE_STRING = 'datarequest'
 
-DataRequestCommentTestCase = create_comment_test_case(setUp,
-													  [ "comments_just_users", "comments_datarequests" ])
+datarequest_comment_test_case_fixtures = [
+    'comments_just_users',
+    'comments_datarequests'
+]
+
+DataRequestCommentTestCase = create_comment_test_case(
+    setUp, datarequest_comment_test_case_fixtures)

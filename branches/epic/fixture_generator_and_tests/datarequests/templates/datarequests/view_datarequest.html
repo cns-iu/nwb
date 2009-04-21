@@ -55,5 +55,5 @@
   </div>
   
   {% load comment_templatetags %}
-  {% display_post_comment_form_and_list_comments datarequest user form "epic.datarequests.views.post_datarequest_comment" %}
+  {% comments_section datarequest user form "epic.datarequests.views.post_datarequest_comment" %}
 {% endblock %}

@@ -1,45 +1,69 @@
 from datarequests.models import DataRequest
 
+
+#######################################
+# Utilities to generate DataRequests. #
+#######################################
+
+def _create_datarequest(creator, status, ordinal, number):
+    if status == 'C':
+        type_string = 'canceled'
+    elif status == 'F':
+        type_string = 'fulfilled'
+    else:
+        type_string = 'unfulfilled'
+    
+    datarequest_name = '%s_datarequest%s' % (type_string, number)
+    datarequest_description = 'The %s datarequest' % ordinal
+    datarequest_slug = datarequest_name
+    
+    datarequest = DataRequest.objects.create(
+        creator=creator,
+        name=datarequest_name,
+        description=datarequest_description,
+        status=status,
+        slug=datarequest_slug)
+    
+    return datarequest
+                                             
+
 ######################################
-# Create the Canceled DataRequests.  #
+# Create the canceled DataRequests.  #
 ######################################
 
-def _create_c_datarequests():
-	drC1 = DataRequest.objects.create(creator=bob, name='drC1', description='The first canceled datarequest', status='C', slug='drC1')
-	drC2 = DataRequest.objects.create(creator=admin, name='drC2', description='The second canceled datarequest', status='C', slug='drC2')
-	drC3 = DataRequest.objects.create(creator=bob, name='drC3', description='The third canceled datarequest', status='C', slug='drC3')
-	drC4 = DataRequest.objects.create(creator=admin, name='drC4', description='The fourth canceled datarequest', status='C', slug='drC4')
-	drC5 = DataRequest.objects.create(creator=bob, name='drC5', description='The fifth canceled datarequest', status='C', slug='drC5')
-	return
+def _create_canceled_datarequests():
+    canceled_datarequest1 = _create_datarequest(bob, 'C', 'first', 1)
+    canceled_datarequest2 = _create_datarequest(admin, 'C', 'second', 2)
+    canceled_datarequest3 = _create_datarequest(bob, 'C', 'third', 3)
+    canceled_datarequest4 = _create_datarequest(admin, 'C', 'fourth', 4)
+    canceled_datarequest5 = _create_datarequest(bob, 'C', 'fifth', 5)
 
 ######################################
-# Create the Fulfilled DataRequests. #
+# Create the fulfilled DataRequests. #
 ######################################
 
-def _create_f_datarequests():
-	drF1 = DataRequest.objects.create(creator=bob, name='drF1', description='The first fulfilled datarequest', status='F', slug='drF1')
-	drF2 = DataRequest.objects.create(creator=admin, name='drF2', description='The second fulfilled datarequest', status='F', slug='drF2')
-	drF3 = DataRequest.objects.create(creator=bob, name='drF3', description='The third fulfilled datarequest', status='F', slug='drF3')
-	drF4 = DataRequest.objects.create(creator=admin, name='drF4', description='The fourth fulfilled datarequest', status='F', slug='drF4')
-	drF5 = DataRequest.objects.create(creator=bob, name='drF5', description='The fifth fulfilled datarequest', status='F', slug='drF5')
-	drF6 = DataRequest.objects.create(creator=admin, name='drF6', description='The sixth fulfilled datarequest', status='F', slug='drF6')
-	return 
+def _create_fulfilled_datarequests():
+    fulfilled_datarequest1 = _create_datarequest(bob, 'F', 'first', 1)
+    fulfilled_datarequest2 = _create_datarequest(admin, 'F', 'second', 2)
+    fulfilled_datarequest3 = _create_datarequest(bob, 'F', 'third', 3)
+    fulfilled_datarequest4 = _create_datarequest(admin, 'F', 'fourth', 4)
+    fulfilled_datarequest5 = _create_datarequest(bob, 'F', 'fifth', 5)
+    fulfilled_datarequest6 = _create_datarequest(admin, 'F', 'sixth', 6)
 
 ########################################
 # Create the unfulfilled DataRequests. #
 ########################################
 
-def _create_u_datarequests():
-	drU1 = DataRequest.objects.create(creator=bob, name='drU1', description='The first unfulfilled datarequest', status='U', slug='drU1')
-	drU2 = DataRequest.objects.create(creator=admin, name='drU2', description='The second unfulfilled datarequest', status='U', slug='drU2')
-	drU3 = DataRequest.objects.create(creator=bob, name='drU3', description='The third unfulfilled datarequest', status='U', slug='drU3')
-	drU4 = DataRequest.objects.create(creator=admin, name='drU4', description='The fourth unfulfilled datarequest', status='U', slug='drU4')
-	return
+def _create_unfulfilled_datarequests():
+    unfulfilled_datarequest1 = _create_datarequest(bob, 'U', 'first', 1)
+    unfulfilled_datarequest2 = _create_datarequest(admin, 'U', 'second', 2)
+    unfulfilled_datarequest3 = _create_datarequest(bob, 'U', 'third', 3)
+    unfulfilled_datarequest4 = _create_datarequest(admin, 'U', 'fourth', 4)
 
 ######################################
 # Generate the actual fixtures here. #
 ######################################
 
-_create_c_datarequests()
-_create_f_datarequests()
-_create_u_datarequests()
+_create_canceled_datarequests()
+_create_fulfilled_datarequests()
+_create_unfulfilled_datarequests()

@@ -429,7 +429,7 @@ class ContactUserLinkDataSetTestCase(CustomTestCase):
 	
 	def setUp(self):
 		commonMessageSetUp(self)
-		self.first_data_set = DataSet.objects.get(creator=self.user_bob, name='ds1', description='this is the first dataset', slug='ds1')
+		self.first_data_set = DataSet.objects.get(creator=self.user_bob, name='dataset1', description='this is the first dataset', slug='dataset1')
  
 	
 	def tearDown(self):
@@ -504,7 +504,7 @@ class ContactUserLinkDataRequestTestCase(CustomTestCase):
 	
 	def setUp(self):
 		commonMessageSetUp(self)
-		self.first_data_request = DataRequest.objects.get(creator=self.user_bob, name='drU1', description='The first unfulfilled datarequest', status='U')
+		self.first_data_request = DataRequest.objects.get(creator=self.user_bob, name='unfulfilled_datarequest1', description='The first unfulfilled datarequest', status='U')
 	
 	def tearDown(self):
 		pass

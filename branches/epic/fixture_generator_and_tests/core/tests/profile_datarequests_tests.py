@@ -5,7 +5,7 @@ from epic.datarequests.models import DataRequest
 
 class ProfileDataRequestTestCase(TestCase):
 	
-	fixtures = ['profile_datarequests']
+	fixtures = ['core_profile_datarequests']
 	
 	def setUp(self):
 		self.profile_url = reverse('epic.core.views.view_profile')

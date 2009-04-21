@@ -86,8 +86,8 @@ def _create_bob2():
 ######################################
 
 def _create_c_datarequests():
-	drC1 = DataRequest.objects.create(creator=bob, name='drC1', description='The first canceled datarequest', status='C', slug='drC1')
-	drC2 = DataRequest.objects.create(creator=admin, name='drC2', description='The second canceled datarequest', status='C', slug='drC2')
+	canceled_datarequest1 = DataRequest.objects.create(creator=bob, name='canceled_datarequest1', description='The first canceled datarequest', status='C', slug='canceled_datarequest1')
+	canceled_datarequest2 = DataRequest.objects.create(creator=admin, name='canceled_datarequest2', description='The second canceled datarequest', status='C', slug='canceled_datarequest2')
 	return
 
 ######################################
@@ -95,8 +95,8 @@ def _create_c_datarequests():
 ######################################
 
 def _create_f_datarequests():
-	drF1 = DataRequest.objects.create(creator=bob, name='drF1', description='The first fulfilled datarequest', status='F', slug='drF1')
-	drF2 = DataRequest.objects.create(creator=admin, name='drF2', description='The second fulfilled datarequest', status='F', slug='drF2')
+	fulfilled_datarequest1 = DataRequest.objects.create(creator=bob, name='fulfilled_datarequest1', description='The first fulfilled datarequest', status='F', slug='fulfilled_datarequest1')
+	fulfilled_datarequest2 = DataRequest.objects.create(creator=admin, name='fulfilled_datarequest2', description='The second fulfilled datarequest', status='F', slug='fulfilled_datarequest2')
 	return 
 
 ########################################
@@ -104,8 +104,8 @@ def _create_f_datarequests():
 ########################################
 
 def _create_u_datarequests():
-	drU1 = DataRequest.objects.create(creator=bob, name='drU1', description='The first unfulfilled datarequest', status='U', slug='drU1')
-	drU2 = DataRequest.objects.create(creator=admin, name='drU2', description='The second unfulfilled datarequest', status='U', slug='drU2')
+	unfulfilled_datarequest1 = DataRequest.objects.create(creator=bob, name='unfulfilled_datarequest1', description='The first unfulfilled datarequest', status='U', slug='unfulfilled_datarequest1')
+	unfulfilled_datarequest2 = DataRequest.objects.create(creator=admin, name='unfulfilled_datarequest2', description='The second unfulfilled datarequest', status='U', slug='unfulfilled_datarequest2')
 	return
 
 #######################
@@ -113,8 +113,8 @@ def _create_u_datarequests():
 #######################
 
 def _create_datasets():
-	ds1 = DataSet.objects.create(creator=bob, name='ds1', description='this is the first dataset', slug='ds1')
-	ds2 = DataSet.objects.create(creator=admin, name='ds2', description='this is the second dataset', slug='ds2')
+	dataset1 = DataSet.objects.create(creator=bob, name='dataset1', description='this is the first dataset', slug='dataset1')
+	dataset2 = DataSet.objects.create(creator=admin, name='dataset2', description='this is the second dataset', slug='dataset2')
 	
 
 ######################################

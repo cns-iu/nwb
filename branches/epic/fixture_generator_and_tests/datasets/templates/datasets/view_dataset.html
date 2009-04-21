@@ -88,6 +88,6 @@
   {% display_map_for_datasets dataset.id %}
   
   {% load comment_templatetags %}
-  {% display_post_comment_form_and_list_comments dataset user form "epic.datasets.views.post_dataset_comment" %}
+  {% comments_section dataset user form "epic.datasets.views.post_dataset_comment" %}
 </div>
 {% endblock %}{# block content #}

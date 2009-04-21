@@ -7,9 +7,9 @@ from epic.tags.models import Tagging
 
 def _create_dataset1():
 	dataset1 = DataSet.objects.create(creator=bob,
-									  name="ds1",
+									  name="dataset1",
 									  description="dataset number one",
-									  slug="ds1")
+									  slug="dataset1")
 	
 	return dataset1
 
@@ -19,9 +19,9 @@ def _create_dataset1():
 
 def _create_dataset2():
 	dataset2 = DataSet.objects.create(creator=bill,
-									  name="ds2",
+									  name="dataset2",
 									  description="dataset number two",
-									  slug="ds2")
+									  slug="dataset2")
 	
 	return dataset2
 
