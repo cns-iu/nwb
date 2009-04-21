@@ -1,7 +1,0 @@
-{% extends "core/base.html" %}
-{% block content %}
-	{% load dataset_templatetags %}
-	{% list_datasets datasets %}
-	<a href="/">Home</a>
-	<a href="{% url datasets.views.create_dataset %}">Add new dataset</a>
-{% endblock %}
