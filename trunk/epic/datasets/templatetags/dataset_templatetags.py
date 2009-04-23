@@ -20,5 +20,5 @@ def show_dataset_title_vote_ratebox_datainfo(context, dataset):
 
 @register.inclusion_tag('templatetags/display_recent_datasets.html')
 def display_recent_datasets(limit=3):
-	datasets = DataSet.objects.all().order_by('-created_at')[:limit]
+	datasets = DataSet.objects.active().order_by('-created_at')[:limit]
 	return {'datasets':datasets,}

@@ -59,7 +59,7 @@ class DataRequestTestCase(CustomTestCase):
 	
 	def testLifeCycle(self):
 		self.assertEqual(DataRequest.objects.unfulfilled().count(), 4)
-		dr = DataRequest.objects.create(creator=self.bob, name="Amazing request", description="this is the description")
+		dr = DataRequest.objects.create(creator=self.bob, name="Amazing request", description="this is the description", is_active=True)
 		self.assertEqual(DataRequest.objects.unfulfilled().count(), 5)
 		dr.fulfill()
 		dr.save()

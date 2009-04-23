@@ -22,7 +22,7 @@ from datetime import datetime
 from decimal import Decimal
 
 def view_datasets(request):
-    datasets = DataSet.objects.all().order_by('-created_at')
+    datasets = DataSet.objects.active().order_by('-created_at')
     return render_to_response('datasets/view_datasets.html',
                               {'datasets': datasets,},
                               context_instance=RequestContext(request))
@@ -39,7 +39,7 @@ def view_dataset(request, item_id=None, slug=None):
 def view_user_dataset_list(request, user_id=None):
 
     requested_user = get_object_or_404(User, pk=user_id)
-    datasets = DataSet.objects.filter(creator=user_id).order_by('-created_at')
+    datasets = DataSet.objects.active().filter(creator=user_id).order_by('-created_at')
     return render_to_response('datasets/view_user_dataset_list.html', 
                               {'datasets': datasets, 'requested_user':requested_user,},
                               context_instance=RequestContext(request))
@@ -62,7 +62,7 @@ def create_dataset(request):
             uploaded_files = form.cleaned_data['files']
             tags = form.cleaned_data['tags']
             
-            new_dataset = DataSet.objects.create(creator=request.user, name=name, description=description, slug=slugify(name))
+            new_dataset = DataSet.objects.create(creator=request.user, name=name, description=description, slug=slugify(name), is_active=True)
             Tagging.objects.update_tags(tags,item=new_dataset, user=request.user)
             
             for geoloc in _get_geolocs_from_formset(add_formset, 'add_location'):
@@ -210,7 +210,19 @@ def tag_dataset(request, item_id, slug=None):
             return render_to_response('datasets/tag_dataset.html', 
                                       {'form':form,'item':dataset}, 
                                       context_instance=RequestContext(request))
-
+@login_required
+def delete_dataset(request, item_id, slug):
+    # TODO: Here would be the place to delete the files from the file sytem if that is required.
+    dataset = DataSet.objects.get(pk=item_id)
+    user = request.user
+    
+    if user == dataset.creator:
+        dataset.is_active = False
+        dataset.save()
+        
+    return HttpResponseRedirect(reverse('epic.datasets.views.view_dataset',
+                                        kwargs={'item_id': dataset.id, 'slug': slug,}))
+    
 def _get_geolocs_from_formset(formset, key='add_location'):
     """Return the proper 'Geoloc's from a formset.
     

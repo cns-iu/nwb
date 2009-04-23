@@ -18,7 +18,7 @@ def site_index(request):
 	return render_to_response('core/site_index.html', context_instance=RequestContext(request))
 
 def browse(request):
-	datasets = DataSet.objects.all().order_by('-created_at')
+	datasets = DataSet.objects.active().order_by('-created_at')
 	return render_to_response('core/browse.html',
 		{'datasets': datasets, },
 		context_instance=RequestContext(request))
@@ -32,9 +32,9 @@ def view_profile(request):
 	user = request.user
 	profile = Profile.objects.for_user(user)
 
-	datasets = DataSet.objects.filter(creator=user).order_by('-created_at')
+	datasets = DataSet.objects.active().filter(creator=user).order_by('-created_at')
 	
-	datarequests = DataRequest.objects.filter(creator=user).exclude(status='C').order_by('-created_at')
+	datarequests = DataRequest.objects.active().filter(creator=user).exclude(status='C').order_by('-created_at')
 	
 # 	HTML content relating to user, it's profile, datasets uploaded & data requests made 
 #	is fetched. 

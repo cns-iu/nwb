@@ -7,15 +7,15 @@ register = template.Library()
 def display_datarequests(context, datarequests=None):
 	user = context['user']
 	if not datarequests:
-		datarequests = DataRequest.objects.exclude(status='C').order_by('-created_at')
+		datarequests = DataRequest.objects.active().exclude(status='C').order_by('-created_at')
 	return {'datarequests':datarequests, 'user':user}
 
 @register.inclusion_tag("templatetags/display_recent_requests.html")
 def display_recent_requests(limit=3):
-	datarequests = DataRequest.objects.exclude(status='C').order_by('-created_at')[:limit]
+	datarequests = DataRequest.objects.active().exclude(status='C').order_by('-created_at')[:limit]
 	return {'datarequests':datarequests}
 
 @register.inclusion_tag("templatetags/display_recently_fulfilled_requests.html")
 def display_recently_fulfilled_requests(limit=2):
-	datarequests = DataRequest.objects.filter(status='F').order_by('-created_at')[:limit]
+	datarequests = DataRequest.objects.active().filter(status='F').order_by('-created_at')[:limit]
 	return {'datarequests':datarequests}

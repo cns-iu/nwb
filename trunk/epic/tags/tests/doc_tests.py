@@ -88,13 +88,13 @@
 >>> user2 = User.objects.create(username="bob255", password="bob255")
 >>> user2
 <User: bob255>
->>> dataset1 = DataSet.objects.create(name="DS1", description="The first dataset item", creator=user1)
+>>> dataset1 = DataSet.objects.create(name="DS1", description="The first dataset item", creator=user1, is_active=True)
 >>> dataset1
 <DataSet: Dataset DS1>
->>> dataset2 = DataSet.objects.create(name="DS2", description="The second dataset item", creator=user1)
+>>> dataset2 = DataSet.objects.create(name="DS2", description="The second dataset item", creator=user1, is_active=True)
 >>> dataset2
 <DataSet: Dataset DS2>
->>> dataset3 = DataSet.objects.create(name="DS3", description="The third dataset item", creator=user2)
+>>> dataset3 = DataSet.objects.create(name="DS3", description="The third dataset item", creator=user2, is_active=True)
 >>> dataset3
 <DataSet: Dataset DS3>
 >>> dataset3.tags.all()

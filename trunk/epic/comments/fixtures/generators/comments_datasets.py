@@ -14,7 +14,8 @@ def _create_dataset(creator, ordinal, number):
         creator=creator,
         name=dataset_name,
         description=dataset_description,
-        slug=dataset_slug)
+        slug=dataset_slug,
+        is_active=True)
     
     return dataset
 

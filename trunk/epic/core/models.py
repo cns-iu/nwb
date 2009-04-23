@@ -34,55 +34,56 @@ from django.db import models
 from django.contrib.auth.models import User
 
 class Item(models.Model):
-	MAX_ITEM_NAME_LENGTH = 256
-	MAX_ITEM_DESCRIPTION_LENGTH = 16384
-	MAX_ITEM_TAGS_LENGTH = 1024
-	MAX_ITEM_INDIVIDUAL_TAG_LENGTH = 64
-	
-	creator = models.ForeignKey(User)
-	name = models.CharField(max_length=MAX_ITEM_NAME_LENGTH)
-	description = models.CharField(max_length=MAX_ITEM_DESCRIPTION_LENGTH)
-	slug = models.SlugField()
-	created_at = models.DateTimeField(auto_now_add=True, db_index=True)
-									
-	@models.permalink
-	def get_absolute_url(self):
-		return self.specific.get_absolute_url()
-	
-	# TODO: Fix this terrible hack
-	def _specific(self):
-		possibilities = ['dataset', 'datarequest']
-		for possibility in possibilities:
-			if hasattr(self, possibility):
-				return getattr(self, possibility)
-		raise Exception("No subclass found for %s" % (self))
-	
-	specific = property(_specific)
-	
+    MAX_ITEM_NAME_LENGTH = 256
+    MAX_ITEM_DESCRIPTION_LENGTH = 16384
+    MAX_ITEM_TAGS_LENGTH = 1024
+    MAX_ITEM_INDIVIDUAL_TAG_LENGTH = 64
+    
+    creator = models.ForeignKey(User)
+    name = models.CharField(max_length=MAX_ITEM_NAME_LENGTH)
+    description = models.CharField(max_length=MAX_ITEM_DESCRIPTION_LENGTH)
+    slug = models.SlugField()
+    created_at = models.DateTimeField(auto_now_add=True, db_index=True)
+    is_active = models.BooleanField(default=False)
+    
+    @models.permalink
+    def get_absolute_url(self):
+        return self.specific.get_absolute_url()
+    
+    # TODO: Fix this terrible hack
+    def _specific(self):
+        possibilities = ['dataset', 'datarequest']
+        for possibility in possibilities:
+            if hasattr(self, possibility):
+                return getattr(self, possibility)
+        raise Exception("No subclass found for %s" % (self))
+    
+    specific = property(_specific)
+    
 class ProfileManager(models.Manager):
-	def for_user(self, user):
-		try:
-			profile = user.get_profile()
-		except:
-			profile = Profile(user=user)
-			try:
-				profile.save()
-			except:
-				profile = user.get_profile()
-		return profile
+    def for_user(self, user):
+        try:
+            profile = user.get_profile()
+        except:
+            profile = Profile(user=user)
+            try:
+                profile.save()
+            except:
+                profile = user.get_profile()
+        return profile
 
 class Profile(models.Model):
-	MAX_USERNAME_LENGTH = 16
-	MAX_USER_PASSWORD_LENGTH = 256
-	MAX_USER_EMAIL_LENGTH = 256
-	MAX_USER_PROFILE_LENGTH = 512
+    MAX_USERNAME_LENGTH = 16
+    MAX_USER_PASSWORD_LENGTH = 256
+    MAX_USER_EMAIL_LENGTH = 256
+    MAX_USER_PROFILE_LENGTH = 512
 
-	objects = ProfileManager()
-	user = models.ForeignKey(User, unique=True)
-	affiliation = models.CharField(max_length=MAX_USER_PROFILE_LENGTH, blank=True)
-	
-	def __unicode__(self):
-		if self.user.first_name and self.user.last_name:
-			return self.user.first_name + " " + self.user.last_name
-		else:
-			return self.user.username
+    objects = ProfileManager()
+    user = models.ForeignKey(User, unique=True)
+    affiliation = models.CharField(max_length=MAX_USER_PROFILE_LENGTH, blank=True)
+    
+    def __unicode__(self):
+        if self.user.first_name and self.user.last_name:
+            return self.user.first_name + " " + self.user.last_name
+        else:
+            return self.user.username

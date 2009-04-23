@@ -6,7 +6,7 @@ from epic.datasets.models import DataSet
 
 
 def setUp(self):
-    self.item = DataRequest.objects.all()[0]
+    self.item = DataRequest.objects.active()[0]
     
     self. post_comment_form_data = {
         COMMENT_KEY: 'abcd'

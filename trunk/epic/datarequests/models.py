@@ -8,6 +8,7 @@ u'unfulfilled'
 """
 
 from django.db import models
+
 from epic.core.models import Item
 
 REQUEST_STATUS = (
@@ -17,37 +18,39 @@ REQUEST_STATUS = (
 )
 
 class DataRequestManager(models.Manager):
-	def unfulfilled(self):
-		return self.get_query_set().filter(status='U')
-	def fulfilled(self):
-		return self.get_query_set().filter(status='F')
-	def canceled(self):
-		return self.get_query_set().filter(status='C')
+    def unfulfilled(self):
+        return self.get_query_set().filter(status='U')
+    def fulfilled(self):
+        return self.get_query_set().filter(status='F')
+    def canceled(self):
+        return self.get_query_set().filter(status='C')
+    def active(self):
+        return self.filter(is_active=True)
 
 class DataRequest(Item):
-	"""
-	A data request.
-	
-	>>> data_request = DataRequest()
-	>>> data_request.get_status_display()
-	u'unfulfilled'
-	>>> data_request.fulfill()
-	>>> data_request.get_status_display()
-	u'fulfilled'
-	"""
-	objects = DataRequestManager()
-	status = models.CharField(max_length=1, choices=REQUEST_STATUS, db_index=True, default='U')
+    """
+    A data request.
+    
+    >>> data_request = DataRequest()
+    >>> data_request.get_status_display()
+    u'unfulfilled'
+    >>> data_request.fulfill()
+    >>> data_request.get_status_display()
+    u'fulfilled'
+    """
+    objects = DataRequestManager()
+    status = models.CharField(max_length=1, choices=REQUEST_STATUS, db_index=True, default='U')
 
-	def fulfill(self):
-		self.status = 'F'
+    def fulfill(self):
+        self.status = 'F'
         
-	def cancel(self):
-		self.status = 'C'
-		
-	@models.permalink
-	def get_absolute_url(self):
-		return ('epic.datarequests.views.view_datarequest', [], {'item_id':self.id, 'slug':self.slug})
-	
-	def __unicode__(self):
-		return "%s %s %s" % (self.status, self.name, self.creator)
-		
+    def cancel(self):
+        self.status = 'C'
+        
+    @models.permalink
+    def get_absolute_url(self):
+        return ('epic.datarequests.views.view_datarequest', [], {'item_id':self.id, 'slug':self.slug})
+    
+    def __unicode__(self):
+        return "%s %s %s" % (self.status, self.name, self.creator)
+        

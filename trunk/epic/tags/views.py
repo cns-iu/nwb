@@ -17,11 +17,13 @@ def index(request):
     return render_to_response('tags/index.html', {'tags':count_tag_list}, context_instance=RequestContext(request))
 
 def view_items_for_tag(request, tag_name):
-	tags = Tagging.objects.filter(tag=tag_name)
-	datasets = []
-	for tag in tags:
-		datasets.append(tag.item.specific)
-	return render_to_response('tags/tag_view.html', {'tags':tags, 'tag_name':tag_name, 'datasets':datasets}, context_instance=RequestContext(request))
+    tags = Tagging.objects.filter(tag=tag_name)
+    datasets = []
+    for tag in tags:
+        dataset = tag.item.specific
+        if dataset.is_active:
+            datasets.append(tag.item.specific)
+    return render_to_response('tags/tag_view.html', {'tags':tags, 'tag_name':tag_name, 'datasets':datasets}, context_instance=RequestContext(request))
 
 @login_required
 def delete_tag(request):
