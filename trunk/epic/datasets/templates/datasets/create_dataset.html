@@ -1,12 +1,8 @@
 {% extends "core/bases/simple_base.html" %}
 {% block nav %}
-  <div id="nav"> 
-    <ul>   
-      <li class="navfirst"><a href="{% url core.views.browse %}">Browse</a></li>
-      <li><a href="{% url datasets.views.create_dataset %}" class="pageon">Upload</a></li>
-      <li><a href="{% url datarequests.views.new_datarequest %}">Request</a></li>
-      <li><a href="{% url core.views.about %}">About</a></li>
-    </ul> 
+  <div id="nav">
+    {% load core_templatetags %}
+    {% nav_bar 'Upload' %}
   </div>
 {% endblock %}{# block nav #}
 {% block scripts_header %}

@@ -12,12 +12,8 @@
 
 {% block nav %}
   <div id="nav"> 
-    <ul>   
-      <li class="navfirst"><a href="{% url core.views.browse %}" class="pageon">Browse</a></li>
-      <li><a href="{% url datasets.views.create_dataset %}">Upload</a></li>
-      <li><a href="{% url datarequests.views.new_datarequest %}">Request</a></li>
-      <li><a href="{% url core.views.about %}">About</a></li>
-    </ul> 
+    {% load core_templatetags %}
+    {% nav_bar 'Browse' %}
   </div>
 {% endblock %}
 
