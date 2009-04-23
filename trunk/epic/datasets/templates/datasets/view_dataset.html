@@ -43,7 +43,7 @@
 	    <h3>Dataset Files</h3>
 	    
 	    <p>
-	      {% if dataset.files %}
+	      {% if dataset.files.all %}
 	        {% for file in dataset.files.all %}      
 	          {# TODO: this should be a reverse? #}
 	            <a href="{{ file.file_contents.url }}">
@@ -62,21 +62,21 @@
 	          </a>
 	          
 	          Download All Files
-	         -->
 	        {% endifnotequal %}
+	         -->
 	      {% else %}
-	        <p>
-	          There are no attached files.
-	        </p>
+	        <h2>The files for this dataset have been removed.</h2>
 	      {% endif %}
 	    </p>
 	  {% else %}
-	    {% if dataset.files %}
+	    {% if dataset.files.all %}
 	      <h2>
 	        {# TODO: Make this not a big fat hack. #}
 	        {# We should be using the url template tag instead of the hardcoded url. #}
 	        Please <a href="/login/?next={{ dataset.get_absolute_url }}">login</a> to download this dataset.
 	      </h2>
+	    {% else %}
+	      <h2>The files for this dataset have been removed.</h2>
 	    {% endif %}
 	  {% endif %}
 	

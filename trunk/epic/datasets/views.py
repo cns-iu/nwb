@@ -112,11 +112,12 @@ def edit_dataset(request, item_id, slug=None):
         add_formset = GeoLocationFormSet(request.POST, prefix='add')
         remove_formset = RemoveGeoLocationFormSet(request.POST, prefix='remove')
             
-        if form.is_valid():
+        if form.is_valid():       
             dataset.name = form.cleaned_data['name']
             dataset.description = form.cleaned_data['description']
             dataset.slug = slugify(dataset.name)
             dataset.save()
+
 
             tag_names = form.cleaned_data["tags"]
             Tagging.objects.update_tags(tag_names=tag_names, item=dataset, user=user)
@@ -127,11 +128,30 @@ def edit_dataset(request, item_id, slug=None):
             for geoloc in _get_geolocs_from_formset(remove_formset, 'remove_location'):
                 dataset.geolocations.remove(geoloc)
             
-            return HttpResponseRedirect(reverse('epic.datasets.views.view_dataset',
-                                                kwargs={ "item_id": dataset.id, 'slug':slug, }))
+            # If the user has set the flag to delete their datasets, delete them
+            # TODO: these files need to be removed from the file system too!!
+
+            delete_files = False
+            try:
+                # This implies that the checkbox was checked.
+                request.POST['delete_dataset_files']
+                delete_files = True
+            except MultiValueDictKeyError:
+                pass
+            
+            if delete_files:
+                return HttpResponseRedirect(reverse('epic.datasets.views.delete_dataset_files',
+                                                    kwargs={ "item_id": dataset.id, 'slug':slug, }))
+            else:
+                return HttpResponseRedirect(reverse('epic.datasets.views.view_dataset',
+                                                    kwargs={ "item_id": dataset.id, 'slug':slug, }))
             
     return render_to_response('datasets/edit_dataset.html', 
-                              {'dataset': dataset, 'form': form, 'add_formset': add_formset,'remove_formset':remove_formset,},
+                              {'dataset': dataset, 
+                               'form': form, 
+                               'add_formset': add_formset, 
+                               'remove_formset':remove_formset,
+                               'files':dataset.files.all()},
                               context_instance=RequestContext(request))
 
 @login_required
@@ -211,17 +231,28 @@ def tag_dataset(request, item_id, slug=None):
                                       {'form':form,'item':dataset}, 
                                       context_instance=RequestContext(request))
 @login_required
-def delete_dataset(request, item_id, slug):
-    # TODO: Here would be the place to delete the files from the file sytem if that is required.
+def delete_dataset_files(request, item_id, slug):
+    # TODO: Here would be the place to delete the files from the file system if that is required.
     dataset = DataSet.objects.get(pk=item_id)
     user = request.user
-    
-    if user == dataset.creator:
-        dataset.is_active = False
-        dataset.save()
+    if request.method != 'POST':
+        return render_to_response('datasets/confirm_delete_dataset_files.html', 
+                                  {'dataset':dataset}, 
+                                  context_instance=RequestContext(request))
+    else:
+        try:
+             # Make sure the user confirmed the deletion.
+            request.POST['confirmed']
+        except MultiValueDictKeyError:
+            return render_to_response('datasets/confirm_delete_dataset_files.html', 
+                                      {'dataset':dataset}, 
+                                      context_instance=RequestContext(request))
+        if user == dataset.creator:
+            for file in dataset.files.all():
+                 file.delete()
         
-    return HttpResponseRedirect(reverse('epic.datasets.views.view_dataset',
-                                        kwargs={'item_id': dataset.id, 'slug': slug,}))
+        return HttpResponseRedirect(reverse('epic.datasets.views.view_dataset',
+                                            kwargs={'item_id': dataset.id, 'slug': dataset.slug,}))
     
 def _get_geolocs_from_formset(formset, key='add_location'):
     """Return the proper 'Geoloc's from a formset.

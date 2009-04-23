@@ -2,7 +2,7 @@ from django.contrib.auth.models import User
 from django.core.urlresolvers import reverse
 
 from epic.core.test import CustomTestCase
-from epic.datasets.models import DataSet
+from epic.datasets.models import DataSet, DataSetFile
 
 class UrlsTestCaseTestCase(CustomTestCase):
     """ Test all the urls to make sure that the view for each works """
@@ -90,8 +90,8 @@ class UrlsTestCaseTestCase(CustomTestCase):
         for code in self.error_page_codes:
             self.assertNotEqual(code, response.status_code)
     
-    def test_delete_dataset(self):
-        url = reverse('epic.datasets.views.delete_dataset', kwargs={'item_id':self.dataset1.id,'slug':self.dataset1.slug})
+    def test_delete_dataset_files(self):
+        url = reverse('epic.datasets.views.delete_dataset_files', kwargs={'item_id':self.dataset1.id,'slug':self.dataset1.slug})
         response = self.client.get(url)
         for code in self.error_page_codes:
             self.assertNotEqual(code, response.status_code)
@@ -404,8 +404,8 @@ class EditDatasetTestCase(CustomTestCase):
         
         ds = DataSet.objects.get(name=self.post_data['name'], description=self.post_data['description'])
         
-class DeleteDatasetTestCase(CustomTestCase):
-    """ Test the delete_dataset view """
+class DeleteDatasetFilesTestCase(CustomTestCase):
+    """ Test the delete_dataset_files view """
     
     fixtures = ['just_users', 'datasets']
     
@@ -414,43 +414,42 @@ class DeleteDatasetTestCase(CustomTestCase):
         self.admin = User.objects.get(username='admin')
         
         self.dataset = DataSet.objects.get(creator=self.bob, name='dataset1', description='this is the first dataset', slug='dataset1')
-        
-        self.delete_url = reverse('epic.datasets.views.delete_dataset', kwargs={'item_id':self.dataset.id, 'slug':self.dataset.slug})
+        self.dataset_file = DataSetFile.objects.create(parent_dataset=self.dataset)
+        self.delete_url = reverse('epic.datasets.views.delete_dataset_files', kwargs={'item_id':self.dataset.id, 'slug':self.dataset.slug})
+
+        self.post_data = {'confirmed': True}
 
     def testLoggedOut(self):
-        # Go to the delete url as an unauthenticated user, then
-        #    verify the dataset is still active
+        # Logged out users cannot remove the files by either
+        # getting or posting the url
         
-        self.assertTrue(self.dataset.is_active)
-        response = self.client.get(self.delete_url)
-        self.assertEqual(response.status_code, 302)
-        
-        self.dataset = DataSet.objects.get(creator=self.bob, name='dataset1', description='this is the first dataset', slug='dataset1')
-        self.assertTrue(self.dataset.is_active)
+        get_response = self.client.get(self.delete_url)
+        self.assertTrue(self.dataset.files.all())
     
+        post_response = self.client.post(self.delete_url, self.post_data)
+        self.assertTrue(self.dataset.files.all())
+        
     def testLoggedInNotOwner(self):
-        # Go to the delete url as a non-owner user, then
-        #    verify the dataset is still active
+        # Non-owner users cannot remove the files by either
+        # getting or posting the url
         
-        self.assertTrue(self.dataset.is_active)
         self.tryLogin('bob2')
-        response = self.client.get(self.delete_url)
-        self.assertEqual(response.status_code, 302)
-        
-        self.dataset = DataSet.objects.get(creator=self.bob, name='dataset1', description='this is the first dataset', slug='dataset1')
-        self.assertTrue(self.dataset.is_active)
+        get_response = self.client.get(self.delete_url)
+        self.assertTrue(self.dataset.files.all())
+            
+        post_response = self.client.post(self.delete_url, self.post_data)
+        self.assertTrue(self.dataset.files.all())
         
     def testLoggedInOwner(self):
-        # Go to the delete url as the owner, then
-        #    verify the dataset is no longer active
+        # The owner user can only remove the files by
+        # posting the url, not getting
         
-        self.assertTrue(self.dataset.is_active)
         self.tryLogin('bob')
-        response = self.client.get(self.delete_url)
-        self.assertEqual(response.status_code, 302)
-        
-        self.dataset = DataSet.objects.get(creator=self.bob, name='dataset1', description='this is the first dataset', slug='dataset1')
-        self.assertFalse(self.dataset.is_active)
+        get_response = self.client.get(self.delete_url)
+        self.assertTrue(self.dataset.files.all())
+            
+        post_response = self.client.post(self.delete_url, self.post_data)
+        self.assertFalse(self.dataset.files.all())
         
 class UnActiveDatasetTestCase(CustomTestCase):
     """  Test that is_active=False datasets are not visible 

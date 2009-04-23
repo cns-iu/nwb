@@ -24,11 +24,6 @@
         Edit
       </a>
     </li>
-    <li>
-      <a href="{% url datasets.views.delete_dataset item_id=dataset.id, slug=dataset.slug %}">
-        Delete
-      </a>
-    </li>
   {% endifequal %}
   
   {% if user.is_authenticated %}
