@@ -64,9 +64,10 @@
 	          <br />
 	          <a href="{% url datasets.views.download_all_files item_id=dataset.id slug=dataset.slug %}">
 	            <img src="/core_media/images/download-all_19.jpg" width="87" height="18" />
-	          </a>
-	          
+	          </a>	          
 	          Download All Files
+	          <br />
+	          <br />
 	        {% endifnotequal %}
 	      {% else %}
 	        <h2>The files for this dataset have been removed.</h2>
