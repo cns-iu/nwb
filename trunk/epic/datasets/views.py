@@ -1,11 +1,13 @@
 import re
 import tarfile
 import zipfile
+import tempfile
 
 from django.conf import settings
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
 from django.core.files.base import ContentFile
+from django.core.servers.basehttp import FileWrapper
 from django.core.urlresolvers import reverse
 from django.http import HttpResponseRedirect, HttpResponse
 from django.forms.formsets import formset_factory
@@ -535,3 +537,27 @@ def _get_geolocs_from_formset(formset, key='add_location'):
             geoloc, created = GeoLoc.objects.get_or_create(longitude=lng, latitude=lat, canonical_name=canonical_name)
             geolocs.append(geoloc)
     return geolocs
+
+@login_required
+def download_all_files(request, item_id, slug):
+    dataset = DataSet.objects.get(pk=item_id)
+    user = request.user
+    
+    temp = tempfile.TemporaryFile()
+    archive = zipfile.ZipFile(temp, 'w')
+    
+    for file in dataset.files.all():
+        file.file_contents.open('r')
+        archive.writestr(file.get_short_name(), file.file_contents.read())
+        file.file_contents.close()
+        
+    archive.close()
+    
+    wrapper = FileWrapper(temp)
+    
+    response = HttpResponse(wrapper, content_type='application/zip')
+    response['Content-Disposition'] = 'attachment; filename=%s.zip' % dataset.name
+    response['Content-Length'] = temp.tell()
+
+    temp.seek(0)
+    return response
