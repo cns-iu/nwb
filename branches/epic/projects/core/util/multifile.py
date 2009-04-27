@@ -69,29 +69,43 @@ class MultiFileInput(FileInput):
         <!--
         %(id)s_counter=%(count)d;
         function new_%(name)s() {
-            b=document.getElementById('%(id)s' + (%(id)s_counter - 1));
-            c=document.createElement("input");
-            c.type="file";
-            c.name="files[]";
-            c.id='%(id)s'+(%(id)s_counter++);
+        
+            // Find the last element in our list of input fields (add new stuff to the end of this)
+            
+            last_input = document.getElementById('%(id)s' + (%(id)s_counter - 1));
+            insertBeforeElement = last_input.parentNode.lastChild.previousSibling;
+           
+            // Insert the actual input field.
+            
+            input_to_add = document.createElement("input");
+            input_to_add.type = "file";
+            input_to_add.name = "files[]";
+            input_to_add.id = '%(id)s'+(%(id)s_counter++);
+            last_input.parentNode.insertBefore(input_to_add, insertBeforeElement);
+            
+            // Insert the "remove" link.
+            
             removeLink = document.createElement("a");
-            removeLink.id='remove_' + c.id;
-            removeLink.setAttribute('onclick', "javascript:remove_%(name)s('" + c.id + "'); return false;");
+            removeLink.id = 'remove_' + input_to_add.id;
+            removeLink.setAttribute('onclick', "javascript:remove_%(name)s('" + input_to_add.id + "'); return false;");
             removeLink.innerHTML = '&nbsp;&nbsp;Remove this file.'; /** TODO: style this instead of using nbsp **/
-            br=document.createElement("br");
-            br.id = 'break_' + c.id;
-            b.parentNode.insertBefore(c,b.parentNode.lastChild);
-            b.parentNode.insertBefore(removeLink, b.parentNode.lastChild);
-            b.parentNode.insertBefore(br,b.parentNode.lastChild);
+            last_input.parentNode.insertBefore(removeLink, insertBeforeElement);
+            
+            // Insert the final line break.
+            
+            br = document.createElement("br");
+            br.id = 'break_' + input_to_add.id;
+            last_input.parentNode.insertBefore(br, insertBeforeElement);
+            
         }
         function remove_%(name)s(id) {
-			removeNode = document.getElementById(id);
-			removeNode.parentNode.removeChild(removeNode);
-			removeText = document.getElementById('remove_' + removeNode.id);
-			removeText.parentNode.removeChild(removeText);
-			removeBreak = document.getElementById('break_' + removeNode.id);
-			removeBreak.parentNode.removeChild(removeBreak);
-			%(id)s_counter--;
+            removeNode = document.getElementById(id);
+            removeNode.parentNode.removeChild(removeNode);
+            removeText = document.getElementById('remove_' + removeNode.id);
+            removeText.parentNode.removeChild(removeText);
+            removeBreak = document.getElementById('break_' + removeNode.id);
+            removeBreak.parentNode.removeChild(removeBreak);
+            %(id)s_counter--;
         }
         -->
         </script>
@@ -145,11 +159,11 @@ class MultiFileField(Field):
         Also checks whether a file was required.
         """
         super(MultiFileField, self).clean(data)
-		
+        
         if not self.required and data in EMPTY_VALUES:
             return None
         try:
-        	f = data
+            f = data
         except TypeError:
             raise ValidationError(ugettext(u"No file was submitted. Check the encoding type on the form..."))
         except KeyError:
@@ -157,10 +171,10 @@ class MultiFileField(Field):
 
         #for a_file in f:
         #    if not a_file.content:
-        #     	raise ValidationError(ugettext(u"The submitted file is empty."))
+        #         raise ValidationError(ugettext(u"The submitted file is empty."))
                
         if self.strict and len(f) != self.count:
-			raise ValidationError(ugettext(u"An incorrect number of files were uploaded."))
+            raise ValidationError(ugettext(u"An incorrect number of files were uploaded."))
             
         return f
 
