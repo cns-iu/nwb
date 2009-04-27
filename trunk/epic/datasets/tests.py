@@ -1,3 +1,5 @@
+import os, zipfile
+
 from django.contrib.auth.models import User
 from django.core.urlresolvers import reverse
 
@@ -506,3 +508,370 @@ class UnActiveDatasetTestCase(CustomTestCase):
         
         response = self.client.get(self.view_profile_url)
         self.assertNotContains(response, self.dataset.name)
+        
+class UploadReadMePostTestCase(CustomTestCase):
+    """  Test uploading a readme with the upload_readme view """
+    
+    fixtures = ['just_users', 'datasets']
+    
+    def setUp(self):
+        self.bob = User.objects.get(username='bob')
+        self.admin = User.objects.get(username='admin')
+        
+        self.dataset = DataSet.objects.create(
+            creator=self.bob, 
+            name='asdfn83tn54yj', 
+            description='this is the first dataset', 
+            slug='dataset', 
+            is_active=False)
+        
+        self.view_dataset_url = reverse('epic.datasets.views.view_dataset', 
+                                        kwargs={'item_id':self.dataset.id, 
+                                                'slug':self.dataset.slug,})
+        self.create_dataset_url = \
+            reverse('epic.datasets.views.create_dataset')
+        self.upload_readme_url = reverse('epic.datasets.views.upload_readme', 
+                                         kwargs={'item_id':self.dataset.id, 
+                                                 'slug':self.dataset.slug,})
+        
+        self.test_readme_file = open('readme.txt', 'w')
+        self.test_readme_file.write("This is a valid test file")
+        self.test_readme_file.close()
+        self.test_readme_file = open('readme.txt', 'r')
+        
+        self.invalid_readme_file = open('r3456.txt', 'w')
+        self.invalid_readme_file.write("This is an invalid test file")
+        self.invalid_readme_file.close()
+        self.invalid_readme_file = open('r3456.txt', 'r')
+        
+        self.upload_readme_file_post_data = {'readme': self.test_readme_file}
+        self.upload_readme_file_invalid_post_data = \
+            {'readme': self.invalid_readme_file}
+    
+    def tearDown(self):
+        self.test_readme_file.close()
+        self.invalid_readme_file.close()
+        os.remove(self.test_readme_file.name)
+        os.remove(self.invalid_readme_file.name)
+    
+    def testUploadInvalidReadme_loggedout(self):
+        # A logged out user should not be able to upload an invalid readme
+        
+        response = self.client.post(self.upload_readme_url, 
+                                    self.upload_readme_file_invalid_post_data)
+        
+        self.dataset = DataSet.objects.get(
+            creator=self.bob, 
+            name='asdfn83tn54yj', 
+            description='this is the first dataset', 
+            slug='dataset')
+        self.assertFalse(self.dataset.is_active)
+        self.assertFalse(self.dataset.files.filter(is_readme=True))
+        
+    def testUploadInvalidReadme_loggedin_notowner(self):
+        # A user that does not own the dataset should not be able to upload an invalid readme
+        self.tryLogin('bob2')
+    
+        response = self.client.post(self.upload_readme_url, 
+                                    self.upload_readme_file_invalid_post_data)
+        
+        self.dataset = DataSet.objects.get(
+            creator=self.bob, 
+            name='asdfn83tn54yj', 
+            description='this is the first dataset', 
+            slug='dataset')
+        self.assertFalse(self.dataset.is_active)
+        self.assertFalse(self.dataset.files.filter(is_readme=True))
+        
+    def testUploadInvalidReadme_loggedin_owner(self):
+        # The owner should not be able to upload an invalid readme
+        self.tryLogin('bob')
+    
+        response = self.client.post(self.upload_readme_url, 
+                                    self.upload_readme_file_invalid_post_data)
+        
+        self.dataset = DataSet.objects.get(
+            creator=self.bob, 
+            name='asdfn83tn54yj', 
+            description='this is the first dataset', 
+            slug='dataset')
+        self.assertFalse(self.dataset.is_active)
+        self.assertFalse(self.dataset.files.filter(is_readme=True))
+       
+    def testUploadValidReadme_loggedout(self):
+        # Anon users should not be able to uploadd a readme
+        response = self.client.post(self.upload_readme_url, 
+                                    self.upload_readme_file_post_data)
+        
+        self.dataset = DataSet.objects.get(
+            creator=self.bob, 
+            name='asdfn83tn54yj', 
+            description='this is the first dataset', 
+            slug='dataset')
+        self.assertFalse(self.dataset.is_active)
+        self.assertFalse(self.dataset.files.filter(is_readme=True))
+        
+    def testUploadValidReadme_loggedin_notowner(self):
+        # A non-owner should not be able to upload a readme
+        self.tryLogin('bob2')
+    
+        response = self.client.post(self.upload_readme_url, 
+                                    self.upload_readme_file_post_data)
+        
+        self.dataset = DataSet.objects.get(
+            creator=self.bob, 
+            name='asdfn83tn54yj', 
+            description='this is the first dataset', 
+            slug='dataset')
+        self.assertFalse(self.dataset.is_active)
+        self.assertFalse(self.dataset.files.filter(is_readme=True))
+        
+    def testUploadValidReadme_loggedin_owner(self):
+        # The owner should be albe to upload a valid readme
+        self.tryLogin('bob')
+    
+        response = self.client.post(self.upload_readme_url, 
+                                    self.upload_readme_file_post_data)
+        
+        self.dataset = DataSet.objects.get(
+            creator=self.bob, 
+            name='asdfn83tn54yj', 
+            description='this is the first dataset', 
+            slug='dataset')
+        self.assertTrue(self.dataset.is_active)
+        self.assertTrue(self.dataset.files.filter(is_readme=True))
+
+class UploadReadmeCreateDatasetsTestCase(CustomTestCase):
+    """  Test uploading a compressed readme from the 
+    create datasets page and the upload_readme page 
+    
+    """
+    
+    fixtures = ['just_users', 'datasets']
+    
+    def setUp(self):
+        self.bob = User.objects.get(username='bob')
+        self.admin = User.objects.get(username='admin')
+        
+        self.dataset = DataSet.objects.create(
+            creator=self.bob, 
+            name='asdfn83tn54yj', 
+            description='this is the first dataset', 
+            slug='dataset', 
+            is_active=False)
+        
+        self.view_dataset_url = reverse('epic.datasets.views.view_dataset',
+                                        kwargs={'item_id':self.dataset.id,
+                                                'slug':self.dataset.slug,})
+        self.create_dataset_url = \
+            reverse('epic.datasets.views.create_dataset')
+        self.upload_readme_url = reverse('epic.datasets.views.upload_readme',
+                                         kwargs={'item_id':self.dataset.id, 
+                                                 'slug':self.dataset.slug,})
+        
+        self.test_readme_file = open('readme.txt', 'w')
+        self.test_readme_file.write("This is a valid test file")
+        self.test_readme_file.close()
+        self.test_readme_file = open('readme.txt', 'r')
+        
+        self.invalid_readme_file = open('r3456.txt', 'w')
+        self.invalid_readme_file.write("This is an invalid test file")
+        self.invalid_readme_file.close()
+        self.invalid_readme_file = open('r3456.txt', 'r')
+        
+        self.invalid_zip = zipfile.ZipFile('invalid.zip', 'w')
+        self.valid_zip = zipfile.ZipFile('valid.zip', 'w')
+        self.invalid_compressed = \
+            self.invalid_zip.write(self.invalid_readme_file.name)
+        self.compressed_readme = \
+            self.valid_zip.write(self.test_readme_file.name)
+        self.invalid_zip.close()
+        self.valid_zip.close()
+        
+        self.invalid_zip = open('invalid.zip', 'r')
+        self.valid_zip = open('valid.zip', 'r')   
+    
+    def tearDown(self):
+        self.test_readme_file.close()
+        self.invalid_readme_file.close()
+        os.remove(self.test_readme_file.name)
+        os.remove(self.invalid_readme_file.name)
+        # TODO: get these from the objects, don't manually code them.
+        self.invalid_zip.close()
+        self.valid_zip.close()
+        os.remove('invalid.zip')
+        os.remove('valid.zip')
+        
+    def testUploadReadme_NoReadMe(self):
+        # If no readme is uploaded, the dataset should not be active
+        
+        self.tryLogin('bob')
+       
+        post_data = {
+            'readme' : self.invalid_readme_file                        
+        }
+        
+        response = self.client.post(self.upload_readme_url, 
+                                    post_data)
+        
+        self.dataset = DataSet.objects.get(
+            creator=self.bob, 
+            name='asdfn83tn54yj', 
+            description='this is the first dataset', 
+            slug='dataset')
+        
+        self.assertFalse(self.dataset.is_active)
+        self.assertFalse(self.dataset.files.filter(is_readme=True))
+    
+    def testUploadReadme_ReadMe(self):
+        # if a readme is uploaded as a file, the dataset should be active
+        
+        self.tryLogin('bob')
+        post_data = {
+            'readme' : self.test_readme_file 
+        }
+        response = self.client.post(self.upload_readme_url, 
+                                    post_data)
+
+        self.dataset = DataSet.objects.get(
+            creator=self.bob, 
+            name='asdfn83tn54yj', 
+            description='this is the first dataset', 
+            slug='dataset')
+        
+        self.assertTrue(self.dataset.is_active)
+        self.assertTrue(self.dataset.files.filter(is_readme=True))
+        
+    def testUploadReadme_NoCompressedReadMe(self):
+        # if a compressed file is uploaded the dataset should be inactive
+        
+        self.tryLogin('bob')
+        post_data = {
+            'readme' : self.invalid_zip     
+        }
+        response = self.client.post(self.upload_readme_url, 
+                                    post_data)
+
+        self.dataset = DataSet.objects.get(
+            creator=self.bob, 
+            name='asdfn83tn54yj', 
+            description='this is the first dataset', 
+            slug='dataset')
+        
+        self.assertFalse(self.dataset.is_active)
+        self.assertFalse(self.dataset.files.filter(is_readme=True))
+    
+    def testUploadReadme_CompressedReadMe(self):
+        # If a compressed file is uploaded and contains a readme file, 
+        #     the dataset should be inactive
+        
+        self.tryLogin('bob')
+        post_data = {
+            'readme' : self.valid_zip
+        }
+        response = self.client.post(self.upload_readme_url, 
+                                    post_data)
+
+        self.dataset = DataSet.objects.get(
+            creator=self.bob, 
+            name='asdfn83tn54yj', 
+            description='this is the first dataset', 
+            slug='dataset')
+        
+        self.assertFalse(self.dataset.is_active)
+        self.assertFalse(self.dataset.files.filter(is_readme=True))
+    
+    def testCreate_NoCompressedReadMe(self):
+        # If a dataset is created with a compressed file that does not 
+        #     contain a readme, the dataset should be inactive
+        
+        self.tryLogin('bob')
+        post_data = {
+            'name': 'This is a new dataset 209u359hdfg',
+            'description': '20y5hdfg ahi3hoh348t3948t5hsdfigh',
+            'files[]': [self.invalid_zip],
+            'remove-INITIAL_FORMS': 0,
+            'add-INITIAL_FORMS': 0,
+            'add-TOTAL_FORMS': 0,
+            'remove-TOTAL_FORMS': 0,
+        }
+        response = self.client.post(self.create_dataset_url, 
+                                    post_data)
+        
+        dataset = DataSet.objects.get(
+            creator=self.bob, 
+            name=post_data['name'], 
+            description=post_data['description'])
+        self.assertFalse(dataset.is_active)
+        self.assertFalse(dataset.files.filter(is_readme=True))
+        
+    
+    def testCreate_CompressedReadMe(self):
+        # If a dataset is created with a compressed file that does contain 
+        #     a readme, the dataset should be active
+        
+        self.tryLogin('bob')
+        post_data = {
+            'name': 'This is a new dataset 209u359hdfg',
+            'description': '20y5hdfg ahi3hoh348t3948t5hsdfigh',
+            'files[]': [self.valid_zip],
+            'remove-INITIAL_FORMS': 0,
+            'add-INITIAL_FORMS': 0,
+            'add-TOTAL_FORMS': 0,
+            'remove-TOTAL_FORMS': 0,
+        }
+        response = self.client.post(self.create_dataset_url, 
+                                    post_data)
+
+        dataset = DataSet.objects.get(
+            creator=self.bob, 
+            name=post_data['name'], 
+            description=post_data['description'])
+        self.assertTrue(dataset.is_active)
+        self.assertTrue(dataset.files.filter(is_readme=True))
+        
+    def testCreate_NoReadMe(self):
+        # A dataset created without a readme should be inactive
+        
+        self.tryLogin('bob')
+        post_data = {
+            'name': 'This is a new dataset 209u359hdfg',
+            'description': '20y5hdfg ahi3hoh348t3948t5hsdfigh',
+            'files[]': [self.invalid_readme_file],
+            'remove-INITIAL_FORMS': 0,
+            'add-INITIAL_FORMS': 0,
+            'add-TOTAL_FORMS': 0,
+            'remove-TOTAL_FORMS': 0,
+        }
+        response = self.client.post(self.create_dataset_url, 
+                                    post_data)
+
+        dataset = DataSet.objects.get(
+            creator=self.bob, 
+            name=post_data['name'], 
+            description=post_data['description'])
+        self.assertFalse(dataset.is_active)
+        self.assertFalse(self.dataset.files.filter(is_readme=True))
+        
+    def testCreate_NoReadMe(self):
+        # A dataset created with a readme should be active
+        
+        self.tryLogin('bob')
+        post_data = {
+            'name': 'This is a new dataset 209u359hdfg',
+            'description': '20y5hdfg ahi3hoh348t3948t5hsdfigh',
+            'files[]': [self.test_readme_file],
+            'remove-INITIAL_FORMS': 0,
+            'add-INITIAL_FORMS': 0,
+            'add-TOTAL_FORMS': 0,
+            'remove-TOTAL_FORMS': 0,
+        }
+        response = self.client.post(self.create_dataset_url, 
+                                    post_data)
+
+        dataset = DataSet.objects.get(
+            creator=self.bob, 
+            name=post_data['name'], 
+            description=post_data['description'])
+        self.assertTrue(dataset.is_active)
+        self.assertTrue(dataset.files.filter(is_readme=True))

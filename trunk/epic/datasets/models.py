@@ -63,12 +63,12 @@ class DataSet(Item):
         return reverse("epic.datasets.views.tag_dataset",
                        kwargs={ "item_id": self.id, "slug": self.slug })
     
-    
 class DataSetFile(models.Model):
     
     parent_dataset = models.ForeignKey(DataSet, related_name="files")
     file_contents = CustomFileField()
     uploaded_at = models.DateTimeField(auto_now_add=True, db_index=True)
+    is_readme = models.BooleanField(default=False)
 
     class Admin:
         pass
