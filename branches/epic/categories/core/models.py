@@ -33,6 +33,8 @@ Let's just test out a few aspects of our models...
 from django.db import models
 from django.contrib.auth.models import User
 
+from epic.categories.models import Category
+
 class Item(models.Model):
     MAX_ITEM_NAME_LENGTH = 256
     MAX_ITEM_DESCRIPTION_LENGTH = 16384
@@ -42,6 +44,7 @@ class Item(models.Model):
     creator = models.ForeignKey(User)
     name = models.CharField(max_length=MAX_ITEM_NAME_LENGTH)
     description = models.CharField(max_length=MAX_ITEM_DESCRIPTION_LENGTH)
+    categories = models.ManyToManyField(Category)
     slug = models.SlugField()
     created_at = models.DateTimeField(auto_now_add=True, db_index=True)
     is_active = models.BooleanField(default=False)

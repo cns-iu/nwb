@@ -111,6 +111,7 @@ INSTALLED_APPS = (
     'epic.tags',
     'epic.messages',
     'epic.geoloc',
+    'epic.categories',
 )
 
 GOOGLE_KEY = 'ABQIAAAA_nCXPZ8LuIeeo7WwioikORQgz-4lV129Gb6RmcYlAWs2FINo4xQC9fAh76x7NI05hOaFBXreklShsg'
