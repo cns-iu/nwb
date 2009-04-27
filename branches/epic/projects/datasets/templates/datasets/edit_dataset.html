@@ -1,0 +1,16 @@
+{% extends "core/bases/simple_base.html" %}
+{% block content %}
+	<h3>Edit {{ dataset.name }}:</h3>
+	<form action="{% url datasets.views.edit_dataset item_id=dataset.id %}" method="POST">
+		<table class="form">
+			{% load core_templatetags %}
+        	{% include_form_as_table form 'True' %}
+		</table>
+		{% load geoloc_templatetags %}
+		{% add_locations_map_for_dataset add_formset remove_formset %}
+		
+		<input type="submit" value="Submit Changes" />
+		<a href = "{% url datasets.views.view_dataset item_id=dataset.id slug=dataset.slug%}">Cancel Changes</a>
+	</form>
+	
+{% endblock %}
