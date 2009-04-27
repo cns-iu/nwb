@@ -1,0 +1,59 @@
+{% extends "core/bases/browse_base.html" %}
+
+{% block content %}
+  <div class="requestspage">
+	<h1>
+	  <a href="{% url datarequests.views.view_datarequest item_id=datarequest.id slug=datarequest.slug%}">
+	    {{ datarequest.name }}
+	  </a>
+	</h1>
+	
+	<h1>Status: {{ datarequest.get_status_display|capfirst }}</h1>
+	
+	<ul class="datainfo">
+	  <li id="first">{{datarequest.creator.get_profile}}</li>
+	  <li>{{ datarequest.created_at|date:"F d, Y - P" }}</li>
+	  
+	  {% ifequal user datarequest.creator %}
+		{% ifnotequal datarequest.status 'C'%}
+		  {% ifnotequal datarequest.status 'F' %}
+		    <li>
+		      <a href="{% url datarequests.views.cancel_datarequest item_id=datarequest.id slug=datarequest.slug %}">
+		        Mark Canceled
+		      </a>
+		    </li>
+		    
+		    <li>
+		      <a href="{% url datarequests.views.fulfill_datarequest item_id=datarequest.id slug=datarequest.slug %}">
+		        Mark Fulfilled
+		      </a>
+		    </li>
+		    
+		    <li>
+		      <a href="{% url datarequests.views.edit_datarequest item_id=datarequest.id slug=datarequest.slug %}">
+		        Edit
+		      </a>
+		    </li>
+		  {% endifnotequal %}
+		{% endifnotequal %}
+      {% endifequal %}
+      
+	  {% if user.is_authenticated %}
+	  {% ifnotequal user datarequest.creator %}
+		<li>
+		  <a href="{% url messages.views.send_message user_id=user.id, recipient_id=datarequest.creator.id %}">
+		    Contact Creator
+		  </a>
+		</li>
+	  {% endifnotequal %}
+	  {% endif %}
+    </ul>
+    
+	<p>{{ datarequest.description|linebreaksbr }}</p>
+	
+	{# TODO: load tags  #}
+  </div>
+  
+  {% load comment_templatetags %}
+  {% comments_section datarequest user form %}
+{% endblock %}
