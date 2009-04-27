@@ -55,10 +55,6 @@ class DataSet(Item):
             kwargs = {'item_id':self.id,}
         return ("epic.datasets.views.view_dataset", [], kwargs)
     
-    # TODO: Implement this for real.
-    def get_download_all_files_url(self):
-        return "http://www.PLACEHOLDER_FOR_DOWNLOAD_ALL_FILES_URL.com"
-    
     def get_add_tags_url(self):
         return reverse("epic.datasets.views.tag_dataset",
                        kwargs={ "item_id": self.id, "slug": self.slug })
@@ -76,7 +72,6 @@ class DataSetFile(models.Model):
     def __unicode__(self):
         return self.get_short_name()
        
-
     def get_short_name(self):
         #returns the non-path component of the file name (the real name)
         before_last_slash, slash, after_last_slash = self.file_contents.name.rpartition('/')

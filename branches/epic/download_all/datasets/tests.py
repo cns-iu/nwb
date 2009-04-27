@@ -1,6 +1,7 @@
 import os, zipfile
 
 from django.contrib.auth.models import User
+from django.core.files.base import ContentFile
 from django.core.urlresolvers import reverse
 
 from epic.core.test import CustomTestCase
@@ -875,3 +876,51 @@ class UploadReadmeCreateDatasetsTestCase(CustomTestCase):
             description=post_data['description'])
         self.assertTrue(dataset.is_active)
         self.assertTrue(dataset.files.filter(is_readme=True))
+        
+class DownloadAllTestCase(CustomTestCase):
+    """  Test the functionality of download all
+             TODO: This needs to actually add files and try to download them
+        
+    """
+    
+    fixtures = ['just_users', 'datasets']
+    
+    def setUp(self):
+        self.bob = User.objects.get(username='bob')
+        self.admin = User.objects.get(username='admin')   
+        
+        self.dataset = DataSet.objects.create(
+            creator=self.bob, 
+            name='asdfn83tn54yj', 
+            description='this is the first dataset', 
+            slug='dataset', 
+            is_active=True)
+        
+        self.datasetfile = DataSetFile.objects.create(
+            parent_dataset=self.dataset,
+            file_contents='asdfhnasdf')
+        
+        self.view_dataset_url = reverse('epic.datasets.views.view_dataset', 
+                                        kwargs={'item_id':self.dataset.id, 
+                                                'slug':self.dataset.slug,})
+        self.download_all_url = reverse('epic.datasets.views.download_all_files', 
+                                        kwargs={'item_id':self.dataset.id, 
+                                                'slug':self.dataset.slug,})
+        
+    def testDownloadAll_loggedout(self):
+        response = self.client.get(self.view_dataset_url)
+        
+        self.assertNotContains(response, self.download_all_url)
+        
+    def testDownloadAll_notowner(self):
+        self.tryLogin('bob2')
+        
+        response = self.client.get(self.view_dataset_url)
+        self.assertContains(response, self.download_all_url)
+        
+    def testDownloadAll_owner(self):
+        self.tryLogin('bob')
+        response = self.client.get(self.view_dataset_url)
+        
+        self.assertContains(response, self.download_all_url)
+        
