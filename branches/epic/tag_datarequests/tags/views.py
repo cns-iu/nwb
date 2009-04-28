@@ -8,6 +8,8 @@ from django.utils import simplejson
 from django.utils.datastructures import MultiValueDictKeyError
 
 from epic.core.models import Item
+from epic.datasets.models import DataSet
+from epic.datarequests.models import DataRequest
 from epic.tags.models import Tagging
 from epic.tags.utils import parse_tag_input
 
@@ -20,7 +22,34 @@ def view_items_for_tag(request, tag_name):
     specifics = []
     for tag in tags:
         specific = tag.item.specific
+                
         if specific.is_active:
+            specifics.append(tag.item.specific)
+    return render_to_response('tags/tag_view.html', 
+                              {'tags':tags, 
+                               'tag_name':tag_name, 
+                               'specifics':specifics}, 
+                              context_instance=RequestContext(request))
+
+def view_datasets_for_tag(request, tag_name):
+    tags = Tagging.objects.filter(tag=tag_name)
+    specifics = []
+    for tag in tags:
+        specific = tag.item.specific
+        if specific.is_active and specific._is_dataset():
+            specifics.append(tag.item.specific)
+    return render_to_response('tags/tag_view.html', 
+                              {'tags':tags, 
+                               'tag_name':tag_name, 
+                               'specifics':specifics}, 
+                              context_instance=RequestContext(request))
+
+def view_datarequests_for_tag(request, tag_name):
+    tags = Tagging.objects.filter(tag=tag_name)
+    specifics = []
+    for tag in tags:
+        specific = tag.item.specific
+        if specific.is_active and specific._is_datarequest():
             specifics.append(tag.item.specific)
     return render_to_response('tags/tag_view.html', 
                               {'tags':tags, 
