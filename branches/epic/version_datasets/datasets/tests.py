@@ -923,4 +923,62 @@ class DownloadAllTestCase(CustomTestCase):
         response = self.client.get(self.view_dataset_url)
         
         self.assertContains(response, self.download_all_url)
+
+class PreviousNextTestCase(CustomTestCase):
+    """  Test the functionality of there being next and previous datasets
         
+    """
+    
+    fixtures = ['just_users', 'datasets']
+    
+    def setUp(self):
+        self.bob = User.objects.get(username='bob')
+        self.admin = User.objects.get(username='admin')   
+        
+        self.create_dataset_url = reverse('epic.datasets.views.create_dataset')
+        
+        self.old_dataset = DataSet.objects.get(creator=self.admin, name='dataset2', description='this is the second dataset', slug='dataset2')
+        
+        self.view_old_dataset_url = reverse('epic.datasets.views.view_dataset', 
+                                        kwargs={'item_id':self.old_dataset.id, 
+                                                'slug':self.old_dataset.slug,})
+        import tempfile
+        #make files for us to upload 
+
+        test_file1 = tempfile.TemporaryFile()
+        test_file1.write("This is a test file1")        
+        test_file1.flush()
+        test_file1.seek(0)
+
+        
+        self.post_data = {
+            'name': 'This is a new dataset 209u359hdfg',
+            'description': '20y5hdfg ahi3hoh348t3948t5hsdfigh',
+            'previous_version': self.old_dataset.id,
+            'files[]' : [test_file1],
+            'remove-INITIAL_FORMS': 0,
+            'add-INITIAL_FORMS': 0,
+            'add-TOTAL_FORMS': 0,
+            'remove-TOTAL_FORMS': 0,
+        }
+        
+    def test_annon(self):
+        response = self.client.post(self.create_dataset_url, self.post_data)
+        
+        self.old_dataset = DataSet.objects.get(creator=self.admin, name='dataset2', description='this is the second dataset', slug='dataset2')
+        self.assertFalse(self.old_dataset.next_version)
+    
+    def test_notowner(self):
+        self.tryLogin('bob')
+        response = self.client.post(self.create_dataset_url, self.post_data)
+
+        self.old_dataset = DataSet.objects.get(creator=self.admin, name='dataset2', description='this is the second dataset', slug='dataset2')
+        self.assertFalse(self.old_dataset.next_version)
+    
+    def test_owner(self):
+        self.tryLogin('admin')
+        response = self.client.post(self.create_dataset_url, self.post_data)
+
+        self.old_dataset = DataSet.objects.get(creator=self.admin, name='dataset2', description='this is the second dataset', slug='dataset2')
+        self.assertTrue(self.old_dataset.next_version)
+        self.assertEqual(self.old_dataset.next_version.previous_version, self.old_dataset)
