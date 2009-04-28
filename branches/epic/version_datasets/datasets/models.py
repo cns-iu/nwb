@@ -40,6 +40,10 @@ class DataSet(Item):
     
     rating = RatingField(choices=RATING_SCALE)
     geolocations = models.ManyToManyField(GeoLoc, related_name='datasets', blank=True)
+    
+    previous_version = models.ForeignKey('self',related_name='previous', blank=True, null=True)
+    next_version = models.ForeignKey('self', related_name='next', blank=True, null=True)
+    
     #supposedly better to do this some other newer way where it's not nested
     class Admin:
         pass

@@ -23,6 +23,24 @@
   
   {% if dataset.is_active %}
 	  <div class="databox">
+	    {% if dataset.next_version %}
+	    <p>There is a newer version of this dataset:
+	      <ul>
+	        <li>
+	          <a href="{{ dataset.next_version.get_absolute_url }}">{{ dataset.next_version }}</a>
+	        </li>
+	      </ul>
+	    </p>
+	    {% endif %}
+	    {% if dataset.previous_version %}
+	    <p>There is a older version of this dataset:
+	      <ul>
+	        <li>
+	          <a href="{{ dataset.previous_version.get_absolute_url }}">{{ dataset.previous_version }}</a>
+	        </li>
+	      </ul>
+	    </p>
+	    {% endif %}
 	    {% load dataset_templatetags %}
 	    
 	    {% show_dataset_title_vote_ratebox_datainfo dataset %}
