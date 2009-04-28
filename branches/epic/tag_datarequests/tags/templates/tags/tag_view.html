@@ -1,0 +1,9 @@
+{% extends "core/bases/simple_base.html" %}
+{% block content %}
+<h3>Items tagged as {{ tag_name }}</h3>
+<ul>
+	{% for specific in specifics %}
+		<li><a href="{{ specific.get_absolute_url }}">{{ specific.name }}</a></li>
+	{% endfor %}
+</ul>
+{% endblock %}
