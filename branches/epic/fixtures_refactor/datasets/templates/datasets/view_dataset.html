@@ -1,0 +1,93 @@
+{% extends "core/bases/browse_base.html" %}
+
+{% load tags_templatetags %}
+
+{% block content %}
+  <div id="error-message">
+    {% block messages %}
+      {% for message in messages %}
+        {{ message }}
+      {%endfor%}
+    {% endblock %}
+  </div>
+  
+  {% if messages %}
+    <div class="highlight" id="message">
+      <ul>
+        {% for message in messages %}
+          <li>{{ message }}</li>
+        {% endfor %}
+      </ul>
+    </div>
+  {% endif %}
+  
+  <div class="databox">
+    {% load dataset_templatetags %}
+    
+    {% show_dataset_title_vote_ratebox_datainfo dataset %}
+    
+    <p>{{ dataset.description|linebreaksbr }}</p>
+    
+    {% list_item_tags dataset user 'True' %}
+    {# TODO: list_item_references dataset #}
+    {% comment %}
+    <h4>
+      References<br />
+      will go here . . .
+    </h4>
+    {% endcomment %}
+  </div>
+  
+  {% if user.is_authenticated %}
+    <h3>Dataset Files</h3>
+    
+    <p>
+      {% if dataset.files %}
+        {% for file in dataset.files.all %}      
+          {# TODO: this should be a reverse? #}
+            <a href="{{ file.file_contents.url }}">
+              <img src="/core_media/images/download-icon_30.jpg" width="69" height="17" align="texttop" />
+            </a>
+            
+            {{ file.get_short_name }}
+            <br />
+        {% endfor %}
+        <!-- 
+        {# TODO: Implement Download All functionality. #}
+        {% ifnotequal dataset.files.all|length 0 %}
+          <br />
+          <a href="{{ dataset.get_download_all_files_url }}">
+            <img src="/core_media/images/download-all_19.jpg" width="87" height="18" />
+          </a>
+          
+          Download All Files
+         -->
+        {% endifnotequal %}
+      {% else %}
+        <p>
+          There are no attached files.
+        </p>
+      {% endif %}
+    </p>
+  {% else %}
+    {% if dataset.files %}
+      <h2>
+        {# TODO: Make this not a big fat hack. #}
+        {# We should be using the url template tag instead of the hardcoded url. #}
+        Please <a href="/login/?next={{ dataset.get_absolute_url }}">login</a> to download this dataset.
+      </h2>
+    {% endif %}
+  {% endif %}
+
+  <h4>
+    Please Cite This Dataset As:<br/>"{{ dataset.name|escape }}." <span class="source_name">EpiC Community Website.</span> {{ dataset.created_at|date:"d M Y" }}. {% now "d M Y" %} &lt;<a>{{ dataset.get_absolute_url }}</a>&gt;
+  </h4>
+
+  
+  {% load geoloc_templatetags %}
+  {% display_map_for_datasets dataset.id %}
+  
+  {% load comment_templatetags %}
+  {% comments_section dataset user form "epic.datasets.views.post_dataset_comment" %}
+</div>
+{% endblock %}{# block content #}
