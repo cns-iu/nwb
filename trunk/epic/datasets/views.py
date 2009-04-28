@@ -1,7 +1,9 @@
+from datetime import datetime
+from decimal import Decimal
 import re
 import tarfile
-import zipfile
 import tempfile
+import zipfile
 
 from django.conf import settings
 from django.contrib.auth.decorators import login_required
@@ -30,8 +32,7 @@ from epic.geoloc.utils import get_best_location, CouldNotFindLocation, \
     parse_geolocation
 from epic.tags.models import Tagging
 
-from datetime import datetime
-from decimal import Decimal
+
 
 def view_datasets(request):
     datasets = DataSet.objects.active().order_by('-created_at')
@@ -60,11 +61,11 @@ def view_user_dataset_list(request, user_id=None):
 def create_dataset(request):
     if request.method != 'POST':
         #user has not filled out the upload form yet
-        form = NewDataSetForm()
+        form = NewDataSetForm(request.user)
         add_formset = GeoLocationFormSet(prefix='add')
         remove_formset = RemoveGeoLocationFormSet(prefix='remove')
     else:
-        form = NewDataSetForm(request.POST, request.FILES)
+        form = NewDataSetForm(request.user, request.POST, request.FILES)
         add_formset = GeoLocationFormSet(request.POST, prefix='add')
         remove_formset = RemoveGeoLocationFormSet(request.POST, 
                                                   prefix='remove')
@@ -74,12 +75,21 @@ def create_dataset(request):
             description = form.cleaned_data['description']
             uploaded_files = form.cleaned_data['files']
             tags = form.cleaned_data['tags']
+            previous_version = form.cleaned_data['previous_version']
             
             new_dataset = DataSet.objects.create(creator=request.user, 
                                                  name=name, 
                                                  description=description, 
-                                                 slug=slugify(name), 
+                                                 slug=slugify(name),
+                                                 previous_version=previous_version, 
                                                  is_active=False)
+            # TODO: Maybe only the latest version of a dataset should show up
+            #  override the objects.all() or objects.active() maybe?
+            if previous_version:
+                #(Note that this will overwrite previous "new versions")
+                previous_version.next_version = new_dataset
+                previous_version.save()
+            
             Tagging.objects.update_tags(tags, 
                                         item=new_dataset, 
                                         user=request.user)
