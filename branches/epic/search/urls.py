@@ -19,6 +19,7 @@ urlpatterns = patterns('',
     (r'^comments/', include('epic.comments.urls')),
     (r'^tags/', include('epic.tags.urls')),
     (r'^geoloc/', include('epic.geoloc.urls')),
+    (r'^search/', include('epic.search.urls')),
 )
 
 if settings.DEBUG:
