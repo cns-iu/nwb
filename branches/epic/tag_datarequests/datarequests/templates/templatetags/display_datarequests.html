@@ -21,6 +21,8 @@
 	  		{% endif %}
 		  </ul>
 		  <p>{{ datarequest.description|truncatewords:50 }}</p>  
+		  {% load tags_templatetags %}
+      	  {% list_item_tags datarequest user %}
 		  <div class="comments">
 			<a href="{% url datarequests.views.view_datarequest item_id=datarequest.id slug=datarequest.slug %}">{{ datarequest.comments.all|length }} comment{{ datarequest.comments.all|length|pluralize }}.</a>
 		  </div>   

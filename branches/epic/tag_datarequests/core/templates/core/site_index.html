@@ -46,7 +46,7 @@
   <h1>Recent Activity</h1>
   <h2>Data Requests</h2> 
   {% load datarequest_templatetags %}
-  {% display_recent_requests %}
+  {% display_recent_requests 3 'False' %}
   <h1><a href="{% url datarequests.views.new_datarequest %}">Make a Request</a></h1> 
   <h2>Data Uploads</h2>
   {% load dataset_templatetags %}
