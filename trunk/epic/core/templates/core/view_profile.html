@@ -6,7 +6,7 @@
 {% endblock %}
 
 {% block content %}
-  <h3>Displaying profile of {{ profile.user.first_name }} {{ profile.user.last_name }}.</h3>
+  <h3>{{ profile.full_title }}</h3>
   <p><b>Username:</b> {{ profile.user.username }}</p>
   <p><b>First Name:</b> {{ profile.user.first_name }}</p>
   <p><b>Last Name:</b> {{ profile.user.last_name }}</p>

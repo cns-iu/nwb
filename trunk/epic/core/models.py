@@ -85,13 +85,29 @@ class Profile(models.Model):
     MAX_USER_PASSWORD_LENGTH = 256
     MAX_USER_EMAIL_LENGTH = 256
     MAX_USER_PROFILE_LENGTH = 512
-
+    
+    NULL_TITLE = '(Invalid Name)'
+    
     objects = ProfileManager()
     user = models.ForeignKey(User, unique=True)
     affiliation = models.CharField(max_length=MAX_USER_PROFILE_LENGTH, blank=True)
     
-    def __unicode__(self):
+    def short_title(self):
         if self.user.first_name and self.user.last_name:
-            return self.user.first_name + " " + self.user.last_name
+            short_title = self.user.first_name + " " + self.user.last_name
         else:
-            return self.user.username
+            short_title = self.NULL_TITLE
+            
+        return short_title
+        
+    def full_title(self):
+        if self.user.first_name and self.user.last_name and self.affiliation:
+            full_title = self.user.first_name + " " + self.user.last_name + \
+                ", " + self.affiliation
+        else:
+            full_title = self.NULL_TITLE
+            
+        return full_title
+    
+    def __unicode__(self):
+        return full_title()

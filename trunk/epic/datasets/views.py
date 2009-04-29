@@ -447,8 +447,6 @@ def rate_dataset(request, item_id, input_rating=None, slug=None):
                 return HttpResponseRedirect(reverse('epic.datasets.views.view_dataset', 
                                                     kwargs={'item_id':dataset.id, 'slug':slug,}))
             else:
-                #print request.POST
-                # form.errors
                 pass
                 
         return render_to_response('datasets/rate_dataset.html', 

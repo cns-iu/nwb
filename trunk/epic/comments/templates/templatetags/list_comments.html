@@ -3,10 +3,7 @@
     {# TODO: This is obviously a class not an id, fix this here and in css. #}
     <div id="commentbox">
       <h1>
-        {{ comment.posting_user.get_profile }}
-        {% if comment.posting_user.get_profile.affiliation %}
-          , {{ comment.posting_user.get_profile.affiliation }}
-        {% endif %}
+        {{ comment.posting_user.get_profile.full_title }}
       </h1>
       
       <h4>

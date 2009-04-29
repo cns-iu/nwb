@@ -21,7 +21,6 @@ def view_items_for_tag(request, tag_name):
     tags = Tagging.objects.filter(tag=tag_name)
     
     specifics = [tag.item.specific for tag in tags if tag.item.specific.is_active]
-    print specifics
     
     return render_to_response('tags/tag_view.html', 
                               {'tags':tags, 
@@ -34,7 +33,6 @@ def view_datasets_for_tag(request, tag_name):
     
     specifics = [tag.item.specific for tag in tags 
                  if tag.item.specific.is_active and tag.item.specific.is_dataset]
-    print specifics
     
     return render_to_response('tags/tag_view.html', 
                               {'tags':tags, 
@@ -47,7 +45,6 @@ def view_datarequests_for_tag(request, tag_name):
     
     specifics = [tag.item.specific for tag in tags 
                  if tag.item.specific.is_active and tag.item.specific.is_datarequest]
-    print specifics
     
     return render_to_response('tags/tag_view.html', 
                               {'tags':tags, 

@@ -99,7 +99,6 @@ class ViewTestCase(CustomTestCase):
         # Test the page for tag 1
         response = self.client.get(self.TAG1_URL)
         self.assertEqual(response.status_code, 200)
-        print response.content
         self.assertContains(response,'href="%s' % self.datarequest1_URL)
         self.assertNotContains(response,'href="%s' % self.datarequest2_URL)
         
