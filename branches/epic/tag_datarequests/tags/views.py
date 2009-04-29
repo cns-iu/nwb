@@ -71,9 +71,13 @@ def delete_tag(request):
     responseData = {}
     try:
         item_id = request.POST['item_id']
+        if not item_id:
+            item_id = None
         item = Item.objects.get(pk=item_id)
         
         tag_name = request.POST['tag_name']
+        if not tag_name:
+            tag_name = None
         tag = Tagging.objects.get(tag=tag_name, item=item)
         
         if (user == tag.user or user == item.creator):
@@ -106,10 +110,11 @@ def add_tags_and_return_successful_tag_names(request):
     responseData = {}
     try:
         item_id = request.POST['item_id']
+        if not item_id:
+            item_id = None
         item = Item.objects.get(pk=item_id)
         
         unparsed_tag_names = request.POST['unparsed_tag_names']
-
         added_tags = Tagging.objects.add_tags_and_return_added_tag_names(unparsed_tag_names, item, user)
         
         responseData['success'] = added_tags
