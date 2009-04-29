@@ -41,7 +41,7 @@
     <h3>Your Projects</h3>
     
     {% load project_templatetags %}
-    {% list_projects projects %}
+    {% list_projects projects 'True' %}
   {% else %}
     <p>You have not created any projects.</p>
   {% endif %}

@@ -15,7 +15,7 @@ class CustomTestCase(TestCase):
     
     # Why did we use camel casing for the rest of these methods?
     # This is Python!
-    def assert_response_status_redirect(
+    def assertResponseStatusRedirect(
             self, view, args=[], kwargs={}, status_codes=[302]):
         response_status_code = self.getStatusCode(view, args, kwargs)
         
@@ -26,6 +26,12 @@ class CustomTestCase(TestCase):
         response_status_code = self.getStatusCode(view, args, kwargs)
         
         self.assertStatusCodeIsASuccess(response_status_code, success_codes)
+    
+    def assertResponseStatusFailure(
+            self, view, args=[], kwargs={}, failure_codes=[404, 500]):
+        response_status_code = self.getStatusCode(view, args, kwargs)
+        
+        self.assertStatusCodeIsAFailure(response_status_code, failure_codes)
 
     def assertResponseStatusNotFailure(
             self, view, args=[], kwargs={}, failure_codes=[404, 500]):
@@ -55,6 +61,10 @@ class CustomTestCase(TestCase):
     
     def assertStatusCodeIsASuccess(self, status_code, success_codes=[200]):
         self._assertStatusCodeIsOneOf(status_code, success_codes)
+    
+    def assertStatusCodeIsAFailure(
+            self, status_code, failure_codes=[404, 500]):
+        self._assertStatusCodeIsOneOf(status_code, failure_codes)
     
     def assertStatusCodeIsNotAFailure(
             self, status_code, failure_codes=[404, 500]):

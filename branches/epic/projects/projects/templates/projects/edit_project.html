@@ -23,7 +23,13 @@
     <input type="submit" value="Save and Continue Editing" name="save_and_continue_editing" />
     <input type="submit" value="Save and Finish Editing" name="save_and_finish_editing" />
     <br />
-    <a href = "{% url projects.views.view_project item_id=project.id slug=project.slug%}">Cancel</a>
+    <a href="{% url projects.views.confirm_delete_project item_id=project.id slug=project.slug %}">
+      Delete this project
+    </a>
+    <br />
+    <a href="{% url projects.views.view_project item_id=project.id slug=project.slug %}">
+      Cancel
+    </a>
   </form>
   
 {% endblock %}

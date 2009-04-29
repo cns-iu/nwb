@@ -13,9 +13,6 @@ ADMIN_PASSWORD = 'admin'
 BOB_USERNAME = 'bob'
 BOB_PASSWORD = 'bob'
 
-# TODO: Test for datasets being listed on Project's page.
-# TODO: Test for the various (two?) submit buttons being clicked.
-
 class URLsTestCase(CustomTestCase):
     """ Test all the urls to make sure that the view for each works.
     """
@@ -48,7 +45,7 @@ class URLsTestCase(CustomTestCase):
             kwargs={'user_id': self.bob.id,})
         
     def test_create_project_not_logged_in(self):
-        self.assert_response_status_redirect(
+        self.assertResponseStatusRedirect(
             'epic.projects.views.create_project')
     
     def test_create_project_logged_in(self):
@@ -248,8 +245,8 @@ class CreateProjectTestCase(CustomTestCase):
     fixtures = ['projects_just_users', 'projects_projects']
     
     def setUp(self):
-        self.bob = User.objects.get(username='bob')
-        self.admin = User.objects.get(username='admin')
+        self.bob = User.objects.get(username=BOB_USERNAME)
+        self.admin = User.objects.get(username=ADMIN_USERNAME)
         
         self.project1 = Project.objects.get(
             creator=self.bob,
@@ -358,13 +355,31 @@ class EditProjectTestCase(CustomTestCase):
             description='This is the second project',
             slug='project2')
         
+        project1_url_reverse_kwargs = {
+            'item_id': self.project1.id,
+            'slug': self.project1.slug,
+        }
+        
+        project2_url_reverse_kwargs = {
+            'item_id': self.project2.id,
+            'slug': self.project2.slug,
+        }
+        
+        self.view_project1_url = reverse(
+            'epic.projects.views.view_project',
+            kwargs=project1_url_reverse_kwargs)
+        
+        self.view_project2_url = reverse(
+            'epic.projects.views.view_project',
+            kwargs=project2_url_reverse_kwargs)
+        
         self.edit_project1_url = reverse(
             'epic.projects.views.edit_project',
-            kwargs={'item_id': self.project1.id, 'slug': self.project1.slug,})
+            kwargs=project1_url_reverse_kwargs)
         
         self.edit_project2_url = reverse(
             'epic.projects.views.edit_project',
-            kwargs={'item_id': self.project2.id, 'slug': self.project2.slug,})
+            kwargs=project2_url_reverse_kwargs)
 
         self.post_data = {
             'name': '3456 345y,th[-k-0dfgh0 209u359hdfg',
@@ -372,24 +387,15 @@ class EditProjectTestCase(CustomTestCase):
         }
     
     def testLoggedOut(self):
-        get_from__edit_project1_url_response = \
+        get_from__edit_project1_url__response = \
             self.client.get(self.edit_project1_url)
         self.assertStatusCodeIsARedirect(
-            get_from__edit_project1_url_response.status_code)
+            get_from__edit_project1_url__response.status_code)
         
-        response = self.client.post(self.edit_project1_url, self.post_data)
-        self.assertEqual(response.status_code, 302)
-        
-        for project in Project.objects.all():
-            self.assertNotEqual(project.name, self.post_data['name'])
-            self.assertNotEqual(project.description,
-                                self.post_data['description'])
-            
-        response = self.client.get(self.edit_project2_url)
-        self.assertEqual(response.status_code, 302)
-        
-        response = self.client.post(self.edit_project2_url, self.post_data)
-        self.assertEqual(response.status_code, 302)
+        post_to__project1_url__response = \
+            self.client.post(self.edit_project1_url, self.post_data)
+        self.assertStatusCodeIsARedirect(
+            post_to__project1_url__response.status_code)
         
         for project in Project.objects.all():
             self.assertNotEqual(project.name, self.post_data['name'])
@@ -417,15 +423,80 @@ class EditProjectTestCase(CustomTestCase):
     def testOwnerLoggedIn(self):
         self.tryLogin(BOB_USERNAME)
         
-        response = self.client.get(self.edit_project1_url)
-        self.assertEqual(response.status_code, 200)
+        get_from__edit_project2_url__response = \
+            self.client.get(self.edit_project1_url)
+        self.assertStatusCodeIsASuccess(
+            get_from__edit_project2_url__response.status_code)
         
-        response = self.client.post(self.edit_project1_url, self.post_data)
-        self.assertEqual(response.status_code, 200)
+        post_to__edit_project2_url__response = \
+            self.client.post(self.edit_project1_url, self.post_data)
+        self.assertEqual(
+            post_to__edit_project2_url__response.status_code, 200)
         
         project = Project.objects.get(
             name=self.post_data['name'],
             description=self.post_data['description'])
+    
+    def testSaveAndContinueEditing(self):
+        # Verify that the "Save and Continue Editing" button takes the user
+        # right back to the edit page and the new displaying of the edit page
+        # has the properly-updated content.
+        
+        self.tryLogin(BOB_USERNAME);
+        
+        get_from__edit_project1_url__response = \
+            self.client.get(self.edit_project1_url)
+        self.assertStatusCodeIsASuccess(
+            get_from__edit_project1_url__response.status_code)
+        
+        post_data_with_save_and_continue_editing_button = \
+            self._form_edit_project_post_data_with_specific_submit_button(
+                'save_and_continue_editing', 'Save and Continue Editing')
+        
+        post_to__edit_project1_url__response = \
+            self.client.post(self.edit_project1_url,
+                             post_data_with_save_and_continue_editing_button)
+        self.assertStatusCodeIsASuccess(
+            post_to__edit_project1_url__response.status_code)
+        
+        self.assertContains(post_to__edit_project1_url__response,
+                            post_data_with_save_and_continue_editing_button['name'])
+        self.assertContains(post_to__edit_project1_url__response,
+                            post_data_with_save_and_continue_editing_button['description'])
+    
+    def testSaveAndFinishEditing(self):
+        # Verify that the "Save and Finish Editing" button takes the user
+        # to the project page and the updated project is displayed correctly.
+        
+        self.tryLogin(BOB_USERNAME)
+        
+        get_from__edit_project1_url__response = \
+            self.client.get(self.edit_project1_url)
+        self.assertStatusCodeIsASuccess(
+            get_from__edit_project1_url__response.status_code)
+        
+        post_data_with_save_and_finish_editing_button = \
+            self._form_edit_project_post_data_with_specific_submit_button(
+                'save_and_finish_editing', 'Save and Finish Editing')
+        post_to__edit_project1_url__response = \
+            self.client.post(self.edit_project1_url,
+                             post_data_with_save_and_finish_editing_button)
+        self.assertStatusCodeIsARedirect(
+            post_to__edit_project1_url__response.status_code)
+        
+        get_view_project1_response = self.client.get(self.view_project1_url)
+        
+        self.assertContains(get_view_project1_response,
+                            post_data_with_save_and_finish_editing_button['name'])
+        self.assertContains(get_view_project1_response,
+                            post_data_with_save_and_finish_editing_button['description'])
+    
+    def _form_edit_project_post_data_with_specific_submit_button(
+            self, submit_button_name, submit_button_value):
+        post_data = self.post_data.copy()
+        post_data[submit_button_name] = submit_button_name
+        
+        return post_data
 
 class AddDatasetsToProjectTestCase(CustomTestCase):
     fixtures = ['projects_projects']
@@ -445,9 +516,18 @@ class AddDatasetsToProjectTestCase(CustomTestCase):
             description='This is the first project',
             slug='project1')
         
+        project1_url_reverse_kwargs = {
+            'item_id': self.project1.id,
+            'slug': self.project1.slug,
+        }
+        
+        self.view_project1_url = reverse(
+            'epic.projects.views.view_project',
+            kwargs=project1_url_reverse_kwargs)
+        
         self.edit_project1_url = reverse(
             'epic.projects.views.edit_project',
-            kwargs={'item_id': self.project1.id, 'slug': self.project1.slug,})
+            kwargs=project1_url_reverse_kwargs)
 
         self.post_data = {
             'name': self.project1.name,
@@ -498,6 +578,9 @@ class AddDatasetsToProjectTestCase(CustomTestCase):
             "Remove dataset '%s'?" % self.dataset.name
         self.assertContains(post_to__edit_project_url__response,
                             remove_dataset_from_project_string)
+        
+        get_view_project_response = self.client.get(self.view_project1_url)
+        self.assertContains(get_view_project_response, self.dataset.name)
     
     def testProjectAlreadyHasDataset(self):
         self.tryLogin(BOB_USERNAME)
@@ -524,7 +607,7 @@ class DeleteDatasetFromProjectTestCase(CustomTestCase):
     
     def setUp(self):
         self.bob = User.objects.get(username=BOB_USERNAME)
-        self.admin = User.objects.get(username='admin')
+        self.admin = User.objects.get(username=ADMIN_USERNAME)
         
         self.dataset = DataSet.objects.get(
             creator=self.bob,
@@ -602,3 +685,122 @@ class DeleteDatasetFromProjectTestCase(CustomTestCase):
         post_data[remove_dataset__html_element_name] = 'on'
         
         return post_data
+
+class DeleteProjectTestCase(CustomTestCase):
+    fixtures = ['projects_projects']
+    
+    def setUp(self):
+        self.bob = User.objects.get(username=BOB_USERNAME)
+        self.admin = User.objects.get(username=ADMIN_USERNAME)
+        
+        self.project1 = Project.objects.get(
+            creator=self.bob,
+            name='project1',
+            description='This is the first project',
+            slug='project1')
+        
+        self.project2 = Project.objects.get(
+            creator=self.admin,
+            name='project2',
+            description='This is the second project',
+            slug='project2')
+        
+        project1_url_reverse_kwargs = {
+            'item_id': self.project1.id,
+            'slug': self.project1.slug,
+        }
+        
+        self.edit_project1_url = reverse(
+            'epic.projects.views.edit_project',
+            kwargs=project1_url_reverse_kwargs)
+        
+        self.view_project1_url = reverse(
+            'epic.projects.views.view_project',
+            kwargs=project1_url_reverse_kwargs)
+        
+        self.confirm_delete_project1_url = reverse(
+            'epic.projects.views.confirm_delete_project',
+            kwargs=project1_url_reverse_kwargs)
+        
+        self.delete_project1_url = reverse(
+            'epic.projects.views.delete_project',
+            kwargs=project1_url_reverse_kwargs)
+        
+        self.view_profile_url = reverse('epic.core.views.view_profile')
+    
+    def testLinks(self):
+        self.tryLogin(BOB_USERNAME)
+        
+        confirm_delete_project1_link = \
+            '<a href="%s"' % self.confirm_delete_project1_url
+        
+        view_profile_response = self.client.get(self.view_profile_url)
+        self.assertContains(view_profile_response,
+                            confirm_delete_project1_link)
+        
+        edit_project1_response = self.client.get(self.edit_project1_url)
+        self.assertContains(edit_project1_response,
+                            confirm_delete_project1_link)
+    
+    def testConfirmationPageLoggedOut(self):
+        response = self.client.get(self.confirm_delete_project1_url)
+        self.assertStatusCodeIsARedirect(response.status_code)
+    
+    def testConfirmationPageNotOwnerLoggedIn(self):
+        self.tryLogin(ADMIN_USERNAME)
+        
+        response = self.client.get(self.confirm_delete_project1_url)
+        self.assertStatusCodeIsARedirect(response.status_code)
+    
+    def testConfirmationPageOwnerLoggedIn(self):
+        self.tryLogin(BOB_USERNAME)
+        
+        response = self.client.get(self.confirm_delete_project1_url)
+        self.assertStatusCodeIsASuccess(response.status_code)
+        
+        self.assertContains(response, self.project1.name)
+    
+    def testCancelDelete(self):
+        self.tryLogin(BOB_USERNAME)
+        
+        confirm_delete_project1_response = \
+            self.client.get(self.confirm_delete_project1_url)
+        self.assertStatusCodeIsASuccess(
+            confirm_delete_project1_response.status_code)
+        
+        cancel_delete_project1_link = \
+            '<a href="%s"' % self.view_project1_url
+        self.assertContains(confirm_delete_project1_response,
+                            cancel_delete_project1_link)
+        
+        view_project1_response = self.client.get(self.view_project1_url)
+        self.assertStatusCodeIsASuccess(view_project1_response.status_code)
+    
+    def testConfirmDeleteLoggedOut(self):
+        response = self.client.get(self.delete_project1_url)
+        self.assertStatusCodeIsARedirect(response.status_code)
+    
+    def testConfirmDeleteNotOwnerLoggedIn(self):
+        self.tryLogin(ADMIN_USERNAME)
+        
+        response = self.client.get(self.delete_project1_url)
+        self.assertStatusCodeIsARedirect(response.status_code)
+    
+    def testConfirmDeleteOwnerLoggedIn(self):
+        self.tryLogin(BOB_USERNAME)
+        
+        confirm_delete_project1_response = \
+            self.client.get(self.confirm_delete_project1_url)
+        self.assertStatusCodeIsASuccess(
+            confirm_delete_project1_response.status_code)
+        
+        delete_project1_link = \
+            '<a href="%s"' % self.delete_project1_url
+        self.assertContains(confirm_delete_project1_response,
+            delete_project1_link)
+        
+        delete_project1_response = self.client.post(self.delete_project1_url)
+        self.assertStatusCodeIsARedirect(delete_project1_response.status_code)
+        
+        view_project1_response = self.client.get(self.view_project1_url)
+        self.assertStatusCodeIsAFailure(view_project1_response.status_code)

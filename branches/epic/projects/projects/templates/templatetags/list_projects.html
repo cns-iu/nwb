@@ -2,7 +2,7 @@
   {% for project in projects %}
     <div class="databox">
       {% load project_templatetags %}
-      {% show_project_header project %}
+      {% show_project_header project show_delete_buttons %}
       
       <p>{{ project.description|truncatewords:50 }}</p>
       

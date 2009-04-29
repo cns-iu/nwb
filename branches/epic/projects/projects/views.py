@@ -14,6 +14,7 @@ from epic.comments.forms import PostCommentForm
 from epic.core.models import Item
 from epic.core.util.view_utils import *
 from epic.projects.forms import AddDatasetToProjectForm
+from epic.projects.forms import AddDatasetToProjectFormSet
 from epic.projects.forms import EditProjectForm
 from epic.projects.forms import NewProjectForm
 from epic.projects.forms import RemoveDatasetFromProjectForm
@@ -21,19 +22,19 @@ from epic.projects.models import Project
 
 
 @login_required
-def check_dataset_url(request, dataset_url):
-    pass
-
-@login_required
 def create_project(request):
     if request.method != 'POST':
-        form = NewProjectForm()
+        new_project_form = NewProjectForm()
+#        add_dataset_to_project_formset = \
+#            AddDatasetToProjectFormSet(prefix='add_dataset')
     else:
-        form = NewProjectForm(request.POST)
+        new_project_form = NewProjectForm(request.POST)
+#        add_dataset_to_project_formset = \
+#            AddDatasetToProjectFormSet(request.POST, prefix='add_dataset')
         
-        if form.is_valid():
-            name = form.cleaned_data['name']
-            description = form.cleaned_data['description']
+        if new_project_form.is_valid():
+            name = new_project_form.cleaned_data['name']
+            description = new_project_form.cleaned_data['description']
             slug = slugify(name)
             
             new_project = Project.objects.create(creator=request.user,
@@ -47,12 +48,49 @@ def create_project(request):
             return HttpResponseRedirect(edit_project_url)
     
     render_to_response_data = {
-        'form': form,
+        'new_project_form': new_project_form,
+#        'add_dataset_to_project_formset': add_dataset_to_project_formset,
     }
     
     return render_to_response('projects/create_project.html',
                               render_to_response_data,
                               context_instance=RequestContext(request))
+
+@login_required
+def confirm_delete_project(request, item_id, slug):
+    project = get_object_or_404(Project, pk=item_id)
+    user = request.user
+    
+    view_project_url = \
+        get_item_url(project, 'epic.projects.views.view_project')
+    
+    if not user_is_item_creator(user, project):
+        return HttpResponseRedirect(view_project_url)
+    
+    render_to_response_data = {
+        'project': project,
+    }
+    
+    return render_to_response('projects/confirm_delete_project.html', 
+                              render_to_response_data,
+                              context_instance=RequestContext(request))
+
+@login_required
+def delete_project(request, item_id, slug):
+    project = get_object_or_404(Project, pk=item_id)
+    user = request.user
+    
+    view_project_url = \
+        get_item_url(project, 'epic.projects.views.view_project')
+    
+    if not user_is_item_creator(user, project):
+        return HttpResponseRedirect(view_project_url)
+    
+    project.delete()
+    
+    view_profile_url = reverse('epic.core.views.view_profile')
+    
+    return HttpResponseRedirect(view_profile_url)
 
 @login_required
 def edit_project(request, item_id, slug):
