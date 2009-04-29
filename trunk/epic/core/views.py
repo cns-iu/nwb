@@ -15,16 +15,18 @@ from epic.datasets.models import DataSet
 
 
 def site_index(request):
-	return render_to_response('core/site_index.html', context_instance=RequestContext(request))
+	return render_to_response('core/site_index.html', 
+                              context_instance=RequestContext(request))
 
 def browse(request):
 	datasets = DataSet.objects.active().order_by('-created_at')
 	return render_to_response('core/browse.html',
-		{'datasets': datasets, },
-		context_instance=RequestContext(request))
+		                      {'datasets': datasets, },
+		                      context_instance=RequestContext(request))
 
 def about (request):
-	return render_to_response('core/about.html', context_instance=RequestContext(request))
+	return render_to_response('core/about.html', 
+                              context_instance=RequestContext(request))
 
 @login_required
 def view_profile(request):
@@ -39,9 +41,9 @@ def view_profile(request):
 # 	HTML content relating to user, it's profile, datasets uploaded & data requests made 
 #	is fetched. 
 	return render_to_response("core/view_profile.html",
-							  { "profile": profile,
-							    "datasets": datasets,
-							    "datarequests": datarequests },
+							  {"profile": profile,
+							   "datasets": datasets,
+							   "datarequests": datarequests },
 							  context_instance=RequestContext(request))
 	
 @login_required
@@ -67,7 +69,10 @@ def edit_profile(request):
 		else:
 			# Form will have errors which will be displayed by page
 			pass
-	return render_to_response('core/edit_profile.html', {'profile_form':profile_form, 'user_form':user_form,}, context_instance=RequestContext(request))
+	return render_to_response('core/edit_profile.html', 
+                              {'profile_form':profile_form, 
+                               'user_form':user_form,}, 
+                              context_instance=RequestContext(request))
 
 def logout_view(request):
 	logout(request)
@@ -77,7 +82,9 @@ def logout_view(request):
 def change_password(request):
 	from django.contrib.auth.views import password_change
 	redirect_url = reverse('epic.core.views.view_profile')
-	return password_change(request, post_change_redirect=redirect_url, template_name='core/change_password.html')
+	return password_change(request, 
+                           post_change_redirect=redirect_url, 
+                           template_name='core/change_password.html')
 
 def forgot_password(request):
 	if request.method != 'POST':
@@ -111,4 +118,6 @@ def forgot_password(request):
 									  {'success_message':success_message,},
 									  context_instance=RequestContext(request))
 	
-	return render_to_response('core/forgot_password.html', {'form':form,}, context_instance=RequestContext(request))
+	return render_to_response('core/forgot_password.html', 
+                              {'form':form,}, 
+                              context_instance=RequestContext(request))

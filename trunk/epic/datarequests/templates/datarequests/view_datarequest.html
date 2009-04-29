@@ -1,4 +1,5 @@
 {% extends "core/bases/browse_base.html" %}
+{% load tags_templatetags %}
 
 {% block content %}
   <div class="requestspage">
@@ -51,7 +52,7 @@
     
 	<p>{{ datarequest.description|linebreaksbr }}</p>
 	
-	{# TODO: load tags  #}
+	{% list_item_tags datarequest user 'True' %}
   </div>
   
   {% load comment_templatetags %}

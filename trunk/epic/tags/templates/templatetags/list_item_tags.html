@@ -48,14 +48,14 @@
 <script type="text/javascript">
 var ADD_TAGS__URL = '{% url tags.views.add_tags_and_return_successful_tag_names %}';
 var DELETE_TAG__URL = '{% url tags.views.delete_tag %}';
-var DATASET_TO_BE_TAGGED = '{{ item.id }}';
+var ITEM_TO_BE_TAGGED = '{{ item.id }}';
 </script>
 <script type="text/javascript">
 /**
  * This script requires that the following variables are defined:
 	 ADD_TAGS__URL -- the post url for adding tags
 	 DELETE_TAG__URL -- the post url for deleting tags
-	 DATASET_TO_BE_TAGGED -- the id for the item that is tagged 
+	 ITEM_TO_BE_TAGGED -- the id for the item that is tagged 
  */
  
 // Add or delete tags using AJAX
@@ -72,7 +72,7 @@ function addTags(tag_names_to_add){
 	
 	var data = {};
 	data.unparsed_tag_names = tag_names_to_add;
-	data.dataset_id = DATASET_TO_BE_TAGGED;
+	data.item_id = ITEM_TO_BE_TAGGED;
 	
 	jQuery.post(ADD_TAGS__URL, data,
     	function(responseData){
@@ -103,7 +103,7 @@ function deleteTag(tag_name){
 
 	var data = {};
 	data.tag_name = tag_name;
-	data.dataset_id = DATASET_TO_BE_TAGGED;
+	data.item_id = ITEM_TO_BE_TAGGED;
 	
 	jQuery.post(DELETE_TAG__URL, data, 
     	function(responseData){
@@ -145,7 +145,7 @@ function showAddTagsBox(parent_id){
 	if (addTagsBox.length != 0){
 		addTagsBox.show();
 	}else{
-		var tagBox_html = '<span id="add_tags_box"><input type="text" id="add_tags_input" name="add_tags" /><input type="submit" value="Submit" onclick="javascript:addTagsFromUserInput(\''+DATASET_TO_BE_TAGGED+'\'); return false;" /></span>';
+		var tagBox_html = '<span id="add_tags_box"><input type="text" id="add_tags_input" name="add_tags" /><input type="submit" value="Submit" onclick="javascript:addTagsFromUserInput(\''+ITEM_TO_BE_TAGGED+'\'); return false;" /></span>';
 		jQuery('#' + parent_id).append(tagBox_html);
 	}
 }

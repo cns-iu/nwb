@@ -30,7 +30,7 @@
   	    <br />
   	    
 		<input type="submit" value="Submit Changes" />
-		<a href = "{% url datasets.views.view_dataset item_id=dataset.id slug=dataset.slug%}">Cancel Changes</a>
+		<a href = "{% url datasets.views.view_dataset item_id=dataset.id slug=dataset.slug %}">Cancel Changes</a>
 	</form>
 	
 {% endblock %}

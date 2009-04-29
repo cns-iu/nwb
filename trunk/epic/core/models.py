@@ -51,6 +51,14 @@ class Item(models.Model):
         return self.specific.get_absolute_url()
     
     # TODO: Fix this terrible hack
+    def is_dataset(self):
+        return type(self.specific).__name__ == 'DataSet'
+    
+    # TODO: Fix this terrible hack
+    def is_datarequest(self):
+        return type(self.specific).__name__ == 'DataRequest'
+    
+    # TODO: Fix this terrible hack
     def _specific(self):
         possibilities = ['dataset', 'datarequest']
         for possibility in possibilities:
