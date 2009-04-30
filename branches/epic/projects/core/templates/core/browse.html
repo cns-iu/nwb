@@ -26,8 +26,9 @@
   
   <ul>
     <li><a href="{% url core.views.browse %}">All</a></li> 
+    <li><a href="{% url datasets.views.view_datasets %}">Datasets</a></li>
+    <li><a href="{% url projects.views.view_projects %}">Projects</a></li>
     <li><a href="{% url datarequests.views.view_datarequests %}">Data Requests</a></li> 
-    <li><a href="{% url datasets.views.view_datasets %}">Datasets </a></li>
     </ul>
 {% endblock %}
 
@@ -45,6 +46,13 @@
   
   {% load dataset_templatetags %}
   {% list_datasets datasets %}
+  
+  <div class="databox">
+    <h1>Projects</h1>
+  </div>
+  
+  {% load project_templatetags %}
+  {% list_projects projects %}
   
   <div class="databox">
     <h1>Can't Find what you're looking for?
