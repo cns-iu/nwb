@@ -37,7 +37,7 @@
       <div id="login">
         {% block login %}
           {% if user.is_authenticated %}
-            <span id="logged-in-user"><a href="{% url core.views.view_profile %}">
+            <span id="logged-in-user"><a href="{% url core.views.view_profile user_id=user.id %}">
               {{ user.get_profile.short_title }}
             </a> | </span>
             {% load messages_templatetags %}
