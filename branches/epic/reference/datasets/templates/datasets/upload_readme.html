@@ -1,0 +1,13 @@
+{% extends "core/bases/simple_base.html" %}
+{% block content %}
+	<h3>Upload a ReadMe file for {{ dataset.name }}:</h3>
+	<p>We looked through the files you provided to see if there is a file called 'readme.txt'.  We were unable to find such a file in the files you uploaded.  It is required that you provided a readme for your dataset.  Please upload one now.</p>
+	<form enctype="multipart/form-data" action="{% url datasets.views.upload_readme item_id=dataset.id slug=dataset.slug %}" method="POST">
+		<table class="form">
+			{% load core_templatetags %}
+        	{% include_form_as_table form 'True' %}
+		</table>
+		<input type="submit" value="Submit Readme" />
+	</form>
+	
+{% endblock %}
