@@ -39,9 +39,12 @@ def view_profile(request, user_id=None):
     
     profile = Profile.objects.for_user(requested_user)
 
-    datasets = DataSet.objects.active().filter(creator=requested_user).order_by('-created_at')
+    datasets = DataSet.objects.active().\
+        filter(creator=requested_user).order_by('-created_at')
     
-    datarequests = DataRequest.objects.active().filter(creator=requested_user).exclude(status='C').order_by('-created_at')
+    datarequests = DataRequest.objects.active().\
+        filter(creator=requested_user).exclude(status='C').\
+        order_by('-created_at')
 
     return render_to_response('core/view_profile.html',
                               {'profile': profile,

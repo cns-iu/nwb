@@ -17,7 +17,6 @@
   
   {% ifequal profile.user user %}
     <p><b><a href="{% url core.views.edit_profile %}">Edit Profile</a></b></p>
-  
 	<p><b><a href="{% url core.views.change_password %}">Change Password</a></b></p>
   {% endifequal %}
   
