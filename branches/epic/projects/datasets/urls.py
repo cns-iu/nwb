@@ -14,4 +14,7 @@ urlpatterns = patterns('epic.datasets.views',
     (r'^(?P<item_id>\d+)/view-(?P<slug>[-\w]+)/rate/$', 'rate_dataset'),
     (r'^(?P<item_id>\d+)/view-(?P<slug>[-\w]+)/rate/(?P<input_rating>\d+)/$', 'rate_dataset_using_input_rating'),
     (r'^(?P<item_id>\d+)/view-(?P<slug>[-\w]+)/add_tags/$', 'tag_dataset'),
+    (r'^(?P<item_id>\d+)/view-(?P<slug>[-\w]+)/delete_files/$', 'delete_dataset_files'),
+    (r'^(?P<item_id>\d+)/view-(?P<slug>[-\w]+)/upload_readme/$', 'upload_readme'),
+    (r'^(?P<item_id>\d+)/view-(?P<slug>[-\w]+)/download_all_files/$', 'download_all_files')
 )

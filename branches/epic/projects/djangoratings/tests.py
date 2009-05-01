@@ -11,7 +11,7 @@ class RatingTestCase(CustomTestCase):
 	fixtures = ['common_data']
 	
 	def setUp(self):
-		self.data_set = DataSet.objects.all()[0]
+		self.data_set = DataSet.objects.active()[0]
 		
 	def tearDown(self):
 		pass

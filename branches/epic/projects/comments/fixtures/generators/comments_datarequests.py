@@ -22,7 +22,8 @@ def _create_datarequest(creator, status, ordinal, number):
         name=datarequest_name,
         description=datarequest_description,
         status=status,
-        slug=datarequest_slug)
+        slug=datarequest_slug,
+        is_active=True)
     
     return datarequest
                                              

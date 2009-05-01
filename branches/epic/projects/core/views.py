@@ -28,7 +28,7 @@ def site_index(request):
                               context_instance=RequestContext(request))
 
 def browse(request):
-    datasets = DataSet.objects.all().order_by('-created_at')
+    datasets = DataSet.objects.active().order_by('-created_at')
     projects = Project.objects.all().order_by('-created_at')
     
     return render_to_response('core/browse.html',
@@ -40,16 +40,22 @@ def about (request):
                               context_instance=RequestContext(request))
 
 @login_required
-def view_profile(request):
+def view_profile(request, user_id=None):
     """ Used to display the basic/home page for logged in user. """
-    user = request.user
-    profile = Profile.objects.for_user(user)
+    requesting_user = request.user
+    if user_id:
+        requested_user = get_object_or_404(User, pk=user_id)
+    else:
+        requested_user = requesting_user
+    
+    profile = Profile.objects.for_user(requested_user)
 
-	# TODO: Go back to original form
-    datasets = DataSet.objects.filter(creator=user).order_by('-created_at')
-    projects = Project.objects.filter(creator=user).order_by('-created_at')
-    datarequests = DataRequest.objects.filter(creator=user). \
-        exclude(status='C').order_by('-created_at')
+    datasets = DataSet.objects.active().\
+        filter(creator=requested_user).order_by('-created_at')
+    projects = Project.objects.filter(creator=requested_user).order_by('-created_at')
+    datarequests = DataRequest.objects.active().\
+        filter(creator=requested_user).exclude(status='C').\
+        order_by('-created_at')
     
     render_to_response_data = {
         'datarequests': datarequests,
@@ -58,8 +64,6 @@ def view_profile(request):
         'projects': projects
     }
     
-    # HTML content relating to user, it's profile, datasets uploaded & data
-    # requests made is fetched. 
     return render_to_response('core/view_profile.html',
                               render_to_response_data,
                               context_instance=RequestContext(request))

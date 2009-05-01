@@ -37,12 +37,8 @@
       <div id="login">
         {% block login %}
           {% if user.is_authenticated %}
-            <span id="logged-in-user"><a href="{% url core.views.view_profile %}">
-              {% if user.get_full_name %}
-                {{ user.get_full_name }}
-              {% else %}
-                {{ user.username }}
-              {% endif%}
+            <span id="logged-in-user"><a href="{% url core.views.view_profile user_id=user.id %}">
+              {{ user.get_profile.short_title }}
             </a> | </span>
             {% load messages_templatetags %}
             <a href="{% url messages.views.index user_id=user.id %}">Messages ({% num_unread_messages user %})</a> | 

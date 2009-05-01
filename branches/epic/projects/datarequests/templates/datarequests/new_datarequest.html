@@ -17,6 +17,8 @@
       <br/>
       <label> {{ form.description }} </label>
       <br/>
+      <label>{{ form.tags }}</label>
+      <br />
       <!--TODO: have data requests be taggable -->
       <input type="image" src="/core_media/images/makerequest_button.jpg" value="Make Request" alt="Make Request" />
       <br/>
@@ -28,6 +30,7 @@ var thisForm = "request_form";
 var defaultVals = new Array();
 defaultVals[0] = new Array("name", "Name this data request.");
 defaultVals[1] = new Array("description", "Describe the data you are requesting.");
+defaultVals[2] = new Array("tags", "Add your tags here (not required).");
 
 window.onload = MPLoadDefaults();
 

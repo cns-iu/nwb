@@ -1,4 +1,5 @@
 {% extends "core/bases/browse_base.html" %}
+{% load tags_templatetags %}
 
 {% block content %}
   <div class="requestspage">
@@ -11,7 +12,7 @@
 	<h1>Status: {{ datarequest.get_status_display|capfirst }}</h1>
 	
 	<ul class="datainfo">
-	  <li id="first">{{datarequest.creator.get_profile}}</li>
+	  <li id="first">{{datarequest.creator.get_profile.full_title}}</li>
 	  <li>{{ datarequest.created_at|date:"F d, Y - P" }}</li>
 	  
 	  {% ifequal user datarequest.creator %}
@@ -51,7 +52,7 @@
     
 	<p>{{ datarequest.description|linebreaksbr }}</p>
 	
-	{# TODO: load tags  #}
+	{% list_item_tags datarequest user 'True' %}
   </div>
   
   {% load comment_templatetags %}

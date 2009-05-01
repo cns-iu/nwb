@@ -2,7 +2,7 @@
 {% if datasets %}
   {% for dataset in datasets %}
 	<div class="recent_dataset">
-		<h2><a href="{{ dataset.get_absolute_url }}">{{ dataset.name }}</a> - {{ dataset.creator.get_profile }}</h2><br />
+		<h2><a href="{{ dataset.get_absolute_url }}">{{ dataset.name }}</a> - {{ dataset.creator.get_profile.full_title }}</h2><br />
 		<p>{{ dataset.description|truncatewords:15 }}</p>
 		<div class="comments">
 			<a href="{{ dataset.get_absolute_url }}">{{ dataset.comments.all|length }} comment{{ dataset.comments.all|length|pluralize }}.</a>

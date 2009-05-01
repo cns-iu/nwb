@@ -9,6 +9,7 @@ from django.utils.datastructures import MultiValueDictKeyError
 
 from epic.core.models import Item
 from epic.datasets.models import DataSet
+from epic.datarequests.models import DataRequest
 from epic.tags.models import Tagging
 from epic.tags.utils import parse_tag_input
 
@@ -17,11 +18,39 @@ def index(request):
     return render_to_response('tags/index.html', {'tags':count_tag_list}, context_instance=RequestContext(request))
 
 def view_items_for_tag(request, tag_name):
-	tags = Tagging.objects.filter(tag=tag_name)
-	datasets = []
-	for tag in tags:
-		datasets.append(tag.item.specific)
-	return render_to_response('tags/tag_view.html', {'tags':tags, 'tag_name':tag_name, 'datasets':datasets}, context_instance=RequestContext(request))
+    tags = Tagging.objects.filter(tag=tag_name)
+    
+    specifics = [tag.item.specific for tag in tags if tag.item.specific.is_active]
+    
+    return render_to_response('tags/tag_view.html', 
+                              {'tags':tags, 
+                               'tag_name':tag_name, 
+                               'specifics':specifics}, 
+                              context_instance=RequestContext(request))
+
+def view_datasets_for_tag(request, tag_name):
+    tags = Tagging.objects.filter(tag=tag_name)
+    
+    specifics = [tag.item.specific for tag in tags 
+                 if tag.item.specific.is_active and tag.item.specific.is_dataset]
+    
+    return render_to_response('tags/tag_view.html', 
+                              {'tags':tags, 
+                               'tag_name':tag_name, 
+                               'specifics':specifics}, 
+                              context_instance=RequestContext(request))
+
+def view_datarequests_for_tag(request, tag_name):
+    tags = Tagging.objects.filter(tag=tag_name)
+    
+    specifics = [tag.item.specific for tag in tags 
+                 if tag.item.specific.is_active and tag.item.specific.is_datarequest]
+    
+    return render_to_response('tags/tag_view.html', 
+                              {'tags':tags, 
+                               'tag_name':tag_name, 
+                               'specifics':specifics}, 
+                              context_instance=RequestContext(request))
 
 @login_required
 def delete_tag(request):
@@ -29,31 +58,35 @@ def delete_tag(request):
     
     Post variables:
     tag_name -- the name of the tag to be removed
-    dataset_id -- the dataset the tag is attached to
+    item_id -- the item the tag is attached to
     
     """
     
     user = request.user
     responseData = {}
     try:
-        dataset_id = request.POST['dataset_id']
-        dataset = DataSet.objects.get(pk=dataset_id)
+        item_id = request.POST['item_id']
+        if not item_id:
+            item_id = None
+        item = Item.objects.get(pk=item_id)
         
         tag_name = request.POST['tag_name']
-        tag = Tagging.objects.get(tag=tag_name, item=dataset)
+        if not tag_name:
+            tag_name = None
+        tag = Tagging.objects.get(tag=tag_name, item=item)
         
-        if (user == tag.user or user == dataset.creator):
+        if (user == tag.user or user == item.creator):
             tag.remove()
             responseData['success'] = 'The tag "%(tag)s" was removed.' % {'tag': tag,}
         else:
-            responseData['failure'] = 'You do not have permission to remove the tag "%(tag)s" on dataset "%(dataset)s".' % {'tag': tag, 'dataset': dataset,}
+            responseData['failure'] = 'You do not have permission to remove the tag "%(tag)s" on item "%(item)s".' % {'tag': tag, 'item': item,}
     
     except MultiValueDictKeyError:
-        responseData['failure'] = 'Either the tag_name or the dataset_id was not given.'
-    except DataSet.DoesNotExist:
-        responseData['failure'] = 'The dataset_id %s was invalid.' % (dataset_id)
+        responseData['failure'] = 'Either the tag_name or the item_id was not given.'
+    except Item.DoesNotExist:
+        responseData['failure'] = 'The item_id %s was invalid.' % (item_id)
     except Tagging.DoesNotExist:
-        responseData['failure'] = 'The tag %s for dataset %s was invalid.' % (tag_name, dataset_id)
+        responseData['failure'] = 'The tag %s for item %s was invalid.' % (tag_name, item_id)
 
     json = simplejson.dumps(responseData)
     return HttpResponse(json, mimetype='application/json')
@@ -64,26 +97,27 @@ def add_tags_and_return_successful_tag_names(request):
     
     Post variables:
     unparsed_tag_names -- the raw string containing the tags to be added
-    dataset_id -- the dataset the tags are to be added to
+    item_id -- the item the tags are to be added to
     
     """
     
     user = request.user
     responseData = {}
     try:
-        dataset_id = request.POST['dataset_id']
-        dataset = DataSet.objects.get(pk=dataset_id)
+        item_id = request.POST['item_id']
+        if not item_id:
+            item_id = None
+        item = Item.objects.get(pk=item_id)
         
         unparsed_tag_names = request.POST['unparsed_tag_names']
-
-        added_tags = Tagging.objects.add_tags_and_return_added_tag_names(unparsed_tag_names, dataset, user)
+        added_tags = Tagging.objects.add_tags_and_return_added_tag_names(unparsed_tag_names, item, user)
         
         responseData['success'] = added_tags
 
     except MultiValueDictKeyError:
-        responseData['failure'] = 'Either the unparsed_tag_names or the dataset_id was not given.'
-    except DataSet.DoesNotExist:
-        responseData['failure'] = 'The dataset_id %s was invalid.' % (dataset_id)
+        responseData['failure'] = 'Either the unparsed_tag_names or the item_id was not given.'
+    except Item.DoesNotExist:
+        responseData['failure'] = 'The item_id %s was invalid.' % (item_id)
     
     json = simplejson.dumps(responseData)
     return HttpResponse(json, mimetype='application/json')
