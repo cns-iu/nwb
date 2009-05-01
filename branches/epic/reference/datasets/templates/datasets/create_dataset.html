@@ -17,10 +17,12 @@
     <table class="form">
         {% load core_templatetags %}
         {% include_form_as_table form 'True' %}
+		{% include_form_as_table ref_form 'True' %}
     </table>
 	{% load geoloc_templatetags%}
 	{% add_locations_map_for_dataset add_formset remove_formset %}
     <input type="image" alt="Submit New Dataset" src="/core_media/images/submit.jpg" value="Upload" />
 </form>
-
+<table>
+</table>
 {% endblock %}

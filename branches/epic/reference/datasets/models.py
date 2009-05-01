@@ -63,16 +63,6 @@ class DataSet(Item):
         return reverse("epic.datasets.views.tag_dataset",
                        kwargs={ "item_id": self.id, "slug": self.slug })
 
-class DataSetAcademicReference(models.Model):
-    parent_dataset = models.ForeignKey(DataSet, related_name="references")
-    # fields from http://www.dlib.org/dlib/july99/caplan/07caplan.html
-    title = models.CharField
-    author
-    journal_title
-    pub_date
-    enumeration
-    location
-    type
 class DataSetFile(models.Model):
     
     parent_dataset = models.ForeignKey(DataSet, related_name="files")
