@@ -26,7 +26,8 @@ from epic.comments.forms import PostCommentForm
 from epic.core.models import Item, AcademicReference
 from epic.datasets.forms import NewDataSetForm, \
     EditDataSetForm, RatingDataSetForm, TagDataSetForm, GeoLocationFormSet, \
-    RemoveGeoLocationFormSet, UploadReadMeForm, AcademicReferenceForm
+    RemoveGeoLocationFormSet, UploadReadMeForm, AcademicReferenceForm, \
+    AcademicReferenceFormSet
 from epic.datasets.models import DataSetFile, DataSet, RATING_SCALE
 from epic.geoloc.models import GeoLoc
 from epic.geoloc.utils import get_best_location, CouldNotFindLocation, \
@@ -68,21 +69,20 @@ def create_dataset(request):
         form = NewDataSetForm(request.user)
         add_formset = GeoLocationFormSet(prefix='add')
         remove_formset = RemoveGeoLocationFormSet(prefix='remove')
-        ref_form = AcademicReferenceForm()
+        ref_formset = AcademicReferenceFormSet(prefix='reference')
     else:
         form = NewDataSetForm(request.user, request.POST, request.FILES)
         add_formset = GeoLocationFormSet(request.POST, prefix='add')
         remove_formset = RemoveGeoLocationFormSet(request.POST, 
                                                   prefix='remove')
-        ref_form = AcademicReferenceForm(request.POST)
+        ref_formset = AcademicReferenceFormSet(request.POST,prefix='reference')
         
-        if form.is_valid() and ref_form.is_valid():
+        if form.is_valid() and ref_formset.is_valid():
             name = form.cleaned_data['name']
             description = form.cleaned_data['description']
             uploaded_files = form.cleaned_data['files']
             tags = form.cleaned_data['tags']
             previous_version = form.cleaned_data['previous_version']
-            reference = ref_form.cleaned_data['reference']
             
             new_dataset = DataSet.objects.create(creator=request.user, 
                                                  name=name, 
@@ -109,7 +109,11 @@ def create_dataset(request):
                                                     'remove_location'):
                 new_dataset.geolocations.remove(geoloc)
             
-            AcademicReference.objects.create(item=new_dataset, reference=reference)
+            for ref_form in ref_formset.forms:
+                if ref_form.is_valid():
+                    if ref_form.cleaned_data:
+                        reference = ref_form.cleaned_data['reference'] 
+                        AcademicReference.objects.create(item=new_dataset, reference=reference)
             
             try:
                 _add_uploaded_files(new_dataset, uploaded_files)
@@ -129,7 +133,7 @@ def create_dataset(request):
                               {'form':form, 
                                'add_formset': add_formset, 
                                'remove_formset':remove_formset,
-                               'ref_form':ref_form}, 
+                               'ref_formset':ref_formset}, 
                               context_instance=RequestContext(request))
         
 class NoReadMeException(Exception):

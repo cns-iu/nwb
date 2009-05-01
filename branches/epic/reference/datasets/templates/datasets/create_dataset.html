@@ -11,13 +11,12 @@
 {% endblock %}
 
 {% block content %}
-
 <h1>Upload Your Data</h1>
 <form enctype="multipart/form-data" action="{% url datasets.views.create_dataset %}" method="POST">
     <table class="form">
         {% load core_templatetags %}
         {% include_form_as_table form 'True' %}
-		{% include_form_as_table ref_form 'True' %}
+  		{{ ref_formset.as_table }}
     </table>
 	{% load geoloc_templatetags%}
 	{% add_locations_map_for_dataset add_formset remove_formset %}
