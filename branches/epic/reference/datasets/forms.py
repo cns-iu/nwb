@@ -56,4 +56,4 @@ class AcademicReferenceForm(ModelForm):
         model = AcademicReference
         exclude = ['item']
         
-AcademicReferenceFormSet = formset_factory(AcademicReferenceForm, extra=10)
+AcademicReferenceFormSet = formset_factory(AcademicReferenceForm, extra=1)
