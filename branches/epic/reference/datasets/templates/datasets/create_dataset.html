@@ -44,7 +44,7 @@ function getManager(){
 }
 function initalizeReferences(){
 	var count = getCount();
-	for(i = 0; i < count; i++){
+	for(i = 1; i < count; i++){
 		var referenceToAdd = document.getElementById('id_' + formPrefix + '-' + i + '-' + formPrefix);
 		var td = referenceToAdd.parentNode;
 		var tr = td.parentNode;
@@ -135,7 +135,7 @@ function removeReference(id){
 	manager.setAttribute('value', parseInt(manager.value) - 1);
 	
 	var count = getCount();
-	for(var i = 0; i < count; i++){
+	for(var i = 1; i < count; i++){
 		if(references[i] == tr){
 			references[i] = null;
 		}
@@ -149,7 +149,7 @@ function updateReferences(){
 	** Drop out all the null elements.
 	**/
 	var count = references.length;
-	for(var i = 0; i < count; i++){
+	for(var i = 1; i < count; i++){
 		if(references[i] == null){
 			references.splice(i,1);
 		}
@@ -160,7 +160,7 @@ function updateReferences(){
 	**   the ids are in order for the formset.
 	*/
 	count = references.length;
-	for(var i = 0; i < count; i++){
+	for(var i = 1; i < count; i++){
 		// the tr had two children if correctly formed - [0] is the 'input', [1] is the 'a'
 		var input = references[i].childNodes[1].childNodes[0];
 
@@ -169,7 +169,7 @@ function updateReferences(){
 
 		var removeLink = references[i].childNodes[1].childNodes[1];
 
-		removeLink.setAttribute('onclick', 'removeReference("' + i + '"); return false;');
+		removeLink.setAttribute('onclick', 'removeReference("' + input.id + '"); return false;');
 	}
 }
 </script>
