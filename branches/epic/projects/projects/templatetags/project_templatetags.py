@@ -26,6 +26,8 @@ def show_project_header(context, project, show_delete_buttons=False):
         'show_delete_buttons': show_delete_buttons,
     }
 
+# TODO: This functionality is not finished, and thus this is never called.
+# Delete it?
 @register.inclusion_tag('templatetags/add_dataset_to_project__widget.html')
 def add_dataset_to_project__widget(add_dataset_to_project_formset):
     return {'add_dataset_to_project_formset': add_dataset_to_project_formset,}

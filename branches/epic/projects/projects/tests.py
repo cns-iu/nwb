@@ -262,9 +262,9 @@ class EditProjectTestCase(CustomTestCase):
             description=self.post_data['description'])
     
     def testSaveAndContinueEditing(self):
-        # Verify that the "Save and Continue Editing" button takes the user
-        # right back to the edit page and the new displaying of the edit page
-        # has the properly-updated content.
+        # Verify that posting data using the "Save and Continue Editing"
+        # button takes the user back to the edit page and the newly displayed
+        # edit page has the posted content.
         
         self.tryLogin(BOB_USERNAME);
         
