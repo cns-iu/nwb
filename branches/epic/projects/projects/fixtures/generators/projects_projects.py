@@ -43,7 +43,8 @@ def _create_project2():
         creator=admin,
         name='project2',
         description='This is the second project',
-        slug='project2')
+        slug='project2',
+        is_active=True)
     
     project2.datasets.add(project_dataset)
     

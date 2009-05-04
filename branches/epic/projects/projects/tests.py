@@ -14,6 +14,9 @@ ADMIN_PASSWORD = 'admin'
 BOB_USERNAME = 'bob'
 BOB_PASSWORD = 'bob'
 
+BILL_USERNAME = 'bill'
+BILL_PASSWORD = 'bill'
+
 class URLsTestCase(CustomTestCase):
     """ Test all the urls to make sure that the view for each works.
     """
@@ -624,7 +627,9 @@ class DeleteProjectTestCase(CustomTestCase):
         self.assertStatusCodeIsARedirect(delete_project1_response.status_code)
         
         view_project1_response = self.client.get(self.view_project1_url)
-        self.assertStatusCodeIsAFailure(view_project1_response.status_code)
+        self.assertStatusCodeIsASuccess(view_project1_response.status_code)
+        self.assertContains(view_project1_response,
+                            'This project is not available.')
 
 class BrowseProjectsTestCase(CustomTestCase):
     """ Test the browsing of projects.
@@ -638,6 +643,9 @@ class BrowseProjectsTestCase(CustomTestCase):
         
         self.admin = User.objects.get(username=ADMIN_USERNAME)
         self.admins_profile = Profile.objects.for_user(user=self.admin)
+        
+        self.bill = User.objects.get(username=BILL_USERNAME)
+        self.bills_profile = Profile.objects.for_user(user=self.bill)
         
         self.project1 = Project.objects.get(
             creator=self.bob,
@@ -661,6 +669,10 @@ class BrowseProjectsTestCase(CustomTestCase):
             'user_id': self.admin.id,
         }
         
+        view_bill_kwargs = {
+            'user_id': self.bill.id,
+        }
+        
         self.view_bobs_projects_url = reverse(
             'epic.projects.views.view_user_project_list',
             kwargs=view_bob_kwargs)
@@ -669,6 +681,7 @@ class BrowseProjectsTestCase(CustomTestCase):
             'epic.core.views.view_profile',
             kwargs=view_bob_kwargs)
         
+        
         self.view_admins_projects_url = reverse(
             'epic.projects.views.view_user_project_list',
             kwargs=view_admin_kwargs)
@@ -676,6 +689,16 @@ class BrowseProjectsTestCase(CustomTestCase):
         self.view_admins_profile_url = reverse(
             'epic.core.views.view_profile',
             kwargs=view_admin_kwargs)
+        
+        
+        self.view_bills_projects_url = reverse(
+            'epic.projects.views.view_user_project_list',
+            kwargs=view_bill_kwargs)
+        
+        self.view_bills_profile_url = reverse(
+            'epic.core.views.view_profile',
+            kwargs=view_bill_kwargs)
+        
         
         self.browse_url = reverse('epic.core.views.browse')
         self.browse_projects_url = \
@@ -820,11 +843,11 @@ class BrowseProjectsTestCase(CustomTestCase):
         # Test browsing Projects via a user's profile and not the profile's
         # user, and there are no projects.
         
-        self.tryLogin(BOB_USERNAME)
-        response = self.client.get(self.view_admins_profile_url)
+        self.tryLogin(ADMIN_USERNAME)
+        response = self.client.get(self.view_bills_profile_url)
         
         fake_projects_listing = \
-            '%s Projects' % self.admins_profile.full_title()
+            '%s Projects' % self.bills_profile.full_title()
         real_projects_listing = '%s has not created any projects.' % \
             self.admins_profile.full_title()
         self.assertNotContains(response, fake_projects_listing)
@@ -834,8 +857,8 @@ class BrowseProjectsTestCase(CustomTestCase):
         # Test browsing Projects via a user's profile and not the profile's
         # user, and there are no projects.
         
-        self.tryLogin(ADMIN_USERNAME)
-        response = self.client.get(self.view_admins_profile_url)
+        self.tryLogin(BILL_USERNAME)
+        response = self.client.get(self.view_bills_profile_url)
         
         fake_projects_listing = 'Your Projects'
         real_projects_listing = 'You have not created any projects.'
@@ -952,13 +975,15 @@ class ViewProjectTestCase(CustomTestCase):
             creator=self.bob,
             name='project1',
             description='This is the first project',
-            slug='project1')
+            slug='project1',
+            is_active=True)
         
-        self.project2 = Project.objects.create(
+        self.project2 = Project.objects.get(
             creator=self.admin,
             name='project2',
             description='This is the second project',
-            slug='project2')
+            slug='project2',
+            is_active=True)
         
         self.view_project1_url = \
             get_item_url(self.project1, 'epic.projects.views.view_project')

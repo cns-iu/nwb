@@ -13,21 +13,16 @@ class ProjectManager(models.Manager):
 class Project(Item):
     objects = ProjectManager()
     
+    # TODO: This should probably be Item, since Algorithms will certainly be
+    # Project'able and DataRequests might be.  (But what about Projects?)
     datasets = models.ManyToManyField(DataSet, related_name='projects')
-    
-    class Admin:
-        pass
     
     def __unicode__(self):
         return 'Project %s (containing datasets %s)' % \
-            (self.name, self.datasets.all())
+            (self.name, self.datasets.active())
     
     @models.permalink
     def get_absolute_url(self):
         kwargs = {'item_id': self.id, 'slug': self.slug,}
         
         return ('epic.projects.views.view_project', [], kwargs)
-    
-    # TODO: Implement this for real.
-    def get_download_all_files_url(self):
-        return "http://www.PLACEHOLDER_FOR_DOWNLOAD_ALL_FILES_URL.com"

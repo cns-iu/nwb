@@ -1,3 +1,5 @@
+import re
+
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
 from django.core.urlresolvers import reverse
@@ -13,6 +15,7 @@ from django.template.defaultfilters import slugify
 from epic.comments.forms import PostCommentForm
 from epic.core.models import Item
 from epic.core.util.view_utils import *
+from epic.datasets.models import DataSet
 from epic.projects.forms import AddDatasetToProjectForm
 from epic.projects.forms import AddDatasetToProjectFormSet
 from epic.projects.forms import EditProjectForm
@@ -25,12 +28,8 @@ from epic.projects.models import Project
 def create_project(request):
     if request.method != 'POST':
         new_project_form = NewProjectForm()
-#        add_dataset_to_project_formset = \
-#            AddDatasetToProjectFormSet(prefix='add_dataset')
     else:
         new_project_form = NewProjectForm(request.POST)
-#        add_dataset_to_project_formset = \
-#            AddDatasetToProjectFormSet(request.POST, prefix='add_dataset')
         
         if new_project_form.is_valid():
             name = new_project_form.cleaned_data['name']
@@ -48,14 +47,10 @@ def create_project(request):
             
             return HttpResponseRedirect(edit_project_url)
     
-    render_to_response_data = {
-        'new_project_form': new_project_form,
-#        'add_dataset_to_project_formset': add_dataset_to_project_formset,
-    }
-    
-    return render_to_response('projects/create_project.html',
-                              render_to_response_data,
-                              context_instance=RequestContext(request))
+    return render_to_response(
+        'projects/create_project.html',
+        {'new_project_form': new_project_form,},
+        context_instance=RequestContext(request))
 
 @login_required
 def confirm_delete_project(request, item_id, slug):
@@ -68,13 +63,10 @@ def confirm_delete_project(request, item_id, slug):
     if not user_is_item_creator(user, project):
         return HttpResponseRedirect(view_project_url)
     
-    render_to_response_data = {
-        'project': project,
-    }
-    
-    return render_to_response('projects/confirm_delete_project.html', 
-                              render_to_response_data,
-                              context_instance=RequestContext(request))
+    return render_to_response(
+        'projects/confirm_delete_project.html', 
+        {'project': project,},
+        context_instance=RequestContext(request))
 
 @login_required
 def delete_project(request, item_id, slug):
@@ -87,7 +79,8 @@ def delete_project(request, item_id, slug):
     if not user_is_item_creator(user, project):
         return HttpResponseRedirect(view_project_url)
     
-    project.delete()
+    project.is_active = False
+    project.save()
     
     view_profile_url = reverse('epic.core.views.view_profile')
     
@@ -105,25 +98,25 @@ def edit_project(request, item_id, slug):
         return HttpResponseRedirect(view_project_url)
     
     if request.method != "POST":
-        initial_remove_datasets_data = []
-        
-        for dataset in project.datasets.all():
-            initial_remove_datasets_data.append({'dataset_id': dataset.id})
-        
-        edit_project_form = _make_edit_project_form_from_project(project)
+        initial_edit_project_data = {
+            'name': project.name,
+            'description': project.description,
+        }
+    
+        edit_project_form = EditProjectForm(initial=initial_edit_project_data)
         add_dataset_to_project_form = AddDatasetToProjectForm()
     else:
         edit_project_form = EditProjectForm(request.POST)
         add_dataset_to_project_form = AddDatasetToProjectForm(request.POST)
             
-        if edit_project_form.is_valid():
+        if edit_project_form.is_valid() and \
+                add_dataset_to_project_form.is_valid():
             project.name = edit_project_form.cleaned_data['name']
             project.description = \
                 edit_project_form.cleaned_data['description']
             project.slug = slugify(project.name)
             project.save()
-        
-        if add_dataset_to_project_form.is_valid():
+            
             # AddDatasetToProjectForm's validation should make sure dataset_id
             # is a valid dataset id.
             dataset = add_dataset_to_project_form.cleaned_data['dataset']
@@ -131,28 +124,25 @@ def edit_project(request, item_id, slug):
             if dataset is not None:
                 add_dataset_to_project_form = AddDatasetToProjectForm()
                 
-                try:
-                    project.datasets.get(pk=dataset.id)
-                except:
+                # TODO: Error upon duplication of a dataset (in a project)?
+                if dataset not in project.datasets.all():
                     project.datasets.add(dataset)
         
-        # Remove datasets.
-        for dataset in project.datasets.all():
-            should_remove_this_dataset_id = 'remove-dataset-%s' % dataset.id
+            # Remove datasets.
             
-            try:
-                remove_this_dataset_field_on = \
-                    request.POST[should_remove_this_dataset_id]
+            remove_dataset_expression = \
+                r'^remove-dataset-(?P<item_id>\d+)$'
+            
+            pattern = re.compile(remove_dataset_expression) 
+            
+            for post_key in request.POST:
+                match = pattern.match(post_key)
                 
-                if remove_this_dataset_field_on == 'on':
-                    should_remove_this_dataset = True
-                else:
-                    should_remove_this_dataset = False
-                
-                if should_remove_this_dataset:
-                    project.datasets.remove(dataset)
-            except:
-                pass
+                if match is not None:
+                    item_id = match.group('item_id')
+                    dataset_to_remove = get_object_or_404(DataSet, pk=item_id)
+                    
+                    project.datasets.remove(dataset_to_remove)
         
         try:
             if request.POST['save_and_finish_editing']:
@@ -197,13 +187,3 @@ def view_user_project_list(request, user_id):
         'projects/view_user_project_list.html',
         {'projects': projects, 'requested_user': requested_user},
         context_instance=RequestContext(request))
-
-def _make_edit_project_form_from_project(project):
-    initial_edit_project_data = {
-        'name': project.name,
-        'description': project.description,
-    }
-    
-    edit_project_form = EditProjectForm(initial=initial_edit_project_data)
-    
-    return edit_project_form

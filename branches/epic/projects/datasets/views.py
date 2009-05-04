@@ -573,3 +573,4 @@ def download_all_files(request, item_id, slug):
     temp.seek(0)
     
     return response
+   
