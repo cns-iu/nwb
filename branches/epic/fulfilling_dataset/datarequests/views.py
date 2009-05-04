@@ -115,9 +115,15 @@ def cancel_datarequest(request, item_id, slug):
                                                     'slug':datarequest.slug}))
 
 @login_required
-def fulfill_datarequest(request, item_id, slug):
+def fulfill_datarequest(request, item_id, slug, fulfilling_item_id=None):
     user = request.user
     datarequest = get_object_or_404(DataRequest,pk=item_id)
+    
+    if fulfilling_item_id and datarequest.creator == user:
+        fulfilling_item = get_object_or_404(Item, pk=fulfilling_item_id)
+        datarequest.fulfilling_item = fulfilling_item
+        datarequest.save()
+        
     if datarequest.creator != user:
         #only a request's owner should be able to change it
         return HttpResponseRedirect(reverse('epic.datarequests.views.view_datarequest', 

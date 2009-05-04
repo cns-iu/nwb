@@ -1,7 +1,9 @@
-from epic.core.test import CustomTestCase
-from django.core.urlresolvers import reverse
-from epic.datarequests.models import DataRequest
 from django.contrib.auth.models import User
+from django.core.urlresolvers import reverse
+
+from epic.core.test import CustomTestCase
+from epic.datarequests.models import DataRequest
+from epic.datasets.models import DataSet
 
 class DataRequestTestCase(CustomTestCase):
 	""" Test that the model for datarequests is working correctly """
@@ -391,6 +393,64 @@ class FulfillDatarequestsTestCase(CustomTestCase):
 		
 		self.assertEqual(self.dr1.status, 'F')
 
+class FullfillDatarequestWithItemTestCase(CustomTestCase):
+    """ Test that fulfilling a datarequest with an item adds
+        that item as a fulfiling item 
+    
+    """
+    fixtures = ['datarequests_just_users', 'datarequests_datarequests']
+    
+    def setUp(self):
+        self.bob = User.objects.get(username="bob")
+        self.dataset1 = DataSet.objects.create(creator=self.bob, 
+                                               name='asdfnasdf', 
+                                               description='asdf3')
+        self.dr1 = DataRequest.objects.get(
+                        creator=self.bob, 
+                        name='unfulfilled_datarequest1', 
+                        description='The first unfulfilled datarequest')
+        
+        self.fulfill_url = reverse(
+            'epic.datarequests.views.fulfill_datarequest', 
+            kwargs={'item_id': self.dr1.id, 
+                    'slug':self.dr1.slug, 
+                    'fulfilling_item_id':self.dataset1.id })
+    
+    def test_loggedout(self):
+        # Logged out users shouldn't be able to add the fulfilling item
+        response = self.client.get(self.fulfill_url)
+        
+        self.datarequest1 = DataRequest.objects.get(
+                            creator=self.bob, 
+                            name='unfulfilled_datarequest1', 
+                            description='The first unfulfilled datarequest')
+        
+        self.assertFalse(self.datarequest1.fulfilling_item)
+    
+    def test_loggedin_notowner(self):
+        # Non owners should not be able to add the fulfilling item
+        self.tryLogin('bob2')
+        response = self.client.get(self.fulfill_url)
+        
+        self.datarequest1 = DataRequest.objects.get(
+                            creator=self.bob, 
+                            name='unfulfilled_datarequest1', 
+                            description='The first unfulfilled datarequest')
+        
+        self.assertFalse(self.datarequest1.fulfilling_item)
+    
+    def test_loggedin_owner(self):
+        # The owner should be able to add the fulfilling item
+        self.tryLogin('bob')
+        response = self.client.get(self.fulfill_url)
+        
+        self.datarequest1 = DataRequest.objects.get(
+                            creator=self.bob, 
+                            name='unfulfilled_datarequest1', 
+                            description='The first unfulfilled datarequest')
+        
+        self.assertEqual(self.datarequest1.fulfilling_item.id, self.dataset1.id)
+        
 class EditDatarequestsTestCase(CustomTestCase):
 	""" Test the edit datarequests page/view """
 	

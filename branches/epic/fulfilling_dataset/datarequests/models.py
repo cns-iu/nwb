@@ -40,7 +40,8 @@ class DataRequest(Item):
     """
     objects = DataRequestManager()
     status = models.CharField(max_length=1, choices=REQUEST_STATUS, db_index=True, default='U')
-
+    fulfilling_item = models.ForeignKey(Item, related_name='fulfilling_item', null=True, blank=True)
+    
     def fulfill(self):
         self.status = 'F'
         
