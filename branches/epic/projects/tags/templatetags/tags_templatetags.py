@@ -1,6 +1,6 @@
 from django import template
 from epic.tags.models import Tagging
-from tags.utils import LOGARITHMIC, LINEAR
+from epic.tags.utils import LOGARITHMIC, LINEAR
 from epic.tags.models import Tagging
 
 register = template.Library()

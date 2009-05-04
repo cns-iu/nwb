@@ -40,7 +40,8 @@ def create_project(request):
             new_project = Project.objects.create(creator=request.user,
                                                  name=name,
                                                  description=description,
-                                                 slug=slug)
+                                                 slug=slug,
+                                                 is_active=True)
             
             edit_project_url = \
                 get_item_url(new_project, 'epic.projects.views.edit_project')
@@ -172,7 +173,7 @@ def edit_project(request, item_id, slug):
                               context_instance=RequestContext(request))
 
 def view_projects(request):
-    projects = Project.objects.all().order_by('-created_at')
+    projects = Project.objects.active().order_by('-created_at')
     
     return render_to_response('projects/view_projects.html',
                               {'projects': projects,},
@@ -188,12 +189,14 @@ def view_project(request, item_id=None, slug=None):
 
 def view_user_project_list(request, user_id):
     requested_user = get_object_or_404(User, pk=user_id)
-    projects = \
-        Project.objects.filter(creator=requested_user).order_by('-created_at')
     
-    return render_to_response('projects/view_user_project_list.html',
-                              {'projects': projects,},
-                              context_instance=RequestContext(request))
+    projects = Project.objects.active().\
+        filter(creator=requested_user).order_by('-created_at')
+    
+    return render_to_response(
+        'projects/view_user_project_list.html',
+        {'projects': projects, 'requested_user': requested_user},
+        context_instance=RequestContext(request))
 
 def _make_edit_project_form_from_project(project):
     initial_edit_project_data = {

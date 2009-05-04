@@ -1,5 +1,6 @@
 from epic.datasets.models import DataSet
 from epic.projects.models import Project
+from epic.tags.models import Tagging
 
 
 ###################
@@ -11,7 +12,8 @@ def _create_project1():
         creator=bob,
         name='project1',
         description='This is the first project',
-        slug='project1')
+        slug='project1',
+        is_active=True)
     
     return project1
 
@@ -24,7 +26,13 @@ def _create_project2_dataset():
         creator=bob,
         name='dataset1',
         description='This is the first dataset',
-        slug='project1')
+        slug='dataset1',
+        is_active=True)
+    
+    bob_tags = 'lol testing for teh win'
+    
+    Tagging.objects.add_tags_and_return_added_tag_names(
+        bob_tags, item=dataset, user=bob)
     
     return dataset
 

@@ -3,7 +3,16 @@ from django.db import models
 from epic.core.models import Item
 from epic.datasets.models import DataSet
 
+
+class ProjectManager(models.Manager):
+    use_for_related_fields = True
+    
+    def active(self):
+        return self.filter(is_active=True)
+
 class Project(Item):
+    objects = ProjectManager()
+    
     datasets = models.ManyToManyField(DataSet, related_name='projects')
     
     class Admin:

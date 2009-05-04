@@ -19,10 +19,10 @@
   
   {% if projects %}
     <div class="projects-authorname">
-      Projects for {{ user.get_full_name }}
+      Projects for {{ requested_user.get_full_name }}
 	</div>
 	
 	{% load project_templatetags %}
-	{% list_projects projects %}
+	{% list_projects projects 'True' %}
   {% endif %}
 {% endblock %}

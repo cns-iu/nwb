@@ -15,21 +15,22 @@ class ProfileProjectTestCase(CustomTestCase):
     fixtures = ['core_profile_projects']
     
     def setUp(self):
-        self.profile_url = reverse('epic.core.views.view_profile')
+        self.view_profile_url = reverse('epic.core.views.view_profile')
         self.project1 = Project.objects.get(name='Test Project1')
     
     def testForNoProjects(self):
         self.tryLogin(BILL_USERNAME)
         
-        response = self.client.get('/user/')
+        response = self.client.get(self.view_profile_url)
         
         self.failUnless(response.status_code, 200)
         self.assertNotContains(response, 'Your Projects')
+        self.assertContains(response, 'You have not created any projects.')
     
     def testForProjects(self):
         self.tryLogin(BOB_USERNAME)
         
-        response = self.client.get('/user/')
+        response = self.client.get(self.view_profile_url)
         
         self.failUnless(response.status_code, 200)
         self.assertContains(response, 'Your Projects')

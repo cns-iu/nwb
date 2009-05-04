@@ -29,7 +29,7 @@ def site_index(request):
 
 def browse(request):
     datasets = DataSet.objects.active().order_by('-created_at')
-    projects = Project.objects.all().order_by('-created_at')
+    projects = Project.objects.active().order_by('-created_at')
     
     return render_to_response('core/browse.html',
         {'datasets': datasets, 'projects': projects,},
@@ -52,7 +52,8 @@ def view_profile(request, user_id=None):
 
     datasets = DataSet.objects.active().\
         filter(creator=requested_user).order_by('-created_at')
-    projects = Project.objects.filter(creator=requested_user).order_by('-created_at')
+    projects = Project.objects.active().\
+        filter(creator=requested_user).order_by('-created_at')
     datarequests = DataRequest.objects.active().\
         filter(creator=requested_user).exclude(status='C').\
         order_by('-created_at')
