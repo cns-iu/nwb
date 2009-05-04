@@ -134,4 +134,13 @@ def fulfill_datarequest(request, item_id, slug, fulfilling_item_id=None):
         datarequest.save()
         return HttpResponseRedirect(reverse('epic.datarequests.views.view_datarequest', 
                                             kwargs={'item_id':datarequest.id, 
-                                                    'slug':datarequest.slug}))    
+                                                    'slug':datarequest.slug}))
+
+@login_required
+def choose_fulfilling_item(request, fulfilling_item_id):
+    user = request.user
+    item = get_object_or_404(Item, pk=fulfilling_item_id)
+    
+    return render_to_response('datarequests/choose_fulfilling_item.html',
+                              {'item':item},
+                              context_instance=RequestContext(request))

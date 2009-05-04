@@ -41,8 +41,10 @@
 	      </ul>
 	    </p>
 	    {% endif %}
-	    {% load dataset_templatetags %}
 	    
+	    <h5><a href="{% url datarequests.views.choose_fulfilling_item fulfilling_item_id=dataset.id %}">This dataset fulfills my request ICON</a></h5>
+	    
+	    {% load dataset_templatetags %}
 	    {% show_dataset_title_vote_ratebox_datainfo dataset %}
 	    
 	    <p>{{ dataset.description|linebreaksbr }}</p>
