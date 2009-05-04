@@ -290,6 +290,8 @@ class CreateDatasetTestCase(CustomTestCase):
             'add-INITIAL_FORMS': 0,
             'add-TOTAL_FORMS': 0,
             'remove-TOTAL_FORMS': 0,
+            'reference-INITIAL_FORMS': 0,
+            'reference-TOTAL_FORMS': 1
         }
         
     def tearDown(self):
@@ -795,6 +797,8 @@ class UploadReadmeCreateDatasetsTestCase(CustomTestCase):
             'add-INITIAL_FORMS': 0,
             'add-TOTAL_FORMS': 0,
             'remove-TOTAL_FORMS': 0,
+            'reference-INITIAL_FORMS': 0,
+            'reference-TOTAL_FORMS': 1
         }
         response = self.client.post(self.create_dataset_url, 
                                     post_data)
@@ -820,6 +824,8 @@ class UploadReadmeCreateDatasetsTestCase(CustomTestCase):
             'add-INITIAL_FORMS': 0,
             'add-TOTAL_FORMS': 0,
             'remove-TOTAL_FORMS': 0,
+            'reference-INITIAL_FORMS': 0,
+            'reference-TOTAL_FORMS': 1
         }
         response = self.client.post(self.create_dataset_url, 
                                     post_data)
@@ -842,7 +848,8 @@ class UploadReadmeCreateDatasetsTestCase(CustomTestCase):
             'remove-INITIAL_FORMS': 0,
             'add-INITIAL_FORMS': 0,
             'add-TOTAL_FORMS': 0,
-            'remove-TOTAL_FORMS': 0,
+            'reference-INITIAL_FORMS': 0,
+            'reference-TOTAL_FORMS': 1
         }
         response = self.client.post(self.create_dataset_url, 
                                     post_data)
@@ -866,6 +873,8 @@ class UploadReadmeCreateDatasetsTestCase(CustomTestCase):
             'add-INITIAL_FORMS': 0,
             'add-TOTAL_FORMS': 0,
             'remove-TOTAL_FORMS': 0,
+            'reference-INITIAL_FORMS': 0,
+            'reference-TOTAL_FORMS': 1
         }
         response = self.client.post(self.create_dataset_url, 
                                     post_data)
@@ -961,6 +970,8 @@ class PreviousNextTestCase(CustomTestCase):
             'add-INITIAL_FORMS': 0,
             'add-TOTAL_FORMS': 0,
             'remove-TOTAL_FORMS': 0,
+            'reference-INITIAL_FORMS': 0,
+            'reference-TOTAL_FORMS': 1
         }
         
     def test_loggedout(self):
