@@ -12,7 +12,7 @@
 	<h1>Status: {{ datarequest.get_status_display|capfirst }}</h1>
 	
 	<ul class="datainfo">
-	  <li id="first">{{datarequest.creator.get_profile.full_title}}</li>
+	  <li id="first"><a href="{% url core.views.view_profile user_id=datarequest.creator.id %}">{{datarequest.creator.get_profile.full_title}}</a></li>
 	  <li>{{ datarequest.created_at|date:"F d, Y - P" }}</li>
 	  
 	  {% ifequal user datarequest.creator %}

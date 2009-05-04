@@ -3,7 +3,7 @@
     {# TODO: This is obviously a class not an id, fix this here and in css. #}
     <div id="commentbox">
       <h1>
-        {{ comment.posting_user.get_profile.full_title }}
+        <a href="{% url core.views.view_profile user_id=comment.posting_user.id %}">{{ comment.posting_user.get_profile.full_title }}</a>
       </h1>
       
       <h4>

@@ -3,7 +3,7 @@
 		<div class="databox">
 		  <h1> <a href="{% url datarequests.views.view_datarequest item_id=datarequest.id  slug=datarequest.slug%}">{{ datarequest.name }}</a></h1>
 		  <ul class="datainfo">
-		  	<li id="first">{{ datarequest.creator.get_profile.full_title }}</li>
+		  	<li id="first"><a href="{% url core.views.view_profile user_id=datarequest.creator.id %}">{{ datarequest.creator.get_profile.full_title }}</a></li>
 			<li>{{ datarequest.created_at|date:"F d, Y - P" }}</li>
 			{% ifequal user datarequest.creator %}
 			  {% ifnotequal datarequest.status 'C'%}
