@@ -140,7 +140,8 @@ def fulfill_datarequest(request, item_id, slug, fulfilling_item_id=None):
 def choose_fulfilling_item(request, fulfilling_item_id):
     user = request.user
     item = get_object_or_404(Item, pk=fulfilling_item_id)
-    
+    requests = DataRequest.objects.active().filter(status='U', creator=user).order_by('-created_at')
     return render_to_response('datarequests/choose_fulfilling_item.html',
-                              {'item':item},
+                              {'item':item,
+                               'requests':requests},
                               context_instance=RequestContext(request))
