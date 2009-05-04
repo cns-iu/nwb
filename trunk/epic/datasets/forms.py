@@ -2,7 +2,7 @@ from django import forms
 from django.forms import ModelForm
 from django.forms.formsets import formset_factory
 
-from epic.core.models import Item
+from epic.core.models import Item, AcademicReference
 from epic.core.util.multifile import MultiFileField
 from epic.datasets.models import DataSet, RATING_SCALE
 from epic.djangoratings.forms import RatingField
@@ -49,3 +49,12 @@ class RemoveGeoLocationHiddenFieldForm(forms.Form):
     
 GeoLocationFormSet = formset_factory(GeoLocationHiddenFieldForm, extra=0)
 RemoveGeoLocationFormSet = formset_factory(RemoveGeoLocationHiddenFieldForm, extra=0)
+
+class AcademicReferenceForm(ModelForm):
+    reference = forms.CharField(required=False)
+    
+    class Meta:
+        model = AcademicReference
+        exclude = ['item']
+        
+AcademicReferenceFormSet = formset_factory(AcademicReferenceForm, extra=1)

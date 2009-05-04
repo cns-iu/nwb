@@ -67,6 +67,10 @@ class Item(models.Model):
         raise Exception("No subclass found for %s" % (self))
     
     specific = property(_specific)
+
+class AcademicReference(models.Model):
+    item = models.ForeignKey(Item, related_name="references")
+    reference = models.CharField(max_length=1000)
     
 class ProfileManager(models.Manager):
     def for_user(self, user):

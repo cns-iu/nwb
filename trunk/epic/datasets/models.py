@@ -62,7 +62,7 @@ class DataSet(Item):
     def get_add_tags_url(self):
         return reverse("epic.datasets.views.tag_dataset",
                        kwargs={ "item_id": self.id, "slug": self.slug })
-    
+
 class DataSetFile(models.Model):
     
     parent_dataset = models.ForeignKey(DataSet, related_name="files")

@@ -47,7 +47,6 @@ class ProfileForm(ModelForm):
 		model = Profile
 		exclude = ['user']
 		
-
 class ShortAuthenticationForm(forms.Form):
     username = forms.CharField(label=("Username"), max_length=30, widget=forms.TextInput(attrs={'size': 11}));
     password = forms.CharField(label=("Password"), widget=forms.PasswordInput(attrs={'size': 11}));

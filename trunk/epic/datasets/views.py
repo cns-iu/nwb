@@ -13,6 +13,7 @@ from django.core.servers.basehttp import FileWrapper
 from django.core.urlresolvers import reverse
 from django.http import HttpResponseRedirect, HttpResponse
 from django.forms.formsets import formset_factory
+from django.forms.models import modelformset_factory
 from django.forms.util import ErrorList
 from django.shortcuts import render_to_response, get_object_or_404, \
     get_list_or_404
@@ -22,10 +23,11 @@ from django.utils import simplejson
 from django.utils.datastructures import MultiValueDictKeyError
 
 from epic.comments.forms import PostCommentForm
-from epic.core.models import Item
+from epic.core.models import Item, AcademicReference
 from epic.datasets.forms import NewDataSetForm, \
     EditDataSetForm, RatingDataSetForm, TagDataSetForm, GeoLocationFormSet, \
-    RemoveGeoLocationFormSet, UploadReadMeForm
+    RemoveGeoLocationFormSet, UploadReadMeForm, AcademicReferenceForm, \
+    AcademicReferenceFormSet
 from epic.datasets.models import DataSetFile, DataSet, RATING_SCALE
 from epic.geoloc.models import GeoLoc
 from epic.geoloc.utils import get_best_location, CouldNotFindLocation, \
@@ -42,11 +44,14 @@ def view_datasets(request):
 
 def view_dataset(request, item_id=None, slug=None):
     dataset = get_object_or_404(DataSet, pk=item_id)
+    references = dataset.references.all()
     form = PostCommentForm()
     user = request.user
     
     return render_to_response('datasets/view_dataset.html', 
-                              {'dataset': dataset, 'form': form},
+                              {'dataset': dataset, 
+                               'form': form, 
+                               'references':references}, #TODO: This should come in through datasets
                               context_instance=RequestContext(request))
 
 def view_user_dataset_list(request, user_id=None):
@@ -60,29 +65,34 @@ def view_user_dataset_list(request, user_id=None):
 @login_required
 def create_dataset(request):
     if request.method != 'POST':
-        #user has not filled out the upload form yet
+        #TODO: refactor add_formset and remove_formset to reflect the fact that they relate to geolocations 
+        #(because there's much more going on here than geolocation stuff)
         form = NewDataSetForm(request.user)
         add_formset = GeoLocationFormSet(prefix='add')
         remove_formset = RemoveGeoLocationFormSet(prefix='remove')
+        ref_formset = AcademicReferenceFormSet(prefix='reference')
     else:
         form = NewDataSetForm(request.user, request.POST, request.FILES)
         add_formset = GeoLocationFormSet(request.POST, prefix='add')
         remove_formset = RemoveGeoLocationFormSet(request.POST, 
                                                   prefix='remove')
-
-        if form.is_valid():
+        ref_formset = AcademicReferenceFormSet(request.POST,prefix='reference')
+        
+        if form.is_valid() and ref_formset.is_valid():
             name = form.cleaned_data['name']
             description = form.cleaned_data['description']
             uploaded_files = form.cleaned_data['files']
             tags = form.cleaned_data['tags']
             previous_version = form.cleaned_data['previous_version']
             
-            new_dataset = DataSet.objects.create(creator=request.user, 
-                                                 name=name, 
-                                                 description=description, 
-                                                 slug=slugify(name),
-                                                 previous_version=previous_version, 
-                                                 is_active=False)
+            new_dataset = DataSet.objects.create(
+                creator=request.user, 
+                name=name, 
+                description=description, 
+                slug=slugify(name),
+                previous_version=previous_version, 
+                is_active=False)
+            
             # TODO: Maybe only the latest version of a dataset should show up
             #  override the objects.all() or objects.active() maybe?
             if previous_version:
@@ -102,6 +112,13 @@ def create_dataset(request):
                                                     'remove_location'):
                 new_dataset.geolocations.remove(geoloc)
             
+            for ref_form in ref_formset.forms:
+                if ref_form.is_valid():
+                    if ref_form.cleaned_data:
+                        reference = ref_form.cleaned_data['reference'] 
+                        AcademicReference.objects.create(
+                            item=new_dataset, reference=reference)
+            
             try:
                 _add_uploaded_files(new_dataset, uploaded_files)
                 new_dataset.is_active = True
@@ -119,7 +136,8 @@ def create_dataset(request):
     return render_to_response('datasets/create_dataset.html', 
                               {'form':form, 
                                'add_formset': add_formset, 
-                               'remove_formset':remove_formset,}, 
+                               'remove_formset':remove_formset,
+                               'ref_formset':ref_formset}, 
                               context_instance=RequestContext(request))
         
 class NoReadMeException(Exception):

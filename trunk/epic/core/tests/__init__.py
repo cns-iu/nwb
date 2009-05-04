@@ -1,3 +1,4 @@
+from academic_reference_tests import *
 from change_password_tests import *
 from display_user_profile_tests import *
 from edit_profile_tests import *
