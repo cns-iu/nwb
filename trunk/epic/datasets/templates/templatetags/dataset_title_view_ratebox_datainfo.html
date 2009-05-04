@@ -14,7 +14,7 @@
 
 <ul class="datainfo">
   <li class="first">
-    <a href="{% url datasets.views.view_user_dataset_list user_id=dataset.creator.id %}">
+    <a href="{% url core.views.view_profile user_id=dataset.creator.id %}">
       {{ dataset.creator.get_profile.full_title }}
     </a>
   </li>
