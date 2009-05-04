@@ -1,0 +1,18 @@
+{# TODO: what to display if no datarequests #}
+{% if datarequests %}
+  {% for datarequest in datarequests %}
+	<div class="requests">
+		<h2><a href="{% url datarequests.views.view_datarequest item_id=datarequest.id slug=datarequest.slug %}">{{ datarequest.name }}</a> - {{ datarequest.creator.get_profile.full_title }}</h2><br/>
+		<p>{{ datarequest.description|truncatewords:15 }}</p>
+		{% if show_tags %}
+		  {% load tags_templatetags %}
+      	  {% list_item_tags datarequest user %}
+      	{% endif %}
+		<div class="comments">
+			<a href="{% url datarequests.views.view_datarequest item_id=datarequest.id slug=datarequest.slug %}">{{ datarequest.comments.all|length }} comment{{ datarequest.comments.all|length|pluralize }}.</a>
+		</div>
+	</div>
+  {% endfor %}
+{% else %}
+<p>There are no datarequests.</p>
+{% endif %}
