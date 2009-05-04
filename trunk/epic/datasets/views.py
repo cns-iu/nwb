@@ -63,8 +63,6 @@ def view_user_dataset_list(request, user_id=None):
 @login_required
 def create_dataset(request):
     if request.method != 'POST':
-        #TODO: refactor geoloc_add_formset and geoloc_remove_formset to reflect the fact that they relate to geolocations 
-        #(because there's much more going on here than geolocation stuff)
         form = NewDataSetForm(request.user)
         geoloc_add_formset = GeoLocationFormSet(prefix='add')
         geoloc_remove_formset = RemoveGeoLocationFormSet(prefix='remove')
