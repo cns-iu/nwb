@@ -25,6 +25,7 @@
 
 <script type="text/javascript">
 var formPrefix = 'reference';
+// This array will store all the tr elements for the references.
 var references = [];
 
 initalize();
@@ -48,6 +49,7 @@ function initalizeReferences(){
 		var td = referenceToAdd.parentNode;
 		var tr = td.parentNode;
 		var removeLink = createRemoveLink(referenceToAdd.id)
+		
 		td.appendChild(removeLink);
 		references[i] = tr;
 	}
@@ -74,6 +76,7 @@ function addReference(){
 	var td = document.createElement('td');
 	var removeLink = createRemoveLink(referenceToAdd.id);
 
+	//Put the new tr into the ref array as the last position
 	references[getCount()] = tr;
 	
 	tr.appendChild(th);
@@ -85,6 +88,7 @@ function addReference(){
 
 	insertionPoint.parentNode.insertBefore(tr, insertionPoint.nextSibling);
 
+	//Update the manager to reflect the added element
 	var manager = getManager();
 	manager.setAttribute('value', parseInt(manager.value) + 1);
 }
@@ -122,8 +126,11 @@ function removeReference(id){
 	var td = referenceToRemove.parentNode;
 	var tr = td.parentNode;
 	var tbody = tr.parentNode;
+
+	//Get the entire tr out of the html
 	tbody.removeChild(tr);
 
+	//Update the manager to reflect the removal
 	var manager = getManager();
 	manager.setAttribute('value', parseInt(manager.value) - 1);
 	
@@ -134,18 +141,27 @@ function removeReference(id){
 		}
 	}
 
+	//Formsets require the numbers to be incremental.
 	updateReferences();
 }
 function updateReferences(){
+	/*
+	** Drop out all the null elements.
+	**/
 	var count = references.length;
 	for(var i = 0; i < count; i++){
 		if(references[i] == null){
 			references.splice(i,1);
 		}
 	}
-	
+	/*
+	** Set the ids for the inputs and the remove links
+	**   based on their position in the array so all
+	**   the ids are in order for the formset.
+	*/
 	count = references.length;
 	for(var i = 0; i < count; i++){
+		// the tr had two children if correctly formed - [0] is the 'input', [1] is the 'a'
 		var input = references[i].childNodes[1].childNodes[0];
 
 		input.id = 'id_' + formPrefix + '-' + i + '-' + formPrefix;
@@ -155,8 +171,6 @@ function updateReferences(){
 
 		removeLink.setAttribute('onclick', 'removeReference("' + i + '"); return false;');
 	}
-
-	
 }
 </script>
 {% endblock %}
