@@ -13,7 +13,13 @@ class AcademicReferenceTestCase(CustomTestCase):
     def setUp(self):
         self.create_dataset_url = reverse('epic.datasets.views.create_dataset')
         
-        self.bob = User.objects.get(username='bob')
+        self.bob = User.objects.get(username='bob') 
+        
+        
+    def testReferenceAdded(self):
+        # When uploading a valid academic reference, the model should be
+        #    created in the database
+        self.tryLogin('bob')
         
         test_file1 = tempfile.TemporaryFile()
         test_file2 = tempfile.TemporaryFile()
@@ -27,7 +33,7 @@ class AcademicReferenceTestCase(CustomTestCase):
         test_file1.seek(0)
         test_file2.seek(0)
         
-        self.post_data = {
+        post_data = {
             'name': 'This is a new dataset 209u359hdfg',
             'description': '20y5hdfg ahi3hoh348t3948t5hsdfigh',
             'files[]' : [test_file1, test_file2],
@@ -40,14 +46,47 @@ class AcademicReferenceTestCase(CustomTestCase):
             'reference-0-reference': 'this is my refernece'
         }
         
-    def testReferenceAdded(self):
-        # When uploading a valid academic reference, the model should be
+        response = self.client.post(self.create_dataset_url, post_data)
+
+        dataset = DataSet.objects.get(creator=self.bob, name=post_data['name'])
+        acad_ref = AcademicReference.objects.get(item=dataset)
+        self.assertTrue(acad_ref.reference, post_data['reference-0-reference'])
+        
+    def testMultipleReferencedAdded(self):
+        # When uploading several valid academic reference, the models should be
         #    created in the database
         self.tryLogin('bob')
         
-        response = self.client.post(self.create_dataset_url, self.post_data)
-
-        dataset = DataSet.objects.get(creator=self.bob, name=self.post_data['name'])
-        acad_ref = AcademicReference.objects.get(item=dataset)
-        self.assertTrue(acad_ref.reference, self.post_data['reference-0-reference'])
+        test_file1 = tempfile.TemporaryFile()
+        test_file2 = tempfile.TemporaryFile()
         
+        test_file1.write("This is a test file1")
+        test_file2.write("This is a test file2")
+        
+        test_file1.flush()
+        test_file2.flush()
+
+        test_file1.seek(0)
+        test_file2.seek(0)
+        
+        post_data = {
+            'name': 'This is a new dataset 209u359hdfg',
+            'description': '20y5hdfg ahi3hoh348t3948t5hsdfigh',
+            'files[]' : [test_file1, test_file2],
+            'remove-INITIAL_FORMS': 0,
+            'add-INITIAL_FORMS': 0,
+            'add-TOTAL_FORMS': 0,
+            'remove-TOTAL_FORMS': 0,
+            'reference-INITIAL_FORMS': 0,
+            'reference-TOTAL_FORMS': 2,
+            'reference-0-reference': 'this is my refernece',
+            'reference-1-reference': 'asdf9234t sdg'
+        }
+        
+        response = self.client.post(self.create_dataset_url, post_data)
+
+        dataset = DataSet.objects.get(creator=self.bob, name=post_data['name'])
+        
+        # This will error if the references were not created correctly
+        AcademicReference.objects.get(item=dataset, reference=post_data['reference-0-reference'])
+        AcademicReference.objects.get(item=dataset, reference=post_data['reference-1-reference'])
