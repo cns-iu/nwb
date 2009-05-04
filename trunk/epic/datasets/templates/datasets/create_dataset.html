@@ -19,7 +19,7 @@
   		{{ ref_formset.as_table }}
     </table>
 	{% load geoloc_templatetags%}
-	{% add_locations_map_for_dataset add_formset remove_formset %}
+	{% add_locations_map_for_dataset geoloc_add_formset geoloc_remove_formset %}
     <input type="image" alt="Submit New Dataset" src="/core_media/images/submit.jpg" value="Upload" />
 </form>
 

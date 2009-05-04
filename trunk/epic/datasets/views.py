@@ -44,14 +44,12 @@ def view_datasets(request):
 
 def view_dataset(request, item_id=None, slug=None):
     dataset = get_object_or_404(DataSet, pk=item_id)
-    references = dataset.references.all()
     form = PostCommentForm()
     user = request.user
     
     return render_to_response('datasets/view_dataset.html', 
                               {'dataset': dataset, 
-                               'form': form, 
-                               'references':references}, #TODO: This should come in through datasets
+                               'form': form},
                               context_instance=RequestContext(request))
 
 def view_user_dataset_list(request, user_id=None):
@@ -65,16 +63,16 @@ def view_user_dataset_list(request, user_id=None):
 @login_required
 def create_dataset(request):
     if request.method != 'POST':
-        #TODO: refactor add_formset and remove_formset to reflect the fact that they relate to geolocations 
+        #TODO: refactor geoloc_add_formset and geoloc_remove_formset to reflect the fact that they relate to geolocations 
         #(because there's much more going on here than geolocation stuff)
         form = NewDataSetForm(request.user)
-        add_formset = GeoLocationFormSet(prefix='add')
-        remove_formset = RemoveGeoLocationFormSet(prefix='remove')
+        geoloc_add_formset = GeoLocationFormSet(prefix='add')
+        geoloc_remove_formset = RemoveGeoLocationFormSet(prefix='remove')
         ref_formset = AcademicReferenceFormSet(prefix='reference')
     else:
         form = NewDataSetForm(request.user, request.POST, request.FILES)
-        add_formset = GeoLocationFormSet(request.POST, prefix='add')
-        remove_formset = RemoveGeoLocationFormSet(request.POST, 
+        geoloc_add_formset = GeoLocationFormSet(request.POST, prefix='add')
+        geoloc_remove_formset = RemoveGeoLocationFormSet(request.POST, 
                                                   prefix='remove')
         ref_formset = AcademicReferenceFormSet(request.POST,prefix='reference')
         
@@ -104,11 +102,11 @@ def create_dataset(request):
                                         item=new_dataset, 
                                         user=request.user)
             
-            for geoloc in _get_geolocs_from_formset(add_formset, 
+            for geoloc in _get_geolocs_from_formset(geoloc_add_formset, 
                                                     'add_location'):
                 new_dataset.geolocations.add(geoloc)
             
-            for geoloc in _get_geolocs_from_formset(remove_formset, 
+            for geoloc in _get_geolocs_from_formset(geoloc_remove_formset, 
                                                     'remove_location'):
                 new_dataset.geolocations.remove(geoloc)
             
@@ -135,8 +133,8 @@ def create_dataset(request):
         
     return render_to_response('datasets/create_dataset.html', 
                               {'form':form, 
-                               'add_formset': add_formset, 
-                               'remove_formset':remove_formset,
+                               'geoloc_add_formset': geoloc_add_formset, 
+                               'geoloc_remove_formset':geoloc_remove_formset,
                                'ref_formset':ref_formset}, 
                               context_instance=RequestContext(request))
         
@@ -386,13 +384,13 @@ def edit_dataset(request, item_id, slug=None):
         geolocs = GeoLoc.objects.filter(datasets=dataset.id)
         for geoloc in geolocs:
             initial_location_data.append({'add_location':geoloc,})
-        add_formset = GeoLocationFormSet(prefix='add', 
+        geoloc_add_formset = GeoLocationFormSet(prefix='add', 
                                          initial=initial_location_data)
-        remove_formset = RemoveGeoLocationFormSet(prefix='remove')
+        geoloc_remove_formset = RemoveGeoLocationFormSet(prefix='remove')
     else:
         form = EditDataSetForm(request.POST)
-        add_formset = GeoLocationFormSet(request.POST, prefix='add')
-        remove_formset = RemoveGeoLocationFormSet(request.POST, 
+        geoloc_add_formset = GeoLocationFormSet(request.POST, prefix='add')
+        geoloc_remove_formset = RemoveGeoLocationFormSet(request.POST, 
                                                   prefix='remove')
             
         if form.is_valid():       
@@ -407,11 +405,11 @@ def edit_dataset(request, item_id, slug=None):
                                         item=dataset, 
                                         user=user)
             
-            for geoloc in _get_geolocs_from_formset(add_formset, 
+            for geoloc in _get_geolocs_from_formset(geoloc_add_formset, 
                                                     'add_location'):
                 dataset.geolocations.add(geoloc)
             
-            for geoloc in _get_geolocs_from_formset(remove_formset, 
+            for geoloc in _get_geolocs_from_formset(geoloc_remove_formset, 
                                                     'remove_location'):
                 dataset.geolocations.remove(geoloc)
             
@@ -436,8 +434,8 @@ def edit_dataset(request, item_id, slug=None):
     return render_to_response('datasets/edit_dataset.html', 
                               {'dataset': dataset, 
                                'form': form, 
-                               'add_formset': add_formset, 
-                               'remove_formset':remove_formset,
+                               'geoloc_add_formset': geoloc_add_formset, 
+                               'geoloc_remove_formset':geoloc_remove_formset,
                                'files':dataset.files.all()},
                               context_instance=RequestContext(request))
 
