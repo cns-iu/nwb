@@ -25,19 +25,17 @@
 
 <script type="text/javascript">
 var formPrefix = 'reference';
-var last_id;
 var references = [];
 
 initalize();
 
 function initalize(){
-	last_id = getCount();
 	initalizeReferences();
 	insertAddButton();
 }
 function getCount(){
 	var manager = getManager();
-	return manager.value - 1;
+	return manager.value;
 }
 function getManager(){
 	var manager = document.getElementById('id_' + formPrefix + '-TOTAL_FORMS');
@@ -46,9 +44,12 @@ function getManager(){
 function initalizeReferences(){
 	var count = getCount();
 	for(i = 0; i < count; i++){
-		var input = document.getElementById('id_' + formPrefix + '-' + i + '-' + formPrefix);
-		var tr
-		references[i] = form;
+		var referenceToAdd = document.getElementById('id_' + formPrefix + '-' + i + '-' + formPrefix);
+		var td = referenceToAdd.parentNode;
+		var tr = td.parentNode;
+		var removeLink = createRemoveLink(referenceToAdd.id)
+		td.appendChild(removeLink);
+		references[i] = tr;
 	}
 }
 function insertAddButton(){
@@ -60,11 +61,11 @@ function insertAddButton(){
 	insertionPoint.parentNode.insertBefore(addLink, insertionPoint.nextSibling);	
 }
 function getInsertionPoint(){
-	var insertionPoint = document.getElementById('id_' + formPrefix + '-' + last_id + '-' + formPrefix).parentNode.parentNode;
+	var insertionPoint = document.getElementById('id_' + formPrefix + '-' + parseInt(getCount() - 1) + '-' + formPrefix).parentNode.parentNode;
 	return insertionPoint;
 }
 function addReference(){
-	var newReferenceNumber = last_id + 1;
+	var newReferenceNumber = getCount();
 	var insertionPoint = getInsertionPoint();
 	var labelToAdd = createReferenceLabel(newReferenceNumber);
 	var referenceToAdd = createReference(formPrefix, newReferenceNumber, '');
@@ -73,6 +74,8 @@ function addReference(){
 	var td = document.createElement('td');
 	var removeLink = createRemoveLink(referenceToAdd.id);
 
+	references[getCount()] = tr;
+	
 	tr.appendChild(th);
 	th.appendChild(labelToAdd);
 
@@ -82,7 +85,6 @@ function addReference(){
 
 	insertionPoint.parentNode.insertBefore(tr, insertionPoint.nextSibling);
 
-	last_id ++;
 	var manager = getManager();
 	manager.setAttribute('value', parseInt(manager.value) + 1);
 }
@@ -110,7 +112,7 @@ function createReference(formPrefix, formNumber, formValue){
 function createRemoveLink(id){
 	var removeLink = document.createElement('a');
 
-	removeLink.setAttribute('onclick', 'removeReference("'+id+'"); return false;');
+	removeLink.setAttribute('onclick', 'removeReference("' + id + '"); return false;');
 	removeLink.innerHTML = 'Remove';
 
 	return removeLink;
@@ -124,6 +126,37 @@ function removeReference(id){
 
 	var manager = getManager();
 	manager.setAttribute('value', parseInt(manager.value) - 1);
+	
+	var count = getCount();
+	for(var i = 0; i < count; i++){
+		if(references[i] == tr){
+			references[i] = null;
+		}
+	}
+
+	updateReferences();
+}
+function updateReferences(){
+	var count = references.length;
+	for(var i = 0; i < count; i++){
+		if(references[i] == null){
+			references.splice(i,1);
+		}
+	}
+	
+	count = references.length;
+	for(var i = 0; i < count; i++){
+		var input = references[i].childNodes[1].childNodes[0];
+
+		input.id = 'id_' + formPrefix + '-' + i + '-' + formPrefix;
+		input.name = formPrefix + '-' + i + '-' + formPrefix;
+
+		var removeLink = references[i].childNodes[1].childNodes[1];
+
+		removeLink.setAttribute('onclick', 'removeReference("' + i + '"); return false;');
+	}
+
+	
 }
 </script>
 {% endblock %}
