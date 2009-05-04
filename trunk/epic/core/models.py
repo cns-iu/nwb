@@ -60,11 +60,11 @@ class Item(models.Model):
     
     # TODO: Fix this terrible hack
     def _specific(self):
-        possibilities = ['dataset', 'datarequest']
+        possibilities = ['dataset', 'datarequest', 'project']
         for possibility in possibilities:
             if hasattr(self, possibility):
                 return getattr(self, possibility)
-        raise Exception("No subclass found for %s" % (self))
+        raise Exception('No subclass found for %s' % (self))
     
     specific = property(_specific)
 
@@ -94,7 +94,8 @@ class Profile(models.Model):
     
     objects = ProfileManager()
     user = models.ForeignKey(User, unique=True)
-    affiliation = models.CharField(max_length=MAX_USER_PROFILE_LENGTH, blank=True)
+    affiliation = models.CharField(max_length=MAX_USER_PROFILE_LENGTH,
+                                   blank=True)
     
     def short_title(self):
         if self.user.first_name and self.user.last_name:
@@ -114,4 +115,4 @@ class Profile(models.Model):
         return full_title
     
     def __unicode__(self):
-        return full_title()
+        return self.full_title()

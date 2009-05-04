@@ -20,7 +20,10 @@ def index(request):
 def view_items_for_tag(request, tag_name):
     tags = Tagging.objects.filter(tag=tag_name)
     
-    specifics = [tag.item.specific for tag in tags if tag.item.specific.is_active]
+    datasets = _get_datasets_for_tags(tags)
+    projects = _get_projects_containing_datasets(datasets)
+    datarequests = _get_datarequests_for_tags(tags)
+    specifics = datasets + projects + datarequests
     
     return render_to_response('tags/tag_view.html', 
                               {'tags':tags, 
@@ -31,14 +34,24 @@ def view_items_for_tag(request, tag_name):
 def view_datasets_for_tag(request, tag_name):
     tags = Tagging.objects.filter(tag=tag_name)
     
-    specifics = [tag.item.specific for tag in tags 
-                 if tag.item.specific.is_active and tag.item.specific.is_dataset]
+    specifics = _get_datasets_for_tags(tags)
     
     return render_to_response('tags/tag_view.html', 
                               {'tags':tags, 
                                'tag_name':tag_name, 
                                'specifics':specifics}, 
                               context_instance=RequestContext(request))
+
+def view_projects_for_tag(request, tag_name):
+    tags = Tagging.objects.filter(tag=tag_name)
+    
+    datasets = _get_datasets_for_tags(tags)
+    specifics = _get_projects_containing_datasets(datasets)
+    
+    return render_to_response(
+        'tags/tag_view.html', 
+        {'tags':tags, 'tag_name':tag_name, 'specifics':specifics}, 
+        context_instance=RequestContext(request))
 
 def view_datarequests_for_tag(request, tag_name):
     tags = Tagging.objects.filter(tag=tag_name)
@@ -121,3 +134,26 @@ def add_tags_and_return_successful_tag_names(request):
     
     json = simplejson.dumps(responseData)
     return HttpResponse(json, mimetype='application/json')
+
+def _get_datasets_for_tags(tags):
+    datasets = [tag.item.specific for tag in tags if
+                    tag.item.specific.is_active and
+                    tag.item.specific.is_dataset()]
+    
+    return datasets
+
+def _get_datarequests_for_tags(tags):
+    datarequests = [tag.item.specific for tag in tags if
+                        tag.item.specific.is_active and
+                        tag.item.specific.is_datarequest()]
+    
+    return datarequests
+
+def _get_projects_containing_datasets(datasets):
+    project_sets = [set(dataset.projects.all()) for dataset in datasets]
+    projects = set([])
+    
+    for project_set in project_sets:
+        projects = projects.union(project_set)
+    
+    return list(projects)

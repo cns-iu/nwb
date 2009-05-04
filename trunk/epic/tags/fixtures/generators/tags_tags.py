@@ -10,7 +10,7 @@ def _create_dataset1():
 									  name="dataset1",
 									  description="dataset number one",
 									  slug="dataset1",
-                                      is_active=True)
+									  is_active=True)
 	
 	return dataset1
 
@@ -23,7 +23,7 @@ def _create_dataset2():
 									  name="dataset2",
 									  description="dataset number two",
 									  slug="dataset2",
-                                      is_active=True)
+									  is_active=True)
 	
 	return dataset2
 

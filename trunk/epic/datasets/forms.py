@@ -27,7 +27,7 @@ class NewDataSetForm(EditDataSetForm):
     
 class UploadReadMeForm(forms.Form):
     readme = forms.FileField(required=True)
-    
+
 class RatingDataSetForm(forms.Form):
     rating = RatingField(RATING_SCALE)
 

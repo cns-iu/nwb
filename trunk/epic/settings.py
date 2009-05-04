@@ -110,6 +110,7 @@ INSTALLED_APPS = (
     'epic.tags',
     'epic.messages',
     'epic.geoloc',
+    'epic.projects',
 )
 
 GOOGLE_KEY = 'ABQIAAAA_nCXPZ8LuIeeo7WwioikORQgz-4lV129Gb6RmcYlAWs2FINo4xQC9fAh76x7NI05hOaFBXreklShsg'
@@ -117,4 +118,10 @@ GOOGLE_KEY = 'ABQIAAAA_nCXPZ8LuIeeo7WwioikORQgz-4lV129Gb6RmcYlAWs2FINo4xQC9fAh76
 # This is needed for checking for a readme file as the user uploads.  The only
 #  way to check for a compressed archieve requires the upload to be on disk, 
 #  not in memory.
+FILE_UPLOAD_MAX_MEMORY_SIZE = 0
+GOOGLE_KEY = 'ABQIAAAA_nCXPZ8LuIeeo7WwioikORQgz-4lV129Gb6RmcYlAWs2FINo4xQC9fAh76x7NI05hOaFBXreklShsg'
+
+# This is needed for checking for a readme file as the user uploads.  The only
+# way to check for a compressed archieve requires the upload to be on disk, 
+# not in memory.
 FILE_UPLOAD_MAX_MEMORY_SIZE = 0

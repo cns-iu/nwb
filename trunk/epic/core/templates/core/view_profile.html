@@ -46,8 +46,28 @@
   
   <hr />
   
-  {% if datarequests %}
+  {% if projects %}
+    {% ifequal profile.user user %}
+      <h3>Your Projects</h3>
+    {% else %}
+      <h3>{{ profile.full_title }} Projects</h3>
+    {% endifequal %}
     
+    {% load project_templatetags %}
+    {% list_projects projects 'True' %}
+  {% else %}
+    {% ifequal profile.user user %}
+      <p>You have not created any projects.</p>
+    {% else %}
+      <p>{{ profile.full_title }} has not created any projects.</p>
+    {% endifequal %}
+  {% endif %}
+  
+  <a href="{% url projects.views.view_projects %}">View All Projects</a>
+  
+  <hr />
+  
+  {% if datarequests %}
      {% ifequal profile.user user %}
        <h3>Your Data Requests</h3>
      {% else %}

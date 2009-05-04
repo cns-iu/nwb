@@ -4,6 +4,7 @@
 	<div class="requests">
 		<h2><a href="{% url datarequests.views.view_datarequest item_id=datarequest.id slug=datarequest.slug %}">{{ datarequest.name }}</a> - <a href="{% url core.views.view_profile user_id=datarequest.creator.id %}">{{ datarequest.creator.get_profile.full_title }}</a></h2><br/>
 		<p>{{ datarequest.description|truncatewords:15 }}</p>
+		
 		{% if show_tags %}
 		  {% load tags_templatetags %}
       	  {% list_item_tags datarequest user %}

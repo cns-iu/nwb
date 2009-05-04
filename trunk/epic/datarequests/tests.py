@@ -1,7 +1,8 @@
-from epic.core.test import CustomTestCase
-from django.core.urlresolvers import reverse
-from epic.datarequests.models import DataRequest
 from django.contrib.auth.models import User
+from django.core.urlresolvers import reverse
+
+from epic.core.test import CustomTestCase
+from epic.datarequests.models import DataRequest
 
 class DataRequestTestCase(CustomTestCase):
 	""" Test that the model for datarequests is working correctly """

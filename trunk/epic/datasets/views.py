@@ -11,27 +11,36 @@ from django.contrib.auth.models import User
 from django.core.files.base import ContentFile
 from django.core.servers.basehttp import FileWrapper
 from django.core.urlresolvers import reverse
-from django.http import HttpResponseRedirect, HttpResponse
+from django.http import HttpResponseRedirect
+from django.http import HttpResponse
 from django.forms.formsets import formset_factory
-from django.forms.models import modelformset_factory
 from django.forms.util import ErrorList
-from django.shortcuts import render_to_response, get_object_or_404, \
-    get_list_or_404
+from django.shortcuts import get_list_or_404
+from django.shortcuts import get_object_or_404
+from django.shortcuts import render_to_response
 from django.template.defaultfilters import slugify
 from django.template import RequestContext
 from django.utils import simplejson
 from django.utils.datastructures import MultiValueDictKeyError
 
 from epic.comments.forms import PostCommentForm
-from epic.core.models import Item, AcademicReference
-from epic.datasets.forms import NewDataSetForm, \
-    EditDataSetForm, RatingDataSetForm, TagDataSetForm, GeoLocationFormSet, \
-    RemoveGeoLocationFormSet, UploadReadMeForm, AcademicReferenceForm, \
-    AcademicReferenceFormSet
-from epic.datasets.models import DataSetFile, DataSet, RATING_SCALE
+from epic.core.models import AcademicReference
+from epic.core.models import Item
+from epic.datasets.forms import AcademicReferenceFormSet
+from epic.datasets.forms import EditDataSetForm
+from epic.datasets.forms import GeoLocationFormSet
+from epic.datasets.forms import NewDataSetForm
+from epic.datasets.forms import RatingDataSetForm
+from epic.datasets.forms import RemoveGeoLocationFormSet
+from epic.datasets.forms import TagDataSetForm
+from epic.datasets.forms import UploadReadMeForm
+from epic.datasets.models import DataSet
+from epic.datasets.models import DataSetFile
+from epic.datasets.models import RATING_SCALE
 from epic.geoloc.models import GeoLoc
-from epic.geoloc.utils import get_best_location, CouldNotFindLocation, \
-    parse_geolocation
+from epic.geoloc.utils import CouldNotFindLocation
+from epic.geoloc.utils import get_best_location
+from epic.geoloc.utils import parse_geolocation
 from epic.tags.models import Tagging
 
 
@@ -48,8 +57,7 @@ def view_dataset(request, item_id=None, slug=None):
     user = request.user
     
     return render_to_response('datasets/view_dataset.html', 
-                              {'dataset': dataset, 
-                               'form': form},
+                              {'dataset': dataset, 'form': form},
                               context_instance=RequestContext(request))
 
 def view_user_dataset_list(request, user_id=None):

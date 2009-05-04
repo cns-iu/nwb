@@ -93,12 +93,13 @@ class UrlsTestCaseTestCase(CustomTestCase):
         for code in self.error_page_codes:
             self.assertNotEqual(code, response.status_code)
     
-    def test_delete_dataset_files(self):
-        url = reverse('epic.datasets.views.delete_dataset_files', kwargs={'item_id':self.dataset1.id,'slug':self.dataset1.slug})
-        response = self.client.get(url)
-        for code in self.error_page_codes:
-            self.assertNotEqual(code, response.status_code)
+        def test_delete_dataset_files(self):
+            url = reverse('epic.datasets.views.delete_dataset_files', kwargs={'item_id':self.dataset1.id,'slug':self.dataset1.slug})
+            response = self.client.get(url)
             
+            for code in self.error_page_codes:
+                self.assertNotEqual(code, response.status_code)
+
 class ViewDatasetsTestCase(CustomTestCase):
     """ Test the view_datasets view """
     

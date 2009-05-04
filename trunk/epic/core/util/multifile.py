@@ -99,13 +99,13 @@ class MultiFileInput(FileInput):
             
         }
         function remove_%(name)s(id) {
-			removeNode = document.getElementById(id);
-			removeNode.parentNode.removeChild(removeNode);
-			removeText = document.getElementById('remove_' + removeNode.id);
-			removeText.parentNode.removeChild(removeText);
-			removeBreak = document.getElementById('break_' + removeNode.id);
-			removeBreak.parentNode.removeChild(removeBreak);
-			%(id)s_counter--;
+            removeNode = document.getElementById(id);
+            removeNode.parentNode.removeChild(removeNode);
+            removeText = document.getElementById('remove_' + removeNode.id);
+            removeText.parentNode.removeChild(removeText);
+            removeBreak = document.getElementById('break_' + removeNode.id);
+            removeBreak.parentNode.removeChild(removeBreak);
+            %(id)s_counter--;
         }
         -->
         </script>
@@ -159,11 +159,11 @@ class MultiFileField(Field):
         Also checks whether a file was required.
         """
         super(MultiFileField, self).clean(data)
-		
+        
         if not self.required and data in EMPTY_VALUES:
             return None
         try:
-        	f = data
+            f = data
         except TypeError:
             raise ValidationError(ugettext(u"No file was submitted. Check the encoding type on the form..."))
         except KeyError:
@@ -171,10 +171,10 @@ class MultiFileField(Field):
 
         #for a_file in f:
         #    if not a_file.content:
-        #     	raise ValidationError(ugettext(u"The submitted file is empty."))
+        #         raise ValidationError(ugettext(u"The submitted file is empty."))
                
         if self.strict and len(f) != self.count:
-			raise ValidationError(ugettext(u"An incorrect number of files were uploaded."))
+            raise ValidationError(ugettext(u"An incorrect number of files were uploaded."))
             
         return f
 

@@ -24,6 +24,7 @@ class ProfileDatasetTestCase(CustomTestCase):
     def testForDataSets(self):
         self.tryLogin(BILL_USERNAME)
         response = self.client.get('/user/')
+        
         self.failUnless(response.status_code, 200)
         self.assertContains(response, 'Your Datasets')
         self.assertContains(response, 'edit')

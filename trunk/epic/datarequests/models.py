@@ -11,6 +11,7 @@ from django.db import models
 
 from epic.core.models import Item
 
+
 REQUEST_STATUS = (
     ('U' , 'unfulfilled'),
     ('F' , 'fulfilled'),
@@ -53,4 +54,3 @@ class DataRequest(Item):
     
     def __unicode__(self):
         return "%s %s %s" % (self.status, self.name, self.creator)
-        

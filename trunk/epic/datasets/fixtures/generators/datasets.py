@@ -15,7 +15,7 @@ def _create_datasets():
                                       description='this is the second dataset',
                                       slug='dataset2',
                                       is_active=True)
-	
+
 ######################################
 # Generate the actual fixtures here. #
 ######################################

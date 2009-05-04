@@ -7,10 +7,10 @@ from datasets.models import DataSet
 
 def _create_dataset1():
     dataset1 = DataSet(creator=bill,
-        name='Item 1',
-        description='This is the first item (by bill)',
-        slug='whatever',
-        is_active=True)
+                       name='Item 1',
+                       description='This is the first item (by bill)',
+                       slug='whatever',
+                       is_active=True)
     
     dataset1.save()
     
