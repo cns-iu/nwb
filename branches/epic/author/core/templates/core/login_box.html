@@ -1,0 +1,13 @@
+<form method="post" action="{% url django.contrib.auth.views.login %}">
+  <label>{{ login_form.username }}</label>
+  <br/>
+  
+  <label>{{ login_form.password }}</label>
+  
+  <input type="submit" value="login" />
+  <input type="hidden" name="next" value="{{ next }}" />
+  
+  {# TODO: fix the styling, don't just add spacing. #}
+  <label>&nbsp;&nbsp;&nbsp;<a href="{% url core.views.forgot_password %}">Forgot Info?</a></label>
+</form>
+

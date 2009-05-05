@@ -1,0 +1,276 @@
+{% block scripts_header %}
+{{ block.super }}
+<script src="http://maps.google.com/maps?file=api&amp;v=2&amp;key={{ GOOGLE_KEY }}" type="text/javascript"></script>
+{% endblock %}
+
+
+<script type="text/javascript">
+	window.onUnload = GUnload();
+</script>
+
+{{ geoloc_add_formset }}
+{{ geoloc_remove_formset }}
+
+<h4>Click on the map to add locations to the dataset</h4>
+
+{# TODO: Style this #}
+<div class="messages" id="map_messages"></div>
+<div class="map_location_bar">
+     <p>
+       <b>Add a location:</b>
+       <input type="text" size="30" id="location_input"/>
+       <input type="submit" value="Search" name="find" onclick="lookupLocation('location_input'); return false;"/>
+     </p>
+</div>
+
+<div id="map" style="width: 500px; height: 360px"></div>
+
+
+{% block scripts_footer %}
+{{ block.super }}
+<script type="text/javascript">	
+//TODO: refactor out add_locations and remove_locations to just have one list of locations
+
+	UrlNamePair = function(name, url) {
+		this.name = name;
+		this.url = url;
+	};
+	
+	Location = function (lat, lng, canonicalName, urlNameList) {
+		this.lat = lat;
+		this.lng = lng;
+		this.canonicalName = canonicalName;
+		this.urlNameList = urlNameList;
+		this.toString = function(){
+			if (urlNameList){
+				return '[[' + this.lat + ', ' + this.lng + '], \'' + this.canonicalName + '\', [' + location.urlNameList + ']]';
+			}else{
+				return '[[' + this.lat + ', ' + this.lng + '], \'' + this.canonicalName + '\', []]';
+			}
+		};
+		this.equals = function(location){
+			return ((this.lat == location.lat) && (this.lng == location.lng) && (this.canonicalName == location.canonicalName));
+
+		};
+	};
+</script>
+
+<script type="text/javascript">
+	if (GBrowserIsCompatible()) {
+		
+		// setup google map
+		
+		var map_long = 0;
+		var map_lat = 45;
+		var map_zoom = 1;
+		var map_div = document.getElementById("map");
+
+		var map = new GMap2(map_div);
+		
+		map.addControl(new GSmallMapControl());
+		map.addControl(new GMapTypeControl());
+		
+		var pt = new GLatLng(map_lat, map_long);
+		map.setCenter(pt, map_zoom);
+
+		GEvent.addListener(map, "click", function(overlay, latlng) {     
+			  if (latlng) { 
+				    var html = createHtmlForMapClickInfoWindow(latlng);
+					map.openInfoWindow(latlng, html);
+				  }
+				});
+
+		// add existing location markers to map
+
+		var locations = getInitialLocations(getForms('add'));
+		drawLocationMarkers(locations);
+	}
+
+	function createHtmlForMapClickInfoWindow(latlng){
+		var title = '<br />Location Name:';
+		var textBox = "<input type=\"text\" id=\"canonical_name\" \\>";
+		var onclickFunction = 'addNewLocationFromElement(\'canonical_name\','+ latlng.lat() +','+ latlng.lng() +'); return false;';
+		var submitBox = '<br><input type="submit" value="Add Location" onclick="' + onclickFunction + '" />';
+		var html = title + textBox + submitBox;
+		return html;
+	}
+	
+	/**
+		Get all the forms of a certain prefix that are on the page
+	**/
+	function getForms(formPrefix){
+		re = new RegExp("id_" + formPrefix + "-\\d+-" + formPrefix + "_location");
+		return jQuery('input:hidden').filter(function(){ return this.id.match(re); });
+	}
+
+	function createLocationFromLocationString(locationString){
+		var re = /^\[\[(-?\d*.\d*), (-?\d*.\d*)\], '(.+?)', (\[(?:\[u'(.+?)', '(.+?)'\](?:, )?)*\])\]$/i;
+		var splitLocationString = locationString.split(re);
+
+		var lat = splitLocationString[1];
+		var lng = splitLocationString[2];
+		console.log(lat, lng);
+		var canonicalName = splitLocationString[3];
+		var unprocessedUrlNameList = splitLocationString[4];
+		var urlNameList = [];
+
+		var splitUrlNameList = unprocessedUrlNameList.split('], ');
+			
+		for(var j = 0; j < splitUrlNameList.length; j++){
+			re = /^\[(?:)\[?u'(.+)', '(.+)'/i;
+			var unprocessedUrlName = splitUrlNameList[j].split(re);
+
+			var name = unprocessedUrlName[1];
+			var url = unprocessedUrlName[2];
+
+			var urlNamePair = new UrlNamePair(name, url);
+			urlNameList = urlNameList.concat(urlNamePair);
+		}
+
+		return new Location(lat, lng, canonicalName, urlNameList);
+	}
+
+	function getInitialLocations(existingLocationForms){
+		var locations = [];
+		
+		for (var i = 0; i < existingLocationForms.length ; i ++){
+			var loc = createLocationFromLocationString(existingLocationForms[i].value);
+			locations = locations.concat(loc);
+		}
+		return locations;
+	}
+
+	/**
+		Get the number of forms with a certain prefix on the page
+	**/
+	function calculateNumberOfFormsOnPage(formPrefix){
+		return getForms(formPrefix).length;
+	}
+	
+	/**
+		Create the html that represents a form on the page
+	**/
+	function createHtmlForForm(formPrefix, formNumber, formValue){
+		var id = 'id_' + formPrefix + '-' + formNumber + '-' + formPrefix + '_location';
+		var value = formValue;
+		var name = formPrefix + '-' + formNumber + '-' + formPrefix + '_location';
+		return '<input type="hidden" id="' + id + '" value="' + value + '" name="' + name + '"/>';
+	}
+	
+	/**
+		Add a new form to the page with the value specified
+	**/
+	function addFormToPage(formPrefix, formValue){
+		var formNumber = calculateNumberOfFormsOnPage(formPrefix);
+		var html = createHtmlForForm(formPrefix, formNumber, formValue);
+	
+		if (formNumber === 0){
+			jQuery('form').prepend(html);
+		}else{
+			jQuery('#id_' + formPrefix + '-0-' + formPrefix +'_location').parent().prepend(html);
+		}
+	
+		jQuery('#id_' + formPrefix + '-TOTAL_FORMS').attr('value', formNumber+1);
+	}
+	
+	/**
+	Insert a location into the array of locations and add an 'add' form to the html
+	**/
+	function insertLocation(location){
+		addFormToPage('add', location.toString());
+		locations = locations.concat(location);
+	}
+	
+	/**
+	Remove a location from the array of locations and add an 'remove' form to the html
+	**/
+	function removeLocation(location){
+		for(var i = 0; i < locations.length; i++){
+			if (location.equals(locations[i])){
+				locations.splice(i, 1);
+				addFormToPage('remove', location.toString());
+			}
+		}
+	}
+	
+	function createHtmlForLocationMarker(location){
+		var title = '<b>' + location.canonicalName + '</b>';
+		var body = '';
+		for ( var i = 0; i < location.urlNameList.length; i ++ ){
+			var pair = location.urlNameList[i];
+			body += '<br /><a href="' + pair.url + '">' + pair.name + '</a>';
+		}
+		var onclickFunction = 'removeLoc(\'' +  location.canonicalName  + '\','+ location.lat +','+ location.lng +'); return false';
+		var submit = '<br /><br /><input type="submit" value="Remove this Location" onclick="'+ onclickFunction + '" />';
+		var html = title + body + submit;
+		return html;
+	}
+
+	function createMarkerFromLocation(location){
+		return new GMarker(new GPoint(location.lng, location.lat));
+	}
+	
+	function addLocationMarker(location) {
+	    var marker = createMarkerFromLocation(location);
+		var html = createHtmlForLocationMarker(location);
+		GEvent.addListener(marker, "click", function() { marker.openInfoWindowHtml(html); });
+		map.addOverlay(marker);
+	}
+
+	function lookupLocation(id){
+		var location_string = document.getElementById(id).value;
+		if (location_string === ''){
+			jQuery('#map_messages').html('You must provide a location.');
+			return false;
+		}
+		var data = {};
+		data.location_string = location_string;
+		jQuery.post('{% url geoloc.views.geoloc_get_best_location %}', data, 
+				    function(responseData){
+						if (responseData.success) {
+							var location = new Location(responseData.lat, responseData.lng, responseData.canonical_name, '');
+							addNewLocationFromLocation(location);
+							jQuery("#map_messages").html(responseData.success);
+							map.setCenter(new GLatLng(location.lat, location.lng));
+						}else{
+							jQuery("#map_messages").html(responseData.failure);
+						}						
+					}, 'json');
+	}
+
+	function addNewLocationFromLocation(location){
+		insertLocation(location);
+		addLocationMarker(location);
+		map.getInfoWindow().hide();
+	}
+
+	function cleanNameFromUserInput(inputName){
+		var re_quote = /\'/gi;
+		var re_double_quote = /\"/gi;
+		var canonicalName = inputName.replace(re_quote, "").replace(re_double_quote, "");
+		return canonicalName;
+	}
+	
+	function addNewLocationFromElement(elementId, lat, lng){
+		var canonicalName = cleanNameFromUserInput(document.getElementById(elementId).value);
+		var location = new Location(lat, lng, canonicalName, '');
+		addNewLocationFromLocation(location);
+	}
+	
+	function removeLoc(canonicalName, lat, lng){
+		var location = new Location(lat, lng, canonicalName, '');
+		removeLocation(location);
+		drawLocationMarkers(locations);
+	}
+	
+	function drawLocationMarkers(locations){
+		map.clearOverlays();
+
+		for (var i = 0; i < locations.length; i++){
+			var location = locations[i];
+			addLocationMarker(location);
+		}
+
+	}
+</script>
+{% endblock %}
