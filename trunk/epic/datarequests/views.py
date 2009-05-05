@@ -13,7 +13,6 @@ from epic.datarequests.forms import DataRequestForm
 from epic.datarequests.models import DataRequest
 from epic.tags.models import Tagging
 
-
 def view_datarequests(request):
     datarequests = \
         DataRequest.objects.active().exclude(status='C').order_by('-created_at')
@@ -42,9 +41,6 @@ def new_datarequest(request):
         form = DataRequestForm(request.POST)
         
         if form.is_valid():
-            # The request instance from from.save() would not have an creator
-            # since we don't let the user set this.  It is therefore necessary
-            # that we do not commit and handle setting the creator here. 
             datarequest = form.save(commit=False)
             datarequest.creator = user
             datarequest.slug = slugify(datarequest.name)
@@ -122,20 +118,38 @@ def cancel_datarequest(request, item_id, slug):
         return HttpResponseRedirect(view_datarequest_url)
 
 @login_required
-def fulfill_datarequest(request, item_id, slug):
+def fulfill_datarequest(request, item_id, slug, fulfilling_item_id=None):
     user = request.user
-    datarequest = get_object_or_404(DataRequest, pk=item_id)
+    datarequest = get_object_or_404(DataRequest,pk=item_id)
     
     if datarequest.creator != user:
         view_datarequest_url = get_item_url(
             datarequest, 'epic.datarequests.views.view_datarequest')
         
         return HttpResponseRedirect(view_datarequest_url)
+        #only a request's owner should be able to change it
+        return HttpResponseRedirect(reverse('epic.datarequests.views.view_datarequest', 
+                                            kwargs={'item_id':datarequest.id, 
+                                                    'slug':datarequest.slug}))
+    elif fulfilling_item_id:
+        fulfilling_item = get_object_or_404(Item, pk=fulfilling_item_id)
+        datarequest.fulfilling_item = fulfilling_item
+        datarequest.save()  
     else:
         datarequest.fulfill()
         datarequest.save()
         
-        view_datarequest_url = get_item_url(
+    view_datarequest_url = get_item_url(
             datarequest, 'epic.datarequests.views.view_datarequest')
         
-        return HttpResponseRedirect(view_datarequest_url)
+    return HttpResponseRedirect(view_datarequest_url)
+
+@login_required
+def choose_fulfilling_item(request, fulfilling_item_id):
+    user = request.user
+    item = get_object_or_404(Item, pk=fulfilling_item_id)
+    requests = DataRequest.objects.active().filter(status='U', creator=user).order_by('-created_at')
+    return render_to_response('datarequests/choose_fulfilling_item.html',
+                              {'item':item,
+                               'requests':requests},
+                              context_instance=RequestContext(request))

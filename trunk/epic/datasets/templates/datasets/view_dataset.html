@@ -1,5 +1,6 @@
 {% extends "core/bases/browse_base.html" %}
 
+{% load datarequest_templatetags %}
 {% load tags_templatetags %}
 
 {% block content %}
@@ -41,8 +42,8 @@
 	      </ul>
 	    </p>
 	    {% endif %}
+	    {% fulfills_request_button dataset %}
 	    {% load dataset_templatetags %}
-	    
 	    {% show_dataset_title_vote_ratebox_datainfo dataset %}
 	    
 	    <p>{{ dataset.description|linebreaksbr }}</p>
