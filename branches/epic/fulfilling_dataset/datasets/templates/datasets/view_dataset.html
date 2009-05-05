@@ -1,5 +1,6 @@
 {% extends "core/bases/browse_base.html" %}
 
+{% load datarequest_templatetags %}
 {% load tags_templatetags %}
 
 {% block content %}
@@ -41,9 +42,7 @@
 	      </ul>
 	    </p>
 	    {% endif %}
-	    
-	    <h5><a href="{% url datarequests.views.choose_fulfilling_item fulfilling_item_id=dataset.id %}">This dataset fulfills my request ICON</a></h5>
-	    
+	    {% fulfills_request_button dataset %}
 	    {% load dataset_templatetags %}
 	    {% show_dataset_title_vote_ratebox_datainfo dataset %}
 	    
