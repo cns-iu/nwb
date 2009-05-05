@@ -64,7 +64,7 @@ class Item(models.Model):
         for possibility in possibilities:
             if hasattr(self, possibility):
                 return getattr(self, possibility)
-        raise Exception("No subclass found for %s" % (self))
+        raise Exception('No subclass found for %s' % (self))
     
     specific = property(_specific)
     

@@ -6,13 +6,16 @@
     {% for request in requests %}
       <tr>
         <td>
+          {{ request.name }}
+        </td>
+        <td>
           <a href="{% url datarequests.views.view_datarequest item_id=request.id slug=request.slug %}">
-            {{ request.name }}
+            VIEW ICON
           </a>
         <td>
         <td>
           <a href="{% url datarequests.views.fulfill_datarequest item_id=request.id slug=request.slug fulfilling_item_id=item.id %}">
-    	    ICON
+    	    SELECT ICON
        	  </a>
    		</td>
       </tr>
