@@ -97,6 +97,9 @@ def create_dataset(request):
                 previous_version=previous_version, 
                 is_active=False)
             
+            new_dataset.render_description()
+            new_dataset.save()
+            
             # TODO: Maybe only the latest version of a dataset should show up
             #  override the objects.all() or objects.active() maybe?
             if previous_version:
@@ -403,6 +406,7 @@ def edit_dataset(request, item_id, slug=None):
             dataset.name = form.cleaned_data['name']
             dataset.description = form.cleaned_data['description']
             dataset.slug = slugify(dataset.name)
+            dataset.render_description()
             dataset.save()
 
 

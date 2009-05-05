@@ -41,6 +41,9 @@ def create_project(request):
                                                  slug=slug,
                                                  is_active=True)
             
+            new_project.render_description()
+            new_project.save()
+            
             edit_project_url = \
                 get_item_url(new_project, 'epic.projects.views.edit_project')
             
@@ -161,6 +164,7 @@ def _save_project(form, project):
     project.name = form.cleaned_data['name']
     project.description = form.cleaned_data['description']
     project.slug = slugify(project.name)
+    project.render_description()
     project.save()
 
 def _update_datasets_for_project(request, form, project):

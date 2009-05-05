@@ -45,6 +45,7 @@ def new_datarequest(request):
             datarequest.creator = user
             datarequest.slug = slugify(datarequest.name)
             datarequest.is_active = True
+            datarequest.render_description()
             datarequest.save()
             
             tag_names = form.cleaned_data["tags"]
@@ -56,6 +57,7 @@ def new_datarequest(request):
                 datarequest, 'epic.datarequests.views.view_datarequest')
             
             return HttpResponseRedirect(view_datarequest_url)
+    
     return render_to_response('datarequests/new_datarequest.html', 
                               {'form': form},
                               context_instance=RequestContext(request))
@@ -87,6 +89,7 @@ def edit_datarequest(request, item_id, slug):
                                         user=user)
                 datarequest = form.save(commit=False)
                 datarequest.slug = slugify(datarequest.name)  
+                datarequest.render_description()
                 datarequest.save()
                 
                 view_datarequest_url = get_item_url(

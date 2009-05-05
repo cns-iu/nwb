@@ -30,8 +30,11 @@ Let's just test out a few aspects of our models...
 'CNS Core'
 """
 
-from django.db import models
 from django.contrib.auth.models import User
+from django.db import models
+
+from epic.core.util.postmarkup import PostMarkup
+
 
 class Item(models.Model):
     MAX_ITEM_NAME_LENGTH = 256
@@ -42,6 +45,14 @@ class Item(models.Model):
     creator = models.ForeignKey(User)
     name = models.CharField(max_length=MAX_ITEM_NAME_LENGTH)
     description = models.CharField(max_length=MAX_ITEM_DESCRIPTION_LENGTH)
+    
+    # TODO: Strip tags for a THIRD version of the description to be displayed
+    # on the short listing (browse) pages.
+    # TODO: Validate images placed in the BBCode.
+    # No max_length is set for rendered_description because its contents
+    # are always derived from description.
+    rendered_description = models.TextField(blank=True, null=True)
+    
     slug = models.SlugField()
     created_at = models.DateTimeField(auto_now_add=True, db_index=True)
     is_active = models.BooleanField(default=False)
@@ -59,6 +70,10 @@ class Item(models.Model):
         return type(self.specific).__name__ == 'DataRequest'
     
     # TODO: Fix this terrible hack
+    def is_project(self):
+        return type(self.specific).__name__ == 'Project'
+    
+    # TODO: Fix this terrible hack
     def _specific(self):
         possibilities = ['dataset', 'datarequest', 'project']
         for possibility in possibilities:
@@ -67,6 +82,15 @@ class Item(models.Model):
         raise Exception('No subclass found for %s' % (self))
     
     specific = property(_specific)
+    
+    # TODO: This should be called automatically from each subclass'
+    # object manager upon object creation.
+    def render_description(self):
+        markup_renderer = PostMarkup()
+        markup_renderer.default_tags()
+        
+        self.rendered_description = \
+            markup_renderer.render_to_html(self.description)
 
 class AcademicReference(models.Model):
     item = models.ForeignKey(Item, related_name="references")

@@ -50,7 +50,7 @@
 	  {% endif %}
     </ul>
     
-	<p>{{ datarequest.description|linebreaksbr }}</p>
+    <p>{{ datarequest.rendered_description|safe|linebreaksbr }}</p>
 	
 	{% list_item_tags datarequest user 'True' %}
   </div>

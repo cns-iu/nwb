@@ -14,6 +14,8 @@ def _create_project1():
         description='This is the first project',
         slug='project1',
         is_active=True)
+    project1.render_description()
+    project1.save()
     
     return project1
 
@@ -28,6 +30,8 @@ def _create_project2_dataset():
         description='This is the first dataset',
         slug='dataset1',
         is_active=True)
+    dataset.render_description()
+    dataset.save()
     
     bob_tags = 'lol testing for teh win'
     
@@ -45,6 +49,8 @@ def _create_project2():
         description='This is the second project',
         slug='project2',
         is_active=True)
+    project2.render_description()
+    project2.save()
     
     project2.datasets.add(project_dataset)
     
