@@ -17,6 +17,9 @@ public class MyRestlet extends Restlet {
 		Searcher searcher = new Searcher();
 		try {
 			String search_string = (String) request.getAttributes().get("search_string");
+			if(search_string == null){
+				search_string = "data";
+			}
 			JSONObject json = searcher.searchItemIndex(search_string, "all", "index");
 			response.setEntity("" + json, MediaType.TEXT_PLAIN);
 		} catch (CorruptIndexException e) {
