@@ -65,7 +65,11 @@
 	    {% if dataset.authors.all %}
 	      <ul>
 	        {% for author in dataset.authors.all %}
-	          <li>{{ author.author }}</li>
+	          <li>
+	            <a href="{% url core.views.view_items_for_author author_name=author.author %}">
+	              {{ author.author }}
+	            </a>
+	          </li>
 	        {% endfor %}
 	      </ul>
 	    {% else %}
