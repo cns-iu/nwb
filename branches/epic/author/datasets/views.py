@@ -406,13 +406,25 @@ def edit_dataset(request, item_id, slug=None):
         geoloc_add_formset = GeoLocationFormSet(prefix='add', 
                                          initial=initial_location_data)
         geoloc_remove_formset = RemoveGeoLocationFormSet(prefix='remove')
+        
+        initial_author_data = []
+        for author in dataset.authors.all():
+            initial_author_data.append({'author': author.author})
+        author_formset = AuthorFormSet(initial=initial_author_data, prefix='author')
+            
+        initial_ref_data = []
+        for ref in dataset.references.all():
+            initial_ref_data.append({'reference': ref.reference})
+        ref_formset = AcademicReferenceFormSet(initial=initial_ref_data, prefix='reference')
     else:
         form = EditDataSetForm(request.POST)
         geoloc_add_formset = GeoLocationFormSet(request.POST, prefix='add')
         geoloc_remove_formset = RemoveGeoLocationFormSet(request.POST, 
                                                   prefix='remove')
+        author_formset = AuthorFormSet(request.POST, prefix='author')
+        ref_formset = AcademicReferenceFormSet(request.POST, prefix='reference')
             
-        if form.is_valid():       
+        if form.is_valid() and author_formset.is_valid() and ref_formset.is_valid():       
             dataset.name = form.cleaned_data['name']
             dataset.description = form.cleaned_data['description']
             dataset.slug = slugify(dataset.name)
@@ -431,6 +443,23 @@ def edit_dataset(request, item_id, slug=None):
             for geoloc in _get_geolocs_from_formset(geoloc_remove_formset, 
                                                     'remove_location'):
                 dataset.geolocations.remove(geoloc)
+            
+            dataset.references.all().delete()
+            for ref_form in ref_formset.forms:
+                if ref_form.is_valid():
+                    if ref_form.cleaned_data:
+                        reference = ref_form.cleaned_data['reference'] 
+                        AcademicReference.objects.create(
+                            item=dataset, reference=reference)
+            
+            for author in dataset.authors.all():
+                author.items.remove(dataset)
+            for author_form in author_formset.forms:
+                if author_form.is_valid():
+                    if author_form.cleaned_data:
+                        author_name = author_form.cleaned_data['author']
+                        author, created = Author.objects.get_or_create(author=author_name)
+                        author.items.add(dataset)
             
             # If the user has set the flag to delete their datasets, delete them
             # TODO: these files need to be removed from the file system too!!
@@ -455,7 +484,9 @@ def edit_dataset(request, item_id, slug=None):
                                'form': form, 
                                'geoloc_add_formset': geoloc_add_formset, 
                                'geoloc_remove_formset':geoloc_remove_formset,
-                               'files':dataset.files.all()},
+                               'files':dataset.files.all(),
+                               'author_formset': author_formset,
+                               'ref_formset': ref_formset},
                               context_instance=RequestContext(request))
 
 @login_required

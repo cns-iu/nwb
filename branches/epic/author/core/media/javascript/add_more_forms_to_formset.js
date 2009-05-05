@@ -21,7 +21,6 @@ function initializeForm(form){
 		var tr = td.parentNode;
 		
 		if (i != 0) {
-			console.log(form);
 			var removeLink = createRemoveLink(input.id, form)
 			td.appendChild(removeLink);
 		}
