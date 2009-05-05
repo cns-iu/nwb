@@ -1,5 +1,5 @@
 Form = function(varName, formPrefix, formLabel){
-	this.varName = varName; // PHP FOR THE WIN BITCHES 
+	this.varName = varName; // TODO: Figure out a better way for this to work. 
 	this.formPrefix = formPrefix;
 	this.formLabel = formLabel;
 	this.formArray = [];
@@ -42,8 +42,6 @@ function getInsertionPoint(form){
 }
 function addMore(form){
 
-	// Create the reference.
-	
 	var newID = form.getCount();
 	
 	var label = createLabel(newID, form);
@@ -53,7 +51,6 @@ function addMore(form){
 	var td = document.createElement('td');
 	var removeLink = createRemoveLink(input.id, form);
 
-	//(Put the new tr into the ref array as the last position)
 	form.formArray[form.getCount()] = tr;
 	
 	tr.appendChild(th);
@@ -62,13 +59,10 @@ function addMore(form){
 	tr.appendChild(td);
 	td.appendChild(input);
 	td.appendChild(removeLink);
-	
-	// Add the reference to the DOM.
 
 	var insertionPoint = getInsertionPoint(form);
 	insertionPoint.parentNode.insertBefore(tr, insertionPoint.nextSibling);
 
-	//Update the manager to reflect the added reference
 	var manager = form.manager;
 	manager.setAttribute('value', parseInt(manager.value) + 1);
 }
@@ -102,21 +96,14 @@ function createRemoveLink(id, form){
 	return removeLink;
 }
 function removeForm(id, form){
-	// Find the reference.
-
 	var input = document.getElementById(id);
 	var td = input.parentNode;
 	var tr = td.parentNode;
 	var tbody = tr.parentNode;
 
-	// Remove the reference from the DOM.
-	
 	tbody.removeChild(tr);
 
-	// Update the manager to reflect the removal.
 	form.manager.setAttribute('value', parseInt(form.manager.value) - 1);
-	
-	// Remove referenceRow from referenceRows.
 	
 	var count = form.getCount();
 	for(var i = 1; i < count; i++){
@@ -125,12 +112,9 @@ function removeForm(id, form){
 		}
 	}
 	
-	// Renumber the remaining rows.
-	
 	updateFormArray(form);
 }
 
-// Renumber the rows so their ids are increment
 function updateFormArray(form){
 	/*
 	** Drop out all the null elements.
