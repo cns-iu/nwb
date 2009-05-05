@@ -100,47 +100,121 @@ class UrlsTestCaseTestCase(CustomTestCase):
             for code in self.error_page_codes:
                 self.assertNotEqual(code, response.status_code)
 
-class ViewDatasetsTestCase(CustomTestCase):
-    """ Test the view_datasets view """
-    
-    fixtures = ['just_users', 'datasets']
-    
-    def setUp(self):
-        self.bob = User.objects.get(username='bob')
-        self.admin = User.objects.get(username='admin')
-        
-        self.dataset1 = DataSet.objects.get(creator=self.bob, name='dataset1', description='this is the first dataset', slug='dataset1')
-        self.dataset2 = DataSet.objects.create(creator=self.admin, name='dataset2', description='this is the second dataset', slug='dataset2')
-        
-        self.view_datasets_url = reverse('epic.datasets.views.view_datasets')
-        
-    def tearDown(self):
-        pass
-    
-    def testLoggedOut(self):
-        response = self.client.get(self.view_datasets_url)
-        self.assertEqual(response.status_code, 200)
-        
-        for ds in DataSet.objects.active():
-            self.assertContains(response, ds.name)
-        
-    def testLoggedInNotOwner(self):
-        self.tryLogin(username='admin', password='admin')
-        
-        response = self.client.get(self.view_datasets_url)
-        self.assertEqual(response.status_code, 200)
-        
-        for ds in DataSet.objects.active():
-            self.assertContains(response, ds.name)
-    
-    def testLoggedInOwner(self):
-        self.tryLogin(username='bob', password='bob')
-        
-        response = self.client.get(self.view_datasets_url)
-        self.assertEqual(response.status_code, 200)
-        
-        for ds in DataSet.objects.active():
-            self.assertContains(response, ds.name)
+class ViewDatasetTestCase(CustomTestCase):
+	""" Test the view_dataset view """
+	
+	fixtures = ['just_users', 'datasets']
+	
+	def setUp(self):
+		self.bob = User.objects.get(username='bob')
+		self.admin = User.objects.get(username='admin')
+		
+		longDescription = '''Lorem ipsum dolor sit amet, consectetur adipiscing elit. Curabitur commodo, lacus at volutpat pellentesque, ipsum ligula hendrerit augue, eget molestie nisi elit in augue. Nullam et lorem. Fusce porta nunc eget massa. Phasellus mi urna, hendrerit eu, lobortis id, lobortis sit amet, tellus. Sed lacus. Duis nec sem. Quisque volutpat. Suspendisse nec sem. Praesent facilisis volutpat lacus. Nunc nec lectus at quam euismod mollis.
+
+					Integer dapibus nunc in nisl. Donec aliquet. Sed facilisis, nibh nec euismod auctor, augue quam pharetra ipsum, vel tempor quam lacus nec tortor. Aenean feugiat pharetra augue. Vivamus molestie, orci vitae vehicula mattis, orci metus mollis leo, quis mollis augue est suscipit nisl. Aenean in arcu a dolor dictum tempus. Vivamus scelerisque metus. Suspendisse luctus, nisi et luctus egestas, tortor diam accumsan tortor, vitae gravida lorem leo vitae lacus. Cras vulputate. Proin aliquam dolor.
+					
+					Sed ac erat. Praesent elementum lorem eu quam. Donec egestas, elit eget dictum molestie, massa diam consectetur arcu, id ullamcorper risus magna nec nisi. Nulla eros urna, scelerisque vel, adipiscing ut, iaculis eu, lorem. Duis pellentesque arcu. Aliquam pharetra mi in purus. Etiam sit amet nibh. Suspendisse molestie. Aenean pellentesque. Mauris porttitor facilisis ipsum. Quisque est lectus, rutrum sit amet, consectetur vulputate, mattis at, nulla. Donec purus. Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas. Curabitur a justo. Maecenas non tellus ut ipsum laoreet cursus. Etiam in urna. Maecenas quis tortor quis odio tempus dignissim.
+					
+					Aenean accumsan, sem at tincidunt egestas, libero mi convallis ante, et ultricies nisi urna sit amet nulla. Suspendisse potenti. In leo. Nullam nec augue quis leo consectetur aliquam. Nulla luctus, nulla vitae malesuada pretium, nisi eros sagittis turpis, non pulvinar erat quam quis augue. Quisque nec massa sed elit rutrum interdum. Nam ante. Donec suscipit rhoncus massa. Fusce eleifend eleifend odio. Fusce nulla risus, sollicitudin eu, venenatis at, auctor sed, magna.
+					
+					Maecenas sit amet magna id metus elementum viverra. Duis bibendum turpis non turpis. Curabitur ac massa fringilla felis fermentum luctus. Integer in nunc sed mi cursus porttitor. Integer dapibus justo ac metus. Vestibulum dolor dui, vehicula sed, vulputate at, fringilla id, lorem. Suspendisse in massa sed enim vulputate congue. Aliquam est felis, varius luctus, faucibus in, blandit ac, dui. Mauris dapibus. Duis justo massa, convallis ac, hendrerit id, accumsan ut, erat. Nunc sollicitudin tristique purus. Phasellus diam. '''
+					
+		self.dataset1 = DataSet.objects.get(creator=self.bob, name='dataset1', description='this is the first dataset', slug='dataset1')
+		self.dataset2 = DataSet.objects.create(creator=self.admin, name='dataset2', description='this is the second dataset', slug='dataset2', is_active=True)
+		self.dataset3 = DataSet.objects.create(creator=self.admin, name='dataset3', description='this is the third dataset with short description', slug='dataset3', is_active=True)
+		self.dataset4 = DataSet.objects.create(creator=self.admin, name='dataset4', 
+											description=longDescription, 
+											slug='dataset3', 
+											is_active=True)
+		
+		self.view_dataset_url_1 = reverse('epic.datasets.views.view_dataset', kwargs={'item_id':self.dataset1.id,})
+		self.view_dataset_url_2 = reverse('epic.datasets.views.view_dataset', kwargs={'item_id':self.dataset2.id, 'slug':self.dataset2.slug,})
+		self.view_dataset_url_3 = reverse('epic.datasets.views.view_dataset', kwargs={'item_id':self.dataset3.id, 'slug':self.dataset3.slug,})
+		self.view_dataset_url_4 = reverse('epic.datasets.views.view_dataset', 
+										kwargs={'item_id':self.dataset4.id, 'slug':self.dataset4.slug,})
+		
+	def tearDown(self):
+		pass
+	
+	def testLoggedOut(self):
+		response = self.client.get(self.view_dataset_url_1)
+		self.assertEqual(response.status_code, 200)
+		
+		self.assertContains(response, self.dataset1.name)
+		self.assertContains(response, self.dataset1.description)
+	
+		response = self.client.get(self.view_dataset_url_2)
+		self.assertEqual(response.status_code, 200)
+		
+		self.assertContains(response, self.dataset2.name)
+		self.assertContains(response, self.dataset2.description)
+	
+	def testDescriptionVariations(self):
+		'''
+		Test used to test if for longer descriptions having more than 1000 characters 
+		'Read the rest of this entry' option is displayed hiding rest of the characters.
+		'''	
+		
+		readMoreMarker = 'Read the rest of this entry'
+		
+#		For Short Descriptions no need to display readMoreMarker
+		response = self.client.get(self.view_dataset_url_3)
+		self.assertEqual(response.status_code, 200)
+		
+		self.assertContains(response, self.dataset3.name)
+		self.assertContains(response, self.dataset3.description)
+		self.assertNotContains(response, readMoreMarker)
+		
+#		For Longer Descriptions readMoreMarker has to be displayed
+		response = self.client.get(self.view_dataset_url_4)
+		self.assertEqual(response.status_code, 200)
+		
+		self.assertContains(response, self.dataset4.name)
+		self.assertContains(response, readMoreMarker)
+				
+	def testLoggedOut(self):
+		response = self.client.get(self.view_dataset_url_1)
+		self.assertEqual(response.status_code, 200)
+		
+		self.assertContains(response, self.dataset1.name)
+		self.assertContains(response, self.dataset1.description)
+	
+		response = self.client.get(self.view_dataset_url_2)
+		self.assertEqual(response.status_code, 200)
+		
+		self.assertContains(response, self.dataset2.name)
+		self.assertContains(response, self.dataset2.description)	
+		
+	def testLoggedInNotOwner(self):
+		self.tryLogin(username='admin', password='admin')
+	
+		response = self.client.get(self.view_dataset_url_1)
+		self.assertEqual(response.status_code, 200)
+		
+		self.assertContains(response, self.dataset1.name)
+		self.assertContains(response, self.dataset1.description)
+	
+		response = self.client.get(self.view_dataset_url_2)
+		self.assertEqual(response.status_code, 200)
+		
+		self.assertContains(response, self.dataset2.name)
+		self.assertContains(response, self.dataset2.description)
+		
+	def testLoggedInOwner(self):
+		self.tryLogin(username='bob', password='bob')
+		
+		response = self.client.get(self.view_dataset_url_1)
+		self.assertEqual(response.status_code, 200)
+		
+		self.assertContains(response, self.dataset1.name)
+		self.assertContains(response, self.dataset1.description)
+	
+		response = self.client.get(self.view_dataset_url_2)
+		self.assertEqual(response.status_code, 200)
+		
+		self.assertContains(response, self.dataset2.name)
+		self.assertContains(response, self.dataset2.description)
+
     
 class ViewDatasetTestCase(CustomTestCase):
     """ Test the view_dataset view """
