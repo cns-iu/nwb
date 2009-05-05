@@ -25,8 +25,10 @@ from django.utils.datastructures import MultiValueDictKeyError
 
 from epic.comments.forms import PostCommentForm
 from epic.core.models import AcademicReference
+from epic.core.models import Author
 from epic.core.models import Item
 from epic.datasets.forms import AcademicReferenceFormSet
+from epic.datasets.forms import AuthorFormSet
 from epic.datasets.forms import EditDataSetForm
 from epic.datasets.forms import GeoLocationFormSet
 from epic.datasets.forms import NewDataSetForm
@@ -42,8 +44,6 @@ from epic.geoloc.utils import CouldNotFindLocation
 from epic.geoloc.utils import get_best_location
 from epic.geoloc.utils import parse_geolocation
 from epic.tags.models import Tagging
-
-
 
 def view_datasets(request):
     datasets = DataSet.objects.active().order_by('-created_at')
@@ -75,14 +75,19 @@ def create_dataset(request):
         geoloc_add_formset = GeoLocationFormSet(prefix='add')
         geoloc_remove_formset = RemoveGeoLocationFormSet(prefix='remove')
         ref_formset = AcademicReferenceFormSet(prefix='reference')
+        author_formset = AuthorFormSet(prefix='author')
     else:
         form = NewDataSetForm(request.user, request.POST, request.FILES)
         geoloc_add_formset = GeoLocationFormSet(request.POST, prefix='add')
         geoloc_remove_formset = RemoveGeoLocationFormSet(request.POST, 
-                                                  prefix='remove')
-        ref_formset = AcademicReferenceFormSet(request.POST,prefix='reference')
+                                                         prefix='remove')
+        ref_formset = AcademicReferenceFormSet(request.POST, 
+                                               prefix='reference')
+        author_formset = AuthorFormSet(request.POST, prefix='author')
         
-        if form.is_valid() and ref_formset.is_valid():
+        if form.is_valid() and ref_formset.is_valid() \
+            and author_formset.is_valid():
+            
             name = form.cleaned_data['name']
             description = form.cleaned_data['description']
             uploaded_files = form.cleaned_data['files']
@@ -122,6 +127,13 @@ def create_dataset(request):
                         reference = ref_form.cleaned_data['reference'] 
                         AcademicReference.objects.create(
                             item=new_dataset, reference=reference)
+                        
+            for author_form in author_formset.forms:
+                if author_form.is_valid():
+                    if author_form.cleaned_data:
+                        author_name = author_form.cleaned_data['author']
+                        author, created = Author.objects.get_or_create(author=author_name)
+                        author.items.add(new_dataset)
             
             try:
                 _add_uploaded_files(new_dataset, uploaded_files)
@@ -138,10 +150,11 @@ def create_dataset(request):
                                             'slug':new_dataset.slug}))
         
     return render_to_response('datasets/create_dataset.html', 
-                              {'form':form, 
+                              {'form': form, 
                                'geoloc_add_formset': geoloc_add_formset, 
-                               'geoloc_remove_formset':geoloc_remove_formset,
-                               'ref_formset':ref_formset}, 
+                               'geoloc_remove_formset': geoloc_remove_formset,
+                               'ref_formset': ref_formset,
+                               'author_formset': author_formset}, 
                               context_instance=RequestContext(request))
         
 class NoReadMeException(Exception):

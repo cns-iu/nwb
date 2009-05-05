@@ -49,6 +49,7 @@
 	    <p>{{ dataset.description|linebreaksbr }}</p>
 	    
 	    {% list_item_tags dataset user 'True' %}
+		
 		<h4>References</h4>
 	    {% if dataset.references.all %}
 	      <ul>
@@ -59,6 +60,18 @@
 	    {% else %}
   	      <p>There are no references for this dataset.
 	    {% endif %}
+	    
+	    <h4>Authors</h4>
+	    {% if dataset.authors.all %}
+	      <ul>
+	        {% for author in dataset.authors.all %}
+	          <li>{{ author.author }}</li>
+	        {% endfor %}
+	      </ul>
+	    {% else %}
+	      <p>There are no authors for this dataset.</p>
+	    {% endif %}
+	    
 	  </div>
 	  
 	  {% if user.is_authenticated %}

@@ -68,10 +68,13 @@ class Item(models.Model):
     
     specific = property(_specific)
 
-class Author(model.Model):
-    item = model.ManyToManyField(Item)
-    author = model.CharField(max_length=100, unique=True)
-
+class Author(models.Model):
+    items = models.ManyToManyField(Item, blank=True, null=True, related_name="authors")
+    author = models.CharField(max_length=100)
+    
+    def __unicode__(self):
+        return "%s" % self.author
+    
 class AcademicReference(models.Model):
     item = models.ForeignKey(Item, related_name="references")
     reference = models.CharField(max_length=1000)
