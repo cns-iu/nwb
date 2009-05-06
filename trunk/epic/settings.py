@@ -2,6 +2,7 @@
 
 DEBUG = True
 TEMPLATE_DEBUG = DEBUG
+DEBUG_SQL = False
 
 ADMINS = (
     # ('Your Name', 'your_email@domain.com'),
@@ -68,6 +69,8 @@ MIDDLEWARE_CLASSES = (
     'django.middleware.common.CommonMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
+    'epic.sql_logging.SQLLogMiddleware.SQLLogMiddleware',
+    'django.middleware.transaction.TransactionMiddleware',
 )
 
 TEMPLATE_CONTEXT_PROCESSORS = (
