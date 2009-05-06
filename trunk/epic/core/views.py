@@ -17,6 +17,7 @@ from django.utils import simplejson
 from epic.core.forms import ForgotPasswordForm
 from epic.core.forms import ProfileForm
 from epic.core.forms import UserForm
+from epic.core.models import Author
 from epic.core.models import Profile
 from epic.datarequests.models import DataRequest
 from epic.datasets.models import DataSet
@@ -38,7 +39,13 @@ def browse(request):
 def about (request):
     return render_to_response('core/about.html',
                               context_instance=RequestContext(request))
-
+def view_items_for_author(request, author_name):
+    author = Author.objects.get(author=author_name)
+    items = author.items.all()
+    return render_to_response('authors/view_items_for_author.html',
+                              {'items': items, 'author': author},
+                              context_instance=RequestContext(request))
+    
 @login_required
 def view_profile(request, user_id=None):
     """ Used to display the basic/home page for logged in user. """

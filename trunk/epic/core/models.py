@@ -92,6 +92,16 @@ class Item(models.Model):
         self.rendered_description = \
             markup_renderer.render_to_html(self.description)
 
+class Author(models.Model):
+    items = models.ManyToManyField(Item, 
+                                   blank=True,
+                                   null=True, 
+                                   related_name="authors")
+    author = models.CharField(max_length=100)
+    
+    def __unicode__(self):
+        return "%s" % self.author
+    
 class AcademicReference(models.Model):
     item = models.ForeignKey(Item, related_name="references")
     reference = models.CharField(max_length=1000)

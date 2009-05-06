@@ -2,7 +2,7 @@ from django import forms
 from django.forms import ModelForm
 from django.forms.formsets import formset_factory
 
-from epic.core.models import Item, AcademicReference
+from epic.core.models import Item, AcademicReference, Author
 from epic.core.util.multifile import MultiFileField
 from epic.datasets.models import DataSet, RATING_SCALE
 from epic.djangoratings.forms import RatingField
@@ -58,3 +58,11 @@ class AcademicReferenceForm(ModelForm):
         exclude = ['item']
         
 AcademicReferenceFormSet = formset_factory(AcademicReferenceForm, extra=1)
+
+class AuthorForm(ModelForm):
+    author = forms.CharField(required=False)
+    class Meta:
+        model = Author
+        exclude = ['items']
+        
+AuthorFormSet = formset_factory(AuthorForm, extra=1)

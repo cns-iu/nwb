@@ -73,6 +73,7 @@
 	    <p>{{ dataset.rendered_description|safe|linebreaksbr }}</p>
 	    
 	    {% list_item_tags dataset user 'True' %}
+		
 		<h4>References</h4>
 	    {% if dataset.references.all %}
 	      <ul>
@@ -83,6 +84,22 @@
 	    {% else %}
   	      <p>There are no references for this dataset.
 	    {% endif %}
+	    
+	    <h4>Authors</h4>
+	    {% if dataset.authors.all %}
+	      <ul>
+	        {% for author in dataset.authors.all %}
+	          <li>
+	            <a href="{% url core.views.view_items_for_author author_name=author.author %}">
+	              {{ author.author }}
+	            </a>
+	          </li>
+	        {% endfor %}
+	      </ul>
+	    {% else %}
+	      <p>There are no authors for this dataset.</p>
+	    {% endif %}
+	    
 	  </div>
 	  
 	  {% if user.is_authenticated %}

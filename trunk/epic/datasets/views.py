@@ -25,8 +25,10 @@ from django.utils.datastructures import MultiValueDictKeyError
 
 from epic.comments.forms import PostCommentForm
 from epic.core.models import AcademicReference
+from epic.core.models import Author
 from epic.core.models import Item
 from epic.datasets.forms import AcademicReferenceFormSet
+from epic.datasets.forms import AuthorFormSet
 from epic.datasets.forms import EditDataSetForm
 from epic.datasets.forms import GeoLocationFormSet
 from epic.datasets.forms import NewDataSetForm
@@ -42,8 +44,6 @@ from epic.geoloc.utils import CouldNotFindLocation
 from epic.geoloc.utils import get_best_location
 from epic.geoloc.utils import parse_geolocation
 from epic.tags.models import Tagging
-
-
 
 def view_datasets(request):
     datasets = DataSet.objects.active().order_by('-created_at')
@@ -75,61 +75,39 @@ def create_dataset(request):
         geoloc_add_formset = GeoLocationFormSet(prefix='add')
         geoloc_remove_formset = RemoveGeoLocationFormSet(prefix='remove')
         ref_formset = AcademicReferenceFormSet(prefix='reference')
+        author_formset = AuthorFormSet(prefix='author')
     else:
         form = NewDataSetForm(request.user, request.POST, request.FILES)
         geoloc_add_formset = GeoLocationFormSet(request.POST, prefix='add')
         geoloc_remove_formset = RemoveGeoLocationFormSet(request.POST, 
-                                                  prefix='remove')
-        ref_formset = AcademicReferenceFormSet(request.POST,prefix='reference')
+                                                         prefix='remove')
+        ref_formset = AcademicReferenceFormSet(request.POST, 
+                                               prefix='reference')
+        author_formset = AuthorFormSet(request.POST, prefix='author')
         
-        if form.is_valid() and ref_formset.is_valid():
-            name = form.cleaned_data['name']
-            description = form.cleaned_data['description']
-            uploaded_files = form.cleaned_data['files']
-            tags = form.cleaned_data['tags']
-            previous_version = form.cleaned_data['previous_version']
+        if form.is_valid() and ref_formset.is_valid() \
+                and author_formset.is_valid():
             
-            new_dataset = DataSet.objects.create(
-                creator=request.user, 
-                name=name, 
-                description=description, 
-                slug=slugify(name),
-                previous_version=previous_version, 
-                is_active=False)
+            new_dataset = _save_new_dataset(form, request.user)
+            _save_previous_version(form, new_dataset)
+            _save_tags(form, new_dataset, request.user)
+            _save_geolocs(geoloc_add_formset, 
+                          geoloc_remove_formset, 
+                          new_dataset)
+            _save_references(ref_formset, new_dataset)
+            _save_authors(author_formset, new_dataset)
             
-            new_dataset.render_description()
-            new_dataset.save()
-            
-            # TODO: Maybe only the latest version of a dataset should show up
-            #  override the objects.all() or objects.active() maybe?
-            if previous_version:
-                #(Note that this will overwrite previous "new versions")
-                previous_version.next_version = new_dataset
-                previous_version.save()
-            
-            Tagging.objects.update_tags(tags, 
-                                        item=new_dataset, 
-                                        user=request.user)
-            
-            for geoloc in _get_geolocs_from_formset(geoloc_add_formset, 
-                                                    'add_location'):
-                new_dataset.geolocations.add(geoloc)
-            
-            for geoloc in _get_geolocs_from_formset(geoloc_remove_formset, 
-                                                    'remove_location'):
-                new_dataset.geolocations.remove(geoloc)
-            
-            for ref_form in ref_formset.forms:
-                if ref_form.is_valid():
-                    if ref_form.cleaned_data:
-                        reference = ref_form.cleaned_data['reference'] 
-                        AcademicReference.objects.create(
-                            item=new_dataset, reference=reference)
-            
+            #   If there is a readme, activate the dataset and let
+            # the user view the new dataset, otherwise send
+            # them to a page where they can specify the readme.
             try:
+                uploaded_files = form.cleaned_data['files']
+                # Raises a 'NoReadMeException' if no readme is found.
                 _add_uploaded_files(new_dataset, uploaded_files)
+                
                 new_dataset.is_active = True
                 new_dataset.save()
+                
                 return HttpResponseRedirect(
                             reverse('epic.datasets.views.view_dataset', 
                                     kwargs={'item_id':new_dataset.id,
@@ -141,15 +119,72 @@ def create_dataset(request):
                                             'slug':new_dataset.slug}))
         
     return render_to_response('datasets/create_dataset.html', 
-                              {'form':form, 
+                              {'form': form, 
                                'geoloc_add_formset': geoloc_add_formset, 
-                               'geoloc_remove_formset':geoloc_remove_formset,
-                               'ref_formset':ref_formset}, 
+                               'geoloc_remove_formset': geoloc_remove_formset,
+                               'ref_formset': ref_formset,
+                               'author_formset': author_formset}, 
                               context_instance=RequestContext(request))
-        
+
 class NoReadMeException(Exception):
     pass
 
+def _save_new_dataset(form, user):
+    name = form.cleaned_data['name']
+    description = form.cleaned_data['description']
+    previous_version = form.cleaned_data['previous_version']
+    
+    new_dataset = DataSet.objects.create(
+        creator=user, 
+        name=name, 
+        description=description, 
+        slug=slugify(name),
+        previous_version=previous_version, 
+        is_active=False)
+    
+    new_dataset.render_description()
+    new_dataset.save()
+    return new_dataset
+
+def _save_previous_version(form, dataset):
+    # TODO: Maybe only the latest version of a dataset should show up
+    #  override the objects.all() or objects.active() maybe?
+    previous_version = form.cleaned_data['previous_version']
+    if previous_version:
+        #(Note that this will overwrite previous "new versions")
+        previous_version.next_version = dataset
+        previous_version.save()
+        
+def _save_tags(form, dataset, user):
+    tags = form.cleaned_data['tags']
+    Tagging.objects.update_tags(tags, 
+                                item=dataset, 
+                                user=user)
+def _save_geolocs(add_formset, remove_formeset, dataset):
+    for geoloc in _get_geolocs_from_formset(add_formset, 'add_location'):
+        dataset.geolocations.add(geoloc)
+    
+    for geoloc in \
+            _get_geolocs_from_formset(remove_formeset, 'remove_location'):
+        dataset.geolocations.remove(geoloc)
+
+def _save_references(formset, dataset):
+    for form in formset.forms:
+        if form.is_valid():
+            if form.cleaned_data:
+                reference = form.cleaned_data['reference'] 
+                AcademicReference.objects.create(
+                    item=dataset, reference=reference)
+                
+def _save_authors(formset, dataset):
+    for form in formset.forms:
+        if form.is_valid():
+            if form.cleaned_data:
+                author_name = form.cleaned_data['author']
+                author, created = Author.objects.\
+                    get_or_create(author=author_name)
+                author.items.add(dataset)
+                
 def _add_uploaded_files(dataset, uploaded_files):
     """ Add all the uploaded files to the dataset.  The first 'readme' file
     found will be added with a flag that indicates it is a 'readme'.
@@ -396,13 +431,25 @@ def edit_dataset(request, item_id, slug=None):
         geoloc_add_formset = GeoLocationFormSet(prefix='add', 
                                          initial=initial_location_data)
         geoloc_remove_formset = RemoveGeoLocationFormSet(prefix='remove')
+        
+        initial_author_data = []
+        for author in dataset.authors.all():
+            initial_author_data.append({'author': author.author})
+        author_formset = AuthorFormSet(initial=initial_author_data, prefix='author')
+            
+        initial_ref_data = []
+        for ref in dataset.references.all():
+            initial_ref_data.append({'reference': ref.reference})
+        ref_formset = AcademicReferenceFormSet(initial=initial_ref_data, prefix='reference')
     else:
         form = EditDataSetForm(request.POST)
         geoloc_add_formset = GeoLocationFormSet(request.POST, prefix='add')
         geoloc_remove_formset = RemoveGeoLocationFormSet(request.POST, 
                                                   prefix='remove')
+        author_formset = AuthorFormSet(request.POST, prefix='author')
+        ref_formset = AcademicReferenceFormSet(request.POST, prefix='reference')
             
-        if form.is_valid():       
+        if form.is_valid() and author_formset.is_valid() and ref_formset.is_valid():       
             dataset.name = form.cleaned_data['name']
             dataset.description = form.cleaned_data['description']
             dataset.slug = slugify(dataset.name)
@@ -422,6 +469,23 @@ def edit_dataset(request, item_id, slug=None):
             for geoloc in _get_geolocs_from_formset(geoloc_remove_formset, 
                                                     'remove_location'):
                 dataset.geolocations.remove(geoloc)
+            
+            dataset.references.all().delete()
+            for ref_form in ref_formset.forms:
+                if ref_form.is_valid():
+                    if ref_form.cleaned_data:
+                        reference = ref_form.cleaned_data['reference'] 
+                        AcademicReference.objects.create(
+                            item=dataset, reference=reference)
+            
+            for author in dataset.authors.all():
+                author.items.remove(dataset)
+            for author_form in author_formset.forms:
+                if author_form.is_valid():
+                    if author_form.cleaned_data:
+                        author_name = author_form.cleaned_data['author']
+                        author, created = Author.objects.get_or_create(author=author_name)
+                        author.items.add(dataset)
             
             # If the user has set the flag to delete their datasets, delete them
             # TODO: these files need to be removed from the file system too!!
@@ -446,7 +510,9 @@ def edit_dataset(request, item_id, slug=None):
                                'form': form, 
                                'geoloc_add_formset': geoloc_add_formset, 
                                'geoloc_remove_formset':geoloc_remove_formset,
-                               'files':dataset.files.all()},
+                               'files':dataset.files.all(),
+                               'author_formset': author_formset,
+                               'ref_formset': ref_formset},
                               context_instance=RequestContext(request))
 
 @login_required

@@ -366,7 +366,9 @@ class CreateDatasetTestCase(CustomTestCase):
             'add-TOTAL_FORMS': 0,
             'remove-TOTAL_FORMS': 0,
             'reference-INITIAL_FORMS': 0,
-            'reference-TOTAL_FORMS': 1
+            'reference-TOTAL_FORMS': 1,
+            'author-INITIAL_FORMS': 0,
+            'author-TOTAL_FORMS': 0,
         }
         
     def tearDown(self):
@@ -416,6 +418,10 @@ class EditDatasetTestCase(CustomTestCase):
             'add-INITIAL_FORMS': 0,
             'add-TOTAL_FORMS': 0,
             'remove-TOTAL_FORMS': 0,
+            'author-INITIAL_FORMS': 0,
+            'author-TOTAL_FORMS': 0,
+            'reference-INITIAL_FORMS': 0,
+            'reference-TOTAL_FORMS': 1
         }
         
     def tearDown(self):
@@ -873,7 +879,9 @@ class UploadReadmeCreateDatasetsTestCase(CustomTestCase):
             'add-TOTAL_FORMS': 0,
             'remove-TOTAL_FORMS': 0,
             'reference-INITIAL_FORMS': 0,
-            'reference-TOTAL_FORMS': 1
+            'reference-TOTAL_FORMS': 1,
+            'author-INITIAL_FORMS': 0,
+            'author-TOTAL_FORMS': 0,
         }
         response = self.client.post(self.create_dataset_url, 
                                     post_data)
@@ -900,7 +908,9 @@ class UploadReadmeCreateDatasetsTestCase(CustomTestCase):
             'add-TOTAL_FORMS': 0,
             'remove-TOTAL_FORMS': 0,
             'reference-INITIAL_FORMS': 0,
-            'reference-TOTAL_FORMS': 1
+            'reference-TOTAL_FORMS': 1,
+            'author-INITIAL_FORMS': 0,
+            'author-TOTAL_FORMS': 0,
         }
         response = self.client.post(self.create_dataset_url, 
                                     post_data)
@@ -924,7 +934,9 @@ class UploadReadmeCreateDatasetsTestCase(CustomTestCase):
             'add-INITIAL_FORMS': 0,
             'add-TOTAL_FORMS': 0,
             'reference-INITIAL_FORMS': 0,
-            'reference-TOTAL_FORMS': 1
+            'reference-TOTAL_FORMS': 1,
+            'author-INITIAL_FORMS': 0,
+            'author-TOTAL_FORMS': 0,
         }
         response = self.client.post(self.create_dataset_url, 
                                     post_data)
@@ -949,7 +961,9 @@ class UploadReadmeCreateDatasetsTestCase(CustomTestCase):
             'add-TOTAL_FORMS': 0,
             'remove-TOTAL_FORMS': 0,
             'reference-INITIAL_FORMS': 0,
-            'reference-TOTAL_FORMS': 1
+            'reference-TOTAL_FORMS': 1,
+            'author-INITIAL_FORMS': 0,
+            'author-TOTAL_FORMS': 0,
         }
         response = self.client.post(self.create_dataset_url, 
                                     post_data)
@@ -1046,7 +1060,9 @@ class PreviousNextTestCase(CustomTestCase):
             'add-TOTAL_FORMS': 0,
             'remove-TOTAL_FORMS': 0,
             'reference-INITIAL_FORMS': 0,
-            'reference-TOTAL_FORMS': 1
+            'reference-TOTAL_FORMS': 1,
+            'author-INITIAL_FORMS': 0,
+            'author-TOTAL_FORMS': 0,
         }
         
     def test_loggedout(self):
