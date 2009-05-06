@@ -90,11 +90,15 @@ class CreateProjectTestCase(CustomTestCase):
         self.invalid_post_data = {
             'name': '',
             'description': '',
+            'project_datasets-INITIAL_FORMS': 0,
+            'project_datasets-TOTAL_FORMS': 0,
         }
         
         self.valid_post_data = {
             'name': 'This is a new project 209u359hdfg',
             'description': '20y5hdfg ahi3hoh348t3948t5hsdfigh',
+            'project_datasets-INITIAL_FORMS': 0,
+            'project_datasets-TOTAL_FORMS': 0,
         }
     
     def testLoggedOut(self):
@@ -208,6 +212,8 @@ class EditProjectTestCase(CustomTestCase):
         self.post_data = {
             'name': '3456 345y,th[-k-0dfgh0 209u359hdfg',
             'description': '20y5hdfg ahi3hoh348t3948t5hsdfigh',
+            'project_datasets-INITIAL_FORMS': 0,
+            'project_datasets-TOTAL_FORMS': 0,
         }
     
     def testLoggedOut(self):
@@ -247,73 +253,20 @@ class EditProjectTestCase(CustomTestCase):
     def testOwnerLoggedIn(self):
         self.tryLogin(BOB_USERNAME)
         
-        get_from__edit_project2_url__response = \
+        get_response = \
             self.client.get(self.edit_project1_url)
         self.assertStatusCodeIsASuccess(
-            get_from__edit_project2_url__response.status_code)
+            get_response.status_code)
         
-        post_to__edit_project2_url__response = \
+        post_response = \
             self.client.post(self.edit_project1_url, self.post_data)
-        self.assertEqual(
-            post_to__edit_project2_url__response.status_code, 200)
         
-        project = Project.objects.get(
-            name=self.post_data['name'],
-            description=self.post_data['description'])
-    
-    def testSaveAndContinueEditing(self):
-        # Verify that posting data using the "Save and Continue Editing"
-        # button takes the user back to the edit page and the newly displayed
-        # edit page has the posted content.
-        
-        self.tryLogin(BOB_USERNAME);
-        
-        get_from__edit_project1_url__response = \
-            self.client.get(self.edit_project1_url)
-        self.assertStatusCodeIsASuccess(
-            get_from__edit_project1_url__response.status_code)
-        
-        post_data_with_save_and_continue_editing_button = \
-            self._form_edit_project_post_data_with_specific_submit_button(
-                'save_and_continue_editing', 'Save and Continue Editing')
-        
-        post_to__edit_project1_url__response = \
-            self.client.post(self.edit_project1_url,
-                             post_data_with_save_and_continue_editing_button)
-        self.assertStatusCodeIsASuccess(
-            post_to__edit_project1_url__response.status_code)
-        
-        self.assertContains(post_to__edit_project1_url__response,
-                            post_data_with_save_and_continue_editing_button['name'])
-        self.assertContains(post_to__edit_project1_url__response,
-                            post_data_with_save_and_continue_editing_button['description'])
-    
-    def testSaveAndFinishEditing(self):
-        # Verify that the "Save and Finish Editing" button takes the user
-        # to the project page and the updated project is displayed correctly.
-        
-        self.tryLogin(BOB_USERNAME)
-        
-        get_from__edit_project1_url__response = \
-            self.client.get(self.edit_project1_url)
-        self.assertStatusCodeIsASuccess(
-            get_from__edit_project1_url__response.status_code)
-        
-        post_data_with_save_and_finish_editing_button = \
-            self._form_edit_project_post_data_with_specific_submit_button(
-                'save_and_finish_editing', 'Save and Finish Editing')
-        post_to__edit_project1_url__response = \
-            self.client.post(self.edit_project1_url,
-                             post_data_with_save_and_finish_editing_button)
-        self.assertStatusCodeIsARedirect(
-            post_to__edit_project1_url__response.status_code)
-        
-        get_view_project1_response = self.client.get(self.view_project1_url)
-        
-        self.assertContains(get_view_project1_response,
-                            post_data_with_save_and_finish_editing_button['name'])
-        self.assertContains(get_view_project1_response,
-                            post_data_with_save_and_finish_editing_button['description'])
+        try:
+            project = Project.objects.get(
+                        name=self.post_data['name'],
+                        description=self.post_data['description'])
+        except Project.DoesNotExist:
+            self.fail()
     
     def _form_edit_project_post_data_with_specific_submit_button(
             self, submit_button_name, submit_button_value):
@@ -356,55 +309,71 @@ class AddDatasetsToProjectTestCase(CustomTestCase):
         self.post_data = {
             'name': self.project1.name,
             'description': self.project1.description,
-            'dataset_url': '',
+            'project_datasets-INITIAL_FORMS': 0,
+            'project_datasets-TOTAL_FORMS': 0,
+            'project_datasets-0-dataset_url': '',
         }
     
     def testEmptyURL(self):
         self.tryLogin(BOB_USERNAME)
         
-        get_from__edit_project_url__response = \
+        get_response1 = \
             self.client.get(self.edit_project1_url)
         
-        edit_project_post_data = \
-            self._form_edit_project_post_data_with_add_dataset_url('')
-        post_to__edit_project_url__response = \
-            self.client.post(self.edit_project1_url, edit_project_post_data)
+        post_data = {
+            'name': self.project1.name,
+            'description': self.project1.description,
+            'project_datasets-INITIAL_FORMS': 0,
+            'project_datasets-TOTAL_FORMS': 1,
+            'project_datasets-0-dataset_url': '',
+        }
         
-        self.assertEqual(get_from__edit_project_url__response.content,
-                         post_to__edit_project_url__response.content)
+        post_response = \
+            self.client.post(self.edit_project1_url, post_data)
+        
+        get_response2 = \
+            self.client.get(self.edit_project1_url)
+        
+        self.assertEqual(get_response1.content,
+                         get_response2.content)
     
     def testURLIsNotDataset(self):
         self.tryLogin(BOB_USERNAME)
         
         url_that_is_not_a_dataset = 'http://www.google.com/'
-        edit_project_post_data = \
-            self._form_edit_project_post_data_with_add_dataset_url(
-                url_that_is_not_a_dataset)
-        post_to__edit_project_url__response = \
-            self.client.post(self.edit_project1_url, edit_project_post_data)
+        post_data = {
+            'name': self.project1.name,
+            'description': self.project1.description,
+            'project_datasets-INITIAL_FORMS': 0,
+            'project_datasets-TOTAL_FORMS': 1,
+            'project_datasets-0-dataset_url': '' + url_that_is_not_a_dataset,
+        }
+        
+        post_response = \
+            self.client.post(self.edit_project1_url, post_data)
         
         text_that_should_be_in_response = \
             '%s does not refer to a valid dataset.' % \
                 url_that_is_not_a_dataset
-        self.assertContains(post_to__edit_project_url__response,
+        self.assertContains(post_response,
                             text_that_should_be_in_response)
     
     def testAddDatasetToProjectSuccessfully(self):
         self.tryLogin(BOB_USERNAME)
+        post_data = {
+            'name': self.project1.name,
+            'description': self.project1.description,
+            'project_datasets-INITIAL_FORMS': 0,
+            'project_datasets-TOTAL_FORMS': 1,
+            'project_datasets-0-dataset_url': '' + self.dataset.get_absolute_url(),
+        }
+       
+        edit_response = \
+            self.client.post(self.edit_project1_url, post_data)
+            
+        view_response = self.client.get(self.view_project1_url)
         
-        edit_project_post_data = \
-            self._form_edit_project_post_data_with_add_dataset_url(
-                self.dataset.get_absolute_url())
-        post_to__edit_project_url__response = \
-            self.client.post(self.edit_project1_url, edit_project_post_data)
-        
-        remove_dataset_from_project_string = \
-            "Remove dataset '%s'?" % self.dataset.name
-        self.assertContains(post_to__edit_project_url__response,
-                            remove_dataset_from_project_string)
-        
-        get_view_project_response = self.client.get(self.view_project1_url)
-        self.assertContains(get_view_project_response, self.dataset.name)
+        self.assertContains(view_response, self.dataset.name)
     
     def testProjectAlreadyHasDataset(self):
         self.tryLogin(BOB_USERNAME)
@@ -455,6 +424,9 @@ class DeleteDatasetFromProjectTestCase(CustomTestCase):
             'epic.projects.views.edit_project',
             kwargs={'item_id': self.project1.id, 'slug': self.project1.slug,})
         
+        self.view_project2_url = reverse('epic.projects.views.view_project',
+                                         kwargs={'item_id': self.project2.id,
+                                                 'slug': self.project2.slug,})
         self.edit_project2_url = reverse(
             'epic.projects.views.edit_project',
             kwargs={'item_id': self.project2.id, 'slug': self.project2.slug,})
@@ -462,46 +434,58 @@ class DeleteDatasetFromProjectTestCase(CustomTestCase):
         self.post_data = {
             'name': self.project1.name,
             'description': self.project1.description,
-            'dataset_url': '',
+            'project_datasets-INITIAL_FORMS': 0,
+            'project_datasets-TOTAL_FORMS': 0,
+            'project_datasets-0-dataset_url': '',
         }
     
     def testDatasetNotInProject(self):
+    	#TODO: What is this doing? (it's not clear, after thinking about it for a minute)
         self.tryLogin(BOB_USERNAME)
         
-        get_from__edit_project_url__response = \
+        get_response1 = \
             self.client.get(self.edit_project1_url)
         
-        edit_project_post_data = \
-            self._form_edit_project_post_data_with_remove_dataset(
-                self.dataset)
-        post_to__edit_project_url__response = \
-            self.client.post(self.edit_project1_url, edit_project_post_data)
+        post_data = {
+            'name': self.project1.name,
+            'description': self.project1.description,
+            'project_datasets-INITIAL_FORMS': 0,
+            'project_datasets-TOTAL_FORMS': 0,
+        }
         
-        self.assertEqual(get_from__edit_project_url__response.content,
-                         post_to__edit_project_url__response.content)
+        post_response = \
+            self.client.post(self.edit_project1_url, post_data)
+        
+        get_response2 = \
+            self.client.get(self.edit_project1_url)
+            
+        self.assertEqual(get_response1.content,
+                         get_response2.content)
     
     def testActuallyDeleteDatasetFromProject(self):
         self.tryLogin(ADMIN_USERNAME)
         
-        get_from__edit_project_url_pre_delete__response = \
-            self.client.get(self.edit_project2_url)
+        get_response = \
+            self.client.get(self.view_project2_url)
+            
+        self.assertContains(get_response, self.dataset.name)
         
-        remove_dataset_from_project_string = \
-            "Remove dataset '%s'?" % self.dataset.name
-        self.assertContains(get_from__edit_project_url_pre_delete__response,
-                            remove_dataset_from_project_string)
+        post_data = {
+            'name': self.project1.name,
+            'description': self.project1.description,
+            'project_datasets-INITIAL_FORMS': 0,
+            'project_datasets-TOTAL_FORMS': 1,
+            'project_datasets-0-dataset_url': '',
+        }
         
-        edit_project_post_data = \
-            self._form_edit_project_post_data_with_remove_dataset(
-                self.dataset)
-        post_to__edit_project_url__response = \
-            self.client.post(self.edit_project2_url, edit_project_post_data)
-        get_from__edit_project_url_post_delete__response = \
-            self.client.get(self.edit_project2_url)
         
-        self.assertNotContains(
-            get_from__edit_project_url_post_delete__response,
-            remove_dataset_from_project_string)
+        post_response = \
+            self.client.post(self.edit_project2_url, post_data)
+            
+        get_response = \
+            self.client.get(self.view_project2_url)
+        
+        self.assertNotContains(get_response, self.dataset.name)
     
     def _form_edit_project_post_data_with_remove_dataset(self, dataset):
         post_data = self.post_data.copy()

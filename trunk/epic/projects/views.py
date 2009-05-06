@@ -16,10 +16,8 @@ from epic.comments.forms import PostCommentForm
 from epic.core.models import Item
 from epic.core.util.view_utils import *
 from epic.datasets.models import DataSet
-from epic.projects.forms import AddDatasetToProjectForm
-from epic.projects.forms import AddDatasetToProjectFormSet
 from epic.projects.forms import ProjectForm
-from epic.projects.forms import RemoveDatasetFromProjectForm
+from epic.projects.forms import ProjectDataSetFormSet
 from epic.projects.models import Project
 
 
@@ -27,10 +25,13 @@ from epic.projects.models import Project
 def create_project(request):
     if request.method != 'POST':
         new_project_form = ProjectForm()
+        project_datasets = ProjectDataSetFormSet(prefix='project_datasets')
     else:
+        project_datasets = ProjectDataSetFormSet(request.POST, 
+                                                 prefix='project_datasets')
         new_project_form = ProjectForm(request.POST)
         
-        if new_project_form.is_valid():
+        if new_project_form.is_valid() and project_datasets.is_valid():
             name = new_project_form.cleaned_data['name']
             description = new_project_form.cleaned_data['description']
             slug = slugify(name)
@@ -41,17 +42,23 @@ def create_project(request):
                                                  slug=slug,
                                                  is_active=True)
             
+            #TODO: Can we please do this in a constructor (or something) somehow?
             new_project.render_description()
             new_project.save()
             
-            edit_project_url = \
-                get_item_url(new_project, 'epic.projects.views.edit_project')
+            for dataset_form in project_datasets.forms:
+                if dataset_form.is_valid():
+                    dataset = dataset_form.cleaned_data['dataset']
+                    new_project.datasets.add(dataset)
             
-            return HttpResponseRedirect(edit_project_url)
+            view_project_url = \
+                get_item_url(new_project, 'epic.projects.views.view_project')
+            return HttpResponseRedirect(view_project_url)
     
     return render_to_response(
         'projects/create_project.html',
-        {'new_project_form': new_project_form,},
+        {'new_project_form': new_project_form,
+         'project_datasets': project_datasets},
         context_instance=RequestContext(request))
 
 @login_required
@@ -104,26 +111,42 @@ def edit_project(request, item_id, slug):
             'name': project.name,
             'description': project.description,
         }
-    
         edit_form = ProjectForm(initial=initial_edit_project_data)
-        add_dataset_form = AddDatasetToProjectForm()
+        
+        initial_project_datasets = []
+        for dataset in project.datasets.all():
+            initial_project_datasets.append(
+                {'dataset_url': dataset.get_absolute_url()})
+            
+        project_datasets = ProjectDataSetFormSet(
+                                prefix='project_datasets',
+                                initial=initial_project_datasets)
     else:
         edit_form = ProjectForm(request.POST)
-        add_dataset_form = AddDatasetToProjectForm(request.POST)
+        project_datasets = ProjectDataSetFormSet(request.POST, 
+                                                 prefix='project_datasets')
             
-        if edit_form.is_valid() and add_dataset_form.is_valid():
-            _save_project(edit_form, project)
-            add_dataset_form = \
-                _update_datasets_for_project(request, add_dataset_form, project)
-        
-        if 'save_and_finish_editing' in request.POST:
+        if edit_form.is_valid() and project_datasets.is_valid():
+            project.name = edit_form.cleaned_data['name']
+            project.description = edit_form.cleaned_data['description']
+            project.slug = slugify(project.name)
+            project.render_description()
+            project.save()
+            for dataset in project.datasets.all():
+                project.datasets.remove(dataset)
+            for dataset_form in project_datasets.forms:
+                if dataset_form.is_valid():
+                    if 'dataset' in dataset_form.cleaned_data:
+                        dataset = dataset_form.cleaned_data['dataset']
+                        project.datasets.add(dataset)
+            view_project_url = \
+                get_item_url(project, 'epic.projects.views.view_project')
             return HttpResponseRedirect(view_project_url)
-    
-    
+        
     render_to_response_data = {
         'project': project,
         'edit_project_form': edit_form,
-        'add_dataset_to_project_form': add_dataset_form,
+        'project_datasets': project_datasets,
         'datasets': project.datasets.all(),
     }
             
@@ -157,44 +180,3 @@ def view_user_project_list(request, user_id):
         'projects/view_user_project_list.html',
         {'projects': projects, 'requested_user': requested_user},
         context_instance=RequestContext(request))
-
-
-
-def _save_project(form, project):
-    project.name = form.cleaned_data['name']
-    project.description = form.cleaned_data['description']
-    project.slug = slugify(project.name)
-    project.render_description()
-    project.save()
-
-def _update_datasets_for_project(request, form, project):
-    # AddDatasetToProjectForm's validation should make sure dataset_id
-    # is a valid dataset id.
-    dataset = form.cleaned_data['dataset']
-    
-    if dataset is not None:
-        # Form is reset to an empty form if the dataset has already been added
-        # to this project.
-        form = AddDatasetToProjectForm()
-        
-        # TODO: Error upon duplication of a dataset (in a project)?
-        if dataset not in project.datasets.all():
-            project.datasets.add(dataset)
-
-    # Remove datasets.
-    
-    remove_dataset_expression = \
-        r'^remove-dataset-(?P<item_id>\d+)$'
-    
-    pattern = re.compile(remove_dataset_expression) 
-    
-    for post_key in request.POST:
-        match = pattern.match(post_key)
-        
-        if match is not None:
-            item_id = match.group('item_id')
-            dataset_to_remove = get_object_or_404(DataSet, pk=item_id)
-            
-            project.datasets.remove(dataset_to_remove)
-    
-    return form

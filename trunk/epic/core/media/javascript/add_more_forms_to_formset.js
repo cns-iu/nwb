@@ -1,6 +1,7 @@
-FormSet = function (varName, formPrefix, formLabel) {
+FormSet = function (varName, formPrefix, fieldName, formLabel) {
 	this.varName = varName; // TODO: Figure out a better way for this to work.
 	this.formPrefix = formPrefix;
+	this.fieldName = fieldName;
 	this.formLabel = formLabel;
 	this.forms = [];
 	this.formSetManager =
@@ -17,7 +18,7 @@ function initialize(formSet) {
 }
 function createInputId(formSet, id) {
 	return 'id_' + formSet.formPrefix + '-' +
-	       id + '-' + formSet.formPrefix;
+	       id + '-' + formSet.fieldName;
 }
 function initializeFormSet(formSet) {
 	var count = formSet.getFormCount();
@@ -94,7 +95,7 @@ function createLabel(formNumber, formSet) {
 	var label = document.createElement('label');
 
 	var labelForId = 'id_' + formSet.formPrefix + '-' +
-					 formNumber + '-' + formSet.formPrefix;
+					 formNumber + '-' + formSet.fieldName;
 	label.setAttribute('for', labelForId);
 	label.innerHTML = formSet.formLabel;
 
@@ -104,7 +105,7 @@ function createInput(formSet, formNumber, formValue) {
 	var id = createInputId(formSet, formNumber);
 	var value = formValue;
 	var name =
-		formSet.formPrefix + '-' + formNumber + '-' + formSet.formPrefix;
+		formSet.formPrefix + '-' + formNumber + '-' + formSet.fieldName;
 	var input = document.createElement('input');
 
 	input.setAttribute('type', 'text');
@@ -168,7 +169,7 @@ function updateFormSetForms(formSet) {
 		var input = formSet.forms[i].childNodes[1].childNodes[0];
 
 		input.id = createInputId(formSet, i);
-		input.name = formSet.formPrefix + '-' + i + '-' + formSet.formPrefix;
+		input.name = formSet.formPrefix + '-' + i + '-' + formSet.fieldName;
 
 		var removeLink = formSet.forms[i].childNodes[1].childNodes[1];
 		var onclickAttribute = 'removeForm("' + input.id + 

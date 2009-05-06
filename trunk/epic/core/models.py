@@ -45,7 +45,7 @@ class Item(models.Model):
     creator = models.ForeignKey(User)
     name = models.CharField(max_length=MAX_ITEM_NAME_LENGTH)
     description = models.CharField(max_length=MAX_ITEM_DESCRIPTION_LENGTH)
-    
+
     # TODO: Strip tags for a THIRD version of the description to be displayed
     # on the short listing (browse) pages.
     # TODO: Validate images placed in the BBCode.
