@@ -3,7 +3,8 @@ from django.contrib.auth.forms import AuthenticationForm
 from django.core.urlresolvers import reverse
 from django.template import RequestContext
 
-from epic.core.forms import ShortAuthenticationForm    
+from epic.core.forms import ShortAuthenticationForm
+from epic.core.models import Profile 
 from epic.datasets.models import DataSet
 
 
@@ -58,3 +59,17 @@ def nav_bar_link(current_link, link_to_be_highlighted, view_function_name):
         nav_bar_link_html_data
     
     return nav_bar_link_html
+
+@register.inclusion_tag('templatetags/user_title.html')
+def user_title(user, show_affiliation=None):
+    if user.first_name and user.last_name:
+        name = user.first_name + " " + user.last_name  
+    else:
+        name = Profile.objects.for_user(user).NULL_TITLE
+        
+    if show_affiliation:
+        affiliation = Profile.objects.for_user(user).affiliation
+    else:
+        affiliation = None
+        
+    return {'name': name, 'affiliation': affiliation, 'user': user}

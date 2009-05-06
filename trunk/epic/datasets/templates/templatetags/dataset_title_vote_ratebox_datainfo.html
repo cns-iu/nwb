@@ -1,4 +1,5 @@
 {% load djangoratings_templatetags %}
+{% load core_templatetags %}
 {% rate_box_vote dataset user %}
 
 <h2>
@@ -9,9 +10,7 @@
 
 <ul class="datainfo">
   <li class="first">
-    <a href="{% url core.views.view_profile user_id=dataset.creator.id %}">
-      {{ dataset.creator.get_profile.full_title }}
-    </a>
+    {% user_title dataset.creator 'True' %}
   </li>
   
   <li>

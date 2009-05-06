@@ -124,7 +124,7 @@ class Profile(models.Model):
     MAX_USER_EMAIL_LENGTH = 256
     MAX_USER_PROFILE_LENGTH = 512
     
-    NULL_TITLE = '(Invalid Name)'
+    NULL_TITLE = '(No Name Set)'
     
     objects = ProfileManager()
     user = models.ForeignKey(User, unique=True)

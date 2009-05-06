@@ -1,3 +1,4 @@
+{% load core_templatetags %}
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 
 <html xmlns="http://www.w3.org/1999/xhtml">
@@ -37,9 +38,7 @@
       <div id="login">
         {% block login %}
           {% if user.is_authenticated %}
-            <span id="logged-in-user"><a href="{% url core.views.view_profile user_id=user.id %}">
-              {{ user.get_profile.short_title }}
-            </a> | </span>
+            <span id="logged-in-user">{% user_title user %} | </span>
             {% load messages_templatetags %}
             <a href="{% url messages.views.index user_id=user.id %}">Messages ({% num_unread_messages user %})</a> | 
             <a href="{% url core.views.logout_view %}">Log Out</a>

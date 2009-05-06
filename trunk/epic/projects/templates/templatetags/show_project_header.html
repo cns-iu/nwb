@@ -1,3 +1,4 @@
+{% load core_templatetags %}
 <h2>
   <a href="{% url projects.views.view_project item_id=project.id slug=project.slug%}">
     {{ project.name }}
@@ -6,9 +7,7 @@
 
 <ul class="datainfo">
   <li class="first">
-    <a href="{% url projects.views.view_user_project_list user_id=project.creator.id %}">
-      {{ project.creator.get_profile }}
-    </a>
+    {% user_title project.creator 'True' %}
   </li>
   
   <li>
