@@ -643,21 +643,26 @@ def download_all_files(request, item_id, slug):
     dataset = DataSet.objects.get(pk=item_id)
     user = request.user
     
-    temp = tempfile.TemporaryFile()
-    archive = zipfile.ZipFile(temp, 'w')
+    if dataset.is_active:
     
-    for file in dataset.files.all():
-        file.file_contents.open('r')
-        archive.writestr(file.get_short_name(), file.file_contents.read())
-        file.file_contents.close()
+        temp = tempfile.TemporaryFile()
+        archive = zipfile.ZipFile(temp, 'w')
         
-    archive.close()
-    
-    wrapper = FileWrapper(temp)
-    
-    response = HttpResponse(wrapper, content_type='application/zip')
-    response['Content-Disposition'] = 'attachment; filename=%s.zip' % dataset.name
-    response['Content-Length'] = temp.tell()
-
-    temp.seek(0)
-    return response
+        for file in dataset.files.all():
+            file.file_contents.open('r')
+            archive.writestr(file.get_short_name(), file.file_contents.read())
+            file.file_contents.close()
+            
+        archive.close()
+        
+        wrapper = FileWrapper(temp)
+        
+        response = HttpResponse(wrapper, content_type='application/zip')
+        response['Content-Disposition'] = 'attachment; filename=%s.zip' % dataset.name
+        response['Content-Length'] = temp.tell()
+        
+        temp.seek(0)
+        return response
+    else:
+       return HttpResponseRedirect(reverse('epic.datasets.views.view_dataset',
+                                            kwargs={'item_id': dataset.id, 'slug': dataset.slug,})) 
