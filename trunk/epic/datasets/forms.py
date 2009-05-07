@@ -39,7 +39,8 @@ class TagDataSetForm(forms.Form):
                 Tags are comma or space separated.
                 Double quotes can be used to allow multiword tags.
                 """
-    tags = forms.CharField(max_length=Item.MAX_ITEM_TAGS_LENGTH, required=False, help_text=help_text)
+    tags = forms.CharField(max_length=Item.MAX_ITEM_TAGS_LENGTH, required=False, 
+                           help_text=help_text, widget=forms.TextInput(attrs={'size': 40}))
     
 class GeoLocationHiddenFieldForm(forms.Form):
     add_location = forms.CharField(required=False, widget=forms.HiddenInput)
@@ -51,7 +52,7 @@ GeoLocationFormSet = formset_factory(GeoLocationHiddenFieldForm, extra=0)
 RemoveGeoLocationFormSet = formset_factory(RemoveGeoLocationHiddenFieldForm, extra=0)
 
 class AcademicReferenceForm(ModelForm):
-    reference = forms.CharField(required=False)
+    reference = forms.CharField(required=False, widget=forms.TextInput(attrs={'size': 40}))
     
     class Meta:
         model = AcademicReference
@@ -60,7 +61,7 @@ class AcademicReferenceForm(ModelForm):
 AcademicReferenceFormSet = formset_factory(AcademicReferenceForm, extra=1)
 
 class AuthorForm(ModelForm):
-    author = forms.CharField(required=False)
+    author = forms.CharField(required=False, widget=forms.TextInput(attrs={'size': 40}))
     class Meta:
         model = Author
         exclude = ['items']
