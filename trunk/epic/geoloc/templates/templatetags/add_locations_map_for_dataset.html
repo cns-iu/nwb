@@ -248,6 +248,9 @@
 		var re_quote = /\'/gi;
 		var re_double_quote = /\"/gi;
 		var canonicalName = inputName.replace(re_quote, "").replace(re_double_quote, "");
+		if (canonicalName === ""){
+			canonicalName = "Unnamed Location";
+		}
 		return canonicalName;
 	}
 	
