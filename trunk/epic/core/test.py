@@ -3,6 +3,10 @@ from django.test import TestCase
 
 
 class CustomTestCase(TestCase):
+    
+    def assertExists(self, object):
+        self.assertTrue(object)
+        
     # TODO: Is there a way to have a single argument turn into a list of one
     # when passed to a method?
     
