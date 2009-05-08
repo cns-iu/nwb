@@ -1,0 +1,41 @@
+{% load core_templatetags %}
+<h2>
+  <a href="{% url projects.views.view_project item_id=project.id slug=project.slug%}">
+    {{ project.name }}
+  </a>
+</h2>
+
+<ul class="datainfo">
+  <li class="first">
+    {% user_title project.creator 'True' %}
+  </li>
+  
+  <li>
+    {{ project.created_at|date:"F d, Y - P" }}
+  </li>
+  
+  {% ifequal user project.creator %}
+    <li>
+      <a href="{% url projects.views.edit_project item_id=project.id, slug=project.slug %}">
+        Edit
+      </a>
+    </li>
+    
+    {% if show_delete_buttons %}
+      <li>
+        <a href="{% url projects.views.confirm_delete_project item_id=project.id, slug=project.slug %}">
+          Delete
+        </a>
+      </li>
+    {% endif %}
+  {% endifequal %}
+  {% comment %}
+  {% if user.is_authenticated %}
+    {% ifnotequal user project.creator %}
+      <a href="{% url messages.views.send_message user_id=user.id, recipient_id=project.creator.id %}">
+        Contact Creator
+      </a>
+    {% endifnotequal %}
+  {% endif %}
+  {% endcomment %}
+</ul>
