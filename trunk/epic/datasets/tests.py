@@ -1,13 +1,16 @@
 import os, zipfile
+import tempfile
 
 from django.contrib.auth.models import User
 from django.core.files.base import ContentFile
 from django.core.urlresolvers import reverse
 
 from epic.core.test import CustomTestCase
+from epic.datasets.forms import AcademicReferenceForm
+from epic.datasets.forms import AuthorForm
 from epic.datasets.models import DataSet, DataSetFile
 
-class UrlsTestCaseTestCase(CustomTestCase):
+class UrlsTestCase(CustomTestCase):
     """ Test all the urls to make sure that the view for each works """
     
     fixtures = ['just_users', 'datasets']
@@ -375,7 +378,7 @@ class CreateDatasetTestCase(CustomTestCase):
         
         self.create_dataset_url = reverse('epic.datasets.views.create_dataset')
         
-        import tempfile
+        
         #make files for us to upload 
 
         test_file1 = tempfile.TemporaryFile()
@@ -428,6 +431,80 @@ class CreateDatasetTestCase(CustomTestCase):
         self.assertEqual(response.status_code, 302, response.content)
         
         ds = DataSet.objects.get(name=self.post_data['name'], description=self.post_data['description'])
+    
+    def testBlankAuthor(self):
+        # Posting '     ' for authors is not allowed.
+        self.tryLogin('bob')
+
+        response = self.client.get(self.create_dataset_url)
+        self.assertEqual(response.status_code, 200)
+        
+        test_file1 = tempfile.TemporaryFile()
+        test_file2 = tempfile.TemporaryFile()
+        
+        test_file1.write("This is a test file1")
+        test_file2.write("This is a test file2")
+        
+        test_file1.flush()
+        test_file2.flush()
+
+        test_file1.seek(0)
+        test_file2.seek(0)
+        
+        post_data_blank_author = {
+            'name': 'This is a new dataset 209u359hdfg',
+            'description': '20y5hdfg ahi3hoh348t3948t5hsdfigh',
+            'files[]' : [test_file1, test_file2],
+            'remove-INITIAL_FORMS': 0,
+            'add-INITIAL_FORMS': 0,
+            'add-TOTAL_FORMS': 0,
+            'remove-TOTAL_FORMS': 0,
+            'reference-INITIAL_FORMS': 0,
+            'reference-TOTAL_FORMS': 0,
+            'author-INITIAL_FORMS': 0,
+            'author-TOTAL_FORMS': 1,
+            'author-0-author': '     ',
+        }
+        
+        response = self.client.post(self.create_dataset_url, post_data_blank_author)
+        self.assertContains(response, AuthorForm.EMPTY_AUTHOR_ERROR_MESSAGE, count=1)
+        
+    def testBlankReference(self):
+        # Posting '     ' for references is not allowed.
+        self.tryLogin('bob')
+
+        response = self.client.get(self.create_dataset_url)
+        self.assertEqual(response.status_code, 200)
+        
+        test_file1 = tempfile.TemporaryFile()
+        test_file2 = tempfile.TemporaryFile()
+        
+        test_file1.write("This is a test file1")
+        test_file2.write("This is a test file2")
+        
+        test_file1.flush()
+        test_file2.flush()
+
+        test_file1.seek(0)
+        test_file2.seek(0)
+        
+        post_data_blank_reference = {
+            'name': 'This is a new dataset 209u359hdfg',
+            'description': '20y5hdfg ahi3hoh348t3948t5hsdfigh',
+            'files[]' : [test_file1, test_file2],
+            'remove-INITIAL_FORMS': 0,
+            'add-INITIAL_FORMS': 0,
+            'add-TOTAL_FORMS': 0,
+            'remove-TOTAL_FORMS': 0,
+            'reference-INITIAL_FORMS': 0,
+            'reference-TOTAL_FORMS': 1,
+            'reference-0-reference': '          ',
+            'author-INITIAL_FORMS': 0,
+            'author-TOTAL_FORMS': 0,
+        }
+        
+        response = self.client.post(self.create_dataset_url, post_data_blank_reference)
+        self.assertContains(response, AcademicReferenceForm.EMPTY_REFERENCE_ERROR_MESSAGE, count=1)
 
 class EditDatasetTestCase(CustomTestCase):
     """ Test the edit_dataset view """

@@ -52,7 +52,22 @@ GeoLocationFormSet = formset_factory(GeoLocationHiddenFieldForm, extra=0)
 RemoveGeoLocationFormSet = formset_factory(RemoveGeoLocationHiddenFieldForm, extra=0)
 
 class AcademicReferenceForm(ModelForm):
-    reference = forms.CharField(required=False, widget=forms.TextInput(attrs={'size': 40}))
+    reference = forms.CharField(required=False,
+                                widget=forms.TextInput(attrs={'size': 40}))
+    
+    EMPTY_REFERENCE_ERROR_MESSAGE = 'References must contain more than whitespace.'
+    
+    def clean_reference(self):
+        reference = self.cleaned_data['reference']
+        
+        # Strip will remove all whitespace so if there is anything left, the
+        #    field was not left 'blank'
+        if reference.strip():
+            pass
+        else:
+            raise forms.ValidationError(self.EMPTY_REFERENCE_ERROR_MESSAGE)
+        
+        return reference
     
     class Meta:
         model = AcademicReference
@@ -62,6 +77,19 @@ AcademicReferenceFormSet = formset_factory(AcademicReferenceForm, extra=1)
 
 class AuthorForm(ModelForm):
     author = forms.CharField(required=False, widget=forms.TextInput(attrs={'size': 40}))
+    
+    EMPTY_AUTHOR_ERROR_MESSAGE = 'Authors must contain more than whitespace.'
+    
+    def clean_author(self):
+        author = self.cleaned_data['author']
+        
+        if author.strip():
+            pass
+        else:
+            raise forms.ValidationError(self.EMPTY_AUTHOR_ERROR_MESSAGE)
+    
+        return author
+    
     class Meta:
         model = Author
         exclude = ['items']
