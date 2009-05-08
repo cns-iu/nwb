@@ -6,7 +6,15 @@
 {% endblock %}
 
 {% block content %}
-  <h3>{{ profile.full_title }}</h3>
+  <h3>{{ profile.full_title }} - 
+  {% if user.is_authenticated %}
+    {% ifnotequal user profile.user %}
+      <a href="{% url messages.views.send_message user_id=user.id, recipient_id=profile.user.id %}">
+        Contact Creator
+      </a>
+    {% endifnotequal %}
+  {% endif %}
+  </h3>
   {% ifequal profile.user user %}
     <p><b>Username:</b> {{ profile.user.username }}</p>
   {% endifequal %}
