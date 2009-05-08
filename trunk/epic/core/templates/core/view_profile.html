@@ -34,7 +34,7 @@
      {% ifequal profile.user user %}
        <h3>Your Datasets</h3>
      {% else %}
-       <h3>{{ profile.full_title }} Datasets</h3>
+       <h3>{% if profile.user.first_name %}{{ profile.user.first_name }}'s{% endif %} Datasets</h3>
      {% endifequal %}
           
     {% load dataset_templatetags %}
@@ -58,7 +58,7 @@
     {% ifequal profile.user user %}
       <h3>Your Projects</h3>
     {% else %}
-      <h3>{{ profile.full_title }} Projects</h3>
+      <h3>{% if profile.user.first_name %}{{ profile.user.first_name }}'s{% endif %} Projects</h3>
     {% endifequal %}
     
     {% load project_templatetags %}
@@ -79,7 +79,7 @@
      {% ifequal profile.user user %}
        <h3>Your Data Requests</h3>
      {% else %}
-       <h3>{{ profile.full_title }} Data Requests</h3>
+       <h3>{% if profile.user.first_name %}{{ profile.user.first_name }}'s{% endif %} Data Requests</h3>
      {% endifequal %}
     
     {% load datarequest_templatetags %}
