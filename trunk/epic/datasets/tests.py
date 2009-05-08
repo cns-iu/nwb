@@ -1035,6 +1035,7 @@ class DownloadAllTestCase(CustomTestCase):
         self.view_dataset_url = reverse('epic.datasets.views.view_dataset', 
                                         kwargs={'item_id':self.dataset.id, 
                                                 'slug':self.dataset.slug,})
+        
         self.download_all_url = reverse('epic.datasets.views.download_all_files', 
                                         kwargs={'item_id':self.dataset.id, 
                                                 'slug':self.dataset.slug,})

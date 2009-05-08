@@ -9,4 +9,5 @@ urlpatterns = patterns('epic.projects.views',
     (r'^(?P<item_id>\d+)/(?P<slug>[-\w]+)/edit/$', 'edit_project'),
     (r'^(?P<item_id>\d+)/(?P<slug>[-\w]+)/confirm_delete/$', 'confirm_delete_project'),
     (r'^(?P<item_id>\d+)/(?P<slug>[-\w]+)/delete/$', 'delete_project'),
+    (r'^(?P<item_id>\d+)/(?P<slug>[-\w]+)/download/$', 'download_all'),
 )

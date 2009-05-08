@@ -1,7 +1,10 @@
+import tempfile
 import re
+import zipfile
 
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
+from django.core.servers.basehttp import FileWrapper
 from django.core.urlresolvers import reverse
 from django.http import HttpResponse
 from django.http import HttpResponseRedirect
@@ -171,3 +174,34 @@ def view_user_project_list(request, user_id):
         'projects/view_user_project_list.html',
         {'projects': projects, 'requested_user': requested_user},
         context_instance=RequestContext(request))
+
+@login_required
+def download_all(request, item_id, slug):
+    project = get_object_or_404(Project, pk=item_id)
+    
+    if project.is_active:
+        datasets = project.datasets.all()
+        temp = tempfile.TemporaryFile()
+        archive = zipfile.ZipFile(temp, 'w')
+        
+        for dataset in datasets:
+            for file in dataset.files.all():
+                file.file_contents.open('r')
+                archive.writestr(dataset.name + '/' + file.get_short_name(),
+                                 file.file_contents.read())
+                file.file_contents.close()
+
+        archive.close()
+        
+        wrapper = FileWrapper(temp)
+        
+        response = HttpResponse(wrapper, content_type='application/zip')
+        response['Content-Disposition'] = 'attachment; filename=%s.zip' % project.name
+        response['Content-Length'] = temp.tell()
+        
+        temp.seek(0)
+        return response
+    else:
+        view_project_url = \
+                get_item_url(project, 'epic.projects.views.view_project')
+        return HttpResponseRedirect(view_project_url)

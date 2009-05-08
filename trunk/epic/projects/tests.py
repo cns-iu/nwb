@@ -5,6 +5,7 @@ from epic.core.models import Profile
 from epic.core.test import CustomTestCase
 from epic.core.util.view_utils import *
 from epic.datasets.models import DataSet
+from epic.datasets.models import DataSetFile
 from epic.projects.models import Project
 
 
@@ -1057,3 +1058,67 @@ class ViewUserProjectListTestCase(CustomTestCase):
         
         self.assertNotContains(response, self.project2.name)
         self.assertNotContains(response, self.project2.name)
+
+class DownloadAll(CustomTestCase):
+    """ Test that downloading all the dataset fiels for a project works
+        TODO: Actually open the zip file that is received
+    """
+    
+    fixtures = ['projects_just_users']
+    
+    def setUp(self):
+        self.bob = User.objects.get(username='bob')
+        self.admin = User.objects.get(username='admin')   
+        
+        self.dataset = DataSet.objects.create(
+            creator=self.bob, 
+            name='asdfn83tn54yj', 
+            description='this is the first dataset',
+            is_active=True)
+        
+        self.datasetfile = DataSetFile.objects.create(
+            parent_dataset=self.dataset,
+            file_contents='asdfhnasdf')
+        
+    def testInactive(self):
+        # Inactive projects should not allow you to download anything.
+        project = Project.objects.create(creator=self.bob,
+                                         name='asdf89234t6',
+                                         description='asn0894jnnagnasd fasd',
+                                         is_active=False)
+        view_project_url = get_item_url(project, 
+                                        'epic.projects.views.view_project')
+        
+        download_all_url = get_item_url(project,
+                                        'epic.projects.views.download_all')
+        self.tryLogin('bob')
+        
+        response = self.client.get(download_all_url)
+        self.assertRedirects(response, view_project_url)
+
+    def testActiveLoggedOut(self):
+        # Logged out users should be redirected (to login).
+        project = Project.objects.create(creator=self.bob,
+                                         name='asdf89234t6',
+                                         description='asn0894jnnagnasd fasd',
+                                         is_active=True)
+        
+        download_all_url = get_item_url(project,
+                                        'epic.projects.views.download_all')
+         
+        response = self.client.get(download_all_url)
+        self.assertEqual(response.status_code, 302)
+    
+    def testActiveLoggedIn(self):
+        # Logged in users should get the zip file
+        self.tryLogin('bob')
+        project = Project.objects.create(creator=self.bob,
+                                         name='asdf89234t6',
+                                         description='asn0894jnnagnasd fasd',
+                                         is_active=True)
+        
+        download_all_url = get_item_url(project,
+                                        'epic.projects.views.download_all')
+         
+        response = self.client.get(download_all_url)
+        self.assertEqual(response['Content-Type'], 'application/zip')
