@@ -78,6 +78,9 @@ class CustomTestCase(TestCase):
             self, status_code, redirect_codes=[302]):
         self._assertStatusCodeIsOneOf(status_code, redirect_codes)
     
+    def failIfNot(self, condition):
+        self.failIf(not condition)
+    
     def _assertStatusCodeIsOneOf(self, status_code, codes):
         if status_code not in codes:
             self.fail('%s not in %s' % (status_code, codes))
