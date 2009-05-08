@@ -15,7 +15,6 @@ def _create_item_of_type(item_type, item_type_string, unique_identifier):
         creator=bob,
         name=unique_item_name_string,
         description=description,
-        slug=unique_item_name_string,
         is_active=True)
     
     return item
@@ -37,7 +36,7 @@ def _create_datarequest1():
 
 def _create_dataset1():
     dataset1 = _create_item_of_type(DataSet, 'DataSet', 1)
-    
+    dataset1.save()
     return dataset1
 
 ############
@@ -46,7 +45,7 @@ def _create_dataset1():
 
 def _create_project1():
     project1 = _create_item_of_type(Project, 'Project', 1)
-    
+    project1.save()
     return project1
 
 ######################################

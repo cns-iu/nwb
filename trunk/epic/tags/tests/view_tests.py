@@ -13,7 +13,6 @@ def common_setUp(self):
     # TODO: Put this in a fixture.
     self.dataset1 = DataSet.objects.get(creator=self.bob,
                                    name="dataset1",
-                                   slug="dataset1",
                                    description="dataset number one")
 
     # dataset2 is created by bill.
@@ -21,7 +20,6 @@ def common_setUp(self):
     
     self.dataset2 = DataSet.objects.get(creator=self.bill,
                                    name="dataset2",
-                                   slug="dataset2",
                                    description="dataset number two")
     
     self.tag1 = Tagging.objects.get(tag="tag1")

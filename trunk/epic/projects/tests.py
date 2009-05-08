@@ -29,8 +29,7 @@ class URLsTestCase(CustomTestCase):
         self.project1 = Project.objects.get(
             creator=self.bob,
             name='project1',
-            description='This is the first project',
-            slug='project1')
+            description='This is the first project',)
     
     def test_view_projects(self):
         self.assertResponseStatusNotFailure(
@@ -75,14 +74,12 @@ class CreateProjectTestCase(CustomTestCase):
         self.project1 = Project.objects.get(
             creator=self.bob,
             name='project1',
-            description='This is the first project',
-            slug='project1')
+            description='This is the first project',)
         
         self.project2 = Project.objects.get(
             creator=self.admin,
             name='project2',
-            description='This is the second project',
-            slug='project2')
+            description='This is the second project',)
         
         self.create_project_url = \
             reverse('epic.projects.views.create_project')
@@ -174,14 +171,12 @@ class EditProjectTestCase(CustomTestCase):
         self.project1 = Project.objects.get(
             creator=self.bob,
             name='project1',
-            description='This is the first project',
-            slug='project1')
+            description='This is the first project',)
         
         self.project2 = Project.objects.create(
             creator=self.admin,
             name='project2',
-            description='This is the second project',
-            slug='project2')
+            description='This is the second project',)
         
         project1_url_reverse_kwargs = {
             'item_id': self.project1.id,
@@ -284,14 +279,12 @@ class AddDatasetsToProjectTestCase(CustomTestCase):
         self.dataset = DataSet.objects.get(
             creator=self.bob,
             name='dataset1',
-            description='This is the first dataset',
-            slug='dataset1')
+            description='This is the first dataset',)
         
         self.project1 = Project.objects.get(
             creator=self.bob,
             name='project1',
-            description='This is the first project',
-            slug='project1')
+            description='This is the first project',)
         
         project1_url_reverse_kwargs = {
             'item_id': self.project1.id,
@@ -405,20 +398,17 @@ class DeleteDatasetFromProjectTestCase(CustomTestCase):
         self.dataset = DataSet.objects.get(
             creator=self.bob,
             name='dataset1',
-            description='This is the first dataset',
-            slug='dataset1')
+            description='This is the first dataset',)
         
         self.project1 = Project.objects.get(
             creator=self.bob,
             name='project1',
-            description='This is the first project',
-            slug='project1')
+            description='This is the first project',)
         
         self.project2 = Project.objects.get(
             creator=self.admin,
             name='project2',
-            description='This is the second project',
-            slug='project2')
+            description='This is the second project',)
         
         self.edit_project1_url = reverse(
             'epic.projects.views.edit_project',
@@ -504,14 +494,12 @@ class DeleteProjectTestCase(CustomTestCase):
         self.project1 = Project.objects.get(
             creator=self.bob,
             name='project1',
-            description='This is the first project',
-            slug='project1')
+            description='This is the first project',)
         
         self.project2 = Project.objects.get(
             creator=self.admin,
             name='project2',
-            description='This is the second project',
-            slug='project2')
+            description='This is the second project',)
         
         project1_url_reverse_kwargs = {
             'item_id': self.project1.id,
@@ -634,14 +622,12 @@ class BrowseProjectsTestCase(CustomTestCase):
         self.project1 = Project.objects.get(
             creator=self.bob,
             name='project1',
-            description='This is the first project',
-            slug='project1')
+            description='This is the first project',)
         
         self.project2 = Project.objects.get(
             creator=self.admin,
             name='project2',
-            description='This is the second project',
-            slug='project2')
+            description='This is the second project',)
         
         self.project2_dataset = self.project2.datasets.all()[0]
         
@@ -909,14 +895,12 @@ class ViewProjectsTestCase(CustomTestCase):
         self.project1 = Project.objects.get(
             creator=self.bob,
             name='project1',
-            description='This is the first project',
-            slug='project1')
+            description='This is the first project',)
         
         self.project2 = Project.objects.create(
             creator=self.admin,
             name='project2',
-            description='This is the second project',
-            slug='project2')
+            description='This is the second project',)
         
         self.view_projects_url = reverse('epic.projects.views.view_projects')
     
@@ -959,14 +943,12 @@ class ViewProjectTestCase(CustomTestCase):
             creator=self.bob,
             name='project1',
             description='This is the first project',
-            slug='project1',
             is_active=True)
         
         self.project2 = Project.objects.get(
             creator=self.admin,
             name='project2',
             description='This is the second project',
-            slug='project2',
             is_active=True)
         
         self.view_project1_url = \
@@ -1031,14 +1013,12 @@ class ViewUserProjectListTestCase(CustomTestCase):
         self.project1 = Project.objects.get(
             creator=self.bob, 
             name='project1',
-            description='This is the first project',
-            slug='project1')
+            description='This is the first project',)
         
         self.project2 = Project.objects.create(
             creator=self.admin,
             name='project2',
-            description='This is the second project',
-            slug='project2')
+            description='This is the second project',)
         
         self.view_user_project_list_url = reverse(
             'epic.projects.views.view_user_project_list',

@@ -9,7 +9,6 @@ def _create_dataset1():
 	dataset1 = DataSet.objects.create(creator=bob,
 									  name="dataset1",
 									  description="dataset number one",
-									  slug="dataset1",
 									  is_active=True)
 	
 	return dataset1
@@ -22,7 +21,6 @@ def _create_dataset2():
 	dataset2 = DataSet.objects.create(creator=bill,
 									  name="dataset2",
 									  description="dataset number two",
-									  slug="dataset2",
 									  is_active=True)
 	
 	return dataset2

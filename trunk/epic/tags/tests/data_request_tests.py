@@ -13,7 +13,6 @@ def common_setUp(self):
     # TODO: Put this in a fixture.
     self.datarequest1 = DataRequest.objects.create(creator=self.bob,
                                    name="datarequest1",
-                                   slug="datarequest1",
                                    description="datarequest number one",
                                    is_active=True)
 
@@ -22,7 +21,6 @@ def common_setUp(self):
     
     self.datarequest2 = DataRequest.objects.create(creator=self.bill,
                                    name="datarequest2",
-                                   slug="datarequest2",
                                    description="datarequest number two",
                                    is_active=True)
     

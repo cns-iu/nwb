@@ -32,6 +32,7 @@ Let's just test out a few aspects of our models...
 
 from django.contrib.auth.models import User
 from django.db import models
+from django.template.defaultfilters import slugify
 
 from epic.core.util.postmarkup import PostMarkup
 
@@ -87,6 +88,7 @@ class Item(models.Model):
     
     def save(self, *args, **kwargs):
         self.rendered_description = self.render_description()
+        self.slug = slugify(self.name)
         super(Item, self).save()
         
     def render_description(self):

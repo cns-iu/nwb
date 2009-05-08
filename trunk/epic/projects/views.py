@@ -10,7 +10,6 @@ from django.shortcuts import get_list_or_404
 from django.shortcuts import get_object_or_404
 from django.shortcuts import render_to_response
 from django.template import RequestContext
-from django.template.defaultfilters import slugify
 
 from epic.comments.forms import PostCommentForm
 from epic.core.models import Item
@@ -34,12 +33,10 @@ def create_project(request):
         if new_project_form.is_valid() and project_datasets.is_valid():
             name = new_project_form.cleaned_data['name']
             description = new_project_form.cleaned_data['description']
-            slug = slugify(name)
             
             new_project = Project.objects.create(creator=request.user,
                                                  name=name,
                                                  description=description,
-                                                 slug=slug,
                                                  is_active=True)
             
             for dataset_form in project_datasets.forms:
@@ -125,7 +122,6 @@ def edit_project(request, item_id, slug):
         if edit_form.is_valid() and project_datasets.is_valid():
             project.name = edit_form.cleaned_data['name']
             project.description = edit_form.cleaned_data['description']
-            project.slug = slugify(project.name)
             project.save()
             for dataset in project.datasets.all():
                 project.datasets.remove(dataset)

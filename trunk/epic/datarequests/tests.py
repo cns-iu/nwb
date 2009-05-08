@@ -212,7 +212,10 @@ class ViewDataRequestTestCase(CustomTestCase):
     def setUp(self):
         self.bob = User.objects.get(username="bob")
         
-        self.dr1 = DataRequest.objects.get(creator=self.bob, name='unfulfilled_datarequest1', description='The first unfulfilled datarequest', status='U', slug='unfulfilled_datarequest1')
+        self.dr1 = DataRequest.objects.get(creator=self.bob, 
+                                           name='unfulfilled_datarequest1', 
+                                           description='The first unfulfilled datarequest', 
+                                           status='U')
         
         self.datarequest_url = reverse('epic.datarequests.views.view_datarequest', kwargs={'item_id': self.dr1.id, 'slug':self.dr1.slug })
         self.edit_url = reverse('epic.datarequests.views.edit_datarequest', kwargs={'item_id': self.dr1.id, 'slug':self.dr1.slug })

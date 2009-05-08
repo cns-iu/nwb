@@ -429,7 +429,9 @@ class ContactUserLinkDataSetTestCase(CustomTestCase):
 	
 	def setUp(self):
 		commonMessageSetUp(self)
-		self.first_data_set = DataSet.objects.get(creator=self.user_bob, name='dataset1', description='this is the first dataset', slug='dataset1')
+		self.first_data_set = DataSet.objects.get(creator=self.user_bob, 
+                                                  name='dataset1', 
+                                                  description='this is the first dataset')
  
 	
 	def tearDown(self):

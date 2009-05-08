@@ -12,7 +12,6 @@ def _create_datarequest1():
         description='This is a datarequest which is canceled, and it ' + \
             'should be on the profile page <- by bill ',
         status='C',
-        slug='data-request-item-3',
         is_active=True)
     
     datarequest1.save()
@@ -31,7 +30,6 @@ def _create_datarequest2():
         description='This is a datarequest which is unfulfilled, and it ' + \
             'should be on the profile page <- by bill ',
         status='U',
-        slug='data-request-item-4',
         is_active=True)
     
     datarequest2.save()

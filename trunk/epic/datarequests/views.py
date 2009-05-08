@@ -4,7 +4,6 @@ from django.core.urlresolvers import reverse
 from django.http import HttpResponseRedirect
 from django.shortcuts import render_to_response, get_object_or_404
 from django.template import RequestContext
-from django.template.defaultfilters import slugify
 
 from epic.comments.forms import PostCommentForm
 from epic.core.models import Item
@@ -43,7 +42,6 @@ def new_datarequest(request):
         if form.is_valid():
             datarequest = form.save(commit=False)
             datarequest.creator = user
-            datarequest.slug = slugify(datarequest.name)
             datarequest.is_active = True
             datarequest.save()
             
@@ -86,8 +84,7 @@ def edit_datarequest(request, item_id, slug):
                 Tagging.objects.update_tags(tag_names=tag_names, 
                                         item=datarequest, 
                                         user=user)
-                datarequest = form.save(commit=False)
-                datarequest.slug = slugify(datarequest.name)  
+                datarequest = form.save(commit=False) 
                 datarequest.save()
                 
                 view_datarequest_url = get_item_url(

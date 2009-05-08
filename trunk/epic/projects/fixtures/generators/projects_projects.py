@@ -12,7 +12,6 @@ def _create_project1():
         creator=bob,
         name='project1',
         description='This is the first project',
-        slug='project1',
         is_active=True)
     
     return project1
@@ -26,7 +25,6 @@ def _create_project2_dataset():
         creator=bob,
         name='dataset1',
         description='This is the first dataset',
-        slug='dataset1',
         is_active=True)
     
     bob_tags = 'lol testing for teh win'
@@ -43,7 +41,6 @@ def _create_project2():
         creator=admin,
         name='project2',
         description='This is the second project',
-        slug='project2',
         is_active=True)
     
     project2.datasets.add(project_dataset)

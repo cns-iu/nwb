@@ -15,14 +15,12 @@ def _create_datarequest(creator, status, ordinal, number):
     
     datarequest_name = '%s_datarequest%s' % (type_string, number)
     datarequest_description = 'The %s datarequest' % ordinal
-    datarequest_slug = datarequest_name
     
     datarequest = DataRequest.objects.create(
         creator=creator,
         name=datarequest_name,
         description=datarequest_description,
         status=status,
-        slug=datarequest_slug,
         is_active=True)
     
     return datarequest

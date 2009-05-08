@@ -18,7 +18,6 @@ from django.forms.util import ErrorList
 from django.shortcuts import get_list_or_404
 from django.shortcuts import get_object_or_404
 from django.shortcuts import render_to_response
-from django.template.defaultfilters import slugify
 from django.template import RequestContext
 from django.utils import simplejson
 from django.utils.datastructures import MultiValueDictKeyError
@@ -137,8 +136,7 @@ def _save_new_dataset(form, user):
     new_dataset = DataSet.objects.create(
         creator=user, 
         name=name, 
-        description=description, 
-        slug=slugify(name),
+        description=description,
         previous_version=previous_version, 
         is_active=False)
 
@@ -450,10 +448,8 @@ def edit_dataset(request, item_id, slug=None):
         if form.is_valid() and author_formset.is_valid() and ref_formset.is_valid():       
             dataset.name = form.cleaned_data['name']
             dataset.description = form.cleaned_data['description']
-            dataset.slug = slugify(dataset.name)
             dataset.save()
-
-
+            
             tag_names = form.cleaned_data["tags"]
             Tagging.objects.update_tags(tag_names=tag_names, 
                                         item=dataset, 

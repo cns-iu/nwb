@@ -46,7 +46,6 @@ class ProfileDataRequestTestCase(CustomTestCase):
             name='DataRequest object with Status U', 
             description='DataRequest object with Status U for Bill',
             status='U',
-            slug='whatever',
             is_active=True)
         datarequest1.save()
         
@@ -55,7 +54,6 @@ class ProfileDataRequestTestCase(CustomTestCase):
             name='DataRequest object with Status F', 
             description='DataRequest object with Status F for Bill',
             status='F',
-            slug='whatever',
             is_active=True)
         datarequest2.save()
         
@@ -82,7 +80,6 @@ class ProfileDataRequestTestCase(CustomTestCase):
             name='DataRequest object with Status C (Should not be shown)', 
             description='DataRequest object with Status C for Bill',
             status='C',
-            slug='whatever',
             is_active=True)
         datarequest.save()
         
