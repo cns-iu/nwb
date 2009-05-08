@@ -30,7 +30,7 @@
             {{ form.name.errors }}
         	{{ form.name }}
        	  </td>
-       	  <td>
+       	  <td {% if form.name.help_text %}class="formtips"{% endif %}>
         	  {{ form.name.help_text }}
           </td>
         </tr>
@@ -42,7 +42,7 @@
             {{ form.description.errors }}
         	{{ form.description }}
        	  </td>
-       	  <td>
+       	  <td {% if form.description.help_text %}class="formtips"{% endif %}>
         	{{ form.description.help_text }}
           </td>
         </tr>
@@ -71,7 +71,7 @@
             {{ form.files.errors }}
         	{{ form.files|safe }}
        	  </td>
-       	  <td class="formtips">
+       	  <td {% if form.files.help_text %}class="formtips"{% endif %}>
         	{{ form.files.help_text }}
           </td>
         </tr>
@@ -111,7 +111,7 @@
               {{ form.reference.errors }}
               {{ form.reference }}
             </td>
-            <td>
+            <td{% if form.reference.help_text %}class="formtips"{% endif %}>
               {{ form.reference.help_text }}
             </td>
           </tr>
