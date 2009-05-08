@@ -103,3 +103,11 @@ class ItemDescriptionMarkupTestCase(CustomTestCase):
         self.assertContains(response, '[b]Project1[/b]')
         self.assertNotContains(response,
                                self.project1.rendered_description)
+    
+    def testImageTag(self):
+        response = self.client.get(self.view_dataset1_url)
+        
+        img_url = 'http://www.google.com/intl/en_ALL/images/logo.gif'
+        img_tag = '<img src="%s" />' % img_url
+        self.assertContains(response, img_tag, 1)
+        self.assertContains(response, img_url, 1)
