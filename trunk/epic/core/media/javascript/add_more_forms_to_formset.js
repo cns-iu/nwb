@@ -39,12 +39,23 @@ function initializeFormSet(formSet) {
 }
 function insertAddButton(formSet) {
 	var insertionPoint = getInsertionPoint(formSet);
-
+	
 	var addLink = document.createElement('a');
 	var onClickAttribute = 'addForm(' + formSet.varName + '); return false;';
 	addLink.setAttribute('onclick', onClickAttribute);
 	addLink.innerHTML = 'Add More';
-	insertionPoint.parentNode.insertBefore(addLink,
+	
+	var tr = document.createElement('tr');
+	var th = document.createElement('th');
+	var td = document.createElement('td');
+	var p = document.createElement('p');
+	
+	tr.appendChild(th);
+	tr.appendChild(td);
+	td.appendChild(p);
+	p.appendChild(addLink);
+	
+	insertionPoint.parentNode.insertBefore(tr,
 										   insertionPoint.nextSibling);
 }
 function getInsertionPoint(formSet) {
