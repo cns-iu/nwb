@@ -32,9 +32,9 @@
   {% comment %}
   {% if user.is_authenticated %}
     {% ifnotequal user project.creator %}
-      [<a href="{% url messages.views.send_message user_id=user.id, recipient_id=project.creator.id %}">
+      <a href="{% url messages.views.send_message user_id=user.id, recipient_id=project.creator.id %}">
         Contact Creator
-      </a>]
+      </a>
     {% endifnotequal %}
   {% endif %}
   {% endcomment %}
