@@ -11,8 +11,6 @@ def _create_datasets():
         description='this is the first dataset', 
         slug='dataset1',
         is_active=True)
-    dataset1.render_description()
-    dataset1.save()
     
     dataset2 = DataSet.objects.create(
         creator=admin,
@@ -20,8 +18,6 @@ def _create_datasets():
         description='this is the second dataset',
         slug='dataset2',
         is_active=True)
-    dataset2.render_description()
-    dataset2.save()
 
 ######################################
 # Generate the actual fixtures here. #

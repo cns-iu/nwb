@@ -18,9 +18,6 @@ def _create_item_of_type(item_type, item_type_string, unique_identifier):
         slug=unique_item_name_string,
         is_active=True)
     
-    item.render_description()
-    item.save()
-    
     return item
 
 ################

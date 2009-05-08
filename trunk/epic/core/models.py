@@ -51,6 +51,8 @@ class Item(models.Model):
     # TODO: Validate images placed in the BBCode.
     # No max_length is set for rendered_description because its contents
     # are always derived from description.
+    # TODO: Actually the max_length likely defaults to some value.  It should
+    # likely be set to the same as description.
     rendered_description = models.TextField(blank=True, null=True)
     
     slug = models.SlugField()
@@ -83,14 +85,15 @@ class Item(models.Model):
     
     specific = property(_specific)
     
-    # TODO: This should be called automatically from each subclass'
-    # object manager upon object creation.
+    def save(self, *args, **kwargs):
+        self.rendered_description = self.render_description()
+        super(Item, self).save()
+        
     def render_description(self):
         markup_renderer = PostMarkup()
         markup_renderer.default_tags()
         
-        self.rendered_description = \
-            markup_renderer.render_to_html(self.description)
+        return markup_renderer.render_to_html(self.description)
 
 class Author(models.Model):
     items = models.ManyToManyField(Item, 

@@ -42,10 +42,6 @@ def create_project(request):
                                                  slug=slug,
                                                  is_active=True)
             
-            #TODO: Can we please do this in a constructor (or something) somehow?
-            new_project.render_description()
-            new_project.save()
-            
             for dataset_form in project_datasets.forms:
                 if dataset_form.is_valid():
                     dataset = dataset_form.cleaned_data['dataset']
@@ -130,7 +126,6 @@ def edit_project(request, item_id, slug):
             project.name = edit_form.cleaned_data['name']
             project.description = edit_form.cleaned_data['description']
             project.slug = slugify(project.name)
-            project.render_description()
             project.save()
             for dataset in project.datasets.all():
                 project.datasets.remove(dataset)

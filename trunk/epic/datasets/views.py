@@ -141,9 +141,7 @@ def _save_new_dataset(form, user):
         slug=slugify(name),
         previous_version=previous_version, 
         is_active=False)
-    
-    new_dataset.render_description()
-    new_dataset.save()
+
     return new_dataset
 
 def _save_previous_version(form, dataset):
@@ -453,7 +451,6 @@ def edit_dataset(request, item_id, slug=None):
             dataset.name = form.cleaned_data['name']
             dataset.description = form.cleaned_data['description']
             dataset.slug = slugify(dataset.name)
-            dataset.render_description()
             dataset.save()
 
 

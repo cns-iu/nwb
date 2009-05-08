@@ -13,8 +13,6 @@ def _create_c_datarequests():
         status='C',
         slug='canceled_datarequest1',
         is_active=True)
-    canceled_datarequest1.render_description()
-    canceled_datarequest1.save()
     
     canceled_datarequest2 = DataRequest.objects.create(
         creator=admin,
@@ -23,8 +21,6 @@ def _create_c_datarequests():
         status='C',
         slug='canceled_datarequest2',
         is_active=True)
-    canceled_datarequest2.render_description()
-    canceled_datarequest2.save()
     
     canceled_datarequest3 = DataRequest.objects.create(
         creator=bob,
@@ -33,8 +29,6 @@ def _create_c_datarequests():
         status='C',
         slug='canceled_datarequest3',
         is_active=True)
-    canceled_datarequest3.render_description()
-    canceled_datarequest3.save()
     
     canceled_datarequest4 = DataRequest.objects.create(
         creator=admin,
@@ -43,8 +37,6 @@ def _create_c_datarequests():
         status='C',
         slug='canceled_datarequest4',
         is_active=True)
-    canceled_datarequest4.render_description()
-    canceled_datarequest4.save()
     
     canceled_datarequest5 = DataRequest.objects.create(
         creator=bob,
@@ -53,8 +45,6 @@ def _create_c_datarequests():
         status='C',
         slug='canceled_datarequest5',
         is_active=True)
-    canceled_datarequest5.render_description()
-    canceled_datarequest5.save()
 
 ######################################
 # Create the Fulfilled DataRequests. #
@@ -68,8 +58,6 @@ def _create_f_datarequests():
         status='F',
         slug='fulfilled_datarequest1',
         is_active=True)
-    fulfilled_datarequest1.render_description()
-    fulfilled_datarequest1.save()
     
     fulfilled_datarequest2 = DataRequest.objects.create(
         creator=admin,
@@ -78,8 +66,6 @@ def _create_f_datarequests():
         status='F',
         slug='fulfilled_datarequest2',
         is_active=True)
-    fulfilled_datarequest2.render_description()
-    fulfilled_datarequest2.save()
     
     fulfilled_datarequest3 = DataRequest.objects.create(
         creator=bob,
@@ -88,8 +74,6 @@ def _create_f_datarequests():
         status='F',
         slug='fulfilled_datarequest3',
         is_active=True)
-    fulfilled_datarequest3.render_description()
-    fulfilled_datarequest3.save()
     
     fulfilled_datarequest4 = DataRequest.objects.create(
         creator=admin,
@@ -98,8 +82,6 @@ def _create_f_datarequests():
         status='F',
         slug='fulfilled_datarequest4',
         is_active=True)
-    fulfilled_datarequest4.render_description()
-    fulfilled_datarequest4.save()
     
     fulfilled_datarequest5 = DataRequest.objects.create(
         creator=bob,
@@ -108,8 +90,6 @@ def _create_f_datarequests():
         status='F',
         slug='fulfilled_datarequest5',
         is_active=True)
-    fulfilled_datarequest5.render_description()
-    fulfilled_datarequest5.save()
     
     fulfilled_datarequest6 = DataRequest.objects.create(
         creator=admin,
@@ -118,8 +98,6 @@ def _create_f_datarequests():
         status='F',
         slug='fulfilled_datarequest6',
         is_active=True)
-    fulfilled_datarequest6.render_description()
-    fulfilled_datarequest6.save()
 
 ########################################
 # Create the unfulfilled DataRequests. #
@@ -133,8 +111,6 @@ def _create_u_datarequests():
         status='U',
         slug='unfulfilled_datarequest1',
         is_active=True)
-    unfulfilled_datarequest1.render_description()
-    unfulfilled_datarequest1.save()
     
     unfulfilled_datarequest2 = DataRequest.objects.create(
         creator=admin,
@@ -143,8 +119,6 @@ def _create_u_datarequests():
         status='U',
         slug='unfulfilled_datarequest2',
         is_active=True)
-    unfulfilled_datarequest2.render_description()
-    unfulfilled_datarequest2.save()
     
     unfulfilled_datarequest3 = DataRequest.objects.create(
         creator=bob,
@@ -153,8 +127,6 @@ def _create_u_datarequests():
         status='U',
         slug='unfulfilled_datarequest3',
         is_active=True)
-    unfulfilled_datarequest3.render_description()
-    unfulfilled_datarequest3.save()
     
     unfulfilled_datarequest4 = DataRequest.objects.create(
         creator=admin,
@@ -163,8 +135,6 @@ def _create_u_datarequests():
         status='U',
         slug='unfulfilled_datarequest4',
         is_active=True)
-    unfulfilled_datarequest4.render_description()
-    unfulfilled_datarequest4.save()
 
 ######################################
 # Generate the actual fixtures here. #
