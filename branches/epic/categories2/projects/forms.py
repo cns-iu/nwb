@@ -1,8 +1,8 @@
 import re
 
 from django import forms
-from django.forms.util import ValidationError
 from django.forms.formsets import formset_factory
+from django.forms.util import ValidationError
 
 from epic.core.forms import CategoryChoiceField
 from epic.core.models import Item

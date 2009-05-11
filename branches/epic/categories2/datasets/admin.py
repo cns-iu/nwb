@@ -8,7 +8,6 @@ class InlineDataSetFile(admin.StackedInline):
 class DataSetAdmin(admin.ModelAdmin):
     list_display = ('creator', 'name', 'created_at', 'is_active')
     list_filter = ('creator', 'is_active')
-#    filter_horizontal = ('category',)
     inlines = [InlineDataSetFile]
     
 admin.site.register(DataSet, DataSetAdmin)
