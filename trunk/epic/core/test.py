@@ -89,9 +89,9 @@ class CustomTestCase(TestCase):
         if status_code in codes:
             self.fail('%s in %s' % (status_code, codes))
     
-    class CouldNotLoginException(Exception):
-        def __init__(self, value):
-            self.value = value
-    
-        def __str__(self):
-            return repr(self.value)
+class CouldNotLoginException(Exception):
+    def __init__(self, value):
+        self.value = value
+
+    def __str__(self):
+        return repr(self.value)

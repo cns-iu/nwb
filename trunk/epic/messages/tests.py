@@ -1,7 +1,9 @@
 from django.contrib.auth.models import User
 from django.core.urlresolvers import reverse
-from epic.messages.models import ReceivedMessage, SentMessage
+
 from epic.core.test import CustomTestCase
+from epic.messages.models import ReceivedMessage, SentMessage
+
 
 def commonMessageSetUp(test_case):
 	# Get the users from the fixtures

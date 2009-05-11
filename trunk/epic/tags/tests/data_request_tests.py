@@ -1,10 +1,10 @@
 from django.contrib.auth.models import User
 from django.core.urlresolvers import reverse
-from epic.core.test import CustomTestCase
 
 from epic.core.test import CustomTestCase
 from epic.datarequests.models import DataRequest
 from epic.tags.models import Tagging
+
 
 def common_setUp(self):
     # datarequest1 is created by bob.
@@ -51,25 +51,25 @@ def common_setUp(self):
     self.tag3 = Tagging.objects.get(tag='tagRequest3', user=self.bill, item=self.datarequest2)
     self.tag4 = Tagging.objects.get(tag='tagRequest4')
     
-    self.TAG_INDEX_URL = reverse("epic.tags.views.index")
+    self.tag_index_url = reverse("epic.tags.views.index")
     
-    self.TAG1_URL = reverse("epic.tags.views.view_items_for_tag",
+    self.tag1_url = reverse("epic.tags.views.view_items_for_tag",
                             kwargs={ "tag_name": self.tag1.tag })
     
-    self.TAG2_URL = reverse("epic.tags.views.view_items_for_tag",
+    self.tag2_url = reverse("epic.tags.views.view_items_for_tag",
                             kwargs={ "tag_name": self.tag2.tag })
     
-    self.TAG3_URL = reverse("epic.tags.views.view_items_for_tag",
+    self.tag3_url = reverse("epic.tags.views.view_items_for_tag",
                             kwargs={ "tag_name": self.tag3.tag })
     
-    self.TAG4_URL = reverse("epic.tags.views.view_items_for_tag",
+    self.tag4_url = reverse("epic.tags.views.view_items_for_tag",
                             kwargs={ "tag_name": self.tag4.tag })
     
-    self.datarequest1_URL = reverse("epic.datarequests.views.view_datarequest",
+    self.datarequest1_url = reverse("epic.datarequests.views.view_datarequest",
                            kwargs={ "item_id": self.datarequest1.id,
                                        "slug": self.datarequest1.slug, })
     
-    self.datarequest2_URL = reverse("epic.datarequests.views.view_datarequest",
+    self.datarequest2_url = reverse("epic.datarequests.views.view_datarequest",
                            kwargs={ "item_id": self.datarequest2.id,
                                        "slug": self.datarequest2.slug, })
 
@@ -84,58 +84,58 @@ class ViewTestCase(CustomTestCase):
     
     def testTagsIndex(self):
         # Verify that all the tags show up on the index page
-        response = self.client.get(self.TAG_INDEX_URL)
+        response = self.client.get(self.tag_index_url)
         self.assertEqual(response.status_code, 200)
         
-        self.assertContains(response, 'href="%s' % self.TAG1_URL)
-        self.assertContains(response, 'href="%s' % self.TAG2_URL)
-        self.assertContains(response, 'href="%s' % self.TAG3_URL)
-        self.assertContains(response, 'href="%s' % self.TAG4_URL)
+        self.assertContains(response, 'href="%s' % self.tag1_url)
+        self.assertContains(response, 'href="%s' % self.tag2_url)
+        self.assertContains(response, 'href="%s' % self.tag3_url)
+        self.assertContains(response, 'href="%s' % self.tag4_url)
         
     
     def testTagsPage(self):
         # Test the page for tag 1
-        response = self.client.get(self.TAG1_URL)
+        response = self.client.get(self.tag1_url)
         self.assertEqual(response.status_code, 200)
-        self.assertContains(response,'href="%s' % self.datarequest1_URL)
-        self.assertNotContains(response,'href="%s' % self.datarequest2_URL)
+        self.assertContains(response,'href="%s' % self.datarequest1_url)
+        self.assertNotContains(response,'href="%s' % self.datarequest2_url)
         
         # Test the page for tag 2
-        response = self.client.get(self.TAG2_URL)
+        response = self.client.get(self.tag2_url)
         self.assertEqual(response.status_code, 200)
-        self.assertContains(response,'href="%s' % self.datarequest1_URL)
-        self.assertNotContains(response,'href="%s' % self.datarequest2_URL)
+        self.assertContains(response,'href="%s' % self.datarequest1_url)
+        self.assertNotContains(response,'href="%s' % self.datarequest2_url)
         
         # Test the page for tag 3
-        response = self.client.get(self.TAG3_URL)
+        response = self.client.get(self.tag3_url)
         self.assertEqual(response.status_code, 200)
-        self.assertContains(response,'href="%s' % self.datarequest1_URL)
-        self.assertContains(response,'href="%s' % self.datarequest2_URL)
+        self.assertContains(response,'href="%s' % self.datarequest1_url)
+        self.assertContains(response,'href="%s' % self.datarequest2_url)
         
         # Test the page for tag 4
-        response = self.client.get(self.TAG4_URL)
+        response = self.client.get(self.tag4_url)
         self.assertEqual(response.status_code, 200)
-        self.assertNotContains(response,'href="%s' % self.datarequest1_URL)
-        self.assertContains(response,'href="%s' % self.datarequest2_URL)
+        self.assertNotContains(response,'href="%s' % self.datarequest1_url)
+        self.assertContains(response,'href="%s' % self.datarequest2_url)
         
     def testDataRequestPage(self):
         # Test the page for datarequest 1
-        response = self.client.get(self.datarequest1_URL)
+        response = self.client.get(self.datarequest1_url)
         self.assertEqual(response.status_code, 200)
         
-        self.assertContains(response,'href="%s' % self.TAG1_URL)
-        self.assertContains(response,'href="%s' % self.TAG2_URL)
-        self.assertContains(response,'href="%s' % self.TAG3_URL)
-        self.assertNotContains(response,'href="%s' % self.TAG4_URL)
+        self.assertContains(response,'href="%s' % self.tag1_url)
+        self.assertContains(response,'href="%s' % self.tag2_url)
+        self.assertContains(response,'href="%s' % self.tag3_url)
+        self.assertNotContains(response,'href="%s' % self.tag4_url)
         
         # Test the page for datarequest2
-        response = self.client.get(self.datarequest2_URL)
+        response = self.client.get(self.datarequest2_url)
         self.assertEqual(response.status_code, 200)
         
-        self.assertNotContains(response,'href="%s' % self.TAG1_URL)
-        self.assertNotContains(response,'href="%s' % self.TAG2_URL)
-        self.assertContains(response,'href="%s' % self.TAG3_URL)
-        self.assertContains(response,'href="%s' % self.TAG4_URL)
+        self.assertNotContains(response,'href="%s' % self.tag1_url)
+        self.assertNotContains(response,'href="%s' % self.tag2_url)
+        self.assertContains(response,'href="%s' % self.tag3_url)
+        self.assertContains(response,'href="%s' % self.tag4_url)
         
 class ViewAddTagsTestCase(CustomTestCase):
     fixtures = [ "tags_just_users"]
@@ -143,52 +143,52 @@ class ViewAddTagsTestCase(CustomTestCase):
     def setUp(self):
         common_setUp(self)
     
-        self.DATAREQUESTS_URL = reverse("epic.datarequests.views.view_datarequests")
-        self.DATAREQUEST_TAGGED_URL = self.datarequest1_URL
-        self.DATAREQUEST_NOT_TAGGED_URL = self.datarequest2_URL
+        self.datarequests_url = reverse("epic.datarequests.views.view_datarequests")
+        self.datarequest_tagged_url = self.datarequest1_url
+        self.datarequest_not_tagged_url = self.datarequest2_url
         
-        self.DATAREQUEST_TAGGED_UNIQUE_DATAREQUEST_JAVASCRIPT_VARIABLE = "var ITEM_TO_BE_TAGGED = '%s'" % self.datarequest1.id
-        self.DATAREQUEST_NOT_TAGGED_UNIQUE_DATAREQUEST_JAVASCRIPT_VARIABLE = "var ITEM_TO_BE_TAGGED = '%s'" % self.datarequest2.id
+        self.datarequest_tagged_unique_datarequest_javascript_variable = "var ITEM_TO_BE_TAGGED = '%s'" % self.datarequest1.id
+        self.datarequest_not_tagged_unique_datarequest_javascript_variable = "var ITEM_TO_BE_TAGGED = '%s'" % self.datarequest2.id
         
-        self.ADD_TAGS_URL = "javascript:showAddTagsBox('add_tag'); return false;"
+        self.add_tags_url = "javascript:showAddTagsBox('add_tag'); return false;"
     
     def tearDown(self):
         pass
     
     def testNoAddTagsOnDataRequests(self):
-        response = self.client.get(self.DATAREQUESTS_URL)
+        response = self.client.get(self.datarequests_url)
         
-        self.assertNotContains(response, self.ADD_TAGS_URL)
+        self.assertNotContains(response, self.add_tags_url)
         
     def testAddTagsOnTaggedDataRequestNotLoggedIn(self):
-        response = self.client.get(self.DATAREQUEST_TAGGED_URL)
+        response = self.client.get(self.datarequest_tagged_url)
         
-        self.assertNotContains(response, self.ADD_TAGS_URL)
+        self.assertNotContains(response, self.add_tags_url)
         
     def testAddTagsOnNotTaggedDataRequestNotLoggedIn(self):
-        response = self.client.get(self.DATAREQUEST_NOT_TAGGED_URL)
+        response = self.client.get(self.datarequest_not_tagged_url)
         
-        self.assertNotContains(response, self.ADD_TAGS_URL)
+        self.assertNotContains(response, self.add_tags_url)
     
     def testAddTagsOnTaggedDataRequest(self):
         self.tryLogin(username="bob", password="bob")
         
-        response = self.client.get(self.DATAREQUEST_TAGGED_URL)
+        response = self.client.get(self.datarequest_tagged_url)
         
-        self.assertContains(response, self.DATAREQUEST_TAGGED_UNIQUE_DATAREQUEST_JAVASCRIPT_VARIABLE)
-        self.assertNotContains(response, self.DATAREQUEST_NOT_TAGGED_UNIQUE_DATAREQUEST_JAVASCRIPT_VARIABLE)
-        self.assertContains(response, self.ADD_TAGS_URL)
+        self.assertContains(response, self.datarequest_tagged_unique_datarequest_javascript_variable)
+        self.assertNotContains(response, self.datarequest_not_tagged_unique_datarequest_javascript_variable)
+        self.assertContains(response, self.add_tags_url)
 
         
         
     def testAddTagsOnNotTaggedDataRequest(self):
         self.tryLogin(username="bob", password="bob")
         
-        response = self.client.get(self.DATAREQUEST_NOT_TAGGED_URL)
+        response = self.client.get(self.datarequest_not_tagged_url)
         
-        self.assertNotContains(response, self.DATAREQUEST_TAGGED_UNIQUE_DATAREQUEST_JAVASCRIPT_VARIABLE)
-        self.assertContains(response, self.DATAREQUEST_NOT_TAGGED_UNIQUE_DATAREQUEST_JAVASCRIPT_VARIABLE)
-        self.assertContains(response, self.ADD_TAGS_URL)
+        self.assertNotContains(response, self.datarequest_tagged_unique_datarequest_javascript_variable)
+        self.assertContains(response, self.datarequest_not_tagged_unique_datarequest_javascript_variable)
+        self.assertContains(response, self.add_tags_url)
         
 
 class DeleteFromDataRequestPageTestCase(CustomTestCase):
@@ -196,8 +196,8 @@ class DeleteFromDataRequestPageTestCase(CustomTestCase):
     
     def setUp(self):
         common_setUp(self)
-        self.REMOVE_TAG_URL = reverse('epic.tags.views.delete_tag')
-        self.DATAREQUEST_TAGGED_URL = self.datarequest1_URL
+        self.remove_tag_url = reverse('epic.tags.views.delete_tag')
+        self.datarequest_tagged_url = self.datarequest1_url
         self.valid_post_data = {'tag_name': self.tag1.tag, 'item_id': self.datarequest1.id}
         self.blank_tag_post_data = {'tag_name': '', 'item_id': self.datarequest1.id}
         self.blank_datarequest_post_data = {'tag_name': self.tag1.tag, 'item_id': ''}
@@ -206,13 +206,13 @@ class DeleteFromDataRequestPageTestCase(CustomTestCase):
         #===============================================================================
         #        Test that a logged out user cannot delete a tag
         #===============================================================================
-        get_response = self.client.get(self.REMOVE_TAG_URL)
+        get_response = self.client.get(self.remove_tag_url)
         self.assertEqual(get_response.status_code, 302)
         
-        post_response = self.client.post(self.REMOVE_TAG_URL, self.valid_post_data)
+        post_response = self.client.post(self.remove_tag_url, self.valid_post_data)
         self.assertEqual(post_response.status_code, 302)
         
-        datarequest_response = self.client.get(self.DATAREQUEST_TAGGED_URL)
+        datarequest_response = self.client.get(self.datarequest_tagged_url)
         self.assertContains(datarequest_response, self.tag1.tag)
     
     def testRemoveNotOwner(self):
@@ -222,13 +222,13 @@ class DeleteFromDataRequestPageTestCase(CustomTestCase):
         
         self.tryLogin('bill')
         
-        get_response = self.client.get(self.REMOVE_TAG_URL)
+        get_response = self.client.get(self.remove_tag_url)
         self.assertEqual(get_response.status_code, 200)
         
-        post_response = self.client.post(self.REMOVE_TAG_URL, self.valid_post_data)
+        post_response = self.client.post(self.remove_tag_url, self.valid_post_data)
         self.assertEqual(post_response.status_code, 200)
         
-        datarequest_response = self.client.get(self.DATAREQUEST_TAGGED_URL)
+        datarequest_response = self.client.get(self.datarequest_tagged_url)
         self.assertContains(datarequest_response, self.tag1.tag)
         
     def testRemoveOwnerNoDataRequest(self):
@@ -237,13 +237,13 @@ class DeleteFromDataRequestPageTestCase(CustomTestCase):
         #===============================================================================
         self.tryLogin('bob')
         
-        get_response = self.client.get(self.REMOVE_TAG_URL)
+        get_response = self.client.get(self.remove_tag_url)
         self.assertEqual(get_response.status_code, 200)
         
-        post_response = self.client.post(self.REMOVE_TAG_URL, self.blank_datarequest_post_data)
+        post_response = self.client.post(self.remove_tag_url, self.blank_datarequest_post_data)
         self.assertEqual(post_response.status_code, 200)
         
-        datarequest_response = self.client.get(self.DATAREQUEST_TAGGED_URL)
+        datarequest_response = self.client.get(self.datarequest_tagged_url)
         self.assertContains(datarequest_response, self.tag1.tag)
         
     def testRemoveOwnerNoTag(self):
@@ -252,13 +252,13 @@ class DeleteFromDataRequestPageTestCase(CustomTestCase):
         #===============================================================================
         self.tryLogin('bob')
         
-        get_response = self.client.get(self.REMOVE_TAG_URL)
+        get_response = self.client.get(self.remove_tag_url)
         self.assertEqual(get_response.status_code, 200)
         
-        post_response = self.client.post(self.REMOVE_TAG_URL, self.blank_tag_post_data)
+        post_response = self.client.post(self.remove_tag_url, self.blank_tag_post_data)
         self.assertEqual(post_response.status_code, 200)
         
-        datarequest_response = self.client.get(self.DATAREQUEST_TAGGED_URL)
+        datarequest_response = self.client.get(self.datarequest_tagged_url)
         self.assertContains(datarequest_response, self.tag1.tag)
         
     def testRemoveOwnerValid(self):
@@ -268,13 +268,13 @@ class DeleteFromDataRequestPageTestCase(CustomTestCase):
         #===============================================================================
         self.tryLogin('bob')
         
-        get_response = self.client.get(self.REMOVE_TAG_URL)
+        get_response = self.client.get(self.remove_tag_url)
         self.assertEqual(get_response.status_code, 200)
         
-        post_response = self.client.post(self.REMOVE_TAG_URL, self.valid_post_data)
+        post_response = self.client.post(self.remove_tag_url, self.valid_post_data)
         self.assertEqual(post_response.status_code, 200)
         
-        datarequest_response = self.client.get(self.DATAREQUEST_TAGGED_URL)
+        datarequest_response = self.client.get(self.datarequest_tagged_url)
         self.assertNotContains(datarequest_response, self.tag1.tag)
         
 class AddTagDataRequestPageTestCase(CustomTestCase):
@@ -282,8 +282,8 @@ class AddTagDataRequestPageTestCase(CustomTestCase):
     
     def setUp(self):
         common_setUp(self)
-        self.ADD_TAG_URL = reverse('epic.tags.views.add_tags_and_return_successful_tag_names')
-        self.DATAREQUEST_TAGGED_URL = self.datarequest1_URL
+        self.add_tag_url = reverse('epic.tags.views.add_tags_and_return_successful_tag_names')
+        self.datarequest_tagged_url = self.datarequest1_url
         self.valid_post_data = {'unparsed_tag_names': 'asdf205', 'item_id': self.datarequest1.id}
         self.blank_tag_post_data = {'unparsed_tag_names': '', 'item_id': self.datarequest1.id}
         self.blank_datarequest_post_data = {'unparsed_tag_names': 'asdf205', 'item_id': ''}
@@ -293,13 +293,13 @@ class AddTagDataRequestPageTestCase(CustomTestCase):
         #===============================================================================
         #        Test that a logged out user cannot add a tag
         #===============================================================================
-        get_response = self.client.get(self.ADD_TAG_URL)
+        get_response = self.client.get(self.add_tag_url)
         self.assertEqual(get_response.status_code, 302)
         
-        post_response = self.client.post(self.ADD_TAG_URL, self.valid_post_data)
+        post_response = self.client.post(self.add_tag_url, self.valid_post_data)
         self.assertEqual(post_response.status_code, 302)
         
-        datarequest_response = self.client.get(self.DATAREQUEST_TAGGED_URL)
+        datarequest_response = self.client.get(self.datarequest_tagged_url)
         self.assertNotContains(datarequest_response, self.valid_post_data['unparsed_tag_names'])
     
     def testAddTagNotOwner(self):
@@ -308,13 +308,13 @@ class AddTagDataRequestPageTestCase(CustomTestCase):
         #===============================================================================
         self.tryLogin('bill')
         
-        get_response = self.client.get(self.ADD_TAG_URL)
+        get_response = self.client.get(self.add_tag_url)
         self.assertEqual(get_response.status_code, 200)
         
-        post_response = self.client.post(self.ADD_TAG_URL, self.valid_post_data)
+        post_response = self.client.post(self.add_tag_url, self.valid_post_data)
         self.assertEqual(post_response.status_code, 200)
         
-        datarequest_response = self.client.get(self.DATAREQUEST_TAGGED_URL)
+        datarequest_response = self.client.get(self.datarequest_tagged_url)
         self.assertContains(datarequest_response, self.valid_post_data['unparsed_tag_names'])
         
     def testAddTagOwnerNoDataRequest(self):
@@ -323,13 +323,13 @@ class AddTagDataRequestPageTestCase(CustomTestCase):
         #===============================================================================
         self.tryLogin('bob')
         
-        get_response = self.client.get(self.ADD_TAG_URL)
+        get_response = self.client.get(self.add_tag_url)
         self.assertEqual(get_response.status_code, 200)
         
-        post_response = self.client.post(self.ADD_TAG_URL, self.blank_datarequest_post_data)
+        post_response = self.client.post(self.add_tag_url, self.blank_datarequest_post_data)
         self.assertEqual(post_response.status_code, 200)
         
-        datarequest_response = self.client.get(self.DATAREQUEST_TAGGED_URL)
+        datarequest_response = self.client.get(self.datarequest_tagged_url)
         self.assertNotContains(datarequest_response, self.valid_post_data['unparsed_tag_names'])
         
     def testAddTagOwnerNoTag(self):
@@ -338,13 +338,13 @@ class AddTagDataRequestPageTestCase(CustomTestCase):
         #===============================================================================
         self.tryLogin('bob')
         
-        get_response = self.client.get(self.ADD_TAG_URL)
+        get_response = self.client.get(self.add_tag_url)
         self.assertEqual(get_response.status_code, 200)
         
-        post_response = self.client.post(self.ADD_TAG_URL, self.blank_tag_post_data)
+        post_response = self.client.post(self.add_tag_url, self.blank_tag_post_data)
         self.assertEqual(post_response.status_code, 200)
         
-        datarequest_response = self.client.get(self.DATAREQUEST_TAGGED_URL)
+        datarequest_response = self.client.get(self.datarequest_tagged_url)
         self.assertNotContains(datarequest_response, self.valid_post_data['unparsed_tag_names'])
         
     def testAddTagOwnerDuplicateTag(self):
@@ -353,13 +353,13 @@ class AddTagDataRequestPageTestCase(CustomTestCase):
         #===============================================================================
         self.tryLogin('bob')
         
-        get_response = self.client.get(self.ADD_TAG_URL)
+        get_response = self.client.get(self.add_tag_url)
         self.assertEqual(get_response.status_code, 200)
         
-        post_response = self.client.post(self.ADD_TAG_URL, self.duplicate_tag_post_data)
+        post_response = self.client.post(self.add_tag_url, self.duplicate_tag_post_data)
         self.assertEqual(post_response.status_code, 200)
         
-        datarequest_response = self.client.get(self.DATAREQUEST_TAGGED_URL)
+        datarequest_response = self.client.get(self.datarequest_tagged_url)
         self.assertContains(datarequest_response, self.duplicate_tag_post_data['unparsed_tag_names'], count=7)
         
     def testAddTagOwnerValid(self):
@@ -368,11 +368,11 @@ class AddTagDataRequestPageTestCase(CustomTestCase):
         #===============================================================================
         self.tryLogin('bob')
         
-        get_response = self.client.get(self.ADD_TAG_URL)
+        get_response = self.client.get(self.add_tag_url)
         self.assertEqual(get_response.status_code, 200)
         
-        post_response = self.client.post(self.ADD_TAG_URL, self.valid_post_data)
+        post_response = self.client.post(self.add_tag_url, self.valid_post_data)
         self.assertEqual(post_response.status_code, 200)
         
-        datarequest_response = self.client.get(self.DATAREQUEST_TAGGED_URL)
+        datarequest_response = self.client.get(self.datarequest_tagged_url)
         self.assertContains(datarequest_response, self.valid_post_data['unparsed_tag_names'], count=7)

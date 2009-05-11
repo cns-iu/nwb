@@ -1,11 +1,13 @@
-from epic.core.test import CustomTestCase
+import os
 
+from django.conf import settings
+from django.core.urlresolvers import reverse
+from django.utils.datastructures import MultiValueDict
+
+from epic.core.test import CustomTestCase
 from epic.datasets.models import DataSet
 from epic.datasets.models import DataSetFile
-from django.utils.datastructures import MultiValueDict
-from django.core.urlresolvers import reverse
-from django.conf import settings
-import os
+
 
 class RatingTestCase(CustomTestCase):
 	fixtures = ['ratings']

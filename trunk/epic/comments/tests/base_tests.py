@@ -1,18 +1,9 @@
 from django.contrib.auth.models import User
 from django.core.urlresolvers import reverse
-from epic.core.test import CustomTestCase
 
 from epic.comments.models import Comment
-from epic.datarequests.models import DataRequest
+from epic.core.test import CustomTestCase
 
-
-COMMENT_KEY = 'comment'
-FORM_KEY = 'form'
-ITEM_ID_KEY = 'item_id'
-SLUG_KEY = 'slug'
-
-TEST_USER_USERNAME = 'peebs'
-TEST_USER_PASSWORD = 'map'
 
 def create_comment_test_case(_setUp, _fixtures):
     class CommentTestCase(CustomTestCase):
@@ -21,82 +12,74 @@ def create_comment_test_case(_setUp, _fixtures):
         def setUp(self):
             _setUp(self)
             
-            self.LOGIN_URL = reverse('django.contrib.auth.views.login')
+            self.login_url = reverse('django.contrib.auth.views.login')
             
-            self.LOGIN_REDIRECT_URL = '%(base_url)s?next=%(next_url)s' % {
-                'base_url': self.LOGIN_URL,
-                'next_url': self.POST_TO_COMMENT_URL
+            self.login_redirect_url = '%(base_url)s?next=%(next_url)s' % {
+                'base_url': self.login_url,
+                'next_url': self.post_to_comment_url
             }
             
-            self.ERROR_DISPLAYING_ITEM_TYPE = 'Error displaying %s!' % \
-                self.ITEM_TYPE_STRING
+            self.error_displaying_item_type = 'Error displaying %s!' % \
+                self.item_type_string
         
         def tearDown(self):
             pass
         
         def testViewNotLoggedIn(self):
-            response = self.client.get(self.VIEW_URL)
+            response = self.client.get(self.view_url)
             
-            self.failUnlessEqual(response.status_code,
-                                 200,
-                                 self.ERROR_DISPLAYING_ITEM_TYPE)
+            self.failUnlessEqual(
+                response.status_code, 200, self.error_displaying_item_type)
             
-            self.assertContains(response,
-                                'You must be logged in to comment.',
-                                1)
+            self.assertContains(
+                response, 'You must be logged in to comment.', 1)
         
         def testViewLoggedIn(self):
-            self.client.login(username=TEST_USER_USERNAME,
-                              password=TEST_USER_PASSWORD)
+            self.tryLogin('peebs', 'map')
             
             # Go to the comment page.
-            response = self.client.get(self.VIEW_URL)
+            response = self.client.get(self.view_url)
             
             # Fail if the page is not there.
-            self.failUnlessEqual(response.status_code,
-                                 200,
-                                 self.ERROR_DISPLAYING_ITEM_TYPE)
+            self.failUnlessEqual(
+                response.status_code, 200, self.error_displaying_item_type)
             
             # Fail if there's no form on the page.
-            self.assertContains(response,
-                                '<form action="%s" method="POST">' % \
-                                    self.POST_TO_COMMENT_URL,
-                                1)
+            self.assertContains(
+                response,
+                '<form action="%s" method="POST">' % self.post_to_comment_url,
+                1)
         
         def testPostCommentNotLoggedIn(self):
-            response = self.client.post(self.POST_TO_COMMENT_URL,
+            response = self.client.post(self.post_to_comment_url,
                                         self.post_comment_form_data)
             
-            self.assertRedirects(response, self.LOGIN_REDIRECT_URL)
+            self.assertRedirects(response, self.login_redirect_url)
         
         def testPostCommentLoggedIn(self):
             # Make sure there are no prior comments.
             Comment.objects.all().delete()
             
-            self.client.login(username=TEST_USER_USERNAME,
-                              password=TEST_USER_PASSWORD)
+            self.tryLogin('peebs', 'map')
             
             # Post a test comment.
-            response = self.client.post(self.POST_TO_COMMENT_URL,
+            response = self.client.post(self.post_to_comment_url,
                                         self.post_comment_form_data)
             
             # The posted-to URL should have redirected back to the view page.
-            self.assertRedirects(response, self.VIEW_URL)
+            self.assertRedirects(response, self.view_url)
             
             # Verify that the comment is properly in the database.
             self.failUnlessEqual(Comment.objects.all()[0].contents,
-                                 self.post_comment_form_data[COMMENT_KEY])
+                                 self.post_comment_form_data['comment'])
         
         def testViewWithNoComments(self):
             # Make sure there are no comments.
             Comment.objects.all().delete()
             
-            response = self.client.get(self.VIEW_URL)
-            
-            self.failUnlessEqual(response.status_code,
-                                 200,
-                                 self.ERROR_DISPLAYING_ITEM_TYPE)
-            
+            response = self.client.get(self.view_url)
+            self.failUnlessEqual(
+                response.status_code, 200, self.error_displaying_item_type)
             self.assertContains(response, 'There are no comments yet.', 1)
         
         def testViewWithAComment(self):
@@ -104,10 +87,10 @@ def create_comment_test_case(_setUp, _fixtures):
             
             # Check if we are able to go to the page we're commenting to.
             
-            response = self.client.get(self.VIEW_URL)
+            response = self.client.get(self.view_url)
             self.failUnlessEqual(response.status_code,
                                  200,
-                                 self.ERROR_DISPLAYING_ITEM_TYPE)
+                                 self.error_displaying_item_type)
             
             # Make sure the posted comment is displayed
             self.assertTrue(self.comment.contents in response.content)
@@ -116,34 +99,31 @@ def create_comment_test_case(_setUp, _fixtures):
             Comment.objects.all().delete()
         
         def testAccessPostCommentURLNotLoggedIn(self):
-            response = self.client.get(self.POST_TO_COMMENT_URL)
+            response = self.client.get(self.post_to_comment_url)
             
-            self.assertRedirects(response, self.LOGIN_REDIRECT_URL)
+            self.assertRedirects(response, self.login_redirect_url)
         
         def testAccessPostCommentURLLoggedIn(self):
-            self.client.login(username=TEST_USER_USERNAME,
-                              password=TEST_USER_PASSWORD)
+            self.tryLogin('peebs', 'map')
             
-            response = self.client.get(self.POST_TO_COMMENT_URL)
-            self.assertRedirects(response, self.VIEW_URL)
+            response = self.client.get(self.post_to_comment_url)
+            self.assertRedirects(response, self.view_url)
         
         def testPostBlankComment(self):
             # This will only happen if the user is logged in, hence we only
             # need this one version of this test.
             
-            self.client.login(username=TEST_USER_USERNAME,
-                              password=TEST_USER_PASSWORD)
+            self.tryLogin('peebs', 'map')
             
-            blank_comment_form_data = {COMMENT_KEY: ''}
-            response = self.client.post(self.POST_TO_COMMENT_URL,
+            blank_comment_form_data = {'comment': ''}
+            response = self.client.post(self.post_to_comment_url,
                                         blank_comment_form_data)
-            # TODO: Currently it redirects on errors, but should *maybe* show
+            
+            # TODO: Currently it redirects on errors, but should *maybe* show.
             # the user what was wrong with the form.
             self.assertEqual(response.status_code, 302)
-#            self.assertFormError(response,
-#                                 FORM_KEY,
-#                                 COMMENT_KEY,
-#                                 'This field is required.')
+#           self.assertFormError(
+#                response, 'form', 'comment', 'This field is required.')
         
         def _make_our_comment_the_only_one(self):
             Comment.objects.all().delete()

@@ -1,10 +1,10 @@
 from django.contrib.auth.models import User
 from django.core.urlresolvers import reverse
-from epic.core.test import CustomTestCase
 
 from epic.core.test import CustomTestCase
 from epic.datasets.models import DataSet
 from epic.tags.models import Tagging
+
 
 def common_setUp(self):
     # dataset1 is created by bob.
@@ -27,25 +27,25 @@ def common_setUp(self):
     self.tag3 = Tagging.objects.get(tag="tag3", user=self.bill, item=self.dataset2)
     self.tag4 = Tagging.objects.get(tag="tag4")
     
-    self.TAG_INDEX_URL = reverse("epic.tags.views.index")
+    self.tag_index_url = reverse("epic.tags.views.index")
     
-    self.TAG1_URL = reverse("epic.tags.views.view_items_for_tag",
+    self.tag1_url = reverse("epic.tags.views.view_items_for_tag",
                             kwargs={ "tag_name": self.tag1.tag })
     
-    self.TAG2_URL = reverse("epic.tags.views.view_items_for_tag",
+    self.tag2_url = reverse("epic.tags.views.view_items_for_tag",
                             kwargs={ "tag_name": self.tag2.tag })
     
-    self.TAG3_URL = reverse("epic.tags.views.view_items_for_tag",
+    self.tag3_url = reverse("epic.tags.views.view_items_for_tag",
                             kwargs={ "tag_name": self.tag3.tag })
     
-    self.TAG4_URL = reverse("epic.tags.views.view_items_for_tag",
+    self.tag4_url = reverse("epic.tags.views.view_items_for_tag",
                             kwargs={ "tag_name": self.tag4.tag })
     
-    self.dataset1_URL = reverse("epic.datasets.views.view_dataset",
+    self.dataset1_url = reverse("epic.datasets.views.view_dataset",
                            kwargs={ "item_id": self.dataset1.id,
                                        "slug": self.dataset1.slug, })
     
-    self.dataset2_URL = reverse("epic.datasets.views.view_dataset",
+    self.dataset2_url = reverse("epic.datasets.views.view_dataset",
                            kwargs={ "item_id": self.dataset2.id,
                                        "slug": self.dataset2.slug, })
 
@@ -60,58 +60,58 @@ class ViewTestCase(CustomTestCase):
     
     def testTagsIndex(self):
         # Verify that all the tags show up on the index page
-        response = self.client.get(self.TAG_INDEX_URL)
+        response = self.client.get(self.tag_index_url)
         self.assertEqual(response.status_code, 200)
         
-        self.assertContains(response, 'href="%s' % self.TAG1_URL)
-        self.assertContains(response, 'href="%s' % self.TAG2_URL)
-        self.assertContains(response, 'href="%s' % self.TAG3_URL)
-        self.assertContains(response, 'href="%s' % self.TAG4_URL)
+        self.assertContains(response, 'href="%s' % self.tag1_url)
+        self.assertContains(response, 'href="%s' % self.tag2_url)
+        self.assertContains(response, 'href="%s' % self.tag3_url)
+        self.assertContains(response, 'href="%s' % self.tag4_url)
         
     
     def testTagsPage(self):
         # Test the page for tag 1
-        response = self.client.get(self.TAG1_URL)
+        response = self.client.get(self.tag1_url)
         self.assertEqual(response.status_code, 200)
-        self.assertContains(response,'href="%s' % self.dataset1_URL)
-        self.assertNotContains(response,'href="%s' % self.dataset2_URL)
+        self.assertContains(response,'href="%s' % self.dataset1_url)
+        self.assertNotContains(response,'href="%s' % self.dataset2_url)
         
         # Test the page for tag 2
-        response = self.client.get(self.TAG2_URL)
+        response = self.client.get(self.tag2_url)
         self.assertEqual(response.status_code, 200)
-        self.assertContains(response,'href="%s' % self.dataset1_URL)
-        self.assertNotContains(response,'href="%s' % self.dataset2_URL)
+        self.assertContains(response,'href="%s' % self.dataset1_url)
+        self.assertNotContains(response,'href="%s' % self.dataset2_url)
         
         # Test the page for tag 3
-        response = self.client.get(self.TAG3_URL)
+        response = self.client.get(self.tag3_url)
         self.assertEqual(response.status_code, 200)
-        self.assertContains(response,'href="%s' % self.dataset1_URL)
-        self.assertContains(response,'href="%s' % self.dataset2_URL)
+        self.assertContains(response,'href="%s' % self.dataset1_url)
+        self.assertContains(response,'href="%s' % self.dataset2_url)
         
         # Test the page for tag 4
-        response = self.client.get(self.TAG4_URL)
+        response = self.client.get(self.tag4_url)
         self.assertEqual(response.status_code, 200)
-        self.assertNotContains(response,'href="%s' % self.dataset1_URL)
-        self.assertContains(response,'href="%s' % self.dataset2_URL)
+        self.assertNotContains(response,'href="%s' % self.dataset1_url)
+        self.assertContains(response,'href="%s' % self.dataset2_url)
         
     def testDataSetPage(self):
         # Test the page for dataset 1
-        response = self.client.get(self.dataset1_URL)
+        response = self.client.get(self.dataset1_url)
         self.assertEqual(response.status_code, 200)
         
-        self.assertContains(response,'href="%s' % self.TAG1_URL)
-        self.assertContains(response,'href="%s' % self.TAG2_URL)
-        self.assertContains(response,'href="%s' % self.TAG3_URL)
-        self.assertNotContains(response,'href="%s' % self.TAG4_URL)
+        self.assertContains(response,'href="%s' % self.tag1_url)
+        self.assertContains(response,'href="%s' % self.tag2_url)
+        self.assertContains(response,'href="%s' % self.tag3_url)
+        self.assertNotContains(response,'href="%s' % self.tag4_url)
         
         # Test the page for dataset2
-        response = self.client.get(self.dataset2_URL)
+        response = self.client.get(self.dataset2_url)
         self.assertEqual(response.status_code, 200)
         
-        self.assertNotContains(response,'href="%s' % self.TAG1_URL)
-        self.assertNotContains(response,'href="%s' % self.TAG2_URL)
-        self.assertContains(response,'href="%s' % self.TAG3_URL)
-        self.assertContains(response,'href="%s' % self.TAG4_URL)
+        self.assertNotContains(response,'href="%s' % self.tag1_url)
+        self.assertNotContains(response,'href="%s' % self.tag2_url)
+        self.assertContains(response,'href="%s' % self.tag3_url)
+        self.assertContains(response,'href="%s' % self.tag4_url)
         
 class ViewAddTagsTestCase(CustomTestCase):
     fixtures = [ "tags_just_users", "tags_tags" ]
@@ -119,52 +119,52 @@ class ViewAddTagsTestCase(CustomTestCase):
     def setUp(self):
         common_setUp(self)
     
-        self.DATASETS_URL = reverse("epic.datasets.views.view_datasets")
-        self.DATASET_TAGGED_URL = self.dataset1_URL
-        self.DATASET_NOT_TAGGED_URL = self.dataset2_URL
+        self.datasets_url = reverse("epic.datasets.views.view_datasets")
+        self.dataset_tagged_url = self.dataset1_url
+        self.dataset_not_tagged_url = self.dataset2_url
         
-        self.DATASET_TAGGED_UNIQUE_DATASET_JAVASCRIPT_VARIABLE = "var ITEM_TO_BE_TAGGED = '%s'" % self.dataset1.id
-        self.DATASET_NOT_TAGGED_UNIQUE_DATASET_JAVASCRIPT_VARIABLE = "var ITEM_TO_BE_TAGGED = '%s'" % self.dataset2.id
+        self.dataset_tagged_unique_dataset_javascript_variable = "var ITEM_TO_BE_TAGGED = '%s'" % self.dataset1.id
+        self.dataset_not_tagged_unique_dataset_javascript_variable = "var ITEM_TO_BE_TAGGED = '%s'" % self.dataset2.id
         
-        self.ADD_TAGS_URL = "javascript:showAddTagsBox('add_tag'); return false;"
+        self.add_tags_url = "javascript:showAddTagsBox('add_tag'); return false;"
     
     def tearDown(self):
         pass
     
     def testNoAddTagsOnDataSets(self):
-        response = self.client.get(self.DATASETS_URL)
+        response = self.client.get(self.datasets_url)
         
-        self.assertNotContains(response, self.ADD_TAGS_URL)
+        self.assertNotContains(response, self.add_tags_url)
         
     def testAddTagsOnTaggedDataSetNotLoggedIn(self):
-        response = self.client.get(self.DATASET_TAGGED_URL)
+        response = self.client.get(self.dataset_tagged_url)
         
-        self.assertNotContains(response, self.ADD_TAGS_URL)
+        self.assertNotContains(response, self.add_tags_url)
         
     def testAddTagsOnNotTaggedDataSetNotLoggedIn(self):
-        response = self.client.get(self.DATASET_NOT_TAGGED_URL)
+        response = self.client.get(self.dataset_not_tagged_url)
         
-        self.assertNotContains(response, self.ADD_TAGS_URL)
+        self.assertNotContains(response, self.add_tags_url)
     
     def testAddTagsOnTaggedDataSet(self):
         self.tryLogin(username="bob", password="bob")
         
-        response = self.client.get(self.DATASET_TAGGED_URL)
+        response = self.client.get(self.dataset_tagged_url)
         
-        self.assertContains(response, self.DATASET_TAGGED_UNIQUE_DATASET_JAVASCRIPT_VARIABLE)
-        self.assertNotContains(response, self.DATASET_NOT_TAGGED_UNIQUE_DATASET_JAVASCRIPT_VARIABLE)
-        self.assertContains(response, self.ADD_TAGS_URL)
+        self.assertContains(response, self.dataset_tagged_unique_dataset_javascript_variable)
+        self.assertNotContains(response, self.dataset_not_tagged_unique_dataset_javascript_variable)
+        self.assertContains(response, self.add_tags_url)
 
         
         
     def testAddTagsOnNotTaggedDataSet(self):
         self.tryLogin(username="bob", password="bob")
         
-        response = self.client.get(self.DATASET_NOT_TAGGED_URL)
+        response = self.client.get(self.dataset_not_tagged_url)
         
-        self.assertNotContains(response, self.DATASET_TAGGED_UNIQUE_DATASET_JAVASCRIPT_VARIABLE)
-        self.assertContains(response, self.DATASET_NOT_TAGGED_UNIQUE_DATASET_JAVASCRIPT_VARIABLE)
-        self.assertContains(response, self.ADD_TAGS_URL)
+        self.assertNotContains(response, self.dataset_tagged_unique_dataset_javascript_variable)
+        self.assertContains(response, self.dataset_not_tagged_unique_dataset_javascript_variable)
+        self.assertContains(response, self.add_tags_url)
         
 
 class DeleteFromDataSetPageTestCase(CustomTestCase):
@@ -172,8 +172,8 @@ class DeleteFromDataSetPageTestCase(CustomTestCase):
     
     def setUp(self):
         common_setUp(self)
-        self.REMOVE_TAG_URL = reverse('epic.tags.views.delete_tag')
-        self.DATASET_TAGGED_URL = self.dataset1_URL
+        self.remove_tag_url = reverse('epic.tags.views.delete_tag')
+        self.dataset_tagged_url = self.dataset1_url
         self.valid_post_data = {'tag_name': self.tag1.tag, 'item_id': self.dataset1.id}
         self.blank_tag_post_data = {'tag_name': '', 'item_id': self.dataset1.id}
         self.blank_dataset_post_data = {'tag_name': self.tag1.tag, 'item_id': ''}
@@ -182,13 +182,13 @@ class DeleteFromDataSetPageTestCase(CustomTestCase):
         #===============================================================================
         #        Test that a logged out user cannot delete a tag
         #===============================================================================
-        get_response = self.client.get(self.REMOVE_TAG_URL)
+        get_response = self.client.get(self.remove_tag_url)
         self.assertEqual(get_response.status_code, 302)
         
-        post_response = self.client.post(self.REMOVE_TAG_URL, self.valid_post_data)
+        post_response = self.client.post(self.remove_tag_url, self.valid_post_data)
         self.assertEqual(post_response.status_code, 302)
         
-        dataset_response = self.client.get(self.DATASET_TAGGED_URL)
+        dataset_response = self.client.get(self.dataset_tagged_url)
         self.assertContains(dataset_response, self.tag1.tag)
     
     def testRemoveNotOwner(self):
@@ -198,13 +198,13 @@ class DeleteFromDataSetPageTestCase(CustomTestCase):
         
         self.tryLogin('bill')
         
-        get_response = self.client.get(self.REMOVE_TAG_URL)
+        get_response = self.client.get(self.remove_tag_url)
         self.assertEqual(get_response.status_code, 200)
         
-        post_response = self.client.post(self.REMOVE_TAG_URL, self.valid_post_data)
+        post_response = self.client.post(self.remove_tag_url, self.valid_post_data)
         self.assertEqual(post_response.status_code, 200)
         
-        dataset_response = self.client.get(self.DATASET_TAGGED_URL)
+        dataset_response = self.client.get(self.dataset_tagged_url)
         self.assertContains(dataset_response, self.tag1.tag)
         
     def testRemoveOwnerNoDataset(self):
@@ -213,13 +213,13 @@ class DeleteFromDataSetPageTestCase(CustomTestCase):
         #===============================================================================
         self.tryLogin('bob')
         
-        get_response = self.client.get(self.REMOVE_TAG_URL)
+        get_response = self.client.get(self.remove_tag_url)
         self.assertEqual(get_response.status_code, 200)
         
-        post_response = self.client.post(self.REMOVE_TAG_URL, self.blank_dataset_post_data)
+        post_response = self.client.post(self.remove_tag_url, self.blank_dataset_post_data)
         self.assertEqual(post_response.status_code, 200)
         
-        dataset_response = self.client.get(self.DATASET_TAGGED_URL)
+        dataset_response = self.client.get(self.dataset_tagged_url)
         self.assertContains(dataset_response, self.tag1.tag)
         
     def testRemoveOwnerNoTag(self):
@@ -228,13 +228,13 @@ class DeleteFromDataSetPageTestCase(CustomTestCase):
         #===============================================================================
         self.tryLogin('bob')
         
-        get_response = self.client.get(self.REMOVE_TAG_URL)
+        get_response = self.client.get(self.remove_tag_url)
         self.assertEqual(get_response.status_code, 200)
         
-        post_response = self.client.post(self.REMOVE_TAG_URL, self.blank_tag_post_data)
+        post_response = self.client.post(self.remove_tag_url, self.blank_tag_post_data)
         self.assertEqual(post_response.status_code, 200)
         
-        dataset_response = self.client.get(self.DATASET_TAGGED_URL)
+        dataset_response = self.client.get(self.dataset_tagged_url)
         self.assertContains(dataset_response, self.tag1.tag)
         
     def testRemoveOwnerValid(self):
@@ -244,13 +244,13 @@ class DeleteFromDataSetPageTestCase(CustomTestCase):
         #===============================================================================
         self.tryLogin('bob')
         
-        get_response = self.client.get(self.REMOVE_TAG_URL)
+        get_response = self.client.get(self.remove_tag_url)
         self.assertEqual(get_response.status_code, 200)
         
-        post_response = self.client.post(self.REMOVE_TAG_URL, self.valid_post_data)
+        post_response = self.client.post(self.remove_tag_url, self.valid_post_data)
         self.assertEqual(post_response.status_code, 200)
         
-        dataset_response = self.client.get(self.DATASET_TAGGED_URL)
+        dataset_response = self.client.get(self.dataset_tagged_url)
         self.assertNotContains(dataset_response, self.tag1.tag)
         
 class AddTagDataSetPageTestCase(CustomTestCase):
@@ -258,8 +258,8 @@ class AddTagDataSetPageTestCase(CustomTestCase):
     
     def setUp(self):
         common_setUp(self)
-        self.ADD_TAG_URL = reverse('epic.tags.views.add_tags_and_return_successful_tag_names')
-        self.DATASET_TAGGED_URL = self.dataset1_URL
+        self.add_tag_url = reverse('epic.tags.views.add_tags_and_return_successful_tag_names')
+        self.dataset_tagged_url = self.dataset1_url
         self.valid_post_data = {'unparsed_tag_names': 'asdf205', 'item_id': self.dataset1.id}
         self.blank_tag_post_data = {'unparsed_tag_names': '', 'item_id': self.dataset1.id}
         self.blank_dataset_post_data = {'unparsed_tag_names': 'asdf205', 'item_id': ''}
@@ -269,13 +269,13 @@ class AddTagDataSetPageTestCase(CustomTestCase):
         #===============================================================================
         #        Test that a logged out user cannot add a tag
         #===============================================================================
-        get_response = self.client.get(self.ADD_TAG_URL)
+        get_response = self.client.get(self.add_tag_url)
         self.assertEqual(get_response.status_code, 302)
         
-        post_response = self.client.post(self.ADD_TAG_URL, self.valid_post_data)
+        post_response = self.client.post(self.add_tag_url, self.valid_post_data)
         self.assertEqual(post_response.status_code, 302)
         
-        dataset_response = self.client.get(self.DATASET_TAGGED_URL)
+        dataset_response = self.client.get(self.dataset_tagged_url)
         self.assertNotContains(dataset_response, self.valid_post_data['unparsed_tag_names'])
     
     def testAddTagNotOwner(self):
@@ -284,13 +284,13 @@ class AddTagDataSetPageTestCase(CustomTestCase):
         #===============================================================================
         self.tryLogin('bill')
         
-        get_response = self.client.get(self.ADD_TAG_URL)
+        get_response = self.client.get(self.add_tag_url)
         self.assertEqual(get_response.status_code, 200)
         
-        post_response = self.client.post(self.ADD_TAG_URL, self.valid_post_data)
+        post_response = self.client.post(self.add_tag_url, self.valid_post_data)
         self.assertEqual(post_response.status_code, 200)
         
-        dataset_response = self.client.get(self.DATASET_TAGGED_URL)
+        dataset_response = self.client.get(self.dataset_tagged_url)
         self.assertContains(dataset_response, self.valid_post_data['unparsed_tag_names'])
         
     def testAddTagOwnerNoDataset(self):
@@ -299,13 +299,13 @@ class AddTagDataSetPageTestCase(CustomTestCase):
         #===============================================================================
         self.tryLogin('bob')
         
-        get_response = self.client.get(self.ADD_TAG_URL)
+        get_response = self.client.get(self.add_tag_url)
         self.assertEqual(get_response.status_code, 200)
         
-        post_response = self.client.post(self.ADD_TAG_URL, self.blank_dataset_post_data)
+        post_response = self.client.post(self.add_tag_url, self.blank_dataset_post_data)
         self.assertEqual(post_response.status_code, 200)
         
-        dataset_response = self.client.get(self.DATASET_TAGGED_URL)
+        dataset_response = self.client.get(self.dataset_tagged_url)
         self.assertNotContains(dataset_response, self.valid_post_data['unparsed_tag_names'])
         
     def testAddTagOwnerNoTag(self):
@@ -314,13 +314,13 @@ class AddTagDataSetPageTestCase(CustomTestCase):
         #===============================================================================
         self.tryLogin('bob')
         
-        get_response = self.client.get(self.ADD_TAG_URL)
+        get_response = self.client.get(self.add_tag_url)
         self.assertEqual(get_response.status_code, 200)
         
-        post_response = self.client.post(self.ADD_TAG_URL, self.blank_tag_post_data)
+        post_response = self.client.post(self.add_tag_url, self.blank_tag_post_data)
         self.assertEqual(post_response.status_code, 200)
         
-        dataset_response = self.client.get(self.DATASET_TAGGED_URL)
+        dataset_response = self.client.get(self.dataset_tagged_url)
         self.assertNotContains(dataset_response, self.valid_post_data['unparsed_tag_names'])
         
     def testAddTagOwnerDuplicateTag(self):
@@ -329,13 +329,13 @@ class AddTagDataSetPageTestCase(CustomTestCase):
         #===============================================================================
         self.tryLogin('bob')
         
-        get_response = self.client.get(self.ADD_TAG_URL)
+        get_response = self.client.get(self.add_tag_url)
         self.assertEqual(get_response.status_code, 200)
         
-        post_response = self.client.post(self.ADD_TAG_URL, self.duplicate_tag_post_data)
+        post_response = self.client.post(self.add_tag_url, self.duplicate_tag_post_data)
         self.assertEqual(post_response.status_code, 200)
         
-        dataset_response = self.client.get(self.DATASET_TAGGED_URL)
+        dataset_response = self.client.get(self.dataset_tagged_url)
         self.assertContains(dataset_response, self.duplicate_tag_post_data['unparsed_tag_names'], count=7)
         
     def testAddTagOwnerValid(self):
@@ -344,11 +344,11 @@ class AddTagDataSetPageTestCase(CustomTestCase):
         #===============================================================================
         self.tryLogin('bob')
         
-        get_response = self.client.get(self.ADD_TAG_URL)
+        get_response = self.client.get(self.add_tag_url)
         self.assertEqual(get_response.status_code, 200)
         
-        post_response = self.client.post(self.ADD_TAG_URL, self.valid_post_data)
+        post_response = self.client.post(self.add_tag_url, self.valid_post_data)
         self.assertEqual(post_response.status_code, 200)
         
-        dataset_response = self.client.get(self.DATASET_TAGGED_URL)
+        dataset_response = self.client.get(self.dataset_tagged_url)
         self.assertContains(dataset_response, self.valid_post_data['unparsed_tag_names'], count=7)

@@ -5,6 +5,7 @@ from epic.core.test import CustomTestCase
 from epic.datarequests.models import DataRequest
 from epic.datasets.models import DataSet
 
+
 class DataRequestTestCase(CustomTestCase):
     """ Test that the model for datarequests is working correctly """
     

@@ -1,8 +1,11 @@
-from epic.core.test import CustomTestCase
-from django.core.urlresolvers import reverse
 from django.contrib.auth.models import User
+from django.core.urlresolvers import reverse
+
+from epic.core.test import CustomTestCase
 from epic.geoloc.models import GeoLoc
-from epic.geoloc.utils import get_best_location, CouldNotFindLocation
+from epic.geoloc.utils import CouldNotFindLocation
+from epic.geoloc.utils import get_best_location
+
 
 class GeoLocTestCase(CustomTestCase):
 	""" Test that the model and utils for geoloc is working as expected """

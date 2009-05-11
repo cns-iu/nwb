@@ -9,15 +9,6 @@ from epic.datasets.models import DataSetFile
 from epic.projects.models import Project
 
 
-ADMIN_USERNAME = 'admin'
-ADMIN_PASSWORD = 'admin'
-
-BOB_USERNAME = 'bob'
-BOB_PASSWORD = 'bob'
-
-BILL_USERNAME = 'bill'
-BILL_PASSWORD = 'bill'
-
 class URLsTestCase(CustomTestCase):
     """ Test all the urls to make sure that the view for each works.
     """
@@ -25,7 +16,7 @@ class URLsTestCase(CustomTestCase):
     fixtures = ['projects_just_users', 'projects_projects']
     
     def setUp(self):
-        self.bob = User.objects.get(username=BOB_USERNAME)
+        self.bob = User.objects.get(username='bob')
         
         self.project1 = Project.objects.get(
             creator=self.bob,
@@ -69,8 +60,8 @@ class CreateProjectTestCase(CustomTestCase):
     fixtures = ['projects_just_users', 'projects_projects']
     
     def setUp(self):
-        self.bob = User.objects.get(username=BOB_USERNAME)
-        self.admin = User.objects.get(username=ADMIN_USERNAME)
+        self.bob = User.objects.get(username='bob')
+        self.admin = User.objects.get(username='admin')
         
         self.project1 = Project.objects.get(
             creator=self.bob,
@@ -111,7 +102,7 @@ class CreateProjectTestCase(CustomTestCase):
                                 self.valid_post_data['description'])
     
     def testPostInvalid(self):
-        self.tryLogin(BOB_USERNAME)
+        self.tryLogin('bob')
 
         self._verify__get_from__create_project_url()
         
@@ -126,7 +117,7 @@ class CreateProjectTestCase(CustomTestCase):
                             2)
     
     def testPostValid(self):
-        self.tryLogin(BOB_USERNAME)
+        self.tryLogin('bob')
         
         self._verify__get_from__create_project_url()
         self._verify__post_to__create_project_url(self.valid_post_data, True)
@@ -166,8 +157,8 @@ class EditProjectTestCase(CustomTestCase):
     fixtures = ['projects_just_users', 'projects_projects']
     
     def setUp(self):
-        self.bob = User.objects.get(username=BOB_USERNAME)
-        self.admin = User.objects.get(username=ADMIN_USERNAME)
+        self.bob = User.objects.get(username='bob')
+        self.admin = User.objects.get(username='admin')
         
         self.project1 = Project.objects.get(
             creator=self.bob,
@@ -229,7 +220,7 @@ class EditProjectTestCase(CustomTestCase):
                                 self.post_data['description'])
     
     def testNotOwnerLoggedIn(self):
-        self.tryLogin(BOB_USERNAME)
+        self.tryLogin('bob')
         
         get_from__edit_project2_url__response = \
             self.client.get(self.edit_project2_url)
@@ -247,7 +238,7 @@ class EditProjectTestCase(CustomTestCase):
                                 self.post_data['description'])
     
     def testOwnerLoggedIn(self):
-        self.tryLogin(BOB_USERNAME)
+        self.tryLogin('bob')
         
         get_response = \
             self.client.get(self.edit_project1_url)
@@ -275,7 +266,7 @@ class AddDatasetsToProjectTestCase(CustomTestCase):
     fixtures = ['projects_projects']
     
     def setUp(self):
-        self.bob = User.objects.get(username=BOB_USERNAME)
+        self.bob = User.objects.get(username='bob')
         
         self.dataset = DataSet.objects.get(
             creator=self.bob,
@@ -309,7 +300,7 @@ class AddDatasetsToProjectTestCase(CustomTestCase):
         }
     
     def testEmptyURL(self):
-        self.tryLogin(BOB_USERNAME)
+        self.tryLogin('bob')
         
         get_response1 = \
             self.client.get(self.edit_project1_url)
@@ -332,7 +323,7 @@ class AddDatasetsToProjectTestCase(CustomTestCase):
                          get_response2.content)
     
     def testURLIsNotDataset(self):
-        self.tryLogin(BOB_USERNAME)
+        self.tryLogin('bob')
         
         url_that_is_not_a_dataset = 'http://www.google.com/'
         post_data = {
@@ -353,7 +344,7 @@ class AddDatasetsToProjectTestCase(CustomTestCase):
                             text_that_should_be_in_response)
     
     def testAddDatasetToProjectSuccessfully(self):
-        self.tryLogin(BOB_USERNAME)
+        self.tryLogin('bob')
         post_data = {
             'name': self.project1.name,
             'description': self.project1.description,
@@ -370,7 +361,7 @@ class AddDatasetsToProjectTestCase(CustomTestCase):
         self.assertContains(view_response, self.dataset.name)
     
     def testProjectAlreadyHasDataset(self):
-        self.tryLogin(BOB_USERNAME)
+        self.tryLogin('bob')
         
         edit_project_post_data = \
             self._form_edit_project_post_data_with_add_dataset_url(
@@ -393,8 +384,8 @@ class DeleteDatasetFromProjectTestCase(CustomTestCase):
     fixtures = ['projects_projects']
     
     def setUp(self):
-        self.bob = User.objects.get(username=BOB_USERNAME)
-        self.admin = User.objects.get(username=ADMIN_USERNAME)
+        self.bob = User.objects.get(username='bob')
+        self.admin = User.objects.get(username='admin')
         
         self.dataset = DataSet.objects.get(
             creator=self.bob,
@@ -432,7 +423,7 @@ class DeleteDatasetFromProjectTestCase(CustomTestCase):
     
     def testDatasetNotInProject(self):
     	#TODO: What is this doing? (it's not clear, after thinking about it for a minute)
-        self.tryLogin(BOB_USERNAME)
+        self.tryLogin('bob')
         
         get_response1 = \
             self.client.get(self.edit_project1_url)
@@ -454,7 +445,7 @@ class DeleteDatasetFromProjectTestCase(CustomTestCase):
                          get_response2.content)
     
     def testActuallyDeleteDatasetFromProject(self):
-        self.tryLogin(ADMIN_USERNAME)
+        self.tryLogin('admin')
         
         get_response = \
             self.client.get(self.view_project2_url)
@@ -489,8 +480,8 @@ class DeleteProjectTestCase(CustomTestCase):
     fixtures = ['projects_projects']
     
     def setUp(self):
-        self.bob = User.objects.get(username=BOB_USERNAME)
-        self.admin = User.objects.get(username=ADMIN_USERNAME)
+        self.bob = User.objects.get(username='bob')
+        self.admin = User.objects.get(username='admin')
         
         self.project1 = Project.objects.get(
             creator=self.bob,
@@ -526,7 +517,7 @@ class DeleteProjectTestCase(CustomTestCase):
         self.view_profile_url = reverse('epic.core.views.view_profile')
     
     def testLinks(self):
-        self.tryLogin(BOB_USERNAME)
+        self.tryLogin('bob')
         
         confirm_delete_project1_link = \
             '<a href="%s"' % self.confirm_delete_project1_url
@@ -544,13 +535,13 @@ class DeleteProjectTestCase(CustomTestCase):
         self.assertStatusCodeIsARedirect(response.status_code)
     
     def testConfirmationPageNotOwnerLoggedIn(self):
-        self.tryLogin(ADMIN_USERNAME)
+        self.tryLogin('admin')
         
         response = self.client.get(self.confirm_delete_project1_url)
         self.assertStatusCodeIsARedirect(response.status_code)
     
     def testConfirmationPageOwnerLoggedIn(self):
-        self.tryLogin(BOB_USERNAME)
+        self.tryLogin('bob')
         
         response = self.client.get(self.confirm_delete_project1_url)
         self.assertStatusCodeIsASuccess(response.status_code)
@@ -558,7 +549,7 @@ class DeleteProjectTestCase(CustomTestCase):
         self.assertContains(response, self.project1.name)
     
     def testCancelDelete(self):
-        self.tryLogin(BOB_USERNAME)
+        self.tryLogin('bob')
         
         confirm_delete_project1_response = \
             self.client.get(self.confirm_delete_project1_url)
@@ -578,13 +569,13 @@ class DeleteProjectTestCase(CustomTestCase):
         self.assertStatusCodeIsARedirect(response.status_code)
     
     def testConfirmDeleteNotOwnerLoggedIn(self):
-        self.tryLogin(ADMIN_USERNAME)
+        self.tryLogin('admin')
         
         response = self.client.get(self.delete_project1_url)
         self.assertStatusCodeIsARedirect(response.status_code)
     
     def testConfirmDeleteOwnerLoggedIn(self):
-        self.tryLogin(BOB_USERNAME)
+        self.tryLogin('bob')
         
         confirm_delete_project1_response = \
             self.client.get(self.confirm_delete_project1_url)
@@ -611,13 +602,13 @@ class BrowseProjectsTestCase(CustomTestCase):
     fixtures = ['projects_projects']
     
     def setUp(self):
-        self.bob = User.objects.get(username=BOB_USERNAME)
+        self.bob = User.objects.get(username='bob')
         self.bobs_profile = Profile.objects.for_user(user=self.bob)
         
-        self.admin = User.objects.get(username=ADMIN_USERNAME)
+        self.admin = User.objects.get(username='admin')
         self.admins_profile = Profile.objects.for_user(user=self.admin)
         
-        self.bill = User.objects.get(username=BILL_USERNAME)
+        self.bill = User.objects.get(username='bill')
         self.bills_profile = Profile.objects.for_user(user=self.bill)
         
         self.project1 = Project.objects.get(
@@ -717,7 +708,7 @@ class BrowseProjectsTestCase(CustomTestCase):
         # Test that the Projects option shows up with
         # (All, Datasets, Data Requests) when logged in.
         
-        self.tryLogin(BOB_USERNAME)
+        self.tryLogin('bob')
         response = self.client.get(self.browse_url)
         
         browse_projects_link = '<a href="%s"' % self.browse_projects_url
@@ -737,7 +728,7 @@ class BrowseProjectsTestCase(CustomTestCase):
         
         Project.objects.all().delete()
         
-        self.tryLogin(BOB_USERNAME)
+        self.tryLogin('bob')
         response = self.client.get(self.browse_projects_url)
         
         self.assertContains(response, 'There are no projects.')
@@ -758,7 +749,7 @@ class BrowseProjectsTestCase(CustomTestCase):
     def testWhenTheyExistLoggedIn(self):
         # Test browsing Projects when there are projects and logged in.
         
-        self.tryLogin(BOB_USERNAME)
+        self.tryLogin('bob')
         response = self.client.get(self.browse_projects_url)
         
         self.assertNotContains(response, 'There are no projects.')
@@ -785,7 +776,7 @@ class BrowseProjectsTestCase(CustomTestCase):
     def testUsersProjectsNotOwnerLoggedIn(self):
         # Test browsing Projects via a user and logged in.
         
-        self.tryLogin(ADMIN_USERNAME)
+        self.tryLogin('admin')
         response = self.client.get(self.view_bobs_projects_url)
         
         self.assertNotContains(response, 'There are no projects.')
@@ -799,7 +790,7 @@ class BrowseProjectsTestCase(CustomTestCase):
     def testUsersProjectsOwnerLoggedIn(self):
         # Test browsing Projects via a user and logged in.
         
-        self.tryLogin(BOB_USERNAME)
+        self.tryLogin('bob')
         response = self.client.get(self.view_bobs_projects_url)
         
         self.assertNotContains(response, 'There are no projects.')
@@ -814,7 +805,7 @@ class BrowseProjectsTestCase(CustomTestCase):
         # Test browsing Projects via a user's profile and not the profile's
         # user, and there are no projects.
         
-        self.tryLogin(ADMIN_USERNAME)
+        self.tryLogin('admin')
         response = self.client.get(self.view_bills_profile_url)
         
         fake_projects_listing = \
@@ -828,7 +819,7 @@ class BrowseProjectsTestCase(CustomTestCase):
         # Test browsing Projects via a user's profile and not the profile's
         # user, and there are no projects.
         
-        self.tryLogin(BILL_USERNAME)
+        self.tryLogin('bill')
         response = self.client.get(self.view_bills_profile_url)
         
         fake_projects_listing = 'Your Projects'
@@ -840,7 +831,7 @@ class BrowseProjectsTestCase(CustomTestCase):
         # Test browsing Projects via a user's profile and not the
         # profile's user, and there are projects.
         
-        self.tryLogin(ADMIN_USERNAME)
+        self.tryLogin('admin')
         response = self.client.get(self.view_bobs_profile_url)
         
         fake_projects_listing = '%s has not created any projects.' % \
@@ -853,7 +844,7 @@ class BrowseProjectsTestCase(CustomTestCase):
         # Test browsing Projects via a user's profile and the profile's user,
         # and there are projects.
         
-        self.tryLogin(BOB_USERNAME)
+        self.tryLogin('bob')
         response = self.client.get(self.view_bobs_profile_url)
         
         fake_projects_listing = 'You have not created any projects.'
@@ -913,7 +904,7 @@ class ViewProjectsTestCase(CustomTestCase):
             self.assertContains(response, project.name)
         
     def testLoggedInNotOwner(self):
-        self.tryLogin(ADMIN_USERNAME)
+        self.tryLogin('admin')
         
         response = self.client.get(self.view_projects_url)
         self.assertEqual(response.status_code, 200)
@@ -922,7 +913,7 @@ class ViewProjectsTestCase(CustomTestCase):
             self.assertContains(response, project.name)
     
     def testLoggedInOwner(self):
-        self.tryLogin(BOB_USERNAME)
+        self.tryLogin('bob')
         
         response = self.client.get(self.view_projects_url)
         self.assertEqual(response.status_code, 200)
@@ -1008,8 +999,8 @@ class ViewUserProjectListTestCase(CustomTestCase):
     fixtures = ['projects_just_users', 'projects_projects']
     
     def setUp(self):
-        self.bob = User.objects.get(username=BOB_USERNAME)
-        self.admin = User.objects.get(username=ADMIN_USERNAME)
+        self.bob = User.objects.get(username='bob')
+        self.admin = User.objects.get(username='admin')
         
         self.project1 = Project.objects.get(
             creator=self.bob, 

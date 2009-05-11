@@ -1,5 +1,6 @@
-import os, zipfile
+import os
 import tempfile
+import zipfile
 
 from django.contrib.auth.models import User
 from django.core.files.base import ContentFile
@@ -9,6 +10,7 @@ from epic.core.test import CustomTestCase
 from epic.datasets.forms import AcademicReferenceForm
 from epic.datasets.forms import AuthorForm
 from epic.datasets.models import DataSet, DataSetFile
+
 
 class UrlsTestCase(CustomTestCase):
     """ Test all the urls to make sure that the view for each works """
