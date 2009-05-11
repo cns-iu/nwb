@@ -1,0 +1,72 @@
+{% extends "core/bases/browse_base.html" %}
+
+{% block css %}
+  {{ block.super }}
+  <link href="/core_media/css/star_rating.css" rel="stylesheet" type="text/css" />
+{% endblock %}
+
+{% block scripts_header %}
+  {{ block.super }}
+  <script type="text/javascript" src="/core_media/javascript/image_swap.js"></script>
+{% endblock %}
+
+{% block nav %}
+  <div id="nav"> 
+    {% load core_templatetags %}
+    {% nav_bar 'Browse' %}
+  </div>
+{% endblock %}
+
+{% block submenu %}
+  {# TODO: Figure out how to actually space this over the *proper* way. #}
+  <span id="tagresult">
+    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+  </span>
+  
+  <ul>
+    <li><a href="{% url core.views.browse %}">All</a></li> 
+    <li><a href="{% url datasets.views.view_datasets %}">Datasets</a></li>
+    <li><a href="{% url projects.views.view_projects %}">Projects</a></li>
+    <li><a href="{% url datarequests.views.view_datarequests %}">Data Requests</a></li> 
+  </ul>
+{% endblock %}
+
+{% block content %}
+  <div class="databox">
+    <h1>3 Most Recent Data Requests</h1>
+  </div>
+  
+  {% load datarequest_templatetags %}
+  {% display_recent_requests 3 %}
+    
+  <div class="databox">
+    <h1>Datasets</h1>
+  </div>
+  
+  {% load dataset_templatetags %}
+  {% list_datasets datasets %}
+  
+  <div class="databox">
+    <h1>Projects</h1>
+  </div>
+  
+  {% load project_templatetags %}
+  {% list_projects projects %}
+  
+  <div class="databox">
+    <h1>Can't Find what you're looking for?
+      <a href="{% url datarequests.views.new_datarequest %}" 
+         onmouseout="MM_swapImgRestore()" 
+         onmouseover="MM_swapImage('Image3','','/core_media/images/request_hover_27.jpg',1)">
+             <img src="/core_media/images/request_27.jpg" 
+                alt="makerequest" 
+                name="Image3" 
+                width="150" 
+                height="35" 
+                border="0" 
+                id="Image3" />
+      </a>
+    </h1>
+  </div>
+{% endblock %}

@@ -1,0 +1,57 @@
+{% extends "core/bases/browse_base.html" %}
+
+{% load tags_templatetags %}
+
+{% block content %}
+  <div id="error-message">
+    {% block messages %}
+      {% for message in messages %}
+        {{ message }}
+      {%endfor%}
+    {% endblock %}
+  </div>
+  
+  {% if messages %}
+    <div class="highlight" id="message">
+      <ul>
+        {% for message in messages %}
+          <li>{{ message }}</li>
+        {% endfor %}
+      </ul>
+    </div>
+  {% endif %}
+  
+  {% if not project.is_active %}
+    <p>This project is not available.</p>
+  {% else %}
+    <div class="databox">
+      {% load project_templatetags %}
+      {% show_project_header project %}
+      
+      <p>{{ project.rendered_description|safe|linebreaksbr }}</p>
+    </div>
+    
+    <h3>Project Datasets</h3>
+    {% load dataset_templatetags %}
+    {% list_datasets project.datasets.all %}
+    
+    <br />
+    
+    {% if user.is_authenticated %}
+      {% if project.datasets.all %}
+        <a href="{% url epic.projects.views.download_all item_id=project.id slug=project.slug %}">
+	      <img src="/core_media/images/download-all_19.jpg" width="87" height="18" />
+	    </a>
+	  {% endif %}	 
+    {% else %}
+      <h2>
+        {# TODO: Make this not a big fat hack. #}
+        {# We should be using the url template tag instead of the hardcoded url. #}
+        Please <a href="/login/?next={{ project.get_absolute_url }}">login</a> to download this project.
+      </h2>
+    {% endif %}
+    
+    {% load comment_templatetags %}
+    {% comments_section project user form %}
+  {% endif %}
+{% endblock %}

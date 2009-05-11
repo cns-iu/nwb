@@ -1,0 +1,37 @@
+{% load category_templatetags %}
+{% load djangoratings_templatetags %}
+{% load core_templatetags %}
+{% rate_box_view dataset user %}
+
+<h2>
+  <a href="{% url datasets.views.view_dataset item_id=dataset.id slug=dataset.slug %}">
+    {{ dataset.name }}
+  </a>
+  {% category_listing dataset %}
+</h2>
+
+<ul class="datainfo">
+  <li class="first">
+    {% user_title dataset.creator 'True' %}
+  </li>
+  
+  <li>
+    {{ dataset.created_at|date:"F d, Y - P" }}
+  </li>
+  
+  {% ifequal user dataset.creator %}
+    <li>
+      <a href="{% url datasets.views.edit_dataset item_id=dataset.id, slug=dataset.slug %}">
+        Edit
+      </a>
+    </li>
+  {% endifequal %}
+  
+  {% if user.is_authenticated %}
+    {% ifnotequal user dataset.creator %}
+      <a href="{% url messages.views.send_message user_id=user.id, recipient_id=dataset.creator.id %}">
+        Contact Creator
+      </a>
+    {% endifnotequal %}
+  {% endif %}
+</ul>

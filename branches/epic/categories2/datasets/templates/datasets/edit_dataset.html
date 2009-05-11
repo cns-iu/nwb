@@ -1,0 +1,43 @@
+{% extends "core/bases/simple_base.html" %}
+{% block content %}
+	<h3>Edit {{ dataset.name }}:</h3>
+	<form action="{% url datasets.views.edit_dataset item_id=dataset.id %}" method="POST">
+		<table class="form">
+			{% load core_templatetags %}
+        	{% include_form_as_table form 'True' %}
+        	{{ fileformset }}
+        	{{ ref_formset.as_table }}
+        	{{ author_formset.as_table }}
+		</table>
+		{# TODO: Style the css and remove these breaks #}
+  	    <br />
+  	    {# TODO: Change the styling so that this break is not needed #}
+		{% load geoloc_templatetags %}
+		{% add_locations_map_for_dataset geoloc_add_formset geoloc_remove_formset %}
+		
+		<br />
+		<br />
+  	    <br />
+  	    {% if dataset.files.all %}
+			<p><span style="color:red">Remove all the files from this dataset?</span> 
+	  	    
+	  	          <input type="checkbox" name="delete_dataset_files" value="True"/>
+	  	          THIS CANNOT BE UNDONE!</p>
+
+  	    {% endif %}
+  	    <br />
+  	    <br />
+  	    <br />
+  	    <br />
+  	    
+		<input type="submit" value="Submit Changes" />
+		<a href = "{% url datasets.views.view_dataset item_id=dataset.id slug=dataset.slug %}">Cancel Changes</a>
+	</form>
+	<script type="text/javascript" src="/core_media/javascript/add_more_forms_to_formset.js"></script>
+	<script type="text/javascript">
+		referenceFormSet = new FormSet('referenceFormSet', 'reference', 'reference', 'Reference');
+		authorFormSet = new FormSet('authorFormSet', 'author', 'author', 'Author');
+		initialize(referenceFormSet);
+		initialize(authorFormSet);
+	</script>
+{% endblock %}
