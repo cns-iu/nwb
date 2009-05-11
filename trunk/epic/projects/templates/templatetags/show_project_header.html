@@ -5,7 +5,7 @@
   <a href="{% url projects.views.view_project item_id=project.id slug=project.slug %}">
     {{ project.name }}
   </a>
-  {% category_listing project %}
+  {% category_link project %}
 </h2>
 
 <ul class="datainfo">

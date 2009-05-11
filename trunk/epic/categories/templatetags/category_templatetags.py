@@ -12,6 +12,6 @@ def categories_box(categories=None):
     
     return {'categories': categories}
 
-@register.inclusion_tag('templatetags/category_listing.html')
-def category_listing(item):
+@register.inclusion_tag('templatetags/category_link.html')
+def category_link(item):
     return {'item': item}

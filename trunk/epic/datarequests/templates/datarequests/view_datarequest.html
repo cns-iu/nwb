@@ -10,7 +10,7 @@
 	  <a href="{% url datarequests.views.view_datarequest item_id=datarequest.id slug=datarequest.slug %}">
 	    {{ datarequest.name }}
 	  </a>
-	  {% category_listing datarequest %}
+	  {% category_link datarequest %}
 	</h1>
 	
 	<h1>Status: {{ datarequest.get_status_display|capfirst }}</h1>
