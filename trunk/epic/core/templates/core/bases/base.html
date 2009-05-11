@@ -51,26 +51,27 @@
             var current = 'shown';
             var hiddenDivId = 'quick_login_hidden';
             var shownDivId = 'quick_login_shown';
-                
-            function activateShownLogin() {
+
+            function switchLogin() {
+                if (current === 'hidden'){
+                  showLogin();
+                } else if (current === 'shown') {
+                  hideLogin();
+                } else {
+                  //console.log('ERROR');
+                }
+            }    
+            function showLogin() {
               jQuery('#' + hiddenDivId).hide();
               jQuery('#' + shownDivId).show();
               current = 'shown';
             }
-            function activateHiddenLogin() {
+            function hideLogin() {
               jQuery('#' + shownDivId).hide();
               jQuery('#' + hiddenDivId).show();
               current = 'hidden';
             }
-            function switchLogin() {
-              if (current === 'hidden'){
-                activateShownLogin();
-              } else if (current === 'shown') {
-                activateHiddenLogin();
-              } else {
-                //console.log('ERROR');
-              }
-            }
+            
           </script>
           <div id="switcher" style="position: absolute;
                                     width: 165px;
@@ -104,12 +105,12 @@
 		                                     background-image: url(/core_media/images/login_ON_02.gif);
 		                                     background-repeat: no-repeat;
 		                                     z-index: 11;">
-            
-          
             {% load core_templatetags %}
             {% login_box %}
           </div>
           <script type="text/javascript">
+            //(Login is shown by default)
+            //(If the user has javascript enabled, this makes the login hidden when the page loads)
             switchLogin();
           </script>
         {% endif %}
