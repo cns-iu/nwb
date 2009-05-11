@@ -18,6 +18,7 @@ from django.forms.util import ErrorList
 from django.shortcuts import get_list_or_404
 from django.shortcuts import get_object_or_404
 from django.shortcuts import render_to_response
+from django.template.defaultfilters import slugify
 from django.template import RequestContext
 from django.utils import simplejson
 from django.utils.datastructures import MultiValueDictKeyError
@@ -26,6 +27,7 @@ from epic.comments.forms import PostCommentForm
 from epic.core.models import AcademicReference
 from epic.core.models import Author
 from epic.core.models import Item
+from epic.core.util.view_utils import *
 from epic.datasets.forms import AcademicReferenceFormSet
 from epic.datasets.forms import AuthorFormSet
 from epic.datasets.forms import EditDataSetForm
@@ -43,6 +45,7 @@ from epic.geoloc.utils import CouldNotFindLocation
 from epic.geoloc.utils import get_best_location
 from epic.geoloc.utils import parse_geolocation
 from epic.tags.models import Tagging
+
 
 def view_datasets(request):
     datasets = DataSet.objects.active().order_by('-created_at')
@@ -103,7 +106,6 @@ def create_dataset(request):
                 uploaded_files = form.cleaned_data['files']
                 # Raises a 'NoReadMeException' if no readme is found.
                 _add_uploaded_files(new_dataset, uploaded_files)
-                
                 new_dataset.is_active = True
                 new_dataset.save()
                 
@@ -130,13 +132,15 @@ class NoReadMeException(Exception):
 
 def _save_new_dataset(form, user):
     name = form.cleaned_data['name']
+    category = form.cleaned_data['category']
     description = form.cleaned_data['description']
     previous_version = form.cleaned_data['previous_version']
     
     new_dataset = DataSet.objects.create(
         creator=user, 
-        name=name, 
+        name=name,
         description=description,
+        category=category,
         previous_version=previous_version, 
         is_active=False)
 
@@ -411,43 +415,59 @@ def edit_dataset(request, item_id, slug=None):
                                     'slug':slug,}))
     
     if request.method != "POST":
-        current_tags = Tagging.objects.get_edit_string(item=dataset, 
-                                                       user=user)
+        current_tags = \
+            Tagging.objects.get_edit_string(item=dataset, user=user)
+        
         initial_dataset_data = {
             'name': dataset.name,
             'description': dataset.description,
             'tags': current_tags,
         }
         
+        if dataset.category is not None:
+            initial_dataset_data['category'] = dataset.category.id
+        
         form = EditDataSetForm(initial=initial_dataset_data)
         initial_location_data = []
         geolocs = GeoLoc.objects.filter(datasets=dataset.id)
+        
         for geoloc in geolocs:
             initial_location_data.append({'add_location':geoloc,})
+        
         geoloc_add_formset = GeoLocationFormSet(prefix='add', 
                                          initial=initial_location_data)
         geoloc_remove_formset = RemoveGeoLocationFormSet(prefix='remove')
         
         initial_author_data = []
+        
         for author in dataset.authors.all():
             initial_author_data.append({'author': author.author})
-        author_formset = AuthorFormSet(initial=initial_author_data, prefix='author')
+        
+        author_formset = AuthorFormSet(
+            initial=initial_author_data, prefix='author')
             
         initial_ref_data = []
+        
         for ref in dataset.references.all():
             initial_ref_data.append({'reference': ref.reference})
-        ref_formset = AcademicReferenceFormSet(initial=initial_ref_data, prefix='reference')
+        
+        ref_formset = AcademicReferenceFormSet(
+            initial=initial_ref_data, prefix='reference')
     else:
         form = EditDataSetForm(request.POST)
         geoloc_add_formset = GeoLocationFormSet(request.POST, prefix='add')
         geoloc_remove_formset = RemoveGeoLocationFormSet(request.POST, 
                                                   prefix='remove')
         author_formset = AuthorFormSet(request.POST, prefix='author')
-        ref_formset = AcademicReferenceFormSet(request.POST, prefix='reference')
+        ref_formset = \
+            AcademicReferenceFormSet(request.POST, prefix='reference')
             
-        if form.is_valid() and author_formset.is_valid() and ref_formset.is_valid():       
+        if form.is_valid() and \
+                author_formset.is_valid() and \
+                ref_formset.is_valid():     
             dataset.name = form.cleaned_data['name']
             dataset.description = form.cleaned_data['description']
+            dataset.category = form.cleaned_data['category']
             dataset.save()
             
             tag_names = form.cleaned_data["tags"]
@@ -455,15 +475,16 @@ def edit_dataset(request, item_id, slug=None):
                                         item=dataset, 
                                         user=user)
             
-            for geoloc in _get_geolocs_from_formset(geoloc_add_formset, 
+            for geoloc in _get_geolocs_from_formset(geoloc_add_formset,
                                                     'add_location'):
                 dataset.geolocations.add(geoloc)
             
-            for geoloc in _get_geolocs_from_formset(geoloc_remove_formset, 
+            for geoloc in _get_geolocs_from_formset(geoloc_remove_formset,
                                                     'remove_location'):
                 dataset.geolocations.remove(geoloc)
             
             dataset.references.all().delete()
+            
             for ref_form in ref_formset.forms:
                 if ref_form.is_valid():
                     if ref_form.cleaned_data:
@@ -473,17 +494,21 @@ def edit_dataset(request, item_id, slug=None):
             
             for author in dataset.authors.all():
                 author.items.remove(dataset)
+            
             for author_form in author_formset.forms:
                 if author_form.is_valid():
                     if author_form.cleaned_data:
                         author_name = author_form.cleaned_data['author']
-                        author, created = Author.objects.get_or_create(author=author_name)
+                        author, created = \
+                            Author.objects.get_or_create(author=author_name)
                         author.items.add(dataset)
             
-            # If the user has set the flag to delete their datasets, delete them
+            # If the user has set the flag to delete their datasets,
+            # delete them.
             # TODO: these files need to be removed from the file system too!!
 
             delete_files = False
+            
             try:
                 # This implies that the checkbox was checked.
                 request.POST['delete_dataset_files']
@@ -492,21 +517,25 @@ def edit_dataset(request, item_id, slug=None):
                 pass
             
             if delete_files:
-                return HttpResponseRedirect(reverse('epic.datasets.views.delete_dataset_files',
-                                                    kwargs={ "item_id": dataset.id, 'slug':slug, }))
+                delete_dataset_files_url = get_item_url(
+                    dataset, 'epic.datasets.views.delete_dataset_files')
+                
+                return HttpResponseRedirect(delete_dataset_files_url)
             else:
-                return HttpResponseRedirect(reverse('epic.datasets.views.view_dataset',
-                                                    kwargs={ "item_id": dataset.id, 'slug':slug, }))
+                view_dataset_url = get_item_url(
+                    dataset, 'epic.datasets.views.view_dataset')
+                
+                return HttpResponseRedirect(view_dataset_url)
             
     return render_to_response('datasets/edit_dataset.html', 
                               {'dataset': dataset, 
                                'form': form, 
                                'geoloc_add_formset': geoloc_add_formset, 
-                               'geoloc_remove_formset':geoloc_remove_formset,
-                               'files':dataset.files.all(),
+                               'geoloc_remove_formset': geoloc_remove_formset,
+                               'files': dataset.files.all(),
                                'author_formset': author_formset,
                                'ref_formset': ref_formset},
-                              context_instance=RequestContext(request))
+                               context_instance=RequestContext(request))
 
 @login_required
 def rate_dataset(request, item_id, input_rating=None, slug=None):

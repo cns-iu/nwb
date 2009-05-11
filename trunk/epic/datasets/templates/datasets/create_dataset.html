@@ -87,6 +87,15 @@
         </tr>
         <tr>
           <th>
+            {{ form.category.label_tag }}
+          </th>
+          <td>
+          	{{ form.category.errors }}
+          	{{ form.category }}
+          </td>
+        </tr>
+        <tr>
+          <th>
             {{ form.tags.label_tag }}
           </th>
           <td>

@@ -845,7 +845,7 @@ class BrowseProjectsTestCase(CustomTestCase):
         
         fake_projects_listing = '%s has not created any projects.' % \
             self.bobs_profile.full_title()
-        real_projects_listing = '%s Projects' % self.bobs_profile.full_title()
+        real_projects_listing = 'Projects'
         self.assertNotContains(response, fake_projects_listing)
         self.assertContains(response, real_projects_listing)
     

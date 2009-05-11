@@ -151,6 +151,7 @@ class PostMarkupTestCase(CustomTestCase):
         self.MARKUP = (
             'pre[tag]contents',
             'pre[tag]contents[/tag]post',
+            'blah',
             'pre[invalid_tag]invalid tag contents[/invalid_tag][b]bold![/b]',
             'pre[b]contents[/b]post',
             'pre[b][u]contents[/u][/b]post',
@@ -162,6 +163,7 @@ class PostMarkupTestCase(CustomTestCase):
         self.EXPECTED_RENDERED_MARKUP = (
             self.MARKUP[0],
             self.MARKUP[1],
+            'blah',
             'pre[invalid_tag]invalid tag contents[/invalid_tag]<b>bold!</b>',
             'pre<b>contents</b>post',
             'pre<b><u>contents</u></b>post',

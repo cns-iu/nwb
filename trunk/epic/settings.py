@@ -106,6 +106,7 @@ INSTALLED_APPS = (
     'django.contrib.sites',
     'django.contrib.admin',
     'epic.core',
+    'epic.categories',
     'epic.datarequests',
     'epic.datasets',
     'epic.comments',

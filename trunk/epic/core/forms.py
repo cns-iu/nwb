@@ -3,7 +3,10 @@ from django.contrib.auth.models import User
 from django.forms import ModelForm
 from django.forms.util import ErrorList
 
-from epic.core.models import Item, Profile
+from epic.categories.models import Category
+from epic.core.models import Item
+from epic.core.models import Profile
+
 
 class ForgotPasswordForm(forms.Form):
 	username_or_email = forms.CharField(max_length=Profile.MAX_USER_EMAIL_LENGTH, label="Username or e-mail address")
@@ -50,3 +53,10 @@ class ProfileForm(ModelForm):
 class ShortAuthenticationForm(forms.Form):
     username = forms.CharField(label=("Username"), max_length=30, widget=forms.TextInput(attrs={'size': 11}));
     password = forms.CharField(label=("Password"), widget=forms.PasswordInput(attrs={'size': 11}));
+
+class CategoryChoiceField(forms.ModelChoiceField):
+    def __init__(self, *args, **kwargs):
+        super(CategoryChoiceField, self).__init__(
+            queryset=Category.objects.all(),
+            empty_label='(No Category)',
+            required=False)

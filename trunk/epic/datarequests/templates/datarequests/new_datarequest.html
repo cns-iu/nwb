@@ -5,18 +5,20 @@
     {% load core_templatetags %}
     {% nav_bar 'Request' %}
   </div>
-{% endblock %}{# block nav #}
+{% endblock %}
 
 {% block content %}
 <div class="requestbox">
    <h1>Make a Request</h1>
    <br/>
    <form id="request_form" name="request_form" action="{% url datarequests.views.new_datarequest %}" method="POST">
-      <br/>
+      <br />
       <label> {{ form.name }} </label>
-      <br/>
+      <br />
       <label> {{ form.description }} </label>
-      <br/>
+      <br />
+      <label> {{ form.category }} </label>
+      <br />
       <label>{{ form.tags }}</label>
       <br />
       <!--TODO: have data requests be taggable -->

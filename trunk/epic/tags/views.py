@@ -1,8 +1,10 @@
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
 from django.core.urlresolvers import reverse
-from django.http import HttpResponseRedirect, HttpResponse
-from django.shortcuts import render_to_response, get_object_or_404
+from django.http import HttpResponse
+from django.http import HttpResponseRedirect
+from django.shortcuts import get_object_or_404
+from django.shortcuts import render_to_response
 from django.template import RequestContext
 from django.utils import simplejson
 from django.utils.datastructures import MultiValueDictKeyError
@@ -10,20 +12,24 @@ from django.utils.datastructures import MultiValueDictKeyError
 from epic.core.models import Item
 from epic.datasets.models import DataSet
 from epic.datarequests.models import DataRequest
+from epic.projects.util.util import *
 from epic.tags.models import Tagging
 from epic.tags.utils import parse_tag_input
 
+
 def index(request):
     count_tag_list = Tagging.objects.get_tags()
-    return render_to_response('tags/index.html', {'tags':count_tag_list}, context_instance=RequestContext(request))
+    return render_to_response('tags/index.html',
+                              {'tags': count_tag_list},
+                              context_instance=RequestContext(request))
 
 def view_items_for_tag(request, tag_name):
     tags = Tagging.objects.filter(tag=tag_name)
     
     datasets = _get_datasets_for_tags(tags)
-    projects = _get_projects_containing_datasets(datasets)
+    projects = get_projects_containing_datasets(datasets)
     datarequests = _get_datarequests_for_tags(tags)
-    specifics = datasets + projects + datarequests
+    specifics = list(datasets) + list(projects) + list(datarequests)
     
     return render_to_response('tags/tag_view.html', 
                               {'tags':tags, 
@@ -46,7 +52,7 @@ def view_projects_for_tag(request, tag_name):
     tags = Tagging.objects.filter(tag=tag_name)
     
     datasets = _get_datasets_for_tags(tags)
-    specifics = _get_projects_containing_datasets(datasets)
+    specifics = get_projects_containing_datasets(datasets)
     
     return render_to_response(
         'tags/tag_view.html', 
@@ -148,12 +154,3 @@ def _get_datarequests_for_tags(tags):
                         tag.item.specific.is_datarequest()]
     
     return datarequests
-
-def _get_projects_containing_datasets(datasets):
-    project_sets = [set(dataset.projects.all()) for dataset in datasets]
-    projects = set([])
-    
-    for project_set in project_sets:
-        projects = projects.union(project_set)
-    
-    return list(projects)

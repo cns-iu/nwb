@@ -45,7 +45,7 @@ def new_datarequest(request):
             datarequest.is_active = True
             datarequest.save()
             
-            tag_names = form.cleaned_data["tags"]
+            tag_names = form.cleaned_data['tags']
             Tagging.objects.update_tags(tag_names=tag_names, 
                                         item=datarequest, 
                                         user=user)

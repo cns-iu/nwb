@@ -1,11 +1,13 @@
+{% load category_templatetags %}
 {% load djangoratings_templatetags %}
 {% load core_templatetags %}
 {% rate_box_view dataset user %}
 
 <h2>
-  <a href="{% url datasets.views.view_dataset item_id=dataset.id slug=dataset.slug%}">
+  <a href="{% url datasets.views.view_dataset item_id=dataset.id slug=dataset.slug %}">
     {{ dataset.name }}
   </a>
+  {% category_listing dataset %}
 </h2>
 
 <ul class="datainfo">

@@ -51,10 +51,6 @@
       </h2>
     {% endif %}
     
-    <h4>
-      Please Cite This Project As:<br/>"{{ project.name|escape }}." <span class="source_name">EpiC Community Website.</span> {{ project.created_at|date:"d M Y" }}. {% now "d M Y" %} &lt;<a>{{ project.get_absolute_url }}</a>&gt;
-    </h4>
-    
     {% load comment_templatetags %}
     {% comments_section project user form %}
   {% endif %}

@@ -34,6 +34,7 @@ from django.contrib.auth.models import User
 from django.db import models
 from django.template.defaultfilters import slugify
 
+from epic.categories.models import Category
 from epic.core.util.postmarkup import PostMarkup
 
 
@@ -55,6 +56,8 @@ class Item(models.Model):
     # TODO: Actually the max_length likely defaults to some value.  It should
     # likely be set to the same as description.
     rendered_description = models.TextField(blank=True, null=True)
+    
+    category = models.ForeignKey(Category, blank=True, null=True)
     
     slug = models.SlugField()
     created_at = models.DateTimeField(auto_now_add=True, db_index=True)

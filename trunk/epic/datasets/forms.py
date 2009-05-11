@@ -2,27 +2,44 @@ from django import forms
 from django.forms import ModelForm
 from django.forms.formsets import formset_factory
 
-from epic.core.models import Item, AcademicReference, Author
+from epic.core.forms import CategoryChoiceField
+from epic.core.models import AcademicReference
+from epic.core.models import Author
+from epic.core.models import Item
 from epic.core.util.multifile import MultiFileField
-from epic.datasets.models import DataSet, RATING_SCALE
+from epic.datasets.models import DataSet
+from epic.datasets.models import RATING_SCALE
 from epic.djangoratings.forms import RatingField
-    
+
+
 class EditDataSetForm(forms.Form):
     name = forms.CharField(max_length=Item.MAX_ITEM_NAME_LENGTH)
-    description = forms.CharField(max_length=Item.MAX_ITEM_DESCRIPTION_LENGTH, widget=forms.Textarea())
-    tags = forms.CharField(max_length=Item.MAX_ITEM_TAGS_LENGTH, required=False)
+    
+    description = forms.CharField(
+        max_length=Item.MAX_ITEM_DESCRIPTION_LENGTH, widget=forms.Textarea())
+    
+    category = CategoryChoiceField()
+    
+    tags = forms.CharField(max_length=Item.MAX_ITEM_TAGS_LENGTH,
+                           required=False)
 
 class NewDataSetForm(EditDataSetForm):
     def __init__(self, user, *args, **kwargs):
         super(NewDataSetForm, self).__init__(*args, **kwargs)
-        self.fields['previous_version'].queryset = DataSet.objects.active().filter(creator=user)
+        self.fields['previous_version'].queryset = \
+            DataSet.objects.active().filter(creator=user)
         
     help_text = """Specify that this dataset is a newer version of a dataset
-                   that you have previously added.  Please only use this as a
-                   way to correct errors from past datasets."""
-    previous_version = forms.ModelChoiceField(queryset=DataSet.objects.none(), empty_label='(No Previous Version)', required=False, help_text=help_text)  
-    help_text = """A "readme.txt" is required.  If one is not directly provided, 
-                it must be in a compressed file that is directly added."""
+                    that you have previously added.  Please only use this as a
+                    way to correct errors from past datasets."""
+    previous_version = forms.ModelChoiceField(queryset=DataSet.objects.none(),
+                                              empty_label='(No Previous Version)',
+                                              required=False,
+                                              help_text=help_text)
+      
+    help_text = """A "readme.txt" is required.  If one is not directly
+                   provided, it must be in a compressed file that is
+                   directly added."""
     files = MultiFileField(required=True, help_text=help_text)
     
 class UploadReadMeForm(forms.Form):

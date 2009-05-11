@@ -8,7 +8,7 @@ from django.conf import settings
 import os
 
 class RatingTestCase(CustomTestCase):
-	fixtures = ['common_data']
+	fixtures = ['ratings']
 	
 	def setUp(self):
 		self.data_set = DataSet.objects.active()[0]

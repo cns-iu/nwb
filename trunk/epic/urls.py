@@ -27,6 +27,7 @@ urlpatterns = patterns('',
     (r'^tags/', include('epic.tags.urls')),
     (r'^geoloc/', include('epic.geoloc.urls')),
     (r'^projects/', include('epic.projects.urls')),
+    (r'^categories/', include('epic.categories.urls')),
     (r'^authors/(?P<author_name>.+?)/$', 'epic.core.views.view_items_for_author')
 )
 

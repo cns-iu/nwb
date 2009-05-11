@@ -46,7 +46,6 @@ def create_project(request):
                 if dataset_form.is_valid():
                     dataset = dataset_form.cleaned_data['dataset']
                     new_project.datasets.add(dataset)
-            
             view_project_url = \
                 get_item_url(new_project, 'epic.projects.views.view_project')
             return HttpResponseRedirect(view_project_url)
@@ -55,7 +54,7 @@ def create_project(request):
         'projects/create_project.html',
         {'new_project_form': new_project_form,
          'project_datasets': project_datasets},
-        context_instance=RequestContext(request))
+         context_instance=RequestContext(request))
 
 @login_required
 def confirm_delete_project(request, item_id, slug):
@@ -107,6 +106,10 @@ def edit_project(request, item_id, slug):
             'name': project.name,
             'description': project.description,
         }
+       
+        if project.category is not None:
+            initial_edit_project_data['category'] = project.category.id
+        
         edit_form = ProjectForm(initial=initial_edit_project_data)
         
         initial_project_datasets = []
@@ -136,7 +139,7 @@ def edit_project(request, item_id, slug):
             view_project_url = \
                 get_item_url(project, 'epic.projects.views.view_project')
             return HttpResponseRedirect(view_project_url)
-        
+    
     render_to_response_data = {
         'project': project,
         'edit_project_form': edit_form,

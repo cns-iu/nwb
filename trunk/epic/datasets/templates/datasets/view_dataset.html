@@ -3,6 +3,47 @@
 {% load datarequest_templatetags %}
 {% load tags_templatetags %}
 
+{% block css %}
+	{{ block.super }}
+	<style type="text/css">
+	#read-more-content {
+		display:none;
+	}
+	#read-more-link {
+		color:blue;
+		display:block;
+		padding-bottom:9px;
+		cursor:pointer;
+	}
+	#read-less-link {
+		color:green;
+		display:none;
+		padding-bottom:9px;
+		cursor:pointer;
+	}
+	</style>
+{% endblock %}
+
+{% block scripts_footer %}
+	{{ block.super }}
+	<script type="text/javascript"> 
+	<!-- 
+		$(document).ready(function(){
+			$("#read-more-link").click(function(){
+					$("#read-more-content").fadeIn();
+					$("#read-more-link").hide();
+					$("#read-less-link").css({'display':'block'});
+				});
+			$("#read-less-link").click(function(){
+				$("#read-more-content").fadeOut();
+				$("#read-less-link").hide();
+				$("#read-more-link").show();
+			});
+			});
+	//-->
+	</script>
+{% endblock %}
+
 {% block content %}
   <div id="error-message">
     {% block messages %}
@@ -70,7 +111,6 @@
 		    <span id="read-less-link">Read less &laquo;</span>
 		  {% endif %}
 		 </p>
-	    <p>{{ dataset.rendered_description|safe|linebreaksbr }}</p>
 	    
 	    {% list_item_tags dataset user 'True' %}
 		

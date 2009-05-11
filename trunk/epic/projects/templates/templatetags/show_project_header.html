@@ -1,8 +1,11 @@
+{% load category_templatetags %}
 {% load core_templatetags %}
+
 <h2>
-  <a href="{% url projects.views.view_project item_id=project.id slug=project.slug%}">
+  <a href="{% url projects.views.view_project item_id=project.id slug=project.slug %}">
     {{ project.name }}
   </a>
+  {% category_listing project %}
 </h2>
 
 <ul class="datainfo">
@@ -29,7 +32,7 @@
       </li>
     {% endif %}
   {% endifequal %}
-  {% comment %}
+  
   {% if user.is_authenticated %}
     {% ifnotequal user project.creator %}
       <a href="{% url messages.views.send_message user_id=user.id, recipient_id=project.creator.id %}">
@@ -37,5 +40,4 @@
       </a>
     {% endifnotequal %}
   {% endif %}
-  {% endcomment %}
 </ul>

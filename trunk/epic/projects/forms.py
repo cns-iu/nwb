@@ -2,9 +2,9 @@ import re
 
 from django import forms
 from django.forms.formsets import formset_factory
-from django.forms.util import ErrorList
 from django.forms.util import ValidationError
 
+from epic.core.forms import CategoryChoiceField
 from epic.core.models import Item
 from epic.datasets.models import DataSet
 
@@ -13,13 +13,20 @@ class ProjectForm(forms.Form):
     name = forms.CharField(max_length=Item.MAX_ITEM_NAME_LENGTH)
     description = forms.CharField(max_length=Item.MAX_ITEM_DESCRIPTION_LENGTH,
                                   widget=forms.Textarea())
+    category = CategoryChoiceField()
+
 class ProjectDataSetForm(forms.Form):
     dataset_url = forms.CharField(label='Dataset URL', required=False)
     
     def clean_dataset_url(self):
         cleaned_data = self.cleaned_data
         dataset_url = cleaned_data['dataset_url']
-
+        
+        if not dataset_url:
+            cleaned_data['dataset'] = None
+            
+            return cleaned_data
+        
         dataset_id = _parse_out_dataset_id(dataset_url)
         
         try:
@@ -38,13 +45,18 @@ def _parse_out_dataset_id(dataset_url):
     dataset_id = _parse_out_item_id_of_type(dataset_url, 'datasets')
     
     return dataset_id
+
+#def _parse_out_algorithm_id(alrogithm_url):
+#    algorithm_id = _parse_out_item_id_of_type(algorithm_url, 'algorithms')
+#    
+#    return algorithm_id
+
+def _parse_out_item_id_of_type(item_url, app_name):
+    expression = r'.*?/%s/(?P<item_id>\d+)/.*?' % app_name 
+    pattern = re.compile(expression)
+    match = pattern.search(item_url)
     
-def _parse_out_item_id_of_type(item_url, item_type):
-    pattern = re.compile(r'^.*?/'+item_type+'/(?P<item_id>\d+)/.*')
-    match = pattern.match(item_url)
-    if match is not None:
-        dict = match.groupdict()
-        if 'item_id' in dict:
-            return dict['item_id']
-    return None
+    if match is None:
+        return None
     
+    return match.group('item_id')

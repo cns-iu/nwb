@@ -139,6 +139,8 @@ class PostMarkup(object):
             
             if tag.display_contents:
                 contents_string = self._convert_markup(contents)
+            else:
+                contents_string = ''
         else:
             opening_string = '[%s]' % tag_name
             closing_string = '[/%s]' % tag_name
