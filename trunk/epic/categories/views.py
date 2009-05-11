@@ -24,51 +24,53 @@ def view_categories(request):
 def view_items_for_category(request, category_id):
     category = get_object_or_404(Category, pk=category_id)
     
-    # TODO: Give these to the template as separate lists and display them
-    # separately.
     datasets = _get_datasets_for_category(category)
+    
     projects_from_datasets = get_projects_containing_datasets(datasets)
     projects_from_category = _get_projects_for_category(category)
     projects = projects_from_datasets | projects_from_category
-    datarequests = _get_datarequests_for_category(category)
-    specifics = list(datasets) + list(projects) + list(datarequests)
     
-    return render_to_response('categories/view_items_for_category.html', 
-                              {'category': category, 'specifics': specifics}, 
+    datarequests = _get_datarequests_for_category(category)
+    
+    return render_to_response('categories/view_all.html', 
+                              {'category': category,
+                               'datasets': datasets,
+                               'projects': projects,
+                               'datarequests': datarequests},
                                context_instance=RequestContext(request))
-    items = Item.objects.filter(category=category)
 
 def view_datasets_for_category(request, category_id):
     category = get_object_or_404(Category, pk=category_id)
     
     datasets = _get_datasets_for_category(category)
-    specifics = datasets
     
-    return render_to_response('categories/view_items_for_category.html', 
-                              {'category': category, 'specifics': specifics}, 
+    return render_to_response('categories/view_datasets.html', 
+                              {'category': category,
+                               'datasets': datasets}, 
                                context_instance=RequestContext(request))
 
 def view_projects_for_category(request, category_id):
     category = get_object_or_404(Category, pk=category_id)
     
     datasets = _get_datasets_for_category(category)
+    
     projects_from_datasets = set(get_projects_containing_datasets(datasets))
     projects_from_category = set(_get_projects_for_category(category))
     projects = list(projects_from_datasets.union(projects_from_category))
-    specifics = projects
     
-    return render_to_response('categories/view_items_for_category.html', 
-                              {'category': category, 'specifics': specifics}, 
+    return render_to_response('categories/view_projects.html', 
+                              {'category': category,
+                               'projects': projects,}, 
                                context_instance=RequestContext(request))
 
 def view_datarequests_for_category(request, category_id):
     category = get_object_or_404(Category, pk=category_id)
     
     datarequests = _get_datarequests_for_category(category)
-    specifics = datarequests
     
-    return render_to_response('categories/view_items_for_category.html', 
-                              {'category': category, 'specifics': specifics}, 
+    return render_to_response('categories/view_datarequests.html', 
+                              {'category': category,
+                               'datarequests': datarequests,}, 
                                context_instance=RequestContext(request))
 
 def _get_datasets_for_category(category):
