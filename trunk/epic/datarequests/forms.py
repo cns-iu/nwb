@@ -9,7 +9,7 @@ from epic.datarequests.models import DataRequest
 class DataRequestForm(ModelForm):
     name_attrs = {
         'size': 42,
-        'onFocus': 'MPClearField(this)',
+        'onFocus': 'ClearField(this)',
     }
     
     name = forms.CharField(max_length=Item.MAX_ITEM_NAME_LENGTH,
@@ -18,7 +18,7 @@ class DataRequestForm(ModelForm):
     description_attrs = {
         'rows': 6,
         'cols': 42,
-        'onFocus': 'MPClearField(this)',
+        'onFocus': 'ClearField(this)',
     }
     
     description = forms.CharField(
@@ -29,7 +29,7 @@ class DataRequestForm(ModelForm):
     
     tags_attrs = {
         'size': 42,
-        'onFocus': 'MPClearField(this)',
+        'onFocus': 'ClearField(this)',
     }
     
     tags = forms.CharField(max_length=Item.MAX_ITEM_TAGS_LENGTH,
