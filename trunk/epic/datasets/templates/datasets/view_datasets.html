@@ -7,7 +7,7 @@
 
 {% block content %}
   {% load dataset_templatetags %}
-  {% list_datasets datasets %}
+  {% datasets_list datasets %}
   <div class="databox">
     <h1>Can't Find what you're looking for?
       <a href="{% url datarequests.views.new_datarequest %}" 

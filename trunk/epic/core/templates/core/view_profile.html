@@ -38,7 +38,7 @@
      {% endifequal %}
           
     {% load dataset_templatetags %}
-    {% list_datasets datasets %}
+    {% datasets_list datasets %}
   {% else %}
      {% ifequal profile.user user %}
 	   <p>You have not uploaded any datasets.</p>

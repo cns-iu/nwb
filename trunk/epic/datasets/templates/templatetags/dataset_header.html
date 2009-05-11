@@ -1,13 +1,15 @@
-{% load category_templatetags %}
 {% load djangoratings_templatetags %}
 {% load core_templatetags %}
-{% rate_box_view dataset user %}
+{% if rating_allowed %}
+  {% rate_box_vote dataset user %}
+{% else %}
+  {% rate_box_view dataset user %}
+{% endif %}
 
 <h2>
-  <a href="{% url datasets.views.view_dataset item_id=dataset.id slug=dataset.slug %}">
+  <a href="{% url datasets.views.view_dataset item_id=dataset.id slug=dataset.slug%}">
     {{ dataset.name }}
   </a>
-  {% category_listing dataset %}
 </h2>
 
 <ul class="datainfo">

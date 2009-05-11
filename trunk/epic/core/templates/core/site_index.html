@@ -50,7 +50,7 @@
   <h1><a href="{% url datarequests.views.new_datarequest %}">Make a Request</a></h1> 
   <h2>Data Uploads</h2>
   {% load dataset_templatetags %}
-  {% display_recent_datasets %}
+  {% recent_datasets %}
   <h1><a href="{% url datasets.views.create_dataset %}">Upload your data</a></h1>  
 {% endblock %}
 
