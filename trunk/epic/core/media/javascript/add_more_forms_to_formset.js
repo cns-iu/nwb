@@ -123,7 +123,8 @@ function createInput(formSet, formNumber, formValue) {
 	input.setAttribute('id', id);
 	input.setAttribute('value', value);
 	input.setAttribute('name', name);
-
+	input.setAttribute('size', 50);
+	
 	return input;
 }
 function createRemoveLink(id, formSet) {

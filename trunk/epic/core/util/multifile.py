@@ -81,6 +81,7 @@ class MultiFileInput(FileInput):
             input_to_add.type = "file";
             input_to_add.name = "files[]";
             input_to_add.id = '%(id)s'+(%(id)s_counter++);
+            input_to_add.size = 40;
             last_input.parentNode.insertBefore(input_to_add, insertBeforeElement);
             
             // Insert the "remove" link.

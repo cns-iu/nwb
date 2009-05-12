@@ -6,14 +6,14 @@ from epic.core.forms import CategoryChoiceField
 from epic.core.models import AcademicReference
 from epic.core.models import Author
 from epic.core.models import Item
-from epic.core.util.multifile import MultiFileField
+from epic.core.util.multifile import MultiFileField, MultiFileInput
 from epic.datasets.models import DataSet
 from epic.datasets.models import RATING_SCALE
 from epic.djangoratings.forms import RatingField
 
 
 class EditDataSetForm(forms.Form):
-    name = forms.CharField(max_length=Item.MAX_ITEM_NAME_LENGTH)
+    name = forms.CharField(max_length=Item.MAX_ITEM_NAME_LENGTH, widget=forms.TextInput(attrs={'size': 50}))
     
     description = forms.CharField(
         max_length=Item.MAX_ITEM_DESCRIPTION_LENGTH, widget=forms.Textarea())
@@ -21,7 +21,8 @@ class EditDataSetForm(forms.Form):
     category = CategoryChoiceField()
     
     tags = forms.CharField(max_length=Item.MAX_ITEM_TAGS_LENGTH,
-                           required=False)
+                           required=False,
+                           widget=forms.TextInput(attrs={'size': 50}))
 
 class NewDataSetForm(EditDataSetForm):
     def __init__(self, user, *args, **kwargs):
@@ -40,7 +41,7 @@ class NewDataSetForm(EditDataSetForm):
     help_text = """A "readme.txt" is required.  If one is not directly
                    provided, it must be in a compressed file that is
                    directly added."""
-    files = MultiFileField(required=True, help_text=help_text)
+    files = MultiFileField(required=True, help_text=help_text, widget=MultiFileInput(attrs={'size': 40}))
     
 class UploadReadMeForm(forms.Form):
     readme = forms.FileField(required=True)
@@ -57,7 +58,7 @@ class TagDataSetForm(forms.Form):
                 Double quotes can be used to allow multiword tags.
                 """
     tags = forms.CharField(max_length=Item.MAX_ITEM_TAGS_LENGTH, required=False, 
-                           help_text=help_text, widget=forms.TextInput(attrs={'size': 40}))
+                           help_text=help_text, widget=forms.TextInput(attrs={'size': 50}))
     
 class GeoLocationHiddenFieldForm(forms.Form):
     add_location = forms.CharField(required=False, widget=forms.HiddenInput)
@@ -70,7 +71,7 @@ RemoveGeoLocationFormSet = formset_factory(RemoveGeoLocationHiddenFieldForm, ext
 
 class AcademicReferenceForm(ModelForm):
     reference = forms.CharField(required=False,
-                                widget=forms.TextInput(attrs={'size': 40}))
+                                widget=forms.TextInput(attrs={'size': 50}))
     
     EMPTY_REFERENCE_ERROR_MESSAGE = 'References must contain more than whitespace.'
     
@@ -93,7 +94,7 @@ class AcademicReferenceForm(ModelForm):
 AcademicReferenceFormSet = formset_factory(AcademicReferenceForm, extra=1)
 
 class AuthorForm(ModelForm):
-    author = forms.CharField(required=False, widget=forms.TextInput(attrs={'size': 40}))
+    author = forms.CharField(required=False, widget=forms.TextInput(attrs={'size': 50}))
     
     EMPTY_AUTHOR_ERROR_MESSAGE = 'Authors must contain more than whitespace.'
     
