@@ -43,11 +43,14 @@ def create_project(request):
                                                  is_active=True)
             
             for dataset_form in project_datasets.forms:
-                if dataset_form.is_valid():
+                if dataset_form.is_valid() and \
+                        'dataset' in dataset_form.cleaned_data:
                     dataset = dataset_form.cleaned_data['dataset']
                     new_project.datasets.add(dataset)
+            
             view_project_url = \
                 get_item_url(new_project, 'epic.projects.views.view_project')
+            
             return HttpResponseRedirect(view_project_url)
     
     return render_to_response(

@@ -63,6 +63,12 @@ class CreateProjectTestCase(CustomTestCase):
         self.bob = User.objects.get(username='bob')
         self.admin = User.objects.get(username='admin')
         
+        self.dataset = DataSet.objects.get(
+            creator=self.bob,
+            name='dataset1',
+            description='This is the first dataset',
+            is_active=True)
+        
         self.project1 = Project.objects.get(
             creator=self.bob,
             name='project1',
@@ -79,27 +85,44 @@ class CreateProjectTestCase(CustomTestCase):
         self.invalid_post_data = {
             'name': '',
             'description': '',
-            'project_datasets-INITIAL_FORMS': 0,
-            'project_datasets-TOTAL_FORMS': 0,
+            'project_datasets-INITIAL_FORMS': 1,
+            'project_datasets-TOTAL_FORMS': 1,
+            'project_datasets-0-dataset_url': '',
         }
         
-        self.valid_post_data = {
+        self.valid_post_data_without_dataset_url = {
             'name': 'This is a new project 209u359hdfg',
             'description': '20y5hdfg ahi3hoh348t3948t5hsdfigh',
             'project_datasets-INITIAL_FORMS': 0,
-            'project_datasets-TOTAL_FORMS': 0,
+            'project_datasets-TOTAL_FORMS': 1,
+            'project_datasets-0-dataset_url': '',
+        }
+        
+        self.valid_post_data_with_invalid_dataset_url = {
+            'name': 'This is a new project 209u359hdfg',
+            'description': '20y5hdfg ahi3hoh348t3948t5hsdfigh',
+            'project_datasets-INITIAL_FORMS': 1,
+            'project_datasets-TOTAL_FORMS': 1,
+            'project_datasets-0-dataset_url': 'asdf',
+        }
+        
+        self.valid_post_data_with_valid_dataset_url = {
+            'name': 'This is a new project 209u359hdfg',
+            'description': '20y5hdfg ahi3hoh348t3948t5hsdfigh',
+            'project_datasets-INITIAL_FORMS': 1,
+            'project_datasets-TOTAL_FORMS': 1,
+            'project_datasets-0-dataset_url': self.dataset.get_absolute_url(),
         }
     
     def testLoggedOut(self):
+        post_data = self.valid_post_data_with_valid_dataset_url
+        
         self._verify__get_from__create_project_url(True)
-        self._verify__post_to__create_project_url(self.valid_post_data, True)
+        self._verify__post_to__create_project_url(post_data, True)
         
         for project in Project.objects.all():
-            self.assertNotEqual(project.name,
-                                self.valid_post_data['name'])
-            
-            self.assertNotEqual(project.description,
-                                self.valid_post_data['description'])
+            self.assertNotEqual(project.name, post_data['name'])
+            self.assertNotEqual(project.description, post_data['description'])
     
     def testPostInvalid(self):
         self.tryLogin('bob')
@@ -116,39 +139,78 @@ class CreateProjectTestCase(CustomTestCase):
                             'This field is required.',
                             2)
     
-    def testPostValid(self):
+    def testPostValidWithoutDataSetURL(self):
         self.tryLogin('bob')
         
-        self._verify__get_from__create_project_url()
-        self._verify__post_to__create_project_url(self.valid_post_data, True)
+        post_data = self.valid_post_data_without_dataset_url
         
-        project = Project.objects.get(
-            name=self.valid_post_data['name'],
-            description=self.valid_post_data['description'])
+        self._verify__get_from__create_project_url()
+        self._verify__post_to__create_project_url(post_data, True)
+        
+        try:
+            project = Project.objects.get(
+                name=post_data['name'],
+                description=post_data['description'])
+        except Project.DoesNotExist:
+            self.fail()
+        
+        self.assertFalse(self.dataset in project.datasets.all())
+    
+    def testPostValidWithInvalidDataSetURL(self):
+        self.tryLogin('bob')
+        
+        post_data = self.valid_post_data_with_invalid_dataset_url
+        
+        self._verify__get_from__create_project_url()
+        self._verify__post_to__create_project_url(post_data, False)
+        
+        project_created = False
+        
+        try:
+            project = Project.objects.get(
+                name=post_data['name'],
+                description=post_data['description'])
+            
+            project_created = True
+        except Project.DoesNotExist:
+            pass
+        
+        self.assertFalse(project_created)
+    
+    def testPostValidWithValidDataSetURL(self):
+        self.tryLogin('bob')
+        
+        post_data = self.valid_post_data_with_valid_dataset_url
+        
+        self._verify__get_from__create_project_url()
+        self._verify__post_to__create_project_url(post_data, True)
+        
+        try:
+            project = Project.objects.get(
+                name=post_data['name'],
+                description=post_data['description'])
+        except Project.DoesNotExist:
+            self.fail()
+        
+        self.assertTrue(self.dataset in project.datasets.all())
     
     def _verify__get_from__create_project_url(
             self, response_should_be_redirect=False):
-        get_from__create_project_url__response = \
-            self.client.get(self.create_project_url)
+        response = self.client.get(self.create_project_url)
         
         if response_should_be_redirect:
-            self.assertStatusCodeIsARedirect(
-                get_from__create_project_url__response.status_code)
+            self.assertStatusCodeIsARedirect(response.status_code)
         else:
-            self.assertStatusCodeIsASuccess(
-                get_from__create_project_url__response.status_code)
+            self.assertStatusCodeIsASuccess(response.status_code)
     
     def _verify__post_to__create_project_url(
             self, post_data, response_should_be_redirect=False):
-        post_to__create_project_url__response = self.client.post(
-            self.create_project_url, post_data)
+        response = self.client.post(self.create_project_url, post_data)
         
         if response_should_be_redirect:
-            self.assertStatusCodeIsARedirect(
-                post_to__create_project_url__response.status_code)
+            self.assertStatusCodeIsARedirect(response.status_code)
         else:
-            self.assertStatusCodeIsASuccess(
-                post_to__create_project_url__response.status_code)
+            self.assertStatusCodeIsASuccess(response.status_code)
 
 class EditProjectTestCase(CustomTestCase):
     """ Test the edit_project view.
@@ -159,6 +221,12 @@ class EditProjectTestCase(CustomTestCase):
     def setUp(self):
         self.bob = User.objects.get(username='bob')
         self.admin = User.objects.get(username='admin')
+        
+        self.dataset = DataSet.objects.get(
+            creator=self.bob,
+            name='dataset1',
+            description='This is the first dataset',
+            is_active=True)
         
         self.project1 = Project.objects.get(
             creator=self.bob,
@@ -195,190 +263,154 @@ class EditProjectTestCase(CustomTestCase):
         self.edit_project2_url = reverse(
             'epic.projects.views.edit_project',
             kwargs=project2_url_reverse_kwargs)
-
-        self.post_data = {
-            'name': '3456 345y,th[-k-0dfgh0 209u359hdfg',
-            'description': '20y5hdfg ahi3hoh348t3948t5hsdfigh',
+        
+        self.invalid_post_data = {
+            'name': '',
+            'description': '',
+            'project_datasets-INITIAL_FORMS': 1,
+            'project_datasets-TOTAL_FORMS': 1,
+            'project_datasets-0-dataset_url': '',
+        }
+        
+        self.valid_post_data_without_dataset_url = {
+            'name': 'New project name',
+            'description': 'New project description',
             'project_datasets-INITIAL_FORMS': 0,
-            'project_datasets-TOTAL_FORMS': 0,
+            'project_datasets-TOTAL_FORMS': 1,
+            'project_datasets-0-dataset_url': '',
+        }
+        
+        self.valid_post_data_with_invalid_dataset_url = {
+            'name': 'New project name',
+            'description': 'New project description',
+            'project_datasets-INITIAL_FORMS': 1,
+            'project_datasets-TOTAL_FORMS': 1,
+            'project_datasets-0-dataset_url': 'asdf',
+        }
+        
+        self.valid_post_data_with_valid_dataset_url = {
+            'name': 'New project name',
+            'description': 'New project description',
+            'project_datasets-INITIAL_FORMS': 1,
+            'project_datasets-TOTAL_FORMS': 1,
+            'project_datasets-0-dataset_url': self.dataset.get_absolute_url(),
         }
     
     def testLoggedOut(self):
-        get_from__edit_project1_url__response = \
-            self.client.get(self.edit_project1_url)
-        self.assertStatusCodeIsARedirect(
-            get_from__edit_project1_url__response.status_code)
+        get_response = self.client.get(self.edit_project1_url)
+        self.assertStatusCodeIsARedirect(get_response.status_code)
         
-        post_to__project1_url__response = \
-            self.client.post(self.edit_project1_url, self.post_data)
-        self.assertStatusCodeIsARedirect(
-            post_to__project1_url__response.status_code)
+        post_data = self.valid_post_data_with_valid_dataset_url
+        
+        post_response = self.client.post(self.edit_project1_url, post_data)
+        self.assertStatusCodeIsARedirect(post_response.status_code)
         
         for project in Project.objects.all():
-            self.assertNotEqual(project.name, self.post_data['name'])
-            self.assertNotEqual(project.description,
-                                self.post_data['description'])
+            self.assertNotEqual(project.name, post_data['name'])
+            self.assertNotEqual(project.description, post_data['description'])
     
-    def testNotOwnerLoggedIn(self):
+    def testNotOwner(self):
         self.tryLogin('bob')
         
-        get_from__edit_project2_url__response = \
-            self.client.get(self.edit_project2_url)
-        self.assertStatusCodeIsARedirect(
-            get_from__edit_project2_url__response.status_code)
+        post_data = self.valid_post_data_with_valid_dataset_url
         
-        post_to__edit_project2_url__response = \
-            self.client.post(self.edit_project2_url, self.post_data)
-        self.assertStatusCodeIsARedirect(
-            post_to__edit_project2_url__response.status_code)
+        get_response = self.client.get(self.edit_project2_url)
+        self.assertStatusCodeIsARedirect(get_response.status_code)
+        
+        post_response = self.client.post(self.edit_project2_url, post_data)
+        self.assertStatusCodeIsARedirect(post_response.status_code)
         
         for project in Project.objects.all():
-            self.assertNotEqual(project.name, self.post_data['name'])
-            self.assertNotEqual(project.description,
-                                self.post_data['description'])
+            self.assertNotEqual(project.name, post_data['name'])
+            self.assertNotEqual(project.description, post_data['description'])
     
-    def testOwnerLoggedIn(self):
+    def testPostInvalid(self):
+        self.tryLogin('bob')
+
+        self._verify__get_from__edit_project_url(self.edit_project1_url)
+        
+        response = \
+            self.client.post(self.edit_project1_url, self.invalid_post_data)
+        self.assertStatusCodeIsASuccess(response.status_code)
+        self.assertContains(response, 'This field is required.', 2)
+    
+    def testPostValidWithoutDataSetURL(self):
         self.tryLogin('bob')
         
-        get_response = \
-            self.client.get(self.edit_project1_url)
-        self.assertStatusCodeIsASuccess(
-            get_response.status_code)
+        post_data = self.valid_post_data_without_dataset_url
         
-        post_response = \
-            self.client.post(self.edit_project1_url, self.post_data)
+        self._verify__get_from__edit_project_url(self.edit_project1_url)
+        self._verify__post_to__edit_project_url(
+            post_data, self.edit_project1_url, True)
         
         try:
             project = Project.objects.get(
-                        name=self.post_data['name'],
-                        description=self.post_data['description'])
+                name=post_data['name'],
+                description=post_data['description'])
         except Project.DoesNotExist:
             self.fail()
+        
+        self.assertFalse(self.dataset in project.datasets.all())
     
-    def _form_edit_project_post_data_with_specific_submit_button(
-            self, submit_button_name, submit_button_value):
-        post_data = self.post_data.copy()
-        post_data[submit_button_name] = submit_button_name
-        
-        return post_data
-
-class AddDatasetsToProjectTestCase(CustomTestCase):
-    fixtures = ['projects_projects']
-    
-    def setUp(self):
-        self.bob = User.objects.get(username='bob')
-        
-        self.dataset = DataSet.objects.get(
-            creator=self.bob,
-            name='dataset1',
-            description='This is the first dataset',)
-        
-        self.project1 = Project.objects.get(
-            creator=self.bob,
-            name='project1',
-            description='This is the first project',)
-        
-        project1_url_reverse_kwargs = {
-            'item_id': self.project1.id,
-            'slug': self.project1.slug,
-        }
-        
-        self.view_project1_url = reverse(
-            'epic.projects.views.view_project',
-            kwargs=project1_url_reverse_kwargs)
-        
-        self.edit_project1_url = reverse(
-            'epic.projects.views.edit_project',
-            kwargs=project1_url_reverse_kwargs)
-
-        self.post_data = {
-            'name': self.project1.name,
-            'description': self.project1.description,
-            'project_datasets-INITIAL_FORMS': 0,
-            'project_datasets-TOTAL_FORMS': 0,
-            'project_datasets-0-dataset_url': '',
-        }
-    
-    def testEmptyURL(self):
+    def testPostValidWithInvalidDataSetURL(self):
         self.tryLogin('bob')
         
-        get_response1 = \
-            self.client.get(self.edit_project1_url)
+        post_data = self.valid_post_data_with_invalid_dataset_url
         
-        post_data = {
-            'name': self.project1.name,
-            'description': self.project1.description,
-            'project_datasets-INITIAL_FORMS': 0,
-            'project_datasets-TOTAL_FORMS': 1,
-            'project_datasets-0-dataset_url': '',
-        }
+        self._verify__get_from__edit_project_url(self.edit_project1_url)
+        self._verify__post_to__edit_project_url(
+            post_data, self.edit_project1_url, False)
         
-        post_response = \
-            self.client.post(self.edit_project1_url, post_data)
+        project_edited = False
         
-        get_response2 = \
-            self.client.get(self.edit_project1_url)
-        
-        self.assertEqual(get_response1.content,
-                         get_response2.content)
-    
-    def testURLIsNotDataset(self):
-        self.tryLogin('bob')
-        
-        url_that_is_not_a_dataset = 'http://www.google.com/'
-        post_data = {
-            'name': self.project1.name,
-            'description': self.project1.description,
-            'project_datasets-INITIAL_FORMS': 0,
-            'project_datasets-TOTAL_FORMS': 1,
-            'project_datasets-0-dataset_url': '' + url_that_is_not_a_dataset,
-        }
-        
-        post_response = \
-            self.client.post(self.edit_project1_url, post_data)
-        
-        text_that_should_be_in_response = \
-            '%s does not refer to a valid dataset.' % \
-                url_that_is_not_a_dataset
-        self.assertContains(post_response,
-                            text_that_should_be_in_response)
-    
-    def testAddDatasetToProjectSuccessfully(self):
-        self.tryLogin('bob')
-        post_data = {
-            'name': self.project1.name,
-            'description': self.project1.description,
-            'project_datasets-INITIAL_FORMS': 0,
-            'project_datasets-TOTAL_FORMS': 1,
-            'project_datasets-0-dataset_url': '' + self.dataset.get_absolute_url(),
-        }
-       
-        edit_response = \
-            self.client.post(self.edit_project1_url, post_data)
+        try:
+            project = Project.objects.get(
+                name=post_data['name'],
+                description=post_data['description'])
             
-        view_response = self.client.get(self.view_project1_url)
+            project_edited = True
+        except Project.DoesNotExist:
+            pass
         
-        self.assertContains(view_response, self.dataset.name)
+        self.assertFalse(project_edited)
     
-    def testProjectAlreadyHasDataset(self):
+    def testPostValidWithValidDataSetURL(self):
         self.tryLogin('bob')
         
-        edit_project_post_data = \
-            self._form_edit_project_post_data_with_add_dataset_url(
-                self.dataset.get_absolute_url())
-        post_to__edit_project_url__response = \
-            self.client.post(self.edit_project1_url, edit_project_post_data)
-        post_to__edit_project_url_again__response = \
-            self.client.post(self.edit_project1_url, edit_project_post_data)
+        post_data = self.valid_post_data_with_valid_dataset_url
         
-        self.assertEqual(post_to__edit_project_url__response.content,
-                         post_to__edit_project_url_again__response.content)
+        self._verify__get_from__edit_project_url(self.edit_project1_url)
+        self._verify__post_to__edit_project_url(
+            post_data, self.edit_project1_url, True)
+        
+        try:
+            project = Project.objects.get(
+                name=post_data['name'],
+                description=post_data['description'])
+        except Project.DoesNotExist:
+            self.fail()
+        
+        self.assertTrue(self.dataset in project.datasets.all())
     
-    def _form_edit_project_post_data_with_add_dataset_url(self, url):
-        post_data = self.post_data.copy()
-        post_data['dataset_url'] = url
+    def _verify__get_from__edit_project_url(
+            self, edit_project_url, response_should_be_redirect=False):
+        response = self.client.get(edit_project_url)
         
-        return post_data
+        if response_should_be_redirect:
+            self.assertStatusCodeIsARedirect(response.status_code)
+        else:
+            self.assertStatusCodeIsASuccess(response.status_code)
+    
+    def _verify__post_to__edit_project_url(self,
+                                           post_data,
+                                           edit_project_url,
+                                           response_should_be_redirect=False):
+        response = self.client.post(edit_project_url, post_data)
+        
+        if response_should_be_redirect:
+            self.assertStatusCodeIsARedirect(response.status_code)
+        else:
+            self.assertStatusCodeIsASuccess(response.status_code)
 
 class DeleteDatasetFromProjectTestCase(CustomTestCase):
     fixtures = ['projects_projects']

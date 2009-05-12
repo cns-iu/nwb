@@ -23,9 +23,7 @@ class ProjectDataSetForm(forms.Form):
         dataset_url = cleaned_data['dataset_url']
         
         if not dataset_url:
-            cleaned_data['dataset'] = None
-            
-            return cleaned_data
+            return ''
         
         dataset_id = _parse_out_dataset_id(dataset_url)
         
@@ -37,7 +35,7 @@ class ProjectDataSetForm(forms.Form):
         
         cleaned_data['dataset'] = dataset
         
-        return cleaned_data
+        return dataset_url
 
 ProjectDataSetFormSet = formset_factory(ProjectDataSetForm, extra=1)
 
