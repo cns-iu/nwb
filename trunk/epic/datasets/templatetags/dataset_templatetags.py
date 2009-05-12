@@ -11,7 +11,7 @@ def datasets_list(context, datasets):
 @register.inclusion_tag('templatetags/dataset_header.html', takes_context=True)
 def dataset_header(context, dataset, rating_allowed):
     user = context['user']
-    if rating_allowed == 'True':
+    if rating_allowed == 'rating_allowed':
         rating_allowed = True
     else:
         rating_allowed = False
