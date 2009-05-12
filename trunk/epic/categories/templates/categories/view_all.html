@@ -1,4 +1,7 @@
 {% extends "core/browse.html" %}
+{% load dataset_templatetags %}
+{% load datarequest_templatetags %}
+{% load project_templatetags %}
 
 {% block submenu %}
   <ul>
@@ -13,35 +16,23 @@
   <h3>Category: {{ category.name }}</h3>
   <p>Description: {{ category.description }}</p>
   
-  <h3>Datasets</h3>
-  {% if datasets %}
-    <ul id="category_items">
-      {% for dataset in datasets %}
-        <li><a href="{{ dataset.get_absolute_url }}">{{ dataset.name }}</a></li>
-      {% endfor %}
-    </ul>
+  <h1>Datasets</h1>
+  {% if datasets %}      
+  	{% datasets_list datasets %}
   {% else %}
     <p>There are no datasets in this category.</p>
   {% endif %}
 	  
-  <h3>Data Requests</h3>
+  <h1>Data Requests</h1>
   {% if datarequests %}
-    <ul id="category_items">
-      {% for datarequest in datarequests %}
-        <li><a href="{{ datarequest.get_absolute_url }}">{{ datarequest.name }}</a></li>
-      {% endfor %}
-    </ul>
+    {% display_datarequests datarequests %}
   {% else %}
    <p>There are no datarequests in this category.</p>
   {% endif %}
     
-  <h3>Projects</h3>
+  <h1>Projects</h1>
   {% if projects %}
-    <ul id="category_items">
-      {% for project in projects %}
-        <li><a href="{{ project.get_absolute_url }}">{{ project.name }}</a></li>
-      {% endfor %}
-    </ul>
+    {% list_projects projects %}
   {% else %}
     <p>There are no projects in this category.</p>
   {% endif %}

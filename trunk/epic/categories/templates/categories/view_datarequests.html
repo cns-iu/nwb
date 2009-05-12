@@ -1,4 +1,5 @@
 {% extends "core/browse.html" %}
+{% load datarequest_templatetags %}
 
 {% block submenu %}
   <ul>
@@ -13,14 +14,10 @@
   <h3>Category: {{ category.name }}</h3>
   <p>Description: {{ category.description }}</p>
   
-  <h3>Data Requests</h3>
-    {% if datarequests %}
-      <ul id="category_items">
-        {% for datarequest in datarequests %}
-          <li><a href="{{ datarequest.get_absolute_url }}">{{ datarequest.name }}</a></li>
-        {% endfor %}
-      </ul>
-    {% else %}
-  	  <p>There are no datarequests in this category.</p>
-    {% endif %}
-    {% endblock %}
+  <h1>Data Requests</h1>
+  {% if datarequests %}
+    {% display_datarequests datarequests %}
+  {% else %}
+   <p>There are no datarequests in this category.</p>
+  {% endif %}
+{% endblock %}

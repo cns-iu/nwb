@@ -1,4 +1,5 @@
 {% extends "core/browse.html" %}
+{% load dataset_templatetags %}
 
 {% block submenu %}
   <ul>
@@ -13,14 +14,10 @@
   <h3>Category: {{ category.name }}</h3>
   <p>Description: {{ category.description }}</p>
   
-  <h3>Datasets</h3>
-	{% if datasets %}
-	  <ul id="category_items">
-	    {% for dataset in datasets %}
-	      <li><a href="{{ dataset.get_absolute_url }}">{{ dataset.name }}</a></li>
-	    {% endfor %}
-	  </ul>
-	{% else %}
-	  <p>There are no datasets in this category.</p>
-	{% endif %}
+  <h1>Datasets</h1>
+  {% if datasets %}      
+  	{% datasets_list datasets %}
+  {% else %}
+    <p>There are no datasets in this category.</p>
+  {% endif %}
 {% endblock %}
