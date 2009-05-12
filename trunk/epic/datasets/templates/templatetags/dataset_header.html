@@ -1,8 +1,10 @@
 {% load djangoratings_templatetags %}
 {% load core_templatetags %}
 {% if rating_allowed %}
+  vote
   {% rate_box_vote dataset user %}
 {% else %}
+  no vote
   {% rate_box_view dataset user %}
 {% endif %}
 

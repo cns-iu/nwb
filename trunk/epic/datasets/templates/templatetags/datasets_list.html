@@ -13,7 +13,7 @@
   {% for dataset in datasets %}
     <div class="databox">
       {% load dataset_templatetags %}    
-      {% dataset_header dataset 'True' %}
+      {% dataset_header dataset 'False' %}
       
       <p>{{ dataset.description|truncatewords:50 }}</p>
            
