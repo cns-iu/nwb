@@ -109,45 +109,86 @@ class PostMarkup(object):
     def render_to_html(self, post_markup):
         safe_post_markup = post_markup.replace('<', '&lt;')
         safe_post_markup = safe_post_markup.replace('>', '&rt;')
+        max_recursion_level = len(self.tags)
         
-        rendered_html = self._convert_markup(safe_post_markup)
+        try:
+            rendered_html = \
+                self._convert_markup(safe_post_markup, 0, max_recursion_level)
+        except InvalidBBCodeException, invalid_bbcode_exception:
+            return invalid_bbcode_exception.value
         
         return rendered_html
     
     # TODO: This will blow out the stack on a long sequence of tags.
     # This should be fixed before the end of the sprint.
     # TODO: Look into pyparser?
-    def _convert_markup(self, markup):
-        match = self.tag_pattern.match(markup)
+    def _convert_markup(self, markup, recursion_level, max_recursion_level):
+        converted_markup_so_far = ''
+        markup_to_convert = markup
+        there_is_markup_to_convert = True
         
-        if match is None:
-            return markup
-        
-        pre_tag = match.group('pre_tag')
-        tag_name = match.group('tag')
-        contents = match.group('contents')
-        post_tag = match.group('post_tag')
-        
-        pre_tag_string = pre_tag
-        post_tag_string = self._convert_markup(post_tag)
-        
-        if tag_name in self.tags:
-            tag = self.tags[tag_name]()
+        while there_is_markup_to_convert:
+            match = self.tag_pattern.match(markup_to_convert)
             
-            opening_string = tag.open(tag_name, contents)
-            closing_string = tag.close(tag_name, contents)
+            if match is None:
+                converted_markup_so_far += markup_to_convert
+                
+                break
             
-            if tag.display_contents:
-                contents_string = self._convert_markup(contents)
+            pre_tag = match.group('pre_tag')
+            tag_name = match.group('tag')
+            contents = match.group('contents')
+            post_tag = match.group('post_tag')
+            
+            pre_tag_string = pre_tag
+            markup_to_convert = post_tag
+            
+            exception_string = 'ERROR: There are too many nested BBCode ' + \
+                'tags.  The maximum number of nested BBCode tags is %s.' % \
+                    max_recursion_level
+            
+            if tag_name in self.tags:
+                tag = self.tags[tag_name]()
+                
+                opening_string = tag.open(tag_name, contents)
+                closing_string = tag.close(tag_name, contents)
+                
+                if tag.display_contents:
+                    try:
+                        if recursion_level == max_recursion_level:
+                            raise InvalidBBCodeException(exception_string)
+                        
+                        contents_string = self._convert_markup(
+                            contents, recursion_level + 1, max_recursion_level)
+                    except InvalidBBCodeException, invalid_bbcode_exception:
+                        raise invalid_bbcode_exception
+                else:
+                    contents_string = ''
             else:
-                contents_string = ''
-        else:
-            opening_string = '[%s]' % tag_name
-            closing_string = '[/%s]' % tag_name
-            contents_string = self._convert_markup(contents)
+                opening_string = '[%s]' % tag_name
+                closing_string = '[/%s]' % tag_name
+                
+                try:
+                    if recursion_level == max_recursion_level:
+                        raise InvalidBBCodeException(exception_string)
+                    
+                    contents_string = self._convert_markup(
+                        contents, recursion_level + 1, max_recursion_level)
+                except InvalidBBCodeException, invalid_bbcode_exception:
+                    raise invalid_bbcode_exception
+            
+            converted_markup_so_far += pre_tag
+            converted_markup_so_far += opening_string
+            converted_markup_so_far += contents_string
+            converted_markup_so_far += closing_string
         
-        return '%s%s%s%s%s' % (pre_tag,
-                               opening_string,
-                               contents_string,
-                               closing_string,
-                               post_tag_string)
+        final_converted_markup = converted_markup_so_far
+        
+        return final_converted_markup
+
+class InvalidBBCodeException(Exception):
+    def __init__(self, value):
+        self.value = value
+
+    def __str__(self):
+        return repr(self.value)

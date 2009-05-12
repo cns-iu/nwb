@@ -208,6 +208,17 @@ class PostMarkupTestCase(CustomTestCase):
                              expected_rendered_markup,
                              'Failed at %s; "%s" != "%s"' % \
                                (i, rendered_markup, expected_rendered_markup))
+    
+    def testRenderTooDeepOfMarkupToHTML(self):
+        self.post_markup.default_tags()
+        
+        markup = """[b][u][i][s][blink][b][img]test
+                    [/img][/b][/blink][/s][/i][/u][/b]"""
+        
+        try:
+            self.post_markup.render_to_html(markup)
+        except InvalidBBCodeException, invalid_bbcode_exception:
+            self.fail()
 
 def _verifyPostMarkupHasTags(
         post_markup, include_tags=None, exclude_tags=None):
