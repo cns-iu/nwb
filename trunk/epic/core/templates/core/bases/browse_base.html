@@ -11,14 +11,16 @@
   
   <div id="browsecontent">
     {% block browsecontent %}
-      {# TODO: Tagbox should be a separate div inside leftsidebar, or whatever we call it. #}
       {% block leftsidebar %}
-        {% categories_box %}
-        {% show_tag_cloud %}
+        <div id="leftsidebar">
+          {% categories_box %}
+          {% show_tag_cloud %}
+        </div>
       {% endblock %}
       
       <div id="content">
         {% block content %}
+        <br />
         {% endblock %}
       </div>
     {% endblock %}

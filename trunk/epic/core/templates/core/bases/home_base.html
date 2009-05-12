@@ -1,13 +1,16 @@
 {% extends "core/bases/base.html" %}
 
+{% load category_templatetags %}
+{% load tags_templatetags %}
+
 {% block maincontent %}
   <div id="browsecontent">
-    {% load tags_templatetags %} 
-    {# TODO: Tagbox should be a separate div inside leftsidebar, or whatever we call it. #}
-    
     {% block leftsidebar %}
-      {% show_tag_cloud %}
-    {% endblock %}
+        <div id="leftsidebar">
+          {% categories_box %}
+          {% show_tag_cloud %}
+        </div>
+      {% endblock %}
     
     <div id="homecolumn2">
       {% block homecolumn2 %}
