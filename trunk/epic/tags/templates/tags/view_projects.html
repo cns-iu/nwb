@@ -1,0 +1,25 @@
+{% extends "core/browse.html" %}
+
+{% block submenu %}
+  <ul>
+    <li><a href="{% url tags.views.view_items_for_tag tag_name=tag_name %}">All</a></li>
+    <li><a href="{% url tags.views.view_datasets_for_tag tag_name=tag_name %}">Datasets</a></li>
+    <li><a class="active_submenu" href="{% url tags.views.view_projects_for_tag tag_name=tag_name %}">Projects</a></li>
+    <li><a href="{% url tags.views.view_datarequests_for_tag tag_name=tag_name %}">Data Requests</a></li>
+  </ul>
+{% endblock %}
+
+{% block content %}
+  <h3>Projects tagged as {{ tag_name }}</h3>
+  
+  <h3>Projects</h3>
+    {% if projects %}
+      <ul id="category_items">
+        {% for project in projects %}
+          <li><a href="{{ project.get_absolute_url }}">{{ project.name }}</a></li>
+        {% endfor %}
+      </ul>
+    {% else %}
+      <p>There are no projects in this category.</p>
+    {% endif %}
+{% endblock %}

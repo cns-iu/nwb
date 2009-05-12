@@ -869,7 +869,7 @@ class BrowseProjectsTestCase(CustomTestCase):
         
         response = self.client.get(self.testing_tag_projects_url)
         
-        self.assertContains(response, 'Items tagged as testing')
+        self.assertContains(response, 'Projects tagged as testing')
         self.assertNotContains(response, self.project1.name)
         self.assertContains(response, self.project2.name)
         self.assertNotContains(response, self.project2_dataset.name)

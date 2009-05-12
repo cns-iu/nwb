@@ -29,46 +29,46 @@ def view_items_for_tag(request, tag_name):
     datasets = _get_datasets_for_tags(tags)
     projects = get_projects_containing_datasets(datasets)
     datarequests = _get_datarequests_for_tags(tags)
-    specifics = list(datasets) + list(projects) + list(datarequests)
     
-    return render_to_response('tags/tag_view.html', 
-                              {'tags':tags, 
-                               'tag_name':tag_name, 
-                               'specifics':specifics}, 
+    return render_to_response('tags/view_all.html', 
+                              {'tags': tags, 
+                               'tag_name': tag_name, 
+                               'datasets': datasets,
+                               'projects': projects,
+                               'datarequests': datarequests}, 
                               context_instance=RequestContext(request))
 
 def view_datasets_for_tag(request, tag_name):
     tags = Tagging.objects.filter(tag=tag_name)
     
-    specifics = _get_datasets_for_tags(tags)
+    datasets = _get_datasets_for_tags(tags)
     
-    return render_to_response('tags/tag_view.html', 
-                              {'tags':tags, 
-                               'tag_name':tag_name, 
-                               'specifics':specifics}, 
+    return render_to_response('tags/view_datasets.html', 
+                              {'tags': tags, 
+                               'tag_name': tag_name, 
+                               'datasets': datasets}, 
                               context_instance=RequestContext(request))
 
 def view_projects_for_tag(request, tag_name):
     tags = Tagging.objects.filter(tag=tag_name)
     
     datasets = _get_datasets_for_tags(tags)
-    specifics = get_projects_containing_datasets(datasets)
+    projects = get_projects_containing_datasets(datasets)
     
-    return render_to_response(
-        'tags/tag_view.html', 
-        {'tags':tags, 'tag_name':tag_name, 'specifics':specifics}, 
-        context_instance=RequestContext(request))
+    return render_to_response('tags/view_projects.html', 
+                              {'tags': tags, 
+                               'tag_name': tag_name, 
+                               'projects': projects}, 
+                              context_instance=RequestContext(request))
 
 def view_datarequests_for_tag(request, tag_name):
     tags = Tagging.objects.filter(tag=tag_name)
+    datarequests = _get_datarequests_for_tags(tags)
     
-    specifics = [tag.item.specific for tag in tags 
-                 if tag.item.specific.is_active and tag.item.specific.is_datarequest]
-    
-    return render_to_response('tags/tag_view.html', 
-                              {'tags':tags, 
-                               'tag_name':tag_name, 
-                               'specifics':specifics}, 
+    return render_to_response('tags/view_datarequests.html', 
+                              {'tags': tags, 
+                               'tag_name': tag_name, 
+                               'datarequests': datarequests}, 
                               context_instance=RequestContext(request))
 
 @login_required
@@ -142,15 +142,13 @@ def add_tags_and_return_successful_tag_names(request):
     return HttpResponse(json, mimetype='application/json')
 
 def _get_datasets_for_tags(tags):
-    datasets = [tag.item.specific for tag in tags if
-                    tag.item.specific.is_active and
-                    tag.item.specific.is_dataset()]
+    datasets = DataSet.objects.filter(is_active=True).\
+                               filter(tagging__in=tags)
     
     return datasets
 
 def _get_datarequests_for_tags(tags):
-    datarequests = [tag.item.specific for tag in tags if
-                        tag.item.specific.is_active and
-                        tag.item.specific.is_datarequest()]
+    datarequests = DataRequest.objects.filter(is_active=True).\
+                                      filter(tagging__in=tags)
     
     return datarequests
