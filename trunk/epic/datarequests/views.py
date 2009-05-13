@@ -132,6 +132,7 @@ def fulfill_datarequest(request, item_id, slug, fulfilling_item_id=None):
     elif fulfilling_item_id:
         fulfilling_item = get_object_or_404(Item, pk=fulfilling_item_id)
         datarequest.fulfilling_item = fulfilling_item
+        datarequest.fulfill()
         datarequest.save()  
     else:
         datarequest.fulfill()

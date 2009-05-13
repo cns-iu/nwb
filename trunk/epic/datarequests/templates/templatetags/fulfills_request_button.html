@@ -1,7 +1,6 @@
 {% if datarequests %}
-<p class="datasetfulfill"> Does this dataset fulfill your request?
-    <a href="{% url datarequests.views.choose_fulfilling_item fulfilling_item_id=dataset.id %}">
-       YES  |   NO {% comment %} ->link to browse page and say "Try a search" {% endcomment %}
-    </a>
-  </p> 
+<p class="datasetfulfill" id="datasetfulfill_question"> Does this dataset fulfill your request?
+  <a href="{% url datarequests.views.choose_fulfilling_item fulfilling_item_id=dataset.id %}">YES</a>  |   
+  <a onclick="$('#datasetfulfill_question').hide();">NO</a>
+</p> 
 {% endif %}
