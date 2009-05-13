@@ -157,7 +157,7 @@ class Profile(models.Model):
             full_title = self.user.first_name + " " + self.user.last_name + \
                 ", " + self.affiliation
         else:
-            full_title = self.NULL_TITLE
+            full_title = self.short_title()
             
         return full_title
     

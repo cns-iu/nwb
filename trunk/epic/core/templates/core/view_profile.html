@@ -6,7 +6,7 @@
 {% endblock %}
 
 {% block content %}
-  <h3>{{ profile.full_title }} - 
+  <h3>{{ profile.full_title }}
   {% if user.is_authenticated %}
     {% ifnotequal user profile.user %}
       <a href="{% url messages.views.send_message user_id=user.id, recipient_id=profile.user.id %}">
