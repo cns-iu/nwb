@@ -8,15 +8,15 @@ from epic.projects.models import Project
 
 class InlineCategoryDataRequest(admin.StackedInline):
     model = DataRequest
-    extra = 0
+    extra = 1
 
 class InlineCategoryDataSet(admin.StackedInline):
     model = DataSet
-    extra = 0
+    extra = 1
 
 class InlineCategoryProject(admin.StackedInline):
     model = Project
-    extra = 0
+    extra = 1
 
 class CategoryAdmin(admin.ModelAdmin):
     date_hierarchy = 'created_at'

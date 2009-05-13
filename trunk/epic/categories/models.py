@@ -12,3 +12,7 @@ class Category(models.Model):
     
     def __unicode__(self):
         return '%s' % self.name
+    
+    def delete(self):
+        self.item_set.clear()
+        super(Category, self).delete()

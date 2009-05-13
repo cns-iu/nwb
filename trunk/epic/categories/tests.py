@@ -1,4 +1,5 @@
 from django.core.urlresolvers import reverse
+from django.contrib.auth.models import User
 
 from epic.categories.models import Category
 from epic.core.test import CustomTestCase
@@ -140,3 +141,22 @@ class CategoryTemplateTagsTestCase(CustomTestCase):
         
         datarequest_response = self.client.get(self.view_datarequest_url)
         self.assertContains(datarequest_response, view_category_url)
+
+class DeleteCategoryTestCase(CustomTestCase):
+    fixtures = ['categories_categories']
+    
+    def setUp(self):
+        self.bob = User.objects.get(username='bob')
+        self.category = Category.objects.create(name='cat1', description='cat2')
+        self.dataset_name = 'a38yyth'
+        self.dataset_description = 'asd09g4h6'
+        self.dataset = DataSet.objects.create(name=self.dataset_name, description=self.dataset_description, category=self.category, creator=self.bob)
+        
+    def testDeleting(self):
+        # I've overwritten the delete method so make sure that
+        # deleting a category wont' delete the dataset attached to it
+        self.category.delete()
+        try:
+            dataset = DataSet.objects.get(name=self.dataset_name, description=self.dataset_description, creator=self.bob)
+        except DataSet.DoesNotExist:
+            self.fail()
