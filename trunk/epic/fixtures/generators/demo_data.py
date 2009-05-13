@@ -3,6 +3,7 @@ from datarequests.models import DataRequest
 from datasets.models import DataSet
 from core.models import Profile
 from tags.models import Tagging
+from geoloc.models import GeoLoc
 
 
 david = User.objects.get(username='david')
@@ -154,6 +155,7 @@ infections and tumors. HIV is transmitted through direct contact of a mucous mem
 bodily fluid containing HIV, such as blood, semen, vaginal fluid, preseminal fluid, and breast milk.''',
                                       is_active=True)
 	_tag_dataset1(dataset1)
+	_geolocate_dataset1(dataset1)
 	
 	dataset2 = DataSet.objects.create(creator=alex, name='Spanish Flu', 
                                       description=
@@ -165,6 +167,7 @@ outbreaks which predominantly affect juvenile, elderly, or otherwise weakened pa
 been implicated in the sudden outbreak of Encephalitis lethargica in the 1920s.''',
                                       is_active=True)
 	_tag_dataset2(dataset2)
+	_geolocate_dataset2(dataset2)
 	
 
 	dataset3 = DataSet.objects.create(creator=micah, name='Poliomyelitis', 
@@ -180,6 +183,7 @@ the legs. Bulbar polio leads to weakness of muscles innervated by cranial nerves
 and spinal paralysis.''',
                                       is_active=True)
 	_tag_dataset3(dataset3)
+	_geolocate_dataset3(dataset3)
 	
 	dataset4 = DataSet.objects.create(creator=elisha, name='Third Pandemic', 
                                   description=
@@ -189,6 +193,7 @@ more than 12 million people in India and China alone. According to the World Hea
 active until 1959, when worldwide casualties dropped to 200 per year.''',
                                       is_active=True)
 	_tag_dataset4(dataset4)
+	_geolocate_dataset4(dataset4)
 	
 	dataset5 = DataSet.objects.create(creator=katy, name='Viral hemorrhagic fever', 
                                   description=
@@ -199,7 +204,92 @@ cases. Some of the VHF agents cause relatively mild illnesses, such as the Scand
 as the African Ebola virus, can cause severe, life-threatening disease.''',
                                       is_active=True)
 	_tag_dataset5(dataset5)
+	_geolocate_dataset5(dataset5)
 	
+#################
+# Create geolocations for dataset1 #
+#################
+
+def _geolocate_dataset1(dataset1):
+
+	geoLocationInformation = {
+		'latitude':'2.235151',
+		'longitude':'18.028564',
+		'canonical_name':'Central Africa',
+	}
+	
+	geoLocationObject = GeoLoc.objects.create(longitude=geoLocationInformation['longitude'],
+								  latitude=geoLocationInformation['latitude'],
+								  canonical_name=geoLocationInformation['canonical_name'],)	
+	dataset1.geolocations.add(geoLocationObject)
+	
+#################
+# Create geolocations for dataset2 #
+#################
+
+def _geolocate_dataset2(dataset2):
+
+	geoLocationInformation = {
+		'latitude':'29.425037',
+		'longitude':'-98.493722',
+		'canonical_name':'Continental USA',
+	}
+	
+	geoLocationObject = GeoLoc.objects.create(longitude=geoLocationInformation['longitude'],
+								  latitude=geoLocationInformation['latitude'],
+								  canonical_name=geoLocationInformation['canonical_name'],)	
+	dataset2.geolocations.add(geoLocationObject)	
+	
+#################
+# Create geolocations for dataset3 #
+#################
+
+def _geolocate_dataset3(dataset3):
+
+	geoLocationInformation = {
+		'latitude':'39.074208',
+		'longitude':'21.824312',
+		'canonical_name':'Greece',
+	}
+	
+	geoLocationObject = GeoLoc.objects.create(longitude=geoLocationInformation['longitude'],
+								  latitude=geoLocationInformation['latitude'],
+								  canonical_name=geoLocationInformation['canonical_name'],)	
+	dataset3.geolocations.add(geoLocationObject)
+	
+#################
+# Create geolocations for dataset4 #
+#################
+
+def _geolocate_dataset4(dataset4):
+
+	geoLocationInformation = {
+		'latitude':'25.043844',
+		'longitude':'102.704567',
+		'canonical_name':'Yunnan province, China',
+	}
+	
+	geoLocationObject = GeoLoc.objects.create(longitude=geoLocationInformation['longitude'],
+								  latitude=geoLocationInformation['latitude'],
+								  canonical_name=geoLocationInformation['canonical_name'],)	
+	dataset4.geolocations.add(geoLocationObject)
+
+#################
+# Create geolocations for dataset5 #
+#################
+
+def _geolocate_dataset5(dataset5):
+
+	geoLocationInformation = {
+		'latitude':'1.0101',
+		'longitude':'13.9675',
+		'canonical_name':'Mekambo, Gabon',
+	}
+	
+	geoLocationObject = GeoLoc.objects.create(longitude=geoLocationInformation['longitude'],
+								  latitude=geoLocationInformation['latitude'],
+								  canonical_name=geoLocationInformation['canonical_name'],)	
+	dataset5.geolocations.add(geoLocationObject)
 	
 #################
 # Create tags for dataset1 #
