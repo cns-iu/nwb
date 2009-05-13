@@ -38,5 +38,11 @@ class DataRequestForm(ModelForm):
         
     class Meta:
         model = DataRequest
-        exclude = \
-            ['creator', 'rendered_description', 'status', 'slug', 'is_active']
+        exclude = [
+            'creator',
+            'rendered_description',
+            'tagless_description',
+            'status',
+            'slug',
+            'is_active'
+        ]

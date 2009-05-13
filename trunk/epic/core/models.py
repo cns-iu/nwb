@@ -47,15 +47,13 @@ class Item(models.Model):
     creator = models.ForeignKey(User)
     name = models.CharField(max_length=MAX_ITEM_NAME_LENGTH)
     description = models.CharField(max_length=MAX_ITEM_DESCRIPTION_LENGTH)
-
-    # TODO: Strip tags for a THIRD version of the description to be displayed
-    # on the short listing (browse) pages.
     # TODO: Validate images placed in the BBCode.
     # No max_length is set for rendered_description because its contents
     # are always derived from description.
     # TODO: Actually the max_length likely defaults to some value.  It should
     # likely be set to the same as description.
     rendered_description = models.TextField(blank=True, null=True)
+    tagless_description = models.TextField(blank=True, null=True)
     
     category = models.ForeignKey(Category, blank=True, null=True)
     
@@ -90,15 +88,22 @@ class Item(models.Model):
     specific = property(_specific)
     
     def save(self, *args, **kwargs):
-        self.rendered_description = self.render_description()
+        self.rendered_description = self._render_description()
+        self.tagless_description = self._strip_tags_from_description()
         self.slug = slugify(self.name)
         super(Item, self).save()
         
-    def render_description(self):
+    def _render_description(self):
         markup_renderer = PostMarkup()
         markup_renderer.default_tags()
         
         return markup_renderer.render_to_html(self.description)
+    
+    def _strip_tags_from_description(self):
+        markup_renderer = PostMarkup()
+        markup_renderer.default_tags()
+        
+        return markup_renderer.strip_tags(self.description)
 
 class Author(models.Model):
     items = models.ManyToManyField(Item, 

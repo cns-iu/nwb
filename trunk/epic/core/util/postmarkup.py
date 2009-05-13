@@ -7,6 +7,8 @@ from urlparse import urlparse
 from urlparse import urlunparse
 
 
+STRIP_TAGS_REPLACEMENT = ' '
+
 class TagBase(object):
     def __init__(self, tag_name):
         self.display_contents = True
@@ -119,9 +121,25 @@ class PostMarkup(object):
         
         return rendered_html
     
-    # TODO: This will blow out the stack on a long sequence of tags.
-    # This should be fixed before the end of the sprint.
-    # TODO: Look into pyparser?
+    def strip_tags(self, post_markup):
+        safe_post_markup = post_markup.replace('<', '&lt;')
+        safe_post_markup = safe_post_markup.replace('>', '&rt;')
+        
+        stripped_post_markup = safe_post_markup
+        
+        for tag_name in self.tags.keys():
+            opening_tag_string = '[%s]' % tag_name
+            closing_tag_string = '[/%s]' % tag_name
+            
+            stripped_post_markup = stripped_post_markup.replace(
+                opening_tag_string, STRIP_TAGS_REPLACEMENT)
+            stripped_post_markup = stripped_post_markup.replace(
+                closing_tag_string, STRIP_TAGS_REPLACEMENT)
+        
+        unmarked_up_result = stripped_post_markup
+        
+        return unmarked_up_result
+    
     def _convert_markup(self, markup, recursion_level, max_recursion_level):
         converted_markup_so_far = ''
         markup_to_convert = markup
@@ -177,7 +195,7 @@ class PostMarkup(object):
                 except InvalidBBCodeException, invalid_bbcode_exception:
                     raise invalid_bbcode_exception
             
-            converted_markup_so_far += pre_tag
+            converted_markup_so_far += pre_tag_string
             converted_markup_so_far += opening_string
             converted_markup_so_far += contents_string
             converted_markup_so_far += closing_string

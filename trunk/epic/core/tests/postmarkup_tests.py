@@ -163,13 +163,38 @@ class PostMarkupTestCase(CustomTestCase):
         self.EXPECTED_RENDERED_MARKUP = (
             self.MARKUP[0],
             self.MARKUP[1],
-            'blah',
+            self.MARKUP[2],
             'pre[invalid_tag]invalid tag contents[/invalid_tag]<b>bold!</b>',
             'pre<b>contents</b>post',
             'pre<b><u>contents</u></b>post',
             'pre<b>contents1</b>post1<u>contents2</u>post2',
             'pre<b><u>contents1</u></b>post1<b>contents2</b>post2',
             'pre<b>[u]contents</b>post',
+        )
+        
+        expected_stripped_markup_data = \
+            {'replacement': STRIP_TAGS_REPLACEMENT}
+        
+        self.EXPECTED_STRIPPED_MARKUP = (
+            self.MARKUP[0],
+            self.MARKUP[1],
+            self.MARKUP[2],
+            ('pre[invalid_tag]invalid tag contents[/invalid_tag]' + \
+             '%(replacement)sbold!%(replacement)s') % \
+                expected_stripped_markup_data,
+            'pre%(replacement)scontents%(replacement)spost' % \
+                expected_stripped_markup_data,
+            ('pre%(replacement)s%(replacement)scontents' + \
+             '%(replacement)s%(replacement)spost') % \
+                expected_stripped_markup_data,
+            ('pre%(replacement)scontents1%(replacement)spost1' + \
+             '%(replacement)scontents2%(replacement)spost2') % \
+                expected_stripped_markup_data,
+            ('pre%(replacement)s%(replacement)scontents1%(replacement)s' + \
+             '%(replacement)spost1%(replacement)s' + \
+             'contents2%(replacement)spost2') % expected_stripped_markup_data,
+            ('pre%(replacement)s%(replacement)scontents' + \
+             '%(replacement)spost') % expected_stripped_markup_data,
         )
     
     def testInit(self):
@@ -208,6 +233,19 @@ class PostMarkupTestCase(CustomTestCase):
                              expected_rendered_markup,
                              'Failed at %s; "%s" != "%s"' % \
                                (i, rendered_markup, expected_rendered_markup))
+    
+    def testStripMarkup(self):
+        self.post_markup.default_tags()
+        
+        for i in range(len(self.MARKUP)):
+            markup = self.MARKUP[i]
+            expected_stripped_markup = self.EXPECTED_STRIPPED_MARKUP[i]
+            
+            rendered_markup = self.post_markup.strip_tags(markup)
+            self.assertEqual(rendered_markup,
+                             expected_stripped_markup,
+                             'Failed at %s; "%s" != "%s"' % \
+                               (i, rendered_markup, expected_stripped_markup))
     
     def testRenderTooDeepOfMarkupToHTML(self):
         self.post_markup.default_tags()

@@ -510,4 +510,3 @@ class EditDatarequestsTestCase(CustomTestCase):
         self.assertEqual(response.status_code, 302)
     
         self.dr1 = DataRequest.objects.get(creator=self.bob, name=self.post_data['name'], description=self.post_data['description'], status='U')
-        
