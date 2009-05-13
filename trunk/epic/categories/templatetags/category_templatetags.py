@@ -15,3 +15,7 @@ def categories_box(categories=None):
 @register.inclusion_tag('templatetags/category_link.html')
 def category_link(item):
     return {'item': item}
+
+@register.inclusion_tag('templatetags/submenu.html')
+def category_submenu(category, active=None):
+    return {'category': category, 'active': active}
