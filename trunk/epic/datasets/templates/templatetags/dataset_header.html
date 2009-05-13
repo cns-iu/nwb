@@ -1,5 +1,7 @@
 {% load djangoratings_templatetags %}
 {% load core_templatetags %}
+{% load category_templatetags %}
+
 {% if rating_allowed %}
   {% rate_box_vote dataset user %}
 {% else %}
@@ -9,7 +11,7 @@
 <h2>
   <a href="{% url datasets.views.view_dataset item_id=dataset.id slug=dataset.slug%}">
     {{ dataset.name }}
-  </a>
+  </a>{% category_link dataset %}
 </h2>
 
 <ul class="datainfo">
