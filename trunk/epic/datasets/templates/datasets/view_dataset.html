@@ -10,13 +10,13 @@
 		display:none;
 	}
 	#read-more-link {
-		color:blue;
+		color: #d13165;
 		display:block;
 		padding-bottom:9px;
 		cursor:pointer;
 	}
 	#read-less-link {
-		color:green;
+		color: #d13165;
 		display:none;
 		padding-bottom:9px;
 		cursor:pointer;
@@ -101,14 +101,14 @@
 	      
 	      {% if dataset.rendered_description|safe|linebreaksbr|slice:"1000:" %}
 	        <span id="read-more-link">
-	          Read the rest of this entry &raquo;
+	          Read more &raquo;
 	        </span>
 	        
 	        <span id="read-more-content">
 	          {{ dataset.rendered_description|safe|linebreaksbr|slice:"1000:" }}
 	        </span>
 	        
-		    <span id="read-less-link">Read less &laquo;</span>
+		    <span id="read-less-link">&laquo; Read less </span>
 		  {% endif %}
 		 </p>
 	    
