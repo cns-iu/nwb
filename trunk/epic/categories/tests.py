@@ -29,6 +29,7 @@ class ViewCategoriesTestCase(CustomTestCase):
         self.assertContains(response, category.name)
 
 class ViewItemsForCategoryTestCase(CustomTestCase):
+    
     fixtures = ['categories_categories']
     
     def setUp(self):
@@ -82,6 +83,11 @@ class ViewItemsForCategoryTestCase(CustomTestCase):
             self.client.get(invalid_datarequests_for_category_url)
         self.assertStatusCodeIsAFailure(datarequests_response.status_code)
     
+    """
+    NOTE: these tests will fail once we implement pagination,
+     since not all items will be displayed on the first page.
+    """
+    
     def testAllItemsInValidCategory(self):
         datasets = self.datasets.all()
         projects = self.projects.all()
@@ -97,7 +103,31 @@ class ViewItemsForCategoryTestCase(CustomTestCase):
         
         for datarequest in datarequests:
             self.assertContains(response, datarequest.name)
+            
+    def testDatasetsInValidCategory(self):
+        datasets = list(self.datasets.all())
+        
+        response = self.client.get(self.view_datasets_url)
+        
+        for dataset in datasets:
+            self.assertContains(response, dataset.name)
 
+    def testDataRequestsInValidCategory(self):
+        datarequests = list(self.datarequests.all())
+        
+        response = self.client.get(self.view_datarequests_url)
+        
+        for datarequest in datarequests:
+            self.assertContains(response, datarequest.name)
+
+    def testProjectsInValidCategory(self):
+        projects = list(self.projects.all())
+        
+        response = self.client.get(self.view_projects_url)
+        
+        for project in projects:
+            self.assertContains(response, project.name)
+            
 class CategoryTemplateTagsTestCase(CustomTestCase):
     fixtures = ['categories_categories']
     
