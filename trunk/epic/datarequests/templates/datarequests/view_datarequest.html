@@ -5,15 +5,11 @@
 {% load core_templatetags %}
 
 {% block content %}
-  <div class="requestspage">
-	<h1>
+  <div class="requestspage"><span class="highlight"> Status: {{ datarequest.get_status_display|capfirst }}</span>
+	  <h2>
 	  <a href="{% url datarequests.views.view_datarequest item_id=datarequest.id slug=datarequest.slug %}">
 	    {{ datarequest.name }}
-	  </a>
-	  {% category_link datarequest %}
-	</h1>
-	
-	<h1>Status: {{ datarequest.get_status_display|capfirst }}</h1>
+	  </a>	</h2> {% category_link datarequest %}
 	
 	<ul class="datainfo">
 	  <li id="first">{% user_title datarequest.creator 'True' %}</li>

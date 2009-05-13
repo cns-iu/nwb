@@ -1,7 +1,7 @@
 {% load category_templatetags %}
 {% load core_templatetags %}
 
-<h2>
+<h2 class="project">
   <a href="{% url projects.views.view_project item_id=project.id slug=project.slug %}">
     {{ project.name }}
   </a>

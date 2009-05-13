@@ -114,18 +114,18 @@
 	    
 	    {% list_item_tags dataset user 'True' %}
 		
-		<h4>References</h4>
+		<h4>References
 	    {% if dataset.references.all %}
 	      <ul>
 	        {% for reference in dataset.references.all %}
 	          <li>{{ reference.reference }}</li>
 	        {% endfor %}
-	      </ul>
+	      </ul></h4>
 	    {% else %}
   	      <p>There are no references for this dataset.
 	    {% endif %}
 	    
-	    <h4>Authors</h4>
+	    <h4>Authors
 	    {% if dataset.authors.all %}
 	      <ul>
 	        {% for author in dataset.authors.all %}
@@ -135,7 +135,7 @@
 	            </a>
 	          </li>
 	        {% endfor %}
-	      </ul>
+	      </ul></h4>
 	    {% else %}
 	      <p>There are no authors for this dataset.</p>
 	    {% endif %}

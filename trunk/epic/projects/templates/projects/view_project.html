@@ -24,11 +24,13 @@
   {% if not project.is_active %}
     <p>This project is not available.</p>
   {% else %}
-    <div class="databox">
+    <div class="projectbox">
       {% load project_templatetags %}
+      
+      
       {% show_project_header project %}
       
-      <p>{{ project.rendered_description|safe|linebreaksbr }}</p>
+      <p class="projectinfo">{{ project.rendered_description|safe|linebreaksbr }}</p>
     </div>
     
     <h3>Project Datasets</h3>

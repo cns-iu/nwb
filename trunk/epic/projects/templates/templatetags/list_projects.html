@@ -4,7 +4,7 @@
       {% load project_templatetags %}
       {% show_project_header project show_delete_buttons %}
       
-      <p>{{ project.description|truncatewords:50 }}</p>
+      <p class="projectinfo">{{ project.description|truncatewords:50 }}</p>
       
       <div class="comments">
 			<a href="{{ project.get_absolute_url }}">{{ project.comments.all|length }} comment{{ project.comments.all|length|pluralize }}.</a>
