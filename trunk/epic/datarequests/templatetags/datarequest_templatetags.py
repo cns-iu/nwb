@@ -32,5 +32,5 @@ def display_recently_fulfilled_requests(context, limit=2):
                         takes_context=True)
 def fulfills_request_button(context, dataset):
     user = context['user']
-    datarequests = DataRequest.objects.active().filter(status='U').filter(creator=user)
+    datarequests = DataRequest.objects.active().filter(status='U').filter(creator=user.id)
     return {'dataset':dataset, 'user':user, 'datarequests':datarequests}
