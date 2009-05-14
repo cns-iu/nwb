@@ -8,7 +8,7 @@ register = template.Library()
 @register.inclusion_tag('templatetags/categories_box.html')
 def categories_box(categories=None):
     if categories is None:
-        categories = Category.objects.all()
+        categories = Category.objects.all().order_by('name')
     
     return {'categories': categories}
 

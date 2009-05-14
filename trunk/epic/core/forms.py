@@ -57,6 +57,6 @@ class ShortAuthenticationForm(forms.Form):
 class CategoryChoiceField(forms.ModelChoiceField):
     def __init__(self, *args, **kwargs):
         super(CategoryChoiceField, self).__init__(
-            queryset=Category.objects.all(),
+            queryset=Category.objects.all().order_by('name'),
             empty_label='(No Category)',
             required=False)
