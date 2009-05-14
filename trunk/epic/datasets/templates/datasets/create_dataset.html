@@ -1,4 +1,12 @@
 {% extends "core/bases/simple_base.html" %}
+
+{% block nav %}
+  <div id="nav">
+    {% load core_templatetags %}
+    {% nav_bar 'Upload' %}
+  </div>
+{% endblock %}
+
 {% block scripts_header %}
 	{{ block.super }}
 	<script type="text/javascript" src="/core_media/javascript/image_swap.js"></script>

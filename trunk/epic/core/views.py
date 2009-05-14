@@ -36,10 +36,6 @@ def browse(request):
         {'datasets': datasets, 'projects': projects,},
         context_instance=RequestContext(request))
 
-def upload(request):
-    return render_to_response('core/upload.html',
-                              context_instance=RequestContext(request))
-
 def about (request):
     return render_to_response('core/about.html',
                               context_instance=RequestContext(request))
