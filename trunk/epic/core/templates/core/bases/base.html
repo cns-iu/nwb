@@ -41,7 +41,7 @@
           <div id="login">
             <ul style="color: white; margin: 2px;">
               {# TODO: I can't make this white #}
-              <li>{% user_title user %}</li>
+              <li><a href="{% url core.views.view_profile user_id=user.id %}">My Profile</a></li>
               <li><a style="color: white;" href="{% url messages.views.index user_id=user.id %}">Messages ({% num_unread_messages user %})</a></li> 
               <li><a style="color: white;" href="{% url core.views.logout_view %}">Log Out</a></li>
             </ul>
