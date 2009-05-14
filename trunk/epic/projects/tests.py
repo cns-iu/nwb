@@ -715,8 +715,10 @@ class BrowseProjectsTestCase(CustomTestCase):
             'epic.projects.views.confirm_delete_project',
             kwargs=project1_url_reverse_kwargs)
         
+        self.tag = 'testing'
+        
         testing_tag_url_reverse_kwargs = {
-            'tag_name': 'testing',
+            'tag_name': self.tag,
         }
         
         self.testing_tag_all_items_url = reverse(
@@ -890,7 +892,7 @@ class BrowseProjectsTestCase(CustomTestCase):
         
         response = self.client.get(self.testing_tag_all_items_url)
         
-        self.assertContains(response, 'Items tagged as testing')
+        self.assertContains(response, 'Tag > %s' % self.tag)
         self.assertNotContains(response, self.project1.name)
         self.assertContains(response, self.project2.name)
         self.assertContains(response, self.project2_dataset.name)
@@ -901,7 +903,7 @@ class BrowseProjectsTestCase(CustomTestCase):
         
         response = self.client.get(self.testing_tag_projects_url)
         
-        self.assertContains(response, 'Projects tagged as testing')
+        self.assertContains(response, 'Tag > %s' % self.tag)
         self.assertNotContains(response, self.project1.name)
         self.assertContains(response, self.project2.name)
         self.assertNotContains(response, self.project2_dataset.name)

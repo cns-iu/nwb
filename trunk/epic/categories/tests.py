@@ -36,7 +36,8 @@ class ViewItemsForCategoryTestCase(CustomTestCase):
         self.category1 = Category.objects.get(name='Test Category1')
         self.datasets = DataSet.objects.filter(category=self.category1)
         self.projects = Project.objects.filter(category=self.category1)
-        self.datarequests = Project.objects.filter(category=self.category1)
+        self.datarequests = \
+            DataRequest.objects.filter(category=self.category1)
         
         self.view_all_items_url = reverse(
             'epic.categories.views.view_items_for_category',
