@@ -7,7 +7,7 @@ from epic.datarequests.models import DataRequest
 
 def setUp(self):
     self.item = DataRequest.objects.active()[0]
-    self. post_comment_form_data = {'comment': 'abcd'}
+    self.comment_posting_form_data = {'comment': 'abcd'}
     self.user = User.objects.get(username='peebs')
     self.comment = Comment(
         posting_user=self.user, parent_item=self.item, contents='abcd')

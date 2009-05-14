@@ -1,12 +1,13 @@
+{% load comment_templatetags %}
+
 <div class="comments">
   <h3>Comments</h3>
   
-  {% load comment_templatetags %}
-  {% display_post_comment_form user form item %}
+  {% comment_posting_form user form item %}
   
   {# TODO: This is bad.  The styles should not rely on breaks.... #}
   <br />
   
-  {% list_comments item %}
+  {% comment_list item %}
 </div>
   

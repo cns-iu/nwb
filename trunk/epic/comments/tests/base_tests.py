@@ -52,7 +52,7 @@ def create_comment_test_case(_setUp, _fixtures):
         
         def testPostCommentNotLoggedIn(self):
             response = self.client.post(self.post_to_comment_url,
-                                        self.post_comment_form_data)
+                                        self.comment_posting_form_data)
             
             self.assertRedirects(response, self.login_redirect_url)
         
@@ -64,14 +64,14 @@ def create_comment_test_case(_setUp, _fixtures):
             
             # Post a test comment.
             response = self.client.post(self.post_to_comment_url,
-                                        self.post_comment_form_data)
+                                        self.comment_posting_form_data)
             
             # The posted-to URL should have redirected back to the view page.
             self.assertRedirects(response, self.view_url)
             
             # Verify that the comment is properly in the database.
             self.failUnlessEqual(Comment.objects.all()[0].contents,
-                                 self.post_comment_form_data['comment'])
+                                 self.comment_posting_form_data['comment'])
         
         def testViewWithNoComments(self):
             # Make sure there are no comments.
