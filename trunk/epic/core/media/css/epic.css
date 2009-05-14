@@ -1010,12 +1010,7 @@ a img {border:none;}
 	background-color: #fefdd2;
 }
 
-.requests h2 a {
-	font-size: 90%;
-	display: block;
-	font-weight: bold;
-	background: none;
-}
+
 .recent_dataset {
 	margin-bottom:10px;
 	border-bottom-width: 1px;
@@ -1071,7 +1066,7 @@ a:hover, a:active {
 
 h1 {
 	font-size: 108%;
-	display: block; margin:0; padding-bottom:2px; 
+	display: block; margin:0; padding-bottom:5px; 
 	
 }
 h2 {
@@ -1138,7 +1133,7 @@ h4 {
 	float:left;
 	background-image: url(/core_media/images/requestbox_07_03.jpg);
 	width:390px;
-	height:262px;
+	height:333px;
 	padding:15px;
 	background-repeat: no-repeat;
 }
@@ -1275,14 +1270,18 @@ a.new_message {
 }
 
 ul.errorlist {
-	margin-top: 0px;
-	margin-bottom: 1px;
+	margin-top:5px;
+	margin-bottom: 5px;
 	padding-left: 0px;
 }
 
 ul.errorlist li {
-	color: #D13165;
-	list-style: none;
+	font-size: 85%;
+	color: #FFFFFF;
+	font-weight: bold;
+	margin:5px; display:inline;
+	background-color:#333333;
+	padding: 5px;
 }
 
 .readme_file {

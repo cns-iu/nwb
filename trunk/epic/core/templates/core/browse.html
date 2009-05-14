@@ -30,23 +30,23 @@
 {% endblock %}
 
 {% block content %}
-  <div class="databox">
+  
     <h1>3 Most Recent Data Requests</h1>
-  </div>
+
   
   {% load datarequest_templatetags %}
   {% display_recent_requests 3 %}
     
-  <div class="databox">
+  
     <h1>Datasets</h1>
-  </div>
+
   
   {% load dataset_templatetags %}
   {% datasets_list datasets %}
   
-  <div class="databox">
+  
     <h1>Projects</h1>
-  </div>
+
   
   {% load project_templatetags %}
   {% list_projects projects %}

@@ -13,7 +13,7 @@
 {% endblock %}
 
 {% block content %}
-  <h3>Items tagged as {{ tag_name }}</h3>
+  <span class="highlight">Tag > {{ tag_name }}</span>
   <h1>Datasets</h1>
   {% if datasets %}      
   	{% datasets_list datasets %}
