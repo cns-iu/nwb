@@ -3,26 +3,26 @@
 {% load tags_templatetags %}
 
 {% if datarequests %}
-  <h1>
-    {{ datarequests|length }} Most Recent Data Request{{ datarequests|length|pluralize }}
-  </h1>
+  {% if not use_simple_display %}
+    <h1>{{ datarequests|length }} Most Recent Data Request{{ datarequests|length|pluralize }}</h1>
+  {% endif %}
   
   {% for datarequest in datarequests %}
-  <div class="requests">
-    <h2><a href="{% url datarequests.views.view_datarequest item_id=datarequest.id slug=datarequest.slug %}">{{ datarequest.name }}</a> - {% user_title datarequest.creator 'True' %}</h2> 
-    {% category_link datarequest %}
-    <p>{{ datarequest.tagless_description|truncatewords:15 }}</p>
-    
-    {% if show_tags %}
-      {% list_item_tags datarequest user %}
-    {% endif %}
-    
-    <div class="comments">
-      <a href="{% url datarequests.views.view_datarequest item_id=datarequest.id slug=datarequest.slug %}">
-        {{ datarequest.comments.all|length }} comment{{ datarequest.comments.all|length|pluralize }}.
-      </a>
+    <div class="requests">
+      <h2><a href="{% url datarequests.views.view_datarequest item_id=datarequest.id slug=datarequest.slug %}">{{ datarequest.name }}</a> - {% user_title datarequest.creator 'True' %}</h2> 
+      {% category_link datarequest %}
+      <p>{{ datarequest.tagless_description|truncatewords:15 }}</p>
+      
+      {% if not use_simple_display %}
+        {% list_item_tags datarequest user %}
+      {% endif %}
+      
+      <div class="comments">
+        <a href="{% url datarequests.views.view_datarequest item_id=datarequest.id slug=datarequest.slug %}">
+          {{ datarequest.comments.all|length }} comment{{ datarequest.comments.all|length|pluralize }}.
+        </a>
+      </div>
     </div>
-  </div>
   {% endfor %}
 {% else %}
   <p>There are no datarequests.</p>
