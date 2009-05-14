@@ -2,7 +2,6 @@
 LOGARITHMIC = 1
 LINEAR = 2
 
-from epic.tags.models import Tagging
 
 # Tag is meant to be a template-displayable tag.  It has no actual ties to the
 # database/Tagging model.
