@@ -668,16 +668,7 @@ li.tagbox-base {
 	font-weight: bold;
 }
 
-#tag_hover {
-	background-color: #FFFFFF;
-   	border: 1px solid #09bac4;
-    color: #09bac4;
-    overflow: auto;
-    position: absolute;
-    visibility: hidden;
-    width: auto;
-    height: auto;
-}
+
 
 #trail {
 	float: right;
@@ -849,17 +840,7 @@ border-left-width: 1px;
 	border-left-color: #666666;}
 
 
-  #tag_hover
-    {
-        border: 1px;
-        border-style: dashed;
-    
-        width: auto;
-        height: auto;
-        overflow: auto;
-        position: absolute;
-        visibility: hidden; padding:3px; 
-    }
+
 	
 	
 	
@@ -1228,12 +1209,12 @@ h4 {
 {
    	border: 1px solid #09bac4;
 	background-color:#FFFFFF;
-    color: red;
     width: auto;
     height: auto;
     overflow: auto;
     position: absolute;
-    visibility: hidden;color: #09bac4;
+    visibility: hidden;
+    color: #09bac4;
 }
 
 .taglist li.lasttag {
