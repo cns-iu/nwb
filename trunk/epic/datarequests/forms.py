@@ -44,5 +44,6 @@ class DataRequestForm(ModelForm):
             'tagless_description',
             'status',
             'slug',
-            'is_active'
+            'is_active',
+            'fulfilling_item',
         ]
