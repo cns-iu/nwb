@@ -13,5 +13,5 @@ class Tag:
 		self.count = count
 	
 	def get_tag_url(self):
-		from epic.tags.models import Tagging
+		from models import Tagging
 		return Tagging.objects.get_url_for_tag(self.tag_name)
