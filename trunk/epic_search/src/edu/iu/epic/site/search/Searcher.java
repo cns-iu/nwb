@@ -48,7 +48,7 @@ public class Searcher {
 
 	public static void main(String[] args) throws CorruptIndexException, ParseException, IOException {
 		Searcher searcher = new Searcher();
-		String searchString = args.length > 0 ? args[0] : "data";
+		String searchString = args.length > 0 ? args[0] : "";
 		System.out.println(searcher.searchItemIndex(searchString, "all", "index"));
 	}
 }

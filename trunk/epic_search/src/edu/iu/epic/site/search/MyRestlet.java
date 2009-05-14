@@ -16,9 +16,12 @@ public class MyRestlet extends Restlet {
 	public void handle(Request request, Response response) {
 		Searcher searcher = new Searcher();
 		try {
-			String search_string = (String) request.getAttributes().get("search_string");
+			String query = request.getResourceRef().getQuery();
+			String search_string = query.substring("?search_string=".length() - 1, query.length());
+			search_string = search_string.replaceAll("\\+", " ");
+			System.out.println(search_string);
 			if(search_string == null){
-				search_string = "data";
+				search_string = "plague";
 			}
 			JSONObject json = searcher.searchItemIndex(search_string, "all", "index");
 			response.setEntity("" + json, MediaType.TEXT_PLAIN);
