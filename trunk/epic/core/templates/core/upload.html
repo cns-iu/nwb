@@ -1,0 +1,24 @@
+{% extends "core/bases/simple_base.html" %}
+{% block nav %}
+  <div id="nav">
+    {% load core_templatetags %}
+    {% nav_bar 'Upload' %}
+  </div>
+{% endblock %}
+
+{% block content %}
+<table width="600" border="0" cellspacing="0" cellpadding="5">
+     <tr>
+       <td width="200"><a href="{% url projects.views.create_project %}"><img src="/core_media/images/buttons_09.jpg" width="166" height="69" /></a></td>
+       <td valign="top"><p> Create a project to contain several datasets. <br />
+
+           <strong>You must have datasets uploaded before you create a project. </strong></p> </td>
+     </tr>
+     <tr>
+       <td width="200"><a href="{% url datasets.views.create_dataset %}"><img src="/core_media/images/buttons_16.jpg" width="166" height="69" /></a></td>
+       <td valign="top"><p> Upload individual datasets. </p> </td>
+     </tr>
+
+</table>
+
+{% endblock %}

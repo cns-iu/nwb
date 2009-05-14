@@ -16,7 +16,7 @@ class NavBarLinkHighlightsTestCase(CustomTestCase):
     
     def setUp(self):
         self.BROWSE_VIEW_URL = reverse('epic.core.views.browse')
-        self.UPLOAD_VIEW_URL = reverse('epic.datasets.views.create_dataset')
+        self.UPLOAD_VIEW_URL = reverse('epic.core.views.upload')
         self.REQUEST_VIEW_URL = \
             reverse('epic.datarequests.views.new_datarequest')
         self.ABOUT_VIEW_URL = reverse('epic.core.views.about')
