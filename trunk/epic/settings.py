@@ -115,6 +115,7 @@ INSTALLED_APPS = (
     'epic.messages',
     'epic.geoloc',
     'epic.projects',
+    'epic.search',
 )
 
 GOOGLE_KEY = 'ABQIAAAA_nCXPZ8LuIeeo7WwioikORQgz-4lV129Gb6RmcYlAWs2FINo4xQC9fAh76x7NI05hOaFBXreklShsg'

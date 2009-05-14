@@ -29,7 +29,8 @@ urlpatterns = patterns('',
     (r'^geoloc/', include('epic.geoloc.urls')),
     (r'^projects/', include('epic.projects.urls')),
     (r'^categories/', include('epic.categories.urls')),
-    (r'^authors/(?P<author_name>.+?)/$', 'epic.core.views.view_items_for_author')
+    (r'^authors/(?P<author_name>.+?)/$', 'epic.core.views.view_items_for_author'),
+    (r'^search/', include('epic.search.urls')),
 )
 
 if settings.DEBUG:
