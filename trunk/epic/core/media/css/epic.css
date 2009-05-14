@@ -1297,3 +1297,8 @@ ul.errorlist li {
 	padding: 5px;
 	width: 200px;
 }
+
+.removelink {
+	padding-left: 5px;
+	font-size: 77%;
+}

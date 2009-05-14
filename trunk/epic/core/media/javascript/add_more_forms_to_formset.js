@@ -133,6 +133,7 @@ function createRemoveLink(id, formSet) {
 	var onClickAttribute = 'removeForm("' + id + '",' +
 						   formSet.varName + '); return false;';
 	removeLink.setAttribute('onclick', onClickAttribute);
+	removeLink.setAttribute('class', 'removelink');
 	removeLink.innerHTML = 'Remove';
 
 	return removeLink;
