@@ -4,6 +4,7 @@ import java.io.IOException;
 
 import org.apache.lucene.index.CorruptIndexException;
 import org.apache.lucene.queryParser.ParseException;
+import org.json.JSONException;
 import org.json.JSONObject;
 import org.restlet.Restlet;
 import org.restlet.data.MediaType;
@@ -32,6 +33,9 @@ public class MyRestlet extends Restlet {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (JSONException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}

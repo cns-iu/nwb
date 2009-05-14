@@ -4,7 +4,6 @@
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
 	<classpathentry kind="lib" path="C:/Documents and Settings/dmcoe/Desktop/lucene-2.4.1/lucene-2.4.1/lucene-core-2.4.1.jar"/>
 	<classpathentry kind="lib" path="C:/Documents and Settings/dmcoe/Desktop/sqlitejdbc-v054.jar"/>
-	<classpathentry kind="lib" path="C:/Documents and Settings/dmcoe/Desktop/json-rpc-1.0.jar"/>
 	<classpathentry kind="lib" path="C:/Documents and Settings/dmcoe/Restlet-1.1/lib/org.restlet.ext.freemarker_2.3.jar"/>
 	<classpathentry kind="lib" path="C:/Documents and Settings/dmcoe/Restlet-1.1/lib/org.restlet.ext.jaxb_2.1.jar"/>
 	<classpathentry kind="lib" path="C:/Documents and Settings/dmcoe/Restlet-1.1/lib/org.restlet.ext.jaxrs_1.0.jar"/>
@@ -57,5 +56,6 @@
 	<classpathentry kind="lib" path="C:/Documents and Settings/dmcoe/Restlet-1.1/lib/org.mortbay.jetty_6.1/org.mortbay.jetty.util.jar"/>
 	<classpathentry kind="lib" path="C:/Documents and Settings/dmcoe/Restlet-1.1/lib/org.apache.commons.logging_1.1/org.apache.commons.logging.jar"/>
 	<classpathentry kind="lib" path="C:/Documents and Settings/dmcoe/Restlet-1.1/lib/org.simpleframework_3.1/org.simpleframework.jar"/>
+	<classpathentry kind="lib" path="/json/bin"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

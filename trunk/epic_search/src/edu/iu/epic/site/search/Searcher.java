@@ -11,12 +11,13 @@ import org.apache.lucene.search.IndexSearcher;
 import org.apache.lucene.search.Query;
 import org.apache.lucene.search.ScoreDoc;
 import org.apache.lucene.search.TopDocCollector;
+import org.json.JSONException;
 import org.json.JSONObject;
 
 public class Searcher {
 	public JSONObject searchItemIndex(String querystring, String fieldToSearch,
 			String indexPath) throws ParseException, CorruptIndexException,
-			IOException {
+			IOException, JSONException {
 
 		Query query = new QueryParser(fieldToSearch, new StandardAnalyzer())
 				.parse(querystring);
@@ -37,7 +38,7 @@ public class Searcher {
 			JSONObject item = new JSONObject();
 			item.put("item_id", itemId);
 			item.put("item_score", itemScore);
-			json.accumulate("result", item);
+			json.append("result", item);
 			System.out.println((i + 1) + ". " + itemId + " - "
 					+ d.get("all") + "(" + itemScore + ")");
 		}
@@ -46,7 +47,7 @@ public class Searcher {
 		return json;
 	}
 
-	public static void main(String[] args) throws CorruptIndexException, ParseException, IOException {
+	public static void main(String[] args) throws CorruptIndexException, ParseException, IOException, JSONException {
 		Searcher searcher = new Searcher();
 		String searchString = args.length > 0 ? args[0] : "";
 		System.out.println(searcher.searchItemIndex(searchString, "all", "index"));
