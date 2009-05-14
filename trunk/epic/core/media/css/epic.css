@@ -532,10 +532,10 @@ margin-bottom:10px; margin-top:5px;
 	border-bottom-style: dotted;
 	border-bottom-width: 1px;
 	margin-bottom: 1em;
-	margin-left: 10em;
-	margin-right: 10em;
+	padding-left: 35%;
+	padding-right: auto;
 	padding-bottom: 1em; 
-	
+	display: inline;
 	top: 0;
 	width: auto;
 }
@@ -565,11 +565,6 @@ margin-bottom:10px; margin-top:5px;
 	display: inline;
 }
 
-#submenu ul {
-	display: inline;
-	font-family: Arial, Helvetica, sans-serif;
-	margin-left: 1em;
-}
 
 /* Aligns the top of the labels for forms at the top. */
 table.form tr th {
@@ -1156,7 +1151,6 @@ h4 {
 	
 }
 
-#submenu ul {  display:inline; margin-left:1em;   font-family:Arial, Helvetica, sans-serif;  } 
 #submenu li {  display:inline; }
 
 
