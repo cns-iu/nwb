@@ -283,19 +283,14 @@ a img {
 img {
 	vertical-align: middle;
 }
-.upload_dataset_form th label {
+th label {
 	background-color: #FFF;
+	display: block;
 	color: #666;
 	text-align: left;
 	vertical-align: top;
-}
-th label {
-	background-color: #ECECEC;
-	color: #666666;
-	display: block;
-	font-size: 93%;
-	margin: 0;
-	padding: 5px 0;
+	padding: 5px 0px;
+	margin: 0px;
 }
 
 #login {
@@ -1245,15 +1240,6 @@ h4 {
     border-right-width: 0px;
     border-right-style: none;
     border: none;
-}
-
-th label {
-	background-color:#ECECEC;
-	color:#666666;
-	display:block;
-	font-size:93%;
-	margin:0;
-	padding:5px 0;
 }
 
 /* Aligns the top of the labels for forms at the top */
