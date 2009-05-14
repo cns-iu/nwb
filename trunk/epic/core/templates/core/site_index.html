@@ -55,15 +55,11 @@
   <h2>Data Requests</h2> 
   
   {% recent_requests 3 'use simple display' %}
-  <h1><a href="{% url datarequests.views.new_datarequest %}">Make a Request</a></h1>
+ 
    
   <h2>Data Uploads</h2>
   {% recent_datasets %}
   
-  <h1>
-    <a href="{% url datasets.views.create_dataset %}">
-      Upload your data
-    </a>
-  </h1>  
+  
 {% endblock %}
 

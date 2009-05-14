@@ -4,12 +4,12 @@
 
 {% if datarequests %}
   {% for datarequest in datarequests %}
-    <div class="databox">
+    <div class="requests">
       <h2>
         <a href="{% url datarequests.views.view_datarequest item_id=datarequest.id slug=datarequest.slug %}">
           {{ datarequest.name }}
         </a>
-        {% category_link datarequest %}
+      
       </h2>
       
       <ul class="datainfo">
@@ -60,6 +60,7 @@
         {{ datarequest.tagless_description|truncatewords:50 }}
       </p>
       
+       
       {% list_item_tags datarequest user %}
       
       <div class="comments">

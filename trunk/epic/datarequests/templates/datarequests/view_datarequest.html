@@ -9,7 +9,7 @@
 	  <h2>
 	  <a href="{% url datarequests.views.view_datarequest item_id=datarequest.id slug=datarequest.slug %}">
 	    {{ datarequest.name }}
-	  </a>	</h2> {% category_link datarequest %}
+	  </a>	</h2> 
 	
 	<ul class="datainfo">
 	  <li id="first">{% user_title datarequest.creator 'True' %}</li>
@@ -51,7 +51,7 @@
     </ul>
     
     <p>{{ datarequest.rendered_description|safe|linebreaksbr }}</p>
-	
+	{% category_link datarequest %}
 	{% list_item_tags datarequest user 'True' %}
   </div>
   

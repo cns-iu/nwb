@@ -6,7 +6,7 @@
     that will be required by the rate_view_box template inside this template.
     """
   {% endcomment %}
-  
+  {% load category_templatetags %}
   {% load djangoratings_templatetags %}
   {% rate_box_view_helper %}
   
@@ -16,7 +16,7 @@
       {% dataset_header dataset 'rating_disallowed' %}
       
       <p>{{ dataset.tagless_description|truncatewords:50 }}</p>
-           
+           {% category_link dataset %}
       {% load tags_templatetags %}
       {% list_item_tags dataset user %}
       <div class="comments">

@@ -6,15 +6,15 @@
 {% endblock %}
 
 {% block content %}
-  <h3>{{ profile.full_title }}
+  <span class="highlight">{{ profile.full_title }} </span>
   {% if user.is_authenticated %}
     {% ifnotequal user profile.user %}
-      <a href="{% url messages.views.send_message user_id=user.id, recipient_id=profile.user.id %}">
+      <h3> <a href="{% url messages.views.send_message user_id=user.id, recipient_id=profile.user.id %}">
         Contact Creator
       </a>
     {% endifnotequal %}
-  {% endif %}
-  </h3>
+  {% endif %} </h3> 
+  
   {% ifequal profile.user user %}
     <p><b>Username:</b> {{ profile.user.username }}</p>
   {% endifequal %}
@@ -30,6 +30,17 @@
   
   <hr />
   
+  <table width="500" border="0" cellspacing="0" cellpadding="5">
+     <tr>
+       <td width="118"><a href="{% url projects.views.create_project %}"><img src="/core_media/images/buttons_09.jpg" width="116" height="35" /></a></td>
+       <td valign="top"><p> A project consists of several datasets.  <br />
+
+         </td>
+     </tr>
+    
+  
+</table>
+  <hr />
   {% if datasets %}
      {% ifequal profile.user user %}
        <h3>Your Datasets</h3>

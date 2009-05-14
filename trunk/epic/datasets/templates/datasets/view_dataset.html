@@ -1,5 +1,6 @@
 {% extends "core/bases/browse_base.html" %}
 
+{% load category_templatetags %}
 {% load datarequest_templatetags %}
 {% load tags_templatetags %}
 
@@ -111,9 +112,9 @@
 		    <span id="read-less-link">&laquo; Read less </span>
 		  {% endif %}
 		 </p>
-	    
+	{% category_link dataset %}
 	    {% list_item_tags dataset user 'True' %}
-		
+	
 		<h4>References
 	    {% if dataset.references.all %}
 	      <ul>

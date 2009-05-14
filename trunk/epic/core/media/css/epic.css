@@ -36,7 +36,8 @@ body, html {
 	height: 100%;
 }
 
-#leftsidebar {  float:left; left:-15em; }
+#leftsidebar {  float:left; left:-15em; margin:0; padding:0; }
+
 
 #categorybox {
 	background-color: #ececec;
@@ -66,7 +67,7 @@ position:relative;
 #categorybox h3 {background-color:#FFFFFF; display:block; padding:5px; font-weight:bold;}
 
 
-#categorybox ul { list-style:none; margin:2px; padding:2px; }
+#categorybox ul { list-style:none; margin-left:10px; margin-top:0; margin-bottom:0; padding:2px; }
 
 li.categorybox-base {
 
@@ -242,9 +243,8 @@ h4 {
 	padding-bottom: 5px; 
 }
 .category {
-	padding: 2px;
-	border: 1px dotted #000000;
-	font-weight: normal; font-size:55%;
+
+	font-weight: bold; font-size:55%;
 	text-transform: uppercase; display:inline;
 }
 
@@ -264,7 +264,12 @@ h4 {
 	float: left;
 	margin-left: 20px;
 	width: 420px;
+		
 }
+
+
+#leftsidebarindex {left:-15em;}
+
 
 #homecolumn3 {
 	background-color: #ececec;
@@ -492,12 +497,14 @@ p {
 	margin-bottom:10px;
 }
 
-.requests h2 a {
+.requests h2 {
 	background: none;
-display:inline;
+display:block;
 	font-size: 90%;
-	font-weight: bold;
+	font-weight: bold; margin:0; padding:0;
 }
+
+
 
 .requestspage {
 	background-color: #fefdd2;
@@ -622,7 +629,7 @@ li.tagbox-base {
 	font-size: 85%; 
 	margin: 0; 
 	padding-bottom: 5px; 
-	padding-left: 0;
+	padding-left: 0; display:inline;
 } 
 
 .taglist li {
@@ -974,7 +981,7 @@ a img {border:none;}
 
 .requests {
 	
-	margin-bottom:10px;
+	margin-bottom:10px; padding:5px;
 	border-bottom-width: 1px;
 	border-bottom-style: solid;
 	border-bottom-color:  #CCCCCC;
@@ -982,8 +989,9 @@ a img {border:none;}
 }
 
 
+
 .recent_dataset {
-	margin-bottom:10px;
+	margin-bottom:10px; padding:5px;
 	border-bottom-width: 1px;
 	border-bottom-style: solid;
 	border-bottom-color:  #CCCCCC;
@@ -1188,7 +1196,7 @@ h4 {
 	background-color: #ececec;
 	padding:5px;
 	width:165px;
-	border: 1px solid #333333;
+	border: 1px solid #9d9d9d;
 	margin-right: 15px;
 }
 

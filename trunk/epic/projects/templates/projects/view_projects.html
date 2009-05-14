@@ -16,9 +16,10 @@
 {% endblock %}
 
 {% block content %}
+  <h1> Projects </h1> 
   {% load project_templatetags %}
   {% list_projects projects %}
-  
+
   <div class="databox">
     <h1>Can't Find what you're looking for?
       <a href="{% url datarequests.views.new_datarequest %}" 
