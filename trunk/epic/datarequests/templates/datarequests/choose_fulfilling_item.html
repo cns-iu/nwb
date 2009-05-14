@@ -1,33 +1,29 @@
 {% extends "core/bases/simple_base.html" %}
+
 {% block content %}
   {% if requests %}
-   <h1> Request Fulfillment </h1> 
-   
-    <h2>Select which request this dataset fulfills. </h2>
-    < should make 'this dataset' say name of the dataset & link back to it> 
-   
+    <h1> Request Fulfillment </h1>
+    <h2>
+      Select which request 
+      <a href="{{ specific.get_absolute_url }}">{{ specific.name }}</a> 
+      fulfills:
+    </h2>
+    
     <table>
-    {% for request in requests %}
-      <tr>
-      
-      <td>
-          <a href="{% url datarequests.views.fulfill_datarequest item_id=request.id slug=request.slug fulfilling_item_id=item.id %}">
-    	    <img src="/core_media/images/select-button_44.jpg"> 
-       	  </a>
-   		</td>
-      
-      
-        <td>
-       <a href="{% url datarequests.views.view_datarequest item_id=request.id slug=request.slug %}">   
-       {{ request.name }}</a>
-        </td>
-       
-          
-            
-      
-        
-      </tr>
-    {% endfor %}
+      {% for request in requests %}
+        <tr>
+          <td>
+            <a href="{% url datarequests.views.fulfill_datarequest item_id=request.id slug=request.slug fulfilling_item_id=item.id %}">
+              <img src="/core_media/images/select-button_44.jpg"> 
+            </a>
+          </td>
+          <td>
+            <a href="{% url datarequests.views.view_datarequest item_id=request.id slug=request.slug %}">   
+              {{ request.name }}
+            </a>
+          </td>
+        </tr>
+      {% endfor %}
     </table>
   {% else %}
     <h2>You do not have any requests to fulfill</h2>
