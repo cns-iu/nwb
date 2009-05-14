@@ -20,7 +20,9 @@ public class Indexer {
 	public void buildItemIndex(String databaseFile, String indexLocation)
 			throws CorruptIndexException, LockObtainFailedException,
 			IOException, ClassNotFoundException, SQLException {
-		
+
+		// You MUST use the same analyzer for reading from and writing to the
+		// index.
 		IndexWriter indexWriter = new IndexWriter(indexLocation,
 				new StandardAnalyzer(), true,
 				IndexWriter.MaxFieldLength.UNLIMITED);
@@ -28,18 +30,19 @@ public class Indexer {
 		Class.forName("org.sqlite.JDBC");
 		Connection connection = DriverManager.getConnection("jdbc:sqlite:"
 				+ databaseFile);
+		
 		Statement statement = connection.createStatement();
 
 		ResultSet resultSet = statement
 				.executeQuery("select id, name, description from core_item;");
-		
+
 		while (resultSet.next()) {
 			String id = resultSet.getString("id");
 			String name = resultSet.getString("name");
 			String description = resultSet.getString("description");
 			addItemDocument(indexWriter, id, name, description);
 		}
-		
+
 		connection.close();
 		indexWriter.close();
 	}

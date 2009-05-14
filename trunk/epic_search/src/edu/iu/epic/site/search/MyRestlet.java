@@ -20,6 +20,7 @@ public class MyRestlet extends Restlet {
 			String query = request.getResourceRef().getQuery();
 			String search_string = query.substring("?search_string=".length() - 1, query.length());
 			search_string = search_string.replaceAll("\\+", " ");
+			
 			System.out.println(search_string);
 			if(search_string == null){
 				search_string = "";

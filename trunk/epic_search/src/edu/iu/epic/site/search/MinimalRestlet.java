@@ -10,7 +10,6 @@ public class MinimalRestlet {
 	 * @throws Exception 
 	 */
 	public static void main(String[] args) throws Exception {
-		 // Creating a minimal Restlet returning "Hello World"  
 		 MyRestlet restlet = new MyRestlet();
 		   
 		 // Create the HTTP server and listen on port 8182  
