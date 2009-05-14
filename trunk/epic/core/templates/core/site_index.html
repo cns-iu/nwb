@@ -1,23 +1,34 @@
 {% extends "core/bases/home_base.html" %}
 
+{% load core_templatetags %}
+{% load datarequest_templatetags %}
+{% load dataset_templatetags %}
+{% load geoloc_templatetags %}
+
 {% block nav %}
   <div id="nav"> 
-    {% load core_templatetags %}
     {% nav_bar %}
   </div>
 {% endblock %}
 
 {% block homecolumn2 %}
-  <h1> The EpiC Marketplace </h1>
-  
+  <h1> The EpiC Marketplace</h1>
   <p>Browse, request, and share epidemics data.</p>
   
-  <p><a href="{% url core.views.about %}"><strong>Learn more</strong></a> about the Epic Project.</p>
+  <p>
+    <strong>
+      <a href="{% url core.views.about %}">
+        Learn more
+      </a>
+    </strong> about the Epic Project.
+  </p>
+  <br />
   
-  <br/>
-  
-  <h1><a href="{% url core.views.browse %}">Browse</a></h1>
-   
+  <h1>
+    <a href="{% url core.views.browse %}">
+      Browse
+    </a>
+  </h1>
   <p>
     View datasets and requests by tag; rate and comment
     <br />
@@ -27,30 +38,32 @@
   <h1>
     <a href="{% url datarequests.views.view_datarequests %}">Request</a>
   </h1>
-   
   <p>Make a request, see recent requests, and fulfulled requests<p>
-   
+  
   <h1>
     <a href="{% url datasets.views.create_dataset %}">Upload</a>
   </h1>
-   
   <p>Upload your dataset</p>
   
   <br />
   
-  {% load geoloc_templatetags %}
   {% display_map_for_datasets %}
 {% endblock %}
   
 {% block homecolumn3 %}
   <h1>Recent Activity</h1>
   <h2>Data Requests</h2> 
-  {% load datarequest_templatetags %}
-  {% display_recent_requests 3 'False' %}
-  <h1><a href="{% url datarequests.views.new_datarequest %}">Make a Request</a></h1> 
+  
+  {% recent_requests 3 'False' %}
+  <h1><a href="{% url datarequests.views.new_datarequest %}">Make a Request</a></h1>
+   
   <h2>Data Uploads</h2>
-  {% load dataset_templatetags %}
   {% recent_datasets %}
-  <h1><a href="{% url datasets.views.create_dataset %}">Upload your data</a></h1>  
+  
+  <h1>
+    <a href="{% url datasets.views.create_dataset %}">
+      Upload your data
+    </a>
+  </h1>  
 {% endblock %}
 

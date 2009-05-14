@@ -11,9 +11,9 @@ def display_datarequests(context, datarequests=None):
         datarequests = DataRequest.objects.active().exclude(status='C').order_by('-created_at')
     return {'datarequests':datarequests, 'user':user}
 
-@register.inclusion_tag("templatetags/display_recent_requests.html", 
+@register.inclusion_tag('templatetags/recent_requests.html',
                         takes_context=True)
-def display_recent_requests(context, limit=3, show_tags=True):
+def recent_requests(context, limit=3, show_tags=True):
     user = context['user']
     if show_tags == 'False': #(Because you can't pass a boolean from a template)
         show_tags = False

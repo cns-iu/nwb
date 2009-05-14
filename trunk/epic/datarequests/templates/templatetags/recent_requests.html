@@ -1,8 +1,12 @@
 {% load category_templatetags %}
 {% load core_templatetags %}
+{% load tags_templatetags %}
 
-{# TODO: what to display if no datarequests #}
 {% if datarequests %}
+  <h1>
+    {{ datarequests|length }} Most Recent Data Request{{ datarequests|length|pluralize }}
+  </h1>
+  
   {% for datarequest in datarequests %}
   <div class="requests">
     <h2><a href="{% url datarequests.views.view_datarequest item_id=datarequest.id slug=datarequest.slug %}">{{ datarequest.name }}</a> - {% user_title datarequest.creator 'True' %}</h2> 
@@ -10,11 +14,13 @@
     <p>{{ datarequest.tagless_description|truncatewords:15 }}</p>
     
     {% if show_tags %}
-      {% load tags_templatetags %}
-          {% list_item_tags datarequest user %}
-        {% endif %}
+      {% list_item_tags datarequest user %}
+    {% endif %}
+    
     <div class="comments">
-      <a href="{% url datarequests.views.view_datarequest item_id=datarequest.id slug=datarequest.slug %}">{{ datarequest.comments.all|length }} comment{{ datarequest.comments.all|length|pluralize }}.</a>
+      <a href="{% url datarequests.views.view_datarequest item_id=datarequest.id slug=datarequest.slug %}">
+        {{ datarequest.comments.all|length }} comment{{ datarequest.comments.all|length|pluralize }}.
+      </a>
     </div>
   </div>
   {% endfor %}
