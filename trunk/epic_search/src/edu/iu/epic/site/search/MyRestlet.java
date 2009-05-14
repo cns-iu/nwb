@@ -21,7 +21,7 @@ public class MyRestlet extends Restlet {
 			search_string = search_string.replaceAll("\\+", " ");
 			System.out.println(search_string);
 			if(search_string == null){
-				search_string = "plague";
+				search_string = "";
 			}
 			JSONObject json = searcher.searchItemIndex(search_string, "all", "index");
 			response.setEntity("" + json, MediaType.TEXT_PLAIN);
