@@ -2,6 +2,8 @@
 LOGARITHMIC = 1
 LINEAR = 2
 
+from epic.tags.models import Tagging
+
 # Tag is meant to be a template-displayable tag.  It has no actual ties to the
 # database/Tagging model.
 # The reason why it exists is because it contains additional data on Taggings that
@@ -12,6 +14,4 @@ class Tag:
 		self.count = count
 	
 	def get_tag_url(self):
-		from tags.models import Tagging
-		
 		return Tagging.objects.get_url_for_tag(self.tag_name)
