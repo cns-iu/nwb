@@ -10,34 +10,49 @@ from django.utils import simplejson
 
 from epic.core.models import Item
 
+SERVELET_URL = 'http://localhost:8182/'
+
 def search(request):
-    
+    # TODO:  TEST THIS!  Test 1 result and test many results
     responseData = {}
+    error_message = None
+    results = None
     
-    search_param = 'search_string'
+    SEARCH_PARAM = 'search_string'
     search_string = None
     
-    if search_param in request.POST:
-        search_string = request.POST[search_param]
-    elif search_param in request.GET:
-        search_string = request.GET[search_param]
-    
+    if SEARCH_PARAM in request.POST:
+        search_string = request.POST[SEARCH_PARAM]
+    elif SEARCH_PARAM in request.GET:
+        search_string = request.GET[SEARCH_PARAM]
+      
     if search_string:
-        results = []
-        print search_string
-        raw = urllib.urlopen('http://epic.slis.indiana.edu/fake.json')
-        js_object = simplejson.loads(raw.read())
+        try:
+            # The java needs spaces to be +s
+            search_string = search_string.replace(" ", "+")
+            
+# Uncomment to use servlet            
+#            raw_data = urllib.urlopen(SERVELET_URL + 
+#                                      '?search_string=' + 
+#                                      search_string)
 
-        for result in js_object['result']:
-            item_id = result['item_id']
-            try:
-                item = Item.objects.get(pk=item_id)
-                results.append({'item':item, 'score': result['score']})
-            except Item.DoesNotExist:
-                results = None
-    else:
-        results = None
+            raw_data = urllib.urlopen('http://epic.slis.indiana.edu/fake.json')
+            json_object = simplejson.loads(raw_data.read())
+            
+            if 'result' in json_object:
+                results = []
+                for result in json_object['result']:
+                    item_id = result['item_id']
+                    try:
+                        item = Item.objects.get(pk=item_id)
+                        results.append({'item':item, 'score': result['item_score']})
+                    except Item.DoesNotExist:
+                        pass
+        except IOError:    
+            error_message = 'There is a problem with the search, please try again later.'
         
     return render_to_response('search/view_search_results.html', 
-                              {'results': results},
+                              {'results': results, 
+                               'search_string': search_string,
+                               'error_message': error_message},
                               context_instance=RequestContext(request))

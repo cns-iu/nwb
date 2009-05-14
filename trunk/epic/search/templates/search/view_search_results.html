@@ -1,10 +1,21 @@
-Search page
+<form name="search" action="." method="get">
+Search for: <input type="text" name="search_string" />
+<input type="submit" value="Go!" />
+</form>
 {% if results %}
   <ul>
     {% for result in results %}
       <li>
-        <a href="{{ result.item.specific.get_absolute_url }}">{{ result.item.specific }}</a>
+        <a href="{{ result.item.specific.get_absolute_url }}">{{ result.item.specific.name }}</a>
       </li>
     {% endfor %}
   </ul>
+{% else %}
+  {% if error_message %}
+    <p>{{ error_message }}</p>
+  {% else %}
+    {% if search_string %}
+	  <p>Sorry, no results matched the term "{{ search_string }}".</p>
+	{% endif %}
+  {% endif %}
 {% endif %}
