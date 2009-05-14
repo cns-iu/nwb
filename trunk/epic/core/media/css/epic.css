@@ -554,7 +554,7 @@ margin-bottom:10px; margin-top:5px;
 	color: #d13165;
 	text-decoration: none;
 }
-#submenu a.on {
+#submenu a.on, #submenu a.active_submenu {
 	background-color: #FFFFFF;
 	background-image: none;
 	border: 1px solid #666666;}
