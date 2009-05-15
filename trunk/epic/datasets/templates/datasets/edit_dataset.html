@@ -1,4 +1,7 @@
 {% extends "core/bases/simple_base.html" %}
+
+{% load geoloc_templatetags %}
+
 {% block content %}
 	<h3>Edit {{ dataset.name }}:</h3>
 	<form action="{% url datasets.views.edit_dataset item_id=dataset.id %}" method="POST">
@@ -103,8 +106,7 @@
         {% endfor %}
 		<tr>
 		  <td colspan="2">
-		    {% load geoloc_templatetags%}
-		    {% add_locations_map_for_dataset geoloc_add_formset geoloc_remove_formset %}
+		    {% location_edit_map geoloc_add_formset geoloc_remove_formset %}
 		  </td>
 		  <td class="formtips">
 		    <span>Click directly on the map or do a location search to specify your data location.</span>

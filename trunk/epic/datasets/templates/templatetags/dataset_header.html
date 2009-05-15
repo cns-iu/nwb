@@ -1,11 +1,10 @@
-{% load djangoratings_templatetags %}
 {% load core_templatetags %}
-
+{% load djangoratings_templatetags %}
 
 {% if rating_allowed %}
-  {% rate_box_vote dataset user %}
+  {% rating_vote_box dataset user %}
 {% else %}
-  {% rate_box_view dataset user %}
+  {% rating_display_box dataset user %}
 {% endif %}
     
 <h2>

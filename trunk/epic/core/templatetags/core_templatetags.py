@@ -18,8 +18,8 @@ def login_box():
     
     return {'login_form': form}
 
-@register.inclusion_tag('templatetags/include_form_as_table.html')
-def include_form_as_table(form, style_required=False):
+@register.inclusion_tag('templatetags/form_as_table.html')
+def form_as_table(form, style_required=False):
     return {'form': form, 'style_required': style_required,}
 
 @register.inclusion_tag('templatetags/nav_bar.html')

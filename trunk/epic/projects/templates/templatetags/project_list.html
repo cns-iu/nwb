@@ -1,13 +1,14 @@
+{% load project_templatetags %}
+
 {% if projects %}
   {% for project in projects %}
     <div class="databox">
-      {% load project_templatetags %}
-      {% show_project_header project show_delete_buttons %}
+      {% project_header project show_delete_buttons %}
       
       <p class="projectinfo">{{ project.tagless_description|truncatewords:50 }}</p>
       
       <div class="comments">
-			<a href="{{ project.get_absolute_url }}">{{ project.comments.all|length }} comment{{ project.comments.all|length|pluralize }}.</a>
+        <a href="{{ project.get_absolute_url }}">{{ project.comments.all|length }} comment{{ project.comments.all|length|pluralize }}.</a>
       </div>
     </div>
   {% endfor %}

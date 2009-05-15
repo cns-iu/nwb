@@ -1,5 +1,7 @@
 {% extends "core/bases/simple_base.html" %}
 
+{% load project_templatetags %}
+
 {% block css %}
   {{ block.super }}
   <link href="/core_media/css/star_rating.css" rel="stylesheet" type="text/css" />
@@ -72,8 +74,7 @@
       <h3>{% if profile.user.first_name %}{{ profile.user.first_name }}'s{% endif %} Projects</h3>
     {% endifequal %}
     
-    {% load project_templatetags %}
-    {% list_projects projects 'True' %}
+    {% project_list projects 'True' %}
   {% else %}
     {% ifequal profile.user user %}
       <p>You have not created any projects.</p>
@@ -94,7 +95,7 @@
      {% endifequal %}
     
     {% load datarequest_templatetags %}
-    {% display_datarequests datarequests %}
+    {% datarequest_list datarequests %}
   {% else %}
     {% ifequal profile.user user %}
 	   <p>You have not made any data requests.</p>

@@ -1,4 +1,5 @@
 {% extends "core/browse.html" %}
+
 {% load category_templatetags %}
 {% load datarequest_templatetags %}
 
@@ -12,7 +13,7 @@
   
   <h1>Data Requests</h1>
   {% if datarequests %}
-    {% display_datarequests datarequests %}
+    {% datarequest_list datarequests %}
   {% else %}
    <p>There are no datarequests in this category.</p>
   {% endif %}

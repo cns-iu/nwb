@@ -1,5 +1,7 @@
 from django import template
+
 from epic.datasets.models import DataSet
+
 
 register = template.Library()
 
@@ -8,7 +10,8 @@ def datasets_list(context, datasets):
     user = context['user']
     return {'datasets':datasets, 'user':user}
 
-@register.inclusion_tag('templatetags/dataset_header.html', takes_context=True)
+@register.inclusion_tag('templatetags/dataset_header.html',
+                        takes_context=True)
 def dataset_header(context, dataset, rating_allowed):
     user = context['user']
     if rating_allowed == 'rating_allowed':

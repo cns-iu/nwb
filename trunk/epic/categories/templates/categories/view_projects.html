@@ -1,4 +1,5 @@
 {% extends "core/browse.html" %}
+
 {% load category_templatetags %}
 {% load project_templatetags %}
 
@@ -11,8 +12,9 @@
   <p>Description: {{ category.description }}</p>
   
   <h1>Projects</h1>
+  
   {% if projects %}
-    {% list_projects projects %}
+    {% project_list projects %}
   {% else %}
     <p>There are no projects in this category.</p>
   {% endif %}

@@ -1,52 +1,67 @@
 from django import template
 from django.core.urlresolvers import reverse
+
 from epic.datasets.models import DataSet
+
 
 register = template.Library()
 
-@register.inclusion_tag('templatetags/show_rating.html')
-def show_rating(dataset):
+@register.inclusion_tag('templatetags/dataset_rating.html')
+def dataset_rating(dataset):
 	rating = dataset.rating.get_average()
 	votes = dataset.rating.votes
-	return {'rating':rating, 'votes':votes}
+    
+	return {'rating': rating, 'votes': votes}
 
-@register.inclusion_tag('templatetags/rate_box_view_helper.html')
-def rate_box_view_helper():
+@register.inclusion_tag('templatetags/rate_box_javascript.html')
+def rate_box_javascript():
 	"""
-	Always include this template whenever loading 'rate_box_view' 
+	Always include this template whenever loading 'rating_display_box' 
 	template since it contains javascript function required for 
-	rate_box_view 
+	rating_display_box 
 	"""
-	return
+    
+	return {}
 
-@register.inclusion_tag('templatetags/rate_box_view.html')
-def rate_box_view(dataset, user):
-	baseurl = reverse("epic.datasets.views.rate_dataset", args=[], kwargs={'item_id': dataset.id})
+@register.inclusion_tag('templatetags/rating_display_box.html')
+def rating_display_box(dataset, user):
+	baseurl = reverse('epic.datasets.views.rate_dataset',
+                      args=[],
+                      kwargs={'item_id': dataset.id})
+    
 	try:
-		user_rating = dataset.rating.get_rating(user=user, ip_address='127.0.0.1') #TODO: ip_address is kind of a hack
+        # TODO: ip_address is kind of a hack.
+		user_rating = dataset.rating.get_rating(user=user,
+                                                ip_address='127.0.0.1')
 	except:
 		user_rating = None
+    
 	rating = dataset.rating.get_average()
 	votes = dataset.rating.votes
+    
 	return {
-			'user_rating':user_rating, 
-			'rating':rating, 
-			'votes':votes, 
-			'item_id': dataset.id
-			}
-	
-@register.inclusion_tag('templatetags/rate_box_vote.html')
-def rate_box_vote(dataset, user):
-	baseurl = reverse("epic.datasets.views.rate_dataset", args=[], kwargs={'item_id': dataset.id})
-	user_rating = dataset.rating.get_rating(user=user, ip_address='127.0.0.1') #TODO: ip_address is kind of a hack
+        'user_rating': user_rating, 
+        'rating': rating, 
+        'votes': votes, 
+        'item_id': dataset.id
+    }
+
+@register.inclusion_tag('templatetags/rating_vote_box.html')
+def rating_vote_box(dataset, user):
+	base_url = reverse('epic.datasets.views.rate_dataset',
+                      args=[],
+                      kwargs={'item_id': dataset.id})
+    # TODO: ip_address is kind of a hack.
+	user_rating = dataset.rating.get_rating(user=user, ip_address='127.0.0.1')
 	rating = dataset.rating.get_average()
 	votes = dataset.rating.votes
 	is_authenticated = user.is_authenticated()
+    
 	return {
-			'ratebaseurl':baseurl, 
-			'user_rating':user_rating, 
-			'rating':rating, 
-			'votes':votes, 
-			'item_id': dataset.id,
-			'is_authenticated': is_authenticated
-			}	
+        'rating_base_url':base_url, 
+        'user_rating':user_rating, 
+        'rating':rating, 
+        'votes':votes, 
+        'item_id': dataset.id,
+        'is_authenticated': is_authenticated
+    }	

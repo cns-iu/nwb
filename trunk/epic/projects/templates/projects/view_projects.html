@@ -1,5 +1,7 @@
 {% extends "core/browse.html" %}
 
+{% load project_templatetags %}
+
 {% block scripts_header %}
   {{ block.super }}
   <script type="text/javascript" src="/core_media/javascript/image_swap.js"></script>
@@ -17,8 +19,7 @@
 
 {% block content %}
   <h1> Projects </h1> 
-  {% load project_templatetags %}
-  {% list_projects projects %}
+  {% project_list projects %}
 
   <div class="databox">
     <h1>Can't Find what you're looking for?

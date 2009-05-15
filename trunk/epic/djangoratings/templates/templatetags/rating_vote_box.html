@@ -150,7 +150,7 @@
 				$("#{{ item_id }}-average-vote li a").unbind('click');
 			
 				var userVote = parseInt(this.id);
-				var urlVote = "{{ ratebaseurl }}" + userVote + "/";
+				var urlVote = "{{ rating_base_url }}" + userVote + "/";
 
 				$.post(urlVote, function(data){
 					if(data == '"TRUE"') {

@@ -1,5 +1,7 @@
 {% extends "core/bases/simple_base.html" %}
 
+{% load geoloc_templatetags%}
+
 {% block nav %}
   <div id="nav">
     {% load core_templatetags %}
@@ -145,8 +147,7 @@
         {% endfor %}
 		<tr>
 		  <td colspan="2">
-		    {% load geoloc_templatetags%}
-		    {% add_locations_map_for_dataset geoloc_add_formset geoloc_remove_formset %}
+		    {% location_edit_map geoloc_add_formset geoloc_remove_formset %}
 		  </td>
 		  <td class="formtips">
 		    <span>Click directly on the map or do a location search to specify your data location.</span>

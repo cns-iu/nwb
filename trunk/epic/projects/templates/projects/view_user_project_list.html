@@ -2,6 +2,8 @@
 
 {% extends "core/bases/browse_base.html" %}
 
+{% load project_templatetags %}
+
 {% block css %}
   {{ block.super }}
 {% endblock %}
@@ -22,7 +24,6 @@
       Projects for {{ requested_user.get_full_name }}
 	</div>
 	
-	{% load project_templatetags %}
-	{% list_projects projects 'True' %}
+	{% project_list projects 'True' %}
   {% endif %}
 {% endblock %}

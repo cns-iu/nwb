@@ -1,40 +1,37 @@
 {% extends "core/bases/simple_base.html" %}
 
+{% load core_templatetags %}
+{% load datarequest_templatetags %}
+
 {% block nav %}
   <div id="nav"> 
-    {% load core_templatetags %}
     {% nav_bar 'Request' %}
   </div>
 {% endblock %}
 
 {% block content %}
-<div class="requestbox">
-   <h1>Make a Request</h1>
-   <form id="request_form" 
-         name="request_form" 
-         action="{% url datarequests.views.new_datarequest %}" 
-         method="POST"
-         onsubmit="ClearAll()" >
+  <div class="requestbox">
+    <h1>Make a Request</h1>
+    <form id="request_form" name="request_form" action="{% url datarequests.views.new_datarequest %}" method="POST" onsubmit="ClearAll()">
       <br />
       {{ form.name.errors }}
-      <label> {{ form.name }} </label>
+      <label>{{ form.name }}</label>
       <br />
       {{ form.description.errors }}
-      <label> {{ form.description }} </label>
+      <label>{{ form.description }}</label>
       <br />
       {{ form.category.errors }}
-      <label> {{ form.category }} </label>
+      <label>{{ form.category }}</label>
       <br />
       {{ form.tags.errors }}
       <label>{{ form.tags }}</label>
       <br />
-      <!--TODO: have data requests be taggable -->
       <input type="image" src="/core_media/images/makerequest_button.jpg" value="Make Request" alt="Make Request" />
       <br/>
-   </form>
-</div>
-
-<script type="text/javascript">
+    </form>
+  </div>
+  
+  <script type="text/javascript">
 /** 
  * Code from http://www.mindpalette.com/tutorials/clear_defaults/index.php
  */
@@ -88,11 +85,9 @@ function ClearAll() {
   	}
   }
 }
-
-</script>
-
-{% load datarequest_templatetags %}
-{% display_recently_fulfilled_requests %}
+  </script>
+  
+  {% recently_fulfilled_requests %}
 {% endblock %}
 
 

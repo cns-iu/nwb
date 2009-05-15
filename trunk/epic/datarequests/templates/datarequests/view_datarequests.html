@@ -1,5 +1,7 @@
 {% extends "core/browse.html" %}
 
+{% load datarequest_templatetags %}
+
 {% block submenu %}
   {# TODO: Figure out how to actually space this over the *proper* way. #}
   <ul>
@@ -13,9 +15,7 @@
 {% block content %}
 
 <h1> Data Requests </h1> 
-  {% load datarequest_templatetags %}
-  {% display_datarequests %}
-  
+  {% datarequest_list %}
   
   <div class="databox">
     <h1>Can't Find what you're looking for?
