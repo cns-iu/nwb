@@ -9,20 +9,18 @@
     {% endblock %}
   </div>
   
-   {% block leftsidebar %}
-        <div id="leftsidebar">
-          {% categories_box %}
-          {% show_tag_cloud %}
-        </div>
+  <div id="leftsidebar">
+    {% block leftsidebar %}
+      {% categories_box %}
+      {% show_tag_cloud %}
+    {% endblock %}
+  </div>
         
   <div id="browsecontent">
     {% block browsecontent %}
-     
-      {% endblock %}
-      
       <div id="content">
         {% block content %}
-        <br />
+          <br />
         {% endblock %}
       </div>
     {% endblock %}

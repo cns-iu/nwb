@@ -4,22 +4,24 @@
 {% load tags_templatetags %}
 
 {% block maincontent %}
-  <div id="browsecontent">
+  <div id="leftsidebar">
     {% block leftsidebar %}
-        <div id="leftsidebar">
-          {% categories_box %}
-          {% show_tag_cloud %}
-        </div>
-      {% endblock %}
-    
-    <div id="homecolumn2">
-      {% block homecolumn2 %}
-      {% endblock %}
-    </div>
-    
-    <div id="homecolumn3">
-      {% block homecolumn3 %}
-      {% endblock %}
-    </div>
+      {% categories_box %}
+      {% show_tag_cloud %}
+    {% endblock %}
+  </div>
+  
+  <div id="browsecontent">
+    {% block browsecontent %}
+      <div id="homecolumn2">
+        {% block homecolumn2 %}
+        {% endblock %}
+      </div>
+      
+      <div id="homecolumn3">
+        {% block homecolumn3 %}
+        {% endblock %}
+      </div>
+    {% endblock %}
   </div>
 {% endblock %}
