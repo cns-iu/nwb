@@ -1,7 +1,9 @@
 from django import template
+from django.conf import settings
 from django.shortcuts import get_list_or_404
 from django.shortcuts import get_object_or_404
 from django.shortcuts import render_to_response
+
 
 from epic.datasets.models import DataSet
 from epic.geoloc.models import GeoLoc
@@ -32,8 +34,7 @@ def location_display_map(item_id=None):
     for location in all_locations_list:
         if location.datasets.all():
             location_list.append(location)
-    
-    return {'location_list': location_list,}
+    return {'location_list': location_list,  'GOOGLE_KEY' : settings.GOOGLE_KEY}
 
 @register.inclusion_tag('templatetags/location_edit_map.html')
 def location_edit_map(geoloc_add_formset, geoloc_remove_formset):
