@@ -1,41 +1,26 @@
 from django.core.urlresolvers import reverse
 from django.contrib.auth.models import User
-from epic.core.test import CustomTestCase
 
+from epic.core.test import CustomTestCase
 from epic.settings import LOGIN_REDIRECT_URL
 
-
-BOB_USER_USERNAME = 'bob'
-BOB_USER_PASSWORD = 'bob'
-BOB2_USER_USERNAME = 'bob2'
-BOB2_USER_PASSWORD = 'bob2'
-
-USERNAME_KEY = 'username'
-PASSWORD_KEY = 'password'
 
 class LogInAndOutTestCase(CustomTestCase):
     fixtures = ['core_just_users']
     
     def setUp(self):
+        self.bob = User.objects.get(username='bob')
         self.login_url = reverse('django.contrib.auth.views.login')
         self.logout_url = reverse('epic.core.views.logout_view')
-        self.bob = User.objects.get(username=BOB_USER_USERNAME)
-        
-    def tearDown(self):
-        pass
     
     def testLoginSuccess(self):
-        """
-        Test that a user can successfully login.
+        """ Test that a user can successfully login.
         """
         
         response = self.client.get(self.login_url)
         self.failUnlessEqual(response.status_code, 200)
         
-        post_data = {
-            USERNAME_KEY: self.bob.username,
-            PASSWORD_KEY: BOB_USER_PASSWORD,        
-        }
+        post_data = {'username': self.bob.username, 'password': 'bob',}
         
         response = self.client.post(self.login_url, post_data)
         self.failUnlessEqual(response.status_code, 302)
@@ -43,13 +28,13 @@ class LogInAndOutTestCase(CustomTestCase):
         self.assertRedirects(response, LOGIN_REDIRECT_URL)
     
     def testLoginFailure(self):
-        """
-        Test that a user must give correct the username/password to log in.
+        """ Test that a user must give correct the username/password to
+            log in.
         """
         
         post_data = {
-            USERNAME_KEY: self.bob.username,
-            PASSWORD_KEY: 'incorrect password',        
+            'username': self.bob.username,
+            'password': 'incorrect password',        
         }
         
         response = self.client.post(self.login_url, post_data)
@@ -62,12 +47,10 @@ class LogInAndOutTestCase(CustomTestCase):
                                 'case-sensitive.')
     
     def testLogout(self):
-        """
-        Test that logging out using the view works correctly.
+        """ Test that logging out using the view works correctly.
         """
         
-        self.tryLogin(username=BOB2_USER_USERNAME, 
-                      password=BOB2_USER_PASSWORD)
+        self.tryLogin(username='bob2', password='bob2')
         
         response = self.client.get(self.logout_url)
         self.failUnlessEqual(response.status_code, 302)
@@ -87,8 +70,8 @@ class LogInAndOutTestCase(CustomTestCase):
         """
         Test that the logout link appears for logged in users
         """        
-        self.tryLogin(username=BOB2_USER_USERNAME,
-                      password=BOB2_USER_PASSWORD)
+        self.tryLogin(username='bob2',
+                      password='bob2')
         
         response = self.client.get('/')
         

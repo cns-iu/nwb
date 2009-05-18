@@ -1,5 +1,7 @@
 {% extends "core/browse.html" %}
 
+{% load dataset_templatetags %}
+
 {% block scripts_header %}
   {{ block.super }}
   <script type="text/javascript" src="/core_media/javascript/image_swap.js"></script>
@@ -16,12 +18,12 @@
 {% endblock %}
 
 {% block content %}
-
-<h1> Datasets </h1> 
-  {% load dataset_templatetags %}
+  <h1> Datasets </h1> 
   {% datasets_list datasets %}
+  
   <div class="databox">
-    <h1>Can't Find what you're looking for?
+    <h1>
+      Can't Find what you're looking for?
       <a href="{% url datarequests.views.new_datarequest %}" 
          onmouseout="MM_swapImgRestore()" 
          onmouseover="MM_swapImage('Image3','','/core_media/images/request_hover_27.jpg',1)">

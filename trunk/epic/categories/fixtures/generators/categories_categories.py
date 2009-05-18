@@ -9,8 +9,8 @@ from epic.projects.models import Project
 #############
 
 def _create_category1():
-    category1 = Category(name='Test Category1',
-                         description='Test Description1')
+    category1 = Category(
+        name='Test Category1', description='Test Description1')
     category1.save()
     
     return category1
@@ -20,12 +20,11 @@ def _create_category1():
 #############
 
 def _create_category2():
-    category2 = Category(name='Test Category2',
-                        description='Test Description2')
+    category2 = Category(
+        name='Test Category2', description='Test Description2')
     category2.save()
     
     return category2
-
 
 ############
 # dataset1 #
@@ -41,7 +40,6 @@ def _create_dataset1(category):
     
     return dataset1
 
-
 ############
 # dataset2 #
 ############
@@ -54,7 +52,6 @@ def _create_dataset2():
                                       is_active=True)
     
     return dataset2
-
 
 ############
 # project1 #
@@ -70,7 +67,6 @@ def _create_project1(category):
     
     return project1
 
-
 ############
 # project2 #
 ############
@@ -83,7 +79,6 @@ def _create_project2():
                                       is_active=True)
     
     return project2
-
 
 ################
 # datarequest1 #
@@ -100,7 +95,6 @@ def _create_datarequest1(category):
     
     return datarequest1
 
-
 ################
 # datarequest2 #
 ################
@@ -114,7 +108,6 @@ def _create_datarequest2():
         is_active=True)
     
     return datarequest2
-
 
 ######################################
 # Generate the actual fixtures here. #

@@ -45,8 +45,7 @@ def view_datasets_for_category(request, category_id):
     datasets = _get_datasets_for_category(category)
     
     return render_to_response('categories/view_datasets.html', 
-                              {'category': category,
-                               'datasets': datasets}, 
+                              {'category': category, 'datasets': datasets},
                                context_instance=RequestContext(request))
 
 def view_projects_for_category(request, category_id):
@@ -54,13 +53,12 @@ def view_projects_for_category(request, category_id):
     
     datasets = _get_datasets_for_category(category)
     
-    projects_from_datasets = set(get_projects_containing_datasets(datasets))
-    projects_from_category = set(_get_projects_for_category(category))
-    projects = list(projects_from_datasets.union(projects_from_category))
+    projects_from_datasets = get_projects_containing_datasets(datasets)
+    projects_from_category = _get_projects_for_category(category)
+    projects = projects_from_datasets | projects_from_category
     
     return render_to_response('categories/view_projects.html', 
-                              {'category': category,
-                               'projects': projects,}, 
+                              {'category': category, 'projects': projects,},
                                context_instance=RequestContext(request))
 
 def view_datarequests_for_category(request, category_id):
@@ -70,7 +68,7 @@ def view_datarequests_for_category(request, category_id):
     
     return render_to_response('categories/view_datarequests.html', 
                               {'category': category,
-                               'datarequests': datarequests,}, 
+                               'datarequests': datarequests,},
                                context_instance=RequestContext(request))
 
 def _get_datasets_for_category(category):

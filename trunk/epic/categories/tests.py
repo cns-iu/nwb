@@ -178,16 +178,24 @@ class DeleteCategoryTestCase(CustomTestCase):
     
     def setUp(self):
         self.bob = User.objects.get(username='bob')
-        self.category = Category.objects.create(name='cat1', description='cat2')
+        self.category = Category.objects.create(name='category1',
+                                                description='category2')
         self.dataset_name = 'a38yyth'
         self.dataset_description = 'asd09g4h6'
-        self.dataset = DataSet.objects.create(name=self.dataset_name, description=self.dataset_description, category=self.category, creator=self.bob)
+        self.dataset = DataSet.objects.create(
+            name=self.dataset_name,
+            description=self.dataset_description,
+            category=self.category,
+            creator=self.bob)
         
     def testDeleting(self):
         # I've overwritten the delete method so make sure that
         # deleting a category wont' delete the dataset attached to it
         self.category.delete()
         try:
-            dataset = DataSet.objects.get(name=self.dataset_name, description=self.dataset_description, creator=self.bob)
+            dataset = DataSet.objects.get(
+                name=self.dataset_name,
+                description=self.dataset_description,
+                creator=self.bob)
         except DataSet.DoesNotExist:
             self.fail()

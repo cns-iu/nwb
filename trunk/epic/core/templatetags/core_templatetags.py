@@ -41,7 +41,7 @@ def nav_bar_link(current_link, link_to_be_highlighted, view_function_name):
     
     if link_to_be_highlighted is None or \
             current_link.lower() != link_to_be_highlighted.lower():
-        # TODO: pageoff class (have Elisha style this up real pretty)
+        # TODO: pageoff class (have Elisha style this up real pretty).
         link_class = 'pageoff'
     else:
         link_class = 'pageon'

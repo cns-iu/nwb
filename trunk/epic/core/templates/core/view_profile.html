@@ -1,5 +1,7 @@
 {% extends "core/bases/simple_base.html" %}
 
+{% load datarequest_templatetags %}
+{% load dataset_templatetags %}
 {% load project_templatetags %}
 
 {% block css %}
@@ -20,6 +22,7 @@
   {% ifequal profile.user user %}
     <p><b>Username:</b> {{ profile.user.username }}</p>
   {% endifequal %}
+  
   <p><b>First Name:</b> {{ profile.user.first_name }}</p>
   <p><b>Last Name:</b> {{ profile.user.last_name }}</p>
   <p><b>Affiliation:</b> {{ profile.affiliation }}</p>
@@ -33,24 +36,34 @@
   <hr />
   
   <table width="500" border="0" cellspacing="0" cellpadding="5">
-     <tr>
-       <td width="118"><a href="{% url projects.views.create_project %}"><img src="/core_media/images/buttons_09.jpg" width="116" height="35" /></a></td>
-       <td valign="top"><p> A project consists of several datasets.  <br />
-
-         </td>
-     </tr>
-    
+    <tr>
+      <td width="118">
+        <a href="{% url projects.views.create_project %}"><img src="/core_media/images/buttons_09.jpg" width="116" height="35" /></a>
+      </td>
+      <td valign="top">
+        <p>
+          A project consists of several datasets.
+          <br />
+        </p>
+      </td>
+    </tr>
+  </table>
   
-</table>
   <hr />
+  
   {% if datasets %}
-     {% ifequal profile.user user %}
-       <h3>Your Datasets</h3>
-     {% else %}
-       <h3>{% if profile.user.first_name %}{{ profile.user.first_name }}'s{% endif %} Datasets</h3>
-     {% endifequal %}
-          
-    {% load dataset_templatetags %}
+    {% ifequal profile.user user %}
+      <h3>Your Datasets</h3>
+    {% else %}
+      <h3>
+        {% if profile.user.first_name %}
+          {{ profile.user.first_name }}'s
+        {% endif %} 
+        
+        Datasets
+      </h3>
+    {% endifequal %}
+    
     {% datasets_list datasets %}
   {% else %}
      {% ifequal profile.user user %}
@@ -60,7 +73,6 @@
      {% endifequal %}
   {% endif %}
   
-  {# TODO: Clean up the styling here #}
   <a href="{% url datasets.views.view_datasets %}">View All Datasets</a>
   
   {# Listing all the un-canceled data requests made by the user. #}
@@ -71,7 +83,13 @@
     {% ifequal profile.user user %}
       <h3>Your Projects</h3>
     {% else %}
-      <h3>{% if profile.user.first_name %}{{ profile.user.first_name }}'s{% endif %} Projects</h3>
+      <h3>
+        {% if profile.user.first_name %}
+          {{ profile.user.first_name }}'s
+        {% endif %} 
+        
+        Projects
+      </h3>
     {% endifequal %}
     
     {% project_list projects 'True' %}
@@ -91,10 +109,15 @@
      {% ifequal profile.user user %}
        <h3>Your Data Requests</h3>
      {% else %}
-       <h3>{% if profile.user.first_name %}{{ profile.user.first_name }}'s{% endif %} Data Requests</h3>
+       <h3>
+         {% if profile.user.first_name %}
+           {{ profile.user.first_name }}'s
+         {% endif %} 
+         
+         Data Requests
+       </h3>
      {% endifequal %}
     
-    {% load datarequest_templatetags %}
     {% datarequest_list datarequests %}
   {% else %}
     {% ifequal profile.user user %}

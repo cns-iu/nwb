@@ -13,11 +13,9 @@ def _create_datarequest1():
             'should be on the profile page <- by bill ',
         status='C',
         is_active=True)
-    
     datarequest1.save()
     
     return datarequest1
-
 
 ################
 # datarequest2 #
@@ -31,11 +29,9 @@ def _create_datarequest2():
             'should be on the profile page <- by bill ',
         status='U',
         is_active=True)
-    
     datarequest2.save()
     
     return datarequest2
-
 
 ######################################
 # Generate the actual fixtures here. #

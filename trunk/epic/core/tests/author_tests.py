@@ -19,8 +19,6 @@ class AuthorTestCase(CustomTestCase):
         
         
     def testAuthorAdded(self):
-        # When uploading a valid academic reference, the model should be
-        #    created in the database
         self.tryLogin('bob')
         
         test_file1 = tempfile.TemporaryFile()
@@ -62,8 +60,6 @@ class AuthorTestCase(CustomTestCase):
         self.assertTrue(author in dataset.authors.all())
         
     def testMultipleAuthorsAdded(self):
-        # When uploading several valid academic reference, 
-        #    the models should be created in the database
         self.tryLogin('bob')
         
         test_file1 = tempfile.TemporaryFile()

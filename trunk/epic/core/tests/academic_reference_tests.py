@@ -7,18 +7,19 @@ from epic.core.models import AcademicReference
 from epic.core.test import CustomTestCase
 from epic.datasets.models import DataSet
 
+
 class AcademicReferenceTestCase(CustomTestCase):
     fixtures = ['core_just_users']
     
     def setUp(self):
-        self.create_dataset_url = reverse('epic.datasets.views.create_dataset')
+        self.create_dataset_url = \
+            reverse('epic.datasets.views.create_dataset')
         
         self.bob = User.objects.get(username='bob') 
         
-        
     def testReferenceAdded(self):
         # When uploading a valid academic reference, the model should be
-        #    created in the database
+        # created in the database.
         self.tryLogin('bob')
         
         test_file1 = tempfile.TemporaryFile()
@@ -50,13 +51,13 @@ class AcademicReferenceTestCase(CustomTestCase):
         
         response = self.client.post(self.create_dataset_url, post_data)
 
-        dataset = DataSet.objects.get(creator=self.bob, name=post_data['name'])
+        dataset = DataSet.objects.get(creator=self.bob,
+                                      name=post_data['name'])
         acad_ref = AcademicReference.objects.get(item=dataset)
-        self.assertTrue(acad_ref.reference, post_data['reference-0-reference'])
+        self.assertTrue(acad_ref.reference,
+                        post_data['reference-0-reference'])
         
     def testMultipleReferencedAdded(self):
-        # When uploading several valid academic reference, the models should be
-        #    created in the database
         self.tryLogin('bob')
         
         test_file1 = tempfile.TemporaryFile()
@@ -89,10 +90,13 @@ class AcademicReferenceTestCase(CustomTestCase):
         
         response = self.client.post(self.create_dataset_url, post_data)
 
-        dataset = DataSet.objects.get(creator=self.bob, name=post_data['name'])
+        dataset = DataSet.objects.get(creator=self.bob,
+                                      name=post_data['name'])
         
         try:
-            AcademicReference.objects.get(item=dataset, reference=post_data['reference-0-reference'])
-            AcademicReference.objects.get(item=dataset, reference=post_data['reference-1-reference'])
+            AcademicReference.objects.get(
+                item=dataset, reference=post_data['reference-0-reference'])
+            AcademicReference.objects.get(
+                item=dataset, reference=post_data['reference-1-reference'])
         except AcademicReference.ItemNotFound:
             self.fail()

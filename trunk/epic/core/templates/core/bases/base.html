@@ -1,46 +1,47 @@
 {% load core_templatetags %}
 {% load messages_templatetags %}
+
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 
 <html xmlns="http://www.w3.org/1999/xhtml">
 
 <head>
-{% block head %}
-  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
-  
-  <title>
-    {% block title %}
-      EpiC Community Website
+  {% block head %}
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    
+    <title>
+      {% block title %}
+        EpiC Community Website
+      {% endblock %}
+    </title>
+    
+    {% block css %}
+      <link href="/core_media/css/epic.css" rel="stylesheet" type="text/css" />
+      {# We could include this only as needed. #}
+      <link href="/core_media/css/star_rating.css" rel="stylesheet" type="text/css" />
     {% endblock %}
-  </title>
-  
-  {% block css %}
-    <link href="/core_media/css/epic.css" rel="stylesheet" type="text/css" />
-    {# We could include this only as needed. #}
-    <link href="/core_media/css/star_rating.css" rel="stylesheet" type="text/css" />
+    
+    {% block scripts_header %}
+      <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.3.2/jquery.min.js"></script>
+    {% endblock %}
   {% endblock %}
-      
-  {% block scripts_header %}
-    <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.3.2/jquery.min.js"></script>
-  {% endblock %}
-{% endblock %}
-
 </head>
 
 <body onload="{% block body_onload %}{% endblock %}">
   <div id="header">
     {% block header %} 
       <a href="{% url core.views.site_index %}">
-          <div id="logo">
+        <div id="logo">
           {% block logo %}
           {% endblock %}
-          </div>
+        </div>
       </a>
+      
       {% block login %}
         {% if user.is_authenticated %}
           <div id="login">
             <ul style="color: white; margin: 2px;">
-              {# TODO: I can't make this white #}
+              {# TODO: I can't make this white. #}
               <li><a href="{% url core.views.view_profile user_id=user.id %}">My Profile</a></li>
               <li><a style="color: white;" href="{% url messages.views.index user_id=user.id %}">Messages ({% num_unread_messages user %})</a></li> 
               <li><a style="color: white;" href="{% url core.views.logout_view %}">Log Out</a></li>
@@ -48,31 +49,31 @@
           </div>
         {% else %}
           <script type="text/javascript">
-            var current = 'shown';
-            var hiddenDivId = 'quick_login_hidden';
-            var shownDivId = 'quick_login_shown';
+var current = 'shown';
+var hiddenDivId = 'quick_login_hidden';
+var shownDivId = 'quick_login_shown';
 
-            function switchLogin() {
-                if (current === 'hidden'){
-                  showLogin();
-                } else if (current === 'shown') {
-                  hideLogin();
-                } else {
-                  //console.log('ERROR');
-                }
-            }    
-            function showLogin() {
-              jQuery('#' + hiddenDivId).hide();
-              jQuery('#' + shownDivId).show();
-              current = 'shown';
-            }
-            function hideLogin() {
-              jQuery('#' + shownDivId).hide();
-              jQuery('#' + hiddenDivId).show();
-              current = 'hidden';
-            }
-            
+function switchLogin() {
+  if (current === 'hidden') {
+    showLogin();
+  } else if (current === 'shown') {
+    hideLogin();
+  }
+}
+
+function showLogin() {
+  jQuery('#' + hiddenDivId).hide();
+  jQuery('#' + shownDivId).show();
+  current = 'shown';
+}
+
+function hideLogin() {
+  jQuery('#' + shownDivId).hide();
+  jQuery('#' + hiddenDivId).show();
+  current = 'hidden';
+}
           </script>
+          
           <div id="switcher" style="position: absolute;
                                     width: 165px;
                                     height: 64px;
@@ -82,6 +83,7 @@
                                     z-index: 12;"
                              onclick="switchLogin(); return false;">
           </div>
+          
           <div id="quick_login_hidden" style="position: absolute; 
 		                                      width: 165px; 
 		                                      height: 64px; 
@@ -93,7 +95,8 @@
 		                                      background-image: url(/core_media/images/loginbox_02.gif);
 		                                      background-repeat: no-repeat;
 		                                      z-index: 11;">
-          </div>                                       
+          </div>
+          
           <div id="quick_login_shown" style="position: absolute; 
 		                                     width: 165px; 
 		                                     height: 178px; 
@@ -105,7 +108,7 @@
 		                                     background-image: url(/core_media/images/login_ON_02.gif);
 		                                     background-repeat: no-repeat;
 		                                     z-index: 11;">
-            {% load core_templatetags %}
+            
             {% login_box %}
           </div>
           <script type="text/javascript">
@@ -115,7 +118,7 @@
           </script>
         {% endif %}
       {% endblock %}
-
+      
       <div id="nav">
         {% block nav %}
           {% load core_templatetags %}
@@ -132,6 +135,7 @@
         {% endblock %}
       </div>
     {% endblock %}
+    
     <div class="clear" style="clear:both" />
   </div>
   

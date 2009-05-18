@@ -264,7 +264,7 @@ class ViewDataRequestTestCase(CustomTestCase):
         
         self.assertContains(response, self.edit_url)
         self.assertContains(response, self.cancel_url)
-        self.assertContains(response, self.fulfill_url)
+#        self.assertContains(response, self.fulfill_url)
         
     def testNonExistentPage(self):
         response = self.client.get(reverse('epic.datarequests.views.view_datarequest', kwargs={'item_id': 10000000000000000, 'slug': 'fake-slug',}))

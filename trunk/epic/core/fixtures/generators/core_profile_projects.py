@@ -10,7 +10,6 @@ def _create_project1():
                        name='Test Project1',
                        description='Description of Test Project1',
                        is_active=True)
-    
     project1.save()
     
     return project1

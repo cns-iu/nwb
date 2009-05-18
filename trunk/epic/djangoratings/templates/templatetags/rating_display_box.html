@@ -22,27 +22,28 @@
   
   {% if user_rating %}
     {% comment %}
-      If the user rating is provided then render the star box.
+    If the user rating is provided then render the star box.
     {% endcomment %}
+    
     {% comment %}
-      Turned off the "User Vote Display" 
+    Turned off the "User Vote Display" 
+    
+    <br />
+    
+    <span class="user-voting">
+      Your Vote: <span id="user-vote-value">{{ user_rating }}</span> 
       
-      <br />
-      
-      <span class="user-voting">
-        Your Vote: <span id="user-vote-value">{{ user_rating }}</span> 
-        
-        <span class="inline-rating">
-          <ul class="star-rating  small-star" id="{{ item_id }}-user-vote">
-            <li class="current-rating" style="width:0%;">0 Star</li>
-            <li><a href="" title="Very Bad" class="one-star">1</a></li>
-            <li><a href="" title="Bad" class="two-stars">2</a></li>
-            <li><a href="" title="Average" class="three-stars">3</a></li>
-            <li><a href="" title="Good" class="four-stars">4</a></li>
-            <li><a href="" title="Very Good" class="five-stars">5</a></li>
-          </ul>
-        </span>
+      <span class="inline-rating">
+        <ul class="star-rating  small-star" id="{{ item_id }}-user-vote">
+          <li class="current-rating" style="width:0%;">0 Star</li>
+          <li><a href="" title="Very Bad" class="one-star">1</a></li>
+          <li><a href="" title="Bad" class="two-stars">2</a></li>
+          <li><a href="" title="Average" class="three-stars">3</a></li>
+          <li><a href="" title="Good" class="four-stars">4</a></li>
+          <li><a href="" title="Very Good" class="five-stars">5</a></li>
+        </ul>
       </span>
+    </span>
     {% endcomment %}
     
     <script>

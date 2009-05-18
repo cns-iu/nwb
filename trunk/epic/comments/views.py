@@ -10,6 +10,7 @@ from epic.comments.forms import PostCommentForm
 from epic.comments.models import Comment
 from epic.core.models import Item
 
+
 @login_required
 def post_comment(request, item_id, slug):
     user = request.user
@@ -21,7 +22,7 @@ def post_comment(request, item_id, slug):
         if form.is_valid():
             comment_contents = form.cleaned_data['comment']
             Comment.objects.create(posting_user=user,
-                              parent_item=item,
-                              contents=comment_contents)
+                                   parent_item=item,
+                                   contents=comment_contents)
             
     return HttpResponseRedirect(item.specific.get_absolute_url())

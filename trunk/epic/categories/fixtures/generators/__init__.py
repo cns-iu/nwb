@@ -8,9 +8,8 @@ from epic.core.models import Profile
 ############
 
 def _create_bob_user():
-    bob_user = User.objects.create_user(username='bob',
-        email='bob@bob.com',
-        password='bob')
+    bob_user = User.objects.create_user(
+        username='bob', email='bob@bob.com', password='bob')
     
     bob_user.save()
     
@@ -28,7 +27,6 @@ def _create_bob():
     bob_profile = _create_bob_profile(bob_user)
     
     return bob_user
-
 
 ######################################
 # Generate the actual fixtures here. #

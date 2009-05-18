@@ -1,6 +1,8 @@
 from django.contrib.auth.models import User
 from django.core.urlresolvers import reverse
+
 from epic.core.test import CustomTestCase
+
 
 class ViewBasicUserProfileTestCase(CustomTestCase):
     fixtures = ['core_just_users']
@@ -9,11 +11,8 @@ class ViewBasicUserProfileTestCase(CustomTestCase):
         self.bob = User.objects.get(username='bob')
         self.bob2 = User.objects.get(username='bob2')
         self.bob_profile_url = reverse('epic.core.views.view_profile',
-                                       kwargs={'user_id':self.bob.id})
+                                       kwargs={'user_id': self.bob.id})
         self.login_url = reverse('django.contrib.auth.views.login')
-        
-    def tearDown(self):
-        pass
     
     def testViewProfileNotLoggedIn(self):
         response = self.client.get(self.bob_profile_url)

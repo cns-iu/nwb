@@ -21,7 +21,8 @@ class Command(BaseCommand):
         applications = self._generate_applications(application_labels)
         self._generate_fixtures_from_applications(applications)
     
-    #TODO: Add comment that describes our strategy for finding applications (if user specified, then X, otherwise Y)
+    # TODO: Add comment that describes our strategy for finding applications
+    # (if user specified, then X, otherwise Y)
     # Our notion of an Application is any directory that has a subdirectory
     # called fixtures that has a subdirectory called generators.
     # If the user specified a list of application labels, we use that as the

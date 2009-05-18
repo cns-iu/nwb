@@ -7,6 +7,7 @@ from epic.datarequests.models import DataRequest
 from epic.datasets.models import DataSet
 from epic.projects.models import Project
 
+
 class ItemDescriptionMarkupTestCase(CustomTestCase):
     fixtures = ['core_markup_items']
     
@@ -14,7 +15,6 @@ class ItemDescriptionMarkupTestCase(CustomTestCase):
         self.datarequest1 = DataRequest.objects.all()[0]
         self.dataset1 = DataSet.objects.all()[0]
         self.project1 = Project.objects.all()[0]
-        
         
         view_datarequest1_url_kwargs = {
             'item_id': self.datarequest1.id,
