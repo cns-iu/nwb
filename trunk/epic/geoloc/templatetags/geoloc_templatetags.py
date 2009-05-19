@@ -34,7 +34,7 @@ def location_display_map(item_id=None):
     for location in all_locations_list:
         if location.datasets.all():
             location_list.append(location)
-    return {'location_list': location_list,  'GOOGLE_KEY' : settings.GOOGLE_KEY}
+    return {'location_list': location_list,  'GOOGLE_KEY' : 'ABQIAAAAXvJKaXXv-aFZ9QFPDtLf2RRYbDcT7AU1sqlHKk7y1uR7IcGNVBRPMeVhk8y3ZgqAMdZmpULqIktKzw'}
 
 @register.inclusion_tag('templatetags/location_edit_map.html')
 def location_edit_map(geoloc_add_formset, geoloc_remove_formset):
