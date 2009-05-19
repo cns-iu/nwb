@@ -247,7 +247,8 @@ h4 {
 	font-weight: bold; font-size:55%;
 	text-transform: uppercase; display:inline;
 }
-
+.category a, .category a:hover, .category a:visited {font-weight: bold; 
+	text-transform: uppercase; display:inline;}
 
 
 .highlight {
@@ -266,6 +267,11 @@ h4 {
 	width: 420px;
 		
 }
+
+.geoindex {font-weight: bold;
+	color: #FFFFFF;
+	padding-left: 5px; margin-bottom:10px;}
+
 
 
 #leftsidebarindex {left:-15em;}
@@ -497,15 +503,20 @@ p {
 	margin-bottom:10px;
 }
 
-.requests h2, {
+.requests h2, .requests h2 a, .requests h2 a:visited {
 	background: none;
-display:block;
-	font-size: 90%;
-	font-weight: bold; margin:0; padding:0;
+display:inline;
+	font-size: 90%;font-weight: bold;
+	 margin:0; padding:0;
 }
 
 
-
+.requestspage h2 a, .requestspage h2 a:visited  {
+	background:none; 
+	display: block;
+margin-bottom:10px; margin-top:5px;
+	font-weight: bold;
+}
 .requestspage {
 	background-color: #fefdd2;
 	border-bottom-color: #CCCCCC;
@@ -515,12 +526,7 @@ display:block;
 	padding:5px;
 }
 
-.requestspage h2 a {
-	background:none; 
-	display: block;
-margin-bottom:10px; margin-top:5px;
-	font-weight: bold;
-}
+
 
 .requests p {
 	display: inline;
@@ -682,13 +688,13 @@ li.tagbox-base {
 #username {
 	float: left;
 	margin-top: 50px;
-	margin-left: 75px;
+	margin-left: 65px;
 }
 
 #password {
 	float: right;
 	margin-top: 50px;
-	margin-right: 75px;
+	margin-right: 65px;
 }
 @charset "UTF-8";
 /* CSS Document */
@@ -800,7 +806,7 @@ width:26.1em;  padding:0; margin-left:5px;
  
 
 
-#nav a {
+#nav a, #nav a:visited {
 	display: block;
 	padding-top:10px;
 	height:40px;
@@ -1016,11 +1022,12 @@ a img {border:none;}
 	background-color: #fefdd2; padding:5px;
 }
 
-.requestspage h2 {
+.requestspage h2, .requestspage h2 a, .requestspage h2 a:hover, .requestspage h2 a:visited {
 	font-size:90%;
 	display:inline;
 	font-weight: bold;  background:none; 
 }
+
 
 .requests p {display:inline; }
 
