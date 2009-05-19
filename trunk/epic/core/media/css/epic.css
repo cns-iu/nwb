@@ -49,13 +49,23 @@ position:relative;
 	width: 12em;
 }
 
+#searchbox {
+
+	
+	font-size: 85%;
+position:relative;
+	padding-bottom:10px; 
+	
+
+}
+
 #tagbox {
 	background-color: #ececec; 
 	border: 1px solid #09bac4;
 	font-size: 85%;
 position:relative;
 	padding: 5px;
-	margin-top:20px; 
+	margin-top:10px; 
 	width: 12em;
 }
 
@@ -219,6 +229,13 @@ h2 {
 	padding-bottom:3px;
 	color: #666666;
 }
+
+h2 a, h2 a:hover, h2 a:visited
+	{font-size: 100%;
+	display: block;
+	margin: 0;
+	padding-bottom:3px;}
+
 h2.project a {font-weight: bold;}
 
 
@@ -476,7 +493,7 @@ p {
 	background-color: #FFFFFF;
 	margin-bottom: 10px;
 }
-.recent_dataset h2 {
+.recent_dataset h2, .recent_dataset h2 a, .recent_dataset h2 a:hover, .recent_dataset h2 a:visited  {
 	background: none;
 	display: inline;
 	font-size: 90%;
