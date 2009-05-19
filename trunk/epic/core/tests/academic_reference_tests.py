@@ -89,7 +89,6 @@ class AcademicReferenceTestCase(CustomTestCase):
         }
         
         response = self.client.post(self.create_dataset_url, post_data)
-
         dataset = DataSet.objects.get(creator=self.bob,
                                       name=post_data['name'])
         

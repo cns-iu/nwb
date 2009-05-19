@@ -34,9 +34,13 @@ from django.contrib.auth.models import User
 from django.db import models
 from django.template.defaultfilters import slugify
 
+from epic.categories.constants import NO_CATEGORY
 from epic.categories.models import Category
 from epic.core.util.postmarkup import PostMarkup
 
+
+def _default_category():
+    return Category.objects.get(name=NO_CATEGORY)
 
 class Item(models.Model):
     MAX_ITEM_NAME_LENGTH = 256
@@ -55,7 +59,7 @@ class Item(models.Model):
     rendered_description = models.TextField(blank=True, null=True)
     tagless_description = models.TextField(blank=True, null=True)
     
-    category = models.ForeignKey(Category, blank=True, null=True)
+    category = models.ForeignKey(Category, default=_default_category)
     
     slug = models.SlugField()
     created_at = models.DateTimeField(auto_now_add=True, db_index=True)
@@ -91,6 +95,10 @@ class Item(models.Model):
         self.rendered_description = self._render_description()
         self.tagless_description = self._strip_tags_from_description()
         self.slug = slugify(self.name)
+        
+        if not self.category:
+            self.category = Category.objects.get(name=NO_CATEGORY)
+        
         super(Item, self).save()
         
     def _render_description(self):

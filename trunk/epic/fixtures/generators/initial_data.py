@@ -1,6 +1,15 @@
 from django.contrib.auth.models import User
 
+from epic.categories.constants import NO_CATEGORY
+from epic.categories.models import Category
 from epic.core.models import Profile
+
+
+# DO NOT REMOVE THIS.  IT WILL KILL THE SITE!
+no_category = Category.objects.create(
+    name=NO_CATEGORY,
+    description='Items that do not fall under any other category')
+no_category.save()
 
 
 User.objects.create_superuser('super', 'super@gmail.com', 'super')
@@ -45,8 +54,8 @@ elisha_profile = Profile.objects.for_user(user=elisha)
 micah = User.objects.create_user(username='micah',
                                  email='micah@gmail.com',
                                  password='micah')
-micah.first_name = 'micah'
-micah.last_name = 'micah'
+micah.first_name = 'Micah'
+micah.last_name = 'Linnemeier'
 micah.save()
 
 micah_profile = Profile.objects.for_user(user=micah)

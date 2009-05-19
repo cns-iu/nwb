@@ -1,9 +1,11 @@
 from django.contrib.auth.models import User
-from datarequests.models import DataRequest
-from datasets.models import DataSet
-from core.models import Profile
-from tags.models import Tagging
-from geoloc.models import GeoLoc
+
+from epic.categories.models import Category
+from epic.core.models import Profile
+from epic.datarequests.models import DataRequest
+from epic.datasets.models import DataSet
+from epic.geoloc.models import GeoLoc
+from epic.tags.models import Tagging
 
 
 david = User.objects.get(username='david')

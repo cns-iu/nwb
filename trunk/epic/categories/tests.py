@@ -1,7 +1,9 @@
 from django.core.urlresolvers import reverse
 from django.contrib.auth.models import User
 
+from epic.categories.constants import NO_CATEGORY
 from epic.categories.models import Category
+from epic.categories.models import CannotDeleteNoCategoryException
 from epic.core.test import CustomTestCase
 from epic.core.util.view_utils import *
 from epic.datarequests.models import DataRequest
@@ -190,8 +192,9 @@ class DeleteCategoryTestCase(CustomTestCase):
         
     def testDeleting(self):
         # I've overwritten the delete method so make sure that
-        # deleting a category wont' delete the dataset attached to it
+        # deleting a category won't delete the dataset attached to it.
         self.category.delete()
+        
         try:
             dataset = DataSet.objects.get(
                 name=self.dataset_name,
@@ -199,3 +202,14 @@ class DeleteCategoryTestCase(CustomTestCase):
                 creator=self.bob)
         except DataSet.DoesNotExist:
             self.fail()
+    
+    def testDeletingNoCategory(self):
+        no_category = Category.objects.get(name=NO_CATEGORY)
+        test_passed = False
+        
+        try:
+            no_category.delete()
+        except CannotDeleteNoCategoryException:
+            test_passed = True
+        
+        self.failIfNot(test_passed)

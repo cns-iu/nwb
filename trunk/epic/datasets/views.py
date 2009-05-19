@@ -89,7 +89,6 @@ def create_dataset(request):
         
         if form.is_valid() and ref_formset.is_valid() \
                 and author_formset.is_valid():
-            
             new_dataset = _save_new_dataset(form, request.user)
             _save_previous_version(form, new_dataset)
             _save_tags(form, new_dataset, request.user)

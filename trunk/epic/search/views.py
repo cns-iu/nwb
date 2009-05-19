@@ -65,7 +65,7 @@ def search(request):
                 projects_from_search = \
                     get_specifics_from_item_ids(Project, item_ids)
                 projects = projects_from_search
-                print scores.keys()
+                
                 _apply_scores_to_results(projects, scores)
 #                projects_from_datasets = \
 #                    get_projects_containing_datasets(datasets)

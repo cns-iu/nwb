@@ -3,6 +3,7 @@ from django.contrib.auth.models import User
 from django.forms import ModelForm
 from django.forms.util import ErrorList
 
+from epic.categories.constants import NO_CATEGORY
 from epic.categories.models import Category
 from epic.core.models import Item
 from epic.core.models import Profile
@@ -57,6 +58,13 @@ class ShortAuthenticationForm(forms.Form):
 class CategoryChoiceField(forms.ModelChoiceField):
     def __init__(self, *args, **kwargs):
         super(CategoryChoiceField, self).__init__(
-            queryset=Category.objects.all().order_by('name'),
-            empty_label='(No Category)',
-            required=False)
+            empty_label=None,
+            queryset=Category.objects.all().order_by('name'))
+    
+    def clean(self, value):
+        if value is None:
+            no_category = Category.objects.get(name=NO_CATEGORY)
+            
+            return super(CategoryChoiceField, self).clean(no_category.id)
+        
+        return super(CategoryChoiceField, self).clean(value)
