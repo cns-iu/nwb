@@ -11,17 +11,19 @@
     {% endblock %}
   </div>
   
-  <div id="browsecontent">
-    {% block browsecontent %}
-      <div id="homecolumn2">
-        {% block homecolumn2 %}
-        {% endblock %}
-      </div>
-      
-      <div id="homecolumn3">
-        {% block homecolumn3 %}
-        {% endblock %}
-      </div>
-    {% endblock %}
+  <div id="homebox">
+    <div id="browsecontent">
+      {% block browsecontent %}
+        <div id="homecolumn2">
+          {% block homecolumn2 %}
+          {% endblock %}
+        </div>
+        
+        <div id="homecolumn3">
+          {% block homecolumn3 %}
+          {% endblock %}
+        </div>
+      {% endblock %}
+    </div>
   </div>
 {% endblock %}

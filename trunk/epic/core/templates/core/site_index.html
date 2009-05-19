@@ -12,42 +12,28 @@
 {% endblock %}
 
 {% block homecolumn2 %}
-  <h1> The EpiC Marketplace</h1>
-  <p>Browse, request, and share epidemics data.</p>
+  <img src="/core_media/images/epic-index_09.jpg" border="0" usemap="#Map" />
   
-  <p>
-    <strong>
-      <a href="{% url core.views.about %}">
-        Learn more
-      </a>
-    </strong> about the Epic Project.
-  </p>
-  <br />
+  <map name="Map" id="Map">
+    <area shape="rect" coords="30,119,173,262" href="{% url core.views.browse %}" />
+    <area shape="rect" coords="191,120,333,263" href="{% url datasets.views.create_dataset %}" />
+    <area shape="rect" coords="357,118,511,263" href="{% url datarequests.views.new_datarequest %}" />
+    <area shape="rect" coords="5,5,505,94" href="{% url core.views.about %}" />
+  </map>
   
-  <h1>
-    <a href="{% url core.views.browse %}">
-      Browse
-    </a>
-  </h1>
-  <p>
-    View datasets and requests by tag; rate and comment
-    <br />
-    <br />
-  </p>
-  
-  <h1>
-    <a href="{% url datarequests.views.view_datarequests %}">Request</a>
-  </h1>
-  <p>Make a request, see recent requests, and fulfulled requests<p>
-  
-  <h1>
-    <a href="{% url datasets.views.create_dataset %}">Upload</a>
-  </h1>
-  <p>Upload your dataset</p>
-  
-  <br />
-  
-  {% location_display_map %}
+  <table width="525" height="387" border="0" cellpadding="5" cellspacing="0" background="/core_media/images/epic-index_18.jpg">
+    <tr>
+      <td valign="top">
+        <span class="geoindex">
+          Location of datasets
+          
+          <center>
+            {% location_display_map %}
+          </center>
+        </span>
+      </td>
+    </tr>
+  </table>
 {% endblock %}
   
 {% block homecolumn3 %}
