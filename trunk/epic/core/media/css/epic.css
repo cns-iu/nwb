@@ -234,7 +234,7 @@ h2 a, h2 a:hover, h2 a:visited
 	{font-size: 100%;
 	display: block;
 	margin: 0;
-	padding-bottom:3px;}
+	padding-bottom:3px; font-weight:bold;}
 
 h2.project a {font-weight: bold;}
 
@@ -823,7 +823,7 @@ width:26.1em;  padding:0; margin-left:5px;
  
 
 
-#nav a, #nav a:visited {
+#nav a, #nav a:visited, #nav a.pageoff  {
 	display: block;
 	padding-top:10px;
 	height:40px;
@@ -852,6 +852,8 @@ width:26.1em;  padding:0; margin-left:5px;
 	text-decoration: none;
 	color: #d13165; background-image:none; 
 }
+
+
 
 #nav li.navfirst  {
 	display: block;

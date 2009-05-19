@@ -29,8 +29,8 @@
   <p><b>Date Joined:</b> {{ profile.user.date_joined|date:"F d, Y - P" }}</p>
   
   {% ifequal profile.user user %}
-    <p><b><a href="{% url core.views.edit_profile %}">Edit Profile</a></b></p>
-	<p><b><a href="{% url core.views.change_password %}">Change Password</a></b></p>
+    <p><a href="{% url core.views.edit_profile %}">Edit Profile</a></p>
+	<p><a href="{% url core.views.change_password %}">Change Password</a></p>
   {% endifequal %}
   
   <hr />
