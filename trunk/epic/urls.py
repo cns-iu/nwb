@@ -20,7 +20,7 @@ urlpatterns = patterns('',
     # reasons later on.
     (r'^media/(?P<path>.*)$',
      'django.views.static.serve',
-     {'document_root': 'uploaded_files/'}),
+     {'document_root': settings.MEDIA_ROOT}),
     (r'^admin/doc/', include('django.contrib.admindocs.urls')),
     (r'^admin/(.*)', admin.site.root),
     (r'^comments/', include('epic.comments.urls')),
