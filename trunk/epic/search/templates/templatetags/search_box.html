@@ -1,0 +1,11 @@
+<div id="searchbox">
+  <form name="search" action="{% url search.views.search %}" method="get">
+    {% if search_string %}
+      <input type="text" name="search_string" value="{{ search_string }}" size="17" />
+    {% else %}
+      <input type="text" name="search_string" size="17" />
+    {% endif %}
+    
+    <input type="image" alt="Search" src="/search_media/images/search_48.jpg" value="Search" />
+  </form>
+</div>

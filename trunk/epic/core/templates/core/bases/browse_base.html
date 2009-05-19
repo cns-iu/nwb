@@ -1,6 +1,7 @@
 {% extends "core/bases/base.html" %}
 
 {% load category_templatetags %}
+{% load search_templatetags %}
 {% load tags_templatetags %}
 
 {% block maincontent %}
@@ -11,6 +12,7 @@
   
   <div id="leftsidebar">
     {% block leftsidebar %}
+      {% search_box %}
       {% categories_box %}
       {% show_tag_cloud %}
     {% endblock %}

@@ -6,16 +6,6 @@
 {% load project_templatetags %}
 
 {% block content %}
-  <form name="search" action="." method="get">
-    {% if search_string %}
-      Search for: <input type="text" name="search_string" value="{{ search_string }}" />
-    {% else %}
-      Search for: <input type="text" name="search_string" />
-    {% endif %}
-    
-    <input type="submit" value="Go!" />
-  </form>
-  
   {% if datasets or projects or datarequests %}
     <h1>Datasets</h1>
     

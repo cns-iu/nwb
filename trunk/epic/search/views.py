@@ -16,8 +16,7 @@ from epic.projects.models import Project
 from epic.projects.util.util import *
 
 
-#SERVELET_URL = 'http://localhost:8182/'
-SERVELET_URL = 'lol!'
+SERVELET_URL = 'http://localhost:8182/'
 
 def search(request):
     # TODO:  TEST THIS!  Test 1 result and test many results
