@@ -36,7 +36,28 @@ body, html {
 	height: 100%;
 }
 
-#leftsidebar {  float:left; left:-15em; margin:0; padding:0; }
+
+#leftsidebar {  float:left; left:15em; margin:0; padding:0; }
+
+#leftsidebarindex {  left:-15em; width:200px; margin:0; padding:0; top:0;}
+
+
+#homebox { margin-left:auto;width:1000px; margin-right:auto}
+
+
+#homecolumn2 { width:600px; margin-left:10px;
+		
+}
+
+#homecolumn3 {
+	background-color: #ececec;
+	border: 1px solid #333333;
+	float: right;
+	font-size: 85%;
+	margin-right: 15px;
+	padding: 5px;
+	width: 165px;
+}
 
 
 #categorybox {
@@ -47,6 +68,15 @@ position:relative;
 	padding: 5px; 
 	
 	width: 12em;
+}
+
+#searchboxindex {
+
+	
+	font-size: 85%;
+
+	
+
 }
 
 #searchbox {
@@ -278,12 +308,7 @@ h4 {
 	padding: 3px;
 }
 
-#homecolumn2 {
-	float: left;
-	margin-left: 20px;
-	width: 420px;
-		
-}
+
 
 .geoindex {font-weight: bold;
 	color: #FFFFFF;
@@ -291,18 +316,9 @@ h4 {
 
 
 
-#leftsidebarindex {left:-15em;}
 
 
-#homecolumn3 {
-	background-color: #ececec;
-	border: 1px solid #333333;
-	float: right;
-	font-size: 85%;
-	margin-right: 15px;
-	padding: 5px;
-	width: 165px;
-}
+
 
 a img {
 	border: none;
@@ -396,7 +412,7 @@ th label {
 	width: 26em; 
 }
 
-#nav a, #nav a:visited  {
+#nav a  {
 	
 	background-color: #ececec;
 
@@ -423,7 +439,7 @@ th label {
 #nav a.pageon {
 	background-color: #FFFFFF;
 	background-image: none; 
-	color: #d13165;
+	color: #d13165;font-weight: bold;
 	text-decoration: none;
 }
 
@@ -804,59 +820,7 @@ html, body {
 }
 
 
-#nav ul {
-	
-	height:30px; 
-width:26.1em;  padding:0; margin-left:5px; 
-	}
-	
-	
-#nav li { 
-	display:inline; width:6em; 
-	float:left;
-	list-style-type:none;
-	font-family: Geneva, Arial, Helvetica, sans-serif;
-	font-size: 108%;
-	 text-align:center; vertical-align:middle; 
- }
- 
- 
 
-
-#nav a, #nav a:visited, #nav a.pageoff  {
-	display: block;
-	padding-top:10px;
-	height:40px;
-	text-decoration: none;
-	color: #999999;
-	border-right-width: 1px;
-	border-right-style: dotted;
-	border-right-color: #666666;
-	border-top-width: 1px;
-	border-top-style: solid;
-	border-top-color: #d13165;
-	background-image: none;
-	background-repeat: repeat-x;
-	background-color: #FFFFFF;
-}
-
-
-#nav a:hover  {
-	background-color: #FFFFFF;
-	text-decoration: none;
-	color: #d13165; background-image:none; 
-}
-
-#nav a.pageon {
-	background-color: #FFFFFF;
-	text-decoration: none;
-	color: #d13165; background-image:none; 
-}
-
-
-
-#nav li.navfirst  {
-	display: block;
 	
 height:45px;
 	text-decoration: none;
@@ -984,9 +948,9 @@ a img {border:none;}
 
 .ratingsbox {
 	height: 50px;
-	padding:5px;
+	padding:5px; 
 	width: 140px; margin-left:auto; margin-right:auto; 
-	padding:5px;
+	margin-bottom:20px;
 	float:right;
 	background-image: url(/core_media/images/ratingsbg_10.jpg);
 	background-repeat: no-repeat;

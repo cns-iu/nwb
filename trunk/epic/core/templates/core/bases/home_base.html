@@ -5,14 +5,7 @@
 {% load tags_templatetags %}
 
 {% block maincontent %}
-  <div id="leftsidebar">
-    {% block leftsidebar %}
-      {% search_box %}
-      {% categories_box %}
-      {% show_tag_cloud %}
-    {% endblock %}
-  </div>
-  
+   
   <div id="homebox">
     <div id="browsecontent">
       {% block browsecontent %}
@@ -25,7 +18,20 @@
           {% block homecolumn3 %}
           {% endblock %}
         </div>
+        
+         
+        
       {% endblock %}
     </div>
+    
+    <div id="leftsidebarindex">
+    {% block leftsidebar %}
+      {% search_box %}
+      {% categories_box %}
+      {% show_tag_cloud %}
+    {% endblock %}
+    
+  </div>
+    
   </div>
 {% endblock %}
