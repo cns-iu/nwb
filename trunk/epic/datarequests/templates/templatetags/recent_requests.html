@@ -13,11 +13,10 @@
   
     <p>{{ datarequest.tagless_description|truncatewords:15 }}</p> <br> 
     
-    
-    {% category_link datarequest %}
-      {% if not use_simple_display %}
-        {% list_item_tags datarequest user %}
-      {% endif %}
+    {% if not use_simple_display %}
+      {% category_link datarequest %}
+      {% list_item_tags datarequest user %}
+    {% endif %}
       
       <div class="comments">
         <a href="{% url datarequests.views.view_datarequest item_id=datarequest.id slug=datarequest.slug %}">
