@@ -3,6 +3,7 @@ from django.forms import ModelForm
 from django.forms.formsets import formset_factory
 
 from epic.core.forms import CategoryChoiceField
+from epic.core.forms import DESCRIPTION_HELP_TEXT
 from epic.core.models import AcademicReference
 from epic.core.models import Author
 from epic.core.models import Item
@@ -16,7 +17,9 @@ class EditDataSetForm(forms.Form):
     name = forms.CharField(max_length=Item.MAX_ITEM_NAME_LENGTH, widget=forms.TextInput(attrs={'size': 50}))
     
     description = forms.CharField(
-        max_length=Item.MAX_ITEM_DESCRIPTION_LENGTH, widget=forms.Textarea())
+        max_length=Item.MAX_ITEM_DESCRIPTION_LENGTH,
+        widget=forms.Textarea(),
+        help_text=DESCRIPTION_HELP_TEXT % 'Datasets')
     
     category = CategoryChoiceField()
     

@@ -55,6 +55,14 @@ class ShortAuthenticationForm(forms.Form):
     username = forms.CharField(label=("Username"), max_length=30, widget=forms.TextInput(attrs={'size': 11}));
     password = forms.CharField(label=("Password"), widget=forms.PasswordInput(attrs={'size': 11}));
 
+DESCRIPTION_HELP_TEXT = '%s descriptions support a limited set of BBCode ' + \
+                        'tags.  The support set of BBCode tags are: ' + \
+                        '<br />[b] ... [/b] to make your text bold ' + \
+                        '<br />[i] ... [/i] to make your text italicized ' + \
+                        '<br />[s] ... [/s] to strike out your text ' + \
+                        '<br />[u] ... [/u] to underline your text ' + \
+                        '<br />[img]URL[/img] to display an image from URL'
+
 class CategoryChoiceField(forms.ModelChoiceField):
     def __init__(self, *args, **kwargs):
         super(CategoryChoiceField, self).__init__(

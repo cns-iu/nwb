@@ -42,7 +42,7 @@
           </td>
           
           <td {% if form.description.help_text %}class="formtips"{% endif %}>
-            {{ form.description.help_text }}
+            {{ form.description.help_text|safe }}
           </td>
         </tr>
         

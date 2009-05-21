@@ -2,6 +2,7 @@ from django import forms
 from django.forms import ModelForm
 
 from epic.core.forms import CategoryChoiceField
+from epic.core.forms import DESCRIPTION_HELP_TEXT
 from epic.core.models import Item
 from epic.datarequests.models import DataRequest
 
@@ -21,9 +22,16 @@ class DataRequestForm(ModelForm):
         'onFocus': 'ClearField(this)',
     }
     
+    # TODO: Include help_text to talk about BBCode. 
+    # This will probably involve displaying the entire DataRequest forms
+    # manually.
     description = forms.CharField(
         max_length=Item.MAX_ITEM_DESCRIPTION_LENGTH,
         widget=forms.Textarea(attrs=description_attrs))
+#    description = forms.CharField(
+#        max_length=Item.MAX_ITEM_DESCRIPTION_LENGTH,
+#        widget=forms.Textarea(attrs=description_attrs),
+#        help_text=DESCRIPTION_HELP_TEXT % 'Data Requests')
     
     category = CategoryChoiceField()
     
