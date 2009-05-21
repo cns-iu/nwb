@@ -19,7 +19,7 @@ class EditDataSetForm(forms.Form):
     description = forms.CharField(
         max_length=Item.MAX_ITEM_DESCRIPTION_LENGTH,
         widget=forms.Textarea(),
-        help_text=DESCRIPTION_HELP_TEXT % 'Datasets')
+        help_text=DESCRIPTION_HELP_TEXT)
     
     category = CategoryChoiceField()
     

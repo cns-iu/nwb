@@ -31,7 +31,7 @@ class DataRequestForm(ModelForm):
 #    description = forms.CharField(
 #        max_length=Item.MAX_ITEM_DESCRIPTION_LENGTH,
 #        widget=forms.Textarea(attrs=description_attrs),
-#        help_text=DESCRIPTION_HELP_TEXT % 'Data Requests')
+#        help_text=DESCRIPTION_HELP_TEXT)
     
     category = CategoryChoiceField()
     

@@ -202,7 +202,7 @@ li.categorybox-base {
 	padding:0
 }
 
-p.datasetfulfill { font-size:77%; background-color:#fefdd2; display:inline; margin-bottom:10px;}
+.datasetfulfill { font-size:77%; background-color:#fefdd2; display:block;  margin-bottom:15px; padding:10px;}
 
 .datainfo li {
 	border-left-color: #999999;
@@ -267,7 +267,7 @@ h2 {
 
 h2 a, h2 a:hover, h2 a:visited
 	{font-size: 100%;
-	display: block;
+	
 	margin: 0;
 	padding-bottom:3px; font-weight:bold;}
 
@@ -549,12 +549,6 @@ display:inline;
 }
 
 
-.requestspage h2 a, .requestspage h2 a:visited  {
-	background:none; 
-	display: block;
-margin-bottom:10px; margin-top:5px;
-	font-weight: bold;
-}
 .requestspage {
 	background-color: #fefdd2;
 	border-bottom-color: #CCCCCC;
@@ -1015,6 +1009,9 @@ a img {border:none;}
 	display:inline;
 	font-weight: bold;  background:none; 
 }
+
+
+
 
 
 .requests p {display:inline; }

@@ -55,12 +55,11 @@ class ShortAuthenticationForm(forms.Form):
     username = forms.CharField(label=("Username"), max_length=30, widget=forms.TextInput(attrs={'size': 11}));
     password = forms.CharField(label=("Password"), widget=forms.PasswordInput(attrs={'size': 11}));
 
-DESCRIPTION_HELP_TEXT = '%s descriptions support a limited set of BBCode ' + \
-                        'tags.  The support set of BBCode tags are: ' + \
-                        '<br />[b] ... [/b] to make your text bold ' + \
-                        '<br />[i] ... [/i] to make your text italicized ' + \
-                        '<br />[s] ... [/s] to strike out your text ' + \
-                        '<br />[u] ... [/u] to underline your text ' + \
+DESCRIPTION_HELP_TEXT = 'Format your text using these tags: ' + \
+                        '<br />[b] ... [/b]  <strong> bold </strong> ' + \
+                        '<br />[i] ... [/i] <i> italicized  </i>' + \
+                        '<br />[s] ... [/s] <strike> strike out </strike> ' + \
+                        '<br />[u] ... [/u] <u> underline </u> ' + \
                         '<br />[img]URL[/img] to display an image from URL'
 
 class CategoryChoiceField(forms.ModelChoiceField):

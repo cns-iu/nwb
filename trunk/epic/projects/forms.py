@@ -20,7 +20,7 @@ class ProjectForm(forms.Form):
 #    description = forms.CharField(
 #        max_length=Item.MAX_ITEM_DESCRIPTION_LENGTH,
 #        widget=forms.Textarea(),
-#        help_text=DESCRIPTION_HELP_TEXT % 'Projects')
+#        help_text=DESCRIPTION_HELP_TEXT)
     category = CategoryChoiceField()
 
 class ProjectDataSetForm(forms.Form):
