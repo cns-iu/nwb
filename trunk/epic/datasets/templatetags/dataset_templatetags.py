@@ -5,10 +5,11 @@ from epic.datasets.models import DataSet
 
 register = template.Library()
 
-@register.inclusion_tag('templatetags/datasets_list.html', takes_context=True)
-def datasets_list(context, datasets):
+@register.inclusion_tag('templatetags/dataset_list.html', takes_context=True)
+def dataset_list(context, datasets):
     user = context['user']
-    return {'datasets':datasets, 'user':user}
+    
+    return {'datasets': datasets, 'user': user}
 
 @register.inclusion_tag('templatetags/dataset_header.html',
                         takes_context=True)

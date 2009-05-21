@@ -11,10 +11,13 @@
   <div class="requests">
     <h2> <a href="{% url datarequests.views.view_datarequest item_id=datarequest.id slug=datarequest.slug %}">{{ datarequest.name }}</a>  -  {% user_title datarequest.creator 'True' %}</h2> 
   
-    <p>{{ datarequest.tagless_description|truncatewords:15 }}</p> <br> 
+    <p>{{ datarequest.tagless_description|truncatewords:15 }}</p> <br>
+    {{ dont_show_categories }}
+    {% if not dont_show_categories %}
+      {% category_link datarequest %}
+    {% endif %} 
     
     {% if not use_simple_display %}
-      {% category_link datarequest %}
       {% list_item_tags datarequest user %}
     {% endif %}
       

@@ -13,7 +13,7 @@
       </h2>
       
       <ul class="datainfo">
-        <li id="first">
+        <li class="first">
           {% user_title datarequest.creator 'True' %}
         </li>
         
@@ -56,11 +56,9 @@
         {% endif %}
       </ul>
       
-      <p>
-        {{ datarequest.tagless_description|truncatewords:50 }}
-      </p>
-      
-       
+      <p>{{ datarequest.tagless_description|truncatewords:50 }}</p>
+      <br />
+      {% category_link datarequest %}
       {% list_item_tags datarequest user %}
       
       <div class="comments">

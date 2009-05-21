@@ -51,7 +51,7 @@ def _create_c_datarequests(social_contagion,
         name='Leishmaniasis', 
         description='Need dataset for the 2004 Leishmaniasis epidemic ' + \
                     'that happened in Afghanistan.',
-        category=demographics,
+        category=infectious_diseases,
         status='C', 
         is_active=True)
 
@@ -69,7 +69,7 @@ def _create_c_datarequests(social_contagion,
         name='Dengue fever', 
         description='Need dataset for the 2004 Dengue fever epidemic ' + \
                     'that happened in Indonesia.',
-        category=demographics,  
+        category=infectious_diseases,  
         status='C', 
         is_active=True)    
 
@@ -103,7 +103,7 @@ def _create_f_datarequests(social_contagion,
         name='Yellow fever', 
         description='Need dataset for the 1878 Yellow Fever epidemic ' + \
                     'that happened in Memphis, New Orleans.',
-        category=demographics, 
+        category=infectious_diseases, 
         status='F', 
         is_active=True)
     
@@ -112,7 +112,7 @@ def _create_f_datarequests(social_contagion,
         name='Cholera', 
         description='Need dataset for the 1849 Cholera epidemic ' + \
                     'that happened in New York.',
-        category=social_contagion, 
+        category=infectious_diseases, 
         status='F',
         is_active=True)
     
@@ -139,7 +139,7 @@ def _create_f_datarequests(social_contagion,
         name='Typhus', 
         description='Need dataset for the 1816 - 1819 Typhus epidemic ' + \
                     'that happened in Ireland.',
-        category=social_contagion, 
+        category=infectious_diseases, 
         status='F', 
         is_active=True) 
 
@@ -164,7 +164,7 @@ def _create_u_datarequests(social_contagion,
         name='Plague Riot', 
         description='Need dataset for the 1771 Plague Riot epidemic that ' + \
                     'happened in Moscow possibly caused by bubonic plague.',
-        category=demographics, 
+        category=infectious_diseases, 
         status='U',
         is_active=True)
     
@@ -182,7 +182,7 @@ def _create_u_datarequests(social_contagion,
         name='Bilious disorder', 
         description='Need dataset for the 1783 Bilious disorder ' + \
                     'epidemic that happened in Dover, Delaware.',
-        category=demographics, 
+        category=infectious_diseases, 
         status='U',
         is_active=True)
     
@@ -191,7 +191,7 @@ def _create_u_datarequests(social_contagion,
         name='Chikungunya outbreaks in India', 
         description='Need dataset for the 2006 Chikungunya outbreaks ' + \
                     'that happened in India.',
-         category=demographics,
+         category=infectious_diseases,
          status='U',
          is_active=True)
 
@@ -282,7 +282,7 @@ def _create_datasets(social_contagion,
                     'alone. According to the World Health Organization, ' + \
                     'the pandemic was considered active until 1959, when ' + \
                     'worldwide casualties dropped to 200 per year.',
-        category=social_contagion,
+        category=infectious_diseases,
         is_active=True)
     _tag_dataset4(dataset4)
     _geolocate_dataset4(dataset4)
@@ -560,7 +560,7 @@ def _create_non_empty_projects(social_contagion,
         creator=russell,
         name='HIV and You',
         description='HIV and You %s' % PROJECT_DESCRIPTION,
-        category=social_contagion,
+        category=infectious_diseases,
         is_active=True)
     _add_dataset_to_project(project1, 'HIV/AIDS')
     project1.save()

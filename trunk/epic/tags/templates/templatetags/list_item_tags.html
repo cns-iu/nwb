@@ -35,6 +35,8 @@
           </li>
         {% endif %}
       {% endfor %}
+    {% else %}
+      <li class="lasttag">No Tags</li>
     {% endif %}
 </ul>
   {% if user.is_authenticated and show_addtag %}
