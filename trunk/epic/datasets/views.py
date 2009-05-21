@@ -222,12 +222,14 @@ def _add_uploaded_files(dataset, uploaded_files):
     else:
         raise NoReadMeException
 
+VALID_README_FILENAMES = ('readme', 'metadata')
+
 def is_valid_readme_filename(filename):
     
     pattern = re.compile(r'^(.*/)?(?P<filename>.*?)(\.txt)?$')
     match = re.match(pattern, filename.lower())
-
-    if match.group('filename') == 'readme':
+    
+    if match.group('filename').lower() in VALID_README_FILENAMES:
         return True
     else:
         return False
