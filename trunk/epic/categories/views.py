@@ -77,7 +77,7 @@ def _get_datasets_for_category(category):
     return datasets
 
 def _get_projects_for_category(category):
-    projects = Project.objects.active().filter(category=category)
+    projects = Project.objects.active().filter(category=category).distinct()
     
     return projects
 

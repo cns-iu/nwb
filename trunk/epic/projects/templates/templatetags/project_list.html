@@ -1,3 +1,4 @@
+{% load category_templatetags %}
 {% load project_templatetags %}
 
 {% if projects %}
@@ -6,7 +7,7 @@
       {% project_header project show_delete_buttons %}
       
       <p class="projectinfo">{{ project.tagless_description|truncatewords:50 }}</p>
-      
+      {% category_link project %}
       <div class="comments">
         <a href="{{ project.get_absolute_url }}">{{ project.comments.all|length }} comment{{ project.comments.all|length|pluralize }}.</a>
       </div>

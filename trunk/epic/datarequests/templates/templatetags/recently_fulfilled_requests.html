@@ -3,9 +3,15 @@
   
   {% for datarequest in datarequests %}
     <h2>
-      <a href="{% url datasets.views.view_dataset item_id=datarequest.fulfilling_item.id slug=datarequest.fulfilling_item.slug %}">
-        {{ datarequest.name|escape }}
-      </a>
+      {% if datarequest.fulfilling_item %}
+        <a href="{% url datasets.views.view_dataset item_id=datarequest.fulfilling_item.id slug=datarequest.fulfilling_item.slug %}">
+          {{ datarequest.name|escape }}
+        </a>
+      {% else %}
+        <a href="{% url datarequests.views.view_datarequest item_id=datarequest.id slug=datarequest.slug %}">
+          {{ datarequest.name|escape }}
+        </a>
+      {% endif %}
     </h2>
     
     <p>{{ datarequest.tagless_description|truncatewords:50 }}</p>
