@@ -95,53 +95,50 @@ def _create_c_datarequests(social_contagion,
 # Create the Fulfilled DataRequests. #
 ######################################
 
-def _create_f_datarequests(social_contagion,
-                           infectious_diseases,
-                           demographics):
-    fulfilled_datarequest1 = DataRequest.objects.create(
-        creator=jim, 
-        name='Yellow fever', 
-        description='Need dataset for the 1878 Yellow Fever epidemic ' + \
-                    'that happened in Memphis, New Orleans.',
-        category=infectious_diseases, 
-        status='F', 
-        is_active=True)
-    
-    fulfilled_datarequest2 = DataRequest.objects.create(
-        creator=katy, 
-        name='Cholera', 
-        description='Need dataset for the 1849 Cholera epidemic ' + \
-                    'that happened in New York.',
-        category=infectious_diseases, 
+def _create_fulfilled_datarequest(
+        creator, name, description, category, fulfilling_dataset_name):
+    fulfilling_dataset = DataSet.objects.get(name=fulfilling_dataset_name)
+    fulfilled_datarequest = DataRequest.objects.create(
+        creator=creator,
+        name=name,
+        description=description,
+        category=category,
+        fulfilling_item=fulfilling_dataset,
         status='F',
         is_active=True)
     
-    fulfilled_datarequest3 = DataRequest.objects.create(
-        creator=elisha, 
-        name='Yellow fever', 
-        description='Need dataset for the 1878 Yellow Fever epidemic ' + \
-                    'that happened in Memphis, New Orleans.',
-        category=infectious_diseases, 
-        status='F', 
-        is_active=True)
+    return fulfilled_datarequest
+
+def _create_f_datarequests(social_contagion,
+                           infectious_diseases,
+                           demographics):
+    fulfilled_datarequest1 = _create_fulfilled_datarequest(
+        creator=jim, 
+        name='HIV/AIDS', 
+        description='Need data on HIV.',
+        category=infectious_diseases,
+        fulfilling_dataset_name='HIV/AIDS')
     
-    fulfilled_datarequest4 = DataRequest.objects.create(
+    fulfilled_datarequest2 = _create_fulfilled_datarequest(
+        creator=katy, 
+        name='Flu', 
+        description='Need data on all strains of the flu virus.',
+        category=infectious_diseases,
+        fulfilling_dataset_name='Spanish Flu')
+    
+    fulfilled_datarequest3 = _create_fulfilled_datarequest(
+        creator=elisha, 
+        name='Infant diseases', 
+        description='Need data on all types of infant diseases.',
+        category=infectious_diseases, 
+        fulfilling_dataset_name='Poliomyelitis')
+    
+    fulfilled_datarequest4 = _create_fulfilled_datarequest(
         creator=micah, 
-        name='Great Plague of Milan', 
-        description='Need dataset for the 1630 Great Plague of Milan ' + \
-                    'that happened in Milan, Italy.',
+        name='Historical Chinese Pandemics', 
+        description='Need data on pandemics in Chinese history',
         category=infectious_diseases, 
-        status='F', 
-        is_active=True)
-        
-    fulfilled_datarequest5 = DataRequest.objects.create(
-        creator=patrick, 
-        name='Typhus', 
-        description='Need dataset for the 1816 - 1819 Typhus epidemic ' + \
-                    'that happened in Ireland.',
-        category=infectious_diseases, 
-        status='F', 
-        is_active=True) 
+        fulfilling_dataset_name='Third Pandemic')
 
 ########################################
 # Create the unfulfilled DataRequests. #
@@ -602,9 +599,11 @@ def _create_projects(*categories):
 ######################################
 
 categories = _create_categories()
+
+_create_datasets(*categories)
+
 _create_c_datarequests(*categories)
 _create_f_datarequests(*categories)
 _create_u_datarequests(*categories)
 
-_create_datasets(*categories)
 _create_projects(*categories)
