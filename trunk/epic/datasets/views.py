@@ -661,6 +661,13 @@ def _get_geolocs_from_formset(formset, key='add_location'):
             geolocs.append(geoloc)
     return geolocs
 
+# TODO: Rename this and move it to core utils?
+def _safe(string):
+    decoded_string = string.decode('ascii', 'ignore')
+    ascii_string = decoded_string.encode('ascii')
+    
+    return ascii_string
+
 @login_required
 def download_all_files(request, item_id, slug):
     dataset = DataSet.objects.get(pk=item_id)
@@ -673,7 +680,7 @@ def download_all_files(request, item_id, slug):
         
         for file in dataset.files.all():
             file.file_contents.open('r')
-            archive.writestr(file.get_short_name(), file.file_contents.read())
+            archive.writestr(_safe(file.get_short_name()), file.file_contents.read())
             file.file_contents.close()
             
         archive.close()
