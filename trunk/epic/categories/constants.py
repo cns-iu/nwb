@@ -1,1 +1,1 @@
-NO_CATEGORY = '(No Category)'
+NO_CATEGORY = 'Uncategorized'
