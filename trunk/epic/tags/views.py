@@ -142,13 +142,15 @@ def add_tags_and_return_successful_tag_names(request):
     return HttpResponse(json, mimetype='application/json')
 
 def _get_datasets_for_tags(tags):
-    datasets = DataSet.objects.filter(is_active=True).\
-                               filter(tagging__in=tags)
+    datasets = DataSet.objects.filter(is_active=True). \
+                               filter(tagging__in=tags). \
+                               order_by('-created_at')
     
     return datasets
 
 def _get_datarequests_for_tags(tags):
-    datarequests = DataRequest.objects.filter(is_active=True).\
-                                      filter(tagging__in=tags)
+    datarequests = DataRequest.objects.filter(is_active=True). \
+                                      filter(tagging__in=tags). \
+                                      order_by('-created_at')
     
     return datarequests

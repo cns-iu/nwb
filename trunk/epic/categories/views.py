@@ -28,7 +28,8 @@ def view_items_for_category(request, category_id):
     
     projects_from_datasets = get_projects_containing_datasets(datasets)
     projects_from_category = _get_projects_for_category(category)
-    projects = projects_from_datasets | projects_from_category
+    projects = (projects_from_datasets | projects_from_category). \
+               order_by('-created_at')
     
     datarequests = _get_datarequests_for_category(category)
     
@@ -72,16 +73,23 @@ def view_datarequests_for_category(request, category_id):
                                context_instance=RequestContext(request))
 
 def _get_datasets_for_category(category):
-    datasets = DataSet.objects.active().filter(category=category)
+    datasets = DataSet.objects.active(). \
+                               filter(category=category). \
+                               order_by('-created_at')
     
     return datasets
 
 def _get_projects_for_category(category):
-    projects = Project.objects.active().filter(category=category).distinct()
+    projects = Project.objects.active(). \
+                               filter(category=category). \
+                               order_by('-created_at'). \
+                               distinct()
     
     return projects
 
 def _get_datarequests_for_category(category):
-    datarequests = DataRequest.objects.active().filter(category=category)
+    datarequests = DataRequest.objects.active(). \
+                                       filter(category=category). \
+                                       order_by('-created_at')
     
     return datarequests

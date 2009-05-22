@@ -14,7 +14,11 @@
         <tr>
           <td>
             <a href="{% url datarequests.views.fulfill_datarequest item_id=request.id slug=request.slug fulfilling_item_id=item.id %}">
-              <img src="/core_media/images/select-button_44.jpg"> 
+              Select
+              {% comment %}
+              {# TODO: Upload this image! #}
+              <img src="/core_media/images/select-button_44.jpg">
+              {% endcomment %} 
             </a>
           </td>
           <td>
