@@ -5,7 +5,7 @@
 {% block content %}
   <h3>Edit {{ dataset.name }}:</h3>
   
-  <form action="{% url datasets.views.edit_dataset item_id=dataset.id %}" method="POST">
+  <form action="{% url datasets.views.edit_dataset item_id=dataset.id %}" method="POST" id="form">
     <table class="edit_dataset_form">
       <thead style="color: #FFFFFF; background-color: #D13165; font-weight: bold;">
         <tr>

@@ -17,7 +17,7 @@
 {% block content %}
   <h1>Upload Your Data</h1>
   
-  <form enctype="multipart/form-data" action="{% url datasets.views.create_dataset %}" method="POST">
+  <form enctype="multipart/form-data" action="{% url datasets.views.create_dataset %}" name = "form" method="POST">
     <table class="upload_dataset_form">
       <thead style="color: #FFFFFF; background-color: #D13165; font-weight: bold;">
         <tr>
@@ -195,6 +195,13 @@
       </tbody>
     </table>
   </form>
+  
+  <script type="text/javascript">
+/*$("form:first").submit(function() {
+  //return false;
+  return true;
+});*/
+  </script>
   
   <script type="text/javascript" src="/core_media/javascript/add_more_forms_to_formset.js"></script>
   
