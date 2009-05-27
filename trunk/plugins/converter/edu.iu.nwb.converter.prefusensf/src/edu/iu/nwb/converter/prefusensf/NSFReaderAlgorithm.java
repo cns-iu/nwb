@@ -166,7 +166,7 @@ public class NSFReaderAlgorithm implements Algorithm {
 	}
 	
 	private String join(String[] tokens, String separator) {
-		StringBuilder joinedTokens = new StringBuilder();
+		StringBuffer joinedTokens = new StringBuffer();
 		for (int i = 0; i < tokens.length; i++) {
 			joinedTokens.append(tokens[i]);
 			//add separator to end of all but last token

@@ -239,7 +239,7 @@ public class ISICitationExtractionPreparer {
 	}
 
 	private float calculateNameSimilarity(String jn, String cjn) {
-		StringBuilder log = new StringBuilder();
+		StringBuffer log = new StringBuffer();
 		log.append("Calcuating '" + jn + "' and '" + cjn + "'.\r\n");
 		String whitespace = "\\s";
 		String[] jnWords = trimAfterEmpties(jn.split(whitespace));
@@ -275,7 +275,7 @@ public class ISICitationExtractionPreparer {
 	private static final String ALL_NUMBERS = "^[0-9]+$";
 
 	//TODO: maybe expose some of these through preferences.
-	private float calculateWordSimilarity(String word1, String word2, StringBuilder log) {
+	private float calculateWordSimilarity(String word1, String word2, StringBuffer log) {
 		// TODO: This needs to be refactored, a.k.a this code is horrible and I know it.
 		log.append("  comparing '" + word1 + "' with '" + word2 + "'\r\n");
 		if (word1 == null && word2 == null) {

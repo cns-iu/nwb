@@ -44,7 +44,7 @@ public class BibtexValueFormatter {
 	}
 	
 	private String formatFieldValue(BibtexMultipleValues value) {
-		StringBuilder parsedValue = new StringBuilder();
+		StringBuffer parsedValue = new StringBuffer();
 		List values = value.getValues();
 		for (Iterator valuesIt = values.iterator(); valuesIt.hasNext();) {
 			parsedValue.append(formatFieldValue((BibtexAbstractValue) valuesIt.next()));

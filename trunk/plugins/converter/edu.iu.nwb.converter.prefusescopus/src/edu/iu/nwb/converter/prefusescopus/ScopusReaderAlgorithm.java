@@ -153,7 +153,7 @@ public class ScopusReaderAlgorithm implements Algorithm {
     private static final String PAGE_END_COLUMN_NAME = "Page end";
     
    private String createSelfReference(Tuple isiRow) {
-	   StringBuilder selfReference = new StringBuilder();
+	   StringBuffer selfReference = new StringBuffer();
 	   try {
 		   String authors = extractAuthors(isiRow);
 		   if (authors == null) {printNoAuthorColumnWarning(); return "";}

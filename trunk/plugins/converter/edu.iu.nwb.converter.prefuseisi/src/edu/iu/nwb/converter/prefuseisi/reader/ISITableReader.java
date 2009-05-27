@@ -160,7 +160,7 @@ public class ISITableReader {
 			TableData tableData,
 			String appendString,
 			String separatorString) throws IOException {
-		StringBuilder stringSoFar = new StringBuilder();
+		StringBuffer stringSoFar = new StringBuffer();
 
 		currentLine = removeTag(currentLine);
 		
@@ -181,7 +181,7 @@ public class ISITableReader {
 		String allTagDataString = stringSoFar.toString();
 		
 		if (separatorString != null) {
-			allTagDataString = allTagDataString.replace(separatorString, NORMALIZED_SEPARATOR);
+			allTagDataString = allTagDataString.replaceAll(separatorString, NORMALIZED_SEPARATOR);
 		}
 		
 		try {
@@ -338,7 +338,7 @@ public class ISITableReader {
 	}
 	
 	private String joinOver(String[] parts, String joiner) {
-		StringBuilder joinBuilder = new StringBuilder();
+		StringBuffer joinBuilder = new StringBuffer();
 		for (int ii = 0; ii < parts.length; ii++) {
 			joinBuilder.append(parts[ii]);
 			
