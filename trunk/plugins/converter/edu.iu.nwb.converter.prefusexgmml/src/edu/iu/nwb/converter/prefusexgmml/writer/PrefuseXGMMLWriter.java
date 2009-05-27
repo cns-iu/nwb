@@ -11,7 +11,6 @@ import org.cishell.framework.data.Data;
 import org.osgi.service.log.LogService;
 
 import edu.berkeley.guir.prefuse.graph.Graph;
-import edu.berkeley.guir.prefuse.graph.io.XMLGraphWriter;
 
 /**
  * @author Weixia(Bonnie) Huang 
@@ -44,9 +43,8 @@ public class PrefuseXGMMLWriter implements Algorithm {
 	   		tempFile = new File (tempPath+File.separator+"nwbTemp"+File.separator+"temp.nwb");
     	}
     	if (tempFile != null){
-    		try{
-    			(new XMLGraphWriter()).writeGraph((Graph)(data[0].getData()), 
-    						tempFile) ;
+    		try{    			
+    			(new XGMMLGraphWriter()).writeGraph((Graph)(data[0].getData()), tempFile);
     			return new Data[]{new BasicData(tempFile, "file:text/xgmml+xml") };
     		}catch (IOException ioe){
     			logger.log(LogService.LOG_ERROR, "Errors while writing the specified XGMML file", ioe);
