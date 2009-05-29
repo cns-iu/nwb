@@ -1,0 +1,23 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: Antlr_stringtemplate Plug-in
+Bundle-SymbolicName: antlr_stringtemplate
+Bundle-Version: 1.0.0
+Bundle-ClassPath: antlr-2.7.7.jar,
+ stringtemplate.jar
+Export-Package: antlr,
+ antlr.ASdebug,
+ antlr.actions.cpp,
+ antlr.actions.csharp,
+ antlr.actions.java,
+ antlr.actions.python,
+ antlr.build,
+ antlr.collections,
+ antlr.collections.impl,
+ antlr.debug,
+ antlr.debug.misc,
+ antlr.preprocessor,
+ org.antlr.stringtemplate,
+ org.antlr.stringtemplate.language,
+ org.antlr.stringtemplate.misc,
+ org.antlr.stringtemplate.test
