@@ -1,0 +1,92 @@
+AU Xxxx, X
+   Yyyy, Y
+TI Aaaa
+AB The study of networks is gaining prominence in many disciplines as well
+   as in the popular press. Information scientists, however, have studied
+   networks for decades. 
+CR BENSMAN SJ, 1998, LIBR RESOUR TECH SER, V42, P147
+   BRODMAN E, 1944, B MED LIB ASS, V32, P479
+   GARFIELD E, 1955, SCIENCE, V122, P108
+   WELLMAN B, 1989, SOCIAL STRUCTURES NE
+TC 5
+J9 INT MICROBIOL
+PY 2000
+VL 10
+BP 65
+ER 
+
+AU Xxxx, X
+TI Bbbb
+AB The study of networks is gaining prominence in many disciplines as well
+   as in the popular press. Information scientists, however, have studied
+   networks for decades. This session will explore the potential of using
+   citation network analysis and social network analysis to provide
+   structural assessments of scientific communication. Panelists will
+   discuss their research and highlight the advantages and challenges of
+   using these methods to derive a comprehensive portrait of the diffusion
+   of scientific knowledge.
+CR BENSMAN SJ, 1999, LIBR RESOUR TECH SER, V42, P147
+   BRODMAN E, 1945, B MED LIB ASS, V32, P479
+   GARFIELD E, 1959, SCIENCE, V122, P108
+   WELLMAN B, 1981, SOCIAL STRUCTURES NE
+TC 4
+J9 P ASIST ANNU MEET
+PY 2000
+VL 40
+BP 486
+ER  
+
+AU Yyyy, Y
+   Zzzz, Z
+TI Cccc
+AB The empirical question addressed in this contribution is: How does the
+   relative frequency at which authors in a research field cite
+   'authoritative' documents in the reference lists in their papers vary
+   with the number of references such papers contain? 
+CR GARFIELD E, 1985, ESSAYS INFORMATION S, V8, P403
+   GILBERT GN, 1977, SOC STUD SCI, V7, P113
+   Xxxx X, 2000, INT MICROBIOL, V10, P65
+   Xxxx X, 2000, P ASIST ANNU MEET, V40, P486
+TC 1
+J9 SCIENTOMETRICS
+PY 2001
+VL 60
+BP 295
+ER 
+
+AU Xxxx, X
+TI Dddd
+AB To better understand the topic of this colloquium, we have created a
+   series of databases related to knowledge domains (dynamic systems
+   [small world/Milgram], information visualization [Tufte], co-citation
+   [Small], bibliographic coupling [Kessler], and scientometrics
+   [Scientometrics]). 
+CR ASIMOV A, 1963, GENETIC CODE
+   LEDERBERG J, 1972, NATURE, V239, P234
+   Xxxx X, 2000, INT MICROBIOL, V10, P65
+   Xxxx X, 2000, P ASIST ANNU MEET, V40, P486
+TC 2
+J9 J INFORM SCI
+PY 2001
+VL 30
+BP 119
+ER 
+
+AU Xxxx, X
+   Yyyy, Y
+TI Eeee
+AB WoS export files are created in which all cited references
+   for source documents are captured. These bibliographic collections are
+   processed by HistCite, which generates chronological tables as well as
+   historiographs that highlight the most-cited works in and outside the
+   collection. 
+CR AVERY OT, 1944, J EXP MED, V79, P137
+   SMALL H, 1985, J INFORM SCI, V11, P147
+   Xxxx X, 2000, INT MICROBIOL, V10, P65
+   Xxxx X, 2001, J INFORM SCI, V30, P119
+TC 0
+J9 INFORM TECHNOL LIBR
+PY 2002
+VL 22
+BP 183
+ER
