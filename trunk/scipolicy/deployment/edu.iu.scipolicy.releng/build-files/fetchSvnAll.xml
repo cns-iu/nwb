@@ -349,9 +349,9 @@
     </antcall>
     <antcall target="svn.co">
       <param name="target" value="features"/>
-      <param name="element.id" value="edu.iu.nwb.javaalgorithm.feature"/>
-      <param name="project.name" value="/deployment/edu.iu.nwb.javaalgorithm.feature"/>
-      <param name="url" value="http://nwb.slis.indiana.edu/svn/nwb/trunk"/>
+      <param name="element.id" value="edu.iu.scipolicy.javaalgorithm.feature"/>
+      <param name="project.name" value="/deployment/edu.iu.scipolicy.javaalgorithm.feature"/>
+      <param name="url" value="http://nwb.slis.indiana.edu/svn/nwb/trunk/scipolicy"/>
     </antcall>
   	
   	
