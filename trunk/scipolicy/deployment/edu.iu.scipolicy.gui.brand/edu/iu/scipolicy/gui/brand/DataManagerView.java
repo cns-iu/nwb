@@ -1,4 +1,4 @@
-package edu.iu.nwb.gui.brand;
+package edu.iu.scipolicy.gui.brand;
 
 import org.cishell.reference.gui.datamanager.AbstractDataManagerView;
 
