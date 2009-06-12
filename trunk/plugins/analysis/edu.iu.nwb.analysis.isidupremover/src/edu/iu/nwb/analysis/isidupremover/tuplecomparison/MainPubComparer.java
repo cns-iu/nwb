@@ -8,7 +8,7 @@ public class MainPubComparer implements ISIPubComparer {
 	private TotalCitationComparer citationComparer = new TotalCitationComparer();
 	private TotalLengthComparer lengthComparer = new TotalLengthComparer();
 	
-	public int compare(Tuple tu1, Tuple tu2, StringBuilder log) {
+	public int compare(Tuple tu1, Tuple tu2, StringBuffer log) {
 		
 		boolean areIdentical = GraphUtil.areEqual(tu1, tu2);
 		if (areIdentical) {

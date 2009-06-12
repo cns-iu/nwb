@@ -42,7 +42,7 @@ public class ISIDupRemover {
     	
     	this.log = log;
     	
-    	StringBuilder runningLog = new StringBuilder();
+    	StringBuffer runningLog = new StringBuffer();
     
     	log.log(LogService.LOG_INFO, "");
     	log.log(LogService.LOG_INFO, "Loaded " + origTable.getRowCount() + " records.");
@@ -164,7 +164,7 @@ public class ISIDupRemover {
     
     private Integer determineWhichToRemove(Table table,
     		Integer currentPubIndex, Integer savedPubIndex,
-    		StringBuilder runningLog) {
+    		StringBuffer runningLog) {
     	
     	Tuple currentPubTuple = table.getTuple(currentPubIndex.intValue());
     	Tuple savedPubTuple = table.getTuple(savedPubIndex.intValue());
