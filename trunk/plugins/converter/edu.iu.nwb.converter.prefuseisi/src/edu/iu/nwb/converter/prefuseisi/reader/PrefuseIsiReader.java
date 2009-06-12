@@ -16,12 +16,9 @@ import org.cishell.framework.data.DataProperty;
 import org.osgi.service.log.LogService;
 
 import prefuse.data.Table;
-import edu.iu.nwb.analysis.isidupremover.ISIDupRemover;
-import edu.iu.nwb.analysis.isidupremover.TablePair;
 
 public class PrefuseIsiReader implements Algorithm {
 	
-	private static final boolean REMOVE_DUPLICATE_PUBLICATIONS = false;
 	private static final boolean NORMALIZE_AUTHOR_NAMES = true;
 	
     Data[] data;
@@ -29,7 +26,6 @@ public class PrefuseIsiReader implements Algorithm {
     CIShellContext context;
     
     private LogService log;
-    private ISIDupRemover dupRemover;
     private ISICitationExtractionPreparer citationExtractionPreparer;
     
     public PrefuseIsiReader(Data[] data, Dictionary parameters, CIShellContext context) {
@@ -51,25 +47,8 @@ public class PrefuseIsiReader implements Algorithm {
     		Table tableWithDups = tableReader.readTable(new FileInputStream(file));
 		  	
             Table table;     
-			if (REMOVE_DUPLICATE_PUBLICATIONS) {
-			
-				log.log(LogService.LOG_INFO, "");
-				log.log(LogService.LOG_INFO, "Removing duplicate publications...");
-				log.log(LogService.LOG_INFO, "----------------------------------------");
-				log.log(LogService.LOG_INFO, "");
-				
-				if (dupRemover == null) {
-				dupRemover = new ISIDupRemover();
-				} 
-				
-				TablePair noDupandDupTables = 
-					dupRemover.removeDuplicatePublications(tableWithDups, log, false);
-				Table tableWithoutDups = noDupandDupTables.getNoDupTable();
-				
-				table = tableWithoutDups;
-			} else {
-				table = tableWithDups;
-			}
+			table = tableWithDups;
+
 			
 			Table preparedTable = citationExtractionPreparer.prepareForCitationExtraction(table);
 			
