@@ -25,7 +25,7 @@
    <splash
       location="edu.iu.scipolicy.gui.brand"
       startupProgressRect="0,163,500,10" />
-   <launcher name="nwb">
+   <launcher name="scipolicy">
       <linux icon="/edu.iu.scipolicy.gui.brand/icons/nwb.xpm"/>
       <macosx icon="/edu.iu.scipolicy.gui.brand/icons/nwb.icns"/>
       <solaris/>

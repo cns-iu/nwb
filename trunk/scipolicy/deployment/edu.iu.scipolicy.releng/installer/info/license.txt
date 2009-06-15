@@ -1,7 +1,7 @@
-The Network Workbench (NWB) Tool
+The SciPolicy Tool
 Version: 1.0.0 beta
 
-(c)Copyright 2006-2008 Indiana University
+(c)Copyright 2009 Indiana University
 Licensed under the Apache License, Version 2.0 (the "License"); 
 you may not use this file except in compliance with the License.
 You may obtain a copy of the License at
@@ -15,5 +15,4 @@ permissions and limitations under the License.
 
 Project Contacts:
 Micah W. Linnemeier (mwlinnem@indiana.edu)
-Weixia (Bonnie) Huang (huangb@indiana.edu)
 Katy Borner (katy@indiana.edu)
