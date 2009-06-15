@@ -191,6 +191,19 @@
     </antcall>
   	
   	<!-- SciPolicy Plugins -->
+    <antcall target="svn.co">
+        <param name="target" value="features"/>
+        <param name="element.id" value="edu.iu.scipolicy.gui.brand.feature"/>
+        <param name="project.name" value="/deployment/edu.iu.scipolicy.gui.brand.feature"/>
+        <param name="url" value="http://nwb.slis.indiana.edu/svn/nwb/trunk/scipolicy"/>
+      </antcall>
+  	
+      <antcall target="svn.co">
+        <param name="target" value="plugins"/>
+        <param name="element.id" value="edu.iu.scipolicy.gui.brand"/>
+        <param name="project.name" value="/deployment/edu.iu.scipolicy.gui.brand"/>
+        <param name="url" value="http://nwb.slis.indiana.edu/svn/nwb/trunk/scipolicy"/>
+      </antcall>
   	
   	<antcall target="svn.co">
   	  <param name="target" value="features"/>
@@ -337,18 +350,6 @@
       <param name="target" value="plugins"/>
       <param name="element.id" value="edu.iu.nwb.converter.prefuseTreeBetaAlpha"/>
       <param name="project.name" value="/plugins/converter/edu.iu.nwb.converter.prefuseTreeBetaAlpha"/>
-      <param name="url" value="http://nwb.slis.indiana.edu/svn/nwb/trunk"/>
-    </antcall>
-    <antcall target="svn.co">
-      <param name="target" value="features"/>
-      <param name="element.id" value="edu.iu.nwb.gui.brand.feature"/>
-      <param name="project.name" value="/deployment/edu.iu.nwb.gui.brand.feature"/>
-      <param name="url" value="http://nwb.slis.indiana.edu/svn/nwb/trunk"/>
-    </antcall>
-    <antcall target="svn.co">
-      <param name="target" value="plugins"/>
-      <param name="element.id" value="edu.iu.nwb.gui.brand"/>
-      <param name="project.name" value="/deployment/edu.iu.nwb.gui.brand"/>
       <param name="url" value="http://nwb.slis.indiana.edu/svn/nwb/trunk"/>
     </antcall>
     <antcall target="svn.co">

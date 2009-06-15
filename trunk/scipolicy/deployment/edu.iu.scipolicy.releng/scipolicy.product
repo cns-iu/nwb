@@ -1,20 +1,20 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <?pde version="3.4"?>
 
-<product name="SciPolicy Tool" id="edu.iu.nwb.gui.brand.cishell" application="org.cishell.reference.gui.workspace.CIShellApplication" useFeatures="true">
+<product name="SciPolicy Tool" id="edu.iu.scipolicy.gui.brand.cishell" application="org.cishell.reference.gui.workspace.CIShellApplication" useFeatures="true">
 
    <aboutInfo>
-      <image path="/edu.iu.nwb.gui.brand/icons/about.gif"/>
+      <image path="/edu.iu.scipolicy.gui.brand/icons/about.gif"/>
       <text>
          %blurb
       </text>
    </aboutInfo>
 
    <configIni use="default">
-      <linux>/edu.iu.nwb.gui.brand/extra-files/configuration/config.ini</linux>
-      <macosx>/edu.iu.nwb.gui.brand/extra-files/configuration/config.ini</macosx>
-      <solaris>/edu.iu.nwb.gui.brand/extra-files/configuration/config.ini</solaris>
-      <win32>/edu.iu.nwb.gui.brand/extra-files/configuration/config.ini</win32>
+      <linux>/edu.iu.scipolicy.gui.brand/extra-files/configuration/config.ini</linux>
+      <macosx>/edu.iu.scipolicy.gui.brand/extra-files/configuration/config.ini</macosx>
+      <solaris>/edu.iu.scipolicy.gui.brand/extra-files/configuration/config.ini</solaris>
+      <win32>/edu.iu.scipolicy.gui.brand/extra-files/configuration/config.ini</win32>
    </configIni>
 
    <launcherArgs>
@@ -23,14 +23,14 @@
    <windowImages/>
 
    <splash
-      location="edu.iu.nwb.gui.brand"
+      location="edu.iu.scipolicy.gui.brand"
       startupProgressRect="0,163,500,10" />
    <launcher name="nwb">
-      <linux icon="/edu.iu.nwb.gui.brand/icons/nwb.xpm"/>
-      <macosx icon="/edu.iu.nwb.gui.brand/icons/nwb.icns"/>
+      <linux icon="/edu.iu.scipolicy.gui.brand/icons/nwb.xpm"/>
+      <macosx icon="/edu.iu.scipolicy.gui.brand/icons/nwb.icns"/>
       <solaris/>
       <win useIco="true">
-         <ico path="/edu.iu.nwb.gui.brand/icons/nwb.ico"/>
+         <ico path="/edu.iu.scipolicy.gui.brand/icons/nwb.ico"/>
          <bmp
             winSmallHigh="icons/ivc_sm_32.bmp"
             winSmallLow="icons/ivc_sm_16.bmp"
@@ -52,7 +52,7 @@
       <feature id="org.cishell.feature" version="0.3.0"/>
       <feature id="org.cishell.reference.feature" version="0.4.0"/>
       <feature id="org.cishell.reference.gui.feature" version="0.4.0"/>
-      <feature id="edu.iu.nwb.gui.brand.feature" version="0.6.0"/>
+      <feature id="edu.iu.scipolicy.gui.brand.feature" version="0.6.0"/>
       <feature id="edu.iu.scipolicy.javaalgorithm.feature" version="1.0.0"/>
       <feature id="edu.iu.scipolicy.converter.feature" version="1.0.0"/>
    </features>
