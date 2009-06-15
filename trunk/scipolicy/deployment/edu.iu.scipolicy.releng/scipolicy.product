@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <?pde version="3.4"?>
 
-<product name="Network Workbench Tool" id="edu.iu.nwb.gui.brand.cishell" application="org.cishell.reference.gui.workspace.CIShellApplication" useFeatures="true">
+<product name="SciPolicy Tool" id="edu.iu.nwb.gui.brand.cishell" application="org.cishell.reference.gui.workspace.CIShellApplication" useFeatures="true">
 
    <aboutInfo>
       <image path="/edu.iu.nwb.gui.brand/icons/about.gif"/>
@@ -41,7 +41,6 @@
       </win>
    </launcher>
 
-
    <vm>
    </vm>
 
@@ -54,8 +53,8 @@
       <feature id="org.cishell.reference.feature" version="0.4.0"/>
       <feature id="org.cishell.reference.gui.feature" version="0.4.0"/>
       <feature id="edu.iu.nwb.gui.brand.feature" version="0.6.0"/>
-      <feature id="edu.iu.nwb.converter.feature" version="0.8.0"/>
       <feature id="edu.iu.scipolicy.javaalgorithm.feature" version="1.0.0"/>
+      <feature id="edu.iu.scipolicy.converter.feature" version="1.0.0"/>
    </features>
 
 </product>
