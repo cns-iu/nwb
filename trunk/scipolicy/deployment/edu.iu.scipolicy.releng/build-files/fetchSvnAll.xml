@@ -20,6 +20,122 @@
 	    </copy>
   	-->
 
+  	<!-- SciPolicy plugins -->
+  	
+	<!-- (might be able to replace this with a script that gets the entire contents of the directory... -->
+  		<!-- normal_plugins -->
+  	 <antcall target="svn.co">
+  	      <param name="target" value="plugins"/>
+  	      <param name="element.id" value="edu.iu.scipolicy.filtering.topn"/>
+  	      <param name="project.name" value="edu.iu.scipolicy.filtering.topn"/>
+  	      <param name="url" value="https://cishell.svn.sourceforge.net/svnroot/cishell/trunk/scipolicy/plugins/normal_plugins"/>
+  	 </antcall>
+  	
+  	<antcall target="svn.co">
+  	  	      <param name="target" value="plugins"/>
+  	  	      <param name="element.id" value="edu.iu.scipolicy.filtering.topnpercent"/>
+  	  	      <param name="project.name" value="edu.iu.scipolicy.filtering.topnpercent"/>
+  	  	      <param name="url" value="https://cishell.svn.sourceforge.net/svnroot/cishell/trunk/scipolicy/plugins/normal_plugins"/>
+  	  	 </antcall>
+  	
+  	<antcall target="svn.co">
+  	  	      <param name="target" value="plugins"/>
+  	  	      <param name="element.id" value="edu.iu.scipolicy.references.map"/>
+  	  	      <param name="project.name" value="edu.iu.scipolicy.references.map"/>
+  	  	      <param name="url" value="https://cishell.svn.sourceforge.net/svnroot/cishell/trunk/scipolicy/plugins/normal_plugins"/>
+  	  	 </antcall>
+  	
+  	<antcall target="svn.co">
+  	  	      <param name="target" value="plugins"/>
+  	  	      <param name="element.id" value="edu.iu.scipolicy.testutilities"/>
+  	  	      <param name="project.name" value="edu.iu.scipolicy.testutilities"/>
+  	  	      <param name="url" value="https://cishell.svn.sourceforge.net/svnroot/cishell/trunk/scipolicy/plugins/normal_plugins"/>
+  	  	 </antcall>
+  	
+  	<antcall target="svn.co">
+  	  	      <param name="target" value="plugins"/>
+  	  	      <param name="element.id" value="edu.iu.scipolicy.utilities"/>
+  	  	      <param name="project.name" value="edu.iu.scipolicy.utilities"/>
+  	  	      <param name="url" value="https://cishell.svn.sourceforge.net/svnroot/cishell/trunk/scipolicy/plugins/normal_plugins"/>
+  	  	 </antcall>
+  	
+  	<antcall target="svn.co">
+  	  	      <param name="target" value="plugins"/>
+  	  	      <param name="element.id" value="edu.iu.scipolicy.visualization.horizontallinegraph"/>
+  	  	      <param name="project.name" value="edu.iu.scipolicy.visualization.horizontallinegraph"/>
+  	  	      <param name="url" value="https://cishell.svn.sourceforge.net/svnroot/cishell/trunk/scipolicy/plugins/normal_plugins"/>
+  	  	 </antcall>
+  	
+  	<antcall target="svn.co">
+  	  	      <param name="target" value="plugins"/>
+  	  	      <param name="element.id" value="edu.iu.scipolicy.visualization.imageviewer"/>
+  	  	      <param name="project.name" value="edu.iu.scipolicy.visualization.imageviewer"/>
+  	  	      <param name="url" value="https://cishell.svn.sourceforge.net/svnroot/cishell/trunk/scipolicy/plugins/normal_plugins"/>
+  	  	 </antcall>
+  	
+  	<antcall target="svn.co">
+  	  	      <param name="target" value="plugins"/>
+  	  	      <param name="element.id" value="edu.iu.scipolicy.utilities.nsf"/>
+  	  	      <param name="project.name" value="edu.iu.scipolicy.utilities.nsf"/>
+  	  	      <param name="url" value="https://cishell.svn.sourceforge.net/svnroot/cishell/trunk/scipolicy/plugins/normal_plugins"/>
+  	  	 </antcall>
+  	
+  	   <!-- libs -->
+  	<antcall target="svn.co">
+  	  	  	      <param name="target" value="plugins"/>
+  	  	  	      <param name="element.id" value="antlr-stringtemplate"/>
+  	  	  	      <param name="project.name" value="antlr-stringtemplate"/>
+  	  	  	      <param name="url" value="https://cishell.svn.sourceforge.net/svnroot/cishell/trunk/scipolicy/plugins/libs"/>
+  	  	  	 </antcall>
+  	
+	<antcall target="svn.co">
+  	  	  	      <param name="target" value="plugins"/>
+  	  	  	      <param name="element.id" value="freehep-psviewer"/>
+  	  	  	      <param name="project.name" value="freehep-psviewer"/>
+  	  	  	      <param name="url" value="https://cishell.svn.sourceforge.net/svnroot/cishell/trunk/scipolicy/plugins/libs"/>
+  	  	  	 </antcall>
+  	  	  	 	
+	<antcall target="svn.co">
+  	  	  	      <param name="target" value="plugins"/>
+  	  	  	      <param name="element.id" value="opencsv"/>
+  	  	  	      <param name="project.name" value="opencsv"/>
+  	  	  	      <param name="url" value="https://cishell.svn.sourceforge.net/svnroot/cishell/trunk/scipolicy/plugins/libs"/>
+  	  	  	 </antcall>
+  	  	  	 	
+  	<antcall target="svn.co">
+  	  	  	  	  <param name="target" value="plugins"/>
+  	  	  	  	  <param name="element.id" value="pdfbox-fontbox"/>
+  	  	  	  	  <param name="project.name" value="pdfbox-fontbox"/>
+  	  	  	  	  <param name="url" value="https://cishell.svn.sourceforge.net/svnroot/cishell/trunk/scipolicy/plugins/libs"/>
+  	</antcall>
+  	
+  	<!-- converters -->
+  	
+  	<antcall target="svn.co">
+  	  	  	  	  	  <param name="target" value="plugins"/>
+  	  	  	  	  	  <param name="element.id" value="edu.iu.scipolicy.converter.nsf.csv_to_db"/>
+  	  	  	  	  	  <param name="project.name" value="edu.iu.scipolicy.converter.nsf.csv_to_db"/>
+  	  	  	  	  	  <param name="url" value="https://cishell.svn.sourceforge.net/svnroot/cishell/trunk/scipolicy/plugins/libs"/>
+  	</antcall>
+  	
+  	<antcall target="svn.co">
+  	  	  	  	  	  <param name="target" value="plugins"/>
+  	  	  	  	  	  <param name="element.id" value="edu.iu.scipolicy.converter.nsf.db_to_prefuse"/>
+  	  	  	  	  	  <param name="project.name" value="edu.iu.scipolicy.converter.nsf.db_to_prefuse"/>
+  	  	  	  	  	  <param name="url" value="https://cishell.svn.sourceforge.net/svnroot/cishell/trunk/scipolicy/plugins/libs"/>
+  	</antcall>
+  	
+  	<antcall target="svn.co">
+  	  	  	  	  	  <param name="target" value="plugins"/>
+  	  	  	  	  	  <param name="element.id" value="edu.iu.scipolicy.converter.nsf.psraster"/>
+  	  	  	  	  	  <param name="project.name" value="edu.iu.scipolicy.converter.nsf.psraster"/>
+  	  	  	  	  	  <param name="url" value="https://cishell.svn.sourceforge.net/svnroot/cishell/trunk/scipolicy/plugins/libs"/>
+  	</antcall>
+  		
+    
+  	
+  
+  	
   	<!-- CIShell plugins -->
     <antcall target="svn.co">
       <param name="target" value="features"/>

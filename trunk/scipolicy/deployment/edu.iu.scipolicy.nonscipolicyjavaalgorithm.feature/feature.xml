@@ -30,15 +30,7 @@ Weixia Huang (huangb@indiana.edu)
 Bruce Herr (bh2@bh2.net)
 Dr. Katy Borner (katy@indiana.edu)
    </license>
-    	
-    <!--  ALGORITHMS FROM SCIPOLICY GO HERE  -->
-    
-    
-    
-	<!-- ALGORITHMS FROM NWB/CISHELL GO HERE --> 
-	
-	
-	
+
    <plugin
          id="org.prefuse.lib"
          download-size="0"
@@ -163,8 +155,6 @@ Dr. Katy Borner (katy@indiana.edu)
          version="0.0.0"
          unpack="false"/>
 
-   
-
    <plugin
          id="edu.iu.nwb.shared.isiutil"
          download-size="0"
@@ -184,10 +174,6 @@ Dr. Katy Borner (katy@indiana.edu)
          install-size="0"
          version="0.0.0"
          unpack="false"/>
-
-   
-
-  
 
    <plugin
          id="edu.iu.nwb.analysis.dichotomize"
@@ -286,8 +272,6 @@ Dr. Katy Borner (katy@indiana.edu)
          install-size="0"
          version="0.0.0"
          unpack="false"/>
-
-   
 
    <plugin
          id="edu.iu.nwb.preprocessing.extractnodesandedges"
@@ -404,123 +388,115 @@ Dr. Katy Borner (katy@indiana.edu)
          install-size="0"
          version="0.0.0"
          unpack="false"/>
-         
+
    <plugin
          id="edu.iu.nwb.visualization.radialgraph"
          download-size="0"
          install-size="0"
          version="0.0.0"
          unpack="false"/>
-         
+
    <plugin
          id="edu.iu.nwb.analysis.kcore"
          download-size="0"
          install-size="0"
          version="0.0.0"
          unpack="false"/>
-         
-         
-         
-         
-   <!-- UNUSED_AGORITHMS (THEY'RE IN NWB, BUT NOT IN SCIPOLICY)
-	<plugin
-         id="edu.iu.iv.attacktolerance"
+
+   <plugin
+         id="antlr_stringtemplate"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"/>
+
+   <plugin
+         id="freehep_psviewer"
          download-size="0"
          install-size="0"
          version="0.0.0"
          unpack="false"/>
 
    <plugin
-         id="edu.iu.iv.errortolerance"
+         id="opencsv"
          download-size="0"
          install-size="0"
          version="0.0.0"
          unpack="false"/>
 
    <plugin
-         id="edu.iu.iv.modeling.p2p.can"
+         id="pdfbox_fontbox"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"/>
+
+   <plugin
+         id="edu.iu.scipolicy.filtering.topn"
          download-size="0"
          install-size="0"
          version="0.0.0"
          unpack="false"/>
 
    <plugin
-         id="edu.iu.iv.modeling.p2p.chord"
+         id="edu.iu.scipolicy.filtering.topnpercent"
          download-size="0"
          install-size="0"
          version="0.0.0"
          unpack="false"/>
 
    <plugin
-         id="edu.iu.iv.modeling.p2p.hypergrid"
+         id="edu.iu.scipolicy.references.map"
          download-size="0"
          install-size="0"
          version="0.0.0"
          unpack="false"/>
 
    <plugin
-         id="edu.iu.iv.modeling.p2p.pru"
+         id="edu.iu.scipolicy.testutilities"
          download-size="0"
          install-size="0"
          version="0.0.0"
          unpack="false"/>
 
    <plugin
-         id="edu.iu.iv.search.p2p.bfs"
+         id="edu.iu.scipolicy.utilities"
          download-size="0"
          install-size="0"
          version="0.0.0"
          unpack="false"/>
 
    <plugin
-         id="edu.iu.iv.search.p2p.randomwalk"
+         id="edu.iu.scipolicy.utilities.nsf"
          download-size="0"
          install-size="0"
          version="0.0.0"
          unpack="false"/>
 
    <plugin
-         id="edu.iu.nwb.visualization.jungnetworklayout"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         unpack="false"/>
-         
-   <plugin
-         id="edu.iu.nwb.visualization.balloongraph"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         unpack="false"/>            
-   
-   <plugin
-         id="org.cishell.testing.convertertester.algorithm"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         unpack="false"/>
-         
-    <plugin
-         id="org.cishell.testing.convertertester.core.new"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         unpack="false"/>
-         
-    <plugin
-         id="edu.iu.nwb.modeling.discretenetworkdynamics"
+         id="edu.iu.scipolicy.visualization.horizontallinegraph"
          download-size="0"
          install-size="0"
          version="0.0.0"
          unpack="false"/>
 
    <plugin
-         id="edu.iu.nwb.analysis.extractattractors"
+         id="edu.iu.scipolicy.visualization.imageviewer"
          download-size="0"
          install-size="0"
          version="0.0.0"
          unpack="false"/>
-         
-	-->
+
+   <plugin
+         id="edu.iu.nwb.converter.nsf.csv_to_db"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+   <plugin
+         id="edu.iu.nwb.converter.nsf.db_to_prefuse"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
 
 </feature>
