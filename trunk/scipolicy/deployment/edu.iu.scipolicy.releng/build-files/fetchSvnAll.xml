@@ -127,8 +127,8 @@
   	
   	<antcall target="svn.co">
   	  	  	  	  	  <param name="target" value="plugins"/>
-  	  	  	  	  	  <param name="element.id" value="edu.iu.scipolicy.converter.nsf.psraster"/>
-  	  	  	  	  	  <param name="project.name" value="edu.iu.scipolicy.converter.nsf.psraster"/>
+  	  	  	  	  	  <param name="element.id" value="edu.iu.scipolicy.converter.psraster"/>
+  	  	  	  	  	  <param name="project.name" value="edu.iu.scipolicy.converter.psraster"/>
   	  	  	  	  	  <param name="url" value="http://nwb.slis.indiana.edu/svn/nwb/trunk/scipolicy/plugins/converters"/>
   	</antcall>
   		
