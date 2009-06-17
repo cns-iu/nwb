@@ -28,7 +28,7 @@
   	      <param name="target" value="plugins"/>
   	      <param name="element.id" value="edu.iu.scipolicy.filtering.topn"/>
   	      <param name="project.name" value="edu.iu.scipolicy.filtering.topn"/>
-  	      <param name="url" value="https://http://nwb.slis.indiana.edu/svn/nwb/trunk/scipolicy/plugins/normal_plugins"/>
+  	      <param name="url" value="http://http://nwb.slis.indiana.edu/svn/nwb/trunk/scipolicy/plugins/normal_plugins"/>
   	 </antcall>
   	
   	<antcall target="svn.co">
@@ -42,7 +42,7 @@
   	  	      <param name="target" value="plugins"/>
   	  	      <param name="element.id" value="edu.iu.scipolicy.references.map"/>
   	  	      <param name="project.name" value="edu.iu.scipolicy.references.map"/>
-  	  	      <param name="url" value="https://cishell.svn.sourceforge.net/svnroot/cishell/trunk/scipolicy/plugins/normal_plugins"/>
+  	  	      <param name="url" value="http://nwb.slis.indiana.edu/svn/nwb/trunk/scipolicy/plugins/normal_plugins"/>
   	  	 </antcall>
   	
   	<antcall target="svn.co">
