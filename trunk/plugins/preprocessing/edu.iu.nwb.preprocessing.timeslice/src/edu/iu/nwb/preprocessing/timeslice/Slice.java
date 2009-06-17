@@ -36,111 +36,187 @@ import prefuse.util.collections.IntIterator;
  *
  */
 public class Slice implements Algorithm {
-    Data[] data;
-    Dictionary parameters;
-    CIShellContext context;
+	Data[] data;
+	Dictionary parameters;
+	CIShellContext context;
 	private LogService logger;
-    
-	
-    private static Map alignmentMap = new HashMap();
-    private static Map dependencyMap = new HashMap();
-    private static Map weekDayMap = new HashMap();
-    private static Map rollBackMap = new HashMap();
-    private static Map periodMap = new HashMap();
-	private DateTimeFormatter format;
-    static {
-    	/* What field to zero out for a particular alignment
-    	 * 
-    	 * The following can't be aligned:
-    	 * fortnights, quarters, decades, milliseconds
-    	 */
-    	alignmentMap.put("seconds", DateTimeFieldType.millisOfSecond());
-    	alignmentMap.put("minutes", DateTimeFieldType.secondOfMinute());
-    	alignmentMap.put("hours", DateTimeFieldType.minuteOfHour());
-    	alignmentMap.put("days", DateTimeFieldType.millisOfDay());
-    	alignmentMap.put("weeks", DateTimeFieldType.dayOfWeek());
-    	alignmentMap.put("months", DateTimeFieldType.dayOfMonth());
-    	alignmentMap.put("years", DateTimeFieldType.dayOfYear());
-    	alignmentMap.put("centuries", DateTimeFieldType.yearOfCentury());
-    	//alignmentMap.put("eras", DateTimeFieldType.centuryOfEra());
-    	
-    	//to recursively determine what needs to be "zero'd" if a particular field is zero'd
-    	dependencyMap.put(DateTimeFieldType.secondOfMinute(), DateTimeFieldType.millisOfSecond());
-    	dependencyMap.put(DateTimeFieldType.minuteOfHour(), DateTimeFieldType.secondOfMinute());
-    	dependencyMap.put(DateTimeFieldType.dayOfWeek(), DateTimeFieldType.millisOfDay());
-    	dependencyMap.put(DateTimeFieldType.dayOfMonth(), DateTimeFieldType.millisOfDay());
-    	dependencyMap.put(DateTimeFieldType.dayOfYear(), DateTimeFieldType.millisOfDay());
-    	dependencyMap.put(DateTimeFieldType.yearOfCentury(), DateTimeFieldType.dayOfYear());
-    	//dependencyMap.put(DateTimeFieldType.centuryOfEra(), DateTimeFieldType.yearOfCentury());
-    	
-    	//what constant represents what day of the week
-    	weekDayMap.put("saturday", new Integer(DateTimeConstants.SATURDAY));
-    	weekDayMap.put("sunday", new Integer(DateTimeConstants.SUNDAY));
-    	weekDayMap.put("monday", new Integer(DateTimeConstants.MONDAY));
-    	
-    	//how far should a date be rolled back if the field is zero'd to more than the current value
-    	rollBackMap.put(DateTimeFieldType.dayOfWeek(), Period.weeks(1));
-    	
-    	
-    	//how long a period is for each interval chosen
-    	periodMap.put("milliseconds", Period.millis(1));
-    	periodMap.put("seconds", Period.seconds(1));
-    	periodMap.put("minutes", Period.minutes(1));
-    	periodMap.put("hours", Period.hours(1));
-    	periodMap.put("days", Period.days(1));
-    	periodMap.put("weeks", Period.weeks(1));
-    	periodMap.put("fortnights", Period.weeks(2));
-    	periodMap.put("months", Period.months(1));
-    	periodMap.put("quarters", Period.months(3));
-    	periodMap.put("years", Period.years(1));
-    	periodMap.put("decades", Period.years(10));
-    	periodMap.put("centuries", Period.years(100));
-    	//periodMap.put("eras", Period);
-    }
-    
-    public Slice(Data[] data, Dictionary parameters, CIShellContext context) {
-        this.data = data;
-        this.parameters = parameters;
-        this.context = context;
-        this.logger = (LogService) context.getService(LogService.class.getName());
-    }
+	private final static int UNDEFINED_YEAR = -1;
 
-    /* (non-Javadoc)
-     * @see org.cishell.framework.algorithm.Algorithm#execute()
-     */
-    public Data[] execute() throws AlgorithmExecutionException {
-    	
-    	//iterate over rows. For each row, store the corresponding LocalDateTime and the index for the row in a SortedMap
-    	//get the min and max keys
-    	//if align is true, move min so it is aligned with the appropriate interval
-    	//iterate in periods of sliceinto from min to max
-    	//if cumulative, keep adding to every slice; otherwise, only the latest
-    	
-    	Table table = (Table) data[0].getData();
-    	
-    	String formatString = (String) parameters.get("format");
+
+	private static Map alignmentMap = new HashMap();
+	private static Map dependencyMap = new HashMap();
+	private static Map weekDayMap = new HashMap();
+	private static Map rollBackMap = new HashMap();
+	private static Map periodMap = new HashMap();
+	private DateTimeFormatter format;
+	static {
+		/* What field to zero out for a particular alignment
+		 * 
+		 * The following can't be aligned:
+		 * fortnights, quarters, decades, milliseconds
+		 */
+		alignmentMap.put("seconds", DateTimeFieldType.millisOfSecond());
+		alignmentMap.put("minutes", DateTimeFieldType.secondOfMinute());
+		alignmentMap.put("hours", DateTimeFieldType.minuteOfHour());
+		alignmentMap.put("days", DateTimeFieldType.millisOfDay());
+		alignmentMap.put("weeks", DateTimeFieldType.dayOfWeek());
+		alignmentMap.put("months", DateTimeFieldType.dayOfMonth());
+		alignmentMap.put("years", DateTimeFieldType.dayOfYear());
+		alignmentMap.put("centuries", DateTimeFieldType.yearOfCentury());
+		//alignmentMap.put("eras", DateTimeFieldType.centuryOfEra());
+
+		//to recursively determine what needs to be "zero'd" if a particular field is zero'd
+		dependencyMap.put(DateTimeFieldType.secondOfMinute(), DateTimeFieldType.millisOfSecond());
+		dependencyMap.put(DateTimeFieldType.minuteOfHour(), DateTimeFieldType.secondOfMinute());
+		dependencyMap.put(DateTimeFieldType.dayOfWeek(), DateTimeFieldType.millisOfDay());
+		dependencyMap.put(DateTimeFieldType.dayOfMonth(), DateTimeFieldType.millisOfDay());
+		dependencyMap.put(DateTimeFieldType.dayOfYear(), DateTimeFieldType.millisOfDay());
+		dependencyMap.put(DateTimeFieldType.yearOfCentury(), DateTimeFieldType.dayOfYear());
+		//dependencyMap.put(DateTimeFieldType.centuryOfEra(), DateTimeFieldType.yearOfCentury());
+
+		//what constant represents what day of the week
+		weekDayMap.put("saturday", new Integer(DateTimeConstants.SATURDAY));
+		weekDayMap.put("sunday", new Integer(DateTimeConstants.SUNDAY));
+		weekDayMap.put("monday", new Integer(DateTimeConstants.MONDAY));
+
+		//how far should a date be rolled back if the field is zero'd to more than the current value
+		rollBackMap.put(DateTimeFieldType.dayOfWeek(), Period.weeks(1));
+
+		//how long a period is for each interval chosen
+		periodMap.put("milliseconds", Period.millis(1));
+		periodMap.put("seconds", Period.seconds(1));
+		periodMap.put("minutes", Period.minutes(1));
+		periodMap.put("hours", Period.hours(1));
+		periodMap.put("days", Period.days(1));
+		periodMap.put("weeks", Period.weeks(1));
+		periodMap.put("fortnights", Period.weeks(2));
+		periodMap.put("months", Period.months(1));
+		periodMap.put("quarters", Period.months(3));
+		periodMap.put("years", Period.years(1));
+		periodMap.put("decades", Period.years(10));
+		periodMap.put("centuries", Period.years(100));
+		//periodMap.put("eras", Period);
+
+	}
+
+	public Slice(Data[] data, Dictionary parameters, CIShellContext context) {
+		this.data = data;
+		this.parameters = parameters;
+		this.context = context;
+		this.logger = (LogService) context.getService(LogService.class.getName());
+
+	}
+
+	/* (non-Javadoc)
+	 * @see org.cishell.framework.algorithm.Algorithm#execute()
+	 */
+	public Data[] execute() throws AlgorithmExecutionException {
+
+		//iterate over rows. For each row, store the corresponding LocalDateTime and the index for the row in a SortedMap
+		//get the min and max keys
+		//if align is true, move min so it is aligned with the appropriate interval
+		//iterate in periods of sliceinto from min to max
+		//if cumulative, keep adding to every slice; otherwise, only the latest
+
+		Table table = (Table) data[0].getData();
+
+		String formatString = (String) parameters.get("format");
 		String dateColumn = (String) parameters.get("column");
 		String interval = (String) parameters.get("interval");
 		boolean align = ((Boolean) parameters.get("align")).booleanValue();
 		boolean cumulative = ((Boolean) parameters.get("cumulative")).booleanValue();
 		String weekStarts = (String) parameters.get("weekstarts");
-    	
+
+		int[] customYearRange = initializeCustomPeriodRange();
+
 		format = DateTimeFormat.forPattern(formatString);
-		Period period = (Period) periodMap.get(interval);
-		
-    	SortedMap byDateTime = createDateTimeMap(table, dateColumn);
-    	
-    	//this is where tables will be put as created, and new rows will be added through the TableGroup interface
-    	TableGroup tables = createTableGroup(cumulative);
-    	
-    	List epochRange = accumulateTables(table, interval, align, weekStarts,
-				period, byDateTime, tables);
-    	
-        return dataChildrenOf(data[0], tables.getTables(), 
-        		(LocalDateTime[]) ((List) epochRange.get(0)).toArray(new LocalDateTime[]{}), 
-        		(LocalDateTime[]) ((List) epochRange.get(1)).toArray(new LocalDateTime[]{}),
-        		period);
-    }
+
+		String periodMultiplierString = (String) parameters.get("periodmultiplier");
+
+		int periodMultiplier = initializePeriodMultiplier(periodMultiplierString);
+
+		Period periodOriginal = (Period) periodMap.get(interval);
+
+		Period period = multiplyPeriod(periodOriginal, periodMultiplier);
+
+		SortedMap byDateTime = createDateTimeMap(table, dateColumn);
+
+		//this is where tables will be put as created, and new rows will be added through the TableGroup interface
+		TableGroup tables = createTableGroup(cumulative);
+
+		List epochRange = accumulateTables(table, interval, align, weekStarts,
+				period, customYearRange, byDateTime, tables);
+
+		return dataChildrenOf(data[0], tables.getTables(), 
+				(LocalDateTime[]) ((List) epochRange.get(0)).toArray(new LocalDateTime[]{}), 
+				(LocalDateTime[]) ((List) epochRange.get(1)).toArray(new LocalDateTime[]{}),
+				period);
+	}
+
+	/**
+	 * Initializes the Custom period range provided by the user.
+	 * @param customYearRange
+	 * @return 
+	 */
+	private int[] initializeCustomPeriodRange() {
+
+		int[] customYearRange = {UNDEFINED_YEAR,UNDEFINED_YEAR};
+
+		try {
+			customYearRange[0] = Integer.parseInt((String) parameters.get("fromyear"));
+		} catch (NumberFormatException nfe) {
+			System.err.println("Inappropriate \"From year\" value. It should be an integer");
+			customYearRange[0] = UNDEFINED_YEAR;
+		}
+
+		try {
+			customYearRange[1] = Integer.parseInt((String) parameters.get("toyear"));
+		} catch (NumberFormatException nfe) {
+			System.err.println("Inappropriate \"To year\" value. It should be an integer");
+			customYearRange[1] = UNDEFINED_YEAR;
+		}
+
+		return customYearRange;
+	}
+
+	/**
+	 * Multiplies the original period as per the period multiplier provided by the user.
+	 * @param interval is a string indicating which interval is selected
+	 * @return
+	 */
+
+	private Period multiplyPeriod(Period periodOriginal, int periodMultiplier) {
+		Period period = periodOriginal;
+
+		for(int ii = 1;ii < periodMultiplier;ii++) {
+			period = period.plus(periodOriginal);
+		}
+		return period;
+	}
+
+	/**
+	 * Initializes the period multiplier
+	 * @param periodMultiplier
+	 * @return
+	 * @throws AlgorithmExecutionException
+	 */
+	private int initializePeriodMultiplier(String periodMultiplierString)
+	throws AlgorithmExecutionException {
+
+		int periodMultiplier;
+
+		try {
+			periodMultiplier = Integer.parseInt(periodMultiplierString);
+		} catch (NumberFormatException nfe) {
+			periodMultiplier = 1;
+			throw new AlgorithmExecutionException("Inappropriate \"Period multiplier\" value. It should be an integer. " + nfe);
+		}
+
+		if(periodMultiplier <= 0) {
+			periodMultiplier = 1;
+		}
+		return periodMultiplier;
+	}
 
 	/**
 	 * Puts new tables in a {@link TableGroup}, adds rows to the TableGroup, and returns a list of start times.
@@ -150,65 +226,126 @@ public class Slice implements Algorithm {
 	 * @param align if the interval needs to be aligned to calendar intervals
 	 * @param weekStarts a string indicating the day of the week each week starts on
 	 * @param period how long each slice of time is
+	 * @param customYearRange array of "from" & "to" year provided by the user. 
 	 * @param byDateTime a map from times into sets of row ids
 	 * @param tables the TableGroup to accumulate into
 	 * @return an Object containing list of start & end times
+	 * @throws AlgorithmExecutionException 
 	 */
-    
+
 	private List accumulateTables(Table table, String interval, boolean align,
-			String weekStarts, Period period, SortedMap byDateTime,
-			TableGroup tables) {
-		
+			String weekStarts, Period period, int[] customYearRange, SortedMap byDateTime,
+			TableGroup tables) throws AlgorithmExecutionException {
+
 		Schema schema = table.getSchema();
-    	
-    	LocalDateTime min = realMin(byDateTime, interval, align, weekStarts);
-    	
-    	LocalDateTime max = realMax(byDateTime);	
-    	
-    	/*
-    	 * 1 millisecond is subtracted from max DateTime objects because the realMax
-    	 * was introducing extra millisecond resulting into boundary test cases failing.
-    	 * */
-    	
-    	max = max.minusMillis(1);
-    	
-    	LocalDateTime current = new LocalDateTime(max);
-    	
-    	current = current.plus(period);
-    	
-    	List ends = new ArrayList();
-    	List starts = new ArrayList();
-    	
-    	while(current.compareTo(min) >= 0) {
-    		
-    		LocalDateTime currentMinus = new LocalDateTime(current.minus(period));
-    		tables.addTable(schema.instantiate());
-    		
-    		/* 
-    		 * All the records having DateTime greater than or equal to "currentMinus" & strictly
-    		 * less than "current" objects are extracted in a seperate table using "subMap" method. 
-    		 */
-    		
+		
+		LocalDateTime[] recordsExtractionBounds = initializeRecordsExtractionBounds(interval, align, weekStarts, period,
+				customYearRange, byDateTime);
+
+		LocalDateTime current = new LocalDateTime(recordsExtractionBounds[1]);
+
+		current = current.plus(period);
+
+		List ends = new ArrayList();
+		List starts = new ArrayList();
+
+		while(current.compareTo(recordsExtractionBounds[0]) > 0) {
+
+
+			LocalDateTime currentMinus = new LocalDateTime(current.minus(period));
+			tables.addTable(schema.instantiate());
+
+			/* 
+			 * All the records having DateTime greater than or equal to "currentMinus" & strictly
+			 * less than "current" objects are extracted in a seperate table using "subMap" method. 
+			 */
+
+			if(currentMinus.compareTo(recordsExtractionBounds[0]) < 0 ) {
+				currentMinus = recordsExtractionBounds[0];
+			}
+
 			Collection rowSets = byDateTime.subMap(currentMinus, current).values();
 			addRowSets(tables, rowSets, table);
 			ends.add(current);
-    		starts.add(currentMinus);
+			starts.add(currentMinus);
 			current = currentMinus;
-    		
-    	}
-    	
-//    	To make sure that last entered start time is not negative "lastStart" will be checked for it.
-    	LocalDateTime lastStart = (LocalDateTime)starts.get(starts.size() - 1);
-    	
-    	if(lastStart.compareTo(min) < 0) {
-    		starts.set(starts.size() - 1, min);
-    	}
-    	
-    	List returnRange = new ArrayList();
+
+		}
+
+		List returnRange = new ArrayList();
 		returnRange.add(starts);
 		returnRange.add(ends);
-    		
-    	return returnRange;
+
+		return returnRange;
+	}
+
+	/**
+	 * Used to initilalize the bounds for records extractions from the tables.
+	 * @param interval
+	 * @param align
+	 * @param weekStarts
+	 * @param period
+	 * @param customYearRange
+	 * @param byDateTime
+	 * @return recordsExtractionBounds
+	 * @throws AlgorithmExecutionException
+	 */
+	
+	private LocalDateTime[] initializeRecordsExtractionBounds(String interval,
+			boolean align, String weekStarts, Period period,
+			int[] customYearRange, SortedMap byDateTime)
+			throws AlgorithmExecutionException {
+		
+		LocalDateTime[] recordsExtractionBounds = {null,null};
+		
+		/*
+		 * To handle the inappropriate input of "From year" value being greater than "To year". Only legal case 
+		 * where "From year" value can be greater than "To year" is when no "To year" value provided. This is
+		 * also handled. 
+		 * */
+		
+		if(customYearRange[1] != UNDEFINED_YEAR && customYearRange[0] > customYearRange[1]) { 
+			recordsExtractionBounds[0] = realMin(byDateTime, interval, align, weekStarts);
+			recordsExtractionBounds[1] = realMax(byDateTime);	
+			throw new AlgorithmExecutionException("\"From year\" value cannot be more than \"To year\" value. Using the normal range");
+		}
+		else {
+			
+			/*
+			 * If a legal "From year" value is provided by the user. 
+			 * */
+			if(customYearRange[0] != UNDEFINED_YEAR) {
+				recordsExtractionBounds[0] = new LocalDateTime(String.valueOf(customYearRange[0]));
+			}
+			else {
+				recordsExtractionBounds[0] = realMin(byDateTime, interval, align, weekStarts);
+			}
+			
+			/*
+			 * If a legal "To year" value is provided by the user. 
+			 * */
+			if(customYearRange[1] != UNDEFINED_YEAR) {
+				recordsExtractionBounds[1] = new LocalDateTime(String.valueOf(customYearRange[1]));
+				
+//				To account for subtraction of a millisecond to the "End Bound" later on.
+				recordsExtractionBounds[1] = recordsExtractionBounds[1].plusMillis(1);
+				
+//				To account for addition of a period to the "End Bound" later on.
+				recordsExtractionBounds[1] = recordsExtractionBounds[1].minus(period);
+			}
+			else {
+				recordsExtractionBounds[1] = realMax(byDateTime);
+			}
+		}
+
+		/*
+		 * 1 millisecond is subtracted from recordsExtractionBounds[1] DateTime objects because the realMax
+		 * was introducing extra millisecond resulting into boundary test cases failing.
+		 * */
+
+		recordsExtractionBounds[1] = recordsExtractionBounds[1].minusMillis(1);
+		
+		return recordsExtractionBounds;
 	}
 
 	/**
@@ -223,13 +360,11 @@ public class Slice implements Algorithm {
 	 */
 	private Data[] dataChildrenOf(Data parent, Table[] tables, LocalDateTime[] starts, LocalDateTime[] ends, Period period) {
 		Data[] output = new Data[tables.length];
-		
-		
-		
+
 		for(int ii = 0; ii < output.length; ii++) {
-		
+
 			if(tables[ii].getRowCount() > 0) { //don't output tables with no rows
-			
+
 				Data data = new BasicData(tables[ii], Table.class.getName());
 				data = updateProperties(data, parent, starts[ii], ends[ii], tables[ii].getRowCount(), period);
 				output[ii] = data;
@@ -250,12 +385,12 @@ public class Slice implements Algorithm {
 	 * @return the original data item with updated metadata
 	 */
 	private Data updateProperties(Data data, Data parent, LocalDateTime start, LocalDateTime end, int rowCount, Period period) {
-		
+
 		Dictionary metadata = data.getMetadata();
 		metadata.put(DataProperty.LABEL, "slice from beginning of " + format.print(start) + " to beginning of " + format.print(end) + " (" + rowCount + " records)");
 		metadata.put(DataProperty.PARENT, parent);
 		metadata.put(DataProperty.TYPE, DataProperty.TABLE_TYPE);
-		
+
 		return data;
 	}
 
@@ -266,11 +401,11 @@ public class Slice implements Algorithm {
 	 * @return the appropriate TableGroup
 	 */
 	private TableGroup createTableGroup(boolean cumulative) {
-    	if(cumulative) {
-    		return new MultiTableGroup();
-    	} else {
-    		return new SingleTableGroup();
-    	}
+		if(cumulative) {
+			return new MultiTableGroup();
+		} else {
+			return new SingleTableGroup();
+		}
 	}
 
 	/**
@@ -327,9 +462,9 @@ public class Slice implements Algorithm {
 	private LocalDateTime realMin(SortedMap byDateTime, String interval,
 			boolean align, String weekStarts) {
 		LocalDateTime min = (LocalDateTime) byDateTime.firstKey();
-    	if(align) {
-    		min = truncate(min, interval, weekStarts);
-    	}
+		if(align) {
+			min = truncate(min, interval, weekStarts);
+		}
 		return min;
 	}
 
@@ -348,7 +483,7 @@ public class Slice implements Algorithm {
 			logger.log(LogService.LOG_WARNING, interval + " cannot be aligned with the calendar; proceeding without alignment.");
 			return min;
 		}
-		
+
 		DateTimeFieldType fieldType = (DateTimeFieldType) alignmentMap.get(interval);
 		min = rollBackMainField(min, fieldType, weekStarts);
 		//zeroes the fields at finer resolution than the main field to be rolled back
@@ -371,7 +506,7 @@ public class Slice implements Algorithm {
 			Period rollBack = (Period) rollBackMap.get(fieldType);
 			min = min.minus(rollBack);
 		}
-		
+
 		return min.withField(fieldType, firstValue);
 	}
 
@@ -391,7 +526,7 @@ public class Slice implements Algorithm {
 		}
 		return min;
 	}
-	
+
 	/**
 	 * For a given {@link DateTimeFieldType}, returns the appropriate first value.
 	 * 
@@ -400,11 +535,11 @@ public class Slice implements Algorithm {
 	 * @return the integer value for the appropriate first value of the field type
 	 */
 	private int getFirstValue(DateTimeFieldType fieldType, String weekStarts) {
-		
+
 		if(DateTimeFieldType.dayOfWeek().equals(fieldType)) {
 			return ((Integer) weekDayMap.get(weekStarts)).intValue();
 		}
-		
+
 		return 1;
 	}
 
@@ -418,12 +553,12 @@ public class Slice implements Algorithm {
 	 */
 	private SortedMap createDateTimeMap(Table table, String dateColumn) throws AlgorithmExecutionException {
 		SortedMap byDateTime = new TreeMap();
-    	
-    	IntIterator ids = table.rows();
-    	while(ids.hasNext()) {
-    		int id = ids.nextInt();
-    		LocalDateTime dateTime;
-    		String dateTimeString = null;
+
+		IntIterator ids = table.rows();
+		while(ids.hasNext()) {
+			int id = ids.nextInt();
+			LocalDateTime dateTime;
+			String dateTimeString = null;
 			try {
 				dateTimeString = table.getString(id, dateColumn);
 				dateTime = new LocalDateTime(format.parseDateTime(dateTimeString));
@@ -433,8 +568,8 @@ public class Slice implements Algorithm {
 			if(!byDateTime.containsKey(dateTime)) {
 				byDateTime.put(dateTime, new HashSet());
 			}
-    		((Set) byDateTime.get(dateTime)).add(new Integer(id));
-    	}
+			((Set) byDateTime.get(dateTime)).add(new Integer(id));
+		}
 		return byDateTime;
 	}
 }
