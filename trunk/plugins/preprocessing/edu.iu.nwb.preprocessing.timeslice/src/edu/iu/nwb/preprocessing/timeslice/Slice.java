@@ -18,7 +18,6 @@ import org.cishell.framework.algorithm.AlgorithmExecutionException;
 import org.cishell.framework.data.BasicData;
 import org.cishell.framework.data.Data;
 import org.cishell.framework.data.DataProperty;
-
 import org.joda.time.DateTime;
 import org.joda.time.DateTimeConstants;
 import org.joda.time.DateTimeFieldType;
@@ -134,17 +133,17 @@ public class Slice implements Algorithm {
     	//this is where tables will be put as created, and new rows will be added through the TableGroup interface
     	TableGroup tables = createTableGroup(cumulative);
     	
-    	List starts = accumulateTables(table, interval, align, weekStarts,
+    	List epochRange = accumulateTables(table, interval, align, weekStarts,
 				period, byDateTime, tables);
     	
-    	
-        return dataChildrenOf(data[0], tables.getTables(), (LocalDateTime[]) starts.toArray(new LocalDateTime[]{}), period);
+        return dataChildrenOf(data[0], tables.getTables(), 
+        		(LocalDateTime[]) ((List) epochRange.get(0)).toArray(new LocalDateTime[]{}), 
+        		(LocalDateTime[]) ((List) epochRange.get(1)).toArray(new LocalDateTime[]{}),
+        		period);
     }
 
 	/**
 	 * Puts new tables in a {@link TableGroup}, adds rows to the TableGroup, and returns a list of start times.
-	 * <p>
-	 * Consider refactoring by having the TableGroup remember start times, create it in here, then return it.
 	 * 
 	 * @param table the original data table
 	 * @param interval a string indicating which interval is selected
@@ -153,8 +152,9 @@ public class Slice implements Algorithm {
 	 * @param period how long each slice of time is
 	 * @param byDateTime a map from times into sets of row ids
 	 * @param tables the TableGroup to accumulate into
-	 * @return a list of start times
+	 * @return an Object containing list of start & end times
 	 */
+    
 	private List accumulateTables(Table table, String interval, boolean align,
 			String weekStarts, Period period, SortedMap byDateTime,
 			TableGroup tables) {
@@ -165,23 +165,50 @@ public class Slice implements Algorithm {
     	
     	LocalDateTime max = realMax(byDateTime);	
     	
-    	LocalDateTime current = max;
+    	/*
+    	 * 1 millisecond is subtracted from max DateTime objects because the realMax
+    	 * was introducing extra millisecond resulting into boundary test cases failing.
+    	 * */
     	
+    	max = max.minusMillis(1);
     	
+    	LocalDateTime current = new LocalDateTime(max);
     	
+    	current = current.plus(period);
+    	
+    	List ends = new ArrayList();
     	List starts = new ArrayList();
     	
     	while(current.compareTo(min) >= 0) {
-    		LocalDateTime currentMinus = current.minus(period);
+    		
+    		LocalDateTime currentMinus = new LocalDateTime(current.minus(period));
     		tables.addTable(schema.instantiate());
     		
-    		//[a,b)
+    		/* 
+    		 * All the records having DateTime greater than or equal to "currentMinus" & strictly
+    		 * less than "current" objects are extracted in a seperate table using "subMap" method. 
+    		 */
+    		
 			Collection rowSets = byDateTime.subMap(currentMinus, current).values();
 			addRowSets(tables, rowSets, table);
-			starts.add(current);
-    		current = currentMinus;
+			ends.add(current);
+    		starts.add(currentMinus);
+			current = currentMinus;
+    		
     	}
-		return starts;
+    	
+//    	To make sure that last entered start time is not negative "lastStart" will be checked for it.
+    	LocalDateTime lastStart = (LocalDateTime)starts.get(starts.size() - 1);
+    	
+    	if(lastStart.compareTo(min) < 0) {
+    		starts.set(starts.size() - 1, min);
+    	}
+    	
+    	List returnRange = new ArrayList();
+		returnRange.add(starts);
+		returnRange.add(ends);
+    		
+    	return returnRange;
 	}
 
 	/**
@@ -190,15 +217,21 @@ public class Slice implements Algorithm {
 	 * @param parent the data item to be the parent of the new data items
 	 * @param tables the tables to become data items
 	 * @param starts a list of start times, for the descriptive label
-	 * @param period how long each period was, also for the label
+	 * @param ends a list of end times, for the descriptive label
+	 * @param period how long each period was
 	 * @return an array of data items
 	 */
-	private Data[] dataChildrenOf(Data parent, Table[] tables, LocalDateTime[] starts, Period period) {
+	private Data[] dataChildrenOf(Data parent, Table[] tables, LocalDateTime[] starts, LocalDateTime[] ends, Period period) {
 		Data[] output = new Data[tables.length];
+		
+		
+		
 		for(int ii = 0; ii < output.length; ii++) {
+		
 			if(tables[ii].getRowCount() > 0) { //don't output tables with no rows
+			
 				Data data = new BasicData(tables[ii], Table.class.getName());
-				data = updateProperties(data, parent, starts[ii], period, tables[ii].getRowCount());
+				data = updateProperties(data, parent, starts[ii], ends[ii], tables[ii].getRowCount(), period);
 				output[ii] = data;
 			}
 		}
@@ -211,14 +244,15 @@ public class Slice implements Algorithm {
 	 * @param data a data item to set metadata on
 	 * @param parent the parent to set
 	 * @param start a start time to use for the label
-	 * @param period a period to add to the start time to get the end time for the label
+	 * @param end a end time to use for the label
 	 * @param rowCount how many rows are in the data item, for the label
+	 * @param period 
 	 * @return the original data item with updated metadata
 	 */
-	private Data updateProperties(Data data, Data parent, LocalDateTime start, Period period, int rowCount) {
+	private Data updateProperties(Data data, Data parent, LocalDateTime start, LocalDateTime end, int rowCount, Period period) {
 		
 		Dictionary metadata = data.getMetadata();
-		metadata.put(DataProperty.LABEL, "slice from " + format.print(start) + " to " + format.print(start.plus(period)) + " (" + rowCount + " records)");
+		metadata.put(DataProperty.LABEL, "slice from beginning of " + format.print(start) + " to beginning of " + format.print(end) + " (" + rowCount + " records)");
 		metadata.put(DataProperty.PARENT, parent);
 		metadata.put(DataProperty.TYPE, DataProperty.TABLE_TYPE);
 		

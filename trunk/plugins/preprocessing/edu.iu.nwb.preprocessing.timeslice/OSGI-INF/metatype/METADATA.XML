@@ -3,7 +3,8 @@
 	<OCD name="Slice Table by Time" id="edu.iu.nwb.preprocessing.timeslice.Slice.OCD"
 		 description="Slice a table into groups of rows by time.">
 		<AD name="Date/Time Column" id="column" type="String" description="Column with date/time information for the row." default="date"/>
-		<AD name="Date/Time Format" id="format" type="String" description="The format of the date/time. See http://joda-time.sourceforge.net/api-release/org/joda/time/format/DateTimeFormat.html for details." default="yyyy"/>
+		<AD name="Date/Time Format" id="format" type="String" description="The format of the date/time. Commonly used are y for year, M for 
+		month of year, d for day of month. See http://joda-time.sourceforge.net/api-release/org/joda/time/format/DateTimeFormat.html for details." default="yyyy"/>
 		<AD name="Slice Into" id="interval" type="String" description="What time interval should the data be sliced into?" default="days">
 			<Option label="Milliseconds" value="milliseconds"/>
 			<Option label="Seconds" value="seconds"/>
