@@ -115,21 +115,21 @@
   	  	  	  	  	  <param name="target" value="plugins"/>
   	  	  	  	  	  <param name="element.id" value="edu.iu.scipolicy.converter.nsf.csv_to_db"/>
   	  	  	  	  	  <param name="project.name" value="edu.iu.scipolicy.converter.nsf.csv_to_db"/>
-  	  	  	  	  	  <param name="url" value="http://nwb.slis.indiana.edu/svn/nwb/trunk/scipolicy/plugins/libs"/>
+  	  	  	  	  	  <param name="url" value="http://nwb.slis.indiana.edu/svn/nwb/trunk/scipolicy/plugins/converters"/>
   	</antcall>
   	
   	<antcall target="svn.co">
   	  	  	  	  	  <param name="target" value="plugins"/>
   	  	  	  	  	  <param name="element.id" value="edu.iu.scipolicy.converter.nsf.db_to_prefuse"/>
   	  	  	  	  	  <param name="project.name" value="edu.iu.scipolicy.converter.nsf.db_to_prefuse"/>
-  	  	  	  	  	  <param name="url" value="http://nwb.slis.indiana.edu/svn/nwb/trunk/scipolicy/plugins/libs"/>
+  	  	  	  	  	  <param name="url" value="http://nwb.slis.indiana.edu/svn/nwb/trunk/scipolicy/plugins/converters"/>
   	</antcall>
   	
   	<antcall target="svn.co">
   	  	  	  	  	  <param name="target" value="plugins"/>
   	  	  	  	  	  <param name="element.id" value="edu.iu.scipolicy.converter.nsf.psraster"/>
   	  	  	  	  	  <param name="project.name" value="edu.iu.scipolicy.converter.nsf.psraster"/>
-  	  	  	  	  	  <param name="url" value="http://nwb.slis.indiana.edu/svn/nwb/trunk/scipolicy/plugins/libs"/>
+  	  	  	  	  	  <param name="url" value="http://nwb.slis.indiana.edu/svn/nwb/trunk/scipolicy/plugins/converters"/>
   	</antcall>
   		
     
