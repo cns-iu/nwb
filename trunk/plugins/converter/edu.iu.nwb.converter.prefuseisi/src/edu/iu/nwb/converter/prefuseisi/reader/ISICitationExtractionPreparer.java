@@ -90,6 +90,14 @@ public class ISICitationExtractionPreparer {
 			} else {
 				handleNoPage(isiRow);
 			}
+			
+			String doi = extractDOI(isiRow);
+			if (doi != null) {
+				selfReferenceTokenList.add(doi);
+			} else {
+				handleNoDOI(isiRow);
+			}
+			
 		} catch (ArrayIndexOutOfBoundsException e1) {
 			// column requested does not exist (for entire table or just this field?)
 			// Fail silently. This will happen normally. The remainder of the self reference will be returned.
@@ -465,6 +473,14 @@ public class ISICitationExtractionPreparer {
 			return "P" + firstPage;
 		}
 	}
+	
+	private String extractDOI(Tuple isiRow) {
+		String doi = isiRow.getString(ISITag.DOI.columnName);
+		if (doi == null) {
+			return null;
+		}
+		return "DOI " + doi;
+	}
 
 	private String handleNoAuthors() {
 		return null;
@@ -508,6 +524,10 @@ public class ISICitationExtractionPreparer {
 	}
 
 	private void handleNoPage(Tuple isiRow) {
+		// This field is optional (though very common). No error will be printed.
+	}
+	
+	private void handleNoDOI(Tuple isiRow) {
 		// This field is optional (though very common). No error will be printed.
 	}
 

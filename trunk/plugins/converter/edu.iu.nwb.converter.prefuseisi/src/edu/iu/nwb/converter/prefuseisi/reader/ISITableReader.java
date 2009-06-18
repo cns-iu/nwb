@@ -154,6 +154,7 @@ public class ISITableReader {
 		return processMultilineTagData(currentTag, currentLine, reader, table, " ", separator);
 	}
 	
+	private static final String STARTS_WITH_A_NUMBER = "\\d.*";
 	private String processMultilineTagData(ISITag currentTag,
 			String currentLine,
 			BufferedReader reader,
@@ -166,10 +167,25 @@ public class ISITableReader {
 		
 		do {
 			currentLine = currentLine.trim();
+			if (currentTag.equals(ISITag.CITED_REFERENCES) && 
+					currentLine.matches(STARTS_WITH_A_NUMBER)) {
+				//ISI sucks, and puts DOIs on the next line in a list of cited references.
+				//This is kind of a hot mess.
+				
+				//add the DOI onto the main part of the reference with a space between.
+				stringSoFar.append(" ");
+				
+				//we don't do the tag specific handling, because it expects
+				//every entry in cited references to be a citation (this is a hack)
+				//we also skip appending the appendString so these will be treated
+				//as one entry.
+			} else {
 			currentLine = tagSpecificProcessing(currentTag, currentLine);
-			
 			stringSoFar.append(appendString);
+			}
+
 			stringSoFar.append(currentLine);
+			
 		} while ((currentLine = moveToNextNonEmptyLine(reader)).startsWith("  "));
 		
 		/*
