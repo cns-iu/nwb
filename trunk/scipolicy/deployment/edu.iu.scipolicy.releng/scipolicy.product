@@ -51,7 +51,7 @@
       <feature id="org.cishell.environment.equinox.feature" version="0.0.0"/>
       <feature id="org.cishell.feature" version="0.3.0"/>
       <feature id="org.cishell.reference.feature" version="1.0.0"/>
-      <feature id="org.cishell.reference.database.feature" version
+      <feature id="org.cishell.reference.database.feature" version="1.0.0"/>
       <feature id="org.cishell.reference.gui.feature" version="0.4.0"/>
       <feature id="edu.iu.scipolicy.gui.brand.feature" version="0.6.0"/>
       <feature id="edu.iu.scipolicy.nonscipolicyjavaalgorithm.feature" version="1.0.0"/>
