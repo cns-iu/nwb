@@ -104,7 +104,7 @@ Dr. Katy Borner (katy@indiana.edu)
          id="FreeHEP_VectorGraphics"
          download-size="0"
          install-size="0"
-         version="0.0.0"/>
+         version="0.0.1"/>
 
    <plugin
          id="edu.iu.nwb.analysis.multipartitejoining"
@@ -407,96 +407,82 @@ Dr. Katy Borner (katy@indiana.edu)
          id="antlr_stringtemplate"
          download-size="0"
          install-size="0"
-         version="0.0.0"/>
+         version="1.0.0"/>
 
    <plugin
          id="freehep_psviewer"
          download-size="0"
          install-size="0"
-         version="0.0.0"
+         version="0.0.1"
          unpack="false"/>
 
    <plugin
          id="opencsv"
          download-size="0"
          install-size="0"
-         version="0.0.0"
+         version="1.0.0"
          unpack="false"/>
 
    <plugin
          id="pdfbox_fontbox"
          download-size="0"
          install-size="0"
-         version="0.0.0"/>
+         version="1.0.0"/>
 
    <plugin
          id="edu.iu.scipolicy.filtering.topn"
          download-size="0"
          install-size="0"
-         version="0.0.0"
+         version="0.0.1"
          unpack="false"/>
 
    <plugin
          id="edu.iu.scipolicy.filtering.topnpercent"
          download-size="0"
          install-size="0"
-         version="0.0.0"
+         version="0.0.1"
          unpack="false"/>
 
    <plugin
          id="edu.iu.scipolicy.references.map"
          download-size="0"
          install-size="0"
-         version="0.0.0"
+         version="0.0.1"
          unpack="false"/>
 
    <plugin
          id="edu.iu.scipolicy.testutilities"
          download-size="0"
          install-size="0"
-         version="0.0.0"
+         version="1.0.0"
          unpack="false"/>
 
    <plugin
          id="edu.iu.scipolicy.utilities"
          download-size="0"
          install-size="0"
-         version="0.0.0"
+         version="1.0.0"
          unpack="false"/>
 
    <plugin
          id="edu.iu.scipolicy.utilities.nsf"
          download-size="0"
          install-size="0"
-         version="0.0.0"
+         version="1.0.0"
          unpack="false"/>
 
    <plugin
          id="edu.iu.scipolicy.visualization.horizontallinegraph"
          download-size="0"
          install-size="0"
-         version="0.0.0"
+         version="0.0.1"
          unpack="false"/>
 
    <plugin
          id="edu.iu.scipolicy.visualization.imageviewer"
          download-size="0"
          install-size="0"
-         version="0.0.0"
-         unpack="false"/>
-
-   <plugin
-         id="edu.iu.nwb.converter.nsf.csv_to_db"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         unpack="false"/>
-
-   <plugin
-         id="edu.iu.nwb.converter.nsf.db_to_prefuse"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
+         version="0.0.1"
          unpack="false"/>
 
 </feature>

@@ -197,7 +197,21 @@ Dr. Katy Borner (katy@indiana.edu)
          id="edu.iu.scipolicy.converter.psraster"
          download-size="0"
          install-size="0"
-         version="0.0.0"
+         version="0.0.1"
+         unpack="false"/>
+
+   <plugin
+         id="edu.iu.scipolicy.converter.nsf.csv_to_db"
+         download-size="0"
+         install-size="0"
+         version="0.0.1"
+         unpack="false"/>
+
+   <plugin
+         id="edu.iu.scipolicy.converter.nsf.db_to_prefuse"
+         download-size="0"
+         install-size="0"
+         version="0.0.1"
          unpack="false"/>
 
 </feature>
