@@ -3,6 +3,7 @@ plugin@org.cishell.framework=COPY,/home/bherr/cishell-workspace,org.cishell.fram
 feature@org.cishell.environment.equinox.feature=COPY,/home/bherr/cishell-workspace,org.cishell.environment.equinox.feature
 plugin@org.eclipse.equinox.ds=COPY,/home/bherr/cishell-workspace,org.eclipse.equinox.ds
 feature@org.cishell.reference.feature=COPY,/home/bherr/cishell-workspace,org.cishell.reference.feature
+feature@org.cishell.reference.database.feature=COPY,/home/bherr/cishell-workspace,org.cishell.reference.database.feature
 plugin@org.cishell.reference=COPY,/home/bherr/cishell-workspace,org.cishell.reference
 plugin@org.cishell.reference.services=COPY,/home/bherr/cishell-workspace,org.cishell.reference.services
 plugin@org.cishell.service.autostart=COPY,/home/bherr/cishell-workspace,org.cishell.service.autostart
