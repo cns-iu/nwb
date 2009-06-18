@@ -19,9 +19,9 @@
 			<Option label="Decades" value="decades"/>
 			<Option label="Centuries" value="centuries"/>
 		</AD>
-		<AD name="How Many?" id="periodmultiplier" type="String" description="Enter the Multiplier for selected Period." default="1"/>
-		<AD name="From Beginning of Year" id="fromyear" type="String" description="Enter the year from which slicing will start." default="yyyy"/>
-		<AD name="To Beginning of Year" id="toyear" type="String" description="Enter the year where the slicing should end." default="yyyy"/>
+		<AD name="How Many?" id="periodmultiplier" type="Integer" description="Enter an Integer Multiplier for selected Period." default="1"/>
+		<AD name="From Time" id="fromtime" type="String" description="Enter the Period from which slicing will start." default="yyyy"/>
+		<AD name="To Time" id="totime" type="String" description="Enter the Period where the slicing should end." default="yyyy"/>
 		<AD name="Cumulative?" id="cumulative" type="Boolean" description="Should each slice be cumulative with earlier slices?" default="false"/>
 		<AD name="Align With Calendar" id="align" type="Boolean" description="Should the intervals be aligned with calendar intervals?" default="false"/>
 		<AD name="Week Starts On" id="weekstart" type="String" description="What day does the week start on?" default="sunday">

@@ -32,7 +32,7 @@ import prefuse.data.Table;
 import prefuse.util.collections.IntIterator;
 
 /**
- * @author rduhon
+ * @author rduhon & modified by @author Chintan Tank
  *
  */
 public class Slice implements Algorithm {
@@ -40,7 +40,7 @@ public class Slice implements Algorithm {
 	Dictionary parameters;
 	CIShellContext context;
 	private LogService logger;
-	private final static int UNDEFINED_YEAR = -1;
+	private final static String DEFAULT_CUSTOM_TIME = "yyyy";
 
 
 	private static Map alignmentMap = new HashMap();
@@ -127,13 +127,15 @@ public class Slice implements Algorithm {
 		boolean cumulative = ((Boolean) parameters.get("cumulative")).booleanValue();
 		String weekStarts = (String) parameters.get("weekstarts");
 
-		int[] customYearRange = initializeCustomPeriodRange();
-
 		format = DateTimeFormat.forPattern(formatString);
 
-		String periodMultiplierString = (String) parameters.get("periodmultiplier");
-
-		int periodMultiplier = initializePeriodMultiplier(periodMultiplierString);
+		LocalDateTime[] customYearRange = initializeCustomPeriodRange();
+		
+		int periodMultiplier = (Integer) parameters.get("periodmultiplier");
+		
+		if(periodMultiplier <= 0) {
+			periodMultiplier = 1;
+		}
 
 		Period periodOriginal = (Period) periodMap.get(interval);
 
@@ -158,25 +160,31 @@ public class Slice implements Algorithm {
 	 * @param customYearRange
 	 * @return 
 	 */
-	private int[] initializeCustomPeriodRange() {
+	private LocalDateTime[] initializeCustomPeriodRange(){
 
-		int[] customYearRange = {UNDEFINED_YEAR,UNDEFINED_YEAR};
-
-		try {
-			customYearRange[0] = Integer.parseInt((String) parameters.get("fromyear"));
-		} catch (NumberFormatException nfe) {
-			System.err.println("Inappropriate \"From year\" value. It should be an integer");
-			customYearRange[0] = UNDEFINED_YEAR;
+		LocalDateTime[] customPeriodRange = {null,null};
+		
+		String fromTimeString = (String) parameters.get("fromtime");
+		if(!fromTimeString.equalsIgnoreCase(DEFAULT_CUSTOM_TIME)) {
+			try {
+				customPeriodRange[0] = new LocalDateTime(format.parseDateTime(fromTimeString));
+			} catch (IllegalArgumentException e) {
+				logger.log(LogService.LOG_WARNING, "Problem parsing " + fromTimeString+ ". \"From time\" value " +
+						"format should look like " + format.print(new DateTime()) + ". Using default \"From time\" value.", e);
+			}
 		}
 
-		try {
-			customYearRange[1] = Integer.parseInt((String) parameters.get("toyear"));
-		} catch (NumberFormatException nfe) {
-			System.err.println("Inappropriate \"To year\" value. It should be an integer");
-			customYearRange[1] = UNDEFINED_YEAR;
+		String toTimeString = (String) parameters.get("totime");
+		if(!toTimeString.equalsIgnoreCase(DEFAULT_CUSTOM_TIME)) {
+			try {
+				customPeriodRange[1] = new LocalDateTime(format.parseDateTime(toTimeString));
+			} catch (IllegalArgumentException e) {
+				logger.log(LogService.LOG_WARNING, "Problem parsing " + toTimeString + ". \"To time\" value " +
+						"format should look like " + format.print(new DateTime()) + ". Using default \"To time\" value.", e);
+			}
 		}
 
-		return customYearRange;
+		return customPeriodRange;
 	}
 
 	/**
@@ -195,30 +203,6 @@ public class Slice implements Algorithm {
 	}
 
 	/**
-	 * Initializes the period multiplier
-	 * @param periodMultiplier
-	 * @return
-	 * @throws AlgorithmExecutionException
-	 */
-	private int initializePeriodMultiplier(String periodMultiplierString)
-	throws AlgorithmExecutionException {
-
-		int periodMultiplier;
-
-		try {
-			periodMultiplier = Integer.parseInt(periodMultiplierString);
-		} catch (NumberFormatException nfe) {
-			periodMultiplier = 1;
-			throw new AlgorithmExecutionException("Inappropriate \"Period multiplier\" value. It should be an integer. " + nfe);
-		}
-
-		if(periodMultiplier <= 0) {
-			periodMultiplier = 1;
-		}
-		return periodMultiplier;
-	}
-
-	/**
 	 * Puts new tables in a {@link TableGroup}, adds rows to the TableGroup, and returns a list of start times.
 	 * 
 	 * @param table the original data table
@@ -234,7 +218,7 @@ public class Slice implements Algorithm {
 	 */
 
 	private List accumulateTables(Table table, String interval, boolean align,
-			String weekStarts, Period period, int[] customYearRange, SortedMap byDateTime,
+			String weekStarts, Period period, LocalDateTime[] customYearRange, SortedMap byDateTime,
 			TableGroup tables) throws AlgorithmExecutionException {
 
 		Schema schema = table.getSchema();
@@ -293,29 +277,30 @@ public class Slice implements Algorithm {
 	
 	private LocalDateTime[] initializeRecordsExtractionBounds(String interval,
 			boolean align, String weekStarts, Period period,
-			int[] customYearRange, SortedMap byDateTime)
+			LocalDateTime[] customYearRange, SortedMap byDateTime)
 			throws AlgorithmExecutionException {
 		
 		LocalDateTime[] recordsExtractionBounds = {null,null};
 		
 		/*
-		 * To handle the inappropriate input of "From year" value being greater than "To year". Only legal case 
-		 * where "From year" value can be greater than "To year" is when no "To year" value provided. This is
+		 * To handle the inappropriate input of "From time" value being greater than "To time". Only legal case 
+		 * where "From time" value can be greater than "To time" is when no "To time" value provided. This is
 		 * also handled. 
 		 * */
 		
-		if(customYearRange[1] != UNDEFINED_YEAR && customYearRange[0] > customYearRange[1]) { 
+		if(customYearRange[1] != null && customYearRange[0] != null && 
+				customYearRange[0].compareTo(customYearRange[1]) > 0) { 
 			recordsExtractionBounds[0] = realMin(byDateTime, interval, align, weekStarts);
 			recordsExtractionBounds[1] = realMax(byDateTime);	
-			throw new AlgorithmExecutionException("\"From year\" value cannot be more than \"To year\" value. Using the normal range");
+			throw new AlgorithmExecutionException("\"From year\" value cannot be more than \"To year\" value.");
 		}
 		else {
 			
 			/*
 			 * If a legal "From year" value is provided by the user. 
 			 * */
-			if(customYearRange[0] != UNDEFINED_YEAR) {
-				recordsExtractionBounds[0] = new LocalDateTime(String.valueOf(customYearRange[0]));
+			if(customYearRange[0] != null) {
+				recordsExtractionBounds[0] = customYearRange[0];
 			}
 			else {
 				recordsExtractionBounds[0] = realMin(byDateTime, interval, align, weekStarts);
@@ -324,8 +309,8 @@ public class Slice implements Algorithm {
 			/*
 			 * If a legal "To year" value is provided by the user. 
 			 * */
-			if(customYearRange[1] != UNDEFINED_YEAR) {
-				recordsExtractionBounds[1] = new LocalDateTime(String.valueOf(customYearRange[1]));
+			if(customYearRange[1] != null) {
+				recordsExtractionBounds[1] = customYearRange[1];
 				
 //				To account for subtraction of a millisecond to the "End Bound" later on.
 				recordsExtractionBounds[1] = recordsExtractionBounds[1].plusMillis(1);
