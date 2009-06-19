@@ -84,15 +84,15 @@
   	
   	<antcall target="svn.co">
   	  	  	      <param name="target" value="plugins"/>
-  	  	  	      <param name="element.id" value="antlr-stringtemplate"/>
-  	  	  	      <param name="project.name" value="antlr-stringtemplate"/>
+  	  	  	      <param name="element.id" value="antlr_stringtemplate"/>
+  	  	  	      <param name="project.name" value="antlr_stringtemplate"/>
   	  	  	      <param name="url" value="http://nwb.slis.indiana.edu/svn/nwb/trunk/scipolicy/plugins/libs"/>
   	  	  	 </antcall>
   	
 	<antcall target="svn.co">
   	  	  	      <param name="target" value="plugins"/>
-  	  	  	      <param name="element.id" value="freehep-psviewer"/>
-  	  	  	      <param name="project.name" value="freehep-psviewer"/>
+  	  	  	      <param name="element.id" value="freehep_psviewer"/>
+  	  	  	      <param name="project.name" value="freehep_psviewer"/>
   	  	  	      <param name="url" value="http://nwb.slis.indiana.edu/svn/nwb/trunk/scipolicy/plugins/libs"/>
   	  	  	 </antcall>
   	  	  	 	
@@ -105,8 +105,8 @@
   	  	  	 	
   	<antcall target="svn.co">
   	  	  	  	  <param name="target" value="plugins"/>
-  	  	  	  	  <param name="element.id" value="pdfbox-fontbox"/>
-  	  	  	  	  <param name="project.name" value="pdfbox-fontbox"/>
+  	  	  	  	  <param name="element.id" value="pdfbox_fontbox"/>
+  	  	  	  	  <param name="project.name" value="pdfbox_fontbox"/>
   	  	  	  	  <param name="url" value="http://nwb.slis.indiana.edu/svn/nwb/trunk/scipolicy/plugins/libs"/>
   	</antcall>
   	
