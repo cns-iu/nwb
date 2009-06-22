@@ -12,6 +12,8 @@ import java.util.regex
 import sys
 import math
 
+import java.awt as awt
+
 # Graph Modifier
 # By: Jeffrey Wong and Bernie Hogan
 # Modified by: Micah Linnemeier, Russell Duhon, and Patrick Phillips
@@ -23,6 +25,17 @@ import math
 # Used under the following terms of this Creative Commons License: http://creativecommons.org/licenses/by-nc/2.5/
 # Created in association with Netlab, University of Toronto. (http://www.chass.utoronto.ca/~wellman)
 # For questions, comments, or inquiries, please contact Jeffrey (jeffo.wong@gmail.com) or Bernie (bernie.hogan@utoronto.ca)
+
+RESIZE_LINEAR_BUTTON_TEXT = "Resize Linear"
+COLORIZE_BUTTON_TEXT = "Colorize"
+GRAPH_OBJECT_TYPE_SELECTION_BOX_NODE_OPTION = "Nodes"
+GRAPH_OBJECT_TYPE_SELECTION_BOX_EDGE_OPTION = "Edges"
+DO_RESIZE_LINEAR_BUTTON_TEXT = "Do Resize Linear"
+DO_COLORIZE_BUTTON_TEXT = "Do Colorize"
+RESIZE_LINEAR_TEXT_FIELD_SIZE = 7
+COLOR_SELECTOR_BUTTON_SIZE = 20
+FROM_LABEL_TEXT = "From: "
+TO_LABEL_TEXT = "To: "
 
 ######################### BEGIN GLOBAL VARIABLES ###############################
 # general choices that allows you to select all nodes and/or edges
@@ -535,6 +548,7 @@ class GraphModifier(com.hp.hpl.guess.ui.DockableAdapter):
         dockSelf.buttonPanel.setPreferredSize(Dimension(dimWidth, dimHeight))
         dockSelf.layoutPanel.add(dockSelf.buttonPanel)
         
+        # TODO: Put this in its own class, like UtilityButtonPanel.
         dockSelf.formatLabelsButtonPanel = JPanel()
         dockSelf.formatLabelsButtonPanel.setPreferredSize(
             Dimension(dimWidth, dimHeight))
@@ -543,6 +557,10 @@ class GraphModifier(com.hp.hpl.guess.ui.DockableAdapter):
         dockSelf.buttonPanel2 = JPanel()
         dockSelf.buttonPanel2.setPreferredSize(Dimension(dimWidth, dimHeight))
         dockSelf.layoutPanel.add(dockSelf.buttonPanel2)
+        
+        # For resizeLinear and colorize.
+        dockSelf.utilityButtonPanel = UtilityButtonPanel(dimWidth, dimHeight)
+        dockSelf.layoutPanel.add(dockSelf.utilityButtonPanel)
         
         dockSelf.bottomPanel = JPanel() # the bottom panel
         dockSelf.bottomPanel.setPreferredSize(Dimension(900, 280))
@@ -660,6 +678,22 @@ class GraphModifier(com.hp.hpl.guess.ui.DockableAdapter):
         dockSelf.changeHistoryPanel.add(dockSelf.changeHistoryLeftPanel)
         dockSelf.changeHistoryPanel.add(dockSelf.changeHistoryRightPanel)
         dockSelf.changeHistoryPanel.setVisible(false)
+        
+        # These are for both resizeLinear and colorize.
+        nodeNumberFields = _filterNumberFields(nodePropertiesList, g.nodes[0])
+        edgeNumberFields = _filterNumberFields(edgePropertiesList, g.edges[0])
+        uniqueEdgeNumberFields = \
+            _listsDifference(nodeNumberFields, edgeNumberFields)
+        
+        # Resize Linear Panel.
+        dockSelf.resizeLinearPanel = ResizeLinearPanel(nodeNumberFields,
+                                                       uniqueEdgeNumberFields,
+                                                       dockSelf)
+        
+        # Colorize Panel.
+        dockSelf.colorizePanel = ColorizePanel(nodeNumberFields,
+                                               uniqueEdgeNumberFields,
+                                               dockSelf)
         
         # colour button
         dockSelf.colourButton = JButton("Colour")
@@ -1301,6 +1335,294 @@ def unique(s):
             u.append(x)
     return u
 
+class UtilityButtonPanel(JPanel):
+    def __init__(self, width, height):
+        self.setPreferredSize(Dimension(width, height))
+        
+        self.resizeLinearButton = self._createResizeLinearButton()
+        self.add(self.resizeLinearButton)
+        
+        self.colorizeButton = self._createColorizeButton()
+        self.add(self.colorizeButton)
+    
+    def _createResizeLinearButton(self):
+        resizeLinearButton = JButton(RESIZE_LINEAR_BUTTON_TEXT)
+        resizeLinearButton.actionPerformed = lambda event: \
+            updateBottomPanel(GraphModifier.self,
+                              GraphModifier.self.resizeLinearPanel)
+        
+        return resizeLinearButton
+    
+    def _createColorizeButton(self):
+        colorizeButton = JButton(COLORIZE_BUTTON_TEXT)
+        colorizeButton.actionPerformed = lambda event: \
+            updateBottomPanel(GraphModifier.self,
+                              GraphModifier.self.colorizePanel)
+        
+        return colorizeButton
+
+class ResizeLinearPanel(JPanel):
+    def __init__(self, nodeColumnNames, edgeColumnNames, graphModifier):
+        self.setPreferredSize(Dimension(900, 280))
+        self.setVisible(false)
+        
+        self.nodeColumnNames = nodeColumnNames
+        self.edgeColumnNames = edgeColumnNames
+        
+        self.nodeComboBoxModel = DefaultComboBoxModel(self.nodeColumnNames)
+        self.edgeComboBoxModel = DefaultComboBoxModel(self.edgeColumnNames)
+        
+        self.graphObjectTypeSelectionBox = \
+            self._createGraphObjectTypeSelectionBox()
+        self.add(self.graphObjectTypeSelectionBox)
+        
+        self.columnSelectionBox = self._createColumnSelectionBox()
+        self.add(self.columnSelectionBox)
+        
+        self.minTextFieldLabel = self._createMinTextFieldLabel()
+        self.add(self.minTextFieldLabel)
+        self.minTextField = self._createMinTextField()
+        self.add(self.minTextField)
+        
+        self.maxTextFieldLabel = self._createMaxTextFieldLabel()
+        self.add(self.maxTextFieldLabel)
+        self.maxTextField = self._createMaxTextField()
+        self.add(self.maxTextField)
+        
+        self.doResizeLinearButton = self._createDoResizeLinearButton()
+        self.add(self.doResizeLinearButton)
+    
+    def _createGraphObjectTypeSelectionBox(self):
+        class GraphObjectTypeSelectedListener(awt.event.ActionListener):
+            def __init__(self, resizeLinearPanel):
+                self.resizeLinearPanel = resizeLinearPanel
+            
+            def actionPerformed(self, event):
+                self.resizeLinearPanel._chooseGraphObjectType()
+        
+        graphObjectTypeSelectionBoxOptions = [
+            GRAPH_OBJECT_TYPE_SELECTION_BOX_NODE_OPTION,
+            GRAPH_OBJECT_TYPE_SELECTION_BOX_EDGE_OPTION
+        ]
+        
+        graphObjectTypeSelectionBox = \
+            JComboBox(graphObjectTypeSelectionBoxOptions,
+            actionListener=GraphObjectTypeSelectedListener(self))
+        
+        return graphObjectTypeSelectionBox
+    
+    def _createColumnSelectionBox(self):
+        columnSelectionBox = JComboBox(self.nodeComboBoxModel)
+        columnSelectionBox.setEditable(false)
+        
+        return columnSelectionBox
+    
+    def _createMinTextFieldLabel(self):
+        minTextFieldLabel = JLabel(FROM_LABEL_TEXT)
+        
+        return minTextFieldLabel
+    
+    def _createMinTextField(self):
+        minTextField = JTextField(RESIZE_LINEAR_TEXT_FIELD_SIZE)
+        
+        return minTextField
+    
+    def _createMaxTextFieldLabel(self):
+        maxTextFieldLabel = JLabel(TO_LABEL_TEXT)
+        
+        return maxTextFieldLabel
+    
+    def _createMaxTextField(self):
+        maxTextField = JTextField(RESIZE_LINEAR_TEXT_FIELD_SIZE)
+        
+        return maxTextField
+    
+    def _createDoResizeLinearButton(self):
+        doResizeLinearButton = JButton(DO_RESIZE_LINEAR_BUTTON_TEXT)
+        doResizeLinearButton.actionPerformed = self._doResizeLinear
+        
+        return doResizeLinearButton
+    
+    def _chooseGraphObjectType(self):
+        selectedItem = self.graphObjectTypeSelectionBox.getSelectedItem()
+        
+        if selectedItem == GRAPH_OBJECT_TYPE_SELECTION_BOX_NODE_OPTION:
+            self.columnSelectionBox.setModel(self.nodeComboBoxModel)
+        else:
+            self.columnSelectionBox.setModel(self.edgeComboBoxModel)
+    
+    def _doResizeLinear(self, event):
+        selectedFieldName = self.columnSelectionBox.getSelectedItem()
+        min = float(self.minTextField.getText())
+        max = float(self.maxTextField.getText())
+        
+        resizeLinear(eval(selectedFieldName), min, max)
+        
+        self.setVisible(false)
+
+class ColorizePanel(JPanel):
+    def __init__(self, nodeColumnNames, edgeColumnNames, graphModifier):
+        self.setPreferredSize(Dimension(900, 280))
+        self.setVisible(false)
+        
+        self.nodeColumnNames = nodeColumnNames
+        self.edgeColumnNames = edgeColumnNames
+        
+        self.nodeComboBoxModel = DefaultComboBoxModel(self.nodeColumnNames)
+        self.edgeComboBoxModel = DefaultComboBoxModel(self.edgeColumnNames)
+        
+        self.graphObjectTypeSelectionBox = \
+            self._createGraphObjectTypeSelectionBox()
+        self.add(self.graphObjectTypeSelectionBox)
+        
+        self.columnSelectionBox = self._createColumnSelectionBox()
+        self.add(self.columnSelectionBox)
+        
+        self.firstColorLabel = self._createFirstColorLabel()
+        self.add(self.firstColorLabel)
+        self.firstColorSelectorButton = self._createFirstColorSelectorButton()
+        self.add(self.firstColorSelectorButton)
+        
+        self.secondColorLabel = self._createSecondColorLabel()
+        self.add(self.secondColorLabel)
+        self.secondColorSelectorButton = \
+            self._createSecondColorSelectorButton()
+        self.add(self.secondColorSelectorButton)
+        
+        self.doColorizeButton = self._createDoColorizeButton()
+        self.add(self.doColorizeButton)
+    
+    def _createGraphObjectTypeSelectionBox(self):
+        class GraphObjectTypeSelectedListener(awt.event.ActionListener):
+            def __init__(self, colorizePanel):
+                self.colorizePanel = colorizePanel
+            
+            def actionPerformed(self, event):
+                self.colorizePanel._chooseGraphObjectType()
+        
+        graphObjectTypeSelectionBoxOptions = [
+            GRAPH_OBJECT_TYPE_SELECTION_BOX_NODE_OPTION,
+            GRAPH_OBJECT_TYPE_SELECTION_BOX_EDGE_OPTION
+        ]
+        
+        graphObjectTypeSelectionBox = \
+            JComboBox(graphObjectTypeSelectionBoxOptions,
+            actionListener=GraphObjectTypeSelectedListener(self))
+        
+        return graphObjectTypeSelectionBox
+    
+    def _createColumnSelectionBox(self):
+        columnSelectionBox = JComboBox(self.nodeComboBoxModel)
+        columnSelectionBox.setEditable(false)
+        
+        return columnSelectionBox
+    
+    def _createFirstColorLabel(self):
+        firstColorLabel = JLabel(FROM_LABEL_TEXT)
+        
+        return firstColorLabel
+    
+    def _createFirstColorSelectorButton(self):
+        firstColorSelectorButton = JButton("#")
+        firstColorSelectorButton.setPreferredSize(
+            Dimension(COLOR_SELECTOR_BUTTON_SIZE, COLOR_SELECTOR_BUTTON_SIZE))
+        firstColorSelectorButton.actionPerformed = self._chooseFirstColor
+        firstColorSelectorButton.setBackground(Color.lightGray)
+        firstColorSelectorButton.setForeground(Color.lightGray)
+        
+        return firstColorSelectorButton
+    
+    def _createSecondColorLabel(self):
+        secondColorLabel = JLabel(TO_LABEL_TEXT)
+        
+        return secondColorLabel
+    
+    def _createSecondColorSelectorButton(self):
+        secondColorSelectorButton = JButton("#")
+        secondColorSelectorButton.setPreferredSize(
+            Dimension(COLOR_SELECTOR_BUTTON_SIZE, COLOR_SELECTOR_BUTTON_SIZE))
+        secondColorSelectorButton.actionPerformed = self._chooseSecondColor
+        secondColorSelectorButton.setBackground(Color.lightGray)
+        secondColorSelectorButton.setForeground(Color.lightGray)
+        
+        return secondColorSelectorButton
+    
+    def _createDoColorizeButton(self):
+        doColorizeButton = JButton(DO_COLORIZE_BUTTON_TEXT)
+        doColorizeButton.actionPerformed = self._doColorize
+        
+        return doColorizeButton
+    
+    def _chooseGraphObjectType(self):
+        selectedItem = self.graphObjectTypeSelectionBox.getSelectedItem()
+        
+        if selectedItem == GRAPH_OBJECT_TYPE_SELECTION_BOX_NODE_OPTION:
+            self.columnSelectionBox.setModel(self.nodeComboBoxModel)
+        else:
+            self.columnSelectionBox.setModel(self.edgeComboBoxModel)
+    
+    def _chooseFirstColor(self, event):
+        title = "Choose the First Color"
+        color = JColorChooser.showDialog(
+            None, title, self.firstColorSelectorButton.getBackground())
+        
+        if color is not None:
+            self.firstColorSelectorButton.setBackground(color)
+            self.firstColorSelectorButton.setForeground(color)
+    
+    def _chooseSecondColor(self, event):
+        title = "Choose the Second Color"
+        color = JColorChooser.showDialog(
+            None, title, self.secondColorSelectorButton.getBackground())
+        
+        if color is not None:
+            self.secondColorSelectorButton.setBackground(color)
+            self.secondColorSelectorButton.setForeground(color)
+    
+    def _doColorize(self, event):
+        selectedFieldName = self.columnSelectionBox.getSelectedItem()
+        
+        firstColor = self.firstColorSelectorButton.getBackground()
+        firstColorTuple = [
+            firstColor.getRed(),
+            firstColor.getGreen(),
+            firstColor.getBlue()
+        ]
+        
+        secondColor = self.secondColorSelectorButton.getBackground()
+        secondColorTuple = [
+            secondColor.getRed(),
+            secondColor.getGreen(),
+            secondColor.getBlue()
+        ]
+        
+        colorize(eval(selectedFieldName), firstColorTuple, secondColorTuple)
+        
+        self.setVisible(false)
+
+def _filterNumberFields(fieldNames, objectWithFields):
+    filteredFieldNames = []
+    
+    for fieldName in fieldNames:
+        if hasattr(objectWithFields, fieldName):
+            field = getattr(objectWithFields, fieldName)
+            fieldType = type(field)
+            
+            if fieldType == type(int(1)) or \
+               fieldType == type(long(1)) or \
+               fieldType == type(float(1)):
+                    filteredFieldNames.append(fieldName)
+    
+    return filteredFieldNames
+
+def _listsDifference(list1, list2):
+    differenceList = []
+    
+    for listItem in list2:
+        if listItem not in list1:
+            differenceList.append(listItem)
+    
+    return differenceList
 
 ######################## BEGIN FUNCTION CALLS ##################################
 print "Starting GUESS GraphModifier (this may take a while)"
