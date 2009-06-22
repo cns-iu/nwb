@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: Freehep_psviewer Plug-in
 Bundle-SymbolicName: freehep_psviewer
-Bundle-Version: 1.0.0
+Bundle-Version: 0.0.1
 Export-Package: org.freehep.graphics2d,
  org.freehep.graphics2d.font,
  org.freehep.postscript,
