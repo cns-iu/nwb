@@ -4,8 +4,7 @@ Bundle-Name: Image Viewer
 Bundle-SymbolicName: edu.iu.scipolicy.visualization.imageviewer
 Bundle-Version: 0.0.1
 Bundle-ClassPath: .
-Import-Package: edu.iu.scipolicy.converter.psraster.psrasterproperties,
- edu.iu.scipolicy.utilities,
+Import-Package: edu.iu.scipolicy.utilities,
  org.cishell.framework;version="1.0.0",
  org.cishell.framework.algorithm;version="1.0.0",
  org.cishell.framework.data;version="1.0.0",
