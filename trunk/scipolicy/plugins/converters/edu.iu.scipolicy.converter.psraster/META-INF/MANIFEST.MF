@@ -17,6 +17,5 @@ Import-Package: edu.iu.scipolicy.utilities,
  org.osgi.service.prefs;version="1.1.0"
 X-AutoStart: true
 Service-Component: OSGI-INF/ps-validator/psvalidator.xml, OSGI-INF/ps-validator/epsvalidator.xml, OSGI-INF/ps-handler/pshandler.xml, OSGI-INF/jpg-validator/jpegvalidator.xml, OSGI-INF/jpg-validator/jpgvalidator.xml, OSGI-INF/jpg-reader/jpgreader.xml, OSGI-INF/jpg-writer/jpgwriter.xml, OSGI-INF/jpg-handler/jpghandler.xml, OSGI-INF/postscript-renderer/postscriptrenderer.xml
-Require-Bundle: freehep_psviewer;bundle-version="1.0.0"
-Export-Package: edu.iu.scipolicy.converter.psraster.psrasterproperties
+Require-Bundle: freehep_psviewer;bundle-version="0.0.1"
 Bundle-RequiredExecutionEnvironment: J2SE-1.5
