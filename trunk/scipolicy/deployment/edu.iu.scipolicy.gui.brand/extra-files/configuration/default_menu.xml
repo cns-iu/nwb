@@ -19,7 +19,7 @@
 	<menu type="break"/>	
 	<menu name = "Tests" type="group">
 		<menu pid= "org.cishell.tests.ProgressTrackableAlgorithm.AlgorithmTest"/>
-		<menu pid= "org.cishell.testing.convertertester.algorithm.ConverterTesterAlgorithm"/>
+		<!--   <menu pid= "org.cishell.testing.convertertester.algorithm.ConverterTesterAlgorithm"/> -->
 	</menu>
 	<menu type="break"/>
 	<menu name="Exit" type="preserved"/>
@@ -28,8 +28,10 @@
     <top_menu name="Preprocessing">
     <menu pid="edu.iu.nwb.preprocessing.extractnodesandedges.extractnodes.top.ExtractTopNodesAlgorithm"/>
     <menu pid="edu.iu.nwb.preprocessing.extractnodesandedges.extractnodes.abovebelow.ExtractNodesAboveBelowAlgorithm"/>	
+ 	<!--  
  	<menu pid="edu.iu.iv.attacktolerance.AttackToleranceAlgorithm"/>
 	<menu pid="edu.iu.iv.errortolerance.ErrorToleranceAlgorithm"/>	
+	-->
 	<menu pid="edu.iu.nwb.analysis.isolates.Delete"/>
     <menu type="break"/>
     <menu pid="edu.iu.nwb.preprocessing.extractnodesandedges.extractedges.top.ExtractTopEdgesAlgorithm"/>
@@ -54,13 +56,17 @@
 	<menu pid="edu.iu.nwb.modeling.smallworld"/>
 	<menu pid="edu.iu.nwb.modeling.barabasialbert"/>
 	<menu type="break"/>
+	<!-- 
 	<menu pid="edu.iu.iv.modeling.p2p.can.CanAlgorithm"/>
 	<menu pid="edu.iu.iv.modeling.p2p.chord.ChordAlgorithm"/>
 	<menu pid="edu.id.iv.modeling.p2p.hypergrid.Hypergrid"/>
 	<menu pid="edu.iu.iv.modeling.p2p.pru.PruAlgorithm"/>
+	 -->
 	<menu type="break"/>
 	<menu pid="edu.iu.iv.modeling.tarl.TarlAlgorithm"/>
+	<!--  
 	<menu pid="edu.iu.nwb.modeling.discretenetworkdynamics.DNDAlgorithm"/>
+	-->
 	<menu type="break"/>
 	<menu pid="edu.iu.nwb.modeling.weighted.evolvingnetwork"/>
     </top_menu>
@@ -71,7 +77,9 @@
 		<menu pid="edu.iu.nwb.analysis.java.nodedegree"/>
 		<menu pid="edu.iu.nwb.analysis.totaldegreedistribution"/>
         <menu type="break"/>
+        <!--  
 		<menu pid="edu.iu.nwb.analysis.undirectedknn"/>
+		-->
 		<menu pid="edu.iu.nwb.analysis.clustering"/>
 		<menu pid="edu.iu.nwb.analysis.clustering_vs_k"/>
 	 	<menu type="break"/>	
@@ -111,8 +119,10 @@
 		<menu pid="edu.iu.nwb.analysis.transitivity.adjacency"/>
 		<menu type="break"/>
 		<menu pid="edu.iu.nwb.analysis.weakcomponentclustering.ClusteringAlgorithm"/>	
-		<menu pid="edu.iu.nwb.analysis.java.strongcomponentclustering"/>			
+		<menu pid="edu.iu.nwb.analysis.java.strongcomponentclustering"/>	
+		<!--  	
 		<menu pid="edu.iu.nwb.analysis.extractattractors.algorithms.ExtractAttractorsAlgorithm"/>	
+		-->
 		<menu type="break"/>
 		<menu pid="edu.iu.nwb.analysis.kcore.Extract"/>
         <menu pid="edu.iu.nwb.analysis.kcore.Annotate"/>
@@ -122,13 +132,16 @@
 	</menu>
 	<menu name = "Weighted and Directed" type="group">
 	</menu>
+	<!--  
 	<menu type="break"/>	
 	<menu name="Search" type="group">
+	
 		<menu pid="edu.iu.iv.search.p2p.can.CanSearchAlgorithm"/> 
 		<menu pid="edu.iu.iv.search.p2p.chord.ChordSearchAlgorithm"/> 
 		<menu pid="edu.iu.iv.search.p2p.randomwalk.RandomWalkAlgorithm"/> 
 		<menu pid="edu.iu.iv.search.p2p.bfs.BreadthFirstSearchAlgorithm"/> 
     </menu>	
+    -->
     </top_menu>
     
     <top_menu name="Visualization">
@@ -138,20 +151,28 @@
     <menu type="break"/>	
  	<menu pid="edu.iu.nwb.visualization.drl.VxOrdAlgorithm"/> 	
 	<menu pid="edu.iu.nwb.visualization.prefuse.beta.specified.Specified"/>
+	<!-- 
 	<menu type="break"/>
 	<menu pid="edu.iu.nwb.visualization.jungnetworklayout.JUNGCircleLayout"/>
+	-->
  	<menu type="break"/>
 	<menu pid="edu.iu.nwb.visualization.radialgraph.RadialGraph"/> 
 	<menu pid="edu.iu.nwb.visualization.prefuse.beta.radialgraph.RadialGraph"/>
 	<menu pid="edu.iu.nwb.visualization.prefuse.beta.treemap.TreeMap"/>
 	<menu pid="edu.iu.nwb.visualization.prefuse.beta.treeview.TreeView"/>
-	<menu pid="edu.iu.nwb.visualization.balloongraph.BalloongraphAlgorithm"/>
+	<!-- 
+	<menu pid="edu.iu.nwb.visualization.balloongraph.BalloongraphAlgorithm"/>  -->
 	<menu type="break"/>
 	<menu pid="edu.iu.nwb.visualization.prefuse.beta.graphview.GraphView"/> 
+	<!--  
 	<menu pid="edu.iu.nwb.visualization.jungnetworklayout.JUNGKamadaKawaiLayout"/>
+
 	<menu pid="edu.iu.nwb.visualization.jungnetworklayout.JUNGFruchtermanReingoldLayout"/> 
+		-->
 	<menu pid="edu.iu.nwb.visualization.prefuse.beta.fruchtermanreingold.FruchtermanReingold"/>
+	<!--  
 	<menu pid="edu.iu.nwb.visualization.jungnetworklayout.JUNGSpringLayout"/>
+	-->
 	<menu pid="edu.iu.nwb.visualization.prefuse.alpha.smallworld.app.SmallWorld"/>
 	<menu type="break"/>
 	<menu pid="org.mediavirus.parvis.ParallelCoordinatesAlgorithm"/>
