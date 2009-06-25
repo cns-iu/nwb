@@ -158,7 +158,7 @@
 	<antcall target="svn.co">
   	  	      <param name="target" value="plugins"/>
   	  	      <param name="element.id" value="commons_pool"/>
-  	  	      <param name="project.name" value="/plugins/libs/commons_pool"/>
+  	  	      <param name="project.name" value="/libs/commons_pool"/>
   	  	      <param name="url" value="https://cishell.svn.sourceforge.net/svnroot/cishell/trunk"/>
   	</antcall>
   	
