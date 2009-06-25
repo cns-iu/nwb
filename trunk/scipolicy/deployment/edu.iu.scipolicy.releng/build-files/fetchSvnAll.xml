@@ -165,10 +165,17 @@
   	  	<antcall target="svn.co">
   	  	      <param name="target" value="plugins"/>
   	  	      <param name="element.id" value="commons_dbcp"/>
-  	  	      <param name="project.name" value="
-  	  	      	libs/commons_dbcp"/>
+  	  	      <param name="project.name" value="libs/commons_dbcp"/>
   	  	      <param name="url" value="https://cishell.svn.sourceforge.net/svnroot/cishell/trunk"/>
   	  	    </antcall>
+  	
+  	
+  	<antcall target="svn.co">
+  	  	  	      <param name="target" value="plugins"/>
+  	  	  	      <param name="element.id" value="derbylib"/>
+  	  	  	      <param name="project.name" value="libs/derbylib"/>
+  	  	  	      <param name="url" value="https://cishell.svn.sourceforge.net/svnroot/cishell/trunk"/>
+  	  	  	    </antcall>
   	
   	  <!-- Legit CIShell plugins -->
   	
@@ -466,13 +473,7 @@
   	
   	<!-- plugins from NWB part of the repository that aren't even used in NWB itself at the time of this comment -->
   	
-  	
-  	<antcall target="svn.co">
-  	  	  	      <param name="target" value="plugins"/>
-  	  	  	      <param name="element.id" value="derbylib"/>
-  	  	  	      <param name="project.name" value="/plugins/libs/derbylib"/>
-  	  	  	      <param name="url" value="http://nwb.slis.indiana.edu/svn/nwb/trunk"/>
-  	  	  	    </antcall>
+
   	
   	<antcall target="svn.co">
   	  	  	  	      <param name="target" value="plugins"/>
