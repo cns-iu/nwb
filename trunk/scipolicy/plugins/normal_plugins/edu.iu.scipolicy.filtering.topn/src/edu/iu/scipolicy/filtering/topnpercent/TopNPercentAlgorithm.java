@@ -28,8 +28,10 @@ public class TopNPercentAlgorithm implements Algorithm {
     	
         // Unpack parameters that user specified.
     	
-		this.topNPercent =
-			((Float)parameters.get(TopNUtilities.TOP_N_PERCENT_ID)).floatValue();
+    	Integer topNPercentInteger =
+    		(Integer)parameters.get(TopNUtilities.TOP_N_PERCENT_ID);
+    	
+		this.topNPercent = ((float)topNPercentInteger.intValue() / 100.0f);
 		
 		this.columnToSortBy =
 			((String)parameters.get(TopNUtilities.COLUMN_TO_SORT_BY_ID));

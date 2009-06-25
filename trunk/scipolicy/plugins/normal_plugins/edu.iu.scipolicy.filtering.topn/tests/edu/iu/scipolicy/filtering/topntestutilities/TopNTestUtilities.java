@@ -15,10 +15,9 @@ import edu.iu.scipolicy.filtering.topncommon.TopNUtilities;
 import prefuse.data.Table;
 
 public class TopNTestUtilities {
-	public static Dictionary formUserParameters(int topN,
-												String columnToSortBy,
-												boolean isDescending)
-	{
+	public static Dictionary formUserParametersForTopN(int topN,
+													   String columnToSortBy,
+													   boolean isDescending) {
 		Hashtable userParameters = new Hashtable();
 		
 		userParameters.put(TopNUtilities.TOP_N_ID, new Integer(topN));
@@ -29,13 +28,11 @@ public class TopNTestUtilities {
 		return userParameters;
 	}
 	
-	public static Dictionary formUserParameters(float topNPercent,
-												String columnToSortBy,
-												boolean isDescending)
-	{
+	public static Dictionary formUserParametersForTopNPercent
+			(int topNPercent, String columnToSortBy, boolean isDescending) {
 		Hashtable userParameters = new Hashtable();
 		
-		userParameters.put(TopNUtilities.TOP_N_PERCENT_ID, new Float(topNPercent));
+		userParameters.put(TopNUtilities.TOP_N_PERCENT_ID, new Integer(topNPercent));
 		userParameters.put(TopNUtilities.COLUMN_TO_SORT_BY_ID, columnToSortBy);
 		userParameters.put(TopNUtilities.IS_DESCENDING_ID,
 						   new Boolean(isDescending));

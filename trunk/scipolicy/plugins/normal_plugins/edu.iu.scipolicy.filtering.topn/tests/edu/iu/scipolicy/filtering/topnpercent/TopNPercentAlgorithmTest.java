@@ -15,7 +15,7 @@ import prefuse.data.Table;
 import edu.iu.scipolicy.filtering.topntestutilities.TopNTestUtilities;
 
 public class TopNPercentAlgorithmTest {
-	public static final float TEST_TOP_N_PERCENT = 0.25f;
+	public static final int TEST_TOP_N_PERCENT = 25;
 	public static final String TEST_COLUMN_NAME = "meep_meep_MEEP";
 	
 	@BeforeClass
@@ -46,9 +46,8 @@ public class TopNPercentAlgorithmTest {
 	
 	private void testExecuteGeneric(boolean isDescending) {
 		Dictionary testUserParameters =
-			TopNTestUtilities.formUserParameters(TEST_TOP_N_PERCENT,
-												 TEST_COLUMN_NAME,
-												 isDescending);
+			TopNTestUtilities.formUserParametersForTopNPercent
+				(TEST_TOP_N_PERCENT, TEST_COLUMN_NAME, isDescending);
 		
 		Data[] testInputData = TopNTestUtilities.formTestData(TEST_COLUMN_NAME);
 		Data[] testOutputData = null;

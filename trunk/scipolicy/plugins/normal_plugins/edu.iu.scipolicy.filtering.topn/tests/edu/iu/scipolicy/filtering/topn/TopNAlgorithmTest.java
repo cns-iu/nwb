@@ -46,9 +46,8 @@ public class TopNAlgorithmTest {
 	
 	private void testExecuteGeneric(boolean isDescending) {
 		Dictionary testUserParameters =
-			TopNTestUtilities.formUserParameters(TEST_TOP_N,
-												 TEST_COLUMN_NAME,
-												 isDescending);
+			TopNTestUtilities.formUserParametersForTopN
+				(TEST_TOP_N, TEST_COLUMN_NAME, isDescending);
 		
 		Data[] testInputData = TopNTestUtilities.formTestData(TEST_COLUMN_NAME);
 		Data[] testOutputData = null;
