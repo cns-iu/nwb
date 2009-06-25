@@ -1,5 +1,8 @@
 package edu.iu.scipolicy.utilities;
 
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
@@ -83,8 +86,17 @@ public class DateUtilities {
 	}
 	
 	public static int calculateMonthsBetween(Date startDate, Date endDate) {
-		return (int)Math.round
+		int roundedMonthsBetween = (int)Math.round
 			((endDate.getTime() - startDate.getTime()) / AVERAGE_MILLIS_PER_MONTH);
+		
+		if (roundedMonthsBetween > 0) {
+			return roundedMonthsBetween;
+		}
+		else {
+			// HACK(?): There must be at least one month between
+			// (even if they're both the same month).
+			return 1;
+		}
 	}
 	
 	// Assumes dateSet is sorted from earliest to latest.
@@ -157,19 +169,157 @@ public class DateUtilities {
 		return generateFirstOfTheMonthDatesBetweenDates(allDaysBetweenDates);
 	}
 	
-	public static void main(String[] args) {
-		Date[] datesBetween = generateDaysBetweenDates(new Date(1984, 0, 1), new Date(2003, 11, 31));
-		
-		Date[] newYearsDates = getNewYearsDatesFromDateSet(datesBetween);
-		Date[] newYearsDates2 = generateNewYearsDatesBetweenDates(new Date(1984, 0, 1), new Date(2003, 11, 31));
-		Date[] firstOfTheMonthDates = generateFirstOfTheMonthDatesBetweenDates(datesBetween);
-		
-		Date[] outputDates = newYearsDates2;
-		
-		System.err.println("Dates (" + outputDates.length + "):");
-		
-		for (int ii = 0; ii < outputDates.length; ii++) {
-			System.err.println("\tDate: (" + outputDates[ii].getMonth() + "/" + outputDates[ii].getDate() + "/" + outputDates[ii].getYear() + ")");
+	//TODO: These should be sorted so the first format checked is the most likely format, etc...
+	private static final DateFormat[] ACCEPTED_DATE_FORMATS = { 
+		DateFormat.getDateInstance(DateFormat.FULL),
+		new SimpleDateFormat("d-MM-yy"),
+		new SimpleDateFormat("d-MM-yyyy"),
+		new SimpleDateFormat("dd-MM-yy"),
+		new SimpleDateFormat("dd-MM-yyyy"),
+		new SimpleDateFormat("d/MM/yy"),
+		new SimpleDateFormat("dd/MM/yy"),
+		new SimpleDateFormat("d/MM/yyyy"),
+		new SimpleDateFormat("dd/MMM/yyyy"),
+		new SimpleDateFormat("d-MMM-yy"),
+		new SimpleDateFormat("d-MMM-yyyy"),
+		new SimpleDateFormat("dd-MMM-yy"),
+		new SimpleDateFormat("dd-MMM-yyyy"),
+		new SimpleDateFormat("d/MMM/yy"),
+		new SimpleDateFormat("dd/MMM/yy"),
+		new SimpleDateFormat("d/MMM/yyyy"),
+		new SimpleDateFormat("dd/MMM/yyyy"),
+		new SimpleDateFormat("yyyy"),
+		DateFormat.getDateInstance(DateFormat.SHORT),
+		DateFormat.getDateInstance(DateFormat.MEDIUM),
+		DateFormat.getDateInstance(DateFormat.LONG),
+	};
+	
+	public static Date parseDate(String dateString)
+			throws ParseException {
+		for (DateFormat format : ACCEPTED_DATE_FORMATS) {
+			try {
+				format.setLenient(false);
+				Date date = format.parse(dateString);
+				
+				if (date.getYear() < 1900) {
+					date.setYear(date.getYear() + 1900);
+				}
+				
+				return date;
+			}
+			catch (ParseException dateParseException) {
+				continue;
+			}
 		}
+		
+		String exceptionMessage = "Could not parse the field " +
+								  "'" + dateString + "'" +
+								  " as a date.";
+		
+		throw new ParseException(exceptionMessage, 0);
 	}
+	
+	public static Date interpretObjectAsDate(Object object)
+			throws ParseException{
+		final String EMPTY_DATE_MESSAGE = "An empty date was found.";
+		
+		String objectAsString = object.toString();
+		
+		// TODO: These if's are a result of a "bug" in Prefuse's.
+		// CSV Table Reader, which interprets a column as being an array type
+		// if it has empty cells.
+		if (object instanceof Date) {
+			return (Date)object;
+		}
+		else if (object instanceof short[]) {
+			short[] year = (short[])object;
+			
+			if (year.length == 0) {
+				throw new ParseException(EMPTY_DATE_MESSAGE, 0);
+			}
+			else {
+				objectAsString = "" + year[0];
+			}
+		}
+		else if (object instanceof Short[]) {
+			Short[] year = (Short[])object;
+			
+			if (year.length == 0) {
+				throw new ParseException(EMPTY_DATE_MESSAGE, 0);
+			}
+			else {
+				objectAsString = "" + year[0];
+			}
+		}
+		else if (object instanceof int[]) {
+			int[] year = (int[])object;
+			
+			if (year.length == 0) {
+				throw new ParseException(EMPTY_DATE_MESSAGE, 0);
+			}
+			else {
+				objectAsString = "" + year[0];
+			}
+		}
+		else if (object instanceof Integer[]) {
+			Integer[] year = (Integer[])object;
+			
+			if (year.length == 0) {
+				throw new ParseException(EMPTY_DATE_MESSAGE, 0);
+			}
+			else {
+				objectAsString = year.toString();
+			}
+		}
+		else if (object instanceof long[]) {
+			long[] year = (long[])object;
+			
+			if (year.length == 0) {
+				throw new ParseException(EMPTY_DATE_MESSAGE, 0);
+			}
+			else {
+				objectAsString = "" + year[0];
+			}
+		}
+		else if (object instanceof Long[]) {
+			Long[] year = (Long[])object;
+			
+			if (year.length == 0) {
+				throw new ParseException(EMPTY_DATE_MESSAGE, 0);
+			}
+			else {
+				objectAsString = "" + year[0];
+			}
+		}
+		
+		return parseDate(objectAsString);
+	}
+	
+//	private java.util.Date parseDate(String dateString) 
+//		throws AlgorithmExecutionException {
+//		for (DateFormat format : ACCEPTED_DATE_FORMATS) {
+//			try {
+//				format.setLenient(false);
+//				java.util.Date date = format.parse(dateString);
+//				//WE PARSED THE DATE SUCCESSFULLY (if we get to this point)!
+//				//Finish up our processing and return the date.
+//				
+//				//TODO: Methinks this is a hack we should eliminate
+//				if (date.getYear() < 1900)
+//					date.setYear(date.getYear() + 1900);
+//				java.sql.Date dateForSQL = new java.sql.Date(date.getTime());
+//				return dateForSQL;
+//			} catch (ParseException e) {
+//				continue;
+//			}
+//		}
+//		
+//		//we could not parse the date with any of the accepted formats.
+//		
+//		String exceptionMessage = 
+//			"Could not parse the field " + 
+//			"'" + dateString + "'" +
+//			" as a date. Aborting the algorithm.";
+//		throw new AlgorithmExecutionException(exceptionMessage);
+//	}
 }

@@ -31,11 +31,11 @@ public class HorizontalLineGraphAlgorithmTest {
 	}
 
 	@Test public void testExecute() {
-    	Table table = TestUtilities.createPrefuseTableAndFillItWithTestGrantData
-    		(Grant.GRANT_AWARD_LABEL_KEY,
-    		 Grant.GRANT_AWARD_START_DATE_KEY,
-    		 Grant.GRANT_AWARD_END_DATE_KEY,
-    		 Grant.GRANT_AWARD_AMOUNT);
+    	Table table = TestUtilities.createPrefuseTableAndFillItWithTestRecordData
+    		(CommonTestData.RECORD_LABEL_KEY,
+    		 CommonTestData.RECORD_START_DATE_KEY,
+    		 CommonTestData.RECORD_END_DATE_KEY,
+    		 CommonTestData.RECORD_AWARD_AMOUNT);
     	
     	Data dataItem = new BasicData(table, "file:text/table");
     	Data[] data = new Data[] { dataItem };
@@ -58,16 +58,16 @@ public class HorizontalLineGraphAlgorithmTest {
 		Hashtable parameters = new Hashtable();
 		
 		parameters.put(HorizontalLineGraphAlgorithm.LABEL_FIELD_ID,
-					   Grant.GRANT_AWARD_LABEL_KEY);
+					   CommonTestData.RECORD_LABEL_KEY);
 		
     	parameters.put(HorizontalLineGraphAlgorithm.START_DATE_FIELD_ID,
-    				   Grant.GRANT_AWARD_START_DATE_KEY);
+    				   CommonTestData.RECORD_START_DATE_KEY);
     	
     	parameters.put(HorizontalLineGraphAlgorithm.END_DATE_FIELD_ID,
-    				   Grant.GRANT_AWARD_END_DATE_KEY);
+    				   CommonTestData.RECORD_END_DATE_KEY);
     	
     	parameters.put(HorizontalLineGraphAlgorithm.SIZE_BY_FIELD_ID,
-    				   Grant.GRANT_AWARD_AMOUNT);
+    				   CommonTestData.RECORD_AWARD_AMOUNT);
 		
 		return parameters;
 	}

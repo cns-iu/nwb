@@ -8,6 +8,7 @@ import prefuse.data.Table;
 public class MutateParameterUtilities {
 	public static AttributeDefinition formLabelAttributeDefinition
 		(AttributeDefinition oldAttributeDefinition, Table table)
+			throws ColumnNotFoundException
 	{
 		String[] validStringColumnsInTable =
 			TableUtilities.getValidStringColumnNamesInTable(table);
@@ -25,6 +26,7 @@ public class MutateParameterUtilities {
 
 	public static AttributeDefinition formDateAttributeDefinition
 		(AttributeDefinition oldAttributeDefinition, Table table)
+			throws ColumnNotFoundException
 	{
 		String[] validDateColumnsInTable =
 			TableUtilities.getValidDateColumnNamesInTable(table);
@@ -42,6 +44,7 @@ public class MutateParameterUtilities {
 
 	public static AttributeDefinition formIntegerAttributeDefinition
 		(AttributeDefinition oldAttributeDefinition, Table table)
+			throws ColumnNotFoundException
 	{
 		String[] validIntegerColumnsInTable =
 			TableUtilities.getValidIntegerColumnNamesInTable(table);
@@ -55,5 +58,22 @@ public class MutateParameterUtilities {
 										 validIntegerColumnsInTable);
 
 		return integerAttributeDefinition;
+	}
+	
+	public static AttributeDefinition formNumberAttributeDefinition
+		(AttributeDefinition oldAttributeDefinition, Table table)
+			throws ColumnNotFoundException {
+		String[] validNumberColumnsInTable =
+			TableUtilities.getValidNumberColumnNamesInTable(table);
+		
+		AttributeDefinition numberAttributeDefinition =
+			new BasicAttributeDefinition(oldAttributeDefinition.getID(),
+										 oldAttributeDefinition.getName(),
+										 oldAttributeDefinition.getDescription(),
+										 AttributeDefinition.STRING,
+										 validNumberColumnsInTable,
+										 validNumberColumnsInTable);
+		
+		return numberAttributeDefinition;
 	}
 }

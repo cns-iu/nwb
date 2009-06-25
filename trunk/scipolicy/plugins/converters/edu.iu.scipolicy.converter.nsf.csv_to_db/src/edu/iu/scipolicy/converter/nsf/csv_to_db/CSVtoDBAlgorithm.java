@@ -8,9 +8,7 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.sql.Statement;
-import java.text.DateFormat;
 import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.Dictionary;
 import java.util.HashMap;
 import java.util.Map;
@@ -27,6 +25,7 @@ import org.cishell.service.database.DatabaseService;
 import org.osgi.service.log.LogService;
 
 import au.com.bytecode.opencsv.CSVReader;
+import edu.iu.scipolicy.utilities.DateUtilities;
 import edu.iu.scipolicy.utilities.nsf.NsfNames;
 
 //TODO: Expand to support a fuller more sophisticated representation of NSF data in the database
@@ -274,55 +273,19 @@ public class CSVtoDBAlgorithm implements Algorithm  {
 		return columnNameToColumnIndex;
 	}
 	
-	//TODO: These should be sorted so the first format checked is the most likely format, etc...
-	private static final DateFormat[] ACCEPTED_DATE_FORMATS = { 
-		DateFormat.getDateInstance(DateFormat.FULL),
-		new SimpleDateFormat("d-MM-yy"),
-		new SimpleDateFormat("d-MM-yyyy"),
-		new SimpleDateFormat("dd-MM-yy"),
-		new SimpleDateFormat("dd-MM-yyyy"),
-		new SimpleDateFormat("d/MM/yy"),
-		new SimpleDateFormat("dd/MM/yy"),
-		new SimpleDateFormat("d/MM/yyyy"),
-		new SimpleDateFormat("dd/MMM/yyyy"),
-		new SimpleDateFormat("d-MMM-yy"),
-		new SimpleDateFormat("d-MMM-yyyy"),
-		new SimpleDateFormat("dd-MMM-yy"),
-		new SimpleDateFormat("dd-MMM-yyyy"),
-		new SimpleDateFormat("d/MMM/yy"),
-		new SimpleDateFormat("dd/MMM/yy"),
-		new SimpleDateFormat("d/MMM/yyyy"),
-		new SimpleDateFormat("dd/MMM/yyyy"),
-		DateFormat.getDateInstance(DateFormat.SHORT),
-		DateFormat.getDateInstance(DateFormat.MEDIUM),
-		DateFormat.getDateInstance(DateFormat.LONG),
-		};
-	
-	private java.sql.Date parseDate(String dateString) 
-		throws AlgorithmExecutionException {
-		for (DateFormat format : ACCEPTED_DATE_FORMATS) {
-			try {
-				format.setLenient(false);
-				java.util.Date date = format.parse(dateString);
-				//WE PARSED THE DATE SUCCESSFULLY (if we get to this point)!
-				//Finish up our processing and return the date.
-				
-				//TODO: Methinks this is a hack we should eliminate
-				if (date.getYear() < 1900)
-					date.setYear(date.getYear() + 1900);
-				java.sql.Date dateForSQL = new java.sql.Date(date.getTime());
-				return dateForSQL;
-			} catch (ParseException e) {
-				continue;
-			}
+	private java.sql.Date parseDate(String dateString)
+			throws AlgorithmExecutionException {
+		try {
+			java.util.Date standardDate = DateUtilities.parseDate(dateString);
+			
+			return new java.sql.Date(standardDate.getTime());
 		}
-		
-		//we could not parse the date with any of the accepted formats.
-		
-		String exceptionMessage = 
-			"Could not parse the field " + 
-			"'" + dateString + "'" +
-			" as a date. Aborting the algorithm.";
-		throw new AlgorithmExecutionException(exceptionMessage);
+		catch (ParseException parseDateException) {
+			String exceptionMessage = "Could not parse the field " +
+									  "'" + dateString + "'" +
+									  " as a date. Aborting the algorithm.";
+			
+			throw new AlgorithmExecutionException(exceptionMessage);
+		}
 	}
 }

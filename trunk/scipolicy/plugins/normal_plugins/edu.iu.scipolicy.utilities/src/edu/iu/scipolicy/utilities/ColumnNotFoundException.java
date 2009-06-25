@@ -1,6 +1,6 @@
 package edu.iu.scipolicy.utilities;
 
-public class ColumnNotFoundException extends Exception {
+public class ColumnNotFoundException extends RuntimeException {
 	private static final long serialVersionUID = 1L;
 	
 	public ColumnNotFoundException() {

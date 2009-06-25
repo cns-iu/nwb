@@ -83,7 +83,7 @@ public class HorizontalLineGraphAlgorithm implements Algorithm {
     	final String sizeByKey = this.parameters.get(SIZE_BY_FIELD_ID).toString();
     	
     	// Create the PostScript... creator.
-    	HorizontalLineGraphPostScriptCreator horizontalLineGraphPostScriptCreator =
+    	HorizontalLineGraphPostScriptCreator postScriptCreator =
     		new HorizontalLineGraphPostScriptCreator
     			(labelKey, startDateKey, endDateKey, sizeByKey);
     	
@@ -91,8 +91,8 @@ public class HorizontalLineGraphAlgorithm implements Algorithm {
     	
     	try {
     		postScriptCode =
-    			horizontalLineGraphPostScriptCreator.createPostScript
-    				(grantsTable, minNumberOfDaysForGrantBar);
+    			postScriptCreator.createPostScript
+    				(grantsTable, minNumberOfDaysForGrantBar, this.logger);
     	}
     	catch (PostScriptCreationException e) {
     		throw new AlgorithmExecutionException(e);

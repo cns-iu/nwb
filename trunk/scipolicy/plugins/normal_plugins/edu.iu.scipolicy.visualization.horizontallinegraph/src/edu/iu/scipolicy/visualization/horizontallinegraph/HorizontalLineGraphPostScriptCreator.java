@@ -1,27 +1,31 @@
 package edu.iu.scipolicy.visualization.horizontallinegraph;
 
 import java.io.StringWriter;
+import java.text.ParseException;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
+
+import org.osgi.service.log.LogService;
 
 import prefuse.data.Table;
 import edu.iu.scipolicy.utilities.DateUtilities;
 
 /**
  * To my understanding, the drawing "canvas" is given a default size that is used
-   as part of the scaling factor when forming the grant bar lines.
+   as part of the scaling factor when forming the record bar lines.
  * In the original implementation of this visualization, this default size was large
    enough to fit all of the elements of the visualization, so it was also used as
    the bounding box for the Encapsulated PostScript.
  * Since we are dealing with larger datasets than the original implementation of
    this visualization intended, we actually have to dynamically calculate the
-   bounding box size based on the generated PostScript elements (e.g. the grant bar
+   bounding box size based on the generated PostScript elements (e.g. the record bar
    lines) so none of them are clipped.
- * Right now, the CALCULATED bounding box size is updated every time a grant bar is
-   generated, which is poor design because it's a side effect.  Eventually, grant
+ * Right now, the CALCULATED bounding box size is updated every time a record bar is
+   generated, which is poor design because it's a side effect.  Eventually, record
    bars will probably be represented by objects of a class, and an array of them
    will be produced instead of the raw PostScript code for displaying them.  This
-   array of grant bars could then be used to calculate the bounding box size
+   array of record bars could then be used to calculate the bounding box size
    "properly".
  */
 public class HorizontalLineGraphPostScriptCreator {
@@ -44,9 +48,10 @@ public class HorizontalLineGraphPostScriptCreator {
 		this.sizeByKey = sizeByKey;
 	}
 
-	public String createPostScript(Table grantTable, int minNumberOfDaysForBar) 
-		throws PostScriptCreationException
-	{
+	public String createPostScript(Table table,
+								   int minNumberOfDaysForBar,
+								   LogService logger)
+			throws PostScriptCreationException {
 		// The canvas size, in inches.
 		// (NOTE: These could be constants right now, but they may eventually be
 		// user-settable.)
@@ -67,33 +72,40 @@ public class HorizontalLineGraphPostScriptCreator {
 			((canvasWidth * resolutionInDPI) - boundingBoxLeft - boundingBoxRight);
 		final double defaultBoundingBoxHeight =
 			((canvasHeight * resolutionInDPI) - boundingBoxTop - boundingBoxBottom);
-		final double grantBarMargin = 24.0;
+		final double barMargin = 24.0;
 		// (NOTE: This could be a constant, but we may eventually want it to be
 		// user-settable?)
 		final int startYPosition = 5;
 
-		Grant[] grants = readGrantsFromTable(grantTable);
+		Record[] records;
+		
+		try {
+			records = readRecordsFromTable(table, logger);
+		}
+		catch (ParseException parseException) {
+			throw new PostScriptCreationException(parseException);
+		}
 
-		// No grants?  Cya.
-		if (grants.length == 0) {
+		// No records?  Cya.
+		if (records.length == 0) {
 			throw new PostScriptCreationException
-				("No grants to create PostScript from!");
+				("No records to create PostScript from!");
 		}
 		
-		Grant[] sortedGrants = sortGrants(grants);
+		Record[] sortedRecords = sortRecords(records);
 		
-		// Sum the total (monitary) amount across all grants.
-		double totalGrantMoney = calculateTotalGrantAmount(sortedGrants);
+		// Sum the total (monitary) amount across all records.
+		double totalAmount = calculateTotalAmount(sortedRecords);
 		
-		// Calculate the total height for all grants (all of their heights
-		// together?)  This is used to scale the grants appropriately, I think.
-		double totalGrantHeightSpan =
+		// Calculate the total height for all records (all of their heights
+		// together?)  This is used to scale the records appropriately, I think.
+		double totalHeightSpan =
 			Math.abs(defaultBoundingBoxHeight -
-					 (grantBarMargin * (sortedGrants.length + 1)));
+					 (barMargin * (sortedRecords.length + 1)));
 		
-		// Get the first and last dates any of these grants exist.
-		Date graphStartDate = formGraphStartDateBasedOnGrants(sortedGrants);
-		Date graphEndDate = formGraphEndDateBasedOnGrants(sortedGrants);
+		// Get the first and last dates any of these records exist.
+		Date graphStartDate = formGraphStartDateBasedOnRecords(sortedRecords);
+		Date graphEndDate = formGraphEndDateBasedOnRecords(sortedRecords);
 		
 		// We need a Date for every New Year's Day (so, January 1st) between the
 		// start and end dates to use for drawing the date dash lines.
@@ -102,21 +114,21 @@ public class HorizontalLineGraphPostScriptCreator {
 															graphEndDate);
 		
 		// (NOTE: This side effects the calculated canvas width and height.)
-		final String postScriptGrantBars =
-			formPostScriptGrantBars(sortedGrants,
+		final String postScriptRecordBars =
+			formPostScriptRecordBars(sortedRecords,
 									graphStartDate,
 									graphEndDate,
-									grantBarMargin,
-									totalGrantMoney,
-									totalGrantHeightSpan,
+									barMargin,
+									totalAmount,
+									totalHeightSpan,
 									defaultBoundingBoxWidth,
 									startYPosition);
 		
 		final String postScriptHeader =
 			formPostScriptHeader(0,
-								 grantBarMargin,
+								 barMargin,
 								 defaultBoundingBoxWidth,
-								 grantBarMargin);
+								 barMargin);
 		
 		final String postScriptYearLabels = 
 			formPostScriptYearLabels(newYearsDatesForGraph,
@@ -124,66 +136,74 @@ public class HorizontalLineGraphPostScriptCreator {
 									 graphEndDate,
 									 defaultBoundingBoxWidth,
 									 startYPosition,
-									 grantBarMargin);
+									 barMargin);
 		
 		final String postScriptBackground = formPostScriptBackground();
 		
 		return postScriptHeader +
 			   postScriptYearLabels +
-			   postScriptGrantBars +
+			   postScriptRecordBars +
 			   postScriptBackground;
 	}
 	
-	private Grant[] readGrantsFromTable(Table grantTable)
-	{
-		// Get the number of rows from the table so we know how many elements to
-		// allocate our working/resulting grant set for.
-		int numGrants = grantTable.getRowCount();
-		// Allocate our working/resulting grant set.
-		Grant[] grantSet = new Grant [numGrants];
+	private Record[] readRecordsFromTable(Table recordTable, LogService logger)
+			throws ParseException {
+		ArrayList workingRecordSet = new ArrayList();
+		int numTableRows = recordTable.getRowCount();
 		
-		for (int ii = 0; ii < numGrants; ii++) {
-			grantSet[ii] = new Grant(grantTable.getTuple(ii),
-									 this.labelKey,
-									 this.startDateKey,
-									 this.endDateKey,
-									 this.sizeByKey);
+		for (int ii = 0; ii < numTableRows; ii++) {
+			try {
+				Record newRecord = new Record(recordTable.getTuple(ii),
+											  this.labelKey,
+											  this.startDateKey,
+											  this.endDateKey,
+											  this.sizeByKey);
+				
+				workingRecordSet.add(newRecord);
+			}
+			catch (InvalidRecordException invalidRecordException) {
+				logger.log(LogService.LOG_WARNING,
+						   invalidRecordException.getMessage());
+			}
 		}
 		
-		return grantSet;
+		Record[] recordSet = new Record [workingRecordSet.size()];
+		recordSet = (Record[])workingRecordSet.toArray(recordSet);
+		
+		return recordSet;
 	}
 	
-	private Grant[] sortGrants(Grant[] originalGrantSet) {
-		final int numGrants = originalGrantSet.length;
-		Grant[] sortedGrantSet = new Grant [numGrants];
+	private Record[] sortRecords(Record[] originalRecordSet) {
+		final int numRecords = originalRecordSet.length;
+		Record[] sortedRecordSet = new Record [numRecords];
 		
-		for (int ii = 0; ii < numGrants; ii++) {
-			sortedGrantSet[ii] = originalGrantSet[ii];
+		for (int ii = 0; ii < numRecords; ii++) {
+			sortedRecordSet[ii] = originalRecordSet[ii];
 		}
 		
-		Arrays.sort(sortedGrantSet);
+		Arrays.sort(sortedRecordSet);
 		
-		return sortedGrantSet;
+		return sortedRecordSet;
 	}
 	
-	private double calculateTotalGrantAmount(Grant[] grants) {
-		double calculatedTotalGrantAmount = 0.0;
+	private double calculateTotalAmount(Record[] records) {
+		double calculatedTotalRecordAmount = 0.0;
 		
-		for (int ii = 0; ii < grants.length; ii++)
-			calculatedTotalGrantAmount += grants[ii].getAmount();
+		for (int ii = 0; ii < records.length; ii++)
+			calculatedTotalRecordAmount += records[ii].getAmount();
 		
-		return calculatedTotalGrantAmount;
+		return calculatedTotalRecordAmount;
 	}
 	
-	private double calculateGrantBarHeight(double dollarAmount,
-								  		   double totalDollarAmount,
-								  		   double grantHeight,
-								  		   double scale)
+	private double calculateRecordBarHeight(double dollarAmount,
+								  		    double totalDollarAmount,
+								  		    double recordHeight,
+								  		    double scale)
 	{
-		double grantBarHeight =
-			(grantHeight * scale * dollarAmount / totalDollarAmount);
+		double recordBarHeight =
+			(recordHeight * scale * dollarAmount / totalDollarAmount);
 		
-		return grantBarHeight;
+		return recordBarHeight;
 			
 	}
 	
@@ -200,21 +220,22 @@ public class HorizontalLineGraphPostScriptCreator {
 	private String formPostScriptHeader(double boundingBoxBottom,
 										double boundingBogLeft,
 										double defaultBoundingBoxWidth,
-										double grantBarMargin)
+										double recordBarMargin)
 	{
 		String TICK_COLOR_STRING = "0.75 0.75 0.75";
-		String GRANT_LABEL_COLOR_STRING = "0.4 0.4 0.4";
-		String GRANT_BAR_COLOR_STRING = "0.0 0.0 0.0";
+		String RECORD_LABEL_COLOR_STRING = "0.4 0.4 0.4";
+		String RECORD_BAR_COLOR_STRING = "0.0 0.0 0.0";
 		
 		return
-			// TODO: The bounding box is a big fat hack. (It needs to take into account text size and stuff.)
+			// TODO: The bounding box is a big fat hack. (It needs to take into
+			// account text size and stuff.)
 			line("%!PS-Adobe-2.0 EPSF-2.0") +
 			line("%%BoundingBox:" + Math.round(boundingBogLeft) + " " +
 				 Math.round(boundingBoxBottom) + " " +
 				 Math.round(this.calculatedBoundingBoxWidth + 600) + " " +
 				 Math.round(this.calculatedBoundingBoxHeight)) +
 			// line("%%Pages: 1") +
-			line("%%Title: Horizontal Line Graph (NSF Grant Data)") +
+			line("%%Title: Horizontal Line Graph") +
 			line("%%Creator: SciPolicy") +
 			line("%%EndComments") +
 			line("") +
@@ -279,12 +300,12 @@ public class HorizontalLineGraphPostScriptCreator {
 			line("} def") +
 			line("") +
 			
-			line("/grant {") +
+			line("/record {") +
 				line(tabbed("5 -1 roll")) +
 				line(tabbed("4 index 4 index 3 index 2 div add")) +
-				line(tabbed(setrgbcolor(GRANT_LABEL_COLOR_STRING))) +
+				line(tabbed(setrgbcolor(RECORD_LABEL_COLOR_STRING))) +
 				line(tabbed("personlabel")) +
-				line(tabbed(setrgbcolor(GRANT_BAR_COLOR_STRING))) +
+				line(tabbed(setrgbcolor(RECORD_BAR_COLOR_STRING))) +
 				line(tabbed("period")) +
 			line("} def") +
 			line("") +
@@ -336,62 +357,67 @@ public class HorizontalLineGraphPostScriptCreator {
 		return yearLabelPostScript.toString();
 	}
 	
-	private String formPostScriptGrantBars(Grant[] grants,
+	private String formPostScriptRecordBars(Record[] records,
 										   Date graphStartDate,
 										   Date graphEndDate,
-										   double grantBarMargin,
-										   double totalGrantAmount,
-										   double grantHeight,
+										   double recordBarMargin,
+										   double totalRecordAmount,
+										   double recordHeight,
 										   double defaultBoundingBoxWidth,
 										   double startYPosition)
 	{
 		double cursorYCoordinate = startYPosition;
-		StringWriter grantBarPostScript = new StringWriter();
+		StringWriter recordBarPostScript = new StringWriter();
 		
-		for (Grant currentGrant : grants) {
-			String currentGrantName = currentGrant.getGrantLabel();
-			Date currentGrantStartDate = currentGrant.getStartDate();
-			Date currentGrantEndDate = currentGrant.getEndDate();
-			double currentGrantAmount = currentGrant.getAmount();
+		for (Record currentRecord : records) {
+			String currentRecordName = currentRecord.getLabel();
+			Date currentRecordStartDate = currentRecord.getStartDate();
+			Date currentRecordEndDate = currentRecord.getEndDate();
+			double currentRecordAmount = currentRecord.getAmount();
 			
-			double grantBarStartXCoordinate =
-				calculateXCoordinate(currentGrantStartDate,
+			double recordBarStartXCoordinate =
+				calculateXCoordinate(currentRecordStartDate,
 									 graphStartDate,
 									 graphEndDate,
 									 defaultBoundingBoxWidth,
-									 grantBarMargin);
+									 recordBarMargin);
 			
-			double grantBarEndXCoordinate =
-				calculateXCoordinate(currentGrantEndDate,
+			double recordBarEndXCoordinate =
+				calculateXCoordinate(currentRecordEndDate,
 									 graphStartDate,
 									 graphEndDate,
 									 defaultBoundingBoxWidth,
-									 grantBarMargin);
+									 recordBarMargin);
 			
-			double grantBarWidth =
-				(grantBarEndXCoordinate - grantBarStartXCoordinate);
+			double recordBarWidth =
+				(recordBarEndXCoordinate - recordBarStartXCoordinate);
 			
 			double scale = (12.0 /
 				DateUtilities.calculateMonthsBetween
-					(currentGrantStartDate, currentGrantEndDate));
+					(currentRecordStartDate, currentRecordEndDate));
 			
-			double calculatedGrantBarHeight = calculateGrantBarHeight
-				(currentGrantAmount, totalGrantAmount, grantHeight, scale);
+			double calculatedRecordBarHeight = calculateRecordBarHeight
+				(currentRecordAmount, totalRecordAmount, recordHeight, scale);
 			
-			cursorYCoordinate += grantBarMargin;
+			cursorYCoordinate += recordBarMargin;
 			
-			grantBarPostScript.append
-				(line("(" + currentGrantName + ") " + grantBarStartXCoordinate +
-					  " " + cursorYCoordinate + " " + grantBarWidth + " " +
-					  calculatedGrantBarHeight + " grant"));
+			String recordString =
+				line("(" + currentRecordName + ") " +
+					 recordBarStartXCoordinate + " " +
+					 cursorYCoordinate + " " +
+					 recordBarWidth + " " +
+					 calculatedRecordBarHeight +
+					 " record");
 			
-			cursorYCoordinate += calculatedGrantBarHeight;
+			recordBarPostScript.append(recordString);
 			
-			updateCanvasSize(grantBarEndXCoordinate,
-							 (cursorYCoordinate + grantBarMargin));
+			cursorYCoordinate += calculatedRecordBarHeight;
+			
+			updateCanvasSize(recordBarEndXCoordinate,
+							 (cursorYCoordinate + recordBarMargin));
 		}
 		
-		return grantBarPostScript.toString();
+		return recordBarPostScript.toString();
 	}
 	
 	// TODO: Give this a more accurate name?  I'm not sure if this is actually
@@ -412,32 +438,32 @@ public class HorizontalLineGraphPostScriptCreator {
 		return str + " setrgbcolor";
 	}
 	
-	private Date formGraphStartDateBasedOnGrants(Grant[] grants) {
-		// Get the first grant and its start date.
-		Grant firstGrant = grants[0];
-		Date firstGrantStartDate = firstGrant.getStartDate();
-		// Form the GRAPH start date based on the first grant's start date.
-		Date graphStartDate = new Date((firstGrantStartDate.getYear() - 1), 0, 1);
+	private Date formGraphStartDateBasedOnRecords(Record[] records) {
+		// Get the first record and its start date.
+		Record firstRecord = records[0];
+		Date firstRecordStartDate = firstRecord.getStartDate();
+		// Form the GRAPH start date based on the first record's start date.
+		Date graphStartDate = new Date((firstRecordStartDate.getYear() - 1), 0, 1);
 		
 		return graphStartDate;
 	}
 	
-	private Date formGraphEndDateBasedOnGrants(Grant[] grants) {
-		// Form the GRAPH end date based on the determined last year of the grants.
-		Date graphEndDate = new Date((determineLastYearOfGrants(grants) + 1), 0, 1);
+	private Date formGraphEndDateBasedOnRecords(Record[] records) {
+		// Form the GRAPH end date based on the determined last year of the records.
+		Date graphEndDate = new Date((determineLastYearOfRecords(records) + 1), 0, 1);
 		
 		return graphEndDate;
 	}
 	
-	private int determineLastYearOfGrants(Grant[] grants) {
+	private int determineLastYearOfRecords(Record[] records) {
 		int lastYear = 0;
 		
-		for (int ii = 0; ii < grants.length; ii++) {
-			Date grantEndDate = grants[ii].getEndDate();
-			int grantEndDateYear = grantEndDate.getYear();
+		for (int ii = 0; ii < records.length; ii++) {
+			Date recordEndDate = records[ii].getEndDate();
+			int recordEndDateYear = recordEndDate.getYear();
 			
-			if (grantEndDateYear > lastYear)
-				lastYear = grantEndDateYear;
+			if (recordEndDateYear > lastYear)
+				lastYear = recordEndDateYear;
 		}
 		
 		return lastYear;

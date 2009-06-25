@@ -8,21 +8,21 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
-public class GrantTest {
-	private Grant firstGrant;
-	private Grant secondGrant;
-	private Grant thirdGrant;
+public class RecordTest {
+	private Record firstRecord;
+	private Record secondRecord;
+	private Record thirdRecord;
 	
 	@Before
 	public void setUp() throws Exception {
-		this.firstGrant =
-			new Grant("grant1", new Date(1984, 0, 1), new Date(1984, 0, 2), 0.0f);
+		this.firstRecord =
+			new Record("record1", new Date(1984, 0, 1), new Date(1984, 0, 2), 0.0f);
 		
-		this.secondGrant =
-			new Grant("grant2", new Date(1984, 0, 1), new Date(1984, 0, 3), 0.1f);
+		this.secondRecord =
+			new Record("record2", new Date(1984, 0, 1), new Date(1984, 0, 3), 0.1f);
 		
-		this.thirdGrant =
-			new Grant("grant3", new Date(1984, 0, 2), new Date(1984, 0, 3), 0.0f);
+		this.thirdRecord =
+			new Record("record3", new Date(1984, 0, 2), new Date(1984, 0, 3), 0.0f);
 	}
 
 	@After
@@ -31,10 +31,10 @@ public class GrantTest {
 
 	@Test public void testCompareToNotEqual() {
 		int compareToResultFirstToThird =
-			this.firstGrant.compareTo(this.thirdGrant);
+			this.firstRecord.compareTo(this.thirdRecord);
 		
 		int compareToResultThirdToFirst =
-			this.thirdGrant.compareTo(this.firstGrant);
+			this.thirdRecord.compareTo(this.firstRecord);
 		
 		if ((compareToResultFirstToThird >= 0) ||
 			(compareToResultThirdToFirst <= 0))
@@ -45,10 +45,10 @@ public class GrantTest {
 	
 	@Test public void testCompareToEqual() {
 		int compareToResultFirstToSecond =
-			this.firstGrant.compareTo(this.secondGrant);
+			this.firstRecord.compareTo(this.secondRecord);
 		
 		int compareToResultSecondToFirst =
-			this.secondGrant.compareTo(this.firstGrant);
+			this.secondRecord.compareTo(this.firstRecord);
 		
 		if ((compareToResultFirstToSecond != 0) ||
 			(compareToResultSecondToFirst != 0))

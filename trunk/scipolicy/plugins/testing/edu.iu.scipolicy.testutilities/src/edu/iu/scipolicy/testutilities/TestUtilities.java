@@ -83,7 +83,7 @@ public class TestUtilities {
 		return table;
 	}
 	
-	public static Table createPrefuseTableAndFillItWithTestGrantData
+	public static Table createPrefuseTableAndFillItWithTestRecordData
 		(String labelKey, String startDateKey, String endDateKey, String amountKey)
 	{
 		String[] columnNames =

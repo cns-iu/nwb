@@ -8,8 +8,8 @@ import prefuse.data.Table;
 import prefuse.util.collections.IntIterator;
 
 public class TableUtilities {
-	public static String[] filterSchemaColumnNamesByClass(Schema schema,
-														  Class objectClass)
+	public static String[] filterSchemaColumnNamesByClass
+		(Schema schema, Class objectClass) throws ColumnNotFoundException
 	{
 		ArrayList workingColumnNames = new ArrayList();
 
@@ -17,23 +17,124 @@ public class TableUtilities {
 			if (objectClass.isAssignableFrom(schema.getColumnType(ii)))
 				workingColumnNames.add(schema.getColumnName(ii));
 		}
+		
+		if (workingColumnNames.size() == 0) {
+			throw new ColumnNotFoundException
+				("No column of type " + objectClass.getName() + " was found.");
+		}
 
 		String[] finalColumnNames = new String [workingColumnNames.size()];
 
 		return (String[])workingColumnNames.toArray(finalColumnNames);
 	}
 	
-	public static String[] getValidStringColumnNamesInTable(Table table) {
+	public static String[] filterSchemaColumnNamesByClasses
+		(Schema schema, Class[] objectClasses) throws ColumnNotFoundException
+	{
+		ArrayList workingColumnNames = new ArrayList();
+		
+		for (int ii = 0; ii < schema.getColumnCount(); ii++) {
+			for (Class objectClass : objectClasses) {
+				if (objectClass.isAssignableFrom(schema.getColumnType(ii))) {
+					workingColumnNames.add(schema.getColumnName(ii));
+					
+					break;
+				}
+			}
+		}
+		
+		if (workingColumnNames.size() > 0) {
+			String[] finalColumnNames = new String [workingColumnNames.size()];
+
+			return (String[])workingColumnNames.toArray(finalColumnNames);
+		}
+		// An exception is thrown if there is not at least 1 column name.
+		else {
+			StringBuffer objectClassesString = new StringBuffer();
+			objectClassesString.append("[");
+			
+			for (int ii = 0; ii < objectClasses.length; ii++) {
+				objectClassesString.append(objectClasses[ii].getName());
+				
+				if ((ii + 1) < objectClasses.length) {
+					objectClassesString.append(", ");
+				}
+			}
+			
+			objectClassesString.append("]");
+			
+			throw new ColumnNotFoundException
+				("No column of types " + objectClassesString + " was found.");
+		}
+	}
+	
+	public static String[] getValidStringColumnNamesInTable(Table table)
+		throws ColumnNotFoundException
+	{
     	return filterSchemaColumnNamesByClass(table.getSchema(), String.class);
     }
     
-	public static String[] getValidDateColumnNamesInTable(Table table) {
-    	return filterSchemaColumnNamesByClass(table.getSchema(), Date.class);
+	public static String[] getValidDateColumnNamesInTable(Table table)
+		throws ColumnNotFoundException
+	{
+		Class[] possibleDateClasses = {
+			Date.class,
+			int.class,
+			Integer.class,
+			int[].class,
+			Integer[].class
+		};
+		
+    	return filterSchemaColumnNamesByClasses(table.getSchema(),
+    											possibleDateClasses);
     }
     
-	public static String[] getValidIntegerColumnNamesInTable(Table table) {
-    	return filterSchemaColumnNamesByClass(table.getSchema(), int.class);
+	public static String[] getValidIntegerColumnNamesInTable(Table table)
+		throws ColumnNotFoundException
+	{
+		Class[] possibleIntegerClasses = {
+			int.class,
+			Integer.class,
+			int[].class,
+			Integer[].class
+		};
+		
+    	return filterSchemaColumnNamesByClasses(table.getSchema(),
+    											possibleIntegerClasses);
     }
+	
+	public static String[] getValidNumberColumnNamesInTable(Table table)
+			throws ColumnNotFoundException {
+		Class[] possibleNumberClasses = {
+			byte.class,
+			byte[].class,
+			Byte.class,
+			Byte[].class,
+			short.class,
+			short[].class,
+			Short.class,
+			Short[].class,
+			int.class,
+			int[].class,
+			Integer.class,
+			Integer[].class,
+			long.class,
+			long[].class,
+			Long.class,
+			Long[].class,
+			float.class,
+			float[].class,
+			Float.class,
+			Float[].class,
+			double.class,
+			double[].class,
+			Double.class,
+			Double[].class
+		};
+		
+		return filterSchemaColumnNamesByClasses(table.getSchema(),
+												possibleNumberClasses);
+	}
 	
 	public static Table createTableUsingSchema(Schema tableSchema) {
 		final int numTableColumns = tableSchema.getColumnCount();
