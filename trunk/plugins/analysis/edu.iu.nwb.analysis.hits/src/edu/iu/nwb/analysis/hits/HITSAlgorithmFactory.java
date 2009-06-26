@@ -92,7 +92,14 @@ public class HITSAlgorithmFactory implements AlgorithmFactory, ParameterMutator 
 	private String[] createKeyArray(Map schema) {
 		List goodkeys = new ArrayList();
 		
-		for (Iterator keys = schema.keySet().iterator(); keys.hasNext(); ) {
+		/*
+		 * In order to skip "source" & "target" options for the edge weight column.
+		 * */
+		Iterator keysSkip = schema.keySet().iterator();
+		keysSkip.next();
+		keysSkip.next();
+		
+		for (Iterator keys = keysSkip; keys.hasNext(); ) {
 			String key = ""+keys.next();
 			if (!schema.get(key).equals(NWBFileProperty.TYPE_STRING)) {
 				goodkeys.add(key);
