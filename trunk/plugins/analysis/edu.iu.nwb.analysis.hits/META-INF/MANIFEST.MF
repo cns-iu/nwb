@@ -1,0 +1,27 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: Hyperlink-Induced Topic Search Implementation
+Bundle-SymbolicName: edu.iu.nwb.analysis.hits
+Bundle-Version: 1.0.0
+Bundle-ClassPath: .
+Bundle-Localization: plugin
+Import-Package: cern.colt,
+ cern.colt.function,
+ cern.colt.matrix,
+ cern.colt.matrix.doublealgo,
+ cern.colt.matrix.impl,
+ cern.colt.matrix.objectalgo,
+ cern.jet.math,
+ edu.iu.nwb.converter.nwb.common,
+ edu.iu.nwb.util.nwbfile,
+ org.cishell.framework,
+ org.cishell.framework.algorithm,
+ org.cishell.framework.data,
+ org.cishell.reference.service.metatype,
+ org.osgi.framework;version="1.3.0",
+ org.osgi.service.component;version="1.0.0",
+ org.osgi.service.log;version="1.3.0",
+ org.osgi.service.metatype,
+ org.osgi.service.prefs;version="1.1.0"
+X-AutoStart: true
+Service-Component: OSGI-INF/component.xml
