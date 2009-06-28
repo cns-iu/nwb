@@ -8,11 +8,13 @@ import java.util.Dictionary;
 import org.cishell.framework.CIShellContext;
 import org.cishell.framework.algorithm.Algorithm;
 import org.cishell.framework.algorithm.AlgorithmExecutionException;
+import org.cishell.framework.data.BasicData;
 import org.cishell.framework.data.Data;
 import org.cishell.framework.data.DataProperty;
 import org.osgi.service.log.LogService;
 
 import edu.iu.nwb.converter.nwb.common.ValidateNWBFile;
+import edu.iu.nwb.util.nwbfile.NWBFileParser;
 import edu.iu.nwb.util.nwbfile.ParsingException;
 
 /**
@@ -34,7 +36,8 @@ public class HITSAlgorithm implements Algorithm{
     private Dictionary parameters;
     private CIShellContext context;
 	private LogService logger;
-	private int numberOfIterations = 20;
+	private static int DEFAULT_NUMBER_OF_ITERATIONS = 20;
+	private int numberOfIterations = DEFAULT_NUMBER_OF_ITERATIONS;
 	
     /**
      * Construct with the appropriate parameters
@@ -62,20 +65,34 @@ public class HITSAlgorithm implements Algorithm{
 		}
     	
     	if(numberOfNodes > 0) {
-			HITSComputation hitsComputation = new HITSComputation();
 			try {
 				
 				numberOfIterations = (Integer) parameters.get("iterations");
-				
 				String edgeWeightColumnName = (String) parameters.get("weightcolumn");
 				
 				if(numberOfIterations <= 0) {
 					logger.log(LogService.LOG_WARNING, "Number of Iterations should be more than 0. Default " +
-							"value of \"Number of Iterations\" (1) used.");
+							"value of \"Number of Iterations\" (20) used.");
+					numberOfIterations = DEFAULT_NUMBER_OF_ITERATIONS;
 				}
+
 				
-				Data outNWBData = hitsComputation.performHITSComputation(inputData, numberOfNodes, numberOfIterations, edgeWeightColumnName);
+				/*
+				 * Used to process the provided file for HITS.
+				 * */
+				NWBFileParser parser = new NWBFileParser(inputData);
+				HITSComputation hitsComputation = new HITSComputation(numberOfNodes, numberOfIterations, edgeWeightColumnName);
+				parser.parse(hitsComputation);
 				
+				/*
+				 * Used to generate the output file containing the modified graph information. 2 new 
+				 * attributes - authority & hub score are added for each node.
+				*/
+				File outputNWBFile = File.createTempFile("nwb-", ".nwb");
+				NWBFileParser outputParser = new NWBFileParser(inputData);
+				outputParser.parse(new HITSAlgorithmOutputGenerator(hitsComputation, outputNWBFile));
+				
+				Data outNWBData = new BasicData(outputNWBFile,"file:text/nwb");
 				outNWBData.getMetadata().put(DataProperty.LABEL, "HITS on network with " + numberOfNodes 
 						+ " nodes. Authority & Hubs updated " + numberOfIterations + " times.");
 				outNWBData.getMetadata().put(DataProperty.TYPE, DataProperty.NETWORK_TYPE);

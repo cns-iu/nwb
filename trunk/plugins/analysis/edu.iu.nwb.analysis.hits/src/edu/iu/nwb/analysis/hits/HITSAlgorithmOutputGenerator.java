@@ -21,16 +21,15 @@ public class HITSAlgorithmOutputGenerator implements NWBFileParserHandler {
 	private DoubleMatrix2D authorityMatrix, hubMatrix;
 	private HashMap nodeIDToMatrixIndexMap;
 	
-	public HITSAlgorithmOutputGenerator(HashMap nodeIDToMatrixIndexMap, DoubleMatrix2D authorityMatrix, 
-			DoubleMatrix2D hubMatrix, File outputNWBFile) 
-		throws IOException {
+	public HITSAlgorithmOutputGenerator(HITSComputation hitsComputation,
+			File outputNWBFile) throws IOException {
 		output = new NWBFileWriter(outputNWBFile);
-		this.authorityMatrix = authorityMatrix;
-		this.hubMatrix = hubMatrix;
-		this.nodeIDToMatrixIndexMap = nodeIDToMatrixIndexMap;
+		this.authorityMatrix = hitsComputation.authorityMatrix;
+		this.hubMatrix = hitsComputation.hubMatrix;
+		this.nodeIDToMatrixIndexMap = hitsComputation.nodeIDToMatrixIndexMap;
 	}
 
-	
+
 	public void setNodeCount(int numberOfNodes) {
 		output.setNodeCount(numberOfNodes);
 	}
@@ -39,12 +38,13 @@ public class HITSAlgorithmOutputGenerator implements NWBFileParserHandler {
 		schema.put("authority_score", NWBFileProperty.TYPE_FLOAT);
 		schema.put("hub_score", NWBFileProperty.TYPE_FLOAT);
 		output.setNodeSchema(schema);
+		
 	}
 	
 	public void addNode(int id, String label, Map attributes) {
 		
 		int matrixIndexToBeExtracted = (Integer) ((((List) nodeIDToMatrixIndexMap
-				.get(String.valueOf(id))).toArray())[0]);
+				.get(id)).toArray())[0]);
 		
 		float authorityScore, hubScore;
 		
