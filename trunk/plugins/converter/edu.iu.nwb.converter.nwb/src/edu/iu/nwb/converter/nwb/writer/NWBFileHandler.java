@@ -59,7 +59,7 @@ public class NWBFileHandler implements AlgorithmFactory {
 					if(validator.getValidationResult()){
 						  
 					}else {
-						throw new AlgorithmExecutionException("This file does not seem to comply with the NWB format specification. Forwarding anyways.\n" +
+						this.logger.log(LogService.LOG_WARNING,"This file does not seem to comply with the NWB format specification. Forwarding anyways.\n" +
 								"Please notify the developers of the algorithm you are using or the NWB team.");
 						
 					}
