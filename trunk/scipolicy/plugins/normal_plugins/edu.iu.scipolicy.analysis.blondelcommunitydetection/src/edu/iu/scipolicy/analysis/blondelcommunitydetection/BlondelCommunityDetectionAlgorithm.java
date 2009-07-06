@@ -33,15 +33,15 @@ public class BlondelCommunityDetectionAlgorithm implements Algorithm {
     		FileOutputStream testBINFileOutputStream =
     			new FileOutputStream(testBinFile);
     		NWBToBINPreProcessor preProcessor =
-    			new NWBToBINPreProcessor("", false);
-    			// new NWBToBINPreProcessor(testBINFileOutputStream, "", false);
+    			new NWBToBINPreProcessor();
     		
     		NWBFileParser fileParser = new NWBFileParser(nwbFile);
     		fileParser.parse(preProcessor);
     		
     		nwbFile = new File("C:\\Documents and Settings\\pataphil\\Desktop\\testNetwork.nwb");
     		fileParser = new NWBFileParser(nwbFile);
-    		NWBToBINConverter converter = new NWBToBINConverter(testBinFile);
+    		NWBToBINConverter converter =
+    			new NWBToBINConverter(testBinFile, "", false);
     		fileParser.parse(converter);
     	}
     	catch (Exception exception) {

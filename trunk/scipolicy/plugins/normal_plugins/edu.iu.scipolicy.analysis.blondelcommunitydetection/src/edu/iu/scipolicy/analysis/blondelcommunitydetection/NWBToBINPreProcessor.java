@@ -21,9 +21,7 @@ public class NWBToBINPreProcessor extends NWBFileParserAdapter {
 	private String weightAttribute;
 	private boolean isWeighted;
 	
-	public NWBToBINPreProcessor(String weightAttribute, boolean isWeighted) {
-		this.weightAttribute = weightAttribute;
-		this.isWeighted = isWeighted;
+	public NWBToBINPreProcessor() {
 	}
 	
 	public void addDirectedEdge(int sourceNode,
@@ -62,11 +60,11 @@ public class NWBToBINPreProcessor extends NWBFileParserAdapter {
 		}
 		else {
 			NodeLOL sourceNode =
-				NodeLOL.getOrCreateNode(sourceNodeID, weight, this.isWeighted);
+				NodeLOL.getOrCreateNode(sourceNodeID);
 			sourceNode.incrementEdgeCount();
 			
 			NodeLOL targetNode =
-				NodeLOL.getOrCreateNode(targetNodeID, weight, this.isWeighted);
+				NodeLOL.getOrCreateNode(targetNodeID);
 			targetNode.incrementEdgeCount();
 		}
 	}

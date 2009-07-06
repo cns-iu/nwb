@@ -11,7 +11,6 @@ public class NodeLOL {
 	private int originalID;
 	// This is also the index into the nodes ArrayList.
 	private int newID;
-	private int weight;
 	private int edgeCountForOutput = 0;
 	private int actualEdgeCount = 0;
 	
@@ -21,10 +20,9 @@ public class NodeLOL {
 	private long startingWeightOffsetInFile = 0;
 	private long workingWeightOffsetInFile = 0;
 	
-	private NodeLOL(int originalID, int weight) {
+	private NodeLOL(int originalID) {
 		this.originalID = originalID;
 		this.newID = NodeLOL.renumberingID;
-		this.weight = weight;
 		
 		NodeLOL.renumberingID++;
 		NodeLOL.nodes.add(this);
@@ -36,10 +34,6 @@ public class NodeLOL {
 	
 	public int getNewID() {
 		return this.newID;
-	}
-	
-	public int getWeight() {
-		return this.weight;
 	}
 	
 	public int getEdgeCountForOutput() {
@@ -93,10 +87,6 @@ public class NodeLOL {
 	}
 	
 	
-	private void setWeight(int weight) {
-		this.weight = weight;
-	}
-	
 	private void setEdgeCountForOutput(int edgeCountForOutput) {
 		this.edgeCountForOutput = edgeCountForOutput;
 	}
@@ -106,22 +96,15 @@ public class NodeLOL {
 		return NodeLOL.totalEdgeCount;
 	}
 		
-	public static NodeLOL getOrCreateNode(int originalID,
-										  int weight,
-										  boolean shouldAccumulateWeights) {
+	public static NodeLOL getOrCreateNode(int originalID) {
 		NodeLOL nodeThatAlreadyExists =
 			NodeLOL.findNodeByOriginalID(originalID);
 		
 		if (nodeThatAlreadyExists != null) {
-			if (shouldAccumulateWeights) {
-				int newWeight = nodeThatAlreadyExists.getWeight() + weight;
-				nodeThatAlreadyExists.setWeight(newWeight);
-			}
-			
 			return nodeThatAlreadyExists;
 		}
 		else {
-			NodeLOL newNode = new NodeLOL(originalID, weight);
+			NodeLOL newNode = new NodeLOL(originalID);
 			
 			return newNode;
 		}
