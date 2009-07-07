@@ -471,4 +471,11 @@ Dr. Katy Borner (katy@indiana.edu)
          version="0.0.1"
          unpack="false"/>
 
+   <plugin
+         id="edu.iu.nwb.analysis.hits"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
 </feature>

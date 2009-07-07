@@ -486,6 +486,13 @@
   	
   	<!-- legit NWB plugins -->
   	
+  	<antcall target="svn.co">
+  	      <param name="target" value="plugins"/>
+  	      <param name="element.id" value="edu.iu.nwb.analysis.hits"/>
+  	      <param name="project.name" value="/plugins/analysis/edu.iu.nwb.analysis.hits"/>
+  	      <param name="url" value="http://nwb.slis.indiana.edu/svn/nwb/trunk"/>
+  	</antcall>
+  	
     <antcall target="svn.co">
       <param name="target" value="plugins"/>
       <param name="element.id" value="edu.iu.nwb.converter.edgelist"/>
