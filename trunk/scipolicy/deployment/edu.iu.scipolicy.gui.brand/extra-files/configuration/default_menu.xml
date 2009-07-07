@@ -93,6 +93,8 @@
 		<menu type="break"/>
 		<menu pid="edu.iu.nwb.analysis.kcore.Extract"/>
         <menu pid="edu.iu.nwb.analysis.kcore.Annotate"/>
+        <menu type="break"/>	
+		<menu pid="edu.iu.nwb.analysis.hits"/>
 	</menu>
 	<menu name = "Weighted &amp;&amp; Undirected" type="group">
 		<menu pid="edu.iu.nwb.analysis.weighted.averageclusteringcoefficient"/>
@@ -103,6 +105,8 @@
 		<menu pid="edu.iu.nwb.analysis.weighted.strengthdistribution"/>
 		<menu pid="edu.iu.nwb.analysis.weighted.weightdistribution"/>
 		<menu pid="edu.iu.nwb.analysis.weighted.randomweight"/>
+		<menu type="break"/>	
+		<menu pid="edu.iu.nwb.analysis.hits"/>
 	</menu>
 	<menu name = "Unweighted &amp;&amp; Directed" type="group">
 		<menu pid="edu.iu.nwb.analysis.java.nodeindegree"/>
@@ -120,13 +124,15 @@
 		<menu pid="edu.iu.nwb.analysis.transitivity.adjacency"/>
 		<menu type="break"/>
 		<menu pid="edu.iu.nwb.analysis.weakcomponentclustering.ClusteringAlgorithm"/>	
-		<menu pid="edu.iu.nwb.analysis.java.strongcomponentclustering"/>	
+		<menu pid="edu.iu.nwb.analysis.java.strongcomponentclustering"/>
 		<!--  	
 		<menu pid="edu.iu.nwb.analysis.extractattractors.algorithms.ExtractAttractorsAlgorithm"/>	
 		-->
 		<menu type="break"/>
 		<menu pid="edu.iu.nwb.analysis.kcore.Extract"/>
         <menu pid="edu.iu.nwb.analysis.kcore.Annotate"/>
+        <menu type="break"/>	
+		<menu pid="edu.iu.nwb.analysis.hits"/>
 	<menu type="break"/>			
 	</menu>
 	<menu name = "Weighted and Undirected" type="group">
