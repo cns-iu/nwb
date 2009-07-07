@@ -729,7 +729,7 @@ public class RoundRussellComputation  implements NWBFileParserHandler {
 	/*
 	 * Normalize node strengths.
 	 * */
-	private void/*Map<Integer, List>*/ normalizeNodesStrength(/*Map<Integer, List> nodesMap2*/) {
+	private void normalizeNodesStrength() {
 		Double minStrength, maxStrength, normalizedMaxStrength, normalizedMinStrength;
 		
 		List nodeStrengthValues = new ArrayList();
@@ -765,7 +765,6 @@ public class RoundRussellComputation  implements NWBFileParserHandler {
 			
 			nodesMapOutput.put(nodeID, nodeValues);
 		}
-//		return nodesMapOutput;
 	}
 
 	/**
