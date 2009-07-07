@@ -17,10 +17,11 @@
 	<menu pid= "edu.iu.nwb.preprocessing.csv.CsvAlgorithm"/>
 	<menu pid= "edu.iu.nwb.converter.tablegraph.GraphTable"/>
 	<menu type="break"/>	
-	<menu name = "Tests" type="group">
+	<!--  <menu name = "Tests" type="group">
 		<menu pid= "org.cishell.tests.ProgressTrackableAlgorithm.AlgorithmTest"/>
-		<!--   <menu pid= "org.cishell.testing.convertertester.algorithm.ConverterTesterAlgorithm"/> -->
-	</menu>
+		 <menu pid= "org.cishell.testing.convertertester.algorithm.ConverterTesterAlgorithm"/> 
+	</menu> 
+	-->
 	<menu type="break"/>
 	<menu name="Exit" type="preserved"/>
     </top_menu>
