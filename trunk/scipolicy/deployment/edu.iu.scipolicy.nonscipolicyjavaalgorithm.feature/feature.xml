@@ -31,6 +31,10 @@ Bruce Herr (bh2@bh2.net)
 Dr. Katy Borner (katy@indiana.edu)
    </license>
 
+   <requires>
+      <import feature="edu.iu.scipolicy.converter.feature" version="1.0.0"/>
+   </requires>
+
    <plugin
          id="org.prefuse.lib"
          download-size="0"
