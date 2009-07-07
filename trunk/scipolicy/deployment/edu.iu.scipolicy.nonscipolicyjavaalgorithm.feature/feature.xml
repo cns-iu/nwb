@@ -31,6 +31,10 @@ Bruce Herr (bh2@bh2.net)
 Dr. Katy Borner (katy@indiana.edu)
    </license>
 
+   <includes
+         id="edu.iu.scipolicy.converter.feature"
+         version="0.0.0"/>
+
    <requires>
       <import feature="edu.iu.scipolicy.converter.feature" version="1.0.0"/>
    </requires>
