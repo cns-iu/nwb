@@ -37,7 +37,6 @@ Dr. Katy Borner (katy@indiana.edu)
 
    <requires>
       <import feature="edu.iu.scipolicy.converter.feature" version="1.0.0"/>
-      <import plugin="edu.iu.nwb.converter.nwb"/>
    </requires>
 
    <plugin
