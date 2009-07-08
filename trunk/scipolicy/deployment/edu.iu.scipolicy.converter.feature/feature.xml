@@ -31,23 +31,9 @@ Project Contacts:
 (mwlinnem@indiana.edu)
 Dr. Katy Borner (katy@indiana.edu)
    </license>
-
+<!--
    <plugin
          id="edu.iu.nwb.converter.edgelist"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         unpack="false"/>
-
-   <plugin
-         id="edu.iu.nwb.converter.jungprefuse"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         unpack="false"/>
-
-   <plugin
-         id="edu.iu.nwb.converter.jungprefusebeta"
          download-size="0"
          install-size="0"
          version="0.0.0"
@@ -145,13 +131,6 @@ Dr. Katy Borner (katy@indiana.edu)
          unpack="false"/>
 
    <plugin
-         id="edu.iu.nwb.converter.prefuseTreeBetaAlpha"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         unpack="false"/>
-
-   <plugin
          id="edu.iu.nwb.converter.nwbgraphml"
          download-size="0"
          install-size="0"
@@ -220,5 +199,6 @@ Dr. Katy Borner (katy@indiana.edu)
          install-size="0"
          version="0.0.0"
          unpack="false"/>
+         -->
 
 </feature>

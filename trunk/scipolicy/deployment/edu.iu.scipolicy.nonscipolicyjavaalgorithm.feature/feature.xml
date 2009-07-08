@@ -38,7 +38,178 @@ Dr. Katy Borner (katy@indiana.edu)
    <requires>
       <import feature="edu.iu.scipolicy.converter.feature" version="1.0.0"/>
    </requires>
+   
+      <plugin
+         id="edu.iu.nwb.converter.edgelist"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
 
+   <plugin
+         id="edu.iu.nwb.converter.nwb"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+   <plugin
+         id="edu.iu.nwb.converter.nwbpajeknet"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+   <plugin
+         id="edu.iu.nwb.converter.pajekmat"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+   <plugin
+         id="edu.iu.nwb.converter.pajekmatpajeknet"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+   <plugin
+         id="edu.iu.nwb.converter.pajeknet"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+   <plugin
+         id="edu.iu.nwb.converter.prefusecsv"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+   <plugin
+         id="edu.iu.nwb.converter.prefusegraphml"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+   <plugin
+         id="edu.iu.nwb.converter.prefusetreeml"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+   <plugin
+         id="edu.iu.nwb.converter.prefusexgmml"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+   <plugin
+         id="edu.iu.nwb.converter.tablegraph"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+   <plugin
+         id="edu.iu.nwb.converter.treegraph"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+   <plugin
+         id="edu.iu.nwb.converter.prefuseisi"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+   <plugin
+         id="edu.iu.nwb.shared.isiutil"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+   <plugin
+         id="edu.iu.nwb.converter.nwbgraphml"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+   <plugin
+         id="edu.iu.nwb.converter.prefusebibtex"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+   <plugin
+         id="edu.iu.nwb.converter.prefusensf"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+   <plugin
+         id="edu.iu.nwb.converter.prefusescopus"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+   <plugin
+         id="edu.iu.nwb.converter.prefuserefer"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+   <plugin
+         id="javabib.orig"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+   <plugin
+         id="edu.iu.scipolicy.converter.psraster"
+         download-size="0"
+         install-size="0"
+         version="0.0.1"
+         unpack="false"/>
+
+   <plugin
+         id="edu.iu.scipolicy.converter.nsf.csv_to_db"
+         download-size="0"
+         install-size="0"
+         version="0.0.1"
+         unpack="false"/>
+
+   <plugin
+         id="edu.iu.scipolicy.converter.nsf.db_to_prefuse"
+         download-size="0"
+         install-size="0"
+         version="0.0.1"
+         unpack="false"/>
+
+   <plugin
+         id="edu.iu.scipolicy.utilities"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+         
+         
+         
+         
    <plugin
          id="org.prefuse.lib"
          download-size="0"
