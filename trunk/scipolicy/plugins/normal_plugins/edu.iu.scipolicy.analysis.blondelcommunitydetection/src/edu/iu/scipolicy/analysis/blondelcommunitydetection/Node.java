@@ -2,8 +2,9 @@ package edu.iu.scipolicy.analysis.blondelcommunitydetection;
 
 import java.util.ArrayList;
 
-public class NodeLOL {
-	public static ArrayList nodes = new ArrayList();
+public class Node {
+	private static ArrayList nodes = new ArrayList();
+	private static int maxCommunityLevel = 0;
 	
 	private static int renumberingID = 0;
 	private static int totalEdgeCount = 0;
@@ -20,12 +21,13 @@ public class NodeLOL {
 	private long startingWeightOffsetInFile = 0;
 	private long workingWeightOffsetInFile = 0;
 	
-	private NodeLOL(int originalID) {
+	private ArrayList communities = new ArrayList();
+	
+	private Node(int originalID) {
 		this.originalID = originalID;
-		this.newID = NodeLOL.renumberingID;
-		
-		NodeLOL.renumberingID++;
-		NodeLOL.nodes.add(this);
+		this.newID = Node.renumberingID;
+		Node.renumberingID++;
+		Node.nodes.add(this);
 	}
 
 	public int getOriginalID() {
@@ -61,9 +63,14 @@ public class NodeLOL {
 	}
 	
 	
+	public ArrayList getCommunities() {
+		return this.communities;
+	}
+	
+	
 	public void incrementEdgeCount() {
 		this.actualEdgeCount++;
-		NodeLOL.totalEdgeCount++;
+		Node.totalEdgeCount++;
 	}
 	
 	
@@ -87,38 +94,64 @@ public class NodeLOL {
 	}
 	
 	
+	public void addCommunity(Integer communityID) {
+		this.communities.add(communityID);
+		int communityCount = this.communities.size();
+		
+		if (communityCount > Node.maxCommunityLevel) {
+			Node.maxCommunityLevel = communityCount;
+		}
+	}
+	
+	
 	private void setEdgeCountForOutput(int edgeCountForOutput) {
 		this.edgeCountForOutput = edgeCountForOutput;
 	}
 	
 	
+	public static void reset() {
+		Node.nodes = new ArrayList();
+		Node.maxCommunityLevel = 0;
+		
+		Node.renumberingID = 0;
+		Node.totalEdgeCount = 0;
+	}
+	
+	public static ArrayList getNodes() {
+		return Node.nodes;
+	}
+	
+	public static int getMaxCommunityLevel() {
+		return Node.maxCommunityLevel;
+	}
+	
 	public static int getTotalEdgeCount() {
-		return NodeLOL.totalEdgeCount;
+		return Node.totalEdgeCount;
 	}
 		
-	public static NodeLOL getOrCreateNode(int originalID) {
-		NodeLOL nodeThatAlreadyExists =
-			NodeLOL.findNodeByOriginalID(originalID);
+	public static Node getOrCreateNode(int originalID) {
+		Node nodeThatAlreadyExists = Node.findNodeByOriginalID(originalID);
 		
 		if (nodeThatAlreadyExists != null) {
 			return nodeThatAlreadyExists;
 		}
 		else {
-			NodeLOL newNode = new NodeLOL(originalID);
+			Node newNode = new Node(originalID);
 			
 			return newNode;
 		}
 	}
 	
-	public static NodeLOL findNodeByOriginalID(int originalID) {
-		final int nodeCount = NodeLOL.nodes.size();
+	public static Node findNodeByOriginalID(int originalID) {
+		final int nodeCount = Node.nodes.size();
 		
 		if (originalID < 0) {
 			return null;
 		}
 		else {
+			//TODO: turn into a map. Absolutely must not go into production
 			for (int ii = 0; ii < nodeCount; ii++) {
-				NodeLOL node = (NodeLOL)NodeLOL.nodes.get(ii);
+				Node node = (Node)Node.nodes.get(ii);
 				
 				if (node.getOriginalID() == originalID) {
 					return node;
@@ -130,11 +163,11 @@ public class NodeLOL {
 	}
 	
 	public static void accumulateEdgeCountsForOutput() {
-		int nodeCount = NodeLOL.nodes.size();
+		int nodeCount = Node.nodes.size();
 		int edgeCountForOutput = 0;
-		
+		//TODO: iterator? java 5?
 		for (int ii = 0; ii < nodeCount; ii++) {
-			NodeLOL node = (NodeLOL)NodeLOL.nodes.get(ii);
+			Node node = (Node)Node.nodes.get(ii);
 			edgeCountForOutput += node.getActualEdgeCount();
 			node.setEdgeCountForOutput(edgeCountForOutput);
 		}

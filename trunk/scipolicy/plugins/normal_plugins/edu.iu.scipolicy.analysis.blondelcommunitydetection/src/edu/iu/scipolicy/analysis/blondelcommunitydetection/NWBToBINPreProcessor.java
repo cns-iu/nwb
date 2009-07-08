@@ -37,7 +37,7 @@ public class NWBToBINPreProcessor extends NWBFileParserAdapter {
 	}
 	
 	public void finishedParsing() {
-		NodeLOL.accumulateEdgeCountsForOutput();
+		Node.accumulateEdgeCountsForOutput();
 	}
 	
 	public boolean haltParsingNow() {
@@ -59,12 +59,10 @@ public class NWBToBINPreProcessor extends NWBFileParserAdapter {
 			this.shouldHaltParsing = true;
 		}
 		else {
-			NodeLOL sourceNode =
-				NodeLOL.getOrCreateNode(sourceNodeID);
+			Node sourceNode = Node.getOrCreateNode(sourceNodeID);
 			sourceNode.incrementEdgeCount();
 			
-			NodeLOL targetNode =
-				NodeLOL.getOrCreateNode(targetNodeID);
+			Node targetNode = Node.getOrCreateNode(targetNodeID);
 			targetNode.incrementEdgeCount();
 		}
 	}
