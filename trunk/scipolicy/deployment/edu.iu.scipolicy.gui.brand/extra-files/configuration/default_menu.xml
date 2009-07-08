@@ -138,6 +138,7 @@
 	<menu name = "Weighted and Undirected" type="group">
 	</menu>
 	<menu name = "Weighted and Directed" type="group">
+		<menu pid="edu.iu.nwb.analysis.hits.HitsAlgorithm"/>
 	</menu>
 	<!--  
 	<menu type="break"/>	
