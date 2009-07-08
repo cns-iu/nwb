@@ -148,7 +148,7 @@ public class RoundRussellComputation  implements NWBFileParserHandler {
 			double currentNodeStrength = Double.parseDouble(attributes.get(nodeStrengthColumnName).toString()); 
 			nodeAttributes.add(currentNodeStrength);
 		}
-		catch (NumberFormatException e) {
+		catch (Exception e) {
 			nodeAttributes.add(DEFAULT_NODE_STRENGTH);
 		}
 		
@@ -465,7 +465,7 @@ public class RoundRussellComputation  implements NWBFileParserHandler {
 		controlPositions.add(nodePositionsMap.get(sourceNode));
 		controlPositions.addAll(ancestorPositions);
 		controlPositions.add(nodePositionsMap.get(targetNode));
-
+		
 		return adjustControlPositions(controlPositions, edgeBundlingDegree);
 	}
 
@@ -663,6 +663,7 @@ public class RoundRussellComputation  implements NWBFileParserHandler {
 			positionValues = convertToCartesianSystem(CANVAS_RADIUS, currentAnglesInDegrees);
 			
 			nodePositionsMap.put((Integer)angleEntry.getKey(), positionValues);
+			
 		}
 	}
 
@@ -692,7 +693,11 @@ public class RoundRussellComputation  implements NWBFileParserHandler {
 		double angle;
 		int indexCounter = 0;
 		
-		SortedSet<Integer> sortedNodesForAngles = new TreeSet<Integer>(new Comparator<Object>() {
+		List<Integer> sortedNodesForAnglesList = new ArrayList<Integer>();
+		
+		sortedNodesForAnglesList.addAll(nodesMap.keySet());
+		
+		Collections.sort(sortedNodesForAnglesList, new Comparator(){
 
 			public int compare(Object n1, Object n2) {
 				for(int i = hierarchy.size() - 1 ; i > -1 ; i--) {
@@ -713,11 +718,13 @@ public class RoundRussellComputation  implements NWBFileParserHandler {
 				return nodesMap.get(n1).get(0).toString().compareToIgnoreCase(nodesMap.get(n2).get(0).toString());
 			}
 			
+			
 		});
 		
-		sortedNodesForAngles.addAll(nodesMap.keySet());
-		numberOfNodes = (double) sortedNodesForAngles.size();
-		Iterator sortedNodesForAnglesIterator = sortedNodesForAngles.iterator();
+		
+		numberOfNodes = (double) sortedNodesForAnglesList.size();
+		
+		Iterator sortedNodesForAnglesIterator = sortedNodesForAnglesList.iterator();
 		
 		while(sortedNodesForAnglesIterator.hasNext()) {
 			angle = ((double)indexCounter + 0.5) * 360.0 / numberOfNodes;
