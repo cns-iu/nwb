@@ -27,10 +27,10 @@
       startupProgressRect="0,163,500,10" />
    <launcher name="scipolicy">
       <linux icon="/edu.iu.scipolicy.gui.brand/icons/nwb.xpm"/>
-      <macosx icon="/edu.iu.scipolicy.gui.brand/icons/nwb.icns"/>
+      <macosx icon="/edu.iu.scipolicy.gui.brand/icons/scisip128.icns"/>
       <solaris/>
       <win useIco="true">
-         <ico path="/edu.iu.scipolicy.gui.brand/icons/nwb.ico"/>
+         <ico path="/edu.iu.scipolicy.gui.brand/icons/scisip128.ico"/>
          <bmp
             winSmallHigh="icons/ivc_sm_32.bmp"
             winSmallLow="icons/ivc_sm_16.bmp"
