@@ -23,14 +23,11 @@ public class HorizontalLineGraphAlgorithmFactory
     								 Dictionary parameters,
     								 CIShellContext context)
     {
-    	System.err.println("createAlgorithm.");
         return new HorizontalLineGraphAlgorithm(data, parameters, context);
     }
     
     public ObjectClassDefinition mutateParameters
-    	(Data[] data, ObjectClassDefinition oldParameters)
-    {
-    	System.err.println("Entering mutateParameters.");
+    		(Data[] data, ObjectClassDefinition oldParameters) {
     	Data inData = data[0];
     	Table table = (Table)inData.getData();
     	BasicObjectClassDefinition newParameters;
@@ -79,19 +76,10 @@ public class HorizontalLineGraphAlgorithmFactory
 					MutateParameterUtilities.formNumberAttributeDefinition
 						(oldAttributeDefinition, table);
 			}
-			else
-			{
-				System.err.println("WTF");
-				System.err.flush();
-			}
-			
 			
 			newParameters.addAttributeDefinition(ObjectClassDefinition.REQUIRED,
 												 newAttributeDefinition);
 		}
-		
-		System.err.println("Exiting mutateParameters.");
-		System.err.flush();
 		
     	return newParameters;
     }
