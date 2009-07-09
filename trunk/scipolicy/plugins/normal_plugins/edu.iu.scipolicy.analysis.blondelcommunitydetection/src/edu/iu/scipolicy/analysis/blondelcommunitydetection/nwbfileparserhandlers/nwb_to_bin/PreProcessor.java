@@ -1,4 +1,4 @@
-package edu.iu.scipolicy.analysis.blondelcommunitydetection;
+package edu.iu.scipolicy.analysis.blondelcommunitydetection.nwbfileparserhandlers.nwb_to_bin;
 
 import java.io.DataOutputStream;
 import java.io.FileOutputStream;
@@ -9,8 +9,10 @@ import java.util.HashMap;
 import java.util.Map;
 
 import edu.iu.nwb.util.nwbfile.NWBFileParserAdapter;
+import edu.iu.scipolicy.analysis.blondelcommunitydetection.NetworkInfo;
+import edu.iu.scipolicy.analysis.blondelcommunitydetection.Node;
 
-public class NWBToBINPreProcessor extends NWBFileParserAdapter {
+public class PreProcessor extends NWBFileParserAdapter {
 	private static final String NON_POSITIVE_WEIGHT_HALT_REASON =
 		"Non-positive weights are not allowed.  To use this algorithm, " +
 		"preprocess your network further.";
@@ -18,10 +20,13 @@ public class NWBToBINPreProcessor extends NWBFileParserAdapter {
 	private String haltParsingReason = "";
 	private boolean shouldHaltParsing = false;
 	
+	private NetworkInfo networkInfo;
+	
 	private String weightAttribute;
 	private boolean isWeighted;
 	
-	public NWBToBINPreProcessor() {
+	public PreProcessor(NetworkInfo networkInfo) {
+		this.networkInfo = networkInfo;
 	}
 	
 	public void addDirectedEdge(int sourceNode,
@@ -37,7 +42,7 @@ public class NWBToBINPreProcessor extends NWBFileParserAdapter {
 	}
 	
 	public void finishedParsing() {
-		Node.accumulateEdgeCountsForOutput();
+		this.networkInfo.accumulateEdgeCountsForOutput();
 	}
 	
 	public boolean haltParsingNow() {
@@ -59,11 +64,13 @@ public class NWBToBINPreProcessor extends NWBFileParserAdapter {
 			this.shouldHaltParsing = true;
 		}
 		else {
-			Node sourceNode = Node.getOrCreateNode(sourceNodeID);
-			sourceNode.incrementEdgeCount();
+			Node sourceNode =
+				Node.getOrCreateNode(sourceNodeID, this.networkInfo);
+			sourceNode.incrementEdgeCount(this.networkInfo);
 			
-			Node targetNode = Node.getOrCreateNode(targetNodeID);
-			targetNode.incrementEdgeCount();
+			Node targetNode =
+				Node.getOrCreateNode(targetNodeID, this.networkInfo);
+			targetNode.incrementEdgeCount(this.networkInfo);
 		}
 	}
 }

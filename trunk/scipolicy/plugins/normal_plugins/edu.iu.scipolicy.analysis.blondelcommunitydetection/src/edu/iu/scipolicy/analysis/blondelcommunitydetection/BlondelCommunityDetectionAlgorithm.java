@@ -1,26 +1,25 @@
 package edu.iu.scipolicy.analysis.blondelcommunitydetection;
 
 import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.util.ArrayList;
 import java.util.Dictionary;
 
 import org.cishell.framework.CIShellContext;
 import org.cishell.framework.algorithm.Algorithm;
 import org.cishell.framework.algorithm.AlgorithmExecutionException;
 import org.cishell.framework.algorithm.AlgorithmFactory;
-import org.cishell.framework.data.BasicData;
 import org.cishell.framework.data.Data;
-import org.cishell.framework.data.DataProperty;
 
-import edu.iu.nwb.util.nwbfile.NWBFileParser;
-import edu.iu.nwb.util.nwbfile.ParsingException;
-import edu.iu.scipolicy.utilities.FileUtilities;
+import edu.iu.scipolicy.analysis.blondelcommunitydetection.algorithmstages.CommunityDetectionRunner;
+import edu.iu.scipolicy.analysis.blondelcommunitydetection.algorithmstages.NWBAndTreeFilesMerger;
+import edu.iu.scipolicy.analysis.blondelcommunitydetection.algorithmstages.NWBToBINConverter;
 
 public class BlondelCommunityDetectionAlgorithm implements Algorithm {
+	
 	private AlgorithmFactory blondelCommunityDetectionAlgorithmFactory;
-	private Data[] data;
+	
+	private Data inputData;
+	File inputNWBFile;
+	
 	private Dictionary parameters;
 	private CIShellContext context;
     
@@ -31,183 +30,66 @@ public class BlondelCommunityDetectionAlgorithm implements Algorithm {
     		CIShellContext context) {
     	this.blondelCommunityDetectionAlgorithmFactory =
     		blondelCommunityDetectionAlgorithmFactory;
-        this.data = data;
+    	
+        this.inputData = data[0];
+        this.inputNWBFile = (File)inputData.getData();
+        //TODO: Get weight attribute out HERE, and don't assign parameters to
+        //be a instance variable
         this.parameters = parameters;
         this.context = context;
     }
 
+    // The C++ implementation of Blondel's community detection algorithm
+    // expects the input to be a BIN network file, and it outputs a tree
+    // hierarchy file that contains the generated community structures.
+    // This algorithm first converts the input NWB to a BIN file and passes
+    // the result into the compiled C++ community detection program.
+    // This algorithm then merges the resulting tree file with the input NWB
+    // file, producing a new NWB with nodes that are annotated with the
+    // appropriate community attributes.
     public Data[] execute() throws AlgorithmExecutionException {
-    	Data inputData = this.data[0];
-    	File inputNWBFile = (File)inputData.getData();
-    	Dictionary inputMetaData = inputData.getMetadata();
-    	System.err.println("inputMetaData: " + inputData.getFormat());
+    	NetworkInfo networkInfo = new NetworkInfo();
     	
-    	Node.reset();
+    	// Convert the NWB file to a BIN file.
     	
-    	File binFile = this.processConversion(inputNWBFile);
+    	File binFile =
+    		NWBToBINConverter.convertNWBFileToBINFile(this.inputNWBFile,
+    												  networkInfo);
+    	
+    	/*
+    	 *  Run community detection on the BIN file,
+    	 *  producing a TREE file with community-annotation.
+    	 */
+    	
+    	CommunityDetectionRunner communityDetectionRunner =
+    		new CommunityDetectionRunner(
+    			this.blondelCommunityDetectionAlgorithmFactory,
+    			this.parameters,
+    			this.context);
+    	
     	File communityTreeFile =
-    		this.runCommunityDetection(binFile, inputData);
-    	File outputNWBFile =
-    		this.mergeCommunitiesFileWithNWBFile(communityTreeFile,
-    											 inputNWBFile);
+    		communityDetectionRunner.runCommunityDetection(binFile,
+    													   this.inputData);
     	
-        Data[] outData = wrapFileAsOutputData(outputNWBFile,
-        									  "file:text/nwb",
-        									  inputData);
+    	/*
+    	 *  Merge the TREE file with community-annotation and the original
+    	 *  NWB file,
+    	 *  producing a community-annotated NWB file.
+    	 */
+    	 
+    	
+    	File outputNWBFile =
+    		NWBAndTreeFilesMerger.mergeCommunitiesFileWithNWBFile(
+    			communityTreeFile, this.inputNWBFile, networkInfo);
+    	
+    	// Wrap the community-annotated NWB file in Data[] for output.
+    	
+        Data[] outData = Utilities.wrapFileAsOutputData(outputNWBFile,
+        												"file:text/nwb",
+        												this.inputData);
+        
+        // Return Data[].
         
         return outData;
-    }
-    
-    public static void main(String[] args) {
-    	try {
-    		Node.reset();
-    		File nwbFile = new File("C:\\Documents and Settings\\pataphil\\Desktop\\testNetwork2.nwb");
-    		File testBinFile = new File("C:\\Documents and Settings\\pataphil\\Desktop\\test2.bin");
-    		NWBToBINPreProcessor preProcessor =
-    			new NWBToBINPreProcessor();
-    		
-    		NWBFileParser fileParser = new NWBFileParser(nwbFile);
-    		fileParser.parse(preProcessor);
-    		
-    		nwbFile = new File("C:\\Documents and Settings\\pataphil\\Desktop\\testNetwork2.nwb");
-    		fileParser = new NWBFileParser(nwbFile);
-    		NWBToBINConverter converter =
-    			new NWBToBINConverter(Node.getNodes(),
-    								  testBinFile,
-    								  "",
-    								  false);
-    		fileParser.parse(converter);
-    	}
-    	catch (Exception exception) {
-    		exception.printStackTrace();
-    	}
-    }
-    
-    private Data[] wrapFileAsOutputData(File outputFile,
-    									String mimeType,
-    									Data inputData) {
-    	Data outputFileData = new BasicData(outputFile, mimeType);
-    	Dictionary outputFileMetaData = outputFileData.getMetadata();
-    	outputFileMetaData.put(DataProperty.LABEL,
-    						   "With community attributes");
-    	outputFileMetaData.put(DataProperty.PARENT, inputData);
-    	outputFileMetaData.put(DataProperty.TYPE, DataProperty.NETWORK_TYPE);
-    	
-    	return new Data[] { outputFileData };
-    }
-    
-    private File processConversion(File nwbFile)
-    		throws AlgorithmExecutionException {
-    	this.preProcessNWBFile(nwbFile);
-    	
-    	return convertNWBFileToBINFile(nwbFile);
-    }
-    
-    private File runCommunityDetection(File binFile, Data inputData)
-    		throws AlgorithmExecutionException {
-    	Data[] communityDetectionData =
-    		this.wrapFileAsOutputData(binFile, "file:text/bin", inputData);
-    	Algorithm communityDetectionAlgorithm =
-    		this.blondelCommunityDetectionAlgorithmFactory.createAlgorithm(
-    			communityDetectionData, this.parameters, this.context);
-    	Data[] executionResultData = communityDetectionAlgorithm.execute();
-    	// TODO: Verify the output here?
-    	File treeFile = (File)executionResultData[0].getData();
-    	
-    	return treeFile;
-    }
-    
-    private File mergeCommunitiesFileWithNWBFile(File communitiesFile,
-    											 File nwbFile)
-    		throws AlgorithmExecutionException {
-    	try {
-    		File outputNWBFile =
-    			FileUtilities.createTemporaryFileInDefaultTemporaryDirectory("blondel-nwb-", "nwb");
-    		NWBAndTreeFilesMerger merger = new NWBAndTreeFilesMerger(
-    			communitiesFile, outputNWBFile, Node.getNodes());
-    		
-    		NWBFileParser fileParser = new NWBFileParser(nwbFile);
-    		fileParser.parse(merger);
-    		
-    		return outputNWBFile;
-    		
-    		// TODO: hadIssue
-    	}
-    	catch (FileNotFoundException fileNotFoundException) {
-    		throw new AlgorithmExecutionException(fileNotFoundException);
-    	}
-    	catch (IOException ioException) {
-    		throw new AlgorithmExecutionException(ioException);
-    	}
-    	catch (ParsingException parsingException) {
-    		throw new AlgorithmExecutionException(parsingException);
-    	}
-    	catch (TreeFileParsingException treeFileParsingException) {
-    		throw new AlgorithmExecutionException(treeFileParsingException);
-    	}
-    }
-    
-    private void preProcessNWBFile(File nwbFile)
-    		throws AlgorithmExecutionException {
-    	NWBToBINPreProcessor preProcessor = new NWBToBINPreProcessor();
-    	NWBFileParser preProcessorFileParser;
-    	
-    	try {
-    		preProcessorFileParser = new NWBFileParser(nwbFile);
-    		preProcessorFileParser.parse(preProcessor);
-    	}
-    	catch (IOException ioException) {
-    		throw new AlgorithmExecutionException(
-    			"Failed to read NWB file that is being preprocessed for " +
-    				"conversion to BIN file.",
-    			ioException);
-    	}
-    	catch (ParsingException parsingException) {
-    		throw new AlgorithmExecutionException(
-    			"Failed to parse NWB file that is " +
-    				"being preprocessed for conversion to BIN file.",
-    			parsingException);
-    	}
-    }
-    
-    private File convertNWBFileToBINFile(File nwbFile)
-    		throws AlgorithmExecutionException {
-    	File outputBINFile;
-    	
-    	try {
-    		outputBINFile = FileUtilities.
-    			createTemporaryFileInDefaultTemporaryDirectory("TEMP-BLONDEL",
-    														   "bin");
-    	}
-    	catch (IOException ioException) {
-    		throw new AlgorithmExecutionException(
-    			"Failed to create temporary BIN file.", ioException);
-    	}
-    	
-    	// TODO: Get the second (weightAttribute) and third (isWeighted) values
-    	// from input parameters.
-    	NWBToBINConverter converter = new NWBToBINConverter(Node.getNodes(),
-    														outputBINFile,
-    														"",
-    														false);
-    	NWBFileParser converterFileParser;
-    	
-    	try {
-    		converterFileParser = new NWBFileParser(nwbFile);
-    		converterFileParser.parse(converter);
-    	}
-    	catch (IOException ioException) {
-    		throw new AlgorithmExecutionException(
-    			"Failed to read NWB file that is being converted to BIN file.",
-    			ioException);
-    	}
-    	catch (ParsingException parsingException) {
-    		throw new AlgorithmExecutionException(
-    			"Failed to parse NWB file that is " +
-    				"being converted to BIN file.",
-    			parsingException);
-    	}
-    	
-    	return outputBINFile;
     }
 }

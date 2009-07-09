@@ -1,4 +1,4 @@
-package edu.iu.scipolicy.analysis.blondelcommunitydetection;
+package edu.iu.scipolicy.analysis.blondelcommunitydetection.nwbfileparserhandlers.nwb_to_bin;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -8,8 +8,10 @@ import java.util.ArrayList;
 import java.util.Map;
 
 import edu.iu.nwb.util.nwbfile.NWBFileParserAdapter;
+import edu.iu.scipolicy.analysis.blondelcommunitydetection.NetworkInfo;
+import edu.iu.scipolicy.analysis.blondelcommunitydetection.Node;
 
-public class NWBToBINConverter extends NWBFileParserAdapter {
+public class Converter extends NWBFileParserAdapter {
 	private static final String NON_POSITIVE_WEIGHT_HALT_REASON =
 		"Non-positive weights are not allowed.  To use this algorithm, " +
 		"preprocess your network further.";
@@ -17,18 +19,18 @@ public class NWBToBINConverter extends NWBFileParserAdapter {
 	private String haltParsingReason = "";
 	private boolean shouldHaltParsing = false;
 	
-	private ArrayList nodes;
+	NetworkInfo networkInfo;
 	
 	private RandomAccessFile outputBINFile;
 	
 	private String weightAttribute;
 	private boolean isWeighted;
 	
-	public NWBToBINConverter(ArrayList nodes,
+	public Converter(NetworkInfo networkInfo,
 							 File outputFile,
 							 String weightAttribute,
 							 boolean isWeighted) {
-		this.nodes = nodes;
+		this.networkInfo = networkInfo;
 		
 		this.weightAttribute = weightAttribute;
 		this.isWeighted = isWeighted;
@@ -82,8 +84,10 @@ public class NWBToBINConverter extends NWBFileParserAdapter {
 			this.shouldHaltParsing = true;
 		}
 		else {
-			Node sourceNode = Node.findNodeByOriginalID(sourceNodeID);
-			Node targetNode = Node.findNodeByOriginalID(targetNodeID);
+			Node sourceNode =
+				this.networkInfo.findNodeByOriginalID(sourceNodeID);
+			Node targetNode =
+				this.networkInfo.findNodeByOriginalID(targetNodeID);
 			
 			try {
 				this.writeEdgeAndWeightForNode(sourceNode, targetNode, weight);
@@ -117,11 +121,12 @@ public class NWBToBINConverter extends NWBFileParserAdapter {
 	private long writeHeader() throws IOException {
 		long headerSize = 0;
 		
-		int nodeCount = this.nodes.size();
+		ArrayList nodes = this.networkInfo.getNodes();
+		int nodeCount = nodes.size();
 		headerSize += this.writeLittleEndianInt(nodeCount);
 		
 		for (int ii = 0; ii < nodeCount; ii++) {
-			Node node = (Node)this.nodes.get(ii);
+			Node node = (Node)nodes.get(ii);
 			headerSize +=
 				this.writeLittleEndianInt(node.getEdgeCountForOutput());
 		}
@@ -132,11 +137,12 @@ public class NWBToBINConverter extends NWBFileParserAdapter {
 	private void writeEmptyBody(long headerSize) throws IOException {
 		long numBytesWritten = headerSize;
 		
-		int nodeCount = this.nodes.size();
+		ArrayList nodes = this.networkInfo.getNodes();
+		int nodeCount = nodes.size();
 		
 		// Write the fake edges.
 		for (int ii = 0; ii < nodeCount; ii++) {
-			Node node = (Node)this.nodes.get(ii);
+			Node node = (Node)nodes.get(ii);
 			node.setStartingEdgeOffsetInFile(numBytesWritten);
 			
 			for (int jj = 0; jj < node.getActualEdgeCount(); jj++) {
@@ -146,7 +152,7 @@ public class NWBToBINConverter extends NWBFileParserAdapter {
 		
 		// Write the fake weights.
 		for (int ii = 0; ii < nodeCount; ii++) {
-			Node node = (Node)this.nodes.get(ii);
+			Node node = (Node)nodes.get(ii);
 			node.setStartingWeightOffsetInFile(numBytesWritten);
 			
 			for (int jj = 0; jj < node.getActualEdgeCount(); jj++) {

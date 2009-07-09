@@ -1,4 +1,4 @@
-package edu.iu.scipolicy.analysis.blondelcommunitydetection;
+package edu.iu.scipolicy.analysis.blondelcommunitydetection.nwbfileparserhandlers.tree_to_nwb;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -11,32 +11,35 @@ import java.util.Scanner;
 
 import edu.iu.nwb.util.nwbfile.NWBFileProperty;
 import edu.iu.nwb.util.nwbfile.NWBFileWriter;
+import edu.iu.scipolicy.analysis.blondelcommunitydetection.NetworkInfo;
+import edu.iu.scipolicy.analysis.blondelcommunitydetection.Node;
+import edu.iu.scipolicy.analysis.blondelcommunitydetection.TreeFileParsingException;
 import edu.iu.scipolicy.utilities.SetUtilities;
 
-public class NWBAndTreeFilesMerger extends NWBFileWriter  {
+public class Merger extends NWBFileWriter  {
 	public static final String BASE_COMMUNITY_LEVEL_ATTRIBUTE_NAME =
 		"blondel_community_level_";
 	public static final String BASE_COMMUNITY_LABEL = "community_";
 	public static final String BASE_ISOLATE_LABEL = "isolate_";
 	
-	private ArrayList nodes;
+	private NetworkInfo networkInfo;
 	private int isolateCount = 0;
 	
-	public NWBAndTreeFilesMerger(File treeFile,
+	public Merger(File treeFile,
 								 File outputFile,
-								 ArrayList nodes)
+								 NetworkInfo networkInfo)
 			throws FileNotFoundException,
 				   IOException,
 				   TreeFileParsingException {
 		super(outputFile);
 		
-		this.nodes = nodes;
+		this.networkInfo = networkInfo;
 		
 		this.readTreeFileAndAnnotateNodes(new Scanner(treeFile));
 	}
 	
 	public void addNode(int id, String label, Map attributes) {
-		Node node = Node.findNodeByOriginalID(id);
+		Node node = this.networkInfo.findNodeByOriginalID(id);
 		Map annotatedAttributes = new HashMap();
 		annotatedAttributes.putAll(attributes);
 		
@@ -54,7 +57,7 @@ public class NWBAndTreeFilesMerger extends NWBFileWriter  {
 		}
 		// Isolate nodes would not been added to our nodes list.
 		else {
-			for (int ii = 0; ii < Node.getMaxCommunityLevel(); ii++) {
+			for (int ii = 0; ii < this.networkInfo.getMaxCommunityLevel(); ii++) {
 				String communityLevelAttributeName =
 					BASE_COMMUNITY_LEVEL_ATTRIBUTE_NAME + ii;
 				String communityName = BASE_ISOLATE_LABEL + this.isolateCount;
@@ -69,7 +72,7 @@ public class NWBAndTreeFilesMerger extends NWBFileWriter  {
 	}
 	
 	public void setNodeSchema(LinkedHashMap schema) {
-		for (int ii = 0; ii < Node.getMaxCommunityLevel(); ii++) {
+		for (int ii = 0; ii < this.networkInfo.getMaxCommunityLevel(); ii++) {
 			String communityLevelAttributeName =
 				BASE_COMMUNITY_LEVEL_ATTRIBUTE_NAME + ii;
 			schema.put(communityLevelAttributeName,
@@ -83,6 +86,7 @@ public class NWBAndTreeFilesMerger extends NWBFileWriter  {
 			throws TreeFileParsingException {
 		Map previousMap = null;
 		Map currentMap = null;
+		ArrayList nodes = this.networkInfo.getNodes();
 		
 		boolean shouldKeepReading = true;
 		while (shouldKeepReading) {
@@ -109,14 +113,14 @@ public class NWBAndTreeFilesMerger extends NWBFileWriter  {
 						Integer currentNodeID =
 							(Integer)nodesInCommunity.get(ii);
 						currentMap.put(currentNodeID, communityID);
-						Node node = (Node)this.nodes.get(currentNodeID.intValue());
-						node.addCommunity(communityID);
+						Node node = (Node)nodes.get(currentNodeID.intValue());
+						node.addCommunity(communityID, this.networkInfo);
 					}
 				}
 				else {
 					currentMap.put(nodeID, communityID);
-					Node node = (Node)this.nodes.get(nodeID.intValue());
-					node.addCommunity(communityID);
+					Node node = (Node)nodes.get(nodeID.intValue());
+					node.addCommunity(communityID, this.networkInfo);
 				}
 			}
 		}
