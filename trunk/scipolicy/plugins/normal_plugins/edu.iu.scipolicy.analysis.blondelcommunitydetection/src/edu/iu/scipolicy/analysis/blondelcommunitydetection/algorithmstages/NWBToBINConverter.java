@@ -25,14 +25,17 @@ import edu.iu.scipolicy.utilities.FileUtilities;
 // * write the neighbors/edges for each node as the edges are processed.
 public class NWBToBINConverter {
 	public static File convertNWBFileToBINFile(File inputNWBFile,
-											   NetworkInfo networkInfo)
+											   NetworkInfo networkInfo,
+											   String weightAttribute,
+											   boolean isWeighted)
 			throws NWBToBINConversionException {
 		
 		// (networkInfo gets side-effected in both of these steps).
 
 		preProcessNWBFile(inputNWBFile, networkInfo);
     	
-    	return doConversion(inputNWBFile, networkInfo);
+    	return doConversion(
+    		inputNWBFile, networkInfo, weightAttribute, isWeighted);
 	}
 	
 	private static void preProcessNWBFile(File nwbFile,
@@ -60,7 +63,10 @@ public class NWBToBINConverter {
     }
 	
 	// This modifies networkInfo.
-	private static File doConversion(File nwbFile, NetworkInfo networkInfo)
+	private static File doConversion(File nwbFile,
+									 NetworkInfo networkInfo,
+									 String weightAttribute,
+									 boolean isWeighted)
     		throws NWBToBINConversionException {
     	File outputBINFile;
     	
@@ -79,8 +85,8 @@ public class NWBToBINConverter {
     	Converter converter =
     		new Converter(networkInfo,
     							  outputBINFile,
-    							  "",
-    							  false);
+    							  weightAttribute,
+    							  isWeighted);
     	NWBFileParser converterFileParser;
     	
     	try {

@@ -22,9 +22,6 @@ public class PreProcessor extends NWBFileParserAdapter {
 	
 	private NetworkInfo networkInfo;
 	
-	private String weightAttribute;
-	private boolean isWeighted;
-	
 	public PreProcessor(NetworkInfo networkInfo) {
 		this.networkInfo = networkInfo;
 	}
@@ -50,27 +47,12 @@ public class PreProcessor extends NWBFileParserAdapter {
 	}
 	
 	private void addEdge(int sourceNodeID, int targetNodeID, Map attributes) {
-		int weight;
+		Node sourceNode =
+			Node.getOrCreateNode(sourceNodeID, this.networkInfo);
+		sourceNode.incrementEdgeCount(this.networkInfo);
 		
-		if (this.isWeighted) {
-			weight = ((Number)attributes.get(this.weightAttribute)).intValue();
-		}
-		else {
-			weight = 1;
-		}
-		
-		if (weight < 0.0) {
-			this.haltParsingReason = NON_POSITIVE_WEIGHT_HALT_REASON;
-			this.shouldHaltParsing = true;
-		}
-		else {
-			Node sourceNode =
-				Node.getOrCreateNode(sourceNodeID, this.networkInfo);
-			sourceNode.incrementEdgeCount(this.networkInfo);
-			
-			Node targetNode =
-				Node.getOrCreateNode(targetNodeID, this.networkInfo);
-			targetNode.incrementEdgeCount(this.networkInfo);
-		}
+		Node targetNode =
+			Node.getOrCreateNode(targetNodeID, this.networkInfo);
+		targetNode.incrementEdgeCount(this.networkInfo);
 	}
 }

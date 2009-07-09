@@ -14,11 +14,17 @@ import edu.iu.scipolicy.analysis.blondelcommunitydetection.algorithmstages.NWBAn
 import edu.iu.scipolicy.analysis.blondelcommunitydetection.algorithmstages.NWBToBINConverter;
 
 public class BlondelCommunityDetectionAlgorithm implements Algorithm {
+	public static final String WEIGHT_FIELD_ID = "weight";
+	public static final String IS_WEIGHTED_FIELD_ID = "isweighted";
+	public static final String NO_EDGE_WEIGHT_IDENTIFIER = "unweighted";
 	
 	private AlgorithmFactory blondelCommunityDetectionAlgorithmFactory;
 	
 	private Data inputData;
-	File inputNWBFile;
+	private File inputNWBFile;
+	
+	private String weightAttribute;
+	private boolean isWeighted;
 	
 	private Dictionary parameters;
 	private CIShellContext context;
@@ -33,6 +39,15 @@ public class BlondelCommunityDetectionAlgorithm implements Algorithm {
     	
         this.inputData = data[0];
         this.inputNWBFile = (File)inputData.getData();
+        this.weightAttribute = parameters.get(WEIGHT_FIELD_ID).toString();
+        
+        if (this.weightAttribute.equals(NO_EDGE_WEIGHT_IDENTIFIER)) {
+        	this.isWeighted = false;
+        }
+        else {
+        	this.isWeighted = true;
+        }
+        
         //TODO: Get weight attribute out HERE, and don't assign parameters to
         //be a instance variable
         this.parameters = parameters;
@@ -54,7 +69,9 @@ public class BlondelCommunityDetectionAlgorithm implements Algorithm {
     	
     	File binFile =
     		NWBToBINConverter.convertNWBFileToBINFile(this.inputNWBFile,
-    												  networkInfo);
+    												  networkInfo,
+    												  this.weightAttribute,
+    												  this.isWeighted);
     	
     	/*
     	 *  Run community detection on the BIN file,
