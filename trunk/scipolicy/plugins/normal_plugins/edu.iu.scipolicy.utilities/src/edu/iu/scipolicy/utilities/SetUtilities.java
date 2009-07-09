@@ -7,7 +7,7 @@ import java.util.Set;
 
 public class SetUtilities {
 	public static ArrayList getKeysOfMapEntrySetWithValue(Set mapEntrySet,
-														Object value) {
+														  Object value) {
 		ArrayList keysOfMapEntrySetWithValue = new ArrayList();
 		Iterator mapEntrySetIterator = mapEntrySet.iterator();
 		

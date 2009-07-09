@@ -1,5 +1,7 @@
 package edu.iu.scipolicy.utilities;
 
+import java.util.LinkedHashMap;
+
 import org.cishell.reference.service.metatype.BasicAttributeDefinition;
 import org.osgi.service.metatype.AttributeDefinition;
 
@@ -73,6 +75,28 @@ public class MutateParameterUtilities {
 										 AttributeDefinition.STRING,
 										 validNumberColumnsInTable,
 										 validNumberColumnsInTable);
+		
+		return numberAttributeDefinition;
+	}
+	
+	public static AttributeDefinition formAttributeDefinitionFromMap
+			(AttributeDefinition oldAttributeDefinition,
+			 LinkedHashMap map,
+			 String[] types,
+			 String[] keysToSkip,
+			 String[] keysToAdd) {
+		String[] validNumberKeysInMap =
+			MapUtilities.getValidKeysOfTypesInMap(
+				map, types, keysToSkip, keysToAdd);
+		
+		AttributeDefinition numberAttributeDefinition =
+			new BasicAttributeDefinition(
+				oldAttributeDefinition.getID(),
+				oldAttributeDefinition.getName(),
+				oldAttributeDefinition.getDescription(),
+				AttributeDefinition.STRING,
+				validNumberKeysInMap,
+				validNumberKeysInMap);
 		
 		return numberAttributeDefinition;
 	}
