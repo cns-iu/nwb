@@ -180,7 +180,6 @@ public class RoundRussellComputation  implements NWBFileParserHandler {
 	 * */
 	public void finishedParsing() {
 		
-//		nodesMap = normalizeNodesStrength(nodesMap);
 		normalizeNodesStrength();
 		
 		/*
