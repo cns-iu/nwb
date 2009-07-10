@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<metatype:MetaData xmlns:metatype="http://www.osgi.org/xmlns/metatype/v1.0.0">
+<!-- TODO Parameter descriptions etc. -->
+	<OCD name="GeoMaps (region coloring)" id="edu.iu.scipolicy.visualization.geomaps.GeoMapsRegionsFactory.OCD"
+		 description="Creates maps with colored-region annotations">
+		<AD name="Feature Name Attribute" id="featureName" type="String" description="Parameter Description" default="featureName"/>
+		<AD name="Feature Color Attribute" id="featureColorQuantity" type="String" description="Parameter Description" default="featureColorQuantity"/>
+		<AD name="Feature Color Scaling" id="featureColorScaling" type="String" description="Parameter Description" default="Linear"/>
+		<AD name="Feature Color Range" id="featureColorRange" type="String" description="Parameter Description" default="TODO"/>
+	</OCD>
+	<Designate pid="edu.iu.scipolicy.visualization.geomaps.GeoMapsRegionsFactory">
+		<Object ocdref="edu.iu.scipolicy.visualization.geomaps.GeoMapsRegionsFactory.OCD" />
+	</Designate>
+	
+	<OCD name="GeoMaps (circles)" id="edu.iu.scipolicy.visualization.geomaps.GeoMapsCirclesFactory.OCD"
+		 description="Creates maps with circle annotations">
+		<AD name="Latitude Attribute" id="latitude" type="String" description="Parameter Description" default="latitude"/>
+		<AD name="Longitude Attribute" id="longitude" type="String" description="Parameter Description" default="longitude"/>
+		<AD name="Circle Size Attribute" id="circleArea" type="String" description="Parameter Description" default="circleArea"/>
+		<AD name="Circle Size Scaling" id="circleAreaScaling" type="String" description="Parameter Description" default="Linear"/>
+		<AD name="Circle Color Attribute" id="circleColorQuantity" type="String" description="Parameter Description" default="circleColorQuantity"/>
+		<AD name="Circle Color Scaling" id="circleColorScaling" type="String" description="Parameter Description" default="Linear"/>
+		<AD name="Circle Color Range" id="circleColorRange" type="String" description="Parameter Description" default="TODO"/>
+	</OCD>
+	<Designate pid="edu.iu.scipolicy.visualization.geomaps.GeoMapsCirclesFactory">
+		<Object ocdref="edu.iu.scipolicy.visualization.geomaps.GeoMapsCirclesFactory.OCD" />
+	</Designate>
+</metatype:MetaData>
