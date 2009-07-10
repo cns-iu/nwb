@@ -7,8 +7,8 @@ public class GlobalConstants {
 		"%%Title: Hierarchical\n" +
 		"%%BoundingBox:-1200 -1200 1200 1200\n" +
 		"%%EndComments\n" +
-		"\n" +
-		"\n" +
+		"300 400 translate\n" +
+		".25 .25 scale\n" +
 		"/Courier findfont\n" +
 		"%/Times-Roman findfont\n" +
 		"/fontsize 15 def\n" +
