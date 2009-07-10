@@ -979,7 +979,7 @@
   	  	      <param name="project.name" value="edu.iu.scipolicy.analysis.blondelexecutable"/>
   	  	      <param name="url" value="http://nwb.slis.indiana.edu/svn/nwb/trunk/scipolicy/plugins/nonpde_plugins/"/>
   	  	</antcall>
-  	<ant dir="${buildDirectory}/nonpde_plugins/edu.iu.nwb.analysis.weighted.averageclusteringcoefficient"/>
+  	<ant dir="${buildDirectory}/nonpde_plugins/edu.iu.scipolicy.analysis.blondelexecutable"/>
   	
   	<antcall target="svn.co">
   	      <param name="target" value="nonpde_plugins"/>
