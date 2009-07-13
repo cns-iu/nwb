@@ -25,9 +25,7 @@ public class Merger extends NWBFileWriter  {
 	private NetworkInfo networkInfo;
 	private int isolateCount = 0;
 	
-	public Merger(File treeFile,
-								 File outputFile,
-								 NetworkInfo networkInfo)
+	public Merger(File treeFile, File outputFile, NetworkInfo networkInfo)
 			throws FileNotFoundException,
 				   IOException,
 				   TreeFileParsingException {
@@ -55,7 +53,7 @@ public class Merger extends NWBFileWriter  {
 										communityName);
 			}
 		}
-		// Isolate nodes would not been added to our nodes list.
+		// Isolate nodes would not have been added to our nodes list.
 		else {
 			for (int ii = 0; ii < this.networkInfo.getMaxCommunityLevel(); ii++) {
 				String communityLevelAttributeName =
@@ -89,6 +87,7 @@ public class Merger extends NWBFileWriter  {
 		ArrayList nodes = this.networkInfo.getNodes();
 		
 		boolean shouldKeepReading = true;
+		
 		while (shouldKeepReading) {
 			if (!this.checkForAnotherEntry(treeFileScanner)) {
 				shouldKeepReading = false;

@@ -106,7 +106,7 @@ public class BlondelCommunityDetectionAlgorithmFactory implements
 		};
 		
 		String[] numberKeysToAdd = new String[] {
-			BlondelCommunityDetectionAlgorithm.NO_EDGE_WEIGHT_IDENTIFIER
+			BlondelCommunityDetectionAlgorithm.NO_EDGE_WEIGHT_VALUE
 		};
 		
 		for (AttributeDefinition oldAttributeDefinition : oldAttributeDefinitions) {

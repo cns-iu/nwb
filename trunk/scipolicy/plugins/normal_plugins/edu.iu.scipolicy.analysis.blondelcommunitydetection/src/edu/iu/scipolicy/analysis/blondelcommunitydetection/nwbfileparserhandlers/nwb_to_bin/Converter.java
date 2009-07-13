@@ -27,9 +27,9 @@ public class Converter extends NWBFileParserAdapter {
 	private boolean isWeighted;
 	
 	public Converter(NetworkInfo networkInfo,
-							 File outputFile,
-							 String weightAttribute,
-							 boolean isWeighted) {
+					 File outputFile,
+					 String weightAttribute,
+					 boolean isWeighted) {
 		this.networkInfo = networkInfo;
 		
 		this.weightAttribute = weightAttribute;

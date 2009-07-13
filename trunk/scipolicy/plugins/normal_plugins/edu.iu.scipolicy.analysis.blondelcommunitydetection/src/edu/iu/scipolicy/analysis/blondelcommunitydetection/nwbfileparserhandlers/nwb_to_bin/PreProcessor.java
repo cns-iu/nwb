@@ -1,11 +1,5 @@
 package edu.iu.scipolicy.analysis.blondelcommunitydetection.nwbfileparserhandlers.nwb_to_bin;
 
-import java.io.DataOutputStream;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashMap;
 import java.util.Map;
 
 import edu.iu.nwb.util.nwbfile.NWBFileParserAdapter;
@@ -17,7 +11,6 @@ public class PreProcessor extends NWBFileParserAdapter {
 		"Non-positive weights are not allowed.  To use this algorithm, " +
 		"preprocess your network further.";
 	
-	private String haltParsingReason = "";
 	private boolean shouldHaltParsing = false;
 	
 	private NetworkInfo networkInfo;

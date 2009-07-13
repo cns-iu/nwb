@@ -16,7 +16,7 @@ import edu.iu.scipolicy.analysis.blondelcommunitydetection.algorithmstages.NWBTo
 public class BlondelCommunityDetectionAlgorithm implements Algorithm {
 	public static final String WEIGHT_FIELD_ID = "weight";
 	public static final String IS_WEIGHTED_FIELD_ID = "isweighted";
-	public static final String NO_EDGE_WEIGHT_IDENTIFIER = "unweighted";
+	public static final String NO_EDGE_WEIGHT_VALUE = "unweighted";
 	
 	private AlgorithmFactory blondelCommunityDetectionAlgorithmFactory;
 	
@@ -41,15 +41,13 @@ public class BlondelCommunityDetectionAlgorithm implements Algorithm {
         this.inputNWBFile = (File)inputData.getData();
         this.weightAttribute = parameters.get(WEIGHT_FIELD_ID).toString();
         
-        if (this.weightAttribute.equals(NO_EDGE_WEIGHT_IDENTIFIER)) {
+        if (this.weightAttribute.equals(NO_EDGE_WEIGHT_VALUE)) {
         	this.isWeighted = false;
         }
         else {
         	this.isWeighted = true;
         }
         
-        //TODO: Get weight attribute out HERE, and don't assign parameters to
-        //be a instance variable
         this.parameters = parameters;
         this.context = context;
     }

@@ -3,7 +3,7 @@ package edu.iu.scipolicy.analysis.blondelcommunitydetection.algorithmstages;
 // This is the third stage of the Blondel Community Detection algorithm.
 // The input to this stage is the output of the second stage, which is a tree
 // file.
-// The input tree file consistings of pairs of integer, where each first
+// The input tree file consists of pairs of integer, where each first
 // integer is a node index and each second integer is the index of the
 // community that it belongs to.  Each node index of 0 indicates a new
 // community level.
@@ -13,13 +13,11 @@ package edu.iu.scipolicy.analysis.blondelcommunitydetection.algorithmstages;
 // The input tree file is parsed and mapped to the nodes on the original input
 // network.  The result of this mapping is a new network with nodes that are
 // annotated to have attributes that specify which communities they belong to
-// at the various community levels.  This new network is output as a new NWB
+// at various community levels.  This new network is output as a new NWB
 // file.
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
-
-import org.cishell.framework.algorithm.AlgorithmExecutionException;
 
 import edu.iu.nwb.util.nwbfile.NWBFileParser;
 import edu.iu.nwb.util.nwbfile.ParsingException;
@@ -45,8 +43,6 @@ public class NWBAndTreeFilesMerger {
     		fileParser.parse(merger);
     		
     		return outputNWBFile;
-    		
-    		// TODO: hadIssue
     	}
     	catch (FileNotFoundException fileNotFoundException) {
     		throw new NWBAndTreeFileMergingException(fileNotFoundException);

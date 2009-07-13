@@ -11,18 +11,20 @@ import edu.iu.scipolicy.analysis.blondelcommunitydetection.nwbfileparserhandlers
 import edu.iu.scipolicy.analysis.blondelcommunitydetection.nwbfileparserhandlers.nwb_to_bin.PreProcessor;
 import edu.iu.scipolicy.utilities.FileUtilities;
 
-// This is the first stage of the Blondel Community Detection algorithm.
-// The input to this stage is the NWB file that the user chose to run this
-// algorithm on.
-// The input NWB file is first preprocessed, which entails:
-// * Marking the nodes that are found on edges and 
-// * keeping track of the number of edges for each node, then finally
-// * annotating each of these nodes with some data for writing the header of
-//   the BIN file that is created in the conversion step.
-// The input NWB must then be converted, which entails:
-// * Writing the header generated in the preprocessing step and using it to
-//   know how to
-// * write the neighbors/edges for each node as the edges are processed.
+/*
+ * This is the first stage of the Blondel Community Detection algorithm.
+ * The input to this stage is the NWB file that the user chose to run this
+ * algorithm on.
+ * The input NWB file is first preprocessed, which entails:
+   * Marking the nodes that are found on edges and 
+   * keeping track of the number of edges for each node, then finally
+   * annotating each of these nodes with some data for writing the header of
+   *  the BIN file that is created in the conversion step.
+ * The input NWB must then be converted, which entails:
+   * Writing the header generated in the preprocessing step and using it to
+   *  know how to write the neighbors/edges for each node as the edges
+   *  are processed.
+ */
 public class NWBToBINConverter {
 	public static File convertNWBFileToBINFile(File inputNWBFile,
 											   NetworkInfo networkInfo,
@@ -80,8 +82,6 @@ public class NWBToBINConverter {
     			"Failed to create temporary BIN file.", ioException);
     	}
     	
-    	// TODO: Get the second (weightAttribute) and third (isWeighted) values
-    	// from input parameters.
     	Converter converter =
     		new Converter(networkInfo,
     							  outputBINFile,
