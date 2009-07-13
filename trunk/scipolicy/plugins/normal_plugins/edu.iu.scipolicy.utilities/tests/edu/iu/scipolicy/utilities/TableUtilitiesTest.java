@@ -86,6 +86,25 @@ public class TableUtilitiesTest {
 			fail();
 		}
 	}
+	
+	@Test
+	public void testGetNonConflictingNewColumnName() {
+		Schema testSchema = formTestSchema();
+		
+		try {
+			Table testTable = TableUtilities.createTableUsingSchema(testSchema);
+			Schema testTableSchema = testTable.getSchema();
+			
+			String newColumnName = TableUtilities.formNonConflictingNewColumnName(testTableSchema, "string1");
+			
+			if (!newColumnName.equalsIgnoreCase("string1_1")) {
+				fail();
+			}
+		}
+		catch (Exception e) {
+			fail();
+		}
+	}
 
 	@Test
 	public void testCopyTableRow() {

@@ -2,6 +2,7 @@ package edu.iu.scipolicy.utilities;
 
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 import prefuse.data.Schema;
 import prefuse.data.Table;
@@ -26,6 +27,43 @@ public class TableUtilities {
 		String[] finalColumnNames = new String [workingColumnNames.size()];
 
 		return (String[])workingColumnNames.toArray(finalColumnNames);
+	}
+	
+	public static List getAllColumnNames(Schema schema) 
+			throws ColumnNotFoundException {
+		List workingColumnNames = new ArrayList();
+	
+		for (int ii = 0; ii < schema.getColumnCount(); ii++) {
+			workingColumnNames.add(schema.getColumnName(ii));
+		}
+		
+		if (workingColumnNames.size() == 0) {
+			throw new ColumnNotFoundException
+				("No columns found in the schema.");
+		}
+	
+		return workingColumnNames;
+	}
+	
+	public static String formNonConflictingNewColumnName(
+			Schema schema, String suggestedColumnName) 
+			throws ColumnNotFoundException {
+		List workingColumnNames = getAllColumnNames(schema);
+	
+		if(!workingColumnNames.contains(suggestedColumnName)) {
+			return suggestedColumnName;
+		}
+		else {
+			int columnNameSuffix = 1;
+			while(true) {
+				String newColumnName =
+					suggestedColumnName.concat("_" + columnNameSuffix);
+				if(!workingColumnNames.contains(newColumnName)) {
+					return newColumnName;
+				}
+				columnNameSuffix++;
+			}
+		}
 	}
 	
 	public static String[] filterSchemaColumnNamesByClasses
