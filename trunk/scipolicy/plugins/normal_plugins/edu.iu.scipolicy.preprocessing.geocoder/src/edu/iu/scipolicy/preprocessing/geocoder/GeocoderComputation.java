@@ -29,6 +29,10 @@ public class GeocoderComputation {
 	private String locationColumnName;
 	private Table originalTable, outputTable;
 
+	private String outputTableLatitudeColumnName;
+
+	private String outputTableLongitudeColumnName;
+
 	public GeocoderComputation(String locationType, String locationColumnName,
 			Table table, LogService logger) {
 		
@@ -53,8 +57,18 @@ public class GeocoderComputation {
 		 * */
 		outputTable = TableUtilities.createTableUsingSchema(originalTable.getSchema());
 		
-		outputTable.addColumn(LATITUDE_COLUMN_NAME, Double.class);
-		outputTable.addColumn(LONGITUDE_COLUMN_NAME, Double.class);
+		outputTableLatitudeColumnName = TableUtilities.formNonConflictingNewColumnName(
+			originalTable.getSchema(), LATITUDE_COLUMN_NAME);
+		
+		outputTableLongitudeColumnName = TableUtilities.formNonConflictingNewColumnName(
+			originalTable.getSchema(), LONGITUDE_COLUMN_NAME);
+		
+		outputTable.addColumn(outputTableLatitudeColumnName, Double.class);
+		outputTable.addColumn(outputTableLongitudeColumnName, Double.class);
+		
+		logger.log(LogService.LOG_INFO, "Latitude & Longitude values added to "
+				+ outputTableLatitudeColumnName + " & " 
+				+ outputTableLongitudeColumnName + " respectively.");
 		
 		Iterator locationColumnIterator = originalTable.iterator();
 		
@@ -79,8 +93,8 @@ public class GeocoderComputation {
 			
 			int currentRowNumber = Integer.parseInt(locationColumnIterator.next().toString());
 			int locationColumnNumber = originalTable.getColumnNumber(locationColumnName);
-			int latitudeColumnNumber = outputTable.getColumnNumber(LATITUDE_COLUMN_NAME);
-			int longitudeColumnNumber = outputTable.getColumnNumber(LONGITUDE_COLUMN_NAME);
+			int latitudeColumnNumber = outputTable.getColumnNumber(outputTableLatitudeColumnName);
+			int longitudeColumnNumber = outputTable.getColumnNumber(outputTableLongitudeColumnName);
 			String currentLocationKey = originalTable.get(currentRowNumber, locationColumnNumber).toString(); 
 			
 			List<Double> cachedLocationValue = new ArrayList<Double>();
@@ -137,8 +151,4 @@ public class GeocoderComputation {
 		return outputTable;
 	}
 	
-	
-	
-	
-
 }
