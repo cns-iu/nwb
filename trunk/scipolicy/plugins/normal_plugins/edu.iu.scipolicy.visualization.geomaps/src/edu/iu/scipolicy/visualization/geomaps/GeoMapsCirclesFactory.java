@@ -56,6 +56,9 @@ public class GeoMapsCirclesFactory extends GeoMapsAlgorithmFactory {
 			else if (oldAttributeDefinitionID.equals(CircleAnnotationMode.CIRCLE_COLOR_RANGE_ID)) {
 				newAttributeDefinition = formStringDropdownAttributeDefinition(oldAttributeDefinition, CircleAnnotationMode.COLOR_RANGES.keySet());
 			}
+			else if (oldAttributeDefinitionID.equals(RegionAnnotationMode.SHAPEFILE_ID)) {
+				newAttributeDefinition = formStringDropdownAttributeDefinition(oldAttributeDefinition, GeoMapsAlgorithmFactory.SHAPEFILES.keySet());
+			}
 			
 			newParameters.addAttributeDefinition(ObjectClassDefinition.REQUIRED, newAttributeDefinition);
 		}

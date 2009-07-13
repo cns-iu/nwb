@@ -25,6 +25,8 @@ import edu.iu.scipolicy.utilities.FileUtilities;
 public class GeoMapsAlgorithm implements Algorithm {
 	public static final String OUTPUT_FILE_EXTENSION = "ps"; // TODO eps
 
+	
+	
 	private Data[] data;
 	@SuppressWarnings("unchecked") // TODO
 	private Dictionary parameters;
@@ -46,7 +48,17 @@ public class GeoMapsAlgorithm implements Algorithm {
 		Table inTable = (Table) inDatum.getData();
 				
 		final ClassLoader loader = getClass().getClassLoader();
-		final URL shapefileURL = loader.getResource("/edu/iu/scipolicy/visualization/geomaps/shapefiles/countries.shp");
+		
+//		String whichShapeFile = (String) parameters.get("which");
+//		
+//		URL shapefileURL = null;
+//		
+//		if (whichShapeFile.equals("States")) {
+//			shapefileURL = loader.getResource("/edu/iu/scipolicy/visualization/geomaps/shapefiles/tl_2008_us_state.shp");
+//		} else {
+//			shapefileURL = loader.getResource("/edu/iu/scipolicy/visualization/geomaps/shapefiles/countries.shp");
+//		}
+		
 		
 		// String postscriptFileOutputPath = "C:\\Documents and Settings\\jrbibers\\Desktop\\test.ps";
 		File temporaryPostScriptFile;
@@ -87,7 +99,7 @@ public class GeoMapsAlgorithm implements Algorithm {
 		}
 		
 		try {
-			annotationMode.printPS(inTable, parameters, temporaryPostScriptFile, projectedCRS, shapefileURL);
+			annotationMode.printPS(inTable, parameters, temporaryPostScriptFile, projectedCRS);
 		} catch (IOException e) {
 			throw new AlgorithmExecutionException(e);
 		}

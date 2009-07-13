@@ -30,17 +30,21 @@ public class RegionAnnotationMode implements AnnotationMode {
 	public static final String FEATURE_COLOR_QUANTITY_ID = "featureColorQuantity";
 	public static final String FEATURE_COLOR_SCALING_ID = "featureColorScaling";
 	public static final String FEATURE_COLOR_RANGE_ID = "featureColorRange";
+	public static final String SHAPEFILE_ID = "shapefile";
 	
-	public static final Map<String, Range<Color>> COLOR_RANGES;
+	public static final Map<String, Range<Color>> COLOR_RANGES;	
 	static {
 		Map<String, Range<Color>> t = new HashMap<String, Range<Color>>();
-		t.put("Cyan to burgundy", new Range<Color>(new Color(49, 243, 255), new Color(127, 4, 27)));
+		t.put("Cyan to Burgundy", new Range<Color>(new Color(49, 243, 255), new Color(127, 4, 27)));
 		COLOR_RANGES = Collections.unmodifiableMap(t);
 	}
 
 	@SuppressWarnings("unchecked") // TODO
-	public void printPS(Table inTable, Dictionary parameters, File temporaryPostScriptFile, ProjectedCRS projectedCRS, URL shapefileURL) throws AlgorithmExecutionException, IOException {
-		
+	public void printPS(Table inTable, Dictionary parameters, File temporaryPostScriptFile, ProjectedCRS projectedCRS) throws AlgorithmExecutionException, IOException {
+		String shapefilePathKey = (String) parameters.get(SHAPEFILE_ID);
+		String shapefilePath = GeoMapsAlgorithmFactory.SHAPEFILES.get(shapefilePathKey);
+		final ClassLoader loader = getClass().getClassLoader();
+		URL shapefileURL = loader.getResource(shapefilePath);
 		
 		String featureNameAttribute = (String) parameters.get(FEATURE_NAME_ID);
 		String featureColorQuantityAttribute = (String) parameters.get(FEATURE_COLOR_QUANTITY_ID);	

@@ -12,5 +12,5 @@ import prefuse.data.Table;
 
 public interface AnnotationMode {
 	@SuppressWarnings("unchecked") // TODO
-	public void printPS(Table inTable, Dictionary parameters, File temporaryPostScriptFile, ProjectedCRS projectedCRS, URL shapefileURL) throws AlgorithmExecutionException, IOException;
+	public void printPS(Table inTable, Dictionary parameters, File temporaryPostScriptFile, ProjectedCRS projectedCRS) throws AlgorithmExecutionException, IOException;
 }

@@ -33,8 +33,8 @@ public class CirclePrinter {
 	public static final DoubleScaler DEFAULT_CIRCLE_COLOR_QUANTITY_SCALER = new LinearScaler();
 	public static final DoubleScaler DEFAULT_CIRCLE_AREA_SCALER = new LinearScaler();
 	public static final Color DEFAULT_CIRCLE_COLOR_MAXIMUM = Color.MAGENTA;
-	public static final double DEFAULT_CIRCLE_AREA_MAXIMUM = 5000.0;
-	public static final double DEFAULT_CIRCLE_AREA_MINIMUM = 100.0;
+	public static final double DEFAULT_CIRCLE_AREA_MAXIMUM = 750.0;
+	public static final double DEFAULT_CIRCLE_AREA_MINIMUM = 80.0;
 	public static final Color DEFAULT_CIRCLE_COLOR_MINIMUM = Color.YELLOW;
 
 	public CirclePrinter(GeometryProjector geometryProjector,

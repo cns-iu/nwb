@@ -256,10 +256,13 @@ public class ShapefileToPostScript {
 	private void printHeader(BufferedWriter out) throws IOException {
 		GeoMapsAlgorithm.logger.log(LogService.LOG_INFO, "Printing PostScript.." + "\n");
 
-		out.write("%!PS-Adobe-3.0 EPSF-3.0\n");
-		out.write("%%BoundingBox: " + postScriptBoundingBox.getCoordinatesString() + "\n");
-		out.write("%%Pages: 1" + "\n");
+//		out.write("%!PS-Adobe-3.0 EPSF-3.0\n");
+//		out.write("%%BoundingBox: " + postScriptBoundingBox.getCoordinatesString() + "\n");
+//		out.write("%%Pages: 1" + "\n");
+//		out.write("\n");
+		out.write("%!" + "\n");
 		out.write("\n");
+		
 
 		out.write("% Save the default clipping path so we can clip the map safely" + "\n");
 		out.write("gsave" + "\n");

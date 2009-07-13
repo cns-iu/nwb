@@ -33,6 +33,7 @@ public class CircleAnnotationMode implements AnnotationMode {
 	public static final String CIRCLE_COLOR_QUANTITY_ID = "circleColorQuantity";
 	public static final String CIRCLE_COLOR_SCALING_ID = "circleColorScaling";
 	public static final String CIRCLE_COLOR_RANGE_ID = "circleColorRange";
+	public static final String SHAPEFILE_ID = "shapefile";
 	
 	public static final Map<String, Range<Color>> COLOR_RANGES;
 	static {
@@ -42,8 +43,13 @@ public class CircleAnnotationMode implements AnnotationMode {
 	}
 
 	@SuppressWarnings("unchecked") // TODO
-	public void printPS(Table inTable, Dictionary parameters, File temporaryPostScriptFile, ProjectedCRS projectedCRS, URL shapefileURL)
+	public void printPS(Table inTable, Dictionary parameters, File temporaryPostScriptFile, ProjectedCRS projectedCRS)
 			throws AlgorithmExecutionException, IOException {
+		String shapefilePathKey = (String) parameters.get(SHAPEFILE_ID);
+		String shapefilePath = GeoMapsAlgorithmFactory.SHAPEFILES.get(shapefilePathKey);
+		final ClassLoader loader = getClass().getClassLoader();
+		URL shapefileURL = loader.getResource(shapefilePath);
+		
 		String latitudeAttribute = (String) parameters.get(LATITUDE_ID);
 		String longitudeAttribute = (String) parameters.get(LONGITUDE_ID);
 		
