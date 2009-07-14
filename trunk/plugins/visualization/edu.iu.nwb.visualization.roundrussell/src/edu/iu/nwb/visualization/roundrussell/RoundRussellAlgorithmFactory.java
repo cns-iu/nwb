@@ -144,14 +144,6 @@ public class RoundRussellAlgorithmFactory implements AlgorithmFactory, Parameter
 								nodeLevelAttribute, 
 								nodeLevelAttribute));
 			}
-			else if(id.equals("betacolumn")) {
-				definition.addAttributeDefinition(ObjectClassDefinition.REQUIRED,
-						new EdgeBundlingDegreeAttributeValueValidator(attributeDefinitions[ii].getID(), 
-								attributeDefinitions[ii].getName(), 
-								attributeDefinitions[ii].getDescription(), 
-								attributeDefinitions[ii].getType(),
-								attributeDefinitions[ii].getDefaultValue().toString()));
-			}
 			else {
 				definition.addAttributeDefinition(ObjectClassDefinition.REQUIRED, attributeDefinitions[ii]);
 			}

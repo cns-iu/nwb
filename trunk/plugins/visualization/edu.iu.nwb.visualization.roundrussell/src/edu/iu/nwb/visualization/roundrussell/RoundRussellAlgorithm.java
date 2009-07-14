@@ -164,7 +164,7 @@ public class RoundRussellAlgorithm implements Algorithm {
 		
 		
 		Data outputPSData = new BasicData(outputPSFile,"file:text/ps");
-		outputPSData.getMetadata().put(DataProperty.LABEL, "Round Russell Visualization in ps format");
+		outputPSData.getMetadata().put(DataProperty.LABEL, "Round Russell Visualization.ps");
 		outputPSData.getMetadata().put(DataProperty.TYPE, DataProperty.VECTOR_IMAGE_TYPE);
 		outputPSData.getMetadata().put(DataProperty.PARENT, data[0]);
 		return outputPSData;
