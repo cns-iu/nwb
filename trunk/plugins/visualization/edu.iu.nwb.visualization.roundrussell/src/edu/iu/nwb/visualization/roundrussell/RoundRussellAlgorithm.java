@@ -70,16 +70,24 @@ public class RoundRussellAlgorithm implements Algorithm {
 				String edgeWeightColumnName = (String) parameters.get("weightcolumn");
 				String nodeStrengthColumnName = (String) parameters.get("strengthcolumn");
 				
+				String level0ColumnName = (String) parameters.get("level0_column");
 				String level1ColumnName = (String) parameters.get("level1_column");
 				String level2ColumnName = (String) parameters.get("level2_column");
 				String level3ColumnName = (String) parameters.get("level3_column");
-				String level4ColumnName = (String) parameters.get("level4_column");
 				
 				int numberOfLevelsSpecified = 0;
 				double betaCurvedValue;
 				
 				List<String> levelColumnNames = new ArrayList<String>();
 				
+				if(!level0ColumnName.equalsIgnoreCase(RoundRussellAlgorithmFactory.NO_LEVEL_IDENTIFIER)) {
+					levelColumnNames.add(level0ColumnName);
+					numberOfLevelsSpecified++;
+				}
+				else {
+					levelColumnNames.add(NO_LEVEL_COLUMN_NAME);
+				}
+
 				if(!level1ColumnName.equalsIgnoreCase(RoundRussellAlgorithmFactory.NO_LEVEL_IDENTIFIER)) {
 					levelColumnNames.add(level1ColumnName);
 					numberOfLevelsSpecified++;
@@ -87,7 +95,7 @@ public class RoundRussellAlgorithm implements Algorithm {
 				else {
 					levelColumnNames.add(NO_LEVEL_COLUMN_NAME);
 				}
-
+				
 				if(!level2ColumnName.equalsIgnoreCase(RoundRussellAlgorithmFactory.NO_LEVEL_IDENTIFIER)) {
 					levelColumnNames.add(level2ColumnName);
 					numberOfLevelsSpecified++;
@@ -98,14 +106,6 @@ public class RoundRussellAlgorithm implements Algorithm {
 				
 				if(!level3ColumnName.equalsIgnoreCase(RoundRussellAlgorithmFactory.NO_LEVEL_IDENTIFIER)) {
 					levelColumnNames.add(level3ColumnName);
-					numberOfLevelsSpecified++;
-				}
-				else {
-					levelColumnNames.add(NO_LEVEL_COLUMN_NAME);
-				}
-				
-				if(!level4ColumnName.equalsIgnoreCase(RoundRussellAlgorithmFactory.NO_LEVEL_IDENTIFIER)) {
-					levelColumnNames.add(level4ColumnName);
 					numberOfLevelsSpecified++;
 				}
 				else {

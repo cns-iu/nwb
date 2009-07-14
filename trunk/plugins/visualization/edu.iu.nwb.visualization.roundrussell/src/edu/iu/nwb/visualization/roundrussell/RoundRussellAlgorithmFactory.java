@@ -3,7 +3,6 @@ package edu.iu.nwb.visualization.roundrussell;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.Dictionary;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
@@ -67,7 +66,6 @@ public class RoundRussellAlgorithmFactory implements AlgorithmFactory, Parameter
 		nodeStrengthAttribute = createNodeStrengthAttributeKeys(metaDataHandler.getNodeSchema());
 		nodeLevelAttribute = createNodeLevelAttributeKeys(metaDataHandler.getNodeSchema());
 		
-
 		if(metaDataHandler.getDirectedEdgeSchema() != null){
 			edgeAttributes = createEdgeAttributeKeyArray(metaDataHandler.getDirectedEdgeSchema());	
 		}
@@ -85,7 +83,9 @@ public class RoundRussellAlgorithmFactory implements AlgorithmFactory, Parameter
 						new BasicAttributeDefinition(attributeDefinitions[ii].getID(), 
 								attributeDefinitions[ii].getName(), 
 								attributeDefinitions[ii].getDescription(), 
-								attributeDefinitions[ii].getType(), 
+								attributeDefinitions[ii].getType(),
+								0, getDefaultOption(edgeAttributes, "weight"),
+								null,
 								edgeAttributes, 
 								edgeAttributes));
 			}  
@@ -94,9 +94,22 @@ public class RoundRussellAlgorithmFactory implements AlgorithmFactory, Parameter
 						new BasicAttributeDefinition(attributeDefinitions[ii].getID(), 
 								attributeDefinitions[ii].getName(), 
 								attributeDefinitions[ii].getDescription(), 
-								attributeDefinitions[ii].getType(), 
+								attributeDefinitions[ii].getType(),
+								0, getDefaultOption(nodeStrengthAttribute, "strength"),
+								null,
 								nodeStrengthAttribute, 
 								nodeStrengthAttribute));
+			}
+			else if(id.equals("level0_column")) {
+				definition.addAttributeDefinition(ObjectClassDefinition.REQUIRED,
+						new BasicAttributeDefinition(attributeDefinitions[ii].getID(), 
+								attributeDefinitions[ii].getName(), 
+								attributeDefinitions[ii].getDescription(), 
+								attributeDefinitions[ii].getType(),
+								0, getDefaultLevelOption(nodeLevelAttribute, 0),
+								null,
+								nodeLevelAttribute, 
+								nodeLevelAttribute));
 			}
 			else if(id.equals("level1_column")) {
 				definition.addAttributeDefinition(ObjectClassDefinition.REQUIRED,
@@ -104,6 +117,8 @@ public class RoundRussellAlgorithmFactory implements AlgorithmFactory, Parameter
 								attributeDefinitions[ii].getName(), 
 								attributeDefinitions[ii].getDescription(), 
 								attributeDefinitions[ii].getType(), 
+								0, getDefaultLevelOption(nodeLevelAttribute, 1),
+								null,
 								nodeLevelAttribute, 
 								nodeLevelAttribute));
 			}
@@ -113,6 +128,8 @@ public class RoundRussellAlgorithmFactory implements AlgorithmFactory, Parameter
 								attributeDefinitions[ii].getName(), 
 								attributeDefinitions[ii].getDescription(), 
 								attributeDefinitions[ii].getType(), 
+								0, getDefaultLevelOption(nodeLevelAttribute, 2),
+								null,
 								nodeLevelAttribute, 
 								nodeLevelAttribute));
 			}
@@ -121,16 +138,9 @@ public class RoundRussellAlgorithmFactory implements AlgorithmFactory, Parameter
 						new BasicAttributeDefinition(attributeDefinitions[ii].getID(), 
 								attributeDefinitions[ii].getName(), 
 								attributeDefinitions[ii].getDescription(), 
-								attributeDefinitions[ii].getType(), 
-								nodeLevelAttribute, 
-								nodeLevelAttribute));
-			}
-			else if(id.equals("level4_column")) {
-				definition.addAttributeDefinition(ObjectClassDefinition.REQUIRED,
-						new BasicAttributeDefinition(attributeDefinitions[ii].getID(), 
-								attributeDefinitions[ii].getName(), 
-								attributeDefinitions[ii].getDescription(), 
-								attributeDefinitions[ii].getType(), 
+								attributeDefinitions[ii].getType(),
+								0, getDefaultLevelOption(nodeLevelAttribute, 3),
+								null,
 								nodeLevelAttribute, 
 								nodeLevelAttribute));
 			}
@@ -150,6 +160,52 @@ public class RoundRussellAlgorithmFactory implements AlgorithmFactory, Parameter
 		return definition;
 	}
 	
+	/*
+	 * To smartly select the appropriate level column name from the drop down box.
+	 * */
+	private String[] getDefaultLevelOption(String[] nodeLevelAttribute, int levelIndicator) {
+		
+		for(int attributesIndex = 0; 
+				attributesIndex < nodeLevelAttribute.length; 
+				attributesIndex++ ) {
+			
+			String lowerCaseNodeLevelAttributeName = nodeLevelAttribute[attributesIndex].toLowerCase();
+			if(lowerCaseNodeLevelAttributeName.contains("level") 
+				&& lowerCaseNodeLevelAttributeName.contains(String.valueOf(levelIndicator))) {
+				return new String[] { nodeLevelAttribute[attributesIndex] };
+			}
+	    }
+		
+		for(int attributesIndex = 0; attributesIndex < nodeLevelAttribute.length; attributesIndex++ ) {
+			String lowerCaseNodeLevelAttributeName = nodeLevelAttribute[attributesIndex].toLowerCase();
+			if(lowerCaseNodeLevelAttributeName.contains("level")) {
+				return new String[] { nodeLevelAttribute[attributesIndex] }; 
+			}
+	    }
+		return null;
+	}
+	
+	/*
+	 * To smartly select the appropriate strength or weight column name from
+	 *  the drop down box.
+	 */
+	private String[] getDefaultOption(String[] attributeNames,
+									  String suggestedPattern) {
+		
+		String lowerCaseSuggestedPattern = suggestedPattern.toLowerCase();
+		
+		for(int attributesIndex = 0;
+				attributesIndex < attributeNames.length;
+				attributesIndex++ ) {
+			String lowerCaseAttributeName =
+				attributeNames[attributesIndex].toLowerCase();
+			if(lowerCaseAttributeName.contains(lowerCaseSuggestedPattern)) {
+				return new String[] { attributeNames[attributesIndex] };
+			}
+	    }
+		return null;
+	}
+
 	/**
 	 * Used to create strength key array from the node attribute columns from the selected nwb file, 
 	 * except the node id column & the columns with "string" type.
@@ -164,7 +220,7 @@ public class RoundRussellAlgorithmFactory implements AlgorithmFactory, Parameter
 		keysSkip.next();
 		
 		for (Iterator keys = keysSkip; keys.hasNext(); ) {
-			String key = ""+keys.next();
+			String key = keys.next().toString();
 			
 				/*
 				 * Strength column cannot have the type "String".
@@ -175,7 +231,6 @@ public class RoundRussellAlgorithmFactory implements AlgorithmFactory, Parameter
 				
 		}
 		goodKeys.add(NO_STRENGTH_IDENTIFIER);
-		Collections.reverse(goodKeys);
 		return (String[]) goodKeys.toArray(new String[]{});
 	}
 
@@ -187,6 +242,7 @@ public class RoundRussellAlgorithmFactory implements AlgorithmFactory, Parameter
 	 */
 	private String[] createNodeLevelAttributeKeys(LinkedHashMap nodeSchema) {
 		List<String> goodKeys = new ArrayList<String>();
+		goodKeys.add(NO_LEVEL_IDENTIFIER);
 		
 		/*
 		 * In order to skip "node id" options.
@@ -195,12 +251,10 @@ public class RoundRussellAlgorithmFactory implements AlgorithmFactory, Parameter
 		keysSkip.next();
 		
 		for (Iterator keys = keysSkip; keys.hasNext(); ) {
-			String key = ""+keys.next();
+			String key = keys.next().toString();
 				goodKeys.add(key);
 		}
 		
-		goodKeys.add(NO_LEVEL_IDENTIFIER);
-		Collections.reverse(goodKeys);
 		return (String[]) goodKeys.toArray(new String[]{});
 	}
 
@@ -216,13 +270,12 @@ public class RoundRussellAlgorithmFactory implements AlgorithmFactory, Parameter
 		keysSkip.next();
 		
 		for (Iterator keys = keysSkip; keys.hasNext(); ) {
-			String key = ""+keys.next();
+			String key = keys.next().toString();
 			if (!schema.get(key).equals(NWBFileProperty.TYPE_STRING)) {
 				goodKeys.add(key);
 			}
 		}
 		goodKeys.add(NO_EDGE_WEIGHT_IDENTIFIER);
-		Collections.reverse(goodKeys);
 		return (String[]) goodKeys.toArray(new String[]{});
 	}
 }
