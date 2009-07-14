@@ -34,6 +34,8 @@ public class RegionAnnotationMode implements AnnotationMode {
 	static {
 		Map<String, Range<Color>> t = new HashMap<String, Range<Color>>();
 		t.put("Cyan to burgundy", new Range<Color>(new Color(49, 243, 255), new Color(127, 4, 27)));
+		t.put("Saffron to crimson", new Range<Color>(new Color(254, 204, 92), new Color(177, 4, 39)));
+		t.put("Lemon chiffon to egyptian blue", new Range<Color>(new Color(255, 255, 158), new Color(37, 52, 148)));
 		COLOR_RANGES = Collections.unmodifiableMap(t);
 	}
 
