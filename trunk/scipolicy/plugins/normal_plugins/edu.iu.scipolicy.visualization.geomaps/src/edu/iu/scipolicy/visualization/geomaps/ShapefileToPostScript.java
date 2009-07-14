@@ -8,7 +8,6 @@ import java.io.IOException;
 import java.net.URL;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Map.Entry;
 
 import org.cishell.framework.algorithm.AlgorithmExecutionException;
 import org.geotools.feature.FeatureCollection;
@@ -23,149 +22,62 @@ import org.osgi.service.log.LogService;
 import com.vividsolutions.jts.geom.Coordinate;
 import com.vividsolutions.jts.geom.Geometry;
 
-import edu.iu.scipolicy.visualization.geomaps.interpolation.ColorInterpolator;
-import edu.iu.scipolicy.visualization.geomaps.interpolation.DoubleInterpolator;
-import edu.iu.scipolicy.visualization.geomaps.interpolation.DoubleMapInterpolator;
-import edu.iu.scipolicy.visualization.geomaps.interpolation.LinearInterpolator;
 import edu.iu.scipolicy.visualization.geomaps.legend.AreaLegend;
 import edu.iu.scipolicy.visualization.geomaps.legend.LabeledGradient;
 import edu.iu.scipolicy.visualization.geomaps.legend.Legend;
 import edu.iu.scipolicy.visualization.geomaps.printing.Circle;
 import edu.iu.scipolicy.visualization.geomaps.printing.CirclePrinter;
 import edu.iu.scipolicy.visualization.geomaps.printing.FeaturePrinter;
-import edu.iu.scipolicy.visualization.geomaps.printing.PostScriptBoundingBox;
+import edu.iu.scipolicy.visualization.geomaps.printing.MapBoundingBox;
 import edu.iu.scipolicy.visualization.geomaps.projection.GeometryProjector;
-import edu.iu.scipolicy.visualization.geomaps.scaling.DoubleMapScaler;
-import edu.iu.scipolicy.visualization.geomaps.scaling.DoubleScaler;
-import edu.iu.scipolicy.visualization.geomaps.utility.Range;
 import edu.iu.scipolicy.visualization.geomaps.utility.ShapefileFeatureReader;
 
+import org.geotools.referencing.crs.DefaultGeographicCRS;
+
 public class ShapefileToPostScript {
-	
-	// PostScript is not Encapsulated if this is set to false!
-	public static final boolean CLIP_TO_BOUNDING_BOX = true;
-	public static final boolean DRAW_BOUNDING_BOX = true;
-	public static final boolean BACKGROUND_TRANSPARENT = true;
-	public static final Color BACKGROUND_COLOR = Color.CYAN;
-	public static final String DEFAULT_FEATURE_COLOR_MAP_KEY = "NAME";
 	public static final String INDENT = "  ";
 	
 	public static final String MERCATOR_EPSG_CODE = "EPSG:3395";
 	public static final String ALBERS_EPSG_CODE = "EPSG:3083";
-	public static final String LAMBERT_EPSG_CODE = "EPSG:2267";
+	public static final String LAMBERT_EPSG_CODE = "EPSG:2267";	
 	
 	private FeatureCollection<SimpleFeatureType, SimpleFeature> featureCollection;
 	private GeometryProjector geometryProjector;
-	private PostScriptBoundingBox postScriptBoundingBox;
+	private MapBoundingBox mapBoundingBox;
+	private Legend legend = new Legend();
+	private Map<String, Color> featureColorMap = new HashMap<String, Color>();
+	private String featureNameKey;
+	private Map<Coordinate, Circle> circleMap = new HashMap<Coordinate, Circle>();
 
-//	public static void main(String[] args) throws FactoryException, TransformException, IOException {
-//		String shapefileInputPath = "C:\\Documents and Settings\\jrbibers\\Desktop\\shapefiles\\countries.shp";
-//		String postscriptFileOutputPath = "C:\\Documents and Settings\\jrbibers\\Desktop\\test.ps";
-//
-//		ProjectedCRS projectedCRS = (ProjectedCRS) CRS.parseWKT(WKTLibrary.MERCATOR_WKT);
-//		// ProjectedCRS projectedCRS = (ProjectedCRS) CRS.decode(MERCATOR_EPSG_CODE);
-//
-//		ShapefileToPostScript shapefileToPostScript = new ShapefileToPostScript(shapefileInputPath, projectedCRS);
-//		shapefileToPostScript.printPostScript(postscriptFileOutputPath);
-//	}
-
-	public ShapefileToPostScript(URL shapefileURL, ProjectedCRS projectedCRS) throws AlgorithmExecutionException {
+	
+	public ShapefileToPostScript(URL shapefileURL, ProjectedCRS projectedCRS, String featureNameKey) throws AlgorithmExecutionException {
 		ShapefileFeatureReader shapefileFeatureReader = new ShapefileFeatureReader(shapefileURL);
 		featureCollection = shapefileFeatureReader.getFeatureCollection();
 		geometryProjector = makeGeometryPreparer(projectedCRS);
-		postScriptBoundingBox = calculatePostScriptBoundingBox();
+		mapBoundingBox = calculateMapBoundingBox();
+		this.featureNameKey = featureNameKey;
+	}
+	
+	public void setFeatureColorAnnotations(Map<String, Color> featureColorMap, LabeledGradient featureColorGradient) {
+		this.featureColorMap = featureColorMap;
+		legend.add(featureColorGradient);
+	}
+	
+	public void setCircleAnnotations(Map<Coordinate, Circle> circleMap, AreaLegend circleAreaLegend, LabeledGradient circleColorGradient) {
+		this.circleMap = circleMap;
+		legend.add(circleAreaLegend);
+		legend.add(circleColorGradient);
 	}
 
-	/* TODO Name is no longer accurate.. not this class' responsibility.  Needs to move
-	 */
-	public void printPostScript(File psFile, Map<String, Double> featureColorQuantityMap, String featureColorQuantityAttribute, DoubleScaler featureColorQuantityScaler, Range<Color> featureColorRange, Map<Coordinate, Double> circleAreaMap, String circleAreaAttribute, DoubleScaler circleAreaScaler, Map<Coordinate, Double> circleColorQuantityMap, String circleColorQuantityAttribute, DoubleScaler circleColorQuantityScaler, Range<Color> circleColorRange)
-	throws AlgorithmExecutionException, IOException {
-		// Create and fill legend
-		Legend legend = new Legend();
-
-		Map<String, Color> interpolatedFeatureColorMap = new HashMap<String, Color>();
-		if ( !featureColorQuantityMap.isEmpty() ) {
-			// Scale and interpolate feature colors
-			DoubleMapScaler<String> featureColorQuantityMapScaler = new DoubleMapScaler<String>(featureColorQuantityScaler);
-			Map<String, Double> scaledFeatureColorQuantityMap = featureColorQuantityMapScaler.scale(featureColorQuantityMap);
-			Range<Double> featureColorQuantityScalableRange = featureColorQuantityMapScaler.getScalableRange();
-			DoubleInterpolator<Color> featureColorQuantityInterpolator = new ColorInterpolator(scaledFeatureColorQuantityMap.values(), featureColorRange);
-			interpolatedFeatureColorMap = (new DoubleMapInterpolator<String, Color>(featureColorQuantityInterpolator)).getInterpolatedMap(scaledFeatureColorQuantityMap );
-			
-			// Add feature color legend
-			double featureColorGradientLowerLeftX = .05*legend.getWidth();
-			double featureColorGradientLowerLeftY = legend.getLowerLeftY();
-			double featureColorGradientWidth = legend.getWidth()/3 * .90;
-			double featureColorGradientHeight = 15;
-			String featureColorTypeLabel = "Feature Color";
-			legend.add(new LabeledGradient(featureColorQuantityScalableRange, featureColorRange, featureColorTypeLabel, featureColorQuantityAttribute, featureColorGradientLowerLeftX, featureColorGradientLowerLeftY, featureColorGradientWidth, featureColorGradientHeight));
-		}
-
-		Map<Coordinate, Circle> interpolatedCircleMap = new HashMap<Coordinate, Circle>();		
-		if ( circleAreaMap.keySet().equals(circleColorQuantityMap.keySet()) ) {
-			if ( !circleAreaMap.isEmpty() ) {
-				// Scale and interpolate circle areas
-				DoubleMapScaler<Coordinate> circleAreaDoubleMapScaler = new DoubleMapScaler<Coordinate>(circleAreaScaler);
-				Map<Coordinate, Double> scaledCircleAreaMap = circleAreaDoubleMapScaler.scale(circleAreaMap);
-				Range<Double> circleAreaScalableRange = circleAreaDoubleMapScaler.getScalableRange();
-				Range<Double> interpolatedCircleAreaRange = new Range<Double>(CirclePrinter.DEFAULT_CIRCLE_AREA_MINIMUM, CirclePrinter.DEFAULT_CIRCLE_AREA_MAXIMUM);
-				DoubleInterpolator<Double> circleAreaInterpolator = new LinearInterpolator(scaledCircleAreaMap.values(), interpolatedCircleAreaRange);
-				Map<Coordinate, Double> interpolatedCircleAreaMap = (new DoubleMapInterpolator<Coordinate, Double>(circleAreaInterpolator)).getInterpolatedMap(scaledCircleAreaMap);
-		
-				// Add circle area legend
-				double areaLegendLowerLeftX = .38*legend.getWidth();
-				double areaLegendLowerLeftY = legend.getLowerLeftY();
-				String areaTypeLabel = "Circle Size";
-				legend.add(new AreaLegend(circleAreaScalableRange, interpolatedCircleAreaRange, areaTypeLabel, circleAreaAttribute, areaLegendLowerLeftX, areaLegendLowerLeftY));
-				
-				// Scale and interpolate circle colors
-				DoubleMapScaler<Coordinate> circleColorQuantityMapScaler = new DoubleMapScaler<Coordinate>(circleColorQuantityScaler);
-				Map<Coordinate, Double> scaledCircleColorQuantityMap = circleColorQuantityMapScaler.scale(circleColorQuantityMap);
-				Range<Double> circleColorQuantityScalableRange = circleColorQuantityMapScaler.getScalableRange();
-				DoubleInterpolator<Color> circleColorInterpolator = new ColorInterpolator(scaledCircleColorQuantityMap.values(), circleColorRange);
-				Map<Coordinate, Color> interpolatedCircleColorMap = (new DoubleMapInterpolator<Coordinate, Color>(circleColorInterpolator)).getInterpolatedMap(scaledCircleColorQuantityMap);
-	
-				// Add circle color legend
-				double circleColorGradientLowerLeftX = 2*legend.getWidth()/3;
-				double circleColorGradientLowerLeftY = legend.getLowerLeftY();
-				double circleColorGradientWidth = legend.getWidth()/3 * .90;
-				double circleColorGradientHeight = 15;
-				String circleColorTypeLabel = "Circle Color";
-				legend.add(new LabeledGradient(circleColorQuantityScalableRange, circleColorRange, circleColorTypeLabel, circleColorQuantityAttribute, circleColorGradientLowerLeftX, circleColorGradientLowerLeftY, circleColorGradientWidth, circleColorGradientHeight));
-				
-				/* Construct the Circle map from the specified areas and colors.
-				 * Note we require that every Coordinate with an area specified has a color specified
-				 * and that every Coordinate with a color specified has an area specified.
-				 */
-				interpolatedCircleMap = new HashMap<Coordinate, Circle>();
-				assert( interpolatedCircleAreaMap.keySet().equals(interpolatedCircleColorMap.keySet()) ); // TODO
-				for ( Entry<Coordinate, Double> circleAreaMapEntry : interpolatedCircleAreaMap.entrySet() ) {
-					Coordinate coordinate = circleAreaMapEntry.getKey();
-					double area = circleAreaMapEntry.getValue();
-					Color color = interpolatedCircleColorMap.get(coordinate);
-	
-					interpolatedCircleMap.put(coordinate, new Circle(area, color));
-				}
-			}
-		}
-		else {
-			throw new AlgorithmExecutionException("Every circle annotation must have both a size and a color specified.");
-		}
-		
-		printPostScript(DEFAULT_FEATURE_COLOR_MAP_KEY, interpolatedFeatureColorMap, interpolatedCircleMap, legend, psFile);
-	}
-
-	public void printPostScript(String featureColorMapKey,
-			Map<String, Color> featureColorMap, Map<Coordinate, Circle> circleMap,
-			Legend legend, File psFile) throws IOException, AlgorithmExecutionException {
+	public void printPostScript(File psFile) throws IOException, AlgorithmExecutionException {
 		BufferedWriter out = new BufferedWriter(new FileWriter(psFile));
 
 		printHeader(out);
 
-		FeaturePrinter featurePrinter = new FeaturePrinter(featureCollection, geometryProjector, postScriptBoundingBox);
-		featurePrinter.printFeatures(out, featureColorMap, featureColorMapKey);
+		FeaturePrinter featurePrinter = new FeaturePrinter(featureCollection, geometryProjector, mapBoundingBox);
+		featurePrinter.printFeatures(out, featureColorMap, featureNameKey);
 
-		CirclePrinter circlePrinter = new CirclePrinter(geometryProjector, postScriptBoundingBox);
+		CirclePrinter circlePrinter = new CirclePrinter(geometryProjector, mapBoundingBox);
 		circlePrinter.printCircles(out, circleMap);
 
 		out.write("% Restore the default clipping path" + "\n");
@@ -197,17 +109,21 @@ public class ShapefileToPostScript {
 
 		SimpleFeatureType featureSchema = featureCollection.getSchema();
 		CoordinateReferenceSystem originalCRS = featureSchema.getCoordinateReferenceSystem();
+		if ( originalCRS == null ) {
+			GeoMapsAlgorithm.logger.log(LogService.LOG_WARNING, "Shapefile has no associated coordinate reference system.  Assuming WGS84.");
+			originalCRS = DefaultGeographicCRS.WGS84;
+		}
+		
 		try {
 			geometryProjector = new GeometryProjector(originalCRS, projectedCRS);
 		} catch (FactoryException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			throw new AlgorithmExecutionException(e);
 		}
 
 		return geometryProjector;
 	}
 
-	private PostScriptBoundingBox calculatePostScriptBoundingBox() throws AlgorithmExecutionException {
+	private MapBoundingBox calculateMapBoundingBox() throws AlgorithmExecutionException {
 		/* Identify extreme values for the X and Y dimensions
 		 * among the Geometries in our featureCollection.
 		 * Note that this is *after* Geometry preparation (cropping and projecting).
@@ -222,8 +138,9 @@ public class ShapefileToPostScript {
 			Geometry rawGeometry = (Geometry) feature.getDefaultGeometry();
 			Geometry geometry = geometryProjector.projectGeometry(rawGeometry);
 
-			// TODO: How deeply can geometries be nested (if infinitely, we need
-			// to handle it)
+			/* TODO: How deeply can geometries be nested (if infinitely, we need
+			 * to handle it)
+			 */
 			for (int gg = 0; gg < geometry.getNumGeometries(); gg++) {
 				Geometry subgeometry = geometry.getGeometryN(gg);
 
@@ -250,25 +167,36 @@ public class ShapefileToPostScript {
 			it.close();
 		}
 
-		return new PostScriptBoundingBox(dataMinX, dataMinY, dataMaxX, dataMaxY);
+		return new MapBoundingBox(dataMinX, dataMinY, dataMaxX, dataMaxY);
 	}
 
 	private void printHeader(BufferedWriter out) throws IOException {
 		GeoMapsAlgorithm.logger.log(LogService.LOG_INFO, "Printing PostScript.." + "\n");
 
-//		out.write("%!PS-Adobe-3.0 EPSF-3.0\n");
-//		out.write("%%BoundingBox: " + postScriptBoundingBox.getCoordinatesString() + "\n");
-//		out.write("%%Pages: 1" + "\n");
-//		out.write("\n");
-		out.write("%!" + "\n");
+		out.write("%!PS-Adobe-3.0 EPSF-3.0\n");
+		out.write(createBoundingBoxComment());
+		out.write("%%Pages: 1" + "\n");
 		out.write("\n");
-		
 
 		out.write("% Save the default clipping path so we can clip the map safely" + "\n");
 		out.write("gsave" + "\n");
 
-		out.write(postScriptBoundingBox.toPostScript(DRAW_BOUNDING_BOX, BACKGROUND_TRANSPARENT, BACKGROUND_COLOR, CLIP_TO_BOUNDING_BOX));
+		out.write(mapBoundingBox.toPostScript());
 
 		out.write("\n");
+	}
+	
+	/* Heuristic only.
+	 * This calculation will likely be incorrect if the map and legend are
+	 * repositioned.
+	 * Should work when the legend is below the map.
+	 */
+	private String createBoundingBoxComment() throws IOException {
+		double lowerLeftX = Math.min(mapBoundingBox.getLowerLeftX(), legend.getLowerLeftX());
+		double lowerLeftY = Math.min(mapBoundingBox.getLowerLeftY(), legend.getLowerLeftY());
+		double upperRightX = mapBoundingBox.getUpperRightX();
+		double upperRightY = mapBoundingBox.getUpperRightY();		
+		
+		return "%%BoundingBox: " + lowerLeftX + " " + lowerLeftY + " " + upperRightX + " " + upperRightY + "\n";
 	}
 }

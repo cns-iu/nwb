@@ -5,7 +5,10 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
+import java.util.Collections;
 import java.util.Dictionary;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Properties;
 
 import org.cishell.framework.CIShellContext;
@@ -23,10 +26,39 @@ import prefuse.data.Table;
 import edu.iu.scipolicy.utilities.FileUtilities;
 
 public class GeoMapsAlgorithm implements Algorithm {
-	public static final String OUTPUT_FILE_EXTENSION = "ps"; // TODO eps
+	public static final String SHAPEFILE_ID = "shapefile";
+	public static final Map<String, String> PROJECTIONS;
+	static {
+		// Values should correspond to .shp files in the shapefiles package
+		Map<String, String> t = new HashMap<String, String>();
+		t.put("US States", "/edu/iu/scipolicy/visualization/geomaps/shapefiles/statesp020.shp");
+		t.put("Countries", "/edu/iu/scipolicy/visualization/geomaps/shapefiles/countries.shp");
+		SHAPEFILES = Collections.unmodifiableMap(t);
+	}	
+	public static final Map<String, String> FEATURE_NAME_KEY;
+	static {
+		/* Values should correspond to feature-identifying attribute of the 
+		 *respective shapefile
+		 */
+		Map<String, String> t = new HashMap<String, String>();
+		t.put("US States", "STATE");
+		t.put("Countries", "NAME");
+		FEATURE_NAME_KEY = Collections.unmodifiableMap(t);
+	}
+	
+	public static final String PROJECTION_ID = "projection";
+	public static final Map<String, String> SHAPEFILES;
+	static {
+		// Values should correspond to keys in projection/wellKnownTexts.properties
+		Map<String, String> t = new HashMap<String, String>();
+		t.put("Mercator", "mercator");
+		t.put("Albers Equal-Area Conic", "albersEqualArea");
+		t.put("Lambert Conformal Conic", "lambertConformalConic");
+		PROJECTIONS = Collections.unmodifiableMap(t);
+	}
+	
+	public static final String OUTPUT_FILE_EXTENSION = "eps";
 
-	
-	
 	private Data[] data;
 	@SuppressWarnings("unchecked") // TODO
 	private Dictionary parameters;
@@ -44,30 +76,40 @@ public class GeoMapsAlgorithm implements Algorithm {
 	}
 
 	public Data[] execute() throws AlgorithmExecutionException {
-		Data inDatum = this.data[0];
-		Table inTable = (Table) inDatum.getData();
-				
-		final ClassLoader loader = getClass().getClassLoader();
-		
-//		String whichShapeFile = (String) parameters.get("which");
-//		
-//		URL shapefileURL = null;
-//		
-//		if (whichShapeFile.equals("States")) {
-//			shapefileURL = loader.getResource("/edu/iu/scipolicy/visualization/geomaps/shapefiles/tl_2008_us_state.shp");
-//		} else {
-//			shapefileURL = loader.getResource("/edu/iu/scipolicy/visualization/geomaps/shapefiles/countries.shp");
-//		}
-		
-		
-		// String postscriptFileOutputPath = "C:\\Documents and Settings\\jrbibers\\Desktop\\test.ps";
 		File temporaryPostScriptFile;
 		try {
 			temporaryPostScriptFile = FileUtilities.createTemporaryFileInDefaultTemporaryDirectory("TEMP-POSTSCRIPT", OUTPUT_FILE_EXTENSION);
 		} catch (IOException e) {
 			throw new AlgorithmExecutionException(e);
 		}
+
+		Data inDatum = this.data[0];
+		Table inTable = (Table) inDatum.getData();
 		
+		final ClassLoader loader = getClass().getClassLoader();
+		String shapefileKey = (String) parameters.get(SHAPEFILE_ID);
+		String shapefilePath = GeoMapsAlgorithm.SHAPEFILES.get(shapefileKey);	
+		final URL shapefileURL = loader.getResource(shapefilePath);
+		final ProjectedCRS projectedCRS = getProjectedCRS();
+		
+		String featureNameKey = GeoMapsAlgorithm.FEATURE_NAME_KEY.get(shapefileKey);
+		
+		ShapefileToPostScript shapefileToPostScript = new ShapefileToPostScript(shapefileURL, projectedCRS, featureNameKey);
+		
+		annotationMode.applyAnnotations(inTable, parameters, shapefileToPostScript);
+		try {
+			shapefileToPostScript.printPostScript(temporaryPostScriptFile);
+		} catch (IOException e) {
+			throw new AlgorithmExecutionException(e);
+		}
+
+		Data[] outData = formOutData(temporaryPostScriptFile, inDatum);
+
+		return outData;
+	}
+	
+	private ProjectedCRS getProjectedCRS() throws AlgorithmExecutionException {
+		final ClassLoader loader = getClass().getClassLoader();
 		final InputStream wellKnownTextInputStream = loader.getResourceAsStream("/edu/iu/scipolicy/visualization/geomaps/projection/wellKnownTexts.properties");
 
 		final Properties wellKnownTexts = new Properties();
@@ -79,34 +121,26 @@ public class GeoMapsAlgorithm implements Algorithm {
 			logger.log(LogService.LOG_ERROR, ie.getMessage(), ie);
 		}
 
-		ProjectedCRS projectedCRS;
+		String projectionName = (String) parameters.get(PROJECTION_ID);
+		String projectionWKTKey = GeoMapsAlgorithm.PROJECTIONS.get(projectionName);
 		try {
-			projectedCRS = (ProjectedCRS) CRS.parseWKT(wellKnownTexts.getProperty("mercator"));
+			return (ProjectedCRS) CRS.parseWKT(wellKnownTexts.getProperty(projectionWKTKey));
 
-//			/*
-//			 * You will need to attach the EPSG database (and maybe even its
-//			 * extensions) if you wish to specify the projection using an EPSG
-//			 * code. You may know a better way, but I would do this by creating
-//			 * a small GeoTools standalone project (see
-//			 * http://docs.codehaus.org/display/GEOTDOC/03+First+Project ) and
-//			 * specifying the epsg and epsg-extension dependencies in the
-//			 * pom.xml. Let maven acquire the necessary jars (as on the page
-//			 * given), then create plugins from those.
-//			 */
-//			projectedCRS = (ProjectedCRS) CRS.decode(MERCATOR_EPSG_CODE);
+			/*
+			 * You will need to attach the EPSG database (and maybe even its
+			 * extensions) if you wish to specify the projection using an EPSG
+			 * code. You may know a better way, but I would do this by creating
+			 * a small GeoTools standalone project (see
+			 * http://docs.codehaus.org/display/GEOTDOC/03+First+Project ) and
+			 * specifying the epsg and epsg-extension dependencies in the
+			 * pom.xml. Let maven acquire the necessary jars (as on the page
+			 * given), then create a new geolibs plugin from those.
+			 * 
+			 * projectedCRS = (ProjectedCRS) CRS.decode(MERCATOR_EPSG_CODE);
+			 */
 		} catch (FactoryException e) {
 			throw new AlgorithmExecutionException(e);
 		}
-		
-		try {
-			annotationMode.printPS(inTable, parameters, temporaryPostScriptFile, projectedCRS);
-		} catch (IOException e) {
-			throw new AlgorithmExecutionException(e);
-		}
-
-		Data[] outData = formOutData(temporaryPostScriptFile, inDatum);
-
-		return outData;
 	}
 
 	@SuppressWarnings("unchecked") // TODO
@@ -125,8 +159,4 @@ public class GeoMapsAlgorithm implements Algorithm {
 
 		return new Data[] { postScriptData };
 	}
-	
-	
-	
-	
 }

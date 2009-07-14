@@ -29,7 +29,7 @@ public class CirclePrinter {
 											+ "} def" + "\n";
 	
 	private GeometryProjector geometryProjector;
-	private PostScriptBoundingBox postScriptBoundingBox;
+	private MapBoundingBox mapBoundingBox;
 	public static final DoubleScaler DEFAULT_CIRCLE_COLOR_QUANTITY_SCALER = new LinearScaler();
 	public static final DoubleScaler DEFAULT_CIRCLE_AREA_SCALER = new LinearScaler();
 	public static final Color DEFAULT_CIRCLE_COLOR_MAXIMUM = Color.MAGENTA;
@@ -38,9 +38,9 @@ public class CirclePrinter {
 	public static final Color DEFAULT_CIRCLE_COLOR_MINIMUM = Color.YELLOW;
 
 	public CirclePrinter(GeometryProjector geometryProjector,
-			PostScriptBoundingBox postScriptBoundingBox) {
+			MapBoundingBox mapBoundingBox) {
 		this.geometryProjector = geometryProjector;
-		this.postScriptBoundingBox = postScriptBoundingBox;
+		this.mapBoundingBox = mapBoundingBox;
 	}
 
 	public void printCircles(BufferedWriter out, Map<Coordinate, Circle> circleMap) throws IOException, AlgorithmExecutionException {
@@ -91,7 +91,7 @@ public class CirclePrinter {
 		 * Then we wouldn't be able to draw this Circle.
 		 */
 		Geometry point = geometryProjector.transformGeometry(rawPoint);
-		Coordinate coordinate = postScriptBoundingBox.getDisplayCoordinate(point.getCoordinate());
+		Coordinate coordinate = mapBoundingBox.getDisplayCoordinate(point.getCoordinate());
 
 		out.write(INDENT + coordinate.x + " " + coordinate.y + " " + radius + " circle" + "\n");
 		out.write(INDENT + "gsave" + "\n");

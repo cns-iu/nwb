@@ -5,20 +5,21 @@ import java.io.BufferedWriter;
 import java.io.IOException;
 import java.util.Map;
 
-import edu.iu.scipolicy.visualization.geomaps.ShapefileToPostScript;
-import edu.iu.scipolicy.visualization.geomaps.projection.GeometryProjector;
-import edu.iu.scipolicy.visualization.geomaps.scaling.DoubleScaler;
-import edu.iu.scipolicy.visualization.geomaps.scaling.LinearScaler;
-
 import org.cishell.framework.algorithm.AlgorithmExecutionException;
 import org.geotools.feature.FeatureCollection;
 import org.geotools.feature.FeatureIterator;
 import org.opengis.feature.Property;
 import org.opengis.feature.simple.SimpleFeature;
 import org.opengis.feature.simple.SimpleFeatureType;
+import org.opengis.feature.type.AttributeDescriptor;
 
 import com.vividsolutions.jts.geom.Coordinate;
 import com.vividsolutions.jts.geom.Geometry;
+
+import edu.iu.scipolicy.visualization.geomaps.ShapefileToPostScript;
+import edu.iu.scipolicy.visualization.geomaps.projection.GeometryProjector;
+import edu.iu.scipolicy.visualization.geomaps.scaling.DoubleScaler;
+import edu.iu.scipolicy.visualization.geomaps.scaling.LinearScaler;
 
 public class FeaturePrinter {
 	public static final Color DEFAULT_FEATURE_COLOR = Color.WHITE;	
@@ -28,15 +29,15 @@ public class FeaturePrinter {
 	
 	private FeatureCollection<SimpleFeatureType, SimpleFeature> featureCollection;
 	private GeometryProjector geometryProjector;
-	private PostScriptBoundingBox postScriptBoundingBox;
+	private MapBoundingBox mapBoundingBox;
 	public static final DoubleScaler DEFAULT_FEATURE_COLOR_QUANTITY_SCALER = new LinearScaler();
 	public static final Color DEFAULT_FEATURE_COLOR_MAXIMUM = Color.GREEN;
 	public static final Color DEFAULT_FEATURE_COLOR_MINIMUM = Color.BLUE;
 	
-	public FeaturePrinter(FeatureCollection<SimpleFeatureType, SimpleFeature> featureCollection, GeometryProjector geometryProjector, PostScriptBoundingBox postScriptBoundingBox) {
+	public FeaturePrinter(FeatureCollection<SimpleFeatureType, SimpleFeature> featureCollection, GeometryProjector geometryProjector, MapBoundingBox mapBoundingBox) {
 		this.featureCollection = featureCollection;
 		this.geometryProjector = geometryProjector;
-		this.postScriptBoundingBox = postScriptBoundingBox;
+		this.mapBoundingBox = mapBoundingBox;
 	}
 	
 	public void printFeatures(
@@ -78,13 +79,14 @@ public class FeaturePrinter {
 		if (nameProperty != null) {
 			name = (String) nameProperty.getValue();
 		} else {
-			throw new AlgorithmExecutionException("Feature " + feature + " has no " + featureColorMapKey + " property.");
+			String message = ("Feature " + feature + " has no " + featureColorMapKey + " property.  Consider using one of the following: " + "\n");
+			for ( AttributeDescriptor ad : featureCollection.getSchema().getAttributeDescriptors() ) {
+				message += ("  " + ad.getName() + "\n");
+			}
+			throw new AlgorithmExecutionException(message);
 		}
 
 		out.write(INDENT + "% Feature, " + featureColorMapKey + ": " + name + "\n");
-
-		//		Random random = new Random();
-		//		Color color = new Color(random.nextFloat(), random.nextFloat(), random.nextFloat());
 
 		for (int gg = 0; gg < geometry.getNumGeometries(); gg++) {
 			Geometry subgeometry = geometry.getGeometryN(gg);
@@ -96,13 +98,13 @@ public class FeaturePrinter {
 			if (coordinates.length == 0) {
 				continue;
 			}
-			Coordinate firstCoordinate = postScriptBoundingBox.getDisplayCoordinate(coordinates[0]);
+			Coordinate firstCoordinate = mapBoundingBox.getDisplayCoordinate(coordinates[0]);
 
 			out.write(INDENT + INDENT + (firstCoordinate.x) + " "
 					+ (firstCoordinate.y) + " moveto\n");
 
 			for (int cc = 1; cc < coordinates.length; cc++) {
-				Coordinate coordinate = postScriptBoundingBox.getDisplayCoordinate(coordinates[cc]);
+				Coordinate coordinate = mapBoundingBox.getDisplayCoordinate(coordinates[cc]);
 
 				out.write(INDENT + INDENT + (coordinate.x) + " "
 						+ (coordinate.y) + " lineto\n");

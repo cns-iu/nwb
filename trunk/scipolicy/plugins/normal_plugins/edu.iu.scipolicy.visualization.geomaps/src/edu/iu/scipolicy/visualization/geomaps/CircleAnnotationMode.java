@@ -1,16 +1,13 @@
 package edu.iu.scipolicy.visualization.geomaps;
 
 import java.awt.Color;
-import java.io.File;
-import java.io.IOException;
-import java.net.URL;
 import java.util.Collections;
 import java.util.Dictionary;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Map.Entry;
 
 import org.cishell.framework.algorithm.AlgorithmExecutionException;
-import org.opengis.referencing.crs.ProjectedCRS;
 import org.osgi.service.log.LogService;
 
 import prefuse.data.Table;
@@ -19,8 +16,17 @@ import prefuse.data.util.TableIterator;
 
 import com.vividsolutions.jts.geom.Coordinate;
 
+import edu.iu.scipolicy.visualization.geomaps.interpolation.ColorInterpolator;
+import edu.iu.scipolicy.visualization.geomaps.interpolation.DoubleInterpolator;
+import edu.iu.scipolicy.visualization.geomaps.interpolation.DoubleMapInterpolator;
+import edu.iu.scipolicy.visualization.geomaps.interpolation.LinearInterpolator;
+import edu.iu.scipolicy.visualization.geomaps.legend.AreaLegend;
+import edu.iu.scipolicy.visualization.geomaps.legend.LabeledGradient;
+import edu.iu.scipolicy.visualization.geomaps.legend.Legend;
+import edu.iu.scipolicy.visualization.geomaps.printing.Circle;
+import edu.iu.scipolicy.visualization.geomaps.printing.CirclePrinter;
+import edu.iu.scipolicy.visualization.geomaps.scaling.DoubleMapScaler;
 import edu.iu.scipolicy.visualization.geomaps.scaling.DoubleScaler;
-import edu.iu.scipolicy.visualization.geomaps.scaling.LinearScaler;
 import edu.iu.scipolicy.visualization.geomaps.scaling.ScalerFactory;
 import edu.iu.scipolicy.visualization.geomaps.utility.PrefuseDoubleReader;
 import edu.iu.scipolicy.visualization.geomaps.utility.Range;
@@ -33,8 +39,6 @@ public class CircleAnnotationMode implements AnnotationMode {
 	public static final String CIRCLE_COLOR_QUANTITY_ID = "circleColorQuantity";
 	public static final String CIRCLE_COLOR_SCALING_ID = "circleColorScaling";
 	public static final String CIRCLE_COLOR_RANGE_ID = "circleColorRange";
-	public static final String SHAPEFILE_ID = "shapefile";
-	
 	public static final Map<String, Range<Color>> COLOR_RANGES;
 	static {
 		Map<String, Range<Color>> t = new HashMap<String, Range<Color>>();
@@ -43,13 +47,7 @@ public class CircleAnnotationMode implements AnnotationMode {
 	}
 
 	@SuppressWarnings("unchecked") // TODO
-	public void printPS(Table inTable, Dictionary parameters, File temporaryPostScriptFile, ProjectedCRS projectedCRS)
-			throws AlgorithmExecutionException, IOException {
-		String shapefilePathKey = (String) parameters.get(SHAPEFILE_ID);
-		String shapefilePath = GeoMapsAlgorithmFactory.SHAPEFILES.get(shapefilePathKey);
-		final ClassLoader loader = getClass().getClassLoader();
-		URL shapefileURL = loader.getResource(shapefilePath);
-		
+	public void applyAnnotations(Table inTable, Dictionary parameters, ShapefileToPostScript shapefileToPostScript) throws AlgorithmExecutionException {
 		String latitudeAttribute = (String) parameters.get(LATITUDE_ID);
 		String longitudeAttribute = (String) parameters.get(LONGITUDE_ID);
 		
@@ -65,16 +63,62 @@ public class CircleAnnotationMode implements AnnotationMode {
 		String circleColorRangeKey = (String) parameters.get(CIRCLE_COLOR_RANGE_ID);
 		Range<Color> circleColorRange = COLOR_RANGES.get(circleColorRangeKey);
 		
-		// TODO Extremely temporary //////////
-		Map<String, Double> featureColorQuantityMap = new HashMap<String, Double>();
-		String featureColorQuantityAttribute = "";
-		DoubleScaler featureColorQuantityScaler = new LinearScaler();
-		Range<Color> featureColorRange = new Range<Color>(Color.WHITE, Color.WHITE);
-		//////////////////////////////////////
+		Map<Coordinate, Circle> interpolatedCircleMap = new HashMap<Coordinate, Circle>();		
+		if ( circleAreaMap.keySet().equals(circleColorQuantityMap.keySet()) ) {
+			if ( circleAreaMap.isEmpty() ) {
+				// TODO Throw exception?
+				GeoMapsAlgorithm.logger.log(LogService.LOG_WARNING, "No appropriate data found for circle annotations.");
+			}
+			else {
+				// Scale and interpolate circle areas
+				DoubleMapScaler<Coordinate> circleAreaDoubleMapScaler = new DoubleMapScaler<Coordinate>(circleAreaScaler);
+				Map<Coordinate, Double> scaledCircleAreaMap = circleAreaDoubleMapScaler.scale(circleAreaMap);
+				Range<Double> circleAreaScalableRange = circleAreaDoubleMapScaler.getScalableRange();
+				Range<Double> interpolatedCircleAreaRange = new Range<Double>(CirclePrinter.DEFAULT_CIRCLE_AREA_MINIMUM, CirclePrinter.DEFAULT_CIRCLE_AREA_MAXIMUM);
+				DoubleInterpolator<Double> circleAreaInterpolator = new LinearInterpolator(scaledCircleAreaMap.values(), interpolatedCircleAreaRange);
+				Map<Coordinate, Double> interpolatedCircleAreaMap = (new DoubleMapInterpolator<Coordinate, Double>(circleAreaInterpolator)).getInterpolatedMap(scaledCircleAreaMap);
 		
-		ShapefileToPostScript shapefileToPostScript = new ShapefileToPostScript(shapefileURL, projectedCRS);
-		
-		shapefileToPostScript.printPostScript(temporaryPostScriptFile, featureColorQuantityMap, featureColorQuantityAttribute, featureColorQuantityScaler, featureColorRange, circleAreaMap, circleAreaAttribute, circleAreaScaler, circleColorQuantityMap, circleColorQuantityAttribute, circleColorQuantityScaler, circleColorRange);
+				// Add circle area legend
+				double areaLegendLowerLeftX = .38 * Legend.DEFAULT_WIDTH_IN_POINTS;
+				double areaLegendLowerLeftY = Legend.DEFAULT_LOWER_LEFT_Y_IN_POINTS;
+				String areaTypeLabel = "Circle Size";
+				AreaLegend circleAreaLegend = new AreaLegend(circleAreaScalableRange, interpolatedCircleAreaRange, areaTypeLabel, circleAreaAttribute, areaLegendLowerLeftX, areaLegendLowerLeftY);
+				
+				// Scale and interpolate circle colors
+				DoubleMapScaler<Coordinate> circleColorQuantityMapScaler = new DoubleMapScaler<Coordinate>(circleColorQuantityScaler);
+				Map<Coordinate, Double> scaledCircleColorQuantityMap = circleColorQuantityMapScaler.scale(circleColorQuantityMap);
+				Range<Double> circleColorQuantityScalableRange = circleColorQuantityMapScaler.getScalableRange();
+				DoubleInterpolator<Color> circleColorInterpolator = new ColorInterpolator(scaledCircleColorQuantityMap.values(), circleColorRange);
+				Map<Coordinate, Color> interpolatedCircleColorMap = (new DoubleMapInterpolator<Coordinate, Color>(circleColorInterpolator)).getInterpolatedMap(scaledCircleColorQuantityMap);
+	
+				// Add circle color legend
+				double circleColorGradientLowerLeftX = 2 * Legend.DEFAULT_WIDTH_IN_POINTS/3;
+				double circleColorGradientLowerLeftY = Legend.DEFAULT_LOWER_LEFT_Y_IN_POINTS;
+				double circleColorGradientWidth = Legend.DEFAULT_WIDTH_IN_POINTS/3 * .90;
+				double circleColorGradientHeight = 15;
+				String circleColorTypeLabel = "Circle Color";
+				LabeledGradient circleColorGradient = new LabeledGradient(circleColorQuantityScalableRange, circleColorRange, circleColorTypeLabel, circleColorQuantityAttribute, circleColorGradientLowerLeftX, circleColorGradientLowerLeftY, circleColorGradientWidth, circleColorGradientHeight);
+				
+				/* Construct the Circle map from the specified areas and colors.
+				 * Note we require that every Coordinate with an area specified has a color specified
+				 * and that every Coordinate with a color specified has an area specified.
+				 */
+				interpolatedCircleMap = new HashMap<Coordinate, Circle>();
+				assert( interpolatedCircleAreaMap.keySet().equals(interpolatedCircleColorMap.keySet()) ); // TODO
+				for ( Entry<Coordinate, Double> circleAreaMapEntry : interpolatedCircleAreaMap.entrySet() ) {
+					Coordinate coordinate = circleAreaMapEntry.getKey();
+					double area = circleAreaMapEntry.getValue();
+					Color color = interpolatedCircleColorMap.get(coordinate);
+	
+					interpolatedCircleMap.put(coordinate, new Circle(area, color));
+				}
+				
+				shapefileToPostScript.setCircleAnnotations(interpolatedCircleMap, circleAreaLegend, circleColorGradient);
+			}
+		}
+		else {
+			throw new AlgorithmExecutionException("Every circle annotation must have both a size and a color specified.");
+		}
 	}
 	
 	private Map<Coordinate, Double> getCircleAreaMap(Table inTable, String latitudeAttribute, String longitudeAttribute, String circleAreaAttribute) throws AlgorithmExecutionException {
@@ -84,11 +128,11 @@ public class CircleAnnotationMode implements AnnotationMode {
 		for( TableIterator tableIterator = inTable.iterator(); tableIterator.hasNext(); ) {
 			Tuple row = inTable.getTuple(tableIterator.nextInt());
 			
-			boolean latitudeSpecified = PrefuseDoubleReader.specified(row, latitudeAttribute);
-			boolean longitudeSpecified = PrefuseDoubleReader.specified(row, longitudeAttribute);
-			boolean circleAreaSpecified = PrefuseDoubleReader.specified(row, circleAreaAttribute);
+			boolean latitudeSpecified = PrefuseDoubleReader.isSpecified(row, latitudeAttribute);
+			boolean longitudeSpecified = PrefuseDoubleReader.isSpecified(row, longitudeAttribute);
+			boolean circleAreaSpecified = PrefuseDoubleReader.isSpecified(row, circleAreaAttribute);
 			
-			if ( latitudeSpecified && longitudeSpecified && circleAreaSpecified ) {		
+			if ( latitudeSpecified && longitudeSpecified && circleAreaSpecified ) {
 				double latitude = PrefuseDoubleReader.get(row, latitudeAttribute);
 				double longitude = PrefuseDoubleReader.get(row, longitudeAttribute);
 				double area = PrefuseDoubleReader.get(row, circleAreaAttribute);
@@ -99,7 +143,6 @@ public class CircleAnnotationMode implements AnnotationMode {
 					duplicateCoordinateKeys++;
 				}
 				else {
-					System.out.println("Adding " + coordinate + " to " + area);
 					circleAreaMap.put(coordinate, area);
 				}
 			}
@@ -118,9 +161,9 @@ public class CircleAnnotationMode implements AnnotationMode {
 		for( TableIterator tableIterator = inTable.iterator(); tableIterator.hasNext(); ) {
 			Tuple row = inTable.getTuple(tableIterator.nextInt());
 			
-			boolean latitudeSpecified = PrefuseDoubleReader.specified(row, latitudeAttribute);
-			boolean longitudeSpecified = PrefuseDoubleReader.specified(row, longitudeAttribute);
-			boolean circleColorQuantitySpecified = PrefuseDoubleReader.specified(row, circleColorQuantityAttribute);
+			boolean latitudeSpecified = PrefuseDoubleReader.isSpecified(row, latitudeAttribute);
+			boolean longitudeSpecified = PrefuseDoubleReader.isSpecified(row, longitudeAttribute);
+			boolean circleColorQuantitySpecified = PrefuseDoubleReader.isSpecified(row, circleColorQuantityAttribute);
 			
 			if ( latitudeSpecified && longitudeSpecified && circleColorQuantitySpecified ) {		
 				double latitude = PrefuseDoubleReader.get(row, latitudeAttribute);
@@ -133,7 +176,6 @@ public class CircleAnnotationMode implements AnnotationMode {
 					duplicateCoordinateKeys++;
 				}
 				else {
-					System.out.println("Adding " + coordinate + " to " + colorQuantity);
 					circleColorQuantityMap.put(coordinate, colorQuantity);
 				}
 			}

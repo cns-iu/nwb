@@ -55,8 +55,11 @@ public class GeoMapsRegionsFactory extends GeoMapsAlgorithmFactory {
 			else if (oldAttributeDefinitionID.equals(RegionAnnotationMode.FEATURE_COLOR_RANGE_ID)) {
 				newAttributeDefinition = formStringDropdownAttributeDefinition(oldAttributeDefinition, RegionAnnotationMode.COLOR_RANGES.keySet());
 			}
-			else if (oldAttributeDefinitionID.equals(RegionAnnotationMode.SHAPEFILE_ID)) {
-				newAttributeDefinition = formStringDropdownAttributeDefinition(oldAttributeDefinition, GeoMapsAlgorithmFactory.SHAPEFILES.keySet());
+			else if (oldAttributeDefinitionID.equals(GeoMapsAlgorithm.SHAPEFILE_ID)) {
+				newAttributeDefinition = formStringDropdownAttributeDefinition(oldAttributeDefinition, GeoMapsAlgorithm.SHAPEFILES.keySet());
+			}
+			else if (oldAttributeDefinitionID.equals(GeoMapsAlgorithm.PROJECTION_ID)) {
+				newAttributeDefinition = formStringDropdownAttributeDefinition(oldAttributeDefinition, GeoMapsAlgorithm.PROJECTIONS.keySet());
 			}
 			
 			

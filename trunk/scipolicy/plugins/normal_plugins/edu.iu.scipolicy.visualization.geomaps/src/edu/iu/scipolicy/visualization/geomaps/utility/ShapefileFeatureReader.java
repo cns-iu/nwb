@@ -46,8 +46,7 @@ public class ShapefileFeatureReader {
 		FeatureSource<SimpleFeatureType, SimpleFeature> featureSource;
 		try {
 			typeNames = dataStore.getTypeNames();
-			typeName = typeNames[0]; // TODO: Give readers a hint about what is
-			// going on with this
+			typeName = typeNames[0]; // TODO: Give readers a hint about what is going on with this
 			GeoMapsAlgorithm.logger.log(LogService.LOG_INFO, "Reading content: " + typeName);
 			featureSource = dataStore.getFeatureSource(typeName);
 		} catch (IOException e) {

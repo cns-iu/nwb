@@ -66,7 +66,15 @@ public class GeometryProjector {
 				originalCRS, projectedCRS, REQUEST_LENIENT_TRANSFORM));
 				
 		cropGeometries = new HashSet<Geometry>();
-		//TODO: Think about how we want to handle this (what if it's not a world map?)		
+		
+		/* Note that cropping around the opposite meridian is generally
+		 * necessary even when the desired resulting map will have less than
+		 * global extent.
+		 * Because the source shapefile may generally contain features which
+		 * span the opposite meridian, even a map showing only features away
+		 * from the opposite meridian could have glitchy map-crossing borders
+		 * passing through that area when said features are drawn.
+		 */
 		double centralMeridian = findCentralMeridian(projectedCRS);		
 		double oppositeMeridian = getOppositeLongitude(centralMeridian);
 		cropGeometries.add(CropGeometryBuilder.createMeridianGeometry(oppositeMeridian));
