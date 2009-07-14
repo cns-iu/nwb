@@ -291,6 +291,16 @@ public class DateUtilities {
 				objectAsString = "" + year[0];
 			}
 		}
+		else if (object instanceof String[]) {
+			String[] year = (String[])object;
+			
+			if (year.length == 0) {
+				throw new ParseException(EMPTY_DATE_MESSAGE, 0);
+			}
+			else {
+				objectAsString = year[0];
+			}
+		}
 		
 		return parseDate(objectAsString);
 	}

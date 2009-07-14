@@ -167,7 +167,7 @@ public class HorizontalLineGraphPostScriptCreator {
 			}
 		}
 		
-		Record[] recordSet = new Record [workingRecordSet.size()];
+		Record[] recordSet = new Record[workingRecordSet.size()];
 		recordSet = (Record[])workingRecordSet.toArray(recordSet);
 		
 		return recordSet;

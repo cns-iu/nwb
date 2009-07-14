@@ -119,8 +119,10 @@ public class TableUtilities {
 			Date.class,
 			int.class,
 			Integer.class,
+			String.class,
 			int[].class,
-			Integer[].class
+			Integer[].class,
+			String[].class,
 		};
 		
     	return filterSchemaColumnNamesByClasses(table.getSchema(),
