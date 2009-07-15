@@ -16,7 +16,7 @@ import org.opengis.feature.type.AttributeDescriptor;
 import com.vividsolutions.jts.geom.Coordinate;
 import com.vividsolutions.jts.geom.Geometry;
 
-import edu.iu.scipolicy.visualization.geomaps.ShapefileToPostScript;
+import edu.iu.scipolicy.visualization.geomaps.ShapefileToPostScriptWriter;
 import edu.iu.scipolicy.visualization.geomaps.projection.GeometryProjector;
 import edu.iu.scipolicy.visualization.geomaps.scaling.Scaler;
 import edu.iu.scipolicy.visualization.geomaps.scaling.LinearScaler;
@@ -118,7 +118,7 @@ public class FeaturePrinter {
 			}
 
 			out.write(INDENT + "gsave" + "\n");
-			out.write(INDENT + INDENT + ShapefileToPostScript.makeSetRGBColorCommand(color));
+			out.write(INDENT + INDENT + ShapefileToPostScriptWriter.makeSetRGBColorCommand(color));
 			out.write(INDENT + INDENT + "fill" + "\n");
 			out.write(INDENT + "grestore" + "\n");
 			out.write(INDENT + "stroke" + "\n");

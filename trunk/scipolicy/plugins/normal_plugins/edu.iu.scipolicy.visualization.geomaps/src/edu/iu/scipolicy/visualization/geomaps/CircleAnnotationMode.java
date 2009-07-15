@@ -57,19 +57,24 @@ public class CircleAnnotationMode implements AnnotationMode {
 	private List<Double> circleColorQuantities;
 
 	@SuppressWarnings("unchecked") // TODO
-	public void applyAnnotations(Table inTable, Dictionary parameters, ShapefileToPostScript shapefileToPostScript) throws AlgorithmExecutionException {
+	public void applyAnnotations(Table inTable, Dictionary parameters, ShapefileToPostScriptWriter shapefileToPostScript) throws AlgorithmExecutionException {
+		// STEPS:
+		// Scale
+		// Interpolate
+		// Make a legend component
+		// ALSO: creates shape file to post script writer
 		String latitudeAttribute = (String) parameters.get(LATITUDE_ID);
 		String longitudeAttribute = (String) parameters.get(LONGITUDE_ID);		
-		String circleAreaAttribute = (String) parameters.get(CIRCLE_AREA_ID);			
-		String circleColorQuantityAttribute = (String) parameters.get(CIRCLE_COLOR_QUANTITY_ID);		
-		String circleAreaScaling = (String) parameters.get(CIRCLE_AREA_SCALING_ID);
-		Scaler circleAreaScaler = ScalerFactory.createScaler(circleAreaScaling);	
-		String circleColorScaling = (String) parameters.get(CIRCLE_COLOR_SCALING_ID);
-		Scaler circleColorQuantityScaler = ScalerFactory.createScaler(circleColorScaling);
-		String circleColorRangeKey = (String) parameters.get(CIRCLE_COLOR_RANGE_ID);
-		Range<Color> circleColorRange = COLOR_RANGES.get(circleColorRangeKey);
+		String areaAttribute = (String) parameters.get(CIRCLE_AREA_ID);			
+		String colorQuantityAttribute = (String) parameters.get(CIRCLE_COLOR_QUANTITY_ID);		
+		String areaScaling = (String) parameters.get(CIRCLE_AREA_SCALING_ID);
+		Scaler areaScaler = ScalerFactory.createScaler(areaScaling);	
+		String colorScaling = (String) parameters.get(CIRCLE_COLOR_SCALING_ID);
+		Scaler colorQuantityScaler = ScalerFactory.createScaler(colorScaling);
+		String colorRangeKey = (String) parameters.get(CIRCLE_COLOR_RANGE_ID);
+		Range<Color> colorRange = COLOR_RANGES.get(colorRangeKey);
 		
-		setCircleData(inTable, latitudeAttribute, longitudeAttribute, circleAreaAttribute, circleAreaScaler, circleColorQuantityAttribute, circleColorQuantityScaler);
+		setCircleData(inTable, latitudeAttribute, longitudeAttribute, areaAttribute, areaScaler, colorQuantityAttribute, colorQuantityScaler);
 		
 		if ( circleIDs.isEmpty() ) {
 			// TODO Throw exception?
@@ -77,7 +82,8 @@ public class CircleAnnotationMode implements AnnotationMode {
 		}
 		else {
 			// Scale and interpolate circle areas
-			ListScaler circleAreaListScaler = new ListScaler(circleAreaScaler);
+			// TODO: Refactor these variable names.
+			ListScaler circleAreaListScaler = new ListScaler(areaScaler);
 			List<Double> scaledCircleAreas = circleAreaListScaler.scale(circleAreas);
 			Range<Double> circleAreaScalableRange = circleAreaListScaler.getScalableRange();			
 			Range<Double> interpolatedCircleAreaRange = new Range<Double>(CirclePrinter.DEFAULT_CIRCLE_AREA_MINIMUM, CirclePrinter.DEFAULT_CIRCLE_AREA_MAXIMUM);
@@ -88,13 +94,13 @@ public class CircleAnnotationMode implements AnnotationMode {
 			double areaLegendLowerLeftX = .38 * Legend.DEFAULT_WIDTH_IN_POINTS;
 			double areaLegendLowerLeftY = Legend.DEFAULT_LOWER_LEFT_Y_IN_POINTS;
 			String areaTypeLabel = "Circle Size";
-			AreaLegend circleAreaLegend = new AreaLegend(circleAreaScalableRange, interpolatedCircleAreaRange, areaTypeLabel, circleAreaAttribute, areaLegendLowerLeftX, areaLegendLowerLeftY);
+			AreaLegend circleAreaLegend = new AreaLegend(circleAreaScalableRange, interpolatedCircleAreaRange, areaTypeLabel, areaAttribute, areaLegendLowerLeftX, areaLegendLowerLeftY);
 			
 			// Scale and interpolate circle colors
-			ListScaler circleColorQuantityListScaler = new ListScaler(circleColorQuantityScaler);
+			ListScaler circleColorQuantityListScaler = new ListScaler(colorQuantityScaler);
 			List<Double> scaledCircleColorQuantities = circleColorQuantityListScaler.scale(circleColorQuantities);
 			Range<Double> circleColorQuantityScalableRange = circleColorQuantityListScaler.getScalableRange();
-			Interpolator<Color> circleColorInterpolator = new ColorInterpolator(scaledCircleColorQuantities, circleColorRange);
+			Interpolator<Color> circleColorInterpolator = new ColorInterpolator(scaledCircleColorQuantities, colorRange);
 			List<Color> interpolatedCircleColors = (new ListInterpolator<Color>(circleColorInterpolator)).getInterpolatedList(scaledCircleColorQuantities);
 
 			// Add circle color legend
@@ -103,7 +109,7 @@ public class CircleAnnotationMode implements AnnotationMode {
 			double circleColorGradientWidth = Legend.DEFAULT_WIDTH_IN_POINTS/3 * .90;
 			double circleColorGradientHeight = 15;
 			String circleColorTypeLabel = "Circle Color";
-			LabeledGradient circleColorGradient = new LabeledGradient(circleColorQuantityScalableRange, circleColorRange, circleColorTypeLabel, circleColorQuantityAttribute, circleColorGradientLowerLeftX, circleColorGradientLowerLeftY, circleColorGradientWidth, circleColorGradientHeight);
+			LabeledGradient circleColorGradient = new LabeledGradient(circleColorQuantityScalableRange, colorRange, circleColorTypeLabel, colorQuantityAttribute, circleColorGradientLowerLeftX, circleColorGradientLowerLeftY, circleColorGradientWidth, circleColorGradientHeight);
 			
 			/* Construct the list of Circles from the specified areas and colors.
 			 * Note we require that every Coordinate with an area specified has a color specified
@@ -182,3 +188,69 @@ public class CircleAnnotationMode implements AnnotationMode {
 		}
 	}
 }
+
+/*
+ *
+
+class CircleSpecification {
+	double area;
+	double colorQuantity;
+	double lat, lng;
+	
+	CircleSpecification(area, colorQuantity, lat, lng, scaler) {
+		this.area = area
+		...
+		
+		if (scaler..area < 0 ||
+				this.colorQuantiy < 0) {
+			isValid = false;
+		}
+}
+
+List<CircleSpecification> circleSpecs;
+
+// TODO: new name
+annotation(container) {
+	// Get dataContainerOutOfParameters
+	// Create circleSpecs
+	Range minMax = new Range();
+
+	unScaledAreaIterator = new CircleAreaIterator(container);
+	// Side effects minMax
+	scaledCircleAreas = scale(unScaledAreaIterator, minMax);
+	scaledAreaIterator = new CircleAreaIterator(scaledCircleAreas)
+	interpolatedCircleAreas = doInterpolation(scaledAreaIterator, minMax);
+	sizeComponent = makeAreaLegend(interpolatedCircleAreas);
+	
+	unscaledColorIterator = new CircleColorIterator(container);
+	// Side effects minMax
+	scaledCircleColors = scale(unscaledColorIterator, minMax);
+	scaledColorIterator = new CircleColorIterator(scaledCircleColors)
+	interpolatedCircleColors = doInterpolation(scaledColorIterator, minMax);
+	colorComponent = makeColorLegend(interpolatedCircleColors);
+}
+
+class CircleAreaIterator implements Iterator {
+	List<CircleSpecification> circleSpecs;
+	int currentCircleSpec = 0;
+	
+	getNext() {
+		nextCircleSpec = circleSpecs[currentCircleSpec]
+		currentCircleSpec++
+		
+		return nextCircleSpec.area;
+	}
+}
+
+class CircleColorIterator implements Iterator {
+	List<CircleSpecification> circleSpecs;
+	int currentCircleSpec = 0;
+	
+	getNext() {
+		nextCircleSpec = circleSpecs[currentCircleSpec]
+		currentCircleSpec++
+		
+		return nextCircleSpec.colorQuantity;
+	}
+}
+*/

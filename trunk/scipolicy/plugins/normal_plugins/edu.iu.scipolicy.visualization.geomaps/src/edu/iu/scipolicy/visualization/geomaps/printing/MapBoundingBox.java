@@ -4,7 +4,7 @@ import java.awt.Color;
 
 import com.vividsolutions.jts.geom.Coordinate;
 
-import edu.iu.scipolicy.visualization.geomaps.ShapefileToPostScript;
+import edu.iu.scipolicy.visualization.geomaps.ShapefileToPostScriptWriter;
 
 public class MapBoundingBox {
 	// PostScript is not Encapsulated if this is set to false!
@@ -102,7 +102,7 @@ public class MapBoundingBox {
 		s += "closepath" + "\n";
 		if ( !BACKGROUND_TRANSPARENT ) {
 			s += "gsave" + "\n";
-			s += INDENT + ShapefileToPostScript.makeSetRGBColorCommand(BACKGROUND_COLOR);
+			s += INDENT + ShapefileToPostScriptWriter.makeSetRGBColorCommand(BACKGROUND_COLOR);
 			s += INDENT + "fill" + "\n";
 			s += "grestore" + "\n";
 		}

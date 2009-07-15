@@ -13,7 +13,7 @@ import com.vividsolutions.jts.geom.Geometry;
 import com.vividsolutions.jts.geom.GeometryFactory;
 import com.vividsolutions.jts.geom.Point;
 
-import edu.iu.scipolicy.visualization.geomaps.ShapefileToPostScript;
+import edu.iu.scipolicy.visualization.geomaps.ShapefileToPostScriptWriter;
 import edu.iu.scipolicy.visualization.geomaps.projection.GeometryProjector;
 import edu.iu.scipolicy.visualization.geomaps.scaling.Scaler;
 import edu.iu.scipolicy.visualization.geomaps.scaling.LinearScaler;
@@ -92,7 +92,7 @@ public class CirclePrinter {
 
 		out.write(INDENT + displayCoordinate.x + " " + displayCoordinate.y + " " + radius + " circle" + "\n");
 		out.write(INDENT + "gsave" + "\n");
-		out.write(INDENT + INDENT + ShapefileToPostScript.makeSetRGBColorCommand(color));
+		out.write(INDENT + INDENT + ShapefileToPostScriptWriter.makeSetRGBColorCommand(color));
 		out.write(INDENT + INDENT + "stroke" + "\n");
 		out.write(INDENT + "grestore" + "\n");
 		out.write("\n");

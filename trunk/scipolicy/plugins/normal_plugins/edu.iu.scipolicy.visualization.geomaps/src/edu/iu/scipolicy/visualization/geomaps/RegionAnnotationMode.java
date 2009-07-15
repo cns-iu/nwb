@@ -44,7 +44,11 @@ public class RegionAnnotationMode implements AnnotationMode {
 	}
 
 	@SuppressWarnings("unchecked") // TODO
-	public void applyAnnotations(Table inTable, Dictionary parameters, ShapefileToPostScript shapefileToPostScript) throws AlgorithmExecutionException {
+	public void applyAnnotations(Table inTable, Dictionary parameters, ShapefileToPostScriptWriter shapefileToPostScript) throws AlgorithmExecutionException {
+		// STEPS:
+		// Scale
+		// Interpolate
+		// Make a legend component
 		String featureNameAttribute = (String) parameters.get(FEATURE_NAME_ID);
 		String featureColorQuantityAttribute = (String) parameters.get(FEATURE_COLOR_QUANTITY_ID);
 		String featureColorScaling = (String) parameters.get(FEATURE_COLOR_SCALING_ID);
@@ -79,7 +83,7 @@ public class RegionAnnotationMode implements AnnotationMode {
 			// Add feature color legend
 			double featureColorGradientLowerLeftX = .05 * Legend.DEFAULT_WIDTH_IN_POINTS;
 			double featureColorGradientLowerLeftY = Legend.DEFAULT_LOWER_LEFT_Y_IN_POINTS;
-			double featureColorGradientWidth = Legend.DEFAULT_WIDTH_IN_POINTS/3 * .90;
+			double featureColorGradientWidth = (Legend.DEFAULT_WIDTH_IN_POINTS / 3) * 0.90;
 			double featureColorGradientHeight = 15;
 			String featureColorTypeLabel = "Feature Color";
 

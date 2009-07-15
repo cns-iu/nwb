@@ -35,7 +35,7 @@ import edu.iu.scipolicy.visualization.geomaps.printing.MapBoundingBox;
 import edu.iu.scipolicy.visualization.geomaps.projection.GeometryProjector;
 import edu.iu.scipolicy.visualization.geomaps.utility.ShapefileFeatureReader;
 
-public class ShapefileToPostScript {
+public class ShapefileToPostScriptWriter {
 	public static final String INDENT = "  ";
 	
 	public static final String MERCATOR_EPSG_CODE = "EPSG:3395";
@@ -51,7 +51,7 @@ public class ShapefileToPostScript {
 	private List<Circle> circles = new ArrayList<Circle>();
 
 	
-	public ShapefileToPostScript(URL shapefileURL, ProjectedCRS projectedCRS, String featureNameKey) throws AlgorithmExecutionException {
+	public ShapefileToPostScriptWriter(URL shapefileURL, ProjectedCRS projectedCRS, String featureNameKey) throws AlgorithmExecutionException {
 		ShapefileFeatureReader shapefileFeatureReader = new ShapefileFeatureReader(shapefileURL);
 		featureCollection = shapefileFeatureReader.getFeatureCollection();
 		geometryProjector = makeGeometryPreparer(projectedCRS);
@@ -70,10 +70,11 @@ public class ShapefileToPostScript {
 		legend.add(circleColorGradient);
 	}
 
-	public void printPostScript(File psFile) throws IOException, AlgorithmExecutionException {
+	public void writePostScriptToFile(File psFile)
+			throws IOException, AlgorithmExecutionException {
 		BufferedWriter out = new BufferedWriter(new FileWriter(psFile));
 
-		printHeader(out);
+		writeHeader(out);
 
 		FeaturePrinter featurePrinter = new FeaturePrinter(featureCollection, geometryProjector, mapBoundingBox);
 		featurePrinter.printFeatures(out, featureColorMap, featureNameKey);
@@ -171,7 +172,7 @@ public class ShapefileToPostScript {
 		return new MapBoundingBox(dataMinX, dataMinY, dataMaxX, dataMaxY);
 	}
 
-	private void printHeader(BufferedWriter out) throws IOException {
+	private void writeHeader(BufferedWriter out) throws IOException {
 		GeoMapsAlgorithm.logger.log(LogService.LOG_INFO, "Printing PostScript.." + "\n");
 
 		out.write("%!PS-Adobe-3.0 EPSF-3.0\n");

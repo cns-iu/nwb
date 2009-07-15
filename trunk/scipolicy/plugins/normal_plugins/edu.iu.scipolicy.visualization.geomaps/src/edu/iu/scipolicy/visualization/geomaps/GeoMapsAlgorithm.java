@@ -96,11 +96,12 @@ public class GeoMapsAlgorithm implements Algorithm {
 		
 		String featureNameKey = GeoMapsAlgorithm.FEATURE_NAME_KEY.get(shapefileKey);
 		
-		ShapefileToPostScript shapefileToPostScript = new ShapefileToPostScript(shapefileURL, projectedCRS, featureNameKey);
+		ShapefileToPostScriptWriter postScriptWriter =
+			new ShapefileToPostScriptWriter(shapefileURL, projectedCRS, featureNameKey);
 		
-		annotationMode.applyAnnotations(inTable, parameters, shapefileToPostScript);
+		annotationMode.applyAnnotations(inTable, parameters, postScriptWriter);
 		try {
-			shapefileToPostScript.printPostScript(temporaryPostScriptFile);
+			postScriptWriter.writePostScriptToFile(temporaryPostScriptFile);
 		} catch (IOException e) {
 			throw new AlgorithmExecutionException(e);
 		}
