@@ -16,6 +16,7 @@ import org.cishell.templates.staticexecutable.StaticExecutableAlgorithmFactory;
 import org.osgi.service.component.ComponentContext;
 import org.osgi.service.log.LogService;
 
+import edu.iu.nwb.util.nwbfile.GetMetadataAndCounts;
 import edu.iu.nwb.util.nwbfile.NWBFileParser;
 import edu.iu.nwb.util.nwbfile.NWBFileParserHandler;
 import edu.iu.nwb.util.nwbfile.ParsingException;
