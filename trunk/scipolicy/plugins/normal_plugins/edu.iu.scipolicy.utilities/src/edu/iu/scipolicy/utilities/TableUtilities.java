@@ -67,6 +67,13 @@ public class TableUtilities {
 		}
 		
 		/*
+		 * If none of the suggested names are conflicting then return the first suggested name.
+		 * */
+		if(!suggestedNameFound) {
+			return suggestedColumnNames[0];
+		}
+
+		/*
 		 * This part of code will be executed only if the suggested names are already present in the 
 		 * column schema.
 		 * */

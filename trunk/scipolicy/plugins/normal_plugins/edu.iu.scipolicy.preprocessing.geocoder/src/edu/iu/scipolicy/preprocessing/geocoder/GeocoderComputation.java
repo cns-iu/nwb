@@ -20,8 +20,8 @@ public class GeocoderComputation {
 	
 	private LogService logger;
 
-	private static final String[] LONGITUDE_COLUMN_NAME_SUGGESTIONS = {"Longitude", "Lat"};
-	private static final String[] LATITUDE_COLUMN_NAME_SUGGESTIONS = {"Latitude", "Lon"};
+	private static final String[] LATITUDE_COLUMN_NAME_SUGGESTIONS = {"Latitude", "Lat"};
+	private static final String[] LONGITUDE_COLUMN_NAME_SUGGESTIONS = {"Longitude", "Lon"};
 	
 	private static List<Double> DEFAULT_NO_LOCATION_VALUE = Arrays.asList(null, null);
 	
