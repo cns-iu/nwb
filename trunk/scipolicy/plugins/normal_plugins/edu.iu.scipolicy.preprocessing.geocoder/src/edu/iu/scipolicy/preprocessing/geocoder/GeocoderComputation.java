@@ -20,10 +20,10 @@ public class GeocoderComputation {
 	
 	private LogService logger;
 
-	private static final String LONGITUDE_COLUMN_NAME = "Longitude";
-	private static final String LATITUDE_COLUMN_NAME = "Latitude";
+	private static final String[] LONGITUDE_COLUMN_NAME_SUGGESTIONS = {"Longitude", "Lat"};
+	private static final String[] LATITUDE_COLUMN_NAME_SUGGESTIONS = {"Latitude", "Lon"};
 	
-	private static List<Double> DEFAULT_NO_LOCATION_VALUE = Arrays.asList(0.0, 0.0);
+	private static List<Double> DEFAULT_NO_LOCATION_VALUE = Arrays.asList(null, null);
 	
 	private String locationType;
 	private String locationColumnName;
@@ -56,12 +56,12 @@ public class GeocoderComputation {
 		 * Create Blank new output table using the schema from the original table.
 		 * */
 		outputTable = TableUtilities.createTableUsingSchema(originalTable.getSchema());
-		
+		//TODO: Put lat and long up top like latitude and longitude
 		outputTableLatitudeColumnName = TableUtilities.formNonConflictingNewColumnName(
-			originalTable.getSchema(), LATITUDE_COLUMN_NAME);
+			originalTable.getSchema(), LATITUDE_COLUMN_NAME_SUGGESTIONS);
 		
 		outputTableLongitudeColumnName = TableUtilities.formNonConflictingNewColumnName(
-			originalTable.getSchema(), LONGITUDE_COLUMN_NAME);
+			originalTable.getSchema(), LONGITUDE_COLUMN_NAME_SUGGESTIONS);
 		
 		outputTable.addColumn(outputTableLatitudeColumnName, Double.class);
 		outputTable.addColumn(outputTableLongitudeColumnName, Double.class);

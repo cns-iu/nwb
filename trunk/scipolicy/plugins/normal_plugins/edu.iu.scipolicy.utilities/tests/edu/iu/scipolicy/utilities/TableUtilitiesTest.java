@@ -95,9 +95,9 @@ public class TableUtilitiesTest {
 			Table testTable = TableUtilities.createTableUsingSchema(testSchema);
 			Schema testTableSchema = testTable.getSchema();
 			
-			String newColumnName = TableUtilities.formNonConflictingNewColumnName(testTableSchema, "string1");
+			String newColumnName = TableUtilities.formNonConflictingNewColumnName(testTableSchema, new String[]{"string1"});
 			
-			if (!newColumnName.equalsIgnoreCase("string1_1")) {
+			if (!newColumnName.equalsIgnoreCase("string1_2")) {
 				fail();
 			}
 		}
