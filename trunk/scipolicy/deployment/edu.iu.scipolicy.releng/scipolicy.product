@@ -26,7 +26,7 @@
       location="edu.iu.scipolicy.gui.brand"
       startupProgressRect="0,163,500,10" />
    <launcher name="scipolicy">
-      <linux icon="/edu.iu.scipolicy.gui.brand/icons/nwb.xpm"/>
+      <linux icon="/edu.iu.scipolicy.gui.brand/icons/scisip32.xpm"/>
       <macosx icon="/edu.iu.scipolicy.gui.brand/icons/scisip128.icns"/>
       <solaris/>
       <win useIco="true">
