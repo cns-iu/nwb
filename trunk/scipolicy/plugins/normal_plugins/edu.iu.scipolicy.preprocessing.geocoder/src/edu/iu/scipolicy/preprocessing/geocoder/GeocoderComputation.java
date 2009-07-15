@@ -56,7 +56,6 @@ public class GeocoderComputation {
 		 * Create Blank new output table using the schema from the original table.
 		 * */
 		outputTable = TableUtilities.createTableUsingSchema(originalTable.getSchema());
-		//TODO: Put lat and long up top like latitude and longitude
 		outputTableLatitudeColumnName = TableUtilities.formNonConflictingNewColumnName(
 			originalTable.getSchema(), LATITUDE_COLUMN_NAME_SUGGESTIONS);
 		
