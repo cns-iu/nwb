@@ -140,9 +140,6 @@ public class ShapefileToPostScriptWriter {
 			Geometry rawGeometry = (Geometry) feature.getDefaultGeometry();
 			Geometry geometry = geometryProjector.projectGeometry(rawGeometry);
 
-			/* TODO: How deeply can geometries be nested (if infinitely, we need
-			 * to handle it)
-			 */
 			for (int gg = 0; gg < geometry.getNumGeometries(); gg++) {
 				Geometry subgeometry = geometry.getGeometryN(gg);
 

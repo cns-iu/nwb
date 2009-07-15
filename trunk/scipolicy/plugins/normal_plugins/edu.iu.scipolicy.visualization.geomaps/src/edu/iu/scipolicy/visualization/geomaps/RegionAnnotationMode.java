@@ -37,18 +37,21 @@ public class RegionAnnotationMode implements AnnotationMode {
 	private List<Double> featureColorQuantities;
 	static {
 		Map<String, Range<Color>> t = new HashMap<String, Range<Color>>();
-		t.put("Cyan to burgundy", new Range<Color>(new Color(49, 243, 255), new Color(127, 4, 27)));
-		t.put("Saffron to crimson", new Range<Color>(new Color(254, 204, 92), new Color(177, 4, 39)));
-		t.put("Lemon chiffon to egyptian blue", new Range<Color>(new Color(255, 255, 158), new Color(37, 52, 148)));
+		t.put("Blue to red", new Range<Color>(new Color(49, 243, 255), new Color(127, 4, 27)));
+		t.put("Yellow to red", new Range<Color>(new Color(254, 204, 92), new Color(177, 4, 39)));
+		t.put("Yellow to blue", new Range<Color>(new Color(255, 255, 158), new Color(37, 52, 148)));
 		COLOR_RANGES = Collections.unmodifiableMap(t);
 	}
 
+	/* 1: Grab the relevant parameters
+     * 2: Read the color data from inTable
+	 * 3: Scale the color data
+	 * 4: Interpolate the color data
+     * 5: Make region color LegendComponent
+	 * 6: Apply this annotation (the List<Circle> and the LegendComponents) to postScriptWriter
+	 */
 	@SuppressWarnings("unchecked") // TODO
-	public void applyAnnotations(Table inTable, Dictionary parameters, ShapefileToPostScriptWriter shapefileToPostScript) throws AlgorithmExecutionException {
-		// STEPS:
-		// Scale
-		// Interpolate
-		// Make a legend component
+	public void applyAnnotations(ShapefileToPostScriptWriter shapefileToPostScript, Table inTable, Dictionary parameters) throws AlgorithmExecutionException {
 		String featureNameAttribute = (String) parameters.get(FEATURE_NAME_ID);
 		String featureColorQuantityAttribute = (String) parameters.get(FEATURE_COLOR_QUANTITY_ID);
 		String featureColorScaling = (String) parameters.get(FEATURE_COLOR_SCALING_ID);
@@ -59,8 +62,7 @@ public class RegionAnnotationMode implements AnnotationMode {
 		getFeatureData(inTable, featureNameAttribute, featureColorQuantityAttribute, featureColorQuantityScaler);
 		
 		if ( featureColorQuantities.isEmpty() ) {
-			// TODO Throw exception?
-			GeoMapsAlgorithm.logger.log(LogService.LOG_WARNING, "No data found for region color annotations.");
+			throw new AlgorithmExecutionException("No data found for region color annotations.");
 		}
 		else {
 			// Scale and interpolate feature colors
@@ -70,7 +72,7 @@ public class RegionAnnotationMode implements AnnotationMode {
 			Interpolator<Color> featureColorQuantityInterpolator = new ColorInterpolator(scaledFeatureColorQuantities, featureColorRange);
 			List<Color> interpolatedFeatureColors = (new ListInterpolator<Color>(featureColorQuantityInterpolator)).getInterpolatedList(scaledFeatureColorQuantities );
 			
-			Map<String, Color> interpolatedFeatureColorMap = new HashMap();
+			Map<String, Color> interpolatedFeatureColorMap = new HashMap<String, Color>();
 			for ( Map.Entry<String, Integer> featureID : featureIDs.entrySet() ) {
 				String featureName = featureID.getKey();
 				int id = featureID.getValue();
@@ -85,8 +87,9 @@ public class RegionAnnotationMode implements AnnotationMode {
 			double featureColorGradientLowerLeftY = Legend.DEFAULT_LOWER_LEFT_Y_IN_POINTS;
 			double featureColorGradientWidth = (Legend.DEFAULT_WIDTH_IN_POINTS / 3) * 0.90;
 			double featureColorGradientHeight = 15;
-			String featureColorTypeLabel = "Feature Color";
+			String featureColorTypeLabel = "Region Color";
 
+			
 			LabeledGradient featureColorGradient = new LabeledGradient(featureColorQuantityScalableRange, featureColorRange, featureColorTypeLabel, featureColorQuantityAttribute, featureColorGradientLowerLeftX, featureColorGradientLowerLeftY, featureColorGradientWidth, featureColorGradientHeight);
 			shapefileToPostScript.setFeatureColorAnnotations(interpolatedFeatureColorMap, featureColorGradient);
 		}

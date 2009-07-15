@@ -1,14 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <metatype:MetaData xmlns:metatype="http://www.osgi.org/xmlns/metatype/v1.0.0">
-<!-- TODO Parameter descriptions etc. -->
 	<OCD name="GeoMaps (region coloring)" id="edu.iu.scipolicy.visualization.geomaps.GeoMapsRegionsFactory.OCD"
 		 description="Creates maps with colored-region annotations">
-		<AD name="Map" id="shapefile" type="String" description="Map to render" default=""/>
-		<AD name="Projection" id="projection" type="String" description="Type of map projection" default=""/>
-		<AD name="Region name" id="featureName" type="String" description="How to identify regions by name" default=""/>
-		<AD name="Color by" id="featureColorQuantity" type="String" description="Parameter Description" default="featureColorQuantity"/>
-		<AD name="Color scaling" id="featureColorScaling" type="String" description="Parameter Description" default="Linear"/>
-		<AD name="Color range" id="featureColorRange" type="String" description="Parameter Description" default="TODO"/>
+		<AD name="Map" id="shapefile" type="String" description="Map to annotate" default="Mutate"/>
+		<AD name="Projection" id="projection" type="String" description="Map projection" default="Mutate"/>
+		<AD name="Region name" id="featureName" type="String" description="String attribute that names regions" default="Mutate"/>
+		<AD name="Color by" id="featureColorQuantity" type="String" description="Numeric attribute that determines region color" default="Mutate"/>
+		<AD name="Color scaling" id="featureColorScaling" type="String" description="How to scale the color attribute (linear implies no rescaling)" default="Mutate"/>
+		<AD name="Color range" id="featureColorRange" type="String" description="Two colors that the region colors should range between, from least to greatest" default="Mutate"/>
 	</OCD>
 	<Designate pid="edu.iu.scipolicy.visualization.geomaps.GeoMapsRegionsFactory">
 		<Object ocdref="edu.iu.scipolicy.visualization.geomaps.GeoMapsRegionsFactory.OCD"/>
@@ -16,15 +15,16 @@
 	
 	<OCD name="GeoMaps (circles)" id="edu.iu.scipolicy.visualization.geomaps.GeoMapsCirclesFactory.OCD"
 		 description="Creates maps with circle annotations">
-		<AD name="Map" id="shapefile" type="String" description="Parameter Description" default="TODO"/>
-		<AD name="Projection" id="projection" type="String" description="Parameter Description" default="TODO"/>
-		<AD name="Latitude" id="latitude" type="String" description="Parameter Description" default="latitude"/>
-		<AD name="Longitude" id="longitude" type="String" description="Parameter Description" default="longitude"/>
-		<AD name="Size circles by" id="circleArea" type="String" description="Parameter Description" default="circleArea"/>
-		<AD name="Size scaling" id="circleAreaScaling" type="String" description="Parameter Description" default="Linear"/>
-		<AD name="Color circles by" id="circleColorQuantity" type="String" description="Parameter Description" default="circleColorQuantity"/>
-		<AD name="Color Scaling" id="circleColorScaling" type="String" description="Parameter Description" default="Linear"/>
-		<AD name="Color Range" id="circleColorRange" type="String" description="Parameter Description" default="TODO"/>
+		<AD name="Map" id="shapefile" type="String" description="Map to annotate" default="Mutate"/>
+		<AD name="Projection" id="projection" type="String" description="Map projection" default="Mutate"/>
+		<AD name="Latitude" id="latitude" type="String" description="Numeric attribute that determines circle latitude (ranges from -180 (180 degrees west) to +180 (180 degrees east)" default="Mutate"/>
+		<AD name="Longitude" id="longitude" type="String" description="Numeric attribute that determines circle longitude (ranges from -90 (90 degrees south) to +90 (90 degrees north)" default="Mutate"/>
+		<AD name="Size circles by" id="circleArea" type="String" description="Numeric attribute that determines circle size (that is, area)" default="Mutate"/>
+		<AD name="Size scaling" id="circleAreaScaling" type="String" description="How to scale the size attribute (linear implies no rescaling)" default="Mutate"/>
+		<!-- TODO: Expose "Size Range"? -->
+		<AD name="Color circles by" id="circleColorQuantity" type="String" description="Numeric attribute that determines circle color" default="Mutate"/>
+		<AD name="Color Scaling" id="circleColorScaling" type="String" description="How to scale the color attribute (linear implies no rescaling)" default="Mutate"/>
+		<AD name="Color Range" id="circleColorRange" type="String" description="Two colors that the circle colors should range between, from least to greatest" default="Mutate"/>
 	</OCD>
 	<Designate pid="edu.iu.scipolicy.visualization.geomaps.GeoMapsCirclesFactory">
 		<Object ocdref="edu.iu.scipolicy.visualization.geomaps.GeoMapsCirclesFactory.OCD"/>

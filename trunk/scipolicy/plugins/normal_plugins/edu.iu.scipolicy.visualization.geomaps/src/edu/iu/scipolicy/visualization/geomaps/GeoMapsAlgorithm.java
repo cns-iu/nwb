@@ -59,8 +59,6 @@ public class GeoMapsAlgorithm implements Algorithm {
 		PROJECTIONS = Collections.unmodifiableMap(t);
 	}
 	
-	
-
 	private Data[] data;
 	@SuppressWarnings("unchecked") // TODO
 	private Dictionary parameters;
@@ -99,7 +97,7 @@ public class GeoMapsAlgorithm implements Algorithm {
 		ShapefileToPostScriptWriter postScriptWriter =
 			new ShapefileToPostScriptWriter(shapefileURL, projectedCRS, featureNameKey);
 		
-		annotationMode.applyAnnotations(inTable, parameters, postScriptWriter);
+		annotationMode.applyAnnotations(postScriptWriter, inTable, parameters);
 		try {
 			postScriptWriter.writePostScriptToFile(temporaryPostScriptFile);
 		} catch (IOException e) {

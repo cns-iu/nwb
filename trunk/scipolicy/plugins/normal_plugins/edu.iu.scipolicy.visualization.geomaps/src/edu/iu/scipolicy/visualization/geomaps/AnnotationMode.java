@@ -8,5 +8,5 @@ import prefuse.data.Table;
 
 public interface AnnotationMode {
 	@SuppressWarnings("unchecked") // TODO
-	public void applyAnnotations(Table inTable, Dictionary parameters, ShapefileToPostScriptWriter shapefileToPostScript) throws AlgorithmExecutionException;
+	public void applyAnnotations(ShapefileToPostScriptWriter postScriptWriter, Table inTable, Dictionary parameters) throws AlgorithmExecutionException;
 }

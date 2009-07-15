@@ -38,6 +38,8 @@ public class ShapefileFeatureReader {
 		return featureCollection;
 	}
 
+	/* GeoTools boilerplate.  Returns the Features in the shapefile at shapefileURL
+	 */
 	private FeatureSource<SimpleFeatureType, SimpleFeature> getFeatureSource(URL shapefileURL) throws AlgorithmExecutionException {
 		DataStore dataStore = getDataStore(shapefileURL);
 
@@ -46,8 +48,8 @@ public class ShapefileFeatureReader {
 		FeatureSource<SimpleFeatureType, SimpleFeature> featureSource;
 		try {
 			typeNames = dataStore.getTypeNames();
-			typeName = typeNames[0]; // TODO: Give readers a hint about what is going on with this
-			GeoMapsAlgorithm.logger.log(LogService.LOG_INFO, "Reading content: " + typeName);
+			typeName = typeNames[0];
+			GeoMapsAlgorithm.logger.log(LogService.LOG_INFO, "Reading shapefile: " + typeName);
 			featureSource = dataStore.getFeatureSource(typeName);
 		} catch (IOException e) {
 			throw new AlgorithmExecutionException(e);
