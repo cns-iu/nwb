@@ -2,8 +2,8 @@ package edu.iu.scipolicy.visualization.geomaps.scaling;
 
 import org.cishell.framework.algorithm.AlgorithmExecutionException;
 
-public class LinearScaler implements DoubleScaler {
-	public boolean isScalable(double value) {
+public class LinearScaler implements Scaler {
+	public boolean canScale(double value) {
 		return true;
 	}
 	

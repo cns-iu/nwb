@@ -26,6 +26,8 @@ import prefuse.data.Table;
 import edu.iu.scipolicy.utilities.FileUtilities;
 
 public class GeoMapsAlgorithm implements Algorithm {
+	public static final String OUTPUT_FILE_EXTENSION = "eps";
+	
 	public static final String SHAPEFILE_ID = "shapefile";
 	public static final Map<String, String> PROJECTIONS;
 	static {
@@ -57,7 +59,7 @@ public class GeoMapsAlgorithm implements Algorithm {
 		PROJECTIONS = Collections.unmodifiableMap(t);
 	}
 	
-	public static final String OUTPUT_FILE_EXTENSION = "eps";
+	
 
 	private Data[] data;
 	@SuppressWarnings("unchecked") // TODO

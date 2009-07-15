@@ -2,13 +2,13 @@ package edu.iu.scipolicy.visualization.geomaps.scaling;
 
 import org.cishell.framework.algorithm.AlgorithmExecutionException;
 
-public class LogScaler implements DoubleScaler {
-	public boolean isScalable(double value) {
+public class LogScaler implements Scaler {
+	public boolean canScale(double value) {
 		return ( value > 0.0 );
 	}
 
 	public double scale(double rawValue) throws AlgorithmExecutionException {
-		if ( isScalable(rawValue) ) {
+		if ( canScale(rawValue) ) {
 			return Math.log10(rawValue);
 		}
 		else {

@@ -6,7 +6,7 @@ import org.cishell.framework.algorithm.AlgorithmExecutionException;
 
 import edu.iu.scipolicy.visualization.geomaps.utility.Range;
 
-public class LinearInterpolator implements DoubleInterpolator<Double> {
+public class LinearInterpolator implements Interpolator<Double> {
 	private Collection<Double> values;
 	private double minimumValue;
 	private double maximumValue;

@@ -1,10 +1,7 @@
 package edu.iu.scipolicy.visualization.geomaps;
 
 import java.util.Collection;
-import java.util.Collections;
 import java.util.Dictionary;
-import java.util.HashMap;
-import java.util.Map;
 
 import org.cishell.framework.CIShellContext;
 import org.cishell.framework.algorithm.Algorithm;

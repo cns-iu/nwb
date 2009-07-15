@@ -7,7 +7,7 @@ import org.cishell.framework.algorithm.AlgorithmExecutionException;
 import edu.iu.scipolicy.visualization.geomaps.utility.Range;
 
 
-public class ColorInterpolator implements DoubleInterpolator<Color> {
+public class ColorInterpolator implements Interpolator<Color> {
 	public static final Range<Color> DEFAULT_INTERPOLATED_COLOR_RANGE = new Range<Color>(Color.BLUE, Color.GREEN);
 	public static final int RED = 0;
 	public static final int GREEN = 1;

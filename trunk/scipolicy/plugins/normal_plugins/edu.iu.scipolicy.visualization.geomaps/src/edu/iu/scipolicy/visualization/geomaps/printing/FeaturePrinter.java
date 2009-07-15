@@ -18,7 +18,7 @@ import com.vividsolutions.jts.geom.Geometry;
 
 import edu.iu.scipolicy.visualization.geomaps.ShapefileToPostScript;
 import edu.iu.scipolicy.visualization.geomaps.projection.GeometryProjector;
-import edu.iu.scipolicy.visualization.geomaps.scaling.DoubleScaler;
+import edu.iu.scipolicy.visualization.geomaps.scaling.Scaler;
 import edu.iu.scipolicy.visualization.geomaps.scaling.LinearScaler;
 
 public class FeaturePrinter {
@@ -30,7 +30,7 @@ public class FeaturePrinter {
 	private FeatureCollection<SimpleFeatureType, SimpleFeature> featureCollection;
 	private GeometryProjector geometryProjector;
 	private MapBoundingBox mapBoundingBox;
-	public static final DoubleScaler DEFAULT_FEATURE_COLOR_QUANTITY_SCALER = new LinearScaler();
+	public static final Scaler DEFAULT_FEATURE_COLOR_QUANTITY_SCALER = new LinearScaler();
 	public static final Color DEFAULT_FEATURE_COLOR_MAXIMUM = Color.GREEN;
 	public static final Color DEFAULT_FEATURE_COLOR_MINIMUM = Color.BLUE;
 	

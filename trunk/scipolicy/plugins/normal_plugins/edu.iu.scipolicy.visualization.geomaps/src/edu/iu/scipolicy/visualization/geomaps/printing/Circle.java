@@ -2,11 +2,15 @@ package edu.iu.scipolicy.visualization.geomaps.printing;
 
 import java.awt.Color;
 
+import com.vividsolutions.jts.geom.Coordinate;
+
 public class Circle {
 	private double area;
 	private Color color;
+	private Coordinate coordinate;
 
-	public Circle(double area, Color color) {
+	public Circle(Coordinate coordinate, double area, Color color) {
+		this.coordinate = coordinate;
 		this.area = area;
 		this.color = color;
 	}
@@ -18,12 +22,18 @@ public class Circle {
 	public double calculateRadiusFromArea() {
 		return Circle.calculateRadiusFromArea(area);
 	}
+	
+	public Coordinate getCoordinate() {
+		return coordinate;
+	}
+	
+	public double getArea() {
+		return area;
+	}
 
 	public Color getColor() {
 		return color;
 	}
 
-	public double getArea() {
-		return area;
-	}
+	
 }

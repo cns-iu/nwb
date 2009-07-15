@@ -6,12 +6,15 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.cishell.framework.algorithm.AlgorithmExecutionException;
 import org.geotools.feature.FeatureCollection;
 import org.geotools.feature.FeatureIterator;
+import org.geotools.referencing.crs.DefaultGeographicCRS;
 import org.opengis.feature.simple.SimpleFeature;
 import org.opengis.feature.simple.SimpleFeatureType;
 import org.opengis.referencing.FactoryException;
@@ -32,8 +35,6 @@ import edu.iu.scipolicy.visualization.geomaps.printing.MapBoundingBox;
 import edu.iu.scipolicy.visualization.geomaps.projection.GeometryProjector;
 import edu.iu.scipolicy.visualization.geomaps.utility.ShapefileFeatureReader;
 
-import org.geotools.referencing.crs.DefaultGeographicCRS;
-
 public class ShapefileToPostScript {
 	public static final String INDENT = "  ";
 	
@@ -47,7 +48,7 @@ public class ShapefileToPostScript {
 	private Legend legend = new Legend();
 	private Map<String, Color> featureColorMap = new HashMap<String, Color>();
 	private String featureNameKey;
-	private Map<Coordinate, Circle> circleMap = new HashMap<Coordinate, Circle>();
+	private List<Circle> circles = new ArrayList<Circle>();
 
 	
 	public ShapefileToPostScript(URL shapefileURL, ProjectedCRS projectedCRS, String featureNameKey) throws AlgorithmExecutionException {
@@ -63,8 +64,8 @@ public class ShapefileToPostScript {
 		legend.add(featureColorGradient);
 	}
 	
-	public void setCircleAnnotations(Map<Coordinate, Circle> circleMap, AreaLegend circleAreaLegend, LabeledGradient circleColorGradient) {
-		this.circleMap = circleMap;
+	public void setCircleAnnotations(List<Circle> circles, AreaLegend circleAreaLegend, LabeledGradient circleColorGradient) {
+		this.circles = circles;
 		legend.add(circleAreaLegend);
 		legend.add(circleColorGradient);
 	}
@@ -78,7 +79,7 @@ public class ShapefileToPostScript {
 		featurePrinter.printFeatures(out, featureColorMap, featureNameKey);
 
 		CirclePrinter circlePrinter = new CirclePrinter(geometryProjector, mapBoundingBox);
-		circlePrinter.printCircles(out, circleMap);
+		circlePrinter.printCircles(out, circles);
 
 		out.write("% Restore the default clipping path" + "\n");
 		out.write("grestore" + "\n");

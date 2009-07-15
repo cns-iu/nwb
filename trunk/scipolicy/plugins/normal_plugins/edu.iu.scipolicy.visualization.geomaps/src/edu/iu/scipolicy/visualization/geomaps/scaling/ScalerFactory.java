@@ -16,7 +16,7 @@ public class ScalerFactory {
 		SCALER_TYPES = Collections.unmodifiableMap(t);
 	}
 	
-	public static DoubleScaler createScaler(String scaling) throws AlgorithmExecutionException {
+	public static Scaler createScaler(String scaling) throws AlgorithmExecutionException {
 		if ( SCALER_TYPES.containsKey(scaling) ) {
 			return createScaler(SCALER_TYPES.get(scaling));
 		}
@@ -25,7 +25,7 @@ public class ScalerFactory {
 		}
 	}
 	
-	public static DoubleScaler createScaler(ScalerType scalerType) throws AlgorithmExecutionException {
+	public static Scaler createScaler(ScalerType scalerType) throws AlgorithmExecutionException {
 		if ( scalerType.equals(ScalerType.LINEAR_SCALER) ) {
 			return new LinearScaler();
 		}
