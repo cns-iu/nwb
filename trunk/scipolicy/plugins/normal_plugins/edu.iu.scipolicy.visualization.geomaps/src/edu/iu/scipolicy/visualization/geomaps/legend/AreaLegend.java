@@ -43,6 +43,7 @@ public class AreaLegend implements LegendComponent {
 		this.lowerLeftY = lowerLeftY;
 	}
 
+	// TODO? Draw circles using the line width set in CirclePrinter.CIRCLE_LINE_WIDTH
 	public String toPostScript() {
 		String s = "";
 

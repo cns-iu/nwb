@@ -20,7 +20,7 @@ import edu.iu.scipolicy.visualization.geomaps.scaling.LinearScaler;
 
 public class CirclePrinter {
 	public static final String INDENT = "  ";
-	public static final double CIRCLE_LINE_WIDTH = 1.2;	
+	public static final double CIRCLE_LINE_WIDTH = 2;	
 	public static final String CIRCLE_DEF = "/circle {" + "\n"
 											+ INDENT + "newpath" + "\n"
 											+ INDENT + INDENT + "0 360 arc" + "\n"
