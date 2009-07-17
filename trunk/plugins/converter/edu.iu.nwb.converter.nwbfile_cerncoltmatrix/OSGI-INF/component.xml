@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<component name="edu.iu.nwb.converter.nwbfile_cerncoltmatrix.NWBFileToCernColtMatrixAlgorithm.component" immediate="false">
+	<implementation class="edu.iu.nwb.converter.nwbfile_cerncoltmatrix.NWBFileToCernColtMatrixAlgorithmFactory"/>
+	<properties entry="OSGI-INF/algorithm.properties"/>
+	
+	<service>
+		<provide interface=
+			"org.cishell.framework.algorithm.AlgorithmFactory"/>
+	</service>
+</component>
