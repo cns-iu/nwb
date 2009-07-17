@@ -12,7 +12,7 @@ import java.util.Map;
 /**
  * A lightweight NWB File Writer. 
  * 
- * FIXME: Needs much more erorr handling/checking
+ * FIXME: Needs much more error handling/checking
  * 
  * @author Bruce Herr (bh2@bh2.net)
  */
