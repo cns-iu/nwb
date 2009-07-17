@@ -10,9 +10,9 @@ import org.cishell.framework.algorithm.Algorithm;
 import org.cishell.framework.algorithm.AlgorithmExecutionException;
 import org.cishell.framework.data.BasicData;
 import org.cishell.framework.data.Data;
+import org.cishell.utilities.FileUtilities;
 
 import edu.iu.scipolicy.converter.psraster.psrasterproperties.PSRasterProperties;
-import edu.iu.scipolicy.utilities.FileUtilities;
 
 
 public class JPGWriterAlgorithm implements Algorithm {

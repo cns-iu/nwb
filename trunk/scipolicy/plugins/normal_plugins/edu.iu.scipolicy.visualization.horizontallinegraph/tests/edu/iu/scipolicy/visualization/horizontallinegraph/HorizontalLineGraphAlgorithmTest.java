@@ -2,7 +2,6 @@ package edu.iu.scipolicy.visualization.horizontallinegraph;
 
 import static org.junit.Assert.fail;
 
-import java.util.Date;
 import java.util.Dictionary;
 import java.util.Hashtable;
 

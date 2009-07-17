@@ -6,10 +6,10 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
 
+import org.cishell.utilities.DateUtilities;
 import org.osgi.service.log.LogService;
 
 import prefuse.data.Table;
-import edu.iu.scipolicy.utilities.DateUtilities;
 
 /**
  * To my understanding, the drawing "canvas" is given a default size that is used

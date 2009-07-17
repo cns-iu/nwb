@@ -8,7 +8,6 @@ import org.cishell.framework.algorithm.Algorithm;
 import org.cishell.framework.algorithm.AlgorithmExecutionException;
 import org.cishell.framework.data.BasicData;
 import org.cishell.framework.data.Data;
-import org.cishell.framework.data.DataProperty;
 
 import edu.iu.scipolicy.converter.psraster.psrasterproperties.PSRasterProperties;
 

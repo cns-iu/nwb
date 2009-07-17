@@ -9,11 +9,11 @@ import org.cishell.framework.algorithm.AlgorithmFactory;
 import org.cishell.framework.algorithm.ParameterMutator;
 import org.cishell.framework.data.Data;
 import org.cishell.reference.service.metatype.BasicObjectClassDefinition;
+import org.cishell.utilities.MutateParameterUtilities;
 import org.osgi.service.metatype.AttributeDefinition;
 import org.osgi.service.metatype.ObjectClassDefinition;
 
 import prefuse.data.Table;
-import edu.iu.scipolicy.utilities.MutateParameterUtilities;
 
 
 public class HorizontalLineGraphAlgorithmFactory

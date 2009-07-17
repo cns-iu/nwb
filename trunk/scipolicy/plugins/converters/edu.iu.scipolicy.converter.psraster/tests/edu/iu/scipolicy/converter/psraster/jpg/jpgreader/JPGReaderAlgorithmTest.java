@@ -10,6 +10,8 @@ import junit.framework.TestCase;
 import org.cishell.framework.algorithm.AlgorithmExecutionException;
 import org.cishell.framework.data.BasicData;
 import org.cishell.framework.data.Data;
+import org.cishell.utilities.FileUtilities;
+import org.cishell.utilities.ImageUtilities;
 import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Before;
@@ -17,8 +19,6 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 
 import edu.iu.scipolicy.converter.psraster.psrasterproperties.PSRasterProperties;
-import edu.iu.scipolicy.utilities.FileUtilities;
-import edu.iu.scipolicy.utilities.ImageUtilities;
 
 public class JPGReaderAlgorithmTest extends TestCase {
 	private File temporaryInvalidJPGFileToBeRead;

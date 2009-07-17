@@ -1,7 +1,5 @@
 package edu.iu.scipolicy.filtering.topntestutilities;
 
-import static org.junit.Assert.fail;
-
 import java.util.Dictionary;
 import java.util.Hashtable;
 import java.util.Random;
@@ -9,10 +7,8 @@ import java.util.Random;
 import org.cishell.framework.data.BasicData;
 import org.cishell.framework.data.Data;
 
-import edu.iu.scipolicy.filtering.topn.TopNAlgorithm;
-import edu.iu.scipolicy.filtering.topncommon.TopNUtilities;
-
 import prefuse.data.Table;
+import edu.iu.scipolicy.filtering.topncommon.TopNUtilities;
 
 public class TopNTestUtilities {
 	public static Dictionary formUserParametersForTopN(int topN,

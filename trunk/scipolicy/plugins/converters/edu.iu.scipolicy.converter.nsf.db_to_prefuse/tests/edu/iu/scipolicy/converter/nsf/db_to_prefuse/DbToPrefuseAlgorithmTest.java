@@ -2,9 +2,6 @@ package edu.iu.scipolicy.converter.nsf.db_to_prefuse;
 
 import static org.junit.Assert.fail;
 
-import java.util.Dictionary;
-import java.util.Hashtable;
-
 import org.cishell.framework.algorithm.Algorithm;
 import org.cishell.framework.algorithm.AlgorithmExecutionException;
 import org.cishell.framework.data.Data;

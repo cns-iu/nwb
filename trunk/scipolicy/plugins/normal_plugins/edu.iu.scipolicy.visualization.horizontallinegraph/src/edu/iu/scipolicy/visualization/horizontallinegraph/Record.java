@@ -3,9 +3,10 @@ package edu.iu.scipolicy.visualization.horizontallinegraph;
 import java.text.ParseException;
 import java.util.Date;
 
+import org.cishell.utilities.DateUtilities;
+import org.cishell.utilities.NumberUtilities;
+
 import prefuse.data.Tuple;
-import edu.iu.scipolicy.utilities.DateUtilities;
-import edu.iu.scipolicy.utilities.NumberUtilities;
 
 public class Record implements Comparable {
 	private String label;

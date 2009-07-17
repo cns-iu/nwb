@@ -10,13 +10,13 @@ import org.cishell.framework.data.BasicData;
 import org.cishell.framework.data.Data;
 import org.cishell.framework.data.DataProperty;
 import org.cishell.service.database.DataSourceWithID;
+import org.cishell.utilities.StringUtilities;
 import org.osgi.service.log.LogService;
 
 import prefuse.data.Table;
 import prefuse.data.io.DataIOException;
 import prefuse.data.io.sql.ConnectionFactory;
 import prefuse.data.io.sql.DatabaseDataSource;
-import edu.iu.scipolicy.utilities.StringUtilities;
 import edu.iu.scipolicy.utilities.nsf.NsfNames;
 
 public class DbToPrefuseAlgorithm implements Algorithm {

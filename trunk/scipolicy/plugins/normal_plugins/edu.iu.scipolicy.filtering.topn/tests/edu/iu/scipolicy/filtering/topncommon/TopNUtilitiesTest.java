@@ -13,7 +13,6 @@ import org.junit.Test;
 import org.osgi.service.metatype.ObjectClassDefinition;
 
 import prefuse.data.Table;
-import edu.iu.scipolicy.utilities.ColumnNotFoundException;
 
 public class TopNUtilitiesTest {
 	@BeforeClass

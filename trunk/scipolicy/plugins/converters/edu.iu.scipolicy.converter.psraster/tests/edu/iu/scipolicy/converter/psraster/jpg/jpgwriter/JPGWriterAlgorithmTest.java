@@ -1,6 +1,6 @@
 package edu.iu.scipolicy.converter.psraster.jpg.jpgwriter;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertFalse;
 
 import java.awt.Color;
 import java.awt.Graphics2D;
@@ -16,7 +16,6 @@ import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
-import edu.iu.scipolicy.converter.psraster.jpg.jpgreader.JPGReaderAlgorithm;
 import edu.iu.scipolicy.converter.psraster.psrasterproperties.PSRasterProperties;
 
 public class JPGWriterAlgorithmTest {

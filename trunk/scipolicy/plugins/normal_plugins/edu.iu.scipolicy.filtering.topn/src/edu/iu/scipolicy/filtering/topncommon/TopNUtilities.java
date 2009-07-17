@@ -4,14 +4,14 @@ import java.io.IOException;
 
 import org.cishell.framework.data.Data;
 import org.cishell.reference.service.metatype.BasicObjectClassDefinition;
+import org.cishell.utilities.ColumnNotFoundException;
+import org.cishell.utilities.MutateParameterUtilities;
+import org.cishell.utilities.TableUtilities;
 import org.osgi.service.metatype.AttributeDefinition;
 import org.osgi.service.metatype.ObjectClassDefinition;
 
 import prefuse.data.Table;
 import prefuse.util.collections.IntIterator;
-import edu.iu.scipolicy.utilities.ColumnNotFoundException;
-import edu.iu.scipolicy.utilities.MutateParameterUtilities;
-import edu.iu.scipolicy.utilities.TableUtilities;
 
 public class TopNUtilities {
 	// Must agree with id in METADATA.XML.

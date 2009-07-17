@@ -8,10 +8,10 @@ import org.cishell.framework.algorithm.AlgorithmExecutionException;
 import org.cishell.framework.data.BasicData;
 import org.cishell.framework.data.Data;
 import org.cishell.framework.data.DataProperty;
+import org.cishell.utilities.ColumnNotFoundException;
 
 import prefuse.data.Table;
 import edu.iu.scipolicy.filtering.topncommon.TopNUtilities;
-import edu.iu.scipolicy.utilities.ColumnNotFoundException;
 
 public class TopNPercentAlgorithm implements Algorithm {
 	private Data[] data;

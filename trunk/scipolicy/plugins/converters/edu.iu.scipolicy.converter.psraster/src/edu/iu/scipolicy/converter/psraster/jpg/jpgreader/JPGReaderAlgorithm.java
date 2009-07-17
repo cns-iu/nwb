@@ -4,7 +4,6 @@ import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 import java.util.Dictionary;
-import java.util.Enumeration;
 
 import javax.imageio.ImageIO;
 

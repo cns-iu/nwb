@@ -1,19 +1,13 @@
 package edu.iu.scipolicy.converter.psraster.jpg.jpghandler;
 
-import java.awt.Image;
-import java.awt.image.BufferedImage;
 import java.io.File;
-import java.io.IOException;
 import java.util.Dictionary;
-
-import javax.imageio.ImageIO;
 
 import org.cishell.framework.CIShellContext;
 import org.cishell.framework.algorithm.Algorithm;
 import org.cishell.framework.algorithm.AlgorithmExecutionException;
 import org.cishell.framework.data.BasicData;
 import org.cishell.framework.data.Data;
-import org.osgi.service.log.LogService;
 
 import edu.iu.scipolicy.converter.psraster.psrasterproperties.PSRasterProperties;
 

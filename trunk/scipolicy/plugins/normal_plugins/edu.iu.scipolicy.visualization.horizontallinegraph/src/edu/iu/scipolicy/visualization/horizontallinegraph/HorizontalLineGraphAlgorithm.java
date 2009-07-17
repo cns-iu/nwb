@@ -11,10 +11,10 @@ import org.cishell.framework.algorithm.AlgorithmExecutionException;
 import org.cishell.framework.data.BasicData;
 import org.cishell.framework.data.Data;
 import org.cishell.framework.data.DataProperty;
+import org.cishell.utilities.FileUtilities;
 import org.osgi.service.log.LogService;
 
 import prefuse.data.Table;
-import edu.iu.scipolicy.utilities.FileUtilities;
 
 public class HorizontalLineGraphAlgorithm implements Algorithm {
 	public static String LABEL_FIELD_ID = "label";

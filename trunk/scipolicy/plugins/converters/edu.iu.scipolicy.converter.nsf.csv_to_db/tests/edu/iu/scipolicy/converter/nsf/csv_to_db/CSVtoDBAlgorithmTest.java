@@ -7,13 +7,13 @@ import java.io.File;
 import org.cishell.framework.CIShellContext;
 import org.cishell.framework.data.BasicData;
 import org.cishell.framework.data.Data;
+import org.cishell.utilities.FileUtilities;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
 import edu.iu.scipolicy.testutilities.TestContext;
 import edu.iu.scipolicy.testutilities.TestUtilities;
-import edu.iu.scipolicy.utilities.FileUtilities;
 import edu.iu.scipolicy.utilities.nsf.NsfNames;
 
 public class CSVtoDBAlgorithmTest {
