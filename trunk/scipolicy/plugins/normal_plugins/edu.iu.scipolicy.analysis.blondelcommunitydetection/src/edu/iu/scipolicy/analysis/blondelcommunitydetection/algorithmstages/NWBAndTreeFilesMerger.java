@@ -19,13 +19,14 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 
+import org.cishell.utilities.FileUtilities;
+
 import edu.iu.nwb.util.nwbfile.NWBFileParser;
 import edu.iu.nwb.util.nwbfile.ParsingException;
 import edu.iu.scipolicy.analysis.blondelcommunitydetection.NetworkInfo;
 import edu.iu.scipolicy.analysis.blondelcommunitydetection.TreeFileParsingException;
 import edu.iu.scipolicy.analysis.blondelcommunitydetection.algorithmstages.exceptiontypes.NWBAndTreeFileMergingException;
 import edu.iu.scipolicy.analysis.blondelcommunitydetection.nwbfileparserhandlers.tree_to_nwb.Merger;
-import edu.iu.scipolicy.utilities.FileUtilities;
 
 public class NWBAndTreeFilesMerger {
 	public static File mergeCommunitiesFileWithNWBFile(File communitiesFile,

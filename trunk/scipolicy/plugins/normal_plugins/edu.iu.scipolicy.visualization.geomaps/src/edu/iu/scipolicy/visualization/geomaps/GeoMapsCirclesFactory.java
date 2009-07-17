@@ -7,12 +7,12 @@ import java.util.List;
 
 import org.cishell.framework.data.Data;
 import org.cishell.reference.service.metatype.BasicObjectClassDefinition;
+import org.cishell.utilities.MutateParameterUtilities;
+import org.cishell.utilities.TableUtilities;
 import org.osgi.service.metatype.AttributeDefinition;
 import org.osgi.service.metatype.ObjectClassDefinition;
 
 import prefuse.data.Table;
-import edu.iu.scipolicy.utilities.MutateParameterUtilities;
-import edu.iu.scipolicy.utilities.TableUtilities;
 import edu.iu.scipolicy.visualization.geomaps.scaling.ScalerFactory;
 
 public class GeoMapsCirclesFactory extends GeoMapsAlgorithmFactory {

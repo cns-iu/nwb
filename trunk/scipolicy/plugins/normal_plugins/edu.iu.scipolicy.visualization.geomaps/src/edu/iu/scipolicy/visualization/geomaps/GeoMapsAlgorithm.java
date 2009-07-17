@@ -17,13 +17,13 @@ import org.cishell.framework.algorithm.AlgorithmExecutionException;
 import org.cishell.framework.data.BasicData;
 import org.cishell.framework.data.Data;
 import org.cishell.framework.data.DataProperty;
+import org.cishell.utilities.FileUtilities;
 import org.geotools.referencing.CRS;
 import org.opengis.referencing.FactoryException;
 import org.opengis.referencing.crs.ProjectedCRS;
 import org.osgi.service.log.LogService;
 
 import prefuse.data.Table;
-import edu.iu.scipolicy.utilities.FileUtilities;
 
 public class GeoMapsAlgorithm implements Algorithm {
 	public static final String OUTPUT_FILE_EXTENSION = "eps";

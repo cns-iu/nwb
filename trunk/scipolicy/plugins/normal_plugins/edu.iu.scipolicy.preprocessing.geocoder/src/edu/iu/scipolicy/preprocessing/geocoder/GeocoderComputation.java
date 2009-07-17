@@ -7,10 +7,10 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
+import org.cishell.utilities.TableUtilities;
 import org.osgi.service.log.LogService;
 
 import prefuse.data.Table;
-import edu.iu.scipolicy.utilities.TableUtilities;
 
 /**
  * @author cdtank

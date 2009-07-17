@@ -3,13 +3,14 @@ package edu.iu.scipolicy.analysis.blondelcommunitydetection.algorithmstages;
 import java.io.File;
 import java.io.IOException;
 
+import org.cishell.utilities.FileUtilities;
+
 import edu.iu.nwb.util.nwbfile.NWBFileParser;
 import edu.iu.nwb.util.nwbfile.ParsingException;
 import edu.iu.scipolicy.analysis.blondelcommunitydetection.NetworkInfo;
 import edu.iu.scipolicy.analysis.blondelcommunitydetection.algorithmstages.exceptiontypes.NWBToBINConversionException;
 import edu.iu.scipolicy.analysis.blondelcommunitydetection.nwbfileparserhandlers.nwb_to_bin.Converter;
 import edu.iu.scipolicy.analysis.blondelcommunitydetection.nwbfileparserhandlers.nwb_to_bin.PreProcessor;
-import edu.iu.scipolicy.utilities.FileUtilities;
 
 /*
  * This is the first stage of the Blondel Community Detection algorithm.

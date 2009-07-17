@@ -9,12 +9,13 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Scanner;
 
+import org.cishell.utilities.SetUtilities;
+
 import edu.iu.nwb.util.nwbfile.NWBFileProperty;
 import edu.iu.nwb.util.nwbfile.NWBFileWriter;
 import edu.iu.scipolicy.analysis.blondelcommunitydetection.NetworkInfo;
 import edu.iu.scipolicy.analysis.blondelcommunitydetection.Node;
 import edu.iu.scipolicy.analysis.blondelcommunitydetection.TreeFileParsingException;
-import edu.iu.scipolicy.utilities.SetUtilities;
 
 public class Merger extends NWBFileWriter  {
 	public static final String BASE_COMMUNITY_LEVEL_ATTRIBUTE_NAME =

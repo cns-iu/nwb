@@ -4,11 +4,11 @@ import java.io.IOException;
 
 import org.cishell.framework.data.Data;
 import org.cishell.reference.service.metatype.BasicObjectClassDefinition;
+import org.cishell.utilities.MutateParameterUtilities;
 import org.osgi.service.metatype.AttributeDefinition;
 import org.osgi.service.metatype.ObjectClassDefinition;
 
 import prefuse.data.Table;
-import edu.iu.scipolicy.utilities.MutateParameterUtilities;
 import edu.iu.scipolicy.visualization.geomaps.scaling.ScalerFactory;
 
 public class GeoMapsRegionsFactory extends GeoMapsAlgorithmFactory {

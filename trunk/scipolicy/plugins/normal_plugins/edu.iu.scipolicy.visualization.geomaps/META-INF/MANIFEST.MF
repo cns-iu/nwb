@@ -5,7 +5,6 @@ Bundle-SymbolicName: edu.iu.scipolicy.visualization.geomaps
 Bundle-Version: 0.0.1
 Bundle-ClassPath: .
 Import-Package: com.vividsolutions.jts.geom,
- edu.iu.scipolicy.utilities,
  org.apache.commons.collections,
  org.apache.commons.collections.map,
  org.cishell.framework;version="1.0.0",
@@ -13,6 +12,7 @@ Import-Package: com.vividsolutions.jts.geom,
  org.cishell.framework.data;version="1.0.0",
  org.cishell.framework.userprefs;version="1.0.0",
  org.cishell.reference.service.metatype,
+ org.cishell.utilities,
  org.geotools.data,
  org.geotools.feature,
  org.geotools.geometry.jts,

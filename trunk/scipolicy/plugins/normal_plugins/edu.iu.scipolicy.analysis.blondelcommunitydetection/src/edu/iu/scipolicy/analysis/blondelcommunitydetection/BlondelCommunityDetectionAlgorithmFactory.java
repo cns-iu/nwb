@@ -11,6 +11,8 @@ import org.cishell.framework.algorithm.AlgorithmFactory;
 import org.cishell.framework.algorithm.ParameterMutator;
 import org.cishell.framework.data.Data;
 import org.cishell.reference.service.metatype.BasicObjectClassDefinition;
+import org.cishell.utilities.AlgorithmUtilities;
+import org.cishell.utilities.MutateParameterUtilities;
 import org.osgi.framework.BundleContext;
 import org.osgi.service.component.ComponentContext;
 import org.osgi.service.metatype.AttributeDefinition;
@@ -20,8 +22,6 @@ import edu.iu.nwb.util.nwbfile.GetNWBFileMetadata;
 import edu.iu.nwb.util.nwbfile.NWBFileParser;
 import edu.iu.nwb.util.nwbfile.NWBFileProperty;
 import edu.iu.nwb.util.nwbfile.ParsingException;
-import edu.iu.scipolicy.utilities.AlgorithmUtilities;
-import edu.iu.scipolicy.utilities.MutateParameterUtilities;
 
 public class BlondelCommunityDetectionAlgorithmFactory implements
 		AlgorithmFactory, ParameterMutator {
