@@ -1,9 +1,12 @@
 package edu.iu.scipolicy.utilities;
 
+import java.io.IOException;
 import java.util.LinkedHashMap;
 
 import org.cishell.reference.service.metatype.BasicAttributeDefinition;
+import org.cishell.reference.service.metatype.BasicObjectClassDefinition;
 import org.osgi.service.metatype.AttributeDefinition;
+import org.osgi.service.metatype.ObjectClassDefinition;
 
 import prefuse.data.Table;
 
@@ -99,5 +102,22 @@ public class MutateParameterUtilities {
 				validNumberKeysInMap);
 		
 		return numberAttributeDefinition;
+	}
+	
+	public static BasicObjectClassDefinition createNewParameters(
+			ObjectClassDefinition oldParameters) {
+		try {
+			return
+				new BasicObjectClassDefinition(oldParameters.getID(),
+											   oldParameters.getName(),
+											   oldParameters.getDescription(),
+											   oldParameters.getIcon(16));
+		}
+		catch (IOException e) {
+			return new BasicObjectClassDefinition
+				(oldParameters.getID(),
+				 oldParameters.getName(),
+				 oldParameters.getDescription(), null);
+		}
 	}
 }
