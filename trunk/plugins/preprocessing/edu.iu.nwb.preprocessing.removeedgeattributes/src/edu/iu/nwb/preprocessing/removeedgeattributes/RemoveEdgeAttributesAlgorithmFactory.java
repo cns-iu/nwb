@@ -14,6 +14,7 @@ import org.cishell.framework.algorithm.ParameterMutator;
 import org.cishell.framework.data.Data;
 import org.cishell.reference.service.metatype.BasicAttributeDefinition;
 import org.cishell.reference.service.metatype.BasicObjectClassDefinition;
+import org.cishell.utilities.MutateParameterUtilities;
 import org.osgi.service.log.LogService;
 import org.osgi.service.metatype.AttributeDefinition;
 import org.osgi.service.metatype.ObjectClassDefinition;
@@ -33,7 +34,10 @@ public class RemoveEdgeAttributesAlgorithmFactory implements AlgorithmFactory,
         return new RemoveEdgeAttributesAlgorithm(data, parameters, context);
     }
     
-	// TODO: Motivation for mutating parameters?
+	/* First, remove the dummy parameter.
+	 * Then create a boolean parameter for each removable attribute of the input
+	 * NWB file's edge schema.
+	 */
     public ObjectClassDefinition mutateParameters(
     		Data[] data,
     		ObjectClassDefinition oldParameters) {
@@ -43,9 +47,9 @@ public class RemoveEdgeAttributesAlgorithmFactory implements AlgorithmFactory,
     	
     		File nwbFile = (File) data[0].getData();
 		
-    		Collection removableAttributeKeys;
     		NWBEdgeAttributeReader reader = new NWBEdgeAttributeReader(nwbFile);
-    		removableAttributeKeys = reader.getRemovableAttributeKeys();
+    		Collection removableAttributeKeys =
+    			reader.getRemovableAttributeKeys();
     		
     		return addBooleanOptions(newParameters,
     								 removableAttributeKeys,
@@ -62,43 +66,10 @@ public class RemoveEdgeAttributesAlgorithmFactory implements AlgorithmFactory,
 		}
 	}
 
-	private ObjectClassDefinition addBooleanOptions(
-			ObjectClassDefinition oldOCD,
-			Collection removableAttributeKeys,
-			AttributeDescriptionCreator descriptionCreator) {
-		BasicObjectClassDefinition ocd = cloneOCD(oldOCD);
-		
-		AttributeDefinition[] ads =
-			oldOCD.getAttributeDefinitions(ObjectClassDefinition.ALL);
-		for(int ii = 0; ii < ads.length; ii++) {
-			ocd.addAttributeDefinition(ObjectClassDefinition.REQUIRED, ads[ii]);
-		}
-	
-		for(Iterator optionIt = removableAttributeKeys.iterator(); optionIt.hasNext(); ) {
-			String name = (String) optionIt.next();
-			AttributeDefinition ad = new BasicAttributeDefinition(
-												name,
-												name,
-												descriptionCreator.create(name),
-												AttributeDefinition.BOOLEAN);
-			ocd.addAttributeDefinition(ObjectClassDefinition.REQUIRED, ad);
-		}
-	
-		return ocd;
-	}
-	
-	private interface AttributeDescriptionCreator {
-		String create(String name);
-	}	
-	private class RemoveDescriptionCreator implements AttributeDescriptionCreator {
-		public String create(String name) {
-			return "Remove attribute " + name + "?";
-		}
-	}
-
 	private ObjectClassDefinition removeDummyParameter(
 										ObjectClassDefinition parameters) {
-		BasicObjectClassDefinition cleanedParameters = cloneOCD(parameters);
+		BasicObjectClassDefinition cleanedParameters =
+			MutateParameterUtilities.createNewParameters(parameters);
 		
 		AttributeDefinition[] ads = parameters.getAttributeDefinitions(
 													ObjectClassDefinition.ALL);
@@ -115,31 +86,46 @@ public class RemoveEdgeAttributesAlgorithmFactory implements AlgorithmFactory,
 		return cleanedParameters;
 	}
 
-	// TODO: Remove this and use the (org.cishell.utilities?)
-	// MutateParameterUtilites version.
-	private BasicObjectClassDefinition cloneOCD(ObjectClassDefinition ocd) {
-		BasicObjectClassDefinition clonedOCD;
-		try {
-			clonedOCD = new BasicObjectClassDefinition(
-													ocd.getID(),
-													ocd.getName(),
-													ocd.getDescription(),
-													ocd.getIcon(16));
-		}
-		catch(IOException e) {
-			clonedOCD = new BasicObjectClassDefinition(
-													ocd.getID(),
-													ocd.getName(),
-													ocd.getDescription(),
-													null);
-		}
+	private ObjectClassDefinition addBooleanOptions(
+			ObjectClassDefinition oldOCD,
+			Collection removableAttributeKeys,
+			AttributeDescriptionCreator descriptionCreator) {
+		BasicObjectClassDefinition ocd =
+			MutateParameterUtilities.createNewParameters(oldOCD);
 		
-		return clonedOCD;
+		AttributeDefinition[] ads =
+			oldOCD.getAttributeDefinitions(ObjectClassDefinition.ALL);
+		for(int ii = 0; ii < ads.length; ii++) {
+			ocd.addAttributeDefinition(ObjectClassDefinition.REQUIRED, ads[ii]);
+		}
+	
+		for(Iterator optionIt = removableAttributeKeys.iterator();
+				optionIt.hasNext(); ) {
+			String name = (String) optionIt.next();
+			AttributeDefinition ad = new BasicAttributeDefinition(
+												name,
+												name,
+												descriptionCreator.create(name),
+												AttributeDefinition.BOOLEAN);
+			ocd.addAttributeDefinition(ObjectClassDefinition.REQUIRED, ad);
+		}
+	
+		return ocd;
 	}
-
+	
 	private void logWarning(Exception e) {
 		RemoveEdgeAttributesAlgorithm.logger.log(
 							LogService.LOG_WARNING,
 							"Exception while reading edge attributes:" + e);
+	}
+
+	private interface AttributeDescriptionCreator {
+		String create(String name);
+	}
+	private class RemoveDescriptionCreator
+			implements AttributeDescriptionCreator {
+		public String create(String name) {
+			return "Remove attribute " + name + "?";
+		}
 	}
 }

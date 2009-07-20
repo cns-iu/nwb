@@ -17,7 +17,6 @@ import org.cishell.framework.data.DataProperty;
 import org.cishell.utilities.StringUtilities;
 import org.osgi.service.log.LogService;
 
-import edu.iu.nwb.util.nwbfile.NWBFileParser;
 import edu.iu.nwb.util.nwbfile.NWBFileProperty;
 import edu.iu.nwb.util.nwbfile.NWBFileUtilities;
 import edu.iu.nwb.util.nwbfile.ParsingException;
@@ -30,11 +29,12 @@ import edu.iu.nwb.util.nwbfile.ParsingException;
  * the node and edge schemas to implement Map.  It will also simplify the
  * user interface.
  * 
- * No guarantees are made for when the input file contains such duplicates.
+ * No guarantees are made when the input file contains such duplicates.
  */
 
 public class RemoveEdgeAttributesAlgorithm implements Algorithm {
-    public static final String OUT_DATA_LABEL =
+    public static final String REMOVED_ATTRIBUTES_LIST_SEPARATOR = ", ";
+	public static final String OUT_DATA_LABEL =
     	"With select edge attributes removed";
 	private Data[] data;
 	private Dictionary parameters;
@@ -55,28 +55,16 @@ public class RemoveEdgeAttributesAlgorithm implements Algorithm {
 	public Data[] execute() throws AlgorithmExecutionException {    	
     	try {
 			File inputNWBFile = (File) data[0].getData();
-			File outputNWBFile = NWBFileUtilities.createTemporaryNWBFile();//File.createTempFile("nwb-", ".nwb");
+			File outputNWBFile = NWBFileUtilities.createTemporaryNWBFile();
 			
-			NWBEdgeAttributeReader attributeReader =
-									new NWBEdgeAttributeReader(inputNWBFile);
-			Collection removableKeys = attributeReader.getRemovableAttributeKeys();
+			List keysToRemove = findKeysToRemove(inputNWBFile);
 			
-			List selectedKeys = getSelectedKeys(removableKeys, parameters);
-			
-			NWBFileParser parser = new NWBFileParser(inputNWBFile);
 			EdgeAttributeFilteringWriter filteringWriter =
-				new EdgeAttributeFilteringWriter(outputNWBFile, selectedKeys);
-			parser.parse(filteringWriter);
+				new EdgeAttributeFilteringWriter(outputNWBFile, keysToRemove);
+			NWBFileUtilities.parseNWBFileWithHandler(inputNWBFile,
+													 filteringWriter);
 			
-			if ( selectedKeys.isEmpty() ) {
-				logger.log(LogService.LOG_INFO, "No edge attributes removed.");
-			}
-			else {
-				logger.log(LogService.LOG_INFO,
-					"Removed edge attributes named: "
-					+ StringUtilities.implodeStringArray((String[]) selectedKeys.toArray(new String[0]), ", ")
-					+ ".");
-			}
+			logRemovedAttributes(keysToRemove);
 			
 			return createOutData(outputNWBFile);
     	}
@@ -86,6 +74,36 @@ public class RemoveEdgeAttributesAlgorithm implements Algorithm {
     		throw new AlgorithmExecutionException(e);
 		}
     }
+
+	/* Determine keys for edge attributes which can be
+	 * and have been requested to be removed.
+	 */
+	private List findKeysToRemove(File inputNWBFile)
+			throws AlgorithmExecutionException, IOException, ParsingException {
+		NWBEdgeAttributeReader attributeReader =
+			new NWBEdgeAttributeReader(inputNWBFile);
+		Collection removableKeys =
+			attributeReader.getRemovableAttributeKeys();			
+		return getSelectedKeys(removableKeys, parameters);
+	}
+
+
+	private void logRemovedAttributes(List removedKeys) {
+		if ( removedKeys.isEmpty() ) {
+			logger.log(LogService.LOG_INFO, "No edge attributes removed.");
+		}
+		else {
+			String[] removedKeyArray =
+				(String[]) removedKeys.toArray(new String[0]);
+			String removedKeyString =
+				StringUtilities.implodeStringArray(
+					removedKeyArray,
+					REMOVED_ATTRIBUTES_LIST_SEPARATOR);
+			
+			logger.log(LogService.LOG_INFO,
+				"Removed edge attributes named: " + removedKeyString + ".");
+		}
+	}
 	
 	private List getSelectedKeys(Collection removableKeys, Dictionary parameters)
 			throws AlgorithmExecutionException {

@@ -55,7 +55,10 @@ public class EdgeAttributeFilteringWriter extends NWBFileWriter {
 			String attributeType = (String) attribute.getValue();
 			
 			if (keysToRemove.contains(attributeKey)) {
-				// Do nothing
+				/* Do nothing -- we are removing the edge attribute with this
+				 * key by excluding it from attributes so that it will not be
+				 * printed.
+				 */
 			}
 			else {
 				newSchema.put(attributeKey, attributeType);
