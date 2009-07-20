@@ -22,49 +22,45 @@ public class EdgeAttributeFilteringWriter extends NWBFileWriter {
 	
 	
 	public void setDirectedEdgeSchema(LinkedHashMap schema) {
-		LinkedHashMap newSchema = filterAttributes(schema, keysToRemove);
+		LinkedHashMap newSchema = subtractKeysFromMap(keysToRemove, schema);
 		super.setDirectedEdgeSchema(newSchema);
 	}
 	
 	public void setUndirectedEdgeSchema(LinkedHashMap schema) {
-		LinkedHashMap newSchema = filterAttributes(schema, keysToRemove);
+		LinkedHashMap newSchema = subtractKeysFromMap(keysToRemove, schema);
 		super.setUndirectedEdgeSchema(newSchema);
 	}
 
 	public void addDirectedEdge(int sourceNode,
 								int targetNode,
 								Map attributes) {
-		LinkedHashMap newSchema = filterAttributes(attributes, keysToRemove);		
+		LinkedHashMap newSchema = subtractKeysFromMap(keysToRemove, attributes);		
 		super.addDirectedEdge(sourceNode, targetNode, newSchema);
 	}
 	
 	public void addUndirectedEdge(int sourceNode,
 									int targetNode,
 									Map attributes) {
-		LinkedHashMap newSchema = filterAttributes(attributes, keysToRemove);		
+		LinkedHashMap newSchema = subtractKeysFromMap(keysToRemove, attributes);		
 		super.addUndirectedEdge(sourceNode, targetNode, newSchema);
 	}
 
-	private LinkedHashMap filterAttributes(Map attributes, List keysToRemove) {
-		LinkedHashMap newSchema = new LinkedHashMap();
+	private LinkedHashMap subtractKeysFromMap(List keysToRemove, Map oldMap) {
+		LinkedHashMap map = new LinkedHashMap();
 		
-		for (Iterator attributeIt = attributes.entrySet().iterator();
-				attributeIt.hasNext(); ) {
-			Entry attribute = (Entry) attributeIt.next();
-			String attributeKey = (String) attribute.getKey();
-			String attributeType = (String) attribute.getValue();
-			
-			if (keysToRemove.contains(attributeKey)) {
-				/* Do nothing -- we are removing the edge attribute with this
-				 * key by excluding it from attributes so that it will not be
-				 * printed.
-				 */
+		for (Iterator entryIt = oldMap.entrySet().iterator();
+				entryIt.hasNext(); ) {
+			Entry entry = (Entry) entryIt.next();
+			String key = (String) entry.getKey();
+
+			if (keysToRemove.contains(key)) {
+				// Do nothing
 			}
 			else {
-				newSchema.put(attributeKey, attributeType);
+				map.put(key, entry.getValue());
 			}
 		}
 		
-		return newSchema;
+		return map;
 	}
 }
