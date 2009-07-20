@@ -2,9 +2,7 @@ package edu.iu.nwb.util.nwbfile;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.Collections;
 import java.util.LinkedHashMap;
-import java.util.Map;
 
 import org.cishell.utilities.FileUtilities;
 
@@ -19,20 +17,6 @@ public class NWBFileUtilities {
 		NWBFileProperty.ATTRIBUTE_SOURCE,
 		NWBFileProperty.ATTRIBUTE_TARGET
 	};
-	
-	public static Map NECESSARY_EDGE_ATTRIBUTES;
-	static {
-		/* It's very important that the implementation is LinkedHashMap,
-		 * as this preserves key order according to insertion order.
-		 * An unordered map could violate the schema specification that
-		 * ATTRIBUTE_SOURCE must come before ATTRIBUTE_TARGET.
-		 * By the same reasoning, you must not re-order the insertions below.
-		 */
-		Map m = new LinkedHashMap();
-		m.put(NWBFileProperty.ATTRIBUTE_SOURCE, NWBFileProperty.TYPE_INT);
-		m.put(NWBFileProperty.ATTRIBUTE_TARGET, NWBFileProperty.TYPE_INT);
-		NECESSARY_EDGE_ATTRIBUTES = Collections.unmodifiableMap(m);
-	}
 	
 	/*
 	 * This creates an NWBFileParser with nwbFile and passes in handler when
