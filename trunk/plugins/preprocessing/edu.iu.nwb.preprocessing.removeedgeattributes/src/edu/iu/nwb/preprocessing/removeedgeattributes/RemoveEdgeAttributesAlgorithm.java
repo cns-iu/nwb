@@ -3,6 +3,7 @@ package edu.iu.nwb.preprocessing.removeedgeattributes;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Dictionary;
 import java.util.Iterator;
 import java.util.List;
@@ -13,10 +14,12 @@ import org.cishell.framework.algorithm.AlgorithmExecutionException;
 import org.cishell.framework.data.BasicData;
 import org.cishell.framework.data.Data;
 import org.cishell.framework.data.DataProperty;
+import org.cishell.utilities.StringUtilities;
 import org.osgi.service.log.LogService;
 
 import edu.iu.nwb.util.nwbfile.NWBFileParser;
 import edu.iu.nwb.util.nwbfile.NWBFileProperty;
+import edu.iu.nwb.util.nwbfile.NWBFileUtilities;
 import edu.iu.nwb.util.nwbfile.ParsingException;
 
 /* This code assumes the input file's edge table will not contain duplicate
@@ -52,12 +55,11 @@ public class RemoveEdgeAttributesAlgorithm implements Algorithm {
 	public Data[] execute() throws AlgorithmExecutionException {    	
     	try {
 			File inputNWBFile = (File) data[0].getData();
-			// TODO: Use NWBFileUtilities blah blah.
-			File outputNWBFile = File.createTempFile("nwb-", ".nwb");
+			File outputNWBFile = NWBFileUtilities.createTemporaryNWBFile();//File.createTempFile("nwb-", ".nwb");
 			
 			NWBEdgeAttributeReader attributeReader =
 									new NWBEdgeAttributeReader(inputNWBFile);
-			List removableKeys = attributeReader.getRemovableAttributeKeys();
+			Collection removableKeys = attributeReader.getRemovableAttributeKeys();
 			
 			List selectedKeys = getSelectedKeys(removableKeys, parameters);
 			
@@ -72,7 +74,7 @@ public class RemoveEdgeAttributesAlgorithm implements Algorithm {
 			else {
 				logger.log(LogService.LOG_INFO,
 					"Removed edge attributes named: "
-					+ createCommaSeparatedString(selectedKeys)
+					+ StringUtilities.implodeStringArray((String[]) selectedKeys.toArray(new String[0]), ", ")
 					+ ".");
 			}
 			
@@ -85,7 +87,7 @@ public class RemoveEdgeAttributesAlgorithm implements Algorithm {
 		}
     }
 	
-	private List getSelectedKeys(List removableKeys, Dictionary parameters)
+	private List getSelectedKeys(Collection removableKeys, Dictionary parameters)
 			throws AlgorithmExecutionException {
 		List selectedKeys = new ArrayList();
 		
@@ -107,25 +109,6 @@ public class RemoveEdgeAttributesAlgorithm implements Algorithm {
 		}
 		
 		return selectedKeys;
-	}
-
-
-	private String createCommaSeparatedString(List list) {
-		String s = "";
-		
-		Iterator listIt = list.iterator();		
-		if ( listIt.hasNext() ) {
-			Object first = listIt.next();
-			s += first;
-			
-			while ( listIt.hasNext() ) {
-				Object o = listIt.next();
-				s += ", ";
-				s += o;
-			}
-		}
-		
-		return s;
 	}
 
 	private Data[] createOutData(File outputNWBFile) {

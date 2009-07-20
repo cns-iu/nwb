@@ -2,9 +2,9 @@ package edu.iu.nwb.preprocessing.removeedgeattributes;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.Collection;
 import java.util.Dictionary;
 import java.util.Iterator;
-import java.util.List;
 
 import org.cishell.framework.CIShellContext;
 import org.cishell.framework.algorithm.Algorithm;
@@ -43,7 +43,7 @@ public class RemoveEdgeAttributesAlgorithmFactory implements AlgorithmFactory,
     	
     		File nwbFile = (File) data[0].getData();
 		
-    		List removableAttributeKeys;
+    		Collection removableAttributeKeys;
     		NWBEdgeAttributeReader reader = new NWBEdgeAttributeReader(nwbFile);
     		removableAttributeKeys = reader.getRemovableAttributeKeys();
     		
@@ -64,7 +64,7 @@ public class RemoveEdgeAttributesAlgorithmFactory implements AlgorithmFactory,
 
 	private ObjectClassDefinition addBooleanOptions(
 			ObjectClassDefinition oldOCD,
-			List options,
+			Collection removableAttributeKeys,
 			AttributeDescriptionCreator descriptionCreator) {
 		BasicObjectClassDefinition ocd = cloneOCD(oldOCD);
 		
@@ -74,7 +74,7 @@ public class RemoveEdgeAttributesAlgorithmFactory implements AlgorithmFactory,
 			ocd.addAttributeDefinition(ObjectClassDefinition.REQUIRED, ads[ii]);
 		}
 	
-		for(Iterator optionIt = options.iterator(); optionIt.hasNext(); ) {
+		for(Iterator optionIt = removableAttributeKeys.iterator(); optionIt.hasNext(); ) {
 			String name = (String) optionIt.next();
 			AttributeDefinition ad = new BasicAttributeDefinition(
 												name,
