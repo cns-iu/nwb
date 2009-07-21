@@ -21,6 +21,7 @@
   	-->
 
   	<!-- CIShell plugins -->
+  	
   	<antcall target="svn.co">
   	  	      <param name="target" value="plugins"/>
   	  	      <param name="element.id" value="org.cishell.utilities"/>
@@ -197,6 +198,15 @@
     </antcall>
   	
   	<!-- NWB Plugins -->
+  	
+  	
+    <antcall target="svn.co">
+        <param name="target" value="features"/>
+        <param name="element.id" value="edu.iu.nwb.gui.brand.welcometext"/>
+        <param name="project.name" value="/deployment/edu.iu.nwb.gui.brand.welcometext"/>
+        <param name="url" value="http://nwb.slis.indiana.edu/svn/nwb/trunk"/>
+      </antcall>
+  	
     <antcall target="svn.co">
       <param name="target" value="features"/>
       <param name="element.id" value="edu.iu.nwb.converter.feature"/>
