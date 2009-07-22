@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<component name="edu.iu.nwb.converter.edgelist.EdgeListToNWBFactory.component" immediate="false">
-	<implementation class="edu.iu.nwb.converter.edgelist.EdgeListToNWBFactory"/>
+<component name="edu.iu.nwb.converter.edgelist.conversion.EdgeListToNWBAlgorithmFactory.component" immediate="false">
+	<implementation class="edu.iu.nwb.converter.edgelist.conversion.EdgeListToNWBAlgorithmFactory"/>
 	<properties entry="OSGI-INF/edgelisttonwb.properties"/>
 	<reference name="LOG" interface="org.osgi.service.log.LogService"/>
 	<reference name="MTS" interface="org.osgi.service.metatype.MetaTypeService"/>
