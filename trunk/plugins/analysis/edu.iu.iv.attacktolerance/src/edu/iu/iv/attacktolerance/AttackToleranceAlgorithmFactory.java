@@ -10,7 +10,6 @@ import org.cishell.framework.data.Data;
 
 public class AttackToleranceAlgorithmFactory implements AlgorithmFactory {
 
-
     public Algorithm createAlgorithm(Data[] data, Dictionary parameters, CIShellContext context) {
         return new AttackToleranceAlgorithm(data, parameters, context);
     }

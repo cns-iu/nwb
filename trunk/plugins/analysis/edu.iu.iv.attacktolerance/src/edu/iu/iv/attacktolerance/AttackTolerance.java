@@ -8,34 +8,35 @@ import edu.uci.ics.jung.graph.Graph;
 import edu.uci.ics.jung.graph.Vertex;
 
 /**
- * Perform Attack Tolerance Test on the network graph. Randomly deletes nodes in the graph.
- * @author Hardik Sheth (hsheth@indiana.edu)
-*/
+ * Perform an Attack Tolerance test on a graph. 
+ */
 public class AttackTolerance {
 	/**
-	 * Perform attack tolerance test on the graph.
-	 * @return true when test done.
+	 * Perform an attack tolerance test on the graph.
+	 * 
+	 * @return a Graph with 'numNodesToDelete' of its highest degree nodes 
+	 * deleted. Edges associated with deleted nodes will be removed as well.
 	 */
-	public static Graph testAttackTolerance(final Graph graph, int numberOfDeletedNodes) {
-		int cnt = 0;
-		Graph attackGraph = (Graph) graph.copy();
+	public static Graph testAttackTolerance(final Graph graph,
+			int numNodesToDelete) {
 		
-		DegreeDistributionRanker ranker = new DegreeDistributionRanker(attackGraph);
-		ranker.evaluate();
+		Graph graphToAttack = (Graph) graph.copy();
 		
-		Iterator nodeRankingList = ranker.getRankings().iterator();
+		DegreeDistributionRanker rankByDegree = 
+			new DegreeDistributionRanker(graphToAttack);
+		rankByDegree.evaluate();
 		
-		while (cnt < numberOfDeletedNodes && nodeRankingList.hasNext()) {
-			/* Select a highly-connected node. Deletes all its edges and then delete the node. */	
-			Vertex v = ((NodeRanking)nodeRankingList.next()).vertex;
+		Iterator nodesByDegree = rankByDegree.getRankings().iterator();
+		for (int numNodesDeleted = 0;
+			 numNodesDeleted < numNodesToDelete && nodesByDegree.hasNext();
+			 numNodesDeleted++) {
+			
+			Vertex v = ((NodeRanking) nodesByDegree.next()).vertex;
             
-			attackGraph.removeVertex(v);
-						
-			/* Increment count if node deleted from the graph */
-			cnt++;
+			graphToAttack.removeVertex(v);
 		}
 		
-		return attackGraph;
-	} // end of testAttackTolerance
+		return graphToAttack;
+	}
 	
 }
