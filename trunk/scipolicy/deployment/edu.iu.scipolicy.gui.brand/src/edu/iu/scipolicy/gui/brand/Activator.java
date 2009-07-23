@@ -80,7 +80,7 @@ public class Activator extends AbstractUIPlugin implements IStartup{
                 alreadyLogged = true;
                 
                 LogService logger = (LogService)bContext.getService(ref);
-                logger.log(LogService.LOG_INFO, greeting);
+                // logger.log(LogService.LOG_INFO, greeting);
             }
         }
         
