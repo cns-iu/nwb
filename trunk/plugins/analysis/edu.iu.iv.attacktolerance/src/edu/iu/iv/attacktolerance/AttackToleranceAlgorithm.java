@@ -11,6 +11,7 @@ import org.cishell.framework.data.DataProperty;
 import edu.uci.ics.jung.graph.Graph;
 
 public class AttackToleranceAlgorithm implements Algorithm {
+	
 	private Data[] data;
 	private int numNodesToDelete;
 

@@ -7,9 +7,6 @@ import edu.uci.ics.jung.algorithms.importance.NodeRanking;
 import edu.uci.ics.jung.graph.Graph;
 import edu.uci.ics.jung.graph.Vertex;
 
-/**
- * Perform an Attack Tolerance test on a graph. 
- */
 public class AttackTolerance {
 	/**
 	 * Perform an attack tolerance test on the graph.
