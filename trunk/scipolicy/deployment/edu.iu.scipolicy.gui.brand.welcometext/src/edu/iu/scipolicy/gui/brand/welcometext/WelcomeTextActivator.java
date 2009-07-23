@@ -43,16 +43,6 @@ public class WelcomeTextActivator {
         		(LogService)componentContext.locateService("LOG");
         	
         	logService.log(LogService.LOG_INFO, greeting);
-        	
-        	try {
-        	FileWriter fstream = new FileWriter("C:/Documents and Settings/pataphil/Desktop/out.txt");
-        	BufferedWriter out = new BufferedWriter(fstream);
-        	out.write(greeting);
-        	out.close();
-        	}
-        	catch (Exception e) {
-        	System.err.println("Error: " + e.getMessage());
-        	}
 		}
 	}
 	
