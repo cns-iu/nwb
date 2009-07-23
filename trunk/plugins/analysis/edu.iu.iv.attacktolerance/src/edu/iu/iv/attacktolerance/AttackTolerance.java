@@ -8,32 +8,30 @@ import edu.uci.ics.jung.graph.Graph;
 import edu.uci.ics.jung.graph.Vertex;
 
 public class AttackTolerance {
+
 	/**
 	 * Perform an attack tolerance test on the graph.
 	 * 
-	 * @return a Graph with 'numNodesToDelete' of its highest degree nodes 
-	 * deleted. Edges associated with deleted nodes will be removed as well.
+	 * @return a Graph with 'numNodesToDelete' of its highest degree nodes deleted. 
+	 * Edges associated with deleted nodes will be removed as well.
 	 */
-	public static Graph testAttackTolerance(final Graph graph,
-			int numNodesToDelete) {
-		
+	public static Graph testAttackTolerance(final Graph graph, int numNodesToDelete) {
+
 		Graph graphToAttack = (Graph) graph.copy();
-		
-		DegreeDistributionRanker rankByDegree = 
-			new DegreeDistributionRanker(graphToAttack);
+
+		DegreeDistributionRanker rankByDegree = new DegreeDistributionRanker(graphToAttack);
 		rankByDegree.evaluate();
-		
+
 		Iterator nodesByDegree = rankByDegree.getRankings().iterator();
 		for (int numNodesDeleted = 0;
-			 numNodesDeleted < numNodesToDelete && nodesByDegree.hasNext();
-			 numNodesDeleted++) {
-			
+			numNodesDeleted < numNodesToDelete && nodesByDegree.hasNext();
+			numNodesDeleted++) {
+
 			Vertex v = ((NodeRanking) nodesByDegree.next()).vertex;
-            
+
 			graphToAttack.removeVertex(v);
 		}
-		
+
 		return graphToAttack;
 	}
-	
 }
