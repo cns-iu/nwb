@@ -66,7 +66,7 @@ public class VxOrdAlgorithm implements Algorithm {
     		boolean shouldNotCutEdges =
     			((Boolean) parameters.get(SHOULD_NOT_CUT_EDGES_ID)).booleanValue();
     		if ( shouldNotCutEdges ) {
-    			parameters.put(EDGE_CUT_ATTRIBUTE_ID, NO_CUT_EDGE_CUT_STRENGTH);
+    			parameters.put(EDGE_CUT_ATTRIBUTE_ID, new Double(NO_CUT_EDGE_CUT_STRENGTH));
     		}
     		
     		// Translate inputNWBFile to a SIM file to give DrL
