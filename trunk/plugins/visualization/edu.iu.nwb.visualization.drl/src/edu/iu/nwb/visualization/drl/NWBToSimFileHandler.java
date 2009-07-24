@@ -2,34 +2,40 @@ package edu.iu.nwb.visualization.drl;
 
 import java.io.OutputStream;
 import java.io.PrintWriter;
-import java.util.LinkedHashMap;
 import java.util.Map;
 
 import edu.iu.nwb.util.nwbfile.NWBFileParserAdapter;
-import edu.iu.nwb.util.nwbfile.NWBFileProperty;
 
 public class NWBToSimFileHandler extends NWBFileParserAdapter {
-	private PrintWriter out;
+	private static final double DEFAULT_EDGE_WEIGHT = 1.0;
+	
+	private boolean useEdgeWeight;
 	private String weightAttribute;
+	private PrintWriter out;
 	
-	public NWBToSimFileHandler(String weightAttribute, OutputStream output) {
+	public NWBToSimFileHandler(boolean useEdgeWeight,
+							   String weightAttribute,
+							   OutputStream output) {
+		this.useEdgeWeight = useEdgeWeight;
 		this.weightAttribute = weightAttribute;
-		out = new PrintWriter(output);
+		this.out = new PrintWriter(output);
 	}
 	
-	public void setUndirectedEdgeSchema(LinkedHashMap schema) {
-		if (!schema.containsKey(weightAttribute)) {			
-			throw new RuntimeException("Weight attribute: "+weightAttribute+" is not in the edge schema!");
-		} else if(schema.get(weightAttribute).equals(NWBFileProperty.TYPE_STRING)) {
-			throw new RuntimeException("Weight attribute: "+weightAttribute+" is not a numerical attribute!");
+	public void addUndirectedEdge(int source, int target, Map attributes) {
+		if (useEdgeWeight) {
+			if (attributes.containsKey(weightAttribute)) {
+				out.println(createEdgeLine(source,
+										   target,
+										   attributes.get(weightAttribute)));
+			}
+		}
+		else {
+			out.println(createEdgeLine(source, target, ""+DEFAULT_EDGE_WEIGHT));
 		}
 	}
 	
-	public void addUndirectedEdge(int node1, int node2, Map attributes) {
-		//ignore nodes without the weight attribute
-		if (attributes.containsKey(weightAttribute)) {
-			out.println(node1+"\t"+node2+"\t"+attributes.get(weightAttribute)+"\n");
-		}
+	private String createEdgeLine(int source, int target, Object weight) {
+		return (source + "\t" + target + "\t" + weight + "\n");
 	}
 	
 	public void finishedParsing() {

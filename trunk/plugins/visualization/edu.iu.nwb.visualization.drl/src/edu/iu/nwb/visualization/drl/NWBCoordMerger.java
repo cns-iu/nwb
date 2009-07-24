@@ -33,7 +33,11 @@ public class NWBCoordMerger implements NWBFileParserHandler {
 	private OpenIntDoubleHashMap idToXMap;
 	private OpenIntDoubleHashMap idToYMap;
 	
-	public NWBCoordMerger(File coordFile,File srcNWBFile,String xpos,String ypos,File outputNWBFile) throws IOException {
+	public NWBCoordMerger(File coordFile,
+						  File srcNWBFile,
+						  String xpos,
+						  String ypos,
+						  File outputNWBFile) throws IOException {
 		this.xpos = xpos;
 		this.ypos = ypos;
 		this.coordFile = coordFile;
@@ -55,7 +59,9 @@ public class NWBCoordMerger implements NWBFileParserHandler {
 			idToYMap.ensureCapacity(numNodes);
 		}
 		
-		BufferedReader in = new BufferedReader(new InputStreamReader(new FileInputStream(coordFile),"UTF-8"));
+		BufferedReader in = new BufferedReader(
+								new InputStreamReader(
+									new FileInputStream(coordFile), "UTF-8"));
 		
 		String line = in.readLine();
 		while (line != null) {

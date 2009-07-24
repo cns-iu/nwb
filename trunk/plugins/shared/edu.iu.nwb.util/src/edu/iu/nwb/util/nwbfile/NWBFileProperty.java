@@ -1,7 +1,9 @@
 package edu.iu.nwb.util.nwbfile;
 
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.LinkedHashMap;
+import java.util.List;
 
 public class NWBFileProperty {
 	public static final String PRESERVED_STAR = "*";
@@ -19,6 +21,13 @@ public class NWBFileProperty {
     public static final String TYPE_STRING = "string";
     public static final String TYPE_FLOAT = "float";  
     public static final String TYPE_REAL = "real";
+    
+    public static final List NUMERIC_ATTRIBUTE_TYPES =
+    	Arrays.asList(new String[]{ 
+    		TYPE_INT,
+    		TYPE_FLOAT,
+    		TYPE_REAL
+    	});
      
 //    public static final String HEADER_NODE_ATTRIBUTES = "*NodeAttributes";
 //    public static final String HEADER_EDGE_ATTRIBUTES = "*EdgeAttributes";
