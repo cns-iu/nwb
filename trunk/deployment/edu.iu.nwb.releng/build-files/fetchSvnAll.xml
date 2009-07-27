@@ -210,28 +210,28 @@
   	  	        <param name="target" value="plugins"/>
   	  	        <param name="element.id" value="edu.iu.nwb.analysis.pagerank.weighted"/>
   	  	        <param name="project.name" value="/analysis/edu.iu.nwb.analysis.pagerank.weighted"/>
-  	  	        <param name="url" value="http://nwb.slis.indiana.edu/svn/nwb/trunk"/>
+  	  	        <param name="url" value="http://nwb.slis.indiana.edu/svn/nwb/trunk/plugins"/>
   	  	</antcall>
 		
   	<antcall target="svn.co">
   	  	        <param name="target" value="plugins"/>
   	  	        <param name="element.id" value="edu.iu.nwb.analysis.hits"/>
   	  	        <param name="project.name" value="/analysis/edu.iu.nwb.analysis.hits"/>
-  	  	        <param name="url" value="http://nwb.slis.indiana.edu/svn/nwb/trunk"/>
+  	  	        <param name="url" value="http://nwb.slis.indiana.edu/svn/nwb/trunk/plugins"/>
   	  	</antcall>
   	
 	<antcall target="svn.co">
   	        <param name="target" value="plugins"/>
   	        <param name="element.id" value="edu.iu.nwb.visualization.roundrussell"/>
   	        <param name="project.name" value="/visualization/edu.iu.nwb.visualization.roundrussell"/>
-  	        <param name="url" value="http://nwb.slis.indiana.edu/svn/nwb/trunk"/>
+  	        <param name="url" value="http://nwb.slis.indiana.edu/svn/nwb/trunk/plugins"/>
   	</antcall>
 		
   	<antcall target="svn.co">
   	        <param name="target" value="plugins"/>
   	        <param name="element.id" value="edu.iu.nwb.preprocessing.removeedgeattributes"/>
   	        <param name="project.name" value="/preprocessing/edu.iu.nwb.preprocessing.removeedgeattributes"/>
-  	        <param name="url" value="http://nwb.slis.indiana.edu/svn/nwb/trunk"/>
+  	        <param name="url" value="http://nwb.slis.indiana.edu/svn/nwb/trunk/plugins"/>
   	</antcall>
   	
     <antcall target="svn.co">
