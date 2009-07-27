@@ -130,7 +130,9 @@
 		<menu pid="edu.iu.iv.search.p2p.chord.ChordSearchAlgorithm"/> 
 		<menu pid="edu.iu.iv.search.p2p.randomwalk.RandomWalkAlgorithm"/> 
 		<menu pid="edu.iu.iv.search.p2p.bfs.BreadthFirstSearchAlgorithm"/> 
-    </menu>	
+    </menu>
+	<menu type="break"/>
+ 	<menu pid="edu.iu.nwb.analysis.blondelcommunitydetection.BlondelCommunityDetectionAlgorithm"/>
     </top_menu>
     
     <top_menu name="Visualization">
