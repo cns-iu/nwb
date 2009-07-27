@@ -1,4 +1,4 @@
-package edu.iu.scipolicy.analysis.blondelcommunitydetection.nwbfileparserhandlers.nwb_to_bin;
+package edu.iu.nwb.analysis.blondelcommunitydetection.nwbfileparserhandlers.nwb_to_bin;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -7,9 +7,9 @@ import java.io.RandomAccessFile;
 import java.util.ArrayList;
 import java.util.Map;
 
+import edu.iu.nwb.analysis.blondelcommunitydetection.NetworkInfo;
+import edu.iu.nwb.analysis.blondelcommunitydetection.Node;
 import edu.iu.nwb.util.nwbfile.NWBFileParserAdapter;
-import edu.iu.scipolicy.analysis.blondelcommunitydetection.NetworkInfo;
-import edu.iu.scipolicy.analysis.blondelcommunitydetection.Node;
 
 public class Converter extends NWBFileParserAdapter {
 	private static final String NON_POSITIVE_WEIGHT_HALT_REASON =
@@ -37,15 +37,13 @@ public class Converter extends NWBFileParserAdapter {
 		
 		try {
 			this.outputBINFile = new RandomAccessFile(outputFile, "rw");
-		}
-		catch (FileNotFoundException fileNotFoundException) {
+		} catch (FileNotFoundException fileNotFoundException) {
 			throw new RuntimeException(fileNotFoundException);
 		}
 		
 		try {
 			this.createBINFile();
-		}
-		catch (IOException ioException) {
+		} catch (IOException ioException) {
 			throw new RuntimeException(ioException);
 		}
 	}
@@ -74,16 +72,14 @@ public class Converter extends NWBFileParserAdapter {
 		
 		if (this.isWeighted) {
 			weight = ((Number)attributes.get(this.weightAttribute)).intValue();
-		}
-		else {
+		} else {
 			weight = 1;
 		}
 		
 		if (weight < 0.0) {
 			this.haltParsingReason = NON_POSITIVE_WEIGHT_HALT_REASON;
 			this.shouldHaltParsing = true;
-		}
-		else {
+		} else {
 			Node sourceNode =
 				this.networkInfo.findNodeByOriginalID(sourceNodeID);
 			Node targetNode =
@@ -92,8 +88,7 @@ public class Converter extends NWBFileParserAdapter {
 			try {
 				this.writeEdgeAndWeightForNode(sourceNode, targetNode, weight);
 				this.writeEdgeAndWeightForNode(targetNode, sourceNode, weight);
-			}
-			catch (IOException ioException) {
+			} catch (IOException ioException) {
 				throw new RuntimeException(ioException);
 			}
 		}

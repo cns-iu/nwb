@@ -1,4 +1,4 @@
-package edu.iu.scipolicy.analysis.blondelcommunitydetection.nwbfileparserhandlers.tree_to_nwb;
+package edu.iu.nwb.analysis.blondelcommunitydetection.nwbfileparserhandlers.tree_to_nwb;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -11,11 +11,11 @@ import java.util.Scanner;
 
 import org.cishell.utilities.SetUtilities;
 
+import edu.iu.nwb.analysis.blondelcommunitydetection.NetworkInfo;
+import edu.iu.nwb.analysis.blondelcommunitydetection.Node;
+import edu.iu.nwb.analysis.blondelcommunitydetection.TreeFileParsingException;
 import edu.iu.nwb.util.nwbfile.NWBFileProperty;
 import edu.iu.nwb.util.nwbfile.NWBFileWriter;
-import edu.iu.scipolicy.analysis.blondelcommunitydetection.NetworkInfo;
-import edu.iu.scipolicy.analysis.blondelcommunitydetection.Node;
-import edu.iu.scipolicy.analysis.blondelcommunitydetection.TreeFileParsingException;
 
 public class Merger extends NWBFileWriter  {
 	public static final String BASE_COMMUNITY_LEVEL_ATTRIBUTE_NAME =
@@ -53,10 +53,11 @@ public class Merger extends NWBFileWriter  {
 				annotatedAttributes.put(communityLevelAttributeName,
 										communityName);
 			}
-		}
-		// Isolate nodes would not have been added to our nodes list.
-		else {
-			for (int ii = 0; ii < this.networkInfo.getMaxCommunityLevel(); ii++) {
+		} else {
+			// Isolate nodes would not have been added to our nodes list.
+			for (int ii = 0;
+					ii < this.networkInfo.getMaxCommunityLevel();
+					ii++) {
 				String communityLevelAttributeName =
 					BASE_COMMUNITY_LEVEL_ATTRIBUTE_NAME + ii;
 				String communityName = BASE_ISOLATE_LABEL + this.isolateCount;
@@ -92,8 +93,7 @@ public class Merger extends NWBFileWriter  {
 		while (shouldKeepReading) {
 			if (!this.checkForAnotherEntry(treeFileScanner)) {
 				shouldKeepReading = false;
-			}
-			else {
+			} else {
 				Integer nodeID = this.readNextNodeID(treeFileScanner);
 				Integer communityID =
 					this.readNextCommunityID(treeFileScanner);
@@ -116,8 +116,7 @@ public class Merger extends NWBFileWriter  {
 						Node node = (Node)nodes.get(currentNodeID.intValue());
 						node.addCommunity(communityID, this.networkInfo);
 					}
-				}
-				else {
+				} else {
 					currentMap.put(nodeID, communityID);
 					Node node = (Node)nodes.get(nodeID.intValue());
 					node.addCommunity(communityID, this.networkInfo);
@@ -133,12 +132,10 @@ public class Merger extends NWBFileWriter  {
 				throw new TreeFileParsingException(
 					"A non-integer was found.  " +
 					"Tree files must contain only pairs of integers.");
-			}
-			else {
+			} else {
 				return true;
 			}
-		}
-		else {
+		} else {
 			return false;
 		}
 	}
@@ -155,8 +152,7 @@ public class Merger extends NWBFileWriter  {
 			throw new TreeFileParsingException(
 				"A single integer was found.  " +
 				"Tree files must contain only pairs of integers.");
-		}
-		else {
+		} else {
 			return new Integer(treeFileScanner.nextInt());
 		}
 	}

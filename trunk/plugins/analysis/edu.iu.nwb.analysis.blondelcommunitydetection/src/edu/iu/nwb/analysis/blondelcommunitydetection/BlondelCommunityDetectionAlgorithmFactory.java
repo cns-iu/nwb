@@ -1,4 +1,4 @@
-package edu.iu.scipolicy.analysis.blondelcommunitydetection;
+package edu.iu.nwb.analysis.blondelcommunitydetection;
 
 import java.io.File;
 import java.io.IOException;
@@ -36,7 +36,7 @@ public class BlondelCommunityDetectionAlgorithmFactory implements
     								 CIShellContext context) {
     	AlgorithmFactory blondelExecutableAlgorithmFactory =
     		AlgorithmUtilities.getAlgorithmFactoryByPID(
-    			"edu.iu.scipolicy.analysis.blondelexecutable",
+    			"edu.iu.nwb.shared.blondelexecutable",
     			this.bundleContext);
     	
         return new BlondelCommunityDetectionAlgorithm(
@@ -55,11 +55,9 @@ public class BlondelCommunityDetectionAlgorithmFactory implements
     	try {
     		nwbParser = new NWBFileParser(inputNWBFile);
     		nwbParser.parse(nwbFileMetaDataGetter);
-    	}
-    	catch (IOException ioException) {
+    	} catch (IOException ioException) {
     		throw new RuntimeException(ioException);
-    	}
-    	catch (ParsingException parsingException) {
+    	} catch (ParsingException parsingException) {
     		throw new RuntimeException(parsingException);
     	}
     	
@@ -71,8 +69,7 @@ public class BlondelCommunityDetectionAlgorithmFactory implements
     	
     	if (directedEdgeSchema != null) {
     		edgeSchema = directedEdgeSchema;
-    	}
-    	else {
+    	} else {
     		edgeSchema = undirectedEdgeSchema;
     	}
     	
@@ -84,8 +81,7 @@ public class BlondelCommunityDetectionAlgorithmFactory implements
 											   oldParameters.getName(),
 											   oldParameters.getDescription(),
 											   oldParameters.getIcon(16));
-		}
-		catch (IOException e) {
+		} catch (IOException e) {
 			newParameters = new BasicObjectClassDefinition
 				(oldParameters.getID(),
 				 oldParameters.getName(),
@@ -109,9 +105,11 @@ public class BlondelCommunityDetectionAlgorithmFactory implements
 			BlondelCommunityDetectionAlgorithm.NO_EDGE_WEIGHT_VALUE
 		};
 		
-		for (AttributeDefinition oldAttributeDefinition : oldAttributeDefinitions) {
+		for (AttributeDefinition oldAttributeDefinition :
+				oldAttributeDefinitions) {
 			String oldAttributeDefinitionID = oldAttributeDefinition.getID();
-			AttributeDefinition newAttributeDefinition = oldAttributeDefinition;
+			AttributeDefinition newAttributeDefinition =
+				oldAttributeDefinition;
 			
 			if (oldAttributeDefinitionID.equals
 				(BlondelCommunityDetectionAlgorithm.WEIGHT_FIELD_ID))
@@ -125,8 +123,9 @@ public class BlondelCommunityDetectionAlgorithmFactory implements
 						 numberKeysToAdd);
 			}
 			
-			newParameters.addAttributeDefinition(ObjectClassDefinition.REQUIRED,
-												 newAttributeDefinition);
+			newParameters.addAttributeDefinition(
+				ObjectClassDefinition.REQUIRED,
+				newAttributeDefinition);
 		}
 		
 		return newParameters;

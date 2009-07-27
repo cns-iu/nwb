@@ -1,10 +1,10 @@
-package edu.iu.scipolicy.analysis.blondelcommunitydetection.nwbfileparserhandlers.nwb_to_bin;
+package edu.iu.nwb.analysis.blondelcommunitydetection.nwbfileparserhandlers.nwb_to_bin;
 
 import java.util.Map;
 
+import edu.iu.nwb.analysis.blondelcommunitydetection.NetworkInfo;
+import edu.iu.nwb.analysis.blondelcommunitydetection.Node;
 import edu.iu.nwb.util.nwbfile.NWBFileParserAdapter;
-import edu.iu.scipolicy.analysis.blondelcommunitydetection.NetworkInfo;
-import edu.iu.scipolicy.analysis.blondelcommunitydetection.Node;
 
 public class PreProcessor extends NWBFileParserAdapter {
 	private static final String NON_POSITIVE_WEIGHT_HALT_REASON =

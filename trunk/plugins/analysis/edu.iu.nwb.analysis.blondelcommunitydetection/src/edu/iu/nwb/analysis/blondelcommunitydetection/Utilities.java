@@ -1,4 +1,4 @@
-package edu.iu.scipolicy.analysis.blondelcommunitydetection;
+package edu.iu.nwb.analysis.blondelcommunitydetection;
 
 import java.io.File;
 import java.util.Dictionary;

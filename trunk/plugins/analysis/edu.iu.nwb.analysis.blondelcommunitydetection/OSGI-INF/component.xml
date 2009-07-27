@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<component name="edu.iu.scipolicy.analysis.blondelcommunitydetection.BlondelCommunityDetectionAlgorithm.component" immediate="false">
-	<implementation class="edu.iu.scipolicy.analysis.blondelcommunitydetection.BlondelCommunityDetectionAlgorithmFactory"/>
+<component name="edu.iu.nwb.analysis.blondelcommunitydetection.BlondelCommunityDetectionAlgorithm.component" immediate="false">
+	<implementation class="edu.iu.nwb.analysis.blondelcommunitydetection.BlondelCommunityDetectionAlgorithmFactory"/>
 	<properties entry="OSGI-INF/algorithm.properties"/>
 	
 	<service>

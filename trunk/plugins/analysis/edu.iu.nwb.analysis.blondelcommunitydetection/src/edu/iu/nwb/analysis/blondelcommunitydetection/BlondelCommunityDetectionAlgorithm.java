@@ -1,4 +1,4 @@
-package edu.iu.scipolicy.analysis.blondelcommunitydetection;
+package edu.iu.nwb.analysis.blondelcommunitydetection;
 
 import java.io.File;
 import java.util.Dictionary;
@@ -9,9 +9,9 @@ import org.cishell.framework.algorithm.AlgorithmExecutionException;
 import org.cishell.framework.algorithm.AlgorithmFactory;
 import org.cishell.framework.data.Data;
 
-import edu.iu.scipolicy.analysis.blondelcommunitydetection.algorithmstages.CommunityDetectionRunner;
-import edu.iu.scipolicy.analysis.blondelcommunitydetection.algorithmstages.NWBAndTreeFilesMerger;
-import edu.iu.scipolicy.analysis.blondelcommunitydetection.algorithmstages.NWBToBINConverter;
+import edu.iu.nwb.analysis.blondelcommunitydetection.algorithmstages.CommunityDetectionRunner;
+import edu.iu.nwb.analysis.blondelcommunitydetection.algorithmstages.NWBAndTreeFilesMerger;
+import edu.iu.nwb.analysis.blondelcommunitydetection.algorithmstages.NWBToBINConverter;
 
 public class BlondelCommunityDetectionAlgorithm implements Algorithm {
 	public static final String WEIGHT_FIELD_ID = "weight";
@@ -43,8 +43,7 @@ public class BlondelCommunityDetectionAlgorithm implements Algorithm {
         
         if (this.weightAttribute.equals(NO_EDGE_WEIGHT_VALUE)) {
         	this.isWeighted = false;
-        }
-        else {
+        } else {
         	this.isWeighted = true;
         }
         

@@ -1,4 +1,4 @@
-package edu.iu.scipolicy.analysis.blondelcommunitydetection;
+package edu.iu.nwb.analysis.blondelcommunitydetection;
 
 import java.util.ArrayList;
 
@@ -112,8 +112,7 @@ public class Node {
 		
 		if (nodeThatAlreadyExists != null) {
 			return nodeThatAlreadyExists;
-		}
-		else {
+		} else {
 			Node newNode =
 				new Node(originalID, networkInfo.getRenumberingID());
 			

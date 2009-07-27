@@ -1,4 +1,4 @@
-package edu.iu.scipolicy.analysis.blondelcommunitydetection;
+package edu.iu.nwb.analysis.blondelcommunitydetection;
 
 import java.util.ArrayList;
 
@@ -49,8 +49,7 @@ public class NetworkInfo {
 		
 		if (originalID < 0) {
 			return null;
-		}
-		else {
+		} else {
 			//TODO: turn into a map. Absolutely must not go into production
 			for (int ii = 0; ii < nodeCount; ii++) {
 				Node node = (Node)this.nodes.get(ii);
@@ -67,7 +66,7 @@ public class NetworkInfo {
 	public void accumulateEdgeCountsForOutput() {
 		int nodeCount = this.nodes.size();
 		int edgeCountForOutput = 0;
-		//TODO: iterator? java 5?
+
 		for (int ii = 0; ii < nodeCount; ii++) {
 			Node node = (Node)this.nodes.get(ii);
 			edgeCountForOutput += node.getActualEdgeCount();

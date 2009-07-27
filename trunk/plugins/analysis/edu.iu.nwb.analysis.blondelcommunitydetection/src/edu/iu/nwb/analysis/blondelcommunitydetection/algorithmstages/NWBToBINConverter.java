@@ -1,16 +1,16 @@
-package edu.iu.scipolicy.analysis.blondelcommunitydetection.algorithmstages;
+package edu.iu.nwb.analysis.blondelcommunitydetection.algorithmstages;
 
 import java.io.File;
 import java.io.IOException;
 
 import org.cishell.utilities.FileUtilities;
 
+import edu.iu.nwb.analysis.blondelcommunitydetection.NetworkInfo;
+import edu.iu.nwb.analysis.blondelcommunitydetection.algorithmstages.exceptiontypes.NWBToBINConversionException;
+import edu.iu.nwb.analysis.blondelcommunitydetection.nwbfileparserhandlers.nwb_to_bin.Converter;
+import edu.iu.nwb.analysis.blondelcommunitydetection.nwbfileparserhandlers.nwb_to_bin.PreProcessor;
 import edu.iu.nwb.util.nwbfile.NWBFileParser;
 import edu.iu.nwb.util.nwbfile.ParsingException;
-import edu.iu.scipolicy.analysis.blondelcommunitydetection.NetworkInfo;
-import edu.iu.scipolicy.analysis.blondelcommunitydetection.algorithmstages.exceptiontypes.NWBToBINConversionException;
-import edu.iu.scipolicy.analysis.blondelcommunitydetection.nwbfileparserhandlers.nwb_to_bin.Converter;
-import edu.iu.scipolicy.analysis.blondelcommunitydetection.nwbfileparserhandlers.nwb_to_bin.PreProcessor;
 
 /*
  * This is the first stage of the Blondel Community Detection algorithm.
@@ -50,14 +50,12 @@ public class NWBToBINConverter {
     	try {
     		preProcessorFileParser = new NWBFileParser(nwbFile);
     		preProcessorFileParser.parse(preProcessor);
-    	}
-    	catch (IOException ioException) {
+    	} catch (IOException ioException) {
     		throw new NWBToBINConversionException(
     			"Failed to read NWB file that is being preprocessed for " +
     				"conversion to BIN file.",
     			ioException);
-    	}
-    	catch (ParsingException parsingException) {
+    	} catch (ParsingException parsingException) {
     		throw new NWBToBINConversionException(
     			"Failed to parse NWB file that is " +
     				"being preprocessed for conversion to BIN file.",
@@ -77,8 +75,7 @@ public class NWBToBINConverter {
     		outputBINFile = FileUtilities.
     			createTemporaryFileInDefaultTemporaryDirectory("TEMP-BLONDEL",
     														   "bin");
-    	}
-    	catch (IOException ioException) {
+    	} catch (IOException ioException) {
     		throw new NWBToBINConversionException(
     			"Failed to create temporary BIN file.", ioException);
     	}
@@ -93,13 +90,11 @@ public class NWBToBINConverter {
     	try {
     		converterFileParser = new NWBFileParser(nwbFile);
     		converterFileParser.parse(converter);
-    	}
-    	catch (IOException ioException) {
+    	} catch (IOException ioException) {
     		throw new NWBToBINConversionException(
     			"Failed to read NWB file that is being converted to BIN file.",
     			ioException);
-    	}
-    	catch (ParsingException parsingException) {
+    	} catch (ParsingException parsingException) {
     		throw new NWBToBINConversionException(
     			"Failed to parse NWB file that is " +
     				"being converted to BIN file.",

@@ -1,4 +1,4 @@
-package edu.iu.scipolicy.analysis.blondelcommunitydetection.algorithmstages;
+package edu.iu.nwb.analysis.blondelcommunitydetection.algorithmstages;
 
 // This is the third stage of the Blondel Community Detection algorithm.
 // The input to this stage is the output of the second stage, which is a tree
@@ -21,12 +21,12 @@ import java.io.IOException;
 
 import org.cishell.utilities.FileUtilities;
 
+import edu.iu.nwb.analysis.blondelcommunitydetection.NetworkInfo;
+import edu.iu.nwb.analysis.blondelcommunitydetection.TreeFileParsingException;
+import edu.iu.nwb.analysis.blondelcommunitydetection.algorithmstages.exceptiontypes.NWBAndTreeFileMergingException;
+import edu.iu.nwb.analysis.blondelcommunitydetection.nwbfileparserhandlers.tree_to_nwb.Merger;
 import edu.iu.nwb.util.nwbfile.NWBFileParser;
 import edu.iu.nwb.util.nwbfile.ParsingException;
-import edu.iu.scipolicy.analysis.blondelcommunitydetection.NetworkInfo;
-import edu.iu.scipolicy.analysis.blondelcommunitydetection.TreeFileParsingException;
-import edu.iu.scipolicy.analysis.blondelcommunitydetection.algorithmstages.exceptiontypes.NWBAndTreeFileMergingException;
-import edu.iu.scipolicy.analysis.blondelcommunitydetection.nwbfileparserhandlers.tree_to_nwb.Merger;
 
 public class NWBAndTreeFilesMerger {
 	public static File mergeCommunitiesFileWithNWBFile(File communitiesFile,
@@ -44,17 +44,13 @@ public class NWBAndTreeFilesMerger {
     		fileParser.parse(merger);
     		
     		return outputNWBFile;
-    	}
-    	catch (FileNotFoundException fileNotFoundException) {
+    	} catch (FileNotFoundException fileNotFoundException) {
     		throw new NWBAndTreeFileMergingException(fileNotFoundException);
-    	}
-    	catch (IOException ioException) {
+    	} catch (IOException ioException) {
     		throw new NWBAndTreeFileMergingException(ioException);
-    	}
-    	catch (ParsingException parsingException) {
+    	} catch (ParsingException parsingException) {
     		throw new NWBAndTreeFileMergingException(parsingException);
-    	}
-    	catch (TreeFileParsingException treeFileParsingException) {
+    	} catch (TreeFileParsingException treeFileParsingException) {
     		throw new NWBAndTreeFileMergingException(treeFileParsingException);
     	}
     }

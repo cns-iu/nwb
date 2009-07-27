@@ -1,4 +1,4 @@
-package edu.iu.scipolicy.analysis.blondelcommunitydetection.algorithmstages.exceptiontypes;
+package edu.iu.nwb.analysis.blondelcommunitydetection.algorithmstages.exceptiontypes;
 
 public class CommunityDetectionRunnerException extends RuntimeException {
 	private static final long serialVersionUID = 1L;

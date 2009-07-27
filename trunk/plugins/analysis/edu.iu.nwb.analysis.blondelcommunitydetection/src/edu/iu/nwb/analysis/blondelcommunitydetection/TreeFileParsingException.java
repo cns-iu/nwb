@@ -1,4 +1,4 @@
-package edu.iu.scipolicy.analysis.blondelcommunitydetection;
+package edu.iu.nwb.analysis.blondelcommunitydetection;
 
 public class TreeFileParsingException extends Exception {
 	private static final long serialVersionUID = 1L;
