@@ -15,6 +15,7 @@ import org.osgi.service.log.LogService;
 
 import edu.iu.nwb.converter.edgelist.common.EdgeListParser;
 import edu.iu.nwb.converter.edgelist.common.InvalidEdgeListFormatException;
+import edu.iu.nwb.util.nwbfile.NWBFileParserAdapter;
 
 public class EdgeListValidatorAlgorithm implements Algorithm {    
 	public static final String REVIEW_SPEC_MESSAGE =
@@ -55,7 +56,10 @@ public class EdgeListValidatorAlgorithm implements Algorithm {
     	EdgeListParser parser = new EdgeListParser(edgeListFile, true);
     	
 		try {
-			parser.parseInto(new NullNWBFileParserHandler());
+			/* NWBFileParserAdapter is essentially a null object implementation
+			 * of NWBFileWriter.
+			 */
+			parser.parseInto(new NWBFileParserAdapter());
 		} catch (FileNotFoundException e){
 			throw new AlgorithmExecutionException(e);						
 		} catch (IOException ioe){
