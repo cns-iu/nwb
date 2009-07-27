@@ -23,6 +23,13 @@
   	<!-- CIShell plugins -->
   	
   	<antcall target="svn.co">
+  	  	  	      <param name="target" value="plugins"/>
+  	  	  	      <param name="element.id" value="org.cishell.algorithm.convertergraph"/>
+  	  	  	      <param name="project.name" value="/core/org.cishell.algorithm.convertergraph"/>
+  	  	  	      <param name="url" value="https://cishell.svn.sourceforge.net/svnroot/cishell/trunk"/>
+  	  	</antcall>
+  	
+  	<antcall target="svn.co">
   	  	      <param name="target" value="plugins"/>
   	  	      <param name="element.id" value="org.cishell.utilities"/>
   	  	      <param name="project.name" value="/core/org.cishell.utilities"/>
@@ -199,9 +206,36 @@
   	
   	<!-- NWB Plugins -->
   	
+	<antcall target="svn.co">
+  	  	        <param name="target" value="plugins"/>
+  	  	        <param name="element.id" value="edu.iu.nwb.analysis.pagerank.weighted"/>
+  	  	        <param name="project.name" value="/analysis/edu.iu.nwb.analysis.pagerank.weighted"/>
+  	  	        <param name="url" value="http://nwb.slis.indiana.edu/svn/nwb/trunk"/>
+  	  	</antcall>
+		
+  	<antcall target="svn.co">
+  	  	        <param name="target" value="plugins"/>
+  	  	        <param name="element.id" value="edu.iu.nwb.analysis.hits"/>
+  	  	        <param name="project.name" value="/analysis/edu.iu.nwb.analysis.hits"/>
+  	  	        <param name="url" value="http://nwb.slis.indiana.edu/svn/nwb/trunk"/>
+  	  	</antcall>
+  	
+	<antcall target="svn.co">
+  	        <param name="target" value="plugins"/>
+  	        <param name="element.id" value="edu.iu.nwb.visualization.roundrussell"/>
+  	        <param name="project.name" value="/visualization/edu.iu.nwb.visualization.roundrussell"/>
+  	        <param name="url" value="http://nwb.slis.indiana.edu/svn/nwb/trunk"/>
+  	</antcall>
+		
+  	<antcall target="svn.co">
+  	        <param name="target" value="plugins"/>
+  	        <param name="element.id" value="edu.iu.nwb.preprocessing.removeedgeattributes"/>
+  	        <param name="project.name" value="/preprocessing/edu.iu.nwb.preprocessing.removeedgeattributes"/>
+  	        <param name="url" value="http://nwb.slis.indiana.edu/svn/nwb/trunk"/>
+  	</antcall>
   	
     <antcall target="svn.co">
-        <param name="target" value="features"/>
+        <param name="target" value="plugins"/>
         <param name="element.id" value="edu.iu.nwb.gui.brand.welcometext"/>
         <param name="project.name" value="/deployment/edu.iu.nwb.gui.brand.welcometext"/>
         <param name="url" value="http://nwb.slis.indiana.edu/svn/nwb/trunk"/>
@@ -545,8 +579,8 @@
     </antcall>
     <antcall target="svn.co">
       <param name="target" value="plugins"/>
-      <param name="element.id" value="edu.iu.nwb.analysis.pathfindergraphnetworkscaling"/>
-      <param name="project.name" value="/plugins/analysis/edu.iu.nwb.analysis.pathfindergraphnetworkscaling"/>
+      <param name="element.id" value="edu.iu.nwb.preprocessing.pathfindernetworkscaling.mst"/>
+      <param name="project.name" value="/plugins/preprocessing/edu.iu.nwb.preprocessing.pathfindernetworkscaling.mst"/>
       <param name="url" value="http://nwb.slis.indiana.edu/svn/nwb/trunk"/>
     </antcall>
     <antcall target="svn.co">
