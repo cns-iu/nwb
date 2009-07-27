@@ -1,4 +1,4 @@
-package edu.iu.nwb.converter.nwbfile_cerncoltmatrix;
+package edu.iu.nwb.preprocessing.nwbfile_cerncoltmatrix;
 
 import java.io.File;
 import java.util.Dictionary;
@@ -43,8 +43,7 @@ public class NWBFileToCernColtMatrixAlgorithmFactory
 
     	try {
     		edgeMetadata = NWBFileUtilities.getEdgeMetadata(inputNWBFile);
-    	}
-    	catch (NWBMetadataParsingException nwbMetadataParsingException) {
+    	} catch (NWBMetadataParsingException nwbMetadataParsingException) {
     		throw new RuntimeException(nwbMetadataParsingException);
     	}
 

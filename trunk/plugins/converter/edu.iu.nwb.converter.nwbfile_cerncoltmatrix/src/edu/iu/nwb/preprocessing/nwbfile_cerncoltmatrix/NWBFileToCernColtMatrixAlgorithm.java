@@ -1,4 +1,4 @@
-package edu.iu.nwb.converter.nwbfile_cerncoltmatrix;
+package edu.iu.nwb.preprocessing.nwbfile_cerncoltmatrix;
 
 import java.io.File;
 import java.util.Dictionary;
@@ -32,8 +32,7 @@ public class NWBFileToCernColtMatrixAlgorithm implements Algorithm {
         
         if (this.weightAttribute.equals(NO_EDGE_WEIGHT_VALUE)) {
         	this.isWeighted = false;
-        }
-        else {
+        } else {
         	this.isWeighted = true;
         }
     }
@@ -49,13 +48,11 @@ public class NWBFileToCernColtMatrixAlgorithm implements Algorithm {
     	
         	return outData;
         
-    	} 
-    	 catch (NWBMetadataParsingException nwbMetaDataParsingException) {
+    	} catch (NWBMetadataParsingException nwbMetaDataParsingException) {
     		throw new AlgorithmExecutionException(
     			"Error parsing meta data for input NWB file",
     			nwbMetaDataParsingException);
-    	}
-    	catch (ParsingException parsingException) {
+    	} catch (ParsingException parsingException) {
     		throw new AlgorithmExecutionException(
     			"Error parsing input NWB file", parsingException);
     	}

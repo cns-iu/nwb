@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <projectDescription>
-	<name>edu.iu.nwb.converter.nwbfile_cerncoltmatrix</name>
+	<name>edu.iu.nwb.preprocessing.nwbfile_cerncoltmatrix</name>
 	<comment></comment>
 	<projects>
 	</projects>

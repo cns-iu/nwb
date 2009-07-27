@@ -1,4 +1,4 @@
-package edu.iu.nwb.converter.nwbfile_cerncoltmatrix;
+package edu.iu.nwb.preprocessing.nwbfile_cerncoltmatrix;
 
 import java.io.File;
 
@@ -12,7 +12,8 @@ public class Converter {
 	public static DoubleMatrix2D convertNWBFileToMatrix(
 			File nwbFile, boolean isWeighted, String weightAttribute) 
 			throws NWBMetadataParsingException, ParsingException {
-		GetMetadataAndCounts metadata = NWBFileUtilities.parseMetadata(nwbFile);
+		GetMetadataAndCounts metadata =
+			NWBFileUtilities.parseMetadata(nwbFile);
 		int nodeCount = metadata.getNodeCount();
 		// TODO: This could probably be optimized.
 		NWBFileToCernColtMatrixHandler converter =

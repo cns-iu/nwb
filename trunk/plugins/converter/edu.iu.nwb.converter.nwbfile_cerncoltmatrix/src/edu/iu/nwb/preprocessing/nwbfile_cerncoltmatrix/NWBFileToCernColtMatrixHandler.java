@@ -1,4 +1,4 @@
-package edu.iu.nwb.converter.nwbfile_cerncoltmatrix;
+package edu.iu.nwb.preprocessing.nwbfile_cerncoltmatrix;
 
 import java.util.Map;
 
@@ -52,8 +52,7 @@ public class NWBFileToCernColtMatrixHandler extends NWBFileParserAdapter {
 		if (this.isWeighted) {
 			weight =
 				((Number)attributes.get(this.weightAttribute)).doubleValue();
-		}
-		else {
+		} else {
 			weight = 1.0;
 		}
 		

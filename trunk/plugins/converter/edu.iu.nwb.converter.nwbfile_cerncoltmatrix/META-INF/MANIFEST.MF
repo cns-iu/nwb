@@ -1,7 +1,7 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: NWB File to Cern Colt Matrix converter
-Bundle-SymbolicName: edu.iu.nwb.converter.nwbfile_cerncoltmatrix
+Bundle-SymbolicName: edu.iu.nwb.preprocessing.nwbfile_cerncoltmatrix
 Bundle-Version: 0.0.1
 Bundle-ClassPath: .
 Import-Package: cern.colt.matrix,
