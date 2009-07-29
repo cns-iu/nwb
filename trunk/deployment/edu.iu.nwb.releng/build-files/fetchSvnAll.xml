@@ -206,6 +206,14 @@
   	
   	<!-- NWB Plugins -->
   	
+  	<antcall target="svn.co">
+  	  	  	        <param name="target" value="plugins"/>
+  	  	  	        <param name="element.id" value="edu.iu.nwb.analysis.blondelcommunitydetection"/>
+  	  	  	        <param name="project.name" value="/analysis/edu.iu.nwb.analysis.blondelcommunitydetection"/>
+  	  	  	        <param name="url" value="http://nwb.slis.indiana.edu/svn/nwb/trunk/plugins"/>
+  	  	  	</antcall>
+  			
+  	
 	<antcall target="svn.co">
   	  	        <param name="target" value="plugins"/>
   	  	        <param name="element.id" value="edu.iu.nwb.analysis.pagerank.weighted"/>
