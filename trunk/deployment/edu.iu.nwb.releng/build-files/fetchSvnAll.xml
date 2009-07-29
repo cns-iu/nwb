@@ -206,6 +206,8 @@
   	
   	<!-- NWB Plugins -->
   	
+  	
+  	
   	<antcall target="svn.co">
   	  	  	        <param name="target" value="plugins"/>
   	  	  	        <param name="element.id" value="edu.iu.nwb.analysis.blondelcommunitydetection"/>
@@ -805,6 +807,14 @@
   	
   	
   	<!-- Non-PDE-based NWB Plugins -->
+  	
+  	<antcall target="svn.co">
+  	  	  	  	  	        <param name="target" value="nonpde_plugins"/>
+  	  	  	  	  	        <param name="element.id" value="edu.iu.nwb.shared.blondelexecutable"/>
+  	  	  	  	  	        <param name="project.name" value="/shared/edu.iu.nwb.shared.blondelexecutable"/>
+  	  	  	  	  	        <param name="url" value="http://nwb.slis.indiana.edu/svn/nwb/trunk/plugins"/>
+  	</antcall>
+  	
   	<antcall target="svn.co">
   	      <param name="target" value="nonpde_plugins"/>
   	      <param name="element.id" value="edu.iu.nwb.analysis.weighted.averageclusteringcoefficient"/>
