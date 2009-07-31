@@ -207,6 +207,12 @@
   	<!-- NWB Plugins -->
   	
   	
+  	<antcall target="svn.co">
+  	  	  	  	        <param name="target" value="plugins"/>
+  	  	  	  	        <param name="element.id" value="edu.iu.nwb.preprocessing.nwbfile_cerncoltmatrix"/>
+  	  	  	  	        <param name="project.name" value="/preprocessing/edu.iu.nwb.preprocessing.nwbfile_cerncoltmatrix"/>
+  	  	  	  	        <param name="url" value="http://nwb.slis.indiana.edu/svn/nwb/trunk/plugins"/>
+  	  	  	  	</antcall>
   	
   	<antcall target="svn.co">
   	  	  	        <param name="target" value="plugins"/>
