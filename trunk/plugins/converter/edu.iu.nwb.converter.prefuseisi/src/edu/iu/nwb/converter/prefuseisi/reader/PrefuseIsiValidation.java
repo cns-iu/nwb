@@ -20,70 +20,68 @@ import org.osgi.service.log.LogService;
  * @author Weixia(Bonnie) Huang
  */
 public class PrefuseIsiValidation implements AlgorithmFactory {
-
 	/*
 	 * All the ISI files have FN * ISI * pattern as it's starting line. This is used to identify 
 	 * whether or not it is an ISI file.
-	 * */
+	 */
+	public static final String ISI_IDENTIFIER_SIGNATURE = "fn{1}.*isi{1}.*";
+	public static final int NUMBER_LINES_CONSIDERED = 5;
 
-	private final String ISI_IDENTIFIER_SIGNATURE = "fn{1}.*isi{1}.*";
-	private final int NUMBER_LINES_CONSIDERED = 5;
-
-	public Algorithm createAlgorithm(Data[] data, Dictionary parameters,
-			CIShellContext context) {
+	public Algorithm createAlgorithm(
+			Data[] data, Dictionary parameters, CIShellContext context) {
 		return new ISIValidationAlgorithm(data, parameters, context);
 	}
 
 	public class ISIValidationAlgorithm implements Algorithm {
-		Data[] data;
-		Dictionary parameters;
-		CIShellContext context;
-		private LogService logger;
+		public static final String ISI_MIME_TYPE = "file:text/isi";
+		
+		private String inISIFile;
 
-		public ISIValidationAlgorithm(Data[] inputData,
-				Dictionary parameters, CIShellContext ciShellContext) {
-			this.data = inputData;
-			this.parameters = parameters;
-			this.context = ciShellContext;
-
-			logger = (LogService) ciShellContext.getService(LogService.class.getName());
-
+		
+		public ISIValidationAlgorithm(Data[] data,
+									  Dictionary parameters,
+									  CIShellContext context) {
+			this.inISIFile = (String) data[0].getData();
 		}
 
+		
 		public Data[] execute() throws AlgorithmExecutionException {
-			String fileHandler = (String) data[0].getData();
-			File inputData = new File(fileHandler);
+			File inputData = new File(inISIFile);
 			boolean isiIdentifierFound = false;
 
 			/*
-			 * ISIIdentifierFound variable tracks whether or not ISI signature is found
-			 * by using the isiSignatureSearcher method.
+			 * ISIIdentifierFound variable tracks whether or not ISI signature
+			 * is found by using the isiSignatureSearcher method.
 			 * */
-			isiIdentifierFound = isiSignatureSearcher(fileHandler);
+			isiIdentifierFound = isiSignatureSearcher(inISIFile);
 
 			/*
-			 * Depending upon whether ISI signature is found or not further actions are taken.
+			 * Depending upon whether ISI signature is found or not further
+			 * actions are taken.
 			 * */
 			if (isiIdentifierFound) {
 				try {
-					Data[] validationData = new Data[] { new BasicData(inputData,
-					"file:text/isi") };
-					validationData[0].getMetadata().put(DataProperty.LABEL,
-							"Prefuse ISI file: " + fileHandler);
-					validationData[0].getMetadata().put(DataProperty.TYPE,
-							DataProperty.TABLE_TYPE);
-					return validationData;
-				} catch (SecurityException exception) {
-					throw new AlgorithmExecutionException(exception);
+					return createOutData(inputData);
+				} catch (SecurityException e) {
+					throw new AlgorithmExecutionException(e.getMessage(), e);
 				}
 			} else {
-				logger.log(LogService.LOG_ERROR,"Invalid ISI format file selected.\nUnable to continue loading "
-						+ fileHandler + " file.");
 				throw new AlgorithmExecutionException(
-						"Invalid ISI format file selected. Unable to continue loading "
-						+ fileHandler + " file.");
+						"Invalid ISI format file selected. "
+						+" Unable to continue loading "
+						+ inISIFile + " file.");
 			}
 
+		}
+
+		private Data[] createOutData(File inputData) {
+			Data[] validationData = new Data[] { new BasicData(inputData,
+			ISI_MIME_TYPE) };
+			validationData[0].getMetadata().put(DataProperty.LABEL,
+					"Prefuse ISI file: " + inISIFile);
+			validationData[0].getMetadata().put(DataProperty.TYPE,
+					DataProperty.TABLE_TYPE);
+			return validationData;
 		}
 
 		/**
@@ -96,42 +94,39 @@ public class PrefuseIsiValidation implements AlgorithmFactory {
 		 * @throws AlgorithmExecutionException
 		 */
 		//TODO: refactor isiIdentifier here too
-		private boolean isiSignatureSearcher(String fileHandler) throws AlgorithmExecutionException {
+		private boolean isiSignatureSearcher(String fileHandler)
+				throws AlgorithmExecutionException {
 			boolean isiIdentifierFound = false;
 			try {
-				BufferedReader isiInputFileReader = new BufferedReader(
-						new FileReader(fileHandler));
+				BufferedReader isiInputFileReader =
+					new BufferedReader(new FileReader(fileHandler));
 				String lineContent;
-				int currentNumberOfLinesCounter = 0;
-				
+				int currentNumberOfLinesCounter = 0;				
 
-				while (
-						(lineContent = isiInputFileReader.readLine()) != null
+				while ((lineContent = isiInputFileReader.readLine()) != null
 						&& !isiIdentifierFound 
-						&& (currentNumberOfLinesCounter < NUMBER_LINES_CONSIDERED) 
-
-				) {
-						
+						&& (currentNumberOfLinesCounter < NUMBER_LINES_CONSIDERED)) {						
 					lineContent = lineContent.trim();
 					if (lineContent.length() > 0) {
-						/*
-						 * RegExp for searching for the ISI Signature in a case insensitive manner. 
-						 * */
-						isiIdentifierFound = Pattern
-						.compile(
+						/* Regex for searching for the ISI Signature in
+						 * a case insensitive manner. 
+						 */
+						isiIdentifierFound =
+							Pattern.compile(
 								ISI_IDENTIFIER_SIGNATURE,
 								Pattern.CASE_INSENSITIVE
 								| Pattern.UNICODE_CASE)
-								.matcher(lineContent).matches();
+									.matcher(lineContent).matches();
 
 						currentNumberOfLinesCounter++;
 					}
-
 				}
+				
 				isiInputFileReader.close();
-			} catch (IOException testFileException) {
-				throw new AlgorithmExecutionException(testFileException);
+			} catch (IOException e) {
+				throw new AlgorithmExecutionException(e.getMessage(), e);
 			}
+			
 			return isiIdentifierFound;
 		}
 	}

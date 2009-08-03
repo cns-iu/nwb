@@ -15,9 +15,7 @@ import edu.uci.ics.jung.graph.Vertex;
 import edu.uci.ics.jung.utils.PredicateUtils;
 import edu.uci.ics.jung.utils.UserDataContainer;
 
-
-public class JungPrefuseBetaConverter {
-    
+public class JungPrefuseBetaConverter {    
 	private prefuse.data.Graph prefuseGraph;
 	
     public prefuse.data.Graph getPrefuseGraph( Graph jungGraph ) {
@@ -38,14 +36,12 @@ public class JungPrefuseBetaConverter {
 			prefuse.data.Edge edge = prefuseGraph.addEdge(first, second);
             merge(e, edge);
         }
-
-
+        
         return prefuseGraph;
     }
 
 
-    private void merge(UserDataContainer jungContainer, Tuple prefuseTuple) {
-		
+    private void merge(UserDataContainer jungContainer, Tuple prefuseTuple) {		
 		Iterator keys = jungContainer.getUserDatumKeyIterator();
 		
 		while(keys.hasNext()) {
@@ -56,11 +52,10 @@ public class JungPrefuseBetaConverter {
 			if(!prefuseTuple.canSet(key, metadataClass)) {
 				prefuseTuple.getTable().addColumn(key, metadataClass);
 			}
-			if(!"target".equals(key) && !"source".equals(key)) { //special cases that prefuse refuses to set for
+			// Special cases that Prefuse refuses to set for
+			if(!"target".equals(key) && !"source".equals(key)) {
 				prefuseTuple.set(key, datum);
 			}
-		}
-		
+		}		
 	}
-
 }

@@ -18,9 +18,7 @@ import edu.uci.ics.jung.utils.UserData;
 import edu.uci.ics.jung.utils.UserDataContainer;
 
 public class PrefuseJungConverter {
-
-	public static Graph getJungGraph(edu.berkeley.guir.prefuse.graph.Graph prefuseGraph) {
-		
+	public static Graph getJungGraph(edu.berkeley.guir.prefuse.graph.Graph prefuseGraph) {		
 		boolean directed = prefuseGraph.isDirected();
 		
 		Graph jungGraph;
@@ -35,7 +33,10 @@ public class PrefuseJungConverter {
 		Iterator nodes = prefuseGraph.getNodes();
 		while(nodes.hasNext()) {
 			Node node = (Node) nodes.next();
-			Vertex vertex = new SparseVertex(); //can handle directed & undirected & parallel -- switch to SimpleSparseVertex if we don't care about parallel			
+			/* Can handle directed & undirected & parallel
+			 * Switch to SimpleSparseVertex if we don't care about parallel
+			 */
+			Vertex vertex = new SparseVertex(); 			
 			merge(node, vertex);
 			
 			jungGraph.addVertex(vertex);
@@ -67,16 +68,13 @@ public class PrefuseJungConverter {
 		return jungGraph;
 	}
 
-	private static void merge(Entity prefuseEntity, UserDataContainer jungContainer) {
-		
+	private static void merge(Entity prefuseEntity, UserDataContainer jungContainer) {		
 		Map attributes = prefuseEntity.getAttributes();
 		
 		Iterator keys = attributes.keySet().iterator();
 		while(keys.hasNext()) {
 			Object key = keys.next();
 			jungContainer.addUserDatum(key, attributes.get(key), UserData.SHARED);
-		}
-		
-	}
-	
+		}		
+	}	
 }

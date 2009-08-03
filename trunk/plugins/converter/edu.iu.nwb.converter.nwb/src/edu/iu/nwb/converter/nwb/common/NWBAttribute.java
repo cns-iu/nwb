@@ -1,10 +1,11 @@
 package edu.iu.nwb.converter.nwb.common;
 
+// TODO Move this somewhere appropriately general
 public class NWBAttribute {
 	private String attributeName;
 	private String dataType;
 	
-	public NWBAttribute (String name, String type){
+	public NWBAttribute(String name, String type) {
 		this.attributeName = name;
 		this.dataType = type;
 	}
@@ -16,5 +17,4 @@ public class NWBAttribute {
 	public String getDataType() {
 		return dataType;
 	}
-
 }

@@ -10,6 +10,6 @@ import org.cishell.framework.data.Data;
 
 public class ReferValidationFactory implements AlgorithmFactory {
     public Algorithm createAlgorithm(Data[] data, Dictionary parameters, CIShellContext context) {
-        return new ReferValidation(data, parameters, context);
+        return new ReferValidationAlgorithm(data, parameters, context);
     }
 }

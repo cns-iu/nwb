@@ -27,8 +27,9 @@ public class ReferUtil {
 		this.log = log;
 	}
 	
-	public BufferedReader makeReader(File file) throws AlgorithmExecutionException {
-	    	try {
+	public BufferedReader makeReader(File file)
+			throws AlgorithmExecutionException {
+    	try {
 	    	InputStream stream = new FileInputStream(file);
 	    	/*
 	    	 * UnicodeReader contains a hack for eating funny encoding characters that are 
@@ -38,10 +39,12 @@ public class ReferUtil {
 	    	UnicodeReader unicodeReader = new UnicodeReader(stream, "UTF-8"); 
 	    	BufferedReader reader = new BufferedReader(unicodeReader);
 	    	return reader;
-	    	} catch (FileNotFoundException e1) {
-	    		throw new AlgorithmExecutionException("ReferReader could not find a file at " + file.getAbsolutePath(), e1);
-	    	} 
-	    }
+    	} catch (FileNotFoundException e) {
+    		throw new AlgorithmExecutionException(
+    				"ReferReader could not find a file at "
+    				+ file.getAbsolutePath(), e);
+    	} 
+    }
 	
 	public boolean startsWithFieldMarker(String line) {
     	return line.startsWith("%");
@@ -59,12 +62,6 @@ public class ReferUtil {
     
     public boolean isEndOfFile(String line) {
     	return line == null;
-    }
-    
-    public void printError(String line, int lineNum) {
-    	this.log.log(LogService.LOG_WARNING,
-				"Format error on line " + lineNum + " of reference file. The line '" + line 
-				+ "' was not inside of a field. Ignoring line and moving on.");
     }
     
     public TableData createEmptyTable() {
@@ -96,28 +93,29 @@ public class ReferUtil {
     	return "\r\n";
     }
     
-    public void commitFieldToRecord(TableData table, String field, String fieldContents) throws AlgorithmExecutionException {
-    	//will create the column if it does not already exist
+    public void commitFieldToRecord(
+    		TableData table, String field, String fieldContents)
+    			throws AlgorithmExecutionException {
+    	// Will create the column if it does not already exist
     	table.setString(field, fieldContents);
     }
     
     public void commitRecordToTable(TableData table) {
-    	//only actually creates the next row if we later try to some field data into it.
+    	/* Only actually creates the next row if we later try to some field
+    	 * data into it.
+    	 */
     	table.moveOnToNextRow();
     }
     
-    public Data[] formatAsData(Table referTable, String referFilePath) {
+    public Data[] createOutData(Table referTable, String referFilePath) {
     	Data[] tableToReturnData = 
 			new Data[] {new BasicData(referTable, Table.class.getName())};
-		tableToReturnData[0].getMetadata().put(DataProperty.LABEL, "Parsed EndNote reference file: " + referFilePath);
-		//TODO: should this really be a text_type?
-        tableToReturnData[0].getMetadata().put(DataProperty.TYPE, DataProperty.MATRIX_TYPE);
+		tableToReturnData[0].getMetadata().put(
+				DataProperty.LABEL,
+				"Parsed EndNote reference file: " + referFilePath);
+        tableToReturnData[0].getMetadata().put(
+        		DataProperty.TYPE, DataProperty.MATRIX_TYPE);
         return tableToReturnData;
-    }
-    
-    public void printProgrammerErrorMessage() {
-    	this.log.log(LogService.LOG_WARNING,
-    			"Programmer error: attempted to enter invalid state for state machine in ReferReader.");
     }
     
     private Map createColumnNameMap() {

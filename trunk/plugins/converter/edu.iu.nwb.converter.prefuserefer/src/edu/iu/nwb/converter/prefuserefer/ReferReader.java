@@ -15,27 +15,23 @@ import prefuse.data.Table;
 import edu.iu.nwb.converter.prefuserefer.util.TableData;
 
 public class ReferReader implements Algorithm {
-    Data[] data;
-    Dictionary parameters;
-    CIShellContext context;
-    LogService log;
-    
+    private LogService log;    
     private ReferUtil util;
 
-    public ReferReader(Data[] data, Dictionary parameters, CIShellContext context) {
-        this.data = data;
-        this.parameters = parameters;
-        this.context = context;
-        this.log = (LogService) context.getService("org.osgi.service.log.LogService");
+    public ReferReader(
+    		Data[] data, Dictionary parameters, CIShellContext context) {
+        this.inReferFile = (File) data[0].getData();
+        this.log =
+        	(LogService) context.getService(LogService.class.getName());
         
-        this.util = new ReferUtil(log);
+        this.util = new ReferUtil(log);		
     }
 
     public Data[] execute() throws AlgorithmExecutionException {
-    	File referFile = (File) data[0].getData();
-    	BufferedReader referReader = util.makeReader(referFile);
+    	BufferedReader referReader = util.makeReader(inReferFile);
     	Table referTable = extractTable(referReader);
-    	Data[] referData = util.formatAsData(referTable, referFile.getAbsolutePath());
+    	Data[] referData =
+    		util.createOutData(referTable, inReferFile.getAbsolutePath());
     	return referData;
     }
     
@@ -63,14 +59,25 @@ public class ReferReader implements Algorithm {
      *    extra blanks will be added.
      * 5) Probably more that I am not thinking of
      */
+	private File inReferFile;
     
-    private Table extractTable(BufferedReader referReader) throws AlgorithmExecutionException {
-    	TableData table = util.createEmptyTable(); // the table we are filling with reference records
+    private Table extractTable(BufferedReader referReader)
+    		throws AlgorithmExecutionException {
+    	// The table we are filling with reference records
+    	TableData table = util.createEmptyTable();
     	
-    	String field = null; //the field we are currently reading ("Author", "Year", etc...)
-    	String fieldContents = null; //the content of the field we have read so far (Nikola Tesla, 1899, etc...)
-    	String line = null; //the current line of the file we are parsing
-    	int numBlankLinesInARowAfterField = 0; //used to determine whether blank lines are part of field data, or are separating two records
+    	// The field we are currently reading ("Author", "Year", etc...)
+    	String field = null;
+    	/* The content of the field we have read
+    	 * so far (Nikola Tesla, 1899, etc...)
+    	 */
+    	String fieldContents = null;
+    	// The current line of the file we are parsing
+    	String line = null; 
+    	/* Used to determine whether blank lines are part of field data,
+    	 * or are separating two records
+    	 */
+    	int numBlankLinesInARowAfterField = 0;
     	
     
     	boolean doneParsing = false;
@@ -204,8 +211,12 @@ public class ReferReader implements Algorithm {
     		}
     		
     		case ERROR: {  //we see a line which we do not know how to handle
-    			//print error
-    			util.printError(line, getLinesRead());
+    			this.log.log(
+    					LogService.LOG_WARNING,
+    					"Format error on line " + getLinesRead()
+    					+ " of reference file. The line '" + line 
+    					+ "' was not inside of a field. "
+    					+ "Ignoring line and moving on.");
     			//get next line
     			line = getNextLine(referReader);
     			//go to next state
@@ -227,7 +238,10 @@ public class ReferReader implements Algorithm {
     		}
     		
     		default:
-    			util.printProgrammerErrorMessage();
+    			log.log(
+    					LogService.LOG_WARNING,
+    					"Programmer error: attempted to enter invalid state "
+    					+ "for state machine in ReferReader.");
     			doneParsing = true;
     			break;
     	}
@@ -239,11 +253,13 @@ public class ReferReader implements Algorithm {
     
     public String getNextLine(BufferedReader reader){
     	try {
-    	String line = reader.readLine();
-    	linesRead++;
-    	return line;
-    	} catch (IOException e1) {
-    		this.log.log(LogService.LOG_WARNING, "Unable to read the next line from file. Treating this as the end of the file", e1);
+	    	String line = reader.readLine();
+	    	linesRead++;
+	    	return line;
+    	} catch (IOException e) {
+    		log.log(LogService.LOG_WARNING,
+    				"Unable to read the next line from file. "
+    				+ "Treating this as the end of the file", e);
     		return null;
     	}
     }

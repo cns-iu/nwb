@@ -9,9 +9,7 @@ import org.cishell.framework.data.Data;
 import org.osgi.service.metatype.MetaTypeProvider;
 
 public class PrefuseJungConverterAlgorithmFactory  implements AlgorithmFactory {
-
 	public Algorithm createAlgorithm(Data[] data, Dictionary parameters, CIShellContext context) {
 		return new PrefuseJungConverterAlgorithm(data, parameters, context);
 	}
-
 }

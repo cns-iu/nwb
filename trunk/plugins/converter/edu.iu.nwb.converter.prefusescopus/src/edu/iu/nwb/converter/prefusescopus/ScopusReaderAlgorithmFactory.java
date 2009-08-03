@@ -9,7 +9,8 @@ import org.cishell.framework.data.Data;
 
 
 public class ScopusReaderAlgorithmFactory implements AlgorithmFactory {
-    public Algorithm createAlgorithm(Data[] data, Dictionary parameters, CIShellContext context) {
+    public Algorithm createAlgorithm(
+    		Data[] data, Dictionary parameters, CIShellContext context) {
         return new ScopusReaderAlgorithm(data, parameters, context);
     }
 }

@@ -10,7 +10,8 @@ import org.osgi.service.log.LogService;
 
 
 public class BibtexReaderAlgorithmFactory implements AlgorithmFactory {
-    public Algorithm createAlgorithm(Data[] data, Dictionary parameters, CIShellContext context) {
-        return new BibtexReaderAlgorithm(data, parameters, context, (LogService) context.getService("org.osgi.service.log.LogService"));
+    public Algorithm createAlgorithm(
+    		Data[] data, Dictionary parameters, CIShellContext context) {
+        return new BibtexReaderAlgorithm(data, parameters, context);
     }
 }

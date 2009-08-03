@@ -5,6 +5,7 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
 
+import org.cishell.framework.algorithm.AlgorithmExecutionException;
 import org.osgi.service.log.LogService;
 
 import prefuse.data.Schema;
@@ -17,10 +18,9 @@ import edu.iu.nwb.shared.isiutil.ISITag;
  * @author mwlinnem
  * based off of code from rduhon
  */
-public class ISITableReader {
-	
-	private static final String NORMALIZED_SEPARATOR = "|";
-	private static final int TAG_LENGTH = 2;
+public class ISITableReader {	
+	public static final String NORMALIZED_SEPARATOR = "|";
+	public static final int TAG_LENGTH = 2;
 	
 	private LogService log;
 	private boolean normalizeAuthorNames;
@@ -35,7 +35,7 @@ public class ISITableReader {
 		this.normalizeAuthorNames = normalizeAuthorNames;
 	}
 	
-	public Table readTable(FileInputStream stream) throws IOException {
+	public Table readTable(FileInputStream stream) throws IOException, AlgorithmExecutionException {
 		BufferedReader reader = new BufferedReader(new InputStreamReader(stream));
 		
 		TableData tableData = generateEmptyISITable();
@@ -71,8 +71,9 @@ public class ISITableReader {
 			} else {
 				//either we had an error in the program or there is something wrong with the file.
 				log.log(LogService.LOG_WARNING,
-						"No case in ISITableReader to handle the tag " + currentTag.columnName + ".");
-				log.log(LogService.LOG_WARNING, "Moving on to next tag.");
+						"No case in ISITableReader to handle the tag "
+						+ currentTag.columnName
+						+ ".  Moving on to next tag.");
 				currentLine = moveToNextLineWithTag(reader);
 			}
 		}
@@ -82,7 +83,7 @@ public class ISITableReader {
 	}
 		
 	private String addIntTagData(ISITag currentTag, String currentLine,
-			BufferedReader reader, TableData tableData) throws IOException {
+			BufferedReader reader, TableData tableData) throws IOException, AlgorithmExecutionException {
 		currentLine = removeTag(currentLine);
 		currentLine = currentLine.trim();
 		
@@ -94,15 +95,17 @@ public class ISITableReader {
 			String nextLine = moveToNextLineWithTag(reader);
 			return nextLine;
 		} catch (NumberFormatException e) {
-			System.err.println("Tag '" + currentTag + "' " + "with data '" 
-					+ currentLine + "' could not be parsed as an integer.");
-			System.err.println("Treating the data as text instead");
-			return addMultivalueTagData(currentTag, currentLine, reader, tableData);
+			log.log(LogService.LOG_WARNING,
+					"WARNING: Tag '" + currentTag + "' " + "with data '" 
+					+ currentLine + "' could not be parsed as an integer.  "
+					+ "Treating the data as text instead", e);
+			return addMultivalueTagData(
+					currentTag, currentLine, reader, tableData);
 		}
 	}
 	
 	private String addStringTagData(ISITag currentTag, String currentLine,
-			BufferedReader reader, TableData tableData) throws IOException {
+			BufferedReader reader, TableData tableData) throws IOException, AlgorithmExecutionException {
 		String nextLine;
 		
 		nextLine = processMultilineTagDataNormally(currentTag, 
@@ -112,14 +115,15 @@ public class ISITableReader {
 	}
 	
 	private String addMultivalueTagData(ISITag currentTag, String currentLine,
-			BufferedReader reader, TableData tableData) throws IOException {
+			BufferedReader reader, TableData tableData) throws IOException, AlgorithmExecutionException {
 		
 		String separator = currentTag.separator;
 		
 		String nextLine;
 		
 		if (separator == null) {
-			System.err.println("Programmer error: multi-value text tag not provided with separator");
+			log.log(LogService.LOG_WARNING,
+				"Programmer error: multi-value text tag not provided with separator");
 			nextLine = moveToNextLineWithTag(reader);
 		} else if (separator.equals("\n")) {
 			nextLine = processMultilineTagDataWithNewlineSeparators(
@@ -135,14 +139,14 @@ public class ISITableReader {
 	private String processMultilineTagDataNormally(ISITag currentTag, 
 			String currentLine,
 			BufferedReader reader,
-			TableData table) throws IOException {
+			TableData table) throws IOException, AlgorithmExecutionException {
 		return processMultilineTagData(currentTag, currentLine, reader, table, " ", null);
 	}
 	
 	private String processMultilineTagDataWithNewlineSeparators(ISITag currentTag,
 			String currentLine,
 			BufferedReader reader,
-			TableData table) throws IOException {
+			TableData table) throws IOException, AlgorithmExecutionException {
 		return processMultilineTagData(currentTag, currentLine, reader, table, NORMALIZED_SEPARATOR, null);
 	}
 	
@@ -150,7 +154,7 @@ public class ISITableReader {
 			String currentLine,
 			BufferedReader reader,
 			TableData table,
-			String separator) throws IOException {
+			String separator) throws IOException, AlgorithmExecutionException {
 		return processMultilineTagData(currentTag, currentLine, reader, table, " ", separator);
 	}
 	
@@ -160,7 +164,7 @@ public class ISITableReader {
 			BufferedReader reader,
 			TableData tableData,
 			String appendString,
-			String separatorString) throws IOException {
+			String separatorString) throws IOException, AlgorithmExecutionException {
 		StringBuffer stringSoFar = new StringBuffer();
 
 		currentLine = removeTag(currentLine);
@@ -201,13 +205,15 @@ public class ISITableReader {
 		}
 		
 		try {
-		tableData.setString(currentTag.columnName, allTagDataString);
+			tableData.setString(currentTag.columnName, allTagDataString);
 		} catch (Exception e) {
-			log.log(LogService.LOG_INFO, "currentTag name: " + currentTag.columnName);
-			log.log(LogService.LOG_INFO, "currentTag type: " + currentTag.type);
-			log.log(LogService.LOG_INFO, "allTagDataString: " + allTagDataString);
-			log.log(LogService.LOG_ERROR, "Error occurred while setting table data", e);
-			e.printStackTrace();
+			log.log(LogService.LOG_INFO,
+					"currentTag name: " + currentTag.columnName + "\n"
+					+ "currentTag type: " + currentTag.type + "\n"
+					+ "allTagDataString: " + allTagDataString, e);
+			throw new AlgorithmExecutionException(
+					"Error occurred while setting table data: "
+					+ e.getMessage(), e);
 		}
 		
 		String nextLineAfterThisTag = currentLine;
@@ -220,9 +226,9 @@ public class ISITableReader {
 		if (line != null && line.length() >= TAG_LENGTH) {
 			tag = line.substring(0, TAG_LENGTH);
 		} else {
-			System.err.println("Invalid line in isi file. Could not extract tag from line \r\n" +
-					line);
-			System.err.println("Skipping line...");
+			log.log(LogService.LOG_WARNING,
+					"Invalid line in isi file. Could not extract tag from line \r\n"
+					+ line + "\nSkipping line...");
 			tag = null;
 		}
 		
@@ -269,8 +275,9 @@ public class ISITableReader {
 			//since we have no stored information on this tag...
 			//we attempt to parse the tag data in the most general way possible.
 				
-			System.err.println("Unrecognized tag '" + tagName + "'");
-			System.err.println("Treating tag as if it held single-value text data");
+			log.log(LogService.LOG_WARNING,
+					"Unrecognized tag '" + tagName + "'.  Treating tag as if "
+					+ "it held single-value text data");
 				
 			ContentType currentTagContentType = ContentType.TEXT;
 			ISITag.addTag(tagName, tagName,  currentTagContentType);
@@ -314,7 +321,9 @@ public class ISITableReader {
 			String[] fields = line.split(",");
 			
 			if (fields.length == 0) {
-				System.err.println("Error in tagSpecificProcessing");
+				log.log(LogService.LOG_WARNING,
+						"Skipping this line because no fields were found: "
+						+ line);
 				return line;
 			}
 			

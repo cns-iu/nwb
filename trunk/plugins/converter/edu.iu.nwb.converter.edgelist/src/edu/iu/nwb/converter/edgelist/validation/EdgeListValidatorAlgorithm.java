@@ -11,28 +11,20 @@ import org.cishell.framework.algorithm.AlgorithmExecutionException;
 import org.cishell.framework.data.BasicData;
 import org.cishell.framework.data.Data;
 import org.cishell.framework.data.DataProperty;
-import org.osgi.service.log.LogService;
 
 import edu.iu.nwb.converter.edgelist.common.EdgeListParser;
 import edu.iu.nwb.converter.edgelist.common.InvalidEdgeListFormatException;
 import edu.iu.nwb.util.nwbfile.NWBFileParserAdapter;
 
 public class EdgeListValidatorAlgorithm implements Algorithm {    
-	public static final String REVIEW_SPEC_MESSAGE =
-		"The file selected as .edge is not a valid EdgeList file." + "\n"
-		+ "Please review the EdgeList file format specification at" + "\n"
-		+ "https://nwb.slis.indiana.edu/community/?n=LoadData.Edgelist" + "\n";
 	public static final String EDGE_LIST_MIME_TYPE = "file:text/edge";
 	private String edgeListFilePath;
-    LogService logger;
 	
         
     public EdgeListValidatorAlgorithm(Data[] data,
     								  Dictionary parameters,
     								  CIShellContext context) {
     	this.edgeListFilePath = (String) data[0].getData();
-        this.logger =
-        	(LogService) context.getService(LogService.class.getName());
     }
 
     
@@ -41,9 +33,9 @@ public class EdgeListValidatorAlgorithm implements Algorithm {
 		try {
 			validateEdgeList(edgeListFile);
 		} catch (AlgorithmExecutionException e) {
-			throw new AlgorithmExecutionException(
-					"Unable to validate edgelist file: " + e.getMessage(),
-					e);
+			String message =
+				"Error: Unable to validate edgelist file: " + e.getMessage();
+			throw new AlgorithmExecutionException(message, e);
 		}
 		
 		// If no exceptions were thrown, then edgeListFile is valid
@@ -61,11 +53,10 @@ public class EdgeListValidatorAlgorithm implements Algorithm {
 			 */
 			parser.parseInto(new NWBFileParserAdapter());
 		} catch (FileNotFoundException e){
-			throw new AlgorithmExecutionException(e);						
-		} catch (IOException ioe){
-			throw new AlgorithmExecutionException(ioe);
+			throw new AlgorithmExecutionException(e.getMessage(), e);						
+		} catch (IOException e){
+			throw new AlgorithmExecutionException(e.getMessage(), e);
 		} catch (InvalidEdgeListFormatException e) {
-			logger.log(LogService.LOG_ERROR, REVIEW_SPEC_MESSAGE);
 			throw new AlgorithmExecutionException(e.getMessage(), e);					
 		}
     }

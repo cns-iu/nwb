@@ -75,17 +75,20 @@ public class PrefuseEdgeLabeler {
     		return id;
     	
     	// Try to use the names of the nodes joined by this edge
-    	String joinedNames = createEdgeLabelFromAttributeOfJoinedNodes(edge, XGMMLGraphWriter.NAME);
+    	String joinedNames =
+    		createEdgeLabelFromAttributeOfJoinedNodes(edge, XGMMLGraphWriter.NAME);
     	if ( joinedNames != null )
     		return joinedNames;
     	
     	// Try to use the labels of the nodes joined by this edge
-    	String joinedLabels = createEdgeLabelFromAttributeOfJoinedNodes(edge, XGMMLGraphWriter.LABEL);
+    	String joinedLabels =
+    		createEdgeLabelFromAttributeOfJoinedNodes(edge, XGMMLGraphWriter.LABEL);
     	if ( joinedLabels != null )
     		return joinedLabels;
     	
     	// Try to use the ids of the nodes joined by this edge
-    	String joinedIDs = createEdgeLabelFromAttributeOfJoinedNodes(edge, XGMMLGraphWriter.ID);
+    	String joinedIDs =
+    		createEdgeLabelFromAttributeOfJoinedNodes(edge, XGMMLGraphWriter.ID);
     	if ( joinedIDs != null )
     		return joinedIDs;
     	
@@ -95,6 +98,7 @@ public class PrefuseEdgeLabeler {
         do {
         	uniqueNewEdgeLabel = String.valueOf(++nextUnusedEdgeLabel);
         } while ( usedEdgeLabels.contains(uniqueNewEdgeLabel) );
+        
     	return uniqueNewEdgeLabel;
     }
     

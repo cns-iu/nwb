@@ -100,8 +100,10 @@ public class NETFileColor {
 	public static final String COLOR_GRAY_85 = "gray85";
 	public static final String COLOR_GRAY_90 = "gray90";
 	public static final String COLOR_GRAY_95 = "gray95";
-	
-	public static final String[] VERTEX_COLOR_LIST = {NETFileColor.COLOR_APRICOT,
+
+	public static final String[] VERTEX_COLOR_LIST =
+	{
+		NETFileColor.COLOR_APRICOT,
 		NETFileColor.COLOR_AQUAMARINE,
 		NETFileColor.COLOR_BITTER_SWEET,
 		NETFileColor.COLOR_BLACK,
@@ -195,7 +197,8 @@ public class NETFileColor {
 		NETFileColor.COLOR_WILD_STRAWBERRY,
 		NETFileColor.COLOR_YELLOW,
 		NETFileColor.COLOR_YELLOW_GREEN,
-		NETFileColor.COLOR_YELLOW_ORANGE};
+		NETFileColor.COLOR_YELLOW_ORANGE
+	};
 
 
 }

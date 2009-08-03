@@ -9,81 +9,78 @@ import java.util.Dictionary;
 
 import org.cishell.framework.CIShellContext;
 import org.cishell.framework.algorithm.Algorithm;
+import org.cishell.framework.algorithm.AlgorithmExecutionException;
 import org.cishell.framework.algorithm.AlgorithmFactory;
 import org.cishell.framework.data.BasicData;
 import org.cishell.framework.data.Data;
 import org.cishell.framework.data.DataProperty;
-import org.osgi.service.component.ComponentContext;
-import org.osgi.service.log.LogService;
-import org.osgi.service.metatype.MetaTypeProvider;
 
 import edu.berkeley.guir.prefuse.graph.io.XMLGraphReader;
 
 /**
  * @author Weixia(Bonnie) Huang 
  */
-public class PrefuseXGMMLValidation implements AlgorithmFactory {
- 
-    protected void activate(ComponentContext ctxt) {
-    }
-    protected void deactivate(ComponentContext ctxt) {
-     }
-
-    public Algorithm createAlgorithm(Data[] data, Dictionary parameters, CIShellContext context) {
+public class PrefuseXGMMLValidation implements AlgorithmFactory { 
+    public Algorithm createAlgorithm(
+    		Data[] data, Dictionary parameters, CIShellContext context) {
         return new PrefuseXGMMLValidationAlg(data, parameters, context);
-    }
-    public MetaTypeProvider createParameters(Data[] data) {
-        return null;
     }
     
     public class PrefuseXGMMLValidationAlg implements Algorithm {
-        Data[] data;
-        Dictionary parameters;
-        CIShellContext context;
-        LogService logger;
+		public static final String XGMML_MIME_TYPE = "file:text/xgmml+xml";
+		
+		private String inXGMMLFileName;
         
-        public PrefuseXGMMLValidationAlg(Data[] data, Dictionary parameters, CIShellContext context) {
-            this.data = data;
-            this.parameters = parameters;
-            this.context = context;
-           	logger = (LogService)context.getService(LogService.class.getName());
+		
+        public PrefuseXGMMLValidationAlg(
+        		Data[] data, Dictionary parameters, CIShellContext context) {
+            this.inXGMMLFileName = (String) data[0].getData();
         }
 
-        public Data[] execute() {
-//	 
-
-			String fileHandler = (String) data[0].getData();
-			File inData = new File(fileHandler);
+        
+        public Data[] execute() throws AlgorithmExecutionException {
+        	File inData = new File(inXGMMLFileName);
+        	
         	try{
-        		if (validateXGMMLHeader(inData)){
-	        		(new XMLGraphReader()).loadGraph(fileHandler);
-	        		Data[] dm = new Data[] {new BasicData(inData, "file:text/xgmml+xml")};
-	        		dm[0].getMetadata().put(DataProperty.LABEL, "Prefuse XGMML .xml file: " + fileHandler);
-	                dm[0].getMetadata().put(DataProperty.TYPE, DataProperty.NETWORK_TYPE);
-	        		return dm;
-        		}else
-        			return null;   
-        	}catch (FileNotFoundException e){
-        		logger.log(LogService.LOG_ERROR, "Could not find the specified XGMML file for validation.",e );
-        		return null;
-        	}catch (IOException ioe){
-        		logger.log(LogService.LOG_ERROR, "IO error while validating the specified XGMML file.", ioe);
-//        		logger.log(LogService.LOG_ERROR, "IOException", ioe);
-        		return null;
+        		if (validateXGMMLHeader(inData)) {
+	        		(new XMLGraphReader()).loadGraph(inXGMMLFileName);
+	        		
+	        		return createOutData(inData);
+        		} else {
+        			throw new AlgorithmExecutionException(
+        				"Couldn't validate " + inXGMMLFileName
+        				+ " as an XGMML file.");
+        		}
+        	} catch (FileNotFoundException e) {
+        		throw new AlgorithmExecutionException(
+        			"Could not find XGMML file to validate: "
+        				+ e.getMessage(), e);
+        	} catch (IOException e) {
+        		throw new AlgorithmExecutionException(e.getMessage(), e);
         	}
-
         }
+
+		private Data[] createOutData(File inData) {
+			Data[] dm = new Data[]{ new BasicData(inData, XGMML_MIME_TYPE) };
+			dm[0].getMetadata().put(
+					DataProperty.LABEL,
+					"Prefuse XGMML .xml file: " + inXGMMLFileName);
+			dm[0].getMetadata().put(
+					DataProperty.TYPE, DataProperty.NETWORK_TYPE);
+			return dm;
+		}
         
-        //TODO Bonnie
-        //This is a temporary fix. The problem is after we get rid of LoadDataChooser
-        //It seems that prefuse library can load xgmml file(.xml) in as a graphml.
-        //but all visualization algs didn't work since it is not a real graphml file.
-        //It also possible that sometimes prefuse can load gramphml file in as an xgmml.
-        //although the reverse path never happened in my testing env. 
-        //Here I try to detect if there is "<graphml" header in the file, if not, it 
-        //is not a gramphml file
+        /* TODO Bonnie
+         * This is a temporary fix. The problem is after we get rid of
+         * LoadDataChooser.  It seems that prefuse library can load xgmml
+         * file(.xml) in as a graphml but all visualization algs didn't work
+         * since it is not a real graphml file.  It also possible that sometimes
+         * prefuse can load graphml file in as an xgmml.  Although the reverse
+         * path never happened in my testing env.  Here I try to detect if there
+         * is "<graphml" header in the file, if not, it is not a gramphml file.
+         */
         private boolean validateXGMMLHeader(File inData)
-        		throws FileNotFoundException, IOException{
+        		throws FileNotFoundException, IOException {
         	boolean hasXGMMLHeader = false;
     		
         	BufferedReader reader = 
@@ -95,15 +92,14 @@ public class PrefuseXGMMLValidation implements AlgorithmFactory {
     				hasXGMMLHeader = false;
     				break;
     			}
-    			if(line.startsWith("<graph ") || line.startsWith("<graph>")){
+    			if(line.startsWith("<graph ") || line.startsWith("<graph>")) {
     				hasXGMMLHeader = true;
     				break;
     			}    			
     			line = reader.readLine();	
     		}
-    		return hasXGMMLHeader;
     		
+    		return hasXGMMLHeader;    		
         }
-
     }
 }

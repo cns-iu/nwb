@@ -26,12 +26,15 @@ public class TableData {
 		currentRowIsFinished = true;
 	}
 	
-	public void setString(String columnTag, String value) throws AlgorithmExecutionException {
+	public void setString(String columnTag, String value)
+			throws AlgorithmExecutionException {
 		setString(columnTag, value, DEFAULT_MULTI_VAL_SEPARATOR);
 	}
 	
 	//will create the column if it does not already exist
-	public void setString(String columnTag, String value, String multiValSeparator) throws AlgorithmExecutionException {
+	public void setString(
+			String columnTag, String value, String multiValSeparator)
+				throws AlgorithmExecutionException {
 		ensureRowNotFinishedYet();
 		
 		String readableColumnTag = getReadableColName(columnTag);
@@ -48,10 +51,13 @@ public class TableData {
 			//maybe column does not yet exist. Add it and try again.
 			addColumn(readableColumnTag, String.class);
 			try {
-			table.setString(currentRow, readableColumnTag, value);
-			} catch (Exception e2) {
+				table.setString(currentRow, readableColumnTag, value);
+			} catch (Exception e) {
 				//something else must be wrong.
-				throw new AlgorithmExecutionException("Error occurred while adding the value " + value + " to the column " + readableColumnTag + " on row " + currentRow, e2);
+				throw new AlgorithmExecutionException(
+					"Error occurred while adding the value " + value
+					+ " to the column " + readableColumnTag + " on row "
+					+ currentRow, e);
 			}
 		}
 	}

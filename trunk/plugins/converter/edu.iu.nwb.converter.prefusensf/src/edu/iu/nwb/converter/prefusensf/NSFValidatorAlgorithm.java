@@ -10,27 +10,18 @@ import org.cishell.framework.data.BasicData;
 import org.cishell.framework.data.Data;
 import org.cishell.framework.data.DataProperty;
 
-import edu.iu.nwb.converter.prefusecsv.validator.PrefuseCsvValidationAlgorithm;
-import edu.iu.nwb.converter.prefusecsv.validator.PrefuseCsvValidationAlgorithmFactory;
-
 public class NSFValidatorAlgorithm implements Algorithm {
-	Data[] data;
-	Dictionary parameters;
-	CIShellContext context;
+	private String inNSFFileName;
 
-	public NSFValidatorAlgorithm(Data[] data, Dictionary parameters,
-			CIShellContext context) {
-		this.data = data;
-		this.parameters = parameters;
-		this.context = context;
+	public NSFValidatorAlgorithm(
+			Data[] data, Dictionary parameters, CIShellContext context) {
+		this.inNSFFileName = (String) data[0].getData();
 	}
 
 	public Data[] execute() throws AlgorithmExecutionException {
-		String nsfFileName = (String) data[0].getData();
-		File nsfFile = new File(nsfFileName);
+		File inNSFFile = new File(inNSFFileName);
 
 		try {
-
 			/*
 			 * TODO: Write a proper/working NSF File validator. Initially used
 			 * CSV Validator for this but it doesnt work as expected. Use the
@@ -49,16 +40,19 @@ public class NSFValidatorAlgorithm implements Algorithm {
 			 * csvValidator.validateSelectedFileforCSVFormat(nsfFileName);
 			 */
 
-			Data[] validatedData = new Data[] { new BasicData(nsfFile,
-			"file:text/nsf") };
-			validatedData[0].getMetadata().put(DataProperty.LABEL,
-					"NSF csv file: " + nsfFileName);
-			validatedData[0].getMetadata().put(DataProperty.TYPE,
-					DataProperty.TABLE_TYPE);
-			return validatedData;
-		} catch (SecurityException exception) {
-			throw new AlgorithmExecutionException(exception);
+			return createOutData(inNSFFile);
+		} catch (SecurityException e) {
+			throw new AlgorithmExecutionException(e.getMessage(), e);
 		}
+	}
 
+	private Data[] createOutData(File nsfFile) {
+		Data[] validatedData =
+			new Data[] { new BasicData(nsfFile, "file:text/nsf") };
+		validatedData[0].getMetadata().put(
+				DataProperty.LABEL,	"NSF csv file: " + inNSFFileName);
+		validatedData[0].getMetadata().put(
+				DataProperty.TYPE, DataProperty.TABLE_TYPE);
+		return validatedData;
 	}
 }

@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.cishell.framework.algorithm.AlgorithmExecutionException;
 import org.osgi.service.log.LogService;
 
 import prefuse.data.DataTypeException;
@@ -30,7 +31,7 @@ public class ISICitationExtractionPreparer {
 		this.log = log;
 	}
 
-	public Table prepareForCitationExtraction(Table isiTable) {
+	public Table prepareForCitationExtraction(Table isiTable) throws AlgorithmExecutionException {
 		// make journal names in papers conform to journal names used to reference those papers
 		isiTable = cleanReferences(isiTable);
 		// create self-references (that is, a field that looks like how other papers will reference it) for each paper
@@ -40,7 +41,7 @@ public class ISICitationExtractionPreparer {
 	}
 
 	// side-effects isiTable
-	private Table addSelfReferences(Table isiTable) {
+	private Table addSelfReferences(Table isiTable) throws AlgorithmExecutionException {
 		// create the self-reference column
 		isiTable.addColumn(SELF_REFERENCE_COLUMN_NAME, String.class);
 		// for each record in the table...
@@ -55,7 +56,7 @@ public class ISICitationExtractionPreparer {
 		return isiTable;
 	}
 
-	private String createSelfReference(Tuple isiRow) {
+	private String createSelfReference(Tuple isiRow) throws AlgorithmExecutionException {
 		List selfReferenceTokenList = new ArrayList();
 		try {
 			// standard elements
@@ -98,13 +99,15 @@ public class ISICitationExtractionPreparer {
 				handleNoDOI(isiRow);
 			}
 			
-		} catch (ArrayIndexOutOfBoundsException e1) {
+		} catch (ArrayIndexOutOfBoundsException e) {
 			// column requested does not exist (for entire table or just this field?)
 			// Fail silently. This will happen normally. The remainder of the self reference will be returned.
-		} catch (DataTypeException e2) {
+		} catch (DataTypeException e) {
 			// column type cannot be interpreted as a string (?)
 			// this should only happen if the column is of some bizarre unexpected type
-			printWrongColumnTypeError(e2, isiRow);
+			throw new AlgorithmExecutionException(
+					"Some elements in the tuple '" + isiRow
+					+ "' cannot be converted to a String (apparently)", e);
 		}
 		// construct self reference from tokens we just collected
 		String[] selfReferenceTokens = (String[]) selfReferenceTokenList.toArray(new String[selfReferenceTokenList
@@ -247,8 +250,8 @@ public class ISICitationExtractionPreparer {
 	}
 
 	private float calculateNameSimilarity(String jn, String cjn) {
-		StringBuffer log = new StringBuffer();
-		log.append("Calcuating '" + jn + "' and '" + cjn + "'.\r\n");
+		StringBuffer bufferLog = new StringBuffer();
+		bufferLog.append("Calcuating '" + jn + "' and '" + cjn + "'.\r\n");
 		String whitespace = "\\s";
 		String[] jnWords = trimAfterEmpties(jn.split(whitespace));
 		String[] cjnWords = trimAfterEmpties(cjn.split(whitespace));
@@ -257,18 +260,19 @@ public class ISICitationExtractionPreparer {
 		// look through indices where both have letters
 		int i = 0;
 		for (; i < jnWords.length && i < cjnWords.length; i++) {
-			scoreCounter += calculateWordSimilarity(jnWords[i], cjnWords[i], log);
+			scoreCounter += calculateWordSimilarity(jnWords[i], cjnWords[i], bufferLog);
 		}
 
 		// look through indices where only one has letters
 		for (int j = i; j < jnWords.length || j < cjnWords.length; j++) {
-			scoreCounter += calculateWordSimilarity(oneWithMoreWords[j], null, log);
+			scoreCounter += calculateWordSimilarity(oneWithMoreWords[j], null, bufferLog);
 		}
 
 		float finalScore = scoreCounter / (float) oneWithMoreWords.length;
 		if (finalScore > -.5f && finalScore < .5) {
-			System.out.println("" + jn + " == " + cjn + ": " + finalScore);
-			System.out.println(log.toString());
+			log.log(LogService.LOG_INFO,
+					"" + jn + " == " + cjn + ": " + finalScore);
+			log.log(LogService.LOG_INFO, bufferLog.toString());
 		}
 		return finalScore;
 	}
@@ -499,9 +503,8 @@ public class ISICitationExtractionPreparer {
 		return (String[]) sList.toArray(new String[sList.size()]);
 	}
 
-	private void printWrongColumnTypeError(DataTypeException e2, Tuple isiRow) {
-		this.log.log(LogService.LOG_ERROR, "Some elements in the tuple '" + isiRow
-				+ "' cannot be converted to a String (apparently)", e2);
+	private void printWrongColumnTypeError(DataTypeException e, Tuple isiRow) {
+		
 	}
 
 	private void handleNoAuthor(Tuple isiRow) {

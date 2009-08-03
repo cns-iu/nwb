@@ -1,9 +1,11 @@
 package edu.iu.nwb.converter.prefusegraphml.reader;
 
+import java.io.IOException;
 import java.io.InputStream;
 import java.util.Date;
 import java.util.HashMap;
 
+import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.parsers.SAXParser;
 import javax.xml.parsers.SAXParserFactory;
 
@@ -32,26 +34,26 @@ import prefuse.util.collections.IntIterator;
  * 
  * @author <a href="http://jheer.org">jeffrey heer</a>
  */
-public class GraphMLReaderModified extends AbstractGraphReader  implements GraphReader {
+public class GraphMLReaderModified
+		extends AbstractGraphReader implements GraphReader {
     
     /**
      * @see prefuse.data.io.GraphReader#readGraph(java.io.InputStream)
      */
-    public Graph readGraph(InputStream is) throws DataIOException {
-        try {       
-            SAXParserFactory factory   = SAXParserFactory.newInstance();
-            SAXParser        saxParser = factory.newSAXParser();
-            
-            GraphMLHandler   handler   = new GraphMLHandler();
-            saxParser.parse(is, handler);
-            return handler.getGraph();
-        } catch ( Exception e ) {
-            if ( e instanceof DataIOException ) {
-                throw (DataIOException)e;
-            } else {
-                throw new DataIOException(e);
-            }
-        }
+    public Graph readGraph(InputStream is) throws DataIOException {       
+		try {
+			SAXParserFactory factory = SAXParserFactory.newInstance();
+		    SAXParser saxParser = factory.newSAXParser();
+			GraphMLHandler handler = new GraphMLHandler();
+	        saxParser.parse(is, handler);
+	        return handler.getGraph();
+		} catch (ParserConfigurationException e) {
+			throw new DataIOException(e.getMessage(), e);
+		} catch (SAXException e) {
+			throw new DataIOException(e.getMessage(), e);
+		} catch (IOException e) {
+			throw new DataIOException(e.getMessage(), e);
+		}
     }
     
     /**
@@ -138,15 +140,16 @@ public class GraphMLReaderModified extends AbstractGraphReader  implements Graph
             m_esch.addColumn(TRGID, String.class);
         }
         
-        public void endDocument() throws SAXException {
+        public void endDocument() throws SAXException {        	
+        	/*NOTE: Inserted from 1.5 version of this file.
+        	 * The fix is not available in the current release, but was
+        	 * merged in from the repository
+        	 */
         	
-        	//NOTE: Inserted from 1.5 version of this file. The fix is not available in the current release, but was merged in
-        	//from the repository
-        	
-        	// Initialise the schemas just in case there are no nodes or edges
+        	// Initialize the schemas just in case there are no nodes or edges
         	schemaCheck();
         	
-            // time to actually set up the edges
+            // Set up the edges
             IntIterator rows = m_edges.rows();
             while (rows.hasNext()) {
                 int r = rows.nextInt();
@@ -172,21 +175,23 @@ public class GraphMLReaderModified extends AbstractGraphReader  implements Graph
             m_edges.removeColumn(SRCID);
             m_edges.removeColumn(TRGID);
 
-            // now create the graph
+            // Now create the graph
             m_graph = new Graph(m_nodes, m_edges, m_directed);
             if (m_graphid != null)
                 m_graph.putClientProperty(ID, m_graphid);
         }
         
-        public void startElement(String namespaceURI, String localName, 
-                                 String qName, Attributes atts)
-        {
-            // first clear the character buffer
+        public void startElement(String namespaceURI,
+        						 String localName,
+        						 String qName,
+        						 Attributes atts)
+        							throws SAXException {
+            // Clear the character buffer
             m_sbuf.delete(0, m_sbuf.length());
             
             if ( qName.equals(GRAPH) )
             {
-                // parse directedness default
+                // Parse directedness default
                 String edef = atts.getValue(EDGEDEF);
                 m_directed = DIRECTED.equalsIgnoreCase(edef);
                 m_graphid = atts.getValue(ID);
@@ -194,7 +199,8 @@ public class GraphMLReaderModified extends AbstractGraphReader  implements Graph
             else if ( qName.equals(KEY) )
             {
                 if ( !inSchema ) {
-                    error("\""+KEY+"\" elements can not"
+                	throw new SAXException(
+                		"\""+KEY+"\" elements can not"
                         + " occur after the first node or edge declaration.");
                 }
                 m_for = atts.getValue(FOR);
@@ -244,9 +250,8 @@ public class GraphMLReaderModified extends AbstractGraphReader  implements Graph
             }
         }
 
-        public void endElement(String namespaceURI, 
-                String localName, String qName)
-        {
+        public void endElement(
+        		String namespaceURI, String localName, String qName) throws SAXException {
             if ( qName.equals(DEFAULT) ) {
                 // value is in the buffer
                 m_dflt = m_sbuf.toString();
@@ -263,8 +268,8 @@ public class GraphMLReaderModified extends AbstractGraphReader  implements Graph
                 try {
                     Object val = parse(value, type);
                     m_table.set(m_row, name, val);
-                } catch ( DataParseException dpe ) {
-                    error(dpe);
+                } catch (DataParseException e) {
+                	throw new SAXException(e);
                 }
             }
             else if ( qName.equals(NODE) || qName.equals(EDGE) ) {
@@ -289,11 +294,11 @@ public class GraphMLReaderModified extends AbstractGraphReader  implements Graph
             }
         }
         
-        protected void addToSchema() {
+        protected void addToSchema() throws SAXException {
             if ( m_name == null || m_name.length() == 0 )
-                error("Empty "+KEY+" name.");
+                throw new SAXException("Empty "+KEY+" name.");
             if ( m_type == null || m_type.length() == 0 )
-                error("Empty "+KEY+" type.");
+            	throw new SAXException("Empty "+KEY+" type.");
             
             try {
                 Class type = parseType(m_type);
@@ -307,17 +312,18 @@ public class GraphMLReaderModified extends AbstractGraphReader  implements Graph
                 } else if ( m_for.equals(EDGE) ) {
                     m_esch.addColumn(m_name, type, dflt);
                 } else {
-                    error("Unrecognized \""+FOR+"\" value: "+ m_for);
+                	throw new SAXException(
+                			"Unrecognized \""+FOR+"\" value: "+ m_for);
                 }
                 m_idMap.put(m_id, m_name);
                 
                 m_dflt = null;
             } catch ( DataParseException dpe ) {
-                error(dpe);
+            	throw new SAXException(dpe);
             }
         }
         
-        protected Class parseType(String type) {
+        protected Class parseType(String type) throws SAXException {
             type = type.toLowerCase();
             if ( type.equals(INT) || type.equals(INTEGER) ) {
                 return int.class;
@@ -334,31 +340,18 @@ public class GraphMLReaderModified extends AbstractGraphReader  implements Graph
             } else if ( type.equals(DATE) ) {
                 return Date.class;
             } else {
-                error("Unrecognized data type: "+type);
-                return null;
+                throw new SAXException("Unrecognized data type: "+type);
             }
         }
         
-        protected Object parse(String s, Class type)
-            throws DataParseException
-        {
+        protected Object parse(String s, Class type) throws DataParseException {
             DataParser dp = m_pf.getParser(type);
             return dp.parse(s);
         }
         
         public Graph getGraph() {
             return m_graph;
-        }
-        
-        protected void error(String s) {
-            throw new RuntimeException(s);
-        }
-        
-        protected void error(Exception e) {
-            throw new RuntimeException(e);
-        }
-        
-    } // end of inner class GraphMLHandler
-
-} // end of class XMLGraphReader
+        }        
+    }
+}
 

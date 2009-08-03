@@ -7,6 +7,7 @@ import java.util.Dictionary;
 
 import org.cishell.framework.CIShellContext;
 import org.cishell.framework.algorithm.Algorithm;
+import org.cishell.framework.algorithm.AlgorithmExecutionException;
 import org.cishell.framework.data.BasicData;
 import org.cishell.framework.data.Data;
 import org.cishell.framework.data.DataProperty;
@@ -20,36 +21,35 @@ import prefuse.data.io.TreeMLReader;
  * @author Weixia(Bonnie) Huang 
  */
 public class PrefuseTreeMLReader implements Algorithm {
-    Data[] data;
-    Dictionary parameters;
-    CIShellContext context;
+	private File inTreeMLFile;
     
-    public PrefuseTreeMLReader(Data[] data, Dictionary parameters, CIShellContext context) {
-        this.data = data;
-        this.parameters = parameters;
-        this.context = context;
+    public PrefuseTreeMLReader(
+    		Data[] data, Dictionary parameters, CIShellContext context) {
+        this.inTreeMLFile = (File) data[0].getData();
     }
 
-    public Data[] execute() {
-     	LogService logger = (LogService)context.getService(LogService.class.getName());
-    	File fileHandler = (File) data[0].getData();
-
-    	try{
-    		Graph graph= (new TreeMLReader()).readGraph(new FileInputStream(fileHandler));
-    		Data[] dm = new Data[] {new BasicData(graph, graph.getClass().getName())};
-    		dm[0].getMetadata().put(DataProperty.LABEL, "Prefuse Tree: " + fileHandler);
-            dm[0].getMetadata().put(DataProperty.TYPE, DataProperty.NETWORK_TYPE);
-    		return dm;
-    	}catch (DataIOException dioe){
-    		logger.log(LogService.LOG_ERROR, "A Data IO error occured while reading the specified TreeML file.", dioe);
-    		return null;
-    	}catch (SecurityException exception){
-    		logger.log(LogService.LOG_ERROR, "A security error occured while reading the specified TreeML file.", exception);
-    		return null;
-    	}catch (FileNotFoundException e){
-    		logger.log(LogService.LOG_ERROR, "Could not find the specified TreeML file.", e);
-    		return null;
-    	}
-    	
+    public Data[] execute() throws AlgorithmExecutionException {
+    	try {
+    		Graph graph =
+    			(new TreeMLReader()).readGraph(
+    					new FileInputStream(inTreeMLFile));
+    		return createOutData(graph);
+    	} catch (DataIOException e) {
+    		throw new AlgorithmExecutionException(e.getMessage(), e);
+    	} catch (SecurityException e) {
+    		throw new AlgorithmExecutionException(e.getMessage(), e);
+    	} catch (FileNotFoundException e) {
+    		throw new AlgorithmExecutionException(e.getMessage(), e);
+    	}    	
     }
+
+	private Data[] createOutData(Graph graph) {
+		Data[] dm = new Data[] {new BasicData(
+				graph, graph.getClass().getName())};
+		dm[0].getMetadata().put(
+				DataProperty.LABEL, "Prefuse Tree: " + inTreeMLFile);
+		dm[0].getMetadata().put(
+				DataProperty.TYPE, DataProperty.NETWORK_TYPE);
+		return dm;
+	}
 }

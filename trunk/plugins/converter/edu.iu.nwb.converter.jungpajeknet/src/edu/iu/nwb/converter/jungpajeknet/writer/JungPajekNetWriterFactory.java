@@ -9,7 +9,9 @@ import org.cishell.framework.data.Data;
 
 
 public class JungPajekNetWriterFactory implements AlgorithmFactory {
-    public Algorithm createAlgorithm(Data[] data, Dictionary parameters, CIShellContext context) {
+    public Algorithm createAlgorithm(Data[] data,
+    								 Dictionary parameters,
+    								 CIShellContext context) {
         return new JungPajekNetWriter(data, parameters, context);
     }
 }

@@ -20,33 +20,33 @@ import prefuse.data.io.DataIOException;
  * @author Russell Duhon
  */
 public class PrefuseCsvReader implements Algorithm {
-    Data[] data;
-    Dictionary parameters;
-    CIShellContext context;
+    private File inCSVFile;
     
-    public PrefuseCsvReader(Data[] data, Dictionary parameters, CIShellContext context) {
-        this.data = data;
-        this.parameters = parameters;
-        this.context = context;
+    public PrefuseCsvReader(
+    		Data[] data, Dictionary parameters, CIShellContext context) {
+        this.inCSVFile = (File) data[0].getData();
     }
 
     public Data[] execute() throws AlgorithmExecutionException {
-    	File file = (File) data[0].getData();
-
-    	try{
+    	try {
     		CSVTableReader tableReader = new CSVTableReader();
     		tableReader.setHasHeader(true);
-			Table table= tableReader.readTable(new FileInputStream(file));
-    		Data[] dm = new Data[] {new BasicData(table, Table.class.getName())};
-    		dm[0].getMetadata().put(DataProperty.LABEL, "Prefuse Table: " + file);
-            dm[0].getMetadata().put(DataProperty.TYPE, DataProperty.TABLE_TYPE);
-    		return dm;
-    	} catch (DataIOException dioe){
-    		throw new AlgorithmExecutionException("DataIOException", dioe);
-    	} catch (SecurityException exception){
-    		throw new AlgorithmExecutionException("SecurityException", exception);
-    	} catch (FileNotFoundException e){
-    		throw new AlgorithmExecutionException("FileNotFoundException", e);
+			Table table = tableReader.readTable(new FileInputStream(inCSVFile));
+			
+    		return createOutData(inCSVFile, table);
+    	} catch (DataIOException e) {
+    		throw new AlgorithmExecutionException(e.getMessage(), e);
+    	} catch (SecurityException e) {
+    		throw new AlgorithmExecutionException(e.getMessage(), e);
+    	} catch (FileNotFoundException e) {
+    		throw new AlgorithmExecutionException(e.getMessage(), e);
     	}
     }
+
+	private Data[] createOutData(File file, Table table) {
+		Data[] dm = new Data[] {new BasicData(table, Table.class.getName())};
+		dm[0].getMetadata().put(DataProperty.LABEL, "Prefuse Table: " + file);
+		dm[0].getMetadata().put(DataProperty.TYPE, DataProperty.TABLE_TYPE);
+		return dm;
+	}
 }

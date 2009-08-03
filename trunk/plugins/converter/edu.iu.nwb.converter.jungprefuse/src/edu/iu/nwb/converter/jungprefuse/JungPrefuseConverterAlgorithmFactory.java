@@ -10,7 +10,9 @@ import org.osgi.service.metatype.MetaTypeProvider;
 
 
 public class JungPrefuseConverterAlgorithmFactory implements AlgorithmFactory {
-    public Algorithm createAlgorithm(Data[] data, Dictionary parameters, CIShellContext context) {
+    public Algorithm createAlgorithm(Data[] data,
+    								 Dictionary parameters,
+    								 CIShellContext context) {
         return new JungPrefuseConverterAlgorithm(data, parameters, context);
     }
- }
+}

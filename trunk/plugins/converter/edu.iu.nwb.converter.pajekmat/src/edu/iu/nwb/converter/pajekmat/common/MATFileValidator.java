@@ -23,11 +23,15 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.StringTokenizer;
+import java.util.logging.Logger;
 
-public class ValidateMATFile {
+import org.cishell.framework.algorithm.AlgorithmExecutionException;
+
+import sun.util.logging.resources.logging;
+
+public class MATFileValidator {
 	private boolean hasHeader_Vertices = false;
 	private boolean hasHeader_Matrix = false;
-
 
 	private boolean isFileGood = true;
 	private boolean inVertexSection = false;
@@ -41,22 +45,23 @@ public class ValidateMATFile {
 	private ArrayList vertices = new ArrayList();
 	private ArrayList arcs = new ArrayList(); 
 
-	public void validateMATFormat(File fileHandler) throws FileNotFoundException, IOException {
+	public void validateMATFormat(File fileHandler)
+			throws FileNotFoundException, IOException, AlgorithmExecutionException {
 		currentLine = 0;
 		totalNumOfNodes = 0;
 		
-		BufferedReader reader = 
-			new BufferedReader(new FileReader(fileHandler));
+		BufferedReader reader = new BufferedReader(new FileReader(fileHandler));
 		this.processFile(reader);
 	}
-
 	
 	public boolean getValidationResult(){
 		return isFileGood;
 	}
+	
 	public String getErrorMessages(){
 		return errorMessages.toString();
 	}
+	
 	public List getVertexAttrList(){ 
 		return MATVertex.getVertexAttributes();
 	}
@@ -80,6 +85,7 @@ public class ValidateMATFile {
 	public ArrayList getVertices(){
 		return this.vertices;
 	}
+	
 	public ArrayList getArcs(){
 		return this.arcs;
 	}
@@ -95,7 +101,7 @@ public class ValidateMATFile {
 	 */
 
 
-	public boolean validateVertexHeader(String s) throws IOException{
+	public boolean validateVertexHeader(String s) {
 		//String s = r.readLine();
 
 		s = s.toLowerCase();
@@ -175,7 +181,7 @@ public class ValidateMATFile {
 		return nv;
 	}
 
-	public void processMatrix(BufferedReader br, int lineNumber, String initial){
+	public void processMatrix(BufferedReader br, int lineNumber, String initial) throws AlgorithmExecutionException {
 
 		String errorMessage;
 		String ss = initial;
@@ -219,23 +225,23 @@ public class ValidateMATFile {
 				lineNumber++;
 				i++;
 			}
-		}catch(IOException ex){
+		} catch(IOException ex) {
 			isFileGood = false;
 			errorMessage = "Error reading connection matrix at line: " + lineNumber +
 			". Chances are there are not enough rows." +" Read " + i + 
 			" lines, but expected to read " + this.totalNumOfNodes + " lines.";
 			errorMessages.append(errorMessage);
-			ex.printStackTrace();
-		}catch(Exception ex){
-			isFileGood = false;
-			errorMessages.append(ex.getMessage());
-			ex.printStackTrace();
 		}
+//		catch(Exception ex) {
+//			isFileGood = false;
+//			errorMessages.append(ex.getMessage());
+//			ex.printStackTrace();
+//		}
 	}
 
 
 
-	public void processFile(BufferedReader reader) throws IOException{
+	public void processFile(BufferedReader reader) throws IOException, AlgorithmExecutionException {
 		MATVertex.clearAttributes();
 		MATArcs.clearAttributes();
 		String line = reader.readLine();
@@ -243,29 +249,30 @@ public class ValidateMATFile {
 			currentLine++;
 			//System.out.println(this.skipNodeList);
 			line = line.trim();
-			if(line.startsWith(MATFileProperty.PREFIX_COMMENTS) || (line.length() < 1)){
+			if (line.startsWith(MATFileProperty.PREFIX_COMMENTS)
+					|| (line.length() < 1)){
 				line = reader.readLine();
 				continue;
 			}
 
-			if(this.validateVertexHeader(line)){
+			if (this.validateVertexHeader(line)) {
 				line = reader.readLine();
 
 				continue;
 			}
 
-			if(this.validateMatrixHeader(line)){
+			if (this.validateMatrixHeader(line)) {
 				line = reader.readLine();
 				continue;
 			}
 			
-			if(inVertexSection && isFileGood){
+			if (inVertexSection && isFileGood) {
 				this.vertices.add(processVertices(line));
 				line = reader.readLine();
 				continue;
 			}
 
-			if(inMatrixSection && isFileGood){
+			if (inMatrixSection && isFileGood) {
 				processMatrix(reader, currentLine, line);
 				line = reader.readLine();
 				continue;
@@ -303,9 +310,7 @@ public class ValidateMATFile {
 					MATVertex nv = new MATVertex(s);
 					//	System.out.println(nv);
 					this.vertices.add(nv);
-				}
-				catch(Exception e){
-					e.printStackTrace();
+				} catch(Exception e) {
 					isFileGood = false;
 				}
 			}

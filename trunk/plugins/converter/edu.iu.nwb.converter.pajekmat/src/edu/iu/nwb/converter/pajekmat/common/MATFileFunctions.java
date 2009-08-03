@@ -3,6 +3,8 @@ package edu.iu.nwb.converter.pajekmat.common;
 import java.util.ArrayList;
 import java.util.StringTokenizer;
 
+import org.cishell.framework.algorithm.AlgorithmExecutionException;
+
 public class MATFileFunctions {
 	public static String[] processTokens(String s){
 		String str = s.trim();
@@ -108,21 +110,26 @@ public class MATFileFunctions {
 		}
 	}    
 
-	protected static boolean isAString(String input, String attr) throws Exception {
-		if(input.getClass().toString().endsWith("String"))
-		return true;
-		throw new Exception("Not a String value.");
+	protected static boolean isAString(String input, String attr)
+			throws AlgorithmExecutionException {
+		if(input.getClass().toString().endsWith("String")) {
+			return true;
+		}
+		else {
+			throw new AlgorithmExecutionException("Not a String value.");
+		}
 	}
 
 	protected static float asAFloat(String input) throws NumberFormatException{
 		float f = new Float(input).floatValue();
 		return f;
 	}
+	
 	protected static boolean isAFloat (String input, String attr){
-		try{
-		asAFloat(input);
-		return true;
-		}catch(NumberFormatException nfe){
+		try {
+			asAFloat(input);
+			return true;
+		} catch(NumberFormatException e) {
 			return false;
 		}
 	}
@@ -136,6 +143,7 @@ public class MATFileFunctions {
 					return true;
 			}
 		}
+		
 		return value;
 	}
 	

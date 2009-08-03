@@ -25,7 +25,10 @@ import org.cishell.framework.algorithm.Algorithm;
 import org.cishell.framework.algorithm.AlgorithmExecutionException;
 import org.cishell.framework.data.BasicData;
 import org.cishell.framework.data.Data;
+import org.cishell.utilities.FileUtilities;
 import org.osgi.service.log.LogService;
+
+import edu.iu.nwb.util.nwbfile.NWBFileProperty;
 
 /**
  * Converts from GraphML to NWB file format via the Stax libraries
@@ -33,81 +36,69 @@ import org.osgi.service.log.LogService;
  */
 
 public class GraphMLToNWBbyStax implements Algorithm {
+	private File inGraphMLFile;
 
-	Data[] data;
-	Dictionary parameters;
-	CIShellContext ciContext;
-	LogService logger;
-
-
-
-	/**
-	 * Intializes the algorithm
-	 * @param data List of Data objects to convert
-	 * @param parameters Parameters passed to the converter
-	 * @param context Provides access to CIShell services
-	 */
 
 	public GraphMLToNWBbyStax(Data[] data, Dictionary parameters, CIShellContext context) {
-		this.data = data;
-		this.parameters = parameters;
-		this.ciContext = context;
-		this.logger = (LogService)ciContext.getService(LogService.class.getName());
+		inGraphMLFile = (File) data[0].getData();
+		
 	} 
 
 	public Data[] execute() throws AlgorithmExecutionException {
-		XMLInputFactory inputFactory = XMLInputFactory.newInstance();
-		XMLStreamReader xmlReader = null;
+		File outNWBFile = createOutNWBFile(inGraphMLFile);
+		
+		return new Data[] { new BasicData(
+				outNWBFile, NWBFileProperty.NWB_MIME_TYPE) };
+	}
+
+	private File createOutNWBFile(File inGraphMLFile) throws AlgorithmExecutionException {
 		File outData = null;
 		
+		XMLInputFactory inputFactory = XMLInputFactory.newInstance();
+		XMLStreamReader xmlReader = null;		
 		try {
 			try {
-				xmlReader = inputFactory
-				.createXMLStreamReader(new FileInputStream(
-						(File) data[0].getData()));
-			} catch (XMLStreamException ex) {
-				throw new AlgorithmExecutionException("Unable to open XML Stream", ex);
-			} catch (FileNotFoundException foe) {
-				throw new AlgorithmExecutionException("GraphML file not found ", foe);
+				xmlReader =
+					inputFactory.createXMLStreamReader(
+							new FileInputStream(inGraphMLFile));
+			} catch (XMLStreamException e) {
+				String message =
+					"Error parsing GraphML file: " + e.getMessage();
+				throw new AlgorithmExecutionException(message, e);
+			} catch (FileNotFoundException e) {
+				String message =
+					"Error: Couldn't find GraphML file: " + e.getMessage();
+				throw new AlgorithmExecutionException(message, e);
 			}
-
-
 
 			try {
 				outData = this.convert(xmlReader);
 			} catch (XMLStreamException e) {
-				throw new AlgorithmExecutionException("Unable to convert graphml to NWB", e);
+				String message =
+					"Error parsing GraphML file: " + e.getMessage();
+				throw new AlgorithmExecutionException(message, e);
 			} catch (IOException e) {
-				throw new AlgorithmExecutionException("Unable to convert graphml to NWB", e);
+				String message =
+					"File access error: " + e.getMessage();
+				throw new AlgorithmExecutionException(message, e);
 			}
-
 		} finally {
 			if (xmlReader != null) {
 				try {
 					xmlReader.close();
 				} catch (XMLStreamException e) {
-					throw new AlgorithmExecutionException("Unable to close XML Stream", e);
+					String message =
+						"Error: Unable to close XML Stream: " + e.getMessage();
+					throw new AlgorithmExecutionException(message, e);
 				}
 			}
 		}
 
-		return new Data[] { new BasicData(outData, "file:text/nwb") };
+		return outData;
 	}
 
-	protected String tmpFileLocation(String base, String extension) {
-
-		String tmpRoot = System.getProperty("java.io.tmpdir") + File.separator + "temp";
-
-		File tmpDir = new File(tmpRoot);
-
-		if(!tmpDir.exists()) {
-			tmpDir.mkdir();
-		}
-		return tmpRoot + File.separator + base + System.currentTimeMillis() + "." + extension;
-	}
-
-	protected File convert(XMLStreamReader xmlReader) throws XMLStreamException, IOException
-	{
+	protected File convert(XMLStreamReader xmlReader)
+			throws XMLStreamException, IOException {
 		boolean directed = false;
 		int nodeCount = 0;
 		int directedEdgeCount = 0;
@@ -119,30 +110,48 @@ public class GraphMLToNWBbyStax implements Algorithm {
 		List nodeAttributes = new ArrayList();
 		List edgeAttributes = new ArrayList();
 
-		String nodeFileLocation = tmpFileLocation("node", "nwb");
-		String undirectedEdgeFileLocation = tmpFileLocation("undirected", "nwb");
-		String directedEdgeFileLocation = tmpFileLocation("directed", "nwb");
-
-		BufferedWriter nodeWriter = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(nodeFileLocation), "UTF-8"));
-		BufferedWriter undirectedEdgeWriter = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(undirectedEdgeFileLocation), "UTF-8"));
-		BufferedWriter directedEdgeWriter = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(directedEdgeFileLocation), "UTF-8"));
+		File nodeFile =
+			FileUtilities.createTemporaryFileInDefaultTemporaryDirectory(
+					"GraphMLToNWB-node", "nwb");
+		BufferedWriter nodeWriter =
+			new BufferedWriter(
+					new OutputStreamWriter(
+							new FileOutputStream(nodeFile), "UTF-8"));
+		
+		File undirectedEdgeFile =
+			FileUtilities.createTemporaryFileInDefaultTemporaryDirectory(
+					"GraphMLToNWB-undirected", "nwb");
+		BufferedWriter undirectedEdgeWriter =
+			new BufferedWriter(
+					new OutputStreamWriter(
+							new FileOutputStream(undirectedEdgeFile), "UTF-8"));
+		
+		File directedEdgeFile =
+			FileUtilities.createTemporaryFileInDefaultTemporaryDirectory(
+					"GraphMLToNWB-directed", "nwb");
+		BufferedWriter directedEdgeWriter =
+			new BufferedWriter(
+					new OutputStreamWriter(
+							new FileOutputStream(directedEdgeFile), "UTF-8"));
 		
 		boolean wroteNodeHeader = false;
 		boolean wroteEdgeHeader = false;
 
-		while (xmlReader.hasNext())
-		{   
+		/* TODO All of these magic strings should refer to fields common with
+		 * the NWBToGraphML classes
+		 */
+		while (xmlReader.hasNext())	{   
 			int eventType = xmlReader.next();
-			if (eventType == XMLEvent.START_ELEMENT){
+			if (eventType == XMLEvent.START_ELEMENT) {
 				//check for graph element
-				if (xmlReader.getLocalName().equals("graph")&& xmlReader.getAttributeCount() > 0)
-				{
+				if (xmlReader.getLocalName().equals("graph")
+						&& xmlReader.getAttributeCount() > 0) {
 					if ("directed".equals(xmlReader.getAttributeValue(null, "edgedefault"))) {
 						directed = true;
 					}
 				}
 
-				//check for node element
+				// Check for node element
 				if (xmlReader.getLocalName().equals("node")&& xmlReader.getAttributeCount() > 0)
 				{
 					nodeCount++;
@@ -163,28 +172,26 @@ public class GraphMLToNWBbyStax implements Algorithm {
 					Integer source = (Integer) nodeIds.get(xmlReader.getAttributeValue(null, "source"));
 					Integer target = (Integer) nodeIds.get(xmlReader.getAttributeValue(null, "target"));
 					Map attributeValues = extractAttributes(xmlReader, "edge");
-					if(isDirected)
-					{
+					if(isDirected) {
 						directedEdgeCount++;
 						if(directedEdgeCount==1) {
 							directedEdgeWriter.write(createDirectedEdgeHeader(edgeAttributes));
 							wroteEdgeHeader = true;
 						}
-
-
+						
 						directedEdgeWriter.write(createEdge(source.intValue(), target.intValue(), attributeValues, edgeAttributes));
-					}else
-					{
+					} else {
 						undirectedEdgeCount++;
 						if(undirectedEdgeCount==1) {
 							undirectedEdgeWriter.write(createUndirectedEdgeHeader(edgeAttributes));
 							wroteEdgeHeader = true;
 						}
+						
 						undirectedEdgeWriter.write(createEdge(source.intValue(), target.intValue(), attributeValues, edgeAttributes));
 					}
 				}
 
-				//check for key element
+				// Check for key element
 				if (xmlReader.getLocalName().equals("key")&& xmlReader.getAttributeCount() > 0) {
 					Attribute attribute = readAttribute(xmlReader);
 					if(!attribute.isReservedForNode() && attribute.isForNode()) {
@@ -213,26 +220,15 @@ public class GraphMLToNWBbyStax implements Algorithm {
 		undirectedEdgeWriter.close();
 		nodeWriter.close();
 
-
-		File directedEdgeFile = new File(directedEdgeFileLocation);
-
-		File undirectedEdgeFile = new File(undirectedEdgeFileLocation);
-
-
-		File nodeFile = new File(nodeFileLocation);
-
 		File output = mergeFiles(nodeFile, undirectedEdgeFile, directedEdgeFile);
 
 		directedEdgeFile.delete();
-
 		undirectedEdgeFile.delete();
 
 		return output;
-
-
 	}
+	
 	protected File mergeFiles(File nodeFile, File undirectedEdgeFile, File directedEdgeFile) throws IOException {
-
 		FileOutputStream nodeStream = new FileOutputStream(nodeFile, true);
 
 		//nodeStream.write('\n');
@@ -269,24 +265,19 @@ public class GraphMLToNWBbyStax implements Algorithm {
 		Attribute attribute = new Attribute();
 		int eventType;
 
-
 		attribute.setDomain(xmlReader.getAttributeValue(null, "for"));
 		attribute.setId(xmlReader.getAttributeValue(null, "id"));
 		attribute.setName(xmlReader.getAttributeValue(null, "attr.name"));
 		attribute.setType(xmlReader.getAttributeValue(null, "attr.type"));
 
-		while (xmlReader.hasNext())
-		{
-
+		while (xmlReader.hasNext()) {
 			eventType = xmlReader.next();
-			if (eventType == XMLEvent.START_ELEMENT)
-			{
+			if (eventType == XMLEvent.START_ELEMENT) {
 				if (xmlReader.getLocalName().equals("default")) {
 					attribute.setDefault(getElementText(xmlReader));
 				}
 			}
-			else if (eventType == XMLEvent.END_ELEMENT)
-			{
+			else if (eventType == XMLEvent.END_ELEMENT) {
 				break;
 			}
 		}
@@ -294,8 +285,7 @@ public class GraphMLToNWBbyStax implements Algorithm {
 		return attribute;
 	}
 
-	public boolean isDirectedEdge(boolean defaultValue, XMLStreamReader xmlReader)
-	{
+	public boolean isDirectedEdge(boolean defaultValue, XMLStreamReader xmlReader) {
 		String attributeValue = xmlReader.getAttributeValue(null, "directed");
 		if(defaultValue) {
 			return !"false".equals(attributeValue);
@@ -304,11 +294,7 @@ public class GraphMLToNWBbyStax implements Algorithm {
 		}
 	}
 
-
-
-
-	public String createNodeHeader(List nodeAttributes)
-	{
+	public String createNodeHeader(List nodeAttributes) {
 		return "*Nodes\nid*int label*string " + attributesHeader(nodeAttributes) + "\n";
 	}
 
@@ -324,6 +310,7 @@ public class GraphMLToNWBbyStax implements Algorithm {
 			header.append(attribute.getType());
 
 		}
+		
 		return header.toString();
 	}
 
@@ -348,17 +335,14 @@ public class GraphMLToNWBbyStax implements Algorithm {
 		int eventType;
 		Map attributeValues = new Hashtable();
 
-		while (xmlReader.hasNext())
-		{
+		while (xmlReader.hasNext()) {
 			eventType = xmlReader.next();
-			if (eventType == XMLEvent.START_ELEMENT)
-			{
+			if (eventType == XMLEvent.START_ELEMENT) {
 				if (xmlReader.getLocalName().equals("data")) {
 					attributeValues.put(xmlReader.getAttributeValue(null, "key"), getElementText(xmlReader));
 				}
 			}
-			else if (eventType == XMLEvent.END_ELEMENT)
-			{
+			else if (eventType == XMLEvent.END_ELEMENT) {
 				if(xmlReader.getLocalName().equals(endElement)) {
 					break;
 				}
@@ -414,28 +398,25 @@ public class GraphMLToNWBbyStax implements Algorithm {
 	}
 
 
-	protected String getElementText(XMLStreamReader xmlReader) throws XMLStreamException
-	{
+	protected String getElementText(XMLStreamReader xmlReader) throws XMLStreamException {
 		int eventType;
 
 		StringBuffer value = new StringBuffer();
 
-		while (xmlReader.hasNext())
-		{
+		while (xmlReader.hasNext()) {
 			eventType = xmlReader.next();
 
 
-			if (eventType == XMLEvent.CHARACTERS)
-			{
+			if (eventType == XMLEvent.CHARACTERS) {
 
 				value.append(xmlReader.getText());
 
 			}
-			else if (eventType == XMLEvent.END_ELEMENT)
-			{
+			else if (eventType == XMLEvent.END_ELEMENT) {
 				break;
 			}
 		}
-		return  value.toString();
+		
+		return value.toString();
 	}
 }

@@ -25,7 +25,7 @@ public class MATVertex {
 		this.String_Parameters = new HashMap();
 	}
 
-	public MATVertex(String s) throws Exception {
+	public MATVertex(String s) throws MATFileFormatException {
 		String[] properties = MATFileFunctions.processTokens(s);
 		this.Numeric_Parameters = new HashMap();
 		this.String_Parameters = new HashMap();
@@ -33,7 +33,7 @@ public class MATVertex {
 
 	}
 
-	public boolean testVertices(String[] strings) throws Exception{
+	public boolean testVertices(String[] strings) throws MATFileFormatException {
 		boolean value = false;
 		LinkedList stringQueue = new LinkedList();
 		for(int ii = 0; ii < strings.length; ii++){
@@ -49,54 +49,42 @@ public class MATVertex {
 			return true;
 		}
 
-		try{
+		this.testVertexID(stringQueue);
 
-			this.testVertexID(stringQueue);
+		if(!stringQueue.isEmpty()){
 
-			if(!stringQueue.isEmpty()){
-
-				this.testVertexPosition(stringQueue);	
-				if(! setVertexShape((String) stringQueue.getFirst())){
-					testParameters(stringQueue);
-				}
-				else {
-					stringQueue.removeFirst();
-					testParameters(stringQueue);
-				}
+			this.testVertexPosition(stringQueue);	
+			if(! setVertexShape((String) stringQueue.getFirst())){
+				testParameters(stringQueue);
 			}
-
-		}catch(Exception ex){
-			throw ex;
+			else {
+				stringQueue.removeFirst();
+				testParameters(stringQueue);
+			}
 		}
 		value = finalCheck();
 		return value;
 	}
 
-	public boolean testVertexID(LinkedList qs) throws Exception{
-		try
-		{
-			if(qs.size() < 2){
-				throw new MATFileFormatException("Vertices must have both ID and Label");
-			}
-			String s = (String) qs.removeFirst();
-
-			this.setID(s);
-			s = (String)qs.removeFirst();
-			this.setLabel(s);
-
-			return true;
+	public boolean testVertexID(LinkedList qs) throws MATFileFormatException {
+		if(qs.size() < 2){
+			throw new MATFileFormatException("Vertices must have both ID and Label");
 		}
-		catch(Exception ex){
-			throw new MATFileFormatException(ex);
-		}
+		String s = (String) qs.removeFirst();
+
+		this.setID(s);
+		s = (String)qs.removeFirst();
+		this.setLabel(s);
+
+		return true;
 	}
 
-	public boolean testVertexPosition(LinkedList qs) throws Exception{
+	public boolean testVertexPosition(LinkedList qs) throws MATFileFormatException {
 
 		boolean value = true;
 		float f = 0;
 		int i = 0;
-		try{
+		try {
 			for(;;){
 				if(qs.isEmpty()) {
 					return false;  //no positional data
@@ -119,8 +107,7 @@ public class MATVertex {
 				i++;
 				qs.removeFirst();
 			}
-		}
-		catch(NumberFormatException ex){
+		} catch(NumberFormatException e) {
 			return value;
 		}
 
@@ -129,22 +116,17 @@ public class MATVertex {
 
 
 
-	public boolean setVertexShape(String st) throws Exception{
+	public boolean setVertexShape(String st) {
 		try {
-
 			this.setShape(st);
 			return true;
-
-
-
-		}
-		catch(Exception ex){
+		} catch(MATFileFormatException ex){
 			return false;
 		}
 	}
 
 
-	public boolean testParameters(LinkedList qs) throws Exception{
+	public boolean testParameters(LinkedList qs) throws MATFileFormatException {
 		boolean value = false;
 
 		while(!qs.isEmpty()){
@@ -378,10 +360,9 @@ public class MATVertex {
 		MATVertex.Attributes.put(MATFileParameter.PARAMETER_PHI, "float");
 		this.Numeric_Parameters.put(MATFileParameter.PARAMETER_PHI, new Float(f));
 	}
-	public void setPhi(String s) throws Exception{
+	public void setPhi(String s) {
 		float f = MATFileFunctions.asAFloat(s);
 		this.setPhi(f);
-
 	}
 
 	/*
@@ -454,7 +435,7 @@ public class MATVertex {
 		MATVertex.Attributes.put(MATFileParameter.PARAMETER_BW, "float");
 		this.Numeric_Parameters.put(MATFileParameter.PARAMETER_BW, new Float(f));
 	}
-	public void setBorderWidth(String s) throws Exception{
+	public void setBorderWidth(String s) {
 		float f = MATFileFunctions.asAFloat(s);
 		this.setBorderWidth(f);
 	}
@@ -492,7 +473,7 @@ public class MATVertex {
 		MATVertex.Attributes.put(MATFileParameter.PARAMETER_FOS, "float");
 		this.Numeric_Parameters.put(MATFileParameter.PARAMETER_FOS,new Float(f));
 	}
-	public void setFontSize(String s) throws Exception {
+	public void setFontSize(String s) {
 		float f = MATFileFunctions.asAFloat(s);
 		this.setFontSize(f);
 
@@ -550,7 +531,7 @@ public class MATVertex {
 	 * color.
 	 * written by: Tim Kelley
 	 */
-	private void setLabelColor(String s) throws MATFileFormatException{
+	private void setLabelColor(String s) throws MATFileFormatException {
 		if(s!= null){
 			String[] number = s.split(" ");
 			if(MATFileFunctions.isAFloat(number[0], "float") || MATFileFunctions.isAnInteger(number[0], "int")){
@@ -603,7 +584,7 @@ public class MATVertex {
 		MATVertex.Attributes.put(MATFileParameter.PARAMETER_R, "float");
 		this.Numeric_Parameters.put(MATFileParameter.PARAMETER_R, new Float(f));
 	}
-	private void setCornerRadius(String s) throws MATFileFormatException{
+	private void setCornerRadius(String s) throws MATFileFormatException {
 
 		try {
 			float f = MATFileFunctions.asAFloat(s);

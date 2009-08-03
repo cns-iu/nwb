@@ -1,18 +1,18 @@
 package edu.iu.nwb.converter.pajeknet.common;
 
 /*
- * 
+ *
  * This class is used to validate a Pajek .net file against a subset of
- * the specifications found in the Pajek manual, availble at: 
+ * the specifications found in the Pajek manual, availble at:
  * http://vlado.fmf.uni-lj.si/pub/networks/pajek/doc/pajekman.pdf
  * Right now we only support the basic id and label definitions
  * and the use of either Arcs or Nodes, but not both. .net files have
  * a slew of optional parameters that should be easy to write into a .nwb
  * file and then retreive them, but that will be for future releases.
- * 
+ *
  * Written by: Tim Kelley
  * Date: May 16, 2007
- * 
+ *
  */
 
 import java.io.BufferedReader;
@@ -20,15 +20,14 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.StringTokenizer;
 
-public class ValidateNETFile {
+public class NETFileValidator {
 	private boolean hasHeader_Vertices = false;
 	private boolean hasHeader_Edges = false;
 	private boolean hasHeader_Arcs = false;
-	
+
 
 	private boolean isFileGood = true;
 	private boolean inVerticesSection = false;
@@ -43,7 +42,7 @@ public class ValidateNETFile {
 	private StringBuffer errorMessages = new StringBuffer();
 	private int numVertices, numArcs, numEdges;
 	//private ArrayList vertices = new ArrayList();
-	//private ArrayList arcs = new ArrayList(), edges = new ArrayList(); 
+	//private ArrayList arcs = new ArrayList(), edges = new ArrayList();
 
 	public void validateNETFormat(File fileHandler) throws FileNotFoundException, IOException {
 		currentLine = 0;
@@ -52,10 +51,7 @@ public class ValidateNETFile {
 		numArcs = 0;
 		numEdges = 0;
 
-	
-		
-		BufferedReader reader = 
-			new BufferedReader(new FileReader(fileHandler));
+		BufferedReader reader = new BufferedReader(new FileReader(fileHandler));
 		this.processFile(reader);
 	}
 
@@ -81,7 +77,7 @@ public class ValidateNETFile {
 	public String getErrorMessages(){
 		return errorMessages.toString();
 	}
-	public List getVertexAttrList(){ 
+	public List getVertexAttrList(){
 		return NETVertex.getVertexAttributes();
 	}
 
@@ -113,16 +109,16 @@ public class ValidateNETFile {
 
 
 	/*
-	 * 
-	 *  validateVertexHeader takes in a string and checks to see if it starts with 
+	 *
+	 *  validateVertexHeader takes in a string and checks to see if it starts with
 	 *  *vertices with an optional integer following the vertices declaration.
-	 *  
+	 *
 	 *  Written by: Tim Kelley
 	 *  Date: May 17th 2007
 	 */
 
 
-	public boolean validateVertexHeader(String s) throws IOException{
+	public boolean validateVertexHeader(String s) {
 		//String s = r.readLine();
 
 		s = s.toLowerCase();
@@ -132,11 +128,11 @@ public class ValidateNETFile {
 			this.inVerticesSection = true;
 			this.inEdgesSection = false;
 			this.inArcsSection = false;
-		
+
 			//this.vertices = new ArrayList();
 			numVertices = 0;
 			StringTokenizer st= new StringTokenizer(s);
-			
+
 			if (st.countTokens()>1){
 				st.nextToken();
 				//*****If it is not an integer...
@@ -158,20 +154,20 @@ public class ValidateNETFile {
 	 * @inputs: String s
 	 * this validates the transition into the Arc section of a .net file and intializes the attribute list
 	 * for arcs.
-	 * 
+	 *
 	 * written by: Tim Kelley
-	 * 
+	 *
 	 */
 
 	public boolean validateArcHeader(String s){
 		s = s.toLowerCase();
-		if(s.startsWith(NETFileProperty.HEADER_ARCS)) 
+		if(s.startsWith(NETFileProperty.HEADER_ARCS))
 		{
 			hasHeader_Arcs = true;
 			inArcsSection = true;
 			inVerticesSection = false;
 			inEdgesSection = false;
-		
+
 			numArcs = 0;
 			if(numVertices == 0)
 				this.skipNodeList = true;
@@ -187,7 +183,7 @@ public class ValidateNETFile {
 	 * @input String s
 	 * validateEdgeHeader validates the transition into the Edges section of a .net file and
 	 * initializes the attribute list for the edges.
-	 * 
+	 *
 	 * written by: Tim Kelley
 	 */
 
@@ -197,7 +193,7 @@ public class ValidateNETFile {
 			hasHeader_Edges = true;
 			inArcsSection = false;
 			inVerticesSection = false;
-			
+
 			inEdgesSection = true;
 			numEdges = 0;
 			if(numVertices == 0)
@@ -210,71 +206,51 @@ public class ValidateNETFile {
 
 
 	/*
-	 * 
+	 *
 	 * processVertices
 	 * @input String s
 	 * Written By: Tim Kelley
 	 * Date: May 18, 2007
-	 * 
+	 *
 	 * Here we process the vertices of a pajek .net file. The pajek file format does not include an attribute declaration
 	 * as .nwb files do, so we do not check for attributes. Similarly, we cannot assume a string token length of 2
 	 * as the .net file may have not only positional data, but display data as well. I treat these optional
 	 * parameters as attributes to ease the conversion into .nwb format.
-	 * 
+	 *
 	 */
 
 	public NETVertex processVertices(String s){
 		NETVertex nv = null;
-		try{
-			//System.out.println(s);
+		try {
 			nv = new NETVertex(s);
-			
-
-		}
-		catch (NumberFormatException nfe){
+		} catch (NETFileFormatException e) {
 			isFileGood = false;
-			//nfe.toString();
-			errorMessages.append("*Wrong NET format at line "+currentLine+".\n"+
-			"Node id must be an integer and greater than 0.\n\n");
-		}
-		catch (Exception e){
-			isFileGood = false;
-			errorMessages.append("*Wrong NET format at line "+currentLine+".\n"+
-					e.toString()+"\n\n");
+			errorMessages.append(
+					"*Wrong NET format at line "+currentLine+".\n"+
+					e.getMessage()+"\n\n");
 		}
 
 		return nv;
 	}
 
-	
+
 	public NETArcsnEdges processArcsnEdges(String s){
 		NETArcsnEdges nae = null;
 
-
-		try{
+		try {
 			nae = new NETArcsnEdges(s);
-
-		//	System.out.println(nae);
-
-		}
-		catch (NumberFormatException nfe){
+		} catch (NETFileFormatException e){
 			isFileGood = false;
-			errorMessages.append("*Wrong NET format at line "+currentLine+".\n"+
-			"Node id must be an integer and greater than 0.\n\n");
-		}
-		catch (Exception e){
-			isFileGood = false;
-			errorMessages.append("*Wrong NET format at line "+currentLine+".\n"+
+			errorMessages.append(
+					"*Wrong NET format at line "+currentLine+".\n"+
 					e.toString()+"\n\n");
 		}
 
-
 		return nae;
-
 	}
 
 
-	public void processFile(BufferedReader reader) throws IOException{
+	public void processFile(BufferedReader reader) throws IOException {
 		NETVertex.clearAttributes();
 		NETArcsnEdges.clearAttributes();
 		String line = reader.readLine();
@@ -305,7 +281,7 @@ public class ValidateNETFile {
 			}
 
 
-			if(inVerticesSection && isFileGood){	
+			if(inVerticesSection && isFileGood){
 
 				processVertices(line);
 				numVertices++;
@@ -334,20 +310,20 @@ public class ValidateNETFile {
 			line = reader.readLine();
 		}
 
-		if (isFileGood){
-			this.checkFile();			
+		if (isFileGood) {
+			this.checkFile();
 		}
-		
-		if(this.hasTotalNumOfNodes && !this.skipNodeList && (this.totalNumOfNodes != this.numVertices)){
+
+		if (this.hasTotalNumOfNodes && !this.skipNodeList && (this.totalNumOfNodes != this.numVertices)){
 			this.errorMessages.append("The stated total number of vertices (" +
 					this.totalNumOfNodes+") does not match the calculated number of vertices ("+
 					this.numVertices+")");
 			isFileGood = false;
 		}
-		
-		if(!this.hasTotalNumOfNodes)
+
+		if (!this.hasTotalNumOfNodes) {
 			this.totalNumOfNodes = this.numVertices;
-		
+		}
 	}
 
 	public void checkFile(){
@@ -367,7 +343,7 @@ public class ValidateNETFile {
 				String s = (i+1) + " \"" + (i+1) + "\"";
 				try{
 					NETVertex nv = new NETVertex(s);
-				
+
 					this.vertices.add(nv);
 				}
 				catch(Exception e){
@@ -376,12 +352,7 @@ public class ValidateNETFile {
 				}
 			}
 		}*/
-
 	}
-
-
-
-
 }
 
 

@@ -18,66 +18,58 @@ import org.cishell.framework.data.DataProperty;
 import org.osgi.service.log.LogService;
 
 import edu.iu.nwb.converter.pajekmat.common.MATFileProperty;
-import edu.iu.nwb.converter.pajekmat.common.ValidateMATFile;
+import edu.iu.nwb.converter.pajekmat.common.MATFileValidator;
 
 /**
  * @author Timothy Kelley
  *
  */
 public class MATValidation implements AlgorithmFactory {
-
 	public Algorithm createAlgorithm(Data[] data, Dictionary parameters,
 			CIShellContext context) {
-		// TODO Auto-generated method stub
 		return new MATValidationAlg(data, parameters, context);
 	}
 
 	
 	public class MATValidationAlg implements Algorithm {
-        
-    	Data[] data;
-        Dictionary parameters;
-        CIShellContext ciContext;
-        LogService logger;
-        
-        public MATValidationAlg(Data[] dm, Dictionary parameters, CIShellContext context) {
-        	this.data = dm;
-            this.parameters = parameters;
-            this.ciContext = context;
-            logger = (LogService)ciContext.getService(LogService.class.getName());
+		private String inMATFileName;		
+
+		public MATValidationAlg(
+				Data[] data, Dictionary parameters, CIShellContext context) {
+			this.inMATFileName = (String) data[0].getData();
         }
 
         public Data[] execute() throws AlgorithmExecutionException {
-	    
-
-			String fileHandler = (String) data[0].getData();
-			File inData = new File(fileHandler);
-			ValidateMATFile validator = new ValidateMATFile();
-			try{ 
-				validator.validateMATFormat(inData);
-				if(validator.getValidationResult()){						
-					Data[] dm = new Data[] {new BasicData(inData, MATFileProperty.MAT_MIME_TYPE)};
-					dm[0].getMetadata().put(DataProperty.LABEL, "Pajek .mat file: " + fileHandler);
-					dm[0].getMetadata().put(DataProperty.TYPE, DataProperty.NETWORK_TYPE);
-                	return dm;
-
-				}else {
-					//System.out.println(">>>wrong format: "+validator.getErrorMessages());
-					logger.log(LogService.LOG_ERROR,"Sorry, your file does not comply with the .mat File Format Specification.\n"+
-							"Please review the latest NET File Format Specification at "+
-							"http://vlado.fmf.uni-lj.si/pub/networks/pajek/doc/pajekman.pdf, and update your file. \n\n"+
-							validator.getErrorMessages());
-					return null;
+        	File inMATFile = new File(inMATFileName);
+			MATFileValidator validator = new MATFileValidator();
+			try { 
+				validator.validateMATFormat(inMATFile);
+				if (validator.getValidationResult()){						
+					return createOutData(inMATFile);
+				} else {
+					String message =
+						"Sorry, your file does not comply with the .mat File Format Specification.\n"+
+						"Please review the latest NET File Format Specification at "+
+						"http://vlado.fmf.uni-lj.si/pub/networks/pajek/doc/pajekman.pdf, and update your file. \n\n"
+						+ validator.getErrorMessages();
+					throw new AlgorithmExecutionException(message);
 				}
-
-			}catch (FileNotFoundException e){
-				throw new AlgorithmExecutionException("Could not find the Pajek .mat file to validate.",e);	
-			}catch (IOException ioe){
-				throw new AlgorithmExecutionException("IO Errors while reading the specified Pajek .mat file.",ioe);
+			} catch (FileNotFoundException e) {
+				String message =
+					"Couldn't find Pajek .mat file: " + e.getMessage();
+				throw new AlgorithmExecutionException(message, e);
+			} catch (IOException e) {
+				String message = "File access error: " + e.getMessage();
+				throw new AlgorithmExecutionException(message, e);
 			}
         }
-      
 
+		private Data[] createOutData(File inMATFile) {
+			Data[] dm = new Data[]{ new BasicData(
+					inMATFile, MATFileProperty.MAT_MIME_TYPE) };
+			dm[0].getMetadata().put(DataProperty.LABEL, "Pajek .mat file: " + inMATFileName);
+			dm[0].getMetadata().put(DataProperty.TYPE, DataProperty.NETWORK_TYPE);
+			return dm;
+		}
     }
-
 }

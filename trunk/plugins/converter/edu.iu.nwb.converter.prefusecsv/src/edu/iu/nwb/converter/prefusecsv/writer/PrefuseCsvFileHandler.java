@@ -15,37 +15,42 @@ import org.osgi.service.log.LogService;
  * @author Weixia(Bonnie) Huang 
  */
 public class PrefuseCsvFileHandler implements AlgorithmFactory {
-    public Algorithm createAlgorithm(Data[] data, Dictionary parameters, CIShellContext context) {
+    public Algorithm createAlgorithm(
+    		Data[] data, Dictionary parameters, CIShellContext context) {
         return new PrefuseCSVFileHandlerAlgorithm(data, parameters, context);
     }
     
     public class PrefuseCSVFileHandlerAlgorithm implements Algorithm {
-        Data[] data;
-        Dictionary parameters;
-        CIShellContext context;
-        LogService logger;
+		public static final String CSV_FILE_EXT = "file-ext:csv";
+		public static final String CSV_MIME_TYPE = "file:text/csv";
+		
+		private Object inData;
+		private String inFormat;
         
-        public PrefuseCSVFileHandlerAlgorithm(Data[] inputData, Dictionary parameters, CIShellContext ciShellContext) {
-            this.data = inputData;
-            this.parameters = parameters;
-            this.context = ciShellContext;
-            logger=(LogService)ciShellContext.getService(LogService.class.getName());
+		
+        public PrefuseCSVFileHandlerAlgorithm(Data[] data,
+        									  Dictionary parameters,
+        									  CIShellContext ciShellContext) {
+			inData = data[0].getData();
+			inFormat = data[0].getFormat();
         }
 
+        
         public Data[] execute() throws AlgorithmExecutionException {
-        	Object inputData = data[0].getData();
-        	String format = data[0].getFormat();
-        	if(inputData instanceof File && format.equals("file:text/csv")){
-        		return new Data[]{new BasicData(inputData, "file-ext:csv")};          		
+        	if (inData instanceof File) {
+        		if (CSV_MIME_TYPE.equals(inFormat)) {
+        			return new Data[]{ new BasicData(inData, CSV_FILE_EXT) };
+        		} else {
+        			throw new AlgorithmExecutionException(
+        					"Expect " + CSV_MIME_TYPE
+        					+ ", but the input format is "
+        					+ inFormat);
+        		}
+        	} else {
+        		throw new AlgorithmExecutionException(
+    					"Expect a File, but the input data is "
+    					+ inData.getClass().getName());
         	}
-        	else {
-        		if (!(inputData instanceof File))        				
-        			throw new AlgorithmExecutionException("Expect a File, but the input data is "+inputData.getClass().getName());
-        		else if (!format.equals("file:text/csv"))
-        			throw new AlgorithmExecutionException("Expect file:text/csv, but the input format is "+format);
-        		throw new AlgorithmExecutionException("");
-        	}     	
-
         }
     }
 }

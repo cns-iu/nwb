@@ -17,60 +17,57 @@ import org.osgi.service.log.LogService;
 
 import prefuse.data.Table;
 
-public class PrefuseIsiReader implements Algorithm {
+public class PrefuseIsiReader implements Algorithm {	
+	public static final boolean NORMALIZE_AUTHOR_NAMES = true;
 	
-	private static final boolean NORMALIZE_AUTHOR_NAMES = true;
-	
-    Data[] data;
-    Dictionary parameters;
-    CIShellContext context;
-    
+	private File inISIFile;
     private LogService log;
     private ISICitationExtractionPreparer citationExtractionPreparer;
+	
     
-    public PrefuseIsiReader(Data[] data, Dictionary parameters, CIShellContext context) {
-        this.data = data;
-        this.parameters = parameters;
-        this.context = context;
+    public PrefuseIsiReader(
+    		Data[] data, Dictionary parameters, CIShellContext context) {
+    	this.inISIFile = (File) data[0].getData();
         
      	this.log = (LogService)context.getService(LogService.class.getName());
-     	this.citationExtractionPreparer = new ISICitationExtractionPreparer(log);
+     	this.citationExtractionPreparer =
+     		new ISICitationExtractionPreparer(log);		
     }
 
+    
     public Data[] execute() throws AlgorithmExecutionException {
-
-    	File file = (File) data[0].getData();
-    	
-    	try{
-    		ISITableReader tableReader = new ISITableReader(this.log, NORMALIZE_AUTHOR_NAMES);
+    	try {
+    		ISITableReader tableReader =
+    			new ISITableReader(this.log, NORMALIZE_AUTHOR_NAMES);
 			
-    		Table tableWithDups = tableReader.readTable(new FileInputStream(file));
+    		Table tableWithDups =
+    			tableReader.readTable(new FileInputStream(inISIFile));
 		  	
-            Table table;     
-			table = tableWithDups;
-
+            Table table = tableWithDups;			
+			Table preparedTable =
+				citationExtractionPreparer.prepareForCitationExtraction(table);
 			
-			Table preparedTable = citationExtractionPreparer.prepareForCitationExtraction(table);
-			
-			Data[] tableToReturnData = 
-				new Data[] {new BasicData(preparedTable, Table.class.getName())};
-    		tableToReturnData[0].getMetadata().put(DataProperty.LABEL, "ISI Data: " + file);
-            tableToReturnData[0].getMetadata().put(DataProperty.TYPE, DataProperty.TABLE_TYPE);
-			
-    		return tableToReturnData;
-    		
-    	}catch (SecurityException exception){
-    		throw new AlgorithmExecutionException("Security Exception", exception);
-    		
-    	}catch (FileNotFoundException e){
-    		throw new AlgorithmExecutionException("FileNotFoundException", e);
-    		
+			return createOutData(preparedTable);    		
+    	} catch (SecurityException e) {
+    		throw new AlgorithmExecutionException(e.getMessage(), e);    		
+    	} catch (FileNotFoundException e) {
+    		throw new AlgorithmExecutionException(e.getMessage(), e);    		
     	} catch (UnsupportedEncodingException e) {
-			// UTF-8 wasn't good
-    		throw new AlgorithmExecutionException("UTF-8 is not supported.", e);
-			
+    		throw new AlgorithmExecutionException(e.getMessage(), e);			
 		} catch (IOException e) {
-			throw new AlgorithmExecutionException("Problem reading data from file.", e);
+			throw new AlgorithmExecutionException(e.getMessage(), e);
 		}
     }
+
+
+	private Data[] createOutData(Table preparedTable) {
+		Data[] tableToReturnData = 
+			new Data[] { new BasicData(preparedTable, Table.class.getName()) };
+		tableToReturnData[0].getMetadata().put(
+				DataProperty.LABEL, "ISI Data: " + inISIFile);
+		tableToReturnData[0].getMetadata().put(
+				DataProperty.TYPE, DataProperty.TABLE_TYPE);
+		
+		return tableToReturnData;
+	}
 }

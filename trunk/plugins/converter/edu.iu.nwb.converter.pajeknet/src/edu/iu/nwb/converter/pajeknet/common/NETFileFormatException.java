@@ -1,13 +1,11 @@
 package edu.iu.nwb.converter.pajeknet.common;
 
-public class NETFileFormatException extends Exception{
-	
+public class NETFileFormatException extends Exception {
 	public NETFileFormatException(String s){
 		super(s);
 	}
-	
-	public NETFileFormatException(Exception ex){
-		super(ex);
-	}
 
+	public NETFileFormatException(Exception e){
+		super(e);
+	}
 }

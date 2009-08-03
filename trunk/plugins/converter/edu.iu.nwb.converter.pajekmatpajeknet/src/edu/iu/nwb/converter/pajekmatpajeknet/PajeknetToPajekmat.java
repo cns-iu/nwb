@@ -16,6 +16,7 @@ import org.cishell.framework.algorithm.Algorithm;
 import org.cishell.framework.algorithm.AlgorithmExecutionException;
 import org.cishell.framework.data.BasicData;
 import org.cishell.framework.data.Data;
+import org.cishell.utilities.FileUtilities;
 import org.osgi.service.log.LogService;
 
 import edu.iu.nwb.converter.pajekmat.common.MATFileProperty;
@@ -24,80 +25,56 @@ import edu.iu.nwb.converter.pajeknet.common.NETAttribute;
 import edu.iu.nwb.converter.pajeknet.common.NETFileFunctions;
 import edu.iu.nwb.converter.pajeknet.common.NETFileProperty;
 import edu.iu.nwb.converter.pajeknet.common.NETVertex;
-import edu.iu.nwb.converter.pajeknet.common.ValidateNETFile;
+import edu.iu.nwb.converter.pajeknet.common.NETFileValidator;
 
 public class PajeknetToPajekmat implements Algorithm{
-	Data[] data;
-	Dictionary parameters;
-	CIShellContext ciContext;
-	LogService logger;
-	String[] noPrintParameters = { NETFileProperty.ATTRIBUTE_ID, NETFileProperty.ATTRIBUTE_LABEL, "xpos", "ypos", "zpos", "shape",NETFileProperty.ATTRIBUTE_SOURCE, NETFileProperty.ATTRIBUTE_TARGET, NETFileProperty.ATTRIBUTE_WEIGHT };
+	public static final String[] noPrintParameters = { NETFileProperty.ATTRIBUTE_ID, NETFileProperty.ATTRIBUTE_LABEL, "xpos", "ypos", "zpos", "shape",NETFileProperty.ATTRIBUTE_SOURCE, NETFileProperty.ATTRIBUTE_TARGET, NETFileProperty.ATTRIBUTE_WEIGHT };
+	
+	private File inNETFile;
 
-	public PajeknetToPajekmat(Data[] dm, Dictionary parameters, CIShellContext cContext){
-		this.data = dm;
-		this.parameters = parameters;
-		this.ciContext = cContext;
-		this.logger = (LogService)ciContext.getService(LogService.class.getName());
+	
+	public PajeknetToPajekmat(Data[] data, Dictionary parameters, CIShellContext cContext){
+		inNETFile = (File) data[0].getData();
 	}
 
-	private File getTempFile() throws IOException{
-		String tempPath = System.getProperty("java.io.tmpdir");
-		File tempDir = new File(tempPath+File.separator+"temp");
-		if(!tempDir.exists())
-			tempDir.mkdir();
-		
-		return File.createTempFile("NWB-Session-", ".net", tempDir);
-	}
-
+	
 	public Data[] execute() throws AlgorithmExecutionException {
-		File inData, outData;
-		Data [] dm = null;
-		ValidateNETFile validator;
-		Object inFile = data[0].getData();
-
-		if (inFile instanceof File){
-			inData = (File)inFile;
-
-			validator = new ValidateNETFile();
-			try {
-				validator.validateNETFormat(inData);
-				if(validator.getValidationResult()){
-					outData = convertNetToMat(validator,inData);
-					if(outData != null){
-						dm = new Data[] {new BasicData(outData, MATFileProperty.MAT_MIME_TYPE)};
-						return dm;
-					}else {
-						throw new AlgorithmExecutionException("Problem executing conversion from Pajek .net to .mat. Output file was not created");
-					}
-				}else{
-					throw new AlgorithmExecutionException("Problem executing conversion from Pajek .net to .mat " + validator.getErrorMessages());
-				}
+		try {
+			NETFileValidator netValidator = new NETFileValidator();
+			netValidator.validateNETFormat(inNETFile);
+			if (netValidator.getValidationResult()){
+				File outMATFile = convertNetToMat(netValidator, inNETFile);
+				
+				return new Data[]{ new BasicData(
+							outMATFile, MATFileProperty.MAT_MIME_TYPE) };
+			} else {
+				throw new AlgorithmExecutionException(
+						"Problem executing conversion from Pajek .net to .mat "
+						+ netValidator.getErrorMessages());
 			}
-			catch (FileNotFoundException fnf){
-				throw new AlgorithmExecutionException("Could not find the specified Pajek .net file.", fnf);
-			}
-			catch (IOException ioe){
-				throw new AlgorithmExecutionException("IO Error while converting from Pajek .net to .mat.", ioe);
-			}
-			catch( Exception ex){
-				throw new AlgorithmExecutionException("Error while converting from Pajek .net to .mat." + validator.getErrorMessages(), ex);
-			}
+		} catch (FileNotFoundException e) {
+			String message = "Couldn't find Pajek .net file: " + e.getMessage();
+			throw new AlgorithmExecutionException(message, e);
+		} catch (IOException e) {
+			String message = "File access error: " + e.getMessage();
+			throw new AlgorithmExecutionException(message, e);
 		}
-		else
-			throw new AlgorithmExecutionException("Unable to convert the file. " +
-			"Unable to convert from Pajek .net to .mat because input data is not a file");
 	}
 
-	private File convertNetToMat(ValidateNETFile vmf, File f) throws IOException {
-		File mat = getTempFile();
-		PrintWriter out = new PrintWriter(new BufferedWriter(new FileWriter(mat)));
+	private File convertNetToMat(NETFileValidator vmf, File f) throws IOException {
+		File outMATFile =
+			FileUtilities.createTemporaryFileInDefaultTemporaryDirectory(
+					"NWB-Session-", "mat");
+		PrintWriter out =
+			new PrintWriter(new BufferedWriter(new FileWriter(outMATFile)));
 		BufferedReader br = new BufferedReader(new FileReader(f));
 		processFile(vmf,br,out);
 		out.close();
-		return mat;
+		return outMATFile;
 	}
 	
-	private void processFile(ValidateNETFile nv, BufferedReader reader, PrintWriter pw) throws IOException{
+	private void processFile(NETFileValidator nv, BufferedReader reader, PrintWriter pw)
+			throws IOException {
 		boolean inVerticesSection = false;
 		boolean inArcsSection = false;
 		boolean inEdgesSection = false;
@@ -188,13 +165,15 @@ public class PajeknetToPajekmat implements Algorithm{
 	}
 	
 	private static String processLine(String line){
-		if(line.startsWith(NETFileProperty.PREFIX_COMMENTS))
+		if(line.startsWith(NETFileProperty.PREFIX_COMMENTS)) {
 			return "";
-		else
+		}
+		else {
 			return line;
+		}
 	}
 
-	private void writeVertex(ValidateNETFile vmf, PrintWriter pw, NETVertex nv){
+	private void writeVertex(NETFileValidator vmf, PrintWriter pw, NETVertex nv) {
 		    //pw.write(MATFileProperty.HEADER_VERTICES + " " + vmf.getVertices().size() + "\n");
 			String s = "";
 			for(int j = 0; j < NETVertex.getVertexAttributes().size(); j++){
@@ -224,7 +203,7 @@ public class PajeknetToPajekmat implements Algorithm{
 								s += attr + " " + nv.getAttribute(attr) + " ";
 						}
 					}
-				}catch(NullPointerException ex){
+				} catch(NullPointerException e) {
 					s += "";
 				}
 			}
@@ -234,22 +213,22 @@ public class PajeknetToPajekmat implements Algorithm{
 	
 	}
 
-	private void writeDirectedMatrix(ValidateNETFile vmf, PrintWriter pw, ArrayList arcs){
+	private void writeDirectedMatrix(NETFileValidator vmf, PrintWriter pw, ArrayList arcs) {
 		NETArcsnEdges nae;
 		int source, target;
 		float weight = (float)0.0;
 		//pw.println(MATFileProperty.HEADER_MATRIX);
-		for(int i = 0; i < vmf.getTotalNumOfNodes(); i++){
-			for(int j = 0; j < vmf.getTotalNumOfNodes(); j++){
-				for(int k = 0; k < arcs.size(); k++){
-					nae = (NETArcsnEdges)arcs.get(k);
+		for(int ii = 0; ii < vmf.getTotalNumOfNodes(); ii++){
+			for(int jj = 0; jj < vmf.getTotalNumOfNodes(); jj++){
+				for(int kk = 0; kk < arcs.size(); kk++){
+					nae = (NETArcsnEdges)arcs.get(kk);
 					target = ((Integer)nae.getAttribute(NETFileProperty.ATTRIBUTE_TARGET)).intValue();
 					source = ((Integer)nae.getAttribute(NETFileProperty.ATTRIBUTE_SOURCE)).intValue();					
 					
-					if(((i+1) == source) && ((j+1) == target)){
+					if(((ii+1) == source) && ((jj+1) == target)){
 						try{
-						weight = ((Float)nae.getAttribute(NETFileProperty.ATTRIBUTE_WEIGHT)).floatValue();
-						}catch(NullPointerException npe){
+							weight = ((Float)nae.getAttribute(NETFileProperty.ATTRIBUTE_WEIGHT)).floatValue();
+						} catch (NullPointerException e) {
 							weight = 1;
 						}
 						break;
@@ -264,21 +243,21 @@ public class PajeknetToPajekmat implements Algorithm{
 		}	
 	}
 	
-	private void writeUndirectedMatrix(ValidateNETFile vmf, PrintWriter pw, ArrayList edges){
+	private void writeUndirectedMatrix(NETFileValidator vmf, PrintWriter pw, ArrayList edges) {
 		//float[][] matrix = new float[vmf.getVertices().size()][vmf.getVertices().size()];
 		NETArcsnEdges nae;
 		int source, target;
 		float weight = (float)0.0;
 		//pw.println(MATFileProperty.HEADER_MATRIX);
-		for(int i = 0; i < vmf.getTotalNumOfNodes(); i++){
-			for(int j = 0; j < vmf.getTotalNumOfNodes(); j++){
-				for(int k = 0; k < edges.size(); k++){
-					nae = (NETArcsnEdges)edges.get(k);
+		for (int ii = 0; ii < vmf.getTotalNumOfNodes(); ii++){
+			for (int jj = 0; jj < vmf.getTotalNumOfNodes(); jj++){
+				for (int kk = 0; kk < edges.size(); kk++){
+					nae = (NETArcsnEdges)edges.get(kk);
 					target = ((Integer)nae.getAttribute(NETFileProperty.ATTRIBUTE_TARGET)).intValue();
 					source = ((Integer)nae.getAttribute(NETFileProperty.ATTRIBUTE_SOURCE)).intValue();
 					
-					if((((i+1) == source) && ((j+1) == target))||
-							(((i+1) == target) && ((j+1) == source))){
+					if((((ii+1) == source) && ((jj+1) == target))||
+							(((ii+1) == target) && ((jj+1) == source))){
 						try{
 						weight = ((Float)nae.getAttribute(NETFileProperty.ATTRIBUTE_WEIGHT)).floatValue();
 						}catch(NullPointerException npe){

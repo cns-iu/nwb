@@ -3,6 +3,7 @@ package edu.iu.nwb.converter.jungpajeknet.reader;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
+import java.nio.CharBuffer;
 import java.util.Dictionary;
 
 import org.cishell.framework.CIShellContext;
@@ -17,35 +18,50 @@ import edu.uci.ics.jung.io.PajekNetReader;
 
 
 public class JungPajekNetValidation implements AlgorithmFactory {
-    public Algorithm createAlgorithm(Data[] data, Dictionary parameters, CIShellContext context) {
+    public Algorithm createAlgorithm(Data[] data,
+    								 Dictionary parameters,
+    								 CIShellContext context) {
         return new JungPajekNetValidationAlg(data, parameters, context);
     }
     
+    
     public class JungPajekNetValidationAlg implements Algorithm {
-        Data[] data;
-        Dictionary parameters;
-        CIShellContext context;
+        public static final String PAJEK_MIME_TYPE = "file:application/pajek";
         
-        public JungPajekNetValidationAlg(Data[] data, Dictionary parameters, CIShellContext context) {
-            this.data = data;
-            this.parameters = parameters;
-            this.context = context;
+        private String inNetFileName;
+		
+        
+        public JungPajekNetValidationAlg(Data[] data,
+        								 Dictionary parameters,
+        								 CIShellContext context) {
+        	inNetFileName = (String) data[0].getData();
         }
 
-        public Data[] execute() throws AlgorithmExecutionException {		
-        	String fileHandler = (String) data[0].getData();
-        	File inData = new File(fileHandler);
-        	try{
-        		(new PajekNetReader()).load(new FileReader(inData));
-        		Data[] dm = new Data[] {new BasicData(inData, "file:application/pajek")};
-        		dm[0].getMetadata().put(DataProperty.LABEL, "Pajek .net file: " + fileHandler);
-                dm[0].getMetadata().put(DataProperty.TYPE, DataProperty.NETWORK_TYPE);
-        		return dm;
-			}catch (FileNotFoundException exception){
-				throw new AlgorithmExecutionException(exception.getMessage(),exception);
-			}catch (Exception e){
-				throw new AlgorithmExecutionException(e.getMessage(),e);	
+        
+        public Data[] execute() throws AlgorithmExecutionException {	        	
+        	File pajekNetFile = new File(inNetFileName);
+        	
+        	try {
+        		(new PajekNetReader()).load(new FileReader(pajekNetFile));
+        		return createOutData(inNetFileName, pajekNetFile);
+			} catch (FileNotFoundException e) {
+				String message =
+					"Could find the Pajek .net file: " + e.getMessage();
+				throw new AlgorithmExecutionException(message, e);
+			} catch (Exception e) {
+				String message = "Unexpected error: " + e.getMessage();
+				throw new AlgorithmExecutionException(message, e);	
 			}
         }
+
+		private Data[] createOutData(String fileName, File inData) {
+			Data[] dm =
+				new Data[]{ new BasicData(inData, PAJEK_MIME_TYPE) };
+			dm[0].getMetadata().put(
+					DataProperty.LABEL, "Pajek .net file: " + fileName);
+			dm[0].getMetadata().put(
+					DataProperty.TYPE, DataProperty.NETWORK_TYPE);
+			return dm;
+		}
     }
 }

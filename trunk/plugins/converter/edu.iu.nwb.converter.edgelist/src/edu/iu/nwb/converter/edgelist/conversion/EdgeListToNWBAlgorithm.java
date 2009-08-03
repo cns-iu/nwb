@@ -53,7 +53,7 @@ public class EdgeListToNWBAlgorithm implements Algorithm {
 			
 			return outputNWBFile;
 		} catch (IOException e) {
-			throw new AlgorithmExecutionException(e.getMessage(), e);
+			throw new AlgorithmExecutionException("Error creating the output file: " + e.getMessage(), e);
 		} catch (InvalidEdgeListFormatException e) {
 			throw new AlgorithmExecutionException(e.getMessage(), e);
 		}

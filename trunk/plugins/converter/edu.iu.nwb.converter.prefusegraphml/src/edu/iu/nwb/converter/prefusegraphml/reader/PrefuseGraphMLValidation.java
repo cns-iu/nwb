@@ -25,54 +25,55 @@ import prefuse.data.io.GraphMLReader;
  */
 public class PrefuseGraphMLValidation implements AlgorithmFactory {
     public Algorithm createAlgorithm(Data[] data, Dictionary parameters, CIShellContext context) {
-        return new PrefuseGraphMLValidationAlg(data, parameters, context);
+        return new PrefuseGraphMLValidationAlgorithm(data, parameters, context);
     }
     
-    public class PrefuseGraphMLValidationAlg implements Algorithm {
-        Data[] data;
-        Dictionary parameters;
-        CIShellContext context;
+    public class PrefuseGraphMLValidationAlgorithm implements Algorithm {
+		private String inGraphMLFileName;
         
-        public PrefuseGraphMLValidationAlg(Data[] data, Dictionary parameters, CIShellContext context) {
-            this.data = data;
-            this.parameters = parameters;
-            this.context = context;
+        public PrefuseGraphMLValidationAlgorithm(Data[] data, Dictionary parameters, CIShellContext context) {
+			this.inGraphMLFileName = (String) data[0].getData();
         }
 
         public Data[] execute() throws AlgorithmExecutionException {
-        	String fileHandler = (String) data[0].getData();
-        	File inData = new File(fileHandler);
+        	File inGraphMLFile = new File(inGraphMLFileName);
         	
-        	try{
-        		if (validateGraphMLHeader(inData)){
-	        		(new GraphMLReaderModified()).readGraph(new FileInputStream(fileHandler));
-	        		Data[] dm = new Data[] {new BasicData(inData, "file:text/graphml+xml")};
-	        		dm[0].getMetadata().put(DataProperty.LABEL, "Prefuse GraphML file: " + fileHandler);
-	                dm[0].getMetadata().put(DataProperty.TYPE, DataProperty.NETWORK_TYPE);
-	        		return dm;
-        		}else 
-            		return null;
-        	}catch (DataIOException dioe){
-				throw new AlgorithmExecutionException("Data IO error while validating the specified graphML file.", dioe);
-        	}catch (SecurityException exception){
-        		throw new AlgorithmExecutionException( "Security error while validating the specified graphML file.", exception);
-        	}catch (FileNotFoundException e){
-        		throw new AlgorithmExecutionException("Could not find the specified graphML file for validation.", e);
-        	}catch (IOException ioe){
-        		throw new AlgorithmExecutionException("IO errors while validating the specified graphML", ioe);
+        	try {
+        		if (validateGraphMLHeader(inGraphMLFile)) {
+	        		(new GraphMLReaderModified()).readGraph(
+	        				new FileInputStream(inGraphMLFileName));
+	        		return createOutData(inGraphMLFile);
+        		} else {
+            		throw new AlgorithmExecutionException(
+            				"Unable to validate GraphML file.");
+        		}
+        	} catch (DataIOException e) {
+				throw new AlgorithmExecutionException(e.getMessage(), e);
+        	} catch (SecurityException e) {
+        		throw new AlgorithmExecutionException(e.getMessage(), e);
+        	} catch (FileNotFoundException e) {
+        		throw new AlgorithmExecutionException(e.getMessage(), e);
+        	} catch (IOException e) {
+        		throw new AlgorithmExecutionException(e.getMessage(), e);
         	}
-        	
-        	
         }
+
+		private Data[] createOutData(File inGraphMLFile) {
+			Data[] dm = new Data[] {new BasicData(inGraphMLFile, "file:text/graphml+xml")};
+			dm[0].getMetadata().put(DataProperty.LABEL, "Prefuse GraphML file: " + inGraphMLFileName);
+			dm[0].getMetadata().put(DataProperty.TYPE, DataProperty.NETWORK_TYPE);
+			return dm;
+		}
         
-        //TODO
-        //This is a temporary fix. The problem is after we get rid of LoadDataChooser
-        //It seems that prefuse library can load xgmml file(.xml) in as a graphml.
-        //but all visualization algs didn't work since it is not a real graphml file.
-        //Here I try to detect if there is "http://graphml.graphdrawing.org/xmlns" namespace
-        //in the file, if not, it is not a gramphml file
+        /* TODO:  This is a temporary fix. The problem is after we get rid of
+         * LoadDataChooser.  It seems that prefuse library can load
+         * xgmml file(.xml) in as a graphml.  But all visualization algs didn't
+         * work since it is not a real graphml file.  Here I try to detect if
+         * there is "http://graphml.graphdrawing.org/xmlns" namespace in the
+         * file, if not, it is not a gramphml file.
+         */
         private boolean validateGraphMLHeader(File inData)
-        		throws FileNotFoundException, IOException{
+        		throws FileNotFoundException, IOException {
         	boolean hasGraphMLHeader = false;
     		
         	BufferedReader reader = 
@@ -86,8 +87,8 @@ public class PrefuseGraphMLValidation implements AlgorithmFactory {
     			}    			
     			line = reader.readLine();	
     		}
-    		return hasGraphMLHeader;
     		
+    		return hasGraphMLHeader;    		
         }
     }
 }

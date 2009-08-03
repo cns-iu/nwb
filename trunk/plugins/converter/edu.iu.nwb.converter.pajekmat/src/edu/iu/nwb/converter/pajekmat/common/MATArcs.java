@@ -8,6 +8,8 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
+import org.cishell.framework.algorithm.AlgorithmExecutionException;
+
 
 public class MATArcs {
 	private static Map Attributes = new LinkedHashMap();
@@ -25,14 +27,14 @@ public class MATArcs {
 		this.String_Parameters = new HashMap();	
 	}
 
-	public MATArcs(String s) throws Exception{
+	public MATArcs(String s) throws AlgorithmExecutionException {
 		String[] properties = MATFileFunctions.processTokens(s);
 		this.Numeric_Parameters = new HashMap();
 		this.String_Parameters = new HashMap();
 		this.valid = testArcsnEdges(properties);
 	}
 
-	public boolean testArcsnEdges(String[] strings) throws Exception{
+	public boolean testArcsnEdges(String[] strings) throws AlgorithmExecutionException {
 		boolean value = false;
 		LinkedList stringQueue = new LinkedList();
 		for(int ii = 0; ii < strings.length; ii++){
@@ -48,21 +50,16 @@ public class MATArcs {
 			return true;
 		}
 
-		try{
+		this.testSourceTargetWeight(stringQueue);
 
-			this.testSourceTargetWeight(stringQueue);
-
-			if(!stringQueue.isEmpty()){
-
-			}
-
-		}catch(Exception ex){
-			throw ex;
+		if(!stringQueue.isEmpty()) {
+			// Do nothing?
 		}
+			
 		return value;
 	}
 
-	public boolean testSourceTargetWeight(LinkedList qs) throws Exception{
+	public boolean testSourceTargetWeight(LinkedList qs) throws AlgorithmExecutionException {
 		boolean value = false;
 		int i = 0;
 		try{
@@ -79,21 +76,20 @@ public class MATArcs {
 						this.setWeight((String) qs.removeFirst());
 						break;
 					default:
-						throw new Exception("Unknown data found");
+						throw new AlgorithmExecutionException("Unknown data found");
 					}		
 				i++;
 			}
 			switch(i){
 			case 0:
 			case 1:
-				throw new Exception("Arcs and edges must contain both source and target values");
+				throw new AlgorithmExecutionException("Arcs and edges must contain both source and target values");
 			case 2:
 				this.setWeight("1");
 				break;
 			}
-		}
-		catch(NumberFormatException ex){
-			throw new Exception("The file contains an invalid sequence in the positional data.");
+		} catch (NumberFormatException e) {
+			throw new AlgorithmExecutionException("The file contains an invalid sequence in the positional data.", e);
 		}
 		value = true;
 		return value;
@@ -107,26 +103,27 @@ public class MATArcs {
 	/*************************
 	 * 
 	 * Setters
+	 * @throws AlgorithmExecutionException 
 	 * 
 	 *************************/
 
-	public void setSource(String s) throws Exception {
+	public void setSource(String s) throws AlgorithmExecutionException {
 		int i = MATFileFunctions.asAnInteger(s);
 		MATArcs.Attributes.put(MATFileProperty.ATTRIBUTE_SOURCE, MATFileProperty.TYPE_INT);
 		if(!(i > 0))
-			throw new Exception("Source id must be greater than 0");
+			throw new AlgorithmExecutionException("Source id must be greater than 0");
 		this.source = i;
 	}
 	
-	public void setTarget(String s) throws Exception{
+	public void setTarget(String s) throws AlgorithmExecutionException {
 		int i = MATFileFunctions.asAnInteger(s);
 		MATArcs.Attributes.put(MATFileProperty.ATTRIBUTE_TARGET, MATFileProperty.TYPE_INT);
 		if(!(i > 0))
-			throw new Exception("Target id must be greater than 0");
+			throw new AlgorithmExecutionException("Target id must be greater than 0");
 		this.target = i;
 	}
 
-	public void setWeight(String s) throws Exception{
+	public void setWeight(String s) {
 		float f = MATFileFunctions.asAFloat(s);
 		MATArcs.Attributes.put(MATFileProperty.ATTRIBUTE_WEIGHT,MATFileProperty.TYPE_FLOAT);
 		this.Numeric_Parameters.put(MATFileProperty.ATTRIBUTE_WEIGHT, new Float(f));

@@ -20,31 +20,33 @@ public class PrefuseGraphMLFileHandler implements AlgorithmFactory {
     }
     
     public class PrefuseGraphMLFileHandlerAlg implements Algorithm {
-        Data[] data;
-        Dictionary parameters;
-        CIShellContext context;
-        LogService logger;
+		public static final String XML_FILE_EXT = "file-ext:xml";
+		public static final String GRAPHML_MIME_TYPE = "file:text/graphml+xml";
+		
+		private Object inData;
+		private String inFormat;
         
+		
         public PrefuseGraphMLFileHandlerAlg(Data[] data, Dictionary parameters, CIShellContext context) {
-            this.data = data;
-            this.parameters = parameters;
-            this.context = context;
-            logger=(LogService)context.getService(LogService.class.getName());
+			inData = data[0].getData();
+			inFormat = data[0].getFormat();
         }
 
+        
         public Data[] execute() throws AlgorithmExecutionException{
-        	Object inData = data[0].getData();
-        	String format = data[0].getFormat();
-        	if(inData instanceof File && format.equals("file:text/graphml+xml")){
-        		return new Data[]{new BasicData(inData, "file-ext:xml")};          		
-        	}
-        	else {
-        		if (!(inData instanceof File))        				
-        			throw new AlgorithmExecutionException("Expected a File, but the input data is "+inData.getClass().getName());
-        		else if (!format.equals("file:text/graphml+xml"))
-        			throw new AlgorithmExecutionException("Expected file:text/graphml+xml, but the input format is "+format);
-       			throw new AlgorithmExecutionException("Either not a file or format is not graphml");
-        	}     	
+        	if (inData instanceof File) {
+        		if (inFormat.equals(GRAPHML_MIME_TYPE)) {
+        			return new Data[]{new BasicData(inData, XML_FILE_EXT)};
+        		} else {
+        			throw new AlgorithmExecutionException(
+        					"Expected file:text/graphml+xml, "
+        					+ "but the input format is " + inFormat);
+        		}
+        	} else {
+        		throw new AlgorithmExecutionException(
+    					"Expected a File, but the input data is "
+    					+ inData.getClass().getName());
+        	}    	
         }
     }
 }

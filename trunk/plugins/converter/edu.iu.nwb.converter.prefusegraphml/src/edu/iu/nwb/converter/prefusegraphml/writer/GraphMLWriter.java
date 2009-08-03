@@ -223,7 +223,8 @@ OUTER:
         for ( int i=0; i<s.getColumnCount(); ++i ) {
             Class type = s.getColumnType(i);
             if ( TYPES.get(type) == null ) {
-                throw new DataIOException("Data type unsupported by the "
+                throw new DataIOException(
+                	"Data type unsupported by the "
                     + "GraphML format: " + type.getName());
             }
         }

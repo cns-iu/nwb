@@ -1,88 +1,80 @@
 package edu.iu.nwb.converter.nwb.writer;
 
-//Java
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.Dictionary;
 
-//OSGi
-import org.osgi.service.component.ComponentContext;
-import org.osgi.service.log.LogService;
-import org.osgi.service.metatype.MetaTypeProvider;
-import org.osgi.service.metatype.MetaTypeService;
-//CIShell
 import org.cishell.framework.CIShellContext;
 import org.cishell.framework.algorithm.Algorithm;
 import org.cishell.framework.algorithm.AlgorithmExecutionException;
 import org.cishell.framework.algorithm.AlgorithmFactory;
 import org.cishell.framework.data.BasicData;
 import org.cishell.framework.data.Data;
-
+import org.osgi.service.log.LogService;
 
 import edu.iu.nwb.converter.nwb.common.ValidateNWBFile;
-import edu.iu.nwb.converter.nwb.common.NWBFileProperty;
+import edu.iu.nwb.util.nwbfile.NWBFileProperty;
 
 /**
  * @author Weixia(Bonnie) Huang 
  */
 public class NWBFileHandler implements AlgorithmFactory {
 
-    public Algorithm createAlgorithm(Data[] data, Dictionary parameters, CIShellContext context) {
-        return new NWBFileHandlerAlg(data, parameters, context);
+    public Algorithm createAlgorithm(
+    		Data[] data, Dictionary parameters, CIShellContext context) {
+        return new NWBFileHandlerAlgorithm(data, parameters, context);
     }
     
-    public class NWBFileHandlerAlg implements Algorithm {
-        Data[] data;
-        Dictionary parameters;
-        CIShellContext ciContext;
-        LogService logger;
-      
+    public class NWBFileHandlerAlgorithm implements Algorithm {
+    	private Object inData;
+		private String format;
         
-        public NWBFileHandlerAlg(Data[] data, Dictionary parameters, CIShellContext context) {
-            this.data = data;
-            this.parameters = parameters;
-            this.ciContext = context;
-            logger = (LogService)ciContext.getService(LogService.class.getName());
-	    
+        
+        public NWBFileHandlerAlgorithm(
+        		Data[] data, Dictionary parameters, CIShellContext context) {
+        	this.inData = data[0].getData();
+        	this.format = data[0].getFormat();	    
         }
 
+        
         public Data[] execute() throws AlgorithmExecutionException {
-
-        	Object inData = data[0].getData();
-        	String format = data[0].getFormat();
-        	if(inData instanceof File && format.equals(NWBFileProperty.NWB_MIME_TYPE)){
-        		
-				ValidateNWBFile validator = new ValidateNWBFile();
-				try{ 
-					validator.validateNWBFormat((File)inData);
-					if(validator.getValidationResult()){
-						  
-					}else {
-						this.logger.log(LogService.LOG_WARNING,"This file does not seem to comply with the NWB format specification. Forwarding anyways.\n" +
-								"Please notify the developers of the algorithm you are using or the NWB team.");
-						
+        	if (inData instanceof File) {
+        		if (NWBFileProperty.NWB_MIME_TYPE.equals(format)) {        		
+					ValidateNWBFile validator = new ValidateNWBFile();
+					
+					try { 
+						validator.validateNWBFormat((File)inData);
+						if (validator.getValidationResult()) {
+							return new Data[]{ new BasicData(
+									inData, NWBFileProperty.NWB_FILE_TYPE) };
+						} else {
+							throw new AlgorithmExecutionException(
+								"This file does not seem to comply with the NWB "
+								+ "format specification. Forwarding anyways.\n"
+								+ "Please notify the developers of the algorithm "
+								+ "you are using or the NWB team.");
+						}
+					} catch (FileNotFoundException e) {
+						String message =
+							"Couldn't find NWB file to validate: " + e.getMessage();
+						throw new AlgorithmExecutionException(message, e);
+					} catch (IOException e) {
+						String message = "File access error: " + e.getMessage();
+						throw new AlgorithmExecutionException(message, e);					
 					}
-					return new Data[]{new BasicData(inData, NWBFileProperty.NWB_FILE_TYPE)};
-
-				}catch (FileNotFoundException e){
-					throw new AlgorithmExecutionException( 
-							"Could not find the specified .nwb file to write.",e);	
-					
-				}catch (IOException ioe){
-					throw new AlgorithmExecutionException(
-							"Errors writing the specified .nwb file.",ioe);
-					
-				}        		        		
+        		} else {
+        			String message =
+        				"Error: Expected " + NWBFileProperty.NWB_MIME_TYPE
+        				+ ", but the input format is " + format;
+        			throw new AlgorithmExecutionException(message);
+        		}
+        	} else {
+        		String message =
+        			"Expect a File, but the input data is "
+    				+ inData.getClass().getName();
+        		throw new AlgorithmExecutionException(message);
         	}
-        	else {
-        		if (!(inData instanceof File))        				
-        			throw new AlgorithmExecutionException( "Expect a File, but the input data is "+inData.getClass().getName());
-        		else if (!format.equals(NWBFileProperty.NWB_MIME_TYPE))
-        			throw new AlgorithmExecutionException( "Expect "+NWBFileProperty.NWB_MIME_TYPE+", but the input format is "+format);
-       			return null;
-        	}
-
         }
     }
 }

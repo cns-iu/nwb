@@ -14,17 +14,11 @@ import org.cishell.framework.data.Data;
  * @author bmarkine
  */
 
+/* TODO This entire plugin should be scrapped and rewritten
+ * using edu.iu.nwb.util.nwbfile utilities.
+ */
 public class GraphMLToNWBbyStaxFactory implements AlgorithmFactory  {
-
-    /**
-     * Create an converter
-     * 
-     * @param data The data to convert
-     * @param parameters Parameters passed to the algorithm
-     * @param context Access to the CIShell environment
-     */
     public Algorithm createAlgorithm(Data[] data, Dictionary parameters, CIShellContext context) {
-				return new GraphMLToNWBbyStax(data, parameters, context);
+		return new GraphMLToNWBbyStax(data, parameters, context);
     }
-
 }

@@ -13,12 +13,9 @@ import edu.uci.ics.jung.graph.Edge;
 import edu.uci.ics.jung.graph.Graph;
 import edu.uci.ics.jung.graph.Vertex;
 import edu.uci.ics.jung.graph.impl.DirectedSparseEdge;
-import edu.uci.ics.jung.graph.impl.DirectedSparseGraph;
 import edu.uci.ics.jung.graph.impl.SimpleSparseVertex;
 import edu.uci.ics.jung.graph.impl.SparseGraph;
 import edu.uci.ics.jung.graph.impl.UndirectedSparseEdge;
-import edu.uci.ics.jung.graph.impl.UndirectedSparseGraph;
-import edu.uci.ics.jung.utils.PredicateUtils;
 import edu.uci.ics.jung.utils.UserData;
 import edu.uci.ics.jung.utils.UserDataContainer;
 

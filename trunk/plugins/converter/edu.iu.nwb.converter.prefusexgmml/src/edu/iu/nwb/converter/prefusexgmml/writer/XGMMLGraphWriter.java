@@ -1,7 +1,6 @@
 package edu.iu.nwb.converter.prefusexgmml.writer;
 
 import java.io.BufferedOutputStream;
-import java.io.IOException;
 import java.io.OutputStream;
 import java.io.PrintWriter;
 import java.util.HashMap;
@@ -78,7 +77,7 @@ public class XGMMLGraphWriter extends AbstractGraphWriter {
 	public static final String XML_NAMESPACE_ATTRIBUTE_KEY = "xmlns";
 	public static final String XGMML_NAMESPACE = "http://www.cs.rpi.edu/XGMML";
 
-	public void writeGraph(Graph graph, OutputStream os) throws IOException {		
+	public void writeGraph(Graph graph, OutputStream os) {		
 		PrefuseNodeIDer.assignMissingIDs(graph);
 		PrefuseNodeLabeler.assignMissingNodeLabels(graph);
 		PrefuseEdgeLabeler.assignMissingEdgeLabels(graph);

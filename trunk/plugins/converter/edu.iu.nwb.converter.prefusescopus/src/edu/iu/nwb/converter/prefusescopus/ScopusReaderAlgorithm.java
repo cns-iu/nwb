@@ -21,8 +21,8 @@ import prefuse.util.collections.IntIterator;
 import edu.iu.nwb.converter.prefusescopus.util.StringUtil;
 
 public class ScopusReaderAlgorithm implements Algorithm {
-    Data[] data;
-    Dictionary parameters;
+    public static final String CSV_MIME_TYPE = "file:text/csv";
+	Data[] data;
     CIShellContext context;
     LogService log;
     
@@ -36,7 +36,6 @@ public class ScopusReaderAlgorithm implements Algorithm {
     
     public ScopusReaderAlgorithm(Data[] data, Dictionary parameters, CIShellContext context) {
         this.data = data;
-        this.parameters = parameters;
         this.context = context;
         this.log = (LogService) context.getService(LogService.class.getName());
     }
@@ -53,18 +52,24 @@ public class ScopusReaderAlgorithm implements Algorithm {
     
     
     private Data convertInputData(Data inputData) throws AlgorithmExecutionException {
-    	 DataConversionService converter = (DataConversionService)
-         context.getService(DataConversionService.class.getName());
-		//this is a bit like a cast. We know the nsf format is also a csv, so we change the format to csv so
-		//the Conversion service knows it is a csv when it tries to convert it to a prefuse.data.Table
+    	DataConversionService converter = (DataConversionService)
+        	context.getService(DataConversionService.class.getName());
+    	
+		/* This is a bit like a cast. We know the nsf format is also a csv, so
+		 * we change the format to csv so the Conversion service knows it is a
+		 * csv when it tries to convert it to a prefuse.data.Table
+		 */
 		 
 		//printTable((Table) inputData.getData());
-		Data formatChangedData = new BasicData(inputData.getMetadata(), (File) inputData.getData(), "file:text/csv");
+		Data formatChangedData = new BasicData(inputData.getMetadata(),
+											  (File) inputData.getData(),
+											  CSV_MIME_TYPE);
 		try {
-		Data convertedData = converter.convert(formatChangedData, Table.class.getName());
-		return convertedData;
-		} catch (ConversionException e1){
-			throw new AlgorithmExecutionException(e1);
+			Data convertedData =
+				converter.convert(formatChangedData, Table.class.getName());
+			return convertedData;
+		} catch (ConversionException e){
+			throw new AlgorithmExecutionException(e.getMessage(), e);
 		}
     }
     
@@ -75,18 +80,19 @@ public class ScopusReaderAlgorithm implements Algorithm {
     		return scopusTable;
     	}
     	try {
-    	for (IntIterator tableIt = scopusTable.rows(); tableIt.hasNext();) {
-			int rowIndex = tableIt.nextInt();
-    		String authors = authorColumn.getString(rowIndex);
-    		if (authors != null && ! authors.equals("")) {
-    			String normalizedAuthors = normalizeAuthorNames(authors);
-    			authorColumn.setString(normalizedAuthors, rowIndex);
-    		}
-    	}
-    	} catch (DataTypeException e1) {
-    		printColumnNotOfTypeStringWarning();
+	    	for (IntIterator tableIt = scopusTable.rows(); tableIt.hasNext();) {
+				int rowIndex = tableIt.nextInt();
+	    		String authors = authorColumn.getString(rowIndex);
+	    		if (authors != null && ! authors.equals("")) {
+	    			String normalizedAuthors = normalizeAuthorNames(authors);
+	    			authorColumn.setString(normalizedAuthors, rowIndex);
+	    		}
+	    	}
+    	} catch (DataTypeException e) {
+    		printColumnNotOfTypeStringWarning(e);
     		return scopusTable;
     	}
+    	
     	return scopusTable;
     }
     
@@ -103,19 +109,20 @@ public class ScopusReaderAlgorithm implements Algorithm {
     		printNoReferenceColumnWarning();
     		return scopusTable;
     	}
-    try {
-		for (IntIterator tableIt = scopusTable.rows(); tableIt.hasNext();) {
-			int rowIndex = tableIt.nextInt();
-    		String references = referenceColumn.getString(rowIndex);
-    		if (references != null && ! references.equals("")) {
-    			String normalizedReferences = normalizeReferences(references);
-    			referenceColumn.setString(normalizedReferences, rowIndex);
-    		}
-    	}
-    	} catch (DataTypeException e1) {
-    		printColumnNotOfTypeStringWarning();
+    	try {
+			for (IntIterator tableIt = scopusTable.rows(); tableIt.hasNext();) {
+				int rowIndex = tableIt.nextInt();
+	    		String references = referenceColumn.getString(rowIndex);
+	    		if (references != null && ! references.equals("")) {
+	    			String normalizedReferences = normalizeReferences(references);
+	    			referenceColumn.setString(normalizedReferences, rowIndex);
+	    		}
+	    	}
+    	} catch (DataTypeException e) {
+    		printColumnNotOfTypeStringWarning(e);
     		return scopusTable;
     	}
+    	
     	return scopusTable;
     }
     
@@ -127,7 +134,7 @@ public class ScopusReaderAlgorithm implements Algorithm {
     
     private static final String SELF_REFERENCE_COLUMN_NAME = "Self Reference";
     
-    private Table addSelfReferences(Table scopusTable) {
+    private Table addSelfReferences(Table scopusTable) throws AlgorithmExecutionException {
     		//create the self-reference column
     		scopusTable.addColumn(SELF_REFERENCE_COLUMN_NAME, String.class);
     		//for each record in the table...
@@ -152,7 +159,7 @@ public class ScopusReaderAlgorithm implements Algorithm {
     private static final String PAGE_START_COLUMN_NAME = "Page start";
     private static final String PAGE_END_COLUMN_NAME = "Page end";
     
-   private String createSelfReference(Tuple isiRow) {
+   private String createSelfReference(Tuple isiRow) throws AlgorithmExecutionException {
 	   StringBuffer selfReference = new StringBuffer();
 	   try {
 		   String authors = extractAuthors(isiRow);
@@ -196,13 +203,19 @@ public class ScopusReaderAlgorithm implements Algorithm {
 			   selfReference.append("-");
 			   selfReference.append(pageEnd);
 		   }
-		} catch (ArrayIndexOutOfBoundsException e1) {
-			//column requested does not exist (for entire table or just this field?)
-			//Fail silently. This will happen normally. The remainder of the self reference will be returned.
-		} catch (DataTypeException e2) {
-			//column type cannot be interpreted as a string (?)
-			//this should only happen if the column is of some bizarre unexpected type
-			printWrongColumnTypeError(e2, isiRow);
+		} catch (ArrayIndexOutOfBoundsException e) {
+			/* Column requested does not exist (for entire table or just this
+			 * field?)  Fail silently. This will happen normally.
+			 * The remainder of the self reference will be returned.
+			 */
+		} catch (DataTypeException e) {
+			/* Column type cannot be interpreted as a string (?)
+			 * This should only happen if the column is of
+			 * some bizarre unexpected type.
+			 */
+			throw new AlgorithmExecutionException(
+					"Some elements in the tuple '" + isiRow
+					+ "' cannot be converted to a String (apparently)", e);
 		}
 		
 		return selfReference.toString();
@@ -248,14 +261,15 @@ public class ScopusReaderAlgorithm implements Algorithm {
 		return authorsWithOriginalSeparator;
 }
 
-	private Data[] formatAsData(Table scopusTable) throws AlgorithmExecutionException {
-    	try{
+	private Data[] formatAsData(Table scopusTable)
+			throws AlgorithmExecutionException {
+    	try {
 			Data[] dm = new Data[] {new BasicData(scopusTable, Table.class.getName())};
 			dm[0].getMetadata().put(DataProperty.LABEL, "Normalized Scopus table");
 			dm[0].getMetadata().put(DataProperty.TYPE, DataProperty.MATRIX_TYPE);
 			return dm;
-		}catch (SecurityException exception){
-			throw new AlgorithmExecutionException(exception);
+		} catch (SecurityException e) {
+			throw new AlgorithmExecutionException(e.getMessage(), e);
 		}
     }
 	
@@ -292,14 +306,10 @@ public class ScopusReaderAlgorithm implements Algorithm {
     					"We will continue on without attempting to normalize this column");
     }
     
-    private void printColumnNotOfTypeStringWarning() {
-    	this.log.log(LogService.LOG_WARNING, "The column '" + AUTHOR_COLUMN_NAME + 
-    			"' in the scopus file cannot be normalized, because it cannot be interpreted as text. Skipping normalization of authors");
+    private void printColumnNotOfTypeStringWarning(DataTypeException e) {
+    	this.log.log(LogService.LOG_WARNING,
+    			"The column '" + AUTHOR_COLUMN_NAME
+    			+ "' in the scopus file cannot be normalized, because it cannot "
+    			+ "be interpreted as text. Skipping normalization of authors", e);
     }
-    
-    private void printWrongColumnTypeError(DataTypeException e, Tuple row) {
-		this.log.log(LogService.LOG_ERROR, "Some elements in the tuple '" + row + "' cannot be converted to a String (apparently)", e);
-	}
-    
-
 }

@@ -6,56 +6,41 @@ import java.util.Dictionary;
 
 import org.cishell.framework.CIShellContext;
 import org.cishell.framework.algorithm.Algorithm;
+import org.cishell.framework.algorithm.AlgorithmExecutionException;
 import org.cishell.framework.data.BasicData;
 import org.cishell.framework.data.Data;
+import org.cishell.utilities.FileUtilities;
 import org.osgi.service.log.LogService;
 
 import edu.berkeley.guir.prefuse.graph.Graph;
-
 /**
- * @author Weixia(Bonnie) Huang 
+ * @author Weixia(Bonnie) Huang
  */
 public class PrefuseXGMMLWriter implements Algorithm {
-    Data[] data;
-    Dictionary parameters;
-    CIShellContext context;
-    LogService logger;
-    
-    public PrefuseXGMMLWriter(Data[] data, Dictionary parameters, CIShellContext context) {
-        this.data = data;
-        this.parameters = parameters;
-        this.context = context;
-        logger=(LogService)context.getService(LogService.class.getName());
-    }
+	public static final String XGMML_MIME_TYPE = "file:text/xgmml+xml";
+	public static final String XGMML_FILE_EXTENSION = "xgmml.xml";
+	
+	private Graph inGraph;
 
-    public Data[] execute() {
-		File tempFile;
-        
-	    String tempPath = System.getProperty("java.io.tmpdir");
-	    File tempDir = new File(tempPath+File.separator+"temp");
-	    if(!tempDir.exists())
-	    	tempDir.mkdir();
-	    try{
-	    	tempFile = File.createTempFile("NWB-Session-", ".net", tempDir);
-	    		
-	    }catch (IOException e){
-	    	logger.log(LogService.LOG_ERROR, "Errors creating the temporary file to write the specified XGMML file to.", e);
-	   		tempFile = new File (tempPath+File.separator+"nwbTemp"+File.separator+"temp.nwb");
-    	}
-    	if (tempFile != null){
-    		try{    			
-    			(new XGMMLGraphWriter()).writeGraph((Graph)(data[0].getData()), tempFile);
-    			return new Data[]{new BasicData(tempFile, "file:text/xgmml+xml") };
-    		}catch (IOException ioe){
-    			logger.log(LogService.LOG_ERROR, "Errors while writing the specified XGMML file", ioe);
-    			return null;
-    		}
-    	}
-    	else{
+	
+	public PrefuseXGMMLWriter(
+			Data[] data, Dictionary parameters,	CIShellContext context) {
+		this.inGraph = (Graph) (data[0].getData());
+	}
 
-    		return null;
-    	}
+	
+	public Data[] execute() throws AlgorithmExecutionException {
+		try {
+			File outXGMMLFile =
+				FileUtilities.createTemporaryFileInDefaultTemporaryDirectory(
+						"NWB-Session-", XGMML_FILE_EXTENSION);
+			
+			(new XGMMLGraphWriter()).writeGraph(
+					inGraph, outXGMMLFile);
 
-
-    }
+			 return new Data[]{ new BasicData(outXGMMLFile, XGMML_MIME_TYPE) };
+		} catch (IOException e) {
+			throw new AlgorithmExecutionException(e.getMessage(), e);
+		}
+	}
 }

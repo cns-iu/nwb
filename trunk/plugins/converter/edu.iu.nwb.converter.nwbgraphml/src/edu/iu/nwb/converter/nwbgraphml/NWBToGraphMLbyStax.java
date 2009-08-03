@@ -7,6 +7,7 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.Dictionary;
 import java.util.List;
@@ -21,111 +22,129 @@ import org.cishell.framework.algorithm.Algorithm;
 import org.cishell.framework.algorithm.AlgorithmExecutionException;
 import org.cishell.framework.data.BasicData;
 import org.cishell.framework.data.Data;
+import org.cishell.utilities.FileUtilities;
 import org.osgi.service.log.LogService;
 
 import edu.iu.nwb.converter.nwb.common.NWBAttribute;
-import edu.iu.nwb.converter.nwb.common.NWBFileProperty;
 import edu.iu.nwb.converter.nwb.common.ValidateNWBFile;
-
+import edu.iu.nwb.util.nwbfile.NWBFileProperty;
 /**
  * @author Weixia(Bonnie) Huang 
  */
 public class NWBToGraphMLbyStax implements Algorithm {
-	Data[] data;
-	Dictionary parameters;
-	CIShellContext ciContext;
-	LogService logger;
-
+	public static final String GRAPHML_MIME_TYPE = "file:text/graphml+xml";
+	public static final String EDGEDEFAULT_ATTRIBUTE_KEY = "edgedefault";
+	private static final String GRAPH_ELEMENT = "graph";
+	private static final String NODE_ELEMENT = "node";
+	private static final String KEY_ATTRIBUTE_KEY = "key";
+	private static final String DATA_ELEMENT = "data";
+	private static final String EDGE_ELEMENT = "edge";
+	private static final String ID_ATTRIBUTE_KEY = "id";
+	public static final String TARGET_ATTRIBUTE_KEY = "target";
+	public static final String SOURCE_ATTRIBUTE_KEY = "source";
+	public static final String DOUBLE_TYPE_TOKEN = "double";
+	public static final String XML_FILE_EXTENSION = "xml";
+	private File inNWBFile;
+	private LogService logger;
+	
 
 	public NWBToGraphMLbyStax(Data[] data, Dictionary parameters, CIShellContext context) {
-		this.data = data;
-		this.parameters = parameters;
-		this.ciContext = context;
+		this.inNWBFile = (File) data[0].getData();
+		
+		this.logger =
+			(LogService) context.getService(LogService.class.getName());
 	}
 
+	
 	public Data[] execute() throws AlgorithmExecutionException {
-		File inData, outData;
-		Data [] dm = null;
-		ValidateNWBFile validator;
-
-		logger = (LogService)ciContext.getService(LogService.class.getName());
-
-		Object inFile = data[0].getData();
-
-		inData = (File)inFile;
-		validator = new ValidateNWBFile();
+		ValidateNWBFile validator = new ValidateNWBFile();
+		
 		try {
-			validator.validateNWBFormat(inData);
+			validator.validateNWBFormat(inNWBFile);
 			if (validator.getValidationResult()) {
-				outData = convertNWBToGraphMLbyStax(inData, validator);
-				if (outData != null){
-					dm = new Data[] {new BasicData(outData, "file:text/graphml+xml")};
-					return dm;
-				}
-				else {
-					throw new AlgorithmExecutionException("Failed to convert a file from NWB file format to GraphML file format.");
-				}
-			}
-			else {
-				throw new AlgorithmExecutionException("Unable to Make a File Conversion. " +
-						"The input file has a bad NWB format. \n " + validator.getErrorMessages() +
-						"Please review the latest NWB File Format Specification at \n" +
-						"http://nwb.slis.indiana.edu/software.html, and update your file."
+				File outGraphMLFile =
+					convertNWBToGraphMLbyStax(inNWBFile, validator);
+				
+				return createOutData(outGraphMLFile);
+			} else {
+				throw new AlgorithmExecutionException(
+					"Error: Unable to validate NWB file. \n "
+					+ validator.getErrorMessages() + "\n"
+					+ "Please review the latest NWB File Format Specification "
+					+ "at \nhttp://nwb.slis.indiana.edu/software.html, "
+					+ "and update your file."
 				);
 			}
 		} catch (FileNotFoundException e) {
-			throw new AlgorithmExecutionException("Unable to find the given .nwb file.", e);
-		} catch (IOException ioe) {
-			throw new AlgorithmExecutionException("IO Errors while writing from .nwb to graphML", ioe);
+			String message =
+				"Couldn't find NWB file to validate: " + e.getMessage();
+			throw new AlgorithmExecutionException(message, e);
+		} catch (IOException e) {
+			String message =
+				"File access error: " + e.getMessage();
+			throw new AlgorithmExecutionException(message, e);
 		}
 	}
-	private File convertNWBToGraphMLbyStax(File nwbFile, ValidateNWBFile validator){
-		try{
-			File graphml  = getTempFile();
-			BufferedReader reader = new BufferedReader(
+
+
+	private Data[] createOutData(File outGraphMLFile) {
+		Data[] outData = new Data[]{
+				new BasicData(outGraphMLFile, GRAPHML_MIME_TYPE) };
+		return outData;
+	}
+	
+	private File convertNWBToGraphMLbyStax(
+			File nwbFile, ValidateNWBFile validator)
+				throws AlgorithmExecutionException {
+		try {
+			File graphml =
+				FileUtilities.createTemporaryFileInDefaultTemporaryDirectory(
+						"NWB-Session-", XML_FILE_EXTENSION);
+			BufferedReader reader;
+			
+			reader =
+				new BufferedReader(
 					new InputStreamReader(
 							new FileInputStream(nwbFile),"UTF-8"));
-
+			
+	
 			XMLOutputFactory xof =  XMLOutputFactory.newInstance();  
 			XMLStreamWriter xtw = null;  
 			xtw = xof.createXMLStreamWriter(  
 					new FileOutputStream(graphml), "utf-8");
-
+	
 			writeGraphMLHeader (xtw);
 			writeAttributes(xtw, validator);
 			printGraph (xtw, validator, reader);
-
+	
 			//write </graph></graphml>
 			try {
 				xtw.writeEndElement();
 				
 				xtw.writeEndElement();
-			} catch (Exception e) {
-				e.printStackTrace();
+			} catch (XMLStreamException e) {
+				logger.log(LogService.LOG_WARNING, e.getMessage(), e);
 			}
-
+	
 			reader.close();
 			xtw.flush();  
 			xtw.close();
+			
 			return graphml;
-		}catch (FileNotFoundException e){
-			logger.log(LogService.LOG_ERROR, 
-					"Got a File Not Found Exception while converting from .nwb to graphML.",e);
-			return null;
-		}catch (IOException ioe){
-			logger.log(LogService.LOG_ERROR, "IO Errors while converting from .nwb to graphML",ioe);
-			return null;
-		}catch (XMLStreamException xmlse){
-			logger.log(LogService.LOG_ERROR, "XMLStreamException while converting from .nwb to graphML",xmlse);
-			return null;
-		} catch (Exception e) {
-			return null;
+		} catch (UnsupportedEncodingException e) {
+			throw new AlgorithmExecutionException(e.getMessage(), e);
+		} catch (FileNotFoundException e) {
+			throw new AlgorithmExecutionException(e.getMessage(), e);
+		} catch (XMLStreamException e) {
+			throw new AlgorithmExecutionException(e.getMessage(), e);
+		} catch (IOException e) {
+			throw new AlgorithmExecutionException(e.getMessage(), e);
 		}
-
 	}
 
-	//  write a Header with XML Schema reference 
-	private void writeGraphMLHeader (XMLStreamWriter xtw) throws XMLStreamException{
+	// Write a Header with XML Schema reference 
+	private void writeGraphMLHeader(XMLStreamWriter xtw)
+			throws XMLStreamException {
 
 		xtw.writeStartDocument("UTF-8","1.0");
 		xtw.writeComment("This file is generated by XMLStreamWriter");
@@ -135,27 +154,25 @@ public class NWBToGraphMLbyStax implements Algorithm {
 				"xsi","http://www.w3.org/2001/XMLSchema-instance");
 		xtw.writeAttribute("xsi", "http://www.w3.org/2001/XMLSchema-instance",
 				"schemaLocation", 
-		"http://graphml.graphdrawing.org/xmlns http://graphml.graphdrawing.org/xmlns/1.0/graphml.xsd");
-
+				"http://graphml.graphdrawing.org/xmlns http://graphml.graphdrawing.org/xmlns/1.0/graphml.xsd");
 	}
 
-	// write GraphML-Attributes
+	// Write GraphML-Attributes
 	private void writeAttributes(XMLStreamWriter xtw, ValidateNWBFile validator)
-	throws XMLStreamException, Exception {
-
-		//first handle node attributes
+			throws XMLStreamException, AlgorithmExecutionException {
+		// First handle node attributes
 		List array = validator.getNodeAttrList();
-		for (int i=0; i<array.size(); i++){
-			NWBAttribute attr = (NWBAttribute) array.get(i);
+		for (int ii = 0; ii < array.size(); ii++) {
+			NWBAttribute attr = (NWBAttribute) array.get(ii);
 			String attrName = attr.getAttrName();
-			if (attrName.equalsIgnoreCase(NWBFileProperty.ATTRIBUTE_ID)){
+			if (attrName.equalsIgnoreCase(NWBFileProperty.ATTRIBUTE_ID)) {
 				continue;
 			}    		
-			xtw.writeStartElement("key");
-			xtw.writeAttribute("id", attr.getAttrName().toLowerCase());
-			xtw.writeAttribute("for", "node");
+			xtw.writeStartElement(KEY_ATTRIBUTE_KEY);
+			xtw.writeAttribute(ID_ATTRIBUTE_KEY, attr.getAttrName().toLowerCase());
+			xtw.writeAttribute("for", NODE_ELEMENT);
 			xtw.writeAttribute("attr.name", attr.getAttrName());
-			xtw.writeAttribute("attr.type", getGraphmlType(attr));
+			xtw.writeAttribute("attr.type", getGraphMLType(attr));
 			xtw.writeEndElement();
 		}
 
@@ -170,16 +187,16 @@ public class NWBToGraphMLbyStax implements Algorithm {
 						attrName.equalsIgnoreCase(NWBFileProperty.ATTRIBUTE_ID)){
 					continue;
 				}        		
-				xtw.writeStartElement("key");
-				xtw.writeAttribute("id", attr.getAttrName().toLowerCase());
-				xtw.writeAttribute("for", "edge");
+				xtw.writeStartElement(KEY_ATTRIBUTE_KEY);
+				xtw.writeAttribute(ID_ATTRIBUTE_KEY, attr.getAttrName().toLowerCase());
+				xtw.writeAttribute("for", EDGE_ELEMENT);
 				xtw.writeAttribute("attr.name", attr.getAttrName());
-				xtw.writeAttribute("attr.type", getGraphmlType(attr));
+				xtw.writeAttribute("attr.type", getGraphMLType(attr));
 				xtw.writeEndElement();
 
 			}
-			xtw.writeStartElement("graph");
-			xtw.writeAttribute("edgedefault", "directed");
+			xtw.writeStartElement(GRAPH_ELEMENT);
+			xtw.writeAttribute(EDGEDEFAULT_ATTRIBUTE_KEY, "directed");
 		}
 		else if ((!validator.isDirectedGraph() || validator.getTotalNumOfDirectedEdges() == 0) && validator.isUndirectedGraph()){
 			//this is a undirected graph
@@ -192,36 +209,39 @@ public class NWBToGraphMLbyStax implements Algorithm {
 						attrName.equalsIgnoreCase(NWBFileProperty.ATTRIBUTE_ID)){
 					continue;
 				}
-				xtw.writeStartElement("key");
-				xtw.writeAttribute("id", attr.getAttrName().toLowerCase());
-				xtw.writeAttribute("for", "edge");
+				xtw.writeStartElement(KEY_ATTRIBUTE_KEY);
+				xtw.writeAttribute(ID_ATTRIBUTE_KEY, attr.getAttrName().toLowerCase());
+				xtw.writeAttribute("for", EDGE_ELEMENT);
 				xtw.writeAttribute("attr.name", attr.getAttrName());
 				xtw.writeAttribute("attr.type", attr.getDataType());
 				xtw.writeEndElement();
 				
 			}
-			xtw.writeStartElement("graph");
-			xtw.writeAttribute("edgedefault", "undirected");
+			xtw.writeStartElement(GRAPH_ELEMENT);
+			xtw.writeAttribute(EDGEDEFAULT_ATTRIBUTE_KEY, "undirected");
 			
 		}
 		else if (validator.isDirectedGraph() && validator.isUndirectedGraph()){
 			//hybrid graph, don't know how to handle it???
-			logger.log(LogService.LOG_WARNING, "Unable to convert hybrid NWB graph file to GraphML.");
-			//TODO: Make this some kind of real exception.
-			throw new Exception("Unable to convert hybrid NWB graph file to GraphML.");
+			throw new AlgorithmExecutionException(
+					"Unable to convert hybrid NWB graph file to GraphML.");
 		} else {
-			//graph is neither directed nor undirected. Must have no edges. Strange case.
-			xtw.writeStartElement("graph");
-			//since you must specify edgedefault, let's just call it undirected
-			xtw.writeAttribute("edgedefault", "undirected");
+			/* graph is neither directed nor undirected. Must have no edges.
+			 * Strange case.
+			 */
+			xtw.writeStartElement(GRAPH_ELEMENT);
+			/* Since you must specify edgedefault,
+			 * let's just call it undirected
+			 */
+			xtw.writeAttribute(EDGEDEFAULT_ATTRIBUTE_KEY, "undirected");
 		}
 	}
 
-	private void printGraph (XMLStreamWriter xtw, ValidateNWBFile validator,
-			BufferedReader reader) throws XMLStreamException, IOException{
-
-		
-		//read from nwb file and write to the graphml file
+	private void printGraph(XMLStreamWriter xtw,
+							ValidateNWBFile validator,
+							BufferedReader reader)
+								throws XMLStreamException, IOException {
+		// Read from nwb file and write to the graphml file
 		boolean inNodesSection = false;
 		boolean inDirectededgesSection = false;
 		boolean inUndirectededgesSection = false;
@@ -230,7 +250,8 @@ public class NWBToGraphMLbyStax implements Algorithm {
 
 		while (line != null){
 			line = line.trim();
-			if (line.length()==0 || line.startsWith(NWBFileProperty.PREFIX_COMMENTS)){
+			if (line.length()==0
+					|| line.startsWith(NWBFileProperty.PREFIX_COMMENTS)) {
 				line = reader.readLine();
 				continue;
 			}
@@ -283,8 +304,8 @@ public class NWBToGraphMLbyStax implements Algorithm {
 					List nodeAttrList = validator.getNodeAttrList();
 					//print <node id=\""+columns[0]+"\">
 
-					xtw.writeStartElement("node");
-					xtw.writeAttribute("id", "n" + columns[0]);
+					xtw.writeStartElement(NODE_ELEMENT);
+					xtw.writeAttribute(ID_ATTRIBUTE_KEY, "n" + columns[0]);
 					
 
 					for(int i = 1; i<nodeAttrList.size(); i++){
@@ -302,8 +323,8 @@ public class NWBToGraphMLbyStax implements Algorithm {
 						if(! value.equalsIgnoreCase("*")) {
 							//out.println("<data key=\""+attr.getAttrName()+
 							//		"\">"+escape(value)+"</data>");  
-							xtw.writeStartElement("data");
-							xtw.writeAttribute("key", attr.getAttrName().toLowerCase());
+							xtw.writeStartElement(DATA_ELEMENT);
+							xtw.writeAttribute(KEY_ATTRIBUTE_KEY, attr.getAttrName().toLowerCase());
 							xtw.writeCharacters(value);
 							xtw.writeEndElement();	
 							
@@ -353,10 +374,10 @@ public class NWBToGraphMLbyStax implements Algorithm {
 						if (edgeAttrList.size()>2){
 							//out.println("<edge id=\""+edgeID+"\" source=\""+columns[sourceColumnNumber]+
 							//	"\" target=\""+columns[targetColumnNumber]+"\">");
-							xtw.writeStartElement("edge");
-							xtw.writeAttribute("id", "e" + new Integer(edgeID).toString());
-							xtw.writeAttribute("source", "n" + columns[sourceColumnNumber]);
-							xtw.writeAttribute("target", "n" + columns[targetColumnNumber]);
+							xtw.writeStartElement(EDGE_ELEMENT);
+							xtw.writeAttribute(ID_ATTRIBUTE_KEY, "e" + new Integer(edgeID).toString());
+							xtw.writeAttribute(SOURCE_ATTRIBUTE_KEY, "n" + columns[sourceColumnNumber]);
+							xtw.writeAttribute(TARGET_ATTRIBUTE_KEY, "n" + columns[targetColumnNumber]);
 							
 
 							for(int i = 0; i<edgeAttrList.size(); i++){
@@ -378,8 +399,8 @@ public class NWBToGraphMLbyStax implements Algorithm {
 									if(! value.equalsIgnoreCase("*")) {
 										//out.println("<data key=\""+attr.getAttrName()+
 										//		"\">"+escape(value)+"</data>");  
-										xtw.writeStartElement("data");
-										xtw.writeAttribute("key", attr.getAttrName().toLowerCase());
+										xtw.writeStartElement(DATA_ELEMENT);
+										xtw.writeAttribute(KEY_ATTRIBUTE_KEY, attr.getAttrName().toLowerCase());
 										xtw.writeCharacters(value);
 										xtw.writeEndElement();
 										
@@ -401,10 +422,10 @@ public class NWBToGraphMLbyStax implements Algorithm {
 						}else{
 							//out.println("<edge id=\""+edgeID+"\" source=\""+columns[sourceColumnNumber]+
 							//		"\" target=\""+columns[targetColumnNumber]+"\"/>");
-							xtw.writeStartElement("edge");
-							xtw.writeAttribute("id", "e" + new Integer(edgeID).toString());
-							xtw.writeAttribute("source", "n" + columns[sourceColumnNumber]);
-							xtw.writeAttribute("target", "n" + columns[targetColumnNumber]);
+							xtw.writeStartElement(EDGE_ELEMENT);
+							xtw.writeAttribute(ID_ATTRIBUTE_KEY, "e" + new Integer(edgeID).toString());
+							xtw.writeAttribute(SOURCE_ATTRIBUTE_KEY, "n" + columns[sourceColumnNumber]);
+							xtw.writeAttribute(TARGET_ATTRIBUTE_KEY, "n" + columns[targetColumnNumber]);
 							xtw.writeEndElement();
 							
 							
@@ -415,10 +436,10 @@ public class NWBToGraphMLbyStax implements Algorithm {
 							//out.println("<edge id=\""+columns[idColumnNumber]+
 							//		"\" source=\""+columns[sourceColumnNumber]+
 							//		"\" target=\""+columns[targetColumnNumber]+"\">");
-							xtw.writeStartElement("edge");
-							xtw.writeAttribute("id", "e" + columns[idColumnNumber]);
-							xtw.writeAttribute("source", "n" + columns[sourceColumnNumber]);
-							xtw.writeAttribute("target", "n" + columns[targetColumnNumber]);
+							xtw.writeStartElement(EDGE_ELEMENT);
+							xtw.writeAttribute(ID_ATTRIBUTE_KEY, "e" + columns[idColumnNumber]);
+							xtw.writeAttribute(SOURCE_ATTRIBUTE_KEY, "n" + columns[sourceColumnNumber]);
+							xtw.writeAttribute(TARGET_ATTRIBUTE_KEY, "n" + columns[targetColumnNumber]);
 							
 
 							for(int i = 0; i<edgeAttrList.size(); i++){
@@ -432,8 +453,8 @@ public class NWBToGraphMLbyStax implements Algorithm {
 										//System.out.println(escape(columns[i]));
 										//out.println("<data key=\""+attr.getAttrName()+
 										//		"\">"+escape(columns[i])+"</data>");
-										xtw.writeStartElement("data");
-										xtw.writeAttribute("key", attr.getAttrName().toLowerCase());
+										xtw.writeStartElement(DATA_ELEMENT);
+										xtw.writeAttribute(KEY_ATTRIBUTE_KEY, attr.getAttrName().toLowerCase());
 										xtw.writeCharacters(columns[i]);
 										xtw.writeEndElement();
 										
@@ -457,10 +478,10 @@ public class NWBToGraphMLbyStax implements Algorithm {
 							//out.println("<edge id=\""+columns[idColumnNumber]+
 							//		"\" source=\""+columns[sourceColumnNumber]+
 							//		"\" target=\""+columns[targetColumnNumber]+"\"/>");
-							xtw.writeStartElement("edge");
-							xtw.writeAttribute("id", "e" + columns[idColumnNumber]);
-							xtw.writeAttribute("source", "n" + columns[sourceColumnNumber]);
-							xtw.writeAttribute("target", "n" + columns[targetColumnNumber]);
+							xtw.writeStartElement(EDGE_ELEMENT);
+							xtw.writeAttribute(ID_ATTRIBUTE_KEY, "e" + columns[idColumnNumber]);
+							xtw.writeAttribute(SOURCE_ATTRIBUTE_KEY, "n" + columns[sourceColumnNumber]);
+							xtw.writeAttribute(TARGET_ATTRIBUTE_KEY, "n" + columns[targetColumnNumber]);
 							xtw.writeEndElement();
 						}
 					} 		    			
@@ -472,35 +493,15 @@ public class NWBToGraphMLbyStax implements Algorithm {
 		}//end while
 	}
 
-	private int findAttr(String attrName, List attrList){
-		for(int i = 0; i<attrList.size(); i++){
-			NWBAttribute attr = (NWBAttribute) attrList.get(i); 
-			if (attr.getAttrName().equalsIgnoreCase(attrName)){
-				return i;
+	private int findAttr(String attrName, List attrList) {
+		for (int ii = 0; ii < attrList.size(); ii++){
+			NWBAttribute attr = (NWBAttribute) attrList.get(ii); 
+			if (attr.getAttrName().equalsIgnoreCase(attrName)) {
+				return ii;
 			}
 		}
 		return -1;
-	}
-
-
-
-	private File getTempFile(){
-		File tempFile;
-
-		String tempPath = System.getProperty("java.io.tmpdir");
-		File tempDir = new File(tempPath+File.separator+"temp");
-		if(!tempDir.exists())
-			tempDir.mkdir();
-		try{
-			tempFile = File.createTempFile("NWB-Session-", ".xml", tempDir);
-
-		}catch (IOException e){
-			logger.log(LogService.LOG_ERROR, e.toString(), e);
-			tempFile = new File (tempPath+File.separator+"nwbTemp"+File.separator+"temp.nwb");
-
-		}
-		return tempFile;
-	}			
+	}		
 
 	protected static String escape(String s){
 		String val = s.replaceAll("&amp;|&", "&amp;");
@@ -509,17 +510,19 @@ public class NWBToGraphMLbyStax implements Algorithm {
 		val = val.replaceAll("&quot;|\"", "&quot;");
 		val = val.replaceAll("&apos;|\'", "&apos;");
 		return val;
-
 	}
 
-	private String getGraphmlType(NWBAttribute attr) {
+	private String getGraphMLType(NWBAttribute attr) {
 		String type = attr.getDataType();
 
 		if (NWBFileProperty.TYPE_REAL.equals(type)) {
-			type = "double";
+			type = DOUBLE_TYPE_TOKEN;
 		} else if (NWBFileProperty.TYPE_FLOAT.equals(type)) {
-			//TODO: GUESS can't handle the float type for unknown reasons. If we ever have a converter from GraphML to GUESS, move this into that code.
-			type = "double";
+			/* TODO: GUESS can't handle the float type for unknown reasons.
+			 * If we ever have a converter from GraphML to GUESS, move this
+			 * into that code.
+			 */
+			type = DOUBLE_TYPE_TOKEN;
 		}
 
 		return type;

@@ -1,8 +1,9 @@
 package edu.iu.nwb.converter.pajeknet.common;
 
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.StringTokenizer;
+
+import org.cishell.framework.algorithm.AlgorithmExecutionException;
 
 public class NETFileFunctions {
 	public static String[] processTokens(String s){
@@ -32,7 +33,7 @@ public class NETFileFunctions {
 						!st.endsWith("\"")	){
 					bf.append(" "+st);
 				}
-				else if (st.endsWith("\"")){    				
+				else if (st.endsWith("\"")){
 					bf.append(" "+st);
 					sl.add(bf.toString().replace("\"", ""));
 					bf = new StringBuffer();
@@ -70,14 +71,14 @@ public class NETFileFunctions {
 				else{
 					append = true;
 					bf.append(element);
-				}    			
+				}
 			}
 			else {
 				if(element.endsWith("\\\"") ||
 						!element.endsWith("\"")	){
 					bf.append(" "+element);
 				}
-				else if (element.endsWith("\"")){    				
+				else if (element.endsWith("\"")){
 					bf.append(" "+element);
 					tokens[tokenIndex]= bf.toString();
 					tokenIndex++;
@@ -87,35 +88,40 @@ public class NETFileFunctions {
 			}
 		}
 
-	
+
 
 		return tokens;
 
 
 	}
-	
-	protected static int asAnInteger(String input) throws NumberFormatException{
+
+	protected static int asAnInteger(String input)
+			throws NumberFormatException {
 		int i = new Integer(input).intValue();
 		return i;
 	}
 
 	protected static boolean isAnInteger(String input, String attr){
-		try{
-			Integer value = new Integer (input);    
-		} catch(NumberFormatException ex){
+		try {
+			new Integer (input);
+		} catch(NumberFormatException e) {
 			return false;
 		}
-		
-		return true;    	
-	}    
 
-	protected static boolean isAString(String input, String attr) throws Exception {
-		/*if (!input.startsWith("\"") || !input.endsWith("\"")) {
-			
-		}   */ 	
-		if(input.getClass().toString().endsWith("String"))
 		return true;
-		throw new Exception("Not a String value.");
+	}
+
+	protected static boolean isAString(String input, String attr)
+			throws AlgorithmExecutionException {
+		/*if (!input.startsWith("\"") || !input.endsWith("\"")) {
+
+		}   */
+		if(input.getClass().toString().endsWith("String")) {
+			return true;
+		}
+		else {
+			throw new AlgorithmExecutionException("Not a String value.");
+		}
 	}
 
 	protected static float asAFloat(String input) throws NumberFormatException{
@@ -124,10 +130,11 @@ public class NETFileFunctions {
 	}
 	protected static boolean isAFloat (String input, String attr) {
 		try{
-		asAFloat(input);
-		}catch(Exception ex){
+			asAFloat(input);
+		} catch(NumberFormatException e) {
 			return false;
 		}
+
 		return true;
 	}
 
@@ -142,5 +149,5 @@ public class NETFileFunctions {
 		}
 		return value;
 	}
-	
+
 }

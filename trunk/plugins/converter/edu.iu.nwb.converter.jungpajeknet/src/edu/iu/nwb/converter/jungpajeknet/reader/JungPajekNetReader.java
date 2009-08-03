@@ -27,38 +27,52 @@ import edu.uci.ics.jung.utils.UserData;
  * @author Weixia(Bonnie) Huang 
  */
 public class JungPajekNetReader implements Algorithm {
-    Data[] data;
-    Dictionary parameters;
-    CIShellContext context;
+    public static final String EDGE_WEIGHT_ATTRIBUTE = "weight";
     
-    public JungPajekNetReader(Data[] data, Dictionary parameters, CIShellContext context) {
-        this.data = data;
-        this.parameters = parameters;
-        this.context = context;
+    private File inNetFileName;
+	
+    
+    public JungPajekNetReader(Data[] data,
+    						  Dictionary parameters,
+    						  CIShellContext context) {
+		inNetFileName = (File) data[0].getData();
     }
 
+    
     public Data[] execute() throws AlgorithmExecutionException {
-    	File fileHandler = (File) data[0].getData();
     	try {
     		Reader reader =
     			new BufferedReader(new InputStreamReader
-    				(new FileInputStream(fileHandler), "UTF8"));
+    				(new FileInputStream(inNetFileName)));
     		
-    		UserDatumNumberEdgeValue weightValues = new UserDatumNumberEdgeValue("weight");
+    		UserDatumNumberEdgeValue weightValues =
+    			new UserDatumNumberEdgeValue(EDGE_WEIGHT_ATTRIBUTE);
     		weightValues.setCopyAction(UserData.SHARED);
 			Graph graph = (new PajekNetReader()).load(reader, weightValues);
             fixLabels(graph);
             
-    		Data[] dm = new Data[] {new BasicData(graph, Graph.class.getName())};
-    		dm[0].getMetadata().put(DataProperty.LABEL, "Jung Graph: " + fileHandler.getAbsolutePath());
-            dm[0].getMetadata().put(DataProperty.TYPE, DataProperty.NETWORK_TYPE);
-    		return dm;
-    	}catch (FileNotFoundException exception){
-    		throw new AlgorithmExecutionException(exception.getMessage(),exception);
-    	}catch (IOException ioe){
-    		throw new AlgorithmExecutionException(ioe.getMessage(),ioe);
+    		return createOutData(inNetFileName, graph);
+    	} catch (FileNotFoundException e) {
+    		String message =
+    			"Couldn't find the Pajek .net file: " + e.getMessage();
+    		throw new AlgorithmExecutionException(message, e);
+    	} catch (IOException e) {
+    		String message = "File access error: " + e.getMessage();
+    		throw new AlgorithmExecutionException(message, e);
     	}
     }
+
+	private Data[] createOutData(File fileHandler, Graph graph) {
+		Data[] dm =
+			new Data[]{ new BasicData(graph, Graph.class.getName()) };
+		dm[0].getMetadata().put(
+				DataProperty.LABEL,
+				"Jung Graph: " + fileHandler.getAbsolutePath());
+		dm[0].getMetadata().put(
+				DataProperty.TYPE,
+				DataProperty.NETWORK_TYPE);
+		return dm;
+	}
     
     private void fixLabels(Graph g) {
         Iterator vertices = g.getVertices().iterator();

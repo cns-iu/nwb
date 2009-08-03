@@ -26,125 +26,80 @@ import org.cishell.framework.algorithm.Algorithm;
 import org.cishell.framework.algorithm.AlgorithmExecutionException;
 import org.cishell.framework.data.BasicData;
 import org.cishell.framework.data.Data;
-import org.osgi.service.log.LogService;
+import org.cishell.utilities.FileUtilities;
 
 import edu.iu.nwb.converter.nwb.common.NWBAttribute;
-import edu.iu.nwb.converter.nwb.common.NWBFileProperty;
 import edu.iu.nwb.converter.nwb.common.ValidateNWBFile;
 import edu.iu.nwb.converter.pajeknet.common.ARCEDGEParameter;
 import edu.iu.nwb.converter.pajeknet.common.NETFileFunctions;
 import edu.iu.nwb.converter.pajeknet.common.NETFileProperty;
+import edu.iu.nwb.util.nwbfile.NWBFileProperty;
 
 public class NWBToPajeknet implements Algorithm {
-	String[] noPrintParameters = { NETFileProperty.ATTRIBUTE_ID, NETFileProperty.ATTRIBUTE_LABEL, "xpos", "ypos", "zpos", "shape",NETFileProperty.ATTRIBUTE_SOURCE, NETFileProperty.ATTRIBUTE_TARGET, NETFileProperty.ATTRIBUTE_WEIGHT };
-	Data[] data;
-	Dictionary parameters;
-	CIShellContext ciContext;
-	LogService logger;
+	public static final String[] noPrintParameters = { NETFileProperty.ATTRIBUTE_ID, NETFileProperty.ATTRIBUTE_LABEL, "xpos", "ypos", "zpos", "shape",NETFileProperty.ATTRIBUTE_SOURCE, NETFileProperty.ATTRIBUTE_TARGET, NETFileProperty.ATTRIBUTE_WEIGHT };
+	
+	private File inNWBFile;
+	private Map vertexToIdMap;
 
-	Map vertexToIdMap;
-
-
-	/**
-	 * Intializes the algorithm
-	 * @param data List of Data objects to convert
-	 * @param parameters Parameters passed to the converter
-	 * @param context Provides access to CIShell services
-	 * @param transformer 
-	 */
+	
 	public NWBToPajeknet(Data[] data, Dictionary parameters, CIShellContext context) {
-		this.data = data;
-		this.parameters = parameters;
-		this.ciContext = context;
-		this.logger = (LogService)ciContext.getService(LogService.class.getName());
+		this.inNWBFile = (File) data[0].getData();
+		
 		this.vertexToIdMap = new HashMap();
 	}
 
-	/**
-	 * Executes the conversion
-	 * 
-	 * @return A single java file object
-	 * @throws AlgorithmExecutionException 
-	 */
+	
 	public Data[] execute() throws AlgorithmExecutionException {
-		File inData, outData;
-		Data [] dm = null;
-		ValidateNWBFile validator;
-
-		Object inFile = data[0].getData();
-
-		inData = (File)inFile;
-		validator = new ValidateNWBFile();
 		try {
-			validator.validateNWBFormat(inData);
-			if(validator.getValidationResult()){
-				outData = convertNWBToNet(inData,validator);
-				if(outData != null){
-					dm = new Data[] {new BasicData(outData, NETFileProperty.NET_MIME_TYPE)};
-					return dm;
-				}else {
-					throw new AlgorithmExecutionException("Problem executing transformation from .nwb to Pajek .net Output file was not created.");
-				}
-			}else{
-				throw new AlgorithmExecutionException("Problem executing transformation from .nwb to Pajek .net" + validator.getErrorMessages());
+			ValidateNWBFile validator = new ValidateNWBFile();
+			validator.validateNWBFormat(inNWBFile);
+			if (validator.getValidationResult()) {
+				File outNetFile = convertNWBToNet(inNWBFile, validator);
+				
+				return createOutData(outNetFile);
+			} else {
+				throw new AlgorithmExecutionException(
+					"Error converting NWB to Pajek .net: "
+						+ validator.getErrorMessages());
 			}
-		}
-		catch (FileNotFoundException fnf){
-			throw new AlgorithmExecutionException("The specified .nwb file could not be found.", fnf);
-		}
-		catch (IOException ioe){
-			throw new AlgorithmExecutionException("IO Errors while converting from .nwb to Pajek .net.", ioe);
+		} catch (FileNotFoundException e) {
+			String message = "Couldn't find NWB file: " + e.getMessage();
+			throw new AlgorithmExecutionException(message, e);
+		} catch (IOException e) {
+			String message = "File access error: " + e.getMessage();
+			throw new AlgorithmExecutionException(message, e);
 		}
 	}
 
-	/**
-	 * Creates a temporary file for the NWB file
-	 * @return The temporary file
-	 */
-	private File getTempFile(){
-		File tempFile;
-
-		String tempPath = System.getProperty("java.io.tmpdir");
-		File tempDir = new File(tempPath+File.separator+"temp");
-		if(!tempDir.exists())
-			tempDir.mkdir();
-		try{
-			tempFile = File.createTempFile("NWB-Session-", ".net", tempDir);
-
-		}catch (IOException e){
-			logger.log(LogService.LOG_ERROR, e.toString(), e);
-			tempFile = new File (tempPath+File.separator+"nwbTemp"+File.separator+"temp.net");
-
-		}
-		return tempFile;
+	private Data[] createOutData(File outNetFile) {
+		Data[] dm = new Data[]{ new BasicData(outNetFile, NETFileProperty.NET_MIME_TYPE) };
+		return dm;
 	}
 
-	private File convertNWBToNet(File nwbFile, ValidateNWBFile validator){
-		try{
-			File net = getTempFile();
-			PrintWriter out = new PrintWriter(new BufferedWriter(new FileWriter(net)), true);
+	private File convertNWBToNet(File nwbFile, ValidateNWBFile validator)
+			throws AlgorithmExecutionException{
+		try {
+			File outNetFile =
+				FileUtilities.createTemporaryFileInDefaultTemporaryDirectory(
+						"NWBToPajekNet-", "net");
+			PrintWriter out =
+				new PrintWriter(
+					new BufferedWriter(new FileWriter(outNetFile)), true);
 			out.flush();
 			BufferedReader reader = new BufferedReader(new FileReader(nwbFile));
 			printGraph(out,validator,reader);
 
-			return net;
-		}catch (FileNotFoundException e){
-			logger.log(LogService.LOG_ERROR, "Could not create the temp file for writing from .nwb to Pajek .net.", e);
-			return null;
-		}catch (IOException ioe){
-			logger.log(LogService.LOG_ERROR, "IO Errors while writing from .nwb to Pajek .net.", ioe);
-			return null;
-		}catch(Exception e){
-			logger.log(LogService.LOG_ERROR, "Errors in translating between .nwb and .net." +
-					"\n"+e.toString(), e);
-			//e.printStackTrace();
-			return null;
+			return outNetFile;
+		} catch (FileNotFoundException e) {
+			throw new AlgorithmExecutionException(e.getMessage(), e);
+		} catch (IOException e) {
+			throw new AlgorithmExecutionException(e.getMessage(), e);
 		}
 	}
 
-	private void printGraph (PrintWriter out, ValidateNWBFile validator,
-			BufferedReader reader) throws Exception{
-
+	private void printGraph(
+			PrintWriter out, ValidateNWBFile validator, BufferedReader reader)
+				throws IOException, AlgorithmExecutionException {
 		int nodes = 1;
 		boolean inNodesSection = false;
 		boolean inDirectededgesSection = false;
@@ -239,18 +194,18 @@ public class NWBToPajeknet implements Algorithm {
 		out.flush();
 	}
 
-
-
-
 	private void writeHeader(String s, PrintWriter out){
 		out.flush();
 		String st = NWBFileProperty.PRESERVED_STAR+s;
 
 		out.print(st+"\r\n");
-
 	}
 
-	private void writeNodes(String s, PrintWriter out, ValidateNWBFile validator, List nodeAttrList, int mapper){
+	private void writeNodes(String s,
+							PrintWriter out,
+							ValidateNWBFile validator,
+							List nodeAttrList,
+							int mapper) {
 		out.flush();
 		String[] columns = NETFileFunctions.processTokens(s);
 
@@ -323,10 +278,10 @@ public class NWBToPajeknet implements Algorithm {
 		}
 
 		out.print("\r\n");
-
 	}
 
-	private void writeEdges(String s, PrintWriter out, ValidateNWBFile validator, List edgeAttrList) throws Exception{
+	private void writeEdges(String s, PrintWriter out, ValidateNWBFile validator, List edgeAttrList)
+			throws AlgorithmExecutionException {
 		//System.out.println(s);
 		out.flush();
 
@@ -357,10 +312,10 @@ public class NWBToPajeknet implements Algorithm {
 				}
 				else{
 					if(na.getAttrName().equals(NWBFileProperty.ATTRIBUTE_SOURCE) || na.getAttrName().equals(NWBFileProperty.ATTRIBUTE_TARGET)){
-						try{
-							value = ((Integer)this.vertexToIdMap.get(new Integer(value))).toString();
-						}catch(NullPointerException npe){
-							throw new Exception("Edge references an undefined node " + value);
+						try {
+							value = ((Integer) this.vertexToIdMap.get(new Integer(value))).toString();
+						} catch (NullPointerException e) {
+							throw new AlgorithmExecutionException("Edge references an undefined node.", e);
 						}
 					}
 					out.print(value + " ");
@@ -403,7 +358,7 @@ public class NWBToPajeknet implements Algorithm {
 				}
 			}
 
-			else;
+			else; // TODO .......
 			i++;
 		}
 

@@ -6,7 +6,6 @@ import org.cishell.framework.CIShellContext;
 import org.cishell.framework.algorithm.Algorithm;
 import org.cishell.framework.algorithm.AlgorithmFactory;
 import org.cishell.framework.data.Data;
-import org.osgi.service.metatype.MetaTypeProvider;
 
 
 public class JungPrefuseBetaConverterAlgorithmFactory implements AlgorithmFactory {

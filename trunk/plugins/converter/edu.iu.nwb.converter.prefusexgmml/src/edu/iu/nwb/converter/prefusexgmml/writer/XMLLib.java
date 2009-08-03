@@ -34,7 +34,7 @@ public class XMLLib {
 	public static void EscapeString(String str, StringBuffer sbuf) {
 	    if ( sbuf == null ) {
 		    throw new IllegalArgumentException(
-			"Input StringBuffer must be non-null.");
+		    		"Input StringBuffer must be non-null.");
 	    }
         if ( str == null ) {
             sbuf.append("null");

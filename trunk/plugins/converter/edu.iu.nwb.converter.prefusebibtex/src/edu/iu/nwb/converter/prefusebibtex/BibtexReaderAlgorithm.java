@@ -1,7 +1,9 @@
 package edu.iu.nwb.converter.prefusebibtex;
 
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.FileReader;
+import java.io.IOException;
 import java.util.Dictionary;
 import java.util.Iterator;
 import java.util.Map;
@@ -26,53 +28,53 @@ import bibtex.dom.BibtexFile;
 import bibtex.expansions.ExpansionException;
 import bibtex.expansions.MacroReferenceExpander;
 import bibtex.parser.BibtexParser;
+import bibtex.parser.ParseException;
 import edu.iu.nwb.converter.prefusebibtex.util.StringUtil;
 
 public class BibtexReaderAlgorithm implements Algorithm {
 	//TODO: what if they have fields with these names?
-	private static final String ENTRY_TYPE_KEY = "entry type";
-	private static final String ENTRY_KEY_KEY = "entry key";
+	public static final String ENTRY_TYPE_KEY = "entry type";
+	public static final String ENTRY_KEY_KEY = "entry key";
 	
-	private static final String AUTHOR_COLUMN_NAME = "author";
-	private static final String ORIG_AUTHOR_COLUMN_SEPARATOR = " and ";
-	private static final String NEW_AUTHOR_COLUMN_SEPARATOR = "|";
+	public static final String AUTHOR_COLUMN_NAME = "author";
+	public static final String ORIG_AUTHOR_COLUMN_SEPARATOR = " and ";
+	public static final String NEW_AUTHOR_COLUMN_SEPARATOR = "|";
 		
-	private BibtexValueFormatter valueFormatter;
-	
-    Data[] data;
-    Dictionary parameters;
-    CIShellContext context;
-    LogService log;
+    private LogService log;
     
-    public BibtexReaderAlgorithm(Data[] data, Dictionary parameters, CIShellContext context, LogService log) {
-        this.data = data;
-        this.parameters = parameters;
-        this.context = context;
-        this.log = log;
-        this.valueFormatter = new BibtexValueFormatter(log);
+    private BibtexValueFormatter valueFormatter;
+	private File inBibtexFile;
+    
+    public BibtexReaderAlgorithm(
+    		Data[] data, Dictionary parameters, CIShellContext context) {
+    	this.inBibtexFile = (File) data[0].getData();
+    	
+        this.log = (LogService) context.getService(LogService.class.getName());
+        
+        this.valueFormatter = new BibtexValueFormatter(log);		
     }
 
     public Data[] execute() throws AlgorithmExecutionException {
-    	File bibtexFile = (File) data[0].getData();
-    	String bibtexFilePath = bibtexFile.getAbsolutePath();
-//    	//parse bibtex File
-//    	bibtex.Main.main(new String[] {"-expandStringDefinitions", bibtexFilePath});
-    	
+    	String bibtexFilePath = inBibtexFile.getAbsolutePath();
+
     	BibtexFile parsedBibtex = parseBibtex(bibtexFilePath);
-    	//write parsed bibtex File to table
+    	// Write parsed bibtex File to table
     	Table bibtexTable = makeTable(parsedBibtex);
-    	//normalize author names
+    	// Normalize author names
     	bibtexTable = normalizeAuthorNames(bibtexTable);
-    	//return bibtex table data
-    	Data[] bibtexReturnData = formatAsData(bibtexTable, bibtexFilePath);
+    	// Return bibtex table data
+    	Data[] bibtexReturnData = createOutData(bibtexTable, bibtexFilePath);
+    	
 		return bibtexReturnData;
     }
     
-    private Data[] formatAsData(Table bibtex, String bibtexFilePath) {
+    private Data[] createOutData(Table bibtex, String bibtexFilePath) {
     	Data[] tableToReturnData = 
 			new Data[] {new BasicData(bibtex, Table.class.getName())};
-		tableToReturnData[0].getMetadata().put(DataProperty.LABEL, "Parsed BibTeX file: " + bibtexFilePath);
-        tableToReturnData[0].getMetadata().put(DataProperty.TYPE, DataProperty.TABLE_TYPE);
+		tableToReturnData[0].getMetadata().put(
+				DataProperty.LABEL, "Parsed BibTeX file: " + bibtexFilePath);
+        tableToReturnData[0].getMetadata().put(
+        		DataProperty.TYPE, DataProperty.TABLE_TYPE);
         return tableToReturnData;
     }
     
@@ -103,22 +105,30 @@ public class BibtexReaderAlgorithm implements Algorithm {
     	return table.getPrefuseTable();
     }
     
-    private BibtexFile parseBibtex(String bibtexFilePath)throws AlgorithmExecutionException {
+    private BibtexFile parseBibtex(String bibtexFilePath)
+    		throws AlgorithmExecutionException {
     	BibtexFile bibtexFile = new BibtexFile();
     	BibtexParser parser = new BibtexParser(false);
     	try {
-    	parser.parse(bibtexFile, new FileReader(bibtexFilePath));
-    	} catch (Exception e) {
-    		throw new AlgorithmExecutionException("Fatal exception occurred while parsing bibtex file.", e);
-    	} finally {
-    		printNonFatalExceptions(parser.getExceptions(), bibtexFile.getEntries().size());
+    		parser.parse(bibtexFile, new FileReader(bibtexFilePath));
+    	} catch (FileNotFoundException e) {
+			throw new AlgorithmExecutionException(e.getMessage(), e);
+		} catch (ParseException e) {
+			throw new AlgorithmExecutionException(e.getMessage(), e);
+		} catch (IOException e) {
+			throw new AlgorithmExecutionException(e.getMessage(), e);
+		} finally {
+    		printNonFatalExceptions(parser.getExceptions(),
+    								bibtexFile.getEntries().size());
     	}
+		
     	try {
-    	MacroReferenceExpander macroExpander = 
-    		new MacroReferenceExpander(true, true, false, false);
-    	macroExpander.expand(bibtexFile);
+	    	MacroReferenceExpander macroExpander = 
+	    		new MacroReferenceExpander(true, true, false, false);
+	    	macroExpander.expand(bibtexFile);
     	} catch (ExpansionException e) {
-    		throw new AlgorithmExecutionException("Error occurred while parsing bibtex file.", e);
+    		throw new AlgorithmExecutionException(
+    				"Error occurred while parsing bibtex file.", e);
     	}
     	return bibtexFile;
     }
@@ -176,8 +186,8 @@ public class BibtexReaderAlgorithm implements Algorithm {
     			authorColumn.setString(normalizedAuthors, rowIndex);
     		}
     	}
-    	} catch (DataTypeException e1) {
-    		printColumnNotOfTypeStringWarning();
+    	} catch (DataTypeException e) {
+    		printColumnNotOfTypeStringWarning(e);
     		return bibtexTable;
     	}
     	return bibtexTable;
@@ -190,30 +200,30 @@ public class BibtexReaderAlgorithm implements Algorithm {
     	return normalizedAuthorNames;
     }
     
-	private void printNonFatalExceptions(Exception[] exceptions, int numTotalEntries) {
+	private void printNonFatalExceptions(
+			Exception[] exceptions, int numTotalEntries) {
 		if (exceptions.length > 0) {
 		
-			System.err.println("Non-fatal exceptions: ");
-			try {
-			} catch (Exception e) {};
+			log.log(LogService.LOG_WARNING, "Non-fatal exceptions:\n");
 			
 			for (int i = 0; i < exceptions.length; i++) {
-				exceptions[i].printStackTrace();
 				String message = exceptions[i].getMessage();
 				if (message == null) {
 					message = "";
 				}
-				this.log.log(LogService.LOG_WARNING, "" + message, exceptions[i]);
-				System.err.println("===================");
+				log.log(LogService.LOG_WARNING, "  " + message, exceptions[i]);
 			}
-			float percentFlawed = ((float) exceptions.length) / ((float) numTotalEntries);
+			float percentFlawed =
+				((float) exceptions.length) / ((float) numTotalEntries);
 			String percentFlawedAsString = String.valueOf(percentFlawed * 100);
 			percentFlawedAsString = percentFlawedAsString.substring(0, 4);
 			this.log.log(LogService.LOG_WARNING, "" + exceptions.length + 
 					" non-fatal errors were found out of  " + numTotalEntries +
-					" entries. Each will usually cause one or more fields to be lost for a single entry.");
+					" entries. Each will usually cause one or more fields to "
+					+ "be lost for a single entry.");
 		} else {
-			this.log.log(LogService.LOG_INFO, "File successfully parsed (0 errors).");
+			this.log.log(LogService.LOG_INFO,
+						 "File successfully parsed -- no issues arose.");
 		}
 	}
     
@@ -232,18 +242,19 @@ public class BibtexReaderAlgorithm implements Algorithm {
 			currentRowIsFinished = true;
 		}
 		
-		public void setString(String columnTag, String value) throws AlgorithmExecutionException {
+		public void setString(String columnTag, String value)
+				throws AlgorithmExecutionException {
 			ensureRowNotFinishedYet();
 			
 			try {
-			table.setString(currentRow, columnTag, value);
+				table.setString(currentRow, columnTag, value);
 			} catch (Exception e1) {
-				//maybe column does not yet exist. Add it and try again.
+				// Maybe column does not yet exist. Add it and try again.
 				addColumn(columnTag, String.class);
 				try {
-				table.setString(currentRow, columnTag, value);
+					table.setString(currentRow, columnTag, value);
 				} catch (Exception e2) {
-					//something else must be wrong.
+					// Something else must be wrong.
 					throw new AlgorithmExecutionException(e2);
 				}
 			}
@@ -262,14 +273,12 @@ public class BibtexReaderAlgorithm implements Algorithm {
 				currentRow = table.addRow();
 				currentRowIsFinished = false;
 			}
-		}
-		
-		
+		}		
 	}
     
-    private void printColumnNotOfTypeStringWarning() {
+    private void printColumnNotOfTypeStringWarning(DataTypeException e) {
     	this.log.log(LogService.LOG_WARNING, "The column '" + AUTHOR_COLUMN_NAME + 
-    			"' in the bibtex file cannot be normalized, because it cannot be interpreted as text.");
+    			"' in the bibtex file cannot be normalized, because it cannot be interpreted as text.", e);
     }
     
     private void printNoAuthorColumnWarning() {
