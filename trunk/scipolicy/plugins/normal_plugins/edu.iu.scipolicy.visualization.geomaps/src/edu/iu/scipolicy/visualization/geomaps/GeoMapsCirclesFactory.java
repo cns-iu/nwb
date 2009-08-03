@@ -1,15 +1,12 @@
 package edu.iu.scipolicy.visualization.geomaps;
 
-import java.io.IOException;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
 import org.cishell.framework.data.Data;
-import org.cishell.reference.service.metatype.BasicObjectClassDefinition;
-import org.cishell.utilities.MutateParameterUtilities;
 import org.cishell.utilities.TableUtilities;
-import org.osgi.service.metatype.AttributeDefinition;
+import org.cishell.utilities.mutateParameter.DropdownMutator;
 import org.osgi.service.metatype.ObjectClassDefinition;
 
 import prefuse.data.Table;
@@ -32,68 +29,39 @@ public class GeoMapsCirclesFactory extends GeoMapsAlgorithmFactory {
 			ObjectClassDefinition oldParameters) {
 		Data inData = data[0];
 		Table table = (Table) inData.getData();
-		BasicObjectClassDefinition newParameters;
 
-		try {
-			newParameters = new BasicObjectClassDefinition(oldParameters
-					.getID(), oldParameters.getName(), oldParameters
-					.getDescription(), oldParameters.getIcon(16));
-		} catch (IOException e) {
-			newParameters = new BasicObjectClassDefinition(oldParameters
-					.getID(), oldParameters.getName(), oldParameters
-					.getDescription(), null);
-		}
-
-		AttributeDefinition[] oldAttributeDefinitions = oldParameters
-				.getAttributeDefinitions(ObjectClassDefinition.ALL);
-
-		for (AttributeDefinition oldAttributeDefinition : oldAttributeDefinitions) {
-			String oldAttributeDefinitionID = oldAttributeDefinition.getID();
-			AttributeDefinition newAttributeDefinition = oldAttributeDefinition;
-
-			if (oldAttributeDefinitionID
-					.equals(CircleAnnotationMode.CIRCLE_AREA_SCALING_ID)
-					|| oldAttributeDefinitionID
-							.equals(CircleAnnotationMode.CIRCLE_COLOR_SCALING_ID)) {
-				newAttributeDefinition = formStringDropdownAttributeDefinition(
-						oldAttributeDefinition, ScalerFactory.SCALER_TYPES
-								.keySet());
-			} else if (oldAttributeDefinitionID.equals(CircleAnnotationMode.LATITUDE_ID)) {
-				String[] numberColumns = TableUtilities.getValidNumberColumnNamesInTable(table);
-				swapFirstMatchToFront(numberColumns, LATITUDE_KEYS);
-				newAttributeDefinition = formStringDropdownAttributeDefinition(oldAttributeDefinition, Arrays.asList(numberColumns));
-			} else if (oldAttributeDefinitionID.equals(CircleAnnotationMode.LONGITUDE_ID)) {
-				String[] numberColumns = TableUtilities.getValidNumberColumnNamesInTable(table);
-				swapFirstMatchToFront(numberColumns, LONGITUDE_KEYS);
-				newAttributeDefinition = formStringDropdownAttributeDefinition(oldAttributeDefinition, Arrays.asList(numberColumns));
-			}
-			else if ( oldAttributeDefinitionID.equals(CircleAnnotationMode.CIRCLE_AREA_ID)
-					|| oldAttributeDefinitionID.equals(CircleAnnotationMode.CIRCLE_COLOR_QUANTITY_ID)) {
-				newAttributeDefinition = MutateParameterUtilities
-						.formNumberAttributeDefinition(oldAttributeDefinition,
-								table);
-			} else if (oldAttributeDefinitionID
-					.equals(CircleAnnotationMode.CIRCLE_COLOR_RANGE_ID)) {
-				newAttributeDefinition = formStringDropdownAttributeDefinition(
-						oldAttributeDefinition,
-						CircleAnnotationMode.COLOR_RANGES.keySet());
-			} else if (oldAttributeDefinitionID
-					.equals(GeoMapsAlgorithm.SHAPEFILE_ID)) {
-				newAttributeDefinition = formStringDropdownAttributeDefinition(
-						oldAttributeDefinition,
-						GeoMapsAlgorithm.SHAPEFILES.keySet());
-			} else if (oldAttributeDefinitionID
-					.equals(GeoMapsAlgorithm.PROJECTION_ID)) {
-				newAttributeDefinition = formStringDropdownAttributeDefinition(
-						oldAttributeDefinition,
-						GeoMapsAlgorithm.PROJECTIONS.keySet());
-			}
-
-			newParameters.addAttributeDefinition(
-					ObjectClassDefinition.REQUIRED, newAttributeDefinition);
-		}
-
-		return newParameters;
+		DropdownMutator mutator = new DropdownMutator();
+		
+		mutator.add(GeoMapsAlgorithm.SHAPEFILE_ID,
+					GeoMapsAlgorithm.SHAPEFILES.keySet());
+		
+		mutator.add(GeoMapsAlgorithm.PROJECTION_ID,
+					GeoMapsAlgorithm.PROJECTIONS.keySet());
+		
+		String[] numberColumnsForLat =
+			TableUtilities.getValidNumberColumnNamesInTable(table);		
+		swapFirstMatchToFront(numberColumnsForLat, LATITUDE_KEYS);		
+		mutator.add(CircleAnnotationMode.LATITUDE_ID, numberColumnsForLat);
+		
+		String[] numberColumnsForLong =
+			TableUtilities.getValidNumberColumnNamesInTable(table);	
+		swapFirstMatchToFront(numberColumnsForLong, LONGITUDE_KEYS);		
+		mutator.add(CircleAnnotationMode.LONGITUDE_ID, numberColumnsForLong);
+		
+		mutator.add(CircleAnnotationMode.CIRCLE_AREA_ID,
+					TableUtilities.getValidNumberColumnNamesInTable(table));
+		mutator.add(CircleAnnotationMode.CIRCLE_AREA_SCALING_ID,
+					ScalerFactory.SCALER_TYPES.keySet());
+		// Expose circle area range?
+		
+		mutator.add(CircleAnnotationMode.CIRCLE_COLOR_QUANTITY_ID,
+					TableUtilities.getValidNumberColumnNamesInTable(table));
+		mutator.add(CircleAnnotationMode.CIRCLE_COLOR_SCALING_ID,
+					ScalerFactory.SCALER_TYPES.keySet());
+		mutator.add(CircleAnnotationMode.CIRCLE_COLOR_RANGE_ID,
+					CircleAnnotationMode.COLOR_RANGES.keySet());
+				
+		return mutator.mutate(oldParameters);
 	}
 	
 	private static void swapFirstMatchToFront(String[] array, List<String> targets) {
@@ -101,6 +69,7 @@ public class GeoMapsCirclesFactory extends GeoMapsAlgorithmFactory {
 			int index = indexOf(target, array);
 			
 			if ( index != -1 ) {
+				System.out.println("Swapping " + array[index] + " from " + index + " to 0.");
 				swap(array, 0, index);
 				return;
 			}

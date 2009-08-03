@@ -1,11 +1,8 @@
 package edu.iu.scipolicy.visualization.geomaps;
 
-import java.io.IOException;
-
 import org.cishell.framework.data.Data;
-import org.cishell.reference.service.metatype.BasicObjectClassDefinition;
-import org.cishell.utilities.MutateParameterUtilities;
-import org.osgi.service.metatype.AttributeDefinition;
+import org.cishell.utilities.TableUtilities;
+import org.cishell.utilities.mutateParameter.DropdownMutator;
 import org.osgi.service.metatype.ObjectClassDefinition;
 
 import prefuse.data.Table;
@@ -21,51 +18,27 @@ public class GeoMapsRegionsFactory extends GeoMapsAlgorithmFactory {
 	public ObjectClassDefinition mutateParameters(Data[] data, ObjectClassDefinition oldParameters) {
 		Data inData = data[0];
 		Table table = (Table)inData.getData();
-		BasicObjectClassDefinition newParameters;
 		
-		try {
-			newParameters =
-				new BasicObjectClassDefinition(oldParameters.getID(),
-											   oldParameters.getName(),
-											   oldParameters.getDescription(),
-											   oldParameters.getIcon(16));
-		}
-		catch (IOException e) {
-			newParameters = new BasicObjectClassDefinition
-				(oldParameters.getID(),
-				 oldParameters.getName(),
-				 oldParameters.getDescription(), null);
-		}
+		DropdownMutator mutator = new DropdownMutator();
 		
-		AttributeDefinition[] oldAttributeDefinitions =	oldParameters.getAttributeDefinitions(ObjectClassDefinition.ALL);
+		mutator.add(GeoMapsAlgorithm.SHAPEFILE_ID,
+					GeoMapsAlgorithm.SHAPEFILES.keySet());
 		
-		for (AttributeDefinition oldAttributeDefinition : oldAttributeDefinitions) {
-			String oldAttributeDefinitionID = oldAttributeDefinition.getID();
-			AttributeDefinition newAttributeDefinition = oldAttributeDefinition;
-			
-			if (oldAttributeDefinitionID.equals(RegionAnnotationMode.FEATURE_NAME_ID)) {
-				newAttributeDefinition = MutateParameterUtilities.formLabelAttributeDefinition(oldAttributeDefinition, table);
-			}
-			else if (oldAttributeDefinitionID.equals(RegionAnnotationMode.FEATURE_COLOR_QUANTITY_ID)) {
-				newAttributeDefinition = MutateParameterUtilities.formNumberAttributeDefinition(oldAttributeDefinition, table);
-			}
-			else if (oldAttributeDefinitionID.equals(RegionAnnotationMode.FEATURE_COLOR_SCALING_ID)) {
-				newAttributeDefinition = formStringDropdownAttributeDefinition(oldAttributeDefinition, ScalerFactory.SCALER_TYPES.keySet());
-			}
-			else if (oldAttributeDefinitionID.equals(RegionAnnotationMode.FEATURE_COLOR_RANGE_ID)) {
-				newAttributeDefinition = formStringDropdownAttributeDefinition(oldAttributeDefinition, RegionAnnotationMode.COLOR_RANGES.keySet());
-			}
-			else if (oldAttributeDefinitionID.equals(GeoMapsAlgorithm.SHAPEFILE_ID)) {
-				newAttributeDefinition = formStringDropdownAttributeDefinition(oldAttributeDefinition, GeoMapsAlgorithm.SHAPEFILES.keySet());
-			}
-			else if (oldAttributeDefinitionID.equals(GeoMapsAlgorithm.PROJECTION_ID)) {
-				newAttributeDefinition = formStringDropdownAttributeDefinition(oldAttributeDefinition, GeoMapsAlgorithm.PROJECTIONS.keySet());
-			}
-			
-			
-			newParameters.addAttributeDefinition(ObjectClassDefinition.REQUIRED, newAttributeDefinition);
-		}
+		mutator.add(GeoMapsAlgorithm.PROJECTION_ID,
+					GeoMapsAlgorithm.PROJECTIONS.keySet());
 		
-		return newParameters;
+		mutator.add(RegionAnnotationMode.FEATURE_NAME_ID,
+					TableUtilities.getValidStringColumnNamesInTable(table));
+		
+		mutator.add(RegionAnnotationMode.FEATURE_COLOR_QUANTITY_ID,
+					TableUtilities.getValidNumberColumnNamesInTable(table));
+		
+		mutator.add(RegionAnnotationMode.FEATURE_COLOR_SCALING_ID,
+					ScalerFactory.SCALER_TYPES.keySet());
+
+		mutator.add(RegionAnnotationMode.FEATURE_COLOR_RANGE_ID,
+					RegionAnnotationMode.COLOR_RANGES.keySet());
+				
+		return mutator.mutate(oldParameters);
 	}
 }
