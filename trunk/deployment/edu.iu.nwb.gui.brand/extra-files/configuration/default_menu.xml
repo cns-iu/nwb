@@ -65,6 +65,7 @@
 	<menu pid="edu.iu.iv.modeling.p2p.pru.PruAlgorithm"/>
 	<menu type="break"/>
 	<menu pid="edu.iu.iv.modeling.tarl.TarlAlgorithm"/>
+	<menu type="break"/>
 	<menu pid="edu.iu.nwb.modeling.discretenetworkdynamics.DNDAlgorithm"/>
 	<menu type="break"/>
 	<menu pid="edu.iu.nwb.modeling.weighted.evolvingnetwork"/>
@@ -83,6 +84,7 @@
 		<menu pid="edu.iu.nwb.analysis.averageshortestpath"/>
 		<menu pid="edu.iu.nwb.analysis.shortestpathdistr"/>
 		<menu pid="edu.iu.nwb.analysis.sitebetweenness"/>
+		<menu pid="edu.iu.nwb.analysis.connectedcomponents"/>
 		<menu type="break"/>
 		<menu pid="edu.iu.nwb.analysis.hits.HITSAlgorithm"/>
 		<menu type="break"/>
@@ -98,6 +100,7 @@
 		<menu pid="edu.iu.nwb.analysis.weighted.degreeaveragestrength"/>
 		<menu pid="edu.iu.nwb.analysis.weighted.degreestrength"/>
 		<menu pid="edu.iu.nwb.analysis.weighted.endpointdegree"/>
+		<menu pid="edu.iu.nwb.analysis.java.undirectedknn"/>
 		<menu pid="edu.iu.nwb.analysis.weighted.strengthdistribution"/>
 		<menu pid="edu.iu.nwb.analysis.weighted.weightdistribution"/>
 		<menu pid="edu.iu.nwb.analysis.weighted.randomweight"/>
@@ -141,8 +144,6 @@
 		<menu pid="edu.iu.iv.search.p2p.randomwalk.RandomWalkAlgorithm"/> 
 		<menu pid="edu.iu.iv.search.p2p.bfs.BreadthFirstSearchAlgorithm"/> 
     </menu>
-	<menu type="break"/>
- 	<menu pid="edu.iu.nwb.analysis.blondelcommunitydetection.BlondelCommunityDetectionAlgorithm"/>
     </top_menu>
     
     <top_menu name="Visualization">

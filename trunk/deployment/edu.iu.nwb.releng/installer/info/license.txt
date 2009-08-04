@@ -1,5 +1,5 @@
 The Network Workbench (NWB) Tool
-Version: 1.0.0 beta
+Version: 1.0.0 official
 
 (c)Copyright 2006-2008 Indiana University
 Licensed under the Apache License, Version 2.0 (the "License"); 
