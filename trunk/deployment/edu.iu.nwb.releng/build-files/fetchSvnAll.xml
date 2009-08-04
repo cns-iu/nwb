@@ -204,6 +204,15 @@
       <param name="url" value="https://cishell.svn.sourceforge.net/svnroot/cishell/trunk"/>
     </antcall>
   	
+  	<!-- SciPolicy Plugins (better than having to move projects every time we decide to use something in NWB) -->
+  	
+  	<antcall target="svn.co">
+  	  	  	  	  	        <param name="target" value="plugins"/>
+  	  	  	  	  	        <param name="element.id" value="edu.iu.scipolicy.converter.psraster"/>
+  	  	  	  	  	        <param name="project.name" value="edu.iu.scipolicy.converter.psraster"/>
+  	  	  	  	  	        <param name="url" value="http://nwb.slis.indiana.edu/svn/nwb/trunk/scipolicy/plugins/converters"/>
+  	  	  	  	  	</antcall>
+  	
   	<!-- NWB Plugins -->
   	
   	
