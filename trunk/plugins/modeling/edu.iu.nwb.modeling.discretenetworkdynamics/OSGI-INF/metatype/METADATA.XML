@@ -24,10 +24,10 @@
 			description="Select whether you will update functions in a Synchronous or Sequential manner."
 			default="1" required="true" type="String">
 			<Option label="Synchronous" value="1"></Option>
-			<Option label="Sequential" value="0"></Option>
+			<Option label="Asyncrhonous" value="0"></Option>
 		</AD>
 		<AD default=''
-			description="If you have chose sequential updating, specify the update Schedule separated by spaces. Use each number 1...N, where N is number of Nodes, once."
+			description="If you have chose Asynchronous updating, specify the update Schedule separated by spaces. Use each number 1...N, where N is number of Nodes, once."
 			id="updateSchedule" name="Enter update schedule separated by space"
 			required="false" type="String">
 		</AD>

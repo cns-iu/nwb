@@ -3,10 +3,10 @@ package edu.iu.nwb.modeling.discretenetworkdynamics.functions;
 import java.util.HashMap;
 
 public class AbstractFunctionFactory {
-	private HashMap typeToFunctionFactory;
+	private HashMap<String,FunctionFactory> typeToFunctionFactory;
 	
 	public AbstractFunctionFactory(){
-		typeToFunctionFactory = new HashMap();
+		typeToFunctionFactory = new HashMap<String,FunctionFactory>();
 	}
 	
 	public static AbstractFunctionFactory getDefaultFunctionFactory(){

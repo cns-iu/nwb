@@ -11,8 +11,8 @@ import edu.iu.nwb.modeling.discretenetworkdynamics.functions.AbstractFunctionFac
 
 public class FunctionParser {
 	public static FunctionContainer parseFunction(String functionString,boolean isPolynomialFunction)throws FunctionFormatException{
-		Stack functionStack = new Stack();
-		LinkedList outputQueue = new LinkedList();
+		Stack functionStack = new Stack<String>();
+		LinkedList outputQueue = new LinkedList<String>();
 		String token;
 
 		AbstractFunctionFactory aff = AbstractFunctionFactory.getDefaultFunctionFactory();

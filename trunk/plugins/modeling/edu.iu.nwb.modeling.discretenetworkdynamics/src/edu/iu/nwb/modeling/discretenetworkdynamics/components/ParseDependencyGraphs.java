@@ -14,7 +14,7 @@ import edu.iu.nwb.modeling.discretenetworkdynamics.parser.FunctionFormatExceptio
 public class ParseDependencyGraphs {
 
 	public static Graph constructDependencyGraph(final String functionLabel, final String nodeLabel, final Table functionTable) throws FunctionFormatException{
-		
+
 		Graph dependGraph = createEmptyGraph(nodeLabel, functionTable);
 
 		dependGraph = addNodes(functionLabel,nodeLabel,functionTable,dependGraph);
@@ -108,10 +108,10 @@ public class ParseDependencyGraphs {
 		}
 		return g;
 	}
-	
-	
-	
-	private static Graph constructUniqueEdges(String functionString, Node n,Graph g){
+
+
+
+	private static Graph constructUniqueEdges(String functionString, Node n,Graph g) throws NumberFormatException{
 		Pattern p = Pattern.compile("x\\d+");
 		Matcher m = p.matcher(functionString);	
 		String nodeIdentification;
@@ -119,12 +119,10 @@ public class ParseDependencyGraphs {
 		while(m.find()){
 			nodeIdentification = m.group();
 			nodeIdentification = nodeIdentification.substring(1);
-			try{
-				Integer sourceID = new Integer(nodeIdentification);
-				uniqueEdges.add(sourceID);
-			}catch(NumberFormatException nfe){
-				System.out.println("Had a problem here.");
-			}	
+
+			Integer sourceID = new Integer(nodeIdentification);
+			uniqueEdges.add(sourceID);
+
 		}
 		for(Iterator it = uniqueEdges.iterator(); it.hasNext();){
 			int source = ((Integer)it.next()).intValue();
@@ -136,18 +134,18 @@ public class ParseDependencyGraphs {
 
 	private static String parseFunctionString(String func)throws FunctionFormatException{
 		String s = func;
-	
+
 		s = s.replaceAll("\\s","");
 		//s = s.replace("^f\\d*=", "");
 		String[] functionArray = s.split("=");
-		
+
 		if(functionArray.length != 2){
 			throw new FunctionFormatException("Your expression must begin with \"f\" followed by a row number followed by \"=\". " +
 					"The malformed expression looked like this: " + func);
 		}
 
 		s = functionArray[1];
-		
+
 
 		return s;
 
@@ -157,14 +155,14 @@ public class ParseDependencyGraphs {
 		Graph pseudoGraph = createEmptyGraph(nodeLabel,functionTable);
 
 		pseudoGraph = addNodes(functionLabel,nodeLabel,functionTable,pseudoGraph);
-		
+
 		pseudoGraph = createPseudoEdges(functionLabel,functionTable,pseudoGraph);
 
 		return pseudoGraph;
 	}
 
 	private static Graph createPseudoEdges(final String functionLabel, final Table functionTable, Graph g) throws FunctionFormatException{
-		
+
 		for(int i = 0; i < functionTable.getRowCount(); i++){
 			Node n = g.addNode();
 			String pseudoLabel = parseFunctionString(functionTable.get(i,functionLabel).toString());

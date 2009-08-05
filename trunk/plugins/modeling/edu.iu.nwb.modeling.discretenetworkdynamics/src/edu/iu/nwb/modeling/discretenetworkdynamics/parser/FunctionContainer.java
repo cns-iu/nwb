@@ -16,7 +16,7 @@ public class FunctionContainer {
 	}
 	
 	public int evaluate(final int[] stateSpace, final int[] nextState, BigInteger radix, boolean isSequential) throws ArithmeticException{
-		Stack executionStack = new Stack();
+		Stack<BigInteger> executionStack = new Stack<BigInteger>();
 		Integer value;
 		Object token;
 		String tokenString;
@@ -48,7 +48,7 @@ public class FunctionContainer {
 				operator = (AbstractFunction)token;
 				BigInteger[] operands = new BigInteger[operator.getNumberOfArguments()];
 				for(int i = (operands.length-1); i >= 0; i--){
-					operands[i] = (BigInteger)executionStack.pop();
+					operands[i] = executionStack.pop();
 				}
 				
 				
@@ -60,9 +60,9 @@ public class FunctionContainer {
 		}
 	
 	
-		int returnValue = ((BigInteger)executionStack.pop()).intValue();
+		return executionStack.pop().intValue();
 	
-		return returnValue;
+		//return returnValue;
 	}
 	
 	
