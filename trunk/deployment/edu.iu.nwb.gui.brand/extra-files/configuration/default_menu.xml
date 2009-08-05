@@ -50,8 +50,6 @@
 	<menu pid="edu.iu.nwb.analysis.multipartitejoining.JoiningAlgorithm"/>
 	<menu pid="edu.iu.nwb.preprocessing.text.normalization.StandardNormalyzer"/>
 	<menu pid="edu.iu.nwb.preprocessing.timeslice.Slice"/>
-	<menu type="break"/>
-	<menu pid="edu.iu.nwb.preprocessing.nwbfile_cerncoltmatrix.NWBFileToCernColtMatrixAlgorithm"/>
     </top_menu>   
      
     <top_menu name="Modeling">
