@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<metatype:MetaData xmlns:metatype="http://www.osgi.org/xmlns/metatype/v1.0.0">
+	<OCD name="Extract and Annotate Attractors"
+		id="edu.iu.nwb.analysis.extractattractors.algorithms.ExtractAttractorsAlgorithm.network.OCD"
+		description="A tool for analyzing the attractors of a state space.">
+		
+		<AD name="Label Column" id="labelColumn"
+			description="Optional column to use when labeling the attractors."
+			default='' type="String" required="false" />
+		<AD name="Number of States per Node" id="noStates"
+			type="Integer"
+			description="This represents the number of sates a node can be in."
+			default="2" required="true" />	
+	</OCD>
+	<Designate pid="edu.iu.nwb.analysis.extractattractors.algorithms.ExtractAttractorsAlgorithm">
+		<Object ocdref="edu.iu.nwb.analysis.extractattractors.algorithms.ExtractAttractorsAlgorithm.network.OCD" />
+	</Designate>
+</metatype:MetaData>
