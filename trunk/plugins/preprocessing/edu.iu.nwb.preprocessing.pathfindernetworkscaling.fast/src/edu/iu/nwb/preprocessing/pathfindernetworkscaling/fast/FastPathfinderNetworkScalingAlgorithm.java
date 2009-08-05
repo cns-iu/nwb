@@ -70,11 +70,17 @@ public class FastPathfinderNetworkScalingAlgorithm implements Algorithm {
     		logger.log(LogService.LOG_WARNING,
         			"For undirected networks, use MST Pathfinder network scaling " 
         			+ "algorithm for faster results.\n");	
-    	} else {
+    	} if (type.equalsIgnoreCase("UNWEIGHTED")) {
     		logger.log(LogService.LOG_WARNING,
         			"For undirected networks having edges with no weight, " 
     				+ "use MST Pathfinder network scaling " 
         			+ "algorithm for faster & better results.\n");	
+    	} if (type.equalsIgnoreCase("SCALING_RATIO")) {
+    		logger.log(LogService.LOG_WARNING,
+        			"The low scaling ratio (<= 1.5) is probably caused due to " 
+    				+ "many of the edge weights being equal to the minimum edge weight. " 
+    				+ "Better results can be obtained if MST Pathfinder "        			
+    				+ "algorithm is used. But it only works for Undirected networks.\n");	
     	}
 	}
 
@@ -163,16 +169,21 @@ public class FastPathfinderNetworkScalingAlgorithm implements Algorithm {
 	private void prepareOutputMetadata(String edgeWeightType,
 			FastPathfinderNetworkScalingOutputGenerator scalingOutputGenerator, 
 			Data outNWBData) {
+		final double scalingRatio = calculateScalingRatio(
+						(double) numberOfEdges, 
+						(double) scalingOutputGenerator.getScaledNetworkEdgeCount());
 		outNWBData.getMetadata().put(
 				DataProperty.LABEL, "Fast Pathfinder Network Scaling used weight " 
 				+ edgeWeightType + " & value of r = " + rParameter 
 				+ " to reduce " + numberOfEdges + " edges to " 
 				+ scalingOutputGenerator.getScaledNetworkEdgeCount() + ". Scaling ratio = " 
-				+ calculateScalingRatio(
-						(double) numberOfEdges, 
-						(double) scalingOutputGenerator.getScaledNetworkEdgeCount()));
+				+ scalingRatio);
 		outNWBData.getMetadata().put(DataProperty.TYPE, DataProperty.NETWORK_TYPE);
 		outNWBData.getMetadata().put(DataProperty.PARENT, data[0]);
+		
+		if (scalingRatio <= 1.5) {
+			printFastPathfinderUsageWarnings("SCALING_RATIO");
+		}
 	}
     
     private double calculateScalingRatio(double originalNumberOfEdges, 
