@@ -142,6 +142,9 @@
 		<menu pid="edu.iu.iv.search.p2p.randomwalk.RandomWalkAlgorithm"/> 
 		<menu pid="edu.iu.iv.search.p2p.bfs.BreadthFirstSearchAlgorithm"/> 
     </menu>
+    <menu name = "Discrete Network Dynamics" type="group">
+    	<menu pid="edu.iu.nwb.analysis.extractattractors.algorithms.ExtractAttractorsAlgorithm"/>
+    </menu>
     </top_menu>
     
     <top_menu name="Visualization">
