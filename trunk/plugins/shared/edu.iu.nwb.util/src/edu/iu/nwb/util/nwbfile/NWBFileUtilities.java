@@ -76,6 +76,13 @@ public class NWBFileUtilities {
 		return getEdgeSchemaFromMetadata(nwbFileMetaDataGetter);
 	}
 	
+	public static LinkedHashMap getNodeSchema(File nwbFile)
+			throws NWBMetadataParsingException {
+		GetNWBFileMetadata nwbFileMetaDataGetter = parseMetadata(nwbFile);
+		
+		return nwbFileMetaDataGetter.getNodeSchema();
+	}
+	
 	public static File createTemporaryNWBFile() throws IOException {
 		File temporaryNWBFile =
 			FileUtilities.createTemporaryFileInDefaultTemporaryDirectory
