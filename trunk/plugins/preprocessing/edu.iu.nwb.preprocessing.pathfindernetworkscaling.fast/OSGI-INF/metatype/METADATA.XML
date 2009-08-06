@@ -8,7 +8,7 @@
 			description="Value of Minkowski r-metric. r = inifnity provides the optimal scaling solution when q = n - 1." default="true"/>	
 		<AD name="Edge Weight Attribute" id="weightcolumn" type="String" 
 			description="Column with edge weight value." default="weight"/>
-		<AD name="Weight Attribute to be represented as " id="weighttypecolumn" type="String" 
+		<AD name="Weight Attribute measures" id="weighttypecolumn" type="String" 
 			description="Algorithm assumes edge weights to be a measure of dissimilarity i.e. More the weight 
 			more is the dissimilarity. If the input edge weights are a measure of Similarity i.e. More the 
 			weight less is the similarity then select 'Similarity' option from the drop-down box." 
