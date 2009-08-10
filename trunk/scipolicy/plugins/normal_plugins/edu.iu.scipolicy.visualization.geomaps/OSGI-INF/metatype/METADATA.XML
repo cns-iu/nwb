@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <metatype:MetaData xmlns:metatype="http://www.osgi.org/xmlns/metatype/v1.0.0">
-	<OCD name="GeoMaps (region coloring)" id="edu.iu.scipolicy.visualization.geomaps.GeoMapsRegionsFactory.OCD"
+	<OCD name="Geo Maps (region coloring)" id="edu.iu.scipolicy.visualization.geomaps.GeoMapsRegionsFactory.OCD"
 		 description="Creates maps with colored-region annotations">
 		<AD name="Map" id="shapefile" type="String" description="Map to annotate" default="Mutate"/>
 		<AD name="Projection" id="projection" type="String" description="Mercator is a standard entire-globe projection (though it distorts the size and shape of large objects, especially near the poles).  Albers, which preserves area, and Lambert, which preserves angles (or shapes) are recommended for state maps" default="Mutate"/>
@@ -8,12 +8,13 @@
 		<AD name="Color by" id="featureColorQuantity" type="String" description="Numeric attribute that determines region color" default="Mutate"/>
 		<AD name="Color scaling" id="featureColorScaling" type="String" description="How to scale the color attribute (linear implies no rescaling)" default="Mutate"/>
 		<AD name="Color range" id="featureColorRange" type="String" description="Two colors that the region colors should range between, from least to greatest" default="Mutate"/>
+		<AD name="Author name" id="authorName" type="String" description="The name or organization to mark as this annotated map's author (leave blank for none)" default=""/>
 	</OCD>
 	<Designate pid="edu.iu.scipolicy.visualization.geomaps.GeoMapsRegionsFactory">
 		<Object ocdref="edu.iu.scipolicy.visualization.geomaps.GeoMapsRegionsFactory.OCD"/>
 	</Designate>
 	
-	<OCD name="GeoMaps (circles)" id="edu.iu.scipolicy.visualization.geomaps.GeoMapsCirclesFactory.OCD"
+	<OCD name="Geo Maps (circles)" id="edu.iu.scipolicy.visualization.geomaps.GeoMapsCirclesFactory.OCD"
 		 description="Creates maps with circle annotations">
 		<AD name="Map" id="shapefile" type="String" description="Map to annotate" default="Mutate"/>
 		<AD name="Projection" id="projection" type="String" description="Mercator is a standard entire-globe projection (though it distorts the size and shape of large objects, especially near the poles).  Albers, which preserves area, and Lambert, which preserves angles (or shapes) are recommended for state maps" default="Mutate"/>
@@ -25,6 +26,7 @@
 		<AD name="Color circles by" id="circleColorQuantity" type="String" description="Numeric attribute that determines circle color" default="Mutate"/>
 		<AD name="Color Scaling" id="circleColorScaling" type="String" description="How to scale the color attribute (linear implies no rescaling)" default="Mutate"/>
 		<AD name="Color Range" id="circleColorRange" type="String" description="Two colors that the circle colors should range between, from least to greatest" default="Mutate"/>
+		<AD name="Author name" id="authorName" type="String" description="The name or organization to mark as this annotated map's author (leave blank for none)" default=""/>
 	</OCD>
 	<Designate pid="edu.iu.scipolicy.visualization.geomaps.GeoMapsCirclesFactory">
 		<Object ocdref="edu.iu.scipolicy.visualization.geomaps.GeoMapsCirclesFactory.OCD"/>

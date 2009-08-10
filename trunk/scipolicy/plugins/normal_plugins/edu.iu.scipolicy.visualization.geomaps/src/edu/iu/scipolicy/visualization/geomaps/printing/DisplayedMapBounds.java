@@ -5,43 +5,57 @@ import java.awt.Color;
 import com.vividsolutions.jts.geom.Coordinate;
 
 import edu.iu.scipolicy.visualization.geomaps.ShapefileToPostScriptWriter;
+import edu.iu.scipolicy.visualization.geomaps.utility.Calculator;
+import edu.iu.scipolicy.visualization.geomaps.utility.Constants;
 
-public class MapBoundingBox {
-	// PostScript is not Encapsulated if this is set to false!
+public class DisplayedMapBounds {
 	public static final boolean CLIP_TO_BOUNDING_BOX = true;
 	public static final boolean BACKGROUND_TRANSPARENT = true;
-	public static final Color BACKGROUND_COLOR = Color.CYAN;	
-	public static final boolean DRAW_BOUNDING_BOX = false;
+	public static final Color BACKGROUND_COLOR = Color.CYAN;
+	public static final boolean DRAW_BOUNDING_BOX = false;	
 	
 	public static final double BOUNDING_BOX_LINE_WIDTH = .2;
-	public static final String INDENT = "  ";
-	public static final double DISPLAY_LOWER_LEFT_X_IN_INCHES = 0.0;
-	public static final double DISPLAY_LOWER_LEFT_Y_IN_INCHES = 4;
-	public static final double DISPLAY_WIDTH_IN_INCHES = 8.5;
-	public static final double DISPLAY_HEIGHT_IN_INCHES = 11 - DISPLAY_LOWER_LEFT_Y_IN_INCHES;
-	public static final double POINTS_PER_INCH = 72.0;
+	
+	/* The ranges of coordinates of features in the shapefile imply an
+	 * aspect ratio.  "true" means we keep that ratio in the display.
+	 * "false" means we use the dimensions below, even if they will result
+	 * in a map that is "stretched" or "compressed" in one or both dimensions.
+	 */
 	public static final boolean FIX_ASPECT_RATIO = true;
+	public static final String INDENT = "  ";
 
-	private double displayLowerLeftX, displayLowerLeftY, displayUpperRightX, displayUpperRightY;
+	private double displayLowerLeftX, displayLowerLeftY;
+	private double displayUpperRightX, displayUpperRightY;
 	private double displayCenterXInPoints, displayCenterYInPoints;
-	private double scaleX, scaleY;
 	private double dataCenterX, dataCenterY;
+	private double scaleX, scaleY;
+	
+	/* The generated map will generally only take these requested dimensions
+	 * if FIX_ASPECT_RATIO is false.
+	 * When FIX_ASPECT_RATIO is true, the map is centered as indicated and
+	 * drawn precisely large enough to fit the "tighter"
+	 * dimension.  Unless by luck the data and display aspect ratios agree,
+	 * this means that there will be empty space on either side in the
+	 * "looser" dimension.
+	 */
+	public static final double REQUESTED_WIDTH_IN_POINTS =
+		0.9 * Constants.MAP_PAGE_AREA_WIDTH_IN_POINTS;
+	public static final double REQUESTED_HEIGHT_IN_POINTS =
+		0.9 * Constants.MAP_PAGE_AREA_HEIGHT_IN_POINTS;
 	
 
-	public MapBoundingBox(double dataMinX, double dataMinY, double dataMaxX, double dataMaxY) {
-		double displayWidthInPoints = POINTS_PER_INCH * DISPLAY_WIDTH_IN_INCHES;
-		double displayHeightInPoints = POINTS_PER_INCH * DISPLAY_HEIGHT_IN_INCHES;
+	public DisplayedMapBounds(double dataMinX, double dataMinY, double dataMaxX, double dataMaxY) {
+		double displayWidthInPoints = REQUESTED_WIDTH_IN_POINTS;
+		double displayHeightInPoints = REQUESTED_HEIGHT_IN_POINTS;
 
-		double displayLowerLeftXInPoints = POINTS_PER_INCH * DISPLAY_LOWER_LEFT_X_IN_INCHES;
-		double displayLowerLeftYInPoints = POINTS_PER_INCH * DISPLAY_LOWER_LEFT_Y_IN_INCHES;
+		this.displayCenterXInPoints = Constants.MAP_CENTER_X_IN_POINTS;
+		this.displayCenterYInPoints = Constants.MAP_CENTER_Y_IN_POINTS;
 
-		this.displayCenterXInPoints = displayLowerLeftXInPoints + displayWidthInPoints / 2;
-		this.displayCenterYInPoints = displayLowerLeftYInPoints	+ displayHeightInPoints / 2;
+		this.dataCenterX = Calculator.mean(dataMaxX, dataMinX);
+		this.dataCenterY = Calculator.mean(dataMaxY, dataMinY);
 
-		this.dataCenterX = (dataMaxX + dataMinX) / 2;
-		this.dataCenterY = (dataMaxY + dataMinY) / 2;
-
-		calculateScale(dataMinX, dataMinY, dataMaxX, dataMaxY, displayWidthInPoints, displayHeightInPoints);
+		// Set scaleX and scaleY
+		setScales(dataMinX, dataMinY, dataMaxX, dataMaxY, displayWidthInPoints, displayHeightInPoints);
 
 		Coordinate displayLowerLeftCorner = getDisplayCoordinate(new Coordinate(dataMinX, dataMinY));
 		this.displayLowerLeftX = displayLowerLeftCorner.x;
@@ -52,6 +66,7 @@ public class MapBoundingBox {
 		this.displayUpperRightY = displayUpperRightCorner.y;
 	}
 
+	
 	/* 
 	 * Transform ordinate z from the data space to the display space
 	 * Equivalent to the PostScript:
@@ -59,23 +74,20 @@ public class MapBoundingBox {
 	 * 		scale(X) scale(Y) scale
 	 *  	dataCenter(X) dataCenter(Y) translate
 	 */
-	private double positionOnDisplay(double z, double displayCenterInPoints, double scale, double dataCenter) {
+	private double positionOnDisplay(double z,
+									 double displayCenterInPoints,
+									 double scale,
+									 double dataCenter) {
 		return displayCenterInPoints + (scale * (z - dataCenter));
 	}
+	
 	public Coordinate getDisplayCoordinate(Coordinate coordinate) {
 		return new Coordinate(
 				positionOnDisplay(coordinate.x, displayCenterXInPoints, scaleX, dataCenterX),
 				positionOnDisplay(coordinate.y, displayCenterYInPoints, scaleY, dataCenterY));
 	}
 
-	/* Corner specification for the BoundingBox PostScript comment.
-	 * <lower left x> <lower left y> <upper left x> <upper right y>
-	 */
-	public String getCoordinatesString() {
-		return displayLowerLeftX + " " + displayLowerLeftY + " " + displayUpperRightX + " " + displayUpperRightY;
-	}
-
-	private void calculateScale(double dataMinX, double dataMinY,
+	private void setScales(double dataMinX, double dataMinY,
 			double dataMaxX, double dataMaxY, double displayWidthInPoints, double displayHeightInPoints) {
 		double dataWidth = dataMaxX - dataMinX;
 		double dataHeight = dataMaxY - dataMinY;
@@ -100,19 +112,19 @@ public class MapBoundingBox {
 		s += INDENT + displayUpperRightX + " " + displayUpperRightY + " lineto" + "\n";
 		s += INDENT + displayUpperRightX + " " + displayLowerLeftY + " lineto" + "\n";
 		s += "closepath" + "\n";
-		if ( !BACKGROUND_TRANSPARENT ) {
+		if (!BACKGROUND_TRANSPARENT) {
 			s += "gsave" + "\n";
 			s += INDENT + ShapefileToPostScriptWriter.makeSetRGBColorCommand(BACKGROUND_COLOR);
 			s += INDENT + "fill" + "\n";
 			s += "grestore" + "\n";
 		}
-		if ( DRAW_BOUNDING_BOX ) {
+		if (DRAW_BOUNDING_BOX) {
 			s += "gsave" + "\n";
 			s += INDENT + BOUNDING_BOX_LINE_WIDTH + " setlinewidth" + "\n";
 			s += INDENT + "stroke" + "\n";
 			s += "grestore" + "\n";
 		}
-		if ( CLIP_TO_BOUNDING_BOX ) {
+		if (CLIP_TO_BOUNDING_BOX) {
 			s += "clip" + "\n";
 		}
 

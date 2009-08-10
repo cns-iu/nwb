@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Dictionary;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -16,13 +17,18 @@ import prefuse.data.Tuple;
 import prefuse.data.util.TableIterator;
 import edu.iu.scipolicy.visualization.geomaps.interpolation.ColorInterpolator;
 import edu.iu.scipolicy.visualization.geomaps.interpolation.Interpolator;
+import edu.iu.scipolicy.visualization.geomaps.interpolation.InterpolatorInversionException;
 import edu.iu.scipolicy.visualization.geomaps.interpolation.ListInterpolator;
-import edu.iu.scipolicy.visualization.geomaps.legend.LabeledGradient;
+import edu.iu.scipolicy.visualization.geomaps.interpolation.ZeroLengthInterpolatorInputRangeException;
+import edu.iu.scipolicy.visualization.geomaps.legend.ColorLegend;
 import edu.iu.scipolicy.visualization.geomaps.legend.Legend;
+import edu.iu.scipolicy.visualization.geomaps.legend.LegendComponent;
+import edu.iu.scipolicy.visualization.geomaps.legend.NullLegendComponent;
 import edu.iu.scipolicy.visualization.geomaps.scaling.ListScaler;
 import edu.iu.scipolicy.visualization.geomaps.scaling.Scaler;
 import edu.iu.scipolicy.visualization.geomaps.scaling.ScalerFactory;
 import edu.iu.scipolicy.visualization.geomaps.utility.PrefuseDoubleReader;
+import edu.iu.scipolicy.visualization.geomaps.utility.RGBAverager;
 import edu.iu.scipolicy.visualization.geomaps.utility.Range;
 
 public class RegionAnnotationMode implements AnnotationMode {
@@ -33,13 +39,16 @@ public class RegionAnnotationMode implements AnnotationMode {
 	public static final String DEFAULT_FEATURE_NAME_ATTRIBUTE_KEY = "NAME";
 	
 	public static final Map<String, Range<Color>> COLOR_RANGES;
+	public static final String SUBTITLE = "with colored region annotations";
 	private Map<String, Integer> featureIDs;
 	private List<Double> featureColorQuantities;
 	static {
-		Map<String, Range<Color>> t = new HashMap<String, Range<Color>>();
-		t.put("Blue to red", new Range<Color>(new Color(49, 243, 255), new Color(127, 4, 27)));
-		t.put("Yellow to red", new Range<Color>(new Color(254, 204, 92), new Color(177, 4, 39)));
+		Map<String, Range<Color>> t = new LinkedHashMap<String, Range<Color>>();
 		t.put("Yellow to blue", new Range<Color>(new Color(255, 255, 158), new Color(37, 52, 148)));
+		t.put("Yellow to red", new Range<Color>(new Color(254, 204, 92), new Color(177, 4, 39)));
+		t.put("Green to red", new Range<Color>(new Color(98, 164, 44), new Color(123, 21, 21)));
+		t.put("Blue to red", new Range<Color>(new Color(49, 243, 255), new Color(127, 4, 27)));		
+		t.put("Gray to black", new Range<Color>(new Color(214, 214, 214), new Color(0, 0 ,0)));		
 		COLOR_RANGES = Collections.unmodifiableMap(t);
 	}
 
@@ -69,29 +78,48 @@ public class RegionAnnotationMode implements AnnotationMode {
 			ListScaler featureColorQuantityListScaler = new ListScaler(featureColorQuantityScaler);
 			List<Double> scaledFeatureColorQuantities = featureColorQuantityListScaler.scale(featureColorQuantities);
 			Range<Double> featureColorQuantityScalableRange = featureColorQuantityListScaler.getScalableRange();
-			Interpolator<Color> featureColorQuantityInterpolator = new ColorInterpolator(scaledFeatureColorQuantities, featureColorRange);
-			List<Color> interpolatedFeatureColors = (new ListInterpolator<Color>(featureColorQuantityInterpolator)).getInterpolatedList(scaledFeatureColorQuantities );
 			
 			Map<String, Color> interpolatedFeatureColorMap = new HashMap<String, Color>();
-			for ( Map.Entry<String, Integer> featureID : featureIDs.entrySet() ) {
-				String featureName = featureID.getKey();
-				int id = featureID.getValue();
-				Color color = interpolatedFeatureColors.get(id);
+			LegendComponent featureColorGradient = new NullLegendComponent();
+			try {
+				Interpolator<Color> featureColorQuantityInterpolator = new ColorInterpolator(scaledFeatureColorQuantities, featureColorRange);
+				List<Color> interpolatedFeatureColors = (new ListInterpolator<Color>(featureColorQuantityInterpolator)).getInterpolatedList(scaledFeatureColorQuantities );
 				
-				interpolatedFeatureColorMap.put(featureName, color);				
-			}
+				interpolatedFeatureColorMap = new HashMap<String, Color>();
+				for ( Map.Entry<String, Integer> featureID : featureIDs.entrySet() ) {
+					String featureName = featureID.getKey();
+					int id = featureID.getValue();
+					Color color = interpolatedFeatureColors.get(id);
+					
+					interpolatedFeatureColorMap.put(featureName, color);				
+				}
+				
+				Color colorMidrange = RGBAverager.mean(featureColorRange.getMin(), featureColorRange.getMax());
+				double colorMidrangePreInterpolation = featureColorQuantityInterpolator.invert(colorMidrange);
+				double rawMidColorQuantity = featureColorQuantityScaler.invert(colorMidrangePreInterpolation);
+				
+				// Add feature color legend
+				double featureColorGradientLowerLeftX = Legend.DEFAULT_LOWER_LEFT_X_IN_POINTS;
+				double featureColorGradientLowerLeftY = Legend.DEFAULT_LOWER_LEFT_Y_IN_POINTS;
+				double featureColorGradientWidth = 0.90 * Legend.DEFAULT_WIDTH_IN_POINTS;
+				double featureColorGradientHeight = 15;
+				String featureColorTypeLabel = "Region Color";	
+				
+				featureColorGradient = new ColorLegend(featureColorQuantityScalableRange, featureColorScaling, rawMidColorQuantity, featureColorRange, featureColorTypeLabel, featureColorQuantityAttribute, featureColorGradientLowerLeftX, featureColorGradientLowerLeftY, featureColorGradientWidth, featureColorGradientHeight);
+			} catch (ZeroLengthInterpolatorInputRangeException e) {
+				GeoMapsAlgorithm.logger.log(
+						LogService.LOG_WARNING,
+						"Warning: Couldn't interpolate region colors: " + e.getMessage(),
+						e);
+				} catch (InterpolatorInversionException e) {
+					GeoMapsAlgorithm.logger.log(
+						LogService.LOG_WARNING,
+						"Warning: Couldn't reverse interpolation "
+							+ "to make region color legend: " + e.getMessage(),
+						e);
+				}
 			
-			
-			// Add feature color legend
-			double featureColorGradientLowerLeftX = .05 * Legend.DEFAULT_WIDTH_IN_POINTS;
-			double featureColorGradientLowerLeftY = Legend.DEFAULT_LOWER_LEFT_Y_IN_POINTS;
-			double featureColorGradientWidth = (Legend.DEFAULT_WIDTH_IN_POINTS / 3) * 0.90;
-			double featureColorGradientHeight = 15;
-			String featureColorTypeLabel = "Region Color";
-
-			
-			LabeledGradient featureColorGradient = new LabeledGradient(featureColorQuantityScalableRange, featureColorRange, featureColorTypeLabel, featureColorQuantityAttribute, featureColorGradientLowerLeftX, featureColorGradientLowerLeftY, featureColorGradientWidth, featureColorGradientHeight);
-			shapefileToPostScript.setFeatureColorAnnotations(interpolatedFeatureColorMap, featureColorGradient);
+			shapefileToPostScript.setFeatureColorAnnotations(SUBTITLE, interpolatedFeatureColorMap, featureColorGradient);
 		}
 	}
 

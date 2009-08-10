@@ -2,52 +2,85 @@ package edu.iu.scipolicy.visualization.geomaps.interpolation;
 
 import java.util.Collection;
 
-import org.cishell.framework.algorithm.AlgorithmExecutionException;
-
 import edu.iu.scipolicy.visualization.geomaps.utility.Range;
 
 public class LinearInterpolator implements Interpolator<Double> {
-	private Collection<Double> values;
-	private double minimumValue;
-	private double maximumValue;
-	private Range<Double> interpolatedRange;
+	private Range<Double> inRange;
+	private Range<Double> outRange;
 
-	public LinearInterpolator(Collection<Double> values, Range<Double> interpolatedRange) {
-		this.values = values;
-		this.interpolatedRange = interpolatedRange;
-
-		minimumValue = Double.POSITIVE_INFINITY;
-		maximumValue = Double.NEGATIVE_INFINITY;
-		for ( double value : values ) {
-			if ( value < minimumValue ) {
-				minimumValue = value;
-			}
-			if ( value > maximumValue) {
-				maximumValue = value;
-			}
-		}
-		assert( minimumValue < Double.POSITIVE_INFINITY );
-		assert( maximumValue > Double.NEGATIVE_INFINITY );
+	public LinearInterpolator(Collection<Double> inValues, Range<Double> outRange)
+			throws ZeroLengthInterpolatorInputRangeException {
+		this(Range.calculateRange(inValues), outRange);		
 	}
-
-	public Double interpolate(double value) throws AlgorithmExecutionException {
-		if ( values.isEmpty() ) {
-			throw new AlgorithmExecutionException("Cannot interpolate over an empty set.");
-		}
-		// TODO Ordering of the next two branches is best?
-		else if ( values.size() == 1 ) {
-			// TODO: Favor the maximum or..?
-			return interpolatedRange.getMax();
-		}
-		else if ( minimumValue == maximumValue ) {
-			throw new AlgorithmExecutionException("Cannot interpolate when input data has zero variance (equal minimum and maximum).");
-		}		
-		else {
-			return interpolate(value, minimumValue, maximumValue, interpolatedRange.getMin(), interpolatedRange.getMax());
+	
+	public LinearInterpolator(Range<Double> inRange, Range<Double> outRange)
+				throws ZeroLengthInterpolatorInputRangeException {
+		if (inRange.getMin() != inRange.getMax()) {
+			this.inRange = inRange;
+			this.outRange = outRange;
+		} else {
+			throw new ZeroLengthInterpolatorInputRangeException(inRange);
 		}
 	}
+	
+	public Double interpolate(double value) {
+		return interpolate(value, inRange, outRange);
+	}
+	
+	private static double interpolate(double value,
+							   Range<Double> inRange,
+							   Range<Double> outRange) {
+		return interpolate(value,
+						   inRange.getMin(),
+						   inRange.getMax(),
+						   outRange.getMin(),
+						   outRange.getMax());
+	}
 
-	private double interpolate(double x, double xMin, double xMax, double yMin, double yMax) {
-		return (yMin + ( x - xMin ) * ( yMax - yMin ) / ( xMax - xMin ));
+	private static double interpolate(double in,
+									  double inMin,
+									  double inMax,
+									  double outMin,
+									  double outMax) {
+		if (inMax - inMin == 0.0) {
+			throw new RuntimeException(
+					"Unexpected error: "
+					+ "Trying to interpolate from an input range with zero length.");
+		} else {
+			return (outMin + (in - inMin) * (outMax - outMin) / (inMax - inMin));
+		}
+	}
+
+	public double invert(Double value) throws InterpolatorInversionException {
+		Interpolator<Double> inverseInterpolator = createInverse(this);
+		
+		return inverseInterpolator.interpolate(value);
+	}
+	
+	/* The inverse of a linear interpolator is the linear interpolator formed
+	 * by swapping the original's input and output ranges.
+	 * 
+	 * The inverse is ill-defined when the original output range has zero
+	 * length, because this is the input range of the inverse interpolator and
+	 * and interpolator cannot have a zero-length input range (as this would
+	 * cause a division by zero during interpolation).
+	 */
+	private static LinearInterpolator createInverse(LinearInterpolator interpolator) throws InterpolatorInversionException {
+		try {
+			Range<Double> inRange = interpolator.getInRange();
+			Range<Double> outRange = interpolator.getOutRange();
+			
+			return new LinearInterpolator(outRange, inRange);
+		} catch (ZeroLengthInterpolatorInputRangeException e) {
+			throw new InterpolatorInversionException(e);
+		}
+	}
+
+	public Range<Double> getInRange() {
+		return inRange;
+	}
+	
+	public Range<Double> getOutRange() {
+		return outRange;
 	}
 }

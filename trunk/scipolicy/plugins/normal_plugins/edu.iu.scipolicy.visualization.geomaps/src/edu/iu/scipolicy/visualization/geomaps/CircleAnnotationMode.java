@@ -4,7 +4,7 @@ import java.awt.Color;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Dictionary;
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -21,17 +21,23 @@ import com.vividsolutions.jts.geom.Coordinate;
 
 import edu.iu.scipolicy.visualization.geomaps.interpolation.ColorInterpolator;
 import edu.iu.scipolicy.visualization.geomaps.interpolation.Interpolator;
-import edu.iu.scipolicy.visualization.geomaps.interpolation.ListInterpolator;
+import edu.iu.scipolicy.visualization.geomaps.interpolation.InterpolatorInversionException;
 import edu.iu.scipolicy.visualization.geomaps.interpolation.LinearInterpolator;
-import edu.iu.scipolicy.visualization.geomaps.legend.AreaLegend;
-import edu.iu.scipolicy.visualization.geomaps.legend.LabeledGradient;
+import edu.iu.scipolicy.visualization.geomaps.interpolation.ListInterpolator;
+import edu.iu.scipolicy.visualization.geomaps.interpolation.ZeroLengthInterpolatorInputRangeException;
+import edu.iu.scipolicy.visualization.geomaps.legend.CircleAreaLegend;
+import edu.iu.scipolicy.visualization.geomaps.legend.ColorLegend;
 import edu.iu.scipolicy.visualization.geomaps.legend.Legend;
+import edu.iu.scipolicy.visualization.geomaps.legend.LegendComponent;
+import edu.iu.scipolicy.visualization.geomaps.legend.NullLegendComponent;
 import edu.iu.scipolicy.visualization.geomaps.printing.Circle;
 import edu.iu.scipolicy.visualization.geomaps.printing.CirclePrinter;
 import edu.iu.scipolicy.visualization.geomaps.scaling.ListScaler;
 import edu.iu.scipolicy.visualization.geomaps.scaling.Scaler;
 import edu.iu.scipolicy.visualization.geomaps.scaling.ScalerFactory;
+import edu.iu.scipolicy.visualization.geomaps.utility.Calculator;
 import edu.iu.scipolicy.visualization.geomaps.utility.PrefuseDoubleReader;
+import edu.iu.scipolicy.visualization.geomaps.utility.RGBAverager;
 import edu.iu.scipolicy.visualization.geomaps.utility.Range;
 
 public class CircleAnnotationMode implements AnnotationMode {	
@@ -44,11 +50,14 @@ public class CircleAnnotationMode implements AnnotationMode {
 	public static final String CIRCLE_COLOR_RANGE_ID = "circleColorRange";
 
 	public static final Map<String, Range<Color>> COLOR_RANGES;
+	private static final String SUBTITLE = "with circle annotations";
 	static {
-		Map<String, Range<Color>> t = new HashMap<String, Range<Color>>();
-		t.put("Blue to red", new Range<Color>(new Color(49, 243, 255), new Color(127, 4, 27)));
-		t.put("Yellow to red", new Range<Color>(new Color(254, 204, 92), new Color(177, 4, 39)));
+		Map<String, Range<Color>> t = new LinkedHashMap<String, Range<Color>>();
 		t.put("Yellow to blue", new Range<Color>(new Color(255, 255, 158), new Color(37, 52, 148)));
+		t.put("Yellow to red", new Range<Color>(new Color(254, 204, 92), new Color(177, 4, 39)));
+		t.put("Green to red", new Range<Color>(new Color(98, 164, 44), new Color(123, 21, 21)));
+		t.put("Blue to red", new Range<Color>(new Color(49, 243, 255), new Color(127, 4, 27)));		
+		t.put("Gray to black", new Range<Color>(new Color(214, 214, 214), new Color(0, 0 ,0)));	
 		COLOR_RANGES = Collections.unmodifiableMap(t);
 	}
 	
@@ -89,39 +98,80 @@ public class CircleAnnotationMode implements AnnotationMode {
 		
 		if ( ids.isEmpty() ) {
 			throw new AlgorithmExecutionException("No appropriate data found for circle annotations.");
-		}
-		else {
+		} else {
 			// Scale and interpolate circle areas
 			ListScaler areaListScaler = new ListScaler(areaScaler);
 			List<Double> scaledAreas = areaListScaler.scale(areas);
 			Range<Double> areaScalableRange = areaListScaler.getScalableRange();			
-			Range<Double> interpolatedAreaRange = new Range<Double>(CirclePrinter.DEFAULT_CIRCLE_AREA_MINIMUM, CirclePrinter.DEFAULT_CIRCLE_AREA_MAXIMUM);
-			Interpolator<Double> areaInterpolator = new LinearInterpolator(scaledAreas, interpolatedAreaRange);
-			ListInterpolator<Double> areaListInterpolator = new ListInterpolator<Double>(areaInterpolator);
-			List<Double> interpolatedAreas = areaListInterpolator.getInterpolatedList(scaledAreas);
+			Range<Double> interpolatedAreaRange = new Range<Double>(
+					CirclePrinter.DEFAULT_CIRCLE_AREA_MINIMUM, 
+					CirclePrinter.DEFAULT_CIRCLE_AREA_MAXIMUM);
+			
+			List<Double> interpolatedAreas = new ArrayList<Double>();
+			LegendComponent circleAreaLegend = new NullLegendComponent();
+			try {
+				Interpolator<Double> areaInterpolator = new LinearInterpolator(scaledAreas, interpolatedAreaRange);
+				ListInterpolator<Double> areaListInterpolator = new ListInterpolator<Double>(areaInterpolator);
+				interpolatedAreas = areaListInterpolator.getInterpolatedList(scaledAreas);
+				
+				Range<Double> actualInterpolatedAreaRange = Range.calculateRange(interpolatedAreas);
+				double areaMidrange = Calculator.mean(actualInterpolatedAreaRange.getMin(), actualInterpolatedAreaRange.getMax());
+				double areaMidrangePreimage = areaInterpolator.invert(areaMidrange);
+				double rawMidArea = areaScaler.invert(areaMidrangePreimage);
+				
+				// Add circle area legend
+				double areaLegendLowerLeftX = Legend.DEFAULT_LOWER_LEFT_X_IN_POINTS;
+				double areaLegendLowerLeftY = Legend.DEFAULT_LOWER_LEFT_Y_IN_POINTS;
+				String areaTypeLabel = "Circle Area";
+				circleAreaLegend = new CircleAreaLegend(areaScalableRange, areaScaling, rawMidArea, areaMidrange, interpolatedAreaRange, areaTypeLabel, areaAttribute, areaLegendLowerLeftX, areaLegendLowerLeftY);
+			} catch (ZeroLengthInterpolatorInputRangeException e) {
+				GeoMapsAlgorithm.logger.log(
+					LogService.LOG_WARNING,
+					"Warning: Couldn't interpolate circle areas: " + e.getMessage(),
+					e);
+			} catch (InterpolatorInversionException e) {
+				GeoMapsAlgorithm.logger.log(
+					LogService.LOG_WARNING,
+					"Warning: Couldn't reverse interpolation "
+						+ "to make circle area legend: " + e.getMessage(),
+					e);
+			}	
 
-			// Add circle area legend
-			double areaLegendLowerLeftX = .38 * Legend.DEFAULT_WIDTH_IN_POINTS;
-			double areaLegendLowerLeftY = Legend.DEFAULT_LOWER_LEFT_Y_IN_POINTS;
-			String areaTypeLabel = "Circle Size";
-			AreaLegend circleAreaLegend = new AreaLegend(areaScalableRange, interpolatedAreaRange, areaTypeLabel, areaAttribute, areaLegendLowerLeftX, areaLegendLowerLeftY);
-			
-			
 			// Scale and interpolate circle colors
 			ListScaler colorQuantityListScaler = new ListScaler(colorQuantityScaler);
 			List<Double> scaledColorQuantities = colorQuantityListScaler.scale(colorQuantities);
 			Range<Double> colorQuantityScalableRange = colorQuantityListScaler.getScalableRange();
-			Interpolator<Color> colorQuantityInterpolator = new ColorInterpolator(scaledColorQuantities, colorRange);
-			ListInterpolator<Color> colorQuantityListInterpolator = new ListInterpolator<Color>(colorQuantityInterpolator);
-			List<Color> interpolatedColors = colorQuantityListInterpolator.getInterpolatedList(scaledColorQuantities);
-
-			// Add circle color legend
-			double colorGradientLowerLeftX = 2 * Legend.DEFAULT_WIDTH_IN_POINTS/3;
-			double colorGradientLowerLeftY = Legend.DEFAULT_LOWER_LEFT_Y_IN_POINTS;
-			double colorGradientWidth = Legend.DEFAULT_WIDTH_IN_POINTS/3 * .90;
-			double colorGradientHeight = 15;
-			String colorTypeLabel = "Circle Color";
-			LabeledGradient colorGradient = new LabeledGradient(colorQuantityScalableRange, colorRange, colorTypeLabel, colorQuantityAttribute, colorGradientLowerLeftX, colorGradientLowerLeftY, colorGradientWidth, colorGradientHeight);
+			
+			List<Color> interpolatedColors = new ArrayList<Color>();
+			LegendComponent colorGradient = new NullLegendComponent();
+			try {
+				Interpolator<Color> colorQuantityInterpolator = new ColorInterpolator(scaledColorQuantities, colorRange);
+				ListInterpolator<Color> colorQuantityListInterpolator = new ListInterpolator<Color>(colorQuantityInterpolator);
+				interpolatedColors = colorQuantityListInterpolator.getInterpolatedList(scaledColorQuantities);
+	
+				Color colorMidrange = RGBAverager.mean(colorRange.getMin(), colorRange.getMax());
+				double colorMidrangePreimage = colorQuantityInterpolator.invert(colorMidrange);
+				double rawMidColorQuantity = colorQuantityScaler.invert(colorMidrangePreimage);
+				
+				// Add circle color legend
+				double colorGradientLowerLeftX = Legend.DEFAULT_LOWER_LEFT_X_IN_POINTS + (Legend.DEFAULT_WIDTH_IN_POINTS / 2.0);
+				double colorGradientLowerLeftY = Legend.DEFAULT_LOWER_LEFT_Y_IN_POINTS;
+				double colorGradientWidth =  0.8 * (Legend.DEFAULT_WIDTH_IN_POINTS / 2.0);
+				double colorGradientHeight = 10;
+				String colorTypeLabel = "Circle Color";
+				colorGradient = new ColorLegend(colorQuantityScalableRange, colorScaling, rawMidColorQuantity, colorRange, colorTypeLabel, colorQuantityAttribute, colorGradientLowerLeftX, colorGradientLowerLeftY, colorGradientWidth, colorGradientHeight);
+			} catch (ZeroLengthInterpolatorInputRangeException e) {
+				GeoMapsAlgorithm.logger.log(
+						LogService.LOG_WARNING,
+						"Warning: Couldn't interpolate circle colors: " + e.getMessage(),
+						e);
+				} catch (InterpolatorInversionException e) {
+					GeoMapsAlgorithm.logger.log(
+						LogService.LOG_WARNING,
+						"Warning: Couldn't reverse interpolation "
+							+ "to make circle color legend: " + e.getMessage(),
+						e);
+				}
 			
 			/* Construct the list of Circles from the specified areas and colors.
 			 * Note we expect that every Coordinate with an area specified has a color specified
@@ -140,7 +190,7 @@ public class CircleAnnotationMode implements AnnotationMode {
 				}
 			}
 			
-			postScriptWriter.setCircleAnnotations(circles, circleAreaLegend, colorGradient);
+			postScriptWriter.setCircleAnnotations(SUBTITLE, circles, circleAreaLegend, colorGradient);
 		}
 	}
 	

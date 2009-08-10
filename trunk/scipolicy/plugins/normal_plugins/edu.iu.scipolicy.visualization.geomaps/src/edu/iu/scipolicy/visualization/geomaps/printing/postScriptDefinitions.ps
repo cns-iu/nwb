@@ -1,0 +1,349 @@
+% Pops two numbers
+% Pushes the greater of them
+/max { 2 copy lt { exch } if pop } bind def
+
+% Pops x, y, r
+% Pushes a circular path at (x,y) with radius r
+/circle {
+  newpath
+    0 360 arc
+  closepath
+} def
+
+% Pops x, y, text, font, fontgray, fontsize
+% Shows text superscripted at (x, y)
+% Pushes the point after the shown text (at the original/unsuperscripted y-level)
+/showSuperscriptedDict 1 dict def
+/showSuperscripted {
+	showSuperscriptedDict begin
+		/fontsize exch def
+		/fontgray exch def
+		/font exch def
+		/text exch def
+		/y exch def
+		/x exch def
+
+		gsave
+			x y moveto
+			
+			% Show text raised by ((1/3) fontsize) and scaled by ((3/5 fontsize))
+			gsave
+				/upShift {1 3 div fontsize mul} bind def
+				0 upShift rmoveto
+				
+				/relativeFontSize {3 5 div fontsize mul} bind def
+				font relativeFontSize scalefont setfont	
+				fontgray setgray
+				
+				text show
+			grestore
+			
+			% Move to the point at the original baseline (y) directly after the shown text
+			/textWidth {text stringwidth pop} bind def
+			textWidth 0 rmoveto
+			currentpoint
+		grestore
+	end
+} def
+
+% Pops x, y, font, fontgray, fontsize
+% Shows "Sci^{2} Tool" at (x,y)
+% Pushes the point at the end of the shown text
+/showToolNameDict 1 dict def
+/showToolName {
+	showToolNameDict begin
+		/fontsize exch def
+		/fontgray exch def
+		/font exch def
+		/y exch def
+		/x exch def
+
+		gsave
+			x y moveto
+		
+			font fontsize scalefont setfont		
+			fontgray setgray
+			
+			
+			(Sci) show			
+			currentpoint (2) font fontgray fontsize showSuperscripted moveto			
+			( Tool) show
+			
+			currentpoint
+		grestore
+	end
+} def
+
+/legendlabelDict 1 dict def
+/legendlabel {
+	legendlabelDict begin
+		/font exch def
+		/keyfontsize exch def
+		/keygray exch def
+		/keylabel exch def
+		/scalinggray exch def
+		/scalinglabel exch def
+		/typefontsize exch def
+		/typegray exch def
+		/typelabel exch def
+		/y exch def
+		/x exch def
+
+		gsave
+			x y moveto
+
+			gsave
+				font keyfontsize scalefont setfont
+				keygray setgray
+				keylabel show
+			grestore
+
+			gsave
+				0 keyfontsize rmoveto
+				0 5 rmoveto
+
+				font typefontsize scalefont setfont
+
+				typegray setgray
+				typelabel show
+				( ) show
+
+				scalinggray setgray
+				scalinglabel show
+			grestore
+		grestore
+	end
+} def
+
+/arealegendDict 1 dict def
+/arealegend {
+	arealegendDict begin
+		/font exch def
+		/keyfontsize exch def
+		/keygray exch def
+		/keylabel exch def
+		/scalinggray exch def
+		/scalinglabel exch def
+		/typefontsize exch def
+		/typegray exch def
+		/typelabel exch def
+		/extremafontsize exch def
+		/extremalabelgray exch def
+		/maxlabel exch def
+		/midlabel exch def
+		/minlabel exch def
+		/circlegray exch def
+		/maxradius exch def
+		/midradius exch def
+		/minradius exch def
+		/y exch def
+		/x exch def
+
+		gsave
+			x y translate
+		
+			gsave
+				font extremafontsize scalefont setfont
+				
+				/minlabelwidth {minlabel stringwidth pop} bind def
+				/midlabelwidth {midlabel stringwidth pop} bind def
+				/maxlabelwidth {maxlabel stringwidth pop} bind def
+
+				/minCircleX {minlabelwidth 2 div minradius max} bind def
+				/midCircleX {minradius 2 mul minlabelwidth max 15 add midlabelwidth 2 div midradius max add} bind def
+				/maxCircleX {minradius 2 mul minlabelwidth max 15 add midradius 2 mul midlabelwidth max 15 add add maxlabelwidth 2 div maxradius max add} bind def
+				/circleY {0 5 sub maxradius sub} bind def
+				
+				/minLabelX {minCircleX minlabelwidth 2 div sub} bind def
+				/midLabelX {midCircleX midlabelwidth 2 div sub} bind def
+				/maxLabelX {maxCircleX maxlabelwidth 2 div sub} bind def
+				/labelY {0 5 sub maxradius 2 mul sub 5 sub extremafontsize sub} bind def
+				
+				% Minimum
+				%   Circle
+				gsave
+					circlegray setgray
+					minCircleX circleY minradius circle stroke
+				grestore
+				%   Label
+				gsave
+					extremalabelgray setgray
+					minLabelX labelY moveto
+					minlabel show
+				grestore
+
+				% Midpoint
+				%   Circle
+				gsave
+					circlegray setgray
+					midCircleX circleY midradius circle stroke
+				grestore
+				%   Label
+				gsave
+					extremalabelgray setgray
+					midLabelX labelY moveto
+					midlabel show
+				grestore
+				
+				% Maximum
+				%   Circle
+				gsave
+					circlegray setgray
+					maxCircleX circleY maxradius circle stroke
+				grestore
+				%   Label
+				gsave
+					extremalabelgray setgray
+					maxLabelX labelY moveto
+					maxlabel show
+				grestore
+			grestore
+
+			0 0 typelabel typegray typefontsize scalinglabel scalinggray keylabel keygray keyfontsize font legendlabel
+		grestore
+	end
+} def
+
+% Pops n, the number of values to pop for averaging, and n values
+% Pushes the mean of those n values
+/mean {
+	% Basically, fold + from 0 on the n values.
+	% Pop discards the loop index, which we don't actually want.
+	% The final exch div divides the sum by n,
+	% which we've kept rolled at the bottom of the stack.
+	0 1 index {3 -1 roll add} repeat exch div
+} def
+
+% x y gradientwidth gradientheight lowcolorred lowcolorgreen lowcolorblue highcolorred highcolorgreen highcolorblue
+% Draw a gradient from lowcolor to highcolor with lower-left corner (x, y)
+% having the given width and height.
+/labeledgradientDict 1 dict def
+/labeledgradient {
+	labeledgradientDict begin
+		/font exch def
+		/keyfontsize exch def
+		/keygray exch def
+		/keylabel exch def
+		/scalinggray exch def
+		/scalinglabel exch def
+		/typefontsize exch def
+		/typegray exch def
+		/typelabel exch def
+		/extremafontsize exch def
+		/extremalabelgray exch def
+		/maxlabel exch def
+		/midlabel exch def
+		/minlabel exch def
+		/highcolorblue exch def
+		/highcolorgreen exch def
+		/highcolorred exch def
+		/lowcolorblue exch def
+		/lowcolorgreen exch def
+		/lowcolorred exch def
+		/resolution exch def
+		/gradientheight exch def
+		/gradientwidth exch def
+		/y exch def
+		/x exch def
+		
+		/tickHeight {3} bind def
+
+		gsave
+			x y translate
+		
+			% Draw the color gradient/spectrum
+			gsave
+				/firstGradientX {0} bind def
+				/lastGradientX {firstGradientX gradientwidth add resolution sub} bind def
+				/gradientY {0 gradientheight sub 5 sub} bind def
+			
+				firstGradientX resolution lastGradientX {
+					/ii exch def
+					
+					/red {ii firstGradientX lastGradientX lowcolorred highcolorred interpolate} bind def
+					/green {ii firstGradientX lastGradientX lowcolorgreen highcolorgreen interpolate} bind def
+					/blue {ii firstGradientX lastGradientX lowcolorblue highcolorblue interpolate} bind def
+					red green blue setrgbcolor
+					
+					/cellY {gradientY} bind def
+					/cellHeight {gradientheight} bind def
+
+					/isFirstCell {ii firstGradientX sub abs resolution lt} bind def
+					/isMiddleCell {ii lastGradientX firstGradientX 2 mean round sub abs resolution 2 div lt} bind def
+					/isLastCell {ii lastGradientX sub abs resolution lt} bind def
+					
+					isFirstCell isMiddleCell or isLastCell or {
+						/cellY {gradientY tickHeight sub} bind def
+						/cellHeight {gradientheight tickHeight add} bind def
+					} if
+					ii cellY resolution cellHeight box
+
+					fill
+				} for
+			grestore
+
+			% Draw the extrema labels (min, mid, max)
+			gsave
+				font extremafontsize scalefont setfont
+				extremalabelgray setgray
+				
+				/minlabelwidth {minlabel stringwidth pop} bind def
+				/midlabelwidth {midlabel stringwidth pop} bind def
+				/maxlabelwidth {maxlabel stringwidth pop} bind def
+				
+				/minLabelX {0} bind def
+				/midLabelX {gradientwidth 2 div midlabelwidth 2 div sub} bind def
+				/maxLabelX {gradientwidth maxlabelwidth sub} bind def
+				
+				/labelY {0 5 sub gradientheight sub 5 sub extremafontsize sub} bind def
+
+				minLabelX labelY moveto
+				minlabel show
+				
+				midLabelX labelY moveto
+				midlabel show
+				
+				maxLabelX labelY moveto
+				maxlabel show
+			grestore
+
+			% Draw the type and key labels
+			0 0 typelabel typegray typefontsize scalinglabel scalinggray keylabel keygray keyfontsize font legendlabel
+		grestore
+	end
+} def
+
+% x y width height red green blue
+% Draw counter-clockwise from lower-left the box whose
+% lower-left corner is (x, y) having the given width and height.
+/boxDict 1 dict def
+/box {
+	boxDict begin
+		/height exch def
+		/width exch def
+		/y exch def
+		/x exch def
+
+		newpath
+			x y moveto
+			width 0 rlineto
+			0 height rlineto
+			width neg 0 rlineto
+		closepath
+	end
+} def
+
+% x xmin xmax ymin ymax
+% Linear interpolation from xmin-to-xmax to ymin-to-ymax
+/interpolateDict 1 dict def
+/interpolate {
+	interpolateDict begin
+		/ymax exch def
+		/ymin exch def
+		/xmax exch def
+		/xmin exch def
+		/x exch def
+
+		ymax ymin sub xmax xmin sub div x xmin sub mul ymin add
+	end
+} def

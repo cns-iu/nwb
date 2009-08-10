@@ -8,6 +8,7 @@ import java.net.URL;
 import java.util.Collections;
 import java.util.Dictionary;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Properties;
 
@@ -29,12 +30,13 @@ public class GeoMapsAlgorithm implements Algorithm {
 	public static final String OUTPUT_FILE_EXTENSION = "eps";
 	
 	public static final String SHAPEFILE_ID = "shapefile";
-	public static final Map<String, String> PROJECTIONS;
+	
+	public static final Map<String, String> SHAPEFILES;
 	static {
 		// Values should correspond to .shp files in the shapefiles package
-		Map<String, String> t = new HashMap<String, String>();
-		t.put("US States", "/edu/iu/scipolicy/visualization/geomaps/shapefiles/statesp020.shp");
+		Map<String, String> t = new LinkedHashMap<String, String>();
 		t.put("Countries", "/edu/iu/scipolicy/visualization/geomaps/shapefiles/countries.shp");
+		t.put("US States", "/edu/iu/scipolicy/visualization/geomaps/shapefiles/statesp020.shp");		
 		SHAPEFILES = Collections.unmodifiableMap(t);
 	}	
 	public static final Map<String, String> FEATURE_NAME_KEY;
@@ -43,16 +45,18 @@ public class GeoMapsAlgorithm implements Algorithm {
 		 *respective shapefile
 		 */
 		Map<String, String> t = new HashMap<String, String>();
-		t.put("US States", "STATE");
 		t.put("Countries", "NAME");
+		t.put("US States", "STATE");		
 		FEATURE_NAME_KEY = Collections.unmodifiableMap(t);
 	}
 	
 	public static final String PROJECTION_ID = "projection";
-	public static final Map<String, String> SHAPEFILES;
+	public static final String AUTHOR_NAME_ID = "authorName";
+	
+	public static final Map<String, String> PROJECTIONS;
 	static {
 		// Values should correspond to keys in projection/wellKnownTexts.properties
-		Map<String, String> t = new HashMap<String, String>();
+		Map<String, String> t = new LinkedHashMap<String, String>();
 		t.put("Mercator", "mercator");
 		t.put("Albers Equal-Area Conic", "albersEqualArea");
 		t.put("Lambert Conformal Conic", "lambertConformalConic");
@@ -85,6 +89,7 @@ public class GeoMapsAlgorithm implements Algorithm {
 
 		Data inDatum = this.data[0];
 		Table inTable = (Table) inDatum.getData();
+		String dataLabel = (String) inDatum.getMetadata().get(DataProperty.LABEL);
 		
 		final ClassLoader loader = getClass().getClassLoader();
 		String shapefileKey = (String) parameters.get(SHAPEFILE_ID);
@@ -94,12 +99,14 @@ public class GeoMapsAlgorithm implements Algorithm {
 		
 		String featureNameKey = GeoMapsAlgorithm.FEATURE_NAME_KEY.get(shapefileKey);
 		
+		String authorName = (String) parameters.get(AUTHOR_NAME_ID);
+		
 		ShapefileToPostScriptWriter postScriptWriter =
 			new ShapefileToPostScriptWriter(shapefileURL, projectedCRS, featureNameKey);
 		
 		annotationMode.applyAnnotations(postScriptWriter, inTable, parameters);
 		try {
-			postScriptWriter.writePostScriptToFile(temporaryPostScriptFile);
+			postScriptWriter.writePostScriptToFile(temporaryPostScriptFile, authorName, dataLabel);
 		} catch (IOException e) {
 			throw new AlgorithmExecutionException(e);
 		}
@@ -116,10 +123,12 @@ public class GeoMapsAlgorithm implements Algorithm {
 		final Properties wellKnownTexts = new Properties();
 		try {
 			wellKnownTexts.load(wellKnownTextInputStream);
-		} catch (final FileNotFoundException fnfe) {
-			logger.log(LogService.LOG_ERROR, fnfe.getMessage(), fnfe);
-		} catch (final IOException ie) {
-			logger.log(LogService.LOG_ERROR, ie.getMessage(), ie);
+		} catch (FileNotFoundException e) {
+			throw new AlgorithmExecutionException(
+				"Error finding the file that describes available map projections: " + e.getMessage(), e);
+		} catch (IOException e) {
+			throw new AlgorithmExecutionException(
+				"Error accessing the file that describes available map projections: " + e.getMessage(), e);
 		}
 
 		String projectionName = (String) parameters.get(PROJECTION_ID);

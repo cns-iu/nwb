@@ -6,4 +6,5 @@ public interface Scaler {
 	public boolean canScale(double value);
 	public double scale(double rawValue) throws AlgorithmExecutionException;
 	public String getUnscalableMessage() throws AlgorithmExecutionException;
+	public double invert(double value);
 }

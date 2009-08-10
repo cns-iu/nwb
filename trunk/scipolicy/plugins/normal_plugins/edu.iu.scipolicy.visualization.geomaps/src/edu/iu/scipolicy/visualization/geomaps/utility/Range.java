@@ -1,5 +1,7 @@
 package edu.iu.scipolicy.visualization.geomaps.utility;
 
+import java.util.Collection;
+
 
 public class Range<T> {
 	private T min;
@@ -16,5 +18,38 @@ public class Range<T> {
 
 	public T getMax() {
 		return max;
+	}
+
+	public void setMin(T value) {
+		this.min = value;
+	}
+	
+	public void setMax(T value) {
+		this.max = value;
+	}
+	
+	public static Range<Double> createNegatedRange(Range<Double> range) {
+		return new Range<Double>(-range.getMin(), -range.getMax());
+	}
+	
+	public Range<T> createInvertedRange() {
+		return new Range<T>(max, min);
+	}
+
+	public static Range<Double> calculateRange(
+			Collection<Double> values) {
+		Range<Double> range =
+			new Range<Double>(Double.POSITIVE_INFINITY, Double.NEGATIVE_INFINITY);
+	
+		for ( double value : values ) {
+			if (value < range.getMin()) {
+				range.setMin(value);
+			}
+			if (value > range.getMax()) {
+				range.setMax(value);
+			}
+		}
+		
+		return range;
 	}
 }

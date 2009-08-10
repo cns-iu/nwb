@@ -20,7 +20,7 @@ import edu.iu.scipolicy.visualization.geomaps.scaling.LinearScaler;
 
 public class CirclePrinter {
 	public static final String INDENT = "  ";
-	public static final double CIRCLE_LINE_WIDTH = 2;	
+	public static final double CIRCLE_LINE_WIDTH = 1;	
 	public static final String CIRCLE_DEF = "/circle {" + "\n"
 											+ INDENT + "newpath" + "\n"
 											+ INDENT + INDENT + "0 360 arc" + "\n"
@@ -28,7 +28,7 @@ public class CirclePrinter {
 											+ "} def" + "\n";
 	
 	private GeometryProjector geometryProjector;
-	private MapBoundingBox mapBoundingBox;
+	private DisplayedMapBounds displayedMapBounds;
 	public static final Scaler DEFAULT_CIRCLE_COLOR_QUANTITY_SCALER = new LinearScaler();
 	public static final Scaler DEFAULT_CIRCLE_AREA_SCALER = new LinearScaler();
 	public static final Color DEFAULT_CIRCLE_COLOR_MAXIMUM = Color.MAGENTA;
@@ -37,9 +37,9 @@ public class CirclePrinter {
 	public static final Color DEFAULT_CIRCLE_COLOR_MINIMUM = Color.YELLOW;
 
 	public CirclePrinter(GeometryProjector geometryProjector,
-			MapBoundingBox mapBoundingBox) {
+			DisplayedMapBounds displayedMapBounds) {
 		this.geometryProjector = geometryProjector;
-		this.mapBoundingBox = mapBoundingBox;
+		this.displayedMapBounds = displayedMapBounds;
 	}
 
 	public void printCircles(BufferedWriter out, List<Circle> circles) throws IOException, AlgorithmExecutionException {
@@ -88,7 +88,7 @@ public class CirclePrinter {
 		 * Then we wouldn't be able to draw this Circle.
 		 */
 		Geometry point = geometryProjector.transformGeometry(rawPoint);
-		Coordinate displayCoordinate = mapBoundingBox.getDisplayCoordinate(point.getCoordinate());
+		Coordinate displayCoordinate = displayedMapBounds.getDisplayCoordinate(point.getCoordinate());
 
 		out.write(INDENT + displayCoordinate.x + " " + displayCoordinate.y + " " + radius + " circle" + "\n");
 		out.write(INDENT + "gsave" + "\n");

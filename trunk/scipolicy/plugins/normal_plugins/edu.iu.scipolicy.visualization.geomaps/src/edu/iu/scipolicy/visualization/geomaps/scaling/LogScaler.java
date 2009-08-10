@@ -14,7 +14,10 @@ public class LogScaler implements Scaler {
 		else {
 			throw new AlgorithmExecutionException("Cannot scale " + rawValue + ".");
 		}
-	}	
+	}
+	public double invert(double value) {
+		return Math.pow(10.0, value);
+	}
 
 	public String getUnscalableMessage() {
 		return "Logarithmic scale is defined only for positive numbers.";

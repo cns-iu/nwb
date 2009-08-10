@@ -40,8 +40,7 @@ public class ListScaler {
 				}
 
 				scaledValues.add(scaler.scale(rawValue));
-			}
-			else {
+			} else {
 				unscalableValueCount++;
 			}
 		}

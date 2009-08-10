@@ -10,8 +10,13 @@ public class LinearScaler implements Scaler {
 	public double scale(double rawValue) {
 		return rawValue;
 	}
+	public double invert(double value) {
+		return value;
+	}
 
 	public String getUnscalableMessage() throws AlgorithmExecutionException {
 		throw new AlgorithmExecutionException("Faulty warning: Linear scale should be defined for any double value.");
 	}
+
+	
 }

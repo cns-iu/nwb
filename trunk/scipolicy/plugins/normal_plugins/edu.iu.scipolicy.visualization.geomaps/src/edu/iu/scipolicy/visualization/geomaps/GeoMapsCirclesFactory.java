@@ -29,7 +29,7 @@ public class GeoMapsCirclesFactory extends GeoMapsAlgorithmFactory {
 			ObjectClassDefinition oldParameters) {
 		Data inData = data[0];
 		Table table = (Table) inData.getData();
-
+		
 		DropdownMutator mutator = new DropdownMutator();
 		
 		mutator.add(GeoMapsAlgorithm.SHAPEFILE_ID,
@@ -60,7 +60,7 @@ public class GeoMapsCirclesFactory extends GeoMapsAlgorithmFactory {
 					ScalerFactory.SCALER_TYPES.keySet());
 		mutator.add(CircleAnnotationMode.CIRCLE_COLOR_RANGE_ID,
 					CircleAnnotationMode.COLOR_RANGES.keySet());
-				
+		
 		return mutator.mutate(oldParameters);
 	}
 	
@@ -69,7 +69,6 @@ public class GeoMapsCirclesFactory extends GeoMapsAlgorithmFactory {
 			int index = indexOf(target, array);
 			
 			if ( index != -1 ) {
-				System.out.println("Swapping " + array[index] + " from " + index + " to 0.");
 				swap(array, 0, index);
 				return;
 			}

@@ -23,21 +23,21 @@ import edu.iu.scipolicy.visualization.geomaps.scaling.LinearScaler;
 
 public class FeaturePrinter {
 	public static final Color DEFAULT_FEATURE_COLOR = Color.WHITE;	
-	public static final double BORDER_BRIGHTNESS = 0.0;
+	public static final double BORDER_BRIGHTNESS = 0.7;
 	public static final double BORDER_LINE_WIDTH = 0.001;
 	public static final String INDENT = "  ";
 	
 	private FeatureCollection<SimpleFeatureType, SimpleFeature> featureCollection;
 	private GeometryProjector geometryProjector;
-	private MapBoundingBox mapBoundingBox;
+	private DisplayedMapBounds displayedMapBounds;
 	public static final Scaler DEFAULT_FEATURE_COLOR_QUANTITY_SCALER = new LinearScaler();
 	public static final Color DEFAULT_FEATURE_COLOR_MAXIMUM = Color.GREEN;
 	public static final Color DEFAULT_FEATURE_COLOR_MINIMUM = Color.BLUE;
 	
-	public FeaturePrinter(FeatureCollection<SimpleFeatureType, SimpleFeature> featureCollection, GeometryProjector geometryProjector, MapBoundingBox mapBoundingBox) {
+	public FeaturePrinter(FeatureCollection<SimpleFeatureType, SimpleFeature> featureCollection, GeometryProjector geometryProjector, DisplayedMapBounds displayedMapBounds) {
 		this.featureCollection = featureCollection;
 		this.geometryProjector = geometryProjector;
-		this.mapBoundingBox = mapBoundingBox;
+		this.displayedMapBounds = displayedMapBounds;
 	}
 	
 	public void printFeatures(
@@ -86,13 +86,13 @@ public class FeaturePrinter {
 	private void printGeometry(Geometry subgeometry, BufferedWriter out, Map<String, Color> featureColorMap, String name) throws IOException {
 		Coordinate[] coordinates = subgeometry.getCoordinates();
 		if (coordinates.length > 0) {
-			Coordinate firstCoordinate = mapBoundingBox.getDisplayCoordinate(coordinates[0]);
+			Coordinate firstCoordinate = displayedMapBounds.getDisplayCoordinate(coordinates[0]);
 
 			out.write(INDENT + "newpath" + "\n");
 			out.write(INDENT + INDENT + (firstCoordinate.x) + " " + (firstCoordinate.y) + " moveto\n");
 
 			for (int cc = 1; cc < coordinates.length; cc++) {
-				Coordinate coordinate = mapBoundingBox.getDisplayCoordinate(coordinates[cc]);
+				Coordinate coordinate = displayedMapBounds.getDisplayCoordinate(coordinates[cc]);
 
 				out.write(INDENT + INDENT + (coordinate.x) + " " + (coordinate.y) + " lineto\n");
 			}

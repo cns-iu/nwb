@@ -38,7 +38,7 @@ public class GeoMapsRegionsFactory extends GeoMapsAlgorithmFactory {
 
 		mutator.add(RegionAnnotationMode.FEATURE_COLOR_RANGE_ID,
 					RegionAnnotationMode.COLOR_RANGES.keySet());
-				
+		
 		return mutator.mutate(oldParameters);
 	}
 }
