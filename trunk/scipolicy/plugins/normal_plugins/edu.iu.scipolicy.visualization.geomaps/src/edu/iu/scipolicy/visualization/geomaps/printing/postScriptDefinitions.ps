@@ -1,4 +1,8 @@
 % Pops two numbers
+% Pushes the lesser of them
+/min { 2 copy gt { exch } if pop } bind def
+
+% Pops two numbers
 % Pushes the greater of them
 /max { 2 copy lt { exch } if pop } bind def
 
@@ -149,26 +153,30 @@
 				/midlabelwidth {midlabel stringwidth pop} bind def
 				/maxlabelwidth {maxlabel stringwidth pop} bind def
 
-				/minCircleX {minlabelwidth 2 div minradius max} bind def
-				/midCircleX {minradius 2 mul minlabelwidth max 15 add midlabelwidth 2 div midradius max add} bind def
-				/maxCircleX {minradius 2 mul minlabelwidth max 15 add midradius 2 mul midlabelwidth max 15 add add maxlabelwidth 2 div maxradius max add} bind def
-				/circleY {0 5 sub maxradius sub} bind def
+				/circleX {maxradius} bind def
+				/minCircleY {minradius neg 5 sub} bind def
+				/midCircleY {midradius neg 5 sub} bind def
+				/maxCircleY {maxradius neg 5 sub} bind def
 				
-				/minLabelX {minCircleX minlabelwidth 2 div sub} bind def
-				/midLabelX {midCircleX midlabelwidth 2 div sub} bind def
-				/maxLabelX {maxCircleX maxlabelwidth 2 div sub} bind def
-				/labelY {0 5 sub maxradius 2 mul sub 5 sub extremafontsize sub} bind def
+				/labelX {2 maxradius mul 5 add} bind def
+				/minLabelY {minCircleY extremafontsize 2 div sub} bind def
+				% Try to put vertically position the mid and max labels
+				% so that they center on their circle's center, but if that
+				% would result in overlapping labels, position them yet lower
+				% to prevent that.
+				/midLabelY {midCircleY extremafontsize 2 div sub minLabelY extremafontsize sub min} bind def
+				/maxLabelY {maxCircleY extremafontsize 2 div sub midLabelY extremafontsize sub min} bind def
 				
 				% Minimum
 				%   Circle
 				gsave
 					circlegray setgray
-					minCircleX circleY minradius circle stroke
+					circleX minCircleY minradius circle stroke
 				grestore
 				%   Label
 				gsave
 					extremalabelgray setgray
-					minLabelX labelY moveto
+					labelX minLabelY moveto
 					minlabel show
 				grestore
 
@@ -176,12 +184,12 @@
 				%   Circle
 				gsave
 					circlegray setgray
-					midCircleX circleY midradius circle stroke
+					circleX midCircleY midradius circle stroke
 				grestore
 				%   Label
 				gsave
 					extremalabelgray setgray
-					midLabelX labelY moveto
+					labelX midLabelY moveto
 					midlabel show
 				grestore
 				
@@ -189,12 +197,12 @@
 				%   Circle
 				gsave
 					circlegray setgray
-					maxCircleX circleY maxradius circle stroke
+					circleX maxCircleY maxradius circle stroke
 				grestore
 				%   Label
 				gsave
 					extremalabelgray setgray
-					maxLabelX labelY moveto
+					labelX maxLabelY moveto
 					maxlabel show
 				grestore
 			grestore
