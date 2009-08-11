@@ -15,8 +15,8 @@ import com.vividsolutions.jts.geom.Point;
 
 import edu.iu.scipolicy.visualization.geomaps.ShapefileToPostScriptWriter;
 import edu.iu.scipolicy.visualization.geomaps.projection.GeometryProjector;
-import edu.iu.scipolicy.visualization.geomaps.scaling.Scaler;
 import edu.iu.scipolicy.visualization.geomaps.scaling.LinearScaler;
+import edu.iu.scipolicy.visualization.geomaps.scaling.Scaler;
 
 public class CirclePrinter {
 	public static final String INDENT = "  ";
@@ -28,18 +28,16 @@ public class CirclePrinter {
 											+ "} def" + "\n";
 	
 	private GeometryProjector geometryProjector;
-	private DisplayedMapBounds displayedMapBounds;
+	private MapDisplayer mapDisplayer;
 	public static final Scaler DEFAULT_CIRCLE_COLOR_QUANTITY_SCALER = new LinearScaler();
 	public static final Scaler DEFAULT_CIRCLE_AREA_SCALER = new LinearScaler();
-	public static final Color DEFAULT_CIRCLE_COLOR_MAXIMUM = Color.MAGENTA;
-	public static final double DEFAULT_CIRCLE_AREA_MAXIMUM = 750.0;
 	public static final double DEFAULT_CIRCLE_AREA_MINIMUM = 80.0;
-	public static final Color DEFAULT_CIRCLE_COLOR_MINIMUM = Color.YELLOW;
+	public static final double DEFAULT_CIRCLE_AREA_MAXIMUM = 750.0;
 
 	public CirclePrinter(GeometryProjector geometryProjector,
-			DisplayedMapBounds displayedMapBounds) {
+			MapDisplayer mapDisplayer) {
 		this.geometryProjector = geometryProjector;
-		this.displayedMapBounds = displayedMapBounds;
+		this.mapDisplayer = mapDisplayer;
 	}
 
 	public void printCircles(BufferedWriter out, List<Circle> circles) throws IOException, AlgorithmExecutionException {
@@ -88,7 +86,7 @@ public class CirclePrinter {
 		 * Then we wouldn't be able to draw this Circle.
 		 */
 		Geometry point = geometryProjector.transformGeometry(rawPoint);
-		Coordinate displayCoordinate = displayedMapBounds.getDisplayCoordinate(point.getCoordinate());
+		Coordinate displayCoordinate = mapDisplayer.getDisplayCoordinate(point.getCoordinate());
 
 		out.write(INDENT + displayCoordinate.x + " " + displayCoordinate.y + " " + radius + " circle" + "\n");
 		out.write(INDENT + "gsave" + "\n");

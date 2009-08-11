@@ -23,7 +23,7 @@ public class ShapefileFeatureReader {
 	private FeatureSource<SimpleFeatureType, SimpleFeature> featureSource;
 
 	public ShapefileFeatureReader(URL shapefileURL) throws AlgorithmExecutionException {
-		featureSource = getFeatureSource(shapefileURL);
+		this.featureSource = getFeatureSource(shapefileURL);
 	}
 
 	public FeatureCollection<SimpleFeatureType, SimpleFeature> getFeatureCollection() throws AlgorithmExecutionException {
@@ -38,39 +38,39 @@ public class ShapefileFeatureReader {
 		return featureCollection;
 	}
 
-	/* GeoTools boilerplate.  Returns the Features in the shapefile at shapefileURL
+	/* GeoTools boilerplate.
+	 * Returns the Features in the shapefile at shapefileURL
 	 */
-	private FeatureSource<SimpleFeatureType, SimpleFeature> getFeatureSource(URL shapefileURL) throws AlgorithmExecutionException {
-		DataStore dataStore = getDataStore(shapefileURL);
-
-		String[] typeNames;
-		String typeName;
+	private FeatureSource<SimpleFeatureType, SimpleFeature> getFeatureSource(URL shapefileURL)
+			throws AlgorithmExecutionException {
 		FeatureSource<SimpleFeatureType, SimpleFeature> featureSource;
+		
 		try {
-			typeNames = dataStore.getTypeNames();
-			typeName = typeNames[0];
-			GeoMapsAlgorithm.logger.log(LogService.LOG_INFO, "Reading shapefile: " + typeName);
+			DataStore dataStore = getDataStore(shapefileURL);
+			
+			String[] typeNames = dataStore.getTypeNames();
+			String typeName = typeNames[0];
+			
+			GeoMapsAlgorithm.logger.log(
+					LogService.LOG_INFO,
+					"Reading shapefile: " + typeName);
+			
 			featureSource = dataStore.getFeatureSource(typeName);
 		} catch (IOException e) {
-			throw new AlgorithmExecutionException(e);
+			throw new AlgorithmExecutionException(
+					"Error accessing shapefile: " + e.getMessage(),
+					e);
 		}
 
 		return featureSource;
 	}
 
-	private DataStore getDataStore(URL shapefileURL) throws AlgorithmExecutionException {
+	private DataStore getDataStore(URL shapefileURL) throws IOException {
 		Map<String, Serializable> connectParameters = new HashMap<String, Serializable>();
 
 		connectParameters.put("url", shapefileURL);
 		connectParameters.put("create spatial index", true);
 
-		DataStore dataStore;
-		try {
-			dataStore = DataStoreFinder.getDataStore(connectParameters);
-		} catch (IOException e) {
-			throw new AlgorithmExecutionException(e);
-		}
-
-		return dataStore;
+		return DataStoreFinder.getDataStore(connectParameters);
 	}
 }

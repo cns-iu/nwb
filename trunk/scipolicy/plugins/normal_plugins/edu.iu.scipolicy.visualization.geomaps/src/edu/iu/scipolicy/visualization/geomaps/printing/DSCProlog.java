@@ -18,10 +18,12 @@ public class DSCProlog {
 	private static final String PAGE_ORDER_DSC_COMMENT_VALUE = "Ascend";
 	
 	private String outputPSFileName;
+	private double pageHeightInPoints;
 	
 	
-	public DSCProlog(String outputPSFileName) {
+	public DSCProlog(String outputPSFileName, double pageHeightInPoints) {
 		this.outputPSFileName = outputPSFileName;
+		this.pageHeightInPoints = pageHeightInPoints;
 	}
 	
 	
@@ -60,6 +62,6 @@ public class DSCProlog {
 		 * BoundingBox.  Yes, it could be a tiny bit tighter, but it is still
 		 * correct.
 		 */		
-		return "0 0 " + Constants.PAGE_WIDTH_IN_POINTS + " " + Constants.PAGE_HEIGHT_IN_POINTS + "\n";
+		return "0 0 " + Constants.PAGE_WIDTH_IN_POINTS + " " + pageHeightInPoints + "\n";
 	}
 }

@@ -53,7 +53,7 @@ public class GeometryProjector {
 	public static final boolean REQUEST_LENIENT_TRANSFORM = true;
 	public static final double MAX_LONGITUDE = 180.0;
 	public static final double NORTH_POLE_CROP_HEIGHT_DEGREES = 6.0;
-	public static final double SOUTH_POLE_CROP_HEIGHT_DEGREES = 10.0;
+	public static final double SOUTH_POLE_CROP_HEIGHT_DEGREES = 12.0;
 
 	private GeometryCoordinateSequenceTransformer coordinateTransformer =
 		new GeometryCoordinateSequenceTransformer();

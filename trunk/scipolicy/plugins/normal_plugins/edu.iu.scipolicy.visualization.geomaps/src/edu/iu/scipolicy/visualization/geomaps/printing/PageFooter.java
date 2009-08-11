@@ -15,9 +15,9 @@ public class PageFooter {
 	public static final double FONT_SIZE = 6;
 	public static final double FONT_BRIGHTNESS = 0.35;
 	
-	public static final double LOWER_LEFT_X_IN_INCHES =
+	public static final double LOWER_LEFT_X_IN_POINTS =
 		0.35 * Constants.POINTS_PER_INCH;
-	public static final double LOWER_LEFT_Y_IN_INCHES =
+	public static final double LOWER_LEFT_Y_IN_POINTS =
 		0.35 * Constants.POINTS_PER_INCH;
 
 	private static final String SEP = " | ";
@@ -30,7 +30,7 @@ public class PageFooter {
 		s += FONT_SIZE + " scalefont" + "\n";
 		s += "setfont" + "\n";
 		s += FONT_BRIGHTNESS + " setgray" + "\n";
-		s += LOWER_LEFT_X_IN_INCHES + " " + LOWER_LEFT_Y_IN_INCHES + " moveto" + "\n";
+		s += LOWER_LEFT_X_IN_POINTS + " " + LOWER_LEFT_Y_IN_POINTS + " moveto" + "\n";
 		s += "(" + FOOTER_STRING_PREFIX + ") show" + "\n";
 		
 		s += "currentpoint" + " ";

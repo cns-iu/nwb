@@ -8,7 +8,7 @@ import edu.iu.scipolicy.visualization.geomaps.ShapefileToPostScriptWriter;
 import edu.iu.scipolicy.visualization.geomaps.utility.Calculator;
 import edu.iu.scipolicy.visualization.geomaps.utility.Constants;
 
-public class DisplayedMapBounds {
+public class MapDisplayer {
 	public static final boolean CLIP_TO_BOUNDING_BOX = true;
 	public static final boolean BACKGROUND_TRANSPARENT = true;
 	public static final Color BACKGROUND_COLOR = Color.CYAN;
@@ -16,46 +16,27 @@ public class DisplayedMapBounds {
 	
 	public static final double BOUNDING_BOX_LINE_WIDTH = .2;
 	
-	/* The ranges of coordinates of features in the shapefile imply an
-	 * aspect ratio.  "true" means we keep that ratio in the display.
-	 * "false" means we use the dimensions below, even if they will result
-	 * in a map that is "stretched" or "compressed" in one or both dimensions.
-	 */
-	public static final boolean FIX_ASPECT_RATIO = true;
 	public static final String INDENT = "  ";
 
 	private double displayLowerLeftX, displayLowerLeftY;
 	private double displayUpperRightX, displayUpperRightY;
 	private double displayCenterXInPoints, displayCenterYInPoints;
 	private double dataCenterX, dataCenterY;
-	private double scaleX, scaleY;
-	
-	/* The generated map will generally only take these requested dimensions
-	 * if FIX_ASPECT_RATIO is false.
-	 * When FIX_ASPECT_RATIO is true, the map is centered as indicated and
-	 * drawn precisely large enough to fit the "tighter"
-	 * dimension.  Unless by luck the data and display aspect ratios agree,
-	 * this means that there will be empty space on either side in the
-	 * "looser" dimension.
-	 */
-	public static final double REQUESTED_WIDTH_IN_POINTS =
-		0.9 * Constants.MAP_PAGE_AREA_WIDTH_IN_POINTS;
-	public static final double REQUESTED_HEIGHT_IN_POINTS =
-		0.9 * Constants.MAP_PAGE_AREA_HEIGHT_IN_POINTS;
+	private double scale;
+	private double displayHeightInPoints;
 	
 
-	public DisplayedMapBounds(double dataMinX, double dataMinY, double dataMaxX, double dataMaxY) {
-		double displayWidthInPoints = REQUESTED_WIDTH_IN_POINTS;
-		double displayHeightInPoints = REQUESTED_HEIGHT_IN_POINTS;
+	public MapDisplayer(
+			double dataMinX, double dataMinY, double dataMaxX, double dataMaxY) {
+		this.displayCenterXInPoints = Constants.MAP_CENTER_X_IN_POINTS;		
 
-		this.displayCenterXInPoints = Constants.MAP_CENTER_X_IN_POINTS;
-		this.displayCenterYInPoints = Constants.MAP_CENTER_Y_IN_POINTS;
+		this.dataCenterX = Calculator.mean(dataMinX, dataMaxX);
+		this.dataCenterY = Calculator.mean(dataMinY, dataMaxY);
 
-		this.dataCenterX = Calculator.mean(dataMaxX, dataMinX);
-		this.dataCenterY = Calculator.mean(dataMaxY, dataMinY);
-
-		// Set scaleX and scaleY
-		setScales(dataMinX, dataMinY, dataMaxX, dataMaxY, displayWidthInPoints, displayHeightInPoints);
+		this.scale = calculateScale(dataMinX, dataMaxX);
+		
+		this.displayHeightInPoints = (scale * (dataMaxY - dataMinY));
+		this.displayCenterYInPoints = calculateDisplayCenterY(displayHeightInPoints);
 
 		Coordinate displayLowerLeftCorner = getDisplayCoordinate(new Coordinate(dataMinX, dataMinY));
 		this.displayLowerLeftX = displayLowerLeftCorner.x;
@@ -65,13 +46,29 @@ public class DisplayedMapBounds {
 		this.displayUpperRightX = displayUpperRightCorner.x;
 		this.displayUpperRightY = displayUpperRightCorner.y;
 	}
+	
+	public double calculatePageHeightInPoints() {
+		return (
+				Constants.PAGE_FOOTER_HEIGHT_IN_POINTS
+				+ Constants.LEGEND_PAGE_AREA_HEIGHT_IN_POINTS
+				+ displayHeightInPoints
+				+ Constants.PAGE_HEADER_HEIGHT_IN_POINTS);
+	}
 
 	
+	private double calculateDisplayCenterY(double displayHeightInPoints) {
+		return (
+				Constants.PAGE_FOOTER_HEIGHT_IN_POINTS
+				+ Constants.LEGEND_PAGE_AREA_HEIGHT_IN_POINTS
+				+ (displayHeightInPoints / 2.0));
+	}
+
+
 	/* 
 	 * Transform ordinate z from the data space to the display space
 	 * Equivalent to the PostScript:
 	 * 		displayCenter(X)InPoints displayCenter(Y)InPoints translate
-	 * 		scale(X) scale(Y) scale
+	 * 		scale scale scale
 	 *  	dataCenter(X) dataCenter(Y) translate
 	 */
 	private double positionOnDisplay(double z,
@@ -83,24 +80,14 @@ public class DisplayedMapBounds {
 	
 	public Coordinate getDisplayCoordinate(Coordinate coordinate) {
 		return new Coordinate(
-				positionOnDisplay(coordinate.x, displayCenterXInPoints, scaleX, dataCenterX),
-				positionOnDisplay(coordinate.y, displayCenterYInPoints, scaleY, dataCenterY));
+				positionOnDisplay(coordinate.x, displayCenterXInPoints, scale, dataCenterX),
+				positionOnDisplay(coordinate.y, displayCenterYInPoints, scale, dataCenterY));
 	}
 
-	private void setScales(double dataMinX, double dataMinY,
-			double dataMaxX, double dataMaxY, double displayWidthInPoints, double displayHeightInPoints) {
+	private double calculateScale(double dataMinX, double dataMaxX) {
 		double dataWidth = dataMaxX - dataMinX;
-		double dataHeight = dataMaxY - dataMinY;
 
-		this.scaleX = displayWidthInPoints / dataWidth;
-		this.scaleY = displayHeightInPoints / dataHeight;
-
-		if ( FIX_ASPECT_RATIO ) {
-			double scale = Math.min(scaleX, scaleY);
-
-			scaleX = scale;
-			scaleY = scale;
-		}
+		return (Constants.MAP_PAGE_AREA_WIDTH_IN_POINTS / dataWidth);
 	}
 
 	public String toPostScript() {

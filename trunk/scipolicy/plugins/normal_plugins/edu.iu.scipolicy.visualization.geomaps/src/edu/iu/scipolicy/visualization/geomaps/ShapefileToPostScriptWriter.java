@@ -32,8 +32,8 @@ import edu.iu.scipolicy.visualization.geomaps.legend.LegendComponent;
 import edu.iu.scipolicy.visualization.geomaps.printing.Circle;
 import edu.iu.scipolicy.visualization.geomaps.printing.CirclePrinter;
 import edu.iu.scipolicy.visualization.geomaps.printing.DSCProlog;
+import edu.iu.scipolicy.visualization.geomaps.printing.MapDisplayer;
 import edu.iu.scipolicy.visualization.geomaps.printing.FeaturePrinter;
-import edu.iu.scipolicy.visualization.geomaps.printing.DisplayedMapBounds;
 import edu.iu.scipolicy.visualization.geomaps.printing.PageFooter;
 import edu.iu.scipolicy.visualization.geomaps.printing.PageHeader;
 import edu.iu.scipolicy.visualization.geomaps.printing.PageTitle;
@@ -57,18 +57,23 @@ public class ShapefileToPostScriptWriter {
 	
 	private FeatureCollection<SimpleFeatureType, SimpleFeature> featureCollection;
 	private GeometryProjector geometryProjector;
-	private DisplayedMapBounds displayedMapBounds;
+	private MapDisplayer mapDisplayer;
+	private double pageHeightInPoints;
 	private Legend legend = new Legend();
 	private Map<String, Color> featureColorMap = new HashMap<String, Color>();
 	private String featureNameKey;
 	private List<Circle> circles = new ArrayList<Circle>();
-
 	
-	public ShapefileToPostScriptWriter(URL shapefileURL, ProjectedCRS projectedCRS, String featureNameKey) throws AlgorithmExecutionException {
-		ShapefileFeatureReader shapefileFeatureReader = new ShapefileFeatureReader(shapefileURL);
-		featureCollection = shapefileFeatureReader.getFeatureCollection();
-		geometryProjector = makeGeometryPreparer(projectedCRS);
-		displayedMapBounds = calculateMapBoundingBox();
+	
+	public ShapefileToPostScriptWriter(
+			URL shapefileURL, ProjectedCRS projectedCRS, String featureNameKey)
+				throws AlgorithmExecutionException {
+		ShapefileFeatureReader shapefileFeatureReader =
+			new ShapefileFeatureReader(shapefileURL);
+		this.featureCollection = shapefileFeatureReader.getFeatureCollection();
+		this.geometryProjector = makeGeometryPreparer(projectedCRS);
+		this.mapDisplayer = calculateMapBoundingBox();
+		this.pageHeightInPoints = mapDisplayer.calculatePageHeightInPoints();
 		this.featureNameKey = featureNameKey;
 	}
 	
@@ -95,20 +100,20 @@ public class ShapefileToPostScriptWriter {
 		writePostScriptDefinitions(out);
 		out.write("\n");
 		
-		out.write((new PageHeader(authorName, dataLabel)).toPostScript() + "\n");
+		out.write((new PageHeader(authorName, dataLabel, pageHeightInPoints)).toPostScript() + "\n");
 		out.write((new PageFooter()).toPostScript() + "\n");		
 		
 		out.write("% Save the default clipping path so we can clip the map safely" + "\n");
 		out.write("gsave" + "\n");
 		out.write("\n");
 
-		out.write(displayedMapBounds.toPostScript());
+		out.write(mapDisplayer.toPostScript());
 		out.write("\n");
 		
-		FeaturePrinter featurePrinter = new FeaturePrinter(featureCollection, geometryProjector, displayedMapBounds);
+		FeaturePrinter featurePrinter = new FeaturePrinter(featureCollection, geometryProjector, mapDisplayer);
 		featurePrinter.printFeatures(out, featureColorMap, featureNameKey);
 
-		CirclePrinter circlePrinter = new CirclePrinter(geometryProjector, displayedMapBounds);
+		CirclePrinter circlePrinter = new CirclePrinter(geometryProjector, mapDisplayer);
 		circlePrinter.printCircles(out, circles);
 
 		out.write("% Restore the default clipping path" + "\n");
@@ -178,7 +183,7 @@ public class ShapefileToPostScriptWriter {
 		return geometryProjector;
 	}
 
-	private DisplayedMapBounds calculateMapBoundingBox() throws AlgorithmExecutionException {
+	private MapDisplayer calculateMapBoundingBox() throws AlgorithmExecutionException {
 		/* Identify extreme values for the X and Y dimensions
 		 * among the Geometries in our featureCollection.
 		 * Note that this is *after* Geometry preparation (cropping and projecting).
@@ -219,7 +224,7 @@ public class ShapefileToPostScriptWriter {
 			it.close();
 		}
 
-		return new DisplayedMapBounds(dataMinX, dataMinY, dataMaxX, dataMaxY);
+		return new MapDisplayer(dataMinX, dataMinY, dataMaxX, dataMaxY);
 	}
 
 	private void writeCodeHeader(
@@ -227,7 +232,7 @@ public class ShapefileToPostScriptWriter {
 		GeoMapsAlgorithm.logger.log(LogService.LOG_INFO, "Printing PostScript.." + "\n");
 
 		out.write("%!PS-Adobe-3.0 EPSF-3.0" + "\n");
-		out.write((new DSCProlog(outputPSFileName)).toPostScript());
+		out.write((new DSCProlog(outputPSFileName, mapDisplayer.calculatePageHeightInPoints())).toPostScript());
 		
 		/* TODO
 		 * We're using setpagedevice to force page dimensions
@@ -240,7 +245,7 @@ public class ShapefileToPostScriptWriter {
 				+ "{ pop 1 dict" + "\n"
 				+ "dup /PageSize [ "
 					+ Constants.PAGE_WIDTH_IN_POINTS + " "
-					+ Constants.PAGE_HEIGHT_IN_POINTS + " "
+					+ mapDisplayer.calculatePageHeightInPoints() + " "
 				+ "] put" + "\n"
 				+ "setpagedevice" + "\n"
 				+ "} if" + "\n");

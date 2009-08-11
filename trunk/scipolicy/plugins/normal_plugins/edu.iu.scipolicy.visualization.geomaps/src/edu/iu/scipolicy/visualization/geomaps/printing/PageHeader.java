@@ -12,18 +12,22 @@ public class PageHeader {
 	public static final double FONT_SIZE = 6;
 	public static final double FONT_BRIGHTNESS = 0.35;
 	
-	public static final double LOWER_LEFT_X_IN_INCHES =
-		0.35 * Constants.POINTS_PER_INCH;		
-	public static final double LOWER_LEFT_Y_IN_INCHES =
-		Constants.PAGE_HEIGHT_IN_POINTS - (0.35 * Constants.POINTS_PER_INCH) - FONT_SIZE;
+	public static final double LOWER_LEFT_X_IN_POINTS =
+		0.4 * Constants.POINTS_PER_INCH;
+		
 	
 	private String authorName;
-	private String dataLabel;	
+	private String dataLabel;
+	private double lowerLeftYInPoints;	
 
 	
-	public PageHeader(String authorName, String dataLabel) {
+	public PageHeader(String authorName, String dataLabel, double pageHeightInPoints) {
 		this.authorName = authorName;
 		this.dataLabel = dataLabel;
+		
+		// Place the text so that its top is 0.4 inches from the top of the page
+		this.lowerLeftYInPoints =
+			pageHeightInPoints - (0.4 * Constants.POINTS_PER_INCH) - FONT_SIZE;
 	}	
 	
 	public String toString() {
@@ -54,7 +58,7 @@ public class PageHeader {
 		s += FONT_SIZE + " scalefont" + "\n";
 		s += "setfont" + "\n";
 		s += FONT_BRIGHTNESS + " setgray" + "\n";
-		s += LOWER_LEFT_X_IN_INCHES + " " + LOWER_LEFT_Y_IN_INCHES + " moveto" + "\n";
+		s += LOWER_LEFT_X_IN_POINTS + " " + lowerLeftYInPoints + " moveto" + "\n";
 		s += "(" + escapeForPostScript(toString()) + ") show" + "\n";
 		s += "grestore" + "\n";
 		
