@@ -31,14 +31,14 @@ public class FeaturePrinter {
 	private GeometryProjector geometryProjector;
 	private MapDisplayer mapDisplayer;
 	public static final Scaler DEFAULT_FEATURE_COLOR_QUANTITY_SCALER = new LinearScaler();
-	public static final Color DEFAULT_FEATURE_COLOR_MAXIMUM = Color.GREEN;
-	public static final Color DEFAULT_FEATURE_COLOR_MINIMUM = Color.BLUE;
+	
 	
 	public FeaturePrinter(FeatureCollection<SimpleFeatureType, SimpleFeature> featureCollection, GeometryProjector geometryProjector, MapDisplayer mapDisplayer) {
 		this.featureCollection = featureCollection;
 		this.geometryProjector = geometryProjector;
 		this.mapDisplayer = mapDisplayer;
 	}
+	
 	
 	public void printFeatures(
 			BufferedWriter out,

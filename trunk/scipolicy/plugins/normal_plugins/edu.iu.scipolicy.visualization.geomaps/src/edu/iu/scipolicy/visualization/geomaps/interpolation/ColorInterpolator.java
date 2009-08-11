@@ -10,7 +10,6 @@ import edu.iu.scipolicy.visualization.geomaps.utility.Range;
 
 
 public class ColorInterpolator implements Interpolator<Color> {
-	public static final Range<Color> DEFAULT_INTERPOLATED_COLOR_RANGE = new Range<Color>(Color.BLUE, Color.GREEN);
 	public static final int RED = 0;
 	public static final int GREEN = 1;
 	public static final int BLUE = 2;
@@ -22,11 +21,6 @@ public class ColorInterpolator implements Interpolator<Color> {
 	private LinearInterpolator redInterpolator;
 	private LinearInterpolator greenInterpolator;
 	private LinearInterpolator blueInterpolator;
-
-	public ColorInterpolator(Collection<Double> colorQuantities)
-			throws ZeroLengthInterpolatorInputRangeException {
-		this(colorQuantities, DEFAULT_INTERPOLATED_COLOR_RANGE);
-	}
 
 	public ColorInterpolator(
 			Collection<Double> colorQuantities, Range<Color> interpolatedRange)
@@ -78,7 +72,7 @@ public class ColorInterpolator implements Interpolator<Color> {
 			 * We choose to return the mean with a hand-waving claim
 			 * of "numerical stability".
 			 */
-			return Calculator.mean(inversionSamples);
+			return Calculator.mean(inversionSamples.toArray(new Double[0]));
 		} else {
 			String message = 
 				"Unexpected error: Inverting interpolation of the Color " + color

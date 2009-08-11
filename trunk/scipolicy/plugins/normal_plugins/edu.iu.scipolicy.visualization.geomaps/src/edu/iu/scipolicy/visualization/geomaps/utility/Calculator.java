@@ -1,26 +1,18 @@
 package edu.iu.scipolicy.visualization.geomaps.utility;
 
-import java.util.Arrays;
-import java.util.List;
 
 public class Calculator {
 	
-	public static double mean(double x1, double x2) {
-		return mean(Arrays.asList(x1, x2));
-	}
-	public static double mean(double x1, double x2, double x3) {
-		return mean(Arrays.asList(x1, x2, x3));
-	}	
-	public static double mean(List<Double> values) {
-		if (values.size() > 0) {
+	public static double mean(Double... values) {
+		if (values.length > 0) {
 			double sum = 0.0;
 			
 			for (double value : values) {
-				// Beware overflow when values.size() is great
+				// Beware overflow when values.length is great
 				sum += value;
 			}
 			
-			return (sum / values.size());
+			return (sum / values.length);
 		} else {
 			return 0.0;
 		}

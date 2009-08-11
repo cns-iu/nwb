@@ -15,6 +15,10 @@ public class Circle {
 		this.color = color;
 	}
 
+	public static double calculateAreaFromRadius(double radius) {
+		return (Math.PI * radius * radius);
+	}
+	
 	public static double calculateRadiusFromArea(double area) {
 		return Math.sqrt(area / Math.PI);
 	}

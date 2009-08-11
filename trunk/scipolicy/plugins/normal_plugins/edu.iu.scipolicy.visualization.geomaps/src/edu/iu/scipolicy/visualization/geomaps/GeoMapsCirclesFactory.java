@@ -11,6 +11,7 @@ import org.osgi.service.metatype.ObjectClassDefinition;
 
 import prefuse.data.Table;
 import edu.iu.scipolicy.visualization.geomaps.scaling.ScalerFactory;
+import edu.iu.scipolicy.visualization.geomaps.utility.Constants;
 
 public class GeoMapsCirclesFactory extends GeoMapsAlgorithmFactory {
 	public static final List<String> LATITUDE_KEYS = Collections.unmodifiableList(Arrays.asList(new String[]{
@@ -33,10 +34,10 @@ public class GeoMapsCirclesFactory extends GeoMapsAlgorithmFactory {
 		DropdownMutator mutator = new DropdownMutator();
 		
 		mutator.add(GeoMapsAlgorithm.SHAPEFILE_ID,
-					GeoMapsAlgorithm.SHAPEFILES.keySet());
+					Constants.SHAPEFILES.keySet());
 		
 		mutator.add(GeoMapsAlgorithm.PROJECTION_ID,
-					GeoMapsAlgorithm.PROJECTIONS.keySet());
+					Constants.PROJECTIONS.keySet());
 		
 		String[] numberColumnsForLat =
 			TableUtilities.getValidNumberColumnNamesInTable(table);		
@@ -59,7 +60,7 @@ public class GeoMapsCirclesFactory extends GeoMapsAlgorithmFactory {
 		mutator.add(CircleAnnotationMode.CIRCLE_COLOR_SCALING_ID,
 					ScalerFactory.SCALER_TYPES.keySet());
 		mutator.add(CircleAnnotationMode.CIRCLE_COLOR_RANGE_ID,
-					CircleAnnotationMode.COLOR_RANGES.keySet());
+					Constants.COLOR_RANGES.keySet());
 		
 		return mutator.mutate(oldParameters);
 	}

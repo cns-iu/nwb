@@ -2,10 +2,8 @@ package edu.iu.scipolicy.visualization.geomaps;
 
 import java.awt.Color;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.Dictionary;
 import java.util.HashMap;
-import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -27,6 +25,7 @@ import edu.iu.scipolicy.visualization.geomaps.legend.NullLegendComponent;
 import edu.iu.scipolicy.visualization.geomaps.scaling.ListScaler;
 import edu.iu.scipolicy.visualization.geomaps.scaling.Scaler;
 import edu.iu.scipolicy.visualization.geomaps.scaling.ScalerFactory;
+import edu.iu.scipolicy.visualization.geomaps.utility.Constants;
 import edu.iu.scipolicy.visualization.geomaps.utility.PrefuseDoubleReader;
 import edu.iu.scipolicy.visualization.geomaps.utility.RGBAverager;
 import edu.iu.scipolicy.visualization.geomaps.utility.Range;
@@ -38,19 +37,10 @@ public class RegionAnnotationMode implements AnnotationMode {
 	public static final String FEATURE_COLOR_RANGE_ID = "featureColorRange";
 	public static final String DEFAULT_FEATURE_NAME_ATTRIBUTE_KEY = "NAME";
 	
-	public static final Map<String, Range<Color>> COLOR_RANGES;
 	public static final String SUBTITLE = "with colored region annotations";
+	
 	private Map<String, Integer> featureIDs;
 	private List<Double> featureColorQuantities;
-	static {
-		Map<String, Range<Color>> t = new LinkedHashMap<String, Range<Color>>();
-		t.put("Yellow to blue", new Range<Color>(new Color(255, 255, 158), new Color(37, 52, 148)));
-		t.put("Yellow to red", new Range<Color>(new Color(254, 204, 92), new Color(177, 4, 39)));
-		t.put("Green to red", new Range<Color>(new Color(98, 164, 44), new Color(123, 21, 21)));
-		t.put("Blue to red", new Range<Color>(new Color(49, 243, 255), new Color(127, 4, 27)));		
-		t.put("Gray to black", new Range<Color>(new Color(214, 214, 214), new Color(0, 0 ,0)));		
-		COLOR_RANGES = Collections.unmodifiableMap(t);
-	}
 
 	/* 1: Grab the relevant parameters
      * 2: Read the color data from inTable
@@ -66,7 +56,7 @@ public class RegionAnnotationMode implements AnnotationMode {
 		String featureColorScaling = (String) parameters.get(FEATURE_COLOR_SCALING_ID);
 		Scaler featureColorQuantityScaler = ScalerFactory.createScaler(featureColorScaling);
 		String featureColorRangeKey = (String) parameters.get(FEATURE_COLOR_RANGE_ID);
-		Range<Color> featureColorRange = COLOR_RANGES.get(featureColorRangeKey);
+		Range<Color> featureColorRange = Constants.COLOR_RANGES.get(featureColorRangeKey);
 		
 		getFeatureData(inTable, featureNameAttribute, featureColorQuantityAttribute, featureColorQuantityScaler);
 		

@@ -7,6 +7,7 @@ import org.osgi.service.metatype.ObjectClassDefinition;
 
 import prefuse.data.Table;
 import edu.iu.scipolicy.visualization.geomaps.scaling.ScalerFactory;
+import edu.iu.scipolicy.visualization.geomaps.utility.Constants;
 
 public class GeoMapsRegionsFactory extends GeoMapsAlgorithmFactory {
 
@@ -22,10 +23,10 @@ public class GeoMapsRegionsFactory extends GeoMapsAlgorithmFactory {
 		DropdownMutator mutator = new DropdownMutator();
 		
 		mutator.add(GeoMapsAlgorithm.SHAPEFILE_ID,
-					GeoMapsAlgorithm.SHAPEFILES.keySet());
+					Constants.SHAPEFILES.keySet());
 		
 		mutator.add(GeoMapsAlgorithm.PROJECTION_ID,
-					GeoMapsAlgorithm.PROJECTIONS.keySet());
+					Constants.PROJECTIONS.keySet());
 		
 		mutator.add(RegionAnnotationMode.FEATURE_NAME_ID,
 					TableUtilities.getValidStringColumnNamesInTable(table));
@@ -37,7 +38,7 @@ public class GeoMapsRegionsFactory extends GeoMapsAlgorithmFactory {
 					ScalerFactory.SCALER_TYPES.keySet());
 
 		mutator.add(RegionAnnotationMode.FEATURE_COLOR_RANGE_ID,
-					RegionAnnotationMode.COLOR_RANGES.keySet());
+					Constants.COLOR_RANGES.keySet());
 		
 		return mutator.mutate(oldParameters);
 	}

@@ -17,6 +17,7 @@ import edu.iu.scipolicy.visualization.geomaps.ShapefileToPostScriptWriter;
 import edu.iu.scipolicy.visualization.geomaps.projection.GeometryProjector;
 import edu.iu.scipolicy.visualization.geomaps.scaling.LinearScaler;
 import edu.iu.scipolicy.visualization.geomaps.scaling.Scaler;
+import edu.iu.scipolicy.visualization.geomaps.utility.Constants;
 
 public class CirclePrinter {
 	public static final String INDENT = "  ";
@@ -31,8 +32,14 @@ public class CirclePrinter {
 	private MapDisplayer mapDisplayer;
 	public static final Scaler DEFAULT_CIRCLE_COLOR_QUANTITY_SCALER = new LinearScaler();
 	public static final Scaler DEFAULT_CIRCLE_AREA_SCALER = new LinearScaler();
-	public static final double DEFAULT_CIRCLE_AREA_MINIMUM = 80.0;
-	public static final double DEFAULT_CIRCLE_AREA_MAXIMUM = 750.0;
+	public static final double DEFAULT_CIRCLE_RADIUS_MINIMUM =
+		0.007 * Constants.MAP_PAGE_AREA_WIDTH_IN_POINTS;
+	public static final double DEFAULT_CIRCLE_AREA_MINIMUM =
+		Circle.calculateAreaFromRadius(DEFAULT_CIRCLE_RADIUS_MINIMUM);
+	public static final double DEFAULT_CIRCLE_RADIUS_MAXIMUM =
+		0.02 * Constants.MAP_PAGE_AREA_WIDTH_IN_POINTS;
+	public static final double DEFAULT_CIRCLE_AREA_MAXIMUM =
+		Circle.calculateAreaFromRadius(DEFAULT_CIRCLE_RADIUS_MAXIMUM);
 
 	public CirclePrinter(GeometryProjector geometryProjector,
 			MapDisplayer mapDisplayer) {

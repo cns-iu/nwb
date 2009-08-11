@@ -73,10 +73,14 @@ public class ShapefileToPostScriptWriter {
 		this.featureCollection = shapefileFeatureReader.getFeatureCollection();
 		this.geometryProjector = makeGeometryPreparer(projectedCRS);
 		this.mapDisplayer = calculateMapBoundingBox();
-		this.pageHeightInPoints = mapDisplayer.calculatePageHeightInPoints();
+		
+		this.pageHeightInPoints =
+			Constants.calculatePageHeightInPoints(mapDisplayer.getMapHeightInPoints());
+		
+		
 		this.featureNameKey = featureNameKey;
 	}
-	
+
 	public void setFeatureColorAnnotations(String subtitle, Map<String, Color> featureColorMap, LegendComponent featureColorGradient) {
 		this.subtitle = subtitle;
 		this.featureColorMap = featureColorMap;
@@ -110,7 +114,8 @@ public class ShapefileToPostScriptWriter {
 		out.write(mapDisplayer.toPostScript());
 		out.write("\n");
 		
-		FeaturePrinter featurePrinter = new FeaturePrinter(featureCollection, geometryProjector, mapDisplayer);
+		FeaturePrinter featurePrinter =
+			new FeaturePrinter(featureCollection, geometryProjector, mapDisplayer);
 		featurePrinter.printFeatures(out, featureColorMap, featureNameKey);
 
 		CirclePrinter circlePrinter = new CirclePrinter(geometryProjector, mapDisplayer);
@@ -232,7 +237,7 @@ public class ShapefileToPostScriptWriter {
 		GeoMapsAlgorithm.logger.log(LogService.LOG_INFO, "Printing PostScript.." + "\n");
 
 		out.write("%!PS-Adobe-3.0 EPSF-3.0" + "\n");
-		out.write((new DSCProlog(outputPSFileName, mapDisplayer.calculatePageHeightInPoints())).toPostScript());
+		out.write((new DSCProlog(outputPSFileName, pageHeightInPoints)).toPostScript());
 		
 		/* TODO
 		 * We're using setpagedevice to force page dimensions
@@ -245,7 +250,7 @@ public class ShapefileToPostScriptWriter {
 				+ "{ pop 1 dict" + "\n"
 				+ "dup /PageSize [ "
 					+ Constants.PAGE_WIDTH_IN_POINTS + " "
-					+ mapDisplayer.calculatePageHeightInPoints() + " "
+					+ pageHeightInPoints + " "
 				+ "] put" + "\n"
 				+ "setpagedevice" + "\n"
 				+ "} if" + "\n");

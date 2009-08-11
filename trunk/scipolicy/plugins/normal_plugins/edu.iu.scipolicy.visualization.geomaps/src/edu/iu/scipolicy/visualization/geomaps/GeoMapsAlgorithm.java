@@ -5,11 +5,7 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
-import java.util.Collections;
 import java.util.Dictionary;
-import java.util.HashMap;
-import java.util.LinkedHashMap;
-import java.util.Map;
 import java.util.Properties;
 
 import org.cishell.framework.CIShellContext;
@@ -25,43 +21,17 @@ import org.opengis.referencing.crs.ProjectedCRS;
 import org.osgi.service.log.LogService;
 
 import prefuse.data.Table;
+import edu.iu.scipolicy.visualization.geomaps.utility.Constants;
 
 public class GeoMapsAlgorithm implements Algorithm {
+	public static final String POSTSCRIPT_MIME_TYPE = "file:text/ps";
+
 	public static final String OUTPUT_FILE_EXTENSION = "eps";
 	
 	public static final String SHAPEFILE_ID = "shapefile";
 	
-	public static final Map<String, String> SHAPEFILES;
-	static {
-		// Values should correspond to .shp files in the shapefiles package
-		Map<String, String> t = new LinkedHashMap<String, String>();
-		t.put("Countries", "/edu/iu/scipolicy/visualization/geomaps/shapefiles/countries.shp");
-		t.put("US States", "/edu/iu/scipolicy/visualization/geomaps/shapefiles/statesp020.shp");		
-		SHAPEFILES = Collections.unmodifiableMap(t);
-	}	
-	public static final Map<String, String> FEATURE_NAME_KEY;
-	static {
-		/* Values should correspond to feature-identifying attribute of the 
-		 *respective shapefile
-		 */
-		Map<String, String> t = new HashMap<String, String>();
-		t.put("Countries", "NAME");
-		t.put("US States", "STATE");		
-		FEATURE_NAME_KEY = Collections.unmodifiableMap(t);
-	}
-	
 	public static final String PROJECTION_ID = "projection";
 	public static final String AUTHOR_NAME_ID = "authorName";
-	
-	public static final Map<String, String> PROJECTIONS;
-	static {
-		// Values should correspond to keys in projection/wellKnownTexts.properties
-		Map<String, String> t = new LinkedHashMap<String, String>();
-		t.put("Mercator", "mercator");
-		t.put("Albers Equal-Area Conic", "albersEqualArea");
-		t.put("Lambert Conformal Conic", "lambertConformalConic");
-		PROJECTIONS = Collections.unmodifiableMap(t);
-	}
 	
 	private Data[] data;
 	@SuppressWarnings("unchecked") // TODO
@@ -69,7 +39,6 @@ public class GeoMapsAlgorithm implements Algorithm {
 	private AnnotationMode annotationMode;
 	public static LogService logger;
 
-	
 	@SuppressWarnings("unchecked") // TODO
 	public GeoMapsAlgorithm(Data[] data, Dictionary parameters, CIShellContext context, AnnotationMode annotationMode) {
 		this.data = data;
@@ -93,11 +62,11 @@ public class GeoMapsAlgorithm implements Algorithm {
 		
 		final ClassLoader loader = getClass().getClassLoader();
 		String shapefileKey = (String) parameters.get(SHAPEFILE_ID);
-		String shapefilePath = GeoMapsAlgorithm.SHAPEFILES.get(shapefileKey);	
+		String shapefilePath = Constants.SHAPEFILES.get(shapefileKey);	
 		final URL shapefileURL = loader.getResource(shapefilePath);
 		final ProjectedCRS projectedCRS = getProjectedCRS();
 		
-		String featureNameKey = GeoMapsAlgorithm.FEATURE_NAME_KEY.get(shapefileKey);
+		String featureNameKey = Constants.FEATURE_NAME_KEY.get(shapefileKey);
 		
 		String authorName = (String) parameters.get(AUTHOR_NAME_ID);
 		
@@ -132,7 +101,7 @@ public class GeoMapsAlgorithm implements Algorithm {
 		}
 
 		String projectionName = (String) parameters.get(PROJECTION_ID);
-		String projectionWKTKey = GeoMapsAlgorithm.PROJECTIONS.get(projectionName);
+		String projectionWKTKey = Constants.PROJECTIONS.get(projectionName);
 		try {
 			return (ProjectedCRS) CRS.parseWKT(wellKnownTexts.getProperty(projectionWKTKey));
 
@@ -153,11 +122,12 @@ public class GeoMapsAlgorithm implements Algorithm {
 		}
 	}
 
+	
 	@SuppressWarnings("unchecked") // TODO
 	private Data[] formOutData(File postScriptFile, Data inDatum) {
 		Dictionary inMetaData = inDatum.getMetadata();
 
-		Data postScriptData = new BasicData(postScriptFile, "file:text/ps");
+		Data postScriptData = new BasicData(postScriptFile, POSTSCRIPT_MIME_TYPE);
 
 		Dictionary postScriptMetaData = postScriptData.getMetadata();
 
