@@ -61,8 +61,8 @@ public class ColorLegend extends LegendComponent {
 						   String keyLabel,
 						   double lowerLeftX,
 						   double lowerLeftY,
-						   double width, double
-						   height) {
+						   double width,
+						   double height) {
 		this.rawRange = rawRange;
 		this.scalingLabel = scaling;
 		this.rawMidColorQuantity = rawMidColorQuantity;
