@@ -2,12 +2,15 @@ package edu.iu.scipolicy.visualization.geomaps.legend;
 
 import java.awt.Color;
 
+import org.antlr.stringtemplate.StringTemplate;
+
+import edu.iu.scipolicy.visualization.geomaps.GeoMapsAlgorithm;
 import edu.iu.scipolicy.visualization.geomaps.utility.Constants;
 import edu.iu.scipolicy.visualization.geomaps.utility.Range;
 
 /* Create PostScript to draw a color gradient representing the extrema of the
  * interpolated range and label each end with the respective value in the raw
- * range (which is intended to be the respective value before scaling and
+ * range (which is intended to be the respective value before scalingLabel and
  * before interpolation).
  * 
  * This legend component has two captions:
@@ -19,17 +22,20 @@ public class ColorLegend extends LegendComponent {
 	 * A lesser positive integer means more fine, or less blocky.
 	 */
 	public static final int GRADIENT_RESOLUTION = 1;
-	public static final double EXTREMA_LABEL_GRAY = 0.0;
+	public static final double EXTREMA_LABEL_BRIGHTNESS = 0.0;
 	public static final double EXTREMA_LABEL_FONT_SIZE = 8;
-	public static final double TYPE_LABEL_GRAY = 0.0;
+	public static final double TYPE_LABEL_BRIGHTNESS = 0.0;
 	public static final double TYPE_LABEL_FONT_SIZE = 10;
-	public static final double SCALING_LABEL_GRAY = 0.5;
-	public static final double KEY_LABEL_GRAY = 0.5;
+	public static final double SCALING_LABEL_BRIGHTNESS = 0.5;
+	public static final double KEY_LABEL_BRIGHTNESS = 0.5;
 	public static final double KEY_LABEL_FONT_SIZE = 8;
-	public static final String FONT_NAME = Constants.FONT_NAME;	
+	public static final String FONT_NAME = Constants.FONT_NAME;
+	public static final int RED = 0;
+	public static final int GREEN = 1;
+	public static final int BLUE = 2;	
 
 	private Range<Double> rawRange;
-	private String scaling;
+	private String scalingLabel;
 	private double rawMidColorQuantity;
 	private Range<Color> interpolatedRange;
 	/* These "lower lefts" are the lower left corners of the key text,
@@ -43,7 +49,8 @@ public class ColorLegend extends LegendComponent {
 	private double gradientWidth;
 	private double gradientHeight;
 	private String typeLabel;
-	private String keyLabel;	
+	private String keyLabel;
+	private boolean hasPrintedDefinitions;
 	
 
 	public ColorLegend(Range<Double> rawRange,
@@ -57,7 +64,7 @@ public class ColorLegend extends LegendComponent {
 						   double width, double
 						   height) {
 		this.rawRange = rawRange;
-		this.scaling = scaling;
+		this.scalingLabel = scaling;
 		this.rawMidColorQuantity = rawMidColorQuantity;
 		this.interpolatedRange = interpolatedRange;
 		this.typeLabel = typeLabel;
@@ -66,54 +73,67 @@ public class ColorLegend extends LegendComponent {
 		this.lowerLeftY = lowerLeftY;
 		this.gradientWidth = width;
 		this.gradientHeight = height;
+		
+		this.hasPrintedDefinitions = false;
 	}
 
 	public String toPostScript() {
 		String s = "";
-
-		s += lowerLeftX + " ";
-		s += lowerLeftY + " ";
-
-		s += gradientWidth + " ";
-		s += gradientHeight + " ";
-
-		s += GRADIENT_RESOLUTION + " ";
-
+		
+		if (!hasPrintedDefinitions) {
+			StringTemplate definitionsTemplate =
+				GeoMapsAlgorithm.group.getInstanceOf("colorLegendDefinitions");
+			
+			s += definitionsTemplate.toString();
+			
+			this.hasPrintedDefinitions = true;
+		}
+		
+		
+		StringTemplate invocationTemplate =
+			GeoMapsAlgorithm.group.getInstanceOf("colorLegend");
+		
+		invocationTemplate.setAttribute("x", lowerLeftX);
+		invocationTemplate.setAttribute("y", lowerLeftY);
+		
+		invocationTemplate.setAttribute("gradientWidth", gradientWidth);
+		invocationTemplate.setAttribute("gradientHeight", gradientHeight);
+		
+		invocationTemplate.setAttribute("gradientResolution", GRADIENT_RESOLUTION);		
+		
 		float[] minColorComponents = new float[3];
 		interpolatedRange.getMin().getColorComponents(minColorComponents);
-
-		s += minColorComponents[0] + " ";
-		s += minColorComponents[1] + " ";
-		s += minColorComponents[2] + " ";
-
+		invocationTemplate.setAttribute("minColorRed", minColorComponents[RED]);
+		invocationTemplate.setAttribute("minColorGreen", minColorComponents[GREEN]);
+		invocationTemplate.setAttribute("minColorBlue", minColorComponents[BLUE]);
+		
 		float[] maxColorComponents = new float[3];
 		interpolatedRange.getMax().getColorComponents(maxColorComponents);
-
-		s += maxColorComponents[0] + " ";
-		s += maxColorComponents[1] + " ";
-		s += maxColorComponents[2] + " ";
-
-		s += "(" + prettyPrintDouble(rawRange.getMin()) + ")" + " ";
-		s += "(" + prettyPrintDouble(rawMidColorQuantity) + ")" + " ";
-		s += "(" + prettyPrintDouble(rawRange.getMax()) + ")" + " ";
-
-		s += EXTREMA_LABEL_GRAY + " ";
-		s += EXTREMA_LABEL_FONT_SIZE + " ";
-
-		s += "(" + typeLabel + ")" + " ";
-		s += TYPE_LABEL_GRAY + " ";
-		s += TYPE_LABEL_FONT_SIZE + " ";
+		invocationTemplate.setAttribute("maxColorRed", maxColorComponents[RED]);
+		invocationTemplate.setAttribute("maxColorGreen", maxColorComponents[GREEN]);
+		invocationTemplate.setAttribute("maxColorBlue", maxColorComponents[BLUE]);
 		
-		s += "(" + "(" + scaling+ ")" + ")" + " ";
-		s += SCALING_LABEL_GRAY + " ";
+		invocationTemplate.setAttribute("minLabel", prettyPrintDouble(rawRange.getMin()));
+		invocationTemplate.setAttribute("midLabel", prettyPrintDouble(rawMidColorQuantity));
+		invocationTemplate.setAttribute("maxLabel", prettyPrintDouble(rawRange.getMax()));
 		
-		s += "(" + keyLabel + ")" + " ";
-		s += KEY_LABEL_GRAY + " ";
-		s += KEY_LABEL_FONT_SIZE + " ";
-
-		s += "{/" + FONT_NAME + " findfont}" + " ";
-
-		s += "labeledgradient" + "\n";
+		invocationTemplate.setAttribute("extremaLabelBrightness", EXTREMA_LABEL_BRIGHTNESS);
+		invocationTemplate.setAttribute("extremaLabelFontSize", EXTREMA_LABEL_FONT_SIZE);
+		
+		invocationTemplate.setAttribute("typeLabel", typeLabel);
+		invocationTemplate.setAttribute("typeLabelBrightness", TYPE_LABEL_BRIGHTNESS);
+		invocationTemplate.setAttribute("typeLabelFontSize", TYPE_LABEL_FONT_SIZE);
+		
+		invocationTemplate.setAttribute("scalingLabel", "(" + scalingLabel + ")");
+		invocationTemplate.setAttribute("scalingLabelBrightness", SCALING_LABEL_BRIGHTNESS);
+		
+		invocationTemplate.setAttribute("keyLabel", keyLabel);
+		invocationTemplate.setAttribute("keyLabelBrightness", KEY_LABEL_BRIGHTNESS);
+		invocationTemplate.setAttribute("keyLabelFontSize", KEY_LABEL_FONT_SIZE);
+		
+		invocationTemplate.setAttribute("fontName", FONT_NAME);
+		
+		s += invocationTemplate.toString();
 
 		return s;
 	}

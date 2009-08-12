@@ -1,5 +1,8 @@
 package edu.iu.scipolicy.visualization.geomaps.printing;
 
+import org.antlr.stringtemplate.StringTemplate;
+
+import edu.iu.scipolicy.visualization.geomaps.GeoMapsAlgorithm;
 import edu.iu.scipolicy.visualization.geomaps.utility.Constants;
 
 public class PageFooter {	
@@ -22,8 +25,19 @@ public class PageFooter {
 
 	private static final String SEP = " | ";
 	
+	private boolean hasPrintedDefinitions = false;
+	
 	public String toPostScript() {
 		String s = "";
+		
+		if (!hasPrintedDefinitions) {
+			StringTemplate definitionsTemplate =
+				GeoMapsAlgorithm.group.getInstanceOf("showToolNameDefinitions");
+			
+			s += definitionsTemplate.toString();
+			
+			this.hasPrintedDefinitions = true;
+		}
 		
 		s += "gsave" + "\n";
 		s += "/" + FONT_NAME + " findfont" + "\n";

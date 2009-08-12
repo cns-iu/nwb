@@ -5,6 +5,7 @@ import java.io.BufferedWriter;
 import java.io.IOException;
 import java.util.List;
 
+import org.antlr.stringtemplate.StringTemplate;
 import org.cishell.framework.algorithm.AlgorithmExecutionException;
 import org.geotools.geometry.jts.JTSFactoryFinder;
 
@@ -13,6 +14,7 @@ import com.vividsolutions.jts.geom.Geometry;
 import com.vividsolutions.jts.geom.GeometryFactory;
 import com.vividsolutions.jts.geom.Point;
 
+import edu.iu.scipolicy.visualization.geomaps.GeoMapsAlgorithm;
 import edu.iu.scipolicy.visualization.geomaps.ShapefileToPostScriptWriter;
 import edu.iu.scipolicy.visualization.geomaps.projection.GeometryProjector;
 import edu.iu.scipolicy.visualization.geomaps.scaling.LinearScaler;
@@ -32,23 +34,40 @@ public class CirclePrinter {
 	private MapDisplayer mapDisplayer;
 	public static final Scaler DEFAULT_CIRCLE_COLOR_QUANTITY_SCALER = new LinearScaler();
 	public static final Scaler DEFAULT_CIRCLE_AREA_SCALER = new LinearScaler();
+	
 	public static final double DEFAULT_CIRCLE_RADIUS_MINIMUM =
 		0.007 * Constants.MAP_PAGE_AREA_WIDTH_IN_POINTS;
 	public static final double DEFAULT_CIRCLE_AREA_MINIMUM =
 		Circle.calculateAreaFromRadius(DEFAULT_CIRCLE_RADIUS_MINIMUM);
+	
 	public static final double DEFAULT_CIRCLE_RADIUS_MAXIMUM =
-		0.02 * Constants.MAP_PAGE_AREA_WIDTH_IN_POINTS;
+		0.03 * Constants.MAP_PAGE_AREA_WIDTH_IN_POINTS;
 	public static final double DEFAULT_CIRCLE_AREA_MAXIMUM =
 		Circle.calculateAreaFromRadius(DEFAULT_CIRCLE_RADIUS_MAXIMUM);
+	
+	private boolean hasPrintedDefinitions;
 
 	public CirclePrinter(GeometryProjector geometryProjector,
 			MapDisplayer mapDisplayer) {
 		this.geometryProjector = geometryProjector;
 		this.mapDisplayer = mapDisplayer;
+		
+		this.hasPrintedDefinitions = false;
 	}
 
 	public void printCircles(BufferedWriter out, List<Circle> circles) throws IOException, AlgorithmExecutionException {
 		out.write("% Circle annotations" + "\n");
+		
+		if (!hasPrintedDefinitions) {
+			StringTemplate definitionsTemplate =
+				GeoMapsAlgorithm.group.getInstanceOf("circlePrinterDefinitions");
+			
+			out.write(definitionsTemplate.toString());
+			
+			this.hasPrintedDefinitions = true;
+		}
+		
+		
 		out.write("gsave" + "\n");
 		out.write("\n");
 

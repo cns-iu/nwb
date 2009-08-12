@@ -1,18 +1,17 @@
 package edu.iu.scipolicy.visualization.geomaps;
 
 import java.awt.Color;
-import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.io.InputStreamReader;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.antlr.stringtemplate.StringTemplate;
 import org.cishell.framework.algorithm.AlgorithmExecutionException;
 import org.geotools.feature.FeatureCollection;
 import org.geotools.feature.FeatureIterator;
@@ -32,8 +31,8 @@ import edu.iu.scipolicy.visualization.geomaps.legend.LegendComponent;
 import edu.iu.scipolicy.visualization.geomaps.printing.Circle;
 import edu.iu.scipolicy.visualization.geomaps.printing.CirclePrinter;
 import edu.iu.scipolicy.visualization.geomaps.printing.DSCProlog;
-import edu.iu.scipolicy.visualization.geomaps.printing.MapDisplayer;
 import edu.iu.scipolicy.visualization.geomaps.printing.FeaturePrinter;
+import edu.iu.scipolicy.visualization.geomaps.printing.MapDisplayer;
 import edu.iu.scipolicy.visualization.geomaps.printing.PageFooter;
 import edu.iu.scipolicy.visualization.geomaps.printing.PageHeader;
 import edu.iu.scipolicy.visualization.geomaps.printing.PageTitle;
@@ -42,9 +41,6 @@ import edu.iu.scipolicy.visualization.geomaps.utility.Constants;
 import edu.iu.scipolicy.visualization.geomaps.utility.ShapefileFeatureReader;
 
 public class ShapefileToPostScriptWriter {
-	public static final String POST_SCRIPT_DEFINITIONS_PATH =
-		"/edu/iu/scipolicy/visualization/geomaps/printing/postScriptDefinitions.ps";
-
 	public static final String INDENT = "  ";
 	
 	public static final String MERCATOR_EPSG_CODE = "EPSG:3395";
@@ -101,7 +97,7 @@ public class ShapefileToPostScriptWriter {
 
 		writeCodeHeader(out, psFile.getName());
 		
-		writePostScriptDefinitions(out);
+		out.write(createPostScriptUtilityDefinitions());
 		out.write("\n");
 		
 		out.write((new PageHeader(authorName, dataLabel, pageHeightInPoints)).toPostScript() + "\n");
@@ -138,21 +134,11 @@ public class ShapefileToPostScriptWriter {
 		GeoMapsAlgorithm.logger.log(LogService.LOG_INFO, "Done.");
 	}
 
-	private void writePostScriptDefinitions(BufferedWriter out)
-			throws AlgorithmExecutionException, IOException {
-		final ClassLoader loader = getClass().getClassLoader();
-		BufferedReader postScriptDefinitionsReader =
-			new BufferedReader(new InputStreamReader(
-					loader.getResourceAsStream(POST_SCRIPT_DEFINITIONS_PATH)));
-		String line;
-		try {
-			while((line = postScriptDefinitionsReader.readLine()) != null) {
-				out.write(line + "\n");
-			}
-		} catch (IOException e) {
-			throw new AlgorithmExecutionException(e);
-		}
-		out.write("\n");
+	private String createPostScriptUtilityDefinitions() {
+		StringTemplate definitionsTemplate =
+			GeoMapsAlgorithm.group.getInstanceOf("utilityDefinitions");
+		
+		return definitionsTemplate.toString();
 	}
 
 	public static String makeSetRGBColorCommand(Color color) {

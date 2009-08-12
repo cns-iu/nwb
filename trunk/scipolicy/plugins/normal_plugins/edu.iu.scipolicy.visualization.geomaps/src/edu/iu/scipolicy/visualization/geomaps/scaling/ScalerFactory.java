@@ -7,7 +7,7 @@ import java.util.Map;
 import org.cishell.framework.algorithm.AlgorithmExecutionException;
 
 public class ScalerFactory {
-	private enum ScalerType { LINEAR_SCALER, LOG_SCALER };	
+	private enum ScalerType { LINEAR_SCALER, LOG_SCALER }
 	public static final Map<String, ScalerType> SCALER_TYPES;
 	static {
 		Map<String, ScalerType> t = new HashMap<String, ScalerType>();

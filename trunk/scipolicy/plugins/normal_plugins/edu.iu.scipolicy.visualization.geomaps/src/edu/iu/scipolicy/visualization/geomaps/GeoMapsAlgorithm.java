@@ -4,10 +4,12 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.net.URL;
 import java.util.Dictionary;
 import java.util.Properties;
 
+import org.antlr.stringtemplate.StringTemplateGroup;
 import org.cishell.framework.CIShellContext;
 import org.cishell.framework.algorithm.Algorithm;
 import org.cishell.framework.algorithm.AlgorithmExecutionException;
@@ -24,6 +26,9 @@ import prefuse.data.Table;
 import edu.iu.scipolicy.visualization.geomaps.utility.Constants;
 
 public class GeoMapsAlgorithm implements Algorithm {
+	public static final String STRING_TEMPLATE_FILE_PATH =		 
+		"/edu/iu/scipolicy/visualization/geomaps/stringtemplates/group.st";
+
 	public static final String POSTSCRIPT_MIME_TYPE = "file:text/ps";
 
 	public static final String OUTPUT_FILE_EXTENSION = "eps";
@@ -33,6 +38,8 @@ public class GeoMapsAlgorithm implements Algorithm {
 	public static final String PROJECTION_ID = "projection";
 	public static final String AUTHOR_NAME_ID = "authorName";
 	
+	
+	public static StringTemplateGroup group = loadTemplates();
 	private Data[] data;
 	@SuppressWarnings("unchecked") // TODO
 	private Dictionary parameters;
@@ -83,6 +90,13 @@ public class GeoMapsAlgorithm implements Algorithm {
 		Data[] outData = formOutData(temporaryPostScriptFile, inDatum);
 
 		return outData;
+	}
+	
+	private static StringTemplateGroup loadTemplates() {
+		return new StringTemplateGroup(
+				new InputStreamReader(
+					GeoMapsAlgorithm.class.getResourceAsStream(
+						STRING_TEMPLATE_FILE_PATH)));
 	}
 	
 	private ProjectedCRS getProjectedCRS() throws AlgorithmExecutionException {
