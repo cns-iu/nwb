@@ -5,8 +5,9 @@ import java.util.Collection;
 import java.util.List;
 
 import edu.iu.scipolicy.visualization.geomaps.utility.BinaryCondition;
-import edu.iu.scipolicy.visualization.geomaps.utility.Calculator;
+import edu.iu.scipolicy.visualization.geomaps.utility.Averager;
 import edu.iu.scipolicy.visualization.geomaps.utility.Range;
+import edu.iu.scipolicy.visualization.geomaps.utility.RelativeDifferenceLimit;
 
 
 public class ColorInterpolator implements Interpolator<Color> {
@@ -72,7 +73,7 @@ public class ColorInterpolator implements Interpolator<Color> {
 			 * We choose to return the mean with a hand-waving claim
 			 * of "numerical stability".
 			 */
-			return Calculator.mean(inversionSamples.toArray(new Double[0]));
+			return Averager.mean(inversionSamples.toArray(new Double[0]));
 		} else {
 			String message = 
 				"Unexpected error: Inverting interpolation of the Color " + color
@@ -159,40 +160,5 @@ public class ColorInterpolator implements Interpolator<Color> {
 		}
 		
 		return inversionSamples;
-	}
-	
-	
-	private class RelativeDifferenceLimit extends BinaryCondition<Double> {
-		private double tolerance;
-
-		public RelativeDifferenceLimit(double tolerance) {
-			this.tolerance = tolerance;
-		}
-		
-		// "Are x1 and x2 equal, up to the given tolerance?"
-		public boolean satisfiedBy(Double x1, Double x2) {
-			return (relativeDifference(x1, x2) <= tolerance);
-		}
-		
-		/* |x1 - x2| / max(|x1|, |x2|)
-		 * Smaller means closer to equal.
-		 * Think of as a forgiving measure of equality
-		 * for floating-point numbers.
-		 * Conventionally zero when x1 = x2 = 0.
-		 */
-		private double relativeDifference(double x1, double x2) {
-			if (x1 == x2) {
-				/* In particular this catches the case x1 == x2 == 0.0,
-				 * where the maxOfAbsolutes would be zero and would yield an
-				 * ArithmeticException below.
-				 */
-				return 0.0;
-			} else {
-				double absoluteDifference = Math.abs(x1 - x2);
-				double maxOfAbsolutes = Math.max(Math.abs(x1), Math.abs(x2));
-		
-				return (absoluteDifference / maxOfAbsolutes);
-			}
-		}		
 	}
 }

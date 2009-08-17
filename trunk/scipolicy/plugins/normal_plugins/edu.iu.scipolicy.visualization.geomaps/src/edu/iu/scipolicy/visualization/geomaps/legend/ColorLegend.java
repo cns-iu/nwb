@@ -17,7 +17,7 @@ import edu.iu.scipolicy.visualization.geomaps.utility.Range;
  * - typeLabel would be like "Blah Color"
  * - keyLabel would be like "Number of papers published"
  */
-public class ColorLegend extends LegendComponent {
+public class ColorLegend implements LegendComponent {
 	/* Width of each cell of the gradient in points.
 	 * A lesser positive integer means more fine, or less blocky.
 	 */
@@ -113,9 +113,12 @@ public class ColorLegend extends LegendComponent {
 		invocationTemplate.setAttribute("maxColorGreen", maxColorComponents[GREEN]);
 		invocationTemplate.setAttribute("maxColorBlue", maxColorComponents[BLUE]);
 		
-		invocationTemplate.setAttribute("minLabel", prettyPrintDouble(rawRange.getMin()));
-		invocationTemplate.setAttribute("midLabel", prettyPrintDouble(rawMidColorQuantity));
-		invocationTemplate.setAttribute("maxLabel", prettyPrintDouble(rawRange.getMax()));
+		UnsignedZeroDecimalFormat doubleFormatter =
+			UnsignedZeroDecimalFormat.createDecimalFormatOver(
+					rawRange.getMin(), rawMidColorQuantity, rawRange.getMax());
+		invocationTemplate.setAttribute("minLabel", doubleFormatter.format(rawRange.getMin()));
+		invocationTemplate.setAttribute("midLabel", doubleFormatter.format(rawMidColorQuantity));
+		invocationTemplate.setAttribute("maxLabel", doubleFormatter.format(rawRange.getMax()));
 		
 		invocationTemplate.setAttribute("extremaLabelBrightness", EXTREMA_LABEL_BRIGHTNESS);
 		invocationTemplate.setAttribute("extremaLabelFontSize", EXTREMA_LABEL_FONT_SIZE);

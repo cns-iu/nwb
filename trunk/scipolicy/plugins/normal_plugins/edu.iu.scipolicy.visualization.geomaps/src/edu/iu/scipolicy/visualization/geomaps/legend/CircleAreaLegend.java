@@ -16,7 +16,7 @@ import edu.iu.scipolicy.visualization.geomaps.utility.Range;
  * - typeLabel would be like "Circle Area"
  * - keyLabel would be like "Number of papers published"
  */
-public class CircleAreaLegend extends LegendComponent {
+public class CircleAreaLegend implements LegendComponent {
 	public static final double CIRCLE_BRIGHTNESS = 0.5;
 	public static final double EXTREMA_LABEL_BRIGHTNESS = 0.0;
 	public static final double EXTREMA_LABEL_FONT_SIZE = 8;
@@ -89,23 +89,34 @@ public class CircleAreaLegend extends LegendComponent {
 		
 		invocationTemplate.setAttribute("x", lowerLeftX);
 		invocationTemplate.setAttribute("y", lowerLeftY);
+		
 		invocationTemplate.setAttribute("minRadius", Circle.calculateRadiusFromArea(interpolatedRange.getMin()));
 		invocationTemplate.setAttribute("midRadius", Circle.calculateRadiusFromArea(areaMidrange));
 		invocationTemplate.setAttribute("maxRadius", Circle.calculateRadiusFromArea(interpolatedRange.getMax()));
+		
 		invocationTemplate.setAttribute("circleBrightness", CIRCLE_BRIGHTNESS);
-		invocationTemplate.setAttribute("minLabel", prettyPrintDouble(rawRange.getMin()));
-		invocationTemplate.setAttribute("midLabel", prettyPrintDouble(rawMidArea));
-		invocationTemplate.setAttribute("maxLabel", prettyPrintDouble(rawRange.getMax()));
+		
+		UnsignedZeroDecimalFormat doubleFormatter =
+			UnsignedZeroDecimalFormat.createDecimalFormatOver(
+					rawRange.getMin(), rawMidArea, rawRange.getMax());
+		invocationTemplate.setAttribute("minLabel", doubleFormatter.format(rawRange.getMin()));
+		invocationTemplate.setAttribute("midLabel", doubleFormatter.format(rawMidArea));
+		invocationTemplate.setAttribute("maxLabel", doubleFormatter.format(rawRange.getMax()));
+		
 		invocationTemplate.setAttribute("extremaLabelBrightness", EXTREMA_LABEL_BRIGHTNESS);
 		invocationTemplate.setAttribute("extremaLabelFontSize", EXTREMA_LABEL_FONT_SIZE);
+		
 		invocationTemplate.setAttribute("typeLabel", typeLabel);
 		invocationTemplate.setAttribute("typeLabelBrightness", TYPE_LABEL_BRIGHTNESS);
 		invocationTemplate.setAttribute("typeLabelFontSize", TYPE_LABEL_FONT_SIZE);
+		
 		invocationTemplate.setAttribute("scalingLabel", "(" + scalingLabel + ")");
 		invocationTemplate.setAttribute("scalingLabelBrightness", SCALING_LABEL_BRIGHTNESS);
+		
 		invocationTemplate.setAttribute("keyLabel", keyLabel);
 		invocationTemplate.setAttribute("keyLabelBrightness", KEY_LABEL_BRIGHTNESS);
 		invocationTemplate.setAttribute("keyLabelFontSize", KEY_LABEL_FONT_SIZE);
+		
 		invocationTemplate.setAttribute("fontName", FONT_NAME);
 
 		s += invocationTemplate.toString();

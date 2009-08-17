@@ -5,7 +5,7 @@ import java.awt.Color;
 import com.vividsolutions.jts.geom.Coordinate;
 
 import edu.iu.scipolicy.visualization.geomaps.ShapefileToPostScriptWriter;
-import edu.iu.scipolicy.visualization.geomaps.utility.Calculator;
+import edu.iu.scipolicy.visualization.geomaps.utility.Averager;
 import edu.iu.scipolicy.visualization.geomaps.utility.Constants;
 
 public class MapDisplayer {
@@ -29,8 +29,8 @@ public class MapDisplayer {
 			double dataMaxY) {
 		this.displayCenterXInPoints = Constants.MAP_CENTER_X_IN_POINTS;
 
-		this.dataCenterX = Calculator.mean(dataMinX, dataMaxX);
-		this.dataCenterY = Calculator.mean(dataMinY, dataMaxY);
+		this.dataCenterX = Averager.mean(dataMinX, dataMaxX);
+		this.dataCenterY = Averager.mean(dataMinY, dataMaxY);
 
 		this.scale = calculateScale(dataMinX, dataMaxX);
 

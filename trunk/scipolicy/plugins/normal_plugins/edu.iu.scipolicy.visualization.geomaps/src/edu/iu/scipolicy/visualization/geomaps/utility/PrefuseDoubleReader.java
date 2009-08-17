@@ -14,6 +14,8 @@ import prefuse.data.Tuple;
  * read a double value.
  * 
  * Always check that specified() is true before trying to get().
+ * 
+ * TODO Could this class be replaced by org.cishell.utilities.NumberUtilities?
  */
 public class PrefuseDoubleReader {
 	private enum TupleDoubleSpecification { NONE, NUMBER, DOUBLE_ARRAY, FLOAT_ARRAY, INTEGER_ARRAY }

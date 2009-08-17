@@ -33,10 +33,9 @@ import edu.iu.scipolicy.visualization.geomaps.printing.CirclePrinter;
 import edu.iu.scipolicy.visualization.geomaps.scaling.ListScaler;
 import edu.iu.scipolicy.visualization.geomaps.scaling.Scaler;
 import edu.iu.scipolicy.visualization.geomaps.scaling.ScalerFactory;
-import edu.iu.scipolicy.visualization.geomaps.utility.Calculator;
+import edu.iu.scipolicy.visualization.geomaps.utility.Averager;
 import edu.iu.scipolicy.visualization.geomaps.utility.Constants;
 import edu.iu.scipolicy.visualization.geomaps.utility.PrefuseDoubleReader;
-import edu.iu.scipolicy.visualization.geomaps.utility.RGBAverager;
 import edu.iu.scipolicy.visualization.geomaps.utility.Range;
 
 public class CircleAnnotationMode implements AnnotationMode {	
@@ -104,7 +103,7 @@ public class CircleAnnotationMode implements AnnotationMode {
 				interpolatedAreas = areaListInterpolator.getInterpolatedList(scaledAreas);
 				
 				Range<Double> actualInterpolatedAreaRange = Range.calculateRange(interpolatedAreas);
-				double areaMidrange = Calculator.mean(actualInterpolatedAreaRange.getMin(), actualInterpolatedAreaRange.getMax());
+				double areaMidrange = Averager.mean(actualInterpolatedAreaRange.getMin(), actualInterpolatedAreaRange.getMax());
 				double areaMidrangePreimage = areaInterpolator.invert(areaMidrange);
 				double rawMidArea = areaScaler.invert(areaMidrangePreimage);
 				
@@ -138,7 +137,7 @@ public class CircleAnnotationMode implements AnnotationMode {
 				ListInterpolator<Color> colorQuantityListInterpolator = new ListInterpolator<Color>(colorQuantityInterpolator);
 				interpolatedColors = colorQuantityListInterpolator.getInterpolatedList(scaledColorQuantities);
 	
-				Color colorMidrange = RGBAverager.mean(colorRange.getMin(), colorRange.getMax());
+				Color colorMidrange = Averager.mean(colorRange.getMin(), colorRange.getMax());
 				double colorMidrangePreimage = colorQuantityInterpolator.invert(colorMidrange);
 				double rawMidColorQuantity = colorQuantityScaler.invert(colorMidrangePreimage);
 				

@@ -25,9 +25,9 @@ import edu.iu.scipolicy.visualization.geomaps.legend.NullLegendComponent;
 import edu.iu.scipolicy.visualization.geomaps.scaling.ListScaler;
 import edu.iu.scipolicy.visualization.geomaps.scaling.Scaler;
 import edu.iu.scipolicy.visualization.geomaps.scaling.ScalerFactory;
+import edu.iu.scipolicy.visualization.geomaps.utility.Averager;
 import edu.iu.scipolicy.visualization.geomaps.utility.Constants;
 import edu.iu.scipolicy.visualization.geomaps.utility.PrefuseDoubleReader;
-import edu.iu.scipolicy.visualization.geomaps.utility.RGBAverager;
 import edu.iu.scipolicy.visualization.geomaps.utility.Range;
 
 public class RegionAnnotationMode implements AnnotationMode {
@@ -84,7 +84,7 @@ public class RegionAnnotationMode implements AnnotationMode {
 					interpolatedFeatureColorMap.put(featureName, color);				
 				}
 				
-				Color colorMidrange = RGBAverager.mean(featureColorRange.getMin(), featureColorRange.getMax());
+				Color colorMidrange = Averager.mean(featureColorRange.getMin(), featureColorRange.getMax());
 				double colorMidrangePreInterpolation = featureColorQuantityInterpolator.invert(colorMidrange);
 				double rawMidColorQuantity = featureColorQuantityScaler.invert(colorMidrangePreInterpolation);
 				

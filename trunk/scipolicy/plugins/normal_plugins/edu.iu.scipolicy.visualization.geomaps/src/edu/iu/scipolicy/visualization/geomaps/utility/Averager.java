@@ -2,7 +2,24 @@ package edu.iu.scipolicy.visualization.geomaps.utility;
 
 import java.awt.Color;
 
-public class RGBAverager {
+
+public class Averager {
+	
+	public static double mean(Double... values) {
+		if (values.length > 0) {
+			// Beware overflow when values.length is large
+			double sum = 0.0;
+			
+			for (double value : values) {				
+				sum += value;
+			}
+			
+			return (sum / values.length);
+		} else {
+			return 0.0;
+		}
+	}
+
 	public static Color mean(Color... colors) {
 		// Beware overflow when colors.length is large
 		double redTotal = 0.0;
