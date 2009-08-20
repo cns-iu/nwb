@@ -5,9 +5,11 @@
 	<menu pid= "org.cishell.reference.gui.persistence.load.FileLoad"/>
 	<menu pid="edu.iu.nwb.composite.isiloadandclean.ISILoadAndCleanAlgorithm"/>
 	<menu pid= "edu.iu.nwb.preprocessing.prefuse.beta.directoryhierarchyreader.DirectoryHierarchyReaderAlgorithm"/>
+	<!-- 
 	<menu name = "Datasets" type="group">
 		<menu pid="org.mediavirus.parvis.sampledata.pcvis_data.txt"/>									  
 	</menu>	
+	 -->
 	<menu type="break"/>
 	<menu pid= "org.cishell.reference.gui.persistence.save.Save"/>
 	<menu type="break"/>
@@ -48,8 +50,11 @@
 	<menu pid="edu.iu.nwb.analysis.symmetrize.Symmetrize"/>
 	<menu pid="edu.iu.nwb.analysis.dichotomize.Dichotomize"/>
 	<menu pid="edu.iu.nwb.analysis.multipartitejoining.JoiningAlgorithm"/>
+	<menu type="break"/>
 	<menu pid="edu.iu.nwb.preprocessing.text.normalization.StandardNormalyzer"/>
 	<menu pid="edu.iu.nwb.preprocessing.timeslice.Slice"/>
+    <menu pid="edu.iu.scipolicy.filtering.topnpercent.TopNPercentAlgorithm"/>
+    <menu pid="edu.iu.scipolicy.filtering.topn.TopNAlgorithm"/>
     </top_menu>   
      
     <top_menu name="Modeling">
@@ -137,7 +142,7 @@
 	</menu>
 	<menu name = "Weighted and Undirected" type="group">
 	</menu>
-	<menu name = "Weighted and Directed" type="group">
+	<menu name = "Weighted &amp;&amp; Directed" type="group">
 		<menu pid="edu.iu.nwb.analysis.hits.HitsAlgorithm"/>
 	</menu>
 	<!--  
@@ -164,6 +169,7 @@
 	<menu pid="edu.iu.nwb.visualization.jungnetworklayout.JUNGCircleLayout"/>
 	-->
  	<menu type="break"/>
+ 	<menu pid="edu.iu.nwb.visualization.roundrussell.RoundRussellAlgorithm"/>
 	<menu pid="edu.iu.nwb.visualization.radialgraph.RadialGraph"/> 
 	<menu pid="edu.iu.nwb.visualization.prefuse.beta.radialgraph.RadialGraph"/>
 	<menu pid="edu.iu.nwb.visualization.prefuse.beta.treemap.TreeMap"/>
@@ -180,12 +186,14 @@
 	<menu pid="edu.iu.nwb.visualization.prefuse.beta.fruchtermanreingold.FruchtermanReingold"/>
 	<!--  
 	<menu pid="edu.iu.nwb.visualization.jungnetworklayout.JUNGSpringLayout"/>
-	-->
+	
 	<menu pid="edu.iu.nwb.visualization.prefuse.alpha.smallworld.app.SmallWorld"/>
 	<menu type="break"/>
 	<menu pid="org.mediavirus.parvis.ParallelCoordinatesAlgorithm"/>
+
 	<menu type="break"/>
 	<menu pid="nwb.visualization.lanet"/>	
+	 -->
 	</top_menu>
 
     <top_menu name="Scientometrics">    
