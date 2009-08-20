@@ -52,4 +52,7 @@ public class WelcomeTextActivator {
 	public static WelcomeTextActivator getDefault() {
 		return plugin;
 	}
+	
+	public void earlyStartup(){
+	}
 }
