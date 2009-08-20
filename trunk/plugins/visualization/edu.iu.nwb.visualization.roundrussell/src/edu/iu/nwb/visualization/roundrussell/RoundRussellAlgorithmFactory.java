@@ -2,27 +2,27 @@ package edu.iu.nwb.visualization.roundrussell;
 
 import java.io.File;
 import java.io.IOException;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.Dictionary;
-import java.util.Iterator;
 import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
 
 import org.cishell.framework.CIShellContext;
 import org.cishell.framework.algorithm.Algorithm;
 import org.cishell.framework.algorithm.AlgorithmFactory;
 import org.cishell.framework.algorithm.ParameterMutator;
 import org.cishell.framework.data.Data;
-import org.cishell.reference.service.metatype.BasicAttributeDefinition;
-import org.cishell.reference.service.metatype.BasicObjectClassDefinition;
-import org.osgi.service.metatype.AttributeDefinition;
+import org.cishell.utilities.MapUtilities;
+import org.cishell.utilities.mutateParameter.DropdownMutator;
+import org.osgi.framework.BundleContext;
+import org.osgi.service.component.ComponentContext;
 import org.osgi.service.metatype.ObjectClassDefinition;
 
 import edu.iu.nwb.util.nwbfile.GetNWBFileMetadata;
 import edu.iu.nwb.util.nwbfile.NWBFileParser;
 import edu.iu.nwb.util.nwbfile.NWBFileProperty;
 import edu.iu.nwb.util.nwbfile.ParsingException;
+import edu.iu.nwb.visualization.roundrussell.utility.Constants;
 
 /**
  * @author cdtank
@@ -31,9 +31,21 @@ import edu.iu.nwb.util.nwbfile.ParsingException;
 
 public class RoundRussellAlgorithmFactory implements AlgorithmFactory, ParameterMutator  {
 	
-	public final static String NO_EDGE_WEIGHT_IDENTIFIER = "Unweighted";
-	public final static String NO_STRENGTH_IDENTIFIER = "No Strength";
-	public final static String NO_LEVEL_IDENTIFIER = "No Level";
+	public static final String NO_EDGE_WEIGHT_IDENTIFIER = "Unweighted";
+	public static final String NO_STRENGTH_IDENTIFIER = "No Strength";
+	public static final String NO_COLOR_IDENTIFIER = "No Node Color";
+	public static final String NO_LEVEL_IDENTIFIER = "No Level";
+	
+	private static URL postScriptHeaderPath;
+	private static final String postScriptHeaderFilePath = "postScriptHeader.ps";
+
+	protected void activate(ComponentContext ctxt) {
+    	BundleContext bContext = ctxt.getBundleContext();
+    	
+    	this.postScriptHeaderPath = bContext.getBundle().getResource(postScriptHeaderFilePath);
+    	PostScriptOperations.setPostScriptHeaderFile(postScriptHeaderPath);
+    	
+    }
 	
 	public Algorithm createAlgorithm(Data[] data, Dictionary parameters, CIShellContext context) {
 		return new RoundRussellAlgorithm(data, parameters, context);
@@ -52,222 +64,117 @@ public class RoundRussellAlgorithmFactory implements AlgorithmFactory, Parameter
 			return parameters;
 		}
 		
+		String[] nodeStrengthAttribute =
+			MapUtilities.getValidKeysOfTypesInMap(
+					metaDataHandler.getNodeSchema(),
+					(String[]) NWBFileProperty.NUMERIC_ATTRIBUTE_TYPES.toArray(new String[0]),
+					new String[]{ NWBFileProperty.ATTRIBUTE_ID },
+					new String[]{ NO_STRENGTH_IDENTIFIER });
 		
-		BasicObjectClassDefinition definition;
-		try {
-			definition = new BasicObjectClassDefinition(parameters.getID(), parameters.getName(), parameters.getDescription(), parameters.getIcon(16));
-		} catch (IOException e) {
-			definition = new BasicObjectClassDefinition(parameters.getID(), parameters.getName(), parameters.getDescription(), null);
-		}
-		
-		String[] edgeAttributes;
-		
-		String[] nodeStrengthAttribute, nodeLevelAttribute;
-		nodeStrengthAttribute = createNodeStrengthAttributeKeys(metaDataHandler.getNodeSchema());
-		nodeLevelAttribute = createNodeLevelAttributeKeys(metaDataHandler.getNodeSchema());
-		
-		if(metaDataHandler.getDirectedEdgeSchema() != null){
-			edgeAttributes = createEdgeAttributeKeyArray(metaDataHandler.getDirectedEdgeSchema());	
-		}
-		else {
-			edgeAttributes = createEdgeAttributeKeyArray(metaDataHandler.getUndirectedEdgeSchema());
-		}
+		String[] nodeColorAttribute =
+			MapUtilities.getValidKeysOfTypesInMap(
+					metaDataHandler.getNodeSchema(),
+					(String[]) NWBFileProperty.NUMERIC_ATTRIBUTE_TYPES.toArray(new String[0]),
+					new String[]{ NWBFileProperty.ATTRIBUTE_ID },
+					new String[]{ NO_COLOR_IDENTIFIER });
 
-		AttributeDefinition[] attributeDefinitions = parameters.getAttributeDefinitions(ObjectClassDefinition.ALL);
-
-		for(int ii = 0; ii < attributeDefinitions.length; ii++) {
-			String id = attributeDefinitions[ii].getID();
-			
-			if(id.equals("weightcolumn")) {
-				definition.addAttributeDefinition(ObjectClassDefinition.REQUIRED,
-						new BasicAttributeDefinition(attributeDefinitions[ii].getID(), 
-								attributeDefinitions[ii].getName(), 
-								attributeDefinitions[ii].getDescription(), 
-								attributeDefinitions[ii].getType(),
-								0, getDefaultOption(edgeAttributes, "weight"),
-								null,
-								edgeAttributes, 
-								edgeAttributes));
-			}  
-			else if(id.equals("strengthcolumn")) {
-				definition.addAttributeDefinition(ObjectClassDefinition.REQUIRED,
-						new BasicAttributeDefinition(attributeDefinitions[ii].getID(), 
-								attributeDefinitions[ii].getName(), 
-								attributeDefinitions[ii].getDescription(), 
-								attributeDefinitions[ii].getType(),
-								0, getDefaultOption(nodeStrengthAttribute, "strength"),
-								null,
-								nodeStrengthAttribute, 
-								nodeStrengthAttribute));
-			}
-			else if(id.equals("level0_column")) {
-				definition.addAttributeDefinition(ObjectClassDefinition.REQUIRED,
-						new BasicAttributeDefinition(attributeDefinitions[ii].getID(), 
-								attributeDefinitions[ii].getName(), 
-								attributeDefinitions[ii].getDescription(), 
-								attributeDefinitions[ii].getType(),
-								0, getDefaultLevelOption(nodeLevelAttribute, 0),
-								null,
-								nodeLevelAttribute, 
-								nodeLevelAttribute));
-			}
-			else if(id.equals("level1_column")) {
-				definition.addAttributeDefinition(ObjectClassDefinition.REQUIRED,
-						new BasicAttributeDefinition(attributeDefinitions[ii].getID(), 
-								attributeDefinitions[ii].getName(), 
-								attributeDefinitions[ii].getDescription(), 
-								attributeDefinitions[ii].getType(), 
-								0, getDefaultLevelOption(nodeLevelAttribute, 1),
-								null,
-								nodeLevelAttribute, 
-								nodeLevelAttribute));
-			}
-			else if(id.equals("level2_column")) {
-				definition.addAttributeDefinition(ObjectClassDefinition.REQUIRED,
-						new BasicAttributeDefinition(attributeDefinitions[ii].getID(), 
-								attributeDefinitions[ii].getName(), 
-								attributeDefinitions[ii].getDescription(), 
-								attributeDefinitions[ii].getType(), 
-								0, getDefaultLevelOption(nodeLevelAttribute, 2),
-								null,
-								nodeLevelAttribute, 
-								nodeLevelAttribute));
-			}
-			else if(id.equals("level3_column")) {
-				definition.addAttributeDefinition(ObjectClassDefinition.REQUIRED,
-						new BasicAttributeDefinition(attributeDefinitions[ii].getID(), 
-								attributeDefinitions[ii].getName(), 
-								attributeDefinitions[ii].getDescription(), 
-								attributeDefinitions[ii].getType(),
-								0, getDefaultLevelOption(nodeLevelAttribute, 3),
-								null,
-								nodeLevelAttribute, 
-								nodeLevelAttribute));
-			}
-			else {
-				definition.addAttributeDefinition(ObjectClassDefinition.REQUIRED, attributeDefinitions[ii]);
-			}
+		String[] nodeLevelAttribute =
+			MapUtilities.getValidKeysOfTypesInMap(
+					metaDataHandler.getNodeSchema(),
+					(String[]) NWBFileProperty.ALL_ATTRIBUTE_TYPES.toArray(new String[0]),
+					new String[]{ NWBFileProperty.ATTRIBUTE_ID },
+					new String[]{ NO_LEVEL_IDENTIFIER });
+		
+		
+		LinkedHashMap edgeSchema;
+		if (metaDataHandler.getDirectedEdgeSchema() != null) {
+			edgeSchema  = metaDataHandler.getDirectedEdgeSchema();
+		} else {
+			edgeSchema = metaDataHandler.getUndirectedEdgeSchema();
 		}
+		
+		String[] edgeAttributes =
+			MapUtilities.getValidKeysOfTypesInMap(
+					edgeSchema,
+					(String[]) NWBFileProperty.NUMERIC_ATTRIBUTE_TYPES.toArray(new String[0]),
+					new String[]{ NWBFileProperty.ATTRIBUTE_SOURCE, 
+								  NWBFileProperty.ATTRIBUTE_TARGET },
+					new String[]{ NO_EDGE_WEIGHT_IDENTIFIER });
+		
+		DropdownMutator mutator = new DropdownMutator();		
+		
+		mutator.add(RoundRussellAlgorithm.STRENGTH_COLUMN_ID, 
+					nodeStrengthAttribute,
+					getMatchedKey(nodeStrengthAttribute, "strength"));
+		
+		mutator.add(RoundRussellAlgorithm.LEVEL0_COLUMN_ID, 
+					nodeLevelAttribute,
+					getDefaultLevelOption(nodeLevelAttribute, 0));
 
-		return definition;
+		mutator.add(RoundRussellAlgorithm.LEVEL1_COLUMN_ID, 
+					nodeLevelAttribute,
+					getDefaultLevelOption(nodeLevelAttribute, 1));
+		
+		mutator.add(RoundRussellAlgorithm.LEVEL2_COLUMN_ID, 
+					nodeLevelAttribute,
+					getDefaultLevelOption(nodeLevelAttribute, 2));
+		
+		mutator.add(RoundRussellAlgorithm.LEVEL3_COLUMN_ID, 
+					nodeLevelAttribute,
+					getDefaultLevelOption(nodeLevelAttribute, 3));
+		
+		mutator.add(RoundRussellAlgorithm.WEIGHT_COLUMN_ID, 
+					edgeAttributes,
+					getMatchedKey(edgeAttributes, "weight"));
+		
+		mutator.add(RoundRussellAlgorithm.NODE_COLOR_COLUMN_ID, 
+					nodeColorAttribute,
+					getMatchedKey(nodeColorAttribute, "color"));
+		
+		mutator.add(RoundRussellAlgorithm.NODE_COLOR_RANGE_ID, 
+					new ArrayList<String>(Constants.COLOR_RANGES.keySet()));
+		
+		return mutator.mutate(parameters);
 	}
 	
 	/*
 	 * To smartly select the appropriate level column name from the drop down box.
 	 * */
-	private String[] getDefaultLevelOption(String[] nodeLevelAttribute, int levelIndicator) {
-		
-		for(int attributesIndex = 0; 
+	private String getDefaultLevelOption(String[] nodeLevelAttribute, int levelIndicator) {
+		for (int attributesIndex = 0; 
 				attributesIndex < nodeLevelAttribute.length; 
-				attributesIndex++ ) {
+				attributesIndex++) {			
+			String lowerCaseNodeLevelAttributeName = 
+				nodeLevelAttribute[attributesIndex].toLowerCase();
 			
-			String lowerCaseNodeLevelAttributeName = nodeLevelAttribute[attributesIndex].toLowerCase();
-			if(lowerCaseNodeLevelAttributeName.contains("level") 
-				&& lowerCaseNodeLevelAttributeName.contains(String.valueOf(levelIndicator))) {
-				return new String[] { nodeLevelAttribute[attributesIndex] };
+			if (lowerCaseNodeLevelAttributeName.contains("level") 
+					&& lowerCaseNodeLevelAttributeName.contains(String.valueOf(levelIndicator))) {
+				return nodeLevelAttribute[attributesIndex];
 			}
 	    }
 		
-		for(int attributesIndex = 0; attributesIndex < nodeLevelAttribute.length; attributesIndex++ ) {
-			String lowerCaseNodeLevelAttributeName = nodeLevelAttribute[attributesIndex].toLowerCase();
-			if(lowerCaseNodeLevelAttributeName.contains("level")) {
-				return new String[] { nodeLevelAttribute[attributesIndex] }; 
-			}
-	    }
-		return null;
+		return NO_LEVEL_IDENTIFIER;
 	}
 	
 	/*
 	 * To smartly select the appropriate strength or weight column name from
 	 *  the drop down box.
 	 */
-	private String[] getDefaultOption(String[] attributeNames,
-									  String suggestedPattern) {
-		
+	private String getMatchedKey(String[] attributeNames,
+									  String suggestedPattern) {		
 		String lowerCaseSuggestedPattern = suggestedPattern.toLowerCase();
 		
-		for(int attributesIndex = 0;
+		for (int attributesIndex = 0;
 				attributesIndex < attributeNames.length;
-				attributesIndex++ ) {
+				attributesIndex++) {
 			String lowerCaseAttributeName =
 				attributeNames[attributesIndex].toLowerCase();
-			if(lowerCaseAttributeName.contains(lowerCaseSuggestedPattern)) {
-				return new String[] { attributeNames[attributesIndex] };
+
+			if (lowerCaseAttributeName.contains(lowerCaseSuggestedPattern)) {
+				return attributeNames[attributesIndex];
 			}
 	    }
+		
 		return null;
-	}
-
-	/**
-	 * Used to create strength key array from the node attribute columns from the selected nwb file, 
-	 * except the node id column & the columns with "string" type.
-	 */
-	private String[] createNodeStrengthAttributeKeys(LinkedHashMap nodeSchema) {
-		List<String> goodKeys = new ArrayList<String>();
-		
-		/*
-		 * In order to skip "node id" options.
-		 * */
-		Iterator keysSkip = nodeSchema.keySet().iterator();
-		keysSkip.next();
-		
-		for (Iterator keys = keysSkip; keys.hasNext(); ) {
-			String key = keys.next().toString();
-			
-				/*
-				 * Strength column cannot have the type "String".
-				 * */
-				 if(!nodeSchema.get(key).equals(NWBFileProperty.TYPE_STRING)) {
-					 goodKeys.add(key);
-				 }
-				
-		}
-		goodKeys.add(NO_STRENGTH_IDENTIFIER);
-		return (String[]) goodKeys.toArray(new String[]{});
-	}
-
-	/**
-	 * Used to create level key array from the node attribute columns from the selected nwb file, 
-	 * except the node id column.
-	 * @param nodeSchema
-	 * @return
-	 */
-	private String[] createNodeLevelAttributeKeys(LinkedHashMap nodeSchema) {
-		List<String> goodKeys = new ArrayList<String>();
-		goodKeys.add(NO_LEVEL_IDENTIFIER);
-		
-		/*
-		 * In order to skip "node id" options.
-		 * */
-		Iterator keysSkip = nodeSchema.keySet().iterator();
-		keysSkip.next();
-		
-		for (Iterator keys = keysSkip; keys.hasNext(); ) {
-			String key = keys.next().toString();
-				goodKeys.add(key);
-		}
-		
-		return (String[]) goodKeys.toArray(new String[]{});
-	}
-
-	private String[] createEdgeAttributeKeyArray(Map schema) {
-		
-		List goodKeys = new ArrayList();
-		
-		/*
-		 * In order to skip "source" & "target" options for the edge weight column.
-		 * */
-		Iterator keysSkip = schema.keySet().iterator();
-		keysSkip.next();
-		keysSkip.next();
-		
-		for (Iterator keys = keysSkip; keys.hasNext(); ) {
-			String key = keys.next().toString();
-			if (!schema.get(key).equals(NWBFileProperty.TYPE_STRING)) {
-				goodKeys.add(key);
-			}
-		}
-		goodKeys.add(NO_EDGE_WEIGHT_IDENTIFIER);
-		return (String[]) goodKeys.toArray(new String[]{});
 	}
 }

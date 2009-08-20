@@ -28,6 +28,14 @@ public class NWBFileProperty {
     		TYPE_FLOAT,
     		TYPE_REAL
     	});
+    
+    public static final List ALL_ATTRIBUTE_TYPES =
+    	Arrays.asList(new String[]{ 
+    		TYPE_INT,
+    		TYPE_STRING,
+    		TYPE_FLOAT,
+    		TYPE_REAL
+    	});
      
 //    public static final String HEADER_NODE_ATTRIBUTES = "*NodeAttributes";
 //    public static final String HEADER_EDGE_ATTRIBUTES = "*EdgeAttributes";
