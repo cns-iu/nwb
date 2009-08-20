@@ -3,11 +3,11 @@
 <plugin>
    	<extension point="org.eclipse.core.runtime.products" id="cishell">
 	   <product
-	      name="SciPolicy Tool"
+	      name="Sci&#xb2; Tool"
           application="org.cishell.reference.gui.workspace.CIShellApplication">
 	       <property
 	             name="appName"
-	             value="SciPolicy Tool"/>
+	             value="Sci&#xb2; Tool"/>
 	       <property
 	             name="aboutImage"
 	             value="icons/about.gif"/>
