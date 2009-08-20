@@ -79,6 +79,7 @@
     
     <top_menu name="Analysis">
     <menu pid="edu.iu.nwb.toolkit.networkanalysis"/>
+    <menu type="break"/>
 	<menu name = "Unweighted &amp;&amp; Undirected" type="group">
 		<menu pid="edu.iu.nwb.analysis.java.nodedegree"/>
 		<menu pid="edu.iu.nwb.analysis.totaldegreedistribution"/>
@@ -194,8 +195,9 @@
 	<menu type="break"/>
 	<menu pid="nwb.visualization.lanet"/>	
 	 -->
+	 <menu type="break"/>
 	 <menu pid="edu.iu.scipolicy.references.map.MapReferences"/>
-	 
+	 <menu type="break"/>
 	</top_menu>
 
     <top_menu name="Scientometrics">    
