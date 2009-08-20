@@ -1,30 +1,16 @@
 package edu.iu.nwb.analysis.hits;
 
 
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.StringTokenizer;
-
-import org.cishell.framework.data.BasicData;
-import org.cishell.framework.data.Data;
 
 import cern.colt.matrix.DoubleFactory2D;
 import cern.colt.matrix.DoubleMatrix2D;
 import cern.jet.math.Functions;
-import edu.iu.nwb.converter.nwb.common.NWBAttribute;
-import edu.iu.nwb.util.nwbfile.NWBFileParser;
 import edu.iu.nwb.util.nwbfile.NWBFileParserHandler;
-import edu.iu.nwb.util.nwbfile.NWBFileProperty;
-import edu.iu.nwb.util.nwbfile.ParsingException;
 
 public class HITSComputation  implements NWBFileParserHandler {
 	
@@ -48,7 +34,7 @@ public class HITSComputation  implements NWBFileParserHandler {
 	public HITSComputation(int numberOfNodes, int numberOfIterations,
 			String edgeWeightColumnName) {
 		
-		nodeCountForMatrix = 0;
+		this.nodeCountForMatrix = 0;
 		
 		this.numberOfNodes = numberOfNodes;
 		this.numberOfIterations = numberOfIterations;
