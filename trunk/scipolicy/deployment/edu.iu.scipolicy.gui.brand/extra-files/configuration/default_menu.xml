@@ -99,7 +99,7 @@
 		<menu pid="edu.iu.nwb.analysis.kcore.Extract"/>
         <menu pid="edu.iu.nwb.analysis.kcore.Annotate"/>
         <menu type="break"/>	
-		<menu pid="edu.iu.nwb.analysis.hits.HitsAlgorithm"/>
+		<menu pid="edu.iu.nwb.analysis.hits.HITSAlgorithm"/>
 	</menu>
 	<menu name = "Weighted &amp;&amp; Undirected" type="group">
 		<menu pid="edu.iu.nwb.analysis.weighted.averageclusteringcoefficient"/>
@@ -111,7 +111,7 @@
 		<menu pid="edu.iu.nwb.analysis.weighted.weightdistribution"/>
 		<menu pid="edu.iu.nwb.analysis.weighted.randomweight"/>
 		<menu type="break"/>	
-		<menu pid="edu.iu.nwb.analysis.hits.HitsAlgorithm"/>
+		<menu pid="edu.iu.nwb.analysis.hits.HITSAlgorithm"/>
 	</menu>
 	<menu name = "Unweighted &amp;&amp; Directed" type="group">
 		<menu pid="edu.iu.nwb.analysis.java.nodeindegree"/>
@@ -137,13 +137,13 @@
 		<menu pid="edu.iu.nwb.analysis.kcore.Extract"/>
         <menu pid="edu.iu.nwb.analysis.kcore.Annotate"/>
         <menu type="break"/>	
-		<menu pid="edu.iu.nwb.analysis.hits.HitsAlgorithm"/>
+		<menu pid="edu.iu.nwb.analysis.hits.HITSAlgorithm"/>
 	<menu type="break"/>			
 	</menu>
 	<menu name = "Weighted and Undirected" type="group">
 	</menu>
 	<menu name = "Weighted &amp;&amp; Directed" type="group">
-		<menu pid="edu.iu.nwb.analysis.hits.HitsAlgorithm"/>
+		<menu pid="edu.iu.nwb.analysis.hits.HITSAlgorithm"/>
 	</menu>
 	<!--  
 	<menu type="break"/>	
@@ -194,6 +194,8 @@
 	<menu type="break"/>
 	<menu pid="nwb.visualization.lanet"/>	
 	 -->
+	 <menu pid="edu.iu.scipolicy.references.map.MapReferences"/>
+	 
 	</top_menu>
 
     <top_menu name="Scientometrics">    
