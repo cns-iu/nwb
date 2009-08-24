@@ -89,9 +89,7 @@
 		<menu pid="edu.iu.nwb.analysis.java.nodedegree"/>
 		<menu pid="edu.iu.nwb.analysis.totaldegreedistribution"/>
         <menu type="break"/>
-        <!--  
-		<menu pid="edu.iu.nwb.analysis.undirectedknn"/>
-		-->
+		<menu pid="edu.iu.nwb.analysis.java.undirectedknn"/>
 		<menu pid="edu.iu.nwb.analysis.clustering"/>
 		<menu pid="edu.iu.nwb.analysis.clustering_vs_k"/>
 	 	<menu type="break"/>	
