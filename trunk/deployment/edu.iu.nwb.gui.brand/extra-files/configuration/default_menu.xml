@@ -38,9 +38,6 @@
 	<menu pid="edu.iu.nwb.analysis.selfloops.Remove"/>
 	<menu pid="edu.iu.nwb.preprocessing.trimedges.Trim"/>
 	<menu type="break"/>
-	<menu pid="edu.iu.nwb.preprocessing.pathfindernetworkscaling.mst.MSTPathfinderNetworkScalingAlgorithm"/>
-	<menu pid="edu.iu.nwb.preprocessing.pathfindernetworkscaling.fast.FastPathfinderNetworkScalingAlgorithm"/>
-	<menu type="break"/>
 	<menu pid="edu.iu.nwb.analysis.sampling.snowball.SnowballAlgorithm"/>
 	<menu pid="edu.iu.nwb.analysis.sampling.node.NodeAlgorithm"/>
 	<menu pid="edu.iu.nwb.analysis.sampling.edge.EdgeAlgorithm"/>
@@ -89,6 +86,8 @@
 		<menu pid="edu.iu.nwb.analysis.weakcomponentclustering.ClusteringAlgorithm"/>
 		<menu pid="edu.iu.nwb.analysis.blondelcommunitydetection.BlondelCommunityDetectionAlgorithm"/>
 		<menu type="break"/>
+		<menu pid="edu.iu.nwb.preprocessing.pathfindernetworkscaling.mst.MSTPathfinderNetworkScalingAlgorithm"/>
+		<menu type="break"/>
 		<menu pid="edu.iu.nwb.analysis.kcore.Extract"/>
         <menu pid="edu.iu.nwb.analysis.kcore.Annotate"/>
 	</menu>
@@ -102,6 +101,10 @@
 		<menu pid="edu.iu.nwb.analysis.weighted.strengthdistribution"/>
 		<menu pid="edu.iu.nwb.analysis.weighted.weightdistribution"/>
 		<menu pid="edu.iu.nwb.analysis.weighted.randomweight"/>
+		<menu type="break"/>
+		<menu pid="edu.iu.nwb.preprocessing.pathfindernetworkscaling.mst.MSTPathfinderNetworkScalingAlgorithm"/>
+	    <menu pid="edu.iu.nwb.preprocessing.pathfindernetworkscaling.fast.FastPathfinderNetworkScalingAlgorithm"/>
+	    <menu type="break"/>
 		<menu pid="edu.iu.nwb.analysis.blondelcommunitydetection.BlondelCommunityDetectionAlgorithm"/>
 	</menu>
 	<menu name = "Unweighted and Directed" type="group">
@@ -122,8 +125,8 @@
 		<menu type="break"/>
 		<menu pid="edu.iu.nwb.analysis.weakcomponentclustering.ClusteringAlgorithm"/>	
 		<menu pid="edu.iu.nwb.analysis.java.strongcomponentclustering"/>
-			<menu pid="edu.iu.nwb.analysis.blondelcommunitydetection.BlondelCommunityDetectionAlgorithm"/>			
-		<menu pid="edu.iu.nwb.analysis.extractattractors.algorithms.ExtractAttractorsAlgorithm"/>	
+	    <menu type="break"/>
+		<menu pid="edu.iu.nwb.analysis.blondelcommunitydetection.BlondelCommunityDetectionAlgorithm"/>	
 		<menu type="break"/>
 		<menu pid="edu.iu.nwb.analysis.kcore.Extract"/>
         <menu pid="edu.iu.nwb.analysis.kcore.Annotate"/>
@@ -132,6 +135,8 @@
 	<menu name = "Weighted and Directed" type="group">
 		<menu pid="edu.iu.nwb.analysis.hits.HITSAlgorithm"/>
 		<menu pid="edu.iu.nwb.analysis.pagerank.weighted.WeightedPagerank"/>
+		<menu type="break"/>
+	    <menu pid="edu.iu.nwb.preprocessing.pathfindernetworkscaling.fast.FastPathfinderNetworkScalingAlgorithm"/>
 		<menu type="break"/>
 		<menu pid="edu.iu.nwb.analysis.blondelcommunitydetection.BlondelCommunityDetectionAlgorithm"/>
 	</menu>
