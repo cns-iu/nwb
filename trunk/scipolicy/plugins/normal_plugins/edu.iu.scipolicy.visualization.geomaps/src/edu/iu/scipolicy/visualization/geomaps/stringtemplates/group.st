@@ -22,6 +22,25 @@ utilityDefinitions() ::= <<
 	0 1 index {3 -1 roll add} repeat exch div
 } def
 
+% <string> underlinedShow
+% Pops a string
+% Shows the string underlined
+/underlinedShowDict 1 dict def
+/underlinedShow {
+	underlinedShowDict begin
+		/UNDERLINE_THICKNESS 0.1 def
+		/UNDERLINE_VERTICAL_OFFSET -0.8 def
+
+		gsave
+			0 UNDERLINE_VERTICAL_OFFSET rmoveto
+			dup stringwidth rlineto
+			UNDERLINE_THICKNESS setlinewidth stroke
+		grestore
+		
+		show
+	end
+} bind def
+
 >>
 
 

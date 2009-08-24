@@ -6,6 +6,7 @@ import java.util.Calendar;
 import edu.iu.scipolicy.visualization.geomaps.utility.Constants;
 
 public class PageHeader {
+	public static final String INDENT = "    ";
 	public static final String SEP = " | ";
 	
 	public static final String FONT_NAME = Constants.FONT_NAME;
@@ -51,18 +52,18 @@ public class PageHeader {
 	}
 	
 	public String toPostScript() {
-		String s = "";
+		StringBuilder builder = new StringBuilder();
 		
-		s += "gsave" + "\n";
-		s += "/" + FONT_NAME + " findfont" + "\n";
-		s += FONT_SIZE + " scalefont" + "\n";
-		s += "setfont" + "\n";
-		s += FONT_BRIGHTNESS + " setgray" + "\n";
-		s += LOWER_LEFT_X_IN_POINTS + " " + lowerLeftYInPoints + " moveto" + "\n";
-		s += "(" + escapeForPostScript(toString()) + ") show" + "\n";
-		s += "grestore" + "\n";
+		builder.append("gsave" + "\n");
+		builder.append(INDENT + "/" + FONT_NAME + " findfont" + "\n");
+		builder.append(INDENT + FONT_SIZE + " scalefont" + "\n");
+		builder.append(INDENT + "setfont" + "\n");
+		builder.append(INDENT + FONT_BRIGHTNESS + " setgray" + "\n");
+		builder.append(INDENT + LOWER_LEFT_X_IN_POINTS + " " + lowerLeftYInPoints + " moveto" + "\n");
+		builder.append(INDENT + "(" + escapeForPostScript(toString()) + ") show" + "\n");
+		builder.append("grestore" + "\n");
 		
-		return s;
+		return builder.toString();
 	}
 	
 	public static String escapeForPostScript(String string) {

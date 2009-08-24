@@ -5,14 +5,13 @@ import org.antlr.stringtemplate.StringTemplate;
 import edu.iu.scipolicy.visualization.geomaps.GeoMapsAlgorithm;
 import edu.iu.scipolicy.visualization.geomaps.utility.Constants;
 
-public class PageFooter {	
-	public static final String FOOTER_STRING_PREFIX =
-		"Created with the ";
+public class PageFooter {
+	public static final String INDENT = "    ";
+	public static final String ATTRIBUTION_PREFIX =	"Created with the ";
 	
 	public static final String CNS_URL = "http://cns.slis.indiana.edu";
-	public static final String FOOTER_STRING_SUFFIX =
-		"Cyberinfrastructure for Network Science Center "
-		+ "(" + CNS_URL + ")";	
+	public static final String CNS =
+		"Cyberinfrastructure for Network Science Center";
 	
 	public static final String FONT_NAME = Constants.FONT_NAME;
 	public static final double FONT_SIZE = 6;
@@ -28,34 +27,38 @@ public class PageFooter {
 	private boolean hasPrintedDefinitions = false;
 	
 	public String toPostScript() {
-		String s = "";
+		StringBuilder builder = new StringBuilder();
 		
 		if (!hasPrintedDefinitions) {
 			StringTemplate definitionsTemplate =
 				GeoMapsAlgorithm.group.getInstanceOf("showToolNameDefinitions");
 			
-			s += definitionsTemplate.toString();
+			builder.append(definitionsTemplate.toString());
 			
 			this.hasPrintedDefinitions = true;
 		}
 		
-		s += "gsave" + "\n";
-		s += "/" + FONT_NAME + " findfont" + "\n";
-		s += FONT_SIZE + " scalefont" + "\n";
-		s += "setfont" + "\n";
-		s += FONT_BRIGHTNESS + " setgray" + "\n";
-		s += LOWER_LEFT_X_IN_POINTS + " " + LOWER_LEFT_Y_IN_POINTS + " moveto" + "\n";
-		s += "(" + FOOTER_STRING_PREFIX + ") show" + "\n";
+		builder.append("gsave" + "\n");
+		builder.append(INDENT + "/" + FONT_NAME + " findfont" + "\n");
+		builder.append(INDENT + FONT_SIZE + " scalefont" + "\n");
+		builder.append(INDENT + "setfont" + "\n");
+		builder.append(INDENT + FONT_BRIGHTNESS + " setgray" + "\n");		
+		builder.append(INDENT + LOWER_LEFT_X_IN_POINTS + " " + LOWER_LEFT_Y_IN_POINTS + " moveto" + "\n");
 		
-		s += "currentpoint" + " ";
-		s += "{/" + FONT_NAME + " findfont}" + " ";
-		s += FONT_BRIGHTNESS + " ";
-		s += FONT_SIZE + " ";
-		s += "showToolName moveto" + "\n";
+		builder.append(INDENT + "(" + ATTRIBUTION_PREFIX + ") show" + "\n");
 		
-		s += "(" + SEP + FOOTER_STRING_SUFFIX + ") show" + "\n";
-		s += "grestore" + "\n";
+		builder.append(INDENT + "currentpoint" + " ");
+		builder.append("{/" + FONT_NAME + " findfont}" + " ");
+		builder.append(FONT_BRIGHTNESS + " ");
+		builder.append(FONT_SIZE + " ");
+		builder.append("showToolName moveto" + "\n");
 		
-		return s;
+		builder.append(INDENT + "(" + SEP + CNS + " " + ")" + " show" + "\n");
+		builder.append(INDENT + "(" + "\\(" + ")" + " show" + "\n");
+		builder.append(INDENT + "(" + CNS_URL + ")" + " underlinedShow" + "\n");
+		builder.append(INDENT + "(" + "\\)" + ")" + " show" + "\n");
+		builder.append("grestore" + "\n");
+		
+		return builder.toString();
 	}
 }
