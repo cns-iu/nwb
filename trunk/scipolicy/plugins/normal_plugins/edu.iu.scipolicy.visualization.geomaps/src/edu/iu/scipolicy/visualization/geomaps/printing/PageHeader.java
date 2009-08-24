@@ -74,7 +74,7 @@ public class PageHeader {
 	public static String timestamp() {
 		Calendar cal = Calendar.getInstance();
 	    SimpleDateFormat sdf =
-	    	new SimpleDateFormat("EEE, d MMM yyyy");// HH:mm:ss Z");
+	    	new SimpleDateFormat("EEEEEEEEEEEEE, dd MMMMMMMMMMMM, yyyy HH:mm zzz");
 	    return sdf.format(cal.getTime());
 	}
 }
