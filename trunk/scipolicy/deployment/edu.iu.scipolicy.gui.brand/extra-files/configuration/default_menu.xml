@@ -41,7 +41,11 @@
  	<menu pid="edu.iu.nwb.preprocessing.extractnodesandedges.extractedges.abovebelow.ExtractEdgesAboveBelowAlgorithm"/>
 	<menu pid="edu.iu.nwb.analysis.selfloops.Remove"/>
 	<menu pid="edu.iu.nwb.preprocessing.trimedges.Trim"/>
+	<!-- 
 	<menu pid="edu.iu.nwb.analysis.pathfindergraphnetworkscaling.PathfinderGraphAlgorithm"/>
+	 -->
+	<menu pid="edu.iu.nwb.preprocessing.pathfindernetworkscaling.mst.MSTPathfinderNetworkScalingAlgorithm"/>
+	<menu pid="edu.iu.nwb.preprocessing.pathfindernetworkscaling.fast.FastPathfinderNetworkScalingAlgorithm"/>
 	<menu type="break"/>
 	<menu pid="edu.iu.nwb.analysis.sampling.snowball.SnowballAlgorithm"/>
 	<menu pid="edu.iu.nwb.analysis.sampling.node.NodeAlgorithm"/>
