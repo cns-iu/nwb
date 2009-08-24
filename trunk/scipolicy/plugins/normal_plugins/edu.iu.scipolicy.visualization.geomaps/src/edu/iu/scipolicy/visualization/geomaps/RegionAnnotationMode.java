@@ -1,13 +1,12 @@
 package edu.iu.scipolicy.visualization.geomaps;
 
 import java.awt.Color;
-import java.util.ArrayList;
 import java.util.Dictionary;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 import org.cishell.framework.algorithm.AlgorithmExecutionException;
+import org.cishell.utilities.NumberUtilities;
 import org.osgi.service.log.LogService;
 
 import prefuse.data.Table;
@@ -16,21 +15,21 @@ import prefuse.data.util.TableIterator;
 import edu.iu.scipolicy.visualization.geomaps.interpolation.ColorInterpolator;
 import edu.iu.scipolicy.visualization.geomaps.interpolation.Interpolator;
 import edu.iu.scipolicy.visualization.geomaps.interpolation.InterpolatorInversionException;
-import edu.iu.scipolicy.visualization.geomaps.interpolation.ListInterpolator;
 import edu.iu.scipolicy.visualization.geomaps.interpolation.ZeroLengthInterpolatorInputRangeException;
 import edu.iu.scipolicy.visualization.geomaps.legend.ColorLegend;
 import edu.iu.scipolicy.visualization.geomaps.legend.Legend;
 import edu.iu.scipolicy.visualization.geomaps.legend.LegendComponent;
 import edu.iu.scipolicy.visualization.geomaps.legend.NullLegendComponent;
-import edu.iu.scipolicy.visualization.geomaps.scaling.ListScaler;
 import edu.iu.scipolicy.visualization.geomaps.scaling.Scaler;
 import edu.iu.scipolicy.visualization.geomaps.scaling.ScalerFactory;
 import edu.iu.scipolicy.visualization.geomaps.utility.Averager;
 import edu.iu.scipolicy.visualization.geomaps.utility.Constants;
-import edu.iu.scipolicy.visualization.geomaps.utility.PrefuseDoubleReader;
 import edu.iu.scipolicy.visualization.geomaps.utility.Range;
 
-public class RegionAnnotationMode implements AnnotationMode {
+public class RegionAnnotationMode extends AnnotationMode {
+	public static final double COLOR_GRADIENT_WIDTH =
+		0.90 * Legend.DEFAULT_WIDTH_IN_POINTS;
+	public static final int COLOR_GRADIENT_HEIGHT = 15;
 	public static final String FEATURE_NAME_ID = "featureName";
 	public static final String FEATURE_COLOR_QUANTITY_ID = "featureColorQuantity";
 	public static final String FEATURE_COLOR_SCALING_ID = "featureColorScaling";
@@ -38,10 +37,8 @@ public class RegionAnnotationMode implements AnnotationMode {
 	public static final String DEFAULT_FEATURE_NAME_ATTRIBUTE_KEY = "NAME";
 	
 	public static final String SUBTITLE = "with colored region annotations";
+	public static final Color DEFAULT_FEATURE_COLOR = null;
 	
-	private Map<String, Integer> featureIDs;
-	private List<Double> featureColorQuantities;
-
 	/* 1: Grab the relevant parameters
      * 2: Read the color data from inTable
 	 * 3: Scale the color data
@@ -50,96 +47,135 @@ public class RegionAnnotationMode implements AnnotationMode {
 	 * 6: Apply this annotation (the List<Circle> and the LegendComponents) to postScriptWriter
 	 */
 	@SuppressWarnings("unchecked") // TODO
-	public void applyAnnotations(ShapefileToPostScriptWriter shapefileToPostScript, Table inTable, Dictionary parameters) throws AlgorithmExecutionException {
-		String featureNameAttribute = (String) parameters.get(FEATURE_NAME_ID);
-		String featureColorQuantityAttribute = (String) parameters.get(FEATURE_COLOR_QUANTITY_ID);
-		String featureColorScaling = (String) parameters.get(FEATURE_COLOR_SCALING_ID);
-		Scaler featureColorQuantityScaler = ScalerFactory.createScaler(featureColorScaling);
-		String featureColorRangeKey = (String) parameters.get(FEATURE_COLOR_RANGE_ID);
-		Range<Color> featureColorRange = Constants.COLOR_RANGES.get(featureColorRangeKey);
+	public void applyAnnotations(
+			ShapefileToPostScriptWriter shapefileToPostScript,
+			Table inTable,
+			Dictionary parameters)
+				throws AlgorithmExecutionException {
+		String nameAttribute = (String) parameters.get(FEATURE_NAME_ID);
+		String colorValueAttribute = (String) parameters.get(FEATURE_COLOR_QUANTITY_ID);
+		String colorValueScaling = (String) parameters.get(FEATURE_COLOR_SCALING_ID);
+		Scaler colorValueScaler = ScalerFactory.createScaler(colorValueScaling);
+		String colorRangeKey = (String) parameters.get(FEATURE_COLOR_RANGE_ID);
+		Range<Color> colorRange = Constants.COLOR_RANGES.get(colorRangeKey);
 		
-		getFeatureData(inTable, featureNameAttribute, featureColorQuantityAttribute, featureColorQuantityScaler);
 		
-		if ( featureColorQuantities.isEmpty() ) {
-			throw new AlgorithmExecutionException("No data found for region color annotations.");
+		Range<Double> colorValueScalableRange =
+			AnnotationMode.calculateScalableRangeOverColumn(
+					inTable,
+					colorValueAttribute,
+					colorValueScaler);
+		Interpolator<Color> colorInterpolator;
+		try {
+			colorInterpolator =
+				new ColorInterpolator(
+						colorValueScaler.scale(colorValueScalableRange),
+						colorRange);
+		} catch (ZeroLengthInterpolatorInputRangeException e) {
+			throw new AlgorithmExecutionException(
+					"Cannot interpolate feature colors due to: " + e.getMessage(), e);
 		}
-		else {
-			// Scale and interpolate feature colors
-			ListScaler featureColorQuantityListScaler = new ListScaler(featureColorQuantityScaler);
-			List<Double> scaledFeatureColorQuantities = featureColorQuantityListScaler.scale(featureColorQuantities);
-			Range<Double> featureColorQuantityScalableRange = featureColorQuantityListScaler.getScalableRange();
-			
-			Map<String, Color> interpolatedFeatureColorMap = new HashMap<String, Color>();
-			LegendComponent featureColorGradient = new NullLegendComponent();
-			try {
-				Interpolator<Color> featureColorQuantityInterpolator = new ColorInterpolator(scaledFeatureColorQuantities, featureColorRange);
-				List<Color> interpolatedFeatureColors = (new ListInterpolator<Color>(featureColorQuantityInterpolator)).getInterpolatedList(scaledFeatureColorQuantities );
-				
-				interpolatedFeatureColorMap = new HashMap<String, Color>();
-				for ( Map.Entry<String, Integer> featureID : featureIDs.entrySet() ) {
-					String featureName = featureID.getKey();
-					int id = featureID.getValue();
-					Color color = interpolatedFeatureColors.get(id);
-					
-					interpolatedFeatureColorMap.put(featureName, color);				
-				}
-				
-				Color colorMidrange = Averager.mean(featureColorRange.getMin(), featureColorRange.getMax());
-				double colorMidrangePreInterpolation = featureColorQuantityInterpolator.invert(colorMidrange);
-				double rawMidColorQuantity = featureColorQuantityScaler.invert(colorMidrangePreInterpolation);
-				
-				// Add feature color legend
-				double featureColorGradientLowerLeftX = Legend.DEFAULT_LOWER_LEFT_X_IN_POINTS;
-				double featureColorGradientLowerLeftY = Legend.DEFAULT_LOWER_LEFT_Y_IN_POINTS;
-				double featureColorGradientWidth = 0.90 * Legend.DEFAULT_WIDTH_IN_POINTS;
-				double featureColorGradientHeight = 15;
-				String featureColorTypeLabel = "Region Color";	
-				
-				featureColorGradient = new ColorLegend(featureColorQuantityScalableRange, featureColorScaling, rawMidColorQuantity, featureColorRange, featureColorTypeLabel, featureColorQuantityAttribute, featureColorGradientLowerLeftX, featureColorGradientLowerLeftY, featureColorGradientWidth, featureColorGradientHeight);
-			} catch (ZeroLengthInterpolatorInputRangeException e) {
-				GeoMapsAlgorithm.logger.log(
-						LogService.LOG_WARNING,
-						"Warning: Couldn't interpolate region colors: " + e.getMessage(),
-						e);
-				} catch (InterpolatorInversionException e) {
-					GeoMapsAlgorithm.logger.log(
-						LogService.LOG_WARNING,
-						"Warning: Couldn't reverse interpolation "
-							+ "to make region color legend: " + e.getMessage(),
-						e);
-				}
-			
-			shapefileToPostScript.setFeatureColorAnnotations(SUBTITLE, interpolatedFeatureColorMap, featureColorGradient);
-		}
-	}
-
-	private void getFeatureData(Table inTable, String featureNameAttribute, String featureColorQuantityAttribute, Scaler featureColorQuantityScaler) throws AlgorithmExecutionException {
-		featureIDs = new HashMap<String, Integer>();
-		featureColorQuantities = new ArrayList<Double>();
-				
-		int duplicateFeatureNameKeys = 0;
-		int id = 0;
-		for( TableIterator tableIterator = inTable.iterator(); tableIterator.hasNext(); ) {
+		
+		
+		int duplicateFeatureNames = 0;
+		int unreadableColorValues = 0;
+		Map<String, Color> featureColors = new HashMap<String, Color>();
+		for (TableIterator tableIterator = inTable.iterator(); tableIterator.hasNext(); ) {
 			Tuple row = inTable.getTuple(tableIterator.nextInt());
+			
+			if (row.canGetString(nameAttribute)) {
+				String featureName = row.getString(nameAttribute);
 
-			boolean featureNameSpecified = row.canGetString(featureNameAttribute);
-			boolean featureColorQuantitySpecified = PrefuseDoubleReader.isSpecified(row, featureColorQuantityAttribute);
-			if ( featureNameSpecified && featureColorQuantitySpecified ) {					
-				String featureName = row.getString(featureNameAttribute);
-				double featureColorQuantity = PrefuseDoubleReader.get(row, featureColorQuantityAttribute);//(Double) row.get(featureColorQuantityAttribute);
-				
-				if ( featureIDs.containsKey(featureName) ) {
-					duplicateFeatureNameKeys++;
-				}
-				else {					
-					featureColorQuantities.add(featureColorQuantity);
-					featureIDs.put(featureName, id);
-					id++;
+				if (featureColors.containsKey(featureName)) {
+					duplicateFeatureNames++;
+				} else {
+					try {
+						double featureColorValue =
+							NumberUtilities.interpretObjectAsDouble(
+									row.get(colorValueAttribute));
+						
+						if (colorValueScaler.canScale(featureColorValue)) {				
+							Color featureColor =
+								colorInterpolator.interpolate(
+									colorValueScaler.scale(featureColorValue));
+							
+							featureColors.put(featureName, featureColor);
+						}
+					} catch (NumberFormatException e) {
+						unreadableColorValues++;
+					}
 				}
 			}
 		}
-		if ( duplicateFeatureNameKeys > 0 ) {
-			GeoMapsAlgorithm.logger.log(LogService.LOG_WARNING, duplicateFeatureNameKeys + " duplicate feature name keys detected.  Only the first was read.");
+		
+		if (duplicateFeatureNames > 0) {
+			GeoMapsAlgorithm.logger.log(
+					LogService.LOG_WARNING,
+					duplicateFeatureNames
+					+ " duplicate feature name keys detected.  "
+					+ "Only the first was read in each case.");
 		}
+		
+		if (unreadableColorValues > 0) {
+			GeoMapsAlgorithm.logger.log(
+					LogService.LOG_WARNING,
+					unreadableColorValues
+					+ " rows in the table had values in the "
+					+ colorValueAttribute
+					+ " column that could not be read as numbers.  "
+					+ "Those rows were ignored.");
+		}
+
+		LegendComponent legend =
+			createLegend(
+				colorValueAttribute,
+				colorValueScaling,
+				colorValueScaler,
+				colorValueScalableRange,
+				colorInterpolator,
+				colorRange);
+		
+		shapefileToPostScript.setFeatureColorAnnotations(SUBTITLE, featureColors, legend);
+	}
+	
+	private LegendComponent createLegend(
+			String attribute,
+			String scaling,
+			Scaler scaler,
+			Range<Double> scalableRange,
+			Interpolator<Color> colorInterpolator,
+			Range<Color> colorRange)
+				throws AlgorithmExecutionException {
+		LegendComponent featureColorGradient = new NullLegendComponent();
+		try {
+			Color colorMidrange =
+				Averager.mean(
+						colorRange.getMin(),
+						colorRange.getMax());
+			double colorMidrangePreInterpolation =
+				colorInterpolator.invert(colorMidrange);
+			double rawMidColorQuantity =
+				scaler.invert(colorMidrangePreInterpolation);
+			
+			featureColorGradient =
+				new ColorLegend(
+						scalableRange,
+						scaling,
+						rawMidColorQuantity,
+						colorRange,
+						"Region Color",
+						attribute,
+						Legend.DEFAULT_LOWER_LEFT_X_IN_POINTS,
+						Legend.DEFAULT_LOWER_LEFT_Y_IN_POINTS,
+						COLOR_GRADIENT_WIDTH,
+						COLOR_GRADIENT_HEIGHT);
+		} catch (InterpolatorInversionException e) {
+			throw new AlgorithmExecutionException(
+					"Couldn't create region color legend: "
+					+ e.getMessage(),
+					e);
+		}
+		
+		return featureColorGradient;
 	}
 }

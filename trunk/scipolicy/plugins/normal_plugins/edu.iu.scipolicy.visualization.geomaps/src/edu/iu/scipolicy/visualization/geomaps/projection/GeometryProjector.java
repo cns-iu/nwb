@@ -82,7 +82,8 @@ public class GeometryProjector {
 		cropGeometries.add(CropGeometryBuilder.createSouthPoleGeometry(SOUTH_POLE_CROP_HEIGHT_DEGREES));
 	}
 
-	public Geometry projectGeometry(Geometry originalGeometry) throws AlgorithmExecutionException {
+	public Geometry projectGeometry(Geometry originalGeometry)
+			throws TransformException {
 		Geometry croppedGeometry = cropGeometry(originalGeometry, cropGeometries);
 		Geometry projectedGeometry = transformGeometry(croppedGeometry);
 		return projectedGeometry;
@@ -100,15 +101,9 @@ public class GeometryProjector {
 	 * Some callers, like CirclePrinter, must be sure that their passed Geometry
 	 * is not cropped out.
 	 */
-	public Geometry transformGeometry(Geometry originalGeometry) throws AlgorithmExecutionException {
-		Geometry geometry;
-		try {
-			geometry = coordinateTransformer.transform(originalGeometry);
-		} catch (TransformException e) {
-			throw new AlgorithmExecutionException(e);
-		}
-
-		return geometry;
+	public Geometry transformGeometry(Geometry originalGeometry)
+			throws TransformException {
+		return coordinateTransformer.transform(originalGeometry);
 	}
 	
 	private double findCentralMeridian(ProjectedCRS projectedCRS) throws AlgorithmExecutionException {

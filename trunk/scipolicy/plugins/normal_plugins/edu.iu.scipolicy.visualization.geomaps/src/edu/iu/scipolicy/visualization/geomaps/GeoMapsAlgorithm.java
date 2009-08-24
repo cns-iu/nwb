@@ -20,12 +20,15 @@ import org.cishell.utilities.FileUtilities;
 import org.geotools.referencing.CRS;
 import org.opengis.referencing.FactoryException;
 import org.opengis.referencing.crs.ProjectedCRS;
+import org.opengis.referencing.operation.TransformException;
 import org.osgi.service.log.LogService;
 
 import prefuse.data.Table;
 import edu.iu.scipolicy.visualization.geomaps.utility.Constants;
 
 public class GeoMapsAlgorithm implements Algorithm {
+	public static final String WELL_KNOWN_TEXTS_PROPERTIES_FILE_PATH = "/edu/iu/scipolicy/visualization/geomaps/projection/wellKnownTexts.properties";
+
 	public static final String STRING_TEMPLATE_FILE_PATH =		 
 		"/edu/iu/scipolicy/visualization/geomaps/stringtemplates/group.st";
 
@@ -56,40 +59,44 @@ public class GeoMapsAlgorithm implements Algorithm {
 	}
 
 	public Data[] execute() throws AlgorithmExecutionException {
-		File temporaryPostScriptFile;
 		try {
-			temporaryPostScriptFile = FileUtilities.createTemporaryFileInDefaultTemporaryDirectory("TEMP-POSTSCRIPT", OUTPUT_FILE_EXTENSION);
-		} catch (IOException e) {
-			throw new AlgorithmExecutionException(e);
-		}
-
-		Data inDatum = this.data[0];
-		Table inTable = (Table) inDatum.getData();
-		String dataLabel = (String) inDatum.getMetadata().get(DataProperty.LABEL);
-		
-		final ClassLoader loader = getClass().getClassLoader();
-		String shapefileKey = (String) parameters.get(SHAPEFILE_ID);
-		String shapefilePath = Constants.SHAPEFILES.get(shapefileKey);	
-		final URL shapefileURL = loader.getResource(shapefilePath);
-		final ProjectedCRS projectedCRS = getProjectedCRS();
-		
-		String featureNameKey = Constants.FEATURE_NAME_KEY.get(shapefileKey);
-		
-		String authorName = (String) parameters.get(AUTHOR_NAME_ID);
-		
-		ShapefileToPostScriptWriter postScriptWriter =
-			new ShapefileToPostScriptWriter(shapefileURL, projectedCRS, featureNameKey);
-		
-		annotationMode.applyAnnotations(postScriptWriter, inTable, parameters);
-		try {
+			File temporaryPostScriptFile =
+				FileUtilities.createTemporaryFileInDefaultTemporaryDirectory("TEMP-POSTSCRIPT", OUTPUT_FILE_EXTENSION);
+			
+			Data inDatum = this.data[0];
+			Table inTable = (Table) inDatum.getData();
+			String dataLabel = (String) inDatum.getMetadata().get(DataProperty.LABEL);
+			
+			final ClassLoader loader = getClass().getClassLoader();
+			String shapefileKey = (String) parameters.get(SHAPEFILE_ID);
+			String shapefilePath = Constants.SHAPEFILES.get(shapefileKey);	
+			final URL shapefileURL = loader.getResource(shapefilePath);
+			final ProjectedCRS projectedCRS = getProjectedCRS();
+			
+			String featureNameKey = Constants.FEATURE_NAME_KEY.get(shapefileKey);
+			
+			String authorName = (String) parameters.get(AUTHOR_NAME_ID);
+			
+			ShapefileToPostScriptWriter postScriptWriter;
+			postScriptWriter =
+				new ShapefileToPostScriptWriter(shapefileURL, projectedCRS, featureNameKey);
+			
+			annotationMode.applyAnnotations(postScriptWriter, inTable, parameters);
 			postScriptWriter.writePostScriptToFile(temporaryPostScriptFile, authorName, dataLabel);
+
+			Data[] outData = formOutData(temporaryPostScriptFile, inDatum);
+
+			return outData;
+			
 		} catch (IOException e) {
-			throw new AlgorithmExecutionException(e);
+			throw new AlgorithmExecutionException(
+					"Error creating PostScript file: " + e.getMessage(), e);
+		} catch (TransformException e) {
+			throw new AlgorithmExecutionException(
+					"Error transforming features: " + e.getMessage(), e);
 		}
 
-		Data[] outData = formOutData(temporaryPostScriptFile, inDatum);
-
-		return outData;
+		
 	}
 	
 	private static StringTemplateGroup loadTemplates() {
@@ -101,7 +108,8 @@ public class GeoMapsAlgorithm implements Algorithm {
 	
 	private ProjectedCRS getProjectedCRS() throws AlgorithmExecutionException {
 		final ClassLoader loader = getClass().getClassLoader();
-		final InputStream wellKnownTextInputStream = loader.getResourceAsStream("/edu/iu/scipolicy/visualization/geomaps/projection/wellKnownTexts.properties");
+		final InputStream wellKnownTextInputStream =
+			loader.getResourceAsStream(WELL_KNOWN_TEXTS_PROPERTIES_FILE_PATH);
 
 		final Properties wellKnownTexts = new Properties();
 		try {

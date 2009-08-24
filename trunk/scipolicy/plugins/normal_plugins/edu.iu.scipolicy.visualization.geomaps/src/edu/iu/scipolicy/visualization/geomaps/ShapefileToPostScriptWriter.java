@@ -21,6 +21,7 @@ import org.opengis.feature.simple.SimpleFeatureType;
 import org.opengis.referencing.FactoryException;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.crs.ProjectedCRS;
+import org.opengis.referencing.operation.TransformException;
 import org.osgi.service.log.LogService;
 
 import com.vividsolutions.jts.geom.Coordinate;
@@ -63,7 +64,7 @@ public class ShapefileToPostScriptWriter {
 	
 	public ShapefileToPostScriptWriter(
 			URL shapefileURL, ProjectedCRS projectedCRS, String featureNameKey)
-				throws AlgorithmExecutionException {
+				throws AlgorithmExecutionException, TransformException {
 		ShapefileFeatureReader shapefileFeatureReader =
 			new ShapefileFeatureReader(shapefileURL);
 		this.featureCollection = shapefileFeatureReader.getFeatureCollection();
@@ -83,16 +84,18 @@ public class ShapefileToPostScriptWriter {
 		legend.add(featureColorGradient);
 	}
 	
-	public void setCircleAnnotations(String subtitle, List<Circle> circles, LegendComponent circleAreaLegend, LegendComponent colorGradient) {
+	public void setCircleAnnotations(String subtitle, List<Circle> circles, LegendComponent circleAreaLegend, LegendComponent innerColorGradient, LegendComponent outerColorGradient) {
 		this.subtitle = subtitle;
 		this.circles = circles;
+		
+		legend.add(innerColorGradient);
+		legend.add(outerColorGradient);
 		legend.add(circleAreaLegend);
-		legend.add(colorGradient);
 	}
 
 	public void writePostScriptToFile(
 			File psFile, String authorName, String dataLabel)
-				throws IOException, AlgorithmExecutionException {
+				throws IOException, AlgorithmExecutionException, TransformException {
 		BufferedWriter out = new BufferedWriter(new FileWriter(psFile));
 
 		writeCodeHeader(out, psFile.getName());
@@ -174,7 +177,7 @@ public class ShapefileToPostScriptWriter {
 		return geometryProjector;
 	}
 
-	private MapDisplayer calculateMapBoundingBox() throws AlgorithmExecutionException {
+	private MapDisplayer calculateMapBoundingBox() throws TransformException {
 		/* Identify extreme values for the X and Y dimensions
 		 * among the Geometries in our featureCollection.
 		 * Note that this is *after* Geometry preparation (cropping and projecting).

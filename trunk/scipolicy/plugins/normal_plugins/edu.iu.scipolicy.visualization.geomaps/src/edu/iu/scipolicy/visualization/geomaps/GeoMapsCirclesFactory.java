@@ -1,5 +1,6 @@
 package edu.iu.scipolicy.visualization.geomaps;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
@@ -14,12 +15,14 @@ import edu.iu.scipolicy.visualization.geomaps.scaling.ScalerFactory;
 import edu.iu.scipolicy.visualization.geomaps.utility.Constants;
 
 public class GeoMapsCirclesFactory extends GeoMapsAlgorithmFactory {
-	public static final List<String> LATITUDE_KEYS = Collections.unmodifiableList(Arrays.asList(new String[]{
-		"latitude", "Latitude", "lat", "Lat", "lat.", "Lat."
-	}));
-	public static final List<String> LONGITUDE_KEYS = Collections.unmodifiableList(Arrays.asList(new String[]{
-		"longitude", "Longitude", "long", "Long", "long.", "Long.", "lng", "Lng", "lng.", "Lng."
-	}));
+	public static final List<String> LATITUDE_KEYS_TO_GUESS =
+		Collections.unmodifiableList(Arrays.asList(new String[]{
+			"latitude", "Latitude", "lat", "Lat", "lat.", "Lat."
+		}));
+	public static final List<String> LONGITUDE_KEYS_TO_GUESS =
+		Collections.unmodifiableList(Arrays.asList(new String[]{
+			"longitude", "Longitude", "long", "Long", "long.", "Long.", "lng", "Lng", "lng.", "Lng."
+		}));
 
 	@Override
 	protected AnnotationMode getAnnotationMode() {
@@ -34,33 +37,50 @@ public class GeoMapsCirclesFactory extends GeoMapsAlgorithmFactory {
 		DropdownMutator mutator = new DropdownMutator();
 		
 		mutator.add(GeoMapsAlgorithm.SHAPEFILE_ID,
-					Constants.SHAPEFILES.keySet());
+					new ArrayList<String>(Constants.SHAPEFILES.keySet()));
 		
 		mutator.add(GeoMapsAlgorithm.PROJECTION_ID,
-					Constants.PROJECTIONS.keySet());
+				new ArrayList<String>(Constants.PROJECTIONS.keySet()));
 		
-		String[] numberColumnsForLat =
+		String[] numberColumnsForLatitude =
 			TableUtilities.getValidNumberColumnNamesInTable(table);		
-		swapFirstMatchToFront(numberColumnsForLat, LATITUDE_KEYS);		
-		mutator.add(CircleAnnotationMode.LATITUDE_ID, numberColumnsForLat);
+		swapFirstMatchToFront(numberColumnsForLatitude, LATITUDE_KEYS_TO_GUESS);		
+		mutator.add(CircleAnnotationMode.LATITUDE_ID, numberColumnsForLatitude);
 		
-		String[] numberColumnsForLong =
+		String[] numericColumnsForLongitude =
 			TableUtilities.getValidNumberColumnNamesInTable(table);	
-		swapFirstMatchToFront(numberColumnsForLong, LONGITUDE_KEYS);		
-		mutator.add(CircleAnnotationMode.LONGITUDE_ID, numberColumnsForLong);
+		swapFirstMatchToFront(numericColumnsForLongitude, LONGITUDE_KEYS_TO_GUESS);		
+		mutator.add(CircleAnnotationMode.LONGITUDE_ID, numericColumnsForLongitude);
 		
-		mutator.add(CircleAnnotationMode.CIRCLE_AREA_ID,
+		mutator.add(CircleAnnotationMode.AREA_ID,
 					TableUtilities.getValidNumberColumnNamesInTable(table));
-		mutator.add(CircleAnnotationMode.CIRCLE_AREA_SCALING_ID,
-					ScalerFactory.SCALER_TYPES.keySet());
+		mutator.add(CircleAnnotationMode.AREA_SCALING_ID,
+					new ArrayList<String>(ScalerFactory.SCALER_TYPES.keySet()));
 		// Expose circle area range?
 		
-		mutator.add(CircleAnnotationMode.CIRCLE_COLOR_QUANTITY_ID,
-					TableUtilities.getValidNumberColumnNamesInTable(table));
-		mutator.add(CircleAnnotationMode.CIRCLE_COLOR_SCALING_ID,
-					ScalerFactory.SCALER_TYPES.keySet());
-		mutator.add(CircleAnnotationMode.CIRCLE_COLOR_RANGE_ID,
-					Constants.COLOR_RANGES.keySet());
+		List<String> numericColumnsForOuterColorQuantity =
+			toList(TableUtilities.getValidNumberColumnNamesInTable(table));
+		numericColumnsForOuterColorQuantity.add(
+				CircleAnnotationMode.USE_NO_OUTER_COLOR_TOKEN);		
+		mutator.add(CircleAnnotationMode.OUTER_COLOR_QUANTITY_ID,
+					numericColumnsForOuterColorQuantity,
+					CircleAnnotationMode.USE_NO_OUTER_COLOR_TOKEN);
+		mutator.add(CircleAnnotationMode.OUTER_COLOR_SCALING_ID,
+					new ArrayList<String>(ScalerFactory.SCALER_TYPES.keySet()));
+		mutator.add(CircleAnnotationMode.OUTER_COLOR_RANGE_ID,
+					new ArrayList<String>(Constants.COLOR_RANGES.keySet()));
+		
+		List<String> numericColumnsForInnerColorQuantity =
+			toList(TableUtilities.getValidNumberColumnNamesInTable(table));
+		numericColumnsForInnerColorQuantity.add(
+				CircleAnnotationMode.USE_NO_INNER_COLOR_TOKEN);	
+		mutator.add(CircleAnnotationMode.INNER_COLOR_QUANTITY_ID,
+					numericColumnsForInnerColorQuantity,
+					CircleAnnotationMode.USE_NO_INNER_COLOR_TOKEN);
+		mutator.add(CircleAnnotationMode.INNER_COLOR_SCALING_ID,
+					new ArrayList<String>(ScalerFactory.SCALER_TYPES.keySet()));
+		mutator.add(CircleAnnotationMode.INNER_COLOR_RANGE_ID,
+					new ArrayList<String>(Constants.COLOR_RANGES.keySet()));
 		
 		return mutator.mutate(oldParameters);
 	}
@@ -90,5 +110,15 @@ public class GeoMapsCirclesFactory extends GeoMapsAlgorithmFactory {
 		Object temp = array[i];
 		array[i] = array[j];
 		array[j] = temp;
+	}
+	
+	private static <T> List<T> toList(T[] array) {
+		List<T> list = new ArrayList<T>(array.length);
+		
+		for (T element : array) {
+			list.add(element);
+		}
+		
+		return list;
 	}
 }

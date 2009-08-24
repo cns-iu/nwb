@@ -12,6 +12,7 @@ import org.opengis.feature.Property;
 import org.opengis.feature.simple.SimpleFeature;
 import org.opengis.feature.simple.SimpleFeatureType;
 import org.opengis.feature.type.AttributeDescriptor;
+import org.opengis.referencing.operation.TransformException;
 
 import com.vividsolutions.jts.geom.Coordinate;
 import com.vividsolutions.jts.geom.Geometry;
@@ -44,7 +45,7 @@ public class FeaturePrinter {
 			BufferedWriter out,
 			Map<String, Color> featureColorMap,
 			String featureColorMapKey)
-	throws IOException, AlgorithmExecutionException {
+				throws IOException, AlgorithmExecutionException, TransformException {
 		out.write("% Features" + "\n");
 		out.write("gsave" + "\n");
 		out.write(INDENT + BORDER_LINE_WIDTH + " setlinewidth" + "\n");
@@ -67,7 +68,7 @@ public class FeaturePrinter {
 		out.write("\n");
 	}
 
-	private void printFeature(BufferedWriter out, SimpleFeature feature, Map<String, Color> featureColorMap, String featureColorMapKey) throws IOException, AlgorithmExecutionException {
+	private void printFeature(BufferedWriter out, SimpleFeature feature, Map<String, Color> featureColorMap, String featureColorMapKey) throws IOException, TransformException, AlgorithmExecutionException {
 		Geometry rawGeometry = (Geometry) feature.getDefaultGeometry();
 		Geometry geometry = geometryProjector.projectGeometry(rawGeometry);
 

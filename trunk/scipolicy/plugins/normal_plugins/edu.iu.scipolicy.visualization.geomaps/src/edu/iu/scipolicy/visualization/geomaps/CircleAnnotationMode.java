@@ -4,11 +4,9 @@ import java.awt.Color;
 import java.util.ArrayList;
 import java.util.Dictionary;
 import java.util.List;
-import java.util.Map;
 
-import org.apache.commons.collections.MultiHashMap;
-import org.apache.commons.collections.MultiMap;
 import org.cishell.framework.algorithm.AlgorithmExecutionException;
+import org.cishell.utilities.NumberUtilities;
 import org.osgi.service.log.LogService;
 
 import prefuse.data.Table;
@@ -21,7 +19,6 @@ import edu.iu.scipolicy.visualization.geomaps.interpolation.ColorInterpolator;
 import edu.iu.scipolicy.visualization.geomaps.interpolation.Interpolator;
 import edu.iu.scipolicy.visualization.geomaps.interpolation.InterpolatorInversionException;
 import edu.iu.scipolicy.visualization.geomaps.interpolation.LinearInterpolator;
-import edu.iu.scipolicy.visualization.geomaps.interpolation.ListInterpolator;
 import edu.iu.scipolicy.visualization.geomaps.interpolation.ZeroLengthInterpolatorInputRangeException;
 import edu.iu.scipolicy.visualization.geomaps.legend.CircleAreaLegend;
 import edu.iu.scipolicy.visualization.geomaps.legend.ColorLegend;
@@ -30,29 +27,47 @@ import edu.iu.scipolicy.visualization.geomaps.legend.LegendComponent;
 import edu.iu.scipolicy.visualization.geomaps.legend.NullLegendComponent;
 import edu.iu.scipolicy.visualization.geomaps.printing.Circle;
 import edu.iu.scipolicy.visualization.geomaps.printing.CirclePrinter;
-import edu.iu.scipolicy.visualization.geomaps.scaling.ListScaler;
 import edu.iu.scipolicy.visualization.geomaps.scaling.Scaler;
 import edu.iu.scipolicy.visualization.geomaps.scaling.ScalerFactory;
 import edu.iu.scipolicy.visualization.geomaps.utility.Averager;
 import edu.iu.scipolicy.visualization.geomaps.utility.Constants;
-import edu.iu.scipolicy.visualization.geomaps.utility.PrefuseDoubleReader;
 import edu.iu.scipolicy.visualization.geomaps.utility.Range;
 
-public class CircleAnnotationMode implements AnnotationMode {	
+public class CircleAnnotationMode extends AnnotationMode {
+	public static final double AREA_LEGEND_LOWER_LEFT_X =
+		Legend.DEFAULT_LOWER_LEFT_X_IN_POINTS
+		+ (2.0 * Legend.DEFAULT_WIDTH_IN_POINTS / 3.0);
+	
+	public static final double INNER_COLOR_LEGEND_LOWER_LEFT_X =
+		Legend.DEFAULT_LOWER_LEFT_X_IN_POINTS;
+	public static final double INNER_COLOR_GRADIENT_WIDTH =
+		0.8 * (Legend.DEFAULT_WIDTH_IN_POINTS / 3.0);
+	public static final int INNER_COLOR_GRADIENT_HEIGHT = 10;
+	
+	public static final double OUTER_COLOR_LEGEND_LOWER_LEFT_X =
+		Legend.DEFAULT_LOWER_LEFT_X_IN_POINTS
+		+ (1.0 * Legend.DEFAULT_WIDTH_IN_POINTS / 3.0);
+	public static final double OUTER_COLOR_GRADIENT_WIDTH = INNER_COLOR_GRADIENT_WIDTH;
+	public static final int OUTER_COLOR_GRADIENT_HEIGHT = INNER_COLOR_GRADIENT_HEIGHT;
+	
 	public static final String LATITUDE_ID = "latitude";
 	public static final String LONGITUDE_ID = "longitude";
-	public static final String CIRCLE_AREA_ID = "circleArea";
-	public static final String CIRCLE_AREA_SCALING_ID = "circleAreaScaling";
-	public static final String CIRCLE_COLOR_QUANTITY_ID = "circleColorQuantity";
-	public static final String CIRCLE_COLOR_SCALING_ID = "circleColorScaling";
-	public static final String CIRCLE_COLOR_RANGE_ID = "circleColorRange";
+	public static final String AREA_ID = "circleArea";
+	public static final String AREA_SCALING_ID = "circleAreaScaling";
+	public static final String INNER_COLOR_QUANTITY_ID = "innerColorQuantity";
+	public static final String USE_NO_INNER_COLOR_TOKEN = "None (no inner color)";	
+	public static final String INNER_COLOR_SCALING_ID = "innerColorScaling";
+	public static final String INNER_COLOR_RANGE_ID = "innerColorRange";
+	public static final String OUTER_COLOR_QUANTITY_ID = "outerColorQuantity";
+	public static final String USE_NO_OUTER_COLOR_TOKEN = "None (no outer color)";
+	public static final String OUTER_COLOR_SCALING_ID = "outerColorScaling";
+	public static final String OUTER_COLOR_RANGE_ID = "outerColorRange";
 	
 	public static final String SUBTITLE = "with circle annotations";
-
-	// ids provides a common index into areas and colorQuantities
-	private MultiMap ids;
-	private List<Double> areas;
-	private List<Double> colorQuantities;
+	private static final Color DEFAULT_INNER_COLOR = null;
+	private static final Color DEFAULT_OUTER_COLOR = Color.BLACK;
+	
+	
 
 	/* 1: Read the relevant parameters
      * 2: Read the area and color data from inTable
@@ -68,170 +83,361 @@ public class CircleAnnotationMode implements AnnotationMode {
 	 * 6: Apply this annotation (the List<Circle> and the LegendComponents) to postScriptWriter
 	 */
 	@SuppressWarnings("unchecked") // TODO
-	public void applyAnnotations(ShapefileToPostScriptWriter postScriptWriter, Table inTable, Dictionary parameters) throws AlgorithmExecutionException {
-		String areaAttribute = (String) parameters.get(CIRCLE_AREA_ID);
-		String colorQuantityAttribute = (String) parameters.get(CIRCLE_COLOR_QUANTITY_ID);
-	
-		String colorRangeKey = (String) parameters.get(CIRCLE_COLOR_RANGE_ID);
-		Range<Color> colorRange = Constants.COLOR_RANGES.get(colorRangeKey);
-
-		String areaScaling = (String) parameters.get(CIRCLE_AREA_SCALING_ID);
-		Scaler areaScaler = ScalerFactory.createScaler(areaScaling);	
-		String colorScaling = (String) parameters.get(CIRCLE_COLOR_SCALING_ID);
-		Scaler colorQuantityScaler = ScalerFactory.createScaler(colorScaling);
-		
+	public void applyAnnotations(
+			ShapefileToPostScriptWriter postScriptWriter,
+			Table inTable,
+			Dictionary parameters)
+				throws AlgorithmExecutionException {
+		// Read parameters
 		String latitudeAttribute = (String) parameters.get(LATITUDE_ID);
 		String longitudeAttribute = (String) parameters.get(LONGITUDE_ID);
-		setCircleData(inTable, latitudeAttribute, longitudeAttribute, areaAttribute, areaScaler, colorQuantityAttribute, colorQuantityScaler);
 		
-		if ( ids.isEmpty() ) {
-			throw new AlgorithmExecutionException("No appropriate data found for circle annotations.");
-		} else {
-			// Scale and interpolate circle areas
-			ListScaler areaListScaler = new ListScaler(areaScaler);
-			List<Double> scaledAreas = areaListScaler.scale(areas);
-			Range<Double> areaScalableRange = areaListScaler.getScalableRange();			
-			Range<Double> interpolatedAreaRange = new Range<Double>(
-					CirclePrinter.DEFAULT_CIRCLE_AREA_MINIMUM, 
-					CirclePrinter.DEFAULT_CIRCLE_AREA_MAXIMUM);
-			
-			List<Double> interpolatedAreas = new ArrayList<Double>();
-			LegendComponent circleAreaLegend = new NullLegendComponent();
-			try {
-				Interpolator<Double> areaInterpolator = new LinearInterpolator(scaledAreas, interpolatedAreaRange);
-				ListInterpolator<Double> areaListInterpolator = new ListInterpolator<Double>(areaInterpolator);
-				interpolatedAreas = areaListInterpolator.getInterpolatedList(scaledAreas);
-				
-				Range<Double> actualInterpolatedAreaRange = Range.calculateRange(interpolatedAreas);
-				double areaMidrange = Averager.mean(actualInterpolatedAreaRange.getMin(), actualInterpolatedAreaRange.getMax());
-				double areaMidrangePreimage = areaInterpolator.invert(areaMidrange);
-				double rawMidArea = areaScaler.invert(areaMidrangePreimage);
-				
-				// Add circle area legend
-				double areaLegendLowerLeftX = Legend.DEFAULT_LOWER_LEFT_X_IN_POINTS;
-				double areaLegendLowerLeftY = Legend.DEFAULT_LOWER_LEFT_Y_IN_POINTS;
-				String areaTypeLabel = "Circle Area";
-				circleAreaLegend = new CircleAreaLegend(areaScalableRange, areaScaling, rawMidArea, areaMidrange, interpolatedAreaRange, areaTypeLabel, areaAttribute, areaLegendLowerLeftX, areaLegendLowerLeftY);
-			} catch (ZeroLengthInterpolatorInputRangeException e) {
-				GeoMapsAlgorithm.logger.log(
-					LogService.LOG_WARNING,
-					"Warning: Couldn't interpolate circle areas: " + e.getMessage(),
-					e);
-			} catch (InterpolatorInversionException e) {
-				GeoMapsAlgorithm.logger.log(
-					LogService.LOG_WARNING,
-					"Warning: Couldn't reverse interpolation "
-						+ "to make circle area legend: " + e.getMessage(),
-					e);
-			}	
-
-			// Scale and interpolate circle colors
-			ListScaler colorQuantityListScaler = new ListScaler(colorQuantityScaler);
-			List<Double> scaledColorQuantities = colorQuantityListScaler.scale(colorQuantities);
-			Range<Double> colorQuantityScalableRange = colorQuantityListScaler.getScalableRange();
-			
-			List<Color> interpolatedColors = new ArrayList<Color>();
-			LegendComponent colorGradient = new NullLegendComponent();
-			try {
-				Interpolator<Color> colorQuantityInterpolator = new ColorInterpolator(scaledColorQuantities, colorRange);
-				ListInterpolator<Color> colorQuantityListInterpolator = new ListInterpolator<Color>(colorQuantityInterpolator);
-				interpolatedColors = colorQuantityListInterpolator.getInterpolatedList(scaledColorQuantities);
-	
-				Color colorMidrange = Averager.mean(colorRange.getMin(), colorRange.getMax());
-				double colorMidrangePreimage = colorQuantityInterpolator.invert(colorMidrange);
-				double rawMidColorQuantity = colorQuantityScaler.invert(colorMidrangePreimage);
-				
-				// Add circle color legend
-				double colorGradientLowerLeftX = Legend.DEFAULT_LOWER_LEFT_X_IN_POINTS + (Legend.DEFAULT_WIDTH_IN_POINTS / 2.0);
-				double colorGradientLowerLeftY = Legend.DEFAULT_LOWER_LEFT_Y_IN_POINTS;
-				double colorGradientWidth =  0.8 * (Legend.DEFAULT_WIDTH_IN_POINTS / 2.0);
-				double colorGradientHeight = 10;
-				String colorTypeLabel = "Circle Color";
-				colorGradient = new ColorLegend(colorQuantityScalableRange, colorScaling, rawMidColorQuantity, colorRange, colorTypeLabel, colorQuantityAttribute, colorGradientLowerLeftX, colorGradientLowerLeftY, colorGradientWidth, colorGradientHeight);
-			} catch (ZeroLengthInterpolatorInputRangeException e) {
-				GeoMapsAlgorithm.logger.log(
-						LogService.LOG_WARNING,
-						"Warning: Couldn't interpolate circle colors: " + e.getMessage(),
-						e);
-				} catch (InterpolatorInversionException e) {
-					GeoMapsAlgorithm.logger.log(
-						LogService.LOG_WARNING,
-						"Warning: Couldn't reverse interpolation "
-							+ "to make circle color legend: " + e.getMessage(),
-						e);
-				}
-			
-			/* Construct the list of Circles from the specified areas and colors.
-			 * Note we expect that every Coordinate with an area specified has a color specified
-			 * and that every Coordinate with a color specified has an area specified.
-			 */
-			List<Circle> circles = new ArrayList<Circle>();
-			for ( Object circleID : ids.entrySet() ) {
-				Coordinate coordinate = ((Map.Entry<Coordinate, List<Integer>>) circleID).getKey();
-				List<Integer> ids = ((Map.Entry<Coordinate, List<Integer>>) circleID).getValue();
-				
-				for ( int id : ids ) {
-					double area = interpolatedAreas.get(id);
-					Color color = interpolatedColors.get(id);
-
-					circles.add(new Circle(coordinate, area, color));
-				}
-			}
-			
-			postScriptWriter.setCircleAnnotations(SUBTITLE, circles, circleAreaLegend, colorGradient);
+		String areaValueAttribute = (String) parameters.get(AREA_ID);
+		String areaValueScaling = (String) parameters.get(AREA_SCALING_ID);
+		Scaler areaValueScaler = ScalerFactory.createScaler(areaValueScaling);
+		Range<Double> areaRange =
+			new Range<Double>(
+				CirclePrinter.DEFAULT_CIRCLE_AREA_MINIMUM, 
+				CirclePrinter.DEFAULT_CIRCLE_AREA_MAXIMUM);
+		
+		String innerColorValueAttribute =
+			(String) parameters.get(INNER_COLOR_QUANTITY_ID);
+		boolean isUsingInnerColor = true;
+		if (USE_NO_INNER_COLOR_TOKEN.equals(innerColorValueAttribute)) {
+			isUsingInnerColor = false;
 		}
-	}
-	
-	private void setCircleData(Table inTable, String latitudeAttribute, String longitudeAttribute, String circleAreaAttribute, Scaler circleAreaScaler, String circleColorQuantityAttribute, Scaler circleColorQuantityScaler) throws AlgorithmExecutionException {
-		areas = new ArrayList<Double>();
-		colorQuantities = new ArrayList<Double>();
-		ids = new MultiHashMap();
+		String innerColorScaling = (String) parameters.get(INNER_COLOR_SCALING_ID);
+		Scaler innerColorValueScaler = ScalerFactory.createScaler(innerColorScaling);
+		String innerColorRangeKey = (String) parameters.get(INNER_COLOR_RANGE_ID);
+		Range<Color> innerColorRange = Constants.COLOR_RANGES.get(innerColorRangeKey);		
 		
+		String outerColorValueAttribute =
+			(String) parameters.get(OUTER_COLOR_QUANTITY_ID);
+		boolean isUsingOuterColor = true;		
+		if (USE_NO_OUTER_COLOR_TOKEN.equals(outerColorValueAttribute)) {
+			isUsingOuterColor = false;
+		}
+		String outerColorScaling = (String) parameters.get(OUTER_COLOR_SCALING_ID);
+		Scaler outerColorValueScaler = ScalerFactory.createScaler(outerColorScaling);
+		String outerColorRangeKey = (String) parameters.get(OUTER_COLOR_RANGE_ID);
+		Range<Color> outerColorRange = Constants.COLOR_RANGES.get(outerColorRangeKey);		
+		
+		
+		
+		// Set up area interpolator
+		Range<Double> areaValueScalableRange =
+			AnnotationMode.calculateScalableRangeOverColumn(
+					inTable, areaValueAttribute, areaValueScaler);
+		Interpolator<Double> areaInterpolator;
+		try {
+			areaInterpolator =
+				new LinearInterpolator(
+						areaValueScaler.scale(areaValueScalableRange),
+						areaRange);
+		} catch (ZeroLengthInterpolatorInputRangeException e) {
+			throw new AlgorithmExecutionException(
+					"Cannot interpolate circle areas due to: " + e.getMessage(), e);
+		}
+		
+		// Set up inner color interpolator
+		Range<Double> innerColorValueScalableRange = null;
+		Interpolator<Color> innerColorQuantityInterpolator = null;
+		if (isUsingInnerColor) {
+			innerColorValueScalableRange =
+				AnnotationMode.calculateScalableRangeOverColumn(
+						inTable, innerColorValueAttribute, innerColorValueScaler);
+			try {
+				innerColorQuantityInterpolator =
+					new ColorInterpolator(
+							innerColorValueScaler.scale(innerColorValueScalableRange),
+							innerColorRange);
+			} catch (ZeroLengthInterpolatorInputRangeException e) {			
+				GeoMapsAlgorithm.logger.log(
+						LogService.LOG_WARNING,
+						"Can't visualize data with circle inner colors due to: "
+						+ e.getMessage(),
+						e);
+				isUsingInnerColor = false;
+			}
+		}
+		
+		// Set up outer color interpolator
+		Range<Double> outerColorValueScalableRange = null;
+		Interpolator<Color> outerColorQuantityInterpolator = null;
+		if (isUsingOuterColor) {
+			outerColorValueScalableRange =
+				AnnotationMode.calculateScalableRangeOverColumn(
+						inTable, outerColorValueAttribute, outerColorValueScaler);
+			
+			try {
+				outerColorQuantityInterpolator =
+					new ColorInterpolator(
+							outerColorValueScaler.scale(outerColorValueScalableRange),
+							outerColorRange);
+			} catch (ZeroLengthInterpolatorInputRangeException e) {
+				GeoMapsAlgorithm.logger.log(
+						LogService.LOG_WARNING,
+						"Can't visualize data with circle outer colors due to: "
+						+ e.getMessage(),
+						e);
+				isUsingOuterColor = false;
+			}
+		}
+		
+		
+		// Read, scale, and interpolate data from inTable
 		int incompleteSpecificationCount = 0;
-		int unscalableCount = 0;
-		
-		int id = 0;
-		for( TableIterator tableIterator = inTable.iterator(); tableIterator.hasNext(); ) {
+		List<Circle> circles = new ArrayList<Circle>();
+		for (TableIterator tableIterator = inTable.iterator(); tableIterator.hasNext();) {
 			Tuple row = inTable.getTuple(tableIterator.nextInt());
 			
-			boolean latitudeSpecified = PrefuseDoubleReader.isSpecified(row, latitudeAttribute);
-			boolean longitudeSpecified = PrefuseDoubleReader.isSpecified(row, longitudeAttribute);
-			
-			if ( latitudeSpecified && longitudeSpecified ) {
-				boolean circleAreaSpecified = PrefuseDoubleReader.isSpecified(row, circleAreaAttribute);
-				boolean circleColorQuantitySpecified = PrefuseDoubleReader.isSpecified(row, circleColorQuantityAttribute);
-				
-				if ( circleAreaSpecified && circleColorQuantitySpecified ) {
-					double latitude = PrefuseDoubleReader.get(row, latitudeAttribute);
-					double longitude = PrefuseDoubleReader.get(row, longitudeAttribute);
-					double area = PrefuseDoubleReader.get(row, circleAreaAttribute);
-					double colorQuantity = PrefuseDoubleReader.get(row, circleColorQuantityAttribute);
-					
-					if ( circleAreaScaler.canScale(area) && circleColorQuantityScaler.canScale(colorQuantity) ) {
-						Coordinate coordinate = new Coordinate(longitude, latitude);
-						
-						areas.add(area);
-						colorQuantities.add(colorQuantity);
-						ids.put(coordinate, id);
-						id++;
-					}
-					else {
-						unscalableCount++;
-					}
-				}
-				else {
+			try {
+				double latitude =
+					NumberUtilities.interpretObjectAsDouble(row.get(latitudeAttribute));
+				double longitude =
+					NumberUtilities.interpretObjectAsDouble(row.get(longitudeAttribute));
+
+				double areaValue =
+					NumberUtilities.interpretObjectAsDouble(row.get(areaValueAttribute));				
+				double area = Double.NaN;
+				if (areaValueScaler.canScale(areaValue)) {
+					area = areaInterpolator.interpolate(
+							areaValueScaler.scale(areaValue));
+				} else {
 					incompleteSpecificationCount++;
+					continue;
 				}
+				
+				Color innerColor = DEFAULT_INNER_COLOR;
+				if (isUsingInnerColor) {
+					double innerColorValue =
+						NumberUtilities.interpretObjectAsDouble(row.get(innerColorValueAttribute));
+					
+					if (innerColorValueScaler.canScale(innerColorValue)) {
+						innerColor =
+							innerColorQuantityInterpolator.interpolate(
+									innerColorValueScaler.scale(innerColorValue));
+					} else {
+						incompleteSpecificationCount++;
+						continue;
+					}
+				}
+				
+				Color outerColor = DEFAULT_OUTER_COLOR;
+				if (isUsingOuterColor) {
+					double outerColorValue =
+						NumberUtilities.interpretObjectAsDouble(
+								row.get(outerColorValueAttribute));
+					
+					if (outerColorValueScaler.canScale(outerColorValue)) {
+						outerColor =
+							outerColorQuantityInterpolator.interpolate(
+									outerColorValueScaler.scale(outerColorValue));
+					} else {
+						incompleteSpecificationCount++;
+						continue;
+					}
+				}
+				
+				circles.add(
+						new Circle(
+								new Coordinate(longitude, latitude),
+								area,
+								innerColor,
+								outerColor));
+			} catch (NumberFormatException e) {
+				incompleteSpecificationCount++;
 			}
 		}
 		
-		if ( incompleteSpecificationCount > 0 ) {
-			GeoMapsAlgorithm.logger.log(LogService.LOG_WARNING, incompleteSpecificationCount + " rows specified latitude and longitude but not both area and color.. rows skipped.");
+		if (incompleteSpecificationCount > 0) {
+			GeoMapsAlgorithm.logger.log(
+					LogService.LOG_WARNING,
+					incompleteSpecificationCount
+					+ " rows in the table did not specify all values needed "
+					+ "to make a circle.  Those rows were skipped.");
 		}
 		
-		if ( unscalableCount > 0 ) {
-			GeoMapsAlgorithm.logger.log(LogService.LOG_WARNING, unscalableCount + " rows contained an unscalable value for either or both of area and color.. rows skipped.");
+		LegendComponent areaLegend =
+			createAreaLegend(
+				areaValueAttribute,
+				areaValueScaling,
+				areaValueScaler,
+				areaValueScalableRange,
+				areaInterpolator,
+				areaRange);		
+		
+		LegendComponent innerColorLegend =
+			createInnerColorLegend(
+				isUsingInnerColor,
+				innerColorValueAttribute,
+				innerColorScaling,
+				innerColorValueScaler,
+				innerColorValueScalableRange,
+				innerColorQuantityInterpolator,
+				innerColorRange);
+		
+		
+		LegendComponent outerColorLegend =
+			createOuterColorLegend(
+				isUsingOuterColor,
+				outerColorValueAttribute,
+				outerColorScaling,
+				outerColorValueScaler,
+				outerColorValueScalableRange,
+				outerColorQuantityInterpolator,
+				outerColorRange);
+		
+		postScriptWriter.setCircleAnnotations(
+				SUBTITLE,
+				circles,
+				areaLegend,
+				innerColorLegend,
+				outerColorLegend);
+	}
+
+	private LegendComponent createAreaLegend(
+			String attribute,
+			String scaling,
+			Scaler scaler,
+			Range<Double> scalableRange,
+			Interpolator<Double> interpolator,
+			Range<Double> outputRange) throws AlgorithmExecutionException {
+		LegendComponent areaLegend = new NullLegendComponent();
+		try {
+			/* To determine how to label the middle of the legend component,
+			 * we figure the apparent size of the middle circle should be
+			 * the mean of the extrema circle sizes.
+			 * 
+			 * We then un-interpolate and un-scale that point to find what
+			 * number in the original data would be represented by that circle.
+			 */
+			double areaMidrange =
+				Averager.mean(outputRange.getMin(), outputRange.getMax());
+			double areaMidrangePreimage = interpolator.invert(areaMidrange);			
+			double rawMidArea = scaler.invert(areaMidrangePreimage);
+			
+			// Add circle area legend
+			areaLegend =
+				new CircleAreaLegend(
+						scalableRange,
+						scaling,
+						rawMidArea,
+						areaMidrange,
+						outputRange,
+						"Circle Area",
+						attribute,
+						AREA_LEGEND_LOWER_LEFT_X,
+						Legend.DEFAULT_LOWER_LEFT_Y_IN_POINTS);
+		} catch (InterpolatorInversionException e) {
+			throw new AlgorithmExecutionException(
+					"Couldn't create circle area legend: "
+					+ e.getMessage(),
+					e);
 		}
+		return areaLegend;
+	}
+
+	private LegendComponent createInnerColorLegend(
+			boolean isUsingInnerColor,
+			String attribute,
+			String scaling,
+			Scaler scaler,
+			Range<Double> scalableRange,
+			Interpolator<Color> interpolator,
+			Range<Color> colorRange) throws AlgorithmExecutionException {
+		LegendComponent innerColorLegend = new NullLegendComponent();
+		
+		if (isUsingInnerColor) {
+			try {
+				/* To determine how to label the middle of the legend component,
+				 * we figure the apparent color of the gradient's middle should be
+				 * the mean of the extrema colors.
+				 * 
+				 * We then un-interpolate and un-scale that color to find what
+				 * number in the original data would be represented by that color.
+				 */
+				Color innerColorMidrange =
+					Averager.mean(colorRange.getMin(), colorRange.getMax());
+				double innerColorMidrangePreimage;
+				innerColorMidrangePreimage =
+					interpolator.invert(innerColorMidrange);
+				
+				double rawMidInnerColorQuantity =
+					scaler.invert(innerColorMidrangePreimage);
+				
+				// Add circle inner color legend
+				innerColorLegend =
+					new ColorLegend(
+							scalableRange,
+							scaling,
+							rawMidInnerColorQuantity,
+							colorRange,
+							"Inner Circle Color",
+							attribute,
+							INNER_COLOR_LEGEND_LOWER_LEFT_X,
+							Legend.DEFAULT_LOWER_LEFT_Y_IN_POINTS,
+							INNER_COLOR_GRADIENT_WIDTH,
+							INNER_COLOR_GRADIENT_HEIGHT);
+			} catch (InterpolatorInversionException e) {
+				throw new AlgorithmExecutionException(
+						"Couldn't create circle inner color legend: "
+						+ e.getMessage(),
+						e);
+			}
+		}
+		
+		return innerColorLegend;
+	}
+
+	private LegendComponent createOuterColorLegend(
+			boolean isUsingOuterColor,
+			String attribute,
+			String scaling,
+			Scaler scaler,
+			Range<Double> scalableRange,
+			Interpolator<Color> interpolator,
+			Range<Color> colorRange) throws AlgorithmExecutionException {
+		LegendComponent outerColorLegend = new NullLegendComponent();
+		
+		if (isUsingOuterColor) {
+			try {
+				/* To determine how to label the middle of the legend component,
+				 * we figure the apparent color of the gradient's middle should be
+				 * the mean of the extrema colors.
+				 * 
+				 * We then un-interpolate and un-scale that color to find what
+				 * number in the original data would be represented by that color.
+				 */
+				Color outerColorMidrange =
+					Averager.mean(colorRange.getMin(), colorRange.getMax());
+				double outerColorMidrangePreimage =
+					interpolator.invert(outerColorMidrange);
+				double rawMidOuterColorQuantity =
+					scaler.invert(outerColorMidrangePreimage);
+				
+				// Add circle outer color legend
+				outerColorLegend =
+					new ColorLegend(
+							scalableRange,
+							scaling,
+							rawMidOuterColorQuantity,
+							colorRange,
+							"Outer Circle Color",
+							attribute,
+							OUTER_COLOR_LEGEND_LOWER_LEFT_X,
+							Legend.DEFAULT_LOWER_LEFT_Y_IN_POINTS,
+							OUTER_COLOR_GRADIENT_WIDTH,
+							OUTER_COLOR_GRADIENT_HEIGHT);
+			} catch(InterpolatorInversionException e) {
+				throw new AlgorithmExecutionException(
+						"Couldn't create circle inner color legend: "
+						+ e.getMessage(),
+						e);
+			}
+		}
+		
+		return outerColorLegend;
 	}
 }
 

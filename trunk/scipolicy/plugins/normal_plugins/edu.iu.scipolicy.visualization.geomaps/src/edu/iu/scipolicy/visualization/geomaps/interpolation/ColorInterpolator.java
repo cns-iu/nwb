@@ -1,11 +1,10 @@
 package edu.iu.scipolicy.visualization.geomaps.interpolation;
 import java.awt.Color;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 
-import edu.iu.scipolicy.visualization.geomaps.utility.BinaryCondition;
 import edu.iu.scipolicy.visualization.geomaps.utility.Averager;
+import edu.iu.scipolicy.visualization.geomaps.utility.BinaryCondition;
 import edu.iu.scipolicy.visualization.geomaps.utility.Range;
 import edu.iu.scipolicy.visualization.geomaps.utility.RelativeDifferenceLimit;
 
@@ -23,33 +22,43 @@ public class ColorInterpolator implements Interpolator<Color> {
 	private LinearInterpolator greenInterpolator;
 	private LinearInterpolator blueInterpolator;
 
-	public ColorInterpolator(
-			Collection<Double> colorQuantities, Range<Color> interpolatedRange)
-				throws ZeroLengthInterpolatorInputRangeException {
+	public ColorInterpolator(Range<Double> inputRange, Range<Color> interpolatedRange)
+			throws ZeroLengthInterpolatorInputRangeException {
 		float[] minimumColorComponents = new float[3];
 		interpolatedRange.getMin().getColorComponents(minimumColorComponents);
-
+		
 		float[] maximumColorComponents = new float[3];
 		interpolatedRange.getMax().getColorComponents(maximumColorComponents);
-
+		
 		redInterpolator =
 			new LinearInterpolator(
-					colorQuantities,
+					inputRange,
 					new Range<Double>(
 							(double) minimumColorComponents[RED],
 							(double) maximumColorComponents[RED]));
 		greenInterpolator =
 			new LinearInterpolator(
-					colorQuantities,
+					inputRange,
 					new Range<Double>(
 							(double) minimumColorComponents[GREEN],
 							(double) maximumColorComponents[GREEN]));
 		blueInterpolator =
 			new LinearInterpolator(
-					colorQuantities,
+					inputRange,
 					new Range<Double>(
 							(double) minimumColorComponents[BLUE],
 							(double) maximumColorComponents[BLUE]));
+	}
+	
+	public List<Color> interpolate(List<Double> values) {
+		List<Color> interpolatedValues = new ArrayList<Color>();
+		
+		for (Double value : values) {
+			Color interpolatedValue = interpolate(value);
+			interpolatedValues.add(interpolatedValue);
+		}
+
+		return interpolatedValues;
 	}
 
 	public Color interpolate(double colorQuantity) {
@@ -58,7 +67,6 @@ public class ColorInterpolator implements Interpolator<Color> {
 		float blue = blueInterpolator.interpolate(colorQuantity).floatValue();
 		return new Color(red, green, blue);
 	}
-	
 	
 	public double invert(Color color) throws InterpolatorInversionException {
 		List<Double> inversionSamples = calculateColorInversionSamples(color);
@@ -100,8 +108,7 @@ public class ColorInterpolator implements Interpolator<Color> {
 		List<InterpolatorInversionException> exceptions =
 			new ArrayList<InterpolatorInversionException>();
 		
-		/* "Do we really need to check all three dimensions?"
-		 * Yes.
+		/* "Do we really need to check all three dimensions?"  Yes.
 		 * Suppose you consider eliminating the inversion of dimension "foo".
 		 * Then I add a new Color Range, where foo varies
 		 * from the minimum color to the maximum color,

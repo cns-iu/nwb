@@ -1,5 +1,7 @@
 package edu.iu.scipolicy.visualization.geomaps;
 
+import java.util.ArrayList;
+
 import org.cishell.framework.data.Data;
 import org.cishell.utilities.TableUtilities;
 import org.cishell.utilities.mutateParameter.DropdownMutator;
@@ -23,10 +25,10 @@ public class GeoMapsRegionsFactory extends GeoMapsAlgorithmFactory {
 		DropdownMutator mutator = new DropdownMutator();
 		
 		mutator.add(GeoMapsAlgorithm.SHAPEFILE_ID,
-					Constants.SHAPEFILES.keySet());
+					new ArrayList<String>(Constants.SHAPEFILES.keySet()));
 		
 		mutator.add(GeoMapsAlgorithm.PROJECTION_ID,
-					Constants.PROJECTIONS.keySet());
+					new ArrayList<String>(Constants.PROJECTIONS.keySet()));
 		
 		mutator.add(RegionAnnotationMode.FEATURE_NAME_ID,
 					TableUtilities.getValidStringColumnNamesInTable(table));
@@ -35,10 +37,10 @@ public class GeoMapsRegionsFactory extends GeoMapsAlgorithmFactory {
 					TableUtilities.getValidNumberColumnNamesInTable(table));
 		
 		mutator.add(RegionAnnotationMode.FEATURE_COLOR_SCALING_ID,
-					ScalerFactory.SCALER_TYPES.keySet());
+					new ArrayList<String>(ScalerFactory.SCALER_TYPES.keySet()));
 
 		mutator.add(RegionAnnotationMode.FEATURE_COLOR_RANGE_ID,
-					Constants.COLOR_RANGES.keySet());
+					new ArrayList<String>(Constants.COLOR_RANGES.keySet()));
 		
 		return mutator.mutate(oldParameters);
 	}

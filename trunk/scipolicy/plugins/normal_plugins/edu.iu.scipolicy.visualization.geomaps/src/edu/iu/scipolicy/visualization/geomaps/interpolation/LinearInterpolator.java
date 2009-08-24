@@ -1,6 +1,8 @@
 package edu.iu.scipolicy.visualization.geomaps.interpolation;
 
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 
 import edu.iu.scipolicy.visualization.geomaps.utility.Range;
 
@@ -14,13 +16,24 @@ public class LinearInterpolator implements Interpolator<Double> {
 	}
 	
 	public LinearInterpolator(Range<Double> inRange, Range<Double> outRange)
-				throws ZeroLengthInterpolatorInputRangeException {
-		if (inRange.getMin() != inRange.getMax()) {
+			throws ZeroLengthInterpolatorInputRangeException {
+		if (inRange.getMin().equals(inRange.getMax())) {
+			throw new ZeroLengthInterpolatorInputRangeException(inRange);
+		} else {
 			this.inRange = inRange;
 			this.outRange = outRange;
-		} else {
-			throw new ZeroLengthInterpolatorInputRangeException(inRange);
 		}
+	}
+	
+	public List<Double> interpolate(List<Double> values) {
+		List<Double> interpolatedValues = new ArrayList<Double>();
+		
+		for (Double value : values) {
+			double interpolatedValue = interpolate(value);
+			interpolatedValues.add(interpolatedValue);
+		}
+
+		return interpolatedValues;
 	}
 	
 	public Double interpolate(double value) {
@@ -42,13 +55,9 @@ public class LinearInterpolator implements Interpolator<Double> {
 									  double inMax,
 									  double outMin,
 									  double outMax) {
-		if (inMax - inMin == 0.0) {
-			throw new RuntimeException(
-					"Unexpected error: "
-					+ "Trying to interpolate from an input range with zero length.");
-		} else {
-			return (outMin + (in - inMin) * (outMax - outMin) / (inMax - inMin));
-		}
+		assert (inMax - inMin != 0.0);
+		
+		return (outMin + (in - inMin) * (outMax - outMin) / (inMax - inMin));
 	}
 
 	public double invert(Double value) throws InterpolatorInversionException {
@@ -62,10 +71,11 @@ public class LinearInterpolator implements Interpolator<Double> {
 	 * 
 	 * The inverse is ill-defined when the original output range has zero
 	 * length, because this is the input range of the inverse interpolator and
-	 * and interpolator cannot have a zero-length input range (as this would
+	 * and an interpolator cannot have a zero-length input range (as this would
 	 * cause a division by zero during interpolation).
 	 */
-	private static LinearInterpolator createInverse(LinearInterpolator interpolator) throws InterpolatorInversionException {
+	private static LinearInterpolator createInverse(LinearInterpolator interpolator)
+			throws InterpolatorInversionException {
 		try {
 			Range<Double> inRange = interpolator.getInRange();
 			Range<Double> outRange = interpolator.getOutRange();

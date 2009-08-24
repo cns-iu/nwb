@@ -140,8 +140,4 @@ public class ColorLegend implements LegendComponent {
 
 		return s;
 	}
-
-	public Range<Double> getRawRange() {
-		return rawRange;
-	}
 }

@@ -27,14 +27,6 @@ public class Range<T> {
 	public void setMax(T value) {
 		this.max = value;
 	}
-	
-	public static Range<Double> createNegatedRange(Range<Double> range) {
-		return new Range<Double>(-range.getMin(), -range.getMax());
-	}
-	
-	public Range<T> createInvertedRange() {
-		return new Range<T>(max, min);
-	}
 
 	public static Range<Double> calculateRange(
 			Collection<Double> values) {

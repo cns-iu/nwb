@@ -11,8 +11,8 @@ public class ScalerFactory {
 	public static final Map<String, ScalerType> SCALER_TYPES;
 	static {
 		Map<String, ScalerType> t = new HashMap<String, ScalerType>();
-		t.put("Linear", ScalerType.LINEAR_SCALER);
-		t.put("Logarithmic", ScalerType.LOG_SCALER);
+		t.put("linear", ScalerType.LINEAR_SCALER);
+		t.put("logarithmic", ScalerType.LOG_SCALER);
 		SCALER_TYPES = Collections.unmodifiableMap(t);
 	}
 	

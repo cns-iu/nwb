@@ -13,8 +13,7 @@ public class Constants {
 	
 	public static final String FONT_NAME = "Garamond";
 		
-	public static final double PAGE_WIDTH_IN_POINTS = 11.0 * POINTS_PER_INCH;
-	
+	public static final double PAGE_WIDTH_IN_POINTS = 11.0 * POINTS_PER_INCH;	
 	
 	public static final double PAGE_HEADER_HEIGHT_IN_POINTS = 0.75 * POINTS_PER_INCH;
 	
@@ -22,17 +21,17 @@ public class Constants {
 	
 	/* No map page area height is necessary since, as we are fixing the aspect
 	 * ratio, it will be implied by the map page area width.
+	 * See calculatePageHeightInPoints(double).
 	 */
 	public static final double MAP_PAGE_AREA_WIDTH_IN_POINTS = (PAGE_WIDTH_IN_POINTS - (1.0 * POINTS_PER_INCH));
 	
 	public static final double PAGE_FOOTER_HEIGHT_IN_POINTS = 0.75 * POINTS_PER_INCH;
 		
-	public static final double LEGEND_PAGE_AREA_WIDTH_IN_POINTS = PAGE_WIDTH_IN_POINTS / 2.0;
+	public static final double LEGEND_PAGE_AREA_WIDTH_IN_POINTS = .55 * PAGE_WIDTH_IN_POINTS;
 	public static final double LEGEND_PAGE_AREA_HEIGHT_IN_POINTS = 1.5 * POINTS_PER_INCH;
 	
-	public static final double LEGEND_PAGE_AREA_LOWER_LEFT_X_IN_POINTS = PAGE_WIDTH_IN_POINTS / 2.0;
+	public static final double LEGEND_PAGE_AREA_LOWER_LEFT_X_IN_POINTS = MAP_PAGE_AREA_WIDTH_IN_POINTS - LEGEND_PAGE_AREA_WIDTH_IN_POINTS;
 	public static final double LEGEND_PAGE_AREA_LOWER_LEFT_Y_IN_POINTS = PAGE_FOOTER_HEIGHT_IN_POINTS;
-
 
 	public static final Map<String, String> SHAPEFILES;
 	static {
@@ -41,12 +40,11 @@ public class Constants {
 		t.put("Countries", "/edu/iu/scipolicy/visualization/geomaps/shapefiles/countries.shp");
 		t.put("US States", "/edu/iu/scipolicy/visualization/geomaps/shapefiles/statesp020.shp");		
 		SHAPEFILES = Collections.unmodifiableMap(t);
-	}
-	
+	}	
 	public static final Map<String, String> FEATURE_NAME_KEY;
 	static {
 		/* Values should correspond to feature-identifying attribute of the 
-		 *respective shapefile
+		 * respective shapefile
 		 */
 		Map<String, String> t = new HashMap<String, String>();
 		t.put("Countries", "NAME");
@@ -62,17 +60,8 @@ public class Constants {
 		t.put("Albers Equal-Area Conic", "albersEqualArea");
 		t.put("Lambert Conformal Conic", "lambertConformalConic");
 		PROJECTIONS = Collections.unmodifiableMap(t);
-	}
+	}	
 	
-	
-	public static double calculatePageHeightInPoints(double mapHeightInPoints) {
-		return (Constants.PAGE_HEADER_HEIGHT_IN_POINTS
-				+ mapHeightInPoints
-				+ Constants.LEGEND_PAGE_AREA_HEIGHT_IN_POINTS
-				+ Constants.PAGE_FOOTER_HEIGHT_IN_POINTS);
-	}
-
-
 	public static final Map<String, Range<Color>> COLOR_RANGES;
 	static {
 		Map<String, Range<Color>> t = new LinkedHashMap<String, Range<Color>>();
@@ -82,5 +71,13 @@ public class Constants {
 		t.put("Blue to red", new Range<Color>(new Color(49, 243, 255), new Color(127, 4, 27)));		
 		t.put("Gray to black", new Range<Color>(new Color(214, 214, 214), new Color(0, 0 ,0)));	
 		COLOR_RANGES = Collections.unmodifiableMap(t);
+	}
+	
+	
+	public static double calculatePageHeightInPoints(double mapHeightInPoints) {
+		return (Constants.PAGE_HEADER_HEIGHT_IN_POINTS
+				+ mapHeightInPoints
+				+ Constants.LEGEND_PAGE_AREA_HEIGHT_IN_POINTS
+				+ Constants.PAGE_FOOTER_HEIGHT_IN_POINTS);
 	}
 }

@@ -2,13 +2,15 @@ package edu.iu.scipolicy.visualization.geomaps.scaling;
 
 import org.cishell.framework.algorithm.AlgorithmExecutionException;
 
+import edu.iu.scipolicy.visualization.geomaps.utility.Range;
+
 public class LogScaler implements Scaler {
 	public boolean canScale(double value) {
-		return ( value > 0.0 );
+		return (value > 0.0);
 	}
 
 	public double scale(double rawValue) throws AlgorithmExecutionException {
-		if ( canScale(rawValue) ) {
+		if (canScale(rawValue)) {
 			return Math.log10(rawValue);
 		}
 		else {
@@ -21,5 +23,12 @@ public class LogScaler implements Scaler {
 
 	public String getUnscalableMessage() {
 		return "Logarithmic scale is defined only for positive numbers.";
+	}
+	
+	public Range<Double> scale(Range<Double> range) throws AlgorithmExecutionException {
+		double scaledMin = scale(range.getMin());
+		double scaledMax = scale(range.getMax());
+		
+		return new Range<Double>(scaledMin, scaledMax);
 	}
 }

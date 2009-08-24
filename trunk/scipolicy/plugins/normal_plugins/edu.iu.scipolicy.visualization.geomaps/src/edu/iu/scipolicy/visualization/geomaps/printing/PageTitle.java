@@ -10,9 +10,9 @@ public class PageTitle {
 	public static final double FONT_BRIGHTNESS = 0.0;
 	
 	public static final double TITLE_LOWER_LEFT_X_IN_POINTS =
-		1.1 * Constants.POINTS_PER_INCH;
+		0.5 * Constants.POINTS_PER_INCH;
 	public static final double SUBTITLE_LOWER_LEFT_Y_IN_POINTS =
-		1.1 * Constants.POINTS_PER_INCH;
+		1.5 * Constants.POINTS_PER_INCH;
 	public static final double TITLE_LOWER_LEFT_Y_IN_POINTS =
 		SUBTITLE_FONT_SIZE + SUBTITLE_LOWER_LEFT_Y_IN_POINTS;	
 	public static final double SUBTITLE_LOWER_LEFT_X_IN_POINTS =

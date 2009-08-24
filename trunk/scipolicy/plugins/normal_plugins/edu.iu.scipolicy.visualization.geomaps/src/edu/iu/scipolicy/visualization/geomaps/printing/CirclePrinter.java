@@ -3,11 +3,13 @@ package edu.iu.scipolicy.visualization.geomaps.printing;
 import java.awt.Color;
 import java.io.BufferedWriter;
 import java.io.IOException;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
 import org.antlr.stringtemplate.StringTemplate;
-import org.cishell.framework.algorithm.AlgorithmExecutionException;
 import org.geotools.geometry.jts.JTSFactoryFinder;
+import org.opengis.referencing.operation.TransformException;
 
 import com.vividsolutions.jts.geom.Coordinate;
 import com.vividsolutions.jts.geom.Geometry;
@@ -23,12 +25,7 @@ import edu.iu.scipolicy.visualization.geomaps.utility.Constants;
 
 public class CirclePrinter {
 	public static final String INDENT = "  ";
-	public static final double CIRCLE_LINE_WIDTH = 1;	
-	public static final String CIRCLE_DEF = "/circle {" + "\n"
-											+ INDENT + "newpath" + "\n"
-											+ INDENT + INDENT + "0 360 arc" + "\n"
-											+ INDENT + "closepath" + "\n"
-											+ "} def" + "\n";
+	public static final double CIRCLE_LINE_WIDTH = 3;
 	
 	private GeometryProjector geometryProjector;
 	private MapDisplayer mapDisplayer;
@@ -55,7 +52,21 @@ public class CirclePrinter {
 		this.hasPrintedDefinitions = false;
 	}
 
-	public void printCircles(BufferedWriter out, List<Circle> circles) throws IOException, AlgorithmExecutionException {
+	public void printCircles(BufferedWriter out, List<Circle> circles)
+			throws IOException, TransformException {
+		/* Sort descending by area.  We want to draw starting with the biggest
+		 * circles to try to avoid drawing over previously drawn circles.
+		 */
+		Collections.sort(
+			circles,
+			Collections.reverseOrder(
+				new Comparator<Circle>() {
+					public int compare(Circle circle1, Circle circle2) {
+						return Double.compare(circle1.getArea(),
+											  circle2.getArea());
+					}
+				}));
+		
 		out.write("% Circle annotations" + "\n");
 		
 		if (!hasPrintedDefinitions) {
@@ -66,12 +77,8 @@ public class CirclePrinter {
 			
 			this.hasPrintedDefinitions = true;
 		}
-		
-		
-		out.write("gsave" + "\n");
-		out.write("\n");
 
-		out.write(CIRCLE_DEF);
+		out.write("gsave" + "\n");
 		out.write("\n");
 
 		out.write(INDENT + CIRCLE_LINE_WIDTH + " setlinewidth" + "\n");
@@ -85,7 +92,8 @@ public class CirclePrinter {
 		out.write("\n");
 	}
 
-	private void printCircle(BufferedWriter out, Circle circle) throws IOException, AlgorithmExecutionException {
+	private void printCircle(BufferedWriter out, Circle circle)
+			throws IOException, TransformException {
 		/* If in the future we would like to project the circles around these points,
 		 * rather than just projecting the central point and drawing a perfect circle,
 		 * I believe that this could be done by, rather than:
@@ -103,7 +111,8 @@ public class CirclePrinter {
 
 		Coordinate coordinate = circle.getCoordinate();
 		double radius = circle.calculateRadiusFromArea();
-		Color color = circle.getColor();
+		Color innerColor = circle.getInnerColor();
+		Color outerColor = circle.getOuterColor();
 
 		GeometryFactory geometryFactory = JTSFactoryFinder.getGeometryFactory(null);
 		Point rawPoint = geometryFactory.createPoint(coordinate);
@@ -114,11 +123,20 @@ public class CirclePrinter {
 		Geometry point = geometryProjector.transformGeometry(rawPoint);
 		Coordinate displayCoordinate = mapDisplayer.getDisplayCoordinate(point.getCoordinate());
 
+		// Create the circle path
 		out.write(INDENT + displayCoordinate.x + " " + displayCoordinate.y + " " + radius + " circle" + "\n");
-		out.write(INDENT + "gsave" + "\n");
-		out.write(INDENT + INDENT + ShapefileToPostScriptWriter.makeSetRGBColorCommand(color));
-		out.write(INDENT + INDENT + "stroke" + "\n");
-		out.write(INDENT + "grestore" + "\n");
+		if (innerColor != null) {
+			// Apply the inner color
+			out.write(INDENT + "gsave" + "\n");	
+			out.write(INDENT + INDENT + ShapefileToPostScriptWriter.makeSetRGBColorCommand(innerColor));
+			out.write(INDENT + INDENT + "fill" + "\n");
+			out.write(INDENT + "grestore" + "\n");
+		}
+		// Apply the outer color
+		out.write(INDENT + "gsave" + "\n");		
+		out.write(INDENT + INDENT + ShapefileToPostScriptWriter.makeSetRGBColorCommand(outerColor));
+		out.write(INDENT + INDENT + "stroke" + "\n");		
+		out.write(INDENT + "grestore" + "\n");		
 		out.write("\n");
 	}
 }

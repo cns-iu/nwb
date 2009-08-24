@@ -5,16 +5,20 @@ import java.awt.Color;
 import com.vividsolutions.jts.geom.Coordinate;
 
 public class Circle {
-	private double area;
-	private Color color;
 	private Coordinate coordinate;
+	private double area;
+	private Color innerColor;
+	private Color outerColor;
+	
 
-	public Circle(Coordinate coordinate, double area, Color color) {
+	public Circle(Coordinate coordinate, double area, Color innerColor, Color outerColor) {
 		this.coordinate = coordinate;
 		this.area = area;
-		this.color = color;
+		this.innerColor = innerColor;
+		this.outerColor = outerColor;
 	}
 
+	
 	public static double calculateAreaFromRadius(double radius) {
 		return (Math.PI * radius * radius);
 	}
@@ -34,10 +38,12 @@ public class Circle {
 	public double getArea() {
 		return area;
 	}
-
-	public Color getColor() {
-		return color;
+	
+	public Color getInnerColor() {
+		return innerColor;
 	}
 
-	
+	public Color getOuterColor() {
+		return outerColor;
+	}
 }
