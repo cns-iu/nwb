@@ -1050,6 +1050,7 @@
   	</antcall>
   	<ant dir="${buildDirectory}/nonpde_plugins/edu.iu.nwb.analysis.weighted.averageclusteringcoefficient"/>
   	
+  	<!--
   	<antcall target="svn.co">
   	  	      <param name="target" value="nonpde_plugins"/>
   	  	      <param name="element.id" value="edu.iu.nwb.modeling.weighted.evolvingnetwork"/>
@@ -1057,6 +1058,7 @@
   	  	      <param name="url" value="http://nwb.slis.indiana.edu/svn/nwb/trunk/plugins"/>
   	</antcall>
   	<ant dir="${buildDirectory}/nonpde_plugins/edu.iu.nwb.modeling.weighted.evolvingnetwork"/>
+  	-->
   	
   	<antcall target="svn.co">
   	  	  	      <param name="target" value="nonpde_plugins"/>
