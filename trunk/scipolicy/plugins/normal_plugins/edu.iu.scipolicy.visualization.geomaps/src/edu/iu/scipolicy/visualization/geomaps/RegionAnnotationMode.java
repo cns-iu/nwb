@@ -20,6 +20,8 @@ import edu.iu.scipolicy.visualization.geomaps.legend.ColorLegend;
 import edu.iu.scipolicy.visualization.geomaps.legend.Legend;
 import edu.iu.scipolicy.visualization.geomaps.legend.LegendComponent;
 import edu.iu.scipolicy.visualization.geomaps.legend.NullLegendComponent;
+import edu.iu.scipolicy.visualization.geomaps.printing.colorstrategy.ColorStrategy;
+import edu.iu.scipolicy.visualization.geomaps.printing.colorstrategy.FillColorStrategy;
 import edu.iu.scipolicy.visualization.geomaps.scaling.Scaler;
 import edu.iu.scipolicy.visualization.geomaps.scaling.ScalerFactory;
 import edu.iu.scipolicy.visualization.geomaps.utility.Averager;
@@ -79,7 +81,8 @@ public class RegionAnnotationMode extends AnnotationMode {
 		
 		int duplicateFeatureNames = 0;
 		int unreadableColorValues = 0;
-		Map<String, Color> featureColors = new HashMap<String, Color>();
+		Map<String, ColorStrategy> featureColors =
+			new HashMap<String, ColorStrategy>();
 		for (TableIterator tableIterator = inTable.iterator(); tableIterator.hasNext(); ) {
 			Tuple row = inTable.getTuple(tableIterator.nextInt());
 			
@@ -99,7 +102,9 @@ public class RegionAnnotationMode extends AnnotationMode {
 								colorInterpolator.interpolate(
 									colorValueScaler.scale(featureColorValue));
 							
-							featureColors.put(featureName, featureColor);
+							featureColors.put(
+									featureName,
+									new FillColorStrategy(featureColor));
 						}
 					} catch (NumberFormatException e) {
 						unreadableColorValues++;

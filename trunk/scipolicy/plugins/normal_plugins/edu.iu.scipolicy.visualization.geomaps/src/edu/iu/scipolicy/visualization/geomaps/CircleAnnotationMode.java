@@ -27,6 +27,10 @@ import edu.iu.scipolicy.visualization.geomaps.legend.LegendComponent;
 import edu.iu.scipolicy.visualization.geomaps.legend.NullLegendComponent;
 import edu.iu.scipolicy.visualization.geomaps.printing.Circle;
 import edu.iu.scipolicy.visualization.geomaps.printing.CirclePrinter;
+import edu.iu.scipolicy.visualization.geomaps.printing.colorstrategy.ColorStrategy;
+import edu.iu.scipolicy.visualization.geomaps.printing.colorstrategy.FillColorStrategy;
+import edu.iu.scipolicy.visualization.geomaps.printing.colorstrategy.NullColorStrategy;
+import edu.iu.scipolicy.visualization.geomaps.printing.colorstrategy.StrokeColorStrategy;
 import edu.iu.scipolicy.visualization.geomaps.scaling.Scaler;
 import edu.iu.scipolicy.visualization.geomaps.scaling.ScalerFactory;
 import edu.iu.scipolicy.visualization.geomaps.utility.Averager;
@@ -34,6 +38,7 @@ import edu.iu.scipolicy.visualization.geomaps.utility.Constants;
 import edu.iu.scipolicy.visualization.geomaps.utility.Range;
 
 public class CircleAnnotationMode extends AnnotationMode {
+	// Page layout sizes and dimensions
 	public static final double AREA_LEGEND_LOWER_LEFT_X =
 		Legend.DEFAULT_LOWER_LEFT_X_IN_POINTS
 		+ (2.0 * Legend.DEFAULT_WIDTH_IN_POINTS / 3.0);
@@ -50,6 +55,7 @@ public class CircleAnnotationMode extends AnnotationMode {
 	public static final double OUTER_COLOR_GRADIENT_WIDTH = INNER_COLOR_GRADIENT_WIDTH;
 	public static final int OUTER_COLOR_GRADIENT_HEIGHT = INNER_COLOR_GRADIENT_HEIGHT;
 	
+	// User parameter IDs
 	public static final String LATITUDE_ID = "latitude";
 	public static final String LONGITUDE_ID = "longitude";
 	public static final String AREA_ID = "circleArea";
@@ -63,11 +69,7 @@ public class CircleAnnotationMode extends AnnotationMode {
 	public static final String OUTER_COLOR_SCALING_ID = "outerColorScaling";
 	public static final String OUTER_COLOR_RANGE_ID = "outerColorRange";
 	
-	public static final String SUBTITLE = "with circle annotations";
-	private static final Color DEFAULT_INNER_COLOR = null;
-	private static final Color DEFAULT_OUTER_COLOR = Color.BLACK;
-	
-	
+	public static final String SUBTITLE = "with circle annotations";	
 
 	/* 1: Read the relevant parameters
      * 2: Read the area and color data from inTable
@@ -208,31 +210,36 @@ public class CircleAnnotationMode extends AnnotationMode {
 					continue;
 				}
 				
-				Color innerColor = DEFAULT_INNER_COLOR;
+				ColorStrategy innerColorStrategy = new NullColorStrategy();
 				if (isUsingInnerColor) {
 					double innerColorValue =
-						NumberUtilities.interpretObjectAsDouble(row.get(innerColorValueAttribute));
+						NumberUtilities.interpretObjectAsDouble(
+								row.get(innerColorValueAttribute));
 					
 					if (innerColorValueScaler.canScale(innerColorValue)) {
-						innerColor =
-							innerColorQuantityInterpolator.interpolate(
-									innerColorValueScaler.scale(innerColorValue));
+						innerColorStrategy =
+							new FillColorStrategy(
+									innerColorQuantityInterpolator.interpolate(
+											innerColorValueScaler.scale(
+													innerColorValue)));
 					} else {
 						incompleteSpecificationCount++;
 						continue;
 					}
 				}
 				
-				Color outerColor = DEFAULT_OUTER_COLOR;
+				ColorStrategy outerColorStrategy = new StrokeColorStrategy();
 				if (isUsingOuterColor) {
 					double outerColorValue =
 						NumberUtilities.interpretObjectAsDouble(
 								row.get(outerColorValueAttribute));
 					
 					if (outerColorValueScaler.canScale(outerColorValue)) {
-						outerColor =
-							outerColorQuantityInterpolator.interpolate(
-									outerColorValueScaler.scale(outerColorValue));
+						outerColorStrategy =
+							new StrokeColorStrategy(
+									outerColorQuantityInterpolator.interpolate(
+											outerColorValueScaler.scale(
+													outerColorValue)));
 					} else {
 						incompleteSpecificationCount++;
 						continue;
@@ -243,8 +250,8 @@ public class CircleAnnotationMode extends AnnotationMode {
 						new Circle(
 								new Coordinate(longitude, latitude),
 								area,
-								innerColor,
-								outerColor));
+								innerColorStrategy,
+								outerColorStrategy));
 			} catch (NumberFormatException e) {
 				incompleteSpecificationCount++;
 			}

@@ -1,6 +1,5 @@
 package edu.iu.scipolicy.visualization.geomaps.printing;
 
-import java.awt.Color;
 import java.io.BufferedWriter;
 import java.io.IOException;
 import java.util.Collections;
@@ -17,7 +16,7 @@ import com.vividsolutions.jts.geom.GeometryFactory;
 import com.vividsolutions.jts.geom.Point;
 
 import edu.iu.scipolicy.visualization.geomaps.GeoMapsAlgorithm;
-import edu.iu.scipolicy.visualization.geomaps.ShapefileToPostScriptWriter;
+import edu.iu.scipolicy.visualization.geomaps.printing.colorstrategy.ColorStrategy;
 import edu.iu.scipolicy.visualization.geomaps.projection.GeometryProjector;
 import edu.iu.scipolicy.visualization.geomaps.scaling.LinearScaler;
 import edu.iu.scipolicy.visualization.geomaps.scaling.Scaler;
@@ -111,8 +110,8 @@ public class CirclePrinter {
 
 		Coordinate coordinate = circle.getCoordinate();
 		double radius = circle.calculateRadiusFromArea();
-		Color innerColor = circle.getInnerColor();
-		Color outerColor = circle.getOuterColor();
+		ColorStrategy innerColorStrategy = circle.getInnerColorStrategy();
+		ColorStrategy outerColorStrategy = circle.getOuterColorStrategy();
 
 		GeometryFactory geometryFactory = JTSFactoryFinder.getGeometryFactory(null);
 		Point rawPoint = geometryFactory.createPoint(coordinate);
@@ -125,18 +124,8 @@ public class CirclePrinter {
 
 		// Create the circle path
 		out.write(INDENT + displayCoordinate.x + " " + displayCoordinate.y + " " + radius + " circle" + "\n");
-		if (innerColor != null) {
-			// Apply the inner color
-			out.write(INDENT + "gsave" + "\n");	
-			out.write(INDENT + INDENT + ShapefileToPostScriptWriter.makeSetRGBColorCommand(innerColor));
-			out.write(INDENT + INDENT + "fill" + "\n");
-			out.write(INDENT + "grestore" + "\n");
-		}
-		// Apply the outer color
-		out.write(INDENT + "gsave" + "\n");		
-		out.write(INDENT + INDENT + ShapefileToPostScriptWriter.makeSetRGBColorCommand(outerColor));
-		out.write(INDENT + INDENT + "stroke" + "\n");		
-		out.write(INDENT + "grestore" + "\n");		
+		out.write(innerColorStrategy.toPostScript());
+		out.write(outerColorStrategy.toPostScript());	
 		out.write("\n");
 	}
 }

@@ -17,10 +17,11 @@ import org.opengis.referencing.operation.TransformException;
 import com.vividsolutions.jts.geom.Coordinate;
 import com.vividsolutions.jts.geom.Geometry;
 
-import edu.iu.scipolicy.visualization.geomaps.ShapefileToPostScriptWriter;
+import edu.iu.scipolicy.visualization.geomaps.printing.colorstrategy.ColorStrategy;
+import edu.iu.scipolicy.visualization.geomaps.printing.colorstrategy.NullColorStrategy;
 import edu.iu.scipolicy.visualization.geomaps.projection.GeometryProjector;
-import edu.iu.scipolicy.visualization.geomaps.scaling.Scaler;
 import edu.iu.scipolicy.visualization.geomaps.scaling.LinearScaler;
+import edu.iu.scipolicy.visualization.geomaps.scaling.Scaler;
 
 public class FeaturePrinter {
 	public static final Color DEFAULT_FEATURE_COLOR = Color.WHITE;	
@@ -43,7 +44,7 @@ public class FeaturePrinter {
 	
 	public void printFeatures(
 			BufferedWriter out,
-			Map<String, Color> featureColorMap,
+			Map<String, ColorStrategy> featureColorMap,
 			String featureColorMapKey)
 				throws IOException, AlgorithmExecutionException, TransformException {
 		out.write("% Features" + "\n");
@@ -68,7 +69,12 @@ public class FeaturePrinter {
 		out.write("\n");
 	}
 
-	private void printFeature(BufferedWriter out, SimpleFeature feature, Map<String, Color> featureColorMap, String featureColorMapKey) throws IOException, TransformException, AlgorithmExecutionException {
+	private void printFeature(
+			BufferedWriter out,
+			SimpleFeature feature,
+			Map<String, ColorStrategy> featureColorMap,
+			String featureColorMapKey)
+				throws IOException, TransformException, AlgorithmExecutionException {
 		Geometry rawGeometry = (Geometry) feature.getDefaultGeometry();
 		Geometry geometry = geometryProjector.projectGeometry(rawGeometry);
 
@@ -84,7 +90,12 @@ public class FeaturePrinter {
 		out.write("\n");
 	}
 
-	private void printGeometry(Geometry subgeometry, BufferedWriter out, Map<String, Color> featureColorMap, String name) throws IOException {
+	private void printGeometry(
+			Geometry subgeometry,
+			BufferedWriter out,
+			Map<String, ColorStrategy> featureColorMap,
+			String name)
+				throws IOException {
 		Coordinate[] coordinates = subgeometry.getCoordinates();
 		if (coordinates.length > 0) {
 			Coordinate firstCoordinate = mapDisplayer.getDisplayCoordinate(coordinates[0]);
@@ -100,12 +111,21 @@ public class FeaturePrinter {
 
 			out.write(INDENT + "closepath" + "\n");
 
-			Color color = getColor(name, featureColorMap);
-			printColoredFillCommand(out, color);
+			// Fill the interior
+			ColorStrategy colorStrategy = new NullColorStrategy();
+			if (featureColorMap.containsKey(name)) {
+				colorStrategy = featureColorMap.get(name);
+			}
+			out.write(colorStrategy.toPostScript());
+			
+			// Stroke the border
+			out.write("stroke" + "\n");
 		}		
 	}
 
-	private String getFeatureName(SimpleFeature feature, String featureColorMapKey) throws AlgorithmExecutionException {
+	private String getFeatureName(
+			SimpleFeature feature, String featureColorMapKey)
+				throws AlgorithmExecutionException {
 		Property nameProperty = feature.getProperty(featureColorMapKey);
 		String name;
 		if (nameProperty != null) {
@@ -120,23 +140,4 @@ public class FeaturePrinter {
 		
 		return name;
 	}
-
-	private Color getColor(String name, Map<String, Color> featureColorMap) {
-		if (featureColorMap.containsKey(name)) {
-			return featureColorMap.get(name);
-		}
-		else {
-			return DEFAULT_FEATURE_COLOR;
-		}
-	}
-
-	private void printColoredFillCommand(BufferedWriter out, Color color) throws IOException {
-		out.write(INDENT + "gsave" + "\n");
-		out.write(INDENT + INDENT + ShapefileToPostScriptWriter.makeSetRGBColorCommand(color));
-		out.write(INDENT + INDENT + "fill" + "\n");
-		out.write(INDENT + "grestore" + "\n");
-		out.write(INDENT + "stroke" + "\n");
-	}
-	
-	
 }

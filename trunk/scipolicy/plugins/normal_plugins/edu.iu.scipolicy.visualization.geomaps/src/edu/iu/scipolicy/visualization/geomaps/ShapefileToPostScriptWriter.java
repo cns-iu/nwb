@@ -37,6 +37,7 @@ import edu.iu.scipolicy.visualization.geomaps.printing.MapDisplayer;
 import edu.iu.scipolicy.visualization.geomaps.printing.PageFooter;
 import edu.iu.scipolicy.visualization.geomaps.printing.PageHeader;
 import edu.iu.scipolicy.visualization.geomaps.printing.PageTitle;
+import edu.iu.scipolicy.visualization.geomaps.printing.colorstrategy.ColorStrategy;
 import edu.iu.scipolicy.visualization.geomaps.projection.GeometryProjector;
 import edu.iu.scipolicy.visualization.geomaps.utility.Constants;
 import edu.iu.scipolicy.visualization.geomaps.utility.ShapefileFeatureReader;
@@ -57,7 +58,8 @@ public class ShapefileToPostScriptWriter {
 	private MapDisplayer mapDisplayer;
 	private double pageHeightInPoints;
 	private Legend legend = new Legend();
-	private Map<String, Color> featureColorMap = new HashMap<String, Color>();
+	private Map<String, ColorStrategy> featureColorMap =
+		new HashMap<String, ColorStrategy>();
 	private String featureNameKey;
 	private List<Circle> circles = new ArrayList<Circle>();
 	
@@ -78,7 +80,10 @@ public class ShapefileToPostScriptWriter {
 		this.featureNameKey = featureNameKey;
 	}
 
-	public void setFeatureColorAnnotations(String subtitle, Map<String, Color> featureColorMap, LegendComponent featureColorGradient) {
+	public void setFeatureColorAnnotations(
+			String subtitle,
+			Map<String, ColorStrategy> featureColorMap,
+			LegendComponent featureColorGradient) {
 		this.subtitle = subtitle;
 		this.featureColorMap = featureColorMap;
 		legend.add(featureColorGradient);

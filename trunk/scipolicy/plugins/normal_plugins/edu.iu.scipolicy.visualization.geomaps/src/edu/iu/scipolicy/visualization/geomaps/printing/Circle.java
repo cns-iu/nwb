@@ -1,21 +1,25 @@
 package edu.iu.scipolicy.visualization.geomaps.printing;
 
-import java.awt.Color;
-
 import com.vividsolutions.jts.geom.Coordinate;
+
+import edu.iu.scipolicy.visualization.geomaps.printing.colorstrategy.ColorStrategy;
 
 public class Circle {
 	private Coordinate coordinate;
 	private double area;
-	private Color innerColor;
-	private Color outerColor;
+	private ColorStrategy innerColorStrategy;
+	private ColorStrategy outerColorStrategy;
 	
 
-	public Circle(Coordinate coordinate, double area, Color innerColor, Color outerColor) {
+	public Circle(
+			Coordinate coordinate,
+			double area,
+			ColorStrategy innerColorStrategy,
+			ColorStrategy outerColorStrategy) {
 		this.coordinate = coordinate;
 		this.area = area;
-		this.innerColor = innerColor;
-		this.outerColor = outerColor;
+		this.innerColorStrategy = innerColorStrategy;
+		this.outerColorStrategy = outerColorStrategy;
 	}
 
 	
@@ -39,11 +43,11 @@ public class Circle {
 		return area;
 	}
 	
-	public Color getInnerColor() {
-		return innerColor;
+	public ColorStrategy getInnerColorStrategy() {
+		return innerColorStrategy;
 	}
 
-	public Color getOuterColor() {
-		return outerColor;
+	public ColorStrategy getOuterColorStrategy() {
+		return outerColorStrategy;
 	}
 }

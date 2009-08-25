@@ -25,10 +25,10 @@
 		<AD name="Size Scaling" id="circleAreaScaling" type="String" description="How to scale the size attribute (linear implies no rescaling)" default="Mutate"/>
 		<!-- TODO: Expose "Size Range"? -->
 		<AD name="Color Circle Exteriors By" id="outerColorQuantity" type="String" description="Numeric attribute that determines outer color" default="Mutate"/>
-		<AD name="Scale Exterior Colors By" id="outerColorScaling" type="String" description="How to scale the outer color attribute (linear implies no rescaling)" default="Mutate"/>
+		<AD name="Exterior Color Scaling" id="outerColorScaling" type="String" description="How to scale the outer color attribute (linear implies no rescaling)" default="Mutate"/>
 		<AD name="Exterior Color Range" id="outerColorRange" type="String" description="Two colors that the color should range between, from least to greatest" default="Mutate"/>
 		<AD name="Color Circle Interiors By" id="innerColorQuantity" type="String" description="Numeric attribute that determines inner color" default="Mutate"/>
-		<AD name="Scale Interior Colors By" id="innerColorScaling" type="String" description="How to scale the inner color attribute (linear implies no rescaling)" default="Mutate"/>
+		<AD name="Interior Color Scaling" id="innerColorScaling" type="String" description="How to scale the inner color attribute (linear implies no rescaling)" default="Mutate"/>
 		<AD name="Interior Color Range" id="innerColorRange" type="String" description="Two colors that the color should range between, from least to greatest" default="Mutate"/>
 	</OCD>
 	<Designate pid="edu.iu.scipolicy.visualization.geomaps.GeoMapsCirclesFactory">
