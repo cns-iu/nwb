@@ -393,24 +393,25 @@ colorLegendDefinitions() ::= <<
 				firstGradientX gradientResolution lastGradientX {
 					/ii exch def
 					
-					/red {ii firstGradientX lastGradientX minColorRed maxColorRed interpolate} bind def
-					/green {ii firstGradientX lastGradientX minColorGreen maxColorGreen interpolate} bind def
-					/blue {ii firstGradientX lastGradientX minColorBlue maxColorBlue interpolate} bind def
-					red green blue setrgbcolor
-					
-					/cellY {gradientY} bind def
-					/cellHeight {gradientHeight} bind def
-
+					% Draw black ticks below the first, middle, and last cells
 					/isFirstCell {ii firstGradientX sub abs gradientResolution lt} bind def
 					/isMiddleCell {ii lastGradientX firstGradientX 2 mean round sub abs gradientResolution 2 div lt} bind def
 					/isLastCell {ii lastGradientX sub abs gradientResolution lt} bind def
 					
 					isFirstCell isMiddleCell or isLastCell or {
-						/cellY {gradientY tickHeight sub} bind def
-						/cellHeight {gradientHeight tickHeight add} bind def
+						gsave
+							ii gradientY tickHeight sub gradientResolution tickHeight box
+							0 setgray
+							fill
+						grestore
 					} if
-					ii cellY gradientResolution cellHeight box
-
+					
+					% Draw the ii'th colored cell of the gradient
+					/red {ii firstGradientX lastGradientX minColorRed maxColorRed interpolate} bind def
+					/green {ii firstGradientX lastGradientX minColorGreen maxColorGreen interpolate} bind def
+					/blue {ii firstGradientX lastGradientX minColorBlue maxColorBlue interpolate} bind def
+					red green blue setrgbcolor
+					ii gradientY gradientResolution gradientHeight box
 					fill
 				} for
 			grestore
