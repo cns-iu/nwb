@@ -165,6 +165,7 @@
   	
   	  <!-- These arguably shouldn't be CIShell plugins, but they are for now, so oh well -->
   	
+  	
   	 <antcall target="svn.co">
   	  	      <param name="target" value="plugins"/>
   	  	      <param name="element.id" value="org.cishell.reference.service.database"/>
@@ -223,6 +224,13 @@
   	  	  	  	    </antcall>
   	
   	  <!-- Legit CIShell plugins -->
+  	<antcall target="svn.co">
+  	  	  	      <param name="target" value="plugins"/>
+  	  	  	      <param name="element.id" value="org.cishell.algorithm.convertergraph"/>
+  	  	  	      <param name="project.name" value="/core/org.cishell.algorithm.convertergraph"/>
+  	  	  	      <param name="url" value="https://cishell.svn.sourceforge.net/svnroot/cishell/trunk"/>
+  	</antcall>
+  	
   	<antcall target="svn.co">
   	  	      <param name="target" value="plugins"/>
   	  	      <param name="element.id" value="org.cishell.utilities"/>
