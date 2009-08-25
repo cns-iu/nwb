@@ -29,6 +29,11 @@
     </top_menu>
     
     <top_menu name="Preprocessing">
+    <menu pid="edu.iu.scipolicy.filtering.topnpercent.TopNPercentAlgorithm"/>
+    <menu pid="edu.iu.scipolicy.filtering.topn.TopNAlgorithm"/>
+   	<menu pid="edu.iu.nwb.preprocessing.text.normalization.StandardNormalyzer"/>
+	<menu pid="edu.iu.nwb.preprocessing.timeslice.Slice"/>
+	<menu type="break"/>
     <menu pid="edu.iu.nwb.preprocessing.extractnodesandedges.extractnodes.top.ExtractTopNodesAlgorithm"/>
     <menu pid="edu.iu.nwb.preprocessing.extractnodesandedges.extractnodes.abovebelow.ExtractNodesAboveBelowAlgorithm"/>	
  	<!--  
@@ -55,10 +60,7 @@
 	<menu pid="edu.iu.nwb.analysis.dichotomize.Dichotomize"/>
 	<menu pid="edu.iu.nwb.analysis.multipartitejoining.JoiningAlgorithm"/>
 	<menu type="break"/>
-	<menu pid="edu.iu.nwb.preprocessing.text.normalization.StandardNormalyzer"/>
-	<menu pid="edu.iu.nwb.preprocessing.timeslice.Slice"/>
-    <menu pid="edu.iu.scipolicy.filtering.topnpercent.TopNPercentAlgorithm"/>
-    <menu pid="edu.iu.scipolicy.filtering.topn.TopNAlgorithm"/>
+
     </top_menu>   
      
     <top_menu name="Modeling">
@@ -99,6 +101,7 @@
 		<menu pid="edu.iu.nwb.analysis.sitebetweenness"/>
 		<menu type="break"/>
 		<menu pid="edu.iu.nwb.analysis.weakcomponentclustering.ClusteringAlgorithm"/>
+		<menu pid="edu.iu.nwb.analysis.connectedcomponents"/>
 		<menu type="break"/>
 		<menu pid="edu.iu.nwb.analysis.kcore.Extract"/>
         <menu pid="edu.iu.nwb.analysis.kcore.Annotate"/>
@@ -114,6 +117,8 @@
 		<menu pid="edu.iu.nwb.analysis.weighted.strengthdistribution"/>
 		<menu pid="edu.iu.nwb.analysis.weighted.weightdistribution"/>
 		<menu pid="edu.iu.nwb.analysis.weighted.randomweight"/>
+		<menu type="break"/>
+		<menu pid="edu.iu.nwb.analysis.blondelcommunitydetection.BlondelCommunityDetectionAlgorithm"/>
 		<menu type="break"/>	
 		<menu pid="edu.iu.nwb.analysis.hits.HITSAlgorithm"/>
 	</menu>
@@ -171,8 +176,8 @@
  	<menu type="break"/>
 	<menu pid="edu.iu.nwb.visualization.radialgraph.RadialGraph"/> 
 	<menu pid="edu.iu.nwb.visualization.prefuse.beta.radialgraph.RadialGraph"/>
-	<menu pid="edu.iu.nwb.visualization.prefuse.beta.treemap.TreeMap"/>
 	<menu pid="edu.iu.nwb.visualization.prefuse.beta.treeview.TreeView"/>
+	<menu pid="edu.iu.nwb.visualization.prefuse.beta.treemap.TreeMap"/>
 	<!-- 
 	<menu pid="edu.iu.nwb.visualization.balloongraph.BalloongraphAlgorithm"/>
 	<menu pid="edu.iu.nwb.visualization.jungnetworklayout.JUNGKamadaKawaiLayout"/>
@@ -186,10 +191,8 @@
 	<menu type="break"/>
 	<menu pid="edu.iu.scipolicy.visualization.horizontallinegraph.HorizontalLineGraphAlgorithm"/>
 	<menu pid="edu.iu.nwb.visualization.roundrussell.RoundRussellAlgorithm"/>
-	<menu name = "Geo Maps" type="group">
-		<menu pid="edu.iu.scipolicy.visualization.geomaps.GeoMapsCirclesFactory"/>
-		<menu pid="edu.iu.scipolicy.visualization.geomaps.GeoMapsRegionsFactory"/>
-	</menu>
+	<menu pid="edu.iu.scipolicy.visualization.geomaps.GeoMapsCirclesFactory"/>
+	<menu pid="edu.iu.scipolicy.visualization.geomaps.GeoMapsRegionsFactory"/>
 	
 	<!--  
 	<menu pid="edu.iu.nwb.visualization.jungnetworklayout.JUNGSpringLayout"/>
