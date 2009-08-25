@@ -230,6 +230,10 @@ def initializeGlobalVariables():
         edgeIndex.append((i.node1.getName() + " - " + i.node2.getName(), counter))
         counter = counter + 1
     edgeIndex.sort()
+    
+	# Setting the default color of edges & nodes to black.    
+    g.edges.labelColor = '0, 0, 0, 255'
+    g.nodes.labelColor = '0, 0, 0, 255'
 
 # the class to for the auto complete JComboBox
 # automatically completes what is inserted into the JComboBox

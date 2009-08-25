@@ -102,7 +102,9 @@ def formatcolor(arg):
 
     return arg
 
-        
 resizeLinear = fixedResizeLinear
 colorize = fixedColorize
+
+# Sets the default background color of GUESS to white 
+setDisplayBackground(white)        
 
