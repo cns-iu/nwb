@@ -25,7 +25,7 @@ import edu.iu.scipolicy.visualization.geomaps.scaling.Scaler;
 
 public class FeaturePrinter {
 	public static final Color DEFAULT_FEATURE_COLOR = Color.WHITE;	
-	public static final double BORDER_BRIGHTNESS = 0.5;
+	public static final double BORDER_BRIGHTNESS = 0.6;
 	public static final double BORDER_LINE_WIDTH = 0.001;
 	public static final String INDENT = "  ";
 	

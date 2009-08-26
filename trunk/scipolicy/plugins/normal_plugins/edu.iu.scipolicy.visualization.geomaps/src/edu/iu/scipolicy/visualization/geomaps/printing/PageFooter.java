@@ -7,7 +7,7 @@ import edu.iu.scipolicy.visualization.geomaps.utility.Constants;
 
 public class PageFooter {
 	public static final String INDENT = "    ";
-	public static final String ATTRIBUTION_PREFIX =	"Created with the ";
+	public static final String ATTRIBUTION_PREFIX =	"Created with ";
 	
 	public static final String CNS_URL = "http://cns.slis.indiana.edu";
 	public static final String CNS =
@@ -18,9 +18,9 @@ public class PageFooter {
 	public static final double FONT_BRIGHTNESS = 0.35;
 	
 	public static final double LOWER_LEFT_X_IN_POINTS =
-		0.35 * Constants.POINTS_PER_INCH;
+		Constants.PAGE_MARGIN_SIZE_IN_POINTS;
 	public static final double LOWER_LEFT_Y_IN_POINTS =
-		0.35 * Constants.POINTS_PER_INCH;
+		Constants.PAGE_MARGIN_SIZE_IN_POINTS;
 
 	private static final String SEP = " | ";
 	

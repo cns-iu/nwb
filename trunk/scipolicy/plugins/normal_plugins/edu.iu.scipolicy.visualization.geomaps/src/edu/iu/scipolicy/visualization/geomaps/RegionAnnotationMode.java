@@ -29,16 +29,21 @@ import edu.iu.scipolicy.visualization.geomaps.utility.Constants;
 import edu.iu.scipolicy.visualization.geomaps.utility.Range;
 
 public class RegionAnnotationMode extends AnnotationMode {
+	public static final double COLOR_GRADIENT_LOWER_LEFT_X =
+		Legend.DEFAULT_LOWER_LEFT_X_IN_POINTS
+		+ (0.5 * Legend.DEFAULT_WIDTH_IN_POINTS);
 	public static final double COLOR_GRADIENT_WIDTH =
-		0.90 * Legend.DEFAULT_WIDTH_IN_POINTS;
-	public static final int COLOR_GRADIENT_HEIGHT = 15;
+		Constants.PAGE_MARGIN_SIZE_IN_POINTS
+		+ Constants.MAP_PAGE_AREA_WIDTH_IN_POINTS
+		- COLOR_GRADIENT_LOWER_LEFT_X;
+	public static final int COLOR_GRADIENT_HEIGHT = 10;
 	public static final String FEATURE_NAME_ID = "featureName";
 	public static final String FEATURE_COLOR_QUANTITY_ID = "featureColorQuantity";
 	public static final String FEATURE_COLOR_SCALING_ID = "featureColorScaling";
 	public static final String FEATURE_COLOR_RANGE_ID = "featureColorRange";
 	public static final String DEFAULT_FEATURE_NAME_ATTRIBUTE_KEY = "NAME";
 	
-	public static final String SUBTITLE = "with colored region annotations";
+	public static final String SUBTITLE = "Colored-Region Annotation Style";
 	public static final Color DEFAULT_FEATURE_COLOR = null;
 	
 	/* 1: Grab the relevant parameters
@@ -170,7 +175,7 @@ public class RegionAnnotationMode extends AnnotationMode {
 						colorRange,
 						"Region Color",
 						attribute,
-						Legend.DEFAULT_LOWER_LEFT_X_IN_POINTS,
+						COLOR_GRADIENT_LOWER_LEFT_X,
 						Legend.DEFAULT_LOWER_LEFT_Y_IN_POINTS,
 						COLOR_GRADIENT_WIDTH,
 						COLOR_GRADIENT_HEIGHT);

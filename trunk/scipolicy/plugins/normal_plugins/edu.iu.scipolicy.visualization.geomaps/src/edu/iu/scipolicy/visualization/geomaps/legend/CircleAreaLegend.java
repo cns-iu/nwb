@@ -77,7 +77,8 @@ public class CircleAreaLegend implements LegendComponent {
 		
 		if (!hasPrintedDefinitions) {
 			StringTemplate definitionsTemplate =
-				GeoMapsAlgorithm.group.getInstanceOf("circleAreaLegendDefinitions");
+				GeoMapsAlgorithm.group.getInstanceOf(
+						"circleAreaLegendDefinitions");
 			
 			s += definitionsTemplate.toString();
 			
@@ -90,32 +91,49 @@ public class CircleAreaLegend implements LegendComponent {
 		invocationTemplate.setAttribute("x", lowerLeftX);
 		invocationTemplate.setAttribute("y", lowerLeftY);
 		
-		invocationTemplate.setAttribute("minRadius", Circle.calculateRadiusFromArea(interpolatedRange.getMin()));
-		invocationTemplate.setAttribute("midRadius", Circle.calculateRadiusFromArea(areaMidrange));
-		invocationTemplate.setAttribute("maxRadius", Circle.calculateRadiusFromArea(interpolatedRange.getMax()));
+		invocationTemplate.setAttribute(
+				"minRadius",
+				Circle.calculateRadiusFromArea(interpolatedRange.getMin()));
+		invocationTemplate.setAttribute(
+				"midRadius",
+				Circle.calculateRadiusFromArea(areaMidrange));
+		invocationTemplate.setAttribute(
+				"maxRadius",
+				Circle.calculateRadiusFromArea(interpolatedRange.getMax()));
 		
 		invocationTemplate.setAttribute("circleBrightness", CIRCLE_BRIGHTNESS);
 		
 		UnsignedZeroDecimalFormat doubleFormatter =
 			UnsignedZeroDecimalFormat.createDecimalFormatOver(
 					rawRange.getMin(), rawMidArea, rawRange.getMax());
-		invocationTemplate.setAttribute("minLabel", doubleFormatter.format(rawRange.getMin()));
-		invocationTemplate.setAttribute("midLabel", doubleFormatter.format(rawMidArea));
-		invocationTemplate.setAttribute("maxLabel", doubleFormatter.format(rawRange.getMax()));
+		invocationTemplate.setAttribute(
+				"minLabel", doubleFormatter.format(rawRange.getMin()));
+		invocationTemplate.setAttribute(
+				"midLabel", doubleFormatter.format(rawMidArea));
+		invocationTemplate.setAttribute(
+				"maxLabel", doubleFormatter.format(rawRange.getMax()));
 		
-		invocationTemplate.setAttribute("extremaLabelBrightness", EXTREMA_LABEL_BRIGHTNESS);
-		invocationTemplate.setAttribute("extremaLabelFontSize", EXTREMA_LABEL_FONT_SIZE);
+		invocationTemplate.setAttribute(
+				"extremaLabelBrightness", EXTREMA_LABEL_BRIGHTNESS);
+		invocationTemplate.setAttribute(
+				"extremaLabelFontSize", EXTREMA_LABEL_FONT_SIZE);
 		
 		invocationTemplate.setAttribute("typeLabel", typeLabel);
-		invocationTemplate.setAttribute("typeLabelBrightness", TYPE_LABEL_BRIGHTNESS);
-		invocationTemplate.setAttribute("typeLabelFontSize", TYPE_LABEL_FONT_SIZE);
+		invocationTemplate.setAttribute(
+				"typeLabelBrightness", TYPE_LABEL_BRIGHTNESS);
+		invocationTemplate.setAttribute(
+				"typeLabelFontSize", TYPE_LABEL_FONT_SIZE);
 		
-		invocationTemplate.setAttribute("scalingLabel", "(" + scalingLabel + ")");
-		invocationTemplate.setAttribute("scalingLabelBrightness", SCALING_LABEL_BRIGHTNESS);
+		invocationTemplate.setAttribute(
+				"scalingLabel", "(" + scalingLabel + ")");
+		invocationTemplate.setAttribute(
+				"scalingLabelBrightness", SCALING_LABEL_BRIGHTNESS);
 		
 		invocationTemplate.setAttribute("keyLabel", keyLabel);
-		invocationTemplate.setAttribute("keyLabelBrightness", KEY_LABEL_BRIGHTNESS);
-		invocationTemplate.setAttribute("keyLabelFontSize", KEY_LABEL_FONT_SIZE);
+		invocationTemplate.setAttribute(
+				"keyLabelBrightness", KEY_LABEL_BRIGHTNESS);
+		invocationTemplate.setAttribute(
+				"keyLabelFontSize", KEY_LABEL_FONT_SIZE);
 		
 		invocationTemplate.setAttribute("fontName", FONT_NAME);
 

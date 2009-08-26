@@ -74,15 +74,18 @@ public class GeoMapsAlgorithm implements Algorithm {
 			final ProjectedCRS projectedCRS = getProjectedCRS();
 			
 			String featureNameKey = Constants.FEATURE_NAME_KEY.get(shapefileKey);
-			
+			String projectionName = (String) parameters.get(PROJECTION_ID);
 			String authorName = (String) parameters.get(AUTHOR_NAME_ID);
 			
 			ShapefileToPostScriptWriter postScriptWriter;
 			postScriptWriter =
 				new ShapefileToPostScriptWriter(shapefileURL, projectedCRS, featureNameKey);
 			
+			/* applyAnnotations side-effects postScriptWriter
+			 * to set annotation data and LegendComponents.
+			 */
 			annotationMode.applyAnnotations(postScriptWriter, inTable, parameters);
-			postScriptWriter.writePostScriptToFile(temporaryPostScriptFile, authorName, dataLabel);
+			postScriptWriter.writePostScriptToFile(temporaryPostScriptFile, projectionName, authorName, dataLabel);
 
 			Data[] outData = formOutData(temporaryPostScriptFile, inDatum);
 

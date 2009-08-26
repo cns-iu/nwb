@@ -24,7 +24,7 @@ import edu.iu.scipolicy.visualization.geomaps.utility.Constants;
 
 public class CirclePrinter {
 	public static final String INDENT = "  ";
-	public static final double CIRCLE_LINE_WIDTH = 3;
+	public static final double CIRCLE_LINE_WIDTH = 1.5;
 	
 	private GeometryProjector geometryProjector;
 	private MapDisplayer mapDisplayer;

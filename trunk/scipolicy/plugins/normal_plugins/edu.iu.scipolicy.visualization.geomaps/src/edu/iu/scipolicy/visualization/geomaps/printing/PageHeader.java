@@ -1,8 +1,5 @@
 package edu.iu.scipolicy.visualization.geomaps.printing;
 
-import java.text.SimpleDateFormat;
-import java.util.Calendar;
-
 import edu.iu.scipolicy.visualization.geomaps.utility.Constants;
 
 public class PageHeader {
@@ -14,35 +11,25 @@ public class PageHeader {
 	public static final double FONT_BRIGHTNESS = 0.35;
 	
 	public static final double LOWER_LEFT_X_IN_POINTS =
-		0.4 * Constants.POINTS_PER_INCH;
+		Constants.PAGE_MARGIN_SIZE_IN_POINTS;
 		
-	
-	private String authorName;
 	private String dataLabel;
 	private double lowerLeftYInPoints;	
 
 	
-	public PageHeader(String authorName, String dataLabel, double pageHeightInPoints) {
-		this.authorName = authorName;
+	public PageHeader(String dataLabel, double pageHeightInPoints) {
 		this.dataLabel = dataLabel;
 		
-		// Place the text so that its top is 0.4 inches from the top of the page
 		this.lowerLeftYInPoints =
-			pageHeightInPoints - (0.4 * Constants.POINTS_PER_INCH) - FONT_SIZE;
+			pageHeightInPoints - Constants.PAGE_MARGIN_SIZE_IN_POINTS - FONT_SIZE;
 	}	
 	
 	public String toString() {
 		String s = "";
 		
-		if (stringSpecified(authorName)) {
-			s += (authorName + SEP);
-		}
-		
 		if (stringSpecified(dataLabel)) {
-			s += ("Generated from " + dataLabel + SEP);
+			s += ("Generated from " + dataLabel);
 		}
-		
-		s += timestamp();
 		
 		return s;
 	}
@@ -69,12 +56,5 @@ public class PageHeader {
 	public static String escapeForPostScript(String string) {
 		// Replace each backslash with two backslashes
 		return string.replace("\\", "\\\\");
-	}
-
-	public static String timestamp() {
-		Calendar cal = Calendar.getInstance();
-	    SimpleDateFormat sdf =
-	    	new SimpleDateFormat("EEEEEEEEEEEEE, dd MMMMMMMMMMMM, yyyy HH:mm zzz");
-	    return sdf.format(cal.getTime());
 	}
 }

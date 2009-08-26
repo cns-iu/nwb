@@ -69,7 +69,7 @@ public class CircleAnnotationMode extends AnnotationMode {
 	public static final String OUTER_COLOR_SCALING_ID = "outerColorScaling";
 	public static final String OUTER_COLOR_RANGE_ID = "outerColorRange";
 	
-	public static final String SUBTITLE = "with circle annotations";	
+	public static final String SUBTITLE = "Circle Annotation Style";	
 
 	/* 1: Read the relevant parameters
      * 2: Read the area and color data from inTable
@@ -332,7 +332,7 @@ public class CircleAnnotationMode extends AnnotationMode {
 						rawMidArea,
 						areaMidrange,
 						outputRange,
-						"Circle Area",
+						"Area",
 						attribute,
 						AREA_LEGEND_LOWER_LEFT_X,
 						Legend.DEFAULT_LOWER_LEFT_Y_IN_POINTS);
@@ -380,7 +380,7 @@ public class CircleAnnotationMode extends AnnotationMode {
 							scaling,
 							rawMidInnerColorQuantity,
 							colorRange,
-							"Inner Circle Color",
+							"Interior Color",
 							attribute,
 							INNER_COLOR_LEGEND_LOWER_LEFT_X,
 							Legend.DEFAULT_LOWER_LEFT_Y_IN_POINTS,
@@ -430,7 +430,7 @@ public class CircleAnnotationMode extends AnnotationMode {
 							scaling,
 							rawMidOuterColorQuantity,
 							colorRange,
-							"Outer Circle Color",
+							"Exterior Color",
 							attribute,
 							OUTER_COLOR_LEGEND_LOWER_LEFT_X,
 							Legend.DEFAULT_LOWER_LEFT_Y_IN_POINTS,

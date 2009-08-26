@@ -6,7 +6,9 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.net.URL;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -36,20 +38,22 @@ import edu.iu.scipolicy.visualization.geomaps.printing.FeaturePrinter;
 import edu.iu.scipolicy.visualization.geomaps.printing.MapDisplayer;
 import edu.iu.scipolicy.visualization.geomaps.printing.PageFooter;
 import edu.iu.scipolicy.visualization.geomaps.printing.PageHeader;
-import edu.iu.scipolicy.visualization.geomaps.printing.PageTitle;
+import edu.iu.scipolicy.visualization.geomaps.printing.PageMetadata;
 import edu.iu.scipolicy.visualization.geomaps.printing.colorstrategy.ColorStrategy;
 import edu.iu.scipolicy.visualization.geomaps.projection.GeometryProjector;
 import edu.iu.scipolicy.visualization.geomaps.utility.Constants;
 import edu.iu.scipolicy.visualization.geomaps.utility.ShapefileFeatureReader;
 
 public class ShapefileToPostScriptWriter {
+	public static final String TITLE = "Geo Map";
+
 	public static final String INDENT = "  ";
 	
 	public static final String MERCATOR_EPSG_CODE = "EPSG:3395";
 	public static final String ALBERS_EPSG_CODE = "EPSG:3083";
 	public static final String LAMBERT_EPSG_CODE = "EPSG:2267";		
 	
-	public static final String PAGE_TITLE = "Geo Map";
+	public static final String PAGE_TITLE = TITLE;
 	
 	private String subtitle = "";
 	
@@ -99,7 +103,7 @@ public class ShapefileToPostScriptWriter {
 	}
 
 	public void writePostScriptToFile(
-			File psFile, String authorName, String dataLabel)
+			File psFile, String projectionName, String authorName, String dataLabel)
 				throws IOException, AlgorithmExecutionException, TransformException {
 		BufferedWriter out = new BufferedWriter(new FileWriter(psFile));
 
@@ -108,7 +112,7 @@ public class ShapefileToPostScriptWriter {
 		out.write(createPostScriptUtilityDefinitions());
 		out.write("\n");
 		
-		out.write((new PageHeader(authorName, dataLabel, pageHeightInPoints)).toPostScript() + "\n");
+		out.write((new PageHeader(dataLabel, pageHeightInPoints)).toPostScript() + "\n");
 		out.write((new PageFooter()).toPostScript() + "\n");		
 		
 		out.write("% Save the default clipping path so we can clip the map safely" + "\n");
@@ -128,8 +132,12 @@ public class ShapefileToPostScriptWriter {
 		out.write("% Restore the default clipping path" + "\n");
 		out.write("grestore" + "\n");
 		out.write("\n");
-
-		out.write((new PageTitle(PAGE_TITLE, subtitle)).toPostScript());
+		
+		PageMetadata pageMetadata = new PageMetadata(TITLE, subtitle);
+		pageMetadata.add(projectionName + " Projection");		
+		pageMetadata.add(timestamp());
+		pageMetadata.add(authorName);
+		out.write(pageMetadata.toPostScript());
 		out.write("\n");
 		
 		out.write(legend.toPostScript());
@@ -140,6 +148,13 @@ public class ShapefileToPostScriptWriter {
 		out.close();
 
 		GeoMapsAlgorithm.logger.log(LogService.LOG_INFO, "Done.");
+	}
+	
+	public static String timestamp() {
+		Calendar cal = Calendar.getInstance();
+	    SimpleDateFormat sdf =
+	    	new SimpleDateFormat("MMM dd, yyyy | hh:mm:ss aa");
+	    return sdf.format(cal.getTime());
 	}
 
 	private String createPostScriptUtilityDefinitions() {

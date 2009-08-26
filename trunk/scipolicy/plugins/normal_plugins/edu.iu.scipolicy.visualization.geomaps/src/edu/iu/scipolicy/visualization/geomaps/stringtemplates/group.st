@@ -158,15 +158,6 @@ legendDefinitions() ::= <<
 			x y moveto
 
 			gsave
-				font keyLabelFontSize scalefont setfont
-				keyLabelBrightness setgray
-				keyLabel show
-			grestore
-
-			gsave
-				0 keyLabelFontSize rmoveto
-				0 5 rmoveto
-
 				font typeLabelFontSize scalefont setfont
 
 				typeLabelBrightness setgray
@@ -175,6 +166,15 @@ legendDefinitions() ::= <<
 
 				scalingLabelBrightness setgray
 				scalingLabel show
+			grestore
+			
+			gsave
+				0 typeLabelFontSize neg rmoveto
+				0 5 neg rmoveto
+			
+				font keyLabelFontSize scalefont setfont
+				keyLabelBrightness setgray
+				keyLabel show
 			grestore
 		grestore
 	end
@@ -226,6 +226,8 @@ circleAreaLegendDefinitions() ::= <<
 			x y translate
 		
 			gsave
+				0 keyLabelFontSize 10 add neg translate
+			
 				font extremaLabelFontSize scalefont setfont
 				
 				/minLabelwidth {minLabel stringwidth pop} bind def
@@ -386,6 +388,8 @@ colorLegendDefinitions() ::= <<
 		
 			% Draw the color gradient/spectrum
 			gsave
+				0 keyLabelFontSize 10 add neg translate
+			
 				/firstGradientX {0} bind def
 				/lastGradientX {firstGradientX gradientWidth add gradientResolution sub} bind def
 				/gradientY {0 gradientHeight sub 5 sub} bind def
@@ -418,6 +422,8 @@ colorLegendDefinitions() ::= <<
 
 			% Draw the extrema labels (min, mid, max)
 			gsave
+				0 keyLabelFontSize 10 add neg translate
+			
 				font extremaLabelFontSize scalefont setfont
 				extremaLabelBrightness setgray
 				
