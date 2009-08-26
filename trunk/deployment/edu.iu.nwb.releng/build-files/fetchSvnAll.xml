@@ -261,8 +261,8 @@
 		
   	<antcall target="svn.co">
   	        <param name="target" value="plugins"/>
-  	        <param name="element.id" value="edu.iu.nwb.preprocessing.removeedgeattributes"/>
-  	        <param name="project.name" value="/preprocessing/edu.iu.nwb.preprocessing.removeedgeattributes"/>
+  	        <param name="element.id" value="edu.iu.nwb.preprocessing.removegraphattributes"/>
+  	        <param name="project.name" value="/preprocessing/edu.iu.nwb.preprocessing.removegraphattributes"/>
   	        <param name="url" value="http://nwb.slis.indiana.edu/svn/nwb/trunk/plugins"/>
   	</antcall>
   	

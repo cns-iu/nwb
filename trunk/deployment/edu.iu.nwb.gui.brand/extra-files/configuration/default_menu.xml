@@ -28,13 +28,15 @@
     
     <top_menu name="Preprocessing">
     <menu pid="edu.iu.nwb.preprocessing.extractnodesandedges.extractnodes.top.ExtractTopNodesAlgorithm"/>
-    <menu pid="edu.iu.nwb.preprocessing.extractnodesandedges.extractnodes.abovebelow.ExtractNodesAboveBelowAlgorithm"/>	
+    <menu pid="edu.iu.nwb.preprocessing.extractnodesandedges.extractnodes.abovebelow.ExtractNodesAboveBelowAlgorithm"/>
+    <menu pid="edu.iu.nwb.preprocessing.removeegraphattributes.nodes.RemoveNodeAttributesAlgorithmFactory"/>		
  	<menu pid="edu.iu.iv.attacktolerance.AttackToleranceAlgorithm"/>
 	<menu pid="edu.iu.iv.errortolerance.ErrorToleranceAlgorithm"/>	
 	<menu pid="edu.iu.nwb.analysis.isolates.Delete"/>
     <menu type="break"/>
     <menu pid="edu.iu.nwb.preprocessing.extractnodesandedges.extractedges.top.ExtractTopEdgesAlgorithm"/>
  	<menu pid="edu.iu.nwb.preprocessing.extractnodesandedges.extractedges.abovebelow.ExtractEdgesAboveBelowAlgorithm"/>
+ 	<menu pid="edu.iu.nwb.preprocessing.removeegraphattributes.edges.RemoveEdgeAttributesAlgorithmFactory"/>
 	<menu pid="edu.iu.nwb.analysis.selfloops.Remove"/>
 	<menu pid="edu.iu.nwb.preprocessing.trimedges.Trim"/>
 	<menu type="break"/>
