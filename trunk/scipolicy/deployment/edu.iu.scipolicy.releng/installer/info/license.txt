@@ -1,5 +1,5 @@
-The SciPolicy Tool
-Version: 1.0.0 beta
+The Sci\uooB2 Tool
+Version: 0.0.2 alpha
 
 (c)Copyright 2009 Indiana University
 Licensed under the Apache License, Version 2.0 (the "License"); 
@@ -16,3 +16,4 @@ permissions and limitations under the License.
 Project Contacts:
 Micah W. Linnemeier (mwlinnem@indiana.edu)
 Katy Borner (katy@indiana.edu)
+Kevin Boyack (kboyack@mapofscience.com)
