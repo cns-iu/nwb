@@ -76,9 +76,9 @@ public class DocumentationDialog extends Dialog {
 			tutorialsDocLink.setLayoutData(new GridData(GridData.FILL_VERTICAL));
 			
 			//explanation of how browser opens these links
-			String labelText = "Documentation should open in your default web browser." +
-				" It may open in its own tab or in a separate window, depending on your" + 
-				" browser settings.";
+			String labelText = "Documentation should open in your default web browser.\n" 
+				+ "It may open in its own tab or in a separate window, \n" 
+				+ "depending on your browser settings.";
 			Label browserBehaviourExplanation = new Label(group, SWT.WRAP);
 			browserBehaviourExplanation.setText(labelText);
 			browserBehaviourExplanation.setSize(180, 120);
