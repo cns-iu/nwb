@@ -147,7 +147,7 @@ public class Slice implements Algorithm {
 		TableGroup tables = createTableGroup(cumulative);
 
 		List epochRange = accumulateTables(table, interval, align, weekStarts,
-				period, customYearRange, byDateTime, tables);
+				period, customYearRange, byDateTime, tables, cumulative);
 
 		return dataChildrenOf(data[0], tables.getTables(), 
 				(LocalDateTime[]) ((List) epochRange.get(0)).toArray(new LocalDateTime[]{}), 
@@ -213,13 +213,14 @@ public class Slice implements Algorithm {
 	 * @param customYearRange array of "from" & "to" year provided by the user. 
 	 * @param byDateTime a map from times into sets of row ids
 	 * @param tables the TableGroup to accumulate into
+	 * @param cumulative 
 	 * @return an Object containing list of start & end times
 	 * @throws AlgorithmExecutionException 
 	 */
 
 	private List accumulateTables(Table table, String interval, boolean align,
 			String weekStarts, Period period, LocalDateTime[] customYearRange, SortedMap byDateTime,
-			TableGroup tables) throws AlgorithmExecutionException {
+			TableGroup tables, boolean cumulative) throws AlgorithmExecutionException {
 
 		Schema schema = table.getSchema();
 		
@@ -227,11 +228,12 @@ public class Slice implements Algorithm {
 				customYearRange, byDateTime);
 
 		LocalDateTime current = new LocalDateTime(recordsExtractionBounds[1]);
-
+		
 		current = current.plus(period);
 
 		List ends = new ArrayList();
 		List starts = new ArrayList();
+		
 
 		while(current.compareTo(recordsExtractionBounds[0]) > 0) {
 
@@ -248,10 +250,22 @@ public class Slice implements Algorithm {
 				currentMinus = recordsExtractionBounds[0];
 			}
 
+			
 			Collection rowSets = byDateTime.subMap(currentMinus, current).values();
 			addRowSets(tables, rowSets, table);
 			ends.add(current);
-			starts.add(currentMinus);
+			
+			/*
+			 * If Cumulative option is selected we would want the label for the start time 
+			 * to be the same for all the time slices.
+			 * */
+			if (cumulative) {
+				starts.add(recordsExtractionBounds[0]);
+			}
+			else {
+				starts.add(currentMinus);
+			}
+			
 			current = currentMinus;
 
 		}
