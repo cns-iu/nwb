@@ -1,5 +1,5 @@
 *Nodes
-id*int label*string wealth*int totalties*int priorates*int
+id*int label*string wealth*int totalities*int priorates*int
 1 "Acciaiuoli" 10 2 53
 2 "Albizzi" 36 3 65
 3 "Barbadori" 55 14 0
