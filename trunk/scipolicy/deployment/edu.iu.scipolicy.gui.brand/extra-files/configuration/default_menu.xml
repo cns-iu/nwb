@@ -166,8 +166,9 @@
     </top_menu>
     
     <top_menu name="Visualization">
-    <menu pid="edu.iu.nwb.visualization.guess"/>
     <menu pid="edu.iu.nwb.visualization.gnuplot"/>
+    <menu pid="edu.iu.nwb.visualization.guess"/>
+    <menu pid="edu.iu.scipolicy.visualization.imageviewer.ImageViewerAlgorithm"/>
     <menu type="break"/>	
 	<!-- 
 	<menu type="break"/>
@@ -191,7 +192,6 @@
 	<menu type="break"/>
 	<menu pid="edu.iu.scipolicy.visualization.horizontallinegraph.HorizontalLineGraphAlgorithm"/>
 	<menu pid="edu.iu.nwb.visualization.roundrussell.RoundRussellAlgorithm"/>
-	<menu type="break"/>
 	<menu pid="edu.iu.scipolicy.visualization.geomaps.GeoMapsCirclesFactory"/>
 	<menu pid="edu.iu.scipolicy.visualization.geomaps.GeoMapsRegionsFactory"/>
 	<menu type="break"/>
