@@ -128,6 +128,9 @@ dummyComponent = JComboBox()
 # global dir
 globalDir = dir()
 
+#BIG FAT HACK
+ORIGINAL_LABEL_FIELD_NAME = "originallabel"
+
 ######################## END GLOBAL VARIABLES ##################################
 
 # initialize all the global variables
@@ -141,6 +144,15 @@ def initializeGlobalVariables():
     originalGraphProperties = []
     wantedDefaultProperties = []
     # get all methods and variables
+    
+    #MAXIMUM HACKITUDE TO FIX DESPERATE BUG  
+    
+    addNodeField(ORIGINAL_LABEL_FIELD_NAME, Types.VARCHAR, "")
+    setattr(g.nodes, ORIGINAL_LABEL_FIELD_NAME, g.nodes.label)
+    
+    addEdgeField(ORIGINAL_LABEL_FIELD_NAME, Types.VARCHAR, "")
+    setattr(g.edges, ORIGINAL_LABEL_FIELD_NAME, g.edges.label)
+       
     for i in globalDir:
         if gStuff.has_key(i) and not i == "Edge" and not i == "Node" and not i in colorList:
             # check to see if it is a variable

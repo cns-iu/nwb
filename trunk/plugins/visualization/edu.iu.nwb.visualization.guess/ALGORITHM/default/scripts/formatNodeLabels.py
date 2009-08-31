@@ -33,7 +33,7 @@ class GraphObjectLabelFormatter:
                  addFieldFunction):
         self.graphObjects = graphObjects
         self.graphObjectTypeString = graphObjectTypeString
-        self.propertiesList = propertiesList
+        self.propertiesList = list(propertiesList)
         self.previousLabelFormattingString = \
             "{%s}" % ORIGINAL_LABEL_FIELD_NAME
         self.addFieldFunction = addFieldFunction
