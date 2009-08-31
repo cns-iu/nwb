@@ -48,7 +48,7 @@ public class PrefuseCsvValidationAlgorithm implements Algorithm {
 		Data[] validationData = new Data[] { new BasicData(inputData,
 				CSV_MIME_TYPE) };
 		validationData[0].getMetadata().put(DataProperty.LABEL,
-				"Prefuse CSV file: " + inCSVFilePath);
+				"CSV file: " + inCSVFilePath);
 		validationData[0].getMetadata().put(DataProperty.TYPE,
 				DataProperty.TABLE_TYPE);
 		return validationData;
