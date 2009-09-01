@@ -59,7 +59,7 @@ public class Constants {
 		// Values should correspond to .shp files in the shapefiles package
 		Map<String, String> t = new LinkedHashMap<String, String>();
 		t.put("Countries", "/edu/iu/scipolicy/visualization/geomaps/shapefiles/countries.shp");
-		t.put("US States", "/edu/iu/scipolicy/visualization/geomaps/shapefiles/statesp020.shp");		
+		t.put("US States", "/edu/iu/scipolicy/visualization/geomaps/shapefiles/st99_d00.shp");		
 		SHAPEFILES = Collections.unmodifiableMap(t);
 	}
 	
@@ -70,7 +70,7 @@ public class Constants {
 		 */
 		Map<String, String> t = new HashMap<String, String>();
 		t.put("Countries", "NAME");
-		t.put("US States", "STATE");		
+		t.put("US States", "NAME");		
 		FEATURE_NAME_KEY = Collections.unmodifiableMap(t);
 	}
 	

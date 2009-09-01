@@ -32,10 +32,13 @@ public class FeaturePrinter {
 	private FeatureCollection<SimpleFeatureType, SimpleFeature> featureCollection;
 	private GeometryProjector geometryProjector;
 	private MapDisplayer mapDisplayer;
-	public static final Scaler DEFAULT_FEATURE_COLOR_QUANTITY_SCALER = new LinearScaler();
+	public static final Scaler DEFAULT_FEATURE_COLOR_QUANTITY_SCALER =
+		new LinearScaler();
 	
 	
-	public FeaturePrinter(FeatureCollection<SimpleFeatureType, SimpleFeature> featureCollection, GeometryProjector geometryProjector, MapDisplayer mapDisplayer) {
+	public FeaturePrinter(
+			FeatureCollection<SimpleFeatureType, SimpleFeature> featureCollection,
+			GeometryProjector geometryProjector, MapDisplayer mapDisplayer) {
 		this.featureCollection = featureCollection;
 		this.geometryProjector = geometryProjector;
 		this.mapDisplayer = mapDisplayer;
@@ -98,13 +101,15 @@ public class FeaturePrinter {
 				throws IOException {
 		Coordinate[] coordinates = subgeometry.getCoordinates();
 		if (coordinates.length > 0) {
-			Coordinate firstCoordinate = mapDisplayer.getDisplayCoordinate(coordinates[0]);
+			Coordinate firstCoordinate =
+				mapDisplayer.getDisplayCoordinate(coordinates[0]);
 
 			out.write(INDENT + "newpath" + "\n");
 			out.write(INDENT + INDENT + (firstCoordinate.x) + " " + (firstCoordinate.y) + " moveto\n");
 
 			for (int cc = 1; cc < coordinates.length; cc++) {
-				Coordinate coordinate = mapDisplayer.getDisplayCoordinate(coordinates[cc]);
+				Coordinate coordinate =
+					mapDisplayer.getDisplayCoordinate(coordinates[cc]);
 
 				out.write(INDENT + INDENT + (coordinate.x) + " " + (coordinate.y) + " lineto\n");
 			}
@@ -131,10 +136,12 @@ public class FeaturePrinter {
 		if (nameProperty != null) {
 			name = (String) nameProperty.getValue();
 		} else {
-			String message = ("Feature " + feature + " has no " + featureColorMapKey + " property.  Consider using one of the following: " + "\n");
-			for ( AttributeDescriptor ad : featureCollection.getSchema().getAttributeDescriptors() ) {
+			String message =
+				"Feature " + feature + " has no " + featureColorMapKey
+				+ " property.  Consider using one of the following: " + "\n";
+			for (AttributeDescriptor ad : featureCollection.getSchema().getAttributeDescriptors()) {
 				message += ("  " + ad.getName() + "\n");
-			}
+			}			
 			throw new AlgorithmExecutionException(message);
 		}
 		
