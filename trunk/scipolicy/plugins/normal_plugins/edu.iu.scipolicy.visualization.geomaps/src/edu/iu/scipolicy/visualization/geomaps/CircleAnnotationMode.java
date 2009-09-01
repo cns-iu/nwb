@@ -189,6 +189,7 @@ public class CircleAnnotationMode extends AnnotationMode {
 		
 		// Read, scale, and interpolate data from inTable
 		int incompleteSpecificationCount = 0;
+		int unscalableValueCount = 0;
 		List<Circle> circles = new ArrayList<Circle>();
 		for (TableIterator tableIterator = inTable.iterator(); tableIterator.hasNext();) {
 			Tuple row = inTable.getTuple(tableIterator.nextInt());
@@ -206,7 +207,7 @@ public class CircleAnnotationMode extends AnnotationMode {
 					area = areaInterpolator.interpolate(
 							areaValueScaler.scale(areaValue));
 				} else {
-					incompleteSpecificationCount++;
+					unscalableValueCount++;
 					continue;
 				}
 				
@@ -223,7 +224,7 @@ public class CircleAnnotationMode extends AnnotationMode {
 											innerColorValueScaler.scale(
 													innerColorValue)));
 					} else {
-						incompleteSpecificationCount++;
+						unscalableValueCount++;
 						continue;
 					}
 				}
@@ -241,7 +242,7 @@ public class CircleAnnotationMode extends AnnotationMode {
 											outerColorValueScaler.scale(
 													outerColorValue)));
 					} else {
-						incompleteSpecificationCount++;
+						unscalableValueCount++;
 						continue;
 					}
 				}
@@ -262,7 +263,15 @@ public class CircleAnnotationMode extends AnnotationMode {
 					LogService.LOG_WARNING,
 					incompleteSpecificationCount
 					+ " rows in the table did not specify all values needed "
-					+ "to make a circle.  Those rows were skipped.");
+					+ "to make a circle; those rows were skipped.");
+		}
+		
+		if (unscalableValueCount > 0) {
+			GeoMapsAlgorithm.logger.log(
+					LogService.LOG_WARNING,
+					unscalableValueCount
+					+ " rows in the table specified a value that could not be "
+					+ "scaled; those rows were skipped.");
 		}
 		
 		LegendComponent areaLegend =

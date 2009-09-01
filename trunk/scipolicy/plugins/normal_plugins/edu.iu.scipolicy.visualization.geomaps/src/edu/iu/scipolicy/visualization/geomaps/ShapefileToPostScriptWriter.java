@@ -15,14 +15,12 @@ import java.util.Map;
 
 import org.antlr.stringtemplate.StringTemplate;
 import org.cishell.framework.algorithm.AlgorithmExecutionException;
+import org.cishell.utilities.FileUtilities;
 import org.geotools.feature.FeatureCollection;
 import org.geotools.feature.FeatureIterator;
-import org.geotools.referencing.crs.DefaultGeographicCRS;
 import org.opengis.feature.simple.SimpleFeature;
 import org.opengis.feature.simple.SimpleFeatureType;
-import org.opengis.referencing.FactoryException;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
-import org.opengis.referencing.crs.ProjectedCRS;
 import org.opengis.referencing.operation.TransformException;
 import org.osgi.service.log.LogService;
 
@@ -44,19 +42,14 @@ import edu.iu.scipolicy.visualization.geomaps.projection.GeometryProjector;
 import edu.iu.scipolicy.visualization.geomaps.utility.Constants;
 import edu.iu.scipolicy.visualization.geomaps.utility.ShapefileFeatureReader;
 
-public class ShapefileToPostScriptWriter {
+public class ShapefileToPostScriptWriter {	
+	public static final String OUTPUT_FILE_EXTENSION = "eps";
+	
 	public static final String TITLE = "Geo Map";
-
 	public static final String INDENT = "  ";
 	
-	public static final String MERCATOR_EPSG_CODE = "EPSG:3395";
-	public static final String ALBERS_EPSG_CODE = "EPSG:3083";
-	public static final String LAMBERT_EPSG_CODE = "EPSG:2267";		
 	
-	public static final String PAGE_TITLE = TITLE;
-	
-	private String subtitle = "";
-	
+	private String subtitle = "";	
 	private FeatureCollection<SimpleFeatureType, SimpleFeature> featureCollection;
 	private GeometryProjector geometryProjector;
 	private MapDisplayer mapDisplayer;
@@ -69,12 +62,12 @@ public class ShapefileToPostScriptWriter {
 	
 	
 	public ShapefileToPostScriptWriter(
-			URL shapefileURL, ProjectedCRS projectedCRS, String featureNameKey)
+			URL shapefileURL, String projectionName, String featureNameKey)
 				throws AlgorithmExecutionException, TransformException {
 		ShapefileFeatureReader shapefileFeatureReader =
 			new ShapefileFeatureReader(shapefileURL);
 		this.featureCollection = shapefileFeatureReader.getFeatureCollection();
-		this.geometryProjector = makeGeometryPreparer(projectedCRS);
+		this.geometryProjector = makeGeometryProjecter(projectionName);
 		this.mapDisplayer = calculateMapBoundingBox();
 		
 		this.pageHeightInPoints =
@@ -102,9 +95,13 @@ public class ShapefileToPostScriptWriter {
 		legend.add(circleAreaLegend);
 	}
 
-	public void writePostScriptToFile(
-			File psFile, String projectionName, String authorName, String dataLabel)
+	public File writePostScriptToFile(
+			 String projectionName, String authorName, String dataLabel)
 				throws IOException, AlgorithmExecutionException, TransformException {
+		
+		File psFile =
+			FileUtilities.createTemporaryFileInDefaultTemporaryDirectory("TEMP-POSTSCRIPT", OUTPUT_FILE_EXTENSION);
+		
 		BufferedWriter out = new BufferedWriter(new FileWriter(psFile));
 
 		writeCodeHeader(out, psFile.getName());
@@ -148,9 +145,11 @@ public class ShapefileToPostScriptWriter {
 		out.close();
 
 		GeoMapsAlgorithm.logger.log(LogService.LOG_INFO, "Done.");
+		
+		return psFile;
 	}
 	
-	public static String timestamp() {
+	private static String timestamp() {
 		Calendar cal = Calendar.getInstance();
 	    SimpleDateFormat sdf =
 	    	new SimpleDateFormat("MMM dd, yyyy | hh:mm:ss aa");
@@ -174,28 +173,16 @@ public class ShapefileToPostScriptWriter {
 		return r + " " + g + " " + b + " setrgbcolor" + "\n";
 	}
 
-	private GeometryProjector makeGeometryPreparer(ProjectedCRS projectedCRS)
+	private GeometryProjector makeGeometryProjecter(String projectionName)
 			throws AlgorithmExecutionException {
-		GeometryProjector geometryProjector = null;
-
 		SimpleFeatureType featureSchema = featureCollection.getSchema();
 		CoordinateReferenceSystem originalCRS =
 			featureSchema.getCoordinateReferenceSystem();
-		if ( originalCRS == null ) {
-			GeoMapsAlgorithm.logger.log(LogService.LOG_WARNING,
-				"Shapefile has no associated coordinate reference system.  "
-				+ "Assuming the default (WGS84, a very common reference system).");
-			originalCRS = DefaultGeographicCRS.WGS84;
-		}
-		
-		try {
-			geometryProjector = new GeometryProjector(originalCRS, projectedCRS);
-		} catch (FactoryException e) {
-			throw new AlgorithmExecutionException(e);
-		}
 
-		return geometryProjector;
+		return new GeometryProjector(originalCRS, projectionName);
 	}
+	
+	
 
 	private MapDisplayer calculateMapBoundingBox() throws TransformException {
 		/* Identify extreme values for the X and Y dimensions

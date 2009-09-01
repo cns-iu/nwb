@@ -11,29 +11,34 @@ public class ScalerFactory {
 	public static final Map<String, ScalerType> SCALER_TYPES;
 	static {
 		Map<String, ScalerType> t = new HashMap<String, ScalerType>();
-		t.put("linear", ScalerType.LINEAR_SCALER);
-		t.put("logarithmic", ScalerType.LOG_SCALER);
+		t.put("Linear", ScalerType.LINEAR_SCALER);
+		t.put("Logarithmic", ScalerType.LOG_SCALER);
 		SCALER_TYPES = Collections.unmodifiableMap(t);
 	}
 	
-	public static Scaler createScaler(String scaling) throws AlgorithmExecutionException {
-		if ( SCALER_TYPES.containsKey(scaling) ) {
+	public static Scaler createScaler(String scaling)
+			throws AlgorithmExecutionException {
+		if (SCALER_TYPES.containsKey(scaling)) {
 			return createScaler(SCALER_TYPES.get(scaling));
 		}
 		else {
-			throw new AlgorithmExecutionException("Unrecognized scaler type.");
+			throw new AlgorithmExecutionException(
+					"Unrecognized scaling \""  + scaling + "\"");
 		}
+		
+		
 	}
 	
-	public static Scaler createScaler(ScalerType scalerType) throws AlgorithmExecutionException {
-		if ( scalerType.equals(ScalerType.LINEAR_SCALER) ) {
-			return new LinearScaler();
+	public static Scaler createScaler(ScalerType scalerType)
+			throws AlgorithmExecutionException {
+		switch (scalerType) {
+			case LINEAR_SCALER:
+				return new LinearScaler();
+			case LOG_SCALER:
+				return new LogScaler();
 		}
-		else if ( scalerType.equals(ScalerType.LOG_SCALER) ) {
-			return new LogScaler();
-		}
-		else {
-			throw new AlgorithmExecutionException("Unrecognized scaler type.");
-		}
+		
+		throw new AlgorithmExecutionException(
+				"Unrecognized scaler type \"" + scalerType + "\".");
 	}
 }

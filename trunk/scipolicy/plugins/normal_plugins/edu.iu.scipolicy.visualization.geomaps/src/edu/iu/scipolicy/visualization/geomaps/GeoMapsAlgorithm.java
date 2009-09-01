@@ -1,13 +1,10 @@
 package edu.iu.scipolicy.visualization.geomaps;
 
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.URL;
 import java.util.Dictionary;
-import java.util.Properties;
 
 import org.antlr.stringtemplate.StringTemplateGroup;
 import org.cishell.framework.CIShellContext;
@@ -16,10 +13,6 @@ import org.cishell.framework.algorithm.AlgorithmExecutionException;
 import org.cishell.framework.data.BasicData;
 import org.cishell.framework.data.Data;
 import org.cishell.framework.data.DataProperty;
-import org.cishell.utilities.FileUtilities;
-import org.geotools.referencing.CRS;
-import org.opengis.referencing.FactoryException;
-import org.opengis.referencing.crs.ProjectedCRS;
 import org.opengis.referencing.operation.TransformException;
 import org.osgi.service.log.LogService;
 
@@ -27,14 +20,10 @@ import prefuse.data.Table;
 import edu.iu.scipolicy.visualization.geomaps.utility.Constants;
 
 public class GeoMapsAlgorithm implements Algorithm {
-	public static final String WELL_KNOWN_TEXTS_PROPERTIES_FILE_PATH = "/edu/iu/scipolicy/visualization/geomaps/projection/wellKnownTexts.properties";
-
 	public static final String STRING_TEMPLATE_FILE_PATH =		 
 		"/edu/iu/scipolicy/visualization/geomaps/stringtemplates/group.st";
 
 	public static final String POSTSCRIPT_MIME_TYPE = "file:text/ps";
-
-	public static final String OUTPUT_FILE_EXTENSION = "eps";
 	
 	public static final String SHAPEFILE_ID = "shapefile";
 	
@@ -60,9 +49,6 @@ public class GeoMapsAlgorithm implements Algorithm {
 
 	public Data[] execute() throws AlgorithmExecutionException {
 		try {
-			File temporaryPostScriptFile =
-				FileUtilities.createTemporaryFileInDefaultTemporaryDirectory("TEMP-POSTSCRIPT", OUTPUT_FILE_EXTENSION);
-			
 			Data inDatum = this.data[0];
 			Table inTable = (Table) inDatum.getData();
 			String dataLabel = (String) inDatum.getMetadata().get(DataProperty.LABEL);
@@ -71,7 +57,6 @@ public class GeoMapsAlgorithm implements Algorithm {
 			String shapefileKey = (String) parameters.get(SHAPEFILE_ID);
 			String shapefilePath = Constants.SHAPEFILES.get(shapefileKey);	
 			final URL shapefileURL = loader.getResource(shapefilePath);
-			final ProjectedCRS projectedCRS = getProjectedCRS();
 			
 			String featureNameKey = Constants.FEATURE_NAME_KEY.get(shapefileKey);
 			String projectionName = (String) parameters.get(PROJECTION_ID);
@@ -79,15 +64,15 @@ public class GeoMapsAlgorithm implements Algorithm {
 			
 			ShapefileToPostScriptWriter postScriptWriter;
 			postScriptWriter =
-				new ShapefileToPostScriptWriter(shapefileURL, projectedCRS, featureNameKey);
+				new ShapefileToPostScriptWriter(shapefileURL, projectionName, featureNameKey);
 			
 			/* applyAnnotations side-effects postScriptWriter
 			 * to set annotation data and LegendComponents.
 			 */
 			annotationMode.applyAnnotations(postScriptWriter, inTable, parameters);
-			postScriptWriter.writePostScriptToFile(temporaryPostScriptFile, projectionName, authorName, dataLabel);
+			File geoMap = postScriptWriter.writePostScriptToFile(projectionName, authorName, dataLabel);
 
-			Data[] outData = formOutData(temporaryPostScriptFile, inDatum);
+			Data[] outData = formOutData(geoMap, inDatum);
 
 			return outData;
 			
@@ -107,44 +92,6 @@ public class GeoMapsAlgorithm implements Algorithm {
 				new InputStreamReader(
 					GeoMapsAlgorithm.class.getResourceAsStream(
 						STRING_TEMPLATE_FILE_PATH)));
-	}
-	
-	private ProjectedCRS getProjectedCRS() throws AlgorithmExecutionException {
-		final ClassLoader loader = getClass().getClassLoader();
-		final InputStream wellKnownTextInputStream =
-			loader.getResourceAsStream(WELL_KNOWN_TEXTS_PROPERTIES_FILE_PATH);
-
-		final Properties wellKnownTexts = new Properties();
-		try {
-			wellKnownTexts.load(wellKnownTextInputStream);
-		} catch (FileNotFoundException e) {
-			throw new AlgorithmExecutionException(
-				"Error finding the file that describes available map projections: " + e.getMessage(), e);
-		} catch (IOException e) {
-			throw new AlgorithmExecutionException(
-				"Error accessing the file that describes available map projections: " + e.getMessage(), e);
-		}
-
-		String projectionName = (String) parameters.get(PROJECTION_ID);
-		String projectionWKTKey = Constants.PROJECTIONS.get(projectionName);
-		try {
-			return (ProjectedCRS) CRS.parseWKT(wellKnownTexts.getProperty(projectionWKTKey));
-
-			/*
-			 * You will need to attach the EPSG database (and maybe even its
-			 * extensions) if you wish to specify the projection using an EPSG
-			 * code. You may know a better way, but I would do this by creating
-			 * a small GeoTools standalone project (see
-			 * http://docs.codehaus.org/display/GEOTDOC/03+First+Project ) and
-			 * specifying the epsg and epsg-extension dependencies in the
-			 * pom.xml. Let maven acquire the necessary jars (as on the page
-			 * given), then create a new geolibs plugin from those.
-			 * 
-			 * projectedCRS = (ProjectedCRS) CRS.decode(MERCATOR_EPSG_CODE);
-			 */
-		} catch (FactoryException e) {
-			throw new AlgorithmExecutionException(e);
-		}
 	}
 
 	

@@ -6,12 +6,11 @@ import org.cishell.framework.algorithm.AlgorithmExecutionException;
 import org.cishell.utilities.NumberUtilities;
 import org.osgi.service.log.LogService;
 
-import edu.iu.scipolicy.visualization.geomaps.scaling.Scaler;
-import edu.iu.scipolicy.visualization.geomaps.utility.Range;
-
 import prefuse.data.Table;
 import prefuse.data.Tuple;
 import prefuse.data.util.TableIterator;
+import edu.iu.scipolicy.visualization.geomaps.scaling.Scaler;
+import edu.iu.scipolicy.visualization.geomaps.utility.Range;
 
 public abstract class AnnotationMode {
 	@SuppressWarnings("unchecked") // TODO

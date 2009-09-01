@@ -1,9 +1,11 @@
 package edu.iu.scipolicy.visualization.geomaps.utility;
 
 import java.awt.Color;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 
 import edu.iu.scipolicy.visualization.geomaps.legend.Legend;
@@ -71,16 +73,41 @@ public class Constants {
 		t.put("US States", "STATE");		
 		FEATURE_NAME_KEY = Collections.unmodifiableMap(t);
 	}
+	
+	public static final String ECKERT_IV_DISPLAY_NAME =	"Eckert IV";
+	public static final String WINKEL_TRIPEL_DISPLAY_NAME =	"Winkel Tripel";
+	public static final String MERCATOR_DISPLAY_NAME = "Mercator";
+	public static final String ALBERS_EQUAL_AREA_DISPLAY_NAME =
+		"Albers Equal-Area Conic";
+	public static final String LAMBERT_CONFORMAL_CONIC_DISPLAY_NAME =
+		"Lambert Conformal Conic";
 
 	public static final Map<String, String> PROJECTIONS;
 	static {
 		// Values should correspond to keys in projection/wellKnownTexts.properties
 		Map<String, String> t = new LinkedHashMap<String, String>();
-		t.put("Mercator", "mercator");
-		t.put("Albers Equal-Area Conic", "albersEqualArea");
-		t.put("Lambert Conformal Conic", "lambertConformalConic");
+		t.put(ECKERT_IV_DISPLAY_NAME, "eckertIV");
+		t.put(WINKEL_TRIPEL_DISPLAY_NAME, "winkelTripel");
+		t.put(MERCATOR_DISPLAY_NAME, "mercator");
+		t.put(ALBERS_EQUAL_AREA_DISPLAY_NAME, "albersEqualArea");
+		t.put(LAMBERT_CONFORMAL_CONIC_DISPLAY_NAME, "lambertConformalConic");
 		PROJECTIONS = Collections.unmodifiableMap(t);
 	}	
+	
+	public static final List<String> WKT_PROJECTIONS;
+	static {
+		/* The subset of our supported projections which will be parsed from
+		 * a well-known text.  Not all of them can be since the WKT specifies
+		 * a PROJECTION identifier, which for the projections that we include
+		 * that are not currently supported by GeoTools, will result in an error
+		 * trying to find the MapProjection when parsing the WKT.
+		 */
+		List<String> l = new ArrayList<String>();
+		l.add(MERCATOR_DISPLAY_NAME);
+		l.add(ALBERS_EQUAL_AREA_DISPLAY_NAME);
+		l.add(LAMBERT_CONFORMAL_CONIC_DISPLAY_NAME);
+		WKT_PROJECTIONS = l;
+	}
 	
 	public static final Map<String, Range<Color>> COLOR_RANGES;
 	static {
