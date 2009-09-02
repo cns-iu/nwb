@@ -70,6 +70,7 @@
     
     <top_menu name="Analysis">
     <menu pid="edu.iu.nwb.toolkit.networkanalysis"/>
+    <menu type="break"/>
 	<menu name = "Unweighted and Undirected" type="group">
 		<menu pid="edu.iu.nwb.analysis.java.nodedegree"/>
 		<menu pid="edu.iu.nwb.analysis.totaldegreedistribution"/>
