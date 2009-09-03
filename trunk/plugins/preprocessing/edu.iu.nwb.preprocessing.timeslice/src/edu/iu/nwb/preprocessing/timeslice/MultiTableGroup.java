@@ -18,7 +18,7 @@ public class MultiTableGroup implements TableGroup {
 	 */
 	public void addTupleToAll(Tuple tuple) {
 		Iterator iter = tables.iterator();
-		while(iter.hasNext()) {
+		while (iter.hasNext()) {
 			Table table = (Table) iter.next();
 			table.addTuple(tuple);
 		}
