@@ -25,8 +25,6 @@ public class ScalerFactory {
 			throw new AlgorithmExecutionException(
 					"Unrecognized scaling \""  + scaling + "\"");
 		}
-		
-		
 	}
 	
 	public static Scaler createScaler(ScalerType scalerType)

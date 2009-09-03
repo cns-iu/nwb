@@ -240,7 +240,8 @@ public class ShapefileToPostScriptWriter {
 		 * corresponding to US Letter landscape.  This command
 		 * is forbidden in Encapsulated PostScript, so if we
 		 * wish to maintain that format, we'll need a different
-		 * method to specify landscape-style dimensions.
+		 * method to specify landscape-style dimensions (that popular
+		 * PostScript-to-PDF renderers will all respect).
 		 */
 		out.write("/setpagedevice where" + "\n"
 				+ "{ pop 1 dict" + "\n"

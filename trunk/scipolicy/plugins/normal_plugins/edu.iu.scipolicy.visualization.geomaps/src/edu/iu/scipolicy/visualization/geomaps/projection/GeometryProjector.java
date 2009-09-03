@@ -25,6 +25,7 @@ import com.vividsolutions.jts.geom.Geometry;
 
 import edu.iu.scipolicy.visualization.geomaps.GeoMapsAlgorithm;
 import edu.iu.scipolicy.visualization.geomaps.projection.custom.CustomTransformFactory;
+import edu.iu.scipolicy.visualization.geomaps.projection.custom.CustomTransformFactory.TransformNotFoundException;
 import edu.iu.scipolicy.visualization.geomaps.utility.Constants;
 
 /*
@@ -101,8 +102,12 @@ public class GeometryProjector {
 			}
 		} else {
 			centralMeridian = CustomTransformFactory.DEFAULT_CENTRAL_MERIDIAN;
-			transform =
-				CustomTransformFactory.getTransform(projectionName);
+			try {
+				transform =
+					CustomTransformFactory.getTransform(projectionName);
+			} catch (TransformNotFoundException e) {
+				throw new AlgorithmExecutionException(e.getMessage(), e);
+			}
 		}
 				
 		coordinateTransformer.setMathTransform(transform);

@@ -51,13 +51,23 @@ public class CustomTransformFactory {
 		customTransforms.put(projectionName, transform);
 	}
 	
-	public static MathTransform getTransform(String projectionName) {
+	public static MathTransform getTransform(String projectionName)
+			throws TransformNotFoundException {
 		if (customTransforms.containsKey(projectionName)) {
 			MathTransform transform = customTransforms.get(projectionName);
 			return transform;
 		} else {
-			//TODO: Throw custom exception
-			throw new RuntimeException("Invalid projectionName: " + projectionName);
+			throw new TransformNotFoundException(projectionName);
 		}
+	}
+	
+	
+	public static class TransformNotFoundException extends Exception {
+		private static final long serialVersionUID = 1L;
+
+		public TransformNotFoundException(String projectionName) {
+			super("Couldn't find the default transform for projection named "
+					+ projectionName);
+		}	
 	}
 }

@@ -11,12 +11,10 @@ import org.osgi.service.metatype.ObjectClassDefinition;
 
 /*
  * TODO:
- * 
- * Find a lean, clean United States shapefile to replace shapefiles/statesp020.*.
- * We're down from 10MB to 6MB.  Can we do better?
- * 
+ *
  * File extension is "ps" even though the metadata says "eps".  We'd have to write
  * some (trivial) new code that takes the eps MIME type to file-ext eps.  Worth it?
+ * Note: Joseph has written a prototype for this; ask him to commit.
  * 
  * The legend components currently will include data in its extrema even when that
  * piece of data isn't visible on the map.  For example, if the map is of the United
