@@ -7,6 +7,7 @@ import org.cishell.framework.algorithm.Algorithm;
 import org.cishell.framework.algorithm.AlgorithmFactory;
 import org.cishell.framework.data.Data;
 
+import edu.uci.ics.jung.graph.ArchetypeGraph;
 import edu.uci.ics.jung.graph.Graph;
 import edu.uci.ics.jung.visualization.FRLayout;
 
@@ -36,7 +37,7 @@ public class JUNGFruchtermanReingoldLayout implements AlgorithmFactory {
 	        }
 
 	        public Data[] execute() {
-	            Graph graph = (Graph) dm[0].getData();
+	            Graph graph = (Graph) (((Graph) dm[0].getData()).copy());
 	            JUNGLayoutGUI gui = new JUNGLayoutGUI("Fruchterman-Reingold (JUNG)", new FRLayout(graph)); 
 	    		//gui.pack();
 	    	    //gui.setSize(400, 400) ;

@@ -35,8 +35,7 @@ public class JUNGKamadaKawaiLayout implements AlgorithmFactory {
 	        }
 
 	        public Data[] execute() {
-	            Graph graph = (Graph) dm[0].getData();
-	            ;
+	            Graph graph = (Graph) (((Graph) dm[0].getData()).copy());
 	            JUNGLayoutGUI gui = new JUNGLayoutGUI("Kamada-Kawai (JUNG)", new KKLayout(graph)); 
 	    		//gui.pack();
 	    	    //gui.setSize(400, 400) ;
