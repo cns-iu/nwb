@@ -105,6 +105,20 @@ def formatcolor(arg):
 resizeLinear = fixedResizeLinear
 colorize = fixedColorize
 
-# Sets the default background color of GUESS to white 
-setDisplayBackground(white)        
 
+def setDefaultColors():
+	# RGB derived from official hex values at
+	# http://visualidentity.iu.edu/media/index.shtml (retrieved September 3, 2009)
+	iuCream = Color(248, 243, 210)
+	iuCrimson = Color(125, 17, 12)
+	iuLightGray = Color(176, 178, 180)
+
+	setDisplayBackground(iuCream)
+
+	for node in g.nodes:
+		node.color = iuCrimson
+		node.strokecolor = black
+		
+	for edge in g.edges:
+		edge.color = iuLightGray
+setDefaultColors()
