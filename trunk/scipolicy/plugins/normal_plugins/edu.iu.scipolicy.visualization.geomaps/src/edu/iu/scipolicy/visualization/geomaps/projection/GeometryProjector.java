@@ -61,7 +61,7 @@ public class GeometryProjector {
 	
 	public static final double MAX_LONGITUDE = 180.0;
 	public static final double NORTH_POLE_CROP_HEIGHT_IN_DEGREES = 10.0;
-	public static final double SOUTH_POLE_CROP_HEIGHT_IN_DEGREES = 12.0;
+	public static final double SOUTH_POLE_CROP_HEIGHT_IN_DEGREES = 11.0;
 
 	/* "if the math transform should be created even when there is no
 	 * information available for a datum shift."
