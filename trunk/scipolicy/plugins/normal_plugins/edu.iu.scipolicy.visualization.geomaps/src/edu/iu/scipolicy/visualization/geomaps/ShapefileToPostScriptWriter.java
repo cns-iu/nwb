@@ -57,7 +57,7 @@ public class ShapefileToPostScriptWriter {
 	private Legend legend = new Legend();
 	private Map<String, ColorStrategy> featureColorMap =
 		new HashMap<String, ColorStrategy>();
-	private String featureNameKey;
+	private String shapefileFeatureNameKey;
 	private List<Circle> circles = new ArrayList<Circle>();
 	
 	
@@ -74,7 +74,7 @@ public class ShapefileToPostScriptWriter {
 			Constants.calculatePageHeightInPoints(mapDisplayer.getMapHeightInPoints());
 		
 		
-		this.featureNameKey = featureNameKey;
+		this.shapefileFeatureNameKey = featureNameKey;
 	}
 
 	public void setFeatureColorAnnotations(
@@ -120,8 +120,12 @@ public class ShapefileToPostScriptWriter {
 		out.write("\n");
 		
 		FeaturePrinter featurePrinter =
-			new FeaturePrinter(featureCollection, geometryProjector, mapDisplayer);
-		featurePrinter.printFeatures(out, featureColorMap, featureNameKey);
+			new FeaturePrinter(
+					featureCollection,
+					geometryProjector,
+					mapDisplayer,
+					shapefileFeatureNameKey);
+		featurePrinter.printFeatures(out, featureColorMap);
 
 		CirclePrinter circlePrinter = new CirclePrinter(geometryProjector, mapDisplayer);
 		circlePrinter.printCircles(out, circles);
