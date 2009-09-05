@@ -35,29 +35,39 @@ Graph::Graph(char *filename, int type) {
 
   // read number of nodes on 4 bytes
   finput.read((char *)&nb_nodes, 4);
-  cerr << "num nodes: " << nb_nodes << endl;
+  // cerr << "num nodes: " << nb_nodes << endl;
   // read cumulative degree sequence: 4 bytes for each node
   // cum_degree[0]=degree(0); cum_degree[1]=degree(0)+degree(1), etc.
 
+  cerr << "int in: " << nb_nodes << endl;
+
   degrees = (int *)malloc((long)nb_nodes*4);
   finput.read((char *)degrees, (long)nb_nodes*4);
+
   for (int ii = 0; ii < nb_nodes; ii++) {
-	  cerr << "degrees: " << ii << " " << degrees[ii] << endl;
+	  cerr << "int in: " << degrees[ii] << endl;
   }
+
   // read links: 4 bytes for each link (each link is counted twice)
   nb_links=degrees[nb_nodes-1];
-  cerr << "num links: " << nb_links << endl;
   links = (int *)malloc((long)nb_links*4);
-  finput.read((char *)links, (long)nb_links*4);  
-  cerr << "total : " << nb_links << endl;
+  finput.read((char *)links, (long)nb_links*4);
+
+  for (int ii = 0; ii < nb_links * 4; ii++) {
+	  cerr << "int in: " << links[ii] << endl;
+  }
 
   // IF WEIGHTED : read weights: 4 bytes for each link (each link is counted twice)
   if (type==WEIGHTED) {
     weights = (int *)malloc((long)nb_links*4);
     finput.read((char *)weights, (long)nb_links*4);
+
+	for (int ii = 0; ii < nb_links * 4; ii++) {
+		cerr << "int in: " << weights[ii] << endl;
+	}
+
     total_weight=0;
     for (int i = 0 ; i<nb_links ; i++) {
-		cerr << "weight: " << i << " " << weights[i] << endl;
       total_weight += weights[i];
     }
   } else {

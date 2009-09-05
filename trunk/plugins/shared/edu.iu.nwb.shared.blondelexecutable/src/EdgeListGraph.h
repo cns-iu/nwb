@@ -1,4 +1,4 @@
-// File: graph.h
+// File: EdgeListGraph.h
 // -- simple graph handling header file
 //-----------------------------------------------------------------------------
 // Community detection
@@ -14,8 +14,8 @@
 //-----------------------------------------------------------------------------
 // see readme.txt for more details
 
-#ifndef GRAPH_H
-#define GRAPH_H
+#ifndef EDGE_LIST_GRAPH_H
+#define EDGE_LIST_GRAPH_H
 
 #include <stdlib.h>
 #include <stdio.h>
@@ -27,22 +27,28 @@
 #include <set>
 #include <algorithm>
 
-#define WEIGHTED   0
-#define UNWEIGHTED 1
 
 using namespace std;
 
-class Graph {
- public:
-	 // I *think* each vector<pair<int, int> > is a set of edges for that node.
-  vector<vector<pair<int,int> > > links;
-  
-  Graph (char *filename, int type);
-  
-  void clean(int type);
-  void renumber(int type);
-  void display(int type);
-  void display_binary(char *filename, int type);
+typedef enum EDGE_LIST_GRAPH_TYPE {
+	EDGE_LIST_GRAPH_TYPE_WEIGHTED = 0,
+	EDGE_LIST_GRAPH_TYPE_UNWEIGHTED,
 };
 
-#endif // GRAPH_H
+class EdgeListGraph {
+public:
+	// I *think* each vector<pair<int, int> > is a set of edges for that node.
+	vector<vector<pair<int, int> > > links;
+
+	EdgeListGraph(string fileName, EDGE_LIST_GRAPH_TYPE type);
+
+	void clean();
+	void renumber();
+	void display();
+	void displayBinary(char* filename);
+
+private:
+	EDGE_LIST_GRAPH_TYPE type;
+};
+
+#endif // EDGE_LIST_GRAPH_H

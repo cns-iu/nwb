@@ -3,16 +3,16 @@
 CC=g++
 CFLAGS= -O5 -Wall
 LDFLAGS= -lm -Wall
-EXEC=community convert hierarchy
-OBJ1= graph_binary.o community.o
-OBJ2= graph.o
+EXEC=Community convert hierarchy
+OBJ1= BinaryGraph.o Community.o
+OBJ2= EdgeListGraph.o
 
 all: $(EXEC)
 
-community : $(OBJ1) main_community.o
+Community : $(OBJ1) CommunityMain.o
 	$(CC) -o $@ $^ $(LDFLAGS)
 
-convert : $(OBJ2) main_convert.o
+convert : $(OBJ2) ConvertMain.o
 	$(CC) -o $@ $^ $(LDFLAGS)
 
 hierarchy : main_hierarchy.o
