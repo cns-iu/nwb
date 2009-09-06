@@ -7,10 +7,6 @@ import edu.iu.nwb.analysis.blondelcommunitydetection.Node;
 import edu.iu.nwb.util.nwbfile.NWBFileParserAdapter;
 
 public class PreProcessor extends NWBFileParserAdapter {
-	private static final String NON_POSITIVE_WEIGHT_HALT_REASON =
-		"Non-positive weights are not allowed.  To use this algorithm, " +
-		"preprocess your network further.";
-	
 	private boolean shouldHaltParsing = false;
 	
 	private NetworkInfo networkInfo;

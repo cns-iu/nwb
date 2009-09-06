@@ -33,7 +33,7 @@ public class NWBToBINConverter {
 											   boolean isWeighted)
 			throws NWBToBINConversionException {
 		
-		// (networkInfo gets side-effected in both of these steps).
+		// (networkInfo gets side-effected in both of these steps.)
 
 		preProcessNWBFile(inputNWBFile, networkInfo);
     	
