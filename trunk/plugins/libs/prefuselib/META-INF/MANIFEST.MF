@@ -2,8 +2,8 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: Prefuse Visualization Library
 Bundle-SymbolicName: org.prefuse.lib
-Bundle-Version: 20060715
-Bundle-ClassPath: prefuse-beta-20060715.jar,prefuse-alpha-20060526.jar
+Bundle-Version: 20071021
+Bundle-ClassPath: prefuse-beta-20071021.jar,prefuse-alpha-20060526.jar
 Export-Package: edu.berkeley.guir.prefuse,
  edu.berkeley.guir.prefuse.action,
  edu.berkeley.guir.prefuse.action.animate,
