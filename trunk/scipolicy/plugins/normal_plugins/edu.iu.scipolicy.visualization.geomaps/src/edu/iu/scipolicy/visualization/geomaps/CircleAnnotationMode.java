@@ -191,8 +191,8 @@ public class CircleAnnotationMode extends AnnotationMode {
 		int incompleteSpecificationCount = 0;
 		int unscalableValueCount = 0;
 		List<Circle> circles = new ArrayList<Circle>();
-		for (TableIterator tableIterator = inTable.iterator(); tableIterator.hasNext();) {
-			Tuple row = inTable.getTuple(tableIterator.nextInt());
+		for (TableIterator tableIt = inTable.iterator(); tableIt.hasNext();) {
+			Tuple row = inTable.getTuple(tableIt.nextInt());
 			
 			try {
 				double latitude =
@@ -254,6 +254,8 @@ public class CircleAnnotationMode extends AnnotationMode {
 								innerColorStrategy,
 								outerColorStrategy));
 			} catch (NumberFormatException e) {
+				incompleteSpecificationCount++;
+			} catch (NullPointerException e) {
 				incompleteSpecificationCount++;
 			}
 		}

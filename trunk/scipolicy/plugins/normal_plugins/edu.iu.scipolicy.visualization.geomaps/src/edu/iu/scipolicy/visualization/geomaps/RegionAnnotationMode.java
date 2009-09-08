@@ -85,11 +85,11 @@ public class RegionAnnotationMode extends AnnotationMode {
 		
 		
 		int duplicateFeatureNames = 0;
-		int unreadableColorValues = 0;
+		int unreadableTableValues = 0;
 		Map<String, ColorStrategy> featureColors =
 			new HashMap<String, ColorStrategy>();
-		for (TableIterator tableIterator = inTable.iterator(); tableIterator.hasNext(); ) {
-			Tuple row = inTable.getTuple(tableIterator.nextInt());
+		for (TableIterator tableIt = inTable.iterator(); tableIt.hasNext();) {
+			Tuple row = inTable.getTuple(tableIt.nextInt());
 			
 			if (row.canGetString(nameAttribute)) {
 				String featureName = row.getString(nameAttribute);
@@ -112,7 +112,9 @@ public class RegionAnnotationMode extends AnnotationMode {
 									new FillColorStrategy(featureColor));
 						}
 					} catch (NumberFormatException e) {
-						unreadableColorValues++;
+						unreadableTableValues++;
+					} catch (NullPointerException e) {
+						unreadableTableValues++;
 					}
 				}
 			}
@@ -126,14 +128,12 @@ public class RegionAnnotationMode extends AnnotationMode {
 					+ "Only the first was read in each case.");
 		}
 		
-		if (unreadableColorValues > 0) {
+		if (unreadableTableValues > 0) {
 			GeoMapsAlgorithm.logger.log(
 					LogService.LOG_WARNING,
-					unreadableColorValues
-					+ " rows in the table had values in the "
-					+ colorValueAttribute
-					+ " column that could not be read as numbers.  "
-					+ "Those rows were ignored.");
+					unreadableTableValues
+					+ " rows in the table had values that could not be read "
+					+ "as numbers.  Those rows were ignored.");
 		}
 
 		LegendComponent legend =
