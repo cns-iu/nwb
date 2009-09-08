@@ -28,7 +28,8 @@ import org.osgi.service.metatype.ObjectClassDefinition;
  * Need an executive call on this one.
  */
 
-public abstract class GeoMapsAlgorithmFactory implements AlgorithmFactory, ParameterMutator {
+public abstract class GeoMapsAlgorithmFactory
+		implements AlgorithmFactory, ParameterMutator {
 	@SuppressWarnings("unchecked") // TODO
 	public Algorithm createAlgorithm(
 			Data[] data, Dictionary parameters, CIShellContext context) {
