@@ -53,12 +53,12 @@ private:
 };
 
 void printUsageMessage(char* programName, char* additionalText) {
-	cerr << additionalText << endl;
+	/*cerr << additionalText << endl;
 	cerr << "usage: " << programName;
 	cerr << " -i input_file -o outfile [options]" << endl << endl;
 	cerr << "Read the graph and convert it to binary format." << endl;
 	cerr << "-w\tRead the graph as having weights." << endl;
-	cerr << "-h\tShow this usage message." << endl;
+	cerr << "-h\tShow this usage message." << endl;*/
 
 	exit(0);
 }

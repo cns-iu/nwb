@@ -36,13 +36,13 @@ int display_level = -2;
 int k1 = 16;
 
 void usage(char* prog_name, char* more) {
-	cerr << more;
+	/*cerr << more;
 	cerr << "usage: " << prog_name << " input_file [options]" << endl << endl;
 	cerr << "input_file: read the graph to partition from this file." << endl;
 	cerr << "-w\t read the graph as a weighted one (weights are set to 1 otherwise)." << endl;
 	cerr << "-q epsilon\t a given pass stops when the modularity is increased by less than epsilon." << endl;
 	cerr << "-l k\t displays the graph of level k rather than the hierachical structure." << endl;
-	cerr << "-h\tshow this usage message." << endl;
+	cerr << "-h\tshow this usage message." << endl;*/
 
   exit(0);
 }
@@ -90,7 +90,7 @@ void parse_args(int argc, char** argv) {
 void display_time(const char* str) {
 	time_t rawtime;
 	time(&rawtime);
-	cerr << str << " : " << ctime (&rawtime);
+	//cerr << str << " : " << ctime (&rawtime);
 }
 
 int main(int argc, char** argv) {
@@ -108,15 +108,15 @@ int main(int argc, char** argv) {
 
 	double mod = c.modularity();
 
-	cerr << "network : ";
+	/*cerr << "network : ";
 	cerr << c.g.nb_nodes << " nodes, ";
 	cerr << c.g.nb_links << " links, ";
-	cerr << c.g.total_weight << " weight." << endl;
+	cerr << c.g.total_weight << " weight." << endl;*/
  
 	double new_mod = c.one_level();
 
 	display_time("communities computed");
-	cerr << "modularity increased from " << mod << " to " << new_mod << endl;
+	//cerr << "modularity increased from " << mod << " to " << new_mod << endl;
 
 	if (display_level == -1) {
 		c.display_partition();
@@ -157,5 +157,5 @@ int main(int argc, char** argv) {
 	}
 	
 	time(&time_end);
-	cerr << precision << " " << new_mod << " " << (time_end-time_begin) << endl;
+	//cerr << precision << " " << new_mod << " " << (time_end-time_begin) << endl;
 }

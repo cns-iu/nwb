@@ -31,7 +31,7 @@ char *filename = NULL;
 
 void
 usage(char *prog_name, char *more) {
-  cerr << more;
+  /*cerr << more;
   cerr << "usage: " << prog_name << " input_file [options]" << endl << endl;
   cerr << "input_file: read the community tree from this file." << endl;
   cerr << "-l xx\t display the community structure for the level xx." << endl;
@@ -39,7 +39,7 @@ usage(char *prog_name, char *more) {
   cerr << "\t xx must belong to [-1,N] if N is the number of levels." << endl;
   cerr << "-n\t displays the number of levels and the size of each level." << endl;
   cerr << "\t equivalent to -l -1." << endl;
-  cerr << "-h\tshow this usage message." << endl;
+  cerr << "-h\tshow this usage message." << endl;*/
   exit(0);
 }
 
@@ -99,7 +99,7 @@ main(int argc, char **argv) {
     for (unsigned int i=0 ; i<levels.size();i++)
       cout << "level " << i << ": " << levels[i].size() << " nodes" << endl;
   } else if (display_level<0 || (unsigned)display_level>=levels.size()) {
-    cerr << "Incorrect level\n";
+    //cerr << "Incorrect level\n";
   } else {
     vector<int> n2c(levels[0].size());
 
