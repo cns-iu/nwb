@@ -96,7 +96,6 @@ public class Slice implements Algorithm {
 		periodMap.put("hours", Period.hours(1));
 		periodMap.put("days", Period.days(1));
 		periodMap.put("weeks", Period.weeks(1));
-		periodMap.put("fortnights", Period.weeks(2));
 		periodMap.put("months", Period.months(1));
 		periodMap.put("quarters", Period.months(3));
 		periodMap.put("years", Period.years(1));

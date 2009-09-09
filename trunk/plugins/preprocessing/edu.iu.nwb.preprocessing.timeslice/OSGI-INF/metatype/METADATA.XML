@@ -12,7 +12,6 @@
 			<Option label="Hours" value="hours"/>
 			<Option label="Days" value="days"/>
 			<Option label="Weeks" value="weeks"/>
-			<Option label="Fortnights" value="fortnights"/>
 			<Option label="Months" value="months"/>
 			<Option label="Quarters" value="quarters"/>
 			<Option label="Years" value="years"/>
