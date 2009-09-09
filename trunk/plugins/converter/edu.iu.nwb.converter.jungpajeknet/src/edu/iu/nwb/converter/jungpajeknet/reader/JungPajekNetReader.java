@@ -22,12 +22,14 @@ import edu.uci.ics.jung.graph.Vertex;
 import edu.uci.ics.jung.graph.decorators.UserDatumNumberEdgeValue;
 import edu.uci.ics.jung.io.PajekNetReader;
 import edu.uci.ics.jung.utils.UserData;
+import edu.uci.ics.jung.utils.UserDataContainer;
 
 /**
  * @author Weixia(Bonnie) Huang 
  */
 public class JungPajekNetReader implements Algorithm {
     public static final String EDGE_WEIGHT_ATTRIBUTE = "weight";
+    public static final String GOOD_VERTEX_LABEL_ATTRIBUTE_NAME = "label";
     
     private File inNetFileName;
 	
@@ -49,7 +51,7 @@ public class JungPajekNetReader implements Algorithm {
     			new UserDatumNumberEdgeValue(EDGE_WEIGHT_ATTRIBUTE);
     		weightValues.setCopyAction(UserData.SHARED);
 			Graph graph = (new PajekNetReader()).load(reader, weightValues);
-            fixLabels(graph);
+            renameLabelAttributeKeys(graph);
             
     		return createOutData(inNetFileName, graph);
     	} catch (FileNotFoundException e) {
@@ -74,13 +76,27 @@ public class JungPajekNetReader implements Algorithm {
 		return dm;
 	}
     
-    private void fixLabels(Graph g) {
-        Iterator vertices = g.getVertices().iterator();
-        while (vertices.hasNext()) {
+	/* The key for the label attribute that PajekNetReader
+	 * adds (PajekNetReader.LABEL) is not a good attribute key.
+	 * We replace it with "label".
+	 */
+    private void renameLabelAttributeKeys(Graph g) {
+    	for (Iterator vertices = g.getVertices().iterator(); vertices.hasNext();) {
             Vertex v = (Vertex) vertices.next();
+            
             Object label = v.getUserDatum(PajekNetReader.LABEL);
             if (label != null) {
-                v.addUserDatum("label", label, UserData.SHARED);
+                v.addUserDatum(
+                		GOOD_VERTEX_LABEL_ATTRIBUTE_NAME,
+                		label,
+                		UserData.CLONE);
+                
+                /* Remove the redundant old label.  This is especially important
+                 * because a client of the conversion like GUESS will
+                 * throw up (in particular, a reserved word issue) if they get
+                 * a vertex attribute with a name like PajekNetReader.LABEL.
+                 */
+                v.removeUserDatum(PajekNetReader.LABEL);
             }
         }
     }
