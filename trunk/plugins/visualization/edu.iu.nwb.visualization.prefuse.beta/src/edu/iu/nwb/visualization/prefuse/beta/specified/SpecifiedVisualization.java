@@ -3,8 +3,11 @@ package edu.iu.nwb.visualization.prefuse.beta.specified;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Component;
+import java.awt.Rectangle;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.ComponentAdapter;
+import java.awt.event.ComponentEvent;
 import java.awt.event.MouseEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
@@ -63,10 +66,6 @@ import edu.iu.nwb.visualization.prefuse.beta.common.PrefuseBetaVisualization;
  * @author <a href="http://jheer.org">jeffrey heer</a>
  */
 public class SpecifiedVisualization extends JPanel implements PrefuseBetaVisualization {
-
-    /**
-	 * 
-	 */
 	private static final long serialVersionUID = 1L;
 	private static final String graph = "graph";
     private static final String nodes = "graph.nodes";
@@ -111,19 +110,13 @@ public class SpecifiedVisualization extends JPanel implements PrefuseBetaVisuali
 		
 		g.addColumn(Constants._x, new ToDoubleExpression(xLabel));
 		g.addColumn(Constants._y, new ToDoubleExpression(yLabel));
+
 		
-		
-		
-		
-        
-        
         // --------------------------------------------------------------------
         // register the data with a visualization
         
         // adds graph to visualization and sets renderer label field
         setGraph(g, label);
-        
-        
         
         
         SizeAction sizeAction = new SizeAction() {
@@ -138,11 +131,8 @@ public class SpecifiedVisualization extends JPanel implements PrefuseBetaVisuali
         };
         m_vis.putAction("size", sizeAction);
         
-        
         // --------------------------------------------------------------------
         // create actions to process the visual data
-
-        
 
         ColorAction fill = new ColorAction(nodes, 
                 VisualItem.FILLCOLOR, ColorLib.rgb(200,200,255));
@@ -177,7 +167,7 @@ public class SpecifiedVisualization extends JPanel implements PrefuseBetaVisuali
         // --------------------------------------------------------------------
         // set up a display to show the visualization
         
-        Display display = new Display(m_vis);
+        final Display display = new Display(m_vis);
         display.setSize(700,700);
         //display.pan(350, 350);
         display.setForeground(Color.GRAY);
@@ -202,6 +192,14 @@ public class SpecifiedVisualization extends JPanel implements PrefuseBetaVisuali
         });
         display.addControlListener(new NeighborHighlightControl());
 
+        // When the panel is resized, resize the inner display accordingly.
+        addComponentListener(new ComponentAdapter() {
+            public void componentResized(ComponentEvent e) {
+                display.setBounds(new Rectangle(e.getComponent().getSize()));
+                invalidate();
+            }
+        });
+        
         // overview display
 //        Display overview = new Display(vis);
 //        overview.setSize(290,290);
@@ -458,4 +456,18 @@ public class SpecifiedVisualization extends JPanel implements PrefuseBetaVisuali
         }
     }
     
+    public static class ZipColorAction extends ColorAction {
+        public ZipColorAction(String group) {
+            super(group, VisualItem.FILLCOLOR);
+        }
+        
+        public int getColor(VisualItem item) {
+            if ( item.isInGroup(Visualization.SEARCH_ITEMS) ) {
+                return ColorLib.gray(255);
+            } else {
+                return ColorLib.rgb(100,100,75);
+            }
+        }
+    }
+
 } // end of class GraphView
