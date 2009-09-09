@@ -176,6 +176,7 @@ Qatar;QA
 Reunion;RE
 Romania;RO
 Russian Federation;RU
+Russia;RU
 Rwanda;RW
 Saint Helena;SH
 Saint Kitts And Nevis;KN
@@ -206,6 +207,7 @@ Sweden;SE
 Switzerland;CH
 Syrian Arab Republic;SY
 Taiwan, Province Of China;TW
+Taiwan;TW
 Tajikistan;TJ
 Tanzania, United Republic Of;TZ
 Thailand;TH

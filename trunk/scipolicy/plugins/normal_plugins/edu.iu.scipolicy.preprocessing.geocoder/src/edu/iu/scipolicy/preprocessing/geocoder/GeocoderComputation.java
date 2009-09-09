@@ -125,8 +125,7 @@ public class GeocoderComputation {
 				else {
 					cachedLocationValue = DEFAULT_NO_LOCATION_VALUE;
 					logger.log(LogService.LOG_WARNING, "No \"" + locationType + "\" location co-ordinates found for \"" + currentLocationKey 
-							+ "\". Default value assumed for (Latitide, Longitude) as (" + DEFAULT_NO_LOCATION_VALUE.get(0) 
-							+ ", " + DEFAULT_NO_LOCATION_VALUE.get(1) + ")");
+							+ "\". Default value assumed for (Latitide, Longitude).");
 				}
 				
 			}
