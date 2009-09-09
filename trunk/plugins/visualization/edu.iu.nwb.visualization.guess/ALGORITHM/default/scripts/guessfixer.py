@@ -113,7 +113,7 @@ def setDefaultColors():
 	iuCrimson = Color(125, 17, 12)
 	iuLightGray = Color(176, 178, 180)
 
-	setDisplayBackground(iuCream)
+	setDisplayBackground(white)
 
 	for node in g.nodes:
 		node.color = iuCrimson
