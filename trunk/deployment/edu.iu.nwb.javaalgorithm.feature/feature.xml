@@ -274,13 +274,6 @@ Dr. Katy Borner (katy@indiana.edu)
          unpack="false"/>
 
    <plugin
-         id="edu.iu.nwb.analysis.isolates"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         unpack="false"/>
-
-   <plugin
          id="edu.iu.nwb.analysis.selfloops"
          download-size="0"
          install-size="0"
@@ -558,6 +551,13 @@ Dr. Katy Borner (katy@indiana.edu)
 
    <plugin
          id="edu.iu.nwb.preprocessing.removegraphattributes"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+   <plugin
+         id="edu.iu.nwb.analysis.deleteisolates"
          download-size="0"
          install-size="0"
          version="0.0.0"
