@@ -32,7 +32,7 @@
     <menu pid="edu.iu.nwb.preprocessing.removeegraphattributes.nodes.RemoveNodeAttributesAlgorithmFactory"/>		
  	<menu pid="edu.iu.iv.attacktolerance.AttackToleranceAlgorithm"/>
 	<menu pid="edu.iu.iv.errortolerance.ErrorToleranceAlgorithm"/>	
-	<menu pid="edu.iu.nwb.analysis.isolates.Delete"/>
+	<menu pid="edu.iu.nwb.analysis.deleteisolates.DeleteIsolatesAlgorithm"/>
     <menu type="break"/>
     <menu pid="edu.iu.nwb.preprocessing.extractnodesandedges.extractedges.top.ExtractTopEdgesAlgorithm"/>
  	<menu pid="edu.iu.nwb.preprocessing.extractnodesandedges.extractedges.abovebelow.ExtractEdgesAboveBelowAlgorithm"/>
