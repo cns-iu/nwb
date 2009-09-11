@@ -1,7 +1,7 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
-Bundle-Name: edu.iu.nwb.analysis.deleteisolates
-Bundle-SymbolicName: edu.iu.nwb.analysis.deleteisolates
+Bundle-Name: edu.iu.nwb.preprocessing.deleteisolates
+Bundle-SymbolicName: edu.iu.nwb.preprocessing.deleteisolates
 Bundle-Version: 0.0.1
 Bundle-ClassPath: .
 Import-Package: org.cishell.framework.algorithm;version="1.0.0",
