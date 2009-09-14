@@ -12,8 +12,8 @@ public class Constants {
 	public static final String nodeSizeField = "nodeSize";
 	public static final String nodeShapeField = "nodeShape";
 	public static final String label = "label";
-	public static final String x = "x";
-	public static final String y = "y";
+	public static final String X_ID = "x";
+	public static final String Y_ID = "y";
 	public static final String _x = "_specified_x";
 	public static final String _y = "_specified_y";
 	public static final Font FIELD_SPECIFYING_FONT = FontLib.getFont("Serif", Font.BOLD, 11);

@@ -1,5 +1,6 @@
 package edu.iu.nwb.visualization.prefuse.beta.common;
 
+import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.Dimension;
@@ -7,7 +8,6 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
-import java.awt.BorderLayout;
 import java.io.FileNotFoundException;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -19,16 +19,13 @@ import java.util.Properties;
 
 import javax.swing.Box;
 import javax.swing.BoxLayout;
+import javax.swing.JButton;
 import javax.swing.JComponent;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
-import javax.swing.JMenu;
-import javax.swing.JMenuBar;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JSeparator;
-import javax.swing.JButton;
-
 
 import org.freehep.graphics2d.VectorGraphics;
 import org.freehep.graphicsio.ps.PSGraphics2D;
@@ -369,15 +366,14 @@ public abstract class AbstractVisualization implements PrefuseBetaVisualization 
         final JFrame frame = new JFrame();
         JPanel contentPane = new JPanel(new BorderLayout());
         
-        KeyAdapter keyAdapter = new KeyAdapter() {
-		        	
-
-					public void keyTyped(KeyEvent e) {
-		        		if(e.getKeyChar() == 'e') {	        			
-		        			exportGraphToFile(frame, display);		        			
-		        		}
-		        	}
-		        };
+        KeyAdapter keyAdapter =
+        	new KeyAdapter() {
+	        	public void keyTyped(KeyEvent e) {
+	        		if(e.getKeyChar() == 'e') {	        			
+	        			exportGraphToFile(frame, display);		        			
+	        		}
+	        	}
+	        };
 
 		frame.addKeyListener(keyAdapter);
 		display.addKeyListener(keyAdapter);
@@ -414,7 +410,7 @@ public abstract class AbstractVisualization implements PrefuseBetaVisualization 
 		return null;
 	}
 	
-	private void exportGraphToFile (JFrame frame, Display display){
+	private void exportGraphToFile(JFrame frame, Display display) {
 		int option = chooser.showSaveDialog(frame);
 		if(option == JFileChooser.APPROVE_OPTION) {
 			Properties properties = new Properties();
@@ -424,20 +420,19 @@ public abstract class AbstractVisualization implements PrefuseBetaVisualization 
 				//display.saveImage(new FileOutputStream(chooser.getSelectedFile()), "eps", 1.0);				
 				//Rectangle2D bounds = visualization.getBounds(all);
 				
-				VectorGraphics graphics = new PSGraphics2D(chooser.getSelectedFile(), display.getSize());
+				VectorGraphics graphics =
+					new PSGraphics2D(
+							chooser.getSelectedFile(), display.getSize());
 				graphics.setProperties(properties);
 				graphics.startExport();
 				display.printAll(graphics);
 				graphics.endExport();
-			} catch (FileNotFoundException e1) {
+			} catch (FileNotFoundException e) {
 				// TODO Auto-generated catch block
-				e1.printStackTrace();
+				e.printStackTrace();
 			}
 			//ExportDialog export = new ExportDialog();
 			//export.showExportDialog(frame, "Export visualization as . . .", display, "export");
-
 		}
-		
 	}
-	
 }

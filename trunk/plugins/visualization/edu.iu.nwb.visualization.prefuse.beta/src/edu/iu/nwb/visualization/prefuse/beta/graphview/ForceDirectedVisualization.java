@@ -35,7 +35,7 @@ public class ForceDirectedVisualization extends AbstractVisualization {
 
 	private ForceDirectedLayout layout;
 	private GraphDistanceFilter filter;
-	private int hops = 30;;
+	private int hops = 30;
 
 	protected Component arrangeComponents(final Display display,
 			JComponent legend) {

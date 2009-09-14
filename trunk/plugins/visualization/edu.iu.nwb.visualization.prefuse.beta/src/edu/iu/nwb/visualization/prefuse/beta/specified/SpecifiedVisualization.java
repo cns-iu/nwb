@@ -1,34 +1,16 @@
 package edu.iu.nwb.visualization.prefuse.beta.specified;
 
-import java.awt.BorderLayout;
 import java.awt.Color;
-import java.awt.Component;
+import java.awt.Container;
 import java.awt.Rectangle;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
-import java.awt.event.MouseEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
-import java.awt.geom.Rectangle2D;
 import java.util.Dictionary;
 
-import javax.swing.AbstractAction;
-import javax.swing.BorderFactory;
-import javax.swing.Box;
-import javax.swing.BoxLayout;
-import javax.swing.JButton;
-import javax.swing.JDialog;
 import javax.swing.JFrame;
-import javax.swing.JLabel;
-import javax.swing.JList;
 import javax.swing.JPanel;
-import javax.swing.JScrollPane;
-import javax.swing.KeyStroke;
-import javax.swing.ListSelectionModel;
-import javax.swing.event.ListSelectionEvent;
-import javax.swing.event.ListSelectionListener;
 
 import prefuse.Display;
 import prefuse.Visualization;
@@ -46,428 +28,272 @@ import prefuse.controls.ZoomControl;
 import prefuse.controls.ZoomToFitControl;
 import prefuse.data.Graph;
 import prefuse.data.Schema;
-import prefuse.data.Table;
 import prefuse.data.Tuple;
+import prefuse.data.expression.AbstractPredicate;
 import prefuse.data.expression.ColumnExpression;
 import prefuse.render.DefaultRendererFactory;
 import prefuse.render.LabelRenderer;
 import prefuse.util.ColorLib;
-import prefuse.util.GraphicsLib;
-import prefuse.util.display.DisplayLib;
-import prefuse.util.display.ItemBoundsListener;
-import prefuse.util.io.IOLib;
 import prefuse.util.ui.UILib;
-import prefuse.visual.VisualGraph;
 import prefuse.visual.VisualItem;
 import edu.iu.nwb.visualization.prefuse.beta.common.Constants;
 import edu.iu.nwb.visualization.prefuse.beta.common.PrefuseBetaVisualization;
 
-/**
- * @author <a href="http://jheer.org">jeffrey heer</a>
- */
-public class SpecifiedVisualization extends JPanel implements PrefuseBetaVisualization {
+public class SpecifiedVisualization implements PrefuseBetaVisualization {
 	private static final long serialVersionUID = 1L;
-	private static final String graph = "graph";
-    private static final String nodes = "graph.nodes";
-    private static final String edges = "graph.edges";
+	
+	public static final int LAYOUT_ANIMATION_DURATION_IN_MS = 1500;
+	
+	public static final int NUMBER_OF_CLICKS_FOR_FOCUS = 1;
 
-    private Visualization m_vis;
-	//private Dictionary parameters;
+	public static final Color DISPLAY_BACKGROUND_COLOR = Color.WHITE;
+	public static final Color DISPLAY_FOREGROUND_COLOR = Color.GRAY;
+	public static final int IU_CRIMSON = ColorLib.rgb(125, 17, 12);
+	public static final int NODE_FILL_COLOR = IU_CRIMSON;	
+	public static final int EDGE_STROKE_COLOR = ColorLib.gray(200);
+	public static final int EDGE_FILL_COLOR = ColorLib.gray(200);
+	public static final int NODE_TEXT_COLOR = ColorLib.gray(255);
+	public static final int NODE_STROKE_COLOR = ColorLib.gray(0);
+	public static final int HIGHLIGHT_COLOR = ColorLib.rgb(255,200,125);
+
+	public static final String FRAME_TITLE =
+		"Pre-defined Positions (prefuse beta)";
+
+	// Prefuse action identifiers
+	public static final String LAYOUT = "layout";
+	public static final String DRAW = "draw";
+	public static final String SIZE = "size";
+	
+	// Prefuse group identifiers
+	public static final String GRAPH = "graph";
+	public static final String NODES = "graph.nodes";
+	public static final String EDGES = "graph.edges";
+
+	protected static final double NODE_SIZE_MAXIMUM = 0.5;
+	public static final int NODE_LABEL_ROUNDED_ARC_WIDTH = 8;
+	public static final int NODE_LABEL_ROUNDED_ARC_HEIGHT = 8;
+	public static final int DEFAULT_DISPLAY_HEIGHT = 700;
+	public static final int DEFAULT_DISPLAY_WIDTH = 900;
+
+	
+	private JPanel panel;
+    private Visualization visualization;
+	
     
-    public SpecifiedVisualization(Graph g, String label, Dictionary parameters) {
-        //this.parameters = parameters;
-        // create a new, empty visualization for our data
-        m_vis = new Visualization();
+    public SpecifiedVisualization() {
+		panel = new JPanel();
+	}
+
+	public SpecifiedVisualization(
+			Graph graph, String label, Dictionary parameters) {    	
+        visualization = createVisualization(graph, parameters);
         
-        // --------------------------------------------------------------------
-        // set up the renderers
+        final Display display = createInteractiveDisplay(visualization);        
+        panel = createPanel(display);
+        panel.add(display);
         
-        LabelRenderer tr = new LabelRenderer();
-        tr.setRoundedCorner(8, 8);
-        m_vis.setRendererFactory(new DefaultRendererFactory(tr));
+        visualization.run(DRAW);
+    }
+
+
+	public Graph create(Graph graph, Dictionary parameters) {
+	    UILib.setPlatformLookAndFeel();
+	    
+	    String label = (String) parameters.get(Constants.label);
+		JFrame frame = createFrame(graph, label, parameters);
+	    frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+	    
+		return null;
+	}
+
+	private Visualization createVisualization(
+			Graph graph, Dictionary parameters) {
+		Visualization visualization = new Visualization();
         
-        String xLabel = (String) parameters.get(Constants.x);
-		String yLabel = (String) parameters.get(Constants.y);
+        LabelRenderer labelRenderer = new LabelRenderer();
+        labelRenderer.setRoundedCorner(
+        		NODE_LABEL_ROUNDED_ARC_WIDTH, NODE_LABEL_ROUNDED_ARC_HEIGHT);
+        visualization.setRendererFactory(
+        		new DefaultRendererFactory(labelRenderer));
 		
-		//moderately bad, but necessary, hack
+        addScaledDoubleColumns(graph, parameters);
+
+        visualization.removeGroup(GRAPH);
+        visualization.addGraph(GRAPH, graph);        
+        setGroupInteractivity(visualization, EDGES, false);
+        
+        visualization.putAction(SIZE, createSizeAction());
+        
+        ColorAction fill =
+        	new ColorAction(NODES, VisualItem.FILLCOLOR, NODE_FILL_COLOR);
+        fill.add(VisualItem.HIGHLIGHT, HIGHLIGHT_COLOR);
+        
+        visualization.putAction(DRAW, createDrawAction(fill));        
+        visualization.putAction(LAYOUT, createLayoutAction(fill));
+        
+        // Schedule runs
+        visualization.run(LAYOUT);
+        visualization.runAfter(DRAW, SIZE);
+        
+        return visualization;
+	}
+
+	private static JFrame createFrame(
+			Graph graph, String label, Dictionary parameters) {
+	    final SpecifiedVisualization view =
+	    	new SpecifiedVisualization(graph, label, parameters);
+	    
+	    // Launch window
+	    JFrame frame = new JFrame(FRAME_TITLE);
+	    frame.setContentPane(view.getPanel());
+	    frame.pack();
+	    frame.setVisible(true);
+	    
+	    frame.addWindowListener(new WindowAdapter() {
+	        public void windowActivated(WindowEvent e) {
+	            view.visualization.run(LAYOUT);
+	        }
+	        public void windowDeactivated(WindowEvent e) {
+	            view.visualization.cancel(LAYOUT);
+	        }
+	    });
+	    
+	    return frame;
+	}
+
+	private JPanel createPanel(final Display display) {
+		final JPanel panel = new JPanel();
+        
+        // When the panel is resized, resize the inner display accordingly.
+        panel.addComponentListener(new ComponentAdapter() {
+            public void componentResized(ComponentEvent e) {
+                display.setBounds(new Rectangle(e.getComponent().getSize()));
+                panel.invalidate();
+            }
+        });
+        
+        return panel;
+	}
+    
+	private static Display createInteractiveDisplay(
+			Visualization visualization) {
+		final Display display = new Display(visualization);
 		
-		class ToDoubleExpression extends ColumnExpression {
-			ToDoubleExpression(String column) {
+        display.setSize(DEFAULT_DISPLAY_WIDTH, DEFAULT_DISPLAY_HEIGHT);
+        // Pan to center
+        display.pan(DEFAULT_DISPLAY_WIDTH / 2.0, DEFAULT_DISPLAY_HEIGHT / 2.0);
+        
+        display.setForeground(DISPLAY_FOREGROUND_COLOR);
+        display.setBackground(DISPLAY_BACKGROUND_COLOR);
+        
+        display.addControlListener(new FocusControl(NUMBER_OF_CLICKS_FOR_FOCUS));
+        display.addControlListener(new DragControl());
+        display.addControlListener(new PanControl());
+        display.addControlListener(new ZoomControl());
+        display.addControlListener(new WheelZoomControl());
+        display.addControlListener(new ZoomToFitControl(NODES));
+        display.addControlListener(new NeighborHighlightControl());
+        
+		return display;
+	}
+
+	private ActionList createLayoutAction(ColorAction fill) {
+		ActionList layoutActions =
+        	new ActionList(LAYOUT_ANIMATION_DURATION_IN_MS);
+        layoutActions.add(
+        		new SpecifiedLayout(GRAPH, Constants._x, Constants._y));
+		layoutActions.add(fill);
+        layoutActions.add(new RepaintAction());
+		return layoutActions;
+	}
+
+	private ActionList createDrawAction(ColorAction fill) {
+		ActionList drawActions = new ActionList();        
+        drawActions.add(fill);
+        drawActions.add(new ColorAction(
+        		NODES, VisualItem.STROKECOLOR, NODE_STROKE_COLOR));
+        drawActions.add(new ColorAction(
+        		NODES, VisualItem.TEXTCOLOR, NODE_TEXT_COLOR));
+        drawActions.add(new ColorAction(
+        		EDGES, VisualItem.FILLCOLOR, EDGE_FILL_COLOR));
+        drawActions.add(new ColorAction(
+        		EDGES, VisualItem.STROKECOLOR, EDGE_STROKE_COLOR));
+		return drawActions;
+	}
+
+	private SizeAction createSizeAction() {
+		SizeAction sizeAction = new SizeAction() {
+        	public double getSize(VisualItem item) {
+        		double scale = m_vis.getDisplay(0).getScale();
+        		
+        		if (scale <= 1) {
+        			return NODE_SIZE_MAXIMUM;
+        		} else {
+        			return NODE_SIZE_MAXIMUM / scale;
+        		}
+        	}
+        };
+		return sizeAction;
+	}
+
+	/* Enable Prefuse to both read doubles and parse them from Strings.
+	 * Also scales from the DrL values (which tend to be small) to
+	 * an arbitrary bigger scale so that there we will get better dispersion
+	 * of nodes on the Visualization.
+	 */
+	private void addScaledDoubleColumns(Graph graph, Dictionary parameters) {
+		String xLabel = (String) parameters.get(Constants.X_ID);
+		String yLabel = (String) parameters.get(Constants.Y_ID);
+		
+		class DoubleParsingExpression extends ColumnExpression {
+			public static final int DRL_TO_VISUAL_SCALE_FACTOR = 20;
+			
+			DoubleParsingExpression(String column) {
 				super(column);
 			}
 			
-			public double getDouble(Tuple t) {
+			public double getDouble(Tuple t) {				
+				double drlValue = Double.NaN;
 				if(super.getType(t.getSchema()) == double.class) {
-					return super.getDouble(t);
+					drlValue = super.getDouble(t);
+				} else {
+					drlValue = Double.parseDouble((String) super.get(t));
 				}
-				double value = Double.parseDouble((String) super.get(t));
-				return value;
+				
+				double visualValue = DRL_TO_VISUAL_SCALE_FACTOR * drlValue;
+				return visualValue;
 			}
 			public Class getType(Schema s) {
 				return double.class;
 			}
-		}
-		
-		g.addColumn(Constants._x, new ToDoubleExpression(xLabel));
-		g.addColumn(Constants._y, new ToDoubleExpression(yLabel));
-
-		
-        // --------------------------------------------------------------------
-        // register the data with a visualization
-        
-        // adds graph to visualization and sets renderer label field
-        setGraph(g, label);
-        
-        
-        SizeAction sizeAction = new SizeAction() {
-        	public double getSize(VisualItem item) {
-        		double scale = m_vis.getDisplay(0).getScale();
-        		if(scale <= 1) {
-        			return 1;
-        		} else {
-        			return 1 / scale;
-        		}
-        	}
-        };
-        m_vis.putAction("size", sizeAction);
-        
-        // --------------------------------------------------------------------
-        // create actions to process the visual data
-
-        ColorAction fill = new ColorAction(nodes, 
-                VisualItem.FILLCOLOR, ColorLib.rgb(200,200,255));
-        //fill.add(VisualItem.FIXED, ColorLib.rgb(255,100,100));
-        fill.add(VisualItem.HIGHLIGHT, ColorLib.rgb(255,200,125));
-        
-        ActionList draw = new ActionList();
-        draw.add(fill);
-        draw.add(new ColorAction(nodes, VisualItem.STROKECOLOR, 0));
-        draw.add(new ColorAction(nodes, VisualItem.TEXTCOLOR, ColorLib.rgb(0,0,0)));
-        draw.add(new ColorAction(edges, VisualItem.FILLCOLOR, ColorLib.gray(200)));
-        draw.add(new ColorAction(edges, VisualItem.STROKECOLOR, ColorLib.gray(200)));
-        
-        ActionList animate = new ActionList(1500);
-        
-        
-		
-		animate.add(new SpecifiedLayout(graph, Constants._x, Constants._y));
-        //animate.add(new ForceDirectedLayout(graph));
-		animate.add(fill);
-        animate.add(new RepaintAction());
-        
-        // finally, we register our ActionList with the Visualization.
-        // we can later execute our Actions by invoking a method on our
-        // Visualization, using the name we've chosen below.
-        m_vis.putAction("draw", draw);
-        m_vis.putAction("layout", animate);
-
-        m_vis.runAfter("draw", "layout");
-        
-        
-        // --------------------------------------------------------------------
-        // set up a display to show the visualization
-        
-        final Display display = new Display(m_vis);
-        display.setSize(700,700);
-        //display.pan(350, 350);
-        display.setForeground(Color.GRAY);
-        display.setBackground(Color.WHITE);
-        
-        // main display controls
-        display.addControlListener(new FocusControl(1));
-        display.addControlListener(new DragControl());
-        display.addControlListener(new PanControl());
-        display.addControlListener(new ZoomControl() {
-        	public void mouseDragged(MouseEvent event) {
-        		m_vis.run("size");
-        		super.mouseDragged(event);
-        	}
-        });
-        display.addControlListener(new WheelZoomControl());
-        display.addControlListener(new ZoomToFitControl() {
-        	public void mouseClicked(MouseEvent event) {
-        		m_vis.run("size");
-        		super.mouseClicked(event);
-        	}
-        });
-        display.addControlListener(new NeighborHighlightControl());
-
-        // When the panel is resized, resize the inner display accordingly.
-        addComponentListener(new ComponentAdapter() {
-            public void componentResized(ComponentEvent e) {
-                display.setBounds(new Rectangle(e.getComponent().getSize()));
-                invalidate();
-            }
-        });
-        
-        // overview display
-//        Display overview = new Display(vis);
-//        overview.setSize(290,290);
-//        overview.addItemBoundsListener(new FitOverviewListener());
-        
-        display.setForeground(Color.GRAY);
-        display.setBackground(Color.WHITE);
-        
-        // --------------------------------------------------------------------        
-        // launch the visualization
-        
-        
-        
-        
-        
-
-       
-        
-        // now we run our action list
-        m_vis.run("draw");
-        
-        add(display);
-    }
+		}		
+		graph.addColumn(Constants._x, new DoubleParsingExpression(xLabel));
+		graph.addColumn(Constants._y, new DoubleParsingExpression(yLabel));
+	}
     
-    public SpecifiedVisualization() {
-		// TODO Auto-generated constructor stub
+    private void setGroupInteractivity(
+			Visualization visualization,
+			String groupIdentifier,
+			boolean isInteractive) {
+		visualization.setValue(
+				groupIdentifier,
+				new ConstantTruePredicate(),
+				VisualItem.INTERACTIVE,
+				new Boolean(isInteractive));
 	}
 
-	public void setGraph(Graph g, String label) {
-        // update labeling
-        DefaultRendererFactory drf = (DefaultRendererFactory)
-                                                m_vis.getRendererFactory();
-        ((LabelRenderer)drf.getDefaultRenderer()).setTextField(label);
-        
-        // update graph
-        m_vis.removeGroup(graph);
-        VisualGraph vg = m_vis.addGraph(graph, g);
-        m_vis.setValue(edges, null, VisualItem.INTERACTIVE, Boolean.FALSE);
-        VisualItem f = (VisualItem)vg.getNode(0);
-        m_vis.getGroup(Visualization.FOCUS_ITEMS).setTuple(f);
-        f.setFixed(false);
-    }
-    
-    // ------------------------------------------------------------------------
-    // Main and demo methods
-    
-    public Graph create(Graph graph, Dictionary parameters) {
-        UILib.setPlatformLookAndFeel();
-        
-        // create graphview
-        
-        String label = (String) parameters.get(Constants.label);
-		JFrame frame = demo(graph, label, parameters);
-        frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-		return null;
-    }
-    
-    
-    
-    public JFrame demo(Graph g, String label, Dictionary parameters) {
-        final SpecifiedVisualization view = new SpecifiedVisualization(g, label, parameters);
-        
-        // set up menu
-        /* JMenu dataMenu = new JMenu("Data");
-        dataMenu.add(new OpenGraphAction(view));
-        dataMenu.add(new GraphMenuAction("Grid","ctrl 1",view) {
-            protected Graph getGraph() {
-                return GraphLib.getGrid(15,15);
-            }
-        });
-        dataMenu.add(new GraphMenuAction("Clique","ctrl 2",view) {
-            protected Graph getGraph() {
-                return GraphLib.getClique(10);
-            }
-        });
-        dataMenu.add(new GraphMenuAction("Honeycomb","ctrl 3",view) {
-            protected Graph getGraph() {
-                return GraphLib.getHoneycomb(5);
-            }
-        });
-        dataMenu.add(new GraphMenuAction("Balanced Tree","ctrl 4",view) {
-            protected Graph getGraph() {
-                return GraphLib.getBalancedTree(3,5);
-            }
-        });
-        dataMenu.add(new GraphMenuAction("Diamond Tree","ctrl 5",view) {
-            protected Graph getGraph() {
-                return GraphLib.getDiamondTree(3,3,3);
-            }
-        });
-        JMenuBar menubar = new JMenuBar();
-        menubar.add(dataMenu);
-        */
-        // launch window
-        JFrame frame = new JFrame("Pre-defined Positions (prefuse beta)");
-        //frame.setJMenuBar(menubar);
-        frame.setContentPane(view);
-        frame.pack();
-        frame.setVisible(true);
-        
-        frame.addWindowListener(new WindowAdapter() {
-            public void windowActivated(WindowEvent e) {
-                view.m_vis.run("layout");
-            }
-            public void windowDeactivated(WindowEvent e) {
-                view.m_vis.cancel("layout");
-            }
-        });
-        
-        return frame;
-    }
-    
-    
-    // ------------------------------------------------------------------------
-    
-    /**
-     * Swing menu action that loads a graph into the graph viewer.
-     */
-    public abstract static class GraphMenuAction extends AbstractAction {
-        private SpecifiedVisualization m_view;
-        public GraphMenuAction(String name, String accel, SpecifiedVisualization view) {
-            m_view = view;
-            this.putValue(AbstractAction.NAME, name);
-            this.putValue(AbstractAction.ACCELERATOR_KEY,
-                          KeyStroke.getKeyStroke(accel));
-        }
-        public void actionPerformed(ActionEvent e) {
-            m_view.setGraph(getGraph(), "label");
-        }
-        protected abstract Graph getGraph();
-    }
-    
-    public static class OpenGraphAction extends AbstractAction {
-        /**
-		 * 
-		 */
-		private static final long serialVersionUID = 1L;
-		private SpecifiedVisualization m_view;
+	private Container getPanel() {
+		return panel;
+	}
+	
+	
+	public static final class ConstantTruePredicate extends AbstractPredicate {
+		public Object get(Tuple tuple) {
+			return Boolean.TRUE;
+		}
 
-        public OpenGraphAction(SpecifiedVisualization view) {
-            m_view = view;
-            this.putValue(AbstractAction.NAME, "Open File...");
-            this.putValue(AbstractAction.ACCELERATOR_KEY,
-                          KeyStroke.getKeyStroke("ctrl O"));
-        }
-        public void actionPerformed(ActionEvent e) {
-            Graph g = IOLib.getGraphFile(m_view);
-            if ( g == null ) return;
-            String label = getLabel(m_view, g);
-            if ( label != null ) {
-                m_view.setGraph(g, label);
-            }
-        }
-        public static String getLabel(Component c, Graph g) {
-            // get the column names
-            Table t = g.getNodeTable();
-            int  cc = t.getColumnCount();
-            String[] names = new String[cc];
-            for ( int i=0; i<cc; ++i )
-                names[i] = t.getColumnName(i);
-            
-            // where to store the result
-            final String[] label = new String[1];
-
-            // -- build the dialog -----
-            // we need to get the enclosing frame first
-            while ( c != null && !(c instanceof JFrame) ) {
-                c = c.getParent();
-            }
-            final JDialog dialog = new JDialog(
-                    (JFrame)c, "Choose Label Field", true);
-            
-            // create the ok/cancel buttons
-            final JButton ok = new JButton("OK");
-            ok.setEnabled(false);
-            ok.addActionListener(new ActionListener() {
-               public void actionPerformed(ActionEvent e) {
-                   dialog.setVisible(false);
-               }
-            });
-            JButton cancel = new JButton("Cancel");
-            cancel.addActionListener(new ActionListener() {
-                public void actionPerformed(ActionEvent e) {
-                    label[0] = null;
-                    dialog.setVisible(false);
-                }
-            });
-            
-            // build the selection list
-            final JList list = new JList(names);
-            list.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-            list.getSelectionModel().addListSelectionListener(
-            new ListSelectionListener() {
-                public void valueChanged(ListSelectionEvent e) {
-                    int sel = list.getSelectedIndex(); 
-                    if ( sel >= 0 ) {
-                        ok.setEnabled(true);
-                        label[0] = (String)list.getModel().getElementAt(sel);
-                    } else {
-                        ok.setEnabled(false);
-                        label[0] = null;
-                    }
-                }
-            });
-            JScrollPane scrollList = new JScrollPane(list);
-            
-            JLabel title = new JLabel("Choose a field to use for node labels:");
-            
-            // layout the buttons
-            Box bbox = new Box(BoxLayout.X_AXIS);
-            bbox.add(Box.createHorizontalStrut(5));
-            bbox.add(Box.createHorizontalGlue());
-            bbox.add(ok);
-            bbox.add(Box.createHorizontalStrut(5));
-            bbox.add(cancel);
-            bbox.add(Box.createHorizontalStrut(5));
-            
-            // put everything into a panel
-            JPanel panel = new JPanel(new BorderLayout());
-            panel.add(title, BorderLayout.NORTH);
-            panel.add(scrollList, BorderLayout.CENTER);
-            panel.add(bbox, BorderLayout.SOUTH);
-            panel.setBorder(BorderFactory.createEmptyBorder(5,2,2,2));
-            
-            // show the dialog
-            dialog.setContentPane(panel);
-            dialog.pack();
-            dialog.setLocationRelativeTo(c);
-            dialog.setVisible(true);
-            dialog.dispose();
-            
-            // return the label field selection
-            return label[0];
-        }
-    }
-    
-    public static class FitOverviewListener implements ItemBoundsListener {
-        private Rectangle2D m_bounds = new Rectangle2D.Double();
-        private Rectangle2D m_temp = new Rectangle2D.Double();
-        private double m_d = 15;
-        public void itemBoundsChanged(Display d) {
-            d.getItemBounds(m_temp);
-            GraphicsLib.expand(m_temp, 25/d.getScale());
-            
-            double dd = m_d/d.getScale();
-            double xd = Math.abs(m_temp.getMinX()-m_bounds.getMinX());
-            double yd = Math.abs(m_temp.getMinY()-m_bounds.getMinY());
-            double wd = Math.abs(m_temp.getWidth()-m_bounds.getWidth());
-            double hd = Math.abs(m_temp.getHeight()-m_bounds.getHeight());
-            if ( xd>dd || yd>dd || wd>dd || hd>dd ) {
-                m_bounds.setFrame(m_temp);
-                DisplayLib.fitViewToBounds(d, m_bounds, 0);
-            }
-        }
-    }
-    
-    public static class ZipColorAction extends ColorAction {
-        public ZipColorAction(String group) {
-            super(group, VisualItem.FILLCOLOR);
-        }
-        
-        public int getColor(VisualItem item) {
-            if ( item.isInGroup(Visualization.SEARCH_ITEMS) ) {
-                return ColorLib.gray(255);
-            } else {
-                return ColorLib.rgb(100,100,75);
-            }
-        }
-    }
-
-} // end of class GraphView
+		public boolean getBoolean(Tuple tuple) {
+			return true;
+		}
+	}
+}

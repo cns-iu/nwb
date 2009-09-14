@@ -46,16 +46,14 @@ public abstract class PrefuseBetaAlgorithmFactory implements AlgorithmFactory, P
 	protected abstract PrefuseBetaVisualization getVisualization() ;
 
 	private class VisualizationAlgorithm implements Algorithm {
-		Data[] dm;
-		Dictionary parameters;
-		CIShellContext ciContext;
+		private Data[] dm;
+		private Dictionary parameters;
 		private PrefuseBetaVisualization visualization;
 
 		public VisualizationAlgorithm(Data[] dm, Dictionary parameters,
 				CIShellContext ciContext, PrefuseBetaVisualization visualization) {
 			this.dm = dm;
 			this.parameters = parameters;
-			this.ciContext = ciContext;
 			this.visualization = visualization;
 		}
 
