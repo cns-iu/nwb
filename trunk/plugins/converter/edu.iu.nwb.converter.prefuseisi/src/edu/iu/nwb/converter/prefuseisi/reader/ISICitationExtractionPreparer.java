@@ -270,9 +270,8 @@ public class ISICitationExtractionPreparer {
 
 		float finalScore = scoreCounter / (float) oneWithMoreWords.length;
 		if (finalScore > -.5f && finalScore < .5) {
-			log.log(LogService.LOG_INFO,
-					"" + jn + " == " + cjn + ": " + finalScore);
-			log.log(LogService.LOG_INFO, bufferLog.toString());
+			System.out.println("" + jn + " == " + cjn + ": " + finalScore);
+			System.out.println(bufferLog.toString());
 		}
 		return finalScore;
 	}
@@ -287,23 +286,23 @@ public class ISICitationExtractionPreparer {
 	private static final String ALL_NUMBERS = "^[0-9]+$";
 
 	//TODO: maybe expose some of these through preferences.
-	private float calculateWordSimilarity(String word1, String word2, StringBuffer log) {
+	private float calculateWordSimilarity(String word1, String word2, StringBuffer wordSimilarityCalculationLog) {
 		// TODO: This needs to be refactored, a.k.a this code is horrible and I know it.
-		log.append("  comparing '" + word1 + "' with '" + word2 + "'\r\n");
+		wordSimilarityCalculationLog.append("  comparing '" + word1 + "' with '" + word2 + "'\r\n");
 		if (word1 == null && word2 == null) {
-			log.append("    both null. returning 0\r\n");
+			wordSimilarityCalculationLog.append("    both null. returning 0\r\n");
 			return 0f;
 		} else if (word1 == null) {
 			if (word2.matches(ALL_NUMBERS)) {
 				return -.5f;
 			}
-			log.append("    word1 is null. returning " + word2.length() * EXTRA_LETTER_PENALTY + "\r\n");
+			wordSimilarityCalculationLog.append("    word1 is null. returning " + word2.length() * EXTRA_LETTER_PENALTY + "\r\n");
 			return word2.length() * EXTRA_LETTER_PENALTY + -5.0f;
 		} else if (word2 == null) {
 			if (word1.matches(ALL_NUMBERS)) {
 				return -.5f;
 			}
-			log.append("    word2 is null. returning " + word1.length() * EXTRA_LETTER_PENALTY + "\r\n");
+			wordSimilarityCalculationLog.append("    word2 is null. returning " + word1.length() * EXTRA_LETTER_PENALTY + "\r\n");
 			return word1.length() * EXTRA_LETTER_PENALTY + -5.0f;
 		} else {
 			int minLength = Math.min(word1.length(), word2.length());
@@ -321,11 +320,11 @@ public class ISICitationExtractionPreparer {
 					scoreModifier += 1f;
 				} else if (String.valueOf(word1.charAt(i)).matches(VOWEL)
 						&& String.valueOf(word2.charAt(i)).matches(VOWEL) && minLength == maxLength && i != 1) {
-					log.append("Maybe used wrong vowel");
+					wordSimilarityCalculationLog.append("Maybe used wrong vowel");
 					maybeUsedWrongVowel = true;
 				} else {
 					maybeUsedWrongVowel = false;
-					log.append("      non-matching letters " + word1.charAt(i) + "," + word2.charAt(i));
+					wordSimilarityCalculationLog.append("      non-matching letters " + word1.charAt(i) + "," + word2.charAt(i));
 					if (i == 0) {
 						sameWord = false;
 					}
@@ -335,7 +334,7 @@ public class ISICitationExtractionPreparer {
 
 						int index = longWord.substring(longWordPlace).indexOf(shortWord.charAt(j));
 
-						log.append("      does '" + longWord.substring(longWordPlace) + "' contain "
+						wordSimilarityCalculationLog.append("      does '" + longWord.substring(longWordPlace) + "' contain "
 								+ shortWord.charAt(j) + "'?");
 						if (index != -1) {
 
@@ -349,15 +348,15 @@ public class ISICitationExtractionPreparer {
 										if (vowelsSkipped > 1) {
 											sameWord = false;
 										}
-										log.append("Skipped a vowel!");
+										wordSimilarityCalculationLog.append("Skipped a vowel!");
 									}
 								}
 							}
-							log.append("      Yes");
+							wordSimilarityCalculationLog.append("      Yes");
 							scoreModifier += 1f / (float) (index + 1);
 							longWordPlace += index + 1;
 						} else {
-							log.append("      No");
+							wordSimilarityCalculationLog.append("      No");
 							sameWord = false;
 						}
 					}
@@ -373,12 +372,12 @@ public class ISICitationExtractionPreparer {
 					finalScore = MAYBE_USED_DIFFERENT_VOWEL_SCORE * finalScoreModifier;
 				}
 			} else if (missingLetterAbbreviation && sameWord) {
-				log.append("Missing letter abbreviation score!: (final score modifier) " + finalScoreModifier + "\r\n");
+				wordSimilarityCalculationLog.append("Missing letter abbreviation score!: (final score modifier) " + finalScoreModifier + "\r\n");
 				finalScore = MISSING_LETTER_ABBREVIATION_SCORE * (.6f - finalScoreModifier);
 			} else {
 				finalScore = DIFFERENT_WORD_SCORE * (1 - finalScoreModifier) - 1.5f;
 			}
-			log.append("   returning: " + finalScore + "\r\n");
+			wordSimilarityCalculationLog.append("   returning: " + finalScore + "\r\n");
 			return finalScore;
 		}
 	}
