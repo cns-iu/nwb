@@ -557,7 +557,7 @@ Dr. Katy Borner (katy@indiana.edu)
          unpack="false"/>
 
    <plugin
-         id="edu.iu.nwb.analysis.deleteisolates"
+         id="edu.iu.nwb.preprocessing.deleteisolates"
          download-size="0"
          install-size="0"
          version="0.0.0"
