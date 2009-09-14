@@ -104,11 +104,14 @@
 		<menu pid="edu.iu.nwb.analysis.weighted.strengthdistribution"/>
 		<menu pid="edu.iu.nwb.analysis.weighted.weightdistribution"/>
 		<menu pid="edu.iu.nwb.analysis.weighted.randomweight"/>
+		<menu pid="edu.iu.nwb.analysis.pagerank"/>
+		<menu pid="edu.iu.nwb.analysis.hits.HITSAlgorithm"/>
 		<menu type="break"/>
 		<menu pid="edu.iu.nwb.preprocessing.pathfindernetworkscaling.mst.MSTPathfinderNetworkScalingAlgorithm"/>
 	    <menu pid="edu.iu.nwb.preprocessing.pathfindernetworkscaling.fast.FastPathfinderNetworkScalingAlgorithm"/>
 	    <menu type="break"/>
 		<menu pid="edu.iu.nwb.analysis.blondelcommunitydetection.BlondelCommunityDetectionAlgorithm"/>
+
 	</menu>
 	<menu name = "Unweighted and Directed" type="group">
 		<menu pid="edu.iu.nwb.analysis.java.nodeindegree"/>
