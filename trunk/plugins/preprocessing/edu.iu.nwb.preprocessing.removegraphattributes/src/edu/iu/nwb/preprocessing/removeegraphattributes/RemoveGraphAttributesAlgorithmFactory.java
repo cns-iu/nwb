@@ -6,24 +6,25 @@ import java.util.Dictionary;
 
 import org.cishell.framework.CIShellContext;
 import org.cishell.framework.algorithm.Algorithm;
-import org.cishell.framework.algorithm.AlgorithmExecutionException;
 import org.cishell.framework.algorithm.AlgorithmFactory;
 import org.cishell.framework.algorithm.ParameterMutator;
 import org.cishell.framework.data.Data;
 import org.osgi.service.log.LogService;
 import org.osgi.service.metatype.ObjectClassDefinition;
 
-import edu.iu.nwb.preprocessing.removeegraphattributes.nwbIO.RemovableAttributeReader;
+import edu.iu.nwb.preprocessing.removeegraphattributes.nwbIO.NWBRemovableAttributeReader;
 import edu.iu.nwb.preprocessing.removeegraphattributes.ocdMutation.BooleanMutator;
 import edu.iu.nwb.preprocessing.removeegraphattributes.ocdMutation.DummyAttributeDefinitionRemover;
 import edu.iu.nwb.preprocessing.removeegraphattributes.ocdMutation.BooleanMutator.DescriptionCreator;
+import edu.iu.nwb.util.nwbfile.NWBMetadataParsingException;
 
 public abstract class RemoveGraphAttributesAlgorithmFactory
 		implements AlgorithmFactory, ParameterMutator {
 	public abstract Algorithm createAlgorithm(
 			Data[] data, Dictionary parameters, CIShellContext context);
-	public abstract RemovableAttributeReader getAttributeReader(File inNWBFile)
-		throws AlgorithmExecutionException;
+	public abstract NWBRemovableAttributeReader createAttributeReader(
+			File inNWBFile)
+				throws NWBMetadataParsingException;
 	public abstract LogService getLogger();
 	
 	
@@ -32,7 +33,8 @@ public abstract class RemoveGraphAttributesAlgorithmFactory
 		try {
 			// Determine the keys of the attributes that can be removed
 			File inNWBFile = (File) data[0].getData();
-			RemovableAttributeReader reader = getAttributeReader(inNWBFile);
+			NWBRemovableAttributeReader reader =
+				createAttributeReader(inNWBFile);
 			Collection removableAttributeKeys =
 				reader.determineRemovableAttributeKeys();
 
@@ -45,11 +47,12 @@ public abstract class RemoveGraphAttributesAlgorithmFactory
 			// Add a Boolean parameter (check-box) for each removable attribute		
 			BooleanMutator booleanMutator =
 				new BooleanMutator(removableAttributeKeys,
-								   new RemoveDescriptionCreator());			
+								   new RemoveDescriptionCreator());		
+			
 			return booleanMutator.addOptionsTo(properParameters);
-		} catch (AlgorithmExecutionException e) {
+		} catch (NWBMetadataParsingException e) {
 			String message =
-				"Warning: Unable to mutate parameters due to: " + e.getMessage();
+				"Error while mutating user parameters: " + e.getMessage();
 			
 			getLogger().log(LogService.LOG_WARNING, message, e);
 			
@@ -61,8 +64,8 @@ public abstract class RemoveGraphAttributesAlgorithmFactory
 	
 	private class RemoveDescriptionCreator
 			implements DescriptionCreator {
-		public String createDescriptionFrom(String name) {
-			return "Remove attribute " + name + "?";
+		public String createFromName(String name) {
+			return "Remove the " + name + " attribute?";
 		}
 	}
 }

@@ -7,14 +7,14 @@ import java.util.Dictionary;
 
 import org.cishell.framework.CIShellContext;
 import org.cishell.framework.algorithm.Algorithm;
-import org.cishell.framework.algorithm.AlgorithmExecutionException;
 import org.cishell.framework.data.Data;
 import org.osgi.service.log.LogService;
 
 import edu.iu.nwb.preprocessing.removeegraphattributes.RemoveGraphAttributesAlgorithm;
 import edu.iu.nwb.preprocessing.removeegraphattributes.RemoveGraphAttributesAlgorithmFactory;
 import edu.iu.nwb.preprocessing.removeegraphattributes.nwbIO.AttributeFilteringNWBWriter;
-import edu.iu.nwb.preprocessing.removeegraphattributes.nwbIO.RemovableAttributeReader;
+import edu.iu.nwb.preprocessing.removeegraphattributes.nwbIO.NWBRemovableAttributeReader;
+import edu.iu.nwb.util.nwbfile.NWBMetadataParsingException;
 
 public class RemoveEdgeAttributesAlgorithmFactory
 		extends RemoveGraphAttributesAlgorithmFactory {
@@ -32,8 +32,9 @@ public class RemoveEdgeAttributesAlgorithmFactory
 		return new RemoveEdgeAttributesAlgorithm(data, parameters, context);
 	}
 	
-	public RemovableAttributeReader getAttributeReader(File inNWBFile)
-			throws AlgorithmExecutionException {
+	
+	public NWBRemovableAttributeReader createAttributeReader(File inNWBFile)
+			throws NWBMetadataParsingException {
 		return new NWBRemovableEdgeAttributeReader(inNWBFile);
 	}	
 	
@@ -46,15 +47,18 @@ public class RemoveEdgeAttributesAlgorithmFactory
 		}
 		
 
-		public RemovableAttributeReader createAttributeReader(
-				File inputNWBFile) throws AlgorithmExecutionException {
+		public NWBRemovableAttributeReader createAttributeReader(
+				File inputNWBFile) throws NWBMetadataParsingException {
 			return new NWBRemovableEdgeAttributeReader(inputNWBFile);
 		}
 
 		public AttributeFilteringNWBWriter createAttributeFilteringFileWriter(
-				File outputNWBFile, Collection keysToRemove) throws IOException {
-			return new EdgeAttributeFilteringWriter(outputNWBFile, keysToRemove);
-		}
+				File outputNWBFile,
+				Collection keysToRemove)
+					throws IOException {
+			return new EdgeAttributeFilteringWriter(
+					outputNWBFile, keysToRemove);
+		}		
 
 		public String createOutDataLabel(Collection keysToRemove) {
 			int numberOfRemovedAttributes = keysToRemove.size();

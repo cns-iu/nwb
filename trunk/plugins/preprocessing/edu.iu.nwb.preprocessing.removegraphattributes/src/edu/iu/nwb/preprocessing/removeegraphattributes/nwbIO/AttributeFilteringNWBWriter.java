@@ -6,7 +6,7 @@ import java.util.Collection;
 
 import edu.iu.nwb.util.nwbfile.NWBFileWriter;
 
-public class AttributeFilteringNWBWriter extends NWBFileWriter {
+public abstract class AttributeFilteringNWBWriter extends NWBFileWriter {
 	protected Collection keysToRemove;
 	
 	public AttributeFilteringNWBWriter(File file, Collection keysToRemove)

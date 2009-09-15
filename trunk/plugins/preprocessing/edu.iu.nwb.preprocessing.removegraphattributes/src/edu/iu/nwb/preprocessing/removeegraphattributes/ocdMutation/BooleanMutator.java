@@ -18,7 +18,8 @@ public class BooleanMutator {
 	private DescriptionCreator descriptionCreator;
 
 
-	public BooleanMutator(Collection names, DescriptionCreator descriptionCreator) {
+	public BooleanMutator(
+			Collection names, DescriptionCreator descriptionCreator) {
 		this.names = names;
 		this.descriptionCreator = descriptionCreator;
 	}
@@ -32,7 +33,8 @@ public class BooleanMutator {
 		AttributeDefinition[] attributeDefinitions =
 			oldOCD.getAttributeDefinitions(ObjectClassDefinition.ALL);
 		for (int ii = 0; ii < attributeDefinitions.length; ii++) {
-			newOCD.addAttributeDefinition(ObjectClassDefinition.REQUIRED, attributeDefinitions[ii]);
+			newOCD.addAttributeDefinition(
+					ObjectClassDefinition.REQUIRED, attributeDefinitions[ii]);
 		}
 		
 		// Add a Boolean AttributeDefinition for each name in names
@@ -43,10 +45,11 @@ public class BooleanMutator {
 				new BasicAttributeDefinition(
 					name,
 					name,
-					descriptionCreator.createDescriptionFrom(name),
+					descriptionCreator.createFromName(name),
 					AttributeDefinition.BOOLEAN);
 			
-			newOCD.addAttributeDefinition(ObjectClassDefinition.REQUIRED, attributeDefinition);
+			newOCD.addAttributeDefinition(
+					ObjectClassDefinition.REQUIRED, attributeDefinition);
 		}
 	
 		return newOCD;
@@ -54,6 +57,6 @@ public class BooleanMutator {
 	
 	
 	public interface DescriptionCreator {
-		String createDescriptionFrom(String name);
+		String createFromName(String name);
 	}
 }

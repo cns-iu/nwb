@@ -17,7 +17,8 @@ import org.osgi.service.metatype.ObjectClassDefinition;
  * with this tool.
  */
 public class DummyAttributeDefinitionRemover {	
-	public static final String DEFAULT_DUMMY_ATTRIBUTE_DEFINITION_ID = "DUMMY_AD";
+	public static final String DEFAULT_DUMMY_ATTRIBUTE_DEFINITION_ID =
+		"DUMMY_AD";
 	
 	private String dummyAttributeDefinitionID;
 	
@@ -34,8 +35,9 @@ public class DummyAttributeDefinitionRemover {
 		BasicObjectClassDefinition properParameters =
 			MutateParameterUtilities.createNewParameters(dummiedParameters);
 
-		AttributeDefinition[] ads = dummiedParameters
-				.getAttributeDefinitions(ObjectClassDefinition.ALL);
+		AttributeDefinition[] ads =
+			dummiedParameters.getAttributeDefinitions(
+					ObjectClassDefinition.ALL);
 		for (int ii = 0; ii < ads.length; ii++) {
 			AttributeDefinition ad = ads[ii];
 
