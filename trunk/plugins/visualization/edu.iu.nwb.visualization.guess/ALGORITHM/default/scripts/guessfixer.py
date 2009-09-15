@@ -121,4 +121,32 @@ def setDefaultColors():
 		
 	for edge in g.edges:
 		edge.color = iuLightGray
+
 setDefaultColors()
+
+# This all makes highlighted edges obviously highlighted.
+# Edges are widened by HIGHLIGHTED_EDGE_MULTIPLIER and turned bright red when
+# highlighted.
+
+HIGHLIGHTED_EDGE_MULTIPLIER = 2.0
+
+def customMouseEnterEdge(edge):
+    edgeRep = edge.getRep()
+    edgeRep.highlight(true)
+    
+    edgeHighlightColor = Color(255, 32, 32)
+    edgeRep.setStrokePaint(edgeHighlightColor)
+    
+    highlightStroke = BasicStroke(edge.width * HIGHLIGHTED_EDGE_MULTIPLIER, BasicStroke.CAP_BUTT, BasicStroke.JOIN_MITER, 10.0, [5.0], 0.0)
+    edgeRep.setStroke(highlightStroke)
+
+def customMouseLeaveEdge(edge):
+    edge.getRep().highlight(false)
+    edge.getRep().setStroke(BasicStroke(edge.width / HIGHLIGHTED_EDGE_MULTIPLIER))
+
+def setCustomEdgeHighlightColor():
+    vf.defaultEdgeHighlights(false)
+    graphevents.mouseEnterEdge = customMouseEnterEdge
+    graphevents.mouseLeaveEdge = customMouseLeaveEdge
+
+setCustomEdgeHighlightColor()
