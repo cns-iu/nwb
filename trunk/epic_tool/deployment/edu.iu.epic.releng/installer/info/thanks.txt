@@ -1,0 +1,18 @@
+Installation of the SciPolicy Tool was successful.
+
+Please feel free to report bugs or request features through NWB Trac system at 
+https://cns-trac.slis.indiana.edu/trac/nwb/newticket, or directly contact the 
+NWB development team at nwb-dev@googlegroups.com, or post your questions to 
+nwb-helpdesk@googlegroups.com.
+
+New releases will be announced on nwb-announce@googlegroups.com. Please feel 
+free to sign up NWB mailing lists at http://nwb.slis.indiana.edu/mailing.html.
+
+Please go to http://nwb.slis.indiana.edu for more information and breaking news.
+
+If you use the SciPolicy tool or information contained in the 
+http://nwb.slis.indiana.edu website for any publication, please cite as follows:
+
+SciPolicy Team. (2009). SciPolicy Tool. Indiana University, Northeastern University, 
+and University of Michigan, http://sci.slis.indiana.edu. 
+
