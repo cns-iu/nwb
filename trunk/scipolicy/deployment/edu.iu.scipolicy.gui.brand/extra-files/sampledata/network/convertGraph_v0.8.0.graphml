@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<graphml xmlns="http://graphml.graphdrawing.org/xmlns/graphml"  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"  
+xsi:schemaLocation="http://graphml.graphdrawing.org/xmlns/graphml">
+<key id="label" for="node" attr.name="label" attr.type="string" />
+<!-- This is the conversionGraph for NWB tool v0.8.0 -->
+<graph edgedefault="directed"  >
+<node id="1">
+<data key="label">file:text/edge</data>
+</node>
+<node id="2">
+<data key="label">file:text/treeml+xml</data>
+</node> 
+<node id="3">
+<data key="label">prefuse.data.Tree</data>
+</node> 
+<node id="4">
+<data key="label">file:text/xgmml+xml</data>
+</node> 
+<node id="5">
+<data key="label">file:text/isi</data>
+</node>  
+<node id="6">
+<data key="label">edu.berkeley.guir.prefuse.graph.Tree</data>
+</node> 
+<node id="7">
+<data key="label">file:application/pajekmat</data>
+</node> 
+<node id="8">
+<data key="label">prefuse.data.Table</data>
+</node> 
+<node id="9">
+<data key="label">file:text/graphml+xml</data>
+</node> 
+<node id="10">
+<data key="label">prefuse.data.Graph</data>
+</node>
+<node id="11">
+<data key="label">file:text/nwb</data>
+</node>
+<node id="12">
+<data key="label">file:application/pajeknet</data>
+</node>
+<node id="13">
+<data key="label">file:text/csv</data>
+</node>
+<node id="14">
+<data key="label">edu.berkeley.guir.prefuse.graph.Graph</data>
+</node>
+<node id="15">
+<data key="label">edu.uci.ics.jung.graph.Graph</data>
+</node>
+<edge id="1" source="1" target="11" />
+<edge id="2" source="9" target="10" />
+<edge id="3" source="2" target="3" />
+<edge id="4" source="14" target="4" />
+<edge id="5" source="13" target="8" />
+<edge id="6" source="5" target="8" />
+<edge id="7" source="10" target="9" />
+<edge id="8" source="4" target="14" />
+<edge id="9" source="3" target="6" />
+<edge id="10" source="12" target="7" />
+<edge id="11" source="3" target="10" />
+<edge id="12" source="8" target="13" />
+<edge id="13" source="7" target="12" />
+<edge id="14" source="12" target="11" />
+<edge id="15" source="3" target="2" />
+<edge id="16" source="11" target="9" />
+<edge id="17" source="14" target="15" />
+<edge id="18" source="15" target="10" />
+<edge id="19" source="11" target="12" />
+<edge id="20" source="9" target="11" />
+<edge id="21" source="15" target="14" />
+<edge id="22" source="10" target="15" />
+</graph>
+</graphml>
