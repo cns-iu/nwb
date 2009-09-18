@@ -667,13 +667,6 @@ Dr. Katy Borner (katy@indiana.edu)
          unpack="false"/>
 
    <plugin
-         id="edu.iu.scipolicy.gui.brand.welcometext"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         unpack="false"/>
-
-   <plugin
          id="edu.iu.nwb.preprocessing.pathfindernetworkscaling.fast"
          download-size="0"
          install-size="0"
