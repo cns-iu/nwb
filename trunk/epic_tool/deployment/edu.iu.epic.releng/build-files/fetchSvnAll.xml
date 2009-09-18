@@ -1040,7 +1040,7 @@
   	  	      <param name="project.name" value="edu.iu.nwb.shared.blondelexecutable"/>
   	  	      <param name="url" value="http://nwb.slis.indiana.edu/svn/nwb/trunk/plugins/shared"/>
   	  	</antcall>
-  	<ant dir="${buildDirectory}/nonpde_plugins/edu.iu.scipolicy.analysis.blondelexecutable"/>
+  	<ant dir="${buildDirectory}/nonpde_plugins/edu.iu.nwb.shared.blondelexecutable"/>
   	
   	<antcall target="svn.co">
   	      <param name="target" value="nonpde_plugins"/>
