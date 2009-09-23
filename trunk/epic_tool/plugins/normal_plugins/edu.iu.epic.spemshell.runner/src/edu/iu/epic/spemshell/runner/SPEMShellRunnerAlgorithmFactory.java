@@ -16,6 +16,7 @@ import org.cishell.reference.service.metatype.BasicObjectClassDefinition;
 import org.cishell.utilities.MutateParameterUtilities;
 import org.osgi.framework.BundleContext;
 import org.osgi.service.component.ComponentContext;
+import org.osgi.service.log.LogService;
 import org.osgi.service.metatype.AttributeDefinition;
 import org.osgi.service.metatype.ObjectClassDefinition;
 
@@ -37,8 +38,28 @@ import org.osgi.service.metatype.ObjectClassDefinition;
  * Catch the output and return it.
  */
 public class SPEMShellRunnerAlgorithmFactory implements AlgorithmFactory, ParameterMutator {
+	public static final int DEFAULT_NUMBER_OF_DAYS = 730;
+	public static final BasicAttributeDefinition NUMBER_OF_DAYS_ATTRIBUTE_DEFINITION = new BasicAttributeDefinition(
+							"days",
+							"Number of Days",
+							"Length of the simulation (in days)",
+							AttributeDefinition.INTEGER,
+							String.valueOf(DEFAULT_NUMBER_OF_DAYS));
+	
+	public static final int DEFAULT_POPULATION = 1000000;
+	public static final BasicAttributeDefinition POPULATION_ATTRIBUTE_DEFINITION = new BasicAttributeDefinition(
+							"population",
+							"Population",
+							"Initial population",
+							AttributeDefinition.INTEGER,
+							String.valueOf(DEFAULT_POPULATION));
+	
+	/* Prepended to parameter IDs so that we can recognize that kind of
+	 * parameter in the Algorithm (to the exclusion of other kinds).
+	 */
 	public static final String MODEL_PARAMETER_PREFIX = "MODEL_PARAMETER_";
-	public static final String COMPARTMENT_POPULATION_PREFIX = "COMPARTMENT_POPULATION_";
+	public static final String COMPARTMENT_POPULATION_PREFIX =
+		"COMPARTMENT_POPULATION_";
 	
 	protected static BundleContext bundleContext;	
 	protected void activate(ComponentContext componentContext) {
@@ -57,26 +78,16 @@ public class SPEMShellRunnerAlgorithmFactory implements AlgorithmFactory, Parame
 			ObjectClassDefinition oldParameters) {
 		File modelFile = (File) data[0].getData();
 		
-		BasicObjectClassDefinition newParameters = MutateParameterUtilities.createNewParameters(oldParameters);
-		
-//		AttributeDefinition[] oldAttributeDefinitions =
-//			oldParameters.getAttributeDefinitions(ObjectClassDefinition.ALL);
-//		
-//		for (AttributeDefinition oldAttributeDefinition : oldAttributeDefinitions) {
-//			String oldAttributeDefinitionID = oldAttributeDefinition.getID();
-//			
-//			if(oldAttributeDefinitionID.equals("DUMMY_AD")) {
-//				// Don't copy over the dummy; just do nothing.
-//			}		
-//		}
+		BasicObjectClassDefinition newParameters =
+			MutateParameterUtilities.createNewParameters(oldParameters);
 		
 		newParameters.addAttributeDefinition(
 				ObjectClassDefinition.REQUIRED,
-				new BasicAttributeDefinition("population", "population", "population", AttributeDefinition.INTEGER, "1000000"));
+				POPULATION_ATTRIBUTE_DEFINITION);
 		
 		newParameters.addAttributeDefinition(
 				ObjectClassDefinition.REQUIRED,
-				new BasicAttributeDefinition("days", "days", "days", AttributeDefinition.INTEGER, "730"));
+				NUMBER_OF_DAYS_ATTRIBUTE_DEFINITION);
 		
 		try {
 			ModelFileReader modelFileReader =
@@ -90,12 +101,13 @@ public class SPEMShellRunnerAlgorithmFactory implements AlgorithmFactory, Parame
 						ObjectClassDefinition.REQUIRED,
 						new BasicAttributeDefinition(
 								COMPARTMENT_POPULATION_PREFIX + infectionCompartment,
-								infectionCompartment,
-								infectionCompartment,
+								createCompartmentPopulationParameterName(
+										infectionCompartment),
+								createCompartmentPopulationParameterDescription(
+										infectionCompartment),
 								AttributeDefinition.INTEGER));
 			}			
 			
-			// TODO Test
 			Collection<String> unboundReferencedParameters =
 				modelFileReader.findUnboundReferencedParameters();			
 			for (String unboundReferencedParameter : unboundReferencedParameters) {
@@ -103,18 +115,52 @@ public class SPEMShellRunnerAlgorithmFactory implements AlgorithmFactory, Parame
 						ObjectClassDefinition.REQUIRED,
 						new BasicAttributeDefinition(
 								MODEL_PARAMETER_PREFIX + unboundReferencedParameter,
-								unboundReferencedParameter,
-								unboundReferencedParameter,
+								createModelParametersAlgorithmParameterName(
+										unboundReferencedParameter),
+								createModelParametersAlgorithmParameterDescription(
+										unboundReferencedParameter),
 								AttributeDefinition.DOUBLE));
 			}
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			String message =
+				"Error accessing model file to create parameters dialog; " +
+				"continuing without custom parameters.";
+			
+			SPEMShellRunnerAlgorithm.logger.log(
+					LogService.LOG_WARNING,
+					message,
+					e);
 		} catch (RecognitionException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			String message =
+				"Error parsing model file to create parameters dialog; " +
+				"continuing without custom parameters.";
+			
+			SPEMShellRunnerAlgorithm.logger.log(
+					LogService.LOG_WARNING,
+					message,
+					e);
 		}
 		
 		return newParameters;		
+	}
+	
+	private static String createCompartmentPopulationParameterName(
+			String compartmentName) {
+		return "Initial population of " + compartmentName;
+	}
+	
+	private static String createCompartmentPopulationParameterDescription(
+			String compartmentName) {
+		return "The initial population of the " + compartmentName + " compartment";
+	}
+	
+	private static String createModelParametersAlgorithmParameterName(
+			String modelParameterName) {
+		return modelParameterName + " = ";
+	}
+	
+	private static String createModelParametersAlgorithmParameterDescription(
+			String modelParameterName) {
+		return "Numeric value of the " + modelParameterName + " model parameter";
 	}
 }

@@ -21,6 +21,7 @@ import org.cishell.framework.data.Data;
 import org.cishell.framework.data.DataProperty;
 import org.cishell.utilities.AlgorithmUtilities;
 import org.cishell.utilities.FileUtilities;
+import org.osgi.service.log.LogService;
 
 public class SPEMShellRunnerAlgorithm implements Algorithm {
 	public static final String MODEL_FILE_EXTENSION = "mdl";
@@ -49,6 +50,7 @@ public class SPEMShellRunnerAlgorithm implements Algorithm {
 	private Data[] data;
 	private Dictionary<String, Object> parameters;
 	private CIShellContext context;
+	protected static LogService logger;
 
 
 	public SPEMShellRunnerAlgorithm(
@@ -58,6 +60,9 @@ public class SPEMShellRunnerAlgorithm implements Algorithm {
 		this.data = data;		
 		this.parameters = parameters;
 		this.context = context;
+		
+		SPEMShellRunnerAlgorithm.logger =
+			(LogService) context.getService(LogService.class.getName());
 	}
 
 	

@@ -1,4 +1,4 @@
-// $ANTLR 3.1.2 C:\\Documents and Settings\\jrbibers\\workspace\\edu.iu.epic.spemshell.runner\\src\\edu\\iu\\epic\\spemshell\\runner\\parsing\\ModelFile.g 2009-09-22 16:49:34
+// $ANTLR 3.1.2 C:\\Documents and Settings\\jrbibers\\workspace\\edu.iu.epic.spemshell.runner\\src\\edu\\iu\\epic\\spemshell\\runner\\parsing\\ModelFile.g 2009-09-23 17:53:23
 package edu.iu.epic.spemshell.runner.parsing.generated;
 
 import org.antlr.runtime.BaseRecognizer;
@@ -13,13 +13,13 @@ import org.antlr.runtime.RecognitionException;
 import org.antlr.runtime.RecognizerSharedState;
 
 public class ModelFileLexer extends Lexer {
-    public static final int T__28=28;
     public static final int COMMENT_MARKER=9;
     public static final int T__27=27;
     public static final int T__26=26;
     public static final int T__25=25;
+    public static final int T__24=24;
+    public static final int T__23=23;
     public static final int SPONTANEOUS_INTO=10;
-    public static final int UNSIGNED_REAL=24;
     public static final int WHITESPACE=13;
     public static final int SUB=5;
     public static final int INTERACTED_ON_BY=11;
@@ -30,7 +30,6 @@ public class ModelFileLexer extends Lexer {
     public static final int EOF=-1;
     public static final int ALPHANUMERIC_=21;
     public static final int DECIMAL_POINT=8;
-    public static final int UNSIGNED_INTEGER=23;
     public static final int NEWLINE=15;
     public static final int ALPHANUMERIC=20;
     public static final int UNSIGNED_NUMBER=22;
@@ -235,15 +234,57 @@ public class ModelFileLexer extends Lexer {
     }
     // $ANTLR end "INTERACTS_INTO"
 
-    // $ANTLR start "T__25"
-    public final void mT__25() throws RecognitionException {
+    // $ANTLR start "T__23"
+    public final void mT__23() throws RecognitionException {
         try {
-            int _type = T__25;
+            int _type = T__23;
             int _channel = DEFAULT_TOKEN_CHANNEL;
             // C:\\Documents and Settings\\jrbibers\\workspace\\edu.iu.epic.spemshell.runner\\src\\edu\\iu\\epic\\spemshell\\runner\\parsing\\ModelFile.g:14:7: ( 'susceptible' )
             // C:\\Documents and Settings\\jrbibers\\workspace\\edu.iu.epic.spemshell.runner\\src\\edu\\iu\\epic\\spemshell\\runner\\parsing\\ModelFile.g:14:9: 'susceptible'
             {
             match("susceptible"); 
+
+
+            }
+
+            state.type = _type;
+            state.channel = _channel;
+        }
+        finally {
+        }
+    }
+    // $ANTLR end "T__23"
+
+    // $ANTLR start "T__24"
+    public final void mT__24() throws RecognitionException {
+        try {
+            int _type = T__24;
+            int _channel = DEFAULT_TOKEN_CHANNEL;
+            // C:\\Documents and Settings\\jrbibers\\workspace\\edu.iu.epic.spemshell.runner\\src\\edu\\iu\\epic\\spemshell\\runner\\parsing\\ModelFile.g:15:7: ( 'infection' )
+            // C:\\Documents and Settings\\jrbibers\\workspace\\edu.iu.epic.spemshell.runner\\src\\edu\\iu\\epic\\spemshell\\runner\\parsing\\ModelFile.g:15:9: 'infection'
+            {
+            match("infection"); 
+
+
+            }
+
+            state.type = _type;
+            state.channel = _channel;
+        }
+        finally {
+        }
+    }
+    // $ANTLR end "T__24"
+
+    // $ANTLR start "T__25"
+    public final void mT__25() throws RecognitionException {
+        try {
+            int _type = T__25;
+            int _channel = DEFAULT_TOKEN_CHANNEL;
+            // C:\\Documents and Settings\\jrbibers\\workspace\\edu.iu.epic.spemshell.runner\\src\\edu\\iu\\epic\\spemshell\\runner\\parsing\\ModelFile.g:16:7: ( 'latent' )
+            // C:\\Documents and Settings\\jrbibers\\workspace\\edu.iu.epic.spemshell.runner\\src\\edu\\iu\\epic\\spemshell\\runner\\parsing\\ModelFile.g:16:9: 'latent'
+            {
+            match("latent"); 
 
 
             }
@@ -261,10 +302,10 @@ public class ModelFileLexer extends Lexer {
         try {
             int _type = T__26;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // C:\\Documents and Settings\\jrbibers\\workspace\\edu.iu.epic.spemshell.runner\\src\\edu\\iu\\epic\\spemshell\\runner\\parsing\\ModelFile.g:15:7: ( 'infection' )
-            // C:\\Documents and Settings\\jrbibers\\workspace\\edu.iu.epic.spemshell.runner\\src\\edu\\iu\\epic\\spemshell\\runner\\parsing\\ModelFile.g:15:9: 'infection'
+            // C:\\Documents and Settings\\jrbibers\\workspace\\edu.iu.epic.spemshell.runner\\src\\edu\\iu\\epic\\spemshell\\runner\\parsing\\ModelFile.g:17:7: ( 'recovered' )
+            // C:\\Documents and Settings\\jrbibers\\workspace\\edu.iu.epic.spemshell.runner\\src\\edu\\iu\\epic\\spemshell\\runner\\parsing\\ModelFile.g:17:9: 'recovered'
             {
-            match("infection"); 
+            match("recovered"); 
 
 
             }
@@ -282,10 +323,10 @@ public class ModelFileLexer extends Lexer {
         try {
             int _type = T__27;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // C:\\Documents and Settings\\jrbibers\\workspace\\edu.iu.epic.spemshell.runner\\src\\edu\\iu\\epic\\spemshell\\runner\\parsing\\ModelFile.g:16:7: ( 'latent' )
-            // C:\\Documents and Settings\\jrbibers\\workspace\\edu.iu.epic.spemshell.runner\\src\\edu\\iu\\epic\\spemshell\\runner\\parsing\\ModelFile.g:16:9: 'latent'
+            // C:\\Documents and Settings\\jrbibers\\workspace\\edu.iu.epic.spemshell.runner\\src\\edu\\iu\\epic\\spemshell\\runner\\parsing\\ModelFile.g:18:7: ( 'secondary' )
+            // C:\\Documents and Settings\\jrbibers\\workspace\\edu.iu.epic.spemshell.runner\\src\\edu\\iu\\epic\\spemshell\\runner\\parsing\\ModelFile.g:18:9: 'secondary'
             {
-            match("latent"); 
+            match("secondary"); 
 
 
             }
@@ -297,27 +338,6 @@ public class ModelFileLexer extends Lexer {
         }
     }
     // $ANTLR end "T__27"
-
-    // $ANTLR start "T__28"
-    public final void mT__28() throws RecognitionException {
-        try {
-            int _type = T__28;
-            int _channel = DEFAULT_TOKEN_CHANNEL;
-            // C:\\Documents and Settings\\jrbibers\\workspace\\edu.iu.epic.spemshell.runner\\src\\edu\\iu\\epic\\spemshell\\runner\\parsing\\ModelFile.g:17:7: ( 'recovered' )
-            // C:\\Documents and Settings\\jrbibers\\workspace\\edu.iu.epic.spemshell.runner\\src\\edu\\iu\\epic\\spemshell\\runner\\parsing\\ModelFile.g:17:9: 'recovered'
-            {
-            match("recovered"); 
-
-
-            }
-
-            state.type = _type;
-            state.channel = _channel;
-        }
-        finally {
-        }
-    }
-    // $ANTLR end "T__28"
 
     // $ANTLR start "WHITESPACE"
     public final void mWHITESPACE() throws RecognitionException {
@@ -493,8 +513,8 @@ public class ModelFileLexer extends Lexer {
     // $ANTLR start "NUMERIC"
     public final void mNUMERIC() throws RecognitionException {
         try {
-            // C:\\Documents and Settings\\jrbibers\\workspace\\edu.iu.epic.spemshell.runner\\src\\edu\\iu\\epic\\spemshell\\runner\\parsing\\ModelFile.g:162:2: ( '0' .. '9' )
-            // C:\\Documents and Settings\\jrbibers\\workspace\\edu.iu.epic.spemshell.runner\\src\\edu\\iu\\epic\\spemshell\\runner\\parsing\\ModelFile.g:162:4: '0' .. '9'
+            // C:\\Documents and Settings\\jrbibers\\workspace\\edu.iu.epic.spemshell.runner\\src\\edu\\iu\\epic\\spemshell\\runner\\parsing\\ModelFile.g:158:2: ( '0' .. '9' )
+            // C:\\Documents and Settings\\jrbibers\\workspace\\edu.iu.epic.spemshell.runner\\src\\edu\\iu\\epic\\spemshell\\runner\\parsing\\ModelFile.g:158:4: '0' .. '9'
             {
             matchRange('0','9'); 
 
@@ -509,7 +529,7 @@ public class ModelFileLexer extends Lexer {
     // $ANTLR start "ALPHABETIC"
     public final void mALPHABETIC() throws RecognitionException {
         try {
-            // C:\\Documents and Settings\\jrbibers\\workspace\\edu.iu.epic.spemshell.runner\\src\\edu\\iu\\epic\\spemshell\\runner\\parsing\\ModelFile.g:165:2: ( 'a' .. 'z' | 'A' .. 'Z' )
+            // C:\\Documents and Settings\\jrbibers\\workspace\\edu.iu.epic.spemshell.runner\\src\\edu\\iu\\epic\\spemshell\\runner\\parsing\\ModelFile.g:161:2: ( 'a' .. 'z' | 'A' .. 'Z' )
             // C:\\Documents and Settings\\jrbibers\\workspace\\edu.iu.epic.spemshell.runner\\src\\edu\\iu\\epic\\spemshell\\runner\\parsing\\ModelFile.g:
             {
             if ( (input.LA(1)>='A' && input.LA(1)<='Z')||(input.LA(1)>='a' && input.LA(1)<='z') ) {
@@ -533,7 +553,7 @@ public class ModelFileLexer extends Lexer {
     // $ANTLR start "ALPHABETIC_"
     public final void mALPHABETIC_() throws RecognitionException {
         try {
-            // C:\\Documents and Settings\\jrbibers\\workspace\\edu.iu.epic.spemshell.runner\\src\\edu\\iu\\epic\\spemshell\\runner\\parsing\\ModelFile.g:169:2: ( ALPHABETIC | '_' )
+            // C:\\Documents and Settings\\jrbibers\\workspace\\edu.iu.epic.spemshell.runner\\src\\edu\\iu\\epic\\spemshell\\runner\\parsing\\ModelFile.g:165:2: ( ALPHABETIC | '_' )
             // C:\\Documents and Settings\\jrbibers\\workspace\\edu.iu.epic.spemshell.runner\\src\\edu\\iu\\epic\\spemshell\\runner\\parsing\\ModelFile.g:
             {
             if ( (input.LA(1)>='A' && input.LA(1)<='Z')||input.LA(1)=='_'||(input.LA(1)>='a' && input.LA(1)<='z') ) {
@@ -557,7 +577,7 @@ public class ModelFileLexer extends Lexer {
     // $ANTLR start "ALPHANUMERIC"
     public final void mALPHANUMERIC() throws RecognitionException {
         try {
-            // C:\\Documents and Settings\\jrbibers\\workspace\\edu.iu.epic.spemshell.runner\\src\\edu\\iu\\epic\\spemshell\\runner\\parsing\\ModelFile.g:173:2: ( ALPHABETIC | NUMERIC )
+            // C:\\Documents and Settings\\jrbibers\\workspace\\edu.iu.epic.spemshell.runner\\src\\edu\\iu\\epic\\spemshell\\runner\\parsing\\ModelFile.g:169:2: ( ALPHABETIC | NUMERIC )
             // C:\\Documents and Settings\\jrbibers\\workspace\\edu.iu.epic.spemshell.runner\\src\\edu\\iu\\epic\\spemshell\\runner\\parsing\\ModelFile.g:
             {
             if ( (input.LA(1)>='0' && input.LA(1)<='9')||(input.LA(1)>='A' && input.LA(1)<='Z')||(input.LA(1)>='a' && input.LA(1)<='z') ) {
@@ -581,7 +601,7 @@ public class ModelFileLexer extends Lexer {
     // $ANTLR start "ALPHANUMERIC_"
     public final void mALPHANUMERIC_() throws RecognitionException {
         try {
-            // C:\\Documents and Settings\\jrbibers\\workspace\\edu.iu.epic.spemshell.runner\\src\\edu\\iu\\epic\\spemshell\\runner\\parsing\\ModelFile.g:177:2: ( ALPHANUMERIC | '_' )
+            // C:\\Documents and Settings\\jrbibers\\workspace\\edu.iu.epic.spemshell.runner\\src\\edu\\iu\\epic\\spemshell\\runner\\parsing\\ModelFile.g:173:2: ( ALPHANUMERIC | '_' )
             // C:\\Documents and Settings\\jrbibers\\workspace\\edu.iu.epic.spemshell.runner\\src\\edu\\iu\\epic\\spemshell\\runner\\parsing\\ModelFile.g:
             {
             if ( (input.LA(1)>='0' && input.LA(1)<='9')||(input.LA(1)>='A' && input.LA(1)<='Z')||input.LA(1)=='_'||(input.LA(1)>='a' && input.LA(1)<='z') ) {
@@ -607,11 +627,11 @@ public class ModelFileLexer extends Lexer {
         try {
             int _type = ID;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // C:\\Documents and Settings\\jrbibers\\workspace\\edu.iu.epic.spemshell.runner\\src\\edu\\iu\\epic\\spemshell\\runner\\parsing\\ModelFile.g:181:2: ( ALPHABETIC_ ( ALPHANUMERIC_ )* )
-            // C:\\Documents and Settings\\jrbibers\\workspace\\edu.iu.epic.spemshell.runner\\src\\edu\\iu\\epic\\spemshell\\runner\\parsing\\ModelFile.g:181:4: ALPHABETIC_ ( ALPHANUMERIC_ )*
+            // C:\\Documents and Settings\\jrbibers\\workspace\\edu.iu.epic.spemshell.runner\\src\\edu\\iu\\epic\\spemshell\\runner\\parsing\\ModelFile.g:177:2: ( ALPHABETIC_ ( ALPHANUMERIC_ )* )
+            // C:\\Documents and Settings\\jrbibers\\workspace\\edu.iu.epic.spemshell.runner\\src\\edu\\iu\\epic\\spemshell\\runner\\parsing\\ModelFile.g:177:4: ALPHABETIC_ ( ALPHANUMERIC_ )*
             {
             mALPHABETIC_(); 
-            // C:\\Documents and Settings\\jrbibers\\workspace\\edu.iu.epic.spemshell.runner\\src\\edu\\iu\\epic\\spemshell\\runner\\parsing\\ModelFile.g:181:16: ( ALPHANUMERIC_ )*
+            // C:\\Documents and Settings\\jrbibers\\workspace\\edu.iu.epic.spemshell.runner\\src\\edu\\iu\\epic\\spemshell\\runner\\parsing\\ModelFile.g:177:16: ( ALPHANUMERIC_ )*
             loop4:
             do {
                 int alt4=2;
@@ -624,7 +644,7 @@ public class ModelFileLexer extends Lexer {
 
                 switch (alt4) {
             	case 1 :
-            	    // C:\\Documents and Settings\\jrbibers\\workspace\\edu.iu.epic.spemshell.runner\\src\\edu\\iu\\epic\\spemshell\\runner\\parsing\\ModelFile.g:181:17: ALPHANUMERIC_
+            	    // C:\\Documents and Settings\\jrbibers\\workspace\\edu.iu.epic.spemshell.runner\\src\\edu\\iu\\epic\\spemshell\\runner\\parsing\\ModelFile.g:177:17: ALPHANUMERIC_
             	    {
             	    mALPHANUMERIC_(); 
 
@@ -647,15 +667,15 @@ public class ModelFileLexer extends Lexer {
     }
     // $ANTLR end "ID"
 
-    // $ANTLR start "UNSIGNED_INTEGER"
-    public final void mUNSIGNED_INTEGER() throws RecognitionException {
+    // $ANTLR start "UNSIGNED_NUMBER"
+    public final void mUNSIGNED_NUMBER() throws RecognitionException {
         try {
-            int _type = UNSIGNED_INTEGER;
+            int _type = UNSIGNED_NUMBER;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // C:\\Documents and Settings\\jrbibers\\workspace\\edu.iu.epic.spemshell.runner\\src\\edu\\iu\\epic\\spemshell\\runner\\parsing\\ModelFile.g:190:2: ( ( NUMERIC )+ ( DECIMAL_POINT )? )
-            // C:\\Documents and Settings\\jrbibers\\workspace\\edu.iu.epic.spemshell.runner\\src\\edu\\iu\\epic\\spemshell\\runner\\parsing\\ModelFile.g:190:4: ( NUMERIC )+ ( DECIMAL_POINT )?
+            // C:\\Documents and Settings\\jrbibers\\workspace\\edu.iu.epic.spemshell.runner\\src\\edu\\iu\\epic\\spemshell\\runner\\parsing\\ModelFile.g:185:2: ( ( NUMERIC )+ ( DECIMAL_POINT ( NUMERIC )+ )? )
+            // C:\\Documents and Settings\\jrbibers\\workspace\\edu.iu.epic.spemshell.runner\\src\\edu\\iu\\epic\\spemshell\\runner\\parsing\\ModelFile.g:185:4: ( NUMERIC )+ ( DECIMAL_POINT ( NUMERIC )+ )?
             {
-            // C:\\Documents and Settings\\jrbibers\\workspace\\edu.iu.epic.spemshell.runner\\src\\edu\\iu\\epic\\spemshell\\runner\\parsing\\ModelFile.g:190:4: ( NUMERIC )+
+            // C:\\Documents and Settings\\jrbibers\\workspace\\edu.iu.epic.spemshell.runner\\src\\edu\\iu\\epic\\spemshell\\runner\\parsing\\ModelFile.g:185:4: ( NUMERIC )+
             int cnt5=0;
             loop5:
             do {
@@ -669,7 +689,7 @@ public class ModelFileLexer extends Lexer {
 
                 switch (alt5) {
             	case 1 :
-            	    // C:\\Documents and Settings\\jrbibers\\workspace\\edu.iu.epic.spemshell.runner\\src\\edu\\iu\\epic\\spemshell\\runner\\parsing\\ModelFile.g:190:5: NUMERIC
+            	    // C:\\Documents and Settings\\jrbibers\\workspace\\edu.iu.epic.spemshell.runner\\src\\edu\\iu\\epic\\spemshell\\runner\\parsing\\ModelFile.g:185:5: NUMERIC
             	    {
             	    mNUMERIC(); 
 
@@ -685,67 +705,33 @@ public class ModelFileLexer extends Lexer {
                 cnt5++;
             } while (true);
 
-            // C:\\Documents and Settings\\jrbibers\\workspace\\edu.iu.epic.spemshell.runner\\src\\edu\\iu\\epic\\spemshell\\runner\\parsing\\ModelFile.g:190:15: ( DECIMAL_POINT )?
-            int alt6=2;
-            int LA6_0 = input.LA(1);
+            // C:\\Documents and Settings\\jrbibers\\workspace\\edu.iu.epic.spemshell.runner\\src\\edu\\iu\\epic\\spemshell\\runner\\parsing\\ModelFile.g:185:15: ( DECIMAL_POINT ( NUMERIC )+ )?
+            int alt7=2;
+            int LA7_0 = input.LA(1);
 
-            if ( (LA6_0=='.') ) {
-                alt6=1;
+            if ( (LA7_0=='.') ) {
+                alt7=1;
             }
-            switch (alt6) {
+            switch (alt7) {
                 case 1 :
-                    // C:\\Documents and Settings\\jrbibers\\workspace\\edu.iu.epic.spemshell.runner\\src\\edu\\iu\\epic\\spemshell\\runner\\parsing\\ModelFile.g:190:16: DECIMAL_POINT
+                    // C:\\Documents and Settings\\jrbibers\\workspace\\edu.iu.epic.spemshell.runner\\src\\edu\\iu\\epic\\spemshell\\runner\\parsing\\ModelFile.g:185:16: DECIMAL_POINT ( NUMERIC )+
                     {
                     mDECIMAL_POINT(); 
-
-                    }
-                    break;
-
-            }
-
-
-            }
-
-            state.type = _type;
-            state.channel = _channel;
-        }
-        finally {
-        }
-    }
-    // $ANTLR end "UNSIGNED_INTEGER"
-
-    // $ANTLR start "UNSIGNED_REAL"
-    public final void mUNSIGNED_REAL() throws RecognitionException {
-        try {
-            // C:\\Documents and Settings\\jrbibers\\workspace\\edu.iu.epic.spemshell.runner\\src\\edu\\iu\\epic\\spemshell\\runner\\parsing\\ModelFile.g:193:2: ( ( ( NUMERIC )+ )? DECIMAL_POINT ( NUMERIC )+ )
-            // C:\\Documents and Settings\\jrbibers\\workspace\\edu.iu.epic.spemshell.runner\\src\\edu\\iu\\epic\\spemshell\\runner\\parsing\\ModelFile.g:193:4: ( ( NUMERIC )+ )? DECIMAL_POINT ( NUMERIC )+
-            {
-            // C:\\Documents and Settings\\jrbibers\\workspace\\edu.iu.epic.spemshell.runner\\src\\edu\\iu\\epic\\spemshell\\runner\\parsing\\ModelFile.g:193:4: ( ( NUMERIC )+ )?
-            int alt8=2;
-            int LA8_0 = input.LA(1);
-
-            if ( ((LA8_0>='0' && LA8_0<='9')) ) {
-                alt8=1;
-            }
-            switch (alt8) {
-                case 1 :
-                    // C:\\Documents and Settings\\jrbibers\\workspace\\edu.iu.epic.spemshell.runner\\src\\edu\\iu\\epic\\spemshell\\runner\\parsing\\ModelFile.g:193:5: ( NUMERIC )+
-                    {
-                    // C:\\Documents and Settings\\jrbibers\\workspace\\edu.iu.epic.spemshell.runner\\src\\edu\\iu\\epic\\spemshell\\runner\\parsing\\ModelFile.g:193:5: ( NUMERIC )+
-                    int cnt7=0;
-                    loop7:
+                    // C:\\Documents and Settings\\jrbibers\\workspace\\edu.iu.epic.spemshell.runner\\src\\edu\\iu\\epic\\spemshell\\runner\\parsing\\ModelFile.g:185:30: ( NUMERIC )+
+                    int cnt6=0;
+                    loop6:
                     do {
-                        int alt7=2;
-                        int LA7_0 = input.LA(1);
+                        int alt6=2;
+                        int LA6_0 = input.LA(1);
 
-                        if ( ((LA7_0>='0' && LA7_0<='9')) ) {
-                            alt7=1;
+                        if ( ((LA6_0>='0' && LA6_0<='9')) ) {
+                            alt6=1;
                         }
 
 
-                        switch (alt7) {
+                        switch (alt6) {
                     	case 1 :
-                    	    // C:\\Documents and Settings\\jrbibers\\workspace\\edu.iu.epic.spemshell.runner\\src\\edu\\iu\\epic\\spemshell\\runner\\parsing\\ModelFile.g:193:6: NUMERIC
+                    	    // C:\\Documents and Settings\\jrbibers\\workspace\\edu.iu.epic.spemshell.runner\\src\\edu\\iu\\epic\\spemshell\\runner\\parsing\\ModelFile.g:185:31: NUMERIC
                     	    {
                     	    mNUMERIC(); 
 
@@ -753,12 +739,12 @@ public class ModelFileLexer extends Lexer {
                     	    break;
 
                     	default :
-                    	    if ( cnt7 >= 1 ) break loop7;
+                    	    if ( cnt6 >= 1 ) break loop6;
                                 EarlyExitException eee =
-                                    new EarlyExitException(7, input);
+                                    new EarlyExitException(6, input);
                                 throw eee;
                         }
-                        cnt7++;
+                        cnt6++;
                     } while (true);
 
 
@@ -767,71 +753,9 @@ public class ModelFileLexer extends Lexer {
 
             }
 
-            mDECIMAL_POINT(); 
-            // C:\\Documents and Settings\\jrbibers\\workspace\\edu.iu.epic.spemshell.runner\\src\\edu\\iu\\epic\\spemshell\\runner\\parsing\\ModelFile.g:193:32: ( NUMERIC )+
-            int cnt9=0;
-            loop9:
-            do {
-                int alt9=2;
-                int LA9_0 = input.LA(1);
-
-                if ( ((LA9_0>='0' && LA9_0<='9')) ) {
-                    alt9=1;
-                }
-
-
-                switch (alt9) {
-            	case 1 :
-            	    // C:\\Documents and Settings\\jrbibers\\workspace\\edu.iu.epic.spemshell.runner\\src\\edu\\iu\\epic\\spemshell\\runner\\parsing\\ModelFile.g:193:33: NUMERIC
-            	    {
-            	    mNUMERIC(); 
-
-            	    }
-            	    break;
-
-            	default :
-            	    if ( cnt9 >= 1 ) break loop9;
-                        EarlyExitException eee =
-                            new EarlyExitException(9, input);
-                        throw eee;
-                }
-                cnt9++;
-            } while (true);
-
 
             }
 
-        }
-        finally {
-        }
-    }
-    // $ANTLR end "UNSIGNED_REAL"
-
-    // $ANTLR start "UNSIGNED_NUMBER"
-    public final void mUNSIGNED_NUMBER() throws RecognitionException {
-        try {
-            int _type = UNSIGNED_NUMBER;
-            int _channel = DEFAULT_TOKEN_CHANNEL;
-            // C:\\Documents and Settings\\jrbibers\\workspace\\edu.iu.epic.spemshell.runner\\src\\edu\\iu\\epic\\spemshell\\runner\\parsing\\ModelFile.g:196:2: ( UNSIGNED_INTEGER | UNSIGNED_REAL )
-            int alt10=2;
-            alt10 = dfa10.predict(input);
-            switch (alt10) {
-                case 1 :
-                    // C:\\Documents and Settings\\jrbibers\\workspace\\edu.iu.epic.spemshell.runner\\src\\edu\\iu\\epic\\spemshell\\runner\\parsing\\ModelFile.g:196:4: UNSIGNED_INTEGER
-                    {
-                    mUNSIGNED_INTEGER(); 
-
-                    }
-                    break;
-                case 2 :
-                    // C:\\Documents and Settings\\jrbibers\\workspace\\edu.iu.epic.spemshell.runner\\src\\edu\\iu\\epic\\spemshell\\runner\\parsing\\ModelFile.g:197:4: UNSIGNED_REAL
-                    {
-                    mUNSIGNED_REAL(); 
-
-                    }
-                    break;
-
-            }
             state.type = _type;
             state.channel = _channel;
         }
@@ -841,10 +765,10 @@ public class ModelFileLexer extends Lexer {
     // $ANTLR end "UNSIGNED_NUMBER"
 
     public void mTokens() throws RecognitionException {
-        // C:\\Documents and Settings\\jrbibers\\workspace\\edu.iu.epic.spemshell.runner\\src\\edu\\iu\\epic\\spemshell\\runner\\parsing\\ModelFile.g:1:8: ( ADD | SUB | MULT | DIV | DECIMAL_POINT | COMMENT_MARKER | SPONTANEOUS_INTO | INTERACTED_ON_BY | INTERACTS_INTO | T__25 | T__26 | T__27 | T__28 | WHITESPACE | NEWLINE | COMMENT | ID | UNSIGNED_INTEGER | UNSIGNED_NUMBER )
-        int alt11=19;
-        alt11 = dfa11.predict(input);
-        switch (alt11) {
+        // C:\\Documents and Settings\\jrbibers\\workspace\\edu.iu.epic.spemshell.runner\\src\\edu\\iu\\epic\\spemshell\\runner\\parsing\\ModelFile.g:1:8: ( ADD | SUB | MULT | DIV | DECIMAL_POINT | COMMENT_MARKER | SPONTANEOUS_INTO | INTERACTED_ON_BY | INTERACTS_INTO | T__23 | T__24 | T__25 | T__26 | T__27 | WHITESPACE | NEWLINE | COMMENT | ID | UNSIGNED_NUMBER )
+        int alt8=19;
+        alt8 = dfa8.predict(input);
+        switch (alt8) {
             case 1 :
                 // C:\\Documents and Settings\\jrbibers\\workspace\\edu.iu.epic.spemshell.runner\\src\\edu\\iu\\epic\\spemshell\\runner\\parsing\\ModelFile.g:1:10: ADD
                 {
@@ -909,70 +833,70 @@ public class ModelFileLexer extends Lexer {
                 }
                 break;
             case 10 :
-                // C:\\Documents and Settings\\jrbibers\\workspace\\edu.iu.epic.spemshell.runner\\src\\edu\\iu\\epic\\spemshell\\runner\\parsing\\ModelFile.g:1:105: T__25
+                // C:\\Documents and Settings\\jrbibers\\workspace\\edu.iu.epic.spemshell.runner\\src\\edu\\iu\\epic\\spemshell\\runner\\parsing\\ModelFile.g:1:105: T__23
+                {
+                mT__23(); 
+
+                }
+                break;
+            case 11 :
+                // C:\\Documents and Settings\\jrbibers\\workspace\\edu.iu.epic.spemshell.runner\\src\\edu\\iu\\epic\\spemshell\\runner\\parsing\\ModelFile.g:1:111: T__24
+                {
+                mT__24(); 
+
+                }
+                break;
+            case 12 :
+                // C:\\Documents and Settings\\jrbibers\\workspace\\edu.iu.epic.spemshell.runner\\src\\edu\\iu\\epic\\spemshell\\runner\\parsing\\ModelFile.g:1:117: T__25
                 {
                 mT__25(); 
 
                 }
                 break;
-            case 11 :
-                // C:\\Documents and Settings\\jrbibers\\workspace\\edu.iu.epic.spemshell.runner\\src\\edu\\iu\\epic\\spemshell\\runner\\parsing\\ModelFile.g:1:111: T__26
+            case 13 :
+                // C:\\Documents and Settings\\jrbibers\\workspace\\edu.iu.epic.spemshell.runner\\src\\edu\\iu\\epic\\spemshell\\runner\\parsing\\ModelFile.g:1:123: T__26
                 {
                 mT__26(); 
 
                 }
                 break;
-            case 12 :
-                // C:\\Documents and Settings\\jrbibers\\workspace\\edu.iu.epic.spemshell.runner\\src\\edu\\iu\\epic\\spemshell\\runner\\parsing\\ModelFile.g:1:117: T__27
+            case 14 :
+                // C:\\Documents and Settings\\jrbibers\\workspace\\edu.iu.epic.spemshell.runner\\src\\edu\\iu\\epic\\spemshell\\runner\\parsing\\ModelFile.g:1:129: T__27
                 {
                 mT__27(); 
 
                 }
                 break;
-            case 13 :
-                // C:\\Documents and Settings\\jrbibers\\workspace\\edu.iu.epic.spemshell.runner\\src\\edu\\iu\\epic\\spemshell\\runner\\parsing\\ModelFile.g:1:123: T__28
-                {
-                mT__28(); 
-
-                }
-                break;
-            case 14 :
-                // C:\\Documents and Settings\\jrbibers\\workspace\\edu.iu.epic.spemshell.runner\\src\\edu\\iu\\epic\\spemshell\\runner\\parsing\\ModelFile.g:1:129: WHITESPACE
+            case 15 :
+                // C:\\Documents and Settings\\jrbibers\\workspace\\edu.iu.epic.spemshell.runner\\src\\edu\\iu\\epic\\spemshell\\runner\\parsing\\ModelFile.g:1:135: WHITESPACE
                 {
                 mWHITESPACE(); 
 
                 }
                 break;
-            case 15 :
-                // C:\\Documents and Settings\\jrbibers\\workspace\\edu.iu.epic.spemshell.runner\\src\\edu\\iu\\epic\\spemshell\\runner\\parsing\\ModelFile.g:1:140: NEWLINE
+            case 16 :
+                // C:\\Documents and Settings\\jrbibers\\workspace\\edu.iu.epic.spemshell.runner\\src\\edu\\iu\\epic\\spemshell\\runner\\parsing\\ModelFile.g:1:146: NEWLINE
                 {
                 mNEWLINE(); 
 
                 }
                 break;
-            case 16 :
-                // C:\\Documents and Settings\\jrbibers\\workspace\\edu.iu.epic.spemshell.runner\\src\\edu\\iu\\epic\\spemshell\\runner\\parsing\\ModelFile.g:1:148: COMMENT
+            case 17 :
+                // C:\\Documents and Settings\\jrbibers\\workspace\\edu.iu.epic.spemshell.runner\\src\\edu\\iu\\epic\\spemshell\\runner\\parsing\\ModelFile.g:1:154: COMMENT
                 {
                 mCOMMENT(); 
 
                 }
                 break;
-            case 17 :
-                // C:\\Documents and Settings\\jrbibers\\workspace\\edu.iu.epic.spemshell.runner\\src\\edu\\iu\\epic\\spemshell\\runner\\parsing\\ModelFile.g:1:156: ID
+            case 18 :
+                // C:\\Documents and Settings\\jrbibers\\workspace\\edu.iu.epic.spemshell.runner\\src\\edu\\iu\\epic\\spemshell\\runner\\parsing\\ModelFile.g:1:162: ID
                 {
                 mID(); 
 
                 }
                 break;
-            case 18 :
-                // C:\\Documents and Settings\\jrbibers\\workspace\\edu.iu.epic.spemshell.runner\\src\\edu\\iu\\epic\\spemshell\\runner\\parsing\\ModelFile.g:1:159: UNSIGNED_INTEGER
-                {
-                mUNSIGNED_INTEGER(); 
-
-                }
-                break;
             case 19 :
-                // C:\\Documents and Settings\\jrbibers\\workspace\\edu.iu.epic.spemshell.runner\\src\\edu\\iu\\epic\\spemshell\\runner\\parsing\\ModelFile.g:1:176: UNSIGNED_NUMBER
+                // C:\\Documents and Settings\\jrbibers\\workspace\\edu.iu.epic.spemshell.runner\\src\\edu\\iu\\epic\\spemshell\\runner\\parsing\\ModelFile.g:1:165: UNSIGNED_NUMBER
                 {
                 mUNSIGNED_NUMBER(); 
 
@@ -984,86 +908,31 @@ public class ModelFileLexer extends Lexer {
     }
 
 
-    protected DFA10 dfa10 = new DFA10(this);
-    protected DFA11 dfa11 = new DFA11(this);
-    static final String DFA10_eotS =
-        "\1\uffff\1\3\2\uffff\1\3";
-    static final String DFA10_eofS =
-        "\5\uffff";
-    static final String DFA10_minS =
-        "\2\56\2\uffff\1\60";
-    static final String DFA10_maxS =
-        "\2\71\2\uffff\1\71";
-    static final String DFA10_acceptS =
-        "\2\uffff\1\2\1\1\1\uffff";
-    static final String DFA10_specialS =
-        "\5\uffff}>";
-    static final String[] DFA10_transitionS = {
-            "\1\2\1\uffff\12\1",
-            "\1\4\1\uffff\12\1",
-            "",
-            "",
-            "\12\2"
-    };
-
-    static final short[] DFA10_eot = DFA.unpackEncodedString(DFA10_eotS);
-    static final short[] DFA10_eof = DFA.unpackEncodedString(DFA10_eofS);
-    static final char[] DFA10_min = DFA.unpackEncodedStringToUnsignedChars(DFA10_minS);
-    static final char[] DFA10_max = DFA.unpackEncodedStringToUnsignedChars(DFA10_maxS);
-    static final short[] DFA10_accept = DFA.unpackEncodedString(DFA10_acceptS);
-    static final short[] DFA10_special = DFA.unpackEncodedString(DFA10_specialS);
-    static final short[][] DFA10_transition;
-
-    static {
-        int numStates = DFA10_transitionS.length;
-        DFA10_transition = new short[numStates][];
-        for (int i=0; i<numStates; i++) {
-            DFA10_transition[i] = DFA.unpackEncodedString(DFA10_transitionS[i]);
-        }
-    }
-
-    class DFA10 extends DFA {
-
-        public DFA10(BaseRecognizer recognizer) {
-            this.recognizer = recognizer;
-            this.decisionNumber = 10;
-            this.eot = DFA10_eot;
-            this.eof = DFA10_eof;
-            this.min = DFA10_min;
-            this.max = DFA10_max;
-            this.accept = DFA10_accept;
-            this.special = DFA10_special;
-            this.transition = DFA10_transition;
-        }
-        public String getDescription() {
-            return "195:1: UNSIGNED_NUMBER : ( UNSIGNED_INTEGER | UNSIGNED_REAL );";
-        }
-    }
-    static final String DFA11_eotS =
-        "\2\uffff\1\22\2\uffff\1\23\1\25\1\uffff\4\16\3\uffff\1\33\7\uffff"+
-        "\4\16\1\uffff\1\33\16\16\1\57\3\16\1\uffff\5\16\1\70\1\71\1\16\2"+
-        "\uffff\1\73\1\uffff";
-    static final String DFA11_eofS =
-        "\74\uffff";
-    static final String DFA11_minS =
-        "\1\11\1\uffff\1\55\2\uffff\1\60\1\0\1\uffff\1\165\1\156\1\141\1"+
-        "\145\3\uffff\1\56\7\uffff\1\163\1\146\1\164\1\143\1\uffff\1\60\1"+
-        "\143\2\145\1\157\1\145\1\143\1\156\1\166\1\160\2\164\1\145\1\164"+
-        "\1\151\1\60\1\162\1\151\1\157\1\uffff\1\145\1\142\1\156\1\144\1"+
-        "\154\2\60\1\145\2\uffff\1\60\1\uffff";
-    static final String DFA11_maxS =
-        "\1\172\1\uffff\1\76\2\uffff\1\71\1\uffff\1\uffff\1\165\1\156\1"+
-        "\141\1\145\3\uffff\1\71\7\uffff\1\163\1\146\1\164\1\143\1\uffff"+
-        "\1\71\1\143\2\145\1\157\1\145\1\143\1\156\1\166\1\160\2\164\1\145"+
-        "\1\164\1\151\1\172\1\162\1\151\1\157\1\uffff\1\145\1\142\1\156\1"+
-        "\144\1\154\2\172\1\145\2\uffff\1\172\1\uffff";
-    static final String DFA11_acceptS =
-        "\1\uffff\1\1\1\uffff\1\3\1\4\2\uffff\1\11\4\uffff\1\16\1\17\1\21"+
-        "\1\uffff\1\7\1\10\1\2\1\5\1\23\1\6\1\20\4\uffff\1\22\23\uffff\1"+
-        "\14\10\uffff\1\13\1\15\1\uffff\1\12";
-    static final String DFA11_specialS =
-        "\6\uffff\1\0\65\uffff}>";
-    static final String[] DFA11_transitionS = {
+    protected DFA8 dfa8 = new DFA8(this);
+    static final String DFA8_eotS =
+        "\2\uffff\1\22\3\uffff\1\23\1\uffff\4\16\11\uffff\27\16\1\61\4\16"+
+        "\1\uffff\6\16\1\74\1\75\1\76\1\16\3\uffff\1\100\1\uffff";
+    static final String DFA8_eofS =
+        "\101\uffff";
+    static final String DFA8_minS =
+        "\1\11\1\uffff\1\55\3\uffff\1\0\1\uffff\1\145\1\156\1\141\1\145"+
+        "\11\uffff\1\163\1\143\1\146\1\164\2\143\1\157\2\145\1\157\1\145"+
+        "\1\156\1\143\1\156\1\166\1\160\1\144\2\164\1\145\1\164\1\141\1\151"+
+        "\1\60\1\162\1\151\1\162\1\157\1\uffff\1\145\1\142\1\171\1\156\1"+
+        "\144\1\154\3\60\1\145\3\uffff\1\60\1\uffff";
+    static final String DFA8_maxS =
+        "\1\172\1\uffff\1\76\3\uffff\1\uffff\1\uffff\1\165\1\156\1\141\1"+
+        "\145\11\uffff\1\163\1\143\1\146\1\164\2\143\1\157\2\145\1\157\1"+
+        "\145\1\156\1\143\1\156\1\166\1\160\1\144\2\164\1\145\1\164\1\141"+
+        "\1\151\1\172\1\162\1\151\1\162\1\157\1\uffff\1\145\1\142\1\171\1"+
+        "\156\1\144\1\154\3\172\1\145\3\uffff\1\172\1\uffff";
+    static final String DFA8_acceptS =
+        "\1\uffff\1\1\1\uffff\1\3\1\4\1\5\1\uffff\1\11\4\uffff\1\17\1\20"+
+        "\1\22\1\23\1\7\1\10\1\2\1\6\1\21\34\uffff\1\14\12\uffff\1\16\1\13"+
+        "\1\15\1\uffff\1\12";
+    static final String DFA8_specialS =
+        "\6\uffff\1\0\72\uffff}>";
+    static final String[] DFA8_transitionS = {
             "\1\14\1\15\2\uffff\1\15\22\uffff\1\14\2\uffff\1\6\6\uffff\1"+
             "\3\1\1\1\uffff\1\2\1\5\1\4\12\17\3\uffff\1\7\3\uffff\32\16\4"+
             "\uffff\1\16\1\uffff\10\16\1\11\2\16\1\12\5\16\1\13\1\10\7\16",
@@ -1071,30 +940,29 @@ public class ModelFileLexer extends Lexer {
             "\1\21\20\uffff\1\20",
             "",
             "",
-            "\12\24",
-            "\0\26",
             "",
+            "\0\24",
+            "",
+            "\1\26\17\uffff\1\25",
             "\1\27",
             "\1\30",
             "\1\31",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
             "\1\32",
-            "",
-            "",
-            "",
-            "\1\34\1\uffff\12\17",
-            "",
-            "",
-            "",
-            "",
-            "",
-            "",
-            "",
+            "\1\33",
+            "\1\34",
             "\1\35",
             "\1\36",
             "\1\37",
             "\1\40",
-            "",
-            "\12\24",
             "\1\41",
             "\1\42",
             "\1\43",
@@ -1109,74 +977,80 @@ public class ModelFileLexer extends Lexer {
             "\1\54",
             "\1\55",
             "\1\56",
-            "\12\16\7\uffff\32\16\4\uffff\1\16\1\uffff\32\16",
+            "\1\57",
             "\1\60",
-            "\1\61",
+            "\12\16\7\uffff\32\16\4\uffff\1\16\1\uffff\32\16",
             "\1\62",
-            "",
             "\1\63",
             "\1\64",
             "\1\65",
+            "",
             "\1\66",
             "\1\67",
-            "\12\16\7\uffff\32\16\4\uffff\1\16\1\uffff\32\16",
-            "\12\16\7\uffff\32\16\4\uffff\1\16\1\uffff\32\16",
+            "\1\70",
+            "\1\71",
             "\1\72",
+            "\1\73",
+            "\12\16\7\uffff\32\16\4\uffff\1\16\1\uffff\32\16",
+            "\12\16\7\uffff\32\16\4\uffff\1\16\1\uffff\32\16",
+            "\12\16\7\uffff\32\16\4\uffff\1\16\1\uffff\32\16",
+            "\1\77",
+            "",
             "",
             "",
             "\12\16\7\uffff\32\16\4\uffff\1\16\1\uffff\32\16",
             ""
     };
 
-    static final short[] DFA11_eot = DFA.unpackEncodedString(DFA11_eotS);
-    static final short[] DFA11_eof = DFA.unpackEncodedString(DFA11_eofS);
-    static final char[] DFA11_min = DFA.unpackEncodedStringToUnsignedChars(DFA11_minS);
-    static final char[] DFA11_max = DFA.unpackEncodedStringToUnsignedChars(DFA11_maxS);
-    static final short[] DFA11_accept = DFA.unpackEncodedString(DFA11_acceptS);
-    static final short[] DFA11_special = DFA.unpackEncodedString(DFA11_specialS);
-    static final short[][] DFA11_transition;
+    static final short[] DFA8_eot = DFA.unpackEncodedString(DFA8_eotS);
+    static final short[] DFA8_eof = DFA.unpackEncodedString(DFA8_eofS);
+    static final char[] DFA8_min = DFA.unpackEncodedStringToUnsignedChars(DFA8_minS);
+    static final char[] DFA8_max = DFA.unpackEncodedStringToUnsignedChars(DFA8_maxS);
+    static final short[] DFA8_accept = DFA.unpackEncodedString(DFA8_acceptS);
+    static final short[] DFA8_special = DFA.unpackEncodedString(DFA8_specialS);
+    static final short[][] DFA8_transition;
 
     static {
-        int numStates = DFA11_transitionS.length;
-        DFA11_transition = new short[numStates][];
+        int numStates = DFA8_transitionS.length;
+        DFA8_transition = new short[numStates][];
         for (int i=0; i<numStates; i++) {
-            DFA11_transition[i] = DFA.unpackEncodedString(DFA11_transitionS[i]);
+            DFA8_transition[i] = DFA.unpackEncodedString(DFA8_transitionS[i]);
         }
     }
 
-    class DFA11 extends DFA {
+    class DFA8 extends DFA {
 
-        public DFA11(BaseRecognizer recognizer) {
+        public DFA8(BaseRecognizer recognizer) {
             this.recognizer = recognizer;
-            this.decisionNumber = 11;
-            this.eot = DFA11_eot;
-            this.eof = DFA11_eof;
-            this.min = DFA11_min;
-            this.max = DFA11_max;
-            this.accept = DFA11_accept;
-            this.special = DFA11_special;
-            this.transition = DFA11_transition;
+            this.decisionNumber = 8;
+            this.eot = DFA8_eot;
+            this.eof = DFA8_eof;
+            this.min = DFA8_min;
+            this.max = DFA8_max;
+            this.accept = DFA8_accept;
+            this.special = DFA8_special;
+            this.transition = DFA8_transition;
         }
         public String getDescription() {
-            return "1:1: Tokens : ( ADD | SUB | MULT | DIV | DECIMAL_POINT | COMMENT_MARKER | SPONTANEOUS_INTO | INTERACTED_ON_BY | INTERACTS_INTO | T__25 | T__26 | T__27 | T__28 | WHITESPACE | NEWLINE | COMMENT | ID | UNSIGNED_INTEGER | UNSIGNED_NUMBER );";
+            return "1:1: Tokens : ( ADD | SUB | MULT | DIV | DECIMAL_POINT | COMMENT_MARKER | SPONTANEOUS_INTO | INTERACTED_ON_BY | INTERACTS_INTO | T__23 | T__24 | T__25 | T__26 | T__27 | WHITESPACE | NEWLINE | COMMENT | ID | UNSIGNED_NUMBER );";
         }
         public int specialStateTransition(int s, IntStream _input) throws NoViableAltException {
             IntStream input = _input;
         	int _s = s;
             switch ( s ) {
                     case 0 : 
-                        int LA11_6 = input.LA(1);
+                        int LA8_6 = input.LA(1);
 
                         s = -1;
-                        if ( ((LA11_6>='\u0000' && LA11_6<='\uFFFF')) ) {s = 22;}
+                        if ( ((LA8_6>='\u0000' && LA8_6<='\uFFFF')) ) {s = 20;}
 
-                        else s = 21;
+                        else s = 19;
 
                         if ( s>=0 ) return s;
                         break;
             }
             NoViableAltException nvae =
-                new NoViableAltException(getDescription(), 11, _s, input);
+                new NoViableAltException(getDescription(), 8, _s, input);
             error(nvae);
             throw nvae;
         }

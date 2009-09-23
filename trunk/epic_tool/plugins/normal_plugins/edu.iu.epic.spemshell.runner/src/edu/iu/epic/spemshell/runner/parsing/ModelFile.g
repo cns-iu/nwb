@@ -134,17 +134,13 @@ recoveredCompartmentDeclaration
 
 
 // Transitions
-// Note we are currently assuming no "secondary" stuff
-transitionRule
-	: transitionRelation transitionRate
-	;
 // Ask whether numeric constants are permissible here, or are we strictly limited to expressions on PARAMETER_KEYs?
 transitionRate
 	: parameterValue
 	;
-transitionRelation
-	: spontaneousTransitionRelation
-	| interactionTransitionRelation
+transitionRule
+	: spontaneousTransitionRelation transitionRate ('secondary')?
+	| interactionTransitionRelation transitionRate
 	;
 spontaneousTransitionRelation
 	: compartmentID SPONTANEOUS_INTO compartmentID
@@ -185,15 +181,6 @@ ID
 number
 	: ('-')? UNSIGNED_NUMBER
 	;
-// TODO Testing!
-UNSIGNED_INTEGER
-	: (NUMERIC)+ (DECIMAL_POINT)?
-	;
-fragment UNSIGNED_REAL
-	: ((NUMERIC)+)? DECIMAL_POINT (NUMERIC)+
-	;
 UNSIGNED_NUMBER
-	: UNSIGNED_INTEGER
-	| UNSIGNED_REAL
+	: (NUMERIC)+ (DECIMAL_POINT (NUMERIC)+)?
 	;
-

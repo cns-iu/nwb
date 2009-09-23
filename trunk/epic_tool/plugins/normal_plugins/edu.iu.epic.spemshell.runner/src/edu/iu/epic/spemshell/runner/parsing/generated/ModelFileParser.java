@@ -1,37 +1,31 @@
-// $ANTLR 3.1.2 C:\\Documents and Settings\\jrbibers\\workspace\\edu.iu.epic.spemshell.runner\\src\\edu\\iu\\epic\\spemshell\\runner\\parsing\\ModelFile.g 2009-09-22 16:49:34
+// $ANTLR 3.1.2 C:\\Documents and Settings\\jrbibers\\workspace\\edu.iu.epic.spemshell.runner\\src\\edu\\iu\\epic\\spemshell\\runner\\parsing\\ModelFile.g 2009-09-23 17:53:23
 
 package edu.iu.epic.spemshell.runner.parsing.generated;
-
-import java.util.HashMap;
-import java.util.HashSet;
 import java.util.LinkedHashMap;
+import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
-import org.antlr.runtime.BitSet;
-import org.antlr.runtime.EarlyExitException;
-import org.antlr.runtime.MismatchedSetException;
-import org.antlr.runtime.NoViableAltException;
-import org.antlr.runtime.Parser;
-import org.antlr.runtime.ParserRuleReturnScope;
-import org.antlr.runtime.RecognitionException;
-import org.antlr.runtime.RecognizerSharedState;
-import org.antlr.runtime.TokenStream;
-import org.antlr.stringtemplate.StringTemplate;
-import org.antlr.stringtemplate.StringTemplateGroup;
-import org.antlr.stringtemplate.language.AngleBracketTemplateLexer;
 
+import org.antlr.runtime.*;
+import java.util.Stack;
+import java.util.List;
+import java.util.ArrayList;
+
+import org.antlr.stringtemplate.*;
+import org.antlr.stringtemplate.language.*;
+import java.util.HashMap;
 public class ModelFileParser extends Parser {
     public static final String[] tokenNames = new String[] {
-        "<invalid>", "<EOR>", "<DOWN>", "<UP>", "ADD", "SUB", "MULT", "DIV", "DECIMAL_POINT", "COMMENT_MARKER", "SPONTANEOUS_INTO", "INTERACTED_ON_BY", "INTERACTS_INTO", "WHITESPACE", "COMMENT", "NEWLINE", "ID", "NUMERIC", "ALPHABETIC", "ALPHABETIC_", "ALPHANUMERIC", "ALPHANUMERIC_", "UNSIGNED_NUMBER", "UNSIGNED_INTEGER", "UNSIGNED_REAL", "'susceptible'", "'infection'", "'latent'", "'recovered'"
+        "<invalid>", "<EOR>", "<DOWN>", "<UP>", "ADD", "SUB", "MULT", "DIV", "DECIMAL_POINT", "COMMENT_MARKER", "SPONTANEOUS_INTO", "INTERACTED_ON_BY", "INTERACTS_INTO", "WHITESPACE", "COMMENT", "NEWLINE", "ID", "NUMERIC", "ALPHABETIC", "ALPHABETIC_", "ALPHANUMERIC", "ALPHANUMERIC_", "UNSIGNED_NUMBER", "'susceptible'", "'infection'", "'latent'", "'recovered'", "'secondary'"
     };
-    public static final int T__28=28;
     public static final int T__27=27;
     public static final int COMMENT_MARKER=9;
     public static final int T__26=26;
     public static final int T__25=25;
+    public static final int T__24=24;
+    public static final int T__23=23;
     public static final int SPONTANEOUS_INTO=10;
-    public static final int UNSIGNED_REAL=24;
     public static final int WHITESPACE=13;
     public static final int SUB=5;
     public static final int INTERACTED_ON_BY=11;
@@ -41,7 +35,6 @@ public class ModelFileParser extends Parser {
     public static final int ID=16;
     public static final int EOF=-1;
     public static final int ALPHANUMERIC_=21;
-    public static final int UNSIGNED_INTEGER=23;
     public static final int DECIMAL_POINT=8;
     public static final int NEWLINE=15;
     public static final int ALPHANUMERIC=20;
@@ -147,7 +140,7 @@ public class ModelFileParser extends Parser {
                 int alt1=2;
                 int LA1_0 = input.LA(1);
 
-                if ( ((LA1_0>=COMMENT && LA1_0<=ID)||(LA1_0>=25 && LA1_0<=28)) ) {
+                if ( ((LA1_0>=COMMENT && LA1_0<=ID)||(LA1_0>=23 && LA1_0<=26)) ) {
                     alt1=1;
                 }
 
@@ -218,18 +211,18 @@ public class ModelFileParser extends Parser {
                     {
                     int LA2_2 = input.LA(2);
 
-                    if ( (LA2_2==INTERACTS_INTO) ) {
-                        alt2=2;
-                    }
-                    else if ( ((LA2_2>=SPONTANEOUS_INTO && LA2_2<=INTERACTED_ON_BY)) ) {
+                    if ( ((LA2_2>=SPONTANEOUS_INTO && LA2_2<=INTERACTED_ON_BY)) ) {
                         alt2=4;
+                    }
+                    else if ( (LA2_2==INTERACTS_INTO) ) {
+                        alt2=2;
                     }
                     }
                     break;
+                case 23:
+                case 24:
                 case 25:
                 case 26:
-                case 27:
-                case 28:
                     {
                     alt2=3;
                     }
@@ -653,22 +646,22 @@ public class ModelFileParser extends Parser {
             // C:\\Documents and Settings\\jrbibers\\workspace\\edu.iu.epic.spemshell.runner\\src\\edu\\iu\\epic\\spemshell\\runner\\parsing\\ModelFile.g:117:2: ( susceptibleCompartmentDeclaration | infectedCompartmentDeclaration | latentCompartmentDeclaration | recoveredCompartmentDeclaration )
             int alt6=4;
             switch ( input.LA(1) ) {
-            case 25:
+            case 23:
                 {
                 alt6=1;
                 }
                 break;
-            case 26:
+            case 24:
                 {
                 alt6=2;
                 }
                 break;
-            case 27:
+            case 25:
                 {
                 alt6=3;
                 }
                 break;
-            case 28:
+            case 26:
                 {
                 alt6=4;
                 }
@@ -759,7 +752,7 @@ public class ModelFileParser extends Parser {
             // C:\\Documents and Settings\\jrbibers\\workspace\\edu.iu.epic.spemshell.runner\\src\\edu\\iu\\epic\\spemshell\\runner\\parsing\\ModelFile.g:123:2: ( 'susceptible' compartmentID )
             // C:\\Documents and Settings\\jrbibers\\workspace\\edu.iu.epic.spemshell.runner\\src\\edu\\iu\\epic\\spemshell\\runner\\parsing\\ModelFile.g:123:4: 'susceptible' compartmentID
             {
-            match(input,25,FOLLOW_25_in_susceptibleCompartmentDeclaration369); 
+            match(input,23,FOLLOW_23_in_susceptibleCompartmentDeclaration369); 
             pushFollow(FOLLOW_compartmentID_in_susceptibleCompartmentDeclaration371);
             compartmentID4=compartmentID();
 
@@ -801,7 +794,7 @@ public class ModelFileParser extends Parser {
             // C:\\Documents and Settings\\jrbibers\\workspace\\edu.iu.epic.spemshell.runner\\src\\edu\\iu\\epic\\spemshell\\runner\\parsing\\ModelFile.g:126:2: ( 'infection' compartmentID )
             // C:\\Documents and Settings\\jrbibers\\workspace\\edu.iu.epic.spemshell.runner\\src\\edu\\iu\\epic\\spemshell\\runner\\parsing\\ModelFile.g:126:4: 'infection' compartmentID
             {
-            match(input,26,FOLLOW_26_in_infectedCompartmentDeclaration383); 
+            match(input,24,FOLLOW_24_in_infectedCompartmentDeclaration383); 
             pushFollow(FOLLOW_compartmentID_in_infectedCompartmentDeclaration385);
             compartmentID5=compartmentID();
 
@@ -840,7 +833,7 @@ public class ModelFileParser extends Parser {
             // C:\\Documents and Settings\\jrbibers\\workspace\\edu.iu.epic.spemshell.runner\\src\\edu\\iu\\epic\\spemshell\\runner\\parsing\\ModelFile.g:129:2: ( 'latent' ( compartmentID )+ )
             // C:\\Documents and Settings\\jrbibers\\workspace\\edu.iu.epic.spemshell.runner\\src\\edu\\iu\\epic\\spemshell\\runner\\parsing\\ModelFile.g:129:4: 'latent' ( compartmentID )+
             {
-            match(input,27,FOLLOW_27_in_latentCompartmentDeclaration397); 
+            match(input,25,FOLLOW_25_in_latentCompartmentDeclaration397); 
             // C:\\Documents and Settings\\jrbibers\\workspace\\edu.iu.epic.spemshell.runner\\src\\edu\\iu\\epic\\spemshell\\runner\\parsing\\ModelFile.g:129:13: ( compartmentID )+
             int cnt7=0;
             loop7:
@@ -907,7 +900,7 @@ public class ModelFileParser extends Parser {
             // C:\\Documents and Settings\\jrbibers\\workspace\\edu.iu.epic.spemshell.runner\\src\\edu\\iu\\epic\\spemshell\\runner\\parsing\\ModelFile.g:132:2: ( 'recovered' ( compartmentID )+ )
             // C:\\Documents and Settings\\jrbibers\\workspace\\edu.iu.epic.spemshell.runner\\src\\edu\\iu\\epic\\spemshell\\runner\\parsing\\ModelFile.g:132:4: 'recovered' ( compartmentID )+
             {
-            match(input,28,FOLLOW_28_in_recoveredCompartmentDeclaration411); 
+            match(input,26,FOLLOW_26_in_recoveredCompartmentDeclaration411); 
             // C:\\Documents and Settings\\jrbibers\\workspace\\edu.iu.epic.spemshell.runner\\src\\edu\\iu\\epic\\spemshell\\runner\\parsing\\ModelFile.g:132:16: ( compartmentID )+
             int cnt8=0;
             loop8:
@@ -958,48 +951,6 @@ public class ModelFileParser extends Parser {
     }
     // $ANTLR end "recoveredCompartmentDeclaration"
 
-    public static class transitionRule_return extends ParserRuleReturnScope {
-        public StringTemplate st;
-        public Object getTemplate() { return st; }
-        public String toString() { return st==null?null:st.toString(); }
-    };
-
-    // $ANTLR start "transitionRule"
-    // C:\\Documents and Settings\\jrbibers\\workspace\\edu.iu.epic.spemshell.runner\\src\\edu\\iu\\epic\\spemshell\\runner\\parsing\\ModelFile.g:138:1: transitionRule : transitionRelation transitionRate ;
-    public final ModelFileParser.transitionRule_return transitionRule() throws RecognitionException {
-        ModelFileParser.transitionRule_return retval = new ModelFileParser.transitionRule_return();
-        retval.start = input.LT(1);
-
-        try {
-            // C:\\Documents and Settings\\jrbibers\\workspace\\edu.iu.epic.spemshell.runner\\src\\edu\\iu\\epic\\spemshell\\runner\\parsing\\ModelFile.g:139:2: ( transitionRelation transitionRate )
-            // C:\\Documents and Settings\\jrbibers\\workspace\\edu.iu.epic.spemshell.runner\\src\\edu\\iu\\epic\\spemshell\\runner\\parsing\\ModelFile.g:139:4: transitionRelation transitionRate
-            {
-            pushFollow(FOLLOW_transitionRelation_in_transitionRule429);
-            transitionRelation();
-
-            state._fsp--;
-
-            pushFollow(FOLLOW_transitionRate_in_transitionRule431);
-            transitionRate();
-
-            state._fsp--;
-
-
-            }
-
-            retval.stop = input.LT(-1);
-
-        }
-        catch (RecognitionException re) {
-            reportError(re);
-            recover(input,re);
-        }
-        finally {
-        }
-        return retval;
-    }
-    // $ANTLR end "transitionRule"
-
     public static class transitionRate_return extends ParserRuleReturnScope {
         public StringTemplate st;
         public Object getTemplate() { return st; }
@@ -1007,16 +958,16 @@ public class ModelFileParser extends Parser {
     };
 
     // $ANTLR start "transitionRate"
-    // C:\\Documents and Settings\\jrbibers\\workspace\\edu.iu.epic.spemshell.runner\\src\\edu\\iu\\epic\\spemshell\\runner\\parsing\\ModelFile.g:142:1: transitionRate : parameterValue ;
+    // C:\\Documents and Settings\\jrbibers\\workspace\\edu.iu.epic.spemshell.runner\\src\\edu\\iu\\epic\\spemshell\\runner\\parsing\\ModelFile.g:138:1: transitionRate : parameterValue ;
     public final ModelFileParser.transitionRate_return transitionRate() throws RecognitionException {
         ModelFileParser.transitionRate_return retval = new ModelFileParser.transitionRate_return();
         retval.start = input.LT(1);
 
         try {
-            // C:\\Documents and Settings\\jrbibers\\workspace\\edu.iu.epic.spemshell.runner\\src\\edu\\iu\\epic\\spemshell\\runner\\parsing\\ModelFile.g:143:2: ( parameterValue )
-            // C:\\Documents and Settings\\jrbibers\\workspace\\edu.iu.epic.spemshell.runner\\src\\edu\\iu\\epic\\spemshell\\runner\\parsing\\ModelFile.g:143:4: parameterValue
+            // C:\\Documents and Settings\\jrbibers\\workspace\\edu.iu.epic.spemshell.runner\\src\\edu\\iu\\epic\\spemshell\\runner\\parsing\\ModelFile.g:139:2: ( parameterValue )
+            // C:\\Documents and Settings\\jrbibers\\workspace\\edu.iu.epic.spemshell.runner\\src\\edu\\iu\\epic\\spemshell\\runner\\parsing\\ModelFile.g:139:4: parameterValue
             {
-            pushFollow(FOLLOW_parameterValue_in_transitionRate442);
+            pushFollow(FOLLOW_parameterValue_in_transitionRate429);
             parameterValue();
 
             state._fsp--;
@@ -1037,62 +988,90 @@ public class ModelFileParser extends Parser {
     }
     // $ANTLR end "transitionRate"
 
-    public static class transitionRelation_return extends ParserRuleReturnScope {
+    public static class transitionRule_return extends ParserRuleReturnScope {
         public StringTemplate st;
         public Object getTemplate() { return st; }
         public String toString() { return st==null?null:st.toString(); }
     };
 
-    // $ANTLR start "transitionRelation"
-    // C:\\Documents and Settings\\jrbibers\\workspace\\edu.iu.epic.spemshell.runner\\src\\edu\\iu\\epic\\spemshell\\runner\\parsing\\ModelFile.g:145:1: transitionRelation : ( spontaneousTransitionRelation | interactionTransitionRelation );
-    public final ModelFileParser.transitionRelation_return transitionRelation() throws RecognitionException {
-        ModelFileParser.transitionRelation_return retval = new ModelFileParser.transitionRelation_return();
+    // $ANTLR start "transitionRule"
+    // C:\\Documents and Settings\\jrbibers\\workspace\\edu.iu.epic.spemshell.runner\\src\\edu\\iu\\epic\\spemshell\\runner\\parsing\\ModelFile.g:141:1: transitionRule : ( spontaneousTransitionRelation transitionRate ( 'secondary' )? | interactionTransitionRelation transitionRate );
+    public final ModelFileParser.transitionRule_return transitionRule() throws RecognitionException {
+        ModelFileParser.transitionRule_return retval = new ModelFileParser.transitionRule_return();
         retval.start = input.LT(1);
 
         try {
-            // C:\\Documents and Settings\\jrbibers\\workspace\\edu.iu.epic.spemshell.runner\\src\\edu\\iu\\epic\\spemshell\\runner\\parsing\\ModelFile.g:146:2: ( spontaneousTransitionRelation | interactionTransitionRelation )
-            int alt9=2;
-            int LA9_0 = input.LA(1);
+            // C:\\Documents and Settings\\jrbibers\\workspace\\edu.iu.epic.spemshell.runner\\src\\edu\\iu\\epic\\spemshell\\runner\\parsing\\ModelFile.g:142:2: ( spontaneousTransitionRelation transitionRate ( 'secondary' )? | interactionTransitionRelation transitionRate )
+            int alt10=2;
+            int LA10_0 = input.LA(1);
 
-            if ( (LA9_0==ID) ) {
-                int LA9_1 = input.LA(2);
+            if ( (LA10_0==ID) ) {
+                int LA10_1 = input.LA(2);
 
-                if ( (LA9_1==INTERACTED_ON_BY) ) {
-                    alt9=2;
+                if ( (LA10_1==INTERACTED_ON_BY) ) {
+                    alt10=2;
                 }
-                else if ( (LA9_1==SPONTANEOUS_INTO) ) {
-                    alt9=1;
+                else if ( (LA10_1==SPONTANEOUS_INTO) ) {
+                    alt10=1;
                 }
                 else {
                     NoViableAltException nvae =
-                        new NoViableAltException("", 9, 1, input);
+                        new NoViableAltException("", 10, 1, input);
 
                     throw nvae;
                 }
             }
             else {
                 NoViableAltException nvae =
-                    new NoViableAltException("", 9, 0, input);
+                    new NoViableAltException("", 10, 0, input);
 
                 throw nvae;
             }
-            switch (alt9) {
+            switch (alt10) {
                 case 1 :
-                    // C:\\Documents and Settings\\jrbibers\\workspace\\edu.iu.epic.spemshell.runner\\src\\edu\\iu\\epic\\spemshell\\runner\\parsing\\ModelFile.g:146:4: spontaneousTransitionRelation
+                    // C:\\Documents and Settings\\jrbibers\\workspace\\edu.iu.epic.spemshell.runner\\src\\edu\\iu\\epic\\spemshell\\runner\\parsing\\ModelFile.g:142:4: spontaneousTransitionRelation transitionRate ( 'secondary' )?
                     {
-                    pushFollow(FOLLOW_spontaneousTransitionRelation_in_transitionRelation452);
+                    pushFollow(FOLLOW_spontaneousTransitionRelation_in_transitionRule439);
                     spontaneousTransitionRelation();
 
                     state._fsp--;
+
+                    pushFollow(FOLLOW_transitionRate_in_transitionRule441);
+                    transitionRate();
+
+                    state._fsp--;
+
+                    // C:\\Documents and Settings\\jrbibers\\workspace\\edu.iu.epic.spemshell.runner\\src\\edu\\iu\\epic\\spemshell\\runner\\parsing\\ModelFile.g:142:49: ( 'secondary' )?
+                    int alt9=2;
+                    int LA9_0 = input.LA(1);
+
+                    if ( (LA9_0==27) ) {
+                        alt9=1;
+                    }
+                    switch (alt9) {
+                        case 1 :
+                            // C:\\Documents and Settings\\jrbibers\\workspace\\edu.iu.epic.spemshell.runner\\src\\edu\\iu\\epic\\spemshell\\runner\\parsing\\ModelFile.g:142:50: 'secondary'
+                            {
+                            match(input,27,FOLLOW_27_in_transitionRule444); 
+
+                            }
+                            break;
+
+                    }
 
 
                     }
                     break;
                 case 2 :
-                    // C:\\Documents and Settings\\jrbibers\\workspace\\edu.iu.epic.spemshell.runner\\src\\edu\\iu\\epic\\spemshell\\runner\\parsing\\ModelFile.g:147:4: interactionTransitionRelation
+                    // C:\\Documents and Settings\\jrbibers\\workspace\\edu.iu.epic.spemshell.runner\\src\\edu\\iu\\epic\\spemshell\\runner\\parsing\\ModelFile.g:143:4: interactionTransitionRelation transitionRate
                     {
-                    pushFollow(FOLLOW_interactionTransitionRelation_in_transitionRelation457);
+                    pushFollow(FOLLOW_interactionTransitionRelation_in_transitionRule451);
                     interactionTransitionRelation();
+
+                    state._fsp--;
+
+                    pushFollow(FOLLOW_transitionRate_in_transitionRule453);
+                    transitionRate();
 
                     state._fsp--;
 
@@ -1112,7 +1091,7 @@ public class ModelFileParser extends Parser {
         }
         return retval;
     }
-    // $ANTLR end "transitionRelation"
+    // $ANTLR end "transitionRule"
 
     public static class spontaneousTransitionRelation_return extends ParserRuleReturnScope {
         public StringTemplate st;
@@ -1121,22 +1100,22 @@ public class ModelFileParser extends Parser {
     };
 
     // $ANTLR start "spontaneousTransitionRelation"
-    // C:\\Documents and Settings\\jrbibers\\workspace\\edu.iu.epic.spemshell.runner\\src\\edu\\iu\\epic\\spemshell\\runner\\parsing\\ModelFile.g:149:1: spontaneousTransitionRelation : compartmentID SPONTANEOUS_INTO compartmentID ;
+    // C:\\Documents and Settings\\jrbibers\\workspace\\edu.iu.epic.spemshell.runner\\src\\edu\\iu\\epic\\spemshell\\runner\\parsing\\ModelFile.g:145:1: spontaneousTransitionRelation : compartmentID SPONTANEOUS_INTO compartmentID ;
     public final ModelFileParser.spontaneousTransitionRelation_return spontaneousTransitionRelation() throws RecognitionException {
         ModelFileParser.spontaneousTransitionRelation_return retval = new ModelFileParser.spontaneousTransitionRelation_return();
         retval.start = input.LT(1);
 
         try {
-            // C:\\Documents and Settings\\jrbibers\\workspace\\edu.iu.epic.spemshell.runner\\src\\edu\\iu\\epic\\spemshell\\runner\\parsing\\ModelFile.g:150:2: ( compartmentID SPONTANEOUS_INTO compartmentID )
-            // C:\\Documents and Settings\\jrbibers\\workspace\\edu.iu.epic.spemshell.runner\\src\\edu\\iu\\epic\\spemshell\\runner\\parsing\\ModelFile.g:150:4: compartmentID SPONTANEOUS_INTO compartmentID
+            // C:\\Documents and Settings\\jrbibers\\workspace\\edu.iu.epic.spemshell.runner\\src\\edu\\iu\\epic\\spemshell\\runner\\parsing\\ModelFile.g:146:2: ( compartmentID SPONTANEOUS_INTO compartmentID )
+            // C:\\Documents and Settings\\jrbibers\\workspace\\edu.iu.epic.spemshell.runner\\src\\edu\\iu\\epic\\spemshell\\runner\\parsing\\ModelFile.g:146:4: compartmentID SPONTANEOUS_INTO compartmentID
             {
-            pushFollow(FOLLOW_compartmentID_in_spontaneousTransitionRelation467);
+            pushFollow(FOLLOW_compartmentID_in_spontaneousTransitionRelation463);
             compartmentID();
 
             state._fsp--;
 
-            match(input,SPONTANEOUS_INTO,FOLLOW_SPONTANEOUS_INTO_in_spontaneousTransitionRelation469); 
-            pushFollow(FOLLOW_compartmentID_in_spontaneousTransitionRelation471);
+            match(input,SPONTANEOUS_INTO,FOLLOW_SPONTANEOUS_INTO_in_spontaneousTransitionRelation465); 
+            pushFollow(FOLLOW_compartmentID_in_spontaneousTransitionRelation467);
             compartmentID();
 
             state._fsp--;
@@ -1164,16 +1143,16 @@ public class ModelFileParser extends Parser {
     };
 
     // $ANTLR start "compartmentID"
-    // C:\\Documents and Settings\\jrbibers\\workspace\\edu.iu.epic.spemshell.runner\\src\\edu\\iu\\epic\\spemshell\\runner\\parsing\\ModelFile.g:152:1: compartmentID : ID ;
+    // C:\\Documents and Settings\\jrbibers\\workspace\\edu.iu.epic.spemshell.runner\\src\\edu\\iu\\epic\\spemshell\\runner\\parsing\\ModelFile.g:148:1: compartmentID : ID ;
     public final ModelFileParser.compartmentID_return compartmentID() throws RecognitionException {
         ModelFileParser.compartmentID_return retval = new ModelFileParser.compartmentID_return();
         retval.start = input.LT(1);
 
         try {
-            // C:\\Documents and Settings\\jrbibers\\workspace\\edu.iu.epic.spemshell.runner\\src\\edu\\iu\\epic\\spemshell\\runner\\parsing\\ModelFile.g:153:2: ( ID )
-            // C:\\Documents and Settings\\jrbibers\\workspace\\edu.iu.epic.spemshell.runner\\src\\edu\\iu\\epic\\spemshell\\runner\\parsing\\ModelFile.g:153:4: ID
+            // C:\\Documents and Settings\\jrbibers\\workspace\\edu.iu.epic.spemshell.runner\\src\\edu\\iu\\epic\\spemshell\\runner\\parsing\\ModelFile.g:149:2: ( ID )
+            // C:\\Documents and Settings\\jrbibers\\workspace\\edu.iu.epic.spemshell.runner\\src\\edu\\iu\\epic\\spemshell\\runner\\parsing\\ModelFile.g:149:4: ID
             {
-            match(input,ID,FOLLOW_ID_in_compartmentID481); 
+            match(input,ID,FOLLOW_ID_in_compartmentID477); 
 
             }
 
@@ -1197,28 +1176,28 @@ public class ModelFileParser extends Parser {
     };
 
     // $ANTLR start "interactionTransitionRelation"
-    // C:\\Documents and Settings\\jrbibers\\workspace\\edu.iu.epic.spemshell.runner\\src\\edu\\iu\\epic\\spemshell\\runner\\parsing\\ModelFile.g:155:1: interactionTransitionRelation : compartmentID INTERACTED_ON_BY compartmentID INTERACTS_INTO compartmentID ;
+    // C:\\Documents and Settings\\jrbibers\\workspace\\edu.iu.epic.spemshell.runner\\src\\edu\\iu\\epic\\spemshell\\runner\\parsing\\ModelFile.g:151:1: interactionTransitionRelation : compartmentID INTERACTED_ON_BY compartmentID INTERACTS_INTO compartmentID ;
     public final ModelFileParser.interactionTransitionRelation_return interactionTransitionRelation() throws RecognitionException {
         ModelFileParser.interactionTransitionRelation_return retval = new ModelFileParser.interactionTransitionRelation_return();
         retval.start = input.LT(1);
 
         try {
-            // C:\\Documents and Settings\\jrbibers\\workspace\\edu.iu.epic.spemshell.runner\\src\\edu\\iu\\epic\\spemshell\\runner\\parsing\\ModelFile.g:156:2: ( compartmentID INTERACTED_ON_BY compartmentID INTERACTS_INTO compartmentID )
-            // C:\\Documents and Settings\\jrbibers\\workspace\\edu.iu.epic.spemshell.runner\\src\\edu\\iu\\epic\\spemshell\\runner\\parsing\\ModelFile.g:156:4: compartmentID INTERACTED_ON_BY compartmentID INTERACTS_INTO compartmentID
+            // C:\\Documents and Settings\\jrbibers\\workspace\\edu.iu.epic.spemshell.runner\\src\\edu\\iu\\epic\\spemshell\\runner\\parsing\\ModelFile.g:152:2: ( compartmentID INTERACTED_ON_BY compartmentID INTERACTS_INTO compartmentID )
+            // C:\\Documents and Settings\\jrbibers\\workspace\\edu.iu.epic.spemshell.runner\\src\\edu\\iu\\epic\\spemshell\\runner\\parsing\\ModelFile.g:152:4: compartmentID INTERACTED_ON_BY compartmentID INTERACTS_INTO compartmentID
             {
+            pushFollow(FOLLOW_compartmentID_in_interactionTransitionRelation487);
+            compartmentID();
+
+            state._fsp--;
+
+            match(input,INTERACTED_ON_BY,FOLLOW_INTERACTED_ON_BY_in_interactionTransitionRelation489); 
             pushFollow(FOLLOW_compartmentID_in_interactionTransitionRelation491);
             compartmentID();
 
             state._fsp--;
 
-            match(input,INTERACTED_ON_BY,FOLLOW_INTERACTED_ON_BY_in_interactionTransitionRelation493); 
+            match(input,INTERACTS_INTO,FOLLOW_INTERACTS_INTO_in_interactionTransitionRelation493); 
             pushFollow(FOLLOW_compartmentID_in_interactionTransitionRelation495);
-            compartmentID();
-
-            state._fsp--;
-
-            match(input,INTERACTS_INTO,FOLLOW_INTERACTS_INTO_in_interactionTransitionRelation497); 
-            pushFollow(FOLLOW_compartmentID_in_interactionTransitionRelation499);
             compartmentID();
 
             state._fsp--;
@@ -1246,34 +1225,34 @@ public class ModelFileParser extends Parser {
     };
 
     // $ANTLR start "number"
-    // C:\\Documents and Settings\\jrbibers\\workspace\\edu.iu.epic.spemshell.runner\\src\\edu\\iu\\epic\\spemshell\\runner\\parsing\\ModelFile.g:185:1: number : ( '-' )? UNSIGNED_NUMBER ;
+    // C:\\Documents and Settings\\jrbibers\\workspace\\edu.iu.epic.spemshell.runner\\src\\edu\\iu\\epic\\spemshell\\runner\\parsing\\ModelFile.g:181:1: number : ( '-' )? UNSIGNED_NUMBER ;
     public final ModelFileParser.number_return number() throws RecognitionException {
         ModelFileParser.number_return retval = new ModelFileParser.number_return();
         retval.start = input.LT(1);
 
         try {
-            // C:\\Documents and Settings\\jrbibers\\workspace\\edu.iu.epic.spemshell.runner\\src\\edu\\iu\\epic\\spemshell\\runner\\parsing\\ModelFile.g:186:2: ( ( '-' )? UNSIGNED_NUMBER )
-            // C:\\Documents and Settings\\jrbibers\\workspace\\edu.iu.epic.spemshell.runner\\src\\edu\\iu\\epic\\spemshell\\runner\\parsing\\ModelFile.g:186:4: ( '-' )? UNSIGNED_NUMBER
+            // C:\\Documents and Settings\\jrbibers\\workspace\\edu.iu.epic.spemshell.runner\\src\\edu\\iu\\epic\\spemshell\\runner\\parsing\\ModelFile.g:182:2: ( ( '-' )? UNSIGNED_NUMBER )
+            // C:\\Documents and Settings\\jrbibers\\workspace\\edu.iu.epic.spemshell.runner\\src\\edu\\iu\\epic\\spemshell\\runner\\parsing\\ModelFile.g:182:4: ( '-' )? UNSIGNED_NUMBER
             {
-            // C:\\Documents and Settings\\jrbibers\\workspace\\edu.iu.epic.spemshell.runner\\src\\edu\\iu\\epic\\spemshell\\runner\\parsing\\ModelFile.g:186:4: ( '-' )?
-            int alt10=2;
-            int LA10_0 = input.LA(1);
+            // C:\\Documents and Settings\\jrbibers\\workspace\\edu.iu.epic.spemshell.runner\\src\\edu\\iu\\epic\\spemshell\\runner\\parsing\\ModelFile.g:182:4: ( '-' )?
+            int alt11=2;
+            int LA11_0 = input.LA(1);
 
-            if ( (LA10_0==SUB) ) {
-                alt10=1;
+            if ( (LA11_0==SUB) ) {
+                alt11=1;
             }
-            switch (alt10) {
+            switch (alt11) {
                 case 1 :
-                    // C:\\Documents and Settings\\jrbibers\\workspace\\edu.iu.epic.spemshell.runner\\src\\edu\\iu\\epic\\spemshell\\runner\\parsing\\ModelFile.g:186:5: '-'
+                    // C:\\Documents and Settings\\jrbibers\\workspace\\edu.iu.epic.spemshell.runner\\src\\edu\\iu\\epic\\spemshell\\runner\\parsing\\ModelFile.g:182:5: '-'
                     {
-                    match(input,SUB,FOLLOW_SUB_in_number617); 
+                    match(input,SUB,FOLLOW_SUB_in_number613); 
 
                     }
                     break;
 
             }
 
-            match(input,UNSIGNED_NUMBER,FOLLOW_UNSIGNED_NUMBER_in_number621); 
+            match(input,UNSIGNED_NUMBER,FOLLOW_UNSIGNED_NUMBER_in_number617); 
 
             }
 
@@ -1295,7 +1274,7 @@ public class ModelFileParser extends Parser {
 
  
 
-    public static final BitSet FOLLOW_line_in_modelFile157 = new BitSet(new long[]{0x000000001E01C002L});
+    public static final BitSet FOLLOW_line_in_modelFile157 = new BitSet(new long[]{0x000000000781C002L});
     public static final BitSet FOLLOW_COMMENT_in_line170 = new BitSet(new long[]{0x0000000000008000L});
     public static final BitSet FOLLOW_parameterAssignment_in_line174 = new BitSet(new long[]{0x0000000000008000L});
     public static final BitSet FOLLOW_compartmentDeclaration_in_line178 = new BitSet(new long[]{0x0000000000008000L});
@@ -1318,29 +1297,30 @@ public class ModelFileParser extends Parser {
     public static final BitSet FOLLOW_infectedCompartmentDeclaration_in_compartmentDeclaration349 = new BitSet(new long[]{0x0000000000000002L});
     public static final BitSet FOLLOW_latentCompartmentDeclaration_in_compartmentDeclaration354 = new BitSet(new long[]{0x0000000000000002L});
     public static final BitSet FOLLOW_recoveredCompartmentDeclaration_in_compartmentDeclaration359 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_25_in_susceptibleCompartmentDeclaration369 = new BitSet(new long[]{0x0000000000010000L});
+    public static final BitSet FOLLOW_23_in_susceptibleCompartmentDeclaration369 = new BitSet(new long[]{0x0000000000010000L});
     public static final BitSet FOLLOW_compartmentID_in_susceptibleCompartmentDeclaration371 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_26_in_infectedCompartmentDeclaration383 = new BitSet(new long[]{0x0000000000010000L});
+    public static final BitSet FOLLOW_24_in_infectedCompartmentDeclaration383 = new BitSet(new long[]{0x0000000000010000L});
     public static final BitSet FOLLOW_compartmentID_in_infectedCompartmentDeclaration385 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_27_in_latentCompartmentDeclaration397 = new BitSet(new long[]{0x0000000000010000L});
+    public static final BitSet FOLLOW_25_in_latentCompartmentDeclaration397 = new BitSet(new long[]{0x0000000000010000L});
     public static final BitSet FOLLOW_compartmentID_in_latentCompartmentDeclaration399 = new BitSet(new long[]{0x0000000000010002L});
-    public static final BitSet FOLLOW_28_in_recoveredCompartmentDeclaration411 = new BitSet(new long[]{0x0000000000010000L});
+    public static final BitSet FOLLOW_26_in_recoveredCompartmentDeclaration411 = new BitSet(new long[]{0x0000000000010000L});
     public static final BitSet FOLLOW_compartmentID_in_recoveredCompartmentDeclaration413 = new BitSet(new long[]{0x0000000000010002L});
-    public static final BitSet FOLLOW_transitionRelation_in_transitionRule429 = new BitSet(new long[]{0x0000000000410020L});
-    public static final BitSet FOLLOW_transitionRate_in_transitionRule431 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_parameterValue_in_transitionRate442 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_spontaneousTransitionRelation_in_transitionRelation452 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_interactionTransitionRelation_in_transitionRelation457 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_compartmentID_in_spontaneousTransitionRelation467 = new BitSet(new long[]{0x0000000000000400L});
-    public static final BitSet FOLLOW_SPONTANEOUS_INTO_in_spontaneousTransitionRelation469 = new BitSet(new long[]{0x0000000000010000L});
-    public static final BitSet FOLLOW_compartmentID_in_spontaneousTransitionRelation471 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_ID_in_compartmentID481 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_compartmentID_in_interactionTransitionRelation491 = new BitSet(new long[]{0x0000000000000800L});
-    public static final BitSet FOLLOW_INTERACTED_ON_BY_in_interactionTransitionRelation493 = new BitSet(new long[]{0x0000000000010000L});
-    public static final BitSet FOLLOW_compartmentID_in_interactionTransitionRelation495 = new BitSet(new long[]{0x0000000000001000L});
-    public static final BitSet FOLLOW_INTERACTS_INTO_in_interactionTransitionRelation497 = new BitSet(new long[]{0x0000000000010000L});
-    public static final BitSet FOLLOW_compartmentID_in_interactionTransitionRelation499 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_SUB_in_number617 = new BitSet(new long[]{0x0000000000400000L});
-    public static final BitSet FOLLOW_UNSIGNED_NUMBER_in_number621 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_parameterValue_in_transitionRate429 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_spontaneousTransitionRelation_in_transitionRule439 = new BitSet(new long[]{0x0000000000410020L});
+    public static final BitSet FOLLOW_transitionRate_in_transitionRule441 = new BitSet(new long[]{0x0000000008000002L});
+    public static final BitSet FOLLOW_27_in_transitionRule444 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_interactionTransitionRelation_in_transitionRule451 = new BitSet(new long[]{0x0000000000410020L});
+    public static final BitSet FOLLOW_transitionRate_in_transitionRule453 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_compartmentID_in_spontaneousTransitionRelation463 = new BitSet(new long[]{0x0000000000000400L});
+    public static final BitSet FOLLOW_SPONTANEOUS_INTO_in_spontaneousTransitionRelation465 = new BitSet(new long[]{0x0000000000010000L});
+    public static final BitSet FOLLOW_compartmentID_in_spontaneousTransitionRelation467 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_ID_in_compartmentID477 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_compartmentID_in_interactionTransitionRelation487 = new BitSet(new long[]{0x0000000000000800L});
+    public static final BitSet FOLLOW_INTERACTED_ON_BY_in_interactionTransitionRelation489 = new BitSet(new long[]{0x0000000000010000L});
+    public static final BitSet FOLLOW_compartmentID_in_interactionTransitionRelation491 = new BitSet(new long[]{0x0000000000001000L});
+    public static final BitSet FOLLOW_INTERACTS_INTO_in_interactionTransitionRelation493 = new BitSet(new long[]{0x0000000000010000L});
+    public static final BitSet FOLLOW_compartmentID_in_interactionTransitionRelation495 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_SUB_in_number613 = new BitSet(new long[]{0x0000000000400000L});
+    public static final BitSet FOLLOW_UNSIGNED_NUMBER_in_number617 = new BitSet(new long[]{0x0000000000000002L});
 
 }
