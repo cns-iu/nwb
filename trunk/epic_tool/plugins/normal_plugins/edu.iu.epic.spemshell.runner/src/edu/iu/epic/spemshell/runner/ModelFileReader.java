@@ -32,6 +32,7 @@ public class ModelFileReader {
 		return parser.getReferencedParameters();
 	}
 	
+	@SuppressWarnings("unchecked") // TODO
 	public Collection<String> findUnboundReferencedParameters() {
 		return CollectionUtils.subtract(
 				getReferencedParameters(),

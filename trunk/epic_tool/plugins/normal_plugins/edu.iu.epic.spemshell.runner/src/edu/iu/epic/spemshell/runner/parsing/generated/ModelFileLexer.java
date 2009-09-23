@@ -1,10 +1,16 @@
 // $ANTLR 3.1.2 C:\\Documents and Settings\\jrbibers\\workspace\\edu.iu.epic.spemshell.runner\\src\\edu\\iu\\epic\\spemshell\\runner\\parsing\\ModelFile.g 2009-09-22 16:49:34
 package edu.iu.epic.spemshell.runner.parsing.generated;
 
-import org.antlr.runtime.*;
-import java.util.Stack;
-import java.util.List;
-import java.util.ArrayList;
+import org.antlr.runtime.BaseRecognizer;
+import org.antlr.runtime.CharStream;
+import org.antlr.runtime.DFA;
+import org.antlr.runtime.EarlyExitException;
+import org.antlr.runtime.IntStream;
+import org.antlr.runtime.Lexer;
+import org.antlr.runtime.MismatchedSetException;
+import org.antlr.runtime.NoViableAltException;
+import org.antlr.runtime.RecognitionException;
+import org.antlr.runtime.RecognizerSharedState;
 
 public class ModelFileLexer extends Lexer {
     public static final int T__28=28;
@@ -37,7 +43,7 @@ public class ModelFileLexer extends Lexer {
     // delegates
     // delegators
 
-    public ModelFileLexer() {;} 
+    public ModelFileLexer() {} 
     public ModelFileLexer(CharStream input) {
         this(input, new RecognizerSharedState());
     }

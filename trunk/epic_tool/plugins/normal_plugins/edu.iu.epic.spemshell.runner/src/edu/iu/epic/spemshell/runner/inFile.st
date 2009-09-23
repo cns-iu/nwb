@@ -1,6 +1,6 @@
 group inFile;
 
-inFile(modelFileName,numberOfSecondaryEvents,population,susceptibleCompartmentID,compartmentPopulations,numberOfDays,seed,parameters) ::= <<
+inFile(modelFileName,numberOfSecondaryEvents,population,susceptibleCompartmentID,compartmentPopulations,numberOfDays,seed) ::= <<
 ###############################################################################
 # Single Population Model Input File                                          #
 ###############################################################################
@@ -26,7 +26,7 @@ population <population>
 # Various                                                                     #
 ###############################################################################
 
-# What is the label for the susceptible compartiment?
+# What is the label for the susceptible compartment?
 susceptible <susceptibleCompartmentID>
 
 # initial compartment populations
@@ -44,12 +44,6 @@ output .
 
 # Random number generator seed
 seed <seed>
-
-###############################################################################
-# Parameter values                                                            #
-###############################################################################
-
-<parameters; separator="\n">
 
 ###############################################################################
 # End Input File                                                              #

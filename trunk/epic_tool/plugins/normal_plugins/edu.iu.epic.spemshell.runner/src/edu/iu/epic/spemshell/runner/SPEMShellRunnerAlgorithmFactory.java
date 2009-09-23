@@ -4,14 +4,8 @@ import java.io.File;
 import java.io.IOException;
 import java.util.Collection;
 import java.util.Dictionary;
-import java.util.Map;
-import java.util.Set;
-import java.util.Map.Entry;
 
-import org.antlr.runtime.ANTLRFileStream;
-import org.antlr.runtime.CommonTokenStream;
 import org.antlr.runtime.RecognitionException;
-import org.apache.commons.collections.CollectionUtils;
 import org.cishell.framework.CIShellContext;
 import org.cishell.framework.algorithm.Algorithm;
 import org.cishell.framework.algorithm.AlgorithmFactory;
@@ -19,15 +13,11 @@ import org.cishell.framework.algorithm.ParameterMutator;
 import org.cishell.framework.data.Data;
 import org.cishell.reference.service.metatype.BasicAttributeDefinition;
 import org.cishell.reference.service.metatype.BasicObjectClassDefinition;
-import org.cishell.utilities.AlgorithmUtilities;
 import org.cishell.utilities.MutateParameterUtilities;
 import org.osgi.framework.BundleContext;
 import org.osgi.service.component.ComponentContext;
 import org.osgi.service.metatype.AttributeDefinition;
 import org.osgi.service.metatype.ObjectClassDefinition;
-
-import edu.iu.epic.spemshell.runner.parsing.generated.ModelFileLexer;
-import edu.iu.epic.spemshell.runner.parsing.generated.ModelFileParser;
 
 /* TODO:
  * Given a model file (file:text/model or whatever)
@@ -56,7 +46,8 @@ public class SPEMShellRunnerAlgorithmFactory implements AlgorithmFactory, Parame
 			componentContext.getBundleContext();
 	}
 	
-    public Algorithm createAlgorithm(Data[] data,
+    @SuppressWarnings("unchecked") // TODO
+	public Algorithm createAlgorithm(Data[] data,
     								 Dictionary parameters,
     								 CIShellContext context) {
     	return new SPEMShellRunnerAlgorithm(data, parameters, context);

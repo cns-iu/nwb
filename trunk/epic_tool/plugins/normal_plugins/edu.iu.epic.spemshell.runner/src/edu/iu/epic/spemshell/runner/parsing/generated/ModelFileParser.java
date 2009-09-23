@@ -1,20 +1,26 @@
 // $ANTLR 3.1.2 C:\\Documents and Settings\\jrbibers\\workspace\\edu.iu.epic.spemshell.runner\\src\\edu\\iu\\epic\\spemshell\\runner\\parsing\\ModelFile.g 2009-09-22 16:49:34
 
 package edu.iu.epic.spemshell.runner.parsing.generated;
-import java.util.LinkedHashMap;
+
+import java.util.HashMap;
 import java.util.HashSet;
+import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Set;
 
+import org.antlr.runtime.BitSet;
+import org.antlr.runtime.EarlyExitException;
+import org.antlr.runtime.MismatchedSetException;
+import org.antlr.runtime.NoViableAltException;
+import org.antlr.runtime.Parser;
+import org.antlr.runtime.ParserRuleReturnScope;
+import org.antlr.runtime.RecognitionException;
+import org.antlr.runtime.RecognizerSharedState;
+import org.antlr.runtime.TokenStream;
+import org.antlr.stringtemplate.StringTemplate;
+import org.antlr.stringtemplate.StringTemplateGroup;
+import org.antlr.stringtemplate.language.AngleBracketTemplateLexer;
 
-import org.antlr.runtime.*;
-import java.util.Stack;
-import java.util.List;
-import java.util.ArrayList;
-
-import org.antlr.stringtemplate.*;
-import org.antlr.stringtemplate.language.*;
-import java.util.HashMap;
 public class ModelFileParser extends Parser {
     public static final String[] tokenNames = new String[] {
         "<invalid>", "<EOR>", "<DOWN>", "<UP>", "ADD", "SUB", "MULT", "DIV", "DECIMAL_POINT", "COMMENT_MARKER", "SPONTANEOUS_INTO", "INTERACTED_ON_BY", "INTERACTS_INTO", "WHITESPACE", "COMMENT", "NEWLINE", "ID", "NUMERIC", "ALPHABETIC", "ALPHABETIC_", "ALPHANUMERIC", "ALPHANUMERIC_", "UNSIGNED_NUMBER", "UNSIGNED_INTEGER", "UNSIGNED_REAL", "'susceptible'", "'infection'", "'latent'", "'recovered'"

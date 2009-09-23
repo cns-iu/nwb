@@ -22,3 +22,4 @@ Import-Package: org.antlr,
 X-AutoStart: true
 Service-Component: OSGI-INF/component.xml
 Require-Bundle: antlr_stringtemplate
+Bundle-RequiredExecutionEnvironment: J2SE-1.5
