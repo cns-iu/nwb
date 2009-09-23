@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<metatype:MetaData xmlns:metatype="http://www.osgi.org/xmlns/metatype/v1.0.0">
+	<OCD name="Single-Population" id="edu.iu.epic.spemshell.runner.SPEMShellRunnerAlgorithm.OCD"
+		 description="TODO ">
+		<AD name="DUMMY_AD" id="DUMMY_AD" type="String" description="DUMMY_AD" default="DUMMY_AD"/>
+	</OCD>
+	<Designate pid="edu.iu.epic.spemshell.runner.SPEMShellRunnerAlgorithm">
+		<Object ocdref="edu.iu.epic.spemshell.runner.SPEMShellRunnerAlgorithm.OCD" />
+	</Designate>
+</metatype:MetaData>
