@@ -48,11 +48,9 @@ int main(int argc, char *argv[])
   if(output[output.size()-1]!='/')
     output+="/";
 
-stdout = fopen((output+"SPEM."+name+".out.txt").c_str(),"w");
-
-stderr = fopen((output+"SPEM."+name+".err.txt").c_str(),"w");
-
-
+/* Note we've changed both extensions here from .dat to .txt
+ * and switched from stdfoo = bar to using freopen.
+ */
 #ifdef _WIN32
 freopen((output + "SPEM." + name + ".out.txt").c_str(), "w", stdout);
 freopen((output + "SPEM." + name + ".err.txt").c_str(), "w", stderr);
@@ -60,7 +58,6 @@ freopen((output + "SPEM." + name + ".err.txt").c_str(), "w", stderr);
 stdout = fopen((output+"SPEM."+name+".out.txt").c_str(),"w");
 stderr = fopen((output+"SPEM."+name+".err.txt").c_str(),"w");
 #endif // _WIN32
-
 
 #ifdef BGDEBUG
   input.writeToFile(stderr);
@@ -83,6 +80,7 @@ stderr = fopen((output+"SPEM."+name+".err.txt").c_str(),"w");
   std::string line;
 
   do{
+    // Note we've removed the .gz extensions from all three of these filenames.
     FILE *fpout = input.openFile(output + "SPEM." + name + ".out.dat");
     FILE *fperr = input.openFile(output + "SPEM." + name + ".err.dat");
     FILE *fpsec = input.openFile(output + "SPEM." + name + ".sec.dat");
