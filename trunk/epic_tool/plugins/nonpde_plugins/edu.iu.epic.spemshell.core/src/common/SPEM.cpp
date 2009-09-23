@@ -48,9 +48,9 @@ int main(int argc, char *argv[])
   if(output[output.size()-1]!='/')
     output+="/";
 
-stdout = fopen((output+"SPEM."+name+".out.dat").c_str(),"w");
+stdout = fopen((output+"SPEM."+name+".out.txt").c_str(),"w");
 
-stderr = fopen((output+"SPEM."+name+".err.dat").c_str(),"w");
+stderr = fopen((output+"SPEM."+name+".err.txt").c_str(),"w");
 
 #ifdef BGDEBUG
   input.writeToFile(stderr);
@@ -73,9 +73,9 @@ stderr = fopen((output+"SPEM."+name+".err.dat").c_str(),"w");
   std::string line;
 
   do{
-    FILE *fpout = input.openFile(output + "SPEM." + name + ".out.dat.gz");
-    FILE *fperr = input.openFile(output + "SPEM." + name + ".err.dat.gz");
-    FILE *fpsec = input.openFile(output + "SPEM." + name + ".sec.dat.gz");
+    FILE *fpout = input.openFile(output + "SPEM." + name + ".out.dat");
+    FILE *fperr = input.openFile(output + "SPEM." + name + ".err.dat");
+    FILE *fpsec = input.openFile(output + "SPEM." + name + ".sec.dat");
 
     in.open(infections.c_str());
     
