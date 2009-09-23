@@ -52,6 +52,16 @@ stdout = fopen((output+"SPEM."+name+".out.txt").c_str(),"w");
 
 stderr = fopen((output+"SPEM."+name+".err.txt").c_str(),"w");
 
+
+#ifdef _WIN32
+freopen((output + "SPEM." + name + ".out.txt").c_str(), "w", stdout);
+freopen((output + "SPEM." + name + ".err.txt").c_str(), "w", stderr);
+#else
+stdout = fopen((output+"SPEM."+name+".out.txt").c_str(),"w");
+stderr = fopen((output+"SPEM."+name+".err.txt").c_str(),"w");
+#endif // _WIN32
+
+
 #ifdef BGDEBUG
   input.writeToFile(stderr);
   input.writeToFile(stderr, modelFile);
