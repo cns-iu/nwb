@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <feature
-      id="edu.iu.scipolicy.converter.feature"
-      label="SciPolicy Data Format Converters"
+      id="edu.iu.epic.converter.feature"
+      label="EpiC Data Format Converters"
       version="1.0.0"
-      provider-name="SciPolicy Team">
+      provider-name="EpiC Team">
 
    <description>
-      The tool supports various file formats for the SciPolicy tool.
+      The tool supports various file formats for the EpiC tool.
 
 The tool deliver the following data/file converters:
    </description>
@@ -16,7 +16,7 @@ The tool deliver the following data/file converters:
    </copyright>
 
    <license url="http://www.apache.org/licenses/LICENSE-2.0">
-      SciPolicy Tool
+      EpiC Tool
 Copyright 2009 Indiana University
 Licensed under the Apache License, Version 2.0 (the &quot;License&quot;);
 you may not use this file except in compliance with the License.

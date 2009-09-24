@@ -1,4 +1,4 @@
-The SciPolicy Tool
+The EpiC Tool
 Version: 1.0.0 beta
 
 (c)Copyright 2009 Indiana University

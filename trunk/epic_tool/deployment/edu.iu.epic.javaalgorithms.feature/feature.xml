@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <feature
-      id="edu.iu.scipolicy.nonscipolicyjavaalgorithm.feature"
+      id="edu.iu.epic.javaalgorithms.feature"
       label="Java-based algorithms"
       version="1.0.0"
-      provider-name="SciPolicy Team">
+      provider-name="EpiC Team">
 
    <description>
       Java-based algorithms that have been integrated in the SciPolicy tool.
@@ -14,7 +14,7 @@
    </copyright>
 
    <license url="http://www.apache.org/licenses/LICENSE-2.0">
-      SciPolicy Tool
+      EpiC Tool
 Copyright 2006 Indiana University
 Licensed under the Apache License, Version 2.0 (the &quot;License&quot;);
 you may not use this file except in compliance with the License.
@@ -32,11 +32,11 @@ Dr. Katy Borner (katy@indiana.edu)
    </license>
 
    <includes
-         id="edu.iu.scipolicy.converter.feature"
+         id="edu.iu.epic.converter.feature"
          version="0.0.0"/>
 
    <requires>
-      <import feature="edu.iu.scipolicy.converter.feature" version="1.0.0"/>
+      <import feature="edu.iu.epic.converter.feature" version="1.0.0"/>
    </requires>
 
    <plugin
@@ -716,7 +716,7 @@ Dr. Katy Borner (katy@indiana.edu)
          unpack="false"/>
 
    <plugin
-         id="edu.iu.scipolicy.gui.brand.welcometext"
+         id="edu.iu.epic.gui.brand.welcometext"
          download-size="0"
          install-size="0"
          version="0.0.0"

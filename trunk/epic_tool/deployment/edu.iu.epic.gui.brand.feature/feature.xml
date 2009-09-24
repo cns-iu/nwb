@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <feature
-      id="edu.iu.scipolicy.gui.brand.feature"
-      label="SciPolicy Brand "
+      id="edu.iu.epic.gui.brand.feature"
+      label="EpiC Brand "
       version="1.0.0"
-      provider-name="SciPolicy Team">
+      provider-name="EpiC Team">
 
    <description>
-      SciPolicy Tool
+      EpiC Tool
    </description>
 
    <copyright>
@@ -14,7 +14,7 @@
    </copyright>
 
    <license url="http://www.apache.org/licenses/LICENSE-2.0">
-      SciPolicy tool
+      EpiC tool
 Copyright 2009 Indiana University
 Licensed under the Apache License, Version 2.0 (the &quot;License&quot;);
 you may not use this file except in compliance with the License.
@@ -35,7 +35,7 @@ Dr. Katy Borner (katy@indiana.edu)
          version="0.0.0"/>
 
    <plugin
-         id="edu.iu.scipolicy.gui.brand"
+         id="edu.iu.epic.gui.brand"
          download-size="0"
          install-size="0"
          version="0.0.0"
