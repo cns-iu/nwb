@@ -38,8 +38,20 @@ public class ModelFileReader {
 				getReferencedParameters(),
 				getParameterBindings().keySet());
 	}
+	
+	public String getSusceptibleCompartmentID() {
+		return this.parser.getSusceptibleCompartmentID();
+	}
 
-	public Collection<String> getInfectionCompartments() {
+	public Set<String> getInfectionCompartments() {
 		return this.parser.getInfectionCompartments();
+	}
+	
+	public Set<String> getLatentCompartments() {
+		return this.parser.getLatentCompartments();
+	}
+	
+	public Set<String> getRecoveredCompartments() {
+		return this.parser.getRecoveredCompartments();
 	}
 }

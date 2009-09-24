@@ -14,7 +14,6 @@ import org.antlr.stringtemplate.StringTemplateGroup;
 import edu.iu.epic.spemshell.runner.SPEMShellRunnerAlgorithm;
 
 public class InFileMaker {
-	public static final String DEFAULT_SUSCEPTIBLE_COMPARTMENT_ID = "S";
 	public static final int DEFAULT_NUMBER_OF_SECONDARY_EVENTS = 0;
 	
 	public static final String IN_FILE_EXTENSION = "in";
@@ -27,25 +26,30 @@ public class InFileMaker {
 	
 	private String modelFilePath;
 	private Dictionary<String, Object> parameters;
-	private Map<String, Object> compartmentPopulations;
+	private String susceptibleCompartmentID;
+	private Map<String, Object> infectionCompartmentPopulations;
+	private Map<String, Object> latentCompartmentPopulations;
+	private Map<String, Object> recoveredCompartmentPopulations;
 	
-
+	
 	public InFileMaker(
 			String modelFilePath,
 			Dictionary<String, Object> parameters,
-			Map<String, Object> compartmentPopulations) {
+			String susceptibleCompartmentID,
+			Map<String, Object> infectionCompartmentPopulations,
+			Map<String, Object> latentCompartmentPopulations,
+			Map<String, Object> recoveredCompartmentPopulations) {
 		this.modelFilePath = modelFilePath;
 		this.parameters = parameters;
-		this.compartmentPopulations = compartmentPopulations;
+		this.susceptibleCompartmentID = susceptibleCompartmentID;
+		this.infectionCompartmentPopulations = infectionCompartmentPopulations;
+		this.latentCompartmentPopulations = latentCompartmentPopulations;
+		this.recoveredCompartmentPopulations = recoveredCompartmentPopulations;
 	}
 
 
 	public File make() throws IOException {
-		StringTemplate template =
-			prepareTemplate(
-					this.modelFilePath,
-					this.parameters,
-					this.compartmentPopulations);
+		StringTemplate template = prepareTemplate();
 
 //		// TODO For now, we will instead put such parameters in the mdl file.
 //		for (Enumeration<String> parameterKeys = parameters.keys();
@@ -77,27 +81,46 @@ public class InFileMaker {
 		return file;
 	}
 	
-	private StringTemplate prepareTemplate(
-			String modelFilePath,
-			Dictionary<String, Object> parameters,
-			Map<String, Object> compartmentPopulations) {
+	private StringTemplate prepareTemplate() {
 		StringTemplate template =
 			inFileTemplateGroup.getInstanceOf(IN_FILE_TEMPLATE_NAME);
-		template.setAttribute("modelFileName", modelFilePath);
+		template.setAttribute("modelFileName", this.modelFilePath);
 		template.setAttribute(
 				"numberOfSecondaryEvents",
 				DEFAULT_NUMBER_OF_SECONDARY_EVENTS);
-		template.setAttribute("population", parameters.get("population"));
+		template.setAttribute("population", this.parameters.get("population"));
 		template.setAttribute(
 				"susceptibleCompartmentID",
-				DEFAULT_SUSCEPTIBLE_COMPARTMENT_ID);
-		template.setAttribute("numberOfDays", parameters.get("days"));
+				this.susceptibleCompartmentID);
+		template.setAttribute("numberOfDays", this.parameters.get("days"));
 		template.setAttribute("seed", 0);
 		
-		for (Entry<String, Object> compartmentPopulation : compartmentPopulations.entrySet()) {
+		for (Entry<String, Object> compartmentPopulation
+				: this.infectionCompartmentPopulations.entrySet()) {
 			template.setAttribute(
 					"compartmentPopulations",
 					new CompartmentPopulationFormatter(
+							"infection",
+							compartmentPopulation.getKey(),
+							compartmentPopulation.getValue()));
+		}
+		
+		for (Entry<String, Object> compartmentPopulation
+				: this.latentCompartmentPopulations.entrySet()) {
+			template.setAttribute(
+					"compartmentPopulations",
+					new CompartmentPopulationFormatter(
+							"latent",
+							compartmentPopulation.getKey(),
+							compartmentPopulation.getValue()));
+		}
+		
+		for (Entry<String, Object> compartmentPopulation
+				: this.recoveredCompartmentPopulations.entrySet()) {
+			template.setAttribute(
+					"compartmentPopulations",
+					new CompartmentPopulationFormatter(
+							"recovered",
 							compartmentPopulation.getKey(),
 							compartmentPopulation.getValue()));
 		}
@@ -107,18 +130,20 @@ public class InFileMaker {
 	
 	
 	private static class CompartmentPopulationFormatter {
+		private String type;
 		private String name;
 		private Object initialPopulation;
 		
 		public CompartmentPopulationFormatter(
-				String name, Object initialPopulation) {
+				String type, String name, Object initialPopulation) {
+			this.type = type;
 			this.name = name;
 			this.initialPopulation = initialPopulation;
 		}
 		
 		@Override
 		public String toString() {
-			return "compartment " + this.name + " " + this.initialPopulation;
+			return this.type + " " + this.name + " " + this.initialPopulation;
 		}
 	}
 }

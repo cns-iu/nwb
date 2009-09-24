@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.IOException;
 import java.util.Collection;
 import java.util.Dictionary;
+import java.util.Set;
 
 import org.antlr.runtime.RecognitionException;
 import org.cishell.framework.CIShellContext;
@@ -64,6 +65,9 @@ public class SPEMShellRunnerAlgorithmFactory
 	public static final String MODEL_PARAMETER_PREFIX = "MODEL_PARAMETER_";
 	public static final String COMPARTMENT_POPULATION_PREFIX =
 		"COMPARTMENT_POPULATION_";
+	public static final String INFECTION_PREFIX = "INFECTION_";
+	public static final String LATENT_PREFIX = "LATENT_";
+	public static final String RECOVERED_PREFIX = "RECOVERED_";
 	
 	private static BundleContext bundleContext;	
 	protected void activate(ComponentContext componentContext) {
@@ -106,20 +110,49 @@ public class SPEMShellRunnerAlgorithmFactory
 				new ModelFileReader(modelFile.getPath());
 			
 			// Add a parameter for the initial population of each compartment.
-			// TODO Also request initial populations for compartments beyond infections?
-			Collection<String> infectionCompartments =
-				modelFileReader.getInfectionCompartments();			
-			for (String infectionCompartment : infectionCompartments) {
+			Set<String> infectionCompartments = modelFileReader.getInfectionCompartments();
+			for (String compartment : infectionCompartments) {
 				newParameters.addAttributeDefinition(
 						ObjectClassDefinition.REQUIRED,
 						new BasicAttributeDefinition(
-								COMPARTMENT_POPULATION_PREFIX + infectionCompartment,
+								COMPARTMENT_POPULATION_PREFIX + INFECTION_PREFIX + compartment,
 								createCompartmentPopulationParameterName(
-										infectionCompartment),
+										compartment),
 								createCompartmentPopulationParameterDescription(
-										infectionCompartment),
+										compartment),
 								AttributeDefinition.INTEGER));
-			}			
+			}
+			
+//			/* As of version v0.1, asking SPEMShell to take initial populations
+//			 * in a latent or recovered compartment appears to have no effect.
+//			 */
+//			// Add a parameter for the initial population of each compartment.
+//			Set<String> latentCompartments = modelFileReader.getLatentCompartments();
+//			for (String compartment : latentCompartments) {
+//				newParameters.addAttributeDefinition(
+//						ObjectClassDefinition.REQUIRED,
+//						new BasicAttributeDefinition(
+//								COMPARTMENT_POPULATION_PREFIX + LATENT_PREFIX + compartment,
+//								createCompartmentPopulationParameterName(
+//										compartment),
+//								createCompartmentPopulationParameterDescription(
+//										compartment),
+//								AttributeDefinition.INTEGER));
+//			}
+//			
+//			// Add a parameter for the initial population of each compartment.
+//			Set<String> recoveredCompartments = modelFileReader.getRecoveredCompartments();
+//			for (String compartment : recoveredCompartments) {
+//				newParameters.addAttributeDefinition(
+//						ObjectClassDefinition.REQUIRED,
+//						new BasicAttributeDefinition(
+//								COMPARTMENT_POPULATION_PREFIX + RECOVERED_PREFIX + compartment,
+//								createCompartmentPopulationParameterName(
+//										compartment),
+//								createCompartmentPopulationParameterDescription(
+//										compartment),
+//								AttributeDefinition.INTEGER));
+//			}
 			
 			/* Add an algorithm parameter for each model parameter
 			 * that is needed and not already specified.

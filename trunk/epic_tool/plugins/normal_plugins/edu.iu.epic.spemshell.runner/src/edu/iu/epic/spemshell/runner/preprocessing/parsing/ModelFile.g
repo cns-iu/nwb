@@ -53,7 +53,7 @@ public Set<String> getInfectionCompartments() {
 	return infectionCompartments;
 }
 
-/*
+
 private Set<String> latentCompartments = new HashSet<String>();
 public Set<String> getLatentCompartments() {
 	return latentCompartments;
@@ -63,7 +63,6 @@ private Set<String> recoveredCompartments = new HashSet<String>();
 public Set<String> getRecoveredCompartments() {
 	return recoveredCompartments;
 }
-*/
 }
 
 
@@ -129,10 +128,10 @@ infectedCompartmentDeclaration
 	: 'infection' compartmentID {infectionCompartments.add($compartmentID.text);}
 	;
 latentCompartmentDeclaration
-	: 'latent' compartmentID+ // TODO
+	: 'latent' compartmentID {latentCompartments.add($compartmentID.text);}
 	;
 recoveredCompartmentDeclaration
-	: 'recovered' compartmentID+ // TODO
+	: 'recovered' compartmentID {recoveredCompartments.add($compartmentID.text);}
 	;
 
 

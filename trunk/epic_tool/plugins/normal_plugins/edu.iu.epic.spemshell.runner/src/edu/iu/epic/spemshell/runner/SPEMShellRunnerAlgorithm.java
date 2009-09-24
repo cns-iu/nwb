@@ -7,6 +7,7 @@ import java.util.Dictionary;
 import java.util.Hashtable;
 import java.util.Map;
 
+import org.antlr.runtime.RecognitionException;
 import org.antlr.stringtemplate.StringTemplateGroup;
 import org.cishell.framework.CIShellContext;
 import org.cishell.framework.algorithm.Algorithm;
@@ -22,6 +23,7 @@ import edu.iu.epic.spemshell.runner.postprocessing.DatToCsv;
 import edu.iu.epic.spemshell.runner.preprocessing.InFileMaker;
 import edu.iu.epic.spemshell.runner.preprocessing.InfectionsFileMaker;
 import edu.iu.epic.spemshell.runner.preprocessing.ModelFileMaker;
+import edu.iu.epic.spemshell.runner.preprocessing.parsing.ModelFileReader;
 
 public class SPEMShellRunnerAlgorithm implements Algorithm {	
 	public static final String PLAIN_TEXT_MIME_TYPE = "file:text/plain";
@@ -58,6 +60,10 @@ public class SPEMShellRunnerAlgorithm implements Algorithm {
 		} catch (IOException e) {
 			throw new AlgorithmExecutionException(
 					"Error creating data for SPEMShell: " + e.getMessage(),
+					e);
+		} catch (RecognitionException e) {
+			throw new AlgorithmExecutionException(
+					"Error parsing model file: " + e.getMessage(),
 					e);
 		}
 		
@@ -102,24 +108,47 @@ public class SPEMShellRunnerAlgorithm implements Algorithm {
 
 	private Data[] createSPEMShellInData(
 			Data[] data, Dictionary<String, Object> parameters)
-				throws IOException {
+				throws IOException, RecognitionException {
 		File epicModelFile = (File) data[0].getData();
 		ModelFileMaker modelFileMaker =
 			new ModelFileMaker(epicModelFile, parameters);		
 		File spemShellModelFile =
 			modelFileMaker.make();
 		
-		Map<String, Object> compartmentPopulations =
+		Map<String, Object> infectionCompartmentPopulations =
 			CIShellParameterUtilities.filterByAndStripIDPrefixes(
 					parameters,
-					SPEMShellRunnerAlgorithmFactory.COMPARTMENT_POPULATION_PREFIX);
+					SPEMShellRunnerAlgorithmFactory.COMPARTMENT_POPULATION_PREFIX + 
+					SPEMShellRunnerAlgorithmFactory.INFECTION_PREFIX);
+		
+		Map<String, Object> latentCompartmentPopulations =
+			CIShellParameterUtilities.filterByAndStripIDPrefixes(
+					parameters,
+					SPEMShellRunnerAlgorithmFactory.COMPARTMENT_POPULATION_PREFIX + 
+					SPEMShellRunnerAlgorithmFactory.LATENT_PREFIX);
+		
+		Map<String, Object> recoveredCompartmentPopulations =
+			CIShellParameterUtilities.filterByAndStripIDPrefixes(
+					parameters,
+					SPEMShellRunnerAlgorithmFactory.COMPARTMENT_POPULATION_PREFIX + 
+					SPEMShellRunnerAlgorithmFactory.RECOVERED_PREFIX);
+		
+		ModelFileReader modelFileReader =
+			new ModelFileReader(epicModelFile.getPath());
 		
 		InFileMaker inFileMaker =
-			new InFileMaker(spemShellModelFile.getPath(), parameters, compartmentPopulations);
+			new InFileMaker(
+					spemShellModelFile.getPath(),
+					parameters,
+					modelFileReader.getSusceptibleCompartmentID(),
+					infectionCompartmentPopulations,
+					latentCompartmentPopulations,
+					recoveredCompartmentPopulations);
 		File inFile = inFileMaker.make();
-		
+			
 		InfectionsFileMaker infectionsFileMaker = new InfectionsFileMaker();
-		File infectionsFile = infectionsFileMaker.make(compartmentPopulations);
+		File infectionsFile =
+			infectionsFileMaker.make(infectionCompartmentPopulations);
 		
 		Data[] spemShellData =
 			new Data[]{
@@ -128,8 +157,7 @@ public class SPEMShellRunnerAlgorithm implements Algorithm {
 		
 		return spemShellData;
 	}
-
-
+	
 	@SuppressWarnings("unchecked") // TODO
 	private static Data[] createOutData(
 			File outDatFile, String label, Data parentData) {
@@ -141,13 +169,13 @@ public class SPEMShellRunnerAlgorithm implements Algorithm {
 		
 		return new Data[]{ outData };
 	}
-	
+
 	public static File createTempFileWithNoSpacesInPath(String filename) {
 		/* TODO As of September 23, SPEMShell can't handle paths containing
 		 * spaces, so it would be dangerous to create Files in the user's
 		 * default temporary file directory.  For now we hand-code paths that
 		 * we know will not contain spaces. 
-		 */		
+		 */
 		File file =
 			new File("Z:\\jrbibers\\SPEMShell\\", filename);
 		
