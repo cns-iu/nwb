@@ -4,6 +4,10 @@ import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.Dictionary;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -12,6 +16,7 @@ import org.antlr.stringtemplate.StringTemplate;
 import org.antlr.stringtemplate.StringTemplateGroup;
 
 import edu.iu.epic.spemshell.runner.SPEMShellRunnerAlgorithm;
+import edu.iu.epic.spemshell.runner.SPEMShellRunnerAlgorithmFactory;
 
 public class InFileMaker {
 	public static final int DEFAULT_NUMBER_OF_SECONDARY_EVENTS = 0;
@@ -48,7 +53,7 @@ public class InFileMaker {
 	}
 
 
-	public File make() throws IOException {
+	public File make() throws IOException, ParseException {
 		StringTemplate template = prepareTemplate();
 
 //		// TODO For now, we will instead put such parameters in the mdl file.
@@ -81,19 +86,33 @@ public class InFileMaker {
 		return file;
 	}
 	
-	private StringTemplate prepareTemplate() {
+	private StringTemplate prepareTemplate() throws ParseException {
 		StringTemplate template =
 			inFileTemplateGroup.getInstanceOf(IN_FILE_TEMPLATE_NAME);
 		template.setAttribute("modelFileName", this.modelFilePath);
 		template.setAttribute(
 				"numberOfSecondaryEvents",
 				DEFAULT_NUMBER_OF_SECONDARY_EVENTS);
-		template.setAttribute("population", this.parameters.get("population"));
+		template.setAttribute("population",
+				this.parameters.get(
+						SPEMShellRunnerAlgorithmFactory.POPULATION_ID));
 		template.setAttribute(
 				"susceptibleCompartmentID",
 				this.susceptibleCompartmentID);
-		template.setAttribute("numberOfDays", this.parameters.get("days"));
-		template.setAttribute("seed", 0);
+		template.setAttribute(
+				"numberOfDays",
+				this.parameters.get(
+						SPEMShellRunnerAlgorithmFactory.NUMBER_OF_DAYS_ID));
+		
+		String rawDateString =
+			(String) this.parameters.get(
+					SPEMShellRunnerAlgorithmFactory.START_DATE_ID);
+		DateFormat dateFormat =
+			new SimpleDateFormat(SPEMShellRunnerAlgorithmFactory.DATE_PATTERN);
+		Date date = dateFormat.parse(rawDateString);
+		String formattedDateString = dateFormat.format(date);
+		template.setAttribute("date", formattedDateString);
+		template.setAttribute("seed", this.parameters.get("seed"));
 		
 		for (Entry<String, Object> compartmentPopulation
 				: this.infectionCompartmentPopulations.entrySet()) {

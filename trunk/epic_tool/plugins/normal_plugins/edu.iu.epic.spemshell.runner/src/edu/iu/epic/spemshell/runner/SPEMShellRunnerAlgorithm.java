@@ -3,6 +3,7 @@ package edu.iu.epic.spemshell.runner;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.text.ParseException;
 import java.util.Dictionary;
 import java.util.Hashtable;
 import java.util.Map;
@@ -65,6 +66,10 @@ public class SPEMShellRunnerAlgorithm implements Algorithm {
 			throw new AlgorithmExecutionException(
 					"Error parsing model file: " + e.getMessage(),
 					e);
+		} catch (ParseException e) {
+			throw new AlgorithmExecutionException(
+					"Error parsing the given start date: " + e.getMessage(),
+					e);
 		}
 		
 		try {
@@ -108,7 +113,7 @@ public class SPEMShellRunnerAlgorithm implements Algorithm {
 
 	private Data[] createSPEMShellInData(
 			Data[] data, Dictionary<String, Object> parameters)
-				throws IOException, RecognitionException {
+				throws IOException, RecognitionException, ParseException {
 		File epicModelFile = (File) data[0].getData();
 		ModelFileMaker modelFileMaker =
 			new ModelFileMaker(epicModelFile, parameters);		
