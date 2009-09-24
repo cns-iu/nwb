@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.Dictionary;
 import java.util.Hashtable;
+import java.util.Map;
 
 import org.antlr.stringtemplate.StringTemplateGroup;
 import org.cishell.framework.CIShellContext;
@@ -52,8 +53,8 @@ public class SPEMShellRunnerAlgorithm implements Algorithm {
 	public Data[] execute() throws AlgorithmExecutionException {		
 		File datFile;
 		try {
-			Data[] spemShellData = createSPEMShellInData(data, parameters);
-			datFile = executeSPEMShell(spemShellData, context);
+			Data[] spemShellData = createSPEMShellInData(this.data, this.parameters);
+			datFile = executeSPEMShell(spemShellData, this.context);
 		} catch (IOException e) {
 			throw new AlgorithmExecutionException(
 					"Error creating data for SPEMShell: " + e.getMessage(),
@@ -64,7 +65,7 @@ public class SPEMShellRunnerAlgorithm implements Algorithm {
 			DatToCsv datToCSV = new DatToCsv(datFile);
 			File csvFile = datToCSV.convert();
 	    	
-	    	return createOutData(csvFile, "Simulation results", data[0]);
+	    	return createOutData(csvFile, "Simulation results", this.data[0]);
 		} catch (IOException e) {
 			throw new AlgorithmExecutionException(
 					"Error translating from .dat to .csv:" + e.getMessage(),
@@ -108,12 +109,17 @@ public class SPEMShellRunnerAlgorithm implements Algorithm {
 		File spemShellModelFile =
 			modelFileMaker.make();
 		
+		Map<String, Object> compartmentPopulations =
+			CIShellParameterUtilities.filterByAndStripIDPrefixes(
+					parameters,
+					SPEMShellRunnerAlgorithmFactory.COMPARTMENT_POPULATION_PREFIX);
+		
 		InFileMaker inFileMaker =
-			new InFileMaker(spemShellModelFile.getPath(), parameters);
+			new InFileMaker(spemShellModelFile.getPath(), parameters, compartmentPopulations);
 		File inFile = inFileMaker.make();
 		
 		InfectionsFileMaker infectionsFileMaker = new InfectionsFileMaker();
-		File infectionsFile = infectionsFileMaker.make(parameters);
+		File infectionsFile = infectionsFileMaker.make(compartmentPopulations);
 		
 		Data[] spemShellData =
 			new Data[]{

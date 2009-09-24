@@ -5,13 +5,13 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.Dictionary;
-import java.util.Enumeration;
+import java.util.Map;
+import java.util.Map.Entry;
 
 import org.antlr.stringtemplate.StringTemplate;
 import org.antlr.stringtemplate.StringTemplateGroup;
 
 import edu.iu.epic.spemshell.runner.SPEMShellRunnerAlgorithm;
-import edu.iu.epic.spemshell.runner.SPEMShellRunnerAlgorithmFactory;
 
 public class InFileMaker {
 	public static final String DEFAULT_SUSCEPTIBLE_COMPARTMENT_ID = "S";
@@ -26,17 +26,26 @@ public class InFileMaker {
 				"/edu/iu/epic/spemshell/runner/preprocessing/inFile.st");
 	
 	private String modelFilePath;
-	private Dictionary<String, Object> parameters;	
+	private Dictionary<String, Object> parameters;
+	private Map<String, Object> compartmentPopulations;
 	
 
-	public InFileMaker(String modelFilePath, Dictionary<String, Object> parameters) {
+	public InFileMaker(
+			String modelFilePath,
+			Dictionary<String, Object> parameters,
+			Map<String, Object> compartmentPopulations) {
 		this.modelFilePath = modelFilePath;
 		this.parameters = parameters;
+		this.compartmentPopulations = compartmentPopulations;
 	}
 
 
 	public File make() throws IOException {
-		StringTemplate template = prepareTemplate(modelFilePath, parameters);
+		StringTemplate template =
+			prepareTemplate(
+					this.modelFilePath,
+					this.parameters,
+					this.compartmentPopulations);
 
 //		// TODO For now, we will instead put such parameters in the mdl file.
 //		for (Enumeration<String> parameterKeys = parameters.keys();
@@ -70,41 +79,30 @@ public class InFileMaker {
 	
 	private StringTemplate prepareTemplate(
 			String modelFilePath,
-			Dictionary<String,
-			Object> parameters) {
-		StringTemplate inFileTemplate =
+			Dictionary<String, Object> parameters,
+			Map<String, Object> compartmentPopulations) {
+		StringTemplate template =
 			inFileTemplateGroup.getInstanceOf(IN_FILE_TEMPLATE_NAME);
-		inFileTemplate.setAttribute("modelFileName", modelFilePath);
-		inFileTemplate.setAttribute(
+		template.setAttribute("modelFileName", modelFilePath);
+		template.setAttribute(
 				"numberOfSecondaryEvents",
 				DEFAULT_NUMBER_OF_SECONDARY_EVENTS);
-		inFileTemplate.setAttribute("population", parameters.get("population"));
-		inFileTemplate.setAttribute(
+		template.setAttribute("population", parameters.get("population"));
+		template.setAttribute(
 				"susceptibleCompartmentID",
 				DEFAULT_SUSCEPTIBLE_COMPARTMENT_ID);
-		inFileTemplate.setAttribute("numberOfDays", parameters.get("days"));
-		inFileTemplate.setAttribute("seed", 0);
+		template.setAttribute("numberOfDays", parameters.get("days"));
+		template.setAttribute("seed", 0);
 		
-		for (Enumeration<String> parameterKeys = parameters.keys();
-				parameterKeys.hasMoreElements();) {
-			String key = parameterKeys.nextElement();
-			
-			if (key.startsWith(
-					SPEMShellRunnerAlgorithmFactory.COMPARTMENT_POPULATION_PREFIX)) {
-				Object value = parameters.get(key);
-				
-				String parameterName =
-					key.replace(
-							SPEMShellRunnerAlgorithmFactory.COMPARTMENT_POPULATION_PREFIX,
-							"");
-			
-				inFileTemplate.setAttribute(
-						"compartmentPopulations",
-						new CompartmentPopulationFormatter(parameterName, value));
-			}
+		for (Entry<String, Object> compartmentPopulation : compartmentPopulations.entrySet()) {
+			template.setAttribute(
+					"compartmentPopulations",
+					new CompartmentPopulationFormatter(
+							compartmentPopulation.getKey(),
+							compartmentPopulation.getValue()));
 		}
 		
-		return inFileTemplate;
+		return template;
 	}
 	
 	
@@ -118,8 +116,9 @@ public class InFileMaker {
 			this.initialPopulation = initialPopulation;
 		}
 		
+		@Override
 		public String toString() {
-			return "compartment " + name + " " + initialPopulation;
+			return "compartment " + this.name + " " + this.initialPopulation;
 		}
 	}
 }

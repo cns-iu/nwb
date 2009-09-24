@@ -19,17 +19,17 @@ public class ModelFileReader {
 	public ModelFileReader(String modelFilePath) throws RecognitionException, IOException {
 		ModelFileLexer lex = new ModelFileLexer(new ANTLRFileStream(modelFilePath));
        	CommonTokenStream tokens = new CommonTokenStream(lex);
-       	parser = new ModelFileParser(tokens);
+       	this.parser = new ModelFileParser(tokens);
     	
-        parser.modelFile();
+        this.parser.modelFile();
 	}
 	
 	public Map<String, String> getParameterBindings() {
-		return parser.getParameterBindings();
+		return this.parser.getParameterBindings();
 	}
 	
 	public Set<String> getReferencedParameters() {
-		return parser.getReferencedParameters();
+		return this.parser.getReferencedParameters();
 	}
 	
 	@SuppressWarnings("unchecked") // TODO
@@ -40,6 +40,6 @@ public class ModelFileReader {
 	}
 
 	public Collection<String> getInfectionCompartments() {
-		return parser.getInfectionCompartments();
+		return this.parser.getInfectionCompartments();
 	}
 }

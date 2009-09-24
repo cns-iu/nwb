@@ -30,7 +30,7 @@ public class DatToCsv {
 					"spemshell_output", CSV_FILE_EXTENSION);
 		BufferedWriter writer = new BufferedWriter(new FileWriter(csvFile));
 		
-		BufferedReader reader = new BufferedReader(new FileReader(datFile));
+		BufferedReader reader = new BufferedReader(new FileReader(this.datFile));
 		
 		String line = reader.readLine();
 		do {
@@ -45,8 +45,7 @@ public class DatToCsv {
 		return csvFile;
 	}
 
-	private String convertDatFileLineToCSV(String line)
-			throws IOException {
+	private String convertDatFileLineToCSV(String line) {
 		if (line.startsWith(DAT_FILE_COLUMN_NAMES_LINE_PREFIX)) {
 			// Skip the comment marker and take only the column names
 			String lineStartingWithColumns =

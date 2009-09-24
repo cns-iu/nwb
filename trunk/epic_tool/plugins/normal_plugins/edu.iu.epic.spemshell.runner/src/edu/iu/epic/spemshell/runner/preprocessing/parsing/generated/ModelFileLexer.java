@@ -1,5 +1,7 @@
-// $ANTLR 3.1.2 C:\\Documents and Settings\\jrbibers\\workspace\\edu.iu.epic.spemshell.runner\\src\\edu\\iu\\epic\\spemshell\\runner\\preprocessing\\parsing\\ModelFile.g 2009-09-23 20:01:15
+// $ANTLR 3.1.2 C:\\Documents and Settings\\jrbibers\\workspace\\edu.iu.epic.spemshell.runner\\src\\edu\\iu\\epic\\spemshell\\runner\\preprocessing\\parsing\\ModelFile.g 2009-09-24 12:13:00
+
 package edu.iu.epic.spemshell.runner.preprocessing.parsing.generated;
+
 
 import org.antlr.runtime.BaseRecognizer;
 import org.antlr.runtime.CharStream;
@@ -11,6 +13,8 @@ import org.antlr.runtime.MismatchedSetException;
 import org.antlr.runtime.NoViableAltException;
 import org.antlr.runtime.RecognitionException;
 import org.antlr.runtime.RecognizerSharedState;
+
+@SuppressWarnings("all")
 
 public class ModelFileLexer extends Lexer {
     public static final int COMMENT_MARKER=9;
@@ -42,7 +46,7 @@ public class ModelFileLexer extends Lexer {
     // delegates
     // delegators
 
-    public ModelFileLexer() {} 
+    public ModelFileLexer() {;} 
     public ModelFileLexer(CharStream input) {
         this(input, new RecognizerSharedState());
     }
@@ -57,8 +61,8 @@ public class ModelFileLexer extends Lexer {
         try {
             int _type = ADD;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // C:\\Documents and Settings\\jrbibers\\workspace\\edu.iu.epic.spemshell.runner\\src\\edu\\iu\\epic\\spemshell\\runner\\preprocessing\\parsing\\ModelFile.g:5:5: ( '+' )
-            // C:\\Documents and Settings\\jrbibers\\workspace\\edu.iu.epic.spemshell.runner\\src\\edu\\iu\\epic\\spemshell\\runner\\preprocessing\\parsing\\ModelFile.g:5:7: '+'
+            // C:\\Documents and Settings\\jrbibers\\workspace\\edu.iu.epic.spemshell.runner\\src\\edu\\iu\\epic\\spemshell\\runner\\preprocessing\\parsing\\ModelFile.g:7:5: ( '+' )
+            // C:\\Documents and Settings\\jrbibers\\workspace\\edu.iu.epic.spemshell.runner\\src\\edu\\iu\\epic\\spemshell\\runner\\preprocessing\\parsing\\ModelFile.g:7:7: '+'
             {
             match('+'); 
 
@@ -77,8 +81,8 @@ public class ModelFileLexer extends Lexer {
         try {
             int _type = SUB;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // C:\\Documents and Settings\\jrbibers\\workspace\\edu.iu.epic.spemshell.runner\\src\\edu\\iu\\epic\\spemshell\\runner\\preprocessing\\parsing\\ModelFile.g:6:5: ( '-' )
-            // C:\\Documents and Settings\\jrbibers\\workspace\\edu.iu.epic.spemshell.runner\\src\\edu\\iu\\epic\\spemshell\\runner\\preprocessing\\parsing\\ModelFile.g:6:7: '-'
+            // C:\\Documents and Settings\\jrbibers\\workspace\\edu.iu.epic.spemshell.runner\\src\\edu\\iu\\epic\\spemshell\\runner\\preprocessing\\parsing\\ModelFile.g:8:5: ( '-' )
+            // C:\\Documents and Settings\\jrbibers\\workspace\\edu.iu.epic.spemshell.runner\\src\\edu\\iu\\epic\\spemshell\\runner\\preprocessing\\parsing\\ModelFile.g:8:7: '-'
             {
             match('-'); 
 
@@ -97,8 +101,8 @@ public class ModelFileLexer extends Lexer {
         try {
             int _type = MULT;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // C:\\Documents and Settings\\jrbibers\\workspace\\edu.iu.epic.spemshell.runner\\src\\edu\\iu\\epic\\spemshell\\runner\\preprocessing\\parsing\\ModelFile.g:7:6: ( '*' )
-            // C:\\Documents and Settings\\jrbibers\\workspace\\edu.iu.epic.spemshell.runner\\src\\edu\\iu\\epic\\spemshell\\runner\\preprocessing\\parsing\\ModelFile.g:7:8: '*'
+            // C:\\Documents and Settings\\jrbibers\\workspace\\edu.iu.epic.spemshell.runner\\src\\edu\\iu\\epic\\spemshell\\runner\\preprocessing\\parsing\\ModelFile.g:9:6: ( '*' )
+            // C:\\Documents and Settings\\jrbibers\\workspace\\edu.iu.epic.spemshell.runner\\src\\edu\\iu\\epic\\spemshell\\runner\\preprocessing\\parsing\\ModelFile.g:9:8: '*'
             {
             match('*'); 
 
@@ -117,8 +121,8 @@ public class ModelFileLexer extends Lexer {
         try {
             int _type = DIV;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // C:\\Documents and Settings\\jrbibers\\workspace\\edu.iu.epic.spemshell.runner\\src\\edu\\iu\\epic\\spemshell\\runner\\preprocessing\\parsing\\ModelFile.g:8:5: ( '/' )
-            // C:\\Documents and Settings\\jrbibers\\workspace\\edu.iu.epic.spemshell.runner\\src\\edu\\iu\\epic\\spemshell\\runner\\preprocessing\\parsing\\ModelFile.g:8:7: '/'
+            // C:\\Documents and Settings\\jrbibers\\workspace\\edu.iu.epic.spemshell.runner\\src\\edu\\iu\\epic\\spemshell\\runner\\preprocessing\\parsing\\ModelFile.g:10:5: ( '/' )
+            // C:\\Documents and Settings\\jrbibers\\workspace\\edu.iu.epic.spemshell.runner\\src\\edu\\iu\\epic\\spemshell\\runner\\preprocessing\\parsing\\ModelFile.g:10:7: '/'
             {
             match('/'); 
 
@@ -137,8 +141,8 @@ public class ModelFileLexer extends Lexer {
         try {
             int _type = DECIMAL_POINT;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // C:\\Documents and Settings\\jrbibers\\workspace\\edu.iu.epic.spemshell.runner\\src\\edu\\iu\\epic\\spemshell\\runner\\preprocessing\\parsing\\ModelFile.g:9:15: ( '.' )
-            // C:\\Documents and Settings\\jrbibers\\workspace\\edu.iu.epic.spemshell.runner\\src\\edu\\iu\\epic\\spemshell\\runner\\preprocessing\\parsing\\ModelFile.g:9:17: '.'
+            // C:\\Documents and Settings\\jrbibers\\workspace\\edu.iu.epic.spemshell.runner\\src\\edu\\iu\\epic\\spemshell\\runner\\preprocessing\\parsing\\ModelFile.g:11:15: ( '.' )
+            // C:\\Documents and Settings\\jrbibers\\workspace\\edu.iu.epic.spemshell.runner\\src\\edu\\iu\\epic\\spemshell\\runner\\preprocessing\\parsing\\ModelFile.g:11:17: '.'
             {
             match('.'); 
 
@@ -157,8 +161,8 @@ public class ModelFileLexer extends Lexer {
         try {
             int _type = COMMENT_MARKER;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // C:\\Documents and Settings\\jrbibers\\workspace\\edu.iu.epic.spemshell.runner\\src\\edu\\iu\\epic\\spemshell\\runner\\preprocessing\\parsing\\ModelFile.g:10:16: ( '#' )
-            // C:\\Documents and Settings\\jrbibers\\workspace\\edu.iu.epic.spemshell.runner\\src\\edu\\iu\\epic\\spemshell\\runner\\preprocessing\\parsing\\ModelFile.g:10:18: '#'
+            // C:\\Documents and Settings\\jrbibers\\workspace\\edu.iu.epic.spemshell.runner\\src\\edu\\iu\\epic\\spemshell\\runner\\preprocessing\\parsing\\ModelFile.g:12:16: ( '#' )
+            // C:\\Documents and Settings\\jrbibers\\workspace\\edu.iu.epic.spemshell.runner\\src\\edu\\iu\\epic\\spemshell\\runner\\preprocessing\\parsing\\ModelFile.g:12:18: '#'
             {
             match('#'); 
 
@@ -177,8 +181,8 @@ public class ModelFileLexer extends Lexer {
         try {
             int _type = SPONTANEOUS_INTO;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // C:\\Documents and Settings\\jrbibers\\workspace\\edu.iu.epic.spemshell.runner\\src\\edu\\iu\\epic\\spemshell\\runner\\preprocessing\\parsing\\ModelFile.g:11:18: ( '->' )
-            // C:\\Documents and Settings\\jrbibers\\workspace\\edu.iu.epic.spemshell.runner\\src\\edu\\iu\\epic\\spemshell\\runner\\preprocessing\\parsing\\ModelFile.g:11:20: '->'
+            // C:\\Documents and Settings\\jrbibers\\workspace\\edu.iu.epic.spemshell.runner\\src\\edu\\iu\\epic\\spemshell\\runner\\preprocessing\\parsing\\ModelFile.g:13:18: ( '->' )
+            // C:\\Documents and Settings\\jrbibers\\workspace\\edu.iu.epic.spemshell.runner\\src\\edu\\iu\\epic\\spemshell\\runner\\preprocessing\\parsing\\ModelFile.g:13:20: '->'
             {
             match("->"); 
 
@@ -198,8 +202,8 @@ public class ModelFileLexer extends Lexer {
         try {
             int _type = INTERACTED_ON_BY;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // C:\\Documents and Settings\\jrbibers\\workspace\\edu.iu.epic.spemshell.runner\\src\\edu\\iu\\epic\\spemshell\\runner\\preprocessing\\parsing\\ModelFile.g:12:18: ( '--' )
-            // C:\\Documents and Settings\\jrbibers\\workspace\\edu.iu.epic.spemshell.runner\\src\\edu\\iu\\epic\\spemshell\\runner\\preprocessing\\parsing\\ModelFile.g:12:20: '--'
+            // C:\\Documents and Settings\\jrbibers\\workspace\\edu.iu.epic.spemshell.runner\\src\\edu\\iu\\epic\\spemshell\\runner\\preprocessing\\parsing\\ModelFile.g:14:18: ( '--' )
+            // C:\\Documents and Settings\\jrbibers\\workspace\\edu.iu.epic.spemshell.runner\\src\\edu\\iu\\epic\\spemshell\\runner\\preprocessing\\parsing\\ModelFile.g:14:20: '--'
             {
             match("--"); 
 
@@ -219,8 +223,8 @@ public class ModelFileLexer extends Lexer {
         try {
             int _type = INTERACTS_INTO;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // C:\\Documents and Settings\\jrbibers\\workspace\\edu.iu.epic.spemshell.runner\\src\\edu\\iu\\epic\\spemshell\\runner\\preprocessing\\parsing\\ModelFile.g:13:16: ( '=' )
-            // C:\\Documents and Settings\\jrbibers\\workspace\\edu.iu.epic.spemshell.runner\\src\\edu\\iu\\epic\\spemshell\\runner\\preprocessing\\parsing\\ModelFile.g:13:18: '='
+            // C:\\Documents and Settings\\jrbibers\\workspace\\edu.iu.epic.spemshell.runner\\src\\edu\\iu\\epic\\spemshell\\runner\\preprocessing\\parsing\\ModelFile.g:15:16: ( '=' )
+            // C:\\Documents and Settings\\jrbibers\\workspace\\edu.iu.epic.spemshell.runner\\src\\edu\\iu\\epic\\spemshell\\runner\\preprocessing\\parsing\\ModelFile.g:15:18: '='
             {
             match('='); 
 
@@ -239,8 +243,8 @@ public class ModelFileLexer extends Lexer {
         try {
             int _type = T__23;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // C:\\Documents and Settings\\jrbibers\\workspace\\edu.iu.epic.spemshell.runner\\src\\edu\\iu\\epic\\spemshell\\runner\\preprocessing\\parsing\\ModelFile.g:14:7: ( 'susceptible' )
-            // C:\\Documents and Settings\\jrbibers\\workspace\\edu.iu.epic.spemshell.runner\\src\\edu\\iu\\epic\\spemshell\\runner\\preprocessing\\parsing\\ModelFile.g:14:9: 'susceptible'
+            // C:\\Documents and Settings\\jrbibers\\workspace\\edu.iu.epic.spemshell.runner\\src\\edu\\iu\\epic\\spemshell\\runner\\preprocessing\\parsing\\ModelFile.g:16:7: ( 'susceptible' )
+            // C:\\Documents and Settings\\jrbibers\\workspace\\edu.iu.epic.spemshell.runner\\src\\edu\\iu\\epic\\spemshell\\runner\\preprocessing\\parsing\\ModelFile.g:16:9: 'susceptible'
             {
             match("susceptible"); 
 
@@ -260,8 +264,8 @@ public class ModelFileLexer extends Lexer {
         try {
             int _type = T__24;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // C:\\Documents and Settings\\jrbibers\\workspace\\edu.iu.epic.spemshell.runner\\src\\edu\\iu\\epic\\spemshell\\runner\\preprocessing\\parsing\\ModelFile.g:15:7: ( 'infection' )
-            // C:\\Documents and Settings\\jrbibers\\workspace\\edu.iu.epic.spemshell.runner\\src\\edu\\iu\\epic\\spemshell\\runner\\preprocessing\\parsing\\ModelFile.g:15:9: 'infection'
+            // C:\\Documents and Settings\\jrbibers\\workspace\\edu.iu.epic.spemshell.runner\\src\\edu\\iu\\epic\\spemshell\\runner\\preprocessing\\parsing\\ModelFile.g:17:7: ( 'infection' )
+            // C:\\Documents and Settings\\jrbibers\\workspace\\edu.iu.epic.spemshell.runner\\src\\edu\\iu\\epic\\spemshell\\runner\\preprocessing\\parsing\\ModelFile.g:17:9: 'infection'
             {
             match("infection"); 
 
@@ -281,8 +285,8 @@ public class ModelFileLexer extends Lexer {
         try {
             int _type = T__25;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // C:\\Documents and Settings\\jrbibers\\workspace\\edu.iu.epic.spemshell.runner\\src\\edu\\iu\\epic\\spemshell\\runner\\preprocessing\\parsing\\ModelFile.g:16:7: ( 'latent' )
-            // C:\\Documents and Settings\\jrbibers\\workspace\\edu.iu.epic.spemshell.runner\\src\\edu\\iu\\epic\\spemshell\\runner\\preprocessing\\parsing\\ModelFile.g:16:9: 'latent'
+            // C:\\Documents and Settings\\jrbibers\\workspace\\edu.iu.epic.spemshell.runner\\src\\edu\\iu\\epic\\spemshell\\runner\\preprocessing\\parsing\\ModelFile.g:18:7: ( 'latent' )
+            // C:\\Documents and Settings\\jrbibers\\workspace\\edu.iu.epic.spemshell.runner\\src\\edu\\iu\\epic\\spemshell\\runner\\preprocessing\\parsing\\ModelFile.g:18:9: 'latent'
             {
             match("latent"); 
 
@@ -302,8 +306,8 @@ public class ModelFileLexer extends Lexer {
         try {
             int _type = T__26;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // C:\\Documents and Settings\\jrbibers\\workspace\\edu.iu.epic.spemshell.runner\\src\\edu\\iu\\epic\\spemshell\\runner\\preprocessing\\parsing\\ModelFile.g:17:7: ( 'recovered' )
-            // C:\\Documents and Settings\\jrbibers\\workspace\\edu.iu.epic.spemshell.runner\\src\\edu\\iu\\epic\\spemshell\\runner\\preprocessing\\parsing\\ModelFile.g:17:9: 'recovered'
+            // C:\\Documents and Settings\\jrbibers\\workspace\\edu.iu.epic.spemshell.runner\\src\\edu\\iu\\epic\\spemshell\\runner\\preprocessing\\parsing\\ModelFile.g:19:7: ( 'recovered' )
+            // C:\\Documents and Settings\\jrbibers\\workspace\\edu.iu.epic.spemshell.runner\\src\\edu\\iu\\epic\\spemshell\\runner\\preprocessing\\parsing\\ModelFile.g:19:9: 'recovered'
             {
             match("recovered"); 
 
@@ -323,8 +327,8 @@ public class ModelFileLexer extends Lexer {
         try {
             int _type = T__27;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // C:\\Documents and Settings\\jrbibers\\workspace\\edu.iu.epic.spemshell.runner\\src\\edu\\iu\\epic\\spemshell\\runner\\preprocessing\\parsing\\ModelFile.g:18:7: ( 'secondary' )
-            // C:\\Documents and Settings\\jrbibers\\workspace\\edu.iu.epic.spemshell.runner\\src\\edu\\iu\\epic\\spemshell\\runner\\preprocessing\\parsing\\ModelFile.g:18:9: 'secondary'
+            // C:\\Documents and Settings\\jrbibers\\workspace\\edu.iu.epic.spemshell.runner\\src\\edu\\iu\\epic\\spemshell\\runner\\preprocessing\\parsing\\ModelFile.g:20:7: ( 'secondary' )
+            // C:\\Documents and Settings\\jrbibers\\workspace\\edu.iu.epic.spemshell.runner\\src\\edu\\iu\\epic\\spemshell\\runner\\preprocessing\\parsing\\ModelFile.g:20:9: 'secondary'
             {
             match("secondary"); 
 
@@ -344,10 +348,10 @@ public class ModelFileLexer extends Lexer {
         try {
             int _type = WHITESPACE;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // C:\\Documents and Settings\\jrbibers\\workspace\\edu.iu.epic.spemshell.runner\\src\\edu\\iu\\epic\\spemshell\\runner\\preprocessing\\parsing\\ModelFile.g:69:2: ( ( '\\t' | ' ' )+ )
-            // C:\\Documents and Settings\\jrbibers\\workspace\\edu.iu.epic.spemshell.runner\\src\\edu\\iu\\epic\\spemshell\\runner\\preprocessing\\parsing\\ModelFile.g:69:4: ( '\\t' | ' ' )+
+            // C:\\Documents and Settings\\jrbibers\\workspace\\edu.iu.epic.spemshell.runner\\src\\edu\\iu\\epic\\spemshell\\runner\\preprocessing\\parsing\\ModelFile.g:72:2: ( ( '\\t' | ' ' )+ )
+            // C:\\Documents and Settings\\jrbibers\\workspace\\edu.iu.epic.spemshell.runner\\src\\edu\\iu\\epic\\spemshell\\runner\\preprocessing\\parsing\\ModelFile.g:72:4: ( '\\t' | ' ' )+
             {
-            // C:\\Documents and Settings\\jrbibers\\workspace\\edu.iu.epic.spemshell.runner\\src\\edu\\iu\\epic\\spemshell\\runner\\preprocessing\\parsing\\ModelFile.g:69:4: ( '\\t' | ' ' )+
+            // C:\\Documents and Settings\\jrbibers\\workspace\\edu.iu.epic.spemshell.runner\\src\\edu\\iu\\epic\\spemshell\\runner\\preprocessing\\parsing\\ModelFile.g:72:4: ( '\\t' | ' ' )+
             int cnt1=0;
             loop1:
             do {
@@ -402,7 +406,7 @@ public class ModelFileLexer extends Lexer {
         try {
             int _type = NEWLINE;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // C:\\Documents and Settings\\jrbibers\\workspace\\edu.iu.epic.spemshell.runner\\src\\edu\\iu\\epic\\spemshell\\runner\\preprocessing\\parsing\\ModelFile.g:81:2: ( '\\r' | '\\n' | '\\r\\n' )
+            // C:\\Documents and Settings\\jrbibers\\workspace\\edu.iu.epic.spemshell.runner\\src\\edu\\iu\\epic\\spemshell\\runner\\preprocessing\\parsing\\ModelFile.g:84:2: ( '\\r' | '\\n' | '\\r\\n' )
             int alt2=3;
             int LA2_0 = input.LA(1);
 
@@ -426,21 +430,21 @@ public class ModelFileLexer extends Lexer {
             }
             switch (alt2) {
                 case 1 :
-                    // C:\\Documents and Settings\\jrbibers\\workspace\\edu.iu.epic.spemshell.runner\\src\\edu\\iu\\epic\\spemshell\\runner\\preprocessing\\parsing\\ModelFile.g:81:4: '\\r'
+                    // C:\\Documents and Settings\\jrbibers\\workspace\\edu.iu.epic.spemshell.runner\\src\\edu\\iu\\epic\\spemshell\\runner\\preprocessing\\parsing\\ModelFile.g:84:4: '\\r'
                     {
                     match('\r'); 
 
                     }
                     break;
                 case 2 :
-                    // C:\\Documents and Settings\\jrbibers\\workspace\\edu.iu.epic.spemshell.runner\\src\\edu\\iu\\epic\\spemshell\\runner\\preprocessing\\parsing\\ModelFile.g:82:4: '\\n'
+                    // C:\\Documents and Settings\\jrbibers\\workspace\\edu.iu.epic.spemshell.runner\\src\\edu\\iu\\epic\\spemshell\\runner\\preprocessing\\parsing\\ModelFile.g:85:4: '\\n'
                     {
                     match('\n'); 
 
                     }
                     break;
                 case 3 :
-                    // C:\\Documents and Settings\\jrbibers\\workspace\\edu.iu.epic.spemshell.runner\\src\\edu\\iu\\epic\\spemshell\\runner\\preprocessing\\parsing\\ModelFile.g:83:4: '\\r\\n'
+                    // C:\\Documents and Settings\\jrbibers\\workspace\\edu.iu.epic.spemshell.runner\\src\\edu\\iu\\epic\\spemshell\\runner\\preprocessing\\parsing\\ModelFile.g:86:4: '\\r\\n'
                     {
                     match("\r\n"); 
 
@@ -462,11 +466,11 @@ public class ModelFileLexer extends Lexer {
         try {
             int _type = COMMENT;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // C:\\Documents and Settings\\jrbibers\\workspace\\edu.iu.epic.spemshell.runner\\src\\edu\\iu\\epic\\spemshell\\runner\\preprocessing\\parsing\\ModelFile.g:87:2: ( COMMENT_MARKER ( . )* NEWLINE )
-            // C:\\Documents and Settings\\jrbibers\\workspace\\edu.iu.epic.spemshell.runner\\src\\edu\\iu\\epic\\spemshell\\runner\\preprocessing\\parsing\\ModelFile.g:87:4: COMMENT_MARKER ( . )* NEWLINE
+            // C:\\Documents and Settings\\jrbibers\\workspace\\edu.iu.epic.spemshell.runner\\src\\edu\\iu\\epic\\spemshell\\runner\\preprocessing\\parsing\\ModelFile.g:90:2: ( COMMENT_MARKER ( . )* NEWLINE )
+            // C:\\Documents and Settings\\jrbibers\\workspace\\edu.iu.epic.spemshell.runner\\src\\edu\\iu\\epic\\spemshell\\runner\\preprocessing\\parsing\\ModelFile.g:90:4: COMMENT_MARKER ( . )* NEWLINE
             {
             mCOMMENT_MARKER(); 
-            // C:\\Documents and Settings\\jrbibers\\workspace\\edu.iu.epic.spemshell.runner\\src\\edu\\iu\\epic\\spemshell\\runner\\preprocessing\\parsing\\ModelFile.g:87:19: ( . )*
+            // C:\\Documents and Settings\\jrbibers\\workspace\\edu.iu.epic.spemshell.runner\\src\\edu\\iu\\epic\\spemshell\\runner\\preprocessing\\parsing\\ModelFile.g:90:19: ( . )*
             loop3:
             do {
                 int alt3=2;
@@ -485,7 +489,7 @@ public class ModelFileLexer extends Lexer {
 
                 switch (alt3) {
             	case 1 :
-            	    // C:\\Documents and Settings\\jrbibers\\workspace\\edu.iu.epic.spemshell.runner\\src\\edu\\iu\\epic\\spemshell\\runner\\preprocessing\\parsing\\ModelFile.g:87:19: .
+            	    // C:\\Documents and Settings\\jrbibers\\workspace\\edu.iu.epic.spemshell.runner\\src\\edu\\iu\\epic\\spemshell\\runner\\preprocessing\\parsing\\ModelFile.g:90:19: .
             	    {
             	    matchAny(); 
 
@@ -513,8 +517,8 @@ public class ModelFileLexer extends Lexer {
     // $ANTLR start "NUMERIC"
     public final void mNUMERIC() throws RecognitionException {
         try {
-            // C:\\Documents and Settings\\jrbibers\\workspace\\edu.iu.epic.spemshell.runner\\src\\edu\\iu\\epic\\spemshell\\runner\\preprocessing\\parsing\\ModelFile.g:158:2: ( '0' .. '9' )
-            // C:\\Documents and Settings\\jrbibers\\workspace\\edu.iu.epic.spemshell.runner\\src\\edu\\iu\\epic\\spemshell\\runner\\preprocessing\\parsing\\ModelFile.g:158:4: '0' .. '9'
+            // C:\\Documents and Settings\\jrbibers\\workspace\\edu.iu.epic.spemshell.runner\\src\\edu\\iu\\epic\\spemshell\\runner\\preprocessing\\parsing\\ModelFile.g:161:2: ( '0' .. '9' )
+            // C:\\Documents and Settings\\jrbibers\\workspace\\edu.iu.epic.spemshell.runner\\src\\edu\\iu\\epic\\spemshell\\runner\\preprocessing\\parsing\\ModelFile.g:161:4: '0' .. '9'
             {
             matchRange('0','9'); 
 
@@ -529,7 +533,7 @@ public class ModelFileLexer extends Lexer {
     // $ANTLR start "ALPHABETIC"
     public final void mALPHABETIC() throws RecognitionException {
         try {
-            // C:\\Documents and Settings\\jrbibers\\workspace\\edu.iu.epic.spemshell.runner\\src\\edu\\iu\\epic\\spemshell\\runner\\preprocessing\\parsing\\ModelFile.g:161:2: ( 'a' .. 'z' | 'A' .. 'Z' )
+            // C:\\Documents and Settings\\jrbibers\\workspace\\edu.iu.epic.spemshell.runner\\src\\edu\\iu\\epic\\spemshell\\runner\\preprocessing\\parsing\\ModelFile.g:164:2: ( 'a' .. 'z' | 'A' .. 'Z' )
             // C:\\Documents and Settings\\jrbibers\\workspace\\edu.iu.epic.spemshell.runner\\src\\edu\\iu\\epic\\spemshell\\runner\\preprocessing\\parsing\\ModelFile.g:
             {
             if ( (input.LA(1)>='A' && input.LA(1)<='Z')||(input.LA(1)>='a' && input.LA(1)<='z') ) {
@@ -553,7 +557,7 @@ public class ModelFileLexer extends Lexer {
     // $ANTLR start "ALPHABETIC_"
     public final void mALPHABETIC_() throws RecognitionException {
         try {
-            // C:\\Documents and Settings\\jrbibers\\workspace\\edu.iu.epic.spemshell.runner\\src\\edu\\iu\\epic\\spemshell\\runner\\preprocessing\\parsing\\ModelFile.g:165:2: ( ALPHABETIC | '_' )
+            // C:\\Documents and Settings\\jrbibers\\workspace\\edu.iu.epic.spemshell.runner\\src\\edu\\iu\\epic\\spemshell\\runner\\preprocessing\\parsing\\ModelFile.g:168:2: ( ALPHABETIC | '_' )
             // C:\\Documents and Settings\\jrbibers\\workspace\\edu.iu.epic.spemshell.runner\\src\\edu\\iu\\epic\\spemshell\\runner\\preprocessing\\parsing\\ModelFile.g:
             {
             if ( (input.LA(1)>='A' && input.LA(1)<='Z')||input.LA(1)=='_'||(input.LA(1)>='a' && input.LA(1)<='z') ) {
@@ -577,7 +581,7 @@ public class ModelFileLexer extends Lexer {
     // $ANTLR start "ALPHANUMERIC"
     public final void mALPHANUMERIC() throws RecognitionException {
         try {
-            // C:\\Documents and Settings\\jrbibers\\workspace\\edu.iu.epic.spemshell.runner\\src\\edu\\iu\\epic\\spemshell\\runner\\preprocessing\\parsing\\ModelFile.g:169:2: ( ALPHABETIC | NUMERIC )
+            // C:\\Documents and Settings\\jrbibers\\workspace\\edu.iu.epic.spemshell.runner\\src\\edu\\iu\\epic\\spemshell\\runner\\preprocessing\\parsing\\ModelFile.g:172:2: ( ALPHABETIC | NUMERIC )
             // C:\\Documents and Settings\\jrbibers\\workspace\\edu.iu.epic.spemshell.runner\\src\\edu\\iu\\epic\\spemshell\\runner\\preprocessing\\parsing\\ModelFile.g:
             {
             if ( (input.LA(1)>='0' && input.LA(1)<='9')||(input.LA(1)>='A' && input.LA(1)<='Z')||(input.LA(1)>='a' && input.LA(1)<='z') ) {
@@ -601,7 +605,7 @@ public class ModelFileLexer extends Lexer {
     // $ANTLR start "ALPHANUMERIC_"
     public final void mALPHANUMERIC_() throws RecognitionException {
         try {
-            // C:\\Documents and Settings\\jrbibers\\workspace\\edu.iu.epic.spemshell.runner\\src\\edu\\iu\\epic\\spemshell\\runner\\preprocessing\\parsing\\ModelFile.g:173:2: ( ALPHANUMERIC | '_' )
+            // C:\\Documents and Settings\\jrbibers\\workspace\\edu.iu.epic.spemshell.runner\\src\\edu\\iu\\epic\\spemshell\\runner\\preprocessing\\parsing\\ModelFile.g:176:2: ( ALPHANUMERIC | '_' )
             // C:\\Documents and Settings\\jrbibers\\workspace\\edu.iu.epic.spemshell.runner\\src\\edu\\iu\\epic\\spemshell\\runner\\preprocessing\\parsing\\ModelFile.g:
             {
             if ( (input.LA(1)>='0' && input.LA(1)<='9')||(input.LA(1)>='A' && input.LA(1)<='Z')||input.LA(1)=='_'||(input.LA(1)>='a' && input.LA(1)<='z') ) {
@@ -627,11 +631,11 @@ public class ModelFileLexer extends Lexer {
         try {
             int _type = ID;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // C:\\Documents and Settings\\jrbibers\\workspace\\edu.iu.epic.spemshell.runner\\src\\edu\\iu\\epic\\spemshell\\runner\\preprocessing\\parsing\\ModelFile.g:177:2: ( ALPHABETIC_ ( ALPHANUMERIC_ )* )
-            // C:\\Documents and Settings\\jrbibers\\workspace\\edu.iu.epic.spemshell.runner\\src\\edu\\iu\\epic\\spemshell\\runner\\preprocessing\\parsing\\ModelFile.g:177:4: ALPHABETIC_ ( ALPHANUMERIC_ )*
+            // C:\\Documents and Settings\\jrbibers\\workspace\\edu.iu.epic.spemshell.runner\\src\\edu\\iu\\epic\\spemshell\\runner\\preprocessing\\parsing\\ModelFile.g:180:2: ( ALPHABETIC_ ( ALPHANUMERIC_ )* )
+            // C:\\Documents and Settings\\jrbibers\\workspace\\edu.iu.epic.spemshell.runner\\src\\edu\\iu\\epic\\spemshell\\runner\\preprocessing\\parsing\\ModelFile.g:180:4: ALPHABETIC_ ( ALPHANUMERIC_ )*
             {
             mALPHABETIC_(); 
-            // C:\\Documents and Settings\\jrbibers\\workspace\\edu.iu.epic.spemshell.runner\\src\\edu\\iu\\epic\\spemshell\\runner\\preprocessing\\parsing\\ModelFile.g:177:16: ( ALPHANUMERIC_ )*
+            // C:\\Documents and Settings\\jrbibers\\workspace\\edu.iu.epic.spemshell.runner\\src\\edu\\iu\\epic\\spemshell\\runner\\preprocessing\\parsing\\ModelFile.g:180:16: ( ALPHANUMERIC_ )*
             loop4:
             do {
                 int alt4=2;
@@ -644,7 +648,7 @@ public class ModelFileLexer extends Lexer {
 
                 switch (alt4) {
             	case 1 :
-            	    // C:\\Documents and Settings\\jrbibers\\workspace\\edu.iu.epic.spemshell.runner\\src\\edu\\iu\\epic\\spemshell\\runner\\preprocessing\\parsing\\ModelFile.g:177:17: ALPHANUMERIC_
+            	    // C:\\Documents and Settings\\jrbibers\\workspace\\edu.iu.epic.spemshell.runner\\src\\edu\\iu\\epic\\spemshell\\runner\\preprocessing\\parsing\\ModelFile.g:180:17: ALPHANUMERIC_
             	    {
             	    mALPHANUMERIC_(); 
 
@@ -672,10 +676,10 @@ public class ModelFileLexer extends Lexer {
         try {
             int _type = UNSIGNED_NUMBER;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // C:\\Documents and Settings\\jrbibers\\workspace\\edu.iu.epic.spemshell.runner\\src\\edu\\iu\\epic\\spemshell\\runner\\preprocessing\\parsing\\ModelFile.g:185:2: ( ( NUMERIC )+ ( DECIMAL_POINT ( NUMERIC )+ )? )
-            // C:\\Documents and Settings\\jrbibers\\workspace\\edu.iu.epic.spemshell.runner\\src\\edu\\iu\\epic\\spemshell\\runner\\preprocessing\\parsing\\ModelFile.g:185:4: ( NUMERIC )+ ( DECIMAL_POINT ( NUMERIC )+ )?
+            // C:\\Documents and Settings\\jrbibers\\workspace\\edu.iu.epic.spemshell.runner\\src\\edu\\iu\\epic\\spemshell\\runner\\preprocessing\\parsing\\ModelFile.g:188:2: ( ( NUMERIC )+ ( DECIMAL_POINT ( NUMERIC )+ )? )
+            // C:\\Documents and Settings\\jrbibers\\workspace\\edu.iu.epic.spemshell.runner\\src\\edu\\iu\\epic\\spemshell\\runner\\preprocessing\\parsing\\ModelFile.g:188:4: ( NUMERIC )+ ( DECIMAL_POINT ( NUMERIC )+ )?
             {
-            // C:\\Documents and Settings\\jrbibers\\workspace\\edu.iu.epic.spemshell.runner\\src\\edu\\iu\\epic\\spemshell\\runner\\preprocessing\\parsing\\ModelFile.g:185:4: ( NUMERIC )+
+            // C:\\Documents and Settings\\jrbibers\\workspace\\edu.iu.epic.spemshell.runner\\src\\edu\\iu\\epic\\spemshell\\runner\\preprocessing\\parsing\\ModelFile.g:188:4: ( NUMERIC )+
             int cnt5=0;
             loop5:
             do {
@@ -689,7 +693,7 @@ public class ModelFileLexer extends Lexer {
 
                 switch (alt5) {
             	case 1 :
-            	    // C:\\Documents and Settings\\jrbibers\\workspace\\edu.iu.epic.spemshell.runner\\src\\edu\\iu\\epic\\spemshell\\runner\\preprocessing\\parsing\\ModelFile.g:185:5: NUMERIC
+            	    // C:\\Documents and Settings\\jrbibers\\workspace\\edu.iu.epic.spemshell.runner\\src\\edu\\iu\\epic\\spemshell\\runner\\preprocessing\\parsing\\ModelFile.g:188:5: NUMERIC
             	    {
             	    mNUMERIC(); 
 
@@ -705,7 +709,7 @@ public class ModelFileLexer extends Lexer {
                 cnt5++;
             } while (true);
 
-            // C:\\Documents and Settings\\jrbibers\\workspace\\edu.iu.epic.spemshell.runner\\src\\edu\\iu\\epic\\spemshell\\runner\\preprocessing\\parsing\\ModelFile.g:185:15: ( DECIMAL_POINT ( NUMERIC )+ )?
+            // C:\\Documents and Settings\\jrbibers\\workspace\\edu.iu.epic.spemshell.runner\\src\\edu\\iu\\epic\\spemshell\\runner\\preprocessing\\parsing\\ModelFile.g:188:15: ( DECIMAL_POINT ( NUMERIC )+ )?
             int alt7=2;
             int LA7_0 = input.LA(1);
 
@@ -714,10 +718,10 @@ public class ModelFileLexer extends Lexer {
             }
             switch (alt7) {
                 case 1 :
-                    // C:\\Documents and Settings\\jrbibers\\workspace\\edu.iu.epic.spemshell.runner\\src\\edu\\iu\\epic\\spemshell\\runner\\preprocessing\\parsing\\ModelFile.g:185:16: DECIMAL_POINT ( NUMERIC )+
+                    // C:\\Documents and Settings\\jrbibers\\workspace\\edu.iu.epic.spemshell.runner\\src\\edu\\iu\\epic\\spemshell\\runner\\preprocessing\\parsing\\ModelFile.g:188:16: DECIMAL_POINT ( NUMERIC )+
                     {
                     mDECIMAL_POINT(); 
-                    // C:\\Documents and Settings\\jrbibers\\workspace\\edu.iu.epic.spemshell.runner\\src\\edu\\iu\\epic\\spemshell\\runner\\preprocessing\\parsing\\ModelFile.g:185:30: ( NUMERIC )+
+                    // C:\\Documents and Settings\\jrbibers\\workspace\\edu.iu.epic.spemshell.runner\\src\\edu\\iu\\epic\\spemshell\\runner\\preprocessing\\parsing\\ModelFile.g:188:30: ( NUMERIC )+
                     int cnt6=0;
                     loop6:
                     do {
@@ -731,7 +735,7 @@ public class ModelFileLexer extends Lexer {
 
                         switch (alt6) {
                     	case 1 :
-                    	    // C:\\Documents and Settings\\jrbibers\\workspace\\edu.iu.epic.spemshell.runner\\src\\edu\\iu\\epic\\spemshell\\runner\\preprocessing\\parsing\\ModelFile.g:185:31: NUMERIC
+                    	    // C:\\Documents and Settings\\jrbibers\\workspace\\edu.iu.epic.spemshell.runner\\src\\edu\\iu\\epic\\spemshell\\runner\\preprocessing\\parsing\\ModelFile.g:188:31: NUMERIC
                     	    {
                     	    mNUMERIC(); 
 

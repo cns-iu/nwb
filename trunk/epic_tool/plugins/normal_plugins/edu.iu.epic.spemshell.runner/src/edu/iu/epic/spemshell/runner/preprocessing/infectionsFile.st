@@ -1,6 +1,6 @@
 group infectionsFile;
 
-infectionsFile(infectionCompartmentPopulations) ::= <<
-<infectionCompartmentPopulations; separator="\n">
+infectionsFile(compartmentPopulations) ::= <<
+<compartmentPopulations; separator="\n">
 >>
 
