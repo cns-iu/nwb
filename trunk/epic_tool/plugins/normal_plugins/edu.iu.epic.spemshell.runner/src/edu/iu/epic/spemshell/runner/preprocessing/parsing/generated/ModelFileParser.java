@@ -1,6 +1,6 @@
-// $ANTLR 3.1.2 C:\\Documents and Settings\\jrbibers\\workspace\\edu.iu.epic.spemshell.runner\\src\\edu\\iu\\epic\\spemshell\\runner\\parsing\\ModelFile.g 2009-09-23 17:53:23
+// $ANTLR 3.1.2 C:\\Documents and Settings\\jrbibers\\workspace\\edu.iu.epic.spemshell.runner\\src\\edu\\iu\\epic\\spemshell\\runner\\preprocessing\\parsing\\ModelFile.g 2009-09-23 20:01:15
 
-package edu.iu.epic.spemshell.runner.parsing.generated;
+package edu.iu.epic.spemshell.runner.preprocessing.parsing.generated;
 import java.util.LinkedHashMap;
 import java.util.HashSet;
 import java.util.Map;
@@ -81,7 +81,7 @@ public class ModelFileParser extends Parser {
     }
 
     public String[] getTokenNames() { return ModelFileParser.tokenNames; }
-    public String getGrammarFileName() { return "C:\\Documents and Settings\\jrbibers\\workspace\\edu.iu.epic.spemshell.runner\\src\\edu\\iu\\epic\\spemshell\\runner\\parsing\\ModelFile.g"; }
+    public String getGrammarFileName() { return "C:\\Documents and Settings\\jrbibers\\workspace\\edu.iu.epic.spemshell.runner\\src\\edu\\iu\\epic\\spemshell\\runner\\preprocessing\\parsing\\ModelFile.g"; }
 
 
     private Map<String, String> parameterBindings = new LinkedHashMap<String, String>();
@@ -124,16 +124,16 @@ public class ModelFileParser extends Parser {
     };
 
     // $ANTLR start "modelFile"
-    // C:\\Documents and Settings\\jrbibers\\workspace\\edu.iu.epic.spemshell.runner\\src\\edu\\iu\\epic\\spemshell\\runner\\parsing\\ModelFile.g:74:1: modelFile : ( line )+ ;
+    // C:\\Documents and Settings\\jrbibers\\workspace\\edu.iu.epic.spemshell.runner\\src\\edu\\iu\\epic\\spemshell\\runner\\preprocessing\\parsing\\ModelFile.g:74:1: modelFile : ( line )+ ;
     public final ModelFileParser.modelFile_return modelFile() throws RecognitionException {
         ModelFileParser.modelFile_return retval = new ModelFileParser.modelFile_return();
         retval.start = input.LT(1);
 
         try {
-            // C:\\Documents and Settings\\jrbibers\\workspace\\edu.iu.epic.spemshell.runner\\src\\edu\\iu\\epic\\spemshell\\runner\\parsing\\ModelFile.g:75:2: ( ( line )+ )
-            // C:\\Documents and Settings\\jrbibers\\workspace\\edu.iu.epic.spemshell.runner\\src\\edu\\iu\\epic\\spemshell\\runner\\parsing\\ModelFile.g:75:4: ( line )+
+            // C:\\Documents and Settings\\jrbibers\\workspace\\edu.iu.epic.spemshell.runner\\src\\edu\\iu\\epic\\spemshell\\runner\\preprocessing\\parsing\\ModelFile.g:75:2: ( ( line )+ )
+            // C:\\Documents and Settings\\jrbibers\\workspace\\edu.iu.epic.spemshell.runner\\src\\edu\\iu\\epic\\spemshell\\runner\\preprocessing\\parsing\\ModelFile.g:75:4: ( line )+
             {
-            // C:\\Documents and Settings\\jrbibers\\workspace\\edu.iu.epic.spemshell.runner\\src\\edu\\iu\\epic\\spemshell\\runner\\parsing\\ModelFile.g:75:4: ( line )+
+            // C:\\Documents and Settings\\jrbibers\\workspace\\edu.iu.epic.spemshell.runner\\src\\edu\\iu\\epic\\spemshell\\runner\\preprocessing\\parsing\\ModelFile.g:75:4: ( line )+
             int cnt1=0;
             loop1:
             do {
@@ -147,7 +147,7 @@ public class ModelFileParser extends Parser {
 
                 switch (alt1) {
             	case 1 :
-            	    // C:\\Documents and Settings\\jrbibers\\workspace\\edu.iu.epic.spemshell.runner\\src\\edu\\iu\\epic\\spemshell\\runner\\parsing\\ModelFile.g:75:5: line
+            	    // C:\\Documents and Settings\\jrbibers\\workspace\\edu.iu.epic.spemshell.runner\\src\\edu\\iu\\epic\\spemshell\\runner\\preprocessing\\parsing\\ModelFile.g:75:5: line
             	    {
             	    pushFollow(FOLLOW_line_in_modelFile157);
             	    line();
@@ -190,16 +190,16 @@ public class ModelFileParser extends Parser {
     };
 
     // $ANTLR start "line"
-    // C:\\Documents and Settings\\jrbibers\\workspace\\edu.iu.epic.spemshell.runner\\src\\edu\\iu\\epic\\spemshell\\runner\\parsing\\ModelFile.g:77:1: line : ( COMMENT | parameterAssignment | compartmentDeclaration | transitionRule )? NEWLINE ;
+    // C:\\Documents and Settings\\jrbibers\\workspace\\edu.iu.epic.spemshell.runner\\src\\edu\\iu\\epic\\spemshell\\runner\\preprocessing\\parsing\\ModelFile.g:77:1: line : ( COMMENT | parameterAssignment | compartmentDeclaration | transitionRule )? NEWLINE ;
     public final ModelFileParser.line_return line() throws RecognitionException {
         ModelFileParser.line_return retval = new ModelFileParser.line_return();
         retval.start = input.LT(1);
 
         try {
-            // C:\\Documents and Settings\\jrbibers\\workspace\\edu.iu.epic.spemshell.runner\\src\\edu\\iu\\epic\\spemshell\\runner\\parsing\\ModelFile.g:78:2: ( ( COMMENT | parameterAssignment | compartmentDeclaration | transitionRule )? NEWLINE )
-            // C:\\Documents and Settings\\jrbibers\\workspace\\edu.iu.epic.spemshell.runner\\src\\edu\\iu\\epic\\spemshell\\runner\\parsing\\ModelFile.g:78:4: ( COMMENT | parameterAssignment | compartmentDeclaration | transitionRule )? NEWLINE
+            // C:\\Documents and Settings\\jrbibers\\workspace\\edu.iu.epic.spemshell.runner\\src\\edu\\iu\\epic\\spemshell\\runner\\preprocessing\\parsing\\ModelFile.g:78:2: ( ( COMMENT | parameterAssignment | compartmentDeclaration | transitionRule )? NEWLINE )
+            // C:\\Documents and Settings\\jrbibers\\workspace\\edu.iu.epic.spemshell.runner\\src\\edu\\iu\\epic\\spemshell\\runner\\preprocessing\\parsing\\ModelFile.g:78:4: ( COMMENT | parameterAssignment | compartmentDeclaration | transitionRule )? NEWLINE
             {
-            // C:\\Documents and Settings\\jrbibers\\workspace\\edu.iu.epic.spemshell.runner\\src\\edu\\iu\\epic\\spemshell\\runner\\parsing\\ModelFile.g:78:4: ( COMMENT | parameterAssignment | compartmentDeclaration | transitionRule )?
+            // C:\\Documents and Settings\\jrbibers\\workspace\\edu.iu.epic.spemshell.runner\\src\\edu\\iu\\epic\\spemshell\\runner\\preprocessing\\parsing\\ModelFile.g:78:4: ( COMMENT | parameterAssignment | compartmentDeclaration | transitionRule )?
             int alt2=5;
             switch ( input.LA(1) ) {
                 case COMMENT:
@@ -231,14 +231,14 @@ public class ModelFileParser extends Parser {
 
             switch (alt2) {
                 case 1 :
-                    // C:\\Documents and Settings\\jrbibers\\workspace\\edu.iu.epic.spemshell.runner\\src\\edu\\iu\\epic\\spemshell\\runner\\parsing\\ModelFile.g:78:5: COMMENT
+                    // C:\\Documents and Settings\\jrbibers\\workspace\\edu.iu.epic.spemshell.runner\\src\\edu\\iu\\epic\\spemshell\\runner\\preprocessing\\parsing\\ModelFile.g:78:5: COMMENT
                     {
                     match(input,COMMENT,FOLLOW_COMMENT_in_line170); 
 
                     }
                     break;
                 case 2 :
-                    // C:\\Documents and Settings\\jrbibers\\workspace\\edu.iu.epic.spemshell.runner\\src\\edu\\iu\\epic\\spemshell\\runner\\parsing\\ModelFile.g:78:15: parameterAssignment
+                    // C:\\Documents and Settings\\jrbibers\\workspace\\edu.iu.epic.spemshell.runner\\src\\edu\\iu\\epic\\spemshell\\runner\\preprocessing\\parsing\\ModelFile.g:78:15: parameterAssignment
                     {
                     pushFollow(FOLLOW_parameterAssignment_in_line174);
                     parameterAssignment();
@@ -249,7 +249,7 @@ public class ModelFileParser extends Parser {
                     }
                     break;
                 case 3 :
-                    // C:\\Documents and Settings\\jrbibers\\workspace\\edu.iu.epic.spemshell.runner\\src\\edu\\iu\\epic\\spemshell\\runner\\parsing\\ModelFile.g:78:37: compartmentDeclaration
+                    // C:\\Documents and Settings\\jrbibers\\workspace\\edu.iu.epic.spemshell.runner\\src\\edu\\iu\\epic\\spemshell\\runner\\preprocessing\\parsing\\ModelFile.g:78:37: compartmentDeclaration
                     {
                     pushFollow(FOLLOW_compartmentDeclaration_in_line178);
                     compartmentDeclaration();
@@ -260,7 +260,7 @@ public class ModelFileParser extends Parser {
                     }
                     break;
                 case 4 :
-                    // C:\\Documents and Settings\\jrbibers\\workspace\\edu.iu.epic.spemshell.runner\\src\\edu\\iu\\epic\\spemshell\\runner\\parsing\\ModelFile.g:78:62: transitionRule
+                    // C:\\Documents and Settings\\jrbibers\\workspace\\edu.iu.epic.spemshell.runner\\src\\edu\\iu\\epic\\spemshell\\runner\\preprocessing\\parsing\\ModelFile.g:78:62: transitionRule
                     {
                     pushFollow(FOLLOW_transitionRule_in_line182);
                     transitionRule();
@@ -297,7 +297,7 @@ public class ModelFileParser extends Parser {
     };
 
     // $ANTLR start "parameterAssignment"
-    // C:\\Documents and Settings\\jrbibers\\workspace\\edu.iu.epic.spemshell.runner\\src\\edu\\iu\\epic\\spemshell\\runner\\parsing\\ModelFile.g:92:1: parameterAssignment : parameterID '=' parameterValue ;
+    // C:\\Documents and Settings\\jrbibers\\workspace\\edu.iu.epic.spemshell.runner\\src\\edu\\iu\\epic\\spemshell\\runner\\preprocessing\\parsing\\ModelFile.g:92:1: parameterAssignment : parameterID '=' parameterValue ;
     public final ModelFileParser.parameterAssignment_return parameterAssignment() throws RecognitionException {
         ModelFileParser.parameterAssignment_return retval = new ModelFileParser.parameterAssignment_return();
         retval.start = input.LT(1);
@@ -308,8 +308,8 @@ public class ModelFileParser extends Parser {
 
 
         try {
-            // C:\\Documents and Settings\\jrbibers\\workspace\\edu.iu.epic.spemshell.runner\\src\\edu\\iu\\epic\\spemshell\\runner\\parsing\\ModelFile.g:93:2: ( parameterID '=' parameterValue )
-            // C:\\Documents and Settings\\jrbibers\\workspace\\edu.iu.epic.spemshell.runner\\src\\edu\\iu\\epic\\spemshell\\runner\\parsing\\ModelFile.g:93:4: parameterID '=' parameterValue
+            // C:\\Documents and Settings\\jrbibers\\workspace\\edu.iu.epic.spemshell.runner\\src\\edu\\iu\\epic\\spemshell\\runner\\preprocessing\\parsing\\ModelFile.g:93:2: ( parameterID '=' parameterValue )
+            // C:\\Documents and Settings\\jrbibers\\workspace\\edu.iu.epic.spemshell.runner\\src\\edu\\iu\\epic\\spemshell\\runner\\preprocessing\\parsing\\ModelFile.g:93:4: parameterID '=' parameterValue
             {
             pushFollow(FOLLOW_parameterID_in_parameterAssignment238);
             parameterID1=parameterID();
@@ -346,14 +346,14 @@ public class ModelFileParser extends Parser {
     };
 
     // $ANTLR start "parameterID"
-    // C:\\Documents and Settings\\jrbibers\\workspace\\edu.iu.epic.spemshell.runner\\src\\edu\\iu\\epic\\spemshell\\runner\\parsing\\ModelFile.g:95:1: parameterID : ID ;
+    // C:\\Documents and Settings\\jrbibers\\workspace\\edu.iu.epic.spemshell.runner\\src\\edu\\iu\\epic\\spemshell\\runner\\preprocessing\\parsing\\ModelFile.g:95:1: parameterID : ID ;
     public final ModelFileParser.parameterID_return parameterID() throws RecognitionException {
         ModelFileParser.parameterID_return retval = new ModelFileParser.parameterID_return();
         retval.start = input.LT(1);
 
         try {
-            // C:\\Documents and Settings\\jrbibers\\workspace\\edu.iu.epic.spemshell.runner\\src\\edu\\iu\\epic\\spemshell\\runner\\parsing\\ModelFile.g:96:2: ( ID )
-            // C:\\Documents and Settings\\jrbibers\\workspace\\edu.iu.epic.spemshell.runner\\src\\edu\\iu\\epic\\spemshell\\runner\\parsing\\ModelFile.g:96:4: ID
+            // C:\\Documents and Settings\\jrbibers\\workspace\\edu.iu.epic.spemshell.runner\\src\\edu\\iu\\epic\\spemshell\\runner\\preprocessing\\parsing\\ModelFile.g:96:2: ( ID )
+            // C:\\Documents and Settings\\jrbibers\\workspace\\edu.iu.epic.spemshell.runner\\src\\edu\\iu\\epic\\spemshell\\runner\\preprocessing\\parsing\\ModelFile.g:96:4: ID
             {
             match(input,ID,FOLLOW_ID_in_parameterID254); 
 
@@ -379,14 +379,14 @@ public class ModelFileParser extends Parser {
     };
 
     // $ANTLR start "parameterValue"
-    // C:\\Documents and Settings\\jrbibers\\workspace\\edu.iu.epic.spemshell.runner\\src\\edu\\iu\\epic\\spemshell\\runner\\parsing\\ModelFile.g:100:1: parameterValue : arithmeticParameterExpression ;
+    // C:\\Documents and Settings\\jrbibers\\workspace\\edu.iu.epic.spemshell.runner\\src\\edu\\iu\\epic\\spemshell\\runner\\preprocessing\\parsing\\ModelFile.g:100:1: parameterValue : arithmeticParameterExpression ;
     public final ModelFileParser.parameterValue_return parameterValue() throws RecognitionException {
         ModelFileParser.parameterValue_return retval = new ModelFileParser.parameterValue_return();
         retval.start = input.LT(1);
 
         try {
-            // C:\\Documents and Settings\\jrbibers\\workspace\\edu.iu.epic.spemshell.runner\\src\\edu\\iu\\epic\\spemshell\\runner\\parsing\\ModelFile.g:101:2: ( arithmeticParameterExpression )
-            // C:\\Documents and Settings\\jrbibers\\workspace\\edu.iu.epic.spemshell.runner\\src\\edu\\iu\\epic\\spemshell\\runner\\parsing\\ModelFile.g:101:4: arithmeticParameterExpression
+            // C:\\Documents and Settings\\jrbibers\\workspace\\edu.iu.epic.spemshell.runner\\src\\edu\\iu\\epic\\spemshell\\runner\\preprocessing\\parsing\\ModelFile.g:101:2: ( arithmeticParameterExpression )
+            // C:\\Documents and Settings\\jrbibers\\workspace\\edu.iu.epic.spemshell.runner\\src\\edu\\iu\\epic\\spemshell\\runner\\preprocessing\\parsing\\ModelFile.g:101:4: arithmeticParameterExpression
             {
             pushFollow(FOLLOW_arithmeticParameterExpression_in_parameterValue266);
             arithmeticParameterExpression();
@@ -416,21 +416,21 @@ public class ModelFileParser extends Parser {
     };
 
     // $ANTLR start "arithmeticParameterExpression"
-    // C:\\Documents and Settings\\jrbibers\\workspace\\edu.iu.epic.spemshell.runner\\src\\edu\\iu\\epic\\spemshell\\runner\\parsing\\ModelFile.g:103:1: arithmeticParameterExpression : arithmeticParameterTerm ( ( ADD | SUB ) arithmeticParameterTerm )* ;
+    // C:\\Documents and Settings\\jrbibers\\workspace\\edu.iu.epic.spemshell.runner\\src\\edu\\iu\\epic\\spemshell\\runner\\preprocessing\\parsing\\ModelFile.g:103:1: arithmeticParameterExpression : arithmeticParameterTerm ( ( ADD | SUB ) arithmeticParameterTerm )* ;
     public final ModelFileParser.arithmeticParameterExpression_return arithmeticParameterExpression() throws RecognitionException {
         ModelFileParser.arithmeticParameterExpression_return retval = new ModelFileParser.arithmeticParameterExpression_return();
         retval.start = input.LT(1);
 
         try {
-            // C:\\Documents and Settings\\jrbibers\\workspace\\edu.iu.epic.spemshell.runner\\src\\edu\\iu\\epic\\spemshell\\runner\\parsing\\ModelFile.g:104:2: ( arithmeticParameterTerm ( ( ADD | SUB ) arithmeticParameterTerm )* )
-            // C:\\Documents and Settings\\jrbibers\\workspace\\edu.iu.epic.spemshell.runner\\src\\edu\\iu\\epic\\spemshell\\runner\\parsing\\ModelFile.g:104:4: arithmeticParameterTerm ( ( ADD | SUB ) arithmeticParameterTerm )*
+            // C:\\Documents and Settings\\jrbibers\\workspace\\edu.iu.epic.spemshell.runner\\src\\edu\\iu\\epic\\spemshell\\runner\\preprocessing\\parsing\\ModelFile.g:104:2: ( arithmeticParameterTerm ( ( ADD | SUB ) arithmeticParameterTerm )* )
+            // C:\\Documents and Settings\\jrbibers\\workspace\\edu.iu.epic.spemshell.runner\\src\\edu\\iu\\epic\\spemshell\\runner\\preprocessing\\parsing\\ModelFile.g:104:4: arithmeticParameterTerm ( ( ADD | SUB ) arithmeticParameterTerm )*
             {
             pushFollow(FOLLOW_arithmeticParameterTerm_in_arithmeticParameterExpression277);
             arithmeticParameterTerm();
 
             state._fsp--;
 
-            // C:\\Documents and Settings\\jrbibers\\workspace\\edu.iu.epic.spemshell.runner\\src\\edu\\iu\\epic\\spemshell\\runner\\parsing\\ModelFile.g:104:28: ( ( ADD | SUB ) arithmeticParameterTerm )*
+            // C:\\Documents and Settings\\jrbibers\\workspace\\edu.iu.epic.spemshell.runner\\src\\edu\\iu\\epic\\spemshell\\runner\\preprocessing\\parsing\\ModelFile.g:104:28: ( ( ADD | SUB ) arithmeticParameterTerm )*
             loop3:
             do {
                 int alt3=2;
@@ -443,7 +443,7 @@ public class ModelFileParser extends Parser {
 
                 switch (alt3) {
             	case 1 :
-            	    // C:\\Documents and Settings\\jrbibers\\workspace\\edu.iu.epic.spemshell.runner\\src\\edu\\iu\\epic\\spemshell\\runner\\parsing\\ModelFile.g:104:29: ( ADD | SUB ) arithmeticParameterTerm
+            	    // C:\\Documents and Settings\\jrbibers\\workspace\\edu.iu.epic.spemshell.runner\\src\\edu\\iu\\epic\\spemshell\\runner\\preprocessing\\parsing\\ModelFile.g:104:29: ( ADD | SUB ) arithmeticParameterTerm
             	    {
             	    if ( (input.LA(1)>=ADD && input.LA(1)<=SUB) ) {
             	        input.consume();
@@ -491,21 +491,21 @@ public class ModelFileParser extends Parser {
     };
 
     // $ANTLR start "arithmeticParameterTerm"
-    // C:\\Documents and Settings\\jrbibers\\workspace\\edu.iu.epic.spemshell.runner\\src\\edu\\iu\\epic\\spemshell\\runner\\parsing\\ModelFile.g:106:1: arithmeticParameterTerm : arithmeticParameterFactor ( ( MULT | DIV ) arithmeticParameterFactor )* ;
+    // C:\\Documents and Settings\\jrbibers\\workspace\\edu.iu.epic.spemshell.runner\\src\\edu\\iu\\epic\\spemshell\\runner\\preprocessing\\parsing\\ModelFile.g:106:1: arithmeticParameterTerm : arithmeticParameterFactor ( ( MULT | DIV ) arithmeticParameterFactor )* ;
     public final ModelFileParser.arithmeticParameterTerm_return arithmeticParameterTerm() throws RecognitionException {
         ModelFileParser.arithmeticParameterTerm_return retval = new ModelFileParser.arithmeticParameterTerm_return();
         retval.start = input.LT(1);
 
         try {
-            // C:\\Documents and Settings\\jrbibers\\workspace\\edu.iu.epic.spemshell.runner\\src\\edu\\iu\\epic\\spemshell\\runner\\parsing\\ModelFile.g:107:2: ( arithmeticParameterFactor ( ( MULT | DIV ) arithmeticParameterFactor )* )
-            // C:\\Documents and Settings\\jrbibers\\workspace\\edu.iu.epic.spemshell.runner\\src\\edu\\iu\\epic\\spemshell\\runner\\parsing\\ModelFile.g:107:4: arithmeticParameterFactor ( ( MULT | DIV ) arithmeticParameterFactor )*
+            // C:\\Documents and Settings\\jrbibers\\workspace\\edu.iu.epic.spemshell.runner\\src\\edu\\iu\\epic\\spemshell\\runner\\preprocessing\\parsing\\ModelFile.g:107:2: ( arithmeticParameterFactor ( ( MULT | DIV ) arithmeticParameterFactor )* )
+            // C:\\Documents and Settings\\jrbibers\\workspace\\edu.iu.epic.spemshell.runner\\src\\edu\\iu\\epic\\spemshell\\runner\\preprocessing\\parsing\\ModelFile.g:107:4: arithmeticParameterFactor ( ( MULT | DIV ) arithmeticParameterFactor )*
             {
             pushFollow(FOLLOW_arithmeticParameterFactor_in_arithmeticParameterTerm300);
             arithmeticParameterFactor();
 
             state._fsp--;
 
-            // C:\\Documents and Settings\\jrbibers\\workspace\\edu.iu.epic.spemshell.runner\\src\\edu\\iu\\epic\\spemshell\\runner\\parsing\\ModelFile.g:107:30: ( ( MULT | DIV ) arithmeticParameterFactor )*
+            // C:\\Documents and Settings\\jrbibers\\workspace\\edu.iu.epic.spemshell.runner\\src\\edu\\iu\\epic\\spemshell\\runner\\preprocessing\\parsing\\ModelFile.g:107:30: ( ( MULT | DIV ) arithmeticParameterFactor )*
             loop4:
             do {
                 int alt4=2;
@@ -518,7 +518,7 @@ public class ModelFileParser extends Parser {
 
                 switch (alt4) {
             	case 1 :
-            	    // C:\\Documents and Settings\\jrbibers\\workspace\\edu.iu.epic.spemshell.runner\\src\\edu\\iu\\epic\\spemshell\\runner\\parsing\\ModelFile.g:107:31: ( MULT | DIV ) arithmeticParameterFactor
+            	    // C:\\Documents and Settings\\jrbibers\\workspace\\edu.iu.epic.spemshell.runner\\src\\edu\\iu\\epic\\spemshell\\runner\\preprocessing\\parsing\\ModelFile.g:107:31: ( MULT | DIV ) arithmeticParameterFactor
             	    {
             	    if ( (input.LA(1)>=MULT && input.LA(1)<=DIV) ) {
             	        input.consume();
@@ -566,7 +566,7 @@ public class ModelFileParser extends Parser {
     };
 
     // $ANTLR start "arithmeticParameterFactor"
-    // C:\\Documents and Settings\\jrbibers\\workspace\\edu.iu.epic.spemshell.runner\\src\\edu\\iu\\epic\\spemshell\\runner\\parsing\\ModelFile.g:109:1: arithmeticParameterFactor : ( parameterID | number );
+    // C:\\Documents and Settings\\jrbibers\\workspace\\edu.iu.epic.spemshell.runner\\src\\edu\\iu\\epic\\spemshell\\runner\\preprocessing\\parsing\\ModelFile.g:109:1: arithmeticParameterFactor : ( parameterID | number );
     public final ModelFileParser.arithmeticParameterFactor_return arithmeticParameterFactor() throws RecognitionException {
         ModelFileParser.arithmeticParameterFactor_return retval = new ModelFileParser.arithmeticParameterFactor_return();
         retval.start = input.LT(1);
@@ -575,7 +575,7 @@ public class ModelFileParser extends Parser {
 
 
         try {
-            // C:\\Documents and Settings\\jrbibers\\workspace\\edu.iu.epic.spemshell.runner\\src\\edu\\iu\\epic\\spemshell\\runner\\parsing\\ModelFile.g:110:2: ( parameterID | number )
+            // C:\\Documents and Settings\\jrbibers\\workspace\\edu.iu.epic.spemshell.runner\\src\\edu\\iu\\epic\\spemshell\\runner\\preprocessing\\parsing\\ModelFile.g:110:2: ( parameterID | number )
             int alt5=2;
             int LA5_0 = input.LA(1);
 
@@ -593,7 +593,7 @@ public class ModelFileParser extends Parser {
             }
             switch (alt5) {
                 case 1 :
-                    // C:\\Documents and Settings\\jrbibers\\workspace\\edu.iu.epic.spemshell.runner\\src\\edu\\iu\\epic\\spemshell\\runner\\parsing\\ModelFile.g:110:4: parameterID
+                    // C:\\Documents and Settings\\jrbibers\\workspace\\edu.iu.epic.spemshell.runner\\src\\edu\\iu\\epic\\spemshell\\runner\\preprocessing\\parsing\\ModelFile.g:110:4: parameterID
                     {
                     pushFollow(FOLLOW_parameterID_in_arithmeticParameterFactor323);
                     parameterID3=parameterID();
@@ -605,7 +605,7 @@ public class ModelFileParser extends Parser {
                     }
                     break;
                 case 2 :
-                    // C:\\Documents and Settings\\jrbibers\\workspace\\edu.iu.epic.spemshell.runner\\src\\edu\\iu\\epic\\spemshell\\runner\\parsing\\ModelFile.g:111:4: number
+                    // C:\\Documents and Settings\\jrbibers\\workspace\\edu.iu.epic.spemshell.runner\\src\\edu\\iu\\epic\\spemshell\\runner\\preprocessing\\parsing\\ModelFile.g:111:4: number
                     {
                     pushFollow(FOLLOW_number_in_arithmeticParameterFactor330);
                     number();
@@ -637,13 +637,13 @@ public class ModelFileParser extends Parser {
     };
 
     // $ANTLR start "compartmentDeclaration"
-    // C:\\Documents and Settings\\jrbibers\\workspace\\edu.iu.epic.spemshell.runner\\src\\edu\\iu\\epic\\spemshell\\runner\\parsing\\ModelFile.g:116:1: compartmentDeclaration : ( susceptibleCompartmentDeclaration | infectedCompartmentDeclaration | latentCompartmentDeclaration | recoveredCompartmentDeclaration );
+    // C:\\Documents and Settings\\jrbibers\\workspace\\edu.iu.epic.spemshell.runner\\src\\edu\\iu\\epic\\spemshell\\runner\\preprocessing\\parsing\\ModelFile.g:116:1: compartmentDeclaration : ( susceptibleCompartmentDeclaration | infectedCompartmentDeclaration | latentCompartmentDeclaration | recoveredCompartmentDeclaration );
     public final ModelFileParser.compartmentDeclaration_return compartmentDeclaration() throws RecognitionException {
         ModelFileParser.compartmentDeclaration_return retval = new ModelFileParser.compartmentDeclaration_return();
         retval.start = input.LT(1);
 
         try {
-            // C:\\Documents and Settings\\jrbibers\\workspace\\edu.iu.epic.spemshell.runner\\src\\edu\\iu\\epic\\spemshell\\runner\\parsing\\ModelFile.g:117:2: ( susceptibleCompartmentDeclaration | infectedCompartmentDeclaration | latentCompartmentDeclaration | recoveredCompartmentDeclaration )
+            // C:\\Documents and Settings\\jrbibers\\workspace\\edu.iu.epic.spemshell.runner\\src\\edu\\iu\\epic\\spemshell\\runner\\preprocessing\\parsing\\ModelFile.g:117:2: ( susceptibleCompartmentDeclaration | infectedCompartmentDeclaration | latentCompartmentDeclaration | recoveredCompartmentDeclaration )
             int alt6=4;
             switch ( input.LA(1) ) {
             case 23:
@@ -675,7 +675,7 @@ public class ModelFileParser extends Parser {
 
             switch (alt6) {
                 case 1 :
-                    // C:\\Documents and Settings\\jrbibers\\workspace\\edu.iu.epic.spemshell.runner\\src\\edu\\iu\\epic\\spemshell\\runner\\parsing\\ModelFile.g:117:4: susceptibleCompartmentDeclaration
+                    // C:\\Documents and Settings\\jrbibers\\workspace\\edu.iu.epic.spemshell.runner\\src\\edu\\iu\\epic\\spemshell\\runner\\preprocessing\\parsing\\ModelFile.g:117:4: susceptibleCompartmentDeclaration
                     {
                     pushFollow(FOLLOW_susceptibleCompartmentDeclaration_in_compartmentDeclaration344);
                     susceptibleCompartmentDeclaration();
@@ -686,7 +686,7 @@ public class ModelFileParser extends Parser {
                     }
                     break;
                 case 2 :
-                    // C:\\Documents and Settings\\jrbibers\\workspace\\edu.iu.epic.spemshell.runner\\src\\edu\\iu\\epic\\spemshell\\runner\\parsing\\ModelFile.g:118:4: infectedCompartmentDeclaration
+                    // C:\\Documents and Settings\\jrbibers\\workspace\\edu.iu.epic.spemshell.runner\\src\\edu\\iu\\epic\\spemshell\\runner\\preprocessing\\parsing\\ModelFile.g:118:4: infectedCompartmentDeclaration
                     {
                     pushFollow(FOLLOW_infectedCompartmentDeclaration_in_compartmentDeclaration349);
                     infectedCompartmentDeclaration();
@@ -697,7 +697,7 @@ public class ModelFileParser extends Parser {
                     }
                     break;
                 case 3 :
-                    // C:\\Documents and Settings\\jrbibers\\workspace\\edu.iu.epic.spemshell.runner\\src\\edu\\iu\\epic\\spemshell\\runner\\parsing\\ModelFile.g:119:4: latentCompartmentDeclaration
+                    // C:\\Documents and Settings\\jrbibers\\workspace\\edu.iu.epic.spemshell.runner\\src\\edu\\iu\\epic\\spemshell\\runner\\preprocessing\\parsing\\ModelFile.g:119:4: latentCompartmentDeclaration
                     {
                     pushFollow(FOLLOW_latentCompartmentDeclaration_in_compartmentDeclaration354);
                     latentCompartmentDeclaration();
@@ -708,7 +708,7 @@ public class ModelFileParser extends Parser {
                     }
                     break;
                 case 4 :
-                    // C:\\Documents and Settings\\jrbibers\\workspace\\edu.iu.epic.spemshell.runner\\src\\edu\\iu\\epic\\spemshell\\runner\\parsing\\ModelFile.g:120:4: recoveredCompartmentDeclaration
+                    // C:\\Documents and Settings\\jrbibers\\workspace\\edu.iu.epic.spemshell.runner\\src\\edu\\iu\\epic\\spemshell\\runner\\preprocessing\\parsing\\ModelFile.g:120:4: recoveredCompartmentDeclaration
                     {
                     pushFollow(FOLLOW_recoveredCompartmentDeclaration_in_compartmentDeclaration359);
                     recoveredCompartmentDeclaration();
@@ -740,7 +740,7 @@ public class ModelFileParser extends Parser {
     };
 
     // $ANTLR start "susceptibleCompartmentDeclaration"
-    // C:\\Documents and Settings\\jrbibers\\workspace\\edu.iu.epic.spemshell.runner\\src\\edu\\iu\\epic\\spemshell\\runner\\parsing\\ModelFile.g:122:1: susceptibleCompartmentDeclaration : 'susceptible' compartmentID ;
+    // C:\\Documents and Settings\\jrbibers\\workspace\\edu.iu.epic.spemshell.runner\\src\\edu\\iu\\epic\\spemshell\\runner\\preprocessing\\parsing\\ModelFile.g:122:1: susceptibleCompartmentDeclaration : 'susceptible' compartmentID ;
     public final ModelFileParser.susceptibleCompartmentDeclaration_return susceptibleCompartmentDeclaration() throws RecognitionException {
         ModelFileParser.susceptibleCompartmentDeclaration_return retval = new ModelFileParser.susceptibleCompartmentDeclaration_return();
         retval.start = input.LT(1);
@@ -749,8 +749,8 @@ public class ModelFileParser extends Parser {
 
 
         try {
-            // C:\\Documents and Settings\\jrbibers\\workspace\\edu.iu.epic.spemshell.runner\\src\\edu\\iu\\epic\\spemshell\\runner\\parsing\\ModelFile.g:123:2: ( 'susceptible' compartmentID )
-            // C:\\Documents and Settings\\jrbibers\\workspace\\edu.iu.epic.spemshell.runner\\src\\edu\\iu\\epic\\spemshell\\runner\\parsing\\ModelFile.g:123:4: 'susceptible' compartmentID
+            // C:\\Documents and Settings\\jrbibers\\workspace\\edu.iu.epic.spemshell.runner\\src\\edu\\iu\\epic\\spemshell\\runner\\preprocessing\\parsing\\ModelFile.g:123:2: ( 'susceptible' compartmentID )
+            // C:\\Documents and Settings\\jrbibers\\workspace\\edu.iu.epic.spemshell.runner\\src\\edu\\iu\\epic\\spemshell\\runner\\preprocessing\\parsing\\ModelFile.g:123:4: 'susceptible' compartmentID
             {
             match(input,23,FOLLOW_23_in_susceptibleCompartmentDeclaration369); 
             pushFollow(FOLLOW_compartmentID_in_susceptibleCompartmentDeclaration371);
@@ -782,7 +782,7 @@ public class ModelFileParser extends Parser {
     };
 
     // $ANTLR start "infectedCompartmentDeclaration"
-    // C:\\Documents and Settings\\jrbibers\\workspace\\edu.iu.epic.spemshell.runner\\src\\edu\\iu\\epic\\spemshell\\runner\\parsing\\ModelFile.g:125:1: infectedCompartmentDeclaration : 'infection' compartmentID ;
+    // C:\\Documents and Settings\\jrbibers\\workspace\\edu.iu.epic.spemshell.runner\\src\\edu\\iu\\epic\\spemshell\\runner\\preprocessing\\parsing\\ModelFile.g:125:1: infectedCompartmentDeclaration : 'infection' compartmentID ;
     public final ModelFileParser.infectedCompartmentDeclaration_return infectedCompartmentDeclaration() throws RecognitionException {
         ModelFileParser.infectedCompartmentDeclaration_return retval = new ModelFileParser.infectedCompartmentDeclaration_return();
         retval.start = input.LT(1);
@@ -791,8 +791,8 @@ public class ModelFileParser extends Parser {
 
 
         try {
-            // C:\\Documents and Settings\\jrbibers\\workspace\\edu.iu.epic.spemshell.runner\\src\\edu\\iu\\epic\\spemshell\\runner\\parsing\\ModelFile.g:126:2: ( 'infection' compartmentID )
-            // C:\\Documents and Settings\\jrbibers\\workspace\\edu.iu.epic.spemshell.runner\\src\\edu\\iu\\epic\\spemshell\\runner\\parsing\\ModelFile.g:126:4: 'infection' compartmentID
+            // C:\\Documents and Settings\\jrbibers\\workspace\\edu.iu.epic.spemshell.runner\\src\\edu\\iu\\epic\\spemshell\\runner\\preprocessing\\parsing\\ModelFile.g:126:2: ( 'infection' compartmentID )
+            // C:\\Documents and Settings\\jrbibers\\workspace\\edu.iu.epic.spemshell.runner\\src\\edu\\iu\\epic\\spemshell\\runner\\preprocessing\\parsing\\ModelFile.g:126:4: 'infection' compartmentID
             {
             match(input,24,FOLLOW_24_in_infectedCompartmentDeclaration383); 
             pushFollow(FOLLOW_compartmentID_in_infectedCompartmentDeclaration385);
@@ -824,17 +824,17 @@ public class ModelFileParser extends Parser {
     };
 
     // $ANTLR start "latentCompartmentDeclaration"
-    // C:\\Documents and Settings\\jrbibers\\workspace\\edu.iu.epic.spemshell.runner\\src\\edu\\iu\\epic\\spemshell\\runner\\parsing\\ModelFile.g:128:1: latentCompartmentDeclaration : 'latent' ( compartmentID )+ ;
+    // C:\\Documents and Settings\\jrbibers\\workspace\\edu.iu.epic.spemshell.runner\\src\\edu\\iu\\epic\\spemshell\\runner\\preprocessing\\parsing\\ModelFile.g:128:1: latentCompartmentDeclaration : 'latent' ( compartmentID )+ ;
     public final ModelFileParser.latentCompartmentDeclaration_return latentCompartmentDeclaration() throws RecognitionException {
         ModelFileParser.latentCompartmentDeclaration_return retval = new ModelFileParser.latentCompartmentDeclaration_return();
         retval.start = input.LT(1);
 
         try {
-            // C:\\Documents and Settings\\jrbibers\\workspace\\edu.iu.epic.spemshell.runner\\src\\edu\\iu\\epic\\spemshell\\runner\\parsing\\ModelFile.g:129:2: ( 'latent' ( compartmentID )+ )
-            // C:\\Documents and Settings\\jrbibers\\workspace\\edu.iu.epic.spemshell.runner\\src\\edu\\iu\\epic\\spemshell\\runner\\parsing\\ModelFile.g:129:4: 'latent' ( compartmentID )+
+            // C:\\Documents and Settings\\jrbibers\\workspace\\edu.iu.epic.spemshell.runner\\src\\edu\\iu\\epic\\spemshell\\runner\\preprocessing\\parsing\\ModelFile.g:129:2: ( 'latent' ( compartmentID )+ )
+            // C:\\Documents and Settings\\jrbibers\\workspace\\edu.iu.epic.spemshell.runner\\src\\edu\\iu\\epic\\spemshell\\runner\\preprocessing\\parsing\\ModelFile.g:129:4: 'latent' ( compartmentID )+
             {
             match(input,25,FOLLOW_25_in_latentCompartmentDeclaration397); 
-            // C:\\Documents and Settings\\jrbibers\\workspace\\edu.iu.epic.spemshell.runner\\src\\edu\\iu\\epic\\spemshell\\runner\\parsing\\ModelFile.g:129:13: ( compartmentID )+
+            // C:\\Documents and Settings\\jrbibers\\workspace\\edu.iu.epic.spemshell.runner\\src\\edu\\iu\\epic\\spemshell\\runner\\preprocessing\\parsing\\ModelFile.g:129:13: ( compartmentID )+
             int cnt7=0;
             loop7:
             do {
@@ -848,7 +848,7 @@ public class ModelFileParser extends Parser {
 
                 switch (alt7) {
             	case 1 :
-            	    // C:\\Documents and Settings\\jrbibers\\workspace\\edu.iu.epic.spemshell.runner\\src\\edu\\iu\\epic\\spemshell\\runner\\parsing\\ModelFile.g:129:13: compartmentID
+            	    // C:\\Documents and Settings\\jrbibers\\workspace\\edu.iu.epic.spemshell.runner\\src\\edu\\iu\\epic\\spemshell\\runner\\preprocessing\\parsing\\ModelFile.g:129:13: compartmentID
             	    {
             	    pushFollow(FOLLOW_compartmentID_in_latentCompartmentDeclaration399);
             	    compartmentID();
@@ -891,17 +891,17 @@ public class ModelFileParser extends Parser {
     };
 
     // $ANTLR start "recoveredCompartmentDeclaration"
-    // C:\\Documents and Settings\\jrbibers\\workspace\\edu.iu.epic.spemshell.runner\\src\\edu\\iu\\epic\\spemshell\\runner\\parsing\\ModelFile.g:131:1: recoveredCompartmentDeclaration : 'recovered' ( compartmentID )+ ;
+    // C:\\Documents and Settings\\jrbibers\\workspace\\edu.iu.epic.spemshell.runner\\src\\edu\\iu\\epic\\spemshell\\runner\\preprocessing\\parsing\\ModelFile.g:131:1: recoveredCompartmentDeclaration : 'recovered' ( compartmentID )+ ;
     public final ModelFileParser.recoveredCompartmentDeclaration_return recoveredCompartmentDeclaration() throws RecognitionException {
         ModelFileParser.recoveredCompartmentDeclaration_return retval = new ModelFileParser.recoveredCompartmentDeclaration_return();
         retval.start = input.LT(1);
 
         try {
-            // C:\\Documents and Settings\\jrbibers\\workspace\\edu.iu.epic.spemshell.runner\\src\\edu\\iu\\epic\\spemshell\\runner\\parsing\\ModelFile.g:132:2: ( 'recovered' ( compartmentID )+ )
-            // C:\\Documents and Settings\\jrbibers\\workspace\\edu.iu.epic.spemshell.runner\\src\\edu\\iu\\epic\\spemshell\\runner\\parsing\\ModelFile.g:132:4: 'recovered' ( compartmentID )+
+            // C:\\Documents and Settings\\jrbibers\\workspace\\edu.iu.epic.spemshell.runner\\src\\edu\\iu\\epic\\spemshell\\runner\\preprocessing\\parsing\\ModelFile.g:132:2: ( 'recovered' ( compartmentID )+ )
+            // C:\\Documents and Settings\\jrbibers\\workspace\\edu.iu.epic.spemshell.runner\\src\\edu\\iu\\epic\\spemshell\\runner\\preprocessing\\parsing\\ModelFile.g:132:4: 'recovered' ( compartmentID )+
             {
             match(input,26,FOLLOW_26_in_recoveredCompartmentDeclaration411); 
-            // C:\\Documents and Settings\\jrbibers\\workspace\\edu.iu.epic.spemshell.runner\\src\\edu\\iu\\epic\\spemshell\\runner\\parsing\\ModelFile.g:132:16: ( compartmentID )+
+            // C:\\Documents and Settings\\jrbibers\\workspace\\edu.iu.epic.spemshell.runner\\src\\edu\\iu\\epic\\spemshell\\runner\\preprocessing\\parsing\\ModelFile.g:132:16: ( compartmentID )+
             int cnt8=0;
             loop8:
             do {
@@ -915,7 +915,7 @@ public class ModelFileParser extends Parser {
 
                 switch (alt8) {
             	case 1 :
-            	    // C:\\Documents and Settings\\jrbibers\\workspace\\edu.iu.epic.spemshell.runner\\src\\edu\\iu\\epic\\spemshell\\runner\\parsing\\ModelFile.g:132:16: compartmentID
+            	    // C:\\Documents and Settings\\jrbibers\\workspace\\edu.iu.epic.spemshell.runner\\src\\edu\\iu\\epic\\spemshell\\runner\\preprocessing\\parsing\\ModelFile.g:132:16: compartmentID
             	    {
             	    pushFollow(FOLLOW_compartmentID_in_recoveredCompartmentDeclaration413);
             	    compartmentID();
@@ -958,14 +958,14 @@ public class ModelFileParser extends Parser {
     };
 
     // $ANTLR start "transitionRate"
-    // C:\\Documents and Settings\\jrbibers\\workspace\\edu.iu.epic.spemshell.runner\\src\\edu\\iu\\epic\\spemshell\\runner\\parsing\\ModelFile.g:138:1: transitionRate : parameterValue ;
+    // C:\\Documents and Settings\\jrbibers\\workspace\\edu.iu.epic.spemshell.runner\\src\\edu\\iu\\epic\\spemshell\\runner\\preprocessing\\parsing\\ModelFile.g:138:1: transitionRate : parameterValue ;
     public final ModelFileParser.transitionRate_return transitionRate() throws RecognitionException {
         ModelFileParser.transitionRate_return retval = new ModelFileParser.transitionRate_return();
         retval.start = input.LT(1);
 
         try {
-            // C:\\Documents and Settings\\jrbibers\\workspace\\edu.iu.epic.spemshell.runner\\src\\edu\\iu\\epic\\spemshell\\runner\\parsing\\ModelFile.g:139:2: ( parameterValue )
-            // C:\\Documents and Settings\\jrbibers\\workspace\\edu.iu.epic.spemshell.runner\\src\\edu\\iu\\epic\\spemshell\\runner\\parsing\\ModelFile.g:139:4: parameterValue
+            // C:\\Documents and Settings\\jrbibers\\workspace\\edu.iu.epic.spemshell.runner\\src\\edu\\iu\\epic\\spemshell\\runner\\preprocessing\\parsing\\ModelFile.g:139:2: ( parameterValue )
+            // C:\\Documents and Settings\\jrbibers\\workspace\\edu.iu.epic.spemshell.runner\\src\\edu\\iu\\epic\\spemshell\\runner\\preprocessing\\parsing\\ModelFile.g:139:4: parameterValue
             {
             pushFollow(FOLLOW_parameterValue_in_transitionRate429);
             parameterValue();
@@ -995,13 +995,13 @@ public class ModelFileParser extends Parser {
     };
 
     // $ANTLR start "transitionRule"
-    // C:\\Documents and Settings\\jrbibers\\workspace\\edu.iu.epic.spemshell.runner\\src\\edu\\iu\\epic\\spemshell\\runner\\parsing\\ModelFile.g:141:1: transitionRule : ( spontaneousTransitionRelation transitionRate ( 'secondary' )? | interactionTransitionRelation transitionRate );
+    // C:\\Documents and Settings\\jrbibers\\workspace\\edu.iu.epic.spemshell.runner\\src\\edu\\iu\\epic\\spemshell\\runner\\preprocessing\\parsing\\ModelFile.g:141:1: transitionRule : ( spontaneousTransitionRelation transitionRate ( 'secondary' )? | interactionTransitionRelation transitionRate );
     public final ModelFileParser.transitionRule_return transitionRule() throws RecognitionException {
         ModelFileParser.transitionRule_return retval = new ModelFileParser.transitionRule_return();
         retval.start = input.LT(1);
 
         try {
-            // C:\\Documents and Settings\\jrbibers\\workspace\\edu.iu.epic.spemshell.runner\\src\\edu\\iu\\epic\\spemshell\\runner\\parsing\\ModelFile.g:142:2: ( spontaneousTransitionRelation transitionRate ( 'secondary' )? | interactionTransitionRelation transitionRate )
+            // C:\\Documents and Settings\\jrbibers\\workspace\\edu.iu.epic.spemshell.runner\\src\\edu\\iu\\epic\\spemshell\\runner\\preprocessing\\parsing\\ModelFile.g:142:2: ( spontaneousTransitionRelation transitionRate ( 'secondary' )? | interactionTransitionRelation transitionRate )
             int alt10=2;
             int LA10_0 = input.LA(1);
 
@@ -1029,7 +1029,7 @@ public class ModelFileParser extends Parser {
             }
             switch (alt10) {
                 case 1 :
-                    // C:\\Documents and Settings\\jrbibers\\workspace\\edu.iu.epic.spemshell.runner\\src\\edu\\iu\\epic\\spemshell\\runner\\parsing\\ModelFile.g:142:4: spontaneousTransitionRelation transitionRate ( 'secondary' )?
+                    // C:\\Documents and Settings\\jrbibers\\workspace\\edu.iu.epic.spemshell.runner\\src\\edu\\iu\\epic\\spemshell\\runner\\preprocessing\\parsing\\ModelFile.g:142:4: spontaneousTransitionRelation transitionRate ( 'secondary' )?
                     {
                     pushFollow(FOLLOW_spontaneousTransitionRelation_in_transitionRule439);
                     spontaneousTransitionRelation();
@@ -1041,7 +1041,7 @@ public class ModelFileParser extends Parser {
 
                     state._fsp--;
 
-                    // C:\\Documents and Settings\\jrbibers\\workspace\\edu.iu.epic.spemshell.runner\\src\\edu\\iu\\epic\\spemshell\\runner\\parsing\\ModelFile.g:142:49: ( 'secondary' )?
+                    // C:\\Documents and Settings\\jrbibers\\workspace\\edu.iu.epic.spemshell.runner\\src\\edu\\iu\\epic\\spemshell\\runner\\preprocessing\\parsing\\ModelFile.g:142:49: ( 'secondary' )?
                     int alt9=2;
                     int LA9_0 = input.LA(1);
 
@@ -1050,7 +1050,7 @@ public class ModelFileParser extends Parser {
                     }
                     switch (alt9) {
                         case 1 :
-                            // C:\\Documents and Settings\\jrbibers\\workspace\\edu.iu.epic.spemshell.runner\\src\\edu\\iu\\epic\\spemshell\\runner\\parsing\\ModelFile.g:142:50: 'secondary'
+                            // C:\\Documents and Settings\\jrbibers\\workspace\\edu.iu.epic.spemshell.runner\\src\\edu\\iu\\epic\\spemshell\\runner\\preprocessing\\parsing\\ModelFile.g:142:50: 'secondary'
                             {
                             match(input,27,FOLLOW_27_in_transitionRule444); 
 
@@ -1063,7 +1063,7 @@ public class ModelFileParser extends Parser {
                     }
                     break;
                 case 2 :
-                    // C:\\Documents and Settings\\jrbibers\\workspace\\edu.iu.epic.spemshell.runner\\src\\edu\\iu\\epic\\spemshell\\runner\\parsing\\ModelFile.g:143:4: interactionTransitionRelation transitionRate
+                    // C:\\Documents and Settings\\jrbibers\\workspace\\edu.iu.epic.spemshell.runner\\src\\edu\\iu\\epic\\spemshell\\runner\\preprocessing\\parsing\\ModelFile.g:143:4: interactionTransitionRelation transitionRate
                     {
                     pushFollow(FOLLOW_interactionTransitionRelation_in_transitionRule451);
                     interactionTransitionRelation();
@@ -1100,14 +1100,14 @@ public class ModelFileParser extends Parser {
     };
 
     // $ANTLR start "spontaneousTransitionRelation"
-    // C:\\Documents and Settings\\jrbibers\\workspace\\edu.iu.epic.spemshell.runner\\src\\edu\\iu\\epic\\spemshell\\runner\\parsing\\ModelFile.g:145:1: spontaneousTransitionRelation : compartmentID SPONTANEOUS_INTO compartmentID ;
+    // C:\\Documents and Settings\\jrbibers\\workspace\\edu.iu.epic.spemshell.runner\\src\\edu\\iu\\epic\\spemshell\\runner\\preprocessing\\parsing\\ModelFile.g:145:1: spontaneousTransitionRelation : compartmentID SPONTANEOUS_INTO compartmentID ;
     public final ModelFileParser.spontaneousTransitionRelation_return spontaneousTransitionRelation() throws RecognitionException {
         ModelFileParser.spontaneousTransitionRelation_return retval = new ModelFileParser.spontaneousTransitionRelation_return();
         retval.start = input.LT(1);
 
         try {
-            // C:\\Documents and Settings\\jrbibers\\workspace\\edu.iu.epic.spemshell.runner\\src\\edu\\iu\\epic\\spemshell\\runner\\parsing\\ModelFile.g:146:2: ( compartmentID SPONTANEOUS_INTO compartmentID )
-            // C:\\Documents and Settings\\jrbibers\\workspace\\edu.iu.epic.spemshell.runner\\src\\edu\\iu\\epic\\spemshell\\runner\\parsing\\ModelFile.g:146:4: compartmentID SPONTANEOUS_INTO compartmentID
+            // C:\\Documents and Settings\\jrbibers\\workspace\\edu.iu.epic.spemshell.runner\\src\\edu\\iu\\epic\\spemshell\\runner\\preprocessing\\parsing\\ModelFile.g:146:2: ( compartmentID SPONTANEOUS_INTO compartmentID )
+            // C:\\Documents and Settings\\jrbibers\\workspace\\edu.iu.epic.spemshell.runner\\src\\edu\\iu\\epic\\spemshell\\runner\\preprocessing\\parsing\\ModelFile.g:146:4: compartmentID SPONTANEOUS_INTO compartmentID
             {
             pushFollow(FOLLOW_compartmentID_in_spontaneousTransitionRelation463);
             compartmentID();
@@ -1143,14 +1143,14 @@ public class ModelFileParser extends Parser {
     };
 
     // $ANTLR start "compartmentID"
-    // C:\\Documents and Settings\\jrbibers\\workspace\\edu.iu.epic.spemshell.runner\\src\\edu\\iu\\epic\\spemshell\\runner\\parsing\\ModelFile.g:148:1: compartmentID : ID ;
+    // C:\\Documents and Settings\\jrbibers\\workspace\\edu.iu.epic.spemshell.runner\\src\\edu\\iu\\epic\\spemshell\\runner\\preprocessing\\parsing\\ModelFile.g:148:1: compartmentID : ID ;
     public final ModelFileParser.compartmentID_return compartmentID() throws RecognitionException {
         ModelFileParser.compartmentID_return retval = new ModelFileParser.compartmentID_return();
         retval.start = input.LT(1);
 
         try {
-            // C:\\Documents and Settings\\jrbibers\\workspace\\edu.iu.epic.spemshell.runner\\src\\edu\\iu\\epic\\spemshell\\runner\\parsing\\ModelFile.g:149:2: ( ID )
-            // C:\\Documents and Settings\\jrbibers\\workspace\\edu.iu.epic.spemshell.runner\\src\\edu\\iu\\epic\\spemshell\\runner\\parsing\\ModelFile.g:149:4: ID
+            // C:\\Documents and Settings\\jrbibers\\workspace\\edu.iu.epic.spemshell.runner\\src\\edu\\iu\\epic\\spemshell\\runner\\preprocessing\\parsing\\ModelFile.g:149:2: ( ID )
+            // C:\\Documents and Settings\\jrbibers\\workspace\\edu.iu.epic.spemshell.runner\\src\\edu\\iu\\epic\\spemshell\\runner\\preprocessing\\parsing\\ModelFile.g:149:4: ID
             {
             match(input,ID,FOLLOW_ID_in_compartmentID477); 
 
@@ -1176,14 +1176,14 @@ public class ModelFileParser extends Parser {
     };
 
     // $ANTLR start "interactionTransitionRelation"
-    // C:\\Documents and Settings\\jrbibers\\workspace\\edu.iu.epic.spemshell.runner\\src\\edu\\iu\\epic\\spemshell\\runner\\parsing\\ModelFile.g:151:1: interactionTransitionRelation : compartmentID INTERACTED_ON_BY compartmentID INTERACTS_INTO compartmentID ;
+    // C:\\Documents and Settings\\jrbibers\\workspace\\edu.iu.epic.spemshell.runner\\src\\edu\\iu\\epic\\spemshell\\runner\\preprocessing\\parsing\\ModelFile.g:151:1: interactionTransitionRelation : compartmentID INTERACTED_ON_BY compartmentID INTERACTS_INTO compartmentID ;
     public final ModelFileParser.interactionTransitionRelation_return interactionTransitionRelation() throws RecognitionException {
         ModelFileParser.interactionTransitionRelation_return retval = new ModelFileParser.interactionTransitionRelation_return();
         retval.start = input.LT(1);
 
         try {
-            // C:\\Documents and Settings\\jrbibers\\workspace\\edu.iu.epic.spemshell.runner\\src\\edu\\iu\\epic\\spemshell\\runner\\parsing\\ModelFile.g:152:2: ( compartmentID INTERACTED_ON_BY compartmentID INTERACTS_INTO compartmentID )
-            // C:\\Documents and Settings\\jrbibers\\workspace\\edu.iu.epic.spemshell.runner\\src\\edu\\iu\\epic\\spemshell\\runner\\parsing\\ModelFile.g:152:4: compartmentID INTERACTED_ON_BY compartmentID INTERACTS_INTO compartmentID
+            // C:\\Documents and Settings\\jrbibers\\workspace\\edu.iu.epic.spemshell.runner\\src\\edu\\iu\\epic\\spemshell\\runner\\preprocessing\\parsing\\ModelFile.g:152:2: ( compartmentID INTERACTED_ON_BY compartmentID INTERACTS_INTO compartmentID )
+            // C:\\Documents and Settings\\jrbibers\\workspace\\edu.iu.epic.spemshell.runner\\src\\edu\\iu\\epic\\spemshell\\runner\\preprocessing\\parsing\\ModelFile.g:152:4: compartmentID INTERACTED_ON_BY compartmentID INTERACTS_INTO compartmentID
             {
             pushFollow(FOLLOW_compartmentID_in_interactionTransitionRelation487);
             compartmentID();
@@ -1225,16 +1225,16 @@ public class ModelFileParser extends Parser {
     };
 
     // $ANTLR start "number"
-    // C:\\Documents and Settings\\jrbibers\\workspace\\edu.iu.epic.spemshell.runner\\src\\edu\\iu\\epic\\spemshell\\runner\\parsing\\ModelFile.g:181:1: number : ( '-' )? UNSIGNED_NUMBER ;
+    // C:\\Documents and Settings\\jrbibers\\workspace\\edu.iu.epic.spemshell.runner\\src\\edu\\iu\\epic\\spemshell\\runner\\preprocessing\\parsing\\ModelFile.g:181:1: number : ( '-' )? UNSIGNED_NUMBER ;
     public final ModelFileParser.number_return number() throws RecognitionException {
         ModelFileParser.number_return retval = new ModelFileParser.number_return();
         retval.start = input.LT(1);
 
         try {
-            // C:\\Documents and Settings\\jrbibers\\workspace\\edu.iu.epic.spemshell.runner\\src\\edu\\iu\\epic\\spemshell\\runner\\parsing\\ModelFile.g:182:2: ( ( '-' )? UNSIGNED_NUMBER )
-            // C:\\Documents and Settings\\jrbibers\\workspace\\edu.iu.epic.spemshell.runner\\src\\edu\\iu\\epic\\spemshell\\runner\\parsing\\ModelFile.g:182:4: ( '-' )? UNSIGNED_NUMBER
+            // C:\\Documents and Settings\\jrbibers\\workspace\\edu.iu.epic.spemshell.runner\\src\\edu\\iu\\epic\\spemshell\\runner\\preprocessing\\parsing\\ModelFile.g:182:2: ( ( '-' )? UNSIGNED_NUMBER )
+            // C:\\Documents and Settings\\jrbibers\\workspace\\edu.iu.epic.spemshell.runner\\src\\edu\\iu\\epic\\spemshell\\runner\\preprocessing\\parsing\\ModelFile.g:182:4: ( '-' )? UNSIGNED_NUMBER
             {
-            // C:\\Documents and Settings\\jrbibers\\workspace\\edu.iu.epic.spemshell.runner\\src\\edu\\iu\\epic\\spemshell\\runner\\parsing\\ModelFile.g:182:4: ( '-' )?
+            // C:\\Documents and Settings\\jrbibers\\workspace\\edu.iu.epic.spemshell.runner\\src\\edu\\iu\\epic\\spemshell\\runner\\preprocessing\\parsing\\ModelFile.g:182:4: ( '-' )?
             int alt11=2;
             int LA11_0 = input.LA(1);
 
@@ -1243,7 +1243,7 @@ public class ModelFileParser extends Parser {
             }
             switch (alt11) {
                 case 1 :
-                    // C:\\Documents and Settings\\jrbibers\\workspace\\edu.iu.epic.spemshell.runner\\src\\edu\\iu\\epic\\spemshell\\runner\\parsing\\ModelFile.g:182:5: '-'
+                    // C:\\Documents and Settings\\jrbibers\\workspace\\edu.iu.epic.spemshell.runner\\src\\edu\\iu\\epic\\spemshell\\runner\\preprocessing\\parsing\\ModelFile.g:182:5: '-'
                     {
                     match(input,SUB,FOLLOW_SUB_in_number613); 
 

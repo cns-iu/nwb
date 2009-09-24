@@ -20,14 +20,14 @@ tokens {
 }
 
 @header {
-package edu.iu.epic.spemshell.runner.parsing.generated;
+package edu.iu.epic.spemshell.runner.preprocessing.parsing.generated;
 import java.util.LinkedHashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 }
 
-@lexer::header {package edu.iu.epic.spemshell.runner.parsing.generated;}
+@lexer::header {package edu.iu.epic.spemshell.runner.preprocessing.parsing.generated;}
 
 @members {
 private Map<String, String> parameterBindings = new LinkedHashMap<String, String>();

@@ -1,4 +1,4 @@
-package edu.iu.epic.spemshell.runner;
+package edu.iu.epic.spemshell.runner.preprocessing.parsing;
 
 import java.io.IOException;
 import java.util.Collection;
@@ -10,8 +10,8 @@ import org.antlr.runtime.CommonTokenStream;
 import org.antlr.runtime.RecognitionException;
 import org.apache.commons.collections.CollectionUtils;
 
-import edu.iu.epic.spemshell.runner.parsing.generated.ModelFileLexer;
-import edu.iu.epic.spemshell.runner.parsing.generated.ModelFileParser;
+import edu.iu.epic.spemshell.runner.preprocessing.parsing.generated.ModelFileLexer;
+import edu.iu.epic.spemshell.runner.preprocessing.parsing.generated.ModelFileParser;
 
 public class ModelFileReader {
 	private ModelFileParser parser;

@@ -20,7 +20,9 @@ import org.osgi.service.log.LogService;
 import org.osgi.service.metatype.AttributeDefinition;
 import org.osgi.service.metatype.ObjectClassDefinition;
 
-/* TODO:
+import edu.iu.epic.spemshell.runner.preprocessing.parsing.ModelFileReader;
+
+/* TODO Design plan:
  * Given a model file (file:text/model or whatever)
  * Parse it to find parameters which need to have values set by the user
  * 		Mutate them into ObjectClassDefinition.
@@ -33,13 +35,14 @@ import org.osgi.service.metatype.ObjectClassDefinition;
  * Create the appropriate .in file (and .mdl file.. patched to conform with Bruno or our style?)
  * in the default temp directory.  Make sure .in points at .mdl.
  * Also create an infections.txt?  Is this necessary?
- * Also create cfg file (runs=1 for now; outvals only as necessary).
  * Invoke the core static executable with data = the .in file.
  * Catch the output and return it.
  */
-public class SPEMShellRunnerAlgorithmFactory implements AlgorithmFactory, ParameterMutator {
+public class SPEMShellRunnerAlgorithmFactory
+		implements AlgorithmFactory, ParameterMutator {
 	public static final int DEFAULT_NUMBER_OF_DAYS = 730;
-	public static final BasicAttributeDefinition NUMBER_OF_DAYS_ATTRIBUTE_DEFINITION = new BasicAttributeDefinition(
+	public static final BasicAttributeDefinition NUMBER_OF_DAYS_ATTRIBUTE_DEFINITION =
+		new BasicAttributeDefinition(
 							"days",
 							"Number of Days",
 							"Length of the simulation (in days)",
@@ -47,24 +50,28 @@ public class SPEMShellRunnerAlgorithmFactory implements AlgorithmFactory, Parame
 							String.valueOf(DEFAULT_NUMBER_OF_DAYS));
 	
 	public static final int DEFAULT_POPULATION = 1000000;
-	public static final BasicAttributeDefinition POPULATION_ATTRIBUTE_DEFINITION = new BasicAttributeDefinition(
+	public static final BasicAttributeDefinition POPULATION_ATTRIBUTE_DEFINITION =
+		new BasicAttributeDefinition(
 							"population",
 							"Population",
 							"Initial population",
 							AttributeDefinition.INTEGER,
 							String.valueOf(DEFAULT_POPULATION));
 	
-	/* Prepended to parameter IDs so that we can recognize that kind of
+	/* Prepended to IDs so that we can recognize that kind of
 	 * parameter in the Algorithm (to the exclusion of other kinds).
 	 */
 	public static final String MODEL_PARAMETER_PREFIX = "MODEL_PARAMETER_";
 	public static final String COMPARTMENT_POPULATION_PREFIX =
 		"COMPARTMENT_POPULATION_";
 	
-	protected static BundleContext bundleContext;	
+	private static BundleContext bundleContext;	
 	protected void activate(ComponentContext componentContext) {
 		SPEMShellRunnerAlgorithmFactory.bundleContext =
 			componentContext.getBundleContext();
+	}
+	protected static BundleContext getBundleContext() {
+		return bundleContext;
 	}
 	
     @SuppressWarnings("unchecked") // TODO
@@ -74,6 +81,11 @@ public class SPEMShellRunnerAlgorithmFactory implements AlgorithmFactory, Parame
     	return new SPEMShellRunnerAlgorithm(data, parameters, context);
     }
 
+    /* Add algorithm parameters:
+     * - That always belong (like the initial total population or number of days).
+     * - For the initial population of each compartment declared in the model file. // TODO Currently only infections
+     * - For each model parameter that is needed and not already specified in the model file.
+     */
 	public ObjectClassDefinition mutateParameters(Data[] data,
 			ObjectClassDefinition oldParameters) {
 		File modelFile = (File) data[0].getData();
@@ -93,7 +105,8 @@ public class SPEMShellRunnerAlgorithmFactory implements AlgorithmFactory, Parame
 			ModelFileReader modelFileReader =
 				new ModelFileReader(modelFile.getPath());
 			
-			// TODO Catch other initial populations beyond infections, too.
+			// Add a parameter for the initial population of each compartment.
+			// TODO Also request initial populations for compartments beyond infections?
 			Collection<String> infectionCompartments =
 				modelFileReader.getInfectionCompartments();			
 			for (String infectionCompartment : infectionCompartments) {
@@ -108,6 +121,9 @@ public class SPEMShellRunnerAlgorithmFactory implements AlgorithmFactory, Parame
 								AttributeDefinition.INTEGER));
 			}			
 			
+			/* Add an algorithm parameter for each model parameter
+			 * that is needed and not already specified.
+			 */
 			Collection<String> unboundReferencedParameters =
 				modelFileReader.findUnboundReferencedParameters();			
 			for (String unboundReferencedParameter : unboundReferencedParameters) {
@@ -156,7 +172,7 @@ public class SPEMShellRunnerAlgorithmFactory implements AlgorithmFactory, Parame
 	
 	private static String createModelParametersAlgorithmParameterName(
 			String modelParameterName) {
-		return modelParameterName + " = ";
+		return "Model parameter \"" + modelParameterName + "\"";
 	}
 	
 	private static String createModelParametersAlgorithmParameterDescription(
