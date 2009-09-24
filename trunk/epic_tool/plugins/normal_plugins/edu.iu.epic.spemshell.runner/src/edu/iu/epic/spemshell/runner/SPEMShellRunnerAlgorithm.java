@@ -113,7 +113,7 @@ public class SPEMShellRunnerAlgorithm implements Algorithm {
 		File inFile = inFileMaker.make();
 		
 		InfectionsFileMaker infectionsFileMaker = new InfectionsFileMaker();
-		File infectionsFile = infectionsFileMaker.make();
+		File infectionsFile = infectionsFileMaker.make(parameters);
 		
 		Data[] spemShellData =
 			new Data[]{

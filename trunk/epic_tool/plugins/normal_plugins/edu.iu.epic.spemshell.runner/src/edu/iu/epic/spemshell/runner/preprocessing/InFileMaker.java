@@ -92,10 +92,15 @@ public class InFileMaker {
 			if (key.startsWith(
 					SPEMShellRunnerAlgorithmFactory.COMPARTMENT_POPULATION_PREFIX)) {
 				Object value = parameters.get(key);
+				
+				String parameterName =
+					key.replace(
+							SPEMShellRunnerAlgorithmFactory.COMPARTMENT_POPULATION_PREFIX,
+							"");
 			
 				inFileTemplate.setAttribute(
 						"compartmentPopulations",
-						new CompartmentPopulationFormatter(key, value));
+						new CompartmentPopulationFormatter(parameterName, value));
 			}
 		}
 		

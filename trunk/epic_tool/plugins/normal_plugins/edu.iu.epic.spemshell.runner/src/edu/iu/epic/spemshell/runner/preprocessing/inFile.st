@@ -30,8 +30,7 @@ population <population>
 susceptible <susceptibleCompartmentID>
 
 # initial compartment populations
-compartment Ia 7
-compartment It 3
+<compartmentPopulations; separator="\n">
 
 # number of days
 days <numberOfDays>
