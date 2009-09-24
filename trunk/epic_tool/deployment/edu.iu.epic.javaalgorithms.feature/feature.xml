@@ -200,13 +200,6 @@ Dr. Katy Borner (katy@indiana.edu)
          version="0.0.0"/>
 
    <plugin
-         id="org.mediavirus.parvis"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         unpack="false"/>
-
-   <plugin
          id="edu.iu.iv.modeling.tarl"
          download-size="0"
          install-size="0"

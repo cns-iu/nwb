@@ -4,10 +4,7 @@
     <top_menu name="File">
 	<menu pid= "org.cishell.reference.gui.persistence.load.FileLoad"/>
 	<menu pid="edu.iu.nwb.composite.isiloadandclean.ISILoadAndCleanAlgorithm"/>
-	<menu pid= "edu.iu.nwb.preprocessing.prefuse.beta.directoryhierarchyreader.DirectoryHierarchyReaderAlgorithm"/>
-	<menu name = "Datasets" type="group">
-		<menu pid="org.mediavirus.parvis.sampledata.pcvis_data.txt"/>									  
-	</menu>	
+	<menu pid= "edu.iu.nwb.preprocessing.prefuse.beta.directoryhierarchyreader.DirectoryHierarchyReaderAlgorithm"/>								
 	<menu type="break"/>
 	<menu pid= "org.cishell.reference.gui.persistence.save.Save"/>
 	<menu type="break"/>
@@ -182,8 +179,6 @@
 	<menu pid="edu.iu.nwb.visualization.jungnetworklayout.JUNGSpringLayout"/>
 	-->
 	<menu pid="edu.iu.nwb.visualization.prefuse.alpha.smallworld.app.SmallWorld"/>
-	<menu type="break"/>
-	<menu pid="org.mediavirus.parvis.ParallelCoordinatesAlgorithm"/>
 	<menu type="break"/>
 	<menu pid="nwb.visualization.lanet"/>	
 	</top_menu>
