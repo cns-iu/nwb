@@ -16,8 +16,10 @@ import edu.iu.epic.spemshell.runner.preprocessing.parsing.generated.ModelFilePar
 public class ModelFileReader {
 	private ModelFileParser parser;
 
-	public ModelFileReader(String modelFilePath) throws RecognitionException, IOException {
-		ModelFileLexer lex = new ModelFileLexer(new ANTLRFileStream(modelFilePath));
+	public ModelFileReader(String modelFilePath)
+			throws RecognitionException, IOException {
+		ModelFileLexer lex =
+			new ModelFileLexer(new ANTLRFileStream(modelFilePath));
        	CommonTokenStream tokens = new CommonTokenStream(lex);
        	this.parser = new ModelFileParser(tokens);
     	
@@ -32,7 +34,8 @@ public class ModelFileReader {
 		return this.parser.getReferencedParameters();
 	}
 	
-	@SuppressWarnings("unchecked") // TODO
+	// CollectionUtils is 1.4 and returns a raw Collection
+	@SuppressWarnings("unchecked")
 	public Collection<String> findUnboundReferencedParameters() {
 		return CollectionUtils.subtract(
 				getReferencedParameters(),

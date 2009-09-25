@@ -52,11 +52,12 @@ public class SPEMShellRunnerAlgorithm implements Algorithm {
 			(LogService) context.getService(LogService.class.getName());
 	}
 
-	
+	// Run SPEMShell and interpret its output.
 	public Data[] execute() throws AlgorithmExecutionException {		
 		File datFile;
 		try {
-			Data[] spemShellData = createSPEMShellInData(this.data, this.parameters);
+			Data[] spemShellData =
+				createSPEMShellInData(this.data, this.parameters);
 			datFile = executeSPEMShell(spemShellData, this.context);
 		} catch (IOException e) {
 			throw new AlgorithmExecutionException(
@@ -84,6 +85,7 @@ public class SPEMShellRunnerAlgorithm implements Algorithm {
 		}
 	}
 
+	// Execute the inner Algorithm, the SPEMShell core, and return its output.
 	private File executeSPEMShell(Data[] data, CIShellContext context)
 			throws AlgorithmExecutionException {
 		try {			
@@ -92,6 +94,10 @@ public class SPEMShellRunnerAlgorithm implements Algorithm {
 					SPEMSHELL_CORE_PID,
 					SPEMShellRunnerAlgorithmFactory.getBundleContext());
 			
+			/* We could pass in this.parameters since the argument
+			 * won't be read anyhow, but to emphasize that fact,
+			 * we instead give an empty Dictionary.
+			 */
 			Dictionary<Object, Object> emptyParameters =
 				new Hashtable<Object, Object>();
 			
@@ -110,16 +116,12 @@ public class SPEMShellRunnerAlgorithm implements Algorithm {
 		}
 	}
 
-
 	private Data[] createSPEMShellInData(
 			Data[] data, Dictionary<String, Object> parameters)
 				throws IOException, RecognitionException, ParseException {
-		File epicModelFile = (File) data[0].getData();
-		ModelFileMaker modelFileMaker =
-			new ModelFileMaker(epicModelFile, parameters);		
-		File spemShellModelFile =
-			modelFileMaker.make();
-		
+		/* Fetch the compartment initial populations
+		 * from the algorithm parameters.
+		 */
 		Map<String, Object> infectionCompartmentPopulations =
 			CIShellParameterUtilities.filterByAndStripIDPrefixes(
 					parameters,
@@ -138,9 +140,18 @@ public class SPEMShellRunnerAlgorithm implements Algorithm {
 					SPEMShellRunnerAlgorithmFactory.COMPARTMENT_POPULATION_PREFIX + 
 					SPEMShellRunnerAlgorithmFactory.RECOVERED_PREFIX);
 		
+		// Create the SPEMShell model file from the EpiC model file.
+		File epicModelFile = (File) data[0].getData();
+		ModelFileMaker modelFileMaker =
+			new ModelFileMaker(epicModelFile, parameters);		
+		File spemShellModelFile =
+			modelFileMaker.make();		
 		ModelFileReader modelFileReader =
 			new ModelFileReader(epicModelFile.getPath());
 		
+		/* Create the .in file, making sure to give it the path to the
+		 * created SPEMShell model file.
+		 */
 		InFileMaker inFileMaker =
 			new InFileMaker(
 					spemShellModelFile.getPath(),
@@ -150,11 +161,13 @@ public class SPEMShellRunnerAlgorithm implements Algorithm {
 					latentCompartmentPopulations,
 					recoveredCompartmentPopulations);
 		File inFile = inFileMaker.make();
-			
+		
+		// Create the infections file.
 		InfectionsFileMaker infectionsFileMaker = new InfectionsFileMaker();
 		File infectionsFile =
 			infectionsFileMaker.make(infectionCompartmentPopulations);
 		
+		// Put it all together to get the in data for the SPEMShell core.
 		Data[] spemShellData =
 			new Data[]{
 				new BasicData(inFile, IN_FILE_MIME_TYPE),

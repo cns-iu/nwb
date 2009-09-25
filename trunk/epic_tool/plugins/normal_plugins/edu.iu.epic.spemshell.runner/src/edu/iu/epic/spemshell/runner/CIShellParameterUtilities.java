@@ -6,6 +6,10 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class CIShellParameterUtilities {
+	/* Returns a Map containing only those entries in the given Dictionary
+	 * whose key.startsWith(prefix), and where those prefixes
+	 * are stripped off of the key before adding the entry to the Map.
+	 */
 	public static <V> Map<String, V> filterByAndStripIDPrefixes(
 			Dictionary<String, V> parameters,
 			String prefix) {
