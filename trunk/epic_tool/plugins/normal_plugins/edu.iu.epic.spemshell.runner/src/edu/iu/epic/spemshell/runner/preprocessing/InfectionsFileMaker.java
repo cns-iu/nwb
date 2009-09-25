@@ -19,14 +19,13 @@ public class InfectionsFileMaker {
 				"/edu/iu/epic/spemshell/runner/preprocessing/infectionsFile.st");
 	
 	
-	public File make(Map<String, Object> compartmentPopulations) throws IOException {		
+	public File make(Map<String, Object> infectionCompartmentPopulations)
+			throws IOException {		
 		StringTemplate template =
 			infectionsFileTemplateGroup.getInstanceOf("infectionsFile");
-		/* IMPORTANT TODO: This has no smarts about whether the given compartment
-		 * population is an infection.  Presumably only infection populations
-		 * should be given here.
-		 */
-		for (Entry<String, Object> compartmentPopulation : compartmentPopulations.entrySet()) {
+
+		for (Entry<String, Object> compartmentPopulation
+				: infectionCompartmentPopulations.entrySet()) {
 			template.setAttribute(
 					"compartmentPopulations",
 					new CompartmentPopulationFormatter(

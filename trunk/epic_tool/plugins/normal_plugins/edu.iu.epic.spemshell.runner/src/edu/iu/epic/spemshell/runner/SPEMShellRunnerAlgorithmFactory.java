@@ -26,22 +26,6 @@ import org.osgi.service.metatype.ObjectClassDefinition;
 
 import edu.iu.epic.spemshell.runner.preprocessing.parsing.ModelFileReader;
 
-/* TODO Design plan:
- * Given a model file (file:text/model or whatever)
- * Parse it to find parameters which need to have values set by the user
- * 		Mutate them into ObjectClassDefinition.
- * Also prompt for (and provide reasonable defaults for):
- * 		An initial population
- * 		Initial compartment populations (except susceptible)?
- * 		Number of days
- * 		Initial date
- * 		? Random number seed?
- * Create the appropriate .in file (and .mdl file.. patched to conform with Bruno or our style?)
- * in the default temp directory.  Make sure .in points at .mdl.
- * Also create an infections.txt?  Is this necessary?
- * Invoke the core static executable with data = the .in file.
- * Catch the output and return it.
- */
 public class SPEMShellRunnerAlgorithmFactory
 		implements AlgorithmFactory, ParameterMutator {	
 	public static final String START_DATE_ID = "startDate";
@@ -126,12 +110,17 @@ public class SPEMShellRunnerAlgorithmFactory
 				ObjectClassDefinition.REQUIRED,
 				START_DATE_ATTRIBUTE_DEFINITION);
 		
+		
+		final String seedDescription =
+			"The seed value for the pseudo-random number generator.  " +
+			"If you would like to reproduce results from an earlier run, " +
+			"use the same seed, otherwise use the given default.";
 		newParameters.addAttributeDefinition(
 				ObjectClassDefinition.REQUIRED,
 				new BasicAttributeDefinition(
 						"seed",
 						"Random number generator seed",
-						"TODO",
+						seedDescription,
 						AttributeDefinition.INTEGER,
 						String.valueOf((new Random()).nextInt())));
 		
