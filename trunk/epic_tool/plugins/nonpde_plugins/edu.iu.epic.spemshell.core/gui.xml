@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <metatype:MetaData xmlns:metatype="http://www.osgi.org/xmlns/metatype/v1.0.0">
 	<OCD name="edu.iu.epic.spemshell.core" id="edu.iu.epic.spemshell.core.gui"
-		 description="TODO">
+		 description="Simulate an infection or infections using with given epidemics model with a single-population population model.">
 		 <!-- Note that the only hard-coded parameter is a dummy.
 		 		All other parameters will be injected in #mutateParameters.
 		 		The dummy is included only so that the given OCD reference is not null.
