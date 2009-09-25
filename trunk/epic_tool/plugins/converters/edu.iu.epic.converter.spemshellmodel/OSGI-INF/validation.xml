@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<component name="edu.iu.epic.converter.spemshellmodel.SPEMShellValidatorFactory.component" immediate="false">
-	<implementation class="edu.iu.epic.converter.spemshellmodel.SPEMShellValidatorFactory"/>
+<component name="edu.iu.epic.converter.spemshellmodel.SPEMShellValidatorAlgorithm$Factory.component" immediate="false">
+	<implementation class="edu.iu.epic.converter.spemshellmodel.SPEMShellValidatorAlgorithm$Factory"/>
 	<properties entry="OSGI-INF/validation.properties"/>
 	<reference name="LOG" interface="org.osgi.service.log.LogService"/>
 	<reference name="MTS" interface="org.osgi.service.metatype.MetaTypeService"/>
