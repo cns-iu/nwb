@@ -10,10 +10,10 @@ CP = cp
 FILE = $*
 
 all: src/Model.o src/Calendar.o src/Parse.o src/input.o src/Calculator.o
-	$(CPP) $(INCLUDE) $(GSL) $(GSL_LIB) SPEM.cpp $^ -o SPEM.x
+	$(CPP) $(INCLUDE) $(GSL) $(GSL_LIB) SPEM.cpp $^ -o SPEM
 
 dbg: src/Model_dbg.o src/Calendar_dbg.o src/Parse_dbg.o src/input_dbg.o src/Calculator_dbg.o
-	$(CPP) $(DEBUG) $(INCLUDE) $(GSL) $(GSL_LIB) SPEM.cpp $^ -o SPEM_dbg.x
+	$(CPP) $(DEBUG) $(INCLUDE) $(GSL) $(GSL_LIB) SPEM.cpp $^ -o SPEM_dbg
 
 %_dbg.o: %.cpp
 	$(CPP) -c $(DEBUG) $(INCLUDE) $(GSL) $(FILE).cpp -o $(FILE)_dbg.o
@@ -33,8 +33,8 @@ test_dir:
 
 clean:
 	$(RM) -f src/*.o
-	$(RM) -f SPEM.x 
-	$(RM) -rf SPEM_dbg.x*
+	$(RM) -f SPEM 
+	$(RM) -rf SPEM_dbg*
 	$(RM) -rf runs/
 
 clean_run:
