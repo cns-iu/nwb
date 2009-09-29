@@ -12,6 +12,7 @@ import org.cishell.framework.data.DataProperty;
 
 public class SPEMShellValidatorAlgorithm implements Algorithm {
     public static final String MODEL_FILE_MIME_TYPE = "file:text/mdl";
+    
 	private String inMDLFilePath;
     
 	
@@ -29,12 +30,22 @@ public class SPEMShellValidatorAlgorithm implements Algorithm {
     	this.inMDLFilePath = (String) data[0].getData();
     }
 
-    
-    /* TODO Note that this is currently completely trivial.  No validation
-     * of any kind is performed.  This is just for testing SPEMShell integration
-     * (we need to be able to load .mdl files into the data manager).
-     */
+
     public Data[] execute() {
+    	// TODO We currently perform no validation.
+//    	// TODO This is hanging CIShell on bad inputs; not sure why.
+//    	try {
+//			new ModelFileReader(this.inMDLFilePath);
+//		} catch (RecognitionException e) {
+//			throw new AlgorithmExecutionException(
+//					"Invalid model file: " + e.getMessage(),
+//					e);
+//		} catch (IOException e) {
+//			throw new AlgorithmExecutionException(
+//					"Error accessing model file: " + e.getMessage(),
+//					e);
+//		}
+    	
 		return createOutData(new File(this.inMDLFilePath));
     }
     
