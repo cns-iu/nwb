@@ -14,15 +14,15 @@ import java.util.Map.Entry;
 
 import org.antlr.stringtemplate.StringTemplate;
 import org.antlr.stringtemplate.StringTemplateGroup;
+import org.cishell.utilities.FileUtilities;
 
 import edu.iu.epic.spemshell.runner.SPEMShellRunnerAlgorithm;
 import edu.iu.epic.spemshell.runner.SPEMShellRunnerAlgorithmFactory;
 
 public class InFileMaker {
 	public static final int DEFAULT_NUMBER_OF_SECONDARY_EVENTS = 0;
-	
-	public static final String IN_FILE_EXTENSION = "in";
-	public static final String FILENAME = "simul." + IN_FILE_EXTENSION;
+	public static final String FILENAME = "simul";
+	public static final String FILE_EXTENSION = "in";
 	
 	public static final String IN_FILE_TEMPLATE_NAME = "inFile";	
 	private static StringTemplateGroup inFileTemplateGroup =
@@ -70,15 +70,9 @@ public class InFileMaker {
 //			}
 //		}
 		
-		/* TODO Switch to FileUtilities.createTemporaryFileInDefaultTemporaryDirectory
-		 * when Bruno has modified SPEMShell to allow spaces in paths.
-		 */
-//		File inFile =
-//			FileUtilities.createTemporaryFileInDefaultTemporaryDirectory(
-//					"SPEMShell", "in");
 		File file =
-			SPEMShellRunnerAlgorithm.createTempFileWithNoSpacesInPath(
-					FILENAME);		
+			FileUtilities.createTemporaryFileInDefaultTemporaryDirectory(
+					FILENAME, FILE_EXTENSION);	
 		BufferedWriter writer = new BufferedWriter(new FileWriter(file));
 		writer.write(template.toString());
 		writer.close();		

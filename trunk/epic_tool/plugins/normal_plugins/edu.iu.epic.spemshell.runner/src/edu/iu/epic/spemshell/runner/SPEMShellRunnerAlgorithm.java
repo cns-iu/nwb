@@ -176,7 +176,7 @@ public class SPEMShellRunnerAlgorithm implements Algorithm {
 		return spemShellData;
 	}
 	
-	@SuppressWarnings("unchecked") // TODO
+	@SuppressWarnings("unchecked") // Raw Dictionary
 	private static Data[] createOutData(
 			File outDatFile, String label, Data parentData) {
 		Data outData = new BasicData(outDatFile, CSV_MIME_TYPE);
@@ -187,21 +187,6 @@ public class SPEMShellRunnerAlgorithm implements Algorithm {
 		
 		return new Data[]{ outData };
 	}
-
-	public static File createTempFileWithNoSpacesInPath(String filename) {
-		/* TODO As of September 23, SPEMShell can't handle paths containing
-		 * spaces, so it would be dangerous to create Files in the user's
-		 * default temporary file directory.  For now we hand-code paths that
-		 * we know will not contain spaces. 
-		 */
-		File file =
-			new File("Z:\\jrbibers\\SPEMShell\\", filename);
-		
-		assert (!(file.getPath().contains(" ")));
-		
-		return file;
-	}
-
 
 	public static StringTemplateGroup loadTemplates(String templatePath) {
 		return new StringTemplateGroup(

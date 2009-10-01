@@ -8,11 +8,13 @@ import java.util.Map.Entry;
 
 import org.antlr.stringtemplate.StringTemplate;
 import org.antlr.stringtemplate.StringTemplateGroup;
+import org.cishell.utilities.FileUtilities;
 
 import edu.iu.epic.spemshell.runner.SPEMShellRunnerAlgorithm;
 
 public class InfectionsFileMaker {
-	public static final String FILENAME = "infections.txt";
+	public static final String FILENAME = "infections";
+	public static final String FILE_EXTENSION = "txt";
 	
 	private static StringTemplateGroup infectionsFileTemplateGroup =
 		SPEMShellRunnerAlgorithm.loadTemplates(
@@ -33,12 +35,9 @@ public class InfectionsFileMaker {
 							compartmentPopulation.getValue()));
 		}
 		
-//		File inFile =
-//			FileUtilities.createTemporaryFileInDefaultTemporaryDirectory(
-//					"infections", "txt");
 		File file =
-			SPEMShellRunnerAlgorithm.createTempFileWithNoSpacesInPath(
-					FILENAME);
+			FileUtilities.createTemporaryFileInDefaultTemporaryDirectory(
+					FILENAME, FILE_EXTENSION);
 		FileWriter writer = new FileWriter(file);
 		writer.write(template.toString());
 		writer.close();

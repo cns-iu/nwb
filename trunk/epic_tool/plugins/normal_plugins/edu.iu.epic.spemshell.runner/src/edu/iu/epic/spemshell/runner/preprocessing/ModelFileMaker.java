@@ -13,8 +13,9 @@ import java.util.Map;
 import java.util.Set;
 import java.util.Map.Entry;
 
+import org.cishell.utilities.FileUtilities;
+
 import edu.iu.epic.spemshell.runner.CIShellParameterUtilities;
-import edu.iu.epic.spemshell.runner.SPEMShellRunnerAlgorithm;
 import edu.iu.epic.spemshell.runner.SPEMShellRunnerAlgorithmFactory;
 
 /* Converts from an EpiC-style model file to a SPEMShell-style model file.
@@ -64,9 +65,8 @@ public class ModelFileMaker {
 	
 	private File removeCompartmentDeclarations(File inFile) throws IOException {
 		File outFile =
-			SPEMShellRunnerAlgorithm.createTempFileWithNoSpacesInPath(
-					"SPEMShellModelWithoutCompartmentDeclarations" + 
-					"." + 
+			FileUtilities.createTemporaryFileInDefaultTemporaryDirectory(
+					"SPEMShellModelWithoutCompartmentDeclarations",
 					MODEL_FILE_EXTENSION);
 		BufferedWriter writer =	new BufferedWriter(new FileWriter(outFile));
 		
@@ -90,9 +90,8 @@ public class ModelFileMaker {
 	
 	private File insertParameterDefinitions(File inFile) throws IOException {
 		File file =
-			SPEMShellRunnerAlgorithm.createTempFileWithNoSpacesInPath(
-					"SPEMShellModelWithParameterDefinitions" + 
-					"." + 
+			FileUtilities.createTemporaryFileInDefaultTemporaryDirectory(
+					"SPEMShellModelWithParameterDefinitions",
 					MODEL_FILE_EXTENSION);
 		BufferedWriter writer =	new BufferedWriter(new FileWriter(file));
 		
