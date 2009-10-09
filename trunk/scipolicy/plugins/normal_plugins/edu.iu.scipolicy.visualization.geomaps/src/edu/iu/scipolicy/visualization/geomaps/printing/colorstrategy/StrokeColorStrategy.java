@@ -17,6 +17,7 @@ public class StrokeColorStrategy extends ColorStrategy {
 	}
 	
 
+	@Override
 	public String toPostScript() {
 		StringBuilder builder = new StringBuilder();
 		

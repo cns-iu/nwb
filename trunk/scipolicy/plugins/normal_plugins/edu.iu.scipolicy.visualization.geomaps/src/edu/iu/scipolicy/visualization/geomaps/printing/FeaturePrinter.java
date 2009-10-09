@@ -30,9 +30,9 @@ import edu.iu.scipolicy.visualization.geomaps.printing.colorstrategy.NullColorSt
 import edu.iu.scipolicy.visualization.geomaps.projection.GeometryProjector;
 
 public class FeaturePrinter {
-	public static final Color DEFAULT_FEATURE_COLOR = Color.WHITE;	
-	public static final double BORDER_BRIGHTNESS = 0.6;
-	public static final double BORDER_LINE_WIDTH = 0.001;
+	public static final Color DEFAULT_FEATURE_COLOR = Color.WHITE;
+	public static final double BORDER_BRIGHTNESS = 0.7;
+	public static final double BORDER_LINE_WIDTH = 0.8;
 	public static final String INDENT = "  ";
 	
 	private FeatureCollection<SimpleFeatureType, SimpleFeature> featureCollection;
@@ -79,10 +79,8 @@ public class FeaturePrinter {
 
 			printFeature(out, feature, featureColorMap);
 		}
-		if (iterator != null) {
-			// Quoth GeoTools: "YOU MUST CLOSE THE ITERATOR!"
-			iterator.close();
-		}
+		// Quoth GeoTools: "YOU MUST CLOSE THE ITERATOR!"
+		iterator.close();
 
 		out.write("grestore" + "\n");
 

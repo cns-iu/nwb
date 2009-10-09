@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.antlr.stringtemplate.StringTemplate;
-import org.cishell.framework.algorithm.AlgorithmExecutionException;
 
 import edu.iu.scipolicy.visualization.geomaps.GeoMapsAlgorithm;
 import edu.iu.scipolicy.visualization.geomaps.utility.Constants;
@@ -27,7 +26,7 @@ public class Legend {
 		this.hasPrintedDefinitions = false;
 	}
 
-	public String toPostScript() throws AlgorithmExecutionException {
+	public String toPostScript() {
 		String s = "";
 
 		if (!hasPrintedDefinitions) {

@@ -19,10 +19,10 @@ public class LinearInterpolator implements Interpolator<Double> {
 			throws ZeroLengthInterpolatorInputRangeException {
 		if (inRange.getMin().equals(inRange.getMax())) {
 			throw new ZeroLengthInterpolatorInputRangeException(inRange);
-		} else {
-			this.inRange = inRange;
-			this.outRange = outRange;
 		}
+
+		this.inRange = inRange;
+		this.outRange = outRange;
 	}
 	
 	public List<Double> interpolate(List<Double> values) {

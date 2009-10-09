@@ -24,6 +24,7 @@ public class PageHeader {
 			pageHeightInPoints - Constants.PAGE_MARGIN_SIZE_IN_POINTS - FONT_SIZE;
 	}	
 	
+	@Override
 	public String toString() {
 		String s = "";
 		

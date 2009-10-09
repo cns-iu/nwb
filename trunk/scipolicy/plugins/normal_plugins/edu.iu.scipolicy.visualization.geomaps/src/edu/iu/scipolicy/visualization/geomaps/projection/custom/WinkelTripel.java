@@ -5,7 +5,6 @@ import java.awt.geom.Point2D;
 import org.geotools.metadata.iso.citation.Citations;
 import org.geotools.referencing.NamedIdentifier;
 import org.geotools.referencing.operation.projection.MapProjection;
-import org.geotools.referencing.operation.projection.ProjectionException;
 import org.opengis.parameter.ParameterDescriptor;
 import org.opengis.parameter.ParameterDescriptorGroup;
 import org.opengis.parameter.ParameterNotFoundException;
@@ -50,12 +49,14 @@ public class WinkelTripel extends MapProjection {
 			super(PARAMETERS);
 		}
 
-		@SuppressWarnings("unchecked") // TODO
+		@SuppressWarnings("unchecked") // Raw Class
+		@Override
 		public Class getOperationType() {
 			// Not actually cylindrical
 			return CylindricalProjection.class;
 		}
 
+		@Override
 		public MathTransform createMathTransform(
 				final ParameterValueGroup parameters)
 					throws ParameterNotFoundException {
@@ -69,8 +70,9 @@ public class WinkelTripel extends MapProjection {
 		super(parameters);
 	}
 
+	@Override
 	protected Point2D transformNormalized(
-			double lam, double phi, Point2D ptDst) throws ProjectionException {		
+			double lam, double phi, Point2D ptDst) {		
 		double c, d;
 		double x, y;
 		
@@ -95,8 +97,9 @@ public class WinkelTripel extends MapProjection {
 		return ptDst;
 	}
 
+	@Override
 	protected Point2D inverseTransformNormalized(
-			double x, double y, Point2D ptDst) throws ProjectionException {
+			double x, double y, Point2D ptDst) {
 		System.out.println(
 				"Warning: Winkel Tripel has been asked for an inverse "
 				+ "transform.  This code has not been implemented!");

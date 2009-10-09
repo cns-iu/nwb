@@ -29,6 +29,7 @@ public class GeoMapsCirclesFactory extends GeoMapsAlgorithmFactory {
 		return new CircleAnnotationMode();
 	}
 
+	@Override
 	public ObjectClassDefinition mutateParameters(Data[] data,
 			ObjectClassDefinition oldParameters) {
 		Data inData = data[0];

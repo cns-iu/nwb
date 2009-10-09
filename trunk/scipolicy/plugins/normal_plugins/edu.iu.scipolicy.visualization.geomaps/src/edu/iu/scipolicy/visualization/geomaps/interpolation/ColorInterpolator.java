@@ -84,7 +84,8 @@ public class ColorInterpolator implements Interpolator<Color> {
 			return Averager.mean(inversionSamples.toArray(new Double[0]));
 		} else {
 			String message = 
-				"Unexpected error: Inverting interpolation of the Color " + color
+				"Unexpected error: Inverting interpolation of the Color "
+				+ color
 				+ " generated intolerable differences between the pre-image "
 				+ "red, green, and blue dimensions.  These values should be "
 				+ "nearly equal, up to floating-point arithmetic error.  ";

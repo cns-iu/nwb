@@ -53,11 +53,11 @@ public class RegionAnnotationMode extends AnnotationMode {
      * 5: Make region color LegendComponent
 	 * 6: Apply this annotation (the List<Circle> and the LegendComponents) to postScriptWriter
 	 */
-	@SuppressWarnings("unchecked") // TODO
+	@Override
 	public void applyAnnotations(
 			ShapefileToPostScriptWriter shapefileToPostScript,
 			Table inTable,
-			Dictionary parameters)
+			Dictionary<String, Object> parameters)
 				throws AlgorithmExecutionException {
 		String nameAttribute = (String) parameters.get(FEATURE_NAME_ID);
 		String colorValueAttribute = (String) parameters.get(FEATURE_COLOR_QUANTITY_ID);

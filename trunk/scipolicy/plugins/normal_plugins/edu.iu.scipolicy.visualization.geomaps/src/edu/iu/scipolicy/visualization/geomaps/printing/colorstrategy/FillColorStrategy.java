@@ -9,7 +9,7 @@ public class FillColorStrategy extends ColorStrategy {
 		this.color = color;
 	}
 	
-	
+	@Override
 	public String toPostScript() {
 		StringBuilder builder = new StringBuilder();
 		

@@ -18,7 +18,10 @@ public class GeoMapsRegionsFactory extends GeoMapsAlgorithmFactory {
 		return new RegionAnnotationMode();
 	}
 	
-	public ObjectClassDefinition mutateParameters(Data[] data, ObjectClassDefinition oldParameters) {
+	@Override
+	public ObjectClassDefinition mutateParameters(
+			Data[] data,
+			ObjectClassDefinition oldParameters) {
 		Data inData = data[0];
 		Table table = (Table)inData.getData();
 		

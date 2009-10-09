@@ -5,7 +5,6 @@ import java.awt.geom.Point2D;
 import org.geotools.metadata.iso.citation.Citations;
 import org.geotools.referencing.NamedIdentifier;
 import org.geotools.referencing.operation.projection.MapProjection;
-import org.geotools.referencing.operation.projection.ProjectionException;
 import org.opengis.parameter.ParameterDescriptor;
 import org.opengis.parameter.ParameterDescriptorGroup;
 import org.opengis.parameter.ParameterNotFoundException;
@@ -59,12 +58,14 @@ public class EckertIV extends MapProjection {
 			super(PARAMETERS);
 		}
 
-		@SuppressWarnings("unchecked") // TODO
+		@SuppressWarnings("unchecked") // Raw Class
+		@Override
 		public Class getOperationType() {
 			// Actually, pseudo-cylindrical
 			return CylindricalProjection.class;
 		}
 
+		@Override
 		public MathTransform createMathTransform(
 				final ParameterValueGroup parameters)
 					throws ParameterNotFoundException {
@@ -78,8 +79,9 @@ public class EckertIV extends MapProjection {
 		super(parameters);
 	}
 
+	@Override
 	protected Point2D transformNormalized(
-			double lam, double phi, Point2D ptDst) throws ProjectionException {		
+			double lam, double phi, Point2D ptDst) {		
 		double p = C_p * Math.sin(phi);
 		double V = phi * phi;
 		phi *= 0.895168 + V * ( 0.0218849 + V * 0.00826809 );
@@ -118,8 +120,9 @@ public class EckertIV extends MapProjection {
 	 * use for it, but implementation is necessary and we may as well fill in
 	 * what should be the correct code.
 	 */
+	@Override
 	protected Point2D inverseTransformNormalized(
-			double x, double y, Point2D ptDst) throws ProjectionException {
+			double x, double y, Point2D ptDst) {
 		System.out.println(
 				"Warning: Eckert IV has been asked for an inverse "
 				+ "transform.  This code has not been tested!");

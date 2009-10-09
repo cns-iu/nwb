@@ -66,7 +66,8 @@ public class ShapefileFeatureReader {
 	}
 
 	private DataStore getDataStore(URL shapefileURL) throws IOException {
-		Map<String, Serializable> connectParameters = new HashMap<String, Serializable>();
+		Map<String, Serializable> connectParameters =
+			new HashMap<String, Serializable>();
 
 		connectParameters.put("url", shapefileURL);
 		connectParameters.put("create spatial index", true);

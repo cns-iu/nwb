@@ -36,9 +36,9 @@ public class UnsignedZeroDecimalFormat {
 		
 		if (NEGATIVE_ZERO.equals(formattedValue)) {
 			return UNSIGNED_ZERO;
-		} else {
-			return formattedValue;
 		}
+
+		return formattedValue;
 	}
 	
 	/* Create a DecimalFormat and add "fraction digits" (up to ATTEMPT_LIMIT)

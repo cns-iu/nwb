@@ -8,6 +8,7 @@ public class RelativeDifferenceLimit extends BinaryCondition<Double> {
 	}
 	
 	// "Are x1 and x2 equal, up to the given tolerance?"
+	@Override
 	public boolean isSatisfiedBy(Double x1, Double x2) {
 		return (relativeDifference(x1, x2) <= tolerance);
 	}

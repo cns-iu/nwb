@@ -1,7 +1,5 @@
 package edu.iu.scipolicy.visualization.geomaps.printing;
 
-import java.io.IOException;
-
 import edu.iu.scipolicy.visualization.geomaps.utility.Constants;
 
 /* DSC = Document Structuring Conventions, the standards that a piece of
@@ -12,7 +10,7 @@ import edu.iu.scipolicy.visualization.geomaps.utility.Constants;
  */
 public class DSCProlog {
 	public static final String CREATOR_DSC_COMMENT_VALUE =
-		"Geo Maps plug-in for the Sci² Tool, a product of the Cyberinfrastructure " +
+		"Geo Maps plug-in for the Sciï¿½ Tool, a product of the Cyberinfrastructure " +
 		"for Network Science Center (http://cns.slis.indiana.edu) at Indiana University";
 	public static final int NUMBER_OF_PAGES_DSC_COMMENT_VALUE = 1;
 	private static final String PAGE_ORDER_DSC_COMMENT_VALUE = "Ascend";
@@ -27,7 +25,7 @@ public class DSCProlog {
 	}
 	
 	
-	public String toPostScript() throws IOException {
+	public String toPostScript() {
 		String s = "";
 		
 		s += ("%%Creator: " + CREATOR_DSC_COMMENT_VALUE + "\n");
@@ -47,7 +45,7 @@ public class DSCProlog {
 	 * repositioned.
 	 * Should work when the legend is below the map.
 	 */
-	private String createBoundingBoxCommentValue() throws IOException {
+	private String createBoundingBoxCommentValue() {
 //		double lowerLeftX = Math.min(mapBoundingBox.getLowerLeftX(), legend.getLowerLeftX());
 //		double lowerLeftY = Math.min(mapBoundingBox.getLowerLeftY(), legend.getLowerLeftY());
 //		double upperRightX = mapBoundingBox.getUpperRightX();

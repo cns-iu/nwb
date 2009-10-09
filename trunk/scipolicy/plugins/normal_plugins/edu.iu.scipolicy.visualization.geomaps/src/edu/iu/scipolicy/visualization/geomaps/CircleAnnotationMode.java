@@ -84,11 +84,11 @@ public class CircleAnnotationMode extends AnnotationMode {
 	 * 5: Zip the area and color data together to make the List<Circle>
 	 * 6: Apply this annotation (the List<Circle> and the LegendComponents) to postScriptWriter
 	 */
-	@SuppressWarnings("unchecked") // TODO
+	@Override
 	public void applyAnnotations(
 			ShapefileToPostScriptWriter postScriptWriter,
 			Table inTable,
-			Dictionary parameters)
+			Dictionary<String, Object> parameters)
 				throws AlgorithmExecutionException {
 		// Read parameters
 		String latitudeAttribute = (String) parameters.get(LATITUDE_ID);
@@ -179,7 +179,7 @@ public class CircleAnnotationMode extends AnnotationMode {
 			} catch (ZeroLengthInterpolatorInputRangeException e) {
 				GeoMapsAlgorithm.logger.log(
 						LogService.LOG_WARNING,
-						"Can't visualize data with circle outer colors due to: "
+						"Cannot visualize data with circle outer colors due to: "
 						+ e.getMessage(),
 						e);
 				isUsingOuterColor = false;
@@ -212,7 +212,8 @@ public class CircleAnnotationMode extends AnnotationMode {
 				}
 				
 				ColorStrategy innerColorStrategy = new NullColorStrategy();
-				if (isUsingInnerColor) {
+				if (isUsingInnerColor
+						&& (innerColorQuantityInterpolator != null)) {
 					double innerColorValue =
 						NumberUtilities.interpretObjectAsDouble(
 								row.get(innerColorValueAttribute));
@@ -230,7 +231,8 @@ public class CircleAnnotationMode extends AnnotationMode {
 				}
 				
 				ColorStrategy outerColorStrategy = new StrokeColorStrategy();
-				if (isUsingOuterColor) {
+				if (isUsingOuterColor
+						&& (outerColorQuantityInterpolator != null)) {
 					double outerColorValue =
 						NumberUtilities.interpretObjectAsDouble(
 								row.get(outerColorValueAttribute));

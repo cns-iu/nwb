@@ -43,7 +43,7 @@ import edu.iu.scipolicy.visualization.geomaps.utility.Constants;
 import edu.iu.scipolicy.visualization.geomaps.utility.ShapefileFeatureReader;
 
 public class ShapefileToPostScriptWriter {	
-	public static final String OUTPUT_FILE_EXTENSION = "eps";
+	public static final String OUTPUT_FILE_EXTENSION = "ps";
 	
 	public static final String TITLE = "Geo Map";
 	public static final String INDENT = "  ";
@@ -224,10 +224,8 @@ public class ShapefileToPostScriptWriter {
 				}
 			}
 		}
-		if (it != null) {
-			// YOU MUST CLOSE THE ITERATOR!
-			it.close();
-		}
+		// YOU MUST CLOSE THE ITERATOR!
+		it.close();
 
 		return new MapDisplayer(dataMinX, dataMinY, dataMaxX, dataMaxY);
 	}
@@ -239,8 +237,7 @@ public class ShapefileToPostScriptWriter {
 		out.write("%!PS-Adobe-3.0 EPSF-3.0" + "\n");
 		out.write((new DSCProlog(outputPSFileName, pageHeightInPoints)).toPostScript());
 		
-		/* TODO
-		 * We're using setpagedevice to force page dimensions
+		/* TODO We're using setpagedevice to force page dimensions
 		 * corresponding to US Letter landscape.  This command
 		 * is forbidden in Encapsulated PostScript, so if we
 		 * wish to maintain that format, we'll need a different

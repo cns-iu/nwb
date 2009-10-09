@@ -13,11 +13,10 @@ import edu.iu.scipolicy.visualization.geomaps.scaling.Scaler;
 import edu.iu.scipolicy.visualization.geomaps.utility.Range;
 
 public abstract class AnnotationMode {
-	@SuppressWarnings("unchecked") // TODO
 	public abstract void applyAnnotations(
 			ShapefileToPostScriptWriter postScriptWriter,
 			Table inTable,
-			Dictionary parameters)
+			Dictionary<String, Object> parameters)
 				throws AlgorithmExecutionException;
 
 	public static Range<Double> calculateScalableRangeOverColumn(

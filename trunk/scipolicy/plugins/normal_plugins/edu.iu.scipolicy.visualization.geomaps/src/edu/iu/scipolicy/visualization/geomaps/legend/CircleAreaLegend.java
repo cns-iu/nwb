@@ -7,22 +7,25 @@ import edu.iu.scipolicy.visualization.geomaps.printing.Circle;
 import edu.iu.scipolicy.visualization.geomaps.utility.Constants;
 import edu.iu.scipolicy.visualization.geomaps.utility.Range;
 
-/* Create PostScript to draw two Circles representing the extrema of the
- * interpolated range and label each with the respective value in the raw
- * range (which is intended to be the respective value before scalingLabel and
- * before interpolation).
+/* Create PostScript to draw three Circles representing the extrema (minimum,
+ * midpoint, and maximum) of the interpolated range and label each with the
+ * respective value in the raw range (which is intended to be the respective
+ * value before scalingLabel and before interpolation).
  * 
  * This legend component has two captions:
  * - typeLabel would be like "Circle Area"
  * - keyLabel would be like "Number of papers published"
  */
 public class CircleAreaLegend implements LegendComponent {
+	/* Brightnesses correspond to PostScript's setgray command.
+	 * 0 is black, 1 is white.
+	 */
 	public static final double CIRCLE_BRIGHTNESS = 0.5;
 	public static final double EXTREMA_LABEL_BRIGHTNESS = 0.0;
 	public static final double EXTREMA_LABEL_FONT_SIZE = 8;
 	public static final double TYPE_LABEL_BRIGHTNESS = 0.0;
 	public static final double TYPE_LABEL_FONT_SIZE = 10;
-	public static final double SCALING_LABEL_BRIGHTNESS = 0.5;
+	public static final double SCALING_LABEL_BRIGHTNESS = 0.25;
 	public static final double KEY_LABEL_BRIGHTNESS = 0.5;
 	public static final double KEY_LABEL_FONT_SIZE = 8;
 	public static final String FONT_NAME = Constants.FONT_NAME;
