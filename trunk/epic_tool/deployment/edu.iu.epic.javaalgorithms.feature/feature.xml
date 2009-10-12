@@ -31,14 +31,6 @@ Bruce Herr (bh2@bh2.net)
 Dr. Katy Borner (katy@indiana.edu)
    </license>
 
-   <includes
-         id="edu.iu.epic.converter.feature"
-         version="0.0.0"/>
-
-   <requires>
-      <import feature="edu.iu.epic.converter.feature" version="1.0.0"/>
-   </requires>
-
    <plugin
          id="edu.iu.nwb.converter.edgelist"
          download-size="0"
@@ -679,8 +671,8 @@ Dr. Katy Borner (katy@indiana.edu)
          install-size="0"
          version="0.0.0"
          unpack="false"/>
-         
-         <plugin
+
+   <plugin
          id="edu.iu.nwb.converter.edgelist"
          download-size="0"
          install-size="0"
@@ -833,6 +825,5 @@ Dr. Katy Borner (katy@indiana.edu)
          install-size="0"
          version="0.0.0"
          unpack="false"/>
-         -->
 
 </feature>
