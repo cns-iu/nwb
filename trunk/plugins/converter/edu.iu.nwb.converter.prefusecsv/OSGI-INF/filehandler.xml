@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <component name="edu.iu.nwb.converter.prefusecsv.writer.PrefuseCsvFileHandler.component" immediate="false">
-	<implementation class="edu.iu.nwb.converter.prefusecsv.writer.PrefuseCsvFileHandler"/>
+	<implementation class="edu.iu.nwb.converter.prefusecsv.writer.PrefuseCsvFileHandler$Factory"/>
 	<properties entry="OSGI-INF/filehandler.properties"/>
 	<reference name="LOG" interface="org.osgi.service.log.LogService"/>
 	<reference name="MTS" interface="org.osgi.service.metatype.MetaTypeService"/>

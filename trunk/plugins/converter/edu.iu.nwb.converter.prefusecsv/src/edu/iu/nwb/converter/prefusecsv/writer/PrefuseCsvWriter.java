@@ -9,10 +9,10 @@ import java.util.Dictionary;
 import org.cishell.framework.CIShellContext;
 import org.cishell.framework.algorithm.Algorithm;
 import org.cishell.framework.algorithm.AlgorithmExecutionException;
+import org.cishell.framework.algorithm.AlgorithmFactory;
 import org.cishell.framework.data.BasicData;
 import org.cishell.framework.data.Data;
 import org.cishell.utilities.FileUtilities;
-import org.osgi.service.log.LogService;
 
 import prefuse.data.Table;
 import prefuse.data.io.DataIOException;
@@ -25,8 +25,13 @@ public class PrefuseCsvWriter implements Algorithm {
 	private Table inTable;
     
 	
-    public PrefuseCsvWriter(
-    		Data[] data, Dictionary parameters, CIShellContext context) {
+	public static class Factory implements AlgorithmFactory {
+	    public Algorithm createAlgorithm(
+	    		Data[] data, Dictionary parameters, CIShellContext context) {
+	        return new PrefuseCsvWriter(data);
+	    }
+	}
+    public PrefuseCsvWriter(Data[] data) {
 		this.inTable = (Table) data[0].getData();
     }
 

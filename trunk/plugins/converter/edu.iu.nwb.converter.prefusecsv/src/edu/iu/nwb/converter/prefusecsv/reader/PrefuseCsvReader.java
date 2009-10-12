@@ -8,6 +8,7 @@ import java.util.Dictionary;
 import org.cishell.framework.CIShellContext;
 import org.cishell.framework.algorithm.Algorithm;
 import org.cishell.framework.algorithm.AlgorithmExecutionException;
+import org.cishell.framework.algorithm.AlgorithmFactory;
 import org.cishell.framework.data.BasicData;
 import org.cishell.framework.data.Data;
 import org.cishell.framework.data.DataProperty;
@@ -22,10 +23,17 @@ import prefuse.data.io.DataIOException;
 public class PrefuseCsvReader implements Algorithm {
     private File inCSVFile;
     
-    public PrefuseCsvReader(
-    		Data[] data, Dictionary parameters, CIShellContext context) {
+    
+    public static class Factory implements AlgorithmFactory {
+        public Algorithm createAlgorithm(
+        		Data[] data, Dictionary parameters, CIShellContext context) {
+            return new PrefuseCsvReader(data);
+        }
+    }
+    public PrefuseCsvReader(Data[] data) {
         this.inCSVFile = (File) data[0].getData();
     }
+    
 
     public Data[] execute() throws AlgorithmExecutionException {
     	try {

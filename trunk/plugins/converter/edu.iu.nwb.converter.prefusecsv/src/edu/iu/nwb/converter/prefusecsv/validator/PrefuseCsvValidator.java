@@ -6,6 +6,7 @@ import java.util.Dictionary;
 import org.cishell.framework.CIShellContext;
 import org.cishell.framework.algorithm.Algorithm;
 import org.cishell.framework.algorithm.AlgorithmExecutionException;
+import org.cishell.framework.algorithm.AlgorithmFactory;
 import org.cishell.framework.data.BasicData;
 import org.cishell.framework.data.Data;
 import org.cishell.framework.data.DataProperty;
@@ -13,16 +14,22 @@ import org.cishell.framework.data.DataProperty;
 import prefuse.data.io.CSVTableReader;
 import prefuse.data.io.DataIOException;
 
-public class PrefuseCsvValidationAlgorithm implements Algorithm {
+public class PrefuseCsvValidator implements Algorithm {
 	public static final String CSV_MIME_TYPE = "file:text/csv";
 	
 	private String inCSVFilePath;
 
 	
-	public PrefuseCsvValidationAlgorithm() {}
-	
-	public PrefuseCsvValidationAlgorithm(Data[] data,
-			Dictionary parameters, CIShellContext ciShellContext) {
+	public static class Factory implements AlgorithmFactory {
+		public Algorithm createAlgorithm(
+				Data[] data, Dictionary parameters, CIShellContext context) {
+			return new PrefuseCsvValidator(data);
+		}
+	}
+	public PrefuseCsvValidator() {
+		// For edu.iu.nwb.converter.prefusescopus.ScopusValidatorAlgorithm
+	}	
+	public PrefuseCsvValidator(Data[] data) {
 		this.inCSVFilePath = (String) data[0].getData();		
 	}
 
