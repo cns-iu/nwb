@@ -5,11 +5,13 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.URL;
 import java.util.Dictionary;
+import java.util.Hashtable;
 
 import org.antlr.stringtemplate.StringTemplateGroup;
 import org.cishell.framework.CIShellContext;
 import org.cishell.framework.algorithm.Algorithm;
 import org.cishell.framework.algorithm.AlgorithmExecutionException;
+import org.cishell.framework.algorithm.AlgorithmFactory;
 import org.cishell.framework.data.BasicData;
 import org.cishell.framework.data.Data;
 import org.cishell.framework.data.DataProperty;
@@ -17,6 +19,8 @@ import org.opengis.referencing.operation.TransformException;
 import org.osgi.service.log.LogService;
 
 import prefuse.data.Table;
+import edu.iu.nwb.converter.prefusecsv.reader.PrefuseCsvReader;
+import edu.iu.scipolicy.visualization.geomaps.testing.LogOnlyCIShellContext;
 import edu.iu.scipolicy.visualization.geomaps.utility.Constants;
 
 public class GeoMapsAlgorithm implements Algorithm {
@@ -122,95 +126,61 @@ public class GeoMapsAlgorithm implements Algorithm {
 	}
 
 
-//	public static void main(String[] args) {
-////		File outFile = null;
-//		
+	public static void main(String[] args) {
+//		File outFile = null;
+		
+		try {
+			URL testFileURL =
+				GeoMapsAlgorithm.class.getResource(TEST_DATUM_PATH);
+			File inFile = new File(testFileURL.toURI());
+			Data data = new BasicData(inFile, CSV_MIME_TYPE);
+
+			PrefuseCsvReader prefuseCSVReader =
+				new PrefuseCsvReader(new Data[]{ data });
+			Data[] convertedData = prefuseCSVReader.execute();
+
+			// Most of these will vary with the test file, naturally.
+			Dictionary<String, Object> parameters =
+				new Hashtable<String, Object>();
+			parameters.put("shapefile", "Countries");
+			parameters.put("projection", "Eckert IV");
+			parameters.put("authorName", "Joseph Biberstine");
+			parameters.put("latitude", "Latitude");
+			parameters.put("longitude", "Longitude");
+			parameters.put("circleArea", "Population (thousands)");
+			parameters.put("circleAreaScaling", "Linear");
+			parameters.put("outerColorQuantity", "GDP (billions USD)");
+			parameters.put("outerColorScaling", "Linear");
+			parameters.put("outerColorRange", "Yellow to Blue");
+			parameters.put("innerColorQuantity", "Population (thousands)");
+			parameters.put("innerColorScaling", "Linear");
+			parameters.put("innerColorRange", "Green to Red");
+
+			AlgorithmFactory algorithmFactory =
+				new GeoMapsCirclesFactory();
+			CIShellContext ciContext = new LogOnlyCIShellContext();
+			Algorithm algorithm =
+				algorithmFactory.createAlgorithm(
+						convertedData, parameters, ciContext);
+
+			System.out.println("Executing.. ");
+			/*Data[] outData = */algorithm.execute();
+//			outFile = (File) outData[0].getData();
+			System.out.println(".. Done.");
+		} catch (Exception e) {
+			e.printStackTrace();
+			System.exit(-1);
+		}
+		
 //		try {
-//			File inFile = loadTestFile();
-//			Data data = new BasicData(inFile, CSV_MIME_TYPE);
-//
-//			CIShellContext ciContext = createDummyCIShellContext();
-//
-//			PrefuseCsvReader prefuseCSVReader =
-//				new PrefuseCsvReader(
-//						new Data[]{ data },
-//						new Hashtable<String, Object>(),
-//						ciContext);
-//			Data[] convertedData = prefuseCSVReader.execute();
-//
-//			Dictionary<String, Object> parameters =
-//				new Hashtable<String, Object>();
-//			parameters.put("shapefile", "Countries");
-//			parameters.put("projection", "Eckert IV");
-//			parameters.put("authorName", "Joseph Biberstine");
-//			parameters.put("latitude", "Latitude");
-//			parameters.put("longitude", "Longitude");
-//			parameters.put("circleArea", "Population (thousands)");
-//			parameters.put("circleAreaScaling", "Linear");
-//			parameters.put("outerColorQuantity", "GDP (billions USD)");
-//			parameters.put("outerColorScaling", "Linear");
-//			parameters.put("outerColorRange", "Yellow to Blue");
-//			parameters.put("innerColorQuantity", "Population (thousands)");
-//			parameters.put("innerColorScaling", "Linear");
-//			parameters.put("innerColorRange", "Green to Red");
-//
-//			AlgorithmFactory algorithmFactory =
-//				new GeoMapsCirclesFactory();
-//			Algorithm algorithm =
-//				algorithmFactory.createAlgorithm(
-//						convertedData, parameters, ciContext);
-//
-//			System.out.println("Executing.. ");
-//			/*Data[] outData = */algorithm.execute();
-////			outFile = (File) outData[0].getData();
+//			System.out.println("Opening output..");
+//			Desktop.getDesktop().open(outFile);
 //			System.out.println(".. Done.");
-//		} catch (Exception e) {
+//		} catch (IOException e) {
 //			e.printStackTrace();
 //			System.exit(-1);
 //		}
-//		
-////		try {
-////			System.out.println("Opening output..");
-////			Desktop.getDesktop().open(outFile);
-////			System.out.println(".. Done.");
-////		} catch (IOException e) {
-////			e.printStackTrace();
-////			System.exit(-1);
-////		}
-//
-//		System.exit(0);
-//	}	
-//	private static File loadTestFile() throws URISyntaxException {
-//		URL url = GeoMapsAlgorithm.class.getResource(TEST_DATUM_PATH);
-//	    return new File(url.toURI());
-//	}
-//	/* A CIShellContext whose getService always returns a LogService
-//	 * that puts all messages on System.err.
-//	 */
-//	private static CIShellContext createDummyCIShellContext() {
-//		return new CIShellContext() {
-//			public Object getService(String service) {
-//				return new LogService() {
-//					public void log(int level, String message) {
-//						System.err.println(message);
-//					}
-//
-//					public void log(int level, String message,
-//							Throwable exception) {
-//						log(level, message);
-//					}
-//
-//					public void log(ServiceReference sr, int level,
-//							String message) {
-//						log(level, message);
-//					}
-//
-//					public void log(ServiceReference sr, int level,
-//							String message, Throwable exception) {
-//						log(level, message);
-//					}
-//				};
-//			}
-//		};
-//	}
+
+		System.exit(0);
+	}
 }
