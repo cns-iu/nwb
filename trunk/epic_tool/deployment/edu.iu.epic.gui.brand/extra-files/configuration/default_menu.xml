@@ -4,7 +4,12 @@
     <top_menu name="File">
 	<menu pid= "org.cishell.reference.gui.persistence.load.FileLoad"/>
 	<menu pid="edu.iu.nwb.composite.isiloadandclean.ISILoadAndCleanAlgorithm"/>
-	<menu pid= "edu.iu.nwb.preprocessing.prefuse.beta.directoryhierarchyreader.DirectoryHierarchyReaderAlgorithm"/>								
+	<menu pid= "edu.iu.nwb.preprocessing.prefuse.beta.directoryhierarchyreader.DirectoryHierarchyReaderAlgorithm"/>
+	<!-- 
+	<menu name = "Datasets" type="group">
+		<menu pid="org.mediavirus.parvis.sampledata.pcvis_data.txt"/>									  
+	</menu>	
+	 -->
 	<menu type="break"/>
 	<menu pid= "org.cishell.reference.gui.persistence.save.Save"/>
 	<menu type="break"/>
@@ -24,6 +29,11 @@
     </top_menu>
     
     <top_menu name="Preprocessing">
+    <menu pid="edu.iu.scipolicy.filtering.topnpercent.TopNPercentAlgorithm"/>
+    <menu pid="edu.iu.scipolicy.filtering.topn.TopNAlgorithm"/>
+   	<menu pid="edu.iu.nwb.preprocessing.text.normalization.StandardNormalyzer"/>
+	<menu pid="edu.iu.nwb.preprocessing.timeslice.Slice"/>
+	<menu type="break"/>
     <menu pid="edu.iu.nwb.preprocessing.extractnodesandedges.extractnodes.top.ExtractTopNodesAlgorithm"/>
     <menu pid="edu.iu.nwb.preprocessing.extractnodesandedges.extractnodes.abovebelow.ExtractNodesAboveBelowAlgorithm"/>	
  	<!--  
@@ -36,7 +46,11 @@
  	<menu pid="edu.iu.nwb.preprocessing.extractnodesandedges.extractedges.abovebelow.ExtractEdgesAboveBelowAlgorithm"/>
 	<menu pid="edu.iu.nwb.analysis.selfloops.Remove"/>
 	<menu pid="edu.iu.nwb.preprocessing.trimedges.Trim"/>
+	<!-- 
 	<menu pid="edu.iu.nwb.analysis.pathfindergraphnetworkscaling.PathfinderGraphAlgorithm"/>
+	 -->
+	<menu pid="edu.iu.nwb.preprocessing.pathfindernetworkscaling.mst.MSTPathfinderNetworkScalingAlgorithm"/>
+	<menu pid="edu.iu.nwb.preprocessing.pathfindernetworkscaling.fast.FastPathfinderNetworkScalingAlgorithm"/>
 	<menu type="break"/>
 	<menu pid="edu.iu.nwb.analysis.sampling.snowball.SnowballAlgorithm"/>
 	<menu pid="edu.iu.nwb.analysis.sampling.node.NodeAlgorithm"/>
@@ -45,8 +59,8 @@
 	<menu pid="edu.iu.nwb.analysis.symmetrize.Symmetrize"/>
 	<menu pid="edu.iu.nwb.analysis.dichotomize.Dichotomize"/>
 	<menu pid="edu.iu.nwb.analysis.multipartitejoining.JoiningAlgorithm"/>
-	<menu pid="edu.iu.nwb.preprocessing.text.normalization.StandardNormalyzer"/>
-	<menu pid="edu.iu.nwb.preprocessing.timeslice.Slice"/>
+	<menu type="break"/>
+
     </top_menu>   
      
     <top_menu name="Modeling">
@@ -64,20 +78,20 @@
 	<menu pid="edu.iu.iv.modeling.tarl.TarlAlgorithm"/>
 	<!--  
 	<menu pid="edu.iu.nwb.modeling.discretenetworkdynamics.DNDAlgorithm"/>
-	-->
+	
 	<menu type="break"/>
 	<menu pid="edu.iu.nwb.modeling.weighted.evolvingnetwork"/>
+	-->
     </top_menu>
     
     <top_menu name="Analysis">
     <menu pid="edu.iu.nwb.toolkit.networkanalysis"/>
+    <menu type="break"/>
 	<menu name = "Unweighted &amp;&amp; Undirected" type="group">
 		<menu pid="edu.iu.nwb.analysis.java.nodedegree"/>
 		<menu pid="edu.iu.nwb.analysis.totaldegreedistribution"/>
         <menu type="break"/>
-        <!--  
-		<menu pid="edu.iu.nwb.analysis.undirectedknn"/>
-		-->
+		<menu pid="edu.iu.nwb.analysis.java.undirectedknn"/>
 		<menu pid="edu.iu.nwb.analysis.clustering"/>
 		<menu pid="edu.iu.nwb.analysis.clustering_vs_k"/>
 	 	<menu type="break"/>	
@@ -87,11 +101,12 @@
 		<menu pid="edu.iu.nwb.analysis.sitebetweenness"/>
 		<menu type="break"/>
 		<menu pid="edu.iu.nwb.analysis.weakcomponentclustering.ClusteringAlgorithm"/>
+		<menu pid="edu.iu.nwb.analysis.connectedcomponents"/>
 		<menu type="break"/>
 		<menu pid="edu.iu.nwb.analysis.kcore.Extract"/>
         <menu pid="edu.iu.nwb.analysis.kcore.Annotate"/>
         <menu type="break"/>	
-		<menu pid="edu.iu.nwb.analysis.hits.HitsAlgorithm"/>
+		<menu pid="edu.iu.nwb.analysis.hits.HITSAlgorithm"/>
 	</menu>
 	<menu name = "Weighted &amp;&amp; Undirected" type="group">
 		<menu pid="edu.iu.nwb.analysis.weighted.averageclusteringcoefficient"/>
@@ -102,8 +117,10 @@
 		<menu pid="edu.iu.nwb.analysis.weighted.strengthdistribution"/>
 		<menu pid="edu.iu.nwb.analysis.weighted.weightdistribution"/>
 		<menu pid="edu.iu.nwb.analysis.weighted.randomweight"/>
+		<menu type="break"/>
+		<menu pid="edu.iu.nwb.analysis.blondelcommunitydetection.BlondelCommunityDetectionAlgorithm"/>
 		<menu type="break"/>	
-		<menu pid="edu.iu.nwb.analysis.hits.HitsAlgorithm"/>
+		<menu pid="edu.iu.nwb.analysis.hits.HITSAlgorithm"/>
 	</menu>
 	<menu name = "Unweighted &amp;&amp; Directed" type="group">
 		<menu pid="edu.iu.nwb.analysis.java.nodeindegree"/>
@@ -113,8 +130,6 @@
        	<menu type="break"/>	
       	<menu pid="edu.iu.nwb.analysis.java.directedknn"/>
 		<menu pid="edu.iu.nwb.analysis.onepointcorrelations"/>
-		<menu type="break"/>
-		<menu pid="edu.iu.nwb.analysis.pagerank"/>
 		<menu type="break"/>
 		<menu pid="edu.iu.nwb.analysis.reciprocity.dyad"/>
 		<menu pid="edu.iu.nwb.analysis.reciprocity.arc"/>
@@ -129,13 +144,14 @@
 		<menu pid="edu.iu.nwb.analysis.kcore.Extract"/>
         <menu pid="edu.iu.nwb.analysis.kcore.Annotate"/>
         <menu type="break"/>	
-		<menu pid="edu.iu.nwb.analysis.hits.HitsAlgorithm"/>
+		<menu pid="edu.iu.nwb.analysis.hits.HITSAlgorithm"/>
+		<menu pid="edu.iu.nwb.analysis.pagerank"/>
 	<menu type="break"/>			
 	</menu>
 	<menu name = "Weighted and Undirected" type="group">
 	</menu>
-	<menu name = "Weighted and Directed" type="group">
-		<menu pid="edu.iu.nwb.analysis.hits.HitsAlgorithm"/>
+	<menu name = "Weighted &amp;&amp; Directed" type="group">
+		<menu pid="edu.iu.nwb.analysis.hits.HITSAlgorithm"/>
 	</menu>
 	<!--  
 	<menu type="break"/>	
@@ -150,12 +166,10 @@
     </top_menu>
     
     <top_menu name="Visualization">
-    <menu pid="edu.iu.nwb.visualization.guess"/>
-    <menu type="break"/>
     <menu pid="edu.iu.nwb.visualization.gnuplot"/>
+    <menu pid="edu.iu.nwb.visualization.guess"/>
+    <menu pid="edu.iu.scipolicy.visualization.imageviewer.ImageViewerAlgorithm"/>
     <menu type="break"/>	
- 	<menu pid="edu.iu.nwb.visualization.drl.VxOrdAlgorithm"/> 	
-	<menu pid="edu.iu.nwb.visualization.prefuse.beta.specified.Specified"/>
 	<!-- 
 	<menu type="break"/>
 	<menu pid="edu.iu.nwb.visualization.jungnetworklayout.JUNGCircleLayout"/>
@@ -163,24 +177,36 @@
  	<menu type="break"/>
 	<menu pid="edu.iu.nwb.visualization.radialgraph.RadialGraph"/> 
 	<menu pid="edu.iu.nwb.visualization.prefuse.beta.radialgraph.RadialGraph"/>
-	<menu pid="edu.iu.nwb.visualization.prefuse.beta.treemap.TreeMap"/>
 	<menu pid="edu.iu.nwb.visualization.prefuse.beta.treeview.TreeView"/>
+	<menu pid="edu.iu.nwb.visualization.prefuse.beta.treemap.TreeMap"/>
 	<!-- 
-	<menu pid="edu.iu.nwb.visualization.balloongraph.BalloongraphAlgorithm"/>  -->
-	<menu type="break"/>
-	<menu pid="edu.iu.nwb.visualization.prefuse.beta.graphview.GraphView"/> 
-	<!--  
+	<menu pid="edu.iu.nwb.visualization.balloongraph.BalloongraphAlgorithm"/>
 	<menu pid="edu.iu.nwb.visualization.jungnetworklayout.JUNGKamadaKawaiLayout"/>
-
 	<menu pid="edu.iu.nwb.visualization.jungnetworklayout.JUNGFruchtermanReingoldLayout"/> 
-		-->
+	-->
+	<menu pid="edu.iu.nwb.visualization.prefuse.beta.graphview.GraphView"/>
 	<menu pid="edu.iu.nwb.visualization.prefuse.beta.fruchtermanreingold.FruchtermanReingold"/>
+	<menu type="break"/>	
+ 	<menu pid="edu.iu.nwb.visualization.drl.VxOrdAlgorithm"/> 	
+	<menu pid="edu.iu.nwb.visualization.prefuse.beta.specified.Specified"/>
+	<menu type="break"/>
+	<menu pid="edu.iu.scipolicy.visualization.horizontallinegraph.HorizontalLineGraphAlgorithm"/>
+	<menu pid="edu.iu.nwb.visualization.roundrussell.RoundRussellAlgorithm"/>
+	<menu pid="edu.iu.scipolicy.visualization.geomaps.GeoMapsCirclesFactory"/>
+	<menu pid="edu.iu.scipolicy.visualization.geomaps.GeoMapsRegionsFactory"/>
+	<menu type="break"/>
 	<!--  
 	<menu pid="edu.iu.nwb.visualization.jungnetworklayout.JUNGSpringLayout"/>
-	-->
 	<menu pid="edu.iu.nwb.visualization.prefuse.alpha.smallworld.app.SmallWorld"/>
 	<menu type="break"/>
+	<menu pid="org.mediavirus.parvis.ParallelCoordinatesAlgorithm"/>
+	<menu type="break"/>
 	<menu pid="nwb.visualization.lanet"/>	
+	
+	 
+	 <menu type="break"/>
+	 <menu pid="edu.iu.scipolicy.references.map.MapReferences"/>
+	  -->
 	</top_menu>
 
     <top_menu name="Scientometrics">    
