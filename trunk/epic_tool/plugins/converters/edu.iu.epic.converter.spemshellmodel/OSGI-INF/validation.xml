@@ -2,9 +2,7 @@
 <component name="edu.iu.epic.converter.spemshellmodel.SPEMShellValidatorAlgorithm$Factory.component" immediate="false">
 	<implementation class="edu.iu.epic.converter.spemshellmodel.SPEMShellValidatorAlgorithm$Factory"/>
 	<properties entry="OSGI-INF/validation.properties"/>
-	<reference name="LOG" interface="org.osgi.service.log.LogService"/>
-	<reference name="MTS" interface="org.osgi.service.metatype.MetaTypeService"/>
-	
+
 	<service>
 		<provide interface=
 			"org.cishell.framework.algorithm.AlgorithmFactory"/>
