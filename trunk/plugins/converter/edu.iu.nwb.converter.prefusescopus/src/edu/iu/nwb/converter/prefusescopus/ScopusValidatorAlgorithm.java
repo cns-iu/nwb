@@ -10,7 +10,7 @@ import org.cishell.framework.data.BasicData;
 import org.cishell.framework.data.Data;
 import org.cishell.framework.data.DataProperty;
 
-import edu.iu.nwb.converter.prefusecsv.validator.PrefuseCsvValidationAlgorithm;
+import edu.iu.nwb.converter.prefusecsv.validator.PrefuseCsvValidator;
 
 public class ScopusValidatorAlgorithm implements Algorithm {
 	public static final String SCOPUS_MIME_TYPE = "file:text/scopus";
@@ -32,8 +32,8 @@ public class ScopusValidatorAlgorithm implements Algorithm {
 			 * Use the CSV Validator Algorithm for both NSF & SCOPUS Files.
 			 * Since both are CSV based File Formats.
 			 * */
-			PrefuseCsvValidationAlgorithm csvValidator =
-				new PrefuseCsvValidationAlgorithm();
+			PrefuseCsvValidator csvValidator =
+				new PrefuseCsvValidator();
 
 			/*
 			 * validateSelectedFileforCSVFormat throws an exception if the file
