@@ -29,8 +29,8 @@ public class NSFValidatorAlgorithm implements Algorithm {
 			 * are CSV based File Formats.
 			 * 
 			 * 
-			 * PrefuseCsvValidationAlgorithm csvValidator = new
-			 * PrefuseCsvValidationAlgorithm();
+			 * PrefuseCsvValidator csvValidator = new
+			 * PrefuseCsvValidator();
 			 * 
 			 * 
 			 * validateSelectedFileforCSVFormat throws an exception if the file
