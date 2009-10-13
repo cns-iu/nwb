@@ -1,4 +1,6 @@
 FN ISI Export Format
+VR 1.0
+PT J
 AU Xxxx, X
    Yyyy, Y
 TI Aaaa
@@ -16,6 +18,7 @@ VL 10
 BP 65
 ER 
 
+PT J
 AU Xxxx, X
 TI Bbbb
 AB The study of networks is gaining prominence in many disciplines as well
@@ -37,6 +40,7 @@ VL 40
 BP 486
 ER  
 
+PT J
 AU Yyyy, Y
    Zzzz, Z
 TI Cccc
@@ -55,6 +59,7 @@ VL 60
 BP 295
 ER 
 
+PT J
 AU Xxxx, X
 TI Dddd
 AB To better understand the topic of this colloquium, we have created a
@@ -73,6 +78,7 @@ VL 30
 BP 119
 ER 
 
+PT J
 AU Xxxx, X
    Yyyy, Y
 TI Eeee
@@ -91,3 +97,5 @@ PY 2002
 VL 22
 BP 183
 ER
+
+EF
