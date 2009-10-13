@@ -35,7 +35,7 @@ public class AssembleAggregateFunctions {
 		return af;
 	}
 
-	public AggregateFunctionFactory addAggregateFunctionFactory(String functionName, AggregateFunctionFactory aff){
+	public AggregateFunctionFactory addAggregateFunctionFactory(String functionName, AggregateFunctionFactory aggregationFunctionFactory){
 		if(this.nameToFunctionFactory.get(functionName) != null){
 			//redefine the function but
 			//let the user know that they are 
@@ -43,8 +43,8 @@ public class AssembleAggregateFunctions {
 			//throw FunctionFactoryDefinitionException?
 			return null;
 		}		
-		this.nameToFunctionFactory.put(functionName, aff);
-		return aff;
+		this.nameToFunctionFactory.put(functionName, aggregationFunctionFactory);
+		return aggregationFunctionFactory;
 
 	}
 

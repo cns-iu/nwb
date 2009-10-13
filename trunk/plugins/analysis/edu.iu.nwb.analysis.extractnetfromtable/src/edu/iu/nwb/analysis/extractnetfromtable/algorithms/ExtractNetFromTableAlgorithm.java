@@ -11,66 +11,95 @@ import org.cishell.framework.data.Data;
 import org.cishell.framework.data.DataProperty;
 import org.osgi.service.log.LogService;
 
+import prefuse.data.Graph;
+import prefuse.data.Table;
 import edu.iu.nwb.analysis.extractnetfromtable.components.ExtractNetworkFromTable;
 import edu.iu.nwb.analysis.extractnetfromtable.components.GraphContainer;
 import edu.iu.nwb.analysis.extractnetfromtable.components.InvalidColumnNameException;
 import edu.iu.nwb.analysis.extractnetfromtable.components.PropertyHandler;
 
 public class ExtractNetFromTableAlgorithm implements Algorithm {
-	Data[] data;
-	Dictionary parameters;
-	CIShellContext context;
-	LogService logger;
+	private Data[] data;
+	private Dictionary parameters;
+	private LogService logger;
 
-	public ExtractNetFromTableAlgorithm(Data[] data, Dictionary parameters, CIShellContext context) {
+	
+	public ExtractNetFromTableAlgorithm(
+			Data[] data, Dictionary parameters, CIShellContext context) {
 		this.data = data;
 		this.parameters = parameters;
-		this.context = context;
-		logger = (LogService) context.getService(LogService.class.getName());
+		this.logger =
+			(LogService) context.getService(LogService.class.getName());
 	}
 	
-	
-	
-	public Data[] execute() throws AlgorithmExecutionException {
-		final prefuse.data.Table dataTable = (prefuse.data.Table) data[0].getData();
-
-		String split = null;
-		String extractColumn = null;
-		Properties p = null;
 		
-		split = this.parameters.get("delimiter").toString();
-		extractColumn = this.parameters.get("colName").toString();
+	public Data[] execute() throws AlgorithmExecutionException {
+		final Table dataTable = (Table) data[0].getData();
 
-		if(this.parameters.get("aff") != null){
-			p = PropertyHandler.getProperties((String)this.parameters.get("aff"),this.logger);
+		String split = parameters.get("delimiter").toString();
+		String extractColumn =
+			(String) parameters.get(
+					ExtractNetFromTableAlgorithmFactory.COLUMN_NAME_PARAMETER_ID);
+		Properties properties = null;
+
+		Object aggregationFunctionFilePath =
+			parameters.get(
+				ExtractNetFromTableAlgorithmFactory.AGGREGATION_FUNCTION_FILE_PARAMETER_ID);
+		if (aggregationFunctionFilePath != null) {
+			properties =
+				PropertyHandler.getProperties(
+						(String) aggregationFunctionFilePath,
+						logger);
 		}
 
-		try{
-		GraphContainer gc = GraphContainer.initializeGraph(dataTable, extractColumn, extractColumn, false, p, this.logger);
-		final prefuse.data.Graph outputGraph = gc.buildGraph(extractColumn, extractColumn, split, this.logger);//enft.getGraph();
-		final Data outputData1 = new BasicData(outputGraph,
-				prefuse.data.Graph.class.getName());
-		final Dictionary graphAttributes = outputData1.getMetadata();
+		try {
+			GraphContainer gc =
+				GraphContainer.initializeGraph(
+						dataTable,
+						extractColumn,
+						extractColumn,
+						false,
+						properties,
+						logger);
+			Graph outputGraph =
+				gc.buildGraph(extractColumn, extractColumn, split, logger);//enft.getGraph();
+			Data outGraphData = createOutGraphData(extractColumn, outputGraph);	
+			
+			Table outputTable =
+				ExtractNetworkFromTable.constructTable(outputGraph);
+			Data outTableData = createOutTableData(extractColumn, outputTable);
+	
+			return new Data[]{ outGraphData, outTableData };		
+		} catch (InvalidColumnNameException e) {
+			String message = "Invalid column name: " + e.getMessage();
+			throw new AlgorithmExecutionException(message, e);
+		}
+	}
+	
+	private Data createOutGraphData(String extractColumn, Graph outputGraph) {
+		Data outGraphData =	new BasicData(outputGraph, Graph.class.getName());
+		
+		Dictionary graphAttributes = outGraphData.getMetadata();		
 		graphAttributes.put(DataProperty.MODIFIED, new Boolean(true));
 		graphAttributes.put(DataProperty.PARENT, data[0]);
 		graphAttributes.put(DataProperty.TYPE, DataProperty.NETWORK_TYPE);
 		graphAttributes.put(DataProperty.LABEL,
-				"Extracted Network on Column "+extractColumn);
-
+				"Extracted Network on Column " + extractColumn);
 		
-		final prefuse.data.Table outputTable = ExtractNetworkFromTable.constructTable(outputGraph);
-		final Data outputData2 = new BasicData(outputTable,
-				prefuse.data.Table.class.getName());	
-		final Dictionary tableAttributes = outputData2.getMetadata();
+		return outGraphData;
+	}
+
+	private Data createOutTableData(String extractColumn, Table table) {
+		Data outTableData =	new BasicData(table, Table.class.getName());
+		
+		Dictionary tableAttributes = outTableData.getMetadata();		
 		tableAttributes.put(DataProperty.MODIFIED, new Boolean(true));
 		tableAttributes.put(DataProperty.PARENT, data[0]);
 		tableAttributes.put(DataProperty.TYPE, DataProperty.MATRIX_TYPE);
-		tableAttributes.put(DataProperty.LABEL, "Merge Table: based on "+extractColumn);
-
-		return new Data[] { outputData1, outputData2 };
+		tableAttributes.put(
+				DataProperty.LABEL,
+				"Merge Table: based on " + extractColumn);
 		
-		}catch(InvalidColumnNameException ex){
-			throw new AlgorithmExecutionException(ex.getMessage(),ex);
-		}
+		return outTableData;
 	}
 }

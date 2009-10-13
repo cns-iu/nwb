@@ -41,20 +41,20 @@ public class AggregateFunctionMappings {
 		
 	}
 	
-	public String getFunctionFromColumnName(String colName){
-		return (String) this.metaColumnNameToFunctionMap.get(colName);
+	public String getFunctionFromColumnName(String columnName){
+		return (String) this.metaColumnNameToFunctionMap.get(columnName);
 	}
 	
-	public String getOriginalColumnFromFunctionColumn(String colName){
-		return (String) this.functionColumnToOriginalColumnMap.get(colName);
+	public String getOriginalColumnFromFunctionColumn(String columnName){
+		return (String) this.functionColumnToOriginalColumnMap.get(columnName);
 	}
 	
 	public ValueAttributes getFunctionRow(Object label){
 		return (ValueAttributes)this.labelToFunctionMap.get(label);
 	}
 	
-	public int getAppliedNodeType(String colName){
-		return ((Integer)this.functionColumnToAppliedNodeTypeMap.get(colName)).intValue();
+	public int getAppliedNodeType(String columnName){
+		return ((Integer)this.functionColumnToAppliedNodeTypeMap.get(columnName)).intValue();
 	}
 	
 	public static void parseProperties(Schema input, Schema nodes, Schema edges, Properties p, 

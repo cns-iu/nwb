@@ -16,21 +16,21 @@ public class FunctionContainer {
 		int appliedNodeType;
 		
 		for(int k = 0; k < tuple.getColumnCount(); k++){
-			final String colName = tuple.getColumnName(k);
+			final String columnName = tuple.getColumnName(k);
 			aggregateFunction = va.getFunction(k);  //see if the function already exists.
 			/*
 			 * If not, try to create it.
 			 * */
 			if(aggregateFunction == null) { 
-				aggregateFunction = assembleAggregateFunction.getAggregateFunction(aggregateFunctionMappings.getFunctionFromColumnName(colName), tuple.getColumnType(k));
+				aggregateFunction = assembleAggregateFunction.getAggregateFunction(aggregateFunctionMappings.getFunctionFromColumnName(columnName), tuple.getColumnType(k));
 				
 			}
 				
 			if(aggregateFunction != null){
 				
-				operateColumn = aggregateFunctionMappings.getOriginalColumnFromFunctionColumn(colName);
+				operateColumn = aggregateFunctionMappings.getOriginalColumnFromFunctionColumn(columnName);
 				
-				appliedNodeType = aggregateFunctionMappings.getAppliedNodeType(colName);
+				appliedNodeType = aggregateFunctionMappings.getAppliedNodeType(columnName);
 
 				
 				
