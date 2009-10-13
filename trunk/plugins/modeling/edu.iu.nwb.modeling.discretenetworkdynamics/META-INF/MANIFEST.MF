@@ -24,3 +24,4 @@ Export-Package: edu.iu.nwb.modeling.discretenetworkdynamics,
  edu.iu.nwb.modeling.discretenetworkdynamics.components,
  edu.iu.nwb.modeling.discretenetworkdynamics.functions,
  edu.iu.nwb.modeling.discretenetworkdynamics.parser
+Bundle-RequiredExecutionEnvironment: J2SE-1.5
