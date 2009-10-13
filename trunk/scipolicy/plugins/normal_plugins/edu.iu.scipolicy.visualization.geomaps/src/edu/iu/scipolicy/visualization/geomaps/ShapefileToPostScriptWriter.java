@@ -100,7 +100,7 @@ public class ShapefileToPostScriptWriter {
 				throws IOException, AlgorithmExecutionException, TransformException {
 		
 		File psFile =
-			FileUtilities.createTemporaryFileInDefaultTemporaryDirectory("TEMP-POSTSCRIPT", OUTPUT_FILE_EXTENSION);
+			FileUtilities.createTemporaryFileInDefaultTemporaryDirectory("geoMaps", OUTPUT_FILE_EXTENSION);
 		
 		BufferedWriter out = new BufferedWriter(new FileWriter(psFile));
 
