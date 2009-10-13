@@ -21,6 +21,7 @@ public class ExtractNetFromTableAlgorithmFactory
 	public static final String COLUMN_NAME_PARAMETER_ID = "columnName";
 	public static final String AGGREGATION_FUNCTION_FILE_PARAMETER_ID =
 		"aggregationFunctionFile";
+	public static final String DELIMITER_PARAMETER_ID = "delimiter";
 
 	
 	public Algorithm createAlgorithm(

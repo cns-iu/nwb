@@ -36,7 +36,9 @@ public class ExtractNetFromTableAlgorithm implements Algorithm {
 	public Data[] execute() throws AlgorithmExecutionException {
 		final Table dataTable = (Table) data[0].getData();
 
-		String split = parameters.get("delimiter").toString();
+		String delimiter =
+			(String) parameters.get(
+					ExtractNetFromTableAlgorithmFactory.DELIMITER_PARAMETER_ID);
 		String extractColumn =
 			(String) parameters.get(
 					ExtractNetFromTableAlgorithmFactory.COLUMN_NAME_PARAMETER_ID);
@@ -62,7 +64,7 @@ public class ExtractNetFromTableAlgorithm implements Algorithm {
 						properties,
 						logger);
 			Graph outputGraph =
-				gc.buildGraph(extractColumn, extractColumn, split, logger);//enft.getGraph();
+				gc.buildGraph(extractColumn, extractColumn, delimiter, logger);//enft.getGraph();
 			Data outGraphData = createOutGraphData(extractColumn, outputGraph);	
 			
 			Table outputTable =
