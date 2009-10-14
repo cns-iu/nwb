@@ -35,7 +35,7 @@ public class GeoMapsAlgorithm implements Algorithm {
 	public static final String PROJECTION_ID = "projection";
 	public static final String AUTHOR_NAME_ID = "authorName";
 
-	public static final String TEST_DATUM_PATH = "/edu/iu/scipolicy/visualization/geomaps/testFiles/25mostPopulousNationsWithGDPs.csv";
+	public static final String TEST_DATUM_PATH = "/edu/iu/scipolicy/visualization/geomaps/testing/25mostPopulousNationsWithGDPs.csv";
 
 	private Data[] data;
 	private Dictionary<String, Object> parameters;
