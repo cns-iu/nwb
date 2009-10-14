@@ -218,8 +218,6 @@ public class DuplicateNodeDetectorAlgorithm implements Algorithm {
 		// Purely for formatting in the merge log.  1-indexed for users.
 		int mergeReportIndex = 1;
 
-		// TODO: Refactor the contents of this loop to a method that returns a
-		// StringBuffer (which is then appended to mergeLog)?
 		for (Iterator clusterIt = clusters.iterator(); clusterIt.hasNext();) {
 			Collection cluster = (Collection) clusterIt.next();
 			
@@ -228,58 +226,79 @@ public class DuplicateNodeDetectorAlgorithm implements Algorithm {
 				continue;
 			}
 			
-			mergeLog.append(
-					"======== Merge " + mergeReportIndex + " ========" + "\n");
+			StringBuffer mergeLogPiece =
+				setMergeInfoForCluster(newNodeTable, cluster, mergeReportIndex);
+			mergeLog.append(mergeLogPiece);
+			
 			mergeReportIndex++;
-			
-			Integer primaryNode =
-				selectNodeWithLongestAttributeValue(
-						newNodeTable, cluster, compareAttributeName);
-			String primaryNodeName =
-				newNodeTable.getString(
-						primaryNode.intValue(),	compareAttributeName);
-			/* Correct for that unique indices are 1-based rather than 0-based,
-			 * but otherwise correlate with row index.
-			 */
-			int uniqueIndex = primaryNode.intValue() + 1;
-			
-			mergeLog.append(
-					primaryNodeName + " will have the following merged in:" + "\n");
-			
-			for (Iterator nodeIt = cluster.iterator(); nodeIt.hasNext();) {
-				Integer node = (Integer) nodeIt.next();
-				
-				/* Skip the primary node.
-				 * We don't want to try to merge it with itself.
-				 */
-				if (primaryNode.equals(node)) {
-					continue;
-				}
-				
-				// Mark intent to merge in the table.
-				newNodeTable.setInt(
-						node.intValue(),
-						UNIQUE_INDEX_COLUMN_NAME,
-						uniqueIndex);				
-				newNodeTable.setString(
-						node.intValue(),
-						COMBINE_VALUES_COLUMN_NAME,
-						NOT_THE_PRIMARY_NODE);
-				
-				// Report intent to merge.
-				String name =
-					newNodeTable.getString(
-							node.intValue(),
-							compareAttributeName);				
-				mergeLog.append(name + "\n");
-			}
-			
-			mergeLog.append("\n");
 		}
 		
 		mergeLog.append("End of merge report.\n");
 		
 		return newNodeTable;
+	}
+	
+	private StringBuffer setMergeInfoForCluster(
+			Table newNodeTable, Collection cluster, int mergeReportIndex) {
+		StringBuffer mLog = new StringBuffer();
+		
+		mLog.append(
+				"======== Merge " + mergeReportIndex + " ========" + "\n");
+		
+		
+		Integer primaryNode =
+			selectNodeWithLongestAttributeValue(
+					newNodeTable, cluster, compareAttributeName);
+		String primaryNodeName =
+			newNodeTable.getString(
+					primaryNode.intValue(),	compareAttributeName);
+		/* Correct for that unique indices are 1-based rather than 0-based,
+		 * but otherwise correlate with row index.
+		 */
+		int uniqueIndex = primaryNode.intValue() + 1;
+		
+		mLog.append(
+				primaryNodeName + " will have the following merged in:" + "\n");
+		
+		for (Iterator nodeIt = cluster.iterator(); nodeIt.hasNext();) {
+			Integer node = (Integer) nodeIt.next();
+			
+			/* Skip the primary node.
+			 * We don't want to try to merge it with itself.
+			 */
+			if (primaryNode.equals(node)) {
+				continue;
+			}
+			
+			String name = setMergeInfoForNode(newNodeTable, node, uniqueIndex);
+			
+			mLog.append(name + "\n");
+		}
+		
+		mLog.append("\n");
+		
+		return mLog;
+	}
+
+	private String setMergeInfoForNode(
+			Table newNodeTable, Integer node, int uniqueIndex) {
+		// Mark intent to merge in the table.
+		newNodeTable.setInt(
+				node.intValue(),
+				UNIQUE_INDEX_COLUMN_NAME,
+				uniqueIndex);				
+		newNodeTable.setString(
+				node.intValue(),
+				COMBINE_VALUES_COLUMN_NAME,
+				NOT_THE_PRIMARY_NODE);
+		
+		// Report intent to merge.
+		String name =
+			newNodeTable.getString(
+					node.intValue(),
+					compareAttributeName);
+		
+		return name;
 	}
 	
 	/**
