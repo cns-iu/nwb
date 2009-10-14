@@ -8,6 +8,7 @@ import java.util.Properties;
 import org.osgi.service.log.LogService;
 
 import prefuse.data.Schema;
+import edu.iu.nwb.analysis.extractnetfromtable.aggregate.AggregateFunctionNames;
 import edu.iu.nwb.analysis.extractnetfromtable.aggregate.AssembleAggregateFunctions;
 
 public class AggregateFunctionMappings {
@@ -32,8 +33,6 @@ public class AggregateFunctionMappings {
 		this.functionColumnToAppliedNodeTypeMap.put(functionValueCol, new Integer(nodeType));
 	}
 	
-	
-	
 	public ValueAttributes addFunctionRow(Object label, ValueAttributes va){
 		
 			this.labelToFunctionMap.put(label, va);
@@ -57,11 +56,11 @@ public class AggregateFunctionMappings {
 		return ((Integer)this.functionColumnToAppliedNodeTypeMap.get(columnName)).intValue();
 	}
 	
-	public static void parseProperties(Schema input, Schema nodes, Schema edges, Properties p, 
+	public static void parseProperties(Schema input, Schema nodes, Schema edges, Properties properties, 
 			AggregateFunctionMappings nodeFunctionMappings, 
 			AggregateFunctionMappings edgeFunctionMappings, LogService log){
 		
-		if(p != null){
+		if(properties != null){
 			HashSet functionNames = new HashSet(AssembleAggregateFunctions.defaultAssembly().getFunctionNames());
 			HashSet columnNames = new HashSet();
 
@@ -69,10 +68,10 @@ public class AggregateFunctionMappings {
 				columnNames.add(input.getColumnName(i));
 			}
 
-			for (final Iterator it = p.keySet().iterator(); it.hasNext();) {
+			for (final Iterator it = properties.keySet().iterator(); it.hasNext();) {
 				final String key = (String) it.next();
 				String[] functionDefinitionLHS = key.split("\\.");
-				String[] functionDefinitionRHS = p.getProperty(key).split("\\.");
+				String[] functionDefinitionRHS = properties.getProperty(key).split("\\.");
 				String applyToNodeType = null;
 				int nodeType = -1;
 				
@@ -131,11 +130,32 @@ public class AggregateFunctionMappings {
 		}
 	}
 	
+	public static final String DEFAULT_WEIGHT_NAME = "weight";
+	
+	public static void addDefaultEdgeWeightColumn(Schema inputGraphNodeSchema,
+			Schema outputGraphEdgeSchema,
+			AggregateFunctionMappings edgeFunctionMappings,
+			String  sourceColumnName) {	
+		/*
+		 * Prepare to create a edge weight column,
+		 * where each edge's weight is the number of times that relationship
+		 * between nodes has occurred in the original dataset
+		 * (for instance, in co-authorship the edge weight would be how 
+		 * many times two authors have co-authored together).
+		 */
+		String newColumnName = DEFAULT_WEIGHT_NAME;
+		String function = AggregateFunctionNames.COUNT;
+		Class columnType = inputGraphNodeSchema.getColumnType(sourceColumnName);
+		
+		createColumn(newColumnName, sourceColumnName, function, columnType, outputGraphEdgeSchema);
+		edgeFunctionMappings.addFunctionMapping(newColumnName,  sourceColumnName, function);
+	}
+	
+	
+	
 	private static void createColumn(String newColumnName, String calculateColumnName, String function, Class columnType, Schema newSchema) {	
 		Class finalType = null;
 		finalType = AssembleAggregateFunctions.defaultAssembly().getAggregateFunction(function, columnType).getType();
 		newSchema.addColumn(newColumnName, finalType);
 	}
-	
-	
 }
