@@ -886,6 +886,7 @@
     </antcall>
   	
   	<!-- This unfortunately must be included, as converter.psraster depends on it. At some point these dependencies should be untangles -->
+  	
   	<antcall target="svn.co">
   	  	  	  	  	      <param name="target" value="plugins"/>
   	  	  	  	  	      <param name="element.id" value="freehep_psviewer"/>
