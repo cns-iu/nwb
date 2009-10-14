@@ -38,7 +38,7 @@ public class NetworkProperties {
 		
 		
 		output = directedInfo(output, isDirectedGraph);
-		output = outputNodeAndEdgeStats(output, nodeStats, edgeStats, isDirectedGraph);	
+		output = outputNodeAndEdgeStats(output, nodeStats, edgeStats);	
 
 		output = averageDegreeInfo(output, nodeStats,isDirectedGraph);
 		
@@ -88,7 +88,8 @@ public class NetworkProperties {
 	}
 
 
-	private static StringBuffer outputNodeAndEdgeStats(StringBuffer sb, NodeStats ns, EdgeStats es, boolean isDirectedGraph){
+	private static StringBuffer outputNodeAndEdgeStats(
+			StringBuffer sb, NodeStats ns, EdgeStats es) {
 		sb.append(LINE_SEP);
 		sb.append(ns.nodeInfo());
 		sb.append(LINE_SEP);

@@ -35,7 +35,6 @@ public class StrongComponentClusteringThread extends Thread{
 		secondStack.setSize(nodeCount);
 		
 
-		int count = 0;
 		this.clusters = 0;
 
 		Integer testCount = new Integer(0);

@@ -10,7 +10,7 @@ import prefuse.data.Edge;
 import prefuse.data.Graph;
 import prefuse.data.Table;
 
-public class EdgeStats extends Thread{	
+public class EdgeStats extends Thread {	
 	double[] meanValues;
 	double[] maxValues;
 	double[] minValues;
@@ -27,10 +27,6 @@ public class EdgeStats extends Thread{
 	SelfLoopsParallelEdges selfLoopsParallelEdges;
 	
 	private Graph edgeGraph;
-	
-	private EdgeStats(){
-		
-	}
 	
 	public void run(){
 		
@@ -130,16 +126,19 @@ public class EdgeStats extends Thread{
 
 	public void calculateEdgeStats(CascadedTable visitedTable){
 		HashSet observedValues = null;
-		if(this.numericAttributes.size() == 1)
+		if (numericAttributes.size() == 1) {
 			observedValues = new HashSet();
-		for(Iterator it = this.edgeGraph.edges(); it.hasNext();){
-			Edge e = (Edge)it.next();
-			this.addEdge(e, visitedTable, observedValues);
 		}
 		
-		if(this.numericAttributes.size() == 1){
-			if(observedValues.size() > 1){
-				this.isValuedNetwork = true;
+		for (Iterator edgeIt = edgeGraph.edges(); edgeIt.hasNext();){
+			Edge e = (Edge) edgeIt.next();
+			
+			addEdge(e, visitedTable, observedValues);
+		}
+		
+		if (numericAttributes.size() == 1) {
+			if(observedValues.size() > 1) {
+				isValuedNetwork = true;
 			}
 		}
 		
@@ -256,37 +255,42 @@ public class EdgeStats extends Thread{
 		private String printEdgeAttributes(Vector attributeNames, boolean isNumeric){
 			StringBuffer sb = new StringBuffer();
 			DecimalFormat densityFormatter = null;
-			if(isNumeric){
+			
+			if (isNumeric) {
 				sb.append("\t\t\t\tmin\tmax\tmean");
 				sb.append(System.getProperty("line.separator"));
 				densityFormatter = new DecimalFormat("#.#####");
-			}
-			else{
+			} else {
 				sb.append("\t\t\t\tExample value");
 				sb.append(System.getProperty("line.separator"));
 			}
-			for(int i = 0; i < attributeNames.size(); i++){
-				String attributeName = (String)attributeNames.get(i);
-				if(attributeName.length() > 7){
+			
+			for (int i = 0; i < attributeNames.size(); i++) {
+				String attributeName = (String) attributeNames.get(i);
+				if (attributeName.length() > 7) {
 					attributeName = attributeName.substring(0, 7);
 					attributeName += "...";
-				}
-				else{
+				} else {
 					String spacer = "          ";
-					attributeName += spacer.substring(0,1+spacer.length()-attributeName.length());
+					attributeName +=
+						spacer.substring(
+								0,
+								1 + spacer.length() - attributeName.length());
 				}
-				sb.append("\t\t"+attributeName+"\t");
-				if(isNumeric){
+				
+				sb.append("\t\t" + attributeName + "\t");
+				
+				if (isNumeric) {
 					sb.append(densityFormatter.format(this.minValues[i])
 							+ "\t" + densityFormatter.format(this.maxValues[i])
 							+ "\t" + densityFormatter.format(this.meanValues[i]));
-				}
-				else{
+				} else {
 					sb.append(this.characteristicValues[i].toString());
 				}
-				sb.append(System.getProperty("line.separator"));
 				
-		}
+				sb.append(System.getProperty("line.separator"));				
+			}
+			
 			return sb.toString();
 		}
 

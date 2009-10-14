@@ -1,6 +1,5 @@
 package edu.iu.nwb.toolkit.networkanalysis.analysis;
 
-import java.text.DecimalFormat;
 import java.util.Iterator;
 
 import prefuse.data.Graph;
@@ -36,8 +35,6 @@ public class NodeStats extends Thread{
 			}
 			this.averageDegree+= (double) degree/ (double) this.numberOfNodes;
 			if(graph.isDirected()){
-				int inDegree = n.getInDegree();
-				int outDegree = n.getOutDegree();
 				this.averageInDegree += (double)n.getInDegree()/(double)this.numberOfNodes;
 				this.averageOutDegree += (double)n.getOutDegree()/(double)this.numberOfNodes;				
 			}
