@@ -3,13 +3,15 @@ package edu.iu.nwb.preprocessing.duplicatenodedetector.util;
 import java.util.Iterator;
 import java.util.LinkedHashSet;
 import java.util.LinkedList;
-import java.util.Queue;
 import java.util.Stack;
 
 import prefuse.data.Edge;
 import prefuse.data.Graph;
 import prefuse.data.Node;
 
+/**
+ * @see edu.iu.nwb.toolkit.networkanalysis.analysis.GraphSearchAlgorithms
+ */
 public class GraphSearchAlgorithms {
 
 	public static LinkedHashSet undirectedDepthFirstSearch(final Graph g, Integer n){
@@ -29,9 +31,6 @@ public class GraphSearchAlgorithms {
 
 		return nodeSet;
 	}
-
-
-
 
 	public static LinkedHashSet directedDepthFirstSearch(final Graph g, Integer n, boolean getPreOrder, boolean isReverse){
 		LinkedHashSet nodeSet = new LinkedHashSet();
@@ -53,44 +52,41 @@ public class GraphSearchAlgorithms {
 		return nodeSet;
 	}
 
-	private static void runUDFS(final Graph g, Integer n, LinkedHashSet pre){
-		Queue q = new LinkedList();
-		
-		Node nd;
-		Integer nodeRow;
-		Integer nodeNumber;
-		Edge edg;
-		Node nd2;
-		q.add(new Integer(n.intValue()));
-		while(!q.isEmpty()){
-			nodeRow = new Integer(((Integer)q.poll()).intValue());
-			if(!pre.contains(nodeRow)){
-				nd = g.getNode(nodeRow.intValue());
-				pre.add(nodeRow);
+	private static void runUDFS(
+			final Graph graph,
+			Integer startingNodeIndex,
+			LinkedHashSet alreadyCheckedNodes) {
+		LinkedList queue = new LinkedList();
 
-				for(Iterator it = nd.edges(); it.hasNext();){
-					edg = (Edge)it.next();
-					nd2 = edg.getTargetNode();
-					nodeNumber = new Integer(nd2.getRow());
-					if(!pre.contains(nodeNumber))
-						q.add(nodeNumber);
-					nd2 = edg.getSourceNode();
-					nodeNumber = new Integer(nd2.getRow());
-					if(!pre.contains(nodeNumber))
-						q.add(nodeNumber);
+		queue.add(startingNodeIndex);
 
+		while (!queue.isEmpty()) {
+			Integer nodeRow = (Integer)queue.removeFirst();
+
+			if (!alreadyCheckedNodes.contains(nodeRow)) {
+				Node node = graph.getNode(nodeRow.intValue());
+				alreadyCheckedNodes.add(nodeRow);
+
+				for (Iterator edgeIt = node.edges(); edgeIt.hasNext();) {
+					Edge edge = (Edge) edgeIt.next();
+
+					Node targetNode = edge.getTargetNode();
+					Integer targetRow = new Integer(targetNode.getRow());
+					if (!alreadyCheckedNodes.contains(targetRow)) {
+						queue.add(targetRow);
+					}
+
+					Node source = edge.getSourceNode();
+					Integer sourceRow = new Integer(source.getRow());
+					if (!alreadyCheckedNodes.contains(sourceRow)) {
+						queue.add(sourceRow);
+					}
 				}
 			}
 		}
-		nodeRow = null;
-		nodeNumber = null;
-		q = null;
-		edg = null;
-		nd2 = null;
-
 	}
 
-	public static Graph reverseGraph(final Graph g){
+	public static Graph reverseGraph(final Graph g) {
 		Graph g2 = g;
 		for(Iterator it = g.edges(); it.hasNext();){
 
@@ -112,7 +108,7 @@ public class GraphSearchAlgorithms {
 
 	}
 
-	
+
 
 
 	private static void runDDFS(final Graph g, Integer n, LinkedHashSet nodeSet, boolean isPreOrder){

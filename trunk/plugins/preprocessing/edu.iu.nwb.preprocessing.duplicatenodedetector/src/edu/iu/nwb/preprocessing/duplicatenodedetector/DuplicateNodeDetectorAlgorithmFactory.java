@@ -19,32 +19,32 @@ import edu.iu.nwb.preprocessing.duplicatenodedetector.util.GraphUtil;
 
 
 public class DuplicateNodeDetectorAlgorithmFactory implements AlgorithmFactory, ParameterMutator {
-    public Algorithm createAlgorithm(Data[] data, Dictionary parameters, CIShellContext context) {
-        return new DuplicateNodeDetectorAlgorithm(data, parameters, context);
-    }
+	public Algorithm createAlgorithm(Data[] data, Dictionary parameters, CIShellContext context) {
+		return new DuplicateNodeDetectorAlgorithm(data, parameters);
+	}
 
-    //allow the user to pick a node attribute from those available on the graph node.
-    //Use the contents of this attribute for each node to determine node's similarities to one another
+	//allow the user to pick a node attribute from those available on the graph node.
+	//Use the contents of this attribute for each node to determine node's similarities to one another
 	public ObjectClassDefinition mutateParameters(Data[] data, ObjectClassDefinition parameters) {
-		
+
 		//extract node attributes from the input graph
-		
+
 		Graph inputGraph = (Graph) data[0].getData();
 		Table nodeTable = inputGraph.getNodeTable();
 		String[] nodeAttributes = GraphUtil.getColumnNames(nodeTable);
-		
+
 		//make a new parameter object, so far identical to the old one.
-		
+
 		BasicObjectClassDefinition newParameters;
 		try {
 			newParameters = new BasicObjectClassDefinition(parameters.getID(), parameters.getName(), parameters.getDescription(), parameters.getIcon(16));
 		} catch (IOException e) {
 			newParameters = new BasicObjectClassDefinition(parameters.getID(), parameters.getName(), parameters.getDescription(), null);
 		}
-		
+
 		//make the new parameter object the same as the old one...
 		//except fill the column name attribute with values for all the node attributes in the graph
-		
+
 		AttributeDefinition[] paramAttributes = parameters.getAttributeDefinitions(ObjectClassDefinition.ALL);
 		for(int ii = 0; ii < paramAttributes.length; ii++) {
 			AttributeDefinition paramAttribute = paramAttributes[ii];
@@ -56,9 +56,9 @@ public class DuplicateNodeDetectorAlgorithmFactory implements AlgorithmFactory, 
 				newParameters.addAttributeDefinition(ObjectClassDefinition.REQUIRED, paramAttributes[ii]);
 			}
 		}
-		
+
 		//return our new parameters
-		
+
 		return newParameters;
 	}
 }
