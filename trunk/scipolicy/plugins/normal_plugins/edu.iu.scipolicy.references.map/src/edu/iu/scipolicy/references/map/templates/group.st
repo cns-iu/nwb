@@ -300,8 +300,29 @@ incrementpage
 7.6 inch 10.7 inch moveto
 (page ) show page 5 string cvs show
 
+% \<string\> underlinedShow
+% Pops a string
+% Shows the string underlined
+/underlinedShowDict 1 dict def
+/underlinedShow {
+	underlinedShowDict begin
+		/UNDERLINE_THICKNESS 0.1 def
+		/UNDERLINE_VERTICAL_OFFSET -0.8 def
+
+		gsave
+			0 UNDERLINE_VERTICAL_OFFSET rmoveto
+			dup stringwidth rlineto
+			UNDERLINE_THICKNESS setlinewidth stroke
+		grestore
+		
+		show
+	end
+} bind def
+
 .5 inch .35 inch moveto
-(Cyberinfrastructure for Network Science Center (2009) RefMapper. Indiana University, http://sci.slis.indiana.edu.) show
+(Cyberinfrastructure for Network Science Center (2009) RefMapper. Indiana University, ) show
+(http://sci.slis.indiana.edu) underlinedShow
+(.) show
 
 grestore
 
