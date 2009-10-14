@@ -8,6 +8,7 @@ import org.cishell.framework.algorithm.AlgorithmExecutionException;
 public class NetworkProperties {
 
 	private static final String LINE_SEP = System.getProperty("line.separator");
+	public static final DecimalFormat roundedStatisticsFormatter = new DecimalFormat("#.####");
 
 	public static StringBuffer calculateNetworkProperties(final prefuse.data.Graph graph) throws AlgorithmExecutionException {
 		boolean isDirectedGraph = graph.isDirected();
@@ -101,13 +102,13 @@ public class NetworkProperties {
 	protected static StringBuffer averageDegreeInfo(StringBuffer sb, NodeStats ns, boolean isDirected){
 		
 		if (isDirected) {
-			sb.append("Average total degree: " + ns.averageDegree);
+			sb.append("Average total degree: " + ns.getRoundedAverageDegree());
 			sb.append(LINE_SEP);
-			sb.append("Average in degree: " + ns.averageInDegree);
+			sb.append("Average in degree: " + ns.getRoundedAverageInDegree());
 			sb.append(LINE_SEP);
-			sb.append("Average out degree: " + ns.averageOutDegree);
+			sb.append("Average out degree: " + ns.getRoundedAverageOutDegree());
 		} else { //is undirected
-			sb.append("Average degree: " + ns.averageDegree);
+			sb.append("Average degree: " + ns.getRoundedAverageDegree());
 		}
 		sb.append(LINE_SEP);
 		return sb;
@@ -168,8 +169,8 @@ public class NetworkProperties {
 	public static StringBuffer densityInfo(StringBuffer sb, EdgeStats es,int numNodes,int numEdges,boolean isDirected){
 		sb.append(LINE_SEP);
 		double density = calculateDensity(numNodes, numEdges, isDirected);
-		DecimalFormat densityFormatter = new DecimalFormat("#.#####");
-		String densityString = densityFormatter.format(density);
+		
+		String densityString = roundedStatisticsFormatter.format(density);
 
 		sb.append("Density (disregarding weights): " + densityString);
 		int numberOfAdditionalNumericAttributes = es.numericAttributes.size();
@@ -194,7 +195,6 @@ public class NetworkProperties {
 	private static String printWeightedDensities(boolean useObservedMax,EdgeStats es, int numNodes,boolean isDirected){
 		double weightedSum,maxObservedValue,weightedDensity;
 		long maxConnections;
-		DecimalFormat densityFormatter = new DecimalFormat("#.#####");
 		
 		StringBuffer sb = new StringBuffer();
 		
@@ -223,7 +223,7 @@ public class NetworkProperties {
 			if(useObservedMax)
 				weightedDensity = (double)weightedDensity/maxObservedValue;
 
-			sb.append(densityFormatter.format(weightedDensity));
+			sb.append(roundedStatisticsFormatter.format(weightedDensity));
 			sb.append(LINE_SEP);
 		}
 		return sb.toString();
@@ -238,11 +238,11 @@ public class NetworkProperties {
 			return(double)((long)numberOfEdges)/(maxEdges/2);
 		}
 	}
-
+	
 	protected static double calculateAverageDegree(int numNodes, int numEdges) {
 		//for each edge we have, two nodes have their degree increase by one.
 		double averageDegree = 2 * (double) numEdges / (double) numNodes;
 		return averageDegree;
 	}
-	
+
 }

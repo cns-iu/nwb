@@ -1,5 +1,6 @@
 package edu.iu.nwb.toolkit.networkanalysis.analysis;
 
+import java.text.DecimalFormat;
 import java.util.Iterator;
 
 import prefuse.data.Graph;
@@ -84,6 +85,27 @@ public class NodeStats extends Thread{
 		return this.nodeAttributes;
 	}
 	
+	/**
+	 * @return the averageDegree
+	 */
+	public double getRoundedAverageDegree() {
+		return Double.parseDouble(NetworkProperties.roundedStatisticsFormatter.format(averageDegree));
+	}
+	
+	/**
+	 * @return the averageInDegree
+	 */
+	public double getRoundedAverageInDegree() {
+		return Double.parseDouble(NetworkProperties.roundedStatisticsFormatter.format(averageInDegree));
+	}
+
+	/**
+	 * @return the averageOutDegree
+	 */
+	public double getRoundedAverageOutDegree() {
+		return Double.parseDouble(NetworkProperties.roundedStatisticsFormatter.format(averageOutDegree));
+	}
+
 	protected String nodeInfo(){
 		StringBuffer sb = new StringBuffer();
 		sb.append("Nodes: " + this.numberOfNodes);
