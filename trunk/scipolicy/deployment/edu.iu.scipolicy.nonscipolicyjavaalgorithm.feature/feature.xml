@@ -688,14 +688,14 @@ Dr. Katy Borner (katy@indiana.edu)
          unpack="false"/>
 
    <plugin
-         id="edu.iu.cns.converters.graceplot"
+         id="edu.iu.cns.converter.graceplot"
          download-size="0"
          install-size="0"
          version="0.0.0"
          unpack="false"/>
 
    <plugin
-         id="edu.iu.cns.converters.plotcsv"
+         id="edu.iu.cns.converter.plotcsv"
          download-size="0"
          install-size="0"
          version="0.0.0"

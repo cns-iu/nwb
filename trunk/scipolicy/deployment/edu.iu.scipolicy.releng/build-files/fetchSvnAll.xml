@@ -526,16 +526,16 @@
   	
   	<antcall target="svn.co">
   		<param name="target" value="plugins"/>
-  		<param name="element.id" value="edu.iu.cns.converters.plotcsv"/>
-  		<param name="project.name" value="edu.iu.cns.converters.plotcsv"/>
-  		<param name="url" value="http://nwb.slis.indiana.edu/svn/nwb/trunk/plugins/converters/"/>
+  		<param name="element.id" value="edu.iu.cns.converter.plotcsv"/>
+  		<param name="project.name" value="edu.iu.cns.converter.plotcsv"/>
+  		<param name="url" value="http://nwb.slis.indiana.edu/svn/nwb/trunk/plugins/converter/"/>
   	</antcall>
   	
   	<antcall target="svn.co">
   		<param name="target" value="plugins"/>
-  		<param name="element.id" value="edu.iu.cns.converters.graceplot"/>
-  		<param name="project.name" value="edu.iu.cns.converters.graceplot"/>
-  		<param name="url" value="http://nwb.slis.indiana.edu/svn/nwb/trunk/plugins/converters/"/>
+  		<param name="element.id" value="edu.iu.cns.converter.graceplot"/>
+  		<param name="project.name" value="edu.iu.cns.converter.graceplot"/>
+  		<param name="url" value="http://nwb.slis.indiana.edu/svn/nwb/trunk/plugins/converter/"/>
   	</antcall>
   	
   	<antcall target="svn.co">
