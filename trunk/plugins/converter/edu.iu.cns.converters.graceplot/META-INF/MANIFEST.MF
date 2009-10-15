@@ -1,7 +1,7 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
-Bundle-Name: edu.iu.cns.converters.graceplot
-Bundle-SymbolicName: edu.iu.cns.converters.graceplot
+Bundle-Name: edu.iu.cns.converter.graceplot
+Bundle-SymbolicName: edu.iu.cns.converter.graceplot
 Bundle-Version: 0.0.1
 Bundle-ClassPath: .
 Import-Package: org.cishell.framework;version="1.0.0",

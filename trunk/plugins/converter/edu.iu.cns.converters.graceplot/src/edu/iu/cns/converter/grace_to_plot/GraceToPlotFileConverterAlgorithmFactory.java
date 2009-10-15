@@ -1,4 +1,4 @@
-package edu.iu.cns.converters.grace_to_plot;
+package edu.iu.cns.converter.grace_to_plot;
 
 import java.util.Dictionary;
 

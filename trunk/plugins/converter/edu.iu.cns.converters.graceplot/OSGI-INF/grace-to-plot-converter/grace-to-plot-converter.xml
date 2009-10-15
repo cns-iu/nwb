@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<component name="edu.iu.cns.converters.grace_to_plot.GraceToPlotFileConverterAlgorithm.component" immediate="false">
-	<implementation class="edu.iu.cns.converters.grace_to_plot.GraceToPlotFileConverterAlgorithmFactory"/>
+<component name="edu.iu.cns.converter.grace_to_plot.GraceToPlotFileConverterAlgorithm.component" immediate="false">
+	<implementation class="edu.iu.cns.converter.grace_to_plot.GraceToPlotFileConverterAlgorithmFactory"/>
 	<properties entry="OSGI-INF/grace-to-plot-converter/grace-to-plot-converter.properties"/>
 	
 	<service>
