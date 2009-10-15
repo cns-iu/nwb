@@ -1,4 +1,4 @@
-package edu.iu.cns.converters.plot_to_csv;
+package edu.iu.cns.converter.plot_to_csv;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -15,7 +15,7 @@ import java.util.Scanner;
 import org.cishell.utilities.FileUtilities;
 
 import au.com.bytecode.opencsv.CSVWriter;
-import edu.iu.cns.converters.plot_to_csv.exceptiontypes.PlotFileReadingException;
+import edu.iu.cns.converter.plot_to_csv.exceptiontypes.PlotFileReadingException;
 
 public class PlotFileConverter {
 	public static final String UNROUNDED_DECIMAL_PATTERN =

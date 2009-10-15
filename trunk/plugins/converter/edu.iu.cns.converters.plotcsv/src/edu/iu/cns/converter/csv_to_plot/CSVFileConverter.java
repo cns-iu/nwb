@@ -1,4 +1,4 @@
-package edu.iu.cns.converters.csv_to_plot;
+package edu.iu.cns.converter.csv_to_plot;
 
 import java.io.BufferedWriter;
 import java.io.File;
@@ -12,7 +12,7 @@ import org.cishell.utilities.StringUtilities;
 import org.osgi.service.log.LogService;
 
 import au.com.bytecode.opencsv.CSVReader;
-import edu.iu.cns.converters.csv_to_plot.exceptiontypes.CSVFileReadingException;
+import edu.iu.cns.converter.csv_to_plot.exceptiontypes.CSVFileReadingException;
 
 /*
  * This class sucks and should probably be rewritten to use a PlotFileWriter

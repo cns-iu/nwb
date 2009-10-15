@@ -1,7 +1,7 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
-Bundle-Name: edu.iu.cns.converters.plotcsv
-Bundle-SymbolicName: edu.iu.cns.converters.plotcsv
+Bundle-Name: edu.iu.cns.converter.plotcsv
+Bundle-SymbolicName: edu.iu.cns.converter.plotcsv
 Bundle-Version: 0.0.1
 Bundle-ClassPath: .
 Import-Package: au.com.bytecode.opencsv,

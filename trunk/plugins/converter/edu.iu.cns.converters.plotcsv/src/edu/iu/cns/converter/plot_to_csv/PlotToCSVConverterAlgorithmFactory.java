@@ -1,4 +1,4 @@
-package edu.iu.cns.converters.plot_to_csv;
+package edu.iu.cns.converter.plot_to_csv;
 
 import java.util.Dictionary;
 

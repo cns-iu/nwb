@@ -1,4 +1,4 @@
-package edu.iu.cns.converters.plot_to_csv.exceptiontypes;
+package edu.iu.cns.converter.plot_to_csv.exceptiontypes;
 
 public class PlotFileReadingException extends Exception {
 	private static final long serialVersionUID = 1L;
