@@ -11,7 +11,6 @@ import com
 import java.util.regex
 import sys
 import math
-
 import java.awt as awt
 
 # Graph Modifier
@@ -243,7 +242,7 @@ def initializeGlobalVariables():
         counter = counter + 1
     edgeIndex.sort()
     
-	# Setting the default color of edges & nodes to black.    
+    # Setting the default color of edges & nodes to black.    
     g.edges.labelColor = '0, 0, 0, 255'
     g.nodes.labelColor = '0, 0, 0, 255'
 
@@ -435,7 +434,10 @@ class propertyBoxListener(java.awt.event.ActionListener):
         propertyName = ""
         propertyDictionary = ""
         propertyValues = None
-        
+
+        # To store the values of the "Value" drop-down box.
+        valueItemsTokens = []
+                
         # these are node properties
         if propertyFor == "nodes":
             propertyDictionary = nodeProperties
@@ -470,7 +472,8 @@ class propertyBoxListener(java.awt.event.ActionListener):
             
             # add in the property values
             for i in propertyValues[propertyName]:
-                pblSelf.dock.valueBox.addItem(str(i))
+#                pblSelf.dock.valueBox.addItem(str(i))
+                valueItemsTokens.append(generate_sort_tokens(str(i)))
             
             # add in the appropriate operators
             for i in pblSelf.dock.stringOperators:
@@ -490,11 +493,22 @@ class propertyBoxListener(java.awt.event.ActionListener):
             smallestValue = propertyValues[propertyName][0]
             largestValue = propertyValues[propertyName][1]
             valueRange = "Number from : " + str(smallestValue) + " - " + str(largestValue)
-            pblSelf.dock.valueBox.addItem(valueRange)
+#            pblSelf.dock.valueBox.addItem(valueRange)
+            valueItemsTokens.append(generate_sort_tokens(valueRange))
             
-            # add in the apropriate operators
+            # add in the appropriate operators
             for i in pblSelf.dock.numberOperators:
                 pblSelf.dock.operatorBox.addItem(i)
+        
+        # sort the values in the "Value" drop-down        
+        valueItemsTokens.sort()
+
+        # Add the sorted values in the valueBox
+        for (primary_sort_token, secondary_sort_token, values_label) in valueItemsTokens:
+            pblSelf.dock.valueBox.addItem(values_label)
+            
+                
+         
 
 # width slider change listener
 class widthSliderListener(javax.swing.event.ChangeListener):
@@ -529,15 +543,26 @@ class GraphModifier(com.hp.hpl.guess.ui.DockableAdapter):
         GraphModifier.tempColor = None # dummy variable
         dockSelf.currentColor = red
         
+        nodes_tokens = []
         # get only the node names
         nodes = []
         for i in nodeIndex:
-            nodes.append(i[0])
+#            nodes.append(i[0])
+            nodes_tokens.append(generate_sort_tokens(i[0]))
         
         # get only the edge names
         edges = []
         for i in edgeIndex:
             edges.append(i[0])
+        
+        # Sort the node tokens so that the output has 'n1', 'n2' instead of 
+        # 'n1', 'n11' etc 
+        nodes_tokens.sort()
+        
+        # Extract only the original node names
+        sorted_nodes = [nodes_label for (primary_sort_token, secondary_sort_token, nodes_label) in nodes_tokens]
+        
+        nodes = sorted_nodes
         
         dockSelf.objects = general + nodes + edges
         
@@ -1281,7 +1306,29 @@ def exportGDFFile():
             JOptionPane.showMessageDialog(GraphModifier.self.buttonPanel, "Error in exporting GDF")
     GraphModifier.self.bottomPanel.setVisible(false)
 
-
+def generate_sort_tokens(original_string):
+    """Method for generating tokens that will be used for sorting later on.
+    It splits the input string as following,
+        'foobar12' => ('foobar', 12, 'foobar12')
+        '12foo' => ('12', None, '12foo')
+        'fooo' => ('fooo', None, 'fooo') 
+        '124512' => ('124512', None, '124512')
+        'foo12bar56' => ('foo', 12, 'foo12bar56')
+    """
+    from re import match
+    
+    sort_tokenizer = match(r"([\D]+)([\d]+)", original_string)
+    if sort_tokenizer is not None:
+        sort_tokens = sort_tokenizer.groups()
+        return (sort_tokens[0].lower(), int(sort_tokens[1]), original_string)
+    
+    sort_tokenizer = match(r"([\d]+)([\D]+)", original_string)
+    if sort_tokenizer is not None:
+        sort_tokens = sort_tokenizer.groups()
+        return (sort_tokens[0].lower(), None, original_string)
+    
+    return (original_string.lower(), None, original_string)
+        
 #from code.activestate.com/recipes/52560
 def unique(s):
     """Return a list of the elements in s, but without duplicates.
