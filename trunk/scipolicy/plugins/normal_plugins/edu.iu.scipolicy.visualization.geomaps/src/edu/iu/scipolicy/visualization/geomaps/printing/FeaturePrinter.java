@@ -1,6 +1,5 @@
 package edu.iu.scipolicy.visualization.geomaps.printing;
 
-import java.awt.Color;
 import java.io.BufferedWriter;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -30,9 +29,10 @@ import edu.iu.scipolicy.visualization.geomaps.printing.colorstrategy.NullColorSt
 import edu.iu.scipolicy.visualization.geomaps.projection.GeometryProjector;
 
 public class FeaturePrinter {
-	public static final Color DEFAULT_FEATURE_COLOR = Color.WHITE;
+	// TODO Comment.
+	public static final double INTERRUPTION_CROSSING_GLITCH_DETECTION_THRESHOLD = 150;
 	public static final double BORDER_BRIGHTNESS = 0.7;
-	public static final double BORDER_LINE_WIDTH = 0.8;
+	public static final double BORDER_LINE_WIDTH = 0.4;
 	public static final String INDENT = "  ";
 	
 	private FeatureCollection<SimpleFeatureType, SimpleFeature> featureCollection;
@@ -114,8 +114,8 @@ public class FeaturePrinter {
 		}
 		
 		if (unfoundFeatureNames.size() > 0) {
-			final int prefixSize = 3;
-			final int suffixSize = 1;
+			final int prefixSize = 6 ;
+			final int suffixSize = 3;
 			final int previewSize = prefixSize + suffixSize;
 			
 			final String unfoundFeatureNamesPreview =
@@ -159,9 +159,8 @@ public class FeaturePrinter {
 
 		String name = getFeatureName(feature);
 
-		out.write(INDENT + "% Feature, " + shapefileFeatureNameKey + ": " + name + "\n");
-
 		for (int gg = 0; gg < geometry.getNumGeometries(); gg++) {
+			out.write(INDENT + "% Feature, " + shapefileFeatureNameKey + " = " + name + ", subgeometry " + gg + "\n");
 			Geometry subgeometry = geometry.getGeometryN(gg);
 			printGeometry(subgeometry, out, featureColorMap, name);
 		}
@@ -183,26 +182,97 @@ public class FeaturePrinter {
 			out.write(INDENT + "newpath" + "\n");
 			out.write(INDENT + INDENT + (firstCoordinate.x) + " " + (firstCoordinate.y) + " moveto\n");
 
-			for (int cc = 1; cc < coordinates.length; cc++) {
+			/* Many projections involve interruptions.
+			 * Practically, this may mean that one coordinate of a geometry is on "one side"
+			 * of the interruption and the next is on the "other".
+			 * In GeometryProjecter, we account for interruptions at the meridian opposite that
+			 * which will be central in the visualization.  That check does NOT account for
+			 * non-opposite-meridianial interruptions, such as polar interruptions in a conic
+			 * projection of the whole world.
+			 * Without a special check, this code would naively draw an unwanted and ugly line
+			 * between two points which could projected at opposite ends of the world.
+			 * Therefore, we must check the distance between each coordinate that we process
+			 * and the previous.
+			 * If their distance is greater than INTERRUPTION_CROSSING_GLITCH_DETECTION_THRESHOLD,
+			 * we assume that that line isn't really meant to be drawn, we stroke the path up
+			 * to the last "good" coordinate, and start a new path.
+			 */
+			for (int cc = 1; cc < coordinates.length; cc++) {				
 				Coordinate coordinate =
 					mapDisplayer.getDisplayCoordinate(coordinates[cc]);
-
-				out.write(INDENT + INDENT + (coordinate.x) + " " + (coordinate.y) + " lineto\n");
+				Coordinate previousCoordinate =
+					mapDisplayer.getDisplayCoordinate(coordinates[cc - 1]);
+				
+				/* A closed path consisting of two or more points at the same location is a
+				 * degenerate path. A degenerate path will be drawn only if you have set the line
+				 * caps to round caps. If your line caps are not round caps, or if the path is not
+				 * closed, the path will not be drawn. If the path is drawn, it will appear as a
+				 * filled circle center at the point."
+				 * 
+				 * In an attempt to avoid some subtleties with degenerate paths,
+				 * we skip any coordinate coincident to the previous. 
+				 */
+				if (coordinate.equals2D(previousCoordinate)) {
+					continue;
+				}
+				
+				if (isAProbableInterruptionGlitch(coordinate, previousCoordinate)) {
+					System.err.println(name + ":\n\t" + coordinate.x + ", " + coordinate.y);
+					System.err.println("\tdistance = " + distance(coordinate, previousCoordinate));
+					
+					out.write("% Probable line glitch across polar cuts." + "\n");
+					out.write("% Inserting a mid-Geometry stroke and " +
+								"starting new path at next coordinate." + "\n");
+					out.write(INDENT + "stroke" + "\n");
+					out.write(INDENT + "newpath" + "\n");					
+					out.write(INDENT + INDENT + (coordinate.x) + " " + (coordinate.y) + " moveto\n");
+				} else {
+					out.write(INDENT + INDENT + (coordinate.x) + " " + (coordinate.y) + " lineto\n");
+				}
 			}
 
 			out.write(INDENT + "closepath" + "\n");
 
-			// Fill the interior
-			ColorStrategy colorStrategy = new NullColorStrategy();
-			if (featureColorMap.containsKey(name)) {
-				featureWasColoredMap.put(name, true);
-				colorStrategy = featureColorMap.get(name);
-			}
-			out.write(colorStrategy.toPostScript());
-			
-			// Stroke the border
-			out.write("stroke" + "\n");
+			writeInkingCommands(out, featureColorMap, name);
 		}		
+	}
+
+	private boolean isAProbableInterruptionGlitch(Coordinate coordinate,
+			Coordinate previousCoordinate) {
+		return (distance(coordinate, previousCoordinate) > INTERRUPTION_CROSSING_GLITCH_DETECTION_THRESHOLD);
+	}
+
+	private void writeInkingCommands(
+			BufferedWriter out,	Map<String, ColorStrategy> featureColorMap, String rawName)
+				throws IOException {
+		// Fill the interior
+		ColorStrategy colorStrategy = new NullColorStrategy();
+		
+		String normalName = rawName.toLowerCase();
+		
+//		if (normalName.contains("ranc")) {
+//			System.out.println("rawName\t" + rawName);
+//			System.out.println("normalName\t" + normalName);
+//		}
+		
+		if (featureColorMap.containsKey(normalName)) {
+//			if (normalName.contains("ranc")) {
+//				System.out.println("\t\ttrue");
+//			}
+			featureWasColoredMap.put(normalName, true);
+			colorStrategy = featureColorMap.get(normalName);
+		}
+		out.write(colorStrategy.toPostScript());
+		
+		// Stroke the border
+		out.write("stroke" + "\n");
+	}
+	
+	private double distance(Coordinate coordinate1, Coordinate coordinate2) {
+		double deltaX = (coordinate1.x - coordinate2.x);
+		double deltaY = (coordinate1.y - coordinate2.y);
+		
+		return Math.sqrt(deltaX*deltaX + deltaY*deltaY);
 	}
 
 	private String getFeatureName(SimpleFeature feature)

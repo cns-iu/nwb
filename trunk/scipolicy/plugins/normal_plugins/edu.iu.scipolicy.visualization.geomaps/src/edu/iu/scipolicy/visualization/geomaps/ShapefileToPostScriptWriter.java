@@ -234,24 +234,23 @@ public class ShapefileToPostScriptWriter {
 			BufferedWriter out, String outputPSFileName) throws IOException {
 		GeoMapsAlgorithm.logger.log(LogService.LOG_INFO, "Printing PostScript.." + "\n");
 
-		out.write("%!PS-Adobe-3.0 EPSF-3.0" + "\n");
 		out.write((new DSCProlog(outputPSFileName, pageHeightInPoints)).toPostScript());
 		
-		/* TODO We're using setpagedevice to force page dimensions
-		 * corresponding to US Letter landscape.  This command
-		 * is forbidden in Encapsulated PostScript, so if we
-		 * wish to maintain that format, we'll need a different
-		 * method to specify landscape-style dimensions (that popular
-		 * PostScript-to-PDF renderers will all respect).
-		 */
-		out.write("/setpagedevice where" + "\n"
-				+ "{ pop 1 dict" + "\n"
-				+ "dup /PageSize [ "
-					+ Constants.PAGE_WIDTH_IN_POINTS + " "
-					+ pageHeightInPoints + " "
-				+ "] put" + "\n"
-				+ "setpagedevice" + "\n"
-				+ "} if" + "\n");
-		out.write("\n");
+//		/* TODO We're using setpagedevice to force page dimensions
+//		 * corresponding to US Letter landscape.  This command
+//		 * is forbidden in Encapsulated PostScript, so if we
+//		 * wish to maintain that format, we'll need a different
+//		 * method to specify landscape-style dimensions (that popular
+//		 * PostScript-to-PDF renderers will all respect).
+//		 */
+//		out.write("/setpagedevice where" + "\n"
+//				+ "{ pop 1 dict" + "\n"
+//				+ "dup /PageSize [ "
+//					+ Constants.PAGE_WIDTH_IN_POINTS + " "
+//					+ pageHeightInPoints + " "
+//				+ "] put" + "\n"
+//				+ "setpagedevice" + "\n"
+//				+ "} if" + "\n");
+//		out.write("\n");
 	}
 }

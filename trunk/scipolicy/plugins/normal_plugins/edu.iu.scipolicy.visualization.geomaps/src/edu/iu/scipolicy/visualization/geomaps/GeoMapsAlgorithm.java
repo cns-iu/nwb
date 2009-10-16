@@ -130,21 +130,15 @@ public class GeoMapsAlgorithm implements Algorithm {
 //		File outFile = null;
 		
 		try {
-			URL testFileURL =
-				GeoMapsAlgorithm.class.getResource(TEST_DATUM_PATH);
-			File inFile = new File(testFileURL.toURI());
-			Data data = new BasicData(inFile, CSV_MIME_TYPE);
-
-			PrefuseCsvReader prefuseCSVReader =
-				new PrefuseCsvReader(new Data[]{ data });
-			Data[] convertedData = prefuseCSVReader.execute();
-
-			// Most of these will vary with the test file, naturally.
 			Dictionary<String, Object> parameters =
 				new Hashtable<String, Object>();
 			parameters.put("shapefile", "Countries");
-			parameters.put("projection", "Eckert IV");
+			parameters.put("projection", "Albers Equal-Area Conic");
 			parameters.put("authorName", "Joseph Biberstine");
+
+			URL testFileURL = GeoMapsAlgorithm.class.getResource(TEST_DATUM_PATH);
+			File inFile = new File(testFileURL.toURI());
+//			File inFile = new File("C:\\Documents and Settings\\jrbibers\\Desktop\\nianli-10-16-12\\uspto_country_1976-1979_geocoded.csv");
 			parameters.put("latitude", "Latitude");
 			parameters.put("longitude", "Longitude");
 			parameters.put("circleArea", "Population (thousands)");
@@ -155,9 +149,29 @@ public class GeoMapsAlgorithm implements Algorithm {
 			parameters.put("innerColorQuantity", "Population (thousands)");
 			parameters.put("innerColorScaling", "Linear");
 			parameters.put("innerColorRange", "Green to Red");
-
 			AlgorithmFactory algorithmFactory =
 				new GeoMapsCirclesFactory();
+			
+////			File inFile = new File("C:\\Documents and Settings\\jrbibers\\Desktop\\NIH-MIDAS-grants-pivot-by-state-to-total-award-amount_unabbreviated.csv");
+////			File inFile = new File("C:\\Documents and Settings\\jrbibers\\Desktop\\nianli-10-16-12\\uspto_country_f_00-08.csv");
+////			parameters.put("featureName", "country_name");
+////			parameters.put("featureColorQuantity", "total");
+////			parameters.put("featureColorScaling", "Logarithmic");
+////			parameters.put("featureColorRange", "Yellow to Blue");
+//			File inFile = new File("C:\\Documents and Settings\\jrbibers\\Desktop\\geomaps\\statePopulations.csv");
+//			parameters.put("featureName", "State");
+//			parameters.put("featureColorQuantity", "Population");
+//			parameters.put("featureColorScaling", "Logarithmic");
+//			parameters.put("featureColorRange", "Yellow to Blue");
+//			AlgorithmFactory algorithmFactory =
+//				new GeoMapsRegionsFactory();
+			
+			Data data = new BasicData(inFile, CSV_MIME_TYPE);
+			
+			PrefuseCsvReader prefuseCSVReader =
+				new PrefuseCsvReader(new Data[]{ data });
+			Data[] convertedData = prefuseCSVReader.execute();
+			
 			CIShellContext ciContext = new LogOnlyCIShellContext();
 			Algorithm algorithm =
 				algorithmFactory.createAlgorithm(

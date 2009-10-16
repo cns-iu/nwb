@@ -61,7 +61,7 @@ public class GeometryProjector {
 	
 	public static final double MAX_LONGITUDE = 180.0;
 	public static final double NORTH_POLE_CROP_HEIGHT_IN_DEGREES = 10.0;
-	public static final double SOUTH_POLE_CROP_HEIGHT_IN_DEGREES = 11.0;
+	public static final double SOUTH_POLE_CROP_HEIGHT_IN_DEGREES = 12.0;
 
 	/* "if the math transform should be created even when there is no
 	 * information available for a datum shift."
@@ -138,6 +138,7 @@ public class GeometryProjector {
 		Geometry croppedGeometry =
 			cropGeometry(originalGeometry, cropGeometries);
 		Geometry projectedGeometry = transformGeometry(croppedGeometry);
+		
 		return projectedGeometry;
 	}	
 	private Geometry cropGeometry(Geometry originalGeometry,
@@ -168,9 +169,9 @@ public class GeometryProjector {
 	}
 	
 	private ProjectedCRS getProjectedCRS(String projectionName) throws AlgorithmExecutionException {
-		final ClassLoader loader = getClass().getClassLoader();
 		final InputStream wellKnownTextInputStream =
-			loader.getResourceAsStream(WELL_KNOWN_TEXTS_PROPERTIES_FILE_PATH);
+			getClass().getResourceAsStream(
+					WELL_KNOWN_TEXTS_PROPERTIES_FILE_PATH);
 
 		final Properties wellKnownTexts = new Properties();
 		try {

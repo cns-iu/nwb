@@ -13,9 +13,6 @@ import org.geotools.data.FeatureSource;
 import org.geotools.feature.FeatureCollection;
 import org.opengis.feature.simple.SimpleFeature;
 import org.opengis.feature.simple.SimpleFeatureType;
-import org.osgi.service.log.LogService;
-
-import edu.iu.scipolicy.visualization.geomaps.GeoMapsAlgorithm;
 
 // Boxes up the ugly GeoTools idiom to get the Features from a shapefile.
 public class ShapefileFeatureReader {
@@ -50,10 +47,6 @@ public class ShapefileFeatureReader {
 			
 			String[] typeNames = dataStore.getTypeNames();
 			String typeName = typeNames[0];
-			
-			GeoMapsAlgorithm.logger.log(
-					LogService.LOG_INFO,
-					"Reading shapefile: " + typeName);
 			
 			featureSource = dataStore.getFeatureSource(typeName);
 		} catch (IOException e) {

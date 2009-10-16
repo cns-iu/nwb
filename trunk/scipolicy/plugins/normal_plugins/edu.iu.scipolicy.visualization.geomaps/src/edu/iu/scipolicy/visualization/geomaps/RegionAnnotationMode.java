@@ -92,9 +92,21 @@ public class RegionAnnotationMode extends AnnotationMode {
 			Tuple row = inTable.getTuple(tableIt.nextInt());
 			
 			if (row.canGetString(nameAttribute)) {
-				String featureName = row.getString(nameAttribute);
+				String rawFeatureName = row.getString(nameAttribute);
+				
+				if (rawFeatureName == null) {
+					GeoMapsAlgorithm.logger.log(
+							LogService.LOG_WARNING,
+							"Skipping row with no region name value.");
+					continue;
+				}
+				
+				String normalFeatureName = rawFeatureName.toLowerCase();
 
-				if (featureColors.containsKey(featureName)) {
+				if (featureColors.containsKey(normalFeatureName)) {
+					GeoMapsAlgorithm.logger.log(
+							LogService.LOG_WARNING,
+							"Duplicate region name: \"" + normalFeatureName + "\"");
 					duplicateFeatureNames++;
 				} else {
 					try {
@@ -108,7 +120,7 @@ public class RegionAnnotationMode extends AnnotationMode {
 									colorValueScaler.scale(featureColorValue));
 							
 							featureColors.put(
-									featureName,
+									normalFeatureName,
 									new FillColorStrategy(featureColor));
 						}
 					} catch (NumberFormatException e) {
