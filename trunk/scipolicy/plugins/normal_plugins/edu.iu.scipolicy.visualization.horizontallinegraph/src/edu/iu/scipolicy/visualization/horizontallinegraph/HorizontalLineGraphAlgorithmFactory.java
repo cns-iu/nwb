@@ -1,6 +1,5 @@
 package edu.iu.scipolicy.visualization.horizontallinegraph;
 
-import java.io.IOException;
 import java.util.Dictionary;
 
 import org.cishell.framework.CIShellContext;
@@ -15,70 +14,57 @@ import org.osgi.service.metatype.ObjectClassDefinition;
 
 import prefuse.data.Table;
 
-
 public class HorizontalLineGraphAlgorithmFactory
-	implements AlgorithmFactory, ParameterMutator
-{
+		implements AlgorithmFactory, ParameterMutator {
+    @SuppressWarnings("unchecked") // Raw Dictionary
     public Algorithm createAlgorithm(Data[] data,
     								 Dictionary parameters,
-    								 CIShellContext context)
-    {
-        return new HorizontalLineGraphAlgorithm(data, parameters, context);
+    								 CIShellContext ciShellContext) {
+        return new HorizontalLineGraphAlgorithm(
+        	data, parameters, ciShellContext);
     }
     
-    public ObjectClassDefinition mutateParameters
-    		(Data[] data, ObjectClassDefinition oldParameters) {
+    public ObjectClassDefinition mutateParameters(
+    		Data[] data, ObjectClassDefinition oldParameters) {
     	Data inData = data[0];
-    	Table table = (Table)inData.getData();
-    	BasicObjectClassDefinition newParameters;
+    	Table table = (Table) inData.getData();
     	
-		try {
-			newParameters =
-				new BasicObjectClassDefinition(oldParameters.getID(),
-											   oldParameters.getName(),
-											   oldParameters.getDescription(),
-											   oldParameters.getIcon(16));
-		}
-		catch (IOException e) {
-			newParameters = new BasicObjectClassDefinition
-				(oldParameters.getID(),
-				 oldParameters.getName(),
-				 oldParameters.getDescription(), null);
-		}
+		BasicObjectClassDefinition newParameters =
+			MutateParameterUtilities.createNewParameters(oldParameters);
 		
 		AttributeDefinition[] oldAttributeDefinitions =
 			oldParameters.getAttributeDefinitions(ObjectClassDefinition.ALL);
 		
-		for (AttributeDefinition oldAttributeDefinition : oldAttributeDefinitions) {
+		for (AttributeDefinition oldAttributeDefinition :
+				oldAttributeDefinitions) {
 			String oldAttributeDefinitionID = oldAttributeDefinition.getID();
-			AttributeDefinition newAttributeDefinition = oldAttributeDefinition;
+			AttributeDefinition newAttributeDefinition =
+				oldAttributeDefinition;
 			
-			if (oldAttributeDefinitionID.equals
-				(HorizontalLineGraphAlgorithm.LABEL_FIELD_ID))
-			{
+			if (oldAttributeDefinitionID.equals(
+					HorizontalLineGraphAlgorithm.LABEL_FIELD_ID)) {
 				newAttributeDefinition =
-					MutateParameterUtilities.formLabelAttributeDefinition
-						(oldAttributeDefinition, table);
-			}
-			else if (oldAttributeDefinitionID.equals
-				(HorizontalLineGraphAlgorithm.START_DATE_FIELD_ID) ||
-					 oldAttributeDefinitionID.equals
-				(HorizontalLineGraphAlgorithm.END_DATE_FIELD_ID))
-			{
+					MutateParameterUtilities.formLabelAttributeDefinition(
+						oldAttributeDefinition, table);
+			} else if (oldAttributeDefinitionID.equals(
+						HorizontalLineGraphAlgorithm.START_DATE_FIELD_ID) ||
+					oldAttributeDefinitionID.equals(
+						HorizontalLineGraphAlgorithm.END_DATE_FIELD_ID)) {
 				newAttributeDefinition =
-					MutateParameterUtilities.formDateAttributeDefinition
-						(oldAttributeDefinition, table);
-			}
-			else if (oldAttributeDefinitionID.equals
-				(HorizontalLineGraphAlgorithm.SIZE_BY_FIELD_ID))
-			{
+					MutateParameterUtilities.formDateAttributeDefinition(
+						oldAttributeDefinition, table);
+			} else if (oldAttributeDefinitionID.equals(
+					HorizontalLineGraphAlgorithm.SIZE_BY_FIELD_ID)) {
 				newAttributeDefinition =
-					MutateParameterUtilities.formNumberAttributeDefinition
-						(oldAttributeDefinition, table);
+					MutateParameterUtilities.formNumberAttributeDefinition(
+						oldAttributeDefinition, table);
 			}
 			
-			newParameters.addAttributeDefinition(ObjectClassDefinition.REQUIRED,
-												 newAttributeDefinition);
+			/* TODO This can take optional ADs and mutate them needlessly into
+			 * required ones, so be careful.
+			 */
+			newParameters.addAttributeDefinition(
+				ObjectClassDefinition.REQUIRED, newAttributeDefinition);
 		}
 		
     	return newParameters;
