@@ -18,13 +18,16 @@ import org.osgi.service.metatype.AttributeDefinition;
 import org.osgi.service.metatype.ObjectClassDefinition;
 
 import prefuse.data.Table;
+import edu.iu.scipolicy.preprocessing.geocoder.coders.CountryCoder;
+import edu.iu.scipolicy.preprocessing.geocoder.coders.StateCoder;
 
 public class GeocoderFactory implements AlgorithmFactory, ParameterMutator {
 	
-	URL countryGeoCodePath, stateGeoCodePath;
+	URL country_GeoCodePath, state_GeoCodePath, zipCode_GeoCodePath;
 	
-	private static final String countryGeoCodeFilePath = "countries_geo_code.txt";
-	private static final String stateGeoCodeFilePath = "us_states_geo_code.txt";
+	private static final String country_GeoCodeFilePath = "countries_geo_code.txt";
+	private static final String state_GeoCodeFilePath = "us_states_geo_code.txt";
+	private static final String zipCode_GeoCodeFilePath = "us_zipcode_geo_code.csv";
 
 	/*
 	 * Fetch the Latitude & Longitude values from the text files in to appropriate Maps.
@@ -33,11 +36,14 @@ public class GeocoderFactory implements AlgorithmFactory, ParameterMutator {
 	protected void activate(ComponentContext ctxt) {
     	BundleContext bContext = ctxt.getBundleContext();
     	
-    	this.stateGeoCodePath = bContext.getBundle().getResource(stateGeoCodeFilePath);
-    	GeocoderDictionaries.setStateFile(stateGeoCodePath);
+    	this.state_GeoCodePath = bContext.getBundle().getResource(state_GeoCodeFilePath);
+    	StateCoder.setStateFile(state_GeoCodePath);
     	
-    	this.countryGeoCodePath = bContext.getBundle().getResource(countryGeoCodeFilePath);
-    	GeocoderDictionaries.setCountryFile(countryGeoCodePath);
+    	this.country_GeoCodePath = bContext.getBundle().getResource(country_GeoCodeFilePath);
+    	CountryCoder.setCountryFile(country_GeoCodePath);
+    	
+//    	this.zipCode_GeoCodePath = bContext.getBundle().getResource(zipCode_GeoCodeFilePath);
+//    	GeocoderDictionaries.setZipCodeFile(zipCode_GeoCodePath);
     }
 	
 	public Algorithm createAlgorithm(Data[] data, Dictionary parameters, CIShellContext context) {

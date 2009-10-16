@@ -11,6 +11,8 @@ import org.cishell.utilities.TableUtilities;
 import org.osgi.service.log.LogService;
 
 import prefuse.data.Table;
+import edu.iu.scipolicy.preprocessing.geocoder.coders.CountryCoder;
+import edu.iu.scipolicy.preprocessing.geocoder.coders.StateCoder;
 
 /**
  * @author cdtank
@@ -79,12 +81,12 @@ public class GeocoderComputation {
 		 * Place_Type input by the user.
 		 * */
 		if(locationType.equalsIgnoreCase(GeocoderAlgorithm.LOCATION_AS_STATE_IDENTIFIER)) {
-			fullFormToLocationDictionary = GeocoderDictionaries.getStateFullformToLocation();
-			abbreviationToFullFormDictionary = GeocoderDictionaries.getStateAbbreviationToFullform();
+			fullFormToLocationDictionary = StateCoder.getStateFullformToLocation();
+			abbreviationToFullFormDictionary = StateCoder.getStateAbbreviationToFullform();
 		}
 		else {
-			fullFormToLocationDictionary = GeocoderDictionaries.getCountryFullformToLocation();
-			abbreviationToFullFormDictionary = GeocoderDictionaries.getCountryAbbreviationToFullform();
+			fullFormToLocationDictionary = CountryCoder.getCountryFullformToLocation();
+			abbreviationToFullFormDictionary = CountryCoder.getCountryAbbreviationToFullform();
 		}
 		
 		
