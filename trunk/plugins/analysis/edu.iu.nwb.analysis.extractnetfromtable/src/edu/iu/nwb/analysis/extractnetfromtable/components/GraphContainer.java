@@ -172,7 +172,7 @@ public class GraphContainer {
 
 				for (int ii = 0; ii < sources.length; ii++) {
 					String trimmedSource = sources[ii].trim();
-					
+					if("".equals(trimmedSource)) { continue; }
 					if (seenSource.add(trimmedSource)) { 
 						node1 = NodeUtilities.mutateNode(
 								trimmedSource,
@@ -186,7 +186,7 @@ public class GraphContainer {
 
 						for (int jj = 0; jj < targets.length; jj++) {
 							String trimmedTarget = targets[jj].trim();
-						
+							if("".equals(trimmedTarget)) { continue; }
 							if(seenTarget.add(trimmedTarget)) {
 								node2 = NodeUtilities.mutateNode(
 										trimmedTarget,
