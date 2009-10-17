@@ -1,5 +1,6 @@
 package edu.iu.scipolicy.preprocessing.extractzipcode;
 
+import java.text.DecimalFormat;
 import java.util.Dictionary;
 
 import org.cishell.framework.CIShellContext;
@@ -50,20 +51,34 @@ public class ExtractZipcodeAlgorithm implements Algorithm {
 		/*
 		 * After getting the Prefuse Table data pass it for parsing ZIP codes.
 		 * */
-		ExtractZipcodeComputation geoCoderComputation = 
+		ExtractZipcodeComputation zipcodeExtractionComputation = 
 			new ExtractZipcodeComputation(truncate, addressColumnName, originalInputTable, logger);
+		
+		logger.log(LogService.LOG_INFO, zipcodeExtractionComputation.getTotalZipcodesExtracted()
+										+ " ZIP codes extracted from "
+										+ zipcodeExtractionComputation.getTotalAddressesConsidered()
+										+ " addresses.");
+				
 		
 		/*
 		 * After getting the output in table format make it available to the user.
 		 * */
-		Data output = new BasicData(geoCoderComputation.getOutputTable(), Table.class.getName());
+		Data output = new BasicData(zipcodeExtractionComputation.getOutputTable(), Table.class.getName());
 		Dictionary metadata = output.getMetadata();
 		metadata.put(DataProperty.LABEL, "ZIP codes for addresses in \"" 
 										 + addressColumnName 
-										 + "\" is added.");
+										 + "\" is added. "
+										 + calculateParsingPercentage(zipcodeExtractionComputation.getTotalZipcodesExtracted(), 
+												 					  zipcodeExtractionComputation.getTotalAddressesConsidered())
+										 + "% ZIP codes extracted.");
 		metadata.put(DataProperty.PARENT, this.data[0]);
 		metadata.put(DataProperty.TYPE, DataProperty.TABLE_TYPE);
 		
 		return new Data[]{ output };
+    }
+    
+    private double calculateParsingPercentage(int extractedZipcodesCount, int totalAddresses) {
+       	DecimalFormat roundedRatioFormat = new DecimalFormat("#.###");
+		return Double.valueOf(roundedRatioFormat.format(((double) extractedZipcodesCount * 100.0) / totalAddresses));
     }
 }

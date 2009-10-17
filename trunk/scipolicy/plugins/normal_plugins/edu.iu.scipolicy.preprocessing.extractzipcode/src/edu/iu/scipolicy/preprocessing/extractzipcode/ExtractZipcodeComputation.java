@@ -39,6 +39,9 @@ public class ExtractZipcodeComputation {
 	private static final int PRIMARY_TO_EXTENSION_DISTANCE_TOLERANCE_VALUE = 2;
 	private static final int EXTENSION_ZIPCODE_LENGTH = 4;
 	private static final int PRIMARY_ZIPCODE_LENGTH = 5;
+	
+	
+	private int totalAddressesConsidered = 0, totalZipcodesExtracted = 0;
 
 	private LogService logger;
 
@@ -73,8 +76,8 @@ public class ExtractZipcodeComputation {
 		
 		outputTable.addColumn(outputTableZipcodeColumnName, String.class);
 		
-		logger.log(LogService.LOG_INFO, "ZIP code added to "
-										+ outputTableZipcodeColumnName);
+		logger.log(LogService.LOG_INFO, "ZIP code added to \""
+										+ outputTableZipcodeColumnName + "\" column.");
 		
 		Iterator addressColumnIterator = originalTable.iterator();
 		
@@ -145,6 +148,7 @@ public class ExtractZipcodeComputation {
 							outputZipcode = zipcode.getPrimaryZipcode(); 
 					}
 				}
+				totalZipcodesExtracted++;
 			}
 			
 			/*
@@ -155,6 +159,8 @@ public class ExtractZipcodeComputation {
 			TableUtilities
 				.copyTableRow(currentRowNumber, currentRowNumber, outputTable, originalTable);
 			outputTable.set(currentRowNumber, zipcodeColumnNumber, outputZipcode);
+			
+			totalAddressesConsidered++;
 		}
 	}
 
@@ -209,6 +215,20 @@ public class ExtractZipcodeComputation {
 	 */
 	public Table getOutputTable() {
 		return outputTable;
+	}
+
+	/**
+	 * @return the totalAddressesConsidered
+	 */
+	public int getTotalAddressesConsidered() {
+		return totalAddressesConsidered;
+	}
+
+	/**
+	 * @return the totalZipcodesExtracted
+	 */
+	public int getTotalZipcodesExtracted() {
+		return totalZipcodesExtracted;
 	}
 	
 }
