@@ -33,7 +33,7 @@ import prefuse.data.Tuple;
  */
 public class HorizontalLineGraphPostScriptCreator {
 	public static final int FAKE_BOUNDING_BOX_WIDTH_HACK = 600;
-	public static final int CHOSEN_DOTS_PER_INCH = 72;
+	public static final int DOTS_PER_INCH = 72;
 	
 	private String labelKey;
 	private String startDateKey;
@@ -150,11 +150,24 @@ public class HorizontalLineGraphPostScriptCreator {
 			totalHeightSpan,
 			defaultBoundingBoxWidth,
 			startYPosition);
+
+		final double pageWidth = 8.5;
+		final double pageHeight = 11;
+		final boolean shouldScaleToFitPage = true;
+		double scale = 1.0;
 		
-		final String postScriptHeader = formPostScriptHeader(
-			0, barMargin, defaultBoundingBoxWidth, barMargin);
+		if (shouldScaleToFitPage) {
+			scale = determineScaleToFitToPageSize(pageWidth, pageHeight);
+		}
 		
-		final String postScriptYearLabels =  formPostScriptYearLabels(
+		final String postScriptComments = formPostScriptComments(
+			0, barMargin, defaultBoundingBoxWidth, barMargin, scale);
+		
+		final String postScriptScale = formPostScriptScale(scale);
+		
+		final String postScriptHeader = formPostScriptHeader();
+		
+		final String postScriptYearLabels = formPostScriptYearLabels(
 			newYearsDatesForGraph,
 			graphStartDate,
 			graphEndDate,
@@ -164,14 +177,12 @@ public class HorizontalLineGraphPostScriptCreator {
 		
 		final String postScriptBackground = formPostScriptBackground();
 		
-		//final String postScriptScale = formPostScriptScale();
-		final String postScriptScale = "";
-		
 		// TODO
 		final String postScriptRotation = "";
 		
-		return postScriptHeader +
+		return postScriptComments +
 			   postScriptScale +
+			   postScriptHeader +
 			   postScriptYearLabels +
 			   postScriptRecordBars +
 			   postScriptBackground;
@@ -256,13 +267,17 @@ public class HorizontalLineGraphPostScriptCreator {
 		return interpolatedWidth + 1000;
 	}
 	
-	private String formPostScriptHeader(double boundingBoxBottom,
-										double boundingBogLeft,
-										double defaultBoundingBoxWidth,
-										double recordBarMargin) {
-		String TICK_COLOR_STRING = "0.75 0.75 0.75";
-		String RECORD_LABEL_COLOR_STRING = "0.4 0.4 0.4";
-		String RECORD_BAR_COLOR_STRING = "0.0 0.0 0.0";
+	private String formPostScriptComments(
+			double boundingBoxBottom,
+			double boundingBoxLeft,
+			double defaultBoundingBoxWidth,
+			double recordBarMargin,
+			double scale) {
+		double boundingBoxWidth = Math.round(
+			(this.calculatedBoundingBoxWidth + FAKE_BOUNDING_BOX_WIDTH_HACK) *
+			scale);
+		double boundingBoxHeight = Math.round(
+			this.calculatedBoundingBoxHeight * scale);
 		
 		return
 			/*
@@ -272,19 +287,26 @@ public class HorizontalLineGraphPostScriptCreator {
 			 */
 			line("%!PS-Adobe-2.0 EPSF-2.0") +
 			line("%%BoundingBox:" +
-					Math.round(boundingBogLeft) +
+					Math.round(boundingBoxLeft) +
 					" " +
 					Math.round(boundingBoxBottom) +
 					" " +
-				 	Math.round(this.calculatedBoundingBoxWidth + FAKE_BOUNDING_BOX_WIDTH_HACK) +
+				 	boundingBoxWidth +
 				 	" " +
-				 	Math.round(this.calculatedBoundingBoxHeight)) +
+				 	boundingBoxHeight) +
 			// line("%%Pages: 1") +
 			line("%%Title: Horizontal Line Graph") +
 			line("%%Creator: SciPolicy") +
 			line("%%EndComments") +
-			line("") +
-			
+			line("");
+	}
+	
+	private String formPostScriptHeader() {
+		String TICK_COLOR_STRING = "0.75 0.75 0.75";
+		String RECORD_LABEL_COLOR_STRING = "0.4 0.4 0.4";
+		String RECORD_BAR_COLOR_STRING = "0.0 0.0 0.0";
+		
+		return
 			line("/tick {") +
 				line(tabbed("newpath")) +
 				line(tabbed("moveto")) +
@@ -463,6 +485,17 @@ public class HorizontalLineGraphPostScriptCreator {
 		return recordBarPostScript.toString();
 	}
 	
+	private double determineScaleToFitToPageSize(
+			double pageWidth, double pageHeight) {
+		if (this.calculatedBoundingBoxHeight > 0.0) {
+			double pageHeightInPoints = DOTS_PER_INCH * pageHeight;
+			
+			return pageHeightInPoints / this.calculatedBoundingBoxHeight;
+		} else {
+			return 1.0;
+		}
+	}
+	
 	/*
 	 * TODO: Give this a more accurate name?  I'm not sure if this is actually
 	 *  changing the background.
@@ -471,11 +504,8 @@ public class HorizontalLineGraphPostScriptCreator {
 		return line("0 0 1 setrgbcolor");
 	}
 	
-	private String formPostScriptScale() {
-		double widthScale = this.calculatedBoundingBoxWidth;
-		double heightScale =
-			this.calculatedBoundingBoxHeight + FAKE_BOUNDING_BOX_WIDTH_HACK;
-		return line(widthScale + " " + heightScale + " scale");
+	private String formPostScriptScale(double scale) {
+		return line(scale + " " + scale + " scale");
 	}
 	
 	private String line(String str) {
