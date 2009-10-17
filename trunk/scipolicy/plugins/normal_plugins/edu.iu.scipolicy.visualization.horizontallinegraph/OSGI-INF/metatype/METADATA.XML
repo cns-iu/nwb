@@ -6,6 +6,7 @@
 		 <AD name="Start Date" id="start_date" type="String" description="The field used for the starting date" default="START_DATE"/>
 		 <AD name="End Date" id="end_date" type="String" description="The field used for the ending date" default="ENDING_DATE"/>
 		 <AD name="Size By" id="size_by" type="String" description="The field used to size the horizontal bar lines by" default="AWARDED_AMOUNT_TO_DATE"/>
+		 <AD name="Date Format" id="date_format" type="String" description="The format of the start and end dates" default=""/>
 	</OCD>
 	<Designate pid="edu.iu.scipolicy.visualization.horizontallinegraph.HorizontalLineGraphAlgorithm">
 		<Object ocdref="edu.iu.scipolicy.visualization.horizontallinegraph.HorizontalLineGraphAlgorithm.OCD" />

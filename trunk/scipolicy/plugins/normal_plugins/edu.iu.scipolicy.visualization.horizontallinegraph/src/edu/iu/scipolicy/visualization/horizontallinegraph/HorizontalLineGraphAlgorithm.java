@@ -23,12 +23,16 @@ public class HorizontalLineGraphAlgorithm implements Algorithm {
 	public static final String START_DATE_FIELD_ID = "start_date";
 	public static final String END_DATE_FIELD_ID = "end_date";
 	public static final String SIZE_BY_FIELD_ID = "size_by";
+	public static final String DATE_FORMAT_FIELD_ID = "date_format";
 	
     private Data inputData;
     private String labelKey;
     private String startDateKey;
     private String endDateKey;
     private String sizeByKey;
+    private String startDateFormat;
+    private String endDateFormat;
+    
     private LogService logger;
     
     public HorizontalLineGraphAlgorithm(Data[] data,
@@ -40,6 +44,8 @@ public class HorizontalLineGraphAlgorithm implements Algorithm {
         this.startDateKey = parameters.get(START_DATE_FIELD_ID).toString();
         this.endDateKey = parameters.get(END_DATE_FIELD_ID).toString();
         this.sizeByKey = parameters.get(SIZE_BY_FIELD_ID).toString();
+        this.startDateFormat = (String)parameters.get(DATE_FORMAT_FIELD_ID);
+        this.endDateFormat = (String)parameters.get(DATE_FORMAT_FIELD_ID);
         
         this.logger =
         	(LogService) context.getService(LogService.class.getName());
@@ -84,7 +90,9 @@ public class HorizontalLineGraphAlgorithm implements Algorithm {
     			this.labelKey,
     			this.startDateKey,
     			this.endDateKey,
-    			this.sizeByKey);
+    			this.sizeByKey,
+    			this.startDateFormat,
+    			this.endDateFormat);
 
 		String postScriptCode =
 			postScriptCreator.createPostScript

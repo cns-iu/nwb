@@ -8,6 +8,7 @@ import org.cishell.framework.algorithm.AlgorithmFactory;
 import org.cishell.framework.algorithm.ParameterMutator;
 import org.cishell.framework.data.Data;
 import org.cishell.reference.service.metatype.BasicObjectClassDefinition;
+import org.cishell.utilities.DateUtilities;
 import org.cishell.utilities.MutateParameterUtilities;
 import org.osgi.service.metatype.AttributeDefinition;
 import org.osgi.service.metatype.ObjectClassDefinition;
@@ -58,6 +59,15 @@ public class HorizontalLineGraphAlgorithmFactory
 				newAttributeDefinition =
 					MutateParameterUtilities.formNumberAttributeDefinition(
 						oldAttributeDefinition, table);
+			} else if (oldAttributeDefinitionID.equals(
+					HorizontalLineGraphAlgorithm.DATE_FORMAT_FIELD_ID)) {
+				String[] dateFormatOptions = formDateFormatOptions();
+				// TODO: form labels (so the tool displays "NIH Date Format")
+				newAttributeDefinition = MutateParameterUtilities.
+					cloneToDropdownAttributeDefinition(
+						oldAttributeDefinition,
+						dateFormatOptions,
+						dateFormatOptions);
 			}
 			
 			/* TODO This can take optional ADs and mutate them needlessly into
@@ -68,5 +78,12 @@ public class HorizontalLineGraphAlgorithmFactory
 		}
 		
     	return newParameters;
+    }
+    
+    private static String[] formDateFormatOptions() {
+    	return new String[] {
+    		DateUtilities.MONTH_DAY_DATE_FORMAT,
+    		DateUtilities.DAY_MONTH_DATE_FORMAT,
+    	};
     }
 }

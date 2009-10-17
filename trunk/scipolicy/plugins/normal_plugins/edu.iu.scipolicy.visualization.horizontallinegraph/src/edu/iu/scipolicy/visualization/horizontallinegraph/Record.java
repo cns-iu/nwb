@@ -27,12 +27,14 @@ public class Record implements Comparable<Record> {
 				  String labelKey,
 				  String startDateKey,
 				  String endDateKey,
-				  String sizeByKey) throws InvalidRecordException {
+				  String sizeByKey,
+				  String startDateFormat,
+				  String endDateFormat) throws InvalidRecordException {
 		this.label = (String)tableRow.get(labelKey);
 		
 		try {
 			this.startDate = DateUtilities.interpretObjectAsDate(
-				tableRow.get(startDateKey));
+				tableRow.get(startDateKey), startDateFormat);
 		} catch (ParseException unparsableDateException) {
 			String exceptionMessage =
 				"The record labeled \'" +
@@ -44,8 +46,8 @@ public class Record implements Comparable<Record> {
 		}
 		
 		try {
-			this.endDate =
-				DateUtilities.interpretObjectAsDate(tableRow.get(endDateKey));
+			this.endDate = DateUtilities.interpretObjectAsDate(
+				tableRow.get(endDateKey), endDateFormat);
 		} catch (ParseException unparsableDateException) {
 			String exceptionMessage =
 				"The record labeled \'" +

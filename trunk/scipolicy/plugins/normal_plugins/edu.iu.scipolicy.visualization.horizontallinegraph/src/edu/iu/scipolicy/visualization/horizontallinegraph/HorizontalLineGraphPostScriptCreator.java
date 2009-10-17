@@ -39,19 +39,26 @@ public class HorizontalLineGraphPostScriptCreator {
 	private String startDateKey;
 	private String endDateKey;
 	private String sizeByKey;
+	private String startDateFormat;
+	private String endDateFormat;
 	
 	private double calculatedBoundingBoxWidth = 0.0;
 	private double calculatedBoundingBoxHeight = 0.0;
 	
-	public HorizontalLineGraphPostScriptCreator(String labelKey,
-												String startDateKey,
-												String endDateKey,
-												String sizeByKey)
+	public HorizontalLineGraphPostScriptCreator(
+			String labelKey,
+			String startDateKey,
+			String endDateKey,
+			String sizeByKey,
+			String startDateFormat,
+			String endDateFormat)
 	{
 		this.labelKey = labelKey;
 		this.startDateKey = startDateKey;
 		this.endDateKey = endDateKey;
 		this.sizeByKey = sizeByKey;
+		this.startDateFormat = startDateFormat;
+		this.endDateFormat = endDateFormat;
 	}
 
 	public String createPostScript(
@@ -157,17 +164,17 @@ public class HorizontalLineGraphPostScriptCreator {
 		
 		final String postScriptBackground = formPostScriptBackground();
 		
-		final String postScriptScale = formPostScriptScale();
+		//final String postScriptScale = formPostScriptScale();
+		final String postScriptScale = "";
 		
 		// TODO
 		final String postScriptRotation = "";
 		
 		return postScriptHeader +
+			   postScriptScale +
 			   postScriptYearLabels +
 			   postScriptRecordBars +
-			   postScriptBackground +
-			   postScriptScale +
-			   postScriptRotation;
+			   postScriptBackground;
 	}
 	
 	@SuppressWarnings("unchecked") // Raw Iterator from the tuples method.
@@ -179,11 +186,14 @@ public class HorizontalLineGraphPostScriptCreator {
 			Tuple row = rows.next();
 			
 			try {
-				Record newRecord = new Record(row,
-											  this.labelKey,
-											  this.startDateKey,
-											  this.endDateKey,
-											  this.sizeByKey);
+				Record newRecord = new Record(
+					row,
+					this.labelKey,
+					this.startDateKey,
+					this.endDateKey,
+					this.sizeByKey,
+					this.startDateFormat,
+					this.endDateFormat);
 				
 				workingRecordSet.add(newRecord);
 			} catch (InvalidRecordException invalidRecordException) {
