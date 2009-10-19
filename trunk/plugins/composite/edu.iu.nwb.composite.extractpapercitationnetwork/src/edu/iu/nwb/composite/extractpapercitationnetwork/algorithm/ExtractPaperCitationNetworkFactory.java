@@ -9,6 +9,6 @@ import org.cishell.framework.data.Data;
 
 public class ExtractPaperCitationNetworkFactory implements AlgorithmFactory {
     public Algorithm createAlgorithm(Data[] data, Dictionary parameters, CIShellContext context) {
-        return new ExtractPaperCitationNetwork(data, parameters, context);
+        return new ExtractPaperCitationNetwork(data, context);
     }
 }
