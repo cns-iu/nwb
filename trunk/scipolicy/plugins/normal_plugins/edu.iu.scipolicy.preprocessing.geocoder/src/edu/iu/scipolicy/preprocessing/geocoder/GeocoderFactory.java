@@ -46,6 +46,7 @@ public class GeocoderFactory implements AlgorithmFactory, ParameterMutator {
 //    	GeocoderDictionaries.setZipCodeFile(zipCode_GeoCodePath);
     }
 	
+	@SuppressWarnings("unchecked") // Raw Dictionary
 	public Algorithm createAlgorithm(Data[] data, Dictionary parameters, CIShellContext context) {
 
 		return new GeocoderAlgorithm(data, parameters, context);

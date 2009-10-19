@@ -12,7 +12,6 @@ import java.util.List;
 import java.util.Map;
 
 public class CountryCoder {
-
 	private static final int CACHE_ROW_ABBREVIATION_INDEX = 1;
 	private static final int CACHE_ROW_FULLFORM_INDEX = 0;
 	private static final int CACHE_ROW_LONGITUDE_INDEX = 3;

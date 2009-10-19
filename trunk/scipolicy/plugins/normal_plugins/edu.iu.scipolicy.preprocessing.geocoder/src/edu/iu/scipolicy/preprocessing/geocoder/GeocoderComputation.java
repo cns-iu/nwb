@@ -57,6 +57,7 @@ public class GeocoderComputation {
 		/*
 		 * Create Blank new output table using the schema from the original table.
 		 * */
+		// TODO Replace with schema.instantiate() and test.
 		outputTable = TableUtilities.createTableUsingSchema(originalTable.getSchema());
 		outputTableLatitudeColumnName = TableUtilities.formNonConflictingNewColumnName(
 			originalTable.getSchema(), LATITUDE_COLUMN_NAME_SUGGESTIONS);

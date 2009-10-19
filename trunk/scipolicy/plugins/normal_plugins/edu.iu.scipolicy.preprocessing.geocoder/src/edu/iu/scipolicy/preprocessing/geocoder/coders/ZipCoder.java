@@ -1,16 +1,16 @@
 package edu.iu.scipolicy.preprocessing.geocoder.coders;
 
-import java.io.File;
-import java.io.FileReader;
-import java.io.IOException;
-import java.net.URL;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
-import org.cishell.framework.algorithm.AlgorithmExecutionException;
-
-public class ZipCoder {
+//import java.io.File;
+//import java.io.FileReader;
+//import java.io.IOException;
+//import java.net.URL;
+//import java.util.HashMap;
+//import java.util.List;
+//import java.util.Map;
+//
+//import org.cishell.framework.algorithm.AlgorithmExecutionException;
+//
+//public class ZipCoder {
 
 //	private static final int CACHE_ROW_ABBREVIATION_INDEX = 1;
 //	private static final int CACHE_ROW_FULLFORM_INDEX = 0;
@@ -82,4 +82,4 @@ public class ZipCoder {
 //		
 //		return columnNameToColumnIndex;
 //	}
-}
+//}

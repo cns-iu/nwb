@@ -4,7 +4,6 @@ import java.util.Dictionary;
 
 import org.cishell.framework.CIShellContext;
 import org.cishell.framework.algorithm.Algorithm;
-import org.cishell.framework.algorithm.AlgorithmExecutionException;
 import org.cishell.framework.data.BasicData;
 import org.cishell.framework.data.Data;
 import org.cishell.framework.data.DataProperty;
@@ -27,11 +26,9 @@ import prefuse.data.Table;
  *
  */
 
-public class GeocoderAlgorithm implements Algorithm{
-	
+public class GeocoderAlgorithm implements Algorithm {
 	private Data[] data;
-    private Dictionary parameters;
-    private CIShellContext context;
+    private Dictionary<String, Object> parameters;
 	private LogService logger;
 	
 	public static final String LOCATION_AS_STATE_IDENTIFIER = "STATE";
@@ -41,17 +38,16 @@ public class GeocoderAlgorithm implements Algorithm{
     public static final String PLACE_TYPE = "place_type";
     
     
-    public GeocoderAlgorithm(Data[] data, Dictionary parameters,
-			CIShellContext context) {
-    	
+    public GeocoderAlgorithm(
+    		Data[] data, Dictionary<String, Object> parameters, CIShellContext context) {    	
         this.data = data;
         this.parameters = parameters;
-        this.context = context;
+        
 		this.logger = (LogService) context.getService(LogService.class.getName());
 	}
 
-    public Data[] execute() throws AlgorithmExecutionException {
-
+    @SuppressWarnings("unchecked") // Raw Dictionary
+	public Data[] execute() {
 		String locationType = (String)parameters.get(PLACE_TYPE);
 		String locationColumnName = (String)parameters.get(PLACE_NAME_COLUMN);
 		
@@ -68,7 +64,7 @@ public class GeocoderAlgorithm implements Algorithm{
 		 * */
 		Data output = new BasicData(geoCoderComputation.getOutputTable(), Table.class.getName());
 		Dictionary metadata = output.getMetadata();
-		metadata.put(DataProperty.LABEL, "Latitude & Longitude for \"" + locationType + "\" in \"" + locationColumnName + "\" is added.");
+		metadata.put(DataProperty.LABEL, "With Latitude & Longitude from '" + locationColumnName + "'");
 		metadata.put(DataProperty.PARENT, this.data[0]);
 		metadata.put(DataProperty.TYPE, DataProperty.TABLE_TYPE);
 		
