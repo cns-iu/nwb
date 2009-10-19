@@ -10,8 +10,6 @@ import java.util.regex.Pattern;
 import org.cishell.framework.algorithm.ProgressMonitor;
 import org.osgi.service.log.LogService;
 
-import edu.iu.nwb.analysis.extractnetfromtable.aggregate.AggregateFunctionNames;
-
 import prefuse.data.Graph;
 import prefuse.data.Node;
 import prefuse.data.Schema;
