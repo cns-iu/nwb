@@ -15,9 +15,10 @@ public class PostScriptFormationUtilities {
 	}
 	
 	public static String centeringTranslate(double xTranslate) {
-		double yTranslate = 0.0;
+		/* double yTranslate = 0.0;
 		
-		return line(xTranslate + " " + yTranslate + " translate");
+		return line(xTranslate + " " + yTranslate + " translate"); */
+		return line("");
 	}
 	
 	public static String comments(

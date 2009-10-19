@@ -99,7 +99,10 @@ public class CalculationUtilities {
 	}
 	
 	public static double scaleToFitToPageSize(
-			double boundingBoxHeight, double pageWidth, double pageHeight) {
+			double boundingBoxWidth,
+			double boundingBoxHeight,
+			double pageWidth,
+			double pageHeight) {
 		double pageWidthInPoints =
 			(pageWidth * PostScriptFormationUtilities.DOTS_PER_INCH);
 		double pageHeightInPoints =
@@ -110,18 +113,10 @@ public class CalculationUtilities {
 			scale = pageHeightInPoints / boundingBoxHeight;
 		}
 		
-		System.err.println("scale: " + scale);
+		double scaledBoundingBoxWidth = (boundingBoxWidth * scale);
 		
-		double scaledPageWidth = (pageWidth * scale);
-		double scaledPageHeight = (pageHeight * scale);
-		
-		System.err.println("scaledPageWidth: " + scaledPageWidth);
-		System.err.println("scaledPageHeight: " + scaledPageHeight);
-		System.err.println("pageWidthInPoints: " + pageWidthInPoints);
-		
-		if (scaledPageWidth > pageWidthInPoints) {
-			scale *= pageWidthInPoints / scaledPageWidth;
-			System.err.println("new scale: " + scale);
+		if (scaledBoundingBoxWidth > pageWidthInPoints) {
+			scale *= pageWidthInPoints / scaledBoundingBoxWidth;
 		}
 		
 		return scale;

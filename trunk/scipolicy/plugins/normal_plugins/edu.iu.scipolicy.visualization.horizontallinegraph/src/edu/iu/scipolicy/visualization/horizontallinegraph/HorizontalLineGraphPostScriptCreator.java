@@ -174,6 +174,7 @@ public class HorizontalLineGraphPostScriptCreator {
 		
 		if (this.shouldScaleOutput) {
 			scale = CalculationUtilities.scaleToFitToPageSize(
+				this.calculatedBoundingBoxWidth,
 				this.calculatedBoundingBoxHeight,
 				this.pageWidth,
 				this.pageHeight);
