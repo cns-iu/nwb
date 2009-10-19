@@ -17,6 +17,9 @@ import org.osgi.service.log.LogService;
 import prefuse.data.Table;
 
 public class HorizontalLineGraphAlgorithm implements Algorithm {
+	public static final double DEFAULT_PAGE_WIDTH = 8.5;
+	public static final double DEFAULT_PAGE_HEIGTH = 11.0;
+
 	public static final String POSTSCRIPT_MIME_TYPE="file:text/ps";
 	public static final String EPS_FILE_EXTENSION="eps";
 	public static final String LABEL_FIELD_ID = "label";
@@ -24,6 +27,10 @@ public class HorizontalLineGraphAlgorithm implements Algorithm {
 	public static final String END_DATE_FIELD_ID = "end_date";
 	public static final String SIZE_BY_FIELD_ID = "size_by";
 	public static final String DATE_FORMAT_FIELD_ID = "date_format";
+	public static final String PAGE_WIDTH_FIELD_ID = "page_width";
+	public static final String PAGE_HEIGHT_FIELD_ID = "page_height";
+	public static final String SHOULD_SCALE_OUTPUT_FIELD_ID =
+		"should_scale_output";
 	
     private Data inputData;
     private String labelKey;
@@ -32,6 +39,9 @@ public class HorizontalLineGraphAlgorithm implements Algorithm {
     private String sizeByKey;
     private String startDateFormat;
     private String endDateFormat;
+    private double pageWidth = DEFAULT_PAGE_WIDTH;
+    private double pageHeight = DEFAULT_PAGE_HEIGTH;
+    private boolean shouldScaleOutput = false;
     
     private LogService logger;
     
@@ -46,6 +56,13 @@ public class HorizontalLineGraphAlgorithm implements Algorithm {
         this.sizeByKey = parameters.get(SIZE_BY_FIELD_ID).toString();
         this.startDateFormat = (String)parameters.get(DATE_FORMAT_FIELD_ID);
         this.endDateFormat = (String)parameters.get(DATE_FORMAT_FIELD_ID);
+        this.pageWidth =
+        	((Double)parameters.get(PAGE_WIDTH_FIELD_ID)).doubleValue();
+        this.pageHeight =
+        	((Double)parameters.get(PAGE_HEIGHT_FIELD_ID)).doubleValue();
+        this.shouldScaleOutput =
+        	((Boolean)parameters.get(SHOULD_SCALE_OUTPUT_FIELD_ID)).
+        		booleanValue();
         
         this.logger =
         	(LogService) context.getService(LogService.class.getName());
@@ -92,7 +109,10 @@ public class HorizontalLineGraphAlgorithm implements Algorithm {
     			this.endDateKey,
     			this.sizeByKey,
     			this.startDateFormat,
-    			this.endDateFormat);
+    			this.endDateFormat,
+    			this.pageWidth,
+    			this.pageHeight,
+    			this.shouldScaleOutput);
 
 		String postScriptCode =
 			postScriptCreator.createPostScript

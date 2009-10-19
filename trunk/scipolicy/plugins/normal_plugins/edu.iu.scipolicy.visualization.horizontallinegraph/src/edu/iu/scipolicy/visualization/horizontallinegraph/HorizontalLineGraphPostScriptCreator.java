@@ -34,6 +34,9 @@ import prefuse.data.Tuple;
 public class HorizontalLineGraphPostScriptCreator {
 	public static final int FAKE_BOUNDING_BOX_WIDTH_HACK = 600;
 	public static final int DOTS_PER_INCH = 72;
+	public static final double MARGIN_WIDTH_FACTOR = 0.10;
+	public static final double MARGIN_HEIGHT_FACTOR = 0.10;
+	public static final double SPACING_ABOVE_X_AXIS_FACTOR = 0.05;
 	
 	private String labelKey;
 	private String startDateKey;
@@ -41,6 +44,9 @@ public class HorizontalLineGraphPostScriptCreator {
 	private String sizeByKey;
 	private String startDateFormat;
 	private String endDateFormat;
+	private double pageWidth;
+    private double pageHeight;
+    private boolean shouldScaleOutput;
 	
 	private double calculatedBoundingBoxWidth = 0.0;
 	private double calculatedBoundingBoxHeight = 0.0;
@@ -51,7 +57,10 @@ public class HorizontalLineGraphPostScriptCreator {
 			String endDateKey,
 			String sizeByKey,
 			String startDateFormat,
-			String endDateFormat)
+			String endDateFormat,
+			double pageWidth,
+			double pageHeight,
+			boolean shouldScaleOutput)
 	{
 		this.labelKey = labelKey;
 		this.startDateKey = startDateKey;
@@ -59,6 +68,9 @@ public class HorizontalLineGraphPostScriptCreator {
 		this.sizeByKey = sizeByKey;
 		this.startDateFormat = startDateFormat;
 		this.endDateFormat = endDateFormat;
+		this.pageWidth = pageWidth;
+		this.pageHeight = pageHeight;
+		this.shouldScaleOutput = shouldScaleOutput;
 	}
 
 	public String createPostScript(
@@ -150,40 +162,41 @@ public class HorizontalLineGraphPostScriptCreator {
 			totalHeightSpan,
 			defaultBoundingBoxWidth,
 			startYPosition);
+		
+		updateBoundingBoxSizeForPadding();
 
-		final double pageWidth = 8.5;
-		final double pageHeight = 11;
-		final boolean shouldScaleToFitPage = true;
 		double scale = 1.0;
 		
-		if (shouldScaleToFitPage) {
-			scale = determineScaleToFitToPageSize(pageWidth, pageHeight);
+		if (this.shouldScaleOutput) {
+			scale = determineScaleToFitToPageSize(
+				this.pageWidth, this.pageHeight);
 		}
 		
-		final String postScriptComments = formPostScriptComments(
-			0, barMargin, defaultBoundingBoxWidth, barMargin, scale);
-		
+		final String postScriptComments = formPostScriptComments(scale);
+		final String postScriptRotation = formPostScriptRotate(scale);
+		final String postScriptTranslate =
+			formPostScriptTranslateForMargins(scale);
 		final String postScriptScale = formPostScriptScale(scale);
-		
 		final String postScriptHeader = formPostScriptHeader();
-		
 		final String postScriptYearLabels = formPostScriptYearLabels(
 			newYearsDatesForGraph,
 			graphStartDate,
 			graphEndDate,
 			defaultBoundingBoxWidth,
 			startYPosition,
-			barMargin);
-		
+			barMargin,
+			scale);
+		final String postScriptPaddingAboveYearLabels =
+			formPostScriptTranslateForPaddingAboveYearLabels(scale);
 		final String postScriptBackground = formPostScriptBackground();
 		
-		// TODO
-		final String postScriptRotation = "";
-		
 		return postScriptComments +
+			   postScriptRotation +
+			   postScriptTranslate +
 			   postScriptScale +
 			   postScriptHeader +
 			   postScriptYearLabels +
+			   postScriptPaddingAboveYearLabels +
 			   postScriptRecordBars +
 			   postScriptBackground;
 	}
@@ -267,17 +280,9 @@ public class HorizontalLineGraphPostScriptCreator {
 		return interpolatedWidth + 1000;
 	}
 	
-	private String formPostScriptComments(
-			double boundingBoxBottom,
-			double boundingBoxLeft,
-			double defaultBoundingBoxWidth,
-			double recordBarMargin,
-			double scale) {
-		double boundingBoxWidth = Math.round(
-			(this.calculatedBoundingBoxWidth + FAKE_BOUNDING_BOX_WIDTH_HACK) *
-			scale);
-		double boundingBoxHeight = Math.round(
-			this.calculatedBoundingBoxHeight * scale);
+	private String formPostScriptComments(double scale) {
+		long pageBoundingBoxWidth = calculatePageBoundingBoxWidth(scale);
+		long pageBoundingBoxHeight = calculatePageBoundingBoxHeight(scale);
 		
 		return
 			/*
@@ -287,13 +292,13 @@ public class HorizontalLineGraphPostScriptCreator {
 			 */
 			line("%!PS-Adobe-2.0 EPSF-2.0") +
 			line("%%BoundingBox:" +
-					Math.round(boundingBoxLeft) +
+					0 +
 					" " +
-					Math.round(boundingBoxBottom) +
+					0 +
 					" " +
-				 	boundingBoxWidth +
+				 	pageBoundingBoxWidth +
 				 	" " +
-				 	boundingBoxHeight) +
+				 	pageBoundingBoxHeight) +
 			// line("%%Pages: 1") +
 			line("%%Title: Horizontal Line Graph") +
 			line("%%Creator: SciPolicy") +
@@ -307,6 +312,7 @@ public class HorizontalLineGraphPostScriptCreator {
 		String RECORD_BAR_COLOR_STRING = "0.0 0.0 0.0";
 		
 		return
+			line("") +
 			line("/tick {") +
 				line(tabbed("newpath")) +
 				line(tabbed("moveto")) +
@@ -402,7 +408,11 @@ public class HorizontalLineGraphPostScriptCreator {
 											Date graphEndDate,
 											double defaultBoundingBoxWidth,
 											int startYPosition,
-											double margin) {
+											double margin,
+											double scale) {
+		final double verticalTickHeight =
+			(calculatePageBoundingBoxHeight(1.0) -
+			 (calculateMarginHeight(1.0) / 2.0));
 		StringWriter yearLabelPostScript = new StringWriter();
 		
 		for (Date currentNewYearsDate : newYearsDates) {
@@ -417,10 +427,18 @@ public class HorizontalLineGraphPostScriptCreator {
 				line("(" + currentNewYearsDate.getYear() + ") " + 
 						xCoordinate + " " + startYPosition + " ticklabel") +
 				line("" + xCoordinate + " " + startYPosition + " " +
-						this.calculatedBoundingBoxHeight + " vertical"));
+						verticalTickHeight + " vertical"));
 		}
 		
 		return yearLabelPostScript.toString();
+	}
+	
+	private String formPostScriptTranslateForPaddingAboveYearLabels(
+			double scale) {
+		double xTranslate = 0.0;
+		double yTranslate = calculatePaddingAboveXAxis(scale);
+		
+		return line(xTranslate + " " + yTranslate + " translate");
 	}
 	
 	private String formPostScriptRecordBars(Record[] records,
@@ -466,6 +484,7 @@ public class HorizontalLineGraphPostScriptCreator {
 			
 			cursorYCoordinate += recordBarMargin;
 			
+			
 			String recordString =
 				line("(" + currentRecordName + ") " +
 					 recordBarStartXCoordinate + " " +
@@ -506,6 +525,19 @@ public class HorizontalLineGraphPostScriptCreator {
 	
 	private String formPostScriptScale(double scale) {
 		return line(scale + " " + scale + " scale");
+	}
+	
+	// TODO:
+	private String formPostScriptRotate(double scale) {
+		return "";
+	}
+	
+	// TODO:
+	private String formPostScriptTranslateForMargins(double scale) {
+		double xTranslate = (calculateMarginWidth(scale) / 2.0);
+		double yTranslate = (calculateMarginHeight(scale) / 2.0);
+		
+		return line(xTranslate + " " + yTranslate + " translate");
 	}
 	
 	private String line(String str) {
@@ -567,5 +599,32 @@ public class HorizontalLineGraphPostScriptCreator {
 		}
 	}
 	
+	private void updateBoundingBoxSizeForPadding() {
+		this.calculatedBoundingBoxWidth += calculateMarginWidth(1.0);
+		this.calculatedBoundingBoxHeight +=
+			(calculateMarginHeight(1.0) + calculatePaddingAboveXAxis(1.0));
+	}
 	
+	private double calculateMarginWidth(double scale) {
+		return (this.calculatedBoundingBoxWidth * MARGIN_WIDTH_FACTOR * scale);
+	}
+	
+	private double calculateMarginHeight(double scale) {
+		return
+			(this.calculatedBoundingBoxHeight * MARGIN_HEIGHT_FACTOR * scale);
+	}
+	
+	private double calculatePaddingAboveXAxis(double scale) {
+		return (this.calculatedBoundingBoxHeight *
+				SPACING_ABOVE_X_AXIS_FACTOR *
+				scale);
+	}
+	
+	private long calculatePageBoundingBoxWidth(double scale) {
+		return Math.round(this.calculatedBoundingBoxWidth * scale);
+	}
+	
+	private long calculatePageBoundingBoxHeight(double scale) {
+		return Math.round(this.calculatedBoundingBoxHeight * scale);
+	}
 }

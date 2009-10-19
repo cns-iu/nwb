@@ -61,12 +61,12 @@ public class HorizontalLineGraphAlgorithmFactory
 						oldAttributeDefinition, table);
 			} else if (oldAttributeDefinitionID.equals(
 					HorizontalLineGraphAlgorithm.DATE_FORMAT_FIELD_ID)) {
+				String[] dateFormatLabels = formDateFormatLabels();
 				String[] dateFormatOptions = formDateFormatOptions();
-				// TODO: form labels (so the tool displays "NIH Date Format")
 				newAttributeDefinition = MutateParameterUtilities.
 					cloneToDropdownAttributeDefinition(
 						oldAttributeDefinition,
-						dateFormatOptions,
+						dateFormatLabels,
 						dateFormatOptions);
 			}
 			
@@ -80,10 +80,19 @@ public class HorizontalLineGraphAlgorithmFactory
     	return newParameters;
     }
     
+    private static String[] formDateFormatLabels() {
+    	return new String[] {
+    		(DateUtilities.MONTH_DAY_YEAR_DATE_FORMAT +
+    			" (U.S., e.g. 10/15/2010)"),
+    		(DateUtilities.DAY_MONTH_YEAR_DATE_FORMAT +
+    			" (Europe, e.g. 15/10/2010)")
+    	};
+    }
+    
     private static String[] formDateFormatOptions() {
     	return new String[] {
-    		DateUtilities.MONTH_DAY_DATE_FORMAT,
-    		DateUtilities.DAY_MONTH_DATE_FORMAT,
+    		DateUtilities.MONTH_DAY_YEAR_DATE_FORMAT,
+    		DateUtilities.DAY_MONTH_YEAR_DATE_FORMAT,
     	};
     }
 }
