@@ -42,7 +42,12 @@ import edu.iu.scipolicy.visualization.geomaps.projection.GeometryProjector;
 import edu.iu.scipolicy.visualization.geomaps.utility.Constants;
 import edu.iu.scipolicy.visualization.geomaps.utility.ShapefileFeatureReader;
 
-public class ShapefileToPostScriptWriter {	
+public class ShapefileToPostScriptWriter {
+	/* Percentage of the data range to add to each side of the map as a buffer.
+	 * Between 0 and 1.
+	 */
+	public static final double MAP_BOUNDING_BOX_BUFFER_RATIO = 0.1;
+
 	public static final String OUTPUT_FILE_EXTENSION = "ps";
 	
 	public static final String TITLE = "Geo Map";
@@ -226,8 +231,23 @@ public class ShapefileToPostScriptWriter {
 		}
 		// YOU MUST CLOSE THE ITERATOR!
 		it.close();
+		
+		// Exaggerate the data range a bit to provide a buffer around it in the map.
+		double xRange = dataMaxX - dataMinX;
+		double xBufferSize = MAP_BOUNDING_BOX_BUFFER_RATIO * xRange;
+		double bufferedDataMinX = dataMinX - xBufferSize;
+		double bufferedDataMaxX = dataMaxX + xBufferSize;
+		
+		double yRange = dataMaxY - dataMinY;
+		double yBufferSize = MAP_BOUNDING_BOX_BUFFER_RATIO * yRange;
+		double bufferedDataMinY = dataMinY - yBufferSize;
+		double bufferedDataMaxY = dataMaxY + yBufferSize;
 
-		return new MapDisplayer(dataMinX, dataMinY, dataMaxX, dataMaxY);
+		return new MapDisplayer(
+				bufferedDataMinX, 
+				bufferedDataMinY, 
+				bufferedDataMaxX, 
+				bufferedDataMaxY);
 	}
 
 	private void writeCodeHeader(

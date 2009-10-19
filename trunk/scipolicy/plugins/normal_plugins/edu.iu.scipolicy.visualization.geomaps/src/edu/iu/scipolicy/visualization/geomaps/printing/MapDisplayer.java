@@ -36,13 +36,13 @@ public class MapDisplayer {
 		this.displayHeightInPoints = (scale * (dataMaxY - dataMinY));
 		this.displayCenterYInPoints = calculateDisplayCenterY(displayHeightInPoints);
 
-		Coordinate displayLowerLeftCorner = getDisplayCoordinate(new Coordinate(
-				dataMinX, dataMinY));
+		Coordinate displayLowerLeftCorner =
+			getDisplayCoordinate(new Coordinate(dataMinX, dataMinY));
 		this.displayLowerLeftX = displayLowerLeftCorner.x;
 		this.displayLowerLeftY = displayLowerLeftCorner.y;
 
-		Coordinate displayUpperRightCorner = getDisplayCoordinate(new Coordinate(
-				dataMaxX, dataMaxY));
+		Coordinate displayUpperRightCorner =
+			getDisplayCoordinate(new Coordinate(dataMaxX, dataMaxY));
 		this.displayUpperRightX = displayUpperRightCorner.x;
 		this.displayUpperRightY = displayUpperRightCorner.y;
 	}
@@ -56,11 +56,7 @@ public class MapDisplayer {
 				+ Constants.LEGEND_PAGE_AREA_HEIGHT_IN_POINTS + (displayHeightInPoints / 2.0));
 	}
 
-	/*
-	 * Transform ordinate z from the data space to the display space Equivalent
-	 * to the PostScript: displayCenter(X)InPoints displayCenter(Y)InPoints
-	 * translate scale scale scale dataCenter(X) dataCenter(Y) translate
-	 */
+	// Transform ordinate z from the data space to the display space.
 	private double positionOnDisplay(double z, double displayCenterInPoints,
 			double scale, double dataCenter) {
 		return displayCenterInPoints + (scale * (z - dataCenter));

@@ -1,5 +1,6 @@
 package edu.iu.scipolicy.visualization.geomaps.printing;
 
+import java.awt.Color;
 import java.io.BufferedWriter;
 import java.io.IOException;
 import java.util.Collections;
@@ -17,12 +18,15 @@ import com.vividsolutions.jts.geom.Point;
 
 import edu.iu.scipolicy.visualization.geomaps.GeoMapsAlgorithm;
 import edu.iu.scipolicy.visualization.geomaps.printing.colorstrategy.ColorStrategy;
+import edu.iu.scipolicy.visualization.geomaps.printing.colorstrategy.StrokeColorStrategy;
 import edu.iu.scipolicy.visualization.geomaps.projection.GeometryProjector;
 import edu.iu.scipolicy.visualization.geomaps.scaling.LinearScaler;
 import edu.iu.scipolicy.visualization.geomaps.scaling.Scaler;
 import edu.iu.scipolicy.visualization.geomaps.utility.Constants;
 
 public class CirclePrinter {
+	public static final double OUTLINE_ADDITIONAL_RADIUS = 0.25;
+	public static final Color OUTLINE_COLOR = Color.BLACK;
 	public static final String INDENT = "  ";
 	public static final double CIRCLE_LINE_WIDTH = 1.5;
 	
@@ -83,7 +87,7 @@ public class CirclePrinter {
 		out.write(INDENT + CIRCLE_LINE_WIDTH + " setlinewidth" + "\n");
 		out.write("\n");
 
-		for ( Circle circle : circles ) {
+		for (Circle circle : circles) {
 			printCircle(out, circle);
 		}
 
@@ -122,9 +126,16 @@ public class CirclePrinter {
 		Geometry point = geometryProjector.transformGeometry(rawPoint);
 		Coordinate displayCoordinate = mapDisplayer.getDisplayCoordinate(point.getCoordinate());
 
-		// Create the circle path
+		// Create and paint the circle outline (by stroking a slightly larger circle).
+		ColorStrategy outlineStrategy = new StrokeColorStrategy(OUTLINE_COLOR);
+		double outlineRadius = radius + OUTLINE_ADDITIONAL_RADIUS;
+		out.write(INDENT + displayCoordinate.x + " " + displayCoordinate.y + " " + outlineRadius + " circle" + "\n");
+		out.write(outlineStrategy.toPostScript());
+		
+		// Create and paint the circle path
 		out.write(INDENT + displayCoordinate.x + " " + displayCoordinate.y + " " + radius + " circle" + "\n");
 		out.write(innerColorStrategy.toPostScript());
+		
 		out.write(outerColorStrategy.toPostScript());	
 		out.write("\n");
 	}
