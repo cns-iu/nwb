@@ -35,7 +35,6 @@ import edu.iu.scipolicy.visualization.horizontallinegraph.utilities.PostScriptFo
  */
 public class HorizontalLineGraphPostScriptCreator {
 	public static final int FAKE_BOUNDING_BOX_WIDTH_HACK = 600;
-	public static final int DOTS_PER_INCH = 72;
 	public static final double MARGIN_WIDTH_FACTOR = 0.10;
 	public static final double MARGIN_HEIGHT_FACTOR = 0.10;
 	public static final double SPACING_ABOVE_X_AXIS_FACTOR = 0.05;
@@ -174,8 +173,10 @@ public class HorizontalLineGraphPostScriptCreator {
 		double scale = 1.0;
 		
 		if (this.shouldScaleOutput) {
-			scale = determineScaleToFitToPageSize(
-				this.pageWidth, this.pageHeight);
+			scale = CalculationUtilities.scaleToFitToPageSize(
+				this.calculatedBoundingBoxHeight,
+				this.pageWidth,
+				this.pageHeight);
 		}
 		
 		double horizontalCenteringOffset =
@@ -354,17 +355,6 @@ public class HorizontalLineGraphPostScriptCreator {
 		}
 		
 		return recordBarPostScript.toString();
-	}
-	
-	private double determineScaleToFitToPageSize(
-			double pageWidth, double pageHeight) {
-		if (this.calculatedBoundingBoxHeight > 0.0) {
-			double pageHeightInPoints = DOTS_PER_INCH * pageHeight;
-			
-			return pageHeightInPoints / this.calculatedBoundingBoxHeight;
-		} else {
-			return 1.0;
-		}
 	}
 	
 	private Date formGraphStartDateBasedOnRecords(Record[] records) {

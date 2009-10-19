@@ -4,6 +4,8 @@ import java.io.StringWriter;
 import java.util.Date;
 
 public class PostScriptFormationUtilities {
+	public static final int DOTS_PER_INCH = 72;
+	
 	/*
 	 * TODO: Give this a more accurate name?  I'm not sure if this is actually
 	 *  changing the background.
@@ -21,7 +23,7 @@ public class PostScriptFormationUtilities {
 	public static String comments(
 			double boundingBoxHeight, double pageWidth, double scale) {
 		long pageBoundingBoxWidth = CalculationUtilities.pageBoundingBoxWidth(
-			pageWidth, scale);
+			pageWidth);
 		long pageBoundingBoxHeight =
 			CalculationUtilities.pageBoundingBoxHeight(
 				boundingBoxHeight, scale);
@@ -34,7 +36,7 @@ public class PostScriptFormationUtilities {
 			 */
 			line("%!PS-Adobe-2.0 EPSF-2.0") +
 			line("%%BoundingBox:" +
-					pageBoundingBoxWidth +
+					0 +
 					" " +
 					0 +
 					" " +

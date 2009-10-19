@@ -15,7 +15,7 @@ public class CalculationUtilities {
 			Date lastDate,
 			double defaultBoundingBoxWidth,
 			double margin,
-			double unscaledBoundingBoxWidth) {
+			double pageBoundingBoxWidth) {
 		double graphStart = xCoordinate(
 			firstDate,
 			graphStartDate,
@@ -29,7 +29,7 @@ public class CalculationUtilities {
 			defaultBoundingBoxWidth,
 			margin);
 		double graphWidth = (graphEnd - graphStart);
-		double remainingWidth = (unscaledBoundingBoxWidth - graphWidth);
+		double remainingWidth = (pageBoundingBoxWidth - graphWidth);
 		
 		return ((graphWidth + remainingWidth) / 2.0);
 	}
@@ -74,9 +74,9 @@ public class CalculationUtilities {
 		return Math.round(boundingBoxHeight * scale);
 	}
 	
-	public static long pageBoundingBoxWidth(
-			double pageWidth, double scale) {
-		return Math.round(pageWidth * scale);
+	public static long pageBoundingBoxWidth(double pageWidth) {
+		return Math.round(
+			PostScriptFormationUtilities.DOTS_PER_INCH * pageWidth);
 	}
 	
 	public static double recordBarHeight(
@@ -96,5 +96,34 @@ public class CalculationUtilities {
 		}
 		
 		return totalRecordAmount;
+	}
+	
+	public static double scaleToFitToPageSize(
+			double boundingBoxHeight, double pageWidth, double pageHeight) {
+		double pageWidthInPoints =
+			(pageWidth * PostScriptFormationUtilities.DOTS_PER_INCH);
+		double pageHeightInPoints =
+			(pageHeight * PostScriptFormationUtilities.DOTS_PER_INCH);
+		double scale = 1.0;
+		
+		if (boundingBoxHeight > pageHeightInPoints) {
+			scale = pageHeightInPoints / boundingBoxHeight;
+		}
+		
+		System.err.println("scale: " + scale);
+		
+		double scaledPageWidth = (pageWidth * scale);
+		double scaledPageHeight = (pageHeight * scale);
+		
+		System.err.println("scaledPageWidth: " + scaledPageWidth);
+		System.err.println("scaledPageHeight: " + scaledPageHeight);
+		System.err.println("pageWidthInPoints: " + pageWidthInPoints);
+		
+		if (scaledPageWidth > pageWidthInPoints) {
+			scale *= pageWidthInPoints / scaledPageWidth;
+			System.err.println("new scale: " + scale);
+		}
+		
+		return scale;
 	}
 }
