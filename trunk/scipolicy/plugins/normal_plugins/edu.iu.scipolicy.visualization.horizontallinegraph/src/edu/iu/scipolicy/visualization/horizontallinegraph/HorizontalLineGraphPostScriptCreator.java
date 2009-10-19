@@ -163,6 +163,9 @@ public class HorizontalLineGraphPostScriptCreator {
 			defaultBoundingBoxWidth,
 			startYPosition);
 		
+		double originalBoundingBoxWidth = this.calculatedBoundingBoxWidth;
+		// double originalBoundingBoxHeight = this.calculatedBoundingBoxHeight;
+		
 		updateBoundingBoxSizeForPadding();
 
 		double scale = 1.0;
@@ -172,12 +175,25 @@ public class HorizontalLineGraphPostScriptCreator {
 				this.pageWidth, this.pageHeight);
 		}
 		
-		final String postScriptComments = formPostScriptComments(scale);
+		double horizontalCenteringOffset = calculateHorizontalCenteringOffset(
+			scale,
+			graphStartDate,
+			graphEndDate,
+			sortedRecords[0].getStartDate(),
+			sortedRecords[sortedRecords.length - 1].getEndDate(),
+			defaultBoundingBoxWidth,
+			barMargin,
+			originalBoundingBoxWidth);
+		
+		final String postScriptComments =
+			formPostScriptComments(this.pageWidth, scale);
 		final String postScriptRotation = formPostScriptRotate(scale);
 		final String postScriptTranslate =
 			formPostScriptTranslateForMargins(scale);
 		final String postScriptScale = formPostScriptScale(scale);
 		final String postScriptHeader = formPostScriptHeader();
+		final String postScriptCenteringTranslate =
+			formPostScriptCenteringTranslate(horizontalCenteringOffset);
 		final String postScriptYearLabels = formPostScriptYearLabels(
 			newYearsDatesForGraph,
 			graphStartDate,
@@ -195,6 +211,7 @@ public class HorizontalLineGraphPostScriptCreator {
 			   postScriptTranslate +
 			   postScriptScale +
 			   postScriptHeader +
+			   postScriptCenteringTranslate +
 			   postScriptYearLabels +
 			   postScriptPaddingAboveYearLabels +
 			   postScriptRecordBars +
@@ -280,8 +297,9 @@ public class HorizontalLineGraphPostScriptCreator {
 		return interpolatedWidth + 1000;
 	}
 	
-	private String formPostScriptComments(double scale) {
-		long pageBoundingBoxWidth = calculatePageBoundingBoxWidth(scale);
+	private String formPostScriptComments(double pageWidth, double scale) {
+		long pageBoundingBoxWidth =
+			calculatePageBoundingBoxWidth(pageWidth, scale);
 		long pageBoundingBoxHeight = calculatePageBoundingBoxHeight(scale);
 		
 		return
@@ -292,7 +310,7 @@ public class HorizontalLineGraphPostScriptCreator {
 			 */
 			line("%!PS-Adobe-2.0 EPSF-2.0") +
 			line("%%BoundingBox:" +
-					0 +
+					pageBoundingBoxWidth +
 					" " +
 					0 +
 					" " +
@@ -401,6 +419,12 @@ public class HorizontalLineGraphPostScriptCreator {
 			line("0.0039 0.4509 0.5843 setrgbcolor") +
 			line("1.5 setlinewidth") +
 			line("/Garamond findfont 25 scalefont setfont");
+	}
+	
+	private String formPostScriptCenteringTranslate(double xTranslate) {
+		double yTranslate = 0.0;
+		
+		return line(xTranslate + " " + yTranslate + " translate");
 	}
 	
 	private String formPostScriptYearLabels(Date[] newYearsDates,
@@ -527,14 +551,12 @@ public class HorizontalLineGraphPostScriptCreator {
 		return line(scale + " " + scale + " scale");
 	}
 	
-	// TODO:
 	private String formPostScriptRotate(double scale) {
 		return "";
 	}
 	
-	// TODO:
 	private String formPostScriptTranslateForMargins(double scale) {
-		double xTranslate = (calculateMarginWidth(scale) / 2.0);
+		double xTranslate = 0.0;
 		double yTranslate = (calculateMarginHeight(scale) / 2.0);
 		
 		return line(xTranslate + " " + yTranslate + " translate");
@@ -620,11 +642,39 @@ public class HorizontalLineGraphPostScriptCreator {
 				scale);
 	}
 	
-	private long calculatePageBoundingBoxWidth(double scale) {
-		return Math.round(this.calculatedBoundingBoxWidth * scale);
+	private long calculatePageBoundingBoxWidth(
+			double pageWidth, double scale) {
+		return Math.round(pageWidth * scale);
 	}
 	
 	private long calculatePageBoundingBoxHeight(double scale) {
 		return Math.round(this.calculatedBoundingBoxHeight * scale);
+	}
+	
+	private double calculateHorizontalCenteringOffset(
+			double scale,
+			Date graphStartDate,
+			Date graphEndDate,
+			Date firstDate,
+			Date lastDate,
+			double defaultBoundingBoxWidth,
+			double margin,
+			double unscaledBoundingBoxWidth) {
+		double graphStart = calculateXCoordinate(
+			firstDate,
+			graphStartDate,
+			graphEndDate,
+			defaultBoundingBoxWidth,
+			margin);
+		double graphEnd = calculateXCoordinate(
+			lastDate,
+			graphStartDate,
+			graphEndDate,
+			defaultBoundingBoxWidth,
+			margin);
+		double graphWidth = (graphEnd - graphStart);
+		double remainingWidth = (unscaledBoundingBoxWidth - graphWidth);
+		
+		return ((graphWidth + remainingWidth) / 2.0);
 	}
 }
