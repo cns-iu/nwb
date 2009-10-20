@@ -33,6 +33,7 @@ public class GeocoderAlgorithm implements Algorithm {
 	
 	public static final String LOCATION_AS_STATE_IDENTIFIER = "STATE";
 	public static final String LOCATION_AS_COUNTRY_IDENTIFIER = "COUNTRY";
+	public static final String LOCATION_AS_ZIPCODE_IDENTIFIER = "ZIP CODE";
 
     public static final String PLACE_NAME_COLUMN = "place_name_column";
     public static final String PLACE_TYPE = "place_type";
@@ -56,15 +57,17 @@ public class GeocoderAlgorithm implements Algorithm {
 		/*
 		 * After getting the Prefuse Table data pass it for making lookups & getting co-ordinates.
 		 * */
-		GeocoderComputation geoCoderComputation = new GeocoderComputation(locationType,locationColumnName,
-				originalInputTable,logger);
+		GeocoderComputation geoCoderComputation = new GeocoderComputation(
+				locationType, locationColumnName,
+				originalInputTable, logger);
 		
 		/*
 		 * After getting the output in table format make it available to the user.
 		 * */
 		Data output = new BasicData(geoCoderComputation.getOutputTable(), Table.class.getName());
 		Dictionary metadata = output.getMetadata();
-		metadata.put(DataProperty.LABEL, "With Latitude & Longitude from '" + locationColumnName + "'");
+		metadata.put(DataProperty.LABEL, "With Latitude & Longitude from '" 
+			+ locationColumnName + "'");
 		metadata.put(DataProperty.PARENT, this.data[0]);
 		metadata.put(DataProperty.TYPE, DataProperty.TABLE_TYPE);
 		

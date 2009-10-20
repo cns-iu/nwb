@@ -19,9 +19,9 @@ public class CountryCoder {
 	
 	private static URL countryFile = null;
 	
-	private static Map<String,List<Double>> countryFullformToLocation = null;
+	private static Map<String, GeoLocation> countryFullformToLocation = null;
 
-	private static Map<String,String> countryAbbreviationToFullform = null;
+	private static Map<String, String> countryAbbreviationToFullform = null;
 	
 	public static void setCountryFile(URL countryFile) {
 		CountryCoder.countryFile = countryFile;
@@ -31,7 +31,7 @@ public class CountryCoder {
 	/**
 	 * @return the countryFullformToLocation
 	 */
-	public static Map<String, List<Double>> getCountryFullformToLocation() {
+	public static Map<String, GeoLocation> getCountryFullformToLocation() {
 		if (countryFullformToLocation == null)  {
 			initializeCountryLocationMappings(countryFile);
 		}
@@ -56,11 +56,12 @@ public class CountryCoder {
 	private static void initializeCountryLocationMappings(
 			URL countryLocationFilePath) {
 		if (countryFile == null) {
-			throw new NoCacheFoundException("You must call setCountryFile before calling this method!");
+			throw new NoCacheFoundException(
+					"You must call setCountryFile before calling this method!");
 		}
 		
-		countryFullformToLocation = new HashMap<String,List<Double>>();
-    	countryAbbreviationToFullform = new HashMap<String,String>();
+		countryFullformToLocation = new HashMap<String, GeoLocation>();
+    	countryAbbreviationToFullform = new HashMap<String, String>();
     	
 		InputStream inStream = null;
     	BufferedReader input = null;
@@ -74,11 +75,12 @@ public class CountryCoder {
     		    		
     	    while (null != (line = input.readLine())) {
     	    	
-    	    	List<Double> location = new ArrayList<Double>();
     	    	String[] lineTokens = line.split(";");
     	    	
-    	    	location.add(Double.parseDouble(lineTokens[2]));
-    	    	location.add(Double.parseDouble(lineTokens[3]));
+    	    	double latitude = Double.parseDouble(lineTokens[CACHE_ROW_LATITUDE_INDEX]);
+    	    	double longitude = Double.parseDouble(lineTokens[ CACHE_ROW_LONGITUDE_INDEX]);
+    	    	
+    	    	GeoLocation location = new GeoLocation(latitude, longitude);
     	    	
     	    	/*
     	    	 * Map with Full Form as the Key and List of Latitude, Longitude as the Value.
@@ -88,18 +90,21 @@ public class CountryCoder {
     	    	/*
     	    	 * Map with Abbreviation as the Key and Full Form as the value.
     	    	 * */
-    	    	countryAbbreviationToFullform.put(lineTokens[CACHE_ROW_ABBREVIATION_INDEX], lineTokens[0]);
+    	    	countryAbbreviationToFullform.put(
+    	    			lineTokens[CACHE_ROW_ABBREVIATION_INDEX],
+    	    			lineTokens[CACHE_ROW_FULLFORM_INDEX]);
         	}
-    	}
-    	catch (Exception e) {
+    	} catch (Exception e) {
     		e.printStackTrace();
-    	}
-    	finally {
+    	} finally {
     		try {
-    			if (input != null) input.close();
-    	        if (inStream != null) inStream.close();
-    	    }
-    	    catch (IOException e) {
+    			if (input != null) {
+    				input.close();
+    			}
+    	        if (inStream != null) {
+    	        	inStream.close();
+    	        }
+    	    } catch (IOException e) {
     	        e.printStackTrace();
     	    }
     	}

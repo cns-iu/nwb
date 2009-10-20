@@ -6,9 +6,7 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.URL;
 import java.net.URLConnection;
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 public class StateCoder {
@@ -20,9 +18,9 @@ public class StateCoder {
 	
 	private static URL stateFile = null;
 	
-	private static Map<String,List<Double>> stateFullformToLocation = null;
+	private static Map<String, GeoLocation> stateFullformToLocation = null;
 	
-	private static Map<String,String> stateAbbreviationToFullform = null;
+	private static Map<String, String> stateAbbreviationToFullform = null;
 	
 
 	public static void setStateFile(URL stateFile) {
@@ -32,7 +30,7 @@ public class StateCoder {
 	/**
 	 * @return the stateFullformToLocation
 	 */
-	public static Map<String, List<Double>> getStateFullformToLocation() {
+	public static Map<String, GeoLocation> getStateFullformToLocation() {
 		if (stateFullformToLocation == null) {
 			initializeStateLocationMappings(stateFile);
 		}
@@ -57,11 +55,12 @@ public class StateCoder {
 	private static void initializeStateLocationMappings(
 			URL stateLocationFilePath) {
 		if (stateFile == null) {
-			throw new NoCacheFoundException("You must call setStateFile before calling this method!");
+			throw new NoCacheFoundException(
+					"You must call setStateFile before calling this method!");
 		}
 		
-		stateFullformToLocation = new HashMap<String,List<Double>>();
-		stateAbbreviationToFullform = new HashMap<String,String>();
+		stateFullformToLocation = new HashMap<String, GeoLocation>();
+		stateAbbreviationToFullform = new HashMap<String, String>();
 		
     	InputStream inStream = null;
     	BufferedReader input = null;
@@ -75,11 +74,12 @@ public class StateCoder {
     		    		
     	    while (null != (line = input.readLine())) {
     	    	
-    	    	List<Double> location = new ArrayList<Double>();
     	    	String[] lineTokens = line.split(";");
     	    	
-    	    	location.add(Double.parseDouble(lineTokens[CACHE_ROW_LATITUDE_INDEX]));
-    	    	location.add(Double.parseDouble(lineTokens[CACHE_ROW_LONGITUDE_INDEX]));
+    	    	double latitude = Double.parseDouble(lineTokens[CACHE_ROW_LATITUDE_INDEX]);
+    	    	double longitude = Double.parseDouble(lineTokens[CACHE_ROW_LONGITUDE_INDEX]);
+    	    	
+    	    	GeoLocation location = new GeoLocation(latitude, longitude);
     	    	
     	    	/*
     	    	 * Map with Full Form as the Key and List of Latitude, Longitude as the Value.
@@ -89,18 +89,21 @@ public class StateCoder {
        	    	/*
     	    	 * Map with Abbreviation as the Key and Full Form as the value.
     	    	 * */
-    	    	stateAbbreviationToFullform.put(lineTokens[CACHE_ROW_ABBREVIATION_INDEX], lineTokens[CACHE_ROW_FULLFORM_INDEX]);
+    	    	stateAbbreviationToFullform.put(
+    	    			lineTokens[CACHE_ROW_ABBREVIATION_INDEX],
+    	    			lineTokens[CACHE_ROW_FULLFORM_INDEX]);
         	}
-    	}
-    	catch (IOException e) {
+    	} catch (IOException e) {
     		e.printStackTrace();
-    	}
-    	finally {
+    	} finally {
     		try {
-    			if (input != null) input.close();
-    	        if (inStream != null) inStream.close();
-    	    }
-    	    catch (IOException e) {
+    			if (input != null) {
+    				input.close();
+    			}
+    	        if (inStream != null) {
+    	        	inStream.close();
+    	        }
+    	    } catch (IOException e) {
     	        e.printStackTrace();
     	    }
     	}

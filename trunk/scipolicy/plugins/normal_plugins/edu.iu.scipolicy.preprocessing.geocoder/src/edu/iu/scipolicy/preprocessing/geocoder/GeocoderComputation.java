@@ -12,7 +12,9 @@ import org.osgi.service.log.LogService;
 
 import prefuse.data.Table;
 import edu.iu.scipolicy.preprocessing.geocoder.coders.CountryCoder;
+import edu.iu.scipolicy.preprocessing.geocoder.coders.GeoLocation;
 import edu.iu.scipolicy.preprocessing.geocoder.coders.StateCoder;
+import edu.iu.scipolicy.preprocessing.geocoder.coders.ZipCoder;
 
 /**
  * @author cdtank
@@ -25,7 +27,7 @@ public class GeocoderComputation {
 	private static final String[] LATITUDE_COLUMN_NAME_SUGGESTIONS = {"Latitude", "Lat"};
 	private static final String[] LONGITUDE_COLUMN_NAME_SUGGESTIONS = {"Longitude", "Lon"};
 	
-	private static List<Double> DEFAULT_NO_LOCATION_VALUE = Arrays.asList(null, null);
+	private static GeoLocation DEFAULT_NO_LOCATION_VALUE = new GeoLocation(null, null);
 	
 	private String locationType;
 	private String locationColumnName;
@@ -74,73 +76,87 @@ public class GeocoderComputation {
 		
 		Iterator locationColumnIterator = originalTable.iterator();
 		
-		Map<String,List<Double>> fullFormToLocationDictionary = new HashMap<String, List<Double>>();
-		Map<String,String> abbreviationToFullFormDictionary = new HashMap<String, String>();
+		Map<String, GeoLocation> fullFormToLocation = new HashMap<String, GeoLocation>();
+		Map<String, String> abbreviationToFullForm = new HashMap<String, String>();
 		
 		/*
 		 * Used to make selection of appropriate set of Maps for lookup - based on the 
 		 * Place_Type input by the user.
 		 * */
-		if(locationType.equalsIgnoreCase(GeocoderAlgorithm.LOCATION_AS_STATE_IDENTIFIER)) {
-			fullFormToLocationDictionary = StateCoder.getStateFullformToLocation();
-			abbreviationToFullFormDictionary = StateCoder.getStateAbbreviationToFullform();
-		}
-		else {
-			fullFormToLocationDictionary = CountryCoder.getCountryFullformToLocation();
-			abbreviationToFullFormDictionary = CountryCoder.getCountryAbbreviationToFullform();
+		if (locationType.equalsIgnoreCase(GeocoderAlgorithm.LOCATION_AS_STATE_IDENTIFIER)) {
+			fullFormToLocation = StateCoder.getStateFullformToLocation();
+			abbreviationToFullForm = StateCoder.getStateAbbreviationToFullform();
+		} else if (locationType.equalsIgnoreCase(
+				GeocoderAlgorithm.LOCATION_AS_COUNTRY_IDENTIFIER)) {
+			fullFormToLocation = CountryCoder.getCountryFullformToLocation();
+			abbreviationToFullForm = CountryCoder.getCountryAbbreviationToFullform();
+		} else if (locationType.equalsIgnoreCase(
+				GeocoderAlgorithm.LOCATION_AS_ZIPCODE_IDENTIFIER)) {
+			fullFormToLocation = ZipCoder.getZipCodeToLocation();
 		}
 		
 		
-		while(locationColumnIterator.hasNext()){
+		while (locationColumnIterator.hasNext()) {
 			
 			int currentRowNumber = Integer.parseInt(locationColumnIterator.next().toString());
-			int locationColumnNumber = originalTable.getColumnNumber(locationColumnName);
-			int latitudeColumnNumber = outputTable.getColumnNumber(outputTableLatitudeColumnName);
-			int longitudeColumnNumber = outputTable.getColumnNumber(outputTableLongitudeColumnName);
-			String currentLocationKey = originalTable.get(currentRowNumber, locationColumnNumber).toString(); 
+			int locationColumnNumber = 
+				originalTable.getColumnNumber(locationColumnName);
+			int latitudeColumnNumber =
+				outputTable.getColumnNumber(outputTableLatitudeColumnName);
+			int longitudeColumnNumber = 
+				outputTable.getColumnNumber(outputTableLongitudeColumnName);
+			String currentLocationKey = 
+				originalTable.get(currentRowNumber, locationColumnNumber).toString(); 
 			
-			List<Double> cachedLocationValue = new ArrayList<Double>();
+			GeoLocation cachedLocationValue = null;
 			
 			/*
 			 * First make the lookup from the Full-form or complete name Map.
 			 * */
-			cachedLocationValue = fullFormToLocationDictionary.get(currentLocationKey.toUpperCase());
+			String currentLocationKeyUppercase = currentLocationKey.toUpperCase();
+			cachedLocationValue = fullFormToLocation.get(currentLocationKeyUppercase);
 			
 			/*
 			 * If the lookup was unsuccessful due to no match try lookup in the abbreviation map. 
 			 * */
-			if(cachedLocationValue == null) {
+			if (cachedLocationValue == null) {
 				
-				String fullformForAbbreviation = abbreviationToFullFormDictionary.get(currentLocationKey.toUpperCase());
+				String fullformForAbbreviation = 
+					abbreviationToFullForm.get(currentLocationKey.toUpperCase());
 
 				/*
-				 * If the lookup was successful then the input string was an abbreviation of a state or country.
-				 * Populate the co-ordinates by now making lookup from the recent lookup i.e. use fullformForAbbreviation. 
+				 * If the lookup was successful,
+				 * then the input string was an abbreviation of a state or country.
+				 * Populate the co-ordinates by now making lookup from the recent lookup 
+				 * i.e. use fullformForAbbreviation. 
 				 * */
-				if(fullformForAbbreviation != null) {
-					cachedLocationValue = fullFormToLocationDictionary.get(fullformForAbbreviation.toUpperCase());
-				}
-				
-				/*
-				 * The input string is not found either in full-form or abbreviations list. Assume default value
-				 * for the co-ordinates. Warn user about it. 
-				 * */
-				else {
+				if (fullformForAbbreviation != null) {
+					cachedLocationValue = 
+						fullFormToLocation.get(fullformForAbbreviation.toUpperCase());
+				} else {
+					/*
+					 * The input string is not found either in full-form or abbreviations list.
+					 * Assume default value for the co-ordinates. Warn user about it. 
+					 * */
 					cachedLocationValue = DEFAULT_NO_LOCATION_VALUE;
-					logger.log(LogService.LOG_WARNING, "No \"" + locationType + "\" location co-ordinates found. " 
-							+ "The row with \"" + currentLocationKey + "\" location has not been given a latitude " 
+					logger.log(LogService.LOG_WARNING, "No \"" 
+							+ locationType + "\" location co-ordinates found. " 
+							+ "The row with \"" + currentLocationKey 
+							+ "\" location has not been given a latitude " 
 							+ "or longitude.");
 				}
 				
 			}
 			
 			/*
-			 * Add the new row to the new table by copying the original row & then adding 2 new columns to it.
+			 * Add the new row to the new table
+			 * by copying the original row & then adding 2 new columns to it.
 			 * */
 			outputTable.addRow();
-			TableUtilities.copyTableRow(currentRowNumber, currentRowNumber, outputTable, originalTable);
-			outputTable.set(currentRowNumber, latitudeColumnNumber, cachedLocationValue.get(0));
-			outputTable.set(currentRowNumber, longitudeColumnNumber, cachedLocationValue.get(1));
+			TableUtilities.copyTableRow(
+					currentRowNumber, currentRowNumber, outputTable, originalTable);
+			outputTable.set(currentRowNumber, latitudeColumnNumber, cachedLocationValue.latitude);
+			outputTable.set(currentRowNumber, longitudeColumnNumber, cachedLocationValue.longitude);
 		}
 		
 		
