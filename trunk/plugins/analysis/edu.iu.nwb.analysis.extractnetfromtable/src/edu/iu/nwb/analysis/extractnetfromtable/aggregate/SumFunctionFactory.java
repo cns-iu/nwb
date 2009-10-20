@@ -39,7 +39,7 @@ class DoubleSum extends AggregateFunction {
 	}
 
 	public void operate(Object o) {
-		if (o instanceof Number && o != null) {
+		if (o != null && o instanceof Number) {
 			total += ((Number) o).doubleValue();
 		} else {
 			throw new IllegalArgumentException(
@@ -65,7 +65,7 @@ class FloatSum extends AggregateFunction {
 	}
 
 	public void operate(Object o) {
-		if (o instanceof Number && o != null) {
+		if (o != null && o instanceof Number) {
 			total += ((Number) o).floatValue();
 		} else {
 			throw new IllegalArgumentException(
@@ -92,7 +92,7 @@ class IntegerSum extends AggregateFunction {
 	}
 
 	public void operate(Object o) {
-		if (o instanceof Number && o != null) {
+		if (o != null && o instanceof Number) {
 			total += ((Number) o).intValue();
 		} else {
 			throw new IllegalArgumentException(

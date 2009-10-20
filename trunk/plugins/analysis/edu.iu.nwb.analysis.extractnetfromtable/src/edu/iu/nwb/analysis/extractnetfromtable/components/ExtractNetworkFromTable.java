@@ -1,23 +1,11 @@
 package edu.iu.nwb.analysis.extractnetfromtable.components;
 
-import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Iterator;
-import java.util.Properties;
-import java.util.Set;
-import java.util.TreeSet;
-import java.util.regex.Pattern;
 
-import org.osgi.service.log.LogService;
-
-import prefuse.data.Edge;
 import prefuse.data.Graph;
 import prefuse.data.Node;
 import prefuse.data.Schema;
 import prefuse.data.Table;
-import prefuse.data.Tuple;
-import edu.iu.nwb.analysis.extractnetfromtable.aggregate.AggregateFunction;
-import edu.iu.nwb.analysis.extractnetfromtable.aggregate.AssembleAggregateFunctions;
 
 public class ExtractNetworkFromTable {
 
@@ -40,35 +28,35 @@ public class ExtractNetworkFromTable {
 	 * 
 	 */
 
-	private static void addDuplicateValueErrorMessage(String title, String col, HashMap errorMessages){
-		//This needs to be generalized.
-		String error = "The work:"+
-		System.getProperty("line.separator")+
-		"\t"+title+
-		System.getProperty("line.separator")+
-		"contains duplicate values in column: " + col +
-		System.getProperty("line.separator")+
-		"The work has been added with duplicates considered as a single value."+
-		System.getProperty("line.separator")+
-		"This may affect the accuracy of your data."+
-		System.getProperty("line.separator")+
-		System.getProperty("line.separator");;
-		errorMessages.put(title, error);
-	}
-
-	private static void printNoValueToExtractError(String title, String col, LogService ls){
-		//This needs to be generalized.
-		String error = "The work:"+
-		System.getProperty("line.separator")+
-		"\t"+title+
-		System.getProperty("line.separator")+
-		"contains no values in column: "+ col +
-		System.getProperty("line.separator")+
-		"The work has not been added."+
-		System.getProperty("line.separator")+
-		System.getProperty("line.separator");
-		ls.log(LogService.LOG_WARNING, error);
-	}
+//	private static void addDuplicateValueErrorMessage(String title, String col, HashMap errorMessages){
+//		//This needs to be generalized.
+//		String error = "The work:"+
+//		System.getProperty("line.separator")+
+//		"\t"+title+
+//		System.getProperty("line.separator")+
+//		"contains duplicate values in column: " + col +
+//		System.getProperty("line.separator")+
+//		"The work has been added with duplicates considered as a single value."+
+//		System.getProperty("line.separator")+
+//		"This may affect the accuracy of your data."+
+//		System.getProperty("line.separator")+
+//		System.getProperty("line.separator");;
+//		errorMessages.put(title, error);
+//	}
+//
+//	private static void printNoValueToExtractError(String title, String col, LogService ls){
+//		//This needs to be generalized.
+//		String error = "The work:"+
+//		System.getProperty("line.separator")+
+//		"\t"+title+
+//		System.getProperty("line.separator")+
+//		"contains no values in column: "+ col +
+//		System.getProperty("line.separator")+
+//		"The work has not been added."+
+//		System.getProperty("line.separator")+
+//		System.getProperty("line.separator");
+//		ls.log(LogService.LOG_WARNING, error);
+//	}
 
 	/***
 	 * 

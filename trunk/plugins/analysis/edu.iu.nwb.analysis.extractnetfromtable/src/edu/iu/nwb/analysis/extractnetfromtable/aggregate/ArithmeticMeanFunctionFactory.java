@@ -42,12 +42,12 @@ class DoubleArithmeticMean extends AggregateFunction {
 	}
 
 	public void operate(Object o) {
-		if (o instanceof Number && o != null) {
+		if (o != null && o instanceof Number) {
 			items += 1;
 			total += ((Number) o).doubleValue();
 		} else {
 			throw new IllegalArgumentException(
-			"DoubleArithmeticMean can only operate on Numbers.");
+				"DoubleArithmeticMean can only operate on Numbers.");
 		}
 	}
 }
@@ -70,7 +70,7 @@ class FloatArithmeticMean extends AggregateFunction {
 	}
 
 	public void operate(Object o) {
-		if (o instanceof Number && o != null) {
+		if (o != null && o instanceof Number) {
 			items += 1;
 			total += ((Number) o).floatValue();
 		} else {

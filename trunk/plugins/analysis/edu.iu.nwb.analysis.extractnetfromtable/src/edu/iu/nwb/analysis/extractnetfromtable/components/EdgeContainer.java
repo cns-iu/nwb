@@ -5,7 +5,6 @@ import java.util.Vector;
 
 import prefuse.data.Edge;
 import prefuse.data.Node;
-import prefuse.data.Tuple;
 
 
 public class EdgeContainer {
@@ -60,7 +59,13 @@ public class EdgeContainer {
 			createEdge(edgeVector,graph,table,rowNumber,afm);
 		} else { 
 			int edgeNumber = va.getRowNumber();
-			FunctionContainer.mutateFunctions((Tuple)graph.getEdge(edgeNumber),table, rowNumber,va,afm,AggregateFunctionMappings.SOURCEANDTARGET);
+			FunctionContainer.mutateFunctions(
+					graph.getEdge(edgeNumber),
+					table,
+					rowNumber,
+					va,
+					afm,
+					AggregateFunctionMappings.SOURCEANDTARGET);
 		}
 	}
 	

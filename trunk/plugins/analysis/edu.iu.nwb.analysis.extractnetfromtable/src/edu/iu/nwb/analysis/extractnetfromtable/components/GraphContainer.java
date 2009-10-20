@@ -156,15 +156,15 @@ public class GraphContainer {
 			
 		for (Iterator rowIt = this.table.rows(); rowIt.hasNext();) {
 			int row = ((Integer)rowIt.next()).intValue();
-			final String sourceString = (String) sourceColumn.get(row);
+			final String sourceString = sourceColumn.getString(row);
 			
 			final String targetString =
 				buildRowTargetStringFromColumnNames(
 						row, targetColumnNames, this.table, delimiter);
 
 			Set seenSource = new HashSet();
-			Set seenTarget;// = seenSource;www
-			if (sourceString != null && targetString != null) { //ensure we have values to extract
+			Set seenTarget;
+			if (sourceString != null && targetString != null) {
 				final String[] sources = splitPattern.split(sourceString);
 				final String[] targets = splitPattern.split(targetString);
 

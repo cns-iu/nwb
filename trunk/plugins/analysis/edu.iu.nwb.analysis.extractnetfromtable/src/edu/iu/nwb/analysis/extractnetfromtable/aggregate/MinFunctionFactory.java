@@ -41,7 +41,7 @@ class DoubleMin extends AggregateFunction {
 	}
 
 	public void operate(Object o) {
-		if (o instanceof Number && o != null) {			
+		if (o != null && o instanceof Number) {			
 			if (((Number) o).doubleValue() < value) {
 				value = ((Number) o).doubleValue();
 			}			
@@ -67,7 +67,7 @@ class FloatMin extends AggregateFunction {
 	}
 
 	public void operate(Object o) {
-		if (o instanceof Number && o != null) {			
+		if (o != null && o instanceof Number) {			
 			if (((Number) o).floatValue() < value) {
 				value = ((Number) o).floatValue();
 			}			
@@ -93,7 +93,7 @@ class IntegerMin extends AggregateFunction {
 	}
 
 	public void operate(Object o) {
-		if (o instanceof Number && o != null) {
+		if (o != null && o instanceof Number) {
 			if (((Number) o).intValue() < value) {
 				value = ((Number) o).intValue();
 			}		

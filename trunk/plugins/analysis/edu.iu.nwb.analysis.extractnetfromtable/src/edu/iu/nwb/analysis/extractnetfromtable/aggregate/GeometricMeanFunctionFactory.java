@@ -42,7 +42,7 @@ class DoubleGeometricMean extends AggregateFunction {
 	}
 
 	public void operate(Object o) {
-		if (o instanceof Number && o != null) {
+		if (o != null && o instanceof Number) {
 			items += 1;
 			value *= ((Number) o).doubleValue();
 		} else {
@@ -70,7 +70,7 @@ class FloatGeometricMean extends AggregateFunction {
 	}
 
 	public void operate(Object o) {
-		if (o instanceof Number && o != null) {
+		if (o != null && o instanceof Number) {
 			items += 1;
 			value *= ((Number) o).floatValue();
 		} else {

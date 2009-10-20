@@ -80,34 +80,31 @@ public class AggregateFunctionMappings {
 				final Class columnType = input.getColumnType(sourceColumnName);
 				final String function = functionDefinitionRHS[functionDefinitionRHS.length-1];
 				if(functionDefinitionRHS.length == 3){
-					applyToNodeType = functionDefinitionRHS[1];	
+					applyToNodeType = functionDefinitionRHS[1];
 				}
 				
-				try{
-				if(applyToNodeType.equalsIgnoreCase("source")){
-					nodeType = AggregateFunctionMappings.SOURCE;
-				}
-				else if(applyToNodeType.equalsIgnoreCase("target")){
-					nodeType = AggregateFunctionMappings.TARGET;
-				}
-				else{
+				// TODO: swap equals.
+				if (applyToNodeType == null) {
 					nodeType = AggregateFunctionMappings.SOURCEANDTARGET;
-				}
-				}catch(NullPointerException npe){
-					nodeType = AggregateFunctionMappings.SOURCEANDTARGET;
-				}
-				
+				} else {
+					if (applyToNodeType.equalsIgnoreCase("source")) {
+						nodeType = AggregateFunctionMappings.SOURCE;
+					} else if (applyToNodeType.equalsIgnoreCase("target")) {
+						nodeType = AggregateFunctionMappings.TARGET;
+					} else {
+						nodeType = AggregateFunctionMappings.SOURCEANDTARGET;
+					}
+				}				
 				
 				String newColumnName = functionDefinitionLHS[functionDefinitionLHS.length-1];
 				
 				if(functionNames.contains(function) && columnNames.contains(sourceColumnName) && !columnNames.contains(newColumnName)){
 					if (key.startsWith("edge.")) {
-						createColumn(newColumnName,sourceColumnName, function, columnType, edges);
+						createColumn(newColumnName,function, columnType, edges);
 						edgeFunctionMappings.addFunctionMapping(newColumnName, sourceColumnName, function);
 					}
 					if (key.startsWith("node.")) {
-						createColumn(newColumnName, sourceColumnName, function, columnType,
-								nodes);
+						createColumn(newColumnName, function, columnType, nodes);
 						nodeFunctionMappings.addFunctionMapping(newColumnName, sourceColumnName, function,nodeType);
 					}
 				}
@@ -147,15 +144,15 @@ public class AggregateFunctionMappings {
 		String function = AggregateFunctionNames.COUNT;
 		Class columnType = inputGraphNodeSchema.getColumnType(sourceColumnName);
 		
-		createColumn(newColumnName, sourceColumnName, function, columnType, outputGraphEdgeSchema);
+		createColumn(newColumnName, function, columnType, outputGraphEdgeSchema);
 		edgeFunctionMappings.addFunctionMapping(newColumnName,  sourceColumnName, function);
 	}
 	
 	
 	
-	private static void createColumn(String newColumnName, String calculateColumnName, String function, Class columnType, Schema newSchema) {	
-		Class finalType = null;
-		finalType = AssembleAggregateFunctions.defaultAssembly().getAggregateFunction(function, columnType).getType();
+	private static void createColumn(String newColumnName, String function, Class columnType, Schema newSchema) {	
+		Class finalType =
+			AssembleAggregateFunctions.defaultAssembly().getAggregateFunction(function, columnType).getType();
 		newSchema.addColumn(newColumnName, finalType);
 	}
 }

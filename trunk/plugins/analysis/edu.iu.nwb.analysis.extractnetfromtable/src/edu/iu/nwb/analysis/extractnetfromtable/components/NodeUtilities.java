@@ -3,7 +3,6 @@ package edu.iu.nwb.analysis.extractnetfromtable.components;
 import prefuse.data.Graph;
 import prefuse.data.Node;
 import prefuse.data.Table;
-import prefuse.data.Tuple;
 
 
 public class NodeUtilities {
@@ -28,11 +27,9 @@ public class NodeUtilities {
 		else{
 			int nodeNumber = va.getRowNumber();
 			n = g.getNode(nodeNumber);
-			FunctionContainer.mutateFunctions((Tuple)n,t,rowNumber,va,afm,nodeType);
+			FunctionContainer.mutateFunctions(n, t, rowNumber, va, afm, nodeType);
 		}
 		
 		return n;
 	}
-	
-	
 }
