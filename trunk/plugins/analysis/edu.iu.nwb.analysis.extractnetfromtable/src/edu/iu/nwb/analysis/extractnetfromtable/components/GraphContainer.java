@@ -83,11 +83,14 @@ public class GraphContainer {
 				
 				// Trim each target.
 				for (int ii = 0; ii < splitTargetStringArray.length; ii++) {
-					splitTargetStringArray[ii] =
-						splitTargetStringArray[ii].trim();
+					splitTargetStringArray[ii] = splitTargetStringArray[ii].trim();
 				}
 
 				for (int ii = splitTargetStringArray.length - 1; ii >= 0; ii--) {
+					if("".equals(splitTargetStringArray[ii])) {
+						continue;
+					}
+					
 					if(seenObject.add(splitTargetStringArray[ii])) { // No duplicate nodes.
 						node1 = NodeUtilities.mutateNode(splitTargetStringArray[ii], this.graph,
 							this.table, row, this.nodeMap, AggregateFunctionMappings.SOURCEANDTARGET);
@@ -96,6 +99,10 @@ public class GraphContainer {
 					node1 = this.graph.getNode(this.nodeMap.getFunctionRow(splitTargetStringArray[ii]).getRowNumber());
 					
 					for (int jj = 0; jj < ii; jj++) {
+						if("".equals(splitTargetStringArray[jj])) {
+							continue;
+						}
+						
 						if(!splitTargetStringArray[jj].equals(splitTargetStringArray[ii])) {
 							if(seenObject.add(splitTargetStringArray[jj])) { //No duplicate nodes.
 								node2 = NodeUtilities.mutateNode(splitTargetStringArray[jj],
@@ -163,14 +170,17 @@ public class GraphContainer {
 						row, targetColumnNames, this.table, delimiter);
 
 			Set seenSource = new HashSet();
-			Set seenTarget;
+			Set seenTargets;
 			if (sourceString != null && targetString != null) {
 				final String[] sources = splitPattern.split(sourceString);
 				final String[] targets = splitPattern.split(targetString);
 
 				for (int ii = 0; ii < sources.length; ii++) {
 					String trimmedSource = sources[ii].trim();
-					if("".equals(trimmedSource)) { continue; }
+					if("".equals(trimmedSource)) {
+						continue;
+					}
+					
 					if (seenSource.add(trimmedSource)) { 
 						node1 = NodeUtilities.mutateNode(
 								trimmedSource,
@@ -180,12 +190,15 @@ public class GraphContainer {
 								this.nodeMap,
 								AggregateFunctionMappings.SOURCE);
 							
-						seenTarget = new HashSet();
+						seenTargets = new HashSet();
 
 						for (int jj = 0; jj < targets.length; jj++) {
 							String trimmedTarget = targets[jj].trim();
-							if("".equals(trimmedTarget)) { continue; }
-							if(seenTarget.add(trimmedTarget)) {
+							if("".equals(trimmedTarget)) {
+								continue;
+							}
+							
+							if(seenTargets.add(trimmedTarget)) {
 								node2 = NodeUtilities.mutateNode(
 										trimmedTarget,
 										this.graph,
