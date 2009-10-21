@@ -1,89 +1,41 @@
 package edu.iu.nwb.analysis.extractdirectednetfromtable.algorithms;
 
-import java.io.IOException;
-import java.util.Arrays;
+import java.util.Collections;
 import java.util.Dictionary;
+import java.util.List;
 
 import org.cishell.framework.CIShellContext;
 import org.cishell.framework.algorithm.Algorithm;
 import org.cishell.framework.algorithm.AlgorithmFactory;
 import org.cishell.framework.algorithm.ParameterMutator;
 import org.cishell.framework.data.Data;
-import org.cishell.reference.service.metatype.BasicAttributeDefinition;
-import org.cishell.reference.service.metatype.BasicObjectClassDefinition;
-import org.osgi.service.component.ComponentContext;
-import org.osgi.service.metatype.AttributeDefinition;
-import org.osgi.service.metatype.MetaTypeInformation;
-import org.osgi.service.metatype.MetaTypeService;
+import org.cishell.utilities.TableUtilities;
+import org.cishell.utilities.mutateParameter.DropdownMutator;
 import org.osgi.service.metatype.ObjectClassDefinition;
 
-import prefuse.data.Schema;
 import prefuse.data.Table;
 
-
-
-
-public class ExtractDirectedNetworkAlgorithmFactory implements AlgorithmFactory,ParameterMutator {
-	private MetaTypeInformation originalProvider;
-	private String pid;
+public class ExtractDirectedNetworkAlgorithmFactory implements AlgorithmFactory, ParameterMutator {
 	
-	public ObjectClassDefinition mutateParameters(Data[] data, ObjectClassDefinition parameters) {
-		Table t = (Table) data[0].getData();
-
-		ObjectClassDefinition oldDefinition = parameters;
-
-		BasicObjectClassDefinition definition;
-		try {
-			definition = new BasicObjectClassDefinition(oldDefinition.getID(), oldDefinition.getName(), oldDefinition.getDescription(), oldDefinition.getIcon(16));
-		} catch (IOException e) {
-			definition = new BasicObjectClassDefinition(oldDefinition.getID(), oldDefinition.getName(), oldDefinition.getDescription(), null);
-		}
-
-		String[] columnNames = createKeyArray(t.getSchema());
-		Arrays.sort(columnNames);
-
-		AttributeDefinition[] definitions = oldDefinition.getAttributeDefinitions(ObjectClassDefinition.ALL);
-
-		for(int ii = 0; ii < definitions.length; ii++) {
-			String id = definitions[ii].getID();
-			if((id.equals("sourceColumn") || id.equals("targetColumn"))){
-				definition.addAttributeDefinition(ObjectClassDefinition.REQUIRED,
-						new BasicAttributeDefinition(id, definitions[ii].getName(), definitions[ii].getDescription(), definitions[ii].getType(), columnNames, columnNames));
-			}
-			else if(id.equals("delimiter")){
-				definition.addAttributeDefinition(ObjectClassDefinition.REQUIRED, definitions[ii]);
-			}
-			else{
-				definition.addAttributeDefinition(ObjectClassDefinition.OPTIONAL, definitions[ii]);
-			}
-		}
-
-		
-		return definition;	
+	public static final String TARGET_COLUMN_NAME_PARAMETER_ID = "targetColumn";
+	public static final String SOURCE_COLUMN_NAME_PARAMETER_ID = "sourceColumn";
+	public static final String DELIMITER_PARAMETER_ID = "delimiter";
+	public static final String AGGREGATION_FUNCTION_FILE_PARAMETER_ID = "aff";
+	
+	public Algorithm createAlgorithm(Data[] data, Dictionary parameters, CIShellContext context) {
+		return new ExtractDirectedNetworkAlgorithm(data, parameters, context);
 	}
 
+	public ObjectClassDefinition mutateParameters(Data[] data, ObjectClassDefinition oldParameters) {
+		Table table = (Table) data[0].getData();
 
-    protected void activate(ComponentContext ctxt) {
-    	MetaTypeService mts = (MetaTypeService)ctxt.locateService("MTS");
-        originalProvider = mts.getMetaTypeInformation(ctxt.getBundleContext().getBundle());
-        pid = (String) ctxt.getServiceReference().getProperty(org.osgi.framework.Constants.SERVICE_PID);
-    }
-    protected void deactivate(ComponentContext ctxt) {
-       originalProvider = null;
-    }
+		List columnNames = TableUtilities.getAllColumnNames(table.getSchema());
+		Collections.sort(columnNames);
 
-    public Algorithm createAlgorithm(Data[] data, Dictionary parameters, CIShellContext context) {
-        return new ExtractDirectedNetworkAlgorithm(data, parameters, context);
-    }
-    
-    private String[] createKeyArray(Schema schema) {
-		String[] keys = new String[schema.getColumnCount() + 1];
-		keys[0] = "";
+		DropdownMutator mutator = new DropdownMutator();
+		mutator.add(SOURCE_COLUMN_NAME_PARAMETER_ID, columnNames);
+		mutator.add(TARGET_COLUMN_NAME_PARAMETER_ID, columnNames);
 
-		for(int ii = 1; ii <= schema.getColumnCount(); ii++) {
-			keys[ii] = schema.getColumnName(ii - 1);
-		}
-
-		return keys;
+		return mutator.mutate(oldParameters);
 	}
 }
