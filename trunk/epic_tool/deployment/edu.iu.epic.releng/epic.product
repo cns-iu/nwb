@@ -26,7 +26,7 @@
       location="edu.iu.epic.gui.brand"
       startupProgressRect="0,163,500,10" />
    <launcher name="epic">
-      <linux icon="/edu.iu.epic.gui.brand/icons/scisip32.xpm"/>
+      <linux icon="/edu.iu.epic.gui.brand/icons/epic32.xpm"/>
       <macosx icon="/edu.iu.epic.gui.brand/icons/epic-icon512.icns"/>
       <solaris/>
       <win useIco="true">
