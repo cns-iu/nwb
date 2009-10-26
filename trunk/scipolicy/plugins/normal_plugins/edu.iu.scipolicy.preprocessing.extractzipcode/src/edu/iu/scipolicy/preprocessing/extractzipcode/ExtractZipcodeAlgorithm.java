@@ -5,7 +5,6 @@ import java.util.Dictionary;
 
 import org.cishell.framework.CIShellContext;
 import org.cishell.framework.algorithm.Algorithm;
-import org.cishell.framework.algorithm.AlgorithmExecutionException;
 import org.cishell.framework.data.BasicData;
 import org.cishell.framework.data.Data;
 import org.cishell.framework.data.DataProperty;
@@ -27,13 +26,13 @@ public class ExtractZipcodeAlgorithm implements Algorithm {
 	
 	private static final String TRUNCATE_COLUMN = "truncate";
 	private Data[] data;
-    private Dictionary parameters;
+    private Dictionary<String, Object> parameters;
 	private LogService logger;
 	
     public static final String PLACE_NAME_COLUMN = "addresscolumn";
     
     
-    public ExtractZipcodeAlgorithm(Data[] data, Dictionary parameters,
+    public ExtractZipcodeAlgorithm(Data[] data, Dictionary<String, Object> parameters,
 			CIShellContext context) {
     	
         this.data = data;
@@ -41,7 +40,8 @@ public class ExtractZipcodeAlgorithm implements Algorithm {
 		this.logger = (LogService) context.getService(LogService.class.getName());
 	}
 
-    public Data[] execute() throws AlgorithmExecutionException {
+    @SuppressWarnings("unchecked") // Raw Dictionary of metadata
+	public Data[] execute() {
 
 		boolean truncate = Boolean.parseBoolean(parameters.get(TRUNCATE_COLUMN).toString());
 		String addressColumnName = (String) parameters.get(PLACE_NAME_COLUMN);
@@ -64,7 +64,7 @@ public class ExtractZipcodeAlgorithm implements Algorithm {
 		 * After getting the output in table format make it available to the user.
 		 * */
 		Data output = new BasicData(zipcodeExtractionComputation.getOutputTable(), Table.class.getName());
-		Dictionary metadata = output.getMetadata();
+		Dictionary<String, Object> metadata = output.getMetadata();
 		metadata.put(DataProperty.LABEL, "ZIP codes for addresses in \"" 
 										 + addressColumnName 
 										 + "\" is added. "
@@ -79,6 +79,6 @@ public class ExtractZipcodeAlgorithm implements Algorithm {
     
     private double calculateParsingPercentage(int extractedZipcodesCount, int totalAddresses) {
        	DecimalFormat roundedRatioFormat = new DecimalFormat("#.###");
-		return Double.valueOf(roundedRatioFormat.format(((double) extractedZipcodesCount * 100.0) / totalAddresses));
+		return Double.valueOf(roundedRatioFormat.format((extractedZipcodesCount * 100.0) / totalAddresses));
     }
 }

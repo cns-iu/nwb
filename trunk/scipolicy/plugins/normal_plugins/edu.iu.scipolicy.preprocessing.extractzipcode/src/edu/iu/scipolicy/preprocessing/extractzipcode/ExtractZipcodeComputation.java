@@ -1,7 +1,6 @@
 package edu.iu.scipolicy.preprocessing.extractzipcode;
 
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -10,6 +9,7 @@ import org.cishell.utilities.TableUtilities;
 import org.osgi.service.log.LogService;
 
 import prefuse.data.Table;
+import prefuse.data.util.TableIterator;
 
 /**
  * 
@@ -45,7 +45,7 @@ public class ExtractZipcodeComputation {
 
 	private LogService logger;
 
-	private static final String[] ZIPCODE_COLUMN_NAME_SUGGESTIONS = {"Zipcode", "Zip"};
+	private static final String[] ZIPCODE_COLUMN_NAME_SUGGESTIONS = {"ZIP code", "ZIP"};
 	
 	private boolean truncate;
 	private String addressColumnName;
@@ -66,11 +66,7 @@ public class ExtractZipcodeComputation {
 	}
 
 	private void processTable() {
-		
-		/*
-		 * Create Blank new output table using the schema from the original table.
-		 * */
-		outputTable = TableUtilities.createTableUsingSchema(originalTable.getSchema());
+		outputTable = originalTable.getSchema().instantiate();
 		outputTableZipcodeColumnName = TableUtilities.formNonConflictingNewColumnName(
 			originalTable.getSchema(), ZIPCODE_COLUMN_NAME_SUGGESTIONS);
 		
@@ -79,10 +75,7 @@ public class ExtractZipcodeComputation {
 		logger.log(LogService.LOG_INFO, "ZIP code added to \""
 										+ outputTableZipcodeColumnName + "\" column.");
 		
-		Iterator addressColumnIterator = originalTable.iterator();
-		
-		int addressColumnNumber = originalTable.getColumnNumber(addressColumnName);
-		int zipcodeColumnNumber = outputTable.getColumnNumber(outputTableZipcodeColumnName);
+		TableIterator addressColumnIterator = originalTable.iterator();
 		
 		/*
 		 * Use regular expression to find out all the groups which containing numbers.
@@ -93,11 +86,10 @@ public class ExtractZipcodeComputation {
 		Zipcode zipcode;
 		String outputZipcode = "";
 		
-		while (addressColumnIterator.hasNext()) {
-			
+		while (addressColumnIterator.hasNext()) {			
 			int currentRowNumber = Integer.parseInt(addressColumnIterator.next().toString());
 			String currentAddress = originalTable
-										.get(currentRowNumber, addressColumnNumber).toString(); 
+										.getString(currentRowNumber, addressColumnName);
 			
 			zipcodeMatcher = zipcodePattern.matcher(currentAddress);
 
@@ -158,7 +150,7 @@ public class ExtractZipcodeComputation {
 			outputTable.addRow();
 			TableUtilities
 				.copyTableRow(currentRowNumber, currentRowNumber, outputTable, originalTable);
-			outputTable.set(currentRowNumber, zipcodeColumnNumber, outputZipcode);
+			outputTable.set(currentRowNumber, outputTableZipcodeColumnName, outputZipcode);
 			
 			totalAddressesConsidered++;
 		}
