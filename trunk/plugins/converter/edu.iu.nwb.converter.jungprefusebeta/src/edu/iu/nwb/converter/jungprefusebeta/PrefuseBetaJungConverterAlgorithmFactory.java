@@ -9,6 +9,6 @@ import org.cishell.framework.data.Data;
 
 public class PrefuseBetaJungConverterAlgorithmFactory implements AlgorithmFactory {
 	public Algorithm createAlgorithm(Data[] data, Dictionary parameters, CIShellContext context) {
-		return new PrefuseBetaJungConverterAlgorithm(data, parameters, context);
+		return new PrefuseBetaJungConverterAlgorithm(data);
 	}
 }

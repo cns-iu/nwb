@@ -4,7 +4,6 @@ Bundle-Name: Jung to Prefuse Beta Converter
 Bundle-SymbolicName: edu.iu.nwb.converter.jungprefusebeta
 Bundle-Version: 1.0.0
 Bundle-ClassPath: .
-Bundle-Localization: plugin
 Import-Package: edu.uci.ics.jung.graph,
  edu.uci.ics.jung.graph.impl,
  edu.uci.ics.jung.utils,
@@ -22,3 +21,4 @@ Import-Package: edu.uci.ics.jung.graph,
  prefuse.data.tuple
 X-AutoStart: true
 Service-Component: OSGI-INF/jungprefusebeta.xml, OSGI-INF/prefusebetajung.xml
+Bundle-RequiredExecutionEnvironment: J2SE-1.4

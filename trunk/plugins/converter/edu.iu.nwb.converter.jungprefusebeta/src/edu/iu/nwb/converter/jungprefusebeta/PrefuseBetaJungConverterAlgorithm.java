@@ -1,8 +1,6 @@
 package edu.iu.nwb.converter.jungprefusebeta;
 
-import java.util.Dictionary;
 
-import org.cishell.framework.CIShellContext;
 import org.cishell.framework.algorithm.Algorithm;
 import org.cishell.framework.algorithm.AlgorithmProperty;
 import org.cishell.framework.data.BasicData;
@@ -13,7 +11,7 @@ import edu.uci.ics.jung.graph.Graph;
 public class PrefuseBetaJungConverterAlgorithm implements Algorithm, AlgorithmProperty {
 	private Data[] data;
 
-	public PrefuseBetaJungConverterAlgorithm(Data[] data, Dictionary parameters, CIShellContext context) {
+	public PrefuseBetaJungConverterAlgorithm(Data[] data) {
 		this.data = data;
 	}
 
