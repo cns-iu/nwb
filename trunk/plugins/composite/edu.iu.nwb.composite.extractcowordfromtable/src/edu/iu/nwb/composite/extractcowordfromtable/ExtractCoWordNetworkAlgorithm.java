@@ -1,21 +1,18 @@
 package edu.iu.nwb.composite.extractcowordfromtable;
 
 import java.util.Dictionary;
-import java.util.Hashtable;
 import java.util.Enumeration;
+import java.util.Hashtable;
 
 import org.cishell.framework.CIShellContext;
 import org.cishell.framework.algorithm.Algorithm;
 import org.cishell.framework.algorithm.AlgorithmExecutionException;
 import org.cishell.framework.algorithm.AlgorithmFactory;
-import org.cishell.framework.data.BasicData;
 import org.cishell.framework.data.Data;
 import org.cishell.framework.data.DataProperty;
 import org.cishell.service.conversion.ConversionException;
 import org.cishell.service.conversion.DataConversionService;
 import org.osgi.service.log.LogService;
-
-import prefuse.data.Table;
 
 public class ExtractCoWordNetworkAlgorithm implements Algorithm {
 	Data[] data;

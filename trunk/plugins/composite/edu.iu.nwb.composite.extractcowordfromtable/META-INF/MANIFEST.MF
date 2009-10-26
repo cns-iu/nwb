@@ -21,3 +21,4 @@ Import-Package: edu.iu.nwb.analysis.extractnetfromtable.aggregate,
 X-AutoStart: true
 Service-Component: OSGI-INF/component.xml
 Require-Bundle: org.cishell.framework
+Bundle-RequiredExecutionEnvironment: J2SE-1.4

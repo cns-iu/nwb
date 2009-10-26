@@ -10,10 +10,8 @@ import org.cishell.framework.algorithm.ParameterMutator;
 import org.cishell.framework.data.Data;
 import org.cishell.reference.service.metatype.BasicAttributeDefinition;
 import org.cishell.reference.service.metatype.BasicObjectClassDefinition;
-import org.osgi.service.component.ComponentContext;
 import org.osgi.service.metatype.AttributeDefinition;
 import org.osgi.service.metatype.MetaTypeInformation;
-import org.osgi.service.metatype.MetaTypeService;
 import org.osgi.service.metatype.ObjectClassDefinition;
 
 import edu.iu.nwb.composite.extractauthorpapernetwork.metadata.SupportedFileTypes;
@@ -44,19 +42,6 @@ public class ExtractAuthorPaperNetworkFactory implements AlgorithmFactory, Param
 
 		return definition;	
 	}
-	
-	protected void activate(ComponentContext ctxt) {
-		MetaTypeService mts = (MetaTypeService)ctxt.locateService("MTS");
-		originalProvider = mts.getMetaTypeInformation(ctxt.getBundleContext().getBundle());
-		pid = (String) ctxt.getServiceReference().getProperty(org.osgi.framework.Constants.SERVICE_PID);      
-	}
-
-
-	protected void deactivate(ComponentContext ctxt) {
-		originalProvider = null;
-	}
-	
-
 
 	public Algorithm createAlgorithm(Data[] data, Dictionary parameters, CIShellContext context) {
 		return new ExtractAuthorPaperNetwork(data, parameters, context);

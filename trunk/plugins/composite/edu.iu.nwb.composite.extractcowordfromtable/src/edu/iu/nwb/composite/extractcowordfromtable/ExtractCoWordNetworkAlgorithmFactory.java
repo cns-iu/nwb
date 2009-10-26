@@ -15,7 +15,6 @@ import org.cishell.service.conversion.DataConversionService;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.InvalidSyntaxException;
 import org.osgi.framework.ServiceReference;
-import org.osgi.service.component.ComponentContext;
 import org.osgi.service.log.LogService;
 import org.osgi.service.metatype.AttributeDefinition;
 import org.osgi.service.metatype.ObjectClassDefinition;
@@ -88,6 +87,7 @@ public class ExtractCoWordNetworkAlgorithmFactory implements AlgorithmFactory, P
 			}
 			else if(id.equals("targetColumn"))
 			{
+				// Skip target column.
 			}
 			else
 			{
@@ -174,18 +174,10 @@ public class ExtractCoWordNetworkAlgorithmFactory implements AlgorithmFactory, P
 		return newObjectClassDefinition;
 	}
 
-
-    protected void activate(ComponentContext ctxt) {
-        this.log = (LogService) ctxt.locateService("LOG");
-        bContext = ctxt.getBundleContext();
-    }
-    protected void deactivate(ComponentContext ctxt) {
-    }
-
     public Algorithm createAlgorithm(Data[] data, Dictionary parameters, CIShellContext context) {
     	String filter = "";
         try {
-        	filter = "(service.pid=edu.iu.nwb.analysis.extractdirectednetfromtable.algorithms.ExtractDirectedNetworkAlgorithm)";
+        	filter = "(service.pid=edu.iu.nwb.analysis.extractdirectednetfromtable.ExtractDirectedNetwork)";
         	extractDirectedNetwork = getAlgorithmFactory(filter);
         	
         	//WARNING: This will break if the PID changes, and given that its current pid is misleading, this seems likely

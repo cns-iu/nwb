@@ -16,6 +16,8 @@ import org.cishell.framework.data.Data;
 import org.cishell.framework.data.DataProperty;
 import org.osgi.service.log.LogService;
 
+import prefuse.data.Graph;
+import prefuse.data.Table;
 import edu.iu.nwb.analysis.extractcoauthorship.metadata.SupportedFileTypes;
 import edu.iu.nwb.analysis.extractnetfromtable.components.ExtractNetworkFromTable;
 import edu.iu.nwb.analysis.extractnetfromtable.components.GraphContainer;
@@ -47,7 +49,7 @@ public class ExtractAlgorithm implements Algorithm, SupportedFileTypes,ProgressT
 	}
 
 	public Data[] execute() throws AlgorithmExecutionException{
-		final prefuse.data.Table dataTable = (prefuse.data.Table) data[0]
+		final Table dataTable = (Table) data[0]
 				.getData();
 
 		
@@ -69,9 +71,9 @@ public class ExtractAlgorithm implements Algorithm, SupportedFileTypes,ProgressT
 		try{
 			String authorColumn = CitationFormat.getAuthorColumnByName(fileFormat);
 			GraphContainer gc = GraphContainer.initializeGraph(dataTable, authorColumn, authorColumn, false, metaData, this.logger,this.progressMonitor);
-			final prefuse.data.Graph outputGraph = gc.buildGraph(authorColumn, authorColumn, "|", this.logger);
+			final Graph outputGraph = gc.buildGraph(authorColumn, authorColumn, "|", false, this.logger);
 			final Data outputData1 = new BasicData(outputGraph,
-					prefuse.data.Graph.class.getName());
+					Graph.class.getName());
 			final Dictionary graphAttributes = outputData1.getMetadata();
 			graphAttributes.put(DataProperty.MODIFIED, new Boolean(true));
 			graphAttributes.put(DataProperty.PARENT, data[0]);
@@ -81,10 +83,10 @@ public class ExtractAlgorithm implements Algorithm, SupportedFileTypes,ProgressT
 		
 		
 		
-		final prefuse.data.Table outputTable = ExtractNetworkFromTable.constructTable(outputGraph);
+		final Table outputTable = ExtractNetworkFromTable.constructTable(outputGraph);
 	
 		final Data outputData2 = new BasicData(outputTable,
-				prefuse.data.Table.class.getName());
+				Table.class.getName());
 
 		final Dictionary tableAttributes = outputData2.getMetadata();
 		tableAttributes.put(DataProperty.MODIFIED, new Boolean(true));

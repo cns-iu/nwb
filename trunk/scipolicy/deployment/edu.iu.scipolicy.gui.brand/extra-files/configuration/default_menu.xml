@@ -215,7 +215,8 @@
     <menu pid="edu.iu.nwb.preprocessing.duplicatenodedetector.DuplicateNodeDetectorAlgorithm"/>    
     <menu pid="edu.iu.nwb.tools.mergenodes.MergeNodes"/>
     <menu type="break"/>
-    <menu pid="edu.iu.nwb.analysis.extractdirectednetfromtable.algorithms.ExtractDirectedNetworkAlgorithm"/>
+    <menu pid="edu.iu.nwb.analysis.extractdirectednetfromtable.ExtractDirectedNetwork"/>
+    <menu pid="edu.iu.nwb.analysis.extractdirectednetfromtable.ExtractBipartiteNetwork"/>
     <menu pid="edu.iu.nwb.composite.extractpapercitationnetwork.algorithm.ExtractPaperCitationNetwork"/>
     <menu pid="edu.iu.nwb.composite.extractauthorpapernetwork.algorithm.ExtractAuthorPaperNetwork"/>
     <menu type="break"/>

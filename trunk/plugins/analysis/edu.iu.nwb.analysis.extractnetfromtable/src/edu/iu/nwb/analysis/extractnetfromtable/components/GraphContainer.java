@@ -17,18 +17,23 @@ import prefuse.data.Table;
 import prefuse.data.column.Column;
 
 public class GraphContainer {
-	
+	public static final String TARGET_COLUMN_NAME = "target";
+	public static final String SOURCE_COLUMN_NAME = "source";
+	public static final String LABEL_COLUMN_NAME = "label";
+
 	private Graph graph;
 	private Table table;
 	private AggregateFunctionMappings nodeMap;
 	private AggregateFunctionMappings edgeMap;
 	private ProgressMonitor progMonitor = null;
 
-	public GraphContainer(Graph g, Table t, AggregateFunctionMappings nodeFunctionMap, AggregateFunctionMappings edgeFunctionMap){
+	public GraphContainer(Graph g, Table t, AggregateFunctionMappings nodeFunctionMap,
+			AggregateFunctionMappings edgeFunctionMap) {
 		this(g, t, nodeFunctionMap, edgeFunctionMap, null);
 	}
 
-	public GraphContainer(Graph g, Table t, AggregateFunctionMappings nodeFunctionMap, AggregateFunctionMappings edgeFunctionMap, ProgressMonitor pm){
+	public GraphContainer(Graph g, Table t, AggregateFunctionMappings nodeFunctionMap,
+			AggregateFunctionMappings edgeFunctionMap, ProgressMonitor pm) {
 		this.graph = g;
 		this.table = t;
 		this.nodeMap = nodeFunctionMap;
@@ -36,236 +41,265 @@ public class GraphContainer {
 		this.progMonitor = pm;
 	}
 
-	public Graph buildGraph(
-			String sourceColumnName,
-			String targetColumnName,
-			String delimiter,
-			LogService log){
+	public Graph buildGraph(String sourceColumnName, String targetColumnName, String delimiter,
+			boolean requestBipartite, LogService log) {
 		String[] targetColumnNames = targetColumnName.split("\\,");
-		
-		if(this.graph.isDirected()) {
-			return buildDirectedGraph(
-					sourceColumnName, targetColumnNames, delimiter,	log);
+
+		if (this.graph.isDirected()) {
+			return buildDirectedGraph(sourceColumnName, targetColumnNames, delimiter,
+					requestBipartite, log);
 		} else {
-			return buildUndirectedGraph(
-					targetColumnNames, delimiter, log);
+			return buildUndirectedGraph(targetColumnNames, delimiter, log);
 		}
 	}
 
-	private Graph buildUndirectedGraph(
-			String[] targetColumnNames,
-			String delimiter,
-			LogService log) {
+	private Graph buildUndirectedGraph(String[] targetColumnNames, String delimiter, LogService log) {
 		boolean dupValues = false;
 		final HashMap dupValuesErrorMessages = new HashMap();
 		int numTotalRows = this.table.getRowCount();
 		int numRowsProcessedSoFar = 0;
 
-		if(this.progMonitor != null) {
+		NodeMaintainer nodeMaintainer = new NodeMaintainer();
+
+		if (this.progMonitor != null) {
 			this.progMonitor.start(ProgressMonitor.WORK_TRACKABLE, numTotalRows);
 		}
 
-		for (Iterator rowIt = this.table.rows(); rowIt.hasNext();){
-			int row = ((Integer)rowIt.next()).intValue();
-			
+		for (Iterator rowIt = this.table.rows(); rowIt.hasNext();) {
+			int row = ((Integer) rowIt.next()).intValue();
+
 			Node node1 = null;
 			Node node2 = null;
-			
-			final String targetString =
-				buildRowTargetStringFromColumnNames(
-						row, targetColumnNames, this.table, delimiter);
+
+			final String targetString = buildRowTargetStringFromColumnNames(row, targetColumnNames,
+					this.table, delimiter);
 
 			Set seenObject = new HashSet();
 
-			if(targetString != null) { //no values to extract from
+			if (targetString != null) { // no values to extract from
 				final Pattern splitPattern = Pattern.compile("\\Q" + delimiter + "\\E");
 				final String[] splitTargetStringArray = splitPattern.split(targetString);
-				
+
 				// Trim each target.
 				for (int ii = 0; ii < splitTargetStringArray.length; ii++) {
 					splitTargetStringArray[ii] = splitTargetStringArray[ii].trim();
 				}
 
 				for (int ii = splitTargetStringArray.length - 1; ii >= 0; ii--) {
-					if("".equals(splitTargetStringArray[ii])) {
+					if ("".equals(splitTargetStringArray[ii])) {
 						continue;
 					}
-					
-					if(seenObject.add(splitTargetStringArray[ii])) { // No duplicate nodes.
-						node1 = NodeUtilities.mutateNode(splitTargetStringArray[ii], this.graph,
-							this.table, row, this.nodeMap, AggregateFunctionMappings.SOURCEANDTARGET);
+
+					if (seenObject.add(splitTargetStringArray[ii])) { // No
+						// duplicate
+						// nodes.
+						node1 = nodeMaintainer.mutateNode(splitTargetStringArray[ii], null, this.graph,
+								this.table, row, this.nodeMap, AggregateFunctionMappings.SOURCEANDTARGET);
 					}
-					
-					node1 = this.graph.getNode(this.nodeMap.getFunctionRow(splitTargetStringArray[ii]).getRowNumber());
-					
+
+					node1 = this.graph.getNode(this.nodeMap.getFunctionRow(
+							new NodeID(splitTargetStringArray[ii], null)).getRowNumber());
+
 					for (int jj = 0; jj < ii; jj++) {
-						if("".equals(splitTargetStringArray[jj])) {
+						if ("".equals(splitTargetStringArray[jj])) {
 							continue;
 						}
-						
-						if(!splitTargetStringArray[jj].equals(splitTargetStringArray[ii])) {
-							if(seenObject.add(splitTargetStringArray[jj])) { //No duplicate nodes.
-								node2 = NodeUtilities.mutateNode(splitTargetStringArray[jj],
-									this.graph, this.table, row, this.nodeMap,
-									AggregateFunctionMappings.SOURCEANDTARGET);
+
+						if (!splitTargetStringArray[jj].equals(splitTargetStringArray[ii])) {
+							if (seenObject.add(splitTargetStringArray[jj])) { // No
+								// duplicate
+								// nodes.
+								node2 = nodeMaintainer.mutateNode(splitTargetStringArray[jj],
+										null, this.graph, this.table, row, this.nodeMap, AggregateFunctionMappings.SOURCEANDTARGET);
 
 							}
-							//create or modify an edge as necessary
-							node2 = this.graph.getNode(this.nodeMap.getFunctionRow(splitTargetStringArray[jj]).getRowNumber());
-							EdgeContainer.mutateEdge(node1, node2, this.graph, this.table, row, this.edgeMap);
-						}
-						else {
-							dupValues = true; //detected a self-loop
+							// Create or modify an edge as necessary.
+							node2 = this.graph.getNode(this.nodeMap.getFunctionRow(
+									splitTargetStringArray[jj]).getRowNumber());
+							EdgeContainer.mutateEdge(node1, node2, this.graph, this.table, row,
+									this.edgeMap);
+						} else {
+							dupValues = true; // Detected a self-loop.
 						}
 					}
 				}
-				if(dupValues){
-					//String title = (String)pdt.get(row,pdt.getColumnNumber("TI"));
-					//String title = "unknown";
-					//ExtractNetworkFromTable.addDuplicateValueErrorMessage(title, columnName, dupValuesErrorMessages);
-					//dupValues = false;
+				if (dupValues) {
+					// String title =
+					// (String)pdt.get(row,pdt.getColumnNumber("TI"));
+					// String title = "unknown";
+					// ExtractNetworkFromTable.addDuplicateValueErrorMessage(title,
+					// columnName, dupValuesErrorMessages);
+					// dupValues = false;
 				}
+			} else {
+				// String title =
+				// (String)pdt.get(row,pdt.getColumnNumber("TI"));
+				// String title = "unknown";
+				// ExtractNetworkFromTable.printNoValueToExtractError(title,
+				// columnName, this.log);
 			}
-			else{
-				//String title = (String)pdt.get(row,pdt.getColumnNumber("TI"));
-				//String title = "unknown";
-				//ExtractNetworkFromTable.printNoValueToExtractError(title, columnName, this.log);
-			}
-			numRowsProcessedSoFar = numRowsProcessedSoFar+1;
-			if(this.progMonitor != null)
+			numRowsProcessedSoFar = numRowsProcessedSoFar + 1;
+			if (this.progMonitor != null)
 				this.progMonitor.worked(numRowsProcessedSoFar);
 
 		}
-		for(Iterator dupIter = dupValuesErrorMessages.keySet().iterator(); dupIter.hasNext();){
-			log.log(LogService.LOG_WARNING, (String)dupValuesErrorMessages.get(dupIter.next()));
+
+		for (Iterator dupIter = dupValuesErrorMessages.keySet().iterator(); dupIter.hasNext();) {
+			log.log(LogService.LOG_WARNING, (String) dupValuesErrorMessages.get(dupIter.next()));
 		}
 
 		return this.graph;
 	}
 
-	private Graph buildDirectedGraph(
-			String sourceColumnName,
-			String[] targetColumnNames,
-			String delimiter,
-			LogService log){
+	private Graph buildDirectedGraph(String sourceColumnName, String[] targetColumnNames,
+			String delimiter, boolean requestBipartite, LogService log) {
 		final Pattern splitPattern = Pattern.compile("\\Q" + delimiter + "\\E");
 		final HashMap dupValuesErrorMessages = new HashMap();
 		Column sourceColumn = this.table.getColumn(sourceColumnName);
-		Node node1;
-		Node node2;
+
+		NodeMaintainer nodeMaintainer = new NodeMaintainer();
+
+		String sourceBipartiteType = null;
+		String targetBipartiteType = null;
+		if (requestBipartite) {
+			sourceBipartiteType = sourceColumnName;
+			targetBipartiteType = separate(targetColumnNames, " OR ");
+		}
 
 		int numTotalRows = this.table.getRowCount();
 		int numRowsProcessedSoFar = 0;
 
-		if(this.progMonitor != null){
+		if (this.progMonitor != null) {
 			this.progMonitor.start(ProgressMonitor.WORK_TRACKABLE, numTotalRows);
 		}
-			
-		for (Iterator rowIt = this.table.rows(); rowIt.hasNext();) {
-			int row = ((Integer)rowIt.next()).intValue();
+
+		for (Iterator rows = this.table.rows(); rows.hasNext();) {
+			int row = ((Integer) rows.next()).intValue();
+
 			final String sourceString = sourceColumn.getString(row);
-			
-			final String targetString =
-				buildRowTargetStringFromColumnNames(
-						row, targetColumnNames, this.table, delimiter);
+			final String targetString = buildRowTargetStringFromColumnNames(row, targetColumnNames,
+					table, delimiter);
 
-			Set seenSource = new HashSet();
-			Set seenTargets;
 			if (sourceString != null && targetString != null) {
+				// Split, trim, remove duplicates.
 				final String[] sources = splitPattern.split(sourceString);
+				Set cleanSourceNames = clean(sources);
 				final String[] targets = splitPattern.split(targetString);
+				Set cleanTargetNames = clean(targets);
+				
+				// Update nodes.
+				Set updatedSources = updateNodes(nodeMaintainer, row, cleanSourceNames,
+						sourceBipartiteType, AggregateFunctionMappings.SOURCE);
 
-				for (int ii = 0; ii < sources.length; ii++) {
-					String trimmedSource = sources[ii].trim();
-					if("".equals(trimmedSource)) {
-						continue;
-					}
+				Set updatedTargets = updateNodes(nodeMaintainer, row, cleanTargetNames,
+						targetBipartiteType, AggregateFunctionMappings.TARGET);
+
+				// Update edges.
+				for (Iterator updatedSourcesIt = updatedSources.iterator();
+						updatedSourcesIt.hasNext();) {
+					Node updatedSource = (Node) updatedSourcesIt.next();
 					
-					if (seenSource.add(trimmedSource)) { 
-						node1 = NodeUtilities.mutateNode(
-								trimmedSource,
-								this.graph,
-								this.table,
-								row,
-								this.nodeMap,
-								AggregateFunctionMappings.SOURCE);
-							
-						seenTargets = new HashSet();
+					for (Iterator updatedTargetsIt = updatedTargets.iterator();
+							updatedTargetsIt.hasNext();) {
+						Node updatedTarget = (Node) updatedTargetsIt.next();
 
-						for (int jj = 0; jj < targets.length; jj++) {
-							String trimmedTarget = targets[jj].trim();
-							if("".equals(trimmedTarget)) {
-								continue;
-							}
-							
-							if(seenTargets.add(trimmedTarget)) {
-								node2 = NodeUtilities.mutateNode(
-										trimmedTarget,
-										this.graph,
-										this.table,
-										row,
-										this.nodeMap,
-										AggregateFunctionMappings.TARGET);
-
-								EdgeContainer.mutateEdge(
-										node1,
-										node2,
-										this.graph,
-										this.table,
-										row,
-										this.edgeMap);
-							}
-						}
+						EdgeContainer.mutateEdge(updatedSource, updatedTarget, graph, table, row,
+							edgeMap);
 					}
 				}
-			} else {
-				// String title = (String)pdt.get(row,pdt.getColumnNumber("TI"));
-				//String title = "unknown";
-				// ExtractNetworkFromTable.printNoValueToExtractError(title, sourceColumnName, log);
 			}
 
 			numRowsProcessedSoFar = numRowsProcessedSoFar + 1;
 
-			if(this.progMonitor != null)
-				this.progMonitor.worked(numRowsProcessedSoFar);
-		}
-				
-		for(Iterator dupIter = dupValuesErrorMessages.keySet().iterator(); dupIter.hasNext();){
-			log.log(LogService.LOG_WARNING, (String)dupValuesErrorMessages.get(dupIter.next()));
+			if (progMonitor != null) {
+				progMonitor.worked(numRowsProcessedSoFar);
+			}
 		}
 
-		return this.graph;
-	}
+		for (Iterator dupIter = dupValuesErrorMessages.keySet().iterator(); dupIter.hasNext();) {
+			log.log(LogService.LOG_WARNING, (String) dupValuesErrorMessages.get(dupIter.next()));
+		}
 
-	public static GraphContainer initializeGraph(Table pdt,String sourceColumnName, String targetColumnName, boolean isDirected,Properties p, LogService log) throws InvalidColumnNameException{
-		return initializeGraph(pdt, sourceColumnName, targetColumnName, isDirected, p, log, null);
+		return graph;
 	}
 	
-	public static GraphContainer initializeGraph(Table inputTable, String sourceColumnName,
-			String targetColumnName, boolean isDirected, Properties functions,
-			LogService log, ProgressMonitor pm)
-	throws InvalidColumnNameException {
+	private static String separate(Object[] array, String delimiter) {
+		StringBuffer buffer = new StringBuffer();
+		
+		if (array.length > 0) {
+			buffer.append(array[0]);
+			
+			for (int ii = 1; ii < array.length; ii++) {
+				buffer.append(delimiter);
+				buffer.append(array[ii]);
+			}
+		}
+		
+		return buffer.toString();
+	}
 
+	private Set updateNodes(NodeMaintainer nodeMaintainer, int rowIndex, final Set cleanNames,
+			String bipartiteType, int aggregateFunctionMappingType) {
+		Set updatedNodes = new HashSet();
+
+		for (Iterator cleanNamesIt = cleanNames.iterator(); cleanNamesIt.hasNext();) {
+			String cleanName = (String) cleanNamesIt.next();
+
+			Node updatedNode = nodeMaintainer.mutateNode(cleanName, bipartiteType,
+					graph, table, rowIndex, nodeMap, aggregateFunctionMappingType);
+
+			updatedNodes.add(updatedNode);
+		}
+
+		return updatedNodes;
+	}
+
+	// Trim (discarding the empty string) and take only unique entries.
+	private static Set clean(final String[] strings) {
+		Set cleanedStrings = new HashSet();
+
+		for (int ii = 0; ii < strings.length; ii++) {
+			String rawString = strings[ii];
+			String trimmedString = rawString.trim();
+
+			if (!"".equals(trimmedString)) {
+				cleanedStrings.add(trimmedString);
+			}
+		}
+
+		return cleanedStrings;
+	}
+
+	public static GraphContainer initializeGraph(Table pdt, String sourceColumnName,
+			String targetColumnName, boolean isDirected, Properties p, LogService log)
+			throws InvalidColumnNameException {
+		return initializeGraph(pdt, sourceColumnName, targetColumnName, isDirected, p, log,
+				null);
+	}
+
+	public static GraphContainer initializeGraph(Table inputTable, String sourceColumnName,
+			String targetColumnName, boolean isDirected, Properties functions, LogService log, ProgressMonitor progressMonitor)
+			throws InvalidColumnNameException {
 		final Schema inputSchema = inputTable.getSchema();
 
-		if(inputSchema.getColumnIndex(sourceColumnName) < 0)
-			throw new InvalidColumnNameException(sourceColumnName + " was not a column in this table.\n");
-		
+		if (inputSchema.getColumnIndex(sourceColumnName) < 0) {
+			throw new InvalidColumnNameException(sourceColumnName
+					+ " was not a column in this table.\n");
+		}
+
 		// Get all of the target column names.
 		String[] targetColumnNameArray = targetColumnName.split("\\,");
-		
+
 		// Make sure the one or more column name(s) is/are valid.
-		
-		if ((targetColumnNameArray == null) || (targetColumnNameArray.length == 0))
-			throw new InvalidColumnNameException(targetColumnName + " was not a column in this table.\n");
-		else
-		{
-			for (int ii = 0; ii < targetColumnNameArray.length; ii++)
-			{
-				if (inputSchema.getColumnIndex(targetColumnNameArray[ii]) < 0)
-				{
-					throw new InvalidColumnNameException(targetColumnNameArray[ii] +
-						" was not a column in this table.\n");
+
+		if ((targetColumnNameArray == null) || (targetColumnNameArray.length == 0)) {
+			throw new InvalidColumnNameException(targetColumnName
+					+ " was not a column in this table.\n");
+		} else {
+			for (int ii = 0; ii < targetColumnNameArray.length; ii++) {
+				if (inputSchema.getColumnIndex(targetColumnNameArray[ii]) < 0) {
+					throw new InvalidColumnNameException(targetColumnNameArray[ii]
+							+ " was not a column in this table.\n");
 				}
 			}
 		}
@@ -276,26 +310,28 @@ public class GraphContainer {
 		AggregateFunctionMappings nodeAggregateFunctionMap = new AggregateFunctionMappings();
 		AggregateFunctionMappings edgeAggregateFunctionMap = new AggregateFunctionMappings();
 
-		AggregateFunctionMappings.parseProperties(inputSchema, nodeSchema, edgeSchema, functions, 
+		AggregateFunctionMappings.parseProperties(inputSchema, nodeSchema, edgeSchema, functions,
 				nodeAggregateFunctionMap, edgeAggregateFunctionMap, log);
-		
+
 		if (isPerformingCooccurrenceExtraction(sourceColumnName, targetColumnName)) {
 			/*
-			 * (For now we only add default edge weights for co-occurrence extractions).
-			 * (What this operation would mean for non-co-occurrence extractions
-			 *  is not yet understood (by me at least)).
+			 * (For now we only add default edge weights for co-occurrence
+			 * extractions). (What this operation would mean for
+			 * non-co-occurrence extractions is not yet understood (by me at
+			 * least)).
 			 */
-			//If we haven't already prepared to add an edge weight column...
+			// If we haven't already prepared to add an edge weight column...
 			if (edgeSchema.getColumnIndex(AggregateFunctionMappings.DEFAULT_WEIGHT_NAME) == -1) {
-				AggregateFunctionMappings.addDefaultEdgeWeightColumn(
-						inputSchema, edgeSchema, edgeAggregateFunctionMap, sourceColumnName);
+				AggregateFunctionMappings.addDefaultEdgeWeightColumn(inputSchema, edgeSchema,
+						edgeAggregateFunctionMap, sourceColumnName);
 			}
 		}
 
-		Graph outputGraph = new Graph(nodeSchema.instantiate(),
-				edgeSchema.instantiate(), isDirected);
+		Graph outputGraph = new Graph(nodeSchema.instantiate(), edgeSchema.instantiate(),
+				isDirected);
 
-		return new GraphContainer(outputGraph, inputTable, nodeAggregateFunctionMap, edgeAggregateFunctionMap, pm);
+		return new GraphContainer(outputGraph, inputTable, nodeAggregateFunctionMap,
+				edgeAggregateFunctionMap, progressMonitor);
 
 	}
 
@@ -303,36 +339,36 @@ public class GraphContainer {
 			String targetColumnName) {
 		return sourceColumnName.equals(targetColumnName);
 	}
-	
 
 	private static Schema createNodeSchema() {
 		Schema nodeSchema = new Schema();
-		nodeSchema.addColumn("label", String.class);
+		nodeSchema.addColumn(LABEL_COLUMN_NAME, String.class);
+
 		return nodeSchema;
 	}
 
 	private static Schema createEdgeSchema() {
 		Schema edgeSchema = new Schema();
-		edgeSchema.addColumn("source", int.class);
-		edgeSchema.addColumn("target", int.class);
+		edgeSchema.addColumn(SOURCE_COLUMN_NAME, int.class);
+		edgeSchema.addColumn(TARGET_COLUMN_NAME, int.class);
 		return edgeSchema;
 	}
-	
-	private static String buildRowTargetStringFromColumnNames(
-			int row, String[] targetColumnNames, Table table, String delimiter) {
+
+	private static String buildRowTargetStringFromColumnNames(int row, String[] targetColumnNames,
+			Table table, String delimiter) {
 		String targetString = "";
-		
-		// This is outside of the proceeding for loop because that loop appends the delimiter first.
+
+		// This is outside of the proceeding for loop because that loop appends
+		// the delimiter first.
 		Column targetColumn = table.getColumn(targetColumnNames[0]);
 		targetString += targetColumn.getString(row);
-		
+
 		for (int iColumn = 1; iColumn < targetColumnNames.length; iColumn++) {
 			targetColumn = table.getColumn(targetColumnNames[iColumn]);
 			targetString += (delimiter);
 			targetString += targetColumn.getString(row);
 		}
-		
+
 		return targetString;
 	}
-	
 }

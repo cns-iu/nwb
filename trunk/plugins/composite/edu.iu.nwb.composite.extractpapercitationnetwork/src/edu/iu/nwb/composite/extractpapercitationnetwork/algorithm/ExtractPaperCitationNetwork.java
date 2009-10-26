@@ -67,7 +67,7 @@ public class ExtractPaperCitationNetwork implements Algorithm, ProgressTrackable
 						this.progressMonitor);
 			
 			final Graph outputGraph =
-				gc.buildGraph(CITATION_COLUMN_NAME,	PAPER_COLUMN_NAME, "|", this.logger);			
+				gc.buildGraph(CITATION_COLUMN_NAME,	PAPER_COLUMN_NAME, "|", false, this.logger);			
 			final Data outputGraphData = createOutputGraphData(outputGraph);
 
 			final Table outputTable = ExtractNetworkFromTable

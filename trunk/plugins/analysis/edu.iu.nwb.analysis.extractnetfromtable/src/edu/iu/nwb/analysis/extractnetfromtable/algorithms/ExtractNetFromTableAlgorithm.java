@@ -64,7 +64,7 @@ public class ExtractNetFromTableAlgorithm implements Algorithm {
 						properties,
 						logger);
 			Graph outputGraph =
-				gc.buildGraph(extractColumn, extractColumn, delimiter, logger);//enft.getGraph();
+				gc.buildGraph(extractColumn, extractColumn, delimiter, false, logger);//enft.getGraph();
 			Data outGraphData = createOutGraphData(extractColumn, outputGraph);	
 			
 			Table outputTable =
@@ -77,6 +77,7 @@ public class ExtractNetFromTableAlgorithm implements Algorithm {
 			throw new AlgorithmExecutionException(message, e);
 		}
 	}
+	
 	
 	private Data createOutGraphData(String extractColumn, Graph outputGraph) {
 		Data outGraphData =	new BasicData(outputGraph, Graph.class.getName());

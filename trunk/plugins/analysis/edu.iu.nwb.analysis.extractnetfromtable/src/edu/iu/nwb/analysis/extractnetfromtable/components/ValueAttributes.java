@@ -25,6 +25,4 @@ public class ValueAttributes {
 	public int getRowNumber() {
 		return rowNumber;
 	}
-
-
 }

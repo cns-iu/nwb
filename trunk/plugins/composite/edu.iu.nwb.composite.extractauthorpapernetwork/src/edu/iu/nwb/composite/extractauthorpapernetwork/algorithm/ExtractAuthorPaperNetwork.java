@@ -59,7 +59,7 @@ public class ExtractAuthorPaperNetwork implements Algorithm,ProgressTrackable,Su
 			String authorColumn = AuthorPaperFormat.getAuthorColumnByName(fileFormat);
 			String paperColumn = AuthorPaperFormat.getPaperColumnByName(fileFormat);
 			GraphContainer gc = GraphContainer.initializeGraph(dataTable, authorColumn, paperColumn, true, metaData, this.logger,this.progressMonitor);
-			final prefuse.data.Graph outputGraph = gc.buildGraph(authorColumn, paperColumn, "|", this.logger);
+			final prefuse.data.Graph outputGraph = gc.buildGraph(authorColumn, paperColumn, "|", false, this.logger);
 			final Data outputData1 = new BasicData(outputGraph,
 					prefuse.data.Graph.class.getName());
 			final Dictionary graphAttributes = outputData1.getMetadata();
