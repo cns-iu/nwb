@@ -27,11 +27,13 @@ public class AssembleAggregateFunctions {
 
 	public AggregateFunction getAggregateFunction(String name, Class type){
 		AggregateFunction af = null;
-		try{
+		
+		try {
 			af = ((AggregateFunctionFactory)nameToFunctionFactory.get(name)).getFunction(type);
-		}catch(NullPointerException npe){
+		} catch (NullPointerException npe) {
 			af = null;
 		}
+		
 		return af;
 	}
 

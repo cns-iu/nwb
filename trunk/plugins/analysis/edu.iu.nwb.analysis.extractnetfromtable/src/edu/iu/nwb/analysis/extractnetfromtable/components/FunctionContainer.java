@@ -17,16 +17,17 @@ public class FunctionContainer {
 		String operateColumn = null;
 		int appliedNodeType;
 
-		for (int k = 0; k < tuple.getColumnCount(); k++) {
-			final String columnName = tuple.getColumnName(k);
-			aggregateFunction = va.getFunction(k); // see if the function
+		for (int cc = 0; cc < tuple.getColumnCount(); cc++) {
+			final String columnName = tuple.getColumnName(cc);
+			aggregateFunction = va.getFunction(cc); // see if the function
 													// already exists.
+
 			// If not, try to create it.
 			if (aggregateFunction == null) {
-				aggregateFunction = assembleAggregateFunction.getAggregateFunction(
-						aggregateFunctionMappings.getFunctionFromColumnName(columnName), tuple
-								.getColumnType(k));
-
+				aggregateFunction =
+					assembleAggregateFunction.getAggregateFunction(
+							aggregateFunctionMappings.getFunctionFromColumnName(columnName),
+							tuple.getColumnType(cc));
 			}
 
 			if (aggregateFunction != null) {
@@ -38,12 +39,12 @@ public class FunctionContainer {
 				if (appliedNodeType == nodeType
 						|| appliedNodeType == AggregateFunctionMappings.SOURCEANDTARGET) {
 					aggregateFunction.operate(t.get(rowNumber, operateColumn));
-					tuple.set(k, aggregateFunction.getResult());
-
+					tuple.set(cc, aggregateFunction.getResult());
 				}
 
-				if (va.getFunction(k) == null)
-					va.addFunction(k, aggregateFunction);
+				if (va.getFunction(cc) == null) {
+					va.addFunction(cc, aggregateFunction);
+				}
 			}
 		}
 		
