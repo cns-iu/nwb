@@ -87,7 +87,8 @@ public class ExtractNetworkAlgorithm implements Algorithm, ProgressTrackable {
 
 //	public static void main(String[] args) {
 //		try {
-//			File inFile = new File("C:\\Documents and Settings\\jrbibers\\Desktop\\extract bipartite network tests\\dead simple\\ab12pipe34foo.csv");
+//			File inFile = new File("C:\\Documents and Settings\\jrbibers\\Desktop\\extract bipartite network tests\\dead simple\\mode.csv");
+////			File inFile = new File("C:\\Documents and Settings\\jrbibers\\Desktop\\extract bipartite network tests\\dead simple\\ab12pipe34foo.csv");
 ////			File inFile = new File(
 ////					"C:\\Documents and Settings\\jrbibers\\Desktop\\extract bipartite network tests\\BethPlale-cleaned.csv");
 //
@@ -97,7 +98,8 @@ public class ExtractNetworkAlgorithm implements Algorithm, ProgressTrackable {
 ////			parameters.put("sourceColumn", "Principal Investigator");
 ////			parameters.put("targetColumn", "Co-PI Name(s)");
 //			parameters.put("delimiter", "|");
-//			parameters.put("aff", "C:\\Documents and Settings\\jrbibers\\Desktop\\extract bipartite network tests\\dead simple\\ab123foosumWithEdges.properties");
+////			parameters.put("aff", "C:\\Documents and Settings\\jrbibers\\Desktop\\extract bipartite network tests\\dead simple\\ab123foosumWithEdges.properties");
+//			parameters.put("aff", "C:\\Documents and Settings\\jrbibers\\Desktop\\extract bipartite network tests\\dead simple\\mode.properties");
 ////			parameters
 ////					.put(
 ////							"aff",

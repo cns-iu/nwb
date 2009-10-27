@@ -10,7 +10,7 @@ import org.cishell.framework.algorithm.AlgorithmFactory;
 import org.cishell.framework.algorithm.ParameterMutator;
 import org.cishell.framework.data.Data;
 import org.cishell.utilities.TableUtilities;
-import org.cishell.utilities.mutateParameter.DropdownMutator;
+import org.cishell.utilities.mutateParameter.dropdown.DropdownMutator;
 import org.osgi.service.metatype.ObjectClassDefinition;
 
 import prefuse.data.Table;

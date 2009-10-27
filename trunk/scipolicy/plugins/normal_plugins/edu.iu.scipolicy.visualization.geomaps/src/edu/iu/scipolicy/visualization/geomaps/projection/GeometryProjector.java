@@ -170,8 +170,7 @@ public class GeometryProjector {
 	
 	private ProjectedCRS getProjectedCRS(String projectionName) throws AlgorithmExecutionException {
 		final InputStream wellKnownTextInputStream =
-			getClass().getResourceAsStream(
-					WELL_KNOWN_TEXTS_PROPERTIES_FILE_PATH);
+			getClass().getResourceAsStream(WELL_KNOWN_TEXTS_PROPERTIES_FILE_PATH);
 
 		final Properties wellKnownTexts = new Properties();
 		try {
