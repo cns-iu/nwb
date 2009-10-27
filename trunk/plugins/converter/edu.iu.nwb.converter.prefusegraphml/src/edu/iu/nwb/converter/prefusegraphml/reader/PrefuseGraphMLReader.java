@@ -3,9 +3,7 @@ package edu.iu.nwb.converter.prefusegraphml.reader;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
-import java.util.Dictionary;
 
-import org.cishell.framework.CIShellContext;
 import org.cishell.framework.algorithm.Algorithm;
 import org.cishell.framework.algorithm.AlgorithmExecutionException;
 import org.cishell.framework.data.BasicData;
@@ -21,8 +19,7 @@ import prefuse.data.io.DataIOException;
 public class PrefuseGraphMLReader implements Algorithm {
 	private File inGraphMLFile;
     
-    public PrefuseGraphMLReader(
-    		Data[] data, Dictionary parameters, CIShellContext context) {
+    public PrefuseGraphMLReader(Data[] data) {
 		this.inGraphMLFile = (File) data[0].getData();
     }
 

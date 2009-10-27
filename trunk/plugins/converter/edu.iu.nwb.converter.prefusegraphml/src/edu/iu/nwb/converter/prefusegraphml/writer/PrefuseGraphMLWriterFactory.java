@@ -9,6 +9,6 @@ import org.cishell.framework.data.Data;
 
 public class PrefuseGraphMLWriterFactory implements AlgorithmFactory {
     public Algorithm createAlgorithm(Data[] data, Dictionary parameters, CIShellContext context) {
-        return new PrefuseGraphMLWriter(data, parameters, context);
+        return new PrefuseGraphMLWriter(data);
     }
 }

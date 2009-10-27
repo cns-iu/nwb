@@ -18,7 +18,6 @@ import prefuse.data.Schema;
 import prefuse.data.Table;
 import prefuse.data.io.AbstractGraphReader;
 import prefuse.data.io.DataIOException;
-import prefuse.data.io.GraphReader;
 import prefuse.data.parser.DataParseException;
 import prefuse.data.parser.DataParser;
 import prefuse.data.parser.ParserFactory;
@@ -34,8 +33,7 @@ import prefuse.util.collections.IntIterator;
  * 
  * @author <a href="http://jheer.org">jeffrey heer</a>
  */
-public class GraphMLReaderModified
-		extends AbstractGraphReader implements GraphReader {
+public class GraphMLReaderModified extends AbstractGraphReader {
     
     /**
      * @see prefuse.data.io.GraphReader#readGraph(java.io.InputStream)
@@ -278,7 +276,7 @@ public class GraphMLReaderModified
             }
         }
         
-        public void characters(char[] ch, int start, int length) throws SAXException {
+        public void characters(char[] ch, int start, int length)  {
             m_sbuf.append(ch, start, length);
         }
 

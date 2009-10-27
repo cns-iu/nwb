@@ -5,9 +5,7 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
-import java.util.Dictionary;
 
-import org.cishell.framework.CIShellContext;
 import org.cishell.framework.algorithm.Algorithm;
 import org.cishell.framework.algorithm.AlgorithmExecutionException;
 import org.cishell.framework.data.BasicData;
@@ -26,8 +24,7 @@ public class PrefuseGraphMLWriter implements Algorithm {
 	private Graph inGraph;
     
 	
-    public PrefuseGraphMLWriter(
-    		Data[] data, Dictionary parameters, CIShellContext context) {
+    public PrefuseGraphMLWriter(Data[] data) {
 		this.inGraph = (Graph) data[0].getData();
     }
 

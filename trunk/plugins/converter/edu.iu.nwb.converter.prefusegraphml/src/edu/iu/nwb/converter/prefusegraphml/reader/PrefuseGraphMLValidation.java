@@ -15,23 +15,21 @@ import org.cishell.framework.algorithm.AlgorithmFactory;
 import org.cishell.framework.data.BasicData;
 import org.cishell.framework.data.Data;
 import org.cishell.framework.data.DataProperty;
-import org.osgi.service.log.LogService;
 
 import prefuse.data.io.DataIOException;
-import prefuse.data.io.GraphMLReader;
 
 /**
  * @author Weixia(Bonnie) Huang 
  */
 public class PrefuseGraphMLValidation implements AlgorithmFactory {
     public Algorithm createAlgorithm(Data[] data, Dictionary parameters, CIShellContext context) {
-        return new PrefuseGraphMLValidationAlgorithm(data, parameters, context);
+        return new PrefuseGraphMLValidationAlgorithm(data);
     }
     
     public class PrefuseGraphMLValidationAlgorithm implements Algorithm {
 		private String inGraphMLFileName;
         
-        public PrefuseGraphMLValidationAlgorithm(Data[] data, Dictionary parameters, CIShellContext context) {
+        public PrefuseGraphMLValidationAlgorithm(Data[] data) {
 			this.inGraphMLFileName = (String) data[0].getData();
         }
 
