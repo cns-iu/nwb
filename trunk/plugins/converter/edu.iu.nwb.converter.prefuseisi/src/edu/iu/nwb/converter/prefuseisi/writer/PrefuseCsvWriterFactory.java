@@ -9,6 +9,6 @@ import org.cishell.framework.data.Data;
 
 public class PrefuseCsvWriterFactory implements AlgorithmFactory {
     public Algorithm createAlgorithm(Data[] data, Dictionary parameters, CIShellContext context) {
-        return new PrefuseCsvWriter(data, parameters, context);
+        return new PrefuseCsvWriter(data);
     }
 }

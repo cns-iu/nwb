@@ -9,7 +9,6 @@ import org.cishell.framework.algorithm.AlgorithmExecutionException;
 import org.cishell.framework.algorithm.AlgorithmFactory;
 import org.cishell.framework.data.BasicData;
 import org.cishell.framework.data.Data;
-import org.osgi.service.log.LogService;
 
 /**
  * @author Weixia(Bonnie) Huang 
@@ -17,7 +16,7 @@ import org.osgi.service.log.LogService;
 public class PrefuseCsvFileHandler implements AlgorithmFactory {
     public Algorithm createAlgorithm(
     		Data[] data, Dictionary parameters, CIShellContext context) {
-        return new PrefuseGraphMLFileHandlerAlg(data, parameters, context);
+        return new PrefuseGraphMLFileHandlerAlg(data);
     }
     
     public class PrefuseGraphMLFileHandlerAlg implements Algorithm {
@@ -28,8 +27,7 @@ public class PrefuseCsvFileHandler implements AlgorithmFactory {
 		private String inFormat;
         
 		
-        public PrefuseGraphMLFileHandlerAlg(
-        		Data[] data, Dictionary parameters, CIShellContext context) {
+        public PrefuseGraphMLFileHandlerAlg(Data[] data) {
 			this.inData = data[0].getData();
 			this.inFormat = data[0].getFormat();
         }

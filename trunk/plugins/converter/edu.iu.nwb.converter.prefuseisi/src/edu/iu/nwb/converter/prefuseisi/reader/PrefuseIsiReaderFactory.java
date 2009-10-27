@@ -10,6 +10,6 @@ import org.cishell.framework.data.Data;
 
 public class PrefuseIsiReaderFactory implements AlgorithmFactory {
     public Algorithm createAlgorithm(Data[] data, Dictionary parameters, CIShellContext context) {
-        return new PrefuseIsiReader(data, parameters, context);
+        return new PrefuseIsiReader(data, context);
     }
 }

@@ -5,9 +5,7 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
-import java.util.Dictionary;
 
-import org.cishell.framework.CIShellContext;
 import org.cishell.framework.algorithm.Algorithm;
 import org.cishell.framework.algorithm.AlgorithmExecutionException;
 import org.cishell.framework.data.BasicData;
@@ -26,7 +24,7 @@ public class PrefuseCsvWriter implements Algorithm {
 	private Table inTable;
     
 	
-    public PrefuseCsvWriter(Data[] data, Dictionary parameters, CIShellContext context) {
+    public PrefuseCsvWriter(Data[] data) {
 		this.inTable = (Table) data[0].getData();
     }
 

@@ -14,7 +14,6 @@ import org.cishell.framework.algorithm.AlgorithmFactory;
 import org.cishell.framework.data.BasicData;
 import org.cishell.framework.data.Data;
 import org.cishell.framework.data.DataProperty;
-import org.osgi.service.log.LogService;
 
 /**
  * @author Weixia(Bonnie) Huang
@@ -29,7 +28,7 @@ public class PrefuseIsiValidation implements AlgorithmFactory {
 
 	public Algorithm createAlgorithm(
 			Data[] data, Dictionary parameters, CIShellContext context) {
-		return new ISIValidationAlgorithm(data, parameters, context);
+		return new ISIValidationAlgorithm(data);
 	}
 
 	public class ISIValidationAlgorithm implements Algorithm {
@@ -38,9 +37,7 @@ public class PrefuseIsiValidation implements AlgorithmFactory {
 		private String inISIFile;
 
 		
-		public ISIValidationAlgorithm(Data[] data,
-									  Dictionary parameters,
-									  CIShellContext context) {
+		public ISIValidationAlgorithm(Data[] data) {
 			this.inISIFile = (String) data[0].getData();
 		}
 

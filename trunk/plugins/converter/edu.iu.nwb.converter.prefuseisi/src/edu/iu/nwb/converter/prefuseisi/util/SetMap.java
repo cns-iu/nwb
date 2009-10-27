@@ -5,12 +5,8 @@ import java.util.Hashtable;
 import java.util.Map;
 import java.util.Set;
 
-public class SetMap {
-	
+public class SetMap {	
 	private Map map = new Hashtable();
-	
-	public SetMap() {
-	}
 	
 	public void put(Object key, Object value) {
 		Set valueSet = (Set) this.map.get(key);

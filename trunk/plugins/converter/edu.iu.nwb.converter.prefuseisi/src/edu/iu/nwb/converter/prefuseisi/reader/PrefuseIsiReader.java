@@ -5,7 +5,6 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
-import java.util.Dictionary;
 
 import org.cishell.framework.CIShellContext;
 import org.cishell.framework.algorithm.Algorithm;
@@ -25,8 +24,7 @@ public class PrefuseIsiReader implements Algorithm {
     private ISICitationExtractionPreparer citationExtractionPreparer;
 	
     
-    public PrefuseIsiReader(
-    		Data[] data, Dictionary parameters, CIShellContext context) {
+    public PrefuseIsiReader(Data[] data, CIShellContext context) {
     	this.inISIFile = (File) data[0].getData();
         
      	this.log = (LogService)context.getService(LogService.class.getName());

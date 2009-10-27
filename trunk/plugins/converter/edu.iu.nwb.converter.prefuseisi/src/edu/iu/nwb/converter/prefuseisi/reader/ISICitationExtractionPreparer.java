@@ -83,20 +83,20 @@ public class ISICitationExtractionPreparer {
 			if (volume != null) {
 				selfReferenceTokenList.add(volume);
 			} else {
-				handleNoVolume(isiRow);
+				handleNoVolume();
 			}
 			String page = extractFirstPage(isiRow);
 			if (page != null) {
 				selfReferenceTokenList.add(page);
 			} else {
-				handleNoPage(isiRow);
+				handleNoPage();
 			}
 			
 			String doi = extractDOI(isiRow);
 			if (doi != null) {
 				selfReferenceTokenList.add(doi);
 			} else {
-				handleNoDOI(isiRow);
+				handleNoDOI();
 			}
 			
 		} catch (ArrayIndexOutOfBoundsException e) {
@@ -126,7 +126,7 @@ public class ISICitationExtractionPreparer {
 			if (journalName == null) {
 				continue;
 			}
-			;
+			
 			// replace it with the cited journal name, it there is a known replacement
 			String citedJournalName = (String) journalNameToCitedJournalName.get(journalName);
 			if (citedJournalName != null) {
@@ -147,7 +147,7 @@ public class ISICitationExtractionPreparer {
 			if (citedReferences == null) {
 				continue;
 			}
-			;
+			
 			String[] eachCitedReference = citedReferences.split("\\" + ISI_CITATION_SEPARATOR);
 			for (int i = 0; i < eachCitedReference.length; i++) {
 				String citedReference = eachCitedReference[i];
@@ -176,7 +176,7 @@ public class ISICitationExtractionPreparer {
 			if (journalName == null) {
 				continue;
 			}
-			;
+			
 			String firstLetter = extractFirstLetter(journalName);
 			if (firstLetter != null) {
 				journalNames.put(firstLetter, journalName);
@@ -251,7 +251,7 @@ public class ISICitationExtractionPreparer {
 
 	private float calculateNameSimilarity(String jn, String cjn) {
 		StringBuffer bufferLog = new StringBuffer();
-		bufferLog.append("Calcuating '" + jn + "' and '" + cjn + "'.\r\n");
+		bufferLog.append("Calculating '" + jn + "' and '" + cjn + "'.\r\n");
 		String whitespace = "\\s";
 		String[] jnWords = trimAfterEmpties(jn.split(whitespace));
 		String[] cjnWords = trimAfterEmpties(cjn.split(whitespace));
@@ -268,7 +268,7 @@ public class ISICitationExtractionPreparer {
 			scoreCounter += calculateWordSimilarity(oneWithMoreWords[j], null, bufferLog);
 		}
 
-		float finalScore = scoreCounter / (float) oneWithMoreWords.length;
+		float finalScore = scoreCounter / oneWithMoreWords.length;
 		if (finalScore > -.5f && finalScore < .5) {
 			System.out.println("" + jn + " == " + cjn + ": " + finalScore);
 			System.out.println(bufferLog.toString());
@@ -311,7 +311,6 @@ public class ISICitationExtractionPreparer {
 			String longWord = getLongWord(word1, word2);
 			float scoreModifier = 0f;
 			boolean sameWord = true;
-			boolean skippedVowel = false;
 			int vowelsSkipped = 0;
 			boolean missingLetterAbbreviation = false;
 			boolean maybeUsedWrongVowel = false;
@@ -343,7 +342,6 @@ public class ISICitationExtractionPreparer {
 								missingLetterAbbreviation = true;
 								for (int k = longWordPlace; k < longWordPlace + index; k++) {
 									if (!(String.valueOf(longWord.charAt(k))).matches(VOWEL)) {
-										skippedVowel = true;
 										vowelsSkipped++;
 										if (vowelsSkipped > 1) {
 											sameWord = false;
@@ -353,7 +351,7 @@ public class ISICitationExtractionPreparer {
 								}
 							}
 							wordSimilarityCalculationLog.append("      Yes");
-							scoreModifier += 1f / (float) (index + 1);
+							scoreModifier += 1f / (index + 1);
 							longWordPlace += index + 1;
 						} else {
 							wordSimilarityCalculationLog.append("      No");
@@ -502,10 +500,6 @@ public class ISICitationExtractionPreparer {
 		return (String[]) sList.toArray(new String[sList.size()]);
 	}
 
-	private void printWrongColumnTypeError(DataTypeException e, Tuple isiRow) {
-		
-	}
-
 	private void handleNoAuthor(Tuple isiRow) {
 		this.log.log(LogService.LOG_WARNING, "The row " + isiRow + " has no author column. The '"
 				+ SELF_REFERENCE_COLUMN_NAME + "' field  will be invalid");
@@ -521,15 +515,15 @@ public class ISICitationExtractionPreparer {
 				+ SELF_REFERENCE_COLUMN_NAME + "' field may be invalid");
 	}
 
-	private void handleNoVolume(Tuple isiRow) {
+	private void handleNoVolume() {
 		// This field is optional (though very common). No error will be printed.
 	}
 
-	private void handleNoPage(Tuple isiRow) {
+	private void handleNoPage() {
 		// This field is optional (though very common). No error will be printed.
 	}
 	
-	private void handleNoDOI(Tuple isiRow) {
+	private void handleNoDOI() {
 		// This field is optional (though very common). No error will be printed.
 	}
 

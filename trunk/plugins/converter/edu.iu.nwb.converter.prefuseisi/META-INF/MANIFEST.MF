@@ -25,3 +25,4 @@ Import-Package: edu.iu.nwb.shared.isiutil,
 X-AutoStart: true
 Service-Component: OSGI-INF/reader.xml, OSGI-INF/validation.xml
 Export-Package: edu.iu.nwb.converter.prefuseisi.reader
+Bundle-RequiredExecutionEnvironment: J2SE-1.4
