@@ -30,6 +30,5 @@
 	</OCD>
 	<Designate pid="edu.iu.nwb.preprocessing.removeegraphattributes.edges.RemoveEdgeAttributesAlgorithmFactory">
 		<Object ocdref="edu.iu.nwb.preprocessing.removeegraphattributes.parameters.edges.OCD" />
-	</Designate>
-	
+	</Designate>	
 </metatype:MetaData>

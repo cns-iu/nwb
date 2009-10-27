@@ -62,7 +62,7 @@ public abstract class RemoveGraphAttributesAlgorithmFactory
 	
 	
 	
-	private class RemoveDescriptionCreator
+	protected static class RemoveDescriptionCreator
 			implements DescriptionCreator {
 		public String createFromName(String name) {
 			return "Remove the " + name + " attribute?";

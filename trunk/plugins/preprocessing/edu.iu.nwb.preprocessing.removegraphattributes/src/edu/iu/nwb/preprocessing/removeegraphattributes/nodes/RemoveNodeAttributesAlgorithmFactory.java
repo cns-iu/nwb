@@ -14,7 +14,6 @@ import edu.iu.nwb.preprocessing.removeegraphattributes.RemoveGraphAttributesAlgo
 import edu.iu.nwb.preprocessing.removeegraphattributes.RemoveGraphAttributesAlgorithmFactory;
 import edu.iu.nwb.preprocessing.removeegraphattributes.nwbIO.AttributeFilteringNWBWriter;
 import edu.iu.nwb.preprocessing.removeegraphattributes.nwbIO.NWBRemovableAttributeReader;
-import edu.iu.nwb.util.nwbfile.NWBMetadataParsingException;
 
 public class RemoveNodeAttributesAlgorithmFactory
 		extends RemoveGraphAttributesAlgorithmFactory {
@@ -31,8 +30,7 @@ public class RemoveNodeAttributesAlgorithmFactory
 		return new RemoveNodeAttributesAlgorithm(data, parameters, context);
 	}
 	
-	public NWBRemovableAttributeReader createAttributeReader(File inNWBFile)
-			throws NWBMetadataParsingException {
+	public NWBRemovableAttributeReader createAttributeReader(File inNWBFile) {
 		return new NWBRemovableNodeAttributeReader(inNWBFile);
 	}
 	
@@ -45,8 +43,7 @@ public class RemoveNodeAttributesAlgorithmFactory
 		}
 		
 
-		public NWBRemovableAttributeReader createAttributeReader(
-				File inputNWBFile) throws NWBMetadataParsingException {
+		public NWBRemovableAttributeReader createAttributeReader(File inputNWBFile) {
 			return new NWBRemovableNodeAttributeReader(inputNWBFile);
 		}
 
