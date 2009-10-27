@@ -83,33 +83,46 @@ public class ExtractZipcodeComputation {
 		Pattern zipcodePattern = Pattern.compile("(\\d)+");
 		Matcher zipcodeMatcher;
 		List<ZipcodeCandidate> zipcodeCandidatesInfo;
-		Zipcode zipcode;
+		Zipcode zipcode = null;
 		String outputZipcode = "";
 		
 		while (addressColumnIterator.hasNext()) {			
 			int currentRowNumber = Integer.parseInt(addressColumnIterator.next().toString());
+			
+
 			String currentAddress = originalTable
 										.getString(currentRowNumber, addressColumnName);
 			
-			zipcodeMatcher = zipcodePattern.matcher(currentAddress);
+			/*
+			 * In some test cases Empty Address Inputs we are getting "null" objects as opposed to
+			 * "" i.e. empty Strings. To handle this case we are testing against null objects.
+			 * */
+			if (currentAddress != null) {
 
-			zipcodeCandidatesInfo = new ArrayList<ZipcodeCandidate>();
-			
-			/*
-			 * Iterate over the address string and collect all the groups of numbers.
-			 * */
-			while (zipcodeMatcher.find()) {
-				zipcodeCandidatesInfo
-					.add(new ZipcodeCandidate(currentAddress, zipcodeMatcher.group(), 
-						 zipcodeMatcher.start(), 
-						 zipcodeMatcher.end(), 
-						 zipcodeMatcher.group().length()));
+				zipcodeMatcher = zipcodePattern.matcher(currentAddress);
+
+				zipcodeCandidatesInfo = new ArrayList<ZipcodeCandidate>();
+				
+				/*
+				 * Iterate over the address string and collect all the groups of numbers.
+				 * */
+				while (zipcodeMatcher.find()) {
+					zipcodeCandidatesInfo
+						.add(new ZipcodeCandidate(currentAddress, zipcodeMatcher.group(), 
+							 zipcodeMatcher.start(), 
+							 zipcodeMatcher.end(), 
+							 zipcodeMatcher.group().length()));
+				}
+				
+				/*
+				 * Get the probable ZipcodeCandidate, if any, from the list of zipcode candidates. 
+				 * */
+				zipcode = selectZipcodeFromExtractedCandidates(zipcodeCandidatesInfo);
+			} else {
+				zipcode.setPrimaryZipcode(null);
+				zipcode.setExtensionZipcode(null);
 			}
-			
-			/*
-			 * Get the probable ZipcodeCandidate, if any, from the list of zipcode candidates. 
-			 * */
-			zipcode = selectZipcodeFromExtractedCandidates(zipcodeCandidatesInfo);
+				
 			
 			/*
 			 * Check if the primary zipcode value is null, if yes then it means no zipcode was 
@@ -150,7 +163,7 @@ public class ExtractZipcodeComputation {
 			outputTable.addRow();
 			TableUtilities
 				.copyTableRow(currentRowNumber, currentRowNumber, outputTable, originalTable);
-			outputTable.set(currentRowNumber, outputTableZipcodeColumnName, outputZipcode);
+			outputTable.setString(currentRowNumber, outputTableZipcodeColumnName, outputZipcode);
 			
 			totalAddressesConsidered++;
 		}
