@@ -2,8 +2,6 @@ package edu.iu.scipolicy.visualization.horizontalbargraph.record;
 
 import org.joda.time.DateTime;
 
-import edu.iu.scipolicy.visualization.horizontalbargraph.UnitOfTime;
-
 public interface Record extends Comparable<Record> {
 	public String getLabel();
 	public boolean hasStartDate();
@@ -11,6 +9,5 @@ public interface Record extends Comparable<Record> {
 	public boolean hasEndDate();
 	public DateTime getEndDate();
 	public double getAmount();
-	public double getAmountPerUnitOfTime(
-			UnitOfTime unitOfTime, int minimumUnitOfTime);
+	public double getAmountPerUnitOfTime();
 }

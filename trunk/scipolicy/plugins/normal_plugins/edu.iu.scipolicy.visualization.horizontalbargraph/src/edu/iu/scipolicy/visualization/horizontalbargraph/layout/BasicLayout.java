@@ -18,10 +18,9 @@ public class BasicLayout {
 		PAGE_HEIGHT / PAGE_WIDTH;
 	public static final double MARGIN_WIDTH_FACTOR = 0.10;
 	public static final double MARGIN_HEIGHT_FACTOR = 0.10;
-	
-	// TODO (FIXED?): Make year width wider.
+
 	public static final double POINTS_PER_INCH = 72.0;
-	public static final double POINTS_PER_YEAR = 144.0;
+	public static final double POINTS_PER_DAY = 144.0 / 365.25;
 	
 	public static final int MAXIMUM_CHARACTER_COUNT = 30;
 	public static final double POINTS_PER_EM = 20.0;
@@ -34,20 +33,14 @@ public class BasicLayout {
 	private DateTime startDate;
 	private DateTime endDate;
 	private double barHeightScale;
-	private UnitOfTime unitOfTime;
-	private int minimumUnitOfTime;
 	
 	public BasicLayout(
 			DateTime startDate,
 			DateTime endDate,
-			double minimumAmountPerUnitOfTime,
-			UnitOfTime unitOfTime,
-			int minimumUnitOfTime) {
+			double minimumAmountPerUnitOfTime) {
 		this.startDate = startDate;
 		this.endDate = endDate;
 		this.barHeightScale = MINIMUM_BAR_HEIGHT / minimumAmountPerUnitOfTime;
-		this.unitOfTime = unitOfTime;
-		this.minimumUnitOfTime = minimumUnitOfTime;
 	}
 
 	public PageOrientation determinePageOrientation(
@@ -111,26 +104,15 @@ public class BasicLayout {
 	}
 	
 	public double calculateX(DateTime date) {
-		int timeBetween = this.unitOfTime.timeBetween(this.startDate, date);
+		int timeBetween = UnitOfTime.DAYS.timeBetween(this.startDate, date);
 		
-		return timeBetween * POINTS_PER_YEAR;
+		return timeBetween * POINTS_PER_DAY;
 	}
 	
 	public double calculateHeight(Record record) {
-		double recordAmountPerUnitOfTime = record.getAmountPerUnitOfTime(
-			this.unitOfTime, this.minimumUnitOfTime);
-			/* TODO: Note, if everything's in milliseconds, the above method on
-			 *  record needs no arguments at all, since we already just set the
-			 *  end date to take care of the minimum length.
-			 */
-		
-		return recordAmountPerUnitOfTime * this.barHeightScale;
+		return record.getAmountPerUnitOfTime() * this.barHeightScale;
 	}
 
-	/* TODO: We have a fixed BB now, anyways.
-	 *  Maybe use a Rectangle instead of a custom class.
-	 * (Rectangle doesn't support longs.  I'm sticking with BoundingBox.)
-	 */
 	public BoundingBox calculateBoundingBox() {
 		long boundingBoxLeft = 0;
 		long boundingBoxBottom = 0;
@@ -147,12 +129,6 @@ public class BasicLayout {
 	}
 	
 	public double calculateTotalWidthWithoutMargins() {
-		/* TODO: Maybe a little more; doesn't the last year label go a bit
-		 *  further? We're addign margins anyways, but never hurts to
-		 *  be precise.
-		 * (If I add space for one year past the maximum end date found,
-		 *  this should be accounted for.)
-		 */
 		double endDateX = calculateX(this.endDate);
 		
 		return TOTAL_TEXT_WIDTH_IN_POINTS + endDateX;
@@ -176,7 +152,7 @@ public class BasicLayout {
 		}
 		
 		double spaceBetweenVisualElements =
-			visualElements.size() * SPACE_BETWEEN_BARS;
+			visualElements.size() * (SPACE_BETWEEN_BARS + 1);
 		
 		return
 			visualElementsHeight +

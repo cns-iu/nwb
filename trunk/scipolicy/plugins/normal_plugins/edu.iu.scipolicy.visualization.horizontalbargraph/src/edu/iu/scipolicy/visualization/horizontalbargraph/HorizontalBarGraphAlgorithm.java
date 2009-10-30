@@ -36,9 +36,6 @@ public class HorizontalBarGraphAlgorithm implements Algorithm {
 	public static final String START_DATE_FIELD_ID = "start_date";
 	public static final String END_DATE_FIELD_ID = "end_date";
 	public static final String SIZE_BY_FIELD_ID = "size_by";
-	public static final String UNIT_OF_TIME_FIELD_ID = "unit_of_time";
-	public static final String MINIMUM_UNIT_OF_TIME_FIELD_ID =
-		"minimum_unit_of_time";
 	public static final String DATE_FORMAT_FIELD_ID = "date_format";
 
 	public static final String CSV_MIME_TYPE = "file:text/csv";
@@ -67,8 +64,6 @@ public class HorizontalBarGraphAlgorithm implements Algorithm {
     private String startDateKey;
     private String endDateKey;
     private String amountKey;
-    private UnitOfTime unitOfTime;
-    private int minimumUnitsOfTime;
     private String startDateFormat;
     private String endDateFormat;
     
@@ -85,11 +80,6 @@ public class HorizontalBarGraphAlgorithm implements Algorithm {
         this.startDateKey = (String)parameters.get(START_DATE_FIELD_ID);
         this.endDateKey = (String)parameters.get(END_DATE_FIELD_ID);
         this.amountKey = (String)parameters.get(SIZE_BY_FIELD_ID);
-        this.unitOfTime = (UnitOfTime)parameters.get(UNIT_OF_TIME_FIELD_ID);
-        this.minimumUnitsOfTime = Math.max(
-        	((Integer)parameters.get(
-        		MINIMUM_UNIT_OF_TIME_FIELD_ID)).intValue(),
-        	1);;
         this.startDateFormat = (String)parameters.get(DATE_FORMAT_FIELD_ID);
         this.endDateFormat = (String)parameters.get(DATE_FORMAT_FIELD_ID);
         
@@ -145,20 +135,14 @@ public class HorizontalBarGraphAlgorithm implements Algorithm {
     	
     	DateTime startDate = recordCollection.getMinimumStartDate();
     	DateTime endDate = recordCollection.getMaximumEndDate();
-    	
-    	/* TODO: Verify that the time between the start and end date is
-    	 * greater than zero?
-    	 */
-    	
+
     	double minimumAmountPerUnitOfTime =
     		recordCollection.calculateMinimumAmountPerUnitOfTime(
-    			this.unitOfTime, this.minimumUnitsOfTime);
+    			UnitOfTime.YEARS);
     	BasicLayout layout = new BasicLayout(
     		startDate,
     		endDate,
-    		minimumAmountPerUnitOfTime,
-    		this.unitOfTime,
-    		this.minimumUnitsOfTime);
+    		minimumAmountPerUnitOfTime);
     	PostScriptCreator postScriptCreator = new PostScriptCreator(
     		horizontalBarGraphGroup,
     		layout,
@@ -208,8 +192,6 @@ public class HorizontalBarGraphAlgorithm implements Algorithm {
     	parameters.put(START_DATE_FIELD_ID, "Start Date");
     	parameters.put(END_DATE_FIELD_ID, "Expiration Date");
     	parameters.put(SIZE_BY_FIELD_ID, "Awarded Amount to Date");
-    	parameters.put(UNIT_OF_TIME_FIELD_ID, UnitOfTime.YEARS);
-    	parameters.put(MINIMUM_UNIT_OF_TIME_FIELD_ID, new Integer(1));
     	parameters.put(
     		DATE_FORMAT_FIELD_ID, DateUtilities.MONTH_DAY_YEAR_DATE_FORMAT);
     	

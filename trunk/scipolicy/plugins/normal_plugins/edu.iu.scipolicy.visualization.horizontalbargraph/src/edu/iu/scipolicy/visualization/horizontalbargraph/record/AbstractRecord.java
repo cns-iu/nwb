@@ -1,6 +1,7 @@
 package edu.iu.scipolicy.visualization.horizontalbargraph.record;
 
-import edu.iu.scipolicy.visualization.horizontalbargraph.UnitOfTime;
+import org.joda.time.Interval;
+import org.joda.time.Months;
 
 public abstract class AbstractRecord implements Record {
 	private String label;
@@ -19,31 +20,15 @@ public abstract class AbstractRecord implements Record {
 		return this.amount;
 	}
 	
-	public double getAmountPerUnitOfTime(
-			UnitOfTime unitOfTime, int minimumUnitOfTime) {
-		// TODO: In this type of record, just calculate this when constructed.
-		/* TODO: Instead of using a .max here, each record should have its end
-		 * time adjusted as necessary as they enter the collection.
-		 * That makes it unnecessary to do any special treatment later at all.
-		 */
-		int timeBetween = Math.max(
-			unitOfTime.timeBetween(getStartDate(), getEndDate()),
-			minimumUnitOfTime);
-		
-		/* TODO: Access amount directly.
-		 * Also, add note as to why casting to double.
-		 */
-		// TODO: Move to using milliseconds everywhere.
-		return getAmount() / (double)timeBetween;
+	public final double getAmountPerUnitOfTime() {
+		long timeBetween = Math.max(
+			new Interval(getStartDate(), getEndDate()).toDurationMillis(),
+			Months.months(1).toPeriod().getMillis());
+
+		return this.amount / timeBetween;
 	}
 	
 	public int compareTo(Record otherRecord) {
-		/* TODO: Make compareTo consistent with what .equals would be
-		 * (then implement .equals in terms of compareTo).
-		 */
-		/* TODO: startDate, endDate, amount, label
-		 * (and eventually category, which should come after amount, maybe?)
-		 */
 		int startDateComparison =
 			getStartDate().compareTo(otherRecord.getStartDate());
 		

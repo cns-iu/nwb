@@ -112,6 +112,7 @@ public class TableRecordExtractor {
 		 * Check the double parsing exception and that here, and throw custom
 		 *  exceptions with understandable messages, then just log those
 		 *  messages outside.
+		 * (Not done yet.)
 		 */
 		return NumberUtilities.interpretObjectAsDouble(
 			row.get(amountKey)).doubleValue();
@@ -128,6 +129,7 @@ public class TableRecordExtractor {
 		// TODO: .equals()! magic is bad.
 		// TODO: Handle by wrapping.
 		// TODO: Just make the logger a member, don't pass it everywhere.
+		// (All of these not done yet.)
 		if (startDate == UNSPECIFIED_DATE) {
 			handleUnspecifiedStartDateCases(
 				recordCollector, label, startDate, endDate, amount, logger);
@@ -144,6 +146,7 @@ public class TableRecordExtractor {
 	/* TODO: If just giving one, also say if there are more.
 	 * Never be totally silent about further errors, just treat them as
 	 *  a group.
+	 * (Not done yet.)
 	 */
 	private void handleUnspecifiedStartDateCases(
 			RecordCollection recordCollector,
@@ -164,6 +167,7 @@ public class TableRecordExtractor {
 			recordCollector.addRecordWithNoDates(label, amount);
 		/* TODO: Include what the invalid end date is
 		 *  (and similarly elsewhere).
+		 * (Not done yet).
 		 */
 		} else if (endDate == INVALID_DATE) {
 			String logMessage =

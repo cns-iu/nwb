@@ -54,7 +54,6 @@ public class PostScriptCreator {
 		String yearLabelsWithVerticalTicks =
 			createYearLabelsWithVerticalTicks();
 		String postScriptRecords = createRecords();
-		String setRGBColor = createRGBColor();
 		
 		return
 			header +
@@ -63,8 +62,7 @@ public class PostScriptCreator {
 			yearLabelProperties +
 			yearLabelsWithVerticalTicks +
 			postScriptRecords +
-			setRGBColor;
-		// TODO: Don't forget the newline.
+			"\r\n";
 		/* TODO: Really this should just pass a bunch of stuff into one
 		 *  template and that should do things, but I won't make a fuss
 		 *  about it.
@@ -159,8 +157,7 @@ public class PostScriptCreator {
 		double totalHeight =
 			this.layout.calculateTotalHeightWithoutMargins(this.bars);
 		StringBuffer yearLabelsWithVerticalTicks = new StringBuffer();
-		
-		// TODO: Experimental for loop style here.
+
 		for (
 				DateTime currentDate = startDate;
 				currentDate.getYear() <= endYear;
@@ -208,24 +205,7 @@ public class PostScriptCreator {
 		
 		return records.toString();
 	}
-	
-	private String createRGBColor() {
-		double red = (double)RGB_COLOR.getRed() / 255.0;
-		double green = (double)RGB_COLOR.getGreen() / 255.0;
-		double blue = (double)RGB_COLOR.getBlue() / 255.0;
-		
-		StringTemplate rgbColorTemplate =
-			this.templateGroup.getInstanceOf("setRGBColor");
-		rgbColorTemplate.setAttribute(
-			"red", NumberUtilities.convertToDecimalNotation(red));
-		rgbColorTemplate.setAttribute(
-			"green", NumberUtilities.convertToDecimalNotation(green));
-		rgbColorTemplate.setAttribute(
-			"blue", NumberUtilities.convertToDecimalNotation(blue));
-		
-		return rgbColorTemplate.toString();
-	}
-	
+
 	private String createRecord(
 			Cursor cursor,
 			Bar bar) {

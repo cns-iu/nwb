@@ -29,8 +29,7 @@ public class RecordCollection {
 		return this.maximumEndDate;
 	}
 
-	public double calculateMinimumAmountPerUnitOfTime(
-			UnitOfTime unitOfTime, int minimumUnitOfTime) {
+	public double calculateMinimumAmountPerUnitOfTime(UnitOfTime unitOfTime) {
 		double minimumAmountPerUnitOfTime = Double.MAX_VALUE;
 		
 		for (Record record : this.records) {
@@ -42,8 +41,7 @@ public class RecordCollection {
 			}
 			
 			double recordMinimumAmountPerUnitOfTime =
-				record.getAmountPerUnitOfTime(
-					unitOfTime, minimumUnitOfTime);
+				record.getAmountPerUnitOfTime();
 
 			if (
 					recordMinimumAmountPerUnitOfTime <
@@ -55,7 +53,7 @@ public class RecordCollection {
 		return minimumAmountPerUnitOfTime;
 	}
 	
-	public double calculateTotalAmountPerUnitOfTime(
+	/*public double calculateTotalAmountPerUnitOfTime(
 			UnitOfTime unitOfTime, int minimumUnitOfTime) {
 		double totalAmount = 0.0;
 		
@@ -68,7 +66,7 @@ public class RecordCollection {
 			minimumUnitOfTime);
 		
 		return totalAmount / timeBetween;
-	}
+	}*/
 	
 	public void addNormalRecord(
 			String label,
@@ -156,13 +154,7 @@ public class RecordCollection {
 		DateTime newRecordStartDate = newRecord.getStartDate();
 		DateTime minimumStartDate = getMinimumStartDate();
 		DateTime maximumEndDate = getMaximumEndDate();
-		
-		/* TODO: setMinimumStartDate() should be removed and
-		 *  getMinimumStartDate not used internally; access fields of ourself
-		 *  directly unless there's a good reason not to.
-		 * (I'm keeping them because setMaximumStartDate actually does special
-		 *  stuff, and I like the duality.)
-		 */
+
 		if ((minimumStartDate == null) ||
 				(newRecordStartDate.compareTo(minimumStartDate) < 0)) {
 			setMinimumStartDate(newRecordStartDate);
@@ -179,7 +171,9 @@ public class RecordCollection {
 	}
 	
 	private void setMinimumStartDate(DateTime minimumStartDate) {
-		this.minimumStartDate = minimumStartDate;
+		DateTime january1stThisYear =
+			minimumStartDate.withMonthOfYear(1).withDayOfMonth(1);
+		this.minimumStartDate = january1stThisYear;
 	}
 	
 	private void setMaximumEndDate(DateTime maximumEndDate) {

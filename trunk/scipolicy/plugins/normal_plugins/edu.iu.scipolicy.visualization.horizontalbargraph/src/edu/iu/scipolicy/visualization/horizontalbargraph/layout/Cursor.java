@@ -1,6 +1,5 @@
 package edu.iu.scipolicy.visualization.horizontalbargraph.layout;
 
-// TODO: Ugh?
 public interface Cursor {
 	public double getPosition();
 	
