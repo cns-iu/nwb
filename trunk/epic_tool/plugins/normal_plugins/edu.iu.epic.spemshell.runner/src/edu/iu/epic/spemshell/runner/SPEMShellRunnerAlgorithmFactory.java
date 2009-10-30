@@ -79,7 +79,7 @@ public class SPEMShellRunnerAlgorithmFactory
 		return bundleContext;
 	}
 	
-    @SuppressWarnings("unchecked") // TODO
+    @SuppressWarnings("unchecked") // Raw Dictionary
 	public Algorithm createAlgorithm(Data[] data,
     								 Dictionary parameters,
     								 CIShellContext context) {
