@@ -1,7 +1,5 @@
 package edu.iu.scipolicy.visualization.horizontalbargraph.bar;
 
-import org.joda.time.DateTime;
-
 import edu.iu.scipolicy.visualization.horizontalbargraph.VisualElement;
 
 public class Bar implements VisualElement {

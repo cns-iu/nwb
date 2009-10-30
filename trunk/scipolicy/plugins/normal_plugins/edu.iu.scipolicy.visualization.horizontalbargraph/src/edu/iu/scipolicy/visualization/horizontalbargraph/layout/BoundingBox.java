@@ -1,4 +1,4 @@
-package edu.iu.scipolicy.visualization.horizontalbargraph;
+package edu.iu.scipolicy.visualization.horizontalbargraph.layout;
 
 public class BoundingBox {
 	private long left;

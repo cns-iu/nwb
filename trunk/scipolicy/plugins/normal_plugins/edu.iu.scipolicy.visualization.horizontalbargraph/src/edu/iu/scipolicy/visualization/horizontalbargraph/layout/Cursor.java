@@ -1,4 +1,4 @@
-package edu.iu.scipolicy.visualization.horizontalbargraph.layouts;
+package edu.iu.scipolicy.visualization.horizontalbargraph.layout;
 
 // TODO: Ugh?
 public interface Cursor {

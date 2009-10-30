@@ -5,12 +5,12 @@ import java.util.Collection;
 
 import org.joda.time.DateTime;
 
-import edu.iu.scipolicy.visualization.horizontalbargraph.layouts.Layout;
+import edu.iu.scipolicy.visualization.horizontalbargraph.layout.BasicLayout;
 import edu.iu.scipolicy.visualization.horizontalbargraph.record.Record;
 
 public class BarFactory {
 	public static Collection<Bar> createBars(
-			Collection<Record> records, Layout layout) {
+			Collection<Record> records, BasicLayout layout) {
 		Collection<Bar> bars = new ArrayList<Bar>();
 		
 		for (Record record : records) {
@@ -21,7 +21,7 @@ public class BarFactory {
 	}
 	
 	public static Bar createBar(
-			Record record, Layout layout) {
+			Record record, BasicLayout layout) {
 		DateTime recordStartDate = record.getStartDate();
 		DateTime recordEndDate = record.getEndDate();
 		double recordAmount = record.getAmount();

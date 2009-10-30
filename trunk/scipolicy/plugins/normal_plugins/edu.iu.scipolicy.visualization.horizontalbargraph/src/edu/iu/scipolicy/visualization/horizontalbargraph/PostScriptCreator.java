@@ -9,8 +9,9 @@ import org.cishell.utilities.NumberUtilities;
 import org.joda.time.DateTime;
 
 import edu.iu.scipolicy.visualization.horizontalbargraph.bar.Bar;
-import edu.iu.scipolicy.visualization.horizontalbargraph.layouts.Cursor;
-import edu.iu.scipolicy.visualization.horizontalbargraph.layouts.Layout;
+import edu.iu.scipolicy.visualization.horizontalbargraph.layout.BasicLayout;
+import edu.iu.scipolicy.visualization.horizontalbargraph.layout.BoundingBox;
+import edu.iu.scipolicy.visualization.horizontalbargraph.layout.Cursor;
 import edu.iu.scipolicy.visualization.horizontalbargraph.record.RecordCollection;
 
 public class PostScriptCreator {
@@ -24,23 +25,18 @@ public class PostScriptCreator {
 	//TODO: make me a constructor
 	public static String createPostScript(
 			StringTemplateGroup templateGroup,
-			Layout layout,
+			BasicLayout layout,
 			String sourceDataName,
-			double pageWidth,
-			double pageHeight,
 			RecordCollection recordCollection,
 			Collection<Bar> bars) {
-		PageOrientation pageOrientation = layout.determinePageOrientation(
-			pageWidth, pageHeight, bars);
+		PageOrientation pageOrientation =
+			layout.determinePageOrientation(bars);
 		
-		String header = createHeader(
-			templateGroup, layout, sourceDataName, pageWidth, pageHeight);
+		String header = createHeader(templateGroup, layout, sourceDataName);
 		String scaleAndOrientation = createTransformations(
 			templateGroup,
 			layout,
 			pageOrientation,
-			pageWidth,
-			pageHeight,
 			bars);
 		String functions = createFunctions(templateGroup);
 		String yearLabelProperties = createYearLabelProperties(
@@ -53,7 +49,6 @@ public class PostScriptCreator {
 			createYearLabelsWithVerticalTicks(
 				templateGroup,
 				layout,
-				pageHeight,
 				recordCollection.getMinimumStartDate(),
 				recordCollection.getMaximumEndDate(),
 				bars);
@@ -61,8 +56,6 @@ public class PostScriptCreator {
 		String records = createRecords(
 			templateGroup,
 			layout,
-			pageWidth,
-			pageHeight,
 			bars);
 		// String setRGBColor = createRGBColor(some color);
 		
@@ -80,12 +73,9 @@ public class PostScriptCreator {
 	
 	public static String createHeader(
 			StringTemplateGroup templateGroup,
-			Layout layout,
-			String sourceDataName,
-			double pageWidth,
-			double pageHeight) {
-		BoundingBox boundingBox =
-			layout.calculateBoundingBox(pageWidth, pageHeight);
+			BasicLayout layout,
+			String sourceDataName) {
+		BoundingBox boundingBox = layout.calculateBoundingBox();
 
 		StringTemplate headerTemplate = templateGroup.getInstanceOf("header");
 		headerTemplate.setAttribute(
@@ -98,35 +88,31 @@ public class PostScriptCreator {
 			"boundingBoxTop", boundingBox.getTop());
 		headerTemplate.setAttribute(
 			"sourceDataName", sourceDataName);
-		headerTemplate.setAttribute("pageWidth", pageWidth);
-		headerTemplate.setAttribute("pageHeight", pageHeight);
+		headerTemplate.setAttribute("pageWidth", layout.PAGE_WIDTH);
+		headerTemplate.setAttribute("pageHeight", layout.PAGE_HEIGHT);
 		
 		return headerTemplate.toString();
 	}
 	
 	public static String createTransformations(
 			StringTemplateGroup templateGroup,
-			Layout layout,
+			BasicLayout layout,
 			PageOrientation pageOrientation,
-			double pageWidth,
-			double pageHeight,
 			Collection<Bar> bars) {
-		double totalWidth =
-			layout.calculateTotalWidthWithoutMargins(pageWidth);
-		double totalHeight =
-			layout.calculateTotalHeightWithoutMargins(bars, pageHeight);
+		double totalWidth = layout.calculateTotalWidthWithoutMargins();
+		double totalHeight = layout.calculateTotalHeightWithoutMargins(bars);
 		StringTemplate transformationsTemplate =
 			templateGroup.getInstanceOf("transformations");
 		transformationsTemplate.setAttribute(
 			"centerX",
 			NumberUtilities.convertToDecimalNotation(
 				pageOrientation.getCenteringTranslateX(
-					pageWidth, pageHeight, totalWidth, totalHeight)));
+					totalWidth, totalHeight)));
 		transformationsTemplate.setAttribute(
 			"centerY",
 			NumberUtilities.convertToDecimalNotation(
 				pageOrientation.getCenteringTranslateY(
-					pageWidth, pageHeight, totalWidth, totalHeight)));
+					totalWidth, totalHeight)));
 		transformationsTemplate.setAttribute(
 			"scale",
 			NumberUtilities.convertToDecimalNotation(
@@ -174,14 +160,13 @@ public class PostScriptCreator {
 	
 	public static String createYearLabelsWithVerticalTicks(
 			StringTemplateGroup templateGroup,
-			Layout layout,
-			double pageHeight,
+			BasicLayout layout,
 			DateTime startDate,
 			DateTime endDate,
 			Collection<Bar> bars) {
 		int endYear = endDate.getYear();
 		double totalHeight =
-			layout.calculateTotalHeightWithoutMargins(bars, pageHeight);
+			layout.calculateTotalHeightWithoutMargins(bars);
 		StringBuffer yearLabelsWithVerticalTicks = new StringBuffer();
 		
 		for (// TODO: Experimental for loop style here.
@@ -203,7 +188,7 @@ public class PostScriptCreator {
 	
 	public static String createYearLabelWithVerticalTick(
 			StringTemplateGroup templateGroup,
-			Layout layout,
+			BasicLayout layout,
 			DateTime startDate,
 			DateTime endDate,
 			DateTime targetDate,
@@ -232,17 +217,14 @@ public class PostScriptCreator {
 	
 	public static String createRecords(
 			StringTemplateGroup templateGroup,
-			Layout layout,
-			double pageWidth,
-			double pageHeight,
+			BasicLayout layout,
 			Collection<? extends Bar> bars) {
 		Cursor cursor = layout.createCursor();
 		StringBuffer records = new StringBuffer();
 		
 		for (Bar bar : bars) {
 			String record = createRecord(
-				templateGroup, cursor, layout, pageWidth, pageHeight, bar);
-			//System.err.println(record);
+				templateGroup, cursor, layout, bar);
 			records.append(record);
 		}
 		
@@ -252,9 +234,7 @@ public class PostScriptCreator {
 	public static String createRecord(
 			StringTemplateGroup templateGroup,
 			Cursor cursor,
-			Layout layout,
-			double pageWidth,
-			double pageHeight,
+			BasicLayout layout,
 			Bar bar) {
 		StringTemplate recordTemplate = templateGroup.getInstanceOf("record");
 		// TODO: PostScriptUtilities.escapeString() ?

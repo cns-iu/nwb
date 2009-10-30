@@ -17,7 +17,6 @@ import org.cishell.framework.data.BasicData;
 import org.cishell.framework.data.Data;
 import org.cishell.framework.data.DataProperty;
 import org.cishell.utilities.DateUtilities;
-import org.cishell.utilities.NumberUtilities;
 import org.joda.time.DateTime;
 import org.osgi.service.log.LogService;
 
@@ -25,17 +24,17 @@ import prefuse.data.Table;
 import edu.iu.nwb.converter.prefusecsv.reader.PrefuseCsvReader;
 import edu.iu.scipolicy.visualization.horizontalbargraph.bar.Bar;
 import edu.iu.scipolicy.visualization.horizontalbargraph.bar.BarFactory;
-import edu.iu.scipolicy.visualization.horizontalbargraph.layouts.BasicLayout;
-import edu.iu.scipolicy.visualization.horizontalbargraph.layouts.Layout;
+import edu.iu.scipolicy.visualization.horizontalbargraph.layout.BasicLayout;
 import edu.iu.scipolicy.visualization.horizontalbargraph.record.Record;
 import edu.iu.scipolicy.visualization.horizontalbargraph.record.RecordCollection;
 import edu.iu.scipolicy.visualization.horizontalbargraph.record.TableRecordExtractor;
 import edu.iu.scipolicy.visualization.horizontalbargraph.testing.LogOnlyCIShellContext;
 
 public class HorizontalBarGraphAlgorithm implements Algorithm {
-	//TODO: make and test edge case datasets. No non-zero amounts, no valid amounts, no items with non-zero duration, you get the idea
-	public static final double DEFAULT_PAGE_WIDTH = 8.5;
-	public static final double DEFAULT_PAGE_HEIGTH = 11.0;
+	/* TODO: Make and test edge case datasets.
+	 * No non-zero amounts, no valid amounts, no items with non-zero duration,
+	 *  you get the idea.
+	 */
 	
 	public static final String LABEL_FIELD_ID = "label";
 	public static final String START_DATE_FIELD_ID = "start_date";
@@ -45,10 +44,6 @@ public class HorizontalBarGraphAlgorithm implements Algorithm {
 	public static final String MINIMUM_UNIT_OF_TIME_FIELD_ID =
 		"minimum_unit_of_time";
 	public static final String DATE_FORMAT_FIELD_ID = "date_format";
-	public static final String PAGE_WIDTH_FIELD_ID = "page_width";
-	public static final String PAGE_HEIGHT_FIELD_ID = "page_height";
-	public static final String SHOULD_SCALE_OUTPUT_FIELD_ID =
-		"should_scale_output";
 
 	public static final String CSV_MIME_TYPE = "file:text/csv";
 	public static final String POST_SCRIPT_MIME_TYPE = "file:text/ps";
@@ -61,13 +56,7 @@ public class HorizontalBarGraphAlgorithm implements Algorithm {
 		TEST_DATA_PATH + "Indiana.csv";
 	public static final String MICHIGAN_TEST_DATA_PATH =
 		TEST_DATA_PATH + "Michigan.csv";
-	
-	//TODO: move to layout
-	public static final double POINTS_PER_YEAR = 60.0;
-	public static final double MINIMUM_BAR_HEIGHT = 3.0;
-	public static final double MARGIN_WIDTH_FACTOR_FOR_NOW = 0.10;
-	public static final double MARGIN_HEIGHT_FACTOR_FOR_NOW = 0.10;
-	public static final int MAXIMUM_CHARACTER_COUNT = 30;
+
 	
 	public static final String STRING_TEMPLATE_BASE_FILE_PATH =
 		"/edu/iu/scipolicy/visualization/horizontalbargraph/stringtemplates/";
@@ -83,13 +72,9 @@ public class HorizontalBarGraphAlgorithm implements Algorithm {
     private String endDateKey;
     private String amountKey;
     private UnitOfTime unitOfTime;
-    private int minimumUnitOfTime;
+    private int minimumUnitsOfTime;
     private String startDateFormat;
     private String endDateFormat;
-    private double pageWidth = DEFAULT_PAGE_WIDTH;
-    private double pageHeight = DEFAULT_PAGE_HEIGTH;
-    private boolean shouldScaleOutput = false;
-    //TODO: make year width wider
     
     private LogService logger;
     
@@ -105,20 +90,12 @@ public class HorizontalBarGraphAlgorithm implements Algorithm {
         this.endDateKey = (String)parameters.get(END_DATE_FIELD_ID);
         this.amountKey = (String)parameters.get(SIZE_BY_FIELD_ID);
         this.unitOfTime = (UnitOfTime)parameters.get(UNIT_OF_TIME_FIELD_ID);
-        this.minimumUnitOfTime = Math.max( //TODO: minimumUnitsOfTime (note plural)
+        this.minimumUnitsOfTime = Math.max(
         	((Integer)parameters.get(
         		MINIMUM_UNIT_OF_TIME_FIELD_ID)).intValue(),
         	1);;
         this.startDateFormat = (String)parameters.get(DATE_FORMAT_FIELD_ID);
         this.endDateFormat = (String)parameters.get(DATE_FORMAT_FIELD_ID);
-        this.pageWidth =
-        	((Double)parameters.get(PAGE_WIDTH_FIELD_ID)).doubleValue();
-        this.pageHeight =
-        	((Double)parameters.get(PAGE_HEIGHT_FIELD_ID)).doubleValue();
-        //TODO: remove this param (and the page width/height stuff
-        this.shouldScaleOutput =
-        	((Boolean)parameters.get(SHOULD_SCALE_OUTPUT_FIELD_ID)).
-        		booleanValue();
         
         this.logger =
         	(LogService)ciShellContext.getService(LogService.class.getName());
@@ -173,35 +150,33 @@ public class HorizontalBarGraphAlgorithm implements Algorithm {
     	DateTime startDate = recordCollection.getMinimumStartDate();
     	DateTime endDate = recordCollection.getMaximumEndDate();
     	
-    	// TODO: Verify that the time between the start and end date is
-    	// greater than zero?
+    	/* TODO: Verify that the time between the start and end date is
+    	 * greater than zero?
+    	 */
     	
     	double minimumAmountPerUnitOfTime =
     		recordCollection.calculateMinimumAmountPerUnitOfTime(
-    			this.unitOfTime, this.minimumUnitOfTime);
-    	Layout layout = new BasicLayout(
-    		POINTS_PER_YEAR, //TODO: They are constants. They shouldn't be arguments.
-    		MINIMUM_BAR_HEIGHT,
+    			this.unitOfTime, this.minimumUnitsOfTime);
+    	BasicLayout layout = new BasicLayout(
     		startDate,
     		endDate,
     		minimumAmountPerUnitOfTime,
     		this.unitOfTime,
-    		this.minimumUnitOfTime,
-    		MARGIN_WIDTH_FACTOR_FOR_NOW,
-    		MARGIN_HEIGHT_FACTOR_FOR_NOW,
-    		MAXIMUM_CHARACTER_COUNT);
+    		this.minimumUnitsOfTime);
 		
-    	//TODO: The layout should have a method that makes a bar from a record
+    	/* TODO: The layout should have a method that makes a bar from
+    	 *  a record.
+    	 */
     	Collection<Record> records = recordCollection.getSortedRecords();
     	Collection<Bar> bars = BarFactory.createBars(records, layout);
     	
-    	//pass records in directly here, then have the layout make the bars as the postscript needs them (hwoever that ends up working)
+    	/* TODO: Pass records in directly here, then have the layout make the
+    	 *  bars as the postscript needs them (however that ends up working).
+    	 */
     	String postScript = PostScriptCreator.createPostScript(
     		horizontalBarGraphGroup,
     		layout,
     		(String)this.inputData.getMetadata().get(DataProperty.LABEL),
-    		this.pageWidth,
-    		this.pageHeight,
     		recordCollection,
     		bars);
     	
@@ -251,9 +226,6 @@ public class HorizontalBarGraphAlgorithm implements Algorithm {
     	parameters.put(MINIMUM_UNIT_OF_TIME_FIELD_ID, new Integer(1));
     	parameters.put(
     		DATE_FORMAT_FIELD_ID, DateUtilities.MONTH_DAY_YEAR_DATE_FORMAT);
-    	parameters.put(PAGE_WIDTH_FIELD_ID, new Double(8.5));
-    	parameters.put(PAGE_HEIGHT_FIELD_ID, new Double(11.0));
-    	parameters.put(SHOULD_SCALE_OUTPUT_FIELD_ID, new Boolean(true));
     	
     	return parameters;
     }

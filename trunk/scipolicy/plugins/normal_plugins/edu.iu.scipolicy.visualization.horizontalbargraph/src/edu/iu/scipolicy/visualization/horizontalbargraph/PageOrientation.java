@@ -1,6 +1,6 @@
 package edu.iu.scipolicy.visualization.horizontalbargraph;
 
-import edu.iu.scipolicy.visualization.horizontalbargraph.layouts.Layout;
+import edu.iu.scipolicy.visualization.horizontalbargraph.layout.BasicLayout;
 
 public class PageOrientation {
 	private PageOrientationType pageOrientationType;
@@ -25,27 +25,19 @@ public class PageOrientation {
 	}
 	
 	public double getCenteringTranslateX(
-			double pageWidth,
-			double pageHeight,
 			double visualizationWidth,
 			double visualizationHeight) {
 		return this.pageOrientationType.centeringTranslateX(
 			this.scale,
-			pageWidth,
-			pageHeight,
 			visualizationWidth,
 			visualizationHeight);
 	}
 	
 	public double getCenteringTranslateY(
-			double pageWidth,
-			double pageHeight,
 			double visualizationWidth,
 			double visualizationHeight) {
 		return this.pageOrientationType.centeringTranslateY(
 			this.scale,
-			pageWidth,
-			pageHeight,
 			visualizationWidth,
 			visualizationHeight);
 	}
@@ -58,11 +50,10 @@ public class PageOrientation {
 			
 			public double centeringTranslateX(
 					double scale,
-					double pageWidth,
-					double pageHeight,
 					double visualizationWidth,
 					double visualizationHeight) {
-				double pageWidthInPoints = pageWidth * Layout.POINTS_PER_INCH;
+				double pageWidthInPoints =
+					BasicLayout.PAGE_WIDTH * BasicLayout.POINTS_PER_INCH;
 				double scaledPageWidthInPoints = pageWidthInPoints / scale;
 				
 				return (scaledPageWidthInPoints + visualizationWidth) / 2.0;
@@ -70,12 +61,10 @@ public class PageOrientation {
 			
 			public double centeringTranslateY(
 					double scale,
-					double pageWidth,
-					double pageHeight,
 					double visualizationWidth,
 					double visualizationHeight) {
 				double pageHeightInPoints =
-					pageHeight * Layout.POINTS_PER_INCH;
+					BasicLayout.PAGE_HEIGHT * BasicLayout.POINTS_PER_INCH;
 				double scaledPageHeightInPoints = pageHeightInPoints / scale;
 				
 				return (scaledPageHeightInPoints - visualizationHeight) / 2.0;
@@ -88,11 +77,10 @@ public class PageOrientation {
 			
 			public double centeringTranslateX(
 					double scale,
-					double pageWidth,
-					double pageHeight,
 					double visualizationWidth,
 					double visualizationHeight) {
-				double pageWidthInPoints = pageWidth * Layout.POINTS_PER_INCH;
+				double pageWidthInPoints =
+					BasicLayout.PAGE_WIDTH * BasicLayout.POINTS_PER_INCH;
 				double scaledPageWidthInPoints = pageWidthInPoints / scale;
 				
 				return (scaledPageWidthInPoints + visualizationHeight) / 2.0;
@@ -100,17 +88,11 @@ public class PageOrientation {
 			
 			public double centeringTranslateY(
 					double scale,
-					double pageWidth,
-					double pageHeight,
 					double visualizationWidth,
 					double visualizationHeight) {
 				double pageHeightInPoints =
-					pageHeight * Layout.POINTS_PER_INCH;
+					BasicLayout.PAGE_HEIGHT * BasicLayout.POINTS_PER_INCH;
 				double scaledPageHeightInPoints = pageHeightInPoints / scale;
-				System.err.println("pageHeightInPoints: " + pageHeightInPoints);
-				System.err.println("scaledPageHeightInPoints: " + scaledPageHeightInPoints);
-				System.err.println("result: " + ((scaledPageHeightInPoints - visualizationWidth) / 2.0));
-				System.err.println("visualizationWidth: " + visualizationWidth);
 				
 				return (scaledPageHeightInPoints - visualizationWidth) / 2.0;
 			}
@@ -119,14 +101,10 @@ public class PageOrientation {
 		public abstract double rotation();
 		public abstract double centeringTranslateX(
 				double scale,
-				double pageWidth,
-				double pageHeight,
 				double visualizationWidth,
 				double visualizationHeight);
 		public abstract double centeringTranslateY(
 				double scale,
-				double pageWidth,
-				double pageHeight,
 				double visualizationWidth,
 				double visualizationHeight);
 	};

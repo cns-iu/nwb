@@ -2,14 +2,12 @@ package edu.iu.scipolicy.visualization.horizontalbargraph.record;
 
 import java.text.ParseException;
 import java.util.Date;
-import java.util.SortedSet;
 
 import org.cishell.utilities.DateUtilities;
 import org.cishell.utilities.NumberUtilities;
 import org.cishell.utilities.StringUtilities;
 import org.joda.time.DateTime;
 import org.osgi.service.log.LogService;
-
 
 import prefuse.data.Table;
 import prefuse.data.Tuple;
