@@ -26,6 +26,13 @@
   		<!-- normal_plugins -->
   	
 	<antcall target="svn.co">
+  	  	  <param name="target" value="plugins"/>
+  	  	  <param name="element.id" value="edu.iu.scipolicy.help.documentation"/>
+  	  	  <param name="project.name" value="edu.iu.scipolicy.help.documentation"/>
+  	  	  <param name="url" value="http://nwb.slis.indiana.edu/svn/nwb/trunk/scipolicyplugins/normal_plugins"/>
+  	</antcall>
+  	  	  	
+	<antcall target="svn.co">
   	  	  	      <param name="target" value="plugins"/>
   	  	  	      <param name="element.id" value="edu.iu.scipolicy.visualization.geomaps"/>
   	  	  	      <param name="project.name" value="edu.iu.scipolicy.visualization.geomaps"/>
@@ -1028,12 +1035,6 @@
   	  <param name="element.id" value="edu.iu.nwb.preprocessing.timeslice"/>
   	  <param name="project.name" value="/plugins/preprocessing/edu.iu.nwb.preprocessing.timeslice"/>
   	  <param name="url" value="http://nwb.slis.indiana.edu/svn/nwb/trunk"/>
-  	</antcall>
-  	<antcall target="svn.co">
-  	  	  <param name="target" value="plugins"/>
-  	  	  <param name="element.id" value="edu.iu.nwb.help.documentation"/>
-  	  	  <param name="project.name" value="/plugins/help/edu.iu.nwb.help.documentation"/>
-  	  	  <param name="url" value="http://nwb.slis.indiana.edu/svn/nwb/trunk"/>
   	</antcall>
   	<antcall target="svn.co">
   	      <param name="target" value="plugins"/>
