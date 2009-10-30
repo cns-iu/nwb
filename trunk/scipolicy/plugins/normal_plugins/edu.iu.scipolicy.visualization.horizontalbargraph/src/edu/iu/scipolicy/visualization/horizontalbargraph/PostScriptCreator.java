@@ -12,6 +12,7 @@ import edu.iu.scipolicy.visualization.horizontalbargraph.bar.Bar;
 import edu.iu.scipolicy.visualization.horizontalbargraph.layout.BasicLayout;
 import edu.iu.scipolicy.visualization.horizontalbargraph.layout.BoundingBox;
 import edu.iu.scipolicy.visualization.horizontalbargraph.layout.Cursor;
+import edu.iu.scipolicy.visualization.horizontalbargraph.record.Record;
 import edu.iu.scipolicy.visualization.horizontalbargraph.record.RecordCollection;
 
 public class PostScriptCreator {
@@ -21,43 +22,39 @@ public class PostScriptCreator {
 	public static final String YEAR_LABEL_FONT_FAMILY = "Garamond";
 	public static final int YEAR_LABEL_FONT_SIZE = 25;
 	public static final int TICK_SIZE = 5;
+	public static final Color RGB_COLOR = new Color(0, 0, 255);
 	
-	//TODO: make me a constructor
-	public static String createPostScript(
+	private StringTemplateGroup templateGroup;
+	private BasicLayout layout;
+	private String sourceDataName;
+	private RecordCollection recordCollection;
+	private Collection<Bar> bars;
+	private PageOrientation pageOrientation;
+	
+	public PostScriptCreator(
 			StringTemplateGroup templateGroup,
 			BasicLayout layout,
 			String sourceDataName,
-			RecordCollection recordCollection,
-			Collection<Bar> bars) {
-		PageOrientation pageOrientation =
+			RecordCollection recordCollection) {
+		this.templateGroup = templateGroup;
+		this.layout = layout;
+		this.sourceDataName = sourceDataName;
+		this.recordCollection = recordCollection;
+		Collection<Record> records = recordCollection.getSortedRecords();
+		this.bars = layout.createBars(records);
+		this.pageOrientation =
 			layout.determinePageOrientation(bars);
-		
-		String header = createHeader(templateGroup, layout, sourceDataName);
-		String scaleAndOrientation = createTransformations(
-			templateGroup,
-			layout,
-			pageOrientation,
-			bars);
-		String functions = createFunctions(templateGroup);
-		String yearLabelProperties = createYearLabelProperties(
-			templateGroup,
-			YEAR_LABEL_COLOR,
-			YEAR_TICK_LINE_LINE_WIDTH,
-			YEAR_LABEL_FONT_FAMILY,
-			YEAR_LABEL_FONT_SIZE);
+	}
+	
+	public String toString() {
+		String header = createHeader();
+		String scaleAndOrientation = createTransformations();
+		String functions = createFunctions();
+		String yearLabelProperties = createYearLabelProperties();
 		String yearLabelsWithVerticalTicks =
-			createYearLabelsWithVerticalTicks(
-				templateGroup,
-				layout,
-				recordCollection.getMinimumStartDate(),
-				recordCollection.getMaximumEndDate(),
-				bars);
-		// String show = createShow(templateGroup);
-		String records = createRecords(
-			templateGroup,
-			layout,
-			bars);
-		// String setRGBColor = createRGBColor(some color);
+			createYearLabelsWithVerticalTicks();
+		String postScriptRecords = createRecords();
+		String setRGBColor = createRGBColor();
 		
 		return
 			header +
@@ -65,19 +62,20 @@ public class PostScriptCreator {
 			functions +
 			yearLabelProperties +
 			yearLabelsWithVerticalTicks +
-			// show +
-			records;
-		//TODO: don't forget the newline
-		//TODO: really this should just pass a bunch of stuff into one template and taht should do things, but I won't make a fuss about it
+			postScriptRecords +
+			setRGBColor;
+		// TODO: Don't forget the newline.
+		/* TODO: Really this should just pass a bunch of stuff into one
+		 *  template and that should do things, but I won't make a fuss
+		 *  about it.
+		 */
 	}
 	
-	public static String createHeader(
-			StringTemplateGroup templateGroup,
-			BasicLayout layout,
-			String sourceDataName) {
-		BoundingBox boundingBox = layout.calculateBoundingBox();
+	private String createHeader() {
+		BoundingBox boundingBox = this.layout.calculateBoundingBox();
 
-		StringTemplate headerTemplate = templateGroup.getInstanceOf("header");
+		StringTemplate headerTemplate =
+			this.templateGroup.getInstanceOf("header");
 		headerTemplate.setAttribute(
 			"boundingBoxLeft", boundingBox.getLeft());
 		headerTemplate.setAttribute(
@@ -87,22 +85,19 @@ public class PostScriptCreator {
 		headerTemplate.setAttribute(
 			"boundingBoxTop", boundingBox.getTop());
 		headerTemplate.setAttribute(
-			"sourceDataName", sourceDataName);
-		headerTemplate.setAttribute("pageWidth", layout.PAGE_WIDTH);
-		headerTemplate.setAttribute("pageHeight", layout.PAGE_HEIGHT);
+			"sourceDataName", this.sourceDataName);
+		headerTemplate.setAttribute("pageWidth", this.layout.PAGE_WIDTH);
+		headerTemplate.setAttribute("pageHeight", this.layout.PAGE_HEIGHT);
 		
 		return headerTemplate.toString();
 	}
 	
-	public static String createTransformations(
-			StringTemplateGroup templateGroup,
-			BasicLayout layout,
-			PageOrientation pageOrientation,
-			Collection<Bar> bars) {
-		double totalWidth = layout.calculateTotalWidthWithoutMargins();
-		double totalHeight = layout.calculateTotalHeightWithoutMargins(bars);
+	private String createTransformations() {
+		double totalWidth = this.layout.calculateTotalWidthWithoutMargins();
+		double totalHeight =
+			this.layout.calculateTotalHeightWithoutMargins(this.bars);
 		StringTemplate transformationsTemplate =
-			templateGroup.getInstanceOf("transformations");
+			this.templateGroup.getInstanceOf("transformations");
 		transformationsTemplate.setAttribute(
 			"centerX",
 			NumberUtilities.convertToDecimalNotation(
@@ -125,25 +120,20 @@ public class PostScriptCreator {
 		return transformationsTemplate.toString();
 	}
 	
-	public static String createFunctions(StringTemplateGroup templateGroup) {
+	private String createFunctions() {
 		StringTemplate functionsTemplate =
-			templateGroup.getInstanceOf("functions");
+			this.templateGroup.getInstanceOf("functions");
 		
 		return functionsTemplate.toString();
 	}
 	
-	public static String createYearLabelProperties(
-			StringTemplateGroup templateGroup,
-			Color color,
-			double lineWidth,
-			String fontFamily,
-			int fontSize) {
-		double red = (double)color.getRed() / 255.0;
-		double green = (double)color.getGreen() / 255.0;
-		double blue = (double)color.getBlue() / 255.0;
+	private String createYearLabelProperties() {
+		double red = (double)YEAR_LABEL_COLOR.getRed() / 255.0;
+		double green = (double)YEAR_LABEL_COLOR.getGreen() / 255.0;
+		double blue = (double)YEAR_LABEL_COLOR.getBlue() / 255.0;
 		
 		StringTemplate yearLabelPropertiesTemplate =
-			templateGroup.getInstanceOf("yearLabelProperties");
+			this.templateGroup.getInstanceOf("yearLabelProperties");
 		yearLabelPropertiesTemplate.setAttribute(
 			"red", NumberUtilities.convertToDecimalNotation(red));
 		yearLabelPropertiesTemplate.setAttribute(
@@ -151,32 +141,32 @@ public class PostScriptCreator {
 		yearLabelPropertiesTemplate.setAttribute(
 			"blue", NumberUtilities.convertToDecimalNotation(blue));
 		yearLabelPropertiesTemplate.setAttribute(
-			"lineWidth", NumberUtilities.convertToDecimalNotation(lineWidth));
-		yearLabelPropertiesTemplate.setAttribute("fontFamily", fontFamily);
-		yearLabelPropertiesTemplate.setAttribute("fontSize", fontSize);
+			"lineWidth",
+			NumberUtilities.convertToDecimalNotation(
+				YEAR_TICK_LINE_LINE_WIDTH));
+		yearLabelPropertiesTemplate.setAttribute(
+			"fontFamily", YEAR_LABEL_FONT_FAMILY);
+		yearLabelPropertiesTemplate.setAttribute(
+			"fontSize", YEAR_LABEL_FONT_SIZE);
 		
 		return yearLabelPropertiesTemplate.toString();
 	}
 	
-	public static String createYearLabelsWithVerticalTicks(
-			StringTemplateGroup templateGroup,
-			BasicLayout layout,
-			DateTime startDate,
-			DateTime endDate,
-			Collection<Bar> bars) {
+	private String createYearLabelsWithVerticalTicks() {
+		DateTime startDate = this.recordCollection.getMinimumStartDate();
+		DateTime endDate = this.recordCollection.getMaximumEndDate();
 		int endYear = endDate.getYear();
 		double totalHeight =
-			layout.calculateTotalHeightWithoutMargins(bars);
+			this.layout.calculateTotalHeightWithoutMargins(this.bars);
 		StringBuffer yearLabelsWithVerticalTicks = new StringBuffer();
 		
-		for (// TODO: Experimental for loop style here.
+		// TODO: Experimental for loop style here.
+		for (
 				DateTime currentDate = startDate;
 				currentDate.getYear() <= endYear;
 				currentDate = currentDate.plusYears(1)) {
 			yearLabelsWithVerticalTicks.append(
 				createYearLabelWithVerticalTick(
-					templateGroup,
-					layout,
 					startDate,
 					endDate,
 					currentDate,
@@ -186,17 +176,15 @@ public class PostScriptCreator {
 		return yearLabelsWithVerticalTicks.toString();
 	}
 	
-	public static String createYearLabelWithVerticalTick(
-			StringTemplateGroup templateGroup,
-			BasicLayout layout,
+	private String createYearLabelWithVerticalTick(
 			DateTime startDate,
 			DateTime endDate,
 			DateTime targetDate,
 			double totalHeight) {
-		double x = layout.calculateX(targetDate);
+		double x = this.layout.calculateX(targetDate);
 		
 		StringTemplate yearLabelWithVerticalTickTemplate =
-			templateGroup.getInstanceOf("yearLabelWithVerticalTick");
+			this.templateGroup.getInstanceOf("yearLabelWithVerticalTick");
 		yearLabelWithVerticalTickTemplate.setAttribute(
 			"year", targetDate.getYear());
 		yearLabelWithVerticalTickTemplate.setAttribute(
@@ -209,39 +197,45 @@ public class PostScriptCreator {
 		return yearLabelWithVerticalTickTemplate.toString();
 	}
 	
-	/*public static String createShow(StringTemplateGroup templateGroup) {
-		StringTemplate showTemplate = templateGroup.getInstanceOf("show");
-		
-		return showTemplate.toString();
-	}*/
-	
-	public static String createRecords(
-			StringTemplateGroup templateGroup,
-			BasicLayout layout,
-			Collection<? extends Bar> bars) {
-		Cursor cursor = layout.createCursor();
+	private String createRecords() {
+		Cursor cursor = this.layout.createCursor();
 		StringBuffer records = new StringBuffer();
 		
-		for (Bar bar : bars) {
-			String record = createRecord(
-				templateGroup, cursor, layout, bar);
+		for (Bar bar : this.bars) {
+			String record = createRecord(cursor, bar);
 			records.append(record);
 		}
 		
 		return records.toString();
 	}
 	
-	public static String createRecord(
-			StringTemplateGroup templateGroup,
+	private String createRGBColor() {
+		double red = (double)RGB_COLOR.getRed() / 255.0;
+		double green = (double)RGB_COLOR.getGreen() / 255.0;
+		double blue = (double)RGB_COLOR.getBlue() / 255.0;
+		
+		StringTemplate rgbColorTemplate =
+			this.templateGroup.getInstanceOf("setRGBColor");
+		rgbColorTemplate.setAttribute(
+			"red", NumberUtilities.convertToDecimalNotation(red));
+		rgbColorTemplate.setAttribute(
+			"green", NumberUtilities.convertToDecimalNotation(green));
+		rgbColorTemplate.setAttribute(
+			"blue", NumberUtilities.convertToDecimalNotation(blue));
+		
+		return rgbColorTemplate.toString();
+	}
+	
+	private String createRecord(
 			Cursor cursor,
-			BasicLayout layout,
 			Bar bar) {
-		StringTemplate recordTemplate = templateGroup.getInstanceOf("record");
+		StringTemplate recordTemplate =
+			this.templateGroup.getInstanceOf("record");
 		// TODO: PostScriptUtilities.escapeString() ?
 		recordTemplate.setAttribute("label", bar.getLabel());
 		recordTemplate.setAttribute("x", bar.getX());
 		recordTemplate.setAttribute(
-			"y", layout.positionVisualElement(bar, cursor));
+			"y", this.layout.positionVisualElement(bar, cursor));
 		recordTemplate.setAttribute("width", bar.getWidth());
 		recordTemplate.setAttribute("height", bar.getHeight());
 		recordTemplate.setAttribute("leftArrow", bar.continuesLeft());

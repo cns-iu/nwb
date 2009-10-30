@@ -4,7 +4,6 @@ import java.io.File;
 import java.io.InputStreamReader;
 import java.net.URISyntaxException;
 import java.net.URL;
-import java.util.Collection;
 import java.util.Dictionary;
 import java.util.Hashtable;
 
@@ -22,10 +21,7 @@ import org.osgi.service.log.LogService;
 
 import prefuse.data.Table;
 import edu.iu.nwb.converter.prefusecsv.reader.PrefuseCsvReader;
-import edu.iu.scipolicy.visualization.horizontalbargraph.bar.Bar;
-import edu.iu.scipolicy.visualization.horizontalbargraph.bar.BarFactory;
 import edu.iu.scipolicy.visualization.horizontalbargraph.layout.BasicLayout;
-import edu.iu.scipolicy.visualization.horizontalbargraph.record.Record;
 import edu.iu.scipolicy.visualization.horizontalbargraph.record.RecordCollection;
 import edu.iu.scipolicy.visualization.horizontalbargraph.record.TableRecordExtractor;
 import edu.iu.scipolicy.visualization.horizontalbargraph.testing.LogOnlyCIShellContext;
@@ -163,22 +159,12 @@ public class HorizontalBarGraphAlgorithm implements Algorithm {
     		minimumAmountPerUnitOfTime,
     		this.unitOfTime,
     		this.minimumUnitsOfTime);
-		
-    	/* TODO: The layout should have a method that makes a bar from
-    	 *  a record.
-    	 */
-    	Collection<Record> records = recordCollection.getSortedRecords();
-    	Collection<Bar> bars = BarFactory.createBars(records, layout);
-    	
-    	/* TODO: Pass records in directly here, then have the layout make the
-    	 *  bars as the postscript needs them (however that ends up working).
-    	 */
-    	String postScript = PostScriptCreator.createPostScript(
+    	PostScriptCreator postScriptCreator = new PostScriptCreator(
     		horizontalBarGraphGroup,
     		layout,
     		(String)this.inputData.getMetadata().get(DataProperty.LABEL),
-    		recordCollection,
-    		bars);
+    		recordCollection);
+    	String postScript = postScriptCreator.toString();
     	
     	System.err.println(postScript);
     	

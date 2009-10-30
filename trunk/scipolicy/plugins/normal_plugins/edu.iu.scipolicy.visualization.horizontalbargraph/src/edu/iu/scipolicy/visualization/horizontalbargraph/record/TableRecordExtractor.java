@@ -11,6 +11,7 @@ import org.osgi.service.log.LogService;
 
 import prefuse.data.Table;
 import prefuse.data.Tuple;
+import prefuse.util.collections.IntIterator;
 
 public class TableRecordExtractor {
 	public static final String UNKNOWN_LABEL_PREFIX = "Unknown Label ";
@@ -36,14 +37,10 @@ public class TableRecordExtractor {
 			String endDateFormat,
 			LogService logger) {
 		RecordCollection recordCollection = new RecordCollection();
-		
-		/*
-		 * I'm not using an iterator here so I can report the row number if a
-		 *  problem occurs.
-		 */
-		//TODO: .rows() for an IntIterator
-		for (int ii = 0; ii < source.getRowCount(); ii++) {
-			Tuple row = source.getTuple(ii);
+
+		for (IntIterator rows = source.rows(); rows.hasNext(); ) {
+			int rowIndex = rows.nextInt();
+			Tuple row = source.getTuple(rowIndex);
 			
 			String label = extractLabel(row, labelKey);
 			DateTime startDate =
@@ -55,8 +52,7 @@ public class TableRecordExtractor {
 				amount = extractAmount(row, amountKey);
 			} catch (NumberFormatException invalidAmountException) {
 				String logMessage =
-				// TODO (FIXED?): Row number ii
-					"The row number " + ii +
+					"The row number " + rowIndex +
 					" has an invalid amount " +
 					"(attribute \"" + amountKey + "\").  " +
 					"Skipping.";
@@ -75,9 +71,10 @@ public class TableRecordExtractor {
 	private String extractLabel(Tuple row, String labelKey) {
 		String potentialLabel =
 			StringUtilities.interpretObjectAsString(row.get(labelKey));
-		
-		//TODO: check for empty/whitespace string
-		if (potentialLabel != null) {
+
+		if (
+				(potentialLabel != null) &&
+				!StringUtilities.isEmptyOrWhiteSpace(potentialLabel)) {
 			return potentialLabel;
 		} else {
 			String label = UNKNOWN_LABEL_PREFIX + this.unknownLabelCount;
@@ -111,7 +108,11 @@ public class TableRecordExtractor {
 	
 	private double extractAmount(Tuple row, String amountKey)
 			throws NumberFormatException {
-		//TODO: negative numbers? They'd probably mess everything up. Check the double parsing exception and that here, and throw custom exceptions with understandable messages, then just log those messages outside
+		/* TODO: Negative numbers? They'd probably mess everything up.
+		 * Check the double parsing exception and that here, and throw custom
+		 *  exceptions with understandable messages, then just log those
+		 *  messages outside.
+		 */
 		return NumberUtilities.interpretObjectAsDouble(
 			row.get(amountKey)).doubleValue();
 	}
@@ -124,9 +125,9 @@ public class TableRecordExtractor {
 			double amount,
 			LogService logger) {
 	
-		//TODO: .equals()! magic is bad
-		//TODO: handle by wrapping
-		//TODO: just make the logger a member, don't pass it everywhere
+		// TODO: .equals()! magic is bad.
+		// TODO: Handle by wrapping.
+		// TODO: Just make the logger a member, don't pass it everywhere.
 		if (startDate == UNSPECIFIED_DATE) {
 			handleUnspecifiedStartDateCases(
 				recordCollector, label, startDate, endDate, amount, logger);
@@ -140,7 +141,10 @@ public class TableRecordExtractor {
 	}
 
 	// TODO: Consider summarizing warnings or just giving one.
-	//TODO: if just giving one, also say if there are more. Never be totally silent about further errors, just treat them as a group.
+	/* TODO: If just giving one, also say if there are more.
+	 * Never be totally silent about further errors, just treat them as
+	 *  a group.
+	 */
 	private void handleUnspecifiedStartDateCases(
 			RecordCollection recordCollector,
 			String label,
@@ -158,7 +162,9 @@ public class TableRecordExtractor {
 			logger.log(LogService.LOG_WARNING, logMessage);
 		
 			recordCollector.addRecordWithNoDates(label, amount);
-		//TODO: include what the invalid end date is (and similarly elsewhere)
+		/* TODO: Include what the invalid end date is
+		 *  (and similarly elsewhere).
+		 */
 		} else if (endDate == INVALID_DATE) {
 			String logMessage =
 				logPrefix +

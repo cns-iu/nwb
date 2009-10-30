@@ -108,10 +108,3 @@ setRGBColor(red, green, blue) ::= <<
 <red> <green> <blue> setrgbcolor
 
 >>
-
-
-show() ::= <<
-
-show
-
->>

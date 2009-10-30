@@ -11,6 +11,6 @@ public interface Record extends Comparable<Record> {
 	public boolean hasEndDate();
 	public DateTime getEndDate();
 	public double getAmount();
-	public double calculateAmountPerUnitOfTime(
+	public double getAmountPerUnitOfTime(
 			UnitOfTime unitOfTime, int minimumUnitOfTime);
 }

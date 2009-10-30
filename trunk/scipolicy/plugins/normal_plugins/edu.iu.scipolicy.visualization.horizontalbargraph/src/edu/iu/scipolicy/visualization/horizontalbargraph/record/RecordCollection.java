@@ -28,33 +28,26 @@ public class RecordCollection {
 	public DateTime getMaximumEndDate() {
 		return this.maximumEndDate;
 	}
-	
-	//
+
 	public double calculateMinimumAmountPerUnitOfTime(
 			UnitOfTime unitOfTime, int minimumUnitOfTime) {
-		double minimumAmountPerUnitOfTime = 0.0; // Double.MAX_VALUE
+		double minimumAmountPerUnitOfTime = Double.MAX_VALUE;
 		
 		for (Record record : this.records) {
 			double amount = record.getAmount();
 			
-			//TODO: negatives should have been taken care of way earlier
+			// TODO: Negatives should have been taken care of way earlier.
 			if (amount <= 0.0) {
 				continue;
 			}
 			
-			/*int timeBetween = Math.max(
-				unitOfTime.timeBetween(
-					record.getStartDate(), record.getEndDate()),
-				minimumUnitOfTime);
-			double recordMinimumAmountPerUnitOfTime = amount / timeBetween;*/
-			
 			double recordMinimumAmountPerUnitOfTime =
-				record.calculateAmountPerUnitOfTime(
+				record.getAmountPerUnitOfTime(
 					unitOfTime, minimumUnitOfTime);
-			
-			if ((minimumAmountPerUnitOfTime == 0.0) || //TODO: no need to check for 0.0 if we use Double.MAX_VALUE
-					(recordMinimumAmountPerUnitOfTime <
-						minimumAmountPerUnitOfTime)) {
+
+			if (
+					recordMinimumAmountPerUnitOfTime <
+					minimumAmountPerUnitOfTime) {
 				minimumAmountPerUnitOfTime = recordMinimumAmountPerUnitOfTime;
 			}
 		}
@@ -164,7 +157,12 @@ public class RecordCollection {
 		DateTime minimumStartDate = getMinimumStartDate();
 		DateTime maximumEndDate = getMaximumEndDate();
 		
-		//TODO: setMinimumStartDate() should be removed and getMinimumStartDate not used internally; access fields of ourself directly unless there's a good reason not to.
+		/* TODO: setMinimumStartDate() should be removed and
+		 *  getMinimumStartDate not used internally; access fields of ourself
+		 *  directly unless there's a good reason not to.
+		 * (I'm keeping them because setMaximumStartDate actually does special
+		 *  stuff, and I like the duality.)
+		 */
 		if ((minimumStartDate == null) ||
 				(newRecordStartDate.compareTo(minimumStartDate) < 0)) {
 			setMinimumStartDate(newRecordStartDate);
@@ -185,7 +183,9 @@ public class RecordCollection {
 	}
 	
 	private void setMaximumEndDate(DateTime maximumEndDate) {
-		this.maximumEndDate = maximumEndDate;
+		DateTime january1stNextYear =
+			maximumEndDate.plusYears(1).withMonthOfYear(1).withDayOfMonth(1);
+		this.maximumEndDate = january1stNextYear;
 	}
 	
 	private class NormalRecord extends AbstractRecord {

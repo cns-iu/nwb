@@ -1,5 +1,6 @@
 package edu.iu.scipolicy.visualization.horizontalbargraph.layout;
 
+import java.util.ArrayList;
 import java.util.Collection;
 
 import org.joda.time.DateTime;
@@ -7,6 +8,7 @@ import org.joda.time.DateTime;
 import edu.iu.scipolicy.visualization.horizontalbargraph.PageOrientation;
 import edu.iu.scipolicy.visualization.horizontalbargraph.UnitOfTime;
 import edu.iu.scipolicy.visualization.horizontalbargraph.VisualElement;
+import edu.iu.scipolicy.visualization.horizontalbargraph.bar.Bar;
 import edu.iu.scipolicy.visualization.horizontalbargraph.record.Record;
 
 public class BasicLayout {
@@ -115,7 +117,7 @@ public class BasicLayout {
 	}
 	
 	public double calculateHeight(Record record) {
-		double recordAmountPerUnitOfTime = record.calculateAmountPerUnitOfTime(
+		double recordAmountPerUnitOfTime = record.getAmountPerUnitOfTime(
 			this.unitOfTime, this.minimumUnitOfTime);
 			/* TODO: Note, if everything's in milliseconds, the above method on
 			 *  record needs no arguments at all, since we already just set the
@@ -225,5 +227,35 @@ public class BasicLayout {
 		public void move(double yAmount) {
 			this.y += yAmount;
 		}
+	}
+	
+	public Collection<Bar> createBars(Collection<Record> records) {
+		Collection<Bar> bars = new ArrayList<Bar>();
+		
+		for (Record record : records) {
+			bars.add(createBar(record));
+		}
+		
+		return bars;
+	}
+	
+	public Bar createBar(Record record) {
+		DateTime recordStartDate = record.getStartDate();
+		DateTime recordEndDate = record.getEndDate();
+		double recordAmount = record.getAmount();
+		
+		double startX = calculateX(recordStartDate);
+		double endX = calculateX(recordEndDate);
+		double width = endX - startX;
+		double height = calculateHeight(record);
+		
+		return new Bar(
+			record.getLabel(),
+			record.hasStartDate(),
+			record.hasEndDate(),
+			startX,
+			width,
+			height,
+			recordAmount);
 	}
 }

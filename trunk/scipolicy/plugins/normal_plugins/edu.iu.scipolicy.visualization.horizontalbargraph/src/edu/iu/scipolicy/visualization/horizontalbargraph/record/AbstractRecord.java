@@ -19,11 +19,9 @@ public abstract class AbstractRecord implements Record {
 		return this.amount;
 	}
 	
-	public double calculateAmountPerUnitOfTime(
+	public double getAmountPerUnitOfTime(
 			UnitOfTime unitOfTime, int minimumUnitOfTime) {
-		/* TODO: In this type of record, just calculate this when constructed.
-		 * Also, change it to getAmountPerUnitOfTime in the interface.
-		 */
+		// TODO: In this type of record, just calculate this when constructed.
 		/* TODO: Instead of using a .max here, each record should have its end
 		 * time adjusted as necessary as they enter the collection.
 		 * That makes it unnecessary to do any special treatment later at all.
