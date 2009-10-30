@@ -1,25 +1,39 @@
 package edu.iu.scipolicy.visualization.horizontalbargraph;
 
 import java.io.File;
+import java.io.InputStreamReader;
 import java.net.URISyntaxException;
 import java.net.URL;
+import java.util.Collection;
 import java.util.Dictionary;
 import java.util.Hashtable;
 
+import org.antlr.stringtemplate.StringTemplateGroup;
 import org.cishell.framework.CIShellContext;
 import org.cishell.framework.algorithm.Algorithm;
 import org.cishell.framework.algorithm.AlgorithmExecutionException;
 import org.cishell.framework.algorithm.AlgorithmFactory;
 import org.cishell.framework.data.BasicData;
 import org.cishell.framework.data.Data;
+import org.cishell.framework.data.DataProperty;
 import org.cishell.utilities.DateUtilities;
+import org.cishell.utilities.NumberUtilities;
+import org.joda.time.DateTime;
 import org.osgi.service.log.LogService;
 
 import prefuse.data.Table;
 import edu.iu.nwb.converter.prefusecsv.reader.PrefuseCsvReader;
+import edu.iu.scipolicy.visualization.horizontalbargraph.bar.Bar;
+import edu.iu.scipolicy.visualization.horizontalbargraph.bar.BarFactory;
+import edu.iu.scipolicy.visualization.horizontalbargraph.layouts.BasicLayout;
+import edu.iu.scipolicy.visualization.horizontalbargraph.layouts.Layout;
+import edu.iu.scipolicy.visualization.horizontalbargraph.record.Record;
+import edu.iu.scipolicy.visualization.horizontalbargraph.record.RecordCollection;
+import edu.iu.scipolicy.visualization.horizontalbargraph.record.TableRecordExtractor;
 import edu.iu.scipolicy.visualization.horizontalbargraph.testing.LogOnlyCIShellContext;
 
 public class HorizontalBarGraphAlgorithm implements Algorithm {
+	//TODO: make and test edge case datasets. No non-zero amounts, no valid amounts, no items with non-zero duration, you get the idea
 	public static final double DEFAULT_PAGE_WIDTH = 8.5;
 	public static final double DEFAULT_PAGE_HEIGTH = 11.0;
 	
@@ -37,14 +51,30 @@ public class HorizontalBarGraphAlgorithm implements Algorithm {
 		"should_scale_output";
 
 	public static final String CSV_MIME_TYPE = "file:text/csv";
+	public static final String POST_SCRIPT_MIME_TYPE = "file:text/ps";
 	public static final String TEST_DATA_PATH =
 		"/edu/iu/scipolicy/visualization/horizontalbargraph/testing/";
+	public static final String CNS_TEST_DATA_PATH = TEST_DATA_PATH + "CNS.csv";
 	public static final String CORNELL_TEST_DATA_PATH =
 		TEST_DATA_PATH + "Cornell.csv";
 	public static final String INDIANA_TEST_DATA_PATH =
 		TEST_DATA_PATH + "Indiana.csv";
 	public static final String MICHIGAN_TEST_DATA_PATH =
 		TEST_DATA_PATH + "Michigan.csv";
+	
+	//TODO: move to layout
+	public static final double POINTS_PER_YEAR = 60.0;
+	public static final double MINIMUM_BAR_HEIGHT = 3.0;
+	public static final double MARGIN_WIDTH_FACTOR_FOR_NOW = 0.10;
+	public static final double MARGIN_HEIGHT_FACTOR_FOR_NOW = 0.10;
+	public static final int MAXIMUM_CHARACTER_COUNT = 30;
+	
+	public static final String STRING_TEMPLATE_BASE_FILE_PATH =
+		"/edu/iu/scipolicy/visualization/horizontalbargraph/stringtemplates/";
+	public static final String STRING_TEMPLATE_FILE_PATH =
+		STRING_TEMPLATE_BASE_FILE_PATH + "horizontal_bar_graph.st";
+	public static final StringTemplateGroup horizontalBarGraphGroup =
+		loadTemplates();
 	
     private Data inputData;
     private Table inputTable;
@@ -59,6 +89,7 @@ public class HorizontalBarGraphAlgorithm implements Algorithm {
     private double pageWidth = DEFAULT_PAGE_WIDTH;
     private double pageHeight = DEFAULT_PAGE_HEIGTH;
     private boolean shouldScaleOutput = false;
+    //TODO: make year width wider
     
     private LogService logger;
     
@@ -74,7 +105,7 @@ public class HorizontalBarGraphAlgorithm implements Algorithm {
         this.endDateKey = (String)parameters.get(END_DATE_FIELD_ID);
         this.amountKey = (String)parameters.get(SIZE_BY_FIELD_ID);
         this.unitOfTime = (UnitOfTime)parameters.get(UNIT_OF_TIME_FIELD_ID);
-        this.minimumUnitOfTime = Math.max(
+        this.minimumUnitOfTime = Math.max( //TODO: minimumUnitsOfTime (note plural)
         	((Integer)parameters.get(
         		MINIMUM_UNIT_OF_TIME_FIELD_ID)).intValue(),
         	1);;
@@ -84,6 +115,7 @@ public class HorizontalBarGraphAlgorithm implements Algorithm {
         	((Double)parameters.get(PAGE_WIDTH_FIELD_ID)).doubleValue();
         this.pageHeight =
         	((Double)parameters.get(PAGE_HEIGHT_FIELD_ID)).doubleValue();
+        //TODO: remove this param (and the page width/height stuff
         this.shouldScaleOutput =
         	((Boolean)parameters.get(SHOULD_SCALE_OUTPUT_FIELD_ID)).
         		booleanValue();
@@ -97,9 +129,9 @@ public class HorizontalBarGraphAlgorithm implements Algorithm {
     	 *	for each dateset specified:
     	 *		extract the records
     	 *			fix dates, trunctate text, other preprocessing things...
-    	 *			keep track of minimum "height"; note that things missing a
-    	 *			 start or end date will have updating "heights" as new data
-    	 *			 comes in
+    	 *			keep track of minimum amount/unit of time; note that things
+    	 *			 missing a start or end date will have updating "heights"
+    	 *			 as new data comes in
     	 *			keep track of number of items (or just store in a container
     	 *			 that knows its size)
     	 *			keep track of total amount per unit of time
@@ -111,10 +143,8 @@ public class HorizontalBarGraphAlgorithm implements Algorithm {
     	 *	 Collection, for flexibility)
     	 *	It can be asked for the minimum amount/unit of time, # items, etc
     	 *
-    	 *	----
-    	 *
     	 *	Then there are VisualItems; make a visual item factory, set the
-    	 *	 scaling factor
+    	 *	 scaling factor, which is the minimum amount/unit of time
     	 *	For determining horizontal coordinates, interpolate (start and end)
     	 *	 dates given the earliest start date and latest end date
     	 *	
@@ -140,12 +170,51 @@ public class HorizontalBarGraphAlgorithm implements Algorithm {
     		this.endDateFormat,
     		this.logger);
     	
-    	System.err.println(recordCollection.calculateMinimumAmountPerUnitOfTime(this.unitOfTime, this.minimumUnitOfTime));
-    	System.err.println(recordCollection.calculateTotalAmountPerUnitOfTime(this.unitOfTime, this.minimumUnitOfTime));
-    	System.err.println("earliest start date: " + recordCollection.getMinimumStartDate());
-    	System.err.println("latest end date: " + recordCollection.getMaximumEndDate());
+    	DateTime startDate = recordCollection.getMinimumStartDate();
+    	DateTime endDate = recordCollection.getMaximumEndDate();
+    	
+    	// TODO: Verify that the time between the start and end date is
+    	// greater than zero?
+    	
+    	double minimumAmountPerUnitOfTime =
+    		recordCollection.calculateMinimumAmountPerUnitOfTime(
+    			this.unitOfTime, this.minimumUnitOfTime);
+    	Layout layout = new BasicLayout(
+    		POINTS_PER_YEAR, //TODO: They are constants. They shouldn't be arguments.
+    		MINIMUM_BAR_HEIGHT,
+    		startDate,
+    		endDate,
+    		minimumAmountPerUnitOfTime,
+    		this.unitOfTime,
+    		this.minimumUnitOfTime,
+    		MARGIN_WIDTH_FACTOR_FOR_NOW,
+    		MARGIN_HEIGHT_FACTOR_FOR_NOW,
+    		MAXIMUM_CHARACTER_COUNT);
+		
+    	//TODO: The layout should have a method that makes a bar from a record
+    	Collection<Record> records = recordCollection.getSortedRecords();
+    	Collection<Bar> bars = BarFactory.createBars(records, layout);
+    	
+    	//pass records in directly here, then have the layout make the bars as the postscript needs them (hwoever that ends up working)
+    	String postScript = PostScriptCreator.createPostScript(
+    		horizontalBarGraphGroup,
+    		layout,
+    		(String)this.inputData.getMetadata().get(DataProperty.LABEL),
+    		this.pageWidth,
+    		this.pageHeight,
+    		recordCollection,
+    		bars);
+    	
+    	System.err.println(postScript);
     	
         return new Data[0];
+    }
+    
+    private static StringTemplateGroup loadTemplates() {
+    	return new StringTemplateGroup(
+    		new InputStreamReader(
+    			HorizontalBarGraphAlgorithm.class.getResourceAsStream(
+    				STRING_TEMPLATE_FILE_PATH)));
     }
     
     public static void main(String[] arguments) {
@@ -155,14 +224,16 @@ public class HorizontalBarGraphAlgorithm implements Algorithm {
     		CIShellContext ciShellContext = new LogOnlyCIShellContext();
     		Dictionary<String, Object> parameters = constructParameters();
     		
-    		runAlgorithmOnCornell(
-    			algorithmFactory, ciShellContext, parameters);
+    		 //runAlgorithmOnCNS(algorithmFactory, ciShellContext, parameters);
+    		
+    		/*runAlgorithmOnCornell(
+    			algorithmFactory, ciShellContext, parameters);*/
     		
     		runAlgorithmOnIndiana(
     			algorithmFactory, ciShellContext, parameters);
     		
-    		runAlgorithmOnMichigan(
-    			algorithmFactory, ciShellContext, parameters);
+    		/*runAlgorithmOnMichigan(
+    			algorithmFactory, ciShellContext, parameters);*/
     		
     	} catch (Exception e) {
     		e.printStackTrace();
@@ -187,6 +258,19 @@ public class HorizontalBarGraphAlgorithm implements Algorithm {
     	return parameters;
     }
     
+    private static void runAlgorithmOnCNS(
+    		AlgorithmFactory algorithmFactory,
+    		CIShellContext ciShellContext,
+    		Dictionary<String, Object> parameters)
+    		throws AlgorithmExecutionException, URISyntaxException {
+    	Data[] cnsTestData = createTestData(CNS_TEST_DATA_PATH);
+    	Algorithm algorithm = algorithmFactory.createAlgorithm(
+    		cnsTestData, parameters, ciShellContext);
+    	//System.out.println("Executing algorithm on CNS...");
+    	algorithm.execute();
+    	//System.out.println("...Done.");
+    }
+    
     private static void runAlgorithmOnCornell(
     		AlgorithmFactory algorithmFactory,
     		CIShellContext ciShellContext,
@@ -195,9 +279,9 @@ public class HorizontalBarGraphAlgorithm implements Algorithm {
     	Data[] cornellTestData = createTestData(CORNELL_TEST_DATA_PATH);
     	Algorithm algorithm = algorithmFactory.createAlgorithm(
     		cornellTestData, parameters, ciShellContext);
-    	System.out.println("Executing algorithm on Cornell...");
+    	//System.out.println("Executing algorithm on Cornell...");
     	algorithm.execute();
-    	System.out.println("...Done.");
+    	//System.out.println("...Done.");
     }
     
     private static void runAlgorithmOnIndiana(
@@ -208,9 +292,9 @@ public class HorizontalBarGraphAlgorithm implements Algorithm {
     	Data[] indianaTestData = createTestData(INDIANA_TEST_DATA_PATH);
     	Algorithm algorithm = algorithmFactory.createAlgorithm(
     		indianaTestData, parameters, ciShellContext);
-    	System.out.println("Executing algorithm on Indiana...");
+    	//System.out.println("Executing algorithm on Indiana...");
     	algorithm.execute();
-    	System.out.println("...Done.");
+    	//System.out.println("...Done.");
     }
     
     private static void runAlgorithmOnMichigan(
@@ -221,9 +305,9 @@ public class HorizontalBarGraphAlgorithm implements Algorithm {
     	Data[] michiganTestData = createTestData(MICHIGAN_TEST_DATA_PATH);
     	Algorithm algorithm = algorithmFactory.createAlgorithm(
     		michiganTestData, parameters, ciShellContext);
-    	System.out.println("Executing algorithm on Michigan...");
+    	//System.out.println("Executing algorithm on Michigan...");
     	algorithm.execute();
-    	System.out.println("...Done.");
+    	//System.out.println("...Done.");
     }
     
     private static Data[] createTestData(String testDataPath)

@@ -1,4 +1,4 @@
-package edu.iu.scipolicy.visualization.horizontalbargraph;
+package edu.iu.scipolicy.visualization.horizontalbargraph.record;
 
 import java.text.ParseException;
 import java.util.Date;
@@ -9,6 +9,7 @@ import org.cishell.utilities.NumberUtilities;
 import org.cishell.utilities.StringUtilities;
 import org.joda.time.DateTime;
 import org.osgi.service.log.LogService;
+
 
 import prefuse.data.Table;
 import prefuse.data.Tuple;
@@ -42,6 +43,7 @@ public class TableRecordExtractor {
 		 * I'm not using an iterator here so I can report the row number if a
 		 *  problem occurs.
 		 */
+		//TODO: .rows() for an IntIterator
 		for (int ii = 0; ii < source.getRowCount(); ii++) {
 			Tuple row = source.getTuple(ii);
 			
@@ -55,7 +57,8 @@ public class TableRecordExtractor {
 				amount = extractAmount(row, amountKey);
 			} catch (NumberFormatException invalidAmountException) {
 				String logMessage =
-					"The row " + ii +
+				// TODO (FIXED?): Row number ii
+					"The row number " + ii +
 					" has an invalid amount " +
 					"(attribute \"" + amountKey + "\").  " +
 					"Skipping.";
@@ -75,6 +78,7 @@ public class TableRecordExtractor {
 		String potentialLabel =
 			StringUtilities.interpretObjectAsString(row.get(labelKey));
 		
+		//TODO: check for empty/whitespace string
 		if (potentialLabel != null) {
 			return potentialLabel;
 		} else {
@@ -109,6 +113,7 @@ public class TableRecordExtractor {
 	
 	private double extractAmount(Tuple row, String amountKey)
 			throws NumberFormatException {
+		//TODO: negative numbers? They'd probably mess everything up. Check the double parsing exception and that here, and throw custom exceptions with understandable messages, then just log those messages outside
 		return NumberUtilities.interpretObjectAsDouble(
 			row.get(amountKey)).doubleValue();
 	}
@@ -120,6 +125,10 @@ public class TableRecordExtractor {
 			DateTime endDate,
 			double amount,
 			LogService logger) {
+	
+		//TODO: .equals()! magic is bad
+		//TODO: handle by wrapping
+		//TODO: just make the logger a member, don't pass it everywhere
 		if (startDate == UNSPECIFIED_DATE) {
 			handleUnspecifiedStartDateCases(
 				recordCollector, label, startDate, endDate, amount, logger);
@@ -133,6 +142,7 @@ public class TableRecordExtractor {
 	}
 
 	// TODO: Consider summarizing warnings or just giving one.
+	//TODO: if just giving one, also say if there are more. Never be totally silent about further errors, just treat them as a group.
 	private void handleUnspecifiedStartDateCases(
 			RecordCollection recordCollector,
 			String label,
@@ -150,6 +160,7 @@ public class TableRecordExtractor {
 			logger.log(LogService.LOG_WARNING, logMessage);
 		
 			recordCollector.addRecordWithNoDates(label, amount);
+		//TODO: include what the invalid end date is (and similarly elsewhere)
 		} else if (endDate == INVALID_DATE) {
 			String logMessage =
 				logPrefix +

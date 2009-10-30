@@ -5,6 +5,7 @@ Bundle-SymbolicName: edu.iu.scipolicy.visualization.horizontalbargraph
 Bundle-Version: 0.0.1
 Bundle-ClassPath: .
 Import-Package: edu.iu.nwb.converter.prefusecsv.reader;resolution:=optional,
+ org.antlr.stringtemplate,
  org.cishell.framework;version="1.0.0",
  org.cishell.framework.algorithm;version="1.0.0",
  org.cishell.framework.data;version="1.0.0",

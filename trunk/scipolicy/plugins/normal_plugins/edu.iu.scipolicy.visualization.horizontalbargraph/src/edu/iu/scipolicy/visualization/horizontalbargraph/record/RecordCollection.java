@@ -1,4 +1,4 @@
-package edu.iu.scipolicy.visualization.horizontalbargraph;
+package edu.iu.scipolicy.visualization.horizontalbargraph.record;
 
 import java.util.Collection;
 import java.util.HashSet;
@@ -6,6 +6,8 @@ import java.util.SortedSet;
 import java.util.TreeSet;
 
 import org.joda.time.DateTime;
+
+import edu.iu.scipolicy.visualization.horizontalbargraph.UnitOfTime;
 
 public class RecordCollection {
 	private Collection<Record> records = new HashSet<Record>();
@@ -27,24 +29,30 @@ public class RecordCollection {
 		return this.maximumEndDate;
 	}
 	
+	//
 	public double calculateMinimumAmountPerUnitOfTime(
 			UnitOfTime unitOfTime, int minimumUnitOfTime) {
-		double minimumAmountPerUnitOfTime = 0.0;
+		double minimumAmountPerUnitOfTime = 0.0; // Double.MAX_VALUE
 		
 		for (Record record : this.records) {
 			double amount = record.getAmount();
 			
+			//TODO: negatives should have been taken care of way earlier
 			if (amount <= 0.0) {
 				continue;
 			}
 			
-			int timeBetween = Math.max(
+			/*int timeBetween = Math.max(
 				unitOfTime.timeBetween(
 					record.getStartDate(), record.getEndDate()),
 				minimumUnitOfTime);
-			double recordMinimumAmountPerUnitOfTime = amount / timeBetween;
+			double recordMinimumAmountPerUnitOfTime = amount / timeBetween;*/
 			
-			if ((minimumAmountPerUnitOfTime == 0.0) ||
+			double recordMinimumAmountPerUnitOfTime =
+				record.calculateAmountPerUnitOfTime(
+					unitOfTime, minimumUnitOfTime);
+			
+			if ((minimumAmountPerUnitOfTime == 0.0) || //TODO: no need to check for 0.0 if we use Double.MAX_VALUE
 					(recordMinimumAmountPerUnitOfTime <
 						minimumAmountPerUnitOfTime)) {
 				minimumAmountPerUnitOfTime = recordMinimumAmountPerUnitOfTime;
@@ -82,8 +90,16 @@ public class RecordCollection {
 	public void addRecordWithNoStartDate(
 			String label, final DateTime endDate, double amount) {
 		Record record = new AbstractRecord(label, amount) {
+			public boolean hasStartDate() {
+				return false;
+			}
+			
 			public DateTime getStartDate() {
 				return RecordCollection.this.getMinimumStartDate();
+			}
+			
+			public boolean hasEndDate() {
+				return true;
 			}
 			
 			public DateTime getEndDate() {
@@ -97,8 +113,16 @@ public class RecordCollection {
 	public void addRecordWithNoEndDate(
 			String label, final DateTime startDate, double amount) {
 		Record record = new AbstractRecord(label, amount) {
+			public boolean hasStartDate() {
+				return true;
+			}
+			
 			public DateTime getStartDate() {
 				return startDate;
+			}
+			
+			public boolean hasEndDate() {
+				return false;
 			}
 			
 			public DateTime getEndDate() {
@@ -111,8 +135,16 @@ public class RecordCollection {
 	
 	public void addRecordWithNoDates(String label, double amount) {
 		Record record = new AbstractRecord(label, amount) {
+			public boolean hasStartDate() {
+				return false;
+			}
+			
 			public DateTime getStartDate() {
 				return RecordCollection.this.getMinimumStartDate();
+			}
+			
+			public boolean hasEndDate() {
+				return false;
 			}
 			
 			public DateTime getEndDate() {
@@ -132,6 +164,7 @@ public class RecordCollection {
 		DateTime minimumStartDate = getMinimumStartDate();
 		DateTime maximumEndDate = getMaximumEndDate();
 		
+		//TODO: setMinimumStartDate() should be removed and getMinimumStartDate not used internally; access fields of ourself directly unless there's a good reason not to.
 		if ((minimumStartDate == null) ||
 				(newRecordStartDate.compareTo(minimumStartDate) < 0)) {
 			setMinimumStartDate(newRecordStartDate);
@@ -155,29 +188,7 @@ public class RecordCollection {
 		this.maximumEndDate = maximumEndDate;
 	}
 	
-	private static abstract class AbstractRecord implements Record {
-		private String label;
-		private double amount;
-		
-		public AbstractRecord(String label, double amount) {
-			this.label = label;
-			this.amount = amount;
-		}
-		
-		public String getLabel() {
-			return this.label;
-		}
-		
-		public double getAmount() {
-			return this.amount;
-		}
-		
-		public int compareTo(Record otherRecord) {
-			return getStartDate().compareTo(otherRecord.getStartDate());
-		}
-	};
-	
-	private static class NormalRecord extends AbstractRecord {
+	private class NormalRecord extends AbstractRecord {
 		private DateTime startDate;
 		private DateTime endDate;
 		
@@ -190,9 +201,17 @@ public class RecordCollection {
 			this.startDate = startDate;
 			this.endDate = endDate;
 		}
+		
+		public boolean hasStartDate() {
+			return true;
+		}
 
 		public DateTime getStartDate() {
 			return this.startDate;
+		}
+		
+		public boolean hasEndDate() {
+			return true;
 		}
 	
 		public DateTime getEndDate() {
