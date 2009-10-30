@@ -1,8 +1,8 @@
 CPP = g++
-INCLUDE = -Iinclude/
-DEBUG = -g -Wall -Wextra --pedantic --ansi 
+INCLUDE = -static -Iinclude/
+DEBUG = -g -Wall -Wextra --pedantic
 GSL = -IGnuWin32/include
-GSL_LIB = -LGnuWin32/bin -lgsl -lgslcblas
+GSL_LIB = -LGnuWin32/lib -lgsl -lgslcblas
 RM = del
 MKDIR = mkdir
 CP = copy
@@ -12,10 +12,10 @@ DEBUG_EXECUTABLE_NAME = SPEM_dbg.exe
 FILE = $*
 
 all: src/Model.o src/Calendar.o src/Parse.o src/input.o src/Calculator.o
-	$(CPP) $(INCLUDE) $(GSL) $(GSL_LIB) SPEM.cpp $^ -o $(EXECUTABLE_NAME)
+	$(CPP) $(GSL) $(INCLUDE) SPEM.cpp $^ -o $(EXECUTABLE_NAME) $(GSL_LIB)
 
 dbg: src/Model_dbg.o src/Calendar_dbg.o src/Parse_dbg.o src/input_dbg.o src/Calculator_dbg.o
-	$(CPP) $(DEBUG) $(INCLUDE) $(GSL) $(GSL_LIB) SPEM.cpp $^ -o $(DEBUG_EXECUTABLE_NAME)
+	$(CPP) $(DEBUG) $(INCLUDE) $(GSL) SPEM.cpp $^ -o $(DEBUG_EXECUTABLE_NAME) $(GSL_LIB)
 
 %_dbg.o: %.cpp
 	$(CPP) -c $(DEBUG) $(INCLUDE) $(GSL) $(FILE).cpp -o $(FILE)_dbg.o
