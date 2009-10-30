@@ -29,7 +29,7 @@
   	  	  <param name="target" value="plugins"/>
   	  	  <param name="element.id" value="edu.iu.scipolicy.help.documentation"/>
   	  	  <param name="project.name" value="edu.iu.scipolicy.help.documentation"/>
-  	  	  <param name="url" value="http://nwb.slis.indiana.edu/svn/nwb/trunk/scipolicyplugins/normal_plugins"/>
+  	  	  <param name="url" value="http://nwb.slis.indiana.edu/svn/nwb/trunk/scipolicy/plugins/normal_plugins"/>
   	</antcall>
   	  	  	
 	<antcall target="svn.co">
