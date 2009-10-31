@@ -34,9 +34,8 @@ public class RecordCollection {
 		
 		for (Record record : this.records) {
 			double amount = record.getAmount();
-			
-			// TODO: Negatives should have been taken care of way earlier.
-			if (amount <= 0.0) {
+
+			if (amount == 0.0) {
 				continue;
 			}
 			

@@ -12,11 +12,11 @@ import org.osgi.service.log.LogService;
 import prefuse.data.Table;
 import prefuse.data.Tuple;
 import prefuse.util.collections.IntIterator;
+import edu.iu.scipolicy.visualization.horizontalbargraph.DateTimeWrapper;
+import edu.iu.scipolicy.visualization.horizontalbargraph.record.exception.InvalidAmountException;
 
 public class TableRecordExtractor {
 	public static final String UNKNOWN_LABEL_PREFIX = "Unknown Label ";
-	public static final DateTime UNSPECIFIED_DATE = new DateTime();
-	public static final DateTime INVALID_DATE = new DateTime();
 	
 	public static final String NO_START_DATE_MESSAGE =
 		"  Using the earliest start date found.";
@@ -43,14 +43,15 @@ public class TableRecordExtractor {
 			Tuple row = source.getTuple(rowIndex);
 			
 			String label = extractLabel(row, labelKey);
-			DateTime startDate =
+			DateTimeWrapper startDateWrapper =
 				extractDate(row, startDateKey, startDateFormat);
-			DateTime endDate = extractDate(row, endDateKey, endDateFormat);
+			DateTimeWrapper endDateWrapper =
+				extractDate(row, endDateKey, endDateFormat);
 			double amount;
 			
 			try {
 				amount = extractAmount(row, amountKey);
-			} catch (NumberFormatException invalidAmountException) {
+			} catch (InvalidAmountException invalidAmountException) {
 				String logMessage =
 					"The row number " + rowIndex +
 					" has an invalid amount " +
@@ -62,7 +63,12 @@ public class TableRecordExtractor {
 			}
 			
 			addRecordToCollector(
-				recordCollection, label, startDate, endDate, amount, logger);
+				recordCollection,
+				label,
+				startDateWrapper,
+				endDateWrapper,
+				amount,
+				logger);
 		}
 	
 		return recordCollection;
@@ -84,61 +90,83 @@ public class TableRecordExtractor {
 		}
 	}
 	
-	private DateTime extractDate(
+	private DateTimeWrapper extractDate(
 			Tuple row, String dateKey, String dateFormat) {
 		Object potentialDate = row.get(dateKey);
 		
 		if ((potentialDate == null) ||
 				StringUtilities.isEmptyOrWhiteSpace(
 					potentialDate.toString())) {
-			return UNSPECIFIED_DATE;
+
+			return DateTimeWrapper.createUnspecifiedDateTimeWrapper();
 		}
 		
 		try {
 			Date parsedDate = DateUtilities.interpretObjectAsDate(
 				potentialDate, dateFormat, false);
 			
-			return new DateTime(parsedDate);
+			return DateTimeWrapper.createValidDateTimeWrapper(
+				new DateTime(parsedDate));
 		} catch (ParseException unparsableDateException) {
-			return INVALID_DATE;
+			return DateTimeWrapper.createInvalidDateTimeWrapper();
 		} catch (IllegalArgumentException invalidDateException) {
-			return INVALID_DATE;
+			return DateTimeWrapper.createInvalidDateTimeWrapper();
 		}
 	}
 	
 	private double extractAmount(Tuple row, String amountKey)
-			throws NumberFormatException {
-		/* TODO: Negative numbers? They'd probably mess everything up.
-		 * Check the double parsing exception and that here, and throw custom
-		 *  exceptions with understandable messages, then just log those
-		 *  messages outside.
-		 * (Not done yet.)
-		 */
-		return NumberUtilities.interpretObjectAsDouble(
-			row.get(amountKey)).doubleValue();
+			throws InvalidAmountException {
+		try {
+			double amount = NumberUtilities.interpretObjectAsDouble(
+				row.get(amountKey)).doubleValue();
+			
+			if (amount < 0.0) {
+				String exceptionMessage =
+					"The tuple " + row + " has a negative amount.";
+
+				throw new InvalidAmountException(exceptionMessage);
+			}
+			
+			return amount;
+		} catch (NumberFormatException numberFormatException) {
+			throw new InvalidAmountException(numberFormatException);
+		}
 	}
 	
 	private void addRecordToCollector(
 			RecordCollection recordCollector,
 			String label,
-			DateTime startDate,
-			DateTime endDate,
+			DateTimeWrapper startDateWrapper,
+			DateTimeWrapper endDateWrapper,
 			double amount,
 			LogService logger) {
-	
-		// TODO: .equals()! magic is bad.
-		// TODO: Handle by wrapping.
+
 		// TODO: Just make the logger a member, don't pass it everywhere.
 		// (All of these not done yet.)
-		if (startDate == UNSPECIFIED_DATE) {
+		if (!startDateWrapper.isSpecified()) {
 			handleUnspecifiedStartDateCases(
-				recordCollector, label, startDate, endDate, amount, logger);
-		} else if (startDate == INVALID_DATE) {
+				recordCollector,
+				label,
+				startDateWrapper,
+				endDateWrapper,
+				amount,
+				logger);
+		} else if (!startDateWrapper.isValid()) {
 			handleInvalidStartDateCases(
-				recordCollector, label, startDate, endDate, amount, logger);
+				recordCollector,
+				label,
+				startDateWrapper,
+				endDateWrapper,
+				amount,
+				logger);
 		} else {
 			handleValidStartDateCases(
-				recordCollector, label, startDate, endDate, amount, logger);
+				recordCollector,
+				label,
+				startDateWrapper,
+				endDateWrapper,
+				amount,
+				logger);
 		}
 	}
 
@@ -151,13 +179,13 @@ public class TableRecordExtractor {
 	private void handleUnspecifiedStartDateCases(
 			RecordCollection recordCollector,
 			String label,
-			DateTime startDate,
-			DateTime endDate,
+			DateTimeWrapper startDateWrapper,
+			DateTimeWrapper endDateWrapper,
 			double amount,
 			LogService logger) {
 		String logPrefix = "The record \"" + label + "\" has ";
 		
-		if (endDate == UNSPECIFIED_DATE) {
+		if (!endDateWrapper.isSpecified()) {
 			String logMessage =
 				logPrefix +
 				"unspecified start and end dates." +
@@ -169,7 +197,7 @@ public class TableRecordExtractor {
 		 *  (and similarly elsewhere).
 		 * (Not done yet).
 		 */
-		} else if (endDate == INVALID_DATE) {
+		} else if (!endDateWrapper.isValid()) {
 			String logMessage =
 				logPrefix +
 				"an unspecified start date and an invalid end date." +
@@ -184,20 +212,20 @@ public class TableRecordExtractor {
 			logger.log(LogService.LOG_WARNING, logMessage);
 		
 			recordCollector.addRecordWithNoStartDate(
-				label, endDate, amount);
+				label, endDateWrapper.getDateTime(), amount);
 		}
 	}
 	
 	private void handleInvalidStartDateCases(
 			RecordCollection recordCollector,
 			String label,
-			DateTime startDate,
-			DateTime endDate,
+			DateTimeWrapper startDateWrapper,
+			DateTimeWrapper endDateWrapper,
 			double amount,
 			LogService logger) {
 		String logPrefix = "The record \"" + label + "\" has ";
 		
-		if (endDate == UNSPECIFIED_DATE) {
+		if (!endDateWrapper.isSpecified()) {
 			String logMessage =
 				logPrefix +
 				"an invalid start date and an unspecified end date." +
@@ -205,7 +233,7 @@ public class TableRecordExtractor {
 			logger.log(LogService.LOG_WARNING, logMessage);
 		
 			recordCollector.addRecordWithNoDates(label, amount);
-		} else if (endDate == INVALID_DATE) {
+		} else if (!endDateWrapper.isValid()) {
 			String logMessage =
 				logPrefix + "invalid start date and end dates." +
 				NO_START_AND_END_DATES_MESSAGE;
@@ -218,36 +246,39 @@ public class TableRecordExtractor {
 			logger.log(LogService.LOG_WARNING, logMessage);
 		
 			recordCollector.addRecordWithNoStartDate(
-				label, endDate, amount);
+				label, endDateWrapper.getDateTime(), amount);
 		}
 	}
 	
 	private void handleValidStartDateCases(
 			RecordCollection recordCollector,
 			String label,
-			DateTime startDate,
-			DateTime endDate,
+			DateTimeWrapper startDateWrapper,
+			DateTimeWrapper endDateWrapper,
 			double amount,
 			LogService logger) {
 		String logPrefix = "The record \"" + label + "\" has ";
 		
-		if (endDate == UNSPECIFIED_DATE) {
+		if (!endDateWrapper.isSpecified()) {
 			String logMessage =
 				logPrefix + "an unspecified end date." + NO_END_DATE_MESSAGE;
 			logger.log(LogService.LOG_WARNING, logMessage);
 		
 			recordCollector.addRecordWithNoEndDate(
-				label, startDate, amount);
-		} else if (endDate == INVALID_DATE) {
+				label, startDateWrapper.getDateTime(), amount);
+		} else if (!endDateWrapper.isValid()) {
 			String logMessage =
 				logPrefix + "an invalid end date." + NO_END_DATE_MESSAGE;
 			logger.log(LogService.LOG_WARNING, logMessage);
 		
 			recordCollector.addRecordWithNoEndDate(
-				label, startDate, amount);
+				label, startDateWrapper.getDateTime(), amount);
 		} else {
 			recordCollector.addNormalRecord(
-				label, startDate, endDate, amount);
+				label,
+				startDateWrapper.getDateTime(),
+				endDateWrapper.getDateTime(),
+				amount);
 		}
 	}
 }
