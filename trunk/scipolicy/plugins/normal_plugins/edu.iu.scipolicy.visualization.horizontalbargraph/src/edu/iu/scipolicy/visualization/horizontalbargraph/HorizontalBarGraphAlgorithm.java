@@ -121,7 +121,7 @@ public class HorizontalBarGraphAlgorithm implements Algorithm {
     	 *	 itself. et cetera. done.
     	 */
     
-    	TableRecordExtractor extractor = new TableRecordExtractor();
+    	TableRecordExtractor extractor = new TableRecordExtractor(this.logger);
     
     	RecordCollection recordCollection = extractor.extractRecords(
     		this.inputTable,
@@ -130,8 +130,7 @@ public class HorizontalBarGraphAlgorithm implements Algorithm {
     		this.endDateKey,
     		this.amountKey,
     		this.startDateFormat,
-    		this.endDateFormat,
-    		this.logger);
+    		this.endDateFormat);
     	
     	DateTime startDate = recordCollection.getMinimumStartDate();
     	DateTime endDate = recordCollection.getMaximumEndDate();
@@ -169,10 +168,10 @@ public class HorizontalBarGraphAlgorithm implements Algorithm {
     		CIShellContext ciShellContext = new LogOnlyCIShellContext();
     		Dictionary<String, Object> parameters = constructParameters();
     		
-    		 //runAlgorithmOnCNS(algorithmFactory, ciShellContext, parameters);
+    		runAlgorithmOnCNS(algorithmFactory, ciShellContext, parameters);
     		
     		/*runAlgorithmOnCornell(
-    			algorithmFactory, ciShellContext, parameters);*/
+    			algorithmFactory, ciShellContext, parameters);
     		
     		runAlgorithmOnIndiana(
     			algorithmFactory, ciShellContext, parameters);

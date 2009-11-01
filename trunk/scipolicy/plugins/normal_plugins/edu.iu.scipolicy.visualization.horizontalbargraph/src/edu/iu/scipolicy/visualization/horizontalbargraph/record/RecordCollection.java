@@ -151,19 +151,25 @@ public class RecordCollection {
 	
 	private void addRecord(Record newRecord) {
 		DateTime newRecordStartDate = newRecord.getStartDate();
-		DateTime minimumStartDate = getMinimumStartDate();
-		DateTime maximumEndDate = getMaximumEndDate();
+		
+		if (newRecordStartDate != null) {
+			DateTime minimumStartDate = getMinimumStartDate();
 
-		if ((minimumStartDate == null) ||
-				(newRecordStartDate.compareTo(minimumStartDate) < 0)) {
-			setMinimumStartDate(newRecordStartDate);
+			if ((minimumStartDate == null) ||
+					(newRecordStartDate.compareTo(minimumStartDate) < 0)) {
+				setMinimumStartDate(newRecordStartDate);
+			}
 		}
 		
 		DateTime newRecordEndDate = newRecord.getEndDate();
 		
-		if ((maximumEndDate == null) ||
-				(newRecordEndDate.compareTo(getMaximumEndDate()) > 0)) {
-			setMaximumEndDate(newRecordEndDate);
+		if (newRecordEndDate != null) {
+			DateTime maximumEndDate = getMaximumEndDate();
+			
+			if ((maximumEndDate == null) ||
+					(newRecordEndDate.compareTo(getMaximumEndDate()) > 0)) {
+				setMaximumEndDate(newRecordEndDate);
+			}
 		}
 		
 		this.records.add(newRecord);
