@@ -115,7 +115,7 @@ public class GraphContainer {
 							}
 							// Create or modify an edge as necessary.
 							node2 = this.graph.getNode(this.nodeMap.getFunctionRow(
-									splitTargetStringArray[jj]).getRowNumber());
+									new NodeID(splitTargetStringArray[jj], null)).getRowNumber());
 							EdgeContainer.mutateEdge(node1, node2, this.graph, this.table, row,
 									this.edgeMap);
 						} else {
