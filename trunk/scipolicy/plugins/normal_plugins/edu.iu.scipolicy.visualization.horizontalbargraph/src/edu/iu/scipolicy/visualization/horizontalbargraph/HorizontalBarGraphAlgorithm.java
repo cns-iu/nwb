@@ -1,6 +1,8 @@
 package edu.iu.scipolicy.visualization.horizontalbargraph;
 
 import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.URISyntaxException;
 import java.net.URL;
@@ -16,6 +18,7 @@ import org.cishell.framework.data.BasicData;
 import org.cishell.framework.data.Data;
 import org.cishell.framework.data.DataProperty;
 import org.cishell.utilities.DateUtilities;
+import org.cishell.utilities.FileUtilities;
 import org.joda.time.DateTime;
 import org.osgi.service.log.LogService;
 
@@ -38,8 +41,10 @@ public class HorizontalBarGraphAlgorithm implements Algorithm {
 	public static final String SIZE_BY_FIELD_ID = "size_by";
 	public static final String DATE_FORMAT_FIELD_ID = "date_format";
 
-	public static final String CSV_MIME_TYPE = "file:text/csv";
 	public static final String POST_SCRIPT_MIME_TYPE = "file:text/ps";
+	public static final String EPS_FILE_EXTENSION = "eps";
+	
+	public static final String CSV_MIME_TYPE = "file:text/csv";
 	public static final String TEST_DATA_PATH =
 		"/edu/iu/scipolicy/visualization/horizontalbargraph/testing/";
 	public static final String CNS_TEST_DATA_PATH = TEST_DATA_PATH + "CNS.csv";
@@ -149,9 +154,13 @@ public class HorizontalBarGraphAlgorithm implements Algorithm {
     		recordCollection);
     	String postScript = postScriptCreator.toString();
     	
-    	System.err.println(postScript);
+    	// System.err.println(postScript);
     	
-        return new Data[0];
+        File temporaryPostScriptFile =
+    		writePostScriptCodeToTemporaryFile(
+	    		postScript, "horizontal-line-graph");
+		
+		return formOutData(temporaryPostScriptFile, inputData);
     }
     
     private static StringTemplateGroup loadTemplates() {
@@ -161,6 +170,62 @@ public class HorizontalBarGraphAlgorithm implements Algorithm {
     				STRING_TEMPLATE_FILE_PATH)));
     }
     
+    private File writePostScriptCodeToTemporaryFile(
+    		String postScriptCode, String temporaryFileName)
+    		throws AlgorithmExecutionException {
+    	File temporaryPostScriptFile = null;
+    	
+    	try {
+    		temporaryPostScriptFile =
+    			FileUtilities.createTemporaryFileInDefaultTemporaryDirectory(
+    				temporaryFileName, EPS_FILE_EXTENSION);
+    	} catch (IOException postScriptFileCreationException) {
+    		String exceptionMessage =
+    			"Error creating temporary PostScript file.";
+    		
+    		throw new AlgorithmExecutionException(
+    			exceptionMessage, postScriptFileCreationException);
+    	}
+    	
+    	// TODO: Make variable names shorter?
+    	
+		try {		
+			FileWriter temporaryPostScriptFileWriter =
+				new FileWriter(temporaryPostScriptFile);
+			
+			temporaryPostScriptFileWriter.write(postScriptCode);
+			temporaryPostScriptFileWriter.flush();
+			temporaryPostScriptFileWriter.close();
+		}
+		catch (IOException postScriptFileWritingException) {
+			String exceptionMessage =
+				"Error writing PostScript out to temporary file";
+			
+			throw new AlgorithmExecutionException(
+				exceptionMessage, postScriptFileWritingException);
+		}
+		
+		return temporaryPostScriptFile;
+    }
+    
+    private Data[] formOutData(File postScriptFile, Data singleInData) {
+    	Dictionary inMetaData = singleInData.getMetadata();
+    	
+		Data postScriptData =
+			new BasicData(postScriptFile, POST_SCRIPT_MIME_TYPE);
+
+		Dictionary postScriptMetaData = postScriptData.getMetadata();
+
+		postScriptMetaData.put(
+			DataProperty.LABEL,
+			"PostScript: " + inMetaData.get(DataProperty.LABEL));
+		postScriptMetaData.put(DataProperty.PARENT, singleInData);
+		postScriptMetaData.put(
+			DataProperty.TYPE, DataProperty.VECTOR_IMAGE_TYPE);
+    	
+        return new Data[] { postScriptData };
+    }
+    
     public static void main(String[] arguments) {
     	try {
     		AlgorithmFactory algorithmFactory =
@@ -168,9 +233,9 @@ public class HorizontalBarGraphAlgorithm implements Algorithm {
     		CIShellContext ciShellContext = new LogOnlyCIShellContext();
     		Dictionary<String, Object> parameters = constructParameters();
     		
-    		runAlgorithmOnCNS(algorithmFactory, ciShellContext, parameters);
+    		/*runAlgorithmOnCNS(algorithmFactory, ciShellContext, parameters);
     		
-    		/*runAlgorithmOnCornell(
+    		runAlgorithmOnCornell(
     			algorithmFactory, ciShellContext, parameters);
     		
     		runAlgorithmOnIndiana(

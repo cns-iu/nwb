@@ -21,7 +21,7 @@ public class BasicLayout {
 	public static final double POINTS_PER_INCH = 72.0;
 	public static final double POINTS_PER_DAY = 144.0 / 365.25;
 
-	public static final int MAXIMUM_CHARACTER_COUNT = 30;
+	public static final int MAXIMUM_CHARACTER_COUNT = 50;
 	public static final double POINTS_PER_EM = 20.0;
 	public static final double TOTAL_TEXT_WIDTH_IN_POINTS =
 		MAXIMUM_CHARACTER_COUNT * POINTS_PER_EM;
@@ -226,6 +226,14 @@ public class BasicLayout {
 	}
 
 	public Bar createBar(Record record) {
+		String trimmedLabel = record.getLabel().trim();
+		String label = trimmedLabel;
+		
+		if (trimmedLabel.length() > MAXIMUM_CHARACTER_COUNT) {
+			label =
+				trimmedLabel.substring(0, MAXIMUM_CHARACTER_COUNT - 3) + "...";
+		}
+		
 		DateTime recordStartDate = record.getStartDate();
 		DateTime recordEndDate = record.getEndDate();
 		double recordAmount = record.getAmount();
@@ -236,7 +244,7 @@ public class BasicLayout {
 		double height = calculateHeight(record);
 
 		return new Bar(
-			record.getLabel(),
+			label,
 			!record.hasStartDate(),
 			!record.hasEndDate(),
 			startX,

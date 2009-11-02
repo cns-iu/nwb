@@ -16,9 +16,9 @@ boundingBoxTop, sourceDataName, pageWidth, pageHeight) ::= <<
 
 transformations(centerX, centerY, scale, rotation) ::= <<
 
-<scale> <scale> scale
-<centerX> <centerY> translate
 <rotation> rotate
+<centerX> <centerY> translate
+<scale> <scale> scale
 
 >>
 
