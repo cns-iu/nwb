@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<metatype:MetaData xmlns:metatype="http://www.osgi.org/xmlns/metatype/v1.0.0">
+	<OCD name="Aggregate Data" id="edu.iu.scipolicy.preprocessing.aggregatedata.AggregateDataAlgorithm.OCD"
+		 	description="Aggregate data in the table based on a column.">
+		<AD name="Aggregate on column" id="aggregateoncolumn" type="String" 
+			description="Column on which aggregation is to be performed. No Aggregation will be performed on 
+			this column." 
+			default="aggregate"/>
+	</OCD>
+	<Designate pid="edu.iu.scipolicy.preprocessing.aggregatedata.AggregateDataAlgorithm">
+		<Object ocdref="edu.iu.scipolicy.preprocessing.aggregatedata.AggregateDataAlgorithm.OCD" />
+	</Designate>
+</metatype:MetaData>
