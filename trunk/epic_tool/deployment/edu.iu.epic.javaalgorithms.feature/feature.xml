@@ -163,7 +163,7 @@ Dr. Katy Borner (katy@indiana.edu)
          install-size="0"
          version="0.0.0"
          unpack="false"/>
-         
+
    <plugin
          id="edu.iu.cns.converter.graceplot"
          download-size="0"
@@ -471,13 +471,6 @@ Dr. Katy Borner (katy@indiana.edu)
          download-size="0"
          install-size="0"
          version="0.0.0"
-         unpack="false"/>
-
-   <plugin
-         id="edu.iu.nwb.help.documentation"
-         download-size="0"
-         install-size="0"
-         version="0.0.1"
          unpack="false"/>
 
    <plugin
@@ -849,6 +842,13 @@ Dr. Katy Borner (katy@indiana.edu)
 
    <plugin
          id="edu.iu.cns.converter.plotcsv"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+   <plugin
+         id="edu.iu.epic.help.documentation"
          download-size="0"
          install-size="0"
          version="0.0.0"
