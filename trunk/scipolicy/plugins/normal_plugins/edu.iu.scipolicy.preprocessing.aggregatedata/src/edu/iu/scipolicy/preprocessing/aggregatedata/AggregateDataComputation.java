@@ -272,6 +272,17 @@ public class AggregateDataComputation {
 				
 				String currentCellContent = originalTable.getString(currentRowNumber, 
 																	currentColumnNumber);
+				
+				
+				
+				/*
+				 * There are cases when the Prefuse CSV reader returns a null value for
+				 * empty cells. So to handle this null checking is done. 
+				 * */
+				if (currentCellContent == null) {
+					currentCellContent = "";
+				}
+				
 				/*
 				 * Consider only non-empty string contents.
 				 * */

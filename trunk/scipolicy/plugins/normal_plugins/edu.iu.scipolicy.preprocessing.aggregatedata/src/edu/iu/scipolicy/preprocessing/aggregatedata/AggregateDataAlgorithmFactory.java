@@ -141,7 +141,7 @@ public class AggregateDataAlgorithmFactory implements AlgorithmFactory, Paramete
 				int parameterColumnNumber = table.getColumnNumber(currentColumnName);
 				newParameters.addAttributeDefinition(ObjectClassDefinition.REQUIRED,
 						new BasicAttributeDefinition(String.valueOf(parameterColumnNumber), 
-													 currentColumnName, 
+													 "Delimiter for " + currentColumnName, 
 													 "Aggregate string column " 
 													 + currentColumnName 
 													 + " using following Text Delimiter", 
