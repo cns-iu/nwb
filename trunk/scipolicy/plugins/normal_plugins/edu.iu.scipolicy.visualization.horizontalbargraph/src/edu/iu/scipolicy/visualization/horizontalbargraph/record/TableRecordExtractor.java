@@ -117,7 +117,7 @@ public class TableRecordExtractor {
 		}
 		
 		this.logMessageHandler.printOverloadedMessageTypes(
-			LogService.LOG_INFO);
+			LogService.LOG_WARNING);
 	
 		return recordCollection;
 	}
