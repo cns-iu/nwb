@@ -1,0 +1,9 @@
+external stream Stocks(Date, Open)
+
+layer Ticker[SHAPE]
+from Stocks
+	ID: "Google"
+	(X, Y): (200, 200)
+	SHAPE: "RECTANGLE"
+	SIZE: 50
+	FILL_COLOR: @color(BLUE)
