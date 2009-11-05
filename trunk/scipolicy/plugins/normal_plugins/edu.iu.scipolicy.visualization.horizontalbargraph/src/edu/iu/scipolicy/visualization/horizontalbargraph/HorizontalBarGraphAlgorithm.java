@@ -23,11 +23,11 @@ import org.joda.time.DateTime;
 import org.osgi.service.log.LogService;
 
 import prefuse.data.Table;
+import edu.iu.cns.utilities.testing.LogOnlyCIShellContext;
 import edu.iu.nwb.converter.prefusecsv.reader.PrefuseCsvReader;
 import edu.iu.scipolicy.visualization.horizontalbargraph.layout.BasicLayout;
 import edu.iu.scipolicy.visualization.horizontalbargraph.record.RecordCollection;
 import edu.iu.scipolicy.visualization.horizontalbargraph.record.TableRecordExtractor;
-import edu.iu.scipolicy.visualization.horizontalbargraph.testing.LogOnlyCIShellContext;
 
 public class HorizontalBarGraphAlgorithm implements Algorithm {
 	/* TODO: Make and test edge case datasets.
