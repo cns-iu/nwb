@@ -2,7 +2,7 @@ package edu.iu.epic.modeling.compartment.model;
 
 public class SpontaneousTransition implements Transition {
 	public static final String SYNTAX = "->";
-	
+
 	private Compartment from;
 	private Compartment to;
 	private String rate;
@@ -13,16 +13,16 @@ public class SpontaneousTransition implements Transition {
 		this.from = from;
 		this.to = to;
 		this.rate = parameter;
-		this.isSecondary = isSecondary;		
+		this.isSecondary = isSecondary;
 	}
-	
+
 	@Override
 	public String toString() {
 		String s = from + " " + SYNTAX + " " + to + " " + rate;
 		if (isSecondary) {
 			s += " " + "secondary";
 		}
-		
+
 		return s;
 	}
 

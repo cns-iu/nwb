@@ -16,6 +16,7 @@ import org.antlr.runtime.RecognitionException;
 import org.antlr.stringtemplate.StringTemplate;
 import org.antlr.stringtemplate.StringTemplateGroup;
 
+import edu.iu.epic.modeling.compartment.converter.SystemErrCapturer;
 import edu.iu.epic.modeling.compartment.grammar.parsing.ModelFileParser;
 import edu.iu.epic.modeling.compartment.grammar.parsing.ModelFileParser.UncheckedParsingException;
 import edu.iu.epic.modeling.compartment.model.exceptions.CompartmentDoesNotExistException;
@@ -26,7 +27,7 @@ import edu.iu.epic.modeling.compartment.model.exceptions.MultipleSusceptibleComp
 
 /* TODO: Create an interface for Model.  Create some sort of immutable notion of a Model as well
  * and pass that between algorithms rather than the mutable model.  Take care of the desire to
- * rename compartments of even immutable models.  Ask Russell or Joseph. 
+ * rename compartments of even immutable models.  Ask Russell or Joseph.
  */
 public class Model {
 	private static StringTemplateGroup modelFileTemplateGroup =
@@ -160,8 +161,20 @@ public class Model {
 
 	public static boolean isValidCompartmentName(String id) {
 		try {
-			ModelFileParser parser = ModelFileParser.createParserOn(id);
-			parser.compartmentIDValidator();
+			SystemErrCapturer systemErrCapturer = new SystemErrCapturer();
+			ModelFileParser compartmentIDParser = ModelFileParser.createParserOn(id);
+
+			try {
+	    		systemErrCapturer.startCapturing();
+	    		compartmentIDParser.compartmentIDValidator();
+			} finally {
+				systemErrCapturer.stopCapturing();
+			}
+
+			if (!systemErrCapturer.isEmpty()) {
+				return false;
+			}
+
 			return true; // !parser.encounteredRecognitionException();
 		} catch (RecognitionException e) {
 			return false;
@@ -176,8 +189,21 @@ public class Model {
 		}
 
 		try {
-			ModelFileParser parser = ModelFileParser.createParserOn(parameterExpression);
-			parser.parameterValueValidator(new HashSet<String>());
+			SystemErrCapturer systemErrCapturer = new SystemErrCapturer();
+			ModelFileParser parameterValueParser =
+				ModelFileParser.createParserOn(parameterExpression);
+
+			try {
+	    		systemErrCapturer.startCapturing();
+	    		parameterValueParser.parameterValueValidator(new HashSet<String>());
+			} finally {
+				systemErrCapturer.stopCapturing();
+			}
+
+			if (!systemErrCapturer.isEmpty()) {
+				return false;
+			}
+
 			return true; // !parser.encounteredRecognitionException();
 		} catch (RecognitionException e) {
 			return false;
@@ -215,7 +241,7 @@ public class Model {
 
 				ModelFileParser parser = ModelFileParser.createParserOn(parameterValue);
 
-				parser.parameterValueValidator(referencedParameters);
+				parser.parameterValue(referencedParameters);
 			}
 
 			for (Iterator<Transition> transitionsIt = transitions.iterator(); transitionsIt
@@ -225,7 +251,7 @@ public class Model {
 
 				ModelFileParser parser = ModelFileParser.createParserOn(parameterExpression);
 
-				parser.parameterValueValidator(referencedParameters);
+				parser.parameterValue(referencedParameters);
 			}
 		} catch (RecognitionException e) {
 			throw new InvalidParameterExpressionException("Error examining parameters: "
@@ -252,10 +278,10 @@ public class Model {
 		template.setAttribute(
 				"parameterDefinitions",
 				new ArrayList<Entry<String, String>>(getParameterDefinitions().entrySet()));
-		
+
 		template.setAttribute("compartments", new ArrayList<Compartment>(getCompartments()));
-		
-		template.setAttribute("transitions", getTransitions());		
+
+		template.setAttribute("transitions", getTransitions());
 
 		return template.toString();
 	}

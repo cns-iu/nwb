@@ -22,38 +22,38 @@ import java.io.PrintStream;
  */
 public class SystemErrCapturer {
 	public static final PrintStream ORIGINAL_SYSTEM_ERR = System.err;
-	
+
 	private StringBuffer buffer;
-	
-	public SystemErrCapturer() {			
+
+	public SystemErrCapturer() {
 		buffer = new StringBuffer();
-	}	
-	
-	
+	}
+
+
 	public void startCapturing() {
 		PrintStream capturingPrintStream = new PrintStream(new OutputStream() {
 			@Override
 			public void write(byte[] b) { getBuffer().append(new String(b)); }
-			
+
 			@Override
 			public void write(int b) { getBuffer().append(new String(new byte[]{(byte) b})); }
 		});
-		
+
 		System.setErr(capturingPrintStream);
 	}
-	
+
 	public void stopCapturing() {
 		System.setErr(ORIGINAL_SYSTEM_ERR);
 	}
-	
+
 	public boolean isEmpty() {
 		return (buffer.length() == 0);
 	}
-	
+
 	public StringBuffer getBuffer() {
 		return buffer;
 	}
-	
+
 	public String getCapturedMessages() {
 		return buffer.toString();
 	}

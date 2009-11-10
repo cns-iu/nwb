@@ -4,7 +4,7 @@ public final class Utility {
 	private Utility() {
 		// Static methods only.
 	}
-	
+
 	public static void checkForNullArgument(String name, Object toCheck) {
 		if (name == null) {
 			throw new IllegalArgumentException("Please don't call me with a null name.");

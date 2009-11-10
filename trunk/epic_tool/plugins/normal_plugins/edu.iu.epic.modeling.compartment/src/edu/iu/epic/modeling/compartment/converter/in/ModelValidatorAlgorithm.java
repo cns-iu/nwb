@@ -15,11 +15,11 @@ import edu.iu.epic.modeling.compartment.converter.SystemErrCapturer;
 import edu.iu.epic.modeling.compartment.grammar.parsing.ModelFileParser;
 import edu.iu.epic.modeling.compartment.grammar.parsing.ModelFileParser.UncheckedParsingException;
 
-public class ModelValidatorAlgorithm implements Algorithm {    
+public class ModelValidatorAlgorithm implements Algorithm {
 	private String inputModelFilePath;
 	private LogService logger;
-    
-	
+
+
 	public ModelValidatorAlgorithm(Data[] data, LogService logger) {
     	this.inputModelFilePath = (String) data[0].getData();
     	this.logger = logger;
@@ -28,7 +28,7 @@ public class ModelValidatorAlgorithm implements Algorithm {
 
     public Data[] execute() {
     	SystemErrCapturer systemErrCapturer = new SystemErrCapturer();
-    	
+
     	try {
     		ModelFileParser parser =
     			ModelFileParser.createParserOn(new ANTLRFileStream(inputModelFilePath));
@@ -39,7 +39,7 @@ public class ModelValidatorAlgorithm implements Algorithm {
     		} finally {
     			systemErrCapturer.stopCapturing();
     		}
-    		
+
     		if (!systemErrCapturer.isEmpty()) {
     			String message = "Unable to validate compartment model file "
     				+ "due to these syntax errors:\n"
@@ -47,16 +47,16 @@ public class ModelValidatorAlgorithm implements Algorithm {
     			logger.log(LogService.LOG_ERROR, message);
     			return null;
     		}
-    		
+
     		// Any exceptions thrown will signal an invalid file.
     		parser.getModel();
-    		
+
 //    		if (parser.encounteredRecognitionException()) {
 //    			// TODO Fetch and pass on the cause
 //    			throw new AlgorithmExecutionException(
 //    					"Failure strictly validating invalid model file");
 //    		}
-    		
+
     		BasicDataPlus outData =
     			new BasicDataPlus(new File(inputModelFilePath), Constants.MODEL_MIME_TYPE);
     		outData.setLabel("Model: " + inputModelFilePath);

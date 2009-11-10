@@ -13,7 +13,7 @@ public class ModelHandlerAlgorithm implements Algorithm {
 	private File inputModelFile;
 	private String inputFormat;
 
-	
+
 	public ModelHandlerAlgorithm(Data[] data) {
 		this.inputModelFile = (File) data[0].getData();
 		this.inputFormat = data[0].getFormat();
@@ -27,6 +27,6 @@ public class ModelHandlerAlgorithm implements Algorithm {
 			throw new AlgorithmExecutionException(
 				"Expected " + Constants.MODEL_MIME_TYPE
 				+ " but the input format is " + inputFormat);
-		}  	
+		}
     }
 }

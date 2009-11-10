@@ -4,22 +4,6 @@ options {
 	output = template; // For list labels (like (ids+=compartmentID)+)
 }
 
-/*
-@parser::rulecatch {
-
-catch (RecognitionException e) {
-	throw e;
-}
-}
-
-@lexer::rulecatch {
-catch (RecognitionException e) {
-	throw e;
-}
-}
-*/
-
-
 @parser::header {
 package edu.iu.epic.modeling.compartment.grammar.parsing;
 
@@ -74,7 +58,7 @@ public static ModelFileParser createParserOn(File file) throws IOException {
 }
 
 
-// Ignore whitespace
+// Glob multiple spaces or tabs into one ignored token.
 WHITESPACE
 	: ('\t' | ' ')+ {$channel = HIDDEN;}
 	;
@@ -82,23 +66,22 @@ WHITESPACE
 
 // Global
 modelFile
-	: (line)+ EOF
+	: line EOF
+	| (NEWLINE | (line NEWLINE))+ EOF
 	;
-// TODO Should these be (NEWLINE | EOF)?  This might obviate the need for <rule>Validator.
 // TODO This probably needs to be broken down into sections so that the final compartmentDeclaration must come before the first transitionRule.  Depends upon how we code the Object model.
 line
-	: COMMENT NEWLINE
-	| (ID '=' .*)=> parameterAssignment NEWLINE
-	| compartmentDeclaration NEWLINE
+	: COMMENT
+	| (ID '=' .*)=> parameterAssignment
+	| compartmentDeclaration
 	| (ID ('--' | '->') .*)=> transitionRule
-	| NEWLINE
 	;
 NEWLINE
 	: ('\r'? '\n')=> '\r'? '\n'
 	| '\r'
 	;
 COMMENT
-	: '#' .* NEWLINE {$channel = HIDDEN;}
+	: '#' (~('\n'|'\r'))* {$channel = HIDDEN;}
 	;
 
 
@@ -110,7 +93,6 @@ parameterAssignment
 parameterID
 	: ID
 	;
-
 parameterValueValidator[Set referencedParameters]
 	: parameterValue[referencedParameters] EOF
 	;

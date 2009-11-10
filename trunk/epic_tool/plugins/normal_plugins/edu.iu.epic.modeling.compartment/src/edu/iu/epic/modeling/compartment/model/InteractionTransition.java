@@ -17,11 +17,11 @@ public class InteractionTransition implements Transition {
 		this.rate = rate;
 		this.isSecondary = isSecondary;
 	}
-	
+
 	@Override
 	public String toString() {
 		String s = "";
-		
+
 		if (to == null) {
 			/* When there is no explicit target "to" compartment,
 			 * one assumes that the interactor is also the target.
@@ -30,11 +30,11 @@ public class InteractionTransition implements Transition {
 		} else {
 			s += from + " " + SYNTAX + " " + interactor + " = " + to + " " + rate;
 		}
-		
+
 		if (isSecondary) {
 			s += " " + "secondary";
 		}
-		
+
 		return s;
 	}
 
@@ -45,11 +45,11 @@ public class InteractionTransition implements Transition {
 	public Compartment getFrom() {
 		return from;
 	}
-	
+
 	public Compartment getInteractor() {
 		return interactor;
 	}
-	
+
 	public Compartment getTo() {
 		return to;
 	}

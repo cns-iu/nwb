@@ -12,7 +12,7 @@ public class ModelReaderAlgorithmFactory implements AlgorithmFactory {
 	@SuppressWarnings("unchecked") // Raw Dictionary
 	public Algorithm createAlgorithm(Data[] data, Dictionary parameters, CIShellContext context) {
 		LogService logger = (LogService) context.getService(LogService.class.getName());
-		
+
 		return new ModelReaderAlgorithm(data, logger);
 	}
 }

@@ -30,46 +30,46 @@ public class ModelReaderAlgorithm implements Algorithm {
 		"/edu/iu/epic/modeling/compartment/converter/testing/"
 		+ "good/"
 		+ "test.mdl";
-	
+
 	private Data inputData;
 	private File inputModelFile;
 	private LogService logger;
-    
+
     public ModelReaderAlgorithm(Data[] data, LogService logger) {
     	this.inputData = data[0];
     	this.logger = logger;
-    	
+
 		this.inputModelFile = (File) data[0].getData();
-		
+
     }
-	
+
 	public Data[] execute() throws AlgorithmExecutionException {
 		SystemErrCapturer systemErrCapturer = new SystemErrCapturer();
-		
+
 		try {
 			ModelFileLexer lex =
-				new ModelFileLexer(new ANTLRFileStream(inputModelFile.getCanonicalPath()));			
+				new ModelFileLexer(new ANTLRFileStream(inputModelFile.getCanonicalPath()));
 			CommonTokenStream tokens = new CommonTokenStream(lex);
 		   	ModelFileParser parser = new ModelFileParser(tokens);
-			
+
 		   	try {
 	    		systemErrCapturer.startCapturing();
 	    		parser.modelFile();
 		   	} finally {
 		   		systemErrCapturer.stopCapturing();
 		   	}
-    		
-    		if (!systemErrCapturer.isEmpty()) {    			
+
+    		if (!systemErrCapturer.isEmpty()) {
     			String message = "Unable to validate compartment model file "
     				+ "due to these syntax errors:\n"
     				+ systemErrCapturer.getCapturedMessages();
     			logger.log(LogService.LOG_ERROR, message);
     			throw new AlgorithmExecutionException(message);
     		}
-		    
-    		
+
+
 		    Model outputModel = parser.getModel();
-		    
+
 		    return new Data[]{ new BasicDataPlus(outputModel, inputData) };
 		} catch (IOException e) {
 			logger.log(LogService.LOG_ERROR, "Error reading model file: " + e.getMessage(), e);
@@ -88,19 +88,25 @@ public class ModelReaderAlgorithm implements Algorithm {
 			return null;
 		}
 	}
-	
+
 	public static void main(String[] args) {
 //		File outFile = null;
-		
+
 		try {
 			Dictionary<String, Object> parameters =	new Hashtable<String, Object>();
 
 			URL testFileURL = ModelReaderAlgorithm.class.getResource(TEST_DATUM_PATH);
 			File testFile = new File(testFileURL.toURI());
 			AlgorithmFactory algorithmFactory =	new ModelReaderAlgorithmFactory();
-			
+
+//			File newlineTestFile = File.createTempFile("newlineTest", "mdl");
+//			Writer writer = new FileWriter(newlineTestFile);
+//			writer.write("a=5");
+//			writer.close();
+//			testFile = newlineTestFile;
+
 			Data data = new BasicData(testFile, Constants.MODEL_MIME_TYPE);
-			
+
 			Algorithm algorithm =
 				algorithmFactory.createAlgorithm(
 						new Data[]{ data }, parameters, new LogOnlyCIShellContext());
@@ -108,15 +114,14 @@ public class ModelReaderAlgorithm implements Algorithm {
 			System.out.println("Executing.. ");
 			Data[] outputData = algorithm.execute();
 			System.out.println(".. Done.");
-			
+
 			System.out.println("Read model file:");
 			System.out.println(outputData[0].getData());
 		} catch (Exception e) {
 			e.printStackTrace();
 			System.exit(-1);
 		}
-		
-		
+
 //		// TODO Convert the remainder to unit tests?  Are we doing that?
 //		System.out.println("Parameter expression tests:");
 //		String[] parameterExpressionTests = new String[]{ "a*b", "a%b", "+", "r!beta" };
@@ -126,9 +131,9 @@ public class ModelReaderAlgorithm implements Algorithm {
 //					"'" + parameterExpressionTest + "'" + " is valid?\t\t"
 //					+ Model.isValidParameterExpression(parameterExpressionTest));
 //		}
-//		
+//
 //		System.out.println();
-//		
+//
 //		System.out.println("Compartment ID tests:");
 //		String[] compartmentIDTests =
 //			new String[]{ "S", "L", "Ia", "A7", "_S", "7A", "a+b", "a%b" };
@@ -137,13 +142,13 @@ public class ModelReaderAlgorithm implements Algorithm {
 //			System.out.println("'" + compartmentIDTest + "'" + " is valid?\t\t"
 //					+ Model.isValidCompartmentName(compartmentIDTest));
 //		}
-		
-//		StrictModelFileParser parser = Model.createStrictModelFileParserOn("a+b*foo-c");
+//
+//		ModelFileParser parser = ModelFileParser.createParserOn("a+b*foo-c");
 //		System.out.println("Referenced parameters:");
 //		try {
 //			Set<String> referencedParameters = new HashSet<String>();
-//			parser.parameterValueValidator(referencedParameters);
-//			
+//			parser.parameterValue(referencedParameters);
+//
 //			for (Iterator<String> referencedParametersIt = referencedParameters.iterator();
 //					referencedParametersIt.hasNext();) {
 //				String referencedParameter = referencedParametersIt.next();
@@ -152,19 +157,23 @@ public class ModelReaderAlgorithm implements Algorithm {
 //		} catch (RecognitionException e) {
 //			e.printStackTrace();
 //		}
-		
-		
+//
+//
 //		String[] modelFileTests = new String[]{ "asdajklwehfv\nakl;sertu;al\n" };
 //		for (int ii = 0; ii < modelFileTests.length; ii++) {
 //			String modelFileTest = modelFileTests[ii];
-//			ModelFileParser parser = Model.createModelFileParserOn(modelFileTest);
+//			ModelFileParser modelFileParser = ModelFileParser.createParserOn(modelFileTest);
 //			try {
 //				System.out.println("'" + modelFileTest + "'"
-//						+ " is valid?\t\t" + parser.modelFile());
+//						+ " is valid?\t\t" + modelFileParser.modelFile());
 //			} catch (RecognitionException e) {
 //				e.printStackTrace();
 //			}
 //		}
+
+
+
+
 
 		System.exit(0);
 	}
