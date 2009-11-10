@@ -23,6 +23,9 @@ catch (RecognitionException e) {
 @parser::header {
 package edu.iu.epic.modeling.compartment.grammar.parsing;
 
+import java.io.File;
+import java.io.IOException;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -52,6 +55,21 @@ public static class UncheckedParsingException extends RuntimeException {
 	public UncheckedParsingException(String message) {
 		super(message);
 	}
+}
+
+
+public static ModelFileParser createParserOn(ANTLRStringStream stream) {
+	ModelFileLexer lex = new ModelFileLexer(stream);		
+	CommonTokenStream tokens = new CommonTokenStream(lex);
+   	return new ModelFileParser(tokens);
+}
+
+public static ModelFileParser createParserOn(String input) {
+   	return createParserOn(new ANTLRStringStream(input));
+}
+
+public static ModelFileParser createParserOn(File file) throws IOException {
+	return createParserOn(new ANTLRFileStream(file.getCanonicalPath()));
 }
 }
 

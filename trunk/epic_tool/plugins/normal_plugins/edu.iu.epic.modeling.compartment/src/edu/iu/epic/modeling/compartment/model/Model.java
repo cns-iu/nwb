@@ -16,7 +16,7 @@ import org.antlr.runtime.RecognitionException;
 import org.antlr.stringtemplate.StringTemplate;
 import org.antlr.stringtemplate.StringTemplateGroup;
 
-import edu.iu.epic.modeling.compartment.grammar.parsing.StrictModelFileParser;
+import edu.iu.epic.modeling.compartment.grammar.parsing.ModelFileParser;
 import edu.iu.epic.modeling.compartment.grammar.parsing.ModelFileParser.UncheckedParsingException;
 import edu.iu.epic.modeling.compartment.model.exceptions.CompartmentDoesNotExistException;
 import edu.iu.epic.modeling.compartment.model.exceptions.CompartmentExistsException;
@@ -160,7 +160,7 @@ public class Model {
 
 	public static boolean isValidCompartmentName(String id) {
 		try {
-			StrictModelFileParser parser = StrictModelFileParser.createParserOn(id);
+			ModelFileParser parser = ModelFileParser.createParserOn(id);
 			parser.compartmentIDValidator();
 			return true; // !parser.encounteredRecognitionException();
 		} catch (RecognitionException e) {
@@ -176,8 +176,7 @@ public class Model {
 		}
 
 		try {
-			StrictModelFileParser parser = StrictModelFileParser
-					.createParserOn(parameterExpression);
+			ModelFileParser parser = ModelFileParser.createParserOn(parameterExpression);
 			parser.parameterValueValidator(new HashSet<String>());
 			return true; // !parser.encounteredRecognitionException();
 		} catch (RecognitionException e) {
@@ -214,7 +213,7 @@ public class Model {
 				Entry<String, String> parameterDefinition = parameterDefinitionsIt.next();
 				String parameterValue = parameterDefinition.getValue();
 
-				StrictModelFileParser parser = StrictModelFileParser.createParserOn(parameterValue);
+				ModelFileParser parser = ModelFileParser.createParserOn(parameterValue);
 
 				parser.parameterValueValidator(referencedParameters);
 			}
@@ -224,8 +223,7 @@ public class Model {
 				Transition transition = transitionsIt.next();
 				String parameterExpression = transition.getRate();
 
-				StrictModelFileParser parser = StrictModelFileParser
-						.createParserOn(parameterExpression);
+				ModelFileParser parser = ModelFileParser.createParserOn(parameterExpression);
 
 				parser.parameterValueValidator(referencedParameters);
 			}

@@ -12,7 +12,7 @@ import org.osgi.service.log.LogService;
 
 import edu.iu.epic.modeling.compartment.converter.Constants;
 import edu.iu.epic.modeling.compartment.converter.SystemErrCapturer;
-import edu.iu.epic.modeling.compartment.grammar.parsing.StrictModelFileParser;
+import edu.iu.epic.modeling.compartment.grammar.parsing.ModelFileParser;
 import edu.iu.epic.modeling.compartment.grammar.parsing.ModelFileParser.UncheckedParsingException;
 
 public class ModelValidatorAlgorithm implements Algorithm {    
@@ -30,8 +30,8 @@ public class ModelValidatorAlgorithm implements Algorithm {
     	SystemErrCapturer systemErrCapturer = new SystemErrCapturer();
     	
     	try {
-    		StrictModelFileParser parser =
-    			StrictModelFileParser.createParserOn(new ANTLRFileStream(inputModelFilePath));
+    		ModelFileParser parser =
+    			ModelFileParser.createParserOn(new ANTLRFileStream(inputModelFilePath));
 
     		try {
 	    		systemErrCapturer.startCapturing();
