@@ -19,7 +19,7 @@ import prefuse.data.io.DataIOException;
  * @author Weixia(Bonnie) Huang 
  */
 public class PrefuseGraphMLWriter implements Algorithm {
-	public static final String GRAPHML_FILE_EXTENSION = "file:text/graphml+xml";
+	public static final String GRAPHML_MIME_TYPE = "file:text/graphml+xml";
 	
 	private Graph inGraph;
     
@@ -42,7 +42,7 @@ public class PrefuseGraphMLWriter implements Algorithm {
 			(new GraphMLWriter()).writeGraph(inGraph, outStream);
 			
 			return new Data[]{ new BasicData(
-					outGraphMLFile, GRAPHML_FILE_EXTENSION) };			
+					outGraphMLFile, GRAPHML_MIME_TYPE) };			
 		} catch (IOException e) {
 			throw new AlgorithmExecutionException(e.getMessage(), e);
 		} catch (DataIOException e) {
