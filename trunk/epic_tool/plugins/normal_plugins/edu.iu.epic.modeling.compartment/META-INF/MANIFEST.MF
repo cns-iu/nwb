@@ -4,8 +4,7 @@ Bundle-Name: Modeling
 Bundle-SymbolicName: edu.iu.epic.modeling.compartment
 Bundle-Version: 1.0.0
 Bundle-ClassPath: .
-Import-Package: edu.iu.cns.utilities.testing,
- edu.iu.epic.modeling.compartment.model,
+Import-Package: edu.iu.cns.utilities.testing;resolution:=optional,
  org.antlr.runtime,
  org.antlr.stringtemplate,
  org.antlr.stringtemplate.language,
