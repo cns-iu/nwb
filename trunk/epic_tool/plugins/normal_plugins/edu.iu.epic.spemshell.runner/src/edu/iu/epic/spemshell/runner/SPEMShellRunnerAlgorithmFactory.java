@@ -1,7 +1,5 @@
 package edu.iu.epic.spemshell.runner;
 
-import java.io.File;
-import java.io.IOException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Collection;
@@ -9,7 +7,6 @@ import java.util.Dictionary;
 import java.util.Random;
 import java.util.Set;
 
-import org.antlr.runtime.RecognitionException;
 import org.cishell.framework.CIShellContext;
 import org.cishell.framework.algorithm.Algorithm;
 import org.cishell.framework.algorithm.AlgorithmFactory;
@@ -24,7 +21,9 @@ import org.osgi.service.log.LogService;
 import org.osgi.service.metatype.AttributeDefinition;
 import org.osgi.service.metatype.ObjectClassDefinition;
 
-import edu.iu.epic.spemshell.runner.preprocessing.parsing.ModelFileReader;
+import edu.iu.epic.modeling.compartment.model.Compartment;
+import edu.iu.epic.modeling.compartment.model.Model;
+import edu.iu.epic.modeling.compartment.model.exceptions.InvalidParameterExpressionException;
 
 public class SPEMShellRunnerAlgorithmFactory
 		implements AlgorithmFactory, ParameterMutator {	
@@ -69,8 +68,9 @@ public class SPEMShellRunnerAlgorithmFactory
 	public static final String INFECTION_PREFIX = "INFECTION_";
 	public static final String LATENT_PREFIX = "LATENT_";
 	public static final String RECOVERED_PREFIX = "RECOVERED_";
+	public static final int DEFAULT_COMPARTMENT_INITIAL_POPULATION = 0;
 	
-	private static BundleContext bundleContext;	
+	private static BundleContext bundleContext;
 	protected void activate(ComponentContext componentContext) {
 		SPEMShellRunnerAlgorithmFactory.bundleContext =
 			componentContext.getBundleContext();
@@ -88,33 +88,31 @@ public class SPEMShellRunnerAlgorithmFactory
 
     /* Add algorithm parameters:
      * - That always belong (like the initial total population or number of days).
-     * - For the initial population of each compartment declared in the model file. // TODO Currently only infections
+     * - For the initial population of each compartment declared in the model file.
+     * 		// TODO Currently only infections.
      * - For each model parameter that is needed and not already specified in the model file.
      */
 	public ObjectClassDefinition mutateParameters(Data[] data,
 			ObjectClassDefinition oldParameters) {
-		File modelFile = (File) data[0].getData();
+		Model model = (Model) data[0].getData();
 		
 		BasicObjectClassDefinition newParameters =
 			MutateParameterUtilities.createNewParameters(oldParameters);
 		
 		newParameters.addAttributeDefinition(
-				ObjectClassDefinition.REQUIRED,
-				POPULATION_ATTRIBUTE_DEFINITION);
+				ObjectClassDefinition.REQUIRED,	POPULATION_ATTRIBUTE_DEFINITION);
 		
 		newParameters.addAttributeDefinition(
-				ObjectClassDefinition.REQUIRED,
-				NUMBER_OF_DAYS_ATTRIBUTE_DEFINITION);
+				ObjectClassDefinition.REQUIRED, NUMBER_OF_DAYS_ATTRIBUTE_DEFINITION);
 		
 		newParameters.addAttributeDefinition(
-				ObjectClassDefinition.REQUIRED,
-				START_DATE_ATTRIBUTE_DEFINITION);
+				ObjectClassDefinition.REQUIRED,	START_DATE_ATTRIBUTE_DEFINITION);
 		
 		
 		final String seedDescription =
-			"The seed value for the pseudo-random number generator.  " +
-			"If you would like to reproduce results from an earlier run, " +
-			"use the same seed, otherwise use the given default.";
+			"The seed value for the pseudo-random number generator.  "
+			+ "If you would like to reproduce results from an earlier run, "
+			+ "use the same seed, otherwise use the given default.";
 		newParameters.addAttributeDefinition(
 				ObjectClassDefinition.REQUIRED,
 				new BasicAttributeDefinition(
@@ -124,24 +122,25 @@ public class SPEMShellRunnerAlgorithmFactory
 						AttributeDefinition.INTEGER,
 						String.valueOf((new Random()).nextInt())));
 		
-		try {
-			ModelFileReader modelFileReader =
-				new ModelFileReader(modelFile.getPath());
+		
+		// Add a parameter for the initial population of each compartment.
+		Set<Compartment> infectedCompartments = model.getCompartments(Compartment.Type.INFECTED);
+		for (Compartment infectedCompartment : infectedCompartments) {
+			String infectionCompartmentName = infectedCompartment.getName();
 			
-			// Add a parameter for the initial population of each compartment.
-			Set<String> infectionCompartments = modelFileReader.getInfectionCompartments();
-			for (String compartment : infectionCompartments) {
-				newParameters.addAttributeDefinition(
-						ObjectClassDefinition.REQUIRED,
-						new BasicAttributeDefinition(
-								COMPARTMENT_POPULATION_PREFIX + INFECTION_PREFIX + compartment,
-								createCompartmentPopulationParameterName(
-										compartment),
-								createCompartmentPopulationParameterDescription(
-										compartment),
-								AttributeDefinition.INTEGER));
-			}
+			String id =
+				COMPARTMENT_POPULATION_PREFIX + INFECTION_PREFIX + infectionCompartmentName;
 			
+			newParameters.addAttributeDefinition(
+					ObjectClassDefinition.REQUIRED,
+					new BasicAttributeDefinition(
+						id,
+						createCompartmentPopulationParameterName(infectionCompartmentName),
+						createCompartmentPopulationParameterDescription(infectionCompartmentName),
+						AttributeDefinition.INTEGER,
+						String.valueOf(DEFAULT_COMPARTMENT_INITIAL_POPULATION)));
+		}
+		
 //			/* As of version v0.1, asking SPEMShell to take initial populations
 //			 * in a latent or recovered compartment appears to have no effect,
 //			 * so for now we won't give the illusion of choice.
@@ -173,48 +172,37 @@ public class SPEMShellRunnerAlgorithmFactory
 //										compartment),
 //								AttributeDefinition.INTEGER));
 //			}
-			
-			/* Add an algorithm parameter for each model parameter
-			 * that is needed and not already specified.
-			 */
-			Collection<String> unboundReferencedParameters =
-				modelFileReader.findUnboundReferencedParameters();			
-			for (String unboundReferencedParameter : unboundReferencedParameters) {
-				newParameters.addAttributeDefinition(
-						ObjectClassDefinition.REQUIRED,
-						new BasicAttributeDefinition(
-								MODEL_PARAMETER_PREFIX + unboundReferencedParameter,
-								createModelParametersAlgorithmParameterName(
-										unboundReferencedParameter),
-								createModelParametersAlgorithmParameterDescription(
-										unboundReferencedParameter),
-								AttributeDefinition.DOUBLE));
-			}
-		} catch (IOException e) {
-			String message =
-				"Error accessing model file to create parameters dialog; " +
-				"continuing without custom parameters.";
-			
-			SPEMShellRunnerAlgorithm.logger.log(
-					LogService.LOG_WARNING,
-					message,
+		
+		/* Add an algorithm parameter for each model parameter
+		 * that is needed and not already specified.
+		 */
+		Collection<String> unboundReferencedParameters;
+		try {
+			unboundReferencedParameters = model.listUnboundReferencedParameters();
+		} catch (InvalidParameterExpressionException e) {
+			SPEMShellRunnerAlgorithm.getLogger().log(LogService.LOG_ERROR,
+					"Could not create parameters dialog due to error "
+					+ "calculating unbound, referenced parameters: "
+					+ e.getMessage(),
 					e);
-		} catch (RecognitionException e) {
-			String message =
-				"Error parsing model file to create parameters dialog; " +
-				"continuing without custom parameters.";
-			
-			SPEMShellRunnerAlgorithm.logger.log(
-					LogService.LOG_WARNING,
-					message,
-					e);
+			return oldParameters;
+		}		
+		for (String unboundReferencedParameter : unboundReferencedParameters) {
+			newParameters.addAttributeDefinition(
+					ObjectClassDefinition.REQUIRED,
+					new BasicAttributeDefinition(
+							MODEL_PARAMETER_PREFIX + unboundReferencedParameter,
+							createModelParametersAlgorithmParameterName(
+									unboundReferencedParameter),
+							createModelParametersAlgorithmParameterDescription(
+									unboundReferencedParameter),
+							AttributeDefinition.DOUBLE));
 		}
 		
 		return newParameters;		
 	}
 	
-	private static String createCompartmentPopulationParameterName(
-			String compartmentName) {
+	private static String createCompartmentPopulationParameterName(String compartmentName) {
 		return "Initial population of " + compartmentName;
 	}
 	
@@ -258,10 +246,7 @@ public class SPEMShellRunnerAlgorithmFactory
 			try {
 				this.dateFormat.parse(value);
 			} catch (ParseException e) {
-				return (
-						"Please enter a date in the format \"" + 
-						this.pattern + 
-						"\".");
+				return ("Please enter a date in the format \"" + this.pattern + "\".");
 			}
 			
 			return "";

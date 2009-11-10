@@ -8,7 +8,6 @@ import java.util.Dictionary;
 import java.util.Hashtable;
 import java.util.Map;
 
-import org.antlr.runtime.RecognitionException;
 import org.antlr.stringtemplate.StringTemplateGroup;
 import org.cishell.framework.CIShellContext;
 import org.cishell.framework.algorithm.Algorithm;
@@ -20,24 +19,26 @@ import org.cishell.framework.data.DataProperty;
 import org.cishell.utilities.AlgorithmUtilities;
 import org.osgi.service.log.LogService;
 
+import edu.iu.epic.modeling.compartment.model.Compartment;
+import edu.iu.epic.modeling.compartment.model.Model;
+import edu.iu.epic.modeling.compartment.model.exceptions.CompartmentDoesNotExistException;
+import edu.iu.epic.modeling.compartment.model.exceptions.MultipleSusceptibleCompartmentsException;
 import edu.iu.epic.spemshell.runner.postprocessing.DatToCsv;
 import edu.iu.epic.spemshell.runner.preprocessing.InFileMaker;
 import edu.iu.epic.spemshell.runner.preprocessing.InfectionsFileMaker;
-import edu.iu.epic.spemshell.runner.preprocessing.ModelFileMaker;
-import edu.iu.epic.spemshell.runner.preprocessing.parsing.ModelFileReader;
+import edu.iu.epic.spemshell.runner.preprocessing.SPEMShellModelFileMaker;
 
 public class SPEMShellRunnerAlgorithm implements Algorithm {	
 	public static final String PLAIN_TEXT_MIME_TYPE = "file:text/plain";
 	public static final String CSV_MIME_TYPE = "file:text/csv";
 	public static final String IN_FILE_MIME_TYPE = "file:text/in";
 
-	public static final String SPEMSHELL_CORE_PID =
-		"edu.iu.epic.spemshell.core";
+	public static final String SPEMSHELL_CORE_PID = "edu.iu.epic.spemshell.core";
 	
 	private Data[] data;
 	private Dictionary<String, Object> parameters;
 	private CIShellContext context;
-	protected static LogService logger;
+	private static LogService logger;
 
 
 	public SPEMShellRunnerAlgorithm(
@@ -62,10 +63,6 @@ public class SPEMShellRunnerAlgorithm implements Algorithm {
 		} catch (IOException e) {
 			throw new AlgorithmExecutionException(
 					"Error creating data for SPEMShell: " + e.getMessage(),
-					e);
-		} catch (RecognitionException e) {
-			throw new AlgorithmExecutionException(
-					"Error parsing model file: " + e.getMessage(),
 					e);
 		} catch (ParseException e) {
 			throw new AlgorithmExecutionException(
@@ -118,46 +115,56 @@ public class SPEMShellRunnerAlgorithm implements Algorithm {
 
 	private Data[] createSPEMShellInData(
 			Data[] data, Dictionary<String, Object> parameters)
-				throws IOException, RecognitionException, ParseException {
+				throws IOException, ParseException, AlgorithmExecutionException {
 		/* Fetch the compartment initial populations
 		 * from the algorithm parameters.
 		 */
-		Map<String, Object> infectionCompartmentPopulations =
+		Map<String, Object> infectedCompartmentPopulations =
 			CIShellParameterUtilities.filterByAndStripIDPrefixes(
 					parameters,
-					SPEMShellRunnerAlgorithmFactory.COMPARTMENT_POPULATION_PREFIX + 
-					SPEMShellRunnerAlgorithmFactory.INFECTION_PREFIX);
+					SPEMShellRunnerAlgorithmFactory.COMPARTMENT_POPULATION_PREFIX
+					+ SPEMShellRunnerAlgorithmFactory.INFECTION_PREFIX);
 		
 		Map<String, Object> latentCompartmentPopulations =
 			CIShellParameterUtilities.filterByAndStripIDPrefixes(
 					parameters,
-					SPEMShellRunnerAlgorithmFactory.COMPARTMENT_POPULATION_PREFIX + 
-					SPEMShellRunnerAlgorithmFactory.LATENT_PREFIX);
+					SPEMShellRunnerAlgorithmFactory.COMPARTMENT_POPULATION_PREFIX
+					+ SPEMShellRunnerAlgorithmFactory.LATENT_PREFIX);
 		
 		Map<String, Object> recoveredCompartmentPopulations =
 			CIShellParameterUtilities.filterByAndStripIDPrefixes(
 					parameters,
-					SPEMShellRunnerAlgorithmFactory.COMPARTMENT_POPULATION_PREFIX + 
-					SPEMShellRunnerAlgorithmFactory.RECOVERED_PREFIX);
+					SPEMShellRunnerAlgorithmFactory.COMPARTMENT_POPULATION_PREFIX
+					+ SPEMShellRunnerAlgorithmFactory.RECOVERED_PREFIX);
 		
 		// Create the SPEMShell model file from the EpiC model file.
-		File epicModelFile = (File) data[0].getData();
-		ModelFileMaker modelFileMaker =
-			new ModelFileMaker(epicModelFile, parameters);		
-		File spemShellModelFile =
-			modelFileMaker.make();		
-		ModelFileReader modelFileReader =
-			new ModelFileReader(epicModelFile.getPath());
+		Model epicModel = (Model) data[0].getData();
+		SPEMShellModelFileMaker spemShellModelFileMaker =
+			new SPEMShellModelFileMaker(epicModel, parameters);		
+		File spemShellModelFile = spemShellModelFileMaker.make();		
+//		ModelFileReader modelFileReader =
+//			new ModelFileReader(epicModelFile.getPath());
 		
 		/* Create the .in file, making sure to give it the path to the
 		 * created SPEMShell model file.
 		 */
+		String susceptibleCompartmentName = null;
+		try {
+			Compartment susceptibleCompartment = epicModel.getSusceptibleCompartment();
+			susceptibleCompartmentName = susceptibleCompartment.getName();
+		} catch (CompartmentDoesNotExistException e) {
+			throw new AlgorithmExecutionException(
+					"Error: Required 'susceptible' compartment not found in model.", e);
+		} catch (MultipleSusceptibleCompartmentsException e) {
+			throw new AlgorithmExecutionException(
+					"Error: Model declares more than one 'susceptible' compartment.", e);
+		}
 		InFileMaker inFileMaker =
 			new InFileMaker(
 					spemShellModelFile.getPath(),
 					parameters,
-					modelFileReader.getSusceptibleCompartmentID(),
-					infectionCompartmentPopulations,
+					susceptibleCompartmentName,
+					infectedCompartmentPopulations,
 					latentCompartmentPopulations,
 					recoveredCompartmentPopulations);
 		File inFile = inFileMaker.make();
@@ -165,7 +172,7 @@ public class SPEMShellRunnerAlgorithm implements Algorithm {
 		// Create the infections file.
 		InfectionsFileMaker infectionsFileMaker = new InfectionsFileMaker();
 		File infectionsFile =
-			infectionsFileMaker.make(infectionCompartmentPopulations);
+			infectionsFileMaker.make(infectedCompartmentPopulations);
 		
 		// Put it all together to get the in data for the SPEMShell core.
 		Data[] spemShellData =
@@ -193,5 +200,9 @@ public class SPEMShellRunnerAlgorithm implements Algorithm {
 				new InputStreamReader(
 						SPEMShellRunnerAlgorithm.class.getResourceAsStream(
 								templatePath)));
+	}
+
+	public static LogService getLogger() {
+		return logger;
 	}
 }
