@@ -23,7 +23,7 @@ import org.osgi.service.metatype.ObjectClassDefinition;
 
 import edu.iu.epic.modeling.compartment.model.Compartment;
 import edu.iu.epic.modeling.compartment.model.Model;
-import edu.iu.epic.modeling.compartment.model.exceptions.InvalidParameterExpressionException;
+import edu.iu.epic.modeling.compartment.model.exception.InvalidParameterExpressionException;
 
 public class SPEMShellRunnerAlgorithmFactory
 		implements AlgorithmFactory, ParameterMutator {	

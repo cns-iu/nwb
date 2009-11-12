@@ -21,8 +21,8 @@ import org.osgi.service.log.LogService;
 
 import edu.iu.epic.modeling.compartment.model.Compartment;
 import edu.iu.epic.modeling.compartment.model.Model;
-import edu.iu.epic.modeling.compartment.model.exceptions.CompartmentDoesNotExistException;
-import edu.iu.epic.modeling.compartment.model.exceptions.MultipleSusceptibleCompartmentsException;
+import edu.iu.epic.modeling.compartment.model.exception.CompartmentDoesNotExistException;
+import edu.iu.epic.modeling.compartment.model.exception.MultipleSusceptibleCompartmentsException;
 import edu.iu.epic.spemshell.runner.postprocessing.DatToCsv;
 import edu.iu.epic.spemshell.runner.preprocessing.InFileMaker;
 import edu.iu.epic.spemshell.runner.preprocessing.InfectionsFileMaker;
