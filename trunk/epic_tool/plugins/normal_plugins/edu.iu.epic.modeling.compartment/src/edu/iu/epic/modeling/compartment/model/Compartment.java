@@ -1,7 +1,7 @@
 package edu.iu.epic.modeling.compartment.model;
 
-import edu.iu.epic.modeling.compartment.model.exceptions.CompartmentExistsException;
-import edu.iu.epic.modeling.compartment.model.exceptions.InvalidCompartmentNameException;
+import edu.iu.epic.modeling.compartment.model.exception.CompartmentExistsException;
+import edu.iu.epic.modeling.compartment.model.exception.InvalidCompartmentNameException;
 
 
 public class Compartment {
@@ -27,7 +27,6 @@ public class Compartment {
 	@Override
 	public String toString() {
 		return name;
-//		return name + "(" + type + ")";
 	}
 
 	public synchronized void setName(String name)

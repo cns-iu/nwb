@@ -74,7 +74,7 @@ line
 	: COMMENT
 	| (ID '=' .*)=> parameterAssignment
 	| compartmentDeclaration
-	| (ID ('--' | '->') .*)=> transitionRule
+	| (ID ('--' | '->') .*)=> transition
 	;
 NEWLINE
 	: ('\r'? '\n')=> '\r'? '\n'
@@ -92,6 +92,9 @@ parameterAssignment
 	catch[ModelModificationException e] { throw new UncheckedParsingException(e); }
 parameterID
 	: ID
+	;
+parameterIDValidator
+	: ID EOF
 	;
 parameterValueValidator[Set referencedParameters]
 	: parameterValue[referencedParameters] EOF
@@ -137,31 +140,31 @@ recoveredCompartmentDeclaration
 
 
 // Transitions
-transitionRate
+transitionRatio
 	: parameterValue[new HashSet()]
 	;
-transitionRule
+transition
 	@init { boolean isSecondary = false; }
-	: spontaneousTransitionRelation transitionRate ('secondary' { isSecondary = true; })?
+	: ratioTransition transitionRatio ('secondary' { isSecondary = true; })?
 		{
-		model.addSpontaneousTransition(
-			model.getCompartment($spontaneousTransitionRelation.source),
-			model.getCompartment($spontaneousTransitionRelation.target),
-			$transitionRate.text,
+		model.addRatioTransition(
+			model.getCompartment($ratioTransition.source),
+			model.getCompartment($ratioTransition.target),
+			$transitionRatio.text,
 			isSecondary);
 		}
-	| interactionTransitionRelation transitionRate ('secondary' { isSecondary = true; })?
+	| infectionTransition transitionRatio ('secondary' { isSecondary = true; })?
 		{
-		model.addInteractionTransition(
-			model.getCompartment($interactionTransitionRelation.source),
-			model.getCompartment($interactionTransitionRelation.interactor),
-			model.getCompartment($interactionTransitionRelation.target),
-			$transitionRate.text,
+		model.addInfectionTransition(
+			model.getCompartment($infectionTransition.source),
+			model.getCompartment($infectionTransition.infector),
+			model.getCompartment($infectionTransition.target),
+			$transitionRatio.text,
 			isSecondary);
 		}
 	;
 	catch[ModelModificationException e] { throw new UncheckedParsingException(e); }
-spontaneousTransitionRelation returns [String source, String target]
+ratioTransition returns [String source, String target]
 	: s=compartmentID '->' t=compartmentID
 		{
 		$source = $s.text;
@@ -174,11 +177,11 @@ compartmentID
 compartmentIDValidator
 	: compartmentID EOF
 	;
-interactionTransitionRelation returns [String source, String interactor, String target]
+infectionTransition returns [String source, String infector, String target]
 	: s=compartmentID '--' i=compartmentID '=' t=compartmentID
 		{
 		$source = $s.text;
-		$interactor = $i.text;
+		$infector = $i.text;
 		$target = $t.text;
 		}
 	;

@@ -1,0 +1,27 @@
+<compartmentalModel date="Tue Nov 10 21:13:13 2009 UTC" xmlns="http://www.gleamviz/xmlns/gleamviz_v1">
+  <compartments>
+    <compartment id="A" isTraveller="true" isCommuter="true" isSecondary="false" x="96" y="59" color="5750468"/>
+    <compartment id="B" isTraveller="true" isCommuter="true" isSecondary="false" x="35" y="278" color="5750468"/>
+    <compartment id="C" isTraveller="true" isCommuter="true" isSecondary="false" x="486" y="184" color="5750468"/>
+    <compartment id="D" isTraveller="true" isCommuter="true" isSecondary="false" x="235" y="389" color="5750468"/>
+    <compartment id="E" isTraveller="true" isCommuter="true" isSecondary="false" x="626" y="98" color="5750468"/>
+  </compartments>
+  <ratioTransitions>
+    <ratioTransition source="A" target="B" ratio="a*b" labelPosition="0.5"/>
+  </ratioTransitions>
+  <infections>
+    <infection source="A" target="C">
+      <infector source="B" ratio="7+3*b" x="57" y="-116"/>
+    </infection>
+    <infection source="A" target="D">
+      <infector source="A" ratio="0.4*a" x="71" y="2.5"/>
+    </infection>
+    <infection source="A" target="E">
+      <infector source="E" ratio="1" x="291" y="-81"/>
+    </infection>
+  </infections>
+  <variables>
+    <variable name="7a" value="b"/>
+    <variable name="b" value="a"/>
+  </variables>
+</compartmentalModel>

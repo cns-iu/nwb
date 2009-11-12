@@ -16,14 +16,15 @@ import org.antlr.runtime.RecognitionException;
 import org.antlr.stringtemplate.StringTemplate;
 import org.antlr.stringtemplate.StringTemplateGroup;
 
-import edu.iu.epic.modeling.compartment.converter.SystemErrCapturer;
+import edu.iu.epic.modeling.compartment.converters.text.SystemErrCapturer;
 import edu.iu.epic.modeling.compartment.grammar.parsing.ModelFileParser;
 import edu.iu.epic.modeling.compartment.grammar.parsing.ModelFileParser.UncheckedParsingException;
-import edu.iu.epic.modeling.compartment.model.exceptions.CompartmentDoesNotExistException;
-import edu.iu.epic.modeling.compartment.model.exceptions.CompartmentExistsException;
-import edu.iu.epic.modeling.compartment.model.exceptions.InvalidCompartmentNameException;
-import edu.iu.epic.modeling.compartment.model.exceptions.InvalidParameterExpressionException;
-import edu.iu.epic.modeling.compartment.model.exceptions.MultipleSusceptibleCompartmentsException;
+import edu.iu.epic.modeling.compartment.model.exception.CompartmentDoesNotExistException;
+import edu.iu.epic.modeling.compartment.model.exception.CompartmentExistsException;
+import edu.iu.epic.modeling.compartment.model.exception.InvalidCompartmentNameException;
+import edu.iu.epic.modeling.compartment.model.exception.InvalidParameterExpressionException;
+import edu.iu.epic.modeling.compartment.model.exception.InvalidParameterNameException;
+import edu.iu.epic.modeling.compartment.model.exception.MultipleSusceptibleCompartmentsException;
 
 /* TODO: Create an interface for Model.  Create some sort of immutable notion of a Model as well
  * and pass that between algorithms rather than the mutable model.  Take care of the desire to
@@ -80,55 +81,90 @@ public class Model {
 
 			Compartment compartment = new Compartment(this, name, type);
 			this.compartments.put(name, compartment);
+			
 			return compartment;
 		} else {
 			throw new InvalidCompartmentNameException(name);
 		}
 	}
 
-	public synchronized SpontaneousTransition addSpontaneousTransition(Compartment from,
-			Compartment to, String parameterExpression, boolean isSecondary)
+	public synchronized RatioTransition addRatioTransition(Compartment source,
+			Compartment target, String ratio, boolean isSecondary)
 			throws InvalidParameterExpressionException {
-		Utility.checkForNullArgument("from", from);
-		Utility.checkForNullArgument("to", to);
-		Utility.checkForNullArgument("parameter", parameterExpression);
-		if (!isValidParameterExpression(parameterExpression)) {
-			throw new InvalidParameterExpressionException(parameterExpression);
+		Utility.checkForNullArgument("source", source);
+		Utility.checkForNullArgument("target", target);
+		Utility.checkForNullArgument("ratio", ratio);
+		if (!isValidParameterExpression(ratio)) {
+			throw new InvalidParameterExpressionException(ratio);
 		}
 		Utility.checkForNullArgument("isSecondary", isSecondary);
 
-		SpontaneousTransition transition = new SpontaneousTransition(from, to, parameterExpression,
+		RatioTransition transition = new RatioTransition(source, target, ratio,
 				isSecondary);
 		this.transitions.add(transition);
 		return transition;
 	}
 
-	public synchronized InteractionTransition addInteractionTransition(Compartment from,
-			Compartment interactsWith, Compartment to, String parameterExpression,
+	public synchronized InfectionTransition addInfectionTransition(Compartment source,
+			Compartment infector, Compartment target, String ratio,
 			boolean isSecondary) throws InvalidParameterExpressionException {
-		Utility.checkForNullArgument("from", from);
-		Utility.checkForNullArgument("interactsWith", interactsWith);
-		Utility.checkForNullArgument("to", to);
-		if (!isValidParameterExpression(parameterExpression)) {
-			throw new InvalidParameterExpressionException(parameterExpression);
+		Utility.checkForNullArgument("source", source);
+		Utility.checkForNullArgument("infector", infector);
+		Utility.checkForNullArgument("target", target);
+		Utility.checkForNullArgument("ratio", ratio);
+		if (!isValidParameterExpression(ratio)) {
+			throw new InvalidParameterExpressionException(ratio);
 		}
 		Utility.checkForNullArgument("isSecondary", isSecondary);
 
-		InteractionTransition transition = new InteractionTransition(from, interactsWith, to,
-				parameterExpression, isSecondary);
+		InfectionTransition transition = new InfectionTransition(source, infector, target,
+				ratio, isSecondary);
 		this.transitions.add(transition);
 		return transition;
 	}
 
-	public synchronized void setParameterDefinition(String name, String expression)
-			throws InvalidParameterExpressionException {
+	public synchronized void setParameterDefinition(String name, String value)
+			throws InvalidParameterExpressionException, InvalidParameterNameException {
 		Utility.checkForNullArgument("name", name);
-		// don't need to check expression; null isn't a valid definition
-		if (!isValidParameterExpression(expression)) {
-			throw new InvalidParameterExpressionException(expression);
+		if (!isValidParameterName(name)) {
+			throw new InvalidParameterNameException(name);
+		}
+		
+		// Don't need to check expression; null isn't a valid definition
+		if (!isValidParameterExpression(value)) {
+			throw new InvalidParameterExpressionException(value);
 		}
 		// TODO: check for cycles in dependency graph?
-		this.parameterDefinitions.put(name, expression);
+		this.parameterDefinitions.put(name, value);
+	}
+
+	private boolean isValidParameterName(String name) {
+		if (name == null) {
+			return false;
+		}
+
+		try {
+			SystemErrCapturer systemErrCapturer = new SystemErrCapturer();
+			ModelFileParser parameterValueParser =
+				ModelFileParser.createParserOn(name);
+
+			try {
+	    		systemErrCapturer.startCapturing();
+	    		parameterValueParser.parameterIDValidator();
+			} finally {
+				systemErrCapturer.stopCapturing();
+			}
+
+			if (!systemErrCapturer.isEmpty()) {
+				return false;
+			}
+
+			return true;
+		} catch (RecognitionException e) {
+			return false;
+		} catch (UncheckedParsingException e) {
+			return false;
+		}
 	}
 
 	public synchronized void removeParameterDefinition(String name) {
@@ -247,7 +283,7 @@ public class Model {
 			for (Iterator<Transition> transitionsIt = transitions.iterator(); transitionsIt
 					.hasNext();) {
 				Transition transition = transitionsIt.next();
-				String parameterExpression = transition.getRate();
+				String parameterExpression = transition.getRatio();
 
 				ModelFileParser parser = ModelFileParser.createParserOn(parameterExpression);
 

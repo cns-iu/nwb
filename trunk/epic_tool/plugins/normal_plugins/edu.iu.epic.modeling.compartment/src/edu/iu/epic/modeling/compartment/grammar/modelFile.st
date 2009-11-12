@@ -1,7 +1,7 @@
 group modelFile;
 
 modelFile(parameterDefinitions, compartments, transitions) ::= <<
-# Compartment model
+# Compartmental epidemics model
 
 # Parameter definitions
 <parameterDefinitions:parameterDefinition();separator="\n">
