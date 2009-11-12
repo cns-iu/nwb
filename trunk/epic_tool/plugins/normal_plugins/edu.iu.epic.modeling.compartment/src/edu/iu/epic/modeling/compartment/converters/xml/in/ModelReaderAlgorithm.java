@@ -13,6 +13,7 @@ import org.cishell.framework.algorithm.AlgorithmFactory;
 import org.cishell.framework.data.BasicData;
 import org.cishell.framework.data.Data;
 import org.cishell.utilities.BasicDataPlus;
+import org.cishell.utilities.FileUtilities;
 import org.osgi.service.log.LogService;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
@@ -24,7 +25,7 @@ import edu.iu.epic.modeling.compartment.converters.xml.Constants;
 import edu.iu.epic.modeling.compartment.model.Model;
 
 public class ModelReaderAlgorithm implements Algorithm {
-	public static final String TEST_DATUM_PATH =
+	public static final String TEST_FILE_PATH =
 		"/edu/iu/epic/modeling/compartment/converters/xml/testing/"
 		+ "good/"
 		+ "test.model.xml";
@@ -68,12 +69,8 @@ public class ModelReaderAlgorithm implements Algorithm {
 
 	public static void main(String[] args) {
 		try {
-			Dictionary<String, Object> parameters =	new Hashtable<String, Object>();
-
-			AlgorithmFactory algorithmFactory =	new ModelReaderAlgorithmFactory();
-			
-			URL testFileURL = ModelReaderAlgorithm.class.getResource(TEST_DATUM_PATH);
-			File testFile = new File(testFileURL.toURI());			
+			File testFile =
+				FileUtilities.loadFileFromClassPath(ModelReaderAlgorithm.class, TEST_FILE_PATH);		
 
 //			File testFile = File.createTempFile("newlineTest", "mdl");
 //			Writer writer = new FileWriter(testFile);
@@ -82,9 +79,12 @@ public class ModelReaderAlgorithm implements Algorithm {
 
 			Data data = new BasicData(testFile, Constants.MODEL_MIME_TYPE);
 
+			AlgorithmFactory algorithmFactory =	new ModelReaderAlgorithmFactory();
 			Algorithm algorithm =
 				algorithmFactory.createAlgorithm(
-						new Data[] { data }, parameters, new LogOnlyCIShellContext());
+						new Data[] { data },
+						new Hashtable<String, Object>(),
+						new LogOnlyCIShellContext());
 
 			System.out.println("Executing.. ");
 			Data[] outputData = algorithm.execute();
