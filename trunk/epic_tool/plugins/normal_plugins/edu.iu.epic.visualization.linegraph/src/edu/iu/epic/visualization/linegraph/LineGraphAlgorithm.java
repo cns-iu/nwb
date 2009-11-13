@@ -8,6 +8,7 @@ import java.util.Dictionary;
 import java.util.Hashtable;
 
 import javax.swing.JFrame;
+import javax.swing.SwingUtilities;
 
 import org.cishell.framework.CIShellContext;
 import org.cishell.framework.algorithm.Algorithm;
@@ -15,20 +16,34 @@ import org.cishell.framework.algorithm.AlgorithmExecutionException;
 import org.cishell.framework.algorithm.AlgorithmFactory;
 import org.cishell.framework.data.BasicData;
 import org.cishell.framework.data.Data;
-import org.cishell.utilities.FileUtilities;
 import org.osgi.service.log.LogService;
 
 import prefuse.data.Table;
-import prefuse.util.collections.IntIterator;
+import stencil.adapters.java2D.Adapter;
 import stencil.explore.PropertyManager;
 import stencil.streams.Tuple;
 import stencil.util.BasicTuple;
 import edu.iu.cns.utilities.testing.LogOnlyCIShellContext;
 import edu.iu.epic.visualization.linegraph.utilities.StencilRunner;
 import edu.iu.epic.visualization.linegraph.utilities.StencilRunnerCreationException;
+import edu.iu.epic.visualization.linegraph.utilities.TableTupleStream;
+import edu.iu.epic.visualization.linegraph.utilities.TupleStream;
 import edu.iu.nwb.converter.prefusecsv.reader.PrefuseCsvReader;
 
 public class LineGraphAlgorithm implements Algorithm {
+	public static final String WINDOW_TITLE = "Line Graph Visualization";
+	
+	public static final String TEST_TIME_STEP_COLUMN_NAME = "Date";
+	public static final String TEST_LINE_COLUMN_NAME_1 = "Open";
+	public static final String TEST_LINE_COLUMN_NAME_2 = "High";
+	public static final String TEST_LINE_COLUMN_NAME_3 = "Low";
+	public static final String TEST_LINE_COLUMN_NAME_4 = "Close";
+	public static final String TEST_LINE_COLUMN_NAME_5 = "Volume";
+	public static final String TEST_STENCIL_STREAM_NAME = "Data";
+	public static final String TEST_STENCIL_TIME_STEP_ID = "Timestep";
+	public static final String TEST_LINE_COLUMN_ID = "Line";
+	public static final String TEST_VALUE_ID = "Value";
+
 	public static final String STENCIL_STREAM_NAME = "Stocks";
 	public static final String STENCIL_X_AXIS_NAME = "Date";
 	public static final String STENCIL_Y_AXIS_NAME = "Open";
@@ -48,7 +63,6 @@ public class LineGraphAlgorithm implements Algorithm {
 	public static final String TEST_DATASET_1_PATH =
 		TEST_DATA_PATH + "TestDataset1.csv";
 
-    private Data inputData;
     private Table inputTable;
     private String xAxisName;
     private String yAxisName;
@@ -58,7 +72,6 @@ public class LineGraphAlgorithm implements Algorithm {
     public LineGraphAlgorithm(Data[] data,
     				  Dictionary parameters,
     				  CIShellContext ciShellContext) {
-        this.inputData = data[0];
         this.inputTable = (Table)data[0].getData();
         
         this.xAxisName = (String)parameters.get(X_AXIS_NAME_KEY);
@@ -73,7 +86,7 @@ public class LineGraphAlgorithm implements Algorithm {
     	PropertyManager.loadProperties(
     		new String[0], PropertyManager.stencilConfig);
 
-    	File stencilProgramFile = null;
+    	final File stencilProgramFile;
     	
     	try {
     		stencilProgramFile = loadFileFromClassPath(
@@ -83,82 +96,94 @@ public class LineGraphAlgorithm implements Algorithm {
     		String exceptionMessage =
     			"A serious error occurred when loading the Stencil to " +
     			"visualize your data.  Please send us your logs.";
-    	}
-    	
-    	// TODO: Solve the javaw.exe hanging problem?
-
-    	try {
-    		/*CrappyStencilRunner stencilRunner = CrappyStencilRunner.createStencilRunner(
-    			stencilProgramFile,
-    			this.xAxisName,
-    			this.yAxisName,
-    			this.inputTable);
-    		Display display = stencilRunner.getDisplay();
-    		Shell shell = stencilRunner.getShell();
-
-			stencilRunner.runStencil();
-			
-			shell.open();
-			
-			while (!shell.isDisposed()) {
-				if (!display.readAndDispatch()) {
-					display.sleep();
-				}
-			}
-			
-			display.dispose();*/
-
-			/*Adapter displayAdapter = Adapter.INSTANCE;
-			//Panel stencilPanel = createStencilPanel(stencilProgramFile);
-			Panel stencilPanel = displayAdapter.compile(
-				FileUtilities.readEntireTextFile(stencilProgramFile));
-			JFrame frame = new JFrame();
-			//frame.add(stencilPanel);
-			Container contentPane = frame.getContentPane();
-			java.awt.Panel userControlPanel = new java.awt.Panel();
-			JSplitPane splitPane = new JSplitPane(
-				JSplitPane.HORIZONTAL_SPLIT, userControlPanel, stencilPanel);
-			contentPane.add(splitPane);
-
-			frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-			frame.pack();
-			frame.setSize(800, 600);
-			frame.setBackground(Color.BLACK);
-			stencilPanel.setSize(800, 600);
-			stencilPanel.preRun();
-			frame.setVisible(true);
-
-			for (IntIterator rows = this.inputTable.rows(); rows.hasNext(); ) {
-				int rowIndex = rows.nextInt();
-				
-				stencilPanel.processTuple(
-					createTuple(this.inputTable, rowIndex));
-			}*/
-    	
-    		StencilRunner stencilRunner =
-    			StencilRunner.createStencilRunner(stencilProgramFile);
-    		JFrame frame = stencilRunner.createFrame();
-    		// TODO: TupleStream?
-    		
-    		for (IntIterator rows = this.inputTable.rows(); rows.hasNext(); ) {
-				int rowIndex = rows.nextInt();
-				
-				stencilRunner.processStencilTuple(
-					createTuple(this.inputTable, rowIndex));
-			}
-    	} catch (StencilRunnerCreationException
-    				stencilRunnerCreationException) {
-    		// TODO: Improve this exception message.
-    		String exceptionMessage =
-    			"A problem occurred when visualization your data.  " +
-    			"Please be patient while this error message improves.";
     		
     		throw new AlgorithmExecutionException(
-    			exceptionMessage, stencilRunnerCreationException);
-    	} catch (Exception exception) {
-    		System.err.println(exception.getMessage());
-    		exception.printStackTrace();
+    			exceptionMessage, stencilProgramNotFoundException);
     	}
+
+   		//SwingUtilities.invokeLater(new Runnable() {
+    		//public void run() {
+    			final StencilRunner stencilRunner;
+    			//StencilRunner stencilRunner = null;
+
+	    		try {
+    				stencilRunner =
+    					StencilRunner.createStencilRunner(stencilProgramFile);
+    			} catch (StencilRunnerCreationException
+    						stencilRunnerCreationException) {
+		    		// TODO: Improve this exception message.
+    				String exceptionMessage =
+    					"A problem occurred when visualization your data.  " +
+    					"Please be patient while this error message improves.";
+    				System.err.println(exceptionMessage);
+    				throw new AlgorithmExecutionException(
+    					exceptionMessage, stencilRunnerCreationException);
+    			} catch (Exception exception) {
+    				System.err.println(exception.getMessage());
+    				exception.printStackTrace();
+
+	    			throw new AlgorithmExecutionException(exception);
+    			}
+
+	    		// TODO: Figure out this threading problem?
+	    		// TODO: Wire this up so it uses actual input data.
+	    		// TODO: Export button.
+    			// TODO: Check boxes to toggle lines.
+
+		    	TupleStream testStream1 = new TableTupleStream(
+    				LineGraphAlgorithm.this.inputTable,
+    				TEST_TIME_STEP_COLUMN_NAME,
+    				TEST_LINE_COLUMN_NAME_1,
+	    			TEST_STENCIL_STREAM_NAME,
+	    			TEST_STENCIL_TIME_STEP_ID,
+    				TEST_LINE_COLUMN_ID,
+    				TEST_VALUE_ID);
+    			TupleStream testStream2 = new TableTupleStream(
+	    			LineGraphAlgorithm.this.inputTable,
+		    		TEST_TIME_STEP_COLUMN_NAME,
+    				TEST_LINE_COLUMN_NAME_2,
+    				TEST_STENCIL_STREAM_NAME,
+    				TEST_STENCIL_TIME_STEP_ID,
+		    		TEST_LINE_COLUMN_ID,
+    				TEST_VALUE_ID);
+    			TupleStream testStream3 = new TableTupleStream(
+	    			LineGraphAlgorithm.this.inputTable,
+    				TEST_TIME_STEP_COLUMN_NAME,
+	    			TEST_LINE_COLUMN_NAME_3,
+    				TEST_STENCIL_STREAM_NAME,
+	    			TEST_STENCIL_TIME_STEP_ID,
+    				TEST_LINE_COLUMN_ID,
+    				TEST_VALUE_ID);
+		    	TupleStream testStream4 = new TableTupleStream(
+    				LineGraphAlgorithm.this.inputTable,
+    				TEST_TIME_STEP_COLUMN_NAME,
+    				TEST_LINE_COLUMN_NAME_4,
+	    			TEST_STENCIL_STREAM_NAME,
+	    			TEST_STENCIL_TIME_STEP_ID,
+    				TEST_LINE_COLUMN_ID,
+    				TEST_VALUE_ID);
+	    		TupleStream testStream5 = new TableTupleStream(
+    				LineGraphAlgorithm.this.inputTable,
+	    			TEST_TIME_STEP_COLUMN_NAME,
+    				TEST_LINE_COLUMN_NAME_5,
+	    			TEST_STENCIL_STREAM_NAME,
+    				TEST_STENCIL_TIME_STEP_ID,
+    				TEST_LINE_COLUMN_ID,
+	    			TEST_VALUE_ID);
+		    	stencilRunner.addTupleStream(testStream1);
+    			stencilRunner.addTupleStream(testStream2);
+    			stencilRunner.addTupleStream(testStream3);
+	    		stencilRunner.addTupleStream(testStream4);
+			    //stencilRunner.addTupleStream(testStream5);
+	    		
+	    		JFrame frame = stencilRunner.createFrame(WINDOW_TITLE);
+	    		SwingUtilities.invokeLater(new Runnable() {
+	    			public void run() {
+    					stencilRunner.playStreams();
+	    			}
+	    		});
+    		//}
+    	//});
     	
         return new Data[0];
     }

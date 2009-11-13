@@ -72,4 +72,16 @@ public class TableTupleStream implements TupleStream {
 		this.rows = this.table.rows();
 		this.lastRow = -1;
 	}
+	
+	public long streamSize() {
+		IntIterator fakeRows = this.table.rows();
+		long size = 0;
+		
+		while (fakeRows.hasNext()) {
+			size++;
+			fakeRows.next();
+		}
+		
+		return size;
+	}
 }
