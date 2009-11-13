@@ -1,4 +1,4 @@
-package edu.iu.epic.spemshell.runner.preprocessing;
+package edu.iu.epic.spemshell.runner.single.preprocessing;
 
 import java.io.File;
 import java.io.FileWriter;
@@ -13,9 +13,9 @@ import org.antlr.stringtemplate.StringTemplateGroup;
 import org.cishell.utilities.FileUtilities;
 
 import edu.iu.epic.modeling.compartment.model.Model;
-import edu.iu.epic.spemshell.runner.CIShellParameterUtilities;
-import edu.iu.epic.spemshell.runner.SPEMShellRunnerAlgorithm;
-import edu.iu.epic.spemshell.runner.SPEMShellRunnerAlgorithmFactory;
+import edu.iu.epic.spemshell.runner.single.CIShellParameterUtilities;
+import edu.iu.epic.spemshell.runner.single.SPEMShellRunnerAlgorithm;
+import edu.iu.epic.spemshell.runner.single.SPEMShellRunnerAlgorithmFactory;
 
 // Converts from an EpiC-style model file to a SPEMShell-style model file.
 /* TODO If we decide to do away with compartment declarations permanently,
@@ -26,8 +26,9 @@ public class SPEMShellModelFileMaker {
 	public static final String FILENAME = "simul";
 	public static final String FILE_EXTENSION = "mdl";	
 	
-	private static StringTemplateGroup spemShellModelFileTemplateGroup = SPEMShellRunnerAlgorithm
-			.loadTemplates("/edu/iu/epic/spemshell/runner/preprocessing/spemShellModelFile.st");
+	private static StringTemplateGroup spemShellModelFileTemplateGroup =
+		SPEMShellRunnerAlgorithm.loadTemplates(
+				"/edu/iu/epic/spemshell/runner/single/preprocessing/spemShellModelFile.st");
 	
 	private Model epicModel;
 	private Map<String, Object> modelParameterDefinitions;

@@ -1,4 +1,4 @@
-package edu.iu.epic.spemshell.runner;
+package edu.iu.epic.spemshell.runner.single;
 
 import java.io.File;
 import java.io.IOException;
@@ -20,10 +20,10 @@ import org.cishell.utilities.AlgorithmUtilities;
 import org.osgi.service.log.LogService;
 
 import edu.iu.epic.modeling.compartment.model.Model;
-import edu.iu.epic.spemshell.runner.postprocessing.DatToCsv;
-import edu.iu.epic.spemshell.runner.preprocessing.InFileMaker;
-import edu.iu.epic.spemshell.runner.preprocessing.InfectionsFileMaker;
-import edu.iu.epic.spemshell.runner.preprocessing.SPEMShellModelFileMaker;
+import edu.iu.epic.spemshell.runner.single.postprocessing.DatToCsv;
+import edu.iu.epic.spemshell.runner.single.preprocessing.InFileMaker;
+import edu.iu.epic.spemshell.runner.single.preprocessing.InfectionsFileMaker;
+import edu.iu.epic.spemshell.runner.single.preprocessing.SPEMShellModelFileMaker;
 
 public class SPEMShellRunnerAlgorithm implements Algorithm {	
 	public static final String PLAIN_TEXT_MIME_TYPE = "file:text/plain";

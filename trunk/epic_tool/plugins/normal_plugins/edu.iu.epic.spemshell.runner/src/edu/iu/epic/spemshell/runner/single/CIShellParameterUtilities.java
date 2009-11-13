@@ -1,4 +1,4 @@
-package edu.iu.epic.spemshell.runner;
+package edu.iu.epic.spemshell.runner.single;
 
 import java.util.Dictionary;
 import java.util.Enumeration;

@@ -1,4 +1,4 @@
-package edu.iu.epic.spemshell.runner.preprocessing;
+package edu.iu.epic.spemshell.runner.single.preprocessing;
 
 import java.io.File;
 import java.io.FileWriter;
@@ -10,7 +10,7 @@ import org.antlr.stringtemplate.StringTemplate;
 import org.antlr.stringtemplate.StringTemplateGroup;
 import org.cishell.utilities.FileUtilities;
 
-import edu.iu.epic.spemshell.runner.SPEMShellRunnerAlgorithm;
+import edu.iu.epic.spemshell.runner.single.SPEMShellRunnerAlgorithm;
 
 public class InfectionsFileMaker {
 	public static final String FILENAME = "infections";
@@ -18,7 +18,7 @@ public class InfectionsFileMaker {
 	
 	private static StringTemplateGroup infectionsFileTemplateGroup =
 		SPEMShellRunnerAlgorithm.loadTemplates(
-				"/edu/iu/epic/spemshell/runner/preprocessing/infectionsFile.st");
+				"/edu/iu/epic/spemshell/runner/single/preprocessing/infectionsFile.st");
 	
 	
 	public File make(Map<String, Object> infectionCompartmentPopulations)

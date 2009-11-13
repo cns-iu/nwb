@@ -1,4 +1,4 @@
-package edu.iu.epic.spemshell.runner.preprocessing;
+package edu.iu.epic.spemshell.runner.single.preprocessing;
 
 import java.io.BufferedWriter;
 import java.io.File;
@@ -16,8 +16,8 @@ import org.antlr.stringtemplate.StringTemplate;
 import org.antlr.stringtemplate.StringTemplateGroup;
 import org.cishell.utilities.FileUtilities;
 
-import edu.iu.epic.spemshell.runner.SPEMShellRunnerAlgorithm;
-import edu.iu.epic.spemshell.runner.SPEMShellRunnerAlgorithmFactory;
+import edu.iu.epic.spemshell.runner.single.SPEMShellRunnerAlgorithm;
+import edu.iu.epic.spemshell.runner.single.SPEMShellRunnerAlgorithmFactory;
 
 public class InFileMaker {
 	public static final int DEFAULT_NUMBER_OF_SECONDARY_EVENTS = 0;
@@ -27,7 +27,7 @@ public class InFileMaker {
 	public static final String IN_FILE_TEMPLATE_NAME = "inFile";	
 	private static StringTemplateGroup inFileTemplateGroup =
 		SPEMShellRunnerAlgorithm.loadTemplates(
-				"/edu/iu/epic/spemshell/runner/preprocessing/inFile.st");
+				"/edu/iu/epic/spemshell/runner/single/preprocessing/inFile.st");
 	
 	private String modelFilePath;
 	private Dictionary<String, Object> parameters;
