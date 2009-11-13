@@ -7,6 +7,7 @@ import java.awt.event.ActionListener;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.List;
 
 import javax.swing.BoxLayout;
 import javax.swing.JButton;
@@ -19,6 +20,7 @@ import org.cishell.utilities.FileUtilities;
 
 import stencil.adapters.java2D.Adapter;
 import stencil.adapters.java2D.Panel;
+import stencil.display.StencilPanel;
 
 public class StencilRunner {
 	public static final String REPLAY_BUTTON_LABEL = "Replay";
@@ -26,17 +28,18 @@ public class StencilRunner {
 	public static final String FILE_SAVE_DIALOG_TEXT =
 		"Export Line Graph Rendering As...";
 	
-	private String stencilProgramString;
+	private boolean isShown = false;
+	
+	private JFrame frame;
 	private JSplitPane splitPane;
 	private Panel stencilPanel;
 	private ArrayList<TupleStream> tupleStreams = new ArrayList<TupleStream>();
 	
 	private StencilRunner(String stencilProgramString) throws Exception {
-		this.stencilProgramString = stencilProgramString;
 		createSplitPane();
 	}
 
-	public static StencilRunner createStencilRunner(File stencilProgramFile)
+	public static StencilRunner createStencilRunner()
 			throws StencilRunnerCreationException {
 		try {
 			return createStencilRunner(FileUtilities.readEntireTextFile(
@@ -62,20 +65,32 @@ public class StencilRunner {
 		return new StencilRunner(stencilProgramString);
 	}
 	
-	public void addTupleStream(TupleStream stream) {
-		if (!this.tupleStreams.contains(stream)) {
-			this.tupleStreams.add(stream);
+	private void addNewStencilPanel(StencilData stencilData) throws Exception {
+		//dispose of old panel
+		if (this.stencilPanel != null) {
+			this.stencilPanel.dispose();
+			this.splitPane.setRightComponent(null);
+			this.stencilPanel = null;
 		}
+		
+		Adapter displayAdapter = Adapter.INSTANCE;
+		
+		List<TupleStream> streams = stencilData.createStreams();
+		String stencilScript = stencilData.getStencilScript();
+		
+		this.stencilPanel = displayAdapter.compile(stencilScript);
+		this.splitPane.setRightComponent(stencilPanel);
+		this.stencilPanel.preRun();
 	}
 	
-	public void removeTupleStream(TupleStream stream) {
-		if (this.tupleStreams.contains(stream)) {
-			this.tupleStreams.remove(stream);
+	public void playStencil(StencilData stencilData) throws Exception {
+		if (! this.isShown()) {
+			show();
 		}
-	}
-	
-	public void playStreams() {
-		System.err.println("playing stream");
+		
+		addNewStencilPanel(stencilData);
+		
+		List<TupleStream> streams = stencilData.createStreams();
 		/* TODO: Provide the option of playing the streams in parallel vs.
 		 * playing them one after another?
 		 */
@@ -84,12 +99,12 @@ public class StencilRunner {
 		}*/
 		// We're assuming all of our streams are of the same size.
 		// TODO: Change this?
-		if (this.tupleStreams.size() != 0) {
+		if (streams.size() != 0) {
 			try {
-				long streamSize = this.tupleStreams.get(0).streamSize();
+				long streamSize = streams.get(0).streamSize();
 
 				for (long ii = 0; ii < streamSize; ii++) {
-					for (TupleStream stream : this.tupleStreams) {
+					for (TupleStream stream : streams) {
 						this.stencilPanel.processTuple(stream.nextTuple());
 					}
 				}
@@ -100,11 +115,20 @@ public class StencilRunner {
 		}
 	}
 	
+	public void show() {
+		createFrame("Stencil");
+		this.isShown = true;
+	}
+	
+	public boolean isShown() {
+		return this.isShown;
+	}
+	
 	/* WARNING: Disposing this frame will also dispose the stencil panel
 	 * inside of it!
 	 */
-	public JFrame createFrame(String frameTitle) {
-		JFrame frame = new JFrame(frameTitle);
+	private JFrame createFrame(String frameTitle) {
+		this.frame = new JFrame(frameTitle);
 		Container contentPane = frame.getContentPane();
 		contentPane.add(this.splitPane);
 		
@@ -112,8 +136,8 @@ public class StencilRunner {
 		frame.pack();
 		frame.setSize(800, 600);
 		frame.setBackground(Color.BLACK);
-		this.stencilPanel.setSize(800, 600);
-		this.stencilPanel.preRun();
+		//this.stencilPanel.setSize(800, 600);
+		//this.stencilPanel.preRun(); MIGHT CAUSE PROBLEMS IF DOESN'T EXIST AT THIS POINT
 		frame.setVisible(true);
 
 		return frame;
