@@ -82,3 +82,11 @@ Import-Package: edu.iu.cns.utilities.testing,
  stencil.util.streams.ui
 X-AutoStart: true
 Service-Component: OSGI-INF/component.xml
+Require-Bundle: org.eclipse.ui;bundle-version="3.4.1",
+ org.eclipse.ui.ide;bundle-version="3.4.1",
+ org.eclipse.core.resources;bundle-version="3.4.1",
+ org.eclipse.core.runtime;bundle-version="3.4.0",
+ org.eclipse.jdt;bundle-version="3.4.1",
+ org.eclipse.jdt.core;bundle-version="3.4.2",
+ org.eclipse.jdt.launching;bundle-version="3.4.1",
+ org.eclipse.jdt.ui;bundle-version="3.4.1"
