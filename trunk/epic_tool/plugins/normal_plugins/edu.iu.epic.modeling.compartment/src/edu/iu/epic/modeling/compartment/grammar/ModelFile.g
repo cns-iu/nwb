@@ -15,7 +15,7 @@ import java.util.Set;
 
 import edu.iu.epic.modeling.compartment.model.Compartment;
 import edu.iu.epic.modeling.compartment.model.Model;
-import edu.iu.epic.modeling.compartment.model.exceptions.ModelModificationException;
+import edu.iu.epic.modeling.compartment.model.exception.ModelModificationException;
 }
 
 @lexer::header {
@@ -73,7 +73,6 @@ modelFile
 line
 	: COMMENT
 	| (ID '=' .*)=> parameterAssignment
-	| compartmentDeclaration
 	| (ID ('--' | '->') .*)=> transition
 	;
 NEWLINE
@@ -114,31 +113,6 @@ arithmeticParameterFactor[Set referencedParameters]
 	;
 
 
-// Compartment declarations
-compartmentDeclaration
-	: susceptibleCompartmentDeclaration
-	| infectedCompartmentDeclaration
-	| latentCompartmentDeclaration
-	| recoveredCompartmentDeclaration
-	;
-susceptibleCompartmentDeclaration
-	: 'susceptible' compartmentID	{ model.addCompartment($compartmentID.text, Compartment.Type.SUSCEPTIBLE); }
-	;
-	catch[ModelModificationException e] { throw new UncheckedParsingException(e); }
-infectedCompartmentDeclaration
-	: 'infection' compartmentID	{ model.addCompartment($compartmentID.text, Compartment.Type.INFECTED); }
-	;
-	catch[ModelModificationException e] { throw new UncheckedParsingException(e); }
-latentCompartmentDeclaration
-	: 'latent' compartmentID	{ model.addCompartment($compartmentID.text, Compartment.Type.LATENT); }
-	;
-	catch[ModelModificationException e] { throw new UncheckedParsingException(e); }
-recoveredCompartmentDeclaration
-	: 'recovered' compartmentID	{ model.addCompartment($compartmentID.text, Compartment.Type.RECOVERED); }
-	;
-	catch[ModelModificationException e] { throw new UncheckedParsingException(e); }
-
-
 // Transitions
 transitionRatio
 	: parameterValue[new HashSet()]
@@ -148,17 +122,17 @@ transition
 	: ratioTransition transitionRatio ('secondary' { isSecondary = true; })?
 		{
 		model.addRatioTransition(
-			model.getCompartment($ratioTransition.source),
-			model.getCompartment($ratioTransition.target),
+			model.getOrAddCompartment($ratioTransition.source),
+			model.getOrAddCompartment($ratioTransition.target),
 			$transitionRatio.text,
 			isSecondary);
 		}
 	| infectionTransition transitionRatio ('secondary' { isSecondary = true; })?
 		{
 		model.addInfectionTransition(
-			model.getCompartment($infectionTransition.source),
-			model.getCompartment($infectionTransition.infector),
-			model.getCompartment($infectionTransition.target),
+			model.getOrAddCompartment($infectionTransition.source),
+			model.getOrAddCompartment($infectionTransition.infector),
+			model.getOrAddCompartment($infectionTransition.target),
 			$transitionRatio.text,
 			isSecondary);
 		}
@@ -171,12 +145,6 @@ ratioTransition returns [String source, String target]
 		$target = $t.text;
 		}
 	;
-compartmentID
-	: ID
-	;
-compartmentIDValidator
-	: compartmentID EOF
-	;
 infectionTransition returns [String source, String infector, String target]
 	: s=compartmentID '--' i=compartmentID '=' t=compartmentID
 		{
@@ -184,6 +152,12 @@ infectionTransition returns [String source, String infector, String target]
 		$infector = $i.text;
 		$target = $t.text;
 		}
+	;
+compartmentID
+	: ID
+	;
+compartmentIDValidator
+	: compartmentID EOF
 	;
 
 

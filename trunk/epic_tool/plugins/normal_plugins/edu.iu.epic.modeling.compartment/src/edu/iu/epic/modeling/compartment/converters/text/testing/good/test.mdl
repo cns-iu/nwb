@@ -32,12 +32,6 @@ beta = R0*miu/temp
 # Model Definition                                                            #
 ###############################################################################
 
-susceptible S
-infection Ia
-infection It
-latent L
-recovered R
-
 # Legend
 # S -- I             => S becomes I when it interacts with I
 # I -> R             => I spontaneously decays in to R

@@ -5,7 +5,6 @@ import java.text.SimpleDateFormat;
 import java.util.Collection;
 import java.util.Dictionary;
 import java.util.Random;
-import java.util.Set;
 
 import org.cishell.framework.CIShellContext;
 import org.cishell.framework.algorithm.Algorithm;
@@ -27,6 +26,7 @@ import edu.iu.epic.modeling.compartment.model.exception.InvalidParameterExpressi
 
 public class SPEMShellRunnerAlgorithmFactory
 		implements AlgorithmFactory, ParameterMutator {	
+	public static final String INITIAL_COMPARTMENT_PARAMETER_ID = "initialCompartment";
 	public static final String START_DATE_ID = "startDate";
 	public static final String NUMBER_OF_DAYS_ID = "days";
 	public static final int DEFAULT_NUMBER_OF_DAYS = 730;
@@ -87,6 +87,8 @@ public class SPEMShellRunnerAlgorithmFactory
     }
 
     /* Add algorithm parameters:
+     * - For the compartment representing initial population
+     * 		(a dropdown with all available compartment names).
      * - That always belong (like the initial total population or number of days).
      * - For the initial population of each compartment declared in the model file.
      * 		// TODO Currently only infections.
@@ -96,8 +98,13 @@ public class SPEMShellRunnerAlgorithmFactory
 			ObjectClassDefinition oldParameters) {
 		Model model = (Model) data[0].getData();
 		
+		Collection<String> compartmentNames = model.getCompartmentNames();
 		BasicObjectClassDefinition newParameters =
-			MutateParameterUtilities.createNewParameters(oldParameters);
+			MutateParameterUtilities.mutateToDropdown(
+					oldParameters,
+				INITIAL_COMPARTMENT_PARAMETER_ID,
+				compartmentNames,
+				compartmentNames);
 		
 		newParameters.addAttributeDefinition(
 				ObjectClassDefinition.REQUIRED,	POPULATION_ATTRIBUTE_DEFINITION);
@@ -124,7 +131,7 @@ public class SPEMShellRunnerAlgorithmFactory
 		
 		
 		// Add a parameter for the initial population of each compartment.
-		Set<Compartment> infectedCompartments = model.getCompartments(Compartment.Type.INFECTED);
+		Collection<Compartment> infectedCompartments = model.getInfectedCompartments();
 		for (Compartment infectedCompartment : infectedCompartments) {
 			String infectionCompartmentName = infectedCompartment.getName();
 			

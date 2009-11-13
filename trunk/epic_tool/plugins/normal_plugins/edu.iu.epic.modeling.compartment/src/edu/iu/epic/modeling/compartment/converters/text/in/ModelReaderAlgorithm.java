@@ -28,8 +28,8 @@ import edu.iu.epic.modeling.compartment.model.Model;
 public class ModelReaderAlgorithm implements Algorithm {
 	public static final String TEST_DATUM_PATH =
 		"/edu/iu/epic/modeling/compartment/converters/text/testing/"
-		+ "good/"
-		+ "test.mdl";
+		+ "bad/"
+		+ "duplicateCompartmentName.bad.mdl";
 
 	private Data inputData;
 	private File inputModelFile;
@@ -122,15 +122,15 @@ public class ModelReaderAlgorithm implements Algorithm {
 			System.exit(-1);
 		}
 
-		// TODO Convert the remainder to unit tests?  Are we doing that?
-		System.out.println("Parameter expression tests:");
-		String[] parameterExpressionTests = new String[]{ "a*b", "a%b", "+", "r!beta", "7a" };
-		for (int ii = 0; ii < parameterExpressionTests.length; ii++) {
-			String parameterExpressionTest = parameterExpressionTests[ii];
-			System.out.println(
-					"'" + parameterExpressionTest + "'" + " is valid?\t\t"
-					+ Model.isValidParameterExpression(parameterExpressionTest));
-		}
+//		// TODO Convert the remainder to unit tests?  Are we doing that?
+//		System.out.println("Parameter expression tests:");
+//		String[] parameterExpressionTests = new String[]{ "a*b", "a%b", "+", "r!beta", "7a" };
+//		for (int ii = 0; ii < parameterExpressionTests.length; ii++) {
+//			String parameterExpressionTest = parameterExpressionTests[ii];
+//			System.out.println(
+//					"'" + parameterExpressionTest + "'" + " is valid?\t\t"
+//					+ Model.isValidParameterExpression(parameterExpressionTest));
+//		}
 //
 //		System.out.println();
 //

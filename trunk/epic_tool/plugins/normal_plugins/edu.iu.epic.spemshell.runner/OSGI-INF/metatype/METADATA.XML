@@ -2,11 +2,11 @@
 <metatype:MetaData xmlns:metatype="http://www.osgi.org/xmlns/metatype/v1.0.0">
 	<OCD name="Single-Population" id="edu.iu.epic.spemshell.runner.SPEMShellRunnerAlgorithm.OCD"
 		 description="Simulate an infection or infections with given epidemics model and a simple single-population population model.">
-		<!-- This dummy attribute definition will not be used by the algorithm.
-				It is given only so that there is *some* attribute definition,
-				since otherwise the Factory would receive a null object class
-				definition. -->
-		<AD name="DUMMY_AD" id="DUMMY_AD" type="String" description="DUMMY_AD" default="DUMMY_AD"/>
+		<AD name="Initial Compartment"
+			id="initialCompartment"
+			type="String"
+			description="Which compartment represents the initial population?"
+			default="Mutate"/>
 	</OCD>
 	<Designate pid="edu.iu.epic.spemshell.runner.SPEMShellRunnerAlgorithm">
 		<Object ocdref="edu.iu.epic.spemshell.runner.SPEMShellRunnerAlgorithm.OCD" />

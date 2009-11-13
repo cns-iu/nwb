@@ -5,22 +5,11 @@ import edu.iu.epic.modeling.compartment.model.exception.InvalidCompartmentNameEx
 
 
 public class Compartment {
-	public static enum Type {
-		SUSCEPTIBLE, INFECTED, LATENT, RECOVERED;
-
-		@Override
-		public String toString() {
-			return name().toLowerCase();
-		}
-	}
-
 	private String name;
-	private Type type;
 	private Model model;
 
-	protected Compartment(Model model, String name, Type type) {
+	protected Compartment(Model model, String name) {
 		this.name = name;
-		this.type = type;
 		this.model = model;
 	}
 
@@ -40,9 +29,5 @@ public class Compartment {
 
 	public String getName() {
 		return name;
-	}
-
-	public Type getType() {
-		return type;
 	}
 }

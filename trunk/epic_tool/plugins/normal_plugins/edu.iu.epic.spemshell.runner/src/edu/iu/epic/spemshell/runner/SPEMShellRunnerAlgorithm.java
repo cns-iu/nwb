@@ -19,10 +19,7 @@ import org.cishell.framework.data.DataProperty;
 import org.cishell.utilities.AlgorithmUtilities;
 import org.osgi.service.log.LogService;
 
-import edu.iu.epic.modeling.compartment.model.Compartment;
 import edu.iu.epic.modeling.compartment.model.Model;
-import edu.iu.epic.modeling.compartment.model.exception.CompartmentDoesNotExistException;
-import edu.iu.epic.modeling.compartment.model.exception.MultipleSusceptibleCompartmentsException;
 import edu.iu.epic.spemshell.runner.postprocessing.DatToCsv;
 import edu.iu.epic.spemshell.runner.preprocessing.InFileMaker;
 import edu.iu.epic.spemshell.runner.preprocessing.InfectionsFileMaker;
@@ -115,7 +112,7 @@ public class SPEMShellRunnerAlgorithm implements Algorithm {
 
 	private Data[] createSPEMShellInData(
 			Data[] data, Dictionary<String, Object> parameters)
-				throws IOException, ParseException, AlgorithmExecutionException {
+				throws IOException, ParseException {
 		/* Fetch the compartment initial populations
 		 * from the algorithm parameters.
 		 */
@@ -148,22 +145,14 @@ public class SPEMShellRunnerAlgorithm implements Algorithm {
 		/* Create the .in file, making sure to give it the path to the
 		 * created SPEMShell model file.
 		 */
-		String susceptibleCompartmentName = null;
-		try {
-			Compartment susceptibleCompartment = epicModel.getSusceptibleCompartment();
-			susceptibleCompartmentName = susceptibleCompartment.getName();
-		} catch (CompartmentDoesNotExistException e) {
-			throw new AlgorithmExecutionException(
-					"Error: Required 'susceptible' compartment not found in model.", e);
-		} catch (MultipleSusceptibleCompartmentsException e) {
-			throw new AlgorithmExecutionException(
-					"Error: Model declares more than one 'susceptible' compartment.", e);
-		}
+		String initialCompartmentName =
+			(String) parameters.get(
+					SPEMShellRunnerAlgorithmFactory.INITIAL_COMPARTMENT_PARAMETER_ID);
 		InFileMaker inFileMaker =
 			new InFileMaker(
 					spemShellModelFile.getPath(),
 					parameters,
-					susceptibleCompartmentName,
+					initialCompartmentName,
 					infectedCompartmentPopulations,
 					latentCompartmentPopulations,
 					recoveredCompartmentPopulations);

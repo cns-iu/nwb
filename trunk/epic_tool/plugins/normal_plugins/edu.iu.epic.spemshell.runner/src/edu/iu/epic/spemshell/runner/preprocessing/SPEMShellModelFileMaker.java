@@ -18,6 +18,10 @@ import edu.iu.epic.spemshell.runner.SPEMShellRunnerAlgorithm;
 import edu.iu.epic.spemshell.runner.SPEMShellRunnerAlgorithmFactory;
 
 // Converts from an EpiC-style model file to a SPEMShell-style model file.
+/* TODO If we decide to do away with compartment declarations permanently,
+ * we should kill off the notion of a SPEMShell model file (against an EpiC model file)
+ * as no difference remains.  In that case, we can just use Model.toString.
+ */
 public class SPEMShellModelFileMaker {
 	public static final String FILENAME = "simul";
 	public static final String FILE_EXTENSION = "mdl";	

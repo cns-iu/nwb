@@ -24,7 +24,6 @@ import edu.iu.epic.modeling.compartment.model.exception.CompartmentExistsExcepti
 import edu.iu.epic.modeling.compartment.model.exception.InvalidCompartmentNameException;
 import edu.iu.epic.modeling.compartment.model.exception.InvalidParameterExpressionException;
 import edu.iu.epic.modeling.compartment.model.exception.InvalidParameterNameException;
-import edu.iu.epic.modeling.compartment.model.exception.MultipleSusceptibleCompartmentsException;
 
 /* TODO: Create an interface for Model.  Create some sort of immutable notion of a Model as well
  * and pass that between algorithms rather than the mutable model.  Take care of the desire to
@@ -41,9 +40,38 @@ public class Model {
 	public Map<String, String> getParameterDefinitions() {
 		return parameterDefinitions;
 	}
+	
+	public Collection<String> getCompartmentNames() {
+		return compartments.keySet();
+	}
 
 	public Collection<Compartment> getCompartments() {
 		return Collections.unmodifiableCollection(compartments.values());
+	}
+	
+	public Collection<Compartment> getInfectedCompartments() {
+		Set<Compartment> infectedCompartments = new HashSet<Compartment>();
+		
+		for (Iterator<Transition> transitionsIt = transitions.iterator();
+				transitionsIt.hasNext();) {
+			Transition transition = transitionsIt.next();
+			
+			if (transition instanceof InfectionTransition) {
+				InfectionTransition infectionTransition = (InfectionTransition) transition;
+				infectedCompartments.add(infectionTransition.getInfector());
+			}
+		}
+		
+		return infectedCompartments;
+	}
+	
+	public Compartment getOrAddCompartment(String name)
+			throws CompartmentExistsException, InvalidCompartmentNameException {
+		if (compartments.containsKey(name)) {
+			return compartments.get(name);
+		} else {
+			return addCompartment(name);
+		}
 	}
 
 	public Compartment getCompartment(String name) throws CompartmentDoesNotExistException {
@@ -64,9 +92,8 @@ public class Model {
 	// }
 	// }
 
-	public synchronized Compartment addCompartment(String name, Compartment.Type type)
-			throws CompartmentExistsException, MultipleSusceptibleCompartmentsException,
-			InvalidCompartmentNameException {
+	public synchronized Compartment addCompartment(String name)
+			throws CompartmentExistsException, InvalidCompartmentNameException {
 		Utility.checkForNullArgument("name", name);
 
 		if (compartments.containsKey(name)) {
@@ -74,12 +101,7 @@ public class Model {
 		}
 
 		if (isValidCompartmentName(name)) {
-			if (type.equals(Compartment.Type.SUSCEPTIBLE)
-					&& (!getCompartments(Compartment.Type.SUSCEPTIBLE).isEmpty())) {
-				throw new MultipleSusceptibleCompartmentsException();
-			}
-
-			Compartment compartment = new Compartment(this, name, type);
+			Compartment compartment = new Compartment(this, name);
 			this.compartments.put(name, compartment);
 			
 			return compartment;
@@ -315,40 +337,9 @@ public class Model {
 				"parameterDefinitions",
 				new ArrayList<Entry<String, String>>(getParameterDefinitions().entrySet()));
 
-		template.setAttribute("compartments", new ArrayList<Compartment>(getCompartments()));
-
 		template.setAttribute("transitions", getTransitions());
 
 		return template.toString();
-	}
-
-	// TODO: Can have multiple susceptible compartments?
-	public Compartment getSusceptibleCompartment() throws CompartmentDoesNotExistException,
-			MultipleSusceptibleCompartmentsException {
-		Set<Compartment> susceptibleCompartments = getCompartments(Compartment.Type.SUSCEPTIBLE);
-
-		if (susceptibleCompartments.isEmpty()) {
-			throw new CompartmentDoesNotExistException("Model has no 'susceptible' compartment.");
-		} else if (susceptibleCompartments.size() == 1) {
-			return susceptibleCompartments.toArray(new Compartment[0])[0];
-		} else {
-			throw new MultipleSusceptibleCompartmentsException();
-		}
-	}
-
-	public Set<Compartment> getCompartments(Compartment.Type type) {
-		Set<Compartment> matchingCompartments = new HashSet<Compartment>();
-
-		for (Iterator<Compartment> compartmentsIt = compartments.values().iterator(); compartmentsIt
-				.hasNext();) {
-			Compartment compartment = compartmentsIt.next();
-
-			if (type.equals(compartment.getType())) {
-				matchingCompartments.add(compartment);
-			}
-		}
-
-		return matchingCompartments;
 	}
 
 	public Set<Transition> getTransitions() {

@@ -46,8 +46,7 @@ public class ModelXMLHandler extends DefaultHandler {
 			if ("compartment".equals(localName)) {
 				String id = attributes.getValue("id");
 				
-				// TODO Only INFECTED for now.
-				model.addCompartment(id, Compartment.Type.INFECTED);
+				model.addCompartment(id);
 			} else if ("ratioTransition".equals(localName)) {
 				Compartment source = model.getCompartment(attributes.getValue("source"));
 				Compartment target = model.getCompartment(attributes.getValue("target"));
