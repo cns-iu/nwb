@@ -33,4 +33,10 @@ public class RatioTransition implements Transition {
 	public String getRatio() {
 		return ratio;
 	}
+
+	public void setRatio(String newRatio) {
+		if (Model.isValidParameterExpression(newRatio)) {
+			this.ratio = newRatio;
+		}
+	}
 }

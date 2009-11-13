@@ -4,8 +4,6 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
-import java.net.URL;
-import java.util.Dictionary;
 import java.util.Hashtable;
 
 import org.cishell.framework.algorithm.Algorithm;
@@ -70,7 +68,7 @@ public class ModelReaderAlgorithm implements Algorithm {
 	public static void main(String[] args) {
 		try {
 			File testFile =
-				FileUtilities.loadFileFromClassPath(ModelReaderAlgorithm.class, TEST_FILE_PATH);		
+				FileUtilities.loadFileFromClassPath(ModelReaderAlgorithm.class, TEST_FILE_PATH);
 
 //			File testFile = File.createTempFile("newlineTest", "mdl");
 //			Writer writer = new FileWriter(testFile);

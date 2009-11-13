@@ -262,7 +262,7 @@ public class Model {
 				return false;
 			}
 
-			return true; // !parser.encounteredRecognitionException();
+			return true;
 		} catch (RecognitionException e) {
 			return false;
 		} catch (UncheckedParsingException e) {
@@ -281,7 +281,7 @@ public class Model {
 		}
 
 		if (isValidCompartmentName(name)) {
-			this.compartments.remove(name);
+			this.compartments.remove(compartment.getName());
 			this.compartments.put(name, compartment);
 		} else {
 			throw new InvalidCompartmentNameException(name);
