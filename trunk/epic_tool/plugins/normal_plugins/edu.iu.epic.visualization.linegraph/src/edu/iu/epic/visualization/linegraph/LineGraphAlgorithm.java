@@ -9,7 +9,6 @@ import java.util.Dictionary;
 import java.util.Hashtable;
 import java.util.List;
 
-import javax.swing.JFrame;
 import javax.swing.SwingUtilities;
 
 import org.cishell.framework.CIShellContext;
@@ -30,8 +29,6 @@ import edu.iu.epic.visualization.linegraph.utilities.StencilData;
 import edu.iu.epic.visualization.linegraph.utilities.StencilRunner;
 import edu.iu.epic.visualization.linegraph.utilities.StencilRunnerCreationException;
 import edu.iu.epic.visualization.linegraph.utilities.StreamSource;
-import edu.iu.epic.visualization.linegraph.utilities.TableTupleStream;
-import edu.iu.epic.visualization.linegraph.utilities.TupleStream;
 import edu.iu.nwb.converter.prefusecsv.reader.PrefuseCsvReader;
 
 public class LineGraphAlgorithm implements Algorithm {
@@ -93,6 +90,7 @@ public class LineGraphAlgorithm implements Algorithm {
     	final File stencilProgramFile;
     	
     	try {
+    		
     		stencilProgramFile = loadFileFromClassPath(
     			LineGraphAlgorithm.class, LINE_GRAPH_STENCIL_PATH);
     	} catch (URISyntaxException stencilProgramNotFoundException) {
@@ -111,8 +109,33 @@ public class LineGraphAlgorithm implements Algorithm {
     			//StencilRunner stencilRunner = null;
 
 	    		try {
-    				stencilRunner =
-    					StencilRunner.createStencilRunner();
+	    	   		
+	    			List<StreamSource> streamSources = getSampleStreamSourcesForTesting();
+	    			
+	    			//TODO: add error handling back to below
+	    			String stencilScript = FileUtilities.readEntireTextFile(stencilProgramFile);
+	    			final StencilData stencilData = 
+	    				new StencilData(stencilScript, streamSources);
+	    			
+	    			stencilRunner = new StencilRunner(stencilData);
+    				
+	    			System.out.println("Done creating stencil runner in main thread");
+    				SwingUtilities.invokeAndWait(new Runnable() {
+    	    			public void run() {
+    	    			try {
+        					stencilRunner.show();
+        					System.out.println("Show is done!");
+    	    			} catch (Exception e) {
+    	    				//TODO: Do this right
+    	    				throw new RuntimeException(e);
+    	    			}
+    	    		}
+    				}
+    				);
+    			
+    	    		
+    	    		
+        			stencilRunner.playFromBeginning();
     			} catch (StencilRunnerCreationException
     						stencilRunnerCreationException) {
 		    		// TODO: Improve this exception message.
@@ -136,27 +159,6 @@ public class LineGraphAlgorithm implements Algorithm {
 
 		    	
 			    //stencilRunner.addTupleStream(testStream5);
-	    		
-    			List<StreamSource> streamSources = getSampleStreamSourcesForTesting();
-    			
-    			//TODO: add error handling back to below
-    			String stencilScript = FileUtilities.readEntireTextFile(stencilProgramFile);
-    			final StencilData stencilData = 
-    				new StencilData(stencilScript, streamSources);
-    			
-	    		stencilRunner.show();
-	    		
-	    		SwingUtilities.invokeLater(new Runnable() {
-	    			public void run() {
-	    			try {
-    					stencilRunner.playStencil(stencilData);
-	    			} catch (Exception e) {
-	    				//TODO: Do this right
-	    				throw new RuntimeException(e);
-	    			}
-	    		}
-	    	}
-	    );
     		//}
     	//});
     	
@@ -165,8 +167,8 @@ public class LineGraphAlgorithm implements Algorithm {
     
     public List<StreamSource> getSampleStreamSourcesForTesting() {
     
-    	List<TupleStream> streams = new ArrayList<StreamSource>();
-    		TupleStream testStream1 = new TableTupleStream(
+    	List<StreamSource> streams = new ArrayList<StreamSource>();
+    		StreamSource testStream1 = new StreamSource(
     				LineGraphAlgorithm.this.inputTable,
     				TEST_TIME_STEP_COLUMN_NAME,
     				TEST_LINE_COLUMN_NAME_1,
@@ -174,9 +176,9 @@ public class LineGraphAlgorithm implements Algorithm {
 	    			TEST_STENCIL_TIME_STEP_ID,
     				TEST_LINE_COLUMN_ID,
     				TEST_VALUE_ID);
-    		
     		streams.add(testStream1);
-    			TupleStream testStream2 = new TableTupleStream(
+    		
+    			StreamSource testStream2 = new StreamSource(
 	    			LineGraphAlgorithm.this.inputTable,
 		    		TEST_TIME_STEP_COLUMN_NAME,
     				TEST_LINE_COLUMN_NAME_2,
@@ -185,7 +187,8 @@ public class LineGraphAlgorithm implements Algorithm {
 		    		TEST_LINE_COLUMN_ID,
     				TEST_VALUE_ID);
     		streams.add(testStream2);
-    			TupleStream testStream3 = new TableTupleStream(
+    		
+    			StreamSource testStream3 = new StreamSource(
 	    			LineGraphAlgorithm.this.inputTable,
     				TEST_TIME_STEP_COLUMN_NAME,
 	    			TEST_LINE_COLUMN_NAME_3,
@@ -194,7 +197,8 @@ public class LineGraphAlgorithm implements Algorithm {
     				TEST_LINE_COLUMN_ID,
     				TEST_VALUE_ID);
     			streams.add(testStream3);
-		    	TupleStream testStream4 = new TableTupleStream(
+    			
+		    	StreamSource testStream4 = new StreamSource(
     				LineGraphAlgorithm.this.inputTable,
     				TEST_TIME_STEP_COLUMN_NAME,
     				TEST_LINE_COLUMN_NAME_4,

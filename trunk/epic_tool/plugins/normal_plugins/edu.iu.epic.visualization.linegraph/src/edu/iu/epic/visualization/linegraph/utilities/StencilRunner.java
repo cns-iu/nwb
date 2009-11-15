@@ -4,9 +4,6 @@ import java.awt.Color;
 import java.awt.Container;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.io.File;
-import java.io.IOException;
-import java.util.ArrayList;
 import java.util.List;
 
 import javax.swing.BoxLayout;
@@ -16,11 +13,10 @@ import javax.swing.JPanel;
 import javax.swing.JSplitPane;
 import javax.swing.SwingUtilities;
 
-import org.cishell.utilities.FileUtilities;
+import org.jdesktop.swingworker.SwingWorker;
 
 import stencil.adapters.java2D.Adapter;
 import stencil.adapters.java2D.Panel;
-import stencil.display.StencilPanel;
 
 public class StencilRunner {
 	public static final String REPLAY_BUTTON_LABEL = "Replay";
@@ -33,86 +29,83 @@ public class StencilRunner {
 	private JFrame frame;
 	private JSplitPane splitPane;
 	private Panel stencilPanel;
-	private ArrayList<TupleStream> tupleStreams = new ArrayList<TupleStream>();
+	private StencilData stencilData;
 	
-	private StencilRunner(String stencilProgramString) throws Exception {
+	public StencilRunner(StencilData stencilData) throws Exception {
+		
+		this.stencilData = stencilData;
+		
 		createSplitPane();
 	}
 
-	public static StencilRunner createStencilRunner()
-			throws StencilRunnerCreationException {
-		try {
-			return createStencilRunner(FileUtilities.readEntireTextFile(
-				stencilProgramFile));
-		} catch (IOException ioException) {
-			String exceptionMessage =
-				"A problem occurred while trying to read the file " +
-				"\"" + stencilProgramFile.getAbsolutePath() + "\".";
-			
-			throw new StencilRunnerCreationException(
-				exceptionMessage, ioException);
-		} catch (Exception exception) {
-			String exceptionMessage = exception.getMessage();
-			
-			throw new StencilRunnerCreationException(
-				exceptionMessage, exception);
-		}
-	}
+//	public static StencilRunner createStencilRunner()
+//			throws StencilRunnerCreationException {
+//		try {
+//			return createStencilRunner(FileUtilities.readEntireTextFile(
+//				stencilProgramFile));
+//		} catch (IOException ioException) {
+//			String exceptionMessage =
+//				"A problem occurred while trying to read the file " +
+//				"\"" + stencilProgramFile.getAbsolutePath() + "\".";
+//			
+//			throw new StencilRunnerCreationException(
+//				exceptionMessage, ioException);
+//		} catch (Exception exception) {
+//			String exceptionMessage = exception.getMessage();
+//			
+//			throw new StencilRunnerCreationException(
+//				exceptionMessage, exception);
+//		}
+//	}
 	
-	public static StencilRunner createStencilRunner(
-			String stencilProgramString)
-			throws Exception {
-		return new StencilRunner(stencilProgramString);
-	}
+//	public static StencilRunner createStencilRunner(
+//			String stencilProgramString)
+//			throws Exception {
+//		return new StencilRunner(stencilProgramString);
+//	}
 	
-	private void addNewStencilPanel(StencilData stencilData) throws Exception {
+	private void addNewStencilPanel(StencilData stencilData)  {
 		//dispose of old panel
-		if (this.stencilPanel != null) {
-			this.stencilPanel.dispose();
-			this.splitPane.setRightComponent(null);
-			this.stencilPanel = null;
-		}
-		
-		Adapter displayAdapter = Adapter.INSTANCE;
-		
-		List<TupleStream> streams = stencilData.createStreams();
-		String stencilScript = stencilData.getStencilScript();
-		
-		this.stencilPanel = displayAdapter.compile(stencilScript);
-		this.splitPane.setRightComponent(stencilPanel);
-		this.stencilPanel.preRun();
+
+				if (StencilRunner.this.stencilPanel != null) {
+					StencilRunner.this.stencilPanel.dispose();
+					StencilRunner.this.splitPane.setRightComponent(null);
+					StencilRunner.this.stencilPanel = null;
+				}
+				
+				//create and add new panel
+				
+				Adapter displayAdapter = Adapter.INSTANCE;
+				String stencilScript = StencilRunner.this.stencilData.getStencilScript();
+				try {
+					StencilRunner.this.stencilPanel = displayAdapter.compile(stencilScript);
+					StencilRunner.this.splitPane.setRightComponent(stencilPanel);
+					StencilRunner.this.stencilPanel.preRun();
+				} catch (Exception e) {
+					//TODO: Don't suck
+				}
 	}
 	
-	public void playStencil(StencilData stencilData) throws Exception {
-		if (! this.isShown()) {
-			show();
-		}
-		
-		addNewStencilPanel(stencilData);
-		
-		List<TupleStream> streams = stencilData.createStreams();
-		/* TODO: Provide the option of playing the streams in parallel vs.
-		 * playing them one after another?
-		 */
-		/*for (TupleStream stream : this.tupleStreams) {
-			
-		}*/
-		// We're assuming all of our streams are of the same size.
-		// TODO: Change this?
-		if (streams.size() != 0) {
-			try {
-				long streamSize = streams.get(0).streamSize();
-
-				for (long ii = 0; ii < streamSize; ii++) {
-					for (TupleStream stream : streams) {
-						this.stencilPanel.processTuple(stream.nextTuple());
-					}
-				}
-			} catch (Exception processTupleFailedException) {
-				// TODO
-				processTupleFailedException.printStackTrace();
-			}
-		}
+	public void playFromBeginning() throws Exception {
+//		SwingUtilities.invokeLater(new Runnable() {
+//			public void run() {
+//			try {
+//				StencilRunner.this.reallyDoDrawing();
+//				System.out.println("Done with reallyDoDrawing call");
+//			} catch (Exception e) {
+//				//TODO: Do this right
+//				throw new RuntimeException(e);
+//			}
+//		}
+//		}
+//		);
+		(new TupleFeeder()).doInBackground();
+		//reallyDoDrawing();
+	}
+	
+	public void playWithNewData(StencilData stencilData) throws Exception {
+		this.stencilData = stencilData;
+		playFromBeginning();
 	}
 	
 	public void show() {
@@ -128,6 +121,7 @@ public class StencilRunner {
 	 * inside of it!
 	 */
 	private JFrame createFrame(String frameTitle) {
+		if (this.frame == null) {
 		this.frame = new JFrame(frameTitle);
 		Container contentPane = frame.getContentPane();
 		contentPane.add(this.splitPane);
@@ -139,29 +133,30 @@ public class StencilRunner {
 		//this.stencilPanel.setSize(800, 600);
 		//this.stencilPanel.preRun(); MIGHT CAUSE PROBLEMS IF DOESN'T EXIST AT THIS POINT
 		frame.setVisible(true);
-
+		}
 		return frame;
+		
 	}
 	
-	private void reset() throws Exception {
-		for (TupleStream stream : this.tupleStreams) {
-			stream.reset();
-		}
-		
-		if (this.stencilPanel != null) {
-			this.stencilPanel.dispose();
-		}
-		
-		this.stencilPanel = createStencilPanel();
-		this.splitPane.setRightComponent(this.stencilPanel);
-	}
+//	private void reset() throws Exception {
+//		for (TupleStream stream : this.tupleStreams) {
+//			stream.reset();
+//		}
+//		
+//		if (this.stencilPanel != null) {
+//			this.stencilPanel.dispose();
+//		}
+//		
+//		this.stencilPanel = createStencilPanel();
+//		this.splitPane.setRightComponent(this.stencilPanel);
+//	}
 	
 	private void createSplitPane() throws Exception {
 		JPanel userControlPanel = createUserControlPanel();
 		//this.stencilPanel = createStencilPanel();
 		this.splitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT);
-		reset();
 		this.splitPane.setLeftComponent(userControlPanel);
+		//addNewStencilPanel(this.stencilData);
 	}
 	
 	private JPanel createUserControlPanel() {
@@ -183,7 +178,7 @@ public class StencilRunner {
 	private Panel createStencilPanel() throws Exception {
 		Adapter displayAdapter = Adapter.INSTANCE;
 		
-		return displayAdapter.compile(this.stencilProgramString);
+		return displayAdapter.compile(this.stencilData.getStencilScript());
 	}
 	
 	private JButton createReplayButton() {
@@ -192,18 +187,11 @@ public class StencilRunner {
 		replayButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent actionEvent) {
 			System.out.println( "Are we in eventDispatch?" + javax.swing.SwingUtilities.isEventDispatchThread());
-				SwingUtilities.invokeLater(new Runnable() {
-					public void run() {
-						try {
-							StencilRunner.this.reset();
-						} catch (Exception resetException) {
-							resetException.printStackTrace();
-							// TODO: Log this?
-						}
-
-						StencilRunner.this.playStreams();
-					}
-				});
+			try {
+				StencilRunner.this.playFromBeginning();
+			} catch (Exception e) {
+				//TODO: CRIME!
+			}
 			}
 		});
 
@@ -216,5 +204,52 @@ public class StencilRunner {
 		// TODO: Action listener stuff.
 		
 		return exportButton;
+	}
+	
+	
+	private void reallyDoDrawing() {
+//		if (! this.isShown()) {
+//		show();
+//	}
+		
+		
+		
+	addNewStencilPanel(stencilData);
+	
+	List<TupleStream> streams = stencilData.createStreams();
+	/* TODO: Provide the option of playing the streams in parallel vs.
+	 * playing them one after another?
+	 */
+	/*for (TupleStream stream : this.tupleStreams) {
+		
+	}*/
+	// We're assuming all of our streams are of the same size.
+	// TODO: Change this?
+	if (streams.size() != 0) {
+		try {
+			long streamSize = streams.get(0).streamSize();
+
+			for (long ii = 0; ii < streamSize; ii++) {
+				for (TupleStream stream : streams) {
+					//Thread.sleep(1);
+					StencilRunner.this.stencilPanel.processTuple(stream.nextTuple());
+					
+				}
+			}
+		} catch (Exception processTupleFailedException) {
+			// TODO
+			processTupleFailedException.printStackTrace();
+		}
+	}
+	}
+	private class TupleFeeder extends SwingWorker<Object, Object> {
+		public String doInBackground() {
+			StencilRunner.this.reallyDoDrawing();
+			return null;
+		}
+		
+		protected void done() {
+			//DO SOME STUFF?
+		}
 	}
 }

@@ -20,11 +20,8 @@ import org.eclipse.swt.widgets.FileDialog;
 import org.eclipse.swt.widgets.Shell;
 
 import prefuse.data.Table;
+import prefuse.data.Tuple;
 import prefuse.util.collections.IntIterator;
-import stencil.adapters.java2D.Adapter;
-import stencil.adapters.java2D.Panel;
-import stencil.streams.Tuple;
-import stencil.util.BasicTuple;
 
 // Not generic.  (Specific to LineGraphAlgorithm.)
 public class CrappyStencilRunner {
