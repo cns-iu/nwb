@@ -67,20 +67,30 @@ public class StencilRunner {
 	private void addNewStencilPanel(StencilData stencilData)  {
 		//dispose of old panel
 
-				if (StencilRunner.this.stencilPanel != null) {
-					StencilRunner.this.stencilPanel.dispose();
-					StencilRunner.this.splitPane.setRightComponent(null);
-					StencilRunner.this.stencilPanel = null;
-				}
+//				if (StencilRunner.this.stencilPanel != null) {
+//					StencilRunner.this.stencilPanel.dispose();
+//					StencilRunner.this.splitPane.setRightComponent(null);
+//					StencilRunner.this.stencilPanel = null;
+//				}
 				
 				//create and add new panel
 				
 				Adapter displayAdapter = Adapter.INSTANCE;
 				String stencilScript = StencilRunner.this.stencilData.getStencilScript();
 				try {
+					
+					Panel oldStencilPanel = this.stencilPanel;
+					
 					StencilRunner.this.stencilPanel = displayAdapter.compile(stencilScript);
 					StencilRunner.this.splitPane.setRightComponent(stencilPanel);
 					StencilRunner.this.stencilPanel.preRun();
+					
+					if (oldStencilPanel != null) {oldStencilPanel.dispose();}
+					
+					StencilRunner.this.splitPane.repaint();
+					Thread.yield();
+					
+					StencilRunner.this.splitPane.repaint();
 				} catch (Exception e) {
 					//TODO: Don't suck
 				}
@@ -99,7 +109,7 @@ public class StencilRunner {
 //		}
 //		}
 //		);
-		(new TupleFeeder()).doInBackground();
+		(new TupleFeeder()).execute();
 		//reallyDoDrawing();
 	}
 	
@@ -169,9 +179,7 @@ public class StencilRunner {
 		userControlPanel.add(replayButton);
 		
 		JButton exportButton = createExportButton();
-		// TODO: Set layout data or something for the exportButton?
-		userControlPanel.add(exportButton);
-		
+		// TODO: Set layout data or something for the exportButton?		
 		return userControlPanel;
 	}
 	
@@ -215,7 +223,16 @@ public class StencilRunner {
 		
 		
 	addNewStencilPanel(stencilData);
-	
+	try{
+//		this.stencilPanel.repaint();
+//		this.splitPane.revalidate();
+//	Thread.sleep(500);
+		this.stencilPanel.repaint();
+		this.splitPane.revalidate();
+		System.err.println("After validation");
+	} catch (Exception e) {
+		
+	}
 	List<TupleStream> streams = stencilData.createStreams();
 	/* TODO: Provide the option of playing the streams in parallel vs.
 	 * playing them one after another?
@@ -228,12 +245,12 @@ public class StencilRunner {
 	if (streams.size() != 0) {
 		try {
 			long streamSize = streams.get(0).streamSize();
-
+			System.out.println( "Tuple pushing in eventDispatch?" + javax.swing.SwingUtilities.isEventDispatchThread());
 			for (long ii = 0; ii < streamSize; ii++) {
 				for (TupleStream stream : streams) {
 					//Thread.sleep(1);
 					StencilRunner.this.stencilPanel.processTuple(stream.nextTuple());
-					
+					//System.out.println(ii);
 				}
 			}
 		} catch (Exception processTupleFailedException) {
