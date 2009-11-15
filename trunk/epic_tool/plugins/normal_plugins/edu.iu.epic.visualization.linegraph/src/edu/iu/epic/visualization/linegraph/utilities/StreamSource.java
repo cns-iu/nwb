@@ -1,9 +1,6 @@
 package edu.iu.epic.visualization.linegraph.utilities;
 
-import java.util.List;
-
 import prefuse.data.Table;
-import prefuse.util.collections.IntIterator;
 
 public class StreamSource {
 	

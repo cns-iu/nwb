@@ -91,7 +91,7 @@ public class LineGraphAlgorithm implements Algorithm {
 		stencilRunner.playWithLoadedData();
 
 		// // TODO: Wire this up so it uses actual input data.
-		// // TODO: Export button.
+		// // TODO: Make export button nicer, and get EPS working?
 		// // TODO: Check boxes to toggle lines.
 		
 		return new Data[0];

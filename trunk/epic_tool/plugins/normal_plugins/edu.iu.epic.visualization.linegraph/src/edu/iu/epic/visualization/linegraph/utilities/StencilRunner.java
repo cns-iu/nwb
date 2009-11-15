@@ -2,14 +2,17 @@ package edu.iu.epic.visualization.linegraph.utilities;
 
 import java.awt.Color;
 import java.awt.Container;
+import java.awt.Rectangle;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.List;
 
 import javax.swing.BoxLayout;
 import javax.swing.JButton;
+import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JSplitPane;
 
@@ -176,6 +179,63 @@ public class StencilRunner {
 			public void actionPerformed(ActionEvent actionEvent) {
 				try {
 					System.out.println("Exporting button works!");
+					
+					//TODO: Have Joseph Cottam make an enumeration?
+					String[] supportedFormats = new String[]{ "PNG", "EPS" };
+					
+					String selectedFormat = (String) JOptionPane.showInputDialog(null,
+				            "Choose an export format", "Image Format",
+				            JOptionPane.INFORMATION_MESSAGE, null,
+				            supportedFormats, supportedFormats[0]);
+					
+					if (selectedFormat == null) {
+						//user canceled export
+						return;
+					}
+					//TODO: Is mixing swing and SWT like this a problem?
+					 JFileChooser c = new JFileChooser();
+				      // Demonstrate "Save" dialog:
+				      int rVal = c.showSaveDialog(StencilRunner.this.frame);
+				      if (rVal == JFileChooser.APPROVE_OPTION) {
+				        String fullFileName = 
+				        	c.getCurrentDirectory().toString() + "/" +
+				        	c.getSelectedFile().getName();
+				        
+				        Object exportInfo = null;
+				        if (selectedFormat.equals("PNG")) {
+				        	 int dotsPerInch = 32;
+				        	 exportInfo = dotsPerInch;
+				        } else if (selectedFormat.equals("EPS")) {
+				        	Rectangle dimensions = new Rectangle(400,1600);
+				        	exportInfo = dimensions;
+				        }
+				        StencilRunner.this.stencilPanel.export(fullFileName, selectedFormat, exportInfo);
+				    	 
+				      }
+				      if (rVal == JFileChooser.CANCEL_OPTION) {
+				        System.out.println("You pressed cancel");
+				        
+				      }
+//				     File currentDir = new File(System.getProperty("user.home") + File.separator 
+//				            		+ "anything");
+//				        
+//				     dialog.setFilterPath(currentDir.getPath());
+//				        
+//
+//				      String suggestedFileName = "linegraph";
+//				      dialog.setFileName(suggestedFileName + "." + selectedFormat);
+//				     
+//				      String selectedFileName = dialog.open();
+//				      
+//				      if (selectedFileName == null) {
+//				    	  //user cancelled export
+//				    	  return;
+//				      }
+//				     
+//				      StencilRunner.this.stencilPanel.export(
+//				    		  selectedFileName, selectedFormat, null);
+//					
+					
 				} catch (Exception e) {
 					// TODO: Perhaps a better way to do this
 					throw new RuntimeException(e);
@@ -254,4 +314,10 @@ public class StencilRunner {
 			// DO SOME STUFF?
 		}
 	}
+	
+	class SaveL implements ActionListener {
+	    public void actionPerformed(ActionEvent e) {
+	     
+	    }
+	  }
 }
