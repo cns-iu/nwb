@@ -24,8 +24,9 @@ import edu.iu.epic.modeling.compartment.model.Compartment;
 import edu.iu.epic.modeling.compartment.model.Model;
 import edu.iu.epic.modeling.compartment.model.exception.InvalidParameterExpressionException;
 
-public class SPEMShellRunnerAlgorithmFactory
+public class SPEMShellSingleRunnerAlgorithmFactory
 		implements AlgorithmFactory, ParameterMutator {	
+	public static final String SEED_PARAMETER_ID = "seed";
 	public static final String INITIAL_COMPARTMENT_PARAMETER_ID = "initialCompartment";
 	public static final String START_DATE_ID = "startDate";
 	public static final String NUMBER_OF_DAYS_ID = "days";
@@ -72,7 +73,7 @@ public class SPEMShellRunnerAlgorithmFactory
 	
 	private static BundleContext bundleContext;
 	protected void activate(ComponentContext componentContext) {
-		SPEMShellRunnerAlgorithmFactory.bundleContext =
+		SPEMShellSingleRunnerAlgorithmFactory.bundleContext =
 			componentContext.getBundleContext();
 	}
 	protected static BundleContext getBundleContext() {
@@ -83,7 +84,7 @@ public class SPEMShellRunnerAlgorithmFactory
 	public Algorithm createAlgorithm(Data[] data,
     								 Dictionary parameters,
     								 CIShellContext context) {
-    	return new SPEMShellRunnerAlgorithm(data, parameters, context);
+    	return new SPEMShellSingleRunnerAlgorithm(data, parameters, context, getBundleContext());
     }
 
     /* Add algorithm parameters:
@@ -123,7 +124,7 @@ public class SPEMShellRunnerAlgorithmFactory
 		newParameters.addAttributeDefinition(
 				ObjectClassDefinition.REQUIRED,
 				new BasicAttributeDefinition(
-						"seed",
+						SEED_PARAMETER_ID,
 						"Random number generator seed",
 						seedDescription,
 						AttributeDefinition.INTEGER,
@@ -187,7 +188,7 @@ public class SPEMShellRunnerAlgorithmFactory
 		try {
 			unboundReferencedParameters = model.listUnboundReferencedParameters();
 		} catch (InvalidParameterExpressionException e) {
-			SPEMShellRunnerAlgorithm.getLogger().log(LogService.LOG_ERROR,
+			SPEMShellSingleRunnerAlgorithm.getLogger().log(LogService.LOG_ERROR,
 					"Could not create parameters dialog due to error "
 					+ "calculating unbound, referenced parameters: "
 					+ e.getMessage(),

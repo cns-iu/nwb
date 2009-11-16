@@ -10,14 +10,14 @@ import org.antlr.stringtemplate.StringTemplate;
 import org.antlr.stringtemplate.StringTemplateGroup;
 import org.cishell.utilities.FileUtilities;
 
-import edu.iu.epic.spemshell.runner.single.SPEMShellRunnerAlgorithm;
+import edu.iu.epic.spemshell.runner.single.SPEMShellSingleRunnerAlgorithm;
 
 public class InfectionsFileMaker {
 	public static final String FILENAME = "infections";
 	public static final String FILE_EXTENSION = "txt";
 	
 	private static StringTemplateGroup infectionsFileTemplateGroup =
-		SPEMShellRunnerAlgorithm.loadTemplates(
+		SPEMShellSingleRunnerAlgorithm.loadTemplates(
 				"/edu/iu/epic/spemshell/runner/single/preprocessing/infectionsFile.st");
 	
 	

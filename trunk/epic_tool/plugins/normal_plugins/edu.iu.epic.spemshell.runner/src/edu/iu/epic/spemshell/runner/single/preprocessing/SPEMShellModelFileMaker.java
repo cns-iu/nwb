@@ -14,8 +14,8 @@ import org.cishell.utilities.FileUtilities;
 
 import edu.iu.epic.modeling.compartment.model.Model;
 import edu.iu.epic.spemshell.runner.single.CIShellParameterUtilities;
-import edu.iu.epic.spemshell.runner.single.SPEMShellRunnerAlgorithm;
-import edu.iu.epic.spemshell.runner.single.SPEMShellRunnerAlgorithmFactory;
+import edu.iu.epic.spemshell.runner.single.SPEMShellSingleRunnerAlgorithm;
+import edu.iu.epic.spemshell.runner.single.SPEMShellSingleRunnerAlgorithmFactory;
 
 // Converts from an EpiC-style model file to a SPEMShell-style model file.
 /* TODO If we decide to do away with compartment declarations permanently,
@@ -27,7 +27,7 @@ public class SPEMShellModelFileMaker {
 	public static final String FILE_EXTENSION = "mdl";	
 	
 	private static StringTemplateGroup spemShellModelFileTemplateGroup =
-		SPEMShellRunnerAlgorithm.loadTemplates(
+		SPEMShellSingleRunnerAlgorithm.loadTemplates(
 				"/edu/iu/epic/spemshell/runner/single/preprocessing/spemShellModelFile.st");
 	
 	private Model epicModel;
@@ -38,7 +38,7 @@ public class SPEMShellModelFileMaker {
 		this.epicModel = epicModel;
 		
 		this.modelParameterDefinitions = CIShellParameterUtilities.filterByAndStripIDPrefixes(
-				parameters, SPEMShellRunnerAlgorithmFactory.MODEL_PARAMETER_PREFIX);
+				parameters, SPEMShellSingleRunnerAlgorithmFactory.MODEL_PARAMETER_PREFIX);
 	}
 	
 	

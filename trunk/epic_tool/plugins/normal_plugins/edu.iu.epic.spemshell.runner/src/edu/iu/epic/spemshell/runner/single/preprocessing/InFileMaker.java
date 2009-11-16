@@ -16,8 +16,8 @@ import org.antlr.stringtemplate.StringTemplate;
 import org.antlr.stringtemplate.StringTemplateGroup;
 import org.cishell.utilities.FileUtilities;
 
-import edu.iu.epic.spemshell.runner.single.SPEMShellRunnerAlgorithm;
-import edu.iu.epic.spemshell.runner.single.SPEMShellRunnerAlgorithmFactory;
+import edu.iu.epic.spemshell.runner.single.SPEMShellSingleRunnerAlgorithm;
+import edu.iu.epic.spemshell.runner.single.SPEMShellSingleRunnerAlgorithmFactory;
 
 public class InFileMaker {
 	public static final int DEFAULT_NUMBER_OF_SECONDARY_EVENTS = 0;
@@ -26,7 +26,7 @@ public class InFileMaker {
 	
 	public static final String IN_FILE_TEMPLATE_NAME = "inFile";	
 	private static StringTemplateGroup inFileTemplateGroup =
-		SPEMShellRunnerAlgorithm.loadTemplates(
+		SPEMShellSingleRunnerAlgorithm.loadTemplates(
 				"/edu/iu/epic/spemshell/runner/single/preprocessing/inFile.st");
 	
 	private String modelFilePath;
@@ -62,7 +62,7 @@ public class InFileMaker {
 //			String key = parameterKeys.nextElement();
 //			
 //			if (key.startsWith(
-//					SPEMShellRunnerAlgorithmFactory.MODEL_PARAMETER_PREFIX)) {
+//					SPEMShellSingleRunnerAlgorithmFactory.MODEL_PARAMETER_PREFIX)) {
 //				Object value = parameters.get(key);
 //			
 //				inFileTemplate.setAttribute("parameters",
@@ -89,20 +89,20 @@ public class InFileMaker {
 				DEFAULT_NUMBER_OF_SECONDARY_EVENTS);
 		template.setAttribute("population",
 				this.parameters.get(
-						SPEMShellRunnerAlgorithmFactory.POPULATION_ID));
+						SPEMShellSingleRunnerAlgorithmFactory.POPULATION_ID));
 		template.setAttribute(
 				"susceptibleCompartmentID",
 				this.susceptibleCompartmentID);
 		template.setAttribute(
 				"numberOfDays",
 				this.parameters.get(
-						SPEMShellRunnerAlgorithmFactory.NUMBER_OF_DAYS_ID));
+						SPEMShellSingleRunnerAlgorithmFactory.NUMBER_OF_DAYS_ID));
 		
 		String rawDateString =
 			(String) this.parameters.get(
-					SPEMShellRunnerAlgorithmFactory.START_DATE_ID);
+					SPEMShellSingleRunnerAlgorithmFactory.START_DATE_ID);
 		DateFormat dateFormat =
-			new SimpleDateFormat(SPEMShellRunnerAlgorithmFactory.DATE_PATTERN);
+			new SimpleDateFormat(SPEMShellSingleRunnerAlgorithmFactory.DATE_PATTERN);
 		Date date = dateFormat.parse(rawDateString);
 		String formattedDateString = dateFormat.format(date);
 		template.setAttribute("date", formattedDateString);

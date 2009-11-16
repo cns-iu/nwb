@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<component name="edu.iu.epic.spemshell.runner.single.SPEMShellRunnerAlgorithm.component" immediate="false">
-	<implementation class="edu.iu.epic.spemshell.runner.single.SPEMShellRunnerAlgorithmFactory"/>
+<component name="edu.iu.epic.spemshell.runner.single.SPEMShellSingleRunnerAlgorithm.component" immediate="false">
+	<implementation class="edu.iu.epic.spemshell.runner.single.SPEMShellSingleRunnerAlgorithmFactory"/>
 	<properties entry="OSGI-INF/single.properties"/>
 	
 	<service>

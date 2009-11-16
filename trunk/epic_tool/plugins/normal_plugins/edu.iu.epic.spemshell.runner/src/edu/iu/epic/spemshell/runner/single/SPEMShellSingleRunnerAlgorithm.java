@@ -17,6 +17,7 @@ import org.cishell.framework.data.BasicData;
 import org.cishell.framework.data.Data;
 import org.cishell.framework.data.DataProperty;
 import org.cishell.utilities.AlgorithmUtilities;
+import org.osgi.framework.BundleContext;
 import org.osgi.service.log.LogService;
 
 import edu.iu.epic.modeling.compartment.model.Model;
@@ -25,7 +26,7 @@ import edu.iu.epic.spemshell.runner.single.preprocessing.InFileMaker;
 import edu.iu.epic.spemshell.runner.single.preprocessing.InfectionsFileMaker;
 import edu.iu.epic.spemshell.runner.single.preprocessing.SPEMShellModelFileMaker;
 
-public class SPEMShellRunnerAlgorithm implements Algorithm {	
+public class SPEMShellSingleRunnerAlgorithm implements Algorithm {	
 	public static final String PLAIN_TEXT_MIME_TYPE = "file:text/plain";
 	public static final String CSV_MIME_TYPE = "file:text/csv";
 	public static final String IN_FILE_MIME_TYPE = "file:text/in";
@@ -34,20 +35,23 @@ public class SPEMShellRunnerAlgorithm implements Algorithm {
 	
 	private Data[] data;
 	private Dictionary<String, Object> parameters;
-	private CIShellContext context;
+	private CIShellContext ciContext;
+	private BundleContext bundleContext;
 	private static LogService logger;
 
 
-	public SPEMShellRunnerAlgorithm(
+	public SPEMShellSingleRunnerAlgorithm(
 			Data[] data,
 			Dictionary<String, Object> parameters,
-			CIShellContext context) {
+			CIShellContext ciContext,
+			BundleContext bundleContext) {
 		this.data = data;		
 		this.parameters = parameters;
-		this.context = context;
+		this.ciContext = ciContext;
+		this.bundleContext = bundleContext;
 		
-		SPEMShellRunnerAlgorithm.logger =
-			(LogService) context.getService(LogService.class.getName());
+		SPEMShellSingleRunnerAlgorithm.logger =
+			(LogService) ciContext.getService(LogService.class.getName());
 	}
 
 	// Run SPEMShell and interpret its output.
@@ -56,7 +60,7 @@ public class SPEMShellRunnerAlgorithm implements Algorithm {
 		try {
 			Data[] spemShellData =
 				createSPEMShellInData(this.data, this.parameters);
-			datFile = executeSPEMShell(spemShellData, this.context);
+			datFile = executeSPEMShell(spemShellData, ciContext, bundleContext);
 		} catch (IOException e) {
 			throw new AlgorithmExecutionException(
 					"Error creating data for SPEMShell: " + e.getMessage(),
@@ -80,13 +84,13 @@ public class SPEMShellRunnerAlgorithm implements Algorithm {
 	}
 
 	// Execute the inner Algorithm, the SPEMShell core, and return its output.
-	private File executeSPEMShell(Data[] data, CIShellContext context)
+	private File executeSPEMShell(
+			Data[] data, CIShellContext ciContext, BundleContext bundleContext)
 			throws AlgorithmExecutionException {
 		try {			
 			AlgorithmFactory spemShellCoreAlgorithmFactory =
 				AlgorithmUtilities.getAlgorithmFactoryByPID(
-					SPEMSHELL_CORE_PID,
-					SPEMShellRunnerAlgorithmFactory.getBundleContext());
+					SPEMSHELL_CORE_PID, bundleContext);
 			
 			/* We could pass in this.parameters since the argument
 			 * won't be read anyhow, but to emphasize that fact,
@@ -97,7 +101,7 @@ public class SPEMShellRunnerAlgorithm implements Algorithm {
 			
 			Algorithm spemShellCoreAlgorithm =
 				spemShellCoreAlgorithmFactory.createAlgorithm(
-						data, emptyParameters, context);
+						data, emptyParameters, ciContext);
 			
 			Data[] outData = spemShellCoreAlgorithm.execute();
 			File outDatFile = (File) outData[0].getData();
@@ -119,20 +123,20 @@ public class SPEMShellRunnerAlgorithm implements Algorithm {
 		Map<String, Object> infectedCompartmentPopulations =
 			CIShellParameterUtilities.filterByAndStripIDPrefixes(
 					parameters,
-					SPEMShellRunnerAlgorithmFactory.COMPARTMENT_POPULATION_PREFIX
-					+ SPEMShellRunnerAlgorithmFactory.INFECTION_PREFIX);
+					SPEMShellSingleRunnerAlgorithmFactory.COMPARTMENT_POPULATION_PREFIX
+					+ SPEMShellSingleRunnerAlgorithmFactory.INFECTION_PREFIX);
 		
 		Map<String, Object> latentCompartmentPopulations =
 			CIShellParameterUtilities.filterByAndStripIDPrefixes(
 					parameters,
-					SPEMShellRunnerAlgorithmFactory.COMPARTMENT_POPULATION_PREFIX
-					+ SPEMShellRunnerAlgorithmFactory.LATENT_PREFIX);
+					SPEMShellSingleRunnerAlgorithmFactory.COMPARTMENT_POPULATION_PREFIX
+					+ SPEMShellSingleRunnerAlgorithmFactory.LATENT_PREFIX);
 		
 		Map<String, Object> recoveredCompartmentPopulations =
 			CIShellParameterUtilities.filterByAndStripIDPrefixes(
 					parameters,
-					SPEMShellRunnerAlgorithmFactory.COMPARTMENT_POPULATION_PREFIX
-					+ SPEMShellRunnerAlgorithmFactory.RECOVERED_PREFIX);
+					SPEMShellSingleRunnerAlgorithmFactory.COMPARTMENT_POPULATION_PREFIX
+					+ SPEMShellSingleRunnerAlgorithmFactory.RECOVERED_PREFIX);
 		
 		// Create the SPEMShell model file from the EpiC model file.
 		Model epicModel = (Model) data[0].getData();
@@ -147,7 +151,7 @@ public class SPEMShellRunnerAlgorithm implements Algorithm {
 		 */
 		String initialCompartmentName =
 			(String) parameters.get(
-					SPEMShellRunnerAlgorithmFactory.INITIAL_COMPARTMENT_PARAMETER_ID);
+					SPEMShellSingleRunnerAlgorithmFactory.INITIAL_COMPARTMENT_PARAMETER_ID);
 		InFileMaker inFileMaker =
 			new InFileMaker(
 					spemShellModelFile.getPath(),
@@ -187,7 +191,7 @@ public class SPEMShellRunnerAlgorithm implements Algorithm {
 	public static StringTemplateGroup loadTemplates(String templatePath) {
 		return new StringTemplateGroup(
 				new InputStreamReader(
-						SPEMShellRunnerAlgorithm.class.getResourceAsStream(
+						SPEMShellSingleRunnerAlgorithm.class.getResourceAsStream(
 								templatePath)));
 	}
 
