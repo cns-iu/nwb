@@ -2,25 +2,30 @@ package edu.iu.epic.visualization.linegraph.utilities;
 
 import java.awt.Color;
 import java.awt.Container;
-import java.awt.Rectangle;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.ItemEvent;
+import java.awt.event.ItemListener;
+import java.io.File;
 import java.util.List;
 
 import javax.swing.BoxLayout;
 import javax.swing.JButton;
+import javax.swing.JCheckBox;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
-import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JSplitPane;
+import javax.swing.filechooser.FileFilter;
 
 import org.jdesktop.swingworker.SwingWorker;
 
 import stencil.adapters.java2D.Adapter;
 import stencil.adapters.java2D.Panel;
 import stencil.explore.PropertyManager;
+import stencil.streams.Tuple;
+import stencil.util.BasicTuple;
 
 public class StencilRunner {
 	public static final String REPLAY_BUTTON_LABEL = "Replay";
@@ -141,7 +146,46 @@ public class StencilRunner {
 		JButton exportButton = createExportButton();
 		// TODO: Set layout data or something for the exportButton?
 		userControlPanel.add(exportButton);
+		
+		JCheckBox open = createVisibilityCheckbox("Open");
+		userControlPanel.add(open);
+		JCheckBox high = createVisibilityCheckbox("High");
+		userControlPanel.add(high);
+		JCheckBox low = createVisibilityCheckbox("Low");
+		userControlPanel.add(low);
+		JCheckBox close = createVisibilityCheckbox("Close");
+		userControlPanel.add(close);
+		
 		return userControlPanel;
+	}
+	
+	private JCheckBox createVisibilityCheckbox(final String lineName) {
+		JCheckBox checkBox = new JCheckBox();
+		checkBox.setSelected(true);
+		checkBox.addItemListener(new ItemListener() {
+			public void itemStateChanged (ItemEvent e) {
+				try {
+					
+					boolean visible = true;
+					if (e.getStateChange() == ItemEvent.DESELECTED) {
+						visible = false;
+					}
+					
+					//TODO: Probably need to do this differently
+					if (StencilRunner.this.stencilPanel != null) {
+						Tuple visibilityTuple = new BasicTuple("Visibility", new String[] {"Line", "Visible"}, 
+								new String[] {lineName, String.valueOf(visible)});
+						StencilRunner.this.stencilPanel.processTuple(visibilityTuple);
+					}
+						
+				} catch (Exception exception) {
+					// TODO: still needs work
+					throw new RuntimeException(exception);
+				}
+			}
+		});
+		
+		return checkBox;
 	}
 
 	/*
@@ -172,69 +216,63 @@ public class StencilRunner {
 		return replayButton;
 	}
 
+	
+	private static final String DEFAULT_EXPORT_FILENAME = "graph";
+	
 	private JButton createExportButton() {
 		JButton exportButton = new JButton(EXPORT_BUTTON_LABEL);
 
 		exportButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent actionEvent) {
 				try {
-					System.out.println("Exporting button works!");
 					
-					//TODO: Have Joseph Cottam make an enumeration?
-					String[] supportedFormats = new String[]{ "PNG", "EPS" };
+					//TODO: EPS support seems to not be working. Disabling format choosing until it's fixed
+//					String[] supportedFormats = new String[]{ "PNG", "EPS" };
+//					
+//					String selectedFormat = (String) JOptionPane.showInputDialog(null,
+//				            "Choose an export format", "Image Format",
+//				            JOptionPane.INFORMATION_MESSAGE, null,
+//				            supportedFormats, supportedFormats[0]);
+//					
+//					if (selectedFormat == null) {
+//						//user canceled export
+//						return;
+//					}
 					
-					String selectedFormat = (String) JOptionPane.showInputDialog(null,
-				            "Choose an export format", "Image Format",
-				            JOptionPane.INFORMATION_MESSAGE, null,
-				            supportedFormats, supportedFormats[0]);
+					String selectedFormat = "PNG";
 					
-					if (selectedFormat == null) {
-						//user canceled export
-						return;
-					}
-					//TODO: Is mixing swing and SWT like this a problem?
-					 JFileChooser c = new JFileChooser();
-				      // Demonstrate "Save" dialog:
-				      int rVal = c.showSaveDialog(StencilRunner.this.frame);
-				      if (rVal == JFileChooser.APPROVE_OPTION) {
+					 JFileChooser fileChooser = new JFileChooser();
+					 fileChooser.setSelectedFile(
+							 new File(DEFAULT_EXPORT_FILENAME + "." + selectedFormat.toLowerCase()));
+					 FileFilter pngOnly = new ExtensionFileFilter(
+							 "Portable Network Graphics (PNG)", new String[]{ "png" });
+					 fileChooser.setFileFilter(pngOnly);
+					 
+					 int approvedOrCancelled = fileChooser.showSaveDialog(StencilRunner.this.frame);
+				      
+				      if (approvedOrCancelled == JFileChooser.APPROVE_OPTION) {
 				        String fullFileName = 
-				        	c.getCurrentDirectory().toString() + "/" +
-				        	c.getSelectedFile().getName();
+				        	fileChooser.getCurrentDirectory().toString() + "/" +
+				        	fileChooser.getSelectedFile().getName();
 				        
 				        Object exportInfo = null;
+				        
+				        //TODO: Disabled until EPS works and dotsPerInch is handled right
 				        if (selectedFormat.equals("PNG")) {
-				        	 int dotsPerInch = 32;
-				        	 exportInfo = dotsPerInch;
-				        } else if (selectedFormat.equals("EPS")) {
-				        	Rectangle dimensions = new Rectangle(400,1600);
-				        	exportInfo = dimensions;
+				        	 int dotsPerInch = 64;
+				        	 exportInfo = dotsPerInch; //TODO: this seems to be ignored for now
 				        }
+//				        	
+//				        } else if (selectedFormat.equals("EPS")) {
+//				        	Rectangle dimensions = new Rectangle(400,1600);
+//				        	exportInfo = dimensions;
+//				        }
 				        StencilRunner.this.stencilPanel.export(fullFileName, selectedFormat, exportInfo);
 				    	 
 				      }
-				      if (rVal == JFileChooser.CANCEL_OPTION) {
-				        System.out.println("You pressed cancel");
-				        
+				      if (approvedOrCancelled == JFileChooser.CANCEL_OPTION) {
+				    	  return;
 				      }
-//				     File currentDir = new File(System.getProperty("user.home") + File.separator 
-//				            		+ "anything");
-//				        
-//				     dialog.setFilterPath(currentDir.getPath());
-//				        
-//
-//				      String suggestedFileName = "linegraph";
-//				      dialog.setFileName(suggestedFileName + "." + selectedFormat);
-//				     
-//				      String selectedFileName = dialog.open();
-//				      
-//				      if (selectedFileName == null) {
-//				    	  //user cancelled export
-//				    	  return;
-//				      }
-//				     
-//				      StencilRunner.this.stencilPanel.export(
-//				    		  selectedFileName, selectedFormat, null);
-//					
 					
 				} catch (Exception e) {
 					// TODO: Perhaps a better way to do this
