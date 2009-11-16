@@ -24,6 +24,7 @@ import edu.iu.epic.modeling.compartment.model.exception.CompartmentExistsExcepti
 import edu.iu.epic.modeling.compartment.model.exception.InvalidCompartmentNameException;
 import edu.iu.epic.modeling.compartment.model.exception.InvalidParameterExpressionException;
 import edu.iu.epic.modeling.compartment.model.exception.InvalidParameterNameException;
+import edu.iu.epic.modeling.compartment.model.exception.ParameterAlreadyDefinedException;
 
 /* TODO: Create an interface for Model.  Create some sort of immutable notion of a Model as well
  * and pass that between algorithms rather than the mutable model.  Take care of the desire to
@@ -146,10 +147,16 @@ public class Model {
 	}
 
 	public synchronized void setParameterDefinition(String name, String value)
-			throws InvalidParameterExpressionException, InvalidParameterNameException {
+			throws InvalidParameterExpressionException,
+			InvalidParameterNameException,
+			ParameterAlreadyDefinedException {
 		Utility.checkForNullArgument("name", name);
 		if (!isValidParameterName(name)) {
 			throw new InvalidParameterNameException(name);
+		}
+		
+		if (parameterDefinitions.containsKey(name)) {
+			throw new ParameterAlreadyDefinedException(name);
 		}
 		
 		// Don't need to check expression; null isn't a valid definition

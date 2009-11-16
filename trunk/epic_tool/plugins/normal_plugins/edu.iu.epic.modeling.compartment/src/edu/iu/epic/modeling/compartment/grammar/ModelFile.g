@@ -69,7 +69,6 @@ modelFile
 	: line EOF
 	| (NEWLINE | (line NEWLINE))+ EOF
 	;
-// TODO This probably needs to be broken down into sections so that the final compartmentDeclaration must come before the first transitionRule.  Depends upon how we code the Object model.
 line
 	: COMMENT
 	| (ID '=' .*)=> parameterAssignment
