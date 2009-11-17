@@ -67,8 +67,9 @@ public class ExtractNetworkAlgorithm implements Algorithm, ProgressTrackable {
 			Graph network = gc.buildGraph(sourceColumnName, targetColumnName, delimiter,
 					isBipartite, logger);
 
-			BasicDataPlus outData = new BasicDataPlus(network, DataProperty.NETWORK_TYPE, data[0]);
+			BasicDataPlus outData = new BasicDataPlus(network, data[0]);
 			outData.markAsModified();
+			outData.setType(DataProperty.NETWORK_TYPE);
 			outData.setLabel(outDataLabel);
 
 			return new Data[] { outData };
