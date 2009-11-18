@@ -61,7 +61,7 @@ public class SPEMShellBatchRunnerAlgorithm implements Algorithm {
 		Collection<Callable<Data[]>> runTasks = new HashSet<Callable<Data[]>>();
 		for (int runIndex = 0; runIndex < numberOfRuns; runIndex++) {			
 			int singleSeed = batchRandom.nextInt();
-			Callable<Data[]> runTask = createRunTask(singleSeed); // TODO Add parameters to sig.
+			Callable<Data[]> runTask = createRunTask(singleSeed, parameters);
 			
 			runTasks.add(runTask);
 		}
@@ -95,7 +95,7 @@ public class SPEMShellBatchRunnerAlgorithm implements Algorithm {
 		}
 	}
 
-	private Callable<Data[]> createRunTask(int singleSeed) {
+	private Callable<Data[]> createRunTask(int singleSeed, Dictionary<String, Object> parameters) {
 		parameters.put(SPEMShellSingleRunnerAlgorithmFactory.SEED_PARAMETER_ID, singleSeed);
 		
 		final Algorithm singleAlgorithm =
