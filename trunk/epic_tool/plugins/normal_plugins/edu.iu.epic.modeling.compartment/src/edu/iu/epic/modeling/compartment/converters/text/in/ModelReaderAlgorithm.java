@@ -20,16 +20,16 @@ import org.osgi.service.log.LogService;
 import edu.iu.cns.utilities.testing.LogOnlyCIShellContext;
 import edu.iu.epic.modeling.compartment.converters.text.Constants;
 import edu.iu.epic.modeling.compartment.converters.text.SystemErrCapturer;
-import edu.iu.epic.modeling.compartment.grammar.parsing.ModelFileLexer;
-import edu.iu.epic.modeling.compartment.grammar.parsing.ModelFileParser;
-import edu.iu.epic.modeling.compartment.grammar.parsing.ModelFileParser.UncheckedParsingException;
+import edu.iu.epic.modeling.compartment.converters.text.generated.ModelFileLexer;
+import edu.iu.epic.modeling.compartment.converters.text.generated.ModelFileParser;
+import edu.iu.epic.modeling.compartment.converters.text.generated.ModelFileParser.UncheckedParsingException;
 import edu.iu.epic.modeling.compartment.model.Model;
 
 public class ModelReaderAlgorithm implements Algorithm {
 	public static final String TEST_DATUM_PATH =
 		"/edu/iu/epic/modeling/compartment/converters/text/testing/"
-		+ "bad/"
-		+ "duplicateCompartmentName.bad.mdl";
+		+ "good/"
+		+ "test.mdl";
 
 	private Data inputData;
 	private File inputModelFile;
@@ -122,7 +122,7 @@ public class ModelReaderAlgorithm implements Algorithm {
 			System.exit(-1);
 		}
 
-//		// TODO Convert the remainder to unit tests?  Are we doing that?
+		// A battery of smaller tests to augment the files in testing/bad.
 //		System.out.println("Parameter expression tests:");
 //		String[] parameterExpressionTests = new String[]{ "a*b", "a%b", "+", "r!beta", "7a" };
 //		for (int ii = 0; ii < parameterExpressionTests.length; ii++) {

@@ -7,17 +7,17 @@ public class InfectionTransition implements Transition {
 	private Compartment infector;
 	private Compartment target;
 	private String ratio;
-	private boolean isSecondary;
+	
 
 	protected InfectionTransition(Compartment source, Compartment infector,
-			Compartment target, String ratio, boolean isSecondary) {
+			Compartment target, String ratio) {
 		this.source = source;
 		this.infector = infector;
 		this.target = target;
 		this.ratio = ratio;
-		this.isSecondary = isSecondary;
 	}
 
+	
 	@Override
 	public String toString() {
 		String s = "";
@@ -29,10 +29,6 @@ public class InfectionTransition implements Transition {
 			s += source + " " + SYNTAX + " " + infector + " " + ratio;
 		} else {
 			s += source + " " + SYNTAX + " " + infector + " = " + target + " " + ratio;
-		}
-
-		if (isSecondary) {
-			s += " " + "secondary";
 		}
 
 		return s;
@@ -57,8 +53,6 @@ public class InfectionTransition implements Transition {
 	public String getRatio() {
 		return ratio;
 	}
-
-	
 	public boolean setRatio(String newRatio) {
 		if (Model.isValidParameterExpression(newRatio)) {
 			this.ratio = newRatio;

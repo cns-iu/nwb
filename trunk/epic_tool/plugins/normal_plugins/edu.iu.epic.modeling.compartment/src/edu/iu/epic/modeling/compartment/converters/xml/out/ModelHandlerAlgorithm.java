@@ -1,4 +1,4 @@
-package edu.iu.epic.modeling.compartment.converters.xml.in;
+package edu.iu.epic.modeling.compartment.converters.xml.out;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -16,27 +16,26 @@ import edu.iu.epic.modeling.compartment.converters.xml.Constants;
 import edu.iu.epic.modeling.compartment.converters.xml.ModelUnmarshaller;
 import edu.iu.epic.modeling.compartment.model.exception.ModelModificationException;
 
-public class ModelValidatorAlgorithm implements Algorithm {
+public class ModelHandlerAlgorithm implements Algorithm {
 	private Data inputData;
-	private String inputModelFilePath;
+	private File modelFile;
 	private LogService logger;
-	
 
-	public ModelValidatorAlgorithm(Data inputData, String inputModelFilePath, LogService logger) {
+
+	public ModelHandlerAlgorithm(Data inputData, File modelFile, LogService logger) {
 		this.inputData = inputData;
-    	this.inputModelFilePath = inputModelFilePath;
+    	this.modelFile = modelFile;
     	this.logger = logger;
     }
 
 
     public Data[] execute() {
     	try {    		
-    		ModelUnmarshaller.unmarshalModelFrom(new File(inputModelFilePath), true);
-			
+    		ModelUnmarshaller.unmarshalModelFrom(modelFile, true);
+    		
 			BasicDataPlus outData =
-				new BasicDataPlus(
-						new File(inputModelFilePath), Constants.MODEL_MIME_TYPE, inputData);
-			outData.setLabel("Model: " + inputModelFilePath);
+				new BasicDataPlus(modelFile, Constants.MODEL_FILE_EXTENSION, inputData);
+			outData.setLabel("Model: " + modelFile.getName());
 			return new Data[]{ outData };
 		} catch (FileNotFoundException e) {
 			logger.log(LogService.LOG_ERROR, "Error locating XML file: " + e.getMessage(), e);
@@ -58,8 +57,7 @@ public class ModelValidatorAlgorithm implements Algorithm {
 			logger.log(LogService.LOG_ERROR, "Error parsing XML file: " + e.getMessage(), e);
 			return null;
 		} catch (IOException e) {
-			logger.log(LogService.LOG_ERROR,
-					"Unexpected error: XML schema not found: " + e.getMessage(), e);
+			logger.log(LogService.LOG_ERROR, "Error handling XML file: " + e.getMessage(), e);
 			return null;
 		}
     }

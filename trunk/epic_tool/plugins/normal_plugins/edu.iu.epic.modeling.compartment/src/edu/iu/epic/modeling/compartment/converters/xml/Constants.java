@@ -8,6 +8,6 @@ public final class Constants {
 		// Constants only.
 	}
 
-	public static final String MODEL_FILE_EXTENSION = "file-ext:mdl";
+	public static final String MODEL_FILE_EXTENSION = "file-ext:xml";
 	public static final String MODEL_MIME_TYPE = "file:text/xml+compartmentalmodel";
 }

@@ -1,4 +1,4 @@
-package edu.iu.epic.modeling.compartment.converters.xml.in;
+package edu.iu.epic.modeling.compartment.converters.xml.out;
 
 import java.io.File;
 import java.util.Dictionary;
@@ -9,12 +9,13 @@ import org.cishell.framework.algorithm.AlgorithmFactory;
 import org.cishell.framework.data.Data;
 import org.osgi.service.log.LogService;
 
-public class ModelReaderAlgorithmFactory implements AlgorithmFactory {
+public class ModelHandlerAlgorithmFactory implements AlgorithmFactory {
 	@SuppressWarnings("unchecked") // Raw Dictionary
 	public Algorithm createAlgorithm(Data[] data, Dictionary parameters, CIShellContext context) {
-		File inputModelFile = (File) data[0].getData();
+		Data inputData = data[0];
+		File modelFile = (File) data[0].getData();
 		LogService logger = (LogService) context.getService(LogService.class.getName());
-
-		return new ModelReaderAlgorithm(data[0], inputModelFile, logger);
+		
+		return new ModelHandlerAlgorithm(inputData, modelFile, logger);
 	}
 }

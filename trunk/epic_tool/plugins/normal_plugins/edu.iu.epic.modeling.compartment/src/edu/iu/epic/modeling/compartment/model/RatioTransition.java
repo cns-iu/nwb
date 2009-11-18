@@ -30,10 +30,17 @@ public class RatioTransition implements Transition {
 		return source == compartment || target == compartment;
 	}
 
+	public Compartment getSource() {
+		return source;
+	}
+
+	public Compartment getTarget() {
+		return target;
+	}
+
 	public String getRatio() {
 		return ratio;
 	}
-
 	public boolean setRatio(String newRatio) {
 		if (Model.isValidParameterExpression(newRatio)) {
 			this.ratio = newRatio;
@@ -42,4 +49,11 @@ public class RatioTransition implements Transition {
 			return false;
 		}
 	}
+
+	public boolean isSecondary() {
+		return isSecondary;
+	}
+	public void setSecondary(boolean isSecondary) {
+		this.isSecondary = isSecondary;
+	}	
 }

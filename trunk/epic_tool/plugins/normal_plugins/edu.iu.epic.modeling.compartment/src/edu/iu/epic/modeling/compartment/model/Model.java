@@ -1,5 +1,6 @@
 package edu.iu.epic.modeling.compartment.model;
 
+import java.awt.geom.Point2D;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -17,8 +18,8 @@ import org.antlr.stringtemplate.StringTemplate;
 import org.antlr.stringtemplate.StringTemplateGroup;
 
 import edu.iu.epic.modeling.compartment.converters.text.SystemErrCapturer;
-import edu.iu.epic.modeling.compartment.grammar.parsing.ModelFileParser;
-import edu.iu.epic.modeling.compartment.grammar.parsing.ModelFileParser.UncheckedParsingException;
+import edu.iu.epic.modeling.compartment.converters.text.generated.ModelFileParser;
+import edu.iu.epic.modeling.compartment.converters.text.generated.ModelFileParser.UncheckedParsingException;
 import edu.iu.epic.modeling.compartment.model.exception.CompartmentDoesNotExistException;
 import edu.iu.epic.modeling.compartment.model.exception.CompartmentExistsException;
 import edu.iu.epic.modeling.compartment.model.exception.InvalidCompartmentNameException;
@@ -32,7 +33,7 @@ import edu.iu.epic.modeling.compartment.model.exception.ParameterAlreadyDefinedE
  */
 public class Model {
 	private static StringTemplateGroup modelFileTemplateGroup =
-		loadTemplates("/edu/iu/epic/modeling/compartment/grammar/modelFile.st");
+		loadTemplates("/edu/iu/epic/modeling/compartment/converters/text/modelFile.st");
 
 	private Map<String, Compartment> compartments = new LinkedHashMap<String, Compartment>();
 	private Set<Transition> transitions = new LinkedHashSet<Transition>();
@@ -79,19 +80,10 @@ public class Model {
 		if (compartments.containsKey(name)) {
 			return compartments.get(name);
 		} else {
-			throw new CompartmentDoesNotExistException("Model has no compartment named '" + name
-					+ "'.");
+			throw new CompartmentDoesNotExistException(
+					"Model has no compartment named '" + name + "'.");
 		}
 	}
-
-	// public synchronized Compartment getOrAddCompartment(String name)
-	// throws CompartmentExistsException {
-	// if (compartments.containsKey(name)) {
-	// return compartments.get(name);
-	// } else {
-	// return addCompartment(name);
-	// }
-	// }
 
 	public synchronized Compartment addCompartment(String name)
 			throws CompartmentExistsException, InvalidCompartmentNameException {
@@ -109,6 +101,16 @@ public class Model {
 		} else {
 			throw new InvalidCompartmentNameException(name);
 		}
+	}
+	
+	public synchronized Compartment addCompartment(String name, Point2D position)
+			throws CompartmentExistsException, InvalidCompartmentNameException {
+		Utility.checkForNullArgument("position", position);
+
+		Compartment compartment = addCompartment(name);
+		compartment.setPosition(position);
+		
+		return compartment;
 	}
 
 	public synchronized RatioTransition addRatioTransition(Compartment source,
@@ -129,8 +131,8 @@ public class Model {
 	}
 
 	public synchronized InfectionTransition addInfectionTransition(Compartment source,
-			Compartment infector, Compartment target, String ratio,
-			boolean isSecondary) throws InvalidParameterExpressionException {
+			Compartment infector, Compartment target, String ratio)
+				throws InvalidParameterExpressionException {
 		Utility.checkForNullArgument("source", source);
 		Utility.checkForNullArgument("infector", infector);
 		Utility.checkForNullArgument("target", target);
@@ -138,10 +140,9 @@ public class Model {
 		if (!isValidParameterExpression(ratio)) {
 			throw new InvalidParameterExpressionException(ratio);
 		}
-		Utility.checkForNullArgument("isSecondary", isSecondary);
 
-		InfectionTransition transition = new InfectionTransition(source, infector, target,
-				ratio, isSecondary);
+		InfectionTransition transition =
+			new InfectionTransition(source, infector, target, ratio);
 		this.transitions.add(transition);
 		return transition;
 	}

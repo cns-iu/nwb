@@ -12,8 +12,8 @@ import org.osgi.service.log.LogService;
 
 import edu.iu.epic.modeling.compartment.converters.text.Constants;
 import edu.iu.epic.modeling.compartment.converters.text.SystemErrCapturer;
-import edu.iu.epic.modeling.compartment.grammar.parsing.ModelFileParser;
-import edu.iu.epic.modeling.compartment.grammar.parsing.ModelFileParser.UncheckedParsingException;
+import edu.iu.epic.modeling.compartment.converters.text.generated.ModelFileParser;
+import edu.iu.epic.modeling.compartment.converters.text.generated.ModelFileParser.UncheckedParsingException;
 
 public class ModelValidatorAlgorithm implements Algorithm {
 	private String inputModelFilePath;
@@ -50,12 +50,6 @@ public class ModelValidatorAlgorithm implements Algorithm {
 
     		// Any exceptions thrown will signal an invalid file.
     		parser.getModel();
-
-//    		if (parser.encounteredRecognitionException()) {
-//    			// TODO Fetch and pass on the cause
-//    			throw new AlgorithmExecutionException(
-//    					"Failure strictly validating invalid model file");
-//    		}
 
     		BasicDataPlus outData =
     			new BasicDataPlus(new File(inputModelFilePath), Constants.MODEL_MIME_TYPE);
