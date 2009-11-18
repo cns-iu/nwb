@@ -2,7 +2,9 @@ package edu.iu.epic.spemshell.runner.batch;
 
 import java.util.Collection;
 import java.util.Dictionary;
+import java.util.Enumeration;
 import java.util.HashSet;
+import java.util.Hashtable;
 import java.util.Random;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutionException;
@@ -24,7 +26,7 @@ public class SPEMShellBatchRunnerAlgorithm implements Algorithm {
 	public static final int THREAD_POOL_SIZE = 4;
 	
 	private Data[] data;
-	private Dictionary<String, Object> parameters;
+	private Dictionary<String, Object> batchParameters;
 	private CIShellContext ciContext;
 	private BundleContext bundleContext;
 
@@ -35,7 +37,7 @@ public class SPEMShellBatchRunnerAlgorithm implements Algorithm {
 			CIShellContext ciContext,
 			BundleContext bundleContext) {
 		this.data = data;
-		this.parameters = parameters;
+		this.batchParameters = parameters;
 		this.ciContext = ciContext;
 		this.bundleContext = bundleContext;
 	}
@@ -47,13 +49,13 @@ public class SPEMShellBatchRunnerAlgorithm implements Algorithm {
 		 * AttributeDefinitions in its Factory's mutateParameters method.
 		 */
 		int batchSeed =
-			(Integer) parameters.get(SPEMShellSingleRunnerAlgorithmFactory.SEED_PARAMETER_ID);
+			(Integer) batchParameters.get(SPEMShellSingleRunnerAlgorithmFactory.SEED_PARAMETER_ID);
 		// For generating the sequence of single-run seeds.
 		Random batchRandom = new Random(batchSeed);
 		
 		
 		int numberOfRuns =
-			(Integer) parameters.get(
+			(Integer) batchParameters.get(
 					SPEMShellBatchRunnerAlgorithmFactory.NUMBER_OF_RUNS_PARAMETER_ID);
 		
 
@@ -61,7 +63,16 @@ public class SPEMShellBatchRunnerAlgorithm implements Algorithm {
 		Collection<Callable<Data[]>> runTasks = new HashSet<Callable<Data[]>>();
 		for (int runIndex = 0; runIndex < numberOfRuns; runIndex++) {			
 			int singleSeed = batchRandom.nextInt();
-			Callable<Data[]> runTask = createRunTask(singleSeed, parameters);
+
+			Dictionary<String, Object> singleParameters = createShallowCopy(batchParameters);
+			singleParameters.put(
+					SPEMShellSingleRunnerAlgorithmFactory.SEED_PARAMETER_ID, singleSeed);
+			
+			Algorithm singleAlgorithm =
+				new SPEMShellSingleRunnerAlgorithm(
+						data, singleParameters, ciContext, bundleContext);
+			
+			Callable<Data[]> runTask = new SingleRunTask(singleAlgorithm);
 			
 			runTasks.add(runTask);
 		}
@@ -95,15 +106,6 @@ public class SPEMShellBatchRunnerAlgorithm implements Algorithm {
 		}
 	}
 
-	private Callable<Data[]> createRunTask(int singleSeed, Dictionary<String, Object> parameters) {
-		parameters.put(SPEMShellSingleRunnerAlgorithmFactory.SEED_PARAMETER_ID, singleSeed);
-		
-		final Algorithm singleAlgorithm =
-			new SPEMShellSingleRunnerAlgorithm(data, parameters, ciContext, bundleContext);
-		
-		return new SingleRunTask(singleAlgorithm);	
-	}
-	
 	@SuppressWarnings("unchecked") // Raw Dictionary from getMetadata.
 	private void setSingleOutputDataLabel(Data data, int runIndex) {
 		data.getMetadata().put(DataProperty.LABEL, createSingleOutputDataLabel(runIndex));
@@ -111,6 +113,21 @@ public class SPEMShellBatchRunnerAlgorithm implements Algorithm {
 	private String createSingleOutputDataLabel(int runIndex) {
 		int userFriendlyRunIndex = runIndex + 1;
 		return "Simulation " + userFriendlyRunIndex + " results";
+	}
+	
+	// Note that key and value are not cloned.
+	private static <K, V> Dictionary<K, V> createShallowCopy(
+			Dictionary<K, V> originalDictionary) {
+		Dictionary<K, V> newDictionary = new Hashtable<K, V>();
+		
+		for (Enumeration<K> keys = originalDictionary.keys(); keys.hasMoreElements();) {
+			K key = keys.nextElement();
+			V value = originalDictionary.get(key);
+			
+			newDictionary.put(key, value);
+		}
+		
+		return newDictionary;
 	}
 	
 	
