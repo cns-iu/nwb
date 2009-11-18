@@ -1,7 +1,7 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
-Bundle-Name: edu.iu.epic.spemshell.runner.single
-Bundle-SymbolicName: edu.iu.epic.spemshell.runner.single
+Bundle-Name: edu.iu.epic.spemshell.runner
+Bundle-SymbolicName: edu.iu.epic.spemshell.runner
 Bundle-Version: 0.0.1
 Bundle-ClassPath: .
 Import-Package: edu.iu.epic.modeling.compartment.model,
