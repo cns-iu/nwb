@@ -26,10 +26,10 @@ import prefuse.data.Table;
 import stencil.streams.Tuple;
 import stencil.util.BasicTuple;
 import edu.iu.cns.utilities.testing.LogOnlyCIShellContext;
+import edu.iu.epic.visualization.linegraph.core.StencilRunner;
 import edu.iu.epic.visualization.linegraph.utilities.StencilData;
 import edu.iu.epic.visualization.linegraph.utilities.StencilException;
-import edu.iu.epic.visualization.linegraph.utilities.StencilRunner;
-import edu.iu.epic.visualization.linegraph.utilities.StreamSource;
+import edu.iu.epic.visualization.linegraph.utilities.TableStreamSource;
 import edu.iu.nwb.converter.prefusecsv.reader.PrefuseCsvReader;
 
 public class LineGraphAlgorithm implements Algorithm {
@@ -88,11 +88,10 @@ public class LineGraphAlgorithm implements Algorithm {
 
 		showStencilRunner(stencilRunner);
 
-		stencilRunner.playWithLoadedData();
+		playStencilRunner(stencilRunner);
 
 		// // TODO: Wire this up so it uses actual input data.
-		// // TODO: Make export button nicer, and get EPS working?
-		// // TODO: Check boxes to toggle lines.
+		//TODO: Make Export parameters work (will need Joseph Cottem to update stencil I think)
 		
 		return new Data[0];
 	}
@@ -106,7 +105,7 @@ public class LineGraphAlgorithm implements Algorithm {
 
 		// get the stencil streams
 
-		List<StreamSource> streamSources = getSampleStreamSourcesForTesting();
+		List<TableStreamSource> streamSources = getSampleStreamSourcesForTesting();
 
 		// return the stencil script and streams together as "stencil data"
 
@@ -147,6 +146,15 @@ public class LineGraphAlgorithm implements Algorithm {
 			throw new AlgorithmExecutionException(e);
 		}
 	}
+	
+	private void playStencilRunner(final StencilRunner stencilRunner)
+		throws AlgorithmExecutionException {
+		try {
+			stencilRunner.play();
+		} catch (StencilException e) {
+			throw new AlgorithmExecutionException(e);
+		}
+	}
 
 	private String extractStencilScript(File stencilFile)
 			throws AlgorithmExecutionException {
@@ -173,28 +181,28 @@ public class LineGraphAlgorithm implements Algorithm {
 		}
 	}
 
-	public List<StreamSource> getSampleStreamSourcesForTesting() {
+	public List<TableStreamSource> getSampleStreamSourcesForTesting() {
 
-		List<StreamSource> streams = new ArrayList<StreamSource>();
-		StreamSource testStream1 = new StreamSource(
+		List<TableStreamSource> streams = new ArrayList<TableStreamSource>();
+		TableStreamSource testStream1 = new TableStreamSource(
 				LineGraphAlgorithm.this.inputTable, TEST_TIME_STEP_COLUMN_NAME,
 				TEST_LINE_COLUMN_NAME_1, TEST_STENCIL_STREAM_NAME,
 				TEST_STENCIL_TIME_STEP_ID, TEST_LINE_COLUMN_ID, TEST_VALUE_ID);
 		streams.add(testStream1);
 
-		StreamSource testStream2 = new StreamSource(
+		TableStreamSource testStream2 = new TableStreamSource(
 				LineGraphAlgorithm.this.inputTable, TEST_TIME_STEP_COLUMN_NAME,
 				TEST_LINE_COLUMN_NAME_2, TEST_STENCIL_STREAM_NAME,
 				TEST_STENCIL_TIME_STEP_ID, TEST_LINE_COLUMN_ID, TEST_VALUE_ID);
 		streams.add(testStream2);
 
-		StreamSource testStream3 = new StreamSource(
+		TableStreamSource testStream3 = new TableStreamSource(
 				LineGraphAlgorithm.this.inputTable, TEST_TIME_STEP_COLUMN_NAME,
 				TEST_LINE_COLUMN_NAME_3, TEST_STENCIL_STREAM_NAME,
 				TEST_STENCIL_TIME_STEP_ID, TEST_LINE_COLUMN_ID, TEST_VALUE_ID);
 		streams.add(testStream3);
 
-		StreamSource testStream4 = new StreamSource(
+		TableStreamSource testStream4 = new TableStreamSource(
 				LineGraphAlgorithm.this.inputTable, TEST_TIME_STEP_COLUMN_NAME,
 				TEST_LINE_COLUMN_NAME_4, TEST_STENCIL_STREAM_NAME,
 				TEST_STENCIL_TIME_STEP_ID, TEST_LINE_COLUMN_ID, TEST_VALUE_ID);

@@ -2,6 +2,9 @@
 <metatype:MetaData xmlns:metatype="http://www.osgi.org/xmlns/metatype/v1.0.0">
 	<OCD name="Line Graph" id="edu.iu.epic.visualization.linegraph.LineGraphAlgorithm.OCD"
 		 description="This algorithm renders lines! ">
+		<AD name="Time Step" id="timeStepColumn" type="String" description="The column used to order output in the Line Graph" default=""/>
+		<AD name="COLUMN_NAME" id="column_name_is_line" type="Boolean" description="Should the values in this column be graphed?" default=""/>
+		
 	</OCD>
 	<Designate pid="edu.iu.epic.visualization.linegraph.LineGraphAlgorithm">
 		<Object ocdref="edu.iu.epic.visualization.linegraph.LineGraphAlgorithm.OCD" />

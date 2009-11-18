@@ -2,7 +2,7 @@ package edu.iu.epic.visualization.linegraph.utilities;
 
 import prefuse.data.Table;
 
-public class StreamSource {
+public class TableStreamSource {
 	
 	private Table table;
 	private String timeStepColumnName;
@@ -12,7 +12,7 @@ public class StreamSource {
 	private String stencilLineID;
 	private String stencilValueID;
 	
-		public StreamSource(Table table,
+		public TableStreamSource(Table table,
 			String timeStepColumnName,
 			String lineColumnName,
 			String stencilStreamName,

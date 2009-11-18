@@ -5,7 +5,7 @@ import java.io.File;
 import javax.swing.filechooser.FileFilter;
 
 //from http://www.java2s.com/Code/JavaAPI/javax.swing/JFileChoosersetFileFilterFileFilterfilter.htm
-class ExtensionFileFilter extends FileFilter {
+public class ExtensionFileFilter extends FileFilter {
 	  String description;
 
 	  String extensions[];

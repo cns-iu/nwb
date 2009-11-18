@@ -5,10 +5,10 @@ import java.util.List;
 
 public class StencilData {
 	private String stencilScript;
-	private List<StreamSource> streamSources;
+	private List<TableStreamSource> streamSources;
 	
 	public StencilData(String stencilScript,
-					   List<StreamSource> streamSources) {
+					   List<TableStreamSource> streamSources) {
 		this.stencilScript = stencilScript;
 		this.streamSources = streamSources;
 	}
@@ -19,7 +19,7 @@ public class StencilData {
 	
 	public List<TupleStream> createStreams() {
 		List<TupleStream> streams = new ArrayList<TupleStream>();
-		for (StreamSource source : streamSources) {
+		for (TableStreamSource source : streamSources) {
 			TupleStream stream = source.getStream();
 			streams.add(stream);
 		}
