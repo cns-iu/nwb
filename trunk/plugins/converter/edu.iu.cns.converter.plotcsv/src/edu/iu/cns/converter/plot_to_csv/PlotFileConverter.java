@@ -209,7 +209,7 @@ public class PlotFileConverter {
 		if (tokenizer.hasNext()) {
 			String commentContents = tokenizer.nextLine();
 
-			if (commentContents.contains("|")) {
+			if (commentContents.indexOf("|") != -1) {
 				return commentContents.split(PIPE_DELIMITER_PATTERN);
 			} else {
 				return commentContents.split(ONE_OR_MORE_WHITESPACES_PATTERN);
@@ -236,7 +236,7 @@ public class PlotFileConverter {
 	 */
 	private static String convertToDecimalNotation(String numberAsString) {
 		// Check for a scientific notation delimiter.
-		if (numberAsString.contains("E") || numberAsString.contains("e")) {
+		if (numberAsString.indexOf("E") != -1 || numberAsString.indexOf("e") != -1) {
 			Format format =
 				new DecimalFormat(UNROUNDED_DECIMAL_PATTERN);
 			
