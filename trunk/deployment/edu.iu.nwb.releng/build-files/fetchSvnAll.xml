@@ -229,20 +229,24 @@
   	
   	<!-- NWB Plugins -->
   	
-  	<antcall target="svn.co">
+  	<!--
+  	
+  	Disabled until this is 1.4 compatible
+  	 <antcall target="svn.co">
   		<param name="target" value="plugins"/>
   		<param name="element.id" value="edu.iu.cns.converter.plotcsv"/>
   		<param name="project.name" value="edu.iu.cns.converter.plotcsv"/>
   		<param name="url" value="http://nwb.slis.indiana.edu/svn/nwb/trunk/plugins/converter/"/>
   	</antcall>
   	
+  	-->
   	<antcall target="svn.co">
   		<param name="target" value="plugins"/>
   		<param name="element.id" value="edu.iu.cns.converter.graceplot"/>
   		<param name="project.name" value="edu.iu.cns.converter.graceplot"/>
   		<param name="url" value="http://nwb.slis.indiana.edu/svn/nwb/trunk/plugins/converter/"/>
   	</antcall>
-  	
+
   	<antcall target="svn.co">
   	  	  	        <param name="target" value="plugins"/>
   	  	  	        <param name="element.id" value="edu.iu.nwb.analysis.blondelcommunitydetection"/>
