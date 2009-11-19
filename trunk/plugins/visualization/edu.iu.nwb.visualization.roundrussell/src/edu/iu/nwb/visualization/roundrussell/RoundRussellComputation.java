@@ -19,7 +19,7 @@ import org.osgi.service.log.LogService;
 import edu.iu.nwb.util.nwbfile.NWBFileParserHandler;
 import edu.iu.nwb.visualization.roundrussell.interpolation.ColorInterpolator;
 import edu.iu.nwb.visualization.roundrussell.interpolation.Interpolator;
-import edu.iu.nwb.visualization.roundrussell.interpolation.ZeroLengthInterpolatorInputRangeException;
+import edu.iu.nwb.visualization.roundrussell.interpolation.InputRangeException;
 import edu.iu.nwb.visualization.roundrussell.utility.Range;
 
 public class RoundRussellComputation  implements NWBFileParserHandler {
@@ -326,7 +326,7 @@ public class RoundRussellComputation  implements NWBFileParserHandler {
 				nodeColorInterpolator = 
 					new ColorInterpolator(nodeColorValues, nodeColorRange);
 				isNodeColoringPossible = true;
-			} catch (ZeroLengthInterpolatorInputRangeException e) {
+			} catch (InputRangeException e) {
 				logger.log(LogService.LOG_ERROR, "Node color attribute values " 
 						+ "have to be sufficiently distinct. In the current sample" 
 						+ " max & min for node color attribute is the same. Default " 

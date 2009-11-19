@@ -14,7 +14,7 @@ import org.cishell.framework.algorithm.AlgorithmExecutionException;
 
 import edu.iu.nwb.visualization.roundrussell.interpolation.Interpolator;
 import edu.iu.nwb.visualization.roundrussell.interpolation.InterpolatorInversionException;
-import edu.iu.nwb.visualization.roundrussell.interpolation.ZeroLengthInterpolatorInputRangeException;
+import edu.iu.nwb.visualization.roundrussell.interpolation.InputRangeException;
 import edu.iu.nwb.visualization.roundrussell.legend.ColorLegend;
 import edu.iu.nwb.visualization.roundrussell.legend.Legend;
 import edu.iu.nwb.visualization.roundrussell.utility.Averager;
@@ -85,7 +85,7 @@ public class PostScriptOperations {
 	 * @param nodeColorColumnName
 	 * @return
 	 * @throws AlgorithmExecutionException
-	 * @throws ZeroLengthInterpolatorInputRangeException
+	 * @throws InputRangeException
 	 * @throws InterpolatorInversionException
 	 */
 	public static String getColorLegendContent(Interpolator<Color> colorQuantityInterpolator, 
@@ -93,7 +93,7 @@ public class PostScriptOperations {
 											   Range<Color> colorRange,
 											   String nodeColorColumnName) 
 		throws AlgorithmExecutionException, 
-			ZeroLengthInterpolatorInputRangeException, 
+			InputRangeException, 
 			InterpolatorInversionException {
 		Color colorMidrange = Averager.mean(colorRange.getMin(), colorRange.getMax());		
 		double colorMidrangePreimage = colorQuantityInterpolator.invert(colorMidrange);

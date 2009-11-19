@@ -23,7 +23,7 @@ import edu.iu.nwb.converter.nwb.common.ValidateNWBFile;
 import edu.iu.nwb.util.nwbfile.NWBFileParser;
 import edu.iu.nwb.util.nwbfile.ParsingException;
 import edu.iu.nwb.visualization.roundrussell.interpolation.InterpolatorInversionException;
-import edu.iu.nwb.visualization.roundrussell.interpolation.ZeroLengthInterpolatorInputRangeException;
+import edu.iu.nwb.visualization.roundrussell.interpolation.InputRangeException;
 import edu.iu.nwb.visualization.roundrussell.utility.Constants;
 import edu.iu.nwb.visualization.roundrussell.utility.Range;
 
@@ -258,7 +258,7 @@ public class RoundRussellAlgorithm implements Algorithm {
 			logger.log(LogService.LOG_ERROR, e.getMessage(), e);
 		} catch (AlgorithmExecutionException e) {
 			logger.log(LogService.LOG_ERROR, e.getMessage(), e);
-		} catch (ZeroLengthInterpolatorInputRangeException e) {
+		} catch (InputRangeException e) {
 			logger.log(LogService.LOG_ERROR, e.getMessage(), e);
 		} catch (InterpolatorInversionException e) {
 			logger.log(LogService.LOG_ERROR, e.getMessage(), e);

@@ -11,17 +11,17 @@ public class LinearInterpolator implements Interpolator<Double> {
 	private Range<Double> outRange;
 
 	public LinearInterpolator(Collection<Double> inValues, Range<Double> outRange)
-			throws ZeroLengthInterpolatorInputRangeException {
+			throws InputRangeException {
 		this(Range.calculateRange(inValues), outRange);
 	}
 	
 	public LinearInterpolator(Range<Double> inRange, Range<Double> outRange)
-				throws ZeroLengthInterpolatorInputRangeException {
+				throws InputRangeException {
 		if (!inRange.getMin().equals(inRange.getMax())) {
 			this.inRange = inRange;
 			this.outRange = outRange;
 		} else {
-			throw new ZeroLengthInterpolatorInputRangeException(inRange);
+			throw new InputRangeException(inRange);
 		}
 	}
 	
@@ -74,7 +74,7 @@ public class LinearInterpolator implements Interpolator<Double> {
 			Range<Double> outRange = interpolator.getOutRange();
 			
 			return new LinearInterpolator(outRange, inRange);
-		} catch (ZeroLengthInterpolatorInputRangeException e) {
+		} catch (InputRangeException e) {
 			throw new InterpolatorInversionException(e);
 		}
 	}

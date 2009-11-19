@@ -25,7 +25,7 @@ public class ColorInterpolator implements Interpolator<Color> {
 
 	public ColorInterpolator(
 			Collection<Double> colorQuantities, Range<Color> interpolatedRange)
-				throws ZeroLengthInterpolatorInputRangeException {
+				throws InputRangeException {
 		float[] minimumColorComponents = new float[3];
 		interpolatedRange.getMin().getColorComponents(minimumColorComponents);
 
