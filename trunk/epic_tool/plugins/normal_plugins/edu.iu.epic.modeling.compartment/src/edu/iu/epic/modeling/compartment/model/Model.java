@@ -25,6 +25,7 @@ import edu.iu.epic.modeling.compartment.model.exception.CompartmentExistsExcepti
 import edu.iu.epic.modeling.compartment.model.exception.InvalidCompartmentNameException;
 import edu.iu.epic.modeling.compartment.model.exception.InvalidParameterExpressionException;
 import edu.iu.epic.modeling.compartment.model.exception.InvalidParameterNameException;
+import edu.iu.epic.modeling.compartment.model.exception.ModelModificationException;
 import edu.iu.epic.modeling.compartment.model.exception.ParameterAlreadyDefinedException;
 
 /* TODO: Create an interface for Model.  Create some sort of immutable notion of a Model as well
@@ -352,6 +353,52 @@ public class Model {
 
 	public Set<Transition> getTransitions() {
 		return transitions;
+	}
+	
+	/**
+	 * @return A deep copy of this Model.
+	 * @throws ModelModificationException On failure to create the new Model.
+	 */
+	public Model createCopy() throws ModelModificationException {
+		Model newModel = new Model();
+		
+		for (Compartment compartment : getCompartments()) {
+			double newX = compartment.getPosition().getX();
+			double newY = compartment.getPosition().getY();
+			Point2D newPosition = new Point2D.Double(newX, newY);
+			
+			newModel.addCompartment(compartment.getName(), newPosition);
+		}
+		
+		for (Entry<String, String> parameterDefinition : getParameterDefinitions().entrySet()) {
+			newModel.setParameterDefinition(
+					parameterDefinition.getKey(), parameterDefinition.getValue());
+		}
+		
+		for (Transition transition : getTransitions()) {
+			if (transition instanceof RatioTransition) {
+				RatioTransition ratioTransition = (RatioTransition) transition;
+
+				newModel.addRatioTransition(
+						newModel.getCompartment(ratioTransition.getSource().getName()),
+						newModel.getCompartment(ratioTransition.getTarget().getName()),
+						ratioTransition.getRatio(),
+						ratioTransition.isSecondary());
+			} else if (transition instanceof InfectionTransition) {
+				InfectionTransition infectionTransition = (InfectionTransition) transition;
+				
+				newModel.addInfectionTransition(
+						newModel.getCompartment(infectionTransition.getSource().getName()),
+						newModel.getCompartment(infectionTransition.getInfector().getName()),
+						newModel.getCompartment(infectionTransition.getTarget().getName()),
+						infectionTransition.getRatio());
+			} else {
+				throw new ModelModificationException(
+						"Unrecognized transition type for: " + transition);
+			}
+		}
+		
+		return newModel;
 	}
 
 	private static StringTemplateGroup loadTemplates(String templatePath) {
