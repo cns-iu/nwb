@@ -2,10 +2,12 @@ package edu.iu.epic.visualization.linegraph.core;
 
 import java.awt.Color;
 import java.awt.Container;
+import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
+import java.util.List;
 
 import javax.swing.BoxLayout;
 import javax.swing.JButton;
@@ -15,16 +17,16 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JSplitPane;
 
+import edu.iu.epic.visualization.linegraph.stencil.hack.PropertiesSource;
+import edu.iu.epic.visualization.linegraph.stencil.hack.PropertyManager2;
 import edu.iu.epic.visualization.linegraph.utilities.StencilData;
 import edu.iu.epic.visualization.linegraph.utilities.StencilException;
 
-import stencil.explore.PropertyManager;
-
 /*
- * StencilRunner creates the Stencil GUI
+ * this class creates the Stencil GUI
  *  and wires up its controls to the StencilController
  */
-public class StencilRunner {
+public class StencilGUI {
 	public static final String REPLAY_BUTTON_LABEL = "Replay";
 	public static final String EXPORT_BUTTON_LABEL = "Export";
 	public static final String FILE_SAVE_DIALOG_TEXT = "Export Line Graph Rendering As...";
@@ -32,20 +34,22 @@ public class StencilRunner {
 	private JFrame frame;
 	private JSplitPane splitPane;
 	private StencilController controller;
+	List<String> lineColumnNames;
 
-	public StencilRunner(StencilData stencilData) throws StencilException {
+	public StencilGUI(
+			PropertiesSource stencilConfiguration,
+			StencilData stencilData,
+			String guiTitle) throws StencilException {
+		this.lineColumnNames = stencilData.getLineColumnNames();
 
-		PropertyManager.loadProperties(new String[0],
-				PropertyManager.stencilConfig);
+		PropertyManager2.loadProperties(stencilConfiguration);
 
-		createStencilGUI("Stencil");
+		createStencilGUI(guiTitle, new Dimension(800, 600));
 		
 		this.controller = new StencilController(splitPane, stencilData);
 	}
 
-	
-
-	public void play() throws StencilException {
+	public void run() throws StencilException {
 		controller.playFromStart();
 	}
 
@@ -61,9 +65,9 @@ public class StencilRunner {
 		return this.frame.isVisible();
 	}
 
-	private JFrame createStencilGUI(String frameTitle) throws StencilException {
+	private JFrame createStencilGUI(String frameTitle, Dimension frameSize)
+			throws StencilException {
 		if (this.frame == null) {
-
 			this.frame = new JFrame(frameTitle);
 
 			JSplitPane splitPane = createSplitPane();
@@ -74,9 +78,11 @@ public class StencilRunner {
 
 			frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 			frame.pack();
-			frame.setSize(800, 600);
+			// frame.setSize(800, 600);
+			frame.setSize(frameSize);
 			frame.setBackground(Color.BLACK);
 		}
+
 		return frame;
 
 	}
@@ -106,15 +112,20 @@ public class StencilRunner {
 		// TODO: Set layout data or something for the exportButton?
 		userControlPanel.add(exportButton);
 		
-		//TODO: Change these to wire up to any data, not just sample data
-		JCheckBox open = createVisibilityCheckbox("Open");
+		for (String lineColumnName : this.lineColumnNames) {
+			JCheckBox lineCheckBox = createVisibilityCheckbox(lineColumnName);
+			userControlPanel.add(lineCheckBox);
+		}
+		
+		//TODO: Change these to wire up to any data, not just sample data (!!!)
+		/*JCheckBox open = createVisibilityCheckbox("Open");
 		userControlPanel.add(open);
 		JCheckBox high = createVisibilityCheckbox("High");
 		userControlPanel.add(high);
 		JCheckBox low = createVisibilityCheckbox("Low");
 		userControlPanel.add(low);
 		JCheckBox close = createVisibilityCheckbox("Close");
-		userControlPanel.add(close);
+		userControlPanel.add(close);*/
 		
 		return userControlPanel;
 	}
@@ -126,11 +137,13 @@ public class StencilRunner {
 			public void itemStateChanged (ItemEvent event) {
 					try {
 					boolean visible = true;
-					if (event.getStateChange() == ItemEvent.DESELECTED) {
+					if (event.getStateChange() == ItemEvent.SELECTED) {
+						visible = true;
+					} else if (event.getStateChange() == ItemEvent.DESELECTED) {
 						visible = false;
 					}
 					
-					StencilRunner.this.controller.setLineVisible(lineName, visible);
+					StencilGUI.this.controller.setLineVisible(lineName, visible);
 			
 					} catch (StencilException e) {
 						//TODO: improve
@@ -158,7 +171,7 @@ public class StencilRunner {
 		replayButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent actionEvent) {
 				try {
-					StencilRunner.this.play();
+					StencilGUI.this.run();
 				} catch (Exception e) {
 					// TODO: still needs work
 					throw new RuntimeException(e);
@@ -176,7 +189,7 @@ public class StencilRunner {
 
 		exportButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent actionEvent) {
-					StencilRunner.this.controller.export();					
+					StencilGUI.this.controller.export();					
 			}
 		});
 		return exportButton;

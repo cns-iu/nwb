@@ -18,7 +18,7 @@ import edu.iu.epic.visualization.linegraph.utilities.StencilException;
 public class StencilController {
 
 	private JSplitPane parent;
-	private SingleRunPanel currentPanel;
+	private StencilRun currentPanel;
 	private StencilData data;
 
 	private Map<String, Boolean> lineVisibilityStates = 
@@ -32,7 +32,7 @@ public class StencilController {
 		
 		//replace the old panel with a new one
 		
-		SingleRunPanel newPanel = createNewPanel(this.data);
+		StencilRun newPanel = createNewPanel(this.data);
 		swapInNewPanel(newPanel);
 		this.currentPanel = newPanel;
 		
@@ -67,11 +67,11 @@ public class StencilController {
 		this.currentPanel.export();
 	}
 
-	private void swapInNewPanel(SingleRunPanel newPanel)
+	private void swapInNewPanel(StencilRun newPanel)
 			throws StencilException {
 
 		try {
-			SingleRunPanel oldPanel = this.currentPanel;
+			StencilRun oldPanel = this.currentPanel;
 	
 			this.currentPanel = newPanel;
 			this.parent.setRightComponent(this.currentPanel.getComponent());
@@ -84,9 +84,9 @@ public class StencilController {
 		}
 	}
 
-	private SingleRunPanel createNewPanel(StencilData stencilData)
+	private StencilRun createNewPanel(StencilData stencilData)
 			throws StencilException {
-		SingleRunPanel panel = new SingleRunPanel(this.parent, stencilData);
+		StencilRun panel = new StencilRun(this.parent, stencilData);
 		return panel;
 	}
 

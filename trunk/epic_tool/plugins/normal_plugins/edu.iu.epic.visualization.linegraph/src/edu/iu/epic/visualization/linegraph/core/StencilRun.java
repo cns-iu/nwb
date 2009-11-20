@@ -25,7 +25,7 @@ import edu.iu.epic.visualization.linegraph.utilities.TupleStream;
 /*
  * This class performs a single run of a Stencil. 
  */
-public class SingleRunPanel {
+public class StencilRun {
 
 	private Panel panel;
 	private boolean hasStarted = false;
@@ -33,7 +33,7 @@ public class SingleRunPanel {
 	private StencilData data;
 	private JSplitPane parent;
 
-	public SingleRunPanel(JSplitPane parent, StencilData data)
+	public StencilRun(JSplitPane parent, StencilData data)
 			throws StencilException {
 		this.parent = parent;
 		this.data = data;
@@ -54,7 +54,7 @@ public class SingleRunPanel {
 
 	public void start() {
 		if (this.hasStarted) {
-			throw new DoubleStartException("SingleRunPanel can only be started once.");
+			throw new DoubleStartException("StencilRun can only be started once.");
 		}
 		((new TupleFeeder(this.data))).execute();
 		this.hasStarted = true;
@@ -195,7 +195,7 @@ public class SingleRunPanel {
 
 		public String doInBackground() {
 			try {
-				SingleRunPanel.this
+				StencilRun.this
 						.feedTuplesToStencilPanel(this.stencilData);
 				return null;
 			} catch (StencilException e) {
