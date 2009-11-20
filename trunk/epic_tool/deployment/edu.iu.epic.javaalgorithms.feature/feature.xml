@@ -862,13 +862,6 @@ Dr. Katy Borner (katy@indiana.edu)
          unpack="false"/>
 
    <plugin
-         id="edu.iu.epic.visualization.linegraph"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         unpack="false"/>
-
-   <plugin
          id="edu.iu.epic.modeling.compartment"
          download-size="0"
          install-size="0"
@@ -881,5 +874,17 @@ Dr. Katy Borner (katy@indiana.edu)
          install-size="0"
          version="0.0.0"
          unpack="false"/>
+
+   <plugin
+         id="stencil"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"/>
+
+   <plugin
+         id="jaxb"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"/>
 
 </feature>
