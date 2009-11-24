@@ -1,0 +1,115 @@
+STREAM: File
+NAME: trans
+HEADER: op source dest start end size G r g b
+SEPARATOR: \s+
+SOURCE: ./diss_16.viz
+SKIP: 0
+STRICT: false
+STREAM: File
+NAME: overheads
+HEADER: op rank cpu start end r g b
+SEPARATOR: \s+
+SOURCE: ./diss_16.viz
+SKIP: 0
+STRICT: false
+
+external stream ranks(rank, label)
+external stream overheads(op, rank, cpu, start, end, skewedStart, skewedEnd, r,g,b)
+external stream trans(op, source, dest, start, end, skewedStart, skewedEnd, size, G, r,g,b) 
+
+order ranks > (overheads | trans)
+
+layer labels[TEXT]
+from ranks
+	ID: label
+	TEXT: label
+	X: -10
+	Y: Layout(rank)
+	FONT_COLOR: @color(GRAY70)
+	REGISTRATION: "RIGHT"
+from overheads
+	filter (start > VALUE): Spacer.Query() -> Add(5000,_) -> (start, VALUE)
+	ID: start
+	TEXT: start
+	X: Timescale(skewedStart)
+	Y: -10    
+	FONT_COLOR: @color(GRAY70)
+	REGISTRATION: "LEFT"
+	ROTATION: "VERTICAL"
+	() : Spacer.Map(start)
+from overheads
+	filter (end > VALUE): Spacer.Query() -> Add(5000,_) -> (end, VALUE)
+	ID: end
+	TEXT: end
+	X: Timescale(skewedEnd)
+	Y: -10    
+	FONT_COLOR: @color(GRAY70)
+	REGISTRATION: "LEFT"
+	ROTATION: "VERTICAL"
+	() : Spacer.Map(end)
+
+operator Spacer base Max[1..n]
+
+layer baseline[LINE]
+from overheads
+	ID: rank
+	X.2: Timescale(skewedStart) -> Max[1..n](_)
+	STROKE_COLOR: @color(Gray90)
+	(Y.1, Y.2): Layout(rank) -> (_,_)
+from trans
+	ID: source
+	X.2: Timescale(skewedStart) -> Max[1..n](_) ->(_,_)
+	STROKE_COLOR: @color(Gray90)
+	(Y.1,Y.2): Layout(source) ->(_,_)
+
+
+layer compressions[SHAPE]
+from overheads
+	filter(op =~ "clocalop") : op
+	ID: Count[1]()
+	Y: Layout(rank) 
+	X: Timescale(skewedStart)
+	FILL_COLOR : @color(Purple)
+	SIZE: 15
+	REGISTRATION: "CENTER"
+	
+layer overhead[LINE]
+from overheads
+	filter(op !~ "clocalop") : op
+	ID: Count[1]()
+	(Y.1, Y.2): Layout(rank) -> (_,_)
+	X.1: Timescale(skewedStart)
+	X.2: Timescale(skewedEnd)
+	STROKE_COLOR : ColorByOp(op)
+    STROKE_WEIGHT: WeightByOp(op)
+
+
+layer coms[LINE]
+from trans
+	ID: Count[1]()
+	Y.1: Layout(source)
+	Y.2: Layout(dest)
+	X.1: Timescale(skewedStart)
+	X.2: Timescale(skewedEnd)
+	STROKE_COLOR : ColorByOp(op)
+	CAP2: "ARROW"
+
+operator ColorByOp(op) -> (C)
+	(op =~ "osend") => C: @color(SlateBlue)
+	(op =~ "orecv") => C: @color(MediumSlateBlue)
+	(op =~ "transmission") => C: @color(FireBrick)
+	all => C: @color(BLACK, .5)
+
+operator WeightByOp(op) -> (W)
+	(op =~ "osend") => W : 1
+ 	(op =~ "orecv") => W : 1
+	(op =~ "transmission") => W: .5
+	all => W: 2
+   
+	
+operator Layout (rank)->(Y)
+  all => (Y) : Mult(20, rank)
+ 
+
+operator Timescale(time) -> (time)
+  all => time : Div(time, 50)

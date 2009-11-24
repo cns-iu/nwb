@@ -1,0 +1,42 @@
+STREAM: File
+NAME: Elements
+HEADER: Name
+SEPARATOR: ,
+SOURCE: ./RotationData.txt
+STRICT: TRUE
+SKIP: 1
+
+
+external stream Elements(Name)
+
+layer Text[TEXT]
+from Elements
+	ID : Name
+	TEXT: Name
+	ROTATION: Count(Name) -> Mult(12.5, VALUE) -> (VALUE)
+	X : Count(Name) -> Mult(40, VALUE)-> (VALUE)
+
+layer Shape
+from Elements
+	ID: Concatenate(Name, "TL")
+	SHAPE: "CROSS"
+	ROTATION: Count(Name) -> Mult(12.5, VALUE) -> (VALUE)
+	X : Count(Name) -> Mult(40, VALUE)-> (VALUE)
+	Y : 40
+	SIZE: 30
+ 	FILL_COLOR: @color(RED)
+
+from Elements
+	ID: Concatenate(Name, "Center")
+	SHAPE: "CROSS"
+	REGISTRATION: "CENTER"
+	ROTATION: Count(Name) -> Mult(12.8, VALUE) 
+	X : Count(Name) -> Mult(40, _) -> Add(15,_)
+	Y : 100
+	SIZE: 30
+ 	FILL_COLOR: @color(BLUE)
+
+
+
+operator Count(Name) -> (VALUE) 
+	(all) => VALUE : Index(Name) -> VALUE
