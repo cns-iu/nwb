@@ -8,6 +8,7 @@ import java.util.List;
 import javax.swing.JComponent;
 import javax.swing.JFileChooser;
 import javax.swing.JSplitPane;
+import javax.swing.SwingUtilities;
 import javax.swing.filechooser.FileFilter;
 
 import org.jdesktop.swingworker.SwingWorker;
@@ -43,7 +44,6 @@ public class StencilRun {
 
 			Adapter displayAdapter = Adapter.INSTANCE;
 			Panel stencilPanel = displayAdapter.compile(stencilScript);
-
 			stencilPanel.preRun();
 
 			this.panel = stencilPanel;
@@ -56,7 +56,8 @@ public class StencilRun {
 		if (this.hasStarted) {
 			throw new DoubleStartException("StencilRun can only be started once.");
 		}
-		((new TupleFeeder(this.data))).execute();
+		
+		(new TupleFeeder(this.data)).execute();
 		this.hasStarted = true;
 	}
 
@@ -174,6 +175,7 @@ public class StencilRun {
 				long streamSize = streams.get(0).streamSize();
 				for (long ii = 0; ii < streamSize; ii++) {
 					for (TupleStream stream : streams) {
+						//System.err.println("tuple");
 						// Thread.sleep(1);
 						this.panel.processTuple(stream.nextTuple());
 					}

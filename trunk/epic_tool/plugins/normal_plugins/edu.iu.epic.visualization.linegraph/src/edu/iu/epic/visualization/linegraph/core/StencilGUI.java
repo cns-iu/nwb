@@ -111,22 +111,12 @@ public class StencilGUI {
 		JButton exportButton = createExportButton();
 		// TODO: Set layout data or something for the exportButton?
 		userControlPanel.add(exportButton);
-		
+
 		for (String lineColumnName : this.lineColumnNames) {
 			JCheckBox lineCheckBox = createVisibilityCheckbox(lineColumnName);
 			userControlPanel.add(lineCheckBox);
 		}
-		
-		//TODO: Change these to wire up to any data, not just sample data (!!!)
-		/*JCheckBox open = createVisibilityCheckbox("Open");
-		userControlPanel.add(open);
-		JCheckBox high = createVisibilityCheckbox("High");
-		userControlPanel.add(high);
-		JCheckBox low = createVisibilityCheckbox("Low");
-		userControlPanel.add(low);
-		JCheckBox close = createVisibilityCheckbox("Close");
-		userControlPanel.add(close);*/
-		
+
 		return userControlPanel;
 	}
 	

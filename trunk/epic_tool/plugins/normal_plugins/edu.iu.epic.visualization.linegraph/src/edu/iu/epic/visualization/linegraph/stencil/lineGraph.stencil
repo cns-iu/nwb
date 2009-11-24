@@ -14,7 +14,7 @@ from Data
        Y.new : Add(Value, 0) #-> Height(VALUE)
        STROKE_WEIGHT: 1
        STROKE_COLOR: ColorIndex(Line) -> Colors(_)
-  view(ZOOM, X, Y, HEIGHT) : Zoom(view.PORTAL_WIDTH, view.PORTAL_HEIGHT, canvas.WIDTH, canvas.HEIGHT) -> (_, canvas.X, canvas.Y, canvas.HEIGHT)
+  view(ZOOM, X, Y, HEIGHT) : Zoom(view[PORTAL_WIDTH], view[PORTAL_HEIGHT], canvas[WIDTH], canvas[HEIGHT]) -> (_, canvas[X], canvas[Y], canvas[HEIGHT])
 from Visibility
        ID : Line
        VISIBLE : Visible

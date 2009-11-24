@@ -61,6 +61,8 @@ public class TableTupleStream implements TupleStream {
 		String timeStep = row.get(this.timeStepColumnName).toString();
 		String value = row.get(this.lineColumnName).toString();
 		
+		//System.err.println("Tuple: " + timeStep + " " + this.lineColumnName + " " + value);
+		
 		return new BasicTuple(
 			this.stencilStreamName,
 			this.stencilNames,

@@ -1,10 +1,12 @@
 package edu.iu.epic.visualization.linegraph.core;
 
+import java.lang.reflect.InvocationTargetException;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 
 import javax.swing.JSplitPane;
+import javax.swing.SwingUtilities;
 
 import edu.iu.epic.visualization.linegraph.utilities.StencilData;
 import edu.iu.epic.visualization.linegraph.utilities.StencilException;
@@ -29,27 +31,50 @@ public class StencilController {
 	}
 
 	public void playFromStart() throws StencilException {
-		
-		//replace the old panel with a new one
-		
-		StencilRun newPanel = createNewPanel(this.data);
-		swapInNewPanel(newPanel);
-		this.currentPanel = newPanel;
-		
-		/*
-		 * tell the new panel which lines should be visible
-		 * (lines visible/invisible carries over between stencil runs)
-		 */
-		
-		Set<String> lineNames = lineVisibilityStates.keySet();
-		for (String lineName : lineNames) {
-			Boolean lineVisibility = lineVisibilityStates.get(lineName);
-			this.currentPanel.setLineVisible(lineName, lineVisibility);
+		final StencilException[] stencilExceptionThrown = new StencilException[1];
+
+		try {
+			SwingUtilities.invokeAndWait(new Runnable() {
+				public void run() {
+					try {
+						// Replace the old panel with a new one.
+
+						StencilRun newPanel = createNewPanel(StencilController.this.data);
+						swapInNewPanel(newPanel);
+						StencilController.this.currentPanel = newPanel;
+
+						/*
+		 				 * Tell the new panel which lines should be visible
+		 				 * (lines visible/invisible carries over between stencil runs).
+		 				 */
+
+						Set<String> lineNames = lineVisibilityStates.keySet();
+
+						for (String lineName : lineNames) {
+							Boolean lineVisibility = lineVisibilityStates.get(lineName);
+							StencilController.this.currentPanel.setLineVisible(
+								lineName, lineVisibility);
+						}
+
+						// Start the new panel.
+
+						StencilController.this.currentPanel.start();
+					} catch (StencilException stencilException) {
+						stencilExceptionThrown[0] = stencilException;
+					}
+				}
+			});
+			
+			if (stencilExceptionThrown[0] != null) {
+				throw stencilExceptionThrown[0];
+			}
+		} catch (InvocationTargetException invocationTargetException) {
+			throw new StencilException(
+				invocationTargetException.getMessage(), invocationTargetException);
+		} catch (InterruptedException interruptedException) {
+			throw new StencilException(
+				interruptedException.getMessage(), interruptedException);
 		}
-		
-		//start the new panel
-		
-		this.currentPanel.start();
 	}
 	
 	

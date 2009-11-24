@@ -16,12 +16,9 @@ import org.osgi.service.metatype.ObjectClassDefinition;
 
 import prefuse.data.Table;
 
-public class LineGraphAlgorithmFactory
-	implements AlgorithmFactory, ParameterMutator {
+public class LineGraphAlgorithmFactory implements AlgorithmFactory, ParameterMutator {
     public Algorithm createAlgorithm(
-    		Data[] data,
-    		Dictionary parameters,
-    		CIShellContext ciShellContext) {
+    		Data[] data, Dictionary parameters, CIShellContext ciShellContext) {
         return new LineGraphAlgorithm(data, parameters, ciShellContext);
     }
     

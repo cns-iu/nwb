@@ -1,0 +1,12 @@
+external stream Data(Timestep, Line, Value)
+external stream Visibility(Line, Visible)
+
+
+layer Lines[SHAPE]
+from Data
+	ID: "orange"
+	X : 150
+	Y : 150
+	SIZE: 30
+	SHAPE: "RECTANGLE"
+	FILL_COLOR: @color(GRAY)
