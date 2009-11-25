@@ -70,7 +70,7 @@
   		  	  	  	  <param name="url" value="http://nwb.slis.indiana.edu/svn/nwb/trunk/epic_tool/plugins/normal_plugins"/>
   		  	</antcall>
   		
-  		<!-- Disabled until completed, and testing utility dependency is removed 
+  	
   		
   		<antcall target="svn.co">
   		  	  	  	  <param name="target" value="plugins"/>
@@ -79,7 +79,7 @@
   		  	  	  	  <param name="url" value="http://nwb.slis.indiana.edu/svn/nwb/trunk/epic_tool/plugins/normal_plugins"/>
   		  	</antcall>
   		  	
-  		  	-->
+ 
   	
   	<!--- EpiC non_pde plugins -->
   	<antcall target="svn.co">
