@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<metatype:MetaData xmlns:metatype="http://www.osgi.org/xmlns/metatype/v1.0.0">
+	<OCD name="EpiC ModelBuilder (Create Model)" id="edu.iu.epic.modelbuilder.gui.ModelBuilderNewModelAlgorithmFactory.OCD"
+		 	description="Create new EpiC model using ModelBuilder.">
+	</OCD>
+	<Designate pid="edu.iu.epic.modelbuilder.gui.ModelBuilderNewModelAlgorithmFactory">
+		<Object ocdref="edu.iu.epic.modelbuilder.gui.ModelBuilderNewModelAlgorithmFactory.OCD" />
+	</Designate>
+	
+	<OCD name="EpiC ModelBuilder (Import Model)" id="edu.iu.epic.modelbuilder.gui.ModelBuilderImportModelAlgorithmFactory.OCD"
+		 	description="Import existing EpiC model.">
+	</OCD>
+	<Designate pid="edu.iu.epic.modelbuilder.gui.ModelBuilderImportModelAlgorithmFactory">
+		<Object ocdref="edu.iu.epic.modelbuilder.gui.ModelBuilderImportModelAlgorithmFactory.OCD" />
+	</Designate>
+	
+</metatype:MetaData>
