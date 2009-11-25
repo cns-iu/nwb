@@ -33,8 +33,8 @@ public class StencilController {
 	public void playFromStart() throws StencilException {
 		final StencilException[] stencilExceptionThrown = new StencilException[1];
 
-		try {
-			SwingUtilities.invokeAndWait(new Runnable() {
+		//try {
+			SwingUtilities.invokeLater(new Runnable() {
 				public void run() {
 					try {
 						// Replace the old panel with a new one.
@@ -68,13 +68,14 @@ public class StencilController {
 			if (stencilExceptionThrown[0] != null) {
 				throw stencilExceptionThrown[0];
 			}
-		} catch (InvocationTargetException invocationTargetException) {
-			throw new StencilException(
-				invocationTargetException.getMessage(), invocationTargetException);
-		} catch (InterruptedException interruptedException) {
-			throw new StencilException(
-				interruptedException.getMessage(), interruptedException);
-		}
+		//}
+//		} catch (InvocationTargetException invocationTargetException) {
+//			throw new StencilException(
+//				invocationTargetException.getMessage(), invocationTargetException);
+//		} catch (InterruptedException interruptedException) {
+//			throw new StencilException(
+//				interruptedException.getMessage(), interruptedException);
+//		}
 	}
 	
 	

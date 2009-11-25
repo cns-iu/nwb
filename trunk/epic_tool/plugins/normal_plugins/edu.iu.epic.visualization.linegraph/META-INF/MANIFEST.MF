@@ -5,9 +5,7 @@ Bundle-SymbolicName: edu.iu.epic.visualization.linegraph
 Bundle-Version: 0.0.1
 Bundle-ClassPath: .,
  swing-worker-1.2.jar
-Import-Package: edu.iu.cns.utilities.testing;resolution:=optional,
- edu.iu.nwb.converter.prefusecsv.reader;resolution:=optional,
- org.antlr.runtime,
+Import-Package: org.antlr.runtime,
  org.cishell.framework;version="1.0.0",
  org.cishell.framework.algorithm;version="1.0.0",
  org.cishell.framework.data;version="1.0.0",

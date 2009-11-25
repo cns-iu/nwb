@@ -3,6 +3,9 @@
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
 	<classpathentry kind="con" path="org.eclipse.pde.core.requiredPlugins"/>
 	<classpathentry kind="src" path="src"/>
+	<classpathentry kind="src" path="testing"/>
 	<classpathentry kind="lib" path="swing-worker-1.2.jar"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/edu.iu.cns.utilities.testing"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/edu.iu.nwb.converter.prefusecsv"/>
 	<classpathentry kind="output" path="build"/>
 </classpath>
