@@ -115,6 +115,13 @@
   	      <param name="project.name" value="/plugins/shared/edu.iu.nwb.templates.staticexecutable.nwb"/>
 	  	  <param name="url" value="http://nwb.slis.indiana.edu/svn/nwb/trunk"/>
   	</antcall>
+  	
+  	<antcall target="svn.co">
+  	  	      <param name="target" value="plugins"/>
+  	  	      <param name="element.id" value="antlr_stringtemplate"/>
+  	  	      <param name="project.name" value="antlr_stringtemplate"/>
+  		  	  <param name="url" value="http://nwb.slis.indiana.edu/svn/nwb/trunk/scipolicy/plugins/libs/"/>
+  	  	</antcall>
  
   	
   	<!--- EpiC non_pde plugins -->
