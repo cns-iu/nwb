@@ -443,6 +443,14 @@
   	  	      <param name="project.name" value="edu.iu.scipolicy.utilities"/>
   	  	      <param name="url" value="http://nwb.slis.indiana.edu/svn/nwb/trunk/scipolicy/plugins/normal_plugins"/>
   	  	 </antcall>
+  	
+  	<antcall target="svn.co">
+  	  	  	  	  	  <param name="target" value="plugins"/>
+  	  	  	  	  	  <param name="element.id" value="pdfbox_fontbox"/>
+  	  	  	  	  	  <param name="project.name" value="pdfbox_fontbox"/>
+  	  	  	  	  	  <param name="url" value="http://nwb.slis.indiana.edu/svn/nwb/trunk/scipolicy/plugins/libs"/>
+  	  	</antcall>
+  	  	
 
   	<!-- SciPolicy plugins -->
   	
@@ -527,12 +535,6 @@
   	  	  	 	
 	
   	  	  	 	
-  	<antcall target="svn.co">
-  	  	  	  	  <param name="target" value="plugins"/>
-  	  	  	  	  <param name="element.id" value="pdfbox_fontbox"/>
-  	  	  	  	  <param name="project.name" value="pdfbox_fontbox"/>
-  	  	  	  	  <param name="url" value="http://nwb.slis.indiana.edu/svn/nwb/trunk/scipolicy/plugins/libs"/>
-  	</antcall>
   	
   	
   	<antcall target="svn.co">
