@@ -165,31 +165,10 @@ Dr. Katy Borner (katy@indiana.edu)
          unpack="false"/>
 
    <plugin
-         id="edu.iu.cns.converter.graceplot"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         unpack="false"/>
-
-   <plugin
-         id="edu.iu.cns.converter.plotcsv"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         unpack="false"/>
-
-   <plugin
          id="javabib.orig"
          download-size="0"
          install-size="0"
          version="0.0.0"
-         unpack="false"/>
-
-   <plugin
-         id="edu.iu.scipolicy.converter.psraster"
-         download-size="0"
-         install-size="0"
-         version="0.0.1"
          unpack="false"/>
 
    <plugin
@@ -206,108 +185,10 @@ Dr. Katy Borner (katy@indiana.edu)
          version="0.0.0"/>
 
    <plugin
-         id="edu.iu.iv.modeling.tarl"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         unpack="false"/>
-
-   <plugin
-         id="edu.iu.nwb.preprocessing.prefuse.beta.directoryhierarchyreader"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         unpack="false"/>
-
-   <plugin
-         id="edu.iu.nwb.analysis.sampling"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         unpack="false"/>
-
-   <plugin
-         id="edu.iu.nwb.analysis.weakcomponentclustering"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         unpack="false"/>
-
-   <plugin
-         id="edu.iu.nwb.preprocessing.csv"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         unpack="false"/>
-
-   <plugin
-         id="edu.iu.nwb.visualization.prefuse.beta"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         unpack="false"/>
-
-   <plugin
          id="FreeHEP_VectorGraphics"
          download-size="0"
          install-size="0"
          version="1.0.0"/>
-
-   <plugin
-         id="edu.iu.nwb.analysis.multipartitejoining"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         unpack="false"/>
-
-   <plugin
-         id="edu.iu.nwb.analysis.burst"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         unpack="false"/>
-
-   <plugin
-         id="edu.iu.nwb.analysis.isidupremover"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         unpack="false"/>
-
-   <plugin
-         id="edu.iu.nwb.analysis.extractcoauthorship"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         unpack="false"/>
-
-   <plugin
-         id="edu.iu.nwb.toolkit.networkanalysis"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         unpack="false"/>
-
-   <plugin
-         id="edu.iu.nwb.tools.mergenodes"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         unpack="false"/>
-
-   <plugin
-         id="edu.iu.nwb.composite.isiloadandclean"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         unpack="false"/>
-
-   <plugin
-         id="edu.iu.nwb.shared.isiutil"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         unpack="false"/>
 
    <plugin
          id="stax"
@@ -316,84 +197,7 @@ Dr. Katy Borner (katy@indiana.edu)
          version="0.0.0"/>
 
    <plugin
-         id="edu.iu.nwb.analysis.dichotomize"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         unpack="false"/>
-
-   <plugin
-         id="edu.iu.nwb.analysis.isolates"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         unpack="false"/>
-
-   <plugin
-         id="edu.iu.nwb.analysis.selfloops"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         unpack="false"/>
-
-   <plugin
-         id="edu.iu.nwb.analysis.symmetrize"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         unpack="false"/>
-
-   <plugin
-         id="edu.iu.nwb.preprocessing.tablefilter"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         unpack="false"/>
-
-   <plugin
-         id="edu.iu.nwb.preprocessing.trimedges"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         unpack="false"/>
-
-   <plugin
-         id="edu.iu.nwb.visualization.drl"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         unpack="false"/>
-
-   <plugin
          id="edu.iu.nwb.util"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         unpack="false"/>
-
-   <plugin
-         id="edu.iu.nwb.preprocessing.bibcouplingsimilarity"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         unpack="false"/>
-
-   <plugin
-         id="edu.iu.nwb.preprocessing.cocitationsimilarity"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         unpack="false"/>
-
-   <plugin
-         id="edu.iu.nwb.analysis.extractnetfromtable"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         unpack="false"/>
-
-   <plugin
-         id="edu.iu.nwb.preprocessing.duplicatenodedetector"
          download-size="0"
          install-size="0"
          version="0.0.0"
@@ -407,31 +211,10 @@ Dr. Katy Borner (katy@indiana.edu)
          unpack="false"/>
 
    <plugin
-         id="edu.iu.nwb.analysis.extractdirectednetfromtable"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         unpack="false"/>
-
-   <plugin
-         id="edu.iu.nwb.preprocessing.extractnodesandedges"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         unpack="false"/>
-
-   <plugin
          id="lucene"
          download-size="0"
          install-size="0"
          version="2.3.2"/>
-
-   <plugin
-         id="edu.iu.nwb.composite.extractcowordfromtable"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         unpack="false"/>
 
    <plugin
          id="joda_time"
@@ -440,100 +223,16 @@ Dr. Katy Borner (katy@indiana.edu)
          version="1.0.0"/>
 
    <plugin
-         id="edu.iu.nwb.preprocessing.timeslice"
-         download-size="0"
-         install-size="0"
-         version="1.0.0"
-         unpack="false"/>
-
-   <plugin
          id="lucene_snowball"
          download-size="0"
          install-size="0"
          version="1.0.0"/>
 
    <plugin
-         id="edu.iu.nwb.preprocessing.text.normalization"
-         download-size="0"
-         install-size="0"
-         version="1.0.0"
-         unpack="false"/>
-
-   <plugin
-         id="edu.iu.nwb.composite.extractauthorpapernetwork"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         unpack="false"/>
-
-   <plugin
-         id="edu.iu.nwb.composite.extractpapercitationnetwork"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         unpack="false"/>
-
-   <plugin
          id="edu.iu.nwb.templates.staticexecutable.nwb"
          download-size="0"
          install-size="0"
          version="0.0.1"
-         unpack="false"/>
-
-   <plugin
-         id="edu.iu.nwb.analysis.java.directedknn"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         unpack="false"/>
-
-   <plugin
-         id="edu.iu.nwb.analysis.java.nodedegree"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         unpack="false"/>
-
-   <plugin
-         id="edu.iu.nwb.analysis.java.nodeindegree"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         unpack="false"/>
-
-   <plugin
-         id="edu.iu.nwb.analysis.java.nodeoutdegree"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         unpack="false"/>
-
-   <plugin
-         id="edu.iu.nwb.analysis.java.strongcomponentclustering"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         unpack="false"/>
-
-   <plugin
-         id="edu.iu.nwb.analysis.java.undirectedknn"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         unpack="false"/>
-
-   <plugin
-         id="edu.iu.nwb.visualization.radialgraph"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         unpack="false"/>
-
-   <plugin
-         id="edu.iu.nwb.analysis.kcore"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
          unpack="false"/>
 
    <plugin
@@ -556,102 +255,6 @@ Dr. Katy Borner (katy@indiana.edu)
          version="1.0.0"/>
 
    <plugin
-         id="edu.iu.scipolicy.filtering.topn"
-         download-size="0"
-         install-size="0"
-         version="0.0.1"
-         unpack="false"/>
-
-   <plugin
-         id="edu.iu.scipolicy.filtering.topnpercent"
-         download-size="0"
-         install-size="0"
-         version="0.0.1"
-         unpack="false"/>
-
-   <plugin
-         id="edu.iu.scipolicy.references.map"
-         download-size="0"
-         install-size="0"
-         version="0.0.1"
-         unpack="false"/>
-
-   <plugin
-         id="edu.iu.scipolicy.utilities"
-         download-size="0"
-         install-size="0"
-         version="1.0.0"
-         unpack="false"/>
-
-   <plugin
-         id="edu.iu.scipolicy.utilities.nsf"
-         download-size="0"
-         install-size="0"
-         version="1.0.0"
-         unpack="false"/>
-
-   <plugin
-         id="edu.iu.scipolicy.visualization.horizontallinegraph"
-         download-size="0"
-         install-size="0"
-         version="0.0.1"
-         unpack="false"/>
-
-   <plugin
-         id="edu.iu.scipolicy.visualization.imageviewer"
-         download-size="0"
-         install-size="0"
-         version="0.0.1"
-         unpack="false"/>
-
-   <plugin
-         id="edu.iu.nwb.analysis.hits"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         unpack="false"/>
-
-   <plugin
-         id="edu.iu.nwb.visualization.roundrussell"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"/>
-
-   <plugin
-         id="edu.iu.scipolicy.preprocessing.geocoder"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         unpack="false"/>
-
-   <plugin
-         id="edu.iu.nwb.analysis.blondelcommunitydetection"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         unpack="false"/>
-
-   <plugin
-         id="edu.iu.scipolicy.visualization.geomaps"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         unpack="false"/>
-
-   <plugin
-         id="geolibs"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"/>
-
-   <plugin
-         id="edu.iu.nwb.analysis.pagerank.weighted"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         unpack="false"/>
-
-   <plugin
          id="edu.iu.nwb.converter.jungprefuse"
          download-size="0"
          install-size="0"
@@ -660,20 +263,6 @@ Dr. Katy Borner (katy@indiana.edu)
 
    <plugin
          id="edu.iu.nwb.converter.jungprefusebeta"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         unpack="false"/>
-
-   <plugin
-         id="edu.iu.nwb.preprocessing.pathfindernetworkscaling.fast"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         unpack="false"/>
-
-   <plugin
-         id="edu.iu.nwb.preprocessing.pathfindernetworkscaling.mst"
          download-size="0"
          install-size="0"
          version="0.0.0"
@@ -771,13 +360,6 @@ Dr. Katy Borner (katy@indiana.edu)
          unpack="false"/>
 
    <plugin
-         id="edu.iu.nwb.shared.isiutil"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         unpack="false"/>
-
-   <plugin
          id="edu.iu.nwb.converter.nwbgraphml"
          download-size="0"
          install-size="0"
@@ -807,27 +389,6 @@ Dr. Katy Borner (katy@indiana.edu)
 
    <plugin
          id="edu.iu.nwb.converter.prefuserefer"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         unpack="false"/>
-
-   <plugin
-         id="javabib.orig"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         unpack="false"/>
-
-   <plugin
-         id="edu.iu.scipolicy.converter.psraster"
-         download-size="0"
-         install-size="0"
-         version="0.0.1"
-         unpack="false"/>
-
-   <plugin
-         id="edu.iu.scipolicy.utilities"
          download-size="0"
          install-size="0"
          version="0.0.0"
@@ -886,13 +447,6 @@ Dr. Katy Borner (katy@indiana.edu)
          download-size="0"
          install-size="0"
          version="0.0.0"/>
-
-   <plugin
-         id="edu.iu.cns.utilities.testing"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         unpack="false"/>
 
    <plugin
          id="edu.iu.epic.visualization.linegraph"

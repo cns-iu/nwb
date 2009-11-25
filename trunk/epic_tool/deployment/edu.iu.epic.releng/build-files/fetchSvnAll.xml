@@ -23,12 +23,14 @@
   	<!-- EpiC plugins -->
   	
   	<!-- cns plugins? -->
+	<!-- 
 	<antcall target="svn.co">
   	  	  	  	  <param name="target" value="plugins"/>
   	  	  	  	  <param name="element.id" value="edu.iu.cns.utilities.testing"/>
   	  	  	  	  <param name="project.name" value="edu.iu.cns.utilities.testing"/>
   	  	  	  	  <param name="url" value="http://nwb.slis.indiana.edu/svn/nwb/trunk/plugins/shared/"/>
   	  	</antcall>
+  	  	-->
   	<!--EpiC libraries -->
   	
   	<antcall target="svn.co">
@@ -48,6 +50,13 @@
   	
   	
   	<!--EpiC java plugins-->
+  	
+	<antcall target="svn.co">
+  	  	  	  	      <param name="target" value="plugins"/>
+  	  	  	  	      <param name="element.id" value="edu.iu.epic.gui.brand.welcometext"/>
+  	  	  	  	      <param name="project.name" value="edu.iu.epic.gui.brand.welcometext"/>
+  	  	  	  	      <param name="url" value="http://nwb.slis.indiana.edu/svn/nwb/trunk/epic_tool/deployment/"/>
+  	  	  	  	 </antcall>
   	
   	<antcall target="svn.co">
   	  	  	  <param name="target" value="plugins"/>
@@ -78,7 +87,34 @@
   		  	  	  	  <param name="project.name" value="edu.iu.epic.visualization.linegraph"/>
   		  	  	  	  <param name="url" value="http://nwb.slis.indiana.edu/svn/nwb/trunk/epic_tool/plugins/normal_plugins"/>
   		  	</antcall>
-  		  	
+  	
+  	 <antcall target="svn.co">
+  	          <param name="target" value="features"/>
+  	          <param name="element.id" value="edu.iu.epic.gui.brand.feature"/>
+  	          <param name="project.name" value="/deployment/edu.iu.epic.gui.brand.feature"/>
+  	          <param name="url" value="http://nwb.slis.indiana.edu/svn/nwb/trunk/epic_tool"/>
+  	        </antcall>
+  	  	
+  	      <antcall target="svn.co">
+  	        <param name="target" value="plugins"/>
+  	        <param name="element.id" value="edu.iu.epic.gui.brand"/>
+  	        <param name="project.name" value="/deployment/edu.iu.epic.gui.brand"/>
+  	        <param name="url" value="http://nwb.slis.indiana.edu/svn/nwb/trunk/epic_tool"/>
+  	      </antcall>
+  	
+  	 <antcall target="svn.co">
+  	      <param name="target" value="features"/>
+  	      <param name="element.id" value="edu.iu.epic.javaalgorithms.feature"/>
+  	      <param name="project.name" value="/deployment/edu.iu.epic.javaalgorithms.feature"/>
+  	      <param name="url" value="http://nwb.slis.indiana.edu/svn/nwb/trunk/epic_tool"/>
+  	    </antcall>
+  	  	
+	<antcall target="svn.co">
+  	      <param name="target" value="plugins"/>
+  	      <param name="element.id" value="edu.iu.nwb.templates.staticexecutable.nwb"/>
+  	      <param name="project.name" value="/plugins/shared/edu.iu.nwb.templates.staticexecutable.nwb"/>
+	  	  <param name="url" value="http://nwb.slis.indiana.edu/svn/nwb/trunk"/>
+  	</antcall>
  
   	
   	<!--- EpiC non_pde plugins -->
@@ -89,151 +125,7 @@
   	  		  	  <param name="url" value="http://nwb.slis.indiana.edu/svn/nwb/trunk/epic_tool/plugins/nonpde_plugins"/>
   	    </antcall>
   	  	<ant dir="${buildDirectory}/nonpde_plugins/edu.iu.epic.spemshell.core"/>
-
-  	<!-- SciPolicy plugins -->
   	
-	<!-- (might be able to replace this with a script that gets the entire contents of the directory... -->
-  		<!-- normal_plugins -->
-  	
-  	<antcall target="svn.co">
-  	  	  	  	      <param name="target" value="plugins"/>
-  	  	  	  	      <param name="element.id" value="edu.iu.epic.gui.brand.welcometext"/>
-  	  	  	  	      <param name="project.name" value="edu.iu.epic.gui.brand.welcometext"/>
-  	  	  	  	      <param name="url" value="http://nwb.slis.indiana.edu/svn/nwb/trunk/epic_tool/deployment/"/>
-  	  	  	  	 </antcall>
-  	
-	<antcall target="svn.co">
-  	  	  	      <param name="target" value="plugins"/>
-  	  	  	      <param name="element.id" value="edu.iu.scipolicy.visualization.geomaps"/>
-  	  	  	      <param name="project.name" value="edu.iu.scipolicy.visualization.geomaps"/>
-  	  	  	      <param name="url" value="http://nwb.slis.indiana.edu/svn/nwb/trunk/scipolicy/plugins/normal_plugins"/>
-  	  	  	 </antcall>
-  	
-  	<antcall target="svn.co">
-  	  	  	  	      <param name="target" value="plugins"/>
-  	  	  	  	      <param name="element.id" value="geolibs"/>
-  	  	  	  	      <param name="project.name" value="geolibs"/>
-  	  	  	  	      <param name="url" value="http://nwb.slis.indiana.edu/svn/nwb/trunk/scipolicy/plugins/libs"/>
-  	  	  	  	 </antcall>
-  	
-  	<antcall target="svn.co">
-  	  	      <param name="target" value="plugins"/>
-  	  	      <param name="element.id" value="edu.iu.scipolicy.preprocessing.geocoder"/>
-  	  	      <param name="project.name" value="edu.iu.scipolicy.preprocessing.geocoder"/>
-  	  	      <param name="url" value="http://nwb.slis.indiana.edu/svn/nwb/trunk/scipolicy/plugins/normal_plugins"/>
-  	  	 </antcall>
-  	
-  	 <antcall target="svn.co">
-  	      <param name="target" value="plugins"/>
-  	      <param name="element.id" value="edu.iu.scipolicy.filtering.topn"/>
-  	      <param name="project.name" value="edu.iu.scipolicy.filtering.topn"/>
-  	      <param name="url" value="http://nwb.slis.indiana.edu/svn/nwb/trunk/scipolicy/plugins/normal_plugins"/>
-  	 </antcall>
-  	
-  	<antcall target="svn.co">
-  	  	      <param name="target" value="plugins"/>
-  	  	      <param name="element.id" value="edu.iu.scipolicy.filtering.topnpercent"/>
-  	  	      <param name="project.name" value="edu.iu.scipolicy.filtering.topnpercent"/>
-  	  	      <param name="url" value="http://nwb.slis.indiana.edu/svn/nwb/trunk/scipolicy/plugins/normal_plugins"/>
-  	  	 </antcall>
-  	
-  	<antcall target="svn.co">
-  	  	      <param name="target" value="plugins"/>
-  	  	      <param name="element.id" value="edu.iu.scipolicy.references.map"/>
-  	  	      <param name="project.name" value="edu.iu.scipolicy.references.map"/>
-  	  	      <param name="url" value="http://nwb.slis.indiana.edu/svn/nwb/trunk/scipolicy/plugins/normal_plugins"/>
-  	  	 </antcall>
-  	
-  	<antcall target="svn.co">
-  	  	      <param name="target" value="plugins"/>
-  	  	      <param name="element.id" value="edu.iu.scipolicy.utilities"/>
-  	  	      <param name="project.name" value="edu.iu.scipolicy.utilities"/>
-  	  	      <param name="url" value="http://nwb.slis.indiana.edu/svn/nwb/trunk/scipolicy/plugins/normal_plugins"/>
-  	  	 </antcall>
-  	
-  	<antcall target="svn.co">
-  	  	      <param name="target" value="plugins"/>
-  	  	      <param name="element.id" value="edu.iu.scipolicy.visualization.horizontallinegraph"/>
-  	  	      <param name="project.name" value="edu.iu.scipolicy.visualization.horizontallinegraph"/>
-  	  	      <param name="url" value="http://nwb.slis.indiana.edu/svn/nwb/trunk/scipolicy/plugins/normal_plugins"/>
-  	  	 </antcall>
-  	
-  	<antcall target="svn.co">
-  	  	      <param name="target" value="plugins"/>
-  	  	      <param name="element.id" value="edu.iu.scipolicy.visualization.imageviewer"/>
-  	  	      <param name="project.name" value="edu.iu.scipolicy.visualization.imageviewer"/>
-  	  	      <param name="url" value="http://nwb.slis.indiana.edu/svn/nwb/trunk/scipolicy/plugins/normal_plugins"/>
-  	  	 </antcall>
-  	
-  	<antcall target="svn.co">
-  	  	      <param name="target" value="plugins"/>
-  	  	      <param name="element.id" value="edu.iu.scipolicy.utilities.nsf"/>
-  	  	      <param name="project.name" value="edu.iu.scipolicy.utilities.nsf"/>
-  	  	      <param name="url" value="http://nwb.slis.indiana.edu/svn/nwb/trunk/scipolicy/plugins/normal_plugins"/>
-  	  	 </antcall>
-  	
-  	   <!-- libs -->
-  	
-  	<antcall target="svn.co">
-  	  	  	      <param name="target" value="plugins"/>
-  	  	  	      <param name="element.id" value="antlr_stringtemplate"/>
-  	  	  	      <param name="project.name" value="antlr_stringtemplate"/>
-  	  	  	      <param name="url" value="http://nwb.slis.indiana.edu/svn/nwb/trunk/scipolicy/plugins/libs"/>
-  	  	  	 </antcall>
-  	
-	<antcall target="svn.co">
-  	  	  	      <param name="target" value="plugins"/>
-  	  	  	      <param name="element.id" value="freehep_psviewer"/>
-  	  	  	      <param name="project.name" value="libs/freehep_psviewer"/>
-  	  	  	      <param name="url" value="http://nwb.slis.indiana.edu/svn/nwb/trunk/scipolicy/plugins"/>
-  	  	  	 </antcall>
-  	  	  	 	
-	<antcall target="svn.co">
-  	  	  	      <param name="target" value="plugins"/>
-  	  	  	      <param name="element.id" value="opencsv"/>
-  	  	  	      <param name="project.name" value="opencsv"/>
-  	  	  	      <param name="url" value="http://nwb.slis.indiana.edu/svn/nwb/trunk/scipolicy/plugins/libs"/>
-  	  	  	 </antcall>
-  	  	  	 	
-  	<antcall target="svn.co">
-  	  	  	  	  <param name="target" value="plugins"/>
-  	  	  	  	  <param name="element.id" value="pdfbox_fontbox"/>
-  	  	  	  	  <param name="project.name" value="pdfbox_fontbox"/>
-  	  	  	  	  <param name="url" value="http://nwb.slis.indiana.edu/svn/nwb/trunk/scipolicy/plugins/libs"/>
-  	</antcall>
-  	
-  	<!-- converters -->
-  	
-  	<!--
-  	<antcall target="svn.co">
-  	  	  	  	  	  <param name="target" value="plugins"/>
-  	  	  	  	  	  <param name="element.id" value="edu.iu.scipolicy.converter.nsf.csv_to_db"/>
-  	  	  	  	  	  <param name="project.name" value="edu.iu.scipolicy.converter.nsf.csv_to_db"/>
-  	  	  	  	  	  <param name="url" value="http://nwb.slis.indiana.edu/svn/nwb/trunk/scipolicy/plugins/converters"/>
-  	</antcall>
-  	
-  	<antcall target="svn.co">
-  	  	  	  	  	  <param name="target" value="plugins"/>
-  	  	  	  	  	  <param name="element.id" value="edu.iu.scipolicy.converter.nsf.db_to_prefuse"/>
-  	  	  	  	  	  <param name="project.name" value="edu.iu.scipolicy.converter.nsf.db_to_prefuse"/>
-  	  	  	  	  	  <param name="url" value="http://nwb.slis.indiana.edu/svn/nwb/trunk/scipolicy/plugins/converters"/>
-  	</antcall>
-  	
-  	-->
-  	<antcall target="svn.co">
-  	  	  	  	  	  <param name="target" value="plugins"/>
-  	  	  	  	  	  <param name="element.id" value="edu.iu.scipolicy.converter.psraster"/>
-  	  	  	  	  	  <param name="project.name" value="edu.iu.scipolicy.converter.psraster"/>
-  	  	  	  	  	  <param name="url" value="http://nwb.slis.indiana.edu/svn/nwb/trunk/scipolicy/plugins/converters"/>
-  	</antcall>
-  		
-    
-  	
-  
-  	
-  	<!-- CIShell plugins -->
-  	
-  	  <!-- These arguably shouldn't be CIShell plugins, but they are for now, so oh well -->
   	
   	 <antcall target="svn.co">
   	  	      <param name="target" value="plugins"/>
@@ -483,21 +375,7 @@
       <param name="url" value="https://cishell.svn.sourceforge.net/svnroot/cishell/trunk"/>
     </antcall>
   	
-  	<!-- SciPolicy Plugins -->
-    <antcall target="svn.co">
-        <param name="target" value="features"/>
-        <param name="element.id" value="edu.iu.epic.gui.brand.feature"/>
-        <param name="project.name" value="/deployment/edu.iu.epic.gui.brand.feature"/>
-        <param name="url" value="http://nwb.slis.indiana.edu/svn/nwb/trunk/epic_tool"/>
-      </antcall>
-  	
-      <antcall target="svn.co">
-        <param name="target" value="plugins"/>
-        <param name="element.id" value="edu.iu.epic.gui.brand"/>
-        <param name="project.name" value="/deployment/edu.iu.epic.gui.brand"/>
-        <param name="url" value="http://nwb.slis.indiana.edu/svn/nwb/trunk/epic_tool"/>
-      </antcall>
-  	
+
   	<!-- NWB Plugins -->
   	
   	<antcall target="svn.co">
@@ -513,6 +391,171 @@
   		<param name="project.name" value="edu.iu.cns.converter.graceplot"/>
   		<param name="url" value="http://nwb.slis.indiana.edu/svn/nwb/trunk/plugins/converter/"/>
   	</antcall>
+  	
+    <antcall target="svn.co">
+        <param name="target" value="plugins"/>
+        <param name="element.id" value="edu.iu.nwb.preprocessing.csv"/>
+        <param name="project.name" value="/plugins/preprocessing/edu.iu.nwb.preprocessing.csv"/>
+        <param name="url" value="http://nwb.slis.indiana.edu/svn/nwb/trunk"/>
+      </antcall>
+      <antcall target="svn.co">
+        <param name="target" value="plugins"/>
+        <param name="element.id" value="edu.iu.nwb.visualization.prefuse.beta"/>
+        <param name="project.name" value="/plugins/visualization/edu.iu.nwb.visualization.prefuse.beta"/>
+        <param name="url" value="http://nwb.slis.indiana.edu/svn/nwb/trunk"/>
+      </antcall>
+      <antcall target="svn.co">
+        <param name="target" value="plugins"/>
+        <param name="element.id" value="FreeHEP_VectorGraphics"/>
+        <param name="project.name" value="/plugins/libs/VectorGraphics"/>
+        <param name="url" value="http://nwb.slis.indiana.edu/svn/nwb/trunk"/>
+      </antcall>
+      <antcall target="svn.co">
+        <param name="target" value="plugins"/>
+        <param name="element.id" value="javabib.orig"/>
+        <param name="project.name" value="/plugins/libs/javabib"/>
+        <param name="url" value="http://nwb.slis.indiana.edu/svn/nwb/trunk"/>
+      </antcall>  	
+      <antcall target="svn.co">
+        <param name="target" value="plugins"/>
+        <param name="element.id" value="uk.ac.shef.wit.simmetrics"/>
+        <param name="project.name" value="/plugins/libs/uk.ac.shef.wit.simmetrics"/>
+        <param name="url" value="http://nwb.slis.indiana.edu/svn/nwb/trunk"/>
+      </antcall>  	
+      <antcall target="svn.co">
+        <param name="target" value="plugins"/>
+        <param name="element.id" value="stax"/>
+        <param name="project.name" value="/plugins/libs/staxlib"/>
+        <param name="url" value="http://nwb.slis.indiana.edu/svn/nwb/trunk"/>
+      </antcall>
+  	
+ 	<antcall target="svn.co">
+  	  	      <param name="target" value="plugins"/>
+  	  	      <param name="element.id" value="edu.iu.scipolicy.utilities"/>
+  	  	      <param name="project.name" value="edu.iu.scipolicy.utilities"/>
+  	  	      <param name="url" value="http://nwb.slis.indiana.edu/svn/nwb/trunk/scipolicy/plugins/normal_plugins"/>
+  	  	 </antcall>
+
+  	<!-- SciPolicy plugins -->
+  	
+	<!-- (might be able to replace this with a script that gets the entire contents of the directory... -->
+  		<!-- normal_plugins -->
+  	
+  <!-- Disabled from EpiC for now
+  	
+	<antcall target="svn.co">
+  	  	  	      <param name="target" value="plugins"/>
+  	  	  	      <param name="element.id" value="edu.iu.scipolicy.visualization.geomaps"/>
+  	  	  	      <param name="project.name" value="edu.iu.scipolicy.visualization.geomaps"/>
+  	  	  	      <param name="url" value="http://nwb.slis.indiana.edu/svn/nwb/trunk/scipolicy/plugins/normal_plugins"/>
+  	  	  	 </antcall>
+  	
+  	<antcall target="svn.co">
+  	  	  	  	      <param name="target" value="plugins"/>
+  	  	  	  	      <param name="element.id" value="geolibs"/>
+  	  	  	  	      <param name="project.name" value="geolibs"/>
+  	  	  	  	      <param name="url" value="http://nwb.slis.indiana.edu/svn/nwb/trunk/scipolicy/plugins/libs"/>
+  	  	  	  	 </antcall>
+  	
+  	<antcall target="svn.co">
+  	  	      <param name="target" value="plugins"/>
+  	  	      <param name="element.id" value="edu.iu.scipolicy.preprocessing.geocoder"/>
+  	  	      <param name="project.name" value="edu.iu.scipolicy.preprocessing.geocoder"/>
+  	  	      <param name="url" value="http://nwb.slis.indiana.edu/svn/nwb/trunk/scipolicy/plugins/normal_plugins"/>
+  	  	 </antcall>
+  	
+  	 <antcall target="svn.co">
+  	      <param name="target" value="plugins"/>
+  	      <param name="element.id" value="edu.iu.scipolicy.filtering.topn"/>
+  	      <param name="project.name" value="edu.iu.scipolicy.filtering.topn"/>
+  	      <param name="url" value="http://nwb.slis.indiana.edu/svn/nwb/trunk/scipolicy/plugins/normal_plugins"/>
+  	 </antcall>
+  	
+  	<antcall target="svn.co">
+  	  	      <param name="target" value="plugins"/>
+  	  	      <param name="element.id" value="edu.iu.scipolicy.filtering.topnpercent"/>
+  	  	      <param name="project.name" value="edu.iu.scipolicy.filtering.topnpercent"/>
+  	  	      <param name="url" value="http://nwb.slis.indiana.edu/svn/nwb/trunk/scipolicy/plugins/normal_plugins"/>
+  	  	 </antcall>
+  	
+  	<antcall target="svn.co">
+  	  	      <param name="target" value="plugins"/>
+  	  	      <param name="element.id" value="edu.iu.scipolicy.references.map"/>
+  	  	      <param name="project.name" value="edu.iu.scipolicy.references.map"/>
+  	  	      <param name="url" value="http://nwb.slis.indiana.edu/svn/nwb/trunk/scipolicy/plugins/normal_plugins"/>
+  	  	 </antcall>
+  	
+ 
+  	
+  	<antcall target="svn.co">
+  	  	      <param name="target" value="plugins"/>
+  	  	      <param name="element.id" value="edu.iu.scipolicy.visualization.horizontallinegraph"/>
+  	  	      <param name="project.name" value="edu.iu.scipolicy.visualization.horizontallinegraph"/>
+  	  	      <param name="url" value="http://nwb.slis.indiana.edu/svn/nwb/trunk/scipolicy/plugins/normal_plugins"/>
+  	  	 </antcall>
+  	
+  	<antcall target="svn.co">
+  	  	      <param name="target" value="plugins"/>
+  	  	      <param name="element.id" value="edu.iu.scipolicy.visualization.imageviewer"/>
+  	  	      <param name="project.name" value="edu.iu.scipolicy.visualization.imageviewer"/>
+  	  	      <param name="url" value="http://nwb.slis.indiana.edu/svn/nwb/trunk/scipolicy/plugins/normal_plugins"/>
+  	  	 </antcall>
+  	
+  	<antcall target="svn.co">
+  	  	      <param name="target" value="plugins"/>
+  	  	      <param name="element.id" value="edu.iu.scipolicy.utilities.nsf"/>
+  	  	      <param name="project.name" value="edu.iu.scipolicy.utilities.nsf"/>
+  	  	      <param name="url" value="http://nwb.slis.indiana.edu/svn/nwb/trunk/scipolicy/plugins/normal_plugins"/>
+  	  	 </antcall>
+
+  	
+  	
+	<antcall target="svn.co">
+  	  	  	      <param name="target" value="plugins"/>
+  	  	  	      <param name="element.id" value="freehep_psviewer"/>
+  	  	  	      <param name="project.name" value="libs/freehep_psviewer"/>
+  	  	  	      <param name="url" value="http://nwb.slis.indiana.edu/svn/nwb/trunk/scipolicy/plugins"/>
+  	  	  	 </antcall>
+  	  	  	 	
+	
+  	  	  	 	
+  	<antcall target="svn.co">
+  	  	  	  	  <param name="target" value="plugins"/>
+  	  	  	  	  <param name="element.id" value="pdfbox_fontbox"/>
+  	  	  	  	  <param name="project.name" value="pdfbox_fontbox"/>
+  	  	  	  	  <param name="url" value="http://nwb.slis.indiana.edu/svn/nwb/trunk/scipolicy/plugins/libs"/>
+  	</antcall>
+  	
+  	
+  	<antcall target="svn.co">
+  	  	  	  	  	  <param name="target" value="plugins"/>
+  	  	  	  	  	  <param name="element.id" value="edu.iu.scipolicy.converter.nsf.csv_to_db"/>
+  	  	  	  	  	  <param name="project.name" value="edu.iu.scipolicy.converter.nsf.csv_to_db"/>
+  	  	  	  	  	  <param name="url" value="http://nwb.slis.indiana.edu/svn/nwb/trunk/scipolicy/plugins/converters"/>
+  	</antcall>
+  	
+  	<antcall target="svn.co">
+  	  	  	  	  	  <param name="target" value="plugins"/>
+  	  	  	  	  	  <param name="element.id" value="edu.iu.scipolicy.converter.nsf.db_to_prefuse"/>
+  	  	  	  	  	  <param name="project.name" value="edu.iu.scipolicy.converter.nsf.db_to_prefuse"/>
+  	  	  	  	  	  <param name="url" value="http://nwb.slis.indiana.edu/svn/nwb/trunk/scipolicy/plugins/converters"/>
+  	</antcall>
+
+  	<antcall target="svn.co">
+  	  	  	  	  	  <param name="target" value="plugins"/>
+  	  	  	  	  	  <param name="element.id" value="edu.iu.scipolicy.converter.psraster"/>
+  	  	  	  	  	  <param name="project.name" value="edu.iu.scipolicy.converter.psraster"/>
+  	  	  	  	  	  <param name="url" value="http://nwb.slis.indiana.edu/svn/nwb/trunk/scipolicy/plugins/converters"/>
+  	</antcall>
+  		
+    
+  	
+  	-->
+  	
+  	<!-- CIShell plugins -->
+  	
+  	  <!-- These arguably shouldn't be CIShell plugins, but they are for now, so oh well -->
+
    
   	<!-- Disabled NWB Plugins
   	<antcall target="svn.co">
@@ -614,6 +657,7 @@
   	
   	<!-- legit NWB plugins -->
   	
+  	<!-- Disabled from EpiC for now 
   	<antcall target="svn.co">
   	  	  	  	      <param name="target" value="plugins"/>
   	  	  	  	      <param name="element.id" value="edu.iu.nwb.analysis.blondelcommunitydetection"/>
@@ -642,6 +686,7 @@
   	      <param name="url" value="http://nwb.slis.indiana.edu/svn/nwb/trunk"/>
   	</antcall>
   	
+  	-->
     <antcall target="svn.co">
       <param name="target" value="plugins"/>
       <param name="element.id" value="edu.iu.nwb.converter.edgelist"/>
@@ -780,16 +825,11 @@
       <param name="project.name" value="/plugins/converter/edu.iu.nwb.converter.prefuseTreeBetaAlpha"/>
       <param name="url" value="http://nwb.slis.indiana.edu/svn/nwb/trunk"/>
     </antcall>
-    <antcall target="svn.co">
-      <param name="target" value="features"/>
-      <param name="element.id" value="edu.iu.epic.javaalgorithms.feature"/>
-      <param name="project.name" value="/deployment/edu.iu.epic.javaalgorithms.feature"/>
-      <param name="url" value="http://nwb.slis.indiana.edu/svn/nwb/trunk/epic_tool"/>
-    </antcall>
-  	
-  	
+    
    
   	
+   
+  	<!-- Disabled from EpiC for now 
   	 <antcall target="svn.co">
   	      <param name="target" value="plugins"/>
   	      <param name="element.id" value="edu.iu.nwb.analysis.java.nodedegree"/>
@@ -865,28 +905,27 @@
       <param name="project.name" value="/plugins/visualization/edu.iu.nwb.visualization.radialgraph"/>
       <param name="url" value="http://nwb.slis.indiana.edu/svn/nwb/trunk"/>
     </antcall>
-  	<!--
+
     <antcall target="svn.co">
       <param name="target" value="plugins"/>
       <param name="element.id" value="org.mediavirus.parvis"/>
       <param name="project.name" value="/plugins/visualization/org.mediavirus.parvis"/>
       <param name="url" value="http://nwb.slis.indiana.edu/svn/nwb/trunk"/>
     </antcall>
-    -->
     <antcall target="svn.co">
       <param name="target" value="plugins"/>
       <param name="element.id" value="edu.iu.iv.modeling.tarl"/>
       <param name="project.name" value="/plugins/modeling/edu.iu.iv.modeling.tarl"/>
       <param name="url" value="http://nwb.slis.indiana.edu/svn/nwb/trunk"/>
     </antcall>
-  	<!--
+    
     <antcall target="svn.co">
       <param name="target" value="plugins"/>
       <param name="element.id" value="edu.iu.nwb.analysis.pathfindergraphnetworkscaling"/>
       <param name="project.name" value="/plugins/analysis/edu.iu.nwb.analysis.pathfindergraphnetworkscaling"/>
       <param name="url" value="http://nwb.slis.indiana.edu/svn/nwb/trunk"/>
     </antcall>
-  	-->
+
   	<antcall target="svn.co">
   	      <param name="target" value="plugins"/>
   	      <param name="element.id" value="edu.iu.nwb.preprocessing.pathfindernetworkscaling.fast"/>
@@ -948,50 +987,23 @@
       <param name="project.name" value="/plugins/analysis/edu.iu.nwb.analysis.weakcomponentclustering"/>
       <param name="url" value="http://nwb.slis.indiana.edu/svn/nwb/trunk"/>
     </antcall>
-  	<!--
+
+
+
+
     <antcall target="svn.co">
       <param name="target" value="plugins"/>
       <param name="element.id" value="edu.iu.nwb.visualization.prefuse.alpha.smallworld"/>
       <param name="project.name" value="/plugins/visualization/edu.iu.nwb.visualization.prefuse.alpha.smallworld"/>
       <param name="url" value="http://nwb.slis.indiana.edu/svn/nwb/trunk"/>
     </antcall>
-    -->
-    <antcall target="svn.co">
-      <param name="target" value="plugins"/>
-      <param name="element.id" value="edu.iu.nwb.preprocessing.csv"/>
-      <param name="project.name" value="/plugins/preprocessing/edu.iu.nwb.preprocessing.csv"/>
-      <param name="url" value="http://nwb.slis.indiana.edu/svn/nwb/trunk"/>
-    </antcall>
-    <antcall target="svn.co">
-      <param name="target" value="plugins"/>
-      <param name="element.id" value="edu.iu.nwb.visualization.prefuse.beta"/>
-      <param name="project.name" value="/plugins/visualization/edu.iu.nwb.visualization.prefuse.beta"/>
-      <param name="url" value="http://nwb.slis.indiana.edu/svn/nwb/trunk"/>
-    </antcall>
-    <antcall target="svn.co">
-      <param name="target" value="plugins"/>
-      <param name="element.id" value="FreeHEP_VectorGraphics"/>
-      <param name="project.name" value="/plugins/libs/VectorGraphics"/>
-      <param name="url" value="http://nwb.slis.indiana.edu/svn/nwb/trunk"/>
-    </antcall>
-    <antcall target="svn.co">
-      <param name="target" value="plugins"/>
-      <param name="element.id" value="javabib.orig"/>
-      <param name="project.name" value="/plugins/libs/javabib"/>
-      <param name="url" value="http://nwb.slis.indiana.edu/svn/nwb/trunk"/>
-    </antcall>  	
-    <antcall target="svn.co">
-      <param name="target" value="plugins"/>
-      <param name="element.id" value="uk.ac.shef.wit.simmetrics"/>
-      <param name="project.name" value="/plugins/libs/uk.ac.shef.wit.simmetrics"/>
-      <param name="url" value="http://nwb.slis.indiana.edu/svn/nwb/trunk"/>
-    </antcall>  	
-    <antcall target="svn.co">
-      <param name="target" value="plugins"/>
-      <param name="element.id" value="stax"/>
-      <param name="project.name" value="/plugins/libs/staxlib"/>
-      <param name="url" value="http://nwb.slis.indiana.edu/svn/nwb/trunk"/>
-    </antcall>
+    
+    
+  	
+  	-->
+  
+  	
+  	<!-- Disabled from EpiC for now
     <antcall target="svn.co">
       <param name="target" value="plugins"/>
       <param name="element.id" value="edu.iu.nwb.analysis.multipartitejoining"/>
@@ -1096,12 +1108,9 @@
   	  <param name="url" value="http://nwb.slis.indiana.edu/svn/nwb/trunk"/>
   	</antcall>
   	
-  	<antcall target="svn.co">
-  	      <param name="target" value="plugins"/>
-  	      <param name="element.id" value="edu.iu.nwb.templates.staticexecutable.nwb"/>
-  	      <param name="project.name" value="/plugins/shared/edu.iu.nwb.templates.staticexecutable.nwb"/>
-	  	  <param name="url" value="http://nwb.slis.indiana.edu/svn/nwb/trunk"/>
-  	</antcall>
+  	-->
+  	
+  
   	
   	
   	<!-- Non-PDE-based NWB Plugins -->
@@ -1113,6 +1122,7 @@
   	
   	<!-- Scipolicy non-PDE plugin -->
   	
+  	<!-- Disabled from EpiC for now
   	<antcall target="svn.co">
   	       <param name="target" value="nonpde_plugins"/>
   	       <param name="element.id" value="edu.iu.nwb.shared.blondelexecutable"/>
@@ -1129,7 +1139,12 @@
   	</antcall>
   	<ant dir="${buildDirectory}/nonpde_plugins/edu.iu.nwb.analysis.weighted.averageclusteringcoefficient"/>
   	
-  	<!--
+  	
+  	
+  	
+  	
+  	
+  	
   	<antcall target="svn.co">
   	  	      <param name="target" value="nonpde_plugins"/>
   	  	      <param name="element.id" value="edu.iu.nwb.modeling.weighted.evolvingnetwork"/>
@@ -1137,7 +1152,11 @@
   	  	      <param name="url" value="http://nwb.slis.indiana.edu/svn/nwb/trunk/plugins"/>
   	</antcall>
   	<ant dir="${buildDirectory}/nonpde_plugins/edu.iu.nwb.modeling.weighted.evolvingnetwork"/>
-  	-->
+  	
+  	
+  	
+  	
+  	
   	
   	<antcall target="svn.co">
   	  	  	      <param name="target" value="nonpde_plugins"/>
@@ -1243,7 +1262,13 @@
       <param name="url" value="http://nwb.slis.indiana.edu/svn/nwb/trunk/plugins"/>
     </antcall>
     <ant dir="${buildDirectory}/nonpde_plugins/edu.iu.nwb.analysis.diameter"/>
-  	<!--
+
+
+
+
+
+
+
     <antcall target="svn.co">
       <param name="target" value="nonpde_plugins"/>
       <param name="element.id" value="edu.iu.nwb.analysis.directedknn"/>
@@ -1251,7 +1276,13 @@
       <param name="url" value="http://nwb.slis.indiana.edu/svn/nwb/trunk/plugins"/>
     </antcall>
     <ant dir="${buildDirectory}/nonpde_plugins/edu.iu.nwb.analysis.directedknn"/>
-    -->
+
+
+
+
+
+
+
     <antcall target="svn.co">
       <param name="target" value="nonpde_plugins"/>
       <param name="element.id" value="edu.iu.nwb.analysis.indegreedistribution"/>
@@ -1259,7 +1290,13 @@
       <param name="url" value="http://nwb.slis.indiana.edu/svn/nwb/trunk/plugins"/>
     </antcall>
     <ant dir="${buildDirectory}/nonpde_plugins/edu.iu.nwb.analysis.indegreedistribution"/>
-  	<!--
+
+
+
+
+
+
+
     <antcall target="svn.co">
       <param name="target" value="nonpde_plugins"/>
       <param name="element.id" value="edu.iu.nwb.analysis.indegreesequence"/>
@@ -1267,7 +1304,13 @@
       <param name="url" value="http://nwb.slis.indiana.edu/svn/nwb/trunk/plugins"/>
     </antcall>
     <ant dir="${buildDirectory}/nonpde_plugins/edu.iu.nwb.analysis.indegreesequence"/>
-    -->
+
+
+
+
+
+
+
     <antcall target="svn.co">
       <param name="target" value="nonpde_plugins"/>
       <param name="element.id" value="edu.iu.nwb.analysis.onepointcorrelations"/>
@@ -1282,7 +1325,13 @@
       <param name="url" value="http://nwb.slis.indiana.edu/svn/nwb/trunk/plugins"/>
     </antcall>
     <ant dir="${buildDirectory}/nonpde_plugins/edu.iu.nwb.analysis.outdegreedistribution"/>
-  	<!--
+
+
+
+
+
+
+
     <antcall target="svn.co">
       <param name="target" value="nonpde_plugins"/>
       <param name="element.id" value="edu.iu.nwb.analysis.outdegreesequence"/>
@@ -1290,7 +1339,12 @@
       <param name="url" value="http://nwb.slis.indiana.edu/svn/nwb/trunk/plugins"/>
     </antcall>
     <ant dir="${buildDirectory}/nonpde_plugins/edu.iu.nwb.analysis.outdegreesequence"/>
-    -->
+
+
+
+
+
+
     <antcall target="svn.co">
       <param name="target" value="nonpde_plugins"/>
       <param name="element.id" value="edu.iu.nwb.analysis.pagerank"/>
@@ -1319,7 +1373,10 @@
       <param name="url" value="http://nwb.slis.indiana.edu/svn/nwb/trunk/plugins"/>
     </antcall>
     <ant dir="${buildDirectory}/nonpde_plugins/edu.iu.nwb.analysis.totaldegreedistribution"/>
-  	<!--
+    
+    
+    
+    
     <antcall target="svn.co">
       <param name="target" value="nonpde_plugins"/>
       <param name="element.id" value="edu.iu.nwb.analysis.totaldegreesequence"/>
@@ -1327,8 +1384,7 @@
       <param name="url" value="http://nwb.slis.indiana.edu/svn/nwb/trunk/plugins"/>
     </antcall>
     <ant dir="${buildDirectory}/nonpde_plugins/edu.iu.nwb.analysis.totaldegreesequence"/>
-    -->
-  	<!--
+
     <antcall target="svn.co">
       <param name="target" value="nonpde_plugins"/>
       <param name="element.id" value="edu.iu.nwb.analysis.undirectedknn"/>
@@ -1336,7 +1392,10 @@
       <param name="url" value="http://nwb.slis.indiana.edu/svn/nwb/trunk/plugins"/>
     </antcall>
     <ant dir="${buildDirectory}/nonpde_plugins/edu.iu.nwb.analysis.undirectedknn"/>
-    -->
+    
+    
+    
+    
     <antcall target="svn.co">
       <param name="target" value="nonpde_plugins"/>
       <param name="element.id" value="edu.iu.nwb.analysis.reciprocity.arc"/>
@@ -1394,7 +1453,10 @@
     </antcall>
     <ant dir="${buildDirectory}/nonpde_plugins/edu.iu.nwb.visualization.guess"/>
   	
-  	<!--
+
+
+
+
     <antcall target="svn.co">
       <param name="target" value="nonpde_plugins"/>
       <param name="element.id" value="nwb.visualization.lanet"/>
@@ -1411,6 +1473,12 @@
       <param name="url" value="http://nwb.slis.indiana.edu/svn/nwb/trunk/plugins"/>
     </antcall>
     <ant dir="${buildDirectory}/nonpde_plugins/org.mediavirus.parvis.sampledata"/>
-    -->
+    
+
+
+
+
+
+  	-->
   </target>
 </project>
