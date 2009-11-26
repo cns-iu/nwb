@@ -1,6 +1,6 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
-Bundle-Name: Aggregate Data
+Bundle-Name: EpiC Model Builder GUI
 Bundle-SymbolicName: edu.iu.epic.modelbuilder.gui
 Bundle-Version: 1.0.0
 Bundle-ClassPath: .

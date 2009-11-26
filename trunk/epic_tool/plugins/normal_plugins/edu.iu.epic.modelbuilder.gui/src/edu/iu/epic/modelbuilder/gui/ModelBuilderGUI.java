@@ -83,9 +83,9 @@ public class ModelBuilderGUI implements ActionListener {
         
         Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
 
-        int modelBuilderScreenOffset = 100;
+        int modelBuilderScreenOffset = 50;
 		int modelBuilderWidth = (int) screenSize.getWidth() - modelBuilderScreenOffset;
-		int modelBuilderHeight = (int) screenSize.getHeight() - modelBuilderScreenOffset;
+		int modelBuilderHeight = (int) screenSize.getHeight() - modelBuilderScreenOffset * 2;
 		
 		parentJFrame.setSize(modelBuilderWidth, 
         					 modelBuilderHeight);

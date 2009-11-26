@@ -38,16 +38,21 @@
   	  	  	  	  <param name="element.id" value="jaxb"/>
   	  	  	  	  <param name="project.name" value="jaxb"/>
   	  	  	  	  <param name="url" value="http://nwb.slis.indiana.edu/svn/nwb/trunk/epic_tool/plugins/libs"/>
-  	  	</antcall>
+  	</antcall>
   	
   	<antcall target="svn.co">
   	  	  	  	  	  <param name="target" value="plugins"/>
   	  	  	  	  	  <param name="element.id" value="stencil"/>
   	  	  	  	  	  <param name="project.name" value="stencil"/>
   	  	  	  	  	  <param name="url" value="http://nwb.slis.indiana.edu/svn/nwb/trunk/epic_tool/plugins/libs"/>
-  	  	  	</antcall>
+  	</antcall>
   	
-  	
+  	<antcall target="svn.co">
+  	  	  	  	  	  <param name="target" value="plugins"/>
+  	  	  	  	  	  <param name="element.id" value="piccolo2d"/>
+  	  	  	  	  	  <param name="project.name" value="piccolo2d"/>
+  	  	  	  	  	  <param name="url" value="http://nwb.slis.indiana.edu/svn/nwb/trunk/epic_tool/plugins/libs"/>
+  	</antcall>  	
   	
   	<!--EpiC java plugins-->
   	
@@ -70,14 +75,22 @@
   	  	  	  	  <param name="element.id" value="edu.iu.epic.modeling.compartment"/>
   	  	  	  	  <param name="project.name" value="edu.iu.epic.modeling.compartment"/>
   	  	  	  	  <param name="url" value="http://nwb.slis.indiana.edu/svn/nwb/trunk/epic_tool/plugins/normal_plugins"/>
-  	  	</antcall>
+  	</antcall>
   		
-  		<antcall target="svn.co">
+
+  	<antcall target="svn.co">
+  	  	  	  	  <param name="target" value="plugins"/>
+  	  	  	  	  <param name="element.id" value="edu.iu.epic.modelbuilder.gui"/>
+  	  	  	  	  <param name="project.name" value="edu.iu.epic.modelbuilder.gui"/>
+  	  	  	  	  <param name="url" value="http://nwb.slis.indiana.edu/svn/nwb/trunk/epic_tool/plugins/normal_plugins"/>
+  	</antcall>
+  	
+  	<antcall target="svn.co">
   		  	  	  	  <param name="target" value="plugins"/>
   		  	  	  	  <param name="element.id" value="edu.iu.epic.spemshell.runner"/>
   		  	  	  	  <param name="project.name" value="edu.iu.epic.spemshell.runner"/>
   		  	  	  	  <param name="url" value="http://nwb.slis.indiana.edu/svn/nwb/trunk/epic_tool/plugins/normal_plugins"/>
-  		  	</antcall>
+  	</antcall>
   		
   	
   		
