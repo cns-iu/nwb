@@ -1,10 +1,13 @@
-package edu.iu.epic.modelbuilder.gui;
+package edu.iu.epic.modelbuilder.gui.transition;
 
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
 
 import javax.swing.DefaultComboBoxModel;
+
+import edu.iu.epic.modelbuilder.gui.utility.CompartmentIDToLableMap;
+import edu.iu.epic.modelbuilder.gui.utility.Observer;
 
 public class InfectorComboBoxModel extends DefaultComboBoxModel implements Observer {
 

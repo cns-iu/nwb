@@ -28,6 +28,19 @@ import org.apache.commons.collections.MapIterator;
 import org.apache.commons.collections.keyvalue.MultiKey;
 import org.apache.commons.collections.map.MultiKeyMap;
 
+import edu.iu.epic.modelbuilder.gui.compartment.CompartmentMoveEventHandler;
+import edu.iu.epic.modelbuilder.gui.compartment.PCompartment;
+import edu.iu.epic.modelbuilder.gui.parametertable.ParameterTable;
+import edu.iu.epic.modelbuilder.gui.transition.ComplexTransition;
+import edu.iu.epic.modelbuilder.gui.transition.ComplexTransitionInfectionInformation;
+import edu.iu.epic.modelbuilder.gui.transition.SimpleTransition;
+import edu.iu.epic.modelbuilder.gui.utility.CompartmentIDToLableMap;
+import edu.iu.epic.modelbuilder.gui.utility.GlobalConstants;
+import edu.iu.epic.modelbuilder.gui.utility.IDGenerator;
+import edu.iu.epic.modelbuilder.gui.utility.NotificationArea;
+import edu.iu.epic.modelbuilder.gui.utility.ObjectSelectionEventHandler;
+import edu.iu.epic.modelbuilder.gui.utility.PiccoloUtilities;
+import edu.iu.epic.modelbuilder.gui.utility.WorkBenchInternalFrame;
 import edu.iu.epic.modeling.compartment.model.Compartment;
 import edu.iu.epic.modeling.compartment.model.InfectionTransition;
 import edu.iu.epic.modeling.compartment.model.Model;
@@ -174,24 +187,14 @@ public class ModelBuilderGUI implements ActionListener {
 		PScrollPane mainWorkbenchCanvasScrollPane = new PScrollPane(mainWorkbenchCanvas);
 		workbench.add(mainWorkbenchCanvasScrollPane);
 		
-		notificationAreas = new NotificationArea[2];
-		
-		/*
-		 * For reporting all the unbound parameters.
-		 * */
-		notificationAreas[0] = new NotificationArea(2, ", ");
-		
-		/*
-		 * For reporting all the inconsistencies.
-		 * */
-		notificationAreas[1] = new NotificationArea(10);
-		
 		/*
 		 * For initializing parameters that help build the model. 
 		 * It side-effects,
 		 * 		1. isModelBuildingComplete
 		 * 		2. inMemoryModel
 		 * 		3. pObjectIDGenerator
+		 * 		4. CompartmentIDToLabelMap
+		 * 		5. NotificationAreas
 		 * */
 		initializeModelHelpers();
 
@@ -248,6 +251,18 @@ public class ModelBuilderGUI implements ActionListener {
 		inMemoryModel = new Model();
 		pObjectIDGenerator = new IDGenerator();
 		CompartmentIDToLableMap.resetCompartmentIDToLableMap();
+		
+		notificationAreas = new NotificationArea[2];
+		
+		/*
+		 * For reporting all the unbound parameters.
+		 * */
+		notificationAreas[0] = new NotificationArea(2, ", ");
+		
+		/*
+		 * For reporting all the inconsistencies.
+		 * */
+		notificationAreas[1] = new NotificationArea(10);
 	}
 
 	/**
@@ -682,18 +697,6 @@ public class ModelBuilderGUI implements ActionListener {
         } catch (java.beans.PropertyVetoException e) {}
     }
 
-//	/**
-//     * Create the GUI and show it.  For thread safety,
-//     * this method should be invoked from the
-//     * event-dispatching thread.
-//     */
-//    private static void createAndShowGUI() {
-//        //Make sure we have nice window decorations.
-//        JFrame.setDefaultLookAndFeelDecorated(true);
-//
-//        //Create and set up the window.
-//        new ModelBuilderGUI();
-//    }
 
 	/**
 	 * @return the isModelBuildingComplete

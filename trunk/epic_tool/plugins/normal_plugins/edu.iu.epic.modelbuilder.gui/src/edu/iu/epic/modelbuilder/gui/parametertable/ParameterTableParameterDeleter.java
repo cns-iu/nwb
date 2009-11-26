@@ -1,4 +1,4 @@
-package edu.iu.epic.modelbuilder.gui;
+package edu.iu.epic.modelbuilder.gui.parametertable;
 
 import java.awt.Component;
 import java.awt.event.ActionEvent;
@@ -15,6 +15,7 @@ import javax.swing.table.TableCellEditor;
 import javax.swing.table.TableCellRenderer;
 import javax.swing.table.TableColumnModel;
 
+import edu.iu.epic.modelbuilder.gui.utility.NotificationArea;
 import edu.iu.epic.modeling.compartment.model.Model;
 import edu.iu.epic.modeling.compartment.model.exception.InvalidParameterExpressionException;
 

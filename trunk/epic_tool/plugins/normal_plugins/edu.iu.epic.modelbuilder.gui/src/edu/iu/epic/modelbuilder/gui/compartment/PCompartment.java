@@ -1,4 +1,4 @@
-package edu.iu.epic.modelbuilder.gui;
+package edu.iu.epic.modelbuilder.gui.compartment;
 
 import java.awt.Color;
 import java.awt.Shape;
@@ -8,9 +8,14 @@ import java.beans.PropertyChangeListener;
 import java.util.ArrayList;
 import java.util.List;
 
+import edu.iu.epic.modelbuilder.gui.editablelabel.CompartmentEditableLabelEventHandler;
+import edu.iu.epic.modelbuilder.gui.editablelabel.EditableLabel;
+import edu.iu.epic.modelbuilder.gui.utility.CompartmentIDToLableMap;
+import edu.iu.epic.modelbuilder.gui.utility.GlobalConstants;
+import edu.iu.epic.modelbuilder.gui.utility.NotificationArea;
+import edu.iu.epic.modelbuilder.gui.utility.PiccoloUtilities;
 import edu.iu.epic.modeling.compartment.model.Compartment;
 import edu.iu.epic.modeling.compartment.model.Model;
-import edu.iu.epic.modeling.compartment.model.Transition;
 import edu.iu.epic.modeling.compartment.model.exception.CompartmentExistsException;
 import edu.iu.epic.modeling.compartment.model.exception.InvalidCompartmentNameException;
 import edu.umd.cs.piccolo.PNode;
@@ -220,13 +225,6 @@ public class PCompartment extends PPath {
 
 	public void removeInMemoryCompartment() {
 		inMemoryModel.removeCompartment(inMemoryCompartment);
-		for (String name : inMemoryModel.getCompartmentNames()) {
-			System.out.println("|| comp name > " + name );
-		}
-		for (Transition name : inMemoryModel.getTransitions()) {
-			System.out.println("|| transition name > " + name );
-		}
-		System.out.println("**************************************");
 	}
 
 	public void setInMemoryCompartmentPosition(double xPosition, double yPosition) {

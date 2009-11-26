@@ -1,6 +1,5 @@
-package edu.iu.epic.modelbuilder.gui;
+package edu.iu.epic.modelbuilder.gui.utility;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 

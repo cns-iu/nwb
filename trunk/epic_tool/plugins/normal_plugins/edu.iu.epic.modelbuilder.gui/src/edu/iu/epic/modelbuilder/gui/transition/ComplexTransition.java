@@ -1,4 +1,4 @@
-package edu.iu.epic.modelbuilder.gui;
+package edu.iu.epic.modelbuilder.gui.transition;
 
 import java.awt.Color;
 import java.awt.geom.Point2D;
@@ -7,6 +7,12 @@ import java.awt.geom.Point2D.Double;
 import java.util.ArrayList;
 import java.util.List;
 
+import edu.iu.epic.modelbuilder.gui.utility.CompartmentIDToLableMap;
+import edu.iu.epic.modelbuilder.gui.utility.GlobalConstants;
+import edu.iu.epic.modelbuilder.gui.utility.IDGenerator;
+import edu.iu.epic.modelbuilder.gui.utility.NotificationArea;
+import edu.iu.epic.modelbuilder.gui.utility.Observer;
+import edu.iu.epic.modelbuilder.gui.utility.PiccoloUtilities;
 import edu.iu.epic.modeling.compartment.model.Model;
 import edu.iu.epic.modeling.compartment.model.Transition;
 import edu.umd.cs.piccolo.PNode;
@@ -225,12 +231,6 @@ public class ComplexTransition extends PPath {
 			
 		}
 		
-//		for(Transition transition : inMemoryModel.getTransitions() ) {
-//			System.out.println("adder handler " + transition );
-//		}
-//		System.out.println("+++++++++++++++++++++++++++++");
-		
-		
 		return isInfectorAdditionSuccessful;
 		
 	}
@@ -349,19 +349,11 @@ public class ComplexTransition extends PPath {
 	
 		for (PNode currentInfector : infectors) { 
 			
-//			((InfectorInformationPanel) currentInfector)
-//					.deleteInfectorInformationPanel(currentInfector);
-			System.out.println("deleted " + ((InfectorInformationPanel)currentInfector).getInfectorComboBoxModel());
-			
 			Observer infectorBoxModel = 
 				((InfectorInformationPanel)currentInfector).getInfectorComboBoxModel();
 			CompartmentIDToLableMap.removeObserver(infectorBoxModel);
 		}
 		
-//		currentSelectedNode.removeFromParent();
-//		currentSelectedNode = null;
-		
-//		System.out.println(CompartmentIDToLableMap.getObservers());
 	}
 	
 	public void removeInMemoryInfectionTransitions() {
@@ -371,7 +363,6 @@ public class ComplexTransition extends PPath {
 			inMemoryModel.removeTransition(inMemoryInfectionTransition);
 		}
 		
-		System.out.println("***"+inMemoryModel.getTransitions());
 	}
 	
 	private void updateTransitionAttributeForInvolvedInfectors(
@@ -408,6 +399,7 @@ public class ComplexTransition extends PPath {
 	private void updateRelatedCompartmentAttributes(PNode sourceCompartment,
 			PNode targetCompartment) {
 		List<PNode> tempPNodePlaceHolder;
+		
 		/*
 		 * Updating Source PCompartment with reference to the newly added
 		 * ComplexTransition.
@@ -490,6 +482,7 @@ public class ComplexTransition extends PPath {
 	public static Point2D.Double calculateArrowDisplayPosition(
 			PNode targetCompartment, Point2D.Double normalizedBounds1,
 			Point2D.Double normalizedBounds2) {
+		
 		/*
 		 * It always has to be node2
 		 * */
@@ -545,7 +538,7 @@ public class ComplexTransition extends PPath {
 	}
 
 	/**
-	 * Based on http://local.wasp.uwa.edu.au/~pbourke/geometry/lineline2d/
+	 * Based on http://local.wasp.uwa.edu.au/~pbourke/geometry/lineline2d/ .
 	 * @param edgePoints
 	 * @param nodeBoundsPoints
 	 * @return

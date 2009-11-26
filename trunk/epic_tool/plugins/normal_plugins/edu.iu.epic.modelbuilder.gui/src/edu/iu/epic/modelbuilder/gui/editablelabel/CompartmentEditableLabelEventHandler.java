@@ -1,10 +1,14 @@
-package edu.iu.epic.modelbuilder.gui;
+package edu.iu.epic.modelbuilder.gui.editablelabel;
 
 import java.awt.event.FocusEvent;
 import java.awt.event.FocusListener;
 
 import javax.swing.JTextField;
 
+import edu.iu.epic.modelbuilder.gui.compartment.PCompartment;
+import edu.iu.epic.modelbuilder.gui.utility.CompartmentIDToLableMap;
+import edu.iu.epic.modelbuilder.gui.utility.GlobalConstants;
+import edu.iu.epic.modelbuilder.gui.utility.NotificationArea;
 import edu.umd.cs.piccolo.PNode;
 import edu.umd.cs.piccolo.event.PBasicInputEventHandler;
 import edu.umd.cs.piccolo.event.PInputEvent;

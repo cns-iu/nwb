@@ -10,6 +10,8 @@ import org.cishell.framework.data.Data;
 import org.osgi.framework.BundleContext;
 import org.osgi.service.component.ComponentContext;
 
+import edu.iu.epic.modelbuilder.gui.parametertable.ParameterTable;
+
 public abstract class ModelBuilderGUIAlgorithmFactory implements AlgorithmFactory {
 	
 	private URL deleteButtonMousePressedImagePath, deleteButtonNormalStateImagePath;

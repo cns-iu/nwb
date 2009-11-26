@@ -1,4 +1,4 @@
-package edu.iu.epic.modelbuilder.gui;
+package edu.iu.epic.modelbuilder.gui.utility;
 
 import java.awt.Dimension;
 

@@ -1,4 +1,4 @@
-package edu.iu.epic.modelbuilder.gui;
+package edu.iu.epic.modelbuilder.gui.utility;
 
 public class IDGenerator {
 	private int genericCounter;
@@ -15,33 +15,6 @@ public class IDGenerator {
 		this.complexTransitionCounter = 0;
 	}
 	
-//	/**
-//	 * @return the nodeCounter
-//	 */
-//	public static String getNewNodeID(String counterType) {
-//		if (GlobalConstants.COMPARTMENT_TYPE_ATTRIBUTE_VALUE
-//				.equalsIgnoreCase(counterType)) {
-//			compartmentCounter++;
-//			return "COMPARTMENT_" + compartmentCounter;
-//		} else if (GlobalConstants.SIMPLE_TRANSITION_TYPE_ATTRIBUTE_VALUE
-//				.equalsIgnoreCase(counterType)) {
-//			simpleTransitionCounter++;
-//			return "SIMPLE_TRANSITION_" + simpleTransitionCounter;
-//		} else if (GlobalConstants.COMPLEX_TRANSITION_TYPE_ATTRIBUTE_VALUE
-//				.equalsIgnoreCase(counterType)) {
-//			complexTransitionCounter++;
-//			return "COMPLEX_TRANSITION_" + complexTransitionCounter;
-//		} else if (GlobalConstants.PARAMETER_ATTRIBUTE_VALUE
-//				.equalsIgnoreCase(counterType)) {
-//			parameterCounter++;
-//			return "new_parameter_" + parameterCounter;
-//		} else {
-//			genericCounter++;
-//			return "GENERIC_" + genericCounter;
-//		}
-//		
-//	}
-
 	/**
 	 * @return the genericCounter
 	 */

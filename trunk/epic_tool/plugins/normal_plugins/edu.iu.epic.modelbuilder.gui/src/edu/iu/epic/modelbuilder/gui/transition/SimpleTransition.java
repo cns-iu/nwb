@@ -1,4 +1,4 @@
-package edu.iu.epic.modelbuilder.gui;
+package edu.iu.epic.modelbuilder.gui.transition;
 
 import java.awt.Color;
 import java.awt.geom.Point2D;
@@ -7,6 +7,13 @@ import java.awt.geom.Point2D.Double;
 import java.util.ArrayList;
 import java.util.List;
 
+import edu.iu.epic.modelbuilder.gui.compartment.PCompartment;
+import edu.iu.epic.modelbuilder.gui.editablelabel.EditableLabel;
+import edu.iu.epic.modelbuilder.gui.editablelabel.TransitionEditableLabelEventHandler;
+import edu.iu.epic.modelbuilder.gui.utility.GlobalConstants;
+import edu.iu.epic.modelbuilder.gui.utility.IDGenerator;
+import edu.iu.epic.modelbuilder.gui.utility.NotificationArea;
+import edu.iu.epic.modelbuilder.gui.utility.PiccoloUtilities;
 import edu.iu.epic.modeling.compartment.model.Model;
 import edu.iu.epic.modeling.compartment.model.Transition;
 import edu.iu.epic.modeling.compartment.model.exception.InvalidParameterExpressionException;
@@ -294,7 +301,8 @@ public class SimpleTransition extends PPath {
 		
 		PNode arrow = createDefaultArrow();
 
-		arrow.addAttribute(GlobalConstants.NODE_TYPE_ATTRIBUTE_NAME, GlobalConstants.TRANSITION_ARROW_TYPE_ATTRIBUTE_VALUE);
+		arrow.addAttribute(GlobalConstants.NODE_TYPE_ATTRIBUTE_NAME, 
+						   GlobalConstants.TRANSITION_ARROW_TYPE_ATTRIBUTE_VALUE);
 		/*
 		 * Side-effects the orientation of the arrow.
 		 * */
@@ -396,7 +404,7 @@ public class SimpleTransition extends PPath {
 	}
 
 	/**
-	 * Based on http://local.wasp.uwa.edu.au/~pbourke/geometry/lineline2d/
+	 * Based on http://local.wasp.uwa.edu.au/~pbourke/geometry/lineline2d/ .
 	 * @param edgePoints
 	 * @param nodeBoundsPoints
 	 * @return

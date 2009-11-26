@@ -1,4 +1,4 @@
-package edu.iu.epic.modelbuilder.gui;
+package edu.iu.epic.modelbuilder.gui.parametertable;
 
 import java.awt.Component;
 import java.awt.Dimension;
@@ -19,6 +19,10 @@ import javax.swing.JTable;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableColumn;
 
+import edu.iu.epic.modelbuilder.gui.utility.GlobalConstants;
+import edu.iu.epic.modelbuilder.gui.utility.IDGenerator;
+import edu.iu.epic.modelbuilder.gui.utility.NotificationArea;
+import edu.iu.epic.modelbuilder.gui.utility.PiccoloUtilities;
 import edu.iu.epic.modeling.compartment.model.Model;
 import edu.iu.epic.modeling.compartment.model.exception.InvalidParameterExpressionException;
 import edu.iu.epic.modeling.compartment.model.exception.InvalidParameterNameException;
@@ -376,10 +380,6 @@ public class ParameterTable {
 												  String oldParameterName,
 												  String oldParameterValue) {
 		Vector<String> parameterDefinition = new Vector<String>();
-		//TODO: do something more constructive like display a message to the user.
-		//also we should not stop user from saving illegal parameter name/value
-		//but when they truy to save it out. we shud bust them (per new gleamviz 
-		//modelbuilder bui)
 		
 		/*
 		 * Round 1: Try using user entered values

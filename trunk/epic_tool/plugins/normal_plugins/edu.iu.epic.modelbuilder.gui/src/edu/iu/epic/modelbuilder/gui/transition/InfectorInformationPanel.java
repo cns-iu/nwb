@@ -1,4 +1,4 @@
-package edu.iu.epic.modelbuilder.gui;
+package edu.iu.epic.modelbuilder.gui.transition;
 
 import java.awt.Color;
 import java.awt.geom.Point2D;
@@ -8,6 +8,14 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import edu.iu.epic.modelbuilder.gui.compartment.PCompartment;
+import edu.iu.epic.modelbuilder.gui.editablelabel.EditableLabel;
+import edu.iu.epic.modelbuilder.gui.editablelabel.TransitionEditableLabelEventHandler;
+import edu.iu.epic.modelbuilder.gui.utility.CompartmentIDToLableMap;
+import edu.iu.epic.modelbuilder.gui.utility.GlobalConstants;
+import edu.iu.epic.modelbuilder.gui.utility.NotificationArea;
+import edu.iu.epic.modelbuilder.gui.utility.Observer;
+import edu.iu.epic.modelbuilder.gui.utility.PiccoloUtilities;
 import edu.iu.epic.modeling.compartment.model.Compartment;
 import edu.iu.epic.modeling.compartment.model.InfectionTransition;
 import edu.iu.epic.modeling.compartment.model.Model;
@@ -58,18 +66,12 @@ public class InfectorInformationPanel extends PNode {
 		if (infectorCompartmentName == null
 				|| infectorCompartmentName.equalsIgnoreCase("")) {
 
-			/*((InfectorComboBox) infectorComboBox).getSelectedCompartmentName()*/
 			infectorCompartmentName = 
 				((EditableLabel) PiccoloUtilities.getChildComponentBasedOnGivenAttribute(
 							sourceCompartment, 
 							GlobalConstants.NODE_TYPE_ATTRIBUTE_NAME, 
 							GlobalConstants.COMPARTMENT_LABEL_TYPE_ATTRIBUTE_VALUE)).getText();
 			
-//			System.out.println("null infec name condin " 
-//					+ sourceCompartment.getAttribute(
-//							GlobalConstants.COMPARTMENT_LABEL_TYPE_ATTRIBUTE_VALUE)
-//							+ " ================== "
-//					+ sourceCompartment.getAttribute(GlobalConstants.NODE_ID_ATTRIBUTE_NAME));
 			isInfectorAdditionSuccessful = addInMemoryInfectionTransition(
 					((PCompartment) sourceCompartment).getInMemoryCompartment(),
 					infectorCompartmentName,
@@ -228,9 +230,8 @@ public class InfectorInformationPanel extends PNode {
 		} catch (InvalidParameterExpressionException e) {
 			//TODO: how best to handle this? shoulld i creata parameter definition? 
 			//or a new parameter expression.
-			//TODO: refactor this crap of a method. why infector comaprtments are 
+			//TODO: refactor this method. why infector comaprtments are 
 			//set twice?
-			System.out.println("invalid parameetr expression. using default parameter");
 			
 			notificationAreas[1].addNotification("\"" + ratio 
 											 + "\" is an invalid parameter expression.");
@@ -246,9 +247,6 @@ public class InfectorInformationPanel extends PNode {
 							inMemoryInfectorCompartment, 
 							targetCompartment,
 							ratio);
-				
-				System.out.println("????just added complex transition " + inMemoryInfectionTransition);
-				
 				
 			} catch (InvalidParameterExpressionException e1) {
 				isInfectorAdditionSuccessful = false;
@@ -308,17 +306,13 @@ public class InfectorInformationPanel extends PNode {
 		inMemoryModel.removeTransition(inMemoryInfectionTransition);
 		inMemoryInfectionTransitions.remove(inMemoryInfectionTransition);
 		
-		System.out.print("% ");
 		if (addInMemoryInfectionTransition(sourceCompartment, 
 										   newlySelctedInfector, 
 										   targetCompartment, 
 										   ratio, 
 										   inMemoryModel)) {
 			inMemoryInfectionTransitions.add(inMemoryInfectionTransition);
-//			for (Transition transition : inMemoryModel.getTransitions()) {
-////				System.out.println("complex handler " + transition);
 //				//TODO: print out a message saying tyhat rename was not successful
-//			}
 			
 		}
 		
@@ -335,11 +329,8 @@ public class InfectorInformationPanel extends PNode {
 		currentInfector = null;
 		
 
-//		System.out.println("deletyer handle " + inMemoryInfectionTransition);
 		inMemoryModel.removeTransition(inMemoryInfectionTransition);
 		inMemoryInfectionTransitions.remove(inMemoryInfectionTransition);
-		
-//		System.out.println(inMemoryModel.getTransitions());
 		
 		Observer infectorBoxModel = 
 			((InfectorComboBoxModel) infectorComboBox.getModel());

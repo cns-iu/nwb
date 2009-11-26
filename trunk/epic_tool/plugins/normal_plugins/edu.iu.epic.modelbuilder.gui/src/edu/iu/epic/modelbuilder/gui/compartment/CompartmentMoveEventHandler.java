@@ -1,4 +1,4 @@
-package edu.iu.epic.modelbuilder.gui;
+package edu.iu.epic.modelbuilder.gui.compartment;
 
 import java.awt.Color;
 import java.awt.geom.Point2D;
@@ -6,6 +6,12 @@ import java.awt.geom.Rectangle2D;
 import java.util.ArrayList;
 import java.util.Iterator;
 
+import edu.iu.epic.modelbuilder.gui.transition.ComplexTransition;
+import edu.iu.epic.modelbuilder.gui.transition.SimpleTransition;
+import edu.iu.epic.modelbuilder.gui.utility.GlobalConstants;
+import edu.iu.epic.modelbuilder.gui.utility.IDGenerator;
+import edu.iu.epic.modelbuilder.gui.utility.NotificationArea;
+import edu.iu.epic.modelbuilder.gui.utility.PiccoloUtilities;
 import edu.iu.epic.modeling.compartment.model.Model;
 import edu.umd.cs.piccolo.PLayer;
 import edu.umd.cs.piccolo.PNode;
@@ -123,12 +129,7 @@ public class CompartmentMoveEventHandler extends PDragSequenceEventHandler {
 		
 		PNode currentPickedNode = e.getPickedNode();
 		
-		if  (GlobalConstants.COMPARTMENT_TYPE_ATTRIBUTE_VALUE
-				.equalsIgnoreCase(((String) currentPickedNode
-						.getAttribute(GlobalConstants.NODE_TYPE_ATTRIBUTE_NAME)))) {
-	//TODO: why do i need this if condition? think of something useful. else delete it.
-			
-		} else if  (GlobalConstants.SIMPLE_TRANSITION_HANDLE_TYPE_ATTRIBUTE_VALUE
+		if  (GlobalConstants.SIMPLE_TRANSITION_HANDLE_TYPE_ATTRIBUTE_VALUE
 				.equalsIgnoreCase(((String) currentPickedNode
 						.getAttribute(GlobalConstants.NODE_TYPE_ATTRIBUTE_NAME)))) {
 
@@ -212,12 +213,6 @@ public class CompartmentMoveEventHandler extends PDragSequenceEventHandler {
 		if (GlobalConstants.COMPARTMENT_TYPE_ATTRIBUTE_VALUE.equalsIgnoreCase(pickedNodeType)) {
 		node.translate(event.getDelta().width, event.getDelta().height);
 		
-//		System.out.println("^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^");
-//		System.out.println(node);
-//		System.out.println(node.getFullBoundsReference());
-//		System.out.println(node.getFullBoundsReference().getX());
-//		System.out.println(node.getFullBoundsReference().getY());
-		
 		((PCompartment) node)
 				.setInMemoryCompartmentPosition(node.getFullBoundsReference().getX(),
 												node.getFullBoundsReference().getY());
@@ -272,7 +267,7 @@ public class CompartmentMoveEventHandler extends PDragSequenceEventHandler {
 	private PNode getIntersectingCompartment(Point2D mouseReleasePoint) {
 		
 		for (Iterator<PNode> compartmentsIterator = compartmentLayer.getChildrenIterator(); 
-				compartmentsIterator.hasNext(); ) {
+				compartmentsIterator.hasNext();) {
 			PNode currentCompartment = (PNode) compartmentsIterator.next();
 			Rectangle2D currentCompartmentFullBounds = currentCompartment.getFullBoundsReference(); 
 			if (currentCompartmentFullBounds.contains(mouseReleasePoint)) {

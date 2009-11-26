@@ -1,7 +1,8 @@
-package edu.iu.epic.modelbuilder.gui;
+package edu.iu.epic.modelbuilder.gui.editablelabel;
 
 import java.awt.Color;
 
+import edu.iu.epic.modelbuilder.gui.utility.GlobalConstants;
 import edu.umd.cs.piccolo.event.PInputEventListener;
 import edu.umd.cs.piccolo.nodes.PText;
 

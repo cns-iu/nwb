@@ -15,14 +15,6 @@ import org.osgi.service.log.LogService;
 import edu.iu.epic.modeling.compartment.model.Model;
 
 /**
- * This algorithm aggregates/collapses the input table based off on values in a 
- * "Aggregated On" column provided by the user. The types of aggregation performed
- * on each column can be selected by the user from a drop-down box. 
- * Currently "Sum", "Difference", "Average", "Min", "Max" aggregations are available 
- * for numerical column types.
- * Non-numerical column types are treated as String and hence a user can select 
- * appropriate text delimiters for each. 
- * 
  * @author cdtank
  *
  */
@@ -120,26 +112,5 @@ public class ModelBuilderGUIAlgorithm implements Algorithm {
     	}
     	
     }
-    
-    
-/*	private ModelBuilderGUI showModelBuilder()
-			throws AlgorithmExecutionException {
-		final ModelBuilderGUI modelBuilderInstance = null;
-		SwingUtilities.invokeLater(new Runnable() {
-			public void run() {
-				try {
-					ModelBuilderGUI modelBuilderInstance = new ModelBuilderGUI();
-				} catch (Exception e) {
-					
-					 * Wrap all Exceptions as RuntimeExceptions, and rethrow
-					 * the inner exception on the other side.
-					 
-					throw new RuntimeException(e);
-				}
-			}
-		});
-		
-		return modelBuilderInstance;
-	}*/
 
 }

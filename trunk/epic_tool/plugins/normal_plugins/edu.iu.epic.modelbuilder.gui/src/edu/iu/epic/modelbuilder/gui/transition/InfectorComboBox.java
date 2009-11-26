@@ -1,9 +1,10 @@
-package edu.iu.epic.modelbuilder.gui;
+package edu.iu.epic.modelbuilder.gui.transition;
 
 
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 
+import edu.iu.epic.modelbuilder.gui.utility.CompartmentIDToLableMap;
 import edu.umd.cs.piccolox.pswing.PComboBox;
 
 public class InfectorComboBox extends PComboBox {

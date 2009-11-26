@@ -1,10 +1,11 @@
-package edu.iu.epic.modelbuilder.gui;
+package edu.iu.epic.modelbuilder.gui.editablelabel;
 
 import java.awt.event.FocusEvent;
 import java.awt.event.FocusListener;
 
 import javax.swing.JTextField;
 
+import edu.iu.epic.modelbuilder.gui.utility.NotificationArea;
 import edu.iu.epic.modeling.compartment.model.Model;
 import edu.iu.epic.modeling.compartment.model.Transition;
 import edu.iu.epic.modeling.compartment.model.exception.InvalidParameterExpressionException;

@@ -1,10 +1,13 @@
-package edu.iu.epic.modelbuilder.gui;
+package edu.iu.epic.modelbuilder.gui.utility;
 
 import java.awt.BasicStroke;
 import java.awt.Color;
 import java.util.Iterator;
 import java.util.List;
 
+import edu.iu.epic.modelbuilder.gui.compartment.PCompartment;
+import edu.iu.epic.modelbuilder.gui.transition.ComplexTransition;
+import edu.iu.epic.modelbuilder.gui.transition.SimpleTransition;
 import edu.umd.cs.piccolo.PNode;
 import edu.umd.cs.piccolo.event.PInputEvent;
 import edu.umd.cs.piccolo.nodes.PPath;
@@ -28,16 +31,12 @@ public class ObjectSelectionEventHandler extends PSelectionEventHandler {
 												 BasicStroke.JOIN_BEVEL));
 		((PPath) node).setStrokePaint(Color.RED);
 		
-//		System.out.println("Decorated - " 
-//						+ node.getAttribute(GlobalConstants.NODE_ID_ATTRIBUTE_NAME));
 	}
 	
 	@Override
 	public void undecorateSelectedNode(PNode node) {
 		((PPath) node).setStroke(new BasicStroke());
 		((PPath) node).setStrokePaint(Color.BLACK);
-//		System.out.println("Undecorated - " 
-//						+ node.getAttribute(GlobalConstants.NODE_ID_ATTRIBUTE_NAME));
 	}
 
 	@Override
@@ -89,7 +88,8 @@ public class ObjectSelectionEventHandler extends PSelectionEventHandler {
 								.getAttribute(GlobalConstants.NODE_TYPE_ATTRIBUTE_NAME))) {
 					
 					System.out.println("COMPLEX TRANSITION DELETE");
-					((ComplexTransition) currentSelectedNode).removeInfectorInformationPanels(currentSelectedNode);
+					((ComplexTransition) currentSelectedNode)
+							.removeInfectorInformationPanels(currentSelectedNode);
 					((ComplexTransition) currentSelectedNode).removeInMemoryInfectionTransitions();
 					
 				}

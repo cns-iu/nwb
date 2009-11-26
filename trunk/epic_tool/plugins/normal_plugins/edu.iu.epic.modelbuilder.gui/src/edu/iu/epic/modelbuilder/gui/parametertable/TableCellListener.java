@@ -1,4 +1,4 @@
-package edu.iu.epic.modelbuilder.gui;
+package edu.iu.epic.modelbuilder.gui.parametertable;
 
 import java.awt.event.ActionEvent;
 import java.beans.PropertyChangeEvent;

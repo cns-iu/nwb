@@ -1,4 +1,4 @@
-package edu.iu.epic.modelbuilder.gui;
+package edu.iu.epic.modelbuilder.gui.transition;
 
 public class ComplexTransitionInfectionInformation {
 	private String infectorCompartmentName;

@@ -1,4 +1,4 @@
-package edu.iu.epic.modelbuilder.gui;
+package edu.iu.epic.modelbuilder.gui.utility;
 
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
@@ -21,13 +21,11 @@ public class CompartmentIDToLableMap{
 	public static void addCompartmentID(String key, String value) {
 		compartmentIDToLable.put(key, value);
 		notifyObservers();
-//		System.out.println("map was updated " + compartmentIDToLable);
 	}
 
 	public static void removeCompartmentID(String key) {
 		compartmentIDToLable.remove(key);
 		notifyObservers();
-//		System.out.println("map was updated " + compartmentIDToLable);
 	}
 	
 	public static void notifyObservers() {
