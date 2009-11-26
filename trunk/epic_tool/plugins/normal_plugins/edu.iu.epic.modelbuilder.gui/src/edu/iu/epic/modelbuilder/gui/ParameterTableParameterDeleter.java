@@ -110,9 +110,8 @@ public class ParameterTableParameterDeleter
 		inMemoryModel.removeParameterDefinition(parameterNameToBeDeleted);
 		
 		try {
-			for (String parameter : inMemoryModel.listUnboundReferencedParameters()) {
-					notificationAreas[0].addUniqueNotification(parameter);
-			}
+			notificationAreas[0].addAllNotifications(
+					inMemoryModel.listUnboundReferencedParameters());
 		} catch (InvalidParameterExpressionException exception) {
 			notificationAreas[1].addNotification("Errors in testing of undefined parameters.");
 		}

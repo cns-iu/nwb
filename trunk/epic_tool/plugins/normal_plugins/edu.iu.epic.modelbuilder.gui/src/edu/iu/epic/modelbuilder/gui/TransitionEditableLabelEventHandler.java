@@ -57,14 +57,11 @@ public class TransitionEditableLabelEventHandler
 					currentTransitionLabel.setText(newRatioText);
 					
 					try {
-						for (String parameter : inMemoryModel.listUnboundReferencedParameters()) {
-							if (parameter.equals(newRatioText)) {
-								notificationAreas[0].addUniqueNotification(newRatioText);
-								break;
-							}
-						}
-					} catch (InvalidParameterExpressionException e1) {
-						notificationAreas[1].addNotification("Errors in testing of undefined parameters.");
+						notificationAreas[0].addAllNotifications(
+								inMemoryModel.listUnboundReferencedParameters());
+					} catch (InvalidParameterExpressionException exception) {
+						notificationAreas[1]
+						       .addNotification("Errors in testing of undefined parameters.");
 					}
 					
 				} else {

@@ -10,6 +10,10 @@ public class CompartmentIDToLableMap{
 	private static Map<String, String> compartmentIDToLable = new LinkedHashMap<String, String>();
 	private static List<Observer> observers = new ArrayList<Observer>();
 	
+	public static void resetCompartmentIDToLableMap() {
+		compartmentIDToLable = new LinkedHashMap<String, String>();
+	}
+	
 	public static Map<String, String> getCompartmentIDToLableMap() {
 		return compartmentIDToLable;
 	}

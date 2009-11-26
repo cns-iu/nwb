@@ -178,18 +178,9 @@ public class SimpleTransition extends PPath {
 		 * */
 		if (isInMemoryTransitionAdditionSuccessful) {
 			try {
-				for (String parameter : inMemoryModel.listUnboundReferencedParameters()) {
-					if (parameter.equals(transitionRatio)) {
-						notificationAreas[0].addUniqueNotification(transitionRatio);
-						break;
-					}
-				}
-//				for (String parameter : inMemoryModel.listReferencedParameters()) {
-//					if (parameter.equals(transitionRatio)) {
-//						notificationAreas[0].removeNotification(transitionRatio);
-//					}
-//				}
-			} catch (InvalidParameterExpressionException e) {
+				notificationAreas[0].addAllNotifications(
+						inMemoryModel.listUnboundReferencedParameters());
+			} catch (InvalidParameterExpressionException exception) {
 				notificationAreas[1].addNotification("Errors in testing of undefined parameters.");
 			}
 		}

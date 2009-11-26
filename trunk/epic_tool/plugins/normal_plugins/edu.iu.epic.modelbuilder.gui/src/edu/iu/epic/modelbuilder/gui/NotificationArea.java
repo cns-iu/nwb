@@ -1,6 +1,8 @@
 package edu.iu.epic.modelbuilder.gui;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
+import java.util.Set;
 
 import javax.swing.JTextArea;
 
@@ -46,7 +48,7 @@ public class NotificationArea extends JTextArea {
 		refreshNotificationArea();
 	}
 	
-	public void addUniqueNotification(String notification) {
+	private void addUniqueNotification(String notification) {
 		/*
 		 * Always add at the first position to imitate stack behavior.
 		 * Also only add a notification if its not already there. This 
@@ -59,6 +61,14 @@ public class NotificationArea extends JTextArea {
 		refreshNotificationArea();
 	}
 
+	public void addAllNotifications(Set<String> notificationsToBeAdded) {
+		resetNotifications();
+		for (String notification : notificationsToBeAdded) {
+			addUniqueNotification(notification);
+		}
+	} 
+	
+	
 	public void resetNotifications() {
 			notifications = new ArrayList<String>();
 			refreshNotificationArea();

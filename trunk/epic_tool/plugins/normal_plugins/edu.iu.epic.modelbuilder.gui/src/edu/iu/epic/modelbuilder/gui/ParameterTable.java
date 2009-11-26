@@ -504,13 +504,10 @@ public class ParameterTable {
 		if (additionMessage == ParameterDefinitionAdditionMessageType.NO_ERRORS) {
 		System.out.println("remove notification >");
 			try {
-				notificationAreas[0].resetNotifications();
-				System.out.println(inMemoryModel.listUnboundReferencedParameters());
-				for (String parameter : inMemoryModel.listUnboundReferencedParameters()) {
-					notificationAreas[0].addUniqueNotification(parameter);
-				}	
-			} catch (InvalidParameterExpressionException e) {
-				notificationAreas[1].addNotification("Errors in testing of defined parameters.");
+				notificationAreas[0].addAllNotifications(
+						inMemoryModel.listUnboundReferencedParameters());
+			} catch (InvalidParameterExpressionException exception) {
+				notificationAreas[1].addNotification("Errors in testing of undefined parameters.");
 			}
 		
 		}

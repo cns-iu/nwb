@@ -66,18 +66,22 @@ public class ModelBuilderGUI implements ActionListener {
 		JFrame.setDefaultLookAndFeelDecorated(true);
 		
         parentJFrame = new JFrame("Model Builder");
-        parentJFrame.setSize(new Dimension(1200, 800));
-//        parentJFrame.setMinimumSize(new Dimension(1000, 500));
-        parentJFrame.setPreferredSize(new Dimension(1200, 800));
-        
-        //Make the big window be indented 50 pixels from each edge
-        //of the screen.
-        int inset = 50;
-        Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
-        parentJFrame.setBounds(inset, inset,
-                  screenSize.width  - inset*2,
-                  screenSize.height - inset*2);
 
+        
+        Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
+
+        int modelBuilderScreenOffset = 100;
+		int modelBuilderWidth = (int) screenSize.getWidth() - modelBuilderScreenOffset;
+		int modelBuilderHeight = (int) screenSize.getHeight() - modelBuilderScreenOffset;
+		
+		parentJFrame.setSize(modelBuilderWidth, 
+        					 modelBuilderHeight);
+        
+        parentJFrame.setPreferredSize(new Dimension(modelBuilderWidth, 
+        											modelBuilderHeight));
+        
+        parentJFrame.setLocation(0, modelBuilderScreenOffset);
+        
         
     }
 
@@ -101,13 +105,7 @@ public class ModelBuilderGUI implements ActionListener {
 		
 		initialize(inputInMemoryModel);
         
-//		if (inputInMemoryModel == null) {
-//			inputInMemoryModel = new Model();
-//		}
-//		
-//		initialize(inputInMemoryModel);
-        
-      parentJFrame.addWindowListener(new WindowListener() {
+        parentJFrame.addWindowListener(new WindowListener() {
 
 		public void windowActivated(WindowEvent e) { }
 
@@ -249,6 +247,7 @@ public class ModelBuilderGUI implements ActionListener {
 		isModelBuildingComplete = false;
 		inMemoryModel = new Model();
 		pObjectIDGenerator = new IDGenerator();
+		CompartmentIDToLableMap.resetCompartmentIDToLableMap();
 	}
 
 	/**
