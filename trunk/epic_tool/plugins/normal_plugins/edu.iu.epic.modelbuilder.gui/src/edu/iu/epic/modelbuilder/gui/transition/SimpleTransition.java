@@ -113,15 +113,30 @@ public class SimpleTransition extends PPath {
 			
 			this.addChild(arrow);
 			
+			double labelPositionX = (normalizedBounds1.getX() 
+									+ normalizedBounds2.getX()) * 0.5 + 5.0;
+			double labelPositionY = (normalizedBounds1.getY() 
+									+ normalizedBounds2.getY()) * 0.5;
+			
 			EditableLabel simpleTransitionLabel = new EditableLabel(
 					GlobalConstants.SIMPLE_TRANSITION_RATIO_ATTRIBUTE_NAME,
 					transitionRatio,
-					(normalizedBounds1.getX() + normalizedBounds2.getX()) * 0.5 + 5.0,
-					(normalizedBounds1.getY() + normalizedBounds2.getY()) * 0.5,
+					labelPositionX,
+					labelPositionY,
 					new TransitionEditableLabelEventHandler(inMemoryRatioTransition, 
 															inMemoryModel,
 															notificationAreas));
 	
+			double labelWidth = simpleTransitionLabel.getWidth();
+			
+			if (labelWidth + labelPositionX > normalizedBounds2.getX()
+					&& normalizedBounds2.getX() > normalizedBounds1.getX()) {
+				double newLabelPositionX = labelPositionX 
+										   + labelWidth 
+										   - normalizedBounds2.getX() + 5.0;
+				simpleTransitionLabel.offset(-newLabelPositionX, 0.0);
+			}
+			
 			simpleTransitionLabel.makeEditableLabelBackgroundOpaque();
 			simpleTransitionLabel.moveToFront();
 			this.addChild(simpleTransitionLabel);

@@ -50,13 +50,17 @@ public class TransitionEditableLabelEventHandler
 			public void focusGained(FocusEvent e) { }
 
 			public void focusLost(FocusEvent e) {
+				double oldWidth = currentTransitionLabel.getWidth();
 				String newRatioText = transitionEditorJTextField.getText().trim();
 				
 				//TODO: what if the ratio rename fails? currently setratio does not 
 				//return a boolean. asked joseph to looked into it.
 				if (inMemoryTransition.setRatio(newRatioText)) {
 					currentTransitionLabel.setText(newRatioText);
+					double newWidth = currentTransitionLabel.getWidth();
 					
+					double newOffsetForPositionX = -(newWidth - oldWidth);
+					currentTransitionLabel.offset(newOffsetForPositionX, 0.0);
 					try {
 						notificationAreas[0].addAllNotifications(
 								inMemoryModel.listUnboundReferencedParameters());
@@ -81,8 +85,11 @@ public class TransitionEditableLabelEventHandler
 		
 		PSwing transitionLabelEditor = new PSwing(transitionEditorJTextField);
 	    
-	    transitionLabelTransform.translate(currentTransitionLabel.getX(), 
-	    								   currentTransitionLabel.getY());
+		double editorPositionX = currentTransitionLabel.getFullBoundsReference().getX();
+	    double editorPositionY = currentTransitionLabel.getFullBoundsReference().getY();
+	    
+	    transitionLabelTransform.translate(editorPositionX, 
+	    								   editorPositionY);
 	    transitionLabelTransform.addChild(transitionLabelEditor);
 	    return transitionLabelTransform;
 	}

@@ -124,16 +124,29 @@ public class InfectorInformationPanel extends PNode {
 			
 			this.addChild(connectingEdge);
 			
-			
+			double labelPositionX = (mainTransitionConnectingPoint.getX() 
+									+ comboBoxConnectingPoint.getX()) * 0.5 + 5.0;
+			double labelPositionY = (mainTransitionConnectingPoint.getY() 
+									+ comboBoxConnectingPoint.getY()) * 0.5;
 			complexTransitionLabel = new EditableLabel(
 					GlobalConstants.COMPLEX_TRANSITION_RATIO_ATTRIBUTE_NAME,
 					transitionRatio,
-					(mainTransitionConnectingPoint.getX() + comboBoxConnectingPoint.getX()) * 0.5 + 5.0,
-					(mainTransitionConnectingPoint.getY() + comboBoxConnectingPoint.getY()) * 0.5,
+					labelPositionX,
+					labelPositionY,
 					new TransitionEditableLabelEventHandler(inMemoryInfectionTransition, 
 															inMemoryModel,
 															notificationAreas));
 	
+			double labelWidth = complexTransitionLabel.getWidth();
+			if (labelWidth + labelPositionX > comboBoxConnectingPoint.getX()
+					&& comboBoxConnectingPoint.getX() > mainTransitionConnectingPoint.getX()) {
+				double newLabelPositionX = labelPositionX 
+										   + labelWidth 
+										   - comboBoxConnectingPoint.getX() 
+										   + 5.0;
+				complexTransitionLabel.offset(-newLabelPositionX, 0.0);
+			}
+			
 			complexTransitionLabel.makeEditableLabelBackgroundOpaque();
 			complexTransitionLabel.moveToFront();
 			this.addChild(complexTransitionLabel);
