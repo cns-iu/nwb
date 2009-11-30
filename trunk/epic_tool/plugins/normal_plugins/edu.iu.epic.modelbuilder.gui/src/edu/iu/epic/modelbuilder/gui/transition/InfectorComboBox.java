@@ -32,6 +32,7 @@ public class InfectorComboBox extends PComboBox {
 			public void itemStateChanged(ItemEvent e) {
 				
 				if (e.getStateChange() == ItemEvent.SELECTED) {
+					System.out.println("item state chanege fired");
 					infectorInformationPanel
 						.handleInfectorComboBoxSelectedInfectorChangeEvent(e.getItem().toString());
 				}

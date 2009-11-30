@@ -2,6 +2,8 @@ package edu.iu.epic.modelbuilder.gui.editablelabel;
 
 import java.awt.event.FocusEvent;
 import java.awt.event.FocusListener;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
 
 import javax.swing.JTextField;
 
@@ -50,39 +52,36 @@ public class TransitionEditableLabelEventHandler
 			public void focusGained(FocusEvent e) { }
 
 			public void focusLost(FocusEvent e) {
-				double oldWidth = currentTransitionLabel.getWidth();
-				String newRatioText = transitionEditorJTextField.getText().trim();
-				
-				//TODO: what if the ratio rename fails? currently setratio does not 
-				//return a boolean. asked joseph to looked into it.
-				if (inMemoryTransition.setRatio(newRatioText)) {
-					currentTransitionLabel.setText(newRatioText);
-					double newWidth = currentTransitionLabel.getWidth();
-					
-					double newOffsetForPositionX = -(newWidth - oldWidth);
-					currentTransitionLabel.offset(newOffsetForPositionX, 0.0);
-					try {
-						notificationAreas[0].addAllNotifications(
-								inMemoryModel.listUnboundReferencedParameters());
-					} catch (InvalidParameterExpressionException exception) {
-						notificationAreas[1]
-						       .addNotification("Errors in testing of undefined parameters.");
-					}
-					
-				} else {
-					currentTransitionLabel.setText(oldRatioText);
-					notificationAreas[1].addNotification("\"" + newRatioText 
-	 												 + "\" is an invalid parameter expression."
-	 												 + " Reverting to old parameter expression.");
-					
-				}
-				
-				currentTransitionLabel.setVisible(true);
-				transitionLabelTransform.removeFromParent();				
+				saveTransitionLabel(currentTransitionLabel, 
+									oldRatioText,
+									transitionEditorJTextField, 
+									transitionLabelTransform);				
 			}
 			
 		});
 		
+		transitionEditorJTextField.addKeyListener(new KeyListener() {
+
+			public void keyPressed(KeyEvent e) {
+				
+				/*
+				 * To mimic existing UX norms, save the compartment labels when the 
+				 * user presses "Enter" / "Return" key.
+				 * */
+				if (e.getKeyCode() == KeyEvent.VK_ENTER) {
+					saveTransitionLabel(currentTransitionLabel, 
+							oldRatioText,
+							transitionEditorJTextField, 
+							transitionLabelTransform);	
+				}
+				
+			}
+
+			public void keyReleased(KeyEvent e) { }
+
+			public void keyTyped(KeyEvent e) { }
+			
+		});
 		PSwing transitionLabelEditor = new PSwing(transitionEditorJTextField);
 	    
 		double editorPositionX = currentTransitionLabel.getFullBoundsReference().getX();
@@ -92,6 +91,54 @@ public class TransitionEditableLabelEventHandler
 	    								   editorPositionY);
 	    transitionLabelTransform.addChild(transitionLabelEditor);
 	    return transitionLabelTransform;
+	}
+
+	/**
+	 * @param currentTransitionLabel
+	 * @param oldRatioText
+	 * @param transitionEditorJTextField
+	 * @param transitionLabelTransform
+	 */
+	private void saveTransitionLabel(
+			final PText currentTransitionLabel,
+			final String oldRatioText,
+			final JTextField transitionEditorJTextField,
+			final PNode transitionLabelTransform) {
+		double oldWidth = currentTransitionLabel.getWidth();
+		String newRatioText = transitionEditorJTextField.getText().trim();
+		
+		//TODO: what if the ratio rename fails? currently setratio does not 
+		//return a boolean. asked joseph to looked into it.
+		if (inMemoryTransition.setRatio(newRatioText)) {
+
+			System.out.println(inMemoryTransition);
+			currentTransitionLabel.setText(newRatioText);
+			double newWidth = currentTransitionLabel.getWidth();
+			
+			double newOffsetForPositionX = -(newWidth - oldWidth);
+			currentTransitionLabel.offset(newOffsetForPositionX, 0.0);
+			try {
+				System.out.println("changed ratio " + newRatioText + " <> " 
+						+ inMemoryModel.listUnboundReferencedParameters()
+						+ inMemoryModel.getTransitions());
+				
+				notificationAreas[0].addAllNotifications(
+						inMemoryModel.listUnboundReferencedParameters());
+			} catch (InvalidParameterExpressionException exception) {
+				notificationAreas[1]
+				       .addNotification("Errors in testing of undefined parameters.");
+			}
+			
+		} else {
+			currentTransitionLabel.setText(oldRatioText);
+			notificationAreas[1].addNotification("\"" + newRatioText 
+											 + "\" is an invalid parameter expression."
+											 + " Reverting to old parameter expression.");
+			
+		}
+		
+		currentTransitionLabel.setVisible(true);
+		transitionLabelTransform.removeFromParent();
 	}
 	
 }

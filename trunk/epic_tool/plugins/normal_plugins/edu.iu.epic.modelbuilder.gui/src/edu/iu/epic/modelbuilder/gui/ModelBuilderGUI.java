@@ -11,6 +11,7 @@ import java.awt.event.KeyEvent;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
 import java.awt.geom.Rectangle2D;
+import java.beans.PropertyVetoException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -120,30 +121,36 @@ public class ModelBuilderGUI implements ActionListener {
         
         parentJFrame.addWindowListener(new WindowListener() {
 
-		public void windowActivated(WindowEvent e) { }
-
-		public void windowClosed(WindowEvent e) { 
-			
-		}
-
-		public void windowClosing(WindowEvent e) { 
-			quitModelBuilderWithoutSaving();
-		}
-
-		public void windowDeactivated(WindowEvent e) { }
-
-		public void windowDeiconified(WindowEvent e) { }
-
-		public void windowIconified(WindowEvent e) { }
-
-		public void windowOpened(WindowEvent e) { }
-    	  
+			public void windowActivated(WindowEvent e) { }
+	
+			public void windowClosed(WindowEvent e) { 
+				
+			}
+	
+			public void windowClosing(WindowEvent e) { 
+				quitModelBuilderWithoutSaving();
+			}
+	
+			public void windowDeactivated(WindowEvent e) { }
+	
+			public void windowDeiconified(WindowEvent e) { }
+	
+			public void windowIconified(WindowEvent e) { }
+	
+			public void windowOpened(WindowEvent e) { }
+	    	  
       });
-
+        
       //Display the window.
       parentJFrame.pack();
       parentJFrame.setVisible(true);
-		
+      
+      try {
+    	  workbench.setSelected(true);
+	  } catch (PropertyVetoException e1) {
+		  System.out.println("workbench focus set issues");
+	  }
+      
 	}
 
     private void initialize(Model inputInMemoryModel) {

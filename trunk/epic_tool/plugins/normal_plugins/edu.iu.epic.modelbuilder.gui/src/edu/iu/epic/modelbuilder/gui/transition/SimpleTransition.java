@@ -185,7 +185,7 @@ public class SimpleTransition extends PPath {
 						isSecondary);
 			
 		} catch (InvalidParameterExpressionException e) {
-			//TODO: how best to handle this? shoulld i creata parameter definition? 
+			//TODO: how best to handle this? should i create a parameter definition? 
 			//or a new parameter expression. in this specific case it will NEVER happen
 			//because the default value of ratio is used which is legal.
 			System.out.println("invalid parameetr expression");

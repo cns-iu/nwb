@@ -147,7 +147,7 @@ public class CompartmentMoveEventHandler extends PDragSequenceEventHandler {
 											 destinationCompartment,
 											 pObjectIDGenerator,
 											 GlobalConstants.SIMPLE_TRANSITION_RATIO_DEFAULT_VALUE,
-											 false,
+											 true,
 											 inMemoryModel,
 											 notificationAreas);
 

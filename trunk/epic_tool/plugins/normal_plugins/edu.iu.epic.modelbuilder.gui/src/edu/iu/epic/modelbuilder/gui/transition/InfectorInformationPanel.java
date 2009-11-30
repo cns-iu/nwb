@@ -241,9 +241,9 @@ public class InfectorInformationPanel extends PNode {
 			
 			System.out.println("just added complex transition " + inMemoryInfectionTransition);  
 		} catch (InvalidParameterExpressionException e) {
-			//TODO: how best to handle this? shoulld i creata parameter definition? 
+			//TODO: how best to handle this? should i create a parameter definition? 
 			//or a new parameter expression.
-			//TODO: refactor this method. why infector comaprtments are 
+			//TODO: refactor this method. why infector compartments are 
 			//set twice?
 			
 			notificationAreas[1].addNotification("\"" + ratio 
@@ -308,28 +308,16 @@ public class InfectorInformationPanel extends PNode {
 	
 	public void handleInfectorComboBoxSelectedInfectorChangeEvent(String newlySelctedInfector) {
 		
-		Compartment sourceCompartment = 
-			((InfectionTransition) inMemoryInfectionTransition).getSource();
-		
-		Compartment targetCompartment = 
-			((InfectionTransition) inMemoryInfectionTransition).getTarget();
-		
-		String ratio = ((InfectionTransition) inMemoryInfectionTransition).getRatio();
-
-		inMemoryModel.removeTransition(inMemoryInfectionTransition);
-		inMemoryInfectionTransitions.remove(inMemoryInfectionTransition);
-		
-		if (addInMemoryInfectionTransition(sourceCompartment, 
-										   newlySelctedInfector, 
-										   targetCompartment, 
-										   ratio, 
-										   inMemoryModel)) {
-			inMemoryInfectionTransitions.add(inMemoryInfectionTransition);
-//				//TODO: print out a message saying tyhat rename was not successful
-			
+		Compartment infectorCompartment;
+		try {
+			infectorCompartment = inMemoryModel.getCompartment(newlySelctedInfector);
+			((InfectionTransition) inMemoryInfectionTransition).setInfector(infectorCompartment);
+		} catch (CompartmentDoesNotExistException e) {
+			System.out.println("no cigar compartment infector change #fail");
 		}
-		
+
 	}
+	
 	private void deleteInfectorInformationPanel(PNode currentInfector) {
 		PNode parentComplexTransition = currentInfector.getParent();
 		List<PNode> infectors = (List<PNode>) parentComplexTransition

@@ -2,6 +2,8 @@ package edu.iu.epic.modelbuilder.gui.editablelabel;
 
 import java.awt.event.FocusEvent;
 import java.awt.event.FocusListener;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
 
 import javax.swing.JTextField;
 
@@ -52,57 +54,101 @@ public class CompartmentEditableLabelEventHandler
 			public void focusGained(FocusEvent e) { }
 
 			public void focusLost(FocusEvent e) {
-				String newCompartmentLabelText = compartmentEditorJTextField.getText().trim();
-				
-				boolean isRenameCompartmentLabelSuccessful = 
-					((PCompartment) compartment).renameInMemoryCompartment(
-							oldCompartmentLabel, 
-							newCompartmentLabelText,
-							notificationArea);
-				
-				/*
-				 * Always rename in memory comaprtment first.. before triggering off
-				 * observers (combo boxes...)
-				 * */
-				if (isRenameCompartmentLabelSuccessful) {
-				
-				currentCompartmentLabel.setText(newCompartmentLabelText);
-				
-				double deltaCompartmentLabelWidth = 
-					currentCompartmentLabel.getWidth() - initialCompartmentLabelWidth;
-				
-				compartment.setWidth(compartment.getWidth() + deltaCompartmentLabelWidth);
-				
-				
-				CompartmentIDToLableMap.addCompartmentID(
-						(String) compartment.getAttribute(
-								GlobalConstants.NODE_ID_ATTRIBUTE_NAME),
-						newCompartmentLabelText);
-				
-				} else {
-					
-					System.out.println("rename unsuccessful. rolling it back"); 
-					currentCompartmentLabel.setText(oldCompartmentLabel);	
-					
-				}
-				
-				currentCompartmentLabel.setVisible(true);
-				compartmentTagTransform.removeFromParent();
-
-				for (FocusListener currentFocusListener : 
-						compartmentEditorJTextField.getFocusListeners()) {
-					compartmentEditorJTextField.removeFocusListener(currentFocusListener);
-				}
-				
-
+				saveCompartmentLabel(initialCompartmentLabelWidth,
+									 currentCompartmentLabel, 
+									 compartment,
+									 oldCompartmentLabel, 
+									 compartmentEditorJTextField,
+									 compartmentTagTransform);
 			}
 	    });
+		
+		compartmentEditorJTextField.addKeyListener(new KeyListener() {
+
+			public void keyPressed(KeyEvent e) { 
+				
+				/*
+				 * To mimic existing UX norms, save the compartment labels when the 
+				 * user presses "Enter" / "Return" key.
+				 * */
+				if (e.getKeyCode() == KeyEvent.VK_ENTER) {
+					saveCompartmentLabel(initialCompartmentLabelWidth,
+							 currentCompartmentLabel, 
+							 compartment,
+							 oldCompartmentLabel, 
+							 compartmentEditorJTextField,
+							 compartmentTagTransform);
+				}
+			}
+
+			public void keyReleased(KeyEvent e) { }
+
+			public void keyTyped(KeyEvent e) { }
+			
+		});
 	    
 		PSwing compartmentLabelEditor = new PSwing(compartmentEditorJTextField);
 	    compartmentTagTransform.translate(currentCompartmentLabel.getX(), 
 	    								  currentCompartmentLabel.getY());
 	    compartmentTagTransform.addChild(compartmentLabelEditor);
 	    return compartmentTagTransform;
+	}
+
+	/**
+	 * @param initialCompartmentLabelWidth
+	 * @param currentCompartmentLabel
+	 * @param compartment
+	 * @param oldCompartmentLabel
+	 * @param compartmentEditorJTextField
+	 * @param compartmentTagTransform
+	 */
+	private void saveCompartmentLabel(
+			final double initialCompartmentLabelWidth,
+			final PText currentCompartmentLabel,
+			final PNode compartment, final String oldCompartmentLabel,
+			final JTextField compartmentEditorJTextField,
+			final PNode compartmentTagTransform) {
+		String newCompartmentLabelText = compartmentEditorJTextField.getText().trim();
+		
+		boolean isRenameCompartmentLabelSuccessful = 
+			((PCompartment) compartment).renameInMemoryCompartment(
+					oldCompartmentLabel, 
+					newCompartmentLabelText,
+					notificationArea);
+		
+		/*
+		 * Always rename in memory comaprtment first.. before triggering off
+		 * observers (combo boxes...)
+		 * */
+		if (isRenameCompartmentLabelSuccessful) {
+		
+		currentCompartmentLabel.setText(newCompartmentLabelText);
+		
+		double deltaCompartmentLabelWidth = 
+			currentCompartmentLabel.getWidth() - initialCompartmentLabelWidth;
+		
+		compartment.setWidth(compartment.getWidth() + deltaCompartmentLabelWidth);
+		
+		
+		CompartmentIDToLableMap.addCompartmentID(
+				(String) compartment.getAttribute(
+						GlobalConstants.NODE_ID_ATTRIBUTE_NAME),
+				newCompartmentLabelText);
+		
+		} else {
+			
+			System.out.println("rename unsuccessful. rolling it back"); 
+			currentCompartmentLabel.setText(oldCompartmentLabel);	
+			
+		}
+		
+		currentCompartmentLabel.setVisible(true);
+		compartmentTagTransform.removeFromParent();
+	
+		for (FocusListener currentFocusListener : 
+				compartmentEditorJTextField.getFocusListeners()) {
+			compartmentEditorJTextField.removeFocusListener(currentFocusListener);
+		}
 	}
 	
 }
