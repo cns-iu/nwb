@@ -57,7 +57,7 @@
   	  	  	  	  	  	  <param name="target" value="plugins"/>
   	  	  	  	  	  	  <param name="element.id" value="hsqldb"/>
   	  	  	  	  	  	  <param name="project.name" value="hsqldb"/>
-  	  	  	  	  	  	  <param name="url" value="http://nwb.slis.indiana.edu/svn/nwb/trunk/libs"/>
+  	  	  	  	  	  	  <param name="url" value="https://cishell.svn.sourceforge.net/svnroot/cishell/trunk/libs"/>
   	  	</antcall>  
   	
   	<!--EpiC java plugins-->
