@@ -4,6 +4,7 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Map.Entry;
@@ -141,7 +142,8 @@ public final class ModelMarshaller {
 			marshaller.setSchema(createCompartmentalModelSchema());
 		}
 		File outputFile = File.createTempFile("marshalledModel", ".mdl");
-		marshaller.marshal(xModel, outputFile);
+		FileWriter outWriter = new FileWriter(outputFile);
+		marshaller.marshal(xModel, outWriter);
 		
 		return outputFile;
 	}
