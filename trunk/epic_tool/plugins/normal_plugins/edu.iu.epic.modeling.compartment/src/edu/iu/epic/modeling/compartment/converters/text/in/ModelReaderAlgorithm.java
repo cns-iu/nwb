@@ -127,7 +127,8 @@ public class ModelReaderAlgorithm implements Algorithm {
 
 		// A battery of smaller tests to augment the files in testing/bad.
 //		System.out.println("Parameter expression tests:");
-//		String[] parameterExpressionTests = new String[]{ "a*b", "a%b", "+", "r!beta", "7a" };
+//		String[] parameterExpressionTests =
+//			new String[]{ "", "0", "7", ".3", "2.7", "12.7", "a*b", "a%b", "+", "r!beta", "7a" };
 //		for (int ii = 0; ii < parameterExpressionTests.length; ii++) {
 //			String parameterExpressionTest = parameterExpressionTests[ii];
 //			System.out.println(
@@ -161,7 +162,6 @@ public class ModelReaderAlgorithm implements Algorithm {
 //			e.printStackTrace();
 //		}
 //
-//
 //		String[] modelFileTests = new String[]{ "asdajklwehfv\nakl;sertu;al\n" };
 //		for (int ii = 0; ii < modelFileTests.length; ii++) {
 //			String modelFileTest = modelFileTests[ii];
@@ -173,10 +173,6 @@ public class ModelReaderAlgorithm implements Algorithm {
 //				e.printStackTrace();
 //			}
 //		}
-
-
-
-
 
 		System.exit(0);
 	}

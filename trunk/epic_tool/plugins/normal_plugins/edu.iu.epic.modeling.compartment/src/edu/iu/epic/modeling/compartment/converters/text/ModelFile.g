@@ -5,7 +5,7 @@ options {
 }
 
 @parser::header {
-package edu.iu.epic.modeling.compartment.grammar.parsing;
+package edu.iu.epic.modeling.compartment.converters.text.generated;
 
 import java.io.File;
 import java.io.IOException;
@@ -19,7 +19,7 @@ import edu.iu.epic.modeling.compartment.model.exception.ModelModificationExcepti
 }
 
 @lexer::header {
-package edu.iu.epic.modeling.compartment.grammar.parsing;
+package edu.iu.epic.modeling.compartment.converters.text.generated;
 }
 
 @parser::members {
@@ -132,8 +132,7 @@ transition
 			model.getOrAddCompartment($infectionTransition.source),
 			model.getOrAddCompartment($infectionTransition.infector),
 			model.getOrAddCompartment($infectionTransition.target),
-			$transitionRatio.text,
-			isSecondary);
+			$transitionRatio.text);
 		}
 	;
 	catch[ModelModificationException e] { throw new UncheckedParsingException(e); }
@@ -195,5 +194,6 @@ number
 	: ('-')? UNSIGNED_NUMBER
 	;
 UNSIGNED_NUMBER
-	: (NUMERIC)+ ('.' (NUMERIC)+)?
+	: (NUMERIC)+
+	| (NUMERIC)* '.' (NUMERIC)+
 	;
