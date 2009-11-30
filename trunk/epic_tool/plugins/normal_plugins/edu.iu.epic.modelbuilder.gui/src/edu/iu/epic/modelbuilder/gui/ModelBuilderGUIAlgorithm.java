@@ -99,7 +99,7 @@ public class ModelBuilderGUIAlgorithm implements Algorithm {
     		} else {
     			metadata.put(DataProperty.LABEL, "New EpiC model.");
     		}
-    		metadata.put(DataProperty.TYPE, DataProperty.MODIFIED);
+    		metadata.put(DataProperty.TYPE, DataProperty.MODEL_TYPE);
     		
     		return new Data[]{output};
     	} else {

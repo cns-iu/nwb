@@ -14,6 +14,7 @@ import org.cishell.framework.algorithm.AlgorithmExecutionException;
 import org.cishell.framework.algorithm.AlgorithmFactory;
 import org.cishell.framework.data.BasicData;
 import org.cishell.framework.data.Data;
+import org.cishell.framework.data.DataProperty;
 import org.cishell.utilities.BasicDataPlus;
 import org.osgi.service.log.LogService;
 
@@ -69,8 +70,10 @@ public class ModelReaderAlgorithm implements Algorithm {
 
 
 		    Model outputModel = parser.getModel();
-
-		    return new Data[]{ new BasicDataPlus(outputModel, inputData) };
+		    
+		    BasicDataPlus outputData = new BasicDataPlus(outputModel, inputData);
+		    outputData.setType(DataProperty.MODEL_TYPE);
+		    return new Data[]{outputData};
 		} catch (IOException e) {
 			logger.log(LogService.LOG_ERROR, "Error reading model file: " + e.getMessage(), e);
 			return null;
