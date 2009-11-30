@@ -6,8 +6,8 @@ import java.util.NoSuchElementException;
 
 import prefuse.data.Table;
 import prefuse.util.collections.IntIterator;
-import stencil.streams.Tuple;
-import stencil.util.BasicTuple;
+import stencil.tuple.PrototypedTuple;
+import stencil.tuple.Tuple;
 
 public class TableTupleStream implements TupleStream {
 	private Table table;
@@ -33,7 +33,8 @@ public class TableTupleStream implements TupleStream {
 		this.timeStepColumnName = timeStepColumnName;
 		this.lineColumnName = lineColumnName;
 		this.stencilStreamName = stencilStreamName;
-		this.stencilNames = Arrays.asList(stencilTimeStepID, stencilLineID, stencilValueID);
+		this.stencilNames = Arrays.asList(
+			Tuple.SOURCE_KEY, stencilTimeStepID, stencilLineID, stencilValueID);
 
 		reset();
 	}
@@ -61,10 +62,10 @@ public class TableTupleStream implements TupleStream {
 		String timeStep = row.get(this.timeStepColumnName).toString();
 		String value = row.get(this.lineColumnName).toString();
 
-		return new BasicTuple(
-			this.stencilStreamName,
+		return new PrototypedTuple(
 			this.stencilNames,
-			Arrays.asList(new String[] { timeStep, this.lineColumnName, value }));
+			Arrays.asList(
+				new String[] { this.stencilStreamName, timeStep, this.lineColumnName, value }));
 	}
 	
 	public void reset() {

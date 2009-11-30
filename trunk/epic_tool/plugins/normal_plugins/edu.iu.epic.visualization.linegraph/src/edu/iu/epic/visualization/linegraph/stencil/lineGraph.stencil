@@ -3,42 +3,46 @@ external stream Visibility(Line, Visible)
 
 
 canvas Main
-       guide axis[sample="LINEAR", tickCount=10, label.SCALE_BY="NONE", label.FONT_SIZE=10, line.STROKE_WEIGHT=1, tickSize=5, textOffset=6, label.REGISTRATION="LEFT", axisOffset=10] from Lines X
-       guide axis[sample="LINEAR", tickCount=10, label.SCALE_BY="NONE", label.FONT_SIZE=10, line.STROKE_WEIGHT=1, tickSize=5, textOffset=6, label.REGISTRATION="RIGHT", axisOffset=-10] from Lines Y
+	guide axis[sample="LINEAR", tickCount=10, label.SCALE_BY="NONE", label.FONT_SIZE=10, line.STROKE_WEIGHT=1, tickSize=5, textOffset=6, label.REGISTRATION="LEFT", axisOffset=10] from Lines X
+	guide axis[sample="LINEAR", tickCount=10, label.SCALE_BY="NONE", label.FONT_SIZE=10, line.STROKE_WEIGHT=1, tickSize=5, textOffset=6, label.REGISTRATION="RIGHT", axisOffset=-10] from Lines Y
 
 
 layer Lines[POLY_LINE]
 from Data
-       ID : Line
-       X.new : Stride(Timestep) #-> VALUE
-       Y.new : Add(Value, 0) #-> Height(VALUE)
-       STROKE_WEIGHT: 1
-       STROKE_COLOR: ColorIndex(Line) -> Colors(_)
-  view(ZOOM, X, Y, HEIGHT) : Zoom(view[PORTAL_WIDTH], view[PORTAL_HEIGHT], canvas[WIDTH], canvas[HEIGHT]) -> (_, canvas[X], canvas[Y], canvas[HEIGHT])
+	ID : Line
+	X.new : Index(Timestep) #-> Mult(_, 300)
+	Y.new : Add(Value, 0) #-> Height(VALUE)
+	STROKE_WEIGHT : 1
+	SCALE_BY : "NONE"
+	STROKE_COLOR : ColorIndex(Line) -> Colors(_)
+	local(WidthOffset, HeightOffset) : ScreenToCanvasDimension(60, 20)
+	view(WIDTH) : Mult(canvas[WIDTH], 1.2)
+	view(HEIGHT) : Mult(canvas[HEIGHT], 1.2)
+	view(X) : Sub(canvas[X], WidthOffset)
+	view(Y) : Sub(canvas[Y], HeightOffset)
 from Visibility
-       ID : Line
-       VISIBLE : Visible
+	ID : Line
+	VISIBLE : Visible
 
 operator Colors (Index) -> (Color)
- (Index=1) => Color : @color(166,206,227)
- (Index=2) => Color : @color(31, 120, 180)
- (Index=3) => Color : @color(51, 160, 44)
- (Index=4) => Color : @color(178, 223, 138)
- (Index=5) => Color : @color(251, 154, 153)
- (Index=6) => Color : @color(227, 26, 28)
- (Index=7) => Color : @color(253, 191, 111)
- (Index=8) => Color : @color(255, 127, 0)
- (Index=9) => Color : @color(202, 178, 214)
- (Index=10) => Color : @color(106, 61, 154)
- (Index=11) => Color : @color(255, 255, 153)
- all => Color : @color(GRAY90)
-
+	(Index=1) => Color : @color(166,206,227)
+	(Index=2) => Color : @color(31, 120, 180)
+	(Index=3) => Color : @color(51, 160, 44)
+	(Index=4) => Color : @color(178, 223, 138)
+	(Index=5) => Color : @color(251, 154, 153)
+	(Index=6) => Color : @color(227, 26, 28)
+	(Index=7) => Color : @color(253, 191, 111)
+	(Index=8) => Color : @color(255, 127, 0)
+	(Index=9) => Color : @color(202, 178, 214)
+	(Index=10) => Color : @color(106, 61, 154)
+	(Index=11) => Color : @color(255, 255, 153)
+	all => Color : @color(GRAY90)
 
 operator Height (T) -> (Height)
-       all => (Height) : Mult(-1, T)
+	all => (Height) : Mult(-1, T)
 
 operator Stride (T) -> (VALUE)
-       all => (VALUE) :  Index(T) -> Mult(VALUE, 3)
+	all => (VALUE) :  Index(T) -> Mult(VALUE, 3)
 
 operator ColorIndex (ID) -> (Index)
-       all => (Index) : Index(ID)
+	all => (Index) : Index(ID)

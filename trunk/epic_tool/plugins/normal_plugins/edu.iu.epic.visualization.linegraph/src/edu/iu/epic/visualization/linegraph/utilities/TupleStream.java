@@ -3,7 +3,7 @@ package edu.iu.epic.visualization.linegraph.utilities;
 import java.util.Iterator;
 import java.util.NoSuchElementException;
 
-import stencil.streams.Tuple;
+import stencil.tuple.Tuple;
 
 // TODO: TupleStream probably shouldn't actually extend Iterator, but rather
 // just use it internally.

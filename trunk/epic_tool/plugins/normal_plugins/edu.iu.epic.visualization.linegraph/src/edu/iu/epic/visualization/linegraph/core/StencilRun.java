@@ -14,8 +14,8 @@ import org.jdesktop.swingworker.SwingWorker;
 
 import stencil.adapters.java2D.Adapter;
 import stencil.adapters.java2D.Panel;
-import stencil.streams.Tuple;
-import stencil.util.BasicTuple;
+import stencil.tuple.PrototypedTuple;
+import stencil.tuple.Tuple;
 import edu.iu.epic.visualization.linegraph.utilities.DoubleStartException;
 import edu.iu.epic.visualization.linegraph.utilities.ExtensionFileFilter;
 import edu.iu.epic.visualization.linegraph.utilities.StencilData;
@@ -136,7 +136,7 @@ public class StencilRun {
 		try {
 			System.out.println(lineName);
 			System.out.println(visible);
-			Tuple visibilityTuple = new BasicTuple(
+			Tuple visibilityTuple = new PrototypedTuple(
 				"Visibility",
 				Arrays.asList(new String[] { "Line", "Visible" }), 
 				Arrays.asList(new String[] { lineName, String.valueOf(visible) }));

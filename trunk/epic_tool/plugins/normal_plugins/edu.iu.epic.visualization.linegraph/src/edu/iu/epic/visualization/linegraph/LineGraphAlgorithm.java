@@ -17,7 +17,6 @@ import org.cishell.framework.algorithm.Algorithm;
 import org.cishell.framework.algorithm.AlgorithmExecutionException;
 import org.cishell.framework.data.Data;
 import org.cishell.utilities.FileUtilities;
-import org.osgi.service.log.LogService;
 
 import prefuse.data.Schema;
 import prefuse.data.Table;
