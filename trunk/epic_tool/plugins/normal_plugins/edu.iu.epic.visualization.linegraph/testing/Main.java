@@ -1,8 +1,6 @@
 import java.io.File;
 import java.io.IOException;
-import java.io.InputStream;
 import java.net.URISyntaxException;
-import java.net.URL;
 import java.util.Dictionary;
 import java.util.Hashtable;
 
@@ -21,8 +19,6 @@ import edu.iu.nwb.converter.prefusecsv.reader.PrefuseCsvReader;
 
 
 public class Main {
-
-	
 	public static final String TEST_TIME_STEP_COLUMN_NAME = "Date";
 	public static final String TEST_LINE_COLUMN_NAME_1 = "Open";
 	public static final String TEST_LINE_COLUMN_NAME_2 = "High";
@@ -94,7 +90,4 @@ public class Main {
 
 		return csvReader.execute();
 	}
-
-	
-	
 }
