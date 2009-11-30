@@ -45,6 +45,9 @@ public class InfectionTransition implements Transition {
 	public Compartment getInfector() {
 		return infector;
 	}
+	public void setInfector(Compartment infector) {
+		this.infector = infector;
+	}
 
 	public Compartment getTarget() {
 		return target;

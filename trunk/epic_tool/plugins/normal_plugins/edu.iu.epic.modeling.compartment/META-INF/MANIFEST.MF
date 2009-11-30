@@ -10,8 +10,7 @@ Service-Component: OSGI-INF/text-converter/validator.xml,
 X-AutoStart: true
 Bundle-Name: Modeling
 Bundle-ClassPath: .
-Import-Package: com.sun.xml.bind.v2,
- edu.iu.cns.utilities.testing;resolution:=optional,
+Import-Package: edu.iu.cns.utilities.testing;resolution:=optional,
  javax.activation,
  javax.xml.bind,
  javax.xml.bind.annotation,
