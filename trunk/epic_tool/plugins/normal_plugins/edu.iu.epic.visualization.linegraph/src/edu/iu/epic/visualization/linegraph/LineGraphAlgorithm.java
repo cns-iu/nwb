@@ -142,11 +142,11 @@ public class LineGraphAlgorithm implements Algorithm {
 			SwingUtilities.invokeAndWait(new Runnable() {
 				public void run() {
 					try {
-						// TODO: "YOUR DATA"
+						// TODO: Make the data's label part of the window title?
 						stencilGUI[0] = new StencilGUI(
 							configurationSource,
 							stencilData,
-							"Line Graph Visualization - YOUR DATA");
+							"Line Graph Visualization");
 					} catch (StencilException stencilException) {
 						exceptionThrown[0] = stencilException;
 					}

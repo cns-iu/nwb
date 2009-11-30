@@ -12,7 +12,7 @@ from Data
 	ID : Line
 	X.new : Index(Timestep) #-> Mult(_, 300)
 	Y.new : Add(Value, 0) #-> Height(VALUE)
-	STROKE_WEIGHT : 1
+	STROKE_WEIGHT : 1.5
 	SCALE_BY : "NONE"
 	STROKE_COLOR : ColorIndex(Line) -> Colors(_)
 	local(WidthOffset, HeightOffset) : ScreenToCanvasDimension(60, 20)

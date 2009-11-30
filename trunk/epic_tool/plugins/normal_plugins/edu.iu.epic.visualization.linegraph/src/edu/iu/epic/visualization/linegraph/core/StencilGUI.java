@@ -23,8 +23,8 @@ import edu.iu.epic.visualization.linegraph.utilities.StencilData;
 import edu.iu.epic.visualization.linegraph.utilities.StencilException;
 
 /*
- * this class creates the Stencil GUI
- *  and wires up its controls to the StencilController
+ * This class creates the Stencil GUI
+ *  and wires up its controls to the StencilController.
  */
 public class StencilGUI {
 	public static final String REPLAY_BUTTON_LABEL = "Replay";
