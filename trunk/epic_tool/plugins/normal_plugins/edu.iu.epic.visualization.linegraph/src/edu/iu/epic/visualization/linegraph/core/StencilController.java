@@ -101,8 +101,7 @@ public class StencilController {
 		this.stencilPanel = stencilPanel;
 		wrapperPanel.add(new JButton("Meep"));
 		
-			this.parent.setRightComponent(
-				StencilGUI.createWrapperPanel(this.currentPanel.getComponent()));
+			this.parent.setRightComponent(this.currentPanel.getComponent());
 			
 			if (oldPanel != null) {
 				oldPanel.dispose();
