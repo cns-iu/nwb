@@ -53,6 +53,12 @@
   	  	  	  	  	  <param name="project.name" value="piccolo2d"/>
   	  	  	  	  	  <param name="url" value="http://nwb.slis.indiana.edu/svn/nwb/trunk/epic_tool/plugins/libs"/>
   	</antcall>  	
+  	<antcall target="svn.co">
+  	  	  	  	  	  	  <param name="target" value="plugins"/>
+  	  	  	  	  	  	  <param name="element.id" value="hsqldb"/>
+  	  	  	  	  	  	  <param name="project.name" value="hsqldb"/>
+  	  	  	  	  	  	  <param name="url" value="http://nwb.slis.indiana.edu/svn/nwb/trunk/libs"/>
+  	  	</antcall>  
   	
   	<!--EpiC java plugins-->
   	
