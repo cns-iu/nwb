@@ -12,6 +12,7 @@ import java.util.List;
 import javax.swing.BoxLayout;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
+import javax.swing.JComponent;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
@@ -183,5 +184,14 @@ public class StencilGUI {
 		});
 
 		return exportButton;
+	}
+
+	public static JPanel createWrapperPanel(JComponent innards) {
+		JPanel wrapperPanel = new JPanel();
+		wrapperPanel.setBackground(Color.BLUE);
+		wrapperPanel.add(innards);
+		wrapperPanel.add(new JButton("Meep"));
+		
+		return wrapperPanel;
 	}
 }

@@ -1,9 +1,13 @@
 package edu.iu.epic.visualization.linegraph.core;
 
+import java.awt.Color;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 
+import javax.swing.JButton;
+import javax.swing.JComponent;
+import javax.swing.JPanel;
 import javax.swing.JSplitPane;
 import javax.swing.SwingUtilities;
 
@@ -21,6 +25,9 @@ public class StencilController {
 	private JSplitPane parent;
 	private StencilRun currentPanel;
 	private StencilData data;
+	
+	//TODO: THIS IS A CRIME!
+	private JComponent stencilPanel;
 
 	private Map<String, Boolean> lineVisibilityStates = 
 		new HashMap<String, Boolean>();
@@ -70,7 +77,7 @@ public class StencilController {
 
 	public void setLineVisible(String lineName, boolean visible) throws StencilException {
 		// TODO: Put in runnable?
-
+		System.out.println(stencilPanel.getSize().width + ", " + stencilPanel.getSize().height);
 		// Make the line visible/invisible on the current panel.
 		this.currentPanel.setLineVisible(lineName, visible);
 		// And remember its visibility/invisibility for future panels.
@@ -86,19 +93,29 @@ public class StencilController {
 			StencilRun oldPanel = this.currentPanel;
 	
 			this.currentPanel = newPanel;
-			this.parent.setRightComponent(this.currentPanel.getComponent());
+			
+			JPanel wrapperPanel = new JPanel();
+		wrapperPanel.setBackground(Color.BLUE);
+		JComponent stencilPanel = this.currentPanel.getComponent();
+		wrapperPanel.add(stencilPanel);
+		this.stencilPanel = stencilPanel;
+		wrapperPanel.add(new JButton("Meep"));
+		
+			this.parent.setRightComponent(
+				StencilGUI.createWrapperPanel(this.currentPanel.getComponent()));
 			
 			if (oldPanel != null) {
 				oldPanel.dispose();
 			}
-		} catch (Exception e) {
-			throw new StencilException(e);
+		} catch (Exception exception) {
+			throw new StencilException(exception);
 		}
 	}
 
 	private StencilRun createNewPanel(StencilData stencilData)
 			throws StencilException {
 		StencilRun panel = new StencilRun(this.parent, stencilData);
+		
 		return panel;
 	}
 }
