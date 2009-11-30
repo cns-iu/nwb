@@ -3,12 +3,6 @@ package edu.iu.epic.visualization.linegraph.utilities;
 import java.util.ArrayList;
 import java.util.List;
 
-/* I don't like StencilData.  Stencil is both a script and the platform for
- *  executing that script.  The (Stencil) data to be fed into it is something
- *  different.
- * Certainly there's a term for a program and its data being coupled?
- *  Maybe execution unit?
- */
 public class StencilData {
 	private String stencilScript;
 	private List<TableStreamSource> streamSources;

@@ -78,7 +78,6 @@ public class StencilGUI {
 
 			frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 			frame.pack();
-			// frame.setSize(800, 600);
 			frame.setSize(frameSize);
 			frame.setBackground(Color.BLACK);
 		}
@@ -125,7 +124,7 @@ public class StencilGUI {
 		checkBox.setSelected(true);
 		checkBox.addItemListener(new ItemListener() {
 			public void itemStateChanged (ItemEvent event) {
-					try {
+				try {
 					boolean visible = true;
 					if (event.getStateChange() == ItemEvent.SELECTED) {
 						visible = true;
@@ -135,11 +134,12 @@ public class StencilGUI {
 					
 					StencilGUI.this.controller.setLineVisible(lineName, visible);
 			
-					} catch (StencilException e) {
-						//TODO: improve
-						throw new RuntimeException(e);
+					} catch (StencilException stencilException) {
+						// TODO: Improve this exception handling.
+						throw new RuntimeException(stencilException);
 					}
-					}});
+				}
+			});
 		
 		return checkBox;
 	}
@@ -152,6 +152,7 @@ public class StencilGUI {
 		fillerPanel.setBackground(Color.WHITE);
 		JLabel loadingLabel = new JLabel("Loading...");
 		fillerPanel.add(loadingLabel);
+
 		return fillerPanel;
 	}
 
@@ -162,9 +163,9 @@ public class StencilGUI {
 			public void actionPerformed(ActionEvent actionEvent) {
 				try {
 					StencilGUI.this.run();
-				} catch (Exception e) {
-					// TODO: still needs work
-					throw new RuntimeException(e);
+				} catch (Exception exception) {
+					// TODO: Improve this exception handling.
+					throw new RuntimeException(exception);
 				}
 			}
 		});
@@ -172,8 +173,6 @@ public class StencilGUI {
 		return replayButton;
 	}
 
-
-	
 	private JButton createExportButton() {
 		JButton exportButton = new JButton(EXPORT_BUTTON_LABEL);
 
@@ -182,6 +181,7 @@ public class StencilGUI {
 					StencilGUI.this.controller.export();					
 			}
 		});
+
 		return exportButton;
 	}
 }

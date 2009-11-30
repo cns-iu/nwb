@@ -43,7 +43,6 @@ import stencil.WorkingDirectory;
 import stencil.explore.Application;
 import stencil.explore.model.AdapterOpts;
 import stencil.explore.ui.interactive.Interactive;
-import edu.iu.epic.visualization.linegraph.stencil.hack.PropertiesSource.FileNamePropertiesSource;
 import edu.iu.epic.visualization.linegraph.stencil.hack.PropertiesSource.LoadPropertiesException;
 
 
@@ -65,7 +64,8 @@ public class PropertyManager2 {
 	public static final String CONCURRENT_BIAS_KEY = "concurrentBias";
 	public static final String DEFAULT_ADAPTER = "defaultAdapter";
 	
-	/** Load properties from either the default file or an argument specified in args.
+	/**
+	 * Load properties from either the default file or an argument specified in args.
 	 * If the settings flag appears in args, it will load that file.  Otherwise, it
 	 * uses the default.
 	 *
@@ -86,7 +86,8 @@ public class PropertyManager2 {
 		return files.toArray(new String[files.size()]);
 	}
 
-	/** Loads the configuration information from the specified files.
+	/**
+	 * Loads the configuration information from the specified files.
 	 * Elements in the array have precedence over elements directly passed
 	 * (and thus are loaded later).
 	 */
@@ -111,7 +112,8 @@ public class PropertyManager2 {
 		return loadProperties(allConfigurationFileNames);
 	}
 	
-	/** Loads the configuration information from the specified files.
+	/**
+	 * Loads the configuration information from the specified files.
 	 * The file is assumed to conform to the java standard XML properties file schema.
 	 *
 	 * To provide 'cascading' values, files are loaded first to last.
@@ -240,13 +242,15 @@ public class PropertyManager2 {
 		return mostRecentProperties;
 	}
 
-	/** Save a configuration file name.
+	/**
+	 * Save a configuration file name.
 	 */
 	public static void setExploreConfig(String filename) {
 		exploreConfig = filename;
 	}
 
-	/** Save explore-based configuration information to the indicated file.
+	/**
+	 * Save explore-based configuration information to the indicated file.
 	 * This does not save information that is stencil-wide.  That must be added
 	 * to the stencil configuration file manually.
 	 */

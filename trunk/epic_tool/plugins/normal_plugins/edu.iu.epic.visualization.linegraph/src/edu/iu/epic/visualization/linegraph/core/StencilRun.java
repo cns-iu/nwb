@@ -8,7 +8,6 @@ import java.util.List;
 import javax.swing.JComponent;
 import javax.swing.JFileChooser;
 import javax.swing.JSplitPane;
-import javax.swing.SwingUtilities;
 import javax.swing.filechooser.FileFilter;
 
 import org.jdesktop.swingworker.SwingWorker;
@@ -34,8 +33,7 @@ public class StencilRun {
 	private StencilData data;
 	private JSplitPane parent;
 
-	public StencilRun(JSplitPane parent, StencilData data)
-			throws StencilException {
+	public StencilRun(JSplitPane parent, StencilData data) throws StencilException {
 		this.parent = parent;
 		this.data = data;
 
@@ -47,8 +45,9 @@ public class StencilRun {
 			stencilPanel.preRun();
 
 			this.panel = stencilPanel;
-		} catch (Exception e) {
-			throw new StencilException(e);
+		} catch (Exception exception) {
+			// TODO Handle this exception better?
+			throw new StencilException(exception.getMessage(), exception);
 		}
 	}
 
@@ -66,84 +65,87 @@ public class StencilRun {
 
 	}
 	
-	//(Let's try not to expose the full 'Panel' class. 
-	//Interaction should go through this class instead.
+	/*
+	 * (Let's try not to expose the full 'Panel' class. 
+	 * Interaction should go through this class instead.)
+	 */
 	public JComponent getComponent() {
 		return this.panel;
 	}
 	
-	
 	private static final String DEFAULT_EXPORT_FILENAME = "graph";
 	
 	public void export() {
-		
 		try {
+			/*
+			 * TODO: EPS support seems to not be working. Disabling format choosing until
+			 *  it's fixed.
+			 */
+			/* String[] supportedFormats = new String[]{ "PNG", "EPS" };
 			
-			//TODO: EPS support seems to not be working. Disabling format choosing until it's fixed
-//			String[] supportedFormats = new String[]{ "PNG", "EPS" };
-//			
-//			String selectedFormat = (String) JOptionPane.showInputDialog(null,
-//		            "Choose an export format", "Image Format",
-//		            JOptionPane.INFORMATION_MESSAGE, null,
-//		            supportedFormats, supportedFormats[0]);
-//			
-//			if (selectedFormat == null) {
-//				//user canceled export
-//				return;
-//			}
+			String selectedFormat = (String) JOptionPane.showInputDialog(null,
+		            "Choose an export format", "Image Format",
+		            JOptionPane.INFORMATION_MESSAGE, null,
+		            supportedFormats, supportedFormats[0]);
 			
-		String selectedFormat = "PNG";
-		
-		 JFileChooser fileChooser = new JFileChooser();
-		 fileChooser.setSelectedFile(
-				 new File(DEFAULT_EXPORT_FILENAME + "." + selectedFormat.toLowerCase()));
-		 FileFilter pngOnly = new ExtensionFileFilter(
-				 "Portable Network Graphics (PNG)", new String[]{ "png" });
-		 fileChooser.setFileFilter(pngOnly);
-		 
-		 int approvedOrCancelled = fileChooser.showSaveDialog(this.parent);
-	      
-	      if (approvedOrCancelled == JFileChooser.APPROVE_OPTION) {
-	        String fullFileName = 
-	        	fileChooser.getCurrentDirectory().toString() + "/" +
-	        	fileChooser.getSelectedFile().getName();
-	        
-	        Object exportInfo = null;
-	        
-	        //TODO: Disabled until EPS works and dotsPerInch is handled right
-	        if (selectedFormat.equals("PNG")) {
-	        	 int dotsPerInch = 64;
-	        	 exportInfo = dotsPerInch; 
-	        } else if (selectedFormat.equals("EPS")) {
-	        	Rectangle dimensions = new Rectangle(400,1600);
-	        	exportInfo = dimensions;
-	        }
-	        this.panel.export(fullFileName, selectedFormat, exportInfo);
-	    	 
-	      }
-	      if (approvedOrCancelled == JFileChooser.CANCEL_OPTION) {
-	    	  return;
-	      }
-		
-	} catch (Exception e) {
-		// TODO: Perhaps a better way to do this
-		throw new RuntimeException(e);
-	}
-}
+			if (selectedFormat == null) {
+				//user canceled export
+				return;
+			} */
+			String selectedFormat = "PNG";
 
-	public void setLineVisible(String lineName, boolean visible)
-		throws StencilException {
+			JFileChooser fileChooser = new JFileChooser();
+			fileChooser.setSelectedFile(
+				new File(DEFAULT_EXPORT_FILENAME + "." + selectedFormat.toLowerCase()));
+			FileFilter pngOnly = new ExtensionFileFilter(
+				"Portable Network Graphics (PNG)", new String[]{ "png" });
+			fileChooser.setFileFilter(pngOnly);
+
+			int approvedOrCancelled = fileChooser.showSaveDialog(this.parent);
+
+			if (approvedOrCancelled == JFileChooser.APPROVE_OPTION) {
+	        	String fullFileName = 
+	        		fileChooser.getCurrentDirectory().toString() + "/" +
+	        		fileChooser.getSelectedFile().getName();
+
+				Object exportInfo = null;
+
+				// TODO: Disabled until EPS works and dotsPerInch is handled right.
+				if (selectedFormat.equals("PNG")) {
+					int dotsPerInch = 64;
+					exportInfo = dotsPerInch; 
+				} else if (selectedFormat.equals("EPS")) {
+					Rectangle dimensions = new Rectangle(400,1600);
+					exportInfo = dimensions;
+				}
+
+				this.panel.export(fullFileName, selectedFormat, exportInfo);
+			}
+
+			// TODO: This isn't necessary?
+			if (approvedOrCancelled == JFileChooser.CANCEL_OPTION) {
+				return;
+			}
+		} catch (Exception exception) {
+			// TODO: Perhaps a better way to do this?
+			throw new RuntimeException(exception);
+		}
+	}
+
+	public void setLineVisible(String lineName, boolean visible) throws StencilException {
 		try {
 			System.out.println(lineName);
 			System.out.println(visible);
-			Tuple visibilityTuple = new BasicTuple("Visibility", Arrays.asList(new String[] {"Line", "Visible"}), 
-					Arrays.asList(new String[] {lineName, String.valueOf(visible)}));
+			Tuple visibilityTuple = new BasicTuple(
+				"Visibility",
+				Arrays.asList(new String[] { "Line", "Visible" }), 
+				Arrays.asList(new String[] { lineName, String.valueOf(visible) }));
 			this.panel.processTuple(visibilityTuple);
-		} catch (Exception e) {
-			throw new StencilException(e);
+		} catch (Exception exception) {
+			// TODO Handle this exception better.
+			throw new StencilException(exception);
 		}
-		}
-
+	}
 
 	/*
 	 * TODO: The first half-second of drawing looks odd because the graph is so
@@ -173,22 +175,20 @@ public class StencilRun {
 		if (streams.size() != 0) {
 			try {
 				long streamSize = streams.get(0).streamSize();
+
 				for (long ii = 0; ii < streamSize; ii++) {
 					for (TupleStream stream : streams) {
-						//System.err.println("tuple");
-						// Thread.sleep(1);
 						this.panel.processTuple(stream.nextTuple());
 					}
 				}
 			} catch (Exception processTupleFailedException) {
-				// TODO:
+				// TODO: Handle this exception better.
 				processTupleFailedException.printStackTrace();
 			}
 		}
 	}
 
 	private class TupleFeeder extends SwingWorker<Object, Object> {
-
 		private StencilData stencilData;
 
 		public TupleFeeder(StencilData stencilData) {
@@ -197,16 +197,16 @@ public class StencilRun {
 
 		public String doInBackground() {
 			try {
-				StencilRun.this
-						.feedTuplesToStencilPanel(this.stencilData);
+				StencilRun.this.feedTuplesToStencilPanel(this.stencilData);
+
+				// TODO: Should this return null or empty string?
 				return null;
-			} catch (StencilException e) {
-				// TODO: needs work
-				throw new RuntimeException(e);
+			} catch (StencilException stencilException) {
+				// TODO Handle this exception better.
+				throw new RuntimeException(stencilException);
 			}
 		}
 
-		protected void done() {
-		}
+		protected void done() {}
 	}
 }

@@ -68,8 +68,7 @@ public class LineGraphAlgorithmFactory implements AlgorithmFactory, ParameterMut
     		newParameters.addAttributeDefinition(
     			ObjectClassDefinition.REQUIRED, attributeDefinition);
     	}
-    	
-    	//TODO: Stub. Fill this out
+
     	return newParameters;
     }
 }

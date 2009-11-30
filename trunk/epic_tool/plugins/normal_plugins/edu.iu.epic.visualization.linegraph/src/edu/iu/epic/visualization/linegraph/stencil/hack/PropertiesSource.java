@@ -2,13 +2,10 @@ package edu.iu.epic.visualization.linegraph.stencil.hack;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.StringBufferInputStream;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.InvalidPropertiesFormatException;
 import java.util.Properties;
-
-import org.cishell.utilities.FileUtilities;
 
 public interface PropertiesSource {
 	public Properties loadProperties() throws LoadPropertiesException;
@@ -22,13 +19,6 @@ public interface PropertiesSource {
 		
 		public Properties loadProperties() throws LoadPropertiesException {
 			Properties properties = new Properties();
-			try {
-				String s = FileUtilities.readEntireInputStream(this.propertiesInputStream);
-				this.propertiesInputStream = new StringBufferInputStream(s);
-				//System.err.println(s);
-			} catch (Exception e) {
-				System.err.println(e.getMessage());
-			}
 			
 			try {
 				properties.loadFromXML(propertiesInputStream);
@@ -56,6 +46,8 @@ public interface PropertiesSource {
 	}
 	
 	public class LoadPropertiesException extends Exception {
+		private static final long serialVersionUID = 1L;
+
 		public LoadPropertiesException(String message, Exception exception) {
 			super(message, exception);
 		}

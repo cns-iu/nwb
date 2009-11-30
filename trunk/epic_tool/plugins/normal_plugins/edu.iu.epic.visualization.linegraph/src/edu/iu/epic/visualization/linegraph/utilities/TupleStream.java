@@ -9,7 +9,7 @@ import stencil.streams.Tuple;
 // just use it internally.
 // TODO: Also, reset is redundant with the source methodology.  One of them
 // should go.
-public interface TupleStream extends Iterator {
+public interface TupleStream extends Iterator<Tuple> {
 	public static final long UNKNOWN_STREAM_SIZE = -1;
 	
 	public Tuple nextTuple() throws NoSuchElementException;

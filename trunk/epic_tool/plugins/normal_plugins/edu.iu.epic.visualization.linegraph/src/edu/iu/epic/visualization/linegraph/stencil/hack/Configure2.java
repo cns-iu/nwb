@@ -4,7 +4,8 @@ import java.util.Properties;
 import java.net.URL;
 
 
-/** Methods to configure the Stencil system based
+/**
+ * Methods to configure the Stencil system based
  * upon properties files specified on the system.
  * The loadProperties method should be invoked at least
  * once per application instance before using the Stencil library.
@@ -15,10 +16,9 @@ import java.net.URL;
  */
 public class Configure2 {
 	private static final String DEFAULT_STENCIL_CONFIGURATION_FILE = "Stencil.properties";
-	
+
 	public static String stencilConfig = DEFAULT_STENCIL_CONFIGURATION_FILE;
 
-	
 	private Configure2() {
 		/* Utility, non-instantiable class.*/
 	}

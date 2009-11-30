@@ -4,15 +4,15 @@ import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.util.Properties;
 
-import org.cishell.utilities.FileUtilities;
-
 import stencil.operator.module.Module;
 import stencil.operator.module.ModuleCache;
 import stencil.operator.module.ModuleData;
 import stencil.operator.module.util.ModuleDataParser;
 
 public class PartialModuleCache2 {
-	/** Key on properties in a properties list that indicates module to be registered. */
+	/**
+	 * Key on properties in a properties list that indicates module to be registered.
+	 */
 	public static final String MODULE_KEY = "module";
 	
 	/** Load module entries from a property set.
@@ -31,10 +31,12 @@ public class PartialModuleCache2 {
 				String fileName = props.getProperty(key);
 				
 				/*try {
-				System.err.println(
-					fileName + ": " + FileUtilities.readEntireInputStream(ModuleCache.class.getResourceAsStream(fileName)));;
-				} catch (Exception e) {
-					e.printStackTrace();
+					System.err.println(
+						fileName + ": " +
+						FileUtilities.readEntireInputStream(
+							ModuleCache.class.getResourceAsStream(fileName)));;
+				} catch (Exception exception) {
+					exception.printStackTrace();
 				}*/
 
 				BufferedReader stream = new BufferedReader(
@@ -57,6 +59,7 @@ public class PartialModuleCache2 {
 				} catch (Exception exception) {
 					exception.printStackTrace();
 					System.err.println(exception.getMessage());
+
 					throw new RuntimeException(
 						String.format("Error instantiating module %1$s.", moduleData.getName()),
 						exception);

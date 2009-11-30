@@ -48,14 +48,13 @@ public class LineGraphAlgorithm implements Algorithm {
 
 	public static final String CSV_MIME_TYPE = "file:text/csv";
 
-	
-	private Data inputData;
+
 	private Table inputTable;
 	
 	private String timeStepColumnName;
 	private List<String> lineColumnNames;
 
-	private LogService logger;
+	//private LogService logger;
 
 	public LineGraphAlgorithm(
 			Data[] data, Dictionary<String, Object> parameters, CIShellContext ciShellContext) {
@@ -65,18 +64,17 @@ public class LineGraphAlgorithm implements Algorithm {
 		} catch (Exception e) {
 			e.printStackTrace();
 		}*/
-		this.inputData = data[0];
 		this.inputTable = (Table)data[0].getData();
 		
 		this.timeStepColumnName = (String)parameters.get(TIME_STEP_COLUMN_NAME_KEY);
 		this.lineColumnNames = extractLineColumnNames(parameters, this.inputTable);
 		
-		System.err.println("lineColumnNames:");
+		/*System.err.println("lineColumnNames:");
 		for (String s : this.lineColumnNames) {
 			System.err.println(s);
-		}
+		}*/
 
-		this.logger = (LogService)ciShellContext.getService(LogService.class.getName());
+		//this.logger = (LogService)ciShellContext.getService(LogService.class.getName());
 	}
 
 	public Data[] execute() throws AlgorithmExecutionException {
@@ -136,7 +134,6 @@ public class LineGraphAlgorithm implements Algorithm {
 	private StencilGUI createStencilGUI(final StencilData stencilData)
 			throws AlgorithmExecutionException {
 		try {
-			// TODO: "YOUR DATA"
 			final PropertiesSource configurationSource =
 				new PropertiesSource.InputStreamPropertiesSource(
 					loadStreamFromClassPath(LineGraphAlgorithm.class, STENCIL_CONFIGURATION_PATH));
@@ -146,6 +143,7 @@ public class LineGraphAlgorithm implements Algorithm {
 			SwingUtilities.invokeAndWait(new Runnable() {
 				public void run() {
 					try {
+						// TODO: "YOUR DATA"
 						stencilGUI[0] = new StencilGUI(
 							configurationSource,
 							stencilData,
@@ -209,7 +207,7 @@ public class LineGraphAlgorithm implements Algorithm {
 		}
 	}
 	
-	private String extractStencilScript(File stencilFile)
+	/*private String extractStencilScript(File stencilFile)
 			throws AlgorithmExecutionException {
 		try {
 			return FileUtilities.readEntireTextFile(stencilFile);
@@ -219,7 +217,7 @@ public class LineGraphAlgorithm implements Algorithm {
 
 			throw new AlgorithmExecutionException(exceptionMessage, ioException);
 		}
-	}
+	}*/
 
 	private String extractStencilScript(InputStream stencilFileStream)
 			throws AlgorithmExecutionException {
@@ -274,11 +272,8 @@ public class LineGraphAlgorithm implements Algorithm {
 
 		return new File(fileURL.toURI());
 	}
-	
 
 	private static InputStream loadStreamFromClassPath(Class clazz, String filePath) {
 		return clazz.getResourceAsStream(filePath);
 	}
-
-	
 }

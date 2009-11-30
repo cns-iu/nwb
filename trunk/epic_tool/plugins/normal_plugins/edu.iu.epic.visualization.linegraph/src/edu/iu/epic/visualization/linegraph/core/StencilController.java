@@ -1,6 +1,5 @@
 package edu.iu.epic.visualization.linegraph.core;
 
-import java.lang.reflect.InvocationTargetException;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
@@ -33,59 +32,48 @@ public class StencilController {
 	public void playFromStart() throws StencilException {
 		final StencilException[] stencilExceptionThrown = new StencilException[1];
 
-		//try {
-			SwingUtilities.invokeLater(new Runnable() {
-				public void run() {
-					try {
-						// Replace the old panel with a new one.
+		SwingUtilities.invokeLater(new Runnable() {
+			public void run() {
+				try {
+					// Replace the old panel with a new one.
 
-						StencilRun newPanel = createNewPanel(StencilController.this.data);
-						swapInNewPanel(newPanel);
-						StencilController.this.currentPanel = newPanel;
+					StencilRun newPanel = createNewPanel(StencilController.this.data);
+					swapInNewPanel(newPanel);
+					StencilController.this.currentPanel = newPanel;
 
-						/*
-		 				 * Tell the new panel which lines should be visible
-		 				 * (lines visible/invisible carries over between stencil runs).
-		 				 */
+					/*
+	 				 * Tell the new panel which lines should be visible
+	 				 * (lines visible/invisible carries over between stencil runs).
+	 				 */
 
-						Set<String> lineNames = lineVisibilityStates.keySet();
+					Set<String> lineNames = lineVisibilityStates.keySet();
 
-						for (String lineName : lineNames) {
-							Boolean lineVisibility = lineVisibilityStates.get(lineName);
-							StencilController.this.currentPanel.setLineVisible(
-								lineName, lineVisibility);
-						}
-
-						// Start the new panel.
-
-						StencilController.this.currentPanel.start();
-					} catch (StencilException stencilException) {
-						stencilExceptionThrown[0] = stencilException;
+					for (String lineName : lineNames) {
+						Boolean lineVisibility = lineVisibilityStates.get(lineName);
+						StencilController.this.currentPanel.setLineVisible(
+							lineName, lineVisibility);
 					}
-				}
-			});
-			
-			if (stencilExceptionThrown[0] != null) {
-				throw stencilExceptionThrown[0];
-			}
-		//}
-//		} catch (InvocationTargetException invocationTargetException) {
-//			throw new StencilException(
-//				invocationTargetException.getMessage(), invocationTargetException);
-//		} catch (InterruptedException interruptedException) {
-//			throw new StencilException(
-//				interruptedException.getMessage(), interruptedException);
-//		}
-	}
-	
-	
 
-	public void setLineVisible(String lineName, boolean visible)
-		throws StencilException {
-		//TODO: put in runnable
-		//make the line visible/invisible on the current panel
+					// Start the new panel.
+
+					StencilController.this.currentPanel.start();
+				} catch (StencilException stencilException) {
+					stencilExceptionThrown[0] = stencilException;
+				}
+			}
+		});
+		
+		if (stencilExceptionThrown[0] != null) {
+			throw stencilExceptionThrown[0];
+		}
+	}
+
+	public void setLineVisible(String lineName, boolean visible) throws StencilException {
+		// TODO: Put in runnable?
+
+		// Make the line visible/invisible on the current panel.
 		this.currentPanel.setLineVisible(lineName, visible);
-		//and remember its visibility/invisibility for future panels
+		// And remember its visibility/invisibility for future panels.
 		this.lineVisibilityStates.put(lineName, visible);
 	}
 
@@ -93,9 +81,7 @@ public class StencilController {
 		this.currentPanel.export();
 	}
 
-	private void swapInNewPanel(StencilRun newPanel)
-			throws StencilException {
-
+	private void swapInNewPanel(StencilRun newPanel) throws StencilException {
 		try {
 			StencilRun oldPanel = this.currentPanel;
 	
@@ -115,6 +101,4 @@ public class StencilController {
 		StencilRun panel = new StencilRun(this.parent, stencilData);
 		return panel;
 	}
-
-	
 }

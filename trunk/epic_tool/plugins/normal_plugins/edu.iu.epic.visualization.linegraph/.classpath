@@ -5,7 +5,6 @@
 	<classpathentry kind="src" path="src"/>
 	<classpathentry kind="src" path="testing"/>
 	<classpathentry kind="lib" path="swing-worker-1.2.jar"/>
-	<classpathentry combineaccessrules="false" kind="src" path="/edu.iu.cns.utilities.testing"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/edu.iu.nwb.converter.prefusecsv"/>
 	<classpathentry kind="output" path="build"/>
 </classpath>

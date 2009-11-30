@@ -14,7 +14,7 @@ public class TableTupleStream implements TupleStream {
 	private String timeStepColumnName;
 	private String lineColumnName;
 	private String stencilStreamName;
-	private List stencilNames;
+	private List<String> stencilNames;
 	private IntIterator rows;
 	private int lastRow = -1;
 	
@@ -33,8 +33,8 @@ public class TableTupleStream implements TupleStream {
 		this.timeStepColumnName = timeStepColumnName;
 		this.lineColumnName = lineColumnName;
 		this.stencilStreamName = stencilStreamName;
-		this.stencilNames = Arrays.asList(
-			new String[] { stencilTimeStepID, stencilLineID, stencilValueID });
+		this.stencilNames = Arrays.asList(stencilTimeStepID, stencilLineID, stencilValueID);
+
 		reset();
 	}
 	
@@ -42,12 +42,12 @@ public class TableTupleStream implements TupleStream {
 		return this.rows.hasNext();
 	}
 	
-	public Object next() throws NoSuchElementException {
+	public Tuple next() throws NoSuchElementException {
 		return nextTuple();
 	}
 	
 	public void remove() {
-		// TODO
+		// TODO: Implement this method.
 	}
 	
 	public Tuple nextTuple() throws NoSuchElementException {
@@ -60,14 +60,11 @@ public class TableTupleStream implements TupleStream {
 		prefuse.data.Tuple row = this.table.getTuple(this.lastRow);
 		String timeStep = row.get(this.timeStepColumnName).toString();
 		String value = row.get(this.lineColumnName).toString();
-		
-		//System.err.println("Tuple: " + timeStep + " " + this.lineColumnName + " " + value);
-		
+
 		return new BasicTuple(
 			this.stencilStreamName,
 			this.stencilNames,
-			Arrays.asList(
-				new String[] { timeStep, this.lineColumnName, value }));
+			Arrays.asList(new String[] { timeStep, this.lineColumnName, value }));
 	}
 	
 	public void reset() {
