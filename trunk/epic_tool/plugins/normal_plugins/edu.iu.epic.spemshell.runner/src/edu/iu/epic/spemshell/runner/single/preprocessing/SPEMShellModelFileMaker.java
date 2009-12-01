@@ -4,8 +4,11 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Dictionary;
+import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.Map.Entry;
 
 import org.antlr.stringtemplate.StringTemplate;
@@ -13,6 +16,7 @@ import org.antlr.stringtemplate.StringTemplateGroup;
 import org.cishell.utilities.FileUtilities;
 
 import edu.iu.epic.modeling.compartment.model.Model;
+import edu.iu.epic.modeling.compartment.model.Transition;
 import edu.iu.epic.spemshell.runner.single.CIShellParameterUtilities;
 import edu.iu.epic.spemshell.runner.single.SPEMShellSingleRunnerAlgorithm;
 import edu.iu.epic.spemshell.runner.single.SPEMShellSingleRunnerAlgorithmFactory;
@@ -46,19 +50,28 @@ public class SPEMShellModelFileMaker {
 		StringTemplate template =
 			spemShellModelFileTemplateGroup.getInstanceOf("spemShellModelFile");
 
+		List<Entry<String, String>> parameterDefinitions =
+			new ArrayList<Entry<String, String>>();
 		// Add all parameter definitions given by the algorithm user.
-		template.setAttribute(
-				"parameterDefinitions",
-				new ArrayList<Entry<String, Object>>(modelParameterDefinitions.entrySet()));
-		
+		parameterDefinitions.addAll(
+				(Collection<? extends Entry<String, String>>) modelParameterDefinitions.entrySet());
 		// Add all parameter definitions given by the input model file.
-		template.setAttribute(
-				"parameterDefinitions",
-				new ArrayList<Entry<String, String>>(
-						epicModel.getParameterDefinitions().entrySet()));
+		parameterDefinitions.addAll(epicModel.getParameterDefinitions().entrySet());
 		
+		for (Entry<String, String> parameterDefinition : parameterDefinitions) {
+			parameterDefinition.setValue(fixRawDecimalPoints(parameterDefinition.getValue()));
+		}
+		
+		template.setAttribute("parameterDefinitions", parameterDefinitions);
+		
+		
+		Set<Transition> transitions = epicModel.getTransitions();
+		for (Transition transition : transitions) {
+			transition.setRatio(fixRawDecimalPoints(transition.getRatio()));
+		}		
 		template.setAttribute("transitions", epicModel.getTransitions());
 
+		
 		File file = FileUtilities.createTemporaryFileInDefaultTemporaryDirectory(
 				FILENAME, FILE_EXTENSION);
 		FileWriter writer = new FileWriter(file);
@@ -66,5 +79,9 @@ public class SPEMShellModelFileMaker {
 		writer.close();
 
 		return file;
+	}
+
+	private static String fixRawDecimalPoints(String parameterExpression) {
+		return parameterExpression.replaceAll("([^0-9]|^)\\.", "$1\\0.");
 	}
 }
