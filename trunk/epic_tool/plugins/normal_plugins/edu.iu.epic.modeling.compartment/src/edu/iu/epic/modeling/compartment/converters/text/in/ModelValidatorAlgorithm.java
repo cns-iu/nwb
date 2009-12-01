@@ -7,6 +7,7 @@ import org.antlr.runtime.ANTLRFileStream;
 import org.antlr.runtime.RecognitionException;
 import org.cishell.framework.algorithm.Algorithm;
 import org.cishell.framework.data.Data;
+import org.cishell.framework.data.DataProperty;
 import org.cishell.utilities.BasicDataPlus;
 import org.osgi.service.log.LogService;
 
@@ -53,6 +54,7 @@ public class ModelValidatorAlgorithm implements Algorithm {
 
     		BasicDataPlus outData =
     			new BasicDataPlus(new File(inputModelFilePath), Constants.MODEL_MIME_TYPE);
+    		outData.setType(DataProperty.MODEL_TYPE);
     		outData.setLabel("Model: " + inputModelFilePath);
     		return new Data[]{ outData };
 		} catch (RecognitionException e) {

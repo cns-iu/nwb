@@ -8,6 +8,7 @@ import javax.xml.bind.JAXBException;
 
 import org.cishell.framework.algorithm.Algorithm;
 import org.cishell.framework.data.Data;
+import org.cishell.framework.data.DataProperty;
 import org.cishell.utilities.BasicDataPlus;
 import org.osgi.service.log.LogService;
 import org.xml.sax.SAXException;
@@ -36,6 +37,7 @@ public class ModelValidatorAlgorithm implements Algorithm {
 			BasicDataPlus outData =
 				new BasicDataPlus(
 						new File(inputModelFilePath), Constants.MODEL_MIME_TYPE, inputData);
+			outData.setType(DataProperty.MODEL_TYPE);
 			outData.setLabel("Model: " + inputModelFilePath);
 			return new Data[]{ outData };
 		} catch (FileNotFoundException e) {
