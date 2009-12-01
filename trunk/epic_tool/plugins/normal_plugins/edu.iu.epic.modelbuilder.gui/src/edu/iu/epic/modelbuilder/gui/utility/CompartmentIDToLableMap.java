@@ -12,6 +12,7 @@ public class CompartmentIDToLableMap{
 	
 	public static void resetCompartmentIDToLableMap() {
 		compartmentIDToLable = new LinkedHashMap<String, String>();
+		observers = new ArrayList<Observer>();
 	}
 	
 	public static Map<String, String> getCompartmentIDToLableMap() {

@@ -24,8 +24,6 @@ public class ModelBuilderGUIAlgorithm implements Algorithm {
 	private Data[] data;
 	private LogService logger;
 	
-    public static final String AGGREGATE_ON_COLUMN = "aggregateoncolumn";
-    
     public ModelBuilderGUIAlgorithm(Data[] data, CIShellContext context) {
     	
         this.data = data;
