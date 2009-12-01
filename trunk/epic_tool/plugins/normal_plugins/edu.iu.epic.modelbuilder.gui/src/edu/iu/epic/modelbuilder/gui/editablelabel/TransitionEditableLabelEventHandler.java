@@ -107,21 +107,14 @@ public class TransitionEditableLabelEventHandler
 		double oldWidth = currentTransitionLabel.getWidth();
 		String newRatioText = transitionEditorJTextField.getText().trim();
 		
-		//TODO: what if the ratio rename fails? currently setratio does not 
-		//return a boolean. asked joseph to looked into it.
 		if (inMemoryTransition.setRatio(newRatioText)) {
 
-			System.out.println(inMemoryTransition);
 			currentTransitionLabel.setText(newRatioText);
 			double newWidth = currentTransitionLabel.getWidth();
 			
 			double newOffsetForPositionX = -(newWidth - oldWidth);
 			currentTransitionLabel.offset(newOffsetForPositionX, 0.0);
 			try {
-				System.out.println("changed ratio " + newRatioText + " <> " 
-						+ inMemoryModel.listUnboundReferencedParameters()
-						+ inMemoryModel.getTransitions());
-				
 				notificationAreas[0].addAllNotifications(
 						inMemoryModel.listUnboundReferencedParameters());
 			} catch (InvalidParameterExpressionException exception) {

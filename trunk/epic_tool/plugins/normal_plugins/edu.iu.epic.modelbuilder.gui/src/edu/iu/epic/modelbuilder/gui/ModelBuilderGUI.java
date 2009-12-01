@@ -10,6 +10,7 @@ import java.awt.event.ComponentListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
+import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
 import java.beans.PropertyVetoException;
 import java.util.ArrayList;
@@ -57,6 +58,8 @@ import edu.umd.cs.piccolox.swing.PScrollPane;
 public class ModelBuilderGUI implements ActionListener {
 
 	
+	
+
 	private static final long serialVersionUID = 8679069222688097887L;
 	
 	private JDesktopPane desktopPane;
@@ -75,8 +78,13 @@ public class ModelBuilderGUI implements ActionListener {
 
 	private NotificationArea[] notificationAreas;
 
+	private Point2D.Double newCompartmentSeriesPosition = new Point2D.Double(5.0, 30.0);
+	private Point2D.Double addNewCompartmentPosition = 
+		new Point2D.Double(newCompartmentSeriesPosition.getX(),
+						   newCompartmentSeriesPosition.getY());
+	private int addNewCompartmentCount = 0;
+	
 	public ModelBuilderGUI() {
-//        parentPFrame = new PFrame("PSwingExample", false, new PSwingCanvas());
 		JFrame.setDefaultLookAndFeelDecorated(true);
 		
         parentJFrame = new JFrame("Model Builder");
@@ -211,7 +219,10 @@ public class ModelBuilderGUI implements ActionListener {
         addNewCompartmentButton.addActionListener(new ActionListener() {
 
 			public void actionPerformed(ActionEvent actionEvent) {
-		    	Shape compartmentShape = new Rectangle2D.Double(10.0, 50.0, 
+				addNewCompartmentCount++;
+		    	Shape compartmentShape = new Rectangle2D.Double(
+		    			getNewCompartmentPosition().getX(), 
+		    			getNewCompartmentPosition().getY(),
 		    			GlobalConstants.COMPARTMENT_DIMENSIONS.getWidth(), 
 		    			GlobalConstants.COMPARTMENT_DIMENSIONS.getHeight());
 		    	
@@ -721,6 +732,22 @@ public class ModelBuilderGUI implements ActionListener {
 
 	public PSwingCanvas getMainWorkbenchCanvas() {
 		return mainWorkbenchCanvas;
+	}
+
+	/**
+	 * @return the addNewCompartmentPosition
+	 */
+	public Point2D.Double getNewCompartmentPosition() {
+		if (addNewCompartmentCount <= 21) {
+			addNewCompartmentPosition.x += 5.0;
+			addNewCompartmentPosition.y += 10.0;
+		} else {
+			addNewCompartmentCount = 0;
+			newCompartmentSeriesPosition.x += 21.0 + GlobalConstants.COMPARTMENT_DIMENSIONS.getWidth(); 
+			addNewCompartmentPosition.x = newCompartmentSeriesPosition.x;
+			addNewCompartmentPosition.y = newCompartmentSeriesPosition.y + 10.0;
+		}
+		return addNewCompartmentPosition;
 	}
 
 }

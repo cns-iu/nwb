@@ -15,7 +15,6 @@ public class InfectorComboBoxModel extends DefaultComboBoxModel implements Obser
 	private Map<Integer, String> initialIndexToCompartmentID;
 	
 	public InfectorComboBoxModel(Map<String, String> initialCompartmentIDToLabel) {
-		System.out.println("new obersever added");
 		CompartmentIDToLableMap.addObserver(this);
 		this.initialIndexToCompartmentID = new HashMap<Integer, String>();
 		

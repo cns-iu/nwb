@@ -263,18 +263,15 @@ public class InfectorInformationPanel extends PNode {
 				
 			} catch (InvalidParameterExpressionException e1) {
 				isInfectorAdditionSuccessful = false;
-				System.out.println(e1.getMessage());
 				notificationAreas[1].addNotification("\"" + ratio 
 						 						 + "\" is an invalid parameter expression.");
 			} catch (CompartmentDoesNotExistException e2) {
 				isInfectorAdditionSuccessful = false;
-				System.out.println(e2.getMessage());
 				notificationAreas[1].addNotification("Compartment with name \"" 
 						 + infectorCompartment + "\" does not exist. ");
 			}
 			
 		} catch (CompartmentDoesNotExistException e) {
-			System.out.println("no such compartment exists " + e.getMessage());
 			isInfectorAdditionSuccessful = false;
 			notificationAreas[1].addNotification("Compartment with name \"" 
 											 + infectorCompartment + "\" does not exist. ");
@@ -291,10 +288,6 @@ public class InfectorInformationPanel extends PNode {
 				notificationAreas[1].addNotification("Errors in testing of undefined parameters.");
 			}
 		}
-		
-		
-		
-		
 		return isInfectorAdditionSuccessful;
 	}
 	
@@ -313,7 +306,7 @@ public class InfectorInformationPanel extends PNode {
 			infectorCompartment = inMemoryModel.getCompartment(newlySelctedInfector);
 			((InfectionTransition) inMemoryInfectionTransition).setInfector(infectorCompartment);
 		} catch (CompartmentDoesNotExistException e) {
-			System.out.println("no cigar compartment infector change #fail");
+			System.out.println(e.getMessage());
 		}
 
 	}
@@ -343,9 +336,6 @@ public class InfectorInformationPanel extends PNode {
 		if (infectors.size() == 0) {
 			
 			parentComplexTransition.removeFromParent();
-			
-			System.out.println("--------------");
-			
 			parentComplexTransition = null;
 			
 			/*

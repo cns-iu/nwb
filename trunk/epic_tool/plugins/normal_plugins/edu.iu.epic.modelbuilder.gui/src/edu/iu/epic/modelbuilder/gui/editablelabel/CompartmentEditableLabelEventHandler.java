@@ -136,10 +136,7 @@ public class CompartmentEditableLabelEventHandler
 				newCompartmentLabelText);
 		
 		} else {
-			
-			System.out.println("rename unsuccessful. rolling it back"); 
 			currentCompartmentLabel.setText(oldCompartmentLabel);	
-			
 		}
 		
 		currentCompartmentLabel.setVisible(true);
