@@ -1,5 +1,6 @@
 package edu.iu.epic.modelbuilder.gui.editablelabel;
 
+import java.awt.Color;
 import java.awt.event.FocusEvent;
 import java.awt.event.FocusListener;
 import java.awt.event.KeyEvent;
@@ -36,9 +37,10 @@ public class TransitionEditableLabelEventHandler
 	@Override
 	public void mousePressed(PInputEvent inputEvent) {
 		PText currentTransitionLabel = (PText) inputEvent.getPickedNode();
+		currentTransitionLabel.animateToColor(Color.WHITE, 1);
+		currentTransitionLabel.setVisible(false);
 		PNode transition = currentTransitionLabel.getParent();
 		PNode transitionLabelEditor = createNodeLabelEditor(currentTransitionLabel);
-		currentTransitionLabel.setVisible(false);
 		transition.addChild(transitionLabelEditor);
 	}
 

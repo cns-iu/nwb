@@ -60,6 +60,9 @@ public class ModelBuilderGUI implements ActionListener {
 	
 	
 
+	private static final double ADD_NEW_COMPARTMENT_Y_INCREMENT = 10.0;
+	private static final double ADD_NEW_COMPARTMENT_X_INCREMENT = 5.0;
+
 	private static final long serialVersionUID = 8679069222688097887L;
 	
 	private JDesktopPane desktopPane;
@@ -78,11 +81,9 @@ public class ModelBuilderGUI implements ActionListener {
 
 	private NotificationArea[] notificationAreas;
 
-	private Point2D.Double newCompartmentSeriesPosition = new Point2D.Double(5.0, 30.0);
-	private Point2D.Double addNewCompartmentPosition = 
-		new Point2D.Double(newCompartmentSeriesPosition.getX(),
-						   newCompartmentSeriesPosition.getY());
-	private int addNewCompartmentCount = 0;
+	private Point2D.Double newCompartmentSeriesPosition;
+	private Point2D.Double addNewCompartmentPosition;
+	private int addNewCompartmentCount;
 	
 	public ModelBuilderGUI() {
 		JFrame.setDefaultLookAndFeelDecorated(true);
@@ -281,6 +282,12 @@ public class ModelBuilderGUI implements ActionListener {
 		 * For reporting all the inconsistencies.
 		 * */
 		notificationAreas[1] = new NotificationArea(10);
+		
+		newCompartmentSeriesPosition = new Point2D.Double(5.0, 30.0);
+		addNewCompartmentPosition = 
+			new Point2D.Double(newCompartmentSeriesPosition.getX(),
+							   newCompartmentSeriesPosition.getY());
+		addNewCompartmentCount = 0;
 	}
 
 	/**
@@ -738,14 +745,20 @@ public class ModelBuilderGUI implements ActionListener {
 	 * @return the addNewCompartmentPosition
 	 */
 	public Point2D.Double getNewCompartmentPosition() {
+		
+		/*
+		 * Reset the position of the new series of compartments when it reaches a certain
+		 * threshold, in this case it is 21. 
+		 * */
 		if (addNewCompartmentCount <= 21) {
-			addNewCompartmentPosition.x += 5.0;
-			addNewCompartmentPosition.y += 10.0;
+			addNewCompartmentPosition.x += ADD_NEW_COMPARTMENT_X_INCREMENT;
+			addNewCompartmentPosition.y += ADD_NEW_COMPARTMENT_Y_INCREMENT;
 		} else {
 			addNewCompartmentCount = 0;
 			newCompartmentSeriesPosition.x += 21.0 + GlobalConstants.COMPARTMENT_DIMENSIONS.getWidth(); 
 			addNewCompartmentPosition.x = newCompartmentSeriesPosition.x;
-			addNewCompartmentPosition.y = newCompartmentSeriesPosition.y + 10.0;
+			addNewCompartmentPosition.y = newCompartmentSeriesPosition.y 
+										  + ADD_NEW_COMPARTMENT_Y_INCREMENT;
 		}
 		return addNewCompartmentPosition;
 	}
