@@ -16,11 +16,16 @@ import org.osgi.service.log.LogService;
 import prefuse.data.Table;
 import edu.iu.nwb.shared.isiutil.ISICitationExtractionPreparer;
 import edu.iu.nwb.shared.isiutil.ISITableReader;
+import edu.iu.nwb.shared.isiutil.ISITableReaderHelper;
 import edu.iu.nwb.shared.isiutil.exception.CitationExtractionPreparationException;
+import edu.iu.nwb.shared.isiutil.exception.ReadISIFileException;
 import edu.iu.nwb.shared.isiutil.exception.ReadTableException;
 
 public class PrefuseIsiReader implements Algorithm {	
-	public static final boolean NORMALIZE_AUTHOR_NAMES = true;
+	public static final boolean SHOULD_NORMALIZE_AUTHOR_NAMES = true;
+	public static final boolean SHOULD_CLEAN_AUTHOR_NAME_CAPITALIZATIONS = true;
+	public static final boolean SHOULD_FILL_FILE_METADATA = false;
+	public static final boolean SHOULD_CLEAN_CITED_REFERENCES = true;
 	
 	private File inISIFile;
     private LogService logger;
@@ -33,27 +38,16 @@ public class PrefuseIsiReader implements Algorithm {
 
     public Data[] execute() throws AlgorithmExecutionException {
     	try {
-    		ISITableReader tableReader = new ISITableReader(this.logger, NORMALIZE_AUTHOR_NAMES);
-    		Table tableWithDups =
-    			tableReader.readTable(this.inISIFile);
-			Table preparedTable =
-				new ISICitationExtractionPreparer(this.logger).prepareForCitationExtraction(
-					tableWithDups, true);
-			
-			return createOutData(preparedTable);    		
-    	} catch (SecurityException e) {
-    		throw new AlgorithmExecutionException(e.getMessage(), e);    		
-    	} catch (FileNotFoundException e) {
-    		throw new AlgorithmExecutionException(e.getMessage(), e);    		
-    	} catch (UnsupportedEncodingException e) {
-    		throw new AlgorithmExecutionException(e.getMessage(), e);			
-		} catch (IOException e) {
-			throw new AlgorithmExecutionException(e.getMessage(), e);
-		} catch (ReadTableException e) {
-			throw new AlgorithmExecutionException(e.getMessage(), e);
-		} catch (CitationExtractionPreparationException e) {
-			throw new AlgorithmExecutionException(e.getMessage(), e);
-		}
+    		return createOutData(ISITableReaderHelper.readISIFile(
+    			this.inISIFile,
+    			this.logger,
+    			SHOULD_NORMALIZE_AUTHOR_NAMES,
+    			SHOULD_CLEAN_AUTHOR_NAME_CAPITALIZATIONS,
+    			SHOULD_FILL_FILE_METADATA,
+    			SHOULD_CLEAN_CITED_REFERENCES));
+    	} catch (ReadISIFileException e) {
+    		throw new AlgorithmExecutionException(e.getMessage(), e);
+    	}
     }
 
 	private Data[] createOutData(Table preparedTable) {
