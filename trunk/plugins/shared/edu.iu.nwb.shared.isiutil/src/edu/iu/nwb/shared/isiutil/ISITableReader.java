@@ -1,4 +1,4 @@
-package edu.iu.nwb.converter.prefuseisi.reader;
+package edu.iu.nwb.shared.isiutil;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -6,15 +6,13 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
 
-import org.cishell.framework.algorithm.AlgorithmExecutionException;
 import org.osgi.service.log.LogService;
 
 import prefuse.data.Schema;
 import prefuse.data.Table;
 import prefuse.data.Tuple;
 import prefuse.util.collections.IntIterator;
-import edu.iu.nwb.shared.isiutil.ContentType;
-import edu.iu.nwb.shared.isiutil.ISITag;
+import edu.iu.nwb.shared.isiutil.exception.ReadTableException;
 
 /**
  * 
@@ -49,18 +47,17 @@ public class ISITableReader {
 		this.normalizeAuthorNames = normalizeAuthorNames;
 	}
 
-	public Table readTable(File file)
-			throws IOException, AlgorithmExecutionException {
+	public Table readTable(File file) throws IOException, ReadTableException {
 		return readTable(file, false);
 	}
 
 	public Table readTable(File file, boolean shouldFillFileMetadata)
-			throws IOException, AlgorithmExecutionException {
+			throws IOException, ReadTableException {
 		return readTable(file, shouldFillFileMetadata, true);
 	}
 	
 	public Table readTable(File file, boolean shouldFillFileMetadata, boolean shouldClean)
-			throws IOException, AlgorithmExecutionException {
+			throws IOException, ReadTableException {
 		BufferedReader reader =
 			new BufferedReader(new InputStreamReader(new FileInputStream(file)));
 		TableData tableData = generateEmptyISITable();
@@ -123,8 +120,7 @@ public class ISITableReader {
 			String currentLine,
 			BufferedReader reader,
 			TableData tableData,
-			boolean shouldClean)
-			throws IOException, AlgorithmExecutionException {
+			boolean shouldClean) throws IOException, ReadTableException {
 		String tagValue = extractTagValue(currentLine);
 		
 		try {
@@ -149,8 +145,7 @@ public class ISITableReader {
 			String currentLine,
 			BufferedReader reader,
 			TableData tableData,
-			boolean shouldClean)
-			throws IOException, AlgorithmExecutionException {
+			boolean shouldClean) throws IOException, ReadTableException {
 		return processMultilineTagDataNormally(
 			currentTag, currentLine, reader, tableData, shouldClean);
 	}
@@ -160,8 +155,7 @@ public class ISITableReader {
 			String currentLine,
 			BufferedReader reader,
 			TableData tableData,
-			boolean shouldClean)
-			throws IOException, AlgorithmExecutionException {
+			boolean shouldClean) throws IOException, ReadTableException {
 		String separator = currentTag.separator;
 		String nextLine;
 		
@@ -185,8 +179,7 @@ public class ISITableReader {
 			String currentLine,
 			BufferedReader reader,
 			TableData table,
-			boolean shouldClean)
-			throws IOException, AlgorithmExecutionException {
+			boolean shouldClean) throws IOException, ReadTableException {
 		return processMultilineTagData(
 			currentTag, currentLine, reader, table, " ", null, shouldClean);
 	}
@@ -196,8 +189,7 @@ public class ISITableReader {
 			String currentLine,
 			BufferedReader reader,
 			TableData table,
-			boolean shouldClean)
-			throws IOException, AlgorithmExecutionException {
+			boolean shouldClean) throws IOException, ReadTableException {
 		return processMultilineTagData(
 			currentTag, currentLine, reader, table, NORMALIZED_SEPARATOR, null, shouldClean);
 	}
@@ -208,7 +200,7 @@ public class ISITableReader {
 			BufferedReader reader,
 			TableData table,
 			String separator,
-			boolean shouldClean) throws IOException, AlgorithmExecutionException {
+			boolean shouldClean) throws IOException, ReadTableException {
 		return processMultilineTagData(
 			currentTag, currentLine, reader, table, " ", separator, shouldClean);
 	}
@@ -222,7 +214,7 @@ public class ISITableReader {
 			TableData tableData,
 			String appendString,
 			String separatorString,
-			boolean shouldClean) throws IOException, AlgorithmExecutionException {
+			boolean shouldClean) throws IOException, ReadTableException {
 		currentLine = removeTag(currentLine);
 		StringBuffer stringSoFar = new StringBuffer();
 		
@@ -275,7 +267,7 @@ public class ISITableReader {
 					"currentTag name: " + currentTag.columnName + "\n"
 					+ "currentTag type: " + currentTag.type + "\n"
 					+ "allTagDataString: " + allTagDataString, e);
-			throw new AlgorithmExecutionException(
+			throw new ReadTableException(
 					"Error occurred while setting table data: "
 					+ e.getMessage(), e);
 		}

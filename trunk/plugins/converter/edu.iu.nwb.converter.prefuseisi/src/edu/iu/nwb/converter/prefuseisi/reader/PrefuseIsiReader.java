@@ -1,7 +1,6 @@
 package edu.iu.nwb.converter.prefuseisi.reader;
 
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
@@ -15,6 +14,10 @@ import org.cishell.framework.data.DataProperty;
 import org.osgi.service.log.LogService;
 
 import prefuse.data.Table;
+import edu.iu.nwb.shared.isiutil.ISICitationExtractionPreparer;
+import edu.iu.nwb.shared.isiutil.ISITableReader;
+import edu.iu.nwb.shared.isiutil.exception.CitationExtractionPreparationException;
+import edu.iu.nwb.shared.isiutil.exception.ReadTableException;
 
 public class PrefuseIsiReader implements Algorithm {	
 	public static final boolean NORMALIZE_AUTHOR_NAMES = true;
@@ -45,6 +48,10 @@ public class PrefuseIsiReader implements Algorithm {
     	} catch (UnsupportedEncodingException e) {
     		throw new AlgorithmExecutionException(e.getMessage(), e);			
 		} catch (IOException e) {
+			throw new AlgorithmExecutionException(e.getMessage(), e);
+		} catch (ReadTableException e) {
+			throw new AlgorithmExecutionException(e.getMessage(), e);
+		} catch (CitationExtractionPreparationException e) {
 			throw new AlgorithmExecutionException(e.getMessage(), e);
 		}
     }

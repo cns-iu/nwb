@@ -5,6 +5,7 @@ Bundle-SymbolicName: edu.iu.nwb.converter.prefuseisi
 Bundle-Version: 0.7.0
 Bundle-ClassPath: .
 Import-Package: edu.iu.nwb.shared.isiutil,
+ edu.iu.nwb.shared.isiutil.exception,
  org.cishell.framework;version="1.0.0",
  org.cishell.framework.algorithm;version="1.0.0",
  org.cishell.framework.data;version="1.0.0",

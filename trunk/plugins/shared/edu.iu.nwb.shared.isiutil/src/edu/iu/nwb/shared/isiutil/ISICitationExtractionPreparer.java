@@ -1,4 +1,4 @@
-package edu.iu.nwb.converter.prefuseisi.reader;
+package edu.iu.nwb.shared.isiutil;
 
 import java.util.ArrayList;
 import java.util.Hashtable;
@@ -7,16 +7,15 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import org.cishell.framework.algorithm.AlgorithmExecutionException;
+import org.cishell.utilities.SetMap;
+import org.cishell.utilities.StringUtilities;
 import org.osgi.service.log.LogService;
 
 import prefuse.data.DataTypeException;
 import prefuse.data.Table;
 import prefuse.data.Tuple;
 import prefuse.util.collections.IntIterator;
-import edu.iu.nwb.converter.prefuseisi.util.SetMap;
-import edu.iu.nwb.converter.prefuseisi.util.StringUtil;
-import edu.iu.nwb.shared.isiutil.ISITag;
+import edu.iu.nwb.shared.isiutil.exception.CitationExtractionPreparationException;
 
 public class ISICitationExtractionPreparer {
 	private static final String SELF_REFERENCE_COLUMN_NAME = "Cite Me As";
@@ -31,7 +30,7 @@ public class ISICitationExtractionPreparer {
 	}
 
 	public Table prepareForCitationExtraction(Table isiTable, boolean shouldCleanReferences)
-			throws AlgorithmExecutionException {
+			throws CitationExtractionPreparationException {
 		if (shouldCleanReferences) {
 			/*
 			 * Make journal names in papers conform to journal names used to reference
@@ -50,7 +49,7 @@ public class ISICitationExtractionPreparer {
 	}
 
 	// side-effects isiTable
-	private Table addSelfReferences(Table isiTable) throws AlgorithmExecutionException {
+	private Table addSelfReferences(Table isiTable) throws CitationExtractionPreparationException {
 		// create the self-reference column
 		isiTable.addColumn(SELF_REFERENCE_COLUMN_NAME, String.class);
 		// for each record in the table...
@@ -65,7 +64,7 @@ public class ISICitationExtractionPreparer {
 		return isiTable;
 	}
 
-	private String createSelfReference(Tuple isiRow) throws AlgorithmExecutionException {
+	private String createSelfReference(Tuple isiRow) throws CitationExtractionPreparationException {
 		List selfReferenceTokenList = new ArrayList();
 		try {
 			// standard elements
@@ -114,14 +113,16 @@ public class ISICitationExtractionPreparer {
 		} catch (DataTypeException e) {
 			// column type cannot be interpreted as a string (?)
 			// this should only happen if the column is of some bizarre unexpected type
-			throw new AlgorithmExecutionException(
+			throw new CitationExtractionPreparationException(
 					"Some elements in the tuple '" + isiRow
 					+ "' cannot be converted to a String (apparently)", e);
 		}
 		// construct self reference from tokens we just collected
-		String[] selfReferenceTokens = (String[]) selfReferenceTokenList.toArray(new String[selfReferenceTokenList
-				.size()]);
-		String selfReference = StringUtil.join(selfReferenceTokens, ISI_FIELD_SEPARATOR);
+		String[] selfReferenceTokens =
+			(String[])selfReferenceTokenList.toArray(new String[selfReferenceTokenList.size()]);
+		String selfReference =
+			StringUtilities.implodeStringArray(selfReferenceTokens, ISI_FIELD_SEPARATOR);
+
 		return selfReference;
 	}
 
@@ -294,7 +295,7 @@ public class ISICitationExtractionPreparer {
 	private static final String VOWEL = "[aeiouyAEIOUY]";
 	private static final String ALL_NUMBERS = "^[0-9]+$";
 
-	//TODO: maybe expose some of these through preferences.
+	//TODO: Maybe expose some of these through preferences.
 	private float calculateWordSimilarity(String word1, String word2, StringBuffer wordSimilarityCalculationLog) {
 		// TODO: This needs to be refactored, a.k.a this code is horrible and I know it.
 		wordSimilarityCalculationLog.append("  comparing '" + word1 + "' with '" + word2 + "'\r\n");
@@ -448,7 +449,7 @@ public class ISICitationExtractionPreparer {
 		String firstAuthor = eachAuthor[0];
 		String oneOrMoreCommasOrWhitespaces = "[,\\s]+";
 		String[] nameTokens = firstAuthor.trim().split(oneOrMoreCommasOrWhitespaces);
-		String firstAndLastNameOfFirstAuthor = StringUtil.join(nameTokens, " ");
+		String firstAndLastNameOfFirstAuthor = StringUtilities.implodeStringArray(nameTokens, " ");
 		return firstAndLastNameOfFirstAuthor;
 	}
 
