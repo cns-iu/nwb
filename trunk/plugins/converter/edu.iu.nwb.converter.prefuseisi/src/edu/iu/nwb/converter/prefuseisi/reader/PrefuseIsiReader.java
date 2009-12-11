@@ -20,30 +20,22 @@ public class PrefuseIsiReader implements Algorithm {
 	public static final boolean NORMALIZE_AUTHOR_NAMES = true;
 	
 	private File inISIFile;
-    private LogService log;
-    private ISICitationExtractionPreparer citationExtractionPreparer;
-	
-    
+    private LogService logger;
+
     public PrefuseIsiReader(Data[] data, CIShellContext context) {
     	this.inISIFile = (File) data[0].getData();
         
-     	this.log = (LogService)context.getService(LogService.class.getName());
-     	this.citationExtractionPreparer =
-     		new ISICitationExtractionPreparer(log);		
+     	this.logger = (LogService)context.getService(LogService.class.getName());
     }
 
-    
     public Data[] execute() throws AlgorithmExecutionException {
     	try {
-    		ISITableReader tableReader =
-    			new ISITableReader(this.log, NORMALIZE_AUTHOR_NAMES);
-			
+    		ISITableReader tableReader = new ISITableReader(this.logger, NORMALIZE_AUTHOR_NAMES);
     		Table tableWithDups =
-    			tableReader.readTable(new FileInputStream(inISIFile));
-		  	
-            Table table = tableWithDups;			
+    			tableReader.readTable(this.inISIFile);
 			Table preparedTable =
-				citationExtractionPreparer.prepareForCitationExtraction(table);
+				new ISICitationExtractionPreparer(this.logger).prepareForCitationExtraction(
+					tableWithDups, true);
 			
 			return createOutData(preparedTable);    		
     	} catch (SecurityException e) {
@@ -57,14 +49,11 @@ public class PrefuseIsiReader implements Algorithm {
 		}
     }
 
-
 	private Data[] createOutData(Table preparedTable) {
 		Data[] tableToReturnData = 
 			new Data[] { new BasicData(preparedTable, Table.class.getName()) };
-		tableToReturnData[0].getMetadata().put(
-				DataProperty.LABEL, "ISI Data: " + inISIFile);
-		tableToReturnData[0].getMetadata().put(
-				DataProperty.TYPE, DataProperty.TABLE_TYPE);
+		tableToReturnData[0].getMetadata().put(DataProperty.LABEL, "ISI Data: " + inISIFile);
+		tableToReturnData[0].getMetadata().put(DataProperty.TYPE, DataProperty.TABLE_TYPE);
 		
 		return tableToReturnData;
 	}

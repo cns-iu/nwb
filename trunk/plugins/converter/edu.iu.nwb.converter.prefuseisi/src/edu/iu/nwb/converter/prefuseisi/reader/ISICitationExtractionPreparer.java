@@ -19,7 +19,6 @@ import edu.iu.nwb.converter.prefuseisi.util.StringUtil;
 import edu.iu.nwb.shared.isiutil.ISITag;
 
 public class ISICitationExtractionPreparer {
-
 	private static final String SELF_REFERENCE_COLUMN_NAME = "Cite Me As";
 	private static final String ISI_AUTHOR_SEPARATOR = "|";
 	private static final String ISI_CITATION_SEPARATOR = "|";
@@ -31,10 +30,20 @@ public class ISICitationExtractionPreparer {
 		this.log = log;
 	}
 
-	public Table prepareForCitationExtraction(Table isiTable) throws AlgorithmExecutionException {
-		// make journal names in papers conform to journal names used to reference those papers
-		isiTable = cleanReferences(isiTable);
-		// create self-references (that is, a field that looks like how other papers will reference it) for each paper
+	public Table prepareForCitationExtraction(Table isiTable, boolean shouldCleanReferences)
+			throws AlgorithmExecutionException {
+		if (shouldCleanReferences) {
+			/*
+			 * Make journal names in papers conform to journal names used to reference
+			 *  those papers.
+			 */
+			isiTable = cleanReferences(isiTable);
+		}
+
+		/*
+		 * Create self-references (that is, a field that looks like how other papers will reference
+		 *  it) for each paper.
+		 */
 		isiTable = addSelfReferences(isiTable);
 
 		return isiTable;

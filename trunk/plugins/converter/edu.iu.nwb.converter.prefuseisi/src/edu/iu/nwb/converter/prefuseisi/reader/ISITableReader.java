@@ -1,6 +1,7 @@
 package edu.iu.nwb.converter.prefuseisi.reader;
 
 import java.io.BufferedReader;
+import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -10,6 +11,8 @@ import org.osgi.service.log.LogService;
 
 import prefuse.data.Schema;
 import prefuse.data.Table;
+import prefuse.data.Tuple;
+import prefuse.util.collections.IntIterator;
 import edu.iu.nwb.shared.isiutil.ContentType;
 import edu.iu.nwb.shared.isiutil.ISITag;
 
@@ -21,9 +24,12 @@ import edu.iu.nwb.shared.isiutil.ISITag;
 public class ISITableReader {	
 	public static final String NORMALIZED_SEPARATOR = "|";
 	public static final int TAG_LENGTH = 2;
+	public static final String FILE_PATH_COLUMN_NAME = "File Name";
 	
 	private LogService log;
 	private boolean normalizeAuthorNames;
+	private String fileType = "";
+	private String versionNumber = "";
 	
 	public ISITableReader(LogService log, boolean normalizeAuthorNames) {
 		this.log = log;
@@ -31,15 +37,33 @@ public class ISITableReader {
 		setNormalizeAuthorNames(normalizeAuthorNames);
 	}
 	
+	public String getFileType() {
+		return this.fileType;
+	}
+
+	public String getVersionNumber() {
+		return this.versionNumber;
+	}
+
 	public void setNormalizeAuthorNames(boolean normalizeAuthorNames) {
 		this.normalizeAuthorNames = normalizeAuthorNames;
 	}
+
+	public Table readTable(File file)
+			throws IOException, AlgorithmExecutionException {
+		return readTable(file, false);
+	}
+
+	public Table readTable(File file, boolean shouldFillFileMetadata)
+			throws IOException, AlgorithmExecutionException {
+		return readTable(file, shouldFillFileMetadata, true);
+	}
 	
-	public Table readTable(FileInputStream stream) throws IOException, AlgorithmExecutionException {
-		BufferedReader reader = new BufferedReader(new InputStreamReader(stream));
-		
+	public Table readTable(File file, boolean shouldFillFileMetadata, boolean shouldClean)
+			throws IOException, AlgorithmExecutionException {
+		BufferedReader reader =
+			new BufferedReader(new InputStreamReader(new FileInputStream(file)));
 		TableData tableData = generateEmptyISITable();
-		
 		String currentLine = moveToNextLineWithTag(reader);
 		
 		while (currentLine != null) {
@@ -47,78 +71,98 @@ public class ISITableReader {
 			ISITag currentTag = getOrCreateNewTag(currentTagName, tableData);
 			
 			 if (currentTag.equals(ISITag.END_OF_FILE)) {
-				//tag ignored
+				// Tag ignored.
 				currentLine = moveToNextLineWithTag(reader);
 			} else if (currentTag.equals(ISITag.END_OF_RECORD)) {
-				//we're done with this record
+				// We're done with this record.
 				tableData.moveOnToNextRow();
 				currentLine = moveToNextLineWithTag(reader);
 			} else if (currentTag.equals(ISITag.FILE_TYPE)) {
-				//tag ignored
+				// Tag ignored.
+				this.fileType = extractTagValue(currentLine);
 				currentLine = moveToNextLineWithTag(reader);
 			} else if (currentTag.equals(ISITag.VERSION_NUMBER)) {
-				//tag ignored
+				// Tag ignored.
+				this.versionNumber = extractTagValue(currentLine);
 				currentLine = moveToNextLineWithTag(reader);
 			} else if (currentTag.type.equals(ContentType.INTEGER)) {
-				//side-effects the table data
-				currentLine = addIntTagData(currentTag, currentLine, reader, tableData);
+				// Side-effects the table data.
+				currentLine =
+					addIntTagData(currentTag, currentLine, reader, tableData, shouldClean);
 			} else if (currentTag.type.equals(ContentType.TEXT)) {
-				//side-effects the table data
-				currentLine = addStringTagData(currentTag, currentLine, reader, tableData);
+				// Side-effects the table data.
+				currentLine = addStringTagData(
+					currentTag, currentLine, reader, tableData, shouldClean);
 			} else if (currentTag.type.equals(ContentType.MULTI_VALUE_TEXT)) {
-				//side-effects the table data
-				currentLine = addMultivalueTagData(currentTag, currentLine, reader, tableData);
+				// Side-effects the table data.
+				currentLine =
+					addMultivalueTagData(currentTag, currentLine, reader, tableData, shouldClean);
 			} else {
-				//either we had an error in the program or there is something wrong with the file.
-				log.log(LogService.LOG_WARNING,
-						"No case in ISITableReader to handle the tag "
-						+ currentTag.columnName
-						+ ".  Moving on to next tag.");
+				// Either we had an error in the program or there is something wrong with the file.
+				String logMessage =
+					"No case in ISITableReader to handle the tag " +
+					currentTag.columnName +
+					".  Moving on to next tag.";
+				log.log(LogService.LOG_WARNING, logMessage);
 				currentLine = moveToNextLineWithTag(reader);
 			}
 		}
-		
+
 		Table constructedTable = tableData.getTable();
+		
+		if (shouldFillFileMetadata) {
+			// Side-effects the table.
+			fillFileMetadata(constructedTable, file.getAbsolutePath());
+		}
+
 		return constructedTable;
 	}
 		
-	private String addIntTagData(ISITag currentTag, String currentLine,
-			BufferedReader reader, TableData tableData) throws IOException, AlgorithmExecutionException {
-		currentLine = removeTag(currentLine);
-		currentLine = currentLine.trim();
+	private String addIntTagData(
+			ISITag currentTag,
+			String currentLine,
+			BufferedReader reader,
+			TableData tableData,
+			boolean shouldClean)
+			throws IOException, AlgorithmExecutionException {
+		String tagValue = extractTagValue(currentLine);
 		
 		try {
-			int intValue = Integer.parseInt(currentLine);
-		
+			int intValue = Integer.parseInt(tagValue);
 			tableData.setInt(currentTag.columnName, intValue);
-		
 			String nextLine = moveToNextLineWithTag(reader);
+
 			return nextLine;
 		} catch (NumberFormatException e) {
-			log.log(LogService.LOG_WARNING,
-					"WARNING: Tag '" + currentTag + "' " + "with data '" 
-					+ currentLine + "' could not be parsed as an integer.  "
-					+ "Treating the data as text instead", e);
-			return addMultivalueTagData(
-					currentTag, currentLine, reader, tableData);
+			String logMessage =
+				"WARNING: Tag '" + currentTag + "' " + "with data '" +
+				tagValue + "' could not be parsed as an integer.  " +
+				"Treating the data as text instead";
+			log.log(LogService.LOG_WARNING, logMessage, e);
+
+			return addMultivalueTagData(currentTag, tagValue, reader, tableData, shouldClean);
 		}
 	}
 	
-	private String addStringTagData(ISITag currentTag, String currentLine,
-			BufferedReader reader, TableData tableData) throws IOException, AlgorithmExecutionException {
-		String nextLine;
-		
-		nextLine = processMultilineTagDataNormally(currentTag, 
-				currentLine, reader, tableData);
-		
-		return nextLine;
+	private String addStringTagData(
+			ISITag currentTag,
+			String currentLine,
+			BufferedReader reader,
+			TableData tableData,
+			boolean shouldClean)
+			throws IOException, AlgorithmExecutionException {
+		return processMultilineTagDataNormally(
+			currentTag, currentLine, reader, tableData, shouldClean);
 	}
 	
-	private String addMultivalueTagData(ISITag currentTag, String currentLine,
-			BufferedReader reader, TableData tableData) throws IOException, AlgorithmExecutionException {
-		
+	private String addMultivalueTagData(
+			ISITag currentTag,
+			String currentLine,
+			BufferedReader reader,
+			TableData tableData,
+			boolean shouldClean)
+			throws IOException, AlgorithmExecutionException {
 		String separator = currentTag.separator;
-		
 		String nextLine;
 		
 		if (separator == null) {
@@ -127,65 +171,85 @@ public class ISITableReader {
 			nextLine = moveToNextLineWithTag(reader);
 		} else if (separator.equals("\n")) {
 			nextLine = processMultilineTagDataWithNewlineSeparators(
-					currentTag, currentLine, reader, tableData);
+				currentTag, currentLine, reader, tableData, shouldClean);
 		} else {
 			nextLine = processMultilineTagDataWithNonNewlineSeparators(
-					currentTag, currentLine, reader, tableData, separator);
+				currentTag, currentLine, reader, tableData, separator, shouldClean);
 		}
 		
 		return nextLine;
 	}
 	
-	private String processMultilineTagDataNormally(ISITag currentTag, 
-			String currentLine,
-			BufferedReader reader,
-			TableData table) throws IOException, AlgorithmExecutionException {
-		return processMultilineTagData(currentTag, currentLine, reader, table, " ", null);
-	}
-	
-	private String processMultilineTagDataWithNewlineSeparators(ISITag currentTag,
-			String currentLine,
-			BufferedReader reader,
-			TableData table) throws IOException, AlgorithmExecutionException {
-		return processMultilineTagData(currentTag, currentLine, reader, table, NORMALIZED_SEPARATOR, null);
-	}
-	
-	private String processMultilineTagDataWithNonNewlineSeparators(ISITag currentTag,
+	private String processMultilineTagDataNormally(
+			ISITag currentTag,
 			String currentLine,
 			BufferedReader reader,
 			TableData table,
-			String separator) throws IOException, AlgorithmExecutionException {
-		return processMultilineTagData(currentTag, currentLine, reader, table, " ", separator);
+			boolean shouldClean)
+			throws IOException, AlgorithmExecutionException {
+		return processMultilineTagData(
+			currentTag, currentLine, reader, table, " ", null, shouldClean);
+	}
+	
+	private String processMultilineTagDataWithNewlineSeparators(
+			ISITag currentTag,
+			String currentLine,
+			BufferedReader reader,
+			TableData table,
+			boolean shouldClean)
+			throws IOException, AlgorithmExecutionException {
+		return processMultilineTagData(
+			currentTag, currentLine, reader, table, NORMALIZED_SEPARATOR, null, shouldClean);
+	}
+	
+	private String processMultilineTagDataWithNonNewlineSeparators(
+			ISITag currentTag,
+			String currentLine,
+			BufferedReader reader,
+			TableData table,
+			String separator,
+			boolean shouldClean) throws IOException, AlgorithmExecutionException {
+		return processMultilineTagData(
+			currentTag, currentLine, reader, table, " ", separator, shouldClean);
 	}
 	
 	private static final String STARTS_WITH_A_NUMBER = "\\d.*";
-	private String processMultilineTagData(ISITag currentTag,
+
+	private String processMultilineTagData(
+			ISITag currentTag,
 			String currentLine,
 			BufferedReader reader,
 			TableData tableData,
 			String appendString,
-			String separatorString) throws IOException, AlgorithmExecutionException {
-		StringBuffer stringSoFar = new StringBuffer();
-
+			String separatorString,
+			boolean shouldClean) throws IOException, AlgorithmExecutionException {
 		currentLine = removeTag(currentLine);
+		StringBuffer stringSoFar = new StringBuffer();
 		
 		do {
 			currentLine = currentLine.trim();
+
 			if (currentTag.equals(ISITag.CITED_REFERENCES) && 
 					currentLine.matches(STARTS_WITH_A_NUMBER)) {
-				//ISI sucks, and puts DOIs on the next line in a list of cited references.
-				//This is kind of a hot mess.
+				/*
+				 * ISI sucks, and puts DOIs on the next line in a list of cited references.
+				 * This is kind of a hot mess.
+				 */
 				
-				//add the DOI onto the main part of the reference with a space between.
+				// Add the DOI onto the main part of the reference with a space between.
 				stringSoFar.append(" ");
 				
-				//we don't do the tag specific handling, because it expects
-				//every entry in cited references to be a citation (this is a hack)
-				//we also skip appending the appendString so these will be treated
-				//as one entry.
+				/*
+				 * We don't do the tag specific handling, because it expects every entry in cited
+				 *  references to be a citation (this is a hack).
+				 * We also skip appending the appendString so these will be treated as one entry.
+				 */
 			} else {
-			currentLine = tagSpecificProcessing(currentTag, currentLine);
-			stringSoFar.append(appendString);
+				if (shouldClean) {
+					currentLine = tagSpecificProcessing(currentTag, currentLine);
+				}
+
+				stringSoFar.append(appendString);
 			}
 
 			stringSoFar.append(currentLine);
@@ -193,8 +257,8 @@ public class ISITableReader {
 		} while ((currentLine = moveToNextNonEmptyLine(reader)).startsWith("  "));
 		
 		/*
-		 * take off the first append character 
-		 * (so we don't have a comma before the first element, for instance)
+		 * Take off the first append character (so we don't have a comma before the first element,
+		 *  for instance).
 		 */
 		stringSoFar.delete(0, appendString.length());
 		
@@ -234,7 +298,13 @@ public class ISITableReader {
 		
 		return tag;
 	}
-	
+
+	private String extractTagValue(String lineWithTag) {
+		String lineWithoutTag = removeTag(lineWithTag);
+
+		return lineWithoutTag.trim();
+	}
+
 	private String moveToNextLineWithTag(BufferedReader reader) throws IOException {
 		String nextNonEmptyLine;
 		while ((nextNonEmptyLine = moveToNextNonEmptyLine(reader)) != null) {
@@ -311,27 +381,27 @@ public class ISITableReader {
 			}
 		} else if (tag.equals(ISITag.CITED_REFERENCES)) {
 			if (normalizeAuthorNames) {
-			//same basic idea as authors tag, except each line of 
-			//cited references contains more than just the author name.
-			//everything before the first comma is the (primary?) authors name
-			//(I have never seen more than one author listed per citation
-			//so hopefully that never happens, since this will 
-			//only do its magic on the first name.
-			
-			String[] fields = line.split(",");
-			
-			if (fields.length == 0) {
-				log.log(LogService.LOG_WARNING,
-						"Skipping this line because no fields were found: "
-						+ line);
-				return line;
-			}
-			
-			String authorField = fields[0];
-			String processedAuthorField = processAuthorLine(authorField);
-			fields[0] = processedAuthorField;
-			
-			processedLine = joinOver(fields, ",");
+				/*
+				 * Same basic idea as authors tag, except each line of  cited references contains
+				 *  more than just the author name.
+				 * Everything before the first comma is the (primary?) author's name.
+				 * (I have never seen more than one author listed per citation so hopefully that
+				 *  never happens, since this will only do its magic on the first name.
+				 */
+				String[] fields = line.split(",");
+
+				if (fields.length == 0) {
+					String logMessage = "Skipping this line because no fields were found: " + line;
+					log.log(LogService.LOG_WARNING, logMessage);
+
+					return line;
+				}
+
+				String authorField = fields[0];
+				String processedAuthorField = processAuthorLine(authorField);
+				fields[0] = processedAuthorField;
+
+				processedLine = joinOver(fields, ",");
 			} else {
 				processedLine = line;
 			}
@@ -343,14 +413,17 @@ public class ISITableReader {
 	}
 	
 	private String processAuthorLine(String line) {
-		//capitalize every word in the author name, except the last
-		//(which is most likely an abbreviation of the authors first and/or middle name)
-		
+		/*
+		 * Capitalize every word in the author name, except the last (which is most likely an
+		 *  abbreviation of the authors first and/or middle name).
+		 */
+
 		String[] words = line.split(" ");
-		for (int ii = 0; ii < words.length -1; ii++) {
+
+		for (int ii = 0; ii < words.length - 1; ii++) {
 			words[ii] = capitalizeOnlyFirstLetter(words[ii]);
 		}
-		
+
 		return joinOver(words, " ");
 	}
 	
@@ -378,43 +451,39 @@ public class ISITableReader {
 	private TableData generateEmptyISITable() {
 		Schema isiTableSchema = new Schema();
 		
-		//for each isi tag, alphabetically
+		// For each ISI tag, alphabetically:
 		ISITag[] isiTagsAlphabetically = ISITag.getTagsAlphabetically();
-		for (int i = 0; i < isiTagsAlphabetically.length; i++) {
-			ISITag tag = isiTagsAlphabetically[i];
-			
-			//add that tag to the table schema, with the table storage data type associated with the tags content type
-			//(e.g. Text -> String, Multi-value Text -> String)
 
+		for (int ii = 0; ii < isiTagsAlphabetically.length; ii++) {
+			ISITag tag = isiTagsAlphabetically[ii];
+			
+			/*
+			 * Add that tag to the table schema, with the table storage data type associated with
+			 *  the tags content type (e.g. Text -> String, Multi-value Text -> String).
+			 */
 			Class tagTableDataType = tag.type.getTableDataType();
 			
 			if (tagTableDataType != null) {
-			isiTableSchema.addColumn(tag.columnName, tagTableDataType);
+				isiTableSchema.addColumn(tag.columnName, tagTableDataType);
 			}
 		}
 
-//		//for each content type for isi tags..
-//		ContentType[] isiTagContentTypes = ContentType.getAllContentTypes();
-//		for (int ii = 0; ii < isiTagContentTypes.length; ii++) {
-//			ContentType isiTagContentType = isiTagContentTypes[ii];
-//			
-//			//for each tag corresponding to that content type...
-//			ISITag[] tagsOfThisContentType = ISITag.getTagsWithContentType(isiTagContentType);
-//			for (int jj = 0; jj < tagsOfThisContentType.length; jj++) {
-//				ISITag tag = tagsOfThisContentType[jj];
-//				
-//				Class tagTableDataType = tag.type.getTableDataType();
-//				
-//				//add that tag to the table schema, with the table storage data type associated with the tags content type
-//				//(e.g. Text -> String, Multi-value Text -> String)
-//				if (tagTableDataType != null) {
-//				isiTableSchema.addColumn(tag.columnName, tagTableDataType);
-//				}
-//			}
-//		}
-		
 		TableData emptyISITable = new TableData(isiTableSchema);
+
 		return emptyISITable;
+	}
+	
+	private void fillFileMetadata(Table table, String absoluteFilePath) {
+		table.addColumn(FILE_PATH_COLUMN_NAME, String.class, absoluteFilePath);
+		int fileTypeColumnIndex = table.getColumnNumber(ISITag.FILE_TYPE.getColumnName());
+		int versionNumberColumnIndex =
+			table.getColumnNumber(ISITag.VERSION_NUMBER.getColumnName());
+
+		for (IntIterator rows = table.rows(); rows.hasNext(); ) {
+			Tuple row = table.getTuple(rows.nextInt());
+			row.setString(fileTypeColumnIndex, this.fileType);
+			row.setString(versionNumberColumnIndex, this.versionNumber);
+		}
 	}
 	
 	private class TableData {
