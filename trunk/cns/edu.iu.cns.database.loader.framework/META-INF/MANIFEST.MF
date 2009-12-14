@@ -1,0 +1,9 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: Database Loader Framework
+Bundle-SymbolicName: edu.iu.cns.database.loader.framework
+Bundle-Version: 1.0.0
+Bundle-RequiredExecutionEnvironment: J2SE-1.5
+Export-Package: edu.iu.cns.database.loader.framework,
+ edu.iu.cns.database.loader.framework.utilities
+Import-Package: edu.iu.cns.shared.utilities
