@@ -13,10 +13,12 @@ public abstract class EntityRelationship<
 	private Dictionary<String, Object> attributes;
 
 	public EntityRelationship(
-			FromType fromPrimaryKeyContainer, ToType toPrimaryKeyContainer) {
+			FromType fromPrimaryKeyContainer,
+			ToType toPrimaryKeyContainer,
+			Dictionary<String, Object> attributes) {
 		this.fromPrimaryKeyContainer = fromPrimaryKeyContainer;
 		this.toPrimaryKeyContainer = toPrimaryKeyContainer;
-		this.attributes = createAttributes();
+		this.attributes = attributes;
 
 		// TODO: Hhmmm, is this the right thing to do?
 		this.attributes.put(FROM_PRIMARY_KEY_CONTAINER, fromPrimaryKeyContainer);
@@ -34,8 +36,6 @@ public abstract class EntityRelationship<
 	public final Dictionary<String, Object> getAttributes() {
 		return this.attributes;
 	}
-
-	public abstract Dictionary<String, Object> createAttributes();
 
 	// TODO: formInsertSQLQuery?
 }
