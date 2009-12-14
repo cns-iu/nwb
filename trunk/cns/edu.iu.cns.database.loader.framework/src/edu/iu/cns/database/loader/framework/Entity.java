@@ -11,12 +11,14 @@ public abstract class Entity implements PrimaryKeyContainer {
 	private int primaryKey;
 	private Dictionary<String, Object> attributes;
 
-	public Entity(DatabaseTableKeyGenerator keyGenerator) {
+	public Entity(DatabaseTableKeyGenerator keyGenerator, Dictionary<String, Object> attributes) {
 		this.primaryKey = keyGenerator.getNextKey();
-		this.attributes = createAttributes();
+		this.attributes = attributes;
 
-		// TODO: Hhmmm, is this the right thing to do?
-		this.attributes.put(PrimaryKeyContainer.PRIMARY_KEY, this.primaryKey);
+		/*
+		 * TODO: We DON'T want to add the primary key to attributes here because it causes any
+		 *  otherwise-equal comparison to become unequal.
+		 */
 	}
 
 	public final int getPrimaryKey() {
@@ -61,8 +63,6 @@ public abstract class Entity implements PrimaryKeyContainer {
 	}
 
 	// TODO: Override hashCode?
-
-	public abstract Dictionary<String, Object> createAttributes();
 
 	/*public String createValuesString() {
 		return StringUtilities.impl

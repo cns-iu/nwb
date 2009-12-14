@@ -3,7 +3,10 @@ package edu.iu.cns.database.loader.framework;
 import java.util.ArrayList;
 import java.util.List;
 
+import edu.iu.cns.database.loader.framework.utilities.DatabaseTableKeyGenerator;
+
 public class EntityTableType<EntityObjectType extends Entity> {
+	private DatabaseTableKeyGenerator keyGenerator = new DatabaseTableKeyGenerator();
 	private List<EntityObjectType> entities = new ArrayList<EntityObjectType>();
 	private String entityTypeName;
 	private String entityTableName;
@@ -16,14 +19,12 @@ public class EntityTableType<EntityObjectType extends Entity> {
 		this.entityTypeName = entityTypeName;
 		this.entityTableName = entityTableName;
 	}
-	
-	public int getEntityPrimaryKey(EntityObjectType entity) {
-		return entity.getPrimaryKey();
+
+	public DatabaseTableKeyGenerator getKeyGenerator() {
+		return this.keyGenerator;
 	}
 
 	public final List<? extends Entity> getEntities() {
-	// public final List<EntityObjectType> getEntities() {
-	
 		return this.entities;
 	}
 
