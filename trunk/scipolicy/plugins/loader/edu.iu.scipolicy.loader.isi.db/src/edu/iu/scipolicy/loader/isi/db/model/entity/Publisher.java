@@ -15,7 +15,9 @@ public class Publisher extends Entity {
 
 	public Publisher(
 			DatabaseTableKeyGenerator keyGenerator, String name, String city, String webAddress) {
-		super(keyGenerator);
+		super(
+			keyGenerator,
+			createAttributes(name, city, webAddress));
 		this.name = name;
 		this.city = city;
 		this.webAddress = webAddress;
@@ -33,11 +35,12 @@ public class Publisher extends Entity {
 		return this.webAddress;
 	}
 
-	public Dictionary<String, Object> createAttributes() {
+	public static Dictionary<String, Object> createAttributes(
+			String name, String city, String webAddress) {
 		Dictionary<String, Object> attributes = new Hashtable<String, Object>();
-		attributes.put(ISIDatabase.NAME, this.name);
-		attributes.put(ISIDatabase.PUBLISHER_CITY, this.city);
-		attributes.put(ISIDatabase.WEB_ADDRESS, this.webAddress);
+		attributes.put(ISIDatabase.NAME, name);
+		attributes.put(ISIDatabase.PUBLISHER_CITY, city);
+		attributes.put(ISIDatabase.WEB_ADDRESS, webAddress);
 
 		return attributes;
 	}

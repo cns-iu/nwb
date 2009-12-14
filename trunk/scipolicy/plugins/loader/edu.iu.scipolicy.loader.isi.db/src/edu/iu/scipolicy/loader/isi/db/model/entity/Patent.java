@@ -12,7 +12,7 @@ public class Patent extends Entity {
 	private String patentNumber;
 
 	public Patent(DatabaseTableKeyGenerator keyGenerator, String patentNumber) {
-		super(keyGenerator);
+		super(keyGenerator, createAttributes(patentNumber));
 		this.patentNumber = patentNumber;
 	}
 
@@ -20,9 +20,9 @@ public class Patent extends Entity {
 		return this.patentNumber;
 	}
 
-	public Dictionary<String, Object> createAttributes() {
+	public static Dictionary<String, Object> createAttributes(String patentNumber) {
 		Dictionary<String, Object> attributes = new Hashtable<String, Object>();
-		attributes.put(ISIDatabase.PATENT_NUMBER, this.patentNumber);
+		attributes.put(ISIDatabase.PATENT_NUMBER, patentNumber);
 
 		return attributes;
 	}

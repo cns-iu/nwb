@@ -18,7 +18,7 @@ public class ISIFile extends Entity {
 			String fileName,
 			String fileType,
 			String fileFormatVersionNumber) {
-		super(keyGenerator);
+		super(keyGenerator, createAttributes(fileName, fileType, fileFormatVersionNumber));
 		this.fileName = fileName;
 		this.fileType = fileType;
 		this.fileFormatVersionNumber = fileFormatVersionNumber;
@@ -36,11 +36,12 @@ public class ISIFile extends Entity {
 		return this.fileFormatVersionNumber;
 	}
 
-	public Dictionary<String, Object> createAttributes() {
+	private static Dictionary<String, Object> createAttributes(
+			String fileName, String fileType, String fileFormatVersionNumber) {
 		Dictionary<String, Object> attributes = new Hashtable<String, Object>();
-		attributes.put(ISIDatabase.FILE_NAME, this.fileName);
-		attributes.put(ISIDatabase.FILE_TYPE, this.fileType);
-		attributes.put(ISIDatabase.FILE_FORMAT_VERSION_NUMBER, this.fileFormatVersionNumber);
+		attributes.put(ISIDatabase.FILE_NAME, fileName);
+		attributes.put(ISIDatabase.FILE_TYPE, fileType);
+		attributes.put(ISIDatabase.FILE_FORMAT_VERSION_NUMBER, fileFormatVersionNumber);
 
 		return attributes;
 	}

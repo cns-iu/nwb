@@ -32,7 +32,19 @@ public class Source extends Entity {
 			String conferenceTitle,
 			String conferenceDate,
 			String conferenceDonation) {
-		super(keyGenerator);
+		super(
+			keyGenerator,
+			createAttributes(
+				fullTitle,
+				publicationType,
+				isoTitleAbbreviation,
+				bookSeriesTitle,
+				bookSeriesSubtitle,
+				issn,
+				twentyNineCharacterSourceTitleAbbreviation,
+				conferenceTitle,
+				conferenceDate,
+				conferenceDonation));
 		this.fullTitle = fullTitle;
 		this.publicationType = publicationType;
 		this.isoTitleAbbreviation = isoTitleAbbreviation;
@@ -86,20 +98,30 @@ public class Source extends Entity {
 		return this.conferenceDonation;
 	}
 
-	public Dictionary<String, Object> createAttributes() {
+	public static Dictionary<String, Object> createAttributes(
+			String fullTitle,
+			String publicationType,
+			String isoTitleAbbreviation,
+			String bookSeriesTitle,
+			String bookSeriesSubtitle,
+			String issn,
+			String twentyNineCharacterSourceTitleAbbreviation,
+			String conferenceTitle,
+			String conferenceDate,
+			String conferenceDonation) {
 		Dictionary<String, Object> attributes = new Hashtable<String, Object>();
-		attributes.put(ISIDatabase.FULL_TITLE, this.fullTitle);
-		attributes.put(ISIDatabase.PUBLICATION_TYPE, this.publicationType);
-		attributes.put(ISIDatabase.ISO_TITLE_ABBREVIATION, this.isoTitleAbbreviation);
-		attributes.put(ISIDatabase.BOOK_SERIES_TITLE, this.bookSeriesTitle);
-		attributes.put(ISIDatabase.BOOK_SERIES_SUBTITLE, this.bookSeriesSubtitle);
-		attributes.put(ISIDatabase.ISSN, this.issn);
+		attributes.put(ISIDatabase.FULL_TITLE, fullTitle);
+		attributes.put(ISIDatabase.PUBLICATION_TYPE, publicationType);
+		attributes.put(ISIDatabase.ISO_TITLE_ABBREVIATION, isoTitleAbbreviation);
+		attributes.put(ISIDatabase.BOOK_SERIES_TITLE, bookSeriesTitle);
+		attributes.put(ISIDatabase.BOOK_SERIES_SUBTITLE, bookSeriesSubtitle);
+		attributes.put(ISIDatabase.ISSN, issn);
 		attributes.put(
 			ISIDatabase.TWENTY_NINE_CHARACTER_SOURCE_TITLE_ABBREVIATION,
-			this.twentyNineCharacterSourceTitleAbbreviation);
-		attributes.put(ISIDatabase.CONFERENCE_TITLE, this.conferenceTitle);
-		attributes.put(ISIDatabase.CONFERENCE_DATE, this.conferenceDate);
-		attributes.put(ISIDatabase.CONFERENCE_DONATION, this.conferenceDonation);
+			twentyNineCharacterSourceTitleAbbreviation);
+		attributes.put(ISIDatabase.CONFERENCE_TITLE, conferenceTitle);
+		attributes.put(ISIDatabase.CONFERENCE_DATE, conferenceDate);
+		attributes.put(ISIDatabase.CONFERENCE_DONATION, conferenceDonation);
 
 		return attributes;
 	}

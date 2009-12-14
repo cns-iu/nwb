@@ -13,11 +13,11 @@ public class CitedReference extends EntityRelationship<Document, Reference> {
 	}
 
 	public Document getDocument() {
-		return getLeftEntity();
+		return getFromPrimaryKeyContainer();
 	}
 
 	public Reference getReference() {
-		return getRightEntity();
+		return getToPrimaryKeyContainer();
 	}
 
 	public Dictionary<String, Object> createAttributes() {

@@ -28,7 +28,10 @@ public class Address extends Entity {
 			String postalCode,
 			String country,
 			String rawAddress) {
-		super(keyGenerator);
+		super(
+			keyGenerator,
+			createAttributes(
+				streetAddress, city, stateOrProvince, postalCode, country, rawAddress));
 		this.streetAddress = streetAddress;
 		this.city = city;
 		this.stateOrProvince = stateOrProvince;
@@ -61,14 +64,20 @@ public class Address extends Entity {
 		return this.rawAddress;
 	}
 
-	public Dictionary<String, Object> createAttributes() {
+	public static Dictionary<String, Object> createAttributes(
+			String streetAddress,
+			String city,
+			String stateOrProvince,
+			String postalCode,
+			String country,
+			String rawAddress) {
 		Dictionary<String, Object> attributes = new Hashtable<String, Object>();
-		attributes.put(ISIDatabase.STREET_ADDRESS, this.streetAddress);
-		attributes.put(ISIDatabase.ADDRESS_CITY, this.city);
-		attributes.put(ISIDatabase.STATE_OR_PROVINCE, this.stateOrProvince);
-		attributes.put(ISIDatabase.POSTAL_CODE, this.postalCode);
-		attributes.put(ISIDatabase.COUNTRY, this.country);
-		attributes.put(ISIDatabase.RAW_ADDRESS, this.rawAddress);
+		attributes.put(ISIDatabase.STREET_ADDRESS, streetAddress);
+		attributes.put(ISIDatabase.ADDRESS_CITY, city);
+		attributes.put(ISIDatabase.STATE_OR_PROVINCE, stateOrProvince);
+		attributes.put(ISIDatabase.POSTAL_CODE, postalCode);
+		attributes.put(ISIDatabase.COUNTRY, country);
+		attributes.put(ISIDatabase.RAW_ADDRESS, rawAddress);
 
 		return attributes;
 	}

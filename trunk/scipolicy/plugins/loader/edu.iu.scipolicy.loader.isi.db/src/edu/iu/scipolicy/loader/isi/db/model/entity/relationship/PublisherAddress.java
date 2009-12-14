@@ -13,11 +13,11 @@ public class PublisherAddress extends EntityRelationship<Publisher, Address> {
 	}
 
 	public Publisher getPublisher() {
-		return getLeftEntity();
+		return getFromPrimaryKeyContainer();
 	}
 
 	public Address getAddress() {
-		return getRightEntity();
+		return getToPrimaryKeyContainer();
 	}
 
 	public Dictionary<String, Object> createAttributes() {

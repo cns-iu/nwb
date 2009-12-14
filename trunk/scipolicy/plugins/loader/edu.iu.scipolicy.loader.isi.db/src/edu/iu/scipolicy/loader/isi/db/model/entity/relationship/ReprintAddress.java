@@ -16,11 +16,11 @@ public class ReprintAddress extends EntityRelationship<Document, Address> {
 	}
 
 	public Document getDocument() {
-		return getLeftEntity();
+		return getFromPrimaryKeyContainer();
 	}
 
 	public Address getAddress() {
-		return getRightEntity();
+		return getToPrimaryKeyContainer();
 	}
 
 	public int getOrderListed() {
@@ -29,7 +29,7 @@ public class ReprintAddress extends EntityRelationship<Document, Address> {
 
 	public Dictionary<String, Object> createAttributes() {
 		Dictionary<String, Object> attributes = new Hashtable<String, Object>();
-		attributes.put(ISIDatabase.ORDER_LISTED_KEY, this.orderListed);
+		attributes.put(ISIDatabase.ORDER_LISTED, this.orderListed);
 
 		return attributes;
 	}

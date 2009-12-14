@@ -27,7 +27,9 @@ public class Reference extends Entity {
 			int year,
 			String volume,
 			int pageNumber) {
-		super(keyGenerator);
+		super(
+			keyGenerator,
+			createAttributes(referenceString, paper, person, source, year, volume, pageNumber));
 		this.referenceString = referenceString;
 		this.paper = paper;
 		this.person = person;
@@ -65,15 +67,22 @@ public class Reference extends Entity {
 		return this.pageNumber;
 	}
 
-	public Dictionary<String, Object> createAttributes() {
+	public static Dictionary<String, Object> createAttributes(
+			String referenceString,
+			Paper paper,
+			Person person,
+			Source source,
+			int year,
+			String volume,
+			int pageNumber) {
 		Dictionary<String, Object> attributes = new Hashtable<String, Object>();
-		attributes.put(ISIDatabase.REFERENCE_STRING, this.referenceString);
-		attributes.put(ISIDatabase.PAPER, this.paper);
-		attributes.put(ISIDatabase.PERSON, this.person);
-		attributes.put(ISIDatabase.SOURCE, this.source);
-		attributes.put(ISIDatabase.YEAR, this.year);
-		attributes.put(ISIDatabase.REFERENCE_VOLUME, this.volume);
-		attributes.put(ISIDatabase.PAGE_NUMBER, this.pageNumber);
+		attributes.put(ISIDatabase.REFERENCE_STRING, referenceString);
+		attributes.put(ISIDatabase.PAPER, paper);
+		attributes.put(ISIDatabase.PERSON, person);
+		attributes.put(ISIDatabase.SOURCE, source);
+		attributes.put(ISIDatabase.YEAR, year);
+		attributes.put(ISIDatabase.REFERENCE_VOLUME, volume);
+		attributes.put(ISIDatabase.PAGE_NUMBER, pageNumber);
 
 		return attributes;
 	}

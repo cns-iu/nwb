@@ -72,7 +72,7 @@ public class ISIDatabaseLoaderAlgorithm implements Algorithm {
     private Data[] convertTableToDatabase(Table table, Data inData) {
     	// Create an in-memory ISI model based off of the table.
     		
-    	ISIModel model = ISITableModelExtractor.extractModel(table);
+    	ISIModel model = new ISITableModelExtractor().extractModel(table);
 
     	// Use the ISI model to create an ISI database.
     	

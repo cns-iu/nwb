@@ -147,5 +147,5 @@ public class ISIDatabase {
 	public static final String CITED_REFERENCES_TABLE_NAME = "CITED_REFERENCES";
 
 	// Commonly-Found Entity Relationship Table Information
-	public static final String ORDER_LISTED_KEY = "order_listed";
+	public static final String ORDER_LISTED = "order_listed";
 }

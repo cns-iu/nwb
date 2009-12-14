@@ -13,11 +13,11 @@ public class CitedPatent extends EntityRelationship<Document, Patent> {
 	}
 
 	public Document getDocument() {
-		return getLeftEntity();
+		return getFromPrimaryKeyContainer();
 	}
 
 	public Patent getPatent() {
-		return getRightEntity();
+		return getToPrimaryKeyContainer();
 	}
 
 	public Dictionary<String, Object> createAttributes() {

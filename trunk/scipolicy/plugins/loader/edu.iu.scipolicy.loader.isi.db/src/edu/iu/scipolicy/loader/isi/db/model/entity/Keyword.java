@@ -13,7 +13,7 @@ public class Keyword extends Entity {
 	private String keyword;
 
 	public Keyword(DatabaseTableKeyGenerator keyGenerator, String type, String keyword) {
-		super(keyGenerator);
+		super(keyGenerator, createAttributes(type, keyword));
 		this.type = type;
 		this.keyword = keyword;
 	}
@@ -26,10 +26,10 @@ public class Keyword extends Entity {
 		return this.keyword;
 	}
 
-	public Dictionary<String, Object> createAttributes() {
+	public static Dictionary<String, Object> createAttributes(String type, String keyword) {
 		Dictionary<String, Object> attributes = new Hashtable<String, Object>();
-		attributes.put(ISIDatabase.TYPE, this.type);
-		attributes.put(ISIDatabase.KEYWORD, this.keyword);
+		attributes.put(ISIDatabase.TYPE, type);
+		attributes.put(ISIDatabase.KEYWORD, keyword);
 
 		return attributes;
 	}

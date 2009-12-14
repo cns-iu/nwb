@@ -1,12 +1,13 @@
 package edu.iu.scipolicy.loader.isi.db.utilities;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import prefuse.data.Table;
-import edu.iu.cns.database.loader.framework.Entity;
+import prefuse.data.Tuple;
+import prefuse.util.collections.IntIterator;
 import edu.iu.cns.database.loader.framework.EntityRelationshipTableType;
 import edu.iu.cns.database.loader.framework.EntityTableType;
+import edu.iu.cns.database.loader.framework.utilities.DatabaseTableKeyGenerator;
+import edu.iu.nwb.shared.isiutil.ISITableReader;
+import edu.iu.nwb.shared.isiutil.ISITag;
 import edu.iu.scipolicy.loader.isi.db.ISIDatabase;
 import edu.iu.scipolicy.loader.isi.db.model.ISIModel;
 import edu.iu.scipolicy.loader.isi.db.model.entity.Address;
@@ -29,86 +30,93 @@ import edu.iu.scipolicy.loader.isi.db.model.entity.relationship.ReprintAddress;
 import edu.iu.scipolicy.loader.isi.db.model.entity.relationship.ResearchAddress;
 
 public class ISITableModelExtractor {
-	public static ISIModel extractModel(Table table) {
-		/*
-		 * For each type of entity (ISI File, Publisher, Source, Reference, Address, Keyword,
-		 *  Person, Patent, and Document), create a master list of entities.
-		 */
+	/*
+	 * For each type of entity (ISI File, Publisher, Source, Reference, Address, Keyword,
+	 *  Person, Patent, and Document), create a master list of entities.
+	 */
 
-		EntityTableType<ISIFile> isiFiles = new EntityTableType<ISIFile>(
-			ISIDatabase.ISI_FILE_TYPE_NAME, ISIDatabase.ISI_FILE_TABLE_NAME);
-		EntityTableType<Publisher> publishers = new EntityTableType<Publisher>(
-			ISIDatabase.PUBLISHER_TYPE_NAME, ISIDatabase.PUBLISHER_TABLE_NAME);
-		EntityTableType<Source> sources = new EntityTableType<Source>(
-			ISIDatabase.SOURCE_TYPE_NAME, ISIDatabase.SOURCE_TABLE_NAME);
-		EntityTableType<Reference> references = new EntityTableType<Reference>(
-			ISIDatabase.REFERENCE_TYPE_NAME, ISIDatabase.REFERENCE_TABLE_NAME);
-		EntityTableType<Address> addresses = new EntityTableType<Address>(
-			ISIDatabase.ADDRESS_TYPE_NAME, ISIDatabase.ADDRESS_TABLE_NAME);
-		EntityTableType<Keyword> keywords = new EntityTableType<Keyword>(
-			ISIDatabase.KEYWORD_TYPE_NAME, ISIDatabase.KEYWORD_TABLE_NAME);
-		EntityTableType<Person> people = new EntityTableType<Person>(
-			ISIDatabase.PERSON_TYPE_NAME, ISIDatabase.PERSON_TABLE_NAME);
-		EntityTableType<Patent> patents = new EntityTableType<Patent>(
-			ISIDatabase.PATENT_TYPE_NAME, ISIDatabase.PATENT_TABLE_NAME);
-		EntityTableType<Document> documents = new EntityTableType<Document>(
-			ISIDatabase.DOCUMENT_TYPE_NAME, ISIDatabase.DOCUMENT_TABLE_NAME);
+	private EntityTableType<ISIFile> isiFiles = new EntityTableType<ISIFile>(
+		ISIDatabase.ISI_FILE_TYPE_NAME, ISIDatabase.ISI_FILE_TABLE_NAME);
+	private EntityTableType<Publisher> publishers = new EntityTableType<Publisher>(
+		ISIDatabase.PUBLISHER_TYPE_NAME, ISIDatabase.PUBLISHER_TABLE_NAME);
+	private EntityTableType<Source> sources = new EntityTableType<Source>(
+		ISIDatabase.SOURCE_TYPE_NAME, ISIDatabase.SOURCE_TABLE_NAME);
+	private EntityTableType<Reference> references = new EntityTableType<Reference>(
+		ISIDatabase.REFERENCE_TYPE_NAME, ISIDatabase.REFERENCE_TABLE_NAME);
+	private EntityTableType<Address> addresses = new EntityTableType<Address>(
+		ISIDatabase.ADDRESS_TYPE_NAME, ISIDatabase.ADDRESS_TABLE_NAME);
+	private EntityTableType<Keyword> keywords = new EntityTableType<Keyword>(
+		ISIDatabase.KEYWORD_TYPE_NAME, ISIDatabase.KEYWORD_TABLE_NAME);
+	private EntityTableType<Person> people = new EntityTableType<Person>(
+		ISIDatabase.PERSON_TYPE_NAME, ISIDatabase.PERSON_TABLE_NAME);
+	private EntityTableType<Patent> patents = new EntityTableType<Patent>(
+		ISIDatabase.PATENT_TYPE_NAME, ISIDatabase.PATENT_TABLE_NAME);
+	private EntityTableType<Document> documents = new EntityTableType<Document>(
+		ISIDatabase.DOCUMENT_TYPE_NAME, ISIDatabase.DOCUMENT_TABLE_NAME);
 
-		/*
-		 * Create all of the entity joining tables (Publisher Addresses, Reprint Addresses,
-		 *  Research Addresses, Document Keywords, Authors, Editors, Cited Patents, Document
-		 *  Occurrences, and Cited References).
-		 */
+	/*
+	 * Create all of the entity joining tables (Publisher Addresses, Reprint Addresses,
+	 *  Research Addresses, Document Keywords, Authors, Editors, Cited Patents, Document
+	 *  Occurrences, and Cited References).
+	 */
 
-		EntityRelationshipTableType<PublisherAddress> publisherAddresses =
-			new EntityRelationshipTableType<PublisherAddress>(
-				ISIDatabase.PUBLISHER_ADDRESSES_TYPE_NAME,
-				ISIDatabase.PUBLISHER_ADDRESSES_TABLE_NAME);
+	EntityRelationshipTableType<PublisherAddress> publisherAddresses =
+		new EntityRelationshipTableType<PublisherAddress>(
+			ISIDatabase.PUBLISHER_ADDRESSES_TYPE_NAME,
+			ISIDatabase.PUBLISHER_ADDRESSES_TABLE_NAME);
 
-		EntityRelationshipTableType<ReprintAddress> reprintAddresses =
-			new EntityRelationshipTableType<ReprintAddress>(
-				ISIDatabase.REPRINT_ADDRESSES_TYPE_NAME,
-				ISIDatabase.REPRINT_ADDRESSES_TABLE_NAME);
+	EntityRelationshipTableType<ReprintAddress> reprintAddresses =
+		new EntityRelationshipTableType<ReprintAddress>(
+			ISIDatabase.REPRINT_ADDRESSES_TYPE_NAME,
+			ISIDatabase.REPRINT_ADDRESSES_TABLE_NAME);
 
-		EntityRelationshipTableType<ResearchAddress> researchAddresses =
-			new EntityRelationshipTableType<ResearchAddress>(
-				ISIDatabase.RESEARCH_ADDRESSES_TYPE_NAME,
-				ISIDatabase.RESEARCH_ADDRESSES_TABLE_NAME);
+	EntityRelationshipTableType<ResearchAddress> researchAddresses =
+		new EntityRelationshipTableType<ResearchAddress>(
+			ISIDatabase.RESEARCH_ADDRESSES_TYPE_NAME,
+			ISIDatabase.RESEARCH_ADDRESSES_TABLE_NAME);
 
-		EntityRelationshipTableType<DocumentKeyword> documentKeywords =
-			new EntityRelationshipTableType<DocumentKeyword>(
-				ISIDatabase.DOCUMENT_KEYWORDS_TYPE_NAME,
-				ISIDatabase.DOCUMENT_KEYWORDS_TABLE_NAME);
+	EntityRelationshipTableType<DocumentKeyword> documentKeywords =
+		new EntityRelationshipTableType<DocumentKeyword>(
+			ISIDatabase.DOCUMENT_KEYWORDS_TYPE_NAME,
+			ISIDatabase.DOCUMENT_KEYWORDS_TABLE_NAME);
 
-		EntityRelationshipTableType<Author> authors =
-			new EntityRelationshipTableType<Author>(
-				ISIDatabase.AUTHORS_TYPE_NAME,
-				ISIDatabase.AUTHORS_TABLE_NAME);
+	EntityRelationshipTableType<Author> authors =
+		new EntityRelationshipTableType<Author>(
+			ISIDatabase.AUTHORS_TYPE_NAME,
+			ISIDatabase.AUTHORS_TABLE_NAME);
 
-		EntityRelationshipTableType<Editor> editors =
-			new EntityRelationshipTableType<Editor>(
-				ISIDatabase.EDITORS_TYPE_NAME,
-				ISIDatabase.EDITORS_TABLE_NAME);
+	EntityRelationshipTableType<Editor> editors =
+		new EntityRelationshipTableType<Editor>(
+			ISIDatabase.EDITORS_TYPE_NAME,
+			ISIDatabase.EDITORS_TABLE_NAME);
 
-		EntityRelationshipTableType<CitedPatent> citedPatents =
-			new EntityRelationshipTableType<CitedPatent>(
-				ISIDatabase.CITED_PATENTS_TYPE_NAME,
-				ISIDatabase.CITED_PATENTS_TABLE_NAME);
+	EntityRelationshipTableType<CitedPatent> citedPatents =
+		new EntityRelationshipTableType<CitedPatent>(
+			ISIDatabase.CITED_PATENTS_TYPE_NAME,
+			ISIDatabase.CITED_PATENTS_TABLE_NAME);
 
-		EntityRelationshipTableType<DocumentOccurrence> documentOccurrences =
-			new EntityRelationshipTableType<DocumentOccurrence>(
-				ISIDatabase.DOCUMENT_OCCURRENCES_TYPE_NAME,
-				ISIDatabase.DOCUMENT_OCCURRENCES_TABLE_NAME);
+	EntityRelationshipTableType<DocumentOccurrence> documentOccurrences =
+		new EntityRelationshipTableType<DocumentOccurrence>(
+			ISIDatabase.DOCUMENT_OCCURRENCES_TYPE_NAME,
+			ISIDatabase.DOCUMENT_OCCURRENCES_TABLE_NAME);
 
-		EntityRelationshipTableType<CitedReference> citedReferences =
-			new EntityRelationshipTableType<CitedReference>(
-				ISIDatabase.CITED_REFERENCES_TYPE_NAME,
-				ISIDatabase.CITED_REFERENCES_TABLE_NAME);
+	EntityRelationshipTableType<CitedReference> citedReferences =
+		new EntityRelationshipTableType<CitedReference>(
+			ISIDatabase.CITED_REFERENCES_TYPE_NAME,
+			ISIDatabase.CITED_REFERENCES_TABLE_NAME);
 
+	/**
+	 * This is an instance method instead of a static method so all of the tables can be instance
+	 *  variables and thus don't clutter up this method.
+	 */
+	public ISIModel extractModel(Table table) {
 		// For each record/row in the table:
-			// Extract all entities and relationships out of the row.
+
+		for (IntIterator rows = table.rows(); rows.hasNext(); ) {
+			Tuple row = table.getTuple(rows.nextInt());
 
 			/*
+			 * Extract all entities and relationships out of the row.
 			 * Extract ISI File.
 			 * Extract Publisher.
 			 * Extract Source.
@@ -129,6 +137,9 @@ public class ISITableModelExtractor {
 			 * Extract Cited References, and add relationships to citedReferences.
 			 */
 
+			ISIFile isiFile = extractISIFile(row);
+			Publisher publisher = extractPublisher(row);
+
 			// For each of the entities just extracted:
 				// Check if it is a duplicate.
 					/*
@@ -136,22 +147,28 @@ public class ISITableModelExtractor {
 					 * Update any references to it to refer to the entity it is duplicate with.
 					 * Remove it.
 					 */
+		}
 
 		// Given all of the master lists of entities, construct an ISIModel and return it.
 
 		// Create new ISIModel, passing in all entity tables and relationship tables.
+
+		return null;
+	}
+
+	private ISIFile extractISIFile(Tuple row) {
+		String fileName = row.getString(ISITableReader.FILE_PATH_COLUMN_NAME);
+		String fileType = row.getString(ISITag.FILE_TYPE.getColumnName());
+		String versionNumber = row.getString(ISITag.VERSION_NUMBER.getColumnName());
 		
-		List<EntityTableType<? extends Entity> > tables =
-			new ArrayList<EntityTableType<? extends Entity> >();
-		tables.add(isiFiles);
-		tables.add(publishers);
+		ISIFile isiFile =
+			new ISIFile(this.isiFiles.getKeyGenerator(), fileName, fileType, versionNumber);
 
-		for (EntityTableType<? extends Entity> t : tables) {
-			List<? extends Entity> entities = t.getEntities();
-			/*String query = formQuery(entities);
-			runQuery(query);*/
-		}
+		return this.isiFiles.addEntity(isiFile);
+	}
 
+	private Publisher extractPublisher(Tuple row) {
+		
 		return null;
 	}
 }

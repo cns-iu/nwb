@@ -13,11 +13,11 @@ public class DocumentOccurrence extends EntityRelationship<Document, ISIFile> {
 	}
 
 	public Document getDocument() {
-		return getLeftEntity();
+		return getFromPrimaryKeyContainer();
 	}
 
 	public ISIFile getISIFile() {
-		return getRightEntity();
+		return getToPrimaryKeyContainer();
 	}
 
 	public Dictionary<String, Object> createAttributes() {

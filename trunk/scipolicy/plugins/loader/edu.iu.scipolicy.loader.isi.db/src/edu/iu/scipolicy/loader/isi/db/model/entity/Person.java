@@ -26,7 +26,16 @@ public class Person extends Entity {
 			String middleInitial,
 			String unsplitName,
 			String fullName) {
-		super(keyGenerator);
+		super(
+			keyGenerator,
+			createAttributes(
+				personalName,
+				additionalName,
+				familyName,
+				firstInitial,
+				middleInitial,
+				unsplitName,
+				fullName));
 		this.personalName = personalName;
 		this.additionalName = additionalName;
 		this.familyName = familyName;
@@ -64,15 +73,22 @@ public class Person extends Entity {
 		return this.fullName;
 	}
 
-	public Dictionary<String, Object> createAttributes() {
+	public static Dictionary<String, Object> createAttributes(
+			String personalName,
+			String additionalName,
+			String familyName,
+			String firstInitial,
+			String middleInitial,
+			String unsplitName,
+			String fullName) {
 		Dictionary<String, Object> attributes = new Hashtable<String, Object>();
-		attributes.put(ISIDatabase.PERSONAL_NAME, this.personalName);
-		attributes.put(ISIDatabase.ADDITIONAL_NAME, this.additionalName);
-		attributes.put(ISIDatabase.FAMILY_NAME, this.familyName);
-		attributes.put(ISIDatabase.FIRST_INITIAL, this.firstInitial);
-		attributes.put(ISIDatabase.MIDDLE_INITIAL, this.middleInitial);
-		attributes.put(ISIDatabase.UNSPLIT_NAME, this.unsplitName);
-		attributes.put(ISIDatabase.FULL_NAME, this.fullName);
+		attributes.put(ISIDatabase.PERSONAL_NAME, personalName);
+		attributes.put(ISIDatabase.ADDITIONAL_NAME, additionalName);
+		attributes.put(ISIDatabase.FAMILY_NAME, familyName);
+		attributes.put(ISIDatabase.FIRST_INITIAL, firstInitial);
+		attributes.put(ISIDatabase.MIDDLE_INITIAL, middleInitial);
+		attributes.put(ISIDatabase.UNSPLIT_NAME, unsplitName);
+		attributes.put(ISIDatabase.FULL_NAME, fullName);
 
 		return attributes;
 	}

@@ -57,7 +57,31 @@ public class Document extends Entity {
 			String isiDocumentDeliveryNumber,
 			String isbn,
 			String emailAddress) {
-		super(keyGenerator);
+		super(
+			keyGenerator,
+			createAttributes(
+				digitalObjectIdentifier,
+				title,
+				articleNumber,
+				firstAuthor,
+				language,
+				documentType,
+				citedReferenceCount,
+				abstractText,
+				timesCited,
+				beginningPage,
+				endingPage,
+				pageCount,
+				isiUniqueArticleIdentifier,
+				publicationYear,
+				publicationDate,
+				volume,
+				issue,
+				supplement,
+				specialIssue,
+				isiDocumentDeliveryNumber,
+				isbn,
+				emailAddress));
 		this.digitalObjectIdentifier = digitalObjectIdentifier;
 		this.title = title;
 		this.articleNumber = articleNumber;
@@ -146,6 +170,10 @@ public class Document extends Entity {
 		return this.volume;
 	}
 
+	public String getIssue() {
+		return this.issue;
+	}
+
 	public String getSupplement() {
 		return this.supplement;
 	}
@@ -166,30 +194,52 @@ public class Document extends Entity {
 		return this.emailAddress;
 	}
 
-	public Dictionary<String, Object> createAttributes() {
+	public static Dictionary<String, Object> createAttributes(
+			String digitalObjectIdentifier,
+			String title,
+			String articleNumber,
+			Person firstAuthor,
+			String language,
+			String documentType,
+			int citedReferenceCount,
+			String abstractText,
+			int timesCited,
+			String beginningPage,
+			String endingPage,
+			int pageCount,
+			String isiUniqueArticleIdentifier,
+			int publicationYear,
+			Date publicationDate,
+			String volume,
+			String issue,
+			String supplement,
+			String specialIssue,
+			String isiDocumentDeliveryNumber,
+			String isbn,
+			String emailAddress) {
 		Dictionary<String, Object> attributes = new Hashtable<String, Object>();
-		attributes.put(ISIDatabase.DIGITAL_OBJECT_IDENTIFIER, this.digitalObjectIdentifier);
-		attributes.put(ISIDatabase.TITLE, this.title);
-		attributes.put(ISIDatabase.ARTICLE_NUMBER, this.articleNumber);
-		attributes.put(ISIDatabase.FIRST_AUTHOR, this.firstAuthor);
-		attributes.put(ISIDatabase.LANGUAGE, this.language);
-		attributes.put(ISIDatabase.DOCUMENT_TYPE, this.documentType);
-		attributes.put(ISIDatabase.CITED_REFERENCE_COUNT, this.citedReferenceCount);
-		attributes.put(ISIDatabase.ABSTRACT_TEXT, this.abstractText);
-		attributes.put(ISIDatabase.TIMES_CITED, this.timesCited);
-		attributes.put(ISIDatabase.BEGINNING_PAGE, this.beginningPage);
-		attributes.put(ISIDatabase.ENDING_PAGE, this.endingPage);
-		attributes.put(ISIDatabase.PAGE_COUNT, this.pageCount);
-		attributes.put(ISIDatabase.ISI_UNIQUE_ARTICLE_IDENTIFIER, this.isiUniqueArticleIdentifier);
-		attributes.put(ISIDatabase.PUBLICATION_YEAR, this.publicationYear);
-		attributes.put(ISIDatabase.PUBLICATION_DATE, this.publicationDate);
-		attributes.put(ISIDatabase.DOCUMENT_VOLUME, this.volume);
-		attributes.put(ISIDatabase.ISSUE, this.issue);
-		attributes.put(ISIDatabase.SUPPLEMENT, this.supplement);
-		attributes.put(ISIDatabase.SPECIAL_ISSUE, this.specialIssue);
-		attributes.put(ISIDatabase.ISI_DOCUMENT_DELIVERY_NUMBER, this.isiDocumentDeliveryNumber);
-		attributes.put(ISIDatabase.ISBN, this.isbn);
-		attributes.put(ISIDatabase.EMAIL_ADDRESS, this.emailAddress);
+		attributes.put(ISIDatabase.DIGITAL_OBJECT_IDENTIFIER, digitalObjectIdentifier);
+		attributes.put(ISIDatabase.TITLE, title);
+		attributes.put(ISIDatabase.ARTICLE_NUMBER, articleNumber);
+		attributes.put(ISIDatabase.FIRST_AUTHOR, firstAuthor);
+		attributes.put(ISIDatabase.LANGUAGE, language);
+		attributes.put(ISIDatabase.DOCUMENT_TYPE, documentType);
+		attributes.put(ISIDatabase.CITED_REFERENCE_COUNT, citedReferenceCount);
+		attributes.put(ISIDatabase.ABSTRACT_TEXT, abstractText);
+		attributes.put(ISIDatabase.TIMES_CITED, timesCited);
+		attributes.put(ISIDatabase.BEGINNING_PAGE, beginningPage);
+		attributes.put(ISIDatabase.ENDING_PAGE, endingPage);
+		attributes.put(ISIDatabase.PAGE_COUNT, pageCount);
+		attributes.put(ISIDatabase.ISI_UNIQUE_ARTICLE_IDENTIFIER, isiUniqueArticleIdentifier);
+		attributes.put(ISIDatabase.PUBLICATION_YEAR, publicationYear);
+		attributes.put(ISIDatabase.PUBLICATION_DATE, publicationDate);
+		attributes.put(ISIDatabase.DOCUMENT_VOLUME, volume);
+		attributes.put(ISIDatabase.ISSUE, issue);
+		attributes.put(ISIDatabase.SUPPLEMENT, supplement);
+		attributes.put(ISIDatabase.SPECIAL_ISSUE, specialIssue);
+		attributes.put(ISIDatabase.ISI_DOCUMENT_DELIVERY_NUMBER, isiDocumentDeliveryNumber);
+		attributes.put(ISIDatabase.ISBN, isbn);
+		attributes.put(ISIDatabase.EMAIL_ADDRESS, emailAddress);
 
 		return attributes;
 	}
