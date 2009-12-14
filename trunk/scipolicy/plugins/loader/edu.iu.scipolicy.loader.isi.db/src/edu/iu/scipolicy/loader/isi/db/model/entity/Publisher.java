@@ -12,6 +12,7 @@ public class Publisher extends Entity {
 	private String name;
 	private String city;
 	private String webAddress;
+	private Source source;
 
 	public Publisher(
 			DatabaseTableKeyGenerator keyGenerator, String name, String city, String webAddress) {
@@ -33,6 +34,27 @@ public class Publisher extends Entity {
 
 	public String getWebAddress() {
 		return this.webAddress;
+	}
+
+	public Source getSource() {
+		return this.source;
+	}
+
+	public void setSource(Source source) {
+		this.source = source;
+		// TODO: Figure out a better way to do this?
+		getAttributes().put(ISIDatabase.PUBLISHER_SOURCE, this.source);
+	}
+
+	public boolean equals(Entity otherEntity) {
+		if (this == otherEntity) {
+			return true;
+		} else if (!(otherEntity instanceof Publisher)) {
+			return false;
+		}
+
+		// TODO: Compare by ISSN?
+		return super.equals(otherEntity);
 	}
 
 	public static Dictionary<String, Object> createAttributes(

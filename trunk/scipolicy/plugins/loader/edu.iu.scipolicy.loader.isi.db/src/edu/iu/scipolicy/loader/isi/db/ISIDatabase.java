@@ -39,6 +39,7 @@ public class ISIDatabase {
 	public static final String NAME = "name";
 	public static final String PUBLISHER_CITY = "publisher_city";
 	public static final String WEB_ADDRESS = "web_address";
+	public static final String PUBLISHER_SOURCE = "publisher_source";
 
 	// Source Entity Information
 	public static final String FULL_TITLE = "full_title";

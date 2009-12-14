@@ -12,7 +12,7 @@ public class DocumentKeyword extends EntityRelationship<Document, Keyword> {
 	private int orderListed;
 
 	public DocumentKeyword(Document document, Keyword keyword, int orderListed) {
-		super(document, keyword);
+		super(document, keyword, createAttributes(orderListed));
 		this.orderListed = orderListed;
 	}
 
@@ -28,9 +28,9 @@ public class DocumentKeyword extends EntityRelationship<Document, Keyword> {
 		return this.orderListed;
 	}
 
-	public Dictionary<String, Object> createAttributes() {
+	public static Dictionary<String, Object> createAttributes(int orderListed) {
 		Dictionary<String, Object> attributes = new Hashtable<String, Object>();
-		attributes.put(ISIDatabase.ORDER_LISTED, this.orderListed);
+		attributes.put(ISIDatabase.ORDER_LISTED, orderListed);
 
 		return attributes;
 	}

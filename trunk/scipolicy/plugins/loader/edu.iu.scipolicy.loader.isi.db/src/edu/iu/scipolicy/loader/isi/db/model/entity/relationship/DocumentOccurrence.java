@@ -9,7 +9,7 @@ import edu.iu.scipolicy.loader.isi.db.model.entity.ISIFile;
 
 public class DocumentOccurrence extends EntityRelationship<Document, ISIFile> {
 	public DocumentOccurrence(Document document, ISIFile isiFile) {
-		super(document, isiFile);
+		super(document, isiFile, createAttributes());
 	}
 
 	public Document getDocument() {
@@ -20,7 +20,7 @@ public class DocumentOccurrence extends EntityRelationship<Document, ISIFile> {
 		return getToPrimaryKeyContainer();
 	}
 
-	public Dictionary<String, Object> createAttributes() {
+	public static Dictionary<String, Object> createAttributes() {
 		return new Hashtable<String, Object>();
 	}
 }

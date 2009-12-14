@@ -1,5 +1,7 @@
 package edu.iu.scipolicy.loader.isi.db.utilities;
 
+import org.cishell.utilities.StringUtilities;
+
 import prefuse.data.Table;
 import prefuse.data.Tuple;
 import prefuse.util.collections.IntIterator;
@@ -120,7 +122,7 @@ public class ISITableModelExtractor {
 			 * Extract ISI File.
 			 * Extract Publisher.
 			 * Extract Source.
-			 * Update references between Publisher and Source.
+			 * Update reference from Publisher to Source.
 			 * Extract Reference.
 			 * Update references between Source and Reference.
 			 * Extract Document.
@@ -139,6 +141,10 @@ public class ISITableModelExtractor {
 
 			ISIFile isiFile = extractISIFile(row);
 			Publisher publisher = extractPublisher(row);
+			Source source = extractSource(row);
+			publisher.setSource(source);
+			Reference reference = extractReference(row);
+			System.err.println("source: " + source);
 
 			// For each of the entities just extracted:
 				// Check if it is a duplicate.
@@ -157,10 +163,12 @@ public class ISITableModelExtractor {
 	}
 
 	private ISIFile extractISIFile(Tuple row) {
-		String fileName = row.getString(ISITableReader.FILE_PATH_COLUMN_NAME);
-		String fileType = row.getString(ISITag.FILE_TYPE.getColumnName());
-		String versionNumber = row.getString(ISITag.VERSION_NUMBER.getColumnName());
-		
+		String fileName =
+			StringUtilities.simpleClean(row.getString(ISITableReader.FILE_PATH_COLUMN_NAME));
+		String fileType =
+			StringUtilities.simpleClean(row.getString(ISITag.FILE_TYPE.getColumnName()));
+		String versionNumber =
+			StringUtilities.simpleClean(row.getString(ISITag.VERSION_NUMBER.getColumnName()));
 		ISIFile isiFile =
 			new ISIFile(this.isiFiles.getKeyGenerator(), fileName, fileType, versionNumber);
 
@@ -168,7 +176,56 @@ public class ISITableModelExtractor {
 	}
 
 	private Publisher extractPublisher(Tuple row) {
-		
+		String name =
+			StringUtilities.simpleClean(row.getString(ISITag.PUBLISHER.getColumnName()));
+		String city =
+			StringUtilities.simpleClean(row.getString(ISITag.PUBLISHER_CITY.getColumnName()));
+		String webAddress = StringUtilities.simpleClean(
+			row.getString(ISITag.PUBLISHER_WEB_ADDRESS.getColumnName()));
+		Publisher publisher =
+			new Publisher(this.publishers.getKeyGenerator(), name, city, webAddress);
+
+		return this.publishers.addEntity(publisher);
+	}
+
+	private Source extractSource(Tuple row) {
+		String fullTitle =
+			StringUtilities.simpleClean(row.getString(ISITag.FULL_JOURNAL_TITLE.getColumnName()));
+		String publicationType =
+			StringUtilities.simpleClean(row.getString(ISITag.PUBLICATION_TYPE.getColumnName()));
+		String isoTitleAbbreviation = StringUtilities.simpleClean(
+			row.getString(ISITag.ISO_JOURNAL_TITLE_ABBREVIATION.getColumnName()));
+		String bookSeriesTitle =
+			StringUtilities.simpleClean(row.getString(ISITag.BOOK_SERIES_TITLE.getColumnName()));
+		String bookSeriesSubtitle =
+			StringUtilities.simpleClean(row.getString(ISITag.BOOK_SERIES_SUBTITLE.getColumnName()));
+		String issn =
+			StringUtilities.simpleClean(row.getString(ISITag.ISSN.getColumnName()));
+		String twentyNineCharacterSourceTitleAbbreviation = StringUtilities.simpleClean(
+			row.getString(ISITag.TWENTY_NINE_CHAR_JOURNAL_ABBREVIATION.getColumnName()));
+		// TODO: ?
+		String conferenceTitle = "";
+		String conferenceDate = "";
+		String conferenceDonation = "";
+		Source source = new Source(
+			this.sources.getKeyGenerator(),
+			fullTitle,
+			publicationType,
+			isoTitleAbbreviation,
+			bookSeriesTitle,
+			bookSeriesSubtitle,
+			issn,
+			twentyNineCharacterSourceTitleAbbreviation,
+			conferenceTitle,
+			conferenceDate,
+			conferenceDonation);
+
+		return this.sources.addEntity(source);
+	}
+
+	private Reference extractReference(Tuple row) {
+		/*String referenceString =
+			StringUtilities.simpleClean(row.getString(ISITag.*/
 		return null;
 	}
 }

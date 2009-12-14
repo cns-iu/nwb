@@ -9,7 +9,7 @@ import edu.iu.scipolicy.loader.isi.db.model.entity.Patent;
 
 public class CitedPatent extends EntityRelationship<Document, Patent> {
 	public CitedPatent(Document document, Patent patent) {
-		super(document, patent);
+		super(document, patent, createAttributes());
 	}
 
 	public Document getDocument() {
@@ -20,7 +20,7 @@ public class CitedPatent extends EntityRelationship<Document, Patent> {
 		return getToPrimaryKeyContainer();
 	}
 
-	public Dictionary<String, Object> createAttributes() {
+	public static Dictionary<String, Object> createAttributes() {
 		return new Hashtable<String, Object>();
 	}
 }

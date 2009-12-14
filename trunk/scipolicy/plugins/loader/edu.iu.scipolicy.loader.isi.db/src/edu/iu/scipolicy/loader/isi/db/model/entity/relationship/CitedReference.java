@@ -9,7 +9,7 @@ import edu.iu.scipolicy.loader.isi.db.model.entity.Reference;
 
 public class CitedReference extends EntityRelationship<Document, Reference> {
 	public CitedReference(Document document, Reference reference) {
-		super(document, reference);
+		super(document, reference, createAttributes());
 	}
 
 	public Document getDocument() {
@@ -20,7 +20,7 @@ public class CitedReference extends EntityRelationship<Document, Reference> {
 		return getToPrimaryKeyContainer();
 	}
 
-	public Dictionary<String, Object> createAttributes() {
+	public static Dictionary<String, Object> createAttributes() {
 		return new Hashtable<String, Object>();
 	}
 }

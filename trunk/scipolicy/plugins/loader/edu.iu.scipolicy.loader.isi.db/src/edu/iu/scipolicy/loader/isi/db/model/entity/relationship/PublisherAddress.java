@@ -9,7 +9,7 @@ import edu.iu.scipolicy.loader.isi.db.model.entity.Publisher;
 
 public class PublisherAddress extends EntityRelationship<Publisher, Address> {
 	public PublisherAddress(Publisher publisher, Address address) {
-		super(publisher, address);
+		super(publisher, address, createAttributes());
 	}
 
 	public Publisher getPublisher() {
@@ -20,7 +20,7 @@ public class PublisherAddress extends EntityRelationship<Publisher, Address> {
 		return getToPrimaryKeyContainer();
 	}
 
-	public Dictionary<String, Object> createAttributes() {
+	public static Dictionary<String, Object> createAttributes() {
 		return new Hashtable<String, Object>();
 	}
 }
