@@ -7,13 +7,16 @@ import edu.iu.cns.shared.utilities.DictionaryIterator;
 import edu.iu.cns.shared.utilities.GenericPair;
 
 
-public abstract class Entity {
+public abstract class Entity implements PrimaryKeyContainer {
 	private int primaryKey;
 	private Dictionary<String, Object> attributes;
 
 	public Entity(DatabaseTableKeyGenerator keyGenerator) {
 		this.primaryKey = keyGenerator.getNextKey();
 		this.attributes = createAttributes();
+
+		// TODO: Hhmmm, is this the right thing to do?
+		this.attributes.put(PrimaryKeyContainer.PRIMARY_KEY, this.primaryKey);
 	}
 
 	public final int getPrimaryKey() {
@@ -57,7 +60,7 @@ public abstract class Entity {
 		return true;
 	}
 
-	// TODO: Override hashEquals?
+	// TODO: Override hashCode?
 
 	public abstract Dictionary<String, Object> createAttributes();
 
