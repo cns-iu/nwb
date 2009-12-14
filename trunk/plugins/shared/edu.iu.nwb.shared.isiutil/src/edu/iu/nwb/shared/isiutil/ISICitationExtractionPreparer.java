@@ -132,7 +132,7 @@ public class ISICitationExtractionPreparer {
 			int rowIndex = tableIt.nextInt();
 			Tuple row = isiTable.getTuple(rowIndex);
 			// for each journal name...
-			String journalName = row.getString(ISITag.TWENTY_NINE_CHAR_JOURNAL_ABBREV.columnName);
+			String journalName = row.getString(ISITag.TWENTY_NINE_CHAR_JOURNAL_ABBREVIATION.columnName);
 			if (journalName == null) {
 				continue;
 			}
@@ -140,7 +140,7 @@ public class ISICitationExtractionPreparer {
 			// replace it with the cited journal name, it there is a known replacement
 			String citedJournalName = (String) journalNameToCitedJournalName.get(journalName);
 			if (citedJournalName != null) {
-				row.setString(ISITag.TWENTY_NINE_CHAR_JOURNAL_ABBREV.columnName, citedJournalName);
+				row.setString(ISITag.TWENTY_NINE_CHAR_JOURNAL_ABBREVIATION.columnName, citedJournalName);
 			}
 		}
 		return isiTable;
@@ -182,7 +182,7 @@ public class ISICitationExtractionPreparer {
 			int rowIndex = tableIt.nextInt();
 			Tuple row = isiTable.getTuple(rowIndex);
 			// add the journal name to our set map
-			String journalName = row.getString(ISITag.TWENTY_NINE_CHAR_JOURNAL_ABBREV.columnName);
+			String journalName = row.getString(ISITag.TWENTY_NINE_CHAR_JOURNAL_ABBREVIATION.columnName);
 			if (journalName == null) {
 				continue;
 			}
@@ -459,7 +459,7 @@ public class ISICitationExtractionPreparer {
 	}
 
 	private String extractAbbreviatedJournalName(Tuple isiRow) {
-		String abbreviatedJournalName = isiRow.getString(ISITag.TWENTY_NINE_CHAR_JOURNAL_ABBREV.columnName);
+		String abbreviatedJournalName = isiRow.getString(ISITag.TWENTY_NINE_CHAR_JOURNAL_ABBREVIATION.columnName);
 		return abbreviatedJournalName;
 
 	}
