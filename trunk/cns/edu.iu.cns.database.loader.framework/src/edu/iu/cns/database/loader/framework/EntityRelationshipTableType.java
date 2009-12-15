@@ -5,7 +5,8 @@ import java.util.List;
 
 
 public class EntityRelationshipTableType<
-		RelationshipType extends EntityRelationship<? extends Entity, ? extends Entity> > {
+		RelationshipType extends EntityRelationship<
+			? extends PrimaryKeyContainer, ? extends PrimaryKeyContainer> > {
 	private List<RelationshipType> relationships = new ArrayList<RelationshipType>();
 	private String relationshipTypeName;
 	private String relationshipTableName;
@@ -15,8 +16,8 @@ public class EntityRelationshipTableType<
 		this.relationshipTableName = relationshipTableName;
 	}
 
-	public final List<
-			? extends EntityRelationship<? extends Entity, ? extends Entity> > getRelationships() {
+	public final List<? extends EntityRelationship<
+			? extends PrimaryKeyContainer, ? extends PrimaryKeyContainer> > getRelationships() {
 		return this.relationships;
 	}
 
