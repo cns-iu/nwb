@@ -4,7 +4,7 @@ Bundle-Name: edu.iu.scipolicy.visualization.horizontalbargraph
 Bundle-SymbolicName: edu.iu.scipolicy.visualization.horizontalbargraph
 Bundle-Version: 0.0.1
 Bundle-ClassPath: .
-Import-Package: edu.iu.cns.utilities.testing,
+Import-Package: edu.iu.cns.utilities.testing;resolution:=optional,
  edu.iu.nwb.converter.prefusecsv.reader;resolution:=optional,
  org.antlr.stringtemplate,
  org.cishell.framework;version="1.0.0",
