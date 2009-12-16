@@ -38,7 +38,14 @@ public abstract class Entity implements PrimaryKeyContainer {
 	 * by default, it will do a naive equality check between all of the attributes of this
 	 *  and otherEntity.
 	 */
-	public boolean equals(Entity otherEntity) {
+	@Override
+	public boolean equals(Object otherObject) {
+		if (!(otherObject instanceof Entity)) {
+			return false;
+		}
+
+		Entity otherEntity = (Entity)otherObject;
+
 		if (this == otherEntity) {
 			return true;
 		}
