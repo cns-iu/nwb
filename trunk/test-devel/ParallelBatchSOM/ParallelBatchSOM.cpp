@@ -257,7 +257,7 @@ void train(Map* map) {
 			// update node using eq5num/eq5den (zero-check den first).
 		}
 
-		width = calculateWidthAtTime(t, numbersOfTimesteps);
+		width = calculateWidthAtTime(t, numbersOfTimesteps); // TODO Could hardcode minimum width (1?)
 	}
 
 //	// Beware mix of 0- and 1-indexing throughout.
