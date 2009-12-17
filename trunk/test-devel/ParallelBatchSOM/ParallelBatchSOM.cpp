@@ -25,6 +25,7 @@ const int NUMBER_OF_EPOCHS = 1;
 const int INITIAL_WIDTH = 50;
 const int FINAL_WIDTH = 1; // or 0?
 
+
 struct Node {
 	int row;
 	int column;
@@ -93,24 +94,77 @@ float calculateWidthAtTime(int t, int tFinal) {
 }
 
 // TODO Split this out into its own script.
-void initializeMap(Map* map) {
-	string line;
+Map loadInitialMap() {
 	ifstream codebookFile("random.cod"); // TODO Parameterize
+
 	if (codebookFile.is_open()) {
+		// Read parameters on first line.
+		int weightdim;
+		string topology; // TODO Ignored for now.
+		int xdim;
+		int ydim;
+		string neighborhood; // TODO Ignored for now.
+		codebookFile >> weightdim >> topology >> xdim >> ydim >> neighborhood;
+
+		Map map;
+		map.xdim = xdim;
+		map.ydim = ydim;
+		map.weightdim = weightdim;
+
+		Node nodes[xdim * ydim];
+		map.nodes = nodes;
+
+		// Read the codebook.
+		string line;
+		int i = 0;
+		bool onFirstLine = true;
 		while (!codebookFile.eof()) {
 			getline(codebookFile, line);
+			// Skip first line.
+			if (onFirstLine) {
+				getline(codebookFile, line);
+				onFirstLine = false;
+			}
 
+			// Read weight vector.
+			vector<float> weightVector(weightdim);
+			istringstream iss(line);
+			for (int j = 0; j < weightdim; j++) {
+				string coordinateString;
+				iss >> coordinateString;
+
+				float coordinate = atof(coordinateString.c_str());
+				weightVector.at(j) = coordinate;
+			}
+
+			Node node;
+			node.row = (int) i / ydim;
+			node.column = i % ydim;
+			node.weightVector = weightVector;
+
+			map.nodes[i] = node;
+
+			i++;
 		}
+
+		// TODO Debug only.
+//		cout << map.xdim << ", " << map.ydim << ", " << map.weightdim << endl;
+//		for (int i = 0; i < map.xdim * map.ydim; i++) {
+//			Node node = map.nodes[i];
+//			cout << node.row << ", " << node.column << endl;
+//			vector<float> weightVector = node.weightVector;
+//
+//			vector<float>::const_iterator cii;
+//			for (cii = weightVector.begin(); cii != weightVector.end(); cii++) {
+//				cout << *cii << " ";
+//			}
+//			cout << endl;
+//		}
+
+		// TODO Sanity check: i == xdim * ydim (- 1?)
+	} else {
+		cerr << "Error opening random codebook file!";
 	}
-
-
-	/* read dimension from map
-	 *
-	 * for each node in map:
-	 * 		create a vector of the given dimension
-	 * 		fill the coordinates with random numbers (in what range, [0,1]?)
-	 * 		set this node's weight vector to that.
-	 */
 }
 
 Node findWinningNode(vector<int> trainingVector, Map *map) {
@@ -137,7 +191,7 @@ Node findWinningNode(vector<int> trainingVector, Map *map) {
     return winningNode;
 }
 
-void train(int myRank, Map* map) {
+void train(Map* map) {
 	int t = 0;
 	int dimension = map->weightDimension;
 
@@ -260,12 +314,11 @@ int main(int argc, char *argv[]) {
 
 	/* TODO Parse any command line arguments here */
 
-	/* Get a handle on the training file and read its vectors' dimensionality.
-	 * Might want to read the number of lines, too, and split up the file (one piece per process).
+	/* Might want to read the number of lines, too? and split up the file (one piece per process).
 	 */
+	Map map = loadInitialMap();
 
-	train(myRank, &map);
-
+	train(&map);
 
 	MPI_Finalize();
 
