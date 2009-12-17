@@ -3,12 +3,11 @@ package edu.iu.scipolicy.loader.isi.db.model.entity;
 import java.util.Dictionary;
 import java.util.Hashtable;
 
-
 import edu.iu.cns.database.loader.framework.Entity;
 import edu.iu.cns.database.loader.framework.utilities.DatabaseTableKeyGenerator;
 import edu.iu.scipolicy.loader.isi.db.ISIDatabase;
 
-public class Address extends Entity {
+public class Address extends Entity<Address> {
 	private String streetAddress;
 	private String city;
 	private String stateOrProvince;
@@ -64,14 +63,19 @@ public class Address extends Entity {
 		return this.rawAddress;
 	}
 
-	public static Dictionary<String, Object> createAttributes(
+	public Address merge(Address otherAddress) {
+		// TODO: Implement this.
+		return otherAddress;
+	}
+
+	public static Dictionary<String, Comparable<?>> createAttributes(
 			String streetAddress,
 			String city,
 			String stateOrProvince,
 			String postalCode,
 			String country,
 			String rawAddress) {
-		Dictionary<String, Object> attributes = new Hashtable<String, Object>();
+		Dictionary<String, Comparable<?>> attributes = new Hashtable<String, Comparable<?>>();
 		attributes.put(ISIDatabase.STREET_ADDRESS, streetAddress);
 		attributes.put(ISIDatabase.ADDRESS_CITY, city);
 		attributes.put(ISIDatabase.STATE_OR_PROVINCE, stateOrProvince);

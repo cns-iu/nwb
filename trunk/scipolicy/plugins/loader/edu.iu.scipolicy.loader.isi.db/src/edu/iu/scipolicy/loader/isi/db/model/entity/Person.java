@@ -3,12 +3,11 @@ package edu.iu.scipolicy.loader.isi.db.model.entity;
 import java.util.Dictionary;
 import java.util.Hashtable;
 
-
 import edu.iu.cns.database.loader.framework.Entity;
 import edu.iu.cns.database.loader.framework.utilities.DatabaseTableKeyGenerator;
 import edu.iu.scipolicy.loader.isi.db.ISIDatabase;
 
-public class Person extends Entity {
+public class Person extends Entity<Person> implements Comparable<Person> {
 	private String personalName;
 	private String additionalName;
 	private String familyName;
@@ -57,7 +56,7 @@ public class Person extends Entity {
 		return this.familyName;
 	}
 
-	public String getfirstInitial() {
+	public String getFirstInitial() {
 		return this.firstInitial;
 	}
 
@@ -73,7 +72,16 @@ public class Person extends Entity {
 		return this.fullName;
 	}
 
-	public static Dictionary<String, Object> createAttributes(
+	public int compareTo(Person otherPerson) {
+		return -1;
+	}
+
+	public Person merge(Person otherPerson) {
+		// TODO: Implement this.
+		return otherPerson;
+	}
+
+	public static Dictionary<String, Comparable<?>> createAttributes(
 			String personalName,
 			String additionalName,
 			String familyName,
@@ -81,7 +89,7 @@ public class Person extends Entity {
 			String middleInitial,
 			String unsplitName,
 			String fullName) {
-		Dictionary<String, Object> attributes = new Hashtable<String, Object>();
+		Dictionary<String, Comparable<?>> attributes = new Hashtable<String, Comparable<?>>();
 		attributes.put(ISIDatabase.PERSONAL_NAME, personalName);
 		attributes.put(ISIDatabase.ADDITIONAL_NAME, additionalName);
 		attributes.put(ISIDatabase.FAMILY_NAME, familyName);
@@ -91,9 +99,5 @@ public class Person extends Entity {
 		attributes.put(ISIDatabase.FULL_NAME, fullName);
 
 		return attributes;
-	}
-
-	public final boolean equals(Person otherEntity) {
-		return false;
 	}
 }

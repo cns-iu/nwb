@@ -3,12 +3,11 @@ package edu.iu.scipolicy.loader.isi.db.model.entity;
 import java.util.Dictionary;
 import java.util.Hashtable;
 
-
 import edu.iu.cns.database.loader.framework.Entity;
 import edu.iu.cns.database.loader.framework.utilities.DatabaseTableKeyGenerator;
 import edu.iu.scipolicy.loader.isi.db.ISIDatabase;
 
-public class Source extends Entity {
+public class Source extends Entity<Source> implements Comparable<Source> {
 	private String fullTitle;
 	private String publicationType;
 	private String isoTitleAbbreviation;
@@ -98,7 +97,17 @@ public class Source extends Entity {
 		return this.conferenceDonation;
 	}
 
-	public static Dictionary<String, Object> createAttributes(
+	public int compareTo(Source otherSource) {
+		return get29CharacterSourceTitleAbbreviation().compareTo(
+			otherSource.get29CharacterSourceTitleAbbreviation());
+	}
+
+	public Source merge(Source otherSource) {
+		// TODO: Implement this.
+		return otherSource;
+	}
+
+	public static Dictionary<String, Comparable<?>> createAttributes(
 			String fullTitle,
 			String publicationType,
 			String isoTitleAbbreviation,
@@ -109,7 +118,7 @@ public class Source extends Entity {
 			String conferenceTitle,
 			String conferenceDate,
 			String conferenceDonation) {
-		Dictionary<String, Object> attributes = new Hashtable<String, Object>();
+		Dictionary<String, Comparable<?>> attributes = new Hashtable<String, Comparable<?>>();
 		attributes.put(ISIDatabase.FULL_TITLE, fullTitle);
 		attributes.put(ISIDatabase.PUBLICATION_TYPE, publicationType);
 		attributes.put(ISIDatabase.ISO_TITLE_ABBREVIATION, isoTitleAbbreviation);

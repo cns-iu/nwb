@@ -3,12 +3,11 @@ package edu.iu.scipolicy.loader.isi.db.model.entity;
 import java.util.Dictionary;
 import java.util.Hashtable;
 
-
 import edu.iu.cns.database.loader.framework.Entity;
 import edu.iu.cns.database.loader.framework.utilities.DatabaseTableKeyGenerator;
 import edu.iu.scipolicy.loader.isi.db.ISIDatabase;
 
-public class Publisher extends Entity {
+public class Publisher extends Entity<Publisher> {
 	private String name;
 	private String city;
 	private String webAddress;
@@ -57,9 +56,14 @@ public class Publisher extends Entity {
 		return super.equals(otherEntity);
 	}
 
-	public static Dictionary<String, Object> createAttributes(
+	public Publisher merge(Publisher otherPublisher) {
+		// TODO: Implement this.
+		return otherPublisher;
+	}
+
+	public static Dictionary<String, Comparable<?>> createAttributes(
 			String name, String city, String webAddress) {
-		Dictionary<String, Object> attributes = new Hashtable<String, Object>();
+		Dictionary<String, Comparable<?>> attributes = new Hashtable<String, Comparable<?>>();
 		attributes.put(ISIDatabase.NAME, name);
 		attributes.put(ISIDatabase.PUBLISHER_CITY, city);
 		attributes.put(ISIDatabase.WEB_ADDRESS, webAddress);

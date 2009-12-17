@@ -1,13 +1,14 @@
-package edu.iu.scipolicy.loader.isi.db.utilities;
+package edu.iu.scipolicy.loader.isi.db.utilities.extractor;
+
+import java.util.ArrayList;
+import java.util.List;
 
 import org.cishell.utilities.StringUtilities;
 
 import prefuse.data.Table;
 import prefuse.data.Tuple;
 import prefuse.util.collections.IntIterator;
-import edu.iu.cns.database.loader.framework.EntityRelationshipTableType;
-import edu.iu.cns.database.loader.framework.EntityTableType;
-import edu.iu.cns.database.loader.framework.utilities.DatabaseTableKeyGenerator;
+import edu.iu.cns.database.loader.framework.DatabaseTableType;
 import edu.iu.nwb.shared.isiutil.ISITableReader;
 import edu.iu.nwb.shared.isiutil.ISITag;
 import edu.iu.scipolicy.loader.isi.db.ISIDatabase;
@@ -32,28 +33,30 @@ import edu.iu.scipolicy.loader.isi.db.model.entity.relationship.ReprintAddress;
 import edu.iu.scipolicy.loader.isi.db.model.entity.relationship.ResearchAddress;
 
 public class ISITableModelExtractor {
+	public static final int AUTHOR_FIELD_TOKEN_INDEX = 0;
+
 	/*
 	 * For each type of entity (ISI File, Publisher, Source, Reference, Address, Keyword,
 	 *  Person, Patent, and Document), create a master list of entities.
 	 */
 
-	private EntityTableType<ISIFile> isiFiles = new EntityTableType<ISIFile>(
+	private DatabaseTableType<ISIFile> isiFiles = new DatabaseTableType<ISIFile>(
 		ISIDatabase.ISI_FILE_TYPE_NAME, ISIDatabase.ISI_FILE_TABLE_NAME);
-	private EntityTableType<Publisher> publishers = new EntityTableType<Publisher>(
+	private DatabaseTableType<Publisher> publishers = new DatabaseTableType<Publisher>(
 		ISIDatabase.PUBLISHER_TYPE_NAME, ISIDatabase.PUBLISHER_TABLE_NAME);
-	private EntityTableType<Source> sources = new EntityTableType<Source>(
+	private DatabaseTableType<Source> sources = new DatabaseTableType<Source>(
 		ISIDatabase.SOURCE_TYPE_NAME, ISIDatabase.SOURCE_TABLE_NAME);
-	private EntityTableType<Reference> references = new EntityTableType<Reference>(
+	private DatabaseTableType<Reference> references = new DatabaseTableType<Reference>(
 		ISIDatabase.REFERENCE_TYPE_NAME, ISIDatabase.REFERENCE_TABLE_NAME);
-	private EntityTableType<Address> addresses = new EntityTableType<Address>(
+	private DatabaseTableType<Address> addresses = new DatabaseTableType<Address>(
 		ISIDatabase.ADDRESS_TYPE_NAME, ISIDatabase.ADDRESS_TABLE_NAME);
-	private EntityTableType<Keyword> keywords = new EntityTableType<Keyword>(
+	private DatabaseTableType<Keyword> keywords = new DatabaseTableType<Keyword>(
 		ISIDatabase.KEYWORD_TYPE_NAME, ISIDatabase.KEYWORD_TABLE_NAME);
-	private EntityTableType<Person> people = new EntityTableType<Person>(
+	private DatabaseTableType<Person> people = new DatabaseTableType<Person>(
 		ISIDatabase.PERSON_TYPE_NAME, ISIDatabase.PERSON_TABLE_NAME);
-	private EntityTableType<Patent> patents = new EntityTableType<Patent>(
+	private DatabaseTableType<Patent> patents = new DatabaseTableType<Patent>(
 		ISIDatabase.PATENT_TYPE_NAME, ISIDatabase.PATENT_TABLE_NAME);
-	private EntityTableType<Document> documents = new EntityTableType<Document>(
+	private DatabaseTableType<Document> documents = new DatabaseTableType<Document>(
 		ISIDatabase.DOCUMENT_TYPE_NAME, ISIDatabase.DOCUMENT_TABLE_NAME);
 
 	/*
@@ -62,48 +65,48 @@ public class ISITableModelExtractor {
 	 *  Occurrences, and Cited References).
 	 */
 
-	EntityRelationshipTableType<PublisherAddress> publisherAddresses =
-		new EntityRelationshipTableType<PublisherAddress>(
+	DatabaseTableType<PublisherAddress> publisherAddresses =
+		new DatabaseTableType<PublisherAddress>(
 			ISIDatabase.PUBLISHER_ADDRESSES_TYPE_NAME,
 			ISIDatabase.PUBLISHER_ADDRESSES_TABLE_NAME);
 
-	EntityRelationshipTableType<ReprintAddress> reprintAddresses =
-		new EntityRelationshipTableType<ReprintAddress>(
+	DatabaseTableType<ReprintAddress> reprintAddresses =
+		new DatabaseTableType<ReprintAddress>(
 			ISIDatabase.REPRINT_ADDRESSES_TYPE_NAME,
 			ISIDatabase.REPRINT_ADDRESSES_TABLE_NAME);
 
-	EntityRelationshipTableType<ResearchAddress> researchAddresses =
-		new EntityRelationshipTableType<ResearchAddress>(
+	DatabaseTableType<ResearchAddress> researchAddresses =
+		new DatabaseTableType<ResearchAddress>(
 			ISIDatabase.RESEARCH_ADDRESSES_TYPE_NAME,
 			ISIDatabase.RESEARCH_ADDRESSES_TABLE_NAME);
 
-	EntityRelationshipTableType<DocumentKeyword> documentKeywords =
-		new EntityRelationshipTableType<DocumentKeyword>(
+	DatabaseTableType<DocumentKeyword> documentKeywords =
+		new DatabaseTableType<DocumentKeyword>(
 			ISIDatabase.DOCUMENT_KEYWORDS_TYPE_NAME,
 			ISIDatabase.DOCUMENT_KEYWORDS_TABLE_NAME);
 
-	EntityRelationshipTableType<Author> authors =
-		new EntityRelationshipTableType<Author>(
+	DatabaseTableType<Author> authors =
+		new DatabaseTableType<Author>(
 			ISIDatabase.AUTHORS_TYPE_NAME,
 			ISIDatabase.AUTHORS_TABLE_NAME);
 
-	EntityRelationshipTableType<Editor> editors =
-		new EntityRelationshipTableType<Editor>(
+	DatabaseTableType<Editor> editors =
+		new DatabaseTableType<Editor>(
 			ISIDatabase.EDITORS_TYPE_NAME,
 			ISIDatabase.EDITORS_TABLE_NAME);
 
-	EntityRelationshipTableType<CitedPatent> citedPatents =
-		new EntityRelationshipTableType<CitedPatent>(
+	DatabaseTableType<CitedPatent> citedPatents =
+		new DatabaseTableType<CitedPatent>(
 			ISIDatabase.CITED_PATENTS_TYPE_NAME,
 			ISIDatabase.CITED_PATENTS_TABLE_NAME);
 
-	EntityRelationshipTableType<DocumentOccurrence> documentOccurrences =
-		new EntityRelationshipTableType<DocumentOccurrence>(
+	DatabaseTableType<DocumentOccurrence> documentOccurrences =
+		new DatabaseTableType<DocumentOccurrence>(
 			ISIDatabase.DOCUMENT_OCCURRENCES_TYPE_NAME,
 			ISIDatabase.DOCUMENT_OCCURRENCES_TABLE_NAME);
 
-	EntityRelationshipTableType<CitedReference> citedReferences =
-		new EntityRelationshipTableType<CitedReference>(
+	DatabaseTableType<CitedReference> citedReferences =
+		new DatabaseTableType<CitedReference>(
 			ISIDatabase.CITED_REFERENCES_TYPE_NAME,
 			ISIDatabase.CITED_REFERENCES_TABLE_NAME);
 
@@ -143,8 +146,8 @@ public class ISITableModelExtractor {
 			Publisher publisher = extractPublisher(row);
 			Source source = extractSource(row);
 			publisher.setSource(source);
-			Reference reference = extractReference(row);
-			System.err.println("source: " + source);
+			List<Reference> currentReferences = extractReferences(row);
+			//System.err.println("source: " + source);
 
 			// For each of the entities just extracted:
 				// Check if it is a duplicate.
@@ -172,7 +175,7 @@ public class ISITableModelExtractor {
 		ISIFile isiFile =
 			new ISIFile(this.isiFiles.getKeyGenerator(), fileName, fileType, versionNumber);
 
-		return this.isiFiles.addEntity(isiFile);
+		return this.isiFiles.addOrMerge(isiFile);
 	}
 
 	private Publisher extractPublisher(Tuple row) {
@@ -185,7 +188,7 @@ public class ISITableModelExtractor {
 		Publisher publisher =
 			new Publisher(this.publishers.getKeyGenerator(), name, city, webAddress);
 
-		return this.publishers.addEntity(publisher);
+		return this.publishers.addOrMerge(publisher);
 	}
 
 	private Source extractSource(Tuple row) {
@@ -220,12 +223,44 @@ public class ISITableModelExtractor {
 			conferenceDate,
 			conferenceDonation);
 
-		return this.sources.addEntity(source);
+		return this.sources.addOrMerge(source);
 	}
 
-	private Reference extractReference(Tuple row) {
-		/*String referenceString =
-			StringUtilities.simpleClean(row.getString(ISITag.*/
-		return null;
+	private List<Reference> extractReferences(Tuple row) {
+		List<Reference> references = new ArrayList<Reference>();
+		String rawReferencesString =
+			StringUtilities.simpleClean(row.getString(ISITag.CITED_REFERENCES.getColumnName()));
+		String[] referenceStrings = rawReferencesString.split("\\|");
+
+		for (String referenceString : referenceStrings) {
+			String[] referenceTokens = referenceString.split(",");
+
+			if (StringUtilities.isEmptyOrWhiteSpace(referenceString)) {
+				continue;
+			}
+
+			ReferenceDataExtractor referenceData = new ReferenceDataExtractor(
+				this.people.getKeyGenerator(), this.sources.getKeyGenerator(), referenceString);
+
+			/*Person author = referenceData.getAuthor();
+
+			if (author != null) {
+				System.err.println("Personal name: " + author.getPersonalName());
+				System.err.println("\tAdditional name: " + author.getAdditionalName());
+				System.err.println("\tFamily name: " + author.getFamilyName());
+				System.err.println("\tFirst initial: " + author.getFirstInitial());
+				System.err.println("\tMiddle initial: " + author.getMiddleInitial());
+				System.err.println("\tUnsplit name: " + author.getUnsplitName());
+				System.err.println("\tFull name: " + author.getFullName());
+			}*/
+
+			//String authorField = referenceTokens[AUTHOR_FIELD_TOKEN_INDEX];
+			/*Person author = extractAuthorFromReference(referenceTokens);
+			Source source = extractSourceFromReference(referenceTokens);
+			int year = extractYearFromReference(referenceTokens);
+			String volume = extractVolumeFromReference(referenceTokens);*/
+		}
+
+		return references;
 	}
 }

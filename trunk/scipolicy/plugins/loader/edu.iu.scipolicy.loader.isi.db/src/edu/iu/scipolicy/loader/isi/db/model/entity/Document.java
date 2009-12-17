@@ -4,12 +4,11 @@ import java.util.Date;
 import java.util.Dictionary;
 import java.util.Hashtable;
 
-
 import edu.iu.cns.database.loader.framework.Entity;
 import edu.iu.cns.database.loader.framework.utilities.DatabaseTableKeyGenerator;
 import edu.iu.scipolicy.loader.isi.db.ISIDatabase;
 
-public class Document extends Entity {
+public class Document extends Entity<Document> implements Comparable<Document> {
 	private String digitalObjectIdentifier;
 	private String title;
 	private String articleNumber;
@@ -194,7 +193,16 @@ public class Document extends Entity {
 		return this.emailAddress;
 	}
 
-	public static Dictionary<String, Object> createAttributes(
+	public int compareTo(Document otherDocument) {
+		return -1;
+	}
+
+	public Document merge(Document otherDocument) {
+		// TODO: Implement this.
+		return otherDocument;
+	}
+
+	public static Dictionary<String, Comparable<?>> createAttributes(
 			String digitalObjectIdentifier,
 			String title,
 			String articleNumber,
@@ -217,7 +225,7 @@ public class Document extends Entity {
 			String isiDocumentDeliveryNumber,
 			String isbn,
 			String emailAddress) {
-		Dictionary<String, Object> attributes = new Hashtable<String, Object>();
+		Dictionary<String, Comparable<?>> attributes = new Hashtable<String, Comparable<?>>();
 		attributes.put(ISIDatabase.DIGITAL_OBJECT_IDENTIFIER, digitalObjectIdentifier);
 		attributes.put(ISIDatabase.TITLE, title);
 		attributes.put(ISIDatabase.ARTICLE_NUMBER, articleNumber);

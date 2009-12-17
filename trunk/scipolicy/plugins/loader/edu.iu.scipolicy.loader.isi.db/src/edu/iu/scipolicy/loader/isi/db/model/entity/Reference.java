@@ -1,17 +1,15 @@
 package edu.iu.scipolicy.loader.isi.db.model.entity;
 
-import java.awt.print.Paper;
 import java.util.Dictionary;
 import java.util.Hashtable;
-
 
 import edu.iu.cns.database.loader.framework.Entity;
 import edu.iu.cns.database.loader.framework.utilities.DatabaseTableKeyGenerator;
 import edu.iu.scipolicy.loader.isi.db.ISIDatabase;
 
-public class Reference extends Entity {
+public class Reference extends Entity<Reference> {
 	private String referenceString;
-	private Paper paper;
+	private Document paper;
 	private Person person;
 	private Source source;
 	private int year;
@@ -21,7 +19,7 @@ public class Reference extends Entity {
 	public Reference(
 			DatabaseTableKeyGenerator keyGenerator,
 			String referenceString,
-			Paper paper,
+			Document paper,
 			Person person,
 			Source source,
 			int year,
@@ -43,7 +41,7 @@ public class Reference extends Entity {
 		return this.referenceString;
 	}
 
-	public Paper getPaper() {
+	public Document getPaper() {
 		return this.paper;
 	}
 
@@ -67,15 +65,20 @@ public class Reference extends Entity {
 		return this.pageNumber;
 	}
 
-	public static Dictionary<String, Object> createAttributes(
+	public Reference merge(Reference otherReference) {
+		// TODO: Implement this.
+		return otherReference;
+	}
+
+	public static Dictionary<String, Comparable<?>> createAttributes(
 			String referenceString,
-			Paper paper,
+			Document paper,
 			Person person,
 			Source source,
 			int year,
 			String volume,
 			int pageNumber) {
-		Dictionary<String, Object> attributes = new Hashtable<String, Object>();
+		Dictionary<String, Comparable<?>> attributes = new Hashtable<String, Comparable<?>>();
 		attributes.put(ISIDatabase.REFERENCE_STRING, referenceString);
 		attributes.put(ISIDatabase.PAPER, paper);
 		attributes.put(ISIDatabase.PERSON, person);
