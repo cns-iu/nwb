@@ -6,6 +6,8 @@
  */
 
 #include <iostream>
+#include <fstream>
+#include <string>
 #include <vector>
 #include <limits>
 
@@ -15,22 +17,28 @@ using namespace std;
 using std::cerr;
 using std::endl;
 
+const int NUMBER_OF_TRAINING_STEPS = 500;
+const int NUMBER_OF_JOBS = 4;
+const int NUMBER_OF_STEPS_BETWEEN_UPDATES = 500;
+
 const int NUMBER_OF_EPOCHS = 1;
 const int INITIAL_WIDTH = 50;
-const int FINAL_WIDTH = 1;
+const int FINAL_WIDTH = 1; // or 0?
 
 struct Node {
 	int row;
 	int column;
-	vector<float> weight;
+	vector<float> weightVector;
 };
 
 struct Map {
 	int xdim;
 	int ydim;
 	int weightDimension;
-	/* TODO A good data structure for a rectangle of Nodes */
+	Node nodes[];
 };
+
+
 
 /* According to equation 8, exploiting sparseness.
  * vector is w_k and indexToOnes represents a binary-valued training vector.
@@ -59,9 +67,15 @@ float euclideanDistance(vector<float> vector1, vector<float> vector2) {
 	// Euclidean distance.
 }
 
-// TODO int or float?
-int calculateWidthAtTime(int t, int tFinal) {
-	return (int) interpolate(t, 0, tFinal, INITIAL_WIDTH, FINAL_WIDTH);
+// Only for comparing two weight vectors.
+float cheapEuclideanDistance(vector<float> vector1, vector<float> vector2) {
+	// Euclidean distance, not bothering to sqrt when finding the norms.
+}
+
+// TODO Might revisit some optimizations Russell mentioned in the long term.
+// h_(ck)(t) = exp(-||r_k - r_c||^2 / width(t)^2);
+float gaussian(vector<float> vector1, vector<float> vector2, float width) {
+
 }
 
 float interpolate(float x, float x0, float x1, float y0, float y1) {
@@ -73,62 +87,110 @@ float interpolate(float x, float x0, float x1, float y0, float y1) {
 	}
 }
 
-void initializeMap(Map map) {
-
+// TODO int or float?
+float calculateWidthAtTime(int t, int tFinal) {
+	return interpolate(t, 0, tFinal, INITIAL_WIDTH, FINAL_WIDTH);
 }
 
-Node findWinningNode(vector<float> trainingVector, Map *map) {
+// TODO Split this out into its own script.
+void initializeMap(Map* map) {
+	string line;
+	ifstream codebookFile("random.cod"); // TODO Parameterize
+	if (codebookFile.is_open()) {
+		while (!codebookFile.eof()) {
+			getline(codebookFile, line);
+
+		}
+	}
+
+
+	/* read dimension from map
+	 *
+	 * for each node in map:
+	 * 		create a vector of the given dimension
+	 * 		fill the coordinates with random numbers (in what range, [0,1]?)
+	 * 		set this node's weight vector to that.
+	 */
+}
+
+Node findWinningNode(vector<int> trainingVector, Map *map) {
     /* Long term TODO: In late training (or when convergence can be presumed decent),
 	 * start recording the map (i, j) for the BMU on the previous timestep or two, then
 	 * search only in neighborhoods of that rather than the whole map.
 	 */
     float shortestDistance = numeric_limits<float>::max();
-    Node winningNode = NULL;
+    Node winningNode;
     // TODO Note we use equation 8 here rather than equation 6, to exploit sparseness.
     for(Node node; /* in map */;){
         /* TODO Take note of the comment just after equation 8: we don't need a live
 		 * weight vector here; only needs to be as fresh as the latest epoch.
 		 */
-        float distance = distanceToSparse(node->weightVector, trainingVector, map->weightDimension);
+        float distance = distanceToSparse(node.weightVector, trainingVector);
         if(distance < shortestDistance){
             shortestDistance = distance;
             winningNode = node;
         }
     }
 
-    if (winningNode == NULL) {
-		cerr << "Horrible error calculating best-matching node." << endl;
-		exit (2);
-	}
+    // TODO Should always have a winning node now, but check it.
 
     return winningNode;
 }
 
-void train(Map* map/*TODO ?*/) {
+void train(int myRank, Map* map) {
 	int t = 0;
+	int dimension = map->weightDimension;
 
+	float width = INITIAL_WIDTH;
+	vector<float> eq5num(dimension);
+	float eq5den = 0.0;
+
+	int numbersOfTimesteps =
+			(int) ((NUMBER_OF_TRAINING_STEPS + NUMBER_OF_JOBS - 1) / NUMBER_OF_JOBS);
 	// Beware mix of 0- and 1-indexing throughout.
-	for (int epoch = 1; epoch <= NUMBER_OF_EPOCHS; epoch++) {
-		int width = calculateWidth(t, tFinal);
-
-		float eq5num = 0.0;
-		float eq5den = 0.0;
-
+	for (int t = 0; t < numbersOfTimesteps; t++) {
 		/* TODO Get my piece of the training set.
 		 * How?  Divide up the input file (by the number of processes) before starting even?
+		 * Or index modularly into one big file?
 		 */
-		for (vector<float> trainingVector;;/* in my training vectors */) {
-			t++;
+		vector<int> trainingVector; // = TODO
 
-			Node winningNode = findWinningNode(trainingVector, map);
+		Node winningNode = findWinningNode(trainingVector, map);
 
-			// equation 5 (exploit sparseness here, too)
-			for(Node node; /* in map */;) {
-				// add into eq5num and eq5den.
-			}
+		// equation 5 (exploit sparseness here, too)
+		for (Node node; /* in map */;) {
+			float distance =
+					gaussian(node.weightVector, winningNode.weightVector, calculateWidthAtTime(t));
+
+			// TODO increment eq5num
+			// TODO increment eq5den
 		}
 
+		if ((t + 1) % NUMBER_OF_STEPS_BETWEEN_UPDATES == 0) {
+			/* TODO MPI.Allreduce goes here.
+			 * Add up the eq5nums and eq5dens from each process.
+			 * send		local (per-process) eq5num and eq5den
+			 * count	2
+			 * receive	total eq5num and eq5den
+			 * datatype	MPI::FLOAT?
+			 * op		MPI::SUM?
+			 * comm		world?  don't know. TODO
+			 * remember to check return value for error.
+			 */
+			for (Node node;;/* in map*/) {
+				// update node using eq5num/eq5den (zero-check den first).
+			}
+
+			// Reset for next "epoch"
+			width = calculateWidthAtTime(t, numbersOfTimesteps);
+			vector<float> eq5num(dimension);
+			float eq5den = 0.0;
+		}
+	}
+
+	if ((t + 1) % NUMBER_OF_STEPS_BETWEEN_UPDATES != 0) {
 		/* TODO MPI.Allreduce goes here.
+		 * Add up the eq5nums and eq5dens from each process.
 		 * send		local (per-process) eq5num and eq5den
 		 * count	2
 		 * receive	total eq5num and eq5den
@@ -137,38 +199,73 @@ void train(Map* map/*TODO ?*/) {
 		 * comm		world?  don't know. TODO
 		 * remember to check return value for error.
 		 */
-		// add up the eq5nums and eq5dens from each process.
-
 		for (Node node;;/* in map*/) {
 			// update node using eq5num/eq5den (zero-check den first).
 		}
+
+		width = calculateWidthAtTime(t, numbersOfTimesteps);
 	}
+
+//	// Beware mix of 0- and 1-indexing throughout.
+//	for (int epoch = 1; epoch <= NUMBER_OF_EPOCHS; epoch++) {
+//		int width = calculateWidth(t, tFinal);
+//
+//		vector<float> eq5num(dimension);
+//		float eq5den = 0.0;
+//
+//		/* TODO Get my piece of the training set.
+//		 * How?  Divide up the input file (by the number of processes) before starting even?
+//		 */
+//		for (vector<float> trainingVector;;/* in my training vectors */) {
+//			t++;
+//
+//			Node winningNode = findWinningNode(trainingVector, map);
+//
+//			// equation 5 (exploit sparseness here, too)
+//			for (Node node; /* in map */;) {
+//				// add into eq5num and eq5den.
+//				float distance = gaussian(node->weightVector, winningNode, calculateWidthAtTime(t));
+//
+//				eq5num +=
+//			}
+//		}
+//
+//		/* TODO MPI.Allreduce goes here.
+//		 * Add up the eq5nums and eq5dens from each process.
+//		 * send		local (per-process) eq5num and eq5den
+//		 * count	2
+//		 * receive	total eq5num and eq5den
+//		 * datatype	MPI::FLOAT?
+//		 * op		MPI::SUM?
+//		 * comm		world?  don't know. TODO
+//		 * remember to check return value for error.
+//		 */
+//
+//		for (Node node;;/* in map*/) {
+//			// update node using eq5num/eq5den (zero-check den first).
+//		}
+//	}
 }
 
 
 int main(int argc, char *argv[]) {
-	/*  My ID number and the total number of processors: */
-	int myrank, numProcs;
-
-	/*  Variables for the computation. */
-	int numberOfIntervals, interval;
-	double intervalWidth, intervalMidPoint, totalArea, myArea = 0.0;
-
-	/*  Initialize the MPI API: */
 	MPI_Init(&argc, &argv);
 
-	MPI_Comm_rank(MPI_COMM_WORLD, &myrank);
+	int myRank;
+	MPI_Comm_rank(MPI_COMM_WORLD, &myRank);
+	int numProcs;
 	MPI_Comm_size(MPI_COMM_WORLD, &numProcs);
 
 	/*  Okay. The preparations have been made. */
 
 	/* TODO Parse any command line arguments here */
 
+	/* Get a handle on the training file and read its vectors' dimensionality.
+	 * Might want to read the number of lines, too, and split up the file (one piece per process).
+	 */
 
-	// Just one process initializes the Map.
-	if (myrank == 0) {
-		initializeMap(map);
-	}
+	train(myRank, &map);
+
 
 	MPI_Finalize();
 
