@@ -12,8 +12,11 @@
 #include <vector>
 #include <limits>
 #include <map>
+#include <math.h>
 
 //#include <mpi.h>
+
+/* TODO Check passing by value or reference throughout.. */
 
 using namespace std;
 using std::cerr;
@@ -27,7 +30,7 @@ const int NUMBER_OF_EPOCHS = 1;
 const int INITIAL_WIDTH = 50;
 const int FINAL_WIDTH = 1; // or 0?
 
-// set by loadInitialMap()
+// set by loadInitialNet()
 int g_xdim = -1;
 int g_ydim = -1;
 int g_dim = -1;
@@ -40,6 +43,26 @@ struct Node {
 	int column;
 };
 
+// TODO Used?
+void scaleVector(float scalar, float vector[]) {
+	for (int i = 0; i < g_dim; i++) {
+		vector[i] *= scalar;
+	}
+}
+
+// TODO Used?
+void scaleSparseVector(float scalar, map<int, float> sparseVector) {
+	for(map<int, float>::const_iterator it = sparseVector.begin(); it != sparseVector.end(); ++it) {
+		sparseVector[it->first] = scalar * it->second;
+	}
+}
+
+void incrementVectorBy(float vector[], float addend[]) {
+	for (int i = 0; i < g_dim; i++) {
+		vector[i] += addend[i];
+	}
+}
+
 /* TODO For binary-valued training vectors, would could optimize by replacing the
  * map<int, float>s with some kind of bit array.
  */
@@ -47,26 +70,28 @@ int calculateNodeIndex(Node node) {
 	return g_dim * (node.row * g_ydim + node.column); // TODO Triple check this index.
 }
 
-float* getWeightVector(float map[], Node node) {
-	return &map[calculateNodeIndex(node)];
+float* getWeightVector(float net[], Node node) {
+	return &net[calculateNodeIndex(node)];
 //	float weightVector[g_dim];
 //
 //	int startingIndex = calculateNodeIndex(node);
 //
 //	for (int i = 0; i < g_dim; i++) {
-//		weightVector[i] = map[startingIndex + i];
+//		weightVector[i] = net[startingIndex + i];
 //	}
 //
 //	return weightVector;
 }
 
-void setNode(float map[], Node node, float weight[]) {
+void setNode(float net[], Node node, float weight[]) {
 	int startingIndex = calculateNodeIndex(node);
 
 	for (int i = 0; i < g_dim; i++) {
-		map[startingIndex + i] = weight[i];
+		net[startingIndex + i] = weight[i];
 	}
 }
+
+/* TODO Replace linear algebra functions with calls to BLAS. */
 
 /* According to equation 8, exploiting sparseness.
  * vector is w_k and indexToOnes represents a binary-valued training vector.
@@ -91,21 +116,33 @@ float distanceToSparse(float vector[], map<int, float> sparseVector) {
 	return leftSum + rightSum;
 }
 
-// For use between two weight vectors.
-float euclideanDistance(float vector1[], float vector2[]) {
-	// TODO
+float sumOfSquaredDifferences(float vector1[], float vector2[]) {
+	float sumOfSquaredDifferences = 0.0;
+
+	for (int i = 0; i < g_dim; i++) {
+		float difference = vector1[i] - vector2[i];
+		sumOfSquaredDifferences += difference * difference;
+	}
+
+	return sumOfSquaredDifferences;
 }
 
-// Euclidean distance, not bothering to sqrt when finding the norms.
-// Only for comparing two weight vectors.
-float cheapEuclideanishDistance(float vector1[], float vector2[]) {
-	// TODO
+// For use between two weight vectors.
+float euclideanDistance(float vector1[], float vector2[]) {
+	return sqrt(sumOfSquaredDifferences(vector1, vector2));
 }
+
+/* TODO: Cosine similarity and cheap cosine similarity
+ * The latter ignores sqrting the norms when only comparison to other such numbers is desired.
+ */
 
 // TODO Might revisit some optimizations Russell mentioned in the long term.
 // h_(ck)(t) = exp(-||r_k - r_c||^2 / width(t)^2);
-float gaussian(float vector1[], float vector2[], float width) {
+float gaussian(Node node1, Node node2, float width) {
+	int rowDiff = node1.row - node2.row;
+	int columnDiff = node1.column - node2.column;
 
+	return exp(-(rowDiff*rowDiff + columnDiff*columnDiff) / (width * width));
 }
 
 float interpolate(float x, float x0, float x1, float y0, float y1) {
@@ -123,7 +160,7 @@ float calculateWidthAtTime(int t, int tFinal) {
 }
 
 // TODO Split this out into its own script.
-float* loadInitialMap() {
+float* loadInitialNet() {
 	ifstream codebookFile("random.cod"); // TODO Parameterize
 
 	if (codebookFile.is_open()) {
@@ -132,7 +169,7 @@ float* loadInitialMap() {
 		string neighborhood; // TODO Ignored for now.
 		codebookFile >> g_dim >> topology >> g_xdim >> g_ydim >> neighborhood;
 
-		float map[g_xdim * g_ydim * g_dim];
+		float net[g_xdim * g_ydim * g_dim];
 
 		// Read the codebook.
 		string line;
@@ -160,15 +197,15 @@ float* loadInitialMap() {
 			Node node;
 			node.row = (int) i / g_ydim;
 			node.column = i % g_ydim;
-			setNode(map, node, weightVector);
+			setNode(net, node, weightVector);
 
 			i++;
 		}
 
 		// TODO Debug only.
-//		cout << map.g_xdim << ", " << map.g_ydim << ", " << map.g_dim << endl;
-//		for (int i = 0; i < map.g_xdim * map.g_ydim; i++) {
-//			Node node = map.nodes[i];
+//		cout << net.g_xdim << ", " << net.g_ydim << ", " << net.g_dim << endl;
+//		for (int i = 0; i < net.g_xdim * net.g_ydim; i++) {
+//			Node node = net.nodes[i];
 //			cout << node.row << ", " << node.column << endl;
 //			vector<float> weightVector = node.weightVector;
 //
@@ -185,7 +222,7 @@ float* loadInitialMap() {
 	}
 }
 
-map<int, float>* loadTrainingVectors() {
+map<int, float>* loadMyTrainingVectors(int myRank) {
 	ifstream trainingFile("dummy.dat"); // TODO Parameterize
 
 	if (trainingFile.is_open()) {
@@ -207,6 +244,15 @@ map<int, float>* loadTrainingVectors() {
 			if (onFirstLine) {
 				getline(trainingFile, line);
 				onFirstLine = false;
+			}
+
+			// Skip lines that aren't mine.
+			while (i % k != myRank && !trainingFile.eof()) {
+				getline(trainingFile, line);
+				i++;
+			}
+			if (trainingFile.eof()) {
+				break;
 			}
 
 			// Read training vector into sparse representation.
@@ -243,10 +289,10 @@ map<int, float>* loadTrainingVectors() {
 	}
 }
 
-Node findWinningNode(map<int, float> trainingVector, float* map) {
+Node findWinningNode(map<int, float> trainingVector, float* net) {
     /* Long term TODO: In late training (or when convergence can be presumed decent),
-	 * start recording the map (i, j) for the BMU on the previous timestep or two, then
-	 * search only in neighborhoods of that rather than the whole map.
+	 * start recording the net (i, j) for the BMU on the previous timestep or two, then
+	 * search only in neighborhoods of that rather than the whole net.
 	 */
     float shortestDistance = numeric_limits<float>::max();
     Node winningNode;
@@ -260,7 +306,7 @@ Node findWinningNode(map<int, float> trainingVector, float* map) {
     		node.row = row;
     		node.column = column;
 
-    		float* weightVector = getWeightVector(map, node);
+    		float* weightVector = getWeightVector(net, node);
     		float distance = distanceToSparse(weightVector, trainingVector);
 
     		if(distance < shortestDistance){
@@ -279,8 +325,9 @@ void train(int myRank, float* net, map<int, float>* trainingVectors) {
 	int t = 0;
 
 	float width = INITIAL_WIDTH;
-	float eq5num[g_dim];
-	float eq5den = 0.0;
+
+	float myNetUpdate[g_xdim * g_ydim * g_dim];
+	float myDenominator[g_xdim * g_ydim];
 
 	int numbersOfTimesteps =
 			(int) ((NUMBER_OF_TRAINING_STEPS + NUMBER_OF_JOBS - 1) / NUMBER_OF_JOBS);
@@ -301,14 +348,18 @@ void train(int myRank, float* net, map<int, float>* trainingVectors) {
 		 */
 		for (int row = 0; row < g_xdim; row++) {
 			for (int column = 0; column < g_ydim; column++) {
-				float distance =
-						gaussian(
-								getWeightVector(net, node),
-								getWeightVector(net, winningNode),
-								width);
+				Node node;
+				node.row = row;
+				node.column = column;
 
-				// TODO increment eq5num
-				// TODO increment eq5den
+				float gauss = gaussian(node, winningNode, width);
+
+				// Increment equation 5 numerator.
+				scaleVector(gauss, trainingVector);
+				setNode(myNetUpdate, node, v);
+
+				// Increment equation 5 denominator.
+				myDenominator[row * g_xdim + column] += gauss;
 			}
 		}
 
@@ -323,17 +374,17 @@ void train(int myRank, float* net, map<int, float>* trainingVectors) {
 			 * comm		world?  don't know. TODO
 			 * remember to check return value for error.
 			 */
-			for (Node node;;/* in map*/) {
+			for (Node node;;/* in net*/) {
 				// update node using eq5num/eq5den (zero-check den first).
 			}
 
 			// Reset for next "epoch"
 			width = calculateWidthAtTime(t, numbersOfTimesteps);
-			float eq5num[g_dim];
-			float eq5den = 0.0;
+			memset(myNetUpdate, 0, sizeof myNetUpdate); // TODO Any more efficient way?
 		}
 	}
 
+	// If we had timesteps beyond the final reduce, reduce once more to pick up the stragglers.
 	if ((t + 1) % NUMBER_OF_STEPS_BETWEEN_UPDATES != 0) {
 		/* TODO MPI.Allreduce goes here.
 		 * Add up the eq5nums and eq5dens from each process.
@@ -345,7 +396,7 @@ void train(int myRank, float* net, map<int, float>* trainingVectors) {
 		 * comm		world?  don't know. TODO
 		 * remember to check return value for error.
 		 */
-		for (Node node;;/* in map*/) {
+		for (Node node;;/* in net*/) {
 			// update node using eq5num/eq5den (zero-check den first).
 		}
 
@@ -368,13 +419,13 @@ int main(int argc, char *argv[]) {
 
 	/* Might want to read the number of lines, too? and split up the file (one piece per process).
 	 */
-	float* map = loadInitialMap();
+	float* net = loadInitialNet();
 
-	vector<int, float> trainingVectors[] = loadTrainingVectors();
+	map<int, float> trainingVectors[] = loadMyTrainingVectors(myRank);
 
-	train(myRank, map, trainingVectors);
+	train(myRank, net, trainingVectors);
 
-	// TODO Dump the map to file.
+	// TODO Dump the net to file.
 
 //	MPI_Finalize();
 
