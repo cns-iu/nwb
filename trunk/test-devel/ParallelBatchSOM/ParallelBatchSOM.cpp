@@ -25,9 +25,9 @@ typedef vector< map<int, float> > training_data_t;
 
 
 // TODO Test with more realistic numbers.
-const int NUMBER_OF_TRAINING_STEPS = 1000;
+const int NUMBER_OF_TRAINING_STEPS = 5000;
 const int NUMBER_OF_JOBS = 1;
-const int NUMBER_OF_STEPS_BETWEEN_UPDATES = 1;
+const int NUMBER_OF_STEPS_BETWEEN_UPDATES = 200;
 
 const int INITIAL_WIDTH = 20;
 const int FINAL_WIDTH = 1; // TODO Or what?
@@ -96,7 +96,7 @@ float distanceToSparse(float vector[], map<int, float> sparseVector, float recen
 
 	float rightSum = recentSquaredNorm;
 
-	cout << "leftSum = " << leftSum << "; rightSum = " << rightSum << endl;
+//	cout << "leftSum = " << leftSum << "; rightSum = " << rightSum << endl;
 
 	return (leftSum + rightSum);
 }
