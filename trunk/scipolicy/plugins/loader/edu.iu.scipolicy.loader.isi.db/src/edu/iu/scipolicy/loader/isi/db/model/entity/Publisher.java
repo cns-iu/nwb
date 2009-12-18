@@ -5,7 +5,7 @@ import java.util.Hashtable;
 
 import edu.iu.cns.database.loader.framework.Entity;
 import edu.iu.cns.database.loader.framework.utilities.DatabaseTableKeyGenerator;
-import edu.iu.scipolicy.loader.isi.db.ISIDatabase;
+import edu.iu.nwb.shared.isiutil.database.ISIDatabase;
 
 public class Publisher extends Entity<Publisher> {
 	private String name;
@@ -58,7 +58,7 @@ public class Publisher extends Entity<Publisher> {
 
 	public Publisher merge(Publisher otherPublisher) {
 		// TODO: Implement this.
-		return otherPublisher;
+		return this;
 	}
 
 	public static Dictionary<String, Comparable<?>> createAttributes(

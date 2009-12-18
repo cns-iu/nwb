@@ -1,6 +1,6 @@
 package edu.iu.scipolicy.loader.isi.db.utilities;
 
-import edu.iu.scipolicy.loader.isi.db.ISIDatabase;
+import edu.iu.nwb.shared.isiutil.database.ISIDatabase;
 import edu.iu.scipolicy.loader.isi.db.model.ISIModel;
 
 public class ISIDatabaseCreator {

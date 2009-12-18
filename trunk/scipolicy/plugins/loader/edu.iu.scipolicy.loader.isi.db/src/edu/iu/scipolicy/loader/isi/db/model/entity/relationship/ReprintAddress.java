@@ -4,20 +4,17 @@ import java.util.Dictionary;
 import java.util.Hashtable;
 
 import edu.iu.cns.database.loader.framework.RowItem;
-import edu.iu.scipolicy.loader.isi.db.ISIDatabase;
 import edu.iu.scipolicy.loader.isi.db.model.entity.Address;
 import edu.iu.scipolicy.loader.isi.db.model.entity.Document;
 
 public class ReprintAddress extends RowItem<ReprintAddress> {
 	private Document document;
 	private Address address;
-	private int orderListed;
 
-	public ReprintAddress(Document document, Address address, int orderListed) {
-		super(createAttributes(orderListed));
+	public ReprintAddress(Document document, Address address) {
+		super(createAttributes());
 		this.document = document;
 		this.address = address;
-		this.orderListed = orderListed;
 	}
 
 	public Document getDocument() {
@@ -28,17 +25,12 @@ public class ReprintAddress extends RowItem<ReprintAddress> {
 		return this.address;
 	}
 
-	public int getOrderListed() {
-		return this.orderListed;
-	}
-
 	public ReprintAddress merge(ReprintAddress otherReprintAddress) {
 		return otherReprintAddress;
 	}
 
-	public static Dictionary<String, Comparable<?>> createAttributes(int orderListed) {
+	public static Dictionary<String, Comparable<?>> createAttributes() {
 		Dictionary<String, Comparable<?>> attributes = new Hashtable<String, Comparable<?>>();
-		attributes.put(ISIDatabase.ORDER_LISTED, orderListed);
 
 		return attributes;
 	}

@@ -5,7 +5,7 @@ import java.util.Hashtable;
 
 import edu.iu.cns.database.loader.framework.Entity;
 import edu.iu.cns.database.loader.framework.utilities.DatabaseTableKeyGenerator;
-import edu.iu.scipolicy.loader.isi.db.ISIDatabase;
+import edu.iu.nwb.shared.isiutil.database.ISIDatabase;
 
 public class Person extends Entity<Person> implements Comparable<Person> {
 	private String personalName;
@@ -78,7 +78,7 @@ public class Person extends Entity<Person> implements Comparable<Person> {
 
 	public Person merge(Person otherPerson) {
 		// TODO: Implement this.
-		return otherPerson;
+		return this;
 	}
 
 	public static Dictionary<String, Comparable<?>> createAttributes(

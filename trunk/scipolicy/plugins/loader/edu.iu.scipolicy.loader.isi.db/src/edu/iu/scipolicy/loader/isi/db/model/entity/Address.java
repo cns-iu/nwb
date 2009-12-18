@@ -5,7 +5,7 @@ import java.util.Hashtable;
 
 import edu.iu.cns.database.loader.framework.Entity;
 import edu.iu.cns.database.loader.framework.utilities.DatabaseTableKeyGenerator;
-import edu.iu.scipolicy.loader.isi.db.ISIDatabase;
+import edu.iu.nwb.shared.isiutil.database.ISIDatabase;
 
 public class Address extends Entity<Address> {
 	private String streetAddress;
@@ -65,7 +65,7 @@ public class Address extends Entity<Address> {
 
 	public Address merge(Address otherAddress) {
 		// TODO: Implement this.
-		return otherAddress;
+		return this;
 	}
 
 	public static Dictionary<String, Comparable<?>> createAttributes(

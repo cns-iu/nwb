@@ -5,36 +5,51 @@ import java.util.Hashtable;
 
 import edu.iu.cns.database.loader.framework.Entity;
 import edu.iu.cns.database.loader.framework.utilities.DatabaseTableKeyGenerator;
-import edu.iu.scipolicy.loader.isi.db.ISIDatabase;
+import edu.iu.nwb.shared.isiutil.database.ISIDatabase;
 
 public class Reference extends Entity<Reference> {
 	private String referenceString;
 	private Document paper;
-	private Person person;
+	private Person author;
 	private Source source;
 	private int year;
-	private String volume;
+	private int volume;
 	private int pageNumber;
+	private String annotation;
+	private boolean starred;
 
 	public Reference(
 			DatabaseTableKeyGenerator keyGenerator,
 			String referenceString,
 			Document paper,
-			Person person,
+			Person author,
 			Source source,
 			int year,
-			String volume,
-			int pageNumber) {
+			int volume,
+			int pageNumber,
+			String annotation,
+			boolean starred) {
 		super(
 			keyGenerator,
-			createAttributes(referenceString, paper, person, source, year, volume, pageNumber));
+			createAttributes(
+				referenceString,
+				paper,
+				author,
+				source,
+				year,
+				volume,
+				pageNumber,
+				annotation,
+				starred));
 		this.referenceString = referenceString;
 		this.paper = paper;
-		this.person = person;
+		this.author = author;
 		this.source = source;
 		this.year = year;
 		this.volume = volume;
 		this.pageNumber = pageNumber;
+		this.annotation = annotation;
+		this.starred = starred;
 	}
 
 	public String getReferenceString() {
@@ -45,8 +60,8 @@ public class Reference extends Entity<Reference> {
 		return this.paper;
 	}
 
-	public Person getPerson() {
-		return this.person;
+	public Person getAuthor() {
+		return this.author;
 	}
 
 	public Source getSource() {
@@ -57,7 +72,7 @@ public class Reference extends Entity<Reference> {
 		return this.year;
 	}
 
-	public String getVolume() {
+	public int getVolume() {
 		return this.volume;
 	}
 
@@ -65,27 +80,64 @@ public class Reference extends Entity<Reference> {
 		return this.pageNumber;
 	}
 
+	public String getAnnotation() {
+		return this.annotation;
+	}
+
+	public boolean authorWasStarred() {
+		return this.starred;
+	}
+
+	public void setPaper(Document paper) {
+		this.paper = paper;
+		getAttributes().put(ISIDatabase.PAPER, paper);
+	}
+
+	public void setAuthor(Person author) {
+		this.author = author;
+		getAttributes().put(ISIDatabase.REFERENCE_AUTHOR, author);
+	}
+
+	public void setSource(Source source) {
+		this.source = source;
+		getAttributes().put(ISIDatabase.SOURCE, source);
+	}
+
 	public Reference merge(Reference otherReference) {
 		// TODO: Implement this.
-		return otherReference;
+		return this;
 	}
 
 	public static Dictionary<String, Comparable<?>> createAttributes(
 			String referenceString,
 			Document paper,
-			Person person,
+			Person author,
 			Source source,
 			int year,
-			String volume,
-			int pageNumber) {
+			int volume,
+			int pageNumber,
+			String annotation,
+			boolean starred) {
 		Dictionary<String, Comparable<?>> attributes = new Hashtable<String, Comparable<?>>();
 		attributes.put(ISIDatabase.REFERENCE_STRING, referenceString);
-		attributes.put(ISIDatabase.PAPER, paper);
-		attributes.put(ISIDatabase.PERSON, person);
-		attributes.put(ISIDatabase.SOURCE, source);
+
+		if (paper != null) {
+			attributes.put(ISIDatabase.PAPER, paper);
+		}
+
+		if (author != null) {
+			attributes.put(ISIDatabase.REFERENCE_AUTHOR, author);
+		}
+
+		if (source != null) {
+			attributes.put(ISIDatabase.SOURCE, source);
+		}
+
 		attributes.put(ISIDatabase.YEAR, year);
 		attributes.put(ISIDatabase.REFERENCE_VOLUME, volume);
 		attributes.put(ISIDatabase.PAGE_NUMBER, pageNumber);
+		attributes.put(ISIDatabase.ANNOTATION, annotation);
+		attributes.put(ISIDatabase.AUTHOR_WAS_STARRED, starred);
 
 		return attributes;
 	}

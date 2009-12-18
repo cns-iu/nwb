@@ -5,7 +5,7 @@ import java.util.Hashtable;
 
 import edu.iu.cns.database.loader.framework.Entity;
 import edu.iu.cns.database.loader.framework.utilities.DatabaseTableKeyGenerator;
-import edu.iu.scipolicy.loader.isi.db.ISIDatabase;
+import edu.iu.nwb.shared.isiutil.database.ISIDatabase;
 
 public class Keyword extends Entity<Keyword> {
 	private String type;
@@ -27,7 +27,7 @@ public class Keyword extends Entity<Keyword> {
 
 	public Keyword merge(Keyword otherKeyword) {
 		// TODO: Implement this.
-		return otherKeyword;
+		return this;
 	}
 
 	public static Dictionary<String, Comparable<?>> createAttributes(String type, String keyword) {

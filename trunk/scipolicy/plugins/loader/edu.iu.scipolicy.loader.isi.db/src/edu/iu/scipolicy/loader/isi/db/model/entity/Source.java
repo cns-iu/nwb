@@ -5,7 +5,7 @@ import java.util.Hashtable;
 
 import edu.iu.cns.database.loader.framework.Entity;
 import edu.iu.cns.database.loader.framework.utilities.DatabaseTableKeyGenerator;
-import edu.iu.scipolicy.loader.isi.db.ISIDatabase;
+import edu.iu.nwb.shared.isiutil.database.ISIDatabase;
 
 public class Source extends Entity<Source> implements Comparable<Source> {
 	private String fullTitle;
@@ -104,7 +104,7 @@ public class Source extends Entity<Source> implements Comparable<Source> {
 
 	public Source merge(Source otherSource) {
 		// TODO: Implement this.
-		return otherSource;
+		return this;
 	}
 
 	public static Dictionary<String, Comparable<?>> createAttributes(

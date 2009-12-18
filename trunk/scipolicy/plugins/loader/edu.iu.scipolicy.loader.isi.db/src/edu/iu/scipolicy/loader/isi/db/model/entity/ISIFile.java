@@ -5,7 +5,7 @@ import java.util.Hashtable;
 
 import edu.iu.cns.database.loader.framework.Entity;
 import edu.iu.cns.database.loader.framework.utilities.DatabaseTableKeyGenerator;
-import edu.iu.scipolicy.loader.isi.db.ISIDatabase;
+import edu.iu.nwb.shared.isiutil.database.ISIDatabase;
 
 public class ISIFile extends Entity<ISIFile> {
 	private String fileName;
@@ -37,7 +37,7 @@ public class ISIFile extends Entity<ISIFile> {
 
 	public ISIFile merge(ISIFile otherISIFile) {
 		// TODO: Implement this.
-		return otherISIFile;
+		return this;
 	}
 
 	private static Dictionary<String, Comparable<?>> createAttributes(

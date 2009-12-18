@@ -5,7 +5,7 @@ import java.util.Hashtable;
 
 import edu.iu.cns.database.loader.framework.Entity;
 import edu.iu.cns.database.loader.framework.utilities.DatabaseTableKeyGenerator;
-import edu.iu.scipolicy.loader.isi.db.ISIDatabase;
+import edu.iu.nwb.shared.isiutil.database.ISIDatabase;
 
 public class Patent extends Entity<Patent> {
 	private String patentNumber;
@@ -21,7 +21,7 @@ public class Patent extends Entity<Patent> {
 
 	public Patent merge(Patent otherPatent) {
 		// TODO: Implement this.
-		return otherPatent;
+		return this;
 	}
 
 	public static Dictionary<String, Comparable<?>> createAttributes(String patentNumber) {

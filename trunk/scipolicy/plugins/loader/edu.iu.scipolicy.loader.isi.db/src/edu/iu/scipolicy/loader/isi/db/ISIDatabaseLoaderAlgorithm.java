@@ -13,10 +13,11 @@ import org.osgi.service.log.LogService;
 
 import prefuse.data.Table;
 import edu.iu.nwb.shared.isiutil.ISITableReaderHelper;
+import edu.iu.nwb.shared.isiutil.database.ISIDatabase;
 import edu.iu.nwb.shared.isiutil.exception.ReadISIFileException;
 import edu.iu.scipolicy.loader.isi.db.model.ISIModel;
 import edu.iu.scipolicy.loader.isi.db.utilities.ISIDatabaseCreator;
-import edu.iu.scipolicy.loader.isi.db.utilities.extractor.ISITableModelExtractor;
+import edu.iu.scipolicy.loader.isi.db.utilities.parser.ISITableModelParser;
 
 public class ISIDatabaseLoaderAlgorithm implements Algorithm {
 	public static final boolean SHOULD_NORMALIZE_AUTHOR_NAMES = true;
@@ -35,7 +36,6 @@ public class ISIDatabaseLoaderAlgorithm implements Algorithm {
     }
 
     public Data[] execute() throws AlgorithmExecutionException {
-    	System.err.println("Executing");
     	// Convert input ISI data to an ISI table.
 
     	Table isiTable = convertISIToCSV(this.inData, this.logger);
@@ -43,15 +43,20 @@ public class ISIDatabaseLoaderAlgorithm implements Algorithm {
 
     	// Convert the ISI CSV to an ISI database.
 
-    	Data[] databaseData = convertTableToDatabase(isiTable, this.inData);
+    	ISIDatabase database = convertTableToDatabase(isiTable);
 
     	// Annotate ISI database as output data with metadata and return it.
 
-        return annotateOutputData(databaseData);
+        return annotateOutputData(database, this.inData);
     }
     
     private Table convertISIToCSV(Data isiData, LogService logger)
     		throws AlgorithmExecutionException {
+    	/*
+    	 * TODO: If you want to do template style commenting, describe what's going on throughout
+    	 *  the method.
+    	 */ 
+   		// TODO: (What happens after you read the input ISI data?)
     	// Read the input ISI data.
 
     	File inISIFile = (File)isiData.getData();
@@ -69,21 +74,17 @@ public class ISIDatabaseLoaderAlgorithm implements Algorithm {
     	}
     }
     
-    private Data[] convertTableToDatabase(Table table, Data inData) {
+    private ISIDatabase convertTableToDatabase(Table table) {
     	// Create an in-memory ISI model based off of the table.
     		
-    	ISIModel model = new ISITableModelExtractor().extractModel(table);
+    	ISIModel model = new ISITableModelParser().parseModel(table);
 
     	// Use the ISI model to create an ISI database.
     	
-    	ISIDatabase database = ISIDatabaseCreator.createFromModel(model);
-
-    	// Wrap the resulting ISI database as output and return it. 
-
-    	return wrapAsOutputData(database, inData);
+    	return ISIDatabaseCreator.createFromModel(model);
     }
 
-    private Data[] annotateOutputData(Data[] outputData) {
+    private Data[] annotateOutputData(ISIDatabase isiDatabase, Data parentData) {
     	return null;
     }
     

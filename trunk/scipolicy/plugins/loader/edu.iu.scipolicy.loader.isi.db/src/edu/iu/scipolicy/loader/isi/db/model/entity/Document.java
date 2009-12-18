@@ -6,7 +6,7 @@ import java.util.Hashtable;
 
 import edu.iu.cns.database.loader.framework.Entity;
 import edu.iu.cns.database.loader.framework.utilities.DatabaseTableKeyGenerator;
-import edu.iu.scipolicy.loader.isi.db.ISIDatabase;
+import edu.iu.nwb.shared.isiutil.database.ISIDatabase;
 
 public class Document extends Entity<Document> implements Comparable<Document> {
 	private String digitalObjectIdentifier;
@@ -18,14 +18,15 @@ public class Document extends Entity<Document> implements Comparable<Document> {
 	private int citedReferenceCount;
 	private String abstractText;
 	private int timesCited;
-	private String beginningPage;
-	private String endingPage;
+	private int beginningPage;
+	private int endingPage;
 	private int pageCount;
 	private String isiUniqueArticleIdentifier;
 	private int publicationYear;
-	private Date publicationDate;
+	private String publicationDate;
 	private String volume;
 	private String issue;
+	private String partNumber;
 	private String supplement;
 	private String specialIssue;
 	private String isiDocumentDeliveryNumber;
@@ -43,14 +44,15 @@ public class Document extends Entity<Document> implements Comparable<Document> {
 			int citedReferenceCount,
 			String abstractText,
 			int timesCited,
-			String beginningPage,
-			String endingPage,
+			int beginningPage,
+			int endingPage,
 			int pageCount,
 			String isiUniqueArticleIdentifier,
 			int publicationYear,
-			Date publicationDate,
+			String publicationDate,
 			String volume,
 			String issue,
+			String partNumber,
 			String supplement,
 			String specialIssue,
 			String isiDocumentDeliveryNumber,
@@ -75,6 +77,7 @@ public class Document extends Entity<Document> implements Comparable<Document> {
 				publicationYear,
 				publicationDate,
 				volume,
+				partNumber,
 				issue,
 				supplement,
 				specialIssue,
@@ -97,6 +100,7 @@ public class Document extends Entity<Document> implements Comparable<Document> {
 		this.publicationYear = publicationYear;
 		this.publicationDate = publicationDate;
 		this.volume = volume;
+		this.partNumber = partNumber;
 		this.issue = issue;
 		this.supplement = supplement;
 		this.specialIssue = specialIssue;
@@ -141,11 +145,11 @@ public class Document extends Entity<Document> implements Comparable<Document> {
 		return this.timesCited;
 	}
 
-	public String getBeginningPage() {
+	public int getBeginningPage() {
 		return this.beginningPage;
 	}
 
-	public String getEndingPage() {
+	public int getEndingPage() {
 		return this.endingPage;
 	}
 
@@ -161,7 +165,7 @@ public class Document extends Entity<Document> implements Comparable<Document> {
 		return this.publicationYear;
 	}
 
-	public Date getPublicationDate() {
+	public String getPublicationDate() {
 		return this.publicationDate;
 	}
 
@@ -171,6 +175,10 @@ public class Document extends Entity<Document> implements Comparable<Document> {
 
 	public String getIssue() {
 		return this.issue;
+	}
+
+	public String getPartNumber() {
+		return this.partNumber;
 	}
 
 	public String getSupplement() {
@@ -199,7 +207,7 @@ public class Document extends Entity<Document> implements Comparable<Document> {
 
 	public Document merge(Document otherDocument) {
 		// TODO: Implement this.
-		return otherDocument;
+		return this;
 	}
 
 	public static Dictionary<String, Comparable<?>> createAttributes(
@@ -212,14 +220,15 @@ public class Document extends Entity<Document> implements Comparable<Document> {
 			int citedReferenceCount,
 			String abstractText,
 			int timesCited,
-			String beginningPage,
-			String endingPage,
+			int beginningPage,
+			int endingPage,
 			int pageCount,
 			String isiUniqueArticleIdentifier,
 			int publicationYear,
-			Date publicationDate,
+			String publicationDate,
 			String volume,
 			String issue,
+			String partNumber,
 			String supplement,
 			String specialIssue,
 			String isiDocumentDeliveryNumber,
