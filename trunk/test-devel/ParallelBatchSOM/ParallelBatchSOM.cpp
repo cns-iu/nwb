@@ -25,7 +25,7 @@ typedef vector< map<int, float> > training_data_t;
 
 
 // TODO Test with more realistic numbers.
-const int NUMBER_OF_TRAINING_STEPS = 5000;
+const int NUMBER_OF_TRAINING_STEPS = 1000;
 const int NUMBER_OF_JOBS = 1;
 const int NUMBER_OF_STEPS_BETWEEN_UPDATES = 1;
 
@@ -96,9 +96,12 @@ float distanceToSparse(float vector[], map<int, float> sparseVector, float recen
 
 	float rightSum = recentSquaredNorm;
 
+	cout << "leftSum = " << leftSum << "; rightSum = " << rightSum << endl;
+
 	return (leftSum + rightSum);
 }
 
+/*
 float sumOfSquaredDifferences(float vector1[], float vector2[]) {
 	float sumOfSquaredDifferences = 0.0;
 
@@ -114,6 +117,7 @@ float sumOfSquaredDifferences(float vector1[], float vector2[]) {
 float euclideanDistance(float vector1[], float vector2[]) {
 	return sqrt(sumOfSquaredDifferences(vector1, vector2));
 }
+*/
 
 /* TODO: Cosine similarity and cheap cosine similarity
  * The latter ignores sqrting the norms when only comparison to other such numbers is desired.
@@ -128,6 +132,9 @@ float euclideanDistance(float vector1[], float vector2[]) {
 float gaussian(Coordinate coord1, Coordinate coord2, float width) {
 	int rowDiff = coord1.row - coord2.row;
 	int columnDiff = coord1.column - coord2.column;
+
+//	cout << "rowDiff " << rowDiff << ", columnDiff " << columnDiff << endl;
+//	cout << "  distance = " << exp(-(rowDiff*rowDiff + columnDiff*columnDiff) / (width * width)) << endl;
 
 	return exp(-(rowDiff*rowDiff + columnDiff*columnDiff) / (width * width));
 }
@@ -155,6 +162,7 @@ float* loadInitialNet() {
 		// Read parameters on first line.
 		string topology; // Ignored for now.
 		string neighborhood; // Ignored for now.
+		// TODO The rows and columns seem backwards here.  Ensure it works out.
 		codebookFile >> g_dim >> topology >> g_columns >> g_rows >> neighborhood;
 
 		int numberOfNodes = g_rows * g_columns;
@@ -182,7 +190,7 @@ void writeNetToFile(float* net) {
 
 	ofstream outFile("trained.cod");
 	if (outFile.is_open()) {
-		outFile << g_dim << " " << "hexa" << " " << g_rows << " " << g_columns << " " << "gaussian";
+		outFile << g_dim << " " << "hexa" << " " << g_columns << " " << g_rows << " " << "gaussian";
 
 		int numberOfNodes = g_rows * g_columns;
 
@@ -271,12 +279,14 @@ Coordinate findWinner(map<int, float> trainingVector, float* net, float* recentS
     		float distance =
     				distanceToSparse(calculateNodeIndex(net, coord), trainingVector, recentSquaredNorm);
 
-    		if(distance < shortestDistance){
+    		if (distance < shortestDistance) {
 				shortestDistance = distance;
 				winner = coord;
     		}
     	}
     }
+
+    cout << "Winner is at " << winner.row << ", " << winner.column << " with distance " << shortestDistance << endl;
 
     return winner;
 }
@@ -356,7 +366,7 @@ void train(int myRank, float* net, training_data_t myTrainingVectors) {
 	const int flatSize = numberOfNodes * g_dim;
 
 	float* myNumerators = new float[flatSize];
-	zeroOut(myNumerators, flatSize); // TODO Or does new zero it?
+	zeroOut(myNumerators, flatSize); // TODO Or does "new" zero it?
 	vector<vector<float> > myDenominators(g_rows, vector<float>(g_columns));
 	float* recentSquaredNorms = calculateSquaredNorms(net);
 
@@ -447,6 +457,8 @@ int main(int argc, char *argv[]) {
 	training_data_t trainingVectors = loadMyTrainingVectors(myRank);
 
 	train(myRank, net, trainingVectors);
+
+	// TODO Perhaps write a little quantization error function.
 
 	writeNetToFile(net);
 
