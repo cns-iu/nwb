@@ -4,12 +4,11 @@ import java.util.Dictionary;
 import java.util.Enumeration;
 import java.util.Iterator;
 
-public class DictionaryIterator<KeyType, ValueType> implements
-		Iterator<GenericPair<KeyType, ValueType> >, Iterable<GenericPair<KeyType, ValueType> > {
-	private Dictionary<KeyType, ValueType> dictionary;
-	Enumeration<KeyType> keys;
+public class DictionaryIterator<K, V> implements Iterator<Pair<K, V> >, Iterable<Pair<K, V> > {
+	private Dictionary<K, V> dictionary;
+	Enumeration<K> keys;
 
-	public DictionaryIterator(Dictionary<KeyType, ValueType> dictionary) {
+	public DictionaryIterator(Dictionary<K, V> dictionary) {
 		this.dictionary = dictionary;
 		this.keys = dictionary.keys();
 	}
@@ -18,11 +17,11 @@ public class DictionaryIterator<KeyType, ValueType> implements
 		return this.keys.hasMoreElements();
 	}
 
-	public GenericPair<KeyType, ValueType> next() {
-		KeyType nextKey = this.keys.nextElement();
-		ValueType nextValue = this.dictionary.get(nextKey);
+	public Pair<K, V> next() {
+		K nextKey = this.keys.nextElement();
+		V nextValue = this.dictionary.get(nextKey);
 
-		return new GenericPair<KeyType, ValueType>(nextKey, nextValue);
+		return new Pair<K, V>(nextKey, nextValue);
 	}
 
 	public void remove() {
@@ -31,7 +30,7 @@ public class DictionaryIterator<KeyType, ValueType> implements
 		throw new UnsupportedOperationException(exceptionMessage);
 	}
 
-	public Iterator<GenericPair<KeyType, ValueType> > iterator() {
+	public Iterator<Pair<K, V> > iterator() {
 		return this;
 	}
 }
