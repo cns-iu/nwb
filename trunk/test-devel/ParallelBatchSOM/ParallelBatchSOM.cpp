@@ -23,9 +23,12 @@ using namespace std;
 using std::cerr;
 using std::endl;
 
-const int NUMBER_OF_TRAINING_STEPS = 1000;
+typedef vector< map<int, float> > training_data_t;
+
+
+const int NUMBER_OF_TRAINING_STEPS = 10000;
 const int NUMBER_OF_JOBS = 1;
-const int NUMBER_OF_STEPS_BETWEEN_UPDATES = 1000;
+const int NUMBER_OF_STEPS_BETWEEN_UPDATES = 100;
 
 const int INITIAL_WIDTH = 20;
 const int FINAL_WIDTH = 1; // or 0?
@@ -45,6 +48,12 @@ struct Node {
 
 	Node(int r, int c) { row = r; column = c; }
 };
+
+void zeroOut(float* array, int size) {
+	for (int i = 0; i < size; i++) {
+		array[i] = 0.0;
+	}
+}
 
 void addScaledSparseVectorToNodeVector(float* node, float scalar, map<int, float> sparseVector) {
 	for (map<int, float>::const_iterator it = sparseVector.begin(); it != sparseVector.end(); it++) {
@@ -68,9 +77,9 @@ void setNode(float* node, float weightVector[]) {
 	}
 }
 
-/* TODO For binary-valued training vectors, would could optimize by replacing the
+/* For binary-valued training vectors, would could optimize by replacing the
  * map<int, float>s with some kind of bit array.
- * Or as Russell mentions, perhaps for certain degrees of sparseness we may be better served
+ * As Russell mentions, perhaps for certain degrees of sparseness we may be better served
  * by doing simple BLAS arithmetic and trusting in the L2 cache.
  */
 float* calculateNodeIndex(float* net, Node node) {
@@ -144,70 +153,35 @@ float interpolate(float x, float x0, float x1, float y0, float y1) {
 	}
 }
 
-// TODO int or float?
 float calculateWidthAtTime(int t, int tFinal) {
 	return interpolate(t, 0, tFinal, INITIAL_WIDTH, FINAL_WIDTH);
 }
 
-// TODO Split this out into its own script.
-void loadInitialNet(float** net) {
+float* loadInitialNet() {
+	float* net;
 	ifstream codebookFile("random.cod"); // TODO Parameterize
 
 	if (codebookFile.is_open()) {
 		// Read parameters on first line.
 		string topology; // TODO Ignored for now.
 		string neighborhood; // TODO Ignored for now.
-		codebookFile >> g_dim >> topology >> g_columns >> g_rows >> neighborhood; // TODO Are rows and columns really swapped?
+		codebookFile >> g_dim >> topology >> g_columns >> g_rows >> neighborhood;
 
-		*net = new float(g_rows * g_columns * g_dim);
+		int netSize = g_rows * g_columns * g_dim;
+		net = new float[netSize];
 
-		// Read the codebook.
-		string line;
-		int i = 0;
-		bool onFirstLine = true;
-		while (!codebookFile.eof()) {
-			getline(codebookFile, line);
-			// Skip first line.
-			if (onFirstLine) {
-				getline(codebookFile, line);
-				onFirstLine = false;
+		// TODO Check eof during and after, perhaps.
+		for (int i = 0; i < netSize; i++) {
+			int nodeIndex = i * g_dim;
+
+			for (int weightIndex = 0; weightIndex < g_dim; weightIndex++) {
+				codebookFile >> net[nodeIndex + weightIndex];
 			}
-
-			// Read weight vector.
-			float weightVector[g_dim];
-			istringstream iss(line);
-			for (int j = 0; j < g_dim; j++) {
-				string coordinateString;
-				iss >> coordinateString;
-
-				float coordinate = atof(coordinateString.c_str());
-				weightVector[j] = coordinate;
-			}
-
-			Node node((int) i / g_columns, i % g_columns);
-			setNode(calculateNodeIndex(*net, node), weightVector);
-
-			i++;
 		}
-
-		// TODO Debug only.
-//		cout << net.g_rows << ", " << net.g_columns << ", " << net.g_dim << endl;
-//		for (int i = 0; i < net.g_rows * net.g_columns; i++) {
-//			Node node = net.nodes[i];
-//			cout << node.row << ", " << node.column << endl;
-//			vector<float> weightVector = node.weightVector;
-//
-//			vector<float>::const_iterator cii;
-//			for (cii = weightVector.begin(); cii != weightVector.end(); cii++) {
-//				cout << *cii << " ";
-//			}
-//			cout << endl;
-//		}
-
-		// TODO Sanity check: i == g_rows * g_columns (- 1?)
 	} else {
 		cerr << "Error opening random codebook file!";
 	}
+	return net;
 }
 
 void writeNetToFile(float* net) {
@@ -217,64 +191,69 @@ void writeNetToFile(float* net) {
 		outFile << g_dim << " " << "hexa" << " " << g_rows << " " << g_columns << " " << "gaussian";
 
 		for (int row = 0; row < g_rows; row++) {
-			outFile << endl;
-
 			for (int column = 0; column < g_columns; column++) {
+				outFile << endl;
+
 				Node node(row, column);
-				float* nodeIndex = calculateNodeIndex(net, node);
+				float* nodeArray = calculateNodeIndex(net, node);
 
-				outFile << *nodeIndex;
-
-				if (column < g_columns - 1) {
-					outFile << " ";
+				for (int weightIndex = 0; weightIndex < g_dim; weightIndex++) {
+					outFile << nodeArray[weightIndex] << " ";
 				}
 			}
 		}
 	}
 }
 
-vector<map<int, float> > loadMyTrainingVectors(int myRank) {
+training_data_t loadMyTrainingVectors(int myRank) {
+	g_dim = 3; // TODO REMOVE
+
+	cout << "start" << endl << flush;
+
 	ifstream trainingFile("color.dat"); // TODO Parameterize
 
+	cout << "file stream created" << endl << flush;
+
 	if (trainingFile.is_open()) {
+		cout << "file is open" << endl << flush;
+
 		int dimensions;
 		trainingFile >> g_numberOfVectors >> dimensions;
 		if (dimensions != g_dim) { // TODO Ugh.
-			cerr << "Dimensionality of the training set (" << dimensions << ") does not agree with the dimensionality of the codebook vectors (" << g_dim << ")" << endl;
+			cerr << "Dimensionality of the training set (" << dimensions << ") does not agree with the dimensionality of the codebook vectors (" << g_dim << ")." << endl;
 			exit (1);
 		}
 
-		vector<map<int, float> > trainingVectors(g_numberOfVectors);
+		cout << "before alloc" << endl << flush;
+		training_data_t* trainingVectors = new training_data_t();
+		cout << "after alloc" << endl << flush;
 
 		string line;
 		bool onFirstLine = true;
-		int i = 0;
+		int vectorLineNumber = 0;
 		while (!trainingFile.eof()) {
-			getline(trainingFile, line);
-			// Skip first line.
-			if (onFirstLine) {
-				getline(trainingFile, line);
-				onFirstLine = false;
-			}
 
 			// Skip lines that aren't mine.
-			if (i % NUMBER_OF_JOBS == myRank) {
-				// Read training vector into sparse representation.
-				float trainingVector[dimensions];
-				istringstream iss(line);
+			if (vectorLineNumber % NUMBER_OF_JOBS == myRank) {
+
+				map<int, float> trainingVector;
 
 				for (int j = 0; j < dimensions; j++) {
-					string coordinateString;
-					iss >> coordinateString;
+					float coordinate;
+					trainingFile >> coordinate;
 
-					float coordinate = atof(coordinateString.c_str());
 					if (coordinate != 0.0) {
-						(trainingVectors.at(i))[j] = coordinate;
+						cout << "Attempting to insert coordinate " << coordinate << endl;
+						trainingVector[j] = coordinate;
 					}
 				}
+
+				cout << "Pushing a training vector with size " << trainingVector.size() << endl;
+				trainingVectors->push_back(trainingVector);
+				cout << "Did it." << endl;
 			}
 
-			i++;
+			vectorLineNumber++;
 		}
 		// TODO Sanity check: i == g_rows * g_columns (- 1?)
 
@@ -290,7 +269,7 @@ vector<map<int, float> > loadMyTrainingVectors(int myRank) {
 //			cout << endl;
 //		}
 
-		return trainingVectors;
+		return (*trainingVectors);
 	} else {
 		cerr << "Error opening training data file!";
 		exit (1);
@@ -360,7 +339,9 @@ void train(int myRank, float* net, vector<map<int, float> > myTrainingVectors) {
 	float width = INITIAL_WIDTH;
 
 	float* myNumerators = new float[g_rows * g_columns * g_dim];
+	zeroOut(myNumerators, g_rows * g_columns * g_dim);
 	vector<vector<float> > myDenominators(g_rows, vector<float>(g_columns));//new float[][g_columns];
+
 
 	int numberOfTimesteps =
 			(int) ((NUMBER_OF_TRAINING_STEPS + NUMBER_OF_JOBS - 1) / NUMBER_OF_JOBS);
@@ -404,7 +385,7 @@ void train(int myRank, float* net, vector<map<int, float> > myTrainingVectors) {
 
 			// Reset for next "epoch"
 			width = calculateWidthAtTime(t, numberOfTimesteps);
-			memset(myNumerators, 0, sizeof myNumerators); // TODO Any more efficient way?
+			zeroOut(myNumerators, g_rows * g_columns * g_dim); // TODO Any more efficient way?
 		}
 	}
 
@@ -429,8 +410,7 @@ int main(int argc, char *argv[]) {
 
 	/* Might want to read the number of lines, too? and split up the file (one piece per process).
 	 */
-	float* net;
-	loadInitialNet(&net);
+	float* net = loadInitialNet();
 
 	vector<map<int, float> > trainingVectors = loadMyTrainingVectors(myRank);
 
