@@ -28,6 +28,7 @@ public class ISITag {
 		new ISITag("BP", "Beginning Page", ContentType.TEXT);
 	public static final ISITag RESEARCH_ADDRESSES =
 		new ISITag("C1", "Research Addresses", ContentType.MULTI_VALUE_TEXT, "\n");
+	public static final ISITag CITED_PATENT = new ISITag("CP", "Cited Patent", ContentType.TEXT);
 	public static final ISITag CITED_REFERENCES =
 		new ISITag("CR", "Cited References", ContentType.MULTI_VALUE_TEXT, "\n");
 	public static final ISITag ORIGINAL_KEYWORDS =
@@ -61,6 +62,8 @@ public class ISITag {
 	public static final ISITag PUBLICATION_TYPE =
 		new ISITag("PT", "Publication Type", ContentType.TEXT);
 	public static final ISITag PUBLISHER = new ISITag("PU", "Publisher", ContentType.TEXT);
+	public static final ISITag PUBLISHER_ADDRESS =
+		new ISITag("PA", "Publisher Address", ContentType.TEXT);
 	public static final ISITag PUBLICATION_YEAR =
 		new ISITag("PY", "Publication Year", ContentType.INTEGER);
 	public static final ISITag REPRINT_ADDRESS =
@@ -71,6 +74,7 @@ public class ISITag {
 		new ISITag("BS", "Book Series Subtitle", ContentType.TEXT);
 	public static final ISITag SPECIAL_ISSUE =
 		new ISITag("SI", "Special Issue",  ContentType.TEXT);
+	public static final ISITag ISBN = new ISITag("BN", "ISBN", ContentType.TEXT);
 	public static final ISITag ISSN = new ISITag("SN",  "ISSN", ContentType.TEXT);
 	public static final ISITag FULL_JOURNAL_TITLE =
 		new ISITag("SO", "Journal Title (Full)",ContentType.TEXT);
@@ -92,6 +96,7 @@ public class ISITag {
 		AUTHORS,
 		BEGINNING_PAGE,
 		RESEARCH_ADDRESSES,
+		CITED_PATENT,
 		CITED_REFERENCES,
 		ORIGINAL_KEYWORDS,
 		DOI,
@@ -111,11 +116,13 @@ public class ISITag {
 		PART_NUMBER,
 		PUBLICATION_TYPE,
 		PUBLISHER,
+		PUBLISHER_ADDRESS,
 		PUBLICATION_YEAR,
 		REPRINT_ADDRESS,
 		BOOK_SERIES_TITLE,
 		BOOK_SERIES_SUBTITLE,
 		SPECIAL_ISSUE,
+		ISBN,
 		ISSN,
 		FULL_JOURNAL_TITLE,
 		SUPPLEMENT,

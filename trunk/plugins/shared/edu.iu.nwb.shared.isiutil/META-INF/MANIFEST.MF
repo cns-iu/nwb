@@ -6,6 +6,7 @@ Bundle-Version: 1.0.0
 Bundle-ClassPath: .
 X-AutoStart: true
 Export-Package: edu.iu.nwb.shared.isiutil,
+ edu.iu.nwb.shared.isiutil.database,
  edu.iu.nwb.shared.isiutil.exception
 Import-Package: edu.iu.nwb.shared.isiutil,
  org.cishell.utilities,
