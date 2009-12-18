@@ -3,9 +3,9 @@ package edu.iu.cns.database.loader.framework;
 import java.util.Dictionary;
 
 import edu.iu.cns.shared.utilities.DictionaryIterator;
-import edu.iu.cns.shared.utilities.GenericPair;
+import edu.iu.cns.shared.utilities.Pair;
 
-public abstract class RowItem<RowItemType extends RowItem<?>> {
+public abstract class RowItem<T extends RowItem<?>> {
 	public static final int BASE_HASH_MULTIPLIER = 31;
 
 	private Dictionary<String, Comparable<?>> attributes;
@@ -23,7 +23,7 @@ public abstract class RowItem<RowItemType extends RowItem<?>> {
 	 * By default, it will do a naive equality check between all of the attributes of this
 	 *  and otherEntity.
 	 */
-	public boolean shouldMerge(RowItemType otherItem) {
+	public boolean shouldMerge(T otherItem) {
 		if (this == otherItem) {
 			return true;
 		}
@@ -35,7 +35,7 @@ public abstract class RowItem<RowItemType extends RowItem<?>> {
 			return false;
 		}
 
-		for (GenericPair<String, Comparable<?>> dictionaryEntry :
+		for (Pair<String, Comparable<?>> dictionaryEntry :
 				new DictionaryIterator<String, Comparable<?>>(attributes)) {
 			Object otherValue = otherAttributes.get(dictionaryEntry.getFirstObject());
 
@@ -47,7 +47,7 @@ public abstract class RowItem<RowItemType extends RowItem<?>> {
 		return true;
 	}
 
-	public abstract RowItemType merge(RowItemType otherItem);
+	public abstract T merge(T otherItem);
 
 	public Dictionary<String, Comparable<?>> getAttributesForQuery() {
 		return this.attributes;

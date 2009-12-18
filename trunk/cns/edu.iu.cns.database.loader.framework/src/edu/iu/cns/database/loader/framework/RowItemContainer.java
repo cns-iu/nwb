@@ -5,17 +5,17 @@ import java.util.List;
 
 import edu.iu.cns.database.loader.framework.utilities.DatabaseTableKeyGenerator;
 
-public class DatabaseTableType<RowItemType extends RowItem<RowItemType>> {
+public class RowItemContainer<RowItemType extends RowItem<RowItemType>> {
 	private DatabaseTableKeyGenerator keyGenerator = new DatabaseTableKeyGenerator();
 	private List<RowItemType> items = new ArrayList<RowItemType>();
 	private String humanReadableName;
 	private String databaseTableName;
 
-	public DatabaseTableType(String humanReadableName) {
+	public RowItemContainer(String humanReadableName) {
 		this(humanReadableName, humanReadableName.toUpperCase());
 	}
 
-	public DatabaseTableType(String humanReadableName, String databaseTableName) {
+	public RowItemContainer(String humanReadableName, String databaseTableName) {
 		this.humanReadableName = humanReadableName;
 		this.databaseTableName = databaseTableName;
 	}
@@ -46,15 +46,5 @@ public class DatabaseTableType<RowItemType extends RowItem<RowItemType>> {
 		this.items.add(newItem);
 
 		return newItem;
-	}
-
-	private RowItemType findDuplicateItem(RowItemType newEntity) {
-		for (RowItemType originalEntity : this.items) {
-			if (originalEntity.equals(newEntity)) {
-				return originalEntity;
-			}
-		}
-
-		return null;
 	}
 }

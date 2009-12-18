@@ -5,7 +5,7 @@ import java.util.Dictionary;
 import edu.iu.cns.database.loader.framework.utilities.DatabaseTableKeyGenerator;
 
 
-public abstract class Entity<EntityType extends Entity<?>> extends RowItem<EntityType> {
+public abstract class Entity<T extends Entity<?>> extends RowItem<T> {
 	public static final int BASE_HASH_MULTIPLIER = 31;
 
 	private int primaryKey;
