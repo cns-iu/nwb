@@ -383,7 +383,7 @@ public class MergeNodes implements Algorithm {
    	    	    		break;
    	    	    	}
    	    			mergingNodesMap.put(node, nodeIndex);
-//   	    			printMergingNodesMap();
+//   	    			printMergingNodesMap(); 
    	    			starValue = ((String)nodeRow.get(totalCols-1)).trim();
    	    			addANode(nodeGroup, starValue, node);
    	    			   	    			
