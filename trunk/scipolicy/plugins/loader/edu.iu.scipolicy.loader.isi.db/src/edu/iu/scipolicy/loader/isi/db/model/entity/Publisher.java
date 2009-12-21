@@ -3,6 +3,8 @@ package edu.iu.scipolicy.loader.isi.db.model.entity;
 import java.util.Dictionary;
 import java.util.Hashtable;
 
+import org.cishell.utilities.StringUtilities;
+
 import edu.iu.cns.database.loader.framework.Entity;
 import edu.iu.cns.database.loader.framework.utilities.DatabaseTableKeyGenerator;
 import edu.iu.nwb.shared.isiutil.database.ISIDatabase;
@@ -45,20 +47,21 @@ public class Publisher extends Entity<Publisher> {
 		getAttributes().put(ISIDatabase.PUBLISHER_SOURCE, this.source);
 	}
 
-	public boolean equals(Entity otherEntity) {
-		if (this == otherEntity) {
-			return true;
-		} else if (!(otherEntity instanceof Publisher)) {
-			return false;
-		}
+	public boolean shouldMerge(Publisher otherPublisher) {
+		boolean namesAndCitiesAreEquivalent = (
+			StringUtilities.validAndEquivalentIgnoreCase(this.name, otherPublisher.getName()) &&
+			StringUtilities.validAndEquivalentIgnoreCase(this.city, otherPublisher.getCity()));
+		boolean webAddressesAreEquivalent = StringUtilities.validAndEquivalentIgnoreCase(
+			this.webAddress, otherPublisher.getWebAddress());
 
-		// TODO: Compare by ISSN?
-		return super.equals(otherEntity);
+		return (namesAndCitiesAreEquivalent || webAddressesAreEquivalent);
 	}
 
-	public Publisher merge(Publisher otherPublisher) {
-		// TODO: Implement this.
-		return this;
+	public void merge(Publisher otherPublisher) {
+		this.name = StringUtilities.simpleMerge(this.name, otherPublisher.getName());
+		this.city = StringUtilities.simpleMerge(this.city, otherPublisher.getCity());
+		this.webAddress =
+			StringUtilities.simpleMerge(this.webAddress, otherPublisher.getWebAddress());
 	}
 
 	public static Dictionary<String, Comparable<?>> createAttributes(

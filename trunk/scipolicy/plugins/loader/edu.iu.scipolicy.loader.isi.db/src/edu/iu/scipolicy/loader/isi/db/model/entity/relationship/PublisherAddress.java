@@ -25,8 +25,11 @@ public class PublisherAddress extends RowItem<PublisherAddress> {
 		return this.address;
 	}
 
-	public PublisherAddress merge(PublisherAddress otherPublisherAddress) {
-		return otherPublisherAddress;
+	public boolean shouldMerge(PublisherAddress otherPublisherAddress) {
+		return false;
+	}
+
+	public void merge(PublisherAddress otherPublisherAddress) {
 	}
 
 	public static Dictionary<String, Comparable<?>> createAttributes() {

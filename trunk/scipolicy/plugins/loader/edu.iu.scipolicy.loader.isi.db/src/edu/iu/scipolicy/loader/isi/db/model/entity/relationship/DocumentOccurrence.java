@@ -25,8 +25,11 @@ public class DocumentOccurrence extends RowItem<DocumentOccurrence> {
 		return this.isiFile;
 	}
 
-	public DocumentOccurrence merge(DocumentOccurrence otherDocumentOccurrence) {
-		return otherDocumentOccurrence;
+	public boolean shouldMerge(DocumentOccurrence otherDocumentOccurrence) {
+		return false;
+	}
+
+	public void merge(DocumentOccurrence otherDocumentOccurrence) {
 	}
 
 	public static Dictionary<String, Comparable<?>> createAttributes() {

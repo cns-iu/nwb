@@ -205,9 +205,11 @@ public class Document extends Entity<Document> implements Comparable<Document> {
 		return -1;
 	}
 
-	public Document merge(Document otherDocument) {
-		// TODO: Implement this.
-		return this;
+	public boolean shouldMerge(Document otherDocument) {
+		return false;
+	}
+
+	public void merge(Document otherDocument) {
 	}
 
 	public static Dictionary<String, Comparable<?>> createAttributes(

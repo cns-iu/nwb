@@ -3,6 +3,8 @@ package edu.iu.scipolicy.loader.isi.db.model.entity;
 import java.util.Dictionary;
 import java.util.Hashtable;
 
+import org.cishell.utilities.StringUtilities;
+
 import edu.iu.cns.database.loader.framework.Entity;
 import edu.iu.cns.database.loader.framework.utilities.DatabaseTableKeyGenerator;
 import edu.iu.nwb.shared.isiutil.database.ISIDatabase;
@@ -102,9 +104,34 @@ public class Source extends Entity<Source> implements Comparable<Source> {
 			otherSource.get29CharacterSourceTitleAbbreviation());
 	}
 
-	public Source merge(Source otherSource) {
-		// TODO: Implement this.
-		return this;
+	public boolean shouldMerge(Source otherSource) {
+		return (
+			StringUtilities.validAndEquivalent(this.issn, otherSource.getISSN()) ||
+			StringUtilities.validAndEquivalent(
+				this.twentyNineCharacterSourceTitleAbbreviation,
+				otherSource.get29CharacterSourceTitleAbbreviation()));
+	}
+
+	public void merge(Source otherSource) {
+		this.fullTitle = StringUtilities.simpleMerge(this.fullTitle, otherSource.getFullTitle());
+		this.publicationType =
+			StringUtilities.simpleMerge(this.publicationType, otherSource.getPublicationType());
+		this.isoTitleAbbreviation = StringUtilities.simpleMerge(
+			this.isoTitleAbbreviation, otherSource.getISOTitleAbbreviation());	
+		this.bookSeriesTitle =
+			StringUtilities.simpleMerge(this.bookSeriesTitle, otherSource.getBookSeriesTitle());
+		this.bookSeriesSubtitle = StringUtilities.simpleMerge(
+			this.bookSeriesSubtitle, otherSource.getBookSeriesSubtitle());
+		this.issn = StringUtilities.simpleMerge(this.issn, otherSource.getISSN());
+		this.twentyNineCharacterSourceTitleAbbreviation = StringUtilities.simpleMerge(
+			this.twentyNineCharacterSourceTitleAbbreviation,
+			otherSource.get29CharacterSourceTitleAbbreviation());
+		this.conferenceTitle = StringUtilities.simpleMerge(
+			this.conferenceTitle, otherSource.getConferenceTitle());
+		this.conferenceDate = StringUtilities.simpleMerge(
+			this.conferenceDate, otherSource.getConferenceDate());
+		this.conferenceDonation = StringUtilities.simpleMerge(
+			this.conferenceDonation, otherSource.getConferenceDonation());
 	}
 
 	public static Dictionary<String, Comparable<?>> createAttributes(

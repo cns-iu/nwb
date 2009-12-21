@@ -25,8 +25,11 @@ public class CitedReference extends RowItem<CitedReference> {
 		return this.reference;
 	}
 
-	public CitedReference merge(CitedReference otherCitedReference) {
-		return otherCitedReference;
+	public boolean shouldMerge(CitedReference otherCitedReference) {
+		return false;
+	}
+
+	public void merge(CitedReference otherCitedReference) {
 	}
 
 	public static Dictionary<String, Comparable<?>> createAttributes() {

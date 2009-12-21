@@ -1,7 +1,9 @@
 package edu.iu.scipolicy.loader.isi.db;
 
 import java.io.File;
+import java.util.Collection;
 import java.util.Dictionary;
+import java.util.Map;
 
 import org.cishell.framework.CIShellContext;
 import org.cishell.framework.algorithm.Algorithm;
@@ -17,6 +19,7 @@ import edu.iu.nwb.shared.isiutil.database.ISIDatabase;
 import edu.iu.nwb.shared.isiutil.exception.ReadISIFileException;
 import edu.iu.scipolicy.loader.isi.db.model.ISIModel;
 import edu.iu.scipolicy.loader.isi.db.utilities.ISIDatabaseCreator;
+import edu.iu.scipolicy.loader.isi.db.utilities.ISITablePreprocessor;
 import edu.iu.scipolicy.loader.isi.db.utilities.parser.ISITableModelParser;
 
 public class ISIDatabaseLoaderAlgorithm implements Algorithm {
@@ -38,12 +41,16 @@ public class ISIDatabaseLoaderAlgorithm implements Algorithm {
     public Data[] execute() throws AlgorithmExecutionException {
     	// Convert input ISI data to an ISI table.
 
+    	this.logger.log(LogService.LOG_INFO, "convertISIToCSV");
     	Table isiTable = convertISIToCSV(this.inData, this.logger);
-    	//return wrapAsOutputData(isiTable, this.inData);
 
-    	// Convert the ISI CSV to an ISI database.
+    	// TODO: Preprocess the ISI table to remove duplicate Documents (on the row level).
 
-    	ISIDatabase database = convertTableToDatabase(isiTable);
+    	Collection<Integer> rows = ISITablePreprocessor.removeRowsWithDuplicateDocuments(isiTable);
+
+    	// Convert the ISI table to an ISI database.
+
+    	ISIDatabase database = convertTableToDatabase(isiTable, rows);
 
     	// Annotate ISI database as output data with metadata and return it.
 
@@ -73,11 +80,12 @@ public class ISIDatabaseLoaderAlgorithm implements Algorithm {
     		throw new AlgorithmExecutionException(e.getMessage(), e);
     	}
     }
-    
-    private ISIDatabase convertTableToDatabase(Table table) {
+
+    private ISIDatabase convertTableToDatabase(Table table, Collection<Integer> rows) {
     	// Create an in-memory ISI model based off of the table.
     		
-    	ISIModel model = new ISITableModelParser().parseModel(table);
+    	ISIModel model =
+    		new ISITableModelParser().parseModel(table, rows);
 
     	// Use the ISI model to create an ISI database.
     	

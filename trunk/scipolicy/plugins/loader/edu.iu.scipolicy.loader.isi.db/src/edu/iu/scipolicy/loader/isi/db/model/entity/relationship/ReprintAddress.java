@@ -25,8 +25,11 @@ public class ReprintAddress extends RowItem<ReprintAddress> {
 		return this.address;
 	}
 
-	public ReprintAddress merge(ReprintAddress otherReprintAddress) {
-		return otherReprintAddress;
+	public boolean shouldMerge(ReprintAddress otherReprintAddress) {
+		return false;
+	}
+
+	public void merge(ReprintAddress otherReprintAddress) {
 	}
 
 	public static Dictionary<String, Comparable<?>> createAttributes() {

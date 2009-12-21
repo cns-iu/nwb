@@ -1,13 +1,13 @@
 package edu.iu.scipolicy.loader.isi.db.utilities.parser;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
 import org.cishell.utilities.StringUtilities;
 
 import prefuse.data.Table;
 import prefuse.data.Tuple;
-import prefuse.util.collections.IntIterator;
 import edu.iu.cns.database.loader.framework.RowItemContainer;
 import edu.iu.nwb.shared.isiutil.ISITableReader;
 import edu.iu.nwb.shared.isiutil.ISITag;
@@ -128,15 +128,15 @@ public class ISITableModelParser {
 	 *  variables and thus don't clutter up this method.
 	 */
 	// TODO: Rename this method. Also get rid of ISIModel.
-	public ISIModel parseModel(Table table) {
+	public ISIModel parseModel(Table table, Collection<Integer> rows) {
 		/*
 		 * TODO: Edit template comments to describe process from start to finish, read
 		 *  independently of code.
 		 */
 		// For each record/row in the table:
 
-		for (IntIterator rows = table.rows(); rows.hasNext(); ) {
-			Tuple row = table.getTuple(rows.nextInt());
+		for (Integer rowIndex : rows) {
+			Tuple row = table.getTuple(rowIndex.intValue());
 
 			// Parse ISI File.
 

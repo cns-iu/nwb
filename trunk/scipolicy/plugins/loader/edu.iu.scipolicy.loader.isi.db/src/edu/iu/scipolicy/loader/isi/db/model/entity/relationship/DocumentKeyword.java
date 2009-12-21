@@ -32,8 +32,11 @@ public class DocumentKeyword extends RowItem<DocumentKeyword> {
 		return this.orderListed;
 	}
 
-	public DocumentKeyword merge(DocumentKeyword otherDocumentKeyword) {
-		return otherDocumentKeyword;
+	public boolean shouldMerge(DocumentKeyword otherDocumentKeyword) {
+		return false;
+	}
+
+	public void merge(DocumentKeyword otherDocumentKeyword) {
 	}
 
 	public static Dictionary<String, Comparable<?>> createAttributes(int orderListed) {

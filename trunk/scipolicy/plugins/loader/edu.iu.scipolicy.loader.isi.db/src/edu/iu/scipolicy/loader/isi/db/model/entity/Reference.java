@@ -3,6 +3,8 @@ package edu.iu.scipolicy.loader.isi.db.model.entity;
 import java.util.Dictionary;
 import java.util.Hashtable;
 
+import org.cishell.utilities.StringUtilities;
+
 import edu.iu.cns.database.loader.framework.Entity;
 import edu.iu.cns.database.loader.framework.utilities.DatabaseTableKeyGenerator;
 import edu.iu.nwb.shared.isiutil.database.ISIDatabase;
@@ -103,9 +105,12 @@ public class Reference extends Entity<Reference> {
 		getAttributes().put(ISIDatabase.SOURCE, source);
 	}
 
-	public Reference merge(Reference otherReference) {
-		// TODO: Implement this.
-		return this;
+	public boolean shouldMerge(Reference otherReference) {
+		return StringUtilities.validAndEquivalent(
+			this.referenceString, otherReference.getReferenceString());
+	}
+
+	public void merge(Reference otherReference) {
 	}
 
 	public static Dictionary<String, Comparable<?>> createAttributes(

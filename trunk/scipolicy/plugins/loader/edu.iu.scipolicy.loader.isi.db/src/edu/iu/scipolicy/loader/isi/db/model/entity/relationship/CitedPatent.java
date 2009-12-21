@@ -25,8 +25,11 @@ public class CitedPatent extends RowItem<CitedPatent> {
 		return this.patent;
 	}
 
-	public CitedPatent merge(CitedPatent otherCitedPatent) {
-		return otherCitedPatent;
+	public boolean shouldMerge(CitedPatent otherCitedPatent) {
+		return false;
+	}
+
+	public void merge(CitedPatent otherCitedPatent) {
 	}
 
 	public static Dictionary<String, Comparable<?>> createAttributes() {

@@ -32,8 +32,11 @@ public class ResearchAddress extends RowItem<ResearchAddress> {
 		return this.orderListed;
 	}
 
-	public ResearchAddress merge(ResearchAddress otherResearchAddress) {
-		return otherResearchAddress;
+	public boolean shouldMerge(ResearchAddress otherResearchAddress) {
+		return false;
+	}
+
+	public void merge(ResearchAddress otherResearchAddress) {
 	}
 
 	public static Dictionary<String, Comparable<?>> createAttributes(int orderListed) {

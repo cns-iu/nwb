@@ -32,8 +32,11 @@ public class Editor extends RowItem<Editor> {
 		return this.orderListed;
 	}
 
-	public Editor merge(Editor otherEditor) {
-		return otherEditor;
+	public boolean shouldMerge(Editor otherEditor) {
+		return false;
+	}
+
+	public void merge(Editor otherEditor) {
 	}
 
 	public static Dictionary<String, Comparable<?>> createAttributes(int orderListed) {

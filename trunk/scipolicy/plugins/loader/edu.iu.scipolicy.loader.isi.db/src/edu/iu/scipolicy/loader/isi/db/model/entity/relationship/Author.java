@@ -32,8 +32,11 @@ public class Author extends RowItem<Author> {
 		return this.orderListed;
 	}
 
-	public Author merge(Author otherAuthor) {
-		return otherAuthor;
+	public boolean shouldMerge(Author otherAuthor) {
+		return false;
+	}
+
+	public void merge(Author otherAuthor) {
 	}
 
 	public static Dictionary<String, Comparable<?>> createAttributes(int orderListed) {

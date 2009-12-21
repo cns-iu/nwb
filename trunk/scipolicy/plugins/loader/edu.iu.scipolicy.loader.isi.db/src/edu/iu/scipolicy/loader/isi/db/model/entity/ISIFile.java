@@ -3,6 +3,8 @@ package edu.iu.scipolicy.loader.isi.db.model.entity;
 import java.util.Dictionary;
 import java.util.Hashtable;
 
+import org.cishell.utilities.StringUtilities;
+
 import edu.iu.cns.database.loader.framework.Entity;
 import edu.iu.cns.database.loader.framework.utilities.DatabaseTableKeyGenerator;
 import edu.iu.nwb.shared.isiutil.database.ISIDatabase;
@@ -35,9 +37,15 @@ public class ISIFile extends Entity<ISIFile> {
 		return this.fileFormatVersionNumber;
 	}
 
-	public ISIFile merge(ISIFile otherISIFile) {
-		// TODO: Implement this.
-		return this;
+	public boolean shouldMerge(ISIFile otherISIFile) {
+		return StringUtilities.validAndEquivalentIgnoreCase(
+			this.fileName, otherISIFile.getFileName());
+	}
+
+	public void merge(ISIFile otherISIFile) {
+		this.fileType = StringUtilities.simpleMerge(this.fileType, otherISIFile.getFileType());
+		this.fileFormatVersionNumber = StringUtilities.simpleMerge(
+			this.fileFormatVersionNumber, otherISIFile.getFileFormatVersionNumber());
 	}
 
 	private static Dictionary<String, Comparable<?>> createAttributes(

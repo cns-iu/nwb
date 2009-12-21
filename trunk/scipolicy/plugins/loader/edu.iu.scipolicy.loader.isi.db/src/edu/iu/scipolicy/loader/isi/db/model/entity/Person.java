@@ -76,9 +76,11 @@ public class Person extends Entity<Person> implements Comparable<Person> {
 		return -1;
 	}
 
-	public Person merge(Person otherPerson) {
-		// TODO: Implement this.
-		return this;
+	public boolean shouldMerge(Person otherPerson) {
+		return false;
+	}
+
+	public void merge(Person otherPerson) {
 	}
 
 	public static Dictionary<String, Comparable<?>> createAttributes(

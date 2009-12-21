@@ -3,6 +3,8 @@ package edu.iu.scipolicy.loader.isi.db.model.entity;
 import java.util.Dictionary;
 import java.util.Hashtable;
 
+import org.cishell.utilities.StringUtilities;
+
 import edu.iu.cns.database.loader.framework.Entity;
 import edu.iu.cns.database.loader.framework.utilities.DatabaseTableKeyGenerator;
 import edu.iu.nwb.shared.isiutil.database.ISIDatabase;
@@ -63,9 +65,20 @@ public class Address extends Entity<Address> {
 		return this.rawAddress;
 	}
 
-	public Address merge(Address otherAddress) {
-		// TODO: Implement this.
-		return this;
+	public boolean shouldMerge(Address otherAddress) {
+		return StringUtilities.validAndEquivalentIgnoreCase(
+			this.rawAddress, otherAddress.getRawAddress());
+	}
+
+	public void merge(Address otherAddress) {
+		this.streetAddress =
+			StringUtilities.simpleMerge(this.streetAddress, otherAddress.getStreetAddress());
+		this.city = StringUtilities.simpleMerge(this.city, otherAddress.getCity());
+		this.stateOrProvince =
+			StringUtilities.simpleMerge(this.stateOrProvince, otherAddress.getStateOrProvince());
+		this.postalCode =
+			StringUtilities.simpleMerge(this.postalCode, otherAddress.getPostalCode());
+		this.country = StringUtilities.simpleMerge(this.country, otherAddress.getCountry());
 	}
 
 	public static Dictionary<String, Comparable<?>> createAttributes(
