@@ -39,7 +39,9 @@ public class RowItemContainer<RowItemType extends RowItem<RowItemType>> {
 	public RowItemType addOrMerge(RowItemType newItem) {
 		for (RowItemType originalItem : this.items) {
 			if (originalItem.shouldMerge(newItem)) {
-				return originalItem.merge(newItem);
+				originalItem.merge(newItem);
+
+				return originalItem;
 			}
 		}
 

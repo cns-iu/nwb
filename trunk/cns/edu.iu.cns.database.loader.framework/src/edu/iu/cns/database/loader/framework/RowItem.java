@@ -23,7 +23,7 @@ public abstract class RowItem<T extends RowItem<?>> {
 	 * By default, it will do a naive equality check between all of the attributes of this
 	 *  and otherEntity.
 	 */
-	public boolean shouldMerge(T otherItem) {
+	/*public boolean shouldMerge(T otherItem) {
 		if (this == otherItem) {
 			return true;
 		}
@@ -45,9 +45,13 @@ public abstract class RowItem<T extends RowItem<?>> {
 		}
 
 		return true;
-	}
+	}*/
+	public abstract boolean shouldMerge(T otherItem);
 
-	public abstract T merge(T otherItem);
+	/**
+	 * merge assumes that shouldMerge(otherAddress) would return true.
+	 */
+	public abstract void merge(T otherItem);
 
 	public Dictionary<String, Comparable<?>> getAttributesForQuery() {
 		return this.attributes;
