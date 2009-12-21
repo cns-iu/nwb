@@ -136,6 +136,7 @@ public class ISITableModelParser {
 		// For each record/row in the table:
 
 		for (Integer rowIndex : rows) {
+			System.err.println("rowIndex: " + rowIndex);
 			Tuple row = table.getTuple(rowIndex.intValue());
 
 			// Parse ISI File.

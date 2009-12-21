@@ -41,10 +41,9 @@ public class ISIDatabaseLoaderAlgorithm implements Algorithm {
     public Data[] execute() throws AlgorithmExecutionException {
     	// Convert input ISI data to an ISI table.
 
-    	this.logger.log(LogService.LOG_INFO, "convertISIToCSV");
     	Table isiTable = convertISIToCSV(this.inData, this.logger);
 
-    	// TODO: Preprocess the ISI table to remove duplicate Documents (on the row level).
+    	// Preprocess the ISI table to remove duplicate Documents (on the row level).
 
     	Collection<Integer> rows = ISITablePreprocessor.removeRowsWithDuplicateDocuments(isiTable);
 

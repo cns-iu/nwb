@@ -26,14 +26,12 @@ public class ISITablePreprocessor {
     				isiUniqueArticleIdentifier, isiUniqueArticleIdentifiersToRows)) {
     			int originalRowIndex =
     				isiUniqueArticleIdentifiersToRows.get(isiUniqueArticleIdentifier);
-    			Tuple originalRow = table.getTuple(originalRowIndex);
 
-    			int timesCited =
-    				determineWhichRowToUseFromDuplicates(originalRow, currentRow);
-   				isiUniqueArticleIdentifiersToRows.put(isiUniqueArticleIdentifier, timesCited);
+    			int targetRowIndex =
+    				determineWhichRowToUseFromDuplicates(table, originalRowIndex, currentRowIndex);
+   				isiUniqueArticleIdentifiersToRows.put(isiUniqueArticleIdentifier, targetRowIndex);
     		} else {
-    			int timesCited = getTimesCitedFromRow(currentRow);
-    			isiUniqueArticleIdentifiersToRows.put(isiUniqueArticleIdentifier, timesCited);
+    			isiUniqueArticleIdentifiersToRows.put(isiUniqueArticleIdentifier, currentRowIndex);
     		}
     	}
 
@@ -47,11 +45,17 @@ public class ISITablePreprocessor {
 	}
 
 	private static int determineWhichRowToUseFromDuplicates(
-			Tuple firstRow, Tuple secondRow) {
+			Table table, int firstRowIndex, int secondRowIndex) {
+		Tuple firstRow = table.getTuple(firstRowIndex);
+		Tuple secondRow = table.getTuple(secondRowIndex);
 		int firstTimesCited = getTimesCitedFromRow(firstRow);
 		int secondTimesCited = getTimesCitedFromRow(secondRow);
 
-		return Math.max(firstTimesCited, secondTimesCited);
+		if (firstTimesCited >= secondTimesCited) {
+			return firstRowIndex;
+		} else {
+			return secondRowIndex;
+		}
 	}
 
 	private static int getTimesCitedFromRow(Tuple row) {
