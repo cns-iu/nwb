@@ -25,11 +25,11 @@ typedef vector< map<int, float> > training_data_t;
 
 
 // TODO Test with more realistic numbers.
-const int NUMBER_OF_TRAINING_STEPS = 5000;
+const int NUMBER_OF_TRAINING_STEPS = 10;
 const int NUMBER_OF_JOBS = 1;
-const int NUMBER_OF_STEPS_BETWEEN_UPDATES = 200;
+const int NUMBER_OF_STEPS_BETWEEN_UPDATES = 5;
 
-const int INITIAL_WIDTH = 20;
+const int INITIAL_WIDTH = 3;
 const int FINAL_WIDTH = 1; // TODO Or what?
 
 // set by loadInitialNet()
@@ -56,7 +56,7 @@ void zeroOut(float* array, int size) {
 
 void addScaledSparseVectorToNodeVector(float* node, float scalar, map<int, float> sparseVector) {
 	for (map<int, float>::const_iterator it = sparseVector.begin(); it != sparseVector.end(); it++) {
-		*(node + it->first) += scalar * (it->second);
+		node[it->first] += scalar * (it->second);
 	}
 
 //	for (int i = 0; i < g_dim; i++) {
@@ -64,9 +64,9 @@ void addScaledSparseVectorToNodeVector(float* node, float scalar, map<int, float
 //	}
 }
 
-void scaleNodeVector(float* node, float scalar) {
+void scaleNodeVector(float* node, float* numerator, float scalar) {
 	for (int i = 0; i < g_dim; i++) {
-		*(node + i) *= scalar;
+		node[i] = numerator[i] * scalar;
 	}
 }
 
@@ -84,7 +84,7 @@ float* calculateNodeIndex(float* net, Coordinate coord) {
 /* According to equation 8, exploiting sparseness.
  * vector is w_k and indexToOnes represents a binary-valued training vector.
  */
-float distanceToSparse(float vector[], map<int, float> sparseVector, float recentSquaredNorm) {
+float distanceToSparse(float* vector, map<int, float> sparseVector, float recentSquaredNorm) {
 	float leftSum = 0.0;
 
 	for (map<int, float>::const_iterator it = sparseVector.begin(); it != sparseVector.end(); it++) {
@@ -92,11 +92,15 @@ float distanceToSparse(float vector[], map<int, float> sparseVector, float recen
 		float sparseValue = it->second;
 
 		leftSum += sparseValue * (sparseValue - 2 * vector[sparseIndex]);
+
+		cout << "sparseValue " << sparseValue << ", vector[sparseIndex] = " << vector[sparseIndex] << ", leftSum = " << leftSum << endl;
 	}
 
 	float rightSum = recentSquaredNorm;
 
-//	cout << "leftSum = " << leftSum << "; rightSum = " << rightSum << endl;
+	if (leftSum + rightSum < 0) {
+		cout << "leftSum = " << leftSum << "; rightSum = " << rightSum << endl;
+	}
 
 	return (leftSum + rightSum);
 }
@@ -133,8 +137,8 @@ float gaussian(Coordinate coord1, Coordinate coord2, float width) {
 	int rowDiff = coord1.row - coord2.row;
 	int columnDiff = coord1.column - coord2.column;
 
-//	cout << "rowDiff " << rowDiff << ", columnDiff " << columnDiff << endl;
-//	cout << "  distance = " << exp(-(rowDiff*rowDiff + columnDiff*columnDiff) / (width * width)) << endl;
+	cout << "rowDiff " << rowDiff << ", columnDiff " << columnDiff << endl;
+	cout << "  distance = " << exp(-(rowDiff*rowDiff + columnDiff*columnDiff) / (width * width)) << endl;
 
 	return exp(-(rowDiff*rowDiff + columnDiff*columnDiff) / (width * width));
 }
@@ -170,10 +174,10 @@ float* loadInitialNet() {
 
 		// TODO Check eof during and after, perhaps.
 		for (int i = 0; i < numberOfNodes; i++) {
-			int nodeIndex = i * g_dim;
+			float* currentNode = net + i * g_dim;
 
 			for (int weightIndex = 0; weightIndex < g_dim; weightIndex++) {
-				codebookFile >> net[nodeIndex + weightIndex];
+				codebookFile >> currentNode[weightIndex];
 			}
 		}
 	} else {
@@ -211,6 +215,7 @@ void writeNetToFile(float* net) {
 	cout << "Done." << endl;
 }
 
+//TODO return pointer
 training_data_t loadMyTrainingVectors(int myRank) {
 	cout << "Loading training vectors.. ";
 
@@ -234,6 +239,7 @@ training_data_t loadMyTrainingVectors(int myRank) {
 
 			// Skip lines that aren't mine.
 			if (vectorLineNumber % NUMBER_OF_JOBS == myRank) {
+//				cout << "Reading training vector file line " << vectorLineNumber << endl;
 
 				map<int, float> trainingVector;
 
@@ -292,13 +298,15 @@ Coordinate findWinner(map<int, float> trainingVector, float* net, float* recentS
 }
 
 // Perform the final calculation for equation 5 and Allreduce.
-void synch(float* net, float* myNumerators, vector<vector<float> > myDenominators) {
+void calculateNewNet(float* net, float* myNumerators, float* myDenominators) {
 //	cout << "Synchronizing." << endl;
 
 //	int flatSize = g_rows * g_columns * g_dim;
 //	for (int i = 0; i < flatSize; i++) {
 //
 //	}
+
+//	cout << "0, 0 denom = " << myDenominators[0] << endl;
 
     for (int row = 0; row < g_rows; row++){
         for (int column = 0; column < g_columns; column++){
@@ -310,8 +318,9 @@ void synch(float* net, float* myNumerators, vector<vector<float> > myDenominator
 //            }
 
             scaleNodeVector(
+            		calculateNodeIndex(net, coord),
             		calculateNodeIndex(myNumerators, coord),
-            		(1.0 / myDenominators.at(row).at(column)));
+            		(1.0 / myDenominators[(row * g_columns) + column]));
 
 //            if (row % 11 == 0 && column % 7 == 5) { // TODO Remove.
 //				cout << "After numerator = " << *calculateNodeIndex(myNumerators, coord) << endl;
@@ -332,33 +341,42 @@ void synch(float* net, float* myNumerators, vector<vector<float> > myDenominator
 	 * comm		world?
 	 * Remember to check return value for error.
 	 */
-    net = myNumerators; // TODO Is this right?
 }
 
-float* calculateSquaredNorms(float* net) {
+void calculateSquaredNorms(float* oldSquaredNorms, float* net) {
 //	cout << "Calculating squared norms." << endl;
 
 	int numberOfNodes = g_rows * g_columns;
 
-	float* squaredNorms = new float[numberOfNodes];
+	for (int nodeIndex = 0; nodeIndex < numberOfNodes; nodeIndex++) {
+		float* currentNode = net + nodeIndex * g_dim;
+		float* currentNorm = oldSquaredNorms + nodeIndex;
+//		int nodeIndex = g_dim * nodeIndex;
 
-	for (int i = 0; i < numberOfNodes; i++) {
-		int nodeIndex = g_dim * i;
+//		if (nodeIndex == 2) {
+//			cout << "starting node 0,2" << endl;
+//		}
+		for (int weightIndex = 0; weightIndex < g_dim; weightIndex++) {
+			float weight = currentNode[weightIndex];
 
-		for (int j = 0; j < g_dim; j++) {
-			float weight = net[nodeIndex + j];
+			(*currentNorm) += weight * weight;
 
-			squaredNorms[i] += weight * weight;
+//			if (nodeIndex == 2) {
+//				cout << "weight = " << weight << ", current norm = " << (*currentNorm) << endl;
+//			}
 		}
 	}
 
-	return squaredNorms;
+	cout << "Zero indices in squared norms:" << endl;
+	for (int i = 0; i < numberOfNodes; i++) {
+		if (oldSquaredNorms[i] == 0) {
+			cout << (i % g_columns) << ", " << (i / g_columns) << endl;
+		}
+	}
 }
 
 void train(int myRank, float* net, training_data_t myTrainingVectors) {
 	cout << "Training.. ";
-
-	int t = 0;
 
 	float width = INITIAL_WIDTH;
 
@@ -366,15 +384,20 @@ void train(int myRank, float* net, training_data_t myTrainingVectors) {
 	const int flatSize = numberOfNodes * g_dim;
 
 	float* myNumerators = new float[flatSize];
-	zeroOut(myNumerators, flatSize); // TODO Or does "new" zero it?
-	vector<vector<float> > myDenominators(g_rows, vector<float>(g_columns));
-	float* recentSquaredNorms = calculateSquaredNorms(net);
+	zeroOut(myNumerators, flatSize);
+
+	float* myDenominators = new float[numberOfNodes];//vector<vector<float> > myDenominators(g_rows, vector<float>(g_columns));
+	zeroOut(myDenominators, numberOfNodes);
+
+	float* recentSquaredNorms = new float[numberOfNodes];
+	calculateSquaredNorms(recentSquaredNorms, net);
 
 	int numberOfTimesteps =
 			(int) ((NUMBER_OF_TRAINING_STEPS + NUMBER_OF_JOBS - 1) / NUMBER_OF_JOBS);
 
-	// Beware mix of 0- and 1-indexing throughout.
-	for (int t = 0; t < numberOfTimesteps; t++) {
+	int t;
+
+	for (t = 0; t < numberOfTimesteps; t++) {
 		map<int, float> trainingVector = myTrainingVectors[t % myTrainingVectors.size()];
 
 		Coordinate winner = findWinner(trainingVector, net, recentSquaredNorms);
@@ -399,12 +422,12 @@ void train(int myRank, float* net, training_data_t myTrainingVectors) {
 						calculateNodeIndex(myNumerators, coord), gauss, trainingVector);
 
 				// Increment equation 5 denominator.
-				myDenominators.at(row).at(column) += gauss;
+				myDenominators[(row * g_columns) + column] += gauss;
 			}
 		}
 
 		if ((t + 1) % NUMBER_OF_STEPS_BETWEEN_UPDATES == 0) {
-			synch(net, myNumerators, myDenominators);
+			calculateNewNet(net, myNumerators, myDenominators);
 
 //			for (Coordinate coord;;/* in net*/) {
 //				// update node using eq5num/eq5den (zero-check den first).
@@ -412,26 +435,31 @@ void train(int myRank, float* net, training_data_t myTrainingVectors) {
 
 			// Reset for next "epoch"
 			width = calculateWidthAtTime(t, numberOfTimesteps);
+
+			cout << "Just updated net; new width = " << width << endl;
+
 			zeroOut(myNumerators, flatSize); // TODO Any more efficient way?
 
-			// TODO Be better.
-			for (vector<vector<float> >::iterator outerIt = myDenominators.begin(); outerIt != myDenominators.end(); outerIt++) {
-				vector<float> myDenominatorsRow = *outerIt;
+			zeroOut(myDenominators, numberOfNodes);
+//			// TODO Be better.
+//			for (vector<vector<float> >::iterator outerIt = myDenominators.begin(); outerIt != myDenominators.end(); outerIt++) {
+//				vector<float> myDenominatorsRow = *outerIt;
+//
+//				for (vector<float>::iterator innerIt = myDenominatorsRow.begin(); innerIt != myDenominatorsRow.end(); innerIt++) {
+//					*innerIt = 0.0;
+//				}
+//			}
 
-				for (vector<float>::iterator innerIt = myDenominatorsRow.begin(); innerIt != myDenominatorsRow.end(); innerIt++) {
-					*innerIt = 0.0;
-				}
-			}
-
-			recentSquaredNorms = calculateSquaredNorms(net);
+			zeroOut(recentSquaredNorms, numberOfNodes);
+			calculateSquaredNorms(recentSquaredNorms, net);
 		}
 	}
 
 	// If we had timesteps beyond the final reduce, reduce once more to pick up the stragglers.
-	if ((t + 1) % NUMBER_OF_STEPS_BETWEEN_UPDATES != 0) {
+	if ((t + 1) % NUMBER_OF_STEPS_BETWEEN_UPDATES != 1) {
 		cout << "Handling one remaining synch." << endl;
 
-		synch(net, myNumerators, myDenominators);
+		calculateNewNet(net, myNumerators, myDenominators);
 	}
 
 	cout << "Done." << endl;
