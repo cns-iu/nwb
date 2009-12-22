@@ -25,11 +25,11 @@ typedef vector< map<int, float> > training_data_t;
 
 
 // TODO Test with more realistic numbers.
-const int NUMBER_OF_TRAINING_STEPS = 10;
+const int NUMBER_OF_TRAINING_STEPS = 800 * 20;
 const int NUMBER_OF_JOBS = 1;
-const int NUMBER_OF_STEPS_BETWEEN_UPDATES = 5;
+const int NUMBER_OF_STEPS_BETWEEN_UPDATES = 800;
 
-const int INITIAL_WIDTH = 3;
+const int INITIAL_WIDTH = 8;
 const int FINAL_WIDTH = 1; // TODO Or what?
 
 // set by loadInitialNet()
@@ -93,7 +93,7 @@ float distanceToSparse(float* vector, map<int, float> sparseVector, float recent
 
 		leftSum += sparseValue * (sparseValue - 2 * vector[sparseIndex]);
 
-		cout << "sparseValue " << sparseValue << ", vector[sparseIndex] = " << vector[sparseIndex] << ", leftSum = " << leftSum << endl;
+//		cout << "sparseValue " << sparseValue << ", vector[sparseIndex] = " << vector[sparseIndex] << ", leftSum = " << leftSum << endl;
 	}
 
 	float rightSum = recentSquaredNorm;
@@ -127,6 +127,28 @@ float euclideanDistance(float vector1[], float vector2[]) {
  * The latter ignores sqrting the norms when only comparison to other such numbers is desired.
  */
 
+// From SOM_PAK
+float hexa_dist(int bx, int by, int tx, int ty){
+	float ret, diff;
+
+	diff = bx - tx;
+
+	if (((by - ty) % 2) != 0) {
+		if ((by % 2) == 0) {
+			diff -= 0.5;
+		}
+		else {
+			diff += 0.5;
+		}
+	}
+
+	ret = diff * diff;
+	diff = by - ty;
+	ret += 0.75 * diff * diff;
+
+	return ret;
+}
+
 // Might revisit some optimizations Russell mentioned in the long term.
 // h_(ck)(t) = exp(-||r_k - r_c||^2 / width(t)^2);
 /* TODO Oops, this is not quite right for non-rectangular topologies.
@@ -134,13 +156,13 @@ float euclideanDistance(float vector1[], float vector2[]) {
  * Perhaps use the trick from SOM_PAK.
  */
 float gaussian(Coordinate coord1, Coordinate coord2, float width) {
-	int rowDiff = coord1.row - coord2.row;
-	int columnDiff = coord1.column - coord2.column;
+//	int rowDiff = coord1.row - coord2.row;
+//	int columnDiff = coord1.column - coord2.column;
+//
+//	cout << "rowDiff " << rowDiff << ", columnDiff " << columnDiff << endl;
+//	cout << "  distance = " << exp(-(rowDiff*rowDiff + columnDiff*columnDiff) / (width * width)) << endl;
 
-	cout << "rowDiff " << rowDiff << ", columnDiff " << columnDiff << endl;
-	cout << "  distance = " << exp(-(rowDiff*rowDiff + columnDiff*columnDiff) / (width * width)) << endl;
-
-	return exp(-(rowDiff*rowDiff + columnDiff*columnDiff) / (width * width));
+	return exp(-hexa_dist(coord1.row, coord1.column, coord2.row, coord2.column) / (width * width));
 }
 
 float interpolate(float x, float x0, float x1, float y0, float y1) {
@@ -215,7 +237,6 @@ void writeNetToFile(float* net) {
 	cout << "Done." << endl;
 }
 
-//TODO return pointer
 training_data_t loadMyTrainingVectors(int myRank) {
 	cout << "Loading training vectors.. ";
 
@@ -416,6 +437,7 @@ void train(int myRank, float* net, training_data_t myTrainingVectors) {
 				Coordinate coord(row, column);
 
 				float gauss = gaussian(coord, winner, width);
+//				cout << "gaussian = " << gauss << endl;
 
 				// Increment equation 5 numerator.
 				addScaledSparseVectorToNodeVector(
@@ -438,17 +460,8 @@ void train(int myRank, float* net, training_data_t myTrainingVectors) {
 
 			cout << "Just updated net; new width = " << width << endl;
 
-			zeroOut(myNumerators, flatSize); // TODO Any more efficient way?
-
+			zeroOut(myNumerators, flatSize);
 			zeroOut(myDenominators, numberOfNodes);
-//			// TODO Be better.
-//			for (vector<vector<float> >::iterator outerIt = myDenominators.begin(); outerIt != myDenominators.end(); outerIt++) {
-//				vector<float> myDenominatorsRow = *outerIt;
-//
-//				for (vector<float>::iterator innerIt = myDenominatorsRow.begin(); innerIt != myDenominatorsRow.end(); innerIt++) {
-//					*innerIt = 0.0;
-//				}
-//			}
 
 			zeroOut(recentSquaredNorms, numberOfNodes);
 			calculateSquaredNorms(recentSquaredNorms, net);
