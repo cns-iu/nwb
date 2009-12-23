@@ -18,3 +18,5 @@ parameters.
 7. Update the manifest.properties for bundle-wide properties.
 8. Run 'ant' to compile a jar file that will be available in the build directory.
 9. Copy the jar file to a CIShell/OSGi installation to use.
+
+
