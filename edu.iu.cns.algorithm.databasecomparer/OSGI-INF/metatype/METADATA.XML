@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<metatype:MetaData xmlns:metatype="http://www.osgi.org/xmlns/metatype/v1.0.0">
+	<OCD name="Database Comparer" id="edu.iu.cns.algorithm.databasecomparer.DatabaseComparerAlgorithm.OCD"
+		 description="Reports any differences between two selected databases ">
+		<AD name="Quick Reporting" id="quickReporting" type="Boolean" description="Comparison will return on the first difference found, rather than checking for all differences" default="false"/>
+	</OCD>
+	<Designate pid="edu.iu.cns.algorithm.databasecomparer.DatabaseComparerAlgorithm">
+		<Object ocdref="edu.iu.cns.algorithm.databasecomparer.DatabaseComparerAlgorithm.OCD" />
+	</Designate>
+</metatype:MetaData>
