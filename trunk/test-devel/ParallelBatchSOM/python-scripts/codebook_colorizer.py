@@ -11,7 +11,7 @@ def main():
     lineIndex = 0
     for line in codebookFile:
         r, g, b = line.split()
-        i, j = (int(lineIndex / int(rows)), lineIndex % int(rows))
+        i, j = (int(lineIndex / int(columns)), lineIndex % int(columns))
 
         nodes += [(i, j, float(r)/255, float(g)/255, float(b)/255)]
         

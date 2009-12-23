@@ -14,7 +14,7 @@
 #include <map>
 #include <math.h>
 #include <iomanip>
-#include <time.h>
+#include <time.h> // Add time reporting at all of the critical couts.
 
 #include "mpi.h"
 
@@ -27,7 +27,7 @@ typedef vector< map<int, float> > training_data_t;
 /* TODO Put these numbers together in a way that ensures we always finish training
  * with a net update after a full batch.
  */
-const int NUMBER_OF_TRAINING_STEPS = 500 * 10;
+const int NUMBER_OF_TRAINING_STEPS = 5000 * 10;
 const int NUMBER_OF_STEPS_BETWEEN_UPDATES = 500;
 
 const int INITIAL_WIDTH = 250; // TODO Calculate this from xdim and ydim?  Command line argument?
@@ -478,10 +478,6 @@ void train(int myRank, float* net, training_data_t* myTrainingVectors) {
 		if ((t + 1) % NUMBER_OF_STEPS_BETWEEN_UPDATES == 0) {
 			calculateNewNet(net);
 
-//			for (Coordinate coord;;/* in net*/) {
-//				// update node using eq5num/eq5den (zero-check den first).
-//			}
-
 			// Reset for next "epoch"
 
 			width = calculateWidthAtTime(t, numberOfTimesteps);
@@ -520,6 +516,7 @@ int main(int argc, char *argv[]) {
 
 	float* net = loadInitialNet();
 
+	// TODO Manually swapping out these function names is lame.
 	training_data_t* trainingVectors = loadMyTrainingVectorsFromSparse(myRank);
 
 	train(myRank, net, trainingVectors);
