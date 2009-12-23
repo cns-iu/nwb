@@ -24,7 +24,7 @@ class Count implements UtilityFunction {
 		total = ((Integer)v1).intValue()+ 1;
 		return new Integer(total);
 
-	}
+	} 
 
 }
 
