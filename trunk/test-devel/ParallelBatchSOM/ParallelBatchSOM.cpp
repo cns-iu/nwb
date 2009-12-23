@@ -15,7 +15,7 @@
 #include <math.h>
 #include <iomanip>
 
-//#include <mpi.h>
+#include "mpi.h"
 
 using namespace std;
 using std::cerr;
@@ -23,13 +23,13 @@ using std::endl;
 
 typedef vector< map<int, float> > training_data_t;
 
+/* TODO Put these numbers together in a way that ensures we always finish training
+ * with a net update after a full batch.
+ */
+const int NUMBER_OF_TRAINING_STEPS = 500 * 10;
+const int NUMBER_OF_STEPS_BETWEEN_UPDATES = 500;
 
-// TODO Test with more realistic numbers.
-const int NUMBER_OF_TRAINING_STEPS = 800 * 20;
-const int NUMBER_OF_JOBS = 1;
-const int NUMBER_OF_STEPS_BETWEEN_UPDATES = 800;
-
-const int INITIAL_WIDTH = 8;
+const int INITIAL_WIDTH = 250; // TODO Calculate this from xdim and ydim?  Command line argument?
 const int FINAL_WIDTH = 1; // TODO Or what?
 
 // set by loadInitialNet()
@@ -37,8 +37,15 @@ int g_rows = -1;
 int g_columns = -1;
 int g_dim = -1;
 
+int g_numberOfJobs = 1;
+
 // set by loadTrainingVectors()
 int g_numberOfVectors = -1;
+
+float* g_myNumerators;
+float* g_myNumerators2;
+float* g_myDenominators;
+float* g_myDenominators2;
 
 // TODO Experiment with getting rid of Coordinate altogether.  Benchmark first.
 struct Coordinate {
@@ -58,10 +65,6 @@ void addScaledSparseVectorToNodeVector(float* node, float scalar, map<int, float
 	for (map<int, float>::const_iterator it = sparseVector.begin(); it != sparseVector.end(); it++) {
 		node[it->first] += scalar * (it->second);
 	}
-
-//	for (int i = 0; i < g_dim; i++) {
-//		*(node + i) += scalar * sparseVector.at(i);
-//	}
 }
 
 void scaleNodeVector(float* node, float* numerator, float scalar) {
@@ -76,10 +79,10 @@ void scaleNodeVector(float* node, float* numerator, float scalar) {
  * by doing simple BLAS arithmetic and trusting in the L2 cache.
  */
 float* calculateNodeIndex(float* net, Coordinate coord) {
-	return net + (g_dim * (coord.row * g_columns + coord.column)); // TODO Triple check this index.
+	return net + (g_dim * (coord.row * g_columns + coord.column));
 }
 
-/* TODO Replace linear algebra functions with calls to BLAS. */
+/* TODO Replace linear algebra functions with calls to BLAS? */
 
 /* According to equation 8, exploiting sparseness.
  * vector is w_k and indexToOnes represents a binary-valued training vector.
@@ -92,8 +95,6 @@ float distanceToSparse(float* vector, map<int, float> sparseVector, float recent
 		float sparseValue = it->second;
 
 		leftSum += sparseValue * (sparseValue - 2 * vector[sparseIndex]);
-
-//		cout << "sparseValue " << sparseValue << ", vector[sparseIndex] = " << vector[sparseIndex] << ", leftSum = " << leftSum << endl;
 	}
 
 	float rightSum = recentSquaredNorm;
@@ -104,24 +105,6 @@ float distanceToSparse(float* vector, map<int, float> sparseVector, float recent
 
 	return (leftSum + rightSum);
 }
-
-/*
-float sumOfSquaredDifferences(float vector1[], float vector2[]) {
-	float sumOfSquaredDifferences = 0.0;
-
-	for (int i = 0; i < g_dim; i++) {
-		float difference = vector1[i] - vector2[i];
-		sumOfSquaredDifferences += difference * difference;
-	}
-
-	return sumOfSquaredDifferences;
-}
-
-// For use between two weight vectors.
-float euclideanDistance(float vector1[], float vector2[]) {
-	return sqrt(sumOfSquaredDifferences(vector1, vector2));
-}
-*/
 
 /* TODO: Cosine similarity and cheap cosine similarity
  * The latter ignores sqrting the norms when only comparison to other such numbers is desired.
@@ -149,19 +132,14 @@ float hexa_dist(int bx, int by, int tx, int ty){
 	return ret;
 }
 
-// Might revisit some optimizations Russell mentioned in the long term.
-// h_(ck)(t) = exp(-||r_k - r_c||^2 / width(t)^2);
-/* TODO Oops, this is not quite right for non-rectangular topologies.
- * Since we're assuming hexagonal, this will need to be tweaked.
- * Perhaps use the trick from SOM_PAK.
+/* TODO Might revisit some optimizations Russell mentioned in the long term.
+ * One is that we could exploit the circular symmetry of the gaussian to reduce the number
+ * of calls to this function eightfold (for rectangular topologies; not certain about the reduction
+ * for hexagonal).
+ * Another is that we could calculate the gaussian only once per batch (that is,
+ * only once per width interpolation).
  */
 float gaussian(Coordinate coord1, Coordinate coord2, float width) {
-//	int rowDiff = coord1.row - coord2.row;
-//	int columnDiff = coord1.column - coord2.column;
-//
-//	cout << "rowDiff " << rowDiff << ", columnDiff " << columnDiff << endl;
-//	cout << "  distance = " << exp(-(rowDiff*rowDiff + columnDiff*columnDiff) / (width * width)) << endl;
-
 	return exp(-hexa_dist(coord1.row, coord1.column, coord2.row, coord2.column) / (width * width));
 }
 
@@ -237,8 +215,8 @@ void writeNetToFile(float* net) {
 	cout << "Done." << endl;
 }
 
-training_data_t loadMyTrainingVectors(int myRank) {
-	cout << "Loading training vectors.. ";
+training_data_t* loadMyTrainingVectorsFromDense(int myRank) {
+	cout << "Loading training vectors (from dense representation).. ";
 
 	ifstream trainingFile("color.dat"); // TODO Parameterize
 
@@ -253,15 +231,11 @@ training_data_t loadMyTrainingVectors(int myRank) {
 
 		training_data_t* trainingVectors = new training_data_t();
 
-		string line;
-		bool onFirstLine = true;
 		int vectorLineNumber = 0;
 		while (!trainingFile.eof()) {
 
-			// Skip lines that aren't mine.
-			if (vectorLineNumber % NUMBER_OF_JOBS == myRank) {
-//				cout << "Reading training vector file line " << vectorLineNumber << endl;
-
+			// Only read lines assigned to my rank.
+			if (vectorLineNumber % g_numberOfJobs == myRank) {
 				map<int, float> trainingVector;
 
 				for (int j = 0; j < dimensions; j++) {
@@ -282,7 +256,71 @@ training_data_t loadMyTrainingVectors(int myRank) {
 
 		cout << "Done." << endl;
 
-		return (*trainingVectors);
+		return trainingVectors;
+	} else {
+		cerr << "Error opening training data file!";
+		exit (1);
+	}
+}
+
+// Assumes that the file contains lines which give indices to non-zeroes in a binary-valued vector.
+training_data_t* loadMyTrainingVectorsFromSparse(int myRank) {
+	cout << "Loading training vectors (from sparse representation).. ";
+
+	ifstream trainingFile("color.dat"); // TODO Parameterize
+
+	if (trainingFile.is_open()) {
+		training_data_t* trainingVectors = new training_data_t();
+
+		int lineNumber = 0;
+		string line;
+		while (getline(trainingFile, line)) {
+			// Only read lines assigned to my rank.
+			if (lineNumber % g_numberOfJobs == myRank) {
+				istringstream linestream(line);
+
+				// Read and ignore document ID.
+				int documentID;
+				linestream >> documentID;
+
+				/* TODO Could be mapping into ints, or shorts, or bools even.
+				 * Or even some nice bitset instead of a map.
+				 */
+				map<int, float> trainingVector;
+
+				int oneBasedIndexToNonzero;
+				while (linestream >> oneBasedIndexToNonzero) {
+					int zeroBasedIndexToNonzero = oneBasedIndexToNonzero - 1;
+
+					if (zeroBasedIndexToNonzero < g_dim) {
+						trainingVector[zeroBasedIndexToNonzero] = 1;
+					} else {
+						cerr << "Dimensionality of training vectors exceeds that of the codebook." << endl;
+						exit (1);
+					}
+				}
+
+				trainingVectors->push_back(trainingVector);
+			}
+
+			lineNumber++;
+		}
+		// TODO Sanity check: i == g_rows * g_columns (- 1?)
+
+//		// TODO Debug only.
+//		for (vector<map<int, float> >::const_iterator vecIt = trainingVectors->begin(); vecIt != trainingVectors->end(); vecIt++) {
+//			map<int, float> m = *vecIt;
+//
+//			for (map<int, float>::const_iterator it = m.begin(); it != m.end(); it++) {
+//				cout << it->first << ", " << it->second << endl;
+//			}
+//
+//			cout << endl;
+//		}
+
+		cout << "Done." << endl;
+
+		return trainingVectors;
 	} else {
 		cerr << "Error opening training data file!";
 		exit (1);
@@ -319,84 +357,70 @@ Coordinate findWinner(map<int, float> trainingVector, float* net, float* recentS
 }
 
 // Perform the final calculation for equation 5 and Allreduce.
-void calculateNewNet(float* net, float* myNumerators, float* myDenominators) {
-//	cout << "Synchronizing." << endl;
+void calculateNewNet(float* net) {
+	cout << "Synchronizing.. ";
 
-//	int flatSize = g_rows * g_columns * g_dim;
-//	for (int i = 0; i < flatSize; i++) {
-//
-//	}
+	int numberOfNodes = g_rows * g_columns;
+	int flatSize = numberOfNodes * g_dim;
 
-//	cout << "0, 0 denom = " << myDenominators[0] << endl;
+	float* numTemp = g_myNumerators;
+	float* denTemp = g_myDenominators;
+
+	// TODO Investigate MPI error handling in C++.
+	// TODO Think about being trickier with in-place swaps.
+    MPI::COMM_WORLD.Allreduce(g_myNumerators, g_myNumerators2, flatSize, MPI::FLOAT, MPI::SUM);
+    MPI::COMM_WORLD.Allreduce(g_myDenominators, g_myDenominators2, numberOfNodes, MPI::FLOAT, MPI::SUM);
+
+    g_myNumerators = g_myNumerators2;
+    g_myNumerators2 = numTemp;
+
+    g_myDenominators = g_myDenominators2;
+    g_myDenominators2 = denTemp;
 
     for (int row = 0; row < g_rows; row++){
-        for (int column = 0; column < g_columns; column++){
-            Coordinate coord(row, column);
+		for (int column = 0; column < g_columns; column++){
+			Coordinate coord(row, column);
 
-//            if (row % 11 == 0 && column % 7 == 5) { // TODO Remove.
-//            	cout << "Before numerator = " << *calculateNodeIndex(myNumerators, coord) << endl;
-//            	cout << "Denominator = " << myDenominators.at(row).at(column) << endl;
-//            }
+			scaleNodeVector(
+					calculateNodeIndex(net, coord),
+					calculateNodeIndex(g_myNumerators, coord),
+					(1.0 / g_myDenominators[(row * g_columns) + column]));
 
-            scaleNodeVector(
-            		calculateNodeIndex(net, coord),
-            		calculateNodeIndex(myNumerators, coord),
-            		(1.0 / myDenominators[(row * g_columns) + column]));
-
-//            if (row % 11 == 0 && column % 7 == 5) { // TODO Remove.
-//				cout << "After numerator = " << *calculateNodeIndex(myNumerators, coord) << endl;
-//			}
-
-            /* TODO Put a bunch of error-reporting here
+			/* TODO Put a bunch of error-reporting here
 			 * for when a denominator is, inevitably, zero.
 			 */
-        }
-    }
+		}
+	}
 
-    /* TODO MPI.Allreduce goes here.
-	 * send		myNetUpdate
-	 * count	g_rows * g_columns * g_dim
-	 * receive	net
-	 * datatype	MPI::FLOAT?
-	 * op		MPI::SUM?
-	 * comm		world?
-	 * Remember to check return value for error.
-	 */
+    cout << "Done." << endl;
 }
 
 void calculateSquaredNorms(float* oldSquaredNorms, float* net) {
-//	cout << "Calculating squared norms." << endl;
-
 	int numberOfNodes = g_rows * g_columns;
 
 	for (int nodeIndex = 0; nodeIndex < numberOfNodes; nodeIndex++) {
 		float* currentNode = net + nodeIndex * g_dim;
 		float* currentNorm = oldSquaredNorms + nodeIndex;
-//		int nodeIndex = g_dim * nodeIndex;
 
-//		if (nodeIndex == 2) {
-//			cout << "starting node 0,2" << endl;
-//		}
 		for (int weightIndex = 0; weightIndex < g_dim; weightIndex++) {
 			float weight = currentNode[weightIndex];
 
 			(*currentNorm) += weight * weight;
-
-//			if (nodeIndex == 2) {
-//				cout << "weight = " << weight << ", current norm = " << (*currentNorm) << endl;
-//			}
-		}
-	}
-
-	cout << "Zero indices in squared norms:" << endl;
-	for (int i = 0; i < numberOfNodes; i++) {
-		if (oldSquaredNorms[i] == 0) {
-			cout << (i % g_columns) << ", " << (i / g_columns) << endl;
 		}
 	}
 }
 
-void train(int myRank, float* net, training_data_t myTrainingVectors) {
+/* TODO Periodically check the quantization error (and maybe even write out the codebook).
+ * Not more often than every 15 minutes or so.
+ * Could even append qerrors out to a file so that it can be read during the run and,
+ * when it starts to level off, we can interrupt it.
+ */
+
+float calculateQuantizationError(float* net, training_data_t vectors) {
+	// TODO
+}
+
+void train(int myRank, float* net, training_data_t* myTrainingVectors) {
 	cout << "Training.. ";
 
 	float width = INITIAL_WIDTH;
@@ -404,22 +428,27 @@ void train(int myRank, float* net, training_data_t myTrainingVectors) {
 	const int numberOfNodes = g_rows * g_columns;
 	const int flatSize = numberOfNodes * g_dim;
 
-	float* myNumerators = new float[flatSize];
-	zeroOut(myNumerators, flatSize);
+	g_myNumerators = new float[flatSize];
+	zeroOut(g_myNumerators, flatSize);
+	g_myNumerators2 = new float[flatSize];
+	zeroOut(g_myNumerators2, flatSize);
 
-	float* myDenominators = new float[numberOfNodes];//vector<vector<float> > myDenominators(g_rows, vector<float>(g_columns));
-	zeroOut(myDenominators, numberOfNodes);
+	g_myDenominators = new float[numberOfNodes];
+	zeroOut(g_myDenominators, numberOfNodes);
+	g_myDenominators2 = new float[numberOfNodes];
+	zeroOut(g_myDenominators2, numberOfNodes);
 
 	float* recentSquaredNorms = new float[numberOfNodes];
 	calculateSquaredNorms(recentSquaredNorms, net);
 
+	// TODO Think about tweaking this so that we never need a final synch..
 	int numberOfTimesteps =
-			(int) ((NUMBER_OF_TRAINING_STEPS + NUMBER_OF_JOBS - 1) / NUMBER_OF_JOBS);
+			(int) ((NUMBER_OF_TRAINING_STEPS + g_numberOfJobs - 1) / g_numberOfJobs);
 
 	int t;
 
 	for (t = 0; t < numberOfTimesteps; t++) {
-		map<int, float> trainingVector = myTrainingVectors[t % myTrainingVectors.size()];
+		map<int, float> trainingVector = myTrainingVectors->at(t % myTrainingVectors->size());
 
 		Coordinate winner = findWinner(trainingVector, net, recentSquaredNorms);
 
@@ -437,31 +466,29 @@ void train(int myRank, float* net, training_data_t myTrainingVectors) {
 				Coordinate coord(row, column);
 
 				float gauss = gaussian(coord, winner, width);
-//				cout << "gaussian = " << gauss << endl;
 
-				// Increment equation 5 numerator.
 				addScaledSparseVectorToNodeVector(
-						calculateNodeIndex(myNumerators, coord), gauss, trainingVector);
+						calculateNodeIndex(g_myNumerators, coord), gauss, trainingVector);
 
-				// Increment equation 5 denominator.
-				myDenominators[(row * g_columns) + column] += gauss;
+				g_myDenominators[(row * g_columns) + column] += gauss;
 			}
 		}
 
 		if ((t + 1) % NUMBER_OF_STEPS_BETWEEN_UPDATES == 0) {
-			calculateNewNet(net, myNumerators, myDenominators);
+			calculateNewNet(net);
 
 //			for (Coordinate coord;;/* in net*/) {
 //				// update node using eq5num/eq5den (zero-check den first).
 //			}
 
 			// Reset for next "epoch"
+
 			width = calculateWidthAtTime(t, numberOfTimesteps);
 
-			cout << "Just updated net; new width = " << width << endl;
+			cout << "Updated net; new width = " << width << endl;
 
-			zeroOut(myNumerators, flatSize);
-			zeroOut(myDenominators, numberOfNodes);
+			zeroOut(g_myNumerators, flatSize);
+			zeroOut(g_myDenominators, numberOfNodes);
 
 			zeroOut(recentSquaredNorms, numberOfNodes);
 			calculateSquaredNorms(recentSquaredNorms, net);
@@ -470,9 +497,9 @@ void train(int myRank, float* net, training_data_t myTrainingVectors) {
 
 	// If we had timesteps beyond the final reduce, reduce once more to pick up the stragglers.
 	if ((t + 1) % NUMBER_OF_STEPS_BETWEEN_UPDATES != 1) {
-		cout << "Handling one remaining synch." << endl;
+		cout << "Warning: Had to perform one last net update." << endl;
 
-		calculateNewNet(net, myNumerators, myDenominators);
+		calculateNewNet(net);
 	}
 
 	cout << "Done." << endl;
@@ -480,30 +507,27 @@ void train(int myRank, float* net, training_data_t myTrainingVectors) {
 
 
 int main(int argc, char *argv[]) {
-//	MPI_Init(&argc, &argv);
-//
-	int myRank = 0; // TODO Remove initialization.
-//	MPI_Comm_rank(MPI_COMM_WORLD, &myRank);
-//	int numProcs;
-//	MPI_Comm_size(MPI_COMM_WORLD, &numProcs);
+	MPI::Init(argc, argv);
 
-	/*  Okay. The preparations have been made. */
+	int myRank = MPI::COMM_WORLD.Get_rank();
+
+	cout << "My rank is " << myRank << endl;
+
+	g_numberOfJobs = MPI::COMM_WORLD.Get_size();
 
 	/* TODO Parse any command line arguments here */
 
-	/* Might want to read the number of lines, too? and split up the file (one piece per process).
-	 */
 	float* net = loadInitialNet();
 
-	training_data_t trainingVectors = loadMyTrainingVectors(myRank);
+	training_data_t* trainingVectors = loadMyTrainingVectorsFromSparse(myRank);
 
 	train(myRank, net, trainingVectors);
 
-	// TODO Perhaps write a little quantization error function.
+	if (myRank == 0) {
+		writeNetToFile(net);
+	}
 
-	writeNetToFile(net);
-
-//	MPI_Finalize();
+	MPI::Finalize();
 
 	return 0;
 }
