@@ -14,6 +14,7 @@
 #include <map>
 #include <math.h>
 #include <iomanip>
+#include <time.h>
 
 #include "mpi.h"
 
@@ -54,6 +55,8 @@ struct Coordinate {
 
 	Coordinate(int r, int c) { row = r; column = c; }
 };
+
+
 
 void zeroOut(float* array, int size) {
 	for (int i = 0; i < size; i++) {
@@ -288,12 +291,12 @@ training_data_t* loadMyTrainingVectorsFromSparse(int myRank) {
 				 */
 				map<int, float> trainingVector;
 
-				int oneBasedIndexToNonzero;
-				while (linestream >> oneBasedIndexToNonzero) {
-					int zeroBasedIndexToNonzero = oneBasedIndexToNonzero - 1;
+				int oneBasedIndex;
+				while (linestream >> oneBasedIndex) {
+					int zeroBasedIndex = oneBasedIndex - 1;
 
-					if (zeroBasedIndexToNonzero < g_dim) {
-						trainingVector[zeroBasedIndexToNonzero] = 1;
+					if (zeroBasedIndex < g_dim) {
+						trainingVector[zeroBasedIndex] = 1;
 					} else {
 						cerr << "Dimensionality of training vectors exceeds that of the codebook." << endl;
 						exit (1);
@@ -351,12 +354,10 @@ Coordinate findWinner(map<int, float> trainingVector, float* net, float* recentS
     	}
     }
 
-    cout << "Winner is at " << winner.row << ", " << winner.column << " with distance " << shortestDistance << endl;
-
     return winner;
 }
 
-// Perform the final calculation for equation 5 and Allreduce.
+// Allreduce and perform the final calculation for equation 5.
 void calculateNewNet(float* net) {
 	cout << "Synchronizing.. ";
 
