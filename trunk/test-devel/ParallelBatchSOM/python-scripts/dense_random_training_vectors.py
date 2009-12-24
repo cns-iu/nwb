@@ -1,6 +1,6 @@
 import random
 
-numberOfVectors = 10000
+numberOfVectors = 1000
 dimension = 3
 
 outFile = open('color.dat', 'w')

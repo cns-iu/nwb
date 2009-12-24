@@ -416,10 +416,48 @@ void calculateSquaredNorms(float* oldSquaredNorms, float* net) {
  * Could even append qerrors out to a file so that it can be read during the run and,
  * when it starts to level off, we can interrupt it.
  */
+/* TODO Perhaps overload with one that takes squaredNorms so that we can calculate this during
+ * training without the extra memory and time hits.
+ */
+float calculateQuantizationError(training_data_t* trainingVectors, float* net, float* squaredNorms) {
+	int numberOfNodes = g_rows * g_columns;
 
-float calculateQuantizationError(float* net, training_data_t vectors) {
-	// TODO
+	float totalDiscrepancy = 0.0;
+
+	// TODO Consider reading only some of the training vectors.
+	for (vector<map<int, float> >::const_iterator vecIt = trainingVectors->begin();
+			vecIt != trainingVectors->end();
+			vecIt++) {
+		map<int, float> trainingVector = *vecIt;
+
+		Coordinate winnerCoordinate = findWinner(trainingVector, net, squaredNorms);
+
+		float squaredNorm =
+				squaredNorms[(winnerCoordinate.row * g_columns) + winnerCoordinate.column];
+		float* winner = calculateNodeIndex(net, winnerCoordinate);
+
+		float discrepancy =	distanceToSparse(winner, trainingVector, squaredNorm);
+
+		totalDiscrepancy += discrepancy;
+	}
+
+	return (totalDiscrepancy / numberOfNodes);
 }
+
+float calculateQuantizationError(training_data_t* trainingVectors, float* net) {
+	int numberOfNodes = g_rows * g_columns;
+	float* squaredNorms = new float[numberOfNodes];
+	zeroOut(squaredNorms, numberOfNodes);
+	calculateSquaredNorms(squaredNorms, net);
+
+	float quantizationError = calculateQuantizationError(trainingVectors, net, squaredNorms);
+
+	delete [] squaredNorms;
+
+	return quantizationError;
+}
+
+
 
 void train(int myRank, float* net, training_data_t* myTrainingVectors) {
 	cout << "Training.. ";
@@ -440,7 +478,12 @@ void train(int myRank, float* net, training_data_t* myTrainingVectors) {
 	zeroOut(g_myDenominators2, numberOfNodes);
 
 	float* recentSquaredNorms = new float[numberOfNodes];
+	zeroOut(recentSquaredNorms, numberOfNodes);
 	calculateSquaredNorms(recentSquaredNorms, net);
+
+	float quantizationErrorStart =
+			calculateQuantizationError(myTrainingVectors, net, recentSquaredNorms);
+	cout << "At initialization, quantization error = " << quantizationErrorStart << endl;
 
 	// TODO Think about tweaking this so that we never need a final synch..
 	int numberOfTimesteps =
@@ -478,6 +521,10 @@ void train(int myRank, float* net, training_data_t* myTrainingVectors) {
 		if ((t + 1) % NUMBER_OF_STEPS_BETWEEN_UPDATES == 0) {
 			calculateNewNet(net);
 
+			float quantizationErrorMid =
+					calculateQuantizationError(myTrainingVectors, net, recentSquaredNorms);
+			cout << "Finished synchronizing, quantization error = " << quantizationErrorMid << endl;
+
 			// Reset for next "epoch"
 
 			width = calculateWidthAtTime(t, numberOfTimesteps);
@@ -498,6 +545,10 @@ void train(int myRank, float* net, training_data_t* myTrainingVectors) {
 
 		calculateNewNet(net);
 	}
+
+	float quantizationErrorFinal =
+			calculateQuantizationError(myTrainingVectors, net, recentSquaredNorms);
+	cout << "Finally, quantization error = " << quantizationErrorFinal << endl;
 
 	cout << "Done." << endl;
 }
