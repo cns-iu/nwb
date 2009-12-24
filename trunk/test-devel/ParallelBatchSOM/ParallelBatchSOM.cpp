@@ -14,7 +14,7 @@
 #include <map>
 #include <math.h>
 #include <iomanip>
-#include <time.h> // Add time reporting at all of the critical couts.
+#include <time.h> // TODO Add time reporting at all of the critical couts.
 
 #include "mpi.h"
 
@@ -27,8 +27,8 @@ typedef vector< map<int, float> > training_data_t;
 /* TODO Put these numbers together in a way that ensures we always finish training
  * with a net update after a full batch.
  */
-const int NUMBER_OF_TRAINING_STEPS = 5000 * 10;
-const int NUMBER_OF_STEPS_BETWEEN_UPDATES = 500;
+const int NUMBER_OF_TRAINING_STEPS = 500000;
+const int NUMBER_OF_STEPS_BETWEEN_UPDATES = 1000;
 
 const int INITIAL_WIDTH = 250; // TODO Calculate this from xdim and ydim?  Command line argument?
 const int FINAL_WIDTH = 1; // TODO Or what?
@@ -109,9 +109,33 @@ float distanceToSparse(float* vector, map<int, float> sparseVector, float recent
 	return (leftSum + rightSum);
 }
 
-/* TODO: Cosine similarity and cheap cosine similarity
- * The latter ignores sqrting the norms when only comparison to other such numbers is desired.
+/* TODO: Test this.
+ * TODO: Also implementcheap cosine similarity.
+ * Will ignore sqrting the norms when only comparison to other such numbers is desired.
+ * Could even pull out the trainingVector norm to be calculated only once per epoch.
  */
+float calculateCosineSimilarity(float* netVector, map<int, float> trainingVector) {
+	float dotProduct = 0.0;
+	float trainingVectorSquaredNorm = 0.0;
+
+	for (map<int, float>::const_iterator it = sparseVector.begin(); it != sparseVector.end(); it++) {
+		int sparseIndex = it->first;
+		float sparseValue = it->second;
+
+		dotProduct += sparseValue * vector[sparseIndex];
+		trainingVectorSquaredNorm += sparseValue * sparseValue;
+	}
+
+
+	float netVectorSquaredNorm = 0.0;
+
+	for (int weightIndex = 0; weightIndex < g_dim; weightIndex++) {
+		netVectorSquaredNorm += netVector[weightIndex];
+	}
+
+	return (dotProduct / (sqrt(trainingVectorSquaredNorm) * sqrt(netVectorSquaredNorm)));
+
+}
 
 // From SOM_PAK
 float hexa_dist(int bx, int by, int tx, int ty){
@@ -291,6 +315,11 @@ training_data_t* loadMyTrainingVectorsFromSparse(int myRank) {
 				 */
 				map<int, float> trainingVector;
 
+				/* ===============================================================================================
+				 * TODO Halt all further testing until all questions of one-vs-zero based indexing
+				 * and whether a documentID is given are resolved!!
+				 * ===============================================================================================
+				 */
 				int oneBasedIndex;
 				while (linestream >> oneBasedIndex) {
 					int zeroBasedIndex = oneBasedIndex - 1;
@@ -481,9 +510,11 @@ void train(int myRank, float* net, training_data_t* myTrainingVectors) {
 	zeroOut(recentSquaredNorms, numberOfNodes);
 	calculateSquaredNorms(recentSquaredNorms, net);
 
-	float quantizationErrorStart =
-			calculateQuantizationError(myTrainingVectors, net, recentSquaredNorms);
-	cout << "At initialization, quantization error = " << quantizationErrorStart << endl;
+	if (myRank == 0) {
+		float quantizationErrorStart =
+				calculateQuantizationError(myTrainingVectors, net, recentSquaredNorms);
+		cout << "At initialization, quantization error = " << quantizationErrorStart << endl;
+	}
 
 	// TODO Think about tweaking this so that we never need a final synch..
 	int numberOfTimesteps =
@@ -521,10 +552,6 @@ void train(int myRank, float* net, training_data_t* myTrainingVectors) {
 		if ((t + 1) % NUMBER_OF_STEPS_BETWEEN_UPDATES == 0) {
 			calculateNewNet(net);
 
-			float quantizationErrorMid =
-					calculateQuantizationError(myTrainingVectors, net, recentSquaredNorms);
-			cout << "Finished synchronizing, quantization error = " << quantizationErrorMid << endl;
-
 			// Reset for next "epoch"
 
 			width = calculateWidthAtTime(t, numberOfTimesteps);
@@ -536,6 +563,12 @@ void train(int myRank, float* net, training_data_t* myTrainingVectors) {
 
 			zeroOut(recentSquaredNorms, numberOfNodes);
 			calculateSquaredNorms(recentSquaredNorms, net);
+
+			if (myRank == 0) {
+				float quantizationErrorMid =
+						calculateQuantizationError(myTrainingVectors, net, recentSquaredNorms);
+				cout << "Finished synchronizing, quantization error = " << quantizationErrorMid << endl;
+			}
 		}
 	}
 
@@ -546,9 +579,11 @@ void train(int myRank, float* net, training_data_t* myTrainingVectors) {
 		calculateNewNet(net);
 	}
 
-	float quantizationErrorFinal =
-			calculateQuantizationError(myTrainingVectors, net, recentSquaredNorms);
-	cout << "Finally, quantization error = " << quantizationErrorFinal << endl;
+	if (myRank == 0) {
+		float quantizationErrorFinal =
+				calculateQuantizationError(myTrainingVectors, net, recentSquaredNorms);
+		cout << "Finally, quantization error = " << quantizationErrorFinal << endl;
+	}
 
 	cout << "Done." << endl;
 }

@@ -1,6 +1,6 @@
 import random
 
-numberOfVectors = 200000
+numberOfVectors = 2000000
 dimension = 2300
 denseness = 10.0 / float(dimension)
 
