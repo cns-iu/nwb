@@ -114,7 +114,7 @@ public class PersonParserTest {
 				FIRST_INITIAL,
 				NO_MIDDLE_INITIAL,
 				ABBREVIATED_FIRST_INITIAL_WITH_COMMA,
-				FAMILY_NAME + ", " + FIRST_INITIAL,
+				NO_FULL_NAME,
 				false);
 		} catch (PersonParsingException e) {
 			fail("No exception should've been thrown: " + e.getMessage());
@@ -136,7 +136,7 @@ public class PersonParserTest {
 				FIRST_INITIAL,
 				MIDDLE_INITIAL,
 				ABBREVIATED_FIRST_AND_MIDDLE_INITIALS_WITH_COMMA,
-				FAMILY_NAME + ", " + FIRST_INITIAL + " " + MIDDLE_INITIAL,
+				NO_FULL_NAME,
 				false);
 		} catch(PersonParsingException e) {
 			fail("No exception should've been thrown: " + e.getMessage());
@@ -202,7 +202,7 @@ public class PersonParserTest {
 				FIRST_INITIAL,
 				NO_MIDDLE_INITIAL,
 				ABBREVIATED_FIRST_INITIAL_WITH_COMMA,
-				FAMILY_NAME + ", " + FIRST_INITIAL,
+				NO_FULL_NAME,
 				true);
 		} catch(PersonParsingException e) {
 			fail("No exception should've been thrown: " + e.getMessage());
@@ -224,7 +224,7 @@ public class PersonParserTest {
 				FIRST_INITIAL,
 				MIDDLE_INITIAL,
 				ABBREVIATED_FIRST_AND_MIDDLE_INITIALS_WITH_COMMA,
-				FAMILY_NAME + ", " + FIRST_INITIAL + " " + MIDDLE_INITIAL,
+				NO_FULL_NAME,
 				true);
 		} catch(PersonParsingException e) {
 			fail("No exception should've been thrown: " + e.getMessage());
@@ -290,7 +290,7 @@ public class PersonParserTest {
 				FIRST_INITIAL,
 				NO_MIDDLE_INITIAL,
 				ABBREVIATED_FIRST_INITIAL_WITH_COMMA,
-				ABBREVIATED_FIRST_INITIAL_WITH_COMMA,
+				NO_FULL_NAME,
 				false);
 		} catch(PersonParsingException e) {
 			fail("No exception should've been thrown: " + e.getMessage());
@@ -312,7 +312,7 @@ public class PersonParserTest {
 				FIRST_INITIAL,
 				MIDDLE_INITIAL,
 				ABBREVIATED_FIRST_AND_MIDDLE_INITIALS_WITH_COMMA,
-				FAMILY_NAME + ", " + FIRST_INITIAL + " " + MIDDLE_INITIAL,
+				NO_FULL_NAME,
 				false);
 		} catch(PersonParsingException e) {
 			fail("No exception should've been thrown: " + e.getMessage());
@@ -378,7 +378,7 @@ public class PersonParserTest {
 				FIRST_INITIAL,
 				NO_MIDDLE_INITIAL,
 				ABBREVIATED_FIRST_INITIAL_WITH_COMMA,
-				ABBREVIATED_FIRST_INITIAL_WITH_COMMA,
+				NO_FULL_NAME,
 				true);
 		} catch(PersonParsingException e) {
 			fail("No exception should've been thrown: " + e.getMessage());
@@ -400,7 +400,7 @@ public class PersonParserTest {
 				FIRST_INITIAL,
 				MIDDLE_INITIAL,
 				ABBREVIATED_FIRST_AND_MIDDLE_INITIALS_WITH_COMMA,
-				FAMILY_NAME + ", " + FIRST_INITIAL + " " + MIDDLE_INITIAL,
+				NO_FULL_NAME,
 				true);
 		} catch(PersonParsingException e) {
 			fail("No exception should've been thrown: " + e.getMessage());

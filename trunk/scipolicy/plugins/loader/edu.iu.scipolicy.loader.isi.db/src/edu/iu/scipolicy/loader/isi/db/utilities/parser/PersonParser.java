@@ -39,7 +39,6 @@ public class PersonParser {
 		String firstInitial = "";
 		String middleInitial = "";
 		String unsplitName = rawAbbreviatedNameString.replaceFirst(separatorExpression, ", ");
-		String fullName = "";
 
 		// If there is a first and/or middle initial supplied...
 		if (initialTokens.length > 1) {
@@ -50,13 +49,11 @@ public class PersonParser {
 
 			if (nameTokenLengthIs1 || nameTokenLengthIs2) {
 				firstInitial = Character.toString(Character.toUpperCase(initials.charAt(0)));
-				fullName = familyName + ", " + firstInitial;
 
 				if (nameTokenLengthIs2) {
 					// If there is also a middle initial...
 					middleInitial =
 						Character.toString(Character.toUpperCase(initials.charAt(1)));
-					fullName += " " + middleInitial;
 				}
 
 			} else {
@@ -66,6 +63,7 @@ public class PersonParser {
 
 		String firstName = "";
 		String additionalName = "";
+		String fullName = "";
 
 		if (!StringUtilities.isEmptyOrWhiteSpace(rawFullNameString)) {
 			String fullNameWithoutComma = rawFullNameString.replaceFirst(",", "");
