@@ -15,19 +15,25 @@ public class PersonParserTest {
 	public static final String FAMILY_NAME = "Smith";
 	public static final String FIRST_NAME = "John";
 	public static final String FIRST_INITIAL = "J";
-	public static final String MIDDLE_INIITAL = "G";
+	public static final String MIDDLE_INITIAL = "G";
+	public static final String EXTRA_INITIAL = "A";
 	public static final String ABBREVIATED_NO_INITIALS = FAMILY_NAME;
 	public static final String ABBREVIATED_FIRST_INITIAL_WITH_COMMA =
-		FAMILY_NAME + FIRST_INITIAL;
+		FAMILY_NAME + ", " + FIRST_INITIAL;
 	public static final String ABBREVIATED_FIRST_INITIAL_WITHOUT_COMMA =
-		FAMILY_NAME + FIRST_INITIAL;
+		FAMILY_NAME + " " + FIRST_INITIAL;
 	public static final String ABBREVIATED_FIRST_AND_MIDDLE_INITIALS_WITH_COMMA =
-		FAMILY_NAME + ", " + FIRST_INITIAL + MIDDLE_INIITAL;
+		FAMILY_NAME + ", " + FIRST_INITIAL + MIDDLE_INITIAL;
 	public static final String ABBREVIATED_FIRST_AND_MIDDLE_INITIALS_WITHOUT_COMMA =
-		FAMILY_NAME + " " + FIRST_INITIAL + MIDDLE_INIITAL;
+		FAMILY_NAME + " " + FIRST_INITIAL + MIDDLE_INITIAL;
+	public static final String ABBREVIATED_MORE_THAN_TWO_INITIALS_WITH_COMMA =
+		FAMILY_NAME + ", " + FIRST_INITIAL + MIDDLE_INITIAL + EXTRA_INITIAL;
+	public static final String ABBREVIATED_MORE_THAN_TWO_INITIALS_WITHOUT_COMMA =
+		FAMILY_NAME + " " + FIRST_INITIAL + MIDDLE_INITIAL + EXTRA_INITIAL;
 	public static final String FULL_NAME = FAMILY_NAME + ", " + FIRST_NAME;
 	public static final String NO_PERSONAL_NAME = "";
 	public static final String NO_ADDITIONAL_NAME = "";
+	public static final String NO_FAMILY_NAME = "";
 	public static final String NO_FIRST_INITIAL = "";
 	public static final String NO_MIDDLE_INITIAL = "";
 	public static final String NO_FULL_NAME = "";
@@ -78,9 +84,9 @@ public class PersonParserTest {
 				NO_FULL_NAME,
 				false);
 
-			Pair<Person, Boolean> fullNameResult =
+			/*Pair<Person, Boolean> fullNameResult =
 				PersonParser.parsePerson(this.keyGenerator, ABBREVIATED_NO_INITIALS, FULL_NAME);
-			/*checkResult(
+			checkResult(
 				fullNameResult,
 				FIRST_NAME,
 				NO_ADDITIONAL_NAME,
@@ -96,7 +102,7 @@ public class PersonParserTest {
 	}
 
 	@Test
-	public void testParsePerson_CommaSeparator_NotStarred_JustMiddleInitial() {
+	public void testParsePerson_CommaSeparator_NotStarred_JustFirstInitial() {
 		try {
 			Pair<Person, Boolean> noFullNameResult = PersonParser.parsePerson(
 				this.keyGenerator, ABBREVIATED_FIRST_INITIAL_WITH_COMMA, NO_FULL_NAME);
@@ -107,8 +113,8 @@ public class PersonParserTest {
 				FAMILY_NAME,
 				FIRST_INITIAL,
 				NO_MIDDLE_INITIAL,
-				FAMILY_NAME,
-				NO_FULL_NAME,
+				ABBREVIATED_FIRST_INITIAL_WITH_COMMA,
+				FAMILY_NAME + ", " + FIRST_INITIAL,
 				false);
 		} catch (PersonParsingException e) {
 			fail("No exception should've been thrown: " + e.getMessage());
@@ -116,73 +122,315 @@ public class PersonParserTest {
 	}
 
 	@Test
-	public void testParsePerson_CommaSeparator_NotStarred_MiddleAndFirstInitials() {
-		fail("Not yet implemented");
+	public void testParsePerson_CommaSeparator_NotStarred_FirstAndMiddleInitials() {
+		try {
+			Pair<Person, Boolean> noFullNameResult = PersonParser.parsePerson(
+				this.keyGenerator,
+				ABBREVIATED_FIRST_AND_MIDDLE_INITIALS_WITH_COMMA,
+				NO_FULL_NAME);
+			checkResult(
+				noFullNameResult,
+				FIRST_INITIAL,
+				MIDDLE_INITIAL,
+				FAMILY_NAME,
+				FIRST_INITIAL,
+				MIDDLE_INITIAL,
+				ABBREVIATED_FIRST_AND_MIDDLE_INITIALS_WITH_COMMA,
+				FAMILY_NAME + ", " + FIRST_INITIAL + " " + MIDDLE_INITIAL,
+				false);
+		} catch(PersonParsingException e) {
+			fail("No exception should've been thrown: " + e.getMessage());
+		}
 	}
 
 	@Test
 	public void testParsePerson_CommaSeparator_NotStarred_MoreThanTwoInitials() {
-		fail("Not yet implemented");
+		try {
+			Pair<Person, Boolean> noFullNameResult = PersonParser.parsePerson(
+				this.keyGenerator,
+				ABBREVIATED_MORE_THAN_TWO_INITIALS_WITH_COMMA,
+				NO_FULL_NAME);
+			checkResult(
+				noFullNameResult,
+				NO_PERSONAL_NAME,
+				NO_ADDITIONAL_NAME,
+				FAMILY_NAME,
+				NO_FIRST_INITIAL,
+				NO_MIDDLE_INITIAL,
+				ABBREVIATED_MORE_THAN_TWO_INITIALS_WITH_COMMA,
+				NO_FULL_NAME,
+				false);
+		} catch(PersonParsingException e) {
+			fail("No exception should've been thrown: " + e.getMessage());
+		}
 	}
 
 	@Test
 	public void testParsePerson_CommaSeparator_Starred_NoInitials() {
-		fail("Not yet implemented");
+		try {
+			Pair<Person, Boolean> noFullNameResult = PersonParser.parsePerson(
+				this.keyGenerator,
+				starred(ABBREVIATED_NO_INITIALS),
+				NO_FULL_NAME);
+			checkResult(
+				noFullNameResult,
+				NO_PERSONAL_NAME,
+				NO_ADDITIONAL_NAME,
+				FAMILY_NAME,
+				NO_FIRST_INITIAL,
+				NO_MIDDLE_INITIAL,
+				ABBREVIATED_NO_INITIALS,
+				NO_FULL_NAME,
+				true);
+		} catch(PersonParsingException e) {
+			fail("No exception should've been thrown: " + e.getMessage());
+		}
 	}
 
 	@Test
 	public void testParsePerson_CommaSeparator_Starred_JustMiddleInitial() {
-		fail("Not yet implemented");
+		try {
+			Pair<Person, Boolean> noFullNameResult = PersonParser.parsePerson(
+				this.keyGenerator,
+				starred(ABBREVIATED_FIRST_INITIAL_WITH_COMMA),
+				NO_FULL_NAME);
+			checkResult(
+				noFullNameResult,
+				FIRST_INITIAL,
+				NO_ADDITIONAL_NAME,
+				FAMILY_NAME,
+				FIRST_INITIAL,
+				NO_MIDDLE_INITIAL,
+				ABBREVIATED_FIRST_INITIAL_WITH_COMMA,
+				FAMILY_NAME + ", " + FIRST_INITIAL,
+				true);
+		} catch(PersonParsingException e) {
+			fail("No exception should've been thrown: " + e.getMessage());
+		}
 	}
 
 	@Test
 	public void testParsePerson_CommaSeparator_Starred_MiddleAndFirstInitials() {
-		fail("Not yet implemented");
+		try {
+			Pair<Person, Boolean> noFullNameResult = PersonParser.parsePerson(
+				this.keyGenerator,
+				starred(ABBREVIATED_FIRST_AND_MIDDLE_INITIALS_WITH_COMMA),
+				NO_FULL_NAME);
+			checkResult(
+				noFullNameResult,
+				FIRST_INITIAL,
+				MIDDLE_INITIAL,
+				FAMILY_NAME,
+				FIRST_INITIAL,
+				MIDDLE_INITIAL,
+				ABBREVIATED_FIRST_AND_MIDDLE_INITIALS_WITH_COMMA,
+				FAMILY_NAME + ", " + FIRST_INITIAL + " " + MIDDLE_INITIAL,
+				true);
+		} catch(PersonParsingException e) {
+			fail("No exception should've been thrown: " + e.getMessage());
+		}
 	}
 
 	@Test
 	public void testParsePerson_CommaSeparator_Starred_MoreThanTwoInitials() {
-		fail("Not yet implemented");
+		try {
+			Pair<Person, Boolean> noFullNameResult = PersonParser.parsePerson(
+				this.keyGenerator,
+				starred(ABBREVIATED_MORE_THAN_TWO_INITIALS_WITH_COMMA),
+				NO_FULL_NAME);
+			checkResult(
+				noFullNameResult,
+				NO_PERSONAL_NAME,
+				NO_ADDITIONAL_NAME,
+				FAMILY_NAME,
+				NO_FIRST_INITIAL,
+				NO_MIDDLE_INITIAL,
+				ABBREVIATED_MORE_THAN_TWO_INITIALS_WITH_COMMA,
+				NO_FULL_NAME,
+				true);
+		} catch(PersonParsingException e) {
+			fail("No exception should've been thrown: " + e.getMessage());
+		}
 	}
 
-		@Test
+	@Test
 	public void testParsePerson_WhiteSpaceSeparator_NotStarred_NoInitials() {
-		fail("Not yet implemented");
+		try {
+			Pair<Person, Boolean> noFullNameResult = PersonParser.parsePerson(
+				this.keyGenerator,
+				ABBREVIATED_NO_INITIALS,
+				NO_FULL_NAME);
+			checkResult(
+				noFullNameResult,
+				NO_PERSONAL_NAME,
+				NO_ADDITIONAL_NAME,
+				FAMILY_NAME,
+				NO_FIRST_INITIAL,
+				NO_MIDDLE_INITIAL,
+				ABBREVIATED_NO_INITIALS,
+				NO_FULL_NAME,
+				false);
+		} catch(PersonParsingException e) {
+			fail("No exception should've been thrown: " + e.getMessage());
+		}
 	}
 
 	@Test
-	public void testParsePerson_WhiteSpaceSeparator_NotStarred_JustMiddleInitial() {
-		fail("Not yet implemented");
+	public void testParsePerson_WhiteSpaceSeparator_NotStarred_JustFirstInitial() {
+		try {
+			Pair<Person, Boolean> noFullNameResult = PersonParser.parsePerson(
+				this.keyGenerator,
+				ABBREVIATED_FIRST_INITIAL_WITHOUT_COMMA,
+				NO_FULL_NAME);
+			checkResult(
+				noFullNameResult,
+				FIRST_INITIAL,
+				NO_ADDITIONAL_NAME,
+				FAMILY_NAME,
+				FIRST_INITIAL,
+				NO_MIDDLE_INITIAL,
+				ABBREVIATED_FIRST_INITIAL_WITH_COMMA,
+				ABBREVIATED_FIRST_INITIAL_WITH_COMMA,
+				false);
+		} catch(PersonParsingException e) {
+			fail("No exception should've been thrown: " + e.getMessage());
+		}
 	}
 
 	@Test
-	public void testParsePerson_WhiteSpaceSeparator_NotStarred_MiddleAndFirstInitials() {
-		fail("Not yet implemented");
+	public void testParsePerson_WhiteSpaceSeparator_NotStarred_FirstAndMiddleInitials() {
+		try {
+			Pair<Person, Boolean> noFullNameResult = PersonParser.parsePerson(
+				this.keyGenerator,
+				ABBREVIATED_FIRST_AND_MIDDLE_INITIALS_WITHOUT_COMMA,
+				NO_FULL_NAME);
+			checkResult(
+				noFullNameResult,
+				FIRST_INITIAL,
+				MIDDLE_INITIAL,
+				FAMILY_NAME,
+				FIRST_INITIAL,
+				MIDDLE_INITIAL,
+				ABBREVIATED_FIRST_AND_MIDDLE_INITIALS_WITH_COMMA,
+				FAMILY_NAME + ", " + FIRST_INITIAL + " " + MIDDLE_INITIAL,
+				false);
+		} catch(PersonParsingException e) {
+			fail("No exception should've been thrown: " + e.getMessage());
+		}
 	}
 
 	@Test
 	public void testParsePerson_WhiteSpaceSeparator_NotStarred_MoreThanTwoInitials() {
-		fail("Not yet implemented");
+		try {
+			Pair<Person, Boolean> noFullNameResult = PersonParser.parsePerson(
+				this.keyGenerator,
+				ABBREVIATED_MORE_THAN_TWO_INITIALS_WITHOUT_COMMA,
+				NO_FULL_NAME);
+			checkResult(
+				noFullNameResult,
+				NO_PERSONAL_NAME,
+				NO_ADDITIONAL_NAME,
+				FAMILY_NAME,
+				NO_FIRST_INITIAL,
+				NO_MIDDLE_INITIAL,
+				ABBREVIATED_MORE_THAN_TWO_INITIALS_WITH_COMMA,
+				NO_FULL_NAME,
+				false);
+		} catch(PersonParsingException e) {
+			fail("No exception should've been thrown: " + e.getMessage());
+		}
 	}
 
 	@Test
 	public void testParsePerson_WhiteSpaceSeparator_Starred_NoInitials() {
-		fail("Not yet implemented");
+		try {
+			Pair<Person, Boolean> noFullNameResult = PersonParser.parsePerson(
+				this.keyGenerator,
+				starred(ABBREVIATED_NO_INITIALS),
+				NO_FULL_NAME);
+			checkResult(
+				noFullNameResult,
+				NO_PERSONAL_NAME,
+				NO_ADDITIONAL_NAME,
+				FAMILY_NAME,
+				NO_FIRST_INITIAL,
+				NO_MIDDLE_INITIAL,
+				ABBREVIATED_NO_INITIALS,
+				NO_FULL_NAME,
+				true);
+		} catch(PersonParsingException e) {
+			fail("No exception should've been thrown: " + e.getMessage());
+		}
 	}
 
 	@Test
-	public void testParsePerson_WhiteSpaceSeparator_Starred_JustMiddleInitial() {
-		fail("Not yet implemented");
+	public void testParsePerson_WhiteSpaceSeparator_Starred_JustFirstInitial() {
+		try {
+			Pair<Person, Boolean> noFullNameResult = PersonParser.parsePerson(
+				this.keyGenerator,
+				starred(ABBREVIATED_FIRST_INITIAL_WITHOUT_COMMA),
+				NO_FULL_NAME);
+			checkResult(
+				noFullNameResult,
+				FIRST_INITIAL,
+				NO_ADDITIONAL_NAME,
+				FAMILY_NAME,
+				FIRST_INITIAL,
+				NO_MIDDLE_INITIAL,
+				ABBREVIATED_FIRST_INITIAL_WITH_COMMA,
+				ABBREVIATED_FIRST_INITIAL_WITH_COMMA,
+				true);
+		} catch(PersonParsingException e) {
+			fail("No exception should've been thrown: " + e.getMessage());
+		}
 	}
 
 	@Test
-	public void testParsePerson_WhiteSpaceSeparator_Starred_MiddleAndFirstInitials() {
-		fail("Not yet implemented");
+	public void testParsePerson_WhiteSpaceSeparator_Starred_FirstAndMiddleInitials() {
+		try {
+			Pair<Person, Boolean> noFullNameResult = PersonParser.parsePerson(
+				this.keyGenerator,
+				starred(ABBREVIATED_FIRST_AND_MIDDLE_INITIALS_WITHOUT_COMMA),
+				NO_FULL_NAME);
+			checkResult(
+				noFullNameResult,
+				FIRST_INITIAL,
+				MIDDLE_INITIAL,
+				FAMILY_NAME,
+				FIRST_INITIAL,
+				MIDDLE_INITIAL,
+				ABBREVIATED_FIRST_AND_MIDDLE_INITIALS_WITH_COMMA,
+				FAMILY_NAME + ", " + FIRST_INITIAL + " " + MIDDLE_INITIAL,
+				true);
+		} catch(PersonParsingException e) {
+			fail("No exception should've been thrown: " + e.getMessage());
+		}
 	}
 
 	@Test
 	public void testParsePerson_WhiteSpaceSeparator_Starred_MoreThanTwoInitials() {
-		fail("Not yet implemented");
+		try {
+			Pair<Person, Boolean> noFullNameResult = PersonParser.parsePerson(
+				this.keyGenerator,
+				starred(ABBREVIATED_MORE_THAN_TWO_INITIALS_WITHOUT_COMMA),
+				NO_FULL_NAME);
+			checkResult(
+				noFullNameResult,
+				NO_PERSONAL_NAME,
+				NO_ADDITIONAL_NAME,
+				FAMILY_NAME,
+				NO_FIRST_INITIAL,
+				NO_MIDDLE_INITIAL,
+				ABBREVIATED_MORE_THAN_TWO_INITIALS_WITH_COMMA,
+				NO_FULL_NAME,
+				true);
+		} catch(PersonParsingException e) {
+			fail("No exception should've been thrown: " + e.getMessage());
+		}
+	}
+
+	private String starred(String target) {
+		return "*" + target;
 	}
 
 	private void checkResult(
@@ -192,7 +440,7 @@ public class PersonParserTest {
 			String familyName,
 			String firstInitial,
 			String middleInitial,
-			String unsplitName,
+			String unsplitAbbreviatedName,
 			String fullName,
 			boolean starred) {
 		Person person = result.getFirstObject();
@@ -209,7 +457,10 @@ public class PersonParserTest {
 		comparePersonProperty("Family Names", person.getFamilyName(), familyName);
 		comparePersonProperty("First Initials", person.getFirstInitial(), firstInitial);
 		comparePersonProperty("Middle Initials", person.getMiddleInitial(), middleInitial);
-		comparePersonProperty("Unsplit Names", person.getUnsplitAbbreviatedName(), unsplitName);
+		comparePersonProperty(
+			"Unsplit Abbreviated Names",
+			person.getUnsplitAbbreviatedName(),
+			unsplitAbbreviatedName);
 		comparePersonProperty("Full Names", person.getFullName(), fullName);
 		compareStarredness(result, starred); 
 	}

@@ -26,17 +26,24 @@ public class PersonParser {
 			separatorExpression = "\\s";
 		}
 
-		String[] initialTokens = rawAbbreviatedNameString.split(separatorExpression);
-
 		boolean starred = false;
-		String familyName = initialTokens[0];
 
-		if (familyName.startsWith("*")) {
+		if (rawAbbreviatedNameString.startsWith("*")) {
 			starred = true;
-			familyName = familyName.replaceFirst("\\**+", "");
+			rawAbbreviatedNameString = rawAbbreviatedNameString.replaceFirst("\\**+", "");
 		}
 
-		familyName = StringUtilities.toSentenceCase(initialTokens[0]);
+		String[] initialTokens = rawAbbreviatedNameString.split(separatorExpression);
+		String familyName = StringUtilities.toSentenceCase(initialTokens[0]);
+
+		/*if (familyName.startsWith("*")) {
+			System.err.println("Starred");
+			starred = true;
+			System.err.println("Before: " + familyName);
+			familyName = familyName.replaceFirst("\\**+", "");
+			System.err.println("After: " + familyName);
+		}*/
+
 		String firstInitial = "";
 		String middleInitial = "";
 		String unsplitName = rawAbbreviatedNameString.replaceFirst(separatorExpression, ", ");
@@ -51,16 +58,17 @@ public class PersonParser {
 
 			if (nameTokenLengthIs1 || nameTokenLengthIs2) {
 				firstInitial = Character.toString(Character.toUpperCase(initials.charAt(0)));
+				fullName = familyName + ", " + firstInitial;
 
 				if (nameTokenLengthIs2) {
-					// If there is also a middle initial.
+					// If there is also a middle initial...
 					middleInitial =
 						Character.toString(Character.toUpperCase(initials.charAt(1)));
+					fullName += " " + middleInitial;
 				}
 
-				fullName = familyName + ", " + firstInitial + " " + middleInitial;
 			} else {
-				fullName = unsplitName;
+				// fullName = unsplitName;
 			}
 		}
 
