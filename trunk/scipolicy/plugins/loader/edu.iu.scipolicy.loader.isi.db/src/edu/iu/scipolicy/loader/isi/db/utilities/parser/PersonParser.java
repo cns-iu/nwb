@@ -36,14 +36,6 @@ public class PersonParser {
 		String[] initialTokens = rawAbbreviatedNameString.split(separatorExpression);
 		String familyName = StringUtilities.toSentenceCase(initialTokens[0]);
 
-		/*if (familyName.startsWith("*")) {
-			System.err.println("Starred");
-			starred = true;
-			System.err.println("Before: " + familyName);
-			familyName = familyName.replaceFirst("\\**+", "");
-			System.err.println("After: " + familyName);
-		}*/
-
 		String firstInitial = "";
 		String middleInitial = "";
 		String unsplitName = rawAbbreviatedNameString.replaceFirst(separatorExpression, ", ");
@@ -72,8 +64,22 @@ public class PersonParser {
 			}
 		}
 
-		String firstName = firstInitial;
-		String additionalName = middleInitial;
+		String firstName = "";
+		String additionalName = "";
+
+		if (!StringUtilities.isEmptyOrWhiteSpace(rawFullNameString)) {
+			String fullNameWithoutComma = rawFullNameString.replaceFirst(",", "");
+			String[] fullNameTokens = fullNameWithoutComma.split("\\s");
+
+			String testFullName = StringUtilities.toSentenceCase(fullNameTokens[0]);
+
+			if (!testFullName.equals(familyName)) {
+				String exceptionMessage =
+					"The family names between the abbreviated name and the full name do not " +
+					"match.  Unable to parse person.";
+				throw new PersonParsingException(exceptionMessage);
+			}
+		}
 
 		return new Pair<Person, Boolean>(
 			new Person(

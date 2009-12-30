@@ -108,7 +108,7 @@ public class PersonParserTest {
 				this.keyGenerator, ABBREVIATED_FIRST_INITIAL_WITH_COMMA, NO_FULL_NAME);
 			checkResult(
 				noFullNameResult,
-				FIRST_INITIAL,
+				NO_PERSONAL_NAME,
 				NO_ADDITIONAL_NAME,
 				FAMILY_NAME,
 				FIRST_INITIAL,
@@ -130,8 +130,8 @@ public class PersonParserTest {
 				NO_FULL_NAME);
 			checkResult(
 				noFullNameResult,
-				FIRST_INITIAL,
-				MIDDLE_INITIAL,
+				NO_PERSONAL_NAME,
+				NO_ADDITIONAL_NAME,
 				FAMILY_NAME,
 				FIRST_INITIAL,
 				MIDDLE_INITIAL,
@@ -188,7 +188,7 @@ public class PersonParserTest {
 	}
 
 	@Test
-	public void testParsePerson_CommaSeparator_Starred_JustMiddleInitial() {
+	public void testParsePerson_CommaSeparator_Starred_JustFirstInitial() {
 		try {
 			Pair<Person, Boolean> noFullNameResult = PersonParser.parsePerson(
 				this.keyGenerator,
@@ -196,7 +196,7 @@ public class PersonParserTest {
 				NO_FULL_NAME);
 			checkResult(
 				noFullNameResult,
-				FIRST_INITIAL,
+				NO_PERSONAL_NAME,
 				NO_ADDITIONAL_NAME,
 				FAMILY_NAME,
 				FIRST_INITIAL,
@@ -210,7 +210,7 @@ public class PersonParserTest {
 	}
 
 	@Test
-	public void testParsePerson_CommaSeparator_Starred_MiddleAndFirstInitials() {
+	public void testParsePerson_CommaSeparator_Starred_FirstAndMiddleInitials() {
 		try {
 			Pair<Person, Boolean> noFullNameResult = PersonParser.parsePerson(
 				this.keyGenerator,
@@ -218,8 +218,8 @@ public class PersonParserTest {
 				NO_FULL_NAME);
 			checkResult(
 				noFullNameResult,
-				FIRST_INITIAL,
-				MIDDLE_INITIAL,
+				NO_PERSONAL_NAME,
+				NO_ADDITIONAL_NAME,
 				FAMILY_NAME,
 				FIRST_INITIAL,
 				MIDDLE_INITIAL,
@@ -284,7 +284,7 @@ public class PersonParserTest {
 				NO_FULL_NAME);
 			checkResult(
 				noFullNameResult,
-				FIRST_INITIAL,
+				NO_PERSONAL_NAME,
 				NO_ADDITIONAL_NAME,
 				FAMILY_NAME,
 				FIRST_INITIAL,
@@ -306,8 +306,8 @@ public class PersonParserTest {
 				NO_FULL_NAME);
 			checkResult(
 				noFullNameResult,
-				FIRST_INITIAL,
-				MIDDLE_INITIAL,
+				NO_PERSONAL_NAME,
+				NO_ADDITIONAL_NAME,
 				FAMILY_NAME,
 				FIRST_INITIAL,
 				MIDDLE_INITIAL,
@@ -372,7 +372,7 @@ public class PersonParserTest {
 				NO_FULL_NAME);
 			checkResult(
 				noFullNameResult,
-				FIRST_INITIAL,
+				NO_PERSONAL_NAME,
 				NO_ADDITIONAL_NAME,
 				FAMILY_NAME,
 				FIRST_INITIAL,
@@ -394,8 +394,8 @@ public class PersonParserTest {
 				NO_FULL_NAME);
 			checkResult(
 				noFullNameResult,
-				FIRST_INITIAL,
-				MIDDLE_INITIAL,
+				NO_PERSONAL_NAME,
+				NO_ADDITIONAL_NAME,
 				FAMILY_NAME,
 				FIRST_INITIAL,
 				MIDDLE_INITIAL,
@@ -470,7 +470,9 @@ public class PersonParserTest {
 		if (StringUtilities.isEmptyOrWhiteSpace(personProperty)) {
 			if (!StringUtilities.isEmptyOrWhiteSpace(compareTo)) {
 				String failMessage =
-					propertyName + " do not match: Result is empty and Comparison is not.";
+					propertyName +
+					" do not match: Result is empty (\"" + personProperty + "\")" +
+					" and Comparison is not (\"" + compareTo + "\").";
 				fail(failMessage);
 			} else {
 			}
