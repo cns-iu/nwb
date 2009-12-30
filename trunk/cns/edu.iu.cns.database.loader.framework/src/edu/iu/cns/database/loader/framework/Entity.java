@@ -3,17 +3,18 @@ package edu.iu.cns.database.loader.framework;
 import java.util.Dictionary;
 
 import edu.iu.cns.database.loader.framework.utilities.DatabaseTableKeyGenerator;
+import edu.iu.nwb.shared.isiutil.database.ISIDatabase;
 
 
 public abstract class Entity<T extends Entity<?>> extends RowItem<T> {
-	public static final int BASE_HASH_MULTIPLIER = 31;
-
 	private int primaryKey;
 
 	public Entity(DatabaseTableKeyGenerator keyGenerator,
 			Dictionary<String, Comparable<?>> attributes) {
 		super(attributes);
 		this.primaryKey = keyGenerator.getNextKey();
+
+		getAttributes().put(ISIDatabase.PRIMARY_KEY, this.primaryKey);
 
 		/*
 		 * We DON'T want to add the primary key to attributes here because it causes any

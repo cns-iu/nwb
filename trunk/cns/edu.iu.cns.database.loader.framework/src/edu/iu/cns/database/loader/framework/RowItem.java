@@ -2,9 +2,6 @@ package edu.iu.cns.database.loader.framework;
 
 import java.util.Dictionary;
 
-import edu.iu.cns.shared.utilities.DictionaryIterator;
-import edu.iu.cns.shared.utilities.Pair;
-
 public abstract class RowItem<T extends RowItem<?>> {
 	public static final int BASE_HASH_MULTIPLIER = 31;
 
@@ -18,34 +15,6 @@ public abstract class RowItem<T extends RowItem<?>> {
 		return this.attributes;
 	}
 
-	/**
-	 * This is meant to be overridden.
-	 * By default, it will do a naive equality check between all of the attributes of this
-	 *  and otherEntity.
-	 */
-	/*public boolean shouldMerge(T otherItem) {
-		if (this == otherItem) {
-			return true;
-		}
-
-		Dictionary<String, Comparable<?>> attributes = getAttributes();
-		Dictionary<String, Comparable<?>> otherAttributes = otherItem.getAttributes();
-
-		if (attributes.size() != otherAttributes.size()) {
-			return false;
-		}
-
-		for (Pair<String, Comparable<?>> dictionaryEntry :
-				new DictionaryIterator<String, Comparable<?>>(attributes)) {
-			Object otherValue = otherAttributes.get(dictionaryEntry.getFirstObject());
-
-			if (!dictionaryEntry.getSecondObject().equals(otherValue)) {
-				return false;
-			}
-		}
-
-		return true;
-	}*/
 	public abstract boolean shouldMerge(T otherItem);
 
 	/**
@@ -55,10 +24,5 @@ public abstract class RowItem<T extends RowItem<?>> {
 
 	public Dictionary<String, Comparable<?>> getAttributesForQuery() {
 		return this.attributes;
-	}
-
-	public String toQuery() {
-		// TODO: Implement this.
-		return null;
 	}
 }

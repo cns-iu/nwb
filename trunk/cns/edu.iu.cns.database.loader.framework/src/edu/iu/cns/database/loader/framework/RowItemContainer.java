@@ -5,26 +5,28 @@ import java.util.List;
 
 import edu.iu.cns.database.loader.framework.utilities.DatabaseTableKeyGenerator;
 
-public class RowItemContainer<RowItemType extends RowItem<RowItemType>> {
+public class RowItemContainer<T extends RowItem<T>> {
 	private DatabaseTableKeyGenerator keyGenerator = new DatabaseTableKeyGenerator();
-	private List<RowItemType> items = new ArrayList<RowItemType>();
+	private List<T> items = new ArrayList<T>();
 	private String humanReadableName;
 	private String databaseTableName;
+	private Schema<T> schema;
 
-	public RowItemContainer(String humanReadableName) {
-		this(humanReadableName, humanReadableName.toUpperCase());
+	public RowItemContainer(String humanReadableName, Schema<T> schema) {
+		this(humanReadableName, humanReadableName.toUpperCase(), schema);
 	}
 
-	public RowItemContainer(String humanReadableName, String databaseTableName) {
+	public RowItemContainer(String humanReadableName, String databaseTableName, Schema<T> schema) {
 		this.humanReadableName = humanReadableName;
 		this.databaseTableName = databaseTableName;
+		this.schema = schema;
 	}
 
-	public DatabaseTableKeyGenerator getKeyGenerator() {
+	public final DatabaseTableKeyGenerator getKeyGenerator() {
 		return this.keyGenerator;
 	}
 
-	public final List<? extends RowItem<RowItemType>> getItems() {
+	public final List<? extends RowItem<T>> getItems() {
 		return this.items;
 	}
 
@@ -36,8 +38,12 @@ public class RowItemContainer<RowItemType extends RowItem<RowItemType>> {
 		return this.databaseTableName;
 	}
 
-	public RowItemType addOrMerge(RowItemType newItem) {
-		for (RowItemType originalItem : this.items) {
+	public final Schema<T> getSchema() {
+		return this.schema;
+	}
+
+	public final T addOrMerge(T newItem) {
+		for (T originalItem : this.items) {
 			if (originalItem.shouldMerge(newItem)) {
 				originalItem.merge(newItem);
 
