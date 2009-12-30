@@ -8,25 +8,43 @@ import edu.iu.scipolicy.loader.isi.db.model.entity.Person;
 
 public class PersonParser {
 	public static Pair<Person, Boolean> parsePerson(
-			DatabaseTableKeyGenerator personKeyGenerator, String originalToken) {
-		String[] nameTokens = originalToken.split("\\s");
+			DatabaseTableKeyGenerator personKeyGenerator,
+			String rawAbbreviatedNameString,
+			String rawFullNameString) throws PersonParsingException {
+		if (StringUtilities.isEmptyOrWhiteSpace(rawAbbreviatedNameString)) {
+			String exceptionMessage =
+				"An abbreviated name must be supplied.  Cannot continue parsing this \"person\".";
+			throw new PersonParsingException(exceptionMessage);
+		}
+
+		// TODO: Parse rawFullNameString as well!
+		String separatorExpression;
+
+		if (rawAbbreviatedNameString.contains(",")) {
+			separatorExpression = ",\\s";
+		} else {
+			separatorExpression = "\\s";
+		}
+
+		String[] initialTokens = rawAbbreviatedNameString.split(separatorExpression);
+
 		boolean starred = false;
-		String familyName = nameTokens[0];
+		String familyName = initialTokens[0];
 
 		if (familyName.startsWith("*")) {
 			starred = true;
 			familyName = familyName.replaceFirst("\\**+", "");
 		}
 
-		familyName = StringUtilities.toSentenceCase(nameTokens[0]);
+		familyName = StringUtilities.toSentenceCase(initialTokens[0]);
 		String firstInitial = "";
 		String middleInitial = "";
-		String unsplitName = originalToken.replaceFirst("\\s", ", ");
+		String unsplitName = rawAbbreviatedNameString.replaceFirst(separatorExpression, ", ");
 		String fullName = "";
 
 		// If there is a first and/or middle initial supplied...
-		if (nameTokens.length > 1) {
-			String initials = nameTokens[1];
+		if (initialTokens.length > 1) {
+			String initials = initialTokens[1];
 			int nameTokenLength = initials.length();
 			boolean nameTokenLengthIs1 = (nameTokenLength == 1);
 			boolean nameTokenLengthIs2 = (nameTokenLength == 2);

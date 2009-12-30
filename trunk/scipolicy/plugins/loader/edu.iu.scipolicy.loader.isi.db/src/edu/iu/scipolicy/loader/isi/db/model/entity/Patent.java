@@ -6,10 +6,14 @@ import java.util.Hashtable;
 import org.cishell.utilities.StringUtilities;
 
 import edu.iu.cns.database.loader.framework.Entity;
+import edu.iu.cns.database.loader.framework.Schema;
 import edu.iu.cns.database.loader.framework.utilities.DatabaseTableKeyGenerator;
 import edu.iu.nwb.shared.isiutil.database.ISIDatabase;
 
 public class Patent extends Entity<Patent> {
+	public static final Schema<Patent> SCHEMA = new Schema<Patent>(
+		ISIDatabase.PATENT_NUMBER, Schema.TEXT_CLASS);
+
 	private String patentNumber;
 
 	public Patent(DatabaseTableKeyGenerator keyGenerator, String patentNumber) {

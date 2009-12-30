@@ -6,10 +6,16 @@ import java.util.Hashtable;
 import org.cishell.utilities.StringUtilities;
 
 import edu.iu.cns.database.loader.framework.Entity;
+import edu.iu.cns.database.loader.framework.Schema;
 import edu.iu.cns.database.loader.framework.utilities.DatabaseTableKeyGenerator;
 import edu.iu.nwb.shared.isiutil.database.ISIDatabase;
 
 public class ISIFile extends Entity<ISIFile> {
+	public static final Schema<ISIFile> SCHEMA = new Schema<ISIFile>(
+		ISIDatabase.FILE_NAME, Schema.TEXT_CLASS,
+		ISIDatabase.FILE_TYPE, Schema.TEXT_CLASS,
+		ISIDatabase.FILE_FORMAT_VERSION_NUMBER, Schema.TEXT_CLASS);
+		
 	private String fileName;
 	private String fileType;
 	private String fileFormatVersionNumber;

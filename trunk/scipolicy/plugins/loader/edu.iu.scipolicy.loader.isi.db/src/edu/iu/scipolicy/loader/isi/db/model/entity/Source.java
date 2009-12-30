@@ -6,10 +6,23 @@ import java.util.Hashtable;
 import org.cishell.utilities.StringUtilities;
 
 import edu.iu.cns.database.loader.framework.Entity;
+import edu.iu.cns.database.loader.framework.Schema;
 import edu.iu.cns.database.loader.framework.utilities.DatabaseTableKeyGenerator;
 import edu.iu.nwb.shared.isiutil.database.ISIDatabase;
 
 public class Source extends Entity<Source> implements Comparable<Source> {
+	public final static Schema<Source> SCHEMA = new Schema<Source>(
+		ISIDatabase.FULL_TITLE, Schema.TEXT_CLASS,
+		ISIDatabase.PUBLICATION_TYPE, Schema.TEXT_CLASS,
+		ISIDatabase.ISO_TITLE_ABBREVIATION, Schema.TEXT_CLASS,
+		ISIDatabase.BOOK_SERIES_TITLE, Schema.TEXT_CLASS,
+		ISIDatabase.BOOK_SERIES_SUBTITLE, Schema.TEXT_CLASS,
+		ISIDatabase.ISSN, Schema.TEXT_CLASS,
+		ISIDatabase.TWENTY_NINE_CHARACTER_SOURCE_TITLE_ABBREVIATION, Schema.TEXT_CLASS,
+		ISIDatabase.CONFERENCE_TITLE, Schema.TEXT_CLASS,
+		ISIDatabase.CONFERENCE_DATE, Schema.TEXT_CLASS,
+		ISIDatabase.CONFERENCE_DONATION, Schema.TEXT_CLASS);
+
 	private String fullTitle;
 	private String publicationType;
 	private String isoTitleAbbreviation;

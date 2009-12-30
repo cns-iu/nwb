@@ -6,10 +6,26 @@ import java.util.Hashtable;
 import org.cishell.utilities.StringUtilities;
 
 import edu.iu.cns.database.loader.framework.Entity;
+import edu.iu.cns.database.loader.framework.Schema;
 import edu.iu.cns.database.loader.framework.utilities.DatabaseTableKeyGenerator;
 import edu.iu.nwb.shared.isiutil.database.ISIDatabase;
 
 public class Reference extends Entity<Reference> {
+	public final static Schema<Reference> SCHEMA = new Schema<Reference>(
+		ISIDatabase.REFERENCE_STRING, Schema.TEXT_CLASS,
+		ISIDatabase.PAPER, Schema.FOREIGN_KEY_CLASS,
+		ISIDatabase.REFERENCE_AUTHOR, Schema.FOREIGN_KEY_CLASS,
+		ISIDatabase.SOURCE, Schema.FOREIGN_KEY_CLASS,
+		ISIDatabase.YEAR, Schema.INTEGER_CLASS,
+		ISIDatabase.REFERENCE_VOLUME, Schema.INTEGER_CLASS,
+		ISIDatabase.PAGE_NUMBER, Schema.INTEGER_CLASS,
+		ISIDatabase.ANNOTATION, Schema.TEXT_CLASS,
+		ISIDatabase.AUTHOR_WAS_STARRED, Schema.TEXT_CLASS).
+		FOREIGN_KEYS(
+			ISIDatabase.PAPER, ISIDatabase.DOCUMENT_TABLE_NAME,
+			ISIDatabase.REFERENCE_AUTHOR, ISIDatabase.PERSON_TABLE_NAME,
+			ISIDatabase.SOURCE, ISIDatabase.SOURCE_TABLE_NAME);
+
 	private String referenceString;
 	private Document paper;
 	private Person author;

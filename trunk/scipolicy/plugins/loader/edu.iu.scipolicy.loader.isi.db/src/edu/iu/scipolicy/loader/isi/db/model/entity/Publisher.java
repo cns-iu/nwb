@@ -6,10 +6,18 @@ import java.util.Hashtable;
 import org.cishell.utilities.StringUtilities;
 
 import edu.iu.cns.database.loader.framework.Entity;
+import edu.iu.cns.database.loader.framework.Schema;
 import edu.iu.cns.database.loader.framework.utilities.DatabaseTableKeyGenerator;
 import edu.iu.nwb.shared.isiutil.database.ISIDatabase;
 
 public class Publisher extends Entity<Publisher> {
+	public final static Schema<Publisher> SCHEMA = new Schema<Publisher>(
+		ISIDatabase.PUBLISHER_NAME, Schema.TEXT_CLASS,
+		ISIDatabase.PUBLISHER_CITY, Schema.TEXT_CLASS,
+		ISIDatabase.WEB_ADDRESS, Schema.TEXT_CLASS,
+		ISIDatabase.PUBLISHER_SOURCE, Schema.FOREIGN_KEY_CLASS).
+		FOREIGN_KEYS(ISIDatabase.PUBLISHER_SOURCE, ISIDatabase.SOURCE_TABLE_NAME);
+
 	private String name;
 	private String city;
 	private String webAddress;
@@ -67,7 +75,7 @@ public class Publisher extends Entity<Publisher> {
 	public static Dictionary<String, Comparable<?>> createAttributes(
 			String name, String city, String webAddress) {
 		Dictionary<String, Comparable<?>> attributes = new Hashtable<String, Comparable<?>>();
-		attributes.put(ISIDatabase.NAME, name);
+		attributes.put(ISIDatabase.PUBLISHER_NAME, name);
 		attributes.put(ISIDatabase.PUBLISHER_CITY, city);
 		attributes.put(ISIDatabase.WEB_ADDRESS, webAddress);
 

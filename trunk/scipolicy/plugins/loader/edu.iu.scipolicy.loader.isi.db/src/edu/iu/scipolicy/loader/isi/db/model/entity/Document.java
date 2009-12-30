@@ -1,14 +1,40 @@
 package edu.iu.scipolicy.loader.isi.db.model.entity;
 
-import java.util.Date;
 import java.util.Dictionary;
 import java.util.Hashtable;
 
 import edu.iu.cns.database.loader.framework.Entity;
+import edu.iu.cns.database.loader.framework.Schema;
 import edu.iu.cns.database.loader.framework.utilities.DatabaseTableKeyGenerator;
 import edu.iu.nwb.shared.isiutil.database.ISIDatabase;
 
 public class Document extends Entity<Document> implements Comparable<Document> {
+	public static final Schema<Document> SCHEMA = new Schema<Document>(
+		ISIDatabase.DIGITAL_OBJECT_IDENTIFIER, Schema.TEXT_CLASS,
+		ISIDatabase.TITLE, Schema.TEXT_CLASS,
+		ISIDatabase.ARTICLE_NUMBER, Schema.TEXT_CLASS,
+		ISIDatabase.FIRST_AUTHOR, Schema.FOREIGN_KEY_CLASS,
+		ISIDatabase.LANGUAGE, Schema.TEXT_CLASS,
+		ISIDatabase.DOCUMENT_TYPE, Schema.TEXT_CLASS,
+		ISIDatabase.CITED_REFERENCE_COUNT, Schema.INTEGER_CLASS,
+		ISIDatabase.ABSTRACT_TEXT, Schema.TEXT_CLASS,
+		ISIDatabase.TIMES_CITED, Schema.INTEGER_CLASS,
+		ISIDatabase.BEGINNING_PAGE, Schema.INTEGER_CLASS,
+		ISIDatabase.ENDING_PAGE, Schema.INTEGER_CLASS,
+		ISIDatabase.PAGE_COUNT, Schema.INTEGER_CLASS,
+		ISIDatabase.ISI_UNIQUE_ARTICLE_IDENTIFIER, Schema.TEXT_CLASS,
+		ISIDatabase.PUBLICATION_YEAR, Schema.INTEGER_CLASS,
+		ISIDatabase.PUBLICATION_DATE, Schema.TEXT_CLASS,
+		ISIDatabase.DOCUMENT_VOLUME, Schema.TEXT_CLASS,
+		ISIDatabase.ISSUE, Schema.TEXT_CLASS,
+		ISIDatabase.PART_NUMBER, Schema.TEXT_CLASS,
+		ISIDatabase.SUPPLEMENT, Schema.TEXT_CLASS,
+		ISIDatabase.SPECIAL_ISSUE, Schema.TEXT_CLASS,
+		ISIDatabase.ISI_DOCUMENT_DELIVERY_NUMBER, Schema.TEXT_CLASS,
+		ISIDatabase.ISBN, Schema.TEXT_CLASS,
+		ISIDatabase.EMAIL_ADDRESS, Schema.TEXT_CLASS).
+		FOREIGN_KEYS(ISIDatabase.FIRST_AUTHOR, ISIDatabase.PERSON_TABLE_NAME);
+
 	private String digitalObjectIdentifier;
 	private String title;
 	private String articleNumber;

@@ -3,7 +3,6 @@ package edu.iu.scipolicy.loader.isi.db;
 import java.io.File;
 import java.util.Collection;
 import java.util.Dictionary;
-import java.util.Map;
 
 import org.cishell.framework.CIShellContext;
 import org.cishell.framework.algorithm.Algorithm;
@@ -11,15 +10,18 @@ import org.cishell.framework.algorithm.AlgorithmExecutionException;
 import org.cishell.framework.data.BasicData;
 import org.cishell.framework.data.Data;
 import org.cishell.framework.data.DataProperty;
+import org.cishell.service.database.Database;
+import org.cishell.service.database.DatabaseService;
 import org.osgi.service.log.LogService;
 
 import prefuse.data.Table;
 import edu.iu.nwb.shared.isiutil.ISITableReaderHelper;
-import edu.iu.nwb.shared.isiutil.database.ISIDatabase;
+import edu.iu.nwb.shared.isiutil.exception.ISILoadingException;
 import edu.iu.nwb.shared.isiutil.exception.ReadISIFileException;
 import edu.iu.scipolicy.loader.isi.db.model.ISIModel;
 import edu.iu.scipolicy.loader.isi.db.utilities.ISIDatabaseCreator;
 import edu.iu.scipolicy.loader.isi.db.utilities.ISITablePreprocessor;
+import edu.iu.scipolicy.loader.isi.db.utilities.exception.ModelCreationException;
 import edu.iu.scipolicy.loader.isi.db.utilities.parser.ISITableModelParser;
 
 public class ISIDatabaseLoaderAlgorithm implements Algorithm {
@@ -30,33 +32,40 @@ public class ISIDatabaseLoaderAlgorithm implements Algorithm {
 
     private Data inData;
     private LogService logger;
+    private DatabaseService databaseProvider;
     
     public ISIDatabaseLoaderAlgorithm(
     		Data[] data, Dictionary parameters, CIShellContext ciShellContext) {
         this.inData = data[0];
 
         this.logger = (LogService)ciShellContext.getService(LogService.class.getName());
+        this.databaseProvider =
+        	(DatabaseService)ciShellContext.getService(DatabaseService.class.getName());
     }
 
     public Data[] execute() throws AlgorithmExecutionException {
-    	// Convert input ISI data to an ISI table.
+    	try {
+	    	// Convert input ISI data to an ISI table.
 
-    	Table isiTable = convertISIToCSV(this.inData, this.logger);
+    		Table isiTable = convertISIToTable(this.inData, this.logger);
 
-    	// Preprocess the ISI table to remove duplicate Documents (on the row level).
+	    	// Preprocess the ISI table to remove duplicate Documents (on the row level).
 
-    	Collection<Integer> rows = ISITablePreprocessor.removeRowsWithDuplicateDocuments(isiTable);
+    		Collection<Integer> rows = ISITablePreprocessor.removeRowsWithDuplicateDocuments(isiTable);
 
-    	// Convert the ISI table to an ISI database.
+    		// Convert the ISI table to an ISI database.
 
-    	ISIDatabase database = convertTableToDatabase(isiTable, rows);
+    		Database database = convertTableToDatabase(isiTable, rows);
 
-    	// Annotate ISI database as output data with metadata and return it.
+	    	// Annotate ISI database as output data with metadata and return it.
 
-        return annotateOutputData(database, this.inData);
+    	    return annotateOutputData(database, this.inData);
+    	} catch (ISILoadingException e) {
+    		throw new AlgorithmExecutionException(e.getMessage(), e);
+    	}
     }
     
-    private Table convertISIToCSV(Data isiData, LogService logger)
+    private Table convertISIToTable(Data isiData, LogService logger)
     		throws AlgorithmExecutionException {
     	/*
     	 * TODO: If you want to do template style commenting, describe what's going on throughout
@@ -80,18 +89,22 @@ public class ISIDatabaseLoaderAlgorithm implements Algorithm {
     	}
     }
 
-    private ISIDatabase convertTableToDatabase(Table table, Collection<Integer> rows) {
-    	// Create an in-memory ISI model based off of the table.
-    		
-    	ISIModel model =
-    		new ISITableModelParser().parseModel(table, rows);
+    private Database convertTableToDatabase(Table table, Collection<Integer> rows)
+    		throws ISILoadingException {
+    	try {
+	    	// Create an in-memory ISI model based off of the table.
 
-    	// Use the ISI model to create an ISI database.
-    	
-    	return ISIDatabaseCreator.createFromModel(model);
+    		ISIModel model = new ISITableModelParser().parseModel(table, rows);
+
+	    	// Use the ISI model to create an ISI database.
+
+	    	return ISIDatabaseCreator.createFromModel(this.databaseProvider, model);
+    	} catch (ModelCreationException e) {
+    		throw new ISILoadingException(e.getMessage(), e);
+    	}
     }
 
-    private Data[] annotateOutputData(ISIDatabase isiDatabase, Data parentData) {
+    private Data[] annotateOutputData(Database isiDatabase, Data parentData) {
     	return null;
     }
     

@@ -6,10 +6,19 @@ import java.util.Hashtable;
 import org.cishell.utilities.StringUtilities;
 
 import edu.iu.cns.database.loader.framework.Entity;
+import edu.iu.cns.database.loader.framework.Schema;
 import edu.iu.cns.database.loader.framework.utilities.DatabaseTableKeyGenerator;
 import edu.iu.nwb.shared.isiutil.database.ISIDatabase;
 
 public class Address extends Entity<Address> {
+	public static final Schema<Address> SCHEMA = new Schema<Address>(
+		ISIDatabase.STREET_ADDRESS, Schema.TEXT_CLASS,
+		ISIDatabase.ADDRESS_CITY, Schema.TEXT_CLASS,
+		ISIDatabase.STATE_OR_PROVINCE, Schema.TEXT_CLASS,
+		ISIDatabase.POSTAL_CODE, Schema.TEXT_CLASS,
+		ISIDatabase.COUNTRY, Schema.TEXT_CLASS,
+		ISIDatabase.RAW_ADDRESS, Schema.TEXT_CLASS);
+
 	private String streetAddress;
 	private String city;
 	private String stateOrProvince;

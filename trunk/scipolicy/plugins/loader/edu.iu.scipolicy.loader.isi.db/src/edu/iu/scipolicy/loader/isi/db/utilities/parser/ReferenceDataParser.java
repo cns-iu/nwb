@@ -124,10 +124,13 @@ public class ReferenceDataParser {
 		 * person, source
 		 */
 		} else {
-			Pair<Person, Boolean> parsedPerson =
-				PersonParser.parsePerson(this.personKeyGenerator, firstToken);
-			this.author = parsedPerson.getFirstObject();
-			this.starred = parsedPerson.getSecondObject();
+			try {
+				Pair<Person, Boolean> parsedPerson =
+					PersonParser.parsePerson(this.personKeyGenerator, firstToken, "");
+				this.author = parsedPerson.getFirstObject();
+				this.starred = parsedPerson.getSecondObject();
+			} catch (PersonParsingException e) {
+			}
 		}
 
 		Pair<Source, String> parsedSource =
@@ -172,10 +175,13 @@ public class ReferenceDataParser {
 		 * person, year, source
 		 */
 		} else if (isYear(secondToken)) {
-			Pair<Person, Boolean> parsedPerson =
-				PersonParser.parsePerson(this.personKeyGenerator, firstToken);
-			this.author = parsedPerson.getFirstObject();
-			this.starred = parsedPerson.getSecondObject();
+			try {
+				Pair<Person, Boolean> parsedPerson =
+					PersonParser.parsePerson(this.personKeyGenerator, firstToken, "");
+				this.author = parsedPerson.getFirstObject();
+				this.starred = parsedPerson.getSecondObject();
+			} catch (PersonParsingException e) {
+			}
 
 			this.year = IntegerParserWithDefault.parse(secondToken);
 
@@ -222,10 +228,13 @@ public class ReferenceDataParser {
 		 * person; year; source; volume, page, or chapter 
 		 */
 		} else if (isYear(secondToken)) {
-			Pair<Person, Boolean> parsedPerson =
-				PersonParser.parsePerson(this.personKeyGenerator, firstToken);
-			this.author = parsedPerson.getFirstObject();
-			this.starred = parsedPerson.getSecondObject();
+			try {
+				Pair<Person, Boolean> parsedPerson =
+					PersonParser.parsePerson(this.personKeyGenerator, firstToken, "");
+				this.author = parsedPerson.getFirstObject();
+				this.starred = parsedPerson.getSecondObject();
+			} catch (PersonParsingException e) {
+			}
 
 			this.year = IntegerParserWithDefault.parse(secondToken);
 
@@ -257,10 +266,13 @@ public class ReferenceDataParser {
 		String fourthToken = tokens[3];
 		String fifthToken = tokens[4];
 
-		Pair<Person, Boolean> parsedPerson =
-			PersonParser.parsePerson(this.personKeyGenerator, firstToken);
-		this.author = parsedPerson.getFirstObject();
-		this.starred = parsedPerson.getSecondObject();
+		try {
+			Pair<Person, Boolean> parsedPerson =
+				PersonParser.parsePerson(this.personKeyGenerator, firstToken, "");
+			this.author = parsedPerson.getFirstObject();
+			this.starred = parsedPerson.getSecondObject();
+		} catch (PersonParsingException e) {
+		}
 
 		this.year = IntegerParserWithDefault.parse(secondToken);
 

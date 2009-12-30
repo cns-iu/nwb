@@ -1,13 +1,22 @@
 package edu.iu.scipolicy.loader.isi.db.model;
 
-public class ISIModel {
-	/*
-	 * There is a method that provides the set of entity types.
-	 * (Each entity type also contains all of its entities.)
-	 */
+import java.util.ArrayList;
+import java.util.List;
 
-	/*
-	 * There is a method that, given all entity types and their entities, constructs a set of all
-	 *  entity joining tables.
-	 */
+import edu.iu.cns.database.loader.framework.RowItemContainer;
+
+public class ISIModel {
+	private List<RowItemContainer<?>> rowItemLists = new ArrayList<RowItemContainer<?>>();
+
+	public ISIModel(RowItemContainer<?>... rowItemLists) {
+		for (RowItemContainer<?> rowItemList : rowItemLists) {
+			if (!this.rowItemLists.contains(rowItemList)) {
+				this.rowItemLists.add(rowItemList);
+			}
+		}
+	}
+
+	public List<RowItemContainer<?>> getRowItemLists() {
+		return this.rowItemLists;
+	}
 }

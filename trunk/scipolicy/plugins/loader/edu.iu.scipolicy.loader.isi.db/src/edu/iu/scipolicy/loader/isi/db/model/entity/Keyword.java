@@ -6,10 +6,15 @@ import java.util.Hashtable;
 import org.cishell.utilities.StringUtilities;
 
 import edu.iu.cns.database.loader.framework.Entity;
+import edu.iu.cns.database.loader.framework.Schema;
 import edu.iu.cns.database.loader.framework.utilities.DatabaseTableKeyGenerator;
 import edu.iu.nwb.shared.isiutil.database.ISIDatabase;
 
 public class Keyword extends Entity<Keyword> {
+	public static final Schema<Keyword> SCHEMA = new Schema<Keyword>(
+		ISIDatabase.TYPE, Schema.TEXT_CLASS,
+		ISIDatabase.KEYWORD, Schema.TEXT_CLASS);
+
 	private String type;
 	private String keyword;
 

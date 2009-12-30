@@ -4,11 +4,20 @@ import java.util.Dictionary;
 import java.util.Hashtable;
 
 import edu.iu.cns.database.loader.framework.RowItem;
+import edu.iu.cns.database.loader.framework.Schema;
 import edu.iu.nwb.shared.isiutil.database.ISIDatabase;
 import edu.iu.scipolicy.loader.isi.db.model.entity.Address;
 import edu.iu.scipolicy.loader.isi.db.model.entity.Document;
 
 public class ResearchAddress extends RowItem<ResearchAddress> {
+	public static final Schema<ResearchAddress> SCHEMA = new Schema<ResearchAddress>(
+		ISIDatabase.RESEARCH_ADDRESSES_PUBLISHER_FOREIGN_KEY, Schema.FOREIGN_KEY_CLASS,
+		ISIDatabase.RESEARCH_ADDRESSES_ADDRESS_FOREIGN_KEY, Schema.FOREIGN_KEY_CLASS,
+		ISIDatabase.ORDER_LISTED, Schema.INTEGER_CLASS).
+		FOREIGN_KEYS(
+			ISIDatabase.RESEARCH_ADDRESSES_PUBLISHER_FOREIGN_KEY, ISIDatabase.DOCUMENT_TABLE_NAME,
+			ISIDatabase.RESEARCH_ADDRESSES_ADDRESS_FOREIGN_KEY, ISIDatabase.ADDRESS_TABLE_NAME);
+
 	private Document document;
 	private Address address;
 	private int orderListed;
