@@ -42,11 +42,6 @@ public class ReferenceDataParser {
 	private String rawString;
 	private Person author;
 	private Source source;
-	/*
-	 * TODO: Move constants like this into ISIUtils (or maybe somewhere even more general if/when
-	 *  this becomes a convention across databases), so it can be used for parsing or whatever else
-	 *  needs to interpret what -1 means for a year.
-	 */
 	private int year = ISIDatabase.NULL_YEAR;
 	private int volume = ISIDatabase.NULL_VOLUME;
 	private int pageNumber = ISIDatabase.NULL_PAGE_NUMBER;
@@ -56,7 +51,7 @@ public class ReferenceDataParser {
 	public ReferenceDataParser(
 			DatabaseTableKeyGenerator personKeyGenerator,
 			DatabaseTableKeyGenerator sourceKeyGenerator,
-			String rawString) {
+			String rawString) throws ReferenceParsingException {
 		this.personKeyGenerator = personKeyGenerator;
 		this.sourceKeyGenerator = sourceKeyGenerator;
 		this.rawString = rawString;
@@ -64,7 +59,9 @@ public class ReferenceDataParser {
 		String[] cleanedTokens = StringUtilities.simpleCleanStrings(rawString.split(","));
 
 		if ((cleanedTokens.length < 2) || (cleanedTokens.length > 5)) {
-			// TODO: Warning?  (Invalid format.)
+			String exceptionMessage =
+				cleanedTokens.length + " tokens were found.  Expected at least two and at most 5.";
+			throw new ReferenceParsingException(exceptionMessage);
 		}
 		else if (cleanedTokens.length == 2) {
 			parseTwoTokens(cleanedTokens);

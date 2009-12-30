@@ -362,22 +362,28 @@ public class ISITableModelParser {
 				continue;
 			}
 
-			ReferenceDataParser referenceData = new ReferenceDataParser(
-				this.people.getKeyGenerator(), this.sources.getKeyGenerator(), referenceString);
+			try {
+				ReferenceDataParser referenceData = new ReferenceDataParser(
+					this.people.getKeyGenerator(),
+					this.sources.getKeyGenerator(),
+					referenceString);
 
-			Reference reference = new Reference(
-				this.references.getKeyGenerator(),
-				referenceData.getRawString(),
-				null,
-				referenceData.getAuthor(),
-				referenceData.getSource(),
-				referenceData.getYear(),
-				referenceData.getVolume(),
-				referenceData.getPageNumber(),
-				referenceData.getAnnotation(),
-				referenceData.authorWasStarred());
-			Reference mergedReference = this.references.addOrMerge(reference);
-			references.add(mergedReference);
+				Reference reference = new Reference(
+					this.references.getKeyGenerator(),
+					referenceData.getRawString(),
+					null,
+					referenceData.getAuthor(),
+					referenceData.getSource(),
+					referenceData.getYear(),
+					referenceData.getVolume(),
+					referenceData.getPageNumber(),
+					referenceData.getAnnotation(),
+					referenceData.authorWasStarred());
+				Reference mergedReference = this.references.addOrMerge(reference);
+				references.add(mergedReference);
+			} catch (ReferenceParsingException e) {
+				// TODO: Print a warning?  For now, it's just skipped.
+			}
 		}
 
 		return references;
