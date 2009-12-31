@@ -5,14 +5,12 @@ import static org.junit.Assert.fail;
 import org.cishell.utilities.StringUtilities;
 import org.junit.Test;
 
-import edu.iu.scipolicy.loader.isi.db.model.entity.Person;
 import edu.iu.scipolicy.loader.isi.db.model.entity.Source;
 
 public class ReferenceDataParserTest_3Tokens extends ReferenceDataParserTest {
 	@Test
 	public void test3Tokens_Invalid() throws Exception {
 		ReferenceDataParser result = runTest(", , ", true);
-		Person resultPerson = result.getAuthor();
 		Source resultSource = result.getSource();
 		int resultYear = result.getYear();
 		int resultVolume = result.getVolume();
@@ -26,7 +24,6 @@ public class ReferenceDataParserTest_3Tokens extends ReferenceDataParserTest {
 					(resultPageNumber != IntegerParserWithDefault.DEFAULT)) {
 				String failMessage =
 					"Result should be invalid.  Instead, it has:" +
-					"\n\tPerson: \"" + resultPerson + "\"" +
 					"\n\tSource: \"" + resultSource + "\"" +
 					"\n\tYear: \"" + resultYear + "\"" +
 					"\n\tVolume: \"" + resultVolume + "\"" +
@@ -40,7 +37,6 @@ public class ReferenceDataParserTest_3Tokens extends ReferenceDataParserTest {
 					(resultPageNumber != IntegerParserWithDefault.DEFAULT)) {
 				String failMessage =
 					"Result should be invalid.  Instead, it has:" +
-					"\n\tPerson: \"" + resultPerson + "\"" +
 					"\n\tSource: \"" + resultSource + "\"" +
 					"\n\tYear: \"" + resultYear + "\"" +
 					"\n\tVolume: \"" + resultVolume + "\"" +
@@ -52,7 +48,7 @@ public class ReferenceDataParserTest_3Tokens extends ReferenceDataParserTest {
 
 	/*
 	 * Tests for the pattern:
-	 * year, source, volume or page
+	 * year, source, volume or page number
 	 */
 
 	@Test
@@ -95,7 +91,7 @@ public class ReferenceDataParserTest_3Tokens extends ReferenceDataParserTest {
 	}
 
 	@Test
-	public void test3Tokens_YearFirst_SourceIsAnnotation() throws Exception {
+	public void test3Tokens_YearFirst_SourceIsAnAnnotation() throws Exception {
 		testSourceAsAnnotations(
 			YEAR + ", ",
 			", " + VOLUME_STRING,
@@ -160,7 +156,7 @@ public class ReferenceDataParserTest_3Tokens extends ReferenceDataParserTest {
 	}
 
 	@Test
-	public void test3Tokens_PersonFirst_YearSecond_SourceIsAnnotation() throws Exception {
+	public void test3Tokens_PersonFirst_YearSecond_SourceIsAnAnnotation() throws Exception {
 		testSourceAsAnnotations(
 			PERSON_STRING + ", " + YEAR + ", ",
 			NO_POST_STRING,
@@ -168,7 +164,7 @@ public class ReferenceDataParserTest_3Tokens extends ReferenceDataParserTest {
 	}
 
 	@Test
-	public void test3Tokens_PersonFirst_YearSecond_SourceHasAnnotation() throws Exception {
+	public void test3Tokens_PersonFirst_YearSecond_SourceHasAnAnnotation() throws Exception {
 		testSourceWithAnnotations(
 			PERSON_STRING + ", " + YEAR + ", ",
 			NO_POST_STRING,
@@ -178,7 +174,7 @@ public class ReferenceDataParserTest_3Tokens extends ReferenceDataParserTest {
 
 	/*
 	 * Tests for the pattern:
-	 * person, source, volume or page
+	 * person, source, volume or page number
 	 * Person parsing is tested in PersonParsingTest.  No need to test it here.
 	 */
 
@@ -210,7 +206,7 @@ public class ReferenceDataParserTest_3Tokens extends ReferenceDataParserTest {
 	}
 
 	@Test
-	public void test3Tokens_PersonFirst_SourceSecond_SourceIsAnnotation() throws Exception {
+	public void test3Tokens_PersonFirst_SourceSecond_SourceIsAnAnnotation() throws Exception {
 		testSourceAsAnnotations(
 			PERSON_STRING + ", ",
 			", " + VOLUME_STRING,
@@ -218,7 +214,7 @@ public class ReferenceDataParserTest_3Tokens extends ReferenceDataParserTest {
 	}
 
 	@Test
-	public void test3Tokens_PersonFirst_SourceSecond_SourceHasAnnotation() throws Exception {
+	public void test3Tokens_PersonFirst_SourceSecond_SourceHasAnAnnotation() throws Exception {
 		testSourceWithAnnotations(
 			PERSON_STRING + ", ",
 			", " + VOLUME_STRING,

@@ -52,7 +52,7 @@ public class ReferenceDataParserTest_2Tokens extends ReferenceDataParserTest {
 	}
 
 	@Test
-	public void test2Tokens_YearFirst_SourceIsAnnotation() throws Exception {
+	public void test2Tokens_YearFirst_SourceIsAnAnnotation() throws Exception {
 		testSourceAsAnnotations(YEAR_STRING + ", ", NO_POST_STRING, true);
 	}
 
@@ -74,7 +74,7 @@ public class ReferenceDataParserTest_2Tokens extends ReferenceDataParserTest {
 	}
 
 	@Test
-	public void test2Tokens_PersonFirst_SourceIsAnnotation() throws Exception {
+	public void test2Tokens_PersonFirst_SourceIsAnAnnotation() throws Exception {
 		testSourceAsAnnotations(PERSON_STRING + ", ", NO_POST_STRING, true);
 	}
 
