@@ -156,9 +156,8 @@ public class ReferenceDataParser {
 
 			boolean isVolume = isVolume(thirdToken);
 			boolean isPage = isPageNumber(thirdToken);
-			boolean isSomeOtherNumber = isSomeOtherNumber(thirdToken);
 
-			if (isVolume || isPage || isSomeOtherNumber) {
+			if (isVolume || isPage) {
 				if (isVolume) {
 					this.volume = parseVolume(thirdToken);
 				} else {
@@ -186,8 +185,36 @@ public class ReferenceDataParser {
 				parseSource(this.sourceKeyGenerator, thirdToken);
 			this.source = parsedSource.getFirstObject();
 			this.annotation = parsedSource.getSecondObject();
+		/*
+		 * Assume the pattern is:
+		 * person, source, volume or page
+		 */
 		} else {
-			// TODO: Warning?  (Invalid format.)
+			try {
+				Pair<Person, Boolean> parsedPerson =
+					PersonParser.parsePerson(this.personKeyGenerator, firstToken, "");
+				this.author = parsedPerson.getFirstObject();
+				this.starred = parsedPerson.getSecondObject();
+			} catch (PersonParsingException e) {
+			}
+
+			Pair<Source, String> parsedSource =
+				parseSource(this.sourceKeyGenerator, secondToken);
+			this.source = parsedSource.getFirstObject();
+			this.annotation = parsedSource.getSecondObject();
+
+			boolean isVolume = isVolume(thirdToken);
+			boolean isPage = isPageNumber(thirdToken);
+
+			if (isVolume || isPage) {
+				if (isVolume) {
+					this.volume = parseVolume(thirdToken);
+				} else {
+					this.pageNumber = parsePageNumber(thirdToken);
+				}
+			} else {
+				// TODO: Warning?  (Invalid format.)
+			}
 		}
 	}
 
@@ -293,13 +320,13 @@ public class ReferenceDataParser {
 
 	private static Pair<Source, String> parseSource(
 			DatabaseTableKeyGenerator sourceKeyGenerator, String originalToken) {
-		int prefixIndex = StringUtilities.prefixIndex(originalToken, SOURCE_ANNOTATIONS);
+		int annotationIndex = StringUtilities.prefixIndex(originalToken, SOURCE_ANNOTATIONS);
 		String sourceString = originalToken;
-		String prefix = "";
+		String annotation = "";
 
-		if (prefixIndex != -1) {
-			prefix = SOURCE_ANNOTATIONS[prefixIndex];
-			sourceString = sourceString.replace(prefix, "").trim();
+		if (annotationIndex != -1) {
+			annotation = SOURCE_ANNOTATIONS[annotationIndex];
+			sourceString = sourceString.replace(annotation, "").trim();
 		}
 
 		String fullTitle = "";
@@ -326,7 +353,7 @@ public class ReferenceDataParser {
 				conferenceTitle,
 				conferenceDate,
 				conferenceDonation),
-			prefix);
+			annotation);
 	}
 
 	private static int parseVolume(String originalToken) {

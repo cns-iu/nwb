@@ -12,23 +12,17 @@ public class ReferenceDataParserTest_InvalidNumberOfTokens extends ReferenceData
 	@Test
 	public void test0Tokens() {
 		try {
-			ReferenceDataParser referenceData = runTest(ZERO_REFERENCE_TOKENS_STRING);
-			String failMessage =
-				"An exception should have been thrown when passing an empty string.";
-			fail(failMessage);
-		} catch (ReferenceParsingException e) {
-		}
+			runTest(ZERO_REFERENCE_TOKENS_STRING, false);
+			fail("An exception should have been thrown when passing an empty string.");
+		} catch (Exception e) {}
 	}
 
 	@Test
 	public void test1Token() {
 		try {
-			ReferenceDataParser referenceData = runTest(ONE_REFERENCE_TOKEN_STRING);
-			String failMessage =
-				"An exception should have been thrown when passing an empty string.";
-			fail(failMessage);
-		} catch (ReferenceParsingException e) {
-		}
+			runTest(ONE_REFERENCE_TOKEN_STRING, false);
+			fail("An exception should have been thrown when passing an empty string.");
+		} catch (Exception e) {}
 	}
 
 	/*
@@ -38,11 +32,8 @@ public class ReferenceDataParserTest_InvalidNumberOfTokens extends ReferenceData
 	@Test
 	public void test6Tokens() {
 		try {
-			ReferenceDataParser referenceData = runTest(SIX_REFERENCE_TOKENS_STRING);
-			String failMessage =
-				"An exception should have been thrown when passing an empty string.";
-			fail(failMessage);
-		} catch (ReferenceParsingException e) {
-		}
+			runTest(SIX_REFERENCE_TOKENS_STRING, false);
+			fail("An exception should have been thrown when passing an empty string.");
+		} catch (Exception e) {}
 	}
 }
