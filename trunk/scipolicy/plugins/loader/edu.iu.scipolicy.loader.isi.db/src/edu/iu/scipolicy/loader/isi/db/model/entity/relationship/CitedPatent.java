@@ -21,7 +21,7 @@ public class CitedPatent extends RowItem<CitedPatent> {
 	private Patent patent;
 
 	public CitedPatent(Document document, Patent patent) {
-		super(createAttributes());
+		super(createAttributes(document, patent));
 		this.document = document;
 		this.patent = patent;
 	}
@@ -41,7 +41,12 @@ public class CitedPatent extends RowItem<CitedPatent> {
 	public void merge(CitedPatent otherCitedPatent) {
 	}
 
-	public static Dictionary<String, Comparable<?>> createAttributes() {
-		return new Hashtable<String, Comparable<?>>();
+	public static Dictionary<String, Comparable<?>> createAttributes(
+			Document document, Patent patent) {
+		Dictionary<String, Comparable<?>> attributes = new Hashtable<String, Comparable<?>>();
+		attributes.put(ISIDatabase.CITED_PATENTS_DOCUMENT_FOREIGN_KEY, document);
+		attributes.put(ISIDatabase.CITED_PATENTS_PATENT_FOREIGN_KEY, patent);
+
+		return attributes;
 	}
 }

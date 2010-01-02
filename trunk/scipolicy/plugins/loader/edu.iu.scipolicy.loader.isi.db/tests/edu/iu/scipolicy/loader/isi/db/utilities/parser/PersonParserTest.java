@@ -10,6 +10,7 @@ import org.junit.Test;
 import edu.iu.cns.database.loader.framework.utilities.DatabaseTableKeyGenerator;
 import edu.iu.cns.shared.utilities.Pair;
 import edu.iu.scipolicy.loader.isi.db.model.entity.Person;
+import edu.iu.scipolicy.loader.isi.db.utilities.parser.exception.PersonParsingException;
 
 public class PersonParserTest {
 	public static final String FAMILY_NAME = "Smith";

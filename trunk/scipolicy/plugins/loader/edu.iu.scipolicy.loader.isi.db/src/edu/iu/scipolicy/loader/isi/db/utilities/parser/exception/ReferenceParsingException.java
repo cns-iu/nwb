@@ -1,4 +1,4 @@
-package edu.iu.scipolicy.loader.isi.db.utilities.parser;
+package edu.iu.scipolicy.loader.isi.db.utilities.parser.exception;
 
 public class ReferenceParsingException extends Exception {
 	private static final long serialVersionUID = 1L;

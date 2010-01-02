@@ -1,12 +1,14 @@
 package edu.iu.scipolicy.loader.isi.db.utilities.parser;
 
+import static org.junit.Assert.fail;
+
 import org.cishell.utilities.StringUtilities;
 import org.junit.After;
 import org.junit.Before;
-import static org.junit.Assert.fail;
 
 import edu.iu.cns.database.loader.framework.utilities.DatabaseTableKeyGenerator;
 import edu.iu.scipolicy.loader.isi.db.model.entity.Source;
+import edu.iu.scipolicy.loader.isi.db.utilities.parser.exception.ReferenceParsingException;
 
 public class ReferenceDataParserTest {
 	public static final String ZERO_REFERENCE_TOKENS_STRING = "";

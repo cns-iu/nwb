@@ -9,7 +9,7 @@ import edu.iu.nwb.shared.isiutil.database.ISIDatabase;
 import edu.iu.scipolicy.loader.isi.db.model.entity.Document;
 import edu.iu.scipolicy.loader.isi.db.model.entity.Person;
 
-public class Editor extends RowItem<Editor> {
+public class Editor extends RowItem<Editor> implements Comparable<Editor> {
 	public static final Schema<Editor> SCHEMA = new Schema<Editor>(
 		ISIDatabase.EDITORS_DOCUMENT_FOREIGN_KEY, Schema.FOREIGN_KEY_CLASS,
 		ISIDatabase.EDITORS_PERSON_FOREIGN_KEY, Schema.FOREIGN_KEY_CLASS,
@@ -23,7 +23,7 @@ public class Editor extends RowItem<Editor> {
 	private int orderListed;
 
 	public Editor(Document document, Person person, int orderListed) {
-		super(createAttributes(orderListed));
+		super(createAttributes(document, person, orderListed));
 		this.document = document;
 		this.person = person;
 		this.orderListed = orderListed;
@@ -41,6 +41,11 @@ public class Editor extends RowItem<Editor> {
 		return this.orderListed;
 	}
 
+	public int compareTo(Editor otherEditor) {
+		// TODO:
+		return -1;
+	}
+
 	public boolean shouldMerge(Editor otherEditor) {
 		return false;
 	}
@@ -48,8 +53,11 @@ public class Editor extends RowItem<Editor> {
 	public void merge(Editor otherEditor) {
 	}
 
-	public static Dictionary<String, Comparable<?>> createAttributes(int orderListed) {
+	public static Dictionary<String, Comparable<?>> createAttributes(
+			Document document, Person person, int orderListed) {
 		Dictionary<String, Comparable<?>> attributes = new Hashtable<String, Comparable<?>>();
+		attributes.put(ISIDatabase.EDITORS_DOCUMENT_FOREIGN_KEY, document);
+		attributes.put(ISIDatabase.EDITORS_PERSON_FOREIGN_KEY, person);
 		attributes.put(ISIDatabase.ORDER_LISTED, orderListed);
 
 		return attributes;

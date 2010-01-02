@@ -10,281 +10,303 @@ import edu.iu.nwb.shared.isiutil.database.ISIDatabase;
 
 public class Document extends Entity<Document> implements Comparable<Document> {
 	public static final Schema<Document> SCHEMA = new Schema<Document>(
-		ISIDatabase.DIGITAL_OBJECT_IDENTIFIER, Schema.TEXT_CLASS,
-		ISIDatabase.TITLE, Schema.TEXT_CLASS,
-		ISIDatabase.ARTICLE_NUMBER, Schema.TEXT_CLASS,
-		ISIDatabase.FIRST_AUTHOR, Schema.FOREIGN_KEY_CLASS,
-		ISIDatabase.LANGUAGE, Schema.TEXT_CLASS,
-		ISIDatabase.DOCUMENT_TYPE, Schema.TEXT_CLASS,
-		ISIDatabase.CITED_REFERENCE_COUNT, Schema.INTEGER_CLASS,
 		ISIDatabase.ABSTRACT_TEXT, Schema.TEXT_CLASS,
-		ISIDatabase.TIMES_CITED, Schema.INTEGER_CLASS,
+		ISIDatabase.ARTICLE_NUMBER, Schema.TEXT_CLASS,
 		ISIDatabase.BEGINNING_PAGE, Schema.INTEGER_CLASS,
-		ISIDatabase.ENDING_PAGE, Schema.INTEGER_CLASS,
-		ISIDatabase.PAGE_COUNT, Schema.INTEGER_CLASS,
-		ISIDatabase.ISI_UNIQUE_ARTICLE_IDENTIFIER, Schema.TEXT_CLASS,
-		ISIDatabase.PUBLICATION_YEAR, Schema.INTEGER_CLASS,
-		ISIDatabase.PUBLICATION_DATE, Schema.TEXT_CLASS,
+		ISIDatabase.CITED_REFERENCE_COUNT, Schema.INTEGER_CLASS,
+		ISIDatabase.DIGITAL_OBJECT_IDENTIFIER, Schema.TEXT_CLASS,
+		ISIDatabase.DOCUMENT_TYPE, Schema.TEXT_CLASS,
 		ISIDatabase.DOCUMENT_VOLUME, Schema.TEXT_CLASS,
-		ISIDatabase.ISSUE, Schema.TEXT_CLASS,
-		ISIDatabase.PART_NUMBER, Schema.TEXT_CLASS,
-		ISIDatabase.SUPPLEMENT, Schema.TEXT_CLASS,
-		ISIDatabase.SPECIAL_ISSUE, Schema.TEXT_CLASS,
-		ISIDatabase.ISI_DOCUMENT_DELIVERY_NUMBER, Schema.TEXT_CLASS,
+		ISIDatabase.ENDING_PAGE, Schema.INTEGER_CLASS,
+		ISIDatabase.FIRST_AUTHOR, Schema.FOREIGN_KEY_CLASS,
+		ISIDatabase.FUNDING_AGENCY_AND_GRANT_NUMBER, Schema.TEXT_CLASS,
+		ISIDatabase.FUNDING_TEXT, Schema.TEXT_CLASS,
 		ISIDatabase.ISBN, Schema.TEXT_CLASS,
-		ISIDatabase.EMAIL_ADDRESS, Schema.TEXT_CLASS).
+		ISIDatabase.ISI_DOCUMENT_DELIVERY_NUMBER, Schema.TEXT_CLASS,
+		ISIDatabase.ISI_UNIQUE_ARTICLE_IDENTIFIER, Schema.TEXT_CLASS,
+		ISIDatabase.ISSUE, Schema.TEXT_CLASS,
+		ISIDatabase.LANGUAGE, Schema.TEXT_CLASS,
+		ISIDatabase.PAGE_COUNT, Schema.INTEGER_CLASS,
+		ISIDatabase.PART_NUMBER, Schema.TEXT_CLASS,
+		ISIDatabase.PUBLICATION_DATE, Schema.TEXT_CLASS,
+		ISIDatabase.PUBLICATION_YEAR, Schema.INTEGER_CLASS,
+		ISIDatabase.SPECIAL_ISSUE, Schema.TEXT_CLASS,
+		ISIDatabase.SUBJECT_CATEGORY, Schema.TEXT_CLASS,
+		ISIDatabase.SUPPLEMENT, Schema.TEXT_CLASS,
+		ISIDatabase.TIMES_CITED, Schema.INTEGER_CLASS,
+		ISIDatabase.TITLE, Schema.TEXT_CLASS).
 		FOREIGN_KEYS(ISIDatabase.FIRST_AUTHOR, ISIDatabase.PERSON_TABLE_NAME);
 
-	private String digitalObjectIdentifier;
-	private String title;
-	private String articleNumber;
-	private Person firstAuthor;
-	private String language;
-	private String documentType;
-	private int citedReferenceCount;
 	private String abstractText;
-	private int timesCited;
+	private String articleNumber;
 	private int beginningPage;
+	private int citedReferenceCount;
+	private String digitalObjectIdentifier;
+	private String documentType;
+	private String documentVolume;
 	private int endingPage;
-	private int pageCount;
-	private String isiUniqueArticleIdentifier;
-	private int publicationYear;
-	private String publicationDate;
-	private String volume;
-	private String issue;
-	private String partNumber;
-	private String supplement;
-	private String specialIssue;
-	private String isiDocumentDeliveryNumber;
+	private Person firstAuthor;
+	private String fundingAgencyAndGrantNumber;
+	private String fundingText;
 	private String isbn;
-	private String emailAddress;
+	private String isiDocumentDeliveryNumber;
+	private String isiUniqueArticleIdentifier;
+	private String issue;
+	private String language;
+	private int pageCount;
+	private String partNumber;
+	private String publicationDate;
+	private int publicationYear;
+	private String specialIssue;
+	private String subjectCategory;
+	private String supplement;
+	private int timesCited;
+	private String title;
 
 	public Document(
 			DatabaseTableKeyGenerator keyGenerator,
-			String digitalObjectIdentifier,
-			String title,
-			String articleNumber,
-			Person firstAuthor,
-			String language,
-			String documentType,
-			int citedReferenceCount,
 			String abstractText,
-			int timesCited,
+			String articleNumber,
 			int beginningPage,
+			int citedReferenceCount,
+			String digitalObjectIdentifier,
+			String documentType,
+			String documentVolume,
 			int endingPage,
-			int pageCount,
-			String isiUniqueArticleIdentifier,
-			int publicationYear,
-			String publicationDate,
-			String volume,
-			String issue,
-			String partNumber,
-			String supplement,
-			String specialIssue,
-			String isiDocumentDeliveryNumber,
+			Person firstAuthor,
+			String fundingAgencyAndGrantNumber,
+			String fundingText,
 			String isbn,
-			String emailAddress) {
+			String isiDocumentDeliveryNumber,
+			String isiUniqueArticleIdentifier,
+			String issue,
+			String language,
+			int pageCount,
+			String partNumber,
+			String publicationDate,
+			int publicationYear,
+			String specialIssue,
+			String subjectCategory,
+			String supplement,
+			int timesCited,
+			String title) {
 		super(
 			keyGenerator,
 			createAttributes(
-				digitalObjectIdentifier,
-				title,
-				articleNumber,
-				firstAuthor,
-				language,
-				documentType,
-				citedReferenceCount,
 				abstractText,
-				timesCited,
+				articleNumber,
 				beginningPage,
+				citedReferenceCount,
+				digitalObjectIdentifier,
+				documentType,
+				documentVolume,
 				endingPage,
-				pageCount,
-				isiUniqueArticleIdentifier,
-				publicationYear,
-				publicationDate,
-				volume,
-				partNumber,
-				issue,
-				supplement,
-				specialIssue,
-				isiDocumentDeliveryNumber,
+				firstAuthor,
+				fundingAgencyAndGrantNumber,
+				fundingText,
 				isbn,
-				emailAddress));
-		this.digitalObjectIdentifier = digitalObjectIdentifier;
-		this.title = title;
-		this.articleNumber = articleNumber;
-		this.firstAuthor = firstAuthor;
-		this.language = language;
-		this.documentType = documentType;
-		this.citedReferenceCount = citedReferenceCount;
+				isiDocumentDeliveryNumber,
+				isiUniqueArticleIdentifier,
+				issue,
+				language,
+				pageCount,
+				partNumber,
+				publicationDate,
+				publicationYear,
+				specialIssue,
+				subjectCategory,
+				supplement,
+				timesCited,
+				title));
 		this.abstractText = abstractText;
-		this.timesCited = timesCited;
+		this.articleNumber = articleNumber;
 		this.beginningPage = beginningPage;
+		this.citedReferenceCount = citedReferenceCount;
+		this.digitalObjectIdentifier = digitalObjectIdentifier;
+		this.documentType = documentType;
+		this.documentVolume = documentVolume;
 		this.endingPage = endingPage;
-		this.pageCount = pageCount;
-		this.isiUniqueArticleIdentifier = isiUniqueArticleIdentifier;
-		this.publicationYear = publicationYear;
-		this.publicationDate = publicationDate;
-		this.volume = volume;
-		this.partNumber = partNumber;
-		this.issue = issue;
-		this.supplement = supplement;
-		this.specialIssue = specialIssue;
-		this.isiDocumentDeliveryNumber = isiDocumentDeliveryNumber;
+		this.firstAuthor = firstAuthor;
+		this.fundingAgencyAndGrantNumber = fundingAgencyAndGrantNumber;
+		this.fundingText = fundingText;
 		this.isbn = isbn;
-		this.emailAddress = emailAddress;
+		this.isiDocumentDeliveryNumber = isiDocumentDeliveryNumber;
+		this.isiUniqueArticleIdentifier = isiUniqueArticleIdentifier;
+		this.issue = issue;
+		this.language = language;
+		this.pageCount = pageCount;
+		this.partNumber = partNumber;
+		this.publicationDate = publicationDate;
+		this.publicationYear = publicationYear;
+		this.specialIssue = specialIssue;
+		this.subjectCategory = subjectCategory;
+		this.supplement = supplement;
+		this.timesCited = timesCited;
+		this.title = title;
 	}
 
 	public String getDigitalObjectIdentifier() {
 		return this.digitalObjectIdentifier;
 	}
 
-	public String getTitle() {
-		return this.title;
+	public String getAbstractText() {
+		return this.abstractText;
 	}
 
 	public String getArticleNumber() {
 		return this.articleNumber;
 	}
 
-	public Person getFirstAuthor() {
-		return this.firstAuthor;
-	}
-
-	public String getLanguage() {
-		return this.language;
-	}
-
-	public String getDocumentType() {
-		return this.documentType;
+	public int getBeginningPage() {
+		return this.beginningPage;
 	}
 
 	public int getCitedReferenceCount() {
 		return this.citedReferenceCount;
 	}
 
-	public String getAbstractText() {
-		return this.abstractText;
-	}
-
-	public int getTimesCited() {
-		return this.timesCited;
-	}
-
-	public int getBeginningPage() {
-		return this.beginningPage;
+	public String getDocumentType() {
+		return this.documentType;
 	}
 
 	public int getEndingPage() {
 		return this.endingPage;
 	}
 
-	public int getPageCount() {
-		return this.pageCount;
+	public Person getFirstAuthor() {
+		return this.firstAuthor;
 	}
 
-	public String getISIUniqueArticleIdentifier() {
-		return this.isiUniqueArticleIdentifier;
+	public String getFundingAgencyAndGrantNumber() {
+		return this.fundingAgencyAndGrantNumber;
 	}
 
-	public int getPublicationYear() {
-		return this.publicationYear;
-	}
-
-	public String getPublicationDate() {
-		return this.publicationDate;
-	}
-
-	public String getVolume() {
-		return this.volume;
-	}
-
-	public String getIssue() {
-		return this.issue;
-	}
-
-	public String getPartNumber() {
-		return this.partNumber;
-	}
-
-	public String getSupplement() {
-		return this.supplement;
-	}
-
-	public String getSpecialIssue() {
-		return this.specialIssue;
-	}
-
-	public String getISIDocumentDeliveryNumber() {
-		return this.isiDocumentDeliveryNumber;
+	public String getFundingText() {
+		return this.fundingText;
 	}
 
 	public String getISBN() {
 		return this.isbn;
 	}
 
-	public String getEmailAddress() {
-		return this.emailAddress;
+	public String getISIDocumentDeliveryNumber() {
+		return this.isiDocumentDeliveryNumber;
+	}
+
+	public String getISIUniqueArticleIdentifier() {
+		return this.isiUniqueArticleIdentifier;
+	}
+
+	public String getIssue() {
+		return this.issue;
+	}
+
+	public String getLanguage() {
+		return this.language;
+	}
+
+	public int getPageCount() {
+		return this.pageCount;
+	}
+
+	public String getPartNumber() {
+		return this.partNumber;
+	}
+
+	public String getPublicationDate() {
+		return this.publicationDate;
+	}
+
+	public int getPublicationYear() {
+		return this.publicationYear;
+	}
+
+	public String getSpecialIssue() {
+		return this.specialIssue;
+	}
+
+	public String getSubjectCategory() {
+		return this.subjectCategory;
+	}
+
+	public String getSupplement() {
+		return this.supplement;
+	}
+
+	public int getTimesCited() {
+		return this.timesCited;
+	}
+
+	public String getTitle() {
+		return this.title;
+	}
+
+	public String getVolume() {
+		return this.documentVolume;
 	}
 
 	public int compareTo(Document otherDocument) {
+		// TODO:
 		return -1;
 	}
 
 	public boolean shouldMerge(Document otherDocument) {
+		// TODO:
 		return false;
 	}
 
 	public void merge(Document otherDocument) {
+		// TODO:
 	}
 
 	public static Dictionary<String, Comparable<?>> createAttributes(
-			String digitalObjectIdentifier,
-			String title,
-			String articleNumber,
-			Person firstAuthor,
-			String language,
-			String documentType,
-			int citedReferenceCount,
 			String abstractText,
-			int timesCited,
+			String articleNumber,
 			int beginningPage,
+			int citedReferenceCount,
+			String digitalObjectIdentifier,
+			String documentType,
+			String documentVolume,
 			int endingPage,
-			int pageCount,
-			String isiUniqueArticleIdentifier,
-			int publicationYear,
-			String publicationDate,
-			String volume,
-			String issue,
-			String partNumber,
-			String supplement,
-			String specialIssue,
-			String isiDocumentDeliveryNumber,
+			Person firstAuthor,
+			String fundingAgencyAndGrantNumber,
+			String fundingText,
 			String isbn,
-			String emailAddress) {
+			String isiDocumentDeliveryNumber,
+			String isiUniqueArticleIdentifier,
+			String issue,
+			String language,
+			int pageCount,
+			String partNumber,
+			String publicationDate,
+			int publicationYear,
+			String specialIssue,
+			String subjectCategory,
+			String supplement,
+			int timesCited,
+			String title) {
 		Dictionary<String, Comparable<?>> attributes = new Hashtable<String, Comparable<?>>();
-		attributes.put(ISIDatabase.DIGITAL_OBJECT_IDENTIFIER, digitalObjectIdentifier);
-		attributes.put(ISIDatabase.TITLE, title);
-		attributes.put(ISIDatabase.ARTICLE_NUMBER, articleNumber);
-		attributes.put(ISIDatabase.FIRST_AUTHOR, firstAuthor);
-		attributes.put(ISIDatabase.LANGUAGE, language);
-		attributes.put(ISIDatabase.DOCUMENT_TYPE, documentType);
-		attributes.put(ISIDatabase.CITED_REFERENCE_COUNT, citedReferenceCount);
 		attributes.put(ISIDatabase.ABSTRACT_TEXT, abstractText);
-		attributes.put(ISIDatabase.TIMES_CITED, timesCited);
+		attributes.put(ISIDatabase.ARTICLE_NUMBER, articleNumber);
 		attributes.put(ISIDatabase.BEGINNING_PAGE, beginningPage);
+		attributes.put(ISIDatabase.CITED_REFERENCE_COUNT, citedReferenceCount);
+		attributes.put(ISIDatabase.DIGITAL_OBJECT_IDENTIFIER, digitalObjectIdentifier);
+		attributes.put(ISIDatabase.DOCUMENT_TYPE, documentType);
+		attributes.put(ISIDatabase.DOCUMENT_VOLUME, documentVolume);
 		attributes.put(ISIDatabase.ENDING_PAGE, endingPage);
-		attributes.put(ISIDatabase.PAGE_COUNT, pageCount);
-		attributes.put(ISIDatabase.ISI_UNIQUE_ARTICLE_IDENTIFIER, isiUniqueArticleIdentifier);
-		attributes.put(ISIDatabase.PUBLICATION_YEAR, publicationYear);
-		attributes.put(ISIDatabase.PUBLICATION_DATE, publicationDate);
-		attributes.put(ISIDatabase.DOCUMENT_VOLUME, volume);
-		attributes.put(ISIDatabase.ISSUE, issue);
-		attributes.put(ISIDatabase.SUPPLEMENT, supplement);
-		attributes.put(ISIDatabase.SPECIAL_ISSUE, specialIssue);
-		attributes.put(ISIDatabase.ISI_DOCUMENT_DELIVERY_NUMBER, isiDocumentDeliveryNumber);
+		attributes.put(ISIDatabase.FIRST_AUTHOR, firstAuthor);
 		attributes.put(ISIDatabase.ISBN, isbn);
-		attributes.put(ISIDatabase.EMAIL_ADDRESS, emailAddress);
+		attributes.put(ISIDatabase.ISI_DOCUMENT_DELIVERY_NUMBER, isiDocumentDeliveryNumber);
+		attributes.put(ISIDatabase.ISI_UNIQUE_ARTICLE_IDENTIFIER, isiUniqueArticleIdentifier);
+		attributes.put(ISIDatabase.ISSUE, issue);
+		attributes.put(ISIDatabase.LANGUAGE, language);
+		attributes.put(ISIDatabase.PAGE_COUNT, pageCount);
+		attributes.put(ISIDatabase.PUBLICATION_DATE, publicationDate);
+		attributes.put(ISIDatabase.PUBLICATION_YEAR, publicationYear);
+		attributes.put(ISIDatabase.SPECIAL_ISSUE, specialIssue);
+		attributes.put(ISIDatabase.SUPPLEMENT, supplement);
+		attributes.put(ISIDatabase.TIMES_CITED, timesCited);
+		attributes.put(ISIDatabase.TITLE, title);
 
 		return attributes;
 	}

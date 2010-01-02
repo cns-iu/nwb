@@ -51,7 +51,8 @@ public class ISIDatabaseLoaderAlgorithm implements Algorithm {
 
 	    	// Preprocess the ISI table to remove duplicate Documents (on the row level).
 
-    		Collection<Integer> rows = ISITablePreprocessor.removeRowsWithDuplicateDocuments(isiTable);
+    		Collection<Integer> rows =
+    			ISITablePreprocessor.removeRowsWithDuplicateDocuments(isiTable);
 
     		// Convert the ISI table to an ISI database.
 

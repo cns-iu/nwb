@@ -23,7 +23,7 @@ public class DocumentKeyword extends RowItem<DocumentKeyword> {
 	private int orderListed;
 
 	public DocumentKeyword(Document document, Keyword keyword, int orderListed) {
-		super(createAttributes(orderListed));
+		super(createAttributes(document, keyword, orderListed));
 		this.document = document;
 		this.keyword = keyword;
 		this.orderListed = orderListed;
@@ -48,8 +48,11 @@ public class DocumentKeyword extends RowItem<DocumentKeyword> {
 	public void merge(DocumentKeyword otherDocumentKeyword) {
 	}
 
-	public static Dictionary<String, Comparable<?>> createAttributes(int orderListed) {
+	public static Dictionary<String, Comparable<?>> createAttributes(
+			Document document, Keyword keyword, int orderListed) {
 		Dictionary<String, Comparable<?>> attributes = new Hashtable<String, Comparable<?>>();
+		attributes.put(ISIDatabase.DOCUMENT_KEYWORDS_DOCUMENT_FOREIGN_KEY, document);
+		attributes.put(ISIDatabase.DOCUMENT_KEYWORDS_KEYWORD_FOREIGN_KEY, keyword);
 		attributes.put(ISIDatabase.ORDER_LISTED, orderListed);
 
 		return attributes;

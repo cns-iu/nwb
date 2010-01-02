@@ -21,7 +21,7 @@ public class ReprintAddress extends RowItem<ReprintAddress> {
 	private Address address;
 
 	public ReprintAddress(Document document, Address address) {
-		super(createAttributes());
+		super(createAttributes(document, address));
 		this.document = document;
 		this.address = address;
 	}
@@ -41,8 +41,11 @@ public class ReprintAddress extends RowItem<ReprintAddress> {
 	public void merge(ReprintAddress otherReprintAddress) {
 	}
 
-	public static Dictionary<String, Comparable<?>> createAttributes() {
+	public static Dictionary<String, Comparable<?>> createAttributes(
+			Document document, Address address) {
 		Dictionary<String, Comparable<?>> attributes = new Hashtable<String, Comparable<?>>();
+		attributes.put(ISIDatabase.REPRINT_ADDRESSES_PUBLISHER_FOREIGN_KEY, document);
+		attributes.put(ISIDatabase.REPRINT_ADDRESSES_ADDRESS_FOREIGN_KEY, address);
 
 		return attributes;
 	}

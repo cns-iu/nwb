@@ -2,6 +2,8 @@ package edu.iu.scipolicy.loader.isi.db.utilities.parser;
 
 import org.cishell.utilities.StringUtilities;
 
+import edu.iu.scipolicy.loader.isi.db.utilities.parser.exception.PersonParsingException;
+
 public class AbbreviatedNameParser {
 	public String unsplitAbbreviatedName = "";
 	public String familyName = "";

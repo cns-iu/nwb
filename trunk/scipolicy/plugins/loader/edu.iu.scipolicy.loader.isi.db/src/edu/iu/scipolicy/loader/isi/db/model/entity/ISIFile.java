@@ -10,27 +10,31 @@ import edu.iu.cns.database.loader.framework.Schema;
 import edu.iu.cns.database.loader.framework.utilities.DatabaseTableKeyGenerator;
 import edu.iu.nwb.shared.isiutil.database.ISIDatabase;
 
-public class ISIFile extends Entity<ISIFile> {
+public class ISIFile extends Entity<ISIFile> implements Comparable<ISIFile> {
 	public static final Schema<ISIFile> SCHEMA = new Schema<ISIFile>(
+		ISIDatabase.FILE_FORMAT_VERSION_NUMBER, Schema.TEXT_CLASS,
 		ISIDatabase.FILE_NAME, Schema.TEXT_CLASS,
-		ISIDatabase.FILE_TYPE, Schema.TEXT_CLASS,
-		ISIDatabase.FILE_FORMAT_VERSION_NUMBER, Schema.TEXT_CLASS);
+		ISIDatabase.FILE_TYPE, Schema.TEXT_CLASS);
 		
+	private String fileFormatVersionNumber;
 	private String fileName;
 	private String fileType;
-	private String fileFormatVersionNumber;
 
 	public ISIFile(
 			DatabaseTableKeyGenerator keyGenerator,
+			String fileFormatVersionNumber,
 			String fileName,
-			String fileType,
-			String fileFormatVersionNumber) {
-		super(keyGenerator, createAttributes(fileName, fileType, fileFormatVersionNumber));
+			String fileType) {
+		super(keyGenerator, createAttributes(fileFormatVersionNumber, fileName, fileType));
+		this.fileFormatVersionNumber = fileFormatVersionNumber;
 		this.fileName = fileName;
 		this.fileType = fileType;
-		this.fileFormatVersionNumber = fileFormatVersionNumber;
 	}
-	
+
+	public String getFileFormatVersionNumber() {
+		return this.fileFormatVersionNumber;
+	}
+
 	public String getFileName() {
 		return this.fileName;
 	}
@@ -39,8 +43,9 @@ public class ISIFile extends Entity<ISIFile> {
 		return this.fileType;
 	}
 
-	public String getFileFormatVersionNumber() {
-		return this.fileFormatVersionNumber;
+	public int compareTo(ISIFile otherISIFile) {
+		// TODO:
+		return -1;
 	}
 
 	public boolean shouldMerge(ISIFile otherISIFile) {
@@ -49,17 +54,17 @@ public class ISIFile extends Entity<ISIFile> {
 	}
 
 	public void merge(ISIFile otherISIFile) {
-		this.fileType = StringUtilities.simpleMerge(this.fileType, otherISIFile.getFileType());
 		this.fileFormatVersionNumber = StringUtilities.simpleMerge(
 			this.fileFormatVersionNumber, otherISIFile.getFileFormatVersionNumber());
+		this.fileType = StringUtilities.simpleMerge(this.fileType, otherISIFile.getFileType());
 	}
 
 	private static Dictionary<String, Comparable<?>> createAttributes(
-			String fileName, String fileType, String fileFormatVersionNumber) {
+			String fileFormatVersionNumber, String fileName, String fileType) {
 		Dictionary<String, Comparable<?>> attributes = new Hashtable<String, Comparable<?>>();
+		attributes.put(ISIDatabase.FILE_FORMAT_VERSION_NUMBER, fileFormatVersionNumber);
 		attributes.put(ISIDatabase.FILE_NAME, fileName);
 		attributes.put(ISIDatabase.FILE_TYPE, fileType);
-		attributes.put(ISIDatabase.FILE_FORMAT_VERSION_NUMBER, fileFormatVersionNumber);
 
 		return attributes;
 	}

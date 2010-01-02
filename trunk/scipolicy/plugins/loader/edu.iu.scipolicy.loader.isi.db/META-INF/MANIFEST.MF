@@ -30,3 +30,11 @@ Import-Package: edu.iu.cns.database.loader.framework,
  prefuse.util.collections
 X-AutoStart: true
 Service-Component: OSGI-INF/component.xml
+Export-Package: edu.iu.scipolicy.loader.isi.db,
+ edu.iu.scipolicy.loader.isi.db.model,
+ edu.iu.scipolicy.loader.isi.db.model.entity,
+ edu.iu.scipolicy.loader.isi.db.model.entity.relationship,
+ edu.iu.scipolicy.loader.isi.db.utilities,
+ edu.iu.scipolicy.loader.isi.db.utilities.exception,
+ edu.iu.scipolicy.loader.isi.db.utilities.parser,
+ edu.iu.scipolicy.loader.isi.db.utilities.parser.exception

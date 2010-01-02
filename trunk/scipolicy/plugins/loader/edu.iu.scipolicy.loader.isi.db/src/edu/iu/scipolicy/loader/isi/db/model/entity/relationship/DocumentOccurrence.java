@@ -23,7 +23,7 @@ public class DocumentOccurrence extends RowItem<DocumentOccurrence> {
 	private ISIFile isiFile;
 
 	public DocumentOccurrence(Document document, ISIFile isiFile) {
-		super(createAttributes());
+		super(createAttributes(document, isiFile));
 		this.document = document;
 		this.isiFile = isiFile;
 	}
@@ -43,7 +43,12 @@ public class DocumentOccurrence extends RowItem<DocumentOccurrence> {
 	public void merge(DocumentOccurrence otherDocumentOccurrence) {
 	}
 
-	public static Dictionary<String, Comparable<?>> createAttributes() {
-		return new Hashtable<String, Comparable<?>>();
+	public static Dictionary<String, Comparable<?>> createAttributes(
+			Document document, ISIFile isiFile) {
+		Dictionary<String, Comparable<?>> attributes = new Hashtable<String, Comparable<?>>();
+		attributes.put(ISIDatabase.DOCUMENT_OCCURRENCES_DOCUMENT_FOREIGN_KEY, document);
+		attributes.put(ISIDatabase.DOCUMENT_OCCURRENCES_ISI_FILE_FOREIGN_KEY, isiFile);
+
+		return attributes;
 	}
 }

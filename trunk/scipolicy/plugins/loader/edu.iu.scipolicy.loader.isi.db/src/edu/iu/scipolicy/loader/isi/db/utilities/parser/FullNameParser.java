@@ -2,8 +2,10 @@ package edu.iu.scipolicy.loader.isi.db.utilities.parser;
 
 import org.cishell.utilities.StringUtilities;
 
+import edu.iu.scipolicy.loader.isi.db.utilities.parser.exception.PersonParsingException;
+
 public class FullNameParser {
-	public String firstName = "";
+	public String personalName = "";
 	public String additionalNamesString = "";
 	public String fullName = "";
 
@@ -15,8 +17,8 @@ public class FullNameParser {
 			this.fullName = fullNameFamilyName;
 
 			if (fullNameTokens.length >= 2) {
-				this.firstName = StringUtilities.simpleClean(fullNameTokens[1]);
-				this.fullName += ", " + this.firstName;
+				this.personalName = StringUtilities.simpleClean(fullNameTokens[1]);
+				this.fullName += ", " + this.personalName;
 
 				if (fullNameTokens.length >= 3) {
 					for (int ii = 2; ii < fullNameTokens.length; ii++) {

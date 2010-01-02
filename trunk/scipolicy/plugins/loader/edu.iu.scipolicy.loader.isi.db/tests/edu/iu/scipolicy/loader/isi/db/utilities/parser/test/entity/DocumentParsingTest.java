@@ -1,4 +1,5 @@
-package edu.iu.scipolicy.loader.isi.db.utilities.parser;
+package edu.iu.scipolicy.loader.isi.db.utilities.parser.test.entity;
+
 
 import static org.junit.Assert.fail;
 
@@ -6,7 +7,7 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
-public class ISITableModelParserTest {
+public class DocumentParsingTest {
 	@Before
 	public void setUp() throws Exception {
 	}
@@ -16,7 +17,7 @@ public class ISITableModelParserTest {
 	}
 
 	@Test
-	public void testParseModel() {
-		fail("Not yet implemented");
+	public void test() {
+		fail();
 	}
 }

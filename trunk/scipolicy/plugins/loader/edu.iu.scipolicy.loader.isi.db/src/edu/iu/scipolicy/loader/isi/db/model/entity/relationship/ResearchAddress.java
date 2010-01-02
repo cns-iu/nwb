@@ -23,7 +23,7 @@ public class ResearchAddress extends RowItem<ResearchAddress> {
 	private int orderListed;
 
 	public ResearchAddress(Document document, Address address, int orderListed) {
-		super(createAttributes(orderListed));
+		super(createAttributes(document, address, orderListed));
 		this.document = document;
 		this.address = address;
 		this.orderListed = orderListed;
@@ -48,8 +48,11 @@ public class ResearchAddress extends RowItem<ResearchAddress> {
 	public void merge(ResearchAddress otherResearchAddress) {
 	}
 
-	public static Dictionary<String, Comparable<?>> createAttributes(int orderListed) {
+	public static Dictionary<String, Comparable<?>> createAttributes(
+			Document document, Address address, int orderListed) {
 		Dictionary<String, Comparable<?>> attributes = new Hashtable<String, Comparable<?>>();
+		attributes.put(ISIDatabase.REPRINT_ADDRESSES_PUBLISHER_FOREIGN_KEY, document);
+		attributes.put(ISIDatabase.REPRINT_ADDRESSES_ADDRESS_FOREIGN_KEY, address);
 		attributes.put(ISIDatabase.ORDER_LISTED, orderListed);
 
 		return attributes;

@@ -21,7 +21,7 @@ public class CitedReference extends RowItem<CitedReference> {
 	private Reference reference;
 
 	public CitedReference(Document document, Reference reference) {
-		super(createAttributes());
+		super(createAttributes(document, reference));
 		this.document = document;
 		this.reference = reference;
 	}
@@ -41,7 +41,12 @@ public class CitedReference extends RowItem<CitedReference> {
 	public void merge(CitedReference otherCitedReference) {
 	}
 
-	public static Dictionary<String, Comparable<?>> createAttributes() {
-		return new Hashtable<String, Comparable<?>>();
+	public static Dictionary<String, Comparable<?>> createAttributes(
+			Document document, Reference reference) {
+		Dictionary<String, Comparable<?>> attributes = new Hashtable<String, Comparable<?>>();
+		attributes.put(ISIDatabase.CITED_REFERENCES_DOCUMENT_FOREIGN_KEY, document);
+		attributes.put(ISIDatabase.CITED_REFERENCES_REFERENCE_FOREIGN_KEY, reference);
+
+		return attributes;
 	}
 }

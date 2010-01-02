@@ -32,6 +32,8 @@ import edu.iu.scipolicy.loader.isi.db.model.entity.relationship.Editor;
 import edu.iu.scipolicy.loader.isi.db.model.entity.relationship.PublisherAddress;
 import edu.iu.scipolicy.loader.isi.db.model.entity.relationship.ReprintAddress;
 import edu.iu.scipolicy.loader.isi.db.model.entity.relationship.ResearchAddress;
+import edu.iu.scipolicy.loader.isi.db.utilities.parser.exception.PersonParsingException;
+import edu.iu.scipolicy.loader.isi.db.utilities.parser.exception.ReferenceParsingException;
 
 public class ISITableModelParser {
 	public static final String AUTHOR_KEYWORDS = "authorKeywords";
@@ -182,30 +184,15 @@ public class ISITableModelParser {
 
 			// Parse (Author) People.
 
-			List<Person> currentAuthorPeople;
-
-			try {
-				currentAuthorPeople = parseAuthorPeople(row);
-			} catch (PersonParsingException e) {
-				currentAuthorPeople = new ArrayList<Person>();
-			}
+			List<Person> currentAuthorPeople = parseAuthorPeople(row);
 
 			// Parse Document.
 
-			Document document = null;
-
-			if (currentAuthorPeople.size() != 0) {
-				document = parseDocument(row, currentAuthorPeople.get(0));
-			} else {
-				document = parseDocument(row, null);
-			}
+			Document document  = parseDocument(row, currentAuthorPeople);
 
 			// Link the Authors from the Document to the (Author) People.
 
-			for (int ii = 0; ii < currentAuthorPeople.size(); ii++) {
-				Person author = currentAuthorPeople.get(ii);
-				this.authors.addOrMerge(new Author(document, author, ii));
-			}
+			linkPeopleAsAuthors_ToDocument(currentAuthorPeople, document, row);
 
 			// Parse Author Keywords, and link the Document Keywords from the Document to them.
 
@@ -291,62 +278,62 @@ public class ISITableModelParser {
 	}
 
 	private ISIFile parseISIFile(Tuple row) {
+		String formatVersionNumber =
+			StringUtilities.simpleClean(row.getString(ISITag.VERSION_NUMBER.getColumnName()));
 		String fileName =
 			StringUtilities.simpleClean(row.getString(ISITableReader.FILE_PATH_COLUMN_NAME));
 		String fileType =
 			StringUtilities.simpleClean(row.getString(ISITag.FILE_TYPE.getColumnName()));
-		String versionNumber =
-			StringUtilities.simpleClean(row.getString(ISITag.VERSION_NUMBER.getColumnName()));
 		ISIFile isiFile =
-			new ISIFile(this.isiFiles.getKeyGenerator(), fileName, fileType, versionNumber);
+			new ISIFile(this.isiFiles.getKeyGenerator(), formatVersionNumber, fileType, fileName);
 
 		return this.isiFiles.addOrMerge(isiFile);
 	}
 
 	private Publisher parsePublisher(Tuple row) {
-		String name =
-			StringUtilities.simpleClean(row.getString(ISITag.PUBLISHER.getColumnName()));
 		String city =
 			StringUtilities.simpleClean(row.getString(ISITag.PUBLISHER_CITY.getColumnName()));
+		String name =
+			StringUtilities.simpleClean(row.getString(ISITag.PUBLISHER.getColumnName()));
 		String webAddress = StringUtilities.simpleClean(
 			row.getString(ISITag.PUBLISHER_WEB_ADDRESS.getColumnName()));
 		Publisher publisher =
-			new Publisher(this.publishers.getKeyGenerator(), name, city, webAddress);
+			new Publisher(this.publishers.getKeyGenerator(), city, name, webAddress);
 
 		return this.publishers.addOrMerge(publisher);
 	}
 
 	private Source parseSource(Tuple row) {
-		String fullTitle =
-			StringUtilities.simpleClean(row.getString(ISITag.FULL_JOURNAL_TITLE.getColumnName()));
-		String publicationType =
-			StringUtilities.simpleClean(row.getString(ISITag.PUBLICATION_TYPE.getColumnName()));
-		String isoTitleAbbreviation = StringUtilities.simpleClean(
-			row.getString(ISITag.ISO_JOURNAL_TITLE_ABBREVIATION.getColumnName()));
 		String bookSeriesTitle =
 			StringUtilities.simpleClean(row.getString(ISITag.BOOK_SERIES_TITLE.getColumnName()));
-		String bookSeriesSubtitle =
-			StringUtilities.simpleClean(row.getString(ISITag.BOOK_SERIES_SUBTITLE.getColumnName()));
+		String bookSeriesSubtitle = StringUtilities.simpleClean(
+			row.getString(ISITag.BOOK_SERIES_SUBTITLE.getColumnName()));
+		String conferenceDate = "";
+		String conferenceDonation = "";
+		String conferenceTitle = "";
+		String fullTitle =
+			StringUtilities.simpleClean(row.getString(ISITag.FULL_JOURNAL_TITLE.getColumnName()));
+		String isoTitleAbbreviation = StringUtilities.simpleClean(
+			row.getString(ISITag.ISO_JOURNAL_TITLE_ABBREVIATION.getColumnName()));
 		String issn =
 			StringUtilities.simpleClean(row.getString(ISITag.ISSN.getColumnName()));
+		String publicationType =
+			StringUtilities.simpleClean(row.getString(ISITag.PUBLICATION_TYPE.getColumnName()));
 		String twentyNineCharacterSourceTitleAbbreviation = StringUtilities.simpleClean(
 			row.getString(ISITag.TWENTY_NINE_CHAR_JOURNAL_ABBREVIATION.getColumnName()));
 		// TODO: ?
-		String conferenceTitle = "";
-		String conferenceDate = "";
-		String conferenceDonation = "";
 		Source source = new Source(
 			this.sources.getKeyGenerator(),
-			fullTitle,
-			publicationType,
-			isoTitleAbbreviation,
 			bookSeriesTitle,
 			bookSeriesSubtitle,
-			issn,
-			twentyNineCharacterSourceTitleAbbreviation,
 			conferenceTitle,
 			conferenceDate,
-			conferenceDonation);
+			conferenceDonation,
+			fullTitle,
+			isoTitleAbbreviation,
+			issn,
+			publicationType,
+			twentyNineCharacterSourceTitleAbbreviation);
 
 		return this.sources.addOrMerge(source);
 	}
@@ -370,15 +357,15 @@ public class ISITableModelParser {
 
 				Reference reference = new Reference(
 					this.references.getKeyGenerator(),
-					referenceData.getRawString(),
-					null,
-					referenceData.getAuthor(),
-					referenceData.getSource(),
-					referenceData.getYear(),
-					referenceData.getVolume(),
-					referenceData.getPageNumber(),
 					referenceData.getAnnotation(),
-					referenceData.authorWasStarred());
+					referenceData.getAuthor(),
+					referenceData.authorWasStarred(),
+					referenceData.getPageNumber(),
+					null,
+					referenceData.getRawString(),
+					referenceData.getVolume(),
+					referenceData.getSource(),
+					referenceData.getYear());
 				Reference mergedReference = this.references.addOrMerge(reference);
 				references.add(mergedReference);
 			} catch (ReferenceParsingException e) {
@@ -389,113 +376,155 @@ public class ISITableModelParser {
 		return references;
 	}
 
-	/*
-	 * TODO: Lol authorPeople (no change required). Remind me to give you my copy of
-	 *  'Wizard People, Dear Reader' the Harry Potter movie.
-	 */
-	private List<Person> parseAuthorPeople(Tuple row) throws PersonParsingException {
-		List<Person> authors = new ArrayList<Person>();
+	private List<Person> parseAuthorPeople(Tuple row) {
+		try {
+			List<Person> authorPeople = new ArrayList<Person>();
 
-		String rawAuthorsString =
-			StringUtilities.simpleClean(row.getString(ISITag.AUTHORS.getColumnName()));
-		String[] authorStrings = rawAuthorsString.split("\\|");
-		String rawFullAuthorNamesString =
-			StringUtilities.simpleClean(row.getString(ISITag.AUTHORS_FULL_NAMES.getColumnName()));
-		String[] authorFullNameStrings = rawFullAuthorNamesString.split("\\|");
+			String rawAuthorsString =
+				StringUtilities.simpleClean(row.getString(ISITag.AUTHORS.getColumnName()));
+			String[] authorStrings = rawAuthorsString.split("\\|");
+			String rawFullAuthorNamesString =
+				StringUtilities.simpleClean(row.getString(ISITag.AUTHORS_FULL_NAMES.getColumnName()));
+			String[] authorFullNameStrings = rawFullAuthorNamesString.split("\\|");
 
-		for (int ii = 0; ii < authorStrings.length; ii++) {
-			String authorString = authorStrings[ii];
-			String cleanedAuthorString = StringUtilities.simpleClean(authorString);
-			Pair<Person, Boolean> personParsingResult;
+			for (int ii = 0; ii < authorStrings.length; ii++) {
+				String authorString = authorStrings[ii];
+				String cleanedAuthorString = StringUtilities.simpleClean(authorString);
+				Pair<Person, Boolean> personParsingResult;
 
-			if (authorStrings.length == authorFullNameStrings.length) {
-				String authorFullNameString = authorFullNameStrings[ii];
-				String cleanedAuthorFullNameString =
-					StringUtilities.simpleClean(authorFullNameString);
-				personParsingResult = PersonParser.parsePerson(
-					this.people.getKeyGenerator(),
-					cleanedAuthorString,
-					cleanedAuthorFullNameString);
-			} else {
-				personParsingResult = PersonParser.parsePerson(
-					this.people.getKeyGenerator(), cleanedAuthorString, "");
+				if (authorStrings.length == authorFullNameStrings.length) {
+					String authorFullNameString = authorFullNameStrings[ii];
+					String cleanedAuthorFullNameString =
+						StringUtilities.simpleClean(authorFullNameString);
+					personParsingResult = PersonParser.parsePerson(
+						this.people.getKeyGenerator(),
+						cleanedAuthorString,
+						cleanedAuthorFullNameString);
+				} else {
+					personParsingResult = PersonParser.parsePerson(
+						this.people.getKeyGenerator(), cleanedAuthorString, "");
+				}
+
+				Person authorPerson = personParsingResult.getFirstObject();
+				Person mergedAuthorPerson = this.people.addOrMerge(authorPerson);
+				authorPeople.add(mergedAuthorPerson);
 			}
 
-			Person authorPerson = personParsingResult.getFirstObject();
-			Person mergedAuthorPerson = this.people.addOrMerge(authorPerson);
-			authors.add(mergedAuthorPerson);
+			return authorPeople;
+		} catch (PersonParsingException e) {
+			return new ArrayList<Person>();
 		}
-
-		return authors;
 	}
 
-	private Document parseDocument(Tuple row, Person firstAuthor) {
-		String digitalObjectidentifier =
-			StringUtilities.simpleClean(row.getString(ISITag.DOI.getColumnName()));
-		String title = StringUtilities.simpleClean(row.getString(ISITag.TITLE.getColumnName()));
+	private Document parseDocument(Tuple row, List<Person> authorPeople) {
+		Person firstAuthor = null;
+
+		if (authorPeople.size() != 0) {
+			firstAuthor = authorPeople.get(0);
+		}
+
+		String documentAbstract =
+			StringUtilities.simpleClean(row.getString(ISITag.ABSTRACT.getColumnName()));
 		String articleNumber =
 			StringUtilities.simpleClean(
 				row.getString(ISITag.ARTICLE_NUMBER_OF_NEW_APS_JOURNALS.getColumnName()));
-		String language = StringUtilities.simpleClean(row.getString(ISITag.TITLE.getColumnName()));
-		String documentType =
-			StringUtilities.simpleClean(row.getString(ISITag.DOCUMENT_TYPE.getColumnName()));
-		int citedReferenceCount = IntegerParserWithDefault.parse(StringUtilities.simpleClean(
-			row.getString(ISITag.CITED_REFERENCE_COUNT.getColumnName())));
-		String documentAbstract =
-			StringUtilities.simpleClean(row.getString(ISITag.ABSTRACT.getColumnName()));
-		int timesCited = IntegerParserWithDefault.parse(
-			StringUtilities.simpleClean(row.getString(ISITag.TIMES_CITED.getColumnName())));
+
 		int beginningPage = IntegerParserWithDefault.parse(
 			StringUtilities.simpleClean(row.getString(ISITag.BEGINNING_PAGE.getColumnName())));
+
+		int citedReferenceCount = IntegerParserWithDefault.parse(StringUtilities.simpleClean(
+			row.getString(ISITag.CITED_REFERENCE_COUNT.getColumnName())));
+
+		String digitalObjectidentifier =
+			StringUtilities.simpleClean(row.getString(ISITag.DOI.getColumnName()));
+		String documentType =
+			StringUtilities.simpleClean(row.getString(ISITag.DOCUMENT_TYPE.getColumnName()));
+		String documentVolume =
+			StringUtilities.simpleClean(row.getString(ISITag.VOLUME.getColumnName()));
+
 		int endingPage = IntegerParserWithDefault.parse(
 			StringUtilities.simpleClean(row.getString(ISITag.ENDING_PAGE.getColumnName())));
-		int pageCount = IntegerParserWithDefault.parse(
-			StringUtilities.simpleClean(row.getString(ISITag.NUMBER_OF_PAGES.getColumnName())));
-		String isiUniqueArticleIdentifier =
-			StringUtilities.simpleClean(row.getString(ISITag.UNIQUE_ID.getColumnName()));
-		int publicationYear = IntegerParserWithDefault.parse(
-			StringUtilities.simpleClean(row.getString(ISITag.PUBLICATION_YEAR.getColumnName())));
-		String publicationDate =
-			StringUtilities.simpleClean(row.getString(ISITag.PUBLICATION_DATE.getColumnName()));
-		String volume = StringUtilities.simpleClean(row.getString(ISITag.VOLUME.getColumnName()));
-		String issue = StringUtilities.simpleClean(row.getString(ISITag.ISSUE.getColumnName()));
-		String partNumber =
-			StringUtilities.simpleClean(row.getString(ISITag.PART_NUMBER.getColumnName()));
-		String supplement =
-			StringUtilities.simpleClean(row.getString(ISITag.SUPPLEMENT.getColumnName()));
-		String specialIssue =
-			StringUtilities.simpleClean(row.getString(ISITag.SPECIAL_ISSUE.getColumnName()));
+
+		String fundingAgencyAndGrantNumber = StringUtilities.simpleClean(
+			row.getString(ISITag.FUNDING_AGENCY_AND_GRANT_NUMBER.getColumnName()));
+		String fundingText =
+			StringUtilities.simpleClean(row.getString(ISITag.FUNDING_TEXT.getColumnName()));
+
+		String isbn = StringUtilities.simpleClean(row.getString(ISITag.ISBN.getColumnName()));
 		String isiDocumentDeliveryNumber = StringUtilities.simpleClean(
 			row.getString(ISITag.ISI_DOCUMENT_DELIVERY_NUMBER.getColumnName()));
-		String isbn = StringUtilities.simpleClean(row.getString(ISITag.ISBN.getColumnName()));
-		String emailAddress = StringUtilities.simpleClean(
-			row.getString(ISITag.EMAIL_PRIMARY_AUTHOR.getColumnName()));
+		String isiUniqueArticleIdentifier =
+			StringUtilities.simpleClean(row.getString(ISITag.UNIQUE_ID.getColumnName()));
+		String issue = StringUtilities.simpleClean(row.getString(ISITag.ISSUE.getColumnName()));
+
+		String language = StringUtilities.simpleClean(row.getString(ISITag.TITLE.getColumnName()));
+
+		int pageCount = IntegerParserWithDefault.parse(
+			StringUtilities.simpleClean(row.getString(ISITag.NUMBER_OF_PAGES.getColumnName())));
+		String partNumber =
+			StringUtilities.simpleClean(row.getString(ISITag.PART_NUMBER.getColumnName()));
+		String publicationDate =
+			StringUtilities.simpleClean(row.getString(ISITag.PUBLICATION_DATE.getColumnName()));
+		int publicationYear = IntegerParserWithDefault.parse(
+			StringUtilities.simpleClean(row.getString(ISITag.PUBLICATION_YEAR.getColumnName())));
+
+		String specialIssue =
+			StringUtilities.simpleClean(row.getString(ISITag.SPECIAL_ISSUE.getColumnName()));
+		String subjectCategory =
+			StringUtilities.simpleClean(row.getString(ISITag.SUBJECT_CATEGORY.getColumnName()));
+		String supplement =
+			StringUtilities.simpleClean(row.getString(ISITag.SUPPLEMENT.getColumnName()));
+
+		int timesCited = IntegerParserWithDefault.parse(
+			StringUtilities.simpleClean(row.getString(ISITag.TIMES_CITED.getColumnName())));
+		String title = StringUtilities.simpleClean(row.getString(ISITag.TITLE.getColumnName()));
+
+		/*String emailAddress = StringUtilities.simpleClean(
+			row.getString(ISITag.EMAIL_ADDRESSES.getColumnName()));*/
 
 		return this.documents.addOrMerge(new Document(
 			this.documents.getKeyGenerator(),
-			digitalObjectidentifier,
-			title,
-			articleNumber,
-			firstAuthor,
-			language,
-			documentType,
-			citedReferenceCount,
 			documentAbstract,
-			timesCited,
+			articleNumber,
 			beginningPage,
+			citedReferenceCount,
+			digitalObjectidentifier,
+			documentType,
+			documentVolume,
 			endingPage,
-			pageCount,
-			isiUniqueArticleIdentifier,
-			publicationYear,
-			publicationDate,
-			volume,
-			issue,
-			partNumber,
-			supplement,
-			specialIssue,
-			isiDocumentDeliveryNumber,
+			firstAuthor,
+			fundingAgencyAndGrantNumber,
+			fundingText,
 			isbn,
-			emailAddress));
+			isiDocumentDeliveryNumber,
+			isiUniqueArticleIdentifier,
+			issue,
+			language,
+			pageCount,
+			partNumber,
+			publicationDate,
+			publicationYear,
+			specialIssue,
+			subjectCategory,
+			supplement,
+			timesCited,
+			title));
+	}
+
+	private void linkPeopleAsAuthors_ToDocument(
+			List<Person> authorPeople, Document document, Tuple row) {
+		String rawEmailAddressesString =
+			StringUtilities.simpleClean(row.getString(ISITag.EMAIL_ADDRESSES.getColumnName()));
+		String[] emailAddressStrings = rawEmailAddressesString.split("\\|");
+
+		if (emailAddressStrings.length != authorPeople.size()) {
+		} else {
+			for (int ii = 0; ii < authorPeople.size(); ii++) {
+				Person authorPerson = authorPeople.get(ii);
+				String emailAddress = emailAddressStrings[ii];
+				this.authors.addOrMerge(new Author(document, authorPerson, emailAddress, ii));
+			}
+		}
 	}
 
 	private List<Keyword> parseKeywords(

@@ -9,6 +9,8 @@ import edu.iu.cns.shared.utilities.Pair;
 import edu.iu.nwb.shared.isiutil.database.ISIDatabase;
 import edu.iu.scipolicy.loader.isi.db.model.entity.Person;
 import edu.iu.scipolicy.loader.isi.db.model.entity.Source;
+import edu.iu.scipolicy.loader.isi.db.utilities.parser.exception.PersonParsingException;
+import edu.iu.scipolicy.loader.isi.db.utilities.parser.exception.ReferenceParsingException;
 
 public class ReferenceDataParser {
 	public static final String YEAR_PATTERN = "\\d\\d\\d\\d";
@@ -321,38 +323,38 @@ public class ReferenceDataParser {
 	private static Pair<Source, String> parseSource(
 			DatabaseTableKeyGenerator sourceKeyGenerator, String originalToken) {
 		int annotationIndex = StringUtilities.prefixIndex(originalToken, SOURCE_ANNOTATIONS);
-		String sourceString = originalToken;
 		String annotation = "";
+		String sourceString = originalToken;
 
 		if (annotationIndex != -1) {
 			annotation = SOURCE_ANNOTATIONS[annotationIndex];
 			sourceString = sourceString.replace(annotation, "").trim();
 		}
 
-		String fullTitle = "";
-		String publicationType = "";
-		String isoTitleAbbreviation = "";
 		String bookSeriesTitle = "";
 		String bookSeriesSubtitle = "";
-		String issn = "";
-		String twentyNineCharacterSourceTitleAbbreviation = sourceString;
-		String conferenceTitle = "";
 		String conferenceDate = "";
 		String conferenceDonation = "";
+		String conferenceTitle = "";
+		String fullTitle = "";
+		String isoTitleAbbreviation = "";
+		String issn = "";
+		String publicationType = "";
+		String twentyNineCharacterSourceTitleAbbreviation = sourceString;
 
 		return new Pair<Source, String>(
 			new Source(
 				sourceKeyGenerator,
-				fullTitle,
-				publicationType,
-				isoTitleAbbreviation,
 				bookSeriesTitle,
 				bookSeriesSubtitle,
-				issn,
-				twentyNineCharacterSourceTitleAbbreviation,
-				conferenceTitle,
 				conferenceDate,
-				conferenceDonation),
+				conferenceDonation,
+				conferenceTitle,
+				fullTitle,
+				isoTitleAbbreviation,
+				issn,
+				publicationType,
+				twentyNineCharacterSourceTitleAbbreviation),
 			annotation);
 	}
 

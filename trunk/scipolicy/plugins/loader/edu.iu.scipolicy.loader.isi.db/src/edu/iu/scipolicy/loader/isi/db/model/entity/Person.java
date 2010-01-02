@@ -10,52 +10,48 @@ import edu.iu.nwb.shared.isiutil.database.ISIDatabase;
 
 public class Person extends Entity<Person> implements Comparable<Person> {
 	public static final Schema<Person> SCHEMA = new Schema<Person>(
-		ISIDatabase.PERSONAL_NAME, Schema.TEXT_CLASS,
 		ISIDatabase.ADDITIONAL_NAME, Schema.TEXT_CLASS,
 		ISIDatabase.FAMILY_NAME, Schema.TEXT_CLASS,
 		ISIDatabase.FIRST_INITIAL, Schema.TEXT_CLASS,
+		ISIDatabase.FULL_NAME, Schema.TEXT_CLASS,
 		ISIDatabase.MIDDLE_INITIAL, Schema.TEXT_CLASS,
-		ISIDatabase.UNSPLIT_ABBREVIATED_NAME, Schema.TEXT_CLASS,
-		ISIDatabase.FULL_NAME, Schema.TEXT_CLASS);
+		ISIDatabase.PERSONAL_NAME, Schema.TEXT_CLASS,
+		ISIDatabase.UNSPLIT_ABBREVIATED_NAME, Schema.TEXT_CLASS);
 
-	private String personalName;
 	private String additionalName;
 	private String familyName;
 	private String firstInitial;
-	private String middleInitial;
-	private String unsplitAbbreviatedName;
 	private String fullName;
+	private String middleInitial;
+	private String personalName;
+	private String unsplitAbbreviatedName;
 
 	public Person(
 			DatabaseTableKeyGenerator keyGenerator,
-			String personalName,
 			String additionalName,
 			String familyName,
 			String firstInitial,
+			String fullName,
 			String middleInitial,
-			String unsplitAbbreviatedName,
-			String fullName) {
+			String personalName,
+			String unsplitAbbreviatedName) {
 		super(
 			keyGenerator,
 			createAttributes(
-				personalName,
 				additionalName,
 				familyName,
 				firstInitial,
+				fullName,
 				middleInitial,
-				unsplitAbbreviatedName,
-				fullName));
-		this.personalName = personalName;
+				personalName,
+				unsplitAbbreviatedName));
 		this.additionalName = additionalName;
 		this.familyName = familyName;
 		this.firstInitial = firstInitial;
+		this.fullName = fullName;
 		this.middleInitial = middleInitial;
 		this.unsplitAbbreviatedName = unsplitAbbreviatedName;
-		this.fullName = fullName;
-	}
-
-	public String getPersonalName() {
-		return this.personalName;
+		this.personalName = personalName;
 	}
 
 	public String getAdditionalName() {
@@ -70,16 +66,20 @@ public class Person extends Entity<Person> implements Comparable<Person> {
 		return this.firstInitial;
 	}
 
+	public String getFullName() {
+		return this.fullName;
+	}
+
 	public String getMiddleInitial() {
 		return this.middleInitial;
 	}
 
-	public String getUnsplitAbbreviatedName() {
-		return this.unsplitAbbreviatedName;
+	public String getPersonalName() {
+		return this.personalName;
 	}
 
-	public String getFullName() {
-		return this.fullName;
+	public String getUnsplitAbbreviatedName() {
+		return this.unsplitAbbreviatedName;
 	}
 
 	public int compareTo(Person otherPerson) {
@@ -94,21 +94,21 @@ public class Person extends Entity<Person> implements Comparable<Person> {
 	}
 
 	public static Dictionary<String, Comparable<?>> createAttributes(
-			String personalName,
 			String additionalName,
 			String familyName,
 			String firstInitial,
+			String fullName,
 			String middleInitial,
-			String unsplitName,
-			String fullName) {
+			String personalName,
+			String unsplitName) {
 		Dictionary<String, Comparable<?>> attributes = new Hashtable<String, Comparable<?>>();
-		attributes.put(ISIDatabase.PERSONAL_NAME, personalName);
 		attributes.put(ISIDatabase.ADDITIONAL_NAME, additionalName);
 		attributes.put(ISIDatabase.FAMILY_NAME, familyName);
 		attributes.put(ISIDatabase.FIRST_INITIAL, firstInitial);
-		attributes.put(ISIDatabase.MIDDLE_INITIAL, middleInitial);
-		attributes.put(ISIDatabase.UNSPLIT_ABBREVIATED_NAME, unsplitName);
 		attributes.put(ISIDatabase.FULL_NAME, fullName);
+		attributes.put(ISIDatabase.MIDDLE_INITIAL, middleInitial);
+		attributes.put(ISIDatabase.PERSONAL_NAME, personalName);
+		attributes.put(ISIDatabase.UNSPLIT_ABBREVIATED_NAME, unsplitName);
 
 		return attributes;
 	}

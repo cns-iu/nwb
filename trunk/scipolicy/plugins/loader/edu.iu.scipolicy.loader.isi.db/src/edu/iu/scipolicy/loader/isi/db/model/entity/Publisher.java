@@ -10,21 +10,21 @@ import edu.iu.cns.database.loader.framework.Schema;
 import edu.iu.cns.database.loader.framework.utilities.DatabaseTableKeyGenerator;
 import edu.iu.nwb.shared.isiutil.database.ISIDatabase;
 
-public class Publisher extends Entity<Publisher> {
+public class Publisher extends Entity<Publisher> implements Comparable<Publisher> {
 	public final static Schema<Publisher> SCHEMA = new Schema<Publisher>(
-		ISIDatabase.PUBLISHER_NAME, Schema.TEXT_CLASS,
 		ISIDatabase.PUBLISHER_CITY, Schema.TEXT_CLASS,
-		ISIDatabase.WEB_ADDRESS, Schema.TEXT_CLASS,
-		ISIDatabase.PUBLISHER_SOURCE, Schema.FOREIGN_KEY_CLASS).
+		ISIDatabase.PUBLISHER_NAME, Schema.TEXT_CLASS,
+		ISIDatabase.PUBLISHER_SOURCE, Schema.FOREIGN_KEY_CLASS,
+		ISIDatabase.PUBLISHER_WEB_ADDRESS, Schema.TEXT_CLASS).
 		FOREIGN_KEYS(ISIDatabase.PUBLISHER_SOURCE, ISIDatabase.SOURCE_TABLE_NAME);
 
-	private String name;
 	private String city;
-	private String webAddress;
+	private String name;
 	private Source source;
+	private String webAddress;
 
 	public Publisher(
-			DatabaseTableKeyGenerator keyGenerator, String name, String city, String webAddress) {
+			DatabaseTableKeyGenerator keyGenerator, String city, String name, String webAddress) {
 		super(
 			keyGenerator,
 			createAttributes(name, city, webAddress));
@@ -33,20 +33,20 @@ public class Publisher extends Entity<Publisher> {
 		this.webAddress = webAddress;
 	}
 
-	public String getName() {
-		return this.name;
-	}
-
 	public String getCity() {
 		return this.city;
 	}
 
-	public String getWebAddress() {
-		return this.webAddress;
+	public String getName() {
+		return this.name;
 	}
 
 	public Source getSource() {
 		return this.source;
+	}
+
+	public String getWebAddress() {
+		return this.webAddress;
 	}
 
 	public void setSource(Source source) {
@@ -55,10 +55,16 @@ public class Publisher extends Entity<Publisher> {
 		getAttributes().put(ISIDatabase.PUBLISHER_SOURCE, this.source);
 	}
 
+	public int compareTo(Publisher otherPublisher) {
+		// TODO:
+		return -1;
+	}
+
+
 	public boolean shouldMerge(Publisher otherPublisher) {
 		boolean namesAndCitiesAreEquivalent = (
-			StringUtilities.validAndEquivalentIgnoreCase(this.name, otherPublisher.getName()) &&
-			StringUtilities.validAndEquivalentIgnoreCase(this.city, otherPublisher.getCity()));
+			StringUtilities.validAndEquivalentIgnoreCase(this.city, otherPublisher.getCity()) &&
+			StringUtilities.validAndEquivalentIgnoreCase(this.name, otherPublisher.getName()));
 		boolean webAddressesAreEquivalent = StringUtilities.validAndEquivalentIgnoreCase(
 			this.webAddress, otherPublisher.getWebAddress());
 
@@ -66,18 +72,18 @@ public class Publisher extends Entity<Publisher> {
 	}
 
 	public void merge(Publisher otherPublisher) {
-		this.name = StringUtilities.simpleMerge(this.name, otherPublisher.getName());
 		this.city = StringUtilities.simpleMerge(this.city, otherPublisher.getCity());
+		this.name = StringUtilities.simpleMerge(this.name, otherPublisher.getName());
 		this.webAddress =
 			StringUtilities.simpleMerge(this.webAddress, otherPublisher.getWebAddress());
 	}
 
 	public static Dictionary<String, Comparable<?>> createAttributes(
-			String name, String city, String webAddress) {
+			String city, String name, String webAddress) {
 		Dictionary<String, Comparable<?>> attributes = new Hashtable<String, Comparable<?>>();
-		attributes.put(ISIDatabase.PUBLISHER_NAME, name);
 		attributes.put(ISIDatabase.PUBLISHER_CITY, city);
-		attributes.put(ISIDatabase.WEB_ADDRESS, webAddress);
+		attributes.put(ISIDatabase.PUBLISHER_NAME, name);
+		attributes.put(ISIDatabase.PUBLISHER_WEB_ADDRESS, webAddress);
 
 		return attributes;
 	}

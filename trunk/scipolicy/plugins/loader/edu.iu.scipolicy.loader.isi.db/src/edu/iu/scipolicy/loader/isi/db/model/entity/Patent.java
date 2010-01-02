@@ -10,7 +10,7 @@ import edu.iu.cns.database.loader.framework.Schema;
 import edu.iu.cns.database.loader.framework.utilities.DatabaseTableKeyGenerator;
 import edu.iu.nwb.shared.isiutil.database.ISIDatabase;
 
-public class Patent extends Entity<Patent> {
+public class Patent extends Entity<Patent> implements Comparable<Patent> {
 	public static final Schema<Patent> SCHEMA = new Schema<Patent>(
 		ISIDatabase.PATENT_NUMBER, Schema.TEXT_CLASS);
 
@@ -23,6 +23,10 @@ public class Patent extends Entity<Patent> {
 
 	public String getPatentNumber() {
 		return this.patentNumber;
+	}
+
+	public int compareTo(Patent otherPatent) {
+		return -1;
 	}
 
 	public boolean shouldMerge(Patent otherPatent) {
