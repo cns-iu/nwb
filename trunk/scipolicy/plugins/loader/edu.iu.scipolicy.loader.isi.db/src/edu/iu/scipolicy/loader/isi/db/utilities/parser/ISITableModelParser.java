@@ -150,131 +150,147 @@ public class ISITableModelParser {
 		for (Integer rowIndex : rows) {
 			Tuple row = table.getTuple(rowIndex.intValue());
 
+			// Parse (Author) People.
+
+			List<Person> currentAuthorPeople = parseAuthorPeople(row);
+
 			// Parse ISI File.
 
 			ISIFile isiFile = parseISIFile(row);
+
+			/*
+			 * Parse Author Keywords, and link the Document Keywords from the Document to them
+			 *  via DocumentKeywords.
+			 */
+
+			List<Keyword> authorKeywords =
+				parseKeywords(row, AUTHOR_KEYWORDS, ISITag.ORIGINAL_KEYWORDS);
+
+			/*
+			 * Parse KeyWords Plus, and link the Document Keywords from the Document to them
+			 *  via DocumentKeywords.
+			 */
+
+			List<Keyword> keywordsPlus =
+				parseKeywords(row, KEYWORDS_PLUS, ISITag.NEW_KEYWORDS_GIVEN_BY_ISI);
+
+			// Parse Patent, and link it to the Document via CitedPatents.
+
+			Patent patent = parsePatent(row);
+
+			// Parse Reprint Address (a link between Document and Address).
+
+			Address addressForReprinting = parseAddressForReprinting(row);
+
+			// Parse Research Addresses (links between Document and Address).
+
+			List<Address> currentAddressesOfResearch = parseAddressesOfResearch(row);
+
+			// Parse References, and link them to People and Sources.
+
+			List<Reference> currentReferences = parseReferences(row);
+			handlePeopleAndSourcesFromReferences(currentReferences);
+
+			// Parse Document.
+
+			Document document = parseDocument(row, currentAuthorPeople);
+
+			// Link the Document to the other things parsed.
+
+			linkDocumentToPeople_AsAuthors(document, currentAuthorPeople, row);
+			this.documentOccurrences.addOrMerge(new DocumentOccurrence(document, isiFile));
+			linkDocumentToKeywords(document, authorKeywords);
+			linkDocumentToKeywords(document, keywordsPlus);
+			this.citedPatents.addOrMerge(new CitedPatent(document, patent));
+			this.reprintAddresses.addOrMerge(new ReprintAddress(document, addressForReprinting));
+			linkDocumentToAddressesOfResearch(document, currentAddressesOfResearch);
+			linkDocumentToCitedReferences(document, currentReferences);
+
+			// Parse Source, and link it to Publisher.
+
+			Source source = parseSource(row);
+
+			// Parse Publisher Address (a link between Publisher and Address).
+
+			Address addressOfPublisher = parseAddressOfPublisher(row);
 
 			// Parse Publisher.
 
 			Publisher publisher = parsePublisher(row);
 
-			// Parse Source, and link it to Publisher.
+			// Link the Publisher to the other things parsed.
 
-			Source source = parseSource(row);
 			publisher.setSource(source);
-
-			// Parse References, and link them to People and Sources.
-
-			List<Reference> currentReferences = parseReferences(row);
-
-			for (Reference reference : currentReferences) {
-				Person referenceAuthor = reference.getAuthor();
-				Source referenceSource = reference.getSource();
-
-				if (referenceAuthor != null) {
-					Person mergedAuthor = this.people.addOrMerge(referenceAuthor);
-					reference.setAuthor(mergedAuthor);
-				}
-
-				if (referenceSource != null) {
-					Source mergedSource = this.sources.addOrMerge(referenceSource);
-					reference.setSource(mergedSource);
-				}
-			}
-
-			// Parse (Author) People.
-
-			List<Person> currentAuthorPeople = parseAuthorPeople(row);
-
-			// Parse Document.
-
-			Document document  = parseDocument(row, currentAuthorPeople);
-
-			// Link the Authors from the Document to the (Author) People.
-
-			linkPeopleAsAuthors_ToDocument(currentAuthorPeople, document, row);
-
-			// Parse Author Keywords, and link the Document Keywords from the Document to them.
-
-			List<Keyword> authorKeywords =
-				parseKeywords(row, AUTHOR_KEYWORDS, ISITag.ORIGINAL_KEYWORDS);
-
-			for (int ii = 0; ii < authorKeywords.size(); ii++) {
-				this.documentKeywords.addOrMerge(
-					new DocumentKeyword(document, authorKeywords.get(ii), ii));
-			}
-
-			// Parse KeyWords Plus, and link the Document Keywords from the Document to them.
-
-			List<Keyword> keywordsPlus =
-				parseKeywords(row, KEYWORDS_PLUS, ISITag.NEW_KEYWORDS_GIVEN_BY_ISI);
-
-			for (int ii = 0; ii < keywordsPlus.size(); ii++) {
-				this.documentKeywords.addOrMerge(
-					new DocumentKeyword(document, keywordsPlus.get(ii), ii));
-			}
-
-			// Parse Patent, and link it to the Document.
-
-			Patent patent = parsePatent(row);
-			this.citedPatents.addOrMerge(new CitedPatent(document, patent));
-
-			// Parse Publisher Address.
-
-			Address addressOfPublisher = parseAddressOfPublisher(row);
 			this.publisherAddresses.addOrMerge(
 				new PublisherAddress(publisher, addressOfPublisher));
 
-			// Parse Reprint Address.
-
-			Address addressForReprinting = parseAddressForReprinting(row);
-			this.reprintAddresses.addOrMerge(new ReprintAddress(document, addressForReprinting));
-
-			// Parse Research Address.
-
-			List<Address> currentAddressesOfResearch = parseAddressesOfResearch(row);
-
-			for (int ii = 0; ii < currentAddressesOfResearch.size(); ii++) {
-				Address addressOfResearch = currentAddressesOfResearch.get(ii);
-				this.researchAddresses.addOrMerge(
-					new ResearchAddress(document, addressOfResearch, ii));
-			}
-
 			// Parse Editors. (?)
 			//TODO: Look into what's up with editors.
-
-			// Link up the Document Occurrence.
-
-			this.documentOccurrences.addOrMerge(new DocumentOccurrence(document, isiFile));
-
-			// Link the Cited References to the Document.
-
-			for (Reference reference : currentReferences) {
-				this.citedReferences.addOrMerge(new CitedReference(document, reference));
-			}
 		}
 
 		// Given all of the master lists of row items, construct an ISIModel and return it.
 
 		return new ISIModel(
-			this.isiFiles,
-			this.publishers,
-			this.sources,
-			this.references,
+			// Entities
 			this.addresses,
-			this.keywords,
-			this.people,
-			this.patents,
 			this.documents,
-			this.publisherAddresses,
-			this.reprintAddresses,
-			this.researchAddresses,
-			this.documentKeywords,
+			this.isiFiles,
+			this.keywords,
+			this.patents,
+			this.people,
+			this.publishers,
+			this.references,
+			this.sources,
+			// Relationships
 			this.authors,
 			this.editors,
 			this.citedPatents,
+			this.citedReferences,
+			this.documentKeywords,
 			this.documentOccurrences,
-			this.citedReferences);
+			this.publisherAddresses,
+			this.reprintAddresses,
+			this.researchAddresses);
+	}
+
+	private List<Person> parseAuthorPeople(Tuple row) {
+		try {
+			List<Person> authorPeople = new ArrayList<Person>();
+
+			String rawAuthorsString =
+				StringUtilities.simpleClean(row.getString(ISITag.AUTHORS.getColumnName()));
+			String[] authorStrings = rawAuthorsString.split("\\|");
+			String rawFullAuthorNamesString =
+				StringUtilities.simpleClean(row.getString(ISITag.AUTHORS_FULL_NAMES.getColumnName()));
+			String[] authorFullNameStrings = rawFullAuthorNamesString.split("\\|");
+
+			for (int ii = 0; ii < authorStrings.length; ii++) {
+				String authorString = authorStrings[ii];
+				String cleanedAuthorString = StringUtilities.simpleClean(authorString);
+				Pair<Person, Boolean> personParsingResult;
+
+				if (authorStrings.length == authorFullNameStrings.length) {
+					String authorFullNameString = authorFullNameStrings[ii];
+					String cleanedAuthorFullNameString =
+						StringUtilities.simpleClean(authorFullNameString);
+					personParsingResult = PersonParser.parsePerson(
+						this.people.getKeyGenerator(),
+						cleanedAuthorString,
+						cleanedAuthorFullNameString);
+				} else {
+					personParsingResult = PersonParser.parsePerson(
+						this.people.getKeyGenerator(), cleanedAuthorString, "");
+				}
+
+				Person authorPerson = personParsingResult.getFirstObject();
+				Person mergedAuthorPerson = this.people.addOrMerge(authorPerson);
+				authorPeople.add(mergedAuthorPerson);
+			}
+
+			return authorPeople;
+		} catch (PersonParsingException e) {
+			return new ArrayList<Person>();
+		}
 	}
 
 	private ISIFile parseISIFile(Tuple row) {
@@ -290,52 +306,55 @@ public class ISITableModelParser {
 		return this.isiFiles.addOrMerge(isiFile);
 	}
 
-	private Publisher parsePublisher(Tuple row) {
-		String city =
-			StringUtilities.simpleClean(row.getString(ISITag.PUBLISHER_CITY.getColumnName()));
-		String name =
-			StringUtilities.simpleClean(row.getString(ISITag.PUBLISHER.getColumnName()));
-		String webAddress = StringUtilities.simpleClean(
-			row.getString(ISITag.PUBLISHER_WEB_ADDRESS.getColumnName()));
-		Publisher publisher =
-			new Publisher(this.publishers.getKeyGenerator(), city, name, webAddress);
+	private List<Keyword> parseKeywords(
+			Tuple row, String keywordType, ISITag sourceTag) {
+		List<Keyword> keywords = new ArrayList<Keyword>();
 
-		return this.publishers.addOrMerge(publisher);
+		String rawKeywordsString =
+			StringUtilities.simpleClean(row.getString(sourceTag.getColumnName()));
+		String[] keywordStrings = rawKeywordsString.split("\\|");
+
+		for (String keywordString : keywordStrings) {
+			Keyword keyword = this.keywords.addOrMerge(
+				new Keyword(this.keywords.getKeyGenerator(), keywordString, keywordType));
+			keywords.add(keyword);
+		}
+
+		return keywords;
 	}
 
-	private Source parseSource(Tuple row) {
-		String bookSeriesTitle =
-			StringUtilities.simpleClean(row.getString(ISITag.BOOK_SERIES_TITLE.getColumnName()));
-		String bookSeriesSubtitle = StringUtilities.simpleClean(
-			row.getString(ISITag.BOOK_SERIES_SUBTITLE.getColumnName()));
-		String conferenceDate = "";
-		String conferenceDonation = "";
-		String conferenceTitle = "";
-		String fullTitle =
-			StringUtilities.simpleClean(row.getString(ISITag.FULL_JOURNAL_TITLE.getColumnName()));
-		String isoTitleAbbreviation = StringUtilities.simpleClean(
-			row.getString(ISITag.ISO_JOURNAL_TITLE_ABBREVIATION.getColumnName()));
-		String issn =
-			StringUtilities.simpleClean(row.getString(ISITag.ISSN.getColumnName()));
-		String publicationType =
-			StringUtilities.simpleClean(row.getString(ISITag.PUBLICATION_TYPE.getColumnName()));
-		String twentyNineCharacterSourceTitleAbbreviation = StringUtilities.simpleClean(
-			row.getString(ISITag.TWENTY_NINE_CHAR_JOURNAL_ABBREVIATION.getColumnName()));
-		// TODO: ?
-		Source source = new Source(
-			this.sources.getKeyGenerator(),
-			bookSeriesTitle,
-			bookSeriesSubtitle,
-			conferenceTitle,
-			conferenceDate,
-			conferenceDonation,
-			fullTitle,
-			isoTitleAbbreviation,
-			issn,
-			publicationType,
-			twentyNineCharacterSourceTitleAbbreviation);
+	private Patent parsePatent(Tuple row) {
+		String patentNumber =
+			StringUtilities.simpleClean(row.getString(ISITag.CITED_PATENT.getColumnName()));
 
-		return this.sources.addOrMerge(source);
+		return this.patents.addOrMerge(new Patent(this.patents.getKeyGenerator(), patentNumber));
+	}
+
+	private Address parseAddressForReprinting(Tuple row) {
+		String addressForReprintingString =
+			StringUtilities.simpleClean(row.getString(ISITag.REPRINT_ADDRESS.getColumnName()));
+		// TODO: AddressParser?
+
+		return this.addresses.addOrMerge(
+			new Address(this.addresses.getKeyGenerator(), addressForReprintingString));
+	}
+
+	private List<Address> parseAddressesOfResearch(Tuple row) {
+		List<Address> addressesOfResearch = new ArrayList<Address>();
+
+		String rawAddressesString =
+			StringUtilities.simpleClean(row.getString(ISITag.RESEARCH_ADDRESSES.getColumnName()));
+		String addressStrings[] = rawAddressesString.split("\\|");
+
+		for (String addressString : addressStrings) {
+			String cleanedAddressString = StringUtilities.simpleClean(addressString);
+			// TODO: AddressParser?
+			Address mergedAddressOfResearch = this.addresses.addOrMerge(
+				new Address(this.addresses.getKeyGenerator(), cleanedAddressString));
+			addressesOfResearch.add(mergedAddressOfResearch);
+		}
+
+		return addressesOfResearch;
 	}
 
 	private List<Reference> parseReferences(Tuple row) {
@@ -376,43 +395,20 @@ public class ISITableModelParser {
 		return references;
 	}
 
-	private List<Person> parseAuthorPeople(Tuple row) {
-		try {
-			List<Person> authorPeople = new ArrayList<Person>();
+	private void handlePeopleAndSourcesFromReferences(List<Reference> references) {
+		for (Reference reference : references) {
+			Person referenceAuthor = reference.getAuthor();
+			Source referenceSource = reference.getSource();
 
-			String rawAuthorsString =
-				StringUtilities.simpleClean(row.getString(ISITag.AUTHORS.getColumnName()));
-			String[] authorStrings = rawAuthorsString.split("\\|");
-			String rawFullAuthorNamesString =
-				StringUtilities.simpleClean(row.getString(ISITag.AUTHORS_FULL_NAMES.getColumnName()));
-			String[] authorFullNameStrings = rawFullAuthorNamesString.split("\\|");
-
-			for (int ii = 0; ii < authorStrings.length; ii++) {
-				String authorString = authorStrings[ii];
-				String cleanedAuthorString = StringUtilities.simpleClean(authorString);
-				Pair<Person, Boolean> personParsingResult;
-
-				if (authorStrings.length == authorFullNameStrings.length) {
-					String authorFullNameString = authorFullNameStrings[ii];
-					String cleanedAuthorFullNameString =
-						StringUtilities.simpleClean(authorFullNameString);
-					personParsingResult = PersonParser.parsePerson(
-						this.people.getKeyGenerator(),
-						cleanedAuthorString,
-						cleanedAuthorFullNameString);
-				} else {
-					personParsingResult = PersonParser.parsePerson(
-						this.people.getKeyGenerator(), cleanedAuthorString, "");
-				}
-
-				Person authorPerson = personParsingResult.getFirstObject();
-				Person mergedAuthorPerson = this.people.addOrMerge(authorPerson);
-				authorPeople.add(mergedAuthorPerson);
+			if (referenceAuthor != null) {
+				Person mergedAuthor = this.people.addOrMerge(referenceAuthor);
+				reference.setAuthor(mergedAuthor);
 			}
 
-			return authorPeople;
-		} catch (PersonParsingException e) {
-			return new ArrayList<Person>();
+			if (referenceSource != null) {
+				Source mergedSource = this.sources.addOrMerge(referenceSource);
+				reference.setSource(mergedSource);
+			}
 		}
 	}
 
@@ -479,9 +475,6 @@ public class ISITableModelParser {
 			StringUtilities.simpleClean(row.getString(ISITag.TIMES_CITED.getColumnName())));
 		String title = StringUtilities.simpleClean(row.getString(ISITag.TITLE.getColumnName()));
 
-		/*String emailAddress = StringUtilities.simpleClean(
-			row.getString(ISITag.EMAIL_ADDRESSES.getColumnName()));*/
-
 		return this.documents.addOrMerge(new Document(
 			this.documents.getKeyGenerator(),
 			documentAbstract,
@@ -511,13 +504,25 @@ public class ISITableModelParser {
 			title));
 	}
 
-	private void linkPeopleAsAuthors_ToDocument(
-			List<Person> authorPeople, Document document, Tuple row) {
+	private void linkDocumentToPeople_AsAuthors(
+			Document document, List<Person> authorPeople, Tuple row) {
 		String rawEmailAddressesString =
 			StringUtilities.simpleClean(row.getString(ISITag.EMAIL_ADDRESSES.getColumnName()));
 		String[] emailAddressStrings = rawEmailAddressesString.split("\\|");
 
 		if (emailAddressStrings.length != authorPeople.size()) {
+			// TODO: Warning or fail?
+			// Assume just the first e-mail address for all authors.
+			String emailAddress = "";
+
+			if (emailAddressStrings.length != 0) {
+				emailAddress = emailAddressStrings[0];
+			}
+
+			for (int ii = 0; ii < authorPeople.size(); ii++) {
+				Person authorPerson = authorPeople.get(ii);
+				this.authors.addOrMerge(new Author(document, authorPerson, emailAddress, ii));
+			}
 		} else {
 			for (int ii = 0; ii < authorPeople.size(); ii++) {
 				Person authorPerson = authorPeople.get(ii);
@@ -527,28 +532,66 @@ public class ISITableModelParser {
 		}
 	}
 
-	private List<Keyword> parseKeywords(
-			Tuple row, String keywordType, ISITag sourceTag) {
-		List<Keyword> keywords = new ArrayList<Keyword>();
-
-		String rawKeywordsString =
-			StringUtilities.simpleClean(row.getString(sourceTag.getColumnName()));
-		String[] keywordStrings = rawKeywordsString.split("\\|");
-
-		for (String keywordString : keywordStrings) {
-			Keyword keyword = this.keywords.addOrMerge(
-				new Keyword(this.keywords.getKeyGenerator(), keywordType, keywordString));
-			keywords.add(keyword);
+	private void linkDocumentToKeywords(Document document, List<Keyword> keywords) {
+		for (int ii = 0; ii < keywords.size(); ii++) {
+			this.documentKeywords.addOrMerge(
+				new DocumentKeyword(document, keywords.get(ii), ii));
 		}
-
-		return keywords;
 	}
 
-	private Patent parsePatent(Tuple row) {
-		String patentNumber =
-			StringUtilities.simpleClean(row.getString(ISITag.CITED_PATENT.getColumnName()));
+	private void linkDocumentToAddressesOfResearch(
+			Document document, List<Address> addressesOfResearch) {
+		for (int ii = 0; ii < addressesOfResearch.size(); ii++) {
+			Address addressOfResearch = addressesOfResearch.get(ii);
+			this.researchAddresses.addOrMerge(
+				new ResearchAddress(document, addressOfResearch, ii));
+		}
+	}
 
-		return this.patents.addOrMerge(new Patent(this.patents.getKeyGenerator(), patentNumber));
+	private void linkDocumentToCitedReferences(Document document, List<Reference> references) {
+		for (Reference reference : references) {
+			this.citedReferences.addOrMerge(new CitedReference(document, reference));
+		}
+	}
+
+	private Source parseSource(Tuple row) {
+		String bookSeriesTitle =
+			StringUtilities.simpleClean(row.getString(ISITag.BOOK_SERIES_TITLE.getColumnName()));
+		String bookSeriesSubtitle = StringUtilities.simpleClean(
+			row.getString(ISITag.BOOK_SERIES_SUBTITLE.getColumnName()));
+
+		String conferenceDate = "";
+		String conferenceDonation = "";
+		String conferenceTitle = "";
+
+		String fullTitle =
+			StringUtilities.simpleClean(row.getString(ISITag.FULL_JOURNAL_TITLE.getColumnName()));
+
+		String isoTitleAbbreviation = StringUtilities.simpleClean(
+			row.getString(ISITag.ISO_JOURNAL_TITLE_ABBREVIATION.getColumnName()));
+		String issn =
+			StringUtilities.simpleClean(row.getString(ISITag.ISSN.getColumnName()));
+
+		String publicationType =
+			StringUtilities.simpleClean(row.getString(ISITag.PUBLICATION_TYPE.getColumnName()));
+
+		String twentyNineCharacterSourceTitleAbbreviation = StringUtilities.simpleClean(
+			row.getString(ISITag.TWENTY_NINE_CHAR_JOURNAL_ABBREVIATION.getColumnName()));
+		// TODO: ?
+		Source source = new Source(
+			this.sources.getKeyGenerator(),
+			bookSeriesTitle,
+			bookSeriesSubtitle,
+			conferenceDate,
+			conferenceDonation,
+			conferenceTitle,
+			fullTitle,
+			isoTitleAbbreviation,
+			issn,
+			publicationType,
+			twentyNineCharacterSourceTitleAbbreviation);
+
+		return this.sources.addOrMerge(source);
 	}
 
 	private Address parseAddressOfPublisher(Tuple row) {
@@ -559,29 +602,16 @@ public class ISITableModelParser {
 			new Address(this.addresses.getKeyGenerator(), addressOfPublisherString));
 	}
 
-	private Address parseAddressForReprinting(Tuple row) {
-		String addressForReprintingString =
-			StringUtilities.simpleClean(row.getString(ISITag.REPRINT_ADDRESS.getColumnName()));
+	private Publisher parsePublisher(Tuple row) {
+		String city =
+			StringUtilities.simpleClean(row.getString(ISITag.PUBLISHER_CITY.getColumnName()));
+		String name =
+			StringUtilities.simpleClean(row.getString(ISITag.PUBLISHER.getColumnName()));
+		String webAddress = StringUtilities.simpleClean(
+			row.getString(ISITag.PUBLISHER_WEB_ADDRESS.getColumnName()));
+		Publisher publisher =
+			new Publisher(this.publishers.getKeyGenerator(), city, name, webAddress);
 
-		return this.addresses.addOrMerge(
-			new Address(this.addresses.getKeyGenerator(), addressForReprintingString));
-	}
-
-	private List<Address> parseAddressesOfResearch(Tuple row) {
-		List<Address> addressesOfResearch = new ArrayList<Address>();
-
-		String rawAddressesString =
-			StringUtilities.simpleClean(row.getString(ISITag.RESEARCH_ADDRESSES.getColumnName()));
-		String addressStrings[] = rawAddressesString.split("\\|");
-
-		for (String addressString : addressStrings) {
-			String cleanedAddressString = StringUtilities.simpleClean(addressString);
-			// TODO: AddressParser?
-			Address mergedAddressOfResearch = this.addresses.addOrMerge(
-				new Address(this.addresses.getKeyGenerator(), cleanedAddressString));
-			addressesOfResearch.add(mergedAddressOfResearch);
-		}
-
-		return addressesOfResearch;
+		return this.publishers.addOrMerge(publisher);
 	}
 }
