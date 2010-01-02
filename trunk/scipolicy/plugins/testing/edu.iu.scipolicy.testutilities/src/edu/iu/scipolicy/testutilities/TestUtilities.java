@@ -1,5 +1,6 @@
 package edu.iu.scipolicy.testutilities;
 
+import java.io.File;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
@@ -13,12 +14,34 @@ import org.cishell.framework.data.BasicData;
 import org.cishell.framework.data.Data;
 import org.cishell.service.database.DataSourceWithID;
 import org.cishell.service.database.DatabaseService;
+import org.cishell.utilities.FileUtilities;
 
 import prefuse.data.Table;
+import edu.iu.nwb.converter.prefusecsv.reader.PrefuseCsvReader;
 
 public class TestUtilities {
 	public static int HEADER_COLUMN_NAME_INDEX = 0;
 	public static int HEADER_COLUMN_TYPE_INDEX = 1;
+	public static final String CSV_MIME_TYPE = "file:text/csv";
+
+	public static Data[] createTestTableData(Class<?> clazz, String testDataPath)
+			throws Exception {
+		File file = FileUtilities.safeLoadFileFromClasspath(clazz, testDataPath);
+
+		return createTestTableData(file);
+	}
+
+	public static Data[] createTestTableData(File file) throws Exception {
+		Data fileData = new BasicData(file, CSV_MIME_TYPE);
+
+		return convertFileDataToTableData(fileData);
+	}
+
+	public static Data[] convertFileDataToTableData(Data fileData) throws Exception {
+		PrefuseCsvReader csvReader = new PrefuseCsvReader(new Data[] { fileData });
+
+		return csvReader.execute();
+	}
 	
 	// This is abstracted in case we ever decide to use a full-blown mock library.
 	public static TestContext createFakeCIShellContext() throws Exception {
@@ -42,7 +65,7 @@ public class TestUtilities {
 	   match the length of each element (or each row) in contents.
 	 **/
 	// TODO: Maybe throw exception if header and contents lengths aren't correct.
-	public static Data[] createAndFillTestDatabase(String tableName,
+	/*public static Data[] createAndFillTestDatabase(String tableName,
 												   String[][] header,
 												   String primaryKey,
 												   String[][] contents,
@@ -72,7 +95,7 @@ public class TestUtilities {
 		catch (Exception e) {
 			throw e;
 		}
-	}
+	}*/
 	
 	public static Table createEmptyPrefuseTable(String[] columnNames, Class[] columnTypes) {
 		Table table = new Table();
