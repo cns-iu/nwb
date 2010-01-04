@@ -14,7 +14,7 @@
 #include <map>
 #include <math.h>
 #include <iomanip>
-#include <time.h> // TODO Add time reporting at all of the critical couts.
+#include <time.h>
 
 #include "mpi.h"
 
@@ -103,7 +103,7 @@ float distanceToSparse(float* vector, map<int, float> sparseVector, float recent
 	float rightSum = recentSquaredNorm;
 
 	if (leftSum + rightSum < 0) {
-		cout << "leftSum = " << leftSum << "; rightSum = " << rightSum << endl;
+		cout << "Error: leftSum = " << leftSum << "; rightSum = " << rightSum << endl;
 	}
 
 	return (leftSum + rightSum);
@@ -207,7 +207,7 @@ float calculateWidthAtTime(int t, int tFinal) {
 }
 
 float* loadInitialNet() {
-	cout << "Loading initial codebook.. ";
+	cout << "Loading initial codebook.. " << endl;
 
 	float* net;
 
@@ -240,7 +240,7 @@ float* loadInitialNet() {
 }
 
 void writeNetToFile(float* net) {
-	cout << "Writing codebook to file.. ";
+	cout << "Writing codebook to file.. " << endl;
 
 	ofstream outFile("trained.cod");
 	if (outFile.is_open()) {
@@ -315,7 +315,7 @@ training_data_t* loadMyTrainingVectorsFromDense(int myRank) {
 
 // Assumes that the file contains lines which give indices to non-zeroes in a binary-valued vector.
 training_data_t* loadMyTrainingVectorsFromSparse(int myRank) {
-	cout << "Loading training vectors (from sparse representation).. ";
+	cout << "Loading training vectors (from sparse representation).. " << endl;
 
 	ifstream trainingFile("color.dat"); // TODO Parameterize
 
@@ -411,7 +411,7 @@ Coordinate findWinner(map<int, float> trainingVector, float* net, float* recentS
 
 // Allreduce and perform the final calculation for equation 5.
 void calculateNewNet(float* net) {
-	cout << "Synchronizing.. ";
+	cout << "Synchronizing.. " << endl;
 
 	int numberOfNodes = g_rows * g_columns;
 	int flatSize = numberOfNodes * g_dim;
@@ -512,7 +512,7 @@ float calculateQuantizationError(training_data_t* trainingVectors, float* net) {
 
 
 void train(int myRank, float* net, training_data_t* myTrainingVectors) {
-	cout << "Training.. ";
+	cout << "Training.. " << endl;
 
 	float width = INITIAL_WIDTH;
 
@@ -573,13 +573,22 @@ void train(int myRank, float* net, training_data_t* myTrainingVectors) {
 		}
 
 		if ((t + 1) % NUMBER_OF_STEPS_BETWEEN_UPDATES == 0) {
+			if (myRank == 0) {
+				time_t rawStartTime;
+				time(&rawStartTime);
+				struct tm* startTimeInfo = localtime(&rawStartTime);
+				cout << "Update starting at " << asctime(startTimeInfo) << endl;
+			}
+
 			calculateNewNet(net);
 
 			// Reset for next "epoch"
 
 			width = calculateWidthAtTime(t, numberOfTimesteps);
 
-			cout << "Updated net; new width = " << width << endl;
+			if (myRank == 0) {
+				cout << "Updated net; new width = " << width << endl;
+			}
 
 			zeroOut(g_myNumerators, flatSize);
 			zeroOut(g_myDenominators, numberOfNodes);
@@ -591,6 +600,13 @@ void train(int myRank, float* net, training_data_t* myTrainingVectors) {
 				float quantizationErrorMid =
 						calculateQuantizationError(myTrainingVectors, net, recentSquaredNorms);
 				cout << "Finished synchronizing, quantization error = " << quantizationErrorMid << endl;
+			}
+
+			if (myRank == 0) {
+				time_t rawFinishTime;
+				time(&rawFinishTime);
+				struct tm* finishTimeInfo = localtime(&rawFinishTime);
+				cout << "Update finishing at " << asctime(finishTimeInfo) << endl;
 			}
 		}
 	}
