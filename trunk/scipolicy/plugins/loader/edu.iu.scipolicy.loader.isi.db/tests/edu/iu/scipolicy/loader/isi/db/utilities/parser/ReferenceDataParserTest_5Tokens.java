@@ -50,7 +50,7 @@ public class ReferenceDataParserTest_5Tokens extends ReferenceDataParserTest {
 	 * Tests for the pattern:
 	 * person, year, source, volume, page number
 	 * (This is most likely the only acceptable pattern.)
-	 * Person parsing is tested in PersonParsingTest.  No need to test it here.
+	 * Person parsing is tested in PersonTest.  No need to test it here.
 	 */
 
 	@Test

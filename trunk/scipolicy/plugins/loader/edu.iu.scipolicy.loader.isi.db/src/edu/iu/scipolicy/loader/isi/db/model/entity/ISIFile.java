@@ -44,8 +44,11 @@ public class ISIFile extends Entity<ISIFile> implements Comparable<ISIFile> {
 	}
 
 	public int compareTo(ISIFile otherISIFile) {
-		// TODO:
-		return -1;
+		if (shouldMerge(otherISIFile)) {
+			return 0;
+		}
+
+		return this.fileName.compareTo(otherISIFile.getFileName());
 	}
 
 	public boolean shouldMerge(ISIFile otherISIFile) {

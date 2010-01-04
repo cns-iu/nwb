@@ -64,7 +64,7 @@ public class ReferenceDataParserTest_2Tokens extends ReferenceDataParserTest {
 	/*
 	 * Tests for the pattern:
 	 * person, source
-	 * Person parsing is tested in PersonParsingTest.  No need to test it here.
+	 * Person parsing is tested in PersonTest.  No need to test it here.
 	 */
 
 	@Test

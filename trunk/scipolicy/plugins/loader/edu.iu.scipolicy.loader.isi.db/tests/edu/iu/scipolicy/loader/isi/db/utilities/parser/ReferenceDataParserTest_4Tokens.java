@@ -116,7 +116,7 @@ public class ReferenceDataParserTest_4Tokens extends ReferenceDataParserTest {
 	/*
 	 * Tests for the pattern:
 	 * person, year, source, volume or page number
-	 * Person parsing is tested in PersonParsingTest.  No need to test it here.
+	 * Person parsing is tested in PersonTest.  No need to test it here.
 	 */
 
 	@Test

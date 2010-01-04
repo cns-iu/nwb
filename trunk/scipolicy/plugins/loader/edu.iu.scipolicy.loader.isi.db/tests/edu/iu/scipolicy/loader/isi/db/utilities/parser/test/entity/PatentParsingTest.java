@@ -7,7 +7,9 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
-public class PatentParsingTest {
+import edu.iu.scipolicy.loader.isi.db.utilities.parser.BaseRowItemParsingTest;
+
+public class PatentParsingTest extends BaseRowItemParsingTest {
 	@Before
 	public void setUp() throws Exception {
 	}
@@ -17,7 +19,27 @@ public class PatentParsingTest {
 	}
 
 	@Test
-	public void test() {
+	public void testInvalid() {
+		fail();
+	}
+
+	@Test
+	public void testZeroPatentsGetParsed() {
+		fail();
+	}
+
+	@Test
+	public void testOnePatentGetsParsed() {
+		fail();
+	}
+
+	@Test
+	public void testMultiplePatentsGetParsed() {
+		fail();
+	}
+
+	@Test
+	public void testMultiplePatentsGetMerged() {
 		fail();
 	}
 }

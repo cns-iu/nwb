@@ -45,7 +45,7 @@ public class Document extends Entity<Document> implements Comparable<Document> {
 	private String documentType;
 	private String documentVolume;
 	private int endingPage;
-	private Person firstAuthor;
+	private Person firstAuthorPerson;
 	private String fundingAgencyAndGrantNumber;
 	private String fundingText;
 	private String isbn;
@@ -73,7 +73,7 @@ public class Document extends Entity<Document> implements Comparable<Document> {
 			String documentType,
 			String documentVolume,
 			int endingPage,
-			Person firstAuthor,
+			Person firstAuthorPerson,
 			String fundingAgencyAndGrantNumber,
 			String fundingText,
 			String isbn,
@@ -101,7 +101,7 @@ public class Document extends Entity<Document> implements Comparable<Document> {
 				documentType,
 				documentVolume,
 				endingPage,
-				firstAuthor,
+				firstAuthorPerson,
 				fundingAgencyAndGrantNumber,
 				fundingText,
 				isbn,
@@ -126,7 +126,7 @@ public class Document extends Entity<Document> implements Comparable<Document> {
 		this.documentType = documentType;
 		this.documentVolume = documentVolume;
 		this.endingPage = endingPage;
-		this.firstAuthor = firstAuthor;
+		this.firstAuthorPerson = firstAuthorPerson;
 		this.fundingAgencyAndGrantNumber = fundingAgencyAndGrantNumber;
 		this.fundingText = fundingText;
 		this.isbn = isbn;
@@ -173,8 +173,8 @@ public class Document extends Entity<Document> implements Comparable<Document> {
 		return this.endingPage;
 	}
 
-	public Person getFirstAuthor() {
-		return this.firstAuthor;
+	public Person getFirstAuthorPerson() {
+		return this.firstAuthorPerson;
 	}
 
 	public String getFundingAgencyAndGrantNumber() {
@@ -245,6 +245,12 @@ public class Document extends Entity<Document> implements Comparable<Document> {
 		return this.documentVolume;
 	}
 
+	public void setFirstAuthorPerson(Person firstAuthorPerson) {
+		this.firstAuthorPerson = firstAuthorPerson;
+
+		getAttributes().put(ISIDatabase.FIRST_AUTHOR, firstAuthorPerson);
+	}
+
 	public int compareTo(Document otherDocument) {
 		// TODO:
 		return -1;
@@ -268,7 +274,7 @@ public class Document extends Entity<Document> implements Comparable<Document> {
 			String documentType,
 			String documentVolume,
 			int endingPage,
-			Person firstAuthor,
+			Person firstAuthorPerson,
 			String fundingAgencyAndGrantNumber,
 			String fundingText,
 			String isbn,
@@ -294,7 +300,12 @@ public class Document extends Entity<Document> implements Comparable<Document> {
 		attributes.put(ISIDatabase.DOCUMENT_TYPE, documentType);
 		attributes.put(ISIDatabase.DOCUMENT_VOLUME, documentVolume);
 		attributes.put(ISIDatabase.ENDING_PAGE, endingPage);
-		attributes.put(ISIDatabase.FIRST_AUTHOR, firstAuthor);
+
+		// Apparently, anonymous papers are allowed...?
+		if (firstAuthorPerson != null) {
+			attributes.put(ISIDatabase.FIRST_AUTHOR, firstAuthorPerson);
+		}
+
 		attributes.put(ISIDatabase.ISBN, isbn);
 		attributes.put(ISIDatabase.ISI_DOCUMENT_DELIVERY_NUMBER, isiDocumentDeliveryNumber);
 		attributes.put(ISIDatabase.ISI_UNIQUE_ARTICLE_IDENTIFIER, isiUniqueArticleIdentifier);

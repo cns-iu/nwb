@@ -1,5 +1,18 @@
 package edu.iu.scipolicy.loader.isi.db.utilities.parser;
 
+/*
+ * TODO: Test for DOI cases.
+ * So far, we have:
+ * 2 tokens:
+ *   doi, source
+ * 3 tokens:
+ *   doi, year, source
+ * 5 tokens:
+ *   doi, year, source, volume, page
+ * 6 tokens:
+ *   author, year, source, volume, page, doi
+ */
+
 import static org.junit.Assert.fail;
 
 import org.cishell.utilities.StringUtilities;

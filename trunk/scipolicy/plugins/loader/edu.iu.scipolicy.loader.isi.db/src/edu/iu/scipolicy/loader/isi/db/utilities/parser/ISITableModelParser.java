@@ -260,8 +260,8 @@ public class ISITableModelParser {
 			String rawAuthorsString =
 				StringUtilities.simpleClean(row.getString(ISITag.AUTHORS.getColumnName()));
 			String[] authorStrings = rawAuthorsString.split("\\|");
-			String rawFullAuthorNamesString =
-				StringUtilities.simpleClean(row.getString(ISITag.AUTHORS_FULL_NAMES.getColumnName()));
+			String rawFullAuthorNamesString = StringUtilities.simpleClean(
+				row.getString(ISITag.AUTHORS_FULL_NAMES.getColumnName()));
 			String[] authorFullNameStrings = rawFullAuthorNamesString.split("\\|");
 
 			for (int ii = 0; ii < authorStrings.length; ii++) {
@@ -301,7 +301,7 @@ public class ISITableModelParser {
 		String fileType =
 			StringUtilities.simpleClean(row.getString(ISITag.FILE_TYPE.getColumnName()));
 		ISIFile isiFile =
-			new ISIFile(this.isiFiles.getKeyGenerator(), formatVersionNumber, fileType, fileName);
+			new ISIFile(this.isiFiles.getKeyGenerator(), formatVersionNumber, fileName, fileType);
 
 		return this.isiFiles.addOrMerge(isiFile);
 	}
