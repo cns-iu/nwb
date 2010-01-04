@@ -47,16 +47,20 @@ public class ISITableReader {
 		this.normalizeAuthorNames = normalizeAuthorNames;
 	}
 
-	public Table readTable(File file) throws IOException, ReadTableException {
-		return readTable(file, false);
+	public Table readTable(String originalFileName, File file) throws IOException, ReadTableException {
+		return readTable(originalFileName, file, false);
 	}
 
-	public Table readTable(File file, boolean shouldFillFileMetadata)
+	public Table readTable(String originalFileName, File file, boolean shouldFillFileMetadata)
 			throws IOException, ReadTableException {
-		return readTable(file, shouldFillFileMetadata, true);
+		return readTable(originalFileName, file, shouldFillFileMetadata, true);
 	}
 	
-	public Table readTable(File file, boolean shouldFillFileMetadata, boolean shouldClean)
+	public Table readTable(
+			String originalFileName,
+			File file,
+			boolean shouldFillFileMetadata,
+			boolean shouldClean)
 			throws IOException, ReadTableException {
 		BufferedReader reader =
 			new BufferedReader(new InputStreamReader(new FileInputStream(file)));
@@ -109,7 +113,7 @@ public class ISITableReader {
 		
 		if (shouldFillFileMetadata) {
 			// Side-effects the table.
-			fillFileMetadata(constructedTable, file.getAbsolutePath());
+			fillFileMetadata(constructedTable, originalFileName);
 		}
 
 		return constructedTable;

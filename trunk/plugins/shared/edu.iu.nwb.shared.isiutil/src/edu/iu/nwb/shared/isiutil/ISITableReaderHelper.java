@@ -20,10 +20,32 @@ public class ISITableReaderHelper {
 			boolean shouldCleanAuthorNameCapitalizations,
 			boolean shouldFillFileMetadata,
 			boolean shouldCleanCitedReferences) throws ReadISIFileException {
+		return readISIFile(
+			isiFile.getAbsolutePath(),
+			isiFile,
+			logger,
+			shouldNormalizeAuthorNames,
+			shouldCleanAuthorNameCapitalizations,
+			shouldFillFileMetadata,
+			shouldCleanCitedReferences);
+	}
+
+	// This is sort of a hack, but meh.
+	public static Table readISIFile(
+			String originalFileName,
+			File isiFile,
+			LogService logger,
+			boolean shouldNormalizeAuthorNames,
+			boolean shouldCleanAuthorNameCapitalizations,
+			boolean shouldFillFileMetadata,
+			boolean shouldCleanCitedReferences) throws ReadISIFileException {
 		try {
     		ISITableReader tableReader = new ISITableReader(logger, shouldNormalizeAuthorNames);
     		Table tableWithDups = tableReader.readTable(
-    			isiFile, shouldCleanAuthorNameCapitalizations, shouldFillFileMetadata);
+    			originalFileName,
+    			isiFile,
+    			shouldCleanAuthorNameCapitalizations,
+    			shouldFillFileMetadata);
 			Table preparedTable =
 				new ISICitationExtractionPreparer(logger).prepareForCitationExtraction(
 					tableWithDups, shouldCleanCitedReferences);
