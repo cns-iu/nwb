@@ -116,11 +116,6 @@ public class ISIDatabase {
 	public static final String TIMES_CITED = "times_cited";
 	public static final String TITLE = "title";
 
-	// Commonly-Found Entity Relationship Table Information
-
-	public static final String PRIMARY_KEY = "pk";
-
-
 	// Relationship Type Information
 
 	public static final String PUBLISHER_ADDRESSES_DISPLAY_NAME = "Publisher Addresses";
