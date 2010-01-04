@@ -9,5 +9,5 @@ print >> outFile, weightdim, 'hexa', columns, rows, 'gaussian',
 for i in range(columns * rows):
     print >> outFile
     for j in range(weightdim):
-        print >> outFile, random.randint(0, 1),
+        print >> outFile, random.randint(0, 1),#random.randrange(0, 255),
 outFile.close()

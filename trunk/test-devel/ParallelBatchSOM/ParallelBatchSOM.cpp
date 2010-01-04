@@ -15,6 +15,9 @@
 #include <math.h>
 #include <iomanip>
 #include <time.h>
+#include <cstdlib>
+#include <ctime>
+
 
 #include "mpi.h"
 
@@ -22,18 +25,19 @@ using namespace std;
 using std::cerr;
 using std::endl;
 
-typedef vector< map<int, float> > training_data_t;
+typedef vector<map<int, float> > training_data_t;
 
-/* TODO Put these numbers together in a way that ensures we always finish training
- * with a net update after a full batch.
- */
-const int NUMBER_OF_TRAINING_STEPS = 500000;
-const int NUMBER_OF_STEPS_BETWEEN_UPDATES = 1000;
 
-const int INITIAL_WIDTH = 250; // TODO Calculate this from xdim and ydim?  Command line argument?
-const int FINAL_WIDTH = 1; // TODO Or what?
+int g_numberOfTrainingSteps;
+int g_numberOfStepsBetweenUpdates;
+int g_initialWidth;
+int g_finalWidth;
+string g_initialCodebookPath;
+string g_trainingDataPath;
+string g_outputCodebookPathStem;
 
-// set by loadInitialNet()
+
+// set by loadInitialCodebook()
 int g_rows = -1;
 int g_columns = -1;
 int g_dim = -1;
@@ -56,6 +60,17 @@ struct Coordinate {
 	Coordinate(int r, int c) { row = r; column = c; }
 };
 
+
+//training_data_t* randomlySampleTrainingVectors(training_data_t* trainingVectors, int resultSize) {
+//	training_data_t* sampled = new training_data_t();
+//
+//	for (int i = 0; i < resultSize; i++) {
+//		int selectedIndex = rand() % trainingVectors->size();
+//		sampled->push_back((*trainingVectors)[selectedIndex]);
+//	}
+//
+//	return sampled;
+//}
 
 
 void zeroOut(float* array, int size) {
@@ -132,6 +147,13 @@ float calculateCosineSimilarity(float* netVector, map<int, float> sparseVector) 
 	return (dotProduct / (sqrt(sparseVectorSquaredNorm) * sqrt(netVectorSquaredNorm)));
 }
 
+/* NOTE: This entire notion breaks down when the cosine similarity may be negative.
+ * This will not happen with the data we're currently considering.
+ */
+float calculateCosineDissimilarity(float* netVector, map<int, float> sparseVector) {
+	return 1 - calculateCosineSimilarity(netVector, sparseVector);
+}
+
 ///* Don't bother sqrting the norms when only comparison to other such numbers is desired.
 // * Could pull out the netVector norm to be calculated only once per epoch.
 // * Could pull out the trainingVector norm to be calculated only once.
@@ -203,15 +225,23 @@ float interpolate(float x, float x0, float x1, float y0, float y1) {
 }
 
 float calculateWidthAtTime(int t, int tFinal) {
-	return interpolate(t, 0, tFinal, INITIAL_WIDTH, FINAL_WIDTH);
+	return interpolate(t, 0, tFinal, g_initialWidth, g_finalWidth);
 }
 
-float* loadInitialNet() {
+// myRank is given only to limit reporting.
+float* loadInitialCodebook(int myRank) {
 	cout << "Loading initial codebook.. " << endl;
+
+	if (myRank == 0) {
+		time_t rawStartTime;
+		time(&rawStartTime);
+		struct tm* startTimeInfo = localtime(&rawStartTime);
+		cout << "Starting initial codebook load at " << asctime(startTimeInfo) << endl;
+	}
 
 	float* net;
 
-	ifstream codebookFile("random.cod"); // TODO Parameterize
+	ifstream codebookFile(g_initialCodebookPath.c_str());
 	if (codebookFile.is_open()) {
 		// Read parameters on first line.
 		string topology; // Ignored for now.
@@ -230,8 +260,18 @@ float* loadInitialNet() {
 				codebookFile >> currentNode[weightIndex];
 			}
 		}
+
+		if (myRank == 0) {
+			time_t rawFinishTime;
+			time(&rawFinishTime);
+			struct tm* finishTimeInfo = localtime(&rawFinishTime);
+			cout << "Finishing initial codebook load at " << asctime(finishTimeInfo) << endl;
+		}
+
+		codebookFile.close();
 	} else {
-		cerr << "Error opening random codebook file!";
+		cerr << "Error opening random codebook file!" << endl;
+		exit(1);
 	}
 
 	cout << "Done." << endl;
@@ -239,10 +279,14 @@ float* loadInitialNet() {
 	return net;
 }
 
-void writeNetToFile(float* net) {
+void writeNetToFile(float* net, string filenameID) {
 	cout << "Writing codebook to file.. " << endl;
 
-	ofstream outFile("trained.cod");
+	string outputCodebookPath(g_outputCodebookPathStem);
+	outputCodebookPath.append(filenameID);
+	outputCodebookPath.append(".cod");
+
+	ofstream outFile(outputCodebookPath.c_str());
 	if (outFile.is_open()) {
 		outFile << g_dim << " " << "hexa" << " " << g_columns << " " << g_rows << " " << "gaussian";
 
@@ -257,18 +301,43 @@ void writeNetToFile(float* net) {
 				outFile << net[nodeIndex + weightIndex] << " ";
 			}
 		}
+
+		outFile.close();
 	} else {
-		cerr << "Error opening output codebook file.";
-		exit (4);
+		cerr << "Error opening output codebook file." << endl;
+		exit(1);
 	}
 
 	cout << "Done." << endl;
 }
 
-training_data_t* loadMyTrainingVectorsFromDense(int myRank) {
-	cout << "Loading training vectors (from dense representation).. ";
+void readConfigurationFile() {
+	cout << "Reading configuration file.." << endl;
 
-	ifstream trainingFile("color.dat"); // TODO Parameterize
+	ifstream configurationFile("paths.cfg");
+
+	if (configurationFile.is_open()) {
+		/* TODO Put these numbers together in a way that ensures we always finish training
+		 * with a net update after a full batch.
+		 */
+		configurationFile >> g_numberOfTrainingSteps;
+		configurationFile >> g_numberOfStepsBetweenUpdates;
+		configurationFile >> g_initialWidth;
+		configurationFile >> g_finalWidth;
+		configurationFile >> g_initialCodebookPath;
+		configurationFile >> g_trainingDataPath;
+		configurationFile >> g_outputCodebookPathStem;
+	}
+
+	configurationFile.close();
+
+	cout << "Done." << endl;
+}
+
+training_data_t* loadMyTrainingVectorsFromDense(int myRank) {
+	cout << "Loading training vectors (from dense representation).. " << endl;
+
+	ifstream trainingFile(g_trainingDataPath.c_str());
 
 	if (trainingFile.is_open()) {
 
@@ -276,7 +345,7 @@ training_data_t* loadMyTrainingVectorsFromDense(int myRank) {
 		trainingFile >> g_numberOfVectors >> dimensions;
 		if (dimensions != g_dim) { // TODO Ugh.
 			cerr << "Dimensionality of the training set (" << dimensions << ") does not agree with the dimensionality of the codebook vectors (" << g_dim << ")." << endl;
-			exit (1);
+			exit(1);
 		}
 
 		training_data_t* trainingVectors = new training_data_t();
@@ -304,12 +373,14 @@ training_data_t* loadMyTrainingVectorsFromDense(int myRank) {
 		}
 		// TODO Sanity check: i == g_rows * g_columns (- 1?)
 
+		trainingFile.close();
+
 		cout << "Done." << endl;
 
 		return trainingVectors;
 	} else {
-		cerr << "Error opening training data file!";
-		exit (1);
+		cerr << "Error opening training data file!" << endl;
+		exit(1);
 	}
 }
 
@@ -317,7 +388,14 @@ training_data_t* loadMyTrainingVectorsFromDense(int myRank) {
 training_data_t* loadMyTrainingVectorsFromSparse(int myRank) {
 	cout << "Loading training vectors (from sparse representation).. " << endl;
 
-	ifstream trainingFile("color.dat"); // TODO Parameterize
+	if (myRank == 0) {
+		time_t rawStartTime;
+		time(&rawStartTime);
+		struct tm* startTimeInfo = localtime(&rawStartTime);
+		cout << "Starting training vectors load at " << asctime(startTimeInfo) << endl;
+	}
+
+	ifstream trainingFile(g_trainingDataPath.c_str());
 
 	if (trainingFile.is_open()) {
 		training_data_t* trainingVectors = new training_data_t();
@@ -351,7 +429,7 @@ training_data_t* loadMyTrainingVectorsFromSparse(int myRank) {
 						trainingVector[zeroBasedIndex] = 1;
 					} else {
 						cerr << "Dimensionality of training vectors exceeds that of the codebook." << endl;
-						exit (1);
+						exit(1);
 					}
 				}
 
@@ -373,16 +451,25 @@ training_data_t* loadMyTrainingVectorsFromSparse(int myRank) {
 //			cout << endl;
 //		}
 
+		trainingFile.close();
+
+		if (myRank == 0) {
+			time_t rawFinishTime;
+			time(&rawFinishTime);
+			struct tm* finishTimeInfo = localtime(&rawFinishTime);
+			cout << "Finishing training vectors load at " << asctime(finishTimeInfo) << endl;
+		}
+
 		cout << "Done." << endl;
 
 		return trainingVectors;
 	} else {
-		cerr << "Error opening training data file!";
-		exit (1);
+		cerr << "Error opening training data file!" << endl;
+		exit(1);
 	}
 }
 
-Coordinate findWinner(map<int, float> trainingVector, float* net, float* recentSquaredNorms) {
+Coordinate findWinnerEuclidean(map<int, float> trainingVector, float* net, float* recentSquaredNorms) {
     /* Long term TODO: In late training (or when convergence can be presumed decent),
 	 * start recording the net (i, j) for the BMU on the previous timestep or two, then
 	 * search only in neighborhoods of that rather than the whole net.
@@ -397,10 +484,36 @@ Coordinate findWinner(map<int, float> trainingVector, float* net, float* recentS
     		float recentSquaredNorm = recentSquaredNorms[(row * g_columns) + column];
 
     		float distance =
-    				distanceToSparse(calculateNodeIndex(net, coord), trainingVector, recentSquaredNorm);
+    				distanceToSparse(
+    						calculateNodeIndex(net, coord), trainingVector, recentSquaredNorm);
 
     		if (distance < shortestDistance) {
 				shortestDistance = distance;
+				winner = coord;
+    		}
+    	}
+    }
+
+    return winner;
+}
+
+Coordinate findWinnerCosine(map<int, float> trainingVector, float* net) {
+    /* Long term TODO: In late training (or when convergence can be presumed decent),
+	 * start recording the net (i, j) for the BMU on the previous timestep or two, then
+	 * search only in neighborhoods of that rather than the whole net.
+	 */
+    float leastDissimilarity = numeric_limits<float>::max();
+    Coordinate winner(0, 0);
+
+    for (int row = 0; row < g_rows; row++) {
+    	for (int column = 0; column < g_columns; column++) {
+    		Coordinate coord(row, column);
+
+    		float dissimilarity =
+    				calculateCosineDissimilarity(calculateNodeIndex(net, coord), trainingVector);
+
+    		if (dissimilarity < leastDissimilarity) {
+				leastDissimilarity = dissimilarity;
 				winner = coord;
     		}
     	}
@@ -468,12 +581,7 @@ void calculateSquaredNorms(float* oldSquaredNorms, float* net) {
  * Could even append qerrors out to a file so that it can be read during the run and,
  * when it starts to level off, we can interrupt it.
  */
-/* TODO Perhaps overload with one that takes squaredNorms so that we can calculate this during
- * training without the extra memory and time hits.
- */
-float calculateQuantizationError(training_data_t* trainingVectors, float* net, float* squaredNorms) {
-	int numberOfNodes = g_rows * g_columns;
-
+float calculateEuclideanQuantizationError(training_data_t* trainingVectors, float* net, float* squaredNorms) {
 	float totalDiscrepancy = 0.0;
 
 	// TODO Consider reading only some of the training vectors.
@@ -482,7 +590,7 @@ float calculateQuantizationError(training_data_t* trainingVectors, float* net, f
 			vecIt++) {
 		map<int, float> trainingVector = *vecIt;
 
-		Coordinate winnerCoordinate = findWinner(trainingVector, net, squaredNorms);
+		Coordinate winnerCoordinate = findWinnerEuclidean(trainingVector, net, squaredNorms);
 
 		float squaredNorm =
 				squaredNorms[(winnerCoordinate.row * g_columns) + winnerCoordinate.column];
@@ -493,28 +601,70 @@ float calculateQuantizationError(training_data_t* trainingVectors, float* net, f
 		totalDiscrepancy += discrepancy;
 	}
 
-	return (totalDiscrepancy / numberOfNodes);
+	return (totalDiscrepancy / (*trainingVectors).size());
 }
 
-float calculateQuantizationError(training_data_t* trainingVectors, float* net) {
+float calculateEuclideanQuantizationError(training_data_t* trainingVectors, float* net) {
 	int numberOfNodes = g_rows * g_columns;
 	float* squaredNorms = new float[numberOfNodes];
 	zeroOut(squaredNorms, numberOfNodes);
 	calculateSquaredNorms(squaredNorms, net);
 
-	float quantizationError = calculateQuantizationError(trainingVectors, net, squaredNorms);
+	float quantizationError = calculateEuclideanQuantizationError(trainingVectors, net, squaredNorms);
 
 	delete [] squaredNorms;
 
 	return quantizationError;
 }
 
+float calculateCosineQuantizationError(training_data_t* trainingVectors, float* net) {
+	float totalDissimilarity = 0.0;
+
+	for (vector<map<int, float> >::const_iterator vecIt = trainingVectors->begin();
+			vecIt != trainingVectors->end();
+			vecIt++) {
+		map<int, float> trainingVector = *vecIt;
+
+		Coordinate winnerCoordinate = findWinnerCosine(trainingVector, net);
+		float* winner = calculateNodeIndex(net, winnerCoordinate);
+
+		float dissimilarity = calculateCosineDissimilarity(winner, trainingVector);
+		if (dissimilarity > 0.4) { // TODO Remove.
+			cout << "diss " << dissimilarity << endl;
+		}
+
+		totalDissimilarity += dissimilarity;
+	}
+
+	cout << "total diss " << totalDissimilarity << endl;
+	cout << "number of training vectors " << (*trainingVectors).size() << endl;
+
+	return (totalDissimilarity / (*trainingVectors).size());
+}
+
+void reportAverageQuantizationError(training_data_t* sampledTrainingVectors, float* net, int myRank) {
+	float quantizationErrorStart =
+				calculateCosineQuantizationError(sampledTrainingVectors, net);
+	//				calculateEuclideanQuantizationError(myTrainingVectors, net, recentSquaredNorms);
+	float* qerrorSend = new float[1];
+	*qerrorSend = quantizationErrorStart;
+
+	float* qerrorReceive = new float[1];
+
+	MPI::COMM_WORLD.Reduce(qerrorSend, qerrorReceive, 1, MPI::FLOAT, MPI::SUM, 0);
+
+	float qerror = (*qerrorReceive) / g_numberOfJobs;
+
+	if (myRank == 0) {
+		cout << "Quantization error = " << qerror << endl;
+	}
+}
 
 
 void train(int myRank, float* net, training_data_t* myTrainingVectors) {
 	cout << "Training.. " << endl;
 
-	float width = INITIAL_WIDTH;
+	float width = g_initialWidth;
 
 	const int numberOfNodes = g_rows * g_columns;
 	const int flatSize = numberOfNodes * g_dim;
@@ -529,30 +679,39 @@ void train(int myRank, float* net, training_data_t* myTrainingVectors) {
 	g_myDenominators2 = new float[numberOfNodes];
 	zeroOut(g_myDenominators2, numberOfNodes);
 
-	float* recentSquaredNorms = new float[numberOfNodes];
-	zeroOut(recentSquaredNorms, numberOfNodes);
-	calculateSquaredNorms(recentSquaredNorms, net);
+//	float* recentSquaredNorms = new float[numberOfNodes];
+//	zeroOut(recentSquaredNorms, numberOfNodes);
+//	calculateSquaredNorms(recentSquaredNorms, net);
 
-	if (myRank == 0) {
-		float quantizationErrorStart =
-				calculateQuantizationError(myTrainingVectors, net, recentSquaredNorms);
-		cout << "At initialization, quantization error = " << quantizationErrorStart << endl;
+	training_data_t::const_iterator sampleStart = myTrainingVectors->begin();
+	int sampleSize = 100;
+	if (sampleSize > myTrainingVectors->size()) {
+		sampleSize = myTrainingVectors->size();
 	}
+	training_data_t::const_iterator sampleEnd = myTrainingVectors->begin() + sampleSize;
+	training_data_t sampledTrainingVectors(sampleStart, sampleEnd);
+
+	reportAverageQuantizationError(&sampledTrainingVectors, net, myRank);
 
 	// TODO Think about tweaking this so that we never need a final synch..
 	int numberOfTimesteps =
-			(int) ((NUMBER_OF_TRAINING_STEPS + g_numberOfJobs - 1) / g_numberOfJobs);
+			(int) ((g_numberOfTrainingSteps + g_numberOfJobs - 1) / g_numberOfJobs);
 
 	int t;
 
 	for (t = 0; t < numberOfTimesteps; t++) {
 		map<int, float> trainingVector = myTrainingVectors->at(t % myTrainingVectors->size());
 
-		Coordinate winner = findWinner(trainingVector, net, recentSquaredNorms);
+		Coordinate winner = findWinnerCosine(trainingVector, net);
+//		Coordinate winner = findWinnerEuclidean(trainingVector, net, recentSquaredNorms);
 
 		// Accumulate for equation 5 (exploit sparseness here, too).
 		/* If we do non-gaussian neighborhoods in the future, be smarter about which nodes to
 		 * update.
+		 *
+		 * TODO: Calculate a gaussian blanket only once per width.  Will need to double the map
+		 * in both dimensions, but we can also easily exploit fourfold (eventually even eightfold)
+		 * symmetry.
 		 *
 		 * Eventually, may want to change this to exploit eight-fold symmetry
 		 * in circles centered on the winner (for Gaussian neighborhoods in
@@ -572,12 +731,19 @@ void train(int myRank, float* net, training_data_t* myTrainingVectors) {
 			}
 		}
 
-		if ((t + 1) % NUMBER_OF_STEPS_BETWEEN_UPDATES == 0) {
+		if ((t + 1) % g_numberOfStepsBetweenUpdates == 0) {
 			if (myRank == 0) {
 				time_t rawStartTime;
 				time(&rawStartTime);
 				struct tm* startTimeInfo = localtime(&rawStartTime);
 				cout << "Update starting at " << asctime(startTimeInfo) << endl;
+			}
+
+			if (myRank == 0) {
+				stringstream filenameIDStream;
+				filenameIDStream << t;
+				string filenameID = filenameIDStream.str();
+				writeNetToFile(net, filenameID);
 			}
 
 			calculateNewNet(net);
@@ -593,14 +759,10 @@ void train(int myRank, float* net, training_data_t* myTrainingVectors) {
 			zeroOut(g_myNumerators, flatSize);
 			zeroOut(g_myDenominators, numberOfNodes);
 
-			zeroOut(recentSquaredNorms, numberOfNodes);
-			calculateSquaredNorms(recentSquaredNorms, net);
+//			zeroOut(recentSquaredNorms, numberOfNodes);
+//			calculateSquaredNorms(recentSquaredNorms, net);
 
-			if (myRank == 0) {
-				float quantizationErrorMid =
-						calculateQuantizationError(myTrainingVectors, net, recentSquaredNorms);
-				cout << "Finished synchronizing, quantization error = " << quantizationErrorMid << endl;
-			}
+			reportAverageQuantizationError(&sampledTrainingVectors, net, myRank);
 
 			if (myRank == 0) {
 				time_t rawFinishTime;
@@ -612,23 +774,21 @@ void train(int myRank, float* net, training_data_t* myTrainingVectors) {
 	}
 
 	// If we had timesteps beyond the final reduce, reduce once more to pick up the stragglers.
-	if ((t + 1) % NUMBER_OF_STEPS_BETWEEN_UPDATES != 1) {
+	if ((t + 1) % g_numberOfStepsBetweenUpdates != 1) {
 		cout << "Warning: Had to perform one last net update." << endl;
 
 		calculateNewNet(net);
 	}
 
-	if (myRank == 0) {
-		float quantizationErrorFinal =
-				calculateQuantizationError(myTrainingVectors, net, recentSquaredNorms);
-		cout << "Finally, quantization error = " << quantizationErrorFinal << endl;
-	}
+	reportAverageQuantizationError(&sampledTrainingVectors, net, myRank);
 
 	cout << "Done." << endl;
 }
 
 
 int main(int argc, char *argv[]) {
+	srand(time(0));
+
 	MPI::Init(argc, argv);
 
 	int myRank = MPI::COMM_WORLD.Get_rank();
@@ -639,15 +799,17 @@ int main(int argc, char *argv[]) {
 
 	/* TODO Parse any command line arguments here */
 
-	float* net = loadInitialNet();
+	readConfigurationFile();
+
+	float* net = loadInitialCodebook(myRank);
 
 	// TODO Manually swapping out these function names is lame.
-	training_data_t* trainingVectors = loadMyTrainingVectorsFromSparse(myRank);
+	training_data_t* trainingVectors = loadMyTrainingVectorsFromDense(myRank); // TODO! Revert
 
 	train(myRank, net, trainingVectors);
 
 	if (myRank == 0) {
-		writeNetToFile(net);
+		writeNetToFile(net, "");
 	}
 
 	MPI::Finalize();
