@@ -15,7 +15,7 @@ public class EdgeStats extends Thread {
 	double[] maxValues;
 	double[] minValues;
 	double[] weightedDensitySum;
-	StringBuffer[] characteristicValues;
+	String[] characteristicValues;
 	
 	boolean isValuedNetwork = false;
 
@@ -80,7 +80,7 @@ public class EdgeStats extends Thread {
 		}
 		
 		if(es.nonNumericAttributes.size() > 0){
-			es.characteristicValues = new StringBuffer[es.nonNumericAttributes.size()];
+			es.characteristicValues = new String[es.nonNumericAttributes.size()];
 		}
 		if(es.numericAttributes.size() > 0){
 			es.isValuedNetwork = true;
@@ -115,10 +115,7 @@ public class EdgeStats extends Thread {
 				}
 			}
 			else{
-				if(this.characteristicValues[i] == null){
-					this.characteristicValues[i] = new StringBuffer();
-					this.characteristicValues[i].append(e.get(columnName).toString());
-				}
+				this.characteristicValues[i] = e.get(columnName).toString();
 			}
 		}
 	}
@@ -285,13 +282,22 @@ public class EdgeStats extends Thread {
 							+ "\t" + densityFormatter.format(this.maxValues[i])
 							+ "\t" + densityFormatter.format(this.meanValues[i]));
 				} else {
-					sb.append(this.characteristicValues[i].toString());
+					sb.append(normalize(this.characteristicValues[i]));
 				}
 				
 				sb.append(System.getProperty("line.separator"));				
 			}
 			
 			return sb.toString();
+		}
+
+		private String normalize(String value) {
+			if(value == null) {
+				return "N/A";
+			}
+			else {
+				return value;
+			}
 		}
 
 }
