@@ -109,11 +109,6 @@ float distanceToSparse(float* vector, map<int, float> sparseVector, float recent
 	return (leftSum + rightSum);
 }
 
-/* TODO: Test this.
- * TODO: Also implement cheap cosine similarity.
- * Will ignore sqrting the norms when only comparison to other such numbers is desired.
- * Could even pull out the trainingVector norm to be calculated only once per epoch.
- */
 float calculateCosineSimilarity(float* netVector, map<int, float> sparseVector) {
 	float dotProduct = 0.0;
 	float sparseVectorSquaredNorm = 0.0;
@@ -134,9 +129,36 @@ float calculateCosineSimilarity(float* netVector, map<int, float> sparseVector) 
 		netVectorSquaredNorm += coordinate * coordinate;
 	}
 
-
 	return (dotProduct / (sqrt(sparseVectorSquaredNorm) * sqrt(netVectorSquaredNorm)));
 }
+
+///* Don't bother sqrting the norms when only comparison to other such numbers is desired.
+// * Could pull out the netVector norm to be calculated only once per epoch.
+// * Could pull out the trainingVector norm to be calculated only once.
+// */
+//float cheapCosineSimilarity(float* netVector, map<int, float> sparseVector) {
+//	float dotProduct = 0.0;
+//	float sparseVectorSquaredNorm = 0.0;
+//
+//	for (map<int, float>::const_iterator it = sparseVector.begin(); it != sparseVector.end(); it++) {
+//		int sparseIndex = it->first;
+//		float sparseValue = it->second;
+//
+//		dotProduct += sparseValue * netVector[sparseIndex];
+//		sparseVectorSquaredNorm += sparseValue * sparseValue;
+//	}
+//
+//
+//	float netVectorSquaredNorm = 0.0;
+//
+//	for (int weightIndex = 0; weightIndex < g_dim; weightIndex++) {
+//		float coordinate = netVector[weightIndex];
+//		netVectorSquaredNorm += coordinate * coordinate;
+//	}
+//
+//
+//	return (dotProduct / (sparseVectorSquaredNorm * netVectorSquaredNorm));
+//}
 
 // From SOM_PAK
 float hexa_dist(int bx, int by, int tx, int ty){
