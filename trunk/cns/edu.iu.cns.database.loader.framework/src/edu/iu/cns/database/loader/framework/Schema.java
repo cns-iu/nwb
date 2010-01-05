@@ -6,9 +6,12 @@ import java.util.List;
 import org.cishell.utilities.NumberUtilities;
 
 public class Schema <T extends RowItem<T>> {
+	public static final String PRIMARY_KEY = "pk";
+
+	public static final Class<?> PRIMARY_KEY_CLASS = PrimaryKeyType.class;
+	public static final Class<?> FOREIGN_KEY_CLASS = ForeignKeyType.class;
 	public static final Class<?> TEXT_CLASS = String.class;
 	public static final Class<?> INTEGER_CLASS = Integer.class;
-	public static final Class<?> FOREIGN_KEY_CLASS = Integer.class;
 
 	private List<Field> fields;
 	private List<ForeignKey> foreignKeys = new ArrayList<ForeignKey>();
@@ -104,14 +107,23 @@ public class Schema <T extends RowItem<T>> {
 	}
 
 	public static class ForeignKey {
+		private String fieldName;
 		private String referenceTo_TableName;
 
 		public ForeignKey(String fieldName, String referenceTo_TableName) {
 			this.referenceTo_TableName = referenceTo_TableName;
 		}
 
+		public String getFieldName() {
+			return this.fieldName;
+		}
+
 		public String getReferenceTo_TableName() {
 			return this.referenceTo_TableName;
 		}
 	}
+
+	private static class PrimaryKeyType {}
+
+	private static class ForeignKeyType {}
 }

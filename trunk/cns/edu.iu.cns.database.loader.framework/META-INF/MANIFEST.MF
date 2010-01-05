@@ -8,4 +8,5 @@ Export-Package: edu.iu.cns.database.loader.framework,
  edu.iu.cns.database.loader.framework.utilities
 Import-Package: edu.iu.cns.shared.utilities,
  edu.iu.nwb.shared.isiutil.database,
+ org.cishell.service.database,
  org.cishell.utilities

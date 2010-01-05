@@ -3,8 +3,6 @@ package edu.iu.cns.database.loader.framework;
 import java.util.Dictionary;
 
 public abstract class RowItem<T extends RowItem<?>> {
-	public static final int BASE_HASH_MULTIPLIER = 31;
-
 	private Dictionary<String, Comparable<?>> attributes;
 
 	public RowItem(Dictionary<String, Comparable<?>> attributes) {
@@ -21,8 +19,4 @@ public abstract class RowItem<T extends RowItem<?>> {
 	 * merge assumes that shouldMerge(otherAddress) would return true.
 	 */
 	public abstract void merge(T otherItem);
-
-	public Dictionary<String, Comparable<?>> getAttributesForQuery() {
-		return this.attributes;
-	}
 }

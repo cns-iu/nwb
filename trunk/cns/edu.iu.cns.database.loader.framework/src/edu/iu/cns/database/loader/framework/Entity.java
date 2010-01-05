@@ -3,7 +3,6 @@ package edu.iu.cns.database.loader.framework;
 import java.util.Dictionary;
 
 import edu.iu.cns.database.loader.framework.utilities.DatabaseTableKeyGenerator;
-import edu.iu.nwb.shared.isiutil.database.ISIDatabase;
 
 
 public abstract class Entity<T extends Entity<?>> extends RowItem<T> {
@@ -14,7 +13,7 @@ public abstract class Entity<T extends Entity<?>> extends RowItem<T> {
 		super(attributes);
 		this.primaryKey = keyGenerator.getNextKey();
 
-		getAttributes().put(ISIDatabase.PRIMARY_KEY, this.primaryKey);
+		getAttributes().put(Schema.PRIMARY_KEY, this.primaryKey);
 
 		/*
 		 * We DON'T want to add the primary key to attributes here because it causes any
