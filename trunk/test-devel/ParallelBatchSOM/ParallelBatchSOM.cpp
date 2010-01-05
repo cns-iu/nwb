@@ -255,8 +255,18 @@ float* loadInitialCodebook(int myRank) {
 		for (int i = 0; i < numberOfNodes; i++) {
 			float* currentNode = net + i * g_dim;
 
+			bool allZero = true;
 			for (int weightIndex = 0; weightIndex < g_dim; weightIndex++) {
 				codebookFile >> currentNode[weightIndex];
+
+				if (currentNode[weightIndex] != 0) {
+					allZero = false;
+				}
+			}
+
+			if (allZero) {
+				cerr << "ERROR: Codebook contained an all-zero vector.  Quitting now." << endl;
+				exit(1);
 			}
 		}
 
@@ -278,7 +288,7 @@ float* loadInitialCodebook(int myRank) {
 	return net;
 }
 
-void writeNetToFile(float* net, string filenameID) {
+void writeCodebookToFile(float* net, string filenameID) {
 	cout << "Writing codebook to file.. " << endl;
 
 	string outputCodebookPath(g_outputCodebookPathStem);
@@ -545,7 +555,7 @@ Coordinate findWinnerCosine(map<int, float> trainingVector, float* net) {
 }
 
 // Allreduce and perform the final calculation for equation 5.
-void calculateNewNet(float* net) {
+void calculateNewCodebook(float* net) {
 	cout << "Synchronizing.. " << endl;
 
 	int numberOfNodes = g_rows * g_columns;
@@ -556,8 +566,18 @@ void calculateNewNet(float* net) {
 
 	// TODO Investigate MPI error handling in C++.
 	// TODO Think about being trickier with in-place swaps.
-    MPI::COMM_WORLD.Allreduce(g_myNumerators, g_myNumerators2, flatSize, MPI::FLOAT, MPI::SUM);
-    MPI::COMM_WORLD.Allreduce(g_myDenominators, g_myDenominators2, numberOfNodes, MPI::FLOAT, MPI::SUM);
+	try {
+		MPI::COMM_WORLD.Allreduce(g_myNumerators, g_myNumerators2, flatSize, MPI::FLOAT, MPI::SUM);
+	} catch (MPI::Exception e) {
+		cerr << "MPI error reducing numerators: " << e.Get_error_string() << endl;
+		MPI::COMM_WORLD.Abort(1);
+	}
+	try {
+		MPI::COMM_WORLD.Allreduce(g_myDenominators, g_myDenominators2, numberOfNodes, MPI::FLOAT, MPI::SUM);
+	} catch (MPI::Exception e) {
+		cerr << "MPI error reducing denominators: " << e.Get_error_string() << endl;
+		MPI::COMM_WORLD.Abort(1);
+	}
 
     g_myNumerators = g_myNumerators2;
     g_myNumerators2 = numTemp;
@@ -579,6 +599,11 @@ void calculateNewNet(float* net) {
 			 */
 		}
 	}
+
+    /* TODO Loop over the codebook here and ensure there are no non-zero vectors?
+     * The chance is essentially zero.. but with the cosine similarity metric it
+     * would be fatal.
+     */
 
     cout << "Done." << endl;
 }
@@ -667,7 +692,12 @@ void reportAverageQuantizationError(training_data_t* sampledTrainingVectors, flo
 
 	float* qerrorTotal = new float[1];
 
-	MPI::COMM_WORLD.Reduce(qerrorLocal, qerrorTotal, 1, MPI::FLOAT, MPI::SUM, 0);
+	try {
+		MPI::COMM_WORLD.Reduce(qerrorLocal, qerrorTotal, 1, MPI::FLOAT, MPI::SUM, 0);
+	} catch (MPI::Exception e) {
+		cerr << "MPI error reducing quantization errors: " << e.Get_error_string() << endl;
+		MPI::COMM_WORLD.Abort(1);
+	}
 
 	float qerror = (*qerrorTotal) / g_numberOfJobs;
 
@@ -702,7 +732,7 @@ void train(int myRank, float* net, training_data_t* myTrainingVectors) {
 //	calculateSquaredNorms(recentSquaredNorms, net);
 
 	training_data_t::const_iterator sampleStart = myTrainingVectors->begin();
-	int sampleSize = 100;
+	int sampleSize = numberOfNodes; // TODO Just a thought for now.  Can we do better?
 	if (sampleSize > myTrainingVectors->size()) {
 		sampleSize = myTrainingVectors->size();
 	}
@@ -768,13 +798,13 @@ void train(int myRank, float* net, training_data_t* myTrainingVectors) {
 				cout << "Update starting at " << asctime(startTimeInfo) << endl;
 			}
 
-			calculateNewNet(net);
+			calculateNewCodebook(net);
 
 			if (myRank == 0) {
 				stringstream filenameIDStream;
 				filenameIDStream << t;
 				string filenameID = filenameIDStream.str();
-				writeNetToFile(net, filenameID);
+				writeCodebookToFile(net, filenameID);
 			}
 
 			// Reset for next "epoch"
@@ -810,7 +840,7 @@ void train(int myRank, float* net, training_data_t* myTrainingVectors) {
 	if ((t + 1) % g_epochLengthInTimesteps != 1) {
 		cout << "Warning: Had to perform one last net update." << endl;
 
-		calculateNewNet(net);
+		calculateNewCodebook(net);
 
 		reportAverageQuantizationError(&sampledTrainingVectors, net, myRank);
 	}
@@ -823,6 +853,7 @@ int main(int argc, char *argv[]) {
 	srand(time(0));
 
 	MPI::Init(argc, argv);
+	MPI::COMM_WORLD.Set_errhandler(MPI::ERRORS_THROW_EXCEPTIONS);
 
 	int myRank = MPI::COMM_WORLD.Get_rank();
 
@@ -842,7 +873,7 @@ int main(int argc, char *argv[]) {
 	train(myRank, net, trainingVectors);
 
 	if (myRank == 0) {
-		writeNetToFile(net, "");
+		writeCodebookToFile(net, "");
 	}
 
 	MPI::Finalize();
