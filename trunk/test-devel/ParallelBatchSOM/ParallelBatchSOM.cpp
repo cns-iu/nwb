@@ -136,7 +136,6 @@ float calculateCosineSimilarity(float* netVector, map<int, float> sparseVector) 
 		sparseVectorSquaredNorm += sparseValue * sparseValue;
 	}
 
-
 	float netVectorSquaredNorm = 0.0;
 
 	for (int weightIndex = 0; weightIndex < g_dim; weightIndex++) {
@@ -350,6 +349,7 @@ training_data_t* loadMyTrainingVectorsFromDense(int myRank) {
 
 		training_data_t* trainingVectors = new training_data_t();
 
+		int skippedVectorCount = 0;
 		int vectorLineNumber = 0;
 		while (!trainingFile.eof()) {
 
@@ -366,7 +366,11 @@ training_data_t* loadMyTrainingVectorsFromDense(int myRank) {
 					}
 				}
 
-				trainingVectors->push_back(trainingVector);
+				if (trainingVector.empty()) {
+					skippedVectorCount++;
+				} else {
+					trainingVectors->push_back(trainingVector);
+				}
 			}
 
 			vectorLineNumber++;
@@ -374,6 +378,15 @@ training_data_t* loadMyTrainingVectorsFromDense(int myRank) {
 		// TODO Sanity check: i == g_rows * g_columns (- 1?)
 
 		trainingFile.close();
+
+		if (skippedVectorCount > 0) {
+			if (myRank == 0) {
+				cerr << "WARNING: Skipped " << skippedVectorCount
+					<< " training vectors with no non-zero coordinates.  "
+					<< "If you are not using the cosine similarity metric than remove this check/skip!"
+					<< endl;
+			}
+		}
 
 		cout << "Done." << endl;
 
@@ -400,6 +413,7 @@ training_data_t* loadMyTrainingVectorsFromSparse(int myRank) {
 	if (trainingFile.is_open()) {
 		training_data_t* trainingVectors = new training_data_t();
 
+		int skippedVectorCount = 0;
 		int lineNumber = 0;
 		string line;
 		while (getline(trainingFile, line)) {
@@ -416,11 +430,6 @@ training_data_t* loadMyTrainingVectorsFromSparse(int myRank) {
 				 */
 				map<int, float> trainingVector;
 
-				/* ===============================================================================================
-				 * TODO Halt all further testing until all questions of one-vs-zero based indexing
-				 * and whether a documentID is given are resolved!!
-				 * ===============================================================================================
-				 */
 				int oneBasedIndex;
 				while (linestream >> oneBasedIndex) {
 					int zeroBasedIndex = oneBasedIndex - 1;
@@ -433,7 +442,11 @@ training_data_t* loadMyTrainingVectorsFromSparse(int myRank) {
 					}
 				}
 
-				trainingVectors->push_back(trainingVector);
+				if (trainingVector.empty()) {
+					skippedVectorCount++;
+				} else {
+					trainingVectors->push_back(trainingVector);
+				}
 			}
 
 			lineNumber++;
@@ -458,6 +471,15 @@ training_data_t* loadMyTrainingVectorsFromSparse(int myRank) {
 			time(&rawFinishTime);
 			struct tm* finishTimeInfo = localtime(&rawFinishTime);
 			cout << "Finishing training vectors load at " << asctime(finishTimeInfo) << endl;
+		}
+
+		if (skippedVectorCount > 0) {
+			if (myRank == 0) {
+				cerr << "WARNING: Skipped " << skippedVectorCount
+					<< " training vectors with no non-zero coordinates.  "
+					<< "If you are not using the cosine similarity metric than remove this check/skip!"
+					<< endl;
+			}
 		}
 
 		cout << "Done." << endl;
@@ -629,15 +651,9 @@ float calculateCosineQuantizationError(training_data_t* trainingVectors, float* 
 		float* winner = calculateNodeIndex(net, winnerCoordinate);
 
 		float dissimilarity = calculateCosineDissimilarity(winner, trainingVector);
-		if (dissimilarity > 0.4) { // TODO Remove.
-			cout << "diss " << dissimilarity << endl;
-		}
 
 		totalDissimilarity += dissimilarity;
 	}
-
-	cout << "total diss " << totalDissimilarity << endl;
-	cout << "number of training vectors " << (*trainingVectors).size() << endl;
 
 	return (totalDissimilarity / (*trainingVectors).size());
 }
@@ -646,14 +662,14 @@ void reportAverageQuantizationError(training_data_t* sampledTrainingVectors, flo
 	float quantizationErrorStart =
 				calculateCosineQuantizationError(sampledTrainingVectors, net);
 	//				calculateEuclideanQuantizationError(myTrainingVectors, net, recentSquaredNorms);
-	float* qerrorSend = new float[1];
-	*qerrorSend = quantizationErrorStart;
+	float* qerrorLocal = new float[1];
+	*qerrorLocal = quantizationErrorStart;
 
-	float* qerrorReceive = new float[1];
+	float* qerrorTotal = new float[1];
 
-	MPI::COMM_WORLD.Reduce(qerrorSend, qerrorReceive, 1, MPI::FLOAT, MPI::SUM, 0);
+	MPI::COMM_WORLD.Reduce(qerrorLocal, qerrorTotal, 1, MPI::FLOAT, MPI::SUM, 0);
 
-	float qerror = (*qerrorReceive) / g_numberOfJobs;
+	float qerror = (*qerrorTotal) / g_numberOfJobs;
 
 	if (myRank == 0) {
 		cout << "Quantization error = " << qerror << endl;
@@ -739,14 +755,14 @@ void train(int myRank, float* net, training_data_t* myTrainingVectors) {
 				cout << "Update starting at " << asctime(startTimeInfo) << endl;
 			}
 
+			calculateNewNet(net);
+
 			if (myRank == 0) {
 				stringstream filenameIDStream;
 				filenameIDStream << t;
 				string filenameID = filenameIDStream.str();
 				writeNetToFile(net, filenameID);
 			}
-
-			calculateNewNet(net);
 
 			// Reset for next "epoch"
 
@@ -773,6 +789,7 @@ void train(int myRank, float* net, training_data_t* myTrainingVectors) {
 		}
 	}
 
+	// TODO Maybe this is just a bad idea altogether.
 	// If we had timesteps beyond the final reduce, reduce once more to pick up the stragglers.
 	if ((t + 1) % g_numberOfStepsBetweenUpdates != 1) {
 		cout << "Warning: Had to perform one last net update." << endl;
@@ -804,7 +821,7 @@ int main(int argc, char *argv[]) {
 	float* net = loadInitialCodebook(myRank);
 
 	// TODO Manually swapping out these function names is lame.
-	training_data_t* trainingVectors = loadMyTrainingVectorsFromDense(myRank); // TODO! Revert
+	training_data_t* trainingVectors = loadMyTrainingVectorsFromSparse(myRank);
 
 	train(myRank, net, trainingVectors);
 

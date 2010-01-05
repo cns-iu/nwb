@@ -1,8 +1,8 @@
 import random
 
-numberOfVectors = 2000000
-dimension = 2300
-denseness = 10.0 / float(dimension)
+numberOfVectors = 1000#2000000
+dimension = 3#2300
+denseness = 0.5#10.0 / float(dimension)
 
 outFile = open('training.dat', 'w')
 print >> outFile, numberOfVectors, dimension,

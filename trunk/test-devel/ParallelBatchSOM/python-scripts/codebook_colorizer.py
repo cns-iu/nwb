@@ -13,7 +13,7 @@ def main():
         r, g, b = line.split()
         i, j = (int(lineIndex / int(columns)), lineIndex % int(columns))
 
-        nodes += [(i, j, float(r)/255, float(g)/255, float(b)/255)]
+        nodes += [(i, j, float(r), float(g), float(b))]
         
         lineIndex += 1
     codebookFile.close()

@@ -1,8 +1,8 @@
 import random
 
-columns = 252
-rows = 300
-weightdim = 2300
+columns = 14#252
+rows = 8#300
+weightdim = 3#2300
 
 outFile = open('random.cod', 'w')
 print >> outFile, weightdim, 'hexa', columns, rows, 'gaussian',
