@@ -15,6 +15,7 @@ public class Schema <T extends RowItem<T>> {
 	public static final Class<?> INTEGER_CLASS = Integer.class;
 	public static final Class<?> DATE_CLASS = Date.class;
 	public static final Class<?> DOUBLE_CLASS = Double.class;
+	public static final Class<?> BOOLEAN_CLASS = Boolean.class;
 
 	private List<Field> fields;
 	private List<ForeignKey> foreignKeys = new ArrayList<ForeignKey>();
