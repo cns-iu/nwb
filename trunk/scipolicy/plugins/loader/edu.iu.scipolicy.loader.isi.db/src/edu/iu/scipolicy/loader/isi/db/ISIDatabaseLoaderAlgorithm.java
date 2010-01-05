@@ -1,27 +1,26 @@
 package edu.iu.scipolicy.loader.isi.db;
 
 import java.io.File;
+import java.sql.SQLException;
 import java.util.Collection;
 import java.util.Dictionary;
 
 import org.cishell.framework.CIShellContext;
 import org.cishell.framework.algorithm.Algorithm;
 import org.cishell.framework.algorithm.AlgorithmExecutionException;
-import org.cishell.framework.data.BasicData;
 import org.cishell.framework.data.Data;
-import org.cishell.framework.data.DataProperty;
 import org.cishell.service.database.Database;
+import org.cishell.service.database.DatabaseCreationException;
 import org.cishell.service.database.DatabaseService;
 import org.osgi.service.log.LogService;
 
 import prefuse.data.Table;
+import edu.iu.cns.database.loader.framework.utilities.DerbyDatabaseCreator;
+import edu.iu.cns.database.loader.framework.utilities.DatabaseModel;
 import edu.iu.nwb.shared.isiutil.ISITableReaderHelper;
 import edu.iu.nwb.shared.isiutil.exception.ISILoadingException;
 import edu.iu.nwb.shared.isiutil.exception.ReadISIFileException;
-import edu.iu.scipolicy.loader.isi.db.model.ISIModel;
-import edu.iu.scipolicy.loader.isi.db.utilities.ISIDatabaseCreator;
 import edu.iu.scipolicy.loader.isi.db.utilities.ISITablePreprocessor;
-import edu.iu.scipolicy.loader.isi.db.utilities.exception.ModelCreationException;
 import edu.iu.scipolicy.loader.isi.db.utilities.parser.ISITableModelParser;
 
 public class ISIDatabaseLoaderAlgorithm implements Algorithm {
@@ -95,12 +94,14 @@ public class ISIDatabaseLoaderAlgorithm implements Algorithm {
     	try {
 	    	// Create an in-memory ISI model based off of the table.
 
-    		ISIModel model = new ISITableModelParser().parseModel(table, rows);
+    		DatabaseModel model = new ISITableModelParser().parseModel(table, rows);
 
 	    	// Use the ISI model to create an ISI database.
 
-	    	return ISIDatabaseCreator.createFromModel(this.databaseProvider, model);
-    	} catch (ModelCreationException e) {
+	    	return DerbyDatabaseCreator.createFromModel(this.databaseProvider, model, "ISI");
+    	} catch (DatabaseCreationException e) {
+    		throw new ISILoadingException(e.getMessage(), e);
+    	} catch (SQLException e) {
     		throw new ISILoadingException(e.getMessage(), e);
     	}
     }
@@ -109,14 +110,14 @@ public class ISIDatabaseLoaderAlgorithm implements Algorithm {
     	return null;
     }
     
-    private Data[] wrapAsOutputData(Object outputObject, Data parentData) {
+    /*private Data[] wrapAsOutputData(Object outputObject, Data parentData) {
     	Data outData = new BasicData(outputObject, outputObject.getClass().getName());
     	Dictionary metadata = outData.getMetadata();
     	metadata.put(DataProperty.PARENT, parentData);
     	metadata.put(DataProperty.TYPE, DataProperty.TABLE_TYPE);
 
     	return new Data[] { outData };
-    }
+    }*/
 
     /*public static final String BASE_PATH =
     	"C:\\Documents and Settings\\pataphil\\Desktop\\ISI_CSV";

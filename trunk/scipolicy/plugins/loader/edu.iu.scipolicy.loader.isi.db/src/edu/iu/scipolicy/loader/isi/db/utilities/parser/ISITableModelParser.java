@@ -9,11 +9,11 @@ import org.cishell.utilities.StringUtilities;
 import prefuse.data.Table;
 import prefuse.data.Tuple;
 import edu.iu.cns.database.loader.framework.RowItemContainer;
+import edu.iu.cns.database.loader.framework.utilities.DatabaseModel;
 import edu.iu.cns.shared.utilities.Pair;
 import edu.iu.nwb.shared.isiutil.ISITableReader;
 import edu.iu.nwb.shared.isiutil.ISITag;
 import edu.iu.nwb.shared.isiutil.database.ISIDatabase;
-import edu.iu.scipolicy.loader.isi.db.model.ISIModel;
 import edu.iu.scipolicy.loader.isi.db.model.entity.Address;
 import edu.iu.scipolicy.loader.isi.db.model.entity.Document;
 import edu.iu.scipolicy.loader.isi.db.model.entity.ISIFile;
@@ -139,8 +139,8 @@ public class ISITableModelParser {
 	 * This is an instance method instead of a static method so all of the tables can be instance
 	 *  variables and thus don't clutter up this method.
 	 */
-	// TODO: Rename this method. Also get rid of ISIModel.
-	public ISIModel parseModel(Table table, Collection<Integer> rows) {
+	// TODO: Rename this method. Also get rid of DatabaseModel.
+	public DatabaseModel parseModel(Table table, Collection<Integer> rows) {
 		/*
 		 * TODO: Edit template comments to describe process from start to finish, read
 		 *  independently of code.
@@ -228,9 +228,9 @@ public class ISITableModelParser {
 			//TODO: Look into what's up with editors.
 		}
 
-		// Given all of the master lists of row items, construct an ISIModel and return it.
+		// Given all of the master lists of row items, construct an DatabaseModel and return it.
 
-		return new ISIModel(
+		return new DatabaseModel(
 			// Entities
 			this.addresses,
 			this.documents,

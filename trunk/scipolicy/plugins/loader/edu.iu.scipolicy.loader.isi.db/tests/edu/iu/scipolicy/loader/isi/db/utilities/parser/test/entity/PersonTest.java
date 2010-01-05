@@ -8,8 +8,8 @@ import java.util.List;
 import org.junit.Test;
 
 import edu.iu.cns.database.loader.framework.RowItemContainer;
+import edu.iu.cns.database.loader.framework.utilities.DatabaseModel;
 import edu.iu.nwb.shared.isiutil.database.ISIDatabase;
-import edu.iu.scipolicy.loader.isi.db.model.ISIModel;
 import edu.iu.scipolicy.loader.isi.db.model.entity.Person;
 import edu.iu.scipolicy.loader.isi.db.utilities.parser.BaseRowItemParsingTest;
 
@@ -27,7 +27,7 @@ public class PersonTest extends BaseRowItemParsingTest {
 
 	@Test
 	public void testZeroAuthorsGetParsed() throws Exception {
-		ISIModel model = parseTestData(ZERO_PEOPLE_TEST_DATA_PATH);
+		DatabaseModel model = parseTestData(ZERO_PEOPLE_TEST_DATA_PATH);
 		RowItemContainer<Person> people = model.getRowItemListOfTypeByDatabaseTableName(
 			ISIDatabase.ISI_FILE_TABLE_NAME);
 
@@ -44,7 +44,7 @@ public class PersonTest extends BaseRowItemParsingTest {
 
 	@Test
 	public void testOneAuthorGetsParsed() throws Exception {
-		ISIModel model = parseTestData(ONE_AUTHOR_TEST_DATA_PATH);
+		DatabaseModel model = parseTestData(ONE_AUTHOR_TEST_DATA_PATH);
 		RowItemContainer<Person> people = model.getRowItemListOfTypeByDatabaseTableName(
 			ISIDatabase.PERSON_TABLE_NAME);
 
@@ -64,7 +64,7 @@ public class PersonTest extends BaseRowItemParsingTest {
 
 	@Test
 	public void testMultipleAuthorsGetParsed() throws Exception {
-		ISIModel model = parseTestData(MULTIPLE_AUTHORS_TEST_DATA_PATH);
+		DatabaseModel model = parseTestData(MULTIPLE_AUTHORS_TEST_DATA_PATH);
 		RowItemContainer<Person> people = model.getRowItemListOfTypeByDatabaseTableName(
 			ISIDatabase.PERSON_TABLE_NAME);
 
@@ -87,7 +87,7 @@ public class PersonTest extends BaseRowItemParsingTest {
 
 	@Test
 	public void testOneAuthorGetsParsedFromOneReference() throws Exception {
-		ISIModel model = parseTestData(ONE_REFERENCE_AUTHOR_TEST_DATA_PATH);
+		DatabaseModel model = parseTestData(ONE_REFERENCE_AUTHOR_TEST_DATA_PATH);
 		RowItemContainer<Person> people = model.getRowItemListOfTypeByDatabaseTableName(
 			ISIDatabase.PERSON_TABLE_NAME);
 
@@ -107,7 +107,7 @@ public class PersonTest extends BaseRowItemParsingTest {
 
 	@Test
 	public void testMultipleAuthorsGetParsedFromOneReference() throws Exception {
-		ISIModel model = parseTestData(MULTIPLE_REFERENCE_AUTHORS_TEST_DATA_PATH);
+		DatabaseModel model = parseTestData(MULTIPLE_REFERENCE_AUTHORS_TEST_DATA_PATH);
 		RowItemContainer<Person> people = model.getRowItemListOfTypeByDatabaseTableName(
 			ISIDatabase.PERSON_TABLE_NAME);
 
@@ -130,7 +130,7 @@ public class PersonTest extends BaseRowItemParsingTest {
 
 	@Test
 	public void testAuthorsDoNotGetMerged() throws Exception {
-		ISIModel model = parseTestData(MULTIPLE_AUTHORS_WITH_THE_SAME_NAMES_TEST_DATA_PATH);
+		DatabaseModel model = parseTestData(MULTIPLE_AUTHORS_WITH_THE_SAME_NAMES_TEST_DATA_PATH);
 		RowItemContainer<Person> people = model.getRowItemListOfTypeByDatabaseTableName(
 			ISIDatabase.PERSON_TABLE_NAME);
 

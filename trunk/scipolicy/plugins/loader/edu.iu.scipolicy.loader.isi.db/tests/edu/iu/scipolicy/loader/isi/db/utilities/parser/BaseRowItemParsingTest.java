@@ -15,10 +15,10 @@ import org.cishell.utilities.StringUtilities;
 import org.osgi.service.log.LogService;
 
 import prefuse.data.Table;
+import edu.iu.cns.database.loader.framework.utilities.DatabaseModel;
 import edu.iu.cns.shared.utilities.Pair;
 import edu.iu.nwb.shared.isiutil.ISITableReaderHelper;
 import edu.iu.nwb.shared.isiutil.exception.ReadISIFileException;
-import edu.iu.scipolicy.loader.isi.db.model.ISIModel;
 import edu.iu.scipolicy.loader.isi.db.model.entity.Person;
 import edu.iu.scipolicy.loader.isi.db.utilities.ISITablePreprocessor;
 import edu.iu.scipolicy.testutilities.TestUtilities;
@@ -34,7 +34,7 @@ public class BaseRowItemParsingTest {
 
 	public static final String BASE_TEST_DATA_PATH = "/edu/iu/scipolicy/loader/isi/db/testdata/";
 
-	protected ISIModel parseTestData(String testDataPath) throws Exception {
+	protected DatabaseModel parseTestData(String testDataPath) throws Exception {
 		Pair<Table, Collection<Integer>> testData = prepareTestData(testDataPath);
 
 		return new ISITableModelParser().parseModel(

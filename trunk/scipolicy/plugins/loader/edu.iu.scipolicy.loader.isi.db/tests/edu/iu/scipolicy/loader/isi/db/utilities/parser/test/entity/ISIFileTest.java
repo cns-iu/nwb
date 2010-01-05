@@ -6,8 +6,8 @@ import static org.junit.Assert.fail;
 import org.junit.Test;
 
 import edu.iu.cns.database.loader.framework.RowItemContainer;
+import edu.iu.cns.database.loader.framework.utilities.DatabaseModel;
 import edu.iu.nwb.shared.isiutil.database.ISIDatabase;
-import edu.iu.scipolicy.loader.isi.db.model.ISIModel;
 import edu.iu.scipolicy.loader.isi.db.model.entity.ISIFile;
 import edu.iu.scipolicy.loader.isi.db.utilities.parser.BaseRowItemParsingTest;
 
@@ -23,7 +23,7 @@ public class ISIFileTest extends BaseRowItemParsingTest {
 
 	@Test
 	public void testZeroISIFilesGetParsed() throws Exception {
-		ISIModel model = parseTestData(ZERO_ISI_FILES_TEST_DATA_PATH);
+		DatabaseModel model = parseTestData(ZERO_ISI_FILES_TEST_DATA_PATH);
 		RowItemContainer<ISIFile> isiFiles = model.getRowItemListOfTypeByDatabaseTableName(
 			ISIDatabase.ISI_FILE_TABLE_NAME);
 
@@ -40,7 +40,7 @@ public class ISIFileTest extends BaseRowItemParsingTest {
 
 	@Test
 	public void testOneISIFileGetsParsed() throws Exception {
-		ISIModel model = parseTestData(ONE_ISI_FILE_TEST_DATA_PATH);
+		DatabaseModel model = parseTestData(ONE_ISI_FILE_TEST_DATA_PATH);
 		RowItemContainer<ISIFile> isiFiles = model.getRowItemListOfTypeByDatabaseTableName(
 			ISIDatabase.ISI_FILE_TABLE_NAME);
 
@@ -69,7 +69,7 @@ public class ISIFileTest extends BaseRowItemParsingTest {
 
 	/*@Test
 	public void testMultipleISIFilesGetParsed() throws Exception {
-		ISIModel model = parseTestData(MULTIPLE_ISI_FILES_WITH_NO_MERGES_TEST_DATA_PATH);
+		DatabaseModel model = parseTestData(MULTIPLE_ISI_FILES_WITH_NO_MERGES_TEST_DATA_PATH);
 		RowItemContainer<ISIFile> isiFiles = model.getRowItemListOfTypeByDatabaseTableName(
 			ISIDatabase.ISI_FILE_TABLE_NAME);
 
@@ -86,7 +86,7 @@ public class ISIFileTest extends BaseRowItemParsingTest {
 
 	/*@Test
 	public void testMultipleISIFilesGetMerged() throws Exception {
-		ISIModel model = parseTestData(ZERO_ISI_FILES_TEST_DATA_PATH);
+		DatabaseModel model = parseTestData(ZERO_ISI_FILES_TEST_DATA_PATH);
 		RowItemContainer<ISIFile> isiFiles = model.getRowItemListOfTypeByDatabaseTableName(
 			ISIDatabase.ISI_FILE_TABLE_NAME);
 
