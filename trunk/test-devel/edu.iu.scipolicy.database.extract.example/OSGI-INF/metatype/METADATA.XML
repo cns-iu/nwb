@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<metatype:MetaData xmlns:metatype="http://www.osgi.org/xmlns/metatype/v1.0.0">
+	<OCD name="Extract All Tables" id="edu.iu.scipolicy.database.alltables.TablesTable.OCD"
+		 description="Extract All Tables ">
+	</OCD>
+	<Designate pid="edu.iu.scipolicy.database.alltables.TablesTable">
+		<Object ocdref="edu.iu.scipolicy.database.alltables.TablesTable.OCD" />
+	</Designate>
+</metatype:MetaData>
