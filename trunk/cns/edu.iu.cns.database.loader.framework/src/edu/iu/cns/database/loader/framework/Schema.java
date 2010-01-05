@@ -17,30 +17,17 @@ public class Schema <T extends RowItem<T>> {
 	public static final Class<?> DOUBLE_CLASS = Double.class;
 	public static final Class<?> BOOLEAN_CLASS = Boolean.class;
 
-	private List<Field> fields;
+	private List<Field> fields = new ArrayList<Field>();
 	private List<ForeignKey> foreignKeys = new ArrayList<ForeignKey>();
-
-	public Schema(List<Field> fields) {
-		this.fields = fields;
-	}
-
-	public Schema(Field... fields) {
-		this.fields = new ArrayList<Field>();
-
-		for (Field field : fields) {
-			this.fields.add(field);
-		}
-	}
 
 	public Schema(Object...  objects) throws IllegalArgumentException {
 		if (NumberUtilities.isOdd(objects.length)) {
 			String exceptionMessage =
 				"An even number of arguments must be supplied to Schema().  " +
-				objects.length + " arguments were supplied.";
+				objects.length +
+				" arguments were supplied.";
 			throw new IllegalArgumentException(exceptionMessage);
 		}
-
-		this.fields = new ArrayList<Field>();
 
 		for (int ii = 0; ii < objects.length; ii += 2) {
 			String fieldName = (String)objects[ii];
@@ -88,7 +75,7 @@ public class Schema <T extends RowItem<T>> {
 		Field field = findField(fieldName);
 
 		if (field != null) {
-			this.foreignKeys.add(new ForeignKey(referenceTo_TableName, fieldName));
+			this.foreignKeys.add(new ForeignKey(fieldName, referenceTo_TableName));
 		}
 	}
 
@@ -115,6 +102,7 @@ public class Schema <T extends RowItem<T>> {
 		private String referenceTo_TableName;
 
 		public ForeignKey(String fieldName, String referenceTo_TableName) {
+			this.fieldName = fieldName;
 			this.referenceTo_TableName = referenceTo_TableName;
 		}
 
