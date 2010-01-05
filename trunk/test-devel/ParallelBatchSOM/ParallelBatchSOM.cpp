@@ -29,7 +29,7 @@ typedef vector<map<int, float> > training_data_t;
 
 
 int g_numberOfTrainingSteps;
-int g_numberOfStepsBetweenUpdates;
+int g_epochLengthInTimesteps;
 int g_initialWidth;
 int g_finalWidth;
 string g_initialCodebookPath;
@@ -320,7 +320,7 @@ void readConfigurationFile() {
 		 * with a net update after a full batch.
 		 */
 		configurationFile >> g_numberOfTrainingSteps;
-		configurationFile >> g_numberOfStepsBetweenUpdates;
+		configurationFile >> g_epochLengthInTimesteps;
 		configurationFile >> g_initialWidth;
 		configurationFile >> g_finalWidth;
 		configurationFile >> g_initialCodebookPath;
@@ -678,7 +678,9 @@ void reportAverageQuantizationError(training_data_t* sampledTrainingVectors, flo
 
 
 void train(int myRank, float* net, training_data_t* myTrainingVectors) {
-	cout << "Training.. " << endl;
+	if (myRank == 0) {
+		cout << "Training.. " << endl;
+	}
 
 	float width = g_initialWidth;
 
@@ -711,7 +713,18 @@ void train(int myRank, float* net, training_data_t* myTrainingVectors) {
 
 	// TODO Think about tweaking this so that we never need a final synch..
 	int numberOfTimesteps =
-			(int) ((g_numberOfTrainingSteps + g_numberOfJobs - 1) / g_numberOfJobs);
+			(int) (((float) g_epochLengthInTimesteps) * ceil(((float) g_numberOfTrainingSteps) / (((float) g_numberOfJobs) * ((float) g_epochLengthInTimesteps))));
+
+	if (myRank == 0) {
+		cout << "============ Run length figures ============" << endl;
+		cout << "Number of training steps = " << g_numberOfTrainingSteps << endl;
+		cout << "Epoch length = " << g_epochLengthInTimesteps << endl;
+		cout << "Number of jobs = " << g_numberOfJobs << endl;
+		cout << "Calculated number of timesteps (per job) = " << numberOfTimesteps << endl;
+		cout << "Derived total number of timesteps (across jobs) = " << (g_numberOfJobs * numberOfTimesteps) << endl;
+		cout << "Derived number of batches = " << (numberOfTimesteps / g_epochLengthInTimesteps) << endl;
+		cout << "============================================" << endl;
+	}
 
 	int t;
 
@@ -747,7 +760,7 @@ void train(int myRank, float* net, training_data_t* myTrainingVectors) {
 			}
 		}
 
-		if ((t + 1) % g_numberOfStepsBetweenUpdates == 0) {
+		if ((t + 1) % g_epochLengthInTimesteps == 0) {
 			if (myRank == 0) {
 				time_t rawStartTime;
 				time(&rawStartTime);
@@ -789,15 +802,18 @@ void train(int myRank, float* net, training_data_t* myTrainingVectors) {
 		}
 	}
 
-	// TODO Maybe this is just a bad idea altogether.
+	/* TODO Maybe this is just a bad idea altogether.
+	 * With the Jan 5 update to the derived figure numberOfTimesteps,
+	 * this should never be necessary, as there will be no fractional epochs.
+	 */
 	// If we had timesteps beyond the final reduce, reduce once more to pick up the stragglers.
-	if ((t + 1) % g_numberOfStepsBetweenUpdates != 1) {
+	if ((t + 1) % g_epochLengthInTimesteps != 1) {
 		cout << "Warning: Had to perform one last net update." << endl;
 
 		calculateNewNet(net);
-	}
 
-	reportAverageQuantizationError(&sampledTrainingVectors, net, myRank);
+		reportAverageQuantizationError(&sampledTrainingVectors, net, myRank);
+	}
 
 	cout << "Done." << endl;
 }
