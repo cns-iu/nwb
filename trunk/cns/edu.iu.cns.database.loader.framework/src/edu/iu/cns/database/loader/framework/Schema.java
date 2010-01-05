@@ -1,5 +1,6 @@
 package edu.iu.cns.database.loader.framework;
 
+import java.sql.Date;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -12,6 +13,8 @@ public class Schema <T extends RowItem<T>> {
 	public static final Class<?> FOREIGN_KEY_CLASS = ForeignKeyType.class;
 	public static final Class<?> TEXT_CLASS = String.class;
 	public static final Class<?> INTEGER_CLASS = Integer.class;
+	public static final Class<?> DATE_CLASS = Date.class;
+	public static final Class<?> DOUBLE_CLASS = Double.class;
 
 	private List<Field> fields;
 	private List<ForeignKey> foreignKeys = new ArrayList<ForeignKey>();
