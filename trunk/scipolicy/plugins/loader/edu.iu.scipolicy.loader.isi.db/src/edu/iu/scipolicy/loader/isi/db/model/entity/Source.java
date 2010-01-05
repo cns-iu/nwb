@@ -14,8 +14,9 @@ public class Source extends Entity<Source> implements Comparable<Source> {
 	public final static Schema<Source> SCHEMA = new Schema<Source>(
 		ISIDatabase.BOOK_SERIES_TITLE, Schema.TEXT_CLASS,
 		ISIDatabase.BOOK_SERIES_SUBTITLE, Schema.TEXT_CLASS,
-		ISIDatabase.CONFERENCE_DATE, Schema.TEXT_CLASS,
-		ISIDatabase.CONFERENCE_DONATION, Schema.TEXT_CLASS,
+		ISIDatabase.CONFERENCE_HOST, Schema.TEXT_CLASS,
+		ISIDatabase.CONFERENCE_LOCATION, Schema.TEXT_CLASS,
+		ISIDatabase.CONFERENCE_SPONSORS, Schema.TEXT_CLASS,
 		ISIDatabase.CONFERENCE_TITLE, Schema.TEXT_CLASS,
 		ISIDatabase.FULL_TITLE, Schema.TEXT_CLASS,
 		ISIDatabase.ISO_TITLE_ABBREVIATION, Schema.TEXT_CLASS,
@@ -25,8 +26,9 @@ public class Source extends Entity<Source> implements Comparable<Source> {
 
 	private String bookSeriesTitle;
 	private String bookSeriesSubtitle;
-	private String conferenceDate;
-	private String conferenceDonation;
+	private String conferenceHost;
+	private String conferenceLocation;
+	private String conferenceSponsors;
 	private String conferenceTitle;
 	private String fullTitle;
 	private String isoTitleAbbreviation;
@@ -38,8 +40,9 @@ public class Source extends Entity<Source> implements Comparable<Source> {
 			DatabaseTableKeyGenerator keyGenerator,
 			String bookSeriesTitle,
 			String bookSeriesSubtitle,
-			String conferenceDate,
-			String conferenceDonation,
+			String conferenceHost,
+			String conferenceLocation,
+			String conferenceSponsors,
 			String conferenceTitle,
 			String fullTitle,
 			String isoTitleAbbreviation,
@@ -51,8 +54,9 @@ public class Source extends Entity<Source> implements Comparable<Source> {
 			createAttributes(
 				bookSeriesTitle,
 				bookSeriesSubtitle,
-				conferenceDate,
-				conferenceDonation,
+				conferenceHost,
+				conferenceLocation,
+				conferenceSponsors,
 				conferenceTitle,
 				fullTitle,
 				isoTitleAbbreviation,
@@ -61,8 +65,9 @@ public class Source extends Entity<Source> implements Comparable<Source> {
 				twentyNineCharacterSourceTitleAbbreviation));
 		this.bookSeriesTitle = bookSeriesTitle;
 		this.bookSeriesSubtitle = bookSeriesSubtitle;
-		this.conferenceDate = conferenceDate;
-		this.conferenceDonation = conferenceDonation;
+		this.conferenceHost = conferenceHost;
+		this.conferenceLocation = conferenceLocation;
+		this.conferenceSponsors = conferenceSponsors;
 		this.conferenceTitle = conferenceTitle;
 		this.fullTitle = fullTitle;
 		this.isoTitleAbbreviation = isoTitleAbbreviation;
@@ -80,12 +85,16 @@ public class Source extends Entity<Source> implements Comparable<Source> {
 		return this.bookSeriesSubtitle;
 	}
 
-	public String getConferenceDate() {
-		return this.conferenceDate;
+	public String getConferenceHost() {
+		return this.conferenceHost;
 	}
 
-	public String getConferenceDonation() {
-		return this.conferenceDonation;
+	public String getConferenceLocation() {
+		return this.conferenceLocation;
+	}
+
+	public String getConferenceSponsors() {
+		return this.conferenceSponsors;
 	}
 
 	public String getConferenceTitle() {
@@ -130,10 +139,12 @@ public class Source extends Entity<Source> implements Comparable<Source> {
 			StringUtilities.simpleMerge(this.bookSeriesTitle, otherSource.getBookSeriesTitle());
 		this.bookSeriesSubtitle = StringUtilities.simpleMerge(
 			this.bookSeriesSubtitle, otherSource.getBookSeriesSubtitle());
-		this.conferenceDate = StringUtilities.simpleMerge(
-			this.conferenceDate, otherSource.getConferenceDate());
-		this.conferenceDonation = StringUtilities.simpleMerge(
-			this.conferenceDonation, otherSource.getConferenceDonation());
+		this.conferenceHost = StringUtilities.simpleMerge(
+			this.conferenceHost, otherSource.getConferenceHost());
+		this.conferenceLocation = StringUtilities.simpleMerge(
+			this.conferenceLocation, otherSource.getConferenceLocation());
+		this.conferenceSponsors = StringUtilities.simpleMerge(
+			this.conferenceSponsors, otherSource.getConferenceSponsors());
 		this.conferenceTitle = StringUtilities.simpleMerge(
 			this.conferenceTitle, otherSource.getConferenceTitle());
 		this.fullTitle = StringUtilities.simpleMerge(this.fullTitle, otherSource.getFullTitle());
@@ -150,8 +161,9 @@ public class Source extends Entity<Source> implements Comparable<Source> {
 	public static Dictionary<String, Comparable<?>> createAttributes(
 			String bookSeriesTitle,
 			String bookSeriesSubtitle,
-			String conferenceDate,
-			String conferenceDonation,
+			String conferenceHost,
+			String conferenceLocation,
+			String conferenceSponsors,
 			String conferenceTitle,
 			String fullTitle,
 			String isoTitleAbbreviation,
@@ -161,8 +173,9 @@ public class Source extends Entity<Source> implements Comparable<Source> {
 		Dictionary<String, Comparable<?>> attributes = new Hashtable<String, Comparable<?>>();
 		attributes.put(ISIDatabase.BOOK_SERIES_TITLE, bookSeriesTitle);
 		attributes.put(ISIDatabase.BOOK_SERIES_SUBTITLE, bookSeriesSubtitle);
-		attributes.put(ISIDatabase.CONFERENCE_DATE, conferenceDate);
-		attributes.put(ISIDatabase.CONFERENCE_DONATION, conferenceDonation);
+		attributes.put(ISIDatabase.CONFERENCE_HOST, conferenceHost);
+		attributes.put(ISIDatabase.CONFERENCE_LOCATION, conferenceLocation);
+		attributes.put(ISIDatabase.CONFERENCE_SPONSORS, conferenceSponsors);
 		attributes.put(ISIDatabase.CONFERENCE_TITLE, conferenceTitle);
 		attributes.put(ISIDatabase.FULL_TITLE, fullTitle);
 		attributes.put(ISIDatabase.ISO_TITLE_ABBREVIATION, isoTitleAbbreviation);

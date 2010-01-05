@@ -430,6 +430,8 @@ public class ISITableModelParser {
 
 		int citedReferenceCount = IntegerParserWithDefault.parse(StringUtilities.simpleClean(
 			row.getString(ISITag.CITED_REFERENCE_COUNT.getColumnName())));
+		int citedYear = IntegerParserWithDefault.parse(StringUtilities.simpleClean(
+			row.getString(ISITag.CITED_YEAR.getColumnName())));
 
 		String digitalObjectidentifier =
 			StringUtilities.simpleClean(row.getString(ISITag.DOI.getColumnName()));
@@ -475,12 +477,16 @@ public class ISITableModelParser {
 			StringUtilities.simpleClean(row.getString(ISITag.TIMES_CITED.getColumnName())));
 		String title = StringUtilities.simpleClean(row.getString(ISITag.TITLE.getColumnName()));
 
+		// TODO: Use ISITag.isiTagArray to determine which tags we don't handle, and add those in
+		// to document.
+
 		return this.documents.addOrMerge(new Document(
 			this.documents.getKeyGenerator(),
 			documentAbstract,
 			articleNumber,
 			beginningPage,
 			citedReferenceCount,
+			citedYear,
 			digitalObjectidentifier,
 			documentType,
 			documentVolume,
@@ -560,9 +566,14 @@ public class ISITableModelParser {
 		String bookSeriesSubtitle = StringUtilities.simpleClean(
 			row.getString(ISITag.BOOK_SERIES_SUBTITLE.getColumnName()));
 
-		String conferenceDate = "";
-		String conferenceDonation = "";
-		String conferenceTitle = "";
+		String conferenceHost =
+			StringUtilities.simpleClean(row.getString(ISITag.CONFERENCE_HOST.getColumnName()));
+		String conferenceLocation =
+			StringUtilities.simpleClean(row.getString(ISITag.CONFERENCE_LOCATION.getColumnName()));
+		String conferenceSponsors =
+			StringUtilities.simpleClean(row.getString(ISITag.CONFERENCE_SPONSORS.getColumnName()));
+		String conferenceTitle =
+			StringUtilities.simpleClean(row.getString(ISITag.CONFERENCE_TITLE.getColumnName()));
 
 		String fullTitle =
 			StringUtilities.simpleClean(row.getString(ISITag.FULL_JOURNAL_TITLE.getColumnName()));
@@ -582,8 +593,9 @@ public class ISITableModelParser {
 			this.sources.getKeyGenerator(),
 			bookSeriesTitle,
 			bookSeriesSubtitle,
-			conferenceDate,
-			conferenceDonation,
+			conferenceHost,
+			conferenceLocation,
+			conferenceSponsors,
 			conferenceTitle,
 			fullTitle,
 			isoTitleAbbreviation,

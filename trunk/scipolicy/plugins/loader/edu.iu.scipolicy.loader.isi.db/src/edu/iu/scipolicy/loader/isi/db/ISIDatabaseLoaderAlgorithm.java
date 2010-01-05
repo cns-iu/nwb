@@ -8,16 +8,19 @@ import java.util.Dictionary;
 import org.cishell.framework.CIShellContext;
 import org.cishell.framework.algorithm.Algorithm;
 import org.cishell.framework.algorithm.AlgorithmExecutionException;
+import org.cishell.framework.data.BasicData;
 import org.cishell.framework.data.Data;
+import org.cishell.framework.data.DataProperty;
 import org.cishell.service.database.Database;
 import org.cishell.service.database.DatabaseCreationException;
 import org.cishell.service.database.DatabaseService;
 import org.osgi.service.log.LogService;
 
 import prefuse.data.Table;
-import edu.iu.cns.database.loader.framework.utilities.DerbyDatabaseCreator;
 import edu.iu.cns.database.loader.framework.utilities.DatabaseModel;
+import edu.iu.cns.database.loader.framework.utilities.DerbyDatabaseCreator;
 import edu.iu.nwb.shared.isiutil.ISITableReaderHelper;
+import edu.iu.nwb.shared.isiutil.database.ISIDatabase;
 import edu.iu.nwb.shared.isiutil.exception.ISILoadingException;
 import edu.iu.nwb.shared.isiutil.exception.ReadISIFileException;
 import edu.iu.scipolicy.loader.isi.db.utilities.ISITablePreprocessor;
@@ -107,7 +110,16 @@ public class ISIDatabaseLoaderAlgorithm implements Algorithm {
     }
 
     private Data[] annotateOutputData(Database isiDatabase, Data parentData) {
-    	return null;
+    	Data data = new BasicData(isiDatabase, ISIDatabase.ISI_DATABASE_MIME_TYPE);
+    	Dictionary<String, Object> parentMetadata = parentData.getMetadata();
+    	Dictionary<String, Object> metadata = data.getMetadata();
+    	metadata.put(
+    		DataProperty.LABEL, "ISI Database From " + parentMetadata.get(DataProperty.LABEL));
+    	metadata.put(DataProperty.TYPE, DataProperty.DATABASE_TYPE);
+    	metadata.put(DataProperty.PARENT, parentData);
+
+    	//return null;
+    	return new Data[] { data };
     }
     
     /*private Data[] wrapAsOutputData(Object outputObject, Data parentData) {

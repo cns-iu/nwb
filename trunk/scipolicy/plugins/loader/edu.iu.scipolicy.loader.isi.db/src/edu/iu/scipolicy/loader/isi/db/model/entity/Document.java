@@ -14,6 +14,7 @@ public class Document extends Entity<Document> implements Comparable<Document> {
 		ISIDatabase.ARTICLE_NUMBER, Schema.TEXT_CLASS,
 		ISIDatabase.BEGINNING_PAGE, Schema.INTEGER_CLASS,
 		ISIDatabase.CITED_REFERENCE_COUNT, Schema.INTEGER_CLASS,
+		ISIDatabase.CITED_YEAR, Schema.INTEGER_CLASS,
 		ISIDatabase.DIGITAL_OBJECT_IDENTIFIER, Schema.TEXT_CLASS,
 		ISIDatabase.DOCUMENT_TYPE, Schema.TEXT_CLASS,
 		ISIDatabase.DOCUMENT_VOLUME, Schema.TEXT_CLASS,
@@ -41,6 +42,7 @@ public class Document extends Entity<Document> implements Comparable<Document> {
 	private String articleNumber;
 	private int beginningPage;
 	private int citedReferenceCount;
+	private int citedYear;
 	private String digitalObjectIdentifier;
 	private String documentType;
 	private String documentVolume;
@@ -69,6 +71,7 @@ public class Document extends Entity<Document> implements Comparable<Document> {
 			String articleNumber,
 			int beginningPage,
 			int citedReferenceCount,
+			int citedYear,
 			String digitalObjectIdentifier,
 			String documentType,
 			String documentVolume,
@@ -97,6 +100,7 @@ public class Document extends Entity<Document> implements Comparable<Document> {
 				articleNumber,
 				beginningPage,
 				citedReferenceCount,
+				citedYear,
 				digitalObjectIdentifier,
 				documentType,
 				documentVolume,
@@ -122,6 +126,7 @@ public class Document extends Entity<Document> implements Comparable<Document> {
 		this.articleNumber = articleNumber;
 		this.beginningPage = beginningPage;
 		this.citedReferenceCount = citedReferenceCount;
+		this.citedYear = citedYear;
 		this.digitalObjectIdentifier = digitalObjectIdentifier;
 		this.documentType = documentType;
 		this.documentVolume = documentVolume;
@@ -163,6 +168,10 @@ public class Document extends Entity<Document> implements Comparable<Document> {
 
 	public int getCitedReferenceCount() {
 		return this.citedReferenceCount;
+	}
+
+	public int getCitedYear() {
+		return this.citedYear;
 	}
 
 	public String getDocumentType() {
@@ -270,6 +279,7 @@ public class Document extends Entity<Document> implements Comparable<Document> {
 			String articleNumber,
 			int beginningPage,
 			int citedReferenceCount,
+			int citedYear,
 			String digitalObjectIdentifier,
 			String documentType,
 			String documentVolume,
@@ -296,6 +306,7 @@ public class Document extends Entity<Document> implements Comparable<Document> {
 		attributes.put(ISIDatabase.ARTICLE_NUMBER, articleNumber);
 		attributes.put(ISIDatabase.BEGINNING_PAGE, beginningPage);
 		attributes.put(ISIDatabase.CITED_REFERENCE_COUNT, citedReferenceCount);
+		attributes.put(ISIDatabase.CITED_YEAR, citedYear);
 		attributes.put(ISIDatabase.DIGITAL_OBJECT_IDENTIFIER, digitalObjectIdentifier);
 		attributes.put(ISIDatabase.DOCUMENT_TYPE, documentType);
 		attributes.put(ISIDatabase.DOCUMENT_VOLUME, documentVolume);

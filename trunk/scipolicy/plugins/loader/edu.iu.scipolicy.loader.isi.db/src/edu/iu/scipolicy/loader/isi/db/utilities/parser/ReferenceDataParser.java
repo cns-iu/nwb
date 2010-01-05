@@ -333,8 +333,9 @@ public class ReferenceDataParser {
 
 		String bookSeriesTitle = "";
 		String bookSeriesSubtitle = "";
-		String conferenceDate = "";
-		String conferenceDonation = "";
+		String conferenceHost = "";
+		String conferenceLocation = "";
+		String conferenceSponsors = "";
 		String conferenceTitle = "";
 		String fullTitle = "";
 		String isoTitleAbbreviation = "";
@@ -347,8 +348,9 @@ public class ReferenceDataParser {
 				sourceKeyGenerator,
 				bookSeriesTitle,
 				bookSeriesSubtitle,
-				conferenceDate,
-				conferenceDonation,
+				conferenceHost,
+				conferenceLocation,
+				conferenceSponsors,
 				conferenceTitle,
 				fullTitle,
 				isoTitleAbbreviation,
