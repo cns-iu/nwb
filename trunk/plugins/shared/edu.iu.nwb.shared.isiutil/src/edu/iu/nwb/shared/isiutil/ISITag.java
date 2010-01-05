@@ -35,6 +35,16 @@ public class ISITag {
 		new ISITag("NR", "Cited Reference Count", ContentType.INTEGER);
 	public static final ISITag CITED_REFERENCES =
 		new ISITag("CR", "Cited References", ContentType.MULTI_VALUE_TEXT, "\n");
+	public static final ISITag CITED_YEAR =
+		new ISITag("CY", "Cited Year", ContentType.TEXT);
+	public static final ISITag CONFERENCE_HOST =
+		new ISITag("HO", "Conference Host", ContentType.TEXT);
+	public static final ISITag CONFERENCE_LOCATION =
+		new ISITag("CL", "Conference Location", ContentType.TEXT);
+	public static final ISITag CONFERENCE_SPONSORS =
+		new ISITag("SP", "Conference Sponsors", ContentType.TEXT);
+	public static final ISITag CONFERENCE_TITLE =
+		new ISITag("CT", "Conference Title", ContentType.TEXT);
 
 	public static final ISITag DOCUMENT_TYPE = new ISITag("DT", "Document Type", ContentType.TEXT);
 	public static final ISITag DOI = new ISITag("DI", "DOI", ContentType.TEXT);
@@ -124,6 +134,11 @@ public class ISITag {
 		CITED_PATENT,
 		CITED_REFERENCE_COUNT,
 		CITED_REFERENCES,
+		CITED_YEAR,
+		CONFERENCE_HOST,
+		CONFERENCE_LOCATION,
+		CONFERENCE_SPONSORS,
+		CONFERENCE_TITLE,
 
 		DOCUMENT_TYPE,
 		DOI,

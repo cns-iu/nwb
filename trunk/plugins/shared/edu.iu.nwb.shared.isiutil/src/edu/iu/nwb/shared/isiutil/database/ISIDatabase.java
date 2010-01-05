@@ -1,6 +1,8 @@
 package edu.iu.nwb.shared.isiutil.database;
 
 public class ISIDatabase {
+	public static final String ISI_DATABASE_MIME_TYPE = "db:isi";
+
 	// Entity Type Information
 
 	public static final String ISI_FILE_DISPLAY_NAME = "ISI Files";
@@ -44,8 +46,9 @@ public class ISIDatabase {
 	// Source Entity Information
 	public static final String BOOK_SERIES_TITLE = "book_series_title";
 	public static final String BOOK_SERIES_SUBTITLE = "book_series_subtitle";
-	public static final String CONFERENCE_DATE = "conference_date";
-	public static final String CONFERENCE_DONATION = "conference_donation";
+	public static final String CONFERENCE_HOST = "conference_host";
+	public static final String CONFERENCE_LOCATION = "conference_location";
+	public static final String CONFERENCE_SPONSORS = "conference_sponsors";
 	public static final String CONFERENCE_TITLE = "conference_title";
 	public static final String FULL_TITLE = "full_title";
 	public static final String ISO_TITLE_ABBREVIATION = "iso_title_abbreviation";
@@ -94,11 +97,12 @@ public class ISIDatabase {
 	public static final String ARTICLE_NUMBER = "article_number";
 	public static final String BEGINNING_PAGE = "beginning_page";
 	public static final String CITED_REFERENCE_COUNT = "cited_reference_count";
+	public static final String CITED_YEAR = "cited_year";
 	public static final String DIGITAL_OBJECT_IDENTIFIER = "digital_object_identifier";
 	public static final String DOCUMENT_TYPE = "document_type";
 	public static final String DOCUMENT_VOLUME = "document_volume";
 	public static final String ENDING_PAGE = "ending_page";
-	public static final String FIRST_AUTHOR = "first_author";
+	public static final String FIRST_AUTHOR = "first_author_fk";
 	public static final String FUNDING_AGENCY_AND_GRANT_NUMBER = "funding_agency_and_grant_number";
 	public static final String FUNDING_TEXT = "funding_text";
 	public static final String ISBN = "isbn";
@@ -150,49 +154,63 @@ public class ISIDatabase {
 
 	// Publisher Addresses Relationship Information
 
-	public static final String PUBLISHER_ADDRESSES_PUBLISHER_FOREIGN_KEY = "publisher_fk";
-	public static final String PUBLISHER_ADDRESSES_ADDRESS_FOREIGN_KEY = "address_fk";
+	public static final String PUBLISHER_ADDRESSES_PUBLISHER_FOREIGN_KEY =
+		"publisher_address_publisher_fk";
+	public static final String PUBLISHER_ADDRESSES_ADDRESS_FOREIGN_KEY =
+		"publisher_address_address_fk";
 
 	// Reprint Addresses Relationship Information
 	
-	public static final String REPRINT_ADDRESSES_PUBLISHER_FOREIGN_KEY = "document_fk";
-	public static final String REPRINT_ADDRESSES_ADDRESS_FOREIGN_KEY = "address_fk";
+	public static final String REPRINT_ADDRESSES_PUBLISHER_FOREIGN_KEY =
+		"reprint_address_document_fk";
+	public static final String REPRINT_ADDRESSES_ADDRESS_FOREIGN_KEY =
+		"reprint_address_address_fk";
 
 	// Research Addresses Relationship Information
 
-	public static final String RESEARCH_ADDRESSES_PUBLISHER_FOREIGN_KEY = "document_fk";
-	public static final String RESEARCH_ADDRESSES_ADDRESS_FOREIGN_KEY = "address_fk";
+	public static final String RESEARCH_ADDRESSES_PUBLISHER_FOREIGN_KEY =
+		"research_address_document_fk";
+		//"document_fk";
+	public static final String RESEARCH_ADDRESSES_ADDRESS_FOREIGN_KEY =
+		"research_address_address_fk";
 
 	// Document Keywords Relationship Information
 
-	public static final String DOCUMENT_KEYWORDS_DOCUMENT_FOREIGN_KEY = "document_fk";
-	public static final String DOCUMENT_KEYWORDS_KEYWORD_FOREIGN_KEY = "keyword_fk";
+	public static final String DOCUMENT_KEYWORDS_DOCUMENT_FOREIGN_KEY =
+		"document_keywords_document_fk";
+		//"document_fk";
+	public static final String DOCUMENT_KEYWORDS_KEYWORD_FOREIGN_KEY =
+		"document_keywords_keyword_fk";
 
 	// Authors Relationship Information
 
-	public static final String AUTHORS_DOCUMENT_FOREIGN_KEY = "document_fk";
-	public static final String AUTHORS_PERSON_FOREIGN_KEY = "person_fk";
+	public static final String AUTHORS_DOCUMENT_FOREIGN_KEY = "authors_document_fk";
+	public static final String AUTHORS_PERSON_FOREIGN_KEY = "authors_person_fk";
 	public static final String AUTHORS_EMAIL_ADDRESS = "email_address";
 
 	// Editors Relationship Information
 
-	public static final String EDITORS_DOCUMENT_FOREIGN_KEY = "document_fk";
-	public static final String EDITORS_PERSON_FOREIGN_KEY = "person_fk";
+	public static final String EDITORS_DOCUMENT_FOREIGN_KEY = "editors_document_fk";
+	public static final String EDITORS_PERSON_FOREIGN_KEY = "editors_person_fk";
 
 	// Cited Patents Relationship Information
 
-	public static final String CITED_PATENTS_DOCUMENT_FOREIGN_KEY = "document_fk";
-	public static final String CITED_PATENTS_PATENT_FOREIGN_KEY = "patent_fk";
+	public static final String CITED_PATENTS_DOCUMENT_FOREIGN_KEY = "cited_patents_document_fk";
+	public static final String CITED_PATENTS_PATENT_FOREIGN_KEY = "cited_patents_patent_fk";
 
 	// Document Occurrences Relationship Information
 
-	public static final String DOCUMENT_OCCURRENCES_DOCUMENT_FOREIGN_KEY = "document_fk";
-	public static final String DOCUMENT_OCCURRENCES_ISI_FILE_FOREIGN_KEY = "isi_file_fk";
+	public static final String DOCUMENT_OCCURRENCES_DOCUMENT_FOREIGN_KEY =
+		"document_occurrences_document_fk";
+	public static final String DOCUMENT_OCCURRENCES_ISI_FILE_FOREIGN_KEY =
+		"document_occurrences_isi_file_fk";
 
 	// Cited References Relationship Information
 
-	public static final String CITED_REFERENCES_DOCUMENT_FOREIGN_KEY = "document_fk";
-	public static final String CITED_REFERENCES_REFERENCE_FOREIGN_KEY = "reference_fk";
+	public static final String CITED_REFERENCES_DOCUMENT_FOREIGN_KEY =
+		"cited_references_document_fk";
+	public static final String CITED_REFERENCES_REFERENCE_FOREIGN_KEY =
+		"cited_references_reference_fk";
 
 
 	// Some Meaningful Values.
