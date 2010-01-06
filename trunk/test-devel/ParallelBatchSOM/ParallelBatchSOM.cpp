@@ -192,6 +192,10 @@ float hexa_dist(int bx, int by, int tx, int ty){
 	return ret;
 }
 
+float hexa_dist(int xDelta, int yDelta) {
+	return hexa_dist(0, 0, xDelta, yDelta);
+}
+
 /* TODO Might revisit some optimizations Russell mentioned in the long term.
  * One is that we could exploit the circular symmetry of the gaussian to reduce the number
  * of calls to this function eightfold (for rectangular topologies; not certain about the reduction
@@ -199,10 +203,20 @@ float hexa_dist(int bx, int by, int tx, int ty){
  * Another is that we could calculate the gaussian only once per batch (that is,
  * only once per width interpolation).
  */
+float* g_gaussians;
+void updateGaussians(float width) {
+	for (int rowDelta = 0; rowDelta < g_rows; rowDelta++) {
+		for (int colDelta = 0; colDelta < g_columns; colDelta++) {
+			int flatIndex = rowDelta * g_columns + colDelta;
 
-float gaussian(Coordinate coord1, Coordinate coord2, float width) {
-	return exp(-hexa_dist(coord1.row, coord1.column, coord2.row, coord2.column) / (width * width));
+			g_gaussians[flatIndex] = exp(-hexa_dist(rowDelta, colDelta) / (width * width));
+		}
+	}
 }
+
+//float gaussian(Coordinate coord1, Coordinate coord2, float width) {
+//	return exp(-hexa_dist(coord1.row, coord1.column, coord2.row, coord2.column) / (width * width));
+//}
 
 float interpolate(float x, float x0, float x1, float y0, float y1) {
 	if (x0 == x1) {
@@ -745,8 +759,8 @@ void train(int myRank, float* net, training_data_t* myTrainingVectors) {
 	zeroOut(recentSquaredNorms, numberOfNodes);
 	calculateSquaredNorms(recentSquaredNorms, net);
 
-//	g_gaussians = new float[numberOfNodes];
-//	updateGaussians(net);
+	g_gaussians = new float[numberOfNodes];
+	updateGaussians(width);
 
 	training_data_t::const_iterator sampleStart = myTrainingVectors->begin();
 	int sampleSize = 500; // TODO Just a thought for now.  Can we do better?
@@ -797,7 +811,11 @@ void train(int myRank, float* net, training_data_t* myTrainingVectors) {
 				//TODO Make a Coordinate iterator?
 				Coordinate coord(row, column);
 
-				float gauss = gaussian(coord, winner, width);
+				int rowDelta = abs(coord.row - winner.row);
+				int colDelta = abs(coord.column - winner.column);
+				int flatIndex = rowDelta * g_columns + colDelta;
+				float gauss = g_gaussians[flatIndex];
+//				float gauss = gaussian(coord, winner, width);
 
 				addScaledSparseVectorToNodeVector(
 						calculateNodeIndex(g_myNumerators, coord), gauss, trainingVector);
@@ -826,6 +844,8 @@ void train(int myRank, float* net, training_data_t* myTrainingVectors) {
 			// Reset for next "epoch"
 
 			width = calculateWidthAtTime(t, numberOfTimesteps);
+
+			updateGaussians(width);
 
 			if (myRank == 0) {
 				cout << "Updated net; new width = " << width << endl;
