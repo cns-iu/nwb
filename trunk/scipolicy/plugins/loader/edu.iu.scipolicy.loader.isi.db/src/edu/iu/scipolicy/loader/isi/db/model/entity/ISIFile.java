@@ -12,6 +12,7 @@ import edu.iu.nwb.shared.isiutil.database.ISIDatabase;
 
 public class ISIFile extends Entity<ISIFile> implements Comparable<ISIFile> {
 	public static final Schema<ISIFile> SCHEMA = new Schema<ISIFile>(
+		true,
 		ISIDatabase.FILE_FORMAT_VERSION_NUMBER, Schema.TEXT_CLASS,
 		ISIDatabase.FILE_NAME, Schema.TEXT_CLASS,
 		ISIDatabase.FILE_TYPE, Schema.TEXT_CLASS);

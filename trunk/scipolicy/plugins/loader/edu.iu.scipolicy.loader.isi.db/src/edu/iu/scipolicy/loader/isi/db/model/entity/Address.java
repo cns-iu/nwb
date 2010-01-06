@@ -12,6 +12,7 @@ import edu.iu.nwb.shared.isiutil.database.ISIDatabase;
 
 public class Address extends Entity<Address> implements Comparable<Address> {
 	public static final Schema<Address> SCHEMA = new Schema<Address>(
+		true,
 		ISIDatabase.ADDRESS_CITY, Schema.TEXT_CLASS,
 		ISIDatabase.COUNTRY, Schema.TEXT_CLASS,
 		ISIDatabase.POSTAL_CODE, Schema.TEXT_CLASS,

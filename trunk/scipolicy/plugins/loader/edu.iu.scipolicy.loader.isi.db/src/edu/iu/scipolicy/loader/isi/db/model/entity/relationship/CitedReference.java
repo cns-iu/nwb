@@ -11,6 +11,7 @@ import edu.iu.scipolicy.loader.isi.db.model.entity.Reference;
 
 public class CitedReference extends RowItem<CitedReference> {
 	public static final Schema<CitedReference> SCHEMA = new Schema<CitedReference>(
+		false,
 		ISIDatabase.CITED_REFERENCES_DOCUMENT_FOREIGN_KEY, Schema.FOREIGN_KEY_CLASS,
 		ISIDatabase.CITED_REFERENCES_REFERENCE_FOREIGN_KEY, Schema.FOREIGN_KEY_CLASS).
 		FOREIGN_KEYS(

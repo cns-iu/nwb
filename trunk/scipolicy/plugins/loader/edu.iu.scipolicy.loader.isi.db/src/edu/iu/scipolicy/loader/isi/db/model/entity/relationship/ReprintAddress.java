@@ -11,6 +11,7 @@ import edu.iu.scipolicy.loader.isi.db.model.entity.Document;
 
 public class ReprintAddress extends RowItem<ReprintAddress> {
 	public static final Schema<ReprintAddress> SCHEMA = new Schema<ReprintAddress>(
+		false,
 		ISIDatabase.REPRINT_ADDRESSES_PUBLISHER_FOREIGN_KEY, Schema.FOREIGN_KEY_CLASS,
 		ISIDatabase.REPRINT_ADDRESSES_ADDRESS_FOREIGN_KEY, Schema.FOREIGN_KEY_CLASS).
 		FOREIGN_KEYS(

@@ -11,6 +11,7 @@ import edu.iu.scipolicy.loader.isi.db.model.entity.Patent;
 
 public class CitedPatent extends RowItem<CitedPatent> {
 	public static final Schema<CitedPatent> SCHEMA = new Schema<CitedPatent>(
+		false,
 		ISIDatabase.CITED_PATENTS_DOCUMENT_FOREIGN_KEY, Schema.FOREIGN_KEY_CLASS,
 		ISIDatabase.CITED_PATENTS_PATENT_FOREIGN_KEY, Schema.FOREIGN_KEY_CLASS).
 		FOREIGN_KEYS(

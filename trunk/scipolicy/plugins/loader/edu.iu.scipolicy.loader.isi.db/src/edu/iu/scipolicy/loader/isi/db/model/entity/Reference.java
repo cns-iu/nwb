@@ -12,6 +12,7 @@ import edu.iu.nwb.shared.isiutil.database.ISIDatabase;
 
 public class Reference extends Entity<Reference> implements Comparable<Reference> {
 	public final static Schema<Reference> SCHEMA = new Schema<Reference>(
+		true,
 		ISIDatabase.ANNOTATION, Schema.TEXT_CLASS,
 		ISIDatabase.REFERENCE_AUTHOR, Schema.FOREIGN_KEY_CLASS,
 		ISIDatabase.AUTHOR_WAS_STARRED, Schema.TEXT_CLASS,

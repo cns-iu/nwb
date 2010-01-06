@@ -12,6 +12,7 @@ import edu.iu.nwb.shared.isiutil.database.ISIDatabase;
 
 public class Source extends Entity<Source> implements Comparable<Source> {
 	public final static Schema<Source> SCHEMA = new Schema<Source>(
+		true,
 		ISIDatabase.BOOK_SERIES_TITLE, Schema.TEXT_CLASS,
 		ISIDatabase.BOOK_SERIES_SUBTITLE, Schema.TEXT_CLASS,
 		ISIDatabase.CONFERENCE_HOST, Schema.TEXT_CLASS,

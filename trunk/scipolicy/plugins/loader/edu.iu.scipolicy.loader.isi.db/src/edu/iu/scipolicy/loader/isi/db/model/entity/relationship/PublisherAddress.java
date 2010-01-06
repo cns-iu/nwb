@@ -11,6 +11,7 @@ import edu.iu.scipolicy.loader.isi.db.model.entity.Publisher;
 
 public class PublisherAddress extends RowItem<PublisherAddress> {
 	public static final Schema<PublisherAddress> SCHEMA = new Schema<PublisherAddress>(
+		false,
 		ISIDatabase.PUBLISHER_ADDRESSES_PUBLISHER_FOREIGN_KEY, Schema.FOREIGN_KEY_CLASS,
 		ISIDatabase.PUBLISHER_ADDRESSES_ADDRESS_FOREIGN_KEY, Schema.FOREIGN_KEY_CLASS).
 		FOREIGN_KEYS(

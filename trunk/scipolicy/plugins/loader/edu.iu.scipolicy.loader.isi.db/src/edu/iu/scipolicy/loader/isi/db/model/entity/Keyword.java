@@ -12,6 +12,7 @@ import edu.iu.nwb.shared.isiutil.database.ISIDatabase;
 
 public class Keyword extends Entity<Keyword> implements Comparable<Keyword> {
 	public static final Schema<Keyword> SCHEMA = new Schema<Keyword>(
+		true,
 		ISIDatabase.KEYWORD, Schema.TEXT_CLASS,
 		ISIDatabase.TYPE, Schema.TEXT_CLASS);
 

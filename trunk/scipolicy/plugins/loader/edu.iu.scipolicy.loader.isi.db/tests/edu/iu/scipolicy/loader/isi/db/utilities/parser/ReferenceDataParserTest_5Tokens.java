@@ -2,6 +2,7 @@ package edu.iu.scipolicy.loader.isi.db.utilities.parser;
 
 import static org.junit.Assert.fail;
 
+import org.cishell.utilities.IntegerParserWithDefault;
 import org.cishell.utilities.StringUtilities;
 import org.junit.Test;
 

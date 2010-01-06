@@ -12,6 +12,7 @@ import edu.iu.nwb.shared.isiutil.database.ISIDatabase;
 
 public class Patent extends Entity<Patent> implements Comparable<Patent> {
 	public static final Schema<Patent> SCHEMA = new Schema<Patent>(
+		true,
 		ISIDatabase.PATENT_NUMBER, Schema.TEXT_CLASS);
 
 	private String patentNumber;

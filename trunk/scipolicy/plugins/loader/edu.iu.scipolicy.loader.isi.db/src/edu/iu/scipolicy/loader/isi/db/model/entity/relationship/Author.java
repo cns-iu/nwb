@@ -12,6 +12,7 @@ import edu.iu.scipolicy.loader.isi.db.model.entity.Person;
 public class Author extends RowItem<Author> {
 	// TODO: E-mail address.
 	public static final Schema<Author> SCHEMA = new Schema<Author>(
+		false,
 		ISIDatabase.AUTHORS_DOCUMENT_FOREIGN_KEY, Schema.FOREIGN_KEY_CLASS,
 		ISIDatabase.AUTHORS_PERSON_FOREIGN_KEY, Schema.FOREIGN_KEY_CLASS,
 		ISIDatabase.AUTHORS_EMAIL_ADDRESS, Schema.TEXT_CLASS,

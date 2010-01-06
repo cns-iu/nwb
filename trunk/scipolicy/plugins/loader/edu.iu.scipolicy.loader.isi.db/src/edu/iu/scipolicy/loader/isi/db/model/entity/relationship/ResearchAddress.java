@@ -11,6 +11,7 @@ import edu.iu.scipolicy.loader.isi.db.model.entity.Document;
 
 public class ResearchAddress extends RowItem<ResearchAddress> {
 	public static final Schema<ResearchAddress> SCHEMA = new Schema<ResearchAddress>(
+		false,
 		ISIDatabase.RESEARCH_ADDRESSES_PUBLISHER_FOREIGN_KEY, Schema.FOREIGN_KEY_CLASS,
 		ISIDatabase.RESEARCH_ADDRESSES_ADDRESS_FOREIGN_KEY, Schema.FOREIGN_KEY_CLASS,
 		ISIDatabase.ORDER_LISTED, Schema.INTEGER_CLASS).

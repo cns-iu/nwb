@@ -10,6 +10,7 @@ import edu.iu.nwb.shared.isiutil.database.ISIDatabase;
 
 public class Document extends Entity<Document> implements Comparable<Document> {
 	public static final Schema<Document> SCHEMA = new Schema<Document>(
+		true,
 		ISIDatabase.ABSTRACT_TEXT, Schema.TEXT_CLASS,
 		ISIDatabase.ARTICLE_NUMBER, Schema.TEXT_CLASS,
 		ISIDatabase.BEGINNING_PAGE, Schema.INTEGER_CLASS,

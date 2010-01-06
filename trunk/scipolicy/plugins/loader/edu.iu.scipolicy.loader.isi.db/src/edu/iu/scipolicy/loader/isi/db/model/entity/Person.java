@@ -10,6 +10,7 @@ import edu.iu.nwb.shared.isiutil.database.ISIDatabase;
 
 public class Person extends Entity<Person> implements Comparable<Person> {
 	public static final Schema<Person> SCHEMA = new Schema<Person>(
+		true,
 		ISIDatabase.ADDITIONAL_NAME, Schema.TEXT_CLASS,
 		ISIDatabase.FAMILY_NAME, Schema.TEXT_CLASS,
 		ISIDatabase.FIRST_INITIAL, Schema.TEXT_CLASS,

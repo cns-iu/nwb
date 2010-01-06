@@ -12,6 +12,7 @@ import edu.iu.nwb.shared.isiutil.database.ISIDatabase;
 
 public class Publisher extends Entity<Publisher> implements Comparable<Publisher> {
 	public final static Schema<Publisher> SCHEMA = new Schema<Publisher>(
+		true,
 		ISIDatabase.PUBLISHER_CITY, Schema.TEXT_CLASS,
 		ISIDatabase.PUBLISHER_NAME, Schema.TEXT_CLASS,
 		ISIDatabase.PUBLISHER_SOURCE, Schema.FOREIGN_KEY_CLASS,

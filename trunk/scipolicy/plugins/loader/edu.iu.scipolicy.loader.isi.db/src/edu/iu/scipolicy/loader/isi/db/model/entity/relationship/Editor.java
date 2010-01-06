@@ -11,6 +11,7 @@ import edu.iu.scipolicy.loader.isi.db.model.entity.Person;
 
 public class Editor extends RowItem<Editor> implements Comparable<Editor> {
 	public static final Schema<Editor> SCHEMA = new Schema<Editor>(
+		false,
 		ISIDatabase.EDITORS_DOCUMENT_FOREIGN_KEY, Schema.FOREIGN_KEY_CLASS,
 		ISIDatabase.EDITORS_PERSON_FOREIGN_KEY, Schema.FOREIGN_KEY_CLASS,
 		ISIDatabase.ORDER_LISTED, Schema.INTEGER_CLASS).

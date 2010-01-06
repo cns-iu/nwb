@@ -11,6 +11,7 @@ import edu.iu.scipolicy.loader.isi.db.model.entity.ISIFile;
 
 public class DocumentOccurrence extends RowItem<DocumentOccurrence> {
 	public static final Schema<DocumentOccurrence> SCHEMA = new Schema<DocumentOccurrence>(
+		false,
 		ISIDatabase.DOCUMENT_OCCURRENCES_DOCUMENT_FOREIGN_KEY, Schema.FOREIGN_KEY_CLASS,
 		ISIDatabase.DOCUMENT_OCCURRENCES_ISI_FILE_FOREIGN_KEY, Schema.FOREIGN_KEY_CLASS).
 		FOREIGN_KEYS(

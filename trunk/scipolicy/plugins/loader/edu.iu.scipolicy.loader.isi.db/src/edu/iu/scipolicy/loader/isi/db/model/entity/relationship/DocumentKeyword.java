@@ -11,6 +11,7 @@ import edu.iu.scipolicy.loader.isi.db.model.entity.Keyword;
 
 public class DocumentKeyword extends RowItem<DocumentKeyword> {
 	public static final Schema<DocumentKeyword> SCHEMA = new Schema<DocumentKeyword>(
+		false,
 		ISIDatabase.DOCUMENT_KEYWORDS_DOCUMENT_FOREIGN_KEY, Schema.FOREIGN_KEY_CLASS,
 		ISIDatabase.DOCUMENT_KEYWORDS_KEYWORD_FOREIGN_KEY, Schema.FOREIGN_KEY_CLASS,
 		ISIDatabase.ORDER_LISTED, Schema.INTEGER_CLASS).

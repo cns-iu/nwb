@@ -4,13 +4,13 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.cishell.utilities.IntegerParserWithDefault;
 import org.cishell.utilities.StringUtilities;
 
 import prefuse.data.Table;
 import prefuse.data.Tuple;
 import prefuse.util.collections.IntIterator;
 import edu.iu.nwb.shared.isiutil.ISITag;
-import edu.iu.scipolicy.loader.isi.db.utilities.parser.IntegerParserWithDefault;
 
 public class ISITablePreprocessor {
 	public static Collection<Integer> removeRowsWithDuplicateDocuments(Table table) {
