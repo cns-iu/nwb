@@ -11,7 +11,7 @@ for i in range(columns * rows):
 
     # Generate a vector with at least one 1.
     while True:
-        vector = [random.randint(0, 1) for j in range(weightdim)]
+        vector = [random.randint(0, 1) for j in xrange(weightdim)]
         if 1 in vector:
             break
         
