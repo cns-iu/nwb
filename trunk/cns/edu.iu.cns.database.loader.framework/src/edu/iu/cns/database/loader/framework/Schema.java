@@ -7,7 +7,7 @@ import java.util.List;
 import org.cishell.utilities.NumberUtilities;
 
 public class Schema <T extends RowItem<T>> {
-	public static final String PRIMARY_KEY = "pk";
+	public static final String PRIMARY_KEY = "PK";
 
 	public static final Class<?> PRIMARY_KEY_CLASS = PrimaryKeyType.class;
 	public static final Class<?> FOREIGN_KEY_CLASS = ForeignKeyType.class;
@@ -18,15 +18,21 @@ public class Schema <T extends RowItem<T>> {
 	public static final Class<?> BOOLEAN_CLASS = Boolean.class;
 
 	private List<Field> fields = new ArrayList<Field>();
+	private List<PrimaryKey> primaryKeys = new ArrayList<PrimaryKey>();
 	private List<ForeignKey> foreignKeys = new ArrayList<ForeignKey>();
 
-	public Schema(Object...  objects) throws IllegalArgumentException {
+	public Schema(boolean addPrimaryKey, Object...  objects) throws IllegalArgumentException {
 		if (NumberUtilities.isOdd(objects.length)) {
 			String exceptionMessage =
 				"An even number of arguments must be supplied to Schema().  " +
 				objects.length +
 				" arguments were supplied.";
 			throw new IllegalArgumentException(exceptionMessage);
+		}
+
+		if (addPrimaryKey) {
+			this.fields.add(new Field(PRIMARY_KEY, PRIMARY_KEY_CLASS));
+			PRIMARY_KEYS(PRIMARY_KEY);
 		}
 
 		for (int ii = 0; ii < objects.length; ii += 2) {
@@ -40,8 +46,20 @@ public class Schema <T extends RowItem<T>> {
 		return this.fields;
 	}
 
+	public List<PrimaryKey> getPrimaryKeys() {
+		return this.primaryKeys;
+	}
+
 	public List<ForeignKey> getForeignKeys() {
 		return this.foreignKeys;
+	}
+
+	public Schema<T> PRIMARY_KEYS(String... primaryKeys) {
+		for (String primaryKey : primaryKeys) {
+			this.primaryKeys.add(new PrimaryKey(primaryKey));
+		}
+
+		return this;
 	}
 
 	public Schema<T> FOREIGN_KEYS(String... foreignKeys) {
@@ -94,6 +112,18 @@ public class Schema <T extends RowItem<T>> {
 
 		public Class<?> getClazz() {
 			return this.clazz;
+		}
+	}
+
+	public static class PrimaryKey {
+		private String fieldName;
+
+		public PrimaryKey(String fieldName) {
+			this.fieldName = fieldName;
+		}
+
+		public String getFieldName() {
+			return this.fieldName;
 		}
 	}
 

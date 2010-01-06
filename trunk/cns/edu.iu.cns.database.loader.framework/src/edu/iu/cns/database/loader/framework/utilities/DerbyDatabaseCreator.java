@@ -10,6 +10,7 @@ import java.util.List;
 import org.cishell.service.database.Database;
 import org.cishell.service.database.DatabaseCreationException;
 import org.cishell.service.database.DatabaseService;
+import org.cishell.utilities.IntegerParserWithDefault;
 import org.cishell.utilities.StringUtilities;
 
 import edu.iu.cns.database.loader.framework.RowItem;
@@ -19,6 +20,7 @@ import edu.iu.cns.database.loader.framework.Schema.Field;
 
 public class DerbyDatabaseCreator {
 	public static final int MAX_VARCHAR_LENGTH = 32000;
+	public static final String NULL_VALUE = "null";
 
 	// TODO: Better exception message?
 	/*public static final String EXCEPTION_MESSAGE =
@@ -40,9 +42,12 @@ public class DerbyDatabaseCreator {
 		}
 
 		for (RowItemContainer<? extends RowItem<?>> itemContainer : model.getRowItemLists()) {
-			addForeignKeysToTable(databaseConnection, itemContainer);
 			fillTable(databaseConnection, itemContainer);
 		}
+
+		/*for (RowItemContainer<? extends RowItem<?>> itemContainer : model.getRowItemLists()) {
+			addForeignKeysToTable(databaseConnection, itemContainer);
+		}*/
 
 		databaseConnection.close();
 
@@ -55,13 +60,13 @@ public class DerbyDatabaseCreator {
 		String tableName = itemContainer.getDatabaseTableName();
 		Schema<? extends RowItem<?>> schema = itemContainer.getSchema();
 
-		StringBuffer tableValuesForQuery = new StringBuffer(
-			"\"" + Schema.PRIMARY_KEY + "\" " + getFieldTypeString(Schema.PRIMARY_KEY_CLASS));
-		tableValuesForQuery.append(schemaToFieldsForCreateTableQueryString(schema));
-		tableValuesForQuery.append(", PRIMARY KEY (\"" + Schema.PRIMARY_KEY + "\")");
+		StringBuffer fieldNamesForQuery = new StringBuffer();
+		fieldNamesForQuery.append(schemaToFieldsForCreateTableQueryString(schema));
+		fieldNamesForQuery.append(schemaToPrimaryKeysForCreateTableQueryString(schema));
+		//fieldNamesForQuery.append(", PRIMARY KEY (\"" + Schema.PRIMARY_KEY + "\")");
 
 		String createTableQuery =
-			"CREATE TABLE " + tableName + "(" + tableValuesForQuery.toString() + ")";
+			"CREATE TABLE " + tableName + "(" + fieldNamesForQuery.toString() + ")";
 		connection.createStatement().execute(createTableQuery);
 	}
 
@@ -115,14 +120,21 @@ public class DerbyDatabaseCreator {
 			itemValuesStrings.add(createAttributesStringAccordingToSchemaForInsertQuery(
 				schema, attributes));
 		}
+		/*for (int ii = 0; ii < 1; ii++) {
+			RowItem<?> item = items.get(ii);
+			Dictionary<String, Comparable<?>> attributes = item.getAttributes();
+			itemValuesStrings.add(createAttributesStringAccordingToSchemaForInsertQuery(
+				schema, attributes));
+		}*/
 
-		// String fieldsString = schemaToFieldsForInsertQueryString(schema);
+		String fieldsString = schemaToFieldsForInsertQueryString(schema);
 		String insertQuery =
 			"INSERT INTO " +
 			tableName +
-			" VALUES (" +
-			StringUtilities.implodeList(itemValuesStrings, ", ") +
-			")";
+			" (" +
+			fieldsString +
+			") VALUES " +
+			StringUtilities.implodeList(itemValuesStrings, ", ");
 		System.err.println("\n\"" + insertQuery + "\"");
 		connection.createStatement().execute(insertQuery);
 	}
@@ -145,14 +157,43 @@ public class DerbyDatabaseCreator {
 	// TODO: New name.
 	public static String schemaToFieldsForCreateTableQueryString(
 			Schema<? extends RowItem<?>> schema) {
+		// TODO: Use PreparedStatement.
+		List<Field> fields = schema.getFields();
+		int fieldCount = fields.size();
+
+		if (fieldCount == 0) {
+			return "";
+		}
+
 		StringBuffer fieldsForCreateTableQueryString = new StringBuffer();
 
 		for (Schema.Field field : schema.getFields()) {
 			fieldsForCreateTableQueryString.append(
-				", \"" + field.getName() + "\" " + getFieldTypeString(field.getClazz()));
+				"\"" + field.getName() + "\" " + getFieldTypeString(field.getClazz()) + ", ");
 		}
 
+		// To remove the last ", ".
+		fieldsForCreateTableQueryString.deleteCharAt(fieldsForCreateTableQueryString.length() - 1);
+		fieldsForCreateTableQueryString.deleteCharAt(fieldsForCreateTableQueryString.length() - 1);
+
 		return fieldsForCreateTableQueryString.toString();
+	}
+
+	public static String schemaToPrimaryKeysForCreateTableQueryString(
+			Schema<? extends RowItem<?>> schema) {
+		List<Schema.PrimaryKey> primaryKeys = schema.getPrimaryKeys();
+
+		if (primaryKeys.size() == 0) {
+			return "";
+		}
+
+		List<String> primaryKeyStrings = new ArrayList<String>();
+
+		for (Schema.PrimaryKey primaryKey : primaryKeys) {
+			primaryKeyStrings.add("\"" + primaryKey.getFieldName() + "\"");
+		}
+
+		return ", PRIMARY KEY (" + StringUtilities.implodeList(primaryKeyStrings, ", ") + ")";
 	}
 
 	public static String schemaToFieldsForInsertQueryString(Schema<? extends RowItem<?>> schema) {
@@ -168,32 +209,45 @@ public class DerbyDatabaseCreator {
 	public static String createAttributesStringAccordingToSchemaForInsertQuery(
 			Schema<? extends RowItem<?>> schema, Dictionary<String, Comparable<?>> attributes) {
 		List<String> attributeValues = new ArrayList<String>();
-		attributeValues.add(StringUtilities.emptyStringIfNull(attributes.get(Schema.PRIMARY_KEY)));
 
 		for (Schema.Field field : schema.getFields()) {
-			//attributeValues.add(valueFormattingForField(attributes.get(field.getName()), field));
-			attributeValues.add(
-				"\"" + StringUtilities.emptyStringIfNull(attributes.get(field.getName())) + "\"");
+			attributeValues.add(valueFormattingForField(attributes.get(field.getName()), field));
 		}
 
 		return "(" + StringUtilities.implodeList(attributeValues, ", ") + ")";
 	}
 
-	/*public static String valueFormattingForField(Object toString, Field field) {
+	public static String valueFormattingForField(Object toString, Field field) {
 		String value = StringUtilities.emptyStringIfNull(toString);
 		Class<?> clazz = field.getClazz();
 
 		if (clazz == Schema.PRIMARY_KEY_CLASS) {
-			return IntegerParserWithDefault.parseInt(value);
+			return "" + IntegerParserWithDefault.parse(value);
 		} else if (clazz == Schema.FOREIGN_KEY_CLASS) {
-			return value;
+			if ("".equals(value)) {
+				return NULL_VALUE;
+			} else {
+				return "" + IntegerParserWithDefault.parse(value);
+			}
 		} else if (clazz == Schema.TEXT_CLASS) {
-			return "\"" + value + "\"";
+			if (value == null) {
+				return NULL_VALUE;
+			} else {
+				return "\'" + value + "\'";
+			}
 		} else if (clazz == Schema.INTEGER_CLASS) {
-			return value;
+			if ("".equals(value)) {
+				return NULL_VALUE;
+			} else {
+				return "" + IntegerParserWithDefault.parse(value);
+			}
 		} else {
 			// TODO: Error?  Just default to INT for now.
-			return value;
+			if ("".equals(value)) {
+				return NULL_VALUE;
+			} else {
+				return "" + IntegerParserWithDefault.parse(value);
+			}
 		}
-	}*/
+	}
 }
