@@ -196,13 +196,6 @@ float hexa_dist(int xDelta, int yDelta) {
 	return hexa_dist(0, 0, xDelta, yDelta);
 }
 
-/* TODO Might revisit some optimizations Russell mentioned in the long term.
- * One is that we could exploit the circular symmetry of the gaussian to reduce the number
- * of calls to this function eightfold (for rectangular topologies; not certain about the reduction
- * for hexagonal).
- * Another is that we could calculate the gaussian only once per batch (that is,
- * only once per width interpolation).
- */
 float* g_gaussians;
 void updateGaussians(float width) {
 	for (int rowDelta = 0; rowDelta < g_rows; rowDelta++) {
@@ -213,10 +206,6 @@ void updateGaussians(float width) {
 		}
 	}
 }
-
-//float gaussian(Coordinate coord1, Coordinate coord2, float width) {
-//	return exp(-hexa_dist(coord1.row, coord1.column, coord2.row, coord2.column) / (width * width));
-//}
 
 float interpolate(float x, float x0, float x1, float y0, float y1) {
 	if (x0 == x1) {
@@ -353,7 +342,6 @@ training_data_t* loadMyTrainingVectorsFromDense(int myRank) {
 	ifstream trainingFile(g_trainingDataPath.c_str());
 
 	if (trainingFile.is_open()) {
-
 		int dimensions;
 		trainingFile >> g_numberOfVectors >> dimensions;
 		if (dimensions != g_dim) { // TODO Ugh.
@@ -425,12 +413,29 @@ training_data_t* loadMyTrainingVectorsFromSparse(int myRank) {
 	ifstream trainingFile(g_trainingDataPath.c_str());
 
 	if (trainingFile.is_open()) {
+		string firstLine;
+		getline(trainingFile, firstLine);
+		istringstream firstLineStream(firstLine);
+		int dimensions;
+		firstLineStream >> g_numberOfVectors >> dimensions;
+		if (dimensions != g_dim) { // TODO Ugh.
+			cerr << "Dimensionality of the training set (" << dimensions << ") does not agree with the dimensionality of the codebook vectors (" << g_dim << ")." << endl;
+			exit(1);
+		}
+
+		const string commentMarker("#");
+
 		training_data_t* trainingVectors = new training_data_t();
 
 		int skippedVectorCount = 0;
 		int lineNumber = 0;
 		string line;
 		while (getline(trainingFile, line)) {
+			// Skip comments.
+			if (0 == line.find(commentMarker)) {
+				continue;
+			}
+
 			// Only read lines assigned to my rank.
 			if (lineNumber % g_numberOfJobs == myRank) {
 				istringstream linestream(line);
@@ -465,18 +470,6 @@ training_data_t* loadMyTrainingVectorsFromSparse(int myRank) {
 
 			lineNumber++;
 		}
-		// TODO Sanity check: i == g_rows * g_columns (- 1?)
-
-//		// TODO Debug only.
-//		for (vector<map<int, float> >::const_iterator vecIt = trainingVectors->begin(); vecIt != trainingVectors->end(); vecIt++) {
-//			map<int, float> m = *vecIt;
-//
-//			for (map<int, float>::const_iterator it = m.begin(); it != m.end(); it++) {
-//				cout << it->first << ", " << it->second << endl;
-//			}
-//
-//			cout << endl;
-//		}
 
 		trainingFile.close();
 
@@ -797,14 +790,6 @@ void train(int myRank, float* net, training_data_t* myTrainingVectors) {
 		// Accumulate for equation 5 (exploit sparseness here, too).
 		/* If we do non-gaussian neighborhoods in the future, be smarter about which nodes to
 		 * update.
-		 *
-		 * TODO: Calculate a gaussian blanket only once per width.  Will need to double the map
-		 * in both dimensions, but we can also easily exploit fourfold (eventually even eightfold)
-		 * symmetry.
-		 *
-		 * Eventually, may want to change this to exploit eight-fold symmetry
-		 * in circles centered on the winner (for Gaussian neighborhoods in
-		 * rectangular topology).
 		 */
 		for (int row = 0; row < g_rows; row++) {
 			for (int column = 0; column < g_columns; column++) {
