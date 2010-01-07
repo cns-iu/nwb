@@ -64,7 +64,7 @@ public class ExtractGraph implements Algorithm {
 
 
 		Database database = (Database) data[0].getData();
-		Connection connection = DatabaseUtilities.connect(database);
+		Connection connection = DatabaseUtilities.connect(database, "Unable to communicate with the database.");
 		try {
 			Graph graph = extractGraph(connection);
 			Data outputData = wrapWithMetadata(graph);

@@ -42,7 +42,7 @@ public class ExtractTable implements Algorithm {
     public Data[] execute() throws AlgorithmExecutionException {
     	
     	Database database = (Database) data[0].getData();
-		Connection connection = DatabaseUtilities.connect(database);
+		Connection connection = DatabaseUtilities.connect(database, "Unable to communicate with the database.");
 		try {
     		DatabaseDataSource tableSource = ConnectionFactory.getDatabaseConnection(connection);
     		Table extractedTable = tableSource.getData(query);
