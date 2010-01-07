@@ -72,6 +72,12 @@ struct Coordinate {
 //	return sampled;
 //}
 
+char* getAsctime() {
+	time_t rawTime;
+	time(&rawTime);
+	struct tm* localTime = localtime(&rawTime);
+	return asctime(localTime);
+}
 
 void zeroOut(float* array, int size) {
 	for (int i = 0; i < size; i++) {
@@ -207,6 +213,10 @@ void updateGaussians(float width) {
 	}
 }
 
+//float gaussian(Coordinate coord1, Coordinate coord2, float width) {
+//	return exp(-hexa_dist(coord1.row, coord1.column, coord2.row, coord2.column) / (width * width));
+//}
+
 float interpolate(float x, float x0, float x1, float y0, float y1) {
 	if (x0 == x1) {
 		cerr << "Can't interpolate over an empty input range." << endl;
@@ -225,10 +235,7 @@ float* loadInitialCodebook(int myRank) {
 	cout << "Loading initial codebook.. " << endl;
 
 	if (myRank == 0) {
-		time_t rawStartTime;
-		time(&rawStartTime);
-		struct tm* startTimeInfo = localtime(&rawStartTime);
-		cout << "Starting initial codebook load at " << asctime(startTimeInfo) << endl;
+		cout << "Starting initial codebook load at " << getAsctime() << endl;
 	}
 
 	float* net;
@@ -264,10 +271,7 @@ float* loadInitialCodebook(int myRank) {
 		}
 
 		if (myRank == 0) {
-			time_t rawFinishTime;
-			time(&rawFinishTime);
-			struct tm* finishTimeInfo = localtime(&rawFinishTime);
-			cout << "Finishing initial codebook load at " << asctime(finishTimeInfo) << endl;
+			cout << "Finishing initial codebook load at " << getAsctime() << endl;
 		}
 
 		codebookFile.close();
@@ -282,7 +286,7 @@ float* loadInitialCodebook(int myRank) {
 }
 
 void writeCodebookToFile(float* net, string filenameID) {
-	cout << "Writing codebook to file.. " << endl;
+	cout << "Codebook snapshot starting at " << getAsctime() << endl;
 
 	string outputCodebookPath(g_outputCodebookPathStem);
 	outputCodebookPath.append(filenameID);
@@ -310,7 +314,7 @@ void writeCodebookToFile(float* net, string filenameID) {
 		exit(1);
 	}
 
-	cout << "Done." << endl;
+	cout << "Codebook snapshot finishing at " << getAsctime() << endl;
 }
 
 void readConfigurationFile() {
@@ -404,10 +408,7 @@ training_data_t* loadMyTrainingVectorsFromSparse(int myRank) {
 	cout << "Loading training vectors (from sparse representation).. " << endl;
 
 	if (myRank == 0) {
-		time_t rawStartTime;
-		time(&rawStartTime);
-		struct tm* startTimeInfo = localtime(&rawStartTime);
-		cout << "Starting training vectors load at " << asctime(startTimeInfo) << endl;
+		cout << "Starting training vectors load at " << getAsctime() << endl;
 	}
 
 	ifstream trainingFile(g_trainingDataPath.c_str());
@@ -474,10 +475,7 @@ training_data_t* loadMyTrainingVectorsFromSparse(int myRank) {
 		trainingFile.close();
 
 		if (myRank == 0) {
-			time_t rawFinishTime;
-			time(&rawFinishTime);
-			struct tm* finishTimeInfo = localtime(&rawFinishTime);
-			cout << "Finishing training vectors load at " << asctime(finishTimeInfo) << endl;
+			cout << "Finishing training vectors load at " << getAsctime() << endl;
 		}
 
 		if (skippedVectorCount > 0) {
@@ -692,10 +690,7 @@ float calculateCosineQuantizationError(
 void reportAverageQuantizationError(
 		training_data_t* sampledTrainingVectors, float* net, int myRank, float* recentSquaredNorms) {
 	if (myRank == 0) {
-		time_t rawStartTime;
-		time(&rawStartTime);
-		struct tm* startTimeInfo = localtime(&rawStartTime);
-		cout << "Quantization error report starting at " << asctime(startTimeInfo) << endl;
+		cout << "Quantization error report starting at " << getAsctime() << endl;
 	}
 
 	float quantizationErrorStart =
@@ -720,10 +715,7 @@ void reportAverageQuantizationError(
 	}
 
 	if (myRank == 0) {
-		time_t rawFinishTime;
-		time(&rawFinishTime);
-		struct tm* finishTimeInfo = localtime(&rawFinishTime);
-		cout << "Quantization error report finishing at " << asctime(finishTimeInfo) << endl;
+		cout << "Quantization error report finishing at " << getAsctime() << endl;
 	}
 }
 
@@ -811,10 +803,7 @@ void train(int myRank, float* net, training_data_t* myTrainingVectors) {
 
 		if ((t + 1) % g_epochLengthInTimesteps == 0) {
 			if (myRank == 0) {
-				time_t rawStartTime;
-				time(&rawStartTime);
-				struct tm* startTimeInfo = localtime(&rawStartTime);
-				cout << "Update starting at " << asctime(startTimeInfo) << endl;
+				cout << "Update starting at " << getAsctime() << endl;
 			}
 
 			calculateNewCodebook(net);
@@ -845,10 +834,7 @@ void train(int myRank, float* net, training_data_t* myTrainingVectors) {
 			reportAverageQuantizationError(&sampledTrainingVectors, net, myRank, recentSquaredNorms);
 
 			if (myRank == 0) {
-				time_t rawFinishTime;
-				time(&rawFinishTime);
-				struct tm* finishTimeInfo = localtime(&rawFinishTime);
-				cout << "Update finishing at " << asctime(finishTimeInfo) << endl;
+				cout << "Update finishing at " << getAsctime() << endl;
 			}
 		}
 	}
@@ -878,6 +864,10 @@ int main(int argc, char *argv[]) {
 
 	int myRank = MPI::COMM_WORLD.Get_rank();
 
+	if (myRank == 0) {
+		cout << "Program starting at " << getAsctime() << endl;
+	}
+
 	cout << "My rank is " << myRank << endl;
 
 	g_numberOfJobs = MPI::COMM_WORLD.Get_size();
@@ -895,6 +885,10 @@ int main(int argc, char *argv[]) {
 
 	if (myRank == 0) {
 		writeCodebookToFile(net, "");
+	}
+
+	if (myRank == 0) {
+		cout << "Program finishing at " << getAsctime() << endl;
 	}
 
 	MPI::Finalize();
