@@ -15,6 +15,7 @@ import org.cishell.framework.data.BasicData;
 import org.cishell.framework.data.Data;
 import org.cishell.framework.data.DataProperty;
 import org.cishell.service.database.Database;
+import org.cishell.utilities.DatabaseUtilities;
 
 import prefuse.data.Graph;
 import prefuse.data.Table;
@@ -63,14 +64,17 @@ public class ExtractGraph implements Algorithm {
 
 
 		Database database = (Database) data[0].getData();
+		Connection connection = DatabaseUtilities.connect(database);
 		try {
-			Graph graph = extractGraph(database);
+			Graph graph = extractGraph(connection);
 			Data outputData = wrapWithMetadata(graph);
 			return new Data[] { outputData };
 		} catch (SQLException e) {
 			throw new AlgorithmExecutionException("Unable to communicate with the selected database.", e);
 		} catch (DataIOException e) {
 			throw new AlgorithmExecutionException("There was a problem executing a query: " + e.getMessage(), e);
+		} finally {
+			DatabaseUtilities.closeConnectionQuietly(connection);
 		}
 
 	}
@@ -80,10 +84,9 @@ public class ExtractGraph implements Algorithm {
 	 * As such, we need to generate new 'internal' columns that have integers based on the original IDs.
 	 * That's most of the work in this method.
 	 */
-	private Graph extractGraph(Database database) throws SQLException,
+	private Graph extractGraph(Connection connection) throws SQLException,
 					DataIOException, AlgorithmExecutionException {
-		Connection baseConnection = database.getConnection();
-		DatabaseDataSource tableSource = ConnectionFactory.getDatabaseConnection(baseConnection);
+		DatabaseDataSource tableSource = ConnectionFactory.getDatabaseConnection(connection);
 		Table nodes = tableSource.getData(nodeQuery);
 		Table edges = tableSource.getData(edgeQuery);		
 		addInternalColumns(nodes, edges);

@@ -13,6 +13,7 @@ import org.cishell.framework.data.BasicData;
 import org.cishell.framework.data.Data;
 import org.cishell.framework.data.DataProperty;
 import org.cishell.service.database.Database;
+import org.cishell.utilities.DatabaseUtilities;
 
 import prefuse.data.Table;
 import prefuse.data.io.DataIOException;
@@ -41,9 +42,9 @@ public class ExtractTable implements Algorithm {
     public Data[] execute() throws AlgorithmExecutionException {
     	
     	Database database = (Database) data[0].getData();
-    	try {
-    		Connection baseConnection = database.getConnection();
-    		DatabaseDataSource tableSource = ConnectionFactory.getDatabaseConnection(baseConnection);
+		Connection connection = DatabaseUtilities.connect(database);
+		try {
+    		DatabaseDataSource tableSource = ConnectionFactory.getDatabaseConnection(connection);
     		Table extractedTable = tableSource.getData(query);
     		Data outputData = wrapWithMetadata(extractedTable);
     		return new Data[] { outputData };
@@ -51,9 +52,13 @@ public class ExtractTable implements Algorithm {
 			throw new AlgorithmExecutionException("Unable to communicate with the selected database.", e);
 		} catch (DataIOException e) {
 			throw new AlgorithmExecutionException("There was a problem executing the query: " + e.getMessage(), e);
+		} finally {
+			DatabaseUtilities.closeConnectionQuietly(connection);
 		}
 		
     }
+
+	
 
 	private Data wrapWithMetadata(Table extractedTable) {
 		Data outputData = new BasicData(extractedTable, Table.class.getName());
