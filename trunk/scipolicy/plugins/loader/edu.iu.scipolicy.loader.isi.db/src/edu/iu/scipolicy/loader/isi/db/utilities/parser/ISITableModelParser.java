@@ -463,7 +463,8 @@ public class ISITableModelParser {
 			StringUtilities.simpleClean(row.getString(ISITag.UNIQUE_ID.getColumnName()));
 		String issue = StringUtilities.simpleClean(row.getString(ISITag.ISSUE.getColumnName()));
 
-		String language = StringUtilities.simpleClean(row.getString(ISITag.TITLE.getColumnName()));
+		String language =
+			StringUtilities.simpleClean(row.getString(ISITag.LANGUAGE.getColumnName()));
 
 		int pageCount = IntegerParserWithDefault.parse(
 			StringUtilities.simpleClean(row.getString(ISITag.NUMBER_OF_PAGES.getColumnName())));
