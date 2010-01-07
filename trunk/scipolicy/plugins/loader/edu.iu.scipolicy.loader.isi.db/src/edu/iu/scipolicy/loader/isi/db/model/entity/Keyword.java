@@ -7,14 +7,15 @@ import org.cishell.utilities.StringUtilities;
 
 import edu.iu.cns.database.loader.framework.Entity;
 import edu.iu.cns.database.loader.framework.Schema;
+import edu.iu.cns.database.loader.framework.DerbyFieldType;
 import edu.iu.cns.database.loader.framework.utilities.DatabaseTableKeyGenerator;
 import edu.iu.nwb.shared.isiutil.database.ISIDatabase;
 
 public class Keyword extends Entity<Keyword> implements Comparable<Keyword> {
 	public static final Schema<Keyword> SCHEMA = new Schema<Keyword>(
 		true,
-		ISIDatabase.KEYWORD, Schema.TEXT_CLASS,
-		ISIDatabase.TYPE, Schema.TEXT_CLASS);
+		ISIDatabase.KEYWORD, DerbyFieldType.TEXT,
+		ISIDatabase.TYPE, DerbyFieldType.TEXT);
 
 	private String keyword;
 	private String type;

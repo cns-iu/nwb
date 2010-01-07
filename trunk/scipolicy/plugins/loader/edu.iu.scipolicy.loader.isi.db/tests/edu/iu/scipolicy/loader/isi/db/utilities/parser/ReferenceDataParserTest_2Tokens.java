@@ -15,7 +15,7 @@ public class ReferenceDataParserTest_2Tokens extends ReferenceDataParserTest {
 		ReferenceDataParser result = runTest(", ", true);
 		Source resultSource = result.getSource();
 		String abbreviation = resultSource.get29CharacterSourceTitleAbbreviation();
-		Person resultPerson = result.getAuthor();
+		Person resultPerson = result.getAuthorPerson();
 		int resultYear = result.getYear();
 
 		if (!StringUtilities.isEmptyOrWhiteSpace(abbreviation) ||

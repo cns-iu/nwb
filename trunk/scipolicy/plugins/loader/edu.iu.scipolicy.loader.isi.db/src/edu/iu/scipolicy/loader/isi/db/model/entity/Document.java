@@ -5,38 +5,39 @@ import java.util.Hashtable;
 
 import edu.iu.cns.database.loader.framework.Entity;
 import edu.iu.cns.database.loader.framework.Schema;
+import edu.iu.cns.database.loader.framework.DerbyFieldType;
 import edu.iu.cns.database.loader.framework.utilities.DatabaseTableKeyGenerator;
 import edu.iu.nwb.shared.isiutil.database.ISIDatabase;
 
 public class Document extends Entity<Document> implements Comparable<Document> {
 	public static final Schema<Document> SCHEMA = new Schema<Document>(
 		true,
-		ISIDatabase.ABSTRACT_TEXT, Schema.TEXT_CLASS,
-		ISIDatabase.ARTICLE_NUMBER, Schema.TEXT_CLASS,
-		ISIDatabase.BEGINNING_PAGE, Schema.INTEGER_CLASS,
-		ISIDatabase.CITED_REFERENCE_COUNT, Schema.INTEGER_CLASS,
-		ISIDatabase.CITED_YEAR, Schema.INTEGER_CLASS,
-		ISIDatabase.DIGITAL_OBJECT_IDENTIFIER, Schema.TEXT_CLASS,
-		ISIDatabase.DOCUMENT_TYPE, Schema.TEXT_CLASS,
-		ISIDatabase.DOCUMENT_VOLUME, Schema.TEXT_CLASS,
-		ISIDatabase.ENDING_PAGE, Schema.INTEGER_CLASS,
-		ISIDatabase.FIRST_AUTHOR, Schema.FOREIGN_KEY_CLASS,
-		ISIDatabase.FUNDING_AGENCY_AND_GRANT_NUMBER, Schema.TEXT_CLASS,
-		ISIDatabase.FUNDING_TEXT, Schema.TEXT_CLASS,
-		ISIDatabase.ISBN, Schema.TEXT_CLASS,
-		ISIDatabase.ISI_DOCUMENT_DELIVERY_NUMBER, Schema.TEXT_CLASS,
-		ISIDatabase.ISI_UNIQUE_ARTICLE_IDENTIFIER, Schema.TEXT_CLASS,
-		ISIDatabase.ISSUE, Schema.TEXT_CLASS,
-		ISIDatabase.LANGUAGE, Schema.TEXT_CLASS,
-		ISIDatabase.PAGE_COUNT, Schema.INTEGER_CLASS,
-		ISIDatabase.PART_NUMBER, Schema.TEXT_CLASS,
-		ISIDatabase.PUBLICATION_DATE, Schema.TEXT_CLASS,
-		ISIDatabase.PUBLICATION_YEAR, Schema.INTEGER_CLASS,
-		ISIDatabase.SPECIAL_ISSUE, Schema.TEXT_CLASS,
-		ISIDatabase.SUBJECT_CATEGORY, Schema.TEXT_CLASS,
-		ISIDatabase.SUPPLEMENT, Schema.TEXT_CLASS,
-		ISIDatabase.TIMES_CITED, Schema.INTEGER_CLASS,
-		ISIDatabase.TITLE, Schema.TEXT_CLASS).
+		ISIDatabase.ABSTRACT_TEXT, DerbyFieldType.TEXT,
+		ISIDatabase.ARTICLE_NUMBER, DerbyFieldType.TEXT,
+		ISIDatabase.BEGINNING_PAGE, DerbyFieldType.INTEGER,
+		ISIDatabase.CITED_REFERENCE_COUNT, DerbyFieldType.INTEGER,
+		ISIDatabase.CITED_YEAR, DerbyFieldType.INTEGER,
+		ISIDatabase.DIGITAL_OBJECT_IDENTIFIER, DerbyFieldType.TEXT,
+		ISIDatabase.DOCUMENT_TYPE, DerbyFieldType.TEXT,
+		ISIDatabase.DOCUMENT_VOLUME, DerbyFieldType.TEXT,
+		ISIDatabase.ENDING_PAGE, DerbyFieldType.INTEGER,
+		ISIDatabase.FIRST_AUTHOR, DerbyFieldType.FOREIGN_KEY,
+		ISIDatabase.FUNDING_AGENCY_AND_GRANT_NUMBER, DerbyFieldType.TEXT,
+		ISIDatabase.FUNDING_TEXT, DerbyFieldType.TEXT,
+		ISIDatabase.ISBN, DerbyFieldType.TEXT,
+		ISIDatabase.ISI_DOCUMENT_DELIVERY_NUMBER, DerbyFieldType.TEXT,
+		ISIDatabase.ISI_UNIQUE_ARTICLE_IDENTIFIER, DerbyFieldType.TEXT,
+		ISIDatabase.ISSUE, DerbyFieldType.TEXT,
+		ISIDatabase.LANGUAGE, DerbyFieldType.TEXT,
+		ISIDatabase.PAGE_COUNT, DerbyFieldType.INTEGER,
+		ISIDatabase.PART_NUMBER, DerbyFieldType.TEXT,
+		ISIDatabase.PUBLICATION_DATE, DerbyFieldType.TEXT,
+		ISIDatabase.PUBLICATION_YEAR, DerbyFieldType.INTEGER,
+		ISIDatabase.SPECIAL_ISSUE, DerbyFieldType.TEXT,
+		ISIDatabase.SUBJECT_CATEGORY, DerbyFieldType.TEXT,
+		ISIDatabase.SUPPLEMENT, DerbyFieldType.TEXT,
+		ISIDatabase.TIMES_CITED, DerbyFieldType.INTEGER,
+		ISIDatabase.TITLE, DerbyFieldType.TEXT).
 		FOREIGN_KEYS(ISIDatabase.FIRST_AUTHOR, ISIDatabase.PERSON_TABLE_NAME);
 
 	private String abstractText;
@@ -258,7 +259,7 @@ public class Document extends Entity<Document> implements Comparable<Document> {
 	public void setFirstAuthorPerson(Person firstAuthorPerson) {
 		this.firstAuthorPerson = firstAuthorPerson;
 
-		getAttributes().put(ISIDatabase.FIRST_AUTHOR, firstAuthorPerson);
+		getAttributes().put(ISIDatabase.FIRST_AUTHOR, firstAuthorPerson.getPrimaryKey());
 	}
 
 	public int compareTo(Document otherDocument) {
@@ -315,18 +316,22 @@ public class Document extends Entity<Document> implements Comparable<Document> {
 
 		// Apparently, anonymous papers are allowed...?
 		if (firstAuthorPerson != null) {
-			attributes.put(ISIDatabase.FIRST_AUTHOR, firstAuthorPerson);
+			attributes.put(ISIDatabase.FIRST_AUTHOR, firstAuthorPerson.getPrimaryKey());
 		}
 
+		attributes.put(ISIDatabase.FUNDING_AGENCY_AND_GRANT_NUMBER, fundingAgencyAndGrantNumber);
+		attributes.put(ISIDatabase.FUNDING_TEXT, fundingText);
 		attributes.put(ISIDatabase.ISBN, isbn);
 		attributes.put(ISIDatabase.ISI_DOCUMENT_DELIVERY_NUMBER, isiDocumentDeliveryNumber);
 		attributes.put(ISIDatabase.ISI_UNIQUE_ARTICLE_IDENTIFIER, isiUniqueArticleIdentifier);
 		attributes.put(ISIDatabase.ISSUE, issue);
 		attributes.put(ISIDatabase.LANGUAGE, language);
 		attributes.put(ISIDatabase.PAGE_COUNT, pageCount);
+		attributes.put(ISIDatabase.PART_NUMBER, partNumber);
 		attributes.put(ISIDatabase.PUBLICATION_DATE, publicationDate);
 		attributes.put(ISIDatabase.PUBLICATION_YEAR, publicationYear);
 		attributes.put(ISIDatabase.SPECIAL_ISSUE, specialIssue);
+		attributes.put(ISIDatabase.SUBJECT_CATEGORY, subjectCategory);
 		attributes.put(ISIDatabase.SUPPLEMENT, supplement);
 		attributes.put(ISIDatabase.TIMES_CITED, timesCited);
 		attributes.put(ISIDatabase.TITLE, title);

@@ -7,23 +7,24 @@ import org.cishell.utilities.StringUtilities;
 
 import edu.iu.cns.database.loader.framework.Entity;
 import edu.iu.cns.database.loader.framework.Schema;
+import edu.iu.cns.database.loader.framework.DerbyFieldType;
 import edu.iu.cns.database.loader.framework.utilities.DatabaseTableKeyGenerator;
 import edu.iu.nwb.shared.isiutil.database.ISIDatabase;
 
 public class Source extends Entity<Source> implements Comparable<Source> {
 	public final static Schema<Source> SCHEMA = new Schema<Source>(
 		true,
-		ISIDatabase.BOOK_SERIES_TITLE, Schema.TEXT_CLASS,
-		ISIDatabase.BOOK_SERIES_SUBTITLE, Schema.TEXT_CLASS,
-		ISIDatabase.CONFERENCE_HOST, Schema.TEXT_CLASS,
-		ISIDatabase.CONFERENCE_LOCATION, Schema.TEXT_CLASS,
-		ISIDatabase.CONFERENCE_SPONSORS, Schema.TEXT_CLASS,
-		ISIDatabase.CONFERENCE_TITLE, Schema.TEXT_CLASS,
-		ISIDatabase.FULL_TITLE, Schema.TEXT_CLASS,
-		ISIDatabase.ISO_TITLE_ABBREVIATION, Schema.TEXT_CLASS,
-		ISIDatabase.ISSN, Schema.TEXT_CLASS,
-		ISIDatabase.PUBLICATION_TYPE, Schema.TEXT_CLASS,
-		ISIDatabase.TWENTY_NINE_CHARACTER_SOURCE_TITLE_ABBREVIATION, Schema.TEXT_CLASS);
+		ISIDatabase.BOOK_SERIES_TITLE, DerbyFieldType.TEXT,
+		ISIDatabase.BOOK_SERIES_SUBTITLE, DerbyFieldType.TEXT,
+		ISIDatabase.CONFERENCE_HOST, DerbyFieldType.TEXT,
+		ISIDatabase.CONFERENCE_LOCATION, DerbyFieldType.TEXT,
+		ISIDatabase.CONFERENCE_SPONSORS, DerbyFieldType.TEXT,
+		ISIDatabase.CONFERENCE_TITLE, DerbyFieldType.TEXT,
+		ISIDatabase.FULL_TITLE, DerbyFieldType.TEXT,
+		ISIDatabase.ISO_TITLE_ABBREVIATION, DerbyFieldType.TEXT,
+		ISIDatabase.ISSN, DerbyFieldType.TEXT,
+		ISIDatabase.PUBLICATION_TYPE, DerbyFieldType.TEXT,
+		ISIDatabase.TWENTY_NINE_CHARACTER_SOURCE_TITLE_ABBREVIATION, DerbyFieldType.TEXT);
 
 	private String bookSeriesTitle;
 	private String bookSeriesSubtitle;

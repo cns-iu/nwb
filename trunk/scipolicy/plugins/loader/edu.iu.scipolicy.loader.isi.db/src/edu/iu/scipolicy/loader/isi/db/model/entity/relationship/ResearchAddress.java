@@ -5,6 +5,7 @@ import java.util.Hashtable;
 
 import edu.iu.cns.database.loader.framework.RowItem;
 import edu.iu.cns.database.loader.framework.Schema;
+import edu.iu.cns.database.loader.framework.DerbyFieldType;
 import edu.iu.nwb.shared.isiutil.database.ISIDatabase;
 import edu.iu.scipolicy.loader.isi.db.model.entity.Address;
 import edu.iu.scipolicy.loader.isi.db.model.entity.Document;
@@ -12,9 +13,9 @@ import edu.iu.scipolicy.loader.isi.db.model.entity.Document;
 public class ResearchAddress extends RowItem<ResearchAddress> {
 	public static final Schema<ResearchAddress> SCHEMA = new Schema<ResearchAddress>(
 		false,
-		ISIDatabase.RESEARCH_ADDRESSES_PUBLISHER_FOREIGN_KEY, Schema.FOREIGN_KEY_CLASS,
-		ISIDatabase.RESEARCH_ADDRESSES_ADDRESS_FOREIGN_KEY, Schema.FOREIGN_KEY_CLASS,
-		ISIDatabase.ORDER_LISTED, Schema.INTEGER_CLASS).
+		ISIDatabase.RESEARCH_ADDRESSES_PUBLISHER_FOREIGN_KEY, DerbyFieldType.FOREIGN_KEY,
+		ISIDatabase.RESEARCH_ADDRESSES_ADDRESS_FOREIGN_KEY, DerbyFieldType.FOREIGN_KEY,
+		ISIDatabase.ORDER_LISTED, DerbyFieldType.INTEGER).
 		FOREIGN_KEYS(
 			ISIDatabase.RESEARCH_ADDRESSES_PUBLISHER_FOREIGN_KEY, ISIDatabase.DOCUMENT_TABLE_NAME,
 			ISIDatabase.RESEARCH_ADDRESSES_ADDRESS_FOREIGN_KEY, ISIDatabase.ADDRESS_TABLE_NAME);
@@ -52,8 +53,10 @@ public class ResearchAddress extends RowItem<ResearchAddress> {
 	public static Dictionary<String, Comparable<?>> createAttributes(
 			Document document, Address address, int orderListed) {
 		Dictionary<String, Comparable<?>> attributes = new Hashtable<String, Comparable<?>>();
-		attributes.put(ISIDatabase.REPRINT_ADDRESSES_PUBLISHER_FOREIGN_KEY, document);
-		attributes.put(ISIDatabase.REPRINT_ADDRESSES_ADDRESS_FOREIGN_KEY, address);
+		attributes.put(
+				ISIDatabase.REPRINT_ADDRESSES_PUBLISHER_FOREIGN_KEY, document.getPrimaryKey());
+		attributes.put(
+				ISIDatabase.REPRINT_ADDRESSES_ADDRESS_FOREIGN_KEY, address.getPrimaryKey());
 		attributes.put(ISIDatabase.ORDER_LISTED, orderListed);
 
 		return attributes;

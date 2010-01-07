@@ -54,7 +54,7 @@ public class ISIFileTest extends BaseRowItemParsingTest {
 			fail("Found " + numItems + " item(s); expected 1.");
 		}
 
-		ISIFile isiFile = (ISIFile)isiFiles.getItems().get(0);
+		ISIFile isiFile = (ISIFile)isiFiles.getItems().iterator().next();
 		String isiFileName = isiFile.getFileName();
 
 		if (!isiFileName.equals(ONE_ISI_FILE_TEST_DATA_PATH)) {

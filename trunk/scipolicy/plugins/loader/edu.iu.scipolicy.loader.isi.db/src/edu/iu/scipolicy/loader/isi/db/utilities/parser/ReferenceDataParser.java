@@ -43,7 +43,7 @@ public class ReferenceDataParser {
 	private DatabaseTableKeyGenerator personKeyGenerator;
 	private DatabaseTableKeyGenerator sourceKeyGenerator;
 	private String rawString;
-	private Person author;
+	private Person authorPerson;
 	private Source source;
 	private int year = ISIDatabase.NULL_YEAR;
 	private int volume = ISIDatabase.NULL_VOLUME;
@@ -81,8 +81,8 @@ public class ReferenceDataParser {
 		return this.rawString;
 	}
 
-	public Person getAuthor() {
-		return this.author;
+	public Person getAuthorPerson() {
+		return this.authorPerson;
 	}
 
 	public Source getSource() {
@@ -127,7 +127,7 @@ public class ReferenceDataParser {
 			try {
 				Pair<Person, Boolean> parsedPerson =
 					PersonParser.parsePerson(this.personKeyGenerator, firstToken, "");
-				this.author = parsedPerson.getFirstObject();
+				this.authorPerson = parsedPerson.getFirstObject();
 				this.starred = parsedPerson.getSecondObject();
 			} catch (PersonParsingException e) {
 			}
@@ -177,7 +177,7 @@ public class ReferenceDataParser {
 			try {
 				Pair<Person, Boolean> parsedPerson =
 					PersonParser.parsePerson(this.personKeyGenerator, firstToken, "");
-				this.author = parsedPerson.getFirstObject();
+				this.authorPerson = parsedPerson.getFirstObject();
 				this.starred = parsedPerson.getSecondObject();
 			} catch (PersonParsingException e) {
 			}
@@ -196,7 +196,7 @@ public class ReferenceDataParser {
 			try {
 				Pair<Person, Boolean> parsedPerson =
 					PersonParser.parsePerson(this.personKeyGenerator, firstToken, "");
-				this.author = parsedPerson.getFirstObject();
+				this.authorPerson = parsedPerson.getFirstObject();
 				this.starred = parsedPerson.getSecondObject();
 			} catch (PersonParsingException e) {
 			}
@@ -252,13 +252,13 @@ public class ReferenceDataParser {
 			}
 		/*
 		 * The pattern is:
-		 * person; year; source; volume, page, or chapter 
+		 * person, year, source, volume or page 
 		 */
 		} else if (isYear(secondToken)) {
 			try {
 				Pair<Person, Boolean> parsedPerson =
 					PersonParser.parsePerson(this.personKeyGenerator, firstToken, "");
-				this.author = parsedPerson.getFirstObject();
+				this.authorPerson = parsedPerson.getFirstObject();
 				this.starred = parsedPerson.getSecondObject();
 			} catch (PersonParsingException e) {
 			}
@@ -296,7 +296,7 @@ public class ReferenceDataParser {
 		try {
 			Pair<Person, Boolean> parsedPerson =
 				PersonParser.parsePerson(this.personKeyGenerator, firstToken, "");
-			this.author = parsedPerson.getFirstObject();
+			this.authorPerson = parsedPerson.getFirstObject();
 			this.starred = parsedPerson.getSecondObject();
 		} catch (PersonParsingException e) {
 		}

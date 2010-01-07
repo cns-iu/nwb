@@ -5,6 +5,7 @@ import java.util.Hashtable;
 
 import edu.iu.cns.database.loader.framework.RowItem;
 import edu.iu.cns.database.loader.framework.Schema;
+import edu.iu.cns.database.loader.framework.DerbyFieldType;
 import edu.iu.nwb.shared.isiutil.database.ISIDatabase;
 import edu.iu.scipolicy.loader.isi.db.model.entity.Document;
 import edu.iu.scipolicy.loader.isi.db.model.entity.ISIFile;
@@ -12,8 +13,8 @@ import edu.iu.scipolicy.loader.isi.db.model.entity.ISIFile;
 public class DocumentOccurrence extends RowItem<DocumentOccurrence> {
 	public static final Schema<DocumentOccurrence> SCHEMA = new Schema<DocumentOccurrence>(
 		false,
-		ISIDatabase.DOCUMENT_OCCURRENCES_DOCUMENT_FOREIGN_KEY, Schema.FOREIGN_KEY_CLASS,
-		ISIDatabase.DOCUMENT_OCCURRENCES_ISI_FILE_FOREIGN_KEY, Schema.FOREIGN_KEY_CLASS).
+		ISIDatabase.DOCUMENT_OCCURRENCES_DOCUMENT_FOREIGN_KEY, DerbyFieldType.FOREIGN_KEY,
+		ISIDatabase.DOCUMENT_OCCURRENCES_ISI_FILE_FOREIGN_KEY, DerbyFieldType.FOREIGN_KEY).
 		FOREIGN_KEYS(
 			ISIDatabase.DOCUMENT_OCCURRENCES_DOCUMENT_FOREIGN_KEY,
 				ISIDatabase.DOCUMENT_TABLE_NAME,
@@ -47,8 +48,8 @@ public class DocumentOccurrence extends RowItem<DocumentOccurrence> {
 	public static Dictionary<String, Comparable<?>> createAttributes(
 			Document document, ISIFile isiFile) {
 		Dictionary<String, Comparable<?>> attributes = new Hashtable<String, Comparable<?>>();
-		attributes.put(ISIDatabase.DOCUMENT_OCCURRENCES_DOCUMENT_FOREIGN_KEY, document);
-		attributes.put(ISIDatabase.DOCUMENT_OCCURRENCES_ISI_FILE_FOREIGN_KEY, isiFile);
+		attributes.put(ISIDatabase.DOCUMENT_OCCURRENCES_DOCUMENT_FOREIGN_KEY, document.getPrimaryKey());
+		attributes.put(ISIDatabase.DOCUMENT_OCCURRENCES_ISI_FILE_FOREIGN_KEY, isiFile.getPrimaryKey());
 
 		return attributes;
 	}

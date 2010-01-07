@@ -2,6 +2,7 @@ package edu.iu.scipolicy.loader.isi.db.utilities.parser;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Iterator;
 import java.util.List;
 
 import org.cishell.utilities.IntegerParserWithDefault;
@@ -195,6 +196,12 @@ public class ISITableModelParser {
 			// Parse Document.
 
 			Document document = parseDocument(row, currentAuthorPeople);
+			
+			/*System.err.println("document: " + document);
+			for (Reference ref : currentReferences) {
+				System.err.println("\tref: " + ref);
+				System.err.println("\t" + ref.getAuthorPerson());
+			}*/
 
 			// Link the Document to the other things parsed.
 
@@ -359,7 +366,7 @@ public class ISITableModelParser {
 	}
 
 	private List<Reference> parseReferences(Tuple row) {
-		List<Reference> references = new ArrayList<Reference>();
+		List<Reference> currentReferences = new ArrayList<Reference>();
 		String rawReferencesString =
 			StringUtilities.simpleClean(row.getString(ISITag.CITED_REFERENCES.getColumnName()));
 		String[] referenceStrings = rawReferencesString.split("\\|");
@@ -378,7 +385,7 @@ public class ISITableModelParser {
 				Reference reference = new Reference(
 					this.references.getKeyGenerator(),
 					referenceData.getAnnotation(),
-					referenceData.getAuthor(),
+					referenceData.getAuthorPerson(),
 					referenceData.authorWasStarred(),
 					referenceData.getPageNumber(),
 					null,
@@ -387,22 +394,22 @@ public class ISITableModelParser {
 					referenceData.getSource(),
 					referenceData.getYear());
 				Reference mergedReference = this.references.addOrMerge(reference);
-				references.add(mergedReference);
+				currentReferences.add(mergedReference);
 			} catch (ReferenceParsingException e) {
 				// TODO: Print a warning?  For now, it's just skipped.
 			}
 		}
 
-		return references;
+		return currentReferences;
 	}
 
-	private void handlePeopleAndSourcesFromReferences(List<Reference> references) {
-		for (Reference reference : references) {
-			Person referenceAuthor = reference.getAuthor();
+	private void handlePeopleAndSourcesFromReferences(List<Reference> currentReferences) {
+		for (Reference reference : currentReferences) {
+			Person referenceAuthorPerson = reference.getAuthorPerson();
 			Source referenceSource = reference.getSource();
 
-			if (referenceAuthor != null) {
-				Person mergedAuthor = this.people.addOrMerge(referenceAuthor);
+			if (referenceAuthorPerson != null) {
+				Person mergedAuthor = this.people.addOrMerge(referenceAuthorPerson);
 				reference.setAuthor(mergedAuthor);
 			}
 
@@ -417,7 +424,7 @@ public class ISITableModelParser {
 		Person firstAuthor = null;
 
 		if (authorPeople.size() != 0) {
-			firstAuthor = authorPeople.get(0);
+			firstAuthor = authorPeople.iterator().next();
 		}
 
 		String documentAbstract =
@@ -526,13 +533,17 @@ public class ISITableModelParser {
 				emailAddress = emailAddressStrings[0];
 			}
 
+			Iterator<Person> personIterator = authorPeople.iterator();
+
 			for (int ii = 0; ii < authorPeople.size(); ii++) {
-				Person authorPerson = authorPeople.get(ii);
+				Person authorPerson = personIterator.next();
 				this.authors.addOrMerge(new Author(document, authorPerson, emailAddress, ii));
 			}
 		} else {
+			Iterator<Person> personIterator = authorPeople.iterator();
+
 			for (int ii = 0; ii < authorPeople.size(); ii++) {
-				Person authorPerson = authorPeople.get(ii);
+				Person authorPerson = personIterator.next();
 				String emailAddress = emailAddressStrings[ii];
 				this.authors.addOrMerge(new Author(document, authorPerson, emailAddress, ii));
 			}
@@ -555,7 +566,8 @@ public class ISITableModelParser {
 		}
 	}
 
-	private void linkDocumentToCitedReferences(Document document, List<Reference> references) {
+	private void linkDocumentToCitedReferences(
+			Document document, List<Reference> references) {
 		for (Reference reference : references) {
 			this.citedReferences.addOrMerge(new CitedReference(document, reference));
 		}

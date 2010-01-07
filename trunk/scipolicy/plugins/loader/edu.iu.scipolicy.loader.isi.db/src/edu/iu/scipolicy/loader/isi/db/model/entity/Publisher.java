@@ -7,16 +7,17 @@ import org.cishell.utilities.StringUtilities;
 
 import edu.iu.cns.database.loader.framework.Entity;
 import edu.iu.cns.database.loader.framework.Schema;
+import edu.iu.cns.database.loader.framework.DerbyFieldType;
 import edu.iu.cns.database.loader.framework.utilities.DatabaseTableKeyGenerator;
 import edu.iu.nwb.shared.isiutil.database.ISIDatabase;
 
 public class Publisher extends Entity<Publisher> implements Comparable<Publisher> {
 	public final static Schema<Publisher> SCHEMA = new Schema<Publisher>(
 		true,
-		ISIDatabase.PUBLISHER_CITY, Schema.TEXT_CLASS,
-		ISIDatabase.PUBLISHER_NAME, Schema.TEXT_CLASS,
-		ISIDatabase.PUBLISHER_SOURCE, Schema.FOREIGN_KEY_CLASS,
-		ISIDatabase.PUBLISHER_WEB_ADDRESS, Schema.TEXT_CLASS).
+		ISIDatabase.PUBLISHER_CITY, DerbyFieldType.TEXT,
+		ISIDatabase.PUBLISHER_NAME, DerbyFieldType.TEXT,
+		ISIDatabase.PUBLISHER_SOURCE, DerbyFieldType.FOREIGN_KEY,
+		ISIDatabase.PUBLISHER_WEB_ADDRESS, DerbyFieldType.TEXT).
 		FOREIGN_KEYS(ISIDatabase.PUBLISHER_SOURCE, ISIDatabase.SOURCE_TABLE_NAME);
 
 	private String city;
@@ -53,7 +54,7 @@ public class Publisher extends Entity<Publisher> implements Comparable<Publisher
 	public void setSource(Source source) {
 		this.source = source;
 		// TODO: Figure out a better way to do this?
-		getAttributes().put(ISIDatabase.PUBLISHER_SOURCE, this.source);
+		getAttributes().put(ISIDatabase.PUBLISHER_SOURCE, this.source.getPrimaryKey());
 	}
 
 	public int compareTo(Publisher otherPublisher) {
@@ -79,6 +80,7 @@ public class Publisher extends Entity<Publisher> implements Comparable<Publisher
 			StringUtilities.simpleMerge(this.webAddress, otherPublisher.getWebAddress());
 	}
 
+	//TODO: Put in publisher source
 	public static Dictionary<String, Comparable<?>> createAttributes(
 			String city, String name, String webAddress) {
 		Dictionary<String, Comparable<?>> attributes = new Hashtable<String, Comparable<?>>();

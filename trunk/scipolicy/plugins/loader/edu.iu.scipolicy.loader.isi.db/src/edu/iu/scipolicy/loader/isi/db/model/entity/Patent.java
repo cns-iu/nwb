@@ -7,13 +7,14 @@ import org.cishell.utilities.StringUtilities;
 
 import edu.iu.cns.database.loader.framework.Entity;
 import edu.iu.cns.database.loader.framework.Schema;
+import edu.iu.cns.database.loader.framework.DerbyFieldType;
 import edu.iu.cns.database.loader.framework.utilities.DatabaseTableKeyGenerator;
 import edu.iu.nwb.shared.isiutil.database.ISIDatabase;
 
 public class Patent extends Entity<Patent> implements Comparable<Patent> {
 	public static final Schema<Patent> SCHEMA = new Schema<Patent>(
 		true,
-		ISIDatabase.PATENT_NUMBER, Schema.TEXT_CLASS);
+		ISIDatabase.PATENT_NUMBER, DerbyFieldType.TEXT);
 
 	private String patentNumber;
 

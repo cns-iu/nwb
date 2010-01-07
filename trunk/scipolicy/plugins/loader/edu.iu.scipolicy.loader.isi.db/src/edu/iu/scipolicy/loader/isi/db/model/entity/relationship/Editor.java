@@ -5,6 +5,7 @@ import java.util.Hashtable;
 
 import edu.iu.cns.database.loader.framework.RowItem;
 import edu.iu.cns.database.loader.framework.Schema;
+import edu.iu.cns.database.loader.framework.DerbyFieldType;
 import edu.iu.nwb.shared.isiutil.database.ISIDatabase;
 import edu.iu.scipolicy.loader.isi.db.model.entity.Document;
 import edu.iu.scipolicy.loader.isi.db.model.entity.Person;
@@ -12,9 +13,9 @@ import edu.iu.scipolicy.loader.isi.db.model.entity.Person;
 public class Editor extends RowItem<Editor> implements Comparable<Editor> {
 	public static final Schema<Editor> SCHEMA = new Schema<Editor>(
 		false,
-		ISIDatabase.EDITORS_DOCUMENT_FOREIGN_KEY, Schema.FOREIGN_KEY_CLASS,
-		ISIDatabase.EDITORS_PERSON_FOREIGN_KEY, Schema.FOREIGN_KEY_CLASS,
-		ISIDatabase.ORDER_LISTED, Schema.INTEGER_CLASS).
+		ISIDatabase.EDITORS_DOCUMENT_FOREIGN_KEY, DerbyFieldType.FOREIGN_KEY,
+		ISIDatabase.EDITORS_PERSON_FOREIGN_KEY, DerbyFieldType.FOREIGN_KEY,
+		ISIDatabase.ORDER_LISTED, DerbyFieldType.INTEGER).
 		FOREIGN_KEYS(
 			ISIDatabase.EDITORS_DOCUMENT_FOREIGN_KEY, ISIDatabase.DOCUMENT_TABLE_NAME,
 			ISIDatabase.EDITORS_PERSON_FOREIGN_KEY, ISIDatabase.PERSON_TABLE_NAME);
@@ -57,8 +58,8 @@ public class Editor extends RowItem<Editor> implements Comparable<Editor> {
 	public static Dictionary<String, Comparable<?>> createAttributes(
 			Document document, Person person, int orderListed) {
 		Dictionary<String, Comparable<?>> attributes = new Hashtable<String, Comparable<?>>();
-		attributes.put(ISIDatabase.EDITORS_DOCUMENT_FOREIGN_KEY, document);
-		attributes.put(ISIDatabase.EDITORS_PERSON_FOREIGN_KEY, person);
+		attributes.put(ISIDatabase.EDITORS_DOCUMENT_FOREIGN_KEY, document.getPrimaryKey());
+		attributes.put(ISIDatabase.EDITORS_PERSON_FOREIGN_KEY, person.getPrimaryKey());
 		attributes.put(ISIDatabase.ORDER_LISTED, orderListed);
 
 		return attributes;
