@@ -1,9 +1,13 @@
 package edu.iu.cns.database.loader.framework.utilities;
 
+import java.io.BufferedWriter;
+import java.io.FileWriter;
 import java.sql.Connection;
+import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Dictionary;
 import java.util.List;
 
@@ -13,10 +17,13 @@ import org.cishell.service.database.DatabaseService;
 import org.cishell.utilities.IntegerParserWithDefault;
 import org.cishell.utilities.StringUtilities;
 
+import edu.iu.cns.database.loader.framework.DerbyFieldType;
+import edu.iu.cns.database.loader.framework.Entity;
 import edu.iu.cns.database.loader.framework.RowItem;
 import edu.iu.cns.database.loader.framework.RowItemContainer;
 import edu.iu.cns.database.loader.framework.Schema;
 import edu.iu.cns.database.loader.framework.Schema.Field;
+import edu.iu.nwb.shared.isiutil.database.ISIDatabase;
 
 public class DerbyDatabaseCreator {
 	public static final int MAX_VARCHAR_LENGTH = 32000;
@@ -45,9 +52,9 @@ public class DerbyDatabaseCreator {
 			fillTable(databaseConnection, itemContainer);
 		}
 
-		/*for (RowItemContainer<? extends RowItem<?>> itemContainer : model.getRowItemLists()) {
+		for (RowItemContainer<? extends RowItem<?>> itemContainer : model.getRowItemLists()) {
 			addForeignKeysToTable(databaseConnection, itemContainer);
-		}*/
+		}
 
 		databaseConnection.close();
 
@@ -60,6 +67,7 @@ public class DerbyDatabaseCreator {
 		String tableName = itemContainer.getDatabaseTableName();
 		Schema<? extends RowItem<?>> schema = itemContainer.getSchema();
 
+		// TODO: Refactor this to not use StringBuffer (since it doesn't need to anymore)?
 		StringBuffer fieldNamesForQuery = new StringBuffer();
 		fieldNamesForQuery.append(schemaToFieldsForCreateTableQueryString(schema));
 		fieldNamesForQuery.append(schemaToPrimaryKeysForCreateTableQueryString(schema));
@@ -83,16 +91,16 @@ public class DerbyDatabaseCreator {
 				"ALTER TABLE " +
 				tableName +
 				" ADD CONSTRAINT \"" +
-				foreignKey.getFieldName() +
+				foreignKey.getFieldName() + "_CONSTRAINT" +
 				"\" FOREIGN KEY (\"" +
-				Schema.PRIMARY_KEY +
+				foreignKey.getFieldName() +
 				"\") REFERENCES " +
 				foreignKey.getReferenceTo_TableName() +
 				" (\"" +
 				Schema.PRIMARY_KEY +
-				//foreignKey.getFieldName() +
+				
 				"\")";
-			//System.err.println("foreign key: \"" + addForeignKeyQuery + "\"");
+			System.err.println("foreign key: \"" + addForeignKeyQuery + "\"");
 			statement.execute(addForeignKeyQuery);
 		}
 	}
@@ -106,52 +114,44 @@ public class DerbyDatabaseCreator {
 			Connection connection, RowItemContainer<? extends RowItem<?>> itemContainer)
 			throws SQLException {
 		String tableName = itemContainer.getDatabaseTableName();
-		List<? extends RowItem<?>> items = itemContainer.getItems();
+		Collection<? extends RowItem<?>> items = itemContainer.getItems();
 
 		if (items.size() == 0) {
 			return;
 		}
 
 		Schema<? extends RowItem<?>> schema = itemContainer.getSchema();
-		List<String> itemValuesStrings = new ArrayList<String>();
-
-		for (RowItem<?> item : items) {
-			Dictionary<String, Comparable<?>> attributes = item.getAttributes();
-			itemValuesStrings.add(createAttributesStringAccordingToSchemaForInsertQuery(
-				schema, attributes));
-		}
-		/*for (int ii = 0; ii < 1; ii++) {
-			RowItem<?> item = items.get(ii);
-			Dictionary<String, Comparable<?>> attributes = item.getAttributes();
-			itemValuesStrings.add(createAttributesStringAccordingToSchemaForInsertQuery(
-				schema, attributes));
-		}*/
-
-		String fieldsString = schemaToFieldsForInsertQueryString(schema);
+		
+		String singleRowPlaceholderContents =
+			StringUtilities.multiplyWithSeparator("?", ", ", schema.getFields().size());
+		String singleRowPlaceholders = "(" + singleRowPlaceholderContents + ")";
+		String allPlaceholders = StringUtilities.multiplyWithSeparator(
+			singleRowPlaceholders, ", ", items.size());
+		
 		String insertQuery =
 			"INSERT INTO " +
 			tableName +
-			" (" +
-			fieldsString +
-			") VALUES " +
-			StringUtilities.implodeList(itemValuesStrings, ", ");
-		System.err.println("\n\"" + insertQuery + "\"");
-		connection.createStatement().execute(insertQuery);
-	}
+			" VALUES " + allPlaceholders;
+		
+		PreparedStatement insertStatement = connection.prepareStatement(insertQuery);
+		
+		int fieldIndex = 1; //(PreparedStatement uses 1-based indexing)
+		for (RowItem<?> item : items) {
+			Dictionary<String, Comparable<?>> attributes = item.getAttributes();
+			for (Field field : schema.getFields()) {
+			
+				Object value = attributes.get(field.getName());
 
-	public static String getFieldTypeString(Class<?> clazz) {
-		if (clazz == Schema.PRIMARY_KEY_CLASS) {
-			return "INT NOT NULL";
-		} else if (clazz == Schema.FOREIGN_KEY_CLASS) {
-			return "INT";
-		} else if (clazz == Schema.TEXT_CLASS) {
-			return "VARCHAR(" + MAX_VARCHAR_LENGTH + ")";
-		} else if (clazz == Schema.INTEGER_CLASS) {
-			return "INT";
-		} else {
-			// TODO: Error?  Just default to INT for now.
-			return "INT";
+				if (value != null) {
+					insertStatement.setObject(fieldIndex, value);
+				} else {
+					insertStatement.setNull(fieldIndex, field.getType().getSQLType());
+				}
+
+				fieldIndex++;
+			}
 		}
+		insertStatement.executeUpdate();
 	}
 
 	// TODO: New name.
@@ -167,9 +167,11 @@ public class DerbyDatabaseCreator {
 
 		StringBuffer fieldsForCreateTableQueryString = new StringBuffer();
 
-		for (Schema.Field field : schema.getFields()) {
+		for (Field field : schema.getFields()) {
 			fieldsForCreateTableQueryString.append(
-				"\"" + field.getName() + "\" " + getFieldTypeString(field.getClazz()) + ", ");
+				"\"" + field.getName() + "\" " +
+				field.getType().getDerbyQueryStringRepresentation() +
+				", ");
 		}
 
 		// To remove the last ", ".
@@ -219,23 +221,23 @@ public class DerbyDatabaseCreator {
 
 	public static String valueFormattingForField(Object toString, Field field) {
 		String value = StringUtilities.emptyStringIfNull(toString);
-		Class<?> clazz = field.getClazz();
+		DerbyFieldType type = field.getType();
 
-		if (clazz == Schema.PRIMARY_KEY_CLASS) {
+		if (type == DerbyFieldType.PRIMARY_KEY) {
 			return "" + IntegerParserWithDefault.parse(value);
-		} else if (clazz == Schema.FOREIGN_KEY_CLASS) {
+		} else if (type == DerbyFieldType.FOREIGN_KEY) {
 			if ("".equals(value)) {
 				return NULL_VALUE;
 			} else {
 				return "" + IntegerParserWithDefault.parse(value);
 			}
-		} else if (clazz == Schema.TEXT_CLASS) {
+		} else if (type == DerbyFieldType.TEXT) {
 			if (value == null) {
 				return NULL_VALUE;
 			} else {
 				return "\'" + value + "\'";
 			}
-		} else if (clazz == Schema.INTEGER_CLASS) {
+		} else if (type == DerbyFieldType.INTEGER) {
 			if ("".equals(value)) {
 				return NULL_VALUE;
 			} else {

@@ -1,6 +1,5 @@
 package edu.iu.cns.database.loader.framework;
 
-import java.sql.Date;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -8,14 +7,6 @@ import org.cishell.utilities.NumberUtilities;
 
 public class Schema <T extends RowItem<T>> {
 	public static final String PRIMARY_KEY = "PK";
-
-	public static final Class<?> PRIMARY_KEY_CLASS = PrimaryKeyType.class;
-	public static final Class<?> FOREIGN_KEY_CLASS = ForeignKeyType.class;
-	public static final Class<?> TEXT_CLASS = String.class;
-	public static final Class<?> INTEGER_CLASS = Integer.class;
-	public static final Class<?> DATE_CLASS = Date.class;
-	public static final Class<?> DOUBLE_CLASS = Double.class;
-	public static final Class<?> BOOLEAN_CLASS = Boolean.class;
 
 	private List<Field> fields = new ArrayList<Field>();
 	private List<PrimaryKey> primaryKeys = new ArrayList<PrimaryKey>();
@@ -31,13 +22,13 @@ public class Schema <T extends RowItem<T>> {
 		}
 
 		if (addPrimaryKey) {
-			this.fields.add(new Field(PRIMARY_KEY, PRIMARY_KEY_CLASS));
+			this.fields.add(new Field(PRIMARY_KEY, DerbyFieldType.PRIMARY_KEY));
 			PRIMARY_KEYS(PRIMARY_KEY);
 		}
 
 		for (int ii = 0; ii < objects.length; ii += 2) {
 			String fieldName = (String)objects[ii];
-			Class<?> fieldClass = (Class<?>)objects[ii + 1];
+			DerbyFieldType fieldClass = (DerbyFieldType)objects[ii + 1];
 			this.fields.add(new Field(fieldName, fieldClass));
 		}
 	}
@@ -99,19 +90,19 @@ public class Schema <T extends RowItem<T>> {
 
 	public static class Field {
 		private String name;
-		private Class<?> clazz;
+		private DerbyFieldType type;
 
-		public Field(String name, Class<?> clazz) {
+		public Field(String name, DerbyFieldType type) {
 			this.name = name;
-			this.clazz = clazz;
+			this.type = type;
 		}
 
 		public String getName() {
 			return this.name;
 		}
 
-		public Class<?> getClazz() {
-			return this.clazz;
+		public DerbyFieldType getType() {
+			return this.type;
 		}
 	}
 

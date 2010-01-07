@@ -25,7 +25,7 @@ public abstract class Entity<T extends Entity<?>> extends RowItem<T> {
 		return this.primaryKey;
 	}
 
-	public final String toString() {
+	/*public final String toString() {
 		return Integer.toString(getPrimaryKey());
-	}
+	}*/
 }

@@ -4,7 +4,7 @@ import java.util.Dictionary;
 
 public abstract class RowItem<T extends RowItem<?>> {
 	private Dictionary<String, Comparable<?>> attributes;
-
+	
 	public RowItem(Dictionary<String, Comparable<?>> attributes) {
 		this.attributes = attributes;
 	}
@@ -12,6 +12,14 @@ public abstract class RowItem<T extends RowItem<?>> {
 	public final Dictionary<String, Comparable<?>> getAttributes() {
 		return this.attributes;
 	}
+	
+//	public final Dictionary<String, Comparable<?>> getAttributes() {
+//		getAttributes();
+//	
+//		return new modified attributes thing
+//		
+//		return this.attributes;
+//	}
 
 	public abstract boolean shouldMerge(T otherItem);
 

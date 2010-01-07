@@ -44,7 +44,9 @@ public class RowItemContainer<T extends RowItem<T>> {
 
 	public final T addOrMerge(T newItem) {
 		for (T originalItem : this.items) {
-			if (originalItem.shouldMerge(newItem)) {
+			if (originalItem == newItem) {
+				return originalItem;
+			} else if (originalItem.shouldMerge(newItem)) {
 				originalItem.merge(newItem);
 
 				return originalItem;
