@@ -130,7 +130,6 @@ float distanceToSparse(float* vector, map<int, float> sparseVector, float recent
 	return (leftSum + rightSum);
 }
 
-// TODO netVectorSquaredNorm can be calculated only once per epoch and passed in.
 float calculateCosineSimilarity(float* netVector, map<int, float> sparseVector, float recentSquaredNorm) {
 	float dotProduct = 0.0;
 
@@ -245,7 +244,6 @@ float* loadInitialCodebook(int myRank) {
 		// Read parameters on first line.
 		string topology; // Ignored for now.
 		string neighborhood; // Ignored for now.
-		// TODO The rows and columns seem backwards here.  Ensure it works out.
 		codebookFile >> g_dim >> topology >> g_columns >> g_rows >> neighborhood;
 
 		int numberOfNodes = g_rows * g_columns;
@@ -323,9 +321,6 @@ void readConfigurationFile() {
 	ifstream configurationFile("paths.cfg");
 
 	if (configurationFile.is_open()) {
-		/* TODO Put these numbers together in a way that ensures we always finish training
-		 * with a net update after a full batch.
-		 */
 		configurationFile >> g_numberOfTrainingSteps;
 		configurationFile >> g_epochLengthInTimesteps;
 		configurationFile >> g_initialWidth;
@@ -419,7 +414,7 @@ training_data_t* loadMyTrainingVectorsFromSparse(int myRank) {
 		istringstream firstLineStream(firstLine);
 		int dimensions;
 		firstLineStream >> g_numberOfVectors >> dimensions;
-		if (dimensions != g_dim) { // TODO Ugh.
+		if (dimensions != g_dim) {
 			cerr << "Dimensionality of the training set (" << dimensions << ") does not agree with the dimensionality of the codebook vectors (" << g_dim << ")." << endl;
 			exit(1);
 		}
@@ -447,6 +442,7 @@ training_data_t* loadMyTrainingVectorsFromSparse(int myRank) {
 
 				/* TODO Could be mapping into ints, or shorts, or bools even.
 				 * Or even some nice bitset instead of a map.
+				 * For the work we're currently doing, this could be a set of ints.  Test speed-up.
 				 */
 				map<int, float> trainingVector;
 
@@ -561,7 +557,6 @@ void calculateNewCodebook(float* net) {
 	float* numTemp = g_myNumerators;
 	float* denTemp = g_myDenominators;
 
-	// TODO Investigate MPI error handling in C++.
 	// TODO Think about being trickier with in-place swaps.
 	try {
 		MPI::COMM_WORLD.Allreduce(g_myNumerators, g_myNumerators2, flatSize, MPI::FLOAT, MPI::SUM);
@@ -587,17 +582,14 @@ void calculateNewCodebook(float* net) {
 			Coordinate coord(row, column);
 
 			if (g_myDenominators[(row * g_columns) + column] <= 0) {
-				cout << "BAD DENOM in row " << row << ", column " << column << ": " << g_myDenominators[(row * g_columns) + column] << endl;
+				cout << "ERROR: BAD DENOM in row " << row << ", column " << column << ": "
+						<< g_myDenominators[(row * g_columns) + column] << endl;
 			}
 
 			scaleNodeVector(
 					calculateNodeIndex(net, coord),
 					calculateNodeIndex(g_myNumerators, coord),
 					(1.0 / g_myDenominators[(row * g_columns) + column]));
-
-			/* TODO Put a bunch of error-reporting here
-			 * for when a denominator is, inevitably, zero.
-			 */
 		}
 	}
 
@@ -624,15 +616,9 @@ void calculateSquaredNorms(float* oldSquaredNorms, float* net) {
 	}
 }
 
-/* TODO Periodically check the quantization error (and maybe even write out the codebook).
- * Not more often than every 15 minutes or so.
- * Could even append qerrors out to a file so that it can be read during the run and,
- * when it starts to level off, we can interrupt it.
- */
 float calculateEuclideanQuantizationError(training_data_t* trainingVectors, float* net, float* squaredNorms) {
 	float totalDiscrepancy = 0.0;
 
-	// TODO Consider reading only some of the training vectors.
 	for (vector<map<int, float> >::const_iterator vecIt = trainingVectors->begin();
 			vecIt != trainingVectors->end();
 			vecIt++) {
@@ -839,18 +825,18 @@ void train(int myRank, float* net, training_data_t* myTrainingVectors) {
 		}
 	}
 
-	/* TODO Maybe this is just a bad idea altogether.
-	 * With the Jan 5 update to the derived figure numberOfTimesteps,
-	 * this should never be necessary, as there will be no fractional epochs.
-	 */
-	// If we had timesteps beyond the final reduce, reduce once more to pick up the stragglers.
-	if ((t + 1) % g_epochLengthInTimesteps != 1) {
-		cout << "Warning: Had to perform one last net update." << endl;
-
-		calculateNewCodebook(net);
-
-		reportAverageQuantizationError(&sampledTrainingVectors, net, myRank, recentSquaredNorms);
-	}
+//	/* TODO Maybe this is just a bad idea altogether.
+//	 * With the Jan 5 update to the derived figure numberOfTimesteps,
+//	 * this should never be necessary, as there will be no fractional epochs.
+//	 */
+//	// If we had timesteps beyond the final reduce, reduce once more to pick up the stragglers.
+//	if ((t + 1) % g_epochLengthInTimesteps != 1) {
+//		cout << "Warning: Had to perform one last net update." << endl;
+//
+//		calculateNewCodebook(net);
+//
+//		reportAverageQuantizationError(&sampledTrainingVectors, net, myRank, recentSquaredNorms);
+//	}
 
 	cout << "Done." << endl;
 }
@@ -871,8 +857,6 @@ int main(int argc, char *argv[]) {
 	cout << "My rank is " << myRank << endl;
 
 	g_numberOfJobs = MPI::COMM_WORLD.Get_size();
-
-	/* TODO Parse any command line arguments here */
 
 	readConfigurationFile();
 
