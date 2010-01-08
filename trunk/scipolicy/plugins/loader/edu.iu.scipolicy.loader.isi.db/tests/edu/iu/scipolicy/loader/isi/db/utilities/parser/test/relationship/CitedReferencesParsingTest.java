@@ -7,9 +7,9 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
-import edu.iu.scipolicy.loader.isi.db.utilities.parser.BaseRowItemParsingTest;
+import edu.iu.scipolicy.loader.isi.db.utilities.parser.RowItemTest;
 
-public class CitedReferencesParsingTest extends BaseRowItemParsingTest {
+public class CitedReferencesParsingTest extends RowItemTest {
 	@Before
 	public void setUp() throws Exception {
 	}

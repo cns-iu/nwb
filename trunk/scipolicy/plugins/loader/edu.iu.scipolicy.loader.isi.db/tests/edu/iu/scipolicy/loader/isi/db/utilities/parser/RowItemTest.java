@@ -15,16 +15,19 @@ import org.cishell.utilities.StringUtilities;
 import org.osgi.service.log.LogService;
 
 import prefuse.data.Table;
+import edu.iu.cns.database.loader.framework.RowItemContainer;
 import edu.iu.cns.database.loader.framework.utilities.DatabaseModel;
 import edu.iu.cns.shared.utilities.Pair;
 import edu.iu.nwb.shared.isiutil.ISITableReaderHelper;
 import edu.iu.nwb.shared.isiutil.exception.ReadISIFileException;
+import edu.iu.scipolicy.loader.isi.db.model.entity.Document;
 import edu.iu.scipolicy.loader.isi.db.model.entity.Person;
+import edu.iu.scipolicy.loader.isi.db.model.entity.relationship.Author;
 import edu.iu.scipolicy.loader.isi.db.utilities.ISITablePreprocessor;
 import edu.iu.scipolicy.testutilities.TestUtilities;
 
 // TODO: Just make this a utility class?
-public class BaseRowItemParsingTest {
+public class RowItemTest {
 	public static final boolean SHOULD_NORMALIZE_AUTHOR_NAMES = true;
 	public static final boolean SHOULD_CLEAN_AUTHOR_NAME_CAPITALIZATIONS = true;
 	public static final boolean SHOULD_FILL_FILE_METADATA = true;
@@ -33,6 +36,11 @@ public class BaseRowItemParsingTest {
 	public static final String ISI_MIME_TYPE = "file:text/isi";
 
 	public static final String BASE_TEST_DATA_PATH = "/edu/iu/scipolicy/loader/isi/db/testdata/";
+
+	public static final String ZERO_PEOPLE_TEST_DATA_PATH = BASE_TEST_DATA_PATH + "ZeroPeople.isi";
+	public static final String ONE_AUTHOR_TEST_DATA_PATH = BASE_TEST_DATA_PATH + "OneAuthor.isi";
+	public static final String MULTIPLE_AUTHORS_TEST_DATA_PATH =
+		BASE_TEST_DATA_PATH + "MultipleAuthors.isi";
 
 	protected DatabaseModel parseTestData(String testDataPath) throws Exception {
 		Pair<Table, Collection<Integer>> testData = prepareTestData(testDataPath);
@@ -55,7 +63,7 @@ public class BaseRowItemParsingTest {
 
 	private Data createInputData(String testDataPath) throws Exception {
 		File file =
-			FileUtilities.safeLoadFileFromClasspath(BaseRowItemParsingTest.class, testDataPath);
+			FileUtilities.safeLoadFileFromClasspath(RowItemTest.class, testDataPath);
 
 		return new BasicData(file, ISI_MIME_TYPE);
 	}
@@ -87,7 +95,7 @@ public class BaseRowItemParsingTest {
 
 	// TODO: Moving these into a testing utilities class or something?  meh.
 
-	public static void verifyPersonExists(
+	public static Person getPerson(
 			List<Person> people,
 			String additionalName,
 			String familyName,
@@ -95,7 +103,7 @@ public class BaseRowItemParsingTest {
 			String fullName,
 			String middleInitial,
 			String personalName,
-			String unsplitAbbreviatedName) throws Exception {
+			String unsplitAbbreviatedName) {
 		for (Person person : people) {
 			try {
 				checkPerson(
@@ -108,21 +116,63 @@ public class BaseRowItemParsingTest {
 					personalName,
 					unsplitAbbreviatedName);
 
-				return;
+				return person;
 			} catch (Throwable e) {
 			}
 		}
 
-		String exceptionMessage =
-			"No person with the following specifications were found:" +
-			"\n\tAdditional name: " + additionalName +
-			"\n\tFamily name: " + familyName +
-			"\n\tFirst initial: " + firstInitial +
-			"\n\tFull name: " + fullName +
-			"\n\tMiddle initial: " + middleInitial +
-			"\n\tPersonal name: " + personalName +
-			"\n\tUnsplit abbreviated name: " + unsplitAbbreviatedName;
-		throw new Exception(exceptionMessage);
+		return null;
+	}
+
+	public static Document getDocument(List<Document> documents, String title) {
+		for (Document document : documents) {
+			if (document.getTitle().equals(title)) {
+				return document;
+			}
+		}
+
+		return null;
+	}
+
+	public static Author getAuthor(List<Author> authors, Document document, Person authorPerson) {
+		for (Author author : authors) {
+			if ((author.getDocument() == document) && (author.getPerson() == authorPerson)) {
+				return author;
+			}
+		}
+
+		return null;
+	}
+
+	public static void verifyPersonExists(
+			List<Person> people,
+			String additionalName,
+			String familyName,
+			String firstInitial,
+			String fullName,
+			String middleInitial,
+			String personalName,
+			String unsplitAbbreviatedName) throws Exception {
+		if (getPerson(
+				people,
+				additionalName,
+				familyName,
+				firstInitial,
+				fullName,
+				middleInitial,
+				personalName,
+				unsplitAbbreviatedName) != null) {
+			String exceptionMessage =
+				"No person with the following specifications were found:" +
+				"\n\tAdditional name: " + additionalName +
+				"\n\tFamily name: " + familyName +
+				"\n\tFirst initial: " + firstInitial +
+				"\n\tFull name: " + fullName +
+				"\n\tMiddle initial: " + middleInitial +
+				"\n\tPersonal name: " + personalName +
+				"\n\tUnsplit abbreviated name: " + unsplitAbbreviatedName;
+			throw new Exception(exceptionMessage);
+		}
 	}
 
 	public static void checkPerson(
@@ -178,6 +228,48 @@ public class BaseRowItemParsingTest {
 					"\n\tComparison: \"" + compareTo + "\"";
 				fail(failMessage);
 			}
+		}
+	}
+
+	public static void checkDocuments(
+			Document relationshipDocument, Document providedDocument, String displayName) {
+		if (relationshipDocument != providedDocument) {
+			String failMessage =
+				displayName + " document and provided document are not the same." +
+				"\n\t" + displayName + " document primary key: " +
+					relationshipDocument.getPrimaryKey() +
+				"\n\tProvided document primary key: " + providedDocument.getPrimaryKey() +
+				"\n\t" + displayName + " document title: \"" +
+					relationshipDocument.getTitle() + "\"" +
+				"\n\tProvided document title: \"" + providedDocument.getTitle() + "\"";
+			fail(failMessage);
+		}
+	}
+
+	public static void checkPeople(
+			Person relationshipPerson, Person providedPerson, String displayName) {
+		if (relationshipPerson != providedPerson) {
+			String failMessage =
+				displayName + " person and provided person are not the same." +
+				"\n\t" + displayName + " person: \"" +
+					relationshipPerson.getUnsplitAbbreviatedName() + "\"" +
+				"\n\tProvided person: \"" +
+					providedPerson.getUnsplitAbbreviatedName() + "\"";
+			fail(failMessage);
+		}
+	}
+
+	public static void checkItemContainerValidity(RowItemContainer<?> items, String displayName) {
+		if (items == null) {
+			fail(displayName + " == null.  It shouldn't.  Ever.");
+		}
+	}
+
+	public static void checkItemCount(RowItemContainer<?> items, int itemCount) {
+		int numItems = items.getItems().size();
+
+		if (numItems != itemCount) {
+			fail("Found " + numItems + " item(s); expected " + itemCount + ".");
 		}
 	}
 }

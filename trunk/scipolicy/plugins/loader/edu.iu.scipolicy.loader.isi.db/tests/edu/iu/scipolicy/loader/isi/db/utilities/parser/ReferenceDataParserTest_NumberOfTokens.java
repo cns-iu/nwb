@@ -4,7 +4,7 @@ import static org.junit.Assert.fail;
 
 import org.junit.Test;
 
-public class ReferenceDataParserTest_InvalidNumberOfTokens extends ReferenceDataParserTest {
+public class ReferenceDataParserTest_NumberOfTokens extends ReferenceDataParserTest {
 	/*
 	 * Tests for less than 2 reference tokens.
 	 */
@@ -26,14 +26,27 @@ public class ReferenceDataParserTest_InvalidNumberOfTokens extends ReferenceData
 	}
 
 	/*
-	 * Test for greater than 5 (6, to be exact) reference tokens.
+	 * Test for greater than 6 (7, to be exact) reference tokens.
 	 */
 
 	@Test
-	public void test6Tokens() {
+	public void test7Tokens() {
 		try {
-			runTest(SIX_REFERENCE_TOKENS_STRING, false);
+			runTest(SEVEN_REFERENCE_TOKENS_STRING, false);
 			fail("An exception should have been thrown when passing an empty string.");
 		} catch (Exception e) {}
+	}
+
+	/*
+	 * Just for fun, let's test all of the valid numbers of tokens.
+	 */
+
+	@Test
+	public void testValidNumbersOfTokens() throws Exception {
+		runTest(TWO_REFERENCE_TOKEN_STRING, false);
+		runTest(THREE_REFERENCE_TOKEN_STRING, false);
+		runTest(FOUR_REFERENCE_TOKEN_STRING, false);
+		runTest(FIVE_REFERENCE_TOKEN_STRING, false);
+		runTest(SIX_REFERENCE_TOKEN_STRING, false);
 	}
 }

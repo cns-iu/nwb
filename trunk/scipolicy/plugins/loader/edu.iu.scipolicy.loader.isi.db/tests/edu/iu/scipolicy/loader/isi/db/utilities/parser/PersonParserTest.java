@@ -452,7 +452,7 @@ public class PersonParserTest {
 			String personalName,
 			String unsplitAbbreviatedName,
 			boolean starred) {
-		BaseRowItemParsingTest.checkPerson(
+		RowItemTest.checkPerson(
 			result.getFirstObject(),
 			additionalName,
 			familyName,

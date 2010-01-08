@@ -9,9 +9,9 @@ import edu.iu.cns.database.loader.framework.RowItemContainer;
 import edu.iu.cns.database.loader.framework.utilities.DatabaseModel;
 import edu.iu.nwb.shared.isiutil.database.ISIDatabase;
 import edu.iu.scipolicy.loader.isi.db.model.entity.ISIFile;
-import edu.iu.scipolicy.loader.isi.db.utilities.parser.BaseRowItemParsingTest;
+import edu.iu.scipolicy.loader.isi.db.utilities.parser.RowItemTest;
 
-public class ISIFileTest extends BaseRowItemParsingTest {
+public class ISIFileTest extends RowItemTest {
 	public static final String ZERO_ISI_FILES_TEST_DATA_PATH =
 		BASE_TEST_DATA_PATH + "ZeroISIFiles.isi";
 	public static final String ONE_ISI_FILE_TEST_DATA_PATH =

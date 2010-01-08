@@ -11,13 +11,9 @@ import edu.iu.cns.database.loader.framework.RowItemContainer;
 import edu.iu.cns.database.loader.framework.utilities.DatabaseModel;
 import edu.iu.nwb.shared.isiutil.database.ISIDatabase;
 import edu.iu.scipolicy.loader.isi.db.model.entity.Person;
-import edu.iu.scipolicy.loader.isi.db.utilities.parser.BaseRowItemParsingTest;
+import edu.iu.scipolicy.loader.isi.db.utilities.parser.RowItemTest;
 
-public class PersonTest extends BaseRowItemParsingTest {
-	public static final String ZERO_PEOPLE_TEST_DATA_PATH = BASE_TEST_DATA_PATH + "ZeroPeople.isi";
-	public static final String ONE_AUTHOR_TEST_DATA_PATH = BASE_TEST_DATA_PATH + "OneAuthor.isi";
-	public static final String MULTIPLE_AUTHORS_TEST_DATA_PATH =
-		BASE_TEST_DATA_PATH + "MultipleAuthors.isi";
+public class PersonTest extends RowItemTest {
 	public static final String ONE_REFERENCE_AUTHOR_TEST_DATA_PATH =
 		BASE_TEST_DATA_PATH + "OneReferenceAuthor.isi";
 	public static final String MULTIPLE_REFERENCE_AUTHORS_TEST_DATA_PATH =
@@ -29,17 +25,10 @@ public class PersonTest extends BaseRowItemParsingTest {
 	public void testZeroAuthorsGetParsed() throws Exception {
 		DatabaseModel model = parseTestData(ZERO_PEOPLE_TEST_DATA_PATH);
 		RowItemContainer<Person> people = model.getRowItemListOfTypeByDatabaseTableName(
-			ISIDatabase.ISI_FILE_TABLE_NAME);
+			ISIDatabase.PERSON_TABLE_NAME);
 
-		if (people == null) {
-			fail("people == null.  It shouldn't.  Ever.");
-		}
-
-		int numItems = people.getItems().size();
-
-		if (numItems != 0) {
-			fail("Found " + numItems + " item(s); expected 0.");
-		}
+		checkItemContainerValidity(people, "people");
+		checkItemCount(people, 0);
 	}
 
 	@Test
@@ -48,18 +37,11 @@ public class PersonTest extends BaseRowItemParsingTest {
 		RowItemContainer<Person> people = model.getRowItemListOfTypeByDatabaseTableName(
 			ISIDatabase.PERSON_TABLE_NAME);
 
-		if (people == null) {
-			fail("people == null.  It shouldn't.  Ever.");
-		}
-
+		checkItemContainerValidity(people, "people");
 		List<Person> items = (List<Person>)people.getItems();
-		int numItems = items.size();
-
-		if (numItems != 1) {
-			fail("Found " + numItems + " item(s); expected 1.");
-		}
-
-		checkFirstAuthor(items);
+		
+		checkItemCount(people, 1);
+		checkFirstAuthorPerson(items);
 	}
 
 	@Test
@@ -68,21 +50,14 @@ public class PersonTest extends BaseRowItemParsingTest {
 		RowItemContainer<Person> people = model.getRowItemListOfTypeByDatabaseTableName(
 			ISIDatabase.PERSON_TABLE_NAME);
 
-		if (people == null) {
-			fail("people == null.  It shouldn't.  Ever.");
-		}
-
+		checkItemContainerValidity(people, "people");
 		List<Person> items = (List<Person>)people.getItems();
-		int numItems = items.size();
 
-		if (numItems != 4) {
-			fail("Found " + numItems + " item(s); expected 4.");
-		}
-
-		checkFirstAuthor(items);
-		checkSecondAuthor(items);
-		checkThirdAuthor(items);
-		checkFourthAuthor(items);
+		checkItemCount(people, 4);
+		checkFirstAuthorPerson(items);
+		checkSecondAuthorPerson(items);
+		checkThirdAuthorPerson(items);
+		checkFourthAuthorPerson(items);
 	}
 
 	@Test
@@ -91,18 +66,11 @@ public class PersonTest extends BaseRowItemParsingTest {
 		RowItemContainer<Person> people = model.getRowItemListOfTypeByDatabaseTableName(
 			ISIDatabase.PERSON_TABLE_NAME);
 
-		if (people == null) {
-			fail("people == null.  It shouldn't.  Ever.");
-		}
-
+		checkItemContainerValidity(people, "people");
 		List<Person> items = (List<Person>)people.getItems();
-		int numItems = items.size();
 
-		if (numItems != 1) {
-			fail("Found " + numItems + " item(s); expected 1.");
-		}
-
-		checkThirdAuthor(items);
+		checkItemCount(people, 1);
+		checkThirdAuthorPerson(items);
 	}
 
 	@Test
@@ -111,21 +79,12 @@ public class PersonTest extends BaseRowItemParsingTest {
 		RowItemContainer<Person> people = model.getRowItemListOfTypeByDatabaseTableName(
 			ISIDatabase.PERSON_TABLE_NAME);
 
-		if (people == null) {
-			fail("people == null.  It shouldn't.  Ever.");
-		}
-
+		checkItemContainerValidity(people, "people");
 		List<Person> items = (List<Person>)people.getItems();
-		Person p = items.get(0);
-		System.err.println("abbreviated name: " + p.getUnsplitAbbreviatedName());
-		int numItems = items.size();
 
-		if (numItems != 2) {
-			fail("Found " + numItems + " item(s); expected 2.");
-		}
-
-		checkThirdAuthor(items);
-		checkFourthAuthor(items);
+		checkItemCount(people, 2);
+		checkThirdAuthorPerson(items);
+		checkFourthAuthorPerson(items);
 	}
 
 	@Test
@@ -134,25 +93,18 @@ public class PersonTest extends BaseRowItemParsingTest {
 		RowItemContainer<Person> people = model.getRowItemListOfTypeByDatabaseTableName(
 			ISIDatabase.PERSON_TABLE_NAME);
 
-		if (people == null) {
-			fail("people == null.  It shouldn't.  Ever.");
-		}
-
+		checkItemContainerValidity(people, "people");
 		List<Person> items = (List<Person>)people.getItems();
-		int numItems = items.size();
 
-		if (numItems != 4) {
-			fail("Found " + numItems + " item(s); expected 4.");
-		}
-
-		checkFirstAuthor(items);
-		checkSecondAuthor(items);
-		checkThirdAuthor(items);
+		checkItemCount(people, 4);
+		checkFirstAuthorPerson(items);
+		checkSecondAuthorPerson(items);
+		checkThirdAuthorPerson(items);
 	}
 
 	// TODO: Test Person.
 
-	private void checkFirstAuthor(List<Person> people) throws Exception {
+	private void checkFirstAuthorPerson(List<Person> people) throws Exception {
 		verifyPersonExists(
 			people,
 			"",
@@ -164,7 +116,7 @@ public class PersonTest extends BaseRowItemParsingTest {
 			"Takeda, H");
 	}
 
-	private void checkSecondAuthor(List<Person> people) throws Exception {
+	private void checkSecondAuthorPerson(List<Person> people) throws Exception {
 		verifyPersonExists(
 			people,
 			"",
@@ -176,7 +128,7 @@ public class PersonTest extends BaseRowItemParsingTest {
 			"Nishimura, K");
 	}
 
-	private void checkThirdAuthor(List<Person> people) throws Exception {
+	private void checkThirdAuthorPerson(List<Person> people) throws Exception {
 		verifyPersonExists(
 			people,
 			"",
@@ -188,7 +140,7 @@ public class PersonTest extends BaseRowItemParsingTest {
 			"Macdonald, PJ");
 	}
 
-	private void checkFourthAuthor(List<Person> people) throws Exception {
+	private void checkFourthAuthorPerson(List<Person> people) throws Exception {
 		verifyPersonExists(
 			people,
 			"",

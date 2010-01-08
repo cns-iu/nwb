@@ -25,6 +25,9 @@ public class ReferenceDataParser {
 	public static final String OTHER_PREFIX_PATTERN = "[a-zA-Z]+";
 	public static final String OTHER_NUMBER_PATTERN =
 		OTHER_PREFIX_PATTERN + AT_LEAST_ONE_NUMBER_PATTERN;
+	public static final String DIGITAL_OBJECT_IDENTIFIER_KEYWORD = "DOI ";
+	public static final String DIGITAL_OBJECT_IDENTIFIER_PATTERN =
+		DIGITAL_OBJECT_IDENTIFIER_KEYWORD + ".*/.*";
 
 	public static final String[] SOURCE_ANNOTATIONS = new String[] {
 		"UNPUB",
@@ -40,16 +43,20 @@ public class ReferenceDataParser {
 		Arrays.sort(SOURCE_ANNOTATIONS);
 	}
 
+	public static int MINIMUM_NUMBER_OF_TOKENS_FOR_VALID_REFERENCE = 2;
+	public static int MAXIMUM_NUMBER_OF_TOKENS_FOR_VALID_REFERENCE = 6;
+
 	private DatabaseTableKeyGenerator personKeyGenerator;
 	private DatabaseTableKeyGenerator sourceKeyGenerator;
-	private String rawString;
-	private Person authorPerson;
-	private Source source;
-	private int year = ISIDatabase.NULL_YEAR;
-	private int volume = ISIDatabase.NULL_VOLUME;
-	private int pageNumber = ISIDatabase.NULL_PAGE_NUMBER;
 	private String annotation = "";
+	private Person authorPerson;
 	private boolean starred = false;
+	private String digitalObjectIdentifier = "";
+	private int pageNumber = ISIDatabase.NULL_PAGE_NUMBER;
+	private String rawString;
+	private Source source;
+	private int volume = ISIDatabase.NULL_VOLUME;
+	private int year = ISIDatabase.NULL_YEAR;
 
 	public ReferenceDataParser(
 			DatabaseTableKeyGenerator personKeyGenerator,
@@ -61,9 +68,15 @@ public class ReferenceDataParser {
 
 		String[] cleanedTokens = StringUtilities.simpleCleanStrings(rawString.split(","));
 
-		if ((cleanedTokens.length < 2) || (cleanedTokens.length > 5)) {
+		if ((cleanedTokens.length < MINIMUM_NUMBER_OF_TOKENS_FOR_VALID_REFERENCE) ||
+				(cleanedTokens.length > MAXIMUM_NUMBER_OF_TOKENS_FOR_VALID_REFERENCE)) {
 			String exceptionMessage =
-				cleanedTokens.length + " tokens were found.  Expected at least two and at most 5.";
+				cleanedTokens.length +
+				" tokens were found.  Expected at least " +
+				MINIMUM_NUMBER_OF_TOKENS_FOR_VALID_REFERENCE +
+				" and at most " +
+				MAXIMUM_NUMBER_OF_TOKENS_FOR_VALID_REFERENCE +
+				".";
 			throw new ReferenceParsingException(exceptionMessage);
 		}
 		else if (cleanedTokens.length == 2) {
@@ -74,39 +87,45 @@ public class ReferenceDataParser {
 			parseFourTokens(cleanedTokens);
 		} else if (cleanedTokens.length == 5) {
 			parseFiveTokens(cleanedTokens);
+		} else if ((cleanedTokens.length == 6) && isDigitalObjectIdentifier(cleanedTokens[5])) {
+			parseSixTokens(cleanedTokens);
 		}
-	}
-	
-	public String getRawString() {
-		return this.rawString;
-	}
-
-	public Person getAuthorPerson() {
-		return this.authorPerson;
-	}
-
-	public Source getSource() {
-		return this.source;
-	}
-
-	public int getYear() {
-		return this.year;
-	}
-
-	public int getVolume() {
-		return this.volume;
-	}
-
-	public int getPageNumber() {
-		return this.pageNumber;
 	}
 
 	public String getAnnotation() {
 		return this.annotation;
 	}
 
+	public Person getAuthorPerson() {
+		return this.authorPerson;
+	}
+
 	public boolean authorWasStarred() {
 		return this.starred;
+	}
+
+	public String getDigitalObjectIdentifier() {
+		return this.digitalObjectIdentifier;
+	}
+
+	public int getPageNumber() {
+		return this.pageNumber;
+	}
+
+	public String getRawString() {
+		return this.rawString;
+	}
+
+	public Source getSource() {
+		return this.source;
+	}
+
+	public int getVolume() {
+		return this.volume;
+	}
+
+	public int getYear() {
+		return this.year;
 	}
 
 	private void parseTwoTokens(String[] tokens) {
@@ -119,10 +138,6 @@ public class ReferenceDataParser {
 		 */
 		if (isYear(firstToken)) {
 			this.year = IntegerParserWithDefault.parse(firstToken);
-		/*
-		 * The pattern is:
-		 * person, source
-		 */
 		} else {
 			try {
 				Pair<Person, Boolean> parsedPerson =
@@ -137,6 +152,9 @@ public class ReferenceDataParser {
 			parseSource(this.sourceKeyGenerator, secondToken);
 		this.source = parsedSource.getFirstObject();
 		this.annotation = parsedSource.getSecondObject();
+	}
+	public static void main(String[] args) {
+		System.err.println("DOI 10.1098/rstb.2008.2260".matches("DOI .*/.*"));
 	}
 
 	private void parseThreeTokens(String[] tokens) {
@@ -321,6 +339,47 @@ public class ReferenceDataParser {
 		}
 	}
 
+	/*
+	 * I think the only acceptable pattern is:
+	 * person, source, volume, page number, doi
+	 */
+	private void parseSixTokens(String[] tokens) {
+		String firstToken = tokens[0];
+		String secondToken = tokens[1];
+		String thirdToken = tokens[2];
+		String fourthToken = tokens[3];
+		String fifthToken = tokens[4];
+		String sixthToken = tokens[5];
+
+		try {
+			Pair<Person, Boolean> parsedPerson =
+				PersonParser.parsePerson(this.personKeyGenerator, firstToken, "");
+			this.authorPerson = parsedPerson.getFirstObject();
+			this.starred = parsedPerson.getSecondObject();
+		} catch (PersonParsingException e) {
+		}
+
+		this.year = IntegerParserWithDefault.parse(secondToken);
+
+		Pair<Source, String> parsedSource =
+			parseSource(this.sourceKeyGenerator, thirdToken);
+		this.source = parsedSource.getFirstObject();
+		this.annotation = parsedSource.getSecondObject();
+
+		if (isVolume(fourthToken)) {
+			this.volume = parseVolume(fourthToken);
+
+			if (isPageNumber(fifthToken)) {
+				this.pageNumber = parsePageNumber(fifthToken);
+				this.digitalObjectIdentifier = parseDigitalObjectIdentifier(sixthToken);
+			} else {
+				// TODO: Warning?  (Invalid format.)
+			}
+		} else {
+			// TODO: Warning?  (Invalid format.)
+		}
+	}
+
 	private static Pair<Source, String> parseSource(
 			DatabaseTableKeyGenerator sourceKeyGenerator, String originalToken) {
 		int annotationIndex = StringUtilities.prefixIndex(originalToken, SOURCE_ANNOTATIONS);
@@ -373,8 +432,17 @@ public class ReferenceDataParser {
 		return IntegerParserWithDefault.parse(withoutPrefix);
 	}
 
+	private static String parseDigitalObjectIdentifier(String originalToken) {
+		return originalToken.replaceFirst(DIGITAL_OBJECT_IDENTIFIER_KEYWORD, "");
+	}
+
 	private static boolean isYear(String token) {
 		return token.matches(YEAR_PATTERN);
+	}
+
+	private static boolean isDigitalObjectIdentifier(String token) {
+		return token.matches(DIGITAL_OBJECT_IDENTIFIER_PATTERN);
+		//return token.startsWith("DOI ");
 	}
 
 	private static boolean isVolume(String token) {
