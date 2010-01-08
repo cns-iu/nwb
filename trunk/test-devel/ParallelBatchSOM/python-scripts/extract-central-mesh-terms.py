@@ -5,8 +5,6 @@ from operator import itemgetter
 numberOfTopMeshToSkip = 0
 requestedNumberOfMeshes = 2300
 
-name = 'topmeshof' + str(requestedNumberOfMeshes) + 'from' + str(numberOfTopMeshToSkip)
-
 meshToMeshID = dict()
 documentToMeshID = dict()
 
@@ -54,8 +52,6 @@ print >> outFile, str(len(documentToMeshID)), str(len(meshToMeshID))
 for meshToMeshIDItem in sorted(meshToMeshID.items(), key=itemgetter(1)):
     print >> outFile, "#", meshToMeshIDItem[1], meshToMeshIDItem[0]
     
-resultingDocumentCount = 0
-
 for document in documentToMeshID:
     print >> outFile, document,
     
@@ -63,8 +59,6 @@ for document in documentToMeshID:
         print >> outFile, meshID,
 
     print >> outFile
-
-    resultingDocumentCount += 1
 
 outFile.close()
 

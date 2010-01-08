@@ -748,7 +748,7 @@ void train(int myRank, float* net, training_data_t* myTrainingVectors) {
 	updateGaussians(width);
 
 	training_data_t::const_iterator sampleStart = myTrainingVectors->begin();
-	int sampleSize = 500; // TODO Just a thought for now.  Can we do better?
+	int sampleSize = 100; // TODO Just a thought for now.  Can we do better?
 	if (sampleSize > myTrainingVectors->size()) {
 		sampleSize = myTrainingVectors->size();
 	}
