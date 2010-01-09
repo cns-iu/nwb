@@ -1,10 +1,8 @@
 FN ISI Export Format
 VR 1.0
 PT J
-AU Takeda, H
-   Nishimura, K
-AF Takeda, Hiroyuki
-   Nishimura, Kaneyasu
+ED Macdonald, PJ
+   Almaas, E
 TI Planarians Maintain a Constant Ratio of Different Cell Types During
    Changes in Body Size by Using the Stem Cell System
 SO ZOOLOGICAL SCIENCE
@@ -66,50 +64,6 @@ PG 9
 SC Zoology
 GA 528OU
 UT ISI:000272456900001
-ER
-
-PT J
-AU Macdonald, PJ
-   Almaas, E
-TI Minimum spanning trees of weighted scale-free networks
-SO EUROPHYSICS LETTERS
-LA English
-DT Article
-ID COMPLEX NETWORKS; PERCOLATION; OPTIMIZATION; INTERNET
-AB A complete characterization of real networks requires us to understand
-   the consequences of the uneven interaction strengths between a system's
-   components. Here we use minimum spanning trees (MSTs) to explore the
-   effect of correlations between link weights and network topology on
-   scale-free networks. Solely by changing the nature of the correlations
-   between weights and network topology, the structure of the MSTs can
-   change from scale-free to exponential. Additionally, for some choices
-   of weight correlations, the efficiency of the MSTs increases with
-   increasing network size, a result with potential implications for the
-   design and scalability of communication networks.
-C1 Univ Notre Dame, Ctr Network Res, Notre Dame, IN 46556 USA.
-   Univ Notre Dame, Dept Phys, Notre Dame, IN 46556 USA.
-RP Macdonald, PJ, Univ Notre Dame, Ctr Network Res, Notre Dame, IN 46556
-   USA.
-EM alb@nd.edu
-NR 35
-TC 14
-PU EDP SCIENCES S A
-PI LES ULIS CEDEX A
-PA 17, AVE DU HOGGAR, PA COURTABOEUF, BP 112, F-91944 LES ULIS CEDEX A,
-   FRANCE
-SN 0295-5075
-J9 EUROPHYS LETT
-JI Europhys. Lett.
-PD OCT
-PY 2005
-VL 72
-IS 2
-BP 308
-EP 314
-PG 7
-SC Physics, Multidisciplinary
-GA 983NF
-UT ISI:000233238500024
 ER
 
 EF

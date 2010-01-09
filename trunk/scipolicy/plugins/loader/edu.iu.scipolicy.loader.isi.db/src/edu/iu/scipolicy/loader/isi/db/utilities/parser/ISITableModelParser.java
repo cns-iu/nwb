@@ -156,6 +156,10 @@ public class ISITableModelParser {
 
 			List<Person> currentAuthorPeople = parseAuthorPeople(row);
 
+			// Parse (Editor) People.
+
+			List<Person> currentEditorPeople = parseEditorPeople(row);
+
 			// Parse ISI File.
 
 			ISIFile isiFile = parseISIFile(row);
@@ -196,16 +200,11 @@ public class ISITableModelParser {
 			// Parse Document.
 
 			Document document = parseDocument(row, currentAuthorPeople);
-			
-			/*System.err.println("document: " + document);
-			for (Reference ref : currentReferences) {
-				System.err.println("\tref: " + ref);
-				System.err.println("\t" + ref.getAuthorPerson());
-			}*/
 
 			// Link the Document to the other things parsed.
 
 			linkDocumentToPeople_AsAuthors(document, currentAuthorPeople, row);
+			linkDocumentToPeople_AsEditors(document, currentEditorPeople, row);
 			this.documentOccurrences.addOrMerge(new DocumentOccurrence(document, isiFile));
 			linkDocumentToKeywords(document, authorKeywords);
 			linkDocumentToKeywords(document, keywordsPlus);
@@ -262,21 +261,21 @@ public class ISITableModelParser {
 	}
 
 	private List<Person> parseAuthorPeople(Tuple row) {
-		try {
-			List<Person> authorPeople = new ArrayList<Person>();
+		List<Person> authorPeople = new ArrayList<Person>();
 
-			String rawAuthorsString =
-				StringUtilities.simpleClean(row.getString(ISITag.AUTHORS.getColumnName()));
-			String[] authorStrings = rawAuthorsString.split("\\|");
-			String rawFullAuthorNamesString = StringUtilities.simpleClean(
-				row.getString(ISITag.AUTHORS_FULL_NAMES.getColumnName()));
-			String[] authorFullNameStrings = rawFullAuthorNamesString.split("\\|");
+		String rawAuthorsString =
+			StringUtilities.simpleClean(row.getString(ISITag.AUTHORS.getColumnName()));
+		String[] authorStrings = rawAuthorsString.split("\\|");
+		String rawFullAuthorNamesString = StringUtilities.simpleClean(
+			row.getString(ISITag.AUTHORS_FULL_NAMES.getColumnName()));
+		String[] authorFullNameStrings = rawFullAuthorNamesString.split("\\|");
 
-			for (int ii = 0; ii < authorStrings.length; ii++) {
-				String authorString = authorStrings[ii];
-				String cleanedAuthorString = StringUtilities.simpleClean(authorString);
-				Pair<Person, Boolean> personParsingResult;
+		for (int ii = 0; ii < authorStrings.length; ii++) {
+			String authorString = authorStrings[ii];
+			String cleanedAuthorString = StringUtilities.simpleClean(authorString);
+			Pair<Person, Boolean> personParsingResult;
 
+			try {
 				if (authorStrings.length == authorFullNameStrings.length) {
 					String authorFullNameString = authorFullNameStrings[ii];
 					String cleanedAuthorFullNameString =
@@ -290,15 +289,38 @@ public class ISITableModelParser {
 						this.people.getKeyGenerator(), cleanedAuthorString, "");
 				}
 
-				Person authorPerson = personParsingResult.getFirstObject();
-				Person mergedAuthorPerson = this.people.addOrMerge(authorPerson);
-				authorPeople.add(mergedAuthorPerson);
-			}
-
-			return authorPeople;
-		} catch (PersonParsingException e) {
-			return new ArrayList<Person>();
+					Person authorPerson = personParsingResult.getFirstObject();
+					Person mergedAuthorPerson = this.people.addOrMerge(authorPerson);
+					authorPeople.add(mergedAuthorPerson);
+				} catch (PersonParsingException e) {}
 		}
+
+		return authorPeople;
+	}
+
+	private List<Person> parseEditorPeople(Tuple row) {
+		List<Person> editorPeople = new ArrayList<Person>();
+
+		String rawEditorsString =
+			StringUtilities.simpleClean(row.getString(ISITag.EDITORS.getColumnName()));
+		String[] editorStrings = rawEditorsString.split("\\|");
+
+		for (int ii = 0; ii < editorStrings.length; ii++) {
+			String editorString = editorStrings[ii];
+			String cleanedEditorString = StringUtilities.simpleClean(editorString);
+			Pair<Person, Boolean> personParsingResult;
+
+			try {
+				personParsingResult = PersonParser.parsePerson(
+					this.people.getKeyGenerator(), cleanedEditorString, "");
+
+				Person editorPerson = personParsingResult.getFirstObject();
+				Person mergedEditorPerson = this.people.addOrMerge(editorPerson);
+				editorPeople.add(mergedEditorPerson);
+			} catch (PersonParsingException e) {}
+		}
+
+		return editorPeople;
 	}
 
 	private ISIFile parseISIFile(Tuple row) {
@@ -548,6 +570,16 @@ public class ISITableModelParser {
 				String emailAddress = emailAddressStrings[ii];
 				this.authors.addOrMerge(new Author(document, authorPerson, emailAddress, ii));
 			}
+		}
+	}
+
+	private void linkDocumentToPeople_AsEditors(
+			Document document, List<Person> editorPeople, Tuple row) {
+		Iterator<Person> personIterator = editorPeople.iterator();
+
+		for (int ii = 0; ii < editorPeople.size(); ii++) {
+			Person editorPerson = personIterator.next();
+			this.editors.addOrMerge(new Editor(document, editorPerson, ii));
 		}
 	}
 

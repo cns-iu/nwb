@@ -4,6 +4,7 @@ import static org.junit.Assert.fail;
 
 import java.io.File;
 import java.util.Collection;
+import java.util.Dictionary;
 import java.util.List;
 
 import org.cishell.framework.CIShellContext;
@@ -15,14 +16,17 @@ import org.cishell.utilities.StringUtilities;
 import org.osgi.service.log.LogService;
 
 import prefuse.data.Table;
+import edu.iu.cns.database.loader.framework.RowItem;
 import edu.iu.cns.database.loader.framework.RowItemContainer;
 import edu.iu.cns.database.loader.framework.utilities.DatabaseModel;
 import edu.iu.cns.shared.utilities.Pair;
 import edu.iu.nwb.shared.isiutil.ISITableReaderHelper;
+import edu.iu.nwb.shared.isiutil.database.ISIDatabase;
 import edu.iu.nwb.shared.isiutil.exception.ReadISIFileException;
 import edu.iu.scipolicy.loader.isi.db.model.entity.Document;
 import edu.iu.scipolicy.loader.isi.db.model.entity.Person;
 import edu.iu.scipolicy.loader.isi.db.model.entity.relationship.Author;
+import edu.iu.scipolicy.loader.isi.db.model.entity.relationship.Editor;
 import edu.iu.scipolicy.loader.isi.db.utilities.ISITablePreprocessor;
 import edu.iu.scipolicy.testutilities.TestUtilities;
 
@@ -41,6 +45,10 @@ public class RowItemTest {
 	public static final String ONE_AUTHOR_TEST_DATA_PATH = BASE_TEST_DATA_PATH + "OneAuthor.isi";
 	public static final String MULTIPLE_AUTHORS_TEST_DATA_PATH =
 		BASE_TEST_DATA_PATH + "MultipleAuthors.isi";
+
+	public static final String ONE_EDITOR_TEST_DATA_PATH = BASE_TEST_DATA_PATH + "OneEditor.isi";
+	public static final String MULTIPLE_EDITORS_TEST_DATA_PATH =
+		BASE_TEST_DATA_PATH + "MultipleEditors.isi";
 
 	protected DatabaseModel parseTestData(String testDataPath) throws Exception {
 		Pair<Table, Collection<Integer>> testData = prepareTestData(testDataPath);
@@ -138,6 +146,16 @@ public class RowItemTest {
 		for (Author author : authors) {
 			if ((author.getDocument() == document) && (author.getPerson() == authorPerson)) {
 				return author;
+			}
+		}
+
+		return null;
+	}
+
+	public static Editor getEditor(List<Editor> editors, Document document, Person editorPerson) {
+		for (Editor editor : editors) {
+			if ((editor.getDocument() == document) && (editor.getPerson() == editorPerson)) {
+				return editor;
 			}
 		}
 
@@ -270,6 +288,23 @@ public class RowItemTest {
 
 		if (numItems != itemCount) {
 			fail("Found " + numItems + " item(s); expected " + itemCount + ".");
+		}
+	}
+
+	public static void checkItemOrderListed(RowItem<?> item, int providedOrderListed) {
+		Dictionary<String, Comparable<?>> attributes = item.getAttributes();
+		Integer orderListed = (Integer)attributes.get(ISIDatabase.ORDER_LISTED);
+
+		if (orderListed != null) {
+			int orderListedValue = orderListed.intValue();
+
+			if (orderListedValue != providedOrderListed) {
+				String failMessage =
+					"Order listed values do not match." +
+					"\n\tItem order listed: " + orderListedValue +
+					"\n\tProvided order listed: " + providedOrderListed;
+				fail(failMessage);
+			}
 		}
 	}
 }
