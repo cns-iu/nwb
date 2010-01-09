@@ -1,7 +1,5 @@
 package edu.iu.cns.database.loader.framework.utilities;
 
-import java.io.BufferedWriter;
-import java.io.FileWriter;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
@@ -18,21 +16,14 @@ import org.cishell.utilities.IntegerParserWithDefault;
 import org.cishell.utilities.StringUtilities;
 
 import edu.iu.cns.database.loader.framework.DerbyFieldType;
-import edu.iu.cns.database.loader.framework.Entity;
 import edu.iu.cns.database.loader.framework.RowItem;
 import edu.iu.cns.database.loader.framework.RowItemContainer;
 import edu.iu.cns.database.loader.framework.Schema;
 import edu.iu.cns.database.loader.framework.Schema.Field;
-import edu.iu.nwb.shared.isiutil.database.ISIDatabase;
 
 public class DerbyDatabaseCreator {
 	public static final int MAX_VARCHAR_LENGTH = 32000;
 	public static final String NULL_VALUE = "null";
-
-	// TODO: Better exception message?
-	/*public static final String EXCEPTION_MESSAGE =
-		"A problem occurred when reading ISI data.\n" +
-		"Try reinstalling the application or contacting the Help Desk.";*/
 
 	/**
 	 * dataType should be the human-readable display name of the type of originating data,
@@ -41,8 +32,8 @@ public class DerbyDatabaseCreator {
 	public static Database createFromModel(
 			DatabaseService databaseProvider, DatabaseModel model, String dataType)
 			throws DatabaseCreationException, SQLException {
-		Database isiDatabase = databaseProvider.createNewDatabase();
-		Connection databaseConnection = isiDatabase.getConnection();
+		Database database = databaseProvider.createNewDatabase();
+		Connection databaseConnection = database.getConnection();
 
 		for (RowItemContainer<? extends RowItem<?>> itemContainer : model.getRowItemLists()) {
 			createEmptyTable(databaseConnection, itemContainer);
@@ -58,7 +49,7 @@ public class DerbyDatabaseCreator {
 
 		databaseConnection.close();
 
-		return isiDatabase;
+		return database;
 	}
 
 	public static void createEmptyTable(
