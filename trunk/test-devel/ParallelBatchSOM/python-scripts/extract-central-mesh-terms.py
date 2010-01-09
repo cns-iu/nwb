@@ -1,6 +1,7 @@
 import os
 import gzip
 from operator import itemgetter
+import random
 
 numberOfTopMeshToSkip = 0
 requestedNumberOfMeshes = 2300
@@ -51,8 +52,10 @@ outFile = open('training-top-' + str(requestedNumberOfMeshes) + '-after-' + str(
 print >> outFile, str(len(documentToMeshID)), str(len(meshToMeshID))
 for meshToMeshIDItem in sorted(meshToMeshID.items(), key=itemgetter(1)):
     print >> outFile, "#", meshToMeshIDItem[1], meshToMeshIDItem[0]
-    
-for document in documentToMeshID:
+
+documentKeys = documentToMeshID.keys()
+random.shuffle(documentKeys)
+for document in documentKeys:
     print >> outFile, document,
     
     for meshID in documentToMeshID[document]:

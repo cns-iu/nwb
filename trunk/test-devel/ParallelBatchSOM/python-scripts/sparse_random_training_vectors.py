@@ -1,6 +1,6 @@
 import random
 
-numberOfVectors = 1000#2000000
+numberOfVectors = 10#2000000
 dimension = 3#2300
 #denseness = 10.0 / float(dimension)
 mean = 1.5

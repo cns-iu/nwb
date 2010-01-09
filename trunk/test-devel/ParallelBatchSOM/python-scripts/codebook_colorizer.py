@@ -19,7 +19,7 @@ def main():
     codebookFile.close()
 
     outFile = open('trained.eps', 'w')
-    inFile = open('template.eps')
+    inFile = open('colorTemplate.eps')
     for line in inFile:
         if line.startswith('NEURONS GO HERE'):
             for node in nodes:
