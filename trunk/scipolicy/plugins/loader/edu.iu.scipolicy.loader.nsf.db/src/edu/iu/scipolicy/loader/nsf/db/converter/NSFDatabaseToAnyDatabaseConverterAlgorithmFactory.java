@@ -7,9 +7,9 @@ import org.cishell.framework.algorithm.Algorithm;
 import org.cishell.framework.algorithm.AlgorithmFactory;
 import org.cishell.framework.data.Data;
 
-public class ISIDatabaseToAnyDatabaseConverterAlgorithmFactory implements AlgorithmFactory {
+public class NSFDatabaseToAnyDatabaseConverterAlgorithmFactory implements AlgorithmFactory {
 	public Algorithm createAlgorithm(
 			Data[] data, Dictionary parameters, CIShellContext ciShellContext) {
-		return new ISIDatabaseToAnyDatabaseConverterAlgorithm(data, parameters, ciShellContext);
+		return new NSFDatabaseToAnyDatabaseConverterAlgorithm(data, parameters, ciShellContext);
 	}
 }

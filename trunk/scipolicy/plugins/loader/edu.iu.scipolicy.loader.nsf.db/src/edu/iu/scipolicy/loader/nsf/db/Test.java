@@ -24,7 +24,7 @@ public class Test {
 		// TODO Auto-generated method stub
 		
 		String[] originalTokens = {"chintan tank", "Pal, Ranadip", "Waller, S. Travis", "Hu, Xiaohua (Tony)",
-									"Sylvia J. Spengler", "Xiaoyang Wang", "chin d tAnk"};
+									"Sylvia J. Spengler", "Xiaoyang Wang", "chin d tAnk", "Santiago        Schnell"};
 		for (String token : originalTokens) {
 			
 			String[] nameTokens;
@@ -61,12 +61,18 @@ public class Test {
 				 * 		"FirstName MiddleInitial LastName"
 				 * Program Manager, CO-PI names follow these syntax.
 				 * */
-				nameTokens = token.split("\\s");
+				nameTokens = token.split("\\s+");
 				
 				firstName = StringUtilities.simpleClean(
 						StringUtilities.toSentenceCase(
 								nameTokens[0]));;
-								
+				
+				for (String nmToken : nameTokens) {
+					System.out.print(nmToken + ":::|");
+				}
+				
+				System.out.println(nameTokens.length);
+				
 				if (nameTokens.length == 2) {
 					lastName = StringUtilities.simpleClean(
 									StringUtilities.toSentenceCase(
@@ -103,15 +109,6 @@ public class Test {
 		
 		
 		
-		File f = new File("C:\\Documents and Settings\\Administrator\\workspace-slis\\workspace\\edu.iu.scipolicy.loader.nsf.db\\sample_nsf.csv");
-		
-		String output = computeMD5Checksum(f);
-		
-		System.out.println("MD5: " + output);
-		
-		
-		
-
 	}
 
 	/**

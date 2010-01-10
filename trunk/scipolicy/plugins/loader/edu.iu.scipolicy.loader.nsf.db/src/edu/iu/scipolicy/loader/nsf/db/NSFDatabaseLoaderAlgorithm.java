@@ -3,62 +3,63 @@ package edu.iu.scipolicy.loader.nsf.db;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
+import java.sql.SQLException;
 import java.util.Dictionary;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
+import org.cishell.framework.CIShellContext;
+import org.cishell.framework.algorithm.Algorithm;
 import org.cishell.framework.algorithm.AlgorithmExecutionException;
+import org.cishell.framework.data.BasicData;
 import org.cishell.framework.data.Data;
+import org.cishell.framework.data.DataProperty;
+import org.cishell.service.database.Database;
+import org.cishell.service.database.DatabaseCreationException;
+import org.cishell.service.database.DatabaseService;
 import org.osgi.service.log.LogService;
 
 import au.com.bytecode.opencsv.CSVReader;
-import edu.iu.scipolicy.loader.nsf.db.model.NSFModel;
+import edu.iu.cns.database.loader.framework.RowItemContainer;
+import edu.iu.cns.database.loader.framework.utilities.DatabaseModel;
+import edu.iu.cns.database.loader.framework.utilities.DerbyDatabaseCreator;
+import edu.iu.scipolicy.loader.nsf.db.model.entity.Award;
 import edu.iu.scipolicy.loader.nsf.db.utilities.NSFTableModelParser;
 import edu.iu.scipolicy.utilities.nsf.NsfNames;
 
 /**
- * This algorithm aggregates/collapses the input table based off on values in a 
- * "Aggregated On" column provided by the user. The types of aggregation performed
- * on each column can be selected by the user from a drop-down box. 
- * Currently "Sum", "Difference", "Average", "Min", "Max" aggregations are available 
- * for numerical column types.
- * Non-numerical column types are treated as String and hence a user can select 
- * appropriate text delimiters for each. 
- * 
  * @author cdtank
  *
  */
 
-public class NSFDatabaseLoaderAlgorithm/* implements Algorithm*/ {
+public class NSFDatabaseLoaderAlgorithm implements Algorithm {
 	
 	private Data[] data;
     private Dictionary parameters;
 	private LogService logger;
-	private List<Integer> tableColumnNumericalParameterIDs, tableColumnStringParameterIDs;
+	private DatabaseService databaseProvider;
 	
     public static final String AGGREGATE_ON_COLUMN = "aggregateoncolumn";
     
-/*    public NSFDatabaseLoaderAlgorithm(Data[] data, Dictionary parameters,
-								  CIShellContext context, 
-								  List<Integer> inputNumericalParameterIDs, 
-								  List<Integer> inputStringParameterIDs) {
+    public NSFDatabaseLoaderAlgorithm(Data[] data, 
+    								  Dictionary parameters,
+    								  CIShellContext context) {
     	
         this.data = data;
         this.parameters = parameters;
-        this.tableColumnNumericalParameterIDs = inputNumericalParameterIDs;
-        this.tableColumnStringParameterIDs = inputStringParameterIDs;
 		this.logger = (LogService) context.getService(LogService.class.getName());
-	}*/
+        this.databaseProvider =
+        	(DatabaseService) context.getService(DatabaseService.class.getName());
+	}
 
-//    public Data[] execute() throws AlgorithmExecutionException {
+    public Data[] execute() throws AlgorithmExecutionException {
     
-    public static void main(String[] args) throws AlgorithmExecutionException {
 
-//		File nsfCsv = (File) data[0].getData();
+		File nsfCsv = (File) data[0].getData();
     	
-    	File nsfCsv = new File("C:\\Documents and Settings\\Administrator\\workspace-slis\\workspace\\edu.iu.scipolicy.loader.nsf.db\\sample_nsf.csv");
+//    	File nsfCsv = new File("C:\\Documents and Settings\\cdtank\\workspace\\edu.iu.scipolicy.loader.nsf.db\\sample_nsf.csv");
 
+    	Data output = null;
 		
 		CSVReader nsfCsvReader;
 		try {
@@ -68,33 +69,53 @@ public class NSFDatabaseLoaderAlgorithm/* implements Algorithm*/ {
 			Map<String, Integer> nSFFieldsColumnNameToColumnIndex = 
 				createMapFromNsfColumnNameToColumnIndex(nsfCsvReader);
 			
-			NSFModel inMemoryModel = new NSFTableModelParser()
+			DatabaseModel inMemoryModel = new NSFTableModelParser()
 											.createInMemoryModel(nSFFieldsColumnNameToColumnIndex, 
 																 nsfCsvReader,
 																 nsfCsv);
+			
+			RowItemContainer<Award> rw = (RowItemContainer<Award>) inMemoryModel.getRowItemListByDatabaseTableName("AWARD");
+			
+			/*System.out.println(rw.getSchema());
+			
+			for (RowItem<Award> aw : rw.getItems()) {
+				
+				System.out.println(aw.getAttributes());
+				
+				System.out.println("|||||||||||||||||||||||||||||||||||||||||||||||||||");
+				System.out.println("|||||||||||||||||||||||||||||||||||||||||||||||||||");
+				
+			}*/
+			
+			Database database = DerbyDatabaseCreator.createFromModel(databaseProvider, inMemoryModel, "NSF");
+			
+			/*
+			 * After getting the output in table format make it available to the user.
+			 * */
+			//TODO: replcae null with the actual db object  data
+			output = new BasicData(database, NSFDatabase.NSF_DATABASE_MIME_TYPE);
+	    	Dictionary<String, Object> parentMetadata = data[0].getMetadata();
+	    	Dictionary<String, Object> metadata = output.getMetadata();
+	    	metadata.put(
+	    		DataProperty.LABEL, "NSF Database From " + parentMetadata.get(DataProperty.LABEL));
+	    	metadata.put(DataProperty.TYPE, DataProperty.DATABASE_TYPE);
+	    	metadata.put(DataProperty.PARENT, data[0]);
 			
 			
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
+		} catch (DatabaseCreationException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
 		}
 		
-		/*
-		 * After getting the Prefuse Table data pass it for aggregation.
-		 * */
+
 		
-		/*
-		 * After getting the output in table format make it available to the user.
-		 * */
-		//TODO: replcae null with the actual db object  data
-/*		Data output = new BasicData(null, Table.class.getName());
-		Dictionary metadata = output.getMetadata();
-		metadata.put(DataProperty.LABEL, "Aggregation performed using unique values in \"" 
-										 + "\" column.");
-		metadata.put(DataProperty.PARENT, this.data[0]);
-		metadata.put(DataProperty.TYPE, DataProperty.TABLE_TYPE);*/
-		
-//		return new Data[]{output};
+		return new Data[]{output};
     }
 
 	private static CSVReader createNsfCsvReader(File nsfCsv) throws IOException {

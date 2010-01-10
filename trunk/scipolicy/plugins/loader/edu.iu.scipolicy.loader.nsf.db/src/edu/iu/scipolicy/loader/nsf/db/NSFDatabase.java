@@ -1,6 +1,9 @@
 package edu.iu.scipolicy.loader.nsf.db;
 
+
 public class NSFDatabase {
+	
+	public static final String NSF_DATABASE_MIME_TYPE = "db:nsf";
 	
 	// Entity Type Information
 	public static final String NSF_FILE_HUMAN_READABLE_NAME = "NSF Files";
@@ -28,8 +31,8 @@ public class NSFDatabase {
 	public static final String INVESTIGATOR_HUMAN_READABLE_NAME = "Investigators";
 	public static final String INVESTIGATOR_TABLE_NAME = "INVESTIGATOR";
 	
-	public static final String AWARD_FIELD_OF_APPLICATION_HUMAN_READABLE_NAME = "Investigators";
-	public static final String AWARD_FIELD_OF_APPLICATION_TABLE_NAME = "INVESTIGATOR";
+	public static final String AWARD_FIELD_OF_APPLICATION_HUMAN_READABLE_NAME = "Award Field Of Applications";
+	public static final String AWARD_FIELD_OF_APPLICATION_TABLE_NAME = "AWARD_FIELD_OF_APPLICATIONS";
 
 	public static final String PROGRAM_MANAGER_HUMAN_READABLE_NAME = "Program Managers";
 	public static final String PROGRAM_MANAGER_TABLE_NAME = "PROGRAM_MANAGER";
@@ -44,53 +47,79 @@ public class NSFDatabase {
 	public static final String AWARD_OCCURRENCES_TABLE_NAME = "AWARD_OCCURRENCES";
 	
 	// NSF File Entity Information
-	public static final String FILE_NAME = "file_name";
-	public static final String FILE_TYPE = "file_type";
-	public static final String FILE_MD5_CHECKSUM = "file_md5_checksum";
+	public static final String FILE_NAME = "FILE_NAME";
+	public static final String FILE_TYPE = "FILE_TYPE";
+	public static final String FILE_MD5_CHECKSUM = "FILE_MD5_CHECKSUM";
 
 	// Organization Entity Information
-	public static final String ORGANIZATION_NAME = "organization_name";
-	public static final String ORGANIZATION_PHONE = "organization_phone";
-	public static final String ORGANIZATION_STREET_ADDRESS = "organization_street_address";
-	public static final String ORGANIZATION_CITY = "organization_city";	
-	public static final String ORGANIZATION_STATE = "organization_state";
-	public static final String ORGANIZATION_ZIP = "organization_zip";
+	public static final String ORGANIZATION_NAME = "ORGANIZATION_NAME";
+	public static final String ORGANIZATION_PHONE = "ORGANIZATION_PHONE";
+	public static final String ORGANIZATION_STREET_ADDRESS = "ORGANIZATION_STREET_ADDRESS";
+	public static final String ORGANIZATION_CITY = "ORGANIZATION_CITY";	
+	public static final String ORGANIZATION_STATE = "ORGANIZATION_STATE";
+	public static final String ORGANIZATION_ZIP = "ORGANIZATION_ZIP";
 
 
 	// FieldOfApplication Entity Information
-	public static final String ORIGINAL_INPUT_FIELD = "original_input_field";
-	public static final String EXTRACTED_NUMERIC_FIELD = "extracted_numeric_field";
-	public static final String EXTRACTED_TEXT_FIELD = "extracted_text_field";
+	public static final String ORIGINAL_INPUT_FIELD = "ORIGINAL_INPUT_FIELD";
+	public static final String EXTRACTED_NUMERIC_FIELD = "EXTRACTED_NUMERIC_FIELD";
+	public static final String EXTRACTED_TEXT_FIELD = "EXTRACTED_TEXT_FIELD";
 	
 	// Program Entity Information
-	public static final String PROGRAM_NAME = "program_name";
-	public static final String FUNDING_CODE = "funding_code";
+	public static final String PROGRAM_NAME = "PROGRAM_NAME";
+	public static final String FUNDING_CODE = "FUNDING_CODE";
 
 	// Person Entity Information
-	public static final String LAST_NAME = "last_name";
-	public static final String FIRST_NAME = "first_name";
-	public static final String MIDDLE_INITIAL = "middle_initial";
-	public static final String ORIGINAL_INPUT_NAME = "original_input_name";
-	public static final String FORMATTED_FULL_NAME = "formatted_full_name";
+	public static final String LAST_NAME = "LAST_NAME";
+	public static final String FIRST_NAME = "FIRST_NAME";
+	public static final String MIDDLE_INITIAL = "MIDDLE_INITIAL";
+	public static final String ORIGINAL_INPUT_NAME = "ORIGINAL_INPUT_NAME";
+	public static final String FORMATTED_FULL_NAME = "FORMATTED_FULL_NAME";
 
 	// Award Entity Information
-	public static final String DIGITAL_OBJECT_IDENTIFIER = "digital_object_identifier";
-	public static final String TITLE = "title";
-	public static final String AWARD_NUMBER = "award_number";
-	public static final String START_DATE = "start_date";
-	public static final String EXPIRATION_DATE = "expiration_date";
-	public static final String LAST_AMMENDMENT_DATE = "last_ammendment_date";
-	public static final String AWARDED_AMOUNT_TO_DATE = "awarded_amount_to_date";
-	public static final String AWARD_INSTRUMENT = "award_instrument";
-	public static final String NSF_DIRECTORATE = "nsf_directorate";
-	public static final String NSF_ORGANIZATION = "nsf_organization";
-	public static final String ABSTRACT_TEXT = "abstract_text";
+	public static final String DIGITAL_OBJECT_IDENTIFIER = "DIGITAL_OBJECT_IDENTIFIER";
+	public static final String TITLE = "TITLE";
+	public static final String AWARD_NUMBER = "AWARD_NUMBER";
+	public static final String START_DATE = "START_DATE";
+	public static final String EXPIRATION_DATE = "EXPIRATION_DATE";
+	public static final String LAST_AMMENDMENT_DATE = "LAST_AMMENDMENT_DATE";
+	public static final String AWARDED_AMOUNT_TO_DATE = "AWARDED_AMOUNT_TO_DATE";
+	public static final String AWARD_INSTRUMENT = "AWARD_INSTRUMENT";
+	public static final String NSF_DIRECTORATE = "NSF_DIRECTORATE";
+	public static final String NSF_ORGANIZATION = "NSF_ORGANIZATION";
+	public static final String ABSTRACT_TEXT = "ABSTRACT_TEXT";
 	
-	// Investigator (Person - Award) Relationship Information
-	public static final String EMAIL_ADDRESS = "email_address";
-	public static final String STATE = "state";
-	public static final String IS_MAIN_PI = "is_main_pi";
+	// AwardOccurences (Award - NSFFile) Relationship Information
+	public static final String AWARD_OCCURRENCES_AWARD_FOREIGN_KEY = "AO_AWARD_FK";
+	public static final String AWARD_OCCURRENCES_NSF_FILE_FOREIGN_KEY = "AO_NSF_FILE_FK";
 
+	// FieldOfApplications (FieldOfApplication - Award) Relationship Information
+	public static final String FIELD_OF_APPLICATIONS_FIELD_OF_APPLICATION_FOREIGN_KEY = "FOAS_FIELD_OF_APPLICATION_FK";
+	public static final String FIELD_OF_APPLICATIONS_AWARD_FOREIGN_KEY = "FOAS_AWARD_FK";
+
+	// Investigator (Person - Award) Relationship Information
+	public static final String INVESTIGATOR_PERSON_FOREIGN_KEY = "I_PERSON_FK";
+	public static final String INVESTIGATOR_AWARD_FOREIGN_KEY = "I_AWARD_FK";
+	public static final String EMAIL_ADDRESS = "EMAIL_ADDRESS";
+	public static final String STATE = "STATE";
+	public static final String IS_MAIN_PI = "IS_MAIN_PI";
+	
+	// InvestigatorOrganizations (Investigator - Organization) Relationship Information
+	public static final String INVESTIGATOR_ORGANIZATIONS_INVESTIGATOR_FOREIGN_KEY = "IOS_INVESTIGATOR_FK";
+	public static final String INVESTIGATOR_ORGANIZATIONS_ORGANIZATION_FOREIGN_KEY = "IOS_ORGANIZATION_FK";
+	
+	// ProgramManager (Person - Award) Relationship Information
+	public static final String PROGRAM_MANAGER_PERSON_FOREIGN_KEY = "PM_PERSON_FK";
+	public static final String PROGRAM_MANAGER_AWARD_FOREIGN_KEY = "PM_AWARD_FK";
+	
+	// ProgramNameAndElementCodes (Program - Award) Relationship Information
+	public static final String PROGRAM_NAME_AND_ELEMENT_CODES_PROGRAM_FOREIGN_KEY = "PNEC_PROGRAM_FK";
+	public static final String PROGRAM_NAME_AND_ELEMENT_CODES_AWARD_FOREIGN_KEY = "PNEC_AWARD_FK";	
+	
+	// ProgramReferenceCodes (Program - Award) Relationship Information
+	public static final String PROGRAM_REFERENCE_CODES_PROGRAM_FOREIGN_KEY = "PRC_PROGRAM_FK";
+	public static final String PROGRAM_REFERENCE_CODES_AWARD_FOREIGN_KEY = "PRC_AWARD_FK";	
+	
 	// Commonly-Found Entity Relationship Table Information
-	public static final String ORDER_LISTED_KEY = "order_listed";
+	public static final String ORDER_LISTED_KEY = "ORDER_LISTED";
 }

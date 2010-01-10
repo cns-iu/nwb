@@ -3,11 +3,23 @@ package edu.iu.scipolicy.loader.nsf.db.model.entity;
 import java.util.Dictionary;
 import java.util.Hashtable;
 
+import edu.iu.cns.database.loader.framework.DerbyFieldType;
 import edu.iu.cns.database.loader.framework.Entity;
+import edu.iu.cns.database.loader.framework.Schema;
 import edu.iu.cns.database.loader.framework.utilities.DatabaseTableKeyGenerator;
 import edu.iu.scipolicy.loader.nsf.db.NSFDatabase;
 
-public class Person extends Entity<Person> {
+public class Person extends Entity<Person> implements Comparable<Person>{
+	
+	public static final Schema<Person> SCHEMA = new Schema<Person>(
+			true,
+			NSFDatabase.LAST_NAME, DerbyFieldType.TEXT,
+			NSFDatabase.FIRST_NAME, DerbyFieldType.TEXT,
+			NSFDatabase.MIDDLE_INITIAL, DerbyFieldType.TEXT,
+			NSFDatabase.ORIGINAL_INPUT_NAME, DerbyFieldType.TEXT,
+			NSFDatabase.FORMATTED_FULL_NAME, DerbyFieldType.TEXT
+			);
+	
 	private String lastName;
 	private String firstName;
 	private String middleInitial;
@@ -88,5 +100,10 @@ public class Person extends Entity<Person> {
 	@Override
 	public boolean shouldMerge(Person otherItem) {
 		return false;
+	}
+
+	public int compareTo(Person o) {
+		// TODO Auto-generated method stub
+		return 0;
 	}
 }

@@ -15,7 +15,7 @@ public class FieldOfApplicationParser {
 		String extractedNumericField, extractedTextField;
 		String originalFOA = originalToken;
 		
-		fieldOfApplicationTokens = originalToken.split("\\s");
+		fieldOfApplicationTokens = originalToken.split("\\s+");
 		
 		if (fieldOfApplicationTokens.length != 1) {
 			extractedNumericField = StringUtilities.simpleClean(
@@ -24,6 +24,8 @@ public class FieldOfApplicationParser {
 			for (int ii = 1; ii < fieldOfApplicationTokens.length; ii++) {
 				extractedTextField += fieldOfApplicationTokens[ii] + " ";
 			}
+			
+			extractedTextField = StringUtilities.simpleClean(extractedTextField);
 
 		} else {
 			extractedNumericField = "";

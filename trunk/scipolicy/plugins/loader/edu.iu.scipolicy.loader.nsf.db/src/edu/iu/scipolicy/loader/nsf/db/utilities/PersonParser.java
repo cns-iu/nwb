@@ -45,7 +45,7 @@ public class PersonParser {
 			 * 		"FirstName MiddleInitial LastName"
 			 * Program Manager, CO-PI names follow these syntax.
 			 * */
-			nameTokens = originalToken.split("\\s");
+			nameTokens = originalToken.split("\\s+");
 			
 			firstName = StringUtilities.simpleClean(
 					StringUtilities.toSentenceCase(

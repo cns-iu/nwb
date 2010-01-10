@@ -5,12 +5,20 @@ import java.util.Hashtable;
 
 import org.cishell.utilities.StringUtilities;
 
+import edu.iu.cns.database.loader.framework.DerbyFieldType;
 import edu.iu.cns.database.loader.framework.Entity;
+import edu.iu.cns.database.loader.framework.Schema;
 import edu.iu.cns.database.loader.framework.utilities.DatabaseTableKeyGenerator;
 import edu.iu.scipolicy.loader.nsf.db.NSFDatabase;
 
-public class Program extends Entity<Program> {
+public class Program extends Entity<Program> implements Comparable<Program> {
 
+	public static final Schema<Program> SCHEMA = new Schema<Program>(
+			true,
+			NSFDatabase.PROGRAM_NAME, DerbyFieldType.TEXT,
+			NSFDatabase.FUNDING_CODE, DerbyFieldType.TEXT
+			);
+	
 	private String name;
 	private String fundingCode;
 
@@ -73,6 +81,12 @@ public class Program extends Entity<Program> {
 				return false;
 			}
 		}
+	}
+
+
+	public int compareTo(Program o) {
+		// TODO Auto-generated method stub
+		return 0;
 	}
 
 }

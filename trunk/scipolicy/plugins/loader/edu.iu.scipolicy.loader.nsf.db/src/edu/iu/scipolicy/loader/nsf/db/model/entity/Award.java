@@ -6,12 +6,27 @@ import java.util.Hashtable;
 
 import org.cishell.utilities.StringUtilities;
 
+import edu.iu.cns.database.loader.framework.DerbyFieldType;
 import edu.iu.cns.database.loader.framework.Entity;
+import edu.iu.cns.database.loader.framework.Schema;
 import edu.iu.cns.database.loader.framework.utilities.DatabaseTableKeyGenerator;
 import edu.iu.scipolicy.loader.nsf.db.NSFDatabase;
 
-public class Award extends Entity<Award> {
-
+public class Award extends Entity<Award> implements Comparable<Award>{
+	public static final Schema<Award> SCHEMA = new Schema<Award>(
+			true,
+			NSFDatabase.AWARD_NUMBER, DerbyFieldType.TEXT,
+			NSFDatabase.TITLE, DerbyFieldType.TEXT,
+			NSFDatabase.START_DATE, DerbyFieldType.DATE,
+			NSFDatabase.EXPIRATION_DATE, DerbyFieldType.DATE,
+			NSFDatabase.LAST_AMMENDMENT_DATE, DerbyFieldType.DATE,
+			NSFDatabase.AWARDED_AMOUNT_TO_DATE, DerbyFieldType.DOUBLE,
+			NSFDatabase.AWARD_INSTRUMENT, DerbyFieldType.TEXT,
+			NSFDatabase.NSF_DIRECTORATE, DerbyFieldType.TEXT,
+			NSFDatabase.NSF_ORGANIZATION, DerbyFieldType.TEXT,
+			NSFDatabase.ABSTRACT_TEXT, DerbyFieldType.TEXT
+			);
+	
 	private String awardNumber;
 	private String title;
 	private Date startDate;
@@ -158,5 +173,11 @@ public class Award extends Entity<Award> {
 					this.title, 
 					otherItem.getTitle()) 
 		);
+	}
+
+
+	public int compareTo(Award o) {
+		// TODO Auto-generated method stub
+		return 0;
 	}
 }

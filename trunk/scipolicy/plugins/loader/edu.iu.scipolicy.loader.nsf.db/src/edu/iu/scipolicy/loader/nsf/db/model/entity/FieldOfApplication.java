@@ -5,12 +5,21 @@ import java.util.Hashtable;
 
 import org.cishell.utilities.StringUtilities;
 
+import edu.iu.cns.database.loader.framework.DerbyFieldType;
 import edu.iu.cns.database.loader.framework.Entity;
+import edu.iu.cns.database.loader.framework.Schema;
 import edu.iu.cns.database.loader.framework.utilities.DatabaseTableKeyGenerator;
 import edu.iu.scipolicy.loader.nsf.db.NSFDatabase;
 
-public class FieldOfApplication extends Entity<FieldOfApplication> {
+public class FieldOfApplication extends Entity<FieldOfApplication> implements Comparable<FieldOfApplication>{
 
+	public static final Schema<FieldOfApplication> SCHEMA = new Schema<FieldOfApplication>(
+			true,
+			NSFDatabase.ORIGINAL_INPUT_FIELD, DerbyFieldType.TEXT,
+			NSFDatabase.EXTRACTED_NUMERIC_FIELD, DerbyFieldType.TEXT,
+			NSFDatabase.EXTRACTED_TEXT_FIELD, DerbyFieldType.TEXT
+			);
+	
 	private String originalInputField;
 	private String extractedNumericField;
 	private String extractedTextField;
@@ -88,5 +97,10 @@ public class FieldOfApplication extends Entity<FieldOfApplication> {
 			return false;
 		}
 		
+	}
+
+	public int compareTo(FieldOfApplication o) {
+		// TODO Auto-generated method stub
+		return 0;
 	}
 }

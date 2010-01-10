@@ -5,11 +5,19 @@ import java.util.Hashtable;
 
 import org.cishell.utilities.StringUtilities;
 
+import edu.iu.cns.database.loader.framework.DerbyFieldType;
 import edu.iu.cns.database.loader.framework.Entity;
+import edu.iu.cns.database.loader.framework.Schema;
 import edu.iu.cns.database.loader.framework.utilities.DatabaseTableKeyGenerator;
 import edu.iu.scipolicy.loader.nsf.db.NSFDatabase;
 
-public class NSFFile extends Entity<NSFFile> {
+public class NSFFile extends Entity<NSFFile> implements Comparable<NSFFile> {
+	public static final Schema<NSFFile> SCHEMA = new Schema<NSFFile>(
+			true,
+			NSFDatabase.FILE_NAME, DerbyFieldType.TEXT,
+			NSFDatabase.FILE_TYPE, DerbyFieldType.TEXT,
+			NSFDatabase.FILE_MD5_CHECKSUM, DerbyFieldType.TEXT);
+	
 	private String fileName;
 	private String fileType;
 	private String fileMD5Checksum;
@@ -74,6 +82,11 @@ public class NSFFile extends Entity<NSFFile> {
 							this.fileMD5Checksum,
 							otherItem.getFileMD5Checksum())
 		);
+	}
+
+	public int compareTo(NSFFile o) {
+		// TODO Auto-generated method stub
+		return 0;
 	}
 
 }

@@ -5,12 +5,23 @@ import java.util.Hashtable;
 
 import org.cishell.utilities.StringUtilities;
 
+import edu.iu.cns.database.loader.framework.DerbyFieldType;
 import edu.iu.cns.database.loader.framework.Entity;
+import edu.iu.cns.database.loader.framework.Schema;
 import edu.iu.cns.database.loader.framework.utilities.DatabaseTableKeyGenerator;
 import edu.iu.scipolicy.loader.nsf.db.NSFDatabase;
 
-public class Organization extends Entity<Organization> {
+public class Organization extends Entity<Organization> implements Comparable<Organization>{
 
+	public static final Schema<Organization> SCHEMA = new Schema<Organization>(
+			true,
+			NSFDatabase.ORGANIZATION_NAME, DerbyFieldType.TEXT,
+			NSFDatabase.ORGANIZATION_PHONE, DerbyFieldType.TEXT,
+			NSFDatabase.ORGANIZATION_STREET_ADDRESS, DerbyFieldType.TEXT,
+			NSFDatabase.ORGANIZATION_CITY, DerbyFieldType.TEXT,
+			NSFDatabase.ORGANIZATION_STATE, DerbyFieldType.TEXT,
+			NSFDatabase.ORGANIZATION_ZIP, DerbyFieldType.TEXT
+			);
 
 	private String name;
 	private String phone;
@@ -106,5 +117,10 @@ public class Organization extends Entity<Organization> {
 				&& StringUtilities.validAndEquivalentIgnoreCase(this.phone, otherItem.getPhone())
 				&& StringUtilities.validAndEquivalentIgnoreCase(this.city, otherItem.getCity())
 		);
+	}
+
+	public int compareTo(Organization o) {
+		// TODO Auto-generated method stub
+		return 0;
 	}
 }

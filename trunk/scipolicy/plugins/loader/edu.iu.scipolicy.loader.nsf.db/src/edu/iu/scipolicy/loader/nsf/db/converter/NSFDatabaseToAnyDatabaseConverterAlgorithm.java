@@ -9,20 +9,20 @@ import org.cishell.framework.data.Data;
 import org.cishell.framework.data.DataProperty;
 import org.cishell.service.database.Database;
 
-public class ISIDatabaseToAnyDatabaseConverterAlgorithm implements Algorithm {
+public class NSFDatabaseToAnyDatabaseConverterAlgorithm implements Algorithm {
 	private Data inputData;
-	private Database isiDatabase;
+	private Database nsfDatabase;
 
-	public ISIDatabaseToAnyDatabaseConverterAlgorithm(
+	public NSFDatabaseToAnyDatabaseConverterAlgorithm(
 			Data[] data,
 			Dictionary parameters,
 			CIShellContext ciShellContext) {
 		this.inputData = data[0];
-		this.isiDatabase = (Database)this.inputData.getData();
+		this.nsfDatabase = (Database) this.inputData.getData();
 	}
 
 	public Data[] execute() {
-		Data outputData = new BasicData(this.isiDatabase, Database.GENERIC_DB_MIME_TYPE);
+		Data outputData = new BasicData(this.nsfDatabase, Database.GENERIC_DB_MIME_TYPE);
 		Dictionary outputMetadata = outputData.getMetadata();
 		outputMetadata.put(DataProperty.LABEL, "as a generic database");
 		outputMetadata.put(DataProperty.PARENT, this.inputData);

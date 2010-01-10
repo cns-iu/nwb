@@ -3,12 +3,27 @@ package edu.iu.scipolicy.loader.nsf.db.model.entity.relationship;
 import java.util.Dictionary;
 import java.util.Hashtable;
 
+import edu.iu.cns.database.loader.framework.DerbyFieldType;
 import edu.iu.cns.database.loader.framework.RowItem;
+import edu.iu.cns.database.loader.framework.Schema;
+import edu.iu.scipolicy.loader.nsf.db.NSFDatabase;
 import edu.iu.scipolicy.loader.nsf.db.model.entity.Award;
 import edu.iu.scipolicy.loader.nsf.db.model.entity.FieldOfApplication;
 
 public class FieldOfApplications extends RowItem<FieldOfApplications> {
 
+	public static final Schema<FieldOfApplications> SCHEMA = new Schema<FieldOfApplications>(
+			false,
+			NSFDatabase.FIELD_OF_APPLICATIONS_FIELD_OF_APPLICATION_FOREIGN_KEY, DerbyFieldType.FOREIGN_KEY,
+			NSFDatabase.FIELD_OF_APPLICATIONS_AWARD_FOREIGN_KEY, DerbyFieldType.FOREIGN_KEY
+			).
+			FOREIGN_KEYS(
+					NSFDatabase.FIELD_OF_APPLICATIONS_FIELD_OF_APPLICATION_FOREIGN_KEY,
+						NSFDatabase.FIELD_OF_APPLICATION_TABLE_NAME,
+					NSFDatabase.FIELD_OF_APPLICATIONS_AWARD_FOREIGN_KEY,
+						NSFDatabase.AWARD_TABLE_NAME
+					);
+	
 	private FieldOfApplication fieldOfApplication;
 	private Award award;
 
@@ -31,14 +46,10 @@ public class FieldOfApplications extends RowItem<FieldOfApplications> {
 	}
 
 	@Override
-	public void merge(FieldOfApplications otherItem) {
-		// TODO Auto-generated method stub
-		
-	}
+	public void merge(FieldOfApplications otherItem) { }
 
 	@Override
 	public boolean shouldMerge(FieldOfApplications otherItem) {
-		// TODO Auto-generated method stub
 		return false;
 	}
 }

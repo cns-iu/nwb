@@ -14,8 +14,8 @@ import org.cishell.utilities.StringUtilities;
 
 import au.com.bytecode.opencsv.CSVReader;
 import edu.iu.cns.database.loader.framework.RowItemContainer;
+import edu.iu.cns.database.loader.framework.utilities.DatabaseModel;
 import edu.iu.scipolicy.loader.nsf.db.NSFDatabase;
-import edu.iu.scipolicy.loader.nsf.db.model.NSFModel;
 import edu.iu.scipolicy.loader.nsf.db.model.entity.Award;
 import edu.iu.scipolicy.loader.nsf.db.model.entity.FieldOfApplication;
 import edu.iu.scipolicy.loader.nsf.db.model.entity.NSFFile;
@@ -38,22 +38,34 @@ public class NSFTableModelParser {
 	 * Person and Award), create a master list of entities.
 	 */
 	private RowItemContainer<NSFFile> nsfFiles = new RowItemContainer<NSFFile>(
-			NSFDatabase.NSF_FILE_HUMAN_READABLE_NAME, NSFDatabase.NSF_FILE_TABLE_NAME);
+													NSFDatabase.NSF_FILE_HUMAN_READABLE_NAME, 
+													NSFDatabase.NSF_FILE_TABLE_NAME, 
+													NSFFile.SCHEMA);
 
 	private RowItemContainer<Organization> organizations = new RowItemContainer<Organization>(
-			NSFDatabase.ORGANIZATION_HUMAN_READABLE_NAME, NSFDatabase.ORGANIZATION_TABLE_NAME);
+													NSFDatabase.ORGANIZATION_HUMAN_READABLE_NAME, 
+													NSFDatabase.ORGANIZATION_TABLE_NAME, 
+													Organization.SCHEMA);
 
 	private RowItemContainer<FieldOfApplication> fieldOfApplications = new RowItemContainer<FieldOfApplication>(
-			NSFDatabase.FIELD_OF_APPLICATION_HUMAN_READABLE_NAME, NSFDatabase.FIELD_OF_APPLICATION_TABLE_NAME);
+													NSFDatabase.FIELD_OF_APPLICATION_HUMAN_READABLE_NAME, 
+													NSFDatabase.FIELD_OF_APPLICATION_TABLE_NAME, 
+													FieldOfApplication.SCHEMA);
 
 	private RowItemContainer<Program> programs = new RowItemContainer<Program>(
-			NSFDatabase.PROGRAM_HUMAN_READABLE_NAME, NSFDatabase.PROGRAM_TABLE_NAME);
+													NSFDatabase.PROGRAM_HUMAN_READABLE_NAME, 
+													NSFDatabase.PROGRAM_TABLE_NAME,
+													Program.SCHEMA);
 
 	private RowItemContainer<Person> people = new RowItemContainer<Person>(
-			NSFDatabase.PERSON_HUMAN_READABLE_NAME, NSFDatabase.PERSON_TABLE_NAME);
+													NSFDatabase.PERSON_HUMAN_READABLE_NAME, 
+													NSFDatabase.PERSON_TABLE_NAME,
+													Person.SCHEMA);
 
 	private RowItemContainer<Award> awards = new RowItemContainer<Award>(
-			NSFDatabase.AWARD_HUMAN_READABLE_NAME, NSFDatabase.AWARD_TABLE_NAME);
+													NSFDatabase.AWARD_HUMAN_READABLE_NAME, 
+													NSFDatabase.AWARD_TABLE_NAME,
+													Award.SCHEMA);
 
 	/*
 	 * Create all of the entity joining tables (Field Of Applications, Investigator, 
@@ -63,37 +75,44 @@ public class NSFTableModelParser {
 	private RowItemContainer<InvestigatorOrganizations> investigatorOrganizations =
 		new RowItemContainer<InvestigatorOrganizations>(
 				NSFDatabase.INVESTIGATOR_ORGANIZATIONS_HUMAN_READABLE_NAME,
-				NSFDatabase.INVESTIGATOR_ORGANIZATIONS_TABLE_NAME);
+				NSFDatabase.INVESTIGATOR_ORGANIZATIONS_TABLE_NAME,
+				InvestigatorOrganizations.SCHEMA);
 
 	private RowItemContainer<Investigator> investigators =
 		new RowItemContainer<Investigator>(
 				NSFDatabase.INVESTIGATOR_HUMAN_READABLE_NAME,
-				NSFDatabase.INVESTIGATOR_TABLE_NAME);
+				NSFDatabase.INVESTIGATOR_TABLE_NAME,
+				Investigator.SCHEMA);
 
 	private RowItemContainer<FieldOfApplications> awardFieldOfApplications =
 		new RowItemContainer<FieldOfApplications>(
 				NSFDatabase.AWARD_FIELD_OF_APPLICATION_HUMAN_READABLE_NAME,
-				NSFDatabase.AWARD_FIELD_OF_APPLICATION_TABLE_NAME);
+				NSFDatabase.AWARD_FIELD_OF_APPLICATION_TABLE_NAME,
+				FieldOfApplications.SCHEMA);
 
 	private RowItemContainer<ProgramManager> programManagers =
 		new RowItemContainer<ProgramManager>(
 				NSFDatabase.PROGRAM_MANAGER_HUMAN_READABLE_NAME,
-				NSFDatabase.PROGRAM_MANAGER_TABLE_NAME);
+				NSFDatabase.PROGRAM_MANAGER_TABLE_NAME,
+				ProgramManager.SCHEMA);
 
 	private RowItemContainer<ProgramNameAndElementCodes> programNameAndElementCodes =
 		new RowItemContainer<ProgramNameAndElementCodes>(
 				NSFDatabase.PROGRAM_NAME_AND_ELEMENT_CODES_HUMAN_READABLE_NAME,
-				NSFDatabase.PROGRAM_NAME_AND_ELEMENT_CODES_TABLE_NAME);
+				NSFDatabase.PROGRAM_NAME_AND_ELEMENT_CODES_TABLE_NAME,
+				ProgramNameAndElementCodes.SCHEMA);
 
 	private RowItemContainer<ProgramReferenceCodes> programReferenceCodes =
 		new RowItemContainer<ProgramReferenceCodes>(
 				NSFDatabase.PROGRAM_REFERENCE_CODES_HUMAN_READABLE_NAME,
-				NSFDatabase.PROGRAM_REFERENCE_CODES_TABLE_NAME);
+				NSFDatabase.PROGRAM_REFERENCE_CODES_TABLE_NAME,
+				ProgramReferenceCodes.SCHEMA);
 
 	private RowItemContainer<AwardOccurences> awardOccurences =
 		new RowItemContainer<AwardOccurences>(
 				NSFDatabase.AWARD_OCCURRENCES_HUMAN_READABLE_NAME,
-				NSFDatabase.AWARD_OCCURRENCES_TABLE_NAME);
+				NSFDatabase.AWARD_OCCURRENCES_TABLE_NAME,
+				AwardOccurences.SCHEMA);
 
 
 	/**
@@ -102,10 +121,10 @@ public class NSFTableModelParser {
 	 * @param columnNameToColumnIndex 
 	 * @param nsfCsv 
 	 */
-	public NSFModel createInMemoryModel(Map<String, Integer> columnNameToColumnIndex, 
+	public DatabaseModel createInMemoryModel(Map<String, Integer> columnNameToColumnIndex, 
 								 CSVReader cSVReaderHandle, 
 								 File nsfCsvFile) {
-
+		
 		NSFFile nSFFile = NSFFileParser.parseNSFFile(this.nsfFiles.getKeyGenerator(), 
 													 nsfCsvFile);
 		
@@ -270,7 +289,21 @@ public class NSFTableModelParser {
 
 		// Create new NSFModel, passing in all entity tables and relationship tables.
 
-		return null;
+		return new DatabaseModel(// Entities
+								 this.nsfFiles, 
+								 this.organizations, 
+								 this.fieldOfApplications, 
+								 this.programs, 
+								 this.people, 
+								 this.awards,
+								 // Relationships
+								 this.investigatorOrganizations, 
+								 this.investigators, 
+								 this.awardFieldOfApplications, 
+								 this.programManagers, 
+								 this.programNameAndElementCodes,
+								 this.programReferenceCodes, 
+								 this.awardOccurences);
 	}
 
 
@@ -286,8 +319,9 @@ public class NSFTableModelParser {
 		String rawProgramElementCodesString = StringUtilities.simpleClean(
 				nextAwardLine[columnNameToColumnIndex.get(NsfNames.CSV.PROGRAM_ELEMENT_CODES)]);
 
-		String[] programNames = rawProgramNamesString.split("\\|");
-		String[] programElementCodes = rawProgramElementCodesString.split("\\|");
+		String[] programNames = StringUtilities.filterEmptyStrings(rawProgramNamesString.split("\\|"));
+		String[] programElementCodes = StringUtilities
+											.filterEmptyStrings(rawProgramElementCodesString.split("\\|"));
 
 		boolean isNumberOfNamesEqualToNumberOfElementCodes = 
 			programNames.length == programElementCodes.length ? true : false;
@@ -295,6 +329,11 @@ public class NSFTableModelParser {
 		if (isNumberOfNamesEqualToNumberOfElementCodes) {
 
 			for (int ii = 0; ii < programNames.length; ii++) {
+				
+				/*
+				 * Empty or Whitespace cannot be considered as a proper Program Name or Element 
+				 * Code. So ignore such values. We know for a fact that 
+				 * */
 				String programName = programNames[ii];
 				String programFundingCode = programElementCodes[ii];
 
@@ -360,7 +399,8 @@ public class NSFTableModelParser {
 		String rawProgramReferenceCodesString = StringUtilities.simpleClean(
 				nextAwardLine[columnNameToColumnIndex.get(NsfNames.CSV.PROGRAM_REFERENCE_CODES)]);
 
-		String[] programReferenceCodes = rawProgramReferenceCodesString.split("\\|");
+		String[] programReferenceCodes = StringUtilities
+												.filterEmptyStrings(rawProgramReferenceCodesString.split("\\|"));
 
 		for (int ii = 0; ii < programReferenceCodes.length; ii++) {
 			String programReferenceCode = programReferenceCodes[ii];
@@ -384,9 +424,11 @@ public class NSFTableModelParser {
 		String rawFieldOfApplicationsString = StringUtilities.simpleClean(
 				nextAwardLine[columnNameToColumnIndex.get(NsfNames.CSV.FIELD_OF_APPLICATIONS)]);
 
-		String[] fieldOfApplicationsStrings = rawFieldOfApplicationsString.split("\\|");
+		String[] fieldOfApplicationsStrings = StringUtilities
+													.filterEmptyStrings(rawFieldOfApplicationsString.split("\\|"));
 
 		for (String fieldOfApplicationString : fieldOfApplicationsStrings) {
+			
 			String cleanedFOAString = StringUtilities.simpleClean(fieldOfApplicationString);
 
 			FieldOfApplication fieldApplication = 
@@ -397,6 +439,7 @@ public class NSFTableModelParser {
 			FieldOfApplication mergedFOA = this.fieldOfApplications.addOrMerge(fieldApplication);
 
 			fieldOfApplicationCandidates.add(mergedFOA);
+			
 		}
 
 		return fieldOfApplicationCandidates;
@@ -431,16 +474,16 @@ public class NSFTableModelParser {
 
 		String rawCOPIString = StringUtilities.simpleClean(nextAwardLine[columnNameToColumnIndex
 		                                                                 .get(NsfNames.CSV.CO_PI_NAMES)]);
-		String[] coPIStrings = rawCOPIString.split("\\|");
+		String[] coPIStrings = StringUtilities.filterEmptyStrings(rawCOPIString.split("\\|"));
 
 		for (String coPIString : coPIStrings) {
-			String cleanedCOPIString = StringUtilities.simpleClean(coPIString);
-			Person coPIPerson = PersonParser.parsePerson(
-					this.people.getKeyGenerator(), 
-					cleanedCOPIString);
-			Person mergedCOPIPerson = this.people.addOrMerge(coPIPerson);
+				String cleanedCOPIString = StringUtilities.simpleClean(coPIString);
+				Person coPIPerson = PersonParser.parsePerson(
+						this.people.getKeyGenerator(), 
+						cleanedCOPIString);
+				Person mergedCOPIPerson = this.people.addOrMerge(coPIPerson);
 
-			coPrincipalInvestigatorPeople.add(mergedCOPIPerson);
+				coPrincipalInvestigatorPeople.add(mergedCOPIPerson);	
 		}
 
 		return coPrincipalInvestigatorPeople;
@@ -503,6 +546,8 @@ public class NSFTableModelParser {
 	private Award parseAward(
 			Map<String, Integer> columnNameToColumnIndex,
 			String[] nextAwardLine) throws AlgorithmExecutionException {
+		
+		
 
 		String awardNumber = StringUtilities.simpleClean(nextAwardLine[columnNameToColumnIndex
 		                                                               .get(NsfNames.CSV.AWARD_NUMBER)]);
@@ -585,6 +630,8 @@ public class NSFTableModelParser {
 
 		String cleanedPersonName = StringUtilities.simpleClean(pIpersonName);
 
+		System.out.println("PI:" + cleanedPersonName);
+		
 		Person person = PersonParser.parsePerson(
 				this.people.getKeyGenerator(), 
 				cleanedPersonName);
@@ -593,7 +640,7 @@ public class NSFTableModelParser {
 	}
 
 
-	private java.sql.Date parseDate(String dateString)
+	private Date parseDate(String dateString)
 	throws AlgorithmExecutionException {
 		try {
 			java.util.Date standardDate = DateUtilities.parseDate(dateString);
