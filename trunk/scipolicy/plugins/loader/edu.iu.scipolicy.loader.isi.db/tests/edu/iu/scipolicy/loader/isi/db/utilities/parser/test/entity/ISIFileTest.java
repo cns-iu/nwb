@@ -12,18 +12,9 @@ import edu.iu.scipolicy.loader.isi.db.model.entity.ISIFile;
 import edu.iu.scipolicy.loader.isi.db.utilities.parser.RowItemTest;
 
 public class ISIFileTest extends RowItemTest {
-	public static final String ZERO_ISI_FILES_TEST_DATA_PATH =
-		BASE_TEST_DATA_PATH + "ZeroISIFiles.isi";
-	public static final String ONE_ISI_FILE_TEST_DATA_PATH =
-		BASE_TEST_DATA_PATH + "OneISIFile.isi";
-	/*public static final String MULTIPLE_ISI_FILES_WITH_NO_MERGES_TEST_DATA_PATH =
-		BASE_TEST_DATA_PATH + "MultipleISIFilesWithNoMerges.isi";*/
-	/*public static final String MULTIPLE_ISI_FILES_WITH_MERGES_TEST_DATA_PATH =
-		BASE_TEST_DATA_PATH + "MultipleISIFilesWithMerges.isi";*/
-
 	@Test
 	public void testZeroISIFilesGetParsed() throws Exception {
-		DatabaseModel model = parseTestData(ZERO_ISI_FILES_TEST_DATA_PATH);
+		DatabaseModel model = parseTestData(EMPTY_TEST_DATA_PATH);
 		RowItemContainer<ISIFile> isiFiles = model.getRowItemListOfTypeByDatabaseTableName(
 			ISIDatabase.ISI_FILE_TABLE_NAME);
 

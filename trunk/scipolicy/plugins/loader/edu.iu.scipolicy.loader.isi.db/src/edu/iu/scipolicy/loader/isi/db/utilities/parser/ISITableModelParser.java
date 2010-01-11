@@ -289,10 +289,10 @@ public class ISITableModelParser {
 						this.people.getKeyGenerator(), cleanedAuthorString, "");
 				}
 
-					Person authorPerson = personParsingResult.getFirstObject();
-					Person mergedAuthorPerson = this.people.addOrMerge(authorPerson);
-					authorPeople.add(mergedAuthorPerson);
-				} catch (PersonParsingException e) {}
+				Person authorPerson = personParsingResult.getFirstObject();
+				Person mergedAuthorPerson = this.people.addOrMerge(authorPerson);
+				authorPeople.add(mergedAuthorPerson);
+			} catch (PersonParsingException e) {}
 		}
 
 		return authorPeople;

@@ -1,11 +1,12 @@
 package edu.iu.scipolicy.loader.isi.db.utilities.parser.test.relationship;
 
 
+import static org.junit.Assert.fail;
+
 import java.util.List;
 
 import org.cishell.utilities.StringUtilities;
 import org.junit.Test;
-import static org.junit.Assert.fail;
 
 import edu.iu.cns.database.loader.framework.RowItemContainer;
 import edu.iu.cns.database.loader.framework.utilities.DatabaseModel;
@@ -14,6 +15,8 @@ import edu.iu.scipolicy.loader.isi.db.model.entity.Document;
 import edu.iu.scipolicy.loader.isi.db.model.entity.Person;
 import edu.iu.scipolicy.loader.isi.db.model.entity.relationship.Author;
 import edu.iu.scipolicy.loader.isi.db.utilities.parser.RowItemTest;
+import edu.iu.scipolicy.loader.isi.db.utilities.parser.test.entity.DocumentTest;
+import edu.iu.scipolicy.loader.isi.db.utilities.parser.test.entity.PersonTest;
 
 public class AuthorsTest extends RowItemTest {
 	public static final String FIRST_DOCUMENT_TITLE =
@@ -29,7 +32,7 @@ public class AuthorsTest extends RowItemTest {
 
 	@Test
 	public void testNoAuthorsWereParsed() throws Exception {
-		DatabaseModel model = parseTestData(ZERO_PEOPLE_TEST_DATA_PATH);
+		DatabaseModel model = parseTestData(EMPTY_TEST_DATA_PATH);
 		RowItemContainer<Author> authors = model.getRowItemListOfTypeByDatabaseTableName(
 			ISIDatabase.AUTHORS_TABLE_NAME);
 
@@ -222,13 +225,23 @@ public class AuthorsTest extends RowItemTest {
 
 	// TODO: Test Author.
 
+	public static Author getAuthor(List<Author> authors, Document document, Person authorPerson) {
+		for (Author author : authors) {
+			if ((author.getDocument() == document) && (author.getPerson() == authorPerson)) {
+				return author;
+			}
+		}
+
+		return null;
+	}
+
 	public static void checkAuthor(
 			Author author, Document providedDocument, Person providedAuthorPerson) {
 		Document authorDocument = author.getDocument();
 		Person authorPerson = author.getPerson();
 
-		checkDocuments(authorDocument, providedDocument, "Author");
-		checkPeople(authorPerson, providedAuthorPerson, "Author");
+		DocumentTest.checkDocuments(authorDocument, providedDocument, "Author");
+		PersonTest.checkPeople(authorPerson, providedAuthorPerson, "Author");
 	}
 
 	public static void checkAuthor(
@@ -268,15 +281,15 @@ public class AuthorsTest extends RowItemTest {
 	}
 
 	private Document getFirstDocument(List<Document> documents) {
-		return getDocument(documents, FIRST_DOCUMENT_TITLE);
+		return DocumentTest.getDocument(documents, FIRST_DOCUMENT_TITLE);
 	}
 
 	private Document getSecondDocument(List<Document> documents) {
-		return getDocument(documents, SECOND_DOCUMENT_TITLE);
+		return DocumentTest.getDocument(documents, SECOND_DOCUMENT_TITLE);
 	}
 
 	private Person getFirstAuthorPerson(List<Person> people) {
-		return getPerson(
+		return PersonTest.getPerson(
 			people,
 			"",
 			"Takeda",
@@ -288,7 +301,7 @@ public class AuthorsTest extends RowItemTest {
 	}
 
 	private Person getSecondAuthorPerson(List<Person> people) throws Exception {
-		return getPerson(
+		return PersonTest.getPerson(
 			people,
 			"",
 			"Nishimura",
@@ -300,7 +313,7 @@ public class AuthorsTest extends RowItemTest {
 	}
 
 	private Person getThirdAuthorPerson(List<Person> people) throws Exception {
-		return getPerson(
+		return PersonTest.getPerson(
 			people,
 			"",
 			"Macdonald",
@@ -312,7 +325,7 @@ public class AuthorsTest extends RowItemTest {
 	}
 
 	private Person getFourthAuthorPerson(List<Person> people) throws Exception {
-		return getPerson(
+		return PersonTest.getPerson(
 			people,
 			"",
 			"Almaas",

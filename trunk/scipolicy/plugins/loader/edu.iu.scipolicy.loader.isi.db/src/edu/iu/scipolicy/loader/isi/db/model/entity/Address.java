@@ -29,7 +29,7 @@ public class Address extends Entity<Address> implements Comparable<Address> {
 	private String streetAddress;
 
 	public Address(DatabaseTableKeyGenerator keyGenerator, String rawAddress) {
-		this(keyGenerator, "", "", "", "", "", rawAddress);
+		this(keyGenerator, "", "", "", rawAddress, "", "");
 	}
 
 	public Address(

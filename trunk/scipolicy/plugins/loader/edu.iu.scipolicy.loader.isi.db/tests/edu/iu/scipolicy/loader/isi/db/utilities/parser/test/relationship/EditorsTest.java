@@ -12,6 +12,8 @@ import edu.iu.scipolicy.loader.isi.db.model.entity.Document;
 import edu.iu.scipolicy.loader.isi.db.model.entity.Person;
 import edu.iu.scipolicy.loader.isi.db.model.entity.relationship.Editor;
 import edu.iu.scipolicy.loader.isi.db.utilities.parser.RowItemTest;
+import edu.iu.scipolicy.loader.isi.db.utilities.parser.test.entity.DocumentTest;
+import edu.iu.scipolicy.loader.isi.db.utilities.parser.test.entity.PersonTest;
 
 public class EditorsTest extends RowItemTest {
 	public static final String FIRST_DOCUMENT_TITLE =
@@ -22,7 +24,7 @@ public class EditorsTest extends RowItemTest {
 
 	@Test
 	public void testNoEditorsWereParsed() throws Exception {
-		DatabaseModel model = parseTestData(ZERO_PEOPLE_TEST_DATA_PATH);
+		DatabaseModel model = parseTestData(EMPTY_TEST_DATA_PATH);
 		RowItemContainer<Editor> editors = model.getRowItemListOfTypeByDatabaseTableName(
 			ISIDatabase.EDITORS_TABLE_NAME);
 
@@ -92,13 +94,23 @@ public class EditorsTest extends RowItemTest {
 
 	// TODO: Test Editor.
 
+	public static Editor getEditor(List<Editor> editors, Document document, Person editorPerson) {
+		for (Editor editor : editors) {
+			if ((editor.getDocument() == document) && (editor.getPerson() == editorPerson)) {
+				return editor;
+			}
+		}
+
+		return null;
+	}
+
 	public static void checkEditor(
 			Editor editor, Document providedDocument, Person providedEditorPerson) {
 		Document editorDocument = editor.getDocument();
 		Person editorPerson = editor.getPerson();
 
-		checkDocuments(editorDocument, providedDocument, "Editor");
-		checkPeople(editorPerson, providedEditorPerson, "Editor");
+		DocumentTest.checkDocuments(editorDocument, providedDocument, "Editor");
+		PersonTest.checkPeople(editorPerson, providedEditorPerson, "Editor");
 	}
 
 	public static void checkEditor(
@@ -111,11 +123,11 @@ public class EditorsTest extends RowItemTest {
 	}
 
 	private Document getFirstDocument(List<Document> documents) {
-		return getDocument(documents, FIRST_DOCUMENT_TITLE);
+		return DocumentTest.getDocument(documents, FIRST_DOCUMENT_TITLE);
 	}
 
 	private Person getFirstEditorPerson(List<Person> people) throws Exception {
-		return getPerson(
+		return PersonTest.getPerson(
 			people,
 			"",
 			"Macdonald",
@@ -127,7 +139,7 @@ public class EditorsTest extends RowItemTest {
 	}
 
 	private Person getSecondEditorPerson(List<Person> people) throws Exception {
-		return getPerson(
+		return PersonTest.getPerson(
 			people,
 			"",
 			"Almaas",

@@ -1,11 +1,10 @@
 package edu.iu.scipolicy.loader.isi.db.utilities.parser.test.entity;
 
 
-import static org.junit.Assert.fail;
-
 import java.util.List;
 
 import org.junit.Test;
+import static org.junit.Assert.fail;
 
 import edu.iu.cns.database.loader.framework.RowItemContainer;
 import edu.iu.cns.database.loader.framework.utilities.DatabaseModel;
@@ -14,6 +13,7 @@ import edu.iu.scipolicy.loader.isi.db.model.entity.Person;
 import edu.iu.scipolicy.loader.isi.db.utilities.parser.RowItemTest;
 
 public class PersonTest extends RowItemTest {
+	// Person test data.
 	public static final String ONE_REFERENCE_AUTHOR_TEST_DATA_PATH =
 		BASE_TEST_DATA_PATH + "OneReferenceAuthor.isi";
 	public static final String MULTIPLE_REFERENCE_AUTHORS_TEST_DATA_PATH =
@@ -23,7 +23,7 @@ public class PersonTest extends RowItemTest {
 
 	@Test
 	public void testZeroAuthorsGetParsed() throws Exception {
-		DatabaseModel model = parseTestData(ZERO_PEOPLE_TEST_DATA_PATH);
+		DatabaseModel model = parseTestData(EMPTY_TEST_DATA_PATH);
 		RowItemContainer<Person> people = model.getRowItemListOfTypeByDatabaseTableName(
 			ISIDatabase.PERSON_TABLE_NAME);
 
@@ -103,6 +103,107 @@ public class PersonTest extends RowItemTest {
 	}
 
 	// TODO: Test Person.
+
+	public static Person getPerson(
+			List<Person> people,
+			String additionalName,
+			String familyName,
+			String firstInitial,
+			String fullName,
+			String middleInitial,
+			String personalName,
+			String unsplitAbbreviatedName) {
+		for (Person person : people) {
+			try {
+				checkPerson(
+					person,
+					additionalName,
+					familyName,
+					firstInitial,
+					fullName,
+					middleInitial,
+					personalName,
+					unsplitAbbreviatedName);
+
+				return person;
+			} catch (Throwable e) {
+			}
+		}
+
+		return null;
+	}
+
+	public static void verifyPersonExists(
+			List<Person> people,
+			String additionalName,
+			String familyName,
+			String firstInitial,
+			String fullName,
+			String middleInitial,
+			String personalName,
+			String unsplitAbbreviatedName) throws Exception {
+		if (getPerson(
+				people,
+				additionalName,
+				familyName,
+				firstInitial,
+				fullName,
+				middleInitial,
+				personalName,
+				unsplitAbbreviatedName) == null) {
+			String exceptionMessage =
+				"No person with the following specifications were found:" +
+				"\n\tAdditional name: " + additionalName +
+				"\n\tFamily name: " + familyName +
+				"\n\tFirst initial: " + firstInitial +
+				"\n\tFull name: " + fullName +
+				"\n\tMiddle initial: " + middleInitial +
+				"\n\tPersonal name: " + personalName +
+				"\n\tUnsplit abbreviated name: " + unsplitAbbreviatedName;
+			throw new Exception(exceptionMessage);
+		}
+	}
+
+	public static void checkPeople(
+			Person relationshipPerson, Person providedPerson, String displayName) {
+		if (relationshipPerson != providedPerson) {
+			String failMessage =
+				displayName + " person and provided person are not the same." +
+				"\n\t" + displayName + " person: \"" +
+					relationshipPerson.getUnsplitAbbreviatedName() + "\"" +
+				"\n\tProvided person: \"" +
+					providedPerson.getUnsplitAbbreviatedName() + "\"";
+			fail(failMessage);
+		}
+	}
+
+	public static void checkPerson(
+			Person person,
+			String additionalName,
+			String familyName,
+			String firstInitial,
+			String fullName,
+			String middleInitial,
+			String personalName,
+			String unsplitAbbreviatedName) {
+		if (person == null) {
+			String failMessage =
+				"An exception should have been thrown " +
+				"if the result Person would have ended up null.";
+			fail(failMessage);
+		}
+
+		compareProperty("Additional Names", person.getAdditionalName(), additionalName);
+		compareProperty("Family Names", person.getFamilyName(), familyName);
+		compareProperty("First Initials", person.getFirstInitial(), firstInitial);
+		compareProperty("Full Names", person.getFullName(), fullName);
+		compareProperty("Middle Initials", person.getMiddleInitial(), middleInitial);
+		compareProperty("Personal Names", person.getPersonalName(), personalName);
+		compareProperty(
+			"Unsplit Abbreviated Names",
+			person.getUnsplitAbbreviatedName(),
+			unsplitAbbreviatedName);
+	}
 
 	private void checkFirstAuthorPerson(List<Person> people) throws Exception {
 		verifyPersonExists(
