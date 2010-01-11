@@ -28,7 +28,7 @@ public class FieldOfApplications extends RowItem<FieldOfApplications> {
 	private Award award;
 
 	public FieldOfApplications(FieldOfApplication fieldOfApplication, Award award) {
-		super(createAttributes());
+		super(createAttributes(fieldOfApplication, award));
 		this.fieldOfApplication = fieldOfApplication;
 		this.award = award; 
 	}
@@ -41,8 +41,17 @@ public class FieldOfApplications extends RowItem<FieldOfApplications> {
 		return this.award;
 	}
 
-	private static Dictionary<String, Comparable<?>> createAttributes() {
-		return new Hashtable<String, Comparable<?>>();
+	private static Dictionary<String, Comparable<?>> createAttributes(
+		FieldOfApplication fieldOfApplication, 
+		Award award) {
+		
+		Dictionary<String, Comparable<?>> attributes = new Hashtable<String, Comparable<?>>();
+		attributes.put(NSFDatabase.FIELD_OF_APPLICATIONS_FIELD_OF_APPLICATION_FOREIGN_KEY, 
+					   fieldOfApplication.getPrimaryKey());
+		
+		attributes.put(NSFDatabase.FIELD_OF_APPLICATIONS_AWARD_FOREIGN_KEY, 
+				   	   award.getPrimaryKey());
+		return attributes;
 	}
 
 	@Override

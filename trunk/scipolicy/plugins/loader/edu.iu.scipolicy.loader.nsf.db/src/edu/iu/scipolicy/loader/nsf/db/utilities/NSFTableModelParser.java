@@ -594,7 +594,10 @@ public class NSFTableModelParser {
 				nextAwardLine[columnNameToColumnIndex
 				              .get(NsfNames.CSV.ABSTRACT)]);			   
 
-		/*Merge all the columns right to the abstract column to offset all csv corruption*/                           	
+		/*
+		 * Merge all the columns right to the abstract column to offset all csv corruption.
+		 * */
+		                           	
 		if (nextAwardLine.length > 26) {
 			for (int ii = 26; ii < nextAwardLine.length; ii++) {
 				abstractText += nextAwardLine[ii];

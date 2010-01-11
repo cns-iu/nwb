@@ -27,7 +27,7 @@ public class ProgramReferenceCodes extends RowItem<ProgramReferenceCodes> {
 	private Award award;
 
 	public ProgramReferenceCodes(Program program, Award award) {
-		super(createAttributes());
+		super(createAttributes(program, award));
 		this.program = program;
 		this.award = award;
 	}
@@ -40,8 +40,16 @@ public class ProgramReferenceCodes extends RowItem<ProgramReferenceCodes> {
 		return this.award;
 	}
 
-	private static Dictionary<String, Comparable<?>> createAttributes() {
-		return new Hashtable<String, Comparable<?>>();
+	private static Dictionary<String, Comparable<?>> createAttributes(Program program, Award award) {
+		Dictionary<String, Comparable<?>> attributes = new Hashtable<String, Comparable<?>>();
+		
+		attributes.put(NSFDatabase.PROGRAM_REFERENCE_CODES_AWARD_FOREIGN_KEY, 
+			   	   	   award.getPrimaryKey());
+		
+		attributes.put(NSFDatabase.PROGRAM_REFERENCE_CODES_PROGRAM_FOREIGN_KEY, 
+					   program.getPrimaryKey());
+		
+		return attributes;
 	}
 
 	@Override

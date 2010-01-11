@@ -26,7 +26,7 @@ public class AwardOccurences extends RowItem<AwardOccurences> {
 	private NSFFile nSFFile;
 
 	public AwardOccurences(Award award, NSFFile nSFFile) {
-		super(createAttributes());
+		super(createAttributes(award, nSFFile));
 		this.award = award;
 		this.nSFFile = nSFFile; 
 	}
@@ -39,8 +39,16 @@ public class AwardOccurences extends RowItem<AwardOccurences> {
 		return this.nSFFile;
 	}
 
-	private static Dictionary<String, Comparable<?>> createAttributes() {
-		return new Hashtable<String, Comparable<?>>();
+	private static Dictionary<String, Comparable<?>> createAttributes(Award award, NSFFile nSFFile) {
+		Dictionary<String, Comparable<?>> attributes = new Hashtable<String, Comparable<?>>();
+		
+		attributes.put(NSFDatabase.AWARD_OCCURRENCES_AWARD_FOREIGN_KEY, 
+			   	   	   award.getPrimaryKey());
+		
+		attributes.put(NSFDatabase.AWARD_OCCURRENCES_NSF_FILE_FOREIGN_KEY, 
+					   nSFFile.getPrimaryKey());
+		
+		return attributes;
 	}
 
 	@Override

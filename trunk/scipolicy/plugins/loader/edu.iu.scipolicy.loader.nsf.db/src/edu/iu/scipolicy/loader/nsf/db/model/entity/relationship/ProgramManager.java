@@ -27,7 +27,7 @@ public class ProgramManager extends RowItem<ProgramManager> {
 	private Award award;
 
 	public ProgramManager(Person person, Award award) {
-		super(createAttributes());
+		super(createAttributes(person, award));
 		this.person = person;
 		this.award = award;
 	}
@@ -40,9 +40,16 @@ public class ProgramManager extends RowItem<ProgramManager> {
 		return this.award;
 	}
 
-	private static Dictionary<String, Comparable<?>> createAttributes() {
-		return new Hashtable<String, Comparable<?>>();
-	}
+	private static Dictionary<String, Comparable<?>> createAttributes(Person person, Award award) {
+		Dictionary<String, Comparable<?>> attributes = new Hashtable<String, Comparable<?>>();
+		
+		attributes.put(NSFDatabase.PROGRAM_MANAGER_AWARD_FOREIGN_KEY, 
+			   	   	   award.getPrimaryKey());
+		
+		attributes.put(NSFDatabase.PROGRAM_MANAGER_PERSON_FOREIGN_KEY, 
+					   person.getPrimaryKey());
+		
+		return attributes;	}
 
 	@Override
 	public void merge(ProgramManager otherItem) { }

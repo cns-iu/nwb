@@ -39,7 +39,7 @@ public class Investigator extends Entity<Investigator> implements Comparable<Inv
 						String emailAddress,
 						String state,
 						boolean isMainPI) {
-		super(keyGenerator, createAttributes(isMainPI, emailAddress, state));
+		super(keyGenerator, createAttributes(award, person, isMainPI, emailAddress, state));
 		
 		this.person = person;
 		this.award = award;
@@ -56,10 +56,16 @@ public class Investigator extends Entity<Investigator> implements Comparable<Inv
 		return this.award;
 	}
 
-	private static Dictionary<String, Comparable<?>> createAttributes(boolean isMainPI,
-															   String emailAddress,
-															   String state) {
+	private static Dictionary<String, Comparable<?>> createAttributes(
+			Award award, 
+			Person person, 
+			boolean isMainPI,
+			String emailAddress,
+			String state) {
+		
 		Dictionary<String, Comparable<?>> attributes = new Hashtable<String, Comparable<?>>();
+		attributes.put(NSFDatabase.INVESTIGATOR_AWARD_FOREIGN_KEY, award.getPrimaryKey());
+		attributes.put(NSFDatabase.INVESTIGATOR_PERSON_FOREIGN_KEY, person.getPrimaryKey());
 		attributes.put(NSFDatabase.EMAIL_ADDRESS, emailAddress);
 		attributes.put(NSFDatabase.STATE, state);
 		attributes.put(NSFDatabase.IS_MAIN_PI, isMainPI);

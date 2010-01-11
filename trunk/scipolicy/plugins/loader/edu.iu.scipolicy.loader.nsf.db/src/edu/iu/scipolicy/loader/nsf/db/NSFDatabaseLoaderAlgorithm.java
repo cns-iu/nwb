@@ -128,7 +128,10 @@ public class NSFDatabaseLoaderAlgorithm implements Algorithm {
 		final char quoteEscapeCharacter = '\\';
 		
 		CSVReader nsfCsvReader = new CSVReader(new FileReader(nsfCsv),
-				defaultFieldSeparator, fieldQuoteCharacter, lineToStartReadingFrom, quoteEscapeCharacter);
+											   defaultFieldSeparator, 
+											   fieldQuoteCharacter, 
+											   lineToStartReadingFrom, 
+											   quoteEscapeCharacter);
 		
 		/*
 		 * Test if "," as a separator failed to create appropriate csv handler. If so create a
@@ -138,10 +141,16 @@ public class NSFDatabaseLoaderAlgorithm implements Algorithm {
 		 * */
 		if (nsfCsvReader.readNext().length < 26) {
 			return new CSVReader(new FileReader(nsfCsv),
-					secondaryFieldSeparator, fieldQuoteCharacter, lineToStartReadingFrom, quoteEscapeCharacter);
+								 secondaryFieldSeparator, 
+								 fieldQuoteCharacter, 
+								 lineToStartReadingFrom, 
+								 quoteEscapeCharacter);
 		} else {
 			return new CSVReader(new FileReader(nsfCsv),
-					defaultFieldSeparator, fieldQuoteCharacter, lineToStartReadingFrom, quoteEscapeCharacter);
+								 defaultFieldSeparator, 
+								 fieldQuoteCharacter, 
+								 lineToStartReadingFrom, 
+								 quoteEscapeCharacter);
 		}
 		
 		

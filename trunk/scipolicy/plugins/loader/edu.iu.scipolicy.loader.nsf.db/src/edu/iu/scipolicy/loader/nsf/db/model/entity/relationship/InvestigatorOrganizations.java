@@ -26,7 +26,7 @@ public class InvestigatorOrganizations extends RowItem<InvestigatorOrganizations
 	private Organization organization;
 
 	public InvestigatorOrganizations(Investigator investigator, Organization organization) {
-		super(createAttributes());
+		super(createAttributes(investigator, organization));
 		this.investigator = investigator;
 		this.organization = organization; 
 	}
@@ -39,8 +39,14 @@ public class InvestigatorOrganizations extends RowItem<InvestigatorOrganizations
 		return this.organization;
 	}
 
-	private static Dictionary<String, Comparable<?>> createAttributes() {
-		return new Hashtable<String, Comparable<?>>();
+	private static Dictionary<String, Comparable<?>> createAttributes(Investigator investigator, Organization organization) {
+		Dictionary<String, Comparable<?>> attributes = new Hashtable<String, Comparable<?>>();
+		attributes.put(NSFDatabase.INVESTIGATOR_ORGANIZATIONS_INVESTIGATOR_FOREIGN_KEY, 
+					   investigator.getPrimaryKey());
+		
+		attributes.put(NSFDatabase.INVESTIGATOR_ORGANIZATIONS_ORGANIZATION_FOREIGN_KEY, 
+					   organization.getPrimaryKey());
+		return attributes;
 	}
 
 	@Override
