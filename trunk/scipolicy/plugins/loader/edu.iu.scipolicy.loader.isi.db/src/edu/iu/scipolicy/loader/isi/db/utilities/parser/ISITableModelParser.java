@@ -208,7 +208,11 @@ public class ISITableModelParser {
 			this.documentOccurrences.addOrMerge(new DocumentOccurrence(document, isiFile));
 			linkDocumentToKeywords(document, authorKeywords);
 			linkDocumentToKeywords(document, keywordsPlus);
-			this.citedPatents.addOrMerge(new CitedPatent(document, patent));
+
+			if (patent != null) {
+				this.citedPatents.addOrMerge(new CitedPatent(document, patent));
+			}
+
 			this.reprintAddresses.addOrMerge(new ReprintAddress(document, addressForReprinting));
 			linkDocumentToAddressesOfResearch(document, currentAddressesOfResearch);
 			linkDocumentToCitedReferences(document, currentReferences);
@@ -357,7 +361,12 @@ public class ISITableModelParser {
 		String patentNumber =
 			StringUtilities.simpleClean(row.getString(ISITag.CITED_PATENT.getColumnName()));
 
-		return this.patents.addOrMerge(new Patent(this.patents.getKeyGenerator(), patentNumber));
+		if (!StringUtilities.isEmptyOrWhiteSpace(patentNumber)) {
+			return this.patents.addOrMerge(
+				new Patent(this.patents.getKeyGenerator(), patentNumber));
+		} else {
+			return null;
+		}
 	}
 
 	private Address parseAddressForReprinting(Tuple row) {

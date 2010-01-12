@@ -28,7 +28,7 @@ public class Patent extends Entity<Patent> implements Comparable<Patent> {
 	}
 
 	public int compareTo(Patent otherPatent) {
-		return -1;
+		return new Integer(getPrimaryKey()).compareTo(new Integer(otherPatent.getPrimaryKey()));
 	}
 
 	public boolean shouldMerge(Patent otherPatent) {

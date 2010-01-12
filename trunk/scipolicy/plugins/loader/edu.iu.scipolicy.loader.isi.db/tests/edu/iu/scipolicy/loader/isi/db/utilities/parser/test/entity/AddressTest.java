@@ -106,8 +106,8 @@ public class AddressTest extends RowItemTest {
 		checkItemContainerValidity(reprintAddresses, "reprint addresses");
 		checkItemCount(reprintAddresses, 1);
 
-		Document document = getDocument(documents);
-		Publisher publisher = getPublisher(publishers);
+		Document document = getDocumentForTheseTests(documents);
+		Publisher publisher = getPublisherForTheseTests(publishers);
 		PublisherAddress publisherAddress =
 			getPublisherAddress(addresses, publisherAddresses, publisher);
 		ResearchAddress firstResearchAddress =
@@ -141,7 +141,7 @@ public class AddressTest extends RowItemTest {
 		checkItemContainerValidity(reprintAddresses, "reprint addresses");
 		checkItemCount(reprintAddresses, 1);
 
-		Document document = getDocument(documents);
+		Document document = getDocumentForTheseTests(documents);
 		ResearchAddress firstResearchAddress =
 			getFirstResearchAddress(addresses, researchAddresses, document);
 		ResearchAddress secondResearchAddress =
@@ -234,11 +234,11 @@ public class AddressTest extends RowItemTest {
 		compareProperty("streetAddress", address.getStreetAddress(), streetAddress);
 	}
 
-	private static Document getDocument(RowItemContainer<Document> documents) {
+	private static Document getDocumentForTheseTests(RowItemContainer<Document> documents) {
 		return DocumentTest.getDocument((List<Document>)documents.getItems(), DOCUMENT_TITLE);
 	}
 
-	private static Publisher getPublisher(RowItemContainer<Publisher> publishers) {
+	private static Publisher getPublisherForTheseTests(RowItemContainer<Publisher> publishers) {
 		return PublisherTest.getPublisher((List<Publisher>)publishers.getItems(), PUBLISHER_NAME);
 	}
 

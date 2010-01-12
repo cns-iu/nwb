@@ -13,11 +13,6 @@ import edu.iu.scipolicy.loader.isi.db.model.entity.relationship.ReprintAddress;
 import edu.iu.scipolicy.loader.isi.db.utilities.parser.RowItemTest;
 
 public class ReprintAddressesTest extends RowItemTest {
-	@Test
-	public void test() {
-		fail();
-	}
-
 	public static ReprintAddress getReprintAddress(
 			List<ReprintAddress> reprintAddresses, Document document, Address address) {
 		for (ReprintAddress reprintAddress : reprintAddresses) {
