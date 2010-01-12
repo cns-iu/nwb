@@ -62,30 +62,13 @@ public class DerbyDatabaseCreator {
 	public static void fillTablesFromModel(DatabaseModel model, Connection databaseConnection)
 			throws SQLException {
 		for (RowItemContainer<? extends RowItem<?>> itemContainer : model.getRowItemLists()) {
-			String tableName = itemContainer.getDatabaseTableName();
 			Collection<? extends RowItem<?>> items = itemContainer.getItems();
 
 			if (items.size() == 0) {
 				continue;
 			}
 
-			Schema<? extends RowItem<?>> schema = itemContainer.getSchema();
-			String singleRowPlaceholderContents =
-				StringUtilities.multiplyWithSeparator("?", ", ", schema.getFields().size());
-			String singleRowPlaceholders = "(" + singleRowPlaceholderContents + ")";
-			String allPlaceholders = StringUtilities.multiplyWithSeparator(
-			singleRowPlaceholders, ", ", items.size());
-		
-			String insertQuery = "INSERT INTO " + tableName + " VALUES " + allPlaceholders;
-			PreparedStatement insertStatement = databaseConnection.prepareStatement(insertQuery);
-
-			try {
-				fillTable(databaseConnection, itemContainer, insertStatement);
-			} catch (SQLException e) {
-				throw e;
-			} finally {
-				insertStatement.close();
-			}
+			fillTable(databaseConnection, itemContainer);
 		}
 	}
 
@@ -148,31 +131,58 @@ public class DerbyDatabaseCreator {
  	 */
 	public static void fillTable(
 			Connection connection,
-			RowItemContainer<? extends RowItem<?>> itemContainer,
-			PreparedStatement insertStatement)
+			RowItemContainer<? extends RowItem<?>> itemContainer)
 			throws SQLException {
-		Collection<? extends RowItem<?>> items = itemContainer.getItems();
-
-		Schema<? extends RowItem<?>> schema = itemContainer.getSchema();
 		
-		int fieldIndex = 1; //(PreparedStatement uses 1-based indexing)
-		for (RowItem<?> item : items) {
-			Dictionary<String, Comparable<?>> attributes = item.getAttributes();
-			for (Field field : schema.getFields()) {
-			
-				Object value = attributes.get(field.getName());
+		PreparedStatement insertStatement = createInsertStatement(itemContainer, connection);	
+		
+		try {
+			Schema<? extends RowItem<?>> schema = itemContainer.getSchema();
+			Collection<? extends RowItem<?>> items = itemContainer.getItems();
 
-				if (value != null) {
-					insertStatement.setObject(fieldIndex, value);
-				} else {
-					insertStatement.setNull(fieldIndex, field.getType().getSQLType());
+			for (RowItem<?> item : items) {
+			int fieldIndex = 1; //(PreparedStatement uses 1-based indexing)
+				Dictionary<String, Comparable<?>> attributes = item.getAttributes();
+				for (Field field : schema.getFields()) {
+			
+					Object value = attributes.get(field.getName());
+	
+					if (value != null) {
+						insertStatement.setObject(fieldIndex, value);
+					} else {
+						insertStatement.setNull(fieldIndex, field.getType().getSQLType());
+					}
+			
+					fieldIndex++;
 				}
 
-				fieldIndex++;
+				insertStatement.addBatch();
 			}
+			long beforeBatch = System.currentTimeMillis();
+			insertStatement.executeBatch();
+			long afterBatch = System.currentTimeMillis();
+			long insertTime = afterBatch - beforeBatch;
+			
+			System.err.println("Time to insert into " + itemContainer.getDatabaseTableName() + ": " + insertTime);
+		} finally {
+			insertStatement.close();
 		}
-		insertStatement.executeUpdate();
 	}
+
+	private static PreparedStatement createInsertStatement(
+			RowItemContainer<? extends RowItem<?>> itemContainer,
+			Connection databaseConnection) throws SQLException {
+		String placeholderContents =
+			StringUtilities.multiplyWithSeparator("?", ", ",
+					itemContainer.getSchema().getFields().size());
+		String placeholder = "(" + placeholderContents + ")";
+	
+		String insertQuery = "INSERT INTO " + 
+			itemContainer.getDatabaseTableName() + " VALUES " + placeholder;
+		PreparedStatement insertStatement = databaseConnection.prepareStatement(insertQuery);
+		return insertStatement;
+	}
+
 
 	// TODO: New name.
 	public static String schemaToFieldsForCreateTableQueryString(
