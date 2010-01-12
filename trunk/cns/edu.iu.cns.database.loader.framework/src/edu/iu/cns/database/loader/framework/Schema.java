@@ -74,7 +74,7 @@ public class Schema <T extends RowItem<T>> {
 		return this;
 	}
 
-	private Field findField(String fieldName) {
+	public Field findField(String fieldName) {
 		for (Field field : this.fields) {
 			if (field.name.equals(fieldName)) {
 				return field;
