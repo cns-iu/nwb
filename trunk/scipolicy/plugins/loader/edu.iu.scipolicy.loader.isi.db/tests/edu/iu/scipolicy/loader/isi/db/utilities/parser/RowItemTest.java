@@ -36,24 +36,7 @@ public class RowItemTest {
 
 	public static final String BASE_TEST_DATA_PATH = "/edu/iu/scipolicy/loader/isi/db/testdata/";
 
-	// ISIFile test data.
-	public static final String ONE_ISI_FILE_TEST_DATA_PATH =
-		BASE_TEST_DATA_PATH + "OneISIFile.isi";
-	/*public static final String MULTIPLE_ISI_FILES_WITH_NO_MERGES_TEST_DATA_PATH =
-		BASE_TEST_DATA_PATH + "MultipleISIFilesWithNoMerges.isi";*/
-	/*public static final String MULTIPLE_ISI_FILES_WITH_MERGES_TEST_DATA_PATH =
-		BASE_TEST_DATA_PATH + "MultipleISIFilesWithMerges.isi";*/
-
-	// Author test data.
 	public static final String EMPTY_TEST_DATA_PATH = BASE_TEST_DATA_PATH + "Empty.isi";
-	public static final String ONE_AUTHOR_TEST_DATA_PATH = BASE_TEST_DATA_PATH + "OneAuthor.isi";
-	public static final String MULTIPLE_AUTHORS_TEST_DATA_PATH =
-		BASE_TEST_DATA_PATH + "MultipleAuthors.isi";
-
-	// Editor test data.
-	public static final String ONE_EDITOR_TEST_DATA_PATH = BASE_TEST_DATA_PATH + "OneEditor.isi";
-	public static final String MULTIPLE_EDITORS_TEST_DATA_PATH =
-		BASE_TEST_DATA_PATH + "MultipleEditors.isi";
 
 	// TODO: Moving these into a testing utilities class or something?  meh.
 

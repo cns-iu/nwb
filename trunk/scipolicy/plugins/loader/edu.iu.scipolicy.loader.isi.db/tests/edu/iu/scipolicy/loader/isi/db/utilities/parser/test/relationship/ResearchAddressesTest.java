@@ -13,11 +13,6 @@ import edu.iu.scipolicy.loader.isi.db.model.entity.relationship.ResearchAddress;
 import edu.iu.scipolicy.loader.isi.db.utilities.parser.RowItemTest;
 
 public class ResearchAddressesTest extends RowItemTest {
-	@Test
-	public void test() {
-		fail();
-	}
-
 	public static ResearchAddress getResearchAddress(
 			List<ResearchAddress> researchAddresses, Document document, Address address) {
 		for (ResearchAddress researchAddress : researchAddresses) {

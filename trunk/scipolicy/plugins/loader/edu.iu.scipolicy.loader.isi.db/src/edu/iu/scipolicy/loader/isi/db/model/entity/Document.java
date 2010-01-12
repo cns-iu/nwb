@@ -262,6 +262,15 @@ public class Document extends Entity<Document> implements Comparable<Document> {
 		getAttributes().put(ISIDatabase.FIRST_AUTHOR, firstAuthorPerson.getPrimaryKey());
 	}
 
+	/// This side-effects Document.SCHEMA.
+	public void addArbitraryField(String name, String value) {
+		if (SCHEMA.findField(name) == null) {
+			SCHEMA.addField(name, DerbyFieldType.TEXT);
+		}
+
+		getAttributes().put(name, value);
+	}
+
 	public int compareTo(Document otherDocument) {
 		// TODO:
 		return -1;

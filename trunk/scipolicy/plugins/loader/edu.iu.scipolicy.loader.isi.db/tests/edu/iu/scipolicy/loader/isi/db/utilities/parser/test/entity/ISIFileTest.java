@@ -3,15 +3,35 @@ package edu.iu.scipolicy.loader.isi.db.utilities.parser.test.entity;
 
 import static org.junit.Assert.fail;
 
+import java.util.List;
+
 import org.junit.Test;
 
 import edu.iu.cns.database.loader.framework.RowItemContainer;
 import edu.iu.cns.database.loader.framework.utilities.DatabaseModel;
 import edu.iu.nwb.shared.isiutil.database.ISIDatabase;
+import edu.iu.scipolicy.loader.isi.db.model.entity.Document;
 import edu.iu.scipolicy.loader.isi.db.model.entity.ISIFile;
+import edu.iu.scipolicy.loader.isi.db.model.entity.relationship.DocumentOccurrence;
 import edu.iu.scipolicy.loader.isi.db.utilities.parser.RowItemTest;
+import edu.iu.scipolicy.loader.isi.db.utilities.parser.test.relationship.DocumentOccurrencesTest;
 
 public class ISIFileTest extends RowItemTest {
+	// ISIFile test data.
+	public static final String ONE_ISI_FILE_TEST_DATA_PATH =
+		BASE_TEST_DATA_PATH + "OneISIFile.isi";
+	/*public static final String MULTIPLE_ISI_FILES_WITH_NO_MERGES_TEST_DATA_PATH =
+		BASE_TEST_DATA_PATH + "MultipleISIFilesWithNoMerges.isi";*/
+	/*public static final String MULTIPLE_ISI_FILES_WITH_MERGES_TEST_DATA_PATH =
+		BASE_TEST_DATA_PATH + "MultipleISIFilesWithMerges.isi";*/
+
+	public static final String FIRST_DOCUMENT_TITLE =
+		"Planarians Maintain a Constant Ratio of Different Cell Types During " +
+		"Changes in Body Size by Using the Stem Cell System";
+
+	public static final String FIRST_ISI_FILE_FORMAT_VERSION_NUMBER = "1.0";
+	public static final String FIRST_ISI_FILE_FILE_TYPE = "ISI Export Format";
+
 	@Test
 	public void testZeroISIFilesGetParsed() throws Exception {
 		DatabaseModel model = parseTestData(EMPTY_TEST_DATA_PATH);
@@ -32,28 +52,31 @@ public class ISIFileTest extends RowItemTest {
 	@Test
 	public void testOneISIFileGetsParsed() throws Exception {
 		DatabaseModel model = parseTestData(ONE_ISI_FILE_TEST_DATA_PATH);
+		RowItemContainer<Document> documents = model.getRowItemListOfTypeByDatabaseTableName(
+			ISIDatabase.DOCUMENT_TABLE_NAME);
 		RowItemContainer<ISIFile> isiFiles = model.getRowItemListOfTypeByDatabaseTableName(
 			ISIDatabase.ISI_FILE_TABLE_NAME);
+		RowItemContainer<DocumentOccurrence> documentOccurrences =
+			model.getRowItemListOfTypeByDatabaseTableName(
+				ISIDatabase.DOCUMENT_OCCURRENCES_TABLE_NAME);
 
-		if (isiFiles == null) {
-			fail("isiFiles == null.  It shouldn't.  Ever.");
-		}
+		checkItemContainerValidity(documents, "documents");
+		checkItemCount(documents, 2);
+		checkItemContainerValidity(isiFiles, "isiFiles");
+		checkItemCount(isiFiles, 1);
+		checkItemContainerValidity(documentOccurrences, "document occurrences");
+		checkItemCount(documentOccurrences, 2);
 
-		int numItems = isiFiles.getItems().size();
+		Document firstDocument = getFirstDocument(documents);
+		ISIFile firstISIFile = getFirstISIFile(isiFiles);
+		System.err.println(firstISIFile);
+		DocumentOccurrence firstDocumentOccurrence =
+			DocumentOccurrencesTest.getDocumentOccurrence(
+				(List<DocumentOccurrence>)documentOccurrences.getItems(),
+				firstDocument,
+				firstISIFile);
 
-		if (numItems != 1) {
-			fail("Found " + numItems + " item(s); expected 1.");
-		}
-
-		ISIFile isiFile = (ISIFile)isiFiles.getItems().iterator().next();
-		String isiFileName = isiFile.getFileName();
-
-		if (!isiFileName.equals(ONE_ISI_FILE_TEST_DATA_PATH)) {
-			String failMessage =
-				"ISIFile file name is: \"" + isiFileName + "\"" +
-				"\nIt should be: \"" + ONE_ISI_FILE_TEST_DATA_PATH + "\"";
-			fail(failMessage);
-		}
+		DocumentOccurrencesTest.checkDocumentOccurrence(firstDocumentOccurrence);
 	}
 
 	// These two can't be tested right now.
@@ -93,4 +116,50 @@ public class ISIFileTest extends RowItemTest {
 	}*/
 
 	// TODO: Test ISIFile.
+
+	public static ISIFile getISIFile(
+			List<ISIFile> isiFiles,
+			String fileFormatVersionNumber,
+			String fileName,
+			String fileType) {
+		for (ISIFile isiFile : isiFiles) {
+			try {
+				checkISIFile(isiFile, fileFormatVersionNumber, fileName, fileType);
+
+				return isiFile;
+			} catch (Throwable e) {}
+		}
+
+		return null;
+	}
+
+	public static void checkISIFile(
+			ISIFile isiFile, String fileFormatVersionNumber, String fileName, String fileType) {
+		if (isiFile == null) {
+			String failMessage =
+				"An exception should have been thrown " +
+				"if the result ISIFile would have ended up null.";
+			fail(failMessage);
+		}
+
+		compareProperty(
+			"File Format Version Number",
+			isiFile.getFileFormatVersionNumber(),
+			fileFormatVersionNumber);
+		compareProperty("File Name", isiFile.getFileName(), fileName);
+		compareProperty("File Type", isiFile.getFileType(), fileType);
+	}
+
+	private static Document getFirstDocument(RowItemContainer<Document> documents) {
+		return DocumentTest.getDocument(
+			(List<Document>)documents.getItems(), FIRST_DOCUMENT_TITLE);
+	}
+
+	private static ISIFile getFirstISIFile(RowItemContainer<ISIFile> isiFiles) {
+		return getISIFile(
+			(List<ISIFile>)isiFiles.getItems(),
+			FIRST_ISI_FILE_FORMAT_VERSION_NUMBER,
+			ONE_ISI_FILE_TEST_DATA_PATH,
+			FIRST_ISI_FILE_FILE_TYPE);
+	}
 }

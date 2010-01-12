@@ -5,8 +5,6 @@ import static org.junit.Assert.fail;
 
 import java.util.List;
 
-import org.junit.Test;
-
 import edu.iu.scipolicy.loader.isi.db.model.entity.Document;
 import edu.iu.scipolicy.loader.isi.db.model.entity.Patent;
 import edu.iu.scipolicy.loader.isi.db.model.entity.relationship.CitedPatent;

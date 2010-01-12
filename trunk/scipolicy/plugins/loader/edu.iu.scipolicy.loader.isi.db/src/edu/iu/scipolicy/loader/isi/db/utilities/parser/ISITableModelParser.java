@@ -349,8 +349,9 @@ public class ISITableModelParser {
 		String[] keywordStrings = rawKeywordsString.split("\\|");
 
 		for (String keywordString : keywordStrings) {
+			String cleanedKeywordString = StringUtilities.simpleClean(keywordString);
 			Keyword keyword = this.keywords.addOrMerge(
-				new Keyword(this.keywords.getKeyGenerator(), keywordString, keywordType));
+				new Keyword(this.keywords.getKeyGenerator(), cleanedKeywordString, keywordType));
 			keywords.add(keyword);
 		}
 

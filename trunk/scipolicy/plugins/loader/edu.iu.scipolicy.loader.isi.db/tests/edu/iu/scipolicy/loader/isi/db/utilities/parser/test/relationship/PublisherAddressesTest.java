@@ -13,11 +13,6 @@ import edu.iu.scipolicy.loader.isi.db.model.entity.relationship.PublisherAddress
 import edu.iu.scipolicy.loader.isi.db.utilities.parser.RowItemTest;
 
 public class PublisherAddressesTest extends RowItemTest {
-	@Test
-	public void test() {
-		fail();
-	}
-
 	public static PublisherAddress getPublisherAddress(
 			List<PublisherAddress> publisherAddresses, Publisher publisher, Address address) {
 		for (PublisherAddress publisherAddress : publisherAddresses) {

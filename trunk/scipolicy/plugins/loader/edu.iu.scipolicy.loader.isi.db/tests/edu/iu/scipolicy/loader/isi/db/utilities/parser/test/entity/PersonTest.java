@@ -1,16 +1,18 @@
 package edu.iu.scipolicy.loader.isi.db.utilities.parser.test.entity;
 
 
+import static org.junit.Assert.fail;
+
 import java.util.List;
 
 import org.junit.Test;
-import static org.junit.Assert.fail;
 
 import edu.iu.cns.database.loader.framework.RowItemContainer;
 import edu.iu.cns.database.loader.framework.utilities.DatabaseModel;
 import edu.iu.nwb.shared.isiutil.database.ISIDatabase;
 import edu.iu.scipolicy.loader.isi.db.model.entity.Person;
 import edu.iu.scipolicy.loader.isi.db.utilities.parser.RowItemTest;
+import edu.iu.scipolicy.loader.isi.db.utilities.parser.test.relationship.AuthorsTest;
 
 public class PersonTest extends RowItemTest {
 	// Person test data.
@@ -33,7 +35,7 @@ public class PersonTest extends RowItemTest {
 
 	@Test
 	public void testOneAuthorGetsParsed() throws Exception {
-		DatabaseModel model = parseTestData(ONE_AUTHOR_TEST_DATA_PATH);
+		DatabaseModel model = parseTestData(AuthorsTest.ONE_AUTHOR_TEST_DATA_PATH);
 		RowItemContainer<Person> people = model.getRowItemListOfTypeByDatabaseTableName(
 			ISIDatabase.PERSON_TABLE_NAME);
 
@@ -46,7 +48,7 @@ public class PersonTest extends RowItemTest {
 
 	@Test
 	public void testMultipleAuthorsGetParsed() throws Exception {
-		DatabaseModel model = parseTestData(MULTIPLE_AUTHORS_TEST_DATA_PATH);
+		DatabaseModel model = parseTestData(AuthorsTest.MULTIPLE_AUTHORS_TEST_DATA_PATH);
 		RowItemContainer<Person> people = model.getRowItemListOfTypeByDatabaseTableName(
 			ISIDatabase.PERSON_TABLE_NAME);
 

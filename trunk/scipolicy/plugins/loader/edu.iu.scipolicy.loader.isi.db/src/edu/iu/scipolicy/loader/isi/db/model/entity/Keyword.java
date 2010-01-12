@@ -35,8 +35,7 @@ public class Keyword extends Entity<Keyword> implements Comparable<Keyword> {
 	}
 
 	public int compareTo(Keyword otherKeyword) {
-		// TODO:
-		return -1;
+		return new Integer(getPrimaryKey()).compareTo(new Integer(otherKeyword.getPrimaryKey()));
 	}
 
 	public boolean shouldMerge(Keyword otherKeyword) {

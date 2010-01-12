@@ -19,6 +19,11 @@ import edu.iu.scipolicy.loader.isi.db.utilities.parser.test.entity.DocumentTest;
 import edu.iu.scipolicy.loader.isi.db.utilities.parser.test.entity.PersonTest;
 
 public class AuthorsTest extends RowItemTest {
+	// Author test data.
+	public static final String ONE_AUTHOR_TEST_DATA_PATH = BASE_TEST_DATA_PATH + "OneAuthor.isi";
+	public static final String MULTIPLE_AUTHORS_TEST_DATA_PATH =
+		BASE_TEST_DATA_PATH + "MultipleAuthors.isi";
+
 	public static final String FIRST_DOCUMENT_TITLE =
 		"Planarians Maintain a Constant Ratio of Different Cell Types During " +
 		"Changes in Body Size by Using the Stem Cell System";
