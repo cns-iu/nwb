@@ -28,8 +28,8 @@ public class Schema <T extends RowItem<T>> {
 
 		for (int ii = 0; ii < objects.length; ii += 2) {
 			String fieldName = (String)objects[ii];
-			DerbyFieldType fieldClass = (DerbyFieldType)objects[ii + 1];
-			this.fields.add(new Field(fieldName, fieldClass));
+			DerbyFieldType fieldType = (DerbyFieldType)objects[ii + 1];
+			addField(fieldName, fieldType);
 		}
 	}
 
@@ -43,6 +43,10 @@ public class Schema <T extends RowItem<T>> {
 
 	public List<ForeignKey> getForeignKeys() {
 		return this.foreignKeys;
+	}
+
+	public void addField(String fieldName, DerbyFieldType type) {
+		this.fields.add(new Field(fieldName, type));
 	}
 
 	public Schema<T> PRIMARY_KEYS(String... primaryKeys) {
