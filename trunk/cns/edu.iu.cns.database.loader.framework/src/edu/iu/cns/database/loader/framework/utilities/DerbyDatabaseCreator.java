@@ -35,25 +35,73 @@ public class DerbyDatabaseCreator {
 		Database database = databaseProvider.createNewDatabase();
 		Connection databaseConnection = database.getConnection();
 
-		for (RowItemContainer<? extends RowItem<?>> itemContainer : model.getRowItemLists()) {
-			createEmptyTable(databaseConnection, itemContainer);
-		}
-
-		for (RowItemContainer<? extends RowItem<?>> itemContainer : model.getRowItemLists()) {
-			fillTable(databaseConnection, itemContainer);
-		}
-
-		for (RowItemContainer<? extends RowItem<?>> itemContainer : model.getRowItemLists()) {
-			addForeignKeysToTable(databaseConnection, itemContainer);
-		}
+		createEmptyTablesFromModel(model, databaseConnection);
+		fillTablesFromModel(model, databaseConnection);
+		addForeignKeysToTablesFromModel(model, databaseConnection);
 
 		databaseConnection.close();
 
 		return database;
 	}
 
+	public static void createEmptyTablesFromModel(
+			DatabaseModel model, Connection databaseConnection) throws SQLException {
+		Statement createTableStatement = databaseConnection.createStatement();
+
+		try {
+			for (RowItemContainer<? extends RowItem<?>> itemContainer : model.getRowItemLists()) {
+				createEmptyTable(databaseConnection, itemContainer, createTableStatement);
+			}
+		} catch (SQLException e) {
+			throw e;
+		} finally {
+			createTableStatement.close();
+		}
+	}
+
+	public static void fillTablesFromModel(DatabaseModel model, Connection databaseConnection)
+			throws SQLException {
+		for (RowItemContainer<? extends RowItem<?>> itemContainer : model.getRowItemLists()) {
+			String tableName = itemContainer.getDatabaseTableName();
+			Collection<? extends RowItem<?>> items = itemContainer.getItems();
+
+			if (items.size() == 0) {
+				continue;
+			}
+
+			Schema<? extends RowItem<?>> schema = itemContainer.getSchema();
+			String singleRowPlaceholderContents =
+				StringUtilities.multiplyWithSeparator("?", ", ", schema.getFields().size());
+			String singleRowPlaceholders = "(" + singleRowPlaceholderContents + ")";
+			String allPlaceholders = StringUtilities.multiplyWithSeparator(
+			singleRowPlaceholders, ", ", items.size());
+		
+			String insertQuery = "INSERT INTO " + tableName + " VALUES " + allPlaceholders;
+			PreparedStatement insertStatement = databaseConnection.prepareStatement(insertQuery);
+
+			try {
+				fillTable(databaseConnection, itemContainer, insertStatement);
+			} catch (SQLException e) {
+				throw e;
+			} finally {
+				insertStatement.close();
+			}
+		}
+	}
+
+	public static void addForeignKeysToTablesFromModel(
+			DatabaseModel model, Connection databaseConnection) throws SQLException {
+		Statement addForeignKeysStatement = databaseConnection.createStatement();
+
+		for (RowItemContainer<? extends RowItem<?>> itemContainer : model.getRowItemLists()) {
+			addForeignKeysToTable(databaseConnection, itemContainer, addForeignKeysStatement);
+		}
+	}
+
 	public static void createEmptyTable(
-			Connection connection, RowItemContainer<? extends RowItem<?>> itemContainer)
+			Connection connection,
+			RowItemContainer<? extends RowItem<?>> itemContainer,
+			Statement createTableStatement)
 			throws SQLException {
 		String tableName = itemContainer.getDatabaseTableName();
 		Schema<? extends RowItem<?>> schema = itemContainer.getSchema();
@@ -62,21 +110,20 @@ public class DerbyDatabaseCreator {
 		StringBuffer fieldNamesForQuery = new StringBuffer();
 		fieldNamesForQuery.append(schemaToFieldsForCreateTableQueryString(schema));
 		fieldNamesForQuery.append(schemaToPrimaryKeysForCreateTableQueryString(schema));
-		//fieldNamesForQuery.append(", PRIMARY KEY (\"" + Schema.PRIMARY_KEY + "\")");
 
 		String createTableQuery =
 			"CREATE TABLE " + tableName + "(" + fieldNamesForQuery.toString() + ")";
-		connection.createStatement().execute(createTableQuery);
+		createTableStatement.execute(createTableQuery);
 	}
 
 	public static void addForeignKeysToTable(
-			Connection connection, RowItemContainer<? extends RowItem<?>> itemContainer)
+			Connection connection,
+			RowItemContainer<? extends RowItem<?>> itemContainer,
+			Statement addForeignKeysStatement)
 			throws SQLException {
 		String tableName = itemContainer.getDatabaseTableName();
 		Schema<? extends RowItem<?>> schema = itemContainer.getSchema();
-		Statement statement = connection.createStatement();
 
-		// TODO: Alter table to have foreign keys.
 		for (Schema.ForeignKey foreignKey : schema.getForeignKeys()) {
 			String addForeignKeyQuery =
 				"ALTER TABLE " +
@@ -89,10 +136,8 @@ public class DerbyDatabaseCreator {
 				foreignKey.getReferenceTo_TableName() +
 				" (\"" +
 				Schema.PRIMARY_KEY +
-				
 				"\")";
-			System.err.println("foreign key: \"" + addForeignKeyQuery + "\"");
-			statement.execute(addForeignKeyQuery);
+			addForeignKeysStatement.execute(addForeignKeyQuery);
 		}
 	}
 
@@ -102,29 +147,13 @@ public class DerbyDatabaseCreator {
 	 *  that query.
  	 */
 	public static void fillTable(
-			Connection connection, RowItemContainer<? extends RowItem<?>> itemContainer)
+			Connection connection,
+			RowItemContainer<? extends RowItem<?>> itemContainer,
+			PreparedStatement insertStatement)
 			throws SQLException {
-		String tableName = itemContainer.getDatabaseTableName();
 		Collection<? extends RowItem<?>> items = itemContainer.getItems();
 
-		if (items.size() == 0) {
-			return;
-		}
-
 		Schema<? extends RowItem<?>> schema = itemContainer.getSchema();
-		
-		String singleRowPlaceholderContents =
-			StringUtilities.multiplyWithSeparator("?", ", ", schema.getFields().size());
-		String singleRowPlaceholders = "(" + singleRowPlaceholderContents + ")";
-		String allPlaceholders = StringUtilities.multiplyWithSeparator(
-			singleRowPlaceholders, ", ", items.size());
-		
-		String insertQuery =
-			"INSERT INTO " +
-			tableName +
-			" VALUES " + allPlaceholders;
-		
-		PreparedStatement insertStatement = connection.prepareStatement(insertQuery);
 		
 		int fieldIndex = 1; //(PreparedStatement uses 1-based indexing)
 		for (RowItem<?> item : items) {
