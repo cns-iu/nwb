@@ -127,9 +127,6 @@ public class NSFTableModelParser {
 				NSF_Database_FieldNames.AWARD_OCCURRENCES_TABLE_NAME,
 				AwardOccurence.SCHEMA);
 
-	private LogService logger;
-
-
 	/**
 	 * Parse each field of the nsf file and update the nsf model as you go.
 	 * 		1. Make sure that all the values are trimmed.
