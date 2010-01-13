@@ -30,12 +30,22 @@ public class PersonParser {
 			//in the future.
 			nameTokens = originalToken.split(",");
 			
-			lastName = StringUtilities.simpleClean(
-							StringUtilities.toSentenceCase(
-									nameTokens[0]));
-			firstName = StringUtilities.simpleClean(
-							StringUtilities.toSentenceCase(
-									nameTokens[1]));
+			if (nameTokens.length == 2) { 
+				
+				lastName = StringUtilities.simpleClean(
+								StringUtilities.toSentenceCase(
+										nameTokens[0]));
+				firstName = StringUtilities.simpleClean(
+								StringUtilities.toSentenceCase(
+										nameTokens[1]));
+			} else {
+				originalInputName = "";
+				for (String nameToken : nameTokens) {
+					originalInputName += nameToken + " ";
+				}
+				lastName = "";
+				firstName = "";
+			}
 			
 		} else {
 			
@@ -72,11 +82,20 @@ public class PersonParser {
 				middleInitial = middleInitialCandidate.substring(0, 1);
 				
 			} else {
+				originalInputName = "";
+				for (String nameToken : nameTokens) {
+					originalInputName += nameToken + " ";
+				}
 				lastName = "";
+				firstName = "";
 			}
 		}
 		
-		formattedFullName = lastName + ", " + firstName + " " + middleInitial;
+		if (StringUtilities.allAreEmptyOrWhiteSpace(lastName, firstName, middleInitial)) {
+			formattedFullName = "";
+		} else {
+			formattedFullName = lastName + ", " + firstName + " " + middleInitial;
+		}
 		
 		return new Person(
 				personKeyGenerator,
