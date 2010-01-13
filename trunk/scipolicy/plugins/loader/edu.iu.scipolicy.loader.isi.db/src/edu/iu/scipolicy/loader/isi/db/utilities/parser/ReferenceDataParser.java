@@ -403,9 +403,7 @@ public class ReferenceDataParser {
 		String publicationType = "";
 		String twentyNineCharacterSourceTitleAbbreviation = sourceString;
 
-		return new Pair<Source, String>(
-			new Source(
-				sourceKeyGenerator,
+		if (!StringUtilities.allAreEmptyOrWhiteSpace(
 				bookSeriesTitle,
 				bookSeriesSubtitle,
 				conferenceHost,
@@ -416,8 +414,25 @@ public class ReferenceDataParser {
 				isoTitleAbbreviation,
 				issn,
 				publicationType,
-				twentyNineCharacterSourceTitleAbbreviation),
-			annotation);
+				twentyNineCharacterSourceTitleAbbreviation)) {
+			return new Pair<Source, String>(
+				new Source(
+					sourceKeyGenerator,
+					bookSeriesTitle,
+					bookSeriesSubtitle,
+					conferenceHost,
+					conferenceLocation,
+					conferenceSponsors,
+					conferenceTitle,
+					fullTitle,
+					isoTitleAbbreviation,
+					issn,
+					publicationType,
+					twentyNineCharacterSourceTitleAbbreviation),
+				annotation);
+		} else {
+			return new Pair<Source, String>(null, annotation);
+		}
 	}
 
 	private static int parseVolume(String originalToken) {

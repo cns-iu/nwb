@@ -29,9 +29,9 @@ public class Publisher extends Entity<Publisher> implements Comparable<Publisher
 			DatabaseTableKeyGenerator keyGenerator, String city, String name, String webAddress) {
 		super(
 			keyGenerator,
-			createAttributes(name, city, webAddress));
-		this.name = name;
+			createAttributes(city, name, webAddress));
 		this.city = city;
+		this.name = name;
 		this.webAddress = webAddress;
 	}
 

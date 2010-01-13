@@ -197,9 +197,30 @@ public class ISITableModelParser {
 			List<Reference> currentReferences = parseReferences(row);
 			handlePeopleAndSourcesFromReferences(currentReferences);
 
+			// Parse Source.
+
+			Source source = parseSource(row);
+
+			// Parse Publisher Address (a link between Publisher and Address).
+
+			Address addressOfPublisher = parseAddressOfPublisher(row);
+
+			// Parse Publisher.
+
+			Publisher publisher = parsePublisher(row);
+
+			// Link the Publisher to the other things parsed.
+
+			if (source != null) {
+				publisher.setSource(source);
+			}
+
+			this.publisherAddresses.addOrMerge(
+				new PublisherAddress(publisher, addressOfPublisher));
+
 			// Parse Document.
 
-			Document document = parseDocument(row, currentAuthorPeople);
+			Document document = parseDocument(row, currentAuthorPeople, source);
 
 			// Link the Document to the other things parsed.
 
@@ -216,27 +237,6 @@ public class ISITableModelParser {
 			this.reprintAddresses.addOrMerge(new ReprintAddress(document, addressForReprinting));
 			linkDocumentToAddressesOfResearch(document, currentAddressesOfResearch);
 			linkDocumentToCitedReferences(document, currentReferences);
-
-			// Parse Source, and link it to Publisher.
-
-			Source source = parseSource(row);
-
-			// Parse Publisher Address (a link between Publisher and Address).
-
-			Address addressOfPublisher = parseAddressOfPublisher(row);
-
-			// Parse Publisher.
-
-			Publisher publisher = parsePublisher(row);
-
-			// Link the Publisher to the other things parsed.
-
-			publisher.setSource(source);
-			this.publisherAddresses.addOrMerge(
-				new PublisherAddress(publisher, addressOfPublisher));
-
-			// Parse Editors. (?)
-			//TODO: Look into what's up with editors.
 		}
 
 		// Given all of the master lists of row items, construct an DatabaseModel and return it.
@@ -452,7 +452,7 @@ public class ISITableModelParser {
 		}
 	}
 
-	private Document parseDocument(Tuple row, List<Person> authorPeople) {
+	private Document parseDocument(Tuple row, List<Person> authorPeople, Source source) {
 		Person firstAuthor = null;
 
 		if (authorPeople.size() != 0) {
@@ -544,6 +544,7 @@ public class ISITableModelParser {
 			partNumber,
 			publicationDate,
 			publicationYear,
+			source,
 			specialIssue,
 			subjectCategory,
 			supplement,
@@ -644,22 +645,51 @@ public class ISITableModelParser {
 
 		String twentyNineCharacterSourceTitleAbbreviation = StringUtilities.simpleClean(
 			row.getString(ISITag.TWENTY_NINE_CHAR_JOURNAL_ABBREVIATION.getColumnName()));
-		// TODO: ?
-		Source source = new Source(
-			this.sources.getKeyGenerator(),
-			bookSeriesTitle,
-			bookSeriesSubtitle,
-			conferenceHost,
-			conferenceLocation,
-			conferenceSponsors,
-			conferenceTitle,
-			fullTitle,
-			isoTitleAbbreviation,
-			issn,
-			publicationType,
-			twentyNineCharacterSourceTitleAbbreviation);
 
-		return this.sources.addOrMerge(source);
+		/*if (this.sources.getKeyGenerator().getNextKey() == 73) {
+			System.err.println("bookSeriesTitle: \"" + bookSeriesTitle + "\"");
+			System.err.println("bookSeriesSubtitle: \"" + bookSeriesSubtitle + "\"");
+			System.err.println("conferenceHost: \"" + conferenceHost + "\"");
+			System.err.println("conferenceLocation: \"" + conferenceLocation + "\"");
+			System.err.println("conferenceSponsors: \"" + conferenceSponsors + "\"");
+			System.err.println("conferenceTitle: \"" + conferenceTitle + "\"");
+			System.err.println("fullTitle: \"" + fullTitle + "\"");
+			System.err.println("isoTitleAbbreviation: \"" + isoTitleAbbreviation + "\"");
+			System.err.println("issn: \"" + issn + "\"");
+			System.err.println("publicationType: \"" + publicationType + "\"");
+			System.err.println("twentyNineCharacterSourceTitleAbbreviation: \"" + twentyNineCharacterSourceTitleAbbreviation + "\"");
+		}*/
+
+		if (!StringUtilities.allAreEmptyOrWhiteSpace(
+				bookSeriesTitle,
+				bookSeriesSubtitle,
+				conferenceHost,
+				conferenceLocation,
+				conferenceSponsors,
+				conferenceTitle,
+				fullTitle,
+				isoTitleAbbreviation,
+				issn,
+				publicationType,
+				twentyNineCharacterSourceTitleAbbreviation)) {
+			Source source = new Source(
+				this.sources.getKeyGenerator(),
+				bookSeriesTitle,
+				bookSeriesSubtitle,
+				conferenceHost,
+				conferenceLocation,
+				conferenceSponsors,
+				conferenceTitle,
+				fullTitle,
+				isoTitleAbbreviation,
+				issn,
+				publicationType,
+				twentyNineCharacterSourceTitleAbbreviation);
+
+			return this.sources.addOrMerge(source);
+		} else {
+			return null;
+		}
 	}
 
 	private Address parseAddressOfPublisher(Tuple row) {

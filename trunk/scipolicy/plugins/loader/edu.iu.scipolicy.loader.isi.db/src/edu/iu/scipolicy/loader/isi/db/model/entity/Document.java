@@ -33,12 +33,15 @@ public class Document extends Entity<Document> implements Comparable<Document> {
 		ISIDatabase.PART_NUMBER, DerbyFieldType.TEXT,
 		ISIDatabase.PUBLICATION_DATE, DerbyFieldType.TEXT,
 		ISIDatabase.PUBLICATION_YEAR, DerbyFieldType.INTEGER,
+		ISIDatabase.DOCUMENT_SOURCE, DerbyFieldType.FOREIGN_KEY,
 		ISIDatabase.SPECIAL_ISSUE, DerbyFieldType.TEXT,
 		ISIDatabase.SUBJECT_CATEGORY, DerbyFieldType.TEXT,
 		ISIDatabase.SUPPLEMENT, DerbyFieldType.TEXT,
 		ISIDatabase.TIMES_CITED, DerbyFieldType.INTEGER,
 		ISIDatabase.TITLE, DerbyFieldType.TEXT).
-		FOREIGN_KEYS(ISIDatabase.FIRST_AUTHOR, ISIDatabase.PERSON_TABLE_NAME);
+		FOREIGN_KEYS(
+			ISIDatabase.FIRST_AUTHOR, ISIDatabase.PERSON_TABLE_NAME,
+			ISIDatabase.DOCUMENT_SOURCE, ISIDatabase.SOURCE_TABLE_NAME);
 
 	private String abstractText;
 	private String articleNumber;
@@ -61,6 +64,7 @@ public class Document extends Entity<Document> implements Comparable<Document> {
 	private String partNumber;
 	private String publicationDate;
 	private int publicationYear;
+	private Source source;
 	private String specialIssue;
 	private String subjectCategory;
 	private String supplement;
@@ -90,6 +94,7 @@ public class Document extends Entity<Document> implements Comparable<Document> {
 			String partNumber,
 			String publicationDate,
 			int publicationYear,
+			Source source,
 			String specialIssue,
 			String subjectCategory,
 			String supplement,
@@ -119,6 +124,7 @@ public class Document extends Entity<Document> implements Comparable<Document> {
 				partNumber,
 				publicationDate,
 				publicationYear,
+				source,
 				specialIssue,
 				subjectCategory,
 				supplement,
@@ -145,6 +151,7 @@ public class Document extends Entity<Document> implements Comparable<Document> {
 		this.partNumber = partNumber;
 		this.publicationDate = publicationDate;
 		this.publicationYear = publicationYear;
+		this.source = source;
 		this.specialIssue = specialIssue;
 		this.subjectCategory = subjectCategory;
 		this.supplement = supplement;
@@ -232,6 +239,10 @@ public class Document extends Entity<Document> implements Comparable<Document> {
 		return this.publicationYear;
 	}
 
+	public Source getSource() {
+		return this.source;
+	}
+
 	public String getSpecialIssue() {
 		return this.specialIssue;
 	}
@@ -260,6 +271,12 @@ public class Document extends Entity<Document> implements Comparable<Document> {
 		this.firstAuthorPerson = firstAuthorPerson;
 
 		getAttributes().put(ISIDatabase.FIRST_AUTHOR, firstAuthorPerson.getPrimaryKey());
+	}
+
+	public void setSource(Source source) {
+		this.source = source;
+
+		getAttributes().put(ISIDatabase.DOCUMENT_SOURCE, source.getPrimaryKey());
 	}
 
 	/// This side-effects Document.SCHEMA.
@@ -307,6 +324,7 @@ public class Document extends Entity<Document> implements Comparable<Document> {
 			String partNumber,
 			String publicationDate,
 			int publicationYear,
+			Source source,
 			String specialIssue,
 			String subjectCategory,
 			String supplement,
@@ -323,7 +341,6 @@ public class Document extends Entity<Document> implements Comparable<Document> {
 		attributes.put(ISIDatabase.DOCUMENT_VOLUME, documentVolume);
 		attributes.put(ISIDatabase.ENDING_PAGE, endingPage);
 
-		// Apparently, anonymous papers are allowed...?
 		if (firstAuthorPerson != null) {
 			attributes.put(ISIDatabase.FIRST_AUTHOR, firstAuthorPerson.getPrimaryKey());
 		}
@@ -339,6 +356,11 @@ public class Document extends Entity<Document> implements Comparable<Document> {
 		attributes.put(ISIDatabase.PART_NUMBER, partNumber);
 		attributes.put(ISIDatabase.PUBLICATION_DATE, publicationDate);
 		attributes.put(ISIDatabase.PUBLICATION_YEAR, publicationYear);
+
+		if (source != null) {
+			attributes.put(ISIDatabase.DOCUMENT_SOURCE, source.getPrimaryKey());
+		}
+
 		attributes.put(ISIDatabase.SPECIAL_ISSUE, specialIssue);
 		attributes.put(ISIDatabase.SUBJECT_CATEGORY, subjectCategory);
 		attributes.put(ISIDatabase.SUPPLEMENT, supplement);
