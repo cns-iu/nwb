@@ -114,6 +114,7 @@ public class ISIDatabase {
 	public static final String PART_NUMBER = "PART_NUMBER";
 	public static final String PUBLICATION_DATE = "PUBLICATION_DATE";
 	public static final String PUBLICATION_YEAR = "PUBLICATION_YEAR";
+	public static final String DOCUMENT_SOURCE = "DOCUMENT_SOURCE";
 	public static final String SPECIAL_ISSUE = "SPECIAL_ISSUE";
 	public static final String SUBJECT_CATEGORY = "SUBJECT_CATEGORY";
 	public static final String SUPPLEMENT = "SUPPLEMENT";
@@ -126,7 +127,7 @@ public class ISIDatabase {
 	public static final String PUBLISHER_ADDRESSES_TABLE_NAME = "PUBLISHER_ADDRESSES";
 
 	public static final String REPRINT_ADDRESSES_DISPLAY_NAME = "Reprint Addresses";
-	public static final String REPRINT_ADDRESSES_TABLE_NAME = "REPRINT_ADDRESSES";
+	public static final String REPRINT_ADDRESSES_TABLE_NAME = "REPRINT_ADDRESS";
 
 	public static final String RESEARCH_ADDRESSES_DISPLAY_NAME = "Research Addresses";
 	public static final String RESEARCH_ADDRESSES_TABLE_NAME = "RESEARCH_ADDRESSES";

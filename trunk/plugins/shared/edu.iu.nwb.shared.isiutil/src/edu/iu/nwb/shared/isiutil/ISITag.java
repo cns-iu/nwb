@@ -7,9 +7,6 @@ import java.util.Hashtable;
 import java.util.List;
 
 public class ISITag {
-	
-	
-	
 	/*
 	 * IMPORTANT: If you add a tag here, make sure to add it in the isiTagArray below as well.
 	 * Sorting these alphabetically is a little more sane.
@@ -91,11 +88,11 @@ public class ISITag {
 		new ISITag("PT", "Publication Type", ContentType.TEXT);
 	public static final ISITag PUBLICATION_YEAR =
 		new ISITag("PY", "Publication Year", ContentType.INTEGER);
-	public static final ISITag PUBLISHER = new ISITag("PU", "Publisher", ContentType.TEXT);
 	public static final ISITag PUBLISHER_ADDRESS =
 		new ISITag("PA", "Publisher Address", ContentType.TEXT);
 	public static final ISITag PUBLISHER_CITY =
 		new ISITag("PI", "City of Publisher", ContentType.TEXT);
+	public static final ISITag PUBLISHER = new ISITag("PU", "Publisher", ContentType.TEXT);
 	public static final ISITag PUBLISHER_WEB_ADDRESS =
 		new ISITag("WP", "Publisher Web Address", ContentType.TEXT);
 
