@@ -162,14 +162,14 @@ public class ISIDatabase {
 
 	// Reprint Addresses Relationship Information
 	
-	public static final String REPRINT_ADDRESSES_PUBLISHER_FOREIGN_KEY =
+	public static final String REPRINT_ADDRESSES_DOCUMENT_FOREIGN_KEY =
 		"REPRINT_ADDRESS_DOCUMENT_FK";
 	public static final String REPRINT_ADDRESSES_ADDRESS_FOREIGN_KEY =
 		"REPRINT_ADDRESS_ADDRESS_FK";
 
 	// Research Addresses Relationship Information
 
-	public static final String RESEARCH_ADDRESSES_PUBLISHER_FOREIGN_KEY =
+	public static final String RESEARCH_ADDRESSES_DOCUMENT_FOREIGN_KEY =
 		"RESEARCH_ADDRESS_DOCUMENT_FK";
 	public static final String RESEARCH_ADDRESSES_ADDRESS_FOREIGN_KEY =
 		"RESEARCH_ADDRESS_ADDRESS_FK";
