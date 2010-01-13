@@ -6,6 +6,7 @@ import java.util.Date;
 import org.cishell.utilities.DateUtilities;
 import org.cishell.utilities.NumberUtilities;
 import org.cishell.utilities.StringUtilities;
+import org.cishell.utilities.osgi.logging.LogMessageHandler;
 import org.joda.time.DateTime;
 import org.osgi.service.log.LogService;
 
@@ -13,7 +14,6 @@ import prefuse.data.Table;
 import prefuse.data.Tuple;
 import prefuse.util.collections.IntIterator;
 import edu.iu.scipolicy.visualization.horizontalbargraph.DateTimeWrapper;
-import edu.iu.scipolicy.visualization.horizontalbargraph.LogMessageHandler;
 import edu.iu.scipolicy.visualization.horizontalbargraph.record.exception.InvalidAmountException;
 
 public class TableRecordExtractor {
