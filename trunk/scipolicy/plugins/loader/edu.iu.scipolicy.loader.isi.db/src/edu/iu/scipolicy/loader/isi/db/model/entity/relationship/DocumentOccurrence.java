@@ -39,6 +39,17 @@ public class DocumentOccurrence extends RowItem<DocumentOccurrence> {
 	}
 
 	public boolean shouldMerge(DocumentOccurrence otherDocumentOccurrence) {
+		if ((this.document != null) && (this.isiFile != null)) {
+			Document otherDocument = otherDocumentOccurrence.getDocument();
+			ISIFile otherISIFile = otherDocumentOccurrence.getISIFile();
+
+			if ((otherDocument != null) && (otherISIFile != null)) {
+				return (
+					(this.document.getPrimaryKey() == otherDocument.getPrimaryKey()) &&
+					(this.isiFile.getPrimaryKey() == otherISIFile.getPrimaryKey()));
+			}
+		}
+
 		return false;
 	}
 

@@ -37,6 +37,17 @@ public class CitedReference extends RowItem<CitedReference> {
 	}
 
 	public boolean shouldMerge(CitedReference otherCitedReference) {
+		if ((this.document != null) && (this.reference != null)) {
+			Document otherDocument = otherCitedReference.getDocument();
+			Reference otherReference = otherCitedReference.getReference();
+
+			if ((otherDocument != null) && (otherReference != null)) {
+				return (
+					(this.document.getPrimaryKey() == otherDocument.getPrimaryKey()) &&
+					(this.reference.getPrimaryKey() == otherReference.getPrimaryKey()));
+			}
+		}
+
 		return false;
 	}
 

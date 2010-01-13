@@ -13,11 +13,11 @@ import edu.iu.scipolicy.loader.isi.db.model.entity.Document;
 public class ResearchAddress extends RowItem<ResearchAddress> {
 	public static final Schema<ResearchAddress> SCHEMA = new Schema<ResearchAddress>(
 		false,
-		ISIDatabase.RESEARCH_ADDRESSES_PUBLISHER_FOREIGN_KEY, DerbyFieldType.FOREIGN_KEY,
+		ISIDatabase.RESEARCH_ADDRESSES_DOCUMENT_FOREIGN_KEY, DerbyFieldType.FOREIGN_KEY,
 		ISIDatabase.RESEARCH_ADDRESSES_ADDRESS_FOREIGN_KEY, DerbyFieldType.FOREIGN_KEY,
 		ISIDatabase.ORDER_LISTED, DerbyFieldType.INTEGER).
 		FOREIGN_KEYS(
-			ISIDatabase.RESEARCH_ADDRESSES_PUBLISHER_FOREIGN_KEY, ISIDatabase.DOCUMENT_TABLE_NAME,
+			ISIDatabase.RESEARCH_ADDRESSES_DOCUMENT_FOREIGN_KEY, ISIDatabase.DOCUMENT_TABLE_NAME,
 			ISIDatabase.RESEARCH_ADDRESSES_ADDRESS_FOREIGN_KEY, ISIDatabase.ADDRESS_TABLE_NAME);
 
 	private Document document;
@@ -44,6 +44,17 @@ public class ResearchAddress extends RowItem<ResearchAddress> {
 	}
 
 	public boolean shouldMerge(ResearchAddress otherResearchAddress) {
+		if ((this.document != null) && (this.address != null)) {
+			Document otherDocument = otherResearchAddress.getDocument();
+			Address otherAddress = otherResearchAddress.getAddress();
+
+			if ((otherDocument != null) && (otherAddress != null)) {
+				return (
+					(this.document.getPrimaryKey() == otherDocument.getPrimaryKey()) &&
+					(this.address.getPrimaryKey() == otherAddress.getPrimaryKey()));
+			}
+		}
+
 		return false;
 	}
 
@@ -54,9 +65,9 @@ public class ResearchAddress extends RowItem<ResearchAddress> {
 			Document document, Address address, int orderListed) {
 		Dictionary<String, Comparable<?>> attributes = new Hashtable<String, Comparable<?>>();
 		attributes.put(
-				ISIDatabase.REPRINT_ADDRESSES_PUBLISHER_FOREIGN_KEY, document.getPrimaryKey());
+				ISIDatabase.RESEARCH_ADDRESSES_DOCUMENT_FOREIGN_KEY, document.getPrimaryKey());
 		attributes.put(
-				ISIDatabase.REPRINT_ADDRESSES_ADDRESS_FOREIGN_KEY, address.getPrimaryKey());
+				ISIDatabase.RESEARCH_ADDRESSES_ADDRESS_FOREIGN_KEY, address.getPrimaryKey());
 		attributes.put(ISIDatabase.ORDER_LISTED, orderListed);
 
 		return attributes;

@@ -52,6 +52,17 @@ public class Author extends RowItem<Author> {
 	}
 
 	public boolean shouldMerge(Author otherAuthor) {
+		if ((this.document != null) && (this.person != null)) {
+			Document otherDocument = otherAuthor.getDocument();
+			Person otherPerson = otherAuthor.getPerson();
+
+			if ((otherDocument != null) && (otherPerson != null)) {
+				return (
+					(this.document.getPrimaryKey() == otherDocument.getPrimaryKey()) &&
+					(this.person.getPrimaryKey() == otherPerson.getPrimaryKey()));
+			}
+		}
+
 		return false;
 	}
 

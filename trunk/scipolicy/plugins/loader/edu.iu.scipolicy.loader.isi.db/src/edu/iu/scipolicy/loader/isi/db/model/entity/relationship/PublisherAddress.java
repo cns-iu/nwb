@@ -39,6 +39,17 @@ public class PublisherAddress extends RowItem<PublisherAddress> {
 	}
 
 	public boolean shouldMerge(PublisherAddress otherPublisherAddress) {
+		if ((this.publisher != null) && (this.address != null)) {
+			Publisher otherPublisher = otherPublisherAddress.getPublisher();
+			Address otherAddress = otherPublisherAddress.getAddress();
+
+			if ((otherPublisher != null) && (otherAddress != null)) {
+				return (
+					(this.publisher.getPrimaryKey() == otherPublisher.getPrimaryKey()) &&
+					(this.address.getPrimaryKey() == otherAddress.getPrimaryKey()));
+			}
+		}
+
 		return false;
 	}
 

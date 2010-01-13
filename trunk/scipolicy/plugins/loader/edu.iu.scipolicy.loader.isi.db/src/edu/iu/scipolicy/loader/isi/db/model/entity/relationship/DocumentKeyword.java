@@ -44,6 +44,17 @@ public class DocumentKeyword extends RowItem<DocumentKeyword> {
 	}
 
 	public boolean shouldMerge(DocumentKeyword otherDocumentKeyword) {
+		if ((this.document != null) && (this.keyword != null)) {
+			Document otherDocument = otherDocumentKeyword.getDocument();
+			Keyword otherKeyword = otherDocumentKeyword.getKeyword();
+
+			if ((otherDocument != null) && (otherKeyword != null)) {
+				return (
+					(this.document.getPrimaryKey() == otherDocument.getPrimaryKey()) &&
+					(this.keyword.getPrimaryKey() == otherKeyword.getPrimaryKey()));
+			}
+		}
+
 		return false;
 	}
 

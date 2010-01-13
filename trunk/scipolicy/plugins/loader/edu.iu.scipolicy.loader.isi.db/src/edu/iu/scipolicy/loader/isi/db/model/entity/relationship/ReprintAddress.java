@@ -13,10 +13,10 @@ import edu.iu.scipolicy.loader.isi.db.model.entity.Document;
 public class ReprintAddress extends RowItem<ReprintAddress> {
 	public static final Schema<ReprintAddress> SCHEMA = new Schema<ReprintAddress>(
 		false,
-		ISIDatabase.REPRINT_ADDRESSES_PUBLISHER_FOREIGN_KEY, DerbyFieldType.FOREIGN_KEY,
+		ISIDatabase.REPRINT_ADDRESSES_DOCUMENT_FOREIGN_KEY, DerbyFieldType.FOREIGN_KEY,
 		ISIDatabase.REPRINT_ADDRESSES_ADDRESS_FOREIGN_KEY, DerbyFieldType.FOREIGN_KEY).
 		FOREIGN_KEYS(
-			ISIDatabase.REPRINT_ADDRESSES_PUBLISHER_FOREIGN_KEY, ISIDatabase.DOCUMENT_TABLE_NAME,
+			ISIDatabase.REPRINT_ADDRESSES_DOCUMENT_FOREIGN_KEY, ISIDatabase.DOCUMENT_TABLE_NAME,
 			ISIDatabase.REPRINT_ADDRESSES_ADDRESS_FOREIGN_KEY, ISIDatabase.ADDRESS_TABLE_NAME);
 
 	private Document document;
@@ -37,6 +37,17 @@ public class ReprintAddress extends RowItem<ReprintAddress> {
 	}
 
 	public boolean shouldMerge(ReprintAddress otherReprintAddress) {
+		if ((this.document != null) && (this.address != null)) {
+			Document otherDocument = otherReprintAddress.getDocument();
+			Address otherAddress = otherReprintAddress.getAddress();
+
+			if ((otherDocument != null) && (otherAddress != null)) {
+				return (
+					(this.document.getPrimaryKey() == otherDocument.getPrimaryKey()) &&
+					(this.address.getPrimaryKey() == otherAddress.getPrimaryKey()));
+			}
+		}
+
 		return false;
 	}
 
@@ -47,7 +58,7 @@ public class ReprintAddress extends RowItem<ReprintAddress> {
 			Document document, Address address) {
 		Dictionary<String, Comparable<?>> attributes = new Hashtable<String, Comparable<?>>();
 		attributes.put(
-			ISIDatabase.REPRINT_ADDRESSES_PUBLISHER_FOREIGN_KEY, document.getPrimaryKey());
+			ISIDatabase.REPRINT_ADDRESSES_DOCUMENT_FOREIGN_KEY, document.getPrimaryKey());
 		attributes.put(
 			ISIDatabase.REPRINT_ADDRESSES_ADDRESS_FOREIGN_KEY, address.getPrimaryKey());
 

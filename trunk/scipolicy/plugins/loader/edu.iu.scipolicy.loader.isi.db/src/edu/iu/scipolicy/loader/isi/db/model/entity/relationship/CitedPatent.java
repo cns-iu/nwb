@@ -37,6 +37,17 @@ public class CitedPatent extends RowItem<CitedPatent> {
 	}
 
 	public boolean shouldMerge(CitedPatent otherCitedPatent) {
+		if ((this.document != null) && (this.patent != null)) {
+			Document otherDocument = otherCitedPatent.getDocument();
+			Patent otherPatent = otherCitedPatent.getPatent();
+
+			if ((otherDocument != null) && (otherPatent != null)) {
+				return (
+					(this.document.getPrimaryKey() == otherDocument.getPrimaryKey()) &&
+					(this.patent.getPrimaryKey() == otherPatent.getPrimaryKey()));
+			}
+		}
+
 		return false;
 	}
 

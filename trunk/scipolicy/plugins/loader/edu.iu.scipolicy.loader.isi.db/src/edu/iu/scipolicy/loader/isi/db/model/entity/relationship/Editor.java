@@ -49,6 +49,17 @@ public class Editor extends RowItem<Editor> implements Comparable<Editor> {
 	}
 
 	public boolean shouldMerge(Editor otherEditor) {
+		if ((this.document != null) && (this.person != null)) {
+			Document otherDocument = otherEditor.getDocument();
+			Person otherPerson = otherEditor.getPerson();
+
+			if ((otherDocument != null) && (otherPerson != null)) {
+				return (
+					(this.document.getPrimaryKey() == otherDocument.getPrimaryKey()) &&
+					(this.person.getPrimaryKey() == otherPerson.getPrimaryKey()));
+			}
+		}
+
 		return false;
 	}
 

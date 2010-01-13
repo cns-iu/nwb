@@ -211,12 +211,14 @@ public class ISITableModelParser {
 
 			// Link the Publisher to the other things parsed.
 
-			if (source != null) {
+			if ((publisher != null) && (source != null)) {
 				publisher.setSource(source);
 			}
 
-			this.publisherAddresses.addOrMerge(
-				new PublisherAddress(publisher, addressOfPublisher));
+			if ((publisher != null) && (addressOfPublisher != null)) {
+				this.publisherAddresses.addOrMerge(
+					new PublisherAddress(publisher, addressOfPublisher));
+			}
 
 			// Parse Document.
 
@@ -234,7 +236,11 @@ public class ISITableModelParser {
 				this.citedPatents.addOrMerge(new CitedPatent(document, patent));
 			}
 
-			this.reprintAddresses.addOrMerge(new ReprintAddress(document, addressForReprinting));
+			if (addressForReprinting != null) {
+				this.reprintAddresses.addOrMerge(
+					new ReprintAddress(document, addressForReprinting));
+			}
+
 			linkDocumentToAddressesOfResearch(document, currentAddressesOfResearch);
 			linkDocumentToCitedReferences(document, currentReferences);
 		}
@@ -350,9 +356,12 @@ public class ISITableModelParser {
 
 		for (String keywordString : keywordStrings) {
 			String cleanedKeywordString = StringUtilities.simpleClean(keywordString);
-			Keyword keyword = this.keywords.addOrMerge(
-				new Keyword(this.keywords.getKeyGenerator(), cleanedKeywordString, keywordType));
-			keywords.add(keyword);
+
+			if (!StringUtilities.isEmptyOrWhiteSpace(keywordString)) {
+				Keyword keyword = this.keywords.addOrMerge(
+					new Keyword(this.keywords.getKeyGenerator(), cleanedKeywordString, keywordType));
+				keywords.add(keyword);
+			}
 		}
 
 		return keywords;
@@ -373,10 +382,15 @@ public class ISITableModelParser {
 	private Address parseAddressForReprinting(Tuple row) {
 		String addressForReprintingString =
 			StringUtilities.simpleClean(row.getString(ISITag.REPRINT_ADDRESS.getColumnName()));
-		// TODO: AddressParser?
 
-		return this.addresses.addOrMerge(
-			new Address(this.addresses.getKeyGenerator(), addressForReprintingString));
+		if (!StringUtilities.isEmptyOrWhiteSpace(addressForReprintingString)) {
+			// TODO: AddressParser?
+
+			return this.addresses.addOrMerge(
+				new Address(this.addresses.getKeyGenerator(), addressForReprintingString));
+		} else {
+			return null;
+		}
 	}
 
 	private List<Address> parseAddressesOfResearch(Tuple row) {
@@ -388,10 +402,13 @@ public class ISITableModelParser {
 
 		for (String addressString : addressStrings) {
 			String cleanedAddressString = StringUtilities.simpleClean(addressString);
-			// TODO: AddressParser?
-			Address mergedAddressOfResearch = this.addresses.addOrMerge(
-				new Address(this.addresses.getKeyGenerator(), cleanedAddressString));
-			addressesOfResearch.add(mergedAddressOfResearch);
+
+			if (!StringUtilities.isEmptyOrWhiteSpace(cleanedAddressString)) {
+				// TODO: AddressParser?
+				Address mergedAddressOfResearch = this.addresses.addOrMerge(
+					new Address(this.addresses.getKeyGenerator(), cleanedAddressString));
+				addressesOfResearch.add(mergedAddressOfResearch);
+			}
 		}
 
 		return addressesOfResearch;
@@ -696,8 +713,12 @@ public class ISITableModelParser {
 		String addressOfPublisherString =
 			StringUtilities.simpleClean(row.getString(ISITag.PUBLISHER_ADDRESS.getColumnName()));
 
-		return this.addresses.addOrMerge(
-			new Address(this.addresses.getKeyGenerator(), addressOfPublisherString));
+		if (!StringUtilities.isEmptyOrWhiteSpace(addressOfPublisherString)) {
+			return this.addresses.addOrMerge(
+				new Address(this.addresses.getKeyGenerator(), addressOfPublisherString));
+		} else {
+			return null;
+		}
 	}
 
 	private Publisher parsePublisher(Tuple row) {
@@ -707,9 +728,14 @@ public class ISITableModelParser {
 			StringUtilities.simpleClean(row.getString(ISITag.PUBLISHER.getColumnName()));
 		String webAddress = StringUtilities.simpleClean(
 			row.getString(ISITag.PUBLISHER_WEB_ADDRESS.getColumnName()));
-		Publisher publisher =
-			new Publisher(this.publishers.getKeyGenerator(), city, name, webAddress);
 
-		return this.publishers.addOrMerge(publisher);
+		if (!StringUtilities.allAreEmptyOrWhiteSpace(city, name, webAddress)) {
+			Publisher publisher =
+				new Publisher(this.publishers.getKeyGenerator(), city, name, webAddress);
+
+			return this.publishers.addOrMerge(publisher);
+		} else {
+			return null;
+		}
 	}
 }
