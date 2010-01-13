@@ -1,7 +1,6 @@
-package edu.iu.scipolicy.loader.nsf.db;
+package edu.iu.scipolicy.utilities.nsf;
 
-
-public class NSFDatabase {
+public class NSF_Database_FieldNames {
 	
 	public static final String NSF_DATABASE_MIME_TYPE = "db:nsf";
 	
@@ -25,22 +24,32 @@ public class NSFDatabase {
 	public static final String AWARD_TABLE_NAME = "AWARD";
 	
 	// Entity Relationship Type Information
-	public static final String INVESTIGATOR_ORGANIZATIONS_HUMAN_READABLE_NAME = "Investigator Organizations";
+	public static final String INVESTIGATOR_ORGANIZATIONS_HUMAN_READABLE_NAME 
+									= "Investigator Organizations";
+	
 	public static final String INVESTIGATOR_ORGANIZATIONS_TABLE_NAME = "INVESTIGATOR_ORGANIZATIONS";
 
 	public static final String INVESTIGATOR_HUMAN_READABLE_NAME = "Investigators";
-	public static final String INVESTIGATOR_TABLE_NAME = "INVESTIGATOR";
+	public static final String INVESTIGATOR_TABLE_NAME = "INVESTIGATORS";
 	
-	public static final String AWARD_FIELD_OF_APPLICATION_HUMAN_READABLE_NAME = "Award Field Of Applications";
-	public static final String AWARD_FIELD_OF_APPLICATION_TABLE_NAME = "AWARD_FIELD_OF_APPLICATIONS";
+	public static final String AWARD_FIELD_OF_APPLICATION_HUMAN_READABLE_NAME 
+									= "Award Field Of Applications";
+	
+	public static final String AWARD_FIELD_OF_APPLICATION_TABLE_NAME 
+									= "AWARD_FIELD_OF_APPLICATIONS";
 
 	public static final String PROGRAM_MANAGER_HUMAN_READABLE_NAME = "Program Managers";
-	public static final String PROGRAM_MANAGER_TABLE_NAME = "PROGRAM_MANAGER";
+	public static final String PROGRAM_MANAGER_TABLE_NAME = "PROGRAM_MANAGERS";
 	
-	public static final String PROGRAM_NAME_AND_ELEMENT_CODES_HUMAN_READABLE_NAME = "Program Name And Element Codes";
-	public static final String PROGRAM_NAME_AND_ELEMENT_CODES_TABLE_NAME = "PROGRAM_NAME_AND_ELEMENT_CODES";
+	public static final String PROGRAM_NAME_AND_ELEMENT_CODES_HUMAN_READABLE_NAME 
+									= "Program Name And Element Codes";
+	
+	public static final String PROGRAM_NAME_AND_ELEMENT_CODES_TABLE_NAME 
+									= "PROGRAM_NAME_AND_ELEMENT_CODES";
 
-	public static final String PROGRAM_REFERENCE_CODES_HUMAN_READABLE_NAME = "Program Reference Codes";
+	public static final String PROGRAM_REFERENCE_CODES_HUMAN_READABLE_NAME 
+									= "Program Reference Codes";
+	
 	public static final String PROGRAM_REFERENCE_CODES_TABLE_NAME = "PROGRAM_REFERENCE_CODES";
 	
 	public static final String AWARD_OCCURRENCES_HUMAN_READABLE_NAME = "Award Occurrences";
@@ -81,20 +90,25 @@ public class NSFDatabase {
 	public static final String TITLE = "TITLE";
 	public static final String AWARD_NUMBER = "AWARD_NUMBER";
 	public static final String START_DATE = "START_DATE";
+	public static final String RAW_START_DATE = "RAW_START_DATE";
 	public static final String EXPIRATION_DATE = "EXPIRATION_DATE";
+	public static final String RAW_EXPIRATION_DATE = "RAW_EXPIRATION_DATE";
 	public static final String LAST_AMMENDMENT_DATE = "LAST_AMMENDMENT_DATE";
+	public static final String RAW_LAST_AMMENDMENT_DATE = "RAW_LAST_AMMENDMENT_DATE";
 	public static final String AWARDED_AMOUNT_TO_DATE = "AWARDED_AMOUNT_TO_DATE";
+	public static final String RAW_AWARDED_AMOUNT_TO_DATE = "RAW_AWARDED_AMOUNT_TO_DATE";
 	public static final String AWARD_INSTRUMENT = "AWARD_INSTRUMENT";
 	public static final String NSF_DIRECTORATE = "NSF_DIRECTORATE";
 	public static final String NSF_ORGANIZATION = "NSF_ORGANIZATION";
 	public static final String ABSTRACT_TEXT = "ABSTRACT_TEXT";
 	
-	// AwardOccurences (Award - NSFFile) Relationship Information
+	// AwardOccurence (Award - NSFFile) Relationship Information
 	public static final String AWARD_OCCURRENCES_AWARD_FOREIGN_KEY = "AO_AWARD_FK";
 	public static final String AWARD_OCCURRENCES_NSF_FILE_FOREIGN_KEY = "AO_NSF_FILE_FK";
 
-	// FieldOfApplications (FieldOfApplication - Award) Relationship Information
-	public static final String FIELD_OF_APPLICATIONS_FIELD_OF_APPLICATION_FOREIGN_KEY = "FOAS_FIELD_OF_APPLICATION_FK";
+	// AwardFieldOfApplication (FieldOfApplication - Award) Relationship Information
+	public static final String FIELD_OF_APPLICATIONS_FIELD_OF_APPLICATION_FOREIGN_KEY 
+									= "FOAS_FIELD_OF_APPLICATION_FK";
 	public static final String FIELD_OF_APPLICATIONS_AWARD_FOREIGN_KEY = "FOAS_AWARD_FK";
 
 	// Investigator (Person - Award) Relationship Information
@@ -104,19 +118,22 @@ public class NSFDatabase {
 	public static final String STATE = "STATE";
 	public static final String IS_MAIN_PI = "IS_MAIN_PI";
 	
-	// InvestigatorOrganizations (Investigator - Organization) Relationship Information
-	public static final String INVESTIGATOR_ORGANIZATIONS_INVESTIGATOR_FOREIGN_KEY = "IOS_INVESTIGATOR_FK";
-	public static final String INVESTIGATOR_ORGANIZATIONS_ORGANIZATION_FOREIGN_KEY = "IOS_ORGANIZATION_FK";
+	// InvestigatorOrganization (Investigator - Organization) Relationship Information
+	public static final String INVESTIGATOR_ORGANIZATIONS_INVESTIGATOR_FOREIGN_KEY 
+									= "IOS_INVESTIGATOR_FK";
+	public static final String INVESTIGATOR_ORGANIZATIONS_ORGANIZATION_FOREIGN_KEY 
+									= "IOS_ORGANIZATION_FK";
 	
 	// ProgramManager (Person - Award) Relationship Information
 	public static final String PROGRAM_MANAGER_PERSON_FOREIGN_KEY = "PM_PERSON_FK";
 	public static final String PROGRAM_MANAGER_AWARD_FOREIGN_KEY = "PM_AWARD_FK";
 	
-	// ProgramNameAndElementCodes (Program - Award) Relationship Information
-	public static final String PROGRAM_NAME_AND_ELEMENT_CODES_PROGRAM_FOREIGN_KEY = "PNEC_PROGRAM_FK";
+	// ProgramNameAndElementCode (Program - Award) Relationship Information
+	public static final String PROGRAM_NAME_AND_ELEMENT_CODES_PROGRAM_FOREIGN_KEY 
+									= "PNEC_PROGRAM_FK";
 	public static final String PROGRAM_NAME_AND_ELEMENT_CODES_AWARD_FOREIGN_KEY = "PNEC_AWARD_FK";	
 	
-	// ProgramReferenceCodes (Program - Award) Relationship Information
+	// ProgramReferenceCode (Program - Award) Relationship Information
 	public static final String PROGRAM_REFERENCE_CODES_PROGRAM_FOREIGN_KEY = "PRC_PROGRAM_FK";
 	public static final String PROGRAM_REFERENCE_CODES_AWARD_FOREIGN_KEY = "PRC_AWARD_FK";	
 	

@@ -5,8 +5,6 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.sql.SQLException;
 import java.util.Dictionary;
-import java.util.HashMap;
-import java.util.Map;
 
 import org.cishell.framework.CIShellContext;
 import org.cishell.framework.algorithm.Algorithm;
@@ -20,12 +18,14 @@ import org.cishell.service.database.DatabaseService;
 import org.osgi.service.log.LogService;
 
 import au.com.bytecode.opencsv.CSVReader;
-import edu.iu.cns.database.loader.framework.RowItemContainer;
 import edu.iu.cns.database.loader.framework.utilities.DatabaseModel;
 import edu.iu.cns.database.loader.framework.utilities.DerbyDatabaseCreator;
-import edu.iu.scipolicy.loader.nsf.db.model.entity.Award;
+import edu.iu.scipolicy.loader.nsf.db.exception.NSFDatabaseCreationException;
+import edu.iu.scipolicy.loader.nsf.db.exception.NSFReadingException;
+import edu.iu.scipolicy.loader.nsf.db.utilities.NSFMetadata;
 import edu.iu.scipolicy.loader.nsf.db.utilities.NSFTableModelParser;
-import edu.iu.scipolicy.utilities.nsf.NsfNames;
+import edu.iu.scipolicy.utilities.nsf.NSF_Database_FieldNames;
+import edu.iu.scipolicy.utilities.nsf.NSF_CSV_FieldNames;
 
 /**
  * @author cdtank
@@ -35,88 +35,124 @@ import edu.iu.scipolicy.utilities.nsf.NsfNames;
 public class NSFDatabaseLoaderAlgorithm implements Algorithm {
 	
 	private Data[] data;
-    private Dictionary parameters;
 	private LogService logger;
 	private DatabaseService databaseProvider;
 	
-    public static final String AGGREGATE_ON_COLUMN = "aggregateoncolumn";
-    
     public NSFDatabaseLoaderAlgorithm(Data[] data, 
     								  Dictionary parameters,
     								  CIShellContext context) {
     	
         this.data = data;
-        this.parameters = parameters;
 		this.logger = (LogService) context.getService(LogService.class.getName());
         this.databaseProvider =
         	(DatabaseService) context.getService(DatabaseService.class.getName());
 	}
 
     public Data[] execute() throws AlgorithmExecutionException {
-    
-
-		File nsfCsv = (File) data[0].getData();
     	
-//    	File nsfCsv = new File("C:\\Documents and Settings\\cdtank\\workspace\\edu.iu.scipolicy.loader.nsf.db\\sample_nsf.csv");
-
-    	Data output = null;
-		
+    	/*
+    	 * Get the file data.
+    	 * */
+		File nsfCsv = (File) data[0].getData();
 		CSVReader nsfCsvReader;
+		
 		try {
 			
+			/*
+	    	 * Get a CSV handler for the file object.
+	    	 * */
 			nsfCsvReader = createNsfCsvReader(nsfCsv);
 			
-			Map<String, Integer> nSFFieldsColumnNameToColumnIndex = 
-				createMapFromNsfColumnNameToColumnIndex(nsfCsvReader);
-			
-			DatabaseModel inMemoryModel = new NSFTableModelParser()
-											.createInMemoryModel(nSFFieldsColumnNameToColumnIndex, 
-																 nsfCsvReader,
-																 nsfCsv);
-			
-			RowItemContainer<Award> rw = (RowItemContainer<Award>) inMemoryModel.getRowItemListByDatabaseTableName("AWARD");
-			
-			/*System.out.println(rw.getSchema());
-			
-			for (RowItem<Award> aw : rw.getItems()) {
-				
-				System.out.println(aw.getAttributes());
-				
-				System.out.println("|||||||||||||||||||||||||||||||||||||||||||||||||||");
-				System.out.println("|||||||||||||||||||||||||||||||||||||||||||||||||||");
-				
-			}*/
-			
-			Database database = DerbyDatabaseCreator.createFromModel(databaseProvider, inMemoryModel, "NSF");
+			/*
+			 * Create in-memory nsf model with all its entities & relationships.
+			 * */
+			DatabaseModel inMemoryModel = createInMemoryNSFModel(nsfCsv, nsfCsvReader, logger);
 			
 			/*
-			 * After getting the output in table format make it available to the user.
+			 * Extract the actual database from the in-memory model. 
 			 * */
-			//TODO: replcae null with the actual db object  data
-			output = new BasicData(database, NSFDatabase.NSF_DATABASE_MIME_TYPE);
-	    	Dictionary<String, Object> parentMetadata = data[0].getMetadata();
-	    	Dictionary<String, Object> metadata = output.getMetadata();
-	    	metadata.put(
-	    		DataProperty.LABEL, "NSF Database From " + parentMetadata.get(DataProperty.LABEL));
-	    	metadata.put(DataProperty.TYPE, DataProperty.DATABASE_TYPE);
-	    	metadata.put(DataProperty.PARENT, data[0]);
+			Database database = convertNSFInMemoryModelToDatabase(inMemoryModel);
 			
+			/*
+			 * Provide the finished database in the data manager.
+			 * */
+			return annotateOutputData(database);
 			
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (DatabaseCreationException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (SQLException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+			throw new AlgorithmExecutionException(e.getMessage(), e);
+		} catch (NSFReadingException e) {
+			throw new AlgorithmExecutionException(e.getMessage(), e);
+		} catch (NSFDatabaseCreationException e) {
+			throw new AlgorithmExecutionException(e.getMessage(), e);
+		} 
 		
-
-		
-		return new Data[]{output};
     }
+
+	/**
+	 * @param database
+	 * @return
+	 */
+	@SuppressWarnings("unchecked")
+	private Data[] annotateOutputData(Database database) {
+		Data output = new BasicData(database, NSF_Database_FieldNames.NSF_DATABASE_MIME_TYPE);
+		Dictionary<String, Object> parentMetadata = data[0].getMetadata();
+		Dictionary<String, Object> metadata = output.getMetadata();
+		metadata.put(
+			DataProperty.LABEL, "NSF Database From " + parentMetadata.get(DataProperty.LABEL));
+		metadata.put(DataProperty.TYPE, DataProperty.DATABASE_TYPE);
+		metadata.put(DataProperty.PARENT, data[0]);
+		
+		return new Data[] { output };
+	}
+
+	/**
+	 * @param nsfCsv
+	 * @param nsfCsvReader
+	 * @param logger 
+	 * @return
+	 * @throws AlgorithmExecutionException
+	 * @throws IOException
+	 */
+	private DatabaseModel createInMemoryNSFModel(File nsfCsv,
+												 CSVReader nsfCsvReader, 
+												 LogService logger) 
+			throws NSFReadingException {
+		String[] nsfFileColumnNames = getNsfFileColumnNames(nsfCsvReader);
+		
+		/*
+		 * Generate metadata of the NSF File. 
+		 * */
+		NSFMetadata nsfMetadata = new NSFMetadata(nsfFileColumnNames, nsfCsv);
+		
+		DatabaseModel inMemoryModel;
+		try {
+			inMemoryModel = new NSFTableModelParser()
+									.parseModel(nsfCsvReader,
+												nsfMetadata,
+												logger);
+		} catch (IOException e) {
+			throw new NSFReadingException(e.getMessage(), e);
+		}
+		return inMemoryModel;
+	}
+
+	/**
+	 * @param inMemoryModel
+	 * @return
+	 * @throws AlgorithmExecutionException 
+	 * @throws DatabaseCreationException
+	 * @throws SQLException
+	 */
+	private Database convertNSFInMemoryModelToDatabase(
+			DatabaseModel inMemoryModel) throws NSFDatabaseCreationException {
+		try {
+			return DerbyDatabaseCreator.createFromModel(databaseProvider, inMemoryModel, "NSF");
+		} catch (DatabaseCreationException e) {
+			throw new NSFDatabaseCreationException(e.getMessage(), e); 
+		} catch (SQLException e) {
+			throw new NSFDatabaseCreationException(e.getMessage(), e); 
+		}
+	}
 
 	private static CSVReader createNsfCsvReader(File nsfCsv) throws IOException {
 		//TODO: Currently we only support "csv" nsf files, not "excel" nsf files.
@@ -139,7 +175,7 @@ public class NSFDatabaseLoaderAlgorithm implements Algorithm {
 		 * TODO: If this approach seems inefficient refactor to use better approach or library
 		 * since the current library is not flexible enough. 
 		 * */
-		if (nsfCsvReader.readNext().length < 26) {
+		if (nsfCsvReader.readNext().length < NSF_CSV_FieldNames.CSV.DEFAULT_TOTAL_NSF_FIELDS) {
 			return new CSVReader(new FileReader(nsfCsv),
 								 secondaryFieldSeparator, 
 								 fieldQuoteCharacter, 
@@ -154,29 +190,24 @@ public class NSFDatabaseLoaderAlgorithm implements Algorithm {
 		}
 		
 		
-	}
 
-	private static Map<String, Integer> createMapFromNsfColumnNameToColumnIndex(CSVReader nsfCsvReader) 
-		throws AlgorithmExecutionException, IOException {
-		String[] columnNames = nsfCsvReader.readNext();
-		if (columnNames == null || columnNames.length == 0) {
-			throw new AlgorithmExecutionException("Cannot read in an empty nsf file");
-		}
+	}
 	
-		Map<String, Integer> columnNameToColumnIndex = new HashMap<String, Integer>();
-		for (int columnIndex = 0; columnIndex < columnNames.length; columnIndex++) {
-			columnNameToColumnIndex.put(columnNames[columnIndex].trim(), columnIndex);
+	private static String[] getNsfFileColumnNames(CSVReader nsfCsvReader) 
+			throws NSFReadingException {
+		
+		String[] columnNames;
+		try {
+			columnNames = nsfCsvReader.readNext();
+			
+			if (columnNames == null || columnNames.length == 0) {
+				throw new NSFReadingException("Cannot read in an empty nsf file");
+			}
+			
+			return columnNames;
+			
+		} catch (IOException e) {
+			throw new NSFReadingException(e.getMessage(), e);
 		}
-		
-		/*
-		 * Hard coding the column index for "Award Number". Since there is a duplicate
-		 * column for the same with Same Name. Already emailed NSF about this.
-		 * Analyzed good sample set of NSF Fields to summize that "Award Number" in the
-		 * 0th position is more stable than the 24th Position.  
-		 * */
-		columnNameToColumnIndex.put(NsfNames.CSV.AWARD_NUMBER, 0);
-		
-		return columnNameToColumnIndex;
 	}
-
 }

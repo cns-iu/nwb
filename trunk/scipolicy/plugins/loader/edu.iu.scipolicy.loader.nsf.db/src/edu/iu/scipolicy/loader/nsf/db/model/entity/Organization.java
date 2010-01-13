@@ -9,18 +9,18 @@ import edu.iu.cns.database.loader.framework.DerbyFieldType;
 import edu.iu.cns.database.loader.framework.Entity;
 import edu.iu.cns.database.loader.framework.Schema;
 import edu.iu.cns.database.loader.framework.utilities.DatabaseTableKeyGenerator;
-import edu.iu.scipolicy.loader.nsf.db.NSFDatabase;
+import edu.iu.scipolicy.utilities.nsf.NSF_Database_FieldNames;
 
 public class Organization extends Entity<Organization> implements Comparable<Organization>{
 
 	public static final Schema<Organization> SCHEMA = new Schema<Organization>(
 			true,
-			NSFDatabase.ORGANIZATION_NAME, DerbyFieldType.TEXT,
-			NSFDatabase.ORGANIZATION_PHONE, DerbyFieldType.TEXT,
-			NSFDatabase.ORGANIZATION_STREET_ADDRESS, DerbyFieldType.TEXT,
-			NSFDatabase.ORGANIZATION_CITY, DerbyFieldType.TEXT,
-			NSFDatabase.ORGANIZATION_STATE, DerbyFieldType.TEXT,
-			NSFDatabase.ORGANIZATION_ZIP, DerbyFieldType.TEXT
+			NSF_Database_FieldNames.ORGANIZATION_NAME, DerbyFieldType.TEXT,
+			NSF_Database_FieldNames.ORGANIZATION_PHONE, DerbyFieldType.TEXT,
+			NSF_Database_FieldNames.ORGANIZATION_STREET_ADDRESS, DerbyFieldType.TEXT,
+			NSF_Database_FieldNames.ORGANIZATION_CITY, DerbyFieldType.TEXT,
+			NSF_Database_FieldNames.ORGANIZATION_STATE, DerbyFieldType.TEXT,
+			NSF_Database_FieldNames.ORGANIZATION_ZIP, DerbyFieldType.TEXT
 			);
 
 	private String name;
@@ -58,12 +58,12 @@ public class Organization extends Entity<Organization> implements Comparable<Org
 															   String state,
 															   String zip) {
 		Dictionary<String, Comparable<?>> attributes = new Hashtable<String, Comparable<?>>();
-		attributes.put(NSFDatabase.ORGANIZATION_NAME, name);
-		attributes.put(NSFDatabase.ORGANIZATION_PHONE, phone);
-		attributes.put(NSFDatabase.ORGANIZATION_STREET_ADDRESS, streetAddress);
-		attributes.put(NSFDatabase.ORGANIZATION_CITY, city);
-		attributes.put(NSFDatabase.ORGANIZATION_STATE, state);
-		attributes.put(NSFDatabase.ORGANIZATION_ZIP, zip);
+		attributes.put(NSF_Database_FieldNames.ORGANIZATION_NAME, name);
+		attributes.put(NSF_Database_FieldNames.ORGANIZATION_PHONE, phone);
+		attributes.put(NSF_Database_FieldNames.ORGANIZATION_STREET_ADDRESS, streetAddress);
+		attributes.put(NSF_Database_FieldNames.ORGANIZATION_CITY, city);
+		attributes.put(NSF_Database_FieldNames.ORGANIZATION_STATE, state);
+		attributes.put(NSF_Database_FieldNames.ORGANIZATION_ZIP, zip);
 
 		return attributes;
 	}

@@ -7,17 +7,17 @@ import edu.iu.cns.database.loader.framework.DerbyFieldType;
 import edu.iu.cns.database.loader.framework.Entity;
 import edu.iu.cns.database.loader.framework.Schema;
 import edu.iu.cns.database.loader.framework.utilities.DatabaseTableKeyGenerator;
-import edu.iu.scipolicy.loader.nsf.db.NSFDatabase;
+import edu.iu.scipolicy.utilities.nsf.NSF_Database_FieldNames;
 
 public class Person extends Entity<Person> implements Comparable<Person>{
 	
 	public static final Schema<Person> SCHEMA = new Schema<Person>(
 			true,
-			NSFDatabase.LAST_NAME, DerbyFieldType.TEXT,
-			NSFDatabase.FIRST_NAME, DerbyFieldType.TEXT,
-			NSFDatabase.MIDDLE_INITIAL, DerbyFieldType.TEXT,
-			NSFDatabase.ORIGINAL_INPUT_NAME, DerbyFieldType.TEXT,
-			NSFDatabase.FORMATTED_FULL_NAME, DerbyFieldType.TEXT
+			NSF_Database_FieldNames.LAST_NAME, DerbyFieldType.TEXT,
+			NSF_Database_FieldNames.FIRST_NAME, DerbyFieldType.TEXT,
+			NSF_Database_FieldNames.MIDDLE_INITIAL, DerbyFieldType.TEXT,
+			NSF_Database_FieldNames.ORIGINAL_INPUT_NAME, DerbyFieldType.TEXT,
+			NSF_Database_FieldNames.FORMATTED_FULL_NAME, DerbyFieldType.TEXT
 			);
 	
 	private String lastName;
@@ -61,11 +61,11 @@ public class Person extends Entity<Person> implements Comparable<Person>{
 													   String formattedFullName,
 													   String originalInputName) {
 		Dictionary<String, Comparable<?>> attributes = new Hashtable<String, Comparable<?>>();
-		attributes.put(NSFDatabase.LAST_NAME, lastName);
-		attributes.put(NSFDatabase.FIRST_NAME, firstName);
-		attributes.put(NSFDatabase.MIDDLE_INITIAL, middleInitial);
-		attributes.put(NSFDatabase.ORIGINAL_INPUT_NAME, originalInputName);
-		attributes.put(NSFDatabase.FORMATTED_FULL_NAME, formattedFullName);
+		attributes.put(NSF_Database_FieldNames.LAST_NAME, lastName);
+		attributes.put(NSF_Database_FieldNames.FIRST_NAME, firstName);
+		attributes.put(NSF_Database_FieldNames.MIDDLE_INITIAL, middleInitial);
+		attributes.put(NSF_Database_FieldNames.ORIGINAL_INPUT_NAME, originalInputName);
+		attributes.put(NSF_Database_FieldNames.FORMATTED_FULL_NAME, formattedFullName);
 
 		return attributes;
 	}

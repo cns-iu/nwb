@@ -10,21 +10,25 @@ import edu.iu.cns.database.loader.framework.DerbyFieldType;
 import edu.iu.cns.database.loader.framework.Entity;
 import edu.iu.cns.database.loader.framework.Schema;
 import edu.iu.cns.database.loader.framework.utilities.DatabaseTableKeyGenerator;
-import edu.iu.scipolicy.loader.nsf.db.NSFDatabase;
+import edu.iu.scipolicy.utilities.nsf.NSF_Database_FieldNames;
 
-public class Award extends Entity<Award> implements Comparable<Award>{
+public class Award extends Entity<Award> implements Comparable<Award> {
 	public static final Schema<Award> SCHEMA = new Schema<Award>(
 			true,
-			NSFDatabase.AWARD_NUMBER, DerbyFieldType.TEXT,
-			NSFDatabase.TITLE, DerbyFieldType.TEXT,
-			NSFDatabase.START_DATE, DerbyFieldType.DATE,
-			NSFDatabase.EXPIRATION_DATE, DerbyFieldType.DATE,
-			NSFDatabase.LAST_AMMENDMENT_DATE, DerbyFieldType.DATE,
-			NSFDatabase.AWARDED_AMOUNT_TO_DATE, DerbyFieldType.DOUBLE,
-			NSFDatabase.AWARD_INSTRUMENT, DerbyFieldType.TEXT,
-			NSFDatabase.NSF_DIRECTORATE, DerbyFieldType.TEXT,
-			NSFDatabase.NSF_ORGANIZATION, DerbyFieldType.TEXT,
-			NSFDatabase.ABSTRACT_TEXT, DerbyFieldType.TEXT
+			NSF_Database_FieldNames.AWARD_NUMBER, DerbyFieldType.TEXT,
+			NSF_Database_FieldNames.TITLE, DerbyFieldType.TEXT,
+			NSF_Database_FieldNames.START_DATE, DerbyFieldType.DATE,
+			NSF_Database_FieldNames.RAW_START_DATE, DerbyFieldType.TEXT,
+			NSF_Database_FieldNames.EXPIRATION_DATE, DerbyFieldType.DATE,
+			NSF_Database_FieldNames.RAW_EXPIRATION_DATE, DerbyFieldType.TEXT,
+			NSF_Database_FieldNames.LAST_AMMENDMENT_DATE, DerbyFieldType.DATE,
+			NSF_Database_FieldNames.RAW_LAST_AMMENDMENT_DATE, DerbyFieldType.TEXT,
+			NSF_Database_FieldNames.AWARDED_AMOUNT_TO_DATE, DerbyFieldType.DOUBLE,
+			NSF_Database_FieldNames.RAW_AWARDED_AMOUNT_TO_DATE, DerbyFieldType.TEXT,
+			NSF_Database_FieldNames.AWARD_INSTRUMENT, DerbyFieldType.TEXT,
+			NSF_Database_FieldNames.NSF_DIRECTORATE, DerbyFieldType.TEXT,
+			NSF_Database_FieldNames.NSF_ORGANIZATION, DerbyFieldType.TEXT,
+			NSF_Database_FieldNames.ABSTRACT_TEXT, DerbyFieldType.TEXT
 			);
 	
 	private String awardNumber;
@@ -37,14 +41,22 @@ public class Award extends Entity<Award> implements Comparable<Award>{
 	private String nSFDirectorate;
 	private String nSFOrganization;
 	private String abstractText;
+	private String rawStartDate;
+	private String rawAwardedAmountToDate;
+	private String rawLastAmmendmentDate;
+	private String rawExpirationDate;
 
 	public Award(DatabaseTableKeyGenerator keyGenerator,
 				 String awardNumber,
 				 String title, 
 				 Date startDate,
+				 String rawStartDate, 
 				 Date expirationDate, 
+				 String rawExpirationDate, 
 				 Date lastAmmendmentDate,
-				 double awardedAmountToDate, 
+				 String rawLastAmmendmentDate, 
+				 double awardedAmountToDate,
+				 String rawAwardedAmountToDate,
 				 String awardInstrument,
 				 String nSFDirectorate, 
 				 String nSFOrganization, 
@@ -52,9 +64,13 @@ public class Award extends Entity<Award> implements Comparable<Award>{
 		super(keyGenerator, createAttributes(awardNumber, 
 											 title, 
 											 startDate, 
+											 rawStartDate, 
 											 expirationDate, 
-											 lastAmmendmentDate, 
-											 awardedAmountToDate, 
+											 rawExpirationDate, 
+											 lastAmmendmentDate,
+											 rawLastAmmendmentDate, 
+											 awardedAmountToDate,
+											 rawAwardedAmountToDate, 
 											 awardInstrument, 
 											 nSFDirectorate, 
 											 nSFOrganization, 
@@ -62,9 +78,13 @@ public class Award extends Entity<Award> implements Comparable<Award>{
 		this.awardNumber = awardNumber;
 		this.title = title;
 		this.startDate = startDate;
+		this.rawStartDate = rawStartDate;
 		this.expirationDate = expirationDate;
+		this.rawExpirationDate = rawExpirationDate;
 		this.lastAmmendmentDate = lastAmmendmentDate;
+		this.rawLastAmmendmentDate = rawLastAmmendmentDate;
 		this.awardedAmountToDate = awardedAmountToDate;
+		this.rawAwardedAmountToDate = rawAwardedAmountToDate;
 		this.awardInstrument = awardInstrument;
 		this.nSFDirectorate = nSFDirectorate;
 		this.nSFOrganization = nSFOrganization;
@@ -75,24 +95,44 @@ public class Award extends Entity<Award> implements Comparable<Award>{
 	private static Dictionary<String, Comparable<?>> createAttributes(String awardNumber,
 													   String title,
 													   Date startDate,
+													   String rawStartDate, 
 													   Date expirationDate,
+													   String rawExpirationDate, 
 													   Date lastAmmendmentDate,
+													   String rawLastAmmendmentDate, 
 													   double awardedAmountToDate,
+													   String rawAwardedAmountToDate,
 													   String awardInstrument,
 													   String nSFDirectorate,
 													   String nSFOrganization,
 													   String abstractText) {
 		Dictionary<String, Comparable<?>> attributes = new Hashtable<String, Comparable<?>>();
-		attributes.put(NSFDatabase.TITLE, title);
-		attributes.put(NSFDatabase.AWARD_NUMBER, awardNumber);
-		attributes.put(NSFDatabase.START_DATE, startDate);
-		attributes.put(NSFDatabase.EXPIRATION_DATE, expirationDate);
-		attributes.put(NSFDatabase.LAST_AMMENDMENT_DATE, lastAmmendmentDate);
-		attributes.put(NSFDatabase.AWARDED_AMOUNT_TO_DATE, awardedAmountToDate);
-		attributes.put(NSFDatabase.AWARD_INSTRUMENT, awardInstrument);
-		attributes.put(NSFDatabase.NSF_DIRECTORATE, nSFDirectorate);
-		attributes.put(NSFDatabase.NSF_ORGANIZATION, nSFOrganization);
-		attributes.put(NSFDatabase.ABSTRACT_TEXT, abstractText);
+		attributes.put(NSF_Database_FieldNames.TITLE, title);
+		attributes.put(NSF_Database_FieldNames.AWARD_NUMBER, awardNumber);
+		
+		if (startDate != null) {
+			attributes.put(NSF_Database_FieldNames.START_DATE, startDate);
+		}
+		
+		attributes.put(NSF_Database_FieldNames.RAW_START_DATE, rawStartDate);
+		
+		if (expirationDate != null) {
+			attributes.put(NSF_Database_FieldNames.EXPIRATION_DATE, expirationDate);
+		}
+		
+		attributes.put(NSF_Database_FieldNames.RAW_EXPIRATION_DATE, rawExpirationDate);
+
+		if (lastAmmendmentDate != null) {
+			attributes.put(NSF_Database_FieldNames.LAST_AMMENDMENT_DATE, lastAmmendmentDate);
+		}
+		
+		attributes.put(NSF_Database_FieldNames.RAW_LAST_AMMENDMENT_DATE, rawLastAmmendmentDate);
+		attributes.put(NSF_Database_FieldNames.AWARDED_AMOUNT_TO_DATE, awardedAmountToDate);
+		attributes.put(NSF_Database_FieldNames.RAW_AWARDED_AMOUNT_TO_DATE, rawAwardedAmountToDate);
+		attributes.put(NSF_Database_FieldNames.AWARD_INSTRUMENT, awardInstrument);
+		attributes.put(NSF_Database_FieldNames.NSF_DIRECTORATE, nSFDirectorate);
+		attributes.put(NSF_Database_FieldNames.NSF_ORGANIZATION, nSFOrganization);
+		attributes.put(NSF_Database_FieldNames.ABSTRACT_TEXT, abstractText);
 		
 		return attributes;
 	}
@@ -147,11 +187,25 @@ public class Award extends Entity<Award> implements Comparable<Award>{
 		return abstractText;
 	}
 
+	public void addArbitraryColumn(String name, String value) {
+		if (SCHEMA.findField(name) == null) {
+			SCHEMA.addField(name, DerbyFieldType.TEXT);
+		}
+		getAttributes().put(name, value);
+	}
 
 	@Override
 	public void merge(Award otherItem) {
-		//TODO: do something about date comparisiosn & amount awarded.
-		//i.e. in general anything non-string
+		this.rawStartDate = StringUtilities.simpleMerge(this.rawStartDate,
+														otherItem.getRawStartDate());
+		this.rawExpirationDate = StringUtilities.simpleMerge(this.rawExpirationDate,
+															 otherItem.getRawExpirationDate());
+		this.rawLastAmmendmentDate = StringUtilities.simpleMerge(
+											this.rawLastAmmendmentDate,
+											otherItem.getRawLastAmmendmentDate());
+		this.rawAwardedAmountToDate = StringUtilities.simpleMerge(
+											this.rawAwardedAmountToDate,
+											otherItem.getRawAwardedAmountToDate());
 		this.awardInstrument = StringUtilities.simpleMerge(this.awardInstrument,
 														   otherItem.getAwardInstrument());
 		this.nSFDirectorate = StringUtilities.simpleMerge(this.nSFDirectorate,
@@ -159,7 +213,7 @@ public class Award extends Entity<Award> implements Comparable<Award>{
 		this.nSFOrganization = StringUtilities.simpleMerge(this.nSFOrganization,
 					  									   otherItem.getNSFOrganization());	 
 		this.abstractText = StringUtilities.simpleMerge(this.abstractText,
-					  									otherItem.getAbstractText());	 
+					  									otherItem.getAbstractText());
 	}
 
 
@@ -179,5 +233,25 @@ public class Award extends Entity<Award> implements Comparable<Award>{
 	public int compareTo(Award o) {
 		// TODO Auto-generated method stub
 		return 0;
+	}
+
+
+	public String getRawStartDate() {
+		return rawStartDate;
+	}
+
+
+	public String getRawAwardedAmountToDate() {
+		return rawAwardedAmountToDate;
+	}
+
+
+	public String getRawLastAmmendmentDate() {
+		return rawLastAmmendmentDate;
+	}
+
+
+	public String getRawExpirationDate() {
+		return rawExpirationDate;
 	}
 }

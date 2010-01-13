@@ -7,25 +7,25 @@ import edu.iu.cns.database.loader.framework.DerbyFieldType;
 import edu.iu.cns.database.loader.framework.Entity;
 import edu.iu.cns.database.loader.framework.Schema;
 import edu.iu.cns.database.loader.framework.utilities.DatabaseTableKeyGenerator;
-import edu.iu.scipolicy.loader.nsf.db.NSFDatabase;
 import edu.iu.scipolicy.loader.nsf.db.model.entity.Award;
 import edu.iu.scipolicy.loader.nsf.db.model.entity.Person;
+import edu.iu.scipolicy.utilities.nsf.NSF_Database_FieldNames;
 
 public class Investigator extends Entity<Investigator> implements Comparable<Investigator>{
 	
 	public static final Schema<Investigator> SCHEMA = new Schema<Investigator>(
 			true,
-			NSFDatabase.INVESTIGATOR_AWARD_FOREIGN_KEY, DerbyFieldType.FOREIGN_KEY,
-			NSFDatabase.INVESTIGATOR_PERSON_FOREIGN_KEY, DerbyFieldType.FOREIGN_KEY,
-			NSFDatabase.IS_MAIN_PI, DerbyFieldType.BOOLEAN,
-			NSFDatabase.EMAIL_ADDRESS, DerbyFieldType.TEXT,
-			NSFDatabase.STATE, DerbyFieldType.TEXT
+			NSF_Database_FieldNames.INVESTIGATOR_AWARD_FOREIGN_KEY, DerbyFieldType.FOREIGN_KEY,
+			NSF_Database_FieldNames.INVESTIGATOR_PERSON_FOREIGN_KEY, DerbyFieldType.FOREIGN_KEY,
+			NSF_Database_FieldNames.IS_MAIN_PI, DerbyFieldType.BOOLEAN,
+			NSF_Database_FieldNames.EMAIL_ADDRESS, DerbyFieldType.TEXT,
+			NSF_Database_FieldNames.STATE, DerbyFieldType.TEXT
 			).
 			FOREIGN_KEYS(
-					NSFDatabase.INVESTIGATOR_AWARD_FOREIGN_KEY,
-						NSFDatabase.AWARD_TABLE_NAME,
-					NSFDatabase.INVESTIGATOR_PERSON_FOREIGN_KEY,
-						NSFDatabase.PERSON_TABLE_NAME);
+					NSF_Database_FieldNames.INVESTIGATOR_AWARD_FOREIGN_KEY,
+						NSF_Database_FieldNames.AWARD_TABLE_NAME,
+					NSF_Database_FieldNames.INVESTIGATOR_PERSON_FOREIGN_KEY,
+						NSF_Database_FieldNames.PERSON_TABLE_NAME);
 	
 	private boolean isMainPI;
 	private String emailAddress;
@@ -64,11 +64,11 @@ public class Investigator extends Entity<Investigator> implements Comparable<Inv
 			String state) {
 		
 		Dictionary<String, Comparable<?>> attributes = new Hashtable<String, Comparable<?>>();
-		attributes.put(NSFDatabase.INVESTIGATOR_AWARD_FOREIGN_KEY, award.getPrimaryKey());
-		attributes.put(NSFDatabase.INVESTIGATOR_PERSON_FOREIGN_KEY, person.getPrimaryKey());
-		attributes.put(NSFDatabase.EMAIL_ADDRESS, emailAddress);
-		attributes.put(NSFDatabase.STATE, state);
-		attributes.put(NSFDatabase.IS_MAIN_PI, isMainPI);
+		attributes.put(NSF_Database_FieldNames.INVESTIGATOR_AWARD_FOREIGN_KEY, award.getPrimaryKey());
+		attributes.put(NSF_Database_FieldNames.INVESTIGATOR_PERSON_FOREIGN_KEY, person.getPrimaryKey());
+		attributes.put(NSF_Database_FieldNames.EMAIL_ADDRESS, emailAddress);
+		attributes.put(NSF_Database_FieldNames.STATE, state);
+		attributes.put(NSF_Database_FieldNames.IS_MAIN_PI, isMainPI);
 
 		return attributes;
 	}

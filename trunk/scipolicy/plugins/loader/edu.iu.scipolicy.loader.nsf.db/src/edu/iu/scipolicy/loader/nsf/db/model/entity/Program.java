@@ -9,14 +9,14 @@ import edu.iu.cns.database.loader.framework.DerbyFieldType;
 import edu.iu.cns.database.loader.framework.Entity;
 import edu.iu.cns.database.loader.framework.Schema;
 import edu.iu.cns.database.loader.framework.utilities.DatabaseTableKeyGenerator;
-import edu.iu.scipolicy.loader.nsf.db.NSFDatabase;
+import edu.iu.scipolicy.utilities.nsf.NSF_Database_FieldNames;
 
 public class Program extends Entity<Program> implements Comparable<Program> {
 
 	public static final Schema<Program> SCHEMA = new Schema<Program>(
 			true,
-			NSFDatabase.PROGRAM_NAME, DerbyFieldType.TEXT,
-			NSFDatabase.FUNDING_CODE, DerbyFieldType.TEXT
+			NSF_Database_FieldNames.PROGRAM_NAME, DerbyFieldType.TEXT,
+			NSF_Database_FieldNames.FUNDING_CODE, DerbyFieldType.TEXT
 			);
 	
 	private String name;
@@ -34,8 +34,8 @@ public class Program extends Entity<Program> implements Comparable<Program> {
 	private static Dictionary<String, Comparable<?>> createAttributes(String name, 
 														String fundingCode) {
 		Dictionary<String, Comparable<?>> attributes = new Hashtable<String, Comparable<?>>();
-		attributes.put(NSFDatabase.PROGRAM_NAME, name);
-		attributes.put(NSFDatabase.FUNDING_CODE, fundingCode);
+		attributes.put(NSF_Database_FieldNames.PROGRAM_NAME, name);
+		attributes.put(NSF_Database_FieldNames.FUNDING_CODE, fundingCode);
 
 		return attributes;
 	}

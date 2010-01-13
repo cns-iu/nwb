@@ -9,14 +9,14 @@ import edu.iu.cns.database.loader.framework.DerbyFieldType;
 import edu.iu.cns.database.loader.framework.Entity;
 import edu.iu.cns.database.loader.framework.Schema;
 import edu.iu.cns.database.loader.framework.utilities.DatabaseTableKeyGenerator;
-import edu.iu.scipolicy.loader.nsf.db.NSFDatabase;
+import edu.iu.scipolicy.utilities.nsf.NSF_Database_FieldNames;
 
 public class NSFFile extends Entity<NSFFile> implements Comparable<NSFFile> {
 	public static final Schema<NSFFile> SCHEMA = new Schema<NSFFile>(
 			true,
-			NSFDatabase.FILE_NAME, DerbyFieldType.TEXT,
-			NSFDatabase.FILE_TYPE, DerbyFieldType.TEXT,
-			NSFDatabase.FILE_MD5_CHECKSUM, DerbyFieldType.TEXT);
+			NSF_Database_FieldNames.FILE_NAME, DerbyFieldType.TEXT,
+			NSF_Database_FieldNames.FILE_TYPE, DerbyFieldType.TEXT,
+			NSF_Database_FieldNames.FILE_MD5_CHECKSUM, DerbyFieldType.TEXT);
 	
 	private String fileName;
 	private String fileType;
@@ -51,9 +51,9 @@ public class NSFFile extends Entity<NSFFile> implements Comparable<NSFFile> {
 															   String fileType,
 															   String fileMD5Checksum) {
 		Dictionary<String, Comparable<?>> attributes = new Hashtable<String, Comparable<?>>();
-		attributes.put(NSFDatabase.FILE_NAME, fileName);
-		attributes.put(NSFDatabase.FILE_TYPE, fileType);
-		attributes.put(NSFDatabase.FILE_MD5_CHECKSUM, fileMD5Checksum);
+		attributes.put(NSF_Database_FieldNames.FILE_NAME, fileName);
+		attributes.put(NSF_Database_FieldNames.FILE_TYPE, fileType);
+		attributes.put(NSF_Database_FieldNames.FILE_MD5_CHECKSUM, fileMD5Checksum);
 
 		return attributes;
 	}

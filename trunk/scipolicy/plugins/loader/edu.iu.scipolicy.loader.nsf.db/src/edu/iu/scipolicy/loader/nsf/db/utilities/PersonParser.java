@@ -16,10 +16,11 @@ public class PersonParser {
 		String middleInitial = "";
 		String originalInputName = originalToken;
 		
+		// TODO: Considering adding additional/middle name fields.
 		/*
 		 * For Names which follow,
 		 * 		"LastName, FirstName"
-		 * 		"LastName, FirstInitial. FirstName"
+		 * 		"LastName, FirstInitial. FirstName"		(TODO: The FirstName may actually be MiddleName)
 		 * 		"LastName, FirstName (AlternativeName)"
 		 * Principal Investigators follow these syntax.
 		 * */
@@ -34,7 +35,7 @@ public class PersonParser {
 									nameTokens[0]));
 			firstName = StringUtilities.simpleClean(
 							StringUtilities.toSentenceCase(
-									nameTokens[1]));;
+									nameTokens[1]));
 			
 		} else {
 			
@@ -49,14 +50,14 @@ public class PersonParser {
 			
 			firstName = StringUtilities.simpleClean(
 					StringUtilities.toSentenceCase(
-							nameTokens[0]));;
+							nameTokens[0]));
 							
 			if (nameTokens.length == 2) {
 				lastName = StringUtilities.simpleClean(
 								StringUtilities.toSentenceCase(
 										nameTokens[1]));
 
-			} else if (nameTokens.length == 3){
+			} else if (nameTokens.length == 3) {
 				lastName = StringUtilities.simpleClean(
 								StringUtilities.toSentenceCase(
 										nameTokens[2]));

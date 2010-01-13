@@ -9,15 +9,15 @@ import edu.iu.cns.database.loader.framework.DerbyFieldType;
 import edu.iu.cns.database.loader.framework.Entity;
 import edu.iu.cns.database.loader.framework.Schema;
 import edu.iu.cns.database.loader.framework.utilities.DatabaseTableKeyGenerator;
-import edu.iu.scipolicy.loader.nsf.db.NSFDatabase;
+import edu.iu.scipolicy.utilities.nsf.NSF_Database_FieldNames;
 
 public class FieldOfApplication extends Entity<FieldOfApplication> implements Comparable<FieldOfApplication>{
 
 	public static final Schema<FieldOfApplication> SCHEMA = new Schema<FieldOfApplication>(
 			true,
-			NSFDatabase.ORIGINAL_INPUT_FIELD, DerbyFieldType.TEXT,
-			NSFDatabase.EXTRACTED_NUMERIC_FIELD, DerbyFieldType.TEXT,
-			NSFDatabase.EXTRACTED_TEXT_FIELD, DerbyFieldType.TEXT
+			NSF_Database_FieldNames.ORIGINAL_INPUT_FIELD, DerbyFieldType.TEXT,
+			NSF_Database_FieldNames.EXTRACTED_NUMERIC_FIELD, DerbyFieldType.TEXT,
+			NSF_Database_FieldNames.EXTRACTED_TEXT_FIELD, DerbyFieldType.TEXT
 			);
 	
 	private String originalInputField;
@@ -44,9 +44,9 @@ public class FieldOfApplication extends Entity<FieldOfApplication> implements Co
 													   String extractedNumericField,
 													   String extractedTextField) {
 		Dictionary<String, Comparable<?>> attributes = new Hashtable<String, Comparable<?>>();
-		attributes.put(NSFDatabase.ORIGINAL_INPUT_FIELD, originalInputField);
-		attributes.put(NSFDatabase.EXTRACTED_NUMERIC_FIELD, extractedNumericField);
-		attributes.put(NSFDatabase.EXTRACTED_TEXT_FIELD, extractedTextField);
+		attributes.put(NSF_Database_FieldNames.ORIGINAL_INPUT_FIELD, originalInputField);
+		attributes.put(NSF_Database_FieldNames.EXTRACTED_NUMERIC_FIELD, extractedNumericField);
+		attributes.put(NSF_Database_FieldNames.EXTRACTED_TEXT_FIELD, extractedTextField);
 
 		return attributes;
 	}
