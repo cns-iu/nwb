@@ -746,8 +746,7 @@ public class NSFTableModelParser {
 
 	private Date parseDate(String awardNumber, String dateString, String awardDateType) {
 		try {
-			java.util.Date standardDate = DateUtilities.parseDate(dateString);
-
+			java.util.Date standardDate = DateUtilities.parseDate(dateString, false);
 			return new java.sql.Date(standardDate.getTime());
 		} catch (ParseException parseDateException) {
 			String logMessage = "Error parsing \"" + awardDateType + "\"" 
