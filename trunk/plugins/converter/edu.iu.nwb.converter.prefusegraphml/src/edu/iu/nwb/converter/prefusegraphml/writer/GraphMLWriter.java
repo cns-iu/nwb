@@ -65,6 +65,8 @@ public class GraphMLWriter extends AbstractGraphWriter {
         TYPES.put(boolean.class, Tokens.BOOLEAN);
         TYPES.put(Boolean.class, Tokens.BOOLEAN);
         TYPES.put(String.class, Tokens.STRING);
+        TYPES.put(java.util.Date.class, Tokens.DATE);
+        TYPES.put(java.sql.Date.class, Tokens.DATE);
     }
     
     /**
