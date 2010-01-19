@@ -53,7 +53,6 @@ public class ExtractGraph implements Algorithm {
 		this.sourceColumn = (String) this.parameters.get(ExtractGraphFactory.SOURCE_COLUMN_KEY);
 		this.targetColumn = (String) this.parameters.get(ExtractGraphFactory.TARGET_COLUMN_KEY);
 		this.directed = (Boolean) this.parameters.get(ExtractGraphFactory.DIRECTED_KEY);
-
 		if(parameters.get(ExtractGraphFactory.LABEL_KEY) != null) {
 			this.label = (String) parameters.get(ExtractGraphFactory.LABEL_KEY);
 		}
@@ -145,7 +144,7 @@ public class ExtractGraph implements Algorithm {
 	private Data wrapWithMetadata(Graph extractedGraph) {
 		Data outputData = new BasicData(extractedGraph, Graph.class.getName());
 		Dictionary metadata = outputData.getMetadata();
-		metadata.put(DataProperty.LABEL, "Extracted Graph");
+		metadata.put(DataProperty.LABEL, this.label);
 		metadata.put(DataProperty.PARENT, data[0]);
 		metadata.put(DataProperty.TYPE, DataProperty.NETWORK_TYPE);
 		return outputData;

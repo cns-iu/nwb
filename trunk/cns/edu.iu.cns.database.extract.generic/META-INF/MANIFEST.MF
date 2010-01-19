@@ -50,4 +50,6 @@ Import-Package: org.cishell.framework;version="1.0.0",
  prefuse.visual.tuple
 X-AutoStart: true
 Service-Component: OSGI-INF/extract_table.xml, OSGI-INF/extract_graph.xml
-Export-Package: edu.iu.cns.database.extract.generic
+Export-Package: edu.iu.cns.database.extract.generic,
+ edu.iu.cns.database.extract.generic.service
+Bundle-Activator: edu.iu.cns.database.extract.generic.Activator
