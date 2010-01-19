@@ -69,7 +69,7 @@ public class ISI {
 	// Publisher Entity Information
 	public static final String PUBLISHER_CITY = "PUBLISHER_CITY";
 	public static final String PUBLISHER_NAME = "PUBLISHER_NAME";
-	public static final String PUBLISHER_SOURCE = "PUBLISHER_SOURCE";
+	public static final String PUBLISHER_SOURCE = "PUBLISHER_SOURCE_FK";
 	public static final String PUBLISHER_WEB_ADDRESS = "PUBLISHER_WEB_ADDRESS";
 
 	public static final String[] PUBLISHER_FIELD_NAMES =
@@ -112,7 +112,7 @@ public class ISI {
 	public static final String REFERENCE_STRING = "RAW_REFERENCE_STRING";
 	public static final String REFERENCE_VOLUME = "REFERENCE_VOLUME";
 	public static final String SOURCE = "REFERENCE_SOURCE_FK";
-	public static final String YEAR = "REFERENCE_YEAR_FK";
+	public static final String YEAR = "REFERENCE_YEAR";
 
 	public static final String[] REFERENCE_FIELD_NAMES = new String[] {
 		ANNOTATION,
