@@ -9,17 +9,17 @@ import edu.iu.cns.database.loader.framework.Entity;
 import edu.iu.cns.database.loader.framework.Schema;
 import edu.iu.cns.database.loader.framework.DerbyFieldType;
 import edu.iu.cns.database.loader.framework.utilities.DatabaseTableKeyGenerator;
-import edu.iu.nwb.shared.isiutil.database.ISIDatabase;
+import edu.iu.nwb.shared.isiutil.database.ISI;
 
 public class Address extends Entity<Address> implements Comparable<Address> {
 	public static final Schema<Address> SCHEMA = new Schema<Address>(
 		true,
-		ISIDatabase.ADDRESS_CITY, DerbyFieldType.TEXT,
-		ISIDatabase.COUNTRY, DerbyFieldType.TEXT,
-		ISIDatabase.POSTAL_CODE, DerbyFieldType.TEXT,
-		ISIDatabase.RAW_ADDRESS, DerbyFieldType.TEXT,
-		ISIDatabase.STATE_OR_PROVINCE, DerbyFieldType.TEXT,
-		ISIDatabase.STREET_ADDRESS, DerbyFieldType.TEXT);
+		ISI.ADDRESS_CITY, DerbyFieldType.TEXT,
+		ISI.COUNTRY, DerbyFieldType.TEXT,
+		ISI.POSTAL_CODE, DerbyFieldType.TEXT,
+		ISI.RAW_ADDRESS, DerbyFieldType.TEXT,
+		ISI.STATE_OR_PROVINCE, DerbyFieldType.TEXT,
+		ISI.STREET_ADDRESS, DerbyFieldType.TEXT);
 
 	private String city;
 	private String country;
@@ -105,12 +105,12 @@ public class Address extends Entity<Address> implements Comparable<Address> {
 			String streetAddress,
 			String stateOrProvince) {
 		Dictionary<String, Comparable<?>> attributes = new Hashtable<String, Comparable<?>>();
-		attributes.put(ISIDatabase.ADDRESS_CITY, city);
-		attributes.put(ISIDatabase.COUNTRY, country);
-		attributes.put(ISIDatabase.POSTAL_CODE, postalCode);
-		attributes.put(ISIDatabase.RAW_ADDRESS, rawAddress);
-		attributes.put(ISIDatabase.STATE_OR_PROVINCE, stateOrProvince);
-		attributes.put(ISIDatabase.STREET_ADDRESS, streetAddress);
+		attributes.put(ISI.ADDRESS_CITY, city);
+		attributes.put(ISI.COUNTRY, country);
+		attributes.put(ISI.POSTAL_CODE, postalCode);
+		attributes.put(ISI.RAW_ADDRESS, rawAddress);
+		attributes.put(ISI.STATE_OR_PROVINCE, stateOrProvince);
+		attributes.put(ISI.STREET_ADDRESS, streetAddress);
 
 		return attributes;
 	}

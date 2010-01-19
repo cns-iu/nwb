@@ -20,7 +20,7 @@ import prefuse.data.Table;
 import edu.iu.cns.database.loader.framework.utilities.DatabaseModel;
 import edu.iu.cns.database.loader.framework.utilities.DerbyDatabaseCreator;
 import edu.iu.nwb.shared.isiutil.ISITableReaderHelper;
-import edu.iu.nwb.shared.isiutil.database.ISIDatabase;
+import edu.iu.nwb.shared.isiutil.database.ISI;
 import edu.iu.nwb.shared.isiutil.exception.ISILoadingException;
 import edu.iu.nwb.shared.isiutil.exception.ReadISIFileException;
 import edu.iu.scipolicy.database.isi.loader.utilities.ISITablePreprocessor;
@@ -114,7 +114,7 @@ public class ISIDatabaseLoaderAlgorithm implements Algorithm {
     }
 
     private Data[] annotateOutputData(Database isiDatabase, Data parentData) {
-    	Data data = new BasicData(isiDatabase, ISIDatabase.ISI_DATABASE_MIME_TYPE);
+    	Data data = new BasicData(isiDatabase, ISI.ISI_DATABASE_MIME_TYPE);
     	Dictionary<String, Object> parentMetadata = parentData.getMetadata();
     	Dictionary<String, Object> metadata = data.getMetadata();
     	metadata.put(

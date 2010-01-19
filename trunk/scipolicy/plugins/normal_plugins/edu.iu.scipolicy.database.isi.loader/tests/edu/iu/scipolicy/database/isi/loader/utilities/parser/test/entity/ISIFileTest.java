@@ -9,7 +9,7 @@ import org.junit.Test;
 
 import edu.iu.cns.database.loader.framework.RowItemContainer;
 import edu.iu.cns.database.loader.framework.utilities.DatabaseModel;
-import edu.iu.nwb.shared.isiutil.database.ISIDatabase;
+import edu.iu.nwb.shared.isiutil.database.ISI;
 import edu.iu.scipolicy.database.isi.loader.model.entity.Document;
 import edu.iu.scipolicy.database.isi.loader.model.entity.ISIFile;
 import edu.iu.scipolicy.database.isi.loader.model.entity.relationship.DocumentOccurrence;
@@ -36,7 +36,7 @@ public class ISIFileTest extends RowItemTest {
 	public void testZeroISIFilesGetParsed() throws Exception {
 		DatabaseModel model = parseTestData(EMPTY_TEST_DATA_PATH);
 		RowItemContainer<ISIFile> isiFiles = model.getRowItemListOfTypeByDatabaseTableName(
-			ISIDatabase.ISI_FILE_TABLE_NAME);
+			ISI.ISI_FILE_TABLE_NAME);
 
 		if (isiFiles == null) {
 			fail("isiFiles == null.  It shouldn't.  Ever.");
@@ -53,12 +53,12 @@ public class ISIFileTest extends RowItemTest {
 	public void testOneISIFileGetsParsed() throws Exception {
 		DatabaseModel model = parseTestData(ONE_ISI_FILE_TEST_DATA_PATH);
 		RowItemContainer<Document> documents = model.getRowItemListOfTypeByDatabaseTableName(
-			ISIDatabase.DOCUMENT_TABLE_NAME);
+			ISI.DOCUMENT_TABLE_NAME);
 		RowItemContainer<ISIFile> isiFiles = model.getRowItemListOfTypeByDatabaseTableName(
-			ISIDatabase.ISI_FILE_TABLE_NAME);
+			ISI.ISI_FILE_TABLE_NAME);
 		RowItemContainer<DocumentOccurrence> documentOccurrences =
 			model.getRowItemListOfTypeByDatabaseTableName(
-				ISIDatabase.DOCUMENT_OCCURRENCES_TABLE_NAME);
+				ISI.DOCUMENT_OCCURRENCES_TABLE_NAME);
 
 		checkItemContainerValidity(documents, "documents");
 		checkItemCount(documents, 2);
@@ -85,7 +85,7 @@ public class ISIFileTest extends RowItemTest {
 	public void testMultipleISIFilesGetParsed() throws Exception {
 		DatabaseModel model = parseTestData(MULTIPLE_ISI_FILES_WITH_NO_MERGES_TEST_DATA_PATH);
 		RowItemContainer<ISIFile> isiFiles = model.getRowItemListOfTypeByDatabaseTableName(
-			ISIDatabase.ISI_FILE_TABLE_NAME);
+			ISI.ISI_FILE_TABLE_NAME);
 
 		if (isiFiles == null) {
 			fail("isiFiles == null.  It shouldn't.  Ever.");
@@ -102,7 +102,7 @@ public class ISIFileTest extends RowItemTest {
 	public void testMultipleISIFilesGetMerged() throws Exception {
 		DatabaseModel model = parseTestData(ZERO_ISI_FILES_TEST_DATA_PATH);
 		RowItemContainer<ISIFile> isiFiles = model.getRowItemListOfTypeByDatabaseTableName(
-			ISIDatabase.ISI_FILE_TABLE_NAME);
+			ISI.ISI_FILE_TABLE_NAME);
 
 		if (isiFiles == null) {
 			fail("isiFiles == null.  It shouldn't.  Ever.");

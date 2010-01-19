@@ -6,18 +6,18 @@ import java.util.Hashtable;
 import edu.iu.cns.database.loader.framework.RowItem;
 import edu.iu.cns.database.loader.framework.Schema;
 import edu.iu.cns.database.loader.framework.DerbyFieldType;
-import edu.iu.nwb.shared.isiutil.database.ISIDatabase;
+import edu.iu.nwb.shared.isiutil.database.ISI;
 import edu.iu.scipolicy.database.isi.loader.model.entity.Document;
 import edu.iu.scipolicy.database.isi.loader.model.entity.Reference;
 
 public class CitedReference extends RowItem<CitedReference> {
 	public static final Schema<CitedReference> SCHEMA = new Schema<CitedReference>(
 		false,
-		ISIDatabase.CITED_REFERENCES_DOCUMENT_FOREIGN_KEY, DerbyFieldType.FOREIGN_KEY,
-		ISIDatabase.CITED_REFERENCES_REFERENCE_FOREIGN_KEY, DerbyFieldType.FOREIGN_KEY).
+		ISI.CITED_REFERENCES_DOCUMENT_FOREIGN_KEY, DerbyFieldType.FOREIGN_KEY,
+		ISI.CITED_REFERENCES_REFERENCE_FOREIGN_KEY, DerbyFieldType.FOREIGN_KEY).
 		FOREIGN_KEYS(
-			ISIDatabase.CITED_REFERENCES_DOCUMENT_FOREIGN_KEY, ISIDatabase.DOCUMENT_TABLE_NAME,
-			ISIDatabase.CITED_REFERENCES_REFERENCE_FOREIGN_KEY, ISIDatabase.REFERENCE_TABLE_NAME);
+			ISI.CITED_REFERENCES_DOCUMENT_FOREIGN_KEY, ISI.DOCUMENT_TABLE_NAME,
+			ISI.CITED_REFERENCES_REFERENCE_FOREIGN_KEY, ISI.REFERENCE_TABLE_NAME);
 
 	private Document document;
 	private Reference reference;
@@ -57,8 +57,8 @@ public class CitedReference extends RowItem<CitedReference> {
 	public static Dictionary<String, Comparable<?>> createAttributes(
 			Document document, Reference reference) {
 		Dictionary<String, Comparable<?>> attributes = new Hashtable<String, Comparable<?>>();
-		attributes.put(ISIDatabase.CITED_REFERENCES_DOCUMENT_FOREIGN_KEY, document.getPrimaryKey());
-		attributes.put(ISIDatabase.CITED_REFERENCES_REFERENCE_FOREIGN_KEY, reference.getPrimaryKey());
+		attributes.put(ISI.CITED_REFERENCES_DOCUMENT_FOREIGN_KEY, document.getPrimaryKey());
+		attributes.put(ISI.CITED_REFERENCES_REFERENCE_FOREIGN_KEY, reference.getPrimaryKey());
 
 		return attributes;
 	}

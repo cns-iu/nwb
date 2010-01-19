@@ -10,7 +10,7 @@ import org.junit.Test;
 
 import edu.iu.cns.database.loader.framework.RowItemContainer;
 import edu.iu.cns.database.loader.framework.utilities.DatabaseModel;
-import edu.iu.nwb.shared.isiutil.database.ISIDatabase;
+import edu.iu.nwb.shared.isiutil.database.ISI;
 import edu.iu.scipolicy.database.isi.loader.model.entity.Document;
 import edu.iu.scipolicy.database.isi.loader.model.entity.Person;
 import edu.iu.scipolicy.database.isi.loader.model.entity.relationship.Author;
@@ -39,7 +39,7 @@ public class AuthorsTest extends RowItemTest {
 	public void testNoAuthorsWereParsed() throws Exception {
 		DatabaseModel model = parseTestData(EMPTY_TEST_DATA_PATH);
 		RowItemContainer<Author> authors = model.getRowItemListOfTypeByDatabaseTableName(
-			ISIDatabase.AUTHORS_TABLE_NAME);
+			ISI.AUTHORS_TABLE_NAME);
 
 		checkItemContainerValidity(authors, "authors");
 		checkItemCount(authors, 0);
@@ -49,11 +49,11 @@ public class AuthorsTest extends RowItemTest {
 	public void testOneAuthorWasParsed() throws Exception {
 		DatabaseModel model = parseTestData(ONE_AUTHOR_TEST_DATA_PATH);
 		RowItemContainer<Document> documents = model.getRowItemListOfTypeByDatabaseTableName(
-			ISIDatabase.DOCUMENT_TABLE_NAME);
+			ISI.DOCUMENT_TABLE_NAME);
 		RowItemContainer<Person> people = model.getRowItemListOfTypeByDatabaseTableName(
-			ISIDatabase.PERSON_TABLE_NAME);
+			ISI.PERSON_TABLE_NAME);
 		RowItemContainer<Author> authors = model.getRowItemListOfTypeByDatabaseTableName(
-			ISIDatabase.AUTHORS_TABLE_NAME);
+			ISI.AUTHORS_TABLE_NAME);
 
 		checkItemContainerValidity(documents, "documents");
 		checkItemCount(documents, 1);
@@ -75,11 +75,11 @@ public class AuthorsTest extends RowItemTest {
 	public void testOneAuthorWasParsed_FirstAuthor() throws Exception {
 		DatabaseModel model = parseTestData(ONE_AUTHOR_TEST_DATA_PATH);
 		RowItemContainer<Document> documents = model.getRowItemListOfTypeByDatabaseTableName(
-			ISIDatabase.DOCUMENT_TABLE_NAME);
+			ISI.DOCUMENT_TABLE_NAME);
 		RowItemContainer<Person> people = model.getRowItemListOfTypeByDatabaseTableName(
-			ISIDatabase.PERSON_TABLE_NAME);
+			ISI.PERSON_TABLE_NAME);
 		RowItemContainer<Author> authors = model.getRowItemListOfTypeByDatabaseTableName(
-			ISIDatabase.AUTHORS_TABLE_NAME);
+			ISI.AUTHORS_TABLE_NAME);
 
 		checkItemContainerValidity(documents, "documents");
 		checkItemCount(documents, 1);
@@ -104,11 +104,11 @@ public class AuthorsTest extends RowItemTest {
 	public void testMultipleAuthorsWereParsed() throws Exception {
 		DatabaseModel model = parseTestData(MULTIPLE_AUTHORS_TEST_DATA_PATH);
 		RowItemContainer<Document> documents = model.getRowItemListOfTypeByDatabaseTableName(
-			ISIDatabase.DOCUMENT_TABLE_NAME);
+			ISI.DOCUMENT_TABLE_NAME);
 		RowItemContainer<Person> people = model.getRowItemListOfTypeByDatabaseTableName(
-			ISIDatabase.PERSON_TABLE_NAME);
+			ISI.PERSON_TABLE_NAME);
 		RowItemContainer<Author> authors = model.getRowItemListOfTypeByDatabaseTableName(
-			ISIDatabase.AUTHORS_TABLE_NAME);
+			ISI.AUTHORS_TABLE_NAME);
 
 		checkItemContainerValidity(documents, "documents");
 		checkItemCount(documents, 2);
@@ -136,11 +136,11 @@ public class AuthorsTest extends RowItemTest {
 	public void testMultipleAuthorsWereParsed_FirstAuthor() throws Exception {
 		DatabaseModel model = parseTestData(MULTIPLE_AUTHORS_TEST_DATA_PATH);
 		RowItemContainer<Document> documents = model.getRowItemListOfTypeByDatabaseTableName(
-			ISIDatabase.DOCUMENT_TABLE_NAME);
+			ISI.DOCUMENT_TABLE_NAME);
 		RowItemContainer<Person> people = model.getRowItemListOfTypeByDatabaseTableName(
-			ISIDatabase.PERSON_TABLE_NAME);
+			ISI.PERSON_TABLE_NAME);
 		RowItemContainer<Author> authors = model.getRowItemListOfTypeByDatabaseTableName(
-			ISIDatabase.AUTHORS_TABLE_NAME);
+			ISI.AUTHORS_TABLE_NAME);
 
 		checkItemContainerValidity(documents, "documents");
 		checkItemCount(documents, 2);
@@ -168,11 +168,11 @@ public class AuthorsTest extends RowItemTest {
 	public void testMultipleAuthorsWithOneEmailAddressSpecified() throws Exception {
 		DatabaseModel model = parseTestData(MULTIPLE_AUTHORS_TEST_DATA_PATH);
 		RowItemContainer<Document> documents = model.getRowItemListOfTypeByDatabaseTableName(
-			ISIDatabase.DOCUMENT_TABLE_NAME);
+			ISI.DOCUMENT_TABLE_NAME);
 		RowItemContainer<Person> people = model.getRowItemListOfTypeByDatabaseTableName(
-			ISIDatabase.PERSON_TABLE_NAME);
+			ISI.PERSON_TABLE_NAME);
 		RowItemContainer<Author> authors = model.getRowItemListOfTypeByDatabaseTableName(
-			ISIDatabase.AUTHORS_TABLE_NAME);
+			ISI.AUTHORS_TABLE_NAME);
 
 		checkItemContainerValidity(documents, "documents");
 		checkItemCount(documents, 2);
@@ -200,11 +200,11 @@ public class AuthorsTest extends RowItemTest {
 	public void testMultipleAuthorsWithDifferentEmailAddressesSpecified() throws Exception {
 		DatabaseModel model = parseTestData(MULTIPLE_AUTHORS_TEST_DATA_PATH);
 		RowItemContainer<Document> documents = model.getRowItemListOfTypeByDatabaseTableName(
-			ISIDatabase.DOCUMENT_TABLE_NAME);
+			ISI.DOCUMENT_TABLE_NAME);
 		RowItemContainer<Person> people = model.getRowItemListOfTypeByDatabaseTableName(
-			ISIDatabase.PERSON_TABLE_NAME);
+			ISI.PERSON_TABLE_NAME);
 		RowItemContainer<Author> authors = model.getRowItemListOfTypeByDatabaseTableName(
-			ISIDatabase.AUTHORS_TABLE_NAME);
+			ISI.AUTHORS_TABLE_NAME);
 
 		checkItemContainerValidity(documents, "documents");
 		checkItemCount(documents, 2);

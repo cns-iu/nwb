@@ -9,16 +9,16 @@ import edu.iu.cns.database.loader.framework.Entity;
 import edu.iu.cns.database.loader.framework.Schema;
 import edu.iu.cns.database.loader.framework.DerbyFieldType;
 import edu.iu.cns.database.loader.framework.utilities.DatabaseTableKeyGenerator;
-import edu.iu.nwb.shared.isiutil.database.ISIDatabase;
+import edu.iu.nwb.shared.isiutil.database.ISI;
 
 public class Publisher extends Entity<Publisher> implements Comparable<Publisher> {
 	public final static Schema<Publisher> SCHEMA = new Schema<Publisher>(
 		true,
-		ISIDatabase.PUBLISHER_CITY, DerbyFieldType.TEXT,
-		ISIDatabase.PUBLISHER_NAME, DerbyFieldType.TEXT,
-		ISIDatabase.PUBLISHER_SOURCE, DerbyFieldType.FOREIGN_KEY,
-		ISIDatabase.PUBLISHER_WEB_ADDRESS, DerbyFieldType.TEXT).
-		FOREIGN_KEYS(ISIDatabase.PUBLISHER_SOURCE, ISIDatabase.SOURCE_TABLE_NAME);
+		ISI.PUBLISHER_CITY, DerbyFieldType.TEXT,
+		ISI.PUBLISHER_NAME, DerbyFieldType.TEXT,
+		ISI.PUBLISHER_SOURCE, DerbyFieldType.FOREIGN_KEY,
+		ISI.PUBLISHER_WEB_ADDRESS, DerbyFieldType.TEXT).
+		FOREIGN_KEYS(ISI.PUBLISHER_SOURCE, ISI.SOURCE_TABLE_NAME);
 
 	private String city;
 	private String name;
@@ -54,7 +54,7 @@ public class Publisher extends Entity<Publisher> implements Comparable<Publisher
 	public void setSource(Source source) {
 		this.source = source;
 		// TODO: Figure out a better way to do this?
-		getAttributes().put(ISIDatabase.PUBLISHER_SOURCE, this.source.getPrimaryKey());
+		getAttributes().put(ISI.PUBLISHER_SOURCE, this.source.getPrimaryKey());
 	}
 
 	public int compareTo(Publisher otherPublisher) {
@@ -84,9 +84,9 @@ public class Publisher extends Entity<Publisher> implements Comparable<Publisher
 	public static Dictionary<String, Comparable<?>> createAttributes(
 			String city, String name, String webAddress) {
 		Dictionary<String, Comparable<?>> attributes = new Hashtable<String, Comparable<?>>();
-		attributes.put(ISIDatabase.PUBLISHER_CITY, city);
-		attributes.put(ISIDatabase.PUBLISHER_NAME, name);
-		attributes.put(ISIDatabase.PUBLISHER_WEB_ADDRESS, webAddress);
+		attributes.put(ISI.PUBLISHER_CITY, city);
+		attributes.put(ISI.PUBLISHER_NAME, name);
+		attributes.put(ISI.PUBLISHER_WEB_ADDRESS, webAddress);
 
 		return attributes;
 	}

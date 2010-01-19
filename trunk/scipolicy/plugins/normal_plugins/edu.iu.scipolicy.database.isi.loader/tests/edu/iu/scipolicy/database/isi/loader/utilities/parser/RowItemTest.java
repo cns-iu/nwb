@@ -20,7 +20,7 @@ import edu.iu.cns.database.loader.framework.RowItemContainer;
 import edu.iu.cns.database.loader.framework.utilities.DatabaseModel;
 import edu.iu.cns.shared.utilities.Pair;
 import edu.iu.nwb.shared.isiutil.ISITableReaderHelper;
-import edu.iu.nwb.shared.isiutil.database.ISIDatabase;
+import edu.iu.nwb.shared.isiutil.database.ISI;
 import edu.iu.nwb.shared.isiutil.exception.ReadISIFileException;
 import edu.iu.scipolicy.database.isi.loader.utilities.ISITablePreprocessor;
 import edu.iu.scipolicy.database.isi.loader.utilities.parser.ISITableModelParser;
@@ -57,7 +57,7 @@ public class RowItemTest {
 
 	public static void checkItemOrderListed(RowItem<?> item, int providedOrderListed) {
 		Dictionary<String, Comparable<?>> attributes = item.getAttributes();
-		Integer orderListed = (Integer)attributes.get(ISIDatabase.ORDER_LISTED);
+		Integer orderListed = (Integer)attributes.get(ISI.ORDER_LISTED);
 
 		if (orderListed != null) {
 			int orderListedValue = orderListed.intValue();

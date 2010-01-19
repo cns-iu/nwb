@@ -7,18 +7,18 @@ import edu.iu.cns.database.loader.framework.DerbyFieldType;
 import edu.iu.cns.database.loader.framework.Entity;
 import edu.iu.cns.database.loader.framework.Schema;
 import edu.iu.cns.database.loader.framework.utilities.DatabaseTableKeyGenerator;
-import edu.iu.nwb.shared.isiutil.database.ISIDatabase;
+import edu.iu.nwb.shared.isiutil.database.ISI;
 
 public class Person extends Entity<Person> implements Comparable<Person> {
 	public static final Schema<Person> SCHEMA = new Schema<Person>(
 		true,
-		ISIDatabase.ADDITIONAL_NAME, DerbyFieldType.TEXT,
-		ISIDatabase.FAMILY_NAME, DerbyFieldType.TEXT,
-		ISIDatabase.FIRST_INITIAL, DerbyFieldType.TEXT,
-		ISIDatabase.FULL_NAME, DerbyFieldType.TEXT,
-		ISIDatabase.MIDDLE_INITIAL, DerbyFieldType.TEXT,
-		ISIDatabase.PERSONAL_NAME, DerbyFieldType.TEXT,
-		ISIDatabase.UNSPLIT_ABBREVIATED_NAME, DerbyFieldType.TEXT);
+		ISI.ADDITIONAL_NAME, DerbyFieldType.TEXT,
+		ISI.FAMILY_NAME, DerbyFieldType.TEXT,
+		ISI.FIRST_INITIAL, DerbyFieldType.TEXT,
+		ISI.FULL_NAME, DerbyFieldType.TEXT,
+		ISI.MIDDLE_INITIAL, DerbyFieldType.TEXT,
+		ISI.PERSONAL_NAME, DerbyFieldType.TEXT,
+		ISI.UNSPLIT_ABBREVIATED_NAME, DerbyFieldType.TEXT);
 
 	private String additionalName;
 	private String familyName;
@@ -104,13 +104,13 @@ public class Person extends Entity<Person> implements Comparable<Person> {
 			String personalName,
 			String unsplitName) {
 		Dictionary<String, Comparable<?>> attributes = new Hashtable<String, Comparable<?>>();
-		attributes.put(ISIDatabase.ADDITIONAL_NAME, additionalName);
-		attributes.put(ISIDatabase.FAMILY_NAME, familyName);
-		attributes.put(ISIDatabase.FIRST_INITIAL, firstInitial);
-		attributes.put(ISIDatabase.FULL_NAME, fullName);
-		attributes.put(ISIDatabase.MIDDLE_INITIAL, middleInitial);
-		attributes.put(ISIDatabase.PERSONAL_NAME, personalName);
-		attributes.put(ISIDatabase.UNSPLIT_ABBREVIATED_NAME, unsplitName);
+		attributes.put(ISI.ADDITIONAL_NAME, additionalName);
+		attributes.put(ISI.FAMILY_NAME, familyName);
+		attributes.put(ISI.FIRST_INITIAL, firstInitial);
+		attributes.put(ISI.FULL_NAME, fullName);
+		attributes.put(ISI.MIDDLE_INITIAL, middleInitial);
+		attributes.put(ISI.PERSONAL_NAME, personalName);
+		attributes.put(ISI.UNSPLIT_ABBREVIATED_NAME, unsplitName);
 
 		return attributes;
 	}

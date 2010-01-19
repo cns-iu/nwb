@@ -7,7 +7,7 @@ import org.junit.Test;
 
 import edu.iu.cns.database.loader.framework.RowItemContainer;
 import edu.iu.cns.database.loader.framework.utilities.DatabaseModel;
-import edu.iu.nwb.shared.isiutil.database.ISIDatabase;
+import edu.iu.nwb.shared.isiutil.database.ISI;
 import edu.iu.scipolicy.database.isi.loader.model.entity.Document;
 import edu.iu.scipolicy.database.isi.loader.model.entity.Person;
 import edu.iu.scipolicy.database.isi.loader.model.entity.relationship.Editor;
@@ -31,7 +31,7 @@ public class EditorsTest extends RowItemTest {
 	public void testNoEditorsWereParsed() throws Exception {
 		DatabaseModel model = parseTestData(EMPTY_TEST_DATA_PATH);
 		RowItemContainer<Editor> editors = model.getRowItemListOfTypeByDatabaseTableName(
-			ISIDatabase.EDITORS_TABLE_NAME);
+			ISI.EDITORS_TABLE_NAME);
 
 		checkItemContainerValidity(editors, "editors");
 		checkItemCount(editors, 0);
@@ -41,11 +41,11 @@ public class EditorsTest extends RowItemTest {
 	public void testOneEditorWasParsed() throws Exception {
 		DatabaseModel model = parseTestData(ONE_EDITOR_TEST_DATA_PATH);
 		RowItemContainer<Document> documents = model.getRowItemListOfTypeByDatabaseTableName(
-			ISIDatabase.DOCUMENT_TABLE_NAME);
+			ISI.DOCUMENT_TABLE_NAME);
 		RowItemContainer<Person> people = model.getRowItemListOfTypeByDatabaseTableName(
-			ISIDatabase.PERSON_TABLE_NAME);
+			ISI.PERSON_TABLE_NAME);
 		RowItemContainer<Editor> editors = model.getRowItemListOfTypeByDatabaseTableName(
-			ISIDatabase.EDITORS_TABLE_NAME);
+			ISI.EDITORS_TABLE_NAME);
 
 		checkItemContainerValidity(documents, "documents");
 		checkItemCount(documents, 1);
@@ -69,11 +69,11 @@ public class EditorsTest extends RowItemTest {
 	public void testMultipleEditorsWereParsed() throws Exception {
 		DatabaseModel model = parseTestData(MULTIPLE_EDITORS_TEST_DATA_PATH);
 		RowItemContainer<Document> documents = model.getRowItemListOfTypeByDatabaseTableName(
-			ISIDatabase.DOCUMENT_TABLE_NAME);
+			ISI.DOCUMENT_TABLE_NAME);
 		RowItemContainer<Person> people = model.getRowItemListOfTypeByDatabaseTableName(
-			ISIDatabase.PERSON_TABLE_NAME);
+			ISI.PERSON_TABLE_NAME);
 		RowItemContainer<Editor> editors = model.getRowItemListOfTypeByDatabaseTableName(
-			ISIDatabase.EDITORS_TABLE_NAME);
+			ISI.EDITORS_TABLE_NAME);
 
 		checkItemContainerValidity(documents, "documents");
 		checkItemCount(documents, 1);

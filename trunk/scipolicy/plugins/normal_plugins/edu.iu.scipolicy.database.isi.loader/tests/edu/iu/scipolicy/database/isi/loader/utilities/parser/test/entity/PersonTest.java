@@ -9,7 +9,7 @@ import org.junit.Test;
 
 import edu.iu.cns.database.loader.framework.RowItemContainer;
 import edu.iu.cns.database.loader.framework.utilities.DatabaseModel;
-import edu.iu.nwb.shared.isiutil.database.ISIDatabase;
+import edu.iu.nwb.shared.isiutil.database.ISI;
 import edu.iu.scipolicy.database.isi.loader.model.entity.Person;
 import edu.iu.scipolicy.database.isi.loader.utilities.parser.RowItemTest;
 import edu.iu.scipolicy.database.isi.loader.utilities.parser.test.relationship.AuthorsTest;
@@ -27,7 +27,7 @@ public class PersonTest extends RowItemTest {
 	public void testZeroAuthorsGetParsed() throws Exception {
 		DatabaseModel model = parseTestData(EMPTY_TEST_DATA_PATH);
 		RowItemContainer<Person> people = model.getRowItemListOfTypeByDatabaseTableName(
-			ISIDatabase.PERSON_TABLE_NAME);
+			ISI.PERSON_TABLE_NAME);
 
 		checkItemContainerValidity(people, "people");
 		checkItemCount(people, 0);
@@ -37,7 +37,7 @@ public class PersonTest extends RowItemTest {
 	public void testOneAuthorGetsParsed() throws Exception {
 		DatabaseModel model = parseTestData(AuthorsTest.ONE_AUTHOR_TEST_DATA_PATH);
 		RowItemContainer<Person> people = model.getRowItemListOfTypeByDatabaseTableName(
-			ISIDatabase.PERSON_TABLE_NAME);
+			ISI.PERSON_TABLE_NAME);
 
 		checkItemContainerValidity(people, "people");
 		List<Person> items = (List<Person>)people.getItems();
@@ -50,7 +50,7 @@ public class PersonTest extends RowItemTest {
 	public void testMultipleAuthorsGetParsed() throws Exception {
 		DatabaseModel model = parseTestData(AuthorsTest.MULTIPLE_AUTHORS_TEST_DATA_PATH);
 		RowItemContainer<Person> people = model.getRowItemListOfTypeByDatabaseTableName(
-			ISIDatabase.PERSON_TABLE_NAME);
+			ISI.PERSON_TABLE_NAME);
 
 		checkItemContainerValidity(people, "people");
 		List<Person> items = (List<Person>)people.getItems();
@@ -66,7 +66,7 @@ public class PersonTest extends RowItemTest {
 	public void testOneAuthorGetsParsedFromOneReference() throws Exception {
 		DatabaseModel model = parseTestData(ONE_REFERENCE_AUTHOR_TEST_DATA_PATH);
 		RowItemContainer<Person> people = model.getRowItemListOfTypeByDatabaseTableName(
-			ISIDatabase.PERSON_TABLE_NAME);
+			ISI.PERSON_TABLE_NAME);
 
 		checkItemContainerValidity(people, "people");
 		List<Person> items = (List<Person>)people.getItems();
@@ -79,7 +79,7 @@ public class PersonTest extends RowItemTest {
 	public void testMultipleAuthorsGetParsedFromOneReference() throws Exception {
 		DatabaseModel model = parseTestData(MULTIPLE_REFERENCE_AUTHORS_TEST_DATA_PATH);
 		RowItemContainer<Person> people = model.getRowItemListOfTypeByDatabaseTableName(
-			ISIDatabase.PERSON_TABLE_NAME);
+			ISI.PERSON_TABLE_NAME);
 
 		checkItemContainerValidity(people, "people");
 		List<Person> items = (List<Person>)people.getItems();
@@ -93,7 +93,7 @@ public class PersonTest extends RowItemTest {
 	public void testAuthorsDoNotGetMerged() throws Exception {
 		DatabaseModel model = parseTestData(MULTIPLE_AUTHORS_WITH_THE_SAME_NAMES_TEST_DATA_PATH);
 		RowItemContainer<Person> people = model.getRowItemListOfTypeByDatabaseTableName(
-			ISIDatabase.PERSON_TABLE_NAME);
+			ISI.PERSON_TABLE_NAME);
 
 		checkItemContainerValidity(people, "people");
 		List<Person> items = (List<Person>)people.getItems();

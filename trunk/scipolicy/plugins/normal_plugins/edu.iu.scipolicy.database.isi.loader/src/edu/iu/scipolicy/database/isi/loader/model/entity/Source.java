@@ -9,22 +9,22 @@ import edu.iu.cns.database.loader.framework.Entity;
 import edu.iu.cns.database.loader.framework.Schema;
 import edu.iu.cns.database.loader.framework.DerbyFieldType;
 import edu.iu.cns.database.loader.framework.utilities.DatabaseTableKeyGenerator;
-import edu.iu.nwb.shared.isiutil.database.ISIDatabase;
+import edu.iu.nwb.shared.isiutil.database.ISI;
 
 public class Source extends Entity<Source> implements Comparable<Source> {
 	public final static Schema<Source> SCHEMA = new Schema<Source>(
 		true,
-		ISIDatabase.BOOK_SERIES_TITLE, DerbyFieldType.TEXT,
-		ISIDatabase.BOOK_SERIES_SUBTITLE, DerbyFieldType.TEXT,
-		ISIDatabase.CONFERENCE_HOST, DerbyFieldType.TEXT,
-		ISIDatabase.CONFERENCE_LOCATION, DerbyFieldType.TEXT,
-		ISIDatabase.CONFERENCE_SPONSORS, DerbyFieldType.TEXT,
-		ISIDatabase.CONFERENCE_TITLE, DerbyFieldType.TEXT,
-		ISIDatabase.FULL_TITLE, DerbyFieldType.TEXT,
-		ISIDatabase.ISO_TITLE_ABBREVIATION, DerbyFieldType.TEXT,
-		ISIDatabase.ISSN, DerbyFieldType.TEXT,
-		ISIDatabase.PUBLICATION_TYPE, DerbyFieldType.TEXT,
-		ISIDatabase.TWENTY_NINE_CHARACTER_SOURCE_TITLE_ABBREVIATION, DerbyFieldType.TEXT);
+		ISI.BOOK_SERIES_TITLE, DerbyFieldType.TEXT,
+		ISI.BOOK_SERIES_SUBTITLE, DerbyFieldType.TEXT,
+		ISI.CONFERENCE_HOST, DerbyFieldType.TEXT,
+		ISI.CONFERENCE_LOCATION, DerbyFieldType.TEXT,
+		ISI.CONFERENCE_SPONSORS, DerbyFieldType.TEXT,
+		ISI.CONFERENCE_TITLE, DerbyFieldType.TEXT,
+		ISI.FULL_TITLE, DerbyFieldType.TEXT,
+		ISI.ISO_TITLE_ABBREVIATION, DerbyFieldType.TEXT,
+		ISI.ISSN, DerbyFieldType.TEXT,
+		ISI.PUBLICATION_TYPE, DerbyFieldType.TEXT,
+		ISI.TWENTY_NINE_CHARACTER_SOURCE_TITLE_ABBREVIATION, DerbyFieldType.TEXT);
 
 	private String bookSeriesTitle;
 	private String bookSeriesSubtitle;
@@ -173,18 +173,18 @@ public class Source extends Entity<Source> implements Comparable<Source> {
 			String publicationType,
 			String twentyNineCharacterSourceTitleAbbreviation) {
 		Dictionary<String, Comparable<?>> attributes = new Hashtable<String, Comparable<?>>();
-		attributes.put(ISIDatabase.BOOK_SERIES_TITLE, bookSeriesTitle);
-		attributes.put(ISIDatabase.BOOK_SERIES_SUBTITLE, bookSeriesSubtitle);
-		attributes.put(ISIDatabase.CONFERENCE_HOST, conferenceHost);
-		attributes.put(ISIDatabase.CONFERENCE_LOCATION, conferenceLocation);
-		attributes.put(ISIDatabase.CONFERENCE_SPONSORS, conferenceSponsors);
-		attributes.put(ISIDatabase.CONFERENCE_TITLE, conferenceTitle);
-		attributes.put(ISIDatabase.FULL_TITLE, fullTitle);
-		attributes.put(ISIDatabase.ISO_TITLE_ABBREVIATION, isoTitleAbbreviation);
-		attributes.put(ISIDatabase.ISSN, issn);
-		attributes.put(ISIDatabase.PUBLICATION_TYPE, publicationType);
+		attributes.put(ISI.BOOK_SERIES_TITLE, bookSeriesTitle);
+		attributes.put(ISI.BOOK_SERIES_SUBTITLE, bookSeriesSubtitle);
+		attributes.put(ISI.CONFERENCE_HOST, conferenceHost);
+		attributes.put(ISI.CONFERENCE_LOCATION, conferenceLocation);
+		attributes.put(ISI.CONFERENCE_SPONSORS, conferenceSponsors);
+		attributes.put(ISI.CONFERENCE_TITLE, conferenceTitle);
+		attributes.put(ISI.FULL_TITLE, fullTitle);
+		attributes.put(ISI.ISO_TITLE_ABBREVIATION, isoTitleAbbreviation);
+		attributes.put(ISI.ISSN, issn);
+		attributes.put(ISI.PUBLICATION_TYPE, publicationType);
 		attributes.put(
-			ISIDatabase.TWENTY_NINE_CHARACTER_SOURCE_TITLE_ABBREVIATION,
+			ISI.TWENTY_NINE_CHARACTER_SOURCE_TITLE_ABBREVIATION,
 			twentyNineCharacterSourceTitleAbbreviation);
 
 		return attributes;

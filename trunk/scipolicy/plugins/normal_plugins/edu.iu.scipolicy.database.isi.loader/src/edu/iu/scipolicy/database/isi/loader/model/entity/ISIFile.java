@@ -9,14 +9,14 @@ import edu.iu.cns.database.loader.framework.Entity;
 import edu.iu.cns.database.loader.framework.Schema;
 import edu.iu.cns.database.loader.framework.DerbyFieldType;
 import edu.iu.cns.database.loader.framework.utilities.DatabaseTableKeyGenerator;
-import edu.iu.nwb.shared.isiutil.database.ISIDatabase;
+import edu.iu.nwb.shared.isiutil.database.ISI;
 
 public class ISIFile extends Entity<ISIFile> implements Comparable<ISIFile> {
 	public static final Schema<ISIFile> SCHEMA = new Schema<ISIFile>(
 		true,
-		ISIDatabase.FILE_FORMAT_VERSION_NUMBER, DerbyFieldType.TEXT,
-		ISIDatabase.FILE_NAME, DerbyFieldType.TEXT,
-		ISIDatabase.FILE_TYPE, DerbyFieldType.TEXT);
+		ISI.FILE_FORMAT_VERSION_NUMBER, DerbyFieldType.TEXT,
+		ISI.FILE_NAME, DerbyFieldType.TEXT,
+		ISI.FILE_TYPE, DerbyFieldType.TEXT);
 		
 	private String fileFormatVersionNumber;
 	private String fileName;
@@ -67,9 +67,9 @@ public class ISIFile extends Entity<ISIFile> implements Comparable<ISIFile> {
 	private static Dictionary<String, Comparable<?>> createAttributes(
 			String fileFormatVersionNumber, String fileName, String fileType) {
 		Dictionary<String, Comparable<?>> attributes = new Hashtable<String, Comparable<?>>();
-		attributes.put(ISIDatabase.FILE_FORMAT_VERSION_NUMBER, fileFormatVersionNumber);
-		attributes.put(ISIDatabase.FILE_NAME, fileName);
-		attributes.put(ISIDatabase.FILE_TYPE, fileType);
+		attributes.put(ISI.FILE_FORMAT_VERSION_NUMBER, fileFormatVersionNumber);
+		attributes.put(ISI.FILE_NAME, fileName);
+		attributes.put(ISI.FILE_TYPE, fileType);
 
 		return attributes;
 	}

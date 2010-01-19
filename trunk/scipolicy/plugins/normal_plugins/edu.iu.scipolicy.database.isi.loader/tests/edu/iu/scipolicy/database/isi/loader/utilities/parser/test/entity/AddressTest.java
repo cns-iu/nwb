@@ -9,7 +9,7 @@ import org.junit.Test;
 
 import edu.iu.cns.database.loader.framework.RowItemContainer;
 import edu.iu.cns.database.loader.framework.utilities.DatabaseModel;
-import edu.iu.nwb.shared.isiutil.database.ISIDatabase;
+import edu.iu.nwb.shared.isiutil.database.ISI;
 import edu.iu.scipolicy.database.isi.loader.model.entity.Address;
 import edu.iu.scipolicy.database.isi.loader.model.entity.Document;
 import edu.iu.scipolicy.database.isi.loader.model.entity.Publisher;
@@ -72,7 +72,7 @@ public class AddressTest extends RowItemTest {
 	public void testZeroAddressesGetParsed() throws Exception {
 		DatabaseModel model = parseTestData(EMPTY_TEST_DATA_PATH);
 		RowItemContainer<Address> addresses = model.getRowItemListOfTypeByDatabaseTableName(
-			ISIDatabase.ADDRESS_TABLE_NAME);
+			ISI.ADDRESS_TABLE_NAME);
 
 		checkItemContainerValidity(addresses, "addresses");
 		checkItemCount(addresses, 0);
@@ -82,20 +82,20 @@ public class AddressTest extends RowItemTest {
 	public void testAddressOfEachGetsParsed() throws Exception {
 		DatabaseModel model = parseTestData(ONE_OF_EACH_ADDRESS_TEST_DATA_PATH);
 		RowItemContainer<Address> addresses = model.getRowItemListOfTypeByDatabaseTableName(
-			ISIDatabase.ADDRESS_TABLE_NAME);
+			ISI.ADDRESS_TABLE_NAME);
 		RowItemContainer<Document> documents = model.getRowItemListOfTypeByDatabaseTableName(
-			ISIDatabase.DOCUMENT_TABLE_NAME);
+			ISI.DOCUMENT_TABLE_NAME);
 		RowItemContainer<Publisher> publishers = model.getRowItemListOfTypeByDatabaseTableName(
-			ISIDatabase.PUBLISHER_TABLE_NAME);
+			ISI.PUBLISHER_TABLE_NAME);
 		RowItemContainer<PublisherAddress> publisherAddresses =
 			model.getRowItemListOfTypeByDatabaseTableName(
-				ISIDatabase.PUBLISHER_ADDRESSES_TABLE_NAME);
+				ISI.PUBLISHER_ADDRESSES_TABLE_NAME);
 		RowItemContainer<ResearchAddress> researchAddresses =
 			model.getRowItemListOfTypeByDatabaseTableName(
-				ISIDatabase.RESEARCH_ADDRESSES_TABLE_NAME);
+				ISI.RESEARCH_ADDRESSES_TABLE_NAME);
 		RowItemContainer<ReprintAddress> reprintAddresses =
 			model.getRowItemListOfTypeByDatabaseTableName(
-				ISIDatabase.REPRINT_ADDRESSES_TABLE_NAME);
+				ISI.REPRINT_ADDRESSES_TABLE_NAME);
 
 		checkItemContainerValidity(addresses, "addresses");
 		checkItemCount(addresses, 3);
@@ -124,15 +124,15 @@ public class AddressTest extends RowItemTest {
 	public void testMultipleResearchAddressesGetParsed() throws Exception {
 		DatabaseModel model = parseTestData(MULTIPLE_RESEARCH_ADDRESSES_TEST_DATA_PATH);
 		RowItemContainer<Address> addresses = model.getRowItemListOfTypeByDatabaseTableName(
-			ISIDatabase.ADDRESS_TABLE_NAME);
+			ISI.ADDRESS_TABLE_NAME);
 		RowItemContainer<Document> documents = model.getRowItemListOfTypeByDatabaseTableName(
-			ISIDatabase.DOCUMENT_TABLE_NAME);
+			ISI.DOCUMENT_TABLE_NAME);
 		RowItemContainer<ResearchAddress> researchAddresses =
 			model.getRowItemListOfTypeByDatabaseTableName(
-				ISIDatabase.RESEARCH_ADDRESSES_TABLE_NAME);
+				ISI.RESEARCH_ADDRESSES_TABLE_NAME);
 		RowItemContainer<ReprintAddress> reprintAddresses =
 			model.getRowItemListOfTypeByDatabaseTableName(
-				ISIDatabase.REPRINT_ADDRESSES_TABLE_NAME);
+				ISI.REPRINT_ADDRESSES_TABLE_NAME);
 
 		checkItemContainerValidity(addresses, "addresses");
 		checkItemCount(addresses, 4);

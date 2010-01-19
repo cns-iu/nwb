@@ -9,7 +9,7 @@ import org.junit.Test;
 
 import edu.iu.cns.database.loader.framework.RowItemContainer;
 import edu.iu.cns.database.loader.framework.utilities.DatabaseModel;
-import edu.iu.nwb.shared.isiutil.database.ISIDatabase;
+import edu.iu.nwb.shared.isiutil.database.ISI;
 import edu.iu.scipolicy.database.isi.loader.model.entity.Document;
 import edu.iu.scipolicy.database.isi.loader.model.entity.Keyword;
 import edu.iu.scipolicy.database.isi.loader.model.entity.relationship.DocumentKeyword;
@@ -42,7 +42,7 @@ public class KeywordTest extends RowItemTest {
 	public void testZeroKeywordsGetParsed() throws Exception {
 		DatabaseModel model = parseTestData(EMPTY_TEST_DATA_PATH);
 		RowItemContainer<Keyword> keywords = model.getRowItemListOfTypeByDatabaseTableName(
-			ISIDatabase.KEYWORD_TABLE_NAME);
+			ISI.KEYWORD_TABLE_NAME);
 
 		checkItemContainerValidity(keywords, "keywords");
 		checkItemCount(keywords, 0);
@@ -52,12 +52,12 @@ public class KeywordTest extends RowItemTest {
 	public void testOneKeywordOfEachType() throws Exception {
 		DatabaseModel model = parseTestData(ONE_KEYWORD_OF_EACH_TYPE_TEST_DATA_PATH);
 		RowItemContainer<Document> documents = model.getRowItemListOfTypeByDatabaseTableName(
-			ISIDatabase.DOCUMENT_TABLE_NAME);
+			ISI.DOCUMENT_TABLE_NAME);
 		RowItemContainer<Keyword> keywords = model.getRowItemListOfTypeByDatabaseTableName(
-			ISIDatabase.KEYWORD_TABLE_NAME);
+			ISI.KEYWORD_TABLE_NAME);
 		RowItemContainer<DocumentKeyword> documentKeywords =
 			model.getRowItemListOfTypeByDatabaseTableName(
-				ISIDatabase.DOCUMENT_KEYWORDS_TABLE_NAME);
+				ISI.DOCUMENT_KEYWORDS_TABLE_NAME);
 
 		checkItemContainerValidity(documents, "documents");
 		checkItemCount(documents, 1);
@@ -86,12 +86,12 @@ public class KeywordTest extends RowItemTest {
 	public void testMultipleKeywordsOfEachType() throws Exception {
 		DatabaseModel model = parseTestData(MULTIPLE_KEYWORDS_OF_EACH_TYPE_TEST_DATA_PATH);
 		RowItemContainer<Document> documents = model.getRowItemListOfTypeByDatabaseTableName(
-			ISIDatabase.DOCUMENT_TABLE_NAME);
+			ISI.DOCUMENT_TABLE_NAME);
 		RowItemContainer<Keyword> keywords = model.getRowItemListOfTypeByDatabaseTableName(
-			ISIDatabase.KEYWORD_TABLE_NAME);
+			ISI.KEYWORD_TABLE_NAME);
 		RowItemContainer<DocumentKeyword> documentKeywords =
 			model.getRowItemListOfTypeByDatabaseTableName(
-				ISIDatabase.DOCUMENT_KEYWORDS_TABLE_NAME);
+				ISI.DOCUMENT_KEYWORDS_TABLE_NAME);
 
 		checkItemContainerValidity(documents, "documents");
 		checkItemCount(documents, 1);
@@ -138,12 +138,12 @@ public class KeywordTest extends RowItemTest {
 	public void testAuthorKeywordsGetMerged() throws Exception {
 		DatabaseModel model = parseTestData(KEYWORDS_GET_MERGED_TEST_DATA_PATH);
 		RowItemContainer<Document> documents = model.getRowItemListOfTypeByDatabaseTableName(
-			ISIDatabase.DOCUMENT_TABLE_NAME);
+			ISI.DOCUMENT_TABLE_NAME);
 		RowItemContainer<Keyword> keywords = model.getRowItemListOfTypeByDatabaseTableName(
-			ISIDatabase.KEYWORD_TABLE_NAME);
+			ISI.KEYWORD_TABLE_NAME);
 		RowItemContainer<DocumentKeyword> documentKeywords =
 			model.getRowItemListOfTypeByDatabaseTableName(
-				ISIDatabase.DOCUMENT_KEYWORDS_TABLE_NAME);
+				ISI.DOCUMENT_KEYWORDS_TABLE_NAME);
 
 		checkItemContainerValidity(documents, "documents");
 		checkItemCount(documents, 2);
@@ -201,12 +201,12 @@ public class KeywordTest extends RowItemTest {
 	public void testNoMergingBetweenKeywordTypes() throws Exception {
 		DatabaseModel model = parseTestData(NO_MERGING_BETWEEN_KEYWORD_TYPES_TEST_DATA_PATH);
 		RowItemContainer<Document> documents = model.getRowItemListOfTypeByDatabaseTableName(
-			ISIDatabase.DOCUMENT_TABLE_NAME);
+			ISI.DOCUMENT_TABLE_NAME);
 		RowItemContainer<Keyword> keywords = model.getRowItemListOfTypeByDatabaseTableName(
-			ISIDatabase.KEYWORD_TABLE_NAME);
+			ISI.KEYWORD_TABLE_NAME);
 		RowItemContainer<DocumentKeyword> documentKeywords =
 			model.getRowItemListOfTypeByDatabaseTableName(
-				ISIDatabase.DOCUMENT_KEYWORDS_TABLE_NAME);
+				ISI.DOCUMENT_KEYWORDS_TABLE_NAME);
 
 		checkItemContainerValidity(documents, "documents");
 		checkItemCount(documents, 1);

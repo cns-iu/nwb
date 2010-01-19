@@ -7,7 +7,7 @@ import org.cishell.utilities.StringUtilities;
 
 import edu.iu.cns.database.loader.framework.utilities.DatabaseTableKeyGenerator;
 import edu.iu.cns.shared.utilities.Pair;
-import edu.iu.nwb.shared.isiutil.database.ISIDatabase;
+import edu.iu.nwb.shared.isiutil.database.ISI;
 import edu.iu.scipolicy.database.isi.loader.model.entity.Person;
 import edu.iu.scipolicy.database.isi.loader.model.entity.Source;
 import edu.iu.scipolicy.database.isi.loader.utilities.parser.exception.PersonParsingException;
@@ -52,11 +52,11 @@ public class ReferenceDataParser {
 	private Person authorPerson;
 	private boolean starred = false;
 	private String digitalObjectIdentifier = "";
-	private int pageNumber = ISIDatabase.NULL_PAGE_NUMBER;
+	private int pageNumber = ISI.NULL_PAGE_NUMBER;
 	private String rawString;
 	private Source source;
-	private int volume = ISIDatabase.NULL_VOLUME;
-	private int year = ISIDatabase.NULL_YEAR;
+	private int volume = ISI.NULL_VOLUME;
+	private int year = ISI.NULL_YEAR;
 
 	public ReferenceDataParser(
 			DatabaseTableKeyGenerator personKeyGenerator,

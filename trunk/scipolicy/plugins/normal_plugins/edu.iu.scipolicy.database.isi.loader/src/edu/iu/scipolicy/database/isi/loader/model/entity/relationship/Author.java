@@ -6,7 +6,7 @@ import java.util.Hashtable;
 import edu.iu.cns.database.loader.framework.RowItem;
 import edu.iu.cns.database.loader.framework.Schema;
 import edu.iu.cns.database.loader.framework.DerbyFieldType;
-import edu.iu.nwb.shared.isiutil.database.ISIDatabase;
+import edu.iu.nwb.shared.isiutil.database.ISI;
 import edu.iu.scipolicy.database.isi.loader.model.entity.Document;
 import edu.iu.scipolicy.database.isi.loader.model.entity.Person;
 
@@ -14,13 +14,13 @@ public class Author extends RowItem<Author> {
 	// TODO: E-mail address.
 	public static final Schema<Author> SCHEMA = new Schema<Author>(
 		false,
-		ISIDatabase.AUTHORS_DOCUMENT_FOREIGN_KEY, DerbyFieldType.FOREIGN_KEY,
-		ISIDatabase.AUTHORS_PERSON_FOREIGN_KEY, DerbyFieldType.FOREIGN_KEY,
-		ISIDatabase.AUTHORS_EMAIL_ADDRESS, DerbyFieldType.TEXT,
-		ISIDatabase.ORDER_LISTED, DerbyFieldType.INTEGER).
+		ISI.AUTHORS_DOCUMENT_FOREIGN_KEY, DerbyFieldType.FOREIGN_KEY,
+		ISI.AUTHORS_PERSON_FOREIGN_KEY, DerbyFieldType.FOREIGN_KEY,
+		ISI.AUTHORS_EMAIL_ADDRESS, DerbyFieldType.TEXT,
+		ISI.ORDER_LISTED, DerbyFieldType.INTEGER).
 		FOREIGN_KEYS(
-			ISIDatabase.AUTHORS_DOCUMENT_FOREIGN_KEY, ISIDatabase.DOCUMENT_TABLE_NAME,
-			ISIDatabase.AUTHORS_PERSON_FOREIGN_KEY, ISIDatabase.PERSON_TABLE_NAME);
+			ISI.AUTHORS_DOCUMENT_FOREIGN_KEY, ISI.DOCUMENT_TABLE_NAME,
+			ISI.AUTHORS_PERSON_FOREIGN_KEY, ISI.PERSON_TABLE_NAME);
 
 	private Document document;
 	private Person person;
@@ -72,10 +72,10 @@ public class Author extends RowItem<Author> {
 	public static Dictionary<String, Comparable<?>> createAttributes(
 			Document document, Person person, String emailAddress, int orderListed) {
 		Dictionary<String, Comparable<?>> attributes = new Hashtable<String, Comparable<?>>();
-		attributes.put(ISIDatabase.AUTHORS_DOCUMENT_FOREIGN_KEY, document.getPrimaryKey());
-		attributes.put(ISIDatabase.AUTHORS_PERSON_FOREIGN_KEY, person.getPrimaryKey());
-		attributes.put(ISIDatabase.AUTHORS_EMAIL_ADDRESS, emailAddress);
-		attributes.put(ISIDatabase.ORDER_LISTED, orderListed);
+		attributes.put(ISI.AUTHORS_DOCUMENT_FOREIGN_KEY, document.getPrimaryKey());
+		attributes.put(ISI.AUTHORS_PERSON_FOREIGN_KEY, person.getPrimaryKey());
+		attributes.put(ISI.AUTHORS_EMAIL_ADDRESS, emailAddress);
+		attributes.put(ISI.ORDER_LISTED, orderListed);
 
 		return attributes;
 	}

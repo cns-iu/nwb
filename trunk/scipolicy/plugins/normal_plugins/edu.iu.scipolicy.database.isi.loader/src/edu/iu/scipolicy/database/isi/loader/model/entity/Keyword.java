@@ -9,13 +9,13 @@ import edu.iu.cns.database.loader.framework.Entity;
 import edu.iu.cns.database.loader.framework.Schema;
 import edu.iu.cns.database.loader.framework.DerbyFieldType;
 import edu.iu.cns.database.loader.framework.utilities.DatabaseTableKeyGenerator;
-import edu.iu.nwb.shared.isiutil.database.ISIDatabase;
+import edu.iu.nwb.shared.isiutil.database.ISI;
 
 public class Keyword extends Entity<Keyword> implements Comparable<Keyword> {
 	public static final Schema<Keyword> SCHEMA = new Schema<Keyword>(
 		true,
-		ISIDatabase.KEYWORD, DerbyFieldType.TEXT,
-		ISIDatabase.TYPE, DerbyFieldType.TEXT);
+		ISI.KEYWORD, DerbyFieldType.TEXT,
+		ISI.TYPE, DerbyFieldType.TEXT);
 
 	private String keyword;
 	private String type;
@@ -51,8 +51,8 @@ public class Keyword extends Entity<Keyword> implements Comparable<Keyword> {
 
 	public static Dictionary<String, Comparable<?>> createAttributes(String keyword, String type) {
 		Dictionary<String, Comparable<?>> attributes = new Hashtable<String, Comparable<?>>();
-		attributes.put(ISIDatabase.KEYWORD, keyword);
-		attributes.put(ISIDatabase.TYPE, type);
+		attributes.put(ISI.KEYWORD, keyword);
+		attributes.put(ISI.TYPE, type);
 
 		return attributes;
 	}

@@ -9,7 +9,7 @@ import org.junit.Test;
 
 import edu.iu.cns.database.loader.framework.RowItemContainer;
 import edu.iu.cns.database.loader.framework.utilities.DatabaseModel;
-import edu.iu.nwb.shared.isiutil.database.ISIDatabase;
+import edu.iu.nwb.shared.isiutil.database.ISI;
 import edu.iu.scipolicy.database.isi.loader.model.entity.Document;
 import edu.iu.scipolicy.database.isi.loader.model.entity.Patent;
 import edu.iu.scipolicy.database.isi.loader.model.entity.relationship.CitedPatent;
@@ -38,7 +38,7 @@ public class PatentTest extends RowItemTest {
 	public void testZeroPatentsGetParsed() throws Exception {
 		DatabaseModel model = parseTestData(EMPTY_TEST_DATA_PATH);
 		RowItemContainer<Patent> patents = model.getRowItemListOfTypeByDatabaseTableName(
-			ISIDatabase.PATENT_TABLE_NAME);
+			ISI.PATENT_TABLE_NAME);
 
 		checkItemContainerValidity(patents, "patents");
 		checkItemCount(patents, 0);
@@ -48,9 +48,9 @@ public class PatentTest extends RowItemTest {
 	public void testOnePatentGetsParsed() throws Exception {
 		DatabaseModel model = parseTestData(ONE_PATENT_TEST_DATA_PATH);
 		RowItemContainer<Patent> patents = model.getRowItemListOfTypeByDatabaseTableName(
-			ISIDatabase.PATENT_TABLE_NAME);
+			ISI.PATENT_TABLE_NAME);
 		RowItemContainer<CitedPatent> citedPatents = model.getRowItemListOfTypeByDatabaseTableName(
-			ISIDatabase.CITED_PATENTS_TABLE_NAME);
+			ISI.CITED_PATENTS_TABLE_NAME);
 
 		checkItemContainerValidity(patents, "patents");
 		checkItemCount(patents, 1);
@@ -62,9 +62,9 @@ public class PatentTest extends RowItemTest {
 	public void testDocumentsWithoutPatents() throws Exception {
 		DatabaseModel model = parseTestData(MULTIPLE_DOCUMENTS_WITHOUT_PATENTS_TEST_DATA_PATH);
 		RowItemContainer<Patent> patents = model.getRowItemListOfTypeByDatabaseTableName(
-			ISIDatabase.PATENT_TABLE_NAME);
+			ISI.PATENT_TABLE_NAME);
 		RowItemContainer<CitedPatent> citedPatents = model.getRowItemListOfTypeByDatabaseTableName(
-			ISIDatabase.CITED_PATENTS_TABLE_NAME);
+			ISI.CITED_PATENTS_TABLE_NAME);
 
 		checkItemContainerValidity(patents, "patents");
 		checkItemCount(patents, 0);
@@ -76,11 +76,11 @@ public class PatentTest extends RowItemTest {
 	public void testMultipleDistinctPatentsGetParsed() throws Exception {
 		DatabaseModel model = parseTestData(MULTIPLE_DISTINCT_PATENTS_TEST_DATA_PATH);
 		RowItemContainer<Document> documents = model.getRowItemListOfTypeByDatabaseTableName(
-			ISIDatabase.DOCUMENT_TABLE_NAME);
+			ISI.DOCUMENT_TABLE_NAME);
 		RowItemContainer<Patent> patents = model.getRowItemListOfTypeByDatabaseTableName(
-			ISIDatabase.PATENT_TABLE_NAME);
+			ISI.PATENT_TABLE_NAME);
 		RowItemContainer<CitedPatent> citedPatents = model.getRowItemListOfTypeByDatabaseTableName(
-			ISIDatabase.CITED_PATENTS_TABLE_NAME);
+			ISI.CITED_PATENTS_TABLE_NAME);
 
 		checkItemContainerValidity(documents, "documents");
 		checkItemCount(documents, 2);
@@ -108,11 +108,11 @@ public class PatentTest extends RowItemTest {
 	public void testMultiplePatentsGetMerged() throws Exception {
 		DatabaseModel model = parseTestData(MULTIPLE_PATENTS_THAT_GET_MERGED_TEST_DATA_PATH);
 		RowItemContainer<Document> documents = model.getRowItemListOfTypeByDatabaseTableName(
-			ISIDatabase.DOCUMENT_TABLE_NAME);
+			ISI.DOCUMENT_TABLE_NAME);
 		RowItemContainer<Patent> patents = model.getRowItemListOfTypeByDatabaseTableName(
-			ISIDatabase.PATENT_TABLE_NAME);
+			ISI.PATENT_TABLE_NAME);
 		RowItemContainer<CitedPatent> citedPatents = model.getRowItemListOfTypeByDatabaseTableName(
-			ISIDatabase.CITED_PATENTS_TABLE_NAME);
+			ISI.CITED_PATENTS_TABLE_NAME);
 
 		checkItemContainerValidity(documents, "documents");
 		checkItemCount(documents, 2);

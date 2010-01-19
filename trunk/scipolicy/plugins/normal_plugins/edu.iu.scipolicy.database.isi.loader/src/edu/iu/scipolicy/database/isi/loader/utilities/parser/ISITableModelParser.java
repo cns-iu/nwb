@@ -15,7 +15,7 @@ import edu.iu.cns.database.loader.framework.utilities.DatabaseModel;
 import edu.iu.cns.shared.utilities.Pair;
 import edu.iu.nwb.shared.isiutil.ISITableReader;
 import edu.iu.nwb.shared.isiutil.ISITag;
-import edu.iu.nwb.shared.isiutil.database.ISIDatabase;
+import edu.iu.nwb.shared.isiutil.database.ISI;
 import edu.iu.scipolicy.database.isi.loader.model.entity.Address;
 import edu.iu.scipolicy.database.isi.loader.model.entity.Document;
 import edu.iu.scipolicy.database.isi.loader.model.entity.ISIFile;
@@ -47,23 +47,23 @@ public class ISITableModelParser {
 	 */
 
 	private RowItemContainer<ISIFile> isiFiles = new RowItemContainer<ISIFile>(
-		ISIDatabase.ISI_FILE_DISPLAY_NAME, ISIDatabase.ISI_FILE_TABLE_NAME, ISIFile.SCHEMA);
+		ISI.ISI_FILE_DISPLAY_NAME, ISI.ISI_FILE_TABLE_NAME, ISIFile.SCHEMA);
 	private RowItemContainer<Publisher> publishers = new RowItemContainer<Publisher>(
-		ISIDatabase.PUBLISHER_DISPLAY_NAME, ISIDatabase.PUBLISHER_TABLE_NAME, Publisher.SCHEMA);
+		ISI.PUBLISHER_DISPLAY_NAME, ISI.PUBLISHER_TABLE_NAME, Publisher.SCHEMA);
 	private RowItemContainer<Source> sources = new RowItemContainer<Source>(
-		ISIDatabase.SOURCE_DISPLAY_NAME, ISIDatabase.SOURCE_TABLE_NAME, Source.SCHEMA);
+		ISI.SOURCE_DISPLAY_NAME, ISI.SOURCE_TABLE_NAME, Source.SCHEMA);
 	private RowItemContainer<Reference> references = new RowItemContainer<Reference>(
-		ISIDatabase.REFERENCE_DISPLAY_NAME, ISIDatabase.REFERENCE_TABLE_NAME, Reference.SCHEMA);
+		ISI.REFERENCE_DISPLAY_NAME, ISI.REFERENCE_TABLE_NAME, Reference.SCHEMA);
 	private RowItemContainer<Address> addresses = new RowItemContainer<Address>(
-		ISIDatabase.ADDRESS_DISPLAY_NAME, ISIDatabase.ADDRESS_TABLE_NAME, Address.SCHEMA);
+		ISI.ADDRESS_DISPLAY_NAME, ISI.ADDRESS_TABLE_NAME, Address.SCHEMA);
 	private RowItemContainer<Keyword> keywords = new RowItemContainer<Keyword>(
-		ISIDatabase.KEYWORD_DISPLAY_NAME, ISIDatabase.KEYWORD_TABLE_NAME, Keyword.SCHEMA);
+		ISI.KEYWORD_DISPLAY_NAME, ISI.KEYWORD_TABLE_NAME, Keyword.SCHEMA);
 	private RowItemContainer<Person> people = new RowItemContainer<Person>(
-		ISIDatabase.PERSON_DISPLAY_NAME, ISIDatabase.PERSON_TABLE_NAME, Person.SCHEMA);
+		ISI.PERSON_DISPLAY_NAME, ISI.PERSON_TABLE_NAME, Person.SCHEMA);
 	private RowItemContainer<Patent> patents = new RowItemContainer<Patent>(
-		ISIDatabase.PATENT_DISPLAY_NAME, ISIDatabase.PATENT_TABLE_NAME, Patent.SCHEMA);
+		ISI.PATENT_DISPLAY_NAME, ISI.PATENT_TABLE_NAME, Patent.SCHEMA);
 	private RowItemContainer<Document> documents = new RowItemContainer<Document>(
-		ISIDatabase.DOCUMENT_DISPLAY_NAME, ISIDatabase.DOCUMENT_TABLE_NAME, Document.SCHEMA);
+		ISI.DOCUMENT_DISPLAY_NAME, ISI.DOCUMENT_TABLE_NAME, Document.SCHEMA);
 
 	/*
 	 * Create all of the entity joining tables (Publisher Addresses, Reprint Addresses,
@@ -73,56 +73,56 @@ public class ISITableModelParser {
 
 	RowItemContainer<PublisherAddress> publisherAddresses =
 		new RowItemContainer<PublisherAddress>(
-			ISIDatabase.PUBLISHER_ADDRESSES_DISPLAY_NAME,
-			ISIDatabase.PUBLISHER_ADDRESSES_TABLE_NAME,
+			ISI.PUBLISHER_ADDRESSES_DISPLAY_NAME,
+			ISI.PUBLISHER_ADDRESSES_TABLE_NAME,
 			PublisherAddress.SCHEMA);
 
 	RowItemContainer<ReprintAddress> reprintAddresses =
 		new RowItemContainer<ReprintAddress>(
-			ISIDatabase.REPRINT_ADDRESSES_DISPLAY_NAME,
-			ISIDatabase.REPRINT_ADDRESSES_TABLE_NAME,
+			ISI.REPRINT_ADDRESSES_DISPLAY_NAME,
+			ISI.REPRINT_ADDRESSES_TABLE_NAME,
 			ReprintAddress.SCHEMA);
 
 	RowItemContainer<ResearchAddress> researchAddresses =
 		new RowItemContainer<ResearchAddress>(
-			ISIDatabase.RESEARCH_ADDRESSES_DISPLAY_NAME,
-			ISIDatabase.RESEARCH_ADDRESSES_TABLE_NAME,
+			ISI.RESEARCH_ADDRESSES_DISPLAY_NAME,
+			ISI.RESEARCH_ADDRESSES_TABLE_NAME,
 			ResearchAddress.SCHEMA);
 
 	RowItemContainer<DocumentKeyword> documentKeywords =
 		new RowItemContainer<DocumentKeyword>(
-			ISIDatabase.DOCUMENT_KEYWORDS_DISPLAY_NAME,
-			ISIDatabase.DOCUMENT_KEYWORDS_TABLE_NAME,
+			ISI.DOCUMENT_KEYWORDS_DISPLAY_NAME,
+			ISI.DOCUMENT_KEYWORDS_TABLE_NAME,
 			DocumentKeyword.SCHEMA);
 
 	RowItemContainer<Author> authors =
 		new RowItemContainer<Author>(
-			ISIDatabase.AUTHORS_DISPLAY_NAME,
-			ISIDatabase.AUTHORS_TABLE_NAME,
+			ISI.AUTHORS_DISPLAY_NAME,
+			ISI.AUTHORS_TABLE_NAME,
 		Author.SCHEMA);
 
 	RowItemContainer<Editor> editors =
 		new RowItemContainer<Editor>(
-			ISIDatabase.EDITORS_DISPLAY_NAME,
-			ISIDatabase.EDITORS_TABLE_NAME,
+			ISI.EDITORS_DISPLAY_NAME,
+			ISI.EDITORS_TABLE_NAME,
 		Editor.SCHEMA);
 
 	RowItemContainer<CitedPatent> citedPatents =
 		new RowItemContainer<CitedPatent>(
-			ISIDatabase.CITED_PATENTS_DISPLAY_NAME,
-			ISIDatabase.CITED_PATENTS_TABLE_NAME,
+			ISI.CITED_PATENTS_DISPLAY_NAME,
+			ISI.CITED_PATENTS_TABLE_NAME,
 		CitedPatent.SCHEMA);
 
 	RowItemContainer<DocumentOccurrence> documentOccurrences =
 		new RowItemContainer<DocumentOccurrence>(
-			ISIDatabase.DOCUMENT_OCCURRENCES_DISPLAY_NAME,
-			ISIDatabase.DOCUMENT_OCCURRENCES_TABLE_NAME,
+			ISI.DOCUMENT_OCCURRENCES_DISPLAY_NAME,
+			ISI.DOCUMENT_OCCURRENCES_TABLE_NAME,
 		DocumentOccurrence.SCHEMA);
 
 	RowItemContainer<CitedReference> citedReferences =
 		new RowItemContainer<CitedReference>(
-			ISIDatabase.CITED_REFERENCES_DISPLAY_NAME,
-			ISIDatabase.CITED_REFERENCES_TABLE_NAME,
+			ISI.CITED_REFERENCES_DISPLAY_NAME,
+			ISI.CITED_REFERENCES_TABLE_NAME,
 		CitedReference.SCHEMA);
 
 	/*

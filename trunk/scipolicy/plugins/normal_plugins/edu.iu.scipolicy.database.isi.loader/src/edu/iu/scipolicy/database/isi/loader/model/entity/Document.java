@@ -7,41 +7,41 @@ import edu.iu.cns.database.loader.framework.Entity;
 import edu.iu.cns.database.loader.framework.Schema;
 import edu.iu.cns.database.loader.framework.DerbyFieldType;
 import edu.iu.cns.database.loader.framework.utilities.DatabaseTableKeyGenerator;
-import edu.iu.nwb.shared.isiutil.database.ISIDatabase;
+import edu.iu.nwb.shared.isiutil.database.ISI;
 
 public class Document extends Entity<Document> implements Comparable<Document> {
 	public static final Schema<Document> SCHEMA = new Schema<Document>(
 		true,
-		ISIDatabase.ABSTRACT_TEXT, DerbyFieldType.TEXT,
-		ISIDatabase.ARTICLE_NUMBER, DerbyFieldType.TEXT,
-		ISIDatabase.BEGINNING_PAGE, DerbyFieldType.INTEGER,
-		ISIDatabase.CITED_REFERENCE_COUNT, DerbyFieldType.INTEGER,
-		ISIDatabase.CITED_YEAR, DerbyFieldType.INTEGER,
-		ISIDatabase.DIGITAL_OBJECT_IDENTIFIER, DerbyFieldType.TEXT,
-		ISIDatabase.DOCUMENT_TYPE, DerbyFieldType.TEXT,
-		ISIDatabase.DOCUMENT_VOLUME, DerbyFieldType.TEXT,
-		ISIDatabase.ENDING_PAGE, DerbyFieldType.INTEGER,
-		ISIDatabase.FIRST_AUTHOR, DerbyFieldType.FOREIGN_KEY,
-		ISIDatabase.FUNDING_AGENCY_AND_GRANT_NUMBER, DerbyFieldType.TEXT,
-		ISIDatabase.FUNDING_TEXT, DerbyFieldType.TEXT,
-		ISIDatabase.ISBN, DerbyFieldType.TEXT,
-		ISIDatabase.ISI_DOCUMENT_DELIVERY_NUMBER, DerbyFieldType.TEXT,
-		ISIDatabase.ISI_UNIQUE_ARTICLE_IDENTIFIER, DerbyFieldType.TEXT,
-		ISIDatabase.ISSUE, DerbyFieldType.TEXT,
-		ISIDatabase.LANGUAGE, DerbyFieldType.TEXT,
-		ISIDatabase.PAGE_COUNT, DerbyFieldType.INTEGER,
-		ISIDatabase.PART_NUMBER, DerbyFieldType.TEXT,
-		ISIDatabase.PUBLICATION_DATE, DerbyFieldType.TEXT,
-		ISIDatabase.PUBLICATION_YEAR, DerbyFieldType.INTEGER,
-		ISIDatabase.DOCUMENT_SOURCE, DerbyFieldType.FOREIGN_KEY,
-		ISIDatabase.SPECIAL_ISSUE, DerbyFieldType.TEXT,
-		ISIDatabase.SUBJECT_CATEGORY, DerbyFieldType.TEXT,
-		ISIDatabase.SUPPLEMENT, DerbyFieldType.TEXT,
-		ISIDatabase.TIMES_CITED, DerbyFieldType.INTEGER,
-		ISIDatabase.TITLE, DerbyFieldType.TEXT).
+		ISI.ABSTRACT_TEXT, DerbyFieldType.TEXT,
+		ISI.ARTICLE_NUMBER, DerbyFieldType.TEXT,
+		ISI.BEGINNING_PAGE, DerbyFieldType.INTEGER,
+		ISI.CITED_REFERENCE_COUNT, DerbyFieldType.INTEGER,
+		ISI.CITED_YEAR, DerbyFieldType.INTEGER,
+		ISI.DIGITAL_OBJECT_IDENTIFIER, DerbyFieldType.TEXT,
+		ISI.DOCUMENT_TYPE, DerbyFieldType.TEXT,
+		ISI.DOCUMENT_VOLUME, DerbyFieldType.TEXT,
+		ISI.ENDING_PAGE, DerbyFieldType.INTEGER,
+		ISI.FIRST_AUTHOR, DerbyFieldType.FOREIGN_KEY,
+		ISI.FUNDING_AGENCY_AND_GRANT_NUMBER, DerbyFieldType.TEXT,
+		ISI.FUNDING_TEXT, DerbyFieldType.TEXT,
+		ISI.ISBN, DerbyFieldType.TEXT,
+		ISI.ISI_DOCUMENT_DELIVERY_NUMBER, DerbyFieldType.TEXT,
+		ISI.ISI_UNIQUE_ARTICLE_IDENTIFIER, DerbyFieldType.TEXT,
+		ISI.ISSUE, DerbyFieldType.TEXT,
+		ISI.LANGUAGE, DerbyFieldType.TEXT,
+		ISI.PAGE_COUNT, DerbyFieldType.INTEGER,
+		ISI.PART_NUMBER, DerbyFieldType.TEXT,
+		ISI.PUBLICATION_DATE, DerbyFieldType.TEXT,
+		ISI.PUBLICATION_YEAR, DerbyFieldType.INTEGER,
+		ISI.DOCUMENT_SOURCE, DerbyFieldType.FOREIGN_KEY,
+		ISI.SPECIAL_ISSUE, DerbyFieldType.TEXT,
+		ISI.SUBJECT_CATEGORY, DerbyFieldType.TEXT,
+		ISI.SUPPLEMENT, DerbyFieldType.TEXT,
+		ISI.TIMES_CITED, DerbyFieldType.INTEGER,
+		ISI.TITLE, DerbyFieldType.TEXT).
 		FOREIGN_KEYS(
-			ISIDatabase.FIRST_AUTHOR, ISIDatabase.PERSON_TABLE_NAME,
-			ISIDatabase.DOCUMENT_SOURCE, ISIDatabase.SOURCE_TABLE_NAME);
+			ISI.FIRST_AUTHOR, ISI.PERSON_TABLE_NAME,
+			ISI.DOCUMENT_SOURCE, ISI.SOURCE_TABLE_NAME);
 
 	private String abstractText;
 	private String articleNumber;
@@ -270,13 +270,13 @@ public class Document extends Entity<Document> implements Comparable<Document> {
 	public void setFirstAuthorPerson(Person firstAuthorPerson) {
 		this.firstAuthorPerson = firstAuthorPerson;
 
-		getAttributes().put(ISIDatabase.FIRST_AUTHOR, firstAuthorPerson.getPrimaryKey());
+		getAttributes().put(ISI.FIRST_AUTHOR, firstAuthorPerson.getPrimaryKey());
 	}
 
 	public void setSource(Source source) {
 		this.source = source;
 
-		getAttributes().put(ISIDatabase.DOCUMENT_SOURCE, source.getPrimaryKey());
+		getAttributes().put(ISI.DOCUMENT_SOURCE, source.getPrimaryKey());
 	}
 
 	/// This side-effects Document.SCHEMA.
@@ -331,41 +331,41 @@ public class Document extends Entity<Document> implements Comparable<Document> {
 			int timesCited,
 			String title) {
 		Dictionary<String, Comparable<?>> attributes = new Hashtable<String, Comparable<?>>();
-		attributes.put(ISIDatabase.ABSTRACT_TEXT, abstractText);
-		attributes.put(ISIDatabase.ARTICLE_NUMBER, articleNumber);
-		attributes.put(ISIDatabase.BEGINNING_PAGE, beginningPage);
-		attributes.put(ISIDatabase.CITED_REFERENCE_COUNT, citedReferenceCount);
-		attributes.put(ISIDatabase.CITED_YEAR, citedYear);
-		attributes.put(ISIDatabase.DIGITAL_OBJECT_IDENTIFIER, digitalObjectIdentifier);
-		attributes.put(ISIDatabase.DOCUMENT_TYPE, documentType);
-		attributes.put(ISIDatabase.DOCUMENT_VOLUME, documentVolume);
-		attributes.put(ISIDatabase.ENDING_PAGE, endingPage);
+		attributes.put(ISI.ABSTRACT_TEXT, abstractText);
+		attributes.put(ISI.ARTICLE_NUMBER, articleNumber);
+		attributes.put(ISI.BEGINNING_PAGE, beginningPage);
+		attributes.put(ISI.CITED_REFERENCE_COUNT, citedReferenceCount);
+		attributes.put(ISI.CITED_YEAR, citedYear);
+		attributes.put(ISI.DIGITAL_OBJECT_IDENTIFIER, digitalObjectIdentifier);
+		attributes.put(ISI.DOCUMENT_TYPE, documentType);
+		attributes.put(ISI.DOCUMENT_VOLUME, documentVolume);
+		attributes.put(ISI.ENDING_PAGE, endingPage);
 
 		if (firstAuthorPerson != null) {
-			attributes.put(ISIDatabase.FIRST_AUTHOR, firstAuthorPerson.getPrimaryKey());
+			attributes.put(ISI.FIRST_AUTHOR, firstAuthorPerson.getPrimaryKey());
 		}
 
-		attributes.put(ISIDatabase.FUNDING_AGENCY_AND_GRANT_NUMBER, fundingAgencyAndGrantNumber);
-		attributes.put(ISIDatabase.FUNDING_TEXT, fundingText);
-		attributes.put(ISIDatabase.ISBN, isbn);
-		attributes.put(ISIDatabase.ISI_DOCUMENT_DELIVERY_NUMBER, isiDocumentDeliveryNumber);
-		attributes.put(ISIDatabase.ISI_UNIQUE_ARTICLE_IDENTIFIER, isiUniqueArticleIdentifier);
-		attributes.put(ISIDatabase.ISSUE, issue);
-		attributes.put(ISIDatabase.LANGUAGE, language);
-		attributes.put(ISIDatabase.PAGE_COUNT, pageCount);
-		attributes.put(ISIDatabase.PART_NUMBER, partNumber);
-		attributes.put(ISIDatabase.PUBLICATION_DATE, publicationDate);
-		attributes.put(ISIDatabase.PUBLICATION_YEAR, publicationYear);
+		attributes.put(ISI.FUNDING_AGENCY_AND_GRANT_NUMBER, fundingAgencyAndGrantNumber);
+		attributes.put(ISI.FUNDING_TEXT, fundingText);
+		attributes.put(ISI.ISBN, isbn);
+		attributes.put(ISI.ISI_DOCUMENT_DELIVERY_NUMBER, isiDocumentDeliveryNumber);
+		attributes.put(ISI.ISI_UNIQUE_ARTICLE_IDENTIFIER, isiUniqueArticleIdentifier);
+		attributes.put(ISI.ISSUE, issue);
+		attributes.put(ISI.LANGUAGE, language);
+		attributes.put(ISI.PAGE_COUNT, pageCount);
+		attributes.put(ISI.PART_NUMBER, partNumber);
+		attributes.put(ISI.PUBLICATION_DATE, publicationDate);
+		attributes.put(ISI.PUBLICATION_YEAR, publicationYear);
 
 		if (source != null) {
-			attributes.put(ISIDatabase.DOCUMENT_SOURCE, source.getPrimaryKey());
+			attributes.put(ISI.DOCUMENT_SOURCE, source.getPrimaryKey());
 		}
 
-		attributes.put(ISIDatabase.SPECIAL_ISSUE, specialIssue);
-		attributes.put(ISIDatabase.SUBJECT_CATEGORY, subjectCategory);
-		attributes.put(ISIDatabase.SUPPLEMENT, supplement);
-		attributes.put(ISIDatabase.TIMES_CITED, timesCited);
-		attributes.put(ISIDatabase.TITLE, title);
+		attributes.put(ISI.SPECIAL_ISSUE, specialIssue);
+		attributes.put(ISI.SUBJECT_CATEGORY, subjectCategory);
+		attributes.put(ISI.SUPPLEMENT, supplement);
+		attributes.put(ISI.TIMES_CITED, timesCited);
+		attributes.put(ISI.TITLE, title);
 
 		return attributes;
 	}

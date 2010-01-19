@@ -9,12 +9,12 @@ import edu.iu.cns.database.loader.framework.Entity;
 import edu.iu.cns.database.loader.framework.Schema;
 import edu.iu.cns.database.loader.framework.DerbyFieldType;
 import edu.iu.cns.database.loader.framework.utilities.DatabaseTableKeyGenerator;
-import edu.iu.nwb.shared.isiutil.database.ISIDatabase;
+import edu.iu.nwb.shared.isiutil.database.ISI;
 
 public class Patent extends Entity<Patent> implements Comparable<Patent> {
 	public static final Schema<Patent> SCHEMA = new Schema<Patent>(
 		true,
-		ISIDatabase.PATENT_NUMBER, DerbyFieldType.TEXT);
+		ISI.PATENT_NUMBER, DerbyFieldType.TEXT);
 
 	private String patentNumber;
 
@@ -41,7 +41,7 @@ public class Patent extends Entity<Patent> implements Comparable<Patent> {
 
 	public static Dictionary<String, Comparable<?>> createAttributes(String patentNumber) {
 		Dictionary<String, Comparable<?>> attributes = new Hashtable<String, Comparable<?>>();
-		attributes.put(ISIDatabase.PATENT_NUMBER, patentNumber);
+		attributes.put(ISI.PATENT_NUMBER, patentNumber);
 
 		return attributes;
 	}
