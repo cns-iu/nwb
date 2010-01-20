@@ -199,7 +199,7 @@ public class ISI {
 	public static final String PART_NUMBER = "PART_NUMBER";
 	public static final String PUBLICATION_DATE = "PUBLICATION_DATE";
 	public static final String PUBLICATION_YEAR = "PUBLICATION_YEAR";
-	public static final String DOCUMENT_SOURCE = "DOCUMENT_SOURCE";
+	public static final String DOCUMENT_SOURCE = "DOCUMENT_SOURCE_FK";
 	public static final String SPECIAL_ISSUE = "SPECIAL_ISSUE";
 	public static final String SUBJECT_CATEGORY = "SUBJECT_CATEGORY";
 	public static final String SUPPLEMENT = "SUPPLEMENT";
