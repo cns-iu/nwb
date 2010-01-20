@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <metatype:MetaData xmlns:metatype="http://www.osgi.org/xmlns/metatype/v1.0.0">
-	<OCD name="Extract Co-Authorship Network" id="edu.iu.scipolicy.database.extract.network.cocreator.nsf.OCD"
-		 description="TODO Description ">
+	<OCD name="Extract Co-PI Network" id="edu.iu.scipolicy.database.extract.network.cocreator.nsf.OCD"
+		 description="Extract the co-PI network from this database.">
 	</OCD>
 	<Designate pid="edu.iu.scipolicy.database.extract.network.cocreator.nsf">
 		<Object ocdref="edu.iu.scipolicy.database.extract.network.cocreator.nsf.OCD" />
