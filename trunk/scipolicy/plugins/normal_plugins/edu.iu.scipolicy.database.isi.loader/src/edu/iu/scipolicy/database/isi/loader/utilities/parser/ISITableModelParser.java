@@ -245,6 +245,8 @@ public class ISITableModelParser {
 			linkDocumentToCitedReferences(document, currentReferences);
 		}
 
+		linkReferencesToDocuments();
+
 		// Given all of the master lists of row items, construct an DatabaseModel and return it.
 
 		return new DatabaseModel(
@@ -436,6 +438,7 @@ public class ISITableModelParser {
 					referenceData.getAnnotation(),
 					referenceData.getAuthorPerson(),
 					referenceData.authorWasStarred(),
+					referenceData.getDigitalObjectIdentifier(),
 					referenceData.getPageNumber(),
 					null,
 					referenceData.getRawString(),
@@ -736,6 +739,21 @@ public class ISITableModelParser {
 			return this.publishers.addOrMerge(publisher);
 		} else {
 			return null;
+		}
+	}
+
+	private void linkReferencesToDocuments() {
+		for (Reference reference : (List<Reference>)this.references.getItems()) {
+			String referenceDigitalObjectIdentifier = reference.getDigitalObjectIdentifier();
+
+			for (Document document : (List<Document>)this.documents.getItems()) {
+				String documentDigitalObjectIdentifier = document.getDigitalObjectIdentifier();
+
+				if (!StringUtilities.isEmptyOrWhiteSpace(documentDigitalObjectIdentifier) &&
+						documentDigitalObjectIdentifier.equals(referenceDigitalObjectIdentifier)) {
+					reference.setPaper(document);
+				}
+			}
 		}
 	}
 }

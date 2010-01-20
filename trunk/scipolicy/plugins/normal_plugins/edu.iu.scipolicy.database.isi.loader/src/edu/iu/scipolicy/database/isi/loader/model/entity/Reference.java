@@ -17,6 +17,7 @@ public class Reference extends Entity<Reference> implements Comparable<Reference
 		ISI.ANNOTATION, DerbyFieldType.TEXT,
 		ISI.REFERENCE_AUTHOR, DerbyFieldType.FOREIGN_KEY,
 		ISI.AUTHOR_WAS_STARRED, DerbyFieldType.TEXT,
+		ISI.DIGITAL_OBJECT_IDENTIFIER, DerbyFieldType.TEXT,
 		ISI.PAGE_NUMBER, DerbyFieldType.INTEGER,
 		ISI.PAPER, DerbyFieldType.FOREIGN_KEY,
 		ISI.REFERENCE_STRING, DerbyFieldType.TEXT,
@@ -31,6 +32,7 @@ public class Reference extends Entity<Reference> implements Comparable<Reference
 	private String annotation;
 	private Person author;
 	private boolean authorWasStarred;
+	private String digitalObjectIdentifier;
 	private int pageNumber;
 	private Document paper;
 	private String rawReferenceString;
@@ -43,6 +45,7 @@ public class Reference extends Entity<Reference> implements Comparable<Reference
 			String annotation,
 			Person author,
 			boolean authorWasStarred,
+			String digitalObjectIdentifier,
 			int pageNumber,
 			Document paper,
 			String rawReferenceString,
@@ -55,6 +58,7 @@ public class Reference extends Entity<Reference> implements Comparable<Reference
 				annotation,
 				author,
 				authorWasStarred,
+				digitalObjectIdentifier,
 				pageNumber,
 				paper,
 				rawReferenceString,
@@ -64,6 +68,7 @@ public class Reference extends Entity<Reference> implements Comparable<Reference
 		this.annotation = annotation;
 		this.author = author;
 		this.authorWasStarred = authorWasStarred;
+		this.digitalObjectIdentifier = digitalObjectIdentifier;
 		this.pageNumber = pageNumber;
 		this.paper = paper;
 		this.rawReferenceString = rawReferenceString;
@@ -82,6 +87,10 @@ public class Reference extends Entity<Reference> implements Comparable<Reference
 
 	public boolean authorWasStarred() {
 		return this.authorWasStarred;
+	}
+
+	public String getDigitalObjectIdentifier() {
+		return this.digitalObjectIdentifier;
 	}
 
 	public int getPageNumber() {
@@ -141,6 +150,7 @@ public class Reference extends Entity<Reference> implements Comparable<Reference
 			String annotation,
 			Person author,
 			boolean authorWasStarred,
+			String digitalObjectIdentifier,
 			int pageNumber,
 			Document paper,
 			String rawReferenceString,
@@ -155,6 +165,7 @@ public class Reference extends Entity<Reference> implements Comparable<Reference
 		}
 
 		attributes.put(ISI.AUTHOR_WAS_STARRED, authorWasStarred);
+		attributes.put(ISI.DIGITAL_OBJECT_IDENTIFIER, digitalObjectIdentifier);
 		attributes.put(ISI.PAGE_NUMBER, pageNumber);
 
 		if (paper != null) {
