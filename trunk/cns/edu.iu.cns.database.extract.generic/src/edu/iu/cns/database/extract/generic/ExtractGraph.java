@@ -115,8 +115,7 @@ public class ExtractGraph implements Algorithm {
 			internalizeId(edge, targetColumn, internalTarget, newIds);
 		}
 
-
-		Graph graph = new Graph(nodes, edges, false, internalId, internalSource, internalTarget);
+		Graph graph = new Graph(nodes, edges, directed, internalId, internalSource, internalTarget);
 		return graph;
 	}
 
