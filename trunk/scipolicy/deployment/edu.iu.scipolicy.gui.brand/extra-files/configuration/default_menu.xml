@@ -228,6 +228,29 @@
     <menu pid="edu.iu.nwb.preprocessing.bibcouplingsimilarity.BibCouplingSimilarityAlgorithm"/>
     </top_menu>
     
+    <top_menu name="Extract">
+    <menu name="From ISI Database" type="group">
+    	<!-- Co-authorship network extraction -->
+	    <menu pid="edu.iu.scipolicy.database.isi.extract.network.coauthor"/>
+	    
+	    <menu type="break"/>	    
+	    <!-- Citation network extraction-->
+	    
+	    
+	    <menu type="break"/>	    
+	    <!-- Co-citation network extraction -->
+	    <menu pid="edu.iu.scipolicy.database.isi.extract.network.cocitation.document.all"/>
+	    <menu pid="edu.iu.scipolicy.database.isi.extract.network.cocitation.document.core"/>
+	    <menu pid="edu.iu.scipolicy.database.isi.extract.network.cocitation.journal.all"/>
+	    <menu pid="edu.iu.scipolicy.database.isi.extract.network.cocitation.journal.core"/>
+	    <menu pid="edu.iu.scipolicy.database.isi.extract.network.cocitation.author.core"/>
+    </menu>
+    <menu name="From NSF Database" type="group">
+    	<!--  Co-PI network extraction -->
+    	<menu pid="edu.iu.scipolicy.database.nsf.extract.network.copi"/>
+    </menu>
+    </top_menu>
+    
     <top_menu name="Help">      
 	<menu name="Documentation" pid=""/>
 	<menu type="break"/>
