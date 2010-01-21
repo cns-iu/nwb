@@ -13,14 +13,12 @@ public class Activator implements BundleActivator {
 	//hold on to our service registration so we can unregister when this plugin stops.
 	private ServiceRegistration extractionServiceRegistration;
 	
-	@Override
 	public void start(BundleContext context) throws Exception {
 		//Allow the database service to be found by other services/plugins
 		extractionServiceRegistration = context.registerService(
 				ExtractionService.class.getName(), new ExtractionService(), new Hashtable());
 	}
 
-	@Override
 	public void stop(BundleContext context) throws Exception {
 		//disallow the database service to be found by other services/plugins
 		this.extractionServiceRegistration.unregister();
