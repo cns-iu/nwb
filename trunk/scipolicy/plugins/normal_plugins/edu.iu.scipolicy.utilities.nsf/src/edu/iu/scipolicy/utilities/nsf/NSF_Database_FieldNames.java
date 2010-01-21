@@ -93,8 +93,8 @@ public class NSF_Database_FieldNames {
 	public static final String RAW_START_DATE = "RAW_START_DATE";
 	public static final String EXPIRATION_DATE = "EXPIRATION_DATE";
 	public static final String RAW_EXPIRATION_DATE = "RAW_EXPIRATION_DATE";
-	public static final String LAST_AMMENDMENT_DATE = "LAST_AMMENDMENT_DATE";
-	public static final String RAW_LAST_AMMENDMENT_DATE = "RAW_LAST_AMMENDMENT_DATE";
+	public static final String LAST_AMENDMENT_DATE = "LAST_AMENDMENT_DATE";
+	public static final String RAW_LAST_AMENDMENT_DATE = "RAW_LAST_AMENDMENT_DATE";
 	public static final String AWARDED_AMOUNT_TO_DATE = "AWARDED_AMOUNT_TO_DATE";
 	public static final String RAW_AWARDED_AMOUNT_TO_DATE = "RAW_AWARDED_AMOUNT_TO_DATE";
 	public static final String AWARD_INSTRUMENT = "AWARD_INSTRUMENT";

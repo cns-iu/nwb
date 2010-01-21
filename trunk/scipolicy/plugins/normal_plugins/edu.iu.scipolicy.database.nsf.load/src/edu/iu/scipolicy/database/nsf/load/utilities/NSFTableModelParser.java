@@ -173,7 +173,7 @@ public class NSFTableModelParser {
 
 				/*
 				 * For Award VO parse following columns, Title, Start Date, 
-				 * Last Ammendment Date, Expiration Date, Awarded Amount to Date,
+				 * Last Amendment Date, Expiration Date, Awarded Amount to Date,
 				 * Award Instrument, NSF Organization, NSF Directorate & Abstract.
 				 * */
 				Award award = parseAward(nsfMetadata.getColumnNameToColumnIndex(), 
@@ -640,12 +640,12 @@ public class NSFTableModelParser {
 										rawExpirationDate, 
 										NSF_CSV_FieldNames.CSV.AWARD_EXPIRATION_DATE);
 
-		String rawLastAmmendmentDate = StringUtilities.simpleClean(
+		String rawLastAmendmentDate = StringUtilities.simpleClean(
 											row[columnNameToColumnIndex
 											     .get(NSF_CSV_FieldNames.CSV.AWARD_LAST_AMENDMENT_DATE)]);
 		
-		Date lastAmmendmentDate = parseDate(awardNumber, 
-											rawLastAmmendmentDate, 
+		Date lastAmendmentDate = parseDate(awardNumber, 
+											rawLastAmendmentDate, 
 											NSF_CSV_FieldNames.CSV.AWARD_LAST_AMENDMENT_DATE);         
 
 		String rawAwardedAmountToDate = StringUtilities.simpleClean(
@@ -700,8 +700,8 @@ public class NSFTableModelParser {
 				rawStartDate,
 				expirationDate,
 				rawExpirationDate,
-				lastAmmendmentDate,
-				rawLastAmmendmentDate,
+				lastAmendmentDate,
+				rawLastAmendmentDate,
 				awardedAmountToDate,
 				rawAwardedAmountToDate,
 				awardInstrument,

@@ -21,8 +21,8 @@ public class Award extends Entity<Award> implements Comparable<Award> {
 			NSF_Database_FieldNames.RAW_START_DATE, DerbyFieldType.TEXT,
 			NSF_Database_FieldNames.EXPIRATION_DATE, DerbyFieldType.DATE,
 			NSF_Database_FieldNames.RAW_EXPIRATION_DATE, DerbyFieldType.TEXT,
-			NSF_Database_FieldNames.LAST_AMMENDMENT_DATE, DerbyFieldType.DATE,
-			NSF_Database_FieldNames.RAW_LAST_AMMENDMENT_DATE, DerbyFieldType.TEXT,
+			NSF_Database_FieldNames.LAST_AMENDMENT_DATE, DerbyFieldType.DATE,
+			NSF_Database_FieldNames.RAW_LAST_AMENDMENT_DATE, DerbyFieldType.TEXT,
 			NSF_Database_FieldNames.AWARDED_AMOUNT_TO_DATE, DerbyFieldType.DOUBLE,
 			NSF_Database_FieldNames.RAW_AWARDED_AMOUNT_TO_DATE, DerbyFieldType.TEXT,
 			NSF_Database_FieldNames.AWARD_INSTRUMENT, DerbyFieldType.TEXT,
@@ -35,7 +35,7 @@ public class Award extends Entity<Award> implements Comparable<Award> {
 	private String title;
 	private Date startDate;
 	private Date expirationDate;
-	private Date lastAmmendmentDate;
+	private Date lastAmendmentDate;
 	private double awardedAmountToDate;
 	private String awardInstrument;
 	private String nSFDirectorate;
@@ -43,7 +43,7 @@ public class Award extends Entity<Award> implements Comparable<Award> {
 	private String abstractText;
 	private String rawStartDate;
 	private String rawAwardedAmountToDate;
-	private String rawLastAmmendmentDate;
+	private String rawLastAmendmentDate;
 	private String rawExpirationDate;
 
 	public Award(DatabaseTableKeyGenerator keyGenerator,
@@ -53,8 +53,8 @@ public class Award extends Entity<Award> implements Comparable<Award> {
 				 String rawStartDate, 
 				 Date expirationDate, 
 				 String rawExpirationDate, 
-				 Date lastAmmendmentDate,
-				 String rawLastAmmendmentDate, 
+				 Date lastAmendmentDate,
+				 String rawLastAmendmentDate, 
 				 double awardedAmountToDate,
 				 String rawAwardedAmountToDate,
 				 String awardInstrument,
@@ -67,8 +67,8 @@ public class Award extends Entity<Award> implements Comparable<Award> {
 											 rawStartDate, 
 											 expirationDate, 
 											 rawExpirationDate, 
-											 lastAmmendmentDate,
-											 rawLastAmmendmentDate, 
+											 lastAmendmentDate,
+											 rawLastAmendmentDate, 
 											 awardedAmountToDate,
 											 rawAwardedAmountToDate, 
 											 awardInstrument, 
@@ -81,8 +81,8 @@ public class Award extends Entity<Award> implements Comparable<Award> {
 		this.rawStartDate = rawStartDate;
 		this.expirationDate = expirationDate;
 		this.rawExpirationDate = rawExpirationDate;
-		this.lastAmmendmentDate = lastAmmendmentDate;
-		this.rawLastAmmendmentDate = rawLastAmmendmentDate;
+		this.lastAmendmentDate = lastAmendmentDate;
+		this.rawLastAmendmentDate = rawLastAmendmentDate;
 		this.awardedAmountToDate = awardedAmountToDate;
 		this.rawAwardedAmountToDate = rawAwardedAmountToDate;
 		this.awardInstrument = awardInstrument;
@@ -98,8 +98,8 @@ public class Award extends Entity<Award> implements Comparable<Award> {
 													   String rawStartDate, 
 													   Date expirationDate,
 													   String rawExpirationDate, 
-													   Date lastAmmendmentDate,
-													   String rawLastAmmendmentDate, 
+													   Date lastAmendmentDate,
+													   String rawLastAmendmentDate, 
 													   double awardedAmountToDate,
 													   String rawAwardedAmountToDate,
 													   String awardInstrument,
@@ -122,11 +122,11 @@ public class Award extends Entity<Award> implements Comparable<Award> {
 		
 		attributes.put(NSF_Database_FieldNames.RAW_EXPIRATION_DATE, rawExpirationDate);
 
-		if (lastAmmendmentDate != null) {
-			attributes.put(NSF_Database_FieldNames.LAST_AMMENDMENT_DATE, lastAmmendmentDate);
+		if (lastAmendmentDate != null) {
+			attributes.put(NSF_Database_FieldNames.LAST_AMENDMENT_DATE, lastAmendmentDate);
 		}
 		
-		attributes.put(NSF_Database_FieldNames.RAW_LAST_AMMENDMENT_DATE, rawLastAmmendmentDate);
+		attributes.put(NSF_Database_FieldNames.RAW_LAST_AMENDMENT_DATE, rawLastAmendmentDate);
 		attributes.put(NSF_Database_FieldNames.AWARDED_AMOUNT_TO_DATE, awardedAmountToDate);
 		attributes.put(NSF_Database_FieldNames.RAW_AWARDED_AMOUNT_TO_DATE, rawAwardedAmountToDate);
 		attributes.put(NSF_Database_FieldNames.AWARD_INSTRUMENT, awardInstrument);
@@ -158,8 +158,8 @@ public class Award extends Entity<Award> implements Comparable<Award> {
 	}
 
 
-	public Date getLastAmmendmentDate() {
-		return lastAmmendmentDate;
+	public Date getLastAmendmentDate() {
+		return lastAmendmentDate;
 	}
 
 
@@ -200,9 +200,9 @@ public class Award extends Entity<Award> implements Comparable<Award> {
 														otherItem.getRawStartDate());
 		this.rawExpirationDate = StringUtilities.simpleMerge(this.rawExpirationDate,
 															 otherItem.getRawExpirationDate());
-		this.rawLastAmmendmentDate = StringUtilities.simpleMerge(
-											this.rawLastAmmendmentDate,
-											otherItem.getRawLastAmmendmentDate());
+		this.rawLastAmendmentDate = StringUtilities.simpleMerge(
+											this.rawLastAmendmentDate,
+											otherItem.getRawLastAmendmentDate());
 		this.rawAwardedAmountToDate = StringUtilities.simpleMerge(
 											this.rawAwardedAmountToDate,
 											otherItem.getRawAwardedAmountToDate());
@@ -246,8 +246,8 @@ public class Award extends Entity<Award> implements Comparable<Award> {
 	}
 
 
-	public String getRawLastAmmendmentDate() {
-		return rawLastAmmendmentDate;
+	public String getRawLastAmendmentDate() {
+		return rawLastAmendmentDate;
 	}
 
 
