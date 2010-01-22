@@ -209,7 +209,8 @@ public class ISITableReader {
 			currentTag, currentLine, reader, table, " ", separator, shouldClean);
 	}
 	
-	private static final String STARTS_WITH_A_NUMBER = "\\d.*";
+	//DOIs all start with the DOI directory code, 10, followed by a dot.
+	private static final String LOOKS_LIKE_A_DOI = "10\\..*";
 
 	private String processMultilineTagData(
 			ISITag currentTag,
@@ -226,7 +227,7 @@ public class ISITableReader {
 			currentLine = currentLine.trim();
 
 			if (currentTag.equals(ISITag.CITED_REFERENCES) && 
-					currentLine.matches(STARTS_WITH_A_NUMBER)) {
+					currentLine.matches(LOOKS_LIKE_A_DOI)) {
 				/*
 				 * ISI sucks, and puts DOIs on the next line in a list of cited references.
 				 * This is kind of a hot mess.
