@@ -12,6 +12,13 @@ public class Schema <T extends RowItem<T>> {
 	private List<PrimaryKey> primaryKeys = new ArrayList<PrimaryKey>();
 	private List<ForeignKey> foreignKeys = new ArrayList<ForeignKey>();
 
+	/* TODO: Refactor Schema/the constants/framework/etc. as discussed with Micah, and then Joseph.
+	 * TODO: I would very strongly prefer something along these lines:
+	public Schema(boolean addPrimaryKey, Field... fields) {
+	
+	}
+	*/
+	
 	public Schema(boolean addPrimaryKey, Object...  objects) throws IllegalArgumentException {
 		if (NumberUtilities.isOdd(objects.length)) {
 			String exceptionMessage =
@@ -57,6 +64,7 @@ public class Schema <T extends RowItem<T>> {
 		return this;
 	}
 
+	/* TODO I would discourage interleaving arguments in this way. */
 	public Schema<T> FOREIGN_KEYS(String... foreignKeys) {
 		if (NumberUtilities.isOdd(foreignKeys.length)) {
 			String exceptionMessage =
