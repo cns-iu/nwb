@@ -25,7 +25,7 @@ public class ISITablePreprocessor {
     		String isiUniqueArticleIdentifier = StringUtilities.simpleClean(
     			currentRow.getString(ISITag.UNIQUE_ID.getColumnName()));
 
-    		if (StringUtilities.isEmptyOrWhiteSpace(isiUniqueArticleIdentifier)) {
+    		if (StringUtilities.isNull_Empty_OrWhitespace(isiUniqueArticleIdentifier)) {
     			String hash = hashRow(currentRow);
     			currentRow.set(ISITag.UNIQUE_ID.getColumnName(), hash);
     		}

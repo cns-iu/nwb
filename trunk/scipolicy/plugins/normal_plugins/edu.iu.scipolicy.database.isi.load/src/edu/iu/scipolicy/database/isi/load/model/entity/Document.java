@@ -3,9 +3,12 @@ package edu.iu.scipolicy.database.isi.load.model.entity;
 import java.util.Dictionary;
 import java.util.Hashtable;
 
+import org.cishell.utilities.dictionary.DictionaryEntry;
+import org.cishell.utilities.dictionary.DictionaryUtilities;
+
+import edu.iu.cns.database.loader.framework.DerbyFieldType;
 import edu.iu.cns.database.loader.framework.Entity;
 import edu.iu.cns.database.loader.framework.Schema;
-import edu.iu.cns.database.loader.framework.DerbyFieldType;
 import edu.iu.cns.database.loader.framework.utilities.DatabaseTableKeyGenerator;
 import edu.iu.nwb.shared.isiutil.database.ISI;
 
@@ -45,13 +48,13 @@ public class Document extends Entity<Document> implements Comparable<Document> {
 
 	private String abstractText;
 	private String articleNumber;
-	private int beginningPage;
-	private int citedReferenceCount;
-	private int citedYear;
+	private Integer beginningPage;
+	private Integer citedReferenceCount;
+	private Integer citedYear;
 	private String digitalObjectIdentifier;
 	private String documentType;
 	private String documentVolume;
-	private int endingPage;
+	private Integer endingPage;
 	private Person firstAuthorPerson;
 	private String fundingAgencyAndGrantNumber;
 	private String fundingText;
@@ -60,28 +63,28 @@ public class Document extends Entity<Document> implements Comparable<Document> {
 	private String isiUniqueArticleIdentifier;
 	private String issue;
 	private String language;
-	private int pageCount;
+	private Integer pageCount;
 	private String partNumber;
 	private String publicationDate;
-	private int publicationYear;
+	private Integer publicationYear;
 	private Source source;
 	private String specialIssue;
 	private String subjectCategory;
 	private String supplement;
-	private int timesCited;
+	private Integer timesCited;
 	private String title;
 
 	public Document(
 			DatabaseTableKeyGenerator keyGenerator,
 			String abstractText,
 			String articleNumber,
-			int beginningPage,
-			int citedReferenceCount,
-			int citedYear,
+			Integer beginningPage,
+			Integer citedReferenceCount,
+			Integer citedYear,
 			String digitalObjectIdentifier,
 			String documentType,
 			String documentVolume,
-			int endingPage,
+			Integer endingPage,
 			Person firstAuthorPerson,
 			String fundingAgencyAndGrantNumber,
 			String fundingText,
@@ -90,15 +93,15 @@ public class Document extends Entity<Document> implements Comparable<Document> {
 			String isiUniqueArticleIdentifier,
 			String issue,
 			String language,
-			int pageCount,
+			Integer pageCount,
 			String partNumber,
 			String publicationDate,
-			int publicationYear,
+			Integer publicationYear,
 			Source source,
 			String specialIssue,
 			String subjectCategory,
 			String supplement,
-			int timesCited,
+			Integer timesCited,
 			String title) {
 		super(
 			keyGenerator,
@@ -171,15 +174,15 @@ public class Document extends Entity<Document> implements Comparable<Document> {
 		return this.articleNumber;
 	}
 
-	public int getBeginningPage() {
+	public Integer getBeginningPage() {
 		return this.beginningPage;
 	}
 
-	public int getCitedReferenceCount() {
+	public Integer getCitedReferenceCount() {
 		return this.citedReferenceCount;
 	}
 
-	public int getCitedYear() {
+	public Integer getCitedYear() {
 		return this.citedYear;
 	}
 
@@ -187,7 +190,7 @@ public class Document extends Entity<Document> implements Comparable<Document> {
 		return this.documentType;
 	}
 
-	public int getEndingPage() {
+	public Integer getEndingPage() {
 		return this.endingPage;
 	}
 
@@ -223,7 +226,7 @@ public class Document extends Entity<Document> implements Comparable<Document> {
 		return this.language;
 	}
 
-	public int getPageCount() {
+	public Integer getPageCount() {
 		return this.pageCount;
 	}
 
@@ -235,7 +238,7 @@ public class Document extends Entity<Document> implements Comparable<Document> {
 		return this.publicationDate;
 	}
 
-	public int getPublicationYear() {
+	public Integer getPublicationYear() {
 		return this.publicationYear;
 	}
 
@@ -255,7 +258,7 @@ public class Document extends Entity<Document> implements Comparable<Document> {
 		return this.supplement;
 	}
 
-	public int getTimesCited() {
+	public Integer getTimesCited() {
 		return this.timesCited;
 	}
 
@@ -305,13 +308,13 @@ public class Document extends Entity<Document> implements Comparable<Document> {
 	public static Dictionary<String, Comparable<?>> createAttributes(
 			String abstractText,
 			String articleNumber,
-			int beginningPage,
-			int citedReferenceCount,
-			int citedYear,
+			Integer beginningPage,
+			Integer citedReferenceCount,
+			Integer citedYear,
 			String digitalObjectIdentifier,
 			String documentType,
 			String documentVolume,
-			int endingPage,
+			Integer endingPage,
 			Person firstAuthorPerson,
 			String fundingAgencyAndGrantNumber,
 			String fundingText,
@@ -320,18 +323,50 @@ public class Document extends Entity<Document> implements Comparable<Document> {
 			String isiUniqueArticleIdentifier,
 			String issue,
 			String language,
-			int pageCount,
+			Integer pageCount,
 			String partNumber,
 			String publicationDate,
-			int publicationYear,
+			Integer publicationYear,
 			Source source,
 			String specialIssue,
 			String subjectCategory,
 			String supplement,
-			int timesCited,
+			Integer timesCited,
 			String title) {
 		Dictionary<String, Comparable<?>> attributes = new Hashtable<String, Comparable<?>>();
-		attributes.put(ISI.ABSTRACT_TEXT, abstractText);
+		DictionaryUtilities.addIfNotNull(
+			attributes,
+			new DictionaryEntry<String, Comparable<?>>(ISI.ABSTRACT_TEXT, abstractText),
+			new DictionaryEntry<String, Comparable<?>>(ISI.ARTICLE_NUMBER, articleNumber),
+			new DictionaryEntry<String, Comparable<?>>(ISI.BEGINNING_PAGE, beginningPage),
+			new DictionaryEntry<String, Comparable<?>>(
+				ISI.CITED_REFERENCE_COUNT, citedReferenceCount),
+			new DictionaryEntry<String, Comparable<?>>(ISI.CITED_YEAR, citedYear),
+			new DictionaryEntry<String, Comparable<?>>(
+				ISI.DIGITAL_OBJECT_IDENTIFIER, digitalObjectIdentifier),
+			new DictionaryEntry<String, Comparable<?>>(ISI.DOCUMENT_TYPE, documentType),
+			new DictionaryEntry<String, Comparable<?>>(ISI.DOCUMENT_VOLUME, documentVolume),
+			new DictionaryEntry<String, Comparable<?>>(ISI.ENDING_PAGE, endingPage),
+			new DictionaryEntry<String, Comparable<?>>(
+				ISI.FUNDING_AGENCY_AND_GRANT_NUMBER, fundingAgencyAndGrantNumber),
+			new DictionaryEntry<String, Comparable<?>>(ISI.FUNDING_TEXT, fundingText),
+			new DictionaryEntry<String, Comparable<?>>(ISI.ISBN, isbn),
+			new DictionaryEntry<String, Comparable<?>>(
+				ISI.ISI_DOCUMENT_DELIVERY_NUMBER, isiDocumentDeliveryNumber),
+			new DictionaryEntry<String, Comparable<?>>(
+				ISI.ISI_UNIQUE_ARTICLE_IDENTIFIER, isiUniqueArticleIdentifier),
+			new DictionaryEntry<String, Comparable<?>>(ISI.ISSUE, issue),
+			new DictionaryEntry<String, Comparable<?>>(ISI.LANGUAGE, language),
+			new DictionaryEntry<String, Comparable<?>>(ISI.PAGE_COUNT, pageCount),
+			new DictionaryEntry<String, Comparable<?>>(ISI.PART_NUMBER, partNumber),
+			new DictionaryEntry<String, Comparable<?>>(ISI.PUBLICATION_DATE, publicationDate),
+			new DictionaryEntry<String, Comparable<?>>(ISI.PUBLICATION_YEAR, publicationYear),
+			new DictionaryEntry<String, Comparable<?>>(ISI.SPECIAL_ISSUE, specialIssue),
+			new DictionaryEntry<String, Comparable<?>>(ISI.SUBJECT_CATEGORY, subjectCategory),
+			new DictionaryEntry<String, Comparable<?>>(ISI.SUPPLEMENT, supplement),
+			new DictionaryEntry<String, Comparable<?>>(ISI.TIMES_CITED, timesCited),
+			new DictionaryEntry<String, Comparable<?>>(ISI.TITLE, title));
+		/*attributes.put(ISI.ABSTRACT_TEXT, abstractText);
 		attributes.put(ISI.ARTICLE_NUMBER, articleNumber);
 		attributes.put(ISI.BEGINNING_PAGE, beginningPage);
 		attributes.put(ISI.CITED_REFERENCE_COUNT, citedReferenceCount);
@@ -339,13 +374,13 @@ public class Document extends Entity<Document> implements Comparable<Document> {
 		attributes.put(ISI.DIGITAL_OBJECT_IDENTIFIER, digitalObjectIdentifier);
 		attributes.put(ISI.DOCUMENT_TYPE, documentType);
 		attributes.put(ISI.DOCUMENT_VOLUME, documentVolume);
-		attributes.put(ISI.ENDING_PAGE, endingPage);
+		attributes.put(ISI.ENDING_PAGE, endingPage);*/
 
 		if (firstAuthorPerson != null) {
 			attributes.put(ISI.FIRST_AUTHOR, firstAuthorPerson.getPrimaryKey());
 		}
 
-		attributes.put(ISI.FUNDING_AGENCY_AND_GRANT_NUMBER, fundingAgencyAndGrantNumber);
+		/*attributes.put(ISI.FUNDING_AGENCY_AND_GRANT_NUMBER, fundingAgencyAndGrantNumber);
 		attributes.put(ISI.FUNDING_TEXT, fundingText);
 		attributes.put(ISI.ISBN, isbn);
 		attributes.put(ISI.ISI_DOCUMENT_DELIVERY_NUMBER, isiDocumentDeliveryNumber);
@@ -355,17 +390,17 @@ public class Document extends Entity<Document> implements Comparable<Document> {
 		attributes.put(ISI.PAGE_COUNT, pageCount);
 		attributes.put(ISI.PART_NUMBER, partNumber);
 		attributes.put(ISI.PUBLICATION_DATE, publicationDate);
-		attributes.put(ISI.PUBLICATION_YEAR, publicationYear);
+		attributes.put(ISI.PUBLICATION_YEAR, publicationYear);*/
 
 		if (source != null) {
 			attributes.put(ISI.DOCUMENT_SOURCE, source.getPrimaryKey());
 		}
 
-		attributes.put(ISI.SPECIAL_ISSUE, specialIssue);
+		/*attributes.put(ISI.SPECIAL_ISSUE, specialIssue);
 		attributes.put(ISI.SUBJECT_CATEGORY, subjectCategory);
 		attributes.put(ISI.SUPPLEMENT, supplement);
 		attributes.put(ISI.TIMES_CITED, timesCited);
-		attributes.put(ISI.TITLE, title);
+		attributes.put(ISI.TITLE, title);*/
 
 		return attributes;
 	}

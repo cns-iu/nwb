@@ -3,6 +3,9 @@ package edu.iu.scipolicy.database.isi.load.model.entity;
 import java.util.Dictionary;
 import java.util.Hashtable;
 
+import org.cishell.utilities.dictionary.DictionaryEntry;
+import org.cishell.utilities.dictionary.DictionaryUtilities;
+
 import edu.iu.cns.database.loader.framework.DerbyFieldType;
 import edu.iu.cns.database.loader.framework.Entity;
 import edu.iu.cns.database.loader.framework.Schema;
@@ -104,13 +107,22 @@ public class Person extends Entity<Person> implements Comparable<Person> {
 			String personalName,
 			String unsplitName) {
 		Dictionary<String, Comparable<?>> attributes = new Hashtable<String, Comparable<?>>();
-		attributes.put(ISI.ADDITIONAL_NAME, additionalName);
+		DictionaryUtilities.addIfNotNull(
+			attributes,
+			new DictionaryEntry<String, Comparable<?>>(ISI.ADDITIONAL_NAME, additionalName),
+			new DictionaryEntry<String, Comparable<?>>(ISI.FAMILY_NAME, familyName),
+			new DictionaryEntry<String, Comparable<?>>(ISI.FIRST_INITIAL, firstInitial),
+			new DictionaryEntry<String, Comparable<?>>(ISI.FULL_NAME, fullName),
+			new DictionaryEntry<String, Comparable<?>>(ISI.MIDDLE_INITIAL, middleInitial),
+			new DictionaryEntry<String, Comparable<?>>(ISI.PERSONAL_NAME, personalName),
+			new DictionaryEntry<String, Comparable<?>>(ISI.UNSPLIT_ABBREVIATED_NAME, unsplitName));
+		/*attributes.put(ISI.ADDITIONAL_NAME, additionalName);
 		attributes.put(ISI.FAMILY_NAME, familyName);
 		attributes.put(ISI.FIRST_INITIAL, firstInitial);
 		attributes.put(ISI.FULL_NAME, fullName);
 		attributes.put(ISI.MIDDLE_INITIAL, middleInitial);
 		attributes.put(ISI.PERSONAL_NAME, personalName);
-		attributes.put(ISI.UNSPLIT_ABBREVIATED_NAME, unsplitName);
+		attributes.put(ISI.UNSPLIT_ABBREVIATED_NAME, unsplitName);*/
 
 		return attributes;
 	}

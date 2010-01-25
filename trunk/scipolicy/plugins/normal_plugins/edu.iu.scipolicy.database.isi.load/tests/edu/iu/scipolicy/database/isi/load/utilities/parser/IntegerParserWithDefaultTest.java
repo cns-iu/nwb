@@ -42,7 +42,7 @@ public class IntegerParserWithDefaultTest {
 	@Test
 	public void testParse_InvalidTarget() {
 		try {
-			int parsedInt = IntegerParserWithDefault.parse("sdafsdf1");
+			Integer parsedInt = IntegerParserWithDefault.parse("sdafsdf1");
 
 			if (parsedInt != IntegerParserWithDefault.DEFAULT) {
 				fail(

@@ -19,7 +19,7 @@ public class ReferenceDataParserTest_2Tokens extends ReferenceDataParserTest {
 		Person resultPerson = result.getAuthorPerson();
 		int resultYear = result.getYear();
 
-		if (!StringUtilities.isEmptyOrWhiteSpace(abbreviation) ||
+		if (!StringUtilities.isNull_Empty_OrWhitespace(abbreviation) ||
 				(resultPerson != null) ||
 				(resultYear != IntegerParserWithDefault.DEFAULT)) {
 			String failMessage =

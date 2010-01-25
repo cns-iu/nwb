@@ -4,10 +4,12 @@ import java.util.Dictionary;
 import java.util.Hashtable;
 
 import org.cishell.utilities.StringUtilities;
+import org.cishell.utilities.dictionary.DictionaryEntry;
+import org.cishell.utilities.dictionary.DictionaryUtilities;
 
+import edu.iu.cns.database.loader.framework.DerbyFieldType;
 import edu.iu.cns.database.loader.framework.Entity;
 import edu.iu.cns.database.loader.framework.Schema;
-import edu.iu.cns.database.loader.framework.DerbyFieldType;
 import edu.iu.cns.database.loader.framework.utilities.DatabaseTableKeyGenerator;
 import edu.iu.nwb.shared.isiutil.database.ISI;
 
@@ -28,8 +30,9 @@ public class Address extends Entity<Address> implements Comparable<Address> {
 	private String stateOrProvince;
 	private String streetAddress;
 
+	// TODO Change to nulls
 	public Address(DatabaseTableKeyGenerator keyGenerator, String rawAddress) {
-		this(keyGenerator, "", "", "", rawAddress, "", "");
+		this(keyGenerator, null, null, null, rawAddress, null, null);
 	}
 
 	public Address(
@@ -82,7 +85,7 @@ public class Address extends Entity<Address> implements Comparable<Address> {
 	}
 
 	public boolean shouldMerge(Address otherAddress) {
-		return StringUtilities.validAndEquivalentIgnoreCase(
+		return StringUtilities.areValidAndEqualIgnoreCase(
 			this.rawAddress, otherAddress.getRawAddress());
 	}
 
@@ -105,12 +108,21 @@ public class Address extends Entity<Address> implements Comparable<Address> {
 			String streetAddress,
 			String stateOrProvince) {
 		Dictionary<String, Comparable<?>> attributes = new Hashtable<String, Comparable<?>>();
-		attributes.put(ISI.ADDRESS_CITY, city);
+		DictionaryUtilities.addIfNotNull(
+			attributes,
+			new DictionaryEntry<String, Comparable<?>>(ISI.ADDRESS_CITY, city),
+			new DictionaryEntry<String, Comparable<?>>(ISI.COUNTRY, country),
+			new DictionaryEntry<String, Comparable<?>>(ISI.POSTAL_CODE, postalCode),
+			new DictionaryEntry<String, Comparable<?>>(ISI.RAW_ADDRESS, rawAddress),
+			new DictionaryEntry<String, Comparable<?>>(ISI.STATE_OR_PROVINCE, stateOrProvince),
+			new DictionaryEntry<String, Comparable<?>>(ISI.STREET_ADDRESS, streetAddress));
+		
+		/*attributes.put(ISI.ADDRESS_CITY, city);
 		attributes.put(ISI.COUNTRY, country);
 		attributes.put(ISI.POSTAL_CODE, postalCode);
 		attributes.put(ISI.RAW_ADDRESS, rawAddress);
 		attributes.put(ISI.STATE_OR_PROVINCE, stateOrProvince);
-		attributes.put(ISI.STREET_ADDRESS, streetAddress);
+		attributes.put(ISI.STREET_ADDRESS, streetAddress);*/
 
 		return attributes;
 	}

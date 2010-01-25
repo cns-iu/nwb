@@ -3,9 +3,12 @@ package edu.iu.scipolicy.database.isi.load.model.entity.relationship;
 import java.util.Dictionary;
 import java.util.Hashtable;
 
+import org.cishell.utilities.dictionary.DictionaryEntry;
+import org.cishell.utilities.dictionary.DictionaryUtilities;
+
+import edu.iu.cns.database.loader.framework.DerbyFieldType;
 import edu.iu.cns.database.loader.framework.RowItem;
 import edu.iu.cns.database.loader.framework.Schema;
-import edu.iu.cns.database.loader.framework.DerbyFieldType;
 import edu.iu.nwb.shared.isiutil.database.ISI;
 import edu.iu.scipolicy.database.isi.load.model.entity.Address;
 import edu.iu.scipolicy.database.isi.load.model.entity.Document;
@@ -22,9 +25,9 @@ public class ResearchAddress extends RowItem<ResearchAddress> {
 
 	private Document document;
 	private Address address;
-	private int orderListed;
+	private Integer orderListed;
 
-	public ResearchAddress(Document document, Address address, int orderListed) {
+	public ResearchAddress(Document document, Address address, Integer orderListed) {
 		super(createAttributes(document, address, orderListed));
 		this.document = document;
 		this.address = address;
@@ -39,7 +42,7 @@ public class ResearchAddress extends RowItem<ResearchAddress> {
 		return this.address;
 	}
 
-	public int getOrderListed() {
+	public Integer getOrderListed() {
 		return this.orderListed;
 	}
 
@@ -62,13 +65,16 @@ public class ResearchAddress extends RowItem<ResearchAddress> {
 	}
 
 	public static Dictionary<String, Comparable<?>> createAttributes(
-			Document document, Address address, int orderListed) {
+			Document document, Address address, Integer orderListed) {
 		Dictionary<String, Comparable<?>> attributes = new Hashtable<String, Comparable<?>>();
 		attributes.put(
 				ISI.RESEARCH_ADDRESSES_DOCUMENT_FOREIGN_KEY, document.getPrimaryKey());
 		attributes.put(
 				ISI.RESEARCH_ADDRESSES_ADDRESS_FOREIGN_KEY, address.getPrimaryKey());
-		attributes.put(ISI.ORDER_LISTED, orderListed);
+		DictionaryUtilities.addIfNotNull(
+			attributes,
+			new DictionaryEntry<String, Comparable<?>>(ISI.ORDER_LISTED, orderListed));
+		//attributes.put(ISI.ORDER_LISTED, orderListed);
 
 		return attributes;
 	}

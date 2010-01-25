@@ -19,7 +19,7 @@ public class ReferenceDataParserTest_4Tokens extends ReferenceDataParserTest {
 		int resultPageNumber = result.getPageNumber();
 
 		if (resultSource != null) {
-			if (!StringUtilities.isEmptyOrWhiteSpace(
+			if (!StringUtilities.isNull_Empty_OrWhitespace(
 						resultSource.get29CharacterSourceTitleAbbreviation()) ||
 					(resultYear != IntegerParserWithDefault.DEFAULT) ||
 					(resultVolume != IntegerParserWithDefault.DEFAULT) ||

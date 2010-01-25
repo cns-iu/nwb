@@ -4,6 +4,8 @@ import java.util.Dictionary;
 import java.util.Hashtable;
 
 import org.cishell.utilities.StringUtilities;
+import org.cishell.utilities.dictionary.DictionaryEntry;
+import org.cishell.utilities.dictionary.DictionaryUtilities;
 
 import edu.iu.cns.database.loader.framework.Entity;
 import edu.iu.cns.database.loader.framework.Schema;
@@ -32,7 +34,7 @@ public class Patent extends Entity<Patent> implements Comparable<Patent> {
 	}
 
 	public boolean shouldMerge(Patent otherPatent) {
-		return StringUtilities.validAndEquivalent(
+		return StringUtilities.areValidAndEqual(
 			this.patentNumber, otherPatent.getPatentNumber());
 	}
 
@@ -41,7 +43,10 @@ public class Patent extends Entity<Patent> implements Comparable<Patent> {
 
 	public static Dictionary<String, Comparable<?>> createAttributes(String patentNumber) {
 		Dictionary<String, Comparable<?>> attributes = new Hashtable<String, Comparable<?>>();
-		attributes.put(ISI.PATENT_NUMBER, patentNumber);
+		DictionaryUtilities.addIfNotNull(
+			attributes,
+			new DictionaryEntry<String, Comparable<?>>(ISI.PATENT_NUMBER, patentNumber));
+		//attributes.put(ISI.PATENT_NUMBER, patentNumber);
 
 		return attributes;
 	}

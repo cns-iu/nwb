@@ -4,10 +4,12 @@ import java.util.Dictionary;
 import java.util.Hashtable;
 
 import org.cishell.utilities.StringUtilities;
+import org.cishell.utilities.dictionary.DictionaryEntry;
+import org.cishell.utilities.dictionary.DictionaryUtilities;
 
+import edu.iu.cns.database.loader.framework.DerbyFieldType;
 import edu.iu.cns.database.loader.framework.Entity;
 import edu.iu.cns.database.loader.framework.Schema;
-import edu.iu.cns.database.loader.framework.DerbyFieldType;
 import edu.iu.cns.database.loader.framework.utilities.DatabaseTableKeyGenerator;
 import edu.iu.nwb.shared.isiutil.database.ISI;
 
@@ -65,9 +67,9 @@ public class Publisher extends Entity<Publisher> implements Comparable<Publisher
 
 	public boolean shouldMerge(Publisher otherPublisher) {
 		boolean namesAndCitiesAreEquivalent = (
-			StringUtilities.validAndEquivalentIgnoreCase(this.city, otherPublisher.getCity()) &&
-			StringUtilities.validAndEquivalentIgnoreCase(this.name, otherPublisher.getName()));
-		boolean webAddressesAreEquivalent = StringUtilities.validAndEquivalentIgnoreCase(
+			StringUtilities.areValidAndEqualIgnoreCase(this.city, otherPublisher.getCity()) &&
+			StringUtilities.areValidAndEqualIgnoreCase(this.name, otherPublisher.getName()));
+		boolean webAddressesAreEquivalent = StringUtilities.areValidAndEqualIgnoreCase(
 			this.webAddress, otherPublisher.getWebAddress());
 
 		return (namesAndCitiesAreEquivalent || webAddressesAreEquivalent);
@@ -80,13 +82,17 @@ public class Publisher extends Entity<Publisher> implements Comparable<Publisher
 			StringUtilities.simpleMerge(this.webAddress, otherPublisher.getWebAddress());
 	}
 
-	//TODO: Put in publisher source
 	public static Dictionary<String, Comparable<?>> createAttributes(
 			String city, String name, String webAddress) {
 		Dictionary<String, Comparable<?>> attributes = new Hashtable<String, Comparable<?>>();
-		attributes.put(ISI.PUBLISHER_CITY, city);
+		DictionaryUtilities.addIfNotNull(
+			attributes,
+			new DictionaryEntry<String, Comparable<?>>(ISI.PUBLISHER_CITY, city),
+			new DictionaryEntry<String, Comparable<?>>(ISI.PUBLISHER_NAME, name),
+			new DictionaryEntry<String, Comparable<?>>(ISI.PUBLISHER_WEB_ADDRESS, webAddress));
+		/*attributes.put(ISI.PUBLISHER_CITY, city);
 		attributes.put(ISI.PUBLISHER_NAME, name);
-		attributes.put(ISI.PUBLISHER_WEB_ADDRESS, webAddress);
+		attributes.put(ISI.PUBLISHER_WEB_ADDRESS, webAddress);*/
 
 		return attributes;
 	}

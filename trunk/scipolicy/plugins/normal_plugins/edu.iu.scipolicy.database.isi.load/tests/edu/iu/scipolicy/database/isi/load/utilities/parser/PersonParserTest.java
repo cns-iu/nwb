@@ -2,14 +2,13 @@ package edu.iu.scipolicy.database.isi.load.utilities.parser;
 
 import static org.junit.Assert.fail;
 
+import org.cishell.utilities.Pair;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
 import edu.iu.cns.database.loader.framework.utilities.DatabaseTableKeyGenerator;
-import edu.iu.cns.shared.utilities.Pair;
 import edu.iu.scipolicy.database.isi.load.model.entity.Person;
-import edu.iu.scipolicy.database.isi.load.utilities.parser.PersonParser;
 import edu.iu.scipolicy.database.isi.load.utilities.parser.exception.PersonParsingException;
 import edu.iu.scipolicy.database.isi.load.utilities.parser.test.entity.PersonTest;
 

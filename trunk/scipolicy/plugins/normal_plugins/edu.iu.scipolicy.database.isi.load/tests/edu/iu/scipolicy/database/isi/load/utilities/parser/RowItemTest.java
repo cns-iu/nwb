@@ -11,6 +11,7 @@ import org.cishell.framework.algorithm.AlgorithmExecutionException;
 import org.cishell.framework.data.BasicData;
 import org.cishell.framework.data.Data;
 import org.cishell.utilities.FileUtilities;
+import org.cishell.utilities.Pair;
 import org.cishell.utilities.StringUtilities;
 import org.osgi.service.log.LogService;
 
@@ -18,12 +19,10 @@ import prefuse.data.Table;
 import edu.iu.cns.database.loader.framework.RowItem;
 import edu.iu.cns.database.loader.framework.RowItemContainer;
 import edu.iu.cns.database.loader.framework.utilities.DatabaseModel;
-import edu.iu.cns.shared.utilities.Pair;
 import edu.iu.nwb.shared.isiutil.ISITableReaderHelper;
 import edu.iu.nwb.shared.isiutil.database.ISI;
 import edu.iu.nwb.shared.isiutil.exception.ReadISIFileException;
 import edu.iu.scipolicy.database.isi.load.utilities.ISITablePreprocessor;
-import edu.iu.scipolicy.database.isi.load.utilities.parser.ISITableModelParser;
 import edu.iu.scipolicy.testutilities.TestUtilities;
 
 // TODO: Just make this a utility class?
@@ -74,8 +73,8 @@ public class RowItemTest {
 
 	public static void compareProperty(
 			String propertyName, String itemProperty, String compareTo) {
-		if (StringUtilities.isEmptyOrWhiteSpace(itemProperty)) {
-			if (!StringUtilities.isEmptyOrWhiteSpace(compareTo)) {
+		if (StringUtilities.isNull_Empty_OrWhitespace(itemProperty)) {
+			if (!StringUtilities.isNull_Empty_OrWhitespace(compareTo)) {
 				String failMessage =
 					propertyName +
 					" do not match: Result is empty (\"" + itemProperty + "\")" +
@@ -84,7 +83,7 @@ public class RowItemTest {
 			} else {
 			}
 		} else {
-			if (StringUtilities.isEmptyOrWhiteSpace(compareTo)) {
+			if (StringUtilities.isNull_Empty_OrWhitespace(compareTo)) {
 				String failMessage =
 					propertyName + " do not match: Result is not empty and Comparison is.";
 				fail(failMessage);

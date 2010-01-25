@@ -4,6 +4,8 @@ import java.util.Dictionary;
 import java.util.Hashtable;
 
 import org.cishell.utilities.StringUtilities;
+import org.cishell.utilities.dictionary.DictionaryEntry;
+import org.cishell.utilities.dictionary.DictionaryUtilities;
 
 import edu.iu.cns.database.loader.framework.Entity;
 import edu.iu.cns.database.loader.framework.Schema;
@@ -40,8 +42,8 @@ public class Keyword extends Entity<Keyword> implements Comparable<Keyword> {
 
 	public boolean shouldMerge(Keyword otherKeyword) {
 		return (
-			StringUtilities.validAndEquivalent(this.keyword, otherKeyword.getKeyword()) &&
-			StringUtilities.validAndEquivalent(this.type, otherKeyword.getType()));
+			StringUtilities.areValidAndEqual(this.keyword, otherKeyword.getKeyword()) &&
+			StringUtilities.areValidAndEqual(this.type, otherKeyword.getType()));
 	}
 
 	public void merge(Keyword otherKeyword) {
@@ -51,8 +53,12 @@ public class Keyword extends Entity<Keyword> implements Comparable<Keyword> {
 
 	public static Dictionary<String, Comparable<?>> createAttributes(String keyword, String type) {
 		Dictionary<String, Comparable<?>> attributes = new Hashtable<String, Comparable<?>>();
-		attributes.put(ISI.KEYWORD, keyword);
-		attributes.put(ISI.TYPE, type);
+		DictionaryUtilities.addIfNotNull(
+			attributes,
+			new DictionaryEntry<String, Comparable<?>>(ISI.KEYWORD, keyword),
+			new DictionaryEntry<String, Comparable<?>>(ISI.TYPE, type));
+		/*attributes.put(ISI.KEYWORD, keyword);
+		attributes.put(ISI.TYPE, type);*/
 
 		return attributes;
 	}

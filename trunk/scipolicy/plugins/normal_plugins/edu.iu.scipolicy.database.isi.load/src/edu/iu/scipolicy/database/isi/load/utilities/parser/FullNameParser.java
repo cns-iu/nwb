@@ -10,7 +10,7 @@ public class FullNameParser {
 	public String fullName = "";
 
 	public FullNameParser(String rawFullNameString) throws PersonParsingException {
-		if (!StringUtilities.isEmptyOrWhiteSpace(rawFullNameString)) {
+		if (!StringUtilities.isNull_Empty_OrWhitespace(rawFullNameString)) {
 			String fullNameWithoutComma = rawFullNameString.replaceFirst(",", "");
 			String[] fullNameTokens = fullNameWithoutComma.split("\\s");
 			String fullNameFamilyName = StringUtilities.simpleClean(fullNameTokens[0]);

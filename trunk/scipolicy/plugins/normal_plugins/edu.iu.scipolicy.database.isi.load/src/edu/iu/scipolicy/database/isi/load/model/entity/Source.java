@@ -4,10 +4,12 @@ import java.util.Dictionary;
 import java.util.Hashtable;
 
 import org.cishell.utilities.StringUtilities;
+import org.cishell.utilities.dictionary.DictionaryEntry;
+import org.cishell.utilities.dictionary.DictionaryUtilities;
 
+import edu.iu.cns.database.loader.framework.DerbyFieldType;
 import edu.iu.cns.database.loader.framework.Entity;
 import edu.iu.cns.database.loader.framework.Schema;
-import edu.iu.cns.database.loader.framework.DerbyFieldType;
 import edu.iu.cns.database.loader.framework.utilities.DatabaseTableKeyGenerator;
 import edu.iu.nwb.shared.isiutil.database.ISI;
 
@@ -130,8 +132,8 @@ public class Source extends Entity<Source> implements Comparable<Source> {
 
 	public boolean shouldMerge(Source otherSource) {
 		return (
-			StringUtilities.validAndEquivalent(this.issn, otherSource.getISSN()) ||
-			StringUtilities.validAndEquivalent(
+			StringUtilities.areValidAndEqual(this.issn, otherSource.getISSN()) ||
+			StringUtilities.areValidAndEqual(
 				this.twentyNineCharacterSourceTitleAbbreviation,
 				otherSource.get29CharacterSourceTitleAbbreviation()));
 	}
@@ -173,7 +175,26 @@ public class Source extends Entity<Source> implements Comparable<Source> {
 			String publicationType,
 			String twentyNineCharacterSourceTitleAbbreviation) {
 		Dictionary<String, Comparable<?>> attributes = new Hashtable<String, Comparable<?>>();
-		attributes.put(ISI.BOOK_SERIES_TITLE, bookSeriesTitle);
+		DictionaryUtilities.addIfNotNull(
+			attributes,
+			new DictionaryEntry<String, Comparable<?>>(ISI.BOOK_SERIES_TITLE, bookSeriesTitle),
+			new DictionaryEntry<String, Comparable<?>>(
+				ISI.BOOK_SERIES_SUBTITLE, bookSeriesSubtitle),
+			new DictionaryEntry<String, Comparable<?>>(ISI.CONFERENCE_HOST, conferenceHost),
+			new DictionaryEntry<String, Comparable<?>>(
+				ISI.CONFERENCE_LOCATION, conferenceLocation),
+			new DictionaryEntry<String, Comparable<?>>(
+				ISI.CONFERENCE_SPONSORS, conferenceSponsors),
+			new DictionaryEntry<String, Comparable<?>>(ISI.CONFERENCE_TITLE, conferenceTitle),
+			new DictionaryEntry<String, Comparable<?>>(ISI.FULL_TITLE, fullTitle),
+			new DictionaryEntry<String, Comparable<?>>(
+				ISI.ISO_TITLE_ABBREVIATION, isoTitleAbbreviation),
+			new DictionaryEntry<String, Comparable<?>>(ISI.ISSN, issn),
+			new DictionaryEntry<String, Comparable<?>>(ISI.PUBLICATION_TYPE, publicationType),
+			new DictionaryEntry<String, Comparable<?>>(
+				ISI.TWENTY_NINE_CHARACTER_SOURCE_TITLE_ABBREVIATION,
+				twentyNineCharacterSourceTitleAbbreviation));
+		/*attributes.put(ISI.BOOK_SERIES_TITLE, bookSeriesTitle);
 		attributes.put(ISI.BOOK_SERIES_SUBTITLE, bookSeriesSubtitle);
 		attributes.put(ISI.CONFERENCE_HOST, conferenceHost);
 		attributes.put(ISI.CONFERENCE_LOCATION, conferenceLocation);
@@ -185,7 +206,7 @@ public class Source extends Entity<Source> implements Comparable<Source> {
 		attributes.put(ISI.PUBLICATION_TYPE, publicationType);
 		attributes.put(
 			ISI.TWENTY_NINE_CHARACTER_SOURCE_TITLE_ABBREVIATION,
-			twentyNineCharacterSourceTitleAbbreviation);
+			twentyNineCharacterSourceTitleAbbreviation);*/
 
 		return attributes;
 	}

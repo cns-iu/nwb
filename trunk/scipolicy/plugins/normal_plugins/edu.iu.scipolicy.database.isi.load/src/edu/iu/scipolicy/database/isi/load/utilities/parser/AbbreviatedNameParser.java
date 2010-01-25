@@ -12,7 +12,7 @@ public class AbbreviatedNameParser {
 	public boolean starred = false;
 
 	public AbbreviatedNameParser(String rawAbbreviatedNameString) throws PersonParsingException {
-		if (StringUtilities.isEmptyOrWhiteSpace(rawAbbreviatedNameString)) {
+		if (StringUtilities.isNull_Empty_OrWhitespace(rawAbbreviatedNameString)) {
 			String exceptionMessage =
 				"An abbreviated name must be supplied.  Cannot continue parsing this \"person\".";
 			throw new PersonParsingException(exceptionMessage);

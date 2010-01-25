@@ -3,10 +3,10 @@ package edu.iu.scipolicy.database.isi.load.utilities.parser;
 import java.util.Arrays;
 
 import org.cishell.utilities.IntegerParserWithDefault;
+import org.cishell.utilities.Pair;
 import org.cishell.utilities.StringUtilities;
 
 import edu.iu.cns.database.loader.framework.utilities.DatabaseTableKeyGenerator;
-import edu.iu.cns.shared.utilities.Pair;
 import edu.iu.nwb.shared.isiutil.database.ISI;
 import edu.iu.scipolicy.database.isi.load.model.entity.Person;
 import edu.iu.scipolicy.database.isi.load.model.entity.Source;
@@ -50,13 +50,13 @@ public class ReferenceDataParser {
 	private DatabaseTableKeyGenerator sourceKeyGenerator;
 	private String annotation = "";
 	private Person authorPerson;
-	private boolean starred = false;
+	private Boolean starred = false;
 	private String digitalObjectIdentifier = "";
-	private int pageNumber = ISI.NULL_PAGE_NUMBER;
+	private Integer pageNumber;
 	private String rawString;
 	private Source source;
-	private int volume = ISI.NULL_VOLUME;
-	private int year = ISI.NULL_YEAR;
+	private Integer volume;
+	private Integer year;
 
 	public ReferenceDataParser(
 			DatabaseTableKeyGenerator personKeyGenerator,
@@ -100,7 +100,7 @@ public class ReferenceDataParser {
 		return this.authorPerson;
 	}
 
-	public boolean authorWasStarred() {
+	public Boolean authorWasStarred() {
 		return this.starred;
 	}
 
@@ -108,7 +108,7 @@ public class ReferenceDataParser {
 		return this.digitalObjectIdentifier;
 	}
 
-	public int getPageNumber() {
+	public Integer getPageNumber() {
 		return this.pageNumber;
 	}
 
@@ -120,11 +120,11 @@ public class ReferenceDataParser {
 		return this.source;
 	}
 
-	public int getVolume() {
+	public Integer getVolume() {
 		return this.volume;
 	}
 
-	public int getYear() {
+	public Integer getYear() {
 		return this.year;
 	}
 
@@ -403,7 +403,7 @@ public class ReferenceDataParser {
 		String publicationType = "";
 		String twentyNineCharacterSourceTitleAbbreviation = sourceString;
 
-		if (!StringUtilities.allAreEmptyOrWhiteSpace(
+		if (!StringUtilities.allAreEmptyOrWhitespace(
 				bookSeriesTitle,
 				bookSeriesSubtitle,
 				conferenceHost,

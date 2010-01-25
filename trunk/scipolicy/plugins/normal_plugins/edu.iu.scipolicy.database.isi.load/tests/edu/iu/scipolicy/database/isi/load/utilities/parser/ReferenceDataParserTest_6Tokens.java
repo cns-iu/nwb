@@ -21,7 +21,7 @@ public class ReferenceDataParserTest_6Tokens extends ReferenceDataParserTest {
 
 		if (resultSource != null) {
 			if ((resultYear != IntegerParserWithDefault.DEFAULT) ||
-					!StringUtilities.isEmptyOrWhiteSpace(
+					!StringUtilities.isNull_Empty_OrWhitespace(
 						resultSource.get29CharacterSourceTitleAbbreviation()) ||
 					(resultVolume != IntegerParserWithDefault.DEFAULT) ||
 					(resultPageNumber != IntegerParserWithDefault.DEFAULT) ||

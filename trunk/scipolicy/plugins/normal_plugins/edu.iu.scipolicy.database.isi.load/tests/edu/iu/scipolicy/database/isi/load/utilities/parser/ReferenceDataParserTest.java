@@ -77,7 +77,7 @@ public class ReferenceDataParserTest {
 			fail(failMessage);
 		}
 
-		if (!StringUtilities.isEmptyOrWhiteSpace(annotation) &&
+		if (!StringUtilities.isNull_Empty_OrWhitespace(annotation) &&
 				!annotation.equalsIgnoreCase(providedAnnotation)) {
 			String failMessage =
 				"Source prefix was not parsed properly." +
@@ -119,7 +119,7 @@ public class ReferenceDataParserTest {
 	}
 
 	private String processPre(String rawPre) {
-		if (!StringUtilities.isEmptyOrWhiteSpace(rawPre)) {
+		if (!StringUtilities.isNull_Empty_OrWhitespace(rawPre)) {
 			return rawPre + " ";
 		} else {
 			return "";
@@ -127,7 +127,7 @@ public class ReferenceDataParserTest {
 	}
 
 	private String processPost(String rawPost) {
-		if (!StringUtilities.isEmptyOrWhiteSpace(rawPost)) {
+		if (!StringUtilities.isNull_Empty_OrWhitespace(rawPost)) {
 			return rawPost;
 		} else {
 			return "";

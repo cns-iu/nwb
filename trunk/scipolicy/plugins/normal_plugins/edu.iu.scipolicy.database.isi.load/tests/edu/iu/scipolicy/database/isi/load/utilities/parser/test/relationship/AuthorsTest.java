@@ -276,7 +276,7 @@ public class AuthorsTest extends RowItemTest {
 	public static void checkEmailAddress(Author author, String providedEmailAddress) {
 		String authorEmailAddress = author.getEmailAddress();
 
-		if (!StringUtilities.validAndEquivalent(authorEmailAddress, providedEmailAddress)) {
+		if (!StringUtilities.areValidAndEqual(authorEmailAddress, providedEmailAddress)) {
 			String failMessage =
 				"E-mail addresses are not the same." +
 				"\n\tAuthor e-mail address: \"" + authorEmailAddress + "\"" +

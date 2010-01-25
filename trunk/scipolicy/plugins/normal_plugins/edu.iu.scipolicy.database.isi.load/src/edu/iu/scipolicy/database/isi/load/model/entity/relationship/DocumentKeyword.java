@@ -3,9 +3,12 @@ package edu.iu.scipolicy.database.isi.load.model.entity.relationship;
 import java.util.Dictionary;
 import java.util.Hashtable;
 
+import org.cishell.utilities.dictionary.DictionaryEntry;
+import org.cishell.utilities.dictionary.DictionaryUtilities;
+
+import edu.iu.cns.database.loader.framework.DerbyFieldType;
 import edu.iu.cns.database.loader.framework.RowItem;
 import edu.iu.cns.database.loader.framework.Schema;
-import edu.iu.cns.database.loader.framework.DerbyFieldType;
 import edu.iu.nwb.shared.isiutil.database.ISI;
 import edu.iu.scipolicy.database.isi.load.model.entity.Document;
 import edu.iu.scipolicy.database.isi.load.model.entity.Keyword;
@@ -22,9 +25,9 @@ public class DocumentKeyword extends RowItem<DocumentKeyword> {
 
 	private Document document;
 	private Keyword keyword;
-	private int orderListed;
+	private Integer orderListed;
 
-	public DocumentKeyword(Document document, Keyword keyword, int orderListed) {
+	public DocumentKeyword(Document document, Keyword keyword, Integer orderListed) {
 		super(createAttributes(document, keyword, orderListed));
 		this.document = document;
 		this.keyword = keyword;
@@ -39,7 +42,7 @@ public class DocumentKeyword extends RowItem<DocumentKeyword> {
 		return this.keyword;
 	}
 
-	public int getOrderListed() {
+	public Integer getOrderListed() {
 		return this.orderListed;
 	}
 
@@ -62,11 +65,14 @@ public class DocumentKeyword extends RowItem<DocumentKeyword> {
 	}
 
 	public static Dictionary<String, Comparable<?>> createAttributes(
-			Document document, Keyword keyword, int orderListed) {
+			Document document, Keyword keyword, Integer orderListed) {
 		Dictionary<String, Comparable<?>> attributes = new Hashtable<String, Comparable<?>>();
 		attributes.put(ISI.DOCUMENT_KEYWORDS_DOCUMENT_FOREIGN_KEY, document.getPrimaryKey());
 		attributes.put(ISI.DOCUMENT_KEYWORDS_KEYWORD_FOREIGN_KEY, keyword.getPrimaryKey());
-		attributes.put(ISI.ORDER_LISTED, orderListed);
+		DictionaryUtilities.addIfNotNull(
+			attributes,
+			new DictionaryEntry<String, Comparable<?>>(ISI.ORDER_LISTED, orderListed));
+		//attributes.put(ISI.ORDER_LISTED, orderListed);
 
 		return attributes;
 	}

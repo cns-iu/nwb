@@ -74,13 +74,6 @@ public class ISIDatabaseLoaderAlgorithm implements Algorithm {
     
     private Table convertISIToTable(Data isiData, LogService logger)
     		throws AlgorithmExecutionException {
-    	/*
-    	 * TODO: If you want to do template style commenting, describe what's going on throughout
-    	 *  the method.
-    	 */ 
-   		// TODO: (What happens after you read the input ISI data?)
-    	// Read the input ISI data.
-
     	File inISIFile = (File)isiData.getData();
 
     	try {

@@ -4,10 +4,12 @@ import java.util.Dictionary;
 import java.util.Hashtable;
 
 import org.cishell.utilities.StringUtilities;
+import org.cishell.utilities.dictionary.DictionaryEntry;
+import org.cishell.utilities.dictionary.DictionaryUtilities;
 
+import edu.iu.cns.database.loader.framework.DerbyFieldType;
 import edu.iu.cns.database.loader.framework.Entity;
 import edu.iu.cns.database.loader.framework.Schema;
-import edu.iu.cns.database.loader.framework.DerbyFieldType;
 import edu.iu.cns.database.loader.framework.utilities.DatabaseTableKeyGenerator;
 import edu.iu.nwb.shared.isiutil.database.ISI;
 
@@ -31,27 +33,27 @@ public class Reference extends Entity<Reference> implements Comparable<Reference
 
 	private String annotation;
 	private Person author;
-	private boolean authorWasStarred;
+	private Boolean authorWasStarred;
 	private String digitalObjectIdentifier;
-	private int pageNumber;
+	private Integer pageNumber;
 	private Document paper;
 	private String rawReferenceString;
-	private int referenceVolume;
+	private Integer referenceVolume;
 	private Source source;
-	private int year;
+	private Integer year;
 
 	public Reference(
 			DatabaseTableKeyGenerator keyGenerator,
 			String annotation,
 			Person author,
-			boolean authorWasStarred,
+			Boolean authorWasStarred,
 			String digitalObjectIdentifier,
-			int pageNumber,
+			Integer pageNumber,
 			Document paper,
 			String rawReferenceString,
-			int referenceVolume,
+			Integer referenceVolume,
 			Source source,
-			int year) {
+			Integer year) {
 		super(
 			keyGenerator,
 			createAttributes(
@@ -85,7 +87,7 @@ public class Reference extends Entity<Reference> implements Comparable<Reference
 		return this.author;
 	}
 
-	public boolean authorWasStarred() {
+	public Boolean authorWasStarred() {
 		return this.authorWasStarred;
 	}
 
@@ -93,7 +95,7 @@ public class Reference extends Entity<Reference> implements Comparable<Reference
 		return this.digitalObjectIdentifier;
 	}
 
-	public int getPageNumber() {
+	public Integer getPageNumber() {
 		return this.pageNumber;
 	}
 
@@ -105,7 +107,7 @@ public class Reference extends Entity<Reference> implements Comparable<Reference
 		return this.rawReferenceString;
 	}
 
-	public int getReferenceVolume() {
+	public Integer getReferenceVolume() {
 		return this.referenceVolume;
 	}
 
@@ -113,7 +115,7 @@ public class Reference extends Entity<Reference> implements Comparable<Reference
 		return this.source;
 	}
 
-	public int getYear() {
+	public Integer getYear() {
 		return this.year;
 	}
 
@@ -138,7 +140,7 @@ public class Reference extends Entity<Reference> implements Comparable<Reference
 	}
 
 	public boolean shouldMerge(Reference otherReference) {
-		return StringUtilities.validAndEquivalent(
+		return StringUtilities.areValidAndEqual(
 			this.rawReferenceString, otherReference.getRawReferenceString());
 	}
 
@@ -149,37 +151,47 @@ public class Reference extends Entity<Reference> implements Comparable<Reference
 	public static Dictionary<String, Comparable<?>> createAttributes(
 			String annotation,
 			Person author,
-			boolean authorWasStarred,
+			Boolean authorWasStarred,
 			String digitalObjectIdentifier,
-			int pageNumber,
+			Integer pageNumber,
 			Document paper,
 			String rawReferenceString,
-			int referenceVolume,
+			Integer referenceVolume,
 			Source source,
-			int year) {
+			Integer year) {
 		Dictionary<String, Comparable<?>> attributes = new Hashtable<String, Comparable<?>>();
-		attributes.put(ISI.ANNOTATION, annotation);
+		DictionaryUtilities.addIfNotNull(
+			attributes,
+			new DictionaryEntry<String, Comparable<?>>(ISI.ANNOTATION, annotation),
+			new DictionaryEntry<String, Comparable<?>>(ISI.AUTHOR_WAS_STARRED, authorWasStarred),
+			new DictionaryEntry<String, Comparable<?>>(
+				ISI.DIGITAL_OBJECT_IDENTIFIER, digitalObjectIdentifier),
+			new DictionaryEntry<String, Comparable<?>>(ISI.PAGE_NUMBER, pageNumber),
+			new DictionaryEntry<String, Comparable<?>>(ISI.REFERENCE_STRING, rawReferenceString),
+			new DictionaryEntry<String, Comparable<?>>(ISI.REFERENCE_VOLUME, referenceVolume),
+			new DictionaryEntry<String, Comparable<?>>(ISI.YEAR, year));
+		//attributes.put(ISI.ANNOTATION, annotation);
 
 		if (author != null) {
 			attributes.put(ISI.REFERENCE_AUTHOR, author.getPrimaryKey());
 		}
 
-		attributes.put(ISI.AUTHOR_WAS_STARRED, authorWasStarred);
+		/*attributes.put(ISI.AUTHOR_WAS_STARRED, authorWasStarred);
 		attributes.put(ISI.DIGITAL_OBJECT_IDENTIFIER, digitalObjectIdentifier);
-		attributes.put(ISI.PAGE_NUMBER, pageNumber);
+		attributes.put(ISI.PAGE_NUMBER, pageNumber);*/
 
 		if (paper != null) {
 			attributes.put(ISI.PAPER, paper.getPrimaryKey());
 		}
 
-		attributes.put(ISI.REFERENCE_STRING, rawReferenceString);
-		attributes.put(ISI.REFERENCE_VOLUME, referenceVolume);
+		/*attributes.put(ISI.REFERENCE_STRING, rawReferenceString);
+		attributes.put(ISI.REFERENCE_VOLUME, referenceVolume);*/
 
 		if (source != null) {
 			attributes.put(ISI.SOURCE, source.getPrimaryKey());
 		}
 
-		attributes.put(ISI.YEAR, year);
+		//attributes.put(ISI.YEAR, year);
 
 		return attributes;
 	}

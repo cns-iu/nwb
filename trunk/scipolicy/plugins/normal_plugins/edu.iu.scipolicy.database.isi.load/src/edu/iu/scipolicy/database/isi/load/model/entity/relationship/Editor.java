@@ -3,9 +3,12 @@ package edu.iu.scipolicy.database.isi.load.model.entity.relationship;
 import java.util.Dictionary;
 import java.util.Hashtable;
 
+import org.cishell.utilities.dictionary.DictionaryEntry;
+import org.cishell.utilities.dictionary.DictionaryUtilities;
+
+import edu.iu.cns.database.loader.framework.DerbyFieldType;
 import edu.iu.cns.database.loader.framework.RowItem;
 import edu.iu.cns.database.loader.framework.Schema;
-import edu.iu.cns.database.loader.framework.DerbyFieldType;
 import edu.iu.nwb.shared.isiutil.database.ISI;
 import edu.iu.scipolicy.database.isi.load.model.entity.Document;
 import edu.iu.scipolicy.database.isi.load.model.entity.Person;
@@ -22,9 +25,9 @@ public class Editor extends RowItem<Editor> implements Comparable<Editor> {
 
 	private Document document;
 	private Person person;
-	private int orderListed;
+	private Integer orderListed;
 
-	public Editor(Document document, Person person, int orderListed) {
+	public Editor(Document document, Person person, Integer orderListed) {
 		super(createAttributes(document, person, orderListed));
 		this.document = document;
 		this.person = person;
@@ -39,7 +42,7 @@ public class Editor extends RowItem<Editor> implements Comparable<Editor> {
 		return this.person;
 	}
 
-	public int getOrderListed() {
+	public Integer getOrderListed() {
 		return this.orderListed;
 	}
 
@@ -67,11 +70,14 @@ public class Editor extends RowItem<Editor> implements Comparable<Editor> {
 	}
 
 	public static Dictionary<String, Comparable<?>> createAttributes(
-			Document document, Person person, int orderListed) {
+			Document document, Person person, Integer orderListed) {
 		Dictionary<String, Comparable<?>> attributes = new Hashtable<String, Comparable<?>>();
 		attributes.put(ISI.EDITORS_DOCUMENT_FOREIGN_KEY, document.getPrimaryKey());
 		attributes.put(ISI.EDITORS_PERSON_FOREIGN_KEY, person.getPrimaryKey());
-		attributes.put(ISI.ORDER_LISTED, orderListed);
+		DictionaryUtilities.addIfNotNull(
+			attributes,
+			new DictionaryEntry<String, Comparable<?>>(ISI.ORDER_LISTED, orderListed));
+		//attributes.put(ISI.ORDER_LISTED, orderListed);
 
 		return attributes;
 	}
