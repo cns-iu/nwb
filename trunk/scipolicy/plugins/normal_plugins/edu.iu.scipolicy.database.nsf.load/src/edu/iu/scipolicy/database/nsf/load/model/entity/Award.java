@@ -220,10 +220,10 @@ public class Award extends Entity<Award> implements Comparable<Award> {
 	@Override
 	public boolean shouldMerge(Award otherItem) {
 		return (
-			StringUtilities.validAndEquivalentIgnoreCase(
+			StringUtilities.areValidAndEqualIgnoreCase(
 				this.awardNumber, 
 				otherItem.getAwardNumber())
-			&& StringUtilities.validAndEquivalentIgnoreCase(
+			&& StringUtilities.areValidAndEqualIgnoreCase(
 					this.title, 
 					otherItem.getTitle()) 
 		);

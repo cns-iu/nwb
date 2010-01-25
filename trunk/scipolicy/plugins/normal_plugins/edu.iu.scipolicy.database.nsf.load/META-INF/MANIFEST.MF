@@ -7,7 +7,6 @@ Bundle-ClassPath: .
 Import-Package: au.com.bytecode.opencsv,
  edu.iu.cns.database.loader.framework,
  edu.iu.cns.database.loader.framework.utilities,
- edu.iu.cns.shared.utilities,
  edu.iu.nwb.converter.nwb.common,
  edu.iu.nwb.util.nwbfile,
  edu.iu.scipolicy.utilities.nsf,

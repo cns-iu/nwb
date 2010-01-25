@@ -91,7 +91,7 @@ public class PersonParser {
 			}
 		}
 		
-		if (StringUtilities.allAreEmptyOrWhiteSpace(lastName, firstName, middleInitial)) {
+		if (StringUtilities.allAreEmptyOrWhitespace(lastName, firstName, middleInitial)) {
 			formattedFullName = "";
 		} else {
 			formattedFullName = lastName + ", " + firstName + " " + middleInitial;

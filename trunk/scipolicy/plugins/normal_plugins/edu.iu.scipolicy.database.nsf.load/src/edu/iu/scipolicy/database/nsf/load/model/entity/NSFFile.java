@@ -72,13 +72,13 @@ public class NSFFile extends Entity<NSFFile> implements Comparable<NSFFile> {
 
 	@Override
 	public boolean shouldMerge(NSFFile otherItem) {
-		return (StringUtilities.validAndEquivalentIgnoreCase(
+		return (StringUtilities.areValidAndEqualIgnoreCase(
 									this.fileName,
 									otherItem.getFileName())
-				&& StringUtilities.validAndEquivalentIgnoreCase(
+				&& StringUtilities.areValidAndEqualIgnoreCase(
 							this.fileType,
 							otherItem.getFileType())
-				&& StringUtilities.validAndEquivalentIgnoreCase(
+				&& StringUtilities.areValidAndEqualIgnoreCase(
 							this.fileMD5Checksum,
 							otherItem.getFileMD5Checksum())
 		);

@@ -80,16 +80,16 @@ public class FieldOfApplication extends Entity<FieldOfApplication> implements Co
 		 * We need to make sure that none of the attributes are empty
 		 * to make a valid comparison.
 		 * */
-		if (!StringUtilities.isEmptyOrWhiteSpace(this.extractedNumericField)
-			&& !StringUtilities.isEmptyOrWhiteSpace(this.extractedTextField)
-			&& !StringUtilities.isEmptyOrWhiteSpace(otherItem.getExtractedNumericField())
-			&& !StringUtilities.isEmptyOrWhiteSpace(otherItem.getExtractedTextField())
+		if (!StringUtilities.isNull_Empty_OrWhitespace(this.extractedNumericField)
+			&& !StringUtilities.isNull_Empty_OrWhitespace(this.extractedTextField)
+			&& !StringUtilities.isNull_Empty_OrWhitespace(otherItem.getExtractedNumericField())
+			&& !StringUtilities.isNull_Empty_OrWhitespace(otherItem.getExtractedTextField())
 			) {
 			return (
-					StringUtilities.validAndEquivalentIgnoreCase(
+					StringUtilities.areValidAndEqualIgnoreCase(
 							this.extractedNumericField, 
 							otherItem.getExtractedNumericField())
-					&& StringUtilities.validAndEquivalentIgnoreCase(
+					&& StringUtilities.areValidAndEqualIgnoreCase(
 							this.extractedTextField,
 							otherItem.getExtractedTextField())
 					);	

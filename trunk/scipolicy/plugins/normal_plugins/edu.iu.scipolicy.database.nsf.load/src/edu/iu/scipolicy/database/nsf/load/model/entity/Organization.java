@@ -113,9 +113,9 @@ public class Organization extends Entity<Organization> implements Comparable<Org
 	public boolean shouldMerge(Organization otherItem) {
 		//TODO: check if comparison of only name, phone, city is enoigh?
 		return (
-				StringUtilities.validAndEquivalentIgnoreCase(this.name, otherItem.getName())
-				&& StringUtilities.validAndEquivalentIgnoreCase(this.phone, otherItem.getPhone())
-				&& StringUtilities.validAndEquivalentIgnoreCase(this.city, otherItem.getCity())
+				StringUtilities.areValidAndEqualIgnoreCase(this.name, otherItem.getName())
+				&& StringUtilities.areValidAndEqualIgnoreCase(this.phone, otherItem.getPhone())
+				&& StringUtilities.areValidAndEqualIgnoreCase(this.city, otherItem.getCity())
 		);
 	}
 
