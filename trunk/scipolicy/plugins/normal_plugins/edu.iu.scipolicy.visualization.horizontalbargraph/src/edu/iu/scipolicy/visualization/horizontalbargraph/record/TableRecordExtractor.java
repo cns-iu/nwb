@@ -128,7 +128,7 @@ public class TableRecordExtractor {
 
 		if (
 				(potentialLabel != null) &&
-				!StringUtilities.isEmptyOrWhiteSpace(potentialLabel)) {
+				!StringUtilities.isEmptyOrWhitespace(potentialLabel)) {
 			return potentialLabel;
 		} else {
 			String label = UNKNOWN_LABEL_PREFIX + this.unknownLabelCount;
@@ -143,7 +143,7 @@ public class TableRecordExtractor {
 		Object potentialDate = row.get(dateKey);
 		
 		if ((potentialDate == null) ||
-				StringUtilities.isEmptyOrWhiteSpace(
+				StringUtilities.isEmptyOrWhitespace(
 					potentialDate.toString())) {
 
 			return DateTimeWrapper.createUnspecifiedDateTimeWrapper();
