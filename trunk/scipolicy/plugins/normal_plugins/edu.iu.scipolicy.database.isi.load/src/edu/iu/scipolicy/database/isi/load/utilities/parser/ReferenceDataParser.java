@@ -6,7 +6,7 @@ import org.cishell.utilities.IntegerParserWithDefault;
 import org.cishell.utilities.Pair;
 import org.cishell.utilities.StringUtilities;
 
-import edu.iu.cns.database.loader.framework.utilities.DatabaseTableKeyGenerator;
+import edu.iu.cns.database.load.framework.utilities.DatabaseTableKeyGenerator;
 import edu.iu.nwb.shared.isiutil.database.ISI;
 import edu.iu.scipolicy.database.isi.load.model.entity.Person;
 import edu.iu.scipolicy.database.isi.load.model.entity.Source;

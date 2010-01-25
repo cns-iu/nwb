@@ -14,8 +14,8 @@ import org.cishell.utilities.osgi.logging.LogMessageHandler;
 import org.osgi.service.log.LogService;
 
 import au.com.bytecode.opencsv.CSVReader;
-import edu.iu.cns.database.loader.framework.RowItemContainer;
-import edu.iu.cns.database.loader.framework.utilities.DatabaseModel;
+import edu.iu.cns.database.load.framework.RowItemContainer;
+import edu.iu.cns.database.load.framework.utilities.DatabaseModel;
 import edu.iu.scipolicy.database.nsf.load.model.entity.Award;
 import edu.iu.scipolicy.database.nsf.load.model.entity.FieldOfApplication;
 import edu.iu.scipolicy.database.nsf.load.model.entity.NSFFile;

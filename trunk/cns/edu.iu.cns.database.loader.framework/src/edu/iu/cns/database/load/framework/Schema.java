@@ -1,4 +1,4 @@
-package edu.iu.cns.database.loader.framework;
+package edu.iu.cns.database.load.framework;
 
 import java.util.ArrayList;
 import java.util.List;

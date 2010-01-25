@@ -1,4 +1,4 @@
-package edu.iu.cns.database.loader.framework.utilities;
+package edu.iu.cns.database.load.framework.utilities;
 
 
 public class DatabaseTableKeyGenerator {

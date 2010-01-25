@@ -16,9 +16,9 @@ import org.cishell.utilities.StringUtilities;
 import org.osgi.service.log.LogService;
 
 import prefuse.data.Table;
-import edu.iu.cns.database.loader.framework.RowItem;
-import edu.iu.cns.database.loader.framework.RowItemContainer;
-import edu.iu.cns.database.loader.framework.utilities.DatabaseModel;
+import edu.iu.cns.database.load.framework.RowItem;
+import edu.iu.cns.database.load.framework.RowItemContainer;
+import edu.iu.cns.database.load.framework.utilities.DatabaseModel;
 import edu.iu.nwb.shared.isiutil.ISITableReaderHelper;
 import edu.iu.nwb.shared.isiutil.database.ISI;
 import edu.iu.nwb.shared.isiutil.exception.ReadISIFileException;

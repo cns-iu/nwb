@@ -18,8 +18,8 @@ import org.cishell.service.database.DatabaseService;
 import org.osgi.service.log.LogService;
 
 import au.com.bytecode.opencsv.CSVReader;
-import edu.iu.cns.database.loader.framework.utilities.DatabaseModel;
-import edu.iu.cns.database.loader.framework.utilities.DerbyDatabaseCreator;
+import edu.iu.cns.database.load.framework.utilities.DatabaseModel;
+import edu.iu.cns.database.load.framework.utilities.DerbyDatabaseCreator;
 import edu.iu.scipolicy.database.nsf.load.exception.NSFDatabaseCreationException;
 import edu.iu.scipolicy.database.nsf.load.exception.NSFReadingException;
 import edu.iu.scipolicy.database.nsf.load.utilities.NSFMetadata;

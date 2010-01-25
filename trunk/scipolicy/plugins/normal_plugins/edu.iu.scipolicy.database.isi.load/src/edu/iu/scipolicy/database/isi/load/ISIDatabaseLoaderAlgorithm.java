@@ -17,8 +17,8 @@ import org.cishell.service.database.DatabaseService;
 import org.osgi.service.log.LogService;
 
 import prefuse.data.Table;
-import edu.iu.cns.database.loader.framework.utilities.DatabaseModel;
-import edu.iu.cns.database.loader.framework.utilities.DerbyDatabaseCreator;
+import edu.iu.cns.database.load.framework.utilities.DatabaseModel;
+import edu.iu.cns.database.load.framework.utilities.DerbyDatabaseCreator;
 import edu.iu.nwb.shared.isiutil.ISITableReaderHelper;
 import edu.iu.nwb.shared.isiutil.database.ISI;
 import edu.iu.nwb.shared.isiutil.exception.ISILoadingException;

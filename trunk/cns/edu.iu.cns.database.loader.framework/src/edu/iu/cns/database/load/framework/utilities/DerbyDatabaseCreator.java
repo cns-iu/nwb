@@ -1,4 +1,4 @@
-package edu.iu.cns.database.loader.framework.utilities;
+package edu.iu.cns.database.load.framework.utilities;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -15,11 +15,11 @@ import org.cishell.service.database.DatabaseService;
 import org.cishell.utilities.IntegerParserWithDefault;
 import org.cishell.utilities.StringUtilities;
 
-import edu.iu.cns.database.loader.framework.DerbyFieldType;
-import edu.iu.cns.database.loader.framework.RowItem;
-import edu.iu.cns.database.loader.framework.RowItemContainer;
-import edu.iu.cns.database.loader.framework.Schema;
-import edu.iu.cns.database.loader.framework.Schema.Field;
+import edu.iu.cns.database.load.framework.DerbyFieldType;
+import edu.iu.cns.database.load.framework.RowItem;
+import edu.iu.cns.database.load.framework.RowItemContainer;
+import edu.iu.cns.database.load.framework.Schema;
+import edu.iu.cns.database.load.framework.Schema.Field;
 
 public class DerbyDatabaseCreator {
 	public static final int MAX_VARCHAR_LENGTH = 32000;

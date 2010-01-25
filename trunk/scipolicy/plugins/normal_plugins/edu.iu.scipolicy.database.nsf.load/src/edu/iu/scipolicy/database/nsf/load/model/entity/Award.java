@@ -6,10 +6,10 @@ import java.util.Hashtable;
 
 import org.cishell.utilities.StringUtilities;
 
-import edu.iu.cns.database.loader.framework.DerbyFieldType;
-import edu.iu.cns.database.loader.framework.Entity;
-import edu.iu.cns.database.loader.framework.Schema;
-import edu.iu.cns.database.loader.framework.utilities.DatabaseTableKeyGenerator;
+import edu.iu.cns.database.load.framework.DerbyFieldType;
+import edu.iu.cns.database.load.framework.Entity;
+import edu.iu.cns.database.load.framework.Schema;
+import edu.iu.cns.database.load.framework.utilities.DatabaseTableKeyGenerator;
 import edu.iu.scipolicy.utilities.nsf.NSF_Database_FieldNames;
 
 public class Award extends Entity<Award> implements Comparable<Award> {

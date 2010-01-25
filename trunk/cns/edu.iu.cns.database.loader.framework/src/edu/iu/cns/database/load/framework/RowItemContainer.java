@@ -1,9 +1,9 @@
-package edu.iu.cns.database.loader.framework;
+package edu.iu.cns.database.load.framework;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import edu.iu.cns.database.loader.framework.utilities.DatabaseTableKeyGenerator;
+import edu.iu.cns.database.load.framework.utilities.DatabaseTableKeyGenerator;
 
 public class RowItemContainer<T extends RowItem<T>> {
 	private DatabaseTableKeyGenerator keyGenerator = new DatabaseTableKeyGenerator();

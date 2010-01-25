@@ -2,7 +2,7 @@ package edu.iu.scipolicy.database.nsf.load.utilities;
 
 import org.cishell.utilities.StringUtilities;
 
-import edu.iu.cns.database.loader.framework.utilities.DatabaseTableKeyGenerator;
+import edu.iu.cns.database.load.framework.utilities.DatabaseTableKeyGenerator;
 import edu.iu.scipolicy.database.nsf.load.model.entity.Person;
 
 public class PersonParser {

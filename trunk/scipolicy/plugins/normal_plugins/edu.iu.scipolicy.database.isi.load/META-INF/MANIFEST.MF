@@ -4,8 +4,8 @@ Bundle-Name: edu.iu.scipolicy.loader.isi.db
 Bundle-SymbolicName: edu.iu.scipolicy.database.isi.load
 Bundle-Version: 0.0.1
 Bundle-ClassPath: .
-Import-Package: edu.iu.cns.database.loader.framework,
- edu.iu.cns.database.loader.framework.utilities,
+Import-Package: edu.iu.cns.database.load.framework,
+ edu.iu.cns.database.load.framework.utilities,
  edu.iu.nwb.shared.isiutil,
  edu.iu.nwb.shared.isiutil.database,
  edu.iu.nwb.shared.isiutil.exception,

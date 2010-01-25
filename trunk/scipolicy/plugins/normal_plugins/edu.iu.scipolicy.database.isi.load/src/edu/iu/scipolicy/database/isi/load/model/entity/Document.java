@@ -6,10 +6,10 @@ import java.util.Hashtable;
 import org.cishell.utilities.dictionary.DictionaryEntry;
 import org.cishell.utilities.dictionary.DictionaryUtilities;
 
-import edu.iu.cns.database.loader.framework.DerbyFieldType;
-import edu.iu.cns.database.loader.framework.Entity;
-import edu.iu.cns.database.loader.framework.Schema;
-import edu.iu.cns.database.loader.framework.utilities.DatabaseTableKeyGenerator;
+import edu.iu.cns.database.load.framework.DerbyFieldType;
+import edu.iu.cns.database.load.framework.Entity;
+import edu.iu.cns.database.load.framework.Schema;
+import edu.iu.cns.database.load.framework.utilities.DatabaseTableKeyGenerator;
 import edu.iu.nwb.shared.isiutil.database.ISI;
 
 public class Document extends Entity<Document> implements Comparable<Document> {

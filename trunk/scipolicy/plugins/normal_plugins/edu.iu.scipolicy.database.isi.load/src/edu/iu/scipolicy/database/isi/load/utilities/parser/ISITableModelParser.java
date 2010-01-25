@@ -12,8 +12,8 @@ import org.cishell.utilities.StringUtilities;
 
 import prefuse.data.Table;
 import prefuse.data.Tuple;
-import edu.iu.cns.database.loader.framework.RowItemContainer;
-import edu.iu.cns.database.loader.framework.utilities.DatabaseModel;
+import edu.iu.cns.database.load.framework.RowItemContainer;
+import edu.iu.cns.database.load.framework.utilities.DatabaseModel;
 import edu.iu.nwb.shared.isiutil.ISITableReader;
 import edu.iu.nwb.shared.isiutil.ISITag;
 import edu.iu.nwb.shared.isiutil.database.ISI;

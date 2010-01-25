@@ -5,8 +5,8 @@ Bundle-SymbolicName: edu.iu.scipolicy.database.nsf.load
 Bundle-Version: 1.0.0
 Bundle-ClassPath: .
 Import-Package: au.com.bytecode.opencsv,
- edu.iu.cns.database.loader.framework,
- edu.iu.cns.database.loader.framework.utilities,
+ edu.iu.cns.database.load.framework,
+ edu.iu.cns.database.load.framework.utilities,
  edu.iu.nwb.converter.nwb.common,
  edu.iu.nwb.util.nwbfile,
  edu.iu.scipolicy.utilities.nsf,

@@ -1,8 +1,8 @@
-package edu.iu.cns.database.loader.framework;
+package edu.iu.cns.database.load.framework;
 
 import java.util.Dictionary;
 
-import edu.iu.cns.database.loader.framework.utilities.DatabaseTableKeyGenerator;
+import edu.iu.cns.database.load.framework.utilities.DatabaseTableKeyGenerator;
 
 
 public abstract class Entity<T extends Entity<?>> extends RowItem<T> {

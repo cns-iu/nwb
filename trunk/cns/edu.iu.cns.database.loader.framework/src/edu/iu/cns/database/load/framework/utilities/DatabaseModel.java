@@ -1,10 +1,10 @@
-package edu.iu.cns.database.loader.framework.utilities;
+package edu.iu.cns.database.load.framework.utilities;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import edu.iu.cns.database.loader.framework.RowItem;
-import edu.iu.cns.database.loader.framework.RowItemContainer;
+import edu.iu.cns.database.load.framework.RowItem;
+import edu.iu.cns.database.load.framework.RowItemContainer;
 
 public class DatabaseModel {
 	private List<RowItemContainer<?>> rowItemLists = new ArrayList<RowItemContainer<?>>();

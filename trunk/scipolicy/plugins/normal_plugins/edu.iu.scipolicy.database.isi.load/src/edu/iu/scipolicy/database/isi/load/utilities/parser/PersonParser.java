@@ -2,7 +2,7 @@ package edu.iu.scipolicy.database.isi.load.utilities.parser;
 
 import org.cishell.utilities.Pair;
 
-import edu.iu.cns.database.loader.framework.utilities.DatabaseTableKeyGenerator;
+import edu.iu.cns.database.load.framework.utilities.DatabaseTableKeyGenerator;
 import edu.iu.scipolicy.database.isi.load.model.entity.Person;
 import edu.iu.scipolicy.database.isi.load.utilities.parser.exception.PersonParsingException;
 

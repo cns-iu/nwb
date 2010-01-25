@@ -11,7 +11,7 @@ import org.cishell.utilities.StringUtilities;
 import org.junit.After;
 import org.junit.Before;
 
-import edu.iu.cns.database.loader.framework.utilities.DatabaseTableKeyGenerator;
+import edu.iu.cns.database.load.framework.utilities.DatabaseTableKeyGenerator;
 import edu.iu.scipolicy.database.isi.load.model.entity.Source;
 import edu.iu.scipolicy.database.isi.load.utilities.parser.ReferenceDataParser;
 import edu.iu.scipolicy.database.isi.load.utilities.parser.exception.ReferenceParsingException;
