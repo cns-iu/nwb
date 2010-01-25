@@ -234,12 +234,14 @@
     
     <top_menu name="Extract">
 	    <menu name="From ISI Database" type="group">
+	    	<!-- Tables -->
+	    	<menu pid="edu.iu.scipolicy.database.isi.extract.network.author_citation"/>
+
 	    	<!-- Co-authorship network extraction -->
 		    <menu pid="edu.iu.scipolicy.database.isi.extract.network.coauthor"/>
 		    
 		    <menu type="break"/>	    
 		    <!-- Citation network extraction-->
-		    <menu pid="edu.iu.scipolicy.database.isi.extract.core_entities"/>
 		    <menu pid="edu.iu.scipolicy.database.isi.extract.network.author_citation"/>
 		    <menu pid="edu.iu.scipolicy.database.isi.extract.network.document_citation"/>
 		    <menu pid="edu.iu.scipolicy.database.isi.extract.network.source_citation"/>
