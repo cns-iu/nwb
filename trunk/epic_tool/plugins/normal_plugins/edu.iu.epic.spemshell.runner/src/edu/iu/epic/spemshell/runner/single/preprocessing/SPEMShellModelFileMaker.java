@@ -50,17 +50,21 @@ public class SPEMShellModelFileMaker {
 		StringTemplate template =
 			spemShellModelFileTemplateGroup.getInstanceOf("spemShellModelFile");
 
-		List<Entry<String, String>> parameterDefinitions =
-			new ArrayList<Entry<String, String>>();
-		// Add all parameter definitions given by the algorithm user.
-		parameterDefinitions.addAll(
-				(Collection<? extends Entry<String, String>>) modelParameterDefinitions.entrySet());
-		// Add all parameter definitions given by the input model file.
-		parameterDefinitions.addAll(epicModel.getParameterDefinitions().entrySet());
+		List<Entry<String, ? extends Object>> parameterDefinitions =
+			new ArrayList<Entry<String, ? extends Object>>();
 		
-		for (Entry<String, String> parameterDefinition : parameterDefinitions) {
+		// Add all parameter definitions given by the input model file.
+		//parameterDefinitions.addAll(epicModel.getParameterDefinitions().entrySet());
+		
+		
+		for (Entry<String, String> parameterDefinition : epicModel.getParameterDefinitions().entrySet()) {
 			parameterDefinition.setValue(fixRawDecimalPoints(parameterDefinition.getValue()));
+			parameterDefinitions.add(parameterDefinition);
 		}
+		
+		// Add all parameter definitions given by the algorithm user.
+		parameterDefinitions.addAll(modelParameterDefinitions.entrySet());
+		
 		
 		template.setAttribute("parameterDefinitions", parameterDefinitions);
 		
