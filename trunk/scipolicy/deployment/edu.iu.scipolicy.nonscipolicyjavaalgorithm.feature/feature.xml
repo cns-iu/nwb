@@ -564,13 +564,6 @@ Dr. Katy Borner (katy@indiana.edu)
          unpack="false"/>
 
    <plugin
-         id="edu.iu.scipolicy.filtering.topnpercent"
-         download-size="0"
-         install-size="0"
-         version="0.0.1"
-         unpack="false"/>
-
-   <plugin
          id="edu.iu.scipolicy.utilities"
          download-size="0"
          install-size="0"
