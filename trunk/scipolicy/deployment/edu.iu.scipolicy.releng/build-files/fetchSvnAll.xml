@@ -76,52 +76,109 @@
 
   	<antcall target="svn.co">
   	  	  <param name="target" value="plugins"/>
-  	  	  <param name="element.id" value="edu.iu.scipolicy.database.isi.extract.network.author_citation"/>
-  	  	  <param name="project.name" value="edu.iu.scipolicy.database.isi.extract.network.author_citation"/>
+  	  	  <param name="element.id" value="edu.iu.scipolicy.database.isi.extract.network.citation.author"/>
+  	  	  <param name="project.name" value="edu.iu.scipolicy.database.isi.extract.network.citation.author"/>
   	  	  <param name="url" value="http://nwb.slis.indiana.edu/svn/nwb/trunk/scipolicy/plugins/normal_plugins"/>
   	</antcall>
 
   	<antcall target="svn.co">
   	  	  <param name="target" value="plugins"/>
-  	  	  <param name="element.id" value="edu.iu.scipolicy.database.isi.extract.network.document_citation"/>
-  	  	  <param name="project.name" value="edu.iu.scipolicy.database.isi.extract.network.document_citation"/>
+  	  	  <param name="element.id" value="edu.iu.scipolicy.database.isi.extract.network.citation.document"/>
+  	  	  <param name="project.name" value="edu.iu.scipolicy.database.isi.extract.network.citation.document"/>
   	  	  <param name="url" value="http://nwb.slis.indiana.edu/svn/nwb/trunk/scipolicy/plugins/normal_plugins"/>
   	</antcall>
 
 	<antcall target="svn.co">
   	  	  <param name="target" value="plugins"/>
-  	  	  <param name="element.id" value="edu.iu.scipolicy.database.isi.extract.network.source_citation"/>
-  	  	  <param name="project.name" value="edu.iu.scipolicy.database.isi.extract.network.source_citation"/>
+  	  	  <param name="element.id" value="edu.iu.scipolicy.database.isi.extract.network.citation.source"/>
+  	  	  <param name="project.name" value="edu.iu.scipolicy.database.isi.extract.network.citation.source"/>
   	  	  <param name="url" value="http://nwb.slis.indiana.edu/svn/nwb/trunk/scipolicy/plugins/normal_plugins"/>
   	</antcall>
   	
   	<antcall target="svn.co">
-  	  	  	  <param name="target" value="plugins"/>
-  	  	  	  <param name="element.id" value="edu.iu.scipolicy.database.isi.extract.table.core_entities"/>
-  	  	  	  <param name="project.name" value="edu.iu.scipolicy.database.isi.extract.table.core_entities"/>
-  	  	  	  <param name="url" value="http://nwb.slis.indiana.edu/svn/nwb/trunk/scipolicy/plugins/normal_plugins"/>
-  	  	</antcall>
+  	  	  <param name="target" value="plugins"/>
+  	  	  <param name="element.id" value="edu.iu.scipolicy.database.isi.extract.network.coauthor"/>
+  	  	  <param name="project.name" value="edu.iu.scipolicy.database.isi.extract.network.coauthor"/>
+  	  	  <param name="url" value="http://nwb.slis.indiana.edu/svn/nwb/trunk/scipolicy/plugins/normal_plugins"/>
+  	</antcall>
+  	
+  	<antcall target="svn.co">
+  	  	  <param name="target" value="plugins"/>
+  	  	  <param name="element.id" value="edu.iu.scipolicy.database.isi.extract.network.cocitation.author.core"/>
+  	  	  <param name="project.name" value="edu.iu.scipolicy.database.isi.extract.network.cocitation.author.core"/>
+  	  	  <param name="url" value="http://nwb.slis.indiana.edu/svn/nwb/trunk/scipolicy/plugins/normal_plugins"/>
+  	</antcall>
+  	
+  	<antcall target="svn.co">
+  	  	  <param name="target" value="plugins"/>
+  	  	  <param name="element.id" value="edu.iu.scipolicy.database.isi.extract.network.cocitation.document.all"/>
+  	  	  <param name="project.name" value="edu.iu.scipolicy.database.isi.extract.network.cocitation.document.all"/>
+  	  	  <param name="url" value="http://nwb.slis.indiana.edu/svn/nwb/trunk/scipolicy/plugins/normal_plugins"/>
+  	</antcall>
+  	
+  	<antcall target="svn.co">
+  	  	  <param name="target" value="plugins"/>
+  	  	  <param name="element.id" value="edu.iu.scipolicy.database.isi.extract.network.cocitation.document.core"/>
+  	  	  <param name="project.name" value="edu.iu.scipolicy.database.isi.extract.network.cocitation.document.core"/>
+  	  	  <param name="url" value="http://nwb.slis.indiana.edu/svn/nwb/trunk/scipolicy/plugins/normal_plugins"/>
+  	</antcall>
+  	
+  	<antcall target="svn.co">
+  	  	  <param name="target" value="plugins"/>
+  	  	  <param name="element.id" value="edu.iu.scipolicy.database.isi.extract.network.cocitation.journal.all"/>
+  	  	  <param name="project.name" value="edu.iu.scipolicy.database.isi.extract.network.cocitation.journal.all"/>
+  	  	  <param name="url" value="http://nwb.slis.indiana.edu/svn/nwb/trunk/scipolicy/plugins/normal_plugins"/>
+  	</antcall>
   	  	  	
 	<antcall target="svn.co">
-  	  	  	      <param name="target" value="plugins"/>
-  	  	  	      <param name="element.id" value="edu.iu.scipolicy.visualization.geomaps"/>
-  	  	  	      <param name="project.name" value="edu.iu.scipolicy.visualization.geomaps"/>
-  	  	  	      <param name="url" value="http://nwb.slis.indiana.edu/svn/nwb/trunk/scipolicy/plugins/normal_plugins"/>
-  	  	  	 </antcall>
+	  	  <param name="target" value="plugins"/>
+	  	  <param name="element.id" value="edu.iu.scipolicy.database.isi.extract.network.cocitation.journal.core"/>
+	  	  <param name="project.name" value="edu.iu.scipolicy.database.isi.extract.network.cocitation.journal.core"/>
+	  	  <param name="url" value="http://nwb.slis.indiana.edu/svn/nwb/trunk/scipolicy/plugins/normal_plugins"/>
+	</antcall>
   	
   	<antcall target="svn.co">
-  	  	  	  	      <param name="target" value="plugins"/>
-  	  	  	  	      <param name="element.id" value="geolibs"/>
-  	  	  	  	      <param name="project.name" value="geolibs"/>
-  	  	  	  	      <param name="url" value="http://nwb.slis.indiana.edu/svn/nwb/trunk/scipolicy/plugins/libs"/>
-  	  	  	  	 </antcall>
+  	  	  <param name="target" value="plugins"/>
+  	  	  <param name="element.id" value="edu.iu.scipolicy.database.isi.extract.table.core_entities"/>
+  	  	  <param name="project.name" value="edu.iu.scipolicy.database.isi.extract.table.core_entities"/>
+  	  	  <param name="url" value="http://nwb.slis.indiana.edu/svn/nwb/trunk/scipolicy/plugins/normal_plugins"/>
+  	</antcall>
   	
   	<antcall target="svn.co">
-  	  	      <param name="target" value="plugins"/>
-  	  	      <param name="element.id" value="edu.iu.scipolicy.preprocessing.geocoder"/>
-  	  	      <param name="project.name" value="edu.iu.scipolicy.preprocessing.geocoder"/>
-  	  	      <param name="url" value="http://nwb.slis.indiana.edu/svn/nwb/trunk/scipolicy/plugins/normal_plugins"/>
-  	  	 </antcall>
+  	  	  <param name="target" value="plugins"/>
+  	  	  <param name="element.id" value="edu.iu.scipolicy.database.nsf.extract.network.copi"/>
+  	  	  <param name="project.name" value="edu.iu.scipolicy.database.nsf.extract.network.copi"/>
+  	  	  <param name="url" value="http://nwb.slis.indiana.edu/svn/nwb/trunk/scipolicy/plugins/normal_plugins"/>
+  	</antcall>
+  	
+  	<antcall target="svn.co">
+  	  	  <param name="target" value="plugins"/>
+  	  	  <param name="element.id" value="edu.iu.scipolicy.database.nsf.extract.table.core_entities"/>
+  	  	  <param name="project.name" value="edu.iu.scipolicy.database.nsf.extract.table.core_entities"/>
+  	  	  <param name="url" value="http://nwb.slis.indiana.edu/svn/nwb/trunk/scipolicy/plugins/normal_plugins"/>
+  	</antcall>
+  	
+  	  	  	
+	<antcall target="svn.co">
+  	      <param name="target" value="plugins"/>
+  	      <param name="element.id" value="edu.iu.scipolicy.visualization.geomaps"/>
+  	      <param name="project.name" value="edu.iu.scipolicy.visualization.geomaps"/>
+  	      <param name="url" value="http://nwb.slis.indiana.edu/svn/nwb/trunk/scipolicy/plugins/normal_plugins"/>
+  	 </antcall>
+  	
+  	<antcall target="svn.co">
+  	      <param name="target" value="plugins"/>
+  	      <param name="element.id" value="geolibs"/>
+  	      <param name="project.name" value="geolibs"/>
+  	      <param name="url" value="http://nwb.slis.indiana.edu/svn/nwb/trunk/scipolicy/plugins/libs"/>
+  	 </antcall>
+  	
+  	<antcall target="svn.co">
+  	      <param name="target" value="plugins"/>
+  	      <param name="element.id" value="edu.iu.scipolicy.preprocessing.geocoder"/>
+  	      <param name="project.name" value="edu.iu.scipolicy.preprocessing.geocoder"/>
+  	      <param name="url" value="http://nwb.slis.indiana.edu/svn/nwb/trunk/scipolicy/plugins/normal_plugins"/>
+  	 </antcall>
   	
   	 <antcall target="svn.co">
   	      <param name="target" value="plugins"/>
