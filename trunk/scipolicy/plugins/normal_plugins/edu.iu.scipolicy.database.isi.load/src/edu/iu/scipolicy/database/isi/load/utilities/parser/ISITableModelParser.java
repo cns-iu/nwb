@@ -503,8 +503,10 @@ public class ISITableModelParser {
 			StringUtilities.trimIfNotNull(row.getString(ISITag.DOI.getColumnName()));
 		String documentType =
 			StringUtilities.trimIfNotNull(row.getString(ISITag.DOCUMENT_TYPE.getColumnName()));
-		String documentVolume =
-			StringUtilities.trimIfNotNull(row.getString(ISITag.VOLUME.getColumnName()));
+		/*String documentVolume =
+			StringUtilities.trimIfNotNull(row.getString(ISITag.VOLUME.getColumnName()));*/
+		Integer documentVolume = IntegerParserWithDefault.parse(StringUtilities.trimIfNotNull(
+			row.getString(ISITag.VOLUME.getColumnName())));
 
 		Integer endingPage = IntegerParserWithDefault.parse(
 			StringUtilities.trimIfNotNull(row.getString(ISITag.ENDING_PAGE.getColumnName())));
@@ -551,6 +553,7 @@ public class ISITableModelParser {
 				beginningPage,
 				citedReferenceCount,
 				citedYear,
+				documentVolume,
 				endingPage,
 				firstAuthor,
 				pageCount,
@@ -562,7 +565,6 @@ public class ISITableModelParser {
 						articleNumber,
 						digitalObjectidentifier,
 						documentType,
-						documentVolume,
 						fundingAgencyAndGrantNumber,
 						fundingText,
 						isbn,

@@ -22,7 +22,7 @@ public class Document extends Entity<Document> implements Comparable<Document> {
 		ISI.CITED_YEAR, DerbyFieldType.INTEGER,
 		ISI.DIGITAL_OBJECT_IDENTIFIER, DerbyFieldType.TEXT,
 		ISI.DOCUMENT_TYPE, DerbyFieldType.TEXT,
-		ISI.DOCUMENT_VOLUME, DerbyFieldType.TEXT,
+		ISI.DOCUMENT_VOLUME, DerbyFieldType.INTEGER,
 		ISI.ENDING_PAGE, DerbyFieldType.INTEGER,
 		ISI.FIRST_AUTHOR, DerbyFieldType.FOREIGN_KEY,
 		ISI.FUNDING_AGENCY_AND_GRANT_NUMBER, DerbyFieldType.TEXT,
@@ -53,7 +53,7 @@ public class Document extends Entity<Document> implements Comparable<Document> {
 	private Integer citedYear;
 	private String digitalObjectIdentifier;
 	private String documentType;
-	private String documentVolume;
+	private Integer documentVolume;
 	private Integer endingPage;
 	private Person firstAuthorPerson;
 	private String fundingAgencyAndGrantNumber;
@@ -83,7 +83,7 @@ public class Document extends Entity<Document> implements Comparable<Document> {
 			Integer citedYear,
 			String digitalObjectIdentifier,
 			String documentType,
-			String documentVolume,
+			Integer documentVolume,
 			Integer endingPage,
 			Person firstAuthorPerson,
 			String fundingAgencyAndGrantNumber,
@@ -266,7 +266,7 @@ public class Document extends Entity<Document> implements Comparable<Document> {
 		return this.title;
 	}
 
-	public String getVolume() {
+	public Integer getVolume() {
 		return this.documentVolume;
 	}
 
@@ -313,7 +313,7 @@ public class Document extends Entity<Document> implements Comparable<Document> {
 			Integer citedYear,
 			String digitalObjectIdentifier,
 			String documentType,
-			String documentVolume,
+			Integer documentVolume,
 			Integer endingPage,
 			Person firstAuthorPerson,
 			String fundingAgencyAndGrantNumber,

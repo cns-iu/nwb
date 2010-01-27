@@ -135,7 +135,8 @@ public class Source extends Entity<Source> implements Comparable<Source> {
 			StringUtilities.areValidAndEqual(this.issn, otherSource.getISSN()) ||
 			StringUtilities.areValidAndEqual(
 				this.twentyNineCharacterSourceTitleAbbreviation,
-				otherSource.get29CharacterSourceTitleAbbreviation()));
+				otherSource.get29CharacterSourceTitleAbbreviation()) ||
+			StringUtilities.areValidAndEqual(this.fullTitle, otherSource.getFullTitle()));
 	}
 
 	public void merge(Source otherSource) {
