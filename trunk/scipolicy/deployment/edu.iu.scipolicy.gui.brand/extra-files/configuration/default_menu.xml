@@ -25,12 +25,12 @@
 		</menu> 
 		-->
 		<menu type="break"/>
-		<menu name="Exit" type="preserved"/>
-    </top_menu name="Load Into Database">
-		<menu pid= "edu.iu.scipolicy.database.isi.load" />
-		<menu pid= "edu.iu.scipolicy.database.nsf.load" />
-	<top_menu>
-		
+		<menu name="Exit" type="preserved"/>		
+	</top_menu>
+	
+    <top_menu name="Load Into Database">
+		<menu pid="edu.iu.scipolicy.database.isi.load.ISIDatabaseLoaderAlgorithm" />
+		<menu pid="edu.iu.scipolicy.database.nsf.load.NSFDatabaseLoaderAlgorithm" />
 	</top_menu>
     
     <top_menu name="Preprocessing">
@@ -234,28 +234,41 @@
     
     <top_menu name="Extract">
 	    <menu name="From ISI Database" type="group">
-	    	<!-- Tables -->
-	    	<menu pid="edu.iu.scipolicy.database.isi.extract.network.author_citation"/>
-
-	    	<!-- Co-authorship network extraction -->
+	    	<!-- Core entities -->
+	    	<menu pid="edu.iu.scipolicy.database.isi.extract.table.core_entities.ExtractAuthorsAlgorithm"/>
+	    	<menu pid="edu.iu.scipolicy.database.isi.extract.table.core_entities.ExtractDocumentsAlgorithm"/>
+	    	<menu pid="edu.iu.scipolicy.database.isi.extract.table.core_entities.ExtractKeywordsAlgorithm"/>
+	    	<menu pid="edu.iu.scipolicy.database.isi.extract.table.core_entities.ExtractDocumentSourcesAlgorithm"/>
+	    
+	    	<menu type="break"/>
+	    	<!-- Co-authorship network -->	    	
 		    <menu pid="edu.iu.scipolicy.database.isi.extract.network.coauthor"/>
 		    
 		    <menu type="break"/>	    
-		    <!-- Citation network extraction-->
-		    <menu pid="edu.iu.scipolicy.database.isi.extract.network.author_citation"/>
-		    <menu pid="edu.iu.scipolicy.database.isi.extract.network.document_citation"/>
-		    <menu pid="edu.iu.scipolicy.database.isi.extract.network.source_citation"/>
+		    <!-- Citation networks-->
+		    <menu pid="edu.iu.scipolicy.database.isi.extract.network.citation.author.ISIExtractAuthorCitationNetworkAlgorithm"/>
+		    <menu pid="edu.iu.scipolicy.database.isi.extract.network.citation.document.ISIDocumentCitationNetworkWithoutOuterNodes"/>
+		    <menu pid="edu.iu.scipolicy.database.isi.extract.network.citation.document.ISIDocumentCitationNetworkWithOuterNodes"/>
+		    <menu pid="edu.iu.scipolicy.database.isi.extract.network.citation.source.ISISourceCitationNetworkWithoutOuterNodes"/>
+		    <menu pid="edu.iu.scipolicy.database.isi.extract.network.citation.source.ISISourceCitationNetworkWithOuterNodes"/>
 		    
 		    <menu type="break"/>	    
-		    <!-- Co-citation network extraction -->
+		    <!-- Co-citation networks -->
 		    <menu pid="edu.iu.scipolicy.database.isi.extract.network.cocitation.document.all"/>
 		    <menu pid="edu.iu.scipolicy.database.isi.extract.network.cocitation.document.core"/>
 		    <menu pid="edu.iu.scipolicy.database.isi.extract.network.cocitation.journal.all"/>
 		    <menu pid="edu.iu.scipolicy.database.isi.extract.network.cocitation.journal.core"/>
 		    <menu pid="edu.iu.scipolicy.database.isi.extract.network.cocitation.author.core"/>
 	    </menu>
+	    
 	    <menu name="From NSF Database" type="group">
-	    	<!--  Co-PI network extraction -->
+	   		<!-- Core entities -->
+	   		<menu pid="edu.iu.scipolicy.database.nsf.extract.table.core_entities.ExtractInvestigators"/>
+	    	<menu pid="edu.iu.scipolicy.database.nsf.extract.table.core_entities.ExtractAwards"/>	    	
+	    	<menu pid="edu.iu.scipolicy.database.nsf.extract.table.core_entities.ExtractOrganizations"/>
+	    
+	    	<menu type="break"/>
+	    	<!--  Co-PI network -->
 	    	<menu pid="edu.iu.scipolicy.database.nsf.extract.network.copi"/>
 	    </menu>
     </top_menu>
