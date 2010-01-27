@@ -701,21 +701,21 @@ Dr. Katy Borner (katy@indiana.edu)
          version="0.0.0"
          unpack="false"/>
 
-	<plugin
+   <plugin
          id="edu.iu.cns.shared.utilities"
          download-size="0"
          install-size="0"
          version="0.0.0"
          unpack="false"/>
 
-	<plugin
+   <plugin
          id="edu.iu.scipolicy.utilities.nsf"
          download-size="0"
          install-size="0"
          version="0.0.0"
          unpack="false"/>
 
-	<plugin
+   <plugin
          id="edu.iu.cns.database.load.framework"
          download-size="0"
          install-size="0"
@@ -724,6 +724,13 @@ Dr. Katy Borner (katy@indiana.edu)
 
    <plugin
          id="edu.iu.cns.database.extract.generic"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+   <plugin
+         id="edu.iu.scipolicy.database.nsf.load"
          download-size="0"
          install-size="0"
          version="0.0.0"
