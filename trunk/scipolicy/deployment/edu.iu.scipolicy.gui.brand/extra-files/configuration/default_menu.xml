@@ -32,6 +32,12 @@
 		<menu pid="edu.iu.scipolicy.database.isi.load.ISIDatabaseLoaderAlgorithm" />
 		<menu pid="edu.iu.scipolicy.database.nsf.load.NSFDatabaseLoaderAlgorithm" />
 	</top_menu>
+
+	<top_menu name="Load Into Database">
+		<menu name="ISI" type="group">
+			<menu pid="edu.iu.scipolicy.database.isi.match.reference_to_paper.MatchReferenceToPaperAlgorithm" />
+		</menu>
+	</top_menu>
     
     <top_menu name="Preprocessing">
 	    <menu pid="edu.iu.scipolicy.filtering.topnpercent.TopNPercentAlgorithm"/>

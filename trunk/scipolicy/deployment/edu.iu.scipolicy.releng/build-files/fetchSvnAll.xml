@@ -66,13 +66,20 @@
   	  	  <param name="project.name" value="edu.iu.scipolicy.database.nsf.load"/>
   	  	  <param name="url" value="http://nwb.slis.indiana.edu/svn/nwb/trunk/scipolicy/plugins/normal_plugins"/>
   	</antcall>
-  	
+
   	<antcall target="svn.co">
-  	  	  	  <param name="target" value="plugins"/>
-  	  	  	  <param name="element.id" value="edu.iu.cns.database.extract.generic"/>
-  	  	  	  <param name="project.name" value="edu.iu.cns.database.extract.generic"/>
-  	  	  	  <param name="url" value="http://nwb.slis.indiana.edu/svn/nwb/trunk/cns"/>
-  	  	</antcall>
+  		<param name="target" value="plugins"/>
+  		<param name="element.id" value="edu.iu.scipolicy.database.isi.match.reference_to_paper"/>
+  		<param name="project.name" value="edu.iu.scipolicy.database.isi.match.reference_to_paper"/>
+  		<param name="url" value="http://nwb.slis.indiana.edu/svn/nwb/trunk/scipolicy/plugins/normal_plugins"/>
+  	</antcall>
+
+  	<antcall target="svn.co">
+  	  	  <param name="target" value="plugins"/>
+  	  	  <param name="element.id" value="edu.iu.cns.database.extract.generic"/>
+  	  	  <param name="project.name" value="edu.iu.cns.database.extract.generic"/>
+  	  	  <param name="url" value="http://nwb.slis.indiana.edu/svn/nwb/trunk/cns"/>
+  	</antcall>
 
   	<antcall target="svn.co">
   	  	  <param name="target" value="plugins"/>
