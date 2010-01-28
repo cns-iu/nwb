@@ -334,10 +334,9 @@ public class ISITableReader {
 	private ISITag getOrCreateNewTag(String tagName, TableData tableData) {
 		
 		Object getTagResult = ISITag.getTag(tagName);
-		
-		ISITag tag;
+
 		if (getTagResult != null) {
-			tag = (ISITag) getTagResult;
+			return (ISITag) getTagResult;
 		} else {
 			//since we have no stored information on this tag...
 			//we attempt to parse the tag data in the most general way possible.
@@ -347,13 +346,11 @@ public class ISITableReader {
 					+ "it held single-value text data");
 				
 			ContentType currentTagContentType = ContentType.TEXT;
-			ISITag.addTag(tagName, tagName,  currentTagContentType);
+			ISITag.addArbitraryTag(tagName, tagName, currentTagContentType);
 			tableData.addColumn(ISITag.getColumnName(tagName), currentTagContentType.getTableDataType());
 			
-			tag = ISITag.getTag(tagName);
+			return ISITag.getTag(tagName);
 		}
-		
-		return tag;
 	}
 	
 	private boolean startsWithTag(String potentialTag) {

@@ -503,8 +503,6 @@ public class ISITableModelParser {
 			StringUtilities.trimIfNotNull(row.getString(ISITag.DOI.getColumnName()));
 		String documentType =
 			StringUtilities.trimIfNotNull(row.getString(ISITag.DOCUMENT_TYPE.getColumnName()));
-		/*String documentVolume =
-			StringUtilities.trimIfNotNull(row.getString(ISITag.VOLUME.getColumnName()));*/
 		Integer documentVolume = IntegerParserWithDefault.parse(StringUtilities.trimIfNotNull(
 			row.getString(ISITag.VOLUME.getColumnName())));
 
@@ -578,7 +576,7 @@ public class ISITableModelParser {
 						subjectCategory,
 						supplement,
 						title)) {
-			return this.documents.addOrMerge(new Document(
+			Document document = new Document(
 				this.documents.getKeyGenerator(),
 				documentAbstract,
 				articleNumber,
@@ -606,7 +604,18 @@ public class ISITableModelParser {
 				subjectCategory,
 				supplement,
 				timesCited,
-				title));
+				title);
+
+			for (int ii = 0; ii < row.getColumnCount(); ii++) {
+				String columnName = row.getColumnName(ii);
+
+				if (ISITag.getArbitraryTag(columnName) != null) {
+					String value = row.getString(ii);
+					document.addArbitraryAttribute(columnName, value);
+				}
+			}
+
+			return this.documents.addOrMerge(document);
 		} else {
 			return null;
 		}

@@ -73,6 +73,7 @@ public class Document extends Entity<Document> {
 	private String supplement;
 	private Integer timesCited;
 	private String title;
+	private Dictionary<String, String> arbitraryAttributes = new Hashtable<String, String>();
 
 	public Document(
 			DatabaseTableKeyGenerator keyGenerator,
@@ -270,6 +271,10 @@ public class Document extends Entity<Document> {
 		return this.documentVolume;
 	}
 
+	public Dictionary<String, String> getArbitraryAttributes() {
+		return this.arbitraryAttributes;
+	}
+
 	public void setFirstAuthorPerson(Person firstAuthorPerson) {
 		this.firstAuthorPerson = firstAuthorPerson;
 
@@ -283,12 +288,16 @@ public class Document extends Entity<Document> {
 	}
 
 	/// This side-effects Document.SCHEMA.
-	public void addArbitraryField(String name, String value) {
+	public void addArbitraryAttribute(String name, String value) {
 		if (SCHEMA.findField(name) == null) {
+			System.err.println("found field is null");
 			SCHEMA.addField(name, DerbyFieldType.TEXT);
 		}
 
-		getAttributes().put(name, value);
+		if (value != null) {
+			this.arbitraryAttributes.put(name, value);
+			getAttributes().put(name, value);
+		}
 	}
 
 	public boolean shouldMerge(Document otherDocument) {
@@ -361,41 +370,13 @@ public class Document extends Entity<Document> {
 			new DictionaryEntry<String, Object>(ISI.SUPPLEMENT, supplement),
 			new DictionaryEntry<String, Object>(ISI.TIMES_CITED, timesCited),
 			new DictionaryEntry<String, Object>(ISI.TITLE, title));
-		/*attributes.put(ISI.ABSTRACT_TEXT, abstractText);
-		attributes.put(ISI.ARTICLE_NUMBER, articleNumber);
-		attributes.put(ISI.BEGINNING_PAGE, beginningPage);
-		attributes.put(ISI.CITED_REFERENCE_COUNT, citedReferenceCount);
-		attributes.put(ISI.CITED_YEAR, citedYear);
-		attributes.put(ISI.DIGITAL_OBJECT_IDENTIFIER, digitalObjectIdentifier);
-		attributes.put(ISI.DOCUMENT_TYPE, documentType);
-		attributes.put(ISI.DOCUMENT_VOLUME, documentVolume);
-		attributes.put(ISI.ENDING_PAGE, endingPage);*/
-
 		if (firstAuthorPerson != null) {
 			attributes.put(ISI.FIRST_AUTHOR, firstAuthorPerson.getPrimaryKey());
 		}
 
-		/*attributes.put(ISI.FUNDING_AGENCY_AND_GRANT_NUMBER, fundingAgencyAndGrantNumber);
-		attributes.put(ISI.FUNDING_TEXT, fundingText);
-		attributes.put(ISI.ISBN, isbn);
-		attributes.put(ISI.ISI_DOCUMENT_DELIVERY_NUMBER, isiDocumentDeliveryNumber);
-		attributes.put(ISI.ISI_UNIQUE_ARTICLE_IDENTIFIER, isiUniqueArticleIdentifier);
-		attributes.put(ISI.ISSUE, issue);
-		attributes.put(ISI.LANGUAGE, language);
-		attributes.put(ISI.PAGE_COUNT, pageCount);
-		attributes.put(ISI.PART_NUMBER, partNumber);
-		attributes.put(ISI.PUBLICATION_DATE, publicationDate);
-		attributes.put(ISI.PUBLICATION_YEAR, publicationYear);*/
-
 		if (source != null) {
 			attributes.put(ISI.DOCUMENT_SOURCE, source.getPrimaryKey());
 		}
-
-		/*attributes.put(ISI.SPECIAL_ISSUE, specialIssue);
-		attributes.put(ISI.SUBJECT_CATEGORY, subjectCategory);
-		attributes.put(ISI.SUPPLEMENT, supplement);
-		attributes.put(ISI.TIMES_CITED, timesCited);
-		attributes.put(ISI.TITLE, title);*/
 
 		return attributes;
 	}

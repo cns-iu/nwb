@@ -195,6 +195,11 @@ public class ISITag {
 	private static Dictionary typeToTags = new Hashtable();
 	private static Dictionary tagNameToColumnName = new Hashtable();
 
+	private static List arbitraryISITags = new ArrayList();
+	private static Dictionary arbitraryTagNameToTag = new Hashtable();
+	private static Dictionary arbitraryTypeToTags = new Hashtable();
+	private static Dictionary arbitraryTagNameToColumnName = new Hashtable();
+
 	static {
 		for (int ii = 0; ii < isiTagArray.length; ii++) {
 			ISITag tag = isiTagArray[ii];
@@ -242,9 +247,52 @@ public class ISITag {
 		tagsWithThisType.add(newTag);
 		typeToTags.put(tagType, tagsWithThisType);
 	}
-	
-	
-	
+
+	private static void addArbitraryTagInternal(ISITag newTag, boolean checkForDuplicates) {
+		if (checkForDuplicates) {
+			for (int ii = 0; ii < arbitraryISITags.size(); ii++) {	
+				ISITag tag = (ISITag) arbitraryISITags.get(ii);
+				
+				if (newTag.tagName.equals(tag.tagName)) {
+					System.err.println(
+						"Attempted to add an arbitrary tag tagNamed '" +
+						newTag.tagName +
+						"'" +
+						" when one with the same tagName is already known.");
+					System.err.println("Ignoring attempt to add new tag");
+
+					return;
+				}
+			}
+		}
+		
+		//add to isiTags
+		
+		arbitraryISITags.add(newTag);
+		//add to tagNameToTag
+		
+		arbitraryTagNameToTag.put(newTag.tagName, newTag);
+		
+		//add to tagNameToColumnName
+		
+		arbitraryTagNameToColumnName.put(newTag.tagName, newTag.columnName);
+		
+		//add to typeToTags
+		
+		ContentType tagType = newTag.type;
+		Object typeToTagsResult = arbitraryTypeToTags.get(tagType);
+		List tagsWithThisType;
+
+		if (typeToTagsResult == null) {
+			tagsWithThisType = new ArrayList();
+		} else {
+			tagsWithThisType = (List) typeToTagsResult;
+		}
+		
+		tagsWithThisType.add(newTag);
+		arbitraryTypeToTags.put(tagType, tagsWithThisType);
+	}
+
 	public final String tagName;
 	public final String columnName;
 	public final ContentType type;
@@ -300,6 +348,12 @@ public class ISITag {
 		ISITag newTag = new ISITag(tagName, name, type, separator, isFileUnique);
 		addTagInternal(newTag, true);
 	}
+
+	public static void addArbitraryTag(String tagName, String name, ContentType type) {
+		ISITag newTag = new ISITag(tagName, name, type);
+		addTagInternal(newTag, true);
+		addArbitraryTagInternal(newTag, true);
+	}
 	
 	public static ISITag getTag(String tagName) {
 		if (tagName == null) {
@@ -307,6 +361,19 @@ public class ISITag {
 		}
 		
 		Object result = tagNameToTag.get(tagName);
+		if (result != null) {
+			return (ISITag) result;
+		} else {
+			return null;
+		}
+	}
+
+	public static ISITag getArbitraryTag(String tagName) {
+		if (tagName == null) {
+			return null;
+		}
+		
+		Object result = arbitraryTagNameToTag.get(tagName);
 		if (result != null) {
 			return (ISITag) result;
 		} else {
