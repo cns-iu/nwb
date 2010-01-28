@@ -12,7 +12,7 @@ import edu.iu.cns.database.load.framework.Schema;
 import edu.iu.cns.database.load.framework.utilities.DatabaseTableKeyGenerator;
 import edu.iu.nwb.shared.isiutil.database.ISI;
 
-public class Person extends Entity<Person> implements Comparable<Person> {
+public class Person extends Entity<Person> {
 	public static final Schema<Person> SCHEMA = new Schema<Person>(
 		true,
 		ISI.ADDITIONAL_NAME, DerbyFieldType.TEXT,
@@ -87,10 +87,6 @@ public class Person extends Entity<Person> implements Comparable<Person> {
 		return this.unsplitAbbreviatedName;
 	}
 
-	public int compareTo(Person otherPerson) {
-		return -1;
-	}
-
 	public boolean shouldMerge(Person otherPerson) {
 		return false;
 	}
@@ -98,7 +94,7 @@ public class Person extends Entity<Person> implements Comparable<Person> {
 	public void merge(Person otherPerson) {
 	}
 
-	public static Dictionary<String, Comparable<?>> createAttributes(
+	public static Dictionary<String, Object> createAttributes(
 			String additionalName,
 			String familyName,
 			String firstInitial,
@@ -106,16 +102,16 @@ public class Person extends Entity<Person> implements Comparable<Person> {
 			String middleInitial,
 			String personalName,
 			String unsplitName) {
-		Dictionary<String, Comparable<?>> attributes = new Hashtable<String, Comparable<?>>();
+		Dictionary<String, Object> attributes = new Hashtable<String, Object>();
 		DictionaryUtilities.addIfNotNull(
 			attributes,
-			new DictionaryEntry<String, Comparable<?>>(ISI.ADDITIONAL_NAME, additionalName),
-			new DictionaryEntry<String, Comparable<?>>(ISI.FAMILY_NAME, familyName),
-			new DictionaryEntry<String, Comparable<?>>(ISI.FIRST_INITIAL, firstInitial),
-			new DictionaryEntry<String, Comparable<?>>(ISI.FULL_NAME, fullName),
-			new DictionaryEntry<String, Comparable<?>>(ISI.MIDDLE_INITIAL, middleInitial),
-			new DictionaryEntry<String, Comparable<?>>(ISI.PERSONAL_NAME, personalName),
-			new DictionaryEntry<String, Comparable<?>>(ISI.UNSPLIT_ABBREVIATED_NAME, unsplitName));
+			new DictionaryEntry<String, Object>(ISI.ADDITIONAL_NAME, additionalName),
+			new DictionaryEntry<String, Object>(ISI.FAMILY_NAME, familyName),
+			new DictionaryEntry<String, Object>(ISI.FIRST_INITIAL, firstInitial),
+			new DictionaryEntry<String, Object>(ISI.FULL_NAME, fullName),
+			new DictionaryEntry<String, Object>(ISI.MIDDLE_INITIAL, middleInitial),
+			new DictionaryEntry<String, Object>(ISI.PERSONAL_NAME, personalName),
+			new DictionaryEntry<String, Object>(ISI.UNSPLIT_ABBREVIATED_NAME, unsplitName));
 		/*attributes.put(ISI.ADDITIONAL_NAME, additionalName);
 		attributes.put(ISI.FAMILY_NAME, familyName);
 		attributes.put(ISI.FIRST_INITIAL, firstInitial);

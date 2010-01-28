@@ -13,7 +13,7 @@ import edu.iu.cns.database.load.framework.Schema;
 import edu.iu.cns.database.load.framework.utilities.DatabaseTableKeyGenerator;
 import edu.iu.nwb.shared.isiutil.database.ISI;
 
-public class Keyword extends Entity<Keyword> implements Comparable<Keyword> {
+public class Keyword extends Entity<Keyword> {
 	public static final Schema<Keyword> SCHEMA = new Schema<Keyword>(
 		true,
 		ISI.KEYWORD, DerbyFieldType.TEXT,
@@ -36,10 +36,6 @@ public class Keyword extends Entity<Keyword> implements Comparable<Keyword> {
 		return this.type;
 	}
 
-	public int compareTo(Keyword otherKeyword) {
-		return new Integer(getPrimaryKey()).compareTo(new Integer(otherKeyword.getPrimaryKey()));
-	}
-
 	public boolean shouldMerge(Keyword otherKeyword) {
 		return (
 			StringUtilities.areValidAndEqual(this.keyword, otherKeyword.getKeyword()) &&
@@ -51,12 +47,12 @@ public class Keyword extends Entity<Keyword> implements Comparable<Keyword> {
 		this.type = StringUtilities.simpleMerge(this.type, otherKeyword.getType());
 	}
 
-	public static Dictionary<String, Comparable<?>> createAttributes(String keyword, String type) {
-		Dictionary<String, Comparable<?>> attributes = new Hashtable<String, Comparable<?>>();
+	public static Dictionary<String, Object> createAttributes(String keyword, String type) {
+		Dictionary<String, Object> attributes = new Hashtable<String, Object>();
 		DictionaryUtilities.addIfNotNull(
 			attributes,
-			new DictionaryEntry<String, Comparable<?>>(ISI.KEYWORD, keyword),
-			new DictionaryEntry<String, Comparable<?>>(ISI.TYPE, type));
+			new DictionaryEntry<String, Object>(ISI.KEYWORD, keyword),
+			new DictionaryEntry<String, Object>(ISI.TYPE, type));
 		/*attributes.put(ISI.KEYWORD, keyword);
 		attributes.put(ISI.TYPE, type);*/
 

@@ -40,8 +40,8 @@ public class ProgramManager extends RowItem<ProgramManager> {
 		return this.award;
 	}
 
-	private static Dictionary<String, Comparable<?>> createAttributes(Person person, Award award) {
-		Dictionary<String, Comparable<?>> attributes = new Hashtable<String, Comparable<?>>();
+	private static Dictionary<String, Object> createAttributes(Person person, Award award) {
+		Dictionary<String, Object> attributes = new Hashtable<String, Object>();
 		
 		attributes.put(NSF_Database_FieldNames.PROGRAM_MANAGER_AWARD_FOREIGN_KEY, 
 			   	   	   award.getPrimaryKey());

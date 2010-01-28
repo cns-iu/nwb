@@ -13,7 +13,7 @@ import edu.iu.cns.database.load.framework.Schema;
 import edu.iu.cns.database.load.framework.utilities.DatabaseTableKeyGenerator;
 import edu.iu.nwb.shared.isiutil.database.ISI;
 
-public class Source extends Entity<Source> implements Comparable<Source> {
+public class Source extends Entity<Source> {
 	public final static Schema<Source> SCHEMA = new Schema<Source>(
 		true,
 		ISI.BOOK_SERIES_TITLE, DerbyFieldType.TEXT,
@@ -125,11 +125,6 @@ public class Source extends Entity<Source> implements Comparable<Source> {
 		return this.twentyNineCharacterSourceTitleAbbreviation;
 	}
 
-	public int compareTo(Source otherSource) {
-		return get29CharacterSourceTitleAbbreviation().compareTo(
-			otherSource.get29CharacterSourceTitleAbbreviation());
-	}
-
 	public boolean shouldMerge(Source otherSource) {
 		return (
 			StringUtilities.areValidAndEqual(this.issn, otherSource.getISSN()) ||
@@ -163,7 +158,7 @@ public class Source extends Entity<Source> implements Comparable<Source> {
 			otherSource.get29CharacterSourceTitleAbbreviation());
 	}
 
-	public static Dictionary<String, Comparable<?>> createAttributes(
+	public static Dictionary<String, Object> createAttributes(
 			String bookSeriesTitle,
 			String bookSeriesSubtitle,
 			String conferenceHost,
@@ -175,24 +170,24 @@ public class Source extends Entity<Source> implements Comparable<Source> {
 			String issn,
 			String publicationType,
 			String twentyNineCharacterSourceTitleAbbreviation) {
-		Dictionary<String, Comparable<?>> attributes = new Hashtable<String, Comparable<?>>();
+		Dictionary<String, Object> attributes = new Hashtable<String, Object>();
 		DictionaryUtilities.addIfNotNull(
 			attributes,
-			new DictionaryEntry<String, Comparable<?>>(ISI.BOOK_SERIES_TITLE, bookSeriesTitle),
-			new DictionaryEntry<String, Comparable<?>>(
+			new DictionaryEntry<String, Object>(ISI.BOOK_SERIES_TITLE, bookSeriesTitle),
+			new DictionaryEntry<String, Object>(
 				ISI.BOOK_SERIES_SUBTITLE, bookSeriesSubtitle),
-			new DictionaryEntry<String, Comparable<?>>(ISI.CONFERENCE_HOST, conferenceHost),
-			new DictionaryEntry<String, Comparable<?>>(
+			new DictionaryEntry<String, Object>(ISI.CONFERENCE_HOST, conferenceHost),
+			new DictionaryEntry<String, Object>(
 				ISI.CONFERENCE_LOCATION, conferenceLocation),
-			new DictionaryEntry<String, Comparable<?>>(
+			new DictionaryEntry<String, Object>(
 				ISI.CONFERENCE_SPONSORS, conferenceSponsors),
-			new DictionaryEntry<String, Comparable<?>>(ISI.CONFERENCE_TITLE, conferenceTitle),
-			new DictionaryEntry<String, Comparable<?>>(ISI.FULL_TITLE, fullTitle),
-			new DictionaryEntry<String, Comparable<?>>(
+			new DictionaryEntry<String, Object>(ISI.CONFERENCE_TITLE, conferenceTitle),
+			new DictionaryEntry<String, Object>(ISI.FULL_TITLE, fullTitle),
+			new DictionaryEntry<String, Object>(
 				ISI.ISO_TITLE_ABBREVIATION, isoTitleAbbreviation),
-			new DictionaryEntry<String, Comparable<?>>(ISI.ISSN, issn),
-			new DictionaryEntry<String, Comparable<?>>(ISI.PUBLICATION_TYPE, publicationType),
-			new DictionaryEntry<String, Comparable<?>>(
+			new DictionaryEntry<String, Object>(ISI.ISSN, issn),
+			new DictionaryEntry<String, Object>(ISI.PUBLICATION_TYPE, publicationType),
+			new DictionaryEntry<String, Object>(
 				ISI.TWENTY_NINE_CHARACTER_SOURCE_TITLE_ABBREVIATION,
 				twentyNineCharacterSourceTitleAbbreviation));
 		/*attributes.put(ISI.BOOK_SERIES_TITLE, bookSeriesTitle);

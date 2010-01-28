@@ -71,15 +71,15 @@ public class Author extends RowItem<Author> {
 	public void merge(Author otherAuthor) {
 	}
 
-	public static Dictionary<String, Comparable<?>> createAttributes(
+	public static Dictionary<String, Object> createAttributes(
 			Document document, Person person, String emailAddress, Integer orderListed) {
-		Dictionary<String, Comparable<?>> attributes = new Hashtable<String, Comparable<?>>();
+		Dictionary<String, Object> attributes = new Hashtable<String, Object>();
 		attributes.put(ISI.AUTHORS_DOCUMENT_FOREIGN_KEY, document.getPrimaryKey());
 		attributes.put(ISI.AUTHORS_PERSON_FOREIGN_KEY, person.getPrimaryKey());
 		DictionaryUtilities.addIfNotNull(
 			attributes,
-			new DictionaryEntry<String, Comparable<?>>(ISI.AUTHORS_EMAIL_ADDRESS, emailAddress),
-			new DictionaryEntry<String, Comparable<?>>(ISI.ORDER_LISTED, orderListed));
+			new DictionaryEntry<String, Object>(ISI.AUTHORS_EMAIL_ADDRESS, emailAddress),
+			new DictionaryEntry<String, Object>(ISI.ORDER_LISTED, orderListed));
 		/*attributes.put(ISI.AUTHORS_EMAIL_ADDRESS, emailAddress);
 		attributes.put(ISI.ORDER_LISTED, orderListed);*/
 

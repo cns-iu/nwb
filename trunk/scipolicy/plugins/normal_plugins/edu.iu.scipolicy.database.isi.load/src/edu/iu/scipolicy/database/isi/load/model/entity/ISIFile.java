@@ -13,7 +13,7 @@ import edu.iu.cns.database.load.framework.Schema;
 import edu.iu.cns.database.load.framework.utilities.DatabaseTableKeyGenerator;
 import edu.iu.nwb.shared.isiutil.database.ISI;
 
-public class ISIFile extends Entity<ISIFile> implements Comparable<ISIFile> {
+public class ISIFile extends Entity<ISIFile> {
 	public static final Schema<ISIFile> SCHEMA = new Schema<ISIFile>(
 		true,
 		ISI.FILE_FORMAT_VERSION_NUMBER, DerbyFieldType.TEXT,
@@ -47,14 +47,6 @@ public class ISIFile extends Entity<ISIFile> implements Comparable<ISIFile> {
 		return this.fileType;
 	}
 
-	public int compareTo(ISIFile otherISIFile) {
-		if (shouldMerge(otherISIFile)) {
-			return 0;
-		}
-
-		return this.fileName.compareTo(otherISIFile.getFileName());
-	}
-
 	public boolean shouldMerge(ISIFile otherISIFile) {
 		return StringUtilities.areValidAndEqualIgnoreCase(
 			this.fileName, otherISIFile.getFileName());
@@ -66,15 +58,15 @@ public class ISIFile extends Entity<ISIFile> implements Comparable<ISIFile> {
 		this.fileType = StringUtilities.simpleMerge(this.fileType, otherISIFile.getFileType());
 	}
 
-	private static Dictionary<String, Comparable<?>> createAttributes(
+	private static Dictionary<String, Object> createAttributes(
 			String fileFormatVersionNumber, String fileName, String fileType) {
-		Dictionary<String, Comparable<?>> attributes = new Hashtable<String, Comparable<?>>();
+		Dictionary<String, Object> attributes = new Hashtable<String, Object>();
 		DictionaryUtilities.addIfNotNull(
 			attributes,
-			new DictionaryEntry<String, Comparable<?>>(
+			new DictionaryEntry<String, Object>(
 				ISI.FILE_FORMAT_VERSION_NUMBER, fileFormatVersionNumber),
-			new DictionaryEntry<String, Comparable<?>>(ISI.FILE_NAME, fileName),
-			new DictionaryEntry<String, Comparable<?>>(ISI.FILE_TYPE, fileType));
+			new DictionaryEntry<String, Object>(ISI.FILE_NAME, fileName),
+			new DictionaryEntry<String, Object>(ISI.FILE_TYPE, fileType));
 		/*attributes.put(ISI.FILE_FORMAT_VERSION_NUMBER, fileFormatVersionNumber);
 		attributes.put(ISI.FILE_NAME, fileName);
 		attributes.put(ISI.FILE_TYPE, fileType);*/

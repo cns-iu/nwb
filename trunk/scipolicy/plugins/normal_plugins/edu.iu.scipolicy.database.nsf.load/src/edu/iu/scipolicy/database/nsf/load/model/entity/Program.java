@@ -11,7 +11,7 @@ import edu.iu.cns.database.load.framework.Schema;
 import edu.iu.cns.database.load.framework.utilities.DatabaseTableKeyGenerator;
 import edu.iu.scipolicy.utilities.nsf.NSF_Database_FieldNames;
 
-public class Program extends Entity<Program> implements Comparable<Program> {
+public class Program extends Entity<Program> {
 
 	public static final Schema<Program> SCHEMA = new Schema<Program>(
 			true,
@@ -31,9 +31,9 @@ public class Program extends Entity<Program> implements Comparable<Program> {
 	}
 
 
-	private static Dictionary<String, Comparable<?>> createAttributes(String name, 
+	private static Dictionary<String, Object> createAttributes(String name, 
 														String fundingCode) {
-		Dictionary<String, Comparable<?>> attributes = new Hashtable<String, Comparable<?>>();
+		Dictionary<String, Object> attributes = new Hashtable<String, Object>();
 		attributes.put(NSF_Database_FieldNames.PROGRAM_NAME, name);
 		attributes.put(NSF_Database_FieldNames.FUNDING_CODE, fundingCode);
 
@@ -82,11 +82,4 @@ public class Program extends Entity<Program> implements Comparable<Program> {
 			}
 		}
 	}
-
-
-	public int compareTo(Program o) {
-		// TODO Auto-generated method stub
-		return 0;
-	}
-
 }

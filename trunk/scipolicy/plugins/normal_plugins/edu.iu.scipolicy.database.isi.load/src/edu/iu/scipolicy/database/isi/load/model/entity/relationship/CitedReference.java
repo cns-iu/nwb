@@ -54,9 +54,9 @@ public class CitedReference extends RowItem<CitedReference> {
 	public void merge(CitedReference otherCitedReference) {
 	}
 
-	public static Dictionary<String, Comparable<?>> createAttributes(
+	public static Dictionary<String, Object> createAttributes(
 			Document document, Reference reference) {
-		Dictionary<String, Comparable<?>> attributes = new Hashtable<String, Comparable<?>>();
+		Dictionary<String, Object> attributes = new Hashtable<String, Object>();
 		attributes.put(ISI.CITED_REFERENCES_DOCUMENT_FOREIGN_KEY, document.getPrimaryKey());
 		attributes.put(ISI.CITED_REFERENCES_REFERENCE_FOREIGN_KEY, reference.getPrimaryKey());
 

@@ -54,9 +54,9 @@ public class ReprintAddress extends RowItem<ReprintAddress> {
 	public void merge(ReprintAddress otherReprintAddress) {
 	}
 
-	public static Dictionary<String, Comparable<?>> createAttributes(
+	public static Dictionary<String, Object> createAttributes(
 			Document document, Address address) {
-		Dictionary<String, Comparable<?>> attributes = new Hashtable<String, Comparable<?>>();
+		Dictionary<String, Object> attributes = new Hashtable<String, Object>();
 		attributes.put(
 			ISI.REPRINT_ADDRESSES_DOCUMENT_FOREIGN_KEY, document.getPrimaryKey());
 		attributes.put(

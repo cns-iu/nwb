@@ -56,7 +56,7 @@ public class RowItemTest {
 	}
 
 	public static void checkItemOrderListed(RowItem<?> item, int providedOrderListed) {
-		Dictionary<String, Comparable<?>> attributes = item.getAttributes();
+		Dictionary<String, Object> attributes = item.getAttributes();
 		Integer orderListed = (Integer)attributes.get(ISI.ORDER_LISTED);
 
 		if (orderListed != null) {

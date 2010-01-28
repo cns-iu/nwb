@@ -13,7 +13,7 @@ import edu.iu.cns.database.load.framework.Schema;
 import edu.iu.cns.database.load.framework.utilities.DatabaseTableKeyGenerator;
 import edu.iu.nwb.shared.isiutil.database.ISI;
 
-public class Address extends Entity<Address> implements Comparable<Address> {
+public class Address extends Entity<Address> {
 	public static final Schema<Address> SCHEMA = new Schema<Address>(
 		true,
 		ISI.ADDRESS_CITY, DerbyFieldType.TEXT,
@@ -79,11 +79,6 @@ public class Address extends Entity<Address> implements Comparable<Address> {
 		return this.streetAddress;
 	}
 
-	public int compareTo(Address otherAddress) {
-		// TODO:
-		return -1;
-	}
-
 	public boolean shouldMerge(Address otherAddress) {
 		return StringUtilities.areValidAndEqualIgnoreCase(
 			this.rawAddress, otherAddress.getRawAddress());
@@ -100,22 +95,22 @@ public class Address extends Entity<Address> implements Comparable<Address> {
 			StringUtilities.simpleMerge(this.streetAddress, otherAddress.getStreetAddress());
 	}
 
-	public static Dictionary<String, Comparable<?>> createAttributes(
+	public static Dictionary<String, Object> createAttributes(
 			String city,
 			String country,
 			String postalCode,
 			String rawAddress,
 			String streetAddress,
 			String stateOrProvince) {
-		Dictionary<String, Comparable<?>> attributes = new Hashtable<String, Comparable<?>>();
+		Dictionary<String, Object> attributes = new Hashtable<String, Object>();
 		DictionaryUtilities.addIfNotNull(
 			attributes,
-			new DictionaryEntry<String, Comparable<?>>(ISI.ADDRESS_CITY, city),
-			new DictionaryEntry<String, Comparable<?>>(ISI.COUNTRY, country),
-			new DictionaryEntry<String, Comparable<?>>(ISI.POSTAL_CODE, postalCode),
-			new DictionaryEntry<String, Comparable<?>>(ISI.RAW_ADDRESS, rawAddress),
-			new DictionaryEntry<String, Comparable<?>>(ISI.STATE_OR_PROVINCE, stateOrProvince),
-			new DictionaryEntry<String, Comparable<?>>(ISI.STREET_ADDRESS, streetAddress));
+			new DictionaryEntry<String, Object>(ISI.ADDRESS_CITY, city),
+			new DictionaryEntry<String, Object>(ISI.COUNTRY, country),
+			new DictionaryEntry<String, Object>(ISI.POSTAL_CODE, postalCode),
+			new DictionaryEntry<String, Object>(ISI.RAW_ADDRESS, rawAddress),
+			new DictionaryEntry<String, Object>(ISI.STATE_OR_PROVINCE, stateOrProvince),
+			new DictionaryEntry<String, Object>(ISI.STREET_ADDRESS, streetAddress));
 		
 		/*attributes.put(ISI.ADDRESS_CITY, city);
 		attributes.put(ISI.COUNTRY, country);

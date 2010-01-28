@@ -56,9 +56,9 @@ public class PublisherAddress extends RowItem<PublisherAddress> {
 	public void merge(PublisherAddress otherPublisherAddress) {
 	}
 
-	public static Dictionary<String, Comparable<?>> createAttributes(
+	public static Dictionary<String, Object> createAttributes(
 			Publisher publisher, Address address) {
-		Dictionary<String, Comparable<?>> attributes = new Hashtable<String, Comparable<?>>();
+		Dictionary<String, Object> attributes = new Hashtable<String, Object>();
 		attributes.put(ISI.PUBLISHER_ADDRESSES_PUBLISHER_FOREIGN_KEY,
 				publisher.getPrimaryKey());
 		attributes.put(ISI.PUBLISHER_ADDRESSES_ADDRESS_FOREIGN_KEY, address.getPrimaryKey());

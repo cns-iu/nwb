@@ -12,7 +12,7 @@ import edu.iu.cns.database.load.framework.Schema;
 import edu.iu.cns.database.load.framework.utilities.DatabaseTableKeyGenerator;
 import edu.iu.scipolicy.utilities.nsf.NSF_Database_FieldNames;
 
-public class Award extends Entity<Award> implements Comparable<Award> {
+public class Award extends Entity<Award> {
 	public static final Schema<Award> SCHEMA = new Schema<Award>(
 			true,
 			NSF_Database_FieldNames.AWARD_NUMBER, DerbyFieldType.TEXT,
@@ -92,7 +92,7 @@ public class Award extends Entity<Award> implements Comparable<Award> {
 	}
 	
 	
-	private static Dictionary<String, Comparable<?>> createAttributes(String awardNumber,
+	private static Dictionary<String, Object> createAttributes(String awardNumber,
 													   String title,
 													   Date startDate,
 													   String rawStartDate, 
@@ -106,7 +106,7 @@ public class Award extends Entity<Award> implements Comparable<Award> {
 													   String nSFDirectorate,
 													   String nSFOrganization,
 													   String abstractText) {
-		Dictionary<String, Comparable<?>> attributes = new Hashtable<String, Comparable<?>>();
+		Dictionary<String, Object> attributes = new Hashtable<String, Object>();
 		attributes.put(NSF_Database_FieldNames.TITLE, title);
 		attributes.put(NSF_Database_FieldNames.AWARD_NUMBER, awardNumber);
 		
@@ -228,13 +228,6 @@ public class Award extends Entity<Award> implements Comparable<Award> {
 					otherItem.getTitle()) 
 		);
 	}
-
-
-	public int compareTo(Award o) {
-		// TODO Auto-generated method stub
-		return 0;
-	}
-
 
 	public String getRawStartDate() {
 		return rawStartDate;

@@ -56,14 +56,14 @@ public class Investigator extends Entity<Investigator> implements Comparable<Inv
 		return this.award;
 	}
 
-	private static Dictionary<String, Comparable<?>> createAttributes(
+	private static Dictionary<String, Object> createAttributes(
 			Award award, 
 			Person person, 
 			boolean isMainPI,
 			String emailAddress,
 			String state) {
 		
-		Dictionary<String, Comparable<?>> attributes = new Hashtable<String, Comparable<?>>();
+		Dictionary<String, Object> attributes = new Hashtable<String, Object>();
 		attributes.put(NSF_Database_FieldNames.INVESTIGATOR_AWARD_FOREIGN_KEY, award.getPrimaryKey());
 		attributes.put(NSF_Database_FieldNames.INVESTIGATOR_PERSON_FOREIGN_KEY, person.getPrimaryKey());
 		attributes.put(NSF_Database_FieldNames.EMAIL_ADDRESS, emailAddress);

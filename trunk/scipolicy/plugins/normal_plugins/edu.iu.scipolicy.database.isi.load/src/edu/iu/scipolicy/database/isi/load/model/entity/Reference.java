@@ -13,7 +13,7 @@ import edu.iu.cns.database.load.framework.Schema;
 import edu.iu.cns.database.load.framework.utilities.DatabaseTableKeyGenerator;
 import edu.iu.nwb.shared.isiutil.database.ISI;
 
-public class Reference extends Entity<Reference> implements Comparable<Reference> {
+public class Reference extends Entity<Reference> {
 	public final static Schema<Reference> SCHEMA = new Schema<Reference>(
 		true,
 		ISI.ANNOTATION, DerbyFieldType.TEXT,
@@ -134,11 +134,6 @@ public class Reference extends Entity<Reference> implements Comparable<Reference
 		getAttributes().put(ISI.SOURCE, source.getPrimaryKey());
 	}
 
-	public int compareTo(Reference otherReference) {
-		// TODO:
-		return -1;
-	}
-
 	public boolean shouldMerge(Reference otherReference) {
 		return StringUtilities.areValidAndEqual(
 			this.rawReferenceString, otherReference.getRawReferenceString());
@@ -148,7 +143,7 @@ public class Reference extends Entity<Reference> implements Comparable<Reference
 		// TODO:
 	}
 
-	public static Dictionary<String, Comparable<?>> createAttributes(
+	public static Dictionary<String, Object> createAttributes(
 			String annotation,
 			Person author,
 			Boolean authorWasStarred,
@@ -159,17 +154,17 @@ public class Reference extends Entity<Reference> implements Comparable<Reference
 			Integer referenceVolume,
 			Source source,
 			Integer year) {
-		Dictionary<String, Comparable<?>> attributes = new Hashtable<String, Comparable<?>>();
+		Dictionary<String, Object> attributes = new Hashtable<String, Object>();
 		DictionaryUtilities.addIfNotNull(
 			attributes,
-			new DictionaryEntry<String, Comparable<?>>(ISI.ANNOTATION, annotation),
-			new DictionaryEntry<String, Comparable<?>>(ISI.AUTHOR_WAS_STARRED, authorWasStarred),
-			new DictionaryEntry<String, Comparable<?>>(
+			new DictionaryEntry<String, Object>(ISI.ANNOTATION, annotation),
+			new DictionaryEntry<String, Object>(ISI.AUTHOR_WAS_STARRED, authorWasStarred),
+			new DictionaryEntry<String, Object>(
 				ISI.DIGITAL_OBJECT_IDENTIFIER, digitalObjectIdentifier),
-			new DictionaryEntry<String, Comparable<?>>(ISI.PAGE_NUMBER, pageNumber),
-			new DictionaryEntry<String, Comparable<?>>(ISI.REFERENCE_STRING, rawReferenceString),
-			new DictionaryEntry<String, Comparable<?>>(ISI.REFERENCE_VOLUME, referenceVolume),
-			new DictionaryEntry<String, Comparable<?>>(ISI.YEAR, year));
+			new DictionaryEntry<String, Object>(ISI.PAGE_NUMBER, pageNumber),
+			new DictionaryEntry<String, Object>(ISI.REFERENCE_STRING, rawReferenceString),
+			new DictionaryEntry<String, Object>(ISI.REFERENCE_VOLUME, referenceVolume),
+			new DictionaryEntry<String, Object>(ISI.YEAR, year));
 		//attributes.put(ISI.ANNOTATION, annotation);
 
 		if (author != null) {

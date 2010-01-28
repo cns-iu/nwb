@@ -11,7 +11,7 @@ import edu.iu.cns.database.load.framework.Schema;
 import edu.iu.cns.database.load.framework.utilities.DatabaseTableKeyGenerator;
 import edu.iu.scipolicy.utilities.nsf.NSF_Database_FieldNames;
 
-public class Organization extends Entity<Organization> implements Comparable<Organization>{
+public class Organization extends Entity<Organization> {
 
 	public static final Schema<Organization> SCHEMA = new Schema<Organization>(
 			true,
@@ -51,13 +51,13 @@ public class Organization extends Entity<Organization> implements Comparable<Org
 		this.zip = zip;
 	}
 
-	private static Dictionary<String, Comparable<?>> createAttributes(String name,
+	private static Dictionary<String, Object> createAttributes(String name,
 															   String phone,
 															   String streetAddress,
 															   String city,
 															   String state,
 															   String zip) {
-		Dictionary<String, Comparable<?>> attributes = new Hashtable<String, Comparable<?>>();
+		Dictionary<String, Object> attributes = new Hashtable<String, Object>();
 		attributes.put(NSF_Database_FieldNames.ORGANIZATION_NAME, name);
 		attributes.put(NSF_Database_FieldNames.ORGANIZATION_PHONE, phone);
 		attributes.put(NSF_Database_FieldNames.ORGANIZATION_STREET_ADDRESS, streetAddress);
@@ -117,10 +117,5 @@ public class Organization extends Entity<Organization> implements Comparable<Org
 				&& StringUtilities.areValidAndEqualIgnoreCase(this.phone, otherItem.getPhone())
 				&& StringUtilities.areValidAndEqualIgnoreCase(this.city, otherItem.getCity())
 		);
-	}
-
-	public int compareTo(Organization o) {
-		// TODO Auto-generated method stub
-		return 0;
 	}
 }

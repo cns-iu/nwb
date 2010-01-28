@@ -13,7 +13,7 @@ import edu.iu.cns.database.load.framework.Schema;
 import edu.iu.cns.database.load.framework.utilities.DatabaseTableKeyGenerator;
 import edu.iu.nwb.shared.isiutil.database.ISI;
 
-public class Patent extends Entity<Patent> implements Comparable<Patent> {
+public class Patent extends Entity<Patent> {
 	public static final Schema<Patent> SCHEMA = new Schema<Patent>(
 		true,
 		ISI.PATENT_NUMBER, DerbyFieldType.TEXT);
@@ -29,10 +29,6 @@ public class Patent extends Entity<Patent> implements Comparable<Patent> {
 		return this.patentNumber;
 	}
 
-	public int compareTo(Patent otherPatent) {
-		return new Integer(getPrimaryKey()).compareTo(new Integer(otherPatent.getPrimaryKey()));
-	}
-
 	public boolean shouldMerge(Patent otherPatent) {
 		return StringUtilities.areValidAndEqual(
 			this.patentNumber, otherPatent.getPatentNumber());
@@ -41,11 +37,11 @@ public class Patent extends Entity<Patent> implements Comparable<Patent> {
 	public void merge(Patent otherPatent) {
 	}
 
-	public static Dictionary<String, Comparable<?>> createAttributes(String patentNumber) {
-		Dictionary<String, Comparable<?>> attributes = new Hashtable<String, Comparable<?>>();
+	public static Dictionary<String, Object> createAttributes(String patentNumber) {
+		Dictionary<String, Object> attributes = new Hashtable<String, Object>();
 		DictionaryUtilities.addIfNotNull(
 			attributes,
-			new DictionaryEntry<String, Comparable<?>>(ISI.PATENT_NUMBER, patentNumber));
+			new DictionaryEntry<String, Object>(ISI.PATENT_NUMBER, patentNumber));
 		//attributes.put(ISI.PATENT_NUMBER, patentNumber);
 
 		return attributes;

@@ -40,8 +40,8 @@ public class ProgramReferenceCode extends RowItem<ProgramReferenceCode> {
 		return this.award;
 	}
 
-	private static Dictionary<String, Comparable<?>> createAttributes(Program program, Award award) {
-		Dictionary<String, Comparable<?>> attributes = new Hashtable<String, Comparable<?>>();
+	private static Dictionary<String, Object> createAttributes(Program program, Award award) {
+		Dictionary<String, Object> attributes = new Hashtable<String, Object>();
 		
 		attributes.put(NSF_Database_FieldNames.PROGRAM_REFERENCE_CODES_AWARD_FOREIGN_KEY, 
 			   	   	   award.getPrimaryKey());

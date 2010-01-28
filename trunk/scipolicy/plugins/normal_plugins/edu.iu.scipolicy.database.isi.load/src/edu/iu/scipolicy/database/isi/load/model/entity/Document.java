@@ -12,7 +12,7 @@ import edu.iu.cns.database.load.framework.Schema;
 import edu.iu.cns.database.load.framework.utilities.DatabaseTableKeyGenerator;
 import edu.iu.nwb.shared.isiutil.database.ISI;
 
-public class Document extends Entity<Document> implements Comparable<Document> {
+public class Document extends Entity<Document> {
 	public static final Schema<Document> SCHEMA = new Schema<Document>(
 		true,
 		ISI.ABSTRACT_TEXT, DerbyFieldType.TEXT,
@@ -291,11 +291,6 @@ public class Document extends Entity<Document> implements Comparable<Document> {
 		getAttributes().put(name, value);
 	}
 
-	public int compareTo(Document otherDocument) {
-		// TODO:
-		return -1;
-	}
-
 	public boolean shouldMerge(Document otherDocument) {
 		// TODO:
 		return false;
@@ -305,7 +300,7 @@ public class Document extends Entity<Document> implements Comparable<Document> {
 		// TODO:
 	}
 
-	public static Dictionary<String, Comparable<?>> createAttributes(
+	public static Dictionary<String, Object> createAttributes(
 			String abstractText,
 			String articleNumber,
 			Integer beginningPage,
@@ -333,39 +328,39 @@ public class Document extends Entity<Document> implements Comparable<Document> {
 			String supplement,
 			Integer timesCited,
 			String title) {
-		Dictionary<String, Comparable<?>> attributes = new Hashtable<String, Comparable<?>>();
+		Dictionary<String, Object> attributes = new Hashtable<String, Object>();
 		DictionaryUtilities.addIfNotNull(
 			attributes,
-			new DictionaryEntry<String, Comparable<?>>(ISI.ABSTRACT_TEXT, abstractText),
-			new DictionaryEntry<String, Comparable<?>>(ISI.ARTICLE_NUMBER, articleNumber),
-			new DictionaryEntry<String, Comparable<?>>(ISI.BEGINNING_PAGE, beginningPage),
-			new DictionaryEntry<String, Comparable<?>>(
+			new DictionaryEntry<String, Object>(ISI.ABSTRACT_TEXT, abstractText),
+			new DictionaryEntry<String, Object>(ISI.ARTICLE_NUMBER, articleNumber),
+			new DictionaryEntry<String, Object>(ISI.BEGINNING_PAGE, beginningPage),
+			new DictionaryEntry<String, Object>(
 				ISI.CITED_REFERENCE_COUNT, citedReferenceCount),
-			new DictionaryEntry<String, Comparable<?>>(ISI.CITED_YEAR, citedYear),
-			new DictionaryEntry<String, Comparable<?>>(
+			new DictionaryEntry<String, Object>(ISI.CITED_YEAR, citedYear),
+			new DictionaryEntry<String, Object>(
 				ISI.DIGITAL_OBJECT_IDENTIFIER, digitalObjectIdentifier),
-			new DictionaryEntry<String, Comparable<?>>(ISI.DOCUMENT_TYPE, documentType),
-			new DictionaryEntry<String, Comparable<?>>(ISI.DOCUMENT_VOLUME, documentVolume),
-			new DictionaryEntry<String, Comparable<?>>(ISI.ENDING_PAGE, endingPage),
-			new DictionaryEntry<String, Comparable<?>>(
+			new DictionaryEntry<String, Object>(ISI.DOCUMENT_TYPE, documentType),
+			new DictionaryEntry<String, Object>(ISI.DOCUMENT_VOLUME, documentVolume),
+			new DictionaryEntry<String, Object>(ISI.ENDING_PAGE, endingPage),
+			new DictionaryEntry<String, Object>(
 				ISI.FUNDING_AGENCY_AND_GRANT_NUMBER, fundingAgencyAndGrantNumber),
-			new DictionaryEntry<String, Comparable<?>>(ISI.FUNDING_TEXT, fundingText),
-			new DictionaryEntry<String, Comparable<?>>(ISI.ISBN, isbn),
-			new DictionaryEntry<String, Comparable<?>>(
+			new DictionaryEntry<String, Object>(ISI.FUNDING_TEXT, fundingText),
+			new DictionaryEntry<String, Object>(ISI.ISBN, isbn),
+			new DictionaryEntry<String, Object>(
 				ISI.ISI_DOCUMENT_DELIVERY_NUMBER, isiDocumentDeliveryNumber),
-			new DictionaryEntry<String, Comparable<?>>(
+			new DictionaryEntry<String, Object>(
 				ISI.ISI_UNIQUE_ARTICLE_IDENTIFIER, isiUniqueArticleIdentifier),
-			new DictionaryEntry<String, Comparable<?>>(ISI.ISSUE, issue),
-			new DictionaryEntry<String, Comparable<?>>(ISI.LANGUAGE, language),
-			new DictionaryEntry<String, Comparable<?>>(ISI.PAGE_COUNT, pageCount),
-			new DictionaryEntry<String, Comparable<?>>(ISI.PART_NUMBER, partNumber),
-			new DictionaryEntry<String, Comparable<?>>(ISI.PUBLICATION_DATE, publicationDate),
-			new DictionaryEntry<String, Comparable<?>>(ISI.PUBLICATION_YEAR, publicationYear),
-			new DictionaryEntry<String, Comparable<?>>(ISI.SPECIAL_ISSUE, specialIssue),
-			new DictionaryEntry<String, Comparable<?>>(ISI.SUBJECT_CATEGORY, subjectCategory),
-			new DictionaryEntry<String, Comparable<?>>(ISI.SUPPLEMENT, supplement),
-			new DictionaryEntry<String, Comparable<?>>(ISI.TIMES_CITED, timesCited),
-			new DictionaryEntry<String, Comparable<?>>(ISI.TITLE, title));
+			new DictionaryEntry<String, Object>(ISI.ISSUE, issue),
+			new DictionaryEntry<String, Object>(ISI.LANGUAGE, language),
+			new DictionaryEntry<String, Object>(ISI.PAGE_COUNT, pageCount),
+			new DictionaryEntry<String, Object>(ISI.PART_NUMBER, partNumber),
+			new DictionaryEntry<String, Object>(ISI.PUBLICATION_DATE, publicationDate),
+			new DictionaryEntry<String, Object>(ISI.PUBLICATION_YEAR, publicationYear),
+			new DictionaryEntry<String, Object>(ISI.SPECIAL_ISSUE, specialIssue),
+			new DictionaryEntry<String, Object>(ISI.SUBJECT_CATEGORY, subjectCategory),
+			new DictionaryEntry<String, Object>(ISI.SUPPLEMENT, supplement),
+			new DictionaryEntry<String, Object>(ISI.TIMES_CITED, timesCited),
+			new DictionaryEntry<String, Object>(ISI.TITLE, title));
 		/*attributes.put(ISI.ABSTRACT_TEXT, abstractText);
 		attributes.put(ISI.ARTICLE_NUMBER, articleNumber);
 		attributes.put(ISI.BEGINNING_PAGE, beginningPage);

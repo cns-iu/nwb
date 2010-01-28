@@ -9,7 +9,7 @@ import edu.iu.cns.database.load.framework.Schema;
 import edu.iu.cns.database.load.framework.utilities.DatabaseTableKeyGenerator;
 import edu.iu.scipolicy.utilities.nsf.NSF_Database_FieldNames;
 
-public class Person extends Entity<Person> implements Comparable<Person>{
+public class Person extends Entity<Person> {
 	
 	public static final Schema<Person> SCHEMA = new Schema<Person>(
 			true,
@@ -55,12 +55,12 @@ public class Person extends Entity<Person> implements Comparable<Person>{
 		this.originalInputName = originalInputName;
 	}
 
-	private static Dictionary<String, Comparable<?>> createAttributes(String lastName,
+	private static Dictionary<String, Object> createAttributes(String lastName,
 													   String firstName,
 													   String middleInitial,
 													   String formattedFullName,
 													   String originalInputName) {
-		Dictionary<String, Comparable<?>> attributes = new Hashtable<String, Comparable<?>>();
+		Dictionary<String, Object> attributes = new Hashtable<String, Object>();
 		attributes.put(NSF_Database_FieldNames.LAST_NAME, lastName);
 		attributes.put(NSF_Database_FieldNames.FIRST_NAME, firstName);
 		attributes.put(NSF_Database_FieldNames.MIDDLE_INITIAL, middleInitial);
@@ -68,10 +68,6 @@ public class Person extends Entity<Person> implements Comparable<Person>{
 		attributes.put(NSF_Database_FieldNames.FORMATTED_FULL_NAME, formattedFullName);
 
 		return attributes;
-	}
-
-	public final boolean equals(Person otherEntity) {
-		return false;
 	}
 
 	public String getLastName() {
@@ -100,10 +96,5 @@ public class Person extends Entity<Person> implements Comparable<Person>{
 	@Override
 	public boolean shouldMerge(Person otherItem) {
 		return false;
-	}
-
-	public int compareTo(Person o) {
-		// TODO Auto-generated method stub
-		return 0;
 	}
 }

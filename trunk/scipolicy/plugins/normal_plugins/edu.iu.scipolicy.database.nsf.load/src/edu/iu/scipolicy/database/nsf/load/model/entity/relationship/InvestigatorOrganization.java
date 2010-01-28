@@ -39,8 +39,8 @@ public class InvestigatorOrganization extends RowItem<InvestigatorOrganization> 
 		return this.organization;
 	}
 
-	private static Dictionary<String, Comparable<?>> createAttributes(Investigator investigator, Organization organization) {
-		Dictionary<String, Comparable<?>> attributes = new Hashtable<String, Comparable<?>>();
+	private static Dictionary<String, Object> createAttributes(Investigator investigator, Organization organization) {
+		Dictionary<String, Object> attributes = new Hashtable<String, Object>();
 		attributes.put(NSF_Database_FieldNames.INVESTIGATOR_ORGANIZATIONS_INVESTIGATOR_FOREIGN_KEY, 
 					   investigator.getPrimaryKey());
 		

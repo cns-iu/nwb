@@ -11,7 +11,7 @@ import edu.iu.cns.database.load.framework.Schema;
 import edu.iu.cns.database.load.framework.utilities.DatabaseTableKeyGenerator;
 import edu.iu.scipolicy.utilities.nsf.NSF_Database_FieldNames;
 
-public class FieldOfApplication extends Entity<FieldOfApplication> implements Comparable<FieldOfApplication>{
+public class FieldOfApplication extends Entity<FieldOfApplication> {
 
 	public static final Schema<FieldOfApplication> SCHEMA = new Schema<FieldOfApplication>(
 			true,
@@ -40,10 +40,10 @@ public class FieldOfApplication extends Entity<FieldOfApplication> implements Co
 	}
 
 
-	private static Dictionary<String, Comparable<?>> createAttributes(String originalInputField,
+	private static Dictionary<String, Object> createAttributes(String originalInputField,
 													   String extractedNumericField,
 													   String extractedTextField) {
-		Dictionary<String, Comparable<?>> attributes = new Hashtable<String, Comparable<?>>();
+		Dictionary<String, Object> attributes = new Hashtable<String, Object>();
 		attributes.put(NSF_Database_FieldNames.ORIGINAL_INPUT_FIELD, originalInputField);
 		attributes.put(NSF_Database_FieldNames.EXTRACTED_NUMERIC_FIELD, extractedNumericField);
 		attributes.put(NSF_Database_FieldNames.EXTRACTED_TEXT_FIELD, extractedTextField);
@@ -97,10 +97,5 @@ public class FieldOfApplication extends Entity<FieldOfApplication> implements Co
 			return false;
 		}
 		
-	}
-
-	public int compareTo(FieldOfApplication o) {
-		// TODO Auto-generated method stub
-		return 0;
 	}
 }

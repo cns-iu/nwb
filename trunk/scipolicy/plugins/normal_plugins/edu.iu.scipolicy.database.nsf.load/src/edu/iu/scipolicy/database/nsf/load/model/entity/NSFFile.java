@@ -11,7 +11,7 @@ import edu.iu.cns.database.load.framework.Schema;
 import edu.iu.cns.database.load.framework.utilities.DatabaseTableKeyGenerator;
 import edu.iu.scipolicy.utilities.nsf.NSF_Database_FieldNames;
 
-public class NSFFile extends Entity<NSFFile> implements Comparable<NSFFile> {
+public class NSFFile extends Entity<NSFFile> {
 	public static final Schema<NSFFile> SCHEMA = new Schema<NSFFile>(
 			true,
 			NSF_Database_FieldNames.FILE_NAME, DerbyFieldType.TEXT,
@@ -47,10 +47,10 @@ public class NSFFile extends Entity<NSFFile> implements Comparable<NSFFile> {
 		return this.fileMD5Checksum;
 	}
 
-	private static Dictionary<String, Comparable<?>> createAttributes(String fileName,
+	private static Dictionary<String, Object> createAttributes(String fileName,
 															   String fileType,
 															   String fileMD5Checksum) {
-		Dictionary<String, Comparable<?>> attributes = new Hashtable<String, Comparable<?>>();
+		Dictionary<String, Object> attributes = new Hashtable<String, Object>();
 		attributes.put(NSF_Database_FieldNames.FILE_NAME, fileName);
 		attributes.put(NSF_Database_FieldNames.FILE_TYPE, fileType);
 		attributes.put(NSF_Database_FieldNames.FILE_MD5_CHECKSUM, fileMD5Checksum);
@@ -83,10 +83,4 @@ public class NSFFile extends Entity<NSFFile> implements Comparable<NSFFile> {
 							otherItem.getFileMD5Checksum())
 		);
 	}
-
-	public int compareTo(NSFFile o) {
-		// TODO Auto-generated method stub
-		return 0;
-	}
-
 }

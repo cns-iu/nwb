@@ -56,9 +56,9 @@ public class DocumentOccurrence extends RowItem<DocumentOccurrence> {
 	public void merge(DocumentOccurrence otherDocumentOccurrence) {
 	}
 
-	public static Dictionary<String, Comparable<?>> createAttributes(
+	public static Dictionary<String, Object> createAttributes(
 			Document document, ISIFile isiFile) {
-		Dictionary<String, Comparable<?>> attributes = new Hashtable<String, Comparable<?>>();
+		Dictionary<String, Object> attributes = new Hashtable<String, Object>();
 		attributes.put(ISI.DOCUMENT_OCCURRENCES_DOCUMENT_FOREIGN_KEY, document.getPrimaryKey());
 		attributes.put(ISI.DOCUMENT_OCCURRENCES_ISI_FILE_FOREIGN_KEY, isiFile.getPrimaryKey());
 

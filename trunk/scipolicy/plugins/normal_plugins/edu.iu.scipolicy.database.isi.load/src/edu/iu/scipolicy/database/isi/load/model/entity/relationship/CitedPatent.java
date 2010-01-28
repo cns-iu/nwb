@@ -54,9 +54,9 @@ public class CitedPatent extends RowItem<CitedPatent> {
 	public void merge(CitedPatent otherCitedPatent) {
 	}
 
-	public static Dictionary<String, Comparable<?>> createAttributes(
+	public static Dictionary<String, Object> createAttributes(
 			Document document, Patent patent) {
-		Dictionary<String, Comparable<?>> attributes = new Hashtable<String, Comparable<?>>();
+		Dictionary<String, Object> attributes = new Hashtable<String, Object>();
 		attributes.put(ISI.CITED_PATENTS_DOCUMENT_FOREIGN_KEY, document.getPrimaryKey());
 		attributes.put(ISI.CITED_PATENTS_PATENT_FOREIGN_KEY, patent.getPrimaryKey());
 

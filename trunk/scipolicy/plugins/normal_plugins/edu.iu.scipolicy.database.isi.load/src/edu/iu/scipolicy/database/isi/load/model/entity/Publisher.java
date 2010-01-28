@@ -13,7 +13,7 @@ import edu.iu.cns.database.load.framework.Schema;
 import edu.iu.cns.database.load.framework.utilities.DatabaseTableKeyGenerator;
 import edu.iu.nwb.shared.isiutil.database.ISI;
 
-public class Publisher extends Entity<Publisher> implements Comparable<Publisher> {
+public class Publisher extends Entity<Publisher> {
 	public final static Schema<Publisher> SCHEMA = new Schema<Publisher>(
 		true,
 		ISI.PUBLISHER_CITY, DerbyFieldType.TEXT,
@@ -59,12 +59,6 @@ public class Publisher extends Entity<Publisher> implements Comparable<Publisher
 		getAttributes().put(ISI.PUBLISHER_SOURCE, this.source.getPrimaryKey());
 	}
 
-	public int compareTo(Publisher otherPublisher) {
-		// TODO:
-		return -1;
-	}
-
-
 	public boolean shouldMerge(Publisher otherPublisher) {
 		boolean namesAndCitiesAreEquivalent = (
 			StringUtilities.areValidAndEqualIgnoreCase(this.city, otherPublisher.getCity()) &&
@@ -82,14 +76,14 @@ public class Publisher extends Entity<Publisher> implements Comparable<Publisher
 			StringUtilities.simpleMerge(this.webAddress, otherPublisher.getWebAddress());
 	}
 
-	public static Dictionary<String, Comparable<?>> createAttributes(
+	public static Dictionary<String, Object> createAttributes(
 			String city, String name, String webAddress) {
-		Dictionary<String, Comparable<?>> attributes = new Hashtable<String, Comparable<?>>();
+		Dictionary<String, Object> attributes = new Hashtable<String, Object>();
 		DictionaryUtilities.addIfNotNull(
 			attributes,
-			new DictionaryEntry<String, Comparable<?>>(ISI.PUBLISHER_CITY, city),
-			new DictionaryEntry<String, Comparable<?>>(ISI.PUBLISHER_NAME, name),
-			new DictionaryEntry<String, Comparable<?>>(ISI.PUBLISHER_WEB_ADDRESS, webAddress));
+			new DictionaryEntry<String, Object>(ISI.PUBLISHER_CITY, city),
+			new DictionaryEntry<String, Object>(ISI.PUBLISHER_NAME, name),
+			new DictionaryEntry<String, Object>(ISI.PUBLISHER_WEB_ADDRESS, webAddress));
 		/*attributes.put(ISI.PUBLISHER_CITY, city);
 		attributes.put(ISI.PUBLISHER_NAME, name);
 		attributes.put(ISI.PUBLISHER_WEB_ADDRESS, webAddress);*/

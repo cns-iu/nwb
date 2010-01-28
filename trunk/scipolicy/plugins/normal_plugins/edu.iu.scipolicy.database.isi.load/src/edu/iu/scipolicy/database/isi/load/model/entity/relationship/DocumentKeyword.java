@@ -64,14 +64,14 @@ public class DocumentKeyword extends RowItem<DocumentKeyword> {
 	public void merge(DocumentKeyword otherDocumentKeyword) {
 	}
 
-	public static Dictionary<String, Comparable<?>> createAttributes(
+	public static Dictionary<String, Object> createAttributes(
 			Document document, Keyword keyword, Integer orderListed) {
-		Dictionary<String, Comparable<?>> attributes = new Hashtable<String, Comparable<?>>();
+		Dictionary<String, Object> attributes = new Hashtable<String, Object>();
 		attributes.put(ISI.DOCUMENT_KEYWORDS_DOCUMENT_FOREIGN_KEY, document.getPrimaryKey());
 		attributes.put(ISI.DOCUMENT_KEYWORDS_KEYWORD_FOREIGN_KEY, keyword.getPrimaryKey());
 		DictionaryUtilities.addIfNotNull(
 			attributes,
-			new DictionaryEntry<String, Comparable<?>>(ISI.ORDER_LISTED, orderListed));
+			new DictionaryEntry<String, Object>(ISI.ORDER_LISTED, orderListed));
 		//attributes.put(ISI.ORDER_LISTED, orderListed);
 
 		return attributes;

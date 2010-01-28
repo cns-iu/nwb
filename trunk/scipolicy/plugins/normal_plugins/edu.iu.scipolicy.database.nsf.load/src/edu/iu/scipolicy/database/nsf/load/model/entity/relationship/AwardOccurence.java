@@ -39,8 +39,8 @@ public class AwardOccurence extends RowItem<AwardOccurence> {
 		return this.nsfFile;
 	}
 
-	private static Dictionary<String, Comparable<?>> createAttributes(Award award, NSFFile nsfFile) {
-		Dictionary<String, Comparable<?>> attributes = new Hashtable<String, Comparable<?>>();
+	private static Dictionary<String, Object> createAttributes(Award award, NSFFile nsfFile) {
+		Dictionary<String, Object> attributes = new Hashtable<String, Object>();
 		
 		attributes.put(NSF_Database_FieldNames.AWARD_OCCURRENCES_AWARD_FOREIGN_KEY, 
 			   	   	   award.getPrimaryKey());

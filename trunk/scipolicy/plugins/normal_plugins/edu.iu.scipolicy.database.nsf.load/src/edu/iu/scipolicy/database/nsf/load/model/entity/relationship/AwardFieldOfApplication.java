@@ -11,11 +11,13 @@ import edu.iu.scipolicy.database.nsf.load.model.entity.FieldOfApplication;
 import edu.iu.scipolicy.utilities.nsf.NSF_Database_FieldNames;
 
 public class AwardFieldOfApplication extends RowItem<AwardFieldOfApplication> {
-
-	public static final Schema<AwardFieldOfApplication> SCHEMA = new Schema<AwardFieldOfApplication>(
+	public static final Schema<AwardFieldOfApplication> SCHEMA =
+		new Schema<AwardFieldOfApplication>(
 			false,
-			NSF_Database_FieldNames.FIELD_OF_APPLICATIONS_FIELD_OF_APPLICATION_FOREIGN_KEY, DerbyFieldType.FOREIGN_KEY,
-			NSF_Database_FieldNames.FIELD_OF_APPLICATIONS_AWARD_FOREIGN_KEY, DerbyFieldType.FOREIGN_KEY
+			NSF_Database_FieldNames.FIELD_OF_APPLICATIONS_FIELD_OF_APPLICATION_FOREIGN_KEY,
+				DerbyFieldType.FOREIGN_KEY,
+			NSF_Database_FieldNames.FIELD_OF_APPLICATIONS_AWARD_FOREIGN_KEY,
+				DerbyFieldType.FOREIGN_KEY
 			).
 			FOREIGN_KEYS(
 					NSF_Database_FieldNames.FIELD_OF_APPLICATIONS_FIELD_OF_APPLICATION_FOREIGN_KEY,
@@ -41,11 +43,11 @@ public class AwardFieldOfApplication extends RowItem<AwardFieldOfApplication> {
 		return this.award;
 	}
 
-	private static Dictionary<String, Comparable<?>> createAttributes(
+	private static Dictionary<String, Object> createAttributes(
 		FieldOfApplication fieldOfApplication, 
 		Award award) {
 		
-		Dictionary<String, Comparable<?>> attributes = new Hashtable<String, Comparable<?>>();
+		Dictionary<String, Object> attributes = new Hashtable<String, Object>();
 		attributes.put(NSF_Database_FieldNames.FIELD_OF_APPLICATIONS_FIELD_OF_APPLICATION_FOREIGN_KEY, 
 					   fieldOfApplication.getPrimaryKey());
 		
