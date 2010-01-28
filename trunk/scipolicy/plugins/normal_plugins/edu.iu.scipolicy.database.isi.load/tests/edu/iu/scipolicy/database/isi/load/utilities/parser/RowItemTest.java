@@ -34,7 +34,8 @@ public class RowItemTest {
 
 	public static final String ISI_MIME_TYPE = "file:text/isi";
 
-	public static final String BASE_TEST_DATA_PATH = "/edu/iu/scipolicy/loader/isi/db/testdata/";
+	public static final String BASE_TEST_DATA_PATH =
+		"/edu/iu/scipolicy/database/isi/load/testdata/";
 
 	public static final String EMPTY_TEST_DATA_PATH = BASE_TEST_DATA_PATH + "Empty.isi";
 

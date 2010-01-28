@@ -13,19 +13,20 @@ import edu.iu.scipolicy.database.isi.load.utilities.parser.ReferenceDataParser;
 public class ReferenceDataParserTest_2Tokens extends ReferenceDataParserTest {
 	@Test
 	public void test2Tokens_Invalid() throws Exception {
-		ReferenceDataParser result = runTest(", ", true);
+		ReferenceDataParser result = runTest(", ", true, false);
 		Source resultSource = result.getSource();
-		String abbreviation = resultSource.get29CharacterSourceTitleAbbreviation();
-		Person resultPerson = result.getAuthorPerson();
-		int resultYear = result.getYear();
 
-		if (!StringUtilities.isNull_Empty_OrWhitespace(abbreviation) ||
-				(resultPerson != null) ||
-				(resultYear != IntegerParserWithDefault.DEFAULT)) {
+		if (resultSource != null) {
+			String failMessage = "Result source should be null.";
+			fail(failMessage);
+		}
+
+		Person resultPerson = result.getAuthorPerson();
+		Integer resultYear = result.getYear();
+
+		if ((resultPerson != null) || (resultYear != IntegerParserWithDefault.DEFAULT)) {
 			String failMessage =
 				"Result should be invalid.  Instead, it has:" +
-				"\n\tAbbreviated title: \"" +
-					resultSource.get29CharacterSourceTitleAbbreviation() + "\"" +
 				"\n\tPerson: \"" + resultPerson + "\"" +
 				"\n\tYear: \"" + resultYear + "\"";
 			fail(failMessage);
@@ -39,8 +40,8 @@ public class ReferenceDataParserTest_2Tokens extends ReferenceDataParserTest {
 
 	@Test
 	public void test2Tokens_YearFirst_Year() throws Exception {
-		ReferenceDataParser result = runTest(YEAR + ", " + SOURCE_STRING, true);
-		int resultYear = result.getYear();
+		ReferenceDataParser result = runTest(YEAR + ", " + SOURCE_STRING, true, false);
+		Integer resultYear = result.getYear();
 
 		if (resultYear != YEAR) {
 			fail("Result year (" + resultYear + ") != " + YEAR);

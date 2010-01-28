@@ -383,7 +383,7 @@ public class ReferenceDataParser {
 	private static Pair<Source, String> parseSource(
 			DatabaseTableKeyGenerator sourceKeyGenerator, String originalToken) {
 		int annotationIndex = StringUtilities.prefixIndex(originalToken, SOURCE_ANNOTATIONS);
-		String annotation = "";
+		String annotation = null;
 		String sourceString = originalToken;
 
 		if (annotationIndex != -1) {
@@ -403,7 +403,8 @@ public class ReferenceDataParser {
 		String publicationType = "";
 		String twentyNineCharacterSourceTitleAbbreviation = sourceString;
 
-		if (!StringUtilities.allAreEmptyOrWhitespace(
+		if (!StringUtilities.allAreNull_Empty_OrWhitespace(
+				annotation,
 				bookSeriesTitle,
 				bookSeriesSubtitle,
 				conferenceHost,

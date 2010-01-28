@@ -12,11 +12,11 @@ import edu.iu.scipolicy.database.isi.load.utilities.parser.ReferenceDataParser;
 public class ReferenceDataParserTest_3Tokens extends ReferenceDataParserTest {
 	@Test
 	public void test3Tokens_Invalid() throws Exception {
-		ReferenceDataParser result = runTest(", , ", true);
+		ReferenceDataParser result = runTest(", , ", true, false);
 		Source resultSource = result.getSource();
-		int resultYear = result.getYear();
-		int resultVolume = result.getVolume();
-		int resultPageNumber = result.getPageNumber();
+		Integer resultYear = result.getYear();
+		Integer resultVolume = result.getVolume();
+		Integer resultPageNumber = result.getPageNumber();
 
 		if (resultSource != null) {
 			if (!StringUtilities.isNull_Empty_OrWhitespace(
@@ -57,9 +57,10 @@ public class ReferenceDataParserTest_3Tokens extends ReferenceDataParserTest {
 	public void test3Tokens_YearFirst_InvalidThirdToken() throws Exception {
 		ReferenceDataParser result = runTest(
 			YEAR + ", " + SOURCE_STRING + ", ",
+			true,
 			true);
-		int resultVolume = result.getVolume();
-		int resultPageNumber = result.getPageNumber();
+		Integer resultVolume = result.getVolume();
+		Integer resultPageNumber = result.getPageNumber();
 
 		if ((resultVolume != IntegerParserWithDefault.DEFAULT) ||
 				(resultPageNumber != IntegerParserWithDefault.DEFAULT)) {
@@ -75,8 +76,9 @@ public class ReferenceDataParserTest_3Tokens extends ReferenceDataParserTest {
 	public void test3Tokens_YearFirst_Year() throws Exception {
 		ReferenceDataParser result = runTest(
 			YEAR + ", " + SOURCE_STRING + ", " + VOLUME_STRING,
+			true,
 			true);
-		int resultYear = result.getYear();
+		Integer resultYear = result.getYear();
 
 		if (resultYear != YEAR) {
 			fail("Result year (" + resultYear + ") != " + YEAR);
@@ -112,7 +114,9 @@ public class ReferenceDataParserTest_3Tokens extends ReferenceDataParserTest {
 	@Test
 	public void test3Tokens_YearFirst_HasVolume() throws Exception {
 		ReferenceDataParser result = runTest(
-			YEAR + ", " + SOURCE_STRING + ", " + VOLUME_STRING, true);
+			YEAR + ", " + SOURCE_STRING + ", " + VOLUME_STRING,
+			true,
+			true);
 		int resultVolume = result.getVolume();
 
 		if (resultVolume != VOLUME_NUMBER) {
@@ -123,7 +127,9 @@ public class ReferenceDataParserTest_3Tokens extends ReferenceDataParserTest {
 	@Test
 	public void test3Tokens_YearFirst_HasPageNumber() throws Exception {
 		ReferenceDataParser result = runTest(
-			YEAR + ", " + SOURCE_STRING + ", " + PAGE_NUMBER_STRING, true);
+			YEAR + ", " + SOURCE_STRING + ", " + PAGE_NUMBER_STRING,
+			true,
+			false);
 		int resultPageNumber = result.getPageNumber();
 
 		if (resultPageNumber != PAGE_NUMBER) {
@@ -140,7 +146,9 @@ public class ReferenceDataParserTest_3Tokens extends ReferenceDataParserTest {
 	@Test
 	public void test3Tokens_PersonFirst_YearSecond_Year() throws Exception {
 		ReferenceDataParser result = runTest(
-			PERSON_STRING + ", " + YEAR + ", " + SOURCE_STRING, true);
+			PERSON_STRING + ", " + YEAR + ", " + SOURCE_STRING,
+			true,
+			true);
 		int resultYear = result.getYear();
 
 		if (resultYear != YEAR) {
@@ -184,9 +192,10 @@ public class ReferenceDataParserTest_3Tokens extends ReferenceDataParserTest {
 	public void test3Tokens_PersonFirst_SourceSecond_InvalidThirdToken() throws Exception {
 		ReferenceDataParser result = runTest(
 			PERSON_STRING + ", " + SOURCE_STRING + ", ",
+			true,
 			true);
-		int resultVolume = result.getVolume();
-		int resultPageNumber = result.getPageNumber();
+		Integer resultVolume = result.getVolume();
+		Integer resultPageNumber = result.getPageNumber();
 
 		if ((resultVolume != IntegerParserWithDefault.DEFAULT) ||
 				(resultPageNumber != IntegerParserWithDefault.DEFAULT)) {
@@ -227,7 +236,9 @@ public class ReferenceDataParserTest_3Tokens extends ReferenceDataParserTest {
 	@Test
 	public void test3Tokens_PersonFirst_SourceSecond_HasVolume() throws Exception {
 		ReferenceDataParser result = runTest(
-			PERSON_STRING + ", " + SOURCE_STRING + ", " + VOLUME_STRING, true);
+			PERSON_STRING + ", " + SOURCE_STRING + ", " + VOLUME_STRING,
+			true,
+			true);
 		int resultVolume = result.getVolume();
 
 		if (resultVolume != VOLUME_NUMBER) {
@@ -238,7 +249,9 @@ public class ReferenceDataParserTest_3Tokens extends ReferenceDataParserTest {
 	@Test
 	public void test3Tokens_PersonFirst_SourceSecond_HasPageNumber() throws Exception {
 		ReferenceDataParser result = runTest(
-			PERSON_STRING + ", " + SOURCE_STRING + ", " + PAGE_NUMBER_STRING, true);
+			PERSON_STRING + ", " + SOURCE_STRING + ", " + PAGE_NUMBER_STRING,
+			true,
+			true);
 		int resultPageNumber = result.getPageNumber();
 
 		if (resultPageNumber != PAGE_NUMBER) {

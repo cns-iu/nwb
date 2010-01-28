@@ -63,27 +63,54 @@ public class ReferenceDataParserTest {
 			String sourceString,
 			String providedAnnotation,
 			boolean exceptionFails) throws Exception {
-		ReferenceDataParser result = runTest(rawString, exceptionFails);
+		ReferenceDataParser result = runTest(rawString, exceptionFails, true);
 
 		Source source = result.getSource();
+
+		if (source == null) {
+			if ((sourceString != null) || (providedAnnotation != null)) {
+				String message =
+					"No source was parsed." +
+					"\n\tProvided source string: \"" + sourceString + "\"" +
+					"\n\tProvided annotation: \"" + providedAnnotation + "\"";
+
+				if (exceptionFails) {
+					fail(message);
+				} else {
+					throw new Exception(message);
+				}
+			}
+		}
+
 		String abbreviation = source.get29CharacterSourceTitleAbbreviation();
 		String annotation = result.getAnnotation();
 
-		if (!abbreviation.equals(sourceString)) {
-			String failMessage =
+		if (!StringUtilities.bothAreEqualOrNull(abbreviation, sourceString)) {
+		//if ((abbreviation == null) || !abbreviation.equals(sourceString)) {
+			String message =
 				"Source was not parsed properly." +
-				"\n\tParsed abbreviation: \"" + abbreviation + "\"" +
-				"\n\tProvided source string: \"" + sourceString + "\"";
-			fail(failMessage);
+				"\n\tParsed abbreviation: \" " + abbreviation + "\"" +
+				"\n\tProvided source string: \" " + sourceString + "\"";
+
+			if (exceptionFails) {
+				fail(message);
+			} else {
+				throw new Exception(message);
+			}
 		}
 
 		if (!StringUtilities.isNull_Empty_OrWhitespace(annotation) &&
 				!annotation.equalsIgnoreCase(providedAnnotation)) {
-			String failMessage =
+			String message =
 				"Source prefix was not parsed properly." +
 				"\n\tParsed annotation: \"" + annotation + "\"" +
 				"\n\tProvided annotation: \"" + providedAnnotation + "\"";
-			fail(failMessage);
+
+			if (exceptionFails) {
+				fail(message);
+			} else {
+				throw new Exception(message);
+			}
 		}
 	}
 
@@ -104,11 +131,18 @@ public class ReferenceDataParserTest {
 		}
 	}
 
-	protected ReferenceDataParser runTest(String rawString, boolean exceptionFails)
-			throws Exception {
+	protected ReferenceDataParser runTest(
+			String rawString, boolean exceptionFails, boolean nullSourceFails) throws Exception {
 		try {
-			return new ReferenceDataParser(
+			ReferenceDataParser referenceData = new ReferenceDataParser(
 				this.personKeyGenerator, this.sourceKeyGenerator, rawString);
+
+			if (nullSourceFails && (referenceData.getSource() == null)) {
+				// TODO: Exception message.
+				throw new Exception();
+			} else {
+				return referenceData;
+			}
 		} catch (ReferenceParsingException e) {
 			if (exceptionFails) {
 				fail("No exception should be thrown: " + e.getMessage());

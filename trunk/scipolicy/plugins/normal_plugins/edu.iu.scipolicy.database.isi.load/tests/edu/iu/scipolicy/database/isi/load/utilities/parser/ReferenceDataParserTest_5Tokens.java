@@ -12,11 +12,11 @@ import edu.iu.scipolicy.database.isi.load.utilities.parser.ReferenceDataParser;
 public class ReferenceDataParserTest_5Tokens extends ReferenceDataParserTest {
 	@Test
 	public void test5Tokens_Invalid() throws Exception {
-		ReferenceDataParser result = runTest(", , , , ", true);
-		int resultYear = result.getYear();
+		ReferenceDataParser result = runTest(", , , , ", true, false);
+		Integer resultYear = result.getYear();
 		Source resultSource = result.getSource();
-		int resultVolume = result.getVolume();
-		int resultPageNumber = result.getPageNumber();
+		Integer resultVolume = result.getVolume();
+		Integer resultPageNumber = result.getPageNumber();
 
 		if (resultSource != null) {
 			if ((resultYear != IntegerParserWithDefault.DEFAULT) ||
@@ -63,6 +63,7 @@ public class ReferenceDataParserTest_5Tokens extends ReferenceDataParserTest {
 				SOURCE_STRING + ", " +
 				VOLUME_STRING + ", " +
 				PAGE_NUMBER_STRING,
+			true,
 			true);
 		int resultYear = result.getYear();
 
@@ -109,6 +110,7 @@ public class ReferenceDataParserTest_5Tokens extends ReferenceDataParserTest {
 				SOURCE_STRING + ", " +
 				VOLUME_STRING + ", " +
 				PAGE_NUMBER_STRING,
+			true,
 			true);
 		int resultVolume = result.getVolume();
 
@@ -125,6 +127,7 @@ public class ReferenceDataParserTest_5Tokens extends ReferenceDataParserTest {
 				SOURCE_STRING + ", " +
 				VOLUME_STRING + ", " +
 				PAGE_NUMBER_STRING,
+			true,
 			true);
 		int resultPageNumber = result.getPageNumber();
 

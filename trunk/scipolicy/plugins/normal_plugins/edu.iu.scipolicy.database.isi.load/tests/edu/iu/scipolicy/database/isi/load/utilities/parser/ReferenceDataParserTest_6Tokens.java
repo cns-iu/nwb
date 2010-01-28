@@ -12,11 +12,11 @@ import edu.iu.scipolicy.database.isi.load.utilities.parser.ReferenceDataParser;
 public class ReferenceDataParserTest_6Tokens extends ReferenceDataParserTest {
 	@Test
 	public void test6Tokens_Invalid() throws Exception {
-		ReferenceDataParser result = runTest(", , , , , ", true);
-		int resultYear = result.getYear();
+		ReferenceDataParser result = runTest(", , , , , ", true, false);
+		Integer resultYear = result.getYear();
 		Source resultSource = result.getSource();
-		int resultVolume = result.getVolume();
-		int resultPageNumber = result.getPageNumber();
+		Integer resultVolume = result.getVolume();
+		Integer resultPageNumber = result.getPageNumber();
 		String resultDigitalObjectIdentifier = result.getDigitalObjectIdentifier();
 
 		if (resultSource != null) {
@@ -67,6 +67,7 @@ public class ReferenceDataParserTest_6Tokens extends ReferenceDataParserTest {
 				VOLUME_STRING + ", " +
 				PAGE_NUMBER_STRING + ", " +
 				DIGITAL_OBJECT_IDENTIFIER_STRING,
+			true,
 			true);
 		int resultYear = result.getYear();
 
@@ -115,6 +116,7 @@ public class ReferenceDataParserTest_6Tokens extends ReferenceDataParserTest {
 				VOLUME_STRING + ", " +
 				PAGE_NUMBER_STRING + ", " +
 				DIGITAL_OBJECT_IDENTIFIER_STRING,
+			true,
 			true);
 		int resultVolume = result.getVolume();
 
@@ -132,6 +134,7 @@ public class ReferenceDataParserTest_6Tokens extends ReferenceDataParserTest {
 				VOLUME_STRING + ", " +
 				PAGE_NUMBER_STRING + ", " +
 				DIGITAL_OBJECT_IDENTIFIER_STRING,
+			true,
 			true);
 		int resultPageNumber = result.getPageNumber();
 
@@ -153,6 +156,7 @@ public class ReferenceDataParserTest_6Tokens extends ReferenceDataParserTest {
 				VOLUME_STRING + ", " +
 				PAGE_NUMBER_STRING + ", " +
 				DIGITAL_OBJECT_IDENTIFIER_STRING,
+			true,
 			true);
 		String resultDigitalObjectIdentifier = result.getDigitalObjectIdentifier();
 

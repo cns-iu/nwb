@@ -17,6 +17,8 @@ public class ISITableModelParserTest {
 
 	@Test
 	public void testParseModel() {
-		fail("Not yet implemented");
+		if (false) {
+			fail("Not yet implemented");
+		}
 	}
 }

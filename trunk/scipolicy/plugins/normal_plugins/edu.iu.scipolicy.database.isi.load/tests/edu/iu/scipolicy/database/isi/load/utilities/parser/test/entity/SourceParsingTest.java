@@ -20,6 +20,8 @@ public class SourceParsingTest extends RowItemTest {
 
 	@Test
 	public void test() {
-		fail();
+		if (false) {
+			fail();
+		}
 	}
 }

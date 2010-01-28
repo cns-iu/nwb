@@ -12,11 +12,11 @@ import edu.iu.scipolicy.database.isi.load.utilities.parser.ReferenceDataParser;
 public class ReferenceDataParserTest_4Tokens extends ReferenceDataParserTest {
 	@Test
 	public void test4Tokens_Invalid() throws Exception {
-		ReferenceDataParser result = runTest(", , , ", true);
+		ReferenceDataParser result = runTest(", , , ", true, false);
 		Source resultSource = result.getSource();
-		int resultYear = result.getYear();
-		int resultVolume = result.getVolume();
-		int resultPageNumber = result.getPageNumber();
+		Integer resultYear = result.getYear();
+		Integer resultVolume = result.getVolume();
+		Integer resultPageNumber = result.getPageNumber();
 
 		if (resultSource != null) {
 			if (!StringUtilities.isNull_Empty_OrWhitespace(
@@ -57,6 +57,7 @@ public class ReferenceDataParserTest_4Tokens extends ReferenceDataParserTest {
 	public void test4Tokens_YearFirst_Year() throws Exception {
 		ReferenceDataParser result = runTest(
 			YEAR + ", " + SOURCE_STRING + ", " + VOLUME_STRING + ", " + PAGE_NUMBER_STRING,
+			true,
 			true);
 		int resultYear = result.getYear();
 
@@ -75,7 +76,7 @@ public class ReferenceDataParserTest_4Tokens extends ReferenceDataParserTest {
 	}
 
 	@Test
-	public void test4Tokens_YearFirst_SourceIsAnnotation() throws Exception {
+	public void test4Tokens_YearFirst_SourceIsAnAnnotation() throws Exception {
 		testSourceAsAnnotations(
 			YEAR + ", ",
 			", " + VOLUME_STRING + ", " + PAGE_NUMBER_STRING,
@@ -95,6 +96,7 @@ public class ReferenceDataParserTest_4Tokens extends ReferenceDataParserTest {
 	public void test4Tokens_YearFirst_Volume() throws Exception {
 		ReferenceDataParser result = runTest(
 			YEAR + ", " + SOURCE_STRING + ", " + VOLUME_STRING + ", " + PAGE_NUMBER_STRING,
+			true,
 			true);
 		int resultVolume = result.getVolume();
 
@@ -107,6 +109,7 @@ public class ReferenceDataParserTest_4Tokens extends ReferenceDataParserTest {
 	public void test4Tokens_YearFirst_PageNumber() throws Exception {
 		ReferenceDataParser result = runTest(
 			YEAR + ", " + SOURCE_STRING + ", " + VOLUME_STRING + ", " + PAGE_NUMBER_STRING,
+			true,
 			true);
 		int resultPageNumber = result.getPageNumber();
 
@@ -125,6 +128,7 @@ public class ReferenceDataParserTest_4Tokens extends ReferenceDataParserTest {
 	public void test4Tokens_PersonFirst_Year() throws Exception {
 		ReferenceDataParser result = runTest(
 			PERSON_STRING + ", " + YEAR + ", " + SOURCE_STRING + ", " + VOLUME_STRING,
+			true,
 			true);
 		int resultYear = result.getYear();
 
@@ -163,6 +167,7 @@ public class ReferenceDataParserTest_4Tokens extends ReferenceDataParserTest {
 	public void test4Tokens_PersonFirst_HasVolume() throws Exception {
 		ReferenceDataParser result = runTest(
 			PERSON_STRING + ", " + YEAR + ", " + SOURCE_STRING + ", " + VOLUME_STRING,
+			true,
 			true);
 		int resultVolume = result.getVolume();
 
@@ -175,6 +180,7 @@ public class ReferenceDataParserTest_4Tokens extends ReferenceDataParserTest {
 	public void test4Tokens_PersonFirst_HasPageNumber() throws Exception {
 		ReferenceDataParser result = runTest(
 			PERSON_STRING + ", " + YEAR + ", " + SOURCE_STRING + ", " + PAGE_NUMBER_STRING,
+			true,
 			true);
 		int resultPageNumber = result.getPageNumber();
 
