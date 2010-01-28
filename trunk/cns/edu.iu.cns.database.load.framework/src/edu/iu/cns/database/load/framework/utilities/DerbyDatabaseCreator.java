@@ -142,7 +142,7 @@ public class DerbyDatabaseCreator {
 
 			for (RowItem<?> item : items) {
 			int fieldIndex = 1; //(PreparedStatement uses 1-based indexing)
-				Dictionary<String, Comparable<?>> attributes = item.getAttributes();
+				Dictionary<String, Object> attributes = item.getAttributes();
 				for (Field field : schema.getFields()) {
 			
 					Object value = attributes.get(field.getName());
