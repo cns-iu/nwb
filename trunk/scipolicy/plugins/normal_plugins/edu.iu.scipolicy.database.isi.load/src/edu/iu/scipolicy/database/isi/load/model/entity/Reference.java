@@ -140,7 +140,6 @@ public class Reference extends Entity<Reference> {
 	}
 
 	public void merge(Reference otherReference) {
-		// TODO:
 	}
 
 	public static Dictionary<String, Object> createAttributes(
@@ -165,28 +164,18 @@ public class Reference extends Entity<Reference> {
 			new DictionaryEntry<String, Object>(ISI.REFERENCE_STRING, rawReferenceString),
 			new DictionaryEntry<String, Object>(ISI.REFERENCE_VOLUME, referenceVolume),
 			new DictionaryEntry<String, Object>(ISI.YEAR, year));
-		//attributes.put(ISI.ANNOTATION, annotation);
 
 		if (author != null) {
 			attributes.put(ISI.REFERENCE_AUTHOR, author.getPrimaryKey());
 		}
 
-		/*attributes.put(ISI.AUTHOR_WAS_STARRED, authorWasStarred);
-		attributes.put(ISI.DIGITAL_OBJECT_IDENTIFIER, digitalObjectIdentifier);
-		attributes.put(ISI.PAGE_NUMBER, pageNumber);*/
-
 		if (paper != null) {
 			attributes.put(ISI.PAPER, paper.getPrimaryKey());
 		}
 
-		/*attributes.put(ISI.REFERENCE_STRING, rawReferenceString);
-		attributes.put(ISI.REFERENCE_VOLUME, referenceVolume);*/
-
 		if (source != null) {
 			attributes.put(ISI.SOURCE, source.getPrimaryKey());
 		}
-
-		//attributes.put(ISI.YEAR, year);
 
 		return attributes;
 	}

@@ -37,17 +37,6 @@ public class ReprintAddress extends RowItem<ReprintAddress> {
 	}
 
 	public boolean shouldMerge(ReprintAddress otherReprintAddress) {
-		if ((this.document != null) && (this.address != null)) {
-			Document otherDocument = otherReprintAddress.getDocument();
-			Address otherAddress = otherReprintAddress.getAddress();
-
-			if ((otherDocument != null) && (otherAddress != null)) {
-				return (
-					(this.document.getPrimaryKey() == otherDocument.getPrimaryKey()) &&
-					(this.address.getPrimaryKey() == otherAddress.getPrimaryKey()));
-			}
-		}
-
 		return false;
 	}
 

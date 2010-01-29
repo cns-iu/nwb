@@ -156,6 +156,26 @@ public class Source extends Entity<Source> {
 		this.twentyNineCharacterSourceTitleAbbreviation = StringUtilities.simpleMerge(
 			this.twentyNineCharacterSourceTitleAbbreviation,
 			otherSource.get29CharacterSourceTitleAbbreviation());
+
+		DictionaryUtilities.addIfNotNull(
+			getAttributes(),
+			new DictionaryEntry<String, Object>(ISI.BOOK_SERIES_TITLE, this.bookSeriesTitle),
+			new DictionaryEntry<String, Object>(
+				ISI.BOOK_SERIES_SUBTITLE, this.bookSeriesSubtitle),
+			new DictionaryEntry<String, Object>(ISI.CONFERENCE_HOST, this.conferenceHost),
+			new DictionaryEntry<String, Object>(
+				ISI.CONFERENCE_LOCATION, this.conferenceLocation),
+			new DictionaryEntry<String, Object>(
+				ISI.CONFERENCE_SPONSORS, this.conferenceSponsors),
+			new DictionaryEntry<String, Object>(ISI.CONFERENCE_TITLE, this.conferenceTitle),
+			new DictionaryEntry<String, Object>(ISI.FULL_TITLE, this.fullTitle),
+			new DictionaryEntry<String, Object>(
+				ISI.ISO_TITLE_ABBREVIATION, this.isoTitleAbbreviation),
+			new DictionaryEntry<String, Object>(ISI.ISSN, issn),
+			new DictionaryEntry<String, Object>(ISI.PUBLICATION_TYPE, this.publicationType),
+			new DictionaryEntry<String, Object>(
+				ISI.TWENTY_NINE_CHARACTER_SOURCE_TITLE_ABBREVIATION,
+				this.twentyNineCharacterSourceTitleAbbreviation));
 	}
 
 	public static Dictionary<String, Object> createAttributes(
@@ -190,19 +210,6 @@ public class Source extends Entity<Source> {
 			new DictionaryEntry<String, Object>(
 				ISI.TWENTY_NINE_CHARACTER_SOURCE_TITLE_ABBREVIATION,
 				twentyNineCharacterSourceTitleAbbreviation));
-		/*attributes.put(ISI.BOOK_SERIES_TITLE, bookSeriesTitle);
-		attributes.put(ISI.BOOK_SERIES_SUBTITLE, bookSeriesSubtitle);
-		attributes.put(ISI.CONFERENCE_HOST, conferenceHost);
-		attributes.put(ISI.CONFERENCE_LOCATION, conferenceLocation);
-		attributes.put(ISI.CONFERENCE_SPONSORS, conferenceSponsors);
-		attributes.put(ISI.CONFERENCE_TITLE, conferenceTitle);
-		attributes.put(ISI.FULL_TITLE, fullTitle);
-		attributes.put(ISI.ISO_TITLE_ABBREVIATION, isoTitleAbbreviation);
-		attributes.put(ISI.ISSN, issn);
-		attributes.put(ISI.PUBLICATION_TYPE, publicationType);
-		attributes.put(
-			ISI.TWENTY_NINE_CHARACTER_SOURCE_TITLE_ABBREVIATION,
-			twentyNineCharacterSourceTitleAbbreviation);*/
 
 		return attributes;
 	}

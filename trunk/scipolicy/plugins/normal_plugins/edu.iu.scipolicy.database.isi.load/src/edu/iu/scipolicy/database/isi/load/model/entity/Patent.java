@@ -42,7 +42,6 @@ public class Patent extends Entity<Patent> {
 		DictionaryUtilities.addIfNotNull(
 			attributes,
 			new DictionaryEntry<String, Object>(ISI.PATENT_NUMBER, patentNumber));
-		//attributes.put(ISI.PATENT_NUMBER, patentNumber);
 
 		return attributes;
 	}

@@ -301,12 +301,18 @@ public class Document extends Entity<Document> {
 	}
 
 	public boolean shouldMerge(Document otherDocument) {
-		// TODO:
+		/*
+		 * TODO: At this point, it doesn't make sense for Documents to ever get merged.
+		 * The only scenario in which that would happen is if two Documents are actually duplicates
+		 *  within the same dataset.
+		 * However, duplicates in the same dataset get preprocessed out.
+		 * If we ever support merging between multiple datasets, it's quite possible Documents
+		 *  will need to be merged, but until then...
+		 */
 		return false;
 	}
 
 	public void merge(Document otherDocument) {
-		// TODO:
 	}
 
 	public static Dictionary<String, Object> createAttributes(
@@ -351,9 +357,9 @@ public class Document extends Entity<Document> {
 			new DictionaryEntry<String, Object>(ISI.DOCUMENT_TYPE, documentType),
 			new DictionaryEntry<String, Object>(ISI.DOCUMENT_VOLUME, documentVolume),
 			new DictionaryEntry<String, Object>(ISI.ENDING_PAGE, endingPage),
+			new DictionaryEntry<String, Object>(ISI.FUNDING_TEXT, fundingText),
 			new DictionaryEntry<String, Object>(
 				ISI.FUNDING_AGENCY_AND_GRANT_NUMBER, fundingAgencyAndGrantNumber),
-			new DictionaryEntry<String, Object>(ISI.FUNDING_TEXT, fundingText),
 			new DictionaryEntry<String, Object>(ISI.ISBN, isbn),
 			new DictionaryEntry<String, Object>(
 				ISI.ISI_DOCUMENT_DELIVERY_NUMBER, isiDocumentDeliveryNumber),
@@ -370,6 +376,7 @@ public class Document extends Entity<Document> {
 			new DictionaryEntry<String, Object>(ISI.SUPPLEMENT, supplement),
 			new DictionaryEntry<String, Object>(ISI.TIMES_CITED, timesCited),
 			new DictionaryEntry<String, Object>(ISI.TITLE, title));
+
 		if (firstAuthorPerson != null) {
 			attributes.put(ISI.FIRST_AUTHOR, firstAuthorPerson.getPrimaryKey());
 		}

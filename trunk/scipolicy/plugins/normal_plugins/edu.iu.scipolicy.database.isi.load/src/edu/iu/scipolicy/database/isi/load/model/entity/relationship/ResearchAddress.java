@@ -47,17 +47,6 @@ public class ResearchAddress extends RowItem<ResearchAddress> {
 	}
 
 	public boolean shouldMerge(ResearchAddress otherResearchAddress) {
-		if ((this.document != null) && (this.address != null)) {
-			Document otherDocument = otherResearchAddress.getDocument();
-			Address otherAddress = otherResearchAddress.getAddress();
-
-			if ((otherDocument != null) && (otherAddress != null)) {
-				return (
-					(this.document.getPrimaryKey() == otherDocument.getPrimaryKey()) &&
-					(this.address.getPrimaryKey() == otherAddress.getPrimaryKey()));
-			}
-		}
-
 		return false;
 	}
 
@@ -74,7 +63,6 @@ public class ResearchAddress extends RowItem<ResearchAddress> {
 		DictionaryUtilities.addIfNotNull(
 			attributes,
 			new DictionaryEntry<String, Object>(ISI.ORDER_LISTED, orderListed));
-		//attributes.put(ISI.ORDER_LISTED, orderListed);
 
 		return attributes;
 	}

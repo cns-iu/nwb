@@ -74,6 +74,12 @@ public class Publisher extends Entity<Publisher> {
 		this.name = StringUtilities.simpleMerge(this.name, otherPublisher.getName());
 		this.webAddress =
 			StringUtilities.simpleMerge(this.webAddress, otherPublisher.getWebAddress());
+
+		DictionaryUtilities.addIfNotNull(
+			getAttributes(),
+			new DictionaryEntry<String, Object>(ISI.PUBLISHER_CITY, this.city),
+			new DictionaryEntry<String, Object>(ISI.PUBLISHER_NAME, this.name),
+			new DictionaryEntry<String, Object>(ISI.PUBLISHER_WEB_ADDRESS, this.webAddress));
 	}
 
 	public static Dictionary<String, Object> createAttributes(
@@ -84,9 +90,6 @@ public class Publisher extends Entity<Publisher> {
 			new DictionaryEntry<String, Object>(ISI.PUBLISHER_CITY, city),
 			new DictionaryEntry<String, Object>(ISI.PUBLISHER_NAME, name),
 			new DictionaryEntry<String, Object>(ISI.PUBLISHER_WEB_ADDRESS, webAddress));
-		/*attributes.put(ISI.PUBLISHER_CITY, city);
-		attributes.put(ISI.PUBLISHER_NAME, name);
-		attributes.put(ISI.PUBLISHER_WEB_ADDRESS, webAddress);*/
 
 		return attributes;
 	}

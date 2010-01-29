@@ -93,6 +93,15 @@ public class Address extends Entity<Address> {
 			StringUtilities.simpleMerge(this.stateOrProvince, otherAddress.getStateOrProvince());
 		this.streetAddress =
 			StringUtilities.simpleMerge(this.streetAddress, otherAddress.getStreetAddress());
+
+		DictionaryUtilities.addIfNotNull(
+			getAttributes(),
+			new DictionaryEntry<String, Object>(ISI.ADDRESS_CITY, this.city),
+			new DictionaryEntry<String, Object>(ISI.COUNTRY, this.country),
+			new DictionaryEntry<String, Object>(ISI.POSTAL_CODE, this.postalCode),
+			new DictionaryEntry<String, Object>(ISI.RAW_ADDRESS, this.rawAddress),
+			new DictionaryEntry<String, Object>(ISI.STATE_OR_PROVINCE, this.stateOrProvince),
+			new DictionaryEntry<String, Object>(ISI.STREET_ADDRESS, this.streetAddress));
 	}
 
 	public static Dictionary<String, Object> createAttributes(
@@ -111,13 +120,6 @@ public class Address extends Entity<Address> {
 			new DictionaryEntry<String, Object>(ISI.RAW_ADDRESS, rawAddress),
 			new DictionaryEntry<String, Object>(ISI.STATE_OR_PROVINCE, stateOrProvince),
 			new DictionaryEntry<String, Object>(ISI.STREET_ADDRESS, streetAddress));
-		
-		/*attributes.put(ISI.ADDRESS_CITY, city);
-		attributes.put(ISI.COUNTRY, country);
-		attributes.put(ISI.POSTAL_CODE, postalCode);
-		attributes.put(ISI.RAW_ADDRESS, rawAddress);
-		attributes.put(ISI.STATE_OR_PROVINCE, stateOrProvince);
-		attributes.put(ISI.STREET_ADDRESS, streetAddress);*/
 
 		return attributes;
 	}

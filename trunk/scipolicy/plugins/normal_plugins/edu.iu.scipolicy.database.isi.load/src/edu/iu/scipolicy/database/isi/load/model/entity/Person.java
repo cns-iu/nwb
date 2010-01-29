@@ -112,13 +112,6 @@ public class Person extends Entity<Person> {
 			new DictionaryEntry<String, Object>(ISI.MIDDLE_INITIAL, middleInitial),
 			new DictionaryEntry<String, Object>(ISI.PERSONAL_NAME, personalName),
 			new DictionaryEntry<String, Object>(ISI.UNSPLIT_ABBREVIATED_NAME, unsplitName));
-		/*attributes.put(ISI.ADDITIONAL_NAME, additionalName);
-		attributes.put(ISI.FAMILY_NAME, familyName);
-		attributes.put(ISI.FIRST_INITIAL, firstInitial);
-		attributes.put(ISI.FULL_NAME, fullName);
-		attributes.put(ISI.MIDDLE_INITIAL, middleInitial);
-		attributes.put(ISI.PERSONAL_NAME, personalName);
-		attributes.put(ISI.UNSPLIT_ABBREVIATED_NAME, unsplitName);*/
 
 		return attributes;
 	}

@@ -72,7 +72,6 @@ public class DocumentKeyword extends RowItem<DocumentKeyword> {
 		DictionaryUtilities.addIfNotNull(
 			attributes,
 			new DictionaryEntry<String, Object>(ISI.ORDER_LISTED, orderListed));
-		//attributes.put(ISI.ORDER_LISTED, orderListed);
 
 		return attributes;
 	}

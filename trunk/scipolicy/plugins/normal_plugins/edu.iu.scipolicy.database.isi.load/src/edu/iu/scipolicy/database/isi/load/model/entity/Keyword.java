@@ -45,6 +45,11 @@ public class Keyword extends Entity<Keyword> {
 	public void merge(Keyword otherKeyword) {
 		this.keyword = StringUtilities.simpleMerge(this.keyword, otherKeyword.getKeyword());
 		this.type = StringUtilities.simpleMerge(this.type, otherKeyword.getType());
+
+		DictionaryUtilities.addIfNotNull(
+			getAttributes(),
+			new DictionaryEntry<String, Object>(ISI.KEYWORD, this.keyword),
+			new DictionaryEntry<String, Object>(ISI.TYPE, this.type));
 	}
 
 	public static Dictionary<String, Object> createAttributes(String keyword, String type) {
@@ -53,8 +58,6 @@ public class Keyword extends Entity<Keyword> {
 			attributes,
 			new DictionaryEntry<String, Object>(ISI.KEYWORD, keyword),
 			new DictionaryEntry<String, Object>(ISI.TYPE, type));
-		/*attributes.put(ISI.KEYWORD, keyword);
-		attributes.put(ISI.TYPE, type);*/
 
 		return attributes;
 	}

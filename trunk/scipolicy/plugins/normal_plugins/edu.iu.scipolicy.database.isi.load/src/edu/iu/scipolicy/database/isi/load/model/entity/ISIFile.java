@@ -56,6 +56,13 @@ public class ISIFile extends Entity<ISIFile> {
 		this.fileFormatVersionNumber = StringUtilities.simpleMerge(
 			this.fileFormatVersionNumber, otherISIFile.getFileFormatVersionNumber());
 		this.fileType = StringUtilities.simpleMerge(this.fileType, otherISIFile.getFileType());
+
+		DictionaryUtilities.addIfNotNull(
+			getAttributes(),
+			new DictionaryEntry<String, Object>(
+				ISI.FILE_FORMAT_VERSION_NUMBER, fileFormatVersionNumber),
+			new DictionaryEntry<String, Object>(ISI.FILE_NAME, this.fileName),
+			new DictionaryEntry<String, Object>(ISI.FILE_TYPE, this.fileType));
 	}
 
 	private static Dictionary<String, Object> createAttributes(
@@ -67,9 +74,6 @@ public class ISIFile extends Entity<ISIFile> {
 				ISI.FILE_FORMAT_VERSION_NUMBER, fileFormatVersionNumber),
 			new DictionaryEntry<String, Object>(ISI.FILE_NAME, fileName),
 			new DictionaryEntry<String, Object>(ISI.FILE_TYPE, fileType));
-		/*attributes.put(ISI.FILE_FORMAT_VERSION_NUMBER, fileFormatVersionNumber);
-		attributes.put(ISI.FILE_NAME, fileName);
-		attributes.put(ISI.FILE_TYPE, fileType);*/
 
 		return attributes;
 	}
