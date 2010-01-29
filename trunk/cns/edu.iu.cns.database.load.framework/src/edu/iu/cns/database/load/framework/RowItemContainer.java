@@ -41,7 +41,9 @@ public class RowItemContainer<T extends RowItem<T>> {
 	public final Schema<T> getSchema() {
 		return this.schema;
 	}
-
+	
+	
+	//TODO: replace with a method using item keys, to avoid the computational complexity hit
 	public final T addOrMerge(T newItem) {
 		for (T originalItem : this.items) {
 			if (originalItem == newItem) {
