@@ -737,93 +737,30 @@ Dr. Katy Borner (katy@indiana.edu)
          unpack="false"/>
 
    <plugin
-         id="edu.iu.scipolicy.database.nsf.load"
+         id="google_collections"
          download-size="0"
          install-size="0"
-         version="0.0.0"
-         unpack="false"/>
-         
+         version="0.0.0"/>
+
    <plugin
-         id="edu.iu.scipolicy.database.isi.extract.network.citation.author"
+         id="edu.iu.cns.database.merge.generic"
          download-size="0"
          install-size="0"
          version="0.0.0"
          unpack="false"/>
-         
+
    <plugin
-         id="edu.iu.scipolicy.database.isi.extract.network.citation.document"
+         id="edu.iu.scipolicy.database.isi.merge"
          download-size="0"
          install-size="0"
          version="0.0.0"
          unpack="false"/>
-         
+
    <plugin
-         id="edu.iu.scipolicy.database.isi.extract.network.citation.source"
+         id="edu.iu.scipolicy.database.nsf.merge"
          download-size="0"
          install-size="0"
          version="0.0.0"
          unpack="false"/>
-         
-   <plugin
-         id="edu.iu.scipolicy.database.isi.extract.network.coauthor"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         unpack="false"/>
-         
-   <plugin
-         id="edu.iu.scipolicy.database.isi.extract.network.cocitation.author.core"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         unpack="false"/>
-         
-   <plugin
-         id="edu.iu.scipolicy.database.isi.extract.network.cocitation.document.all"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         unpack="false"/>
-         
-   <plugin
-         id="edu.iu.scipolicy.database.isi.extract.network.cocitation.document.core"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         unpack="false"/>
-         
-   <plugin
-         id="edu.iu.scipolicy.database.isi.extract.network.cocitation.journal.all"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         unpack="false"/>
-         
-   <plugin
-         id="edu.iu.scipolicy.database.isi.extract.network.cocitation.journal.core"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         unpack="false"/>
-         
-   <plugin
-         id="edu.iu.scipolicy.database.isi.extract.table.core_entities"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         unpack="false"/>
-         
-   <plugin
-         id="edu.iu.scipolicy.database.nsf.extract.network.copi"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         unpack="false"/>
-         
-   <plugin
-         id="edu.iu.scipolicy.database.nsf.extract.table.core_entities"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         unpack="false"/>
+
 </feature>
