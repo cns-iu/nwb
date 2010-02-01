@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<component name="edu.iu.cns.database.merge.generic.MergeTable.component" immediate="false">
+	<implementation class="edu.iu.cns.database.merge.generic.MergeTableFactory"/>
+	<properties entry="OSGI-INF/merge.properties"/>
+	
+	<service>
+		<provide interface=
+			"org.cishell.framework.algorithm.AlgorithmFactory"/>
+	</service>
+</component>
