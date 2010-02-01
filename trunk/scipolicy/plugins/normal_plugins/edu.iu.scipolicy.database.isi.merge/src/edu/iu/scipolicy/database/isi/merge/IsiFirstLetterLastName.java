@@ -9,7 +9,7 @@ public class IsiFirstLetterLastName implements KeyMaker {
 	public Object makeKey(Tuple tuple) {
 		String name = tuple.getString(ISI.UNSPLIT_ABBREVIATED_NAME);
 		if(name.length() > 0) {
-			return name.charAt(0);
+			return name.substring(0, 1).toLowerCase();
 		} else {
 			//really, this shouldn't happen. But just in case.
 			return "";
