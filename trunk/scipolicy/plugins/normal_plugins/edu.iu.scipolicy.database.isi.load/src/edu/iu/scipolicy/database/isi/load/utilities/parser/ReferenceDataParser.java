@@ -7,7 +7,6 @@ import org.cishell.utilities.Pair;
 import org.cishell.utilities.StringUtilities;
 
 import edu.iu.cns.database.load.framework.utilities.DatabaseTableKeyGenerator;
-import edu.iu.nwb.shared.isiutil.database.ISI;
 import edu.iu.scipolicy.database.isi.load.model.entity.Person;
 import edu.iu.scipolicy.database.isi.load.model.entity.Source;
 import edu.iu.scipolicy.database.isi.load.utilities.parser.exception.PersonParsingException;
@@ -66,7 +65,7 @@ public class ReferenceDataParser {
 		this.sourceKeyGenerator = sourceKeyGenerator;
 		this.rawString = rawString;
 
-		String[] cleanedTokens = StringUtilities.simpleCleanStrings(rawString.split(","));
+		String[] cleanedTokens = StringUtilities.simpleCleanStrings(rawString.split(", "));
 
 		if ((cleanedTokens.length < MINIMUM_NUMBER_OF_TOKENS_FOR_VALID_REFERENCE) ||
 				(cleanedTokens.length > MAXIMUM_NUMBER_OF_TOKENS_FOR_VALID_REFERENCE)) {
@@ -341,7 +340,7 @@ public class ReferenceDataParser {
 
 	/*
 	 * I think the only acceptable pattern is:
-	 * person, source, volume, page number, doi
+	 * person, year, source, volume, page number, doi
 	 */
 	private void parseSixTokens(String[] tokens) {
 		String firstToken = tokens[0];

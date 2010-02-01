@@ -19,14 +19,15 @@ import edu.iu.scipolicy.database.isi.load.utilities.parser.exception.ReferencePa
 public class ReferenceDataParserTest {
 	public static final String ZERO_REFERENCE_TOKENS_STRING = "";
 	public static final String ONE_REFERENCE_TOKEN_STRING = "token1";
-	public static final String TWO_REFERENCE_TOKEN_STRING = "token1,token2";
-	public static final String THREE_REFERENCE_TOKEN_STRING = "token1,token2,token3";
-	public static final String FOUR_REFERENCE_TOKEN_STRING = "token1,token2,token3,token4";
-	public static final String FIVE_REFERENCE_TOKEN_STRING = "token1,token2,token3,token4,token5";
+	public static final String TWO_REFERENCE_TOKEN_STRING = "token1, token2";
+	public static final String THREE_REFERENCE_TOKEN_STRING = "token1, token2, token3";
+	public static final String FOUR_REFERENCE_TOKEN_STRING = "token1, token2, token3, token4";
+	public static final String FIVE_REFERENCE_TOKEN_STRING =
+		"token1, token2, token3, token4, token5";
 	public static final String SIX_REFERENCE_TOKEN_STRING =
-		"token1,token2,token3,token4,token5,token6";
+		"token1, token2, token3, token4, token5, token6";
 	public static final String SEVEN_REFERENCE_TOKENS_STRING =
-		"token1,token2,token3,token4,token5,token6,token7";
+		"token1, token2, token3, token4, token5, token6, token7";
 
 	public static final String NO_ANNOTATION = "";
 	public static final String NO_SOURCE = "";

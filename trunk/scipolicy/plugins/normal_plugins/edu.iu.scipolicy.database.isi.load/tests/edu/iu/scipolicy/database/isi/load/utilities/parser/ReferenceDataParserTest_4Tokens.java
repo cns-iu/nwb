@@ -12,7 +12,7 @@ import edu.iu.scipolicy.database.isi.load.utilities.parser.ReferenceDataParser;
 public class ReferenceDataParserTest_4Tokens extends ReferenceDataParserTest {
 	@Test
 	public void test4Tokens_Invalid() throws Exception {
-		ReferenceDataParser result = runTest(", , , ", true, false);
+		ReferenceDataParser result = runTest(", , ,  ", true, false);
 		Source resultSource = result.getSource();
 		Integer resultYear = result.getYear();
 		Integer resultVolume = result.getVolume();

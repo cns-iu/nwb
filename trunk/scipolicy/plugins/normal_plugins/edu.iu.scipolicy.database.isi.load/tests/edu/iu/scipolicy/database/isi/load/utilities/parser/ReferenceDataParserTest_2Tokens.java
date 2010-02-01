@@ -13,7 +13,7 @@ import edu.iu.scipolicy.database.isi.load.utilities.parser.ReferenceDataParser;
 public class ReferenceDataParserTest_2Tokens extends ReferenceDataParserTest {
 	@Test
 	public void test2Tokens_Invalid() throws Exception {
-		ReferenceDataParser result = runTest(", ", true, false);
+		ReferenceDataParser result = runTest(",  ", true, false);
 		Source resultSource = result.getSource();
 
 		if (resultSource != null) {
