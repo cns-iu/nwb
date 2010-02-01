@@ -12,8 +12,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
-import javax.swing.JFileChooser;
-
 import edu.iu.scipolicy.utilities.nsf.NSF_CSV_FieldNames;
 
 public class NSFMetadata {
@@ -38,8 +36,7 @@ public class NSFMetadata {
 	
 	//TODO: this method is slow. need to find a better alternative.
 	private static String getFileTypeInformation(File nsfCsvFile) {
-		JFileChooser jFileChooser = new JFileChooser();
-		return jFileChooser.getTypeDescription(nsfCsvFile);
+		return "NSF File";
 	}
 
 	/*
