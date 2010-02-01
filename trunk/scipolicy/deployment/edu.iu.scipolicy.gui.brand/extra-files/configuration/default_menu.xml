@@ -200,7 +200,7 @@
 	 	<menu pid="edu.iu.nwb.visualization.drl.VxOrdAlgorithm"/> 	
 		<menu pid="edu.iu.nwb.visualization.prefuse.beta.specified.Specified"/>
 		<menu type="break"/>
-		<menu pid="edu.iu.scipolicy.visualization.horizontallinegraph.HorizontalLineGraphAlgorithm"/>
+		<menu pid="edu.iu.scipolicy.visualization.horizontalbargraph.HorizontalBarGraphAlgorithm"/>
 		<menu pid="edu.iu.nwb.visualization.roundrussell.RoundRussellAlgorithm"/>
 		<menu pid="edu.iu.scipolicy.visualization.geomaps.GeoMapsCirclesFactory"/>
 		<menu pid="edu.iu.scipolicy.visualization.geomaps.GeoMapsRegionsFactory"/>
