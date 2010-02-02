@@ -68,6 +68,12 @@
 		    <menu pid="edu.iu.scipolicy.database.isi.extract.network.cocitation.journal.all"/>
 		    <menu pid="edu.iu.scipolicy.database.isi.extract.network.cocitation.journal.core"/>
 		    <menu pid="edu.iu.scipolicy.database.isi.extract.network.cocitation.author.core"/>
+		    
+		    <menu type="break"/>
+		    <!-- Custom queries -->
+		    <menu pid="edu.iu.cns.database.extract.generic.ExtractTable"/>
+		    <menu pid="edu.iu.cns.database.extract.generic.ExtractGraph"/>
+		    
 	    </menu>
 	    
 	    <menu name="From NSF Database" type="group">
