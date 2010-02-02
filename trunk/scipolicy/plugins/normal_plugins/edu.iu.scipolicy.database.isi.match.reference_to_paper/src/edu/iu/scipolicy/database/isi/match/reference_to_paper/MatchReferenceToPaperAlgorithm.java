@@ -66,6 +66,8 @@ public class MatchReferenceToPaperAlgorithm implements Algorithm {
     			String exceptionMessage = BASE_EXCEPTION_MESSAGE + e.getMessage();
 
     			throw new AlgorithmExecutionException(exceptionMessage, e);
+    		} finally {
+    			DatabaseUtilities.closeConnectionQuietly(connection);
     		}
 
     		Data outData = wrapForOutput(newDatabase);

@@ -20,7 +20,14 @@ matchReferenceToPaperQuery(
 UPDATE
 	<referenceTableName>
 SET
-	<referenceTableName>.<referencePaperFK> = <documentTableName>.<documentPK>
+	<referenceTableName>.<referencePaperFK> = (SELECT <documentTableName>.<documentPK>
+	                                           FROM <documentTableName>
+	                                           WHERE
+	                                             <referenceTableName>.<referenceAuthorFK> = <documentTableName>.<documentFirstAuthorFK> AND
+	                                             <referenceTableName>.<referencePageNumber> = <documentTableName>.<documentBeginningPage> AND
+	                                             <referenceTableName>.<referenceSource> = <documentTableName>.<documentSource> AND
+	                                             <referenceTableName>.<referenceVolume> = <documentTableName>.<documentVolume> AND
+	                                             <referenceTableName>.<referenceYear> = <documentTableName>.<documentYear>)
 WHERE
 	<referenceTableName>.<referencePK>
 IN (
@@ -31,13 +38,18 @@ IN (
 		JOIN
 			<documentTableName>
 		ON
-			(<referenceTableName>.<referenceAuthorFK> = <documentTableName>.<documentFirstAuthorFK>)
+			<referenceTableName>.<referenceAuthorFK> = <documentTableName>.<documentFirstAuthorFK> AND
+			<referenceTableName>.<referencePageNumber> = <documentTableName>.<documentBeginningPage> AND
+			<referenceTableName>.<referenceSource> = <documentTableName>.<documentSource> AND
+			<referenceTableName>.<referenceVolume> = <documentTableName>.<documentVolume> AND
+			<referenceTableName>.<referenceYear> = <documentTableName>.<documentYear>
 		WHERE
-			(<referenceTableName>.<referencePaperFK> IS NULL) AND
-			((<referenceTableName>.<referenceAuthorFK> IS NOT NULL) AND (<referenceTableName>.<referenceAuthorFK> = <documentTableName>.<documentFirstAuthorFK>)) AND
-			((<referenceTableName>.<referencePageNumber> IS NOT NULL) AND (<referenceTableName>.<referencePageNumber> = <documentTableName>.<documentBeginningPage>)) AND
-			((<referenceTableName>.<referenceSource> IS NOT NULL) AND (<referenceTableName>.<referenceSource> = <documentTableName>.<documentSource>)) AND
-			((<referenceTableName>.<referenceVolume> IS NOT NULL) AND (<referenceTableName>.<referenceVolume> = <documentTableName>.<documentVolume>)) AND
-			((<referenceTableName>.<referenceYear> IS NOT NULL) AND (<referenceTableName>.<referenceYear> = <documentTableName>.<documentYear>)))
+			<referenceTableName>.<referencePaperFK> IS NULL AND
+			<referenceTableName>.<referenceAuthorFK> IS NOT NULL AND
+			<referenceTableName>.<referencePageNumber> IS NOT NULL AND
+			<referenceTableName>.<referenceSource> IS NOT NULL AND
+			<referenceTableName>.<referenceVolume> IS NOT NULL AND
+			<referenceTableName>.<referenceYear> IS NOT NULL
+)
 
 >>
