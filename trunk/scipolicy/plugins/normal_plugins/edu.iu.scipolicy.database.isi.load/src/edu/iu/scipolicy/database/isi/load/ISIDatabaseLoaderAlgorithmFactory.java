@@ -10,7 +10,6 @@ import org.cishell.framework.data.Data;
 public class ISIDatabaseLoaderAlgorithmFactory implements AlgorithmFactory {
     public Algorithm createAlgorithm(
     		Data[] data, Dictionary parameters, CIShellContext ciShellContext) {
-    	System.err.println("Creating algorithm");
         return new ISIDatabaseLoaderAlgorithm(data, parameters, ciShellContext);
     }
 }

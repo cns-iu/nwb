@@ -17,9 +17,11 @@ public class Reference extends Entity<Reference> {
 	public final static Schema<Reference> SCHEMA = new Schema<Reference>(
 		true,
 		ISI.ANNOTATION, DerbyFieldType.TEXT,
+		ISI.REFERENCE_ARTICLE_NUMBER, DerbyFieldType.TEXT,
 		ISI.REFERENCE_AUTHOR, DerbyFieldType.FOREIGN_KEY,
 		ISI.AUTHOR_WAS_STARRED, DerbyFieldType.TEXT,
 		ISI.DIGITAL_OBJECT_IDENTIFIER, DerbyFieldType.TEXT,
+		ISI.REFERENCE_OTHER_INFORMATION, DerbyFieldType.TEXT,
 		ISI.PAGE_NUMBER, DerbyFieldType.INTEGER,
 		ISI.PAPER, DerbyFieldType.FOREIGN_KEY,
 		ISI.REFERENCE_STRING, DerbyFieldType.TEXT,
@@ -32,9 +34,11 @@ public class Reference extends Entity<Reference> {
 			ISI.SOURCE, ISI.SOURCE_TABLE_NAME);
 
 	private String annotation;
+	private String articleNumber;
 	private Person author;
 	private Boolean authorWasStarred;
 	private String digitalObjectIdentifier;
+	private String otherInformation;
 	private Integer pageNumber;
 	private Document paper;
 	private String rawReferenceString;
@@ -45,9 +49,11 @@ public class Reference extends Entity<Reference> {
 	public Reference(
 			DatabaseTableKeyGenerator keyGenerator,
 			String annotation,
+			String articleNumber,
 			Person author,
 			Boolean authorWasStarred,
 			String digitalObjectIdentifier,
+			String otherInformation,
 			Integer pageNumber,
 			Document paper,
 			String rawReferenceString,
@@ -58,9 +64,11 @@ public class Reference extends Entity<Reference> {
 			keyGenerator,
 			createAttributes(
 				annotation,
+				articleNumber,
 				author,
 				authorWasStarred,
 				digitalObjectIdentifier,
+				otherInformation,
 				pageNumber,
 				paper,
 				rawReferenceString,
@@ -68,9 +76,11 @@ public class Reference extends Entity<Reference> {
 				source,
 				year));
 		this.annotation = annotation;
+		this.articleNumber = articleNumber;
 		this.author = author;
 		this.authorWasStarred = authorWasStarred;
 		this.digitalObjectIdentifier = digitalObjectIdentifier;
+		this.otherInformation = otherInformation;
 		this.pageNumber = pageNumber;
 		this.paper = paper;
 		this.rawReferenceString = rawReferenceString;
@@ -83,6 +93,10 @@ public class Reference extends Entity<Reference> {
 		return this.annotation;
 	}
 
+	public String getArticleNumber() {
+		return this.articleNumber;
+	}
+
 	public Person getAuthorPerson() {
 		return this.author;
 	}
@@ -93,6 +107,10 @@ public class Reference extends Entity<Reference> {
 
 	public String getDigitalObjectIdentifier() {
 		return this.digitalObjectIdentifier;
+	}
+
+	public String getOtherInformation() {
+		return this.otherInformation;
 	}
 
 	public Integer getPageNumber() {
@@ -144,9 +162,11 @@ public class Reference extends Entity<Reference> {
 
 	public static Dictionary<String, Object> createAttributes(
 			String annotation,
+			String articleNumber,
 			Person author,
 			Boolean authorWasStarred,
 			String digitalObjectIdentifier,
+			String otherInformation,
 			Integer pageNumber,
 			Document paper,
 			String rawReferenceString,
@@ -157,9 +177,11 @@ public class Reference extends Entity<Reference> {
 		DictionaryUtilities.addIfNotNull(
 			attributes,
 			new DictionaryEntry<String, Object>(ISI.ANNOTATION, annotation),
+			new DictionaryEntry<String, Object>(ISI.REFERENCE_ARTICLE_NUMBER, articleNumber),
 			new DictionaryEntry<String, Object>(ISI.AUTHOR_WAS_STARRED, authorWasStarred),
 			new DictionaryEntry<String, Object>(
 				ISI.DIGITAL_OBJECT_IDENTIFIER, digitalObjectIdentifier),
+			new DictionaryEntry<String, Object>(ISI.REFERENCE_OTHER_INFORMATION, otherInformation),
 			new DictionaryEntry<String, Object>(ISI.PAGE_NUMBER, pageNumber),
 			new DictionaryEntry<String, Object>(ISI.REFERENCE_STRING, rawReferenceString),
 			new DictionaryEntry<String, Object>(ISI.REFERENCE_VOLUME, referenceVolume),

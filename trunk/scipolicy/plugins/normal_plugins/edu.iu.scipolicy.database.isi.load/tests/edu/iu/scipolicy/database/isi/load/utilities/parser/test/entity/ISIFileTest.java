@@ -69,7 +69,6 @@ public class ISIFileTest extends RowItemTest {
 
 		Document firstDocument = getFirstDocument(documents);
 		ISIFile firstISIFile = getFirstISIFile(isiFiles);
-		System.err.println(firstISIFile);
 		DocumentOccurrence firstDocumentOccurrence =
 			DocumentOccurrencesTest.getDocumentOccurrence(
 				(List<DocumentOccurrence>)documentOccurrences.getItems(),

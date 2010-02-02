@@ -61,8 +61,6 @@ public class EditorsTest extends RowItemTest {
 		Editor firstEditor = (Editor)editors.getItems().get(0);
 
 		checkEditor(firstEditor, firstDocument, firstEditorPerson);
-		
-		System.err.println(firstEditorPerson.getUnsplitAbbreviatedName());
 	}
 
 	@Test

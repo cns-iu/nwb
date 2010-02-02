@@ -290,7 +290,6 @@ public class Document extends Entity<Document> {
 	/// This side-effects Document.SCHEMA.
 	public void addArbitraryAttribute(String name, String value) {
 		if (SCHEMA.findField(name) == null) {
-			System.err.println("found field is null");
 			SCHEMA.addField(name, DerbyFieldType.TEXT);
 		}
 

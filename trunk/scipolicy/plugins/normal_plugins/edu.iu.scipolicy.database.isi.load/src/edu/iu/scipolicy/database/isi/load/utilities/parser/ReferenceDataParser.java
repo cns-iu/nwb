@@ -28,11 +28,11 @@ public class ReferenceDataParser {
 	public static final String DIGITAL_OBJECT_IDENTIFIER_PATTERN =
 		DIGITAL_OBJECT_IDENTIFIER_KEYWORD + ".*/.*";
 
-	public static final String ARTICLE_NUMBER_PREFIX = "ARTN";
+	public static final String ARTICLE_NUMBER_PREFIX = "ARTN ";
 	public static final String[] OTHER_INFORMATION_PREFIXES = new String[] {
-		"PII",
-		"PMID",
-		"UNSP",
+		"PII ",
+		"PMID ",
+		"UNSP ",
 	};
 	public static final String[] SOURCE_ANNOTATIONS = new String[] {
 		"UNPUB",
@@ -54,10 +54,12 @@ public class ReferenceDataParser {
 
 	private DatabaseTableKeyGenerator personKeyGenerator;
 	private DatabaseTableKeyGenerator sourceKeyGenerator;
-	private String annotation = "";
+	private String annotation;
+	private String articleNumber;
 	private Person authorPerson;
 	private Boolean starred = false;
-	private String digitalObjectIdentifier = "";
+	private String digitalObjectIdentifier;
+	private String otherInformation;
 	private Integer pageNumber;
 	private String rawString;
 	private Source source;
@@ -72,7 +74,10 @@ public class ReferenceDataParser {
 		this.sourceKeyGenerator = sourceKeyGenerator;
 		this.rawString = rawString;
 
-		String[] cleanedTokens = StringUtilities.simpleCleanStrings(rawString.split(", "));
+		String[] specialCaseCleanedTokens =
+			StringUtilities.simpleCleanStrings(rawString.split(", "));
+
+		String[] cleanedTokens = handleSpecialCaseTokens(specialCaseCleanedTokens);
 
 		if ((cleanedTokens.length < MINIMUM_NUMBER_OF_TOKENS_FOR_VALID_REFERENCE) ||
 				(cleanedTokens.length > MAXIMUM_NUMBER_OF_TOKENS_FOR_VALID_REFERENCE)) {
@@ -102,6 +107,10 @@ public class ReferenceDataParser {
 		return this.annotation;
 	}
 
+	public String getArticleNumber() {
+		return this.articleNumber;
+	}
+
 	public Person getAuthorPerson() {
 		return this.authorPerson;
 	}
@@ -112,6 +121,10 @@ public class ReferenceDataParser {
 
 	public String getDigitalObjectIdentifier() {
 		return this.digitalObjectIdentifier;
+	}
+
+	public String getOtherInformation() {
+		return this.otherInformation;
 	}
 
 	public Integer getPageNumber() {
@@ -132,6 +145,30 @@ public class ReferenceDataParser {
 
 	public Integer getYear() {
 		return this.year;
+	}
+
+	private String[] handleSpecialCaseTokens(String[] specialCaseTokens) {
+		if (specialCaseTokens.length == 0) {
+			return specialCaseTokens;
+		}
+
+		String lastToken = specialCaseTokens[specialCaseTokens.length - 1];
+
+		if (isArticleNumber(lastToken)) {
+			this.articleNumber = parseArticleNumber(lastToken);
+			String[] normalCaseTokens = new String[specialCaseTokens.length - 1];
+			System.arraycopy(specialCaseTokens, 0, normalCaseTokens, 0, normalCaseTokens.length);
+
+			return normalCaseTokens;
+		} else if (isOtherInformation(lastToken)) {
+			this.otherInformation = parseOtherInformation(lastToken);
+			String[] normalCaseTokens = new String[specialCaseTokens.length - 1];
+			System.arraycopy(specialCaseTokens, 0, normalCaseTokens, 0, normalCaseTokens.length);
+
+			return normalCaseTokens;
+		} else {
+			return specialCaseTokens;
+		}
 	}
 
 	private void parseTwoTokens(String[] tokens) {
@@ -159,10 +196,6 @@ public class ReferenceDataParser {
 		this.source = parsedSource.getFirstObject();
 		this.annotation = parsedSource.getSecondObject();
 	}
-
-//	public static void main(String[] args) {
-//		System.err.println("DOI 10.1098/rstb.2008.2260".matches("DOI .*/.*"));
-//	}
 
 	private void parseThreeTokens(String[] tokens) {
 		String firstToken = tokens[0];
@@ -464,13 +497,26 @@ public class ReferenceDataParser {
 		}
 	}
 
-	private static int parseVolume(String originalToken) {
+	private static String parseArticleNumber(String originalToken) {
+		return originalToken.replaceFirst(ARTICLE_NUMBER_PREFIX, "");
+	}
+
+	private static String parseOtherInformation(String originalToken) {
+		/*int otherInformationPrefixIndex =
+			StringUtilities.prefixIndex(originalToken, OTHER_INFORMATION_PREFIXES);
+		String prefix = OTHER_INFORMATION_PREFIXES[otherInformationPrefixIndex];
+
+		return originalToken.replaceFirst(prefix, "").trim();*/
+		return originalToken.trim();
+	}
+
+	private static Integer parseVolume(String originalToken) {
 		String withoutPrefix = originalToken.replaceFirst(VOLUME_PREFIX_PATTERN, "");
 
 		return IntegerParserWithDefault.parse(withoutPrefix);
 	}
 
-	private static int parsePageNumber(String originalToken) {
+	private static Integer parsePageNumber(String originalToken) {
 		String withoutPrefix = originalToken.replaceFirst(PAGE_NUMBER_PREFIX_PATTERN, "");
 
 		return IntegerParserWithDefault.parse(withoutPrefix);
@@ -478,6 +524,17 @@ public class ReferenceDataParser {
 
 	private static String parseDigitalObjectIdentifier(String originalToken) {
 		return originalToken.replaceFirst(DIGITAL_OBJECT_IDENTIFIER_KEYWORD, "");
+	}
+
+	private static boolean isArticleNumber(String token) {
+		return token.startsWith(ARTICLE_NUMBER_PREFIX);
+	}
+
+	private static boolean isOtherInformation(String token) {
+		int otherInformationPrefixIndex =
+			StringUtilities.prefixIndex(token, OTHER_INFORMATION_PREFIXES);
+
+		return (otherInformationPrefixIndex != -1);
 	}
 
 	private static boolean isYear(String token) {
@@ -497,7 +554,7 @@ public class ReferenceDataParser {
 		return token.matches(PAGE_NUMBER_PATTERN);
 	}
 
-	private static boolean isSomeOtherNumber(String token) {
-		return token.matches(OTHER_NUMBER_PATTERN);
-	}
+//	private static boolean isSomeOtherNumber(String token) {
+//		return token.matches(OTHER_NUMBER_PATTERN);
+//	}
 }

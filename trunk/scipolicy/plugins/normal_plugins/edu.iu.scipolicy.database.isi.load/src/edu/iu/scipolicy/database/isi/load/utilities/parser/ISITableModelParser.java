@@ -441,9 +441,11 @@ public class ISITableModelParser {
 					Reference reference = new Reference(
 						this.references.getKeyGenerator(),
 						referenceData.getAnnotation(),
+						referenceData.getArticleNumber(),
 						referenceData.getAuthorPerson(),
 						referenceData.authorWasStarred(),
 						referenceData.getDigitalObjectIdentifier(),
+						referenceData.getOtherInformation(),
 						referenceData.getPageNumber(),
 						null,
 						referenceData.getRawString(),
@@ -803,12 +805,19 @@ public class ISITableModelParser {
 	private void linkReferencesToDocuments() {
 		for (Reference reference : (List<Reference>)this.references.getItems()) {
 			String referenceDigitalObjectIdentifier = reference.getDigitalObjectIdentifier();
+			String referenceArticleNumber = reference.getArticleNumber();
 
 			for (Document document : (List<Document>)this.documents.getItems()) {
 				String documentDigitalObjectIdentifier = document.getDigitalObjectIdentifier();
+				String documentArticleNumber = document.getArticleNumber();
 
 				if (!StringUtilities.isNull_Empty_OrWhitespace(documentDigitalObjectIdentifier) &&
 						documentDigitalObjectIdentifier.equals(referenceDigitalObjectIdentifier)) {
+					reference.setPaper(document);
+				}
+
+				if (!StringUtilities.isNull_Empty_OrWhitespace(documentArticleNumber) &&
+						documentArticleNumber.equals(referenceArticleNumber)) {
 					reference.setPaper(document);
 				}
 			}

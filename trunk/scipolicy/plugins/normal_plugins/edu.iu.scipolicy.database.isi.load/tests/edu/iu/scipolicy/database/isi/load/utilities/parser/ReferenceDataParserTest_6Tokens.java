@@ -11,7 +11,7 @@ import edu.iu.scipolicy.database.isi.load.model.entity.Source;
 public class ReferenceDataParserTest_6Tokens extends ReferenceDataParserTest {
 	@Test
 	public void test6Tokens_Invalid() throws Exception {
-		ReferenceDataParser result = runTest(", , , , ,  ", true, false);
+		ReferenceDataParser result = runTest(",  ,  ,  ,  ,  ", true, false);
 		Integer resultYear = result.getYear();
 		Source resultSource = result.getSource();
 		Integer resultVolume = result.getVolume();
@@ -35,10 +35,9 @@ public class ReferenceDataParserTest_6Tokens extends ReferenceDataParserTest {
 			}
 		} else {
 			if ((resultYear != IntegerParserWithDefault.DEFAULT) ||
-					(resultSource != null) ||
 					(resultVolume != IntegerParserWithDefault.DEFAULT) ||
 					(resultPageNumber != IntegerParserWithDefault.DEFAULT) ||
-					!"".equals(resultDigitalObjectIdentifier)) {
+					!StringUtilities.isNull_Empty_OrWhitespace(resultDigitalObjectIdentifier)) {
 				String failMessage =
 					"Result should be invalid.  Instead, it has:" +
 					"\n\tYear: \"" + resultYear + "\"" +
