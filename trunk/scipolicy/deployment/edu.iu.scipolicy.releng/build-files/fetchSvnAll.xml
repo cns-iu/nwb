@@ -38,6 +38,15 @@
   	  	  <param name="project.name" value="edu.iu.cns.shared.utilities"/>
   	  	  <param name="url" value="http://nwb.slis.indiana.edu/svn/nwb/trunk/cns"/>
   	</antcall>
+  	
+  	<antcall target="svn.co">
+  	  	  	  <param name="target" value="plugins"/>
+  	  	  	  <param name="element.id" value="edu.iu.cns.utilities.testing"/>
+  	  	  	  <param name="project.name" value="edu.iu.cns.utilities.testing"/>
+  	  	  	  <param name="url" value="http://nwb.slis.indiana.edu/svn/nwb/trunk/plugins/shared"/>
+  	  	</antcall>
+  	
+  	
 
   	<antcall target="svn.co">
   	  	  <param name="target" value="plugins"/>
