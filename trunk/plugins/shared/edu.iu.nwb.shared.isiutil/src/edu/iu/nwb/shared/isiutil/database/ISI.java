@@ -105,9 +105,11 @@ public class ISI {
 
 	// Reference Entity Information
 	public static final String ANNOTATION = "ANNOTATION";
+	public static final String REFERENCE_ARTICLE_NUMBER = "REFERENCE_ARTICLE_NUMBER";
 	public static final String REFERENCE_AUTHOR = "REFERENCE_AUTHOR_FK";
 	public static final String AUTHOR_WAS_STARRED = "AUTHOR_WAS_STARRED";
 	// public static final String DIGITAL_OBJECT_IDENTIFIER = "DIGITAL_OBJECT_IDENTIFIER";
+	public static final String REFERENCE_OTHER_INFORMATION = "REFERENCE_OTHER_INFORMATION";
 	public static final String PAGE_NUMBER = "REFERENCE_PAGE_NUMBER";
 	public static final String PAPER = "PAPER_FK";
 	public static final String REFERENCE_STRING = "RAW_REFERENCE_STRING";
