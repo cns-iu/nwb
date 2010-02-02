@@ -1,11 +1,7 @@
 package edu.iu.scipolicy.database.isi.load.utilities.parser.test.relationship;
 
 
-import static org.junit.Assert.fail;
-
 import java.util.List;
-
-import org.junit.Test;
 
 import edu.iu.scipolicy.database.isi.load.model.entity.Address;
 import edu.iu.scipolicy.database.isi.load.model.entity.Publisher;

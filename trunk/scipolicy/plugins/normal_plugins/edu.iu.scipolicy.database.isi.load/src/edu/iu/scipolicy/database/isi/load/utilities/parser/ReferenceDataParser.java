@@ -28,6 +28,12 @@ public class ReferenceDataParser {
 	public static final String DIGITAL_OBJECT_IDENTIFIER_PATTERN =
 		DIGITAL_OBJECT_IDENTIFIER_KEYWORD + ".*/.*";
 
+	public static final String ARTICLE_NUMBER_PREFIX = "ARTN";
+	public static final String[] OTHER_INFORMATION_PREFIXES = new String[] {
+		"PII",
+		"PMID",
+		"UNSP",
+	};
 	public static final String[] SOURCE_ANNOTATIONS = new String[] {
 		"UNPUB",
 		"IN PRESS",
@@ -39,6 +45,7 @@ public class ReferenceDataParser {
 	};
 
 	static {
+		Arrays.sort(OTHER_INFORMATION_PREFIXES);
 		Arrays.sort(SOURCE_ANNOTATIONS);
 	}
 
@@ -152,9 +159,10 @@ public class ReferenceDataParser {
 		this.source = parsedSource.getFirstObject();
 		this.annotation = parsedSource.getSecondObject();
 	}
-	public static void main(String[] args) {
-		System.err.println("DOI 10.1098/rstb.2008.2260".matches("DOI .*/.*"));
-	}
+
+//	public static void main(String[] args) {
+//		System.err.println("DOI 10.1098/rstb.2008.2260".matches("DOI .*/.*"));
+//	}
 
 	private void parseThreeTokens(String[] tokens) {
 		String firstToken = tokens[0];
@@ -294,6 +302,27 @@ public class ReferenceDataParser {
 			} else {
 				// TODO: Warning?  (Invalid format.)
 			}
+		/*
+		 * The pattern is:
+		 * person, source, volume, page
+		 */
+		} else if (isVolume(thirdToken) && isPageNumber(fourthToken)) {
+			try {
+				Pair<Person, Boolean> parsedPerson =
+					PersonParser.parsePerson(this.personKeyGenerator, firstToken, "");
+				this.authorPerson = parsedPerson.getFirstObject();
+				this.starred = parsedPerson.getSecondObject();
+			} catch (PersonParsingException e) {
+			}
+
+			Pair<Source, String> parsedSource =
+				parseSource(this.sourceKeyGenerator, secondToken);
+			this.source = parsedSource.getFirstObject();
+			this.annotation = parsedSource.getSecondObject();
+
+			this.volume = parseVolume(thirdToken);
+
+			this.pageNumber = parsePageNumber(fourthToken);
 		} else {
 			// TODO: Warning?  (Invalid format.)
 		}

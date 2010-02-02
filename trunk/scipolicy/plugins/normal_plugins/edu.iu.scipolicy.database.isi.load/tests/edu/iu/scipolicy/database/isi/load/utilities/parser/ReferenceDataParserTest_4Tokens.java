@@ -7,7 +7,6 @@ import org.cishell.utilities.StringUtilities;
 import org.junit.Test;
 
 import edu.iu.scipolicy.database.isi.load.model.entity.Source;
-import edu.iu.scipolicy.database.isi.load.utilities.parser.ReferenceDataParser;
 
 public class ReferenceDataParserTest_4Tokens extends ReferenceDataParserTest {
 	@Test
@@ -125,7 +124,7 @@ public class ReferenceDataParserTest_4Tokens extends ReferenceDataParserTest {
 	 */
 
 	@Test
-	public void test4Tokens_PersonFirst_Year() throws Exception {
+	public void test4Tokens_PersonFirstWithYear_Year() throws Exception {
 		ReferenceDataParser result = runTest(
 			PERSON_STRING + ", " + YEAR + ", " + SOURCE_STRING + ", " + VOLUME_STRING,
 			true,
@@ -138,7 +137,7 @@ public class ReferenceDataParserTest_4Tokens extends ReferenceDataParserTest {
 	}
 
 	@Test
-	public void test4Tokens_PersonFirst_NoSourceAnnotation() throws Exception {
+	public void test4Tokens_PersonFirstWithYear_NoSourceAnnotation() throws Exception {
 		testSourceWithAnnotation(
 			PERSON_STRING + ", " + YEAR + ", " + SOURCE_STRING + ", " + VOLUME_STRING,
 			SOURCE_STRING,
@@ -147,7 +146,7 @@ public class ReferenceDataParserTest_4Tokens extends ReferenceDataParserTest {
 	}
 
 	@Test
-	public void test4Tokens_PersonFirst_SourceIsAnAnnotation() throws Exception {
+	public void test4Tokens_PersonFirstWithYear_SourceIsAnAnnotation() throws Exception {
 		testSourceAsAnnotations(
 			PERSON_STRING + ", " + YEAR + ", ",
 			", " + VOLUME_STRING,
@@ -155,7 +154,7 @@ public class ReferenceDataParserTest_4Tokens extends ReferenceDataParserTest {
 	}
 
 	@Test
-	public void test4Tokens_PersonFirst_SourceHasAnAnnotation() throws Exception {
+	public void test4Tokens_PersonFirstWithYear_SourceHasAnAnnotation() throws Exception {
 		testSourceWithAnnotations(
 			PERSON_STRING + ", " + YEAR + ", ",
 			", " + VOLUME_STRING,
@@ -164,7 +163,7 @@ public class ReferenceDataParserTest_4Tokens extends ReferenceDataParserTest {
 	}
 
 	@Test
-	public void test4Tokens_PersonFirst_HasVolume() throws Exception {
+	public void test4Tokens_PersonFirstWithYear_HasVolume() throws Exception {
 		ReferenceDataParser result = runTest(
 			PERSON_STRING + ", " + YEAR + ", " + SOURCE_STRING + ", " + VOLUME_STRING,
 			true,
@@ -177,9 +176,76 @@ public class ReferenceDataParserTest_4Tokens extends ReferenceDataParserTest {
 	}
 
 	@Test
-	public void test4Tokens_PersonFirst_HasPageNumber() throws Exception {
+	public void test4Tokens_PersonFirstWithYear_HasPageNumber() throws Exception {
 		ReferenceDataParser result = runTest(
 			PERSON_STRING + ", " + YEAR + ", " + SOURCE_STRING + ", " + PAGE_NUMBER_STRING,
+			true,
+			true);
+		int resultPageNumber = result.getPageNumber();
+
+		if (resultPageNumber != PAGE_NUMBER) {
+			fail("Result page number (" + resultPageNumber + ") != " + PAGE_NUMBER);
+		}
+	}
+
+	/*
+	 * Tests for the pattern:
+	 * person, source, volume, page number
+	 * Person parsing is tested in PersonTest.  No need to test it here.
+	 */
+
+	@Test
+	public void test4Tokens_PersonFirstWithoutYear_NoSourceAnnotation() throws Exception {
+		testSourceWithAnnotation(
+			PERSON_STRING + ", " +
+				SOURCE_STRING + ", " +
+				VOLUME_STRING + ", " +
+				PAGE_NUMBER_STRING,
+			SOURCE_STRING,
+			NO_ANNOTATION,
+			true);
+	}
+
+	@Test
+	public void test4Tokens_PersonFirstWithoutYear_SourceIsAnAnnotation() throws Exception {
+		testSourceAsAnnotations(
+			PERSON_STRING + ", ",
+			", " + VOLUME_STRING + ", " + PAGE_NUMBER_STRING,
+			true);
+	}
+
+	@Test
+	public void test4Tokens_PersonFirstWithoutYear_SourceHasAnAnnotation() throws Exception {
+		testSourceWithAnnotations(
+			PERSON_STRING + ", ",
+			", " + VOLUME_STRING + ", " + PAGE_NUMBER_STRING,
+			SOURCE_STRING,
+			true);
+	}
+
+	@Test
+	public void test4Tokens_PersonFirstWithoutYear_Volume() throws Exception {
+		ReferenceDataParser result = runTest(
+			PERSON_STRING + ", " +
+				SOURCE_STRING + ", " +
+				VOLUME_STRING + ", " +
+				PAGE_NUMBER_STRING,
+			true,
+			true);
+		int resultVolume = result.getVolume();
+
+		if (resultVolume != VOLUME_NUMBER) {
+			fail("Result volume (" + resultVolume + ") != " + VOLUME_NUMBER);
+		}
+	}
+
+	@Test
+	public void test4Tokens_PersonFirstWithoutYear_PageNumber() throws Exception {
+		ReferenceDataParser result = runTest(
+			PERSON_STRING + ", " +
+				SOURCE_STRING + ", " +
+				VOLUME_STRING + ", " +
+				PAGE_NUMBER_STRING,
 			true,
 			true);
 		int resultPageNumber = result.getPageNumber();
