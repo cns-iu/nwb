@@ -34,9 +34,11 @@
 	</top_menu>
 
 	<top_menu name="Merge/Match">
-		<menu name="ISI" type="group">
+			<menu pid="edu.iu.scipolicy.database.isi.merge.MergeIdenticalPeople" />
+			<menu pid="edu.iu.scipolicy.database.isi.merge.journal.MergeJournalsAlgorithm" />
+			<menu pid="edu.iu.scipolicy.database.isi.merge.SuggestPeopleMerges" />
 			<menu pid="edu.iu.scipolicy.database.isi.match.reference_to_paper.MatchReferenceToPaperAlgorithm" />
-		</menu>
+			<menu pid="edu.iu.scipolicy.database.nsf.merge.MergeIdenticalPeople" />
 	</top_menu>
 	
     <top_menu name="Extract">
