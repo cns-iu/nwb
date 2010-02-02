@@ -135,7 +135,6 @@ public class ExtractGraphWithQueriesFactory implements AlgorithmFactory {
     	Hashtable parameters = new Hashtable();
     	
     	String isThisTheLabel = (String) propertiesFromFile.get(LABEL_PROPERTY);
-    	System.out.println("THe label?:" + isThisTheLabel);
     	
     	addIfNotNull(parameters, ExtractGraphFactory.NODE_QUERY_KEY, nodeQuery((String) propertiesFromFile.get(NODE_QUERY_PROPERTY)));
     	addIfNotNull(parameters, ExtractGraphFactory.EDGE_QUERY_KEY, edgeQuery((String) propertiesFromFile.get(EDGE_QUERY_PROPERTY)));

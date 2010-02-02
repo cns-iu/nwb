@@ -16,6 +16,7 @@ import org.cishell.framework.data.Data;
 import org.cishell.framework.data.DataProperty;
 import org.cishell.service.database.Database;
 import org.cishell.utilities.DatabaseUtilities;
+import org.osgi.service.log.LogService;
 
 import prefuse.data.Graph;
 import prefuse.data.Table;
@@ -28,6 +29,7 @@ public class ExtractGraph implements Algorithm {
 	private Data[] data;
 	private Dictionary parameters;
 	private CIShellContext context;
+	private LogService logger;
 	
 	private String nodeQuery;
 	private String edgeQuery;
@@ -46,6 +48,7 @@ public class ExtractGraph implements Algorithm {
 		this.data = data;
 		this.parameters = parameters;
 		this.context = context;
+		this.logger = (LogService) context.getService(LogService.class.getName());
 
 		this.nodeQuery = (String) this.parameters.get(ExtractGraphFactory.NODE_QUERY_KEY);
 		this.edgeQuery = (String) this.parameters.get(ExtractGraphFactory.EDGE_QUERY_KEY);
@@ -86,8 +89,13 @@ public class ExtractGraph implements Algorithm {
 	private Graph extractGraph(Connection connection) throws SQLException,
 					DataIOException, AlgorithmExecutionException {
 		DatabaseDataSource tableSource = ConnectionFactory.getDatabaseConnection(connection);
+		
 		Table nodes = tableSource.getData(nodeQuery);
+		this.logger.log(LogService.LOG_INFO, "Executed node query: \r\n" + nodeQuery);
+		
 		Table edges = tableSource.getData(edgeQuery);		
+		this.logger.log(LogService.LOG_INFO, "Executed edge query: \r\n" + edgeQuery);
+		
 		addInternalColumns(nodes, edges);
 
 		int nodeCount = nodes.getRowCount();

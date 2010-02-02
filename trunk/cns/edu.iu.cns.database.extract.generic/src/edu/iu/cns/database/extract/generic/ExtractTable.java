@@ -4,8 +4,6 @@ import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.Dictionary;
 
-import javax.sql.DataSource;
-
 import org.cishell.framework.CIShellContext;
 import org.cishell.framework.algorithm.Algorithm;
 import org.cishell.framework.algorithm.AlgorithmExecutionException;
@@ -14,6 +12,7 @@ import org.cishell.framework.data.Data;
 import org.cishell.framework.data.DataProperty;
 import org.cishell.service.database.Database;
 import org.cishell.utilities.DatabaseUtilities;
+import org.osgi.service.log.LogService;
 
 import prefuse.data.Table;
 import prefuse.data.io.DataIOException;
@@ -24,6 +23,7 @@ public class ExtractTable implements Algorithm {
 	private Data[] data;
     private Dictionary parameters;
     private CIShellContext context;
+    private LogService logger;
     
 	private String query;
 	private String label = "Extracted table";
@@ -32,6 +32,7 @@ public class ExtractTable implements Algorithm {
         this.data = data;
         this.parameters = parameters;
         this.context = context;
+        this.logger = (LogService) context.getService(LogService.class.getName());
         
         this.query = (String) this.parameters.get(ExtractTableFactory.QUERY_KEY);
         if(parameters.get(ExtractTableFactory.LABEL_KEY) != null) {
@@ -46,6 +47,8 @@ public class ExtractTable implements Algorithm {
 		try {
     		DatabaseDataSource tableSource = ConnectionFactory.getDatabaseConnection(connection);
     		Table extractedTable = tableSource.getData(query);
+    		this.logger.log(LogService.LOG_INFO, "Executed table query: \r\n" + query);
+    		
     		Data outputData = wrapWithMetadata(extractedTable);
     		return new Data[] { outputData };
 		} catch (SQLException e) {
