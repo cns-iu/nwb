@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<component name="edu.iu.scipolicy.database.isi.merge.journal.MergeJournalsAlgorithm.component" immediate="false">
+	<implementation class="edu.iu.scipolicy.database.isi.merge.journal.MergeJournalsAlgorithmFactory"/>
+	<properties entry="OSGI-INF/journal.properties"/>
+	
+	<service>
+		<provide interface=
+			"org.cishell.framework.algorithm.AlgorithmFactory"/>
+	</service>
+</component>

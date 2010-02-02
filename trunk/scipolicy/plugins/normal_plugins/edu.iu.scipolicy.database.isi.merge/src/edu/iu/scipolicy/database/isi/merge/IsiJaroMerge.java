@@ -16,5 +16,4 @@ public class IsiJaroMerge implements MergeCheck {
 		//TODO: make this a parameter, along with other stuff, like duplicate node detector? Probably.
 		return metric.getSimilarity(firstName, secondName) > .85;
 	}
-
 }

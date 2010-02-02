@@ -8,7 +8,8 @@ import org.cishell.framework.algorithm.AlgorithmFactory;
 import org.cishell.framework.data.Data;
 
 public class SuggestPeopleMergesFactory implements AlgorithmFactory {
-    public Algorithm createAlgorithm(Data[] data, Dictionary parameters, CIShellContext context) {
-        return new SuggestPeopleMerges(data, parameters, context);
+    @SuppressWarnings("unchecked") // Raw Dictionary
+	public Algorithm createAlgorithm(Data[] data, Dictionary parameters, CIShellContext context) {
+        return new SuggestPeopleMerges(data, context);
     }
 }
