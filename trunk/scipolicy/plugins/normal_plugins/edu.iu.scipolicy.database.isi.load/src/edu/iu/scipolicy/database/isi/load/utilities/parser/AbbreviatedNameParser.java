@@ -5,10 +5,10 @@ import org.cishell.utilities.StringUtilities;
 import edu.iu.scipolicy.database.isi.load.utilities.parser.exception.PersonParsingException;
 
 public class AbbreviatedNameParser {
-	public String unsplitAbbreviatedName = "";
-	public String familyName = "";
-	public String firstInitial = "";
-	public String middleInitials = "";
+	public String unsplitAbbreviatedName;
+	public String familyName;
+	public String firstInitial;
+	public String middleInitials;
 	public boolean starred = false;
 
 	public AbbreviatedNameParser(String rawAbbreviatedNameString) throws PersonParsingException {

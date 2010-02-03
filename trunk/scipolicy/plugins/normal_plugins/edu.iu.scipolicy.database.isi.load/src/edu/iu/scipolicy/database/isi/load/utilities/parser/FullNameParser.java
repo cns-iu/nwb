@@ -5,9 +5,9 @@ import org.cishell.utilities.StringUtilities;
 import edu.iu.scipolicy.database.isi.load.utilities.parser.exception.PersonParsingException;
 
 public class FullNameParser {
-	public String personalName = "";
-	public String additionalNamesString = "";
-	public String fullName = "";
+	public String personalName;
+	public String additionalNamesString;
+	public String fullName;
 
 	public FullNameParser(String rawFullNameString) throws PersonParsingException {
 		if (!StringUtilities.isNull_Empty_OrWhitespace(rawFullNameString)) {
