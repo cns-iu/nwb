@@ -132,11 +132,14 @@ float distanceToSparse(float* vector, map<int, float> sparseVector, float recent
 
 float calculateCosineSimilarity(float* netVector, map<int, float> sparseVector, float recentSquaredNorm) {
 	float dotProduct = 0.0;
+	//float sparseSquaredNorm = 0.0;
 
 	for (map<int, float>::const_iterator it = sparseVector.begin(); it != sparseVector.end(); it++) {
 		dotProduct += (it->second) * netVector[it->first];
+		//sparseSquaredNorm += (it->second) * (it->second);
 	}
 
+	//return (dotProduct / (sqrt(sparseSquaredNorm) * sqrt(recentSquaredNorm)));
 	return (dotProduct / (sqrt(sparseVector.size()) * sqrt(recentSquaredNorm)));
 }
 
@@ -225,6 +228,7 @@ float interpolate(float x, float x0, float x1, float y0, float y1) {
 	}
 }
 
+// TODO Strongly consider using a different width calculation, especially for long, multi-day runs.
 float calculateWidthAtTime(int t, int tFinal) {
 	return interpolate(t, 0, tFinal, g_initialWidth, g_finalWidth);
 }

@@ -14,7 +14,7 @@ for i in range(numberOfVectors):
     print >> outFile
     
     # Dummy document ID
-    print >> outFile, '0',
+    print >> outFile, random.randrange(100000, 999999),
 
     nonzeroCount = min(3, max(1, int(random.gauss(mean, stddev))))
     for id in sorted(random.sample(validIDs, nonzeroCount)):
