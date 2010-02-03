@@ -2,13 +2,16 @@ package edu.iu.scipolicy.database.isi.merge;
 
 import prefuse.data.Tuple;
 import uk.ac.shef.wit.simmetrics.similaritymetrics.InterfaceStringMetric;
-import uk.ac.shef.wit.simmetrics.similaritymetrics.Jaro;
 import edu.iu.cns.database.merge.generic.maker.MergeCheck;
 import edu.iu.nwb.shared.isiutil.database.ISI;
 
-public class IsiJaroMerge implements MergeCheck {
+public class IsiAuthorStringSimilarityMerge implements MergeCheck {
 	
-	private InterfaceStringMetric metric = new Jaro();
+	private final InterfaceStringMetric metric;
+
+	public IsiAuthorStringSimilarityMerge(InterfaceStringMetric metric) {
+		this.metric = metric;
+	}
 
 	public boolean shouldMerge(Tuple first, Tuple second) {
 		String firstName = first.getString(ISI.UNSPLIT_ABBREVIATED_NAME).toLowerCase();
