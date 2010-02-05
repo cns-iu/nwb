@@ -307,9 +307,9 @@ bool coordinateInRange(coordinate_t coord) {
 void tryInsertNeighbor(
 		cluster_id_t cluster,
 		coordinate_t neighborCoord,
-		map<coordinate_t, cluster_id_t> coordinateToCluster) {
+		map<coordinate_t, cluster_id_t>* coordinateToCluster) {
 	if (coordinateInRange(neighborCoord)) {
-		cluster_id_t neighbor = coordinateToCluster[neighborCoord];
+		cluster_id_t neighbor = (*coordinateToCluster)[neighborCoord];
 		g_neighbors[cluster].insert(neighbor);
 	}
 }
@@ -325,7 +325,7 @@ float* vectorMean(float* vector1, float* vector2) {
 	return meanVector;
 }
 
-cluster_id_t findNearestNeighbor(cluster_id_t center, set<cluster_id_t> topLevelClusters) {
+cluster_id_t findNearestNeighbor(cluster_id_t center, set<cluster_id_t>* topLevelClusters) {
 	float leastDistance = numeric_limits<float>::max();
 	cluster_id_t nearestNeighbor = -1;
 
@@ -334,7 +334,7 @@ cluster_id_t findNearestNeighbor(cluster_id_t center, set<cluster_id_t> topLevel
 			neighbors++) {
 		cluster_id_t neighbor = *neighbors;
 
-		if (topLevelClusters.find(neighbor) != topLevelClusters.end()) {
+		if (topLevelClusters->find(neighbor) != topLevelClusters->end()) {
 			float distance = calculateCosineDissimilarity(g_vectors[center], g_vectors[neighbor]);
 
 			if (distance < leastDistance) {
@@ -391,8 +391,8 @@ cluster_id_t combine(cluster_id_t cluster1, cluster_id_t cluster2) {
 	return mergedCluster;
 }
 
-bool mergingIsComplete(set<cluster_id_t> topLevelClusters) {
-	for (set<cluster_id_t>::iterator it = topLevelClusters.begin(); it != topLevelClusters.end(); it++) {
+bool mergingIsComplete(set<cluster_id_t>* topLevelClusters) {
+	for (set<cluster_id_t>::iterator it = topLevelClusters->begin(); it != topLevelClusters->end(); it++) {
 		cluster_id_t cluster = *it;
 
 		if (g_documents[cluster].size() < g_requestedMinimumSize) {
@@ -403,7 +403,7 @@ bool mergingIsComplete(set<cluster_id_t> topLevelClusters) {
 	return true;
 }
 
-void writeOutClusterFile(set<cluster_id_t> topLevelClusters) {
+void writeOutClusterFile(set<cluster_id_t>* topLevelClusters) {
 	cout << "Write out to cluster file starting at " << getAsctime() << endl;
 
 	ofstream outClusterFile(g_outClusterDataPath.c_str());
@@ -412,7 +412,7 @@ void writeOutClusterFile(set<cluster_id_t> topLevelClusters) {
 
 		outClusterFile << "Cluster ID | Contained documents | Contained coordinates | Reference vector" << endl;
 
-		for (set<cluster_id_t>::iterator it = topLevelClusters.begin(); it != topLevelClusters.end(); it++) {
+		for (set<cluster_id_t>::iterator it = topLevelClusters->begin(); it != topLevelClusters->end(); it++) {
 			cluster_id_t cluster = *it;
 
 			/* Cluster ID. */
@@ -484,17 +484,19 @@ void mergeToSize() {
 			/* Set the initial neighbors. */
 			cluster_id_t center = coordinateToCluster[coordinate];
 
-			tryInsertNeighbor(center, upLeft(coordinate), coordinateToCluster);
-			tryInsertNeighbor(center, upRight(coordinate), coordinateToCluster);
-			tryInsertNeighbor(center, dueLeft(coordinate), coordinateToCluster);
-			tryInsertNeighbor(center, dueRight(coordinate), coordinateToCluster);
-			tryInsertNeighbor(center, downLeft(coordinate), coordinateToCluster);
-			tryInsertNeighbor(center, downRight(coordinate), coordinateToCluster);
+			tryInsertNeighbor(center, upLeft(coordinate), &coordinateToCluster);
+			tryInsertNeighbor(center, upRight(coordinate), &coordinateToCluster);
+			tryInsertNeighbor(center, dueLeft(coordinate), &coordinateToCluster);
+			tryInsertNeighbor(center, dueRight(coordinate), &coordinateToCluster);
+			tryInsertNeighbor(center, downLeft(coordinate), &coordinateToCluster);
+			tryInsertNeighbor(center, downRight(coordinate), &coordinateToCluster);
 
 			/* Push on to the heap. */
 			heap.push(center);
 		}
 	}
+
+	cout << "Initial nearest-neighbor finding finishing at " << getAsctime() << endl;
 
 	bool done = false;
 	while (!done) {
@@ -503,11 +505,14 @@ void mergeToSize() {
 		heap.pop();
 
 		if (topLevelClusters.find(smallestCluster) != topLevelClusters.end()) {
-			cluster_id_t nearestNeighbor = findNearestNeighbor(smallestCluster, topLevelClusters);
+			cluster_id_t nearestNeighbor = findNearestNeighbor(smallestCluster, &topLevelClusters);
 			cluster_id_t mergedCluster = combine(smallestCluster, nearestNeighbor);
 
-			if (mergedCluster % 1000 == 0) {
-				cout << getAsctime() << " Created merge cluster " << mergedCluster << endl;
+			if (mergedCluster % 500 == 0) {
+				cout << "Created merge cluster " << mergedCluster;
+				cout << "; smallest cluster starting this step had size ";
+				cout << g_documents[smallestCluster].size();
+				cout << ".  Time is " << getAsctime() << endl;
 			}
 
 			topLevelClusters.erase(smallestCluster);
@@ -518,12 +523,12 @@ void mergeToSize() {
 			heap.push(mergedCluster);
 
 			if (g_documents[mergedCluster].size() >= g_requestedMinimumSize) {
-				done = mergingIsComplete(topLevelClusters);
+				done = mergingIsComplete(&topLevelClusters);
 			}
 		}
 	}
 
-	writeOutClusterFile(topLevelClusters);
+	writeOutClusterFile(&topLevelClusters);
 
 	cout << "mergeToSize finishing at " << getAsctime() << endl;
 }
