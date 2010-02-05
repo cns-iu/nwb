@@ -27,35 +27,32 @@ struct Coordinate {
 };
 
 struct Cluster {
-	bool topLevel;
+	float* vector;
 	set<string>* documents;
 	set<Cluster>* neighbors;
-
-	float* vector;
-
+	set<Coordinate>* coordinates;
 
 	Cluster(float* v) {
-		topLevel = true;
+		vector = v;
+
 		documents = new set<string>();
 		neighbors = new set<Cluster>();
-
-		vector = v;
+		coordinates = new  set<Coordinate>();
 	}
 };
 
-struct CalibratedDatum {
-	string id;
-	Coordinate coordinate(0, 0);
-//	map<int, float> sparseVector;
-
-	CalibratedDatum(string i, Coordinate c) { id = i; coordinate = c; }
+class DocumentsSizeComparison {
+	bool operator() (const Cluster& cluster1, const Cluster& cluster2) const {
+	    return cluster1.documents->size() < cluster2.documents->size();
+	}
 };
 
-typedef vector<CalibratedDatum> calibrated_data_t;
+typedef priority_queue<Cluster, vector<Cluster>, DocumentsSizeComparison> smallest_cluster_heap_t;
 
 
 string g_codebookPath;
 string g_inCalibratedDataPath;
+int g_requestedMinimumSize;
 string g_outClusterDataPath;
 
 int g_rows = -1;
@@ -80,6 +77,7 @@ void readConfigurationFile() {
 	if (configurationFile.is_open()) {
 		configurationFile >> g_codebookPath;
 		configurationFile >> g_inCalibratedDataPath;
+		configurationFile >> g_requestedMinimumSize;
 		configurationFile >> g_outClusterDataPath;
 	}
 
@@ -88,14 +86,8 @@ void readConfigurationFile() {
 	cout << "Done." << endl;
 }
 
-float* calculateNodeIndex(float* codebook, Coordinate coord) {
-	return codebook + (g_dim * (coord.row * g_columns + coord.column));
-}
-
-float* loadCodebook() {
+void readCodebook(map<Coordinate, Cluster>* coordinateToCluster, set<Cluster>* topLevelClusters) {
 	cout << "Starting codebook load at " << getAsctime() << endl;
-
-	float* codebook;
 
 	ifstream codebookFile(g_codebookPath.c_str());
 	if (codebookFile.is_open()) {
@@ -105,25 +97,58 @@ float* loadCodebook() {
 		codebookFile >> g_dim >> topology >> g_columns >> g_rows >> neighborhood;
 
 		int numberOfNodes = g_rows * g_columns;
-		codebook = new float[numberOfNodes * g_dim];
+//		codebook = new float[numberOfNodes * g_dim];
 
-		for (int i = 0; i < numberOfNodes; i++) {
-			float* currentNode = codebook + i * g_dim;
-
-			bool allZero = true;
-			for (int weightIndex = 0; weightIndex < g_dim; weightIndex++) {
-				codebookFile >> currentNode[weightIndex];
-
-				if (currentNode[weightIndex] != 0) {
-					allZero = false;
-				}
+		int lineNumber = 0;
+		string line;
+		while (getline(codebookFile, line)) {
+			/* Comments are ignored.
+			 * They *must not* affect the line number.
+			 */
+			if (0 == line.find(commentMarker)) {
+				continue;
 			}
 
-			if (allZero) {
-				cerr << "ERROR: Codebook contained an all-zero vector.  Quitting now." << endl;
-				exit(1);
+			istringstream linestream(line);
+
+			float* vector = new float[g_dim];
+			for (int ii = 0; ii < g_dim; ii++) {
+				float value;
+				linestream >> value;
+				vector[ii] = value;
 			}
+
+			int row = ((int) lineNumber / g_columns);
+			int column = lineNumber % g_columns;
+			Coordinate coordinate(row, column);
+
+			Cluster cluster(vector);
+			cluster.coordinates->insert(coordinate);
+
+			topLevelClusters->insert(cluster);
+			coordinateToCluster[coordinate] = cluster;
+
+
+			lineNumber++;
 		}
+
+//		for (int i = 0; i < numberOfNodes; i++) {
+//			float* currentNode = codebook + i * g_dim;
+//
+//			bool allZero = true;
+//			for (int weightIndex = 0; weightIndex < g_dim; weightIndex++) {
+//				codebookFile >> currentNode[weightIndex];
+//
+//				if (currentNode[weightIndex] != 0) {
+//					allZero = false;
+//				}
+//			}
+//
+//			if (allZero) {
+//				cerr << "ERROR: Codebook contained an all-zero vector.  Quitting now." << endl;
+//				exit(1);
+//			}
+//		}
 
 		codebookFile.close();
 	} else {
@@ -132,11 +157,9 @@ float* loadCodebook() {
 	}
 
 	cout << "Finishing initial codebook load at " << getAsctime() << endl;
-
-	return codebook;
 }
 
-calibrated_data_t* loadCalibratedData() {
+void readCalibratedData(map<Coordinate, Cluster>* coordinateToCluster) {
 	cout << "Starting calibrated dataset load at " << getAsctime() << endl;
 
 	ifstream calibratedDataFile(g_inCalibratedDataPath.c_str());
@@ -155,8 +178,6 @@ calibrated_data_t* loadCalibratedData() {
 		}
 
 		const string commentMarker("#");
-
-		calibrated_data_t* calibratedData = new calibrated_data_t();
 
 		int lineNumber = 0;
 		string line;
@@ -177,13 +198,11 @@ calibrated_data_t* loadCalibratedData() {
 			linestream >> column;
 			Coordinate coordinate(row, column);
 
-			float dissimilarity;
-			linestream >> dissimilarity;
+			Cluster bestMatchingNeuronCluster = coordinateToCluster[coordinate];
 
-			/* Note the actual document vectors are ignored. */
+			bestMatchingNeuronCluster.documents->insert(documentID);
 
-			CalibratedDatum calibratedDatum(documentID, coordinate);
-			calibratedData->push_back(calibratedDatum);
+			/* Note the dissimilarity and document vectors are ignored. */
 
 			lineNumber++;
 		}
@@ -191,8 +210,6 @@ calibrated_data_t* loadCalibratedData() {
 		calibratedDataFile.close();
 
 		cout << "Finishing calibrated dataset load at " << getAsctime() << endl;
-
-		return calibratedData;
 	} else {
 		cerr << "Error opening calibrated dataset file!" << endl;
 		exit(1);
@@ -233,84 +250,69 @@ float calculateCosineSimilarity(float* vector1, float* vector2) {
 /* NOTE: This entire notion breaks down when the cosine similarity may be negative.
  * This will not happen with the data we're currently considering.
  */
-float calculateCosineDissimilarity(
-		float* vector, CalibratedDatum* calibratedDatum, float recentSquaredNorm) {
-	return 1 - calculateCosineSimilarity(vector, calibratedDatum, recentSquaredNorm);
+float calculateCosineDissimilarity(float* vector1, float* vector2) {
+	return (1 - calculateCosineSimilarity(vector1, vector2));
 }
 
-int up(int y) {
-	return y - 1;
+int up(int row) {
+	return row - 1;
 }
 
-int down(int y) {
-	return y + 1;
+int down(int row) {
+	return row + 1;
 }
 
-int left(int x) {
-	return x - 1;
+int dueLeft(int column) {
+	return column - 1;
 }
-
-int right(int x) {
-	return x + 1;
-}
-
-//void tryInsertLeftAndRight(
-//		set<Cluster>* s, map<Coordinate, Cluster>* coordinateToCluster, int x, int y) {
-//	if (leftOK(x)) {
-//		Coordinate left(y, left(x));
-//		neighbors->insert(coordinateToCluster[left]);
-//	}
-//
-//	if (rightOK(x)) {
-//		Coordinate right(y, right(x));
-//		neighbors->insert(coordinateToCluster[right]);
-//	}
-//}
-
-int slantLeft(Coordinate c) {
-	int left = c.column;
-	if (c.row % 2 == 0) {
-		left -= 1;
+int slantLeft(Coordinate coord) {
+	int slantLeftColumn = coord.column;
+	if (coord.row % 2 == 0) {
+		slantLeftColumn -= 1;
 	}
 
-	return left;
+	return slantLeftColumn;
 }
 
-int slantRight(Coordinate c) {
-	int right = c.column;
-	if (c.row % 2 == 1) {
-		right += 1;
+int dueRight(int column) {
+	return column + 1;
+}
+int slantRight(Coordinate coord) {
+	int slantRightColumn = coord.column;
+	if (coord.row % 2 == 1) {
+		slantRightColumn += 1;
 	}
 
-	return right;
+	return slantRightColumn;
 }
 
-Coordinate upLeft(Coordinate c) {
-	return coordinate(up(c.row), slantLeft(c));
+Coordinate upLeft(Coordinate coord) {
+	return coordinate(up(coord.row), slantLeft(coord));
 }
 
-Coordinate upRight(Coordinate c) {
-	return coordinate(up(c.row), slantRight(c));
+Coordinate upRight(Coordinate coord) {
+	return coordinate(up(coord.row), slantRight(coord));
 }
 
-Coordinate dueLeft(Coordinate c) {
-	return coordinate(c.row, left(c.column));
+Coordinate dueLeft(Coordinate coord) {
+	return coordinate(coord.row, dueLeft(coord.column));
 }
 
-Coordinate dueRight(Coordinate c) {
-	return coordinate(c.row, right(c.column));
+Coordinate dueRight(Coordinate coord) {
+	return coordinate(coord.row, dueRight(coord.column));
 }
 
-Coordinate downLeft(Coordinate c) {
-	return coordinate(down(c.row), slantLeft(c));
+Coordinate downLeft(Coordinate coord) {
+	return coordinate(down(coord.row), slantLeft(coord));
 }
 
-Coordinate downRight(Coordinate c) {
-	return coordinate(down(c.row), slantRight(c));
+Coordinate downRight(Coordinate coord) {
+	return coordinate(down(coord.row), slantRight(coord));
 }
 
-bool coordinateInRange(Coordinate c) {
-	return ((0 <= c.row && c.row < g_rows) && (0 <= c.column && c.column < g_columns));
+bool coordinateInRange(Coordinate coord) {
+	return ((0 <= coord.row && coord.row < g_rows)
+			&& (0 <= coord.column && coord.column < g_columns));
 }
 
 void tryInsertNeighbor(
@@ -320,49 +322,143 @@ void tryInsertNeighbor(
 	}
 }
 
+/* TODO Consider recycling input memory. */
+float* vectorMean(float* vector1, float* vector2) {
+	float* meanVector = new float[g_dim];
+
+	for (int ii = 0; ii < g_dim; ii++) {
+		meanVector[ii] = (vector1[ii] + vector2[ii]) / 2.0;
+	}
+
+	return meanVector;
+}
+
+Cluster findNearestNeighbor(Cluster center) {
+	float leastDistance = 9999999999999999.0;
+	Cluster nearestNeighbor;
+
+	for (set<Cluster>::iterator neighbors = center.neighbors->begin();
+			neighbors != center.neighbors->end();
+			neighbors++) {
+		Cluster neighbor = *neighbors;
+
+		float distance = calculateCosineDissimilarity(center.vector, neighbor.vector);
+
+		if (distance < leastDistance) {
+			leastDistance = distance;
+			nearestNeighbor = neighbor;
+		}
+	}
+
+	return nearestNeighbor;
+}
+
+/* Create new cluster.
+ * 		Vector = average(?) of input vectors.
+ * 		Documents set = union of input documents sets.
+ * 		Neighbors set = union of input neighbors sets.
+ * 			Note the input clusters would be in this.. specifically exclude them or don't bother?
+ */
 Cluster combine(Cluster cluster1, Cluster cluster2) {
-	/* Create new cluster.
-	 * 		Vector = average(?) of input vectors.
-	 * 		Documents set = union of input documents sets.
-	 * 		Neighbors set = union of input neighbors sets.
-	 * 			Note the input clusters would be in this.. specifically exclude them or don't bother?
-	 */
+	float* meanVector = vectorMean(cluster1.vector, cluster2.vector);
+
+	Cluster mergedCluster(meanVector);
+
+	mergedCluster.documents->insert(cluster1.documents.begin(), cluster1.documents.end());
+	mergedCluster.documents->insert(cluster2.documents.begin(), cluster2.documents.end());
+
+	mergedCluster.neighbors->insert(cluster1.neighbors.begin(), cluster1.neighbors.end());
+	mergedCluster.neighbors->insert(cluster2.neighbors.begin(), cluster2.neighbors.end());
+	// TODO Necessary?
+	mergedCluster.neighbors->erase(cluster1);
+	mergedCluster.neighbors->erase(cluster2);
+
+	mergedCluster.coordinates->insert(cluster1.coordinates.begin(), cluster1.coordinates.end());
+	mergedCluster.coordinates->insert(cluster2.coordinates.begin(), cluster2.coordinates.end());
+
+	/* TODO Explicitly destroy cluster1, cluster2?  If so, here or in caller? */
+
+	return mergedCluster;
 }
 
-bool allSizesSufficient(priority_queue<Cluster> clusters) {
-	/* Check all top-level clusters have size >= minimum size. */
+bool mergingIsComplete(set<Cluster> topLevelClusters) {
+	for (set<Cluster>::iterator it = topLevelClusters.begin(); it != topLevelClusters.end(); it++) {
+		Cluster cluster = *it;
+
+		if (cluster.documents->size() < g_requestedMinimumSize) {
+			return false;
+		}
+	}
+
+	return true;
 }
 
-void mergeToSize(float* codebook, calibrated_data_t* calibratedData) {
+void writeOutClusterFile(set<Cluster> topLevelClusters) {
+	cout << "Write out to cluster file starting at " << getAsctime() << endl;
+
+	ofstream outClusterFile(g_outClusterDataPath.c_str());
+	if (outClusterFile.is_open()) {
+		outClusterFile << g_dim << " " << "hexa" << " " << g_columns << " " << g_rows << " " << "gaussian";
+
+		int numberOfNodes = g_rows * g_columns;
+
+
+		for (set<Cluster>::iterator it = topLevelClusters.begin(); it != topLevelClusters.end(); it++) {
+			Cluster cluster = *it;
+
+			/* TODO Consider writing out some of this other stuff. */
+//			float* vector;
+//			set<string>* documents;
+//			set<Cluster>* neighbors;
+//			set<Coordinate>* coordinates;
+			for (set<string>::iterator it = cluster.documents->begin();
+					it != cluster.documents->end();
+					it++) {
+				outClusterFile << (*it) << " ";
+			}
+
+			outClusterFile << endl;
+		}
+
+//		for (int i = 0; i < numberOfNodes; i++) {
+//			int nodeIndex = i * g_dim;
+//
+//			outClusterFile << endl;
+//
+//			for (int weightIndex = 0; weightIndex < g_dim; weightIndex++) {
+//				outClusterFile << net[nodeIndex + weightIndex] << " ";
+//			}
+//		}
+
+		outClusterFile.close();
+	} else {
+		cerr << "Error writing out cluster file." << endl;
+		exit(1);
+	}
+
+	cout << "Write out to cluster file finishing at " << getAsctime() << endl;
+}
+
+void mergeToSize() {
 	cout << "mergeToSize starting at " << getAsctime() << endl;
 
 	const int numberOfNodes = g_rows * g_columns;
 	const int flatSize = numberOfNodes * g_dim;
 
-	float* recentSquaredNorms = new float[numberOfNodes];
-	zeroOut(recentSquaredNorms, numberOfNodes);
-	calculateSquaredNorms(recentSquaredNorms, codebook);
-
 	map<Coordinate, Cluster> coordinateToCluster;
+	set<Cluster> topLevelClusters;
 
-	/* Create one Cluster for each Coordinate (and record the correspondence. */
+	readCodebook(&coordinateToCluster, &topLevelClusters);
+	readCalibratedData(&coordinateToCluster);
+
+	smallest_cluster_heap_t heap(DocumentsSizeComparison());
+
+	/* For each initial Cluster.. */
 	for (int row = 0; row < g_rows; row++) {
 		for (int column = 0; row < g_columns; column++) {
 			Coordinate coordinate(row, column);
 
-			float* node = calculateNodeIndex(codebook, coordinate);
-
-			Cluster cluster(node);
-
-			coordinateToCluster[coordinate] = cluster;
-		}
-	}
-
-	/* Set the initial neighbors for each Cluster. */
-	for (int row = 0; row < g_rows; row++) {
-		for (int column = 0; row < g_columns; column++) {
-			Coordinate coordinate(row, column);
-
+			/* Set the initial neighbors. */
 			Cluster center = coordinateToCluster[coordinate];
 
 			set<Cluster> neighbors;
@@ -374,33 +470,36 @@ void mergeToSize(float* codebook, calibrated_data_t* calibratedData) {
 			tryInsertNeighbor(downRight(coordinate), coordinateToCluster, &neighbors);
 
 			center.neighbors = neighbors;
+
+			/* Push on to the heap. */
+			heap.push(center);
 		}
 	}
 
-	/* TODO Read calibrated data and assign documents to clusters. */
-	for (calibrated_data_t::const_iterator it = calibratedData->begin();
-			it != calibratedData->end();
-			it++) {
-		CalibratedDatum calibratedDatum = *it;
+	bool done = false;
+	while (!done) {
+		Cluster smallestCluster = heap.pop();
 
-		// TODO
+		if (topLevelClusters.find(smallestCluster) != topLevelClusters.end()) {
+			Cluster nearestNeighbor = findNearestNeighbor(smallestCluster);
+
+			Cluster mergedCluster = combine(smallestCluster, nearestNeighbor);
+
+			topLevelClusters.erase(smallestCluster);
+			topLevelClusters.erase(nearestNeighbor);
+
+			topLevelClusters.insert(mergedCluster);
+
+			heap.push(mergedCluster);
+
+			if (mergedCluster.documents->size() >= g_requestedMinimumSize) {
+				done = mergingIsComplete();
+			}
+		}
 	}
 
-
-	bool allSizesSufficient = false;
-	while (!allSizesSufficient) {
-		// Pop smallest cluster off of heap.
-
-		/* If cluster is top-level:
-		 * 		Find the closest (top-level) neighbor.
-		 *		Combine this cluster with that one.
-		 *		Mark new cluster top-level and old clusters not.
-		 *		Push the new cluster on to the heap.
-		 *		If the resulting cluster has sufficient size, check the end condition.
-		 */
-	}
-
-
+	/* TODO Write out data structures. */
+	writeOutClusterFile(topLevelClusters);
 
 	cout << "mergeToSize finishing at " << getAsctime() << endl;
 }
@@ -410,11 +509,7 @@ int main(int argc, char *argv[]) {
 
 	readConfigurationFile();
 
-	float* codebook = loadCodebook();
-
-	calibrated_data_t* calibratedData = loadCalibratedData();
-
-	mergeToSize(codebook, calibratedData);
+	mergeToSize();
 
 	cout << "MergeClustersToSize finishing at " << getAsctime() << endl;
 
