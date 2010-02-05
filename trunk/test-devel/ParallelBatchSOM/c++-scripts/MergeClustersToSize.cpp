@@ -42,7 +42,8 @@ struct Cluster {
 };
 
 class DocumentsSizeComparison {
-	bool operator() (const Cluster& cluster1, const Cluster& cluster2) const {
+	public:
+	const bool operator()(const Cluster& cluster1, const Cluster& cluster2) {
 	    return cluster1.documents->size() < cluster2.documents->size();
 	}
 };
@@ -99,6 +100,8 @@ void readCodebook(map<Coordinate, Cluster>* coordinateToCluster, set<Cluster>* t
 		int numberOfNodes = g_rows * g_columns;
 //		codebook = new float[numberOfNodes * g_dim];
 
+		const string commentMarker("#");
+
 		int lineNumber = 0;
 		string line;
 		while (getline(codebookFile, line)) {
@@ -126,7 +129,7 @@ void readCodebook(map<Coordinate, Cluster>* coordinateToCluster, set<Cluster>* t
 			cluster.coordinates->insert(coordinate);
 
 			topLevelClusters->insert(cluster);
-			coordinateToCluster[coordinate] = cluster;
+			(*coordinateToCluster)[coordinate] = cluster;
 
 
 			lineNumber++;
@@ -198,7 +201,7 @@ void readCalibratedData(map<Coordinate, Cluster>* coordinateToCluster) {
 			linestream >> column;
 			Coordinate coordinate(row, column);
 
-			Cluster bestMatchingNeuronCluster = coordinateToCluster[coordinate];
+			Cluster bestMatchingNeuronCluster = (*coordinateToCluster)[coordinate];
 
 			bestMatchingNeuronCluster.documents->insert(documentID);
 
@@ -287,27 +290,27 @@ int slantRight(Coordinate coord) {
 }
 
 Coordinate upLeft(Coordinate coord) {
-	return coordinate(up(coord.row), slantLeft(coord));
+	return Coordinate(up(coord.row), slantLeft(coord));
 }
 
 Coordinate upRight(Coordinate coord) {
-	return coordinate(up(coord.row), slantRight(coord));
+	return Coordinate(up(coord.row), slantRight(coord));
 }
 
 Coordinate dueLeft(Coordinate coord) {
-	return coordinate(coord.row, dueLeft(coord.column));
+	return Coordinate(coord.row, dueLeft(coord.column));
 }
 
 Coordinate dueRight(Coordinate coord) {
-	return coordinate(coord.row, dueRight(coord.column));
+	return Coordinate(coord.row, dueRight(coord.column));
 }
 
 Coordinate downLeft(Coordinate coord) {
-	return coordinate(down(coord.row), slantLeft(coord));
+	return Coordinate(down(coord.row), slantLeft(coord));
 }
 
 Coordinate downRight(Coordinate coord) {
-	return coordinate(down(coord.row), slantRight(coord));
+	return Coordinate(down(coord.row), slantRight(coord));
 }
 
 bool coordinateInRange(Coordinate coord) {
@@ -333,20 +336,22 @@ float* vectorMean(float* vector1, float* vector2) {
 	return meanVector;
 }
 
-Cluster findNearestNeighbor(Cluster center) {
-	float leastDistance = 9999999999999999.0;
-	Cluster nearestNeighbor;
+Cluster findNearestNeighbor(Cluster center, set<Cluster> topLevelClusters) {
+	float leastDistance = numeric_limits<float>::max();
+	Cluster nearestNeighbor = NULL;
 
 	for (set<Cluster>::iterator neighbors = center.neighbors->begin();
 			neighbors != center.neighbors->end();
 			neighbors++) {
 		Cluster neighbor = *neighbors;
 
-		float distance = calculateCosineDissimilarity(center.vector, neighbor.vector);
+		if (topLevelClusters.find(neighbor) != topLevelClusters.end()) {
+			float distance = calculateCosineDissimilarity(center.vector, neighbor.vector);
 
-		if (distance < leastDistance) {
-			leastDistance = distance;
-			nearestNeighbor = neighbor;
+			if (distance < leastDistance) {
+				leastDistance = distance;
+				nearestNeighbor = neighbor;
+			}
 		}
 	}
 
@@ -364,17 +369,17 @@ Cluster combine(Cluster cluster1, Cluster cluster2) {
 
 	Cluster mergedCluster(meanVector);
 
-	mergedCluster.documents->insert(cluster1.documents.begin(), cluster1.documents.end());
-	mergedCluster.documents->insert(cluster2.documents.begin(), cluster2.documents.end());
+	mergedCluster.documents->insert(cluster1.documents->begin(), cluster1.documents->end());
+	mergedCluster.documents->insert(cluster2.documents->begin(), cluster2.documents->end());
 
-	mergedCluster.neighbors->insert(cluster1.neighbors.begin(), cluster1.neighbors.end());
-	mergedCluster.neighbors->insert(cluster2.neighbors.begin(), cluster2.neighbors.end());
+	mergedCluster.neighbors->insert(cluster1.neighbors->begin(), cluster1.neighbors->end());
+	mergedCluster.neighbors->insert(cluster2.neighbors->begin(), cluster2.neighbors->end());
 	// TODO Necessary?
 	mergedCluster.neighbors->erase(cluster1);
 	mergedCluster.neighbors->erase(cluster2);
 
-	mergedCluster.coordinates->insert(cluster1.coordinates.begin(), cluster1.coordinates.end());
-	mergedCluster.coordinates->insert(cluster2.coordinates.begin(), cluster2.coordinates.end());
+	mergedCluster.coordinates->insert(cluster1.coordinates->begin(), cluster1.coordinates->end());
+	mergedCluster.coordinates->insert(cluster2.coordinates->begin(), cluster2.coordinates->end());
 
 	/* TODO Explicitly destroy cluster1, cluster2?  If so, here or in caller? */
 
@@ -451,7 +456,10 @@ void mergeToSize() {
 	readCodebook(&coordinateToCluster, &topLevelClusters);
 	readCalibratedData(&coordinateToCluster);
 
-	smallest_cluster_heap_t heap(DocumentsSizeComparison());
+	/* Extra parentheses necessary here to tell the lexer that DocumentsSizeComparison() is not
+	 * an unnamed function declaration..
+	 */
+	smallest_cluster_heap_t heap((DocumentsSizeComparison()));
 
 	/* For each initial Cluster.. */
 	for (int row = 0; row < g_rows; row++) {
@@ -469,7 +477,7 @@ void mergeToSize() {
 			tryInsertNeighbor(downLeft(coordinate), coordinateToCluster, &neighbors);
 			tryInsertNeighbor(downRight(coordinate), coordinateToCluster, &neighbors);
 
-			center.neighbors = neighbors;
+			(*(center.neighbors)) = neighbors;
 
 			/* Push on to the heap. */
 			heap.push(center);
@@ -478,10 +486,12 @@ void mergeToSize() {
 
 	bool done = false;
 	while (!done) {
-		Cluster smallestCluster = heap.pop();
+		// Read and pop off the cluster with the fewest documents.
+		Cluster smallestCluster = heap.top();
+		heap.pop();
 
 		if (topLevelClusters.find(smallestCluster) != topLevelClusters.end()) {
-			Cluster nearestNeighbor = findNearestNeighbor(smallestCluster);
+			Cluster nearestNeighbor = findNearestNeighbor(smallestCluster, topLevelClusters);
 
 			Cluster mergedCluster = combine(smallestCluster, nearestNeighbor);
 
@@ -493,12 +503,11 @@ void mergeToSize() {
 			heap.push(mergedCluster);
 
 			if (mergedCluster.documents->size() >= g_requestedMinimumSize) {
-				done = mergingIsComplete();
+				done = mergingIsComplete(topLevelClusters);
 			}
 		}
 	}
 
-	/* TODO Write out data structures. */
 	writeOutClusterFile(topLevelClusters);
 
 	cout << "mergeToSize finishing at " << getAsctime() << endl;
