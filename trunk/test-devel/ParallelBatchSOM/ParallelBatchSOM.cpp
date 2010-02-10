@@ -4,7 +4,7 @@
  *  Created on: Dec 16, 2009
  *      Author: jrbibers
  */
-
+// TODO Trim includes.
 #include <iostream>
 #include <fstream>
 #include <sstream>
@@ -25,6 +25,7 @@ using namespace std;
 using std::cerr;
 using std::endl;
 
+// TODO Improve data design.
 typedef vector<map<int, float> > training_data_t;
 
 
@@ -60,18 +61,6 @@ struct Coordinate {
 	Coordinate(int r, int c) { row = r; column = c; }
 };
 
-
-//training_data_t* randomlySampleTrainingVectors(training_data_t* trainingVectors, int resultSize) {
-//	training_data_t* sampled = new training_data_t();
-//
-//	for (int i = 0; i < resultSize; i++) {
-//		int selectedIndex = rand() % trainingVectors->size();
-//		sampled->push_back((*trainingVectors)[selectedIndex]);
-//	}
-//
-//	return sampled;
-//}
-
 char* getAsctime() {
 	time_t rawTime;
 	time(&rawTime);
@@ -91,12 +80,6 @@ void addScaledSparseVectorToNodeVector(float* node, float scalar, map<int, float
 	}
 }
 
-void scaleNodeVector(float* node, float* numerator, float scalar) {
-	for (int i = 0; i < g_dim; i++) {
-		node[i] = numerator[i] * scalar;
-	}
-}
-
 /* For binary-valued training vectors, would could optimize by replacing the
  * map<int, float>s with some kind of bit array.
  * As Russell mentions, perhaps for certain degrees of sparseness we may be better served
@@ -108,46 +91,51 @@ float* calculateNodeIndex(float* net, Coordinate coord) {
 
 /* TODO Replace linear algebra functions with calls to BLAS? */
 
-/* According to equation 8, exploiting sparseness.
- * vector is w_k and indexToOnes represents a binary-valued training vector.
+///* According to equation 8, exploiting sparseness.
+// * vector is w_k and indexToOnes represents a binary-valued training vector.
+// */
+//float distanceToSparse(float* vector, map<int, float> sparseVector, float recentSquaredNorm) {
+//	float leftSum = 0.0;
+//
+//	for (map<int, float>::const_iterator it = sparseVector.begin(); it != sparseVector.end(); it++) {
+//		int sparseIndex = it->first;
+//		float sparseValue = it->second;
+//
+//		leftSum += sparseValue * (sparseValue - 2 * vector[sparseIndex]);
+//	}
+//
+//	float rightSum = recentSquaredNorm;
+//
+//	if (leftSum + rightSum < 0) {
+//		cout << "Error: leftSum = " << leftSum << "; rightSum = " << rightSum << endl;
+//	}
+//
+//	return (leftSum + rightSum);
+//}
+
+/* TODO The sparse vector norms should be calculated once per vector per program execution.
+ * This should help a lot, but will require time for a big data re-design.
  */
-float distanceToSparse(float* vector, map<int, float> sparseVector, float recentSquaredNorm) {
-	float leftSum = 0.0;
-
-	for (map<int, float>::const_iterator it = sparseVector.begin(); it != sparseVector.end(); it++) {
-		int sparseIndex = it->first;
-		float sparseValue = it->second;
-
-		leftSum += sparseValue * (sparseValue - 2 * vector[sparseIndex]);
-	}
-
-	float rightSum = recentSquaredNorm;
-
-	if (leftSum + rightSum < 0) {
-		cout << "Error: leftSum = " << leftSum << "; rightSum = " << rightSum << endl;
-	}
-
-	return (leftSum + rightSum);
-}
-
-float calculateCosineSimilarity(float* netVector, map<int, float> sparseVector, float recentSquaredNorm) {
+float calculateCosineSimilarity(
+		float* neuronVector, map<int, float> sparseVector, float neuronVectorNorm) {
 	float dotProduct = 0.0;
-	//float sparseSquaredNorm = 0.0;
+	float sparseSquaredNorm = 0.0;
 
 	for (map<int, float>::const_iterator it = sparseVector.begin(); it != sparseVector.end(); it++) {
-		dotProduct += (it->second) * netVector[it->first];
-		//sparseSquaredNorm += (it->second) * (it->second);
+		dotProduct += (it->second) * neuronVector[it->first];
+		sparseSquaredNorm += (it->second) * (it->second);
 	}
 
-	//return (dotProduct / (sqrt(sparseSquaredNorm) * sqrt(recentSquaredNorm)));
-	return (dotProduct / (sqrt(sparseVector.size()) * sqrt(recentSquaredNorm)));
+	return (dotProduct / (sqrt(sparseSquaredNorm) * neuronVectorNorm));
+//	return (dotProduct / (sqrt(sparseVector.size()) * sqrt(recentSquaredNorm)));
 }
 
 /* NOTE: This entire notion breaks down when the cosine similarity may be negative.
  * This will not happen with the data we're currently considering.
  */
-float calculateCosineDissimilarity(float* netVector, map<int, float> sparseVector, float recentSquaredNorm) {
-	return 1 - calculateCosineSimilarity(netVector, sparseVector, recentSquaredNorm);
+float calculateCosineDissimilarity(
+		float* neuronVector, map<int, float> sparseVector, float neuronVectorNorm) {
+	return 1 - calculateCosineSimilarity(neuronVector, sparseVector, neuronVectorNorm);
 }
 
 ///* Don't bother sqrting the norms when only comparison to other such numbers is desired.
@@ -402,12 +390,102 @@ training_data_t* loadMyTrainingVectorsFromDense(int myRank) {
 	}
 }
 
-// Assumes that the file contains lines which give indices to non-zeroes in a binary-valued vector.
 training_data_t* loadMyTrainingVectorsFromSparse(int myRank) {
-	cout << "Loading training vectors (from sparse representation).. " << endl;
-
 	if (myRank == 0) {
 		cout << "Starting training vectors load at " << getAsctime() << endl;
+	}
+
+	ifstream trainingFile(g_trainingDataPath.c_str());
+
+	if (trainingFile.is_open()) {
+		string firstLine;
+		getline(trainingFile, firstLine);
+		istringstream firstLineStream(firstLine);
+		int dimensions;
+		firstLineStream >> g_numberOfVectors >> dimensions;
+		if (dimensions != g_dim) {
+			cerr << "Dimensionality of the training set (" << dimensions;
+			cout << ") does not agree with the dimensionality of the codebook vectors (";
+			cout << g_dim << ")." << endl;
+			exit(1);
+		}
+
+		const string commentMarker("#");
+
+		training_data_t* trainingVectors = new training_data_t();
+
+		int skippedVectorCount = 0;
+		int lineNumber = 0;
+		string line;
+		while (getline(trainingFile, line)) {
+			// Skip comments.
+			if (0 == line.find(commentMarker)) {
+				continue;
+			}
+
+			// Only read lines assigned to my rank.
+			if (lineNumber % g_numberOfJobs == myRank) {
+				istringstream linestream(line);
+
+				// Read and ignore document ID.
+				int documentID;
+				linestream >> documentID;
+
+				map<int, float> trainingVector;
+
+				int oneBasedIndex;
+				while (linestream >> oneBasedIndex) {
+					int zeroBasedIndex = oneBasedIndex - 1;
+
+					if (0 <= zeroBasedIndex && zeroBasedIndex < g_dim) {
+						float value;
+						linestream >> value;
+
+						trainingVector[zeroBasedIndex] = value;
+					} else {
+						cerr << "Dimensionality of a training vector exceeded that of the codebook." << endl;
+						exit(1);
+					}
+				}
+
+				if (trainingVector.empty()) {
+					skippedVectorCount++;
+				} else {
+					trainingVectors->push_back(trainingVector);
+				}
+			}
+
+			lineNumber++;
+		}
+
+		trainingFile.close();
+
+		if (myRank == 0) {
+			cout << "Finishing training vectors load at " << getAsctime() << endl;
+		}
+
+		if (skippedVectorCount > 0) {
+			if (myRank == 0) {
+				cerr << "WARNING: Skipped " << skippedVectorCount
+					<< " training vectors with no non-zero coordinates.  "
+					<< "If you are not using the cosine similarity metric than remove this check/skip!"
+					<< endl;
+			}
+		}
+
+		cout << "Done." << endl;
+
+		return trainingVectors;
+	} else {
+		cerr << "Error opening training data file!" << endl;
+		exit(1);
+	}
+}
+
+// Assumes that the file contains lines which give indices to non-zeroes in a binary-valued vector.
+training_data_t* loadMyBinaryValuedTrainingVectorsFromSparse(int myRank) {
+	if (myRank == 0) {
+		cout << "Starting binary-valued  training vectors load at " << getAsctime() << endl;
 	}
 
 	ifstream trainingFile(g_trainingDataPath.c_str());
@@ -474,10 +552,6 @@ training_data_t* loadMyTrainingVectorsFromSparse(int myRank) {
 
 		trainingFile.close();
 
-		if (myRank == 0) {
-			cout << "Finishing training vectors load at " << getAsctime() << endl;
-		}
-
 		if (skippedVectorCount > 0) {
 			if (myRank == 0) {
 				cerr << "WARNING: Skipped " << skippedVectorCount
@@ -487,7 +561,9 @@ training_data_t* loadMyTrainingVectorsFromSparse(int myRank) {
 			}
 		}
 
-		cout << "Done." << endl;
+		if (myRank == 0) {
+			cout << "Finishing binary-valued training vectors load at " << getAsctime() << endl;
+		}
 
 		return trainingVectors;
 	} else {
@@ -496,35 +572,35 @@ training_data_t* loadMyTrainingVectorsFromSparse(int myRank) {
 	}
 }
 
-Coordinate findWinnerEuclidean(map<int, float> trainingVector, float* net, float* recentSquaredNorms) {
-    /* Long term TODO: In late training (or when convergence can be presumed decent),
-	 * start recording the net (i, j) for the BMU on the previous timestep or two, then
-	 * search only in neighborhoods of that rather than the whole net.
-	 */
-    float shortestDistance = numeric_limits<float>::max();
-    Coordinate winner(0, 0);
+//Coordinate findWinnerEuclidean(map<int, float> trainingVector, float* net, float* recentSquaredNorms) {
+//    /* Long term TODO: In late training (or when convergence can be presumed decent),
+//	 * start recording the net (i, j) for the BMU on the previous timestep or two, then
+//	 * search only in neighborhoods of that rather than the whole net.
+//	 */
+//    float shortestDistance = numeric_limits<float>::max();
+//    Coordinate winner(0, 0);
+//
+//    for (int row = 0; row < g_rows; row++) {
+//    	for (int column = 0; column < g_columns; column++) {
+//    		Coordinate coord(row, column);
+//
+//    		float recentSquaredNorm = recentSquaredNorms[(row * g_columns) + column];
+//
+//    		float distance =
+//    				distanceToSparse(
+//    						calculateNodeIndex(net, coord), trainingVector, recentSquaredNorm);
+//
+//    		if (distance < shortestDistance) {
+//				shortestDistance = distance;
+//				winner = coord;
+//    		}
+//    	}
+//    }
+//
+//    return winner;
+//}
 
-    for (int row = 0; row < g_rows; row++) {
-    	for (int column = 0; column < g_columns; column++) {
-    		Coordinate coord(row, column);
-
-    		float recentSquaredNorm = recentSquaredNorms[(row * g_columns) + column];
-
-    		float distance =
-    				distanceToSparse(
-    						calculateNodeIndex(net, coord), trainingVector, recentSquaredNorm);
-
-    		if (distance < shortestDistance) {
-				shortestDistance = distance;
-				winner = coord;
-    		}
-    	}
-    }
-
-    return winner;
-}
-
-Coordinate findWinnerCosine(map<int, float> trainingVector, float* net, float* recentSquaredNorms) {
+Coordinate findWinnerCosine(map<int, float> trainingVector, float* net, float* codebookVectorNorms) {
     /* Long term TODO: In late training (or when convergence can be presumed decent),
 	 * start recording the net (i, j) for the BMU on the previous timestep or two, then
 	 * search only in neighborhoods of that rather than the whole net.
@@ -536,10 +612,11 @@ Coordinate findWinnerCosine(map<int, float> trainingVector, float* net, float* r
     	for (int column = 0; column < g_columns; column++) {
     		Coordinate coord(row, column);
 
-    		float recentSquaredNorm = recentSquaredNorms[(row * g_columns) + column];
+    		float neuronVectorNorm = codebookVectorNorms[(row * g_columns) + column];
 
     		float dissimilarity =
-    				calculateCosineDissimilarity(calculateNodeIndex(net, coord), trainingVector, recentSquaredNorm);
+    				calculateCosineDissimilarity(
+    						calculateNodeIndex(net, coord), trainingVector, neuronVectorNorm);
 
     		if (dissimilarity < leastDissimilarity) {
 				leastDissimilarity = dissimilarity;
@@ -590,10 +667,13 @@ void calculateNewCodebook(float* net) {
 						<< g_myDenominators[(row * g_columns) + column] << endl;
 			}
 
-			scaleNodeVector(
-					calculateNodeIndex(net, coord),
-					calculateNodeIndex(g_myNumerators, coord),
-					(1.0 / g_myDenominators[(row * g_columns) + column]));
+			float* referenceVector = calculateNodeIndex(net, coord);
+			float* unscaledNewReferenceVector = calculateNodeIndex(g_myNumerators, coord);
+			float scalar = (1.0 / g_myDenominators[(row * g_columns) + column]);
+
+			for (int ii = 0; ii < g_dim; ii++) {
+				referenceVector[ii] = scalar * unscaledNewReferenceVector[ii];
+			}
 		}
 	}
 
@@ -605,58 +685,60 @@ void calculateNewCodebook(float* net) {
     cout << "Done." << endl;
 }
 
-void calculateSquaredNorms(float* oldSquaredNorms, float* net) {
+void calculateCodebookVectorNorms(float* oldNorms, float* codebook) {
 	int numberOfNodes = g_rows * g_columns;
 
 	for (int nodeIndex = 0; nodeIndex < numberOfNodes; nodeIndex++) {
-		float* currentNode = net + nodeIndex * g_dim;
-		float* currentNorm = oldSquaredNorms + nodeIndex;
+		float* currentNode = codebook + nodeIndex * g_dim;
+		float* currentNorm = oldNorms + nodeIndex;
 
 		for (int weightIndex = 0; weightIndex < g_dim; weightIndex++) {
 			float weight = currentNode[weightIndex];
 
 			(*currentNorm) += weight * weight;
 		}
+
+		(*currentNorm) = sqrt(*currentNorm);
 	}
 }
 
-float calculateEuclideanQuantizationError(training_data_t* trainingVectors, float* net, float* squaredNorms) {
-	float totalDiscrepancy = 0.0;
+//float calculateEuclideanQuantizationError(training_data_t* trainingVectors, float* net, float* squaredNorms) {
+//	float totalDiscrepancy = 0.0;
+//
+//	for (vector<map<int, float> >::const_iterator vecIt = trainingVectors->begin();
+//			vecIt != trainingVectors->end();
+//			vecIt++) {
+//		map<int, float> trainingVector = *vecIt;
+//
+//		Coordinate winnerCoordinate = findWinnerEuclidean(trainingVector, net, squaredNorms);
+//
+//		float squaredNorm =
+//				squaredNorms[(winnerCoordinate.row * g_columns) + winnerCoordinate.column];
+//		float* winner = calculateNodeIndex(net, winnerCoordinate);
+//
+//		float discrepancy =	distanceToSparse(winner, trainingVector, squaredNorm);
+//
+//		totalDiscrepancy += discrepancy;
+//	}
+//
+//	return (totalDiscrepancy / (*trainingVectors).size());
+//}
 
-	for (vector<map<int, float> >::const_iterator vecIt = trainingVectors->begin();
-			vecIt != trainingVectors->end();
-			vecIt++) {
-		map<int, float> trainingVector = *vecIt;
-
-		Coordinate winnerCoordinate = findWinnerEuclidean(trainingVector, net, squaredNorms);
-
-		float squaredNorm =
-				squaredNorms[(winnerCoordinate.row * g_columns) + winnerCoordinate.column];
-		float* winner = calculateNodeIndex(net, winnerCoordinate);
-
-		float discrepancy =	distanceToSparse(winner, trainingVector, squaredNorm);
-
-		totalDiscrepancy += discrepancy;
-	}
-
-	return (totalDiscrepancy / (*trainingVectors).size());
-}
-
-float calculateEuclideanQuantizationError(training_data_t* trainingVectors, float* net) {
-	int numberOfNodes = g_rows * g_columns;
-	float* squaredNorms = new float[numberOfNodes];
-	zeroOut(squaredNorms, numberOfNodes);
-	calculateSquaredNorms(squaredNorms, net);
-
-	float quantizationError = calculateEuclideanQuantizationError(trainingVectors, net, squaredNorms);
-
-	delete [] squaredNorms;
-
-	return quantizationError;
-}
+//float calculateEuclideanQuantizationError(training_data_t* trainingVectors, float* net) {
+//	int numberOfNodes = g_rows * g_columns;
+//	float* squaredNorms = new float[numberOfNodes];
+//	zeroOut(squaredNorms, numberOfNodes);
+//	calculateSquaredNorms(squaredNorms, net);
+//
+//	float quantizationError = calculateEuclideanQuantizationError(trainingVectors, net, squaredNorms);
+//
+//	delete [] squaredNorms;
+//
+//	return quantizationError;
+//}
 
 float calculateCosineQuantizationError(
-		training_data_t* trainingVectors, float* net, float* recentSquaredNorms) {
+		training_data_t* trainingVectors, float* net, float* codebookVectorNorms) {
 	float totalDissimilarity = 0.0;
 
 	for (vector<map<int, float> >::const_iterator vecIt = trainingVectors->begin();
@@ -664,12 +746,12 @@ float calculateCosineQuantizationError(
 			vecIt++) {
 		map<int, float> trainingVector = *vecIt;
 
-		Coordinate winnerCoordinate = findWinnerCosine(trainingVector, net, recentSquaredNorms);
+		Coordinate winnerCoordinate = findWinnerCosine(trainingVector, net, codebookVectorNorms);
 		float* winner = calculateNodeIndex(net, winnerCoordinate);
 
-		float recentSquaredNorm =
-				recentSquaredNorms[(winnerCoordinate.row * g_columns) + winnerCoordinate.column];
-		float dissimilarity = calculateCosineDissimilarity(winner, trainingVector, recentSquaredNorm);
+		float neuronVectorNorm =
+				codebookVectorNorms[(winnerCoordinate.row * g_columns) + winnerCoordinate.column];
+		float dissimilarity = calculateCosineDissimilarity(winner, trainingVector, neuronVectorNorm);
 
 		totalDissimilarity += dissimilarity;
 	}
@@ -678,13 +760,13 @@ float calculateCosineQuantizationError(
 }
 
 void reportAverageQuantizationError(
-		training_data_t* sampledTrainingVectors, float* net, int myRank, float* recentSquaredNorms) {
+		training_data_t* sampledTrainingVectors, float* net, int myRank, float* codebookVectorNorms) {
 	if (myRank == 0) {
 		cout << "Quantization error report starting at " << getAsctime() << endl;
 	}
 
 	float quantizationErrorStart =
-				calculateCosineQuantizationError(sampledTrainingVectors, net, recentSquaredNorms);
+				calculateCosineQuantizationError(sampledTrainingVectors, net, codebookVectorNorms);
 	//				calculateEuclideanQuantizationError(myTrainingVectors, net, recentSquaredNorms);
 	float* qerrorLocal = new float[1];
 	*qerrorLocal = quantizationErrorStart;
@@ -730,22 +812,23 @@ void train(int myRank, float* net, training_data_t* myTrainingVectors) {
 	g_myDenominators2 = new float[numberOfNodes];
 	zeroOut(g_myDenominators2, numberOfNodes);
 
-	float* recentSquaredNorms = new float[numberOfNodes];
-	zeroOut(recentSquaredNorms, numberOfNodes);
-	calculateSquaredNorms(recentSquaredNorms, net);
+	float* codebookVectorNorms = new float[numberOfNodes];
+	zeroOut(codebookVectorNorms, numberOfNodes);
+	calculateCodebookVectorNorms(codebookVectorNorms, net);
 
 	g_gaussians = new float[numberOfNodes];
 	updateGaussians(width);
 
 	training_data_t::const_iterator sampleStart = myTrainingVectors->begin();
-	int sampleSize = 100; // TODO Just a thought for now.  Can we do better?
-	if (sampleSize > myTrainingVectors->size()) {
+	// TODO Just a thought for now.  Can we do better?
+	int sampleSize = 100;
+	if (myTrainingVectors->size() < sampleSize) {
 		sampleSize = myTrainingVectors->size();
 	}
 	training_data_t::const_iterator sampleEnd = myTrainingVectors->begin() + sampleSize;
 	training_data_t sampledTrainingVectors(sampleStart, sampleEnd);
 
-	reportAverageQuantizationError(&sampledTrainingVectors, net, myRank, recentSquaredNorms);
+	reportAverageQuantizationError(&sampledTrainingVectors, net, myRank, codebookVectorNorms);
 
 	int numberOfTimesteps =
 			(int) (((float) g_epochLengthInTimesteps) * ceil(((float) g_numberOfTrainingSteps) / (((float) g_numberOfJobs) * ((float) g_epochLengthInTimesteps))));
@@ -766,7 +849,7 @@ void train(int myRank, float* net, training_data_t* myTrainingVectors) {
 	for (t = 0; t < numberOfTimesteps; t++) {
 		map<int, float> trainingVector = myTrainingVectors->at(t % myTrainingVectors->size());
 
-		Coordinate winner = findWinnerCosine(trainingVector, net, recentSquaredNorms);
+		Coordinate winner = findWinnerCosine(trainingVector, net, codebookVectorNorms);
 //		Coordinate winner = findWinnerEuclidean(trainingVector, net, recentSquaredNorms);
 
 		// Accumulate for equation 5 (exploit sparseness here, too).
@@ -818,10 +901,10 @@ void train(int myRank, float* net, training_data_t* myTrainingVectors) {
 			zeroOut(g_myNumerators, flatSize);
 			zeroOut(g_myDenominators, numberOfNodes);
 
-			zeroOut(recentSquaredNorms, numberOfNodes);
-			calculateSquaredNorms(recentSquaredNorms, net);
+			zeroOut(codebookVectorNorms, numberOfNodes);
+			calculateCodebookVectorNorms(codebookVectorNorms, net);
 
-			reportAverageQuantizationError(&sampledTrainingVectors, net, myRank, recentSquaredNorms);
+			reportAverageQuantizationError(&sampledTrainingVectors, net, myRank, codebookVectorNorms);
 
 			if (myRank == 0) {
 				cout << "Update finishing at " << getAsctime() << endl;
