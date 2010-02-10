@@ -22,7 +22,6 @@ using std::endl;
 #define COLUMN(coord) ((coord).second)
 
 typedef int cluster_id_t;
-typedef pair<float, pair<cluster_id_t, cluster_id_t> > neighbor_pair_t;
 
 typedef int document_id_t;
 
@@ -46,6 +45,8 @@ vector<float*> g_vectors;
 vector<set<document_id_t> > g_documents;
 vector<set<cluster_id_t> > g_neighbors;
 vector<set<coordinate_t> > g_coordinates;
+
+map<cluster_id_t, float> g_distanceToNearestNeighbor;
 
 
 float calculateCosineSimilarity(float* vector1, float* vector2) {
@@ -72,14 +73,43 @@ float calculateCosineDissimilarity(float* vector1, float* vector2) {
 	return (1 - calculateCosineSimilarity(vector1, vector2));
 }
 
-class NearestNeighborCompare {
+set<cluster_id_t> g_topLevelClusters;
+
+float distanceToNearestNeighbor(cluster_id_t center) {
+	float leastDistance = numeric_limits<float>::max();
+
+	for (set<cluster_id_t>::iterator neighbors = g_neighbors[center].begin();
+			neighbors != g_neighbors[center].end();
+			neighbors++) {
+		cluster_id_t neighbor = *neighbors;
+
+		if (g_topLevelClusters.find(neighbor) != g_topLevelClusters.end()) {
+			float distance = calculateCosineDissimilarity(g_vectors[center], g_vectors[neighbor]);
+
+			if (distance < leastDistance) {
+				leastDistance = distance;
+			}
+		}
+	}
+
+	return leastDistance;
+}
+
+class SmallerThenCloserCompare {
 public:
-	bool operator() (const neighbor_pair_t& neighbors1, const neighbor_pair_t& neighbors2) const {
-		return (neighbors1.first > neighbors2.first);
+	bool operator() (const cluster_id_t& cluster1, const cluster_id_t& cluster2) const {
+		int size1 = g_documents[cluster1].size();
+		int size2 = g_documents[cluster2].size();
+
+		if (size1 == size2) {
+			return (g_distanceToNearestNeighbor[cluster1] > g_distanceToNearestNeighbor[cluster2]);
+		} else {
+			return (size1 > size2);
+		}
 	}
 };
 
-typedef priority_queue<neighbor_pair_t, vector<neighbor_pair_t>, NearestNeighborCompare> nearest_neighbor_heap_t;
+typedef priority_queue<cluster_id_t, vector<cluster_id_t>, SmallerThenCloserCompare> smallest_then_closest_heap_t;
 
 
 char* getAsctime() {
@@ -106,9 +136,7 @@ void readConfigurationFile() {
 	cout << "Done." << endl;
 }
 
-void readCodebook(
-		map<coordinate_t, cluster_id_t>* coordinateToCluster,
-		set<cluster_id_t>* topLevelClusters) {
+void readCodebook(map<coordinate_t, cluster_id_t>* coordinateToCluster) {
 	cout << "Starting codebook load at " << getAsctime() << endl;
 
 	ifstream codebookFile(g_codebookPath.c_str());
@@ -160,7 +188,7 @@ void readCodebook(
 			g_coordinates.push_back(set<coordinate_t>());
 			g_coordinates[cluster].insert(coordinate);
 
-			topLevelClusters->insert(cluster);
+			g_topLevelClusters.insert(cluster);
 			(*coordinateToCluster)[coordinate] = cluster;
 
 			lineNumber++;
@@ -295,17 +323,10 @@ bool coordinateInRange(coordinate_t coord) {
 void tryInsertNeighbor(
 		cluster_id_t cluster,
 		coordinate_t neighborCoord,
-		map<coordinate_t, cluster_id_t>* coordinateToCluster,
-		nearest_neighbor_heap_t* heap) {
+		map<coordinate_t, cluster_id_t>* coordinateToCluster) {
 	if (coordinateInRange(neighborCoord)) {
 		cluster_id_t neighbor = (*coordinateToCluster)[neighborCoord];
 		g_neighbors[cluster].insert(neighbor);
-		if (cluster < neighbor) {
-			heap->push(
-					neighbor_pair_t(
-							calculateCosineDissimilarity(g_vectors[cluster], g_vectors[neighbor]),
-							make_pair(cluster, neighbor)));
-		}
 	}
 }
 
@@ -319,34 +340,6 @@ float* vectorMean(float* vector1, float* vector2) {
 
 	return meanVector;
 }
-
-//cluster_id_t findNearestNeighbor(cluster_id_t center, set<cluster_id_t>* topLevelClusters) {
-//	float leastDistance = numeric_limits<float>::max();
-//	cluster_id_t nearestNeighbor = -1;
-//
-//	for (set<cluster_id_t>::iterator neighbors = g_neighbors[center].begin();
-//			neighbors != g_neighbors[center].end();
-//			neighbors++) {
-//		cluster_id_t neighbor = *neighbors;
-//
-//		if (topLevelClusters->find(neighbor) != topLevelClusters->end()) {
-//			float distance = calculateCosineDissimilarity(g_vectors[center], g_vectors[neighbor]);
-//
-//			if (distance < leastDistance) {
-//				leastDistance = distance;
-//				nearestNeighbor = neighbor;
-//			}
-//		}
-//	}
-//
-//	if (nearestNeighbor < 0) {
-//		cerr << "Error: Couldn't identify any nearest neighbor for cluster " << center << endl;
-////		printCluster(cerr, center);
-//		exit(1);
-//	}
-//
-//	return nearestNeighbor;
-//}
 
 /* Create new cluster.
  * 		Vector = average(?) of input vectors.
@@ -377,6 +370,8 @@ cluster_id_t combine(cluster_id_t cluster1, cluster_id_t cluster2) {
 		g_neighbors[neighbor].insert(mergedCluster);
 	}
 
+	g_distanceToNearestNeighbor[mergedCluster] = distanceToNearestNeighbor(mergedCluster);
+
 
 	g_coordinates.push_back(set<coordinate_t>());
 	g_coordinates[mergedCluster].insert(g_coordinates[cluster1].begin(), g_coordinates[cluster1].end());
@@ -387,25 +382,48 @@ cluster_id_t combine(cluster_id_t cluster1, cluster_id_t cluster2) {
 	return mergedCluster;
 }
 
-bool mergingIsComplete(set<cluster_id_t>* topLevelClusters) {
-	for (set<cluster_id_t>::iterator it = topLevelClusters->begin(); it != topLevelClusters->end(); it++) {
+bool mergingIsComplete() {
+	for (set<cluster_id_t>::iterator it = g_topLevelClusters.begin(); it != g_topLevelClusters.end(); it++) {
 		cluster_id_t cluster = *it;
 
-		if (g_documents[cluster].size() == 0) {
-			continue;
+		if (g_documents[cluster].size() < g_requestedMinimumSize) {
+			return false;
 		}
-
-		if (g_documents[cluster].size() >= g_requestedMinimumSize) {
-			continue;
-		}
-
-		return false;
 	}
 
 	return true;
 }
 
-void writeOutClusterFile(set<cluster_id_t>* topLevelClusters) {
+
+cluster_id_t findNearestNeighbor(cluster_id_t center) {
+	float leastDistance = numeric_limits<float>::max();
+	cluster_id_t nearestNeighbor = -1;
+
+	for (set<cluster_id_t>::iterator neighbors = g_neighbors[center].begin();
+			neighbors != g_neighbors[center].end();
+			neighbors++) {
+		cluster_id_t neighbor = *neighbors;
+
+		if (g_topLevelClusters.find(neighbor) != g_topLevelClusters.end()) {
+			float distance = calculateCosineDissimilarity(g_vectors[center], g_vectors[neighbor]);
+
+			if (distance < leastDistance) {
+				leastDistance = distance;
+				nearestNeighbor = neighbor;
+			}
+		}
+	}
+
+	if (nearestNeighbor < 0) {
+		cerr << "Error: Couldn't identify any nearest neighbor for cluster " << center << endl;
+//		printCluster(cerr, center);
+		exit(1);
+	}
+
+	return nearestNeighbor;
+}
+
+void writeOutClusterFile() {
 	cout << "Write out to cluster file starting at " << getAsctime() << endl;
 
 	ofstream outClusterFile(g_outClusterDataPath.c_str());
@@ -414,7 +432,7 @@ void writeOutClusterFile(set<cluster_id_t>* topLevelClusters) {
 
 		outClusterFile << "Cluster ID | Contained documents | Contained coordinates | Reference vector" << endl;
 
-		for (set<cluster_id_t>::iterator it = topLevelClusters->begin(); it != topLevelClusters->end(); it++) {
+		for (set<cluster_id_t>::iterator it = g_topLevelClusters.begin(); it != g_topLevelClusters.end(); it++) {
 			cluster_id_t cluster = *it;
 
 			/* Cluster ID. */
@@ -471,92 +489,93 @@ void mergeToSize() {
 	const int flatSize = numberOfNodes * g_dim;
 
 	map<coordinate_t, cluster_id_t> coordinateToCluster;
-	set<cluster_id_t> topLevelClusters;
 
-	readCodebook(&coordinateToCluster, &topLevelClusters);
+	readCodebook(&coordinateToCluster);
 	readCalibratedData(&coordinateToCluster);
 
-	nearest_neighbor_heap_t heap;
+	vector<cluster_id_t> clusters;
+
+	cout << "Initial neighboring setting starting at " << getAsctime() << endl;
 
 	/* For each initial cluster.. */
 	for (int row = 0; row < g_rows; row++) {
 		for (int column = 0; column < g_columns; column++) {
 			coordinate_t coordinate(row, column);
 
-			/* Set the initial neighbors and push neighboring cluster pairs on to the heap. */
+			/* Set the initial neighbors. */
 			cluster_id_t center = coordinateToCluster[coordinate];
 
-			tryInsertNeighbor(center, upLeft(coordinate), &coordinateToCluster, &heap);
-			tryInsertNeighbor(center, upRight(coordinate), &coordinateToCluster, &heap);
-			tryInsertNeighbor(center, dueLeft(coordinate), &coordinateToCluster, &heap);
-			tryInsertNeighbor(center, dueRight(coordinate), &coordinateToCluster, &heap);
-			tryInsertNeighbor(center, downLeft(coordinate), &coordinateToCluster, &heap);
-			tryInsertNeighbor(center, downRight(coordinate), &coordinateToCluster, &heap);
+			tryInsertNeighbor(center, upLeft(coordinate), &coordinateToCluster);
+			tryInsertNeighbor(center, upRight(coordinate), &coordinateToCluster);
+			tryInsertNeighbor(center, dueLeft(coordinate), &coordinateToCluster);
+			tryInsertNeighbor(center, dueRight(coordinate), &coordinateToCluster);
+			tryInsertNeighbor(center, downLeft(coordinate), &coordinateToCluster);
+			tryInsertNeighbor(center, downRight(coordinate), &coordinateToCluster);
+
+			/* Push on to the heap. */
+			clusters.push_back(center);
 		}
 	}
+
+	// Set nearest neighbor distances.
+	for (set<cluster_id_t>::iterator it = g_topLevelClusters.begin(); it != g_topLevelClusters.end(); it++) {
+		cluster_id_t topLevelCluster = *it;
+
+		g_distanceToNearestNeighbor[topLevelCluster] = distanceToNearestNeighbor(topLevelCluster);
+	}
+
+	cout << "Initial heap population starting at " << getAsctime() << endl;
+
+	smallest_then_closest_heap_t heap(clusters.begin(), clusters.end());
 
 	cout << "Initial heap population finishing at " << getAsctime() << endl;
 
 	bool done = false;
 	while (!done) {
 		// Read and pop off the cluster with the fewest documents.
-		neighbor_pair_t nearestNeighbors = heap.top();
+		cluster_id_t smallestCluster = heap.top();
+		//cout << "Smallest = " << smallestCluster << endl;
 		heap.pop();
 
-		float dissimilarity = nearestNeighbors.first;
-		cluster_id_t cluster1 = nearestNeighbors.second.first;
-		cluster_id_t cluster2 = nearestNeighbors.second.second;
-
-		if ((topLevelClusters.find(cluster1) != topLevelClusters.end())
-				&& (topLevelClusters.find(cluster2) != topLevelClusters.end())) {
-//			cluster_id_t nearestNeighbor = findNearestNeighbor(smallestCluster, &topLevelClusters);
-			cluster_id_t mergedCluster = combine(cluster1, cluster2);
+		if (g_topLevelClusters.find(smallestCluster) != g_topLevelClusters.end()) {
+			cluster_id_t nearestNeighbor = findNearestNeighbor(smallestCluster);
+			//cout << "  Nearest = " << nearestNeighbor << endl;
+			cluster_id_t mergedCluster = combine(smallestCluster, nearestNeighbor);
+			//cout << "  Merged = " << mergedCluster << endl;
 
 			if (mergedCluster % 500 == 0) {
 				cout << "Created merge cluster " << mergedCluster;
-				cout << "; nearest neighbors starting this step had dissimilarity ";
-				cout << calculateCosineDissimilarity(g_vectors[cluster1], g_vectors[cluster2]);
-				cout << " with sizes " << g_documents[cluster1].size() << " and ";
-				cout << g_documents[cluster2].size();
+				cout << "; smallest cluster starting this step had size ";
+				cout << g_documents[smallestCluster].size();
 				cout << ".  Time is " << getAsctime() << endl;
 			}
 
-			topLevelClusters.erase(cluster1);
-			topLevelClusters.erase(cluster2);
+			g_topLevelClusters.erase(smallestCluster);
+			g_topLevelClusters.erase(nearestNeighbor);
 
-			topLevelClusters.insert(mergedCluster);
+			g_topLevelClusters.insert(mergedCluster);
 
-			for (set<cluster_id_t>::iterator neighbors = g_neighbors[mergedCluster].begin();
-					neighbors != g_neighbors[mergedCluster].end();
-					neighbors++) {
-				cluster_id_t neighbor = *neighbors;
+			heap.push(mergedCluster);
 
-				heap.push(
-						neighbor_pair_t(
-								calculateCosineDissimilarity(g_vectors[mergedCluster], g_vectors[neighbor]),
-								make_pair(mergedCluster, neighbor)));
-			}
-
-			if ((g_documents[mergedCluster].size() == 0)
-					|| (g_documents[mergedCluster].size() >= g_requestedMinimumSize)) {
-				done = mergingIsComplete(&topLevelClusters);
+			if (g_documents[mergedCluster].size() >= g_requestedMinimumSize) {
+				done = mergingIsComplete();
 			}
 		}
 	}
 
-	writeOutClusterFile(&topLevelClusters);
+	writeOutClusterFile();
 
 	cout << "mergeToSize finishing at " << getAsctime() << endl;
 }
 
 int main(int argc, char *argv[]) {
-	cout << "MergeClustersBySimilarity starting at " << getAsctime() << endl;
+	cout << "MergeClustersBySizeThenSimilarity starting at " << getAsctime() << endl;
 
 	readConfigurationFile();
 
 	mergeToSize();
 
-	cout << "MergeClustersBySimilarity finishing at " << getAsctime() << endl;
+	cout << "MergeClustersBySizeThenSimilarity finishing at " << getAsctime() << endl;
 
 	return 0;
 }
