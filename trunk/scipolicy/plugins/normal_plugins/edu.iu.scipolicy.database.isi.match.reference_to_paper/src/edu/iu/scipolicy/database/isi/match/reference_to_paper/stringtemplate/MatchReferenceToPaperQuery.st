@@ -29,21 +29,16 @@ SET
 	                                             <referenceTableName>.<referenceVolume> = <documentTableName>.<documentVolume> AND
 	                                             <referenceTableName>.<referenceYear> = <documentTableName>.<documentYear>)
 WHERE
-	<referenceTableName>.<referencePK>
-IN (
+	EXISTS (
 	SELECT
-		<referenceTableName>.<referencePK>
-	FROM
-			<referenceTableName>
-		JOIN
-			<documentTableName>
-		ON
+		<documentTableName>.<documentPK>
+	FROM  <documentTableName>
+	WHERE
 			<referenceTableName>.<referenceAuthorFK> = <documentTableName>.<documentFirstAuthorFK> AND
 			<referenceTableName>.<referencePageNumber> = <documentTableName>.<documentBeginningPage> AND
 			<referenceTableName>.<referenceSource> = <documentTableName>.<documentSource> AND
 			<referenceTableName>.<referenceVolume> = <documentTableName>.<documentVolume> AND
-			<referenceTableName>.<referenceYear> = <documentTableName>.<documentYear>
-		WHERE
+			<referenceTableName>.<referenceYear> = <documentTableName>.<documentYear> AND
 			<referenceTableName>.<referencePaperFK> IS NULL AND
 			<referenceTableName>.<referenceAuthorFK> IS NOT NULL AND
 			<referenceTableName>.<referencePageNumber> IS NOT NULL AND
