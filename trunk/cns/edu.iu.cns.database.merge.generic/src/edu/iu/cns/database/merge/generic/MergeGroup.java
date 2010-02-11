@@ -2,6 +2,7 @@ package edu.iu.cns.database.merge.generic;
 
 import java.sql.Connection;
 import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -29,7 +30,7 @@ public class MergeGroup {
 		this.foreignKeys = foreignKeys;
 	}
 
-	public int merge(Connection connection, DatabaseTable toBeMerged) throws MergingErrorException {
+	public int merge(Statement statement, DatabaseTable toBeMerged) throws MergingErrorException {
 		/*
 		 *	identify all foreign keys pointing to the entities that are not pointing to the selected primary entity
     	 * 	change those foreign keys to point to the selected primary entity
@@ -46,7 +47,7 @@ public class MergeGroup {
 		
 		for(ForeignKey foreignKey : foreignKeys) {
 			try {
-				foreignKey.repoint(otherEntities, primaryEntity, connection);
+				foreignKey.repoint(otherEntities, primaryEntity, statement);
 			} catch (SQLException e) {
 				//e.printStackTrace();
 				//make the stacktrace logged, maybe? but not a log the person sees.
@@ -54,15 +55,15 @@ public class MergeGroup {
 			}
 		}
 		
-		removeOtherEntities(otherEntities, connection);
+		removeOtherEntities(otherEntities, statement);
 		return otherEntities.size();
 		
 	}
 
 	private void removeOtherEntities(List<Map<String, Object>> otherEntities,
-			Connection connection) throws MergingErrorException {
+			Statement statement) throws MergingErrorException {
 		try {
-			databaseTable.deleteRowsByColumns(otherEntities, connection);
+			databaseTable.deleteRowsByColumns(otherEntities, statement);
 		} catch (SQLException e) {
 			throw new MergingErrorException("Unable to merge some of the specified rows in the group " + groupIdentifier);
 		}

@@ -2,6 +2,7 @@ package edu.iu.cns.database.merge.generic;
 
 import java.sql.Connection;
 import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Dictionary;
@@ -73,15 +74,22 @@ public class MergeTable implements Algorithm {
 				Collection<MergeGroup> mergeGroups = createMergeGroups(mergingTable, toBeMerged, outputConnection);
 				int entitiesMergedAway = 0;
 				int numberOfMerges = 0;
+				Statement mergeStatement = outputConnection.createStatement();
 				for(MergeGroup group : mergeGroups) {
 					try {
-						int number = group.merge(outputConnection, toBeMerged);
+						int number = group.merge(mergeStatement, toBeMerged);
 						entitiesMergedAway += number;
 						if(number > 0) {
 							numberOfMerges += 1;
 						}
 					} catch (MergingErrorException e) {
 						problems.add(e.getMessage());
+					}
+				}
+				int[] results = mergeStatement.executeBatch();
+				for(int result : results) {
+					if(result == Statement.EXECUTE_FAILED) {
+						throw new AlgorithmExecutionException("Unable to merge the entity groups.");
 					}
 				}
 				if(problems.size() > 0) {
