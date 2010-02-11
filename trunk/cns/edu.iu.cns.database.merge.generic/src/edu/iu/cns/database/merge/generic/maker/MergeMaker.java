@@ -113,7 +113,6 @@ public class MergeMaker {
     				if(marked.contains(next)) {
     					continue;
     				} else {
-    			    	System.err.println("  Adding row previously marked: "  + currentIdentifier(next));
     					marked.add(next);
     					assignIdentifier(next, clusterIdentifier);
     					markNotPrimary(next);
