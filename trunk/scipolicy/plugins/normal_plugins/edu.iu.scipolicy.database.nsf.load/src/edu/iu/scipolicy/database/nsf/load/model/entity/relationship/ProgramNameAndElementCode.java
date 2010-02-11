@@ -1,7 +1,9 @@
 package edu.iu.scipolicy.database.nsf.load.model.entity.relationship;
 
+import java.util.ArrayList;
 import java.util.Dictionary;
 import java.util.Hashtable;
+import java.util.List;
 
 import edu.iu.cns.database.load.framework.DerbyFieldType;
 import edu.iu.cns.database.load.framework.RowItem;
@@ -14,14 +16,17 @@ public class ProgramNameAndElementCode extends RowItem<ProgramNameAndElementCode
 
 	public static final Schema<ProgramNameAndElementCode> SCHEMA = new Schema<ProgramNameAndElementCode>(
 			false,
-			NSF_Database_FieldNames.PROGRAM_NAME_AND_ELEMENT_CODES_PROGRAM_FOREIGN_KEY, DerbyFieldType.FOREIGN_KEY,
-			NSF_Database_FieldNames.PROGRAM_NAME_AND_ELEMENT_CODES_AWARD_FOREIGN_KEY, DerbyFieldType.FOREIGN_KEY
+			NSF_Database_FieldNames.PROGRAM_NAME_AND_ELEMENT_CODES_PROGRAM_FOREIGN_KEY,
+				DerbyFieldType.FOREIGN_KEY,
+			NSF_Database_FieldNames.PROGRAM_NAME_AND_ELEMENT_CODES_AWARD_FOREIGN_KEY,
+				DerbyFieldType.FOREIGN_KEY
 			).
 			FOREIGN_KEYS(
-					NSF_Database_FieldNames.PROGRAM_NAME_AND_ELEMENT_CODES_PROGRAM_FOREIGN_KEY,
-						NSF_Database_FieldNames.PROGRAM_TABLE_NAME,
-					NSF_Database_FieldNames.PROGRAM_NAME_AND_ELEMENT_CODES_AWARD_FOREIGN_KEY,
-						NSF_Database_FieldNames.AWARD_TABLE_NAME);
+				NSF_Database_FieldNames.PROGRAM_NAME_AND_ELEMENT_CODES_PROGRAM_FOREIGN_KEY,
+					NSF_Database_FieldNames.PROGRAM_TABLE_NAME,
+				NSF_Database_FieldNames.PROGRAM_NAME_AND_ELEMENT_CODES_AWARD_FOREIGN_KEY,
+					NSF_Database_FieldNames.AWARD_TABLE_NAME
+			);
 	
 	private Program program;
 	private Award award;
@@ -40,23 +45,33 @@ public class ProgramNameAndElementCode extends RowItem<ProgramNameAndElementCode
 		return this.award;
 	}
 
-	private static Dictionary<String, Object> createAttributes(Program program, Award award) {
-		Dictionary<String, Object> attributes = new Hashtable<String, Object>();
-		
-		attributes.put(NSF_Database_FieldNames.PROGRAM_NAME_AND_ELEMENT_CODES_PROGRAM_FOREIGN_KEY, 
-					   program.getPrimaryKey());
-		
-		attributes.put(NSF_Database_FieldNames.PROGRAM_NAME_AND_ELEMENT_CODES_AWARD_FOREIGN_KEY, 
-					   award.getPrimaryKey());
-		
-		return attributes;
+	/*@Override
+	public boolean shouldMerge(ProgramNameAndElementCode otherItem) {
+		return false;
+	}*/
+
+	@Override
+	public Object createMergeKey() {
+		List<Object> mergeKey = new ArrayList<Object>();
+		mergeKey.add(this.program.getPrimaryKey());
+		mergeKey.add(this.award.getPrimaryKey());
+
+		return mergeKey;
 	}
 
 	@Override
-	public void merge(ProgramNameAndElementCode otherItem) { }
+	public void merge(ProgramNameAndElementCode otherItem) {
+	}
 
-	@Override
-	public boolean shouldMerge(ProgramNameAndElementCode otherItem) {
-		return false;
+	private static Dictionary<String, Object> createAttributes(Program program, Award award) {
+		Dictionary<String, Object> attributes = new Hashtable<String, Object>();
+		attributes.put(
+			NSF_Database_FieldNames.PROGRAM_NAME_AND_ELEMENT_CODES_PROGRAM_FOREIGN_KEY,
+			program.getPrimaryKey());
+		attributes.put(
+			NSF_Database_FieldNames.PROGRAM_NAME_AND_ELEMENT_CODES_AWARD_FOREIGN_KEY,
+			award.getPrimaryKey());
+		
+		return attributes;
 	}
 }

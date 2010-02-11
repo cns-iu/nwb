@@ -3,6 +3,7 @@ package edu.iu.scipolicy.database.isi.load.utilities.parser.test.entity;
 
 import static org.junit.Assert.fail;
 
+import java.util.Collection;
 import java.util.List;
 
 import org.junit.Test;
@@ -70,14 +71,13 @@ public class KeywordTest extends RowItemTest {
 		Keyword firstAuthorKeyword = getFirstAuthorKeyword(keywords);
 		Keyword firstKeywordPlus = getFirstKeywordPlus(keywords);
 		DocumentKeyword firstAuthorDocumentKeyword = DocumentKeywordsTest.getDocumentKeyword(
-			(List<DocumentKeyword>)documentKeywords.getItems(), firstDocument, firstAuthorKeyword);
+			documentKeywords.getItems(), firstDocument, firstAuthorKeyword);
 		DocumentKeyword firstKeywordPlusDocumentKeyword = DocumentKeywordsTest.getDocumentKeyword(
-			(List<DocumentKeyword>)documentKeywords.getItems(), firstDocument, firstKeywordPlus);
+			documentKeywords.getItems(), firstDocument, firstKeywordPlus);
 
 		checkKeyword(
 			firstAuthorKeyword, FIRST_AUTHOR_KEYWORD, ISITableModelParser.AUTHOR_KEYWORDS);
-		checkKeyword(
-			firstKeywordPlus, FIRST_KEYWORD_PLUS, ISITableModelParser.KEYWORDS_PLUS);
+		checkKeyword(firstKeywordPlus, FIRST_KEYWORD_PLUS, ISITableModelParser.KEYWORDS_PLUS);
 		DocumentKeywordsTest.checkDocumentKeyword(firstAuthorDocumentKeyword, 0);
 		DocumentKeywordsTest.checkDocumentKeyword(firstKeywordPlusDocumentKeyword, 0);
 	}
@@ -106,21 +106,13 @@ public class KeywordTest extends RowItemTest {
 		Keyword firstKeywordPlus = getFirstKeywordPlus(keywords);
 		Keyword secondKeywordPlus = getSecondKeywordPlus(keywords);
 		DocumentKeyword firstAuthorDocumentKeyword = DocumentKeywordsTest.getDocumentKeyword(
-			(List<DocumentKeyword>)documentKeywords.getItems(),
-			firstDocument,
-			firstAuthorKeyword);
+			documentKeywords.getItems(), firstDocument, firstAuthorKeyword);
 		DocumentKeyword secondAuthorDocumentKeyword = DocumentKeywordsTest.getDocumentKeyword(
-			(List<DocumentKeyword>)documentKeywords.getItems(),
-			firstDocument,
-			secondAuthorKeyword);
+			documentKeywords.getItems(), firstDocument, secondAuthorKeyword);
 		DocumentKeyword firstKeywordPlusDocumentKeyword = DocumentKeywordsTest.getDocumentKeyword(
-			(List<DocumentKeyword>)documentKeywords.getItems(),
-			firstDocument,
-			firstKeywordPlus);
+			documentKeywords.getItems(), firstDocument, firstKeywordPlus);
 		DocumentKeyword secondKeywordPlusDocumentKeyword = DocumentKeywordsTest.getDocumentKeyword(
-			(List<DocumentKeyword>)documentKeywords.getItems(),
-			firstDocument,
-			secondKeywordPlus);
+			documentKeywords.getItems(), firstDocument, secondKeywordPlus);
 
 		checkKeyword(
 			firstAuthorKeyword, FIRST_AUTHOR_KEYWORD, ISITableModelParser.AUTHOR_KEYWORDS);
@@ -159,29 +151,17 @@ public class KeywordTest extends RowItemTest {
 		Keyword firstKeywordPlus = getFirstKeywordPlus(keywords);
 		Keyword secondKeywordPlus = getSecondKeywordPlus(keywords);
 		DocumentKeyword firstAuthorDocumentKeyword = DocumentKeywordsTest.getDocumentKeyword(
-			(List<DocumentKeyword>)documentKeywords.getItems(),
-			firstDocument,
-			firstAuthorKeyword);
+			documentKeywords.getItems(), firstDocument, firstAuthorKeyword);
 		DocumentKeyword secondAuthorDocumentKeyword = DocumentKeywordsTest.getDocumentKeyword(
-			(List<DocumentKeyword>)documentKeywords.getItems(),
-			firstDocument,
-			secondAuthorKeyword);
+			documentKeywords.getItems(), firstDocument, secondAuthorKeyword);
 		DocumentKeyword thirdAuthorDocumentKeyword = DocumentKeywordsTest.getDocumentKeyword(
-			(List<DocumentKeyword>)documentKeywords.getItems(),
-			secondDocument,
-			secondAuthorKeyword);
+			documentKeywords.getItems(), secondDocument, secondAuthorKeyword);
 		DocumentKeyword firstKeywordPlusDocumentKeyword = DocumentKeywordsTest.getDocumentKeyword(
-			(List<DocumentKeyword>)documentKeywords.getItems(),
-			firstDocument,
-			firstKeywordPlus);
+			documentKeywords.getItems(), firstDocument, firstKeywordPlus);
 		DocumentKeyword secondKeywordPlusDocumentKeyword = DocumentKeywordsTest.getDocumentKeyword(
-			(List<DocumentKeyword>)documentKeywords.getItems(),
-			firstDocument,
-			secondKeywordPlus);
+			documentKeywords.getItems(), firstDocument, secondKeywordPlus);
 		DocumentKeyword thirdKeywordPlusDocumentKeyword = DocumentKeywordsTest.getDocumentKeyword(
-			(List<DocumentKeyword>)documentKeywords.getItems(),
-			secondDocument,
-			secondKeywordPlus);
+			documentKeywords.getItems(), secondDocument, secondKeywordPlus);
 
 		checkKeyword(
 			firstAuthorKeyword, FIRST_AUTHOR_KEYWORD, ISITableModelParser.AUTHOR_KEYWORDS);
@@ -219,13 +199,9 @@ public class KeywordTest extends RowItemTest {
 		Keyword firstAuthorKeyword = getFirstAuthorKeyword(keywords);
 		Keyword firstKeywordPlus = getAlternateFirstKeywordPlus(keywords);
 		DocumentKeyword firstAuthorDocumentKeyword = DocumentKeywordsTest.getDocumentKeyword(
-			(List<DocumentKeyword>)documentKeywords.getItems(),
-			firstDocument,
-			firstAuthorKeyword);
+			documentKeywords.getItems(), firstDocument, firstAuthorKeyword);
 		DocumentKeyword firstKeywordPlusDocumentKeyword = DocumentKeywordsTest.getDocumentKeyword(
-			(List<DocumentKeyword>)documentKeywords.getItems(),
-			firstDocument,
-			firstKeywordPlus);
+			documentKeywords.getItems(), firstDocument, firstKeywordPlus);
 
 		checkKeyword(
 			firstAuthorKeyword, FIRST_AUTHOR_KEYWORD, ISITableModelParser.AUTHOR_KEYWORDS);
@@ -236,7 +212,8 @@ public class KeywordTest extends RowItemTest {
 
 	// TODO: Test Keyword.
 
-	public static Keyword getKeyword(List<Keyword> keywords, String keywordText, String type) {
+	public static Keyword getKeyword(
+			Collection<Keyword> keywords, String keywordText, String type) {
 		for (Keyword keyword : keywords) {
 			try {
 				checkKeyword(keyword, keywordText, type);
@@ -261,46 +238,44 @@ public class KeywordTest extends RowItemTest {
 	}
 
 	private static Document getFirstDocument(RowItemContainer<Document> documents) {
-		return DocumentTest.getDocument(
-			(List<Document>)documents.getItems(), FIRST_DOCUMENT_TITLE);
+		return DocumentTest.getDocument(documents.getItems(), FIRST_DOCUMENT_TITLE);
 	}
 
 	private static Document getSecondDocument(RowItemContainer<Document> documents) {
-		return DocumentTest.getDocument(
-			(List<Document>)documents.getItems(), SECOND_DOCUMENT_TITLE);
+		return DocumentTest.getDocument(documents.getItems(), SECOND_DOCUMENT_TITLE);
 	}
 
 	private static Keyword getFirstAuthorKeyword(RowItemContainer<Keyword> keywords) {
 		return (getKeyword(
-			(List<Keyword>)keywords.getItems(),
+			keywords.getItems(),
 			FIRST_AUTHOR_KEYWORD,
 			ISITableModelParser.AUTHOR_KEYWORDS));
 	}
 
 	private static Keyword getSecondAuthorKeyword(RowItemContainer<Keyword> keywords) {
 		return (getKeyword(
-			(List<Keyword>)keywords.getItems(),
+			keywords.getItems(),
 			SECOND_AUTHOR_KEYWORD,
 			ISITableModelParser.AUTHOR_KEYWORDS));
 	}
 
 	private static Keyword getFirstKeywordPlus(RowItemContainer<Keyword> keywords) {
 		return (getKeyword(
-			(List<Keyword>)keywords.getItems(),
+			keywords.getItems(),
 			FIRST_KEYWORD_PLUS,
 			ISITableModelParser.KEYWORDS_PLUS));
 	}
 
 	private static Keyword getAlternateFirstKeywordPlus(RowItemContainer<Keyword> keywords) {
 		return (getKeyword(
-			(List<Keyword>)keywords.getItems(),
+			keywords.getItems(),
 			FIRST_AUTHOR_KEYWORD,
 			ISITableModelParser.KEYWORDS_PLUS));
 	}
 
 	private static Keyword getSecondKeywordPlus(RowItemContainer<Keyword> keywords) {
 		return (getKeyword(
-			(List<Keyword>)keywords.getItems(),
+			keywords.getItems(),
 			SECOND_KEYWORD_PLUS,
 			ISITableModelParser.KEYWORDS_PLUS));
 	}

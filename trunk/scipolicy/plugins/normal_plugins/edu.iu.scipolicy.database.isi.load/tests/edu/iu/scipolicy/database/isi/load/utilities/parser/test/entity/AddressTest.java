@@ -3,6 +3,7 @@ package edu.iu.scipolicy.database.isi.load.utilities.parser.test.entity;
 
 import static org.junit.Assert.fail;
 
+import java.util.Collection;
 import java.util.List;
 
 import org.junit.Test;
@@ -157,7 +158,7 @@ public class AddressTest extends RowItemTest {
 	}
 
 	public static Address getAddress(
-			List<Address> addresses,
+			Collection<Address> addresses,
 			String city,
 			String country,
 			String postalCode,
@@ -184,7 +185,7 @@ public class AddressTest extends RowItemTest {
 	}
 
 	public static void verifyAddressExists(
-			List<Address> addresses,
+			Collection<Address> addresses,
 			String city,
 			String country,
 			String postalCode,
@@ -235,11 +236,11 @@ public class AddressTest extends RowItemTest {
 	}
 
 	private static Document getDocumentForTheseTests(RowItemContainer<Document> documents) {
-		return DocumentTest.getDocument((List<Document>)documents.getItems(), DOCUMENT_TITLE);
+		return DocumentTest.getDocument(documents.getItems(), DOCUMENT_TITLE);
 	}
 
 	private static Publisher getPublisherForTheseTests(RowItemContainer<Publisher> publishers) {
-		return PublisherTest.getPublisher((List<Publisher>)publishers.getItems(), PUBLISHER_NAME);
+		return PublisherTest.getPublisher(publishers.getItems(), PUBLISHER_NAME);
 	}
 
 	private static PublisherAddress getPublisherAddress(
@@ -247,7 +248,7 @@ public class AddressTest extends RowItemTest {
 			RowItemContainer<PublisherAddress> publisherAddresses,
 			Publisher publisher) {
 		Address address = getAddress(
-			(List<Address>)addresses.getItems(),
+			addresses.getItems(),
 			PUBLISHER_ADDRESS_CITY,
 			PUBLISHER_ADDRESS_COUNTRY,
 			PUBLISHER_ADDRESS_POSTAL_CODE,
@@ -256,7 +257,7 @@ public class AddressTest extends RowItemTest {
 			PUBLISHER_ADDRESS_STREET_ADDRESS);
 
 		return PublisherAddressesTest.getPublisherAddress(
-			(List<PublisherAddress>)publisherAddresses.getItems(), publisher, address);
+			publisherAddresses.getItems(), publisher, address);
 	}
 
 	private static ResearchAddress getFirstResearchAddress(
@@ -264,7 +265,7 @@ public class AddressTest extends RowItemTest {
 			RowItemContainer<ResearchAddress> researchAddresses,
 			Document document) {
 		Address address = getAddress(
-			(List<Address>)addresses.getItems(),
+			addresses.getItems(),
 			FIRST_RESEARCH_ADDRESS_CITY,
 			FIRST_RESEARCH_ADDRESS_COUNTRY,
 			FIRST_RESEARCH_ADDRESS_POSTAL_CODE,
@@ -273,7 +274,7 @@ public class AddressTest extends RowItemTest {
 			FIRST_RESEARCH_ADDRESS_STREET_ADDRESS);
 
 		return ResearchAddressesTest.getResearchAddress(
-			(List<ResearchAddress>)researchAddresses.getItems(), document, address);
+			researchAddresses.getItems(), document, address);
 	}
 
 	private static ResearchAddress getSecondResearchAddress(
@@ -281,7 +282,7 @@ public class AddressTest extends RowItemTest {
 			RowItemContainer<ResearchAddress> researchAddresses,
 			Document document) {
 		Address address = getAddress(
-			(List<Address>)addresses.getItems(),
+			addresses.getItems(),
 			FIRST_RESEARCH_ADDRESS_CITY,
 			FIRST_RESEARCH_ADDRESS_COUNTRY,
 			FIRST_RESEARCH_ADDRESS_POSTAL_CODE,
@@ -290,7 +291,7 @@ public class AddressTest extends RowItemTest {
 			FIRST_RESEARCH_ADDRESS_STREET_ADDRESS);
 
 		return ResearchAddressesTest.getResearchAddress(
-			(List<ResearchAddress>)researchAddresses.getItems(), document, address);
+			researchAddresses.getItems(), document, address);
 	}
 
 	private static ReprintAddress getFirstReprintAddress(
@@ -298,7 +299,7 @@ public class AddressTest extends RowItemTest {
 			RowItemContainer<ReprintAddress> reprintAddresses,
 			Document document) {
 		Address address = getAddress(
-			(List<Address>)addresses.getItems(),
+			addresses.getItems(),
 			FIRST_REPRINT_ADDRESS_CITY,
 			FIRST_REPRINT_ADDRESS_COUNTRY,
 			FIRST_REPRINT_ADDRESS_POSTAL_CODE,
@@ -307,7 +308,7 @@ public class AddressTest extends RowItemTest {
 			FIRST_REPRINT_ADDRESS_STREET_ADDRESS);
 
 		return ReprintAddressesTest.getReprintAddress(
-			(List<ReprintAddress>)reprintAddresses.getItems(), document, address);
+			reprintAddresses.getItems(), document, address);
 	}
 
 	private static void checkPublisherAddress(PublisherAddress publisherAddress) {

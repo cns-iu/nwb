@@ -3,6 +3,7 @@ package edu.iu.scipolicy.database.isi.load.utilities.parser.test.entity;
 
 import static org.junit.Assert.fail;
 
+import java.util.Collection;
 import java.util.List;
 
 import org.junit.Test;
@@ -69,11 +70,8 @@ public class ISIFileTest extends RowItemTest {
 
 		Document firstDocument = getFirstDocument(documents);
 		ISIFile firstISIFile = getFirstISIFile(isiFiles);
-		DocumentOccurrence firstDocumentOccurrence =
-			DocumentOccurrencesTest.getDocumentOccurrence(
-				(List<DocumentOccurrence>)documentOccurrences.getItems(),
-				firstDocument,
-				firstISIFile);
+		DocumentOccurrence firstDocumentOccurrence = DocumentOccurrencesTest.getDocumentOccurrence(
+			documentOccurrences.getItems(), firstDocument, firstISIFile);
 
 		DocumentOccurrencesTest.checkDocumentOccurrence(firstDocumentOccurrence);
 	}
@@ -117,7 +115,7 @@ public class ISIFileTest extends RowItemTest {
 	// TODO: Test ISIFile.
 
 	public static ISIFile getISIFile(
-			List<ISIFile> isiFiles,
+			Collection<ISIFile> isiFiles,
 			String fileFormatVersionNumber,
 			String fileName,
 			String fileType) {
@@ -150,13 +148,12 @@ public class ISIFileTest extends RowItemTest {
 	}
 
 	private static Document getFirstDocument(RowItemContainer<Document> documents) {
-		return DocumentTest.getDocument(
-			(List<Document>)documents.getItems(), FIRST_DOCUMENT_TITLE);
+		return DocumentTest.getDocument(documents.getItems(), FIRST_DOCUMENT_TITLE);
 	}
 
 	private static ISIFile getFirstISIFile(RowItemContainer<ISIFile> isiFiles) {
 		return getISIFile(
-			(List<ISIFile>)isiFiles.getItems(),
+			isiFiles.getItems(),
 			FIRST_ISI_FILE_FORMAT_VERSION_NUMBER,
 			ONE_ISI_FILE_TEST_DATA_PATH,
 			FIRST_ISI_FILE_FILE_TYPE);

@@ -3,6 +3,7 @@ package edu.iu.scipolicy.database.isi.load.utilities.parser.test.entity;
 
 import static org.junit.Assert.fail;
 
+import java.util.Collection;
 import java.util.List;
 
 import org.junit.Test;
@@ -40,7 +41,7 @@ public class PersonTest extends RowItemTest {
 			ISI.PERSON_TABLE_NAME);
 
 		checkItemContainerValidity(people, "people");
-		List<Person> items = (List<Person>)people.getItems();
+		Collection<Person> items = people.getItems();
 		
 		checkItemCount(people, 1);
 		checkFirstAuthorPerson(items);
@@ -53,7 +54,7 @@ public class PersonTest extends RowItemTest {
 			ISI.PERSON_TABLE_NAME);
 
 		checkItemContainerValidity(people, "people");
-		List<Person> items = (List<Person>)people.getItems();
+		Collection<Person> items = people.getItems();
 
 		checkItemCount(people, 4);
 		checkFirstAuthorPerson(items);
@@ -69,7 +70,7 @@ public class PersonTest extends RowItemTest {
 			ISI.PERSON_TABLE_NAME);
 
 		checkItemContainerValidity(people, "people");
-		List<Person> items = (List<Person>)people.getItems();
+		Collection<Person> items = people.getItems();
 
 		checkItemCount(people, 1);
 		checkThirdAuthorPerson(items);
@@ -82,7 +83,7 @@ public class PersonTest extends RowItemTest {
 			ISI.PERSON_TABLE_NAME);
 
 		checkItemContainerValidity(people, "people");
-		List<Person> items = (List<Person>)people.getItems();
+		Collection<Person> items = people.getItems();
 
 		checkItemCount(people, 2);
 		checkThirdAuthorPerson(items);
@@ -96,7 +97,7 @@ public class PersonTest extends RowItemTest {
 			ISI.PERSON_TABLE_NAME);
 
 		checkItemContainerValidity(people, "people");
-		List<Person> items = (List<Person>)people.getItems();
+		Collection<Person> items = people.getItems();
 
 		checkItemCount(people, 4);
 		checkFirstAuthorPerson(items);
@@ -107,7 +108,7 @@ public class PersonTest extends RowItemTest {
 	// TODO: Test Person.
 
 	public static Person getPerson(
-			List<Person> people,
+			Collection<Person> people,
 			String additionalName,
 			String familyName,
 			String firstInitial,
@@ -136,7 +137,7 @@ public class PersonTest extends RowItemTest {
 	}
 
 	public static void verifyPersonExists(
-			List<Person> people,
+			Collection<Person> people,
 			String additionalName,
 			String familyName,
 			String firstInitial,
@@ -207,7 +208,7 @@ public class PersonTest extends RowItemTest {
 			unsplitAbbreviatedName);
 	}
 
-	private void checkFirstAuthorPerson(List<Person> people) throws Exception {
+	private void checkFirstAuthorPerson(Collection<Person> people) throws Exception {
 		verifyPersonExists(
 			people,
 			"",
@@ -219,7 +220,7 @@ public class PersonTest extends RowItemTest {
 			"Takeda, H");
 	}
 
-	private void checkSecondAuthorPerson(List<Person> people) throws Exception {
+	private void checkSecondAuthorPerson(Collection<Person> people) throws Exception {
 		verifyPersonExists(
 			people,
 			"",
@@ -231,7 +232,7 @@ public class PersonTest extends RowItemTest {
 			"Nishimura, K");
 	}
 
-	private void checkThirdAuthorPerson(List<Person> people) throws Exception {
+	private void checkThirdAuthorPerson(Collection<Person> people) throws Exception {
 		verifyPersonExists(
 			people,
 			"",
@@ -243,7 +244,7 @@ public class PersonTest extends RowItemTest {
 			"Macdonald, PJ");
 	}
 
-	private void checkFourthAuthorPerson(List<Person> people) throws Exception {
+	private void checkFourthAuthorPerson(Collection<Person> people) throws Exception {
 		verifyPersonExists(
 			people,
 			"",

@@ -1,7 +1,9 @@
 package edu.iu.scipolicy.database.nsf.load.model.entity;
 
+import java.util.ArrayList;
 import java.util.Dictionary;
 import java.util.Hashtable;
+import java.util.List;
 
 import org.cishell.utilities.StringUtilities;
 
@@ -30,42 +32,21 @@ public class Organization extends Entity<Organization> {
 	private String state;
 	private String zip;
 	
-	public Organization(DatabaseTableKeyGenerator keyGenerator,
-						String name, 
-						String phone, 
-						String streetAddress,
-						String city, 
-						String state, 
-						String zip) {
-		super(keyGenerator, createAttributes(name, 
-											 phone, 
-											 streetAddress, 
-											 city, 
-											 state, 
-											 zip));
+	public Organization(
+			DatabaseTableKeyGenerator keyGenerator,
+			String name, 
+			String phone, 
+			String streetAddress,
+			String city, 
+			String state, 
+			String zip) {
+		super(keyGenerator, createAttributes(name, phone, streetAddress, city, state, zip));
 		this.name = name;
 		this.phone = phone;
 		this.streetAddress = streetAddress;
 		this.city = city;
 		this.state = state;
 		this.zip = zip;
-	}
-
-	private static Dictionary<String, Object> createAttributes(String name,
-															   String phone,
-															   String streetAddress,
-															   String city,
-															   String state,
-															   String zip) {
-		Dictionary<String, Object> attributes = new Hashtable<String, Object>();
-		attributes.put(NSF_Database_FieldNames.ORGANIZATION_NAME, name);
-		attributes.put(NSF_Database_FieldNames.ORGANIZATION_PHONE, phone);
-		attributes.put(NSF_Database_FieldNames.ORGANIZATION_STREET_ADDRESS, streetAddress);
-		attributes.put(NSF_Database_FieldNames.ORGANIZATION_CITY, city);
-		attributes.put(NSF_Database_FieldNames.ORGANIZATION_STATE, state);
-		attributes.put(NSF_Database_FieldNames.ORGANIZATION_ZIP, zip);
-
-		return attributes;
 	}
 
 	public String getName() {
@@ -92,30 +73,54 @@ public class Organization extends Entity<Organization> {
 		return zip;
 	}
 
-	@Override
-	public void merge(Organization otherItem) {
-		this.phone = StringUtilities.simpleMerge(this.phone, 
-				 								 otherItem.getPhone());	
-		this.name = StringUtilities.simpleMerge(this.name, 
-				 								 otherItem.getName());
-		this.city = StringUtilities.simpleMerge(this.city, 
-												otherItem.getCity());
-		this.state = StringUtilities.simpleMerge(this.state, 
-												 otherItem.getState());
-		this.streetAddress = StringUtilities.simpleMerge(this.streetAddress, 
-														 otherItem.getStreetAddress());
-		this.zip = StringUtilities.simpleMerge(this.zip, 
-											   otherItem.getZip());
-		
-	}
-
-	@Override
+	/*@Override
 	public boolean shouldMerge(Organization otherItem) {
-		//TODO: check if comparison of only name, phone, city is enoigh?
+		//TODO: check if comparison of only name, phone, city is enough?
 		return (
 				StringUtilities.areValidAndEqualIgnoreCase(this.name, otherItem.getName())
 				&& StringUtilities.areValidAndEqualIgnoreCase(this.phone, otherItem.getPhone())
 				&& StringUtilities.areValidAndEqualIgnoreCase(this.city, otherItem.getCity())
 		);
+	}*/
+
+	@Override
+	public Object createMergeKey() {
+		List<Object> mergeKey = new ArrayList<Object>();
+		Integer primaryKey = getPrimaryKey();
+		addCaseInsensitiveStringOrAlternativeToMergeKey(mergeKey, this.name, primaryKey);
+		addCaseInsensitiveStringOrAlternativeToMergeKey(mergeKey, this.phone, primaryKey);
+		addCaseInsensitiveStringOrAlternativeToMergeKey(mergeKey, this.city, primaryKey);
+
+		return mergeKey;
+	}
+
+	@Override
+	public void merge(Organization otherItem) {
+		this.phone = StringUtilities.simpleMerge(this.phone, otherItem.getPhone());	
+		this.name = StringUtilities.simpleMerge(this.name, otherItem.getName());
+		this.city = StringUtilities.simpleMerge(this.city, otherItem.getCity());
+		this.state = StringUtilities.simpleMerge(this.state, otherItem.getState());
+		this.streetAddress =
+			StringUtilities.simpleMerge(this.streetAddress, otherItem.getStreetAddress());
+		this.zip = StringUtilities.simpleMerge(this.zip, otherItem.getZip());
+		
+	}
+
+	private static Dictionary<String, Object> createAttributes(
+			String name,
+			String phone,
+			String streetAddress,
+			String city,
+			String state,
+			String zip) {
+		Dictionary<String, Object> attributes = new Hashtable<String, Object>();
+		attributes.put(NSF_Database_FieldNames.ORGANIZATION_NAME, name);
+		attributes.put(NSF_Database_FieldNames.ORGANIZATION_PHONE, phone);
+		attributes.put(NSF_Database_FieldNames.ORGANIZATION_STREET_ADDRESS, streetAddress);
+		attributes.put(NSF_Database_FieldNames.ORGANIZATION_CITY, city);
+		attributes.put(NSF_Database_FieldNames.ORGANIZATION_STATE, state);
+		attributes.put(NSF_Database_FieldNames.ORGANIZATION_ZIP, zip);
+
+		return attributes;
 	}
 }

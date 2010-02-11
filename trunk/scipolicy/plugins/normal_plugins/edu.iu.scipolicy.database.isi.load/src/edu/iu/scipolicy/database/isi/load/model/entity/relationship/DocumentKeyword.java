@@ -1,7 +1,9 @@
 package edu.iu.scipolicy.database.isi.load.model.entity.relationship;
 
+import java.util.ArrayList;
 import java.util.Dictionary;
 import java.util.Hashtable;
+import java.util.List;
 
 import org.cishell.utilities.dictionary.DictionaryEntry;
 import org.cishell.utilities.dictionary.DictionaryUtilities;
@@ -46,6 +48,7 @@ public class DocumentKeyword extends RowItem<DocumentKeyword> {
 		return this.orderListed;
 	}
 
+	/*@Override
 	public boolean shouldMerge(DocumentKeyword otherDocumentKeyword) {
 		if ((this.document != null) && (this.keyword != null)) {
 			Document otherDocument = otherDocumentKeyword.getDocument();
@@ -59,8 +62,19 @@ public class DocumentKeyword extends RowItem<DocumentKeyword> {
 		}
 
 		return false;
+	}*/
+
+	@Override
+	public Object createMergeKey() {
+		List<Object> mergeKey = new ArrayList<Object>();
+		mergeKey.add(this.document.getPrimaryKey());
+		mergeKey.add(this.keyword.getPrimaryKey());
+		mergeKey.add(this.orderListed);
+
+		return mergeKey;
 	}
 
+	@Override
 	public void merge(DocumentKeyword otherDocumentKeyword) {
 	}
 

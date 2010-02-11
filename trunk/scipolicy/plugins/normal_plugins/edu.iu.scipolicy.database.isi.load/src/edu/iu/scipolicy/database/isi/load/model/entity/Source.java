@@ -1,7 +1,9 @@
 package edu.iu.scipolicy.database.isi.load.model.entity;
 
+import java.util.ArrayList;
 import java.util.Dictionary;
 import java.util.Hashtable;
+import java.util.List;
 
 import org.cishell.utilities.StringUtilities;
 import org.cishell.utilities.dictionary.DictionaryEntry;
@@ -125,6 +127,7 @@ public class Source extends Entity<Source> {
 		return this.twentyNineCharacterSourceTitleAbbreviation;
 	}
 
+	/*@Override
 	public boolean shouldMerge(Source otherSource) {
 		return (
 			StringUtilities.areValidAndEqual(this.issn, otherSource.getISSN()) ||
@@ -132,8 +135,29 @@ public class Source extends Entity<Source> {
 				this.twentyNineCharacterSourceTitleAbbreviation,
 				otherSource.get29CharacterSourceTitleAbbreviation()) ||
 			StringUtilities.areValidAndEqual(this.fullTitle, otherSource.getFullTitle()));
+	}*/
+
+	@Override
+	public List<Object> createMergeKey() {
+		List<Object> mergeKey = new ArrayList<Object>();
+		Integer primaryKey = getPrimaryKey();
+		addStringOrAlternativeToMergeKey(mergeKey, this.bookSeriesTitle, primaryKey);
+		addStringOrAlternativeToMergeKey(mergeKey, this.bookSeriesSubtitle, primaryKey);
+		addStringOrAlternativeToMergeKey(mergeKey, this.conferenceHost, primaryKey);
+		addStringOrAlternativeToMergeKey(mergeKey, this.conferenceLocation, primaryKey);
+		addStringOrAlternativeToMergeKey(mergeKey, this.conferenceSponsors, primaryKey);
+		addStringOrAlternativeToMergeKey(mergeKey, this.conferenceTitle, primaryKey);
+		addStringOrAlternativeToMergeKey(mergeKey, this.fullTitle, primaryKey);
+		addStringOrAlternativeToMergeKey(mergeKey, this.isoTitleAbbreviation, primaryKey);
+		addStringOrAlternativeToMergeKey(mergeKey, this.issn, primaryKey);
+		addStringOrAlternativeToMergeKey(mergeKey, this.publicationType, primaryKey);
+		addStringOrAlternativeToMergeKey(
+			mergeKey, this.twentyNineCharacterSourceTitleAbbreviation, primaryKey);
+
+		return mergeKey;
 	}
 
+	@Override
 	public void merge(Source otherSource) {
 		this.bookSeriesTitle =
 			StringUtilities.simpleMerge(this.bookSeriesTitle, otherSource.getBookSeriesTitle());

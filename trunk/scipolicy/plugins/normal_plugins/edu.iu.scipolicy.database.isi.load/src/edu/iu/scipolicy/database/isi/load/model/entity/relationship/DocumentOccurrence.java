@@ -1,7 +1,9 @@
 package edu.iu.scipolicy.database.isi.load.model.entity.relationship;
 
+import java.util.ArrayList;
 import java.util.Dictionary;
 import java.util.Hashtable;
+import java.util.List;
 
 import edu.iu.cns.database.load.framework.DerbyFieldType;
 import edu.iu.cns.database.load.framework.RowItem;
@@ -38,10 +40,21 @@ public class DocumentOccurrence extends RowItem<DocumentOccurrence> {
 		return this.isiFile;
 	}
 
+	/*@Override
 	public boolean shouldMerge(DocumentOccurrence otherDocumentOccurrence) {
 		return false;
+	}*/
+
+	@Override
+	public Object createMergeKey() {
+		List<Object> mergeKey = new ArrayList<Object>();
+		mergeKey.add(this.document.getPrimaryKey());
+		mergeKey.add(this.isiFile.getPrimaryKey());
+
+		return mergeKey;
 	}
 
+	@Override
 	public void merge(DocumentOccurrence otherDocumentOccurrence) {
 	}
 

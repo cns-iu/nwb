@@ -1,7 +1,9 @@
 package edu.iu.scipolicy.database.isi.load.model.entity;
 
+import java.util.ArrayList;
 import java.util.Dictionary;
 import java.util.Hashtable;
+import java.util.List;
 
 import org.cishell.utilities.StringUtilities;
 import org.cishell.utilities.dictionary.DictionaryEntry;
@@ -47,11 +49,42 @@ public class ISIFile extends Entity<ISIFile> {
 		return this.fileType;
 	}
 
+	/*@Override
 	public boolean shouldMerge(ISIFile otherISIFile) {
 		return StringUtilities.areValidAndEqualIgnoreCase(
 			this.fileName, otherISIFile.getFileName());
+	}*/
+	
+	@Override
+	public List<Object> createMergeKey() {
+		List<Object> mergeKey = new ArrayList<Object>();
+		Integer primaryKey = getPrimaryKey();
+		addStringOrAlternativeToMergeKey(mergeKey, this.fileFormatVersionNumber, primaryKey);
+		addStringOrAlternativeToMergeKey(mergeKey, this.fileName, primaryKey);
+		addStringOrAlternativeToMergeKey(mergeKey, this.fileType, primaryKey);
+
+		/*if (!StringUtilities.isNull_Empty_OrWhitespace(this.fileFormatVersionNumber)) {
+			mergeKey.add(this.fileFormatVersionNumber);
+		} else {
+			mergeKey.add(getPrimaryKey());
+		}
+
+		if (!StringUtilities.isNull_Empty_OrWhitespace(this.fileName)) {
+			mergeKey.add(this.fileName);
+		} else {
+			mergeKey.add(getPrimaryKey());
+		}
+
+		if (!StringUtilities.isNull_Empty_OrWhitespace(this.fileType)) {
+			mergeKey.add(this.fileType);
+		} else {
+			mergeKey.add(getPrimaryKey());
+		}*/
+
+		return mergeKey;
 	}
 
+	@Override
 	public void merge(ISIFile otherISIFile) {
 		this.fileFormatVersionNumber = StringUtilities.simpleMerge(
 			this.fileFormatVersionNumber, otherISIFile.getFileFormatVersionNumber());

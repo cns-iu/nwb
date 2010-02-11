@@ -3,6 +3,7 @@ package edu.iu.scipolicy.database.isi.load.utilities.parser.test.entity;
 
 import static org.junit.Assert.fail;
 
+import java.util.Collection;
 import java.util.List;
 
 import org.junit.Test;
@@ -47,7 +48,7 @@ public class PublisherTest extends RowItemTest {
 		return null;
 	}
 
-	public static Publisher getPublisher(List<Publisher> publishers, String name) {
+	public static Publisher getPublisher(Collection<Publisher> publishers, String name) {
 		for (Publisher publisher : publishers) {
 			if (publisher.getName().equals(name)) {
 				return publisher;

@@ -3,6 +3,7 @@ package edu.iu.scipolicy.database.isi.load.utilities.parser.test.entity;
 
 import static org.junit.Assert.fail;
 
+import java.util.Collection;
 import java.util.List;
 
 import org.junit.After;
@@ -177,7 +178,7 @@ public class DocumentTest extends RowItemTest {
 		return null;
 	}
 
-	public static Document getDocument(List<Document> documents, String title) {
+	public static Document getDocument(Collection<Document> documents, String title) {
 		for (Document document : documents) {
 			if (document.getTitle().equals(title)) {
 				return document;

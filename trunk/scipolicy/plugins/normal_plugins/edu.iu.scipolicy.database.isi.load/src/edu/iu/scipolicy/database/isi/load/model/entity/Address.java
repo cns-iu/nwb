@@ -1,11 +1,15 @@
 package edu.iu.scipolicy.database.isi.load.model.entity;
 
+import java.util.ArrayList;
 import java.util.Dictionary;
 import java.util.Hashtable;
+import java.util.List;
 
 import org.cishell.utilities.StringUtilities;
 import org.cishell.utilities.dictionary.DictionaryEntry;
 import org.cishell.utilities.dictionary.DictionaryUtilities;
+
+import com.sun.corba.se.impl.orbutil.GetPropertyAction;
 
 import edu.iu.cns.database.load.framework.DerbyFieldType;
 import edu.iu.cns.database.load.framework.Entity;
@@ -30,7 +34,6 @@ public class Address extends Entity<Address> {
 	private String stateOrProvince;
 	private String streetAddress;
 
-	// TODO Change to nulls
 	public Address(DatabaseTableKeyGenerator keyGenerator, String rawAddress) {
 		this(keyGenerator, null, null, null, rawAddress, null, null);
 	}
@@ -79,11 +82,25 @@ public class Address extends Entity<Address> {
 		return this.streetAddress;
 	}
 
+	/*
+	@Override
 	public boolean shouldMerge(Address otherAddress) {
 		return StringUtilities.areValidAndEqualIgnoreCase(
 			this.rawAddress, otherAddress.getRawAddress());
+	}*/
+
+	@Override
+	public Object createMergeKey() {
+		/*List<Object> mergeKey = new ArrayList<Object>();
+		Integer primaryKey = getPrimaryKey();
+		addStringOrAlternativeToMergeKey(mergeKey, this.rawAddress, primaryKey);
+
+		return mergeKey;*/
+		return StringUtilities.alternativeIfNotNull_Empty_OrWhitespace(
+			this.rawAddress, getPrimaryKey());
 	}
 
+	@Override
 	public void merge(Address otherAddress) {
 		this.city = StringUtilities.simpleMerge(this.city, otherAddress.getCity());
 		this.country = StringUtilities.simpleMerge(this.country, otherAddress.getCountry());

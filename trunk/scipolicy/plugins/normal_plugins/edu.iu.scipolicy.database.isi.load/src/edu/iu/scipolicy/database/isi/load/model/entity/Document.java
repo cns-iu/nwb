@@ -1,7 +1,9 @@
 package edu.iu.scipolicy.database.isi.load.model.entity;
 
+import java.util.ArrayList;
 import java.util.Dictionary;
 import java.util.Hashtable;
+import java.util.List;
 
 import org.cishell.utilities.dictionary.DictionaryEntry;
 import org.cishell.utilities.dictionary.DictionaryUtilities;
@@ -299,18 +301,30 @@ public class Document extends Entity<Document> {
 		}
 	}
 
-	public boolean shouldMerge(Document otherDocument) {
-		/*
-		 * TODO: At this point, it doesn't make sense for Documents to ever get merged.
-		 * The only scenario in which that would happen is if two Documents are actually duplicates
-		 *  within the same dataset.
-		 * However, duplicates in the same dataset get preprocessed out.
-		 * If we ever support merging between multiple datasets, it's quite possible Documents
-		 *  will need to be merged, but until then...
-		 */
-		return false;
+//	@Override
+//	public boolean shouldMerge(Document otherDocument) {
+//		/*
+//		 * TODO: At this point, it doesn't make sense for Documents to ever get merged.
+//		 * The only scenario in which that would happen is if two Documents are actually duplicates
+//		 *  within the same dataset.
+//		 * However, duplicates in the same dataset get preprocessed out.
+//		 * If we ever support merging between multiple datasets, it's quite possible Documents
+//		 *  will need to be merged, but until then...
+//		 */
+//		return false;
+//	}
+
+	@Override
+	public Object createMergeKey() {
+		/*List<Object> mergeKey = new ArrayList<Object>();
+		Integer primaryKey = getPrimaryKey();
+		mergeKey.add(primaryKey);
+
+		return mergeKey;*/
+		return getPrimaryKey();
 	}
 
+	@Override
 	public void merge(Document otherDocument) {
 	}
 

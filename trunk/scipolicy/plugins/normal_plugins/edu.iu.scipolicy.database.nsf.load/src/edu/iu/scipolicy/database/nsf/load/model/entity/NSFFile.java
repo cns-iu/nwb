@@ -1,7 +1,9 @@
 package edu.iu.scipolicy.database.nsf.load.model.entity;
 
+import java.util.ArrayList;
 import java.util.Dictionary;
 import java.util.Hashtable;
+import java.util.List;
 
 import org.cishell.utilities.StringUtilities;
 
@@ -16,7 +18,8 @@ public class NSFFile extends Entity<NSFFile> {
 			true,
 			NSF_Database_FieldNames.FILE_NAME, DerbyFieldType.TEXT,
 			NSF_Database_FieldNames.FILE_TYPE, DerbyFieldType.TEXT,
-			NSF_Database_FieldNames.FILE_MD5_CHECKSUM, DerbyFieldType.TEXT);
+			NSF_Database_FieldNames.FILE_MD5_CHECKSUM, DerbyFieldType.TEXT
+			);
 	
 	private String fileName;
 	private String fileType;
@@ -27,9 +30,7 @@ public class NSFFile extends Entity<NSFFile> {
 			String fileName,
 			String fileType,
 			String fileMD5Checksum) {
-		super(keyGenerator, createAttributes(fileName, 
-											 fileType, 
-											 fileMD5Checksum));
+		super(keyGenerator, createAttributes(fileName, fileType, fileMD5Checksum));
 		this.fileName = fileName;
 		this.fileType = fileType;
 		this.fileMD5Checksum = fileMD5Checksum;
@@ -47,30 +48,7 @@ public class NSFFile extends Entity<NSFFile> {
 		return this.fileMD5Checksum;
 	}
 
-	private static Dictionary<String, Object> createAttributes(String fileName,
-															   String fileType,
-															   String fileMD5Checksum) {
-		Dictionary<String, Object> attributes = new Hashtable<String, Object>();
-		attributes.put(NSF_Database_FieldNames.FILE_NAME, fileName);
-		attributes.put(NSF_Database_FieldNames.FILE_TYPE, fileType);
-		attributes.put(NSF_Database_FieldNames.FILE_MD5_CHECKSUM, fileMD5Checksum);
-
-		return attributes;
-	}
-
-	@Override
-	public void merge(NSFFile otherItem) {
-		this.fileName = StringUtilities.simpleMerge(this.fileName, 
-													otherItem.getFileName());
-		
-		this.fileType = StringUtilities.simpleMerge(this.fileType, 
-													otherItem.getFileType());
-		
-		this.fileMD5Checksum = StringUtilities.simpleMerge(this.fileMD5Checksum, 
-														   otherItem.getFileMD5Checksum());
-	}
-
-	@Override
+	/*@Override
 	public boolean shouldMerge(NSFFile otherItem) {
 		return (StringUtilities.areValidAndEqualIgnoreCase(
 									this.fileName,
@@ -82,5 +60,37 @@ public class NSFFile extends Entity<NSFFile> {
 							this.fileMD5Checksum,
 							otherItem.getFileMD5Checksum())
 		);
+	}*/
+
+	@Override
+	public Object createMergeKey() {
+		List<Object> mergeKey = new ArrayList<Object>();
+		Integer primaryKey = getPrimaryKey();
+		addCaseInsensitiveStringOrAlternativeToMergeKey(mergeKey, this.fileName, primaryKey);
+		addCaseInsensitiveStringOrAlternativeToMergeKey(mergeKey, this.fileType, primaryKey);
+		addCaseInsensitiveStringOrAlternativeToMergeKey(
+			mergeKey, this.fileMD5Checksum, primaryKey);
+
+		return mergeKey;
+	}
+
+	@Override
+	public void merge(NSFFile otherItem) {
+		this.fileName = StringUtilities.simpleMerge(this.fileName, otherItem.getFileName());
+		this.fileType = StringUtilities.simpleMerge(this.fileType, otherItem.getFileType());
+		this.fileMD5Checksum =
+			StringUtilities.simpleMerge(this.fileMD5Checksum, otherItem.getFileMD5Checksum());
+	}
+
+	private static Dictionary<String, Object> createAttributes(
+			String fileName,
+			String fileType,
+			String fileMD5Checksum) {
+		Dictionary<String, Object> attributes = new Hashtable<String, Object>();
+		attributes.put(NSF_Database_FieldNames.FILE_NAME, fileName);
+		attributes.put(NSF_Database_FieldNames.FILE_TYPE, fileType);
+		attributes.put(NSF_Database_FieldNames.FILE_MD5_CHECKSUM, fileMD5Checksum);
+
+		return attributes;
 	}
 }

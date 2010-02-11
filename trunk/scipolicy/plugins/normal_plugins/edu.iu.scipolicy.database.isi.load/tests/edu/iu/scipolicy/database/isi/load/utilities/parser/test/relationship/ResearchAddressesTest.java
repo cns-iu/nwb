@@ -1,7 +1,7 @@
 package edu.iu.scipolicy.database.isi.load.utilities.parser.test.relationship;
 
 
-import java.util.List;
+import java.util.Collection;
 
 import edu.iu.scipolicy.database.isi.load.model.entity.Address;
 import edu.iu.scipolicy.database.isi.load.model.entity.Document;
@@ -10,7 +10,7 @@ import edu.iu.scipolicy.database.isi.load.utilities.parser.RowItemTest;
 
 public class ResearchAddressesTest extends RowItemTest {
 	public static ResearchAddress getResearchAddress(
-			List<ResearchAddress> researchAddresses, Document document, Address address) {
+			Collection<ResearchAddress> researchAddresses, Document document, Address address) {
 		for (ResearchAddress researchAddress : researchAddresses) {
 			boolean documentsMatch =
 				(researchAddress.getDocument().getPrimaryKey() == document.getPrimaryKey());

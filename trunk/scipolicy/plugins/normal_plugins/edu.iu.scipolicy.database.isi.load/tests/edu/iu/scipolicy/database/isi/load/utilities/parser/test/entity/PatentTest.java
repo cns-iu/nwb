@@ -3,6 +3,7 @@ package edu.iu.scipolicy.database.isi.load.utilities.parser.test.entity;
 
 import static org.junit.Assert.fail;
 
+import java.util.Collection;
 import java.util.List;
 
 import org.junit.Test;
@@ -94,9 +95,9 @@ public class PatentTest extends RowItemTest {
 		Patent firstPatent = getFirstPatent(patents);
 		Patent secondPatent = getSecondPatent(patents);
 		CitedPatent firstCitedPatent = CitedPatentsTest.getCitedPatent(
-			(List<CitedPatent>)citedPatents.getItems(), firstDocument, firstPatent);
+			citedPatents.getItems(), firstDocument, firstPatent);
 		CitedPatent secondCitedPatent = CitedPatentsTest.getCitedPatent(
-			(List<CitedPatent>)citedPatents.getItems(), secondDocument, secondPatent);
+			citedPatents.getItems(), secondDocument, secondPatent);
 
 		checkPatent(firstPatent, FIRST_PATENT_NUMBER);
 		checkPatent(secondPatent, SECOND_PATENT_NUMBER);
@@ -125,16 +126,16 @@ public class PatentTest extends RowItemTest {
 		Document secondDocument = getSecondDocument(documents);
 		Patent firstPatent = getFirstPatent(patents);
 		CitedPatent firstCitedPatent = CitedPatentsTest.getCitedPatent(
-			(List<CitedPatent>)citedPatents.getItems(), firstDocument, firstPatent);
+			citedPatents.getItems(), firstDocument, firstPatent);
 		CitedPatent secondCitedPatent = CitedPatentsTest.getCitedPatent(
-			(List<CitedPatent>)citedPatents.getItems(), secondDocument, firstPatent);
+			citedPatents.getItems(), secondDocument, firstPatent);
 
 		checkPatent(firstPatent, FIRST_PATENT_NUMBER);
 		CitedPatentsTest.checkCitedPatent(firstCitedPatent);
 		CitedPatentsTest.checkCitedPatent(secondCitedPatent);
 	}
 
-	public static Patent getPatent(List<Patent> patents, String patentNumber) {
+	public static Patent getPatent(Collection<Patent> patents, String patentNumber) {
 		for (Patent patent : patents) {
 			try {
 				checkPatent(patent, patentNumber);
@@ -159,20 +160,18 @@ public class PatentTest extends RowItemTest {
 	}
 
 	private static Document getFirstDocument(RowItemContainer<Document> documents) {
-		return DocumentTest.getDocument(
-			(List<Document>)documents.getItems(), FIRST_DOCUMENT_TITLE);
+		return DocumentTest.getDocument(documents.getItems(), FIRST_DOCUMENT_TITLE);
 	}
 
 	private static Document getSecondDocument(RowItemContainer<Document> documents) {
-		return DocumentTest.getDocument(
-			(List<Document>)documents.getItems(), SECOND_DOCUMENT_TITLE);
+		return DocumentTest.getDocument(documents.getItems(), SECOND_DOCUMENT_TITLE);
 	}
 
 	private static Patent getFirstPatent(RowItemContainer<Patent> patents) {
-		return getPatent((List<Patent>)patents.getItems(), FIRST_PATENT_NUMBER);
+		return getPatent(patents.getItems(), FIRST_PATENT_NUMBER);
 	}
 
 	private static Patent getSecondPatent(RowItemContainer<Patent> patents) {
-		return getPatent((List<Patent>)patents.getItems(), SECOND_PATENT_NUMBER);
+		return getPatent(patents.getItems(), SECOND_PATENT_NUMBER);
 	}
 }

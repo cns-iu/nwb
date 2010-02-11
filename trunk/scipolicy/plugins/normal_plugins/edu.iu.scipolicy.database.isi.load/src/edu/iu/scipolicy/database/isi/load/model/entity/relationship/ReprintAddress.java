@@ -1,7 +1,9 @@
 package edu.iu.scipolicy.database.isi.load.model.entity.relationship;
 
+import java.util.ArrayList;
 import java.util.Dictionary;
 import java.util.Hashtable;
+import java.util.List;
 
 import edu.iu.cns.database.load.framework.DerbyFieldType;
 import edu.iu.cns.database.load.framework.RowItem;
@@ -36,10 +38,21 @@ public class ReprintAddress extends RowItem<ReprintAddress> {
 		return this.address;
 	}
 
+	/*@Override
 	public boolean shouldMerge(ReprintAddress otherReprintAddress) {
 		return false;
+	}*/
+
+	@Override
+	public Object createMergeKey() {
+		List<Object> mergeKey = new ArrayList<Object>();
+		mergeKey.add(this.document.getPrimaryKey());
+		mergeKey.add(this.address.getPrimaryKey());
+
+		return mergeKey;
 	}
 
+	@Override
 	public void merge(ReprintAddress otherReprintAddress) {
 	}
 

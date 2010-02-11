@@ -1,7 +1,9 @@
 package edu.iu.scipolicy.database.isi.load.model.entity;
 
+import java.util.ArrayList;
 import java.util.Dictionary;
 import java.util.Hashtable;
+import java.util.List;
 
 import org.cishell.utilities.StringUtilities;
 import org.cishell.utilities.dictionary.DictionaryEntry;
@@ -152,11 +154,24 @@ public class Reference extends Entity<Reference> {
 		getAttributes().put(ISI.SOURCE, source.getPrimaryKey());
 	}
 
+	/*@Override
 	public boolean shouldMerge(Reference otherReference) {
 		return StringUtilities.areValidAndEqual(
 			this.rawReferenceString, otherReference.getRawReferenceString());
+	}*/
+
+	@Override
+	public Object createMergeKey() {
+		/*List<Object> mergeKey = new ArrayList<Object>();
+		Integer primaryKey = getPrimaryKey();
+		addStringOrAlternativeToMergeKey(mergeKey, this.rawReferenceString, primaryKey);
+
+		return mergeKey;*/
+		return StringUtilities.alternativeIfNotNull_Empty_OrWhitespace(
+			this.rawReferenceString, getPrimaryKey());
 	}
 
+	@Override
 	public void merge(Reference otherReference) {
 	}
 

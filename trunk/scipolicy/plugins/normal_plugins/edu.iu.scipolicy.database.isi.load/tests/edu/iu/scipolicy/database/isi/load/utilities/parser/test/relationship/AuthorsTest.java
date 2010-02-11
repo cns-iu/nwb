@@ -3,6 +3,7 @@ package edu.iu.scipolicy.database.isi.load.utilities.parser.test.relationship;
 
 import static org.junit.Assert.fail;
 
+import java.util.Collection;
 import java.util.List;
 
 import org.cishell.utilities.StringUtilities;
@@ -64,9 +65,9 @@ public class AuthorsTest extends RowItemTest {
 		checkItemContainerValidity(authors, "authors");
 		checkItemCount(authors, 1);
 
-		Document firstDocument = (Document)documents.getItems().get(0);
-		Person firstAuthorPerson = (Person)people.getItems().get(0);
-		Author firstAuthor = (Author)authors.getItems().get(0);
+		Document firstDocument = documents.getItems().iterator().next();
+		Person firstAuthorPerson = people.getItems().iterator().next();
+		Author firstAuthor = (Author)authors.getItems().iterator().next();
 
 		checkAuthor(firstAuthor, firstDocument, firstAuthorPerson);
 	}
@@ -83,15 +84,15 @@ public class AuthorsTest extends RowItemTest {
 
 		checkItemContainerValidity(documents, "documents");
 		checkItemCount(documents, 1);
-		List<Document> documentItems = (List<Document>)documents.getItems();
+		Collection<Document> documentItems = documents.getItems();
 
 		checkItemContainerValidity(people, "people");
 		checkItemCount(people, 1);
-		List<Person> personItems = (List<Person>)people.getItems();
+		Collection<Person> personItems = people.getItems();
 
 		checkItemContainerValidity(authors, "authors");
 		checkItemCount(authors, 1);
-		List<Author> authorItems = (List<Author>)authors.getItems();
+		Collection<Author> authorItems = authors.getItems();
 
 		Document firstDocument = getFirstDocument(documentItems);
 		Person firstAuthorPerson = getFirstAuthorPerson(personItems);
@@ -112,15 +113,15 @@ public class AuthorsTest extends RowItemTest {
 
 		checkItemContainerValidity(documents, "documents");
 		checkItemCount(documents, 2);
-		List<Document> documentItems = (List<Document>)documents.getItems();
+		Collection<Document> documentItems = documents.getItems();
 
 		checkItemContainerValidity(people, "people");
 		checkItemCount(people, 4);
-		List<Person> personItems = (List<Person>)people.getItems();
+		Collection<Person> personItems = people.getItems();
 
 		checkItemContainerValidity(authors, "authors");
 		checkItemCount(authors, 4);
-		List<Author> authorItems = (List<Author>)authors.getItems();
+		Collection<Author> authorItems = authors.getItems();
 
 		Document firstDocument = getFirstDocument(documentItems);
 		Person firstAuthorPerson = getFirstAuthorPerson(personItems);
@@ -144,15 +145,15 @@ public class AuthorsTest extends RowItemTest {
 
 		checkItemContainerValidity(documents, "documents");
 		checkItemCount(documents, 2);
-		List<Document> documentItems = (List<Document>)documents.getItems();
+		Collection<Document> documentItems = documents.getItems();
 
 		checkItemContainerValidity(people, "people");
 		checkItemCount(people, 4);
-		List<Person> personItems = (List<Person>)people.getItems();
+		Collection<Person> personItems = people.getItems();
 
 		checkItemContainerValidity(authors, "authors");
 		checkItemCount(authors, 4);
-		List<Author> authorItems = (List<Author>)authors.getItems();
+		Collection<Author> authorItems = authors.getItems();
 
 		Document firstDocument = getFirstDocument(documentItems);
 		Person firstAuthorPerson = getFirstAuthorPerson(personItems);
@@ -176,15 +177,15 @@ public class AuthorsTest extends RowItemTest {
 
 		checkItemContainerValidity(documents, "documents");
 		checkItemCount(documents, 2);
-		List<Document> documentItems = (List<Document>)documents.getItems();
+		Collection<Document> documentItems = documents.getItems();
 
 		checkItemContainerValidity(people, "people");
 		checkItemCount(people, 4);
-		List<Person> personItems = (List<Person>)people.getItems();
+		Collection<Person> personItems = people.getItems();
 
 		checkItemContainerValidity(authors, "authors");
 		checkItemCount(authors, 4);
-		List<Author> authorItems = (List<Author>)authors.getItems();
+		Collection<Author> authorItems = authors.getItems();
 
 		Document secondDocument = getSecondDocument(documentItems);
 		Person thirdAuthorPerson = getThirdAuthorPerson(personItems);
@@ -208,15 +209,15 @@ public class AuthorsTest extends RowItemTest {
 
 		checkItemContainerValidity(documents, "documents");
 		checkItemCount(documents, 2);
-		List<Document> documentItems = (List<Document>)documents.getItems();
+		Collection<Document> documentItems = documents.getItems();
 
 		checkItemContainerValidity(people, "people");
 		checkItemCount(people, 4);
-		List<Person> personItems = (List<Person>)people.getItems();
+		Collection<Person> personItems = people.getItems();
 
 		checkItemContainerValidity(authors, "authors");
 		checkItemCount(authors, 4);
-		List<Author> authorItems = (List<Author>)authors.getItems();
+		Collection<Author> authorItems = authors.getItems();
 
 		Document firstDocument = getFirstDocument(documentItems);
 		Person firstAuthorPerson = getFirstAuthorPerson(personItems);
@@ -230,7 +231,8 @@ public class AuthorsTest extends RowItemTest {
 
 	// TODO: Test Author.
 
-	public static Author getAuthor(List<Author> authors, Document document, Person authorPerson) {
+	public static Author getAuthor(
+			Collection<Author> authors, Document document, Person authorPerson) {
 		for (Author author : authors) {
 			if ((author.getDocument() == document) && (author.getPerson() == authorPerson)) {
 				return author;
@@ -285,15 +287,15 @@ public class AuthorsTest extends RowItemTest {
 		}
 	}
 
-	private Document getFirstDocument(List<Document> documents) {
+	private Document getFirstDocument(Collection<Document> documents) {
 		return DocumentTest.getDocument(documents, FIRST_DOCUMENT_TITLE);
 	}
 
-	private Document getSecondDocument(List<Document> documents) {
+	private Document getSecondDocument(Collection<Document> documents) {
 		return DocumentTest.getDocument(documents, SECOND_DOCUMENT_TITLE);
 	}
 
-	private Person getFirstAuthorPerson(List<Person> people) {
+	private Person getFirstAuthorPerson(Collection<Person> people) {
 		return PersonTest.getPerson(
 			people,
 			"",
@@ -305,7 +307,7 @@ public class AuthorsTest extends RowItemTest {
 			"Takeda, H");
 	}
 
-	private Person getSecondAuthorPerson(List<Person> people) throws Exception {
+	private Person getSecondAuthorPerson(Collection<Person> people) throws Exception {
 		return PersonTest.getPerson(
 			people,
 			"",
@@ -317,7 +319,7 @@ public class AuthorsTest extends RowItemTest {
 			"Nishimura, K");
 	}
 
-	private Person getThirdAuthorPerson(List<Person> people) throws Exception {
+	private Person getThirdAuthorPerson(Collection<Person> people) throws Exception {
 		return PersonTest.getPerson(
 			people,
 			"",
@@ -329,7 +331,7 @@ public class AuthorsTest extends RowItemTest {
 			"Macdonald, PJ");
 	}
 
-	private Person getFourthAuthorPerson(List<Person> people) throws Exception {
+	private Person getFourthAuthorPerson(Collection<Person> people) throws Exception {
 		return PersonTest.getPerson(
 			people,
 			"",

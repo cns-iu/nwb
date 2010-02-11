@@ -1,7 +1,7 @@
 package edu.iu.scipolicy.database.isi.load.utilities.parser.test.relationship;
 
 
-import java.util.List;
+import java.util.Collection;
 
 import edu.iu.scipolicy.database.isi.load.model.entity.Document;
 import edu.iu.scipolicy.database.isi.load.model.entity.ISIFile;
@@ -10,7 +10,7 @@ import edu.iu.scipolicy.database.isi.load.utilities.parser.RowItemTest;
 
 public class DocumentOccurrencesTest extends RowItemTest {
 	public static DocumentOccurrence getDocumentOccurrence(
-			List<DocumentOccurrence> documentOccurrences, Document document, ISIFile isiFile) {
+			Collection<DocumentOccurrence> documentOccurrences, Document document, ISIFile isiFile) {
 		for (DocumentOccurrence documentOccurrence : documentOccurrences) {
 			boolean documentsMatch =
 				(documentOccurrence.getDocument().getPrimaryKey() == document.getPrimaryKey());

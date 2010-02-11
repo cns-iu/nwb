@@ -1,8 +1,10 @@
 package edu.iu.scipolicy.database.nsf.load.model.entity;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.Dictionary;
 import java.util.Hashtable;
+import java.util.List;
 
 import org.cishell.utilities.StringUtilities;
 
@@ -90,53 +92,6 @@ public class Award extends Entity<Award> {
 		this.nSFOrganization = nSFOrganization;
 		this.abstractText = abstractText;
 	}
-	
-	
-	private static Dictionary<String, Object> createAttributes(String awardNumber,
-													   String title,
-													   Date startDate,
-													   String rawStartDate, 
-													   Date expirationDate,
-													   String rawExpirationDate, 
-													   Date lastAmendmentDate,
-													   String rawLastAmendmentDate, 
-													   double awardedAmountToDate,
-													   String rawAwardedAmountToDate,
-													   String awardInstrument,
-													   String nSFDirectorate,
-													   String nSFOrganization,
-													   String abstractText) {
-		Dictionary<String, Object> attributes = new Hashtable<String, Object>();
-		attributes.put(NSF_Database_FieldNames.TITLE, title);
-		attributes.put(NSF_Database_FieldNames.AWARD_NUMBER, awardNumber);
-		
-		if (startDate != null) {
-			attributes.put(NSF_Database_FieldNames.START_DATE, startDate);
-		}
-		
-		attributes.put(NSF_Database_FieldNames.RAW_START_DATE, rawStartDate);
-		
-		if (expirationDate != null) {
-			attributes.put(NSF_Database_FieldNames.EXPIRATION_DATE, expirationDate);
-		}
-		
-		attributes.put(NSF_Database_FieldNames.RAW_EXPIRATION_DATE, rawExpirationDate);
-
-		if (lastAmendmentDate != null) {
-			attributes.put(NSF_Database_FieldNames.LAST_AMENDMENT_DATE, lastAmendmentDate);
-		}
-		
-		attributes.put(NSF_Database_FieldNames.RAW_LAST_AMENDMENT_DATE, rawLastAmendmentDate);
-		attributes.put(NSF_Database_FieldNames.AWARDED_AMOUNT_TO_DATE, awardedAmountToDate);
-		attributes.put(NSF_Database_FieldNames.RAW_AWARDED_AMOUNT_TO_DATE, rawAwardedAmountToDate);
-		attributes.put(NSF_Database_FieldNames.AWARD_INSTRUMENT, awardInstrument);
-		attributes.put(NSF_Database_FieldNames.NSF_DIRECTORATE, nSFDirectorate);
-		attributes.put(NSF_Database_FieldNames.NSF_ORGANIZATION, nSFOrganization);
-		attributes.put(NSF_Database_FieldNames.ABSTRACT_TEXT, abstractText);
-		
-		return attributes;
-	}
-
 
 	public String getAwardNumber() {
 		return awardNumber;
@@ -187,48 +142,6 @@ public class Award extends Entity<Award> {
 		return abstractText;
 	}
 
-	public void addArbitraryColumn(String name, String value) {
-		if (SCHEMA.findField(name) == null) {
-			SCHEMA.addField(name, DerbyFieldType.TEXT);
-		}
-		getAttributes().put(name, value);
-	}
-
-	@Override
-	public void merge(Award otherItem) {
-		this.rawStartDate = StringUtilities.simpleMerge(this.rawStartDate,
-														otherItem.getRawStartDate());
-		this.rawExpirationDate = StringUtilities.simpleMerge(this.rawExpirationDate,
-															 otherItem.getRawExpirationDate());
-		this.rawLastAmendmentDate = StringUtilities.simpleMerge(
-											this.rawLastAmendmentDate,
-											otherItem.getRawLastAmendmentDate());
-		this.rawAwardedAmountToDate = StringUtilities.simpleMerge(
-											this.rawAwardedAmountToDate,
-											otherItem.getRawAwardedAmountToDate());
-		this.awardInstrument = StringUtilities.simpleMerge(this.awardInstrument,
-														   otherItem.getAwardInstrument());
-		this.nSFDirectorate = StringUtilities.simpleMerge(this.nSFDirectorate,
-				   										  otherItem.getNSFDirectorate());	 
-		this.nSFOrganization = StringUtilities.simpleMerge(this.nSFOrganization,
-					  									   otherItem.getNSFOrganization());	 
-		this.abstractText = StringUtilities.simpleMerge(this.abstractText,
-					  									otherItem.getAbstractText());
-	}
-
-
-	@Override
-	public boolean shouldMerge(Award otherItem) {
-		return (
-			StringUtilities.areValidAndEqualIgnoreCase(
-				this.awardNumber, 
-				otherItem.getAwardNumber())
-			&& StringUtilities.areValidAndEqualIgnoreCase(
-					this.title, 
-					otherItem.getTitle()) 
-		);
-	}
-
 	public String getRawStartDate() {
 		return rawStartDate;
 	}
@@ -246,5 +159,100 @@ public class Award extends Entity<Award> {
 
 	public String getRawExpirationDate() {
 		return rawExpirationDate;
+	}
+
+	public void addArbitraryColumn(String name, String value) {
+		if (SCHEMA.findField(name) == null) {
+			SCHEMA.addField(name, DerbyFieldType.TEXT);
+		}
+		getAttributes().put(name, value);
+	}
+
+	/*@Override
+	public boolean shouldMerge(Award otherItem) {
+		return (
+			StringUtilities.areValidAndEqualIgnoreCase(
+				this.awardNumber, 
+				otherItem.getAwardNumber())
+			&& StringUtilities.areValidAndEqualIgnoreCase(
+					this.title, 
+					otherItem.getTitle()) 
+		);
+	}*/
+
+	@Override
+	public Object createMergeKey() {
+		List<Object> mergeKey = new ArrayList<Object>();
+		Integer primaryKey = getPrimaryKey();
+		addCaseInsensitiveStringOrAlternativeToMergeKey(mergeKey, this.awardNumber, primaryKey);
+		addCaseInsensitiveStringOrAlternativeToMergeKey(mergeKey, this.title, primaryKey);
+
+		return mergeKey;
+	}
+
+	@Override
+	public void merge(Award otherItem) {
+		this.rawStartDate =
+			StringUtilities.simpleMerge(this.rawStartDate, otherItem.getRawStartDate());
+		this.rawExpirationDate =
+			StringUtilities.simpleMerge(this.rawExpirationDate, otherItem.getRawExpirationDate());
+		this.rawLastAmendmentDate = StringUtilities.simpleMerge(
+			this.rawLastAmendmentDate, otherItem.getRawLastAmendmentDate());
+		this.rawAwardedAmountToDate = StringUtilities.simpleMerge(
+			this.rawAwardedAmountToDate, otherItem.getRawAwardedAmountToDate());
+		this.awardInstrument =
+			StringUtilities.simpleMerge(this.awardInstrument, otherItem.getAwardInstrument());
+		this.nSFDirectorate =
+			StringUtilities.simpleMerge(this.nSFDirectorate, otherItem.getNSFDirectorate());	 
+		this.nSFOrganization =
+			StringUtilities.simpleMerge(this.nSFOrganization, otherItem.getNSFOrganization());	 
+		this.abstractText =
+			StringUtilities.simpleMerge(this.abstractText, otherItem.getAbstractText());
+	}
+
+	private static Dictionary<String, Object> createAttributes(
+			String awardNumber,
+			String title,
+			Date startDate,
+			String rawStartDate, 
+			Date expirationDate,
+			String rawExpirationDate, 
+			Date lastAmendmentDate,
+			String rawLastAmendmentDate, 
+			double awardedAmountToDate,
+			String rawAwardedAmountToDate,
+			String awardInstrument,
+			String nSFDirectorate,
+			String nSFOrganization,
+			String abstractText) {
+		Dictionary<String, Object> attributes = new Hashtable<String, Object>();
+		attributes.put(NSF_Database_FieldNames.TITLE, title);
+		attributes.put(NSF_Database_FieldNames.AWARD_NUMBER, awardNumber);
+		
+		if (startDate != null) {
+			attributes.put(NSF_Database_FieldNames.START_DATE, startDate);
+		}
+		
+		attributes.put(NSF_Database_FieldNames.RAW_START_DATE, rawStartDate);
+		
+		if (expirationDate != null) {
+			attributes.put(NSF_Database_FieldNames.EXPIRATION_DATE, expirationDate);
+		}
+		
+		attributes.put(NSF_Database_FieldNames.RAW_EXPIRATION_DATE, rawExpirationDate);
+
+		if (lastAmendmentDate != null) {
+			attributes.put(NSF_Database_FieldNames.LAST_AMENDMENT_DATE, lastAmendmentDate);
+		}
+		
+		attributes.put(NSF_Database_FieldNames.RAW_LAST_AMENDMENT_DATE, rawLastAmendmentDate);
+		attributes.put(NSF_Database_FieldNames.AWARDED_AMOUNT_TO_DATE, awardedAmountToDate);
+		attributes.put(NSF_Database_FieldNames.RAW_AWARDED_AMOUNT_TO_DATE, rawAwardedAmountToDate);
+		attributes.put(NSF_Database_FieldNames.AWARD_INSTRUMENT, awardInstrument);
+		attributes.put(NSF_Database_FieldNames.NSF_DIRECTORATE, nSFDirectorate);
+		attributes.put(NSF_Database_FieldNames.NSF_ORGANIZATION, nSFOrganization);
+		attributes.put(NSF_Database_FieldNames.ABSTRACT_TEXT, abstractText);
+		
+		return attributes;
 	}
 }

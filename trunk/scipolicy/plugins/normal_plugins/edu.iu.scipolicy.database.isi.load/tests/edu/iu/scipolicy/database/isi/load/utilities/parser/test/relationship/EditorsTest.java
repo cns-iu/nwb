@@ -1,6 +1,7 @@
 package edu.iu.scipolicy.database.isi.load.utilities.parser.test.relationship;
 
 
+import java.util.Collection;
 import java.util.List;
 
 import org.junit.Test;
@@ -56,9 +57,9 @@ public class EditorsTest extends RowItemTest {
 		checkItemContainerValidity(editors, "editors");
 		checkItemCount(editors, 1);
 
-		Document firstDocument = (Document)documents.getItems().get(0);
-		Person firstEditorPerson = (Person)people.getItems().get(0);
-		Editor firstEditor = (Editor)editors.getItems().get(0);
+		Document firstDocument = (Document)documents.getItems().iterator().next();
+		Person firstEditorPerson = (Person)people.getItems().iterator().next();
+		Editor firstEditor = (Editor)editors.getItems().iterator().next();
 
 		checkEditor(firstEditor, firstDocument, firstEditorPerson);
 	}
@@ -75,15 +76,15 @@ public class EditorsTest extends RowItemTest {
 
 		checkItemContainerValidity(documents, "documents");
 		checkItemCount(documents, 1);
-		List<Document> documentItems = (List<Document>)documents.getItems();
+		Collection<Document> documentItems = (Collection<Document>)documents.getItems();
 
 		checkItemContainerValidity(people, "people");
 		checkItemCount(people, 2);
-		List<Person> personItems = (List<Person>)people.getItems();
+		Collection<Person> personItems = (Collection<Person>)people.getItems();
 
 		checkItemContainerValidity(editors, "authors");
 		checkItemCount(editors, 2);
-		List<Editor> editorItems = (List<Editor>)editors.getItems();
+		Collection<Editor> editorItems = (Collection<Editor>)editors.getItems();
 
 		Document firstDocument = getFirstDocument(documentItems);
 		Person firstEditorPerson = getFirstEditorPerson(personItems);
@@ -97,7 +98,8 @@ public class EditorsTest extends RowItemTest {
 
 	// TODO: Test Editor.
 
-	public static Editor getEditor(List<Editor> editors, Document document, Person editorPerson) {
+	public static Editor getEditor(
+			Collection<Editor> editors, Document document, Person editorPerson) {
 		for (Editor editor : editors) {
 			if ((editor.getDocument() == document) && (editor.getPerson() == editorPerson)) {
 				return editor;
@@ -125,11 +127,11 @@ public class EditorsTest extends RowItemTest {
 		checkItemOrderListed(editor, orderListed);
 	}
 
-	private Document getFirstDocument(List<Document> documents) {
+	private Document getFirstDocument(Collection<Document> documents) {
 		return DocumentTest.getDocument(documents, FIRST_DOCUMENT_TITLE);
 	}
 
-	private Person getFirstEditorPerson(List<Person> people) throws Exception {
+	private Person getFirstEditorPerson(Collection<Person> people) throws Exception {
 		return PersonTest.getPerson(
 			people,
 			"",
@@ -141,7 +143,7 @@ public class EditorsTest extends RowItemTest {
 			"Macdonald, PJ");
 	}
 
-	private Person getSecondEditorPerson(List<Person> people) throws Exception {
+	private Person getSecondEditorPerson(Collection<Person> people) throws Exception {
 		return PersonTest.getPerson(
 			people,
 			"",

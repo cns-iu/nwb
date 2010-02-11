@@ -1,7 +1,9 @@
 package edu.iu.scipolicy.database.isi.load.model.entity;
 
+import java.util.ArrayList;
 import java.util.Dictionary;
 import java.util.Hashtable;
+import java.util.List;
 
 import org.cishell.utilities.StringUtilities;
 import org.cishell.utilities.dictionary.DictionaryEntry;
@@ -59,6 +61,7 @@ public class Publisher extends Entity<Publisher> {
 		getAttributes().put(ISI.PUBLISHER_SOURCE, this.source.getPrimaryKey());
 	}
 
+	/*@Override
 	public boolean shouldMerge(Publisher otherPublisher) {
 		boolean namesAndCitiesAreEquivalent = (
 			StringUtilities.areValidAndEqualIgnoreCase(this.city, otherPublisher.getCity()) &&
@@ -67,8 +70,20 @@ public class Publisher extends Entity<Publisher> {
 			this.webAddress, otherPublisher.getWebAddress());
 
 		return (namesAndCitiesAreEquivalent || webAddressesAreEquivalent);
+	}*/
+
+	@Override
+	public List<Object> createMergeKey() {
+		List<Object> mergeKey = new ArrayList<Object>();
+		Integer primaryKey = getPrimaryKey();
+		addStringOrAlternativeToMergeKey(mergeKey, this.city, primaryKey);
+		addStringOrAlternativeToMergeKey(mergeKey, this.name, primaryKey);
+		addStringOrAlternativeToMergeKey(mergeKey, this.webAddress, primaryKey);
+
+		return mergeKey;
 	}
 
+	@Override
 	public void merge(Publisher otherPublisher) {
 		this.city = StringUtilities.simpleMerge(this.city, otherPublisher.getCity());
 		this.name = StringUtilities.simpleMerge(this.name, otherPublisher.getName());

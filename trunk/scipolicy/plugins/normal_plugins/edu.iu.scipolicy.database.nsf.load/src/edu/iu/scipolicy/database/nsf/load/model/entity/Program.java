@@ -1,7 +1,9 @@
 package edu.iu.scipolicy.database.nsf.load.model.entity;
 
+import java.util.ArrayList;
 import java.util.Dictionary;
 import java.util.Hashtable;
+import java.util.List;
 
 import org.cishell.utilities.StringUtilities;
 
@@ -22,22 +24,10 @@ public class Program extends Entity<Program> {
 	private String name;
 	private String fundingCode;
 
-	public Program(DatabaseTableKeyGenerator keyGenerator,
-				   String name,
-				   String fundingCode) {
+	public Program(DatabaseTableKeyGenerator keyGenerator, String name, String fundingCode) {
 		super(keyGenerator, createAttributes(name, fundingCode));
 		this.fundingCode = fundingCode;
 		this.name = name;
-	}
-
-
-	private static Dictionary<String, Object> createAttributes(String name, 
-														String fundingCode) {
-		Dictionary<String, Object> attributes = new Hashtable<String, Object>();
-		attributes.put(NSF_Database_FieldNames.PROGRAM_NAME, name);
-		attributes.put(NSF_Database_FieldNames.FUNDING_CODE, fundingCode);
-
-		return attributes;
 	}
 
 	public String getName() {
@@ -47,15 +37,8 @@ public class Program extends Entity<Program> {
 	public String getFundingCode() {
 		return fundingCode;
 	}
-	
-	@Override
-	public void merge(Program otherItem) {
-		this.name = StringUtilities.simpleMerge(this.name, otherItem.getName());
-		this.fundingCode = StringUtilities.simpleMerge(this.fundingCode, otherItem.getFundingCode());
-	}
 
-
-	@Override
+	/*@Override
 	public boolean shouldMerge(Program otherItem) {
 		Program otherProgram = otherItem;
 		boolean isCurrentProgramNameEmpty = name.length() == 0 ? true : false;
@@ -81,5 +64,28 @@ public class Program extends Entity<Program> {
 				return false;
 			}
 		}
+	}*/
+
+	public Object createMergeKey() {
+		List<Object> mergeKey = new ArrayList<Object>();
+		Integer primaryKey = getPrimaryKey();
+		addCaseInsensitiveStringOrAlternativeToMergeKey(mergeKey, this.fundingCode, primaryKey);
+		addCaseInsensitiveStringOrAlternativeToMergeKey(mergeKey, this.name, primaryKey);
+
+		return mergeKey;
+	}
+	
+	@Override
+	public void merge(Program otherItem) {
+		this.name = StringUtilities.simpleMerge(this.name, otherItem.getName());
+		this.fundingCode = StringUtilities.simpleMerge(this.fundingCode, otherItem.getFundingCode());
+	}
+
+	private static Dictionary<String, Object> createAttributes(String name,  String fundingCode) {
+		Dictionary<String, Object> attributes = new Hashtable<String, Object>();
+		attributes.put(NSF_Database_FieldNames.PROGRAM_NAME, name);
+		attributes.put(NSF_Database_FieldNames.FUNDING_CODE, fundingCode);
+
+		return attributes;
 	}
 }

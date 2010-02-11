@@ -803,11 +803,11 @@ public class ISITableModelParser {
 	}
 
 	private void linkReferencesToDocuments() {
-		for (Reference reference : (List<Reference>)this.references.getItems()) {
+		for (Reference reference : this.references.getItems()) {
 			String referenceDigitalObjectIdentifier = reference.getDigitalObjectIdentifier();
 			String referenceArticleNumber = reference.getArticleNumber();
 
-			for (Document document : (List<Document>)this.documents.getItems()) {
+			for (Document document : this.documents.getItems()) {
 				String documentDigitalObjectIdentifier = document.getDigitalObjectIdentifier();
 				String documentArticleNumber = document.getArticleNumber();
 

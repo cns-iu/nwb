@@ -3,7 +3,7 @@ package edu.iu.scipolicy.database.isi.load.utilities.parser.test.relationship;
 
 import static org.junit.Assert.fail;
 
-import java.util.List;
+import java.util.Collection;
 
 import edu.iu.scipolicy.database.isi.load.model.entity.Document;
 import edu.iu.scipolicy.database.isi.load.model.entity.Keyword;
@@ -12,7 +12,7 @@ import edu.iu.scipolicy.database.isi.load.utilities.parser.RowItemTest;
 
 public class DocumentKeywordsTest extends RowItemTest {
 	public static DocumentKeyword getDocumentKeyword(
-			List<DocumentKeyword> documentKeywords, Document document, Keyword keyword) {
+			Collection<DocumentKeyword> documentKeywords, Document document, Keyword keyword) {
 		for (DocumentKeyword documentKeyword : documentKeywords) {
 			boolean documentsMatch =
 				(documentKeyword.getDocument().getPrimaryKey() == document.getPrimaryKey());

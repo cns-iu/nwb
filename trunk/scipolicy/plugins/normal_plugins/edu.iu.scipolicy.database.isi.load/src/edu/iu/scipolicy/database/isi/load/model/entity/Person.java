@@ -1,7 +1,9 @@
 package edu.iu.scipolicy.database.isi.load.model.entity;
 
+import java.util.ArrayList;
 import java.util.Dictionary;
 import java.util.Hashtable;
+import java.util.List;
 
 import org.cishell.utilities.dictionary.DictionaryEntry;
 import org.cishell.utilities.dictionary.DictionaryUtilities;
@@ -87,10 +89,22 @@ public class Person extends Entity<Person> {
 		return this.unsplitAbbreviatedName;
 	}
 
+	/*@Override
 	public boolean shouldMerge(Person otherPerson) {
 		return false;
+	}*/
+
+	@Override
+	public Object createMergeKey() {
+		/*List<Object> mergeKey = new ArrayList<Object>();
+		Integer primaryKey = getPrimaryKey();
+		mergeKey.add(primaryKey);
+
+		return mergeKey;*/
+		return getPrimaryKey();
 	}
 
+	@Override
 	public void merge(Person otherPerson) {
 	}
 

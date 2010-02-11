@@ -1,7 +1,9 @@
 package edu.iu.scipolicy.database.isi.load.model.entity.relationship;
 
+import java.util.ArrayList;
 import java.util.Dictionary;
 import java.util.Hashtable;
+import java.util.List;
 
 import org.cishell.utilities.dictionary.DictionaryEntry;
 import org.cishell.utilities.dictionary.DictionaryUtilities;
@@ -46,10 +48,21 @@ public class ResearchAddress extends RowItem<ResearchAddress> {
 		return this.orderListed;
 	}
 
+	/*@Override
 	public boolean shouldMerge(ResearchAddress otherResearchAddress) {
 		return false;
+	}*/
+
+	@Override
+	public Object createMergeKey() {
+		List<Object> mergeKey = new ArrayList<Object>();
+		mergeKey.add(this.document.getPrimaryKey());
+		mergeKey.add(this.address.getPrimaryKey());
+
+		return mergeKey;
 	}
 
+	@Override
 	public void merge(ResearchAddress otherResearchAddress) {
 	}
 

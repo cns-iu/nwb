@@ -1,7 +1,9 @@
 package edu.iu.scipolicy.database.isi.load.model.entity;
 
+import java.util.ArrayList;
 import java.util.Dictionary;
 import java.util.Hashtable;
+import java.util.List;
 
 import org.cishell.utilities.StringUtilities;
 import org.cishell.utilities.dictionary.DictionaryEntry;
@@ -29,11 +31,24 @@ public class Patent extends Entity<Patent> {
 		return this.patentNumber;
 	}
 
+	/*@Override
 	public boolean shouldMerge(Patent otherPatent) {
 		return StringUtilities.areValidAndEqual(
 			this.patentNumber, otherPatent.getPatentNumber());
+	}*/
+
+	@Override
+	public Object createMergeKey() {
+		/*List<Object> mergeKey = new ArrayList<Object>();
+		Integer primaryKey = getPrimaryKey();
+		addStringOrAlternativeToMergeKey(mergeKey, this.patentNumber, primaryKey);
+
+		return mergeKey;*/
+		return StringUtilities.alternativeIfNotNull_Empty_OrWhitespace(
+			this.patentNumber, getPrimaryKey());
 	}
 
+	@Override
 	public void merge(Patent otherPatent) {
 	}
 

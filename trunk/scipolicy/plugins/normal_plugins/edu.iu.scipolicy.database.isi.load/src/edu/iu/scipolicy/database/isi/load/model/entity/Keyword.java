@@ -1,7 +1,9 @@
 package edu.iu.scipolicy.database.isi.load.model.entity;
 
+import java.util.ArrayList;
 import java.util.Dictionary;
 import java.util.Hashtable;
+import java.util.List;
 
 import org.cishell.utilities.StringUtilities;
 import org.cishell.utilities.dictionary.DictionaryEntry;
@@ -36,12 +38,24 @@ public class Keyword extends Entity<Keyword> {
 		return this.type;
 	}
 
+	/*@Override
 	public boolean shouldMerge(Keyword otherKeyword) {
 		return (
 			StringUtilities.areValidAndEqual(this.keyword, otherKeyword.getKeyword()) &&
 			StringUtilities.areValidAndEqual(this.type, otherKeyword.getType()));
+	}*/
+
+	@Override
+	public List<Object> createMergeKey() {
+		List<Object> mergeKey = new ArrayList<Object>();
+		Integer primaryKey = getPrimaryKey();
+		addStringOrAlternativeToMergeKey(mergeKey, this.keyword, primaryKey);
+		addStringOrAlternativeToMergeKey(mergeKey, this.type, primaryKey);
+
+		return mergeKey;
 	}
 
+	@Override
 	public void merge(Keyword otherKeyword) {
 		this.keyword = StringUtilities.simpleMerge(this.keyword, otherKeyword.getKeyword());
 		this.type = StringUtilities.simpleMerge(this.type, otherKeyword.getType());

@@ -1,13 +1,16 @@
 package edu.iu.cns.database.load.framework;
 
-import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import edu.iu.cns.database.load.framework.utilities.DatabaseTableKeyGenerator;
 
 public class RowItemContainer<T extends RowItem<T>> {
 	private DatabaseTableKeyGenerator keyGenerator = new DatabaseTableKeyGenerator();
-	private List<T> items = new ArrayList<T>();
+	//private List<T> items = new ArrayList<T>();
+	private Map<Object, T> items = new HashMap<Object, T>();
 	private String humanReadableName;
 	private String databaseTableName;
 	private Schema<T> schema;
@@ -26,8 +29,8 @@ public class RowItemContainer<T extends RowItem<T>> {
 		return this.keyGenerator;
 	}
 
-	public final List<? extends RowItem<T>> getItems() {
-		return this.items;
+	public final Collection<T> getItems() {
+		return this.items.values();
 	}
 
 	public final String getHumanReadableName() {
@@ -42,21 +45,19 @@ public class RowItemContainer<T extends RowItem<T>> {
 		return this.schema;
 	}
 	
-	
 	//TODO: replace with a method using item keys, to avoid the computational complexity hit
 	public final T addOrMerge(T newItem) {
-		for (T originalItem : this.items) {
-			if (originalItem == newItem) {
-				return originalItem;
-			} else if (originalItem.shouldMerge(newItem)) {
-				originalItem.merge(newItem);
+		Object newItemMergeKey = newItem.createMergeKey();
 
-				return originalItem;
-			}
+		if (this.items.containsKey(newItemMergeKey)) {
+			T originalItem = this.items.get(newItemMergeKey);
+			originalItem.merge(newItem);
+
+			return originalItem;
+		} else {
+			this.items.put(newItemMergeKey, newItem);
+
+			return newItem;
 		}
-
-		this.items.add(newItem);
-
-		return newItem;
 	}
 }
