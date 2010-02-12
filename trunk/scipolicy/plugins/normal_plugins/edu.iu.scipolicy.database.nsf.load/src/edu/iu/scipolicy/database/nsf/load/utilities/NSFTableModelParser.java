@@ -14,6 +14,8 @@ import org.cishell.utilities.osgi.logging.LogMessageHandler;
 import org.osgi.service.log.LogService;
 
 import au.com.bytecode.opencsv.CSVReader;
+import edu.iu.cns.database.load.framework.EntityContainer;
+import edu.iu.cns.database.load.framework.RelationshipContainer;
 import edu.iu.cns.database.load.framework.RowItemContainer;
 import edu.iu.cns.database.load.framework.utilities.DatabaseModel;
 import edu.iu.scipolicy.database.nsf.load.model.entity.Award;
@@ -49,36 +51,36 @@ public class NSFTableModelParser {
 	 * For each type of entity (NSF File, Organization, FieldOfApplication, Program,
 	 * Person and Award), create a master list of entities.
 	 */
-	private RowItemContainer<NSFFile> nsfFiles = new RowItemContainer<NSFFile>(
-													NSF_Database_FieldNames.NSF_FILE_HUMAN_READABLE_NAME, 
-													NSF_Database_FieldNames.NSF_FILE_TABLE_NAME, 
-													NSFFile.SCHEMA);
+	private RowItemContainer<NSFFile> nsfFiles = new EntityContainer<NSFFile>(
+		NSF_Database_FieldNames.NSF_FILE_HUMAN_READABLE_NAME, 
+		NSF_Database_FieldNames.NSF_FILE_TABLE_NAME, 
+		NSFFile.SCHEMA);
 
-	private RowItemContainer<Organization> organizations = new RowItemContainer<Organization>(
-													NSF_Database_FieldNames.ORGANIZATION_HUMAN_READABLE_NAME, 
-													NSF_Database_FieldNames.ORGANIZATION_TABLE_NAME, 
-													Organization.SCHEMA);
+	private RowItemContainer<Organization> organizations = new EntityContainer<Organization>(
+		NSF_Database_FieldNames.ORGANIZATION_HUMAN_READABLE_NAME, 
+		NSF_Database_FieldNames.ORGANIZATION_TABLE_NAME, 
+		Organization.SCHEMA);
 
-	private RowItemContainer<FieldOfApplication> fieldOfApplications 
-						= new RowItemContainer<FieldOfApplication>(
-										NSF_Database_FieldNames.FIELD_OF_APPLICATION_HUMAN_READABLE_NAME, 
-										NSF_Database_FieldNames.FIELD_OF_APPLICATION_TABLE_NAME, 
-										FieldOfApplication.SCHEMA);
+	private RowItemContainer<FieldOfApplication> fieldOfApplications =
+		new EntityContainer<FieldOfApplication>(
+			NSF_Database_FieldNames.FIELD_OF_APPLICATION_HUMAN_READABLE_NAME, 
+			NSF_Database_FieldNames.FIELD_OF_APPLICATION_TABLE_NAME, 
+			FieldOfApplication.SCHEMA);
 
-	private RowItemContainer<Program> programs = new RowItemContainer<Program>(
-													NSF_Database_FieldNames.PROGRAM_HUMAN_READABLE_NAME, 
-													NSF_Database_FieldNames.PROGRAM_TABLE_NAME,
-													Program.SCHEMA);
+	private RowItemContainer<Program> programs = new EntityContainer<Program>(
+		NSF_Database_FieldNames.PROGRAM_HUMAN_READABLE_NAME, 
+		NSF_Database_FieldNames.PROGRAM_TABLE_NAME,
+		Program.SCHEMA);
 
-	private RowItemContainer<Person> people = new RowItemContainer<Person>(
-													NSF_Database_FieldNames.PERSON_HUMAN_READABLE_NAME, 
-													NSF_Database_FieldNames.PERSON_TABLE_NAME,
-													Person.SCHEMA);
+	private RowItemContainer<Person> people = new EntityContainer<Person>(
+		NSF_Database_FieldNames.PERSON_HUMAN_READABLE_NAME, 
+		NSF_Database_FieldNames.PERSON_TABLE_NAME,
+		Person.SCHEMA);
 
-	private RowItemContainer<Award> awards = new RowItemContainer<Award>(
-													NSF_Database_FieldNames.AWARD_HUMAN_READABLE_NAME, 
-													NSF_Database_FieldNames.AWARD_TABLE_NAME,
-													Award.SCHEMA);
+	private RowItemContainer<Award> awards = new EntityContainer<Award>(
+		NSF_Database_FieldNames.AWARD_HUMAN_READABLE_NAME, 
+		NSF_Database_FieldNames.AWARD_TABLE_NAME,
+		Award.SCHEMA);
 
 	/*
 	 * Create all of the entity joining tables (Field Of Applications, Investigator, 
@@ -86,46 +88,46 @@ public class NSFTableModelParser {
 	 *  Program References Codes and Award Occurrences).
 	 */
 	private RowItemContainer<InvestigatorOrganization> investigatorOrganizations =
-		new RowItemContainer<InvestigatorOrganization>(
-				NSF_Database_FieldNames.INVESTIGATOR_ORGANIZATIONS_HUMAN_READABLE_NAME,
-				NSF_Database_FieldNames.INVESTIGATOR_ORGANIZATIONS_TABLE_NAME,
-				InvestigatorOrganization.SCHEMA);
+		new RelationshipContainer<InvestigatorOrganization>(
+			NSF_Database_FieldNames.INVESTIGATOR_ORGANIZATIONS_HUMAN_READABLE_NAME,
+			NSF_Database_FieldNames.INVESTIGATOR_ORGANIZATIONS_TABLE_NAME,
+			InvestigatorOrganization.SCHEMA);
 
 	private RowItemContainer<Investigator> investigators =
-		new RowItemContainer<Investigator>(
-				NSF_Database_FieldNames.INVESTIGATOR_HUMAN_READABLE_NAME,
-				NSF_Database_FieldNames.INVESTIGATOR_TABLE_NAME,
-				Investigator.SCHEMA);
+		new RelationshipContainer<Investigator>(
+			NSF_Database_FieldNames.INVESTIGATOR_HUMAN_READABLE_NAME,
+			NSF_Database_FieldNames.INVESTIGATOR_TABLE_NAME,
+			Investigator.SCHEMA);
 
 	private RowItemContainer<AwardFieldOfApplication> awardFieldOfApplications =
-		new RowItemContainer<AwardFieldOfApplication>(
-				NSF_Database_FieldNames.AWARD_FIELD_OF_APPLICATION_HUMAN_READABLE_NAME,
-				NSF_Database_FieldNames.AWARD_FIELD_OF_APPLICATION_TABLE_NAME,
-				AwardFieldOfApplication.SCHEMA);
+		new RelationshipContainer<AwardFieldOfApplication>(
+			NSF_Database_FieldNames.AWARD_FIELD_OF_APPLICATION_HUMAN_READABLE_NAME,
+			NSF_Database_FieldNames.AWARD_FIELD_OF_APPLICATION_TABLE_NAME,
+			AwardFieldOfApplication.SCHEMA);
 
 	private RowItemContainer<ProgramManager> programManagers =
-		new RowItemContainer<ProgramManager>(
-				NSF_Database_FieldNames.PROGRAM_MANAGER_HUMAN_READABLE_NAME,
-				NSF_Database_FieldNames.PROGRAM_MANAGER_TABLE_NAME,
-				ProgramManager.SCHEMA);
+		new RelationshipContainer<ProgramManager>(
+			NSF_Database_FieldNames.PROGRAM_MANAGER_HUMAN_READABLE_NAME,
+			NSF_Database_FieldNames.PROGRAM_MANAGER_TABLE_NAME,
+			ProgramManager.SCHEMA);
 
 	private RowItemContainer<ProgramNameAndElementCode> programNameAndElementCodes =
-		new RowItemContainer<ProgramNameAndElementCode>(
-				NSF_Database_FieldNames.PROGRAM_NAME_AND_ELEMENT_CODES_HUMAN_READABLE_NAME,
-				NSF_Database_FieldNames.PROGRAM_NAME_AND_ELEMENT_CODES_TABLE_NAME,
-				ProgramNameAndElementCode.SCHEMA);
+		new RelationshipContainer<ProgramNameAndElementCode>(
+			NSF_Database_FieldNames.PROGRAM_NAME_AND_ELEMENT_CODES_HUMAN_READABLE_NAME,
+			NSF_Database_FieldNames.PROGRAM_NAME_AND_ELEMENT_CODES_TABLE_NAME,
+			ProgramNameAndElementCode.SCHEMA);
 
 	private RowItemContainer<ProgramReferenceCode> programReferenceCodes =
-		new RowItemContainer<ProgramReferenceCode>(
-				NSF_Database_FieldNames.PROGRAM_REFERENCE_CODES_HUMAN_READABLE_NAME,
-				NSF_Database_FieldNames.PROGRAM_REFERENCE_CODES_TABLE_NAME,
-				ProgramReferenceCode.SCHEMA);
+		new RelationshipContainer<ProgramReferenceCode>(
+			NSF_Database_FieldNames.PROGRAM_REFERENCE_CODES_HUMAN_READABLE_NAME,
+			NSF_Database_FieldNames.PROGRAM_REFERENCE_CODES_TABLE_NAME,
+			ProgramReferenceCode.SCHEMA);
 
 	private RowItemContainer<AwardOccurence> awardOccurences =
-		new RowItemContainer<AwardOccurence>(
-				NSF_Database_FieldNames.AWARD_OCCURRENCES_HUMAN_READABLE_NAME,
-				NSF_Database_FieldNames.AWARD_OCCURRENCES_TABLE_NAME,
-				AwardOccurence.SCHEMA);
+		new RelationshipContainer<AwardOccurence>(
+			NSF_Database_FieldNames.AWARD_OCCURRENCES_HUMAN_READABLE_NAME,
+			NSF_Database_FieldNames.AWARD_OCCURRENCES_TABLE_NAME,
+			AwardOccurence.SCHEMA);
 
 	/**
 	 * Parse each field of the nsf file and update the nsf model as you go.
@@ -144,13 +146,10 @@ public class NSFTableModelParser {
 	 * @return
 	 * @throws IOException
 	 */
-	public DatabaseModel parseModel(CSVReader cSVReaderHandle,
-									NSFMetadata nsfMetadata, 
-									LogService logger) throws IOException {
-		
-		
-		
-//		this.logger = logger;
+	public DatabaseModel parseModel(
+			CSVReader cSVReaderHandle,
+			NSFMetadata nsfMetadata, 
+			LogService logger) throws IOException {
 		this.logMessageHandler = new LogMessageHandler(logger);
 		this.invalidAwardAmountType = logMessageHandler.addMessageType(
 				ROW_WITH_INVALID_AWARDED_AMOUNT,
@@ -180,7 +179,7 @@ public class NSFTableModelParser {
 										 nsfMetadata.getUnknownColumnNameToColumnIndex(), 
 										 row);
 
-				this.awardOccurences.addOrMerge(new AwardOccurence(award, mergedNSFFile));
+				this.awardOccurences.add(new AwardOccurence(award, mergedNSFFile));
 				
 				/*
 				 * For Person VO parse Principal Investigator column. 
@@ -211,7 +210,7 @@ public class NSFTableModelParser {
 				 * Create a relationship VO of "Investigator - Organization" and add 
 				 * reference in it of the "Investigator" &  "Organization".
 				 * */
-				this.investigatorOrganizations.addOrMerge(
+				this.investigatorOrganizations.add(
 						new InvestigatorOrganization(principalInvestigator, 
 								organization));
 				/*
@@ -228,7 +227,7 @@ public class NSFTableModelParser {
 
 				for (Person coPrinciaplInvestigatorPerson : coPrinciaplInvestigatorPeople) {
 
-					this.investigators.addOrMerge(
+					this.investigators.add(
 							new Investigator(this.investigators.getKeyGenerator(), 
 									award,
 									coPrinciaplInvestigatorPerson,
@@ -262,7 +261,7 @@ public class NSFTableModelParser {
 				 * having reference to both FOA & the current Award.
 				 * */
 				for (FieldOfApplication fieldOfApplication : currentFieldOfApplications) {
-					this.awardFieldOfApplications.addOrMerge(
+					this.awardFieldOfApplications.add(
 							new AwardFieldOfApplication(fieldOfApplication, award));
 				}
 
@@ -279,7 +278,7 @@ public class NSFTableModelParser {
 				 * Program VOs. 
 				 * */
 				for (Program programNameAndElementCode : programNamesAndElementCodes) {
-					this.programNameAndElementCodes.addOrMerge(
+					this.programNameAndElementCodes.add(
 							new ProgramNameAndElementCode(programNameAndElementCode, award));
 				}
 
@@ -291,7 +290,7 @@ public class NSFTableModelParser {
 						row);
 
 				for (Program programReferenceCode : programReferenceCodes) {
-					this.programReferenceCodes.addOrMerge(
+					this.programReferenceCodes.add(
 							new ProgramReferenceCode(programReferenceCode, award));
 				}
 			}
@@ -332,7 +331,7 @@ public class NSFTableModelParser {
 									  nsfMetadata.getFileType(),
 									  nsfMetadata.getMd5Checksum());
 		
-		NSFFile mergedNSFFile = this.nsfFiles.addOrMerge(nsfFile);
+		NSFFile mergedNSFFile = this.nsfFiles.add(nsfFile);
 		return mergedNSFFile;
 	}
 
@@ -428,7 +427,7 @@ public class NSFTableModelParser {
 									  cleanedProgramName,
 									  cleanedProgramElementCode);
 
-		Program mergedProgram = this.programs.addOrMerge(program);
+		Program mergedProgram = this.programs.add(program);
 		return mergedProgram;
 	}
 
@@ -496,7 +495,7 @@ public class NSFTableModelParser {
 						this.fieldOfApplications.getKeyGenerator(), 
 						cleanedFOAString);
 
-			FieldOfApplication mergedFOA = this.fieldOfApplications.addOrMerge(fieldApplication);
+			FieldOfApplication mergedFOA = this.fieldOfApplications.add(fieldApplication);
 
 			fieldOfApplicationCandidates.add(mergedFOA);
 			
@@ -518,9 +517,9 @@ public class NSFTableModelParser {
 				this.people.getKeyGenerator(), 
 				cleanedProgramManagerName);
 
-		Person mergedProgramManagerPerson = this.people.addOrMerge(programManagerPerson);
+		Person mergedProgramManagerPerson = this.people.add(programManagerPerson);
 
-		return this.programManagers.addOrMerge(
+		return this.programManagers.add(
 				new ProgramManager(mergedProgramManagerPerson, 
 						award));
 	}
@@ -543,7 +542,7 @@ public class NSFTableModelParser {
 				Person coPIPerson = PersonParser.parsePerson(
 						this.people.getKeyGenerator(), 
 						cleanedCOPIString);
-				Person mergedCOPIPerson = this.people.addOrMerge(coPIPerson);
+				Person mergedCOPIPerson = this.people.add(coPIPerson);
 
 				coPrincipalInvestigatorPeople.add(mergedCOPIPerson);	
 		}
@@ -587,7 +586,7 @@ public class NSFTableModelParser {
 				state,
 				zip);
 
-		return this.organizations.addOrMerge(organization);
+		return this.organizations.add(organization);
 	}
 
 	private Investigator parsePrincipalInvestigator(
@@ -611,7 +610,7 @@ public class NSFTableModelParser {
 				state,
 				isMainPI); 
 
-		return this.investigators.addOrMerge(principalInvestigator);
+		return this.investigators.add(principalInvestigator);
 
 	}
 
@@ -720,7 +719,7 @@ public class NSFTableModelParser {
 											 row[unknownColumnEntry.getValue()]));
 		}
 		
-		return this.awards.addOrMerge(award);
+		return this.awards.add(award);
 	}
 
 
@@ -740,7 +739,7 @@ public class NSFTableModelParser {
 				this.people.getKeyGenerator(), 
 				cleanedPersonName);
 
-		return this.people.addOrMerge(person);
+		return this.people.add(person);
 	}
 
 

@@ -74,11 +74,13 @@ public class ReferenceDataParser {
 		this.sourceKeyGenerator = sourceKeyGenerator;
 		this.rawString = rawString;
 
+		long hotOnTheChase = System.currentTimeMillis();
 		String[] specialCaseCleanedTokens =
 			StringUtilities.simpleCleanStrings(rawString.split(", "));
 
 		String[] cleanedTokens = handleSpecialCaseTokens(specialCaseCleanedTokens);
-
+		
+		long hotter = System.currentTimeMillis();
 		if ((cleanedTokens.length < MINIMUM_NUMBER_OF_TOKENS_FOR_VALID_REFERENCE) ||
 				(cleanedTokens.length > MAXIMUM_NUMBER_OF_TOKENS_FOR_VALID_REFERENCE)) {
 			String exceptionMessage =
@@ -98,7 +100,7 @@ public class ReferenceDataParser {
 			parseFourTokens(cleanedTokens);
 		} else if (cleanedTokens.length == 5) {
 			parseFiveTokens(cleanedTokens);
-		} else if ((cleanedTokens.length == 6) && isDigitalObjectIdentifier(cleanedTokens[5])) {
+		} else if((cleanedTokens.length == 6) && isDigitalObjectIdentifier(cleanedTokens[5])) {
 			parseSixTokens(cleanedTokens);
 		}
 	}
@@ -386,7 +388,7 @@ public class ReferenceDataParser {
 			parseSource(this.sourceKeyGenerator, thirdToken);
 		this.source = parsedSource.getFirstObject();
 		this.annotation = parsedSource.getSecondObject();
-
+		
 		if (isVolume(fourthToken)) {
 			this.volume = parseVolume(fourthToken);
 
@@ -443,6 +445,7 @@ public class ReferenceDataParser {
 
 	private static Pair<Source, String> parseSource(
 			DatabaseTableKeyGenerator sourceKeyGenerator, String originalToken) {
+		long sourceTime = System.currentTimeMillis();
 		int annotationIndex = StringUtilities.prefixIndex(originalToken, SOURCE_ANNOTATIONS);
 		String annotation = null;
 		String sourceString = originalToken;
@@ -543,7 +546,6 @@ public class ReferenceDataParser {
 
 	private static boolean isDigitalObjectIdentifier(String token) {
 		return token.matches(DIGITAL_OBJECT_IDENTIFIER_PATTERN);
-		//return token.startsWith("DOI ");
 	}
 
 	private static boolean isVolume(String token) {
@@ -553,8 +555,4 @@ public class ReferenceDataParser {
 	private static boolean isPageNumber(String token) {
 		return token.matches(PAGE_NUMBER_PATTERN);
 	}
-
-//	private static boolean isSomeOtherNumber(String token) {
-//		return token.matches(OTHER_NUMBER_PATTERN);
-//	}
 }

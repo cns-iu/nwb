@@ -8,14 +8,14 @@ import edu.iu.scipolicy.database.isi.load.utilities.parser.exception.PersonParsi
 
 public class PersonParser {
 	public static Pair<Person, Boolean> parsePerson(
+		
 			DatabaseTableKeyGenerator personKeyGenerator,
 			String rawAbbreviatedNameString,
 			String rawFullNameString) throws PersonParsingException {
 		AbbreviatedNameParser parsedAbbreviatedName =
 			new AbbreviatedNameParser(rawAbbreviatedNameString);
 		FullNameParser parsedFullName = new FullNameParser(rawFullNameString);
-
-		return new Pair<Person, Boolean>(
+		Pair<Person, Boolean> pair = new Pair<Person, Boolean>(
 			new Person(
 				personKeyGenerator,
 				parsedFullName.additionalNamesString,
@@ -26,5 +26,7 @@ public class PersonParser {
 				parsedFullName.personalName,
 				parsedAbbreviatedName.unsplitAbbreviatedName),
 			parsedAbbreviatedName.starred);
+
+		return pair;
 	}
 }

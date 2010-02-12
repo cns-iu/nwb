@@ -1,9 +1,7 @@
 package edu.iu.scipolicy.database.nsf.load.model.entity.relationship;
 
-import java.util.ArrayList;
 import java.util.Dictionary;
 import java.util.Hashtable;
-import java.util.List;
 
 import edu.iu.cns.database.load.framework.DerbyFieldType;
 import edu.iu.cns.database.load.framework.RowItem;
@@ -46,11 +44,6 @@ public class AwardFieldOfApplication extends RowItem<AwardFieldOfApplication> {
 	}
 
 	/*@Override
-	public boolean shouldMerge(AwardFieldOfApplication otherItem) {
-		return false;
-	}*/
-
-	@Override
 	public Object createMergeKey() {
 		List<Object> mergeKey = new ArrayList<Object>();
 		mergeKey.add(this.fieldOfApplication.getPrimaryKey());
@@ -61,7 +54,7 @@ public class AwardFieldOfApplication extends RowItem<AwardFieldOfApplication> {
 
 	@Override
 	public void merge(AwardFieldOfApplication otherItem) {
-	}
+	}*/
 
 	private static Dictionary<String, Object> createAttributes(
 			FieldOfApplication fieldOfApplication, Award award) {

@@ -1,9 +1,7 @@
 package edu.iu.scipolicy.database.nsf.load.model.entity.relationship;
 
-import java.util.ArrayList;
 import java.util.Dictionary;
 import java.util.Hashtable;
-import java.util.List;
 
 import edu.iu.cns.database.load.framework.DerbyFieldType;
 import edu.iu.cns.database.load.framework.RowItem;
@@ -45,11 +43,6 @@ public class InvestigatorOrganization extends RowItem<InvestigatorOrganization> 
 	}
 
 	/*@Override
-	public boolean shouldMerge(InvestigatorOrganization otherItem) {
-		return false;
-	}*/
-
-	@Override
 	public Object createMergeKey() {
 		List<Object> mergeKey = new ArrayList<Object>();
 		mergeKey.add(this.investigator.getPrimaryKey());
@@ -60,7 +53,7 @@ public class InvestigatorOrganization extends RowItem<InvestigatorOrganization> 
 
 	@Override
 	public void merge(InvestigatorOrganization otherItem) {
-	}
+	}*/
 
 	private static Dictionary<String, Object> createAttributes(
 			Investigator investigator, Organization organization) {

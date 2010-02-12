@@ -1,9 +1,7 @@
 package edu.iu.scipolicy.database.isi.load.model.entity;
 
-import java.util.ArrayList;
 import java.util.Dictionary;
 import java.util.Hashtable;
-import java.util.List;
 
 import org.cishell.utilities.StringUtilities;
 import org.cishell.utilities.dictionary.DictionaryEntry;

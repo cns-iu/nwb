@@ -1,9 +1,7 @@
 package edu.iu.scipolicy.database.isi.load.model.entity.relationship;
 
-import java.util.ArrayList;
 import java.util.Dictionary;
 import java.util.Hashtable;
-import java.util.List;
 
 import org.cishell.utilities.dictionary.DictionaryEntry;
 import org.cishell.utilities.dictionary.DictionaryUtilities;
@@ -56,11 +54,6 @@ public class Author extends RowItem<Author> {
 	}
 
 	/*@Override
-	public boolean shouldMerge(Author otherAuthor) {
-		return false;
-	}*/
-
-	@Override
 	public Object createMergeKey() {
 		List<Object> mergeKey = new ArrayList<Object>();
 		mergeKey.add(this.document.getPrimaryKey());
@@ -72,7 +65,7 @@ public class Author extends RowItem<Author> {
 
 	@Override
 	public void merge(Author otherAuthor) {
-	}
+	}*/
 
 	public static Dictionary<String, Object> createAttributes(
 			Document document, Person person, String emailAddress, Integer orderListed) {

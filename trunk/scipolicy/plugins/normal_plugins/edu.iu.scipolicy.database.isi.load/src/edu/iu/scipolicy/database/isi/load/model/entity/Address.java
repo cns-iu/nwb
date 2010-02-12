@@ -1,15 +1,11 @@
 package edu.iu.scipolicy.database.isi.load.model.entity;
 
-import java.util.ArrayList;
 import java.util.Dictionary;
 import java.util.Hashtable;
-import java.util.List;
 
 import org.cishell.utilities.StringUtilities;
 import org.cishell.utilities.dictionary.DictionaryEntry;
 import org.cishell.utilities.dictionary.DictionaryUtilities;
-
-import com.sun.corba.se.impl.orbutil.GetPropertyAction;
 
 import edu.iu.cns.database.load.framework.DerbyFieldType;
 import edu.iu.cns.database.load.framework.Entity;

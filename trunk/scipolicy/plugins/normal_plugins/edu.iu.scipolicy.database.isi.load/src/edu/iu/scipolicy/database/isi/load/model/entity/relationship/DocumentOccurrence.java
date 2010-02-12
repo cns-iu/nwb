@@ -41,11 +41,6 @@ public class DocumentOccurrence extends RowItem<DocumentOccurrence> {
 	}
 
 	/*@Override
-	public boolean shouldMerge(DocumentOccurrence otherDocumentOccurrence) {
-		return false;
-	}*/
-
-	@Override
 	public Object createMergeKey() {
 		List<Object> mergeKey = new ArrayList<Object>();
 		mergeKey.add(this.document.getPrimaryKey());
@@ -56,7 +51,7 @@ public class DocumentOccurrence extends RowItem<DocumentOccurrence> {
 
 	@Override
 	public void merge(DocumentOccurrence otherDocumentOccurrence) {
-	}
+	}*/
 
 	public static Dictionary<String, Object> createAttributes(
 			Document document, ISIFile isiFile) {
