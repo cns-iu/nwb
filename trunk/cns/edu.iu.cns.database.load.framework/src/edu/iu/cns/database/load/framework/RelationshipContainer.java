@@ -11,9 +11,18 @@ public class RelationshipContainer<T extends RowItem<T>> extends RowItemContaine
 		super(humanReadableName, schema);
 	}
 
+	public RelationshipContainer(String humanReadableName, Schema<T> schema, int batchSize) {
+		super(humanReadableName, schema, batchSize);
+	}
+
 	public RelationshipContainer(
 			String humanReadableName, String databaseTableName, Schema<T> schema) {
 		super(humanReadableName, databaseTableName, schema);
+	}
+
+	public RelationshipContainer(
+			String humanReadableName, String databaseTableName, Schema<T> schema, int batchSize) {
+		super(humanReadableName, databaseTableName, schema, batchSize);
 	}
 
 	public Collection<T> getItems() {

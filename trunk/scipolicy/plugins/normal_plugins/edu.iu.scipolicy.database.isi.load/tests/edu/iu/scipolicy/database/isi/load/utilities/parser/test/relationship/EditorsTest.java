@@ -2,8 +2,9 @@ package edu.iu.scipolicy.database.isi.load.utilities.parser.test.relationship;
 
 
 import java.util.Collection;
-import java.util.List;
 
+import org.cishell.utilities.dictionary.DictionaryEntry;
+import org.cishell.utilities.dictionary.DictionaryIterator;
 import org.junit.Test;
 
 import edu.iu.cns.database.load.framework.RowItemContainer;
@@ -76,11 +77,11 @@ public class EditorsTest extends RowItemTest {
 
 		checkItemContainerValidity(documents, "documents");
 		checkItemCount(documents, 1);
-		Collection<Document> documentItems = (Collection<Document>)documents.getItems();
+		Collection<Document> documentItems = documents.getItems();
 
 		checkItemContainerValidity(people, "people");
 		checkItemCount(people, 2);
-		Collection<Person> personItems = (Collection<Person>)people.getItems();
+		Collection<Person> personItems = people.getItems();
 
 		checkItemContainerValidity(editors, "authors");
 		checkItemCount(editors, 2);

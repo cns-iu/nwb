@@ -11,8 +11,17 @@ public class EntityContainer<T extends Entity<T>> extends RowItemContainer<T> {
 		super(humanReadableName, schema);
 	}
 
+	public EntityContainer(String humanReadableName, Schema<T> schema, int batchSize) {
+		super(humanReadableName, schema, batchSize);
+	}
+
 	public EntityContainer(String humanReadableName, String databaseTableName, Schema<T> schema) {
 		super(humanReadableName, databaseTableName, schema);
+	}
+
+	public EntityContainer(
+			String humanReadableName, String databaseTableName, Schema<T> schema, int batchSize) {
+		super(humanReadableName, databaseTableName, schema, batchSize);
 	}
 
 	public Collection<T> getItems() {

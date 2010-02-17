@@ -12,4 +12,8 @@ public abstract class RowItem<T extends RowItem<?>> {
 	public final Dictionary<String, Object> getAttributes() {
 		return this.attributes;
 	}
+
+	public Dictionary<String, Object> getAttributesForInsertion() {
+		return this.attributes;
+	}
 }

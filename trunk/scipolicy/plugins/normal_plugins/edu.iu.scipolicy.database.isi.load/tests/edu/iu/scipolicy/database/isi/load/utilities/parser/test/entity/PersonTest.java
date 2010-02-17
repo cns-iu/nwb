@@ -4,7 +4,8 @@ package edu.iu.scipolicy.database.isi.load.utilities.parser.test.entity;
 import static org.junit.Assert.fail;
 
 import java.util.Collection;
-import java.util.List;
+import java.util.Dictionary;
+import java.util.Iterator;
 
 import org.junit.Test;
 
@@ -12,6 +13,7 @@ import edu.iu.cns.database.load.framework.RowItemContainer;
 import edu.iu.cns.database.load.framework.utilities.DatabaseModel;
 import edu.iu.nwb.shared.isiutil.database.ISI;
 import edu.iu.scipolicy.database.isi.load.model.entity.Person;
+import edu.iu.scipolicy.database.isi.load.model.entity.Reference;
 import edu.iu.scipolicy.database.isi.load.utilities.parser.RowItemTest;
 import edu.iu.scipolicy.database.isi.load.utilities.parser.test.relationship.AuthorsTest;
 
@@ -66,25 +68,57 @@ public class PersonTest extends RowItemTest {
 	@Test
 	public void testOneAuthorGetsParsedFromOneReference() throws Exception {
 		DatabaseModel model = parseTestData(ONE_REFERENCE_AUTHOR_TEST_DATA_PATH);
+		RowItemContainer<Reference> references = model.getRowItemListOfTypeByDatabaseTableName(
+			ISI.REFERENCE_TABLE_NAME);
 		RowItemContainer<Person> people = model.getRowItemListOfTypeByDatabaseTableName(
 			ISI.PERSON_TABLE_NAME);
 
-		checkItemContainerValidity(people, "people");
-		Collection<Person> items = people.getItems();
+		checkItemContainerValidity(references, "references");
+		Collection<Reference> referenceItems = references.getItems();
 
+		checkItemContainerValidity(people, "people");
+		Collection<Person> personItems = people.getItems();
+
+		checkItemCount(references, 1);
+
+		/*
+		 * The one reference person doesn't exist yet because the reference hasn't been
+		 *  fully parsed.
+		 */
+		checkItemCount(people, 0);
+
+		// Parsing the reference causes its person to be parsed as well.
+		referenceItems.iterator().next().getAttributesForInsertion();
 		checkItemCount(people, 1);
-		checkThirdAuthorPerson(items);
+		checkThirdAuthorPerson(personItems);
 	}
 
 	@Test
 	public void testMultipleAuthorsGetParsedFromOneReference() throws Exception {
 		DatabaseModel model = parseTestData(MULTIPLE_REFERENCE_AUTHORS_TEST_DATA_PATH);
+		RowItemContainer<Reference> references = model.getRowItemListOfTypeByDatabaseTableName(
+			ISI.REFERENCE_TABLE_NAME);
 		RowItemContainer<Person> people = model.getRowItemListOfTypeByDatabaseTableName(
 			ISI.PERSON_TABLE_NAME);
+
+		checkItemContainerValidity(references, "references");
+		Collection<Reference> referenceItems = references.getItems();
 
 		checkItemContainerValidity(people, "people");
 		Collection<Person> items = people.getItems();
 
+		checkItemCount(references, 2);
+
+		/*
+		 * The one reference person doesn't exist yet because the reference hasn't been
+		 *  fully parsed.
+		 */
+		checkItemCount(people, 0);
+
+		// Parsing the reference causes its person to be parsed as well.
+		Iterator<Reference> referenceIterator = referenceItems.iterator();
+		referenceIterator.next().getAttributesForInsertion();
+		referenceIterator.next().getAttributesForInsertion();
 		checkItemCount(people, 2);
 		checkThirdAuthorPerson(items);
 		checkFourthAuthorPerson(items);
@@ -129,8 +163,7 @@ public class PersonTest extends RowItemTest {
 					unsplitAbbreviatedName);
 
 				return person;
-			} catch (Throwable e) {
-			}
+			} catch (Throwable e) {}
 		}
 
 		return null;
@@ -170,12 +203,21 @@ public class PersonTest extends RowItemTest {
 	public static void checkPeople(
 			Person relationshipPerson, Person providedPerson, String displayName) {
 		if (relationshipPerson != providedPerson) {
+			Dictionary<String, Object> relationshipPersonAttributes =
+				relationshipPerson.getAttributes();
+			Object relationshipPersonUnsplitAbbreviatedName =
+				relationshipPersonAttributes.get(ISI.UNSPLIT_ABBREVIATED_NAME);
+
+			Dictionary<String, Object> providedPersonAttributes = providedPerson.getAttributes();
+			Object providedPersonUnsplitAbbreviatedName =
+				providedPersonAttributes.get(ISI.UNSPLIT_ABBREVIATED_NAME);
+
 			String failMessage =
 				displayName + " person and provided person are not the same." +
 				"\n\t" + displayName + " person: \"" +
-					relationshipPerson.getUnsplitAbbreviatedName() + "\"" +
+					relationshipPersonUnsplitAbbreviatedName + "\"" +
 				"\n\tProvided person: \"" +
-					providedPerson.getUnsplitAbbreviatedName() + "\"";
+					providedPersonUnsplitAbbreviatedName + "\"";
 			fail(failMessage);
 		}
 	}
@@ -196,15 +238,25 @@ public class PersonTest extends RowItemTest {
 			fail(failMessage);
 		}
 
-		compareProperty("Additional Names", person.getAdditionalName(), additionalName);
-		compareProperty("Family Names", person.getFamilyName(), familyName);
-		compareProperty("First Initials", person.getFirstInitial(), firstInitial);
-		compareProperty("Full Names", person.getFullName(), fullName);
-		compareProperty("Middle Initials", person.getMiddleInitial(), middleInitial);
-		compareProperty("Personal Names", person.getPersonalName(), personalName);
+		Dictionary<String, Object> personAttributes = person.getAttributesForInsertion();
+		String personAdditionalName = (String)personAttributes.get(ISI.ADDITIONAL_NAME);
+		String personFamilyName = (String)personAttributes.get(ISI.FAMILY_NAME);
+		String personFirstInitial = (String)personAttributes.get(ISI.FIRST_INITIAL);
+		String personFullName = (String)personAttributes.get(ISI.FULL_NAME);
+		String personMiddleInitial = (String)personAttributes.get(ISI.MIDDLE_INITIAL);
+		String personPersonalName = (String)personAttributes.get(ISI.PERSONAL_NAME);
+		String personUnsplitAbbreviatedName =
+			(String)personAttributes.get(ISI.UNSPLIT_ABBREVIATED_NAME);
+
+		compareProperty("Additional Names", personAdditionalName, additionalName);
+		compareProperty("Family Names", personFamilyName, familyName);
+		compareProperty("First Initials", personFirstInitial, firstInitial);
+		compareProperty("Full Names", personFullName, fullName);
+		compareProperty("Middle Initials", personMiddleInitial, middleInitial);
+		compareProperty("Personal Names", personPersonalName, personalName);
 		compareProperty(
 			"Unsplit Abbreviated Names",
-			person.getUnsplitAbbreviatedName(),
+			personUnsplitAbbreviatedName,
 			unsplitAbbreviatedName);
 	}
 

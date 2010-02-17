@@ -57,7 +57,7 @@ public class ReferenceDataParser {
 	private String annotation;
 	private String articleNumber;
 	private Person authorPerson;
-	private Boolean starred = false;
+	//private Boolean starred = false;
 	private String digitalObjectIdentifier;
 	private String otherInformation;
 	private Integer pageNumber;
@@ -74,13 +74,10 @@ public class ReferenceDataParser {
 		this.sourceKeyGenerator = sourceKeyGenerator;
 		this.rawString = rawString;
 
-		long hotOnTheChase = System.currentTimeMillis();
 		String[] specialCaseCleanedTokens =
 			StringUtilities.simpleCleanStrings(rawString.split(", "));
-
 		String[] cleanedTokens = handleSpecialCaseTokens(specialCaseCleanedTokens);
-		
-		long hotter = System.currentTimeMillis();
+
 		if ((cleanedTokens.length < MINIMUM_NUMBER_OF_TOKENS_FOR_VALID_REFERENCE) ||
 				(cleanedTokens.length > MAXIMUM_NUMBER_OF_TOKENS_FOR_VALID_REFERENCE)) {
 			String exceptionMessage =
@@ -117,9 +114,9 @@ public class ReferenceDataParser {
 		return this.authorPerson;
 	}
 
-	public Boolean authorWasStarred() {
+	/*public Boolean authorWasStarred() {
 		return this.starred;
-	}
+	}*/
 
 	public String getDigitalObjectIdentifier() {
 		return this.digitalObjectIdentifier;
@@ -184,13 +181,15 @@ public class ReferenceDataParser {
 		if (isYear(firstToken)) {
 			this.year = IntegerParserWithDefault.parse(firstToken);
 		} else {
-			try {
-				Pair<Person, Boolean> parsedPerson =
+			if (!StringUtilities.isNull_Empty_OrWhitespace(firstToken)) {
+				this.authorPerson = new Person(this.personKeyGenerator, firstToken, "");
+			}
+			//try {
+				/*Pair<Person, Boolean> parsedPerson =
 					PersonParser.parsePerson(this.personKeyGenerator, firstToken, "");
 				this.authorPerson = parsedPerson.getFirstObject();
-				this.starred = parsedPerson.getSecondObject();
-			} catch (PersonParsingException e) {
-			}
+				this.starred = parsedPerson.getSecondObject();*/
+			//} catch (PersonParsingException e) {}
 		}
 
 		Pair<Source, String> parsedSource =
@@ -234,13 +233,15 @@ public class ReferenceDataParser {
 		 * person, year, source
 		 */
 		} else if (isYear(secondToken)) {
-			try {
+			if (!StringUtilities.isNull_Empty_OrWhitespace(firstToken)) {
+				this.authorPerson = new Person(this.personKeyGenerator, firstToken, "");
+			}
+			/*try {
 				Pair<Person, Boolean> parsedPerson =
 					PersonParser.parsePerson(this.personKeyGenerator, firstToken, "");
 				this.authorPerson = parsedPerson.getFirstObject();
 				this.starred = parsedPerson.getSecondObject();
-			} catch (PersonParsingException e) {
-			}
+			} catch (PersonParsingException e) {}*/
 
 			this.year = IntegerParserWithDefault.parse(secondToken);
 
@@ -253,13 +254,15 @@ public class ReferenceDataParser {
 		 * person, source, volume or page
 		 */
 		} else {
-			try {
+			if (!StringUtilities.isNull_Empty_OrWhitespace(firstToken)) {
+				this.authorPerson = new Person(this.personKeyGenerator, firstToken, "");
+			}
+			/*try {
 				Pair<Person, Boolean> parsedPerson =
 					PersonParser.parsePerson(this.personKeyGenerator, firstToken, "");
 				this.authorPerson = parsedPerson.getFirstObject();
 				this.starred = parsedPerson.getSecondObject();
-			} catch (PersonParsingException e) {
-			}
+			} catch (PersonParsingException e) {}*/
 
 			Pair<Source, String> parsedSource =
 				parseSource(this.sourceKeyGenerator, secondToken);
@@ -315,13 +318,15 @@ public class ReferenceDataParser {
 		 * person, year, source, volume or page 
 		 */
 		} else if (isYear(secondToken)) {
-			try {
+			if (!StringUtilities.isNull_Empty_OrWhitespace(firstToken)) {
+				this.authorPerson = new Person(this.personKeyGenerator, firstToken, "");
+			}
+			/*try {
 				Pair<Person, Boolean> parsedPerson =
 					PersonParser.parsePerson(this.personKeyGenerator, firstToken, "");
 				this.authorPerson = parsedPerson.getFirstObject();
 				this.starred = parsedPerson.getSecondObject();
-			} catch (PersonParsingException e) {
-			}
+			} catch (PersonParsingException e) {}*/
 
 			this.year = IntegerParserWithDefault.parse(secondToken);
 
@@ -342,13 +347,15 @@ public class ReferenceDataParser {
 		 * person, source, volume, page
 		 */
 		} else if (isVolume(thirdToken) && isPageNumber(fourthToken)) {
-			try {
+			if (!StringUtilities.isNull_Empty_OrWhitespace(firstToken)) {
+				this.authorPerson = new Person(this.personKeyGenerator, firstToken, "");
+			}
+			/*try {
 				Pair<Person, Boolean> parsedPerson =
 					PersonParser.parsePerson(this.personKeyGenerator, firstToken, "");
 				this.authorPerson = parsedPerson.getFirstObject();
 				this.starred = parsedPerson.getSecondObject();
-			} catch (PersonParsingException e) {
-			}
+			} catch (PersonParsingException e) {}*/
 
 			Pair<Source, String> parsedSource =
 				parseSource(this.sourceKeyGenerator, secondToken);
@@ -374,13 +381,15 @@ public class ReferenceDataParser {
 		String fourthToken = tokens[3];
 		String fifthToken = tokens[4];
 
-		try {
+		if (!StringUtilities.isNull_Empty_OrWhitespace(firstToken)) {
+			this.authorPerson = new Person(this.personKeyGenerator, firstToken, "");
+		}
+		/*try {
 			Pair<Person, Boolean> parsedPerson =
 				PersonParser.parsePerson(this.personKeyGenerator, firstToken, "");
 			this.authorPerson = parsedPerson.getFirstObject();
 			this.starred = parsedPerson.getSecondObject();
-		} catch (PersonParsingException e) {
-		}
+		} catch (PersonParsingException e) {}*/
 
 		this.year = IntegerParserWithDefault.parse(secondToken);
 
@@ -414,13 +423,15 @@ public class ReferenceDataParser {
 		String fifthToken = tokens[4];
 		String sixthToken = tokens[5];
 
-		try {
+		if (!StringUtilities.isNull_Empty_OrWhitespace(firstToken)) {
+			this.authorPerson = new Person(this.personKeyGenerator, firstToken, "");
+		}
+		/*try {
 			Pair<Person, Boolean> parsedPerson =
 				PersonParser.parsePerson(this.personKeyGenerator, firstToken, "");
 			this.authorPerson = parsedPerson.getFirstObject();
 			this.starred = parsedPerson.getSecondObject();
-		} catch (PersonParsingException e) {
-		}
+		} catch (PersonParsingException e) {}*/
 
 		this.year = IntegerParserWithDefault.parse(secondToken);
 

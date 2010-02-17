@@ -8,7 +8,9 @@ import java.util.Dictionary;
 
 import org.cishell.framework.CIShellContext;
 import org.cishell.framework.algorithm.Algorithm;
+import org.cishell.framework.algorithm.AlgorithmCanceledException;
 import org.cishell.framework.algorithm.AlgorithmExecutionException;
+import org.cishell.framework.algorithm.ProgressMonitor;
 import org.cishell.framework.data.BasicData;
 import org.cishell.framework.data.Data;
 import org.cishell.framework.data.DataProperty;
@@ -146,7 +148,11 @@ public class NSFDatabaseLoaderAlgorithm implements Algorithm {
 	private Database convertNSFInMemoryModelToDatabase(
 			DatabaseModel inMemoryModel) throws NSFDatabaseCreationException {
 		try {
-			return DerbyDatabaseCreator.createFromModel(databaseProvider, inMemoryModel, "NSF");
+			// TODO: ProgressMonitor crap.
+			return DerbyDatabaseCreator.createFromModel(
+				databaseProvider, inMemoryModel, "NSF", ProgressMonitor.NULL_MONITOR, 0);
+		} catch (AlgorithmCanceledException e) {
+			throw new NSFDatabaseCreationException(e.getMessage(), e);
 		} catch (DatabaseCreationException e) {
 			throw new NSFDatabaseCreationException(e.getMessage(), e); 
 		} catch (SQLException e) {

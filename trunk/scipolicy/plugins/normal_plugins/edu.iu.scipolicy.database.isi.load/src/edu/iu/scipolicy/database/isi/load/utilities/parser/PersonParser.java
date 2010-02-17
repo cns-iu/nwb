@@ -1,14 +1,51 @@
 package edu.iu.scipolicy.database.isi.load.utilities.parser;
 
-import org.cishell.utilities.Pair;
-
-import edu.iu.cns.database.load.framework.utilities.DatabaseTableKeyGenerator;
-import edu.iu.scipolicy.database.isi.load.model.entity.Person;
 import edu.iu.scipolicy.database.isi.load.utilities.parser.exception.PersonParsingException;
 
 public class PersonParser {
-	public static Pair<Person, Boolean> parsePerson(
-		
+	private AbbreviatedNameParser parsedAbbreviatedName;
+	private FullNameParser parsedFullName;
+
+	public PersonParser(String rawAbbreviatedNameString, String rawFullNameString)
+			throws PersonParsingException {
+		this.parsedAbbreviatedName =
+			new AbbreviatedNameParser(rawAbbreviatedNameString);
+		this.parsedFullName = new FullNameParser(rawFullNameString);
+	}
+
+	public String getUnsplitAbbreviatedName() {
+		return this.parsedAbbreviatedName.unsplitAbbreviatedName;
+	}
+
+	public String getFullName() {
+		return this.parsedFullName.fullName;
+	}
+
+	public String getAdditionalName() {
+		return this.parsedFullName.additionalNamesString;
+	}
+
+	public String getFamilyName() {
+		return this.parsedAbbreviatedName.familyName;
+	}
+
+	public String getFirstInitial() {
+		return this.parsedAbbreviatedName.firstInitial;
+	}
+
+	public String getMiddleInitial() {
+		return this.parsedAbbreviatedName.middleInitials;
+	}
+
+	public String getPersonalName() {
+		return this.parsedFullName.personalName;
+	}
+
+	public boolean wasStarred() {
+		return this.parsedAbbreviatedName.starred;
+	}
+
+	/*public static Pair<Person, Boolean> parsePerson(
 			DatabaseTableKeyGenerator personKeyGenerator,
 			String rawAbbreviatedNameString,
 			String rawFullNameString) throws PersonParsingException {
@@ -28,5 +65,5 @@ public class PersonParser {
 			parsedAbbreviatedName.starred);
 
 		return pair;
-	}
+	}*/
 }

@@ -8,6 +8,7 @@ import java.util.Dictionary;
 
 import org.cishell.framework.CIShellContext;
 import org.cishell.framework.algorithm.AlgorithmExecutionException;
+import org.cishell.framework.algorithm.ProgressMonitor;
 import org.cishell.framework.data.BasicData;
 import org.cishell.framework.data.Data;
 import org.cishell.utilities.FileUtilities;
@@ -105,7 +106,7 @@ public class RowItemTest {
 	protected DatabaseModel parseTestData(String testDataPath) throws Exception {
 		Pair<Table, Collection<Integer>> testData = prepareTestData(testDataPath);
 
-		return new ISITableModelParser().parseModel(
+		return new ISITableModelParser(ProgressMonitor.NULL_MONITOR).parseModel(
 			testData.getFirstObject(), testData.getSecondObject());
 	}
 

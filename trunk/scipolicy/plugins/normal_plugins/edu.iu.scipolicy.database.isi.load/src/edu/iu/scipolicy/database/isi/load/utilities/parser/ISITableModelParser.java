@@ -7,9 +7,10 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
+import org.cishell.framework.algorithm.AlgorithmCanceledException;
+import org.cishell.framework.algorithm.ProgressMonitor;
 import org.cishell.utilities.ArrayUtilities;
 import org.cishell.utilities.IntegerParserWithDefault;
-import org.cishell.utilities.Pair;
 import org.cishell.utilities.StringUtilities;
 
 import prefuse.data.Table;
@@ -39,12 +40,17 @@ import edu.iu.scipolicy.database.isi.load.model.entity.relationship.Editor;
 import edu.iu.scipolicy.database.isi.load.model.entity.relationship.PublisherAddress;
 import edu.iu.scipolicy.database.isi.load.model.entity.relationship.ReprintAddress;
 import edu.iu.scipolicy.database.isi.load.model.entity.relationship.ResearchAddress;
-import edu.iu.scipolicy.database.isi.load.utilities.parser.exception.PersonParsingException;
 import edu.iu.scipolicy.database.isi.load.utilities.parser.exception.ReferenceParsingException;
 
 public class ISITableModelParser {
 	public static final String AUTHOR_KEYWORDS = "authorKeywords";
 	public static final String KEYWORDS_PLUS = "keywordsPlus";
+
+	public static final int SOURCE_BATCH_SIZE = 1000;
+	public static final int REFERENCE_BATCH_SIZE = 1000;
+	public static final int PERSON_BATCH_SIZE = 1000;
+
+	private ProgressMonitor progressMonitor;
 
 	/*
 	 * For each type of entity (ISI File, Publisher, Source, Reference, Address, Keyword,
@@ -56,15 +62,18 @@ public class ISITableModelParser {
 	private RowItemContainer<Publisher> publishers = new EntityContainer<Publisher>(
 			ISI.PUBLISHER_DISPLAY_NAME, ISI.PUBLISHER_TABLE_NAME, Publisher.SCHEMA);
 	private RowItemContainer<Source> sources = new EntityContainer<Source>(
-			ISI.SOURCE_DISPLAY_NAME, ISI.SOURCE_TABLE_NAME, Source.SCHEMA);
+		ISI.SOURCE_DISPLAY_NAME, ISI.SOURCE_TABLE_NAME, Source.SCHEMA, SOURCE_BATCH_SIZE);
 	private RowItemContainer<Reference> references = new EntityContainer<Reference>(
-			ISI.REFERENCE_DISPLAY_NAME, ISI.REFERENCE_TABLE_NAME, Reference.SCHEMA);
+		ISI.REFERENCE_DISPLAY_NAME,
+		ISI.REFERENCE_TABLE_NAME,
+		Reference.SCHEMA,
+		REFERENCE_BATCH_SIZE);
 	private RowItemContainer<Address> addresses = new EntityContainer<Address>(
 			ISI.ADDRESS_DISPLAY_NAME, ISI.ADDRESS_TABLE_NAME, Address.SCHEMA);
 	private RowItemContainer<Keyword> keywords = new EntityContainer<Keyword>(
 			ISI.KEYWORD_DISPLAY_NAME, ISI.KEYWORD_TABLE_NAME, Keyword.SCHEMA);
 	private RowItemContainer<Person> people = new EntityContainer<Person>(
-			ISI.PERSON_DISPLAY_NAME, ISI.PERSON_TABLE_NAME, Person.SCHEMA);
+		ISI.PERSON_DISPLAY_NAME, ISI.PERSON_TABLE_NAME, Person.SCHEMA, PERSON_BATCH_SIZE);
 	private RowItemContainer<Patent> patents = new EntityContainer<Patent>(
 			ISI.PATENT_DISPLAY_NAME, ISI.PATENT_TABLE_NAME, Patent.SCHEMA);
 	private RowItemContainer<Document> documents = new EntityContainer<Document>(
@@ -76,64 +85,80 @@ public class ISITableModelParser {
 	 *  Occurrences, and Cited References).
 	 */
 
-	RowItemContainer<PublisherAddress> publisherAddresses =
+	private RowItemContainer<PublisherAddress> publisherAddresses =
 		new RelationshipContainer<PublisherAddress>(
 				ISI.PUBLISHER_ADDRESSES_DISPLAY_NAME,
 				ISI.PUBLISHER_ADDRESSES_TABLE_NAME,
 				PublisherAddress.SCHEMA);
 
-	RowItemContainer<ReprintAddress> reprintAddresses =
+	private RowItemContainer<ReprintAddress> reprintAddresses =
 		new RelationshipContainer<ReprintAddress>(
 				ISI.REPRINT_ADDRESSES_DISPLAY_NAME,
 				ISI.REPRINT_ADDRESSES_TABLE_NAME,
 				ReprintAddress.SCHEMA);
 
-	RowItemContainer<ResearchAddress> researchAddresses =
+	private RowItemContainer<ResearchAddress> researchAddresses =
 		new RelationshipContainer<ResearchAddress>(
 				ISI.RESEARCH_ADDRESSES_DISPLAY_NAME,
 				ISI.RESEARCH_ADDRESSES_TABLE_NAME,
 				ResearchAddress.SCHEMA);
 
-	RowItemContainer<DocumentKeyword> documentKeywords =
+	private RowItemContainer<DocumentKeyword> documentKeywords =
 		new RelationshipContainer<DocumentKeyword>(
 				ISI.DOCUMENT_KEYWORDS_DISPLAY_NAME,
 				ISI.DOCUMENT_KEYWORDS_TABLE_NAME,
 				DocumentKeyword.SCHEMA);
 
-	RowItemContainer<Author> authors =
+	private RowItemContainer<Author> authors =
 		new RelationshipContainer<Author>(
 				ISI.AUTHORS_DISPLAY_NAME,
 				ISI.AUTHORS_TABLE_NAME,
 				Author.SCHEMA);
 
-	RowItemContainer<Editor> editors =
+	private RowItemContainer<Editor> editors =
 		new RelationshipContainer<Editor>(
 				ISI.EDITORS_DISPLAY_NAME,
 				ISI.EDITORS_TABLE_NAME,
 				Editor.SCHEMA);
 
-	RowItemContainer<CitedPatent> citedPatents =
+	private RowItemContainer<CitedPatent> citedPatents =
 		new RelationshipContainer<CitedPatent>(
 				ISI.CITED_PATENTS_DISPLAY_NAME,
 				ISI.CITED_PATENTS_TABLE_NAME,
 				CitedPatent.SCHEMA);
 
-	RowItemContainer<DocumentOccurrence> documentOccurrences =
+	private RowItemContainer<DocumentOccurrence> documentOccurrences =
 		new RelationshipContainer<DocumentOccurrence>(
 				ISI.DOCUMENT_OCCURRENCES_DISPLAY_NAME,
 				ISI.DOCUMENT_OCCURRENCES_TABLE_NAME,
 				DocumentOccurrence.SCHEMA);
 
-	RowItemContainer<CitedReference> citedReferences =
+	private RowItemContainer<CitedReference> citedReferences =
 		new RelationshipContainer<CitedReference>(
 				ISI.CITED_REFERENCES_DISPLAY_NAME,
 				ISI.CITED_REFERENCES_TABLE_NAME,
 				CitedReference.SCHEMA);
 
-	public DatabaseModel parseModel(Table table, Collection<Integer> rows) {
+	public ISITableModelParser(ProgressMonitor progressMonitor) {
+		this.progressMonitor = progressMonitor;
+	}
+
+	public DatabaseModel parseModel(Table table, Collection<Integer> rows)
+			throws AlgorithmCanceledException {
+		this.progressMonitor.describeWork("Parsing ISI data.");
+
 		// For each record/row in the table:
 
+		int last = 0;
+		int total = 0;
+
 		for (Integer rowIndex : rows) {
+			if (this.progressMonitor.isCanceled()) {
+				throw new AlgorithmCanceledException();
+			}
+
+			while(this.progressMonitor.isPaused()) {}
+
 			Tuple row = table.getTuple(rowIndex.intValue());
 
 			// Parse (Author) People.
@@ -147,8 +172,6 @@ public class ISITableModelParser {
 			// Parse ISI File.
 
 			ISIFile isiFile = parseISIFile(row);
-
-
 
 			/*
 			 * Parse Author Keywords, and link the Document Keywords from the Document to them
@@ -188,8 +211,6 @@ public class ISITableModelParser {
 
 			Source source = parseSource(row);
 
-
-
 			// Parse Publisher Address (a link between Publisher and Address).
 
 			Address addressOfPublisher = parseAddressOfPublisher(row);
@@ -208,7 +229,6 @@ public class ISITableModelParser {
 				this.publisherAddresses.add(
 						new PublisherAddress(publisher, addressOfPublisher));
 			}
-
 
 			// Parse Document.
 
@@ -243,6 +263,15 @@ public class ISITableModelParser {
 				linkDocumentToAddressesOfResearch(document, currentAddressesOfResearch);
 				linkDocumentToCitedReferences(document, currentReferences);
 			}
+
+			//this.progressMonitor.worked(1);
+			last++;
+			total++;
+
+			if (last == 100) {
+				System.err.println("Completed " + total + " so far.");
+				last = 0;
+			}
 		}
 
 		linkReferencesToDocuments();
@@ -250,26 +279,26 @@ public class ISITableModelParser {
 		// Given all of the master lists of row items, construct an DatabaseModel and return it.
 
 		return new DatabaseModel(
-				// Entities
-				this.addresses,
-				this.documents,
-				this.isiFiles,
-				this.keywords,
-				this.patents,
-				this.people,
-				this.publishers,
-				this.references,
-				this.sources,
-				// Relationships
-				this.authors,
-				this.editors,
-				this.citedPatents,
-				this.citedReferences,
-				this.documentKeywords,
-				this.documentOccurrences,
-				this.publisherAddresses,
-				this.reprintAddresses,
-				this.researchAddresses);
+			// Entities
+			this.addresses,
+			this.documents,
+			this.isiFiles,
+			this.keywords,
+			this.patents,
+			this.publishers,
+			this.references,
+			this.people,
+			this.sources,
+			// Relationships
+			this.authors,
+			this.editors,
+			this.citedPatents,
+			this.citedReferences,
+			this.documentKeywords,
+			this.documentOccurrences,
+			this.publisherAddresses,
+			this.reprintAddresses,
+			this.researchAddresses);
 	}
 
 	private List<Person> parseAuthorPeople(Tuple row) {
@@ -285,26 +314,38 @@ public class ISITableModelParser {
 		for (int ii = 0; ii < authorStrings.length; ii++) {
 			String authorString = authorStrings[ii];
 			String cleanedAuthorString = StringUtilities.simpleClean(authorString);
-			Pair<Person, Boolean> personParsingResult;
 
-			try {
+			if (StringUtilities.isNull_Empty_OrWhitespace(cleanedAuthorString)) {
+				continue;
+			}
+
+			//Pair<Person, Boolean> personParsingResult;
+			Person authorPerson;
+
+			//try {
 				if (authorStrings.length == authorFullNameStrings.length) {
 					String authorFullNameString = authorFullNameStrings[ii];
 					String cleanedAuthorFullNameString =
 						StringUtilities.simpleClean(authorFullNameString);
-					personParsingResult = PersonParser.parsePerson(
+					authorPerson = new Person(
 							this.people.getKeyGenerator(),
 							cleanedAuthorString,
 							cleanedAuthorFullNameString);
+					/*personParsingResult = PersonParser.parsePerson(
+						this.people.getKeyGenerator(),
+						cleanedAuthorString,
+						cleanedAuthorFullNameString);*/
 				} else {
-					personParsingResult = PersonParser.parsePerson(
+					authorPerson = new Person(
 							this.people.getKeyGenerator(), cleanedAuthorString, "");
+					/*personParsingResult = PersonParser.parsePerson(
+						this.people.getKeyGenerator(), cleanedAuthorString, "");*/
 				}
 
-				Person authorPerson = personParsingResult.getFirstObject();
+				//Person authorPerson = personParsingResult.getFirstObject();
 				Person mergedAuthorPerson = this.people.add(authorPerson);
 				authorPeople.add(mergedAuthorPerson);
-			} catch (PersonParsingException e) {}
+			//} catch (PersonParsingException e) {}
 		}
 
 		return authorPeople;
@@ -320,16 +361,13 @@ public class ISITableModelParser {
 		for (int ii = 0; ii < editorStrings.length; ii++) {
 			String editorString = editorStrings[ii];
 			String cleanedEditorString = StringUtilities.simpleClean(editorString);
-			Pair<Person, Boolean> personParsingResult;
 
-			try {
-				personParsingResult = PersonParser.parsePerson(
-						this.people.getKeyGenerator(), cleanedEditorString, "");
-
-				Person editorPerson = personParsingResult.getFirstObject();
+			if (!StringUtilities.isNull_Empty_OrWhitespace(cleanedEditorString)) {
+				Person editorPerson = new Person(
+					this.people.getKeyGenerator(), cleanedEditorString, "");
 				Person mergedEditorPerson = this.people.add(editorPerson);
 				editorPeople.add(mergedEditorPerson);
-			} catch (PersonParsingException e) {}
+			}
 		}
 
 		return editorPeople;
@@ -421,53 +459,59 @@ public class ISITableModelParser {
 	}
 
 	private List<Reference> parseReferences(Tuple row) {
-		long secondThreePartOneStart = System.currentTimeMillis();
 		List<Reference> currentReferences = new ArrayList<Reference>();
 		String rawReferencesString =
 			StringUtilities.simpleClean(row.getString(ISITag.CITED_REFERENCES.getColumnName()));
 		String[] referenceStrings = rawReferencesString.split("\\|");
-		long sectionThreePartTwoSubtotal = 0;
+
 		for (String referenceString : referenceStrings) {
 			if (StringUtilities.isNull_Empty_OrWhitespace(referenceString)) {
 				continue;
 			}
 
 			try {
-				long sectionOnePartTwoStart = System.currentTimeMillis();
 				ReferenceDataParser referenceData = new ReferenceDataParser(
 						this.people.getKeyGenerator(),
 						this.sources.getKeyGenerator(),
 						referenceString);
-				sectionThreePartTwoSubtotal += System.currentTimeMillis() - sectionOnePartTwoStart;
+				Source referenceSource = referenceData.getSource();
+
 				if (!ArrayUtilities.allAreNull(
-						referenceData.getAnnotation(),
-						referenceData.getAuthorPerson(),
-						referenceData.authorWasStarred(),
+						//referenceData.getAnnotation(),
+						referenceData.getArticleNumber(),
+						/*referenceData.getAuthorPerson(),
+						referenceData.authorWasStarred(),*/
 						referenceData.getDigitalObjectIdentifier(),
+						/*referenceData.getPageNumber(),
+						null,*/
+						referenceData.getRawString(),
+						//referenceData.getVolume(),
+						referenceSource)) {
+						//referenceData.getYear())) {
+					/*Reference reference = new Reference(
+						this.references.getKeyGenerator(),
+						referenceData.getAnnotation(),
+						referenceData.getArticleNumber(),
+						referenceData.getAuthorPerson(),
+						//referenceData.authorWasStarred(),
+						referenceData.getDigitalObjectIdentifier(),
+						referenceData.getOtherInformation(),
 						referenceData.getPageNumber(),
 						null,
 						referenceData.getRawString(),
 						referenceData.getVolume(),
 						referenceData.getSource(),
-						referenceData.getYear())) {
+						referenceData.getYear());*/
 					Reference reference = new Reference(
-							this.references.getKeyGenerator(),
-							referenceData.getAnnotation(),
-							referenceData.getArticleNumber(),
-							referenceData.getAuthorPerson(),
-							referenceData.authorWasStarred(),
-							referenceData.getDigitalObjectIdentifier(),
-							referenceData.getOtherInformation(),
-							referenceData.getPageNumber(),
-							null,
-							referenceData.getRawString(),
-							referenceData.getVolume(),
-							referenceData.getSource(),
-							referenceData.getYear());
-
+						this.references.getKeyGenerator(),
+						this.people,
+						this.sources.getKeyGenerator(),
+						referenceData.getArticleNumber(),
+						referenceData.getDigitalObjectIdentifier(),
+						referenceString,
+						referenceSource);
 					Reference mergedReference = this.references.add(reference);
 					currentReferences.add(mergedReference);
-
 				}
 			} catch (ReferenceParsingException e) {
 				// TODO: Print a warning?  For now, it's just skipped.
@@ -479,13 +523,13 @@ public class ISITableModelParser {
 
 	private void handlePeopleAndSourcesFromReferences(List<Reference> currentReferences) {
 		for (Reference reference : currentReferences) {
-			Person referenceAuthorPerson = reference.getAuthorPerson();
+			//Person referenceAuthorPerson = reference.getAuthorPerson();
 			Source referenceSource = reference.getSource();
 
-			if (referenceAuthorPerson != null) {
+			/*if (referenceAuthorPerson != null) {
 				Person mergedAuthor = this.people.add(referenceAuthorPerson);
 				reference.setAuthor(mergedAuthor);
-			}
+			}*/
 
 			if (referenceSource != null) {
 				Source mergedSource = this.sources.add(referenceSource);
@@ -817,7 +861,8 @@ public class ISITableModelParser {
 	}
 
 	private void linkReferencesToDocuments() {
-		Map<String, Document> digitalObjectIdentifiersToDocuments = new HashMap<String, Document>();
+		Map<String, Document> digitalObjectIdentifiersToDocuments =
+			new HashMap<String, Document>();
 		Map<String, Document> articleNumbersToDocuments = new HashMap<String, Document>();
 
 		for (Document document : this.documents.getItems()) {
@@ -837,12 +882,44 @@ public class ISITableModelParser {
 			String referenceDigitalObjectIdentifier = reference.getDigitalObjectIdentifier();
 			String referenceArticleNumber = reference.getArticleNumber();
 
+			if (!StringUtilities.isNull_Empty_OrWhitespace(referenceDigitalObjectIdentifier)) {
+				if (digitalObjectIdentifiersToDocuments.containsKey(
+						referenceDigitalObjectIdentifier)) {
+					reference.setPaper(
+						digitalObjectIdentifiersToDocuments.get(referenceDigitalObjectIdentifier));
+				}
+			} else if (!StringUtilities.isNull_Empty_OrWhitespace(referenceArticleNumber)) {
+				if (articleNumbersToDocuments.containsKey(referenceArticleNumber)) {
+					reference.setPaper(articleNumbersToDocuments.get(referenceArticleNumber));
+				}
+			}
+		}
+
+		/*for (Reference reference : this.references.getItems()) {
+			String referenceDigitalObjectIdentifier = reference.getDigitalObjectIdentifier();
+			String referenceArticleNumber = reference.getArticleNumber();
+
+			for (Document document : this.documents.getItems()) {
+				String documentDigitalObjectIdentifier = document.getDigitalObjectIdentifier();
+				String documentArticleNumber = document.getArticleNumber();
+
+				if (!StringUtilities.isNull_Empty_OrWhitespace(documentDigitalObjectIdentifier) &&
+						documentDigitalObjectIdentifier.equals(referenceDigitalObjectIdentifier)) {
+					reference.setPaper(document);
+				}
+
+				if (!StringUtilities.isNull_Empty_OrWhitespace(documentArticleNumber) &&
+						documentArticleNumber.equals(referenceArticleNumber)) {
+					reference.setPaper(document);
+				}
+=======
 			if (digitalObjectIdentifiersToDocuments.containsKey(referenceDigitalObjectIdentifier)) {
 				reference.setPaper(digitalObjectIdentifiersToDocuments.get(referenceDigitalObjectIdentifier));
 			} else if (articleNumbersToDocuments.containsKey(referenceArticleNumber)) {
 				reference.setPaper(articleNumbersToDocuments.get(referenceArticleNumber));
+>>>>>>> .r4412
 			}
-		}
+		}*/
 
 	}
 }

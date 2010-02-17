@@ -69,6 +69,9 @@ public class Source extends Entity<Source> {
 				issn,
 				publicationType,
 				twentyNineCharacterSourceTitleAbbreviation));
+		/*if (getPrimaryKey() == 11) {
+			throw new RuntimeException("meep");
+		}*/
 		this.bookSeriesTitle = bookSeriesTitle;
 		this.bookSeriesSubtitle = bookSeriesSubtitle;
 		this.conferenceHost = conferenceHost;
@@ -141,16 +144,16 @@ public class Source extends Entity<Source> {
 	public List<Object> createMergeKey() {
 		List<Object> mergeKey = new ArrayList<Object>();
 		Integer primaryKey = getPrimaryKey();
-		addStringOrAlternativeToMergeKey(mergeKey, this.bookSeriesTitle, primaryKey);
-		addStringOrAlternativeToMergeKey(mergeKey, this.bookSeriesSubtitle, primaryKey);
-		addStringOrAlternativeToMergeKey(mergeKey, this.conferenceHost, primaryKey);
-		addStringOrAlternativeToMergeKey(mergeKey, this.conferenceLocation, primaryKey);
-		addStringOrAlternativeToMergeKey(mergeKey, this.conferenceSponsors, primaryKey);
-		addStringOrAlternativeToMergeKey(mergeKey, this.conferenceTitle, primaryKey);
-		addStringOrAlternativeToMergeKey(mergeKey, this.fullTitle, primaryKey);
-		addStringOrAlternativeToMergeKey(mergeKey, this.isoTitleAbbreviation, primaryKey);
-		addStringOrAlternativeToMergeKey(mergeKey, this.issn, primaryKey);
-		addStringOrAlternativeToMergeKey(mergeKey, this.publicationType, primaryKey);
+		addStringOrAlternativeToMergeKey(mergeKey, this.bookSeriesTitle, null);
+		addStringOrAlternativeToMergeKey(mergeKey, this.bookSeriesSubtitle, null);
+		addStringOrAlternativeToMergeKey(mergeKey, this.conferenceHost, null);
+		addStringOrAlternativeToMergeKey(mergeKey, this.conferenceLocation, null);
+		addStringOrAlternativeToMergeKey(mergeKey, this.conferenceSponsors, null);
+		addStringOrAlternativeToMergeKey(mergeKey, this.conferenceTitle, null);
+		addStringOrAlternativeToMergeKey(mergeKey, this.fullTitle, null);
+		addStringOrAlternativeToMergeKey(mergeKey, this.isoTitleAbbreviation, null);
+		addStringOrAlternativeToMergeKey(mergeKey, this.issn, null);
+		addStringOrAlternativeToMergeKey(mergeKey, this.publicationType, null);
 		addStringOrAlternativeToMergeKey(
 			mergeKey, this.twentyNineCharacterSourceTitleAbbreviation, primaryKey);
 
