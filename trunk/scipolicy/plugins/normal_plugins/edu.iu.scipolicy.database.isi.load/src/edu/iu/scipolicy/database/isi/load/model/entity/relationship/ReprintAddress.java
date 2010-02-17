@@ -36,19 +36,6 @@ public class ReprintAddress extends RowItem<ReprintAddress> {
 		return this.address;
 	}
 
-	/*@Override
-	public Object createMergeKey() {
-		List<Object> mergeKey = new ArrayList<Object>();
-		mergeKey.add(this.document.getPrimaryKey());
-		mergeKey.add(this.address.getPrimaryKey());
-
-		return mergeKey;
-	}
-
-	@Override
-	public void merge(ReprintAddress otherReprintAddress) {
-	}*/
-
 	public static Dictionary<String, Object> createAttributes(
 			Document document, Address address) {
 		Dictionary<String, Object> attributes = new Hashtable<String, Object>();

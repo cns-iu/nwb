@@ -46,20 +46,6 @@ public class Editor extends RowItem<Editor> {
 		return this.orderListed;
 	}
 
-	/*@Override
-	public Object createMergeKey() {
-		List<Object> mergeKey = new ArrayList<Object>();
-		mergeKey.add(this.document.getPrimaryKey());
-		mergeKey.add(this.person.getPrimaryKey());
-		mergeKey.add(this.orderListed);
-
-		return mergeKey;
-	}
-
-	@Override
-	public void merge(Editor otherEditor) {
-	}*/
-
 	public static Dictionary<String, Object> createAttributes(
 			Document document, Person person, Integer orderListed) {
 		Dictionary<String, Object> attributes = new Hashtable<String, Object>();

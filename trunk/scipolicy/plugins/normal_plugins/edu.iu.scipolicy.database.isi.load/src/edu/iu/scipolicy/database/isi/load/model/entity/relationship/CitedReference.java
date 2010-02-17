@@ -36,19 +36,6 @@ public class CitedReference extends RowItem<CitedReference> {
 		return this.reference;
 	}
 
-	/*@Override
-	public Object createMergeKey() {
-		List<Object> mergeKey = new ArrayList<Object>();
-		mergeKey.add(this.document.getPrimaryKey());
-		mergeKey.add(this.reference.getPrimaryKey());
-
-		return mergeKey;
-	}
-
-	@Override
-	public void merge(CitedReference otherCitedReference) {
-	}*/
-
 	public static Dictionary<String, Object> createAttributes(
 			Document document, Reference reference) {
 		Dictionary<String, Object> attributes = new Hashtable<String, Object>();

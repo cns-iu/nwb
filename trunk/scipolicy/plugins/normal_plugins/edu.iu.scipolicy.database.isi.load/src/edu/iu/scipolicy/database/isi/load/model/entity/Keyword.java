@@ -38,13 +38,6 @@ public class Keyword extends Entity<Keyword> {
 		return this.type;
 	}
 
-	/*@Override
-	public boolean shouldMerge(Keyword otherKeyword) {
-		return (
-			StringUtilities.areValidAndEqual(this.keyword, otherKeyword.getKeyword()) &&
-			StringUtilities.areValidAndEqual(this.type, otherKeyword.getType()));
-	}*/
-
 	@Override
 	public List<Object> createMergeKey() {
 		List<Object> mergeKey = new ArrayList<Object>();

@@ -29,19 +29,8 @@ public class Patent extends Entity<Patent> {
 		return this.patentNumber;
 	}
 
-	/*@Override
-	public boolean shouldMerge(Patent otherPatent) {
-		return StringUtilities.areValidAndEqual(
-			this.patentNumber, otherPatent.getPatentNumber());
-	}*/
-
 	@Override
 	public Object createMergeKey() {
-		/*List<Object> mergeKey = new ArrayList<Object>();
-		Integer primaryKey = getPrimaryKey();
-		addStringOrAlternativeToMergeKey(mergeKey, this.patentNumber, primaryKey);
-
-		return mergeKey;*/
 		return StringUtilities.alternativeIfNotNull_Empty_OrWhitespace(
 			this.patentNumber, getPrimaryKey());
 	}

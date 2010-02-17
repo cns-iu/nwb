@@ -69,9 +69,6 @@ public class Source extends Entity<Source> {
 				issn,
 				publicationType,
 				twentyNineCharacterSourceTitleAbbreviation));
-		/*if (getPrimaryKey() == 11) {
-			throw new RuntimeException("meep");
-		}*/
 		this.bookSeriesTitle = bookSeriesTitle;
 		this.bookSeriesSubtitle = bookSeriesSubtitle;
 		this.conferenceHost = conferenceHost;
@@ -129,16 +126,6 @@ public class Source extends Entity<Source> {
 	public String get29CharacterSourceTitleAbbreviation() {
 		return this.twentyNineCharacterSourceTitleAbbreviation;
 	}
-
-	/*@Override
-	public boolean shouldMerge(Source otherSource) {
-		return (
-			StringUtilities.areValidAndEqual(this.issn, otherSource.getISSN()) ||
-			StringUtilities.areValidAndEqual(
-				this.twentyNineCharacterSourceTitleAbbreviation,
-				otherSource.get29CharacterSourceTitleAbbreviation()) ||
-			StringUtilities.areValidAndEqual(this.fullTitle, otherSource.getFullTitle()));
-	}*/
 
 	@Override
 	public List<Object> createMergeKey() {

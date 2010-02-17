@@ -53,20 +53,6 @@ public class Author extends RowItem<Author> {
 		return this.orderListed;
 	}
 
-	/*@Override
-	public Object createMergeKey() {
-		List<Object> mergeKey = new ArrayList<Object>();
-		mergeKey.add(this.document.getPrimaryKey());
-		mergeKey.add(this.person.getPrimaryKey());
-		mergeKey.add(this.orderListed);
-
-		return mergeKey;
-	}
-
-	@Override
-	public void merge(Author otherAuthor) {
-	}*/
-
 	public static Dictionary<String, Object> createAttributes(
 			Document document, Person person, String emailAddress, Integer orderListed) {
 		Dictionary<String, Object> attributes = new Hashtable<String, Object>();

@@ -40,19 +40,6 @@ public class DocumentOccurrence extends RowItem<DocumentOccurrence> {
 		return this.isiFile;
 	}
 
-	/*@Override
-	public Object createMergeKey() {
-		List<Object> mergeKey = new ArrayList<Object>();
-		mergeKey.add(this.document.getPrimaryKey());
-		mergeKey.add(this.isiFile.getPrimaryKey());
-
-		return mergeKey;
-	}
-
-	@Override
-	public void merge(DocumentOccurrence otherDocumentOccurrence) {
-	}*/
-
 	public static Dictionary<String, Object> createAttributes(
 			Document document, ISIFile isiFile) {
 		Dictionary<String, Object> attributes = new Hashtable<String, Object>();

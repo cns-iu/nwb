@@ -57,20 +57,8 @@ public class Publisher extends Entity<Publisher> {
 
 	public void setSource(Source source) {
 		this.source = source;
-		// TODO: Figure out a better way to do this?
 		getAttributes().put(ISI.PUBLISHER_SOURCE, this.source.getPrimaryKey());
 	}
-
-	/*@Override
-	public boolean shouldMerge(Publisher otherPublisher) {
-		boolean namesAndCitiesAreEquivalent = (
-			StringUtilities.areValidAndEqualIgnoreCase(this.city, otherPublisher.getCity()) &&
-			StringUtilities.areValidAndEqualIgnoreCase(this.name, otherPublisher.getName()));
-		boolean webAddressesAreEquivalent = StringUtilities.areValidAndEqualIgnoreCase(
-			this.webAddress, otherPublisher.getWebAddress());
-
-		return (namesAndCitiesAreEquivalent || webAddressesAreEquivalent);
-	}*/
 
 	@Override
 	public List<Object> createMergeKey() {

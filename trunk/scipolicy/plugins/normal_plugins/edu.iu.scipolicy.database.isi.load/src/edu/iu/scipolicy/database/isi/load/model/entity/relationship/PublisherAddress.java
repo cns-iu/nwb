@@ -38,19 +38,6 @@ public class PublisherAddress extends RowItem<PublisherAddress> {
 		return this.address;
 	}
 
-	/*@Override
-	public Object createMergeKey() {
-		List<Object> mergeKey = new ArrayList<Object>();
-		mergeKey.add(this.publisher.getPrimaryKey());
-		mergeKey.add(this.address.getPrimaryKey());
-
-		return mergeKey;
-	}
-
-	@Override
-	public void merge(PublisherAddress otherPublisherAddress) {
-	}*/
-
 	public static Dictionary<String, Object> createAttributes(
 			Publisher publisher, Address address) {
 		Dictionary<String, Object> attributes = new Hashtable<String, Object>();

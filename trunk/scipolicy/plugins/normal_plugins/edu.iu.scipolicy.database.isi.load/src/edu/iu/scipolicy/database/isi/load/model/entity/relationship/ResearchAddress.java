@@ -46,19 +46,6 @@ public class ResearchAddress extends RowItem<ResearchAddress> {
 		return this.orderListed;
 	}
 
-	/*@Override
-	public Object createMergeKey() {
-		List<Object> mergeKey = new ArrayList<Object>();
-		mergeKey.add(this.document.getPrimaryKey());
-		mergeKey.add(this.address.getPrimaryKey());
-
-		return mergeKey;
-	}
-
-	@Override
-	public void merge(ResearchAddress otherResearchAddress) {
-	}*/
-
 	public static Dictionary<String, Object> createAttributes(
 			Document document, Address address, Integer orderListed) {
 		Dictionary<String, Object> attributes = new Hashtable<String, Object>();

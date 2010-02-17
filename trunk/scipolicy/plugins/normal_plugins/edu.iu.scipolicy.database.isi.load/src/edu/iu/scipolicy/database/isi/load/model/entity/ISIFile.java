@@ -48,12 +48,6 @@ public class ISIFile extends Entity<ISIFile> {
 	public String getFileType() {
 		return this.fileType;
 	}
-
-	/*@Override
-	public boolean shouldMerge(ISIFile otherISIFile) {
-		return StringUtilities.areValidAndEqualIgnoreCase(
-			this.fileName, otherISIFile.getFileName());
-	}*/
 	
 	@Override
 	public List<Object> createMergeKey() {
@@ -62,24 +56,6 @@ public class ISIFile extends Entity<ISIFile> {
 		addStringOrAlternativeToMergeKey(mergeKey, this.fileFormatVersionNumber, primaryKey);
 		addStringOrAlternativeToMergeKey(mergeKey, this.fileName, primaryKey);
 		addStringOrAlternativeToMergeKey(mergeKey, this.fileType, primaryKey);
-
-		/*if (!StringUtilities.isNull_Empty_OrWhitespace(this.fileFormatVersionNumber)) {
-			mergeKey.add(this.fileFormatVersionNumber);
-		} else {
-			mergeKey.add(getPrimaryKey());
-		}
-
-		if (!StringUtilities.isNull_Empty_OrWhitespace(this.fileName)) {
-			mergeKey.add(this.fileName);
-		} else {
-			mergeKey.add(getPrimaryKey());
-		}
-
-		if (!StringUtilities.isNull_Empty_OrWhitespace(this.fileType)) {
-			mergeKey.add(this.fileType);
-		} else {
-			mergeKey.add(getPrimaryKey());
-		}*/
 
 		return mergeKey;
 	}

@@ -27,68 +27,23 @@ public class Person extends Entity<Person> {
 		ISI.UNSPLIT_ABBREVIATED_NAME, DerbyFieldType.TEXT,
 		ISI.AUTHOR_WAS_STARRED, DerbyFieldType.TEXT);
 
-	/*private String additionalName;
-	private String familyName;
-	private String firstInitial;*/
 	private String fullName;
-	/*private String middleInitial;
-	private String personalName;*/
 	private String unsplitAbbreviatedName;
 
 	public Person(
 			DatabaseTableKeyGenerator keyGenerator,
-			/*String additionalName,
-			String familyName,
-			String firstInitial,*/
-			/*String middleInitial,
-			String personalName,*/
 			String unsplitAbbreviatedName,
 			String fullName) {
 		super(
 			keyGenerator,
 			new Hashtable<String, Object>());
-			//createInitialAttributes(unsplitAbbreviatedName, fullName));
-			/*createAttributes(
-				additionalName,
-				familyName,
-				firstInitial,
-				fullName,
-				middleInitial,
-				personalName,
-				unsplitAbbreviatedName));*/
-		/*this.additionalName = additionalName;
-		this.familyName = familyName;
-		this.firstInitial = firstInitial;*/
-		// TODO: Hack?  Should this be done elsewhere?  Maybe not...
 		this.unsplitAbbreviatedName = unsplitAbbreviatedName;
 		this.fullName = fullName;
-		/*this.middleInitial = middleInitial;
-		this.personalName = personalName;*/
 	}
-
-	/*public String getAdditionalName() {
-		return this.additionalName;
-	}
-
-	public String getFamilyName() {
-		return this.familyName;
-	}
-
-	public String getFirstInitial() {
-		return this.firstInitial;
-	}*/
 
 	public String getFullName() {
 		return this.fullName;
 	}
-
-	/*public String getMiddleInitial() {
-		return this.middleInitial;
-	}
-
-	public String getPersonalName() {
-		return this.personalName;
-	}*/
 
 	public String getUnsplitAbbreviatedName() {
 		return this.unsplitAbbreviatedName;
@@ -124,18 +79,6 @@ public class Person extends Entity<Person> {
 	@Override
 	public void merge(Person otherPerson) {
 	}
-
-	/*private static Dictionary<String, Object> createInitialAttributes(
-			String unsplitAbbreviatedName, String fullName) {
-		Dictionary<String, Object> attributes = new Hashtable<String, Object>();
-		DictionaryUtilities.addIfNotNull(
-			attributes,
-			new DictionaryEntry<String, Object>(
-				ISI.UNSPLIT_ABBREVIATED_NAME, unsplitAbbreviatedName),
-			new DictionaryEntry<String, Object>(ISI.FULL_NAME, fullName));
-
-		return attributes;
-	}*/
 
 	private static void fillAttributes(
 			Dictionary<String, Object> attributes,

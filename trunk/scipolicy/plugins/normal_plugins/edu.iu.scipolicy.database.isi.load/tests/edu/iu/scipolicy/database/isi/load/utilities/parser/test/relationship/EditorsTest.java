@@ -58,9 +58,9 @@ public class EditorsTest extends RowItemTest {
 		checkItemContainerValidity(editors, "editors");
 		checkItemCount(editors, 1);
 
-		Document firstDocument = (Document)documents.getItems().iterator().next();
-		Person firstEditorPerson = (Person)people.getItems().iterator().next();
-		Editor firstEditor = (Editor)editors.getItems().iterator().next();
+		Document firstDocument = documents.getItems().iterator().next();
+		Person firstEditorPerson = people.getItems().iterator().next();
+		Editor firstEditor = editors.getItems().iterator().next();
 
 		checkEditor(firstEditor, firstDocument, firstEditorPerson);
 	}

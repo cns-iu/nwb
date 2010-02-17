@@ -299,26 +299,8 @@ public class Document extends Entity<Document> {
 		}
 	}
 
-//	@Override
-//	public boolean shouldMerge(Document otherDocument) {
-//		/*
-//		 * TODO: At this point, it doesn't make sense for Documents to ever get merged.
-//		 * The only scenario in which that would happen is if two Documents are actually duplicates
-//		 *  within the same dataset.
-//		 * However, duplicates in the same dataset get preprocessed out.
-//		 * If we ever support merging between multiple datasets, it's quite possible Documents
-//		 *  will need to be merged, but until then...
-//		 */
-//		return false;
-//	}
-
 	@Override
 	public Object createMergeKey() {
-		/*List<Object> mergeKey = new ArrayList<Object>();
-		Integer primaryKey = getPrimaryKey();
-		mergeKey.add(primaryKey);
-
-		return mergeKey;*/
 		return getPrimaryKey();
 	}
 

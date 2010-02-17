@@ -36,19 +36,6 @@ public class CitedPatent extends RowItem<CitedPatent> {
 		return this.patent;
 	}
 
-	/*@Override
-	public Object createMergeKey() {
-		List<Object> mergeKey = new ArrayList<Object>();
-		mergeKey.add(this.document.getPrimaryKey());
-		mergeKey.add(this.patent.getPrimaryKey());
-
-		return mergeKey;
-	}
-
-	@Override
-	public void merge(CitedPatent otherCitedPatent) {
-	}*/
-
 	public static Dictionary<String, Object> createAttributes(
 			Document document, Patent patent) {
 		Dictionary<String, Object> attributes = new Hashtable<String, Object>();

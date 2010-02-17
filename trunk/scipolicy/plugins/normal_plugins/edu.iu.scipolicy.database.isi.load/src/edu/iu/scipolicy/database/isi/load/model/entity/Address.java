@@ -78,20 +78,8 @@ public class Address extends Entity<Address> {
 		return this.streetAddress;
 	}
 
-	/*
-	@Override
-	public boolean shouldMerge(Address otherAddress) {
-		return StringUtilities.areValidAndEqualIgnoreCase(
-			this.rawAddress, otherAddress.getRawAddress());
-	}*/
-
 	@Override
 	public Object createMergeKey() {
-		/*List<Object> mergeKey = new ArrayList<Object>();
-		Integer primaryKey = getPrimaryKey();
-		addStringOrAlternativeToMergeKey(mergeKey, this.rawAddress, primaryKey);
-
-		return mergeKey;*/
 		return StringUtilities.alternativeIfNotNull_Empty_OrWhitespace(
 			this.rawAddress, getPrimaryKey());
 	}

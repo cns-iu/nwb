@@ -37,94 +37,39 @@ public class Reference extends Entity<Reference> {
 
 	private RowItemContainer<Person> people;
 	private DatabaseTableKeyGenerator sourceKeyGenerator;
-	//private String annotation;
 	private String articleNumber;
-	/*private Person author;
-	private Boolean authorWasStarred;*/
 	private String digitalObjectIdentifier;
-	/*private String otherInformation;
-	private Integer pageNumber;*/
 	private Document paper;
 	private String rawReferenceString;
-	//private Integer referenceVolume;
 	private Source source;
-	//private Integer year;
 
 	public Reference(
 			DatabaseTableKeyGenerator keyGenerator,
 			RowItemContainer<Person> people,
 			DatabaseTableKeyGenerator sourceKeyGenerator,
-			//String annotation,
 			String articleNumber,
-			/*Person author,
-			Boolean authorWasStarred,*/
 			String digitalObjectIdentifier,
-			/*String otherInformation,
-			Integer pageNumber,*/
 			String rawReferenceString,
-			//Integer referenceVolume,
-			Source source/*,
-			Integer year*/) {
+			Source source) {
 		super(
 			keyGenerator,
 			createInitialAttributes(
 				articleNumber, digitalObjectIdentifier, rawReferenceString, source));
-			/*createAttributes(
-				annotation,
-				articleNumber,
-				author,
-				//authorWasStarred,
-				digitalObjectIdentifier,
-				otherInformation,
-				pageNumber,
-				paper,
-				rawReferenceString,
-				referenceVolume,
-				source,
-				year));*/
 		this.people = people;
 		this.sourceKeyGenerator = sourceKeyGenerator;
-		//this.annotation = annotation;
 		this.articleNumber = articleNumber;
-		/*this.author = author;
-		this.authorWasStarred = authorWasStarred;*/
 		this.digitalObjectIdentifier = digitalObjectIdentifier;
-		/*this.otherInformation = otherInformation;
-		this.pageNumber = pageNumber;
-		this.paper = paper;*/
 		this.rawReferenceString = rawReferenceString;
-		//this.referenceVolume = referenceVolume;
 		this.source = source;
-		//this.year = year;
 	}
-
-	/*public String getAnnotation() {
-		return this.annotation;
-	}*/
 
 	public String getArticleNumber() {
 		return this.articleNumber;
 	}
 
-	/*public Person getAuthorPerson() {
-		return this.author;
-	}
-
-	public Boolean authorWasStarred() {
-		return this.authorWasStarred;
-	}*/
-
 	public String getDigitalObjectIdentifier() {
 		return this.digitalObjectIdentifier;
 	}
-
-	/*public String getOtherInformation() {
-		return this.otherInformation;
-	}
-
-	public Integer getPageNumber() {
-		return this.pageNumber;
-	}*/
 
 	public Document getPaper() {
 		return this.paper;
@@ -134,22 +79,9 @@ public class Reference extends Entity<Reference> {
 		return this.rawReferenceString;
 	}
 
-	/*public Integer getReferenceVolume() {
-		return this.referenceVolume;
-	}*/
-
 	public Source getSource() {
 		return this.source;
 	}
-
-	/*public Integer getYear() {
-		return this.year;
-	}
-
-	public void setAuthor(Person author) {
-		this.author = author;
-		getAttributes().put(ISI.REFERENCE_AUTHOR, author.getPrimaryKey());
-	}*/
 
 	public void setPaper(Document paper) {
 		this.paper = paper;
