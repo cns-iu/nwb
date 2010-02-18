@@ -10,7 +10,8 @@ import java.util.Stack;
 import org.cishell.framework.CIShellContext;
 import org.cishell.framework.algorithm.Algorithm;
 import org.cishell.framework.algorithm.AlgorithmExecutionException;
-import org.cishell.framework.data.BasicData;
+import org.cishell.framework.algorithm.ProgressMonitor;
+import org.cishell.framework.algorithm.ProgressTrackable;
 import org.cishell.framework.data.Data;
 import org.cishell.framework.data.DataProperty;
 
@@ -31,11 +32,11 @@ public class MergeMaker {
 	public static Data[] mergeTable(String tableName, Data database,
 			KeyMaker keyMaker, MergeCheck mergeCheck,
 			PreferrableFormComparator preferrableFormComparator,
-			CIShellContext context, String label) throws AlgorithmExecutionException {
+			CIShellContext context, ProgressMonitor monitor, String label) throws AlgorithmExecutionException {
 		Data mergingTable = extractMarkedTable(tableName, database, keyMaker,
 				mergeCheck, preferrableFormComparator, context);
     	
-    	return performMerge(mergingTable, database, context, label);
+    	return performMerge(mergingTable, database, context, monitor, label);
 	}
 
 	private static Data extractMarkedTable(String tableName, Data database,
@@ -58,11 +59,14 @@ public class MergeMaker {
 		return new Data[]{tableData};
 	}
 
-	private static Data[] performMerge(Data mergingTableData, Data databaseData, CIShellContext context, String label)
+	private static Data[] performMerge(Data mergingTableData, Data databaseData, CIShellContext context, ProgressMonitor monitor, String label)
 			throws AlgorithmExecutionException {
     	
-    	Algorithm mergingAlgorithm = new MergeTableFactory().createAlgorithm(new Data[]{mergingTableData, databaseData}, new Hashtable(), context);
-		Data[] mergedOutput = mergingAlgorithm.execute();
+    	Algorithm mergingAlgorithm = new MergeTableFactory().createAlgorithm(new Data[]{mergingTableData, databaseData}, new Hashtable<Object, Object>(), context);
+		if(mergingAlgorithm instanceof ProgressTrackable) {
+			((ProgressTrackable) mergingAlgorithm).setProgressMonitor(monitor);
+		}
+    	Data[] mergedOutput = mergingAlgorithm.execute();
 		mergedOutput[0].getMetadata().put(DataProperty.LABEL, label);
 		return mergedOutput;
 	}
@@ -71,7 +75,7 @@ public class MergeMaker {
 
 
 	private static Data extractTable(String tableName, Data databaseData, CIShellContext context) throws AlgorithmExecutionException {
-		Dictionary extractTableParams = new Hashtable();
+		Dictionary<Object, Object> extractTableParams = new Hashtable<Object, Object>();
     	extractTableParams.put(CreateMergingTableFactory.TABLE_PARAMETER, tableName);
     	Data[] mergingTableData = new CreateMergingTableFactory().createAlgorithm(new Data[]{databaseData}, extractTableParams, context).execute();
 		return mergingTableData[0];

@@ -2,17 +2,15 @@ package edu.iu.cns.database.merge.generic;
 
 import java.sql.Connection;
 import java.sql.SQLException;
-import java.sql.Statement;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Dictionary;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import org.cishell.framework.CIShellContext;
 import org.cishell.framework.algorithm.Algorithm;
 import org.cishell.framework.algorithm.AlgorithmExecutionException;
+import org.cishell.framework.algorithm.ProgressMonitor;
+import org.cishell.framework.algorithm.ProgressTrackable;
 import org.cishell.framework.data.BasicData;
 import org.cishell.framework.data.Data;
 import org.cishell.framework.data.DataProperty;
@@ -32,13 +30,14 @@ import prefuse.data.util.ColumnProjection;
 import prefuse.data.util.NamedColumnProjection;
 import prefuse.data.util.TableIterator;
 
-public class MergeTable implements Algorithm {
-    private static final String INVALID_TABLE_NAME_HEADER_MESSAGE = "Unable to infer table to be merged. The last column header of the spreadsheet should be of the form '"
-						+ CreateMergingTable.FROM_TABLE + " table.name'."; // TODO "table.name" not technically correct here.  User-friendliness is debatable.
+public class MergeTable implements Algorithm, ProgressTrackable {
+	private static final String INVALID_TABLE_NAME_HEADER_MESSAGE = "Unable to infer table to be merged. The last column header of the spreadsheet should be of the form '"
+						+ CreateMergingTable.FROM_TABLE + " table.name'.";
 	private Data[] data;
 	private DatabaseService databaseService;
 	private LogService logger;
 	private List<String> problems = new ArrayList<String>();
+	private ProgressMonitor monitor = ProgressMonitor.NULL_MONITOR;
     
     public MergeTable(Data[] data, Dictionary parameters, CIShellContext context) {
         this.data = data;
@@ -48,16 +47,6 @@ public class MergeTable implements Algorithm {
     }
 
     public Data[] execute() throws AlgorithmExecutionException {
-    	/*
-    	 * look at the last column of the prefuse table to figure out which database table it applies to
-    	 * figure out the primary key of that database table (if no primary key, throw exception)
-    	 * create a duplicate of the database (database service, please work properly)
-    	 * generate the groups of entities that need merging
-    	 * for each group of entities
-    	 * 	identify all foreign keys pointing to the entities that are not pointing to the selected primary entity
-    	 * 	change those foreign keys to point to the selected primary entity
-    	 *  delete all rows corresponding to the non-primary entities in the group
-    	 */
     	
     	Table mergingTable = (Table) data[0].getData();
     	Database originalDatabase = (Database) data[1].getData();
@@ -71,36 +60,18 @@ public class MergeTable implements Algorithm {
 			if(toBeMerged.presentInDatabase(originalConnection)) {
 				outputDatabase = databaseService.copyDatabase(originalDatabase);
 				outputConnection = outputDatabase.getConnection();
-				Collection<MergeGroup> mergeGroups = createMergeGroups(mergingTable, toBeMerged, outputConnection);
-				int entitiesMergedAway = 0;
-				int numberOfMerges = 0;
-				Statement mergeStatement = outputConnection.createStatement();
-				for(MergeGroup group : mergeGroups) {
-					try {
-						int number = group.merge(mergeStatement, toBeMerged);
-						entitiesMergedAway += number;
-						if(number > 0) {
-							numberOfMerges += 1;
-						}
-					} catch (MergingErrorException e) {
-						problems.add(e.getMessage());
-					}
-				}
-				int[] results = mergeStatement.executeBatch();
-				for(int result : results) {
-					if(result == Statement.EXECUTE_FAILED) {
-						throw new AlgorithmExecutionException("Unable to merge the entity groups.");
-					}
-				}
+				Merger merger = collectMerges(mergingTable, toBeMerged, outputConnection);
+				problems.addAll(merger.merge(outputConnection));
 				if(problems.size() > 0) {
 					throw new AlgorithmExecutionException("The following problems were encountered while trying to merge: "
 							+ formatProblems(problems));
 				}
 				
-				logger.log(LogService.LOG_INFO, "Successfully merged " + entitiesMergedAway
-						+ " entities into other entities in " + numberOfMerges + " merges, leaving "
-						+ mergeGroups.size() + " entities in the database.");
+				logger.log(LogService.LOG_INFO, "Successfully merged " + merger.getEntitiesMergedAway()
+						+ " entities into other entities, leaving "
+						+ merger.getRemainingEntities() + " entities in the database.");
 				Data outputData = wrapWithMetadata(outputDatabase, "with merged " + toBeMerged.toString());
+				monitor.done();
 				return new Data[]{outputData};
 				
 			} else {
@@ -115,29 +86,30 @@ public class MergeTable implements Algorithm {
 			DatabaseUtilities.closeConnectionQuietly(outputConnection);
 		}
     }
-
-	private Collection<MergeGroup> createMergeGroups(Table mergingTable,
+    
+    
+	private Merger collectMerges(Table mergingTable,
 			DatabaseTable toBeMerged, Connection connection) throws AlgorithmExecutionException {
-				
-		try {
-			Map<String, MergeGroup> groups = new HashMap<String, MergeGroup>();
 			
+		Merger merger = new Merger(toBeMerged, monitor);
+		try {			
 			String[] primaryKeyColumns = toBeMerged.getPrimaryKeyColumns(connection);
 			ColumnProjection primaryKeyColumnFilter = new NamedColumnProjection(primaryKeyColumns, true);
 			
 			ForeignKey[] foreignKeys = toBeMerged.getRelations(connection);
+			for(ForeignKey foreignKey : foreignKeys) {
+				//merge units are the units of work that will repoint the foreign keys referring to the entities merged away to point at the primary entities
+				merger.addMergeUnit(new MergeUnit(foreignKey));
+			}
 			
 			TableIterator merges = mergingTable.iterator(mergingTable.rowsSortedBy(CreateMergingTable.MERGE_GROUP_IDENTIFIER_COLUMN, true));
-			
 			
 			while(merges.hasNext()) {
 				int row = merges.nextInt();
 				Tuple tuple = mergingTable.getTuple(row);
 				String groupIdentifier = tuple.getString(CreateMergingTable.MERGE_GROUP_IDENTIFIER_COLUMN);
-				if(!groups.containsKey(groupIdentifier)) {
-					groups.put(groupIdentifier, new MergeGroup(groupIdentifier, toBeMerged, primaryKeyColumnFilter, foreignKeys));
-				}
-				MergeGroup group = groups.get(groupIdentifier);
+				//for every key someone used for a merge group, there's an EntityGroup
+				EntityGroup group = merger.getOrCreateEntityGroup(groupIdentifier, toBeMerged, primaryKeyColumnFilter, foreignKeys);
 				try {
 					group.addRecord(tuple);
 				} catch (MergingErrorException e) {
@@ -145,7 +117,7 @@ public class MergeTable implements Algorithm {
 				}
 			}
 			
-			return groups.values();
+			return merger;
 			
 		} catch (SQLException e) {
 			throw new AlgorithmExecutionException("There was a problem creating the output data.", e);
@@ -185,5 +157,13 @@ public class MergeTable implements Algorithm {
 		metadata.put(DataProperty.PARENT, data[1]);
 		metadata.put(DataProperty.TYPE, DataProperty.DATABASE_TYPE);
 		return outputData;
+	}
+
+	public ProgressMonitor getProgressMonitor() {
+		return monitor;
+	}
+
+	public void setProgressMonitor(ProgressMonitor monitor) {
+		this.monitor = monitor;
 	}
 }

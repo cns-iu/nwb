@@ -12,6 +12,8 @@ import java.util.Map;
 import org.cishell.framework.CIShellContext;
 import org.cishell.framework.algorithm.Algorithm;
 import org.cishell.framework.algorithm.AlgorithmExecutionException;
+import org.cishell.framework.algorithm.ProgressMonitor;
+import org.cishell.framework.algorithm.ProgressTrackable;
 import org.cishell.framework.data.Data;
 import org.cishell.utilities.FileUtilities;
 import org.osgi.service.log.LogService;
@@ -38,14 +40,15 @@ import edu.iu.scipolicy.database.isi.merge.AlwaysMerge;
  * known-good form from the manual annotation task, or falling back on a form having
  * the most information about it.
  */
-public class MergeJournalsAlgorithm implements Algorithm {
+public class MergeJournalsAlgorithm implements Algorithm, ProgressTrackable {
 	public static final String MERGE_GROUPS_FILE_NAME = "mergeGroups.txt";
 	public static final String SOURCE_TABLE_ID = "APP" + "." + ISI.SOURCE_TABLE_NAME;
 	public static final Map<String, String> J9_TO_PRIMARY_J9 = createMapFromJ9ToPrimaryJ9();
 	
 	private Data originalDatabaseData;
     private CIShellContext ciShellContext;
-	private LogService logger;	
+	private LogService logger;
+	private ProgressMonitor monitor;	
         
     public MergeJournalsAlgorithm(Data[] data, CIShellContext ciShellContext) {
     	this.originalDatabaseData = data[0];
@@ -70,7 +73,7 @@ public class MergeJournalsAlgorithm implements Algorithm {
     	
     	return MergeMaker.mergeTable(
     			SOURCE_TABLE_ID, originalDatabaseData, primaryJ9KeyMaker, alwaysMerge,
-    			journalComparator, ciShellContext, "with journals merged");	    	
+    			journalComparator, ciShellContext, monitor, "with journals merged");	    	
     }
 
     private void logKnownJ9Statistics() {
@@ -134,5 +137,13 @@ public class MergeJournalsAlgorithm implements Algorithm {
 			System.err.println("Could not access merge file for sources: " + e.getMessage());
 			return new HashMap<String, String>();
 		}
+	}
+	
+	public ProgressMonitor getProgressMonitor() {
+		return monitor;
+	}
+
+	public void setProgressMonitor(ProgressMonitor monitor) {
+		this.monitor = monitor;
 	}
 }
