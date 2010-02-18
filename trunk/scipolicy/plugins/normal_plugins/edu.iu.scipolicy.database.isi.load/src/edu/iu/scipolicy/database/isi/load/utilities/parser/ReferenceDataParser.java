@@ -492,19 +492,20 @@ public class ReferenceDataParser {
 				publicationType,
 				twentyNineCharacterSourceTitleAbbreviation)) {
 			return new Pair<Source, String>(
-				new Source(
-					sourceKeyGenerator,
-					bookSeriesTitle,
-					bookSeriesSubtitle,
-					conferenceHost,
-					conferenceLocation,
-					conferenceSponsors,
-					conferenceTitle,
-					fullTitle,
-					isoTitleAbbreviation,
-					issn,
-					publicationType,
-					twentyNineCharacterSourceTitleAbbreviation),
+//				new Source(
+//					sourceKeyGenerator,
+//					/*bookSeriesTitle,
+//					bookSeriesSubtitle,
+//					conferenceHost,
+//					conferenceLocation,
+//					conferenceSponsors,
+//					conferenceTitle,
+//					fullTitle,
+//					isoTitleAbbreviation,
+//					issn,
+//					publicationType,*/
+//					twentyNineCharacterSourceTitleAbbreviation),
+				new Source(sourceKeyGenerator, twentyNineCharacterSourceTitleAbbreviation, null),
 				annotation);
 		} else {
 			return new Pair<Source, String>(null, annotation);

@@ -61,14 +61,14 @@ public class Publisher extends Entity<Publisher> {
 	}
 
 	@Override
-	public List<Object> createMergeKey() {
+	public Object createMergeKey() {
 		List<Object> mergeKey = new ArrayList<Object>();
 		Integer primaryKey = getPrimaryKey();
 		addStringOrAlternativeToMergeKey(mergeKey, this.city, primaryKey);
 		addStringOrAlternativeToMergeKey(mergeKey, this.name, primaryKey);
 		addStringOrAlternativeToMergeKey(mergeKey, this.webAddress, primaryKey);
 
-		return mergeKey;
+		return mergeKey.hashCode();
 	}
 
 	@Override

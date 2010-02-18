@@ -81,12 +81,12 @@ public class Address extends Entity<Address> {
 	@Override
 	public Object createMergeKey() {
 		return StringUtilities.alternativeIfNotNull_Empty_OrWhitespace(
-			this.rawAddress, getPrimaryKey());
+			this.rawAddress, getPrimaryKey()).hashCode();
 	}
 
 	@Override
 	public void merge(Address otherAddress) {
-		this.city = StringUtilities.simpleMerge(this.city, otherAddress.getCity());
+		/*this.city = StringUtilities.simpleMerge(this.city, otherAddress.getCity());
 		this.country = StringUtilities.simpleMerge(this.country, otherAddress.getCountry());
 		this.postalCode =
 			StringUtilities.simpleMerge(this.postalCode, otherAddress.getPostalCode());
@@ -102,7 +102,7 @@ public class Address extends Entity<Address> {
 			new DictionaryEntry<String, Object>(ISI.POSTAL_CODE, this.postalCode),
 			new DictionaryEntry<String, Object>(ISI.RAW_ADDRESS, this.rawAddress),
 			new DictionaryEntry<String, Object>(ISI.STATE_OR_PROVINCE, this.stateOrProvince),
-			new DictionaryEntry<String, Object>(ISI.STREET_ADDRESS, this.streetAddress));
+			new DictionaryEntry<String, Object>(ISI.STREET_ADDRESS, this.streetAddress));*/
 	}
 
 	public static Dictionary<String, Object> createAttributes(

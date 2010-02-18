@@ -47,12 +47,17 @@ public class DerbyDatabaseCreator {
 		Connection databaseConnection = database.getConnection();
 
 		try {
-			createEmptyTablesFromModel(model, databaseConnection, progressMonitor, workUnitCount);
-			fillTablesFromModel(model, databaseConnection, progressMonitor);
-			addForeignKeysToTablesFromModel(model, databaseConnection, progressMonitor);
-		} finally {
-			// TODO: More cleanup?
-			databaseConnection.close();
+			try {
+				createEmptyTablesFromModel(model, databaseConnection, progressMonitor, workUnitCount);
+				fillTablesFromModel(model, databaseConnection, progressMonitor);
+				addForeignKeysToTablesFromModel(model, databaseConnection, progressMonitor);
+			} finally {
+				// TODO: More cleanup?
+				databaseConnection.close();
+			}
+		} catch (Exception e){
+			System.err.println(e.getClass().getName());
+			System.err.println(e.getMessage());
 		}
 
 		return database;
@@ -239,11 +244,14 @@ public class DerbyDatabaseCreator {
 		Schema<? extends RowItem<?>> schema = itemContainer.getSchema();
 
 		final int batchSize = itemContainer.getBatchSize();
-		Iterator<? extends RowItem<?>> items = itemContainer.getItems().iterator();
+		Collection<? extends RowItem<?>> items = itemContainer.getItems();
+		Iterator<? extends RowItem<?>> iterator = items.iterator();
+		final int totalItemCount = items.size();
+		int itemsInsertedCount = 0;
 
-		while (items.hasNext()) {
-			for (int ii = 0; items.hasNext() && (ii < batchSize); ii++) {
-				RowItem<?> item = items.next();
+		while (iterator.hasNext()) {
+			for (int ii = 0; iterator.hasNext() && (ii < batchSize); ii++, itemsInsertedCount++) {
+				RowItem<?> item = iterator.next();
 				int fieldIndex = 1;
 				Dictionary<String, Object> attributes = item.getAttributesForInsertion();
 
@@ -270,7 +278,8 @@ public class DerbyDatabaseCreator {
 			System.err.println(
 				"Time to insert batch of size " + batchSize +
 				" into " + itemContainer.getDatabaseTableName() +
-				": " + insertTime);
+				": " + insertTime +
+				"; inserted " + itemsInsertedCount + " of " + totalItemCount + ".");
 		}
 	}
 

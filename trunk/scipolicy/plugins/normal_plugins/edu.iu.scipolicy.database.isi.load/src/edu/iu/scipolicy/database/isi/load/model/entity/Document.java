@@ -3,13 +3,17 @@ package edu.iu.scipolicy.database.isi.load.model.entity;
 import java.util.Dictionary;
 import java.util.Hashtable;
 
+import org.cishell.utilities.IntegerParserWithDefault;
+import org.cishell.utilities.StringUtilities;
 import org.cishell.utilities.dictionary.DictionaryEntry;
 import org.cishell.utilities.dictionary.DictionaryUtilities;
 
+import prefuse.data.Tuple;
 import edu.iu.cns.database.load.framework.DerbyFieldType;
 import edu.iu.cns.database.load.framework.Entity;
 import edu.iu.cns.database.load.framework.Schema;
 import edu.iu.cns.database.load.framework.utilities.DatabaseTableKeyGenerator;
+import edu.iu.nwb.shared.isiutil.ISITag;
 import edu.iu.nwb.shared.isiutil.database.ISI;
 
 public class Document extends Entity<Document> {
@@ -46,17 +50,17 @@ public class Document extends Entity<Document> {
 			ISI.FIRST_AUTHOR, ISI.PERSON_TABLE_NAME,
 			ISI.DOCUMENT_SOURCE, ISI.SOURCE_TABLE_NAME);
 
-	private String abstractText;
+	//private String abstractText;
 	private String articleNumber;
-	private Integer beginningPage;
+	/*private Integer beginningPage;
 	private Integer citedReferenceCount;
-	private Integer citedYear;
+	private Integer citedYear;*/
 	private String digitalObjectIdentifier;
-	private String documentType;
+	/*private String documentType;
 	private Integer documentVolume;
-	private Integer endingPage;
+	private Integer endingPage;*/
 	private Person firstAuthorPerson;
-	private String fundingAgencyAndGrantNumber;
+	/*private String fundingAgencyAndGrantNumber;
 	private String fundingText;
 	private String isbn;
 	private String isiDocumentDeliveryNumber;
@@ -66,28 +70,29 @@ public class Document extends Entity<Document> {
 	private Integer pageCount;
 	private String partNumber;
 	private String publicationDate;
-	private Integer publicationYear;
+	private Integer publicationYear;*/
 	private Source source;
-	private String specialIssue;
+	/*private String specialIssue;
 	private String subjectCategory;
 	private String supplement;
 	private Integer timesCited;
-	private String title;
+	private String title;*/
+	private Tuple originalRow;
 	private Dictionary<String, String> arbitraryAttributes = new Hashtable<String, String>();
 
 	public Document(
 			DatabaseTableKeyGenerator keyGenerator,
-			String abstractText,
+			//String abstractText,
 			String articleNumber,
-			Integer beginningPage,
+			/*Integer beginningPage,
 			Integer citedReferenceCount,
-			Integer citedYear,
+			Integer citedYear,*/
 			String digitalObjectIdentifier,
-			String documentType,
+			/*String documentType,
 			Integer documentVolume,
-			Integer endingPage,
+			Integer endingPage,*/
 			Person firstAuthorPerson,
-			String fundingAgencyAndGrantNumber,
+			/*String fundingAgencyAndGrantNumber,
 			String fundingText,
 			String isbn,
 			String isiDocumentDeliveryNumber,
@@ -97,16 +102,18 @@ public class Document extends Entity<Document> {
 			Integer pageCount,
 			String partNumber,
 			String publicationDate,
-			Integer publicationYear,
+			Integer publicationYear,*/
 			Source source,
-			String specialIssue,
+			/*String specialIssue,
 			String subjectCategory,
 			String supplement,
 			Integer timesCited,
-			String title) {
+			String title*/
+			Tuple originalRow) {
 		super(
 			keyGenerator,
-			createAttributes(
+			createInitialAttributes(articleNumber, digitalObjectIdentifier, source));
+			/*createAttributes(
 				abstractText,
 				articleNumber,
 				beginningPage,
@@ -133,18 +140,18 @@ public class Document extends Entity<Document> {
 				subjectCategory,
 				supplement,
 				timesCited,
-				title));
-		this.abstractText = abstractText;
+				title));*/
+		//this.abstractText = abstractText;
 		this.articleNumber = articleNumber;
-		this.beginningPage = beginningPage;
+		/*this.beginningPage = beginningPage;
 		this.citedReferenceCount = citedReferenceCount;
-		this.citedYear = citedYear;
+		this.citedYear = citedYear;*/
 		this.digitalObjectIdentifier = digitalObjectIdentifier;
-		this.documentType = documentType;
+		/*this.documentType = documentType;
 		this.documentVolume = documentVolume;
-		this.endingPage = endingPage;
+		this.endingPage = endingPage;*/
 		this.firstAuthorPerson = firstAuthorPerson;
-		this.fundingAgencyAndGrantNumber = fundingAgencyAndGrantNumber;
+		/*this.fundingAgencyAndGrantNumber = fundingAgencyAndGrantNumber;
 		this.fundingText = fundingText;
 		this.isbn = isbn;
 		this.isiDocumentDeliveryNumber = isiDocumentDeliveryNumber;
@@ -160,7 +167,8 @@ public class Document extends Entity<Document> {
 		this.subjectCategory = subjectCategory;
 		this.supplement = supplement;
 		this.timesCited = timesCited;
-		this.title = title;
+		this.title = title;*/
+		this.originalRow = originalRow;
 	}
 
 	public String getDigitalObjectIdentifier() {
@@ -168,7 +176,12 @@ public class Document extends Entity<Document> {
 	}
 
 	public String getAbstractText() {
-		return this.abstractText;
+		/*String a = StringUtilities.trimIfNotNull(
+			this.originalRow.getString(ISITag.ABSTRACT.getColumnName()));
+		System.err.println("abstract: \"" + a + "\"");
+		return a;*/
+		return StringUtilities.trimIfNotNull(
+			this.originalRow.getString(ISITag.ABSTRACT.getColumnName()));
 	}
 
 	public String getArticleNumber() {
@@ -176,23 +189,28 @@ public class Document extends Entity<Document> {
 	}
 
 	public Integer getBeginningPage() {
-		return this.beginningPage;
+		return IntegerParserWithDefault.parse(StringUtilities.trimIfNotNull(
+			this.originalRow.getString(ISITag.BEGINNING_PAGE.getColumnName())));
 	}
 
 	public Integer getCitedReferenceCount() {
-		return this.citedReferenceCount;
+		return IntegerParserWithDefault.parse(StringUtilities.trimIfNotNull(
+			this.originalRow.getString(ISITag.CITED_REFERENCE_COUNT.getColumnName())));
 	}
 
 	public Integer getCitedYear() {
-		return this.citedYear;
+		return IntegerParserWithDefault.parse(StringUtilities.trimIfNotNull(
+			this.originalRow.getString(ISITag.CITED_YEAR.getColumnName())));
 	}
 
 	public String getDocumentType() {
-		return this.documentType;
+		return StringUtilities.trimIfNotNull(
+			this.originalRow.getString(ISITag.DOCUMENT_TYPE.getColumnName()));
 	}
 
 	public Integer getEndingPage() {
-		return this.endingPage;
+		return IntegerParserWithDefault.parse(StringUtilities.trimIfNotNull(
+			this.originalRow.getString(ISITag.ENDING_PAGE.getColumnName())));
 	}
 
 	public Person getFirstAuthorPerson() {
@@ -200,47 +218,58 @@ public class Document extends Entity<Document> {
 	}
 
 	public String getFundingAgencyAndGrantNumber() {
-		return this.fundingAgencyAndGrantNumber;
+		return StringUtilities.trimIfNotNull(
+			this.originalRow.getString(ISITag.FUNDING_AGENCY_AND_GRANT_NUMBER.getColumnName()));
 	}
 
 	public String getFundingText() {
-		return this.fundingText;
+		return StringUtilities.trimIfNotNull(
+			this.originalRow.getString(ISITag.FUNDING_TEXT.getColumnName()));
 	}
 
 	public String getISBN() {
-		return this.isbn;
+		return StringUtilities.trimIfNotNull(
+			this.originalRow.getString(ISITag.ISBN.getColumnName()));
 	}
 
 	public String getISIDocumentDeliveryNumber() {
-		return this.isiDocumentDeliveryNumber;
+		return StringUtilities.trimIfNotNull(
+			this.originalRow.getString(ISITag.ISI_DOCUMENT_DELIVERY_NUMBER.getColumnName()));
 	}
 
 	public String getISIUniqueArticleIdentifier() {
-		return this.isiUniqueArticleIdentifier;
+		return StringUtilities.trimIfNotNull(
+			this.originalRow.getString(ISITag.UNIQUE_ID.getColumnName()));
 	}
 
 	public String getIssue() {
-		return this.issue;
+		return StringUtilities.trimIfNotNull(
+			this.originalRow.getString(ISITag.ISSUE.getColumnName()));
 	}
 
 	public String getLanguage() {
-		return this.language;
+		return StringUtilities.trimIfNotNull(
+			this.originalRow.getString(ISITag.LANGUAGE.getColumnName()));
 	}
 
 	public Integer getPageCount() {
-		return this.pageCount;
+		return IntegerParserWithDefault.parse(StringUtilities.trimIfNotNull(
+			this.originalRow.getString(ISITag.NUMBER_OF_PAGES.getColumnName())));
 	}
 
 	public String getPartNumber() {
-		return this.partNumber;
+		return StringUtilities.trimIfNotNull(
+			this.originalRow.getString(ISITag.PART_NUMBER.getColumnName()));
 	}
 
 	public String getPublicationDate() {
-		return this.publicationDate;
+		return StringUtilities.trimIfNotNull(
+			this.originalRow.getString(ISITag.PUBLICATION_DATE.getColumnName()));
 	}
 
 	public Integer getPublicationYear() {
-		return this.publicationYear;
+		return IntegerParserWithDefault.parse(StringUtilities.trimIfNotNull(
+			this.originalRow.getString(ISITag.PUBLICATION_YEAR.getColumnName())));
 	}
 
 	public Source getSource() {
@@ -248,27 +277,34 @@ public class Document extends Entity<Document> {
 	}
 
 	public String getSpecialIssue() {
-		return this.specialIssue;
+		return StringUtilities.trimIfNotNull(
+			this.originalRow.getString(ISITag.SPECIAL_ISSUE.getColumnName()));
 	}
 
 	public String getSubjectCategory() {
-		return this.subjectCategory;
+		return StringUtilities.trimIfNotNull(
+			this.originalRow.getString(ISITag.SUBJECT_CATEGORY.getColumnName()));
 	}
 
 	public String getSupplement() {
-		return this.supplement;
+		return StringUtilities.trimIfNotNull(
+			this.originalRow.getString(ISITag.SUPPLEMENT.getColumnName()));
 	}
 
 	public Integer getTimesCited() {
-		return this.timesCited;
+		return IntegerParserWithDefault.parse(
+			StringUtilities.trimIfNotNull(
+				this.originalRow.getString(ISITag.TIMES_CITED.getColumnName())));
 	}
 
 	public String getTitle() {
-		return this.title;
+		return StringUtilities.trimIfNotNull(
+			this.originalRow.getString(ISITag.TITLE.getColumnName()));
 	}
 
 	public Integer getVolume() {
-		return this.documentVolume;
+		return IntegerParserWithDefault.parse(StringUtilities.trimIfNotNull(
+			this.originalRow.getString(ISITag.VOLUME.getColumnName())));
 	}
 
 	public Dictionary<String, String> getArbitraryAttributes() {
@@ -300,6 +336,38 @@ public class Document extends Entity<Document> {
 	}
 
 	@Override
+	public Dictionary<String, Object> getAttributesForInsertion() {
+		Dictionary<String, Object> attributes = DictionaryUtilities.copy(super.getAttributes());
+		fillAttributes(
+			attributes,
+			getAbstractText(),
+			getBeginningPage(),
+			getCitedReferenceCount(),
+			getCitedYear(),
+			getDocumentType(),
+			getVolume(),
+			getEndingPage(),
+			getFundingAgencyAndGrantNumber(),
+			getFundingText(),
+			getISBN(),
+			getISIDocumentDeliveryNumber(),
+			getISIUniqueArticleIdentifier(),
+			getIssue(),
+			getLanguage(),
+			getPageCount(),
+			getPartNumber(),
+			getPublicationDate(),
+			getPublicationYear(),
+			getSpecialIssue(),
+			getSubjectCategory(),
+			getSupplement(),
+			getTimesCited(),
+			getTitle());
+
+		return attributes;
+	}
+
+	@Override
 	public Object createMergeKey() {
 		return getPrimaryKey();
 	}
@@ -308,17 +376,31 @@ public class Document extends Entity<Document> {
 	public void merge(Document otherDocument) {
 	}
 
-	public static Dictionary<String, Object> createAttributes(
+	private static Dictionary<String, Object> createInitialAttributes(
+			String articleNumber, String digitalObjectIdentifier, Source source) {
+		Dictionary<String, Object> attributes = new Hashtable<String, Object>();
+		DictionaryUtilities.addIfNotNull(
+			attributes,
+			new DictionaryEntry<String, Object>(ISI.ARTICLE_NUMBER, articleNumber),
+			new DictionaryEntry<String, Object>(
+				ISI.DIGITAL_OBJECT_IDENTIFIER, digitalObjectIdentifier));
+
+		if (source != null) {
+			attributes.put(ISI.DOCUMENT_SOURCE, source.getPrimaryKey());
+		}
+
+		return attributes;
+	}
+
+	private static void fillAttributes(
+			Dictionary<String, Object> attributes,
 			String abstractText,
-			String articleNumber,
 			Integer beginningPage,
 			Integer citedReferenceCount,
 			Integer citedYear,
-			String digitalObjectIdentifier,
 			String documentType,
 			Integer documentVolume,
 			Integer endingPage,
-			Person firstAuthorPerson,
 			String fundingAgencyAndGrantNumber,
 			String fundingText,
 			String isbn,
@@ -330,23 +412,18 @@ public class Document extends Entity<Document> {
 			String partNumber,
 			String publicationDate,
 			Integer publicationYear,
-			Source source,
 			String specialIssue,
 			String subjectCategory,
 			String supplement,
 			Integer timesCited,
 			String title) {
-		Dictionary<String, Object> attributes = new Hashtable<String, Object>();
 		DictionaryUtilities.addIfNotNull(
 			attributes,
 			new DictionaryEntry<String, Object>(ISI.ABSTRACT_TEXT, abstractText),
-			new DictionaryEntry<String, Object>(ISI.ARTICLE_NUMBER, articleNumber),
 			new DictionaryEntry<String, Object>(ISI.BEGINNING_PAGE, beginningPage),
 			new DictionaryEntry<String, Object>(
 				ISI.CITED_REFERENCE_COUNT, citedReferenceCount),
 			new DictionaryEntry<String, Object>(ISI.CITED_YEAR, citedYear),
-			new DictionaryEntry<String, Object>(
-				ISI.DIGITAL_OBJECT_IDENTIFIER, digitalObjectIdentifier),
 			new DictionaryEntry<String, Object>(ISI.DOCUMENT_TYPE, documentType),
 			new DictionaryEntry<String, Object>(ISI.DOCUMENT_VOLUME, documentVolume),
 			new DictionaryEntry<String, Object>(ISI.ENDING_PAGE, endingPage),
@@ -369,15 +446,5 @@ public class Document extends Entity<Document> {
 			new DictionaryEntry<String, Object>(ISI.SUPPLEMENT, supplement),
 			new DictionaryEntry<String, Object>(ISI.TIMES_CITED, timesCited),
 			new DictionaryEntry<String, Object>(ISI.TITLE, title));
-
-		if (firstAuthorPerson != null) {
-			attributes.put(ISI.FIRST_AUTHOR, firstAuthorPerson.getPrimaryKey());
-		}
-
-		if (source != null) {
-			attributes.put(ISI.DOCUMENT_SOURCE, source.getPrimaryKey());
-		}
-
-		return attributes;
 	}
 }

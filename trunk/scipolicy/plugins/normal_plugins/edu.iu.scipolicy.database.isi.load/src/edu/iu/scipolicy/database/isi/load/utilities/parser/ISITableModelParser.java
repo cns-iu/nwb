@@ -46,9 +46,11 @@ public class ISITableModelParser {
 	public static final String AUTHOR_KEYWORDS = "authorKeywords";
 	public static final String KEYWORDS_PLUS = "keywordsPlus";
 
-	public static final int SOURCE_BATCH_SIZE = 1000;
-	public static final int REFERENCE_BATCH_SIZE = 1000;
-	public static final int PERSON_BATCH_SIZE = 1000;
+	public static final int BATCH_SIZE = 100;
+	/*public static final int DOCUMENT_BATCH_SIZE = 500;
+	public static final int SOURCE_BATCH_SIZE = 500;
+	public static final int REFERENCE_BATCH_SIZE = 250;
+	public static final int PERSON_BATCH_SIZE = 500;*/
 
 	private ProgressMonitor progressMonitor;
 
@@ -58,26 +60,23 @@ public class ISITableModelParser {
 	 */
 
 	private RowItemContainer<ISIFile> isiFiles = new EntityContainer<ISIFile>(
-			ISI.ISI_FILE_DISPLAY_NAME, ISI.ISI_FILE_TABLE_NAME, ISIFile.SCHEMA);
+			ISI.ISI_FILE_DISPLAY_NAME, ISI.ISI_FILE_TABLE_NAME, ISIFile.SCHEMA, BATCH_SIZE);
 	private RowItemContainer<Publisher> publishers = new EntityContainer<Publisher>(
-			ISI.PUBLISHER_DISPLAY_NAME, ISI.PUBLISHER_TABLE_NAME, Publisher.SCHEMA);
+			ISI.PUBLISHER_DISPLAY_NAME, ISI.PUBLISHER_TABLE_NAME, Publisher.SCHEMA, BATCH_SIZE);
 	private RowItemContainer<Source> sources = new EntityContainer<Source>(
-		ISI.SOURCE_DISPLAY_NAME, ISI.SOURCE_TABLE_NAME, Source.SCHEMA, SOURCE_BATCH_SIZE);
+		ISI.SOURCE_DISPLAY_NAME, ISI.SOURCE_TABLE_NAME, Source.SCHEMA, BATCH_SIZE);
 	private RowItemContainer<Reference> references = new EntityContainer<Reference>(
-		ISI.REFERENCE_DISPLAY_NAME,
-		ISI.REFERENCE_TABLE_NAME,
-		Reference.SCHEMA,
-		REFERENCE_BATCH_SIZE);
+		ISI.REFERENCE_DISPLAY_NAME, ISI.REFERENCE_TABLE_NAME, Reference.SCHEMA, BATCH_SIZE);
 	private RowItemContainer<Address> addresses = new EntityContainer<Address>(
-			ISI.ADDRESS_DISPLAY_NAME, ISI.ADDRESS_TABLE_NAME, Address.SCHEMA);
+			ISI.ADDRESS_DISPLAY_NAME, ISI.ADDRESS_TABLE_NAME, Address.SCHEMA, BATCH_SIZE);
 	private RowItemContainer<Keyword> keywords = new EntityContainer<Keyword>(
-			ISI.KEYWORD_DISPLAY_NAME, ISI.KEYWORD_TABLE_NAME, Keyword.SCHEMA);
+			ISI.KEYWORD_DISPLAY_NAME, ISI.KEYWORD_TABLE_NAME, Keyword.SCHEMA, BATCH_SIZE);
 	private RowItemContainer<Person> people = new EntityContainer<Person>(
-		ISI.PERSON_DISPLAY_NAME, ISI.PERSON_TABLE_NAME, Person.SCHEMA, PERSON_BATCH_SIZE);
+		ISI.PERSON_DISPLAY_NAME, ISI.PERSON_TABLE_NAME, Person.SCHEMA, BATCH_SIZE);
 	private RowItemContainer<Patent> patents = new EntityContainer<Patent>(
-			ISI.PATENT_DISPLAY_NAME, ISI.PATENT_TABLE_NAME, Patent.SCHEMA);
+			ISI.PATENT_DISPLAY_NAME, ISI.PATENT_TABLE_NAME, Patent.SCHEMA, BATCH_SIZE);
 	private RowItemContainer<Document> documents = new EntityContainer<Document>(
-			ISI.DOCUMENT_DISPLAY_NAME, ISI.DOCUMENT_TABLE_NAME, Document.SCHEMA);
+			ISI.DOCUMENT_DISPLAY_NAME, ISI.DOCUMENT_TABLE_NAME, Document.SCHEMA, BATCH_SIZE);
 
 	/*
 	 * Create all of the entity joining tables (Publisher Addresses, Reprint Addresses,
@@ -87,57 +86,66 @@ public class ISITableModelParser {
 
 	private RowItemContainer<PublisherAddress> publisherAddresses =
 		new RelationshipContainer<PublisherAddress>(
-				ISI.PUBLISHER_ADDRESSES_DISPLAY_NAME,
-				ISI.PUBLISHER_ADDRESSES_TABLE_NAME,
-				PublisherAddress.SCHEMA);
+			ISI.PUBLISHER_ADDRESSES_DISPLAY_NAME,
+			ISI.PUBLISHER_ADDRESSES_TABLE_NAME,
+			PublisherAddress.SCHEMA,
+			BATCH_SIZE);
 
 	private RowItemContainer<ReprintAddress> reprintAddresses =
 		new RelationshipContainer<ReprintAddress>(
-				ISI.REPRINT_ADDRESSES_DISPLAY_NAME,
-				ISI.REPRINT_ADDRESSES_TABLE_NAME,
-				ReprintAddress.SCHEMA);
+			ISI.REPRINT_ADDRESSES_DISPLAY_NAME,
+			ISI.REPRINT_ADDRESSES_TABLE_NAME,
+			ReprintAddress.SCHEMA,
+			BATCH_SIZE);
 
 	private RowItemContainer<ResearchAddress> researchAddresses =
 		new RelationshipContainer<ResearchAddress>(
-				ISI.RESEARCH_ADDRESSES_DISPLAY_NAME,
-				ISI.RESEARCH_ADDRESSES_TABLE_NAME,
-				ResearchAddress.SCHEMA);
+			ISI.RESEARCH_ADDRESSES_DISPLAY_NAME,
+			ISI.RESEARCH_ADDRESSES_TABLE_NAME,
+			ResearchAddress.SCHEMA,
+			BATCH_SIZE);
 
 	private RowItemContainer<DocumentKeyword> documentKeywords =
 		new RelationshipContainer<DocumentKeyword>(
-				ISI.DOCUMENT_KEYWORDS_DISPLAY_NAME,
-				ISI.DOCUMENT_KEYWORDS_TABLE_NAME,
-				DocumentKeyword.SCHEMA);
+			ISI.DOCUMENT_KEYWORDS_DISPLAY_NAME,
+			ISI.DOCUMENT_KEYWORDS_TABLE_NAME,
+			DocumentKeyword.SCHEMA,
+			BATCH_SIZE);
 
 	private RowItemContainer<Author> authors =
 		new RelationshipContainer<Author>(
-				ISI.AUTHORS_DISPLAY_NAME,
-				ISI.AUTHORS_TABLE_NAME,
-				Author.SCHEMA);
+			ISI.AUTHORS_DISPLAY_NAME,
+			ISI.AUTHORS_TABLE_NAME,
+			Author.SCHEMA,
+			BATCH_SIZE);
 
 	private RowItemContainer<Editor> editors =
 		new RelationshipContainer<Editor>(
-				ISI.EDITORS_DISPLAY_NAME,
-				ISI.EDITORS_TABLE_NAME,
-				Editor.SCHEMA);
+			ISI.EDITORS_DISPLAY_NAME,
+			ISI.EDITORS_TABLE_NAME,
+			Editor.SCHEMA,
+			BATCH_SIZE);
 
 	private RowItemContainer<CitedPatent> citedPatents =
 		new RelationshipContainer<CitedPatent>(
-				ISI.CITED_PATENTS_DISPLAY_NAME,
-				ISI.CITED_PATENTS_TABLE_NAME,
-				CitedPatent.SCHEMA);
+			ISI.CITED_PATENTS_DISPLAY_NAME,
+			ISI.CITED_PATENTS_TABLE_NAME,
+			CitedPatent.SCHEMA,
+			BATCH_SIZE);
 
 	private RowItemContainer<DocumentOccurrence> documentOccurrences =
 		new RelationshipContainer<DocumentOccurrence>(
-				ISI.DOCUMENT_OCCURRENCES_DISPLAY_NAME,
-				ISI.DOCUMENT_OCCURRENCES_TABLE_NAME,
-				DocumentOccurrence.SCHEMA);
+			ISI.DOCUMENT_OCCURRENCES_DISPLAY_NAME,
+			ISI.DOCUMENT_OCCURRENCES_TABLE_NAME,
+			DocumentOccurrence.SCHEMA,
+			BATCH_SIZE);
 
 	private RowItemContainer<CitedReference> citedReferences =
 		new RelationshipContainer<CitedReference>(
-				ISI.CITED_REFERENCES_DISPLAY_NAME,
-				ISI.CITED_REFERENCES_TABLE_NAME,
-				CitedReference.SCHEMA);
+			ISI.CITED_REFERENCES_DISPLAY_NAME,
+			ISI.CITED_REFERENCES_TABLE_NAME,
+			CitedReference.SCHEMA,
+			BATCH_SIZE);
 
 	public ISITableModelParser(ProgressMonitor progressMonitor) {
 		this.progressMonitor = progressMonitor;
@@ -280,8 +288,8 @@ public class ISITableModelParser {
 
 		return new DatabaseModel(
 			// Entities
-			this.addresses,
 			this.documents,
+			this.addresses,
 			this.isiFiles,
 			this.keywords,
 			this.patents,
@@ -464,7 +472,9 @@ public class ISITableModelParser {
 			StringUtilities.simpleClean(row.getString(ISITag.CITED_REFERENCES.getColumnName()));
 		String[] referenceStrings = rawReferencesString.split("\\|");
 
-		for (String referenceString : referenceStrings) {
+		for (int ii = 0; ii < referenceStrings.length; ii++) {
+			String referenceString = referenceStrings[ii];
+
 			if (StringUtilities.isNull_Empty_OrWhitespace(referenceString)) {
 				continue;
 			}
@@ -506,10 +516,12 @@ public class ISITableModelParser {
 						this.references.getKeyGenerator(),
 						this.people,
 						this.sources.getKeyGenerator(),
-						referenceData.getArticleNumber(),
-						referenceData.getDigitalObjectIdentifier(),
-						referenceString,
-						referenceSource);
+//						referenceData.getArticleNumber(),
+//						referenceData.getDigitalObjectIdentifier(),
+						//referenceString,
+						referenceSource,
+						row,
+						ii);
 					Reference mergedReference = this.references.add(reference);
 					currentReferences.add(mergedReference);
 				}
@@ -549,34 +561,34 @@ public class ISITableModelParser {
 			StringUtilities.trimIfNotNull(row.getString(ISITag.ABSTRACT.getColumnName()));
 		String articleNumber =
 			StringUtilities.trimIfNotNull(
-					row.getString(ISITag.ARTICLE_NUMBER_OF_NEW_APS_JOURNALS.getColumnName()));
+				row.getString(ISITag.ARTICLE_NUMBER_OF_NEW_APS_JOURNALS.getColumnName()));
 
 		Integer beginningPage = IntegerParserWithDefault.parse(
-				StringUtilities.trimIfNotNull(row.getString(ISITag.BEGINNING_PAGE.getColumnName())));
+			StringUtilities.trimIfNotNull(row.getString(ISITag.BEGINNING_PAGE.getColumnName())));
 
 		Integer citedReferenceCount = IntegerParserWithDefault.parse(StringUtilities.trimIfNotNull(
-				row.getString(ISITag.CITED_REFERENCE_COUNT.getColumnName())));
+			row.getString(ISITag.CITED_REFERENCE_COUNT.getColumnName())));
 		Integer citedYear = IntegerParserWithDefault.parse(StringUtilities.trimIfNotNull(
-				row.getString(ISITag.CITED_YEAR.getColumnName())));
+			row.getString(ISITag.CITED_YEAR.getColumnName())));
 
 		String digitalObjectidentifier =
 			StringUtilities.trimIfNotNull(row.getString(ISITag.DOI.getColumnName()));
 		String documentType =
 			StringUtilities.trimIfNotNull(row.getString(ISITag.DOCUMENT_TYPE.getColumnName()));
 		Integer documentVolume = IntegerParserWithDefault.parse(StringUtilities.trimIfNotNull(
-				row.getString(ISITag.VOLUME.getColumnName())));
+			row.getString(ISITag.VOLUME.getColumnName())));
 
 		Integer endingPage = IntegerParserWithDefault.parse(
-				StringUtilities.trimIfNotNull(row.getString(ISITag.ENDING_PAGE.getColumnName())));
+			StringUtilities.trimIfNotNull(row.getString(ISITag.ENDING_PAGE.getColumnName())));
 
 		String fundingAgencyAndGrantNumber = StringUtilities.trimIfNotNull(
-				row.getString(ISITag.FUNDING_AGENCY_AND_GRANT_NUMBER.getColumnName()));
+			row.getString(ISITag.FUNDING_AGENCY_AND_GRANT_NUMBER.getColumnName()));
 		String fundingText =
 			StringUtilities.trimIfNotNull(row.getString(ISITag.FUNDING_TEXT.getColumnName()));
 
 		String isbn = StringUtilities.trimIfNotNull(row.getString(ISITag.ISBN.getColumnName()));
 		String isiDocumentDeliveryNumber = StringUtilities.trimIfNotNull(
-				row.getString(ISITag.ISI_DOCUMENT_DELIVERY_NUMBER.getColumnName()));
+			row.getString(ISITag.ISI_DOCUMENT_DELIVERY_NUMBER.getColumnName()));
 		String isiUniqueArticleIdentifier =
 			StringUtilities.trimIfNotNull(row.getString(ISITag.UNIQUE_ID.getColumnName()));
 		String issue = StringUtilities.trimIfNotNull(row.getString(ISITag.ISSUE.getColumnName()));
@@ -585,13 +597,13 @@ public class ISITableModelParser {
 			StringUtilities.trimIfNotNull(row.getString(ISITag.LANGUAGE.getColumnName()));
 
 		Integer pageCount = IntegerParserWithDefault.parse(
-				StringUtilities.trimIfNotNull(row.getString(ISITag.NUMBER_OF_PAGES.getColumnName())));
+			StringUtilities.trimIfNotNull(row.getString(ISITag.NUMBER_OF_PAGES.getColumnName())));
 		String partNumber =
 			StringUtilities.trimIfNotNull(row.getString(ISITag.PART_NUMBER.getColumnName()));
 		String publicationDate =
 			StringUtilities.trimIfNotNull(row.getString(ISITag.PUBLICATION_DATE.getColumnName()));
 		Integer publicationYear = IntegerParserWithDefault.parse(
-				StringUtilities.trimIfNotNull(row.getString(ISITag.PUBLICATION_YEAR.getColumnName())));
+			StringUtilities.trimIfNotNull(row.getString(ISITag.PUBLICATION_YEAR.getColumnName())));
 
 		String specialIssue =
 			StringUtilities.trimIfNotNull(row.getString(ISITag.SPECIAL_ISSUE.getColumnName()));
@@ -601,7 +613,7 @@ public class ISITableModelParser {
 			StringUtilities.trimIfNotNull(row.getString(ISITag.SUPPLEMENT.getColumnName()));
 
 		Integer timesCited = IntegerParserWithDefault.parse(
-				StringUtilities.trimIfNotNull(row.getString(ISITag.TIMES_CITED.getColumnName())));
+			StringUtilities.trimIfNotNull(row.getString(ISITag.TIMES_CITED.getColumnName())));
 		String title = StringUtilities.trimIfNotNull(row.getString(ISITag.TITLE.getColumnName()));
 
 		// TODO: Use ISITag.isiTagArray to determine which tags we don't handle, and add those in
@@ -636,7 +648,7 @@ public class ISITableModelParser {
 						subjectCategory,
 						supplement,
 						title)) {
-			Document document = new Document(
+			/*Document document = new Document(
 					this.documents.getKeyGenerator(),
 					documentAbstract,
 					articleNumber,
@@ -664,7 +676,14 @@ public class ISITableModelParser {
 					subjectCategory,
 					supplement,
 					timesCited,
-					title);
+					title);*/
+			Document document = new Document(
+				this.documentKeywords.getKeyGenerator(),
+				articleNumber,
+				digitalObjectidentifier,
+				firstAuthor,
+				source,
+				row);
 
 			for (int ii = 0; ii < row.getColumnCount(); ii++) {
 				String columnName = row.getColumnName(ii);
@@ -812,7 +831,7 @@ public class ISITableModelParser {
 				twentyNineCharacterSourceTitleAbbreviation)) {
 			Source source = new Source(
 					this.sources.getKeyGenerator(),
-					bookSeriesTitle,
+					/*bookSeriesTitle,
 					bookSeriesSubtitle,
 					conferenceHost,
 					conferenceLocation,
@@ -821,8 +840,9 @@ public class ISITableModelParser {
 					fullTitle,
 					isoTitleAbbreviation,
 					issn,
-					publicationType,
-					twentyNineCharacterSourceTitleAbbreviation);
+					publicationType,*/
+					twentyNineCharacterSourceTitleAbbreviation,
+					row);
 
 			return this.sources.add(source);
 		} else {

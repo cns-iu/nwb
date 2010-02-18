@@ -7,11 +7,13 @@ import org.cishell.utilities.StringUtilities;
 import org.cishell.utilities.dictionary.DictionaryEntry;
 import org.cishell.utilities.dictionary.DictionaryUtilities;
 
+import prefuse.data.Tuple;
 import edu.iu.cns.database.load.framework.DerbyFieldType;
 import edu.iu.cns.database.load.framework.Entity;
 import edu.iu.cns.database.load.framework.RowItemContainer;
 import edu.iu.cns.database.load.framework.Schema;
 import edu.iu.cns.database.load.framework.utilities.DatabaseTableKeyGenerator;
+import edu.iu.nwb.shared.isiutil.ISITag;
 import edu.iu.nwb.shared.isiutil.database.ISI;
 import edu.iu.scipolicy.database.isi.load.utilities.parser.ReferenceDataParser;
 import edu.iu.scipolicy.database.isi.load.utilities.parser.exception.ReferenceParsingException;
@@ -37,38 +39,60 @@ public class Reference extends Entity<Reference> {
 
 	private RowItemContainer<Person> people;
 	private DatabaseTableKeyGenerator sourceKeyGenerator;
-	private String articleNumber;
-	private String digitalObjectIdentifier;
+//	private String articleNumber;
+//	private String digitalObjectIdentifier;
 	private Document paper;
-	private String rawReferenceString;
+//	private String rawReferenceString;
 	private Source source;
+	private Tuple originalRow;
+	private int referenceStringIndex;
 
 	public Reference(
 			DatabaseTableKeyGenerator keyGenerator,
 			RowItemContainer<Person> people,
 			DatabaseTableKeyGenerator sourceKeyGenerator,
-			String articleNumber,
-			String digitalObjectIdentifier,
-			String rawReferenceString,
-			Source source) {
+//			String articleNumber,
+//			String digitalObjectIdentifier,
+//			String rawReferenceString,
+			Source source,
+			Tuple originalRow,
+			int referenceStringIndex) {
 		super(
 			keyGenerator,
 			createInitialAttributes(
-				articleNumber, digitalObjectIdentifier, rawReferenceString, source));
+				/*articleNumber, digitalObjectIdentifier, rawReferenceString,*/ source));
 		this.people = people;
 		this.sourceKeyGenerator = sourceKeyGenerator;
-		this.articleNumber = articleNumber;
-		this.digitalObjectIdentifier = digitalObjectIdentifier;
-		this.rawReferenceString = rawReferenceString;
+//		this.articleNumber = articleNumber;
+//		this.digitalObjectIdentifier = digitalObjectIdentifier;
+//		this.rawReferenceString = rawReferenceString;
 		this.source = source;
+		this.originalRow = originalRow;
+		this.referenceStringIndex = referenceStringIndex;
 	}
 
 	public String getArticleNumber() {
-		return this.articleNumber;
+		//return this.articleNumber;
+		try {
+			ReferenceDataParser referenceData = new ReferenceDataParser(
+				this.people.getKeyGenerator(), this.sourceKeyGenerator, getRawReferenceString());
+
+			return referenceData.getArticleNumber();
+		} catch (ReferenceParsingException e) {
+			return null;
+		}
 	}
 
 	public String getDigitalObjectIdentifier() {
-		return this.digitalObjectIdentifier;
+//		return this.digitalObjectIdentifier;
+		try {
+			ReferenceDataParser referenceData = new ReferenceDataParser(
+				this.people.getKeyGenerator(), this.sourceKeyGenerator, getRawReferenceString());
+
+			return referenceData.getDigitalObjectIdentifier();
+		} catch (ReferenceParsingException e) {
+			return null;
+		}
 	}
 
 	public Document getPaper() {
@@ -76,7 +100,12 @@ public class Reference extends Entity<Reference> {
 	}
 
 	public String getRawReferenceString() {
-		return this.rawReferenceString;
+		// So sweet it's criminal.
+		String rawReferencesString = StringUtilities.simpleClean(
+			this.originalRow.getString(ISITag.CITED_REFERENCES.getColumnName()));
+
+		return StringUtilities.getNthToken(
+			rawReferencesString, "\\|", this.referenceStringIndex, true);
 	}
 
 	public Source getSource() {
@@ -99,7 +128,7 @@ public class Reference extends Entity<Reference> {
 
 		try {
 			ReferenceDataParser referenceData = new ReferenceDataParser(
-				this.people.getKeyGenerator(), this.sourceKeyGenerator, this.rawReferenceString);
+				this.people.getKeyGenerator(), this.sourceKeyGenerator, getRawReferenceString());
 			Person parsedAuthorPerson = referenceData.getAuthorPerson();
 			Person mergedAuthorPerson = null;
 
@@ -112,11 +141,11 @@ public class Reference extends Entity<Reference> {
 				referenceData.getAnnotation(),
 				referenceData.getArticleNumber(),
 				mergedAuthorPerson,
-				this.digitalObjectIdentifier,
+				getDigitalObjectIdentifier(),
 				referenceData.getOtherInformation(),
 				referenceData.getPageNumber(),
 				this.paper,
-				this.rawReferenceString,
+				getRawReferenceString(),
 				referenceData.getVolume(),
 				this.source,
 				referenceData.getYear());
@@ -128,7 +157,7 @@ public class Reference extends Entity<Reference> {
 	@Override
 	public Object createMergeKey() {
 		return StringUtilities.alternativeIfNotNull_Empty_OrWhitespace(
-			this.rawReferenceString, getPrimaryKey());
+			getRawReferenceString(), getPrimaryKey()).hashCode();
 	}
 
 	@Override
@@ -136,17 +165,17 @@ public class Reference extends Entity<Reference> {
 	}
 
 	private static Dictionary<String, Object> createInitialAttributes(
-			String articleNumber,
-			String digitalObjectIdentifier,
-			String rawReferenceString,
+//			String articleNumber,
+//			String digitalObjectIdentifier,
+//			String rawReferenceString,
 			Source source) {
 		Dictionary<String, Object> attributes = new Hashtable<String, Object>();
-		DictionaryUtilities.addIfNotNull(
+		/*DictionaryUtilities.addIfNotNull(
 			attributes,
-			new DictionaryEntry<String, Object>(ISI.ARTICLE_NUMBER, articleNumber),
-			new DictionaryEntry<String, Object>(
-				ISI.DIGITAL_OBJECT_IDENTIFIER, digitalObjectIdentifier),
-			new DictionaryEntry<String, Object>(ISI.REFERENCE_STRING, rawReferenceString));
+//			new DictionaryEntry<String, Object>(ISI.ARTICLE_NUMBER, articleNumber),
+//			new DictionaryEntry<String, Object>(
+//				ISI.DIGITAL_OBJECT_IDENTIFIER, digitalObjectIdentifier),
+			new DictionaryEntry<String, Object>(ISI.REFERENCE_STRING, rawReferenceString));*/
 
 			if (source != null) {
 				attributes.put(ISI.SOURCE, source.getPrimaryKey());

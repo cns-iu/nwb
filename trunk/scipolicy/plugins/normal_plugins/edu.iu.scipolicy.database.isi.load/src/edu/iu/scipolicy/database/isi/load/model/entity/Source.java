@@ -9,10 +9,12 @@ import org.cishell.utilities.StringUtilities;
 import org.cishell.utilities.dictionary.DictionaryEntry;
 import org.cishell.utilities.dictionary.DictionaryUtilities;
 
+import prefuse.data.Tuple;
 import edu.iu.cns.database.load.framework.DerbyFieldType;
 import edu.iu.cns.database.load.framework.Entity;
 import edu.iu.cns.database.load.framework.Schema;
 import edu.iu.cns.database.load.framework.utilities.DatabaseTableKeyGenerator;
+import edu.iu.nwb.shared.isiutil.ISITag;
 import edu.iu.nwb.shared.isiutil.database.ISI;
 
 public class Source extends Entity<Source> {
@@ -30,7 +32,7 @@ public class Source extends Entity<Source> {
 		ISI.PUBLICATION_TYPE, DerbyFieldType.TEXT,
 		ISI.TWENTY_NINE_CHARACTER_SOURCE_TITLE_ABBREVIATION, DerbyFieldType.TEXT);
 
-	private String bookSeriesTitle;
+	/*private String bookSeriesTitle;
 	private String bookSeriesSubtitle;
 	private String conferenceHost;
 	private String conferenceLocation;
@@ -39,12 +41,13 @@ public class Source extends Entity<Source> {
 	private String fullTitle;
 	private String isoTitleAbbreviation;
 	private String issn;
-	private String publicationType;
+	private String publicationType;*/
 	private String twentyNineCharacterSourceTitleAbbreviation;
+	private Tuple originalRow;
 
 	public Source(
 			DatabaseTableKeyGenerator keyGenerator,
-			String bookSeriesTitle,
+			/*String bookSeriesTitle,
 			String bookSeriesSubtitle,
 			String conferenceHost,
 			String conferenceLocation,
@@ -53,12 +56,13 @@ public class Source extends Entity<Source> {
 			String fullTitle,
 			String isoTitleAbbreviation,
 			String issn,
-			String publicationType,
-			String twentyNineCharacterSourceTitleAbbreviation) {
+			String publicationType,*/
+			String twentyNineCharacterSourceTitleAbbreviation,
+			Tuple originalRow) {
 		super(
 			keyGenerator,
-			createAttributes(
-				bookSeriesTitle,
+			createInitialAttributes(
+				/*bookSeriesTitle,
 				bookSeriesSubtitle,
 				conferenceHost,
 				conferenceLocation,
@@ -67,9 +71,9 @@ public class Source extends Entity<Source> {
 				fullTitle,
 				isoTitleAbbreviation,
 				issn,
-				publicationType,
+				publicationType,*/
 				twentyNineCharacterSourceTitleAbbreviation));
-		this.bookSeriesTitle = bookSeriesTitle;
+		/*this.bookSeriesTitle = bookSeriesTitle;
 		this.bookSeriesSubtitle = bookSeriesSubtitle;
 		this.conferenceHost = conferenceHost;
 		this.conferenceLocation = conferenceLocation;
@@ -78,49 +82,100 @@ public class Source extends Entity<Source> {
 		this.fullTitle = fullTitle;
 		this.isoTitleAbbreviation = isoTitleAbbreviation;
 		this.issn = issn;
-		this.publicationType = publicationType;
+		this.publicationType = publicationType;*/
 		this.twentyNineCharacterSourceTitleAbbreviation =
 			twentyNineCharacterSourceTitleAbbreviation;
+		this.originalRow = originalRow;
 	}
 
 	public String getBookSeriesTitle() {
-		return this.bookSeriesTitle;
+		if (this.originalRow != null){
+			return StringUtilities.trimIfNotNull(
+				this.originalRow.getString(ISITag.BOOK_SERIES_TITLE.getColumnName()));
+		} else {
+			return null;
+		}
 	}
 
 	public String getBookSeriesSubtitle() {
-		return this.bookSeriesSubtitle;
+		if (this.originalRow != null) {
+			return StringUtilities.trimIfNotNull(
+				this.originalRow.getString(ISITag.BOOK_SERIES_SUBTITLE.getColumnName()));
+		} else {
+			return null;
+		}
 	}
 
 	public String getConferenceHost() {
-		return this.conferenceHost;
+		if (this.originalRow != null) {
+			return StringUtilities.trimIfNotNull(
+				this.originalRow.getString(ISITag.CONFERENCE_HOST.getColumnName()));
+		} else {
+			return null;
+		}
 	}
 
 	public String getConferenceLocation() {
-		return this.conferenceLocation;
+		if (this.originalRow != null) {
+			return StringUtilities.trimIfNotNull(
+				this.originalRow.getString(ISITag.CONFERENCE_LOCATION.getColumnName()));
+		} else {
+			return null;
+		}
 	}
 
 	public String getConferenceSponsors() {
-		return this.conferenceSponsors;
+		if (this.originalRow != null) {
+			return StringUtilities.trimIfNotNull(
+				this.originalRow.getString(ISITag.CONFERENCE_SPONSORS.getColumnName()));
+		} else {
+			return null;
+		}
 	}
 
 	public String getConferenceTitle() {
-		return this.conferenceTitle;
+		if (this.originalRow != null) {
+			return StringUtilities.trimIfNotNull(
+				this.originalRow.getString(ISITag.CONFERENCE_TITLE.getColumnName()));
+		} else {
+			return null;
+		}
 	}
 
 	public String getFullTitle() {
-		return this.fullTitle;
+		if (this.originalRow != null) {
+			return StringUtilities.trimIfNotNull(
+				this.originalRow.getString(ISITag.FULL_JOURNAL_TITLE.getColumnName()));
+		} else {
+			return null;
+		}
 	}
 
 	public String getISOTitleAbbreviation() {
-		return this.isoTitleAbbreviation;
+		if (this.originalRow != null) {
+			return StringUtilities.trimIfNotNull(
+				this.originalRow.getString(ISITag.ISO_JOURNAL_TITLE_ABBREVIATION.getColumnName()));
+		} else {
+			return null;
+		}
 	}
 
 	public String getISSN() {
-		return this.issn;
+		if (this.originalRow != null) {
+			return StringUtilities.trimIfNotNull(
+				this.originalRow.getString(ISITag.ISSN.getColumnName()));
+		} else {
+			return null;
+		}
 	}
 
 	public String getPublicationType() {
-		return this.publicationType;
+		if (this.originalRow != null) {
+			return StringUtilities.trimIfNotNull(
+				this.originalRow.getString(ISITag.PUBLICATION_TYPE.getColumnName()));
+		} else {
+			return null;
+		}
 	}
 
 	public String get29CharacterSourceTitleAbbreviation() {
@@ -128,28 +183,47 @@ public class Source extends Entity<Source> {
 	}
 
 	@Override
-	public List<Object> createMergeKey() {
+	public Dictionary<String, Object> getAttributesForInsertion() {
+		Dictionary<String, Object> attributes = DictionaryUtilities.copy(super.getAttributes());
+		fillAttributes(
+			attributes,
+			getBookSeriesTitle(),
+			getBookSeriesSubtitle(),
+			getConferenceHost(),
+			getConferenceLocation(),
+			getConferenceSponsors(),
+			getConferenceTitle(),
+			getFullTitle(),
+			getISOTitleAbbreviation(),
+			getISSN(),
+			getPublicationType());
+
+		return attributes;
+	}
+
+	@Override
+	public Object createMergeKey() {
 		List<Object> mergeKey = new ArrayList<Object>();
 		Integer primaryKey = getPrimaryKey();
-		addStringOrAlternativeToMergeKey(mergeKey, this.bookSeriesTitle, null);
-		addStringOrAlternativeToMergeKey(mergeKey, this.bookSeriesSubtitle, null);
-		addStringOrAlternativeToMergeKey(mergeKey, this.conferenceHost, null);
-		addStringOrAlternativeToMergeKey(mergeKey, this.conferenceLocation, null);
-		addStringOrAlternativeToMergeKey(mergeKey, this.conferenceSponsors, null);
-		addStringOrAlternativeToMergeKey(mergeKey, this.conferenceTitle, null);
-		addStringOrAlternativeToMergeKey(mergeKey, this.fullTitle, null);
-		addStringOrAlternativeToMergeKey(mergeKey, this.isoTitleAbbreviation, null);
-		addStringOrAlternativeToMergeKey(mergeKey, this.issn, null);
-		addStringOrAlternativeToMergeKey(mergeKey, this.publicationType, null);
+		addStringOrAlternativeToMergeKey(mergeKey, getBookSeriesTitle(), null);
+		addStringOrAlternativeToMergeKey(mergeKey, getBookSeriesSubtitle(), null);
+		addStringOrAlternativeToMergeKey(mergeKey, getConferenceHost(), null);
+		addStringOrAlternativeToMergeKey(mergeKey, getConferenceLocation(), null);
+		addStringOrAlternativeToMergeKey(mergeKey, getConferenceSponsors(), null);
+		addStringOrAlternativeToMergeKey(mergeKey, getConferenceTitle(), null);
+		addStringOrAlternativeToMergeKey(mergeKey, getFullTitle(), null);
+		addStringOrAlternativeToMergeKey(mergeKey, getISOTitleAbbreviation(), null);
+		addStringOrAlternativeToMergeKey(mergeKey, getISSN(), null);
+		addStringOrAlternativeToMergeKey(mergeKey, getPublicationType(), null);
 		addStringOrAlternativeToMergeKey(
 			mergeKey, this.twentyNineCharacterSourceTitleAbbreviation, primaryKey);
 
-		return mergeKey;
+		return mergeKey.hashCode();
 	}
 
 	@Override
 	public void merge(Source otherSource) {
-		this.bookSeriesTitle =
+		/*this.bookSeriesTitle =
 			StringUtilities.simpleMerge(this.bookSeriesTitle, otherSource.getBookSeriesTitle());
 		this.bookSeriesSubtitle = StringUtilities.simpleMerge(
 			this.bookSeriesSubtitle, otherSource.getBookSeriesSubtitle());
@@ -189,10 +263,23 @@ public class Source extends Entity<Source> {
 			new DictionaryEntry<String, Object>(ISI.PUBLICATION_TYPE, this.publicationType),
 			new DictionaryEntry<String, Object>(
 				ISI.TWENTY_NINE_CHARACTER_SOURCE_TITLE_ABBREVIATION,
-				this.twentyNineCharacterSourceTitleAbbreviation));
+				this.twentyNineCharacterSourceTitleAbbreviation));*/
 	}
 
-	public static Dictionary<String, Object> createAttributes(
+	private static Dictionary<String, Object> createInitialAttributes(
+			String twentyNineCharacterSourceTitleAbbreviation) {
+		Dictionary<String, Object> attributes = new Hashtable<String, Object>();
+		DictionaryUtilities.addIfNotNull(
+			attributes,
+			new DictionaryEntry<String, Object>(
+				ISI.TWENTY_NINE_CHARACTER_SOURCE_TITLE_ABBREVIATION,
+				twentyNineCharacterSourceTitleAbbreviation));
+
+		return attributes;
+	}
+
+	public static void fillAttributes(
+			Dictionary<String, Object> attributes,
 			String bookSeriesTitle,
 			String bookSeriesSubtitle,
 			String conferenceHost,
@@ -202,9 +289,7 @@ public class Source extends Entity<Source> {
 			String fullTitle,
 			String isoTitleAbbreviation,
 			String issn,
-			String publicationType,
-			String twentyNineCharacterSourceTitleAbbreviation) {
-		Dictionary<String, Object> attributes = new Hashtable<String, Object>();
+			String publicationType) {
 		DictionaryUtilities.addIfNotNull(
 			attributes,
 			new DictionaryEntry<String, Object>(ISI.BOOK_SERIES_TITLE, bookSeriesTitle),
@@ -220,11 +305,6 @@ public class Source extends Entity<Source> {
 			new DictionaryEntry<String, Object>(
 				ISI.ISO_TITLE_ABBREVIATION, isoTitleAbbreviation),
 			new DictionaryEntry<String, Object>(ISI.ISSN, issn),
-			new DictionaryEntry<String, Object>(ISI.PUBLICATION_TYPE, publicationType),
-			new DictionaryEntry<String, Object>(
-				ISI.TWENTY_NINE_CHARACTER_SOURCE_TITLE_ABBREVIATION,
-				twentyNineCharacterSourceTitleAbbreviation));
-
-		return attributes;
+			new DictionaryEntry<String, Object>(ISI.PUBLICATION_TYPE, publicationType));
 	}
 }
