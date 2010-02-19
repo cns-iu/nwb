@@ -6,7 +6,8 @@ def main():
 
     nodes = []
 
-    codebookFile = open('trained.cod')
+    codebookFilename = 'trained.cod'
+    codebookFile = open(codebookFilename, 'r')
     dim, topology, columns, rows, neighborhood = codebookFile.next().split()
     lineIndex = 0
     for line in codebookFile:
@@ -18,13 +19,14 @@ def main():
         lineIndex += 1
     codebookFile.close()
 
-    outFile = open('trained.eps', 'w')
+    outFilename = '.'.join(codebookFilename.split('.')[:-1]) + '.colored.eps'
+    outFile = open(outFilename, 'w')
     inFile = open('colorTemplate.eps')
     for line in inFile:
         if line.startswith('NEURONS GO HERE'):
             for node in nodes:
                 i, j, r, g, b = node
-                print >> outFile, str(20 + 40*i + ((j%2)*20)), str(17 + 34*j), str(r), str(g), str(b), 'myLN'
+                print >> outFile, str(19.7 + 39.4*j + ((i%2)*19.7)), str(17 + 34*i), str(r), str(g), str(b), 'myLN'
         else:
             print >> outFile, line,
     inFile.close()

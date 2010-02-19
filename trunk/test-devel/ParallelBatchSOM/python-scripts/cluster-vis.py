@@ -61,7 +61,7 @@ def neuronInRange(neuron):
 
 def displayCoord(neuron):
     row, column = neuron
-    return (20 + 40*column + ((round(row)%2)*20), 17 + 34*row)
+    return (19.7 + 39.4*column + ((round(row)%2)*19.7), 17 + 34*row)
 
 def perpAtOrigin(coord1, coord2):
     #return (, ), (, ))

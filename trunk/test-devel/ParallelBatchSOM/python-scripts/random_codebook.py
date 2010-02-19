@@ -1,7 +1,7 @@
 import random
 
-columns = 150
-rows = 116
+columns = 120
+rows = 100
 weightdim = 529#2300
 
 outFile = open('random.cod', 'w')

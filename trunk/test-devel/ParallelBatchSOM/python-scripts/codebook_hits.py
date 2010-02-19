@@ -96,7 +96,7 @@ def main():
                 hits = codebookHitcounts.get(codebookVectorIndex, 0)
                 gray = 1.0 - (float(hits) / float(maxHitcount))
 
-                print >> outPostScriptFile, str(20 + 40*i + ((j%2)*20)), str(17 + 34*j), str(gray), 'myLN'
+                print >> outPostScriptFile, str(19.7 + 39.4*i + ((j%2)*19.7)), str(17 + 34*j), str(gray), 'myLN'
         else:
             print >> outPostScriptFile, templateLine,
     inTemplateFile.close()
