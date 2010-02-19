@@ -112,7 +112,7 @@ public class Document extends Entity<Document> {
 			Tuple originalRow) {
 		super(
 			keyGenerator,
-			createInitialAttributes(articleNumber, digitalObjectIdentifier, source));
+			createInitialAttributes(articleNumber, digitalObjectIdentifier, firstAuthorPerson, source));
 			/*createAttributes(
 				abstractText,
 				articleNumber,
@@ -377,14 +377,16 @@ public class Document extends Entity<Document> {
 	}
 
 	private static Dictionary<String, Object> createInitialAttributes(
-			String articleNumber, String digitalObjectIdentifier, Source source) {
+			String articleNumber, String digitalObjectIdentifier, Person firstAuthorPerson, Source source) {
 		Dictionary<String, Object> attributes = new Hashtable<String, Object>();
 		DictionaryUtilities.addIfNotNull(
 			attributes,
 			new DictionaryEntry<String, Object>(ISI.ARTICLE_NUMBER, articleNumber),
 			new DictionaryEntry<String, Object>(
 				ISI.DIGITAL_OBJECT_IDENTIFIER, digitalObjectIdentifier));
-
+		if(firstAuthorPerson != null) {
+			attributes.put(ISI.FIRST_AUTHOR, firstAuthorPerson.getPrimaryKey());
+		}
 		if (source != null) {
 			attributes.put(ISI.DOCUMENT_SOURCE, source.getPrimaryKey());
 		}
