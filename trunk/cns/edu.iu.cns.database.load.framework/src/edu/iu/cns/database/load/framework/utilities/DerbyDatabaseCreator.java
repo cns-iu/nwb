@@ -15,6 +15,7 @@ import org.cishell.framework.algorithm.ProgressMonitor;
 import org.cishell.service.database.Database;
 import org.cishell.service.database.DatabaseCreationException;
 import org.cishell.service.database.DatabaseService;
+import org.cishell.utilities.DatabaseUtilities;
 import org.cishell.utilities.IntegerParserWithDefault;
 import org.cishell.utilities.StringUtilities;
 
@@ -47,17 +48,11 @@ public class DerbyDatabaseCreator {
 		Connection databaseConnection = database.getConnection();
 
 		try {
-			try {
-				createEmptyTablesFromModel(model, databaseConnection, progressMonitor, workUnitCount);
-				fillTablesFromModel(model, databaseConnection, progressMonitor);
-				addForeignKeysToTablesFromModel(model, databaseConnection, progressMonitor);
-			} finally {
-				// TODO: More cleanup?
-				databaseConnection.close();
-			}
-		} catch (Exception e){
-			System.err.println(e.getClass().getName());
-			System.err.println(e.getMessage());
+			createEmptyTablesFromModel(model, databaseConnection, progressMonitor, workUnitCount);
+			fillTablesFromModel(model, databaseConnection, progressMonitor);
+			addForeignKeysToTablesFromModel(model, databaseConnection, progressMonitor);
+		} finally {
+			DatabaseUtilities.closeConnectionQuietly(databaseConnection);
 		}
 
 		return database;
