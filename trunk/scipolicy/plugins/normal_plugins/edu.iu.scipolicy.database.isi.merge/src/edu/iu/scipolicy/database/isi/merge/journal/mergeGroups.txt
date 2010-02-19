@@ -16,6 +16,13 @@ j stat phys
 
 proc nat acad sci usa
 p natl acad sci usa
+p natl ac sci us
+p natl acad
+p natl acad sci us
+p nat ac sci us
+p nat acad
+p nat acad sci
+p nat acad sci us
 
 sociol method
 sociol methodol
