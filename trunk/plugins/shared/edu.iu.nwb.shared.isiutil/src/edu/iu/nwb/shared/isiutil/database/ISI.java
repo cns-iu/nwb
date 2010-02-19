@@ -107,7 +107,6 @@ public class ISI {
 	public static final String ANNOTATION = "ANNOTATION";
 	public static final String REFERENCE_ARTICLE_NUMBER = "REFERENCE_ARTICLE_NUMBER";
 	public static final String REFERENCE_AUTHOR = "REFERENCE_AUTHOR_FK";
-	public static final String AUTHOR_WAS_STARRED = "AUTHOR_WAS_STARRED";
 	// public static final String DIGITAL_OBJECT_IDENTIFIER = "DIGITAL_OBJECT_IDENTIFIER";
 	public static final String REFERENCE_OTHER_INFORMATION = "REFERENCE_OTHER_INFORMATION";
 	public static final String PAGE_NUMBER = "REFERENCE_PAGE_NUMBER";
@@ -120,7 +119,6 @@ public class ISI {
 	public static final String[] REFERENCE_FIELD_NAMES = new String[] {
 		ANNOTATION,
 		REFERENCE_AUTHOR,
-		AUTHOR_WAS_STARRED,
 		PAGE_NUMBER,
 		PAPER,
 		REFERENCE_STRING,
@@ -162,6 +160,7 @@ public class ISI {
 	public static final String MIDDLE_INITIAL = "MIDDLE_INITIAL";
 	public static final String PERSONAL_NAME = "PERSONAL_NAME";
 	public static final String UNSPLIT_ABBREVIATED_NAME = "UNSPLIT_NAME";
+	public static final String AUTHOR_WAS_STARRED = "AUTHOR_WAS_STARRED";
 
 	public static final String[] PERSON_FIELD_NAMES = new String[] {
 		ADDITIONAL_NAME,
@@ -171,6 +170,7 @@ public class ISI {
 		MIDDLE_INITIAL,
 		PERSONAL_NAME,
 		UNSPLIT_ABBREVIATED_NAME,
+		AUTHOR_WAS_STARRED,
 	};
 
 	// Patent Entity Information
