@@ -65,6 +65,7 @@ public class ReferenceDataParser {
 	private Source source;
 	private Integer volume;
 	private Integer year;
+	public boolean starred = false;
 
 	public ReferenceDataParser(
 			DatabaseTableKeyGenerator personKeyGenerator,
@@ -74,8 +75,13 @@ public class ReferenceDataParser {
 		this.sourceKeyGenerator = sourceKeyGenerator;
 		this.rawString = rawString;
 
+		if (this.rawString.startsWith("*")) {
+			this.starred = true;
+			this.rawString = this.rawString.replaceFirst("\\**+", "");
+		}
+
 		String[] specialCaseCleanedTokens =
-			StringUtilities.simpleCleanStrings(rawString.split(", "));
+			StringUtilities.simpleCleanStrings(this.rawString.split(", "));
 		String[] cleanedTokens = handleSpecialCaseTokens(specialCaseCleanedTokens);
 
 		if ((cleanedTokens.length < MINIMUM_NUMBER_OF_TOKENS_FOR_VALID_REFERENCE) ||
@@ -144,6 +150,10 @@ public class ReferenceDataParser {
 
 	public Integer getYear() {
 		return this.year;
+	}
+
+	public boolean wasStarred() {
+		return this.starred;
 	}
 
 	private String[] handleSpecialCaseTokens(String[] specialCaseTokens) {
@@ -456,7 +466,6 @@ public class ReferenceDataParser {
 
 	private static Pair<Source, String> parseSource(
 			DatabaseTableKeyGenerator sourceKeyGenerator, String originalToken) {
-		long sourceTime = System.currentTimeMillis();
 		int annotationIndex = StringUtilities.prefixIndex(originalToken, SOURCE_ANNOTATIONS);
 		String annotation = null;
 		String sourceString = originalToken;

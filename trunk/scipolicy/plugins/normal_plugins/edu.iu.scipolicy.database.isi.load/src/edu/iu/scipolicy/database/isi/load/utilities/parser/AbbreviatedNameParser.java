@@ -9,7 +9,6 @@ public class AbbreviatedNameParser {
 	public String familyName;
 	public String firstInitial;
 	public String middleInitials;
-	public boolean starred = false;
 
 	public AbbreviatedNameParser(String rawAbbreviatedNameString) throws PersonParsingException {
 		if (StringUtilities.isNull_Empty_OrWhitespace(rawAbbreviatedNameString)) {
@@ -24,11 +23,6 @@ public class AbbreviatedNameParser {
 			abbreviatedSeparatorExpression = ",\\s";
 		} else {
 			abbreviatedSeparatorExpression = "\\s";
-		}
-
-		if (rawAbbreviatedNameString.startsWith("*")) {
-			starred = true;
-			rawAbbreviatedNameString = rawAbbreviatedNameString.replaceFirst("\\**+", "");
 		}
 
 		String[] initialTokens = rawAbbreviatedNameString.split(abbreviatedSeparatorExpression);

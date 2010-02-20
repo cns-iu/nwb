@@ -574,7 +574,7 @@ public class PersonParserTest {
 	}*/
 	private static void compareStarredness(
 			Dictionary<String, Object> attributes, boolean starred) {
-		boolean personWasStarred = (Boolean)attributes.get(ISI.AUTHOR_WAS_STARRED);
+		boolean personWasStarred = (Boolean)attributes.get(ISI.REFERENCE_WAS_STARRED);
 
 		if (personWasStarred != starred) {
 			String failMessage =

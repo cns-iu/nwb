@@ -3,7 +3,6 @@ package edu.iu.scipolicy.database.isi.load.model.entity;
 import java.util.Dictionary;
 import java.util.Hashtable;
 
-import org.cishell.utilities.StringUtilities;
 import org.cishell.utilities.dictionary.DictionaryEntry;
 import org.cishell.utilities.dictionary.DictionaryUtilities;
 
@@ -24,8 +23,7 @@ public class Person extends Entity<Person> {
 		ISI.FULL_NAME, DerbyFieldType.TEXT,
 		ISI.MIDDLE_INITIAL, DerbyFieldType.TEXT,
 		ISI.PERSONAL_NAME, DerbyFieldType.TEXT,
-		ISI.UNSPLIT_ABBREVIATED_NAME, DerbyFieldType.TEXT,
-		ISI.AUTHOR_WAS_STARRED, DerbyFieldType.TEXT);
+		ISI.UNSPLIT_ABBREVIATED_NAME, DerbyFieldType.TEXT);
 
 	private String fullName;
 	private String unsplitAbbreviatedName;
@@ -64,8 +62,7 @@ public class Person extends Entity<Person> {
 				personParsingResult.getFamilyName(),
 				personParsingResult.getFirstInitial(),
 				personParsingResult.getMiddleInitial(),
-				personParsingResult.getPersonalName(),
-				personParsingResult.wasStarred());
+				personParsingResult.getPersonalName());
 		} catch (PersonParsingException e) {}
 
 		return attributes;
@@ -88,8 +85,7 @@ public class Person extends Entity<Person> {
 			String familyName,
 			String firstInitial,
 			String middleInitial,
-			String personalName,
-			boolean wasStarred) {
+			String personalName) {
 		DictionaryUtilities.addIfNotNull(
 			attributes,
 			new DictionaryEntry<String, Object>(
@@ -99,7 +95,6 @@ public class Person extends Entity<Person> {
 			new DictionaryEntry<String, Object>(ISI.FAMILY_NAME, familyName),
 			new DictionaryEntry<String, Object>(ISI.FIRST_INITIAL, firstInitial),
 			new DictionaryEntry<String, Object>(ISI.MIDDLE_INITIAL, middleInitial),
-			new DictionaryEntry<String, Object>(ISI.PERSONAL_NAME, personalName),
-			new DictionaryEntry<String, Object>(ISI.AUTHOR_WAS_STARRED, wasStarred));
+			new DictionaryEntry<String, Object>(ISI.PERSONAL_NAME, personalName));
 	}
 }

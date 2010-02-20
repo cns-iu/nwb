@@ -31,7 +31,8 @@ public class Reference extends Entity<Reference> {
 		ISI.REFERENCE_STRING, DerbyFieldType.TEXT,
 		ISI.REFERENCE_VOLUME, DerbyFieldType.INTEGER,
 		ISI.SOURCE, DerbyFieldType.FOREIGN_KEY,
-		ISI.YEAR, DerbyFieldType.INTEGER).
+		ISI.YEAR, DerbyFieldType.INTEGER,
+		ISI.REFERENCE_WAS_STARRED, DerbyFieldType.TEXT).
 		FOREIGN_KEYS(
 			ISI.PAPER, ISI.DOCUMENT_TABLE_NAME,
 			ISI.REFERENCE_AUTHOR, ISI.PERSON_TABLE_NAME,
@@ -39,10 +40,7 @@ public class Reference extends Entity<Reference> {
 
 	private RowItemContainer<Person> people;
 	private DatabaseTableKeyGenerator sourceKeyGenerator;
-//	private String articleNumber;
-//	private String digitalObjectIdentifier;
 	private Document paper;
-//	private String rawReferenceString;
 	private Source source;
 	private Tuple originalRow;
 	private int referenceStringIndex;
@@ -51,28 +49,20 @@ public class Reference extends Entity<Reference> {
 			DatabaseTableKeyGenerator keyGenerator,
 			RowItemContainer<Person> people,
 			DatabaseTableKeyGenerator sourceKeyGenerator,
-//			String articleNumber,
-//			String digitalObjectIdentifier,
-//			String rawReferenceString,
 			Source source,
 			Tuple originalRow,
 			int referenceStringIndex) {
 		super(
 			keyGenerator,
-			createInitialAttributes(
-				/*articleNumber, digitalObjectIdentifier, rawReferenceString,*/ source));
+			createInitialAttributes(source));
 		this.people = people;
 		this.sourceKeyGenerator = sourceKeyGenerator;
-//		this.articleNumber = articleNumber;
-//		this.digitalObjectIdentifier = digitalObjectIdentifier;
-//		this.rawReferenceString = rawReferenceString;
 		this.source = source;
 		this.originalRow = originalRow;
 		this.referenceStringIndex = referenceStringIndex;
 	}
 
 	public String getArticleNumber() {
-		//return this.articleNumber;
 		try {
 			ReferenceDataParser referenceData = new ReferenceDataParser(
 				this.people.getKeyGenerator(), this.sourceKeyGenerator, getRawReferenceString());
@@ -84,7 +74,6 @@ public class Reference extends Entity<Reference> {
 	}
 
 	public String getDigitalObjectIdentifier() {
-//		return this.digitalObjectIdentifier;
 		try {
 			ReferenceDataParser referenceData = new ReferenceDataParser(
 				this.people.getKeyGenerator(), this.sourceKeyGenerator, getRawReferenceString());
@@ -100,7 +89,6 @@ public class Reference extends Entity<Reference> {
 	}
 
 	public String getRawReferenceString() {
-		// So sweet it's criminal.
 		String rawReferencesString = StringUtilities.simpleClean(
 			this.originalRow.getString(ISITag.CITED_REFERENCES.getColumnName()));
 
@@ -110,6 +98,17 @@ public class Reference extends Entity<Reference> {
 
 	public Source getSource() {
 		return this.source;
+	}
+
+	public boolean wasStarred() {
+		try {
+			ReferenceDataParser referenceData = new ReferenceDataParser(
+				this.people.getKeyGenerator(), this.sourceKeyGenerator, getRawReferenceString());
+
+			return referenceData.wasStarred();
+		} catch (ReferenceParsingException e) {
+			return false;
+		}
 	}
 
 	public void setPaper(Document paper) {
@@ -148,7 +147,8 @@ public class Reference extends Entity<Reference> {
 				getRawReferenceString(),
 				referenceData.getVolume(),
 				this.source,
-				referenceData.getYear());
+				referenceData.getYear(),
+				referenceData.wasStarred());
 		} catch (ReferenceParsingException e) {}
 
 		return attributes;
@@ -196,7 +196,8 @@ public class Reference extends Entity<Reference> {
 			String rawReferenceString,
 			Integer referenceVolume,
 			Source source,
-			Integer year) {
+			Integer year,
+			boolean wasStarred) {
 		DictionaryUtilities.addIfNotNull(
 			attributes,
 			new DictionaryEntry<String, Object>(ISI.ANNOTATION, annotation),
@@ -207,7 +208,8 @@ public class Reference extends Entity<Reference> {
 			new DictionaryEntry<String, Object>(ISI.PAGE_NUMBER, pageNumber),
 			new DictionaryEntry<String, Object>(ISI.REFERENCE_STRING, rawReferenceString),
 			new DictionaryEntry<String, Object>(ISI.REFERENCE_VOLUME, referenceVolume),
-			new DictionaryEntry<String, Object>(ISI.YEAR, year));
+			new DictionaryEntry<String, Object>(ISI.YEAR, year),
+			new DictionaryEntry<String, Object>(ISI.REFERENCE_WAS_STARRED, wasStarred));
 
 		if (authorPerson != null) {
 			attributes.put(ISI.REFERENCE_AUTHOR, authorPerson.getPrimaryKey());

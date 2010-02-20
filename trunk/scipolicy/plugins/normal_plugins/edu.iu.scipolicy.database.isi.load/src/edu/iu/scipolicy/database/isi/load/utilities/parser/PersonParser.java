@@ -41,10 +41,6 @@ public class PersonParser {
 		return this.parsedFullName.personalName;
 	}
 
-	public boolean wasStarred() {
-		return this.parsedAbbreviatedName.starred;
-	}
-
 	/*public static Pair<Person, Boolean> parsePerson(
 			DatabaseTableKeyGenerator personKeyGenerator,
 			String rawAbbreviatedNameString,

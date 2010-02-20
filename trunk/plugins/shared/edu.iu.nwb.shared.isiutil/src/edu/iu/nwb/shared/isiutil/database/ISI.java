@@ -115,6 +115,7 @@ public class ISI {
 	public static final String REFERENCE_VOLUME = "REFERENCE_VOLUME";
 	public static final String SOURCE = "REFERENCE_SOURCE_FK";
 	public static final String YEAR = "REFERENCE_YEAR";
+	public static final String REFERENCE_WAS_STARRED = "REFERENCE_WAS_STARRED";
 
 	public static final String[] REFERENCE_FIELD_NAMES = new String[] {
 		ANNOTATION,
@@ -125,6 +126,7 @@ public class ISI {
 		REFERENCE_VOLUME,
 		SOURCE,
 		YEAR,
+		REFERENCE_WAS_STARRED,
 	};
 
 	// Address Entity Information
@@ -160,7 +162,6 @@ public class ISI {
 	public static final String MIDDLE_INITIAL = "MIDDLE_INITIAL";
 	public static final String PERSONAL_NAME = "PERSONAL_NAME";
 	public static final String UNSPLIT_ABBREVIATED_NAME = "UNSPLIT_NAME";
-	public static final String AUTHOR_WAS_STARRED = "AUTHOR_WAS_STARRED";
 
 	public static final String[] PERSON_FIELD_NAMES = new String[] {
 		ADDITIONAL_NAME,
@@ -170,7 +171,6 @@ public class ISI {
 		MIDDLE_INITIAL,
 		PERSONAL_NAME,
 		UNSPLIT_ABBREVIATED_NAME,
-		AUTHOR_WAS_STARRED,
 	};
 
 	// Patent Entity Information
