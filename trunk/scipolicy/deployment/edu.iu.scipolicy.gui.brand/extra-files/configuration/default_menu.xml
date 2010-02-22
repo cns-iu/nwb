@@ -67,13 +67,7 @@
 		    <menu pid="edu.iu.scipolicy.database.isi.extract.network.cocitation.document.core"/>
 		    <menu pid="edu.iu.scipolicy.database.isi.extract.network.cocitation.journal.all"/>
 		    <menu pid="edu.iu.scipolicy.database.isi.extract.network.cocitation.journal.core"/>
-		    <menu pid="edu.iu.scipolicy.database.isi.extract.network.cocitation.author.core"/>
-		    
-		    <menu type="break"/>
-		    <!-- Custom queries -->
-		    <menu pid="edu.iu.cns.database.extract.generic.ExtractTable"/>
-		    <menu pid="edu.iu.cns.database.extract.generic.ExtractGraph"/>
-		    
+		    <menu pid="edu.iu.scipolicy.database.isi.extract.network.cocitation.author.core"/> 
 	    </menu>
 	    
 	    <menu name="From NSF Database" type="group">
@@ -86,6 +80,10 @@
 	    	<!--  Co-PI network -->
 	    	<menu pid="edu.iu.scipolicy.database.nsf.extract.network.copi"/>
 	    </menu>
+	    <menu type="break"/>
+		 <!-- Custom queries -->
+		<menu pid="edu.iu.cns.database.extract.generic.ExtractTable"/>
+		<menu pid="edu.iu.cns.database.extract.generic.ExtractGraph"/>
     </top_menu>
     
     <top_menu name="Preprocessing">
