@@ -68,12 +68,11 @@ public class MergeJournalsAlgorithm implements Algorithm, ProgressTrackable {
 		}
 
     	KeyMaker primaryJ9KeyMaker = new JournalKeyMaker(J9_TO_PRIMARY_J9);
-    	MergeCheck alwaysMerge = new AlwaysMerge();
     	PreferrableFormComparator journalComparator = new JournalComparator(J9_TO_PRIMARY_J9);	    	
     	
     	return MergeMaker.mergeTable(
-    			SOURCE_TABLE_ID, originalDatabaseData, primaryJ9KeyMaker, alwaysMerge,
-    			journalComparator, ciShellContext, monitor, "with journals merged");	    	
+    			SOURCE_TABLE_ID, originalDatabaseData, primaryJ9KeyMaker, 
+    			true, journalComparator, ciShellContext, monitor, "with journals merged");	    	
     }
 
     private void logKnownJ9Statistics() {

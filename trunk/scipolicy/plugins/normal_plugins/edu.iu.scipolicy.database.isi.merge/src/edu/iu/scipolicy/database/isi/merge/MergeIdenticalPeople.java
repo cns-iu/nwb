@@ -26,12 +26,11 @@ public class MergeIdenticalPeople implements Algorithm, ProgressTrackable {
     	String personTable = "APP.PERSON";
 
     	KeyMaker keyMaker = new IsiSimpleNameNormalized();
-    	MergeCheck mergeCheck = new AlwaysMerge();
     	PreferrableFormComparator preferrableFormComparator = new IsiPersonPriorities();
     	
     	
-    	return MergeMaker.mergeTable(personTable, data[0], keyMaker, mergeCheck,
-				preferrableFormComparator, context, monitor, "with identical people merged");
+    	return MergeMaker.mergeTable(personTable, data[0], keyMaker,
+				true, preferrableFormComparator, context, monitor, "with identical people merged");
     }
 
 	public ProgressMonitor getProgressMonitor() {
