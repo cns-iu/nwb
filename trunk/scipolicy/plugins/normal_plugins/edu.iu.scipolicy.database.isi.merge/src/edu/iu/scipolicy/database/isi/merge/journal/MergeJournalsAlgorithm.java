@@ -19,11 +19,9 @@ import org.cishell.utilities.FileUtilities;
 import org.osgi.service.log.LogService;
 
 import edu.iu.cns.database.merge.generic.maker.KeyMaker;
-import edu.iu.cns.database.merge.generic.maker.MergeCheck;
 import edu.iu.cns.database.merge.generic.maker.MergeMaker;
 import edu.iu.cns.database.merge.generic.maker.PreferrableFormComparator;
 import edu.iu.nwb.shared.isiutil.database.ISI;
-import edu.iu.scipolicy.database.isi.merge.AlwaysMerge;
 
 /* Each source in the given ISI database may specify a "J9", a canonical journal identifier
  * like "nature" or "science". References also specify a journal identification string, which
