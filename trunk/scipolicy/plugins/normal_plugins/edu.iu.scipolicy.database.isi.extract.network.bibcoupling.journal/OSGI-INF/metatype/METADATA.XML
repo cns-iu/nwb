@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<metatype:MetaData xmlns:metatype="http://www.osgi.org/xmlns/metatype/v1.0.0">
+	<OCD name="Journal Bibliographic Coupling" id="edu.iu.scipolicy.database.isi.extract.network.bibcoupling.journal.OCD"
+		 description="Extract the journal bibliographic coupling network from this ISI database. ">
+	</OCD>
+	<Designate pid="edu.iu.scipolicy.database.isi.extract.network.bibcoupling.journal">
+		<Object ocdref="edu.iu.scipolicy.database.isi.extract.network.bibcoupling.journal.OCD" />
+	</Designate>
+</metatype:MetaData>
