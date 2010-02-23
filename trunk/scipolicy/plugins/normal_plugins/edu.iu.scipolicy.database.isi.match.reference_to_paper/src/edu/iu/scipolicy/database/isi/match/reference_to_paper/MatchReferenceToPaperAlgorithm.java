@@ -2,6 +2,7 @@ package edu.iu.scipolicy.database.isi.match.reference_to_paper;
 
 import java.io.InputStreamReader;
 import java.sql.Connection;
+import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.Dictionary;
@@ -62,6 +63,7 @@ public class MatchReferenceToPaperAlgorithm implements Algorithm {
 
     		try {
     			matchReferencesToPapers(newDatabase, statement);
+    			reportOvermatchedReferences(newDatabase, statement);
     		} catch (SQLException e) {
     			String exceptionMessage = BASE_EXCEPTION_MESSAGE + e.getMessage();
 
@@ -82,7 +84,47 @@ public class MatchReferenceToPaperAlgorithm implements Algorithm {
     	}
     }
 
-    private void matchReferencesToPapers(Database database, Statement statement)
+    private void reportOvermatchedReferences(Database newDatabase,
+			Statement statement) throws SQLException {
+		String query = createSelectOvermatchedReferencesQuery();
+		ResultSet overmatched = statement.executeQuery(query);
+		boolean firstRow = true;
+		while(overmatched.next()) {
+			if(firstRow) {
+				firstRow = false;
+				logger.log(LogService.LOG_WARNING, "Some references matched more than one document." +
+						" This may occur because of corrections, reprints, or data errors (including duplication of records)" +
+						" None of these references will be pointed at documents." +
+						" The references with this problem are:");
+			}
+			logger.log(LogService.LOG_WARNING, "  " + overmatched.getString(1) + " (" + overmatched.getInt(2) + " documents)");
+		}
+	}
+
+	private String createSelectOvermatchedReferencesQuery() {
+		StringTemplate queryTemplate = matchReferencesToPapersGroup.getInstanceOf(
+		"selectOvermatchedReferencesQuery");
+		queryTemplate.setAttribute("referenceTableName", ISI.REFERENCE_TABLE_NAME);
+		queryTemplate.setAttribute("referencePK", PRIMARY_KEY);
+		queryTemplate.setAttribute("referenceRaw", ISI.REFERENCE_STRING);
+		queryTemplate.setAttribute("referenceAuthorFK", ISI.REFERENCE_AUTHOR);
+		queryTemplate.setAttribute("referencePageNumber", ISI.PAGE_NUMBER);
+		queryTemplate.setAttribute("referencePaperFK", ISI.PAPER);
+		queryTemplate.setAttribute("referenceSource", ISI.SOURCE);
+		queryTemplate.setAttribute("referenceVolume", ISI.REFERENCE_VOLUME);
+		queryTemplate.setAttribute("referenceYear", ISI.YEAR);
+		queryTemplate.setAttribute("documentTableName", ISI.DOCUMENT_TABLE_NAME);
+		queryTemplate.setAttribute("documentPK", PRIMARY_KEY);
+		queryTemplate.setAttribute("documentBeginningPage", ISI.BEGINNING_PAGE);
+		queryTemplate.setAttribute("documentFirstAuthorFK", ISI.FIRST_AUTHOR);
+		queryTemplate.setAttribute("documentSource", ISI.DOCUMENT_SOURCE);
+		queryTemplate.setAttribute("documentVolume", ISI.DOCUMENT_VOLUME);
+		queryTemplate.setAttribute("documentYear", ISI.PUBLICATION_YEAR);
+
+	return queryTemplate.toString();
+	}
+
+	private void matchReferencesToPapers(Database database, Statement statement)
     		throws SQLException {
     	String query = createMatchReferencesToDocumentsQuery();
 
