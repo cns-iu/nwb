@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <feature
       id="edu.iu.scipolicy.gui.brand.feature"
-      label="SciPolicy Brand "
+      label="Sci^2 Brand "
       version="1.0.0"
-      provider-name="SciPolicy Team">
+      provider-name="Sci^2 Team">
 
    <description>
       SciPolicy Tool
