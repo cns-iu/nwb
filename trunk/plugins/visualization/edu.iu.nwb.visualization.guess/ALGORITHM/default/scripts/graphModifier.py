@@ -12,6 +12,11 @@ import java.util.regex
 import sys
 import math
 import java.awt as awt
+from java.awt.event import FocusListener
+from java.awt.event import ActionListener
+from java.beans import PropertyChangeListener
+from edu.umd.cs.piccolo import PCamera
+import operator
 
 # Graph Modifier
 # By: Jeffrey Wong and Bernie Hogan
@@ -604,6 +609,10 @@ class GraphModifier(com.hp.hpl.guess.ui.DockableAdapter):
         # For resizeLinear and colorize.
         dockSelf.utilityButtonPanel = UtilityButtonPanel(dimWidth, dimHeight)
         dockSelf.layoutPanel.add(dockSelf.utilityButtonPanel)
+        
+        # For the Zoom Level.
+        dockSelf.zoomLevelPanel = ZoomPanel(dimWidth, dimHeight)
+        dockSelf.layoutPanel.add(dockSelf.zoomLevelPanel)
         
         dockSelf.bottomPanel = JPanel() # the bottom panel
         dockSelf.bottomPanel.setPreferredSize(Dimension(900, 280))
@@ -1664,6 +1673,88 @@ class ColorizePanel(JPanel):
         colorize(eval(selectedFieldName), firstColorTuple, secondColorTuple)
         
         self.setVisible(false)
+
+NUM_ZOOM_LEVEL_DECIMAL_PLACES = 5
+NUM_ZOOM_LEVEL_TEXT_FIELD_COLUMNS = 10
+
+# Courtesy of: http://stackoverflow.com/questions/354038/checking-if-string-is-a-number-python
+def isNumber(s):
+    try:
+        float(s)
+        
+        return true
+    except ValueError:
+        return false
+
+class ZoomLevelTextFieldFocusListener(FocusListener):
+    zoomPanel = None
+    
+    def __init__(self, zoomPanel):
+        self.zoomPanel = zoomPanel
+    
+    def focusGained(self, event):
+        self.zoomPanel.viewScaleTextField.selectAll()
+    
+    def focusLost(self, event):
+        text = self.zoomPanel.viewScaleTextField.getText()
+        
+        if isNumber(text):
+            self.zoomPanel.camera.setViewScale(round(float(text), NUM_ZOOM_LEVEL_DECIMAL_PLACES))
+        else:
+            self.zoomPanel.viewScaleTextField.setText(str(round(self.zoomPanel.camera.getViewScale(), NUM_ZOOM_LEVEL_DECIMAL_PLACES)))
+
+class ZoomLevelTextFieldActionListener(ActionListener):
+    zoomPanel = None
+    
+    def __init__(self, zoomPanel):
+        self.zoomPanel = zoomPanel
+    
+    def actionPerformed(self, event):
+        text = self.zoomPanel.viewScaleTextField.getText()
+        
+        if isNumber(text):
+            self.zoomPanel.camera.setViewScale(round(float(text), NUM_ZOOM_LEVEL_DECIMAL_PLACES))
+        else:
+            self.zoomPanel.viewScaleTextField.setText(str(round(self.zoomPanel.camera.getViewScale(), NUM_ZOOM_LEVEL_DECIMAL_PLACES)))
+
+class CameraZoomListener(PropertyChangeListener):
+    zoomPanel = None
+    
+    def __init__(self, zoomPanel):
+        self.zoomPanel = zoomPanel
+    
+    def propertyChange(self, event):
+        self.zoomPanel.viewScaleTextField.setText(str(round(self.zoomPanel.camera.getViewScale(), NUM_ZOOM_LEVEL_DECIMAL_PLACES)))
+
+class ZoomPanel(JPanel):
+    camera = None
+    label = None
+    viewScaleTextField = None
+    
+    def __init__(self, width, height):
+        self.setPreferredSize(Dimension(width, height))
+        
+        self.camera = vf.getDisplay().getCamera()
+        
+        self.label = JLabel("Zoom Level:")
+        self.add(self.label)
+        
+        viewScale = self.camera.getViewScale()
+        self.viewScaleTextField = self._createViewScaleTextField(viewScale)
+        self.add(self.viewScaleTextField)
+        
+        self.camera.addPropertyChangeListener(PCamera.PROPERTY_VIEW_TRANSFORM, CameraZoomListener(self))
+    
+    def _createViewScaleTextField(self, viewScale):
+        viewScaleTextField = JTextField()
+        viewScaleTextField.setColumns(NUM_ZOOM_LEVEL_TEXT_FIELD_COLUMNS)
+        viewScaleTextField.setEditable(true)
+        viewScaleTextField.setToolTipText("Zoom Level")
+        viewScaleTextField.setText(str(viewScale))
+        viewScaleTextField.addFocusListener(ZoomLevelTextFieldFocusListener(self))
+        viewScaleTextField.addActionListener(ZoomLevelTextFieldActionListener(self))
+        
+        return viewScaleTextField
 
 def _filterNumberFields(fieldNames, objectWithFields):
     filteredFieldNames = []
