@@ -50,6 +50,10 @@
 	    	<menu pid="edu.iu.scipolicy.database.isi.extract.table.core_entities.ExtractDocumentSourcesAlgorithm"/>
 	    
 	    	<menu type="break"/>
+	    	<!-- Tabular summaries -->
+	    	<menu pid="edu.iu.scipolicy.database.isi.extract.table.longitudinalsummary"/> 
+	    
+	    	<menu type="break"/>
 	    	<!-- Co-authorship network -->	    	
 		    <menu pid="edu.iu.scipolicy.database.isi.extract.network.coauthor"/>
 		    
