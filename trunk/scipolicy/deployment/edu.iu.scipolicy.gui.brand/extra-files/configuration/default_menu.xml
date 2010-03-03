@@ -48,9 +48,16 @@
 	    	<menu pid="edu.iu.scipolicy.database.isi.extract.table.core_entities.ExtractDocumentsAlgorithm"/>
 	    	<menu pid="edu.iu.scipolicy.database.isi.extract.table.core_entities.ExtractKeywordsAlgorithm"/>
 	    	<menu pid="edu.iu.scipolicy.database.isi.extract.table.core_entities.ExtractDocumentSourcesAlgorithm"/>
+	    	
+	    	<!-- Core entities by year -->
+	    	<menu pid="edu.iu.scipolicy.isi.extract.table.entities_by_year.ExtractAuthorsByYearAlgorithm"/>
+	    	<menu pid="edu.iu.scipolicy.isi.extract.table.entities_by_year.ExtractDocumentsByYearAlgorithm"/>
+	    	<menu pid="edu.iu.scipolicy.isi.extract.table.entities_by_year.ExtractNewISIKeywordsByYearAlgorithm"/>
+	    	<menu pid="edu.iu.scipolicy.isi.extract.table.entities_by_year.ExtractOriginalKeywordsByYearAlgorithm"/>
+	    	<menu pid="edu.iu.scipolicy.isi.extract.table.entities_by_year.ExtractReferencesByYearAlgorithm"/>
 	    
 	    	<menu type="break"/>
-	    	<!-- Tabular summaries -->
+	    	<!-- Summaries that result in tables (originally "Tabular summaries") -->
 	    	<menu pid="edu.iu.scipolicy.database.isi.extract.table.longitudinalsummary"/> 
 	    
 	    	<menu type="break"/>
