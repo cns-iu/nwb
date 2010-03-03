@@ -37,12 +37,12 @@ import edu.iu.scipolicy.utilities.nsf.NSF_Database_FieldNames;
 public class NSFTableModelParser {
 
 	private LogMessageHandler logMessageHandler;
-	private LogMessageHandler.MessageTypeIndicator invalidAwardAmountType;
+	private LogMessageHandler.MessageTypeDescriptor invalidAwardAmountType;
 	public static final String ROW_WITH_INVALID_AWARDED_AMOUNT =
 		"row(s) with an invalid awarded amount to date";
 	public static final int ROW_WITH_INVALID_AWARDED_AMOUNT_COUNT = 5;
 	
-	private LogMessageHandler.MessageTypeIndicator invalidAwardDateType;
+	private LogMessageHandler.MessageTypeDescriptor invalidAwardDateType;
 	public static final String ROW_WITH_INVALID_AWARD_DATE =
 		"row(s) with an invalid award date";
 	public static final int ROW_WITH_INVALID_AWARD_DATE_COUNT = 5;
@@ -657,7 +657,7 @@ public class NSFTableModelParser {
 			String logMessage = "Error parsing \"Awarded Amount To Date\" field " 
 				 					+ "having value \"" + rawAwardedAmountToDate 
 				 					+ "\" for Award number \"" + awardNumber + "\"";
-			this.logMessageHandler.logMessage(
+			this.logMessageHandler.handleMessage(
 					this.invalidAwardAmountType,
 					LogService.LOG_WARNING,
 					logMessage);
@@ -752,7 +752,7 @@ public class NSFTableModelParser {
 							   	+ " having value \"" + dateString 
 							   	+ "\" for Award number \"" + awardNumber + "\"";
 			
-			this.logMessageHandler.logMessage(this.invalidAwardDateType,
+			this.logMessageHandler.handleMessage(this.invalidAwardDateType,
 											  LogService.LOG_WARNING,
 											  logMessage);
 			return null;
