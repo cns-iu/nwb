@@ -6,10 +6,12 @@ import org.joda.time.Months;
 public abstract class AbstractRecord implements Record {
 	private String label;
 	private double amount;
+	private boolean hasInvalidAmount;
 	
-	public AbstractRecord(String label, double amount) {
+	public AbstractRecord(String label, double amount, boolean hasInvalidAmount) {
 		this.label = label;
 		this.amount = amount;
+		this.hasInvalidAmount = hasInvalidAmount;
 	}
 	
 	public String getLabel() {
@@ -26,6 +28,10 @@ public abstract class AbstractRecord implements Record {
 			Months.months(1).toPeriod().getMillis());
 
 		return this.amount / timeBetween;
+	}
+
+	public final boolean hasInvalidAmount() {
+		return this.hasInvalidAmount;
 	}
 	
 	public int compareTo(Record otherRecord) {

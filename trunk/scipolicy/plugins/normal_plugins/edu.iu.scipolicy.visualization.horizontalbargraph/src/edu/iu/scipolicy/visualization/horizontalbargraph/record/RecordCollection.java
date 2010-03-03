@@ -8,30 +8,33 @@ import java.util.TreeSet;
 import org.joda.time.DateTime;
 
 import edu.iu.scipolicy.visualization.horizontalbargraph.UnitOfTime;
+import edu.iu.scipolicy.visualization.horizontalbargraph.utility.PreprocessedRecordInformation;
 
 public class RecordCollection {
 	private Collection<Record> records = new HashSet<Record>();
-	private DateTime minimumStartDate = null;
-	private DateTime maximumEndDate = null;
+	private DateTime minimumDate = null;
+	private DateTime maximumDate = null;
+	private PreprocessedRecordInformation recordInformation;
 	
-	public RecordCollection() {
+	public RecordCollection(PreprocessedRecordInformation recordInformation) {
+		this.recordInformation = recordInformation;
 	}
 	
 	public Collection<Record> getRecords() {
 		return this.records;
 	}
 	
-	public DateTime getMinimumStartDate() {
-		return this.minimumStartDate;
+	public DateTime getMinimumDate() {
+		return this.minimumDate;
 	}
 	
-	public DateTime getMaximumEndDate() {
-		return this.maximumEndDate;
+	public DateTime getMaximumDate() {
+		return this.maximumDate;
 	}
 
 	public double calculateMinimumAmountPerUnitOfTime(UnitOfTime unitOfTime) {
 		double minimumAmountPerUnitOfTime = Double.MAX_VALUE;
-		
+
 		for (Record record : this.records) {
 			double amount = record.getAmount();
 
@@ -42,9 +45,7 @@ public class RecordCollection {
 			double recordMinimumAmountPerUnitOfTime =
 				record.getAmountPerUnitOfTime();
 
-			if (
-					recordMinimumAmountPerUnitOfTime <
-					minimumAmountPerUnitOfTime) {
+			if (recordMinimumAmountPerUnitOfTime < minimumAmountPerUnitOfTime) {
 				minimumAmountPerUnitOfTime = recordMinimumAmountPerUnitOfTime;
 			}
 		}
@@ -68,24 +69,27 @@ public class RecordCollection {
 	}*/
 	
 	public void addNormalRecord(
-			String label,
-			DateTime startDate,
-			DateTime endDate,
-			double amount) {
-		Record record = new NormalRecord(label, startDate, endDate, amount);
+			String label, DateTime startDate, DateTime endDate, double originalAmount) {
+		DateTime fixedEndDate = fixEndDate(startDate, endDate);
+		double fixedAmount = fixAmount(originalAmount);
+		boolean hasInvalidAmount = hasInvalidAmount(originalAmount);
+		Record record =
+			new NormalRecord(label, startDate, fixedEndDate, fixedAmount, hasInvalidAmount);
 		
 		addRecord(record);
 	}
 	
 	public void addRecordWithNoStartDate(
-			String label, final DateTime endDate, double amount) {
-		Record record = new AbstractRecord(label, amount) {
+			String label, final DateTime endDate, double originalAmount) {
+		double fixedAmount = fixAmount(originalAmount);
+		boolean hasInvalidAmount = hasInvalidAmount(originalAmount);
+		Record record = new AbstractRecord(label, fixedAmount, hasInvalidAmount) {
 			public boolean hasStartDate() {
 				return false;
 			}
 			
 			public DateTime getStartDate() {
-				return RecordCollection.this.getMinimumStartDate();
+				return RecordCollection.this.getMinimumDate();
 			}
 			
 			public boolean hasEndDate() {
@@ -93,7 +97,10 @@ public class RecordCollection {
 			}
 			
 			public DateTime getEndDate() {
-				return endDate;
+				DateTime fixedEndDate = fixEndDate(
+					RecordCollection.this.getMinimumDate(), endDate);
+
+				return fixedEndDate;
 			}
 		};
 		
@@ -101,8 +108,10 @@ public class RecordCollection {
 	}
 	
 	public void addRecordWithNoEndDate(
-			String label, final DateTime startDate, double amount) {
-		Record record = new AbstractRecord(label, amount) {
+			String label, final DateTime startDate, double originalAmount) {
+		double fixedAmount = fixAmount(originalAmount);
+		boolean hasInvalidAmount = hasInvalidAmount(originalAmount);
+		Record record = new AbstractRecord(label, fixedAmount, hasInvalidAmount) {
 			public boolean hasStartDate() {
 				return true;
 			}
@@ -116,21 +125,26 @@ public class RecordCollection {
 			}
 			
 			public DateTime getEndDate() {
-				return RecordCollection.this.getMaximumEndDate();
+				DateTime fixedEndDate = fixEndDate(
+					startDate, RecordCollection.this.getMaximumDate());
+
+				return fixedEndDate;
 			}
 		};
 		
 		addRecord(record);
 	}
 	
-	public void addRecordWithNoDates(String label, double amount) {
-		Record record = new AbstractRecord(label, amount) {
+	public void addRecordWithNoDates(String label, double originalAmount) {
+		double fixedAmount = fixAmount(originalAmount);
+		boolean hasInvalidAmount = hasInvalidAmount(originalAmount);
+		Record record = new AbstractRecord(label, fixedAmount, hasInvalidAmount) {
 			public boolean hasStartDate() {
 				return false;
 			}
 			
 			public DateTime getStartDate() {
-				return RecordCollection.this.getMinimumStartDate();
+				return RecordCollection.this.getMinimumDate();
 			}
 			
 			public boolean hasEndDate() {
@@ -138,7 +152,11 @@ public class RecordCollection {
 			}
 			
 			public DateTime getEndDate() {
-				return RecordCollection.this.getMaximumEndDate();
+				DateTime fixedEndDate = fixEndDate(
+					RecordCollection.this.getMinimumDate(),
+					RecordCollection.this.getMaximumDate());
+
+				return fixedEndDate;
 			}
 		};
 		
@@ -153,38 +171,67 @@ public class RecordCollection {
 		DateTime newRecordStartDate = newRecord.getStartDate();
 		
 		if (newRecordStartDate != null) {
-			DateTime minimumStartDate = getMinimumStartDate();
+			DateTime minimumDate = getMinimumDate();
 
-			if ((minimumStartDate == null) ||
-					(newRecordStartDate.compareTo(minimumStartDate) < 0)) {
-				setMinimumStartDate(newRecordStartDate);
+			if ((minimumDate == null) || (newRecordStartDate.compareTo(minimumDate) < 0)) {
+				setMinimumDate(newRecordStartDate);
+			}
+
+			DateTime maximumDate = getMaximumDate();
+
+			if ((maximumDate == null) || (newRecordStartDate.compareTo(maximumDate) > 0)) {
+				setMaximumDate(newRecordStartDate);
 			}
 		}
 		
 		DateTime newRecordEndDate = newRecord.getEndDate();
 		
 		if (newRecordEndDate != null) {
-			DateTime maximumEndDate = getMaximumEndDate();
+			DateTime maximumDate = getMaximumDate();
 			
-			if ((maximumEndDate == null) ||
-					(newRecordEndDate.compareTo(getMaximumEndDate()) > 0)) {
-				setMaximumEndDate(newRecordEndDate);
+			if ((maximumDate == null) || (newRecordEndDate.compareTo(maximumDate) > 0)) {
+				setMaximumDate(newRecordEndDate);
+			}
+
+			DateTime minimumDate = getMinimumDate();
+
+			if ((minimumDate == null) || (newRecordEndDate.compareTo(minimumDate) < 0)) {
+				setMinimumDate(newRecordEndDate);
 			}
 		}
 		
 		this.records.add(newRecord);
 	}
 	
-	private void setMinimumStartDate(DateTime minimumStartDate) {
-		DateTime january1stThisYear =
-			minimumStartDate.withMonthOfYear(1).withDayOfMonth(1);
-		this.minimumStartDate = january1stThisYear;
+	private void setMinimumDate(DateTime minimumDate) {
+		DateTime january1stThisYear = minimumDate.withMonthOfYear(1).withDayOfMonth(1);
+		this.minimumDate = january1stThisYear;
 	}
 	
-	private void setMaximumEndDate(DateTime maximumEndDate) {
+	private void setMaximumDate(DateTime maximumDate) {
 		DateTime january1stNextYear =
-			maximumEndDate.plusYears(1).withMonthOfYear(1).withDayOfMonth(1);
-		this.maximumEndDate = january1stNextYear;
+			maximumDate.plusYears(1).withMonthOfYear(1).withDayOfMonth(1);
+		this.maximumDate = january1stNextYear;
+	}
+
+	private DateTime fixEndDate(DateTime startDate, DateTime endDate) {
+		if (startDate.equals(endDate)) {
+			return endDate.plusYears(1);
+		}
+
+		return endDate;
+	}
+
+	private double fixAmount(double amount) {
+		if (!Double.isInfinite(amount) && !Double.isNaN(amount)) {
+			return amount;
+		} else {
+			return this.recordInformation.getMaximumAmountFound();
+		}
+	}
+
+	private boolean hasInvalidAmount(double amount) {
+		return (amount < 0.0);
 	}
 	
 	private class NormalRecord extends AbstractRecord {
@@ -195,8 +242,9 @@ public class RecordCollection {
 				String label,
 				DateTime startDate,
 				DateTime endDate,
-				double amount) {
-			super(label, amount);
+				double amount,
+				boolean hasInvalidAmount) {
+			super(label, amount, hasInvalidAmount);
 			this.startDate = startDate;
 			this.endDate = endDate;
 		}

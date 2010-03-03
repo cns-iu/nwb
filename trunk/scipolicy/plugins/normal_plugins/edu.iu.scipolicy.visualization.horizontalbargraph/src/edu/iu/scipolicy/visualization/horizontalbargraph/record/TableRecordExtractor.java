@@ -4,9 +4,9 @@ import java.text.ParseException;
 import java.util.Date;
 
 import org.cishell.utilities.DateUtilities;
-import org.cishell.utilities.NumberUtilities;
 import org.cishell.utilities.StringUtilities;
 import org.cishell.utilities.osgi.logging.LogMessageHandler;
+import org.cishell.utilities.osgi.logging.LogMessageHandler.MessageTypeDescriptor;
 import org.joda.time.DateTime;
 import org.osgi.service.log.LogService;
 
@@ -15,6 +15,8 @@ import prefuse.data.Tuple;
 import prefuse.util.collections.IntIterator;
 import edu.iu.scipolicy.visualization.horizontalbargraph.DateTimeWrapper;
 import edu.iu.scipolicy.visualization.horizontalbargraph.record.exception.InvalidAmountException;
+import edu.iu.scipolicy.visualization.horizontalbargraph.utility.PreprocessedRecordInformation;
+import edu.iu.scipolicy.visualization.horizontalbargraph.utility.Utilities;
 
 public class TableRecordExtractor {
 	public static final String UNKNOWN_LABEL_PREFIX = "Unknown Label ";
@@ -25,11 +27,7 @@ public class TableRecordExtractor {
 		"  Using the latest end date found.";
 	public static final String NO_START_AND_END_DATES_MESSAGE =
 		"  Using the earliest start date and latest end date found.";
-	
-	public static final String RECORD_WITH_INVALID_AMOUNT =
-		"record(s) with an invalid amount";
-	public static final int RECORD_WITH_INVALID_AMOUNT_MESSAGE_COUNT = 1;
-	
+
 	public static final String RECORD_WITHOUT_VALID_START_DATE =
 		"record(s) without a valid start date";
 	public static final int RECORD_WITHOUT_VALID_START_DATE_MESSAGE_COUNT = 1;
@@ -45,18 +43,13 @@ public class TableRecordExtractor {
 	
 	private int unknownLabelCount = 0;
 	
-	LogMessageHandler logMessageHandler;
-	LogMessageHandler.MessageTypeIndicator recordWithInvalidAmountType;
-	LogMessageHandler.MessageTypeIndicator recordWithoutValidStartDateType;
-	LogMessageHandler.MessageTypeIndicator recordWithoutValidEndDateType;
-	LogMessageHandler.MessageTypeIndicator
-		recordWithoutValidStartAndEndDateType;
+	private LogMessageHandler logMessageHandler;
+	private MessageTypeDescriptor recordWithoutValidStartDateType;
+	private MessageTypeDescriptor recordWithoutValidEndDateType;
+	private MessageTypeDescriptor recordWithoutValidStartOrEndDateType;
 	
 	public TableRecordExtractor(LogService logger) {
 		this.logMessageHandler = new LogMessageHandler(logger);
-		this.recordWithInvalidAmountType = logMessageHandler.addMessageType(
-			RECORD_WITH_INVALID_AMOUNT,
-			RECORD_WITH_INVALID_AMOUNT_MESSAGE_COUNT);
 		this.recordWithoutValidStartDateType =
 			logMessageHandler.addMessageType(
 				RECORD_WITHOUT_VALID_START_DATE,
@@ -65,7 +58,7 @@ public class TableRecordExtractor {
 			logMessageHandler.addMessageType(
 				RECORD_WITHOUT_VALID_END_DATE,
 				RECORD_WITHOUT_VALID_END_DATE_MESSAGE_COUNT);
-		this.recordWithoutValidStartAndEndDateType =
+		this.recordWithoutValidStartOrEndDateType =
 			logMessageHandler.addMessageType(
 				RECORD_WITHOUT_VALID_START_AND_END_DATES,
 				RECORD_WITHOUT_VALID_START_AND_END_DATES_MESSAGE_COUNT);
@@ -78,8 +71,10 @@ public class TableRecordExtractor {
 			String endDateKey,
 			String amountKey,
 			String startDateFormat,
-			String endDateFormat) {
-		RecordCollection recordCollection = new RecordCollection();
+			String endDateFormat,
+			LogService logger) {
+		RecordCollection recordCollection = new RecordCollection(
+			new PreprocessedRecordInformation(source, amountKey, logger));
 
 		for (IntIterator rows = source.rows(); rows.hasNext(); ) {
 			int rowIndex = rows.nextInt();
@@ -93,27 +88,13 @@ public class TableRecordExtractor {
 			double amount;
 			
 			try {
-				amount = extractAmount(row, amountKey);
+				amount = Utilities.extractAmount(row, amountKey);
 			} catch (InvalidAmountException invalidAmountException) {
-				String logMessage =
-					"The row number " + rowIndex +
-					" has an invalid amount " +
-					"(attribute \"" + amountKey + "\").  " +
-					"Skipping.";
-				this.logMessageHandler.logMessage(
-					this.recordWithInvalidAmountType,
-					LogService.LOG_WARNING,
-					logMessage);
-				
 				continue;
 			}
 			
 			addRecordToCollector(
-				recordCollection,
-				label,
-				startDateWrapper,
-				endDateWrapper,
-				amount);
+				recordCollection, label, startDateWrapper, endDateWrapper, amount);
 		}
 		
 		this.logMessageHandler.printOverloadedMessageTypes(
@@ -126,15 +107,14 @@ public class TableRecordExtractor {
 		String potentialLabel =
 			StringUtilities.interpretObjectAsString(row.get(labelKey));
 
-		if (
-				(potentialLabel != null) &&
-				!StringUtilities.isEmptyOrWhitespace(potentialLabel)) {
-			return potentialLabel;
+		if ((potentialLabel != null) &&
+				!StringUtilities.isNull_Empty_OrWhitespace(potentialLabel)) {
+			return postscriptEscape(potentialLabel);
 		} else {
 			String label = UNKNOWN_LABEL_PREFIX + this.unknownLabelCount;
 			this.unknownLabelCount++;
 			
-			return label;
+			return postscriptEscape(label);
 		}
 	}
 	
@@ -143,8 +123,7 @@ public class TableRecordExtractor {
 		Object potentialDate = row.get(dateKey);
 		
 		if ((potentialDate == null) ||
-				StringUtilities.isEmptyOrWhitespace(
-					potentialDate.toString())) {
+				StringUtilities.isEmptyOrWhitespace(potentialDate.toString())) {
 
 			return DateTimeWrapper.createUnspecifiedDateTimeWrapper();
 		}
@@ -153,31 +132,11 @@ public class TableRecordExtractor {
 			Date parsedDate = DateUtilities.interpretObjectAsDate(
 				potentialDate, dateFormat, false);
 			
-			return DateTimeWrapper.createValidDateTimeWrapper(
-				new DateTime(parsedDate));
+			return DateTimeWrapper.createValidDateTimeWrapper(new DateTime(parsedDate));
 		} catch (ParseException unparsableDateException) {
 			return DateTimeWrapper.createInvalidDateTimeWrapper();
 		} catch (IllegalArgumentException invalidDateException) {
 			return DateTimeWrapper.createInvalidDateTimeWrapper();
-		}
-	}
-	
-	private double extractAmount(Tuple row, String amountKey)
-			throws InvalidAmountException {
-		try {
-			double amount = NumberUtilities.interpretObjectAsDouble(
-				row.get(amountKey)).doubleValue();
-			
-			if (amount < 0.0) {
-				String exceptionMessage =
-					"The tuple " + row + " has a negative amount.";
-
-				throw new InvalidAmountException(exceptionMessage);
-			}
-			
-			return amount;
-		} catch (NumberFormatException numberFormatException) {
-			throw new InvalidAmountException(numberFormatException);
 		}
 	}
 	
@@ -211,12 +170,6 @@ public class TableRecordExtractor {
 		}
 	}
 
-	// TODO: Consider summarizing warnings or just giving one.
-	/* TODO: If just giving one, also say if there are more.
-	 * Never be totally silent about further errors, just treat them as
-	 *  a group.
-	 * (Not done yet.)
-	 */
 	private void handleUnspecifiedStartDateCases(
 			RecordCollection recordCollector,
 			String label,
@@ -230,8 +183,8 @@ public class TableRecordExtractor {
 				logPrefix +
 				"unspecified start and end dates." +
 				NO_START_AND_END_DATES_MESSAGE;
-			this.logMessageHandler.logMessage(
-				this.recordWithoutValidStartAndEndDateType,
+			this.logMessageHandler.handleMessage(
+				this.recordWithoutValidStartOrEndDateType,
 				LogService.LOG_WARNING,
 				logMessage);
 		
@@ -241,8 +194,8 @@ public class TableRecordExtractor {
 				logPrefix +
 				"an unspecified start date and an invalid end date." +
 				NO_START_AND_END_DATES_MESSAGE;
-			this.logMessageHandler.logMessage(
-				this.recordWithoutValidStartAndEndDateType,
+			this.logMessageHandler.handleMessage(
+				this.recordWithoutValidStartOrEndDateType,
 				LogService.LOG_WARNING,
 				logMessage);
 		
@@ -251,7 +204,7 @@ public class TableRecordExtractor {
 			String logMessage =
 				logPrefix + "an unspecified start date." +
 				NO_START_DATE_MESSAGE;
-			this.logMessageHandler.logMessage(
+			this.logMessageHandler.handleMessage(
 				this.recordWithoutValidStartDateType,
 				LogService.LOG_WARNING,
 				logMessage);
@@ -274,8 +227,8 @@ public class TableRecordExtractor {
 				logPrefix +
 				"an invalid start date and an unspecified end date." +
 				NO_START_AND_END_DATES_MESSAGE;
-			this.logMessageHandler.logMessage(
-				this.recordWithoutValidStartAndEndDateType,
+			this.logMessageHandler.handleMessage(
+				this.recordWithoutValidStartOrEndDateType,
 				LogService.LOG_WARNING,
 				logMessage);
 		
@@ -284,8 +237,8 @@ public class TableRecordExtractor {
 			String logMessage =
 				logPrefix + "invalid start date and end dates." +
 				NO_START_AND_END_DATES_MESSAGE;
-			this.logMessageHandler.logMessage(
-				this.recordWithoutValidStartAndEndDateType,
+			this.logMessageHandler.handleMessage(
+				this.recordWithoutValidStartOrEndDateType,
 				LogService.LOG_WARNING,
 				logMessage);
 		
@@ -293,7 +246,7 @@ public class TableRecordExtractor {
 		} else {
 			String logMessage =
 				logPrefix + "an invalid start date." + NO_START_DATE_MESSAGE;
-			this.logMessageHandler.logMessage(
+			this.logMessageHandler.handleMessage(
 				this.recordWithoutValidStartDateType,
 				LogService.LOG_WARNING,
 				logMessage);
@@ -314,7 +267,7 @@ public class TableRecordExtractor {
 		if (!endDateWrapper.isSpecified()) {
 			String logMessage =
 				logPrefix + "an unspecified end date." + NO_END_DATE_MESSAGE;
-			this.logMessageHandler.logMessage(
+			this.logMessageHandler.handleMessage(
 				this.recordWithoutValidEndDateType,
 				LogService.LOG_WARNING,
 				logMessage);
@@ -324,7 +277,7 @@ public class TableRecordExtractor {
 		} else if (!endDateWrapper.isValid()) {
 			String logMessage =
 				logPrefix + "an invalid end date." + NO_END_DATE_MESSAGE;
-			this.logMessageHandler.logMessage(
+			this.logMessageHandler.handleMessage(
 				this.recordWithoutValidEndDateType,
 				LogService.LOG_WARNING,
 				logMessage);
@@ -338,5 +291,9 @@ public class TableRecordExtractor {
 				endDateWrapper.getDateTime(),
 				amount);
 		}
+	}
+
+	private static String postscriptEscape(String rawReference) {
+		return rawReference.replace("\\", "\\\\").replace(")","\\)").replace("(", "\\(");
 	}
 }

@@ -30,11 +30,6 @@ import edu.iu.scipolicy.visualization.horizontalbargraph.record.RecordCollection
 import edu.iu.scipolicy.visualization.horizontalbargraph.record.TableRecordExtractor;
 
 public class HorizontalBarGraphAlgorithm implements Algorithm {
-	/* TODO: Make and test edge case datasets.
-	 * No non-zero amounts, no valid amounts, no items with non-zero duration,
-	 *  you get the idea.
-	 */
-	
 	public static final String LABEL_FIELD_ID = "label";
 	public static final String START_DATE_FIELD_ID = "start_date";
 	public static final String END_DATE_FIELD_ID = "end_date";
@@ -135,10 +130,11 @@ public class HorizontalBarGraphAlgorithm implements Algorithm {
     		this.endDateKey,
     		this.amountKey,
     		this.startDateFormat,
-    		this.endDateFormat);
+    		this.endDateFormat,
+    		this.logger);
     	
-    	DateTime startDate = recordCollection.getMinimumStartDate();
-    	DateTime endDate = recordCollection.getMaximumEndDate();
+    	DateTime startDate = recordCollection.getMinimumDate();
+    	DateTime endDate = recordCollection.getMaximumDate();
 
     	double minimumAmountPerUnitOfTime =
     		recordCollection.calculateMinimumAmountPerUnitOfTime(
@@ -186,8 +182,6 @@ public class HorizontalBarGraphAlgorithm implements Algorithm {
     		throw new AlgorithmExecutionException(
     			exceptionMessage, postScriptFileCreationException);
     	}
-    	
-    	// TODO: Make variable names shorter?
     	
 		try {		
 			FileWriter temporaryPostScriptFileWriter =

@@ -8,6 +8,7 @@ public class Bar {
 	private double width;
 	private double height;
 	private double originalAmount;
+	private boolean hasInfiniteAmount;
 
 	public Bar(
 			String label,
@@ -16,7 +17,8 @@ public class Bar {
 			double x,
 			double width,
 			double height,
-			double originalAmount) {
+			double originalAmount,
+			boolean hasInfiniteAmount) {
 		this.label = label;
 		this.continuesLeft = continuesLeft;
 		this.continuesRight = continuesRight;
@@ -24,6 +26,7 @@ public class Bar {
 		this.width = width;
 		this.height = height;
 		this.originalAmount = originalAmount;
+		this.hasInfiniteAmount = hasInfiniteAmount;
 	}
 
 	public String getLabel() {
@@ -52,5 +55,9 @@ public class Bar {
 
 	public double getOriginalAmount() {
 		return this.originalAmount;
+	}
+
+	public boolean hasInfiniteAmount() {
+		return this.hasInfiniteAmount;
 	}
 }

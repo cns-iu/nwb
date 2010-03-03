@@ -3,6 +3,7 @@ package edu.iu.scipolicy.visualization.horizontalbargraph.layout;
 import java.util.ArrayList;
 import java.util.Collection;
 
+import org.cishell.utilities.ArrayUtilities;
 import org.joda.time.DateTime;
 
 import edu.iu.scipolicy.visualization.horizontalbargraph.PageOrientation;
@@ -237,6 +238,7 @@ public class BasicLayout {
 		DateTime recordStartDate = record.getStartDate();
 		DateTime recordEndDate = record.getEndDate();
 		double recordAmount = record.getAmount();
+		boolean hasInvalidAmount = record.hasInvalidAmount();
 
 		double startX = calculateX(recordStartDate);
 		double endX = calculateX(recordEndDate);
@@ -250,12 +252,11 @@ public class BasicLayout {
 			startX,
 			width,
 			height,
-			recordAmount);
+			recordAmount,
+			hasInvalidAmount);
 	}
-	
-	// The seemingly-redundant doubles are passed in because they're needed
-	// by the caller as well.
-	// TODO: ?
+
+	// The seemingly-redundant doubles are passed in because they're needed by the caller as well.
 	public Arrow createLeftArrow(
 			Bar bar, double barX, double barY, double barWidth) {
 		// Bottom point.

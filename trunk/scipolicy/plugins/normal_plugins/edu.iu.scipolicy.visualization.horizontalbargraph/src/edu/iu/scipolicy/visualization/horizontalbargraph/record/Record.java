@@ -10,4 +10,5 @@ public interface Record extends Comparable<Record> {
 	public DateTime getEndDate();
 	public double getAmount();
 	public double getAmountPerUnitOfTime();
+	public boolean hasInvalidAmount();
 }

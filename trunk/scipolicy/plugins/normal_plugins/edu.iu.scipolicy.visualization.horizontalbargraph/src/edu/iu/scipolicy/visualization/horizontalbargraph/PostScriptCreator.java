@@ -25,6 +25,8 @@ public class PostScriptCreator {
 	public static final int TICK_SIZE = 5;
 	public static final Color RGB_COLOR = new Color(0, 0, 255);
 
+	public static final int DECIMAL_PLACE_COUNT = 5;
+
 	private StringTemplateGroup templateGroup;
 	private BasicLayout layout;
 	private String sourceDataName;
@@ -149,8 +151,8 @@ public class PostScriptCreator {
 	}
 
 	private String createYearLabelsWithVerticalTicks() {
-		DateTime startDate = this.recordCollection.getMinimumStartDate();
-		DateTime endDate = this.recordCollection.getMaximumEndDate();
+		DateTime startDate = this.recordCollection.getMinimumDate();
+		DateTime endDate = this.recordCollection.getMaximumDate();
 		int endYear = endDate.getYear();
 		double totalHeight =
 			this.layout.calculateTotalHeightWithoutMargins(this.bars);
@@ -202,23 +204,26 @@ public class PostScriptCreator {
 	}
 
 	private String createBar(Cursor cursor, Bar bar) {
-		double barX = this.layout.adjustXForStartArrow(bar);
-		double barY = this.layout.positionBar(bar, cursor);
-		double barWidth = this.layout.adjustWidthForArrows(bar);
-		double barHeight = bar.getHeight();
-		double textX = bar.getX();
-		double textY = (bar.getHeight() / 2.0) + barY;
+		double barX = NumberUtilities.roundToNDecimalPlaces(
+			this.layout.adjustXForStartArrow(bar), DECIMAL_PLACE_COUNT);
+		double barY = NumberUtilities.roundToNDecimalPlaces(
+			this.layout.positionBar(bar, cursor), DECIMAL_PLACE_COUNT);
+		double barWidth = NumberUtilities.roundToNDecimalPlaces(
+			this.layout.adjustWidthForArrows(bar), DECIMAL_PLACE_COUNT);
+		double barHeight = NumberUtilities.roundToNDecimalPlaces(
+			bar.getHeight(), DECIMAL_PLACE_COUNT);
+		double textX = NumberUtilities.roundToNDecimalPlaces(
+			bar.getX(), DECIMAL_PLACE_COUNT);
+		double textY = NumberUtilities.roundToNDecimalPlaces(
+			(bar.getHeight() / 2.0) + barY, DECIMAL_PLACE_COUNT);
 
-		StringTemplate barTemplate =
-			this.templateGroup.getInstanceOf("bar");
-		// TODO: PostScriptUtilities.escapeString() ?
+		StringTemplate barTemplate = getBarStringTemplate(bar);
+
 		barTemplate.setAttribute("label", bar.getLabel());
 		barTemplate.setAttribute("textX", textX);
 		barTemplate.setAttribute("textY", textY);
-		// recordTemplate.setAttribute("recordX", bar.getX());
 		barTemplate.setAttribute("barX", barX);
 		barTemplate.setAttribute("barY", barY);
-		// recordTemplate.setAttribute("recordWidth", bar.getWidth());
 		barTemplate.setAttribute("barWidth", barWidth);
 		barTemplate.setAttribute("barHeight", barHeight);
 		
@@ -230,8 +235,7 @@ public class PostScriptCreator {
 			Arrow leftArrow =
 				this.layout.createLeftArrow(bar, barX, barY, barWidth);
 
-			StringTemplate leftArrowTemplate =
-				this.templateGroup.getInstanceOf("arrow");
+			StringTemplate leftArrowTemplate = getArrowStringTemplate(bar);
 			leftArrowTemplate.setAttribute("startX", leftArrow.startX);
 			leftArrowTemplate.setAttribute("startY", leftArrow.startY);
 			leftArrowTemplate.setAttribute("middleX", leftArrow.middleX);
@@ -246,8 +250,8 @@ public class PostScriptCreator {
 			Arrow rightArrow =
 				this.layout.createRightArrow(bar, barX, barY, barWidth);
 			
-			StringTemplate rightArrowTemplate =
-				this.templateGroup.getInstanceOf("arrow");
+			StringTemplate rightArrowTemplate = getArrowStringTemplate(bar);;
+
 			rightArrowTemplate.setAttribute("startX", rightArrow.startX);
 			rightArrowTemplate.setAttribute("startY", rightArrow.startY);
 			rightArrowTemplate.setAttribute("middleX", rightArrow.middleX);
@@ -259,5 +263,21 @@ public class PostScriptCreator {
 		}
 		
 		return barPostScript + leftArrowPostScript + rightArrowPostScript;
+	}
+
+	private StringTemplate getBarStringTemplate(Bar bar) {
+		if (!bar.hasInfiniteAmount()) {
+			return this.templateGroup.getInstanceOf("bar");
+		} else {
+			return this.templateGroup.getInstanceOf("infiniteBar");
+		}
+	}
+
+	private StringTemplate getArrowStringTemplate(Bar bar) {
+		if (!bar.hasInfiniteAmount()) {
+			return this.templateGroup.getInstanceOf("arrow");
+		} else {
+			return this.templateGroup.getInstanceOf("infiniteArrow");
+		}
 	}
 }

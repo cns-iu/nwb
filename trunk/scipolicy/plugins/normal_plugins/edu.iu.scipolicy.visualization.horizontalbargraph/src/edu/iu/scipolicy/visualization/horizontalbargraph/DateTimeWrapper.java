@@ -2,12 +2,11 @@ package edu.iu.scipolicy.visualization.horizontalbargraph;
 
 import org.joda.time.DateTime;
 
-// TODO: Get reviewed.
 public class DateTimeWrapper {
 	private DateTime dateTime;
 	private boolean isSpecified;
 	private boolean isValid;
-	
+
 	private DateTimeWrapper(
 			DateTime dateTime, boolean isSpecified, boolean isValid) {
 		this.dateTime = dateTime;

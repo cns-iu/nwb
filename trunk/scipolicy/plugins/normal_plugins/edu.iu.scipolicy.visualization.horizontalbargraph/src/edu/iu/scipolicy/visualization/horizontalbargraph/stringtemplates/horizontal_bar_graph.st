@@ -49,10 +49,21 @@ functions() ::= <<
 /period {
 	0.0 0.0 0.0 setrgbcolor
 	newpath
-	4 2 roll moveto
-	exch dup 0 rlineto 0 3 -1 roll
-	rlineto neg 0 rlineto
+		4 2 roll moveto
+		exch dup 0 rlineto 0 3 -1 roll
+		rlineto neg 0 rlineto
+	closepath
 	fill
+} def
+
+/infinitePeriod {
+	1.0 0.0 0.0 setrgbcolor
+	newpath
+		4 2 roll moveto
+		exch dup 0 rlineto 0 3 -1 roll
+		rlineto neg 0 rlineto
+	closepath
+	stroke
 } def
 
 /arrow {
@@ -62,6 +73,15 @@ functions() ::= <<
 		1 index 1 index lineto
 	closepath
 	fill
+} def
+
+/infiniteArrow {
+	newpath
+		5 index 5 index moveto
+		3 index 3 index lineto
+		1 index 1 index lineto
+	closepath
+	stroke
 } def
 
 /vertical {
@@ -107,9 +127,24 @@ bar(label, textX, textY, barX, barY, barWidth, barHeight) ::= <<
 >>
 
 
+infiniteBar(label, textX, textY, barX, barY, barWidth, barHeight) ::= <<
+
+(<label>) <textX> <textY> recordLabel
+<barX> <barY> <barWidth> <barHeight> infinitePeriod
+
+>>
+
+
 arrow(startX, startY, middleX, middleY, endX, endY) ::= <<
 
 <startX> <startY> <middleX> <middleY> <endX> <endY> arrow
+
+>>
+
+
+infiniteArrow(startX, startY, middleX, middleY, endX, endY) ::= <<
+
+<startX> <startY> <middleX> <middleY> <endX> <endY> infiniteArrow
 
 >>
 
