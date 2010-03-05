@@ -85,20 +85,18 @@ public class TableRecordExtractor {
 				extractDate(row, startDateKey, startDateFormat);
 			DateTimeWrapper endDateWrapper =
 				extractDate(row, endDateKey, endDateFormat);
-			double amount;
-			
+
 			try {
-				amount = Utilities.extractAmount(row, amountKey);
+				double amount = Utilities.extractAmount(row, amountKey);
+				addRecordToCollector(
+					recordCollection, label, startDateWrapper, endDateWrapper, amount);
 			} catch (InvalidAmountException invalidAmountException) {
+				System.err.println(label);
 				continue;
 			}
-			
-			addRecordToCollector(
-				recordCollection, label, startDateWrapper, endDateWrapper, amount);
 		}
 		
-		this.logMessageHandler.printOverloadedMessageTypes(
-			LogService.LOG_WARNING);
+		this.logMessageHandler.printOverloadedMessageTypes(LogService.LOG_WARNING);
 	
 		return recordCollection;
 	}

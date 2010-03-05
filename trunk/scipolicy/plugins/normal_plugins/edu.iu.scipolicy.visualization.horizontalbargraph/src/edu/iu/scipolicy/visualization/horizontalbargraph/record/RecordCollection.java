@@ -231,7 +231,7 @@ public class RecordCollection {
 	}
 
 	private boolean hasInvalidAmount(double amount) {
-		return (amount < 0.0);
+		return Double.isInfinite(amount) || Double.isNaN(amount);
 	}
 	
 	private class NormalRecord extends AbstractRecord {
