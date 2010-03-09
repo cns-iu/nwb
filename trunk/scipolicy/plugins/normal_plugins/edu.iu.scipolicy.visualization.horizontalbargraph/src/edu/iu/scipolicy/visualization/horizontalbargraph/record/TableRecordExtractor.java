@@ -1,26 +1,18 @@
 package edu.iu.scipolicy.visualization.horizontalbargraph.record;
 
-import java.text.ParseException;
-import java.util.Date;
-
-import org.cishell.utilities.DateUtilities;
-import org.cishell.utilities.StringUtilities;
 import org.cishell.utilities.osgi.logging.LogMessageHandler;
 import org.cishell.utilities.osgi.logging.LogMessageHandler.MessageTypeDescriptor;
-import org.joda.time.DateTime;
 import org.osgi.service.log.LogService;
 
 import prefuse.data.Table;
 import prefuse.data.Tuple;
-import prefuse.util.collections.IntIterator;
 import edu.iu.scipolicy.visualization.horizontalbargraph.DateTimeWrapper;
 import edu.iu.scipolicy.visualization.horizontalbargraph.record.exception.InvalidAmountException;
 import edu.iu.scipolicy.visualization.horizontalbargraph.utility.PreprocessedRecordInformation;
+import edu.iu.scipolicy.visualization.horizontalbargraph.utility.RecordLabelGenerator;
 import edu.iu.scipolicy.visualization.horizontalbargraph.utility.Utilities;
 
 public class TableRecordExtractor {
-	public static final String UNKNOWN_LABEL_PREFIX = "Unknown Label ";
-	
 	public static final String NO_START_DATE_MESSAGE =
 		"  Using the earliest start date found.";
 	public static final String NO_END_DATE_MESSAGE =
@@ -41,7 +33,7 @@ public class TableRecordExtractor {
 	public static final int
 		RECORD_WITHOUT_VALID_START_AND_END_DATES_MESSAGE_COUNT = 1;
 	
-	private int unknownLabelCount = 0;
+	private RecordLabelGenerator labelGenerator = new RecordLabelGenerator();
 	
 	private LogMessageHandler logMessageHandler;
 	private MessageTypeDescriptor recordWithoutValidStartDateType;
@@ -49,6 +41,7 @@ public class TableRecordExtractor {
 	private MessageTypeDescriptor recordWithoutValidStartOrEndDateType;
 	
 	public TableRecordExtractor(LogService logger) {
+		// TODO: Move this stuff to PreprocessedRecordInformation.
 		this.logMessageHandler = new LogMessageHandler(logger);
 		this.recordWithoutValidStartDateType =
 			logMessageHandler.addMessageType(
@@ -73,25 +66,45 @@ public class TableRecordExtractor {
 			String startDateFormat,
 			String endDateFormat,
 			LogService logger) {
-		RecordCollection recordCollection = new RecordCollection(
-			new PreprocessedRecordInformation(source, amountKey, logger));
+		PreprocessedRecordInformation recordInformation = new PreprocessedRecordInformation(
+			source,
+			labelKey,
+			amountKey,
+			startDateKey,
+			endDateKey,
+			startDateFormat,
+			endDateFormat,
+			logger);
+		RecordCollection recordCollection = new RecordCollection(recordInformation);
 
-		for (IntIterator rows = source.rows(); rows.hasNext(); ) {
-			int rowIndex = rows.nextInt();
+//		for (Integer rowIndex : recordInformation.getValidRows()) {
+//			System.err.println("Row: " + rowIndex);
+//		}
+		//IntIterator rows = source.rows();
+		for (Integer rowIndex : recordInformation.getValidRows()) {
+//		for (IntIterator rows = source.rows(); rows.hasNext(); ) {
+//			System.err.println("IntIterator row " + rows.nextInt());
+//			System.err.println("Row " + rowIndex);
+//			int rowIndex = rows.nextInt();
 			Tuple row = source.getTuple(rowIndex);
 			
-			String label = extractLabel(row, labelKey);
+			String label = this.labelGenerator.generateLabel(row, rowIndex, labelKey);
+			
 			DateTimeWrapper startDateWrapper =
-				extractDate(row, startDateKey, startDateFormat);
+				Utilities.extractDate(row, startDateKey, startDateFormat);
 			DateTimeWrapper endDateWrapper =
-				extractDate(row, endDateKey, endDateFormat);
+				Utilities.extractDate(row, endDateKey, endDateFormat);
 
 			try {
 				double amount = Utilities.extractAmount(row, amountKey);
 				addRecordToCollector(
 					recordCollection, label, startDateWrapper, endDateWrapper, amount);
-			} catch (InvalidAmountException invalidAmountException) {
-				System.err.println(label);
+			} catch (InvalidAmountException e) {
+				/*
+				 * Needing to catch the InvalidAmountException is an artifact of using
+				 *  Utilities.extractAmount().  PreprocessedRecordInformation handles printing a
+				 *  warning message to the user when this happens.
+				 */ 
 				continue;
 			}
 		}
@@ -99,43 +112,6 @@ public class TableRecordExtractor {
 		this.logMessageHandler.printOverloadedMessageTypes(LogService.LOG_WARNING);
 	
 		return recordCollection;
-	}
-	
-	private String extractLabel(Tuple row, String labelKey) {
-		String potentialLabel =
-			StringUtilities.interpretObjectAsString(row.get(labelKey));
-
-		if ((potentialLabel != null) &&
-				!StringUtilities.isNull_Empty_OrWhitespace(potentialLabel)) {
-			return postscriptEscape(potentialLabel);
-		} else {
-			String label = UNKNOWN_LABEL_PREFIX + this.unknownLabelCount;
-			this.unknownLabelCount++;
-			
-			return postscriptEscape(label);
-		}
-	}
-	
-	private DateTimeWrapper extractDate(
-			Tuple row, String dateKey, String dateFormat) {
-		Object potentialDate = row.get(dateKey);
-		
-		if ((potentialDate == null) ||
-				StringUtilities.isEmptyOrWhitespace(potentialDate.toString())) {
-
-			return DateTimeWrapper.createUnspecifiedDateTimeWrapper();
-		}
-		
-		try {
-			Date parsedDate = DateUtilities.interpretObjectAsDate(
-				potentialDate, dateFormat, false);
-			
-			return DateTimeWrapper.createValidDateTimeWrapper(new DateTime(parsedDate));
-		} catch (ParseException unparsableDateException) {
-			return DateTimeWrapper.createInvalidDateTimeWrapper();
-		} catch (IllegalArgumentException invalidDateException) {
-			return DateTimeWrapper.createInvalidDateTimeWrapper();
-		}
 	}
 	
 	private void addRecordToCollector(
@@ -249,8 +225,7 @@ public class TableRecordExtractor {
 				LogService.LOG_WARNING,
 				logMessage);
 		
-			recordCollector.addRecordWithNoStartDate(
-				label, endDateWrapper.getDateTime(), amount);
+			recordCollector.addRecordWithNoStartDate(label, endDateWrapper.getDateTime(), amount);
 		}
 	}
 	
@@ -289,9 +264,5 @@ public class TableRecordExtractor {
 				endDateWrapper.getDateTime(),
 				amount);
 		}
-	}
-
-	private static String postscriptEscape(String rawReference) {
-		return rawReference.replace("\\", "\\\\").replace(")","\\)").replace("(", "\\(");
 	}
 }
