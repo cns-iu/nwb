@@ -28,7 +28,7 @@ public class ExtractionService {
 		return tableData;
 	}
 	
-	public Data[] extractGraph(Data[] dataWithDB,
+	public static Data[] extractGraph(Data[] dataWithDB,
 			String nodeQuery,
 			String edgeQuery,
 			String idColumn,
