@@ -153,11 +153,11 @@ def initializeGlobalVariables():
     # TODO: What bug was this fixing?  It was messing up the Format Node/Edge Labels buttons.
     # There is most likely a better solution to the original problem.
     
-#    addNodeField(ORIGINAL_LABEL_FIELD_NAME, Types.VARCHAR, "")
-#    setattr(g.nodes, ORIGINAL_LABEL_FIELD_NAME, g.nodes.label)
-#    
-#    addEdgeField(ORIGINAL_LABEL_FIELD_NAME, Types.VARCHAR, "")
-#    setattr(g.edges, ORIGINAL_LABEL_FIELD_NAME, g.edges.label)
+    addNodeField(ORIGINAL_LABEL_FIELD_NAME, Types.VARCHAR, "")
+    setattr(g.nodes, ORIGINAL_LABEL_FIELD_NAME, g.nodes.label)
+    
+    addEdgeField(ORIGINAL_LABEL_FIELD_NAME, Types.VARCHAR, "")
+    setattr(g.edges, ORIGINAL_LABEL_FIELD_NAME, g.edges.label)
        
     for i in globalDir:
         if gStuff.has_key(i) and not i == "Edge" and not i == "Node" and not i in colorList:

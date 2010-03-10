@@ -26,29 +26,20 @@ expression = r"%s%s%s%s%s" % (preExpression,
 pattern = re.compile(expression)
 
 class GraphObjectLabelFormatter:
-    def __init__(self,
-                 graphObjects,
-                 graphObjectTypeString,
-                 propertiesList,
-                 addFieldFunction):
+    def __init__(self, graphObjects, graphObjectTypeString, propertiesList, addFieldFunction):
         self.graphObjects = graphObjects
         self.graphObjectTypeString = graphObjectTypeString
         self.propertiesList = list(propertiesList)
-        self.previousLabelFormattingString = \
-            "{%s}" % ORIGINAL_LABEL_FIELD_NAME
+        self.previousLabelFormattingString = "{%s}" % ORIGINAL_LABEL_FIELD_NAME
         self.addFieldFunction = addFieldFunction
         
-        self.addOriginalLabelFieldToObjects()
+#        self.addOriginalLabelFieldToObjects()
     
-    def addOriginalLabelFieldToObjects(self):
-        if ORIGINAL_LABEL_FIELD_NAME not in self.propertiesList:
-            self.addFieldFunction(ORIGINAL_LABEL_FIELD_NAME,
-                                  Types.VARCHAR,
-                                  "")
-            setattr(self.graphObjects,
-                    ORIGINAL_LABEL_FIELD_NAME,
-                    self.graphObjects.label)
-            self.propertiesList.append(ORIGINAL_LABEL_FIELD_NAME)
+#    def addOriginalLabelFieldToObjects(self):
+#        if ORIGINAL_LABEL_FIELD_NAME not in self.propertiesList:
+#            self.addFieldFunction(ORIGINAL_LABEL_FIELD_NAME, Types.VARCHAR, "")
+#            setattr(self.graphObjects, ORIGINAL_LABEL_FIELD_NAME, self.graphObjects.label)
+#            self.propertiesList.append(ORIGINAL_LABEL_FIELD_NAME)
     
     def hookIntoEditMenu(self, shouldAddSeparator, menuItemText):
         editMenu = getEditMenu()
@@ -69,6 +60,7 @@ class GraphObjectLabelFormatter:
         if graphModifierButton is None:
             graphModifierButton = self._createGraphModifierButton(buttonText)
             graphModifier.formatLabelsButtonPanel.add(graphModifierButton)
+            graphModifier.update(graphModifier.getGraphics())
     
     def formatLabelsBasedOnUserPrompt(self, event):
         labelFormattingString = self._getLabelFormattingStringFromUser()
@@ -81,16 +73,13 @@ class GraphObjectLabelFormatter:
         v.repaint()
     
     def formatLabels(self, labelFormattingString):
-        if not labelFormattingString or \
-           not self.graphObjects or \
-           len(self.graphObjects) == 0:
+        if not labelFormattingString or not self.graphObjects or len(self.graphObjects) == 0:
             return
         
         matches = matchAll(labelFormattingString)
         
         for graphObject in self.graphObjects:
-            graphObject.label = \
-                self.formLabel(graphObject, labelFormattingString, matches)
+            graphObject.label = self.formLabel(graphObject, labelFormattingString, matches)
     
     def formLabel(self, graphObject, labelFormattingString, matches):
         labelBeingFormed = ""
@@ -102,10 +91,8 @@ class GraphObjectLabelFormatter:
             closingBrace = match[CLOSING_BRACE_GROUP_INDEX]
             post = match[POST_GROUP_INDEX]
             
-            if attributeName in self.propertiesList or \
-               hasattr(graphObject, attributeName):
-                labelBeingFormed += "%s%s%s" % \
-                    (pre, getattr(graphObject, attributeName), post)
+            if attributeName in self.propertiesList or hasattr(graphObject, attributeName):
+                labelBeingFormed += "%s%s%s" % (pre, getattr(graphObject, attributeName), post)
             else:
                 labelBeingFormed += "%s%s%s%s%s" % \
                     (pre, openingBrace, attributeName, closingBrace, post)
