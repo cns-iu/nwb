@@ -1,4 +1,4 @@
-package edu.iu.scipolicy.references.map;
+package edu.iu.scipolicy.visualization.scimap.references;
 
 import java.util.Collection;
 import java.util.HashMap;

@@ -1,4 +1,4 @@
-package edu.iu.scipolicy.references.map;
+package edu.iu.scipolicy.visualization.scimap.references;
 
 import java.io.BufferedReader;
 import java.io.File;

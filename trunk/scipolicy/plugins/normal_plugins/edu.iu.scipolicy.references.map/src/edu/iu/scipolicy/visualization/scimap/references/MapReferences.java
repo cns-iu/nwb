@@ -1,4 +1,4 @@
-package edu.iu.scipolicy.references.map;
+package edu.iu.scipolicy.visualization.scimap.references;
 
 import java.io.BufferedWriter;
 import java.io.File;
@@ -36,7 +36,7 @@ public class MapReferences implements Algorithm {
 	}
 
 	private static StringTemplateGroup loadTemplates() {
-		return new StringTemplateGroup(new InputStreamReader(MapReferences.class.getResourceAsStream("/edu/iu/scipolicy/references/map/templates/group.st")));
+		return new StringTemplateGroup(new InputStreamReader(MapReferences.class.getResourceAsStream("/edu/iu/scipolicy/visualization/scimap/references/templates/group.st")));
 	}
 
 	public Data[] execute() throws AlgorithmExecutionException {

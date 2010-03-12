@@ -1,4 +1,4 @@
-package edu.iu.scipolicy.references.map;
+package edu.iu.scipolicy.visualization.scimap.references;
 
 import java.text.DateFormat;
 import java.util.Date;

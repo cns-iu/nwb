@@ -287,7 +287,7 @@
 		
 		 
 		 <menu type="break"/>
-		 <menu pid="edu.iu.scipolicy.references.map.MapReferences"/>
+		 <menu pid="edu.iu.scipolicy.visualization.scimap.references.MapReferences"/>
 		  -->
 	</top_menu>
 
