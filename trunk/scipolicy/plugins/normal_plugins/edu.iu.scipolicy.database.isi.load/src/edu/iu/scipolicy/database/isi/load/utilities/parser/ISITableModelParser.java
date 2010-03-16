@@ -11,6 +11,7 @@ import org.cishell.framework.algorithm.AlgorithmCanceledException;
 import org.cishell.framework.algorithm.ProgressMonitor;
 import org.cishell.utilities.ArrayUtilities;
 import org.cishell.utilities.IntegerParserWithDefault;
+import org.cishell.utilities.ProgressMonitorUtilities;
 import org.cishell.utilities.StringUtilities;
 
 import prefuse.data.Table;
@@ -47,10 +48,6 @@ public class ISITableModelParser {
 	public static final String KEYWORDS_PLUS = "keywordsPlus";
 
 	public static final int BATCH_SIZE = 100;
-	/*public static final int DOCUMENT_BATCH_SIZE = 500;
-	public static final int SOURCE_BATCH_SIZE = 500;
-	public static final int REFERENCE_BATCH_SIZE = 250;
-	public static final int PERSON_BATCH_SIZE = 500;*/
 
 	private ProgressMonitor progressMonitor;
 
@@ -153,19 +150,14 @@ public class ISITableModelParser {
 
 	public DatabaseModel parseModel(Table table, Collection<Integer> rows)
 			throws AlgorithmCanceledException {
-		this.progressMonitor.describeWork("Parsing ISI data.");
-
 		// For each record/row in the table:
 
 		int last = 0;
 		int total = 0;
+		int unitsWorked = 0;
 
 		for (Integer rowIndex : rows) {
-			if (this.progressMonitor.isCanceled()) {
-				throw new AlgorithmCanceledException();
-			}
-
-			while(this.progressMonitor.isPaused()) {}
+			ProgressMonitorUtilities.handleCanceledOrPausedAlgorithm(progressMonitor);
 
 			Tuple row = table.getTuple(rowIndex.intValue());
 
@@ -272,7 +264,9 @@ public class ISITableModelParser {
 				linkDocumentToCitedReferences(document, currentReferences);
 			}
 
-			//this.progressMonitor.worked(1);
+			this.progressMonitor.worked(unitsWorked);
+			unitsWorked++;
+
 			last++;
 			total++;
 
@@ -327,36 +321,47 @@ public class ISITableModelParser {
 				continue;
 			}
 
-			//Pair<Person, Boolean> personParsingResult;
-			Person authorPerson;
+			/*Person authorPerson;
 
-			//try {
-				if (authorStrings.length == authorFullNameStrings.length) {
-					String authorFullNameString = authorFullNameStrings[ii];
-					String cleanedAuthorFullNameString =
-						StringUtilities.simpleClean(authorFullNameString);
-					authorPerson = new Person(
-							this.people.getKeyGenerator(),
-							cleanedAuthorString,
-							cleanedAuthorFullNameString);
-					/*personParsingResult = PersonParser.parsePerson(
+			if (authorStrings.length == authorFullNameStrings.length) {
+				String authorFullNameString = authorFullNameStrings[ii];
+				String cleanedAuthorFullNameString =
+					StringUtilities.simpleClean(authorFullNameString);
+				authorPerson = new Person(
 						this.people.getKeyGenerator(),
 						cleanedAuthorString,
-						cleanedAuthorFullNameString);*/
-				} else {
-					authorPerson = new Person(
-							this.people.getKeyGenerator(), cleanedAuthorString, "");
-					/*personParsingResult = PersonParser.parsePerson(
-						this.people.getKeyGenerator(), cleanedAuthorString, "");*/
-				}
+						cleanedAuthorFullNameString);
+			} else {
+				authorPerson = new Person(
+						this.people.getKeyGenerator(), cleanedAuthorString, "");
+			}*/
 
-				//Person authorPerson = personParsingResult.getFirstObject();
-				Person mergedAuthorPerson = this.people.add(authorPerson);
-				authorPeople.add(mergedAuthorPerson);
-			//} catch (PersonParsingException e) {}
+			Person authorPerson =
+				parseAuthorPerson(authorStrings, authorFullNameStrings, cleanedAuthorString, ii);
+
+			Person mergedAuthorPerson = this.people.add(authorPerson);
+			authorPeople.add(mergedAuthorPerson);
 		}
 
 		return authorPeople;
+	}
+
+	private Person parseAuthorPerson(
+			String[] authorStrings,
+			String[] authorFullNameStrings,
+			String cleanedAuthorString,
+			int authorIndex) {
+		if (authorStrings.length == authorFullNameStrings.length) {
+			String authorFullNameString = authorFullNameStrings[authorIndex];
+			String cleanedAuthorFullNameString =
+				StringUtilities.simpleClean(authorFullNameString);
+			return new Person(
+				this.people.getKeyGenerator(),
+				cleanedAuthorString,
+				cleanedAuthorFullNameString);
+		} else {
+			return new Person(this.people.getKeyGenerator(), cleanedAuthorString, "");
+		}
 	}
 
 	private List<Person> parseEditorPeople(Tuple row) {
@@ -487,38 +492,14 @@ public class ISITableModelParser {
 				Source referenceSource = referenceData.getSource();
 
 				if (!ArrayUtilities.allAreNull(
-						//referenceData.getAnnotation(),
 						referenceData.getArticleNumber(),
-						/*referenceData.getAuthorPerson(),
-						referenceData.authorWasStarred(),*/
 						referenceData.getDigitalObjectIdentifier(),
-						/*referenceData.getPageNumber(),
-						null,*/
 						referenceData.getRawString(),
-						//referenceData.getVolume(),
 						referenceSource)) {
-						//referenceData.getYear())) {
-					/*Reference reference = new Reference(
-						this.references.getKeyGenerator(),
-						referenceData.getAnnotation(),
-						referenceData.getArticleNumber(),
-						referenceData.getAuthorPerson(),
-						//referenceData.authorWasStarred(),
-						referenceData.getDigitalObjectIdentifier(),
-						referenceData.getOtherInformation(),
-						referenceData.getPageNumber(),
-						null,
-						referenceData.getRawString(),
-						referenceData.getVolume(),
-						referenceData.getSource(),
-						referenceData.getYear());*/
 					Reference reference = new Reference(
 						this.references.getKeyGenerator(),
 						this.people,
 						this.sources.getKeyGenerator(),
-//						referenceData.getArticleNumber(),
-//						referenceData.getDigitalObjectIdentifier(),
-						//referenceString,
 						referenceSource,
 						row,
 						ii);
@@ -535,13 +516,7 @@ public class ISITableModelParser {
 
 	private void handlePeopleAndSourcesFromReferences(List<Reference> currentReferences) {
 		for (Reference reference : currentReferences) {
-			//Person referenceAuthorPerson = reference.getAuthorPerson();
 			Source referenceSource = reference.getSource();
-
-			/*if (referenceAuthorPerson != null) {
-				Person mergedAuthor = this.people.add(referenceAuthorPerson);
-				reference.setAuthor(mergedAuthor);
-			}*/
 
 			if (referenceSource != null) {
 				Source mergedSource = this.sources.add(referenceSource);
@@ -616,9 +591,6 @@ public class ISITableModelParser {
 			StringUtilities.trimIfNotNull(row.getString(ISITag.TIMES_CITED.getColumnName())));
 		String title = StringUtilities.trimIfNotNull(row.getString(ISITag.TITLE.getColumnName()));
 
-		// TODO: Use ISITag.isiTagArray to determine which tags we don't handle, and add those in
-		// to document.
-
 		if (!ArrayUtilities.allAreNull(
 				beginningPage,
 				citedReferenceCount,
@@ -648,35 +620,6 @@ public class ISITableModelParser {
 						subjectCategory,
 						supplement,
 						title)) {
-			/*Document document = new Document(
-					this.documents.getKeyGenerator(),
-					documentAbstract,
-					articleNumber,
-					beginningPage,
-					citedReferenceCount,
-					citedYear,
-					digitalObjectidentifier,
-					documentType,
-					documentVolume,
-					endingPage,
-					firstAuthor,
-					fundingAgencyAndGrantNumber,
-					fundingText,
-					isbn,
-					isiDocumentDeliveryNumber,
-					isiUniqueArticleIdentifier,
-					issue,
-					language,
-					pageCount,
-					partNumber,
-					publicationDate,
-					publicationYear,
-					source,
-					specialIssue,
-					subjectCategory,
-					supplement,
-					timesCited,
-					title);*/
 			Document document = new Document(
 				this.documentKeywords.getKeyGenerator(),
 				articleNumber,
@@ -793,30 +736,6 @@ public class ISITableModelParser {
 		String twentyNineCharacterSourceTitleAbbreviation = StringUtilities.trimIfNotNull(
 				row.getString(ISITag.TWENTY_NINE_CHAR_JOURNAL_ABBREVIATION.getColumnName()));
 
-		/*if (!ArrayUtilities.allAreNull(
-				bookSeriesTitle,
-				bookSeriesSubtitle,
-				conferenceHost,
-				conferenceLocation,
-				conferenceSponsors,
-				conferenceTitle,
-				fullTitle,
-				isoTitleAbbreviation,
-				issn,
-				publicationType,
-				twentyNineCharacterSourceTitleAbbreviation) &&
-					!StringUtilities.allAreEmptyOrWhiteSpace(
-						bookSeriesTitle,
-						bookSeriesSubtitle,
-						conferenceHost,
-						conferenceLocation,
-						conferenceSponsors,
-						conferenceTitle,
-						fullTitle,
-						isoTitleAbbreviation,
-						issn,
-						publicationType,
-						twentyNineCharacterSourceTitleAbbreviation)) {*/
 		if (!StringUtilities.allAreNull_Empty_OrWhitespace(
 				bookSeriesTitle,
 				bookSeriesSubtitle,
@@ -830,19 +749,9 @@ public class ISITableModelParser {
 				publicationType,
 				twentyNineCharacterSourceTitleAbbreviation)) {
 			Source source = new Source(
-					this.sources.getKeyGenerator(),
-					/*bookSeriesTitle,
-					bookSeriesSubtitle,
-					conferenceHost,
-					conferenceLocation,
-					conferenceSponsors,
-					conferenceTitle,
-					fullTitle,
-					isoTitleAbbreviation,
-					issn,
-					publicationType,*/
-					twentyNineCharacterSourceTitleAbbreviation,
-					row);
+				this.sources.getKeyGenerator(),
+				twentyNineCharacterSourceTitleAbbreviation,
+				row);
 
 			return this.sources.add(source);
 		} else {
@@ -914,32 +823,5 @@ public class ISITableModelParser {
 				}
 			}
 		}
-
-		/*for (Reference reference : this.references.getItems()) {
-			String referenceDigitalObjectIdentifier = reference.getDigitalObjectIdentifier();
-			String referenceArticleNumber = reference.getArticleNumber();
-
-			for (Document document : this.documents.getItems()) {
-				String documentDigitalObjectIdentifier = document.getDigitalObjectIdentifier();
-				String documentArticleNumber = document.getArticleNumber();
-
-				if (!StringUtilities.isNull_Empty_OrWhitespace(documentDigitalObjectIdentifier) &&
-						documentDigitalObjectIdentifier.equals(referenceDigitalObjectIdentifier)) {
-					reference.setPaper(document);
-				}
-
-				if (!StringUtilities.isNull_Empty_OrWhitespace(documentArticleNumber) &&
-						documentArticleNumber.equals(referenceArticleNumber)) {
-					reference.setPaper(document);
-				}
-=======
-			if (digitalObjectIdentifiersToDocuments.containsKey(referenceDigitalObjectIdentifier)) {
-				reference.setPaper(digitalObjectIdentifiersToDocuments.get(referenceDigitalObjectIdentifier));
-			} else if (articleNumbersToDocuments.containsKey(referenceArticleNumber)) {
-				reference.setPaper(articleNumbersToDocuments.get(referenceArticleNumber));
->>>>>>> .r4412
-			}
-		}*/
-
 	}
 }

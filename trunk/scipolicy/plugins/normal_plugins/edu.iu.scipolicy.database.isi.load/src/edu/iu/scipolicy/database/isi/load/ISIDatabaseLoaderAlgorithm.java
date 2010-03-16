@@ -35,8 +35,6 @@ public class ISIDatabaseLoaderAlgorithm implements Algorithm, ProgressTrackable 
 	public static final boolean SHOULD_FILL_FILE_METADATA = true;
 	public static final boolean SHOULD_CLEAN_CITED_REFERENCES = false;
 
-	public static final float PERCENTAGE_OF_PROGRESS_FOR_CREATING_MODEL = 0.1f;
-
     private Data inData;
     private LogService logger;
     private DatabaseService databaseProvider;
@@ -53,8 +51,6 @@ public class ISIDatabaseLoaderAlgorithm implements Algorithm, ProgressTrackable 
 
     public Data[] execute() throws AlgorithmExecutionException {
     	try {
-    		this.progressMonitor.describeWork("Preprocessing ISI data.");
-
 	    	// Convert input ISI data to an ISI table.
 
     		Table isiTable = convertISIToTable(this.inData, this.logger);
@@ -68,25 +64,9 @@ public class ISIDatabaseLoaderAlgorithm implements Algorithm, ProgressTrackable 
     		Collection<Integer> rows =
     			ISITablePreprocessor.removeRowsWithDuplicateDocuments(isiTable);
 
-    		/*
-    		 * We're going to say that creating the model is 10% of the total work for this
-    		 *  algorithm, so multiply the number of rows by 10 to get the total number of work
-    		 *  units for the progress monitor.
-    		 */
-
-    		int rowCount = rows.size();
-    		int totalWorkUnitCount =
-    			Math.round(rowCount / PERCENTAGE_OF_PROGRESS_FOR_CREATING_MODEL);
-    		this.progressMonitor.start(
-    			(ProgressMonitor.WORK_TRACKABLE |
-    				ProgressMonitor.CANCELLABLE |
-    				ProgressMonitor.PAUSEABLE),
-    			totalWorkUnitCount);
-
     		// Convert the ISI table to an ISI database.
 
-    		Database database = convertTableToDatabase(isiTable, rows, totalWorkUnitCount);
-    		this.progressMonitor.done();
+    		Database database = convertTableToDatabase(isiTable, rows);
 
 	    	// Annotate ISI database as output data with metadata and return it.
 
@@ -124,23 +104,44 @@ public class ISIDatabaseLoaderAlgorithm implements Algorithm, ProgressTrackable 
     }
 
     private Database convertTableToDatabase(
-    		Table table, Collection<Integer> rows, int workUnitCount)
+    		Table table, Collection<Integer> rows)
     		throws AlgorithmCanceledException, ISILoadingException {
     	try {
 	    	// Create an in-memory ISI model based off of the table.
 
+    		startProgressMonitorForModelCreation(rows);
     		DatabaseModel model =
     			new ISITableModelParser(this.progressMonitor).parseModel(table, rows);
+    		stopProgressMonitorForModelCreation();
 
 	    	// Use the ISI model to create an ISI database.
 
+    		this.logger.log(
+    			LogService.LOG_INFO, "Beginning Phase 2 of loading the ISI file into a database.");
+
     		return DerbyDatabaseCreator.createFromModel(
-    			this.databaseProvider, model, "ISI", this.progressMonitor, workUnitCount);
+    			this.databaseProvider, model, "ISI", this.progressMonitor);
     	} catch (DatabaseCreationException e) {
     		throw new ISILoadingException(e.getMessage(), e);
     	} catch (SQLException e) {
     		throw new ISILoadingException(e.getMessage(), e);
     	}
+    }
+
+    private void startProgressMonitorForModelCreation(Collection<Integer> rows) {
+    	this.logger.log(
+    		LogService.LOG_INFO, "Beginning Phase 1 of loading the ISI file into a database.");
+    	int workUnitCountForCreatingModel = rows.size();
+		this.progressMonitor.start(
+			(ProgressMonitor.WORK_TRACKABLE |
+				ProgressMonitor.CANCELLABLE |
+				ProgressMonitor.PAUSEABLE),
+			workUnitCountForCreatingModel);
+		this.progressMonitor.describeWork("Parsing ISI data.");
+    }
+
+    private void stopProgressMonitorForModelCreation() {
+    	this.progressMonitor.done();
     }
 
     private Data[] annotateOutputData(Database isiDatabase, Data parentData) {
@@ -152,7 +153,6 @@ public class ISIDatabaseLoaderAlgorithm implements Algorithm, ProgressTrackable 
     	metadata.put(DataProperty.TYPE, DataProperty.DATABASE_TYPE);
     	metadata.put(DataProperty.PARENT, parentData);
 
-    	//return null;
     	return new Data[] { data };
     }
 }

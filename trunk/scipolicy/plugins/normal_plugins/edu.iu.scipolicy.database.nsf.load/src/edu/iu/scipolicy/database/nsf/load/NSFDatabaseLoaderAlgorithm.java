@@ -11,6 +11,7 @@ import org.cishell.framework.algorithm.Algorithm;
 import org.cishell.framework.algorithm.AlgorithmCanceledException;
 import org.cishell.framework.algorithm.AlgorithmExecutionException;
 import org.cishell.framework.algorithm.ProgressMonitor;
+import org.cishell.framework.algorithm.ProgressTrackable;
 import org.cishell.framework.data.BasicData;
 import org.cishell.framework.data.Data;
 import org.cishell.framework.data.DataProperty;
@@ -34,16 +35,15 @@ import edu.iu.scipolicy.utilities.nsf.NSF_Database_FieldNames;
  *
  */
 
-public class NSFDatabaseLoaderAlgorithm implements Algorithm {
+public class NSFDatabaseLoaderAlgorithm implements Algorithm, ProgressTrackable {
 	
 	private Data[] data;
 	private LogService logger;
 	private DatabaseService databaseProvider;
+	private ProgressMonitor progressMonitor = ProgressMonitor.NULL_MONITOR;
 	
-    public NSFDatabaseLoaderAlgorithm(Data[] data, 
-    								  Dictionary parameters,
-    								  CIShellContext context) {
-    	
+    public NSFDatabaseLoaderAlgorithm(
+    		Data[] data, Dictionary parameters, CIShellContext context) {
         this.data = data;
 		this.logger = (LogService) context.getService(LogService.class.getName());
         this.databaseProvider =
@@ -51,35 +51,29 @@ public class NSFDatabaseLoaderAlgorithm implements Algorithm {
 	}
 
     public Data[] execute() throws AlgorithmExecutionException {
-    	
     	/*
     	 * Get the file data.
-    	 * */
-		File nsfCsv = (File) data[0].getData();
-		CSVReader nsfCsvReader;
+    	 */
+
+		File nsfCSVFile = (File) data[0].getData();
 		
 		try {
-			
-			/*
-	    	 * Get a CSV handler for the file object.
-	    	 * */
-			nsfCsvReader = createNsfCsvReader(nsfCsv);
-			
 			/*
 			 * Create in-memory nsf model with all its entities & relationships.
-			 * */
-			DatabaseModel inMemoryModel = createInMemoryNSFModel(nsfCsv, nsfCsvReader, logger);
+			 */
+			DatabaseModel inMemoryModel = createInMemoryNSFModel(nsfCSVFile, logger);
 			
 			/*
 			 * Extract the actual database from the in-memory model. 
-			 * */
+			 */
 			Database database = convertNSFInMemoryModelToDatabase(inMemoryModel);
 			
 			/*
 			 * Provide the finished database in the data manager.
-			 * */
+			 */
 			return annotateOutputData(database);
-			
+		} catch (AlgorithmCanceledException e) {
+			return new Data[] {};
 		} catch (IOException e) {
 			throw new AlgorithmExecutionException(e.getMessage(), e);
 		} catch (NSFReadingException e) {
@@ -87,7 +81,14 @@ public class NSFDatabaseLoaderAlgorithm implements Algorithm {
 		} catch (NSFDatabaseCreationException e) {
 			throw new AlgorithmExecutionException(e.getMessage(), e);
 		} 
-		
+    }
+
+    public void setProgressMonitor(ProgressMonitor progressMonitor) {
+    	this.progressMonitor = progressMonitor;
+    }
+
+    public ProgressMonitor getProgressMonitor() {
+    	return this.progressMonitor;
     }
 
 	/**
@@ -108,34 +109,31 @@ public class NSFDatabaseLoaderAlgorithm implements Algorithm {
 	}
 
 	/**
-	 * @param nsfCsv
-	 * @param nsfCsvReader
+	 * @param nsfCSVFile
+	 * @param nsfCSVReader
 	 * @param logger 
 	 * @return
 	 * @throws AlgorithmExecutionException
 	 * @throws IOException
 	 */
-	private DatabaseModel createInMemoryNSFModel(File nsfCsv,
-												 CSVReader nsfCsvReader, 
-												 LogService logger) 
-			throws NSFReadingException {
-		String[] nsfFileColumnNames = getNsfFileColumnNames(nsfCsvReader);
-		
-		/*
-		 * Generate metadata of the NSF File. 
-		 * */
-		NSFMetadata nsfMetadata = new NSFMetadata(nsfFileColumnNames, nsfCsv);
-		
-		DatabaseModel inMemoryModel;
+	private DatabaseModel createInMemoryNSFModel(File nsfCSVFile, LogService logger)
+			throws AlgorithmCanceledException, IOException, NSFReadingException {
+		CSVReader nsfCSVReader = createNSF_CSVReader(nsfCSVFile);
+		String[] nsfFileColumnNames = getNSFFileColumnNames(nsfCSVReader);
+
+		NSFMetadata nsfMetadata =
+			new NSFMetadata(nsfFileColumnNames, nsfCSVFile, createNSF_CSVReader(nsfCSVFile));
+
 		try {
-			inMemoryModel = new NSFTableModelParser()
-									.parseModel(nsfCsvReader,
-												nsfMetadata,
-												logger);
+			startProgressMonitorForModelCreation(nsfMetadata.getRowCount());
+			DatabaseModel model = new NSFTableModelParser().parseModel(
+				nsfCSVReader, nsfMetadata, logger, this.progressMonitor);
+			stopProgressMonitorForModelCreation();
+
+			return model;
 		} catch (IOException e) {
 			throw new NSFReadingException(e.getMessage(), e);
 		}
-		return inMemoryModel;
 	}
 
 	/**
@@ -148,9 +146,11 @@ public class NSFDatabaseLoaderAlgorithm implements Algorithm {
 	private Database convertNSFInMemoryModelToDatabase(
 			DatabaseModel inMemoryModel) throws NSFDatabaseCreationException {
 		try {
-			// TODO: ProgressMonitor crap.
+			this.logger.log(
+    			LogService.LOG_INFO, "Beginning Phase 2 of loading the NSF file into a database.");
+
 			return DerbyDatabaseCreator.createFromModel(
-				databaseProvider, inMemoryModel, "NSF", ProgressMonitor.NULL_MONITOR, 0);
+				databaseProvider, inMemoryModel, "NSF", this.progressMonitor);
 		} catch (AlgorithmCanceledException e) {
 			throw new NSFDatabaseCreationException(e.getMessage(), e);
 		} catch (DatabaseCreationException e) {
@@ -160,20 +160,38 @@ public class NSFDatabaseLoaderAlgorithm implements Algorithm {
 		}
 	}
 
-	private static CSVReader createNsfCsvReader(File nsfCsv) throws IOException {
-		//TODO: Currently we only support "csv" nsf files, not "excel" nsf files.
-		//TODO: Add flexibility to support tabbed separated and double-quote escape chars.
+	private void startProgressMonitorForModelCreation(int rowCount) {
+    	this.logger.log(
+    		LogService.LOG_INFO, "Beginning Phase 1 of loading the NSF file into a database.");
+    	// rowCount - 1 to account for the header row.
+    	int workUnitCountForCreatingModel = rowCount - 1;
+		this.progressMonitor.start(
+			(ProgressMonitor.WORK_TRACKABLE |
+				ProgressMonitor.CANCELLABLE |
+				ProgressMonitor.PAUSEABLE),
+			workUnitCountForCreatingModel);
+		this.progressMonitor.describeWork("Parsing ISI data.");
+    }
+
+    private void stopProgressMonitorForModelCreation() {
+    	this.progressMonitor.done();
+    }
+
+	private static CSVReader createNSF_CSVReader(File nsfCsv) throws IOException {
+		// TODO: Currently we only support "csv" nsf files, not "excel" nsf files.
+		// TODO: Add flexibility to support tabbed separated and double-quote escape chars.
 		final char defaultFieldSeparator = ',';
 		final char secondaryFieldSeparator = '\t';
 		final char fieldQuoteCharacter = '"';
 		final int lineToStartReadingFrom = 0;
 		final char quoteEscapeCharacter = '\\';
 		
-		CSVReader nsfCsvReader = new CSVReader(new FileReader(nsfCsv),
-											   defaultFieldSeparator, 
-											   fieldQuoteCharacter, 
-											   lineToStartReadingFrom, 
-											   quoteEscapeCharacter);
+		CSVReader nsfCsvReader = new CSVReader(
+			new FileReader(nsfCsv),
+			defaultFieldSeparator, 
+			fieldQuoteCharacter, 
+			lineToStartReadingFrom, 
+			quoteEscapeCharacter);
 		
 		/*
 		 * Test if "," as a separator failed to create appropriate csv handler. If so create a
@@ -194,17 +212,12 @@ public class NSFDatabaseLoaderAlgorithm implements Algorithm {
 								 lineToStartReadingFrom, 
 								 quoteEscapeCharacter);
 		}
-		
-		
-
 	}
 	
-	private static String[] getNsfFileColumnNames(CSVReader nsfCsvReader) 
+	private static String[] getNSFFileColumnNames(CSVReader nsfCSVReader) 
 			throws NSFReadingException {
-		
-		String[] columnNames;
 		try {
-			columnNames = nsfCsvReader.readNext();
+			String[] columnNames = nsfCSVReader.readNext();
 			
 			if (columnNames == null || columnNames.length == 0) {
 				throw new NSFReadingException("Cannot read in an empty nsf file");

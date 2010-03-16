@@ -8,7 +8,10 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
+import org.cishell.framework.algorithm.AlgorithmCanceledException;
+import org.cishell.framework.algorithm.ProgressMonitor;
 import org.cishell.utilities.DateUtilities;
+import org.cishell.utilities.ProgressMonitorUtilities;
 import org.cishell.utilities.StringUtilities;
 import org.cishell.utilities.osgi.logging.LogMessageHandler;
 import org.osgi.service.log.LogService;
@@ -140,16 +143,18 @@ public class NSFTableModelParser {
 	 * 			a. Try to add an exception handler on the add method of each model entity.
 	 * @param columnNameToColumnIndex
 	 * @param unknownColumnNameToColumnIndex
-	 * @param cSVReaderHandle
+	 * @param csvReaderHandle
 	 * @param nsfMetadata
 	 * @param logger
 	 * @return
 	 * @throws IOException
 	 */
 	public DatabaseModel parseModel(
-			CSVReader cSVReaderHandle,
-			NSFMetadata nsfMetadata, 
-			LogService logger) throws IOException {
+			CSVReader csvReaderHandle,
+			NSFMetadata nsfMetadata,
+			LogService logger,
+			ProgressMonitor progressMonitor)
+			throws AlgorithmCanceledException, IOException {
 		this.logMessageHandler = new LogMessageHandler(logger);
 		this.invalidAwardAmountType = logMessageHandler.addMessageType(
 				ROW_WITH_INVALID_AWARDED_AMOUNT,
@@ -160,6 +165,8 @@ public class NSFTableModelParser {
 		 * the NSF File entity only once. 
 		 */
 		NSFFile mergedNSFFile = parseNSFFile(nsfMetadata);
+
+		int unitsWorked = 0;
 		
 		/*			
 		 * Parse each field of the nsf file and update the nsf model as you go.
@@ -168,132 +175,136 @@ public class NSFTableModelParser {
 		 */  
 		String[] row = null;
 		
-			while ((row = cSVReaderHandle.readNext()) != null) {
+		while ((row = csvReaderHandle.readNext()) != null) {
+			ProgressMonitorUtilities.handleCanceledOrPausedAlgorithm(progressMonitor);
 
-				/*
-				 * For Award VO parse following columns, Title, Start Date, 
-				 * Last Amendment Date, Expiration Date, Awarded Amount to Date,
-				 * Award Instrument, NSF Organization, NSF Directorate & Abstract.
-				 * */
-				Award award = parseAward(nsfMetadata.getColumnNameToColumnIndex(), 
-										 nsfMetadata.getUnknownColumnNameToColumnIndex(), 
-										 row);
+			/*
+			 * For Award VO parse following columns, Title, Start Date, 
+			 * Last Amendment Date, Expiration Date, Awarded Amount to Date,
+			 * Award Instrument, NSF Organization, NSF Directorate & Abstract.
+			 * */
+			Award award = parseAward(nsfMetadata.getColumnNameToColumnIndex(), 
+									 nsfMetadata.getUnknownColumnNameToColumnIndex(), 
+									 row);
 
-				this.awardOccurences.add(new AwardOccurence(award, mergedNSFFile));
-				
-				/*
-				 * For Person VO parse Principal Investigator column. 
-				 * */
-				Person principalInvestigatorPerson = 
-					parsePrincipalInvestigatorPerson(nsfMetadata.getColumnNameToColumnIndex(),
-							row);
-				/*
-				 * For Investigator VO parse PI Email Address, State Columns.
-				 * Also, since it is PI set "Is Main" boolean to true for the VO.
-				 * Add a reference to it's Person VO. Add a reference to it's Award VO.
-				 * */
-				Investigator principalInvestigator = 
-					parsePrincipalInvestigator(principalInvestigatorPerson,
-							award,
-							nsfMetadata.getColumnNameToColumnIndex(),
-							row);
-
-				/*
-				 * For Organization VO parse following columns, Organization Phone, 
-				 * Organization Zip, Organization Street Address, Organization State,
-				 * Organization & Organization City.
-				 * */
-				Organization organization = parseOrganization(
-						nsfMetadata.getColumnNameToColumnIndex(), 
+			this.awardOccurences.add(new AwardOccurence(award, mergedNSFFile));
+			
+			/*
+			 * For Person VO parse Principal Investigator column. 
+			 * */
+			Person principalInvestigatorPerson = 
+				parsePrincipalInvestigatorPerson(nsfMetadata.getColumnNameToColumnIndex(),
 						row);
-				/*
-				 * Create a relationship VO of "Investigator - Organization" and add 
-				 * reference in it of the "Investigator" &  "Organization".
-				 * */
-				this.investigatorOrganizations.add(
-						new InvestigatorOrganization(principalInvestigator, 
-								organization));
-				/*
-				 * Parse the "Co-PI Name(s)" column to get individual CO-PI name and 
-				 * create new Person, Investigator VOs accordingly.
-				 * Make sure that splitting up of the multiple values is done properly &
-				 * Parsing of the value in to its individual components of Last, First 
-				 * name etc is done properly.
-				 * */
-				List<Person> coPrinciaplInvestigatorPeople = 
-					parseCOPrincipalInvestigatorPeople(nsfMetadata.getColumnNameToColumnIndex(), 
-							row,
-							award);
-
-				for (Person coPrinciaplInvestigatorPerson : coPrinciaplInvestigatorPeople) {
-
-					this.investigators.add(
-							new Investigator(this.investigators.getKeyGenerator(), 
-									award,
-									coPrinciaplInvestigatorPerson,
-									"",
-									"",
-									false));
-				}
-
-				/*
-				 * Parse the "Program Manager" column to create new Person.
-				 * Create a Program Manager VOs and, Add a reference to it's Person VO 
-				 * and it's Award VO.
-				 * */
-				ProgramManager programManager = parseProgramManager(
+			/*
+			 * For Investigator VO parse PI Email Address, State Columns.
+			 * Also, since it is PI set "Is Main" boolean to true for the VO.
+			 * Add a reference to it's Person VO. Add a reference to it's Award VO.
+			 * */
+			Investigator principalInvestigator = 
+				parsePrincipalInvestigator(principalInvestigatorPerson,
 						award,
 						nsfMetadata.getColumnNameToColumnIndex(),
 						row);
-				/*
-				 *  For the Field of Application VO parse Field Of Application(s) column.
-				 *  Create a list which will contain references to the FOA objects.
-				 *  Make sure that splitting up of the multiple values is done properly
-				 *  Create a new VO for each value obtained (if not already present, that is)
-				 *  If there is a duplicate just get the reference and append it to the list of FOA
-				 * */
-				List<FieldOfApplication> currentFieldOfApplications = 
-					parseFieldOfApplications(nsfMetadata.getColumnNameToColumnIndex(),
-											 row);
 
-				/*
-				 * For the FOA - Award VO for each FOA in the list do, create a new VO 
-				 * having reference to both FOA & the current Award.
-				 * */
-				for (FieldOfApplication fieldOfApplication : currentFieldOfApplications) {
-					this.awardFieldOfApplications.add(
-							new AwardFieldOfApplication(fieldOfApplication, award));
-				}
+			/*
+			 * For Organization VO parse following columns, Organization Phone, 
+			 * Organization Zip, Organization Street Address, Organization State,
+			 * Organization & Organization City.
+			 * */
+			Organization organization = parseOrganization(
+					nsfMetadata.getColumnNameToColumnIndex(), 
+					row);
+			/*
+			 * Create a relationship VO of "Investigator - Organization" and add 
+			 * reference in it of the "Investigator" &  "Organization".
+			 * */
+			this.investigatorOrganizations.add(
+					new InvestigatorOrganization(principalInvestigator, 
+							organization));
+			/*
+			 * Parse the "Co-PI Name(s)" column to get individual CO-PI name and 
+			 * create new Person, Investigator VOs accordingly.
+			 * Make sure that splitting up of the multiple values is done properly &
+			 * Parsing of the value in to its individual components of Last, First 
+			 * name etc is done properly.
+			 * */
+			List<Person> coPrinciaplInvestigatorPeople = 
+				parseCOPrincipalInvestigatorPeople(nsfMetadata.getColumnNameToColumnIndex(), 
+						row,
+						award);
 
-				/*
-				 * Create "Program" entity objects form "Program(s)" & "Program Element Code(s)"
-				 * columns.  
-				 * */
-				List<Program> programNamesAndElementCodes = parseProgramNamesAndElementCodes(
-						nsfMetadata.getColumnNameToColumnIndex(),
-						row);
+			for (Person coPrinciaplInvestigatorPerson : coPrinciaplInvestigatorPeople) {
 
-				/*
-				 * Create "Award - Program Name & Element Code" VO with references to Award & 
-				 * Program VOs. 
-				 * */
-				for (Program programNameAndElementCode : programNamesAndElementCodes) {
-					this.programNameAndElementCodes.add(
-							new ProgramNameAndElementCode(programNameAndElementCode, award));
-				}
-
-				/*
-				 * Similarly, parse for Program Reference Codes.
-				 * */
-				List<Program> programReferenceCodes = parseProgramReferenceCodes(
-						nsfMetadata.getColumnNameToColumnIndex(),
-						row);
-
-				for (Program programReferenceCode : programReferenceCodes) {
-					this.programReferenceCodes.add(
-							new ProgramReferenceCode(programReferenceCode, award));
-				}
+				this.investigators.add(
+						new Investigator(this.investigators.getKeyGenerator(), 
+								award,
+								coPrinciaplInvestigatorPerson,
+								"",
+								"",
+								false));
 			}
+
+			/*
+			 * Parse the "Program Manager" column to create new Person.
+			 * Create a Program Manager VOs and, Add a reference to it's Person VO 
+			 * and it's Award VO.
+			 * */
+			ProgramManager programManager = parseProgramManager(
+					award,
+					nsfMetadata.getColumnNameToColumnIndex(),
+					row);
+			/*
+			 *  For the Field of Application VO parse Field Of Application(s) column.
+			 *  Create a list which will contain references to the FOA objects.
+			 *  Make sure that splitting up of the multiple values is done properly
+			 *  Create a new VO for each value obtained (if not already present, that is)
+			 *  If there is a duplicate just get the reference and append it to the list of FOA
+			 * */
+			List<FieldOfApplication> currentFieldOfApplications = 
+				parseFieldOfApplications(nsfMetadata.getColumnNameToColumnIndex(),
+										 row);
+
+			/*
+			 * For the FOA - Award VO for each FOA in the list do, create a new VO 
+			 * having reference to both FOA & the current Award.
+			 * */
+			for (FieldOfApplication fieldOfApplication : currentFieldOfApplications) {
+				this.awardFieldOfApplications.add(
+						new AwardFieldOfApplication(fieldOfApplication, award));
+			}
+
+			/*
+			 * Create "Program" entity objects form "Program(s)" & "Program Element Code(s)"
+			 * columns.  
+			 * */
+			List<Program> programNamesAndElementCodes = parseProgramNamesAndElementCodes(
+					nsfMetadata.getColumnNameToColumnIndex(),
+					row);
+
+			/*
+			 * Create "Award - Program Name & Element Code" VO with references to Award & 
+			 * Program VOs. 
+			 * */
+			for (Program programNameAndElementCode : programNamesAndElementCodes) {
+				this.programNameAndElementCodes.add(
+						new ProgramNameAndElementCode(programNameAndElementCode, award));
+			}
+
+			/*
+			 * Similarly, parse for Program Reference Codes.
+			 * */
+			List<Program> programReferenceCodes = parseProgramReferenceCodes(
+					nsfMetadata.getColumnNameToColumnIndex(),
+					row);
+
+			for (Program programReferenceCode : programReferenceCodes) {
+				this.programReferenceCodes.add(
+						new ProgramReferenceCode(programReferenceCode, award));
+			}
+
+			progressMonitor.worked(unitsWorked);
+			unitsWorked++;
+		}
 		
 		/*
 		 * Print all the parse errors.
@@ -329,7 +340,7 @@ public class NSFTableModelParser {
 		NSFFile nsfFile = new NSFFile(this.nsfFiles.getKeyGenerator(),
 									  nsfMetadata.getFileName(),
 									  nsfMetadata.getFileType(),
-									  nsfMetadata.getMd5Checksum());
+									  nsfMetadata.getMD5Checksum());
 		
 		NSFFile mergedNSFFile = this.nsfFiles.add(nsfFile);
 		return mergedNSFFile;
