@@ -63,19 +63,15 @@
 		    
 		   	 <menu type="break"/>	    
 		    <!-- Citation networks-->
-		    	<menu pid="edu.iu.scipolicy.database.isi.extract.network.citation.author.ISIExtractAuthorCitationNetworkAlgorithm"/>
-		   	<menu pid="edu.iu.scipolicy.database.isi.extract.network.citation.document.ISIDocumentCitationNetworkWithoutOuterNodes"/>
-		    	<menu pid="edu.iu.scipolicy.database.isi.extract.network.citation.document.ISIDocumentCitationNetworkWithOuterNodes"/>
+		    	<menu pid="edu.iu.scipolicy.database.isi.extract.network.citation.author.ISIExtractAuthorCitationNetworkAlgorithm"/>		   	<menu pid="edu.iu.scipolicy.database.isi.extract.network.citation.document.ISIDocumentCitationNetworkWithoutOuterNodes"/>		    	<menu pid="edu.iu.scipolicy.database.isi.extract.network.citation.document.ISIDocumentCitationNetworkWithOuterNodes"/>
 		    	<menu pid="edu.iu.scipolicy.database.isi.extract.network.citation.source.ISISourceCitationNetworkWithoutOuterNodes"/>
 		    	<menu pid="edu.iu.scipolicy.database.isi.extract.network.citation.source.ISISourceCitationNetworkWithOuterNodes"/>
 		    
 		    	<menu type="break"/>	    
 		    	<!-- Co-citation networks -->
-		    	<menu pid="edu.iu.scipolicy.database.isi.extract.network.cocitation.document.all"/>
 		    	<menu pid="edu.iu.scipolicy.database.isi.extract.network.cocitation.document.core"/>
-		    	<menu pid="edu.iu.scipolicy.database.isi.extract.network.cocitation.journal.all"/>
-		    	<menu pid="edu.iu.scipolicy.database.isi.extract.network.cocitation.journal.core"/>
-		    	<menu pid="edu.iu.scipolicy.database.isi.extract.network.cocitation.author.core"/> 
+		    	<menu pid="edu.iu.scipolicy.database.isi.extract.network.cocitation.document.all"/>			<menu pid="edu.iu.scipolicy.database.isi.extract.network.cocitation.journal.core"/>
+		    	<menu pid="edu.iu.scipolicy.database.isi.extract.network.cocitation.journal.all"/>		    	<menu pid="edu.iu.scipolicy.database.isi.extract.network.cocitation.author.core"/> 
 		    
 		    	<menu type="break"/>	    
 		    	<!-- Bibliographic coupling networks -->
