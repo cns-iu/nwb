@@ -3,7 +3,6 @@ group horizontal_bar_graph;
 
 header(boundingBoxLeft, boundingBoxBottom, boundingBoxRight,
 boundingBoxTop, sourceDataName, pageWidth, pageHeight) ::= <<
-
 %!PS-Adobe-2.0 EPSF-2.0
 %%BoundingBox: <boundingBoxLeft> <boundingBoxBottom> <boundingBoxRight> <boundingBoxTop>
 %%Title: Horizontal Bar Graph - <sourceDataName>
