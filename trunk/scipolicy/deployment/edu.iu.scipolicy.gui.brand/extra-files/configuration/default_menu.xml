@@ -232,13 +232,11 @@
 	        <menu type="break"/>	
 			<menu pid="edu.iu.nwb.analysis.hits.HITSAlgorithm"/>
 			<menu pid="edu.iu.nwb.analysis.pagerank"/>
-			<menu pid="edu.iu.nwb.analysis.pagerank.weighted.WeightedPagerank"/>
 		<menu type="break"/>			
-		</menu>
-		<menu name = "Weighted and Undirected" type="group">
 		</menu>
 		<menu name = "Weighted &amp;&amp; Directed" type="group">
 			<menu pid="edu.iu.nwb.analysis.hits.HITSAlgorithm"/>
+			<menu pid="edu.iu.nwb.analysis.pagerank.weighted.WeightedPagerank"/>
 		</menu>
 </menu> 
 
