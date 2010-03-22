@@ -54,12 +54,19 @@ public class Constants {
 	public static final double METADATA_PAGE_AREA_LOWER_LEFT_Y_IN_POINTS =
 		Legend.DEFAULT_LOWER_LEFT_Y_IN_POINTS;
 
+	public static final String COUNTRIES_SHAPEFILE_KEY = "Countries";
+	public static final String US_STATES_SHAPEFILE_KEY = "US States";
+
 	public static final Map<String, String> SHAPEFILES;
 	static {
 		// Values should correspond to .shp files in the shapefiles package
 		Map<String, String> t = new LinkedHashMap<String, String>();
-		t.put("Countries", "/edu/iu/scipolicy/visualization/geomaps/shapefiles/countries.shp");
-		t.put("US States", "/edu/iu/scipolicy/visualization/geomaps/shapefiles/st99_d00.shp");		
+		t.put(
+			COUNTRIES_SHAPEFILE_KEY,
+			"/edu/iu/scipolicy/visualization/geomaps/shapefiles/countries.shp");
+		t.put(
+			US_STATES_SHAPEFILE_KEY,
+			"/edu/iu/scipolicy/visualization/geomaps/shapefiles/st99_d00.shp");		
 		SHAPEFILES = Collections.unmodifiableMap(t);
 	}
 	

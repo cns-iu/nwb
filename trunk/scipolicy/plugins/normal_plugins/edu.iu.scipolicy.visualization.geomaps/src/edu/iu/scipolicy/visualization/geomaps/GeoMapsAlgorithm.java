@@ -37,11 +37,13 @@ public class GeoMapsAlgorithm implements Algorithm {
 
 	public static final String TEST_DATUM_PATH = "/edu/iu/scipolicy/visualization/geomaps/testing/25mostPopulousNationsWithGDPs.csv";
 
+	public static final boolean SHOULD_LET_USER_CHOOSE_PROJECTION = false;
+
 	private Data[] data;
 	private Dictionary<String, Object> parameters;
 	private AnnotationMode annotationMode;
+	// TODO: WTF?  public static?
 	public static LogService logger;
-
 	
 	public GeoMapsAlgorithm(
 			Data[] data,
@@ -68,7 +70,20 @@ public class GeoMapsAlgorithm implements Algorithm {
 			URL shapefileURL = getClass().getResource(shapefilePath);
 			
 			String featureNameKey = Constants.FEATURE_NAME_KEY.get(shapefileKey);
-			String projectionName = (String) parameters.get(PROJECTION_ID);
+
+			String projectionName;
+			if (SHOULD_LET_USER_CHOOSE_PROJECTION) {
+				projectionName = (String) parameters.get(PROJECTION_ID);
+			} else {
+				if (shapefileKey.equals(Constants.COUNTRIES_SHAPEFILE_KEY)) {
+					projectionName = Constants.ECKERT_IV_DISPLAY_NAME;
+				} else if (shapefileKey.equals(Constants.US_STATES_SHAPEFILE_KEY)) {
+					projectionName = Constants.ALBERS_EQUAL_AREA_DISPLAY_NAME;
+				} else {
+					projectionName = Constants.MERCATOR_DISPLAY_NAME;
+				}
+			}
+
 			String authorName = (String) parameters.get(AUTHOR_NAME_ID);
 			
 			ShapefileToPostScriptWriter postScriptWriter;

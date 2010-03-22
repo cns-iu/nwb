@@ -39,10 +39,14 @@ public class GeoMapsCirclesFactory extends GeoMapsAlgorithmFactory {
 		
 		mutator.add(GeoMapsAlgorithm.SHAPEFILE_ID,
 					new ArrayList<String>(Constants.SHAPEFILES.keySet()));
-		
-		mutator.add(GeoMapsAlgorithm.PROJECTION_ID,
+
+		if (GeoMapsAlgorithm.SHOULD_LET_USER_CHOOSE_PROJECTION) {
+			mutator.add(GeoMapsAlgorithm.PROJECTION_ID,
 				new ArrayList<String>(Constants.PROJECTIONS.keySet()));
-		
+		} else {
+			mutator.ignore(GeoMapsAlgorithm.PROJECTION_ID);
+		}
+
 		String[] numberColumnsForLatitude =
 			TableUtilities.getValidNumberColumnNamesInTable(table);		
 		swapFirstMatchToFront(numberColumnsForLatitude, LATITUDE_KEYS_TO_GUESS);		
