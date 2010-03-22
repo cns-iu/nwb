@@ -281,56 +281,58 @@
     <top_menu name="Visualization">
 	    <menu name="Statistical" type="group">
 	    </menu>
+	    
 	    <menu name="General" type="group">
-	         <menu pid="edu.iu.nwb.visualization.gnuplot"/>
-		 <menu pid="edu.iu.scipolicy.visualization.imageviewer.ImageViewerAlgorithm"/>
+	    	<menu pid="edu.iu.nwb.visualization.gnuplot"/>
+			<menu pid="edu.iu.scipolicy.visualization.imageviewer.ImageViewerAlgorithm"/>
 	    </menu>
+	    
 	    <menu name="Temporal" type="group">
 	         <menu pid="edu.iu.scipolicy.visualization.horizontalbargraph.HorizontalBarGraphAlgorithm"/>
 	    </menu>
+	    
 	    <menu name="Geospatial" type="group">
-		<menu pid="edu.iu.scipolicy.visualization.geomaps.GeoMapsCirclesFactory"/>
-		<menu pid="edu.iu.scipolicy.visualization.geomaps.GeoMapsRegionsFactory"/>
+			<menu pid="edu.iu.scipolicy.visualization.geomaps.GeoMapsCirclesFactory"/>
+			<menu pid="edu.iu.scipolicy.visualization.geomaps.GeoMapsRegionsFactory"/>
 	    </menu>
+	    
 	    <menu name="Topical" type="group">
+	    	<!-- <menu pid="edu.iu.scipolicy.references.map.MapReferences"/> -->
 	    </menu>
+	    
 	    <menu name="Networks" type="group">
-	    <menu pid="edu.iu.nwb.visualization.guess"/>
-	    <menu type="break"/>
-	    <!-- 
-		<menu type="break"/>
-		<menu pid="edu.iu.nwb.visualization.jungnetworklayout.JUNGCircleLayout"/>
-		-->
-	 	<menu type="break"/>
-		<menu pid="edu.iu.nwb.visualization.radialgraph.RadialGraph"/> 
-		<menu pid="edu.iu.nwb.visualization.prefuse.beta.radialgraph.RadialGraph"/>
-		<menu pid="edu.iu.nwb.visualization.prefuse.beta.treeview.TreeView"/>
-		<menu pid="edu.iu.nwb.visualization.prefuse.beta.treemap.TreeMap"/>
-		<!-- 
-		<menu pid="edu.iu.nwb.visualization.balloongraph.BalloongraphAlgorithm"/>
-		<menu pid="edu.iu.nwb.visualization.jungnetworklayout.JUNGKamadaKawaiLayout"/>
-		<menu pid="edu.iu.nwb.visualization.jungnetworklayout.JUNGFruchtermanReingoldLayout"/> 
-		-->
-		<menu pid="edu.iu.nwb.visualization.prefuse.beta.graphview.GraphView"/>
-		<menu pid="edu.iu.nwb.visualization.prefuse.beta.fruchtermanreingold.FruchtermanReingold"/>
-		<menu type="break"/>	
-	 	<menu pid="edu.iu.nwb.visualization.drl.VxOrdAlgorithm"/> 	
-		<menu pid="edu.iu.nwb.visualization.prefuse.beta.specified.Specified"/>
-		<menu type="break"/>
-		<menu pid="edu.iu.nwb.visualization.roundrussell.RoundRussellAlgorithm"/>
-		<menu type="break"/>
-		<!--  
-		<menu pid="edu.iu.nwb.visualization.jungnetworklayout.JUNGSpringLayout"/>
-		<menu pid="edu.iu.nwb.visualization.prefuse.alpha.smallworld.app.SmallWorld"/>
-		<menu type="break"/>
-		<menu pid="org.mediavirus.parvis.ParallelCoordinatesAlgorithm"/>
-		<menu type="break"/>
-		<menu pid="nwb.visualization.lanet"/>	
-		
-		 
-		 <menu type="break"/>
-		 <menu pid="edu.iu.scipolicy.references.map.MapReferences"/>
-		  -->
+	    	<menu pid="edu.iu.nwb.visualization.guess"/>
+	    	<menu type="break"/>
+		    <!-- 
+			<menu type="break"/>
+			<menu pid="edu.iu.nwb.visualization.jungnetworklayout.JUNGCircleLayout"/>
+			-->
+		 	<menu type="break"/>
+			<menu pid="edu.iu.nwb.visualization.radialgraph.RadialGraph"/> 
+			<menu pid="edu.iu.nwb.visualization.prefuse.beta.radialgraph.RadialGraph"/>
+			<menu pid="edu.iu.nwb.visualization.prefuse.beta.treeview.TreeView"/>
+			<menu pid="edu.iu.nwb.visualization.prefuse.beta.treemap.TreeMap"/>
+			<!-- 
+			<menu pid="edu.iu.nwb.visualization.balloongraph.BalloongraphAlgorithm"/>
+			<menu pid="edu.iu.nwb.visualization.jungnetworklayout.JUNGKamadaKawaiLayout"/>
+			<menu pid="edu.iu.nwb.visualization.jungnetworklayout.JUNGFruchtermanReingoldLayout"/> 
+			-->
+			<menu pid="edu.iu.nwb.visualization.prefuse.beta.graphview.GraphView"/>
+			<menu pid="edu.iu.nwb.visualization.prefuse.beta.fruchtermanreingold.FruchtermanReingold"/>
+			<menu type="break"/>	
+		 	<menu pid="edu.iu.nwb.visualization.drl.VxOrdAlgorithm"/> 	
+			<menu pid="edu.iu.nwb.visualization.prefuse.beta.specified.Specified"/>
+			<menu type="break"/>	
+			<menu pid="edu.iu.nwb.visualization.roundrussell.RoundRussellAlgorithm"/>	
+			<menu type="break"/>
+			<!--  
+			<menu pid="edu.iu.nwb.visualization.jungnetworklayout.JUNGSpringLayout"/>
+			<menu pid="edu.iu.nwb.visualization.prefuse.alpha.smallworld.app.SmallWorld"/>
+			<menu type="break"/>
+			<menu pid="org.mediavirus.parvis.ParallelCoordinatesAlgorithm"/>
+			<menu type="break"/>
+			<menu pid="nwb.visualization.lanet"/>	
+			  -->
 	    </menu>	
 	</top_menu>    
     <top_menu name="Help">      
