@@ -8,6 +8,7 @@ import java.util.Set;
 import java.util.regex.Pattern;
 
 import org.cishell.framework.algorithm.ProgressMonitor;
+import org.cishell.utilities.StringUtilities;
 import org.osgi.service.log.LogService;
 
 import prefuse.data.Graph;
@@ -82,7 +83,7 @@ public class GraphContainer {
 
 				// Trim each target.
 				for (int ii = 0; ii < splitTargetStringArray.length; ii++) {
-					splitTargetStringArray[ii] = splitTargetStringArray[ii].trim();
+					splitTargetStringArray[ii] = normalizeLabel(splitTargetStringArray[ii]);
 				}
 
 				for (int ii = splitTargetStringArray.length - 1; ii >= 0; ii--) {
@@ -149,6 +150,21 @@ public class GraphContainer {
 		}
 
 		return this.graph;
+	}
+
+	private static String normalizeLabel(String label) {
+		String[] parts = label.trim().split("\\s+");
+		for(int ii = 0; ii < parts.length; ii++) {
+			parts[ii] = capitalize(parts[ii]);
+		}
+		return StringUtilities.implodeStringArray(parts, " ");
+	}
+
+	private static String capitalize(String s) {
+		if(s.length() <= 1) {
+			return s.toUpperCase();
+		}
+		return s.substring(0, 1).toUpperCase() + s.substring(1).toLowerCase();
 	}
 
 	private Graph buildDirectedGraph(String sourceColumnName, String[] targetColumnNames,
@@ -260,7 +276,7 @@ public class GraphContainer {
 
 		for (int ii = 0; ii < strings.length; ii++) {
 			String rawString = strings[ii];
-			String trimmedString = rawString.trim();
+			String trimmedString = normalizeLabel(rawString);
 
 			if (!"".equals(trimmedString)) {
 				cleanedStrings.add(trimmedString);
