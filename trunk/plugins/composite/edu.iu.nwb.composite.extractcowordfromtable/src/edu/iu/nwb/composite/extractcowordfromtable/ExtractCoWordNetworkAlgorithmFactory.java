@@ -15,6 +15,7 @@ import org.cishell.service.conversion.DataConversionService;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.InvalidSyntaxException;
 import org.osgi.framework.ServiceReference;
+import org.osgi.service.component.ComponentContext;
 import org.osgi.service.log.LogService;
 import org.osgi.service.metatype.AttributeDefinition;
 import org.osgi.service.metatype.ObjectClassDefinition;
@@ -173,6 +174,12 @@ public class ExtractCoWordNetworkAlgorithmFactory implements AlgorithmFactory, P
 		
 		return newObjectClassDefinition;
 	}
+	
+	protected void activate(ComponentContext ctxt) {
+        this.log = (LogService) ctxt.locateService("LOG");
+        bContext = ctxt.getBundleContext();
+    }
+    protected void deactivate(ComponentContext ctxt) {}
 
     public Algorithm createAlgorithm(Data[] data, Dictionary parameters, CIShellContext context) {
     	String filter = "";
