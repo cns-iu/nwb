@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<component name="edu.iu.cns.tool.metadata_report.MetadataReporterAlgorithm.component" immediate="true">
+	<implementation class="edu.iu.cns.tool.metadata_report.MetadataReporterAlgorithmFactory"/>
+	<properties entry="OSGI-INF/algorithm.properties"/>
+	<reference name="LOG" interface="org.osgi.service.log.LogService"/>
+	
+	<service>
+		<provide interface=
+			"org.cishell.framework.algorithm.AlgorithmFactory"/>
+	</service>
+</component>
