@@ -294,13 +294,16 @@
 			<menu pid="edu.iu.scipolicy.visualization.geomaps.GeoMapsRegionsFactory"/>
 	    </menu>
 	    
+	    <!-- Keep this commented out unless you're going to put something in it.
+	         Declaring an empty menu in this file seems to put nothing on the menu.
+	         Furthermore, if a plugin's properties file declares a menu_path inside such
+	         a menu, the menu manager gives errors on tool startup.
 	    <menu name="Topical" type="group">
-	    	<!-- 
 			<menu pid="edu.iu.scipolicy.visualization.scimap.journals.ScienceMapAlgorithm"/>
 			<menu pid="edu.iu.scipolicy.visualization.scimap.fields.ScienceMapAlgorithm"/>
 			<menu pid="edu.iu.scipolicy.visualization.scimap.references.MapReferences"/>
-			-->
 	    </menu>
+	    -->
 	    
 	    <menu name="Networks" type="group">
 	    	<menu pid="edu.iu.nwb.visualization.guess"/>
