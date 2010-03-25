@@ -2,6 +2,7 @@ package edu.iu.scipolicy.visualization.horizontalbargraph;
 
 import java.awt.Color;
 import java.util.Collection;
+import java.util.List;
 
 import org.antlr.stringtemplate.StringTemplate;
 import org.antlr.stringtemplate.StringTemplateGroup;
@@ -24,6 +25,7 @@ public class PostScriptCreator {
 	public static final int YEAR_LABEL_FONT_SIZE = 25;
 	public static final int TICK_SIZE = 5;
 	public static final Color RGB_COLOR = new Color(0, 0, 255);
+	public static final String BAR_LABEL_FONT_FAMILY = "Garamond";
 
 	public static final int DECIMAL_PLACE_COUNT = 5;
 
@@ -31,7 +33,8 @@ public class PostScriptCreator {
 	private BasicLayout layout;
 	private String sourceDataName;
 	private RecordCollection recordCollection;
-	private Collection<Bar> bars;
+	private List<Bar> bars;
+	private double barLabelFontSize;
 	private PageOrientation pageOrientation;
 
 	public PostScriptCreator(
@@ -45,7 +48,9 @@ public class PostScriptCreator {
 		this.recordCollection = recordCollection;
 		Collection<Record> records = recordCollection.getSortedRecords();
 		this.bars = layout.createBars(records);
-		this.pageOrientation = layout.determinePageOrientation(bars);
+		this.barLabelFontSize = this.layout.calculateLabelFontScale(bars);
+		System.err.println("barLabelFontSize: " + barLabelFontSize);
+		this.pageOrientation = layout.determinePageOrientation(bars, this.barLabelFontSize);
 	}
 
 	public String toString() {
@@ -55,7 +60,8 @@ public class PostScriptCreator {
 		String yearLabelProperties = createYearLabelProperties();
 		String yearLabelsWithVerticalTicks =
 			createYearLabelsWithVerticalTicks();
-		String postScriptRecords = createRecords();
+		String barLabelProperties = createBarProperties();
+		String postScriptRecords = createVisualBars();
 
 		return
 			header +
@@ -63,6 +69,7 @@ public class PostScriptCreator {
 			functions +
 			yearLabelProperties +
 			yearLabelsWithVerticalTicks +
+			barLabelProperties +
 			postScriptRecords +
 			"\r\n";
 		/* TODO: Really this should just pass a bunch of stuff into one
@@ -92,7 +99,7 @@ public class PostScriptCreator {
 	private String createTransformations() {
 		double totalWidth = this.layout.calculateTotalWidthWithoutMargins();
 		double totalHeight =
-			this.layout.calculateTotalHeightWithoutMargins(this.bars);
+			this.layout.calculateTotalHeightWithoutMargins(this.bars, this.barLabelFontSize);
 
 		StringTemplate transformationsTemplate =
 			this.templateGroup.getInstanceOf("transformations");
@@ -155,7 +162,7 @@ public class PostScriptCreator {
 		DateTime endDate = this.recordCollection.getMaximumDate();
 		int endYear = endDate.getYear();
 		double totalHeight =
-			this.layout.calculateTotalHeightWithoutMargins(this.bars);
+			this.layout.calculateTotalHeightWithoutMargins(this.bars, this.barLabelFontSize);
 		StringBuffer yearLabelsWithVerticalTicks = new StringBuffer();
 
 		for (
@@ -168,6 +175,20 @@ public class PostScriptCreator {
 		}
 
 		return yearLabelsWithVerticalTicks.toString();
+	}
+
+	private String createBarProperties() {
+		StringTemplate undoYearLabelPropertiesTemplate =
+			this.templateGroup.getInstanceOf("undoYearLabelProperties");
+		undoYearLabelPropertiesTemplate.setAttribute("fontFamily", BAR_LABEL_FONT_FAMILY);
+		undoYearLabelPropertiesTemplate.setAttribute(
+			"inverseFontSize", 1.0 / YEAR_LABEL_FONT_SIZE);
+
+		StringTemplate barPropertiesTemplate = this.templateGroup.getInstanceOf("barProperties");
+		barPropertiesTemplate.setAttribute("fontFamily", BAR_LABEL_FONT_FAMILY);
+		barPropertiesTemplate.setAttribute("fontSize", this.barLabelFontSize);
+
+		return undoYearLabelPropertiesTemplate.toString() + barPropertiesTemplate.toString();
 	}
 
 	private String createYearLabelWithVerticalTick(
@@ -191,8 +212,8 @@ public class PostScriptCreator {
 		return yearLabelWithVerticalTickTemplate.toString();
 	}
 
-	private String createRecords() {
-		Cursor cursor = this.layout.createCursor();
+	private String createVisualBars() {
+		Cursor cursor = this.layout.createCursor(this.barLabelFontSize);
 		StringBuffer records = new StringBuffer();
 
 		for (Bar bar : this.bars) {
@@ -207,7 +228,7 @@ public class PostScriptCreator {
 		double barX = NumberUtilities.roundToNDecimalPlaces(
 			this.layout.adjustXForStartArrow(bar), DECIMAL_PLACE_COUNT);
 		double barY = NumberUtilities.roundToNDecimalPlaces(
-			this.layout.positionBar(bar, cursor), DECIMAL_PLACE_COUNT);
+			this.layout.positionBar(bar, cursor, this.barLabelFontSize), DECIMAL_PLACE_COUNT);
 		double barWidth = NumberUtilities.roundToNDecimalPlaces(
 			this.layout.adjustWidthForArrows(bar), DECIMAL_PLACE_COUNT);
 		double barHeight = NumberUtilities.roundToNDecimalPlaces(
@@ -232,8 +253,7 @@ public class PostScriptCreator {
 		String rightArrowPostScript = "";
 		
 		if (bar.continuesLeft()) {
-			Arrow leftArrow =
-				this.layout.createLeftArrow(bar, barX, barY, barWidth);
+			Arrow leftArrow = this.layout.createLeftArrow(bar, barX, barY, barWidth);
 
 			StringTemplate leftArrowTemplate = getArrowStringTemplate(bar);
 			leftArrowTemplate.setAttribute("startX", leftArrow.startX);
@@ -247,8 +267,7 @@ public class PostScriptCreator {
 		}
 		
 		if (bar.continuesRight()) {
-			Arrow rightArrow =
-				this.layout.createRightArrow(bar, barX, barY, barWidth);
+			Arrow rightArrow = this.layout.createRightArrow(bar, barX, barY, barWidth);
 			
 			StringTemplate rightArrowTemplate = getArrowStringTemplate(bar);;
 

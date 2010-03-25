@@ -2,8 +2,10 @@ package edu.iu.scipolicy.visualization.horizontalbargraph.layout;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.List;
 
-import org.cishell.utilities.ArrayUtilities;
 import org.joda.time.DateTime;
 
 import edu.iu.scipolicy.visualization.horizontalbargraph.PageOrientation;
@@ -32,6 +34,8 @@ public class BasicLayout {
 	public static final double BAR_ARROW_WIDTH_FACTOR = 0.005;
 	public static final double SPACE_BETWEEN_BARS = 20.0;
 
+	public static final double BAR_INDEX_PERCENTAGE_TO_USE_FOR_LABEL_FONT_SIZE = 0.4;
+
 	private DateTime startDate;
 	private DateTime endDate;
 	private double barHeightScale;
@@ -45,9 +49,10 @@ public class BasicLayout {
 		this.barHeightScale = MINIMUM_BAR_HEIGHT / minimumAmountPerUnitOfTime;
 	}
 
-	public PageOrientation determinePageOrientation(Collection<Bar> bars) {
+	public PageOrientation determinePageOrientation(
+			Collection<Bar> bars, double barLabelFontSize) {
 		double visualizationWidth = calculateTotalWidthWithMargins();
-		double visualizationHeight = calculateTotalHeightWithMargins(bars);
+		double visualizationHeight = calculateTotalHeightWithMargins(bars, barLabelFontSize);
 		double visualizationRatio = calculateVisualizationRatio(
 			visualizationHeight, visualizationWidth);
 
@@ -139,6 +144,11 @@ public class BasicLayout {
 		return bar.getWidth() - totalArrowsWidth;
 	}
 
+	public double calculateSpaceBetweenBars(double barLabelFontSize) {
+		// TODO:
+		return SPACE_BETWEEN_BARS + barLabelFontSize;
+	}
+
 	public double calculateHeight(Record record) {
 		return record.getAmountPerUnitOfTime() * this.barHeightScale;
 	}
@@ -172,7 +182,8 @@ public class BasicLayout {
 			calculateHorizontalMargin(totalWidthWithoutMargins);
 	}
 
-	public double calculateTotalHeightWithoutMargins(Collection<Bar> bars) {
+	public double calculateTotalHeightWithoutMargins(
+			Collection<Bar> bars, double barLabelFontSize) {
 		double barsHeight = 0.0;
 
 		for (Bar bar : bars) {
@@ -184,40 +195,49 @@ public class BasicLayout {
 		}
 
 		double spaceBetweenVisualElements =
-			bars.size() * (SPACE_BETWEEN_BARS + 1);
+			bars.size() * (calculateSpaceBetweenBars(barLabelFontSize) + 1);
 
 		return barsHeight + spaceBetweenVisualElements;
 	}
 
-	public double calculateTotalHeightWithMargins(Collection<Bar> bars) {
+	public double calculateTotalHeightWithMargins(Collection<Bar> bars, double barLabelFontSize) {
 		double totalHeightWithoutMargins =
-			calculateTotalHeightWithoutMargins(bars);
+			calculateTotalHeightWithoutMargins(bars, barLabelFontSize);
 
 		return
 			totalHeightWithoutMargins +
 			calculateVerticalMargin(totalHeightWithoutMargins);
 	}
 
-	public Cursor createCursor() {
-		return new BasicCursor(SPACE_BETWEEN_BARS);
+	public Cursor createCursor(double barLabelFontSize) {
+		return new BasicCursor(calculateSpaceBetweenBars(barLabelFontSize));
 	}
 
-	public double positionBar(Bar bar, Cursor cursor) {
+	public double positionBar(Bar bar, Cursor cursor, double barLabelFontSize) {
 		double arrowHeightAdjustment = 0.0;
 
 		if (bar.continuesLeft() || bar.continuesRight()) {
 			arrowHeightAdjustment = BAR_ARROW_HEIGHT;
 		}
 
-		cursor.move(SPACE_BETWEEN_BARS + arrowHeightAdjustment);
+		cursor.move(calculateSpaceBetweenBars(barLabelFontSize) + arrowHeightAdjustment);
 		double position = cursor.getPosition();
 			cursor.move(bar.getHeight() + arrowHeightAdjustment);
 
 		return position;
 	}
+
+	public double calculateLabelFontScale(List<Bar> bars) {
+		List<Bar> sortedCopy = new ArrayList<Bar>(bars);
+		Collections.sort(sortedCopy, new BarHeightComparator());
+		int barIndexToUseForLabelFontHeight =
+			(int)Math.floor(sortedCopy.size() * BAR_INDEX_PERCENTAGE_TO_USE_FOR_LABEL_FONT_SIZE);
+
+		return sortedCopy.get(barIndexToUseForLabelFontHeight).getHeight();
+	}
 	
-	public Collection<Bar> createBars(Collection<Record> records) {
-		Collection<Bar> bars = new ArrayList<Bar>();
+	public List<Bar> createBars(Collection<Record> records) {
+		List<Bar> bars = new ArrayList<Bar>();
 
 		for (Record record : records) {
 			bars.add(createBar(record));
@@ -292,6 +312,21 @@ public class BasicLayout {
 		return
 			Math.max(visualizationWidth, visualizationHeight) /
 			Math.min(visualizationWidth, visualizationHeight);
+	}
+
+	private class BarHeightComparator implements Comparator<Bar> {
+		public int compare(Bar bar1, Bar bar2) {
+			double bar1Height = bar1.getHeight();
+			double bar2Height = bar2.getHeight();
+
+			if (bar1Height > bar2Height) {
+				return 1;
+			} else if (bar1Height < bar2Height) {
+				return -1;
+			} else {
+				return 0;
+			}
+		}
 	}
 	
 	public class Arrow {

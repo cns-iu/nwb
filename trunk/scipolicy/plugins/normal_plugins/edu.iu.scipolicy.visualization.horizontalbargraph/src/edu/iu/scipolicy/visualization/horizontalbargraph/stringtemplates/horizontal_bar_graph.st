@@ -1,8 +1,7 @@
 group horizontal_bar_graph;
 
 
-header(boundingBoxLeft, boundingBoxBottom, boundingBoxRight,
-boundingBoxTop, sourceDataName, pageWidth, pageHeight) ::= <<
+header(boundingBoxLeft, boundingBoxBottom, boundingBoxRight, boundingBoxTop, sourceDataName, pageWidth, pageHeight) ::= <<
 %!PS-Adobe-2.0 EPSF-2.0
 %%BoundingBox: <boundingBoxLeft> <boundingBoxBottom> <boundingBoxRight> <boundingBoxTop>
 %%Title: Horizontal Bar Graph - <sourceDataName>
@@ -109,11 +108,25 @@ yearLabelProperties(red, green, blue, lineWidth, fontFamily, fontSize) ::= <<
 >>
 
 
+undoYearLabelProperties(fontFamily, inverseFontSize) ::= <<
+
+/<fontFamily> findfont <inverseFontSize> scalefont setfont
+
+>>
+
+
 yearLabelWithVerticalTick(year, x, tickSize, height) ::= <<
 
 0 setgray
 (<year>) <x> <tickSize> tickLabel
 <x> <tickSize> <height> vertical
+
+>>
+
+
+barProperties(fontFamily, fontSize) ::= <<
+
+/<fontFamily> findfont <fontSize> scalefont setfont
 
 >>
 
