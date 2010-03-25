@@ -2,8 +2,6 @@ package edu.iu.scipolicy.visualization.horizontalbargraph.layout;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Collections;
-import java.util.Comparator;
 import java.util.List;
 
 import org.joda.time.DateTime;
@@ -22,12 +20,14 @@ public class BasicLayout {
 	public static final double MARGIN_HEIGHT_FACTOR = 0.10;
 
 	public static final double POINTS_PER_INCH = 72.0;
-	public static final double POINTS_PER_DAY = 144.0 / 365.25;
+	public static final double DAYS_PER_YEAR = 365.25;
+	public static final double POINTS_PER_DAY = 144.0 / DAYS_PER_YEAR;
 
-	public static final int MAXIMUM_CHARACTER_COUNT = 50;
-	public static final double POINTS_PER_EM = 20.0;
-	public static final double TOTAL_TEXT_WIDTH_IN_POINTS =
-		MAXIMUM_CHARACTER_COUNT * POINTS_PER_EM;
+	public static final int MAXIMUM_BAR_LABEL_CHARACTER_COUNT = 50;
+	public static final double POINTS_PER_EM_SCALE = 1.1;
+//	public static final double POINTS_PER_EM = 20.0;
+//	public static final double TOTAL_TEXT_WIDTH_IN_POINTS =
+//		MAXIMUM_BAR_LABEL_CHARACTER_COUNT * POINTS_PER_EM;
 
 	public static final double MINIMUM_BAR_HEIGHT = 3.0;
 	public static final double BAR_ARROW_HEIGHT = 6.0;
@@ -39,20 +39,33 @@ public class BasicLayout {
 	private DateTime startDate;
 	private DateTime endDate;
 	private double barHeightScale;
+	private double yearLabelFontSize;
+	private double barLabelFontSize;
 
 	public BasicLayout(
 			DateTime startDate,
 			DateTime endDate,
-			double minimumAmountPerUnitOfTime) {
+			double minimumAmountPerUnitOfTime,
+			double yearLabelFontSize,
+			double barLabelFontSize) {
 		this.startDate = startDate;
 		this.endDate = endDate;
 		this.barHeightScale = MINIMUM_BAR_HEIGHT / minimumAmountPerUnitOfTime;
+		this.yearLabelFontSize = yearLabelFontSize;
+		this.barLabelFontSize = barLabelFontSize;
 	}
 
-	public PageOrientation determinePageOrientation(
-			Collection<Bar> bars, double barLabelFontSize) {
+	public double getYearLabelFontSize() {
+		return this.yearLabelFontSize;
+	}
+
+	public double getBarLabelFontSize() {
+		return this.barLabelFontSize;
+	}
+
+	public PageOrientation determinePageOrientation(Collection<Bar> bars) {
 		double visualizationWidth = calculateTotalWidthWithMargins();
-		double visualizationHeight = calculateTotalHeightWithMargins(bars, barLabelFontSize);
+		double visualizationHeight = calculateTotalHeightWithMargins(bars);
 		double visualizationRatio = calculateVisualizationRatio(
 			visualizationHeight, visualizationWidth);
 
@@ -62,16 +75,16 @@ public class BasicLayout {
 					(PAGE_WIDTH * POINTS_PER_INCH) / visualizationWidth;
 
 				return new PageOrientation(
-					PageOrientation.PageOrientationType.PORTRAIT, scale);
+					PageOrientation.PageOrientationType.PORTRAIT, scale, this);
 			} else if (visualizationHeight < visualizationWidth) {
 				double scale =
 					(PAGE_WIDTH * POINTS_PER_INCH) / visualizationHeight;
 
 				return new PageOrientation(
-					PageOrientation.PageOrientationType.LANDSCAPE, scale);
+					PageOrientation.PageOrientationType.LANDSCAPE, scale, this);
 			} else {
 				return new PageOrientation(
-					PageOrientation.PageOrientationType.PORTRAIT, 1.0);
+					PageOrientation.PageOrientationType.PORTRAIT, 1.0, this);
 			}
 		} else if (PAGE_HEIGHT_TO_WIDTH_RATIO < visualizationRatio) {
 			if (visualizationHeight > visualizationWidth) {
@@ -79,20 +92,20 @@ public class BasicLayout {
 					(PAGE_HEIGHT * POINTS_PER_INCH) / visualizationHeight;
 
 				return new PageOrientation(
-					PageOrientation.PageOrientationType.PORTRAIT, scale);
+					PageOrientation.PageOrientationType.PORTRAIT, scale, this);
 			} else if (visualizationHeight < visualizationWidth) {
 				double scale =
 					(PAGE_HEIGHT * POINTS_PER_INCH) / visualizationWidth;
 
 				return new PageOrientation(
-					PageOrientation.PageOrientationType.LANDSCAPE, scale);
+					PageOrientation.PageOrientationType.LANDSCAPE, scale, this);
 			} else {
 				return new PageOrientation(
-					PageOrientation.PageOrientationType.PORTRAIT, 1.0);
+					PageOrientation.PageOrientationType.PORTRAIT, 1.0, this);
 			}
 		} else {
 			return new PageOrientation(
-				PageOrientation.PageOrientationType.PORTRAIT, 1.0);
+				PageOrientation.PageOrientationType.PORTRAIT, 1.0, this);
 		}
 	}
 
@@ -104,13 +117,15 @@ public class BasicLayout {
 		return totalHeightWithoutMargins * MARGIN_HEIGHT_FACTOR * 2.0;
 	}
 
+	public double calculatePointsPerDay() {
+		return POINTS_PER_DAY;
+	}
+
 	public double calculateX(DateTime date) {
 		int timeBetween = UnitOfTime.DAYS.timeBetween(this.startDate, date);
 
-		return timeBetween * POINTS_PER_DAY;
-	}
-
-	// public double 
+		return timeBetween * calculatePointsPerDay();
+	} 
 
 	public double adjustXForStartArrow(Bar bar) {
 		if (bar.continuesLeft()) {
@@ -144,8 +159,15 @@ public class BasicLayout {
 		return bar.getWidth() - totalArrowsWidth;
 	}
 
+	public double calculatePointsPerEm(double fontSize) {
+		return fontSize * POINTS_PER_EM_SCALE;
+	}
+
+	public double calculateTotalTextWidth(double fontSize, int characterCount) {
+		return calculatePointsPerEm(fontSize) * characterCount;
+	}
+
 	public double calculateSpaceBetweenBars(double barLabelFontSize) {
-		// TODO:
 		return SPACE_BETWEEN_BARS + barLabelFontSize;
 	}
 
@@ -171,7 +193,9 @@ public class BasicLayout {
 	public double calculateTotalWidthWithoutMargins() {
 		double endDateX = calculateX(this.endDate);
 
-		return TOTAL_TEXT_WIDTH_IN_POINTS + endDateX;
+		return
+			calculateTotalTextWidth(this.barLabelFontSize, MAXIMUM_BAR_LABEL_CHARACTER_COUNT) +
+			endDateX;
 	}
 
 	public double calculateTotalWidthWithMargins() {
@@ -182,8 +206,7 @@ public class BasicLayout {
 			calculateHorizontalMargin(totalWidthWithoutMargins);
 	}
 
-	public double calculateTotalHeightWithoutMargins(
-			Collection<Bar> bars, double barLabelFontSize) {
+	public double calculateTotalHeightWithoutMargins(Collection<Bar> bars) {
 		double barsHeight = 0.0;
 
 		for (Bar bar : bars) {
@@ -195,14 +218,13 @@ public class BasicLayout {
 		}
 
 		double spaceBetweenVisualElements =
-			bars.size() * (calculateSpaceBetweenBars(barLabelFontSize) + 1);
+			bars.size() * (calculateSpaceBetweenBars(this.barLabelFontSize) + 1);
 
 		return barsHeight + spaceBetweenVisualElements;
 	}
 
-	public double calculateTotalHeightWithMargins(Collection<Bar> bars, double barLabelFontSize) {
-		double totalHeightWithoutMargins =
-			calculateTotalHeightWithoutMargins(bars, barLabelFontSize);
+	public double calculateTotalHeightWithMargins(Collection<Bar> bars) {
+		double totalHeightWithoutMargins = calculateTotalHeightWithoutMargins(bars);
 
 		return
 			totalHeightWithoutMargins +
@@ -213,28 +235,28 @@ public class BasicLayout {
 		return new BasicCursor(calculateSpaceBetweenBars(barLabelFontSize));
 	}
 
-	public double positionBar(Bar bar, Cursor cursor, double barLabelFontSize) {
+	public double positionBar(Bar bar, Cursor cursor) {
 		double arrowHeightAdjustment = 0.0;
 
 		if (bar.continuesLeft() || bar.continuesRight()) {
 			arrowHeightAdjustment = BAR_ARROW_HEIGHT;
 		}
 
-		cursor.move(calculateSpaceBetweenBars(barLabelFontSize) + arrowHeightAdjustment);
+		cursor.move(calculateSpaceBetweenBars(this.barLabelFontSize) + arrowHeightAdjustment);
 		double position = cursor.getPosition();
 			cursor.move(bar.getHeight() + arrowHeightAdjustment);
 
 		return position;
 	}
 
-	public double calculateLabelFontScale(List<Bar> bars) {
-		List<Bar> sortedCopy = new ArrayList<Bar>(bars);
-		Collections.sort(sortedCopy, new BarHeightComparator());
-		int barIndexToUseForLabelFontHeight =
-			(int)Math.floor(sortedCopy.size() * BAR_INDEX_PERCENTAGE_TO_USE_FOR_LABEL_FONT_SIZE);
-
-		return sortedCopy.get(barIndexToUseForLabelFontHeight).getHeight();
-	}
+//	public double calculateLabelFontScale(List<Bar> bars) {
+//		List<Bar> sortedCopy = new ArrayList<Bar>(bars);
+//		Collections.sort(sortedCopy, new BarHeightComparator());
+//		int barIndexToUseForLabelFontHeight =
+//			(int)Math.floor(sortedCopy.size() * BAR_INDEX_PERCENTAGE_TO_USE_FOR_LABEL_FONT_SIZE);
+//
+//		return sortedCopy.get(barIndexToUseForLabelFontHeight).getHeight();
+//	}
 	
 	public List<Bar> createBars(Collection<Record> records) {
 		List<Bar> bars = new ArrayList<Bar>();
@@ -250,9 +272,9 @@ public class BasicLayout {
 		String trimmedLabel = record.getLabel().trim();
 		String label = trimmedLabel;
 		
-		if (trimmedLabel.length() > MAXIMUM_CHARACTER_COUNT) {
+		if (trimmedLabel.length() > MAXIMUM_BAR_LABEL_CHARACTER_COUNT) {
 			label =
-				trimmedLabel.substring(0, MAXIMUM_CHARACTER_COUNT - 3) + "...";
+				trimmedLabel.substring(0, MAXIMUM_BAR_LABEL_CHARACTER_COUNT - 3) + "...";
 		}
 		
 		DateTime recordStartDate = record.getStartDate();
@@ -314,20 +336,20 @@ public class BasicLayout {
 			Math.min(visualizationWidth, visualizationHeight);
 	}
 
-	private class BarHeightComparator implements Comparator<Bar> {
-		public int compare(Bar bar1, Bar bar2) {
-			double bar1Height = bar1.getHeight();
-			double bar2Height = bar2.getHeight();
-
-			if (bar1Height > bar2Height) {
-				return 1;
-			} else if (bar1Height < bar2Height) {
-				return -1;
-			} else {
-				return 0;
-			}
-		}
-	}
+//	private class BarHeightComparator implements Comparator<Bar> {
+//		public int compare(Bar bar1, Bar bar2) {
+//			double bar1Height = bar1.getHeight();
+//			double bar2Height = bar2.getHeight();
+//
+//			if (bar1Height > bar2Height) {
+//				return 1;
+//			} else if (bar1Height < bar2Height) {
+//				return -1;
+//			} else {
+//				return 0;
+//			}
+//		}
+//	}
 	
 	public class Arrow {
 		public double startX;

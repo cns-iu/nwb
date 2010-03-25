@@ -35,6 +35,8 @@ public class HorizontalBarGraphAlgorithm implements Algorithm {
 	public static final String END_DATE_FIELD_ID = "end_date";
 	public static final String SIZE_BY_FIELD_ID = "size_by";
 	public static final String DATE_FORMAT_FIELD_ID = "date_format";
+	public static final String YEAR_LABEL_FONT_SIZE_FIELD_ID = "year_label_font_size";
+	public static final String BAR_LABEL_FONT_SIZE_FIELD_ID = "bar_label_font_size";
 
 	public static final String POST_SCRIPT_MIME_TYPE = "file:text/ps";
 	public static final String EPS_FILE_EXTENSION = "eps";
@@ -66,6 +68,8 @@ public class HorizontalBarGraphAlgorithm implements Algorithm {
     private String amountKey;
     private String startDateFormat;
     private String endDateFormat;
+    private double yearLabelFontSize;
+    private double barLabelFontSize;
     
     private LogService logger;
     
@@ -82,6 +86,10 @@ public class HorizontalBarGraphAlgorithm implements Algorithm {
         this.amountKey = (String)parameters.get(SIZE_BY_FIELD_ID);
         this.startDateFormat = (String)parameters.get(DATE_FORMAT_FIELD_ID);
         this.endDateFormat = (String)parameters.get(DATE_FORMAT_FIELD_ID);
+        this.yearLabelFontSize =
+        	((Double)parameters.get(YEAR_LABEL_FONT_SIZE_FIELD_ID)).doubleValue();
+        this.barLabelFontSize =
+        	((Double)parameters.get(BAR_LABEL_FONT_SIZE_FIELD_ID)).doubleValue();
         
         this.logger =
         	(LogService)ciShellContext.getService(LogService.class.getName());
@@ -142,7 +150,9 @@ public class HorizontalBarGraphAlgorithm implements Algorithm {
     	BasicLayout layout = new BasicLayout(
     		startDate,
     		endDate,
-    		minimumAmountPerUnitOfTime);
+    		minimumAmountPerUnitOfTime,
+    		this.yearLabelFontSize,
+    		this.barLabelFontSize);
     	PostScriptCreator postScriptCreator = new PostScriptCreator(
     		horizontalBarGraphGroup,
     		layout,

@@ -26,7 +26,7 @@ public class PostScriptCreator {
 	public static final int TICK_SIZE = 5;
 	public static final Color RGB_COLOR = new Color(0, 0, 255);
 	public static final String BAR_LABEL_FONT_FAMILY = "Garamond";
-
+	public static final int YEAR_CHARACTER_COUNT = 4;
 	public static final int DECIMAL_PLACE_COUNT = 5;
 
 	private StringTemplateGroup templateGroup;
@@ -34,7 +34,7 @@ public class PostScriptCreator {
 	private String sourceDataName;
 	private RecordCollection recordCollection;
 	private List<Bar> bars;
-	private double barLabelFontSize;
+//	private double barLabelFontSize;
 	private PageOrientation pageOrientation;
 
 	public PostScriptCreator(
@@ -48,9 +48,8 @@ public class PostScriptCreator {
 		this.recordCollection = recordCollection;
 		Collection<Record> records = recordCollection.getSortedRecords();
 		this.bars = layout.createBars(records);
-		this.barLabelFontSize = this.layout.calculateLabelFontScale(bars);
-		System.err.println("barLabelFontSize: " + barLabelFontSize);
-		this.pageOrientation = layout.determinePageOrientation(bars, this.barLabelFontSize);
+//		this.barLabelFontSize = this.layout.calculateLabelFontScale(bars);
+		this.pageOrientation = layout.determinePageOrientation(bars);
 	}
 
 	public String toString() {
@@ -99,7 +98,7 @@ public class PostScriptCreator {
 	private String createTransformations() {
 		double totalWidth = this.layout.calculateTotalWidthWithoutMargins();
 		double totalHeight =
-			this.layout.calculateTotalHeightWithoutMargins(this.bars, this.barLabelFontSize);
+			this.layout.calculateTotalHeightWithoutMargins(this.bars);
 
 		StringTemplate transformationsTemplate =
 			this.templateGroup.getInstanceOf("transformations");
@@ -146,13 +145,9 @@ public class PostScriptCreator {
 		yearLabelPropertiesTemplate.setAttribute(
 			"blue", NumberUtilities.convertToDecimalNotation(blue));
 		yearLabelPropertiesTemplate.setAttribute(
-			"lineWidth",
-			NumberUtilities.convertToDecimalNotation(
-				YEAR_TICK_LINE_LINE_WIDTH));
-		yearLabelPropertiesTemplate.setAttribute(
-			"fontFamily", YEAR_LABEL_FONT_FAMILY);
-		yearLabelPropertiesTemplate.setAttribute(
-			"fontSize", YEAR_LABEL_FONT_SIZE);
+			"lineWidth", NumberUtilities.convertToDecimalNotation(YEAR_TICK_LINE_LINE_WIDTH));
+		yearLabelPropertiesTemplate.setAttribute("fontFamily", YEAR_LABEL_FONT_FAMILY);
+		yearLabelPropertiesTemplate.setAttribute("fontSize", this.layout.getYearLabelFontSize());
 
 		return yearLabelPropertiesTemplate.toString();
 	}
@@ -161,8 +156,7 @@ public class PostScriptCreator {
 		DateTime startDate = this.recordCollection.getMinimumDate();
 		DateTime endDate = this.recordCollection.getMaximumDate();
 		int endYear = endDate.getYear();
-		double totalHeight =
-			this.layout.calculateTotalHeightWithoutMargins(this.bars, this.barLabelFontSize);
+		double totalHeight = this.layout.calculateTotalHeightWithoutMargins(this.bars);
 		StringBuffer yearLabelsWithVerticalTicks = new StringBuffer();
 
 		for (
@@ -186,7 +180,7 @@ public class PostScriptCreator {
 
 		StringTemplate barPropertiesTemplate = this.templateGroup.getInstanceOf("barProperties");
 		barPropertiesTemplate.setAttribute("fontFamily", BAR_LABEL_FONT_FAMILY);
-		barPropertiesTemplate.setAttribute("fontSize", this.barLabelFontSize);
+		barPropertiesTemplate.setAttribute("fontSize", this.layout.getBarLabelFontSize());
 
 		return undoYearLabelPropertiesTemplate.toString() + barPropertiesTemplate.toString();
 	}
@@ -213,7 +207,7 @@ public class PostScriptCreator {
 	}
 
 	private String createVisualBars() {
-		Cursor cursor = this.layout.createCursor(this.barLabelFontSize);
+		Cursor cursor = this.layout.createCursor(this.layout.getBarLabelFontSize());
 		StringBuffer records = new StringBuffer();
 
 		for (Bar bar : this.bars) {
@@ -228,7 +222,7 @@ public class PostScriptCreator {
 		double barX = NumberUtilities.roundToNDecimalPlaces(
 			this.layout.adjustXForStartArrow(bar), DECIMAL_PLACE_COUNT);
 		double barY = NumberUtilities.roundToNDecimalPlaces(
-			this.layout.positionBar(bar, cursor, this.barLabelFontSize), DECIMAL_PLACE_COUNT);
+			this.layout.positionBar(bar, cursor), DECIMAL_PLACE_COUNT);
 		double barWidth = NumberUtilities.roundToNDecimalPlaces(
 			this.layout.adjustWidthForArrows(bar), DECIMAL_PLACE_COUNT);
 		double barHeight = NumberUtilities.roundToNDecimalPlaces(

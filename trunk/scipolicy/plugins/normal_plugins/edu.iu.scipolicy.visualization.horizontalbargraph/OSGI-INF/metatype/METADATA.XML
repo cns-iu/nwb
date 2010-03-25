@@ -7,7 +7,8 @@
 		 <AD name="End Date" id="end_date" type="String" description="The field used for the ending date" default="ENDING_DATE"/>
 		 <AD name="Size By" id="size_by" type="String" description="The field used to size the horizontal bar lines by" default="AWARDED_AMOUNT_TO_DATE"/>
 		 <AD name="Date Format" id="date_format" type="String" description="The format of the start and end dates" default=""/>
-		 
+		 <AD name="Year Label Font Size" id="year_label_font_size" type="Double" description="The font size to use for year labels.  NOTE: If this is too big, year labels may overlap." default="20.0" min="1.0"/>
+		 <AD name="Bar Label Font Size" id="bar_label_font_size" type="Double" description="The font size to use for bar labels.  NOTE: Extremely large values here may result in poor results." default="20.0" min="1.0"/>
 	</OCD>
 	<Designate pid="edu.iu.scipolicy.visualization.horizontalbargraph.HorizontalBarGraphAlgorithm">
 		<Object ocdref="edu.iu.scipolicy.visualization.horizontalbargraph.HorizontalBarGraphAlgorithm.OCD" />

@@ -7,11 +7,13 @@ public class PageOrientation {
 	
 	private PageOrientationType pageOrientationType;
 	private double scale;
+	private BasicLayout layout;
 	
 	public PageOrientation(
-			PageOrientationType pageOrientationType, double scale) {
+			PageOrientationType pageOrientationType, double scale, BasicLayout layout) {
 		this.pageOrientationType = pageOrientationType;
 		this.scale = scale;
+		this.layout = layout;
 	}
 	
 	public PageOrientationType getPageOrientationType() {
@@ -30,9 +32,7 @@ public class PageOrientation {
 			double visualizationWidth,
 			double visualizationHeight) {
 		return this.pageOrientationType.centeringTranslateX(
-			this.scale,
-			visualizationWidth,
-			visualizationHeight);
+			this.scale, visualizationWidth, visualizationHeight, this.layout);
 	}
 	
 	public double getCenteringTranslateY(
@@ -41,7 +41,8 @@ public class PageOrientation {
 		return this.pageOrientationType.centeringTranslateY(
 			this.scale,
 			visualizationWidth,
-			visualizationHeight);
+			visualizationHeight,
+			this.layout);
 	}
 
 	public enum PageOrientationType {
@@ -53,32 +54,33 @@ public class PageOrientation {
 			public double centeringTranslateX(
 					double scale,
 					double visualizationWidth,
-					double visualizationHeight) {
+					double visualizationHeight,
+					BasicLayout layout) {
 				double pageWidthInPoints =
 					BasicLayout.PAGE_WIDTH * BasicLayout.POINTS_PER_INCH;
 				double scaledVisualizationWidth = visualizationWidth * scale;
 				double fudgeForTextWidth =
-					BasicLayout.TOTAL_TEXT_WIDTH_IN_POINTS *
+					layout.calculateTotalTextWidth(
+						layout.getBarLabelFontSize(),
+						BasicLayout.MAXIMUM_BAR_LABEL_CHARACTER_COUNT) *
 					TEXT_WIDTH_FUDGE_FACTOR *
 					scale;
 				
 				return
-					((pageWidthInPoints - scaledVisualizationWidth) /
-						2.0) +
+					((pageWidthInPoints - scaledVisualizationWidth) / 2.0) +
 					fudgeForTextWidth;
 			}
 			
 			public double centeringTranslateY(
 					double scale,
 					double visualizationWidth,
-					double visualizationHeight) {
-				double pageHeightInPoints =
-					BasicLayout.PAGE_HEIGHT * BasicLayout.POINTS_PER_INCH;
+					double visualizationHeight,
+					BasicLayout layout) {
+				double pageHeightInPoints = BasicLayout.PAGE_HEIGHT * BasicLayout.POINTS_PER_INCH;
 				double scaledVisualizationHeight = visualizationHeight * scale;
 				
 				return
-					(pageHeightInPoints - scaledVisualizationHeight) /
-					2.0;
+					(pageHeightInPoints - scaledVisualizationHeight) / 2.0;
 			}
 		},
 		LANDSCAPE {
@@ -89,12 +91,15 @@ public class PageOrientation {
 			public double centeringTranslateX(
 					double scale,
 					double visualizationWidth,
-					double visualizationHeight) {
+					double visualizationHeight,
+					BasicLayout layout) {
 				double scaledVisualizationWidth = visualizationWidth * scale;
 				double pageHeightInPoints =
 					BasicLayout.PAGE_HEIGHT * BasicLayout.POINTS_PER_INCH;
 				double fudgeForTextWidth =
-					BasicLayout.TOTAL_TEXT_WIDTH_IN_POINTS *
+					layout.calculateTotalTextWidth(
+						layout.getBarLabelFontSize(),
+						BasicLayout.MAXIMUM_BAR_LABEL_CHARACTER_COUNT) *
 					TEXT_WIDTH_FUDGE_FACTOR *
 					scale;
 				System.err.println("scaledVisualizationWidth: " + scaledVisualizationWidth);
@@ -109,7 +114,8 @@ public class PageOrientation {
 			public double centeringTranslateY(
 					double scale,
 					double visualizationWidth,
-					double visualizationHeight) {
+					double visualizationHeight,
+					BasicLayout layout) {
 				double pageWidthInPoints =
 					BasicLayout.PAGE_WIDTH * BasicLayout.POINTS_PER_INCH;
 				double scaledVisualizationHeight = visualizationHeight * scale;
@@ -123,10 +129,12 @@ public class PageOrientation {
 		public abstract double centeringTranslateX(
 				double scale,
 				double visualizationWidth,
-				double visualizationHeight);
+				double visualizationHeight,
+				BasicLayout layout);
 		public abstract double centeringTranslateY(
 				double scale,
 				double visualizationWidth,
-				double visualizationHeight);
+				double visualizationHeight,
+				BasicLayout layout);
 	};
 }
