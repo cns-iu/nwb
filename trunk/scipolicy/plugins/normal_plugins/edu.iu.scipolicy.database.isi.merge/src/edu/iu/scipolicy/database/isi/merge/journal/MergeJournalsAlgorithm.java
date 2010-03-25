@@ -5,6 +5,7 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
+import java.net.URL;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
@@ -39,9 +40,9 @@ import edu.iu.nwb.shared.isiutil.database.ISI;
  * the most information about it.
  */
 public class MergeJournalsAlgorithm implements Algorithm, ProgressTrackable {
-	public static final String MERGE_GROUPS_FILE_NAME = "mergeGroups.txt";
+	public static final String MERGE_GROUPS_FILE_NAME = "JournalGroups.txt";
 	public static final String SOURCE_TABLE_ID = "APP" + "." + ISI.SOURCE_TABLE_NAME;
-	public static final Map<String, String> J9_TO_PRIMARY_J9 = createMapFromJ9ToPrimaryJ9();
+	public static final Map<String, String> NAME_FORM_LOOKUP = createNameFormLookup();
 	
 	private Data originalDatabaseData;
     private CIShellContext ciShellContext;
@@ -56,39 +57,42 @@ public class MergeJournalsAlgorithm implements Algorithm, ProgressTrackable {
 
     
     public Data[] execute() throws AlgorithmExecutionException {
-		if (J9_TO_PRIMARY_J9.isEmpty()) {
+		if (NAME_FORM_LOOKUP.isEmpty()) {
 			String message = "Failed to load journal merging data.  If this problem persists " +
 				"after restarting the tool, please contact the NWB development team at " +
 				"nwb-helpdesk@googlegroups.com";
 			throw new AlgorithmExecutionException(message);
 		} else {
-			logKnownJ9Statistics();
+			logLookupStatistics();
 		}
 
-    	KeyMaker primaryJ9KeyMaker = new JournalKeyMaker(J9_TO_PRIMARY_J9);
-    	PreferrableFormComparator journalComparator = new JournalComparator(J9_TO_PRIMARY_J9);	    	
+    	KeyMaker keyMaker = new JournalKeyMaker(NAME_FORM_LOOKUP);
+    	PreferrableFormComparator journalComparator = new JournalComparator();	    	
     	
     	return MergeMaker.mergeTable(
-    			SOURCE_TABLE_ID, originalDatabaseData, primaryJ9KeyMaker, 
+    			SOURCE_TABLE_ID, originalDatabaseData, keyMaker, 
     			true, journalComparator, ciShellContext, monitor, "with journals merged");	    	
     }
 
-    private void logKnownJ9Statistics() {
-    	int numberOfCanonicalForms = new HashSet<String>(J9_TO_PRIMARY_J9.values()).size();	
-    	int numberOfKnownVariants = J9_TO_PRIMARY_J9.size();			
+    private void logLookupStatistics() {
+    	int numberOfCanonicalForms = new HashSet<String>(NAME_FORM_LOOKUP.values()).size();	
+    	int numberOfKnownVariants = NAME_FORM_LOOKUP.size();			
 		
 		logger.log(
 				LogService.LOG_INFO,
 				"This algorithm can merge " + numberOfKnownVariants + " journal name variants " +
 					"into " + numberOfCanonicalForms + " canonical forms.");
+		logger.log(LogService.LOG_WARNING, "Warning: while we use Web of Science's official list of Journal Title Abbreviations, " +
+				"that list does not cover all spellings of cited sources. Additionally, in some cited references it is not possible to " +
+				"disambiguate between members of a book or conference series and a journal with the same name.");
 	}
 
 
 	/* Expected merge file format:
-     * 	- Plain text with one J9 per line.
+     * 	- Plain text with one journal name form per line.
      * 	- Merge groups are separated by an empty line.
-     * 	- The first J9 of each merge group is the primary form.
-     * 	- By convention, groups with only one member are not expected to be given.
+     * 	- The first member of each merge group is used as the key, but each name only appears once in the file, so this is arbitrary.
+     * 	- Groups with one member are present (for people to add to later), and are loaded (since there's no reason not to).
      * 
      * We read these at class-load time to prevent needless re-reading per algorithm execution.
      * Since this is run during a static initialization, note that we cannot use the logger (or
@@ -96,42 +100,42 @@ public class MergeJournalsAlgorithm implements Algorithm, ProgressTrackable {
      * that these represent should never occur without significant developer error (a misnamed
      * file, perhaps?).
      */
-	private static Map<String, String> createMapFromJ9ToPrimaryJ9() {
+	private static Map<String, String> createNameFormLookup() {
 		try {
-			File mergeGroupsFile =
-				FileUtilities.safeLoadFileFromClasspath(
-						MergeJournalsAlgorithm.class, MERGE_GROUPS_FILE_NAME);
+			File mergeGroupsFile = new File(new URL(System.getProperty("osgi.configuration.area") + File.separator + MERGE_GROUPS_FILE_NAME).getPath());
 			BufferedReader mergeGroupsFileReader =
 				new BufferedReader(new FileReader(mergeGroupsFile));
 			
-			Map<String, String> j9ToPrimary = new HashMap<String, String>();
+			Map<String, String> nameFormLookup = new HashMap<String, String>();
 			String line;
-			String currentPrimary = null;
+			String currentKey = null;
 			while ((line = mergeGroupsFileReader.readLine()) != null) {
-				line = line.toLowerCase();
+				line = line.toLowerCase().trim();
 				
 				// Empty line?  New merge group starting.
-				if (line.trim().length() == 0) {
-					currentPrimary = null;
+				if (line.length() == 0) {
+					currentKey = null;
 					continue;
 				}
 				
 				// First line of merge group?  Then the current line is the primary J9.
-				if (currentPrimary == null) {
-					currentPrimary = line;
-					j9ToPrimary.put(currentPrimary, currentPrimary);
+				if (currentKey == null) {
+					currentKey = line;
+					nameFormLookup.put(currentKey, currentKey);
 				} else {
 					// Otherwise this is an alternate form.
-					j9ToPrimary.put(line, currentPrimary);
+					nameFormLookup.put(line, currentKey);
 				}
 			}
 			
-			return j9ToPrimary;
+			return nameFormLookup;
 	    } catch (FileNotFoundException e) {
 			System.err.println("Could not find merge file for sources: " + e.getMessage());
+			//throw new RuntimeException(e.getMessage());
 			return new HashMap<String, String>();
 		} catch (IOException e) {
 			System.err.println("Could not access merge file for sources: " + e.getMessage());
+			//throw new RuntimeException(e.getMessage());
 			return new HashMap<String, String>();
 		}
 	}

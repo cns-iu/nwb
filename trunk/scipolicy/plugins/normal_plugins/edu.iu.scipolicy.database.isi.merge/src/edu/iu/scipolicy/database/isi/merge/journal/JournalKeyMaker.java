@@ -1,30 +1,42 @@
 package edu.iu.scipolicy.database.isi.merge.journal;
 
 import java.util.Map;
+import java.util.UUID;
 
 import prefuse.data.Tuple;
 import edu.iu.cns.database.merge.generic.maker.KeyMaker;
 import edu.iu.nwb.shared.isiutil.database.ISI;
 
 public class JournalKeyMaker implements KeyMaker {	
-	private Map<String, String> j9ToPrimary;
-	
-	public JournalKeyMaker(Map<String, String> j9ToPrimary) {
-		this.j9ToPrimary = j9ToPrimary;
-	}
+	private Map<String, String> nameFormLookup;
 
+	public JournalKeyMaker(Map<String, String> nameFormLookup) {
+		this.nameFormLookup = nameFormLookup;
+	}
 	
-	/* If the J9 field of the given source corresponds to a known primary J9, give that.
-	 * Otherwise give the J9 field.
-	 */
 	public Object makeKey(Tuple tuple) {
-		String j9 = tuple.getString(ISI.TWENTY_NINE_CHARACTER_SOURCE_TITLE_ABBREVIATION);		
-		j9 = j9.toLowerCase();
+		String j9 = retrieveNormalized(tuple, ISI.TWENTY_NINE_CHARACTER_SOURCE_TITLE_ABBREVIATION);
+		String so = retrieveNormalized(tuple, ISI.FULL_TITLE);
 		
-		if (j9ToPrimary.containsKey(j9)) {
-			return j9ToPrimary.get(j9).toLowerCase();
+		//prepend book series title/subtitle, conference title?
+		if(nameFormLookup.containsKey(so)) {
+			return nameFormLookup.get(so);
+		} else if (nameFormLookup.containsKey(j9)) {
+			return nameFormLookup.get(j9);
+		} else if(j9.length() == 0) {
+			return UUID.randomUUID();
 		} else {
 			return j9;
+		}
+	}
+
+
+	private String retrieveNormalized(Tuple tuple, String field) {
+		String value = tuple.getString(field);
+		if(value == null) {
+			return "";
+		} else {
+			return value.toLowerCase().trim();
 		}
 	}
 }
