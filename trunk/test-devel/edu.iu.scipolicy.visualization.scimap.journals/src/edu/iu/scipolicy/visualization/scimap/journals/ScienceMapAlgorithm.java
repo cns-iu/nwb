@@ -141,7 +141,8 @@ public class ScienceMapAlgorithm implements Algorithm {
 
 			Dictionary<Object, Object> parameters =
 				new Hashtable<Object, Object>();
-			parameters.put("journalColumn", "Journal Title Abbr");
+			parameters.put(ScienceMapAlgorithmFactory.JOURNAL_COLUMN_ID, "Journal Title Abbr");
+			parameters.put(ScienceMapAlgorithmFactory.DATA_DISPLAY_NAME_ID, "CTSA, 2005-2009");
 
 			AlgorithmFactory algorithmFactory =
 				new ScienceMapAlgorithmFactory();

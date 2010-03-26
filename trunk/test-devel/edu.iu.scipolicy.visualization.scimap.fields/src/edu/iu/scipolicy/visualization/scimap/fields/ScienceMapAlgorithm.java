@@ -115,6 +115,11 @@ public class ScienceMapAlgorithm implements Algorithm {
 				noValueCount++;
 			}
 			
+			if (value < 0) {
+				noValueCount++;
+				continue;
+			}
+			
 			String label =
 				StringUtilities.interpretObjectAsString(row.get(nodeLabelColumnName));						
 			

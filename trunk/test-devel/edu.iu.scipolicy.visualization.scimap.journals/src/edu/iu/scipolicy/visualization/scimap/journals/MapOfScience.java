@@ -13,6 +13,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.antlr.stringtemplate.StringTemplate;
+import org.cishell.utilities.NumberUtilities;
 
 import au.com.bytecode.opencsv.CSVReader;
 
@@ -247,9 +248,9 @@ public class MapOfScience {
 		mapTemplate.setAttribute("circleBrightness", CIRCLE_BRIGHTNESS);
 
 				
-		mapTemplate.setAttribute("minLabel", minArea);
-		mapTemplate.setAttribute("midLabel", midArea);
-		mapTemplate.setAttribute("maxLabel", maxArea);
+		mapTemplate.setAttribute("minLabel", round(minArea));
+		mapTemplate.setAttribute("midLabel", round(midArea));
+		mapTemplate.setAttribute("maxLabel", round(maxArea));
 
 		mapTemplate.setAttribute(
 				"extremaLabelBrightness", EXTREMA_LABEL_BRIGHTNESS);
@@ -285,6 +286,14 @@ public class MapOfScience {
 				+ circleAreaLegendDefinitionsTemplate.toString()
 				+ mapTemplate.toString();
 //				+ circleAreaLegendTemplate.toString();
+	}
+	
+	private String round(double number) {
+		if (number == (int) number) {
+			return String.valueOf((int) number);
+		} else {
+			return String.valueOf(NumberUtilities.roundToNDecimalPlaces(number, 2));
+		}
 	}
 
 	private Integer[] foundIdsBySize(Collection<Integer> ids) {

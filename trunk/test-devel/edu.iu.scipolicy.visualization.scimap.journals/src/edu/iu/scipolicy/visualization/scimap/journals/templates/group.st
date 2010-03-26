@@ -516,7 +516,7 @@ grestore
 <proposalMap>
 
 
-1 inch -.1 inch translate
+1 inch -.2 inch translate
 
 gsave
 
