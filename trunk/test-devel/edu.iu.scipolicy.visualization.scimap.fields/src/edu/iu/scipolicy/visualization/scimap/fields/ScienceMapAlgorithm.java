@@ -226,7 +226,7 @@ public class ScienceMapAlgorithm implements Algorithm {
 		Dictionary<String, Object> metadata = postScriptData.getMetadata();
 
 		metadata.put(DataProperty.LABEL,
-				"PostScript: Science map for " + inFileName);
+				"FieldsScienceMap_" + FileUtilities.extractFileName(inFileName) + ".ps");
 		metadata.put(DataProperty.TYPE, DataProperty.VECTOR_IMAGE_TYPE);
 		metadata.put(DataProperty.PARENT, data[0]);
 
