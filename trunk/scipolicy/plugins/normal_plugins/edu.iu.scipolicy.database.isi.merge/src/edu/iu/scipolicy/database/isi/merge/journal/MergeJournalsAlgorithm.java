@@ -102,7 +102,7 @@ public class MergeJournalsAlgorithm implements Algorithm, ProgressTrackable {
      */
 	private static Map<String, String> createNameFormLookup() {
 		try {
-			File mergeGroupsFile = new File(new URL(System.getProperty("osgi.configuration.area") + File.separator + MERGE_GROUPS_FILE_NAME).getPath());
+			File mergeGroupsFile = new File(new URL(new URL(System.getProperty("osgi.configuration.area")), MERGE_GROUPS_FILE_NAME).getPath());
 			BufferedReader mergeGroupsFileReader =
 				new BufferedReader(new FileReader(mergeGroupsFile));
 			
