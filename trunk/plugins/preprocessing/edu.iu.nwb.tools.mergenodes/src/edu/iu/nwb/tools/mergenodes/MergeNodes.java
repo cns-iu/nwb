@@ -566,7 +566,7 @@ public class MergeNodes implements Algorithm {
 		if(!tempDir.exists())
 			tempDir.mkdir();
 		try{
-			tempFile = File.createTempFile("NWB-Session-", ".txt", tempDir);
+			tempFile = File.createTempFile("MergeNodes-", ".txt", tempDir);
 		
 		}catch (IOException e){
 			logger.log(LogService.LOG_ERROR, e.toString(), e);

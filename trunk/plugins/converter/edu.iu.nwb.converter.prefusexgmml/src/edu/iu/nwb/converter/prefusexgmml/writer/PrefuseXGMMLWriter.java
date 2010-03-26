@@ -33,7 +33,7 @@ public class PrefuseXGMMLWriter implements Algorithm {
 		try {
 			File outXGMMLFile =
 				FileUtilities.createTemporaryFileInDefaultTemporaryDirectory(
-						"NWB-Session-", XGMML_FILE_EXTENSION);
+						"XGMML-", XGMML_FILE_EXTENSION);
 			
 			(new XGMMLGraphWriter()).writeGraph(
 					inGraph, outXGMMLFile);

@@ -68,7 +68,7 @@ public class PajekmatToPajeknet implements Algorithm{
 		try{
 			File outNETFile =
 				FileUtilities.createTemporaryFileInDefaultTemporaryDirectory(
-						"NWB-session-", "net");
+						"Pajek-", "net");
 			PrintWriter out =
 				new PrintWriter(new BufferedWriter(new FileWriter(outNETFile)));	
 			writeVertices(matValidator, out);

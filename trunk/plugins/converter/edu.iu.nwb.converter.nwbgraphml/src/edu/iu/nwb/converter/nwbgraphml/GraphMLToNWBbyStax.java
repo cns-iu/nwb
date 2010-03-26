@@ -112,7 +112,7 @@ public class GraphMLToNWBbyStax implements Algorithm {
 
 		File nodeFile =
 			FileUtilities.createTemporaryFileInDefaultTemporaryDirectory(
-					"GraphMLToNWB-node", "nwb");
+					"NWB-node-", "nwb");
 		BufferedWriter nodeWriter =
 			new BufferedWriter(
 					new OutputStreamWriter(
@@ -120,7 +120,7 @@ public class GraphMLToNWBbyStax implements Algorithm {
 		
 		File undirectedEdgeFile =
 			FileUtilities.createTemporaryFileInDefaultTemporaryDirectory(
-					"GraphMLToNWB-undirected", "nwb");
+					"NWB-undirected-", "nwb");
 		BufferedWriter undirectedEdgeWriter =
 			new BufferedWriter(
 					new OutputStreamWriter(
@@ -128,7 +128,7 @@ public class GraphMLToNWBbyStax implements Algorithm {
 		
 		File directedEdgeFile =
 			FileUtilities.createTemporaryFileInDefaultTemporaryDirectory(
-					"GraphMLToNWB-directed", "nwb");
+					"NWB-directed-", "nwb");
 		BufferedWriter directedEdgeWriter =
 			new BufferedWriter(
 					new OutputStreamWriter(

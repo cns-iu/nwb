@@ -72,7 +72,7 @@ public class PajeknetToNWB implements Algorithm {
 		try {
 			File outNWBFile =
 				FileUtilities.createTemporaryFileInDefaultTemporaryDirectory(
-						"NWB-Session-", "nwb");
+						"NWB-", "nwb");
 			PrintWriter out =
 				new PrintWriter(new BufferedWriter(
 						new FileWriter(outNWBFile)), true);

@@ -151,7 +151,7 @@ public class BasinConstructorThread extends Thread{
 
 
 			Table attractorTable = constructAttractorTable(bct.originalTable, bct.labelColumn,true);
-			File stateSpaceFile = File.createTempFile("NWB-Session-StateSpace-", ".nwb");
+			File stateSpaceFile = File.createTempFile("Attractors-StateSpace-", ".nwb");
 			NWBFileWriter stateSpaceFileWriter = createNWBFileWriter(stateSpaceFile);
 
 			calculatedNodes += BasinConstructorThread.smallCalculations(nodes, bct, attractorTable, basinNumber, stateSpaceFileWriter);
@@ -184,7 +184,7 @@ public class BasinConstructorThread extends Thread{
 			NWBFileWriter stateSpaceFileWriter = null;
 
 			if(nodes.size().compareTo(BigArray.maxInteger) < 0){
-				stateSpaceFile = File.createTempFile("NWB-Session-StateSpace-", ".nwb");
+				stateSpaceFile = File.createTempFile("Attractors-StateSpace-", ".nwb");
 				stateSpaceFileWriter = createNWBFileWriter(stateSpaceFile);
 				integerMapping = new HashMap<BigInteger,Integer>(nodes.size().intValue());
 				int i = 0;
@@ -550,7 +550,7 @@ public class BasinConstructorThread extends Thread{
 
 	private static File generateAttractorCSV(final Table t) throws AlgorithmExecutionException{
 		try{
-			File attractorTableFile = File.createTempFile("NWB-Session-StateSpace-", ".csv");
+			File attractorTableFile = File.createTempFile("Attractors-StateSpace-", ".csv");
 			FileOutputStream fis = new FileOutputStream(attractorTableFile);
 			PrintWriter pw = new PrintWriter(fis);
 			for(int i = 0; i < t.getColumnCount(); i++){

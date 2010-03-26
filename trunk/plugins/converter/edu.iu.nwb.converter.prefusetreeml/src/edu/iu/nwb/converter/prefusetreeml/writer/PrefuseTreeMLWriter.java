@@ -36,7 +36,7 @@ public class PrefuseTreeMLWriter implements Algorithm {
     	try {
 			File outTreeMLFile =
 				FileUtilities.createTemporaryFileInDefaultTemporaryDirectory(
-						"NWB-Session-", "treeml.xml");
+						"TreeML-", "treeml.xml");
 			
 			OutputStream outStream =
 				new BufferedOutputStream(new FileOutputStream(outTreeMLFile));

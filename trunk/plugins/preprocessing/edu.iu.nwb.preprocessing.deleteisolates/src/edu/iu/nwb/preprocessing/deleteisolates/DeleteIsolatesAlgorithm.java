@@ -81,7 +81,7 @@ public class DeleteIsolatesAlgorithm implements Algorithm {
     		throws IsolateNodeStrippingException {
     	try {
     		File outputNWBFile = FileUtilities.
-				createTemporaryFileInDefaultTemporaryDirectory("NWB-", "nwb");
+				createTemporaryFileInDefaultTemporaryDirectory("DeleteIsolates-", "nwb");
     		NodeIDFilteringNWBWriter nodeIDFilteringNWBWriter =
     			new NodeIDFilteringNWBWriter(nonIsolateNodeIDs, outputNWBFile);
     		NWBFileParser isolateStripperFileParser =

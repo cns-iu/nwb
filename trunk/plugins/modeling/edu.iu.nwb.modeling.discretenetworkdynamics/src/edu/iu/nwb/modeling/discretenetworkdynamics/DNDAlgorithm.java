@@ -249,7 +249,7 @@ public class DNDAlgorithm implements Algorithm, ProgressTrackable {
 		FileWriter fw = null;
 		BufferedWriter out = null;
 		try{
-			File stateSpaceFile = File.createTempFile("NWB-Session-StateSpace-", ".edge");
+			File stateSpaceFile = File.createTempFile("DND-StateSpace-", ".edge");
 			fw = new FileWriter(stateSpaceFile);
 			out = new BufferedWriter(fw);
 			BigInteger start = BigInteger.ZERO;

@@ -33,7 +33,7 @@ public class PrefuseGraphMLWriter implements Algorithm {
     	try {
 			File outGraphMLFile =
 				FileUtilities.createTemporaryFileInDefaultTemporaryDirectory(
-						"NWB-Session-", "graphml.xml");
+						"GraphML-", "graphml.xml");
 			
 			OutputStream outStream =
 				new BufferedOutputStream(

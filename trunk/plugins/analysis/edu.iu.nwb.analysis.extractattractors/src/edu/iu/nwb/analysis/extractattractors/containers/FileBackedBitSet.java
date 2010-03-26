@@ -12,7 +12,7 @@ public class FileBackedBitSet {
 
 	public FileBackedBitSet(BigInteger size){
 		try{
-			bitSetFile = new RandomAccessFile(File.createTempFile("NWB-SessionFBBS-", ".txt"),"rw");
+			bitSetFile = new RandomAccessFile(File.createTempFile("Attractors-FBBS-", ".txt"), "rw");
 			BigInteger [] sizeArray = size.divideAndRemainder(new BigInteger(new Integer(8).toString()));
 			long fileSize;
 			if(sizeArray[1].compareTo(BigInteger.ZERO)==0)

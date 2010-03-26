@@ -33,7 +33,7 @@ public class PrefuseCsvWriter implements Algorithm {
     	try {
 			File outCSVFile =
 				FileUtilities.createTemporaryFileInDefaultTemporaryDirectory(
-						"NWB-Session-", "csv");
+						"CSV-", "csv");
 			
 			OutputStream outStream =
 				new BufferedOutputStream(new FileOutputStream(outCSVFile));

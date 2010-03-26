@@ -48,7 +48,7 @@ public class JungPajekNetWriter implements Algorithm, VertexStringer {
 		try {
 			File outPajekNETFile =
 	    		FileUtilities.createTemporaryFileInDefaultTemporaryDirectory(
-	    				"NWB-Session-", PAJEK_NET_FILE_EXTENSION);
+	    				"Pajek-", PAJEK_NET_FILE_EXTENSION);
 			
 			Writer writer =
 				new BufferedWriter(

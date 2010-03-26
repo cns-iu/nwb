@@ -99,7 +99,7 @@ public class NWBToGraphMLbyStax implements Algorithm {
 		try {
 			File graphml =
 				FileUtilities.createTemporaryFileInDefaultTemporaryDirectory(
-						"NWB-Session-", XML_FILE_EXTENSION);
+						"GraphML-", XML_FILE_EXTENSION);
 			BufferedReader reader;
 			
 			reader =

@@ -64,7 +64,7 @@ public class PajeknetToPajekmat implements Algorithm{
 	private File convertNetToMat(NETFileValidator vmf, File f) throws IOException {
 		File outMATFile =
 			FileUtilities.createTemporaryFileInDefaultTemporaryDirectory(
-					"NWB-Session-", "mat");
+					"Pajek-", "mat");
 		PrintWriter out =
 			new PrintWriter(new BufferedWriter(new FileWriter(outMATFile)));
 		BufferedReader br = new BufferedReader(new FileReader(f));

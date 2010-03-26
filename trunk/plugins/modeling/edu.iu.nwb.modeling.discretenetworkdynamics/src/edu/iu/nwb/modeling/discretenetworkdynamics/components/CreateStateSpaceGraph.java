@@ -36,7 +36,7 @@ public class CreateStateSpaceGraph {
 					systemSize, isPolynomial, functionLabel);
 
 			BigInteger totalSpace = new BigInteger(new Integer(nodeStates).toString()).pow(systemSize);
-			File stateSpaceFile = File.createTempFile("NWB-Session", ".edge");
+			File stateSpaceFile = File.createTempFile("DND-", ".edge");
 			FileWriter output = new FileWriter(stateSpaceFile);
 			BufferedWriter bufferedOutput = new BufferedWriter(output);
 
