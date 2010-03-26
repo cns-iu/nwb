@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<metatype:MetaData xmlns:metatype="http://www.osgi.org/xmlns/metatype/v1.0.0">
+	<OCD name="Science Map" id="edu.iu.scipolicy.visualization.scimap.journals.ScienceMapAlgorithm.OCD"
+		 description="Locate the journals from a table on the UCSD Map of Science ">
+		<AD name="Journal column" id="journalColumn" type="String" description="Choose a column from your table that gives a journal name, abbreviation, or ISSN (International Standard Serial Number)" default="MUTATE_ME"/>
+		<AD name="Dataset display name" id="datasetDisplayName" type="String" description="Name of the source dataset as it will appear on the visualization." default="MUTATE_ME"/>
+	</OCD>
+	<Designate pid="edu.iu.scipolicy.visualization.scimap.journals.ScienceMapAlgorithm">
+		<Object ocdref="edu.iu.scipolicy.visualization.scimap.journals.ScienceMapAlgorithm.OCD" />
+	</Designate>
+</metatype:MetaData>
