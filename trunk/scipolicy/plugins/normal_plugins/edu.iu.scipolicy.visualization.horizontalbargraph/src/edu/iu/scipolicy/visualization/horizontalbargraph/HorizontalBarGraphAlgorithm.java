@@ -62,14 +62,15 @@ public class HorizontalBarGraphAlgorithm implements Algorithm {
 	
     private Data inputData;
     private Table inputTable;
-    private String labelKey;
-    private String startDateKey;
-    private String endDateKey;
-    private String amountKey;
-    private String startDateFormat;
-    private String endDateFormat;
-    private double yearLabelFontSize;
-    private double barLabelFontSize;
+    private Metadata metadata;
+//    private String labelKey;
+//    private String startDateKey;
+//    private String endDateKey;
+//    private String amountKey;
+//    private String startDateFormat;
+//    private String endDateFormat;
+//    private double yearLabelFontSize;
+//    private double barLabelFontSize;
     
     private LogService logger;
     
@@ -79,17 +80,19 @@ public class HorizontalBarGraphAlgorithm implements Algorithm {
     		CIShellContext ciShellContext) {
         this.inputData = data[0];
         this.inputTable = (Table)data[0].getData();
-        
-        this.labelKey = (String)parameters.get(LABEL_FIELD_ID);
-        this.startDateKey = (String)parameters.get(START_DATE_FIELD_ID);
-        this.endDateKey = (String)parameters.get(END_DATE_FIELD_ID);
-        this.amountKey = (String)parameters.get(SIZE_BY_FIELD_ID);
-        this.startDateFormat = (String)parameters.get(DATE_FORMAT_FIELD_ID);
-        this.endDateFormat = (String)parameters.get(DATE_FORMAT_FIELD_ID);
-        this.yearLabelFontSize =
-        	((Double)parameters.get(YEAR_LABEL_FONT_SIZE_FIELD_ID)).doubleValue();
-        this.barLabelFontSize =
-        	((Double)parameters.get(BAR_LABEL_FONT_SIZE_FIELD_ID)).doubleValue();
+
+        this.metadata = new Metadata(this.inputData, parameters);
+
+//        this.labelKey = (String)parameters.get(LABEL_FIELD_ID);
+//        this.startDateKey = (String)parameters.get(START_DATE_FIELD_ID);
+//        this.endDateKey = (String)parameters.get(END_DATE_FIELD_ID);
+//        this.amountKey = (String)parameters.get(SIZE_BY_FIELD_ID);
+//        this.startDateFormat = (String)parameters.get(DATE_FORMAT_FIELD_ID);
+//        this.endDateFormat = (String)parameters.get(DATE_FORMAT_FIELD_ID);
+//        this.yearLabelFontSize =
+//        	((Double)parameters.get(YEAR_LABEL_FONT_SIZE_FIELD_ID)).doubleValue();
+//        this.barLabelFontSize =
+//        	((Double)parameters.get(BAR_LABEL_FONT_SIZE_FIELD_ID)).doubleValue();
         
         this.logger =
         	(LogService)ciShellContext.getService(LogService.class.getName());
@@ -130,16 +133,18 @@ public class HorizontalBarGraphAlgorithm implements Algorithm {
     	 */
     
     	TableRecordExtractor extractor = new TableRecordExtractor(this.logger);
-    
-    	RecordCollection recordCollection = extractor.extractRecords(
-    		this.inputTable,
-    		this.labelKey,
-    		this.startDateKey,
-    		this.endDateKey,
-    		this.amountKey,
-    		this.startDateFormat,
-    		this.endDateFormat,
-    		this.logger);
+
+    	RecordCollection recordCollection =
+    		extractor.extractRecords(this.inputTable, this.metadata, this.logger);
+//    	RecordCollection recordCollection = extractor.extractRecords(
+//    		this.inputTable,
+//    		this.labelKey,
+//    		this.startDateKey,
+//    		this.endDateKey,
+//    		this.amountKey,
+//    		this.startDateFormat,
+//    		this.endDateFormat,
+//    		this.logger);
     	
     	DateTime startDate = recordCollection.getMinimumDate();
     	DateTime endDate = recordCollection.getMaximumDate();
@@ -151,12 +156,13 @@ public class HorizontalBarGraphAlgorithm implements Algorithm {
     		startDate,
     		endDate,
     		minimumAmountPerUnitOfTime,
-    		this.yearLabelFontSize,
-    		this.barLabelFontSize);
+    		this.metadata.getYearLabelFontSize(),
+    		this.metadata.getBarLabelFontSize());
     	PostScriptCreator postScriptCreator = new PostScriptCreator(
     		horizontalBarGraphGroup,
     		layout,
-    		(String)this.inputData.getMetadata().get(DataProperty.LABEL),
+    		this.metadata,
+//    		(String)this.inputData.getMetadata().get(DataProperty.LABEL),
     		recordCollection);
     	String postScript = postScriptCreator.toString();
     	
