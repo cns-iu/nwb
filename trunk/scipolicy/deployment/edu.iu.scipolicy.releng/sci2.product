@@ -25,7 +25,7 @@
    <splash
       location="edu.iu.scipolicy.gui.brand"
       startupProgressRect="0,163,500,10" />
-   <launcher name="scipolicy">
+   <launcher name="sci2">
       <linux icon="/edu.iu.scipolicy.gui.brand/icons/scisip32.xpm"/>
       <macosx icon="/edu.iu.scipolicy.gui.brand/icons/scisip128.icns"/>
       <solaris/>
