@@ -15,68 +15,64 @@ import org.osgi.service.metatype.ObjectClassDefinition;
 
 import prefuse.data.Table;
 
-public class HorizontalBarGraphAlgorithmFactory
-		implements AlgorithmFactory, ParameterMutator {
-    public Algorithm createAlgorithm(Data[] data,
-    								 Dictionary parameters,
-    								 CIShellContext ciShellContext) {
-        return new HorizontalBarGraphAlgorithm(
-        	data, parameters, ciShellContext);
+public class HorizontalBarGraphAlgorithmFactory implements AlgorithmFactory, ParameterMutator {
+    public Algorithm createAlgorithm(
+    		Data[] data, Dictionary parameters, CIShellContext ciShellContext) {
+        return new HorizontalBarGraphAlgorithm(data, parameters, ciShellContext);
     }
     
     public ObjectClassDefinition mutateParameters(
     		Data[] data, ObjectClassDefinition oldParameters) {
-    	Data inData = data[0];
-    	Table table = (Table) inData.getData();
-    	
-		BasicObjectClassDefinition newParameters =
-			MutateParameterUtilities.createNewParameters(oldParameters);
-		
-		AttributeDefinition[] oldAttributeDefinitions =
-			oldParameters.getAttributeDefinitions(ObjectClassDefinition.ALL);
-		
-		for (AttributeDefinition oldAttributeDefinition :
-				oldAttributeDefinitions) {
-			String oldAttributeDefinitionID = oldAttributeDefinition.getID();
-			AttributeDefinition newAttributeDefinition =
-				oldAttributeDefinition;
-			
-			if (oldAttributeDefinitionID.equals(
-					HorizontalBarGraphAlgorithm.LABEL_FIELD_ID)) {
-				newAttributeDefinition =
-					MutateParameterUtilities.formLabelAttributeDefinition(
+    	try {
+    		Data inData = data[0];
+    		Table table = (Table) inData.getData();
+
+			BasicObjectClassDefinition newParameters =
+				MutateParameterUtilities.createNewParameters(oldParameters);
+
+			AttributeDefinition[] oldAttributeDefinitions =
+				oldParameters.getAttributeDefinitions(ObjectClassDefinition.ALL);
+
+			for (AttributeDefinition oldAttributeDefinition : oldAttributeDefinitions) {
+				String oldAttributeDefinitionID = oldAttributeDefinition.getID();
+				AttributeDefinition newAttributeDefinition = oldAttributeDefinition;
+
+				if (oldAttributeDefinitionID.equals(HorizontalBarGraphAlgorithm.LABEL_FIELD_ID)) {
+					newAttributeDefinition = MutateParameterUtilities.formLabelAttributeDefinition(
 						oldAttributeDefinition, table);
-			} else if (oldAttributeDefinitionID.equals(
-						HorizontalBarGraphAlgorithm.START_DATE_FIELD_ID) ||
-					oldAttributeDefinitionID.equals(
-						HorizontalBarGraphAlgorithm.END_DATE_FIELD_ID)) {
-				newAttributeDefinition =
-					MutateParameterUtilities.formDateAttributeDefinition(
+				} else if (oldAttributeDefinitionID.equals(
+							HorizontalBarGraphAlgorithm.START_DATE_FIELD_ID) ||
+						oldAttributeDefinitionID.equals(
+							HorizontalBarGraphAlgorithm.END_DATE_FIELD_ID)) {
+					newAttributeDefinition = MutateParameterUtilities.formDateAttributeDefinition(
 						oldAttributeDefinition, table);
-			} else if (oldAttributeDefinitionID.equals(
-					HorizontalBarGraphAlgorithm.SIZE_BY_FIELD_ID)) {
-				newAttributeDefinition =
-					MutateParameterUtilities.formNumberAttributeDefinition(
+				} else if (oldAttributeDefinitionID.equals(
+						HorizontalBarGraphAlgorithm.SIZE_BY_FIELD_ID)) {
+					newAttributeDefinition = MutateParameterUtilities.formNumberAttributeDefinition(
 						oldAttributeDefinition, table);
-			} else if (oldAttributeDefinitionID.equals(
-					HorizontalBarGraphAlgorithm.DATE_FORMAT_FIELD_ID)) {
-				String[] dateFormatLabels = formDateFormatLabels();
-				String[] dateFormatOptions = formDateFormatOptions();
-				newAttributeDefinition = MutateParameterUtilities.
-					cloneToDropdownAttributeDefinition(
-						oldAttributeDefinition,
-						dateFormatLabels,
-						dateFormatOptions);
+				} else if (oldAttributeDefinitionID.equals(
+						HorizontalBarGraphAlgorithm.DATE_FORMAT_FIELD_ID)) {
+					String[] dateFormatLabels = formDateFormatLabels();
+					String[] dateFormatOptions = formDateFormatOptions();
+					newAttributeDefinition =
+						MutateParameterUtilities.cloneToDropdownAttributeDefinition(
+							oldAttributeDefinition, dateFormatLabels, dateFormatOptions);
+				}
+
+				/* TODO This can take optional ADs and mutate them needlessly into
+				 * required ones, so be careful.
+				 */
+				newParameters.addAttributeDefinition(
+					ObjectClassDefinition.REQUIRED, newAttributeDefinition);
 			}
-			
-			/* TODO This can take optional ADs and mutate them needlessly into
-			 * required ones, so be careful.
-			 */
-			newParameters.addAttributeDefinition(
-				ObjectClassDefinition.REQUIRED, newAttributeDefinition);
-		}
-		
-    	return newParameters;
+
+    		return newParameters;
+    	} catch (Exception e) {
+    		String exceptionMessage =
+    			"An error occurred when preparing to generate your visualization.  " +
+    			" Please submit this entire message to the Help Desk: \"" + e.getMessage() + "\"";
+    		throw new RuntimeException(exceptionMessage, e);
+    	}
     }
     
     private static String[] formDateFormatLabels() {

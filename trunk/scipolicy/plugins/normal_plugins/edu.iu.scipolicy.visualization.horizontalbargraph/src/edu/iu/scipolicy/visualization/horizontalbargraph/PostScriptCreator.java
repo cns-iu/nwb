@@ -22,7 +22,8 @@ import edu.iu.scipolicy.visualization.horizontalbargraph.utility.Utilities;
 
 public class PostScriptCreator {
 	public static final Color YEAR_LABEL_COLOR =
-		new Color(0.0039f, 0.4509f, 0.5843f);
+		new Color(0.0f, 0.0f, 0.0f);
+//		new Color(0.0039f, 0.4509f, 0.5843f);
 	public static final double YEAR_TICK_LINE_LINE_WIDTH = 1.5;
 	public static final String YEAR_LABEL_FONT_FAMILY = "Garamond";
 	public static final int YEAR_LABEL_FONT_SIZE = 25;

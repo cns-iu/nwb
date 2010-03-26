@@ -4,27 +4,20 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.net.URISyntaxException;
-import java.net.URL;
 import java.util.Dictionary;
-import java.util.Hashtable;
 
 import org.antlr.stringtemplate.StringTemplateGroup;
 import org.cishell.framework.CIShellContext;
 import org.cishell.framework.algorithm.Algorithm;
 import org.cishell.framework.algorithm.AlgorithmExecutionException;
-import org.cishell.framework.algorithm.AlgorithmFactory;
 import org.cishell.framework.data.BasicData;
 import org.cishell.framework.data.Data;
 import org.cishell.framework.data.DataProperty;
-import org.cishell.utilities.DateUtilities;
 import org.cishell.utilities.FileUtilities;
 import org.joda.time.DateTime;
 import org.osgi.service.log.LogService;
 
 import prefuse.data.Table;
-//import edu.iu.cns.utilities.testing.LogOnlyCIShellContext;
-import edu.iu.nwb.converter.prefusecsv.reader.PrefuseCsvReader;
 import edu.iu.scipolicy.visualization.horizontalbargraph.layout.BasicLayout;
 import edu.iu.scipolicy.visualization.horizontalbargraph.record.RecordCollection;
 import edu.iu.scipolicy.visualization.horizontalbargraph.record.TableRecordExtractor;
@@ -63,14 +56,6 @@ public class HorizontalBarGraphAlgorithm implements Algorithm {
     private Data inputData;
     private Table inputTable;
     private Metadata metadata;
-//    private String labelKey;
-//    private String startDateKey;
-//    private String endDateKey;
-//    private String amountKey;
-//    private String startDateFormat;
-//    private String endDateFormat;
-//    private double yearLabelFontSize;
-//    private double barLabelFontSize;
     
     private LogService logger;
     
@@ -80,22 +65,8 @@ public class HorizontalBarGraphAlgorithm implements Algorithm {
     		CIShellContext ciShellContext) {
         this.inputData = data[0];
         this.inputTable = (Table)data[0].getData();
-
         this.metadata = new Metadata(this.inputData, parameters);
-
-//        this.labelKey = (String)parameters.get(LABEL_FIELD_ID);
-//        this.startDateKey = (String)parameters.get(START_DATE_FIELD_ID);
-//        this.endDateKey = (String)parameters.get(END_DATE_FIELD_ID);
-//        this.amountKey = (String)parameters.get(SIZE_BY_FIELD_ID);
-//        this.startDateFormat = (String)parameters.get(DATE_FORMAT_FIELD_ID);
-//        this.endDateFormat = (String)parameters.get(DATE_FORMAT_FIELD_ID);
-//        this.yearLabelFontSize =
-//        	((Double)parameters.get(YEAR_LABEL_FONT_SIZE_FIELD_ID)).doubleValue();
-//        this.barLabelFontSize =
-//        	((Double)parameters.get(BAR_LABEL_FONT_SIZE_FIELD_ID)).doubleValue();
-        
-        this.logger =
-        	(LogService)ciShellContext.getService(LogService.class.getName());
+        this.logger = (LogService)ciShellContext.getService(LogService.class.getName());
     }
 
     public Data[] execute() throws AlgorithmExecutionException {
@@ -131,85 +102,70 @@ public class HorizontalBarGraphAlgorithm implements Algorithm {
     	 *	have the visual item draw itself. translate up. have the next draw
     	 *	 itself. et cetera. done.
     	 */
-    
-    	TableRecordExtractor extractor = new TableRecordExtractor(this.logger);
 
-    	RecordCollection recordCollection =
-    		extractor.extractRecords(this.inputTable, this.metadata, this.logger);
-//    	RecordCollection recordCollection = extractor.extractRecords(
-//    		this.inputTable,
-//    		this.labelKey,
-//    		this.startDateKey,
-//    		this.endDateKey,
-//    		this.amountKey,
-//    		this.startDateFormat,
-//    		this.endDateFormat,
-//    		this.logger);
-    	
-    	DateTime startDate = recordCollection.getMinimumDate();
-    	DateTime endDate = recordCollection.getMaximumDate();
+    	try {
+    		TableRecordExtractor extractor = new TableRecordExtractor(this.logger);
 
-    	double minimumAmountPerUnitOfTime =
-    		recordCollection.calculateMinimumAmountPerUnitOfTime(
-    			UnitOfTime.YEARS);
-    	BasicLayout layout = new BasicLayout(
-    		startDate,
-    		endDate,
-    		minimumAmountPerUnitOfTime,
-    		this.metadata.getYearLabelFontSize(),
-    		this.metadata.getBarLabelFontSize());
-    	PostScriptCreator postScriptCreator = new PostScriptCreator(
-    		horizontalBarGraphGroup,
-    		layout,
-    		this.metadata,
-//    		(String)this.inputData.getMetadata().get(DataProperty.LABEL),
-    		recordCollection);
-    	String postScript = postScriptCreator.toString();
-    	
-    	// System.err.println(postScript);
-    	
-        File temporaryPostScriptFile =
-    		writePostScriptCodeToTemporaryFile(
-	    		postScript, "horizontal-line-graph");
-		
-		return formOutData(temporaryPostScriptFile, inputData);
+    		RecordCollection recordCollection =
+    			extractor.extractRecords(this.inputTable, this.metadata, this.logger);
+
+    		DateTime startDate = recordCollection.getMinimumDate();
+    		DateTime endDate = recordCollection.getMaximumDate();
+
+    		double minimumAmountPerUnitOfTime =
+    			recordCollection.calculateMinimumAmountPerUnitOfTime(UnitOfTime.YEARS);
+    		BasicLayout layout = new BasicLayout(
+    			startDate,
+    			endDate,
+    			minimumAmountPerUnitOfTime,
+    			this.metadata.getYearLabelFontSize(),
+    			this.metadata.getBarLabelFontSize());
+    		PostScriptCreator postScriptCreator = new PostScriptCreator(
+    			horizontalBarGraphGroup, layout, this.metadata, recordCollection);
+    		String postScript = postScriptCreator.toString();
+
+        	File temporaryPostScriptFile =
+        		writePostScriptCodeToTemporaryFile(postScript, "horizontal-line-graph");
+
+			return formOutData(temporaryPostScriptFile, inputData);
+    	} catch (AlgorithmExecutionException e) {
+    		throw e;
+    	} catch (Exception e) {
+    		String exceptionMessage =
+    			"An error occurred when trying to generate your visualization.  " +
+    			" Please submit this entire message to the Help Desk: \"" + e.getMessage() + "\"";
+    		throw new AlgorithmExecutionException(exceptionMessage, e);
+    	}
     }
     
     private static StringTemplateGroup loadTemplates() {
-    	return new StringTemplateGroup(
-    		new InputStreamReader(
-    			HorizontalBarGraphAlgorithm.class.getResourceAsStream(
-    				STRING_TEMPLATE_FILE_PATH)));
+    	return new StringTemplateGroup(new InputStreamReader(
+    			HorizontalBarGraphAlgorithm.class.getResourceAsStream(STRING_TEMPLATE_FILE_PATH)));
     }
     
     private File writePostScriptCodeToTemporaryFile(
-    		String postScriptCode, String temporaryFileName)
-    		throws AlgorithmExecutionException {
+    		String postScriptCode, String temporaryFileName) throws AlgorithmExecutionException {
     	File temporaryPostScriptFile = null;
     	
     	try {
-    		temporaryPostScriptFile =
-    			FileUtilities.createTemporaryFileInDefaultTemporaryDirectory(
-    				temporaryFileName, EPS_FILE_EXTENSION);
+    		temporaryPostScriptFile = FileUtilities.createTemporaryFileInDefaultTemporaryDirectory(
+    			temporaryFileName, EPS_FILE_EXTENSION);
     	} catch (IOException postScriptFileCreationException) {
-    		String exceptionMessage =
-    			"Error creating temporary PostScript file.";
+    		String exceptionMessage = "Error creating temporary PostScript file.";
     		
     		throw new AlgorithmExecutionException(
     			exceptionMessage, postScriptFileCreationException);
     	}
     	
 		try {		
-			FileWriter temporaryPostScriptFileWriter =
-				new FileWriter(temporaryPostScriptFile);
+			FileWriter temporaryPostScriptFileWriter = new FileWriter(temporaryPostScriptFile);
 			
 			temporaryPostScriptFileWriter.write(postScriptCode);
 			temporaryPostScriptFileWriter.flush();
 			temporaryPostScriptFileWriter.close();
 		}
 		catch (IOException postScriptFileWritingException) {
-			String exceptionMessage =
-				"Error writing PostScript out to temporary file";
+			String exceptionMessage = "Error writing PostScript out to temporary file";
 			
 			throw new AlgorithmExecutionException(
 				exceptionMessage, postScriptFileWritingException);
@@ -221,124 +177,18 @@ public class HorizontalBarGraphAlgorithm implements Algorithm {
     private Data[] formOutData(File postScriptFile, Data singleInData) {
     	Dictionary inMetaData = singleInData.getMetadata();
     	
-		Data postScriptData =
-			new BasicData(postScriptFile, POST_SCRIPT_MIME_TYPE);
+		Data postScriptData = new BasicData(postScriptFile, POST_SCRIPT_MIME_TYPE);
 
 		Dictionary postScriptMetaData = postScriptData.getMetadata();
 
-		postScriptMetaData.put(
-			DataProperty.LABEL,
-			"HorizontalBarGraph_" + FileUtilities.extractFileName(inMetaData.get(DataProperty.LABEL).toString()) + ".ps");
+		String label =
+			"HorizontalBarGraph_" +
+			FileUtilities.extractFileName(inMetaData.get(DataProperty.LABEL).toString()) +
+			".ps";
+		postScriptMetaData.put(DataProperty.LABEL, label);
 		postScriptMetaData.put(DataProperty.PARENT, singleInData);
-		postScriptMetaData.put(
-			DataProperty.TYPE, DataProperty.VECTOR_IMAGE_TYPE);
+		postScriptMetaData.put(DataProperty.TYPE, DataProperty.VECTOR_IMAGE_TYPE);
     	
         return new Data[] { postScriptData };
-    }
-    /*
-    public static void main(String[] arguments) {
-    	try {
-    		AlgorithmFactory algorithmFactory =
-    			new HorizontalBarGraphAlgorithmFactory();
-    		CIShellContext ciShellContext = new LogOnlyCIShellContext();
-    		Dictionary<String, Object> parameters = constructParameters();
-    		
-    		/*runAlgorithmOnCNS(algorithmFactory, ciShellContext, parameters);
-    		
-    		runAlgorithmOnCornell(
-    			algorithmFactory, ciShellContext, parameters);
-    		
-    		runAlgorithmOnIndiana(
-    			algorithmFactory, ciShellContext, parameters);
-    		
-    		/*runAlgorithmOnMichigan(
-    			algorithmFactory, ciShellContext, parameters);*/
-    		
-    	/*} catch (Exception e) {
-    		e.printStackTrace();
-    	}
-    } */
-    
-    private static Dictionary<String, Object> constructParameters() {
-    	Dictionary<String, Object> parameters =
-    		new Hashtable<String, Object>();
-    	parameters.put(LABEL_FIELD_ID, "Title");
-    	parameters.put(START_DATE_FIELD_ID, "Start Date");
-    	parameters.put(END_DATE_FIELD_ID, "Expiration Date");
-    	parameters.put(SIZE_BY_FIELD_ID, "Awarded Amount to Date");
-    	parameters.put(
-    		DATE_FORMAT_FIELD_ID, DateUtilities.MONTH_DAY_YEAR_DATE_FORMAT);
-    	
-    	return parameters;
-    }
-    
-    private static void runAlgorithmOnCNS(
-    		AlgorithmFactory algorithmFactory,
-    		CIShellContext ciShellContext,
-    		Dictionary<String, Object> parameters)
-    		throws AlgorithmExecutionException, URISyntaxException {
-    	Data[] cnsTestData = createTestData(CNS_TEST_DATA_PATH);
-    	Algorithm algorithm = algorithmFactory.createAlgorithm(
-    		cnsTestData, parameters, ciShellContext);
-    	//System.out.println("Executing algorithm on CNS...");
-    	algorithm.execute();
-    	//System.out.println("...Done.");
-    }
-    
-    private static void runAlgorithmOnCornell(
-    		AlgorithmFactory algorithmFactory,
-    		CIShellContext ciShellContext,
-    		Dictionary<String, Object> parameters)
-    		throws AlgorithmExecutionException, URISyntaxException {
-    	Data[] cornellTestData = createTestData(CORNELL_TEST_DATA_PATH);
-    	Algorithm algorithm = algorithmFactory.createAlgorithm(
-    		cornellTestData, parameters, ciShellContext);
-    	//System.out.println("Executing algorithm on Cornell...");
-    	algorithm.execute();
-    	//System.out.println("...Done.");
-    }
-    
-    private static void runAlgorithmOnIndiana(
-    		AlgorithmFactory algorithmFactory,
-    		CIShellContext ciShellContext,
-    		Dictionary<String, Object> parameters)
-    		throws AlgorithmExecutionException, URISyntaxException {
-    	Data[] indianaTestData = createTestData(INDIANA_TEST_DATA_PATH);
-    	Algorithm algorithm = algorithmFactory.createAlgorithm(
-    		indianaTestData, parameters, ciShellContext);
-    	//System.out.println("Executing algorithm on Indiana...");
-    	algorithm.execute();
-    	//System.out.println("...Done.");
-    }
-    
-    private static void runAlgorithmOnMichigan(
-    		AlgorithmFactory algorithmFactory,
-    		CIShellContext ciShellContext,
-    		Dictionary<String, Object> parameters)
-    		throws AlgorithmExecutionException, URISyntaxException {
-    	Data[] michiganTestData = createTestData(MICHIGAN_TEST_DATA_PATH);
-    	Algorithm algorithm = algorithmFactory.createAlgorithm(
-    		michiganTestData, parameters, ciShellContext);
-    	//System.out.println("Executing algorithm on Michigan...");
-    	algorithm.execute();
-    	//System.out.println("...Done.");
-    }
-    
-    private static Data[] createTestData(String testDataPath)
-    		throws AlgorithmExecutionException, URISyntaxException {
-    	URL fileURL =
-    		HorizontalBarGraphAlgorithm.class.getResource(testDataPath);
-    	File file = new File(fileURL.toURI());
-    	Data fileData = new BasicData(file, CSV_MIME_TYPE);
-    	
-    	return convertFileDataToTableData(fileData);
-    }
-    
-    private static Data[] convertFileDataToTableData(Data fileData)
-    		throws AlgorithmExecutionException {
-    	PrefuseCsvReader csvReader =
-    		new PrefuseCsvReader(new Data[] { fileData });
-    	
-    	return csvReader.execute();
     }
 }

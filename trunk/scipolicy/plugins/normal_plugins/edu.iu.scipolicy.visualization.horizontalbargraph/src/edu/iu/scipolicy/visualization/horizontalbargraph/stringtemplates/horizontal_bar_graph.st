@@ -43,7 +43,8 @@ functions() ::= <<
 } def
 
 /recordLabel {
-	0.4 0.4 0.4 setrgbcolor
+	0 setgray
+	% 0.4 0.4 0.4 setrgbcolor
 	moveto
 	dup stringwidth pop neg 15 sub 0 rmoveto
 	fontHeightAdjust
@@ -160,13 +161,13 @@ grestore
 % Title?
 gsave
 	<x> inch <datasetNameY> inch moveto
-	0.3 setgray
+	0 setgray
 	/Garamond findfont 14 scalefont setfont
 	(Horizontal Bar Graph for ) show (<datasetName>) show
 grestore
 
 gsave
-	0.3 setgray
+	0 setgray
 	/Garamond findfont 10 scalefont setfont
 
 	% Label Column
