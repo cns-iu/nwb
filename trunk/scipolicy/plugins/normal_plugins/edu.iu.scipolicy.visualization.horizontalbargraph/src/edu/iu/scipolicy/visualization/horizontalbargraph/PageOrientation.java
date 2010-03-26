@@ -45,6 +45,11 @@ public class PageOrientation {
 			this.layout);
 	}
 
+	public double getYTranslateForHeaderAndFooter(double percentage) {
+		return this.pageOrientationType.yTranslateForHeaderAndFooter(
+			BasicLayout.PAGE_WIDTH, BasicLayout.PAGE_HEIGHT, percentage);
+	}
+
 	public enum PageOrientationType {
 		PORTRAIT {
 			public double rotation() {
@@ -79,8 +84,12 @@ public class PageOrientation {
 				double pageHeightInPoints = BasicLayout.PAGE_HEIGHT * BasicLayout.POINTS_PER_INCH;
 				double scaledVisualizationHeight = visualizationHeight * scale;
 				
-				return
-					(pageHeightInPoints - scaledVisualizationHeight) / 2.0;
+				return (pageHeightInPoints - scaledVisualizationHeight) / 2.0;
+			}
+
+			public double yTranslateForHeaderAndFooter(
+					double pageWidth, double pageHeight, double percentage) {
+				return (pageHeight * percentage);
 			}
 		},
 		LANDSCAPE {
@@ -94,17 +103,14 @@ public class PageOrientation {
 					double visualizationHeight,
 					BasicLayout layout) {
 				double scaledVisualizationWidth = visualizationWidth * scale;
-				double pageHeightInPoints =
-					BasicLayout.PAGE_HEIGHT * BasicLayout.POINTS_PER_INCH;
+				double pageHeightInPoints = BasicLayout.PAGE_HEIGHT * BasicLayout.POINTS_PER_INCH;
 				double fudgeForTextWidth =
 					layout.calculateTotalTextWidth(
 						layout.getBarLabelFontSize(),
 						BasicLayout.MAXIMUM_BAR_LABEL_CHARACTER_COUNT) *
 					TEXT_WIDTH_FUDGE_FACTOR *
 					scale;
-				System.err.println("scaledVisualizationWidth: " + scaledVisualizationWidth);
-				System.err.println("pageHeightInPoints: " + pageHeightInPoints);
-				System.err.println("fudgeForTextWidth: " + fudgeForTextWidth);
+
 				return
 					((pageHeightInPoints - scaledVisualizationWidth) /
 						2.0) +
@@ -116,12 +122,15 @@ public class PageOrientation {
 					double visualizationWidth,
 					double visualizationHeight,
 					BasicLayout layout) {
-				double pageWidthInPoints =
-					BasicLayout.PAGE_WIDTH * BasicLayout.POINTS_PER_INCH;
+				double pageWidthInPoints = BasicLayout.PAGE_WIDTH * BasicLayout.POINTS_PER_INCH;
 				double scaledVisualizationHeight = visualizationHeight * scale;
 				
-				return
-					-((pageWidthInPoints + scaledVisualizationHeight) / 2.0);
+				return -((pageWidthInPoints + scaledVisualizationHeight) / 2.0);
+			}
+
+			public double yTranslateForHeaderAndFooter(
+					double pageWidth, double pageHeight, double percentage) {
+				return ((pageWidth * percentage) - pageWidth);
 			}
 		};
 		
@@ -136,5 +145,7 @@ public class PageOrientation {
 				double visualizationWidth,
 				double visualizationHeight,
 				BasicLayout layout);
+		public abstract double yTranslateForHeaderAndFooter(
+				double pageWidth, double pageHeight, double percentage);
 	};
 }

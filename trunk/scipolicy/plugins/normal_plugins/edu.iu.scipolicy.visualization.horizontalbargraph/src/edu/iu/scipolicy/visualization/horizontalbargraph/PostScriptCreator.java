@@ -1,7 +1,9 @@
 package edu.iu.scipolicy.visualization.horizontalbargraph;
 
 import java.awt.Color;
+import java.text.DateFormat;
 import java.util.Collection;
+import java.util.Date;
 import java.util.List;
 
 import org.antlr.stringtemplate.StringTemplate;
@@ -16,6 +18,7 @@ import edu.iu.scipolicy.visualization.horizontalbargraph.layout.Cursor;
 import edu.iu.scipolicy.visualization.horizontalbargraph.layout.BasicLayout.Arrow;
 import edu.iu.scipolicy.visualization.horizontalbargraph.record.Record;
 import edu.iu.scipolicy.visualization.horizontalbargraph.record.RecordCollection;
+import edu.iu.scipolicy.visualization.horizontalbargraph.utility.Utilities;
 
 public class PostScriptCreator {
 	public static final Color YEAR_LABEL_COLOR =
@@ -31,31 +34,31 @@ public class PostScriptCreator {
 
 	private StringTemplateGroup templateGroup;
 	private BasicLayout layout;
-	private String sourceDataName;
+	private Metadata metadata;
 	private RecordCollection recordCollection;
 	private List<Bar> bars;
-//	private double barLabelFontSize;
 	private PageOrientation pageOrientation;
 
 	public PostScriptCreator(
 			StringTemplateGroup templateGroup,
 			BasicLayout layout,
-			String sourceDataName,
+			Metadata metadata,
 			RecordCollection recordCollection) {
 		this.templateGroup = templateGroup;
 		this.layout = layout;
-		this.sourceDataName = sourceDataName;
+		this.metadata = metadata;
 		this.recordCollection = recordCollection;
 		Collection<Record> records = recordCollection.getSortedRecords();
 		this.bars = layout.createBars(records);
-//		this.barLabelFontSize = this.layout.calculateLabelFontScale(bars);
 		this.pageOrientation = layout.determinePageOrientation(bars);
 	}
 
 	public String toString() {
-		String header = createHeader();
-		String scaleAndOrientation = createTransformations();
+		String header = createPostScriptHeader();
 		String functions = createFunctions();
+		String orientation = createOrientation();
+		String visualizationHeaderAndFooter = createVisualizationHeaderAndFooter();
+		String otherTransformations = createOtherTransformations();
 		String yearLabelProperties = createYearLabelProperties();
 		String yearLabelsWithVerticalTicks =
 			createYearLabelsWithVerticalTicks();
@@ -64,8 +67,10 @@ public class PostScriptCreator {
 
 		return
 			header +
-			scaleAndOrientation +
 			functions +
+			orientation +
+			visualizationHeaderAndFooter +
+			otherTransformations +
 			yearLabelProperties +
 			yearLabelsWithVerticalTicks +
 			barLabelProperties +
@@ -77,51 +82,130 @@ public class PostScriptCreator {
 		 */
 	}
 
-	private String createHeader() {
+	private String createPostScriptHeader() {
 		BoundingBox boundingBox = this.layout.calculateBoundingBox();
 
-		StringTemplate headerTemplate =
-			this.templateGroup.getInstanceOf("header");
+		StringTemplate headerTemplate = this.templateGroup.getInstanceOf("header");
 		headerTemplate.setAttribute("boundingBoxLeft", boundingBox.getLeft());
-		headerTemplate.setAttribute(
-			"boundingBoxBottom", boundingBox.getBottom());
-		headerTemplate.setAttribute(
-			"boundingBoxRight", boundingBox.getRight());
+		headerTemplate.setAttribute("boundingBoxBottom", boundingBox.getBottom());
+		headerTemplate.setAttribute("boundingBoxRight", boundingBox.getRight());
 		headerTemplate.setAttribute("boundingBoxTop", boundingBox.getTop());
-		headerTemplate.setAttribute("sourceDataName", this.sourceDataName);
-		headerTemplate.setAttribute("pageWidth", this.layout.PAGE_WIDTH);
-		headerTemplate.setAttribute("pageHeight", this.layout.PAGE_HEIGHT);
+		headerTemplate.setAttribute("sourceDataName", this.metadata.getInputDataPath());
+		headerTemplate.setAttribute("pageWidth", BasicLayout.PAGE_WIDTH);
+		headerTemplate.setAttribute("pageHeight", BasicLayout.PAGE_HEIGHT);
 
 		return headerTemplate.toString();
 	}
 
-	private String createTransformations() {
+	private String createVisualizationHeaderAndFooter() {
+		StringTemplate showHeaderAndFooterTemplate =
+			this.templateGroup.getInstanceOf("showHeaderFooter");
+		showHeaderAndFooterTemplate.setAttribute(
+			"analysisTime",
+			Utilities.postscriptEscape(DateFormat.getDateTimeInstance(
+				DateFormat.LONG, DateFormat.LONG).format(new Date())));
+		showHeaderAndFooterTemplate.setAttribute(
+			"inputData", Utilities.postscriptEscape(this.metadata.getInputDataPath()));
+
+		showHeaderAndFooterTemplate.setAttribute(
+			"datasetName", Utilities.postscriptEscape(this.metadata.getDatasetName()));
+
+		showHeaderAndFooterTemplate.setAttribute(
+			"label", Utilities.postscriptEscape(this.metadata.getLabelColumn()));
+		showHeaderAndFooterTemplate.setAttribute(
+			"startDate",
+			Utilities.postscriptEscape(this.metadata.getStartDateColumn()));
+		showHeaderAndFooterTemplate.setAttribute(
+			"endDate",
+			Utilities.postscriptEscape(this.metadata.getEndDateColumn()));
+		showHeaderAndFooterTemplate.setAttribute(
+			"sizeBy",
+			Utilities.postscriptEscape(this.metadata.getSizeByColumn()));
+		showHeaderAndFooterTemplate.setAttribute(
+			"dateFormat",
+			Utilities.postscriptEscape(this.metadata.getDateFormat()));
+		showHeaderAndFooterTemplate.setAttribute(
+			"yearLabelFontSize",
+			Utilities.postscriptEscape("" + this.metadata.getYearLabelFontSize()));
+		showHeaderAndFooterTemplate.setAttribute(
+			"barLabelFontSize",
+			Utilities.postscriptEscape("" + this.metadata.getBarLabelFontSize()));
+
+		showHeaderAndFooterTemplate.setAttribute("x", HeaderAndFooterPositioningData.X_POSITION);
+		showHeaderAndFooterTemplate.setAttribute(
+			"dateTimeY",
+			this.pageOrientation.getYTranslateForHeaderAndFooter(
+				HeaderAndFooterPositioningData.DATE_TIME_Y_PERCENTAGE));
+		showHeaderAndFooterTemplate.setAttribute(
+			"inputDataY",
+			this.pageOrientation.getYTranslateForHeaderAndFooter(
+				HeaderAndFooterPositioningData.INPUT_DATA_Y_PERCENTAGE));
+
+		showHeaderAndFooterTemplate.setAttribute(
+			"datasetNameY",
+			this.pageOrientation.getYTranslateForHeaderAndFooter(
+				HeaderAndFooterPositioningData.DATASET_NAME_Y_PERCENTAGE));
+
+		showHeaderAndFooterTemplate.setAttribute(
+			"labelY",
+			this.pageOrientation.getYTranslateForHeaderAndFooter(
+				HeaderAndFooterPositioningData.LABEL_COLUMN_Y_PERCENTAGE));
+		showHeaderAndFooterTemplate.setAttribute(
+			"startDateY",
+			this.pageOrientation.getYTranslateForHeaderAndFooter(
+				HeaderAndFooterPositioningData.START_DATE_COLUMN_Y_PERCENTAGE));
+		showHeaderAndFooterTemplate.setAttribute(
+			"endDateY",
+			this.pageOrientation.getYTranslateForHeaderAndFooter(
+				HeaderAndFooterPositioningData.END_DATE_COLUMN_Y_PERCENTAGE));
+		showHeaderAndFooterTemplate.setAttribute(
+			"sizeByY",
+			this.pageOrientation.getYTranslateForHeaderAndFooter(
+				HeaderAndFooterPositioningData.SIZE_BY_COLUMN_Y_PERCENTAGE));
+		showHeaderAndFooterTemplate.setAttribute(
+			"dateFormatY",
+			this.pageOrientation.getYTranslateForHeaderAndFooter(
+				HeaderAndFooterPositioningData.DATE_FORMAT_Y_PERCENTAGE));
+		showHeaderAndFooterTemplate.setAttribute(
+			"yearLabelFontSizeY",
+			this.pageOrientation.getYTranslateForHeaderAndFooter(
+				HeaderAndFooterPositioningData.YEAR_LABEL_FONT_SIZE_Y_PERCENTAGE));
+		showHeaderAndFooterTemplate.setAttribute(
+			"barLabelFontSizeY",
+			this.pageOrientation.getYTranslateForHeaderAndFooter(
+				HeaderAndFooterPositioningData.BAR_LABEL_FONT_SIZE_Y_PERCENTAGE));
+
+		showHeaderAndFooterTemplate.setAttribute(
+			"footerY",
+			this.pageOrientation.getYTranslateForHeaderAndFooter(
+				HeaderAndFooterPositioningData.FOOTER_Y));
+
+		return showHeaderAndFooterTemplate.toString();
+	}
+
+	private String createOtherTransformations() {
 		double totalWidth = this.layout.calculateTotalWidthWithoutMargins();
 		double totalHeight =
 			this.layout.calculateTotalHeightWithoutMargins(this.bars);
 
-		StringTemplate transformationsTemplate =
-			this.templateGroup.getInstanceOf("transformations");
-		transformationsTemplate.setAttribute(
+		StringTemplate otherTransformationsTemplate =
+			this.templateGroup.getInstanceOf("otherTransformations");
+		otherTransformationsTemplate.setAttribute(
 			"centerX",
 			NumberUtilities.convertToDecimalNotation(
 				pageOrientation.getCenteringTranslateX(
 					totalWidth, totalHeight)));
-		transformationsTemplate.setAttribute(
+		otherTransformationsTemplate.setAttribute(
 			"centerY",
 			NumberUtilities.convertToDecimalNotation(
 				pageOrientation.getCenteringTranslateY(
 					totalWidth, totalHeight)));
-		transformationsTemplate.setAttribute(
+		otherTransformationsTemplate.setAttribute(
 			"scale",
 			NumberUtilities.convertToDecimalNotation(
 				pageOrientation.getScale()));
-		transformationsTemplate.setAttribute(
-			"rotation",
-			NumberUtilities.convertToDecimalNotation(
-				pageOrientation.getRotation()));
 
-		return transformationsTemplate.toString();
+		return otherTransformationsTemplate.toString();
 	}
 
 	private String createFunctions() {
@@ -129,6 +213,17 @@ public class PostScriptCreator {
 			this.templateGroup.getInstanceOf("functions");
 
 		return functionsTemplate.toString();
+	}
+
+	private String createOrientation() {
+		StringTemplate orientationTemplate =
+			this.templateGroup.getInstanceOf("orientation");
+		orientationTemplate.setAttribute(
+			"rotation",
+			NumberUtilities.convertToDecimalNotation(
+				pageOrientation.getRotation()));
+
+		return orientationTemplate.toString();
 	}
 
 	private String createYearLabelProperties() {

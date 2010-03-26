@@ -11,6 +11,7 @@ import org.osgi.service.log.LogService;
 import prefuse.data.Table;
 import prefuse.data.Tuple;
 import prefuse.util.collections.IntIterator;
+import edu.iu.scipolicy.visualization.horizontalbargraph.Metadata;
 import edu.iu.scipolicy.visualization.horizontalbargraph.record.exception.InvalidAmountException;
 
 public class PreprocessedRecordInformation {
@@ -42,12 +43,13 @@ public class PreprocessedRecordInformation {
 
 	public PreprocessedRecordInformation(
 			Table source,
-			String labelKey,
-			String amountKey,
-			String startDateKey,
-			String endDateKey,
-			String startDateFormat,
-			String endDateFormat,
+			Metadata metadata,
+//			String labelKey,
+//			String amountKey,
+//			String startDateKey,
+//			String endDateKey,
+//			String startDateFormat,
+//			String endDateFormat,
 			LogService logger) {
 		this.logMessageHandler = new LogMessageHandler(logger);
 		this.recordWithInvalidLabelType = logMessageHandler.addMessageType(
@@ -67,14 +69,17 @@ public class PreprocessedRecordInformation {
 			int rowIndex = rows.nextInt();
 			Tuple row = source.getTuple(rowIndex);
 
-			String label = this.labelGenerator.generateLabel(row, rowIndex, labelKey);
+//			String label = this.labelGenerator.generateLabel(row, rowIndex, labelKey);
+			String label =
+				this.labelGenerator.generateLabel(row, rowIndex, metadata.getLabelColumn());
 
 			if (this.labelGenerator.lastLabelExtractedHadProblem()) {
 				this.labelGenerator.clearProblemStatus();
 
 				String logMessage =
 					"The label column in row " + rowIndex +
-					" (attribute \"" + labelKey +
+					" (attribute \"" + metadata.getLabelColumn() +
+//					" (attribute \"" + labelKey +
 					"\") did not contain a valid value.  " +
 					"Creating default label \"" + label + "\".";
 				this.logMessageHandler.handleMessage(
@@ -82,7 +87,8 @@ public class PreprocessedRecordInformation {
 			}
 
 			try {
-				double amount = Utilities.extractAmount(row, amountKey);
+				double amount = Utilities.extractAmount(row, metadata.getAmountColumn());
+//				double amount = Utilities.extractAmount(row, amountKey);
 				boolean amountIsInfinityOrNaN =
 					(Double.isInfinite(amount) || Double.isNaN(amount));
 
@@ -96,10 +102,17 @@ public class PreprocessedRecordInformation {
 						logMessage);
 				}
 
-				DateTime startDate =
-					Utilities.extractDate(row, startDateKey, startDateFormat).getDateTime();
+				DateTime startDate = Utilities.extractDate(
+					row,
+					metadata.getStartDateColumn(),
+					metadata.getDateFormat()).getDateTime();
+//					Utilities.extractDate(row, startDateKey, startDateFormat).getDateTime();
 				DateTime endDate =
-					Utilities.extractDate(row, endDateKey, endDateFormat).getDateTime();
+					Utilities.extractDate(
+						row,
+						metadata.getEndDateColumn(),
+						metadata.getDateFormat()).getDateTime();
+//					Utilities.extractDate(row, endDateKey, endDateFormat).getDateTime();
 				boolean eitherDateIsNull = ((startDate == null) || (endDate == null));
 				boolean datesAreUsable = (
 					eitherDateIsNull ||
@@ -114,18 +127,24 @@ public class PreprocessedRecordInformation {
 				} else {
 					String logMessage =
 						"The row with label \"" + label +
-						"\" (attribute \"" + labelKey + "\") " +
+						"\" (attribute \"" + metadata.getLabelColumn() + "\") " +
+//						"\" (attribute \"" + labelKey + "\") " +
 						"has the start date \"" + startDate +
-						"\" (attribute \"" + startDateKey + "\"), which is later than " +
+						"\" (attribute \"" + metadata.getStartDateColumn() +
+							"\"), which is later than " +
+//						"\" (attribute \"" + startDateKey + "\"), which is later than " +
 						"the end date \"" + endDate +
-						"\" (attribute \"" + endDateKey + "\").  Skipping.";
+						"\" (attribute \"" + metadata.getEndDateColumn() + "\").  Skipping.";
+//						"\" (attribute \"" + endDateKey + "\").  Skipping.";
 					this.logMessageHandler.handleMessage(
 						this.recordWithLaterStartDateThanEndDateType, LogService.LOG_WARNING, logMessage);
 				}
 			} catch (InvalidAmountException e) {
 				String logMessage =
 					"The row with label \"" + label + "\" " +
-					"has an invalid amount (attribute \"" + amountKey + "\").  Skipping";
+					"has an invalid amount (attribute \"" +
+						metadata.getAmountColumn() + "\").  Skipping";
+//					"has an invalid amount (attribute \"" + amountKey + "\").  Skipping";
 				this.logMessageHandler.handleMessage(
 					this.recordWithInvalidAmountType,
 					LogService.LOG_WARNING,

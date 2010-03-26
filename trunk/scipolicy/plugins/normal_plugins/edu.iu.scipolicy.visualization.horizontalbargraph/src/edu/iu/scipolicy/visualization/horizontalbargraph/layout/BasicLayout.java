@@ -25,9 +25,6 @@ public class BasicLayout {
 
 	public static final int MAXIMUM_BAR_LABEL_CHARACTER_COUNT = 50;
 	public static final double POINTS_PER_EM_SCALE = 1.1;
-//	public static final double POINTS_PER_EM = 20.0;
-//	public static final double TOTAL_TEXT_WIDTH_IN_POINTS =
-//		MAXIMUM_BAR_LABEL_CHARACTER_COUNT * POINTS_PER_EM;
 
 	public static final double MINIMUM_BAR_HEIGHT = 3.0;
 	public static final double BAR_ARROW_HEIGHT = 6.0;

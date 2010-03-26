@@ -12,9 +12,15 @@ header(boundingBoxLeft, boundingBoxBottom, boundingBoxRight, boundingBoxTop, sou
 >>
 
 
-transformations(centerX, centerY, scale, rotation) ::= <<
+orientation(rotation) ::= <<
 
 <rotation> rotate
+
+>>
+
+
+otherTransformations(centerX, centerY, scale) ::= <<
+
 <centerX> <centerY> translate
 <scale> <scale> scale
 
@@ -45,7 +51,7 @@ functions() ::= <<
 } def
 
 /period {
-	0.0 0.0 0.0 setrgbcolor
+	0.8 0.8 0.8 setrgbcolor
 	newpath
 		4 2 roll moveto
 		exch dup 0 rlineto 0 3 -1 roll
@@ -55,13 +61,13 @@ functions() ::= <<
 } def
 
 /infinitePeriod {
-	1.0 0.0 0.0 setrgbcolor
+	0.0 0.0 0.0 setrgbcolor
 	newpath
 		4 2 roll moveto
 		exch dup 0 rlineto 0 3 -1 roll
 		rlineto neg 0 rlineto
 	closepath
-	stroke
+	fill
 } def
 
 /arrow {
@@ -79,7 +85,7 @@ functions() ::= <<
 		3 index 3 index lineto
 		1 index 1 index lineto
 	closepath
-	stroke
+	fill
 } def
 
 /vertical {
@@ -95,6 +101,105 @@ functions() ::= <<
 	stroke
 	grestore
 } def
+
+% \<string\> underlinedShow
+% Pops a string
+% Shows the string underlined
+/underlinedShowDict 1 dict def
+/underlinedShow {
+	underlinedShowDict begin
+		/UNDERLINE_THICKNESS 0.1 def
+		/UNDERLINE_VERTICAL_OFFSET -0.8 def
+
+		gsave
+			0 UNDERLINE_VERTICAL_OFFSET rmoveto
+			dup stringwidth rlineto
+			UNDERLINE_THICKNESS setlinewidth stroke
+		grestore
+		
+		show
+	end
+} bind def
+
+/inch {
+	72 mul
+} def
+
+>>
+
+
+showHeaderFooter(
+	analysisTime, inputData,
+	datasetName,
+	label, startDate, endDate, sizeBy, dateFormat, yearLabelFontSize, barLabelFontSize,
+	x,
+	dateTimeY, inputDataY,
+	datasetNameY,
+	labelY, startDateY, endDateY, sizeByY, dateFormatY, yearLabelFontSizeY, barLabelFontSizeY,
+	footerY) ::= <<
+
+% Actual Header
+gsave
+	/Garamond findfont 8 scalefont setfont
+	.3 setgray
+
+	% Analysis Time
+	<x> inch <dateTimeY> inch moveto
+	(Date and time of analysis: ) show (<analysisTime>) show
+
+	% Input Data
+	<x> inch <inputDataY> inch moveto
+	(Input data: ) show (<inputData>) show
+
+	<x> inch <footerY> inch moveto
+	(Cyberinfrastructure for Network Science Center (2009) Horizontal Bar Graph. Indiana University, ) show
+	(http://sci.slis.indiana.edu) underlinedShow
+	(.) show
+grestore
+
+% Title?
+gsave
+	<x> inch <datasetNameY> inch moveto
+	0.3 setgray
+	/Garamond findfont 14 scalefont setfont
+	(Horizontal Bar Graph for ) show (<datasetName>) show
+grestore
+
+gsave
+	0.3 setgray
+	/Garamond findfont 10 scalefont setfont
+
+	% Label Column
+	<x> inch <labelY> inch moveto
+	(Label Column: ) show (<label>) show
+
+	% Start Date Column
+	<x> inch <startDateY> inch moveto
+	(Start Date Column: ) show (<startDate>) show
+
+	% End Date Column
+	<x> inch <endDateY> inch moveto
+	(End Date Column: ) show (<endDate>) show
+
+	% End Date Column
+	<x> inch <sizeByY> inch moveto
+	(Size By Column: ) show (<sizeBy>) show
+
+	% Date Format Column
+	<x> inch <dateFormatY> inch moveto
+	(Date Format Column: ) show (<dateFormat>) show
+
+	% Year Label Font Size
+	<x> inch <yearLabelFontSizeY> inch moveto
+	(Year Label Font Size: ) show (<yearLabelFontSize>) show
+
+	% Bar Label Font Size
+	<x> inch <barLabelFontSizeY> inch moveto
+	(Bar Label Font Size: ) show (<barLabelFontSize>) show
+
+	%<x> inch 9.62 inch moveto
+	%(These 83 records are associated with 10 of 13 disciplines of science and 57 of 554 research specialties in the UCSD Map of Science.) show
+grestore
 
 >>
 

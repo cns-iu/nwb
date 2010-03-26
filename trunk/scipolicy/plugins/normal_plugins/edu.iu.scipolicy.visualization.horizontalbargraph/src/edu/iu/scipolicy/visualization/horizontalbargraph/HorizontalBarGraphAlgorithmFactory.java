@@ -81,17 +81,14 @@ public class HorizontalBarGraphAlgorithmFactory
     
     private static String[] formDateFormatLabels() {
     	return new String[] {
-    		(DateUtilities.MONTH_DAY_YEAR_DATE_FORMAT +
-    			" (U.S., e.g. 10/15/2010)"),
-    		(DateUtilities.DAY_MONTH_YEAR_DATE_FORMAT +
-    			" (Europe, e.g. 15/10/2010)")
+    		(DateUtilities.MONTH_DAY_YEAR_DATE_FORMAT + " (U.S., e.g. 10/31/2010)"),
+    		(DateUtilities.DAY_MONTH_YEAR_DATE_FORMAT + " (Europe, e.g. 31/10/2010)")
     	};
     }
     
     private static String[] formDateFormatOptions() {
     	return new String[] {
-    		DateUtilities.MONTH_DAY_YEAR_DATE_FORMAT,
-    		DateUtilities.DAY_MONTH_YEAR_DATE_FORMAT,
+    		DateUtilities.MONTH_DAY_YEAR_DATE_FORMAT, DateUtilities.DAY_MONTH_YEAR_DATE_FORMAT,
     	};
     }
 }

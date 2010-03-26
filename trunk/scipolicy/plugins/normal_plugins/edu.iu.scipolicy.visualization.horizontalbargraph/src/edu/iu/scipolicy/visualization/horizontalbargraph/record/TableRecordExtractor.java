@@ -7,6 +7,7 @@ import org.osgi.service.log.LogService;
 import prefuse.data.Table;
 import prefuse.data.Tuple;
 import edu.iu.scipolicy.visualization.horizontalbargraph.DateTimeWrapper;
+import edu.iu.scipolicy.visualization.horizontalbargraph.Metadata;
 import edu.iu.scipolicy.visualization.horizontalbargraph.record.exception.InvalidAmountException;
 import edu.iu.scipolicy.visualization.horizontalbargraph.utility.PreprocessedRecordInformation;
 import edu.iu.scipolicy.visualization.horizontalbargraph.utility.RecordLabelGenerator;
@@ -59,21 +60,23 @@ public class TableRecordExtractor {
 	
 	public RecordCollection extractRecords(
 			Table source,
-			String labelKey,
-			String startDateKey,
-			String endDateKey,
-			String amountKey,
-			String startDateFormat,
-			String endDateFormat,
+			Metadata metadata,
+//			String labelKey,
+//			String startDateKey,
+//			String endDateKey,
+//			String amountKey,
+//			String startDateFormat,
+//			String endDateFormat,
 			LogService logger) {
 		PreprocessedRecordInformation recordInformation = new PreprocessedRecordInformation(
 			source,
-			labelKey,
-			amountKey,
-			startDateKey,
-			endDateKey,
-			startDateFormat,
-			endDateFormat,
+			metadata,
+//			labelKey,
+//			amountKey,
+//			startDateKey,
+//			endDateKey,
+//			startDateFormat,
+//			endDateFormat,
 			logger);
 		RecordCollection recordCollection = new RecordCollection(recordInformation);
 
@@ -87,16 +90,21 @@ public class TableRecordExtractor {
 //			System.err.println("Row " + rowIndex);
 //			int rowIndex = rows.nextInt();
 			Tuple row = source.getTuple(rowIndex);
+
+			String label = this.labelGenerator.generateLabel(
+				row, rowIndex, metadata.getLabelColumn());
+//			String label = this.labelGenerator.generateLabel(row, rowIndex, labelKey);
 			
-			String label = this.labelGenerator.generateLabel(row, rowIndex, labelKey);
-			
-			DateTimeWrapper startDateWrapper =
-				Utilities.extractDate(row, startDateKey, startDateFormat);
+			DateTimeWrapper startDateWrapper = Utilities.extractDate(
+				row, metadata.getStartDateColumn(), metadata.getDateFormat());
+//				Utilities.extractDate(row, startDateKey, startDateFormat);
 			DateTimeWrapper endDateWrapper =
-				Utilities.extractDate(row, endDateKey, endDateFormat);
+				Utilities.extractDate(row, metadata.getEndDateColumn(), metadata.getDateFormat());
+//				Utilities.extractDate(row, endDateKey, endDateFormat);
 
 			try {
-				double amount = Utilities.extractAmount(row, amountKey);
+				double amount = Utilities.extractAmount(row, metadata.getAmountColumn());
+//				double amount = Utilities.extractAmount(row, amountKey);
 				addRecordToCollector(
 					recordCollection, label, startDateWrapper, endDateWrapper, amount);
 			} catch (InvalidAmountException e) {
