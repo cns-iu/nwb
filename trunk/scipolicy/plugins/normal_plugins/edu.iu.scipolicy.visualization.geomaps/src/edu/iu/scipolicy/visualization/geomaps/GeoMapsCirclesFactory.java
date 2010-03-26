@@ -126,4 +126,9 @@ public class GeoMapsCirclesFactory extends GeoMapsAlgorithmFactory {
 		
 		return list;
 	}
+
+	@Override
+	protected String getOutputAlgorithmName() {
+		return "GeoMapsCircles";
+	}
 }

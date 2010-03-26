@@ -23,7 +23,7 @@ import org.joda.time.DateTime;
 import org.osgi.service.log.LogService;
 
 import prefuse.data.Table;
-import edu.iu.cns.utilities.testing.LogOnlyCIShellContext;
+//import edu.iu.cns.utilities.testing.LogOnlyCIShellContext;
 import edu.iu.nwb.converter.prefusecsv.reader.PrefuseCsvReader;
 import edu.iu.scipolicy.visualization.horizontalbargraph.layout.BasicLayout;
 import edu.iu.scipolicy.visualization.horizontalbargraph.record.RecordCollection;
@@ -222,14 +222,14 @@ public class HorizontalBarGraphAlgorithm implements Algorithm {
 
 		postScriptMetaData.put(
 			DataProperty.LABEL,
-			"PostScript: " + inMetaData.get(DataProperty.LABEL));
+			"HorizontalBarGraph_" + FileUtilities.extractFileName(inMetaData.get(DataProperty.LABEL).toString()) + ".ps");
 		postScriptMetaData.put(DataProperty.PARENT, singleInData);
 		postScriptMetaData.put(
 			DataProperty.TYPE, DataProperty.VECTOR_IMAGE_TYPE);
     	
         return new Data[] { postScriptData };
     }
-    
+    /*
     public static void main(String[] arguments) {
     	try {
     		AlgorithmFactory algorithmFactory =
@@ -248,10 +248,10 @@ public class HorizontalBarGraphAlgorithm implements Algorithm {
     		/*runAlgorithmOnMichigan(
     			algorithmFactory, ciShellContext, parameters);*/
     		
-    	} catch (Exception e) {
+    	/*} catch (Exception e) {
     		e.printStackTrace();
     	}
-    }
+    } */
     
     private static Dictionary<String, Object> constructParameters() {
     	Dictionary<String, Object> parameters =

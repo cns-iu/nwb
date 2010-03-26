@@ -15,6 +15,7 @@ import org.cishell.framework.algorithm.AlgorithmFactory;
 import org.cishell.framework.data.BasicData;
 import org.cishell.framework.data.Data;
 import org.cishell.framework.data.DataProperty;
+import org.cishell.utilities.FileUtilities;
 import org.opengis.referencing.operation.TransformException;
 import org.osgi.service.log.LogService;
 
@@ -42,6 +43,7 @@ public class GeoMapsAlgorithm implements Algorithm {
 	private Data[] data;
 	private Dictionary<String, Object> parameters;
 	private AnnotationMode annotationMode;
+	private String outputAlgorithmName;
 	// TODO: WTF?  public static?
 	public static LogService logger;
 	
@@ -49,10 +51,11 @@ public class GeoMapsAlgorithm implements Algorithm {
 			Data[] data,
 			Dictionary<String, Object> parameters,
 			CIShellContext context,
-			AnnotationMode annotationMode) {
+			AnnotationMode annotationMode, String outputAlgorithmName) {
 		this.data = data;
 		this.parameters = parameters;
 		this.annotationMode = annotationMode;
+		this.outputAlgorithmName = outputAlgorithmName;
 		
 		GeoMapsAlgorithm.logger = (LogService) context.getService(LogService.class.getName());
 	}
@@ -131,8 +134,7 @@ public class GeoMapsAlgorithm implements Algorithm {
 		Dictionary<String, Object> postScriptMetaData =
 			postScriptData.getMetadata();
 
-		postScriptMetaData.put(DataProperty.LABEL, "PostScript: "
-				+ inMetaData.get(DataProperty.LABEL));
+		postScriptMetaData.put(DataProperty.LABEL, outputAlgorithmName + "_" + FileUtilities.extractFileName(inMetaData.get(DataProperty.LABEL).toString()) + ".ps");
 		postScriptMetaData.put(DataProperty.PARENT, inDatum);
 		postScriptMetaData.put(DataProperty.TYPE,
 				DataProperty.VECTOR_IMAGE_TYPE);

@@ -33,10 +33,12 @@ public abstract class GeoMapsAlgorithmFactory
 	@SuppressWarnings("unchecked") // Raw Dictionary.
 	public Algorithm createAlgorithm(
 			Data[] data, Dictionary parameters, CIShellContext context) {
-        return new GeoMapsAlgorithm(data, parameters, context, getAnnotationMode());
+        return new GeoMapsAlgorithm(data, parameters, context, getAnnotationMode(), getOutputAlgorithmName());
     }
     
     protected abstract AnnotationMode getAnnotationMode();
+    
+    protected abstract String getOutputAlgorithmName();
     
     public abstract ObjectClassDefinition mutateParameters(
     		Data[] data, ObjectClassDefinition oldParameters);

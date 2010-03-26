@@ -51,4 +51,9 @@ public class GeoMapsRegionsFactory extends GeoMapsAlgorithmFactory {
 		
 		return mutator.mutate(oldParameters);
 	}
+
+	@Override
+	protected String getOutputAlgorithmName() {
+		return "GeoMapsRegions";
+	}
 }
