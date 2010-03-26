@@ -17,6 +17,7 @@ import org.cishell.framework.algorithm.AlgorithmExecutionException;
 import org.cishell.framework.data.BasicData;
 import org.cishell.framework.data.Data;
 import org.cishell.framework.data.DataProperty;
+import org.cishell.utilities.FileUtilities;
 import org.osgi.service.log.LogService;
 
 import edu.iu.nwb.converter.nwb.common.ValidateNWBFile;
@@ -265,7 +266,7 @@ public class RoundRussellAlgorithm implements Algorithm {
 		}		
 		
 		Data outputPSData = new BasicData(outputPSFile, POSTSCRIPT_MIME_TYPE);
-		outputPSData.getMetadata().put(DataProperty.LABEL, OUTPUT_DATA_LABEL); 
+		outputPSData.getMetadata().put(DataProperty.LABEL, "CircularHierarchy_" + FileUtilities.extractFileName(data[0].getMetadata().get(DataProperty.LABEL).toString()) + ".ps"); 
 		outputPSData.getMetadata().put(DataProperty.TYPE, DataProperty.VECTOR_IMAGE_TYPE);
 		outputPSData.getMetadata().put(DataProperty.PARENT, data[0]);
 		return outputPSData;
