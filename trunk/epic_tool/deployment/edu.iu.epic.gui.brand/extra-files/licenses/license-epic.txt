@@ -1,5 +1,5 @@
-Network Workbench Tool
-Copyright 2005 Indiana University
+Sci2 Team. (2009). Science of Science (Sci2) Tool.
+Copyright 2009 Indiana University
 
 Licensed under the Apache License, Version 2.0 (the "License"); 
 you may not use this file except in compliance with the License.
@@ -14,5 +14,6 @@ implied. See the License for the specific language governing
 permissions and limitations under the License.
 
 Project Contacts:
-Weixia Huang (huangb@indiana.edu)
-Dr. Katy Börner (katy@indiana.edu)
+Micah Linnemeier (mwlinnem@indiana.edu)
+Russell Duhon (rduhon@indiana.edu)
+Dr. Katy Borner (katy@indiana.edu)
