@@ -1,4 +1,4 @@
-Sci2 Team. (2009). Science of Science (Sci2) Tool.
+ Epidemiology Cyberinfrastructure (EpiC Tool) (2009). 
 Copyright 2009 Indiana University
 
 Licensed under the Apache License, Version 2.0 (the "License"); 
