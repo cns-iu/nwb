@@ -7,6 +7,7 @@ Bundle-ClassPath: .
 Import-Package: com.google.common.annotations,
  com.google.common.base,
  com.google.common.collect,
+ edu.iu.cns.database.extract.generic,
  edu.iu.cns.database.merge.generic,
  edu.iu.cns.database.merge.generic.maker,
  edu.iu.nwb.shared.isiutil.database,
@@ -56,5 +57,5 @@ Import-Package: com.google.common.annotations,
  prefuse.visual.tuple,
  uk.ac.shef.wit.simmetrics.similaritymetrics
 X-AutoStart: true
-Service-Component: OSGI-INF/identical.xml, OSGI-INF/suggest.xml, OSGI-INF/journal.xml
+Service-Component: OSGI-INF/identical.xml, OSGI-INF/suggest.xml, OSGI-INF/journal.xml, OSGI-INF/journalMergeTable.xml
 Bundle-RequiredExecutionEnvironment: J2SE-1.5
