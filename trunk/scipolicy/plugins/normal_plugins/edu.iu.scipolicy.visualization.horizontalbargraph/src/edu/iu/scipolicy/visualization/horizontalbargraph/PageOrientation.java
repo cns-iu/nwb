@@ -1,6 +1,10 @@
 package edu.iu.scipolicy.visualization.horizontalbargraph;
 
+import java.util.Collection;
+
+import edu.iu.scipolicy.visualization.horizontalbargraph.bar.Bar;
 import edu.iu.scipolicy.visualization.horizontalbargraph.layout.BasicLayout;
+import edu.iu.scipolicy.visualization.horizontalbargraph.layout.BoundingBox;
 
 public class PageOrientation {
 	public static final double TEXT_WIDTH_FUDGE_FACTOR = 0.75;
@@ -28,26 +32,22 @@ public class PageOrientation {
 		return this.pageOrientationType.rotation();
 	}
 	
-	public double getCenteringTranslateX(
-			double visualizationWidth,
-			double visualizationHeight) {
-		return this.pageOrientationType.centeringTranslateX(
-			this.scale, visualizationWidth, visualizationHeight, this.layout);
+	public double getCenteringTranslateX(Collection<Bar> bars) {
+		return this.pageOrientationType.centeringTranslateX(this.scale, bars, this.layout);
 	}
 	
-	public double getCenteringTranslateY(
-			double visualizationWidth,
-			double visualizationHeight) {
-		return this.pageOrientationType.centeringTranslateY(
-			this.scale,
-			visualizationWidth,
-			visualizationHeight,
-			this.layout);
+	public double getCenteringTranslateY(Collection<Bar> bars) {
+		return this.pageOrientationType.centeringTranslateY(this.scale, bars, this.layout);
 	}
 
-	public double getYTranslateForHeaderAndFooter(double percentage) {
-		return this.pageOrientationType.yTranslateForHeaderAndFooter(
-			BasicLayout.PAGE_WIDTH, BasicLayout.PAGE_HEIGHT, percentage);
+	public double getYTranslateForHeader(BoundingBox boundingBox, double distanceFromTop) {
+		return (boundingBox.getTop() - (distanceFromTop * BasicLayout.POINTS_PER_INCH));
+//		return this.pageOrientationType.yTranslateForHeaderAndFooter(boundingBox, percentage);
+//			BasicLayout.PAGE_WIDTH, BasicLayout.PAGE_HEIGHT, percentage);
+	}
+
+	public double getYTranslateForFooter(BoundingBox boundingBox, double distanceFromBottom) {
+		return (boundingBox.getBottom() + (distanceFromBottom * BasicLayout.POINTS_PER_INCH));
 	}
 
 	public enum PageOrientationType {
@@ -57,12 +57,9 @@ public class PageOrientation {
 			}
 			
 			public double centeringTranslateX(
-					double scale,
-					double visualizationWidth,
-					double visualizationHeight,
-					BasicLayout layout) {
-				double pageWidthInPoints =
-					BasicLayout.PAGE_WIDTH * BasicLayout.POINTS_PER_INCH;
+					double scale, Collection<Bar> bars, BasicLayout layout) {
+				double visualizationWidth = layout.calculateTotalWidthWithoutMargins();
+				double pageWidthInPoints = BasicLayout.PAGE_WIDTH * BasicLayout.POINTS_PER_INCH;
 				double scaledVisualizationWidth = visualizationWidth * scale;
 				double fudgeForTextWidth =
 					layout.calculateTotalTextWidth(
@@ -71,26 +68,22 @@ public class PageOrientation {
 					TEXT_WIDTH_FUDGE_FACTOR *
 					scale;
 				
-				return
-					((pageWidthInPoints - scaledVisualizationWidth) / 2.0) +
-					fudgeForTextWidth;
+				return ((pageWidthInPoints - scaledVisualizationWidth) / 2.0) + fudgeForTextWidth;
 			}
 			
 			public double centeringTranslateY(
-					double scale,
-					double visualizationWidth,
-					double visualizationHeight,
-					BasicLayout layout) {
+					double scale, Collection<Bar> bars, BasicLayout layout) {
+				double visualizationHeight = layout.calculateTotalHeightWithoutMargins(bars);
 				double pageHeightInPoints = BasicLayout.PAGE_HEIGHT * BasicLayout.POINTS_PER_INCH;
 				double scaledVisualizationHeight = visualizationHeight * scale;
 				
 				return (pageHeightInPoints - scaledVisualizationHeight) / 2.0;
 			}
 
-			public double yTranslateForHeaderAndFooter(
-					double pageWidth, double pageHeight, double percentage) {
-				return (pageHeight * percentage);
-			}
+//			public double yTranslateForHeaderAndFooter(
+//					BoundingBox boundingBox, double percentage) {
+//				return (boundingBox.getTop() * percentage);
+//			}
 		},
 		LANDSCAPE {
 			public double rotation() {
@@ -98,10 +91,8 @@ public class PageOrientation {
 			}
 			
 			public double centeringTranslateX(
-					double scale,
-					double visualizationWidth,
-					double visualizationHeight,
-					BasicLayout layout) {
+					double scale, Collection<Bar> bars, BasicLayout layout) {
+				double visualizationWidth = layout.calculateTotalWidthWithoutMargins();
 				double scaledVisualizationWidth = visualizationWidth * scale;
 				double pageHeightInPoints = BasicLayout.PAGE_HEIGHT * BasicLayout.POINTS_PER_INCH;
 				double fudgeForTextWidth =
@@ -112,40 +103,64 @@ public class PageOrientation {
 					scale;
 
 				return
-					((pageHeightInPoints - scaledVisualizationWidth) /
-						2.0) +
+					((pageHeightInPoints - scaledVisualizationWidth) / 2.0) +
 					fudgeForTextWidth;
 			}
 			
 			public double centeringTranslateY(
-					double scale,
-					double visualizationWidth,
-					double visualizationHeight,
-					BasicLayout layout) {
+					double scale, Collection<Bar> bars, BasicLayout layout) {
+				double visualizationHeight = layout.calculateTotalHeightWithoutMargins(bars);
 				double pageWidthInPoints = BasicLayout.PAGE_WIDTH * BasicLayout.POINTS_PER_INCH;
 				double scaledVisualizationHeight = visualizationHeight * scale;
 				
 				return -((pageWidthInPoints + scaledVisualizationHeight) / 2.0);
 			}
 
-			public double yTranslateForHeaderAndFooter(
-					double pageWidth, double pageHeight, double percentage) {
-				return ((pageWidth * percentage) - pageWidth);
+//			public double yTranslateForHeaderAndFooter(
+//					BoundingBox boundingBox, double percentage) {
+//				return ((boundingBox.getRight() * percentage) - boundingBox.getTop());
+//			}
+		},
+		NO_SCALING {
+			public double rotation() {
+				return 0.0;
 			}
+
+			public double centeringTranslateX(
+					double scale, Collection<Bar> bars, BasicLayout layout) {
+				double visualizationWidth = layout.calculateTotalWidthWithoutMargins();
+				BoundingBox boundingBox = layout.calculateBoundingBox(bars);
+				double fudgeForTextWidth =
+					layout.calculateTotalTextWidth(
+						layout.getBarLabelFontSize(),
+						BasicLayout.MAXIMUM_BAR_LABEL_CHARACTER_COUNT) *
+					TEXT_WIDTH_FUDGE_FACTOR *
+					scale;
+				
+				return ((boundingBox.getRight() - visualizationWidth) / 2.0) + fudgeForTextWidth;
+			}
+
+			public double centeringTranslateY(
+					double scale, Collection<Bar> bars, BasicLayout layout) {
+				double visualizationHeight = layout.calculateTotalHeightWithoutMargins(bars);
+				BoundingBox boundingBox = layout.calculateBoundingBox(bars);
+				
+				return (boundingBox.getTop() - visualizationHeight) / 2.0;
+			}
+
+//			public double yTranslateForHeaderAndFooter(
+//					BoundingBox boundingBox, double percentage) {
+////				return (boundingBox.getTop() * percentage);
+//				return percentage;
+//			}
 		};
 		
 		public abstract double rotation();
 		public abstract double centeringTranslateX(
-				double scale,
-				double visualizationWidth,
-				double visualizationHeight,
-				BasicLayout layout);
+				double scale, Collection<Bar> bars, BasicLayout layout);
 		public abstract double centeringTranslateY(
-				double scale,
-				double visualizationWidth,
-				double visualizationHeight,
-				BasicLayout layout);
-		public abstract double yTranslateForHeaderAndFooter(
-				double pageWidth, double pageHeight, double percentage);
+				double scale, Collection<Bar> bars, BasicLayout layout);
+//		public abstract double yTranslateForHeaderAndFooter(
+//				BoundingBox boundingBox, double percentage);
 	};
 }

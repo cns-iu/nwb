@@ -44,67 +44,37 @@ public class TableRecordExtractor {
 	public TableRecordExtractor(LogService logger) {
 		// TODO: Move this stuff to PreprocessedRecordInformation.
 		this.logMessageHandler = new LogMessageHandler(logger);
-		this.recordWithoutValidStartDateType =
-			logMessageHandler.addMessageType(
-				RECORD_WITHOUT_VALID_START_DATE,
-				RECORD_WITHOUT_VALID_START_DATE_MESSAGE_COUNT);
-		this.recordWithoutValidEndDateType =
-			logMessageHandler.addMessageType(
-				RECORD_WITHOUT_VALID_END_DATE,
-				RECORD_WITHOUT_VALID_END_DATE_MESSAGE_COUNT);
-		this.recordWithoutValidStartOrEndDateType =
-			logMessageHandler.addMessageType(
-				RECORD_WITHOUT_VALID_START_AND_END_DATES,
-				RECORD_WITHOUT_VALID_START_AND_END_DATES_MESSAGE_COUNT);
+		this.recordWithoutValidStartDateType = logMessageHandler.addMessageType(
+			RECORD_WITHOUT_VALID_START_DATE,
+			RECORD_WITHOUT_VALID_START_DATE_MESSAGE_COUNT);
+		this.recordWithoutValidEndDateType = logMessageHandler.addMessageType(
+			RECORD_WITHOUT_VALID_END_DATE,
+			RECORD_WITHOUT_VALID_END_DATE_MESSAGE_COUNT);
+		this.recordWithoutValidStartOrEndDateType = logMessageHandler.addMessageType(
+			RECORD_WITHOUT_VALID_START_AND_END_DATES,
+			RECORD_WITHOUT_VALID_START_AND_END_DATES_MESSAGE_COUNT);
 	}
 	
 	public RecordCollection extractRecords(
+			PreprocessedRecordInformation recordInformation,
 			Table source,
 			Metadata metadata,
-//			String labelKey,
-//			String startDateKey,
-//			String endDateKey,
-//			String amountKey,
-//			String startDateFormat,
-//			String endDateFormat,
 			LogService logger) {
-		PreprocessedRecordInformation recordInformation = new PreprocessedRecordInformation(
-			source,
-			metadata,
-//			labelKey,
-//			amountKey,
-//			startDateKey,
-//			endDateKey,
-//			startDateFormat,
-//			endDateFormat,
-			logger);
 		RecordCollection recordCollection = new RecordCollection(recordInformation);
 
-//		for (Integer rowIndex : recordInformation.getValidRows()) {
-//			System.err.println("Row: " + rowIndex);
-//		}
-		//IntIterator rows = source.rows();
 		for (Integer rowIndex : recordInformation.getValidRows()) {
-//		for (IntIterator rows = source.rows(); rows.hasNext(); ) {
-//			System.err.println("IntIterator row " + rows.nextInt());
-//			System.err.println("Row " + rowIndex);
-//			int rowIndex = rows.nextInt();
 			Tuple row = source.getTuple(rowIndex);
 
 			String label = this.labelGenerator.generateLabel(
 				row, rowIndex, metadata.getLabelColumn());
-//			String label = this.labelGenerator.generateLabel(row, rowIndex, labelKey);
-			
 			DateTimeWrapper startDateWrapper = Utilities.extractDate(
 				row, metadata.getStartDateColumn(), metadata.getDateFormat());
-//				Utilities.extractDate(row, startDateKey, startDateFormat);
 			DateTimeWrapper endDateWrapper =
 				Utilities.extractDate(row, metadata.getEndDateColumn(), metadata.getDateFormat());
-//				Utilities.extractDate(row, endDateKey, endDateFormat);
 
 			try {
 				double amount = Utilities.extractAmount(row, metadata.getAmountColumn());
-//				double amount = Utilities.extractAmount(row, amountKey);
+
 				addRecordToCollector(
 					recordCollection, label, startDateWrapper, endDateWrapper, amount);
 			} catch (InvalidAmountException e) {
@@ -130,25 +100,13 @@ public class TableRecordExtractor {
 			double amount) {
 		if (!startDateWrapper.isSpecified()) {
 			handleUnspecifiedStartDateCases(
-				recordCollector,
-				label,
-				startDateWrapper,
-				endDateWrapper,
-				amount);
+				recordCollector, label, startDateWrapper, endDateWrapper, amount);
 		} else if (!startDateWrapper.isValid()) {
 			handleInvalidStartDateCases(
-				recordCollector,
-				label,
-				startDateWrapper,
-				endDateWrapper,
-				amount);
+				recordCollector, label, startDateWrapper, endDateWrapper, amount);
 		} else {
 			handleValidStartDateCases(
-				recordCollector,
-				label,
-				startDateWrapper,
-				endDateWrapper,
-				amount);
+				recordCollector, label, startDateWrapper, endDateWrapper, amount);
 		}
 	}
 
@@ -162,13 +120,9 @@ public class TableRecordExtractor {
 		
 		if (!endDateWrapper.isSpecified()) {
 			String logMessage =
-				logPrefix +
-				"unspecified start and end dates." +
-				NO_START_AND_END_DATES_MESSAGE;
+				logPrefix + "unspecified start and end dates." + NO_START_AND_END_DATES_MESSAGE;
 			this.logMessageHandler.handleMessage(
-				this.recordWithoutValidStartOrEndDateType,
-				LogService.LOG_WARNING,
-				logMessage);
+				this.recordWithoutValidStartOrEndDateType, LogService.LOG_WARNING, logMessage);
 		
 			recordCollector.addRecordWithNoDates(label, amount);
 		} else if (!endDateWrapper.isValid()) {
@@ -177,22 +131,15 @@ public class TableRecordExtractor {
 				"an unspecified start date and an invalid end date." +
 				NO_START_AND_END_DATES_MESSAGE;
 			this.logMessageHandler.handleMessage(
-				this.recordWithoutValidStartOrEndDateType,
-				LogService.LOG_WARNING,
-				logMessage);
+				this.recordWithoutValidStartOrEndDateType, LogService.LOG_WARNING, logMessage);
 		
 			recordCollector.addRecordWithNoDates(label, amount);
 		} else {
-			String logMessage =
-				logPrefix + "an unspecified start date." +
-				NO_START_DATE_MESSAGE;
+			String logMessage = logPrefix + "an unspecified start date." + NO_START_DATE_MESSAGE;
 			this.logMessageHandler.handleMessage(
-				this.recordWithoutValidStartDateType,
-				LogService.LOG_WARNING,
-				logMessage);
+				this.recordWithoutValidStartDateType, LogService.LOG_WARNING, logMessage);
 		
-			recordCollector.addRecordWithNoStartDate(
-				label, endDateWrapper.getDateTime(), amount);
+			recordCollector.addRecordWithNoStartDate(label, endDateWrapper.getDateTime(), amount);
 		}
 	}
 	
@@ -210,28 +157,20 @@ public class TableRecordExtractor {
 				"an invalid start date and an unspecified end date." +
 				NO_START_AND_END_DATES_MESSAGE;
 			this.logMessageHandler.handleMessage(
-				this.recordWithoutValidStartOrEndDateType,
-				LogService.LOG_WARNING,
-				logMessage);
+				this.recordWithoutValidStartOrEndDateType, LogService.LOG_WARNING, logMessage);
 		
 			recordCollector.addRecordWithNoDates(label, amount);
 		} else if (!endDateWrapper.isValid()) {
 			String logMessage =
-				logPrefix + "invalid start date and end dates." +
-				NO_START_AND_END_DATES_MESSAGE;
+				logPrefix + "invalid start date and end dates." + NO_START_AND_END_DATES_MESSAGE;
 			this.logMessageHandler.handleMessage(
-				this.recordWithoutValidStartOrEndDateType,
-				LogService.LOG_WARNING,
-				logMessage);
+				this.recordWithoutValidStartOrEndDateType, LogService.LOG_WARNING, logMessage);
 		
 			recordCollector.addRecordWithNoDates(label, amount);
 		} else {
-			String logMessage =
-				logPrefix + "an invalid start date." + NO_START_DATE_MESSAGE;
+			String logMessage = logPrefix + "an invalid start date." + NO_START_DATE_MESSAGE;
 			this.logMessageHandler.handleMessage(
-				this.recordWithoutValidStartDateType,
-				LogService.LOG_WARNING,
-				logMessage);
+				this.recordWithoutValidStartDateType, LogService.LOG_WARNING, logMessage);
 		
 			recordCollector.addRecordWithNoStartDate(label, endDateWrapper.getDateTime(), amount);
 		}
@@ -246,12 +185,9 @@ public class TableRecordExtractor {
 		String logPrefix = "The record \"" + label + "\" has ";
 		
 		if (!endDateWrapper.isSpecified()) {
-			String logMessage =
-				logPrefix + "an unspecified end date." + NO_END_DATE_MESSAGE;
+			String logMessage = logPrefix + "an unspecified end date." + NO_END_DATE_MESSAGE;
 			this.logMessageHandler.handleMessage(
-				this.recordWithoutValidEndDateType,
-				LogService.LOG_WARNING,
-				logMessage);
+				this.recordWithoutValidEndDateType, LogService.LOG_WARNING, logMessage);
 		
 			recordCollector.addRecordWithNoEndDate(
 				label, startDateWrapper.getDateTime(), amount);
@@ -259,18 +195,12 @@ public class TableRecordExtractor {
 			String logMessage =
 				logPrefix + "an invalid end date." + NO_END_DATE_MESSAGE;
 			this.logMessageHandler.handleMessage(
-				this.recordWithoutValidEndDateType,
-				LogService.LOG_WARNING,
-				logMessage);
+				this.recordWithoutValidEndDateType, LogService.LOG_WARNING, logMessage);
 		
-			recordCollector.addRecordWithNoEndDate(
-				label, startDateWrapper.getDateTime(), amount);
+			recordCollector.addRecordWithNoEndDate(label, startDateWrapper.getDateTime(), amount);
 		} else {
 			recordCollector.addNormalRecord(
-				label,
-				startDateWrapper.getDateTime(),
-				endDateWrapper.getDateTime(),
-				amount);
+				label, startDateWrapper.getDateTime(), endDateWrapper.getDateTime(), amount);
 		}
 	}
 }

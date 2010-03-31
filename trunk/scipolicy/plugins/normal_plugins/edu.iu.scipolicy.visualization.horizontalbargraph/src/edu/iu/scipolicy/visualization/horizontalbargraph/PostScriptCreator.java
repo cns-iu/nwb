@@ -55,10 +55,12 @@ public class PostScriptCreator {
 	}
 
 	public String toString() {
-		String header = createPostScriptHeader();
+		BoundingBox boundingBox = this.layout.calculateBoundingBox(this.bars);
+
+		String header = createPostScriptHeader(boundingBox);
 		String functions = createFunctions();
 		String orientation = createOrientation();
-		String visualizationHeaderAndFooter = createVisualizationHeaderAndFooter();
+		String visualizationHeaderAndFooter = createVisualizationHeaderAndFooter(boundingBox);
 		String otherTransformations = createOtherTransformations();
 		String yearLabelProperties = createYearLabelProperties();
 		String yearLabelsWithVerticalTicks =
@@ -83,9 +85,7 @@ public class PostScriptCreator {
 		 */
 	}
 
-	private String createPostScriptHeader() {
-		BoundingBox boundingBox = this.layout.calculateBoundingBox();
-
+	private String createPostScriptHeader(BoundingBox boundingBox) {
 		StringTemplate headerTemplate = this.templateGroup.getInstanceOf("header");
 		headerTemplate.setAttribute("boundingBoxLeft", boundingBox.getLeft());
 		headerTemplate.setAttribute("boundingBoxBottom", boundingBox.getBottom());
@@ -98,7 +98,7 @@ public class PostScriptCreator {
 		return headerTemplate.toString();
 	}
 
-	private String createVisualizationHeaderAndFooter() {
+	private String createVisualizationHeaderAndFooter(BoundingBox boundingBox) {
 		StringTemplate showHeaderAndFooterTemplate =
 			this.templateGroup.getInstanceOf("showHeaderFooter");
 		showHeaderAndFooterTemplate.setAttribute(
@@ -135,94 +135,85 @@ public class PostScriptCreator {
 		showHeaderAndFooterTemplate.setAttribute("x", HeaderAndFooterPositioningData.X_POSITION);
 		showHeaderAndFooterTemplate.setAttribute(
 			"dateTimeY",
-			this.pageOrientation.getYTranslateForHeaderAndFooter(
-				HeaderAndFooterPositioningData.DATE_TIME_Y_PERCENTAGE));
+			this.pageOrientation.getYTranslateForHeader(
+				boundingBox, HeaderAndFooterPositioningData.DATE_TIME_Y));
 		showHeaderAndFooterTemplate.setAttribute(
 			"inputDataY",
-			this.pageOrientation.getYTranslateForHeaderAndFooter(
-				HeaderAndFooterPositioningData.INPUT_DATA_Y_PERCENTAGE));
+			this.pageOrientation.getYTranslateForHeader(
+				boundingBox, HeaderAndFooterPositioningData.INPUT_DATA_Y));
 
 		showHeaderAndFooterTemplate.setAttribute(
 			"datasetNameY",
-			this.pageOrientation.getYTranslateForHeaderAndFooter(
-				HeaderAndFooterPositioningData.DATASET_NAME_Y_PERCENTAGE));
+			this.pageOrientation.getYTranslateForHeader(
+				boundingBox, HeaderAndFooterPositioningData.DATASET_NAME_Y));
 
 		showHeaderAndFooterTemplate.setAttribute(
 			"labelY",
-			this.pageOrientation.getYTranslateForHeaderAndFooter(
-				HeaderAndFooterPositioningData.LABEL_COLUMN_Y_PERCENTAGE));
+			this.pageOrientation.getYTranslateForHeader(
+				boundingBox, HeaderAndFooterPositioningData.LABEL_COLUMN_Y));
 		showHeaderAndFooterTemplate.setAttribute(
 			"startDateY",
-			this.pageOrientation.getYTranslateForHeaderAndFooter(
-				HeaderAndFooterPositioningData.START_DATE_COLUMN_Y_PERCENTAGE));
+			this.pageOrientation.getYTranslateForHeader(
+				boundingBox, HeaderAndFooterPositioningData.START_DATE_COLUMN_Y));
 		showHeaderAndFooterTemplate.setAttribute(
 			"endDateY",
-			this.pageOrientation.getYTranslateForHeaderAndFooter(
-				HeaderAndFooterPositioningData.END_DATE_COLUMN_Y_PERCENTAGE));
+			this.pageOrientation.getYTranslateForHeader(
+				boundingBox, HeaderAndFooterPositioningData.END_DATE_COLUMN_Y));
 		showHeaderAndFooterTemplate.setAttribute(
 			"sizeByY",
-			this.pageOrientation.getYTranslateForHeaderAndFooter(
-				HeaderAndFooterPositioningData.SIZE_BY_COLUMN_Y_PERCENTAGE));
+			this.pageOrientation.getYTranslateForHeader(
+				boundingBox, HeaderAndFooterPositioningData.SIZE_BY_COLUMN_Y));
 		showHeaderAndFooterTemplate.setAttribute(
 			"dateFormatY",
-			this.pageOrientation.getYTranslateForHeaderAndFooter(
-				HeaderAndFooterPositioningData.DATE_FORMAT_Y_PERCENTAGE));
+			this.pageOrientation.getYTranslateForHeader(
+				boundingBox, HeaderAndFooterPositioningData.DATE_FORMAT_Y));
 		showHeaderAndFooterTemplate.setAttribute(
 			"yearLabelFontSizeY",
-			this.pageOrientation.getYTranslateForHeaderAndFooter(
-				HeaderAndFooterPositioningData.YEAR_LABEL_FONT_SIZE_Y_PERCENTAGE));
+			this.pageOrientation.getYTranslateForHeader(
+				boundingBox, HeaderAndFooterPositioningData.YEAR_LABEL_FONT_SIZE_Y));
 		showHeaderAndFooterTemplate.setAttribute(
 			"barLabelFontSizeY",
-			this.pageOrientation.getYTranslateForHeaderAndFooter(
-				HeaderAndFooterPositioningData.BAR_LABEL_FONT_SIZE_Y_PERCENTAGE));
+			this.pageOrientation.getYTranslateForHeader(
+				boundingBox, HeaderAndFooterPositioningData.BAR_LABEL_FONT_SIZE_Y));
 
 		showHeaderAndFooterTemplate.setAttribute(
 			"footerY",
-			this.pageOrientation.getYTranslateForHeaderAndFooter(
-				HeaderAndFooterPositioningData.FOOTER_Y));
+			this.pageOrientation.getYTranslateForFooter(
+				boundingBox, HeaderAndFooterPositioningData.FOOTER_Y));
 
 		return showHeaderAndFooterTemplate.toString();
 	}
 
 	private String createOtherTransformations() {
-		double totalWidth = this.layout.calculateTotalWidthWithoutMargins();
-		double totalHeight =
-			this.layout.calculateTotalHeightWithoutMargins(this.bars);
+//		double totalWidth = this.layout.calculateTotalWidthWithoutMargins();
+//		double totalHeight = this.layout.calculateTotalHeightWithoutMargins(this.bars);
 
 		StringTemplate otherTransformationsTemplate =
 			this.templateGroup.getInstanceOf("otherTransformations");
 		otherTransformationsTemplate.setAttribute(
 			"centerX",
 			NumberUtilities.convertToDecimalNotation(
-				pageOrientation.getCenteringTranslateX(
-					totalWidth, totalHeight)));
+				pageOrientation.getCenteringTranslateX(this.bars)));
 		otherTransformationsTemplate.setAttribute(
 			"centerY",
 			NumberUtilities.convertToDecimalNotation(
-				pageOrientation.getCenteringTranslateY(
-					totalWidth, totalHeight)));
+				pageOrientation.getCenteringTranslateY(this.bars)));
 		otherTransformationsTemplate.setAttribute(
-			"scale",
-			NumberUtilities.convertToDecimalNotation(
-				pageOrientation.getScale()));
+			"scale", NumberUtilities.convertToDecimalNotation(pageOrientation.getScale()));
 
 		return otherTransformationsTemplate.toString();
 	}
 
 	private String createFunctions() {
-		StringTemplate functionsTemplate =
-			this.templateGroup.getInstanceOf("functions");
+		StringTemplate functionsTemplate = this.templateGroup.getInstanceOf("functions");
 
 		return functionsTemplate.toString();
 	}
 
 	private String createOrientation() {
-		StringTemplate orientationTemplate =
-			this.templateGroup.getInstanceOf("orientation");
+		StringTemplate orientationTemplate = this.templateGroup.getInstanceOf("orientation");
 		orientationTemplate.setAttribute(
-			"rotation",
-			NumberUtilities.convertToDecimalNotation(
-				pageOrientation.getRotation()));
+			"rotation", NumberUtilities.convertToDecimalNotation(pageOrientation.getRotation()));
 
 		return orientationTemplate.toString();
 	}
@@ -331,19 +322,19 @@ public class PostScriptCreator {
 		StringTemplate barTemplate = getBarStringTemplate(bar);
 
 		barTemplate.setAttribute("label", bar.getLabel());
-		barTemplate.setAttribute("textX", textX);
 		barTemplate.setAttribute("textY", textY);
 		barTemplate.setAttribute("barX", barX);
 		barTemplate.setAttribute("barY", barY);
 		barTemplate.setAttribute("barWidth", barWidth);
 		barTemplate.setAttribute("barHeight", barHeight);
-		
-		String barPostScript = barTemplate.toString();
+
 		String leftArrowPostScript = "";
 		String rightArrowPostScript = "";
 		
 		if (bar.continuesLeft()) {
 			Arrow leftArrow = this.layout.createLeftArrow(bar, barX, barY, barWidth);
+
+			textX = NumberUtilities.roundToNDecimalPlaces(leftArrow.middleX, DECIMAL_PLACE_COUNT);
 
 			StringTemplate leftArrowTemplate = getArrowStringTemplate(bar);
 			leftArrowTemplate.setAttribute("startX", leftArrow.startX);
@@ -355,6 +346,8 @@ public class PostScriptCreator {
 			
 			leftArrowPostScript = leftArrowTemplate.toString();
 		}
+
+		barTemplate.setAttribute("textX", textX);
 		
 		if (bar.continuesRight()) {
 			Arrow rightArrow = this.layout.createRightArrow(bar, barX, barY, barWidth);
@@ -371,7 +364,7 @@ public class PostScriptCreator {
 			rightArrowPostScript = rightArrowTemplate.toString();
 		}
 		
-		return barPostScript + leftArrowPostScript + rightArrowPostScript;
+		return barTemplate.toString() + leftArrowPostScript + rightArrowPostScript;
 	}
 
 	private StringTemplate getBarStringTemplate(Bar bar) {

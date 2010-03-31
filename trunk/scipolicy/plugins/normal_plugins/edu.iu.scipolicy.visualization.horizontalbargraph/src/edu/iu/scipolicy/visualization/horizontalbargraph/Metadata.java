@@ -18,6 +18,7 @@ public final class Metadata {
 	private String dateFormat;
 	private double yearLabelFontSize;
 	private double barLabelFontSize;
+	private boolean scaleToFitPage;
 
 	public Metadata(
 			String inputDataPath,
@@ -29,7 +30,8 @@ public final class Metadata {
 			String sizeByColumn,
 			String dateFormat,
 			double yearLabelFontSize,
-			double barLabelFontSize) {
+			double barLabelFontSize,
+			boolean scaleToFitPage) {
 		this.inputDataPath = inputDataPath;
 		this.datasetName = datasetName;
 		this.labelColumn = labelColumn;
@@ -40,6 +42,7 @@ public final class Metadata {
 		this.dateFormat = dateFormat;
 		this.yearLabelFontSize = yearLabelFontSize;
 		this.barLabelFontSize = barLabelFontSize;
+		this.scaleToFitPage = scaleToFitPage;
 	}
 
 	public Metadata(Data inputData, Dictionary<String, Object> parameters) {
@@ -56,7 +59,9 @@ public final class Metadata {
         	((Double)parameters.get(
         		HorizontalBarGraphAlgorithm.YEAR_LABEL_FONT_SIZE_FIELD_ID)).doubleValue(),
         	((Double)parameters.get(
-        		HorizontalBarGraphAlgorithm.BAR_LABEL_FONT_SIZE_FIELD_ID)).doubleValue());
+        		HorizontalBarGraphAlgorithm.BAR_LABEL_FONT_SIZE_FIELD_ID)).doubleValue(),
+        	((Boolean)parameters.get(
+        		HorizontalBarGraphAlgorithm.SCALE_TO_FIT_PAGE_ID)).booleanValue());
 	}
 
 	public String getInputDataPath() {
@@ -97,5 +102,9 @@ public final class Metadata {
 
 	public double getBarLabelFontSize() {
 		return this.barLabelFontSize;
+	}
+
+	public boolean scaleToFitPage() {
+		return this.scaleToFitPage;
 	}
 }

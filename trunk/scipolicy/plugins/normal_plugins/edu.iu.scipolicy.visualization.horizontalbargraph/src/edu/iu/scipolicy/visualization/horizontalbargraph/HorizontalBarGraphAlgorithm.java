@@ -21,6 +21,8 @@ import prefuse.data.Table;
 import edu.iu.scipolicy.visualization.horizontalbargraph.layout.BasicLayout;
 import edu.iu.scipolicy.visualization.horizontalbargraph.record.RecordCollection;
 import edu.iu.scipolicy.visualization.horizontalbargraph.record.TableRecordExtractor;
+import edu.iu.scipolicy.visualization.horizontalbargraph.record.exception.BadDatasetException;
+import edu.iu.scipolicy.visualization.horizontalbargraph.utility.PreprocessedRecordInformation;
 
 public class HorizontalBarGraphAlgorithm implements Algorithm {
 	public static final String LABEL_FIELD_ID = "label";
@@ -30,6 +32,7 @@ public class HorizontalBarGraphAlgorithm implements Algorithm {
 	public static final String DATE_FORMAT_FIELD_ID = "date_format";
 	public static final String YEAR_LABEL_FONT_SIZE_FIELD_ID = "year_label_font_size";
 	public static final String BAR_LABEL_FONT_SIZE_FIELD_ID = "bar_label_font_size";
+	public static final String SCALE_TO_FIT_PAGE_ID = "scale_to_fit_page";
 
 	public static final String POST_SCRIPT_MIME_TYPE = "file:text/ps";
 	public static final String EPS_FILE_EXTENSION = "eps";
@@ -104,10 +107,13 @@ public class HorizontalBarGraphAlgorithm implements Algorithm {
     	 */
 
     	try {
+    		PreprocessedRecordInformation recordInformation =
+    			new PreprocessedRecordInformation(this.inputTable, metadata, logger);
+
     		TableRecordExtractor extractor = new TableRecordExtractor(this.logger);
 
-    		RecordCollection recordCollection =
-    			extractor.extractRecords(this.inputTable, this.metadata, this.logger);
+    		RecordCollection recordCollection = extractor.extractRecords(
+    			recordInformation, this.inputTable, this.metadata, this.logger);
 
     		DateTime startDate = recordCollection.getMinimumDate();
     		DateTime endDate = recordCollection.getMaximumDate();
@@ -115,6 +121,7 @@ public class HorizontalBarGraphAlgorithm implements Algorithm {
     		double minimumAmountPerUnitOfTime =
     			recordCollection.calculateMinimumAmountPerUnitOfTime(UnitOfTime.YEARS);
     		BasicLayout layout = new BasicLayout(
+    			this.metadata.scaleToFitPage(),
     			startDate,
     			endDate,
     			minimumAmountPerUnitOfTime,
@@ -130,12 +137,14 @@ public class HorizontalBarGraphAlgorithm implements Algorithm {
 			return formOutData(temporaryPostScriptFile, inputData);
     	} catch (AlgorithmExecutionException e) {
     		throw e;
-    	} catch (Exception e) {
+    	} catch (BadDatasetException e) {
+    		throw new AlgorithmExecutionException(e.getMessage(), e);
+    	}/* catch (Exception e) {
     		String exceptionMessage =
     			"An error occurred when trying to generate your visualization.  " +
     			" Please submit this entire message to the Help Desk: \"" + e.getMessage() + "\"";
     		throw new AlgorithmExecutionException(exceptionMessage, e);
-    	}
+    	}*/
     }
     
     private static StringTemplateGroup loadTemplates() {

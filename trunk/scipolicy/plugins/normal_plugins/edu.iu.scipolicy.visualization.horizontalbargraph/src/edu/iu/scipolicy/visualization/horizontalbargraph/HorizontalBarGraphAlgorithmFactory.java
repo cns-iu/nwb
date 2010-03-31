@@ -23,7 +23,7 @@ public class HorizontalBarGraphAlgorithmFactory implements AlgorithmFactory, Par
     
     public ObjectClassDefinition mutateParameters(
     		Data[] data, ObjectClassDefinition oldParameters) {
-    	try {
+//    	try {
     		Data inData = data[0];
     		Table table = (Table) inData.getData();
 
@@ -67,12 +67,12 @@ public class HorizontalBarGraphAlgorithmFactory implements AlgorithmFactory, Par
 			}
 
     		return newParameters;
-    	} catch (Exception e) {
-    		String exceptionMessage =
-    			"An error occurred when preparing to generate your visualization.  " +
-    			" Please submit this entire message to the Help Desk: \"" + e.getMessage() + "\"";
-    		throw new RuntimeException(exceptionMessage, e);
-    	}
+//    	} catch (Exception e) {
+//    		String exceptionMessage =
+//    			"An error occurred when preparing to generate your visualization.  " +
+//    			" Please submit this entire message to the Help Desk: \"" + e.getMessage() + "\"";
+//    		throw new RuntimeException(exceptionMessage, e);
+//    	}
     }
     
     private static String[] formDateFormatLabels() {

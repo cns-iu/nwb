@@ -215,7 +215,7 @@ public class RecordCollection {
 	}
 
 	private DateTime fixEndDate(DateTime startDate, DateTime endDate) {
-		if (startDate.equals(endDate)) {
+		if ((startDate != null) && startDate.equals(endDate)) {
 			return endDate.plusYears(1);
 		}
 

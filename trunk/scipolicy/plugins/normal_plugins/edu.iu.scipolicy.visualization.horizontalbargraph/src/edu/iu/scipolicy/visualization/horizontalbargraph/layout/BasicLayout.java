@@ -14,8 +14,7 @@ import edu.iu.scipolicy.visualization.horizontalbargraph.record.Record;
 public class BasicLayout {
 	public static final double PAGE_WIDTH = 8.5;
 	public static final double PAGE_HEIGHT = 11.0;
-	public static final double PAGE_HEIGHT_TO_WIDTH_RATIO =
-		PAGE_HEIGHT / PAGE_WIDTH;
+	public static final double PAGE_HEIGHT_TO_WIDTH_RATIO = PAGE_HEIGHT / PAGE_WIDTH;
 	public static final double MARGIN_WIDTH_FACTOR = 0.10;
 	public static final double MARGIN_HEIGHT_FACTOR = 0.10;
 
@@ -28,11 +27,12 @@ public class BasicLayout {
 
 	public static final double MINIMUM_BAR_HEIGHT = 3.0;
 	public static final double BAR_ARROW_HEIGHT = 6.0;
-	public static final double BAR_ARROW_WIDTH_FACTOR = 0.005;
+	public static final double BAR_ARROW_WIDTH_FACTOR = 0.1;
 	public static final double SPACE_BETWEEN_BARS = 20.0;
 
 	public static final double BAR_INDEX_PERCENTAGE_TO_USE_FOR_LABEL_FONT_SIZE = 0.4;
 
+	boolean scaleToFitPage;
 	private DateTime startDate;
 	private DateTime endDate;
 	private double barHeightScale;
@@ -40,16 +40,22 @@ public class BasicLayout {
 	private double barLabelFontSize;
 
 	public BasicLayout(
+			boolean scaleToFitPage,
 			DateTime startDate,
 			DateTime endDate,
 			double minimumAmountPerUnitOfTime,
 			double yearLabelFontSize,
 			double barLabelFontSize) {
+		this.scaleToFitPage = scaleToFitPage;
 		this.startDate = startDate;
 		this.endDate = endDate;
 		this.barHeightScale = MINIMUM_BAR_HEIGHT / minimumAmountPerUnitOfTime;
 		this.yearLabelFontSize = yearLabelFontSize;
 		this.barLabelFontSize = barLabelFontSize;
+	}
+
+	public boolean scaleToFitPage() {
+		return this.scaleToFitPage;
 	}
 
 	public double getYearLabelFontSize() {
@@ -66,43 +72,43 @@ public class BasicLayout {
 		double visualizationRatio = calculateVisualizationRatio(
 			visualizationHeight, visualizationWidth);
 
-		if (PAGE_HEIGHT_TO_WIDTH_RATIO > visualizationRatio) {
-			if (visualizationHeight > visualizationWidth) {
-				double scale =
-					(PAGE_WIDTH * POINTS_PER_INCH) / visualizationWidth;
+		if (this.scaleToFitPage) {
+			if (PAGE_HEIGHT_TO_WIDTH_RATIO > visualizationRatio) {
+				if (visualizationHeight > visualizationWidth) {
+					double scale = (PAGE_WIDTH * POINTS_PER_INCH) / visualizationWidth;
 
-				return new PageOrientation(
-					PageOrientation.PageOrientationType.PORTRAIT, scale, this);
-			} else if (visualizationHeight < visualizationWidth) {
-				double scale =
-					(PAGE_WIDTH * POINTS_PER_INCH) / visualizationHeight;
+					return new PageOrientation(
+						PageOrientation.PageOrientationType.PORTRAIT, scale, this);
+				} else if (visualizationHeight < visualizationWidth) {
+					double scale = (PAGE_WIDTH * POINTS_PER_INCH) / visualizationHeight;
 
-				return new PageOrientation(
-					PageOrientation.PageOrientationType.LANDSCAPE, scale, this);
-			} else {
-				return new PageOrientation(
-					PageOrientation.PageOrientationType.PORTRAIT, 1.0, this);
-			}
-		} else if (PAGE_HEIGHT_TO_WIDTH_RATIO < visualizationRatio) {
-			if (visualizationHeight > visualizationWidth) {
-				double scale =
-					(PAGE_HEIGHT * POINTS_PER_INCH) / visualizationHeight;
+					return new PageOrientation(
+						PageOrientation.PageOrientationType.LANDSCAPE, scale, this);
+				} else {
+					return new PageOrientation(
+						PageOrientation.PageOrientationType.PORTRAIT, 1.0, this);
+				}
+			} else if (PAGE_HEIGHT_TO_WIDTH_RATIO < visualizationRatio) {
+				if (visualizationHeight > visualizationWidth) {
+					double scale = (PAGE_HEIGHT * POINTS_PER_INCH) / visualizationHeight;
 
-				return new PageOrientation(
-					PageOrientation.PageOrientationType.PORTRAIT, scale, this);
-			} else if (visualizationHeight < visualizationWidth) {
-				double scale =
-					(PAGE_HEIGHT * POINTS_PER_INCH) / visualizationWidth;
+					return new PageOrientation(
+						PageOrientation.PageOrientationType.PORTRAIT, scale, this);
+				} else if (visualizationHeight < visualizationWidth) {
+					double scale = (PAGE_HEIGHT * POINTS_PER_INCH) / visualizationWidth;
 
-				return new PageOrientation(
-					PageOrientation.PageOrientationType.LANDSCAPE, scale, this);
+					return new PageOrientation(
+						PageOrientation.PageOrientationType.LANDSCAPE, scale, this);
+				} else {
+					return new PageOrientation(
+						PageOrientation.PageOrientationType.PORTRAIT, 1.0, this);
+				}
 			} else {
 				return new PageOrientation(
 					PageOrientation.PageOrientationType.PORTRAIT, 1.0, this);
 			}
 		} else {
-			return new PageOrientation(
-				PageOrientation.PageOrientationType.PORTRAIT, 1.0, this);
+			return new PageOrientation(PageOrientation.PageOrientationType.NO_SCALING, 1.0, this);
 		}
 	}
 
@@ -127,7 +133,8 @@ public class BasicLayout {
 	public double adjustXForStartArrow(Bar bar) {
 		if (bar.continuesLeft()) {
 			double originalX = bar.getX();
-			double arrowWidth = bar.getWidth() * BAR_ARROW_WIDTH_FACTOR;
+//			double arrowWidth = bar.getWidth() * BAR_ARROW_WIDTH_FACTOR;
+			double arrowWidth = getBarArrowWidth(bar);
 
 			return originalX + arrowWidth;
 		} else {
@@ -136,7 +143,8 @@ public class BasicLayout {
 	}
 	
 	public double getBarArrowWidth(Bar bar) {
-		return bar.getWidth() * BAR_ARROW_WIDTH_FACTOR;
+//		return bar.getWidth() * BAR_ARROW_WIDTH_FACTOR;
+		return bar.getHeight();
 	}
 
 	public double adjustWidthForArrows(Bar bar) {
@@ -172,19 +180,22 @@ public class BasicLayout {
 		return record.getAmountPerUnitOfTime() * this.barHeightScale;
 	}
 
-	public BoundingBox calculateBoundingBox() {
+	public BoundingBox calculateBoundingBox(Collection<Bar> bars) {
 		long boundingBoxLeft = 0;
 		long boundingBoxBottom = 0;
-		long boundingBoxRight =
-			Math.round(PAGE_WIDTH * POINTS_PER_INCH + 0.5);
-		long boundingBoxTop =
-			Math.round(PAGE_HEIGHT * POINTS_PER_INCH + 0.5);
+		long boundingBoxRight;
+		long boundingBoxTop;
+
+		if (this.scaleToFitPage) {
+			boundingBoxRight = Math.round(PAGE_WIDTH * POINTS_PER_INCH + 0.5);
+			boundingBoxTop = Math.round(PAGE_HEIGHT * POINTS_PER_INCH + 0.5);
+		} else {
+			boundingBoxRight = Math.round(calculateTotalWidthWithMargins());
+			boundingBoxTop = Math.round(calculateTotalHeightWithMargins(bars));
+		}
 
 		return new BoundingBox(
-			boundingBoxLeft,
-			boundingBoxBottom,
-			boundingBoxRight,
-			boundingBoxTop);
+			boundingBoxLeft, boundingBoxBottom, boundingBoxRight, boundingBoxTop);
 	}
 
 	public double calculateTotalWidthWithoutMargins() {
@@ -296,32 +307,38 @@ public class BasicLayout {
 	}
 
 	// The seemingly-redundant doubles are passed in because they're needed by the caller as well.
-	public Arrow createLeftArrow(
-			Bar bar, double barX, double barY, double barWidth) {
+	public Arrow createLeftArrow(Bar bar, double barX, double barY, double barWidth) {
+//		final double barArrowWidth = getBarArrowWidth(bar);
 		// Bottom point.
+//		double startX = barX + barArrowWidth;
 		double startX = barX;
-		double startY = barY - BAR_ARROW_HEIGHT;
+//		double startY = barY - BAR_ARROW_HEIGHT;
+		double startY = barY;
 		// Left/middle point.
 		double middleX = barX - getBarArrowWidth(bar);
+//		double middleX = barX;
 		double middleY = barY + (bar.getHeight() / 2.0);
 		// Top point.
 		double endX = barX;
-		double endY = barY + bar.getHeight() + BAR_ARROW_HEIGHT;
+//		double endX = barX + barArrowWidth;
+//		double endY = barY + bar.getHeight() + BAR_ARROW_HEIGHT;
+		double endY = barY + bar.getHeight();
 		
 		return new Arrow(startX, startY, middleX, middleY, endX, endY);
 	}
 	
-	public Arrow createRightArrow(
-			Bar bar, double barX, double barY, double barWidth) {
+	public Arrow createRightArrow(Bar bar, double barX, double barY, double barWidth) {
 		// Top point.
 		double startX = barX + barWidth;
-		double startY = barY + bar.getHeight() + BAR_ARROW_HEIGHT;
+//		double startY = barY + bar.getHeight() + BAR_ARROW_HEIGHT;
+		double startY = barY + bar.getHeight();
 		// Right/middle point.
 		double middleX = barX + barWidth + getBarArrowWidth(bar);
 		double middleY = barY + (bar.getHeight() / 2.0);
 		// Bottom point.
 		double endX = barX + barWidth;
-		double endY = barY - BAR_ARROW_HEIGHT;
+//		double endY = barY - BAR_ARROW_HEIGHT;
+		double endY = barY;
 		
 		return new Arrow(startX, startY, middleX, middleY, endX, endY);
 	}

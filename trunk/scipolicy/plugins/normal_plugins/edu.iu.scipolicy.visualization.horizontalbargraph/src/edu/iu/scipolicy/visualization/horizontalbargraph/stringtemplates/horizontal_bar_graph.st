@@ -145,14 +145,17 @@ gsave
 	.3 setgray
 
 	% Analysis Time
-	<x> inch <dateTimeY> inch moveto
+	%<x> inch <dateTimeY> inch moveto
+	<x> <dateTimeY> moveto
 	(Date and time of analysis: ) show (<analysisTime>) show
 
 	% Input Data
-	<x> inch <inputDataY> inch moveto
+	%<x> inch <inputDataY> inch moveto
+	<x> <inputDataY> moveto
 	(Input data: ) show (<inputData>) show
 
-	<x> inch <footerY> inch moveto
+	%<x> inch <footerY> inch moveto
+	<x> <footerY> moveto
 	(Cyberinfrastructure for Network Science Center (2009) Horizontal Bar Graph. Indiana University, ) show
 	(http://sci.slis.indiana.edu) underlinedShow
 	(.) show
@@ -160,7 +163,8 @@ grestore
 
 % Title?
 gsave
-	<x> inch <datasetNameY> inch moveto
+	%<x> inch <datasetNameY> inch moveto
+	<x> <datasetNameY> moveto
 	0 setgray
 	/Garamond findfont 14 scalefont setfont
 	(Horizontal Bar Graph for ) show (<datasetName>) show
@@ -171,35 +175,39 @@ gsave
 	/Garamond findfont 10 scalefont setfont
 
 	% Label Column
-	<x> inch <labelY> inch moveto
+	%<x> inch <labelY> inch moveto
+	<x> <labelY> moveto
 	(Label Column: ) show (<label>) show
 
 	% Start Date Column
-	<x> inch <startDateY> inch moveto
+	%<x> inch <startDateY> inch moveto
+	<x> <startDateY> moveto
 	(Start Date Column: ) show (<startDate>) show
 
 	% End Date Column
-	<x> inch <endDateY> inch moveto
+	%<x> inch <endDateY> inch moveto
+	<x> <endDateY> moveto
 	(End Date Column: ) show (<endDate>) show
 
 	% End Date Column
-	<x> inch <sizeByY> inch moveto
+	%<x> inch <sizeByY> inch moveto
+	<x> <sizeByY> moveto
 	(Size By Column: ) show (<sizeBy>) show
 
 	% Date Format Column
-	<x> inch <dateFormatY> inch moveto
+	%<x> inch <dateFormatY> inch moveto
+	<x> <dateFormatY> moveto
 	(Date Format Column: ) show (<dateFormat>) show
 
 	% Year Label Font Size
-	<x> inch <yearLabelFontSizeY> inch moveto
+	%<x> inch <yearLabelFontSizeY> inch moveto
+	<x> <yearLabelFontSizeY> moveto
 	(Year Label Font Size: ) show (<yearLabelFontSize>) show
 
 	% Bar Label Font Size
-	<x> inch <barLabelFontSizeY> inch moveto
+	%<x> inch <barLabelFontSizeY> inch moveto
+	<x> <barLabelFontSizeY> moveto
 	(Bar Label Font Size: ) show (<barLabelFontSize>) show
-
-	%<x> inch 9.62 inch moveto
-	%(These 83 records are associated with 10 of 13 disciplines of science and 57 of 554 research specialties in the UCSD Map of Science.) show
 grestore
 
 >>
