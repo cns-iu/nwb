@@ -21,9 +21,7 @@ import edu.iu.scipolicy.visualization.horizontalbargraph.record.RecordCollection
 import edu.iu.scipolicy.visualization.horizontalbargraph.utility.Utilities;
 
 public class PostScriptCreator {
-	public static final Color YEAR_LABEL_COLOR =
-		new Color(0.0f, 0.0f, 0.0f);
-//		new Color(0.0039f, 0.4509f, 0.5843f);
+	public static final Color YEAR_LABEL_COLOR = new Color(0.0f, 0.0f, 0.0f);
 	public static final double YEAR_TICK_LINE_LINE_WIDTH = 1.5;
 	public static final String YEAR_LABEL_FONT_FAMILY = "Garamond";
 	public static final int YEAR_LABEL_FONT_SIZE = 25;
@@ -185,9 +183,6 @@ public class PostScriptCreator {
 	}
 
 	private String createOtherTransformations() {
-//		double totalWidth = this.layout.calculateTotalWidthWithoutMargins();
-//		double totalHeight = this.layout.calculateTotalHeightWithoutMargins(this.bars);
-
 		StringTemplate otherTransformationsTemplate =
 			this.templateGroup.getInstanceOf("otherTransformations");
 		otherTransformationsTemplate.setAttribute(

@@ -41,13 +41,11 @@ public class PageOrientation {
 	}
 
 	public double getYTranslateForHeader(BoundingBox boundingBox, double distanceFromTop) {
-		return (boundingBox.getTop() - (distanceFromTop * BasicLayout.POINTS_PER_INCH));
-//		return this.pageOrientationType.yTranslateForHeaderAndFooter(boundingBox, percentage);
-//			BasicLayout.PAGE_WIDTH, BasicLayout.PAGE_HEIGHT, percentage);
+		return this.pageOrientationType.yTranslateForHeader(boundingBox, distanceFromTop);
 	}
 
 	public double getYTranslateForFooter(BoundingBox boundingBox, double distanceFromBottom) {
-		return (boundingBox.getBottom() + (distanceFromBottom * BasicLayout.POINTS_PER_INCH));
+		return this.pageOrientationType.yTranslateForFooter(boundingBox, distanceFromBottom);
 	}
 
 	public enum PageOrientationType {
@@ -69,6 +67,7 @@ public class PageOrientation {
 					scale;
 				
 				return ((pageWidthInPoints - scaledVisualizationWidth) / 2.0) + fudgeForTextWidth;
+//				return ((pageWidthInPoints - scaledVisualizationWidth) / 2.0) 
 			}
 			
 			public double centeringTranslateY(
@@ -80,10 +79,14 @@ public class PageOrientation {
 				return (pageHeightInPoints - scaledVisualizationHeight) / 2.0;
 			}
 
-//			public double yTranslateForHeaderAndFooter(
-//					BoundingBox boundingBox, double percentage) {
-//				return (boundingBox.getTop() * percentage);
-//			}
+			public double yTranslateForHeader(BoundingBox boundingBox, double distanceFromTop) {
+				return (boundingBox.getTop() - (distanceFromTop * BasicLayout.POINTS_PER_INCH));
+			}
+
+			public double yTranslateForFooter(BoundingBox boundingBox, double distanceFromBottom) {
+				return
+					(boundingBox.getBottom() + (distanceFromBottom * BasicLayout.POINTS_PER_INCH));
+			}
 		},
 		LANDSCAPE {
 			public double rotation() {
@@ -116,10 +119,17 @@ public class PageOrientation {
 				return -((pageWidthInPoints + scaledVisualizationHeight) / 2.0);
 			}
 
-//			public double yTranslateForHeaderAndFooter(
-//					BoundingBox boundingBox, double percentage) {
-//				return ((boundingBox.getRight() * percentage) - boundingBox.getTop());
-//			}
+			public double yTranslateForHeader(BoundingBox boundingBox, double distanceFromTop) {
+//				return (boundingBox.getRight() - (distanceFromTop * BasicLayout.POINTS_PER_INCH));
+				System.err.println("distanceFromTop: " + distanceFromTop + "; " + (-(distanceFromTop * BasicLayout.POINTS_PER_INCH)));
+				return -(distanceFromTop * BasicLayout.POINTS_PER_INCH);
+			}
+
+			public double yTranslateForFooter(BoundingBox boundingBox, double distanceFromBottom) {
+				return
+					(-boundingBox.getRight() + (distanceFromBottom * BasicLayout.POINTS_PER_INCH));
+//					(boundingBox.getLeft() + (distanceFromBottom * BasicLayout.POINTS_PER_INCH));
+			}
 		},
 		NO_SCALING {
 			public double rotation() {
@@ -148,11 +158,14 @@ public class PageOrientation {
 				return (boundingBox.getTop() - visualizationHeight) / 2.0;
 			}
 
-//			public double yTranslateForHeaderAndFooter(
-//					BoundingBox boundingBox, double percentage) {
-////				return (boundingBox.getTop() * percentage);
-//				return percentage;
-//			}
+			public double yTranslateForHeader(BoundingBox boundingBox, double distanceFromTop) {
+				return (boundingBox.getTop() - (distanceFromTop * BasicLayout.POINTS_PER_INCH));
+			}
+
+			public double yTranslateForFooter(BoundingBox boundingBox, double distanceFromBottom) {
+				return
+					(boundingBox.getBottom() + (distanceFromBottom * BasicLayout.POINTS_PER_INCH));
+			}
 		};
 		
 		public abstract double rotation();
@@ -160,7 +173,9 @@ public class PageOrientation {
 				double scale, Collection<Bar> bars, BasicLayout layout);
 		public abstract double centeringTranslateY(
 				double scale, Collection<Bar> bars, BasicLayout layout);
-//		public abstract double yTranslateForHeaderAndFooter(
-//				BoundingBox boundingBox, double percentage);
+		public abstract double yTranslateForHeader(
+				BoundingBox boundingBox, double distanceFromTop);
+		public abstract double yTranslateForFooter(
+				BoundingBox boundingBox, double distanceFromBottom);
 	};
 }

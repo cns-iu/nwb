@@ -25,9 +25,8 @@ public class BasicLayout {
 	public static final int MAXIMUM_BAR_LABEL_CHARACTER_COUNT = 50;
 	public static final double POINTS_PER_EM_SCALE = 1.1;
 
-	public static final double MINIMUM_BAR_HEIGHT = 3.0;
-	public static final double BAR_ARROW_HEIGHT = 6.0;
-	public static final double BAR_ARROW_WIDTH_FACTOR = 0.1;
+	public static final double MINIMUM_BAR_HEIGHT_LOWER_BOUND = 3.0;
+	public static final double MINIMUM_BAR_HEIGHT_UPPER_BOUND = 10.0;
 	public static final double SPACE_BETWEEN_BARS = 20.0;
 
 	public static final double BAR_INDEX_PERCENTAGE_TO_USE_FOR_LABEL_FONT_SIZE = 0.4;
@@ -49,9 +48,17 @@ public class BasicLayout {
 		this.scaleToFitPage = scaleToFitPage;
 		this.startDate = startDate;
 		this.endDate = endDate;
-		this.barHeightScale = MINIMUM_BAR_HEIGHT / minimumAmountPerUnitOfTime;
+		this.barHeightScale = MINIMUM_BAR_HEIGHT_LOWER_BOUND / minimumAmountPerUnitOfTime;
 		this.yearLabelFontSize = yearLabelFontSize;
 		this.barLabelFontSize = barLabelFontSize;
+
+//		if (barLabelFontSize < MINIMUM_BAR_HEIGHT_LOWER_BOUND) {
+//			this.barHeightScale = MINIMUM_BAR_HEIGHT_LOWER_BOUND / minimumAmountPerUnitOfTime;
+//		} else if (barLabelFontSize > MINIMUM_BAR_HEIGHT_UPPER_BOUND) {
+//			this.barHeightScale = MINIMUM_BAR_HEIGHT_UPPER_BOUND / minimumAmountPerUnitOfTime;
+//		} else {
+//			this.barHeightScale = barLabelFontSize / minimumAmountPerUnitOfTime;
+//		}
 	}
 
 	public boolean scaleToFitPage() {
@@ -133,7 +140,6 @@ public class BasicLayout {
 	public double adjustXForStartArrow(Bar bar) {
 		if (bar.continuesLeft()) {
 			double originalX = bar.getX();
-//			double arrowWidth = bar.getWidth() * BAR_ARROW_WIDTH_FACTOR;
 			double arrowWidth = getBarArrowWidth(bar);
 
 			return originalX + arrowWidth;
@@ -143,7 +149,6 @@ public class BasicLayout {
 	}
 	
 	public double getBarArrowWidth(Bar bar) {
-//		return bar.getWidth() * BAR_ARROW_WIDTH_FACTOR;
 		return bar.getHeight();
 	}
 
@@ -219,10 +224,6 @@ public class BasicLayout {
 
 		for (Bar bar : bars) {
 			barsHeight += bar.getHeight();
-
-			if (bar.continuesLeft() || bar.continuesRight()) {
-				barsHeight += BAR_ARROW_HEIGHT * 2.0;
-			}
 		}
 
 		double spaceBetweenVisualElements =
@@ -244,28 +245,13 @@ public class BasicLayout {
 	}
 
 	public double positionBar(Bar bar, Cursor cursor) {
-		double arrowHeightAdjustment = 0.0;
-
-		if (bar.continuesLeft() || bar.continuesRight()) {
-			arrowHeightAdjustment = BAR_ARROW_HEIGHT;
-		}
-
-		cursor.move(calculateSpaceBetweenBars(this.barLabelFontSize) + arrowHeightAdjustment);
+		cursor.move(calculateSpaceBetweenBars(this.barLabelFontSize));
 		double position = cursor.getPosition();
-			cursor.move(bar.getHeight() + arrowHeightAdjustment);
+		cursor.move(bar.getHeight());
 
 		return position;
 	}
 
-//	public double calculateLabelFontScale(List<Bar> bars) {
-//		List<Bar> sortedCopy = new ArrayList<Bar>(bars);
-//		Collections.sort(sortedCopy, new BarHeightComparator());
-//		int barIndexToUseForLabelFontHeight =
-//			(int)Math.floor(sortedCopy.size() * BAR_INDEX_PERCENTAGE_TO_USE_FOR_LABEL_FONT_SIZE);
-//
-//		return sortedCopy.get(barIndexToUseForLabelFontHeight).getHeight();
-//	}
-	
 	public List<Bar> createBars(Collection<Record> records) {
 		List<Bar> bars = new ArrayList<Bar>();
 
@@ -308,20 +294,16 @@ public class BasicLayout {
 
 	// The seemingly-redundant doubles are passed in because they're needed by the caller as well.
 	public Arrow createLeftArrow(Bar bar, double barX, double barY, double barWidth) {
-//		final double barArrowWidth = getBarArrowWidth(bar);
 		// Bottom point.
-//		double startX = barX + barArrowWidth;
 		double startX = barX;
-//		double startY = barY - BAR_ARROW_HEIGHT;
 		double startY = barY;
+
 		// Left/middle point.
 		double middleX = barX - getBarArrowWidth(bar);
-//		double middleX = barX;
 		double middleY = barY + (bar.getHeight() / 2.0);
+
 		// Top point.
 		double endX = barX;
-//		double endX = barX + barArrowWidth;
-//		double endY = barY + bar.getHeight() + BAR_ARROW_HEIGHT;
 		double endY = barY + bar.getHeight();
 		
 		return new Arrow(startX, startY, middleX, middleY, endX, endY);
@@ -330,14 +312,14 @@ public class BasicLayout {
 	public Arrow createRightArrow(Bar bar, double barX, double barY, double barWidth) {
 		// Top point.
 		double startX = barX + barWidth;
-//		double startY = barY + bar.getHeight() + BAR_ARROW_HEIGHT;
 		double startY = barY + bar.getHeight();
+
 		// Right/middle point.
 		double middleX = barX + barWidth + getBarArrowWidth(bar);
 		double middleY = barY + (bar.getHeight() / 2.0);
+
 		// Bottom point.
 		double endX = barX + barWidth;
-//		double endY = barY - BAR_ARROW_HEIGHT;
 		double endY = barY;
 		
 		return new Arrow(startX, startY, middleX, middleY, endX, endY);
@@ -350,21 +332,6 @@ public class BasicLayout {
 			Math.min(visualizationWidth, visualizationHeight);
 	}
 
-//	private class BarHeightComparator implements Comparator<Bar> {
-//		public int compare(Bar bar1, Bar bar2) {
-//			double bar1Height = bar1.getHeight();
-//			double bar2Height = bar2.getHeight();
-//
-//			if (bar1Height > bar2Height) {
-//				return 1;
-//			} else if (bar1Height < bar2Height) {
-//				return -1;
-//			} else {
-//				return 0;
-//			}
-//		}
-//	}
-	
 	public class Arrow {
 		public double startX;
 		public double startY;
