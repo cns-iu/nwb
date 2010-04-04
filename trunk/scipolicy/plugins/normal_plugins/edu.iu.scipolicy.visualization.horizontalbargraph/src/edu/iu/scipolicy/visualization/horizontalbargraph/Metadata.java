@@ -13,8 +13,9 @@ public final class Metadata {
 	private String labelColumn;
 	private String startDateColumn;
 	private String endDateColumn;
-	private String amountColumn;
+//	private String amountColumn;
 	private String sizeByColumn;
+	private ScalingFunction scalingFunction;
 	private String dateFormat;
 	private double yearLabelFontSize;
 	private double barLabelFontSize;
@@ -26,8 +27,9 @@ public final class Metadata {
 			String labelColumn,
 			String startDateColumn,
 			String endDateColumn,
-			String amountColumn,
+//			String amountColumn,
 			String sizeByColumn,
+			ScalingFunction scalingFunction,
 			String dateFormat,
 			double yearLabelFontSize,
 			double barLabelFontSize,
@@ -37,8 +39,9 @@ public final class Metadata {
 		this.labelColumn = labelColumn;
 		this.startDateColumn = startDateColumn;
 		this.endDateColumn = endDateColumn;
-		this.amountColumn = amountColumn;
+//		this.amountColumn = amountColumn;
 		this.sizeByColumn = sizeByColumn;
+		this.scalingFunction = scalingFunction;
 		this.dateFormat = dateFormat;
 		this.yearLabelFontSize = yearLabelFontSize;
 		this.barLabelFontSize = barLabelFontSize;
@@ -53,8 +56,10 @@ public final class Metadata {
 			(String)parameters.get(HorizontalBarGraphAlgorithm.LABEL_FIELD_ID),
         	(String)parameters.get(HorizontalBarGraphAlgorithm.START_DATE_FIELD_ID),
         	(String)parameters.get(HorizontalBarGraphAlgorithm.END_DATE_FIELD_ID),
+//        	(String)parameters.get(HorizontalBarGraphAlgorithm.SIZE_BY_FIELD_ID),
         	(String)parameters.get(HorizontalBarGraphAlgorithm.SIZE_BY_FIELD_ID),
-        	(String)parameters.get(HorizontalBarGraphAlgorithm.SIZE_BY_FIELD_ID),
+        	determineScalingFunction(
+        		(String)parameters.get(HorizontalBarGraphAlgorithm.SCALING_FUNCTION_FIELD_ID)),
         	(String)parameters.get(HorizontalBarGraphAlgorithm.DATE_FORMAT_FIELD_ID),
         	((Double)parameters.get(
         		HorizontalBarGraphAlgorithm.YEAR_LABEL_FONT_SIZE_FIELD_ID)).doubleValue(),
@@ -84,12 +89,16 @@ public final class Metadata {
 		return this.endDateColumn;
 	}
 
-	public String getAmountColumn() {
-		return this.amountColumn;
-	}
+//	public String getAmountColumn() {
+//		return this.amountColumn;
+//	}
 
 	public String getSizeByColumn() {
 		return this.sizeByColumn;
+	}
+
+	public ScalingFunction getScalingFunction() {
+		return this.scalingFunction;
 	}
 
 	public String getDateFormat() {
@@ -106,5 +115,16 @@ public final class Metadata {
 
 	public boolean scaleToFitPage() {
 		return this.scaleToFitPage;
+	}
+
+	private static ScalingFunction determineScalingFunction(String scalingFunctionName) {
+		System.err.println("scalingFunctionName: " + scalingFunctionName);
+		System.err.println("ScalingFunction.LINEAR_SCALING_FUNCTION_NAME: " + ScalingFunction.LINEAR_SCALING_FUNCTION_NAME);
+		System.err.println("Equals? " + (ScalingFunction.LINEAR_SCALING_FUNCTION_NAME.equals(scalingFunctionName)));
+		if (ScalingFunction.LINEAR_SCALING_FUNCTION_NAME.equals(scalingFunctionName)) {
+			return ScalingFunction.LINEAR;
+		} else /* if (ScalingFunction.LOGARITHMIC_SCALING_FUNCTION_NAME.equals(scalingFunctionName)) */ {
+			return ScalingFunction.LOGARITHMIC;
+		}
 	}
 }

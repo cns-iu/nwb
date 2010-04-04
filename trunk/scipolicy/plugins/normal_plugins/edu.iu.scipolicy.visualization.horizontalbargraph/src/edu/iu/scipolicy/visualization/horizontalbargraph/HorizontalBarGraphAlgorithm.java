@@ -29,6 +29,7 @@ public class HorizontalBarGraphAlgorithm implements Algorithm {
 	public static final String START_DATE_FIELD_ID = "start_date";
 	public static final String END_DATE_FIELD_ID = "end_date";
 	public static final String SIZE_BY_FIELD_ID = "size_by";
+	public static final String SCALING_FUNCTION_FIELD_ID = "bar_scaling";
 	public static final String DATE_FORMAT_FIELD_ID = "date_format";
 	public static final String YEAR_LABEL_FONT_SIZE_FIELD_ID = "year_label_font_size";
 	public static final String BAR_LABEL_FONT_SIZE_FIELD_ID = "bar_label_font_size";
@@ -41,20 +42,16 @@ public class HorizontalBarGraphAlgorithm implements Algorithm {
 	public static final String TEST_DATA_PATH =
 		"/edu/iu/scipolicy/visualization/horizontalbargraph/testing/";
 	public static final String CNS_TEST_DATA_PATH = TEST_DATA_PATH + "CNS.csv";
-	public static final String CORNELL_TEST_DATA_PATH =
-		TEST_DATA_PATH + "Cornell.csv";
-	public static final String INDIANA_TEST_DATA_PATH =
-		TEST_DATA_PATH + "Indiana.csv";
-	public static final String MICHIGAN_TEST_DATA_PATH =
-		TEST_DATA_PATH + "Michigan.csv";
+	public static final String CORNELL_TEST_DATA_PATH = TEST_DATA_PATH + "Cornell.csv";
+	public static final String INDIANA_TEST_DATA_PATH = TEST_DATA_PATH + "Indiana.csv";
+	public static final String MICHIGAN_TEST_DATA_PATH = TEST_DATA_PATH + "Michigan.csv";
 
 	
 	public static final String STRING_TEMPLATE_BASE_FILE_PATH =
 		"/edu/iu/scipolicy/visualization/horizontalbargraph/stringtemplates/";
 	public static final String STRING_TEMPLATE_FILE_PATH =
 		STRING_TEMPLATE_BASE_FILE_PATH + "horizontal_bar_graph.st";
-	public static final StringTemplateGroup horizontalBarGraphGroup =
-		loadTemplates();
+	public static final StringTemplateGroup horizontalBarGraphGroup = loadTemplates();
 	
     private Data inputData;
     private Table inputTable;
@@ -63,9 +60,7 @@ public class HorizontalBarGraphAlgorithm implements Algorithm {
     private LogService logger;
     
     public HorizontalBarGraphAlgorithm(
-    		Data[] data,
-    		Dictionary<String, Object> parameters,
-    		CIShellContext ciShellContext) {
+    		Data[] data, Dictionary<String, Object> parameters, CIShellContext ciShellContext) {
         this.inputData = data[0];
         this.inputTable = (Table)data[0].getData();
         this.metadata = new Metadata(this.inputData, parameters);

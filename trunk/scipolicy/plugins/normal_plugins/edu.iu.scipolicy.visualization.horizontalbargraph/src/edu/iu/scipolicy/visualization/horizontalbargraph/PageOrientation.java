@@ -59,24 +59,26 @@ public class PageOrientation {
 				double visualizationWidth = layout.calculateTotalWidthWithoutMargins();
 				double pageWidthInPoints = BasicLayout.PAGE_WIDTH * BasicLayout.POINTS_PER_INCH;
 				double scaledVisualizationWidth = visualizationWidth * scale;
-				double fudgeForTextWidth =
-					layout.calculateTotalTextWidth(
-						layout.getBarLabelFontSize(),
-						BasicLayout.MAXIMUM_BAR_LABEL_CHARACTER_COUNT) *
-					TEXT_WIDTH_FUDGE_FACTOR *
-					scale;
-				
-				return ((pageWidthInPoints - scaledVisualizationWidth) / 2.0) + fudgeForTextWidth;
+				double totalTextWidth = layout.calculateTotalTextWidth(
+					layout.getBarLabelFontSize(), BasicLayout.MAXIMUM_BAR_LABEL_CHARACTER_COUNT);
+				double fudgeForTextWidth = ((totalTextWidth * scale) / 2.0);
+
+//				return ((pageWidthInPoints - scaledVisualizationWidth) / 2.0) + fudgeForTextWidth;
+				return
+					((pageWidthInPoints - scaledVisualizationWidth) / 2.0) +
+					(BasicLayout.LEFT_MARGIN * BasicLayout.POINTS_PER_INCH * scale / 1.0) +
+					fudgeForTextWidth;
 //				return ((pageWidthInPoints - scaledVisualizationWidth) / 2.0) 
 			}
 			
 			public double centeringTranslateY(
 					double scale, Collection<Bar> bars, BasicLayout layout) {
-				double visualizationHeight = layout.calculateTotalHeightWithoutMargins(bars);
-				double pageHeightInPoints = BasicLayout.PAGE_HEIGHT * BasicLayout.POINTS_PER_INCH;
-				double scaledVisualizationHeight = visualizationHeight * scale;
-				
-				return (pageHeightInPoints - scaledVisualizationHeight) / 2.0;
+//				double visualizationHeight = layout.calculateTotalHeightWithoutMargins(bars);
+//				double pageHeightInPoints = BasicLayout.PAGE_HEIGHT * BasicLayout.POINTS_PER_INCH;
+//				double scaledVisualizationHeight = visualizationHeight * scale;
+//				
+//				return (pageHeightInPoints - scaledVisualizationHeight) / 2.0;
+				return (BasicLayout.BOTTOM_MARGIN * BasicLayout.POINTS_PER_INCH);
 			}
 
 			public double yTranslateForHeader(BoundingBox boundingBox, double distanceFromTop) {
@@ -98,15 +100,19 @@ public class PageOrientation {
 				double visualizationWidth = layout.calculateTotalWidthWithoutMargins();
 				double scaledVisualizationWidth = visualizationWidth * scale;
 				double pageHeightInPoints = BasicLayout.PAGE_HEIGHT * BasicLayout.POINTS_PER_INCH;
-				double fudgeForTextWidth =
-					layout.calculateTotalTextWidth(
-						layout.getBarLabelFontSize(),
-						BasicLayout.MAXIMUM_BAR_LABEL_CHARACTER_COUNT) *
-					TEXT_WIDTH_FUDGE_FACTOR *
-					scale;
+				double totalTextWidth = layout.calculateTotalTextWidth(
+					layout.getBarLabelFontSize(), BasicLayout.MAXIMUM_BAR_LABEL_CHARACTER_COUNT);
+				double fudgeForTextWidth = ((totalTextWidth * scale) / 2.0);
+//				double fudgeForTextWidth =
+//					layout.calculateTotalTextWidth(
+//						layout.getBarLabelFontSize(),
+//						BasicLayout.MAXIMUM_BAR_LABEL_CHARACTER_COUNT) *
+//					TEXT_WIDTH_FUDGE_FACTOR *
+//					scale;
 
 				return
 					((pageHeightInPoints - scaledVisualizationWidth) / 2.0) +
+					(BasicLayout.BOTTOM_MARGIN * BasicLayout.POINTS_PER_INCH * scale / 1.0) +
 					fudgeForTextWidth;
 			}
 			
@@ -117,11 +123,13 @@ public class PageOrientation {
 				double scaledVisualizationHeight = visualizationHeight * scale;
 				
 				return -((pageWidthInPoints + scaledVisualizationHeight) / 2.0);
+//				return -(
+//					(BasicLayout.PAGE_WIDTH - BasicLayout.RIGHT_MARGIN) *
+//					BasicLayout.POINTS_PER_INCH);
 			}
 
 			public double yTranslateForHeader(BoundingBox boundingBox, double distanceFromTop) {
 //				return (boundingBox.getRight() - (distanceFromTop * BasicLayout.POINTS_PER_INCH));
-				System.err.println("distanceFromTop: " + distanceFromTop + "; " + (-(distanceFromTop * BasicLayout.POINTS_PER_INCH)));
 				return -(distanceFromTop * BasicLayout.POINTS_PER_INCH);
 			}
 
@@ -140,22 +148,29 @@ public class PageOrientation {
 					double scale, Collection<Bar> bars, BasicLayout layout) {
 				double visualizationWidth = layout.calculateTotalWidthWithoutMargins();
 				BoundingBox boundingBox = layout.calculateBoundingBox(bars);
-				double fudgeForTextWidth =
-					layout.calculateTotalTextWidth(
-						layout.getBarLabelFontSize(),
-						BasicLayout.MAXIMUM_BAR_LABEL_CHARACTER_COUNT) *
-					TEXT_WIDTH_FUDGE_FACTOR *
-					scale;
+				double totalTextWidth = layout.calculateTotalTextWidth(
+					layout.getBarLabelFontSize(), BasicLayout.MAXIMUM_BAR_LABEL_CHARACTER_COUNT);
+				double fudgeForTextWidth = ((totalTextWidth * scale) / 1.0);
+//				double fudgeForTextWidth =
+//					layout.calculateTotalTextWidth(
+//						layout.getBarLabelFontSize(),
+//						BasicLayout.MAXIMUM_BAR_LABEL_CHARACTER_COUNT) *
+//					TEXT_WIDTH_FUDGE_FACTOR *
+//					scale;
 				
-				return ((boundingBox.getRight() - visualizationWidth) / 2.0) + fudgeForTextWidth;
+				return
+					((boundingBox.getRight() - visualizationWidth) / 2.0) +
+					(BasicLayout.LEFT_MARGIN * BasicLayout.POINTS_PER_INCH * scale / 1.0) +
+					fudgeForTextWidth;
 			}
 
 			public double centeringTranslateY(
 					double scale, Collection<Bar> bars, BasicLayout layout) {
-				double visualizationHeight = layout.calculateTotalHeightWithoutMargins(bars);
-				BoundingBox boundingBox = layout.calculateBoundingBox(bars);
-				
-				return (boundingBox.getTop() - visualizationHeight) / 2.0;
+//				double visualizationHeight = layout.calculateTotalHeightWithoutMargins(bars);
+//				BoundingBox boundingBox = layout.calculateBoundingBox(bars);
+//				
+//				return (boundingBox.getTop() - visualizationHeight) / 2.0;
+				return (BasicLayout.BOTTOM_MARGIN * BasicLayout.POINTS_PER_INCH);
 			}
 
 			public double yTranslateForHeader(BoundingBox boundingBox, double distanceFromTop) {

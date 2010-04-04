@@ -100,13 +100,12 @@ public class PreprocessedRecordInformation {
 			double amount = handleAmountResult.getFirstObject();
 			boolean amountIsInfinityOrNaN = handleAmountResult.getSecondObject();
 
-			handleStartAndEndDates(
-				label, amount, amountIsInfinityOrNaN, row, rowIndex, metadata);
+			handleStartAndEndDates(label, amount, amountIsInfinityOrNaN, row, rowIndex, metadata);
 		} catch (InvalidAmountException e) {
 			String logMessage =
 				"The row with label \"" + label + "\" " +
 				"has an invalid amount (attribute \"" +
-				metadata.getAmountColumn() + "\").  Skipping";
+				metadata.getSizeByColumn() + "\").  Skipping";
 			this.logMessageHandler.handleMessage(
 				this.recordWithInvalidAmountType, LogService.LOG_WARNING, logMessage);
 		}
@@ -132,7 +131,7 @@ public class PreprocessedRecordInformation {
 
 	private Pair<Double, Boolean> handleAmount(String label, Tuple row, Metadata metadata)
 			throws InvalidAmountException {
-		double amount = Utilities.extractAmount(row, metadata.getAmountColumn());
+		double amount = Utilities.extractAmount(row, metadata.getSizeByColumn());
 		boolean amountIsInfinityOrNaN = (Double.isInfinite(amount) || Double.isNaN(amount));
 
 		if (amountIsInfinityOrNaN) {

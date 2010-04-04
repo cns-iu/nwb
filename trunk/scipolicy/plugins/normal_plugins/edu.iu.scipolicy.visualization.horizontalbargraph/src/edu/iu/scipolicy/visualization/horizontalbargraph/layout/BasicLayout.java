@@ -15,8 +15,18 @@ public class BasicLayout {
 	public static final double PAGE_WIDTH = 8.5;
 	public static final double PAGE_HEIGHT = 11.0;
 	public static final double PAGE_HEIGHT_TO_WIDTH_RATIO = PAGE_HEIGHT / PAGE_WIDTH;
-	public static final double MARGIN_WIDTH_FACTOR = 0.10;
-	public static final double MARGIN_HEIGHT_FACTOR = 0.10;
+//	public static final double MARGIN_WIDTH = 0.10;
+//	public static final double MARGIN_HEIGHT = 0.10;
+	// In inches.
+	public static final double LEFT_MARGIN = 0.5;
+	public static final double RIGHT_MARGIN = 0.5;
+//	public static final double TOP_MARGIN = 0.3;
+	public static final double TOP_MARGIN = 1.1;
+	public static final double BOTTOM_MARGIN = 0.5;
+	public static final double MARGIN_WIDTH = LEFT_MARGIN + RIGHT_MARGIN;
+	public static final double MARGIN_HEIGHT = TOP_MARGIN + BOTTOM_MARGIN;
+//	public static final double MARGIN_WIDTH = 0.5;
+//	public static final double MARGIN_HEIGHT = 0.5;
 
 	public static final double POINTS_PER_INCH = 72.0;
 	public static final double DAYS_PER_YEAR = 365.25;
@@ -31,7 +41,7 @@ public class BasicLayout {
 
 	public static final double BAR_INDEX_PERCENTAGE_TO_USE_FOR_LABEL_FONT_SIZE = 0.4;
 
-	boolean scaleToFitPage;
+	private boolean scaleToFitPage;
 	private DateTime startDate;
 	private DateTime endDate;
 	private double barHeightScale;
@@ -82,12 +92,19 @@ public class BasicLayout {
 		if (this.scaleToFitPage) {
 			if (PAGE_HEIGHT_TO_WIDTH_RATIO > visualizationRatio) {
 				if (visualizationHeight > visualizationWidth) {
-					double scale = (PAGE_WIDTH * POINTS_PER_INCH) / visualizationWidth;
+					double scale =
+						((PAGE_WIDTH - MARGIN_WIDTH) * POINTS_PER_INCH) / visualizationWidth;
+//						(PAGE_WIDTH * POINTS_PER_INCH) / visualizationWidth;
 
 					return new PageOrientation(
 						PageOrientation.PageOrientationType.PORTRAIT, scale, this);
 				} else if (visualizationHeight < visualizationWidth) {
-					double scale = (PAGE_WIDTH * POINTS_PER_INCH) / visualizationHeight;
+					System.err.println(
+						"height to width ratio > visualizationRatio and height < width; visualizationHeight: " +
+						visualizationHeight + "; visualizationWidth: " + visualizationWidth);
+					double scale =
+						((PAGE_WIDTH - MARGIN_WIDTH) * POINTS_PER_INCH) / visualizationHeight;
+//						(PAGE_WIDTH * POINTS_PER_INCH) / visualizationHeight;
 
 					return new PageOrientation(
 						PageOrientation.PageOrientationType.LANDSCAPE, scale, this);
@@ -97,12 +114,19 @@ public class BasicLayout {
 				}
 			} else if (PAGE_HEIGHT_TO_WIDTH_RATIO < visualizationRatio) {
 				if (visualizationHeight > visualizationWidth) {
-					double scale = (PAGE_HEIGHT * POINTS_PER_INCH) / visualizationHeight;
+					double scale =
+						((PAGE_HEIGHT - MARGIN_HEIGHT) * POINTS_PER_INCH) / visualizationHeight;
+//						(PAGE_HEIGHT * POINTS_PER_INCH) / visualizationHeight;
 
 					return new PageOrientation(
 						PageOrientation.PageOrientationType.PORTRAIT, scale, this);
 				} else if (visualizationHeight < visualizationWidth) {
-					double scale = (PAGE_HEIGHT * POINTS_PER_INCH) / visualizationWidth;
+					System.err.println(
+						"height to width ratio < visualizationRatio and height < width; visualizationHeight: " +
+						visualizationHeight + "; visualizationWidth: " + visualizationWidth);
+					double scale =
+						((PAGE_HEIGHT - MARGIN_WIDTH) * POINTS_PER_INCH) / visualizationWidth;
+//						(PAGE_HEIGHT * POINTS_PER_INCH) / visualizationWidth;
 
 					return new PageOrientation(
 						PageOrientation.PageOrientationType.LANDSCAPE, scale, this);
@@ -120,11 +144,13 @@ public class BasicLayout {
 	}
 
 	public double calculateHorizontalMargin(double totalWidthWithoutMargins) {
-		return totalWidthWithoutMargins * MARGIN_WIDTH_FACTOR * 2.0;
+//		return totalWidthWithoutMargins * MARGIN_WIDTH * 2.0;
+		return (MARGIN_WIDTH * POINTS_PER_INCH);
 	}
 
 	public double calculateVerticalMargin(double totalHeightWithoutMargins) {
-		return totalHeightWithoutMargins * MARGIN_HEIGHT_FACTOR * 2.0;
+//		return totalHeightWithoutMargins * MARGIN_HEIGHT * 2.0;
+		return (MARGIN_HEIGHT * POINTS_PER_INCH);
 	}
 
 	public double calculatePointsPerDay() {

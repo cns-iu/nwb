@@ -7,6 +7,7 @@ import java.util.TreeSet;
 
 import org.joda.time.DateTime;
 
+import edu.iu.scipolicy.visualization.horizontalbargraph.ScalingFunction;
 import edu.iu.scipolicy.visualization.horizontalbargraph.UnitOfTime;
 import edu.iu.scipolicy.visualization.horizontalbargraph.utility.PreprocessedRecordInformation;
 
@@ -15,9 +16,12 @@ public class RecordCollection {
 	private DateTime minimumDate = null;
 	private DateTime maximumDate = null;
 	private PreprocessedRecordInformation recordInformation;
+	private ScalingFunction scalingFunction;
 	
-	public RecordCollection(PreprocessedRecordInformation recordInformation) {
+	public RecordCollection(
+			PreprocessedRecordInformation recordInformation, ScalingFunction scalingFunction) {
 		this.recordInformation = recordInformation;
+		this.scalingFunction = scalingFunction;
 	}
 	
 	public Collection<Record> getRecords() {
@@ -52,21 +56,6 @@ public class RecordCollection {
 		
 		return minimumAmountPerUnitOfTime;
 	}
-	
-	/*public double calculateTotalAmountPerUnitOfTime(
-			UnitOfTime unitOfTime, int minimumUnitOfTime) {
-		double totalAmount = 0.0;
-		
-		for (Record record : this.records) {
-			totalAmount += record.getAmount();
-		}
-		
-		int timeBetween = Math.max(
-			unitOfTime.timeBetween(getMinimumStartDate(), getMaximumEndDate()),
-			minimumUnitOfTime);
-		
-		return totalAmount / timeBetween;
-	}*/
 	
 	public void addNormalRecord(
 			String label, DateTime startDate, DateTime endDate, double originalAmount) {
@@ -224,9 +213,11 @@ public class RecordCollection {
 
 	private double fixAmount(double amount) {
 		if (!Double.isInfinite(amount) && !Double.isNaN(amount)) {
-			return amount;
+//			return amount;
+			return this.scalingFunction.scale(amount);
 		} else {
-			return this.recordInformation.getMaximumAmountFound();
+//			return this.recordInformation.getMaximumAmountFound();
+			return this.scalingFunction.scale(this.recordInformation.getMaximumAmountFound());
 		}
 	}
 

@@ -52,7 +52,7 @@ functions() ::= <<
 } def
 
 /period {
-	0.8 0.8 0.8 setrgbcolor
+	0.0 0.0 0.0 setrgbcolor
 	newpath
 		4 2 roll moveto
 		exch dup 0 rlineto 0 3 -1 roll

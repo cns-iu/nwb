@@ -51,6 +51,13 @@ public class HorizontalBarGraphAlgorithmFactory implements AlgorithmFactory, Par
 					newAttributeDefinition = MutateParameterUtilities.formNumberAttributeDefinition(
 						oldAttributeDefinition, table);
 				} else if (oldAttributeDefinitionID.equals(
+						HorizontalBarGraphAlgorithm.SCALING_FUNCTION_FIELD_ID)) {
+					String[] scalingFunctionLabels = formScalingFunctionLabels();
+					String[] scalingFunctionOptions = formScalingFunctionOptions();
+					newAttributeDefinition =
+						MutateParameterUtilities.cloneToDropdownAttributeDefinition(
+							oldAttributeDefinition, scalingFunctionLabels, scalingFunctionOptions);
+				} else if (oldAttributeDefinitionID.equals(
 						HorizontalBarGraphAlgorithm.DATE_FORMAT_FIELD_ID)) {
 					String[] dateFormatLabels = formDateFormatLabels();
 					String[] dateFormatOptions = formDateFormatOptions();
@@ -73,6 +80,20 @@ public class HorizontalBarGraphAlgorithmFactory implements AlgorithmFactory, Par
 //    			" Please submit this entire message to the Help Desk: \"" + e.getMessage() + "\"";
 //    		throw new RuntimeException(exceptionMessage, e);
 //    	}
+    }
+
+    private static String[] formScalingFunctionLabels() {
+    	return new String[] {
+    		ScalingFunction.LINEAR_SCALING_FUNCTION_NAME,
+    		ScalingFunction.LOGARITHMIC_SCALING_FUNCTION_NAME
+    	};
+    }
+
+    private static String[] formScalingFunctionOptions() {
+    	return new String[] {
+    		ScalingFunction.LINEAR_SCALING_FUNCTION_NAME,
+    		ScalingFunction.LOGARITHMIC_SCALING_FUNCTION_NAME
+    	};
     }
     
     private static String[] formDateFormatLabels() {

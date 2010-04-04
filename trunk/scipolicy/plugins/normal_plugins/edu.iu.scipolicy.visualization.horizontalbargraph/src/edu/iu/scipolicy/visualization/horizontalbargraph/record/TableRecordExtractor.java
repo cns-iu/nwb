@@ -8,6 +8,7 @@ import prefuse.data.Table;
 import prefuse.data.Tuple;
 import edu.iu.scipolicy.visualization.horizontalbargraph.DateTimeWrapper;
 import edu.iu.scipolicy.visualization.horizontalbargraph.Metadata;
+import edu.iu.scipolicy.visualization.horizontalbargraph.ScalingFunction;
 import edu.iu.scipolicy.visualization.horizontalbargraph.record.exception.InvalidAmountException;
 import edu.iu.scipolicy.visualization.horizontalbargraph.utility.PreprocessedRecordInformation;
 import edu.iu.scipolicy.visualization.horizontalbargraph.utility.RecordLabelGenerator;
@@ -60,7 +61,8 @@ public class TableRecordExtractor {
 			Table source,
 			Metadata metadata,
 			LogService logger) {
-		RecordCollection recordCollection = new RecordCollection(recordInformation);
+		RecordCollection recordCollection =
+			new RecordCollection(recordInformation, metadata.getScalingFunction());
 
 		for (Integer rowIndex : recordInformation.getValidRows()) {
 			Tuple row = source.getTuple(rowIndex);
@@ -73,7 +75,7 @@ public class TableRecordExtractor {
 				Utilities.extractDate(row, metadata.getEndDateColumn(), metadata.getDateFormat());
 
 			try {
-				double amount = Utilities.extractAmount(row, metadata.getAmountColumn());
+				double amount = Utilities.extractAmount(row, metadata.getSizeByColumn());
 
 				addRecordToCollector(
 					recordCollection, label, startDateWrapper, endDateWrapper, amount);

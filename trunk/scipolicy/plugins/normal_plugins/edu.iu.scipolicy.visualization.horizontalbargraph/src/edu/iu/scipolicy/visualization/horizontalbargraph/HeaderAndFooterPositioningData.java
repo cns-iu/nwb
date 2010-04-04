@@ -47,5 +47,5 @@ public final class HeaderAndFooterPositioningData {
 	public static final double BAR_LABEL_FONT_SIZE_Y =
 		YEAR_LABEL_FONT_SIZE_Y + SUBHEADER_SPACING_DIFFERENCE;
 
-	public static final double FOOTER_Y = 0.3498;
+	public static final double FOOTER_Y = 0.35;
 }

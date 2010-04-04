@@ -61,8 +61,7 @@ public class PostScriptCreator {
 		String visualizationHeaderAndFooter = createVisualizationHeaderAndFooter(boundingBox);
 		String otherTransformations = createOtherTransformations();
 		String yearLabelProperties = createYearLabelProperties();
-		String yearLabelsWithVerticalTicks =
-			createYearLabelsWithVerticalTicks();
+		String yearLabelsWithVerticalTicks = createYearLabelsWithVerticalTicks();
 		String barLabelProperties = createBarProperties();
 		String postScriptRecords = createVisualBars();
 
@@ -241,13 +240,11 @@ public class PostScriptCreator {
 		double totalHeight = this.layout.calculateTotalHeightWithoutMargins(this.bars);
 		StringBuffer yearLabelsWithVerticalTicks = new StringBuffer();
 
-		for (
-				DateTime currentDate = startDate;
+		for (DateTime currentDate = startDate;
 				currentDate.getYear() <= endYear;
 				currentDate = currentDate.plusYears(1)) {
-			yearLabelsWithVerticalTicks.append(
-				createYearLabelWithVerticalTick(
-					startDate, endDate, currentDate, totalHeight));
+			yearLabelsWithVerticalTicks.append(createYearLabelWithVerticalTick(
+				startDate, endDate, currentDate, totalHeight));
 		}
 
 		return yearLabelsWithVerticalTicks.toString();
@@ -268,20 +265,15 @@ public class PostScriptCreator {
 	}
 
 	private String createYearLabelWithVerticalTick(
-			DateTime startDate,
-			DateTime endDate,
-			DateTime targetDate,
-			double totalHeight) {
+			DateTime startDate, DateTime endDate, DateTime targetDate, double totalHeight) {
 		double x = this.layout.calculateX(targetDate);
 
 		StringTemplate yearLabelWithVerticalTickTemplate =
 			this.templateGroup.getInstanceOf("yearLabelWithVerticalTick");
-		yearLabelWithVerticalTickTemplate.setAttribute(
-			"year", targetDate.getYear());
+		yearLabelWithVerticalTickTemplate.setAttribute("year", targetDate.getYear());
 		yearLabelWithVerticalTickTemplate.setAttribute(
 			"x", NumberUtilities.convertToDecimalNotation(x));
-		yearLabelWithVerticalTickTemplate.setAttribute(
-			"tickSize", TICK_SIZE);
+		yearLabelWithVerticalTickTemplate.setAttribute("tickSize", TICK_SIZE);
 		yearLabelWithVerticalTickTemplate.setAttribute(
 			"height", NumberUtilities.convertToDecimalNotation(totalHeight));
 
@@ -301,12 +293,14 @@ public class PostScriptCreator {
 	}
 
 	private String createBar(Cursor cursor, Bar bar) {
-		double barX = NumberUtilities.roundToNDecimalPlaces(
-			this.layout.adjustXForStartArrow(bar), DECIMAL_PLACE_COUNT);
+//		double barX = NumberUtilities.roundToNDecimalPlaces(
+//			this.layout.adjustXForStartArrow(bar), DECIMAL_PLACE_COUNT);
+		double barX = bar.getX();
 		double barY = NumberUtilities.roundToNDecimalPlaces(
 			this.layout.positionBar(bar, cursor), DECIMAL_PLACE_COUNT);
-		double barWidth = NumberUtilities.roundToNDecimalPlaces(
-			this.layout.adjustWidthForArrows(bar), DECIMAL_PLACE_COUNT);
+//		double barWidth = NumberUtilities.roundToNDecimalPlaces(
+//			this.layout.adjustWidthForArrows(bar), DECIMAL_PLACE_COUNT);
+		double barWidth = bar.getWidth();
 		double barHeight = NumberUtilities.roundToNDecimalPlaces(
 			bar.getHeight(), DECIMAL_PLACE_COUNT);
 		double textX = NumberUtilities.roundToNDecimalPlaces(
