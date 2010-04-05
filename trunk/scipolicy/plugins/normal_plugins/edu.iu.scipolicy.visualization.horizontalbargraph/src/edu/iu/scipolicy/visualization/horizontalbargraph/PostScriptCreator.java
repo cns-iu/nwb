@@ -293,20 +293,17 @@ public class PostScriptCreator {
 	}
 
 	private String createBar(Cursor cursor, Bar bar) {
-//		double barX = NumberUtilities.roundToNDecimalPlaces(
-//			this.layout.adjustXForStartArrow(bar), DECIMAL_PLACE_COUNT);
 		double barX = bar.getX();
 		double barY = NumberUtilities.roundToNDecimalPlaces(
 			this.layout.positionBar(bar, cursor), DECIMAL_PLACE_COUNT);
-//		double barWidth = NumberUtilities.roundToNDecimalPlaces(
-//			this.layout.adjustWidthForArrows(bar), DECIMAL_PLACE_COUNT);
 		double barWidth = bar.getWidth();
 		double barHeight = NumberUtilities.roundToNDecimalPlaces(
 			bar.getHeight(), DECIMAL_PLACE_COUNT);
 		double textX = NumberUtilities.roundToNDecimalPlaces(
 			bar.getX(), DECIMAL_PLACE_COUNT);
-		double textY = NumberUtilities.roundToNDecimalPlaces(
-			(bar.getHeight() / 2.0) + barY, DECIMAL_PLACE_COUNT);
+		double textY = barY;
+//		double textY = NumberUtilities.roundToNDecimalPlaces(
+//			(bar.getHeight() / 2.0) + barY, DECIMAL_PLACE_COUNT);
 
 		StringTemplate barTemplate = getBarStringTemplate(bar);
 

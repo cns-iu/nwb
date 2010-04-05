@@ -52,23 +52,48 @@ functions() ::= <<
 } def
 
 /period {
-	0.0 0.0 0.0 setrgbcolor
-	newpath
-		4 2 roll moveto
-		exch dup 0 rlineto 0 3 -1 roll
-		rlineto neg 0 rlineto
-	closepath
-	fill
+	% Starting stack: lineHeight lineLength lineStartingY lineStartingX
+	gsave
+		0.0 0.0 0.0 setrgbcolor
+
+		% (lineHeight) setlinewidth
+		setlinewidth
+		% Post setlienwidth stack: lineLength lineStartingY lineStartingX
+
+		3 1 roll
+		% Post roll stack: lineStartingY lineStartingX lineLength
+
+		moveto
+		% Post moveto stack: lineLength
+
+		% lineLength 0 rlineto
+		0 rlineto
+
+		stroke
+	grestore
 } def
 
 /infinitePeriod {
-	0.0 0.0 0.0 setrgbcolor
-	newpath
-		4 2 roll moveto
-		exch dup 0 rlineto 0 3 -1 roll
-		rlineto neg 0 rlineto
-	closepath
-	fill
+	% Starting stack: lineHeight lineLength lineStartingY lineStartingX
+	gsave
+		0.0 0.0 0.0 setrgbcolor
+		[15] 0 setdash
+
+		% (lineHeight) setlinewidth
+		setlinewidth
+		% Post setlienwidth stack: lineLength lineStartingY lineStartingX
+
+		3 1 roll
+		% Post roll stack: lineStartingY lineStartingX lineLength
+
+		moveto
+		% Post moveto stack: lineLength
+
+		% lineLength 0 rlineto
+		0 rlineto
+
+		stroke
+	grestore
 } def
 
 /arrow {

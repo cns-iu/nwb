@@ -271,9 +271,14 @@ public class BasicLayout {
 	}
 
 	public double positionBar(Bar bar, Cursor cursor) {
+		double barHeight = bar.getHeight();
+		double halfBarHeight = (barHeight / 2.0);
 		cursor.move(calculateSpaceBetweenBars(this.barLabelFontSize));
+		cursor.move(halfBarHeight);
+//		double position = (cursor.getPosition() + (barHeight * 2));
 		double position = cursor.getPosition();
-		cursor.move(bar.getHeight());
+		cursor.move(halfBarHeight);
+//		cursor.move(barHeight);
 
 		return position;
 	}
@@ -320,33 +325,42 @@ public class BasicLayout {
 
 	// The seemingly-redundant doubles are passed in because they're needed by the caller as well.
 	public Arrow createLeftArrow(Bar bar, double barX, double barY, double barWidth) {
+		double halfBarHeight = (bar.getHeight() / 2.0);
+
 		// Bottom point.
 		double startX = barX;
-		double startY = barY;
+		double startY = (barY - halfBarHeight);
 
 		// Left/middle point.
 		double middleX = barX - getBarArrowWidth(bar);
-		double middleY = barY + (bar.getHeight() / 2.0);
+//		double middleY = barY + (bar.getHeight() / 2.0);
+		double middleY = barY;
 
 		// Top point.
 		double endX = barX;
-		double endY = barY + bar.getHeight();
+//		double endY = barY + bar.getHeight();
+		double endY = barY + halfBarHeight;
 		
 		return new Arrow(startX, startY, middleX, middleY, endX, endY);
 	}
 	
 	public Arrow createRightArrow(Bar bar, double barX, double barY, double barWidth) {
+		double halfBarHeight = (bar.getHeight() / 2.0);
+
 		// Top point.
 		double startX = barX + barWidth;
-		double startY = barY + bar.getHeight();
+//		double startY = barY + bar.getHeight();
+		double startY = (barY + halfBarHeight);
 
 		// Right/middle point.
 		double middleX = barX + barWidth + getBarArrowWidth(bar);
-		double middleY = barY + (bar.getHeight() / 2.0);
+//		double middleY = barY + (bar.getHeight() / 2.0);
+		double middleY = barY;
 
 		// Bottom point.
 		double endX = barX + barWidth;
-		double endY = barY;
+//		double endY = barY;
+		double endY = (barY - halfBarHeight);
 		
 		return new Arrow(startX, startY, middleX, middleY, endX, endY);
 	}
