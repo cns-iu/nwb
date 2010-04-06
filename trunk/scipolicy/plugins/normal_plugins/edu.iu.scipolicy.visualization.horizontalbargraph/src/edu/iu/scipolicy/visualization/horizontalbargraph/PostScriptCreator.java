@@ -302,8 +302,6 @@ public class PostScriptCreator {
 		double textX = NumberUtilities.roundToNDecimalPlaces(
 			bar.getX(), DECIMAL_PLACE_COUNT);
 		double textY = barY;
-//		double textY = NumberUtilities.roundToNDecimalPlaces(
-//			(bar.getHeight() / 2.0) + barY, DECIMAL_PLACE_COUNT);
 
 		StringTemplate barTemplate = getBarStringTemplate(bar);
 

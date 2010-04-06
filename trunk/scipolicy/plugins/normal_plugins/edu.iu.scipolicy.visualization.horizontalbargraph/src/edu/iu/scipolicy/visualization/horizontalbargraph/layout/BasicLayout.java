@@ -15,18 +15,14 @@ public class BasicLayout {
 	public static final double PAGE_WIDTH = 8.5;
 	public static final double PAGE_HEIGHT = 11.0;
 	public static final double PAGE_HEIGHT_TO_WIDTH_RATIO = PAGE_HEIGHT / PAGE_WIDTH;
-//	public static final double MARGIN_WIDTH = 0.10;
-//	public static final double MARGIN_HEIGHT = 0.10;
+
 	// In inches.
 	public static final double LEFT_MARGIN = 0.5;
 	public static final double RIGHT_MARGIN = 0.5;
-//	public static final double TOP_MARGIN = 0.3;
 	public static final double TOP_MARGIN = 1.1;
 	public static final double BOTTOM_MARGIN = 0.5;
 	public static final double MARGIN_WIDTH = LEFT_MARGIN + RIGHT_MARGIN;
 	public static final double MARGIN_HEIGHT = TOP_MARGIN + BOTTOM_MARGIN;
-//	public static final double MARGIN_WIDTH = 0.5;
-//	public static final double MARGIN_HEIGHT = 0.5;
 
 	public static final double POINTS_PER_INCH = 72.0;
 	public static final double DAYS_PER_YEAR = 365.25;
@@ -34,6 +30,7 @@ public class BasicLayout {
 
 	public static final int MAXIMUM_BAR_LABEL_CHARACTER_COUNT = 50;
 	public static final double POINTS_PER_EM_SCALE = 1.1;
+	public static final double HEADER_LABEL_FONT_SIZE = 14.0;
 
 	public static final double MINIMUM_BAR_HEIGHT_LOWER_BOUND = 3.0;
 	public static final double MINIMUM_BAR_HEIGHT_UPPER_BOUND = 10.0;
@@ -61,14 +58,6 @@ public class BasicLayout {
 		this.barHeightScale = MINIMUM_BAR_HEIGHT_LOWER_BOUND / minimumAmountPerUnitOfTime;
 		this.yearLabelFontSize = yearLabelFontSize;
 		this.barLabelFontSize = barLabelFontSize;
-
-//		if (barLabelFontSize < MINIMUM_BAR_HEIGHT_LOWER_BOUND) {
-//			this.barHeightScale = MINIMUM_BAR_HEIGHT_LOWER_BOUND / minimumAmountPerUnitOfTime;
-//		} else if (barLabelFontSize > MINIMUM_BAR_HEIGHT_UPPER_BOUND) {
-//			this.barHeightScale = MINIMUM_BAR_HEIGHT_UPPER_BOUND / minimumAmountPerUnitOfTime;
-//		} else {
-//			this.barHeightScale = barLabelFontSize / minimumAmountPerUnitOfTime;
-//		}
 	}
 
 	public boolean scaleToFitPage() {
@@ -86,25 +75,22 @@ public class BasicLayout {
 	public PageOrientation determinePageOrientation(Collection<Bar> bars) {
 		double visualizationWidth = calculateTotalWidthWithMargins();
 		double visualizationHeight = calculateTotalHeightWithMargins(bars);
-		double visualizationRatio = calculateVisualizationRatio(
-			visualizationHeight, visualizationWidth);
+		double visualizationRatio =
+			calculateVisualizationRatio(visualizationHeight, visualizationWidth);
+		double pageWidth = calculatePageWidth();
+		double pageHeight = calculatePageHeight();
+		double marginWidth = calculateHorizontalMargin();
+		double marginHeight = calculateVerticalMargin();
 
 		if (this.scaleToFitPage) {
 			if (PAGE_HEIGHT_TO_WIDTH_RATIO > visualizationRatio) {
 				if (visualizationHeight > visualizationWidth) {
-					double scale =
-						((PAGE_WIDTH - MARGIN_WIDTH) * POINTS_PER_INCH) / visualizationWidth;
-//						(PAGE_WIDTH * POINTS_PER_INCH) / visualizationWidth;
+					double scale = (pageWidth - marginWidth) / visualizationWidth;
 
 					return new PageOrientation(
 						PageOrientation.PageOrientationType.PORTRAIT, scale, this);
 				} else if (visualizationHeight < visualizationWidth) {
-					System.err.println(
-						"height to width ratio > visualizationRatio and height < width; visualizationHeight: " +
-						visualizationHeight + "; visualizationWidth: " + visualizationWidth);
-					double scale =
-						((PAGE_WIDTH - MARGIN_WIDTH) * POINTS_PER_INCH) / visualizationHeight;
-//						(PAGE_WIDTH * POINTS_PER_INCH) / visualizationHeight;
+					double scale = (pageWidth - marginWidth) / visualizationHeight;
 
 					return new PageOrientation(
 						PageOrientation.PageOrientationType.LANDSCAPE, scale, this);
@@ -114,19 +100,12 @@ public class BasicLayout {
 				}
 			} else if (PAGE_HEIGHT_TO_WIDTH_RATIO < visualizationRatio) {
 				if (visualizationHeight > visualizationWidth) {
-					double scale =
-						((PAGE_HEIGHT - MARGIN_HEIGHT) * POINTS_PER_INCH) / visualizationHeight;
-//						(PAGE_HEIGHT * POINTS_PER_INCH) / visualizationHeight;
+					double scale = (pageHeight - marginHeight) / visualizationHeight;
 
 					return new PageOrientation(
 						PageOrientation.PageOrientationType.PORTRAIT, scale, this);
 				} else if (visualizationHeight < visualizationWidth) {
-					System.err.println(
-						"height to width ratio < visualizationRatio and height < width; visualizationHeight: " +
-						visualizationHeight + "; visualizationWidth: " + visualizationWidth);
-					double scale =
-						((PAGE_HEIGHT - MARGIN_WIDTH) * POINTS_PER_INCH) / visualizationWidth;
-//						(PAGE_HEIGHT * POINTS_PER_INCH) / visualizationWidth;
+					double scale = (pageHeight - marginWidth) / visualizationWidth;
 
 					return new PageOrientation(
 						PageOrientation.PageOrientationType.LANDSCAPE, scale, this);
@@ -143,14 +122,20 @@ public class BasicLayout {
 		}
 	}
 
-	public double calculateHorizontalMargin(double totalWidthWithoutMargins) {
-//		return totalWidthWithoutMargins * MARGIN_WIDTH * 2.0;
+	public double calculateHorizontalMargin() {
 		return (MARGIN_WIDTH * POINTS_PER_INCH);
 	}
 
-	public double calculateVerticalMargin(double totalHeightWithoutMargins) {
-//		return totalHeightWithoutMargins * MARGIN_HEIGHT * 2.0;
-		return (MARGIN_HEIGHT * POINTS_PER_INCH);
+	public double calculateVerticalMargin() {
+		return (MARGIN_HEIGHT * POINTS_PER_INCH) + (HEADER_LABEL_FONT_SIZE * POINTS_PER_EM_SCALE);
+	}
+
+	public double calculatePageWidth() {
+		return PAGE_WIDTH * POINTS_PER_INCH;
+	}
+
+	public double calculatePageHeight() {
+		return PAGE_HEIGHT * POINTS_PER_INCH;
 	}
 
 	public double calculatePointsPerDay() {
@@ -240,9 +225,7 @@ public class BasicLayout {
 	public double calculateTotalWidthWithMargins() {
 		double totalWidthWithoutMargins = calculateTotalWidthWithoutMargins();
 
-		return
-			totalWidthWithoutMargins +
-			calculateHorizontalMargin(totalWidthWithoutMargins);
+		return totalWidthWithoutMargins + calculateHorizontalMargin();
 	}
 
 	public double calculateTotalHeightWithoutMargins(Collection<Bar> bars) {
@@ -261,13 +244,11 @@ public class BasicLayout {
 	public double calculateTotalHeightWithMargins(Collection<Bar> bars) {
 		double totalHeightWithoutMargins = calculateTotalHeightWithoutMargins(bars);
 
-		return
-			totalHeightWithoutMargins +
-			calculateVerticalMargin(totalHeightWithoutMargins);
+		return totalHeightWithoutMargins + calculateVerticalMargin();
 	}
 
 	public Cursor createCursor(double barLabelFontSize) {
-		return new BasicCursor(calculateSpaceBetweenBars(barLabelFontSize));
+		return new BasicCursor(0.0);
 	}
 
 	public double positionBar(Bar bar, Cursor cursor) {
@@ -275,10 +256,8 @@ public class BasicLayout {
 		double halfBarHeight = (barHeight / 2.0);
 		cursor.move(calculateSpaceBetweenBars(this.barLabelFontSize));
 		cursor.move(halfBarHeight);
-//		double position = (cursor.getPosition() + (barHeight * 2));
 		double position = cursor.getPosition();
 		cursor.move(halfBarHeight);
-//		cursor.move(barHeight);
 
 		return position;
 	}
@@ -333,12 +312,10 @@ public class BasicLayout {
 
 		// Left/middle point.
 		double middleX = barX - getBarArrowWidth(bar);
-//		double middleY = barY + (bar.getHeight() / 2.0);
 		double middleY = barY;
 
 		// Top point.
 		double endX = barX;
-//		double endY = barY + bar.getHeight();
 		double endY = barY + halfBarHeight;
 		
 		return new Arrow(startX, startY, middleX, middleY, endX, endY);
@@ -349,17 +326,14 @@ public class BasicLayout {
 
 		// Top point.
 		double startX = barX + barWidth;
-//		double startY = barY + bar.getHeight();
 		double startY = (barY + halfBarHeight);
 
 		// Right/middle point.
 		double middleX = barX + barWidth + getBarArrowWidth(bar);
-//		double middleY = barY + (bar.getHeight() / 2.0);
 		double middleY = barY;
 
 		// Bottom point.
 		double endX = barX + barWidth;
-//		double endY = barY;
 		double endY = (barY - halfBarHeight);
 		
 		return new Arrow(startX, startY, middleX, middleY, endX, endY);
