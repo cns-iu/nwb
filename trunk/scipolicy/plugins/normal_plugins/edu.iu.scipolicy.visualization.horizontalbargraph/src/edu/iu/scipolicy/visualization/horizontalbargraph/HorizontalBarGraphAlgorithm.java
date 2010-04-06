@@ -29,6 +29,8 @@ public class HorizontalBarGraphAlgorithm implements Algorithm {
 	public static final String START_DATE_FIELD_ID = "start_date";
 	public static final String END_DATE_FIELD_ID = "end_date";
 	public static final String SIZE_BY_FIELD_ID = "size_by";
+	public static final String MINIMUM_AMOUNT_PER_DAY_FOR_SCALING_FIELD_ID =
+		"minimum_amount_per_day_for_scaling";
 	public static final String SCALING_FUNCTION_FIELD_ID = "bar_scaling";
 	public static final String DATE_FORMAT_FIELD_ID = "date_format";
 	public static final String YEAR_LABEL_FONT_SIZE_FIELD_ID = "year_label_font_size";

@@ -157,11 +157,11 @@ functions() ::= <<
 showHeaderFooter(
 	analysisTime, inputData,
 	datasetName,
-	label, startDate, endDate, sizeBy, dateFormat, yearLabelFontSize, barLabelFontSize,
+	label, startDate, endDate, sizeBy, minimumAmountPerDayForBarScaling, barScaling, dateFormat, yearLabelFontSize, barLabelFontSize,
 	x,
 	dateTimeY, inputDataY,
 	datasetNameY,
-	labelY, startDateY, endDateY, sizeByY, dateFormatY, yearLabelFontSizeY, barLabelFontSizeY,
+	labelY, startDateY, endDateY, sizeByY, minimumAmountPerDayForBarScalingY, barScalingY, dateFormatY, yearLabelFontSizeY, barLabelFontSizeY,
 	footerY) ::= <<
 
 % Actual Header
@@ -186,7 +186,7 @@ gsave
 	(.) show
 grestore
 
-% Title?
+% Title
 gsave
 	%<x> inch <datasetNameY> inch moveto
 	<x> <datasetNameY> moveto
@@ -200,37 +200,38 @@ gsave
 	/Garamond findfont 10 scalefont setfont
 
 	% Label Column
-	%<x> inch <labelY> inch moveto
 	<x> <labelY> moveto
 	(Label Column: ) show (<label>) show
 
 	% Start Date Column
-	%<x> inch <startDateY> inch moveto
 	<x> <startDateY> moveto
 	(Start Date Column: ) show (<startDate>) show
 
 	% End Date Column
-	%<x> inch <endDateY> inch moveto
 	<x> <endDateY> moveto
 	(End Date Column: ) show (<endDate>) show
 
-	% End Date Column
-	%<x> inch <sizeByY> inch moveto
+	% Size By Column
 	<x> <sizeByY> moveto
 	(Size By Column: ) show (<sizeBy>) show
 
+	% Minimum Amount Per Day For Bar Scaling
+	<x> <minimumAmountPerDayForBarScalingY> moveto
+	(Minimum Amount Per Day For Bar Scaling: ) show (<minimumAmountPerDayForBarScaling>) show
+
+	% Bar Scaling Method
+	<x> <barScalingY> moveto
+	(Bar Scaling Method: ) show (<barScaling>) show
+
 	% Date Format Column
-	%<x> inch <dateFormatY> inch moveto
 	<x> <dateFormatY> moveto
 	(Date Format Column: ) show (<dateFormat>) show
 
 	% Year Label Font Size
-	%<x> inch <yearLabelFontSizeY> inch moveto
 	<x> <yearLabelFontSizeY> moveto
 	(Year Label Font Size: ) show (<yearLabelFontSize>) show
 
 	% Bar Label Font Size
-	%<x> inch <barLabelFontSizeY> inch moveto
 	<x> <barLabelFontSizeY> moveto
 	(Bar Label Font Size: ) show (<barLabelFontSize>) show
 grestore

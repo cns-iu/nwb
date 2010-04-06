@@ -17,8 +17,8 @@ public class BasicLayout {
 	public static final double PAGE_HEIGHT_TO_WIDTH_RATIO = PAGE_HEIGHT / PAGE_WIDTH;
 
 	// In inches.
-	public static final double LEFT_MARGIN = 0.5;
-	public static final double RIGHT_MARGIN = 0.5;
+	public static final double LEFT_MARGIN = 1.0;
+	public static final double RIGHT_MARGIN = 1.0;
 	public static final double TOP_MARGIN = 1.1;
 	public static final double BOTTOM_MARGIN = 0.5;
 	public static final double MARGIN_WIDTH = LEFT_MARGIN + RIGHT_MARGIN;

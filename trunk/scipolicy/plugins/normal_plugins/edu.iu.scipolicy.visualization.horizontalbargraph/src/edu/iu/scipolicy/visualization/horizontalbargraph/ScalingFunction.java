@@ -5,10 +5,18 @@ public enum ScalingFunction {
 		public double scale(double input) {
 			return input;
 		}
+
+		public String getDisplayName() {
+			return "Linear";
+		}
 	},
 	LOGARITHMIC {
 		public double scale(double input) {
 			return Math.log(input + 1);
+		}
+
+		public String getDisplayName() {
+			return "Logarithmic";
 		}
 	};
 
@@ -16,4 +24,5 @@ public enum ScalingFunction {
 	public static final String LOGARITHMIC_SCALING_FUNCTION_NAME = "Logarithmic Scaling";
 
 	public abstract double scale(double input);
+	public abstract String getDisplayName();
 }

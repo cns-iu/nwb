@@ -120,6 +120,12 @@ public class PostScriptCreator {
 			"sizeBy",
 			Utilities.postscriptEscape(this.metadata.getSizeByColumn()));
 		showHeaderAndFooterTemplate.setAttribute(
+			"minimumAmountPerDayForBarScaling",
+			this.metadata.getMinimumAmountPerDayForScaling());
+		showHeaderAndFooterTemplate.setAttribute(
+			"barScaling",
+			Utilities.postscriptEscape(this.metadata.getScalingFunction().getDisplayName()));
+		showHeaderAndFooterTemplate.setAttribute(
 			"dateFormat",
 			Utilities.postscriptEscape(this.metadata.getDateFormat()));
 		showHeaderAndFooterTemplate.setAttribute(
@@ -160,6 +166,15 @@ public class PostScriptCreator {
 			"sizeByY",
 			this.pageOrientation.getYTranslateForHeader(
 				boundingBox, HeaderAndFooterPositioningData.SIZE_BY_COLUMN_Y));
+		showHeaderAndFooterTemplate.setAttribute(
+			"minimumAmountPerDayForBarScalingY",
+			this.pageOrientation.getYTranslateForHeader(
+				boundingBox,
+				HeaderAndFooterPositioningData.MINIMUM_AMOUNT_PER_DAY_FOR_BAR_SCALING_Y));
+		showHeaderAndFooterTemplate.setAttribute(
+			"barScalingY",
+			this.pageOrientation.getYTranslateForHeader(
+				boundingBox, HeaderAndFooterPositioningData.BAR_SCALING_Y));
 		showHeaderAndFooterTemplate.setAttribute(
 			"dateFormatY",
 			this.pageOrientation.getYTranslateForHeader(

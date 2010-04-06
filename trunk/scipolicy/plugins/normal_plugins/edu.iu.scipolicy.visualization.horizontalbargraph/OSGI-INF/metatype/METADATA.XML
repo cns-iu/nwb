@@ -6,6 +6,14 @@
 		 <AD name="Start Date" id="start_date" type="String" description="The field used for the starting date" default="START_DATE"/>
 		 <AD name="End Date" id="end_date" type="String" description="The field used for the ending date" default="ENDING_DATE"/>
 		 <AD name="Size Bars By" id="size_by" type="String" description="The field used to size the horizontal bar lines by" default="AWARDED_AMOUNT_TO_DATE"/>
+		 <AD
+		 	name="Minimum Amount Per Day For Bar Scaling"
+		 	id="minimum_amount_per_day_for_scaling"
+		 	type="Double"
+		 	description="Bars that have have an amount per day of at least this amount will be scaled.  Bars that have an amount per day less than this amount will be displayed differently."
+		 	default="500.0"
+		 	min="1.0"
+		 	/>
 		 <AD name="Bar Scaling" id="bar_scaling" type="String" description="How to scale the bars" default="Mutate"/>
 		 <AD name="Date Format" id="date_format" type="String" description="The format of the start and end dates" default=""/>
 		 <AD name="Year Label Font Size" id="year_label_font_size" type="Double" description="The font size to use for year labels.  NOTE: If this is too big, year labels may overlap." default="20.0" min="1.0"/>
