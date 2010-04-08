@@ -1,0 +1,38 @@
+{% extends "core/browse.html" %}
+
+{% load dataset_templatetags %}
+{% load datarequest_templatetags %}
+{% load project_templatetags %}
+
+{% block submenu %}
+  <ul>
+    <li><a class="active_submenu" href="{% url tags.views.view_items_for_tag tag_name=tag_name %}">All</a></li>
+    <li><a href="{% url tags.views.view_datasets_for_tag tag_name=tag_name %}">Datasets</a></li>
+    <li><a href="{% url tags.views.view_projects_for_tag tag_name=tag_name %}">Projects</a></li>
+    <li><a href="{% url tags.views.view_datarequests_for_tag tag_name=tag_name %}">Data Requests</a></li>
+  </ul>
+{% endblock %}
+
+{% block content %}
+  <span class="highlight">Tag > {{ tag_name }}</span>
+  <h1>Datasets</h1>
+  {% if datasets %}      
+  	{% dataset_list datasets %}
+  {% else %}
+    <p>There are no datasets in this category.</p>
+  {% endif %}
+	  
+  <h1>Data Requests</h1>
+  {% if datarequests %}
+    {% datarequest_list datarequests %}
+  {% else %}
+   <p>There are no datarequests in this category.</p>
+  {% endif %}
+    
+  <h1>Projects</h1>
+  {% if projects %}
+    {% project_list projects %}
+  {% else %}
+    <p>There are no projects in this category.</p>
+  {% endif %}
+{% endblock %}

@@ -1,0 +1,32 @@
+{% load category_templatetags %}
+{% load core_templatetags %}
+{% load tags_templatetags %}
+
+{% if datarequests %}
+  {% if not use_simple_display %}
+    <h1>{{ datarequests|length }} Most Recent Data Request{{ datarequests|length|pluralize }}</h1>
+  {% endif %}
+  
+  {% for datarequest in datarequests %}
+  <div class="requests">
+    <h2> <a href="{% url datarequests.views.view_datarequest item_id=datarequest.id slug=datarequest.slug %}">{{ datarequest.name }}</a>  -  {% user_title datarequest.creator 'True' %}</h2> 
+  
+    <p>{{ datarequest.tagless_description|truncatewords:15 }}</p> <br>
+    {% if not dont_show_categories %}
+      {% category_link datarequest %}
+    {% endif %} 
+    
+    {% if not use_simple_display %}
+      {% list_item_tags datarequest user %}
+    {% endif %}
+      
+      <div class="comments">
+        <a href="{% url datarequests.views.view_datarequest item_id=datarequest.id slug=datarequest.slug %}">
+          {{ datarequest.comments.all|length }} comment{{ datarequest.comments.all|length|pluralize }}.
+        </a>
+      </div>
+    </div>
+  {% endfor %}
+{% else %}
+  <p>There are no datarequests.</p>
+{% endif %}

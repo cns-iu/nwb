@@ -1,0 +1,34 @@
+{% extends "core/browse.html" %}
+
+{% load datarequest_templatetags %}
+
+{% block submenu %}
+  {# TODO: Figure out how to actually space this over the *proper* way. #}
+  <ul>
+    <li><a href="{% url core.views.browse %}">All</a></li> 
+    <li><a href="{% url datasets.views.view_datasets %}">Datasets</a></li>
+    <li><a href="{% url projects.views.view_projects %}">Projects</a></li>
+    <li><a class="active_submenu" href="{% url datarequests.views.view_datarequests %}">Data Requests</a></li> 
+  </ul>
+{% endblock %}
+
+{% block content %}
+  <h1> Data Requests </h1> 
+  {% datarequest_list %}
+  
+  <div class="databox">
+    <h1>Can't Find what you're looking for?
+      <a href="{% url datarequests.views.new_datarequest %}" 
+         onmouseout="MM_swapImgRestore()" 
+         onmouseover="MM_swapImage('Image3','','/core_media/images/request_hover_27.jpg',1)">
+             <img src="/core_media/images/request_27.jpg" 
+                alt="makerequest" 
+                name="Image3" 
+                width="150" 
+                height="35" 
+                border="0" 
+                id="Image3" />
+      </a>
+    </h1>
+  </div>
+{% endblock %}

@@ -1,0 +1,20 @@
+{% extends "core/browse.html" %}
+
+{% load category_templatetags %}
+{% load dataset_templatetags %}
+
+{% block submenu %}
+  {% category_submenu category 'datasets' %}
+{% endblock %}
+
+{% block content %}
+  <span class="highlight">Category > {{ category.name }}</span>
+  <p>Description: {{ category.description }}</p>
+  
+  <h1>Datasets</h1>
+  {% if datasets %}      
+  	{% dataset_list datasets %}
+  {% else %}
+    <p>There are no datasets in this category.</p>
+  {% endif %}
+{% endblock %}

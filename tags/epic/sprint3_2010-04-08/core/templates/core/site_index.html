@@ -1,0 +1,47 @@
+{% extends "core/bases/home_base.html" %}
+
+{% load core_templatetags %}
+{% load datarequest_templatetags %}
+{% load dataset_templatetags %}
+{% load geoloc_templatetags %}
+
+{% block nav %}
+  <div id="nav"> 
+    {% nav_bar %}
+  </div>
+{% endblock %}
+
+{% block homecolumn2 %}
+  <img src="/core_media/images/epic-index_09.jpg" border="0" usemap="#Map" />
+  
+  <map name="Map" id="Map">
+    <area shape="rect" coords="30,119,173,262" href="{% url core.views.browse %}" />
+    <area shape="rect" coords="191,120,333,263" href="{% url datasets.views.create_dataset %}" />
+    <area shape="rect" coords="357,118,511,263" href="{% url datarequests.views.new_datarequest %}" />
+    <area shape="rect" coords="5,5,505,94" href="{% url core.views.about %}" />
+  </map>
+  
+  <table width="520" height="412" border="0" cellpadding="5" cellspacing="0" background="/core_media/images/epic-index_18.jpg">
+    <tr>
+      <td valign="top">
+        <span class="geoindex">
+          Location of datasets
+          
+          <center>
+            {% location_display_map %}
+          </center>
+        </span>
+      </td>
+    </tr>
+  </table>
+{% endblock %}
+  
+{% block homecolumn3 %}
+  <h1>Recent Activity</h1>
+  
+  <h2>Data Requests</h2> 
+  {% recent_requests 2 'use simple display' 'dont show categories' %}
+  
+  <h2>Data Uploads</h2>
+  {% recent_datasets 2 %}
+{% endblock %}
