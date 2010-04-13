@@ -159,12 +159,12 @@ def _save_tags(form, dataset, user):
     Tagging.objects.update_tags(tags, 
                                 item=dataset, 
                                 user=user)
-def _save_geolocs(add_formset, remove_formeset, dataset):
+def _save_geolocs(add_formset, remove_formset, dataset):
     for geoloc in _get_geolocs_from_formset(add_formset, 'add_location'):
         dataset.geolocations.add(geoloc)
     
     for geoloc in \
-            _get_geolocs_from_formset(remove_formeset, 'remove_location'):
+            _get_geolocs_from_formset(remove_formset, 'remove_location'):
         dataset.geolocations.remove(geoloc)
 
 def _save_references(formset, dataset):
@@ -476,12 +476,10 @@ def edit_dataset(request, item_id, slug=None):
                                         item=dataset, 
                                         user=user)
             
-            for geoloc in _get_geolocs_from_formset(geoloc_add_formset,
-                                                    'add_location'):
+            for geoloc in _get_geolocs_from_formset(geoloc_add_formset, 'add_location'):
                 dataset.geolocations.add(geoloc)
             
-            for geoloc in _get_geolocs_from_formset(geoloc_remove_formset,
-                                                    'remove_location'):
+            for geoloc in _get_geolocs_from_formset(geoloc_remove_formset, 'remove_location'):
                 dataset.geolocations.remove(geoloc)
             
             dataset.references.all().delete()

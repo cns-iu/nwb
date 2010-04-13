@@ -5,12 +5,13 @@ Created by Edward Dale (www.scompt.com)
 Released into the Public Domain
 """
 
-from django.utils.encoding import force_unicode
-from django.utils.datastructures import MultiValueDict
-from django.utils.translation import ugettext
-from django.forms.fields import Field, UploadedFile, EMPTY_VALUES
-from django.forms.widgets import FileInput
+from django.forms.fields import Field, EMPTY_VALUES #, UploadedFile
+from django.core.files.uploadedfile import UploadedFile
 from django.forms.util import ErrorList, ValidationError, flatatt
+from django.forms.widgets import FileInput
+from django.utils.datastructures import MultiValueDict
+from django.utils.encoding import force_unicode
+from django.utils.translation import ugettext
 
 #TODO: Add ability to remove file field boxes
 class MultiFileInput(FileInput):
