@@ -65,14 +65,21 @@ TEMPLATE_LOADERS = (
 #     'django.template.loaders.eggs.load_template_source',
 )
 
-MIDDLEWARE_CLASSES = (
+MIDDLEWARE_CLASSES = [
     'django.middleware.common.CommonMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
-    'django.contrib.csrf.middleware.CsrfMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'epic.sql_logging.SQLLogMiddleware.SQLLogMiddleware',
     'django.middleware.transaction.TransactionMiddleware',
-)
+]
+
+
+def csrfProtect():
+	if 'django.contrib.csrf.middleware.CsrfMiddleware' not in MIDDLEWARE_CLASSES:
+		location = MIDDLEWARE_CLASSES.index('django.contrib.sessions.middleware.SessionMiddleware') + 1
+		MIDDLEWARE_CLASSES.insert(location, 'django.contrib.csrf.middleware.CsrfMiddleware')
+
+
 
 TEMPLATE_CONTEXT_PROCESSORS = (
 	"django.core.context_processors.auth",

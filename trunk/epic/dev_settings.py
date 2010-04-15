@@ -10,3 +10,7 @@ DATABASE_OPTIONS = {'sslmode': 'require'}
 
 GOOGLE_KEY = 'ABQIAAAAXvJKaXXv-aFZ9QFPDtLf2RRYbDcT7AU1sqlHKk7y1uR7IcGNVBRPMeVhk8y3ZgqAMdZmpULqIktKzw'
 MEDIA_ROOT = '/projects/epic/interface_dev/uploaded_files/'
+
+DEBUG = False
+
+csrfProtect()
