@@ -5,11 +5,11 @@
     <h2>
       {% if datarequest.fulfilling_item %}
         <a href="{% url datasets.views.view_dataset item_id=datarequest.fulfilling_item.id slug=datarequest.fulfilling_item.slug %}">
-          {{ datarequest.name|escape }}
+          {{ datarequest.name }}
         </a>
       {% else %}
         <a href="{% url datarequests.views.view_datarequest item_id=datarequest.id slug=datarequest.slug %}">
-          {{ datarequest.name|escape }}
+          {{ datarequest.name }}
         </a>
       {% endif %}
     </h2>

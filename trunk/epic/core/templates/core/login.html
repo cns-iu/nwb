@@ -8,7 +8,7 @@
     {% if form.errors %}
       <ul>
         {% for error in form.non_field_errors %}
-          <li class="highlight">{{ error|escape }}</li>
+          <li class="highlight">{{ error }}</li>
         {% endfor %}
       </ul>
     {% endif %}

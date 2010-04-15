@@ -97,6 +97,7 @@ class TagManager(models.Manager):
         # TODO: created_at isn't necessarily the CORRECT created_at.
         # If we want to color-code tags by date created, we should make sure
         # we're getting the CORRECT created_at every time (i.e. the first/earliest one).
+        # TODO: replace with query using .values() or .values_list(), and .annotate(), similar to this: Author.objects.values('name').annotate(average_rating=Avg('book__rating'))
         query = """
             SELECT tag, COUNT(tag)
             FROM %s
