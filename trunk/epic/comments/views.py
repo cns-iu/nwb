@@ -25,5 +25,5 @@ def post_comment(request, item_id, slug):
                                    parent_item=item,
                                    contents=comment_contents)
     import sys
-    raise "" + type(item) + " " + type(item.specific)        
+    raise "" + str(type(item)) + " " + str(type(item.specific))        
     return HttpResponseRedirect(item.specific.get_absolute_url())
