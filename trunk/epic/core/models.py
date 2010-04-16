@@ -65,7 +65,7 @@ class Item(models.Model):
     created_at = models.DateTimeField(auto_now_add=True, db_index=True)
     is_active = models.BooleanField(default=False)
     
-    @models.permalink
+    #no @models.permalink because the .specific versions already do it
     def get_absolute_url(self):
         return self.specific.get_absolute_url()
     
