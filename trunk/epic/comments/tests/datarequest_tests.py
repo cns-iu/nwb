@@ -33,3 +33,4 @@ datarequest_comment_test_case_fixtures = [
 
 DataRequestCommentTestCase = create_comment_test_case(
     setUp, datarequest_comment_test_case_fixtures)
+DataRequestCommentTestCase.__name__ = 'DataRequestCommentTestCase'

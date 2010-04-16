@@ -33,3 +33,4 @@ dataset_comment_test_case_fixtures = [
 
 DataSetCommentTestCase = create_comment_test_case(
     setUp, dataset_comment_test_case_fixtures)
+DataSetCommentTestCase.__name__ = "DataSetCommentTestCase"
