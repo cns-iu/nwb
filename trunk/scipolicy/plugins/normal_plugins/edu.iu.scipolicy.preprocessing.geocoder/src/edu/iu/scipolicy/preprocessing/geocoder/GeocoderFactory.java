@@ -78,7 +78,7 @@ public class GeocoderFactory implements AlgorithmFactory, ParameterMutator {
 				.getAttributeDefinitions(ObjectClassDefinition.ALL);
 		
 		String[] probablePlaceIdentifyingColumnList = 
-			TableUtilities.getValidStringColumnNamesInTable(table);
+			TableUtilities.getAllColumnNames(table.getSchema()).toArray(new String[0]);
 		String[] placeTypeOptionLabels = {"State", "Country", "Zip Code"};
 		String[] placeTypeOptionValues = {GeocoderAlgorithm.LOCATION_AS_STATE_IDENTIFIER,
 				GeocoderAlgorithm.LOCATION_AS_COUNTRY_IDENTIFIER,
