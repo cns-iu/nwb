@@ -25,10 +25,10 @@ import edu.iu.scipolicy.visualization.geomaps.scaling.Scaler;
 import edu.iu.scipolicy.visualization.geomaps.utility.Constants;
 
 public class CirclePrinter {
-	public static final double OUTLINE_ADDITIONAL_RADIUS = 0.25;
+	public static final double OUTLINE_ADDITIONAL_RADIUS = 0.1;
 	public static final Color OUTLINE_COLOR = Color.BLACK;
 	public static final String INDENT = "  ";
-	public static final double CIRCLE_LINE_WIDTH = 1.5;
+	public static final double DEFAULT_CIRCLE_LINE_WIDTH = 2.5;
 	
 	private GeometryProjector geometryProjector;
 	private MapDisplayer mapDisplayer;
@@ -84,7 +84,12 @@ public class CirclePrinter {
 		out.write("gsave" + "\n");
 		out.write("\n");
 
-		out.write(INDENT + CIRCLE_LINE_WIDTH + " setlinewidth" + "\n");
+		// TODO See TODO below.
+		double circleLineWidth = DEFAULT_CIRCLE_LINE_WIDTH;
+		if (!circles.isEmpty() && circles.get(0).getOuterColorStrategy().getColor() == OUTLINE_COLOR) {
+			circleLineWidth = 0.1;
+		}
+		out.write(INDENT + circleLineWidth + " setlinewidth" + "\n");
 		out.write("\n");
 
 		for (Circle circle : circles) {
@@ -126,11 +131,19 @@ public class CirclePrinter {
 		Geometry point = geometryProjector.transformGeometry(rawPoint);
 		Coordinate displayCoordinate = mapDisplayer.getDisplayCoordinate(point.getCoordinate());
 
-		// Create and paint the circle outline (by stroking a slightly larger circle).
-		ColorStrategy outlineStrategy = new StrokeColorStrategy(OUTLINE_COLOR);
-		double outlineRadius = radius + OUTLINE_ADDITIONAL_RADIUS;
-		out.write(INDENT + displayCoordinate.x + " " + displayCoordinate.y + " " + outlineRadius + " circle" + "\n");
-		out.write(outlineStrategy.toPostScript());
+		/* TODO This is a hack to guess whether the user selected exterior circle coloring or not.
+		 * In the case that they did, we use a thicker line width for the stroke.
+		 * This is less than ideal; if the user chooses an exterior color range with pure black
+		 * as one of the endpoints, then the min or max (accordingly) circle will have a
+		 * thick line width.
+		 */
+		if (outerColorStrategy.getColor() != OUTLINE_COLOR) {
+			// Create and paint the circle outline (by stroking a slightly larger circle).
+			ColorStrategy outlineStrategy = new StrokeColorStrategy(OUTLINE_COLOR);
+			double outlineRadius = radius + OUTLINE_ADDITIONAL_RADIUS;
+			out.write(INDENT + displayCoordinate.x + " " + displayCoordinate.y + " " + outlineRadius + " circle" + "\n");
+			out.write(outlineStrategy.toPostScript());
+		}
 		
 		// Create and paint the circle path
 		out.write(INDENT + displayCoordinate.x + " " + displayCoordinate.y + " " + radius + " circle" + "\n");

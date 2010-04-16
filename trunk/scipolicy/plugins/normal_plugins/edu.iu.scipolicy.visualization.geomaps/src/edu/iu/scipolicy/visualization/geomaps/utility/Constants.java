@@ -76,8 +76,8 @@ public class Constants {
 		 * respective shapefile
 		 */
 		Map<String, String> t = new HashMap<String, String>();
-		t.put("Countries", "NAME");
-		t.put("US States", "NAME");		
+		t.put(COUNTRIES_SHAPEFILE_KEY, "NAME");
+		t.put(US_STATES_SHAPEFILE_KEY, "NAME");		
 		FEATURE_NAME_KEY = Collections.unmodifiableMap(t);
 	}
 	

@@ -12,4 +12,8 @@ public abstract class ColorStrategy {
 	protected Color color;
 	
 	public abstract String toPostScript();
+
+	public Color getColor() {
+		return color;
+	}
 }

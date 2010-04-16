@@ -160,7 +160,7 @@ public class GeoMapsAlgorithm implements Algorithm {
 			parameters.put("longitude", "Longitude");
 			parameters.put("circleArea", "Population (thousands)");
 			parameters.put("circleAreaScaling", "Linear");
-			parameters.put("outerColorQuantity", "GDP (billions USD)");
+			parameters.put("outerColorQuantity", "GDP (billions USD)");//CircleAnnotationMode.USE_NO_OUTER_COLOR_TOKEN);//"GDP (billions USD)");
 			parameters.put("outerColorScaling", "Linear");
 			parameters.put("outerColorRange", "Yellow to Blue");
 			parameters.put("innerColorQuantity", "Population (thousands)");
