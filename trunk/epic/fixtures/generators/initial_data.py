@@ -11,9 +11,9 @@ no_category = Category.objects.create(
     description='Items that do not fall under any other category')
 no_category.save()
 
-
-User.objects.create_superuser('super', 'super@gmail.com', 'super')
-super = User.objects.get(username='super')
+# "super2" to avoid a conflict with Django's own doctests -- do not change to "super".
+User.objects.create_superuser('super2', 'super@gmail.com', 'super')
+super = User.objects.get(username='super2')
 super.first_name = 'Super'
 super.last_name = 'User'
 super.save()
