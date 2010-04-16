@@ -1,5 +1,8 @@
 # Django settings for epic_community_website project.
 
+import logsettings
+logsettings.safeSetup()
+
 DEBUG = True
 TEMPLATE_DEBUG = DEBUG
 DEBUG_SQL = False

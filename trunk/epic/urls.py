@@ -1,11 +1,13 @@
 from django.conf import settings
 from django.conf.urls.defaults import *
 from django.contrib import admin
-
+from epic.core.util.view_utils import logged_view
+from decorated_patterns import decorated_patterns
 
 admin.autodiscover()
 
-urlpatterns = patterns('',
+# Note use of decorated_patterns to apply logged_view to every view and included view (but no deeper).
+urlpatterns = decorated_patterns('', logged_view,
     (r'^$', 'epic.core.views.site_index'),
     (r'^browse/$', 'epic.core.views.browse'),
     (r'^about/$', 'epic.core.views.about'),

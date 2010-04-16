@@ -24,4 +24,5 @@ def post_comment(request, item_id, slug):
             Comment.objects.create(posting_user=user,
                                    parent_item=item,
                                    contents=comment_contents)
+    
     return HttpResponseRedirect(item.get_absolute_url())
