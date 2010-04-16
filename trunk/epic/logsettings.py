@@ -10,7 +10,7 @@ def setup():
 	root_logger.setLevel(logging.DEBUG)
 	
     # TODO Or perhaps SysLogHandler, if we can get IT to set it up?
-	console = logging.handlers.RotatingFileHandler(FILEPATH, maxBytes=50000, backupCount=3)
+	console = logging.FileHandler(FILEPATH)
 	console.setFormatter(logging.Formatter(FORMAT_STRING))
 	root_logger.addHandler(console)
 
