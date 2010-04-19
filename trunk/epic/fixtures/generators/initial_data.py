@@ -11,13 +11,13 @@ no_category = Category.objects.create(
     description='Items that do not fall under any other category')
 no_category.save()
 
-User.objects.create_superuser('super', 'super@gmail.com', 'super')
-super = User.objects.get(username='super')
-super.first_name = 'Super'
-super.last_name = 'User'
-super.save()
+User.objects.create_superuser('super_user', 'super_user@gmail.com', 'super_user')
+super_user = User.objects.get(username='super_user')
+super_user.first_name = 'Super'
+super_user.last_name = 'User'
+super_user.save()
 
-super_profile = Profile.objects.for_user(user=super)
+super_profile = Profile.objects.for_user(user=super_user)
 
 
 chintan = User.objects.create_user(username='chintan',
