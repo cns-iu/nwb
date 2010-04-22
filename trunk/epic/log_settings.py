@@ -1,7 +1,7 @@
 import logging
 import logging.handlers
 
-FILEPATH = 'server.log'
+FILE_PATH = 'server.log'
 FORMAT_STRING = '%(asctime)s - %(name)s - %(levelname)s - %(message)s'
 
 
@@ -9,8 +9,7 @@ def setup():
 	root_logger = logging.getLogger('')
 	root_logger.setLevel(logging.DEBUG)
 	
-    # TODO Or perhaps SysLogHandler, if we can get IT to set it up?
-	console = logging.FileHandler(FILEPATH)
+	console = logging.FileHandler(FILE_PATH)
 	console.setFormatter(logging.Formatter(FORMAT_STRING))
 	root_logger.addHandler(console)
 

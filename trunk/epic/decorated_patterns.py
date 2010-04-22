@@ -12,21 +12,18 @@ class DecoratedURLPattern(RegexURLPattern):
             result[0] = self._decorate_with(result[0])
         return result
 
-def decorated_patterns(prefix, func, *args):
-    '''
-    Notice this only goes to depth 1 on include()d URLconfs.
-    '''
-    
+def decorate_pattern_tree(pattern_bits, decorator):
+    for p in pattern_bits:
+        if isinstance(p, RegexURLPattern):
+            p.__class__ = DecoratedURLPattern
+            p._decorate_with = decorator
+        # Recurse where necessary to decorate include()d patterns also.
+        elif isinstance(p, RegexURLResolver):
+            decorate_pattern_tree(p._get_url_patterns(), decorator)
+
+def decorated_patterns(prefix, decorator, *args):
     result = patterns(prefix, *args)
-    if func:
-        for p in result:
-            if isinstance(p, RegexURLPattern):
-                p.__class__ = DecoratedURLPattern
-                p._decorate_with = func
-            elif isinstance(p, RegexURLResolver):
-                for pp in p._get_url_patterns():
-                    if isinstance(pp, RegexURLPattern):
-                        pp.__class__ = DecoratedURLPattern
-                        pp._decorate_with = func
+    if decorator:
+        decorate_pattern_tree(result, decorator)
     
     return result

@@ -27,8 +27,15 @@ def get_specifics_from_item_ids(model, item_ids):
 def convert_quotes(message_item):
     return message_item.replace('"', "'")
 
-def as_message(params):
+def as_log_message(params):
     return ' '.join(['%s="%s"' % (k, convert_quotes(str(v))) for k, v in params.items()])
+
+UNKNOWN_LOG_VALUE = 'unknown'
+def set_if_defined(key, dict1, dict2):
+	if key in dict2:
+		dict1[key] = dict2[key]
+	else:
+		dict1[key] = UNKNOWN_LOG_VALUE
 
 def logged_view(view):
     module_logger = logging.getLogger(view.__module__)
@@ -36,26 +43,32 @@ def logged_view(view):
     def decorated_view(request, *args, **kwargs):
         params = dict()
         
+        # Store request and argument information
         params['path'] = request.path
         params['method'] = request.method
         params['user'] = request.user
         params['view_name'] = view.__name__
-        params['request_time'] = datetime.now()        
-                
+        
+        set_if_defined('REMOTE_ADDR', params, request.META)
+        set_if_defined('HTTP_USER_AGENT', params, request.META)
+        set_if_defined('HTTP_REFERER', params, request.META)
+
         for index, arg in enumerate(args):
             params['arg:' + str(index)] = arg
         
         for kwarg, kwval in kwargs.items():
             params['kwarg:' + kwarg] = kwval
-        
+
+        # Process view with timing
+        params['request_time'] = datetime.now()
         response = view(request, *args, **kwargs)
-        
         params['response_time'] = datetime.now()
         
         view_timedelta = params['response_time'] - params['request_time']
         params['view_timedelta_microseconds'] = view_timedelta.microseconds
 
-        module_logger.info(as_message(params))
+        # Log
+        module_logger.info(as_log_message(params))
 
         return response
     
