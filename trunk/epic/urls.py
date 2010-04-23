@@ -6,7 +6,6 @@ from decorated_patterns import decorated_patterns
 
 admin.autodiscover()
 
-# Note use of decorated_patterns to apply logged_view to every view and included view (but no deeper).
 urlpatterns = decorated_patterns('', logged_view,
     (r'^$', 'epic.core.views.site_index'),
     (r'^browse/$', 'epic.core.views.browse'),
