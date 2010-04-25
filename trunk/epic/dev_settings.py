@@ -16,5 +16,5 @@ DEBUG = False
 csrfProtect()
 
 import log_settings
-log_settings.safeSetup('/home/epic_website/epic_code/server.log')
+log_settings.safeSetup('/home/epic_website/epic_data/server.log')
 
