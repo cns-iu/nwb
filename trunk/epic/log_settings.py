@@ -5,11 +5,11 @@ FILE_PATH = 'server.log'
 FORMAT_STRING = '%(asctime)s - %(name)s - %(levelname)s - %(message)s'
 
 
-def setup():
+def setup(location):
 	root_logger = logging.getLogger('')
 	root_logger.setLevel(logging.DEBUG)
 	
-	console = logging.FileHandler(FILE_PATH)
+	console = logging.FileHandler(location)
 	console.setFormatter(logging.Formatter(FORMAT_STRING))
 	root_logger.addHandler(console)
 
@@ -20,10 +20,10 @@ def setup():
 # to try to guard against any further setup()s after the first.
 if not hasattr(logging, "safe_setup_complete"):
 	logging.safe_setup_complete = False
-def safeSetup():
+def safeSetup(location=FILE_PATH):
 	if logging.safe_setup_complete:
 		return
 
-	setup()
+	setup(location)
 
 	logging.safe_setup_complete = True

@@ -1,4 +1,4 @@
-from settings import *
+from base_settings import *
 
 DATABASE_ENGINE = 'postgresql_psycopg2'
 DATABASE_NAME = 'epic_web'
@@ -14,3 +14,7 @@ MEDIA_ROOT = '/home/epic_website/epic_data/'
 DEBUG = False
 
 csrfProtect()
+
+import log_settings
+log_settings.safeSetup('/home/epic_website/epic_code/server.log')
+
