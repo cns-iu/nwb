@@ -8,7 +8,6 @@ echo "fi" >> remote.sh
 echo "ln -s -f -n /home/epic_website/epic_code/epic-$SVN_REVISION-$BUILD_NUMBER /home/epic_website/epic_code/epic" >> remote.sh
 echo "chmod +x /home/epic_website/epic_code/epic/media_move.sh" >> remote.sh
 echo "/home/epic_website/epic_code/epic/media_move.sh" >> remote.sh
-echo "chmod -R 777 /home/epic_website/epic_code/epic-$SVN_REVISION-$BUILD_NUMBER" >> remote.sh
 echo "touch /home/epic_website/epic.wsgi" >> remote.sh
 
 echo 'if [ -n "$CURRENT_LOC" ]; then' >> remote.sh
