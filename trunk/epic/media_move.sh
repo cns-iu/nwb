@@ -15,26 +15,22 @@ if [ ! -a /home/epic_website/epic_media/tags ]; then
 fi
 
 
-CORE="/home/epic_website/epic_code/epic/core/media/*"
-for f in "$CORE"
+for f in /home/epic_website/epic_code/epic/core/media/*
 do
 	mv "$f" /home/epic_website/epic_media/core/
 done
 
-PROJECTS="/home/epic_website/epic_code/epic/projects/media/*"
-for f in "$PROJECTS"
+for f in /home/epic_website/epic_code/epic/projects/media/*
 do
 	mv "$f" /home/epic_website/epic_media/projects/
 done
 
-SEARCH="/home/epic_website/epic_code/epic/search/media/*"
-for f in "$SEARCH"
+for f in /home/epic_website/epic_code/epic/search/media/*
 do
 	mv "$f" /home/epic_website/epic_media/search/
 done
 
-TAGS="/home/epic_website/epic_code/epic/tags/media/*"
-for f in "$CORE"
+for f in /home/epic_website/epic_code/epic/tags/media/*
 do
 	mv "$f" /home/epic_website/epic_media/tags/
 done
