@@ -18,3 +18,6 @@ csrfProtect()
 import log_settings
 log_settings.safeSetup('/home/epic_website/epic_data/server.log')
 
+TEMPLATE_DIRS = (
+	'/home/epic_website/epic_code/epic/templates',
+)
