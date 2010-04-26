@@ -1,16 +1,16 @@
 #!/bin/bash
 
 
-if [ ! -a /home/epic_website/epic_media/core ]; then
+if [ ! -a "/home/epic_website/epic_media/core" ]; then
 	mkdir /home/epic_website/epic_media/core
 fi
-if [ ! -a /home/epic_website/epic_media/projects ]; then
+if [ ! -a "/home/epic_website/epic_media/projects" ]; then
 	mkdir /home/epic_website/epic_media/projects
 fi
-if [ ! -a /home/epic_website/epic_media/search ]; then
+if [ ! -a "/home/epic_website/epic_media/search" ]; then
 	mkdir /home/epic_website/epic_media/search
 fi
-if [ ! -a /home/epic_website/epic_media/tags ]; then
+if [ ! -a "/home/epic_website/epic_media/tags" ]; then
 	mkdir /home/epic_website/epic_media/tags
 fi
 
