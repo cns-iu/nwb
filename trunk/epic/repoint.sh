@@ -1,4 +1,6 @@
+#!/bin/bash
 scp -r epic cns-epic-dev:/home/epic_website/epic_code/epic-$SVN_REVISION-$BUILD_NUMBER
+ssh cns-epic-dev "chmod +x /home/epic_website/epic_code/epic/media_move.sh"
 ssh cns-epic-dev "/home/epic_website/epic_code/epic/media_move.sh"
 
 echo "if [ -a /home/epic_website/epic_code/epic ]; then" > remote.sh
