@@ -21,7 +21,7 @@ urlpatterns = decorated_patterns('', logged_view,
     # reasons later on.
     (r'^files/(?P<path>.*)$',
      'django.views.static.serve',
-     {'document_root': settings.UPLOADED_FILES}),
+     {'document_root': settings.MEDIA_ROOT}),
     (r'^admin/doc/', include('django.contrib.admindocs.urls')),
     (r'^admin/(.*)', admin.site.root),
     (r'^comments/', include('epic.comments.urls')),

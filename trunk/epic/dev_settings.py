@@ -9,7 +9,7 @@ DATABASE_PORT = ''
 #DATABASE_OPTIONS = {'sslmode': 'require'}
 
 GOOGLE_KEY = 'ABQIAAAAXvJKaXXv-aFZ9QFPDtLf2RRYbDcT7AU1sqlHKk7y1uR7IcGNVBRPMeVhk8y3ZgqAMdZmpULqIktKzw'
-UPLOADED_FILES = '/home/epic_website/epic_data/'
+MEDIA_ROOT = '/home/epic_website/epic_data/'
 
 DEBUG = True
 

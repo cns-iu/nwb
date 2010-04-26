@@ -4,7 +4,7 @@
 from django.db.models import FileField, FileField, signals
 from django.conf import settings
 from distutils.dir_util import mkpath
-import shutil, os, glob, re
+import shutil, os, glob, re, os.path
 
 class CustomFileField(FileField):
     """Allows model instance to specify upload_to dynamically.
@@ -58,11 +58,11 @@ class CustomFileField(FileField):
                           m.groups()[0]
                         )
                     basedir = os.path.join(
-                      settings.UPLOADED_FILES, 
+                      settings.MEDIA_ROOT, 
                       os.path.dirname(dst)
                     )
                     fromdir = os.path.join(
-                      settings.UPLOADED_FILES, 
+                      settings.MEDIA_ROOT, 
                       src
                     )
                     mkpath(basedir)
