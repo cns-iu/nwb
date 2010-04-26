@@ -42,7 +42,7 @@ USE_I18N = True
 # Example: "/home/media/media.lawrence.com/"
 #TODO: This is temporary and should be changed when we use apache to deploy in production
 #developers should not commit this directory or its contents
-MEDIA_ROOT='uploaded_files/'
+UPLOADED_FILES = 'uploaded_files/'
 
 # URL that handles the media served from MEDIA_ROOT. Make sure to use a
 # trailing slash if there is a path component (optional in other cases).

@@ -19,9 +19,9 @@ urlpatterns = decorated_patterns('', logged_view,
     (r'^datarequests/', include('epic.datarequests.urls')),
     # TODO: Must change static media serving for security and performance
     # reasons later on.
-    (r'^media/(?P<path>.*)$',
+    (r'^files/(?P<path>.*)$',
      'django.views.static.serve',
-     {'document_root': settings.MEDIA_ROOT}),
+     {'document_root': settings.UPLOADED_FILES}),
     (r'^admin/doc/', include('django.contrib.admindocs.urls')),
     (r'^admin/(.*)', admin.site.root),
     (r'^comments/', include('epic.comments.urls')),
@@ -37,16 +37,16 @@ if settings.DEBUG:
     # NOT SECURE NOT FOR POST_DEVELOPMENT!
     # http://docs.djangoproject.com/en/1.0/howto/static-files/
     urlpatterns += patterns('',
-        (r'^core_media/(?P<path>.*)$',
+        (r'^media/core/(?P<path>.*)$',
          'django.views.static.serve',
          {'document_root': 'core/media/'}),
-        (r'^projects_media/(?P<path>.*)$',
+        (r'^media/projects/(?P<path>.*)$',
          'django.views.static.serve',
          {'document_root': 'projects/media/'}),
-        (r'^search_media/(?P<path>.*)$',
+        (r'^media/search/(?P<path>.*)$',
          'django.views.static.serve',
          {'document_root': 'search/media/'}),
-        (r'^tags_media/(?P<path>.*)$',
+        (r'^media/tags/(?P<path>.*)$',
          'django.views.static.serve',
          {'document_root': 'tags/media/'}),                
     )

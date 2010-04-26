@@ -18,7 +18,7 @@ a.new_message {
 }
 
 body, html {
-	background-image: url(/core_media/images/BG-pattern.jpg);
+	background-image: url(/media/core/images/BG-pattern.jpg);
 	color: #333333;
 	font-family: Georgia, "Times New Roman", Times, serif;
 	margin: 0;
@@ -230,7 +230,7 @@ li.categorybox-base {
 }
 
 .downloadicon a {
-	background-image: url(/core_media/images/download-icon_30.jpg);
+	background-image: url(/media/core/images/download-icon_30.jpg);
 	height: 17px;
 	width: 69px;
 }
@@ -242,7 +242,7 @@ li.categorybox-base {
 }
 
 .downloadicon a:hover {
-	background-image: url(/core_media/images/download-icon_30.jpg);
+	background-image: url(/media/core/images/download-icon_30.jpg);
 	display: block; 
 	width: 69px;
 	height: 17px;
@@ -343,7 +343,7 @@ th label {
 }
 
 #login {
-	background-image: url(/core_media/images/top_03.jpg);
+	background-image: url(/media/core/images/top_03.jpg);
 	background-repeat: no-repeat;
 	margin-right: 2em;
 	position: absolute;
@@ -365,7 +365,7 @@ th label {
 }
 
 #loginbox {
-	background-image: url(/core_media/images/login-button-top.gif);
+	background-image: url(/media/core/images/login-button-top.gif);
 	background-repeat: no-repeat;
 	margin-left: auto; margin-right:auto;
 	width: 475px; 
@@ -377,7 +377,7 @@ th label {
 }
 
 #logo {
-	background-image: url(/core_media/images/top_01_03.gif);
+	background-image: url(/media/core/images/top_01_03.gif);
 	margin-top: 0;
 	margin-left: 5px;
 	padding: 0;
@@ -485,7 +485,7 @@ p {
 }
 
 .ratingsbox {
-	background-image: url(/core_media/images/ratingsbg_10.jpg);
+	background-image: url(/media/core/images/ratingsbg_10.jpg);
 	background-repeat: no-repeat;
 	float: right;
 	margin-left: auto;
@@ -525,7 +525,7 @@ p {
 }
 
 .requestbox {
-	background-image: url(/core_media/images/requestbox_07_03.jpg);
+	background-image: url(/media/core/images/requestbox_07_03.jpg);
 	background-repeat: no-repeat;
 	float: left;
 	padding:15px;
@@ -586,7 +586,7 @@ display:inline;
 }
 
 #submenu a {
-	background-image: url(/core_media/images/buttonbg_13.jpg);
+	background-image: url(/media/core/images/buttonbg_13.jpg);
 	background-repeat: repeat-x;
 	color: #333333;
 	padding: 5px;border: 1px solid #666666; 
@@ -737,7 +737,7 @@ html, body {
 	height: auto;
 	// height: 100%;
 	margin-bottom: 20px;
-	background-image: url(/core_media/images/BG-pattern.jpg);
+	background-image: url(/media/core/images/BG-pattern.jpg);
 	margin: 0;
 	padding: 0;
 	font-family: Georgia, "Times New Roman", Times, serif;
@@ -784,14 +784,14 @@ html, body {
 }
 
 #logo {
-	background-image: url(/core_media/images/top_01_03.gif); margin-top:0; 
+	background-image: url(/media/core/images/top_01_03.gif); margin-top:0; 
 	padding:0;  margin-left:5px; top:0;   
 	height: 76px;
 	width: 197px;
 	position:absolute; left:0px;  
 }
 #login {
-	background-image: url(/core_media/images/top_03.jpg);
+	background-image: url(/media/core/images/top_03.jpg);
 	height: 64px; 
 	width: 165px; top:0;
 	background-repeat: no-repeat; margin-right:2em;  
@@ -951,7 +951,7 @@ a img {border:none;}
 	width: 140px; margin-left:auto; margin-right:auto; 
 	margin-bottom:20px;
 	float:right;
-	background-image: url(/core_media/images/ratingsbg_10.jpg);
+	background-image: url(/media/core/images/ratingsbg_10.jpg);
 	background-repeat: no-repeat;
 }
 
@@ -1076,7 +1076,7 @@ h4 {
 
 	height: 17px;
 	width: 69px;
-	background-image: url(/core_media/images/download-icon_30.jpg);
+	background-image: url(/media/core/images/download-icon_30.jpg);
 }
 
 .downloadicon span {display:none;height: 17px;
@@ -1087,7 +1087,7 @@ h4 {
 
 	height: 17px;
 	width: 69px;
-	background-image: url(/core_media/images/download-icon_30.jpg); display:block; 
+	background-image: url(/media/core/images/download-icon_30.jpg); display:block; 
 }
 
 
@@ -1102,7 +1102,7 @@ h4 {
 
 .requestbox {
 	float:left;
-	background-image: url(/core_media/images/requestbox_07_03.jpg);
+	background-image: url(/media/core/images/requestbox_07_03.jpg);
 	width:390px;
 	height:333px;
 	padding:15px;
@@ -1127,7 +1127,7 @@ h4 {
 #loginbox
 
 {
-	background-image: url(/core_media/images/login-button-top.gif);
+	background-image: url(/media/core/images/login-button-top.gif);
 	background-repeat: no-repeat;
 	height: 148px;
 	width: 475px; margin-left:auto; margin-right:auto; 
@@ -1155,7 +1155,7 @@ h4 {
 
 
 #submenu a {
-	background-image: url(/core_media/images/buttonbg_13.jpg);
+	background-image: url(/media/core/images/buttonbg_13.jpg);
 	background-repeat: repeat-x;
 	padding: 5px;color: #333333;
 }

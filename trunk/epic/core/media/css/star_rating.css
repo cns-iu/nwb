@@ -9,7 +9,7 @@
 .star-rating a:active,
 .star-rating a:focus,
 .star-rating .current-rating {
-	background: url(/core_media/images/star_rating.gif) left -1000px repeat-x;
+	background: url(/media/core/images/star_rating.gif) left -1000px repeat-x;
 }
 .star-rating {
 	background-position: left top;
@@ -92,7 +92,7 @@
 .small-star a:active,
 .small-star a:focus,
 .small-star .current-rating {
-	background-image: url(/core_media/images/star_rating_small.gif);
+	background-image: url(/media/core/images/star_rating_small.gif);
 	line-height: 10px;
 	height: 10px;
 }

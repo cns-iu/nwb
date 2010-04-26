@@ -58,11 +58,11 @@ class CustomFileField(FileField):
                           m.groups()[0]
                         )
                     basedir = os.path.join(
-                      settings.MEDIA_ROOT, 
+                      settings.UPLOADED_FILES, 
                       os.path.dirname(dst)
                     )
                     fromdir = os.path.join(
-                      settings.MEDIA_ROOT, 
+                      settings.UPLOADED_FILES, 
                       src
                     )
                     mkpath(basedir)

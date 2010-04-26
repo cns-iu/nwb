@@ -40,7 +40,7 @@
     {% if user.is_authenticated %}
       {% if project.datasets.all %}
         <a href="{% url epic.projects.views.download_all item_id=project.id slug=project.slug %}">
-	      <img src="/core_media/images/download-all_19.jpg" width="87" height="18" />
+	      <img src="/media/core/images/download-all_19.jpg" width="87" height="18" />
 	    </a>
 	  {% endif %}	 
     {% else %}
