@@ -13,7 +13,7 @@ echo "touch /home/epic_website/epic.wsgi" >> remote.sh
 echo 'if [ -n "$CURRENT_LOC" ]; then' >> remote.sh
 echo '	rm -rf $CURRENT_LOC' >> remote.sh
 echo "fi" >> remote.sh
-echo "rm -rf /home/epic_website/epic_data/*"
+echo "rm -rf /home/epic_website/epic_data/*" >> remote.sh
 
 scp remote.sh cns-epic-dev:/tmp/remote.sh
 ssh cns-epic-dev "chmod +x /tmp/remote.sh"
