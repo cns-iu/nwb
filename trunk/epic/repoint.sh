@@ -1,0 +1,18 @@
+scp -r epic cns-epic-dev:/home/epic_website/epic_code/epic-$SVN_REVISION-$BUILD_NUMBER
+ssh cns-epic-dev "/home/epic_website/epic_code/epic/media_move.sh"
+
+echo "if [ -a /home/epic_website/epic_code/epic ]; then" > remote.sh
+echo "	CURRENT_LOC=`readlink -n /home/epic_website/epic_code/epic`" >> remote.sh
+echo "fi" >> remote.sh
+
+echo "ln -s -f -n /home/epic_website/epic_code/epic-$SVN_REVISION-$BUILD_NUMBER /home/epic_website/epic_code/epic" >> remote.sh
+echo "chmod -R 777 /home/epic_website/epic_code/epic-$SVN_REVISION-$BUILD_NUMBER" >> remote.sh
+echo "touch /home/epic_website/epic.wsgi" >> remote.sh
+
+echo 'if [ -n "$CURRENT_LOC" ]; then' >> remote.sh
+echo '	rm -rf $CURRENT_LOC' >> remote.sh
+echo "fi" >> remote.sh
+
+scp remote.sh cns-epic-dev:/tmp/remote.sh
+ssh cns-epic-dev "chmod +x /tmp/remote.sh"
+ssh cns-epic-dev "/tmp/remote.sh"
