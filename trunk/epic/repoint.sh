@@ -14,7 +14,7 @@ echo "./media_move.sh" >> remote.sh
 echo "touch /home/epic_website/epic.wsgi" >> remote.sh
 echo "python2.6 manage.py shell --settings=epic.dev_settings --pythonpath=.. < wipeout.py" >> remote.sh
 echo "python2.6 manage.py syncdb --noinput --settings=epic.dev_settings --pythonpath=.." >> remote.sh
-#echo "python2.6 /home/epic_website/epic_code/epic/manage.py loaddata /home/epic_website/epic_code/epic/inital_data.json --settings=epic.dev_settings --pythonpath=/home/epic_website/epic_code" >> remote.sh
+echo "python2.6 manage.py loaddata demo_data --settings=epic.dev_settings --pythonpath=.." >> remote.sh
 
 
 echo 'if [ -n "$CURRENT_LOC" ]; then' >> remote.sh
