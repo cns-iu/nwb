@@ -1,5 +1,6 @@
 #!/bin/bash
-scp -r epic cns-epic-dev:/home/epic_website/epic_code/epic-$SVN_REVISION-$BUILD_NUMBER
+svn export epic epic2
+scp -r epic2 cns-epic-dev:/home/epic_website/epic_code/epic-$SVN_REVISION-$BUILD_NUMBER
 
 echo 'if [ -a "/home/epic_website/epic_code/epic" ]; then' > remote.sh
 echo "	CURRENT_LOC=`readlink -n /home/epic_website/epic_code/epic`" >> remote.sh
