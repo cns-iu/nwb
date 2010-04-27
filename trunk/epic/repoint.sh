@@ -11,7 +11,7 @@ echo "chmod +x /home/epic_website/epic_code/epic/media_move.sh" >> remote.sh
 echo "/home/epic_website/epic_code/epic/media_move.sh" >> remote.sh
 echo "touch /home/epic_website/epic.wsgi" >> remote.sh
 echo "python2.6 /home/epic_website/epic_code/epic/manage.py shell --settings=epic.dev_settings --pythonpath=/home/epic_website/epic_code < /home/epic_website/epic_code/epic/wipeout.py" >> remote.sh
-echo "python2.6 /home/epic_website/epic_code/epic/manage.py syncdb --settings=epic.dev_settings --pythonpath=/home/epic_website/epic_code" >> remote.sh
+echo "python2.6 /home/epic_website/epic_code/epic/manage.py syncdb --noinput --settings=epic.dev_settings --pythonpath=/home/epic_website/epic_code" >> remote.sh
 
 echo 'if [ -n "$CURRENT_LOC" ]; then' >> remote.sh
 echo '	rm -rf $CURRENT_LOC' >> remote.sh
