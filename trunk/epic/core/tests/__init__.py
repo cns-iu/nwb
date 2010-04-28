@@ -14,4 +14,5 @@ from profile_datarequests_tests import *
 from profile_dataset_tests import *
 from profile_general_tests import *
 from profile_link_tests import *
+from registration_tests import *
 from site_index_tests import *

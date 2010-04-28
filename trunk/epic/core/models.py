@@ -30,12 +30,16 @@ Let's just test out a few aspects of our models...
 'CNS Core'
 """
 
+import random
+
 from django.contrib.auth.models import User
 from django.db import models
 from django.template.defaultfilters import slugify
+from django.utils.hashcompat import sha_constructor
 
 from epic.categories.constants import NO_CATEGORY
 from epic.categories.models import Category
+from epic.core.util.model_exists_utils import profile_exists
 from epic.core.util.postmarkup import PostMarkup
 
 
@@ -114,10 +118,7 @@ class Item(models.Model):
         return markup_renderer.strip_tags(self.description)
 
 class Author(models.Model):
-    items = models.ManyToManyField(Item, 
-                                   blank=True,
-                                   null=True, 
-                                   related_name="authors")
+    items = models.ManyToManyField(Item, blank=True, null=True, related_name="authors")
     author = models.CharField(max_length=100)
     
     def __unicode__(self):
@@ -132,25 +133,48 @@ class ProfileManager(models.Manager):
         try:
             profile = user.get_profile()
         except:
-            profile = Profile(user=user)
+            activation_key = self._create_unused_activation_key(user)
+            profile = Profile(user=user, activation_key=activation_key)
+
             try:
                 profile.save()
             except:
                 profile = user.get_profile()
         return profile
 
+    def _create_unused_activation_key(self, user):
+        activation_key = self._create_activation_key(user)
+
+        while profile_exists(activation_key=activation_key):
+            activation_key = self._create_activation_key(user)
+
+        return activation_key
+
+    def _create_activation_key(self, user):
+        salt = sha_constructor(str(random.random())).hexdigest()[:5]
+        activation_key = sha_constructor(salt + user.username).hexdigest()
+
+        return activation_key
+
+HAS_ACTIVATED_ACCOUNT_FIELD_NAME = 'has_activated_account'
+
 class Profile(models.Model):
     MAX_USERNAME_LENGTH = 16
+    MIN_USER_PASSWORD_LENGTH = 8
     MAX_USER_PASSWORD_LENGTH = 256
     MAX_USER_EMAIL_LENGTH = 256
     MAX_USER_PROFILE_LENGTH = 512
+    MAX_FIRST_NAME_LENGTH = 30
+    MAX_LAST_NAME_LENGTH = 30
+    MAX_REGISTRATION_KEY_LENGTH = 50
     
     NULL_TITLE = '(No Name Set)'
     
     objects = ProfileManager()
+    has_activated_account = models.BooleanField(default=False)
     user = models.ForeignKey(User, unique=True)
-    affiliation = models.CharField(max_length=MAX_USER_PROFILE_LENGTH,
-                                   blank=True)
+    affiliation = models.CharField(max_length=MAX_USER_PROFILE_LENGTH, blank=True)
+    activation_key = models.CharField(max_length=MAX_REGISTRATION_KEY_LENGTH, null=True)
     
     def short_title(self):
         if self.user.first_name and self.user.last_name:

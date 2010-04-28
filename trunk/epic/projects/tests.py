@@ -40,8 +40,7 @@ class URLsTestCase(CustomTestCase):
             kwargs={'user_id': self.bob.id,})
         
     def test_create_project_not_logged_in(self):
-        self.assertResponseStatusRedirect(
-            'epic.projects.views.create_project')
+        self.assertResponseStatusRedirect('epic.projects.views.create_project')
     
     def test_create_project_logged_in(self):
         pass

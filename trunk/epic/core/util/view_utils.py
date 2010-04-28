@@ -3,6 +3,13 @@ from datetime import datetime
 import functools
 import logging
 
+
+def request_user_is_authenticated(request):
+    if request.user is not None and request.user.is_authenticated():
+        return True
+
+    return False
+
 # user should be an actual User object.
 def user_is_item_creator(user, item):
     if user == item.creator or user.id == item.creator.id:
@@ -31,6 +38,7 @@ def as_log_message(params):
     return ' '.join(['%s="%s"' % (k, convert_quotes(str(v))) for k, v in params.items()])
 
 UNKNOWN_LOG_VALUE = 'unknown'
+
 def set_if_defined(key, dict1, dict2):
 	if key in dict2:
 		dict1[key] = dict2[key]

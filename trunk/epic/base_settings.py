@@ -133,3 +133,12 @@ GOOGLE_KEY = 'ABQIAAAA_nCXPZ8LuIeeo7WwioikORQgz-4lV129Gb6RmcYlAWs2FINo4xQC9fAh76
 #  way to check for a compressed archieve requires the upload to be on disk, 
 #  not in memory.
 FILE_UPLOAD_MAX_MEMORY_SIZE = 0
+
+# For registration.
+DEFAULT_FROM_EMAIL = 'registration@localhost'
+
+#EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
+EMAIL_BACKEND = 'django.core.mail.backends.filebased.EmailBackend'
+EMAIL_FILE_PATH = '/tmp/app-messages' # change this to a proper location
+
+

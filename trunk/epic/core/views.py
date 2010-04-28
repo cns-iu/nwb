@@ -1,3 +1,4 @@
+from django.contrib.auth.views import login
 from django.contrib.auth import logout
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
@@ -16,9 +17,11 @@ from django.utils import simplejson
 
 from epic.core.forms import ForgotPasswordForm
 from epic.core.forms import ProfileForm
+from epic.core.forms import RegistrationForm
 from epic.core.forms import UserForm
 from epic.core.models import Author
 from epic.core.models import Profile
+from epic.core.util.view_utils import request_user_is_authenticated
 from epic.datarequests.models import DataRequest
 from epic.datasets.models import DataSet
 from epic.projects.models import Project
@@ -36,9 +39,10 @@ def browse(request):
         {'datasets': datasets, 'projects': projects,},
         context_instance=RequestContext(request))
 
-def about (request):
+def about(request):
     return render_to_response('core/about.html',
                               context_instance=RequestContext(request))
+
 def view_items_for_author(request, author_name):
     author = Author.objects.get(author=author_name)
     items = author.items.all()
@@ -128,28 +132,103 @@ def forgot_password(request):
             user.set_password(new_password)
             user.save()
             
-            success_message = \
-                _email_user_about_password_changed(user, new_password)
+            success_message = _email_user_about_password_changed(request, user, new_password)
             
             return render_to_response(
                 'core/forgot_password_done.html',
                 {'success_message': success_message,},
                 context_instance=RequestContext(request))
     
-    return render_to_response('core/forgot_password.html',
-                              {'form': form,},
-                              context_instance=RequestContext(request))
+    return render_to_response(
+        'core/forgot_password.html', {'form': form,}, context_instance=RequestContext(request))
 
-def _email_user_about_password_changed(user, new_password):
-    rendered_email = _form_email_about_password_changed(user, new_password)
+REGISTRATION_FORM_NAME = 'form'
+
+def register(request):
+    if request_user_is_authenticated(request):
+        return HttpResponseRedirect(reverse('epic.core.views.view_profile',))
+
+    if request.method == 'POST':
+        form = RegistrationForm(request.POST)
+        
+        if form.is_valid():
+            email = form.cleaned_data['email']
+            username = form.cleaned_data['username']
+            password = form.cleaned_data['password']
+            first_name = form.cleaned_data['first_name']
+            last_name = form.cleaned_data['last_name']
+            affiliation = form.cleaned_data['affiliation']
+
+            user = User.objects.create_user(email=email, username=username, password=password)
+            user.first_name = first_name
+            user.last_name = last_name
+            user.is_active = False
+            user.save()
+
+            profile = Profile.objects.for_user(user)
+            profile.affiliation = affiliation
+            profile.save()
+            
+            _email_user_about_registration(request, user, profile)
+
+            return render_to_response(
+                'core/registration_complete.html', context_instance=RequestContext(request))
+        else:
+            return render_to_response(
+                'core/register.html',
+                {REGISTRATION_FORM_NAME: form}, context_instance=RequestContext(request))
+    else:
+        form = RegistrationForm()
+
+        return render_to_response(
+            'core/register.html',
+            {REGISTRATION_FORM_NAME: form}, context_instance=RequestContext(request))
+
+def activate(request, activation_key):
+    profile = get_object_or_404(Profile, activation_key=activation_key)
+
+    if profile.user.is_active:
+        return HttpResponseRedirect(reverse('django.contrib.auth.views.login',))
+
+    profile.user.is_active = True
+    profile.user.save()
+
+    return render_to_response('core/activate.html', context_instance=RequestContext(request))
+
+REGISTRATION_EMAIL_SUBJECT = 'EpiC Account Registration'
+
+def _email_user_about_registration(request, user, profile):
+    rendered_email = form_email_about_registration(request, user, profile)
+    user.email_user(REGISTRATION_EMAIL_SUBJECT, rendered_email)
+
+def _email_user_about_password_changed(request, user, new_password):
+    rendered_email = _form_email_about_password_changed(request, user, new_password)
     user.email_user('EpiC Account Password Reset', rendered_email)
     
     success_message = _form_success_message(user)
     
     return success_message
 
-def _form_email_about_password_changed(user, new_password):
+def form_email_about_registration(request, user, profile):
+    email_body = loader.get_template('core/registration_email.html')
+    activation_url = request.build_absolute_uri(
+        reverse('epic.core.views.activate', kwargs={'activation_key': profile.activation_key}))
+    login_url = request.build_absolute_uri(reverse('django.contrib.auth.views.login'))
+
+    template_context_data = {
+        'user': user,
+        'activation_url': activation_url,
+        'login_url': login_url
+    }
+
+    template_context = Context(template_context_data)
+    rendered_email = email_body.render(template_context)
+
+    return rendered_email
+
+def _form_email_about_password_changed(request, user, new_password):
     email_body = loader.get_template('core/password_reset_email.html')
+    login_url = request.build_absolute_uri(reverse('django.contrib.auth.views.login'))
     
     # TODO: Probably not the best security to be sending a plaintext password.
     template_context_data = {
@@ -157,7 +236,7 @@ def _form_email_about_password_changed(user, new_password):
         'last_name': user.last_name,
         'username': user.username,
         'password': new_password,
-        'login_url': reverse('django.contrib.auth.views.login')
+        'login_url': login_url,
     }
     
     template_context = Context(template_context_data)

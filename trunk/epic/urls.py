@@ -4,15 +4,16 @@ from django.contrib import admin
 from epic.core.util.view_utils import logged_view
 from decorated_patterns import decorated_patterns
 
+
 admin.autodiscover()
 
 urlpatterns = decorated_patterns('', logged_view,
     (r'^$', 'epic.core.views.site_index'),
     (r'^browse/$', 'epic.core.views.browse'),
     (r'^about/$', 'epic.core.views.about'),
-    (r'^login/$',
-     'django.contrib.auth.views.login',
-     {'template_name': 'core/login.html'}),
+    (r'^register/$', 'epic.core.views.register'),
+    (r'^activate/(?P<activation_key>.+?)/$', 'epic.core.views.activate'),
+    (r'^login/$', 'django.contrib.auth.views.login', {'template_name': 'core/login.html'}),
     (r'^logout/$', 'epic.core.views.logout_view'),
     (r'^user/', include('epic.core.urls')),
     (r'^datasets/', include('epic.datasets.urls')),
