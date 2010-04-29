@@ -2,7 +2,7 @@ from django.contrib.auth.models import User
 from django.core import mail
 from django.core.urlresolvers import reverse
 
-from epic.core.forms import RegistrationForm
+from epic.core.forms import email_address_already_used_message, password_must_not_match_username_message, password_too_short_message, confirm_password_does_not_match_message, username_already_used_message
 from epic.core.models import Profile
 from epic.core.test import *
 from epic.core.util.model_exists_utils import *
@@ -82,7 +82,7 @@ class RegistrationTestCase(CustomTestCase):
             email_already_used_response,
             REGISTRATION_FORM_NAME,
             EMAIL_FIELD_NAME,
-            RegistrationForm.email_address_already_used_message(NEW_USER_ALREADY_REGISTERED_EMAIL))
+            email_address_already_used_message(NEW_USER_ALREADY_REGISTERED_EMAIL))
 
     def testUsernameField(self):
         """Test username being blank and already used."""
@@ -100,7 +100,7 @@ class RegistrationTestCase(CustomTestCase):
             username_already_used_response,
             REGISTRATION_FORM_NAME,
             USERNAME_FIELD_NAME,
-            RegistrationForm.username_already_used_message(NEW_USER_ALREADY_REGISTERED_USERNAME))
+            username_already_used_message(NEW_USER_ALREADY_REGISTERED_USERNAME))
 
     def testPasswordField(self):
         """Test password being blank, invalid, and too short."""
@@ -119,14 +119,14 @@ class RegistrationTestCase(CustomTestCase):
             invalid_password_response,
             REGISTRATION_FORM_NAME,
             PASSWORD_FIELD_NAME,
-            RegistrationForm.password_must_not_match_username_message())
+            password_must_not_match_username_message())
 
         password_too_short_response = self._register(password=NEW_USER_TOO_SHORT_OF_PASSWORD)
         self.assertFormError(
             password_too_short_response,
             REGISTRATION_FORM_NAME,
             PASSWORD_FIELD_NAME,
-            RegistrationForm.password_too_short_message(NEW_USER_TOO_SHORT_OF_PASSWORD))
+            password_too_short_message(NEW_USER_TOO_SHORT_OF_PASSWORD))
 
     def testConfirmPasswordField(self):
         """Test confirm password being blank and not matching password."""
@@ -145,7 +145,7 @@ class RegistrationTestCase(CustomTestCase):
             confirm_password_not_matching_response,
             REGISTRATION_FORM_NAME,
             CONFIRM_PASSWORD_FIELD_NAME,
-            RegistrationForm.confirm_password_does_not_match_message())
+            confirm_password_does_not_match_message())
 
     def testAllRequiredFieldsValidWithoutOptionalFields(self):
         """Test the successful registration of an account, without optional fields."""

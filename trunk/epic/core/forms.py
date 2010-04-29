@@ -6,10 +6,26 @@ from django.forms.util import ErrorList
 
 from epic.categories.constants import NO_CATEGORY
 from epic.categories.models import Category
-from epic.core.util import Callable
 from epic.core.util.model_exists_utils import user_exists
 from epic.core.models import Item
 from epic.core.models import Profile
+
+
+def email_address_already_used_message(email):
+	return u"The email address '%s' was already registered to an account." % email
+	
+def password_must_not_match_username_message():
+	return u"Your password may not match your username."
+
+def confirm_password_does_not_match_message():
+	return u'The two passwords you entered are not the same.  Enter your password and confirm it here.'
+
+def password_too_short_message(password):
+	return 'Ensure this value has at least %s characters (it has %s).' % \
+		(Profile.MIN_USER_PASSWORD_LENGTH, len(password))
+
+def username_already_used_message(username):
+    return u"The username '%s' was already registered to an account." % username
 
 
 class RegistrationForm(forms.Form):
@@ -45,48 +61,30 @@ class RegistrationForm(forms.Form):
         max_length=Profile.MAX_USER_PROFILE_LENGTH,
         required=False)
 
-    def email_address_already_used_message(email):
-        return u"The email address '%s' was already registered to an account." % email
-    email_address_already_used_message = Callable(email_address_already_used_message)
+    
 
     def clean_email(self):
         cleaned_data = self.cleaned_data
         email = cleaned_data['email']
 
         if user_exists(email=email):
-            message = RegistrationForm.email_address_already_used_message(email)
+            message = email_address_already_used_message(email)
             self._errors['email'] = ErrorList([message])
 
         return email
 
-    def username_already_used_message(username):
-        return u"The username '%s' was already registered to an account." % username
-    username_already_used_message = Callable(username_already_used_message)
+    
 
     def clean_username(self):
         cleaned_data = self.cleaned_data
         username = cleaned_data['username']
 
         if user_exists(username=username):
-            message = RegistrationForm.username_already_used_message(username)
+            message = username_already_used_message(username)
             self._errors['username'] = ErrorList([message])
 
         return username
-
-    def password_must_not_match_username_message():
-        return u"Your password may not match your username."
-    password_must_not_match_username_message = Callable(password_must_not_match_username_message)
-
-    def confirm_password_does_not_match_message():
-        return u'%s%s' % \
-            ('The two passwords you entered are not the same.',
-             '  Enter your password and confirm it here.')
-    confirm_password_does_not_match_message = Callable(confirm_password_does_not_match_message)
-
-    def password_too_short_message(password):
-        return 'Ensure this value has at least %s characters (it has %s).' % \
-            (Profile.MIN_USER_PASSWORD_LENGTH, len(password))
-    password_too_short_message = Callable(password_too_short_message)
+		    
 
     def clean(self):
         cleaned_data = self.cleaned_data
@@ -96,7 +94,7 @@ class RegistrationForm(forms.Form):
             password = cleaned_data['password']
 
             if username == password:
-                message = RegistrationForm.password_must_not_match_username_message()
+                message = password_must_not_match_username_message()
                 self._errors['password'] = ErrorList([message])
 
         if 'password' in cleaned_data and 'confirm_password' in cleaned_data:
@@ -106,7 +104,7 @@ class RegistrationForm(forms.Form):
             if confirm_password == password:
                 cleaned_data['cleaned_password'] = password
             else:
-                message = RegistrationForm.confirm_password_does_not_match_message()
+                message = confirm_password_does_not_match_message()
                 self._errors['confirm_password'] = ErrorList([message])
 
         return cleaned_data
