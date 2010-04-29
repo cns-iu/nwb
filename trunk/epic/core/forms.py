@@ -168,10 +168,13 @@ class ProfileForm(ModelForm):
 		
 class ShortAuthenticationForm(forms.Form):
     username = forms.CharField(
-        label=("Username"),
+        label="Username",
+        initial="username",
         max_length=30,
-        widget=forms.TextInput(attrs={'size': 11}))
-    password = forms.CharField(label=("Password"), widget=forms.PasswordInput(attrs={'size': 11}))
+        widget=forms.TextInput(attrs={'size': 11,}))
+    password = forms.CharField(
+        label=("Password"),
+        widget=forms.PasswordInput(attrs={'size': 11}))
 
 DESCRIPTION_HELP_TEXT = 'Format your text using these tags: ' + \
                         '<br />[b] ... [/b]  <strong> bold </strong> ' + \

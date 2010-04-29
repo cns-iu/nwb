@@ -22,19 +22,25 @@
   </map>
   
   <table width="520" height="412" border="0" cellpadding="5" cellspacing="0" background="/media/core/images/epic-index_18.jpg">
-    <tr>
-      <td valign="top">
-        <span class="geoindex">
-          Location of datasets
-          
-          <center>
-            {% location_display_map %}
-          </center>
-        </span>
-      </td>
-      <!-- TODO: Add login and registration links to front page? -->
-    </tr>
+    <tbody>
+      <tr>
+        <td valign="top">
+          <span class="geoindex">
+            Location of datasets
+            
+            <center>
+              {% location_display_map %}
+            </center>
+          </span>
+        </td>
+      </tr>
+    </tbody>
   </table>
+  {% if not user.is_authenticated %}
+    <br />
+    <a href="{% url django.contrib.auth.views.login %}"><img src="/media/core/images/login_37.jpg" width="123" height="53" /></a>
+    Not registered yet? <a href="{% url epic.core.views.register %}">Register now</a>.
+  {% endif %}
 {% endblock %}
   
 {% block homecolumn3 %}
