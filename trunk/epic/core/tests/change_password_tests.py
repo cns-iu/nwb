@@ -30,7 +30,6 @@ class ChangePasswordTestCase(CustomTestCase):
         """
         
         response = self.client.get(self.change_password_url)
-        
         # TODO: This should not just append the next variable.
         redirect_url = '%(base_url)s?next=%(next_url)s' % \
             {'base_url': self.login_url, 'next_url': self.change_password_url}
@@ -48,9 +47,7 @@ class ChangePasswordTestCase(CustomTestCase):
             'new_password1': 'blah',
             'new_password2': 'blah'
         }
-        
         response = self.client.post(self.change_password_url, post_data)
-        
         # TODO: This should not just append the next variable.
         redirect_url = '%(base_url)s?next=%(next_url)s' % \
             {'base_url': self.login_url, 'next_url': self.change_password_url}
@@ -63,18 +60,11 @@ class ChangePasswordTestCase(CustomTestCase):
         
         self.tryLogin('bob')
         
-        post_data = {
-            'old_password': 'bob',
-            'new_password1': 'b',
-            'new_password2': 'blah'
-        }
-        
+        post_data = {'old_password': 'bob', 'new_password1': 'b', 'new_password2': 'blah'}
         response = self.client.post(self.change_password_url, post_data)
         self.failUnless(response.status_code, 200)
-        self.assertFormError(response,
-                             'form',
-                             'new_password2',
-                             "The two password fields didn't match.")
+        self.assertFormError(
+            response, 'form', 'new_password2', "The two password fields didn't match.")
     
     def testFailToChangeOldPasswordProblem(self):
         """ Test that entering an incorrect old password causes an error in
@@ -88,14 +78,13 @@ class ChangePasswordTestCase(CustomTestCase):
             'new_password1': 'blah',
             'new_password2': 'blah'
         }
-        
         response = self.client.post(self.change_password_url, post_data)
         self.failUnless(response.status_code, 200)
-        self.assertFormError(response,
-                             'form',
-                             'old_password',
-                             'Your old password was entered incorrectly. ' + \
-                                'Please enter it again.')
+        self.assertFormError(
+            response,
+            'form',
+            'old_password',
+            'Your old password was entered incorrectly. Please enter it again.')
     
     def testChangePasswordSuccess(self):
         """ Test that the form will actually change a user's password if used
@@ -104,12 +93,7 @@ class ChangePasswordTestCase(CustomTestCase):
         
         self.tryLogin(username='bob', password='bob')
         
-        post_data = {
-            'old_password': 'bob',
-            'new_password1': 'blah',
-            'new_password2': 'blah'
-        }
-        
+        post_data = {'old_password': 'bob', 'new_password1': 'blah', 'new_password2': 'blah'}
         response = self.client.post(self.change_password_url, post_data)
         self.failUnless(response.status_code, 302)
         # This is set to match the redirect in core.views.change_password.
@@ -118,8 +102,7 @@ class ChangePasswordTestCase(CustomTestCase):
         
         logout = self.client.logout()
         
-        login = self.client.login(username='bob',
-                                  password=post_data['old_password'])
+        login = self.client.login(username='bob', password=post_data['old_password'])
         self.failIf(login)
         
         self.tryLogin(username='bob', password=post_data['new_password1'])

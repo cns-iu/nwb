@@ -33,14 +33,12 @@ class FixtureGenerator(object):
             # not executing from that path, we need the full file path to it.
             generator_file_name = self._get_full_generator_file_name()
             
-            fixture_name = \
-                self._construct_fixture_file_name(self.fixtures_path)
+            fixture_name = self._construct_fixture_file_name(self.fixtures_path)
             
             print 'Using fixture generator "%s" to generate fixture "%s".' % \
                 (self.generator_module_name, fixture_name)
               
             self._run_file_as_python_module(generator_file_name)
-            
             self._dump_results_of_generator_to_fixture_file(fixture_name)
             
         except Exception, generate_fixture_exception:
@@ -52,8 +50,7 @@ class FixtureGenerator(object):
         return os.path.join(self.generators_path, generator_file_name)
     
     def _construct_fixture_file_name(self, fixtures_path):
-        absolute_base_filename = \
-            os.path.join(fixtures_path, self.generator_module_name)
+        absolute_base_filename = os.path.join(fixtures_path, self.generator_module_name)
         
         return '%s.%s' % (absolute_base_filename, FIXTURE_FILE_NAME_EXTENSION)
     
@@ -98,7 +95,6 @@ def _setup_temporary_database():
     from django.db import connection
     
     original_database_name = settings.DATABASE_NAME
-    
     connection.creation.create_test_db(0, autoclobber=False)
     
     return original_database_name

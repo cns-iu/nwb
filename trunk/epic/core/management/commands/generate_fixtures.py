@@ -33,15 +33,13 @@ class Command(BaseCommand):
     # labels because a subdirectory that we find otherwise may not necessarily
     # be an application.
     def _generate_applications(self, application_labels):
-        
         application_names, user_did_supply_application_names = \
             self._determine_application_names(application_labels)
         
         # TODO: What about generating fixtures for things other than
         # applications?  (Maybe a renaming is in order).
         applications = self._generate_applications_from_application_names(
-            application_names,
-            print_invalid_name_warnings=user_did_supply_application_names)
+            application_names, print_invalid_name_warnings=user_did_supply_application_names)
         
         return applications
     
@@ -50,8 +48,10 @@ class Command(BaseCommand):
             for application in applications:
                 application.generate_and_output_fixtures()
         else:
-            print 'No applications with fixture generators have been ' + \
+            error_message = \
+                'No applications with fixture generators have been ' + \
                 'specified.  No fixtures have been created.'
+            print error_message
     
     def _determine_application_names(self, application_labels):
         num_application_labels = len(application_labels)
@@ -66,9 +66,7 @@ class Command(BaseCommand):
         return application_names, user_did_supply_application_names
     
     def _generate_applications_from_application_names(
-            self,
-            application_names,
-            print_invalid_name_warnings=True):
+            self, application_names, print_invalid_name_warnings=True):
         applications = []
         
         for application_name in application_names:
@@ -76,15 +74,15 @@ class Command(BaseCommand):
             fixtures_path = _create_fixtures_path(application_path)
             generators_path = _create_generators_path(fixtures_path)
         
-            if _validate_application(application_name,
-                                     application_path,
-                                     fixtures_path,
-                                     generators_path,
-                                     print_invalid_name_warnings):
-                new_application = Application(
-                    application_name, fixtures_path, generators_path)
+            if _validate_application(
+                    application_name,
+                    application_path,
+                    fixtures_path,
+                    generators_path,
+                    print_invalid_name_warnings):
+                new_application = Application(application_name, fixtures_path, generators_path)
                 applications.append(new_application)
-        
+
         return applications
     
     def _get_application_names(self):
@@ -100,14 +98,9 @@ class Command(BaseCommand):
         
         return application_names
     
-    def _append_path_as_application_name_if_appropriate(
-            self, path, application_names):
+    def _append_path_as_application_name_if_appropriate(self, path, application_names):
         if os.path.isdir(path):
             application_names.append(path)
-
-
-
-
 
 def _get_current_directory_listing():
     directory_path = os.getcwd()
@@ -115,62 +108,60 @@ def _get_current_directory_listing():
     
     return directory_listing
 
-def _validate_application_path(
-        application_path, application_name, print_invalid_name_warnings):
+def _validate_application_path(application_path, application_name, print_invalid_name_warnings):
     if not os.path.isdir(application_path):
         if print_invalid_name_warnings:
-            print ('The application path %s either does not exist or is ' + \
-                    'not a valid path.  Cannot add application "%s".') % \
-                (application_path, application_name)
+            warning_message_template = \
+                ('The application path %s either does not exist or is ' + \
+                 'not a valid path.  Cannot add application "%s".')
+            print warning_message_template % (application_path, application_name)
         
         return False
     
     return True
 
-def _validate_fixtures_path(
-        fixtures_path, application_name, print_invalid_name_warnings):
+def _validate_fixtures_path(fixtures_path, application_name, print_invalid_name_warnings):
     if not os.path.exists(fixtures_path) or not os.path.isdir(fixtures_path):
         if print_invalid_name_warnings:
-            print ('The fixtures path %s either does not exist or is ' + \
-                    'not a valid path.  Cannot add application "%s".') % \
-                (fixtures_path, application_name)
+            warning_message_template = \
+                ('The fixtures path %s either does not exist or is ' + \
+                 'not a valid path.  Cannot add application "%s".')
+            print warning_message_template % (fixtures_path, application_name)
         
         return False
     
     return True
 
-def _validate_generators_path(
-        generators_path, application_name, print_invalid_name_warnings):
-    if not os.path.exists(generators_path) or \
-       not os.path.isdir(generators_path):
+def _validate_generators_path(generators_path, application_name, print_invalid_name_warnings):
+    if not os.path.exists(generators_path) or not os.path.isdir(generators_path):
         if print_invalid_name_warnings:
-            print ('The generators path %s either does not exist or is ' + \
-                    'not a valid path.  Cannot add application "%s".') % \
-                (generators_path, application_name)
+            warning_message_template = \
+                ('The generators path %s either does not exist or is ' + \
+                 'not a valid path.  Cannot add application "%s".')
+            print warning_message_template % (generators_path, application_name)
         
         return False
     
     return True
 
-def _validate_application(application_name,
-                          application_path,
-                          fixtures_path,
-                          generators_path,
-                          print_invalid_name_warnings):
-    # Verify that the application name is a directory, and print a message to
-    # the user if not.
+def _validate_application(
+        application_name,
+        application_path,
+        fixtures_path,
+        generators_path,
+        print_invalid_name_warnings):
+    # Verify that the application name is a directory, and print a message to the user if not.
     if not _validate_application_path(
             application_path, application_name, print_invalid_name_warnings):
         return False
     
-    # The application name is at least a directory, so now verify that it
-    # contains a fixtures/ directory.
-    if not _validate_fixtures_path(
-            fixtures_path, application_name, print_invalid_name_warnings):
+    # The application name is at least a directory, so now verify that it contains a
+    # fixtures/ directory.
+    if not _validate_fixtures_path(fixtures_path, application_name, print_invalid_name_warnings):
         return False
             
-    # The fixtures directory exists within the application directory, so now
-    # verify that the generators/ directory exists within it.
+    # The fixtures directory exists within the application directory, so now verify that the
+    # generators/ directory exists within it.
     if not _validate_generators_path(
             generators_path, application_name, print_invalid_name_warnings):
         return False

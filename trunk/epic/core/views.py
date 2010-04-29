@@ -21,39 +21,45 @@ from epic.core.forms import RegistrationForm
 from epic.core.forms import UserForm
 from epic.core.models import Author
 from epic.core.models import Profile
+from epic.core.util import active_user_required
 from epic.core.util.view_utils import request_user_is_authenticated
 from epic.datarequests.models import DataRequest
 from epic.datasets.models import DataSet
 from epic.projects.models import Project
+from epic.settings import DEACTIVATED_ACCOUNT_VIEW
 
 
 def site_index(request):
-    return render_to_response('core/site_index.html',
-                              context_instance=RequestContext(request))
+    return render_to_response('core/site_index.html', context_instance=RequestContext(request))
 
 def browse(request):
     datasets = DataSet.objects.active().order_by('-created_at')
     projects = Project.objects.active().order_by('-created_at')
     
-    return render_to_response('core/browse.html',
+    return render_to_response(
+        'core/browse.html',
         {'datasets': datasets, 'projects': projects,},
         context_instance=RequestContext(request))
 
 def about(request):
-    return render_to_response('core/about.html',
-                              context_instance=RequestContext(request))
+    return render_to_response('core/about.html', context_instance=RequestContext(request))
 
 def view_items_for_author(request, author_name):
     author = Author.objects.get(author=author_name)
     items = author.items.all()
-    return render_to_response('authors/view_items_for_author.html',
-                              {'items': items, 'author': author},
-                              context_instance=RequestContext(request))
-    
+
+    return render_to_response(
+        'authors/view_items_for_author.html',
+        {'items': items, 'author': author},
+        context_instance=RequestContext(request))
+
 @login_required
+@active_user_required
 def view_profile(request, user_id=None):
     """ Used to display the basic/home page for logged in user. """
+
     requesting_user = request.user
+
     if user_id:
         requested_user = get_object_or_404(User, pk=user_id)
     else:
@@ -61,12 +67,12 @@ def view_profile(request, user_id=None):
     
     profile = Profile.objects.for_user(requested_user)
 
-    datasets = DataSet.objects.active().\
-        filter(creator=requested_user).order_by('-created_at')
-    projects = Project.objects.active().\
-        filter(creator=requested_user).order_by('-created_at')
-    datarequests = DataRequest.objects.active().\
-        filter(creator=requested_user).exclude(status='C').\
+    datasets = DataSet.objects.active().filter(creator=requested_user).order_by('-created_at')
+    projects = Project.objects.active().filter(creator=requested_user).order_by('-created_at')
+    datarequests = \
+        DataRequest.objects.active(). \
+        filter(creator=requested_user). \
+        exclude(status='C'). \
         order_by('-created_at')
     
     render_to_response_data = {
@@ -76,14 +82,15 @@ def view_profile(request, user_id=None):
         'projects': projects
     }
     
-    return render_to_response('core/view_profile.html',
-                              render_to_response_data,
-                              context_instance=RequestContext(request))
+    return render_to_response(
+        'core/view_profile.html',
+        render_to_response_data,
+        context_instance=RequestContext(request))
     
 @login_required
+@active_user_required
 def edit_profile(request):
-    """ Used to allow a user to edit their own profile.
-    """
+    """ Used to allow a user to edit their own profile."""
     
     user = request.user
     profile = Profile.objects.for_user(user)
@@ -99,8 +106,7 @@ def edit_profile(request):
             profile_form.save()
             user_form.save()
             
-            return HttpResponseRedirect(reverse(
-                'epic.core.views.view_profile', kwargs={}))
+            return HttpResponseRedirect(reverse('epic.core.views.view_profile', kwargs={}))
     
     return render_to_response(
         'core/edit_profile.html',
@@ -113,12 +119,14 @@ def logout_view(request):
     return HttpResponseRedirect(reverse('epic.core.views.site_index',))
 
 @login_required
+@active_user_required
 def change_password(request):
     redirect_url = reverse('epic.core.views.view_profile')
     
-    return password_change(request,
-                           post_change_redirect=redirect_url,
-                           template_name='core/change_password.html')
+    return password_change(
+        request,
+        post_change_redirect=redirect_url,
+        template_name='core/change_password.html')
 
 def forgot_password(request):
     if request.method != 'POST':
@@ -128,6 +136,10 @@ def forgot_password(request):
         
         if form.is_valid():
             user = form.cleaned_data['user']
+
+            if not user.is_active:
+                return HttpResponseredirect(reverse(DEACTIVATED_ACCOUNT_VIEW))
+
             new_password = UserManager().make_random_password()
             user.set_password(new_password)
             user.save()
@@ -187,13 +199,25 @@ def register(request):
 def activate(request, activation_key):
     profile = get_object_or_404(Profile, activation_key=activation_key)
 
-    if profile.user.is_active:
-        return HttpResponseRedirect(reverse('django.contrib.auth.views.login',))
+    if not profile.has_activated_account:
+        profile.user.is_active = True
+        profile.user.save()
+        profile.has_activated_account = True
+        profile.save()
 
-    profile.user.is_active = True
-    profile.user.save()
+        return render_to_response('core/activate.html', context_instance=RequestContext(request))
+    else:
+        if profile.user.is_active:
+            if profile.user.is_authenticated():
+                return HttpResponseRedirect(reverse('epic.core.views.view_profile'))
+            else:
+                return HttpResponseRedirect(reverse('django.contrib.auth.views.login',))
+        else:
+            return HttpResponseRedirect(reverse(DEACTIVATED_ACCOUNT_VIEW))
 
-    return render_to_response('core/activate.html', context_instance=RequestContext(request))
+def deactivated_account(request):
+    return render_to_response(
+        'core/deactivated_account.html', context_instance=RequestContext(request))
 
 REGISTRATION_EMAIL_SUBJECT = 'EpiC Account Registration'
 
@@ -216,11 +240,8 @@ def form_email_about_registration(request, user, profile):
     login_url = request.build_absolute_uri(reverse('django.contrib.auth.views.login'))
 
     template_context_data = {
-        'user': user,
-        'activation_url': activation_url,
-        'login_url': login_url
+        'user': user, 'activation_url': activation_url, 'login_url': login_url
     }
-
     template_context = Context(template_context_data)
     rendered_email = email_body.render(template_context)
 
@@ -248,8 +269,8 @@ def _form_success_message(user):
     split_user_email = user.email.split('@')
     user_email_domain = split_user_email[1]
     
-    success_message = ("An email has been sent to your " + \
-        "'%(email_domain)s' address with a new password.") % \
+    success_message = \
+        ("An email has been sent to your '%(email_domain)s' address with a new password.") % \
             {'email_domain': user_email_domain,}
     
     return success_message

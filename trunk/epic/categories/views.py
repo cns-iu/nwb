@@ -18,31 +18,28 @@ from epic.projects.util.util import *
 def view_categories(request):
     categories = Category.objects.all()
     
-    return render_to_response('categories/view_categories.html',
-                              {'categories': categories})
+    return render_to_response('categories/view_categories.html', {'categories': categories})
 
 def view_items_for_category(request, category_id):
     category = get_object_or_404(Category, pk=category_id)
-    
     datasets = _get_datasets_for_category(category)
-    
     projects_from_datasets = get_projects_containing_datasets(datasets)
     projects_from_category = _get_projects_for_category(category)
-    projects = (projects_from_datasets | projects_from_category). \
-               order_by('-created_at')
-    
+    projects = (projects_from_datasets | projects_from_category).order_by('-created_at')
     datarequests = _get_datarequests_for_category(category)
     
-    return render_to_response('categories/view_all.html', 
-                              {'category': category,
-                               'datasets': datasets,
-                               'projects': projects,
-                               'datarequests': datarequests},
-                               context_instance=RequestContext(request))
+    return render_to_response(
+        'categories/view_all.html', 
+        {
+            'category': category,
+            'datasets': datasets,
+            'projects': projects,
+            'datarequests': datarequests
+        },
+        context_instance=RequestContext(request))
 
 def view_datasets_for_category(request, category_id):
     category = get_object_or_404(Category, pk=category_id)
-    
     datasets = _get_datasets_for_category(category)
     
     return render_to_response('categories/view_datasets.html', 
@@ -51,45 +48,37 @@ def view_datasets_for_category(request, category_id):
 
 def view_projects_for_category(request, category_id):
     category = get_object_or_404(Category, pk=category_id)
-    
     datasets = _get_datasets_for_category(category)
-    
     projects_from_datasets = get_projects_containing_datasets(datasets)
     projects_from_category = _get_projects_for_category(category)
     projects = projects_from_datasets | projects_from_category
     
-    return render_to_response('categories/view_projects.html', 
-                              {'category': category, 'projects': projects,},
-                               context_instance=RequestContext(request))
+    return render_to_response(
+        'categories/view_projects.html', 
+        {'category': category, 'projects': projects,},
+        context_instance=RequestContext(request))
 
 def view_datarequests_for_category(request, category_id):
     category = get_object_or_404(Category, pk=category_id)
-    
     datarequests = _get_datarequests_for_category(category)
     
-    return render_to_response('categories/view_datarequests.html', 
-                              {'category': category,
-                               'datarequests': datarequests,},
-                               context_instance=RequestContext(request))
+    return render_to_response(
+        'categories/view_datarequests.html', 
+        {'category': category, 'datarequests': datarequests,},
+        context_instance=RequestContext(request))
 
 def _get_datasets_for_category(category):
-    datasets = DataSet.objects.active(). \
-                               filter(category=category). \
-                               order_by('-created_at')
+    datasets = DataSet.objects.active().filter(category=category).order_by('-created_at')
     
     return datasets
 
 def _get_projects_for_category(category):
-    projects = Project.objects.active(). \
-                               filter(category=category). \
-                               order_by('-created_at'). \
-                               distinct()
+    projects = \
+        Project.objects.active().filter(category=category).order_by('-created_at').distinct()
     
     return projects
 
 def _get_datarequests_for_category(category):
-    datarequests = DataRequest.objects.active(). \
-                                       filter(category=category). \
-                                       order_by('-created_at')
+    datarequests = DataRequest.objects.active().filter(category=category).order_by('-created_at')
     
     return datarequests

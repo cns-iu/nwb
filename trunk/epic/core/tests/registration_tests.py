@@ -1,6 +1,6 @@
+from django.contrib.auth.models import User
 from django.core import mail
 from django.core.urlresolvers import reverse
-from django.contrib.auth.models import User
 
 from epic.core.forms import RegistrationForm
 from epic.core.models import Profile
@@ -10,6 +10,7 @@ from epic.core.views import REGISTRATION_EMAIL_SUBJECT
 from epic.core.views import REGISTRATION_FORM_NAME
 from epic.core.views import form_email_about_registration
 from epic.settings import LOGIN_REDIRECT_URL
+
 
 BOB_USERNAME = 'bob'
 BOB_PASSWORD = 'bob'
@@ -306,9 +307,8 @@ class RegistrationTestCase(CustomTestCase):
         bob.is_active = False
         bob.save()
 
-        # TODO: Uncomment the following lines to actually perform this test.
-#        self.assertResponseStatusRedirect(
-#            'epic.core.views.view_profile', kwargs={'user_id': bob.id})
+        self.assertResponseStatusRedirect(
+            'epic.core.views.view_profile', kwargs={'user_id': bob.id})
 
         bob.is_active = previous_is_active
         bob.save()

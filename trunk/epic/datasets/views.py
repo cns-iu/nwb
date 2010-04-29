@@ -27,6 +27,7 @@ from epic.comments.forms import PostCommentForm
 from epic.core.models import AcademicReference
 from epic.core.models import Author
 from epic.core.models import Item
+from epic.core.util import active_user_required
 from epic.core.util.view_utils import *
 from epic.datasets.forms import AcademicReferenceFormSet
 from epic.datasets.forms import AuthorFormSet
@@ -71,6 +72,7 @@ def view_user_dataset_list(request, user_id=None):
                               context_instance=RequestContext(request))
 
 @login_required
+@active_user_required
 def create_dataset(request):
     if request.method != 'POST':
         form = NewDataSetForm(request.user)
@@ -352,6 +354,7 @@ def _get_compressed_readme(uploaded_file):
     return readme_file
 
 @login_required
+@active_user_required
 def upload_readme(request, item_id, slug):
     """ Allow the user to add a readme to a dataset.
     
@@ -404,6 +407,7 @@ def upload_readme(request, item_id, slug):
                               context_instance=RequestContext(request))
     
 @login_required
+@active_user_required
 def edit_dataset(request, item_id, slug=None):
     dataset = get_object_or_404(DataSet, pk=item_id)
     user = request.user
@@ -537,6 +541,7 @@ def edit_dataset(request, item_id, slug=None):
                                context_instance=RequestContext(request))
 
 @login_required
+@active_user_required
 def rate_dataset(request, item_id, input_rating=None, slug=None):
     if input_rating:
         # TODO: surely this isn't supposed to be pass?!  What used to be here? Wont' it complain if no response is returned?!
@@ -567,6 +572,7 @@ def rate_dataset(request, item_id, input_rating=None, slug=None):
                                   context_instance=RequestContext(request))
     
 @login_required
+@active_user_required
 def rate_dataset_using_input_rating(request, item_id, input_rating=None, slug=None):
     """
     Used specifically when the input_ratings field is provided. Mainly used 
@@ -586,6 +592,7 @@ def rate_dataset_using_input_rating(request, item_id, input_rating=None, slug=No
         pass
     
 @login_required
+@active_user_required
 def tag_dataset(request, item_id, slug=None):
     dataset = DataSet.objects.get(pk = item_id)
     
@@ -611,6 +618,7 @@ def tag_dataset(request, item_id, slug=None):
                                       {'form':form,'item':dataset}, 
                                       context_instance=RequestContext(request))
 @login_required
+@active_user_required
 def delete_dataset_files(request, item_id, slug):
     # TODO: Here would be the place to delete the files from the file system if that is required.
     dataset = DataSet.objects.get(pk=item_id)
@@ -667,6 +675,7 @@ def _safe(string):
     return ascii_string
 
 @login_required
+@active_user_required
 def download_all_files(request, item_id, slug):
     dataset = DataSet.objects.get(pk=item_id)
     user = request.user

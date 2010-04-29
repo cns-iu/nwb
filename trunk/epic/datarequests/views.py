@@ -7,6 +7,7 @@ from django.template import RequestContext
 
 from epic.comments.forms import PostCommentForm
 from epic.core.models import Item
+from epic.core.util import active_user_required
 from epic.core.util.view_utils import *
 from epic.datarequests.forms import DataRequestForm
 from epic.datarequests.models import DataRequest
@@ -33,6 +34,7 @@ def view_datarequest(request, item_id, slug):
                                context_instance=RequestContext(request))
 
 @login_required
+@active_user_required
 def new_datarequest(request):
     user = request.user
     if request.method != 'POST':
@@ -61,6 +63,7 @@ def new_datarequest(request):
                               context_instance=RequestContext(request))
 
 @login_required
+@active_user_required
 def edit_datarequest(request, item_id, slug):
     user = request.user
     datarequest = get_object_or_404(DataRequest, pk=item_id)
@@ -98,6 +101,7 @@ def edit_datarequest(request, item_id, slug):
                                   context_instance=RequestContext(request))
     
 @login_required
+@active_user_required
 def cancel_datarequest(request, item_id, slug):
     user = request.user
     datarequest = get_object_or_404(DataRequest, pk=item_id)
@@ -117,6 +121,7 @@ def cancel_datarequest(request, item_id, slug):
         return HttpResponseRedirect(view_datarequest_url)
 
 @login_required
+@active_user_required
 def fulfill_datarequest(request, item_id, slug, fulfilling_item_id=None):
     user = request.user
     datarequest = get_object_or_404(DataRequest, pk=item_id)
@@ -142,6 +147,7 @@ def fulfill_datarequest(request, item_id, slug, fulfilling_item_id=None):
     return HttpResponseRedirect(view_datarequest_url)
 
 @login_required
+@active_user_required
 def choose_fulfilling_item(request, fulfilling_item_id):
     user = request.user
     item = get_object_or_404(Item, pk=fulfilling_item_id)

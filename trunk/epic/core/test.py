@@ -6,7 +6,6 @@ from django.test import TestCase
 
 
 class CustomTestCase(TestCase):
-    
     def assertExists(self, object):
         self.assertTrue(object)
         
@@ -23,32 +22,28 @@ class CustomTestCase(TestCase):
     # This is Python!
     def assertResponseStatusRedirect(self, view, args=[], kwargs={}, status_codes=[302]):
         response_status_code = self.getStatusCode(view, args, kwargs)
-        
         self.assertStatusCodeIsARedirect(response_status_code, status_codes)
     
     def assertResponseStatusSuccess(self, view, args=[], kwargs={}, success_codes=[200]):
         response_status_code = self.getStatusCode(view, args, kwargs)
-        
         self.assertStatusCodeIsASuccess(response_status_code, success_codes)
     
     def assertResponseStatusFailure(self, view, args=[], kwargs={}, failure_codes=[404, 500]):
         response_status_code = self.getStatusCode(view, args, kwargs)
-        
         self.assertStatusCodeIsAFailure(response_status_code, failure_codes)
 
     def assertResponseStatusNotFailure(self, view, args=[], kwargs={}, failure_codes=[404, 500]):
         response_status_code = self.getStatusCode(view, args, kwargs)
-        
         self.assertStatusCodeIsNotAFailure(response_status_code, failure_codes)
     
     def getStatusCode(self, view, args={}, kwargs={}):
          response = self.getResponseFromView(view, args, kwargs)
-         
+
          return response.status_code
          
     def getResponseFromView(self, view, args=[], kwargs={}):
         view_url = reverse(view, args=args, kwargs=kwargs)
-        
+
         return self.client.get(view_url)
     
     def tryLogin(self, username, password=None):

@@ -9,13 +9,10 @@ def _create_item_of_type(item_type, item_type_string, unique_identifier):
         ('This is the description for the item [b]%(item_name)s[/b] ' + \
          'of type [blink]%(item_type)s[/blink]' + \
          '[img]http://www.google.com/intl/en_ALL/images/logo.gif[/img]') % \
-            {'item_name': unique_item_name_string,
-             'item_type': item_type_string}
+            {'item_name': unique_item_name_string, 'item_type': item_type_string}
     
-    item = item_type(creator=bob,
-                     name=unique_item_name_string,
-                     description=description,
-                     is_active=True)
+    item = item_type(
+        creator=bob, name=unique_item_name_string, description=description, is_active=True)
     
     return item
 

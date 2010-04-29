@@ -9,9 +9,11 @@ from django.template import RequestContext
 from epic.comments.forms import PostCommentForm
 from epic.comments.models import Comment
 from epic.core.models import Item
+from epic.core.util import active_user_required
 
 
 @login_required
+@active_user_required
 def post_comment(request, item_id, slug):
     user = request.user
     item = get_object_or_404(Item, pk=item_id)
@@ -21,8 +23,7 @@ def post_comment(request, item_id, slug):
         
         if form.is_valid():
             comment_contents = form.cleaned_data['comment']
-            Comment.objects.create(posting_user=user,
-                                   parent_item=item,
-                                   contents=comment_contents)
+            Comment.objects.create(
+                posting_user=user, parent_item=item, contents=comment_contents)
     
     return HttpResponseRedirect(item.get_absolute_url())

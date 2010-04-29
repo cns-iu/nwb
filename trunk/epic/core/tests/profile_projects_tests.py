@@ -22,7 +22,6 @@ class ProfileProjectTestCase(CustomTestCase):
         self.tryLogin(BILL_USERNAME)
         
         response = self.client.get(self.view_profile_url)
-        
         self.failUnless(response.status_code, 200)
         self.assertNotContains(response, 'Your Projects')
         self.assertContains(response, 'You have not created any projects.')
@@ -31,7 +30,6 @@ class ProfileProjectTestCase(CustomTestCase):
         self.tryLogin(BOB_USERNAME)
         
         response = self.client.get(self.view_profile_url)
-        
         self.failUnless(response.status_code, 200)
         self.assertContains(response, 'Your Projects')
         self.assertContains(response, 'edit')

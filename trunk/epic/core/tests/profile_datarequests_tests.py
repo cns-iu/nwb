@@ -12,7 +12,6 @@ BILL_USERNAME = 'bill'
 BILL_PASSWORD = 'bill'
 
 class ProfileDataRequestTestCase(CustomTestCase):
-    
     fixtures = ['core_profile_datarequests']
     
     def setUp(self):
@@ -40,7 +39,6 @@ class ProfileDataRequestTestCase(CustomTestCase):
         self.tryLogin(BILL_USERNAME)
         
         user = User.objects.get(username=BILL_USERNAME)
-        
         datarequest1 = DataRequest(
             creator=user, 
             name='DataRequest object with Status U', 
@@ -56,9 +54,8 @@ class ProfileDataRequestTestCase(CustomTestCase):
             status='F',
             is_active=True)
         datarequest2.save()
-        
-        response = self.client.get(self.profile_url)
 
+        response = self.client.get(self.profile_url)
         self.failUnless(response.status_code, 200)
         self.assertContains(response, 'Your Data Requests')
         self.assertContains(response, 'edit')
@@ -74,7 +71,6 @@ class ProfileDataRequestTestCase(CustomTestCase):
         self.tryLogin(BILL_USERNAME)
 
         user = User.objects.get(username=BILL_USERNAME)
-        
         datarequest = DataRequest(
             creator=user, 
             name='DataRequest object with Status C (Should not be shown)', 
@@ -84,7 +80,6 @@ class ProfileDataRequestTestCase(CustomTestCase):
         datarequest.save()
         
         response = self.client.get(self.profile_url)
-        
         self.failUnless(response.status_code, 200)
         self.assertContains(response, 'Your Data Requests')
         self.assertNotContains(response, 'DataRequest object with Status C')

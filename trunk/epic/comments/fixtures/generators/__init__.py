@@ -57,8 +57,7 @@ def _create_peebs():
 ############
 
 def _create_bob_user():
-    bob_user = User.objects.create_user(
-        username='bob', email='bob@bob.com', password='bob')
+    bob_user = User.objects.create_user(username='bob', email='bob@bob.com', password='bob')
     bob_user.save()
     
     return bob_user
@@ -80,8 +79,7 @@ def _create_bob():
 #############
 
 def _create_bob2_user():
-    bob2_user = User.objects.create_user(
-        username='bob2', email='bob2@bob.com', password='bob2')
+    bob2_user = User.objects.create_user(username='bob2', email='bob2@bob.com', password='bob2')
     bob2_user.save()
     
     return bob2_user
@@ -103,8 +101,7 @@ def _create_bob2():
 #############
 
 def _create_bill_user():
-    bill_user = User.objects.create_user(
-        username='bill', email='bill@bill.com', password='bill')
+    bill_user = User.objects.create_user(username='bill', email='bill@bill.com', password='bill')
     bill_user.save()
     
     return bill_user

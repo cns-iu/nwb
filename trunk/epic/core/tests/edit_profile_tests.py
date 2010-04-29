@@ -18,7 +18,7 @@ class ViewEditProfilePageCase(CustomTestCase):
         
         response = self.client.get(self.edit_profile_url)
         # TODO: This should not set next this way.
-        redirect_url = '%(base_url)s?next=%(next_url)s' %\
+        redirect_url = '%(base_url)s?next=%(next_url)s' % \
             {'base_url': self.login_url, 'next_url': self.edit_profile_url}
         self.assertRedirects(response, redirect_url, 302)
         
@@ -31,7 +31,6 @@ class ViewEditProfilePageCase(CustomTestCase):
         
         response = self.client.get(self.edit_profile_url)
         self.assertEqual(response.status_code, 200)
-
         # Check that the correct stuff is on the page
         self.assertContains(response, 'First name')
         self.assertContains(response, 'Last name')
@@ -56,9 +55,7 @@ class ActionEditProfilePageCase(CustomTestCase):
             'email': 'bob@admin.com',
             'affiliation': 'Harvard',
         }
-        
         # Attempt to edit the dataset.
-        
         response = self.client.get(self.edit_profile_url)
         redirect_url = '%(base_url)s?next=%(next_url)s' % \
             {'base_url': self.login_url, 'next_url': self.edit_profile_url}
@@ -77,7 +74,9 @@ class ActionEditProfilePageCase(CustomTestCase):
         user_original_first_name = user.first_name
         user_original_last_name = user.last_name
         user_original_affiliation = profile.affiliation
-        
+
+        self.tryLogin(username='bob', password='bob')
+
         # The changes to the data.
         post_data = {
             'first_name': 'Bob',
@@ -85,11 +84,7 @@ class ActionEditProfilePageCase(CustomTestCase):
             'email': 'bob@admin.com',
             'affiliation': 'Harvard',
         }
-        
-        self.tryLogin(username='bob', password='bob')
-        
         # Edit the dataset.
-        
         response = self.client.post(self.edit_profile_url, post_data)
         self.assertEqual(response.status_code, 302)
         
@@ -104,13 +99,13 @@ class ActionEditProfilePageCase(CustomTestCase):
         user_new_affiliation = profile.affiliation
         
         # Make sure the values changed
-        self.assertNotEqual(user_new_affiliation , user_original_affiliation)
-        self.assertNotEqual(user_new_email , user_original_email)
-        self.assertNotEqual(user_new_first_name , user_original_first_name)
-        self.assertNotEqual(user_new_last_name , user_original_last_name)
+        self.assertNotEqual(user_new_affiliation, user_original_affiliation)
+        self.assertNotEqual(user_new_email, user_original_email)
+        self.assertNotEqual(user_new_first_name, user_original_first_name)
+        self.assertNotEqual(user_new_last_name, user_original_last_name)
         
         # Make sure the values changed correctly
-        self.assertEqual(user_new_affiliation , post_data['affiliation'])
-        self.assertEqual(user_new_email , post_data['email'])
-        self.assertEqual(user_new_first_name , post_data['first_name'])
-        self.assertEqual(user_new_last_name , post_data['last_name'])
+        self.assertEqual(user_new_affiliation, post_data['affiliation'])
+        self.assertEqual(user_new_email, post_data['email'])
+        self.assertEqual(user_new_first_name, post_data['first_name'])
+        self.assertEqual(user_new_last_name, post_data['last_name'])

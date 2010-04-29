@@ -113,8 +113,7 @@ class RegistrationForm(forms.Form):
 
 class ForgotPasswordForm(forms.Form):
 	username_or_email = forms.CharField(
-        max_length=Profile.MAX_USER_EMAIL_LENGTH,
-        label="Username or e-mail address")
+        max_length=Profile.MAX_USER_EMAIL_LENGTH, label="Username or e-mail address")
 	
 	def clean(self):
 		try:
@@ -144,11 +143,23 @@ class ForgotPasswordForm(forms.Form):
 		return cleaned_data
 	
 class UserForm(ModelForm):
-	# this overwrites the email from the model.  It is important that email is NOT in the exclude list though...
+	# This overwrites the email from the model.
+    # It is important that email is NOT in the exclude list though...
 	email = forms.EmailField(label='E-mail address')
+
 	class Meta:
 		model = User
-		exclude = ['username', 'password', 'is_staff', 'is_active', 'is_superuser', 'last_login', 'date_joined', 'groups', 'user_permissions']
+		exclude = [
+            'username',
+            'password',
+            'is_staff',
+            'is_active',
+            'is_superuser',
+            'last_login',
+            'date_joined',
+            'groups',
+            'user_permissions'
+        ]
 
 class ProfileForm(ModelForm):
 	class Meta:
@@ -156,7 +167,10 @@ class ProfileForm(ModelForm):
 		exclude = ['user', 'activation_key']
 		
 class ShortAuthenticationForm(forms.Form):
-    username = forms.CharField(label=("Username"), max_length=30, widget=forms.TextInput(attrs={'size': 11}))
+    username = forms.CharField(
+        label=("Username"),
+        max_length=30,
+        widget=forms.TextInput(attrs={'size': 11}))
     password = forms.CharField(label=("Password"), widget=forms.PasswordInput(attrs={'size': 11}))
 
 DESCRIPTION_HELP_TEXT = 'Format your text using these tags: ' + \
@@ -169,8 +183,7 @@ DESCRIPTION_HELP_TEXT = 'Format your text using these tags: ' + \
 class CategoryChoiceField(forms.ModelChoiceField):
     def __init__(self, *args, **kwargs):
         super(CategoryChoiceField, self).__init__(
-            empty_label=None,
-            queryset=Category.objects.all().order_by('name'))
+            empty_label=None, queryset=Category.objects.all().order_by('name'))
     
     def clean(self, value):
         if value is None:

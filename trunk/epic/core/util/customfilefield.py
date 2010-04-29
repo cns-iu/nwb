@@ -1,10 +1,17 @@
 #modified from http://scottbarnham.com/blog/2007/07/31/uploading-images-to-a-dynamic-path-with-django/#working_solution
 #and http://www.djangosnippets.org/snippets/949/
 
-from django.db.models import FileField, FileField, signals
-from django.conf import settings
 from distutils.dir_util import mkpath
-import shutil, os, glob, re, os.path
+import glob
+import os
+import os.path
+import re
+import shutil
+
+from django.conf import settings
+from django.db.models import FileField
+from django.db.models import signals
+
 
 class CustomFileField(FileField):
     """Allows model instance to specify upload_to dynamically.
@@ -26,9 +33,12 @@ class CustomFileField(FileField):
     def __init__(self, *args, **kwargs):
         if not 'upload_to' in kwargs:
             kwargs['upload_to'] = 'tmp'
+
         self.use_key = kwargs.get('use_key', False)
+
         if 'use_key' in kwargs:
             del(kwargs['use_key'])
+
         super(CustomFileField, self).__init__(*args, **kwargs)
 
     def contribute_to_class(self, cls, name):
@@ -43,33 +53,21 @@ class CustomFileField(FileField):
         """
         if hasattr(instance, 'get_upload_to'):
             src = str(getattr(instance, self.attname))
+
             if src:
                 m = re.match(r"%s/(.*)" % self.upload_to, src)
+
                 if m:
                     if self.use_key:
-                        dst = "%s%d_%s" % (
-                          instance.get_upload_to(self.attname), 
-                          instance.id, 
-                          m.groups()[0]
-                        )
+                        dst = "%s%d_%s" % \
+                            (instance.get_upload_to(self.attname), instance.id, m.groups()[0])
                     else:
-                        dst = "%s%s" % (
-                          instance.get_upload_to(self.attname), 
-                          m.groups()[0]
-                        )
-                    basedir = os.path.join(
-                      settings.MEDIA_ROOT, 
-                      os.path.dirname(dst)
-                    )
-                    fromdir = os.path.join(
-                      settings.MEDIA_ROOT, 
-                      src
-                    )
+                        dst = "%s%s" % (instance.get_upload_to(self.attname), m.groups()[0])
+
+                    basedir = os.path.join(settings.MEDIA_ROOT, os.path.dirname(dst))
+                    fromdir = os.path.join(settings.MEDIA_ROOT, src)
                     mkpath(basedir)
-                    shutil.move(fromdir, 
-                      os.path.join(basedir, 
-                                   m.groups()[0])
-                    )
+                    shutil.move(fromdir, os.path.join(basedir, m.groups()[0]))
                     setattr(instance, self.attname, dst)
                     instance.save()
 

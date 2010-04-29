@@ -10,10 +10,7 @@ def _create_dataset(creator, ordinal, number):
     dataset_description = 'This is the %s dataset' % ordinal
     
     dataset = DataSet.objects.create(
-        creator=creator,
-        name=dataset_name,
-        description=dataset_description,
-        is_active=True)
+        creator=creator, name=dataset_name, description=dataset_description, is_active=True)
     
     return dataset
 

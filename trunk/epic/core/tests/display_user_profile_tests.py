@@ -10,8 +10,8 @@ class ViewBasicUserProfileTestCase(CustomTestCase):
     def setUp(self):
         self.bob = User.objects.get(username='bob')
         self.bob2 = User.objects.get(username='bob2')
-        self.bob_profile_url = reverse('epic.core.views.view_profile',
-                                       kwargs={'user_id': self.bob.id})
+        self.bob_profile_url = reverse(
+            'epic.core.views.view_profile', kwargs={'user_id': self.bob.id})
         self.login_url = reverse('django.contrib.auth.views.login')
     
     def testViewProfileNotLoggedIn(self):
@@ -26,7 +26,6 @@ class ViewBasicUserProfileTestCase(CustomTestCase):
         
         response = self.client.get(self.bob_profile_url)
         self.failUnlessEqual(response.status_code, 200)
-        
         user = User.objects.get(username='bob')
         self.assertContains(response, user.get_profile().full_title())
         
@@ -35,6 +34,5 @@ class ViewBasicUserProfileTestCase(CustomTestCase):
         
         response = self.client.get(self.bob_profile_url)
         self.failUnlessEqual(response.status_code, 200)
-        
         self.assertNotContains(response, self.bob.username)
         self.assertContains(response, self.bob.get_profile().full_title())

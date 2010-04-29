@@ -28,19 +28,17 @@ class Application(object):
         }
         
         user_readable_string = \
-                'Name: "%(application_name)s", ' + \
-                'Fixtures Path: "%(fixtures_path)s", ' + \
-                'Generators Path: "%(generators_path)s"' % \
-            data_for_user_readable_string
+                ('Name: "%(application_name)s", ' + \
+                 'Fixtures Path: "%(fixtures_path)s", ' + \
+                 'Generators Path: "%(generators_path)s"') % data_for_user_readable_string
         
         return user_readable_string
     
     def generate_and_output_fixtures(self):
-        print 'Generating fixtures for application "%s".' % \
-            self.application_name
-        
+        print 'Generating fixtures for application "%s".' % self.application_name
+
         self._execute_all_fixture_generators()
-        
+
         print ''
     
     # TODO: Needs a short, high-level description of our strategy for gathering fixture generators
@@ -51,7 +49,8 @@ class Application(object):
         Python modules and create a set of FixtureGenerators from them.
         
         Look through all the applications in the root directory of this project.
-        FixtureGenerator modules should be found in the fixtures/generators directory of each application.
+        FixtureGenerator modules should be found in the fixtures/generators directory of
+        each application.
         Create FixtureGenerator objects from the FixtureGenerator modules.
         Collect all these FixtureGenerators, and return them in a list.
         
@@ -63,44 +62,29 @@ class Application(object):
         Generate fixtures for each application, using fixture generator scripts found in each application.
         
         2.
-        
-        
-        
         For each application in the root directory:
             Get all the modules in that application's fixtures/generators directory.
               For each of these fixture generator modules:
                 Create a fixture generator object based on that module.
                 Append that fixture generator object to a list
         Return the list of fixture generators.
-        
-       
-                
-        
-        
-        
-        
-        
-        
-        
-           For each of these fixture generator modules:
-                Create a fixture generator object based on the module.
-                Append that fixture generator object to our list of all fixture generators
-                
+
+        For each of these fixture generator modules:
+            Create a fixture generator object based on the module.
+            Append that fixture generator object to our list of all fixture generators
+
         For each application in the root directory:
             Get all the modules in that application's fixtures/generators directory.
             Create Fixture Generators based on those modules.
         Return the Fixture Generators we created.       
-        
-        
-        See FixtureGenerator for a more detailed explanation of what a fixture
-        generator is.
+
+        See FixtureGenerator for a more detailed explanation of what a fixture generator is.
         """
         directory_listing = os.listdir(self.generators_path)
         init_file_name = self._determine_init_file_name(directory_listing)
         
-        fixture_generators = \
-            self._create_fixture_generators_from_directory_listing(
-                directory_listing, init_file_name)
+        fixture_generators = self._create_fixture_generators_from_directory_listing(
+            directory_listing, init_file_name)
         
         return fixture_generators
     
@@ -116,13 +100,11 @@ class Application(object):
         
         return None
     
-    def _create_fixture_generators_from_directory_listing(
-            self, directory_listing, init_file_name):
+    def _create_fixture_generators_from_directory_listing(self, directory_listing, init_file_name):
         fixture_generators = []
         
         for directory_element in directory_listing:
-            absolute_file_name = \
-                os.path.join(self.generators_path, directory_element)
+            absolute_file_name = os.path.join(self.generators_path, directory_element)
             
             # If this listing is not the init module (__init__.py), split it
             # by '.' (to see if it's a Python module).
@@ -132,10 +114,7 @@ class Application(object):
                 
                 if _file_is_valid_python_module(split_file_name):
                     reformed_module_name = '.'.join(split_file_name[: -1])
-                    
-                    absolute_init_file_name = \
-                        os.path.join(self.generators_path, init_file_name)
-                    
+                    absolute_init_file_name = os.path.join(self.generators_path, init_file_name)
                     new_fixture_generator = FixtureGenerator(
                         self.fixtures_path,
                         self.generators_path,
@@ -147,8 +126,7 @@ class Application(object):
         return fixture_generators
     
     def _init_module_is_valid(self, directory_listing):
-        absolute_init_module_file_name = \
-            os.path.join(self.generators_path, INIT_MODULE_FILE_NAME)
+        absolute_init_module_file_name = os.path.join(self.generators_path, INIT_MODULE_FILE_NAME)
         
         return _file_is_valid_and_in_directory_listing(
             absolute_init_module_file_name, directory_listing)
@@ -157,8 +135,8 @@ def _file_is_valid_and_in_directory_listing(file_name, directory_listing):
     base_file_name = os.path.basename(file_name)
     
     if base_file_name in directory_listing and \
-       os.path.exists(file_name) and \
-       os.path.isfile(file_name):
+            os.path.exists(file_name) and \
+            os.path.isfile(file_name):
         return True
     
     return False
@@ -167,8 +145,8 @@ def _is_valid_file_and_not_init_module(listing):
     listing_basename = os.path.basename(listing)
     
     if listing_basename != INIT_MODULE_FILE_NAME and \
-       os.path.exists(listing) and \
-       os.path.isfile(listing):
+            os.path.exists(listing) and \
+            os.path.isfile(listing):
         return True
     
     return False

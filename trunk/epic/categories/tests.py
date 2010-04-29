@@ -13,19 +13,16 @@ from epic.projects.models import Project
 
 class ViewCategoriesTestCase(CustomTestCase):
     def setUp(self):
-        self.view_categories_url = \
-            reverse('epic.categories.views.view_categories')
+        self.view_categories_url = reverse('epic.categories.views.view_categories')
     
     def testNoCategoriesExist(self):
         Category.objects.all().delete()
         
         response = self.client.get(self.view_categories_url)
-        self.assertContains(response,
-                            'There are currently no categories available.')
+        self.assertContains(response, 'There are currently no categories available.')
     
     def testCategoriesExist(self):
-        category = Category.objects.create(name='Test Category',
-                                           description='Test Description')
+        category = Category.objects.create(name='Test Category', description='Test Description')
         
         response = self.client.get(self.view_categories_url)
         self.assertContains(response, category.name)
@@ -38,8 +35,7 @@ class ViewItemsForCategoryTestCase(CustomTestCase):
         self.category1 = Category.objects.get(name='Test Category1')
         self.datasets = DataSet.objects.filter(category=self.category1)
         self.projects = Project.objects.filter(category=self.category1)
-        self.datarequests = \
-            DataRequest.objects.filter(category=self.category1)
+        self.datarequests = DataRequest.objects.filter(category=self.category1)
         
         self.view_all_items_url = reverse(
             'epic.categories.views.view_items_for_category',
@@ -61,29 +57,25 @@ class ViewItemsForCategoryTestCase(CustomTestCase):
         invalid_all_items_for_category_url = reverse(
             'epic.categories.views.view_items_for_category',
             kwargs={'category_id': 1337})
-        all_items_response = \
-            self.client.get(invalid_all_items_for_category_url)
+        all_items_response = self.client.get(invalid_all_items_for_category_url)
         self.assertStatusCodeIsAFailure(all_items_response.status_code)
         
         invalid_datasets_for_category_url = reverse(
             'epic.categories.views.view_datasets_for_category',
             kwargs={'category_id': 1337})
-        datasets_response = \
-            self.client.get(invalid_datasets_for_category_url)
+        datasets_response = self.client.get(invalid_datasets_for_category_url)
         self.assertStatusCodeIsAFailure(datasets_response.status_code)
         
         invalid_projects_for_category_url = reverse(
             'epic.categories.views.view_projects_for_category',
             kwargs={'category_id': 1337})
-        projects_response = \
-            self.client.get(invalid_projects_for_category_url)
+        projects_response = self.client.get(invalid_projects_for_category_url)
         self.assertStatusCodeIsAFailure(projects_response.status_code)
         
         invalid_datarequests_for_category_url = reverse(
             'epic.categories.views.view_datarequests_for_category',
             kwargs={'category_id': 1337})
-        datarequests_response = \
-            self.client.get(invalid_datarequests_for_category_url)
+        datarequests_response = self.client.get(invalid_datarequests_for_category_url)
         self.assertStatusCodeIsAFailure(datarequests_response.status_code)
     
     """
@@ -95,7 +87,7 @@ class ViewItemsForCategoryTestCase(CustomTestCase):
         datasets = self.datasets.all()
         projects = self.projects.all()
         datarequests = self.projects.all()
-        
+
         response = self.client.get(self.view_all_items_url)
         
         for dataset in datasets:
@@ -141,19 +133,14 @@ class CategoryTemplateTagsTestCase(CustomTestCase):
         self.project = Project.objects.active()[0]
         self.datarequest = DataRequest.objects.active()[0]
         
-        self.view_categories_url = \
-            reverse('epic.categories.views.view_categories')
+        self.view_categories_url = reverse('epic.categories.views.view_categories')
         
         self.view_all_items_url = reverse(
             'epic.categories.views.view_items_for_category',
             kwargs={'category_id': self.category1.id})
         
-        self.view_dataset_url = \
-            get_item_url(self.dataset, 'epic.datasets.views.view_dataset')
-        
-        self.view_project_url = \
-            get_item_url(self.project, 'epic.projects.views.view_project')
-        
+        self.view_dataset_url = get_item_url(self.dataset, 'epic.datasets.views.view_dataset')
+        self.view_project_url = get_item_url(self.project, 'epic.projects.views.view_project')
         self.view_datarequest_url = get_item_url(
             self.datarequest, 'epic.datarequests.views.view_datarequest')
     
@@ -180,8 +167,7 @@ class DeleteCategoryTestCase(CustomTestCase):
     
     def setUp(self):
         self.bob = User.objects.get(username='bob')
-        self.category = Category.objects.create(name='category1',
-                                                description='category2')
+        self.category = Category.objects.create(name='category1', description='category2')
         self.dataset_name = 'a38yyth'
         self.dataset_description = 'asd09g4h6'
         self.dataset = DataSet.objects.create(
@@ -197,9 +183,7 @@ class DeleteCategoryTestCase(CustomTestCase):
         
         try:
             dataset = DataSet.objects.get(
-                name=self.dataset_name,
-                description=self.dataset_description,
-                creator=self.bob)
+                name=self.dataset_name, description=self.dataset_description, creator=self.bob)
         except DataSet.DoesNotExist:
             self.fail()
     

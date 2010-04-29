@@ -25,8 +25,10 @@ class MultiFileInput(FileInput):
         The 'count' attribute can be specified to default the number of 
         file boxes initially presented.
         """
+
         super(MultiFileInput, self).__init__(attrs)
-        self.attrs = {'count':1}
+        self.attrs = {'count': 1}
+
         if attrs:
             self.attrs.update(attrs)
         
@@ -36,9 +38,13 @@ class MultiFileInput(FileInput):
         Should not be overridden.  Instead, subclasses should override the
         js, link, and/or fields methods which provide content to this method.
         """
-        final_attrs = self.build_attrs(attrs, type=self.input_type, name=name+'[]')
+
+        final_attrs = self.build_attrs(attrs, type=self.input_type, name=(name + '[]'))
         count = final_attrs['count']
-        if count<1: count=1
+
+        if count < 1:
+            count = 1
+
         del final_attrs['count']
 
         js = self.js(name, value, count, final_attrs)
@@ -51,12 +57,18 @@ class MultiFileInput(FileInput):
         """
         Renders the necessary number of file input boxes.
         """
-        return u''.join([u'<input%s /><br />\n' % flatatt(dict(attrs, id=attrs['id']+str(i))) for i in range(count)])
+
+        return u''.join(
+            [u'<input%s /><br />\n' % flatatt(dict(attrs, id=attrs['id']+str(i))) \
+                for i in range(count)])
         
     def link(self, name, value, count, attrs=None):
         """
         Renders a link to add more file input boxes.
         """
+
+        # TODO: Figure out a way to clean this up.
+        # TODO: Continue cleaning up after this point.
         return u"""<p><a onclick="javascript:new_%(name)s(); return false;">Attach another file.</a></p>""" % {'name': name,}
         
     #TODO: new upload fields should only be added when the user fills in all the existing file fields (like in Gmail)

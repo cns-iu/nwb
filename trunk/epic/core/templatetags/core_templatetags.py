@@ -28,8 +28,7 @@ def nav_bar(link_to_be_highlighted=None):
         return {'link_to_be_highlighted': None}
     
     if link_to_be_highlighted.lower() not in NAV_BAR_LINK_NAMES:
-        raise Exception('nav_bar expects one of the following: %s' % \
-            NAV_BAR_LINK_NAMES)
+        raise Exception('nav_bar expects one of the following: %s' % NAV_BAR_LINK_NAMES)
     
     return {'link_to_be_highlighted': link_to_be_highlighted}
 
@@ -39,24 +38,19 @@ def nav_bar_link(current_link, link_to_be_highlighted, view_function_name):
     the nav bar link to be placed in the template calling it.
     """
     
-    if link_to_be_highlighted is None or \
-            current_link.lower() != link_to_be_highlighted.lower():
+    if link_to_be_highlighted is None or current_link.lower() != link_to_be_highlighted.lower():
         # TODO: pageoff class (have Elisha style this up real pretty).
         link_class = 'pageoff'
     else:
         link_class = 'pageon'
     
     view_url = reverse(view_function_name, kwargs={})
-    
     nav_bar_link_html_data = {
-        'view_url': view_url,
-        'link_class': link_class,
-        'current_link': current_link
+        'view_url': view_url, 'link_class': link_class, 'current_link': current_link
     }
-    
     nav_bar_link_html = \
-      '<a href="%(view_url)s" class="%(link_class)s">%(current_link)s</a>' % \
-        nav_bar_link_html_data
+        '<a href="%(view_url)s" class="%(link_class)s">%(current_link)s</a>' % \
+            nav_bar_link_html_data
     
     return nav_bar_link_html
 

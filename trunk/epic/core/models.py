@@ -88,13 +88,15 @@ class Item(models.Model):
     # TODO: Fix this terrible hack
     def _specific(self):
         possibilities = ['dataset', 'datarequest', 'project']
+
         for possibility in possibilities:
             if hasattr(self, possibility):
                 return getattr(self, possibility)
+
         raise Exception('No subclass found for %s' % (self))
-    
+
     specific = property(_specific)
-    
+
     def save(self, *args, **kwargs):
         self.rendered_description = self._render_description()
         self.tagless_description = self._strip_tags_from_description()
@@ -102,9 +104,9 @@ class Item(models.Model):
         
         if not self.category:
             self.category = Category.objects.get(name=NO_CATEGORY)
-        
+
         super(Item, self).save()
-        
+
     def _render_description(self):
         markup_renderer = PostMarkup()
         markup_renderer.default_tags()

@@ -23,10 +23,6 @@ class CategoryAdmin(admin.ModelAdmin):
     fields = ('name', 'description')
     list_display = ('name', 'description')
     
-    inlines = [
-        InlineCategoryDataRequest,
-        InlineCategoryDataSet,
-        InlineCategoryProject
-    ]
+    inlines = [InlineCategoryDataRequest, InlineCategoryDataSet, InlineCategoryProject]
 
 admin.site.register(Category, CategoryAdmin)

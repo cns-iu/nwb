@@ -12,19 +12,16 @@ class ProfileTestCase(CustomTestCase):
         self.user_with_full_profile = User.objects.get(username='peebs')
         self.user_with_empty_profile = User.objects.get(username='bob')
         self.user_with_no_profile = self._create_noprofile_user()
-        
         self.full_profile = Profile.objects.for_user(self.user_with_full_profile)
         self.empty_profile = Profile.objects.for_user(self.user_with_empty_profile)
         
     def _create_noprofile_user(self):
-        mrempty_user = User.objects.create_user(username='mrnoprofile',
-            email='mrnoprofile@sample.com',
-            password='mrnoprofile')
-    
+        mrempty_user = User.objects.create_user(
+            username='mrnoprofile', email='mrnoprofile@sample.com', password='mrnoprofile')
         mrempty_user.first_name = 'Melvin'
         mrempty_user.last_name = 'NoProfile'
         mrempty_user.save()
-        
+
         #(notice that we're not creating a profile here)
     
         return mrempty_user
@@ -67,7 +64,6 @@ class ProfileTestCase(CustomTestCase):
         
         short_title = self.empty_profile.short_title()
         self.assertEquals(short_title, Profile.NULL_TITLE)
+
         full_title = self.empty_profile.full_title()
         self.assertEquals(full_title, Profile.NULL_TITLE)
-        
-        

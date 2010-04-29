@@ -1,6 +1,7 @@
 import logging
 import logging.handlers
 
+
 FILE_PATH = 'server.log'
 FORMAT_STRING = '%(asctime)s - %(name)s - %(levelname)s - %(message)s'
 
@@ -20,6 +21,7 @@ def setup(location):
 # to try to guard against any further setup()s after the first.
 if not hasattr(logging, "safe_setup_complete"):
 	logging.safe_setup_complete = False
+
 def safeSetup(location=FILE_PATH):
 	if logging.safe_setup_complete:
 		return

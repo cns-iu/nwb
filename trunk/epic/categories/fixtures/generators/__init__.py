@@ -8,16 +8,13 @@ from epic.core.models import Profile
 ############
 
 def _create_bob_user():
-    bob_user = User.objects.create_user(
-        username='bob', email='bob@bob.com', password='bob')
-    
+    bob_user = User.objects.create_user(username='bob', email='bob@bob.com', password='bob')
     bob_user.save()
     
     return bob_user
 
 def _create_bob_profile(bob_user):
     bob_profile = Profile.objects.for_user(bob_user)
-    
     bob_profile.save()
     
     return bob_profile

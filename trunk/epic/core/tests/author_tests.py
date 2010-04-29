@@ -12,9 +12,7 @@ class AuthorTestCase(CustomTestCase):
     fixtures = ['core_just_users']
     
     def setUp(self):
-        self.create_dataset_url = \
-                reverse('epic.datasets.views.create_dataset')
-        
+        self.create_dataset_url = reverse('epic.datasets.views.create_dataset')
         self.bob = User.objects.get(username='bob') 
         
         
@@ -49,9 +47,7 @@ class AuthorTestCase(CustomTestCase):
         }
         
         response = self.client.post(self.create_dataset_url, post_data)
-
-        dataset = DataSet.objects.get(creator=self.bob, 
-                                      name=post_data['name'])
+        dataset = DataSet.objects.get(creator=self.bob, name=post_data['name'])
         
         try:
             author = Author.objects.get(author=post_data['author-0-author'])
@@ -91,14 +87,10 @@ class AuthorTestCase(CustomTestCase):
         }
         
         response = self.client.post(self.create_dataset_url, post_data)
-
-        dataset = DataSet.objects.get(creator=self.bob, 
-                                      name=post_data['name'])
+        dataset = DataSet.objects.get(creator=self.bob, name=post_data['name'])
         
         try:
-            Author.objects.get(items=dataset, 
-                               author=post_data['author-0-author'])
-            Author.objects.get(items=dataset, 
-                               author=post_data['author-1-author'])
+            Author.objects.get(items=dataset, author=post_data['author-0-author'])
+            Author.objects.get(items=dataset, author=post_data['author-1-author'])
         except Author.DoesNotExist:
             self.fail()

@@ -12,9 +12,7 @@ class AcademicReferenceTestCase(CustomTestCase):
     fixtures = ['core_just_users']
     
     def setUp(self):
-        self.create_dataset_url = \
-            reverse('epic.datasets.views.create_dataset')
-        
+        self.create_dataset_url = reverse('epic.datasets.views.create_dataset')
         self.bob = User.objects.get(username='bob') 
         
     def testReferenceAdded(self):
@@ -50,12 +48,9 @@ class AcademicReferenceTestCase(CustomTestCase):
         }
         
         response = self.client.post(self.create_dataset_url, post_data)
-
-        dataset = DataSet.objects.get(creator=self.bob,
-                                      name=post_data['name'])
+        dataset = DataSet.objects.get(creator=self.bob, name=post_data['name'])
         acad_ref = AcademicReference.objects.get(item=dataset)
-        self.assertTrue(acad_ref.reference,
-                        post_data['reference-0-reference'])
+        self.assertTrue(acad_ref.reference, post_data['reference-0-reference'])
         
     def testMultipleReferencedAdded(self):
         self.tryLogin('bob')
@@ -89,8 +84,7 @@ class AcademicReferenceTestCase(CustomTestCase):
         }
         
         response = self.client.post(self.create_dataset_url, post_data)
-        dataset = DataSet.objects.get(creator=self.bob,
-                                      name=post_data['name'])
+        dataset = DataSet.objects.get(creator=self.bob, name=post_data['name'])
         
         try:
             AcademicReference.objects.get(

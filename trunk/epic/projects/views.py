@@ -15,6 +15,7 @@ from django.shortcuts import render_to_response
 from django.template import RequestContext
 
 from epic.comments.forms import PostCommentForm
+from epic.core.util import active_user_required
 from epic.core.models import Item
 from epic.core.util.view_utils import *
 from epic.datasets.models import DataSet
@@ -24,6 +25,7 @@ from epic.projects.models import Project
 
 
 @login_required
+@active_user_required
 def create_project(request):
     if request.method != 'POST':
         new_project_form = ProjectForm()
@@ -60,6 +62,7 @@ def create_project(request):
          context_instance=RequestContext(request))
 
 @login_required
+@active_user_required
 def confirm_delete_project(request, item_id, slug):
     project = get_object_or_404(Project, pk=item_id)
     user = request.user
@@ -76,6 +79,7 @@ def confirm_delete_project(request, item_id, slug):
         context_instance=RequestContext(request))
 
 @login_required
+@active_user_required
 def delete_project(request, item_id, slug):
     project = get_object_or_404(Project, pk=item_id)
     user = request.user
@@ -94,6 +98,7 @@ def delete_project(request, item_id, slug):
     return HttpResponseRedirect(view_profile_url)
 
 @login_required
+@active_user_required
 def edit_project(request, item_id, slug):
     project = get_object_or_404(Project, pk=item_id)
     user = request.user
@@ -182,6 +187,7 @@ def view_user_project_list(request, user_id):
         context_instance=RequestContext(request))
 
 @login_required
+@active_user_required
 def download_all(request, item_id, slug):
     project = get_object_or_404(Project, pk=item_id)
     

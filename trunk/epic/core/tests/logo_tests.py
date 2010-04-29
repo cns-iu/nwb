@@ -1,4 +1,5 @@
 from django.core.urlresolvers import reverse
+
 from epic.core.test import CustomTestCase
 
 

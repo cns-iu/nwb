@@ -11,12 +11,12 @@ ADMINS = (
 
 MANAGERS = ADMINS
 
-DATABASE_ENGINE = 'sqlite3'           # 'postgresql_psycopg2', 'postgresql', 'mysql', 'sqlite3' or 'oracle'.
-DATABASE_NAME = 'sqlite.db'             # Or path to database file if using sqlite3.
-DATABASE_USER = ''             # Not used with sqlite3.
-DATABASE_PASSWORD = ''         # Not used with sqlite3.
-DATABASE_HOST = ''             # Set to empty string for localhost. Not used with sqlite3.
-DATABASE_PORT = ''             # Set to empty string for default. Not used with sqlite3.
+DATABASE_ENGINE = 'sqlite3' # 'postgresql_psycopg2', 'postgresql', 'mysql', 'sqlite3' or 'oracle'.
+DATABASE_NAME = 'sqlite.db' # Or path to database file if using sqlite3.
+DATABASE_USER = ''          # Not used with sqlite3.
+DATABASE_PASSWORD = ''      # Not used with sqlite3.
+DATABASE_HOST = ''          # Set to empty string for localhost. Not used with sqlite3.
+DATABASE_PORT = ''          # Set to empty string for default. Not used with sqlite3.
 
 EMAIL_HOST = 'localhost'
 EMAIL_PORT = '1025'
@@ -77,7 +77,8 @@ MIDDLEWARE_CLASSES = [
 
 def csrfProtect():
 	if 'django.contrib.csrf.middleware.CsrfMiddleware' not in MIDDLEWARE_CLASSES:
-		location = MIDDLEWARE_CLASSES.index('django.contrib.sessions.middleware.SessionMiddleware') + 1
+		location = \
+            MIDDLEWARE_CLASSES.index('django.contrib.sessions.middleware.SessionMiddleware') + 1
 		MIDDLEWARE_CLASSES.insert(location, 'django.contrib.csrf.middleware.CsrfMiddleware')
 
 
@@ -127,7 +128,8 @@ INSTALLED_APPS = (
     'epic.search',
 )
 
-GOOGLE_KEY = 'ABQIAAAA_nCXPZ8LuIeeo7WwioikORQgz-4lV129Gb6RmcYlAWs2FINo4xQC9fAh76x7NI05hOaFBXreklShsg'
+GOOGLE_KEY = \
+    'ABQIAAAA_nCXPZ8LuIeeo7WwioikORQgz-4lV129Gb6RmcYlAWs2FINo4xQC9fAh76x7NI05hOaFBXreklShsg'
 
 # This is needed for checking for a readme file as the user uploads.  The only
 #  way to check for a compressed archieve requires the upload to be on disk, 
@@ -136,6 +138,8 @@ FILE_UPLOAD_MAX_MEMORY_SIZE = 0
 
 # For registration.
 DEFAULT_FROM_EMAIL = 'registration@localhost'
+
+DEACTIVATED_ACCOUNT_VIEW = 'epic.core.views.deactivated_account'
 
 #EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
 EMAIL_BACKEND = 'django.core.mail.backends.filebased.EmailBackend'

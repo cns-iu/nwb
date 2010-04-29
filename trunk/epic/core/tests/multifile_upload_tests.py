@@ -9,9 +9,10 @@ from multifile import *
 import unittest
 
 from django import newforms as forms
-from epic.core.test import CustomTestCase
 from django.test.client import Client
 from django.utils.datastructures import MultiValueDict
+
+from epic.core.test import CustomTestCase
 
 
 INPUT_NAME = 'files'
@@ -27,9 +28,7 @@ class MultiFileInputTest(unittest.TestCase):
     """
     
     def setUp(self):
-        self.multi_file_input_attributes = {
-            ID_KEY: INPUT_ID
-        }
+        self.multi_file_input_attributes = {ID_KEY: INPUT_ID}
     
     def testBasics(self):
         """
@@ -37,7 +36,6 @@ class MultiFileInputTest(unittest.TestCase):
         """
         
         multi_file_input = MultiFileInput()
-        
         self.assertTrue(multi_file_input.needs_multipart_form)
         self.assertFalse(multi_file_input.is_hidden)
     
@@ -45,7 +43,7 @@ class MultiFileInputTest(unittest.TestCase):
         """
         Makes sure we show a minimum of 1 input box.
         """
-        
+
         multi_file_input_html = _make_multi_file_input_html(0)
         _assertHTMLContainsFileInput(multi_file_input_html, 0)
         
@@ -55,7 +53,6 @@ class MultiFileInputTest(unittest.TestCase):
         """
         
         multi_file_input_html = _make_multi_file_input_html()
-        
         _assertHTMLContainsFileInput(multi_file_input_html, 0)
     
     def testMultiRender(self):
@@ -64,7 +61,6 @@ class MultiFileInputTest(unittest.TestCase):
         """
         
         multi_file_input_html = _make_multi_file_input_html(2)
-        
         _assertHTMLContainsFileInput(multi_file_input_html, 0)
         _assertHTMLContainsFileInput(multi_file_input_html, 1)
     
@@ -76,10 +72,8 @@ class MultiFileInputTest(unittest.TestCase):
             multi_file_input = MultiFileInput({COUNT_KEY: 2})
             
         multi_file_input_html = multi_file_input.render(
-            name=INPUT_NAME,
-            value=MULTI_FILE_INPUT_VALUE,
-            attrs=self.multi_file_input_attributes)
-        
+            name=INPUT_NAME, value=MULTI_FILE_INPUT_VALUE, attrs=self.multi_file_input_attributes)
+
         return multi_file_input_html
 
 class MultiFileFieldTest(unittest.TestCase):
@@ -144,16 +138,24 @@ class MultiFileFieldTest(unittest.TestCase):
         """
         Tests the binding of a Form with two files attached.
         """
-        file_data = MultiValueDict({'files[]': [{'filename':'face.jpg', 'content': 'www'},{'filename':'lah.jpg', 'content': 'woop'}]})
+        file_data = MultiValueDict(
+            {'files[]': [
+                {'filename':'face.jpg', 'content': 'www'},
+                {'filename':'lah.jpg', 'content': 'woop'}
+            ]})
         f = self._RequiredForm({}, file_data)
         self.assertTrue(f.is_bound)
         self.assertTrue(f.is_valid())
-        
         self.assertEquals(len(f.cleaned_data['files']), 2)
+
         for input_file in file_data.getlist('files[]'):
             found = False
+
             for output_file in f.cleaned_data['files']:
-                found = found or (output_file.filename == input_file['filename'] and output_file.content == input_file['content'])
+                filenames_match = output_file.filename == input_file['filename']
+                contents_match = output_file.content == input_file['content']
+                found = found or (filenames_match and contents_match)
+
             self.assertTrue(found)
     
     def testEmptyFile(self):
@@ -173,7 +175,11 @@ class MultiFileFieldTest(unittest.TestCase):
         """
         If any file is empty, then the whole form is invalid.
         """
-        file_data = MultiValueDict({'files[]': [{'filename':'face.jpg', 'content': 'www'},{'filename':'lah.jpg', 'content': ''}]})
+        file_data = MultiValueDict(
+            {'files[]': [
+                {'filename':'face.jpg', 'content': 'www'},
+                {'filename':'lah.jpg', 'content': ''}
+            ]})
         f = self._RequiredForm({}, file_data)
         self.assertTrue(f.is_bound)
         self.assertFalse(f.is_valid())
@@ -194,13 +200,22 @@ class MultiFileFieldTest(unittest.TestCase):
         self.assertFalse(f.is_valid())        
 
         # 2 files is great, we want 2
-        file_data = MultiValueDict({'files[]': [{'filename':'face.jpg', 'content': 'www'},{'filename':'lah.jpg', 'content': 'asdf'}]})
+        file_data = MultiValueDict(
+            {'files[]': [
+                {'filename':'face.jpg', 'content': 'www'},
+                {'filename':'lah.jpg', 'content': 'asdf'}
+            ]})
         f = self._StrictForm({}, file_data)
         self.assertTrue(f.is_bound)
         self.assertTrue(f.is_valid())        
 
         # 3 files is no good, we want 2
-        file_data = MultiValueDict({'files[]': [{'filename':'face.jpg', 'content': 'www'},{'filename':'lah.jpg', 'content': 'asdf'}, {'filename':'blah.jpg', 'content': 'asdf'}]})
+        file_data = MultiValueDict(
+            {'files[]': [
+                {'filename':'face.jpg', 'content': 'www'},
+                {'filename':'lah.jpg', 'content': 'asdf'},
+                {'filename':'blah.jpg', 'content': 'asdf'}
+            ]})
         f = self._StrictForm({}, file_data)
         self.assertTrue(f.is_bound)
         self.assertFalse(f.is_valid())        
@@ -217,14 +232,9 @@ class MultiFileFieldTest(unittest.TestCase):
         self.assertTrue(f.is_bound)
     
     def _make_input_html(self, id_index):
-        input_attributes_dictionary = {
-            'name': INPUT_NAME,
-            'id': INPUT_ID,
-            'id_index': id_index
-        }
+        input_attributes_dictionary = {'name': INPUT_NAME, 'id': INPUT_ID, 'id_index': id_index}
         
-        input_html = '<input type="file" name="%(name)s[]" ' + \
-                'id="%(id)s%(id_index)s" />' % \
+        input_html = '<input type="file" name="%(name)s[]" id="%(id)s%(id_index)s" />' % \
             input_attributes_dictionary
         
         return input_html
@@ -258,21 +268,14 @@ class FixedMultiFileTest(unittest.TestCase):
         """
         Test the output of a single field being rendered.
         """
-        m=FixedMultiFileInput()
-        r=m.render(name='blah', value='bla', attrs={'id':'test'})
-
+        m = FixedMultiFileInput()
+        r = m.render(name='blah', value='bla', attrs={'id':'test'})
         self.assertEquals('<input type="file" name="blah[]" id="test0" />\n', r)
 
 #TODO: Rename or add comments to clarify
 def _assertHTMLContainsFileInput(html, id_index):
-    file_input_html_dictionary = {
-        'name': INPUT_NAME,
-        'id': INPUT_ID,
-        'id_index': id_index
-    }
+    file_input_html_dictionary = {'name': INPUT_NAME, 'id': INPUT_ID, 'id_index': id_index}
     
-    file_input_html = ('<input type="file" name="%(name)s[]" ' + \
-            'id="%(id)s%(id_index)s" />') % \
+    file_input_html = '<input type="file" name="%(name)s[]" id="%(id)s%(id_index)s" />' % \
         file_input_html_dictionary
-    
     self.assert_(file_input_html in html)

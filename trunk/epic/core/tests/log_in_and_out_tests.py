@@ -21,7 +21,6 @@ class LogInAndOutTestCase(CustomTestCase):
         self.failUnlessEqual(response.status_code, 200)
         
         post_data = {'username': self.bob.username, 'password': 'bob',}
-        
         response = self.client.post(self.login_url, post_data)
         self.failUnlessEqual(response.status_code, 302)
         # TODO Once the follow=true actually works it should be used here.
@@ -32,19 +31,15 @@ class LogInAndOutTestCase(CustomTestCase):
             log in.
         """
         
-        post_data = {
-            'username': self.bob.username,
-            'password': 'incorrect password',        
-        }
-        
+        post_data = {'username': self.bob.username, 'password': 'incorrect password',}
         response = self.client.post(self.login_url, post_data)
         self.failUnlessEqual(response.status_code, 200)
-        self.assertFormError(response,
-                             'form',
-                             '__all__',
-                             'Please enter a correct username and ' + \
-                                'password. Note that both fields are ' + \
-                                'case-sensitive.')
+        self.assertFormError(
+            response,
+            'form',
+            '__all__',
+            'Please enter a correct username and password. ' + \
+                'Note that both fields are case-sensitive.')
     
     def testLogout(self):
         """ Test that logging out using the view works correctly.
@@ -54,8 +49,8 @@ class LogInAndOutTestCase(CustomTestCase):
         
         response = self.client.get(self.logout_url)
         self.failUnlessEqual(response.status_code, 302)
+
         response = self.client.get('/')
-        
         self.assertContains(response, self.login_url)
         
     def testLoginFrontPage(self):
@@ -70,9 +65,7 @@ class LogInAndOutTestCase(CustomTestCase):
         """
         Test that the logout link appears for logged in users
         """        
-        self.tryLogin(username='bob2',
-                      password='bob2')
+        self.tryLogin(username='bob2', password='bob2')
         
         response = self.client.get('/')
-        
         self.assertContains(response, self.logout_url)

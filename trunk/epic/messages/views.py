@@ -6,10 +6,13 @@ from django.http import HttpResponseRedirect
 from django.shortcuts import render_to_response, get_object_or_404
 from django.template import RequestContext
 
+from epic.core.util import active_user_required
 from epic.messages.models import Message, SentMessage, ReceivedMessage
 from epic.messages.forms import NewMessageForm
 
+
 @login_required
+@active_user_required
 def index(request, user_id):
 	user = request.user
 	user_from_id = get_object_or_404(User, pk=user_id)
@@ -25,6 +28,7 @@ def index(request, user_id):
 							  {'sent_messages':sent_messages, 'received_messages':received_messages}, context_instance=RequestContext(request))
 
 @login_required
+@active_user_required
 def view_sent_message(request, user_id, sentmessage_id):
 	user = request.user
 	user_from_id = get_object_or_404(User, pk=user_id)
@@ -42,7 +46,8 @@ def view_sent_message(request, user_id, sentmessage_id):
 	
 	return render_to_response('messages/view_sent_message.html', {'sent_message':sent_message,}, context_instance=RequestContext(request))
 
-@login_required	
+@login_required
+@active_user_required
 def view_received_message(request, user_id, receivedmessage_id):
 	user = request.user
 	user_from_id = get_object_or_404(User, pk=user_id)
@@ -60,9 +65,14 @@ def view_received_message(request, user_id, receivedmessage_id):
 	
 	received_message.read = True
 	received_message.save()
-	return render_to_response('messages/view_received_message.html', {'received_message':received_message,}, context_instance=RequestContext(request))
+
+	return render_to_response(
+        'messages/view_received_message.html',
+        {'received_message':received_message,},
+        context_instance=RequestContext(request))
 	
 @login_required
+@active_user_required
 def send_message(request, user_id, recipient_id=None, in_reply_to_message_id=None):
 	sender = request.user
 	user_from_id = get_object_or_404(User, pk=user_id)
