@@ -22,7 +22,7 @@ from epic.core.forms import UserForm
 from epic.core.models import Author
 from epic.core.models import Profile
 from epic.core.util import active_user_required
-from epic.core.util.view_utils import request_user_is_authenticated
+from epic.core.util.view_utils import paginate, request_user_is_authenticated
 from epic.datarequests.models import DataRequest
 from epic.datasets.models import DataSet
 from epic.projects.models import Project
@@ -33,8 +33,8 @@ def site_index(request):
     return render_to_response('core/site_index.html', context_instance=RequestContext(request))
 
 def browse(request):
-    datasets = DataSet.objects.active().order_by('-created_at')
-    projects = Project.objects.active().order_by('-created_at')
+    datasets = DataSet.objects.active().order_by('-created_at')[:3]
+    projects = Project.objects.active().order_by('-created_at')[:3]
     
     return render_to_response(
         'core/browse.html',

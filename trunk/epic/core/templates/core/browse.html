@@ -24,20 +24,20 @@
 {% block submenu %}
   {# TODO: Figure out how to actually space this over the *proper* way. #}
   <ul>
-    <li><a class="active_submenu" href="{% url core.views.browse %}">All</a></li> 
-    <li><a href="{% url datasets.views.view_datasets %}">Datasets</a></li>
-    <li><a href="{% url projects.views.view_projects %}">Projects</a></li>
+    <li><a class="active_submenu" href="{% url core.views.browse %}">Overview</a></li>
     <li><a href="{% url datarequests.views.view_datarequests %}">Data Requests</a></li> 
+    <li><a href="{% url datasets.views.view_datasets %}">Data Sets</a></li>
+    <li><a href="{% url projects.views.view_projects %}">Projects</a></li> 
   </ul>
 {% endblock %}
 
 {% block content %}
   {% recent_requests 3 %}
   
-  <h1>Datasets</h1>
+  <h1>Recent data sets.</h1> [<a href="{% url epic.datasets.views.view_datasets %}">view all</a>]
   {% dataset_list datasets %}
   
-  <h1>Projects</h1>
+  <h1>Recent projects.</h1> [<a href="{% url epic.projects.views.view_projects %}">view all</a>]
   {% project_list projects %}
 {% endblock %}
 {% block request %}

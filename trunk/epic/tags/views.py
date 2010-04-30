@@ -16,6 +16,7 @@ from epic.datarequests.models import DataRequest
 from epic.projects.util.util import *
 from epic.tags.models import Tagging
 from epic.tags.utils import parse_tag_input
+from epic.core.util.view_utils import paginate
 
 
 def index(request):
@@ -28,9 +29,9 @@ def index(request):
 
 def view_items_for_tag(request, tag_name):
     tags = Tagging.objects.filter(tag=tag_name)
-    datasets = _get_datasets_for_tags(tags)
-    projects = get_projects_containing_datasets(datasets)
-    datarequests = _get_datarequests_for_tags(tags)
+    datasets = _get_datasets_for_tags(tags)[:3]
+    projects = get_projects_containing_datasets(datasets)[:3]
+    datarequests = _get_datarequests_for_tags(tags)[:3]
     
     return render_to_response(
         'tags/view_all.html',
@@ -45,30 +46,31 @@ def view_items_for_tag(request, tag_name):
 
 def view_datasets_for_tag(request, tag_name):
     tags = Tagging.objects.filter(tag=tag_name)
-    datasets = _get_datasets_for_tags(tags)
-    
+
+    datasets_page = paginate(_get_datasets_for_tags(tags), request.GET)
+
     return render_to_response(
         'tags/view_datasets.html', 
-        {'tags': tags, 'tag_name': tag_name, 'datasets': datasets},
+        {'tags': tags, 'tag_name': tag_name, 'datasets': datasets_page.object_list, 'datasets_page': datasets_page},
         context_instance=RequestContext(request))
 
 def view_projects_for_tag(request, tag_name):
     tags = Tagging.objects.filter(tag=tag_name)
     datasets = _get_datasets_for_tags(tags)
-    projects = get_projects_containing_datasets(datasets)
+    projects_page = paginate(get_projects_containing_datasets(datasets), request.GET)
     
     return render_to_response(
         'tags/view_projects.html', 
-        {'tags': tags, 'tag_name': tag_name, 'projects': projects}, 
+        {'tags': tags, 'tag_name': tag_name, 'projects': projects_page.object_list, 'projects_page': projects_page}, 
         context_instance=RequestContext(request))
 
 def view_datarequests_for_tag(request, tag_name):
     tags = Tagging.objects.filter(tag=tag_name)
-    datarequests = _get_datarequests_for_tags(tags)
-    
+    datarequests_page = paginate(_get_datarequests_for_tags(tags), request.GET)
+
     return render_to_response(
         'tags/view_datarequests.html', 
-        {'tags': tags, 'tag_name': tag_name, 'datarequests': datarequests},
+        {'tags': tags, 'tag_name': tag_name, 'datarequests': datarequests_page.object_list, 'datarequests_page': datarequests_page},
         context_instance=RequestContext(request))
 
 @login_required

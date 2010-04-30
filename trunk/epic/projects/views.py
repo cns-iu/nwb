@@ -1,27 +1,23 @@
-import tempfile
-import re
-import zipfile
-
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
 from django.core.servers.basehttp import FileWrapper
 from django.core.urlresolvers import reverse
-from django.http import HttpResponse
-from django.http import HttpResponseRedirect
 from django.forms.util import ErrorList
-from django.shortcuts import get_list_or_404
-from django.shortcuts import get_object_or_404
-from django.shortcuts import render_to_response
+from django.http import HttpResponse, HttpResponseRedirect
+from django.shortcuts import get_list_or_404, get_object_or_404, render_to_response
 from django.template import RequestContext
-
 from epic.comments.forms import PostCommentForm
 from epic.core.util import active_user_required
 from epic.core.models import Item
 from epic.core.util.view_utils import *
 from epic.datasets.models import DataSet
-from epic.projects.forms import ProjectForm
-from epic.projects.forms import ProjectDataSetFormSet
+from epic.projects.forms import ProjectDataSetFormSet, ProjectForm
 from epic.projects.models import Project
+import epic.core.util.view_utils
+import re
+import tempfile
+import zipfile
+
 
 
 @login_required
@@ -159,11 +155,14 @@ def edit_project(request, item_id, slug):
                               render_to_response_data,
                               context_instance=RequestContext(request))
 
+PER_PAGE = epic.core.util.view_utils.DEFAULT_OBJECTS_PER_PAGE
 def view_projects(request):
     projects = Project.objects.active().order_by('-created_at')
     
+    projects_page = paginate(projects, request.GET, PER_PAGE)
+    
     return render_to_response('projects/view_projects.html',
-                              {'projects': projects,},
+                              {'projects_page': projects_page},
                               context_instance=RequestContext(request))
 
 def view_project(request, item_id, slug):

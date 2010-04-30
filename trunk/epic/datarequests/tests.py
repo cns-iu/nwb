@@ -4,6 +4,7 @@ from django.core.urlresolvers import reverse
 from epic.core.test import CustomTestCase
 from epic.datarequests.models import DataRequest
 from epic.datasets.models import DataSet
+from django.db.models.base import get_absolute_url
 
 
 class DataRequestTestCase(CustomTestCase):
@@ -131,11 +132,92 @@ class UrlsTestCase(CustomTestCase):
         
         response = self.client.get(url)
         self.failUnlessEqual(response.status_code, 302)
-        
+
+
+def save_n_data_requests(user, n):    	
+    for i in range(n):
+    	data_request = DataRequest(creator=user)
+    	data_request.name = 'test_data_request_name_' + str(i)
+    	data_request.is_active = True
+    	data_request.save()
+
+
+class ViewDatarequestsFitExactlyOnePageTestCase(CustomTestCase):
+    fixtures = ['datarequests_just_users']
+
+    def setUp(self):
+    	from views import PER_PAGE
+    	save_n_data_requests(User.objects.get(username="bob"), PER_PAGE)    	
+    
+    def testPaginated(self):    	
+    	response = self.client.get(reverse('epic.datarequests.views.view_datarequests'))
+
+    	self.assertNotContains(response, '<div class="pagination"')
+    	
+    	for data_request in DataRequest.objects.all():
+    		self.assertContains(response, data_request.get_absolute_url())
+    	
+class ViewDatarequestsPartialPageTestCase(CustomTestCase):
+    fixtures = ['datarequests_just_users']
+
+    def setUp(self):
+    	from views import PER_PAGE
+    	save_n_data_requests(User.objects.get(username="bob"), PER_PAGE - 1)
+    
+    def testPaginated(self):    	
+    	response = self.client.get(reverse('epic.datarequests.views.view_datarequests'))
+
+    	self.assertNotContains(response, '<div class="pagination"')
+    	
+    	for data_request in DataRequest.objects.all():
+    		self.assertContains(response, data_request.get_absolute_url())
+
+class ViewDatarequestsTwoPagesTestCase(CustomTestCase):
+    fixtures = ['datarequests_just_users']
+
+    def setUp(self):
+    	from views import PER_PAGE
+    	self.per_page = PER_PAGE
+    	save_n_data_requests(User.objects.get(username="bob"), 2 * PER_PAGE)
+    
+    def testFirstPage(self):    	
+    	response = self.client.get(reverse('epic.datarequests.views.view_datarequests'))
+
+    	self.assertContains(response, '<div class="pagination"')
+    	self.assertContains(response, 'href="?page=2">2')
+    	self.assertContains(response, 'href="?page=2">next')
+    	self.assertContains(response, 'href="?page=2">last')	
+    	self.assertNotContains(response, 'href="?page=1"')
+
+    	data_requests = DataRequest.objects.active().exclude(status='C').order_by('-created_at')
+    	on_first_page, on_second_page = data_requests[:self.per_page], data_requests[self.per_page:]
+    	
+    	for data_request in on_first_page:
+    		self.assertContains(response, data_request.get_absolute_url())
+    	
+    	for data_request in on_second_page:
+    		self.assertNotContains(response, data_request.get_absolute_url())
+    
+    def testSecondPage(self):
+    	response = self.client.get(reverse('epic.datarequests.views.view_datarequests'), {'page': '2'})
+    	
+    	self.assertContains(response, '<div class="pagination"')
+    	self.assertContains(response, 'href="?page=1">1')
+    	self.assertNotContains(response, 'href="?page=2"')
+
+    	data_requests = DataRequest.objects.active().exclude(status='C').order_by('-created_at')
+    	on_first_page, on_second_page = data_requests[:self.per_page], data_requests[self.per_page:]
+    	
+    	for data_request in on_first_page:
+    		self.assertNotContains(response, data_request.get_absolute_url())
+    	
+    	for data_request in on_second_page:
+    		self.assertContains(response, data_request.get_absolute_url())
+
 class ViewDatarequestsTestCase(CustomTestCase):
     """ Test the view datarequests page/view """
     
-    fixtures = ['datarequests_just_users', 'datarequests_datarequests']
+    fixtures = ['datarequests_just_users', 'datarequests_datarequests_small']
     
     def setUp(self):
         self.bob = User.objects.get(username="bob")
@@ -149,6 +231,7 @@ class ViewDatarequestsTestCase(CustomTestCase):
         
     def tearDown(self):
         pass
+    
     
     def testIndexLoggedOut(self):
         response = self.client.get(self.datarequests_url)

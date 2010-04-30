@@ -193,14 +193,14 @@ class ViewDatasetTestCase(CustomTestCase):
 		self.assertEqual(response.status_code, 200)
 		self.assertContains(response, self.dataset2.name)
 		self.assertContains(response, self.dataset2.description)
-	
+
 	def testDescriptionVariations(self):
 		'''
 		Test used to test if for longer descriptions having more than 1000 characters 
 		'Read the rest of this entry' option is displayed hiding rest of the characters.
 		'''	
 		
-		readMoreMarker = 'Read the rest of this entry'
+		readMoreMarker = '<span id="read-more-'
 		
 #		For Short Descriptions no need to display readMoreMarker
 		response = self.client.get(self.view_dataset_url_3)
@@ -251,74 +251,87 @@ class ViewDatasetTestCase(CustomTestCase):
 		self.assertEqual(response.status_code, 200)
 		self.assertContains(response, self.dataset2.name)
 		self.assertContains(response, self.dataset2.description)
-    
-class ViewDatasetTestCase(CustomTestCase):
-    """ Test the view_dataset view """
-    
-    fixtures = ['just_users', 'datasets']
-    
-    def setUp(self):
-        self.bob = User.objects.get(username='bob')
-        self.admin = User.objects.get(username='admin')
-        self.dataset1 = DataSet.objects.get(
-            creator=self.bob, name='dataset1', description='this is the first dataset')
-        self.dataset2 = DataSet.objects.create(
-            creator=self.admin, name='dataset2',
-            description='this is the second dataset',
-            is_active=True)
-        
-        self.view_dataset_url_1 = reverse(
-            'epic.datasets.views.view_dataset', kwargs={'item_id': self.dataset1.id,})
-        self.view_dataset_url_2 = reverse(
-            'epic.datasets.views.view_dataset',
-            kwargs={'item_id': self.dataset1.id, 'slug': self.dataset1.slug,})
-        
-    def tearDown(self):
-        pass
-    
-    def testLoggedOut(self):
-        response = self.client.get(self.view_dataset_url_1)
-        self.assertEqual(response.status_code, 200)
-        
-        self.assertContains(response, self.dataset1.name)
-        self.assertContains(response, self.dataset1.description)
-    
-        response = self.client.get(self.view_dataset_url_2)
-        self.assertEqual(response.status_code, 200)
-        
-        self.assertContains(response, self.dataset1.name)
-        self.assertContains(response, self.dataset1.description)
-        
-    def testLoggedInNotOwner(self):
-        self.tryLogin(username='admin', password='admin')
-    
-        response = self.client.get(self.view_dataset_url_1)
-        self.assertEqual(response.status_code, 200)
-        
-        self.assertContains(response, self.dataset1.name)
-        self.assertContains(response, self.dataset1.description)
-    
-        response = self.client.get(self.view_dataset_url_2)
-        self.assertEqual(response.status_code, 200)
-        
-        self.assertContains(response, self.dataset1.name)
-        self.assertContains(response, self.dataset1.description)
-        
-    def testLoggedInOwner(self):
-        self.tryLogin(username='bob', password='bob')
-        
-        response = self.client.get(self.view_dataset_url_1)
-        self.assertEqual(response.status_code, 200)
-        
-        self.assertContains(response, self.dataset1.name)
-        self.assertContains(response, self.dataset1.description)
-    
-        response = self.client.get(self.view_dataset_url_2)
-        self.assertEqual(response.status_code, 200)
-        
-        self.assertContains(response, self.dataset1.name)
-        self.assertContains(response, self.dataset1.description)
+		
+def save_n_datasets(user, n):
+    for i in range(n):
+        dataset = DataSet(creator=user)
+    	dataset.name = 'test_dataset_name_' + str(i)
+    	dataset.is_active = True
+    	dataset.save()
 
+class ViewDatasetsFitExactlyOnePageTestCase(CustomTestCase):
+    fixtures = ['just_users']
+
+    def setUp(self):
+    	from views import PER_PAGE    	
+    	save_n_datasets(User.objects.get(username="bob"), PER_PAGE)
+
+    def testPaginated(self):    	
+    	response = self.client.get(reverse('epic.datasets.views.view_datasets'))
+
+    	self.assertNotContains(response, '<div class="pagination"')
+    	
+    	for dataset in DataSet.objects.all():
+    		self.assertContains(response, dataset.get_absolute_url())
+    	
+class ViewDatasetsPartialPageTestCase(CustomTestCase):
+    fixtures = ['just_users']
+
+    def setUp(self):
+    	from views import PER_PAGE
+    	save_n_datasets(User.objects.get(username="bob"), PER_PAGE - 1)
+    
+    def testPaginated(self):    	
+    	response = self.client.get(reverse('epic.datasets.views.view_datasets'))
+
+    	self.assertNotContains(response, '<div class="pagination"')
+    	
+    	for dataset in DataSet.objects.all():
+    		self.assertContains(response, dataset.get_absolute_url())
+    	
+class ViewDatasetsTwoPagesTestCase(CustomTestCase):
+    fixtures = ['just_users']
+
+    def setUp(self):
+    	from views import PER_PAGE
+    	self.per_page = PER_PAGE
+    	save_n_datasets(User.objects.get(username="bob"), 2 * self.per_page)
+    
+    def testFirstPage(self):    	
+    	response = self.client.get(reverse('epic.datasets.views.view_datasets'))
+
+    	self.assertContains(response, '<div class="pagination"')
+    	self.assertContains(response, 'href="?page=2">2')
+    	self.assertContains(response, 'href="?page=2">next')
+    	self.assertContains(response, 'href="?page=2">last')    	
+    	self.assertNotContains(response, 'href="?page=1"')
+
+    	datasets = DataSet.objects.active().order_by('-created_at')
+    	on_first_page, on_second_page = datasets[:self.per_page], datasets[self.per_page:]
+    	
+    	for dataset in on_first_page:
+    		self.assertContains(response, dataset.get_absolute_url())
+    	
+    	for dataset in on_second_page:
+    		self.assertNotContains(response, dataset.get_absolute_url())
+    
+    def testSecondPage(self):
+    	response = self.client.get(reverse('epic.datasets.views.view_datasets'), {'page': '2'})
+    	
+    	self.assertContains(response, '<div class="pagination"')
+    	self.assertContains(response, 'href="?page=1">1')
+    	self.assertNotContains(response, 'href="?page=2"')
+
+    	datasets = DataSet.objects.active().order_by('-created_at')
+    	on_first_page, on_second_page = datasets[:self.per_page], datasets[self.per_page:]
+    	
+    	for dataset in on_first_page:
+    		self.assertNotContains(response, dataset.get_absolute_url())
+    	
+    	for dataset in on_second_page:
+    		self.assertContains(response, dataset.get_absolute_url())
+
+    
 class ViewUserDatasetListTestCase(CustomTestCase):
     """ Test the view_user_dataset_list view """
     
@@ -670,7 +683,7 @@ class DeleteDatasetFilesTestCase(CustomTestCase):
             
         post_response = self.client.post(self.delete_url, self.post_data)
         self.assertFalse(self.dataset.files.all())
-        
+
 class UnActiveDatasetTestCase(CustomTestCase):
     """  Test that is_active=False datasets are not visible 
         (An inactive dataset should never appear on any page)

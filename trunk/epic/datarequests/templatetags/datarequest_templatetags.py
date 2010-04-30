@@ -5,16 +5,10 @@ from epic.datarequests.models import DataRequest
 
 register = template.Library()
 
-@register.inclusion_tag('templatetags/datarequest_list.html', 
-                        takes_context=True)
+@register.inclusion_tag('templatetags/datarequest_list.html', takes_context=True)
 def datarequest_list(context, datarequests=None):
-    user = context['user']
-    
-    if not datarequests:
-        datarequests = DataRequest.objects.active().exclude(status='C'). \
-            order_by('-created_at')
-    
-    return {'datarequests': datarequests, 'user': user}
+    return {'datarequests': datarequests,
+		    'user': context['user']}
 
 @register.inclusion_tag('templatetags/recent_requests.html',
                         takes_context=True)

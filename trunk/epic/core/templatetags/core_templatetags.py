@@ -12,6 +12,19 @@ NAV_BAR_LINK_NAMES = ('browse', 'share', 'request', 'about')
 
 register = template.Library()
 
+
+@register.inclusion_tag('templatetags/pagination.html', takes_context=True)
+def pagination(context, page=None, page_radius=5):
+    page_index_start = max(page.number - page_radius, 1)
+    page_index_finish = min(page.number + page_radius, page.paginator.num_pages)
+    page_range = range(page_index_start, page_index_finish + 1)
+    
+    return {'page': page,
+		    'page_index_start': page_index_start,
+		    'page_index_finish': page_index_finish,
+		    'page_range': page_range,
+		    'user': context['user']}
+
 @register.inclusion_tag('core/login_box.html')
 def login_box():
     form = ShortAuthenticationForm()

@@ -6,13 +6,11 @@ from epic.datasets.models import DataSet
 register = template.Library()
 
 @register.inclusion_tag('templatetags/dataset_list.html', takes_context=True)
-def dataset_list(context, datasets):
-    user = context['user']
-    
-    return {'datasets': datasets, 'user': user}
+def dataset_list(context, datasets=None):
+    return {'datasets': datasets,
+		    'user': context['user']}
 
-@register.inclusion_tag('templatetags/dataset_header.html',
-                        takes_context=True)
+@register.inclusion_tag('templatetags/dataset_header.html', takes_context=True)
 def dataset_header(context, dataset, rating_allowed):
     user = context['user']
     if rating_allowed == 'rating_allowed':

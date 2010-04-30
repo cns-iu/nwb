@@ -1,5 +1,6 @@
 {% extends "core/browse.html" %}
 
+{% load core_templatetags %}
 {% load dataset_templatetags %}
 
 {% block scripts_header %}
@@ -10,14 +11,15 @@
 {% block submenu %}
   {# TODO: Figure out how to actually space this over the *proper* way. #}
   <ul>
-    <li><a href="{% url core.views.browse %}">All</a></li> 
-    <li><a class="active_submenu" href="{% url datasets.views.view_datasets %}">Datasets</a></li>
-    <li><a href="{% url projects.views.view_projects %}">Projects</a></li>
-    <li><a href="{% url datarequests.views.view_datarequests %}">Data Requests</a></li> 
+    <li><a href="{% url core.views.browse %}">Overview</a></li> 
+    <li><a href="{% url datarequests.views.view_datarequests %}">Data Requests</a></li>
+    <li><a class="active_submenu" href="{% url datasets.views.view_datasets %}">Data Sets</a></li>
+    <li><a href="{% url projects.views.view_projects %}">Projects</a></li> 
   </ul>
 {% endblock %}
 
 {% block content %}
   <h1> Datasets </h1> 
-  {% dataset_list datasets %}
+  {% dataset_list datasets_page.object_list %}
+  {% pagination datasets_page %}
 {% endblock %}

@@ -928,7 +928,7 @@ class ViewProjectsTestCase(CustomTestCase):
             description='This is the second project',)
         
         self.view_projects_url = reverse('epic.projects.views.view_projects')
-    
+
     def testLoggedOut(self):
         response = self.client.get(self.view_projects_url)
         self.assertEqual(response.status_code, 200)
@@ -953,7 +953,87 @@ class ViewProjectsTestCase(CustomTestCase):
         
         for project in Project.objects.active():
             self.assertContains(response, project.name)
+
+def save_n_projects(user, n):
+    for i in range(n):
+    	project = Project(creator=user)
+    	project.name = 'test_project_name_' + str(i)
+    	project.is_active = True
+    	project.save()
+
+class ViewProjectsFitExactlyOnePageTestCase(CustomTestCase):
+    fixtures = ['projects_just_users']
+
+    def setUp(self):
+    	from views import PER_PAGE
+    	save_n_projects(User.objects.get(username="bob"), PER_PAGE)
     
+    def testPaginated(self):    	
+    	response = self.client.get(reverse('epic.projects.views.view_projects'))
+
+    	self.assertNotContains(response, '<div class="pagination"')
+    	
+    	for project in Project.objects.all():
+    		self.assertContains(response, project.get_absolute_url())
+    	
+class ViewProjectsPartialPageTestCase(CustomTestCase):
+    fixtures = ['projects_just_users']
+
+    def setUp(self):
+    	from views import PER_PAGE
+    	save_n_projects(User.objects.get(username="bob"), PER_PAGE - 1)
+    
+    def testPaginated(self):    	
+    	response = self.client.get(reverse('epic.projects.views.view_projects'))
+
+    	self.assertNotContains(response, '<div class="pagination"')
+    	
+    	for project in Project.objects.all():
+    		self.assertContains(response, project.get_absolute_url())
+    	
+class ViewProjectsTwoPagesTestCase(CustomTestCase):
+    fixtures = ['projects_just_users']
+
+    def setUp(self):
+    	from views import PER_PAGE
+    	self.per_page = PER_PAGE
+    	save_n_projects(User.objects.get(username="bob"), 2 * self.per_page)
+    
+    def testFirstPage(self):    	
+    	response = self.client.get(reverse('epic.projects.views.view_projects'))
+
+    	self.assertContains(response, '<div class="pagination"')
+    	self.assertContains(response, 'href="?page=2">2')
+    	self.assertContains(response, 'href="?page=2">next')
+    	self.assertContains(response, 'href="?page=2">last')    	
+    	self.assertNotContains(response, 'href="?page=1"')
+
+    	projects = Project.objects.active().order_by('-created_at')
+    	on_first_page, on_second_page = projects[:self.per_page], projects[self.per_page:]
+    	
+    	for project in on_first_page:
+    		self.assertContains(response, project.get_absolute_url())
+    	
+    	for project in on_second_page:
+    		self.assertNotContains(response, project.get_absolute_url())
+    
+    def testSecondPage(self):
+    	response = self.client.get(reverse('epic.projects.views.view_projects'), {'page': '2'})
+    	
+    	self.assertContains(response, '<div class="pagination"')
+    	self.assertContains(response, 'href="?page=1">1')
+    	self.assertNotContains(response, 'href="?page=2"')
+
+    	projects = Project.objects.active().order_by('-created_at')
+    	on_first_page, on_second_page = projects[:self.per_page], projects[self.per_page:]
+    	
+    	for project in on_first_page:
+    		self.assertNotContains(response, project.get_absolute_url())
+    	
+    	for project in on_second_page:
+    		self.assertContains(response, project.get_absolute_url())
+
+
 class ViewProjectTestCase(CustomTestCase):
     """ Test the view_project view.
     """

@@ -484,6 +484,11 @@ p {
 	padding-bottom: 5px;
 }
 
+.pagination {
+	font-family: Geneva, Arial, Helvetica, sans-serif;
+	text-align: center;
+}
+
 .ratingsbox {
 	background-image: url(/media/core/images/ratingsbg_10.jpg);
 	background-repeat: no-repeat;

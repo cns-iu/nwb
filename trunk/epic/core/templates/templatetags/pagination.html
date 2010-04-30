@@ -1,0 +1,37 @@
+{# TODO: Replace no-break spaces with styling. #}
+{% if page.has_other_pages %} 
+  <div class="pagination">
+    <span class="step-links">
+      {% if page.has_previous %}
+        <a href="?page=1">&laquo;first</a>&nbsp;&nbsp;
+        <a href="?page={{ page.previous_page_number }}">&lsaquo;previous</a>&nbsp;&nbsp;
+      {% else %}
+        &laquo;first&nbsp;&nbsp;&lsaquo;previous&nbsp;&nbsp;
+      {% endif %}
+      
+      {% ifnotequal page_index_start 1 %}
+        ...
+      {% endifnotequal %}
+  
+      {% for page_number in page_range %}
+        {% ifequal page.number page_number %}
+          {{ page_number }}
+        {% else %}
+          <a href="?page={{ page_number }}">{{ page_number }}</a>
+        {% endifequal %}
+      {% endfor %}
+      
+      {% ifnotequal page_index_finish page.paginator.num_pages %}
+        ...
+      {% endifnotequal %}
+    
+      {% if page.has_next %}
+        &nbsp;&nbsp;<a href="?page={{ page.next_page_number }}">next&rsaquo;</a>
+        &nbsp;&nbsp;<a href="?page={{ page.paginator.num_pages }}">last&raquo;</a>
+      {% else %}
+        &nbsp;&nbsp;next&rsaquo;
+        &nbsp;&nbsp;last&raquo;
+      {% endif %}
+    </span>
+  </div>
+{% endif %}

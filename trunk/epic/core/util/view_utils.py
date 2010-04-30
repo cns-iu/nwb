@@ -1,5 +1,6 @@
-from django.core.urlresolvers import reverse
 from datetime import datetime
+from django.core.paginator import Paginator, InvalidPage, EmptyPage
+from django.core.urlresolvers import reverse
 import functools
 import logging
 
@@ -28,6 +29,23 @@ def get_specifics_from_item_ids(model, item_ids):
                               filter(id__in=item_ids)
     
     return specifics
+
+DEFAULT_OBJECTS_PER_PAGE = 10
+# http://docs.djangoproject.com/en/1.1/topics/pagination/#using-paginator-in-a-view
+def paginate(object_list, params, per_page=DEFAULT_OBJECTS_PER_PAGE, orphans=0):
+    paginator = Paginator(object_list, per_page, orphans)
+    
+    # Make sure page request is an int. If not, deliver first page.
+    try:
+        page = int(params.get('page', '1'))
+    except ValueError:
+        page = 1
+
+    # If page request is out of range, deliver last page of results.
+    try:
+        return paginator.page(page)
+    except (EmptyPage, InvalidPage):
+        return paginator.page(paginator.num_pages)
 
 
 

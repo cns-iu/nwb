@@ -1,18 +1,20 @@
 {% extends "core/browse.html" %}
 
+{% load core_templatetags %}
 {% load datarequest_templatetags %}
 
 {% block submenu %}
   {# TODO: Figure out how to actually space this over the *proper* way. #}
   <ul>
-    <li><a href="{% url core.views.browse %}">All</a></li> 
-    <li><a href="{% url datasets.views.view_datasets %}">Datasets</a></li>
-    <li><a href="{% url projects.views.view_projects %}">Projects</a></li>
-    <li><a class="active_submenu" href="{% url datarequests.views.view_datarequests %}">Data Requests</a></li> 
+    <li><a href="{% url core.views.browse %}">Overview</a></li> 
+    <li><a class="active_submenu" href="{% url datarequests.views.view_datarequests %}">Data Requests</a></li>
+    <li><a href="{% url datasets.views.view_datasets %}">Data Sets</a></li>
+    <li><a href="{% url projects.views.view_projects %}">Projects</a></li> 
   </ul>
 {% endblock %}
 
 {% block content %}
   <h1> Data Requests </h1> 
-  {% datarequest_list %}
+  {% datarequest_list datarequests_page.object_list %}
+  {% pagination datarequests_page %}
 {% endblock %}

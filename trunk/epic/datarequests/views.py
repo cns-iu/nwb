@@ -4,24 +4,25 @@ from django.core.urlresolvers import reverse
 from django.http import HttpResponseRedirect
 from django.shortcuts import render_to_response, get_object_or_404
 from django.template import RequestContext
-
 from epic.comments.forms import PostCommentForm
 from epic.core.models import Item
 from epic.core.util import active_user_required
 from epic.core.util.view_utils import *
+import epic.core.util.view_utils
 from epic.datarequests.forms import DataRequestForm
 from epic.datarequests.models import DataRequest
 from epic.tags.models import Tagging
 
-
+PER_PAGE = epic.core.util.view_utils.DEFAULT_OBJECTS_PER_PAGE
 def view_datarequests(request):
     datarequests = \
         DataRequest.objects.active().exclude(status='C').order_by('-created_at')
-    datarequest_form = DataRequestForm()
+    
+    datarequests_page = paginate(datarequests, request.GET, PER_PAGE)
     
     return render_to_response(
         'datarequests/view_datarequests.html', 
-        {'datarequests': datarequests, 'datarequest_form': datarequest_form,}, 
+        {'datarequests_page': datarequests_page},
         context_instance=RequestContext(request))
 
 def view_datarequest(request, item_id, slug):
