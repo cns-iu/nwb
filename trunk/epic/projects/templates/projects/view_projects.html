@@ -20,20 +20,4 @@
 {% block content %}
   <h1> Projects </h1> 
   {% project_list projects %}
-
-  <div class="databox">
-    <h1>Can't Find what you're looking for?
-      <a href="{% url datarequests.views.new_datarequest %}" 
-         onmouseout="MM_swapImgRestore()" 
-         onmouseover="MM_swapImage('Image3','','/media/core/images/request_hover_27.jpg',1)">
-             <img src="/media/core/images/request_27.jpg" 
-                alt="makerequest" 
-                name="Image3" 
-                width="150" 
-                height="35" 
-                border="0" 
-                id="Image3" />
-      </a>
-    </h1>
-  </div>
 {% endblock %}

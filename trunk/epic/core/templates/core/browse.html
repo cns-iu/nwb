@@ -39,9 +39,10 @@
   
   <h1>Projects</h1>
   {% project_list projects %}
-  
+{% endblock %}
+{% block request %}
   <div class="databox">
-    <h1>Can't Find what you're looking for?
+    <h1>Can't find what you're looking for?
       <a href="{% url datarequests.views.new_datarequest %}" 
          onmouseout="MM_swapImgRestore()" 
          onmouseover="MM_swapImage('Image3','','/media/core/images/request_hover_27.jpg',1)">
