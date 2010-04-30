@@ -13,6 +13,8 @@ class TagManager(models.Manager):
     This will replace the standard Tagging.objects to allow several Tagging related
     functions to be added.
     """
+    
+    use_for_related_fields = True
 
     def get_or_create(self, tag_name, item, user):
         """Get or create a tag given a tag(name), item and a user.
@@ -82,13 +84,7 @@ class TagManager(models.Manager):
         # Add new tags to the database.
         for tag in clean_tag_names:
             self.get_or_create(tag_name=tag, item=item, user=user)
-
-    
-    def get_tag_list(self, item, user):
-        list_of_tags = [value['tag'] for value in self.filter(item=item, user=user).order_by('tag').values('tag')]
-        
-        return ", ".join(list_of_tags)
-    
+                
     def get_tags(self):
         model = Tagging
         model_table = qn(model._meta.db_table)
