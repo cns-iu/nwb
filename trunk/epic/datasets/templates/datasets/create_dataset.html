@@ -5,7 +5,7 @@
 
 {% block nav %}
   <div id="nav">
-    {% nav_bar 'Upload' %}
+    {% nav_bar 'Share' %}
   </div>
 {% endblock %}
 
@@ -15,7 +15,7 @@
 {% endblock %}
 
 {% block content %}
-  <h1>Upload Your Data</h1>
+  <h1>Share Your Data</h1>
   
   <form enctype="multipart/form-data" action="{% url datasets.views.create_dataset %}" name = "form" method="POST">
     <table class="upload_dataset_form">
@@ -81,6 +81,34 @@
         </tr>
         
         <tr>
+          <td>
+            <input type="image" alt="Submit New Dataset" src="/media/core/images/submit.jpg" value="Upload" />
+          </td>
+        </tr>
+
+        <tr style="color: #FFFFFF; background-color: #999999; font-weight: bold;">
+          <th align="left" colspan="3">
+            Select Your Files
+          </th>
+        </tr>
+
+        <tr>
+          <td colspan="3">
+            <p>
+              You can choose to either upload your files directly to the site
+              or have other users contact you for access.
+              If you choose not to upload files,
+              please include any special terms and conditions for sharing them in the description.
+            </p>
+            <p>
+              Note that you cannot upload new files to this dataset later. 
+              You can however create a new dataset and link it as a new version 
+              (see the Previous version field on this page).
+            </p>
+          </td>
+        </tr>
+
+        <tr>
           <th style="vertical-align: top;">
             {{ form.files.label_tag }}
           </th>
@@ -94,16 +122,16 @@
             {{ form.files.help_text }}
           </td>
         </tr>
-        
+
         <tr>
           <td>
             <input type="image" alt="Submit New Dataset" src="/media/core/images/submit.jpg" value="Upload" />
           </td>
         </tr>
-        
+
         <tr style="color: #FFFFFF; background-color: #999999; font-weight: bold;">
           <th align="left" colspan="3">
-            Optional Information
+            Other Optional Information
           </th>
         </tr>
         

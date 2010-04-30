@@ -3,6 +3,7 @@ from django.http import HttpResponseRedirect
 
 from epic.settings import DEACTIVATED_ACCOUNT_VIEW
 
+
 def active_user_required(actual_view_function, redirect_url=DEACTIVATED_ACCOUNT_VIEW):
     def _decorate(view_function):
         def _view(request, *args, **kwargs):

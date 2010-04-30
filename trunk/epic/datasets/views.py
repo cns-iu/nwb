@@ -110,23 +110,26 @@ def create_dataset(request):
                 new_dataset.is_active = True
                 new_dataset.save()
                 
-                return HttpResponseRedirect(
-                            reverse('epic.datasets.views.view_dataset', 
-                                    kwargs={'item_id':new_dataset.id,
-                                            'slug':new_dataset.slug}))
+                return HttpResponseRedirect(reverse(
+                    'epic.datasets.views.view_dataset',
+                    kwargs={'item_id':new_dataset.id,
+                    'slug':new_dataset.slug}))
             except NoReadMeException:
-                return HttpResponseRedirect(
-                            reverse('epic.datasets.views.upload_readme', 
-                                    kwargs={'item_id':new_dataset.id,
-                                            'slug':new_dataset.slug}))
+                return HttpResponseRedirect(reverse(
+                    'epic.datasets.views.upload_readme', 
+                    kwargs={'item_id':new_dataset.id,
+                    'slug':new_dataset.slug}))
         
-    return render_to_response('datasets/create_dataset.html', 
-                              {'form': form, 
-                               'geoloc_add_formset': geoloc_add_formset, 
-                               'geoloc_remove_formset': geoloc_remove_formset,
-                               'ref_formset': ref_formset,
-                               'author_formset': author_formset}, 
-                              context_instance=RequestContext(request))
+    return render_to_response(
+        'datasets/create_dataset.html', 
+        {
+            'form': form, 
+            'geoloc_add_formset': geoloc_add_formset, 
+            'geoloc_remove_formset': geoloc_remove_formset,
+            'ref_formset': ref_formset,
+            'author_formset': author_formset
+        }, 
+        context_instance=RequestContext(request))
 
 class NoReadMeException(Exception):
     pass
@@ -200,34 +203,31 @@ def _add_uploaded_files(dataset, uploaded_files):
     """
     
     readme_file = _get_readme(uploaded_files)
-    
-    for uploaded_file in uploaded_files:
-        if uploaded_file == readme_file:
-            # The readme file will be added below
-            pass
+
+    if uploaded_files:
+        for uploaded_file in uploaded_files:
+            if uploaded_file == readme_file:
+                # The readme file will be added below
+                pass
+            else:
+                new_datasetfile = DataSetFile(parent_dataset=dataset, file_contents=uploaded_file)
+                new_datasetfile.file_contents.save(uploaded_file.name, uploaded_file, save=True)
+                new_datasetfile.save()
+
+        if readme_file:
+            dataset_readmefile = DataSetFile(
+                parent_dataset=dataset, file_contents=readme_file, is_readme=True)
+            dataset_readmefile.file_contents.save('readme.txt', readme_file, save=True)
+            dataset_readmefile.save()
         else:
-            new_datasetfile = DataSetFile(parent_dataset=dataset, 
-                                          file_contents=uploaded_file)
-            new_datasetfile.file_contents.save(uploaded_file.name, 
-                                               uploaded_file, 
-                                               save=True)
-            new_datasetfile.save()
-    
-    if readme_file:
-        dataset_readmefile = DataSetFile(parent_dataset=dataset, 
-                                         file_contents=readme_file, 
-                                         is_readme=True)
-        dataset_readmefile.file_contents.save('readme.txt', 
-                                              readme_file, 
-                                              save=True)
-        dataset_readmefile.save()
+            raise NoReadMeException
     else:
-        raise NoReadMeException
+        # TODO: Something special marking the dataset as just being an advertisement?
+        pass
 
 VALID_README_FILENAMES = ('readme', 'metadata')
 
 def is_valid_readme_filename(filename):
-    
     pattern = re.compile(r'^(.*/)?(?P<filename>.*?)(\.txt)?$')
     match = re.match(pattern, filename.lower())
     
@@ -237,24 +237,24 @@ def is_valid_readme_filename(filename):
         return False
 
 def _get_readme(uploaded_files):
-    """ Return the readme file in the uploaded_files 
-    or None if there is not one.
+    """ Return the readme file in the uploaded_files or None if there is not one.
     
     """
-    
-    # If one of the files is readme.txt, this has priority over 
-    #     something that is compressed
-    for uploaded_file in uploaded_files:
-        if is_valid_readme_filename(uploaded_file.name):
-            return uploaded_file
-    
-    # If there was no readme found in the list of uploaded files, 
-    #     check in the compressed files
-    for uploaded_file in uploaded_files:
-        readme_file = _get_compressed_readme(uploaded_file)
-        if readme_file:
-            return readme_file
-        
+
+    if uploaded_files:
+        # If one of the files is readme.txt, this has priority over something that is compressed.
+        for uploaded_file in uploaded_files:
+            if is_valid_readme_filename(uploaded_file.name):
+                return uploaded_file
+
+            # If there was no readme found in the list of uploaded files,
+            # check in the compressed files.
+        for uploaded_file in uploaded_files:
+            readme_file = _get_compressed_readme(uploaded_file)
+
+            if readme_file:
+                return readme_file
+
     # We could not find a readme file anywhere.
     return None
         

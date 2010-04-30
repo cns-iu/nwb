@@ -8,7 +8,7 @@ from epic.core.models import Profile
 from epic.datasets.models import DataSet
 
 
-NAV_BAR_LINK_NAMES = ('browse', 'upload', 'request', 'about')
+NAV_BAR_LINK_NAMES = ('browse', 'share', 'request', 'about')
 
 register = template.Library()
 
@@ -48,9 +48,8 @@ def nav_bar_link(current_link, link_to_be_highlighted, view_function_name):
     nav_bar_link_html_data = {
         'view_url': view_url, 'link_class': link_class, 'current_link': current_link
     }
-    nav_bar_link_html = \
-        '<a href="%(view_url)s" class="%(link_class)s">%(current_link)s</a>' % \
-            nav_bar_link_html_data
+    nav_bar_link_html = '<a href="%(view_url)s" class="%(link_class)s">%(current_link)s</a>' % \
+        nav_bar_link_html_data
     
     return nav_bar_link_html
 

@@ -15,14 +15,12 @@ from epic.djangoratings.forms import RatingField
 
 class EditDataSetForm(forms.Form):
     name = forms.CharField(max_length=Item.MAX_ITEM_NAME_LENGTH, widget=forms.TextInput(attrs={'size': 50}))
-    
     description = forms.CharField(
         max_length=Item.MAX_ITEM_DESCRIPTION_LENGTH,
         widget=forms.Textarea(),
         help_text=DESCRIPTION_HELP_TEXT)
     
     category = CategoryChoiceField()
-    
     tags = forms.CharField(max_length=Item.MAX_ITEM_TAGS_LENGTH,
                            required=False,
                            widget=forms.TextInput(attrs={'size': 50}))
@@ -30,24 +28,24 @@ class EditDataSetForm(forms.Form):
 class NewDataSetForm(EditDataSetForm):
     def __init__(self, user, *args, **kwargs):
         super(NewDataSetForm, self).__init__(*args, **kwargs)
-        self.fields['previous_version'].queryset = \
-            DataSet.objects.active().filter(creator=user)
+        self.fields['previous_version'].queryset = DataSet.objects.active().filter(creator=user)
         
     help_text = """Specify that this dataset is a newer version of a dataset
                     that you have previously added.  Please only use this as a
                     way to correct errors from past datasets."""
-    previous_version = forms.ModelChoiceField(queryset=DataSet.objects.none(),
-                                              empty_label='(No Previous Version)',
-                                              required=False,
-                                              help_text=help_text)
+    previous_version = forms.ModelChoiceField(
+        queryset=DataSet.objects.none(),
+        empty_label='(No Previous Version)',
+        required=False,
+        help_text=help_text)
       
-    help_text = """A "readme.txt" is required.  If one is not directly
-                   provided, it must be in a compressed file that is
-                   directly added."""
-    files = MultiFileField(required=True, help_text=help_text, widget=MultiFileInput(attrs={'size': 40}))
+    help_text = """A "readme.txt" is required if you choose to upload files.  If one is not directly
+                   provided, it must be in a compressed file that is directly added."""
+    files = MultiFileField(
+        required=False, help_text=help_text, widget=MultiFileInput(attrs={'size': 40}))
     
 class UploadReadMeForm(forms.Form):
-    readme = forms.FileField(required=True)
+    readme = forms.FileField(required=False)
 
 class RatingDataSetForm(forms.Form):
     rating = RatingField(RATING_SCALE)
@@ -60,8 +58,11 @@ class TagDataSetForm(forms.Form):
                 Tags are comma or space separated.
                 Double quotes can be used to allow multiword tags.
                 """
-    tags = forms.CharField(max_length=Item.MAX_ITEM_TAGS_LENGTH, required=False, 
-                           help_text=help_text, widget=forms.TextInput(attrs={'size': 50}))
+    tags = forms.CharField(
+        max_length=Item.MAX_ITEM_TAGS_LENGTH,
+        required=False, 
+        help_text=help_text,
+        widget=forms.TextInput(attrs={'size': 50}))
     
 class GeoLocationHiddenFieldForm(forms.Form):
     add_location = forms.CharField(required=False, widget=forms.HiddenInput)

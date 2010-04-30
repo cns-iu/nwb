@@ -19,9 +19,8 @@ class UrlsTestCase(CustomTestCase):
     
     def setUp(self):
         self.bob = User.objects.get(username='bob')
-        self.dataset1 = DataSet.objects.get(creator=self.bob, 
-                                            name='dataset1', 
-                                            description='this is the first dataset')
+        self.dataset1 = DataSet.objects.get(
+            creator=self.bob, name='dataset1', description='this is the first dataset')
         self.error_page_codes = [404, 500]
     
     def tearDown(self):
@@ -30,86 +29,108 @@ class UrlsTestCase(CustomTestCase):
     def test_view_datasets(self):
         url = reverse('epic.datasets.views.view_datasets')
         response = self.client.get(url)
+
         for code in self.error_page_codes:
             self.assertNotEqual(code, response.status_code)
         
     def test_view_dataset(self):
-        url = reverse('epic.datasets.views.view_dataset', kwargs={'item_id':self.dataset1.id,})
+        url = reverse('epic.datasets.views.view_dataset', kwargs={'item_id': self.dataset1.id,})
         response = self.client.get(url)
+
         for code in self.error_page_codes:
             self.assertNotEqual(code, response.status_code)
         
-        url = reverse('epic.datasets.views.view_dataset', kwargs={'item_id':self.dataset1.id, 'slug':self.dataset1.slug,})
+        url = reverse(
+            'epic.datasets.views.view_dataset',
+            kwargs={'item_id': self.dataset1.id, 'slug': self.dataset1.slug,})
         response = self.client.get(url)
+
         for code in self.error_page_codes:
             self.assertNotEqual(code, response.status_code)
         
     def test_view_user_dataset_list(self):
-        url = reverse('epic.datasets.views.view_user_dataset_list', kwargs={'user_id':self.bob.id,})
+        url = reverse(
+            'epic.datasets.views.view_user_dataset_list', kwargs={'user_id': self.bob.id,})
         response = self.client.get(url)
+        
         for code in self.error_page_codes:
             self.assertNotEqual(code, response.status_code)
         
     def create_dataset(self):
         url = reverse('epic.datasets.views.create_dataset')
         response = self.client.get(url)
+
         for code in self.error_page_codes:
             self.assertNotEqual(code, response.status_code)
         
     def test_edit_dataset(self):
-        url = reverse('epic.datasets.views.edit_dataset', kwargs={'item_id':self.dataset1.id,})
+        url = reverse('epic.datasets.views.edit_dataset', kwargs={'item_id': self.dataset1.id,})
         response = self.client.get(url)
+
         for code in self.error_page_codes:
             self.assertNotEqual(code, response.status_code)
         
-        url = reverse('epic.datasets.views.edit_dataset', kwargs={'item_id':self.dataset1.id, 'slug':self.dataset1.slug,})
+        url = reverse(
+            'epic.datasets.views.edit_dataset',
+            kwargs={'item_id': self.dataset1.id, 'slug': self.dataset1.slug,})
         response = self.client.get(url)
+
         for code in self.error_page_codes:
             self.assertNotEqual(code, response.status_code)
         
     def test_rate_dataset(self):
-        url = reverse('epic.datasets.views.rate_dataset', kwargs={'item_id':self.dataset1.id,})
+        url = reverse('epic.datasets.views.rate_dataset', kwargs={'item_id': self.dataset1.id,})
         response = self.client.get(url)
+
         for code in self.error_page_codes:
             self.assertNotEqual(code, response.status_code)
             
-        url = reverse('epic.datasets.views.rate_dataset', 
-                      kwargs={'item_id':self.dataset1.id, 'slug':self.dataset1.slug,})
+        url = reverse(
+            'epic.datasets.views.rate_dataset', 
+            kwargs={'item_id': self.dataset1.id, 'slug': self.dataset1.slug,})
         response = self.client.get(url)
+
         for code in self.error_page_codes:
             self.assertNotEqual(code, response.status_code)
         
     def test_rate_dataset_using_input_rating(self):
-        url = reverse('epic.datasets.views.rate_dataset_using_input_rating', 
-                      kwargs={'item_id':self.dataset1.id,'input_rating':3,})
+        url = reverse(
+            'epic.datasets.views.rate_dataset_using_input_rating', 
+            kwargs={'item_id': self.dataset1.id, 'input_rating': 3,})
         response = self.client.get(url)
+
         for code in self.error_page_codes:
             self.assertNotEqual(code, response.status_code)
         
-        url = reverse('epic.datasets.views.rate_dataset_using_input_rating', 
-                      kwargs={'item_id':self.dataset1.id, 'slug':self.dataset1.slug,'input_rating':3,})
+        url = reverse(
+            'epic.datasets.views.rate_dataset_using_input_rating', 
+            kwargs={'item_id': self.dataset1.id, 'slug': self.dataset1.slug, 'input_rating': 3,})
         response = self.client.get(url)
+
         for code in self.error_page_codes:
             self.assertNotEqual(code, response.status_code)
         
     def test_tag_dataset(self):
-        url = reverse('epic.datasets.views.tag_dataset', 
-                      kwargs={'item_id':self.dataset1.id,})
+        url = reverse('epic.datasets.views.tag_dataset', kwargs={'item_id': self.dataset1.id,})
         response = self.client.get(url)
+
         for code in self.error_page_codes:
             self.assertNotEqual(code, response.status_code)
         
-        url = reverse('epic.datasets.views.tag_dataset', 
-                      kwargs={'item_id':self.dataset1.id, 'slug':self.dataset1.slug,})
+        url = reverse(
+            'epic.datasets.views.tag_dataset', 
+            kwargs={'item_id': self.dataset1.id, 'slug': self.dataset1.slug,})
         response = self.client.get(url)
+
         for code in self.error_page_codes:
             self.assertNotEqual(code, response.status_code)
     
         def test_delete_dataset_files(self):
-            url = reverse('epic.datasets.views.delete_dataset_files', 
-                          kwargs={'item_id':self.dataset1.id,'slug':self.dataset1.slug})
+            url = reverse(
+                'epic.datasets.views.delete_dataset_files', 
+                kwargs={'item_id': self.dataset1.id, 'slug': self.dataset1.slug})
             response = self.client.get(url)
-            
+
             for code in self.error_page_codes:
                 self.assertNotEqual(code, response.status_code)
 
@@ -132,30 +153,32 @@ class ViewDatasetTestCase(CustomTestCase):
 					
 					Maecenas sit amet magna id metus elementum viverra. Duis bibendum turpis non turpis. Curabitur ac massa fringilla felis fermentum luctus. Integer in nunc sed mi cursus porttitor. Integer dapibus justo ac metus. Vestibulum dolor dui, vehicula sed, vulputate at, fringilla id, lorem. Suspendisse in massa sed enim vulputate congue. Aliquam est felis, varius luctus, faucibus in, blandit ac, dui. Mauris dapibus. Duis justo massa, convallis ac, hendrerit id, accumsan ut, erat. Nunc sollicitudin tristique purus. Phasellus diam. '''
 					
-		self.dataset1 = DataSet.objects.get(creator=self.bob, 
-                                            name='dataset1', 
-                                            description='this is the first dataset')
-		self.dataset2 = DataSet.objects.create(creator=self.admin, 
-                                               name='dataset2', 
-                                               description='this is the second dataset', 
-                                               is_active=True)
-		self.dataset3 = DataSet.objects.create(creator=self.admin, 
-                                               name='dataset3', 
-                                               description='this is the third dataset with short description',
-                                               is_active=True)
-		self.dataset4 = DataSet.objects.create(creator=self.admin, 
-                                               name='dataset4',
-                                               description=longDescription,
-                                               is_active=True)
+		self.dataset1 = DataSet.objects.get(
+            creator=self.bob, name='dataset1', description='this is the first dataset')
+		self.dataset2 = DataSet.objects.create(
+            creator=self.admin,
+            name='dataset2',
+            description='this is the second dataset',
+            is_active=True)
+		self.dataset3 = DataSet.objects.create(
+            creator=self.admin,
+            name='dataset3',
+            description='this is the third dataset with short description',
+            is_active=True)
+		self.dataset4 = DataSet.objects.create(
+            creator=self.admin, name='dataset4', description=longDescription, is_active=True)
 		
-		self.view_dataset_url_1 = reverse('epic.datasets.views.view_dataset', 
-                                          kwargs={'item_id':self.dataset1.id,})
-		self.view_dataset_url_2 = reverse('epic.datasets.views.view_dataset', 
-                                          kwargs={'item_id':self.dataset2.id, 'slug':self.dataset2.slug,})
-		self.view_dataset_url_3 = reverse('epic.datasets.views.view_dataset', 
-                                          kwargs={'item_id':self.dataset3.id, 'slug':self.dataset3.slug,})
-		self.view_dataset_url_4 = reverse('epic.datasets.views.view_dataset', 
-										  kwargs={'item_id':self.dataset4.id, 'slug':self.dataset4.slug,})
+		self.view_dataset_url_1 = reverse(
+            'epic.datasets.views.view_dataset', kwargs={'item_id': self.dataset1.id,})
+		self.view_dataset_url_2 = reverse(
+            'epic.datasets.views.view_dataset',
+            kwargs={'item_id': self.dataset2.id, 'slug': self.dataset2.slug,})
+		self.view_dataset_url_3 = reverse(
+            'epic.datasets.views.view_dataset', 
+            kwargs={'item_id': self.dataset3.id, 'slug': self.dataset3.slug,})
+		self.view_dataset_url_4 = reverse(
+            'epic.datasets.views.view_dataset', 
+            kwargs={'item_id': self.dataset4.id, 'slug': self.dataset4.slug,})
 		
 	def tearDown(self):
 		pass
@@ -163,13 +186,11 @@ class ViewDatasetTestCase(CustomTestCase):
 	def testLoggedOut(self):
 		response = self.client.get(self.view_dataset_url_1)
 		self.assertEqual(response.status_code, 200)
-		
 		self.assertContains(response, self.dataset1.name)
 		self.assertContains(response, self.dataset1.description)
-	
+
 		response = self.client.get(self.view_dataset_url_2)
 		self.assertEqual(response.status_code, 200)
-		
 		self.assertContains(response, self.dataset2.name)
 		self.assertContains(response, self.dataset2.description)
 	
@@ -184,7 +205,6 @@ class ViewDatasetTestCase(CustomTestCase):
 #		For Short Descriptions no need to display readMoreMarker
 		response = self.client.get(self.view_dataset_url_3)
 		self.assertEqual(response.status_code, 200)
-		
 		self.assertContains(response, self.dataset3.name)
 		self.assertContains(response, self.dataset3.description)
 		self.assertNotContains(response, readMoreMarker)
@@ -192,20 +212,17 @@ class ViewDatasetTestCase(CustomTestCase):
 #		For Longer Descriptions readMoreMarker has to be displayed
 		response = self.client.get(self.view_dataset_url_4)
 		self.assertEqual(response.status_code, 200)
-		
 		self.assertContains(response, self.dataset4.name)
 		self.assertContains(response, readMoreMarker)
 				
 	def testLoggedOut(self):
 		response = self.client.get(self.view_dataset_url_1)
 		self.assertEqual(response.status_code, 200)
-		
 		self.assertContains(response, self.dataset1.name)
 		self.assertContains(response, self.dataset1.description)
 	
 		response = self.client.get(self.view_dataset_url_2)
 		self.assertEqual(response.status_code, 200)
-		
 		self.assertContains(response, self.dataset2.name)
 		self.assertContains(response, self.dataset2.description)	
 		
@@ -214,13 +231,11 @@ class ViewDatasetTestCase(CustomTestCase):
 	
 		response = self.client.get(self.view_dataset_url_1)
 		self.assertEqual(response.status_code, 200)
-		
 		self.assertContains(response, self.dataset1.name)
 		self.assertContains(response, self.dataset1.description)
 	
 		response = self.client.get(self.view_dataset_url_2)
 		self.assertEqual(response.status_code, 200)
-		
 		self.assertContains(response, self.dataset2.name)
 		self.assertContains(response, self.dataset2.description)
 		
@@ -229,16 +244,13 @@ class ViewDatasetTestCase(CustomTestCase):
 		
 		response = self.client.get(self.view_dataset_url_1)
 		self.assertEqual(response.status_code, 200)
-		
 		self.assertContains(response, self.dataset1.name)
 		self.assertContains(response, self.dataset1.description)
 	
 		response = self.client.get(self.view_dataset_url_2)
 		self.assertEqual(response.status_code, 200)
-		
 		self.assertContains(response, self.dataset2.name)
 		self.assertContains(response, self.dataset2.description)
-
     
 class ViewDatasetTestCase(CustomTestCase):
     """ Test the view_dataset view """
@@ -248,18 +260,18 @@ class ViewDatasetTestCase(CustomTestCase):
     def setUp(self):
         self.bob = User.objects.get(username='bob')
         self.admin = User.objects.get(username='admin')
+        self.dataset1 = DataSet.objects.get(
+            creator=self.bob, name='dataset1', description='this is the first dataset')
+        self.dataset2 = DataSet.objects.create(
+            creator=self.admin, name='dataset2',
+            description='this is the second dataset',
+            is_active=True)
         
-        self.dataset1 = DataSet.objects.get(creator=self.bob, 
-                                            name='dataset1', 
-                                            description='this is the first dataset')
-        self.dataset2 = DataSet.objects.create(creator=self.admin, name='dataset2', 
-                                               description='this is the second dataset',
-                                               is_active=True)
-        
-        self.view_dataset_url_1 = reverse('epic.datasets.views.view_dataset', 
-                                          kwargs={'item_id':self.dataset1.id,})
-        self.view_dataset_url_2 = reverse('epic.datasets.views.view_dataset', 
-                                          kwargs={'item_id':self.dataset1.id, 'slug':self.dataset1.slug,})
+        self.view_dataset_url_1 = reverse(
+            'epic.datasets.views.view_dataset', kwargs={'item_id': self.dataset1.id,})
+        self.view_dataset_url_2 = reverse(
+            'epic.datasets.views.view_dataset',
+            kwargs={'item_id': self.dataset1.id, 'slug': self.dataset1.slug,})
         
     def tearDown(self):
         pass

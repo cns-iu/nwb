@@ -35,16 +35,11 @@ class DataSet(Item):
     """
     
     objects = DataSetManager()
-    
+
     rating = RatingField(choices=RATING_SCALE)
-    
-    geolocations = \
-        models.ManyToManyField(GeoLoc, related_name='datasets', blank=True)
-    
-    previous_version = models.ForeignKey(
-        'self', related_name='previous', blank=True, null=True)
-    next_version = models.ForeignKey(
-        'self', related_name='next', blank=True, null=True)
+    geolocations = models.ManyToManyField(GeoLoc, related_name='datasets', blank=True)
+    previous_version = models.ForeignKey('self', related_name='previous', blank=True, null=True)
+    next_version = models.ForeignKey('self', related_name='next', blank=True, null=True)
     
     # Supposedly better to do this some other newer way where it's not nested.
     class Admin:
@@ -63,8 +58,7 @@ class DataSet(Item):
         return ('epic.datasets.views.view_dataset', [], kwargs)
     
     def get_add_tags_url(self):
-        view_tag_dataset_url = \
-            get_item_url(self, 'epic.datasets.views.tag_dataset')
+        view_tag_dataset_url = get_item_url(self, 'epic.datasets.views.tag_dataset')
         
         return view_tag_dataset_url
 

@@ -61,8 +61,6 @@ class RegistrationForm(forms.Form):
         max_length=Profile.MAX_USER_PROFILE_LENGTH,
         required=False)
 
-    
-
     def clean_email(self):
         cleaned_data = self.cleaned_data
         email = cleaned_data['email']
@@ -73,8 +71,6 @@ class RegistrationForm(forms.Form):
 
         return email
 
-    
-
     def clean_username(self):
         cleaned_data = self.cleaned_data
         username = cleaned_data['username']
@@ -84,7 +80,6 @@ class RegistrationForm(forms.Form):
             self._errors['username'] = ErrorList([message])
 
         return username
-		    
 
     def clean(self):
         cleaned_data = self.cleaned_data
