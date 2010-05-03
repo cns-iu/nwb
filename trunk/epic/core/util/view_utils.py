@@ -3,6 +3,7 @@ from django.core.paginator import Paginator, InvalidPage, EmptyPage
 from django.core.urlresolvers import reverse
 import functools
 import logging
+import inspect
 
 
 def request_user_is_authenticated(request):
@@ -97,5 +98,7 @@ def logged_view(view):
         module_logger.info(as_log_message(params))
 
         return response
-    
+    if inspect.ismethod(view.__name__):
+        view.__name__ = view.__name__()
+        view.func_name = view.__name__
     return functools.update_wrapper(decorated_view, view)
