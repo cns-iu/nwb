@@ -18,8 +18,7 @@ class Project(Item):
     datasets = models.ManyToManyField(DataSet, related_name='projects')
     
     def __unicode__(self):
-        return 'Project %s (containing datasets %s)' % \
-            (self.name, self.datasets.active())
+        return 'Project %s (containing datasets %s)' % (self.name, self.datasets.active())
     
     @models.permalink
     def get_absolute_url(self):

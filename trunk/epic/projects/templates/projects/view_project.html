@@ -1,5 +1,6 @@
 {% extends "core/bases/browse_base.html" %}
 
+{% load category_templatetags %}
 {% load project_templatetags %}
 {% load tags_templatetags %}
 
@@ -29,6 +30,7 @@
       {% project_header project %}
       
       <p class="projectinfo">{{ project.rendered_description|safe|linebreaksbr }}</p>
+      {% category_link project %}
     </div>
     
     <h3>Project Datasets</h3>

@@ -19,7 +19,6 @@ import tempfile
 import zipfile
 
 
-
 @login_required
 @active_user_required
 def create_project(request):
@@ -27,44 +26,36 @@ def create_project(request):
         new_project_form = ProjectForm()
         project_datasets = ProjectDataSetFormSet(prefix='project_datasets')
     else:
-        project_datasets = ProjectDataSetFormSet(request.POST, 
-                                                 prefix='project_datasets')
+        project_datasets = ProjectDataSetFormSet(request.POST, prefix='project_datasets')
         new_project_form = ProjectForm(request.POST)
         
         if new_project_form.is_valid() and project_datasets.is_valid():
             name = new_project_form.cleaned_data['name']
+            category = new_project_form.cleaned_data['category']
             description = new_project_form.cleaned_data['description']
-            
-            new_project = Project.objects.create(creator=request.user,
-                                                 name=name,
-                                                 description=description,
-                                                 is_active=True)
+            new_project = Project.objects.create(
+                creator=request.user, name=name, description=description, is_active=True)
             
             for dataset_form in project_datasets.forms:
-                if dataset_form.is_valid() and \
-                        'dataset' in dataset_form.cleaned_data:
+                if dataset_form.is_valid() and 'dataset' in dataset_form.cleaned_data:
                     dataset = dataset_form.cleaned_data['dataset']
                     new_project.datasets.add(dataset)
             
-            view_project_url = \
-                get_item_url(new_project, 'epic.projects.views.view_project')
+            view_project_url = get_item_url(new_project, 'epic.projects.views.view_project')
             
             return HttpResponseRedirect(view_project_url)
     
     return render_to_response(
         'projects/create_project.html',
-        {'new_project_form': new_project_form,
-         'project_datasets': project_datasets},
-         context_instance=RequestContext(request))
+        {'new_project_form': new_project_form, 'project_datasets': project_datasets},
+        context_instance=RequestContext(request))
 
 @login_required
 @active_user_required
 def confirm_delete_project(request, item_id, slug):
     project = get_object_or_404(Project, pk=item_id)
     user = request.user
-    
-    view_project_url = \
-        get_item_url(project, 'epic.projects.views.view_project')
+    view_project_url = get_item_url(project, 'epic.projects.views.view_project')
     
     if not user_is_item_creator(user, project):
         return HttpResponseRedirect(view_project_url)
@@ -80,10 +71,9 @@ def delete_project(request, item_id, slug):
     project = get_object_or_404(Project, pk=item_id)
     user = request.user
     
-    view_project_url = \
-        get_item_url(project, 'epic.projects.views.view_project')
-    
     if not user_is_item_creator(user, project):
+        view_project_url = get_item_url(project, 'epic.projects.views.view_project')
+
         return HttpResponseRedirect(view_project_url)
     
     project.is_active = False
@@ -99,49 +89,48 @@ def edit_project(request, item_id, slug):
     project = get_object_or_404(Project, pk=item_id)
     user = request.user
     
-    view_project_url = \
-        get_item_url(project, 'epic.projects.views.view_project')
+    view_project_url = get_item_url(project, 'epic.projects.views.view_project')
     
     if not user_is_item_creator(user, project):
         return HttpResponseRedirect(view_project_url)
     
     if request.method != "POST":
-        initial_edit_project_data = {
-            'name': project.name,
-            'description': project.description,
-        }
+        initial_edit_project_data = {'name': project.name, 'description': project.description,}
        
         if project.category is not None:
             initial_edit_project_data['category'] = project.category.id
         
         edit_form = ProjectForm(initial=initial_edit_project_data)
-        
         initial_project_datasets = []
+
         for dataset in project.datasets.all():
             initial_project_datasets.append(
                 {'dataset_url': dataset.get_absolute_url()})
             
         project_datasets = ProjectDataSetFormSet(
-                                prefix='project_datasets',
-                                initial=initial_project_datasets)
+            prefix='project_datasets', initial=initial_project_datasets)
     else:
         edit_form = ProjectForm(request.POST)
-        project_datasets = ProjectDataSetFormSet(request.POST, 
-                                                 prefix='project_datasets')
+        project_datasets = ProjectDataSetFormSet(
+            request.POST, prefix='project_datasets')
             
         if edit_form.is_valid() and project_datasets.is_valid():
             project.name = edit_form.cleaned_data['name']
+            project.category = edit_form.cleaned_data['category']
             project.description = edit_form.cleaned_data['description']
             project.save()
+
             for dataset in project.datasets.all():
                 project.datasets.remove(dataset)
+
             for dataset_form in project_datasets.forms:
                 if dataset_form.is_valid():
                     if 'dataset' in dataset_form.cleaned_data:
                         dataset = dataset_form.cleaned_data['dataset']
                         project.datasets.add(dataset)
-            view_project_url = \
-                get_item_url(project, 'epic.projects.views.view_project')
+
+            view_project_url = get_item_url(project, 'epic.projects.views.view_project')
+
             return HttpResponseRedirect(view_project_url)
     
     render_to_response_data = {
@@ -151,34 +140,35 @@ def edit_project(request, item_id, slug):
         'datasets': project.datasets.all(),
     }
             
-    return render_to_response('projects/edit_project.html', 
-                              render_to_response_data,
-                              context_instance=RequestContext(request))
+    return render_to_response(
+        'projects/edit_project.html',
+        render_to_response_data,
+        context_instance=RequestContext(request))
 
 PER_PAGE = epic.core.util.view_utils.DEFAULT_OBJECTS_PER_PAGE
+
 def view_projects(request):
     projects = Project.objects.active().order_by('-created_at')
-    
     projects_page = paginate(projects, request.GET, PER_PAGE)
     
-    return render_to_response('projects/view_projects.html',
-                              {'projects_page': projects_page},
-                              context_instance=RequestContext(request))
+    return render_to_response(
+        'projects/view_projects.html',
+        {'projects_page': projects_page},
+        context_instance=RequestContext(request))
 
 def view_project(request, item_id, slug):
     project = get_object_or_404(Project, pk=item_id)
     form = PostCommentForm()
     user = request.user
     
-    return render_to_response('projects/view_project.html', 
-                              {'project': project, 'form': form},
-                              context_instance=RequestContext(request))
+    return render_to_response(
+        'projects/view_project.html',
+        {'project': project, 'form': form},
+        context_instance=RequestContext(request))
 
 def view_user_project_list(request, user_id):
     requested_user = get_object_or_404(User, pk=user_id)
-    
-    projects = Project.objects.active().\
-        filter(creator=requested_user).order_by('-created_at')
+    projects = Project.objects.active().filter(creator=requested_user).order_by('-created_at')
     
     return render_to_response(
         'projects/view_user_project_list.html',
@@ -198,8 +188,8 @@ def download_all(request, item_id, slug):
         for dataset in datasets:
             for file in dataset.files.all():
                 file.file_contents.open('r')
-                archive.writestr(dataset.name + '/' + file.get_short_name(),
-                                 file.file_contents.read())
+                archive.writestr(
+                    (dataset.name + '/' + file.get_short_name()), file.file_contents.read())
                 file.file_contents.close()
 
         archive.close()
@@ -211,8 +201,9 @@ def download_all(request, item_id, slug):
         response['Content-Length'] = temp.tell()
         
         temp.seek(0)
+
         return response
     else:
-        view_project_url = \
-                get_item_url(project, 'epic.projects.views.view_project')
+        view_project_url = get_item_url(project, 'epic.projects.views.view_project')
+
         return HttpResponseRedirect(view_project_url)

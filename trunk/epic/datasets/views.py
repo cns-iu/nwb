@@ -145,6 +145,7 @@ def _save_previous_version(form, dataset):
     # TODO: Maybe only the latest version of a dataset should show up
     #  override the objects.all() or objects.active() maybe?
     previous_version = form.cleaned_data['previous_version']
+
     if previous_version:
         #(Note that this will overwrite previous "new versions")
         previous_version.next_version = dataset
@@ -152,15 +153,13 @@ def _save_previous_version(form, dataset):
         
 def _save_tags(form, dataset, user):
     tags = form.cleaned_data['tags']
-    Tagging.objects.update_tags(tags, 
-                                item=dataset, 
-                                user=user)
+    Tagging.objects.update_tags(tags, item=dataset, user=user)
+
 def _save_geolocs(add_formset, remove_formset, dataset):
     for geoloc in _get_geolocs_from_formset(add_formset, 'add_location'):
         dataset.geolocations.add(geoloc)
     
-    for geoloc in \
-            _get_geolocs_from_formset(remove_formset, 'remove_location'):
+    for geoloc in _get_geolocs_from_formset(remove_formset, 'remove_location'):
         dataset.geolocations.remove(geoloc)
 
 def _save_references(formset, dataset):
@@ -168,16 +167,14 @@ def _save_references(formset, dataset):
         if form.is_valid():
             if form.cleaned_data:
                 reference = form.cleaned_data['reference'] 
-                AcademicReference.objects.create(
-                    item=dataset, reference=reference)
+                AcademicReference.objects.create(item=dataset, reference=reference)
                 
 def _save_authors(formset, dataset):
     for form in formset.forms:
         if form.is_valid():
             if form.cleaned_data:
                 author_name = form.cleaned_data['author']
-                author, created = Author.objects.\
-                    get_or_create(author=author_name)
+                author, created = Author.objects.get_or_create(author=author_name)
                 author.items.add(dataset)
                 
 def _add_uploaded_files(dataset, uploaded_files):
@@ -263,6 +260,7 @@ def _get_zipped_readme(uploaded_file):
     # Find all the readmes in the zip file.
     
     readme_filenames = [] 
+
     for member in uploaded_zip.infolist():
         if is_valid_readme_filename(member.filename):
             readme_filenames.append(member.filename)
@@ -270,12 +268,13 @@ def _get_zipped_readme(uploaded_file):
     # Pick the first of the shallowest of the readmes we found.
     
     readme_file = None
-    shallowest_readme_filename = _get_shallowest_filename(readme_filenames)       
+    shallowest_readme_filename = _get_shallowest_filename(readme_filenames)
+
     if shallowest_readme_filename:
-        readme_file = ContentFile(
-                        uploaded_zip.read(shallowest_readme_filename))
+        readme_file = ContentFile(uploaded_zip.read(shallowest_readme_filename))
            
     uploaded_zip.close()
+
     return readme_file
 
 def _get_tarred_readme(uploaded_file):
@@ -292,19 +291,22 @@ def _get_tarred_readme(uploaded_file):
     # Find all the readmes in the tar file.
     
     readme_filenames = []
+
     for member in uploaded_tar.getmembers():
         if is_valid_readme_filename(member.name):
             readme_filenames.append(member.name)
     
-    #Pick the shallowest of the readmes we found.
+    # Pick the shallowest of the readmes we found.
     
     readme_file = None
-    shallowest_readme_filename = _get_shallowest_filename(readme_filenames)    
+    shallowest_readme_filename = _get_shallowest_filename(readme_filenames)
+
     if shallowest_readme_filename:
         data = uploaded_tar.extractfile(shallowest_readme_filename).read()
         readme_file = ContentFile(data)
     
     uploaded_tar.close()
+
     return readme_file
     
 def _get_shallowest_filename(readme_filenames):
@@ -321,8 +323,7 @@ def _get_shallowest_filename(readme_filenames):
     for readme_filename in readme_filenames:
         if shallowest_readme_filename == None:
             shallowest_readme_filename = readme_filename
-        elif shallowest_readme_filename.count('/') > \
-             readme_filename.count('/'):
+        elif shallowest_readme_filename.count('/') > readme_filename.count('/'):
             shallowest_readme_filename = readme_filename
     
     return shallowest_readme_filename
@@ -371,31 +372,28 @@ def upload_readme(request, item_id, slug):
         
         if form.is_valid():
             readme_file = form.cleaned_data['readme']
+
             if is_valid_readme_filename(readme_file.name):
-                datasetreadmefile = DataSetFile(parent_dataset=dataset, 
-                                                file_contents=readme_file, 
-                                                is_readme=True)
-                datasetreadmefile.file_contents.save('readme.txt', 
-                                                     readme_file, 
-                                                     save=True)
+                datasetreadmefile = DataSetFile(
+                    parent_dataset=dataset, file_contents=readme_file, is_readme=True)
+                datasetreadmefile.file_contents.save('readme.txt', readme_file, save=True)
                 datasetreadmefile.save()
-                
                 dataset.is_active = True
                 dataset.save()
                 
-                return HttpResponseRedirect(
-                            reverse('epic.datasets.views.view_dataset', 
-                                    kwargs={'item_id':dataset.id,
-                                            'slug':dataset.slug}))
+                return HttpResponseRedirect(reverse(
+                    'epic.datasets.views.view_dataset',
+                    kwargs={'item_id':dataset.id, 'slug':dataset.slug}))
             else: 
                 msg = u"""The readme '%(readme)s' is 
                           not a valid readme.txt file.""" \
                           % {'readme': readme_file.name,}
                 form._errors['readme'] = ErrorList([msg])
         
-    return render_to_response('datasets/upload_readme.html',
-                              {'form': form, 'dataset': dataset},
-                              context_instance=RequestContext(request))
+    return render_to_response(
+        'datasets/upload_readme.html',
+        {'form': form, 'dataset': dataset},
+        context_instance=RequestContext(request))
     
 @login_required
 @active_user_required
@@ -405,14 +403,11 @@ def edit_dataset(request, item_id, slug=None):
     
     # Make sure the current user is the creator of the dataset.
     if user != dataset.creator:
-        return HttpResponseRedirect(
-                    reverse('epic.datasets.views.view_dataset',
-                            kwargs={'item_id': dataset.id, 
-                                    'slug':slug,}))
+        return HttpResponseRedirect(reverse(
+            'epic.datasets.views.view_dataset', kwargs={'item_id': dataset.id, 'slug':slug,}))
     
     if request.method != "POST":
-        current_tags = \
-            Tagging.objects.get_edit_string(item=dataset, user=user)
+        current_tags = Tagging.objects.get_edit_string(item=dataset, user=user)
         
         initial_dataset_data = {
             'name': dataset.name,
@@ -430,8 +425,8 @@ def edit_dataset(request, item_id, slug=None):
         for geoloc in geolocs:
             initial_location_data.append({'add_location':geoloc,})
         
-        geoloc_add_formset = GeoLocationFormSet(prefix='add', 
-                                         initial=initial_location_data)
+        geoloc_add_formset = GeoLocationFormSet(
+            prefix='add', initial=initial_location_data)
         geoloc_remove_formset = RemoveGeoLocationFormSet(prefix='remove')
         
         initial_author_data = []
@@ -439,37 +434,29 @@ def edit_dataset(request, item_id, slug=None):
         for author in dataset.authors.all():
             initial_author_data.append({'author': author.author})
         
-        author_formset = AuthorFormSet(
-            initial=initial_author_data, prefix='author')
+        author_formset = AuthorFormSet(initial=initial_author_data, prefix='author')
             
         initial_ref_data = []
         
         for ref in dataset.references.all():
             initial_ref_data.append({'reference': ref.reference})
         
-        ref_formset = AcademicReferenceFormSet(
-            initial=initial_ref_data, prefix='reference')
+        ref_formset = AcademicReferenceFormSet(initial=initial_ref_data, prefix='reference')
     else:
         form = EditDataSetForm(request.POST)
         geoloc_add_formset = GeoLocationFormSet(request.POST, prefix='add')
-        geoloc_remove_formset = RemoveGeoLocationFormSet(request.POST, 
-                                                  prefix='remove')
+        geoloc_remove_formset = RemoveGeoLocationFormSet(request.POST, prefix='remove')
         author_formset = AuthorFormSet(request.POST, prefix='author')
-        ref_formset = \
-            AcademicReferenceFormSet(request.POST, prefix='reference')
+        ref_formset = AcademicReferenceFormSet(request.POST, prefix='reference')
             
-        if form.is_valid() and \
-                author_formset.is_valid() and \
-                ref_formset.is_valid():     
+        if form.is_valid() and author_formset.is_valid() and ref_formset.is_valid():     
             dataset.name = form.cleaned_data['name']
             dataset.description = form.cleaned_data['description']
             dataset.category = form.cleaned_data['category']
             dataset.save()
             
             tag_names = form.cleaned_data["tags"]
-            Tagging.objects.update_tags(tag_names=tag_names, 
-                                        item=dataset, 
-                                        user=user)
+            Tagging.objects.update_tags(tag_names=tag_names, item=dataset, user=user)
             
             for geoloc in _get_geolocs_from_formset(geoloc_add_formset, 'add_location'):
                 dataset.geolocations.add(geoloc)
@@ -483,8 +470,7 @@ def edit_dataset(request, item_id, slug=None):
                 if ref_form.is_valid():
                     if ref_form.cleaned_data:
                         reference = ref_form.cleaned_data['reference'] 
-                        AcademicReference.objects.create(
-                            item=dataset, reference=reference)
+                        AcademicReference.objects.create(item=dataset, reference=reference)
             
             for author in dataset.authors.all():
                 author.items.remove(dataset)
@@ -493,8 +479,7 @@ def edit_dataset(request, item_id, slug=None):
                 if author_form.is_valid():
                     if author_form.cleaned_data:
                         author_name = author_form.cleaned_data['author']
-                        author, created = \
-                            Author.objects.get_or_create(author=author_name)
+                        author, created = Author.objects.get_or_create(author=author_name)
                         author.items.add(dataset)
             
             # If the user has set the flag to delete their datasets,
@@ -516,26 +501,28 @@ def edit_dataset(request, item_id, slug=None):
                 
                 return HttpResponseRedirect(delete_dataset_files_url)
             else:
-                view_dataset_url = get_item_url(
-                    dataset, 'epic.datasets.views.view_dataset')
+                view_dataset_url = get_item_url(dataset, 'epic.datasets.views.view_dataset')
                 
                 return HttpResponseRedirect(view_dataset_url)
             
-    return render_to_response('datasets/edit_dataset.html', 
-                              {'dataset': dataset, 
-                               'form': form, 
-                               'geoloc_add_formset': geoloc_add_formset, 
-                               'geoloc_remove_formset': geoloc_remove_formset,
-                               'files': dataset.files.all(),
-                               'author_formset': author_formset,
-                               'ref_formset': ref_formset},
-                               context_instance=RequestContext(request))
+    return render_to_response(
+        'datasets/edit_dataset.html',
+        {
+            'dataset': dataset,
+            'form': form,
+            'geoloc_add_formset': geoloc_add_formset,
+            'geoloc_remove_formset': geoloc_remove_formset,
+            'files': dataset.files.all(),
+            'author_formset': author_formset,
+            'ref_formset': ref_formset
+        },
+        context_instance=RequestContext(request))
 
 @login_required
 @active_user_required
 def rate_dataset(request, item_id, input_rating=None, slug=None):
     if input_rating:
-        # TODO: surely this isn't supposed to be pass?!  What used to be here? Wont' it complain if no response is returned?!
+        # TODO: surely this isn't supposed to be pass?!  What used to be here? Won't it complain if no response is returned?!
         pass
     else:
         if request.method != 'POST':
