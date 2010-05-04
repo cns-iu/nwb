@@ -16,11 +16,9 @@
   <span class="highlight">Tag > {{ tag_name }}</span>
   
   <h1>Projects</h1>
-  {% if projects %}
-    {% project_list projects %}
-    {% if projects_page %}
-      {% pagination projects_page %}
-    {% endif %}
+  {% if projects_page.object_list %}
+    {% project_list projects_page.object_list %}
+    {% pagination projects_page %}
   {% else %}
     <p>There are no projects with this tag.</p>
   {% endif %}

@@ -1,6 +1,7 @@
 {% extends "core/browse.html" %}
 
 {% load category_templatetags %}
+{% load core_templatetags %}
 {% load datarequest_templatetags %}
 
 {% block submenu %}
@@ -12,8 +13,9 @@
   <p>Description: {{ category.description }}</p>
   
   <h1>Data Requests</h1>
-  {% if datarequests %}
-    {% datarequest_list datarequests %}
+  {% if datarequests_page %}
+    {% datarequest_list datarequests_page.object_list %}
+    {% pagination datarequests_page %}
   {% else %}
    <p>There are no datarequests in this category.</p>
   {% endif %}

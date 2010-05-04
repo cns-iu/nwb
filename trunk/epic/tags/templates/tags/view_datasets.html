@@ -16,11 +16,9 @@
 <span class="highlight">Tag > {{ tag_name }}</span>
   
   <h1>Datasets</h1>
-  {% if datasets %}      
-  	{% dataset_list datasets %}
-  	{% if datasets_page %}
-  	  {% pagination datasets_page %}
-    {% endif %}
+  {% if datasets_page.object_list %}      
+  	{% dataset_list datasets_page.object_list %}
+  	{% pagination datasets_page %}
   {% else %}
     <p>There are no datasets with this tag.</p>
   {% endif %}

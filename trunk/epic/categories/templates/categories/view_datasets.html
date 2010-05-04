@@ -1,6 +1,7 @@
 {% extends "core/browse.html" %}
 
 {% load category_templatetags %}
+{% load core_templatetags %}
 {% load dataset_templatetags %}
 
 {% block submenu %}
@@ -12,8 +13,9 @@
   <p>Description: {{ category.description }}</p>
   
   <h1>Datasets</h1>
-  {% if datasets %}      
-  	{% dataset_list datasets %}
+  {% if datasets_page %}      
+  	{% dataset_list datasets_page.object_list %}
+  	{% pagination datasets_page %}
   {% else %}
     <p>There are no datasets in this category.</p>
   {% endif %}

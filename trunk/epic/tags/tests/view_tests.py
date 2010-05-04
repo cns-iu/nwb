@@ -2,8 +2,11 @@ from django.contrib.auth.models import User
 from django.core.urlresolvers import reverse
 
 from epic.core.test import CustomTestCase
+from epic.datarequests.models import DataRequest
 from epic.datasets.models import DataSet
+from epic.projects.models import Project
 from epic.tags.models import Tagging
+from epic.tags.views import _get_datasets_for_tags, _get_datarequests_for_tags, _get_projects_for_tags
 
 
 def common_setUp(self):
@@ -112,7 +115,95 @@ class ViewTestCase(CustomTestCase):
         self.assertNotContains(response,'href="%s' % self.tag2_url)
         self.assertContains(response,'href="%s' % self.tag3_url)
         self.assertContains(response,'href="%s' % self.tag4_url)
-        
+
+
+def save_n_data_requests_with_tag(user, n, tag):    	
+    for i in range(n):
+    	data_request = DataRequest(creator=user)
+    	data_request.name = 'test_data_request_name_' + str(i)
+    	data_request.is_active = True
+    	data_request.save()
+    	Tagging.objects.add_tags_and_return_added_tag_names(tag, data_request, user)	
+
+class ViewDatarequestsForTagsPaginatedTestCase(CustomTestCase):
+    fixtures = ['tags_just_users']
+
+    def setUp(self):
+    	from epic.datarequests.views import PER_PAGE
+    	self.good_tag = 'test_good_tag'
+    	self.bad_tag = 'test_bad_tag'
+    	save_n_data_requests_with_tag(User.objects.get(username="bob"), PER_PAGE, self.good_tag)
+    	save_n_data_requests_with_tag(User.objects.get(username="bob"), 7, self.bad_tag)    	
+    
+    def testPaginated(self):    	
+    	response = self.client.get(reverse('epic.tags.views.view_datarequests_for_tag', kwargs={'tag_name': self.good_tag}))
+
+    	self.assertNotContains(response, '<div class="pagination"')
+    	
+    	for data_request in _get_datarequests_for_tags(self.good_tag):
+    		self.assertContains(response, data_request.get_absolute_url())
+        for data_request in _get_datarequests_for_tags(self.bad_tag):
+    		self.assertNotContains(response, data_request.get_absolute_url())
+
+
+def save_n_datasets_with_tag(user, n, tag):    	
+    for i in range(n):
+    	dataset = DataSet(creator=user)
+    	dataset.name = 'test_dataset_name_' + str(i)
+    	dataset.is_active = True
+    	dataset.save()
+    	Tagging.objects.add_tags_and_return_added_tag_names(tag, dataset, user)	
+
+class ViewDatasetsForTagsPaginatedTestCase(CustomTestCase):
+    fixtures = ['tags_just_users']
+
+    def setUp(self):
+    	from epic.datasets.views import PER_PAGE
+    	self.good_tag = 'test_good_tag'
+    	self.bad_tag = 'test_bad_tag'
+    	save_n_datasets_with_tag(User.objects.get(username="bob"), PER_PAGE, self.good_tag)
+    	save_n_datasets_with_tag(User.objects.get(username="bob"), 7, self.bad_tag)    	
+    
+    def testPaginated(self):    	
+    	response = self.client.get(reverse('epic.tags.views.view_datasets_for_tag', kwargs={'tag_name': self.good_tag}))
+
+    	self.assertNotContains(response, '<div class="pagination"')
+    	
+    	for dataset in _get_datasets_for_tags(self.good_tag):
+    		self.assertContains(response, dataset.get_absolute_url())
+        for dataset in _get_datasets_for_tags(self.bad_tag):
+    		self.assertNotContains(response, dataset.get_absolute_url())
+
+
+def save_n_projects_with_tag(user, n, tag):    	
+    for i in range(n):
+    	project = Project(creator=user)
+    	project.name = 'test_project_name_' + str(i)
+    	project.is_active = True
+    	project.save()
+    	Tagging.objects.add_tags_and_return_added_tag_names(tag, project, user)	
+
+class ViewProjectsForTagsPaginatedTestCase(CustomTestCase):
+    fixtures = ['tags_just_users']
+
+    def setUp(self):
+    	from epic.projects.views import PER_PAGE
+    	self.good_tag = 'test_good_tag'
+    	self.bad_tag = 'test_bad_tag'
+    	save_n_projects_with_tag(User.objects.get(username="bob"), PER_PAGE, self.good_tag)
+    	save_n_projects_with_tag(User.objects.get(username="bob"), 7, self.bad_tag)    	
+    
+    def testPaginated(self):    	
+    	response = self.client.get(reverse('epic.tags.views.view_projects_for_tag', kwargs={'tag_name': self.good_tag}))
+
+    	self.assertNotContains(response, '<div class="pagination"')
+    	
+    	for project in _get_projects_for_tags(self.good_tag):
+    		self.assertContains(response, project.get_absolute_url())
+        for project in _get_projects_for_tags(self.bad_tag):
+    		self.assertNotContains(response, project.get_absolute_url())
+
+
 class ViewAddTagsTestCase(CustomTestCase):
     fixtures = [ "tags_just_users", "tags_tags" ]
     

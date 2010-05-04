@@ -4,6 +4,7 @@ from django.contrib.auth.models import User
 from epic.categories.constants import NO_CATEGORY
 from epic.categories.models import Category
 from epic.categories.models import CannotDeleteNoCategoryException
+from epic.categories.views import _get_datasets_for_category, _get_datarequests_for_category, _get_projects_for_category
 from epic.core.test import CustomTestCase
 from epic.core.util.view_utils import *
 from epic.datarequests.models import DataRequest
@@ -26,6 +27,100 @@ class ViewCategoriesTestCase(CustomTestCase):
         
         response = self.client.get(self.view_categories_url)
         self.assertContains(response, category.name)
+
+
+def save_n_data_requests_with_category(user, n, category):    	
+    for i in range(n):
+    	data_request = DataRequest(creator=user)
+    	data_request.name = 'test_data_request_name_' + str(i)
+    	data_request.is_active = True
+    	data_request.category = category
+    	data_request.save()	
+
+class ViewDatarequestsForCategoryPaginatedTestCase(CustomTestCase):
+    fixtures = ['core_just_users']
+
+    def setUp(self):
+    	from epic.datarequests.views import PER_PAGE
+    	self.good_category = Category(id=2359237, name='test_good_category')
+    	self.good_category.save()
+    	self.bad_category = Category(id=6822349, name='test_bad_category')
+    	self.bad_category.save()
+    	save_n_data_requests_with_category(User.objects.get(username="bob"), PER_PAGE, self.good_category)
+    	save_n_data_requests_with_category(User.objects.get(username="bob"), 7, self.bad_category)    	
+    
+    def testPaginated(self):	
+    	response = self.client.get(reverse('epic.categories.views.view_datarequests_for_category', kwargs={'category_id': self.good_category.id}))
+
+    	self.assertNotContains(response, '<div class="pagination"')
+    	
+    	for data_request in _get_datarequests_for_category(self.good_category):
+    		self.assertContains(response, data_request.get_absolute_url())
+        for data_request in _get_datarequests_for_category(self.bad_category):
+    		self.assertNotContains(response, data_request.get_absolute_url())
+
+
+def save_n_datasets_with_category(user, n, category):    	
+    for i in range(n):
+    	dataset = DataSet(creator=user)
+    	dataset.name = 'test_dataset_name_' + str(i)
+    	dataset.is_active = True
+    	dataset.category = category
+    	dataset.save()	
+
+class ViewDatasetsForCategoryPaginatedTestCase(CustomTestCase):
+    fixtures = ['core_just_users']
+
+    def setUp(self):
+    	from epic.datasets.views import PER_PAGE
+    	self.good_category = Category(id=2359237, name='test_good_category')
+    	self.good_category.save()
+    	self.bad_category = Category(id=6822349, name='test_bad_category')
+    	self.bad_category.save()
+    	save_n_datasets_with_category(User.objects.get(username="bob"), PER_PAGE, self.good_category)
+    	save_n_datasets_with_category(User.objects.get(username="bob"), 7, self.bad_category)    	
+    
+    def testPaginated(self):    	
+    	response = self.client.get(reverse('epic.categories.views.view_datasets_for_category', kwargs={'category_id': self.good_category.id}))
+
+    	self.assertNotContains(response, '<div class="pagination"')
+    	
+    	for dataset in _get_datasets_for_category(self.good_category):
+    		self.assertContains(response, dataset.get_absolute_url())
+        for dataset in _get_datasets_for_category(self.bad_category):
+    		self.assertNotContains(response, dataset.get_absolute_url())
+
+
+def save_n_projects_with_category(user, n, category):    	
+    for i in range(n):
+    	project = Project(creator=user)
+    	project.name = 'test_project_name_' + str(i)
+    	project.is_active = True
+    	project.category = category
+    	project.save()
+
+class ViewProjectsForCategoryPaginatedTestCase(CustomTestCase):
+    fixtures = ['core_just_users']
+
+    def setUp(self):
+    	from epic.projects.views import PER_PAGE
+    	self.good_category = Category(id=2359237, name='test_good_category')
+    	self.good_category.save()
+    	self.bad_category = Category(id=6822349, name='test_bad_category')
+    	self.bad_category.save()
+    	save_n_projects_with_category(User.objects.get(username="bob"), PER_PAGE, self.good_category)
+    	save_n_projects_with_category(User.objects.get(username="bob"), 7, self.bad_category)    	
+    
+    def testPaginated(self):    	
+    	response = self.client.get(reverse('epic.categories.views.view_projects_for_category', kwargs={'category_id': self.good_category.id}))
+
+    	self.assertNotContains(response, '<div class="pagination"')
+    	
+    	for project in _get_projects_for_category(self.good_category):
+    		self.assertContains(response, project.get_absolute_url())
+        for project in _get_projects_for_category(self.bad_category):
+    		self.assertNotContains(response, project.get_absolute_url())
+
 
 class ViewItemsForCategoryTestCase(CustomTestCase):
     
