@@ -8,7 +8,7 @@ from epic.datasets.models import DataSet
 def setUp(self):
     self.item = DataSet.objects.active()[0]
     self.comment_posting_form_data = {'comment': 'abcd'}
-    self.user = User.objects.get(username='peebs')
+    self.user = User.objects.get(username='mark')
     self.comment = Comment(posting_user=self.user, parent_item=self.item, contents='abcd')
     
     kwargs_for_url_reverses = {'item_id': self.item.id, 'slug': self.item.slug}

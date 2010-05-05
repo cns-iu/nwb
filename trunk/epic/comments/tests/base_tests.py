@@ -29,7 +29,7 @@ def create_comment_test_case(_setUp, _fixtures):
             self.assertContains(response, 'You must be logged in to comment.', 1)
 
         def testViewLoggedIn(self):
-            self.tryLogin('peebs', 'map')
+            self.tryLogin('mark', 'mark')
             
             # Go to the comment page.
             response = self.client.get(self.view_url)
@@ -47,7 +47,7 @@ def create_comment_test_case(_setUp, _fixtures):
             # Make sure there are no prior comments.
             Comment.objects.all().delete()
             
-            self.tryLogin('peebs', 'map')
+            self.tryLogin('mark', 'mark')
             
             # Post a test comment.
             response = self.client.post(self.post_to_comment_url, self.comment_posting_form_data)
@@ -83,7 +83,7 @@ def create_comment_test_case(_setUp, _fixtures):
             self.assertRedirects(response, self.login_redirect_url)
         
         def testAccessPostCommentURLLoggedIn(self):
-            self.tryLogin('peebs', 'map')
+            self.tryLogin('mark', 'mark')
 
             response = self.client.get(self.post_to_comment_url)
             self.assertRedirects(response, self.view_url)
@@ -92,7 +92,7 @@ def create_comment_test_case(_setUp, _fixtures):
             # This will only happen if the user is logged in, hence we only
             # need this one version of this test.
             
-            self.tryLogin('peebs', 'map')
+            self.tryLogin('mark', 'mark')
             
             blank_comment_form_data = {'comment': ''}
             response = self.client.post(self.post_to_comment_url, blank_comment_form_data)

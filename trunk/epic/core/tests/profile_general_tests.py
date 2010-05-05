@@ -9,7 +9,7 @@ class ProfileTestCase(CustomTestCase):
     fixtures = ['core_just_users']
     
     def setUp(self):
-        self.user_with_full_profile = User.objects.get(username='peebs')
+        self.user_with_full_profile = User.objects.get(username='mark')
         self.user_with_empty_profile = User.objects.get(username='bob')
         self.user_with_no_profile = self._create_noprofile_user()
         self.full_profile = Profile.objects.for_user(self.user_with_full_profile)
