@@ -30,7 +30,13 @@ from epic.settings import DEACTIVATED_ACCOUNT_VIEW
 
 
 def site_index(request):
-    return render_to_response('core/site_index.html', context_instance=RequestContext(request))
+    datarequests = DataRequest.objects.active().order_by('-created_at')[:2]
+    datasets = DataSet.objects.active().order_by('-created_at')[:2]
+	
+    return render_to_response(
+        'core/site_index.html',
+        {'datarequests': datarequests, 'datasets': datasets},
+	    context_instance=RequestContext(request))
 
 def terms_and_conditions(request):
     return render_to_response(
@@ -40,12 +46,13 @@ def privacy_policy(request):
     return render_to_response('core/privacy_policy.html', context_instance=RequestContext(request))
 
 def browse(request):
+    datarequests = DataRequest.objects.active().order_by('-created_at')[:3]
     datasets = DataSet.objects.active().order_by('-created_at')[:3]
     projects = Project.objects.active().order_by('-created_at')[:3]
     
     return render_to_response(
         'core/browse.html',
-        {'datasets': datasets, 'projects': projects,},
+        {'datarequests': datarequests, 'datasets': datasets, 'projects': projects},
         context_instance=RequestContext(request))
 
 def about(request):

@@ -32,7 +32,11 @@
 {% endblock %}
 
 {% block content %}
-  {% recent_requests 3 %}
+  <h1>Recent data requests</h1>
+  {% if datarequests %}
+    [<a href="{% url epic.datarequests.views.view_datarequests %}">view more</a> recent data requests]
+  {% endif %}
+  {% datarequest_list_short datarequests %}
   
   <h1>Recent data sets</h1>
   {% if datasets %}

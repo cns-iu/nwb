@@ -2,27 +2,12 @@
 {% load core_templatetags %}
 {% load tags_templatetags %}
 
-{% if not use_simple_display %}
-  <h1>Recent data request{{ datarequests|length|pluralize }}</h1>
-{% endif %}
-
-{% if datarequests %}
-  {% if not use_simple_display %}
-    [<a href="{% url epic.datarequests.views.view_datarequests %}">view more</a> recent data requests]
-  {% endif %}
-  
+{% if datarequests %}  
   {% for datarequest in datarequests %}
   <div class="requests">
     <h2> <a href="{% url datarequests.views.view_datarequest item_id=datarequest.id slug=datarequest.slug %}">{{ datarequest.name }}</a>  -  {% user_title datarequest.creator 'True' %}</h2> 
   
     <p>{{ datarequest.tagless_description|truncatewords:15 }}</p> <br>
-    {% if not dont_show_categories %}
-      {% category_link datarequest %}
-    {% endif %} 
-    
-    {% if not use_simple_display %}
-      {% list_item_tags datarequest user %}
-    {% endif %}
       
       <div class="comments">
         <a href="{% url datarequests.views.view_datarequest item_id=datarequest.id slug=datarequest.slug %}">

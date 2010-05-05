@@ -19,7 +19,6 @@ def dataset_header(context, dataset, rating_allowed):
         rating_allowed = False
     return {'dataset':dataset, 'user':user, 'rating_allowed': rating_allowed,}
 
-@register.inclusion_tag('templatetags/recent_datasets.html')
-def recent_datasets(limit=3):
-    datasets = DataSet.objects.active().order_by('-created_at')[:limit]
-    return {'datasets':datasets,}
+@register.inclusion_tag('templatetags/dataset_list_tiny.html')
+def dataset_list_tiny(datasets=None):
+    return {'datasets': datasets}
