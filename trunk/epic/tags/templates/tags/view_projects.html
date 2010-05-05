@@ -17,6 +17,7 @@
   
   <h1>Projects</h1>
   {% if projects_page.object_list %}
+    {% pagination projects_page %}
     {% project_list projects_page.object_list %}
     {% pagination projects_page %}
   {% else %}

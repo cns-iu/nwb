@@ -16,7 +16,8 @@
 <span class="highlight">Tag > {{ tag_name }}</span>
   
   <h1>Datasets</h1>
-  {% if datasets_page.object_list %}      
+  {% if datasets_page.object_list %}
+    {% pagination datasets_page %}      
   	{% dataset_list datasets_page.object_list %}
   	{% pagination datasets_page %}
   {% else %}

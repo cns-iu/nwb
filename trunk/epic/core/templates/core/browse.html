@@ -34,10 +34,16 @@
 {% block content %}
   {% recent_requests 3 %}
   
-  <h1>Recent data sets.</h1> [<a href="{% url epic.datasets.views.view_datasets %}">view all</a>]
-  {% dataset_list datasets %}
+  <h1>Recent data sets</h1>
+  {% if datasets %}
+    [<a href="{% url epic.datasets.views.view_datasets %}">view more</a> recent data sets]
+  {% endif %}
+  {% dataset_list datasets %}  
   
-  <h1>Recent projects.</h1> [<a href="{% url epic.projects.views.view_projects %}">view all</a>]
+  <h1>Recent projects</h1>
+  {% if projects %}
+    [<a href="{% url epic.projects.views.view_projects %}">view more</a> recent projects]
+  {% endif %}
   {% project_list projects %}
 {% endblock %}
 {% block request %}

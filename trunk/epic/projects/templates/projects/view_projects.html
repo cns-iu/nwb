@@ -20,6 +20,7 @@
 
 {% block content %}
   <h1> Projects </h1> 
+  {% pagination projects_page %}
   {% project_list projects_page.object_list %}
   {% pagination projects_page %}
 {% endblock %}

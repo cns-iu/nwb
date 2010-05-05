@@ -17,6 +17,7 @@
   
   <h1>Data Requests</h1>
   {% if datarequests_page %}
+    {% pagination datarequests_page %}
     {% datarequest_list datarequests_page.object_list %}
     {% pagination datarequests_page %}
   {% else %}
