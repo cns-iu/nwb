@@ -34,7 +34,11 @@ def create_project(request):
             category = new_project_form.cleaned_data['category']
             description = new_project_form.cleaned_data['description']
             new_project = Project.objects.create(
-                creator=request.user, name=name, description=description, is_active=True)
+                creator=request.user,
+                name=name,
+                category=category,
+                description=description,
+                is_active=True)
             
             for dataset_form in project_datasets.forms:
                 if dataset_form.is_valid() and 'dataset' in dataset_form.cleaned_data:
