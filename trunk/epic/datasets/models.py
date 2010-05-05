@@ -5,6 +5,10 @@ These are the DataSet and DataSetFile models.
 from django.contrib.auth.models import User
 from django.core.urlresolvers import reverse
 from django.db import models
+from django.core.files.storage import FileSystemStorage
+
+from django.conf import settings
+
 
 from epic.core.models import Item
 from epic.core.util.customfilefield import CustomFileField
@@ -62,9 +66,11 @@ class DataSet(Item):
         
         return view_tag_dataset_url
 
+file_storage = FileSystemStorage(base_url=settings.FILE_URL)
+
 class DataSetFile(models.Model):
     parent_dataset = models.ForeignKey(DataSet, related_name="files")
-    file_contents = CustomFileField()
+    file_contents = CustomFileField(storage=file_storage)
     uploaded_at = models.DateTimeField(auto_now_add=True, db_index=True)
     is_readme = models.BooleanField(default=False)
 

@@ -49,6 +49,7 @@ MEDIA_ROOT = 'uploaded_files/'
 # Examples: "http://media.lawrence.com", "http://example.com/media/"
 #TODO: This is probably temporary, and should be changed for production
 MEDIA_URL = '/media/'
+FILE_URL = '/files/'
 
 # URL prefix for admin media -- CSS, JavaScript and images. Make sure to use a
 # trailing slash.
