@@ -127,6 +127,7 @@ INSTALLED_APPS = (
     'epic.geoloc',
     'epic.projects',
     'epic.search',
+    'haystack',
 )
 
 GOOGLE_KEY = \
@@ -142,8 +143,8 @@ DEFAULT_FROM_EMAIL = 'registration@localhost'
 
 DEACTIVATED_ACCOUNT_VIEW = 'epic.core.views.deactivated_account'
 
-#EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
-EMAIL_BACKEND = 'django.core.mail.backends.filebased.EmailBackend'
-EMAIL_FILE_PATH = '/tmp/app-messages' # change this to a proper location
+HAYSTACK_SITECONF = 'epic.search_sites'
+HAYSTACK_SEARCH_ENGINE = 'whoosh'
+HAYSTACK_WHOOSH_PATH = 'whoosh'
 
 

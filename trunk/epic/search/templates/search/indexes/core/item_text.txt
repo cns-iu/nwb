@@ -1,0 +1,7 @@
+{{ object.name }}
+{{ object.creator.get_full_name }}
+{{ object.category }}
+{% for tagging in item.tagging_set.all %}
+{{ tagging.tag }}
+{% endfor %}
+{{ object.tagless_description }}

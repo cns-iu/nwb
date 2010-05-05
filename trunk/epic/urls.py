@@ -32,6 +32,7 @@ urlpatterns = decorated_patterns('', logged_view,
     (r'^categories/', include('epic.categories.urls')),
     (r'^authors/(?P<author_name>.+?)/$', 'epic.core.views.view_items_for_author'),
     (r'^search/', include('epic.search.urls')),
+    (r'^search2/', include('haystack.urls')),
 )
 
 if settings.DEBUG:
