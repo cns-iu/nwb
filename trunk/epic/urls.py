@@ -9,6 +9,8 @@ admin.autodiscover()
 
 urlpatterns = decorated_patterns('', logged_view,
     (r'^$', 'epic.core.views.site_index'),
+    (r'^terms_and_conditions', 'epic.core.views.terms_and_conditions'),
+    (r'^privacy_policy', 'epic.core.views.privacy_policy'),
     (r'^browse/$', 'epic.core.views.browse'),
     (r'^about/$', 'epic.core.views.about'),
     (r'^register/$', 'epic.core.views.register'),
