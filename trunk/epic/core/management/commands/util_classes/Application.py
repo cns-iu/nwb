@@ -39,7 +39,7 @@ class Application(object):
 
         self._execute_all_fixture_generators()
 
-        print ''
+        print
     
     # TODO: Needs a short, high-level description of our strategy for gathering fixture generators
     # TODO: A little bit shorter than this kthxbai.
@@ -122,7 +122,11 @@ class Application(object):
                         absolute_init_file_name)
                     
                     fixture_generators.append(new_fixture_generator)
-        
+        #this makes us do any fixture labeled initial_data first
+        for index in range(1, len(fixture_generators)): # 1 is because we don't care if it is already the first
+            if fixture_generators[index].generator_module_name == 'initial_data':
+                fixture_generators.insert(0, fixture_generators.pop(index))
+                break
         return fixture_generators
     
     def _init_module_is_valid(self, directory_listing):

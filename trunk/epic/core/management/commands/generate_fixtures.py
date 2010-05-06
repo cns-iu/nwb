@@ -63,6 +63,12 @@ class Command(BaseCommand):
             application_names = self._get_application_names()
             user_did_supply_application_names = False
         
+        #this is part of making sure we always do initial_data first
+        application_names = list(application_names)
+        if '.' in application_names:
+            application_names.remove('.')
+            application_names.insert(0, '.')
+        
         return application_names, user_did_supply_application_names
     
     def _generate_applications_from_application_names(

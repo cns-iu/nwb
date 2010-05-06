@@ -105,6 +105,8 @@ TEMPLATE_DIRS = (
 LOGIN_URL = '/login/'
 
 
+FIXTURE_DIRS = ['fixtures']
+
 #where you go after you log in
 LOGIN_REDIRECT_URL = '/user/'
 
