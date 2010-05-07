@@ -37,14 +37,14 @@ from django.db import models
 from django.template.defaultfilters import slugify
 from django.utils.hashcompat import sha_constructor
 
-from epic.categories.constants import NO_CATEGORY
+from epic.categories.constants import NO_CATEGORY, NO_CATEGORY_DESCRIPTION
 from epic.categories.models import Category
 from epic.core.util.model_exists_utils import profile_exists
 from epic.core.util.postmarkup import PostMarkup
 
 
 def _default_category():
-    return Category.objects.get(name=NO_CATEGORY)
+    return Category.objects.get_or_create(name=NO_CATEGORY, defaults={'description': NO_CATEGORY_DESCRIPTION})[0] #the second result is whether or not a new object was created
 
 class Item(models.Model):
     MAX_ITEM_NAME_LENGTH = 256
