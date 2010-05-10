@@ -2,7 +2,6 @@ from base_settings import *
 import log_settings
 
 from database_credentials import *
-print DATABASE_HOST
 
 
 DATABASE_ENGINE = 'postgresql_psycopg2'
