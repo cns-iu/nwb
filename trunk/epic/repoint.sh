@@ -12,6 +12,7 @@ echo "cd epic" >> remote.sh
 echo "chmod +x media_move.sh" >> remote.sh
 echo "./media_move.sh" >> remote.sh
 echo "touch /home/epic_website/epic.wsgi" >> remote.sh
+echo "export PYTHONPATH=/home/epic_website" >> remote.sh
 echo "python2.6 manage.py shell --settings=epic.dev_settings --pythonpath=.. < wipeout.py" >> remote.sh
 echo "python2.6 manage.py syncdb --noinput --settings=epic.dev_settings --pythonpath=.." >> remote.sh
 echo "python2.6 manage.py loaddata demo_data --settings=epic.dev_settings --pythonpath=.." >> remote.sh
