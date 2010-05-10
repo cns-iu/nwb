@@ -6,8 +6,8 @@ from database_credentials import *
 
 DATABASE_ENGINE = 'postgresql_psycopg2'
 DATABASE_NAME = 'epic_web'
-DATABASE_PORT = '5432'
-#DATABASE_OPTIONS = {'sslmode': 'require'}
+DATABASE_PORT = '5433'
+DATABASE_OPTIONS = {'sslmode': 'require'}
 
 MEDIA_ROOT = '/home/epic_website/epic_data/'
 
