@@ -7,8 +7,8 @@ echo 'if [ -a "epic" ]; then' >> remote.sh
 echo "	CURRENT_LOC=`readlink -n epic`" >> remote.sh
 echo "fi" >> remote.sh
 
-echo "ln -s -f -n /home/epic_website/epic_code/epic-$SVN_REVISION-$BUILD_NUMBER epic" >> remote.sh
-echo "cd epic" >> remote.sh
+echo "ln -s -f -n /home/epic_website/epic_code/epic-$SVN_REVISION-$BUILD_NUMBER /home/epic_website/epic_code/epic" >> remote.sh
+echo "cd epic-$SVN_REVISION-$BUILD_NUMBER" >> remote.sh
 echo "chmod +x media_move.sh" >> remote.sh
 echo "./media_move.sh" >> remote.sh
 echo "touch /home/epic_website/epic.wsgi" >> remote.sh
