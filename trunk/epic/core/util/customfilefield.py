@@ -74,17 +74,3 @@ class CustomFileField(FileField):
     def db_type(self):
         """Required by Django for ORM."""
         return 'varchar(200)'
-
-
-from south.modelsinspector import add_introspection_rules
-rules = [
-    (
-        (CustomFileField,),
-        [],
-        {
-            'use_key': ['use_key', {"default": False}],
-        },
-    ),
-]
-
-add_introspection_rules(rules, ["^epic\.core\.util\.customfilefield"])
