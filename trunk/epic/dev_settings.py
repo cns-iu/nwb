@@ -10,4 +10,4 @@ GOOGLE_KEY = \
 
 DEBUG = True
 
-log_settings.safeSetup('dev_stage_logging.conf')
+log_settings.safeSetup('/home/epic_website/epic_code/epic/dev_stage_logging.conf')

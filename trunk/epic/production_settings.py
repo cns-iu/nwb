@@ -10,5 +10,5 @@ GOOGLE_KEY = \
 
 DEBUG = True
 
-log_settings.safeSetup('production_logging.conf')
+log_settings.safeSetup('/home/epic_website/epic_code/epic/production_logging.conf')
 
