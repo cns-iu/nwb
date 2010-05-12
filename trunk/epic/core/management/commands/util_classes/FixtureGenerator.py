@@ -21,14 +21,6 @@ class FixtureGenerator(object):
         # We need a temporary database to store the data created within the
         # fixture generators.  If we don't setup the temporary database, our
         # actual production database will most likely be dirtied.
-        if self.generator_module_name == 'initial_data':
-            if os.path.exists('initial_data.json'):
-                os.rename('initial_data.json', 'initial_data.json.bak')
-                print "renaming initial_data.json"
-        else:
-            #basically, we're making certain initial_data has all the stuff syncdb includes by default, but none of the other fixtures do, as they'll all effectively 'include' initial_data
-            from django.core import management
-            management.call_command('reset', 'auth', 'sites', 'contenttypes', interactive=False)
         
         original_database_name = _setup_temporary_database()
         
@@ -69,7 +61,7 @@ class FixtureGenerator(object):
             # python manage.py dumpdata
             # from the command line.  It just outputs to stdout, which is why we
             # needed to redirect stdout to our target file.
-            management.call_command(DJANGO_DUMP_DATA_INTO_FIXTURE_COMMAND)
+            management.call_command(DJANGO_DUMP_DATA_INTO_FIXTURE_COMMAND, exclude=["contenttypes"])
             
             if self.generator_module_name == 'initial_data':
                 if os.path.exists("initial_data.json.bak"):
@@ -118,6 +110,8 @@ class FixtureGenerator(object):
 def _setup_temporary_database():
     from django.conf import settings
     from django.db import connection
+    from django.core import management
+    management._commands['syncdb'] = 'django.core'
     
     original_database_name = settings.DATABASE_NAME
     connection.creation.create_test_db(0, autoclobber=False)
