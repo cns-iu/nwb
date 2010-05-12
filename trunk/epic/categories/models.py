@@ -6,7 +6,7 @@ from epic.categories.constants import NO_CATEGORY_DESCRIPTION
 
 
 class Category(models.Model):
-    name = models.TextField()
+    name = models.CharField(max_length=256, db_index=True)
     description = models.TextField(blank=True, null=True)
     created_at = models.DateTimeField(auto_now_add=True, db_index=True)
     
@@ -30,6 +30,8 @@ class CannotDeleteNoCategoryException(Exception):
 
     def __str__(self):
         return repr(self.value)
+
+
 
 def default_category():
     # The second result is whether or not a new object was created.

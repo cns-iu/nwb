@@ -132,6 +132,7 @@ INSTALLED_APPS = (
     'epic.projects',
     'epic.search',
     'haystack',
+    'south',
 )
 
 GOOGLE_KEY = \
@@ -151,4 +152,4 @@ HAYSTACK_SITECONF = 'epic.search_sites'
 HAYSTACK_SEARCH_ENGINE = 'whoosh'
 HAYSTACK_WHOOSH_PATH = 'whoosh'
 
-
+SKIP_SOUTH_TESTS=True
