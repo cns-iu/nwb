@@ -19,3 +19,6 @@ log_settings.safeSetup('/home/epic_website/epic_data/server.log')
 TEMPLATE_DIRS = (
 	'/home/epic_website/epic_code/epic/templates',
 )
+
+EMAIL_HOST = 'mail-relay.iu.edu'
+EMAIL_USE_TLS = True
