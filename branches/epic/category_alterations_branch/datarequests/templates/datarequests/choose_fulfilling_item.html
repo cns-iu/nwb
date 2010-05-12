@@ -1,0 +1,35 @@
+{% extends "core/bases/simple_base.html" %}
+
+{% block content %}
+  {% if requests %}
+    <h1> Request Fulfillment </h1>
+    <h2>
+      Select which request 
+      <a href="{{ specific.get_absolute_url }}">{{ specific.name }}</a> 
+      fulfills:
+    </h2>
+    
+    <table>
+      {% for request in requests %}
+        <tr>
+          <td>
+            <a href="{% url datarequests.views.fulfill_datarequest item_id=request.id slug=request.slug fulfilling_item_id=item.id %}">
+              Select
+              {% comment %}
+              {# TODO: Upload this image! #}
+              <img src="/media/core/images/select-button_44.jpg">
+              {% endcomment %} 
+            </a>
+          </td>
+          <td>
+            <a href="{% url datarequests.views.view_datarequest item_id=request.id slug=request.slug %}">   
+              {{ request.name }}
+            </a>
+          </td>
+        </tr>
+      {% endfor %}
+    </table>
+  {% else %}
+    <h2>You do not have any requests to fulfill</h2>
+  {% endif %}
+{% endblock %}

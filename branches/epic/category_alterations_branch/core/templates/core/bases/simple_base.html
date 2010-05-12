@@ -1,0 +1,15 @@
+{% extends "core/bases/base.html" %}
+
+{% block maincontent %}
+  <div id="submenu">
+    {% block submenu %}
+    {% endblock %}
+  </div>
+  
+  <div id="content">
+    {% block content %}
+    {% endblock %}
+  </div>
+  
+  {{ block.super }}
+{% endblock %}
