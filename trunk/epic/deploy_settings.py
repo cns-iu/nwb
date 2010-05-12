@@ -20,4 +20,5 @@ TEMPLATE_DIRS = (
 )
 
 EMAIL_HOST = 'mail-relay.iu.edu'
+EMAIL_PORT = '25'
 EMAIL_USE_TLS = True
