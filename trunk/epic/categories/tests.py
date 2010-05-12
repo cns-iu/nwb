@@ -53,7 +53,7 @@ class ViewDatarequestsForCategoryPaginatedTestCase(CustomTestCase):
     	save_n_data_requests_with_category(User.objects.get(username="bob"), 7, self.bad_category)    	
     
     def testPaginated(self):	
-    	response = self.client.get(reverse('epic.categories.views.view_datarequests_for_category', kwargs={'category_id': self.good_category.id}))
+    	response = self.client.get(reverse('epic.categories.views.view_datarequests_for_category', kwargs={'category_id': self.good_category.name}))
 
     	self.assertNotContains(response, '<div class="pagination"')
     	
@@ -84,7 +84,7 @@ class ViewDatasetsForCategoryPaginatedTestCase(CustomTestCase):
     	save_n_datasets_with_category(User.objects.get(username="bob"), 7, self.bad_category)    	
     
     def testPaginated(self):    	
-    	response = self.client.get(reverse('epic.categories.views.view_datasets_for_category', kwargs={'category_id': self.good_category.id}))
+    	response = self.client.get(reverse('epic.categories.views.view_datasets_for_category', kwargs={'category_id': self.good_category.name}))
 
     	self.assertNotContains(response, '<div class="pagination"')
     	
@@ -115,7 +115,7 @@ class ViewProjectsForCategoryPaginatedTestCase(CustomTestCase):
     	save_n_projects_with_category(User.objects.get(username="bob"), 7, self.bad_category)    	
     
     def testPaginated(self):    	
-    	response = self.client.get(reverse('epic.categories.views.view_projects_for_category', kwargs={'category_id': self.good_category.id}))
+    	response = self.client.get(reverse('epic.categories.views.view_projects_for_category', kwargs={'category_id': self.good_category.name}))
 
     	self.assertNotContains(response, '<div class="pagination"')
     	
@@ -137,42 +137,42 @@ class ViewItemsForCategoryTestCase(CustomTestCase):
         
         self.view_all_items_url = reverse(
             'epic.categories.views.view_items_for_category',
-            kwargs={'category_id': self.category1.id})
+            kwargs={'category_id': self.category1.name})
         
         self.view_datasets_url = reverse(
             'epic.categories.views.view_datasets_for_category',
-            kwargs={'category_id': self.category1.id})
+            kwargs={'category_id': self.category1.name})
         
         self.view_projects_url = reverse(
             'epic.categories.views.view_projects_for_category',
-            kwargs={'category_id': self.category1.id})
+            kwargs={'category_id': self.category1.name})
         
         self.view_datarequests_url = reverse(
             'epic.categories.views.view_datarequests_for_category',
-            kwargs={'category_id': self.category1.id})
+            kwargs={'category_id': self.category1.name})
     
     def testInvalidCategory(self):
         invalid_all_items_for_category_url = reverse(
             'epic.categories.views.view_items_for_category',
-            kwargs={'category_id': 1337})
+            kwargs={'category_id': '1337'})
         all_items_response = self.client.get(invalid_all_items_for_category_url)
         self.assertStatusCodeIsAFailure(all_items_response.status_code)
         
         invalid_datasets_for_category_url = reverse(
             'epic.categories.views.view_datasets_for_category',
-            kwargs={'category_id': 1337})
+            kwargs={'category_id': '1337'})
         datasets_response = self.client.get(invalid_datasets_for_category_url)
         self.assertStatusCodeIsAFailure(datasets_response.status_code)
         
         invalid_projects_for_category_url = reverse(
             'epic.categories.views.view_projects_for_category',
-            kwargs={'category_id': 1337})
+            kwargs={'category_id': '1337'})
         projects_response = self.client.get(invalid_projects_for_category_url)
         self.assertStatusCodeIsAFailure(projects_response.status_code)
         
         invalid_datarequests_for_category_url = reverse(
             'epic.categories.views.view_datarequests_for_category',
-            kwargs={'category_id': 1337})
+            kwargs={'category_id': '1337'})
         datarequests_response = self.client.get(invalid_datarequests_for_category_url)
         self.assertStatusCodeIsAFailure(datarequests_response.status_code)
     
@@ -234,7 +234,7 @@ class CategoryTemplateTagsTestCase(CustomTestCase):
         self.view_categories_url = reverse('epic.categories.views.view_categories')
         self.view_all_items_url = reverse(
             'epic.categories.views.view_items_for_category',
-            kwargs={'category_id': self.category1.id})
+            kwargs={'category_id': self.category1.name})
         
         self.view_dataset_url = get_item_url(self.dataset, 'epic.datasets.views.view_dataset')
         self.view_project_url = get_item_url(self.project, 'epic.projects.views.view_project')

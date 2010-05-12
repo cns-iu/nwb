@@ -6,13 +6,10 @@ from epic.categories.constants import NO_CATEGORY_DESCRIPTION
 
 
 class Category(models.Model):
-    name = models.CharField(max_length=256, db_index=True)
+    name = models.CharField(max_length=256, unique=True)
     description = models.TextField(blank=True, null=True)
     created_at = models.DateTimeField(auto_now_add=True, db_index=True)
-    
-    class Meta:
-        unique_together = (('name', 'description',),)
-    
+        
     def __unicode__(self):
         return '%s' % self.name
     
