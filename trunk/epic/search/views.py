@@ -32,9 +32,9 @@ def search_all(request, query=None):
     display_form = SearchForm(initial={'q': query,}, load_all=True)
 
     if query:
-        data_requests = perform_search_for_item('DataRequest', query)
-        datasets = perform_search_for_item('DataSet', query)
-        projects = perform_search_for_item('Project', query)
+        data_requests = perform_search_for_item('DataRequest', query)[:3]
+        datasets = perform_search_for_item('DataSet', query)[:3]
+        projects = perform_search_for_item('Project', query)[:3]
         template_objects = {
             'data_requests': data_requests, 'datasets': datasets, 'projects': projects,
         }
@@ -47,8 +47,8 @@ def search_data_requests(request, query=None):
     display_form = SearchForm(initial={'q': query,}, load_all=True)
 
     if query is not None and query != '':
-        data_requests = perform_search_for_item('DataRequest', query)
-        template_objects = {'data_requests': data_requests,}
+        data_requests_page = paginate(perform_search_for_item('DataRequest', query), request.GET)
+        template_objects = {'data_requests_page': data_requests_page,}
     else:
         template_objects = {}
 
@@ -58,8 +58,8 @@ def search_datasets(request, query=None):
     display_form = SearchForm(initial={'q': query,}, load_all=True)
 
     if query is not None and query != '':
-        datasets = perform_search_for_item('DataSet', query)
-        template_objects = {'datasets': datasets,}
+        datasets_page = paginate(perform_search_for_item('DataSet', query), request.GET)
+        template_objects = {'datasets_page': datasets_page,}
     else:
         template_objects = {}
 
@@ -69,8 +69,8 @@ def search_projects(request, query=None):
     display_form = SearchForm(initial={'q': query,}, load_all=True)
 
     if query is not None and query != '':
-        projects = perform_search_for_item('Project', query)
-        template_objects = {'projects': projects,}
+        projects_page = paginate(perform_search_for_item('Project', query), request.GET)
+        template_objects = {'projects_page': projects_page,}
     else:
         template_objects = {}
 
@@ -92,76 +92,3 @@ def generic_search(request, query, template_objects, template):
             template,
             {'form': display_form, 'query': query,},
             context_instance=RequestContext(request))
-
-#SERVELET_URL = 'http://localhost:8182/'
-#
-#def search(request):
-#    # TODO:  TEST THIS!  Test 1 result and test many results
-#    responseData = {}
-#    error_message = None
-#    datasets = None
-#    projects = None
-#    datarequests = None
-#    
-#    SEARCH_PARAM = 'search_string'
-#    search_string = None
-#    
-#    if SEARCH_PARAM in request.POST:
-#        search_string = request.POST[SEARCH_PARAM]
-#    elif SEARCH_PARAM in request.GET:
-#        search_string = request.GET[SEARCH_PARAM]
-#      
-#    if search_string:
-#        try:
-#            # The java needs spaces to be +s
-#            search_string = search_string.replace(" ", "+")
-#            
-## Uncomment to use servlet            
-#            raw_data = urllib.urlopen(SERVELET_URL + 
-#                                      '?search_string=' + 
-#                                      search_string)
-#
-##            raw_data = urllib.urlopen('http://epic.slis.indiana.edu/fake.json')
-#            json_object = simplejson.loads(raw_data.read())
-#            
-#            if 'result' in json_object:
-#                item_ids = []
-#                scores = {}
-#                
-#                for result in json_object['result']:
-#                    item_id = result['item_id']
-#                    score = result['item_score']
-#                    
-#                    item_ids.append(item_id)
-#                    scores['%s' % item_id] = score
-#                
-#                datasets = get_specifics_from_item_ids(DataSet, item_ids)
-#                _apply_scores_to_results(datasets, scores)
-#                
-#                projects_from_search = \
-#                    get_specifics_from_item_ids(Project, item_ids)
-#                projects = projects_from_search
-#                
-#                _apply_scores_to_results(projects, scores)
-##                projects_from_datasets = \
-##                    get_projects_containing_datasets(datasets)
-##                projects = projects_from_search | projects_from_datasets
-#                
-#                datarequests = \
-#                    get_specifics_from_item_ids(DataRequest, item_ids)
-#                _apply_scores_to_results(datarequests, scores)
-#        except IOError:    
-#            error_message = 'There is a problem with the search, ' + \
-#                'please try again later.'
-#        
-#    return render_to_response('search/view_search_results.html', 
-#                              {'datasets': datasets,
-#                               'projects': projects,
-#                               'datarequests': datarequests,
-#                               'search_string': search_string,
-#                               'error_message': error_message},
-#                              context_instance=RequestContext(request))
-#
-#def _apply_scores_to_results(results, scores):
-#    for result in results:
-#        result.score = scores['%s' % result.id]

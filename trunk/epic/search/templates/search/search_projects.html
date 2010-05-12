@@ -32,9 +32,10 @@
     <span class="highlight">Search Results for "{{ query }}"</span>
 
     <h1>Projects</h1>
-    {% if projects %}
-      [<a href="{% url epic.projects.views.view_projects %}">view more</a> projects]
-      {% project_list projects %}
+    {% if projects_page.object_list %}
+      {% pagination projects_page %}
+      {% project_list projects_page.object_list %}
+      {% pagination projects_page %}
     {% else %}
       <p>No projects were found.</p>
     {% endif %}

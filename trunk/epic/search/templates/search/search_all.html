@@ -32,9 +32,9 @@
     <span class="highlight">Search Results for "{{ query }}"</span>
 
     <h1>Data Requests</h1>
-    {% if datarequests %}
+    {% if data_requests %}
       [<a href="{% url data-requests-query-search query=query %}">view more</a> data requests]
-      {% datarequest_list datarequests %}
+      {% datarequest_list data_requests %}
       {# TODO: Just use datarequest_list outside of if because it does the check itself. #}
     {% else %}
       <p>No data requests were found.</p>

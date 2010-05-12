@@ -32,9 +32,10 @@
     <span class="highlight">Search Results for "{{ query }}"</span>
 
     <h1>Data Requests</h1>
-    {% if datarequests %}
-      [<a href="{% url epic.datarequests.views.view_datarequests %}">view more</a> data requests]
-      {% datarequest_list datarequests %}
+    {% if data_requests_page.object_list %}
+      {% pagination data_requests_page %}
+      {% datarequest_list data_requests_page.object_list %}
+      {% pagination data_requests_page %}
     {% else %}
       <p>No data requests were found.</p>
     {% endif %}

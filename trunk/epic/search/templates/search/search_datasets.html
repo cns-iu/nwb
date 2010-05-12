@@ -32,7 +32,13 @@
     <span class="highlight">Search Results for "{{ query }}"</span>
 
     <h1>Datasets</h1>
-    {% dataset_list datasets %}
+    {% if datasets_page.object_list %}
+      {% pagination datasets_page %}
+      {% dataset_list datasets_page.object_list %}
+      {% pagination datasets_page %}
+    {% else %}
+      <p>No datasets were found.</p>
+    {% endif %}
   {% endif %}
 {% endblock %}
 
