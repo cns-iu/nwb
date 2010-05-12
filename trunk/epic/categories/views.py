@@ -19,7 +19,10 @@ from epic.projects.util.util import *
 def view_categories(request):
     categories = Category.objects.all()
     
-    return render_to_response('categories/view_categories.html', {'categories': categories})
+    return render_to_response(
+        'categories/view_categories.html',
+        {'categories': categories},
+        context_instance=RequestContext(request))
 
 def view_items_for_category(request, category_id):
     category = get_object_or_404(Category, pk=category_id)
@@ -41,10 +44,10 @@ def view_datasets_for_category(request, category_id):
     category = get_object_or_404(Category, pk=category_id)
     datasets_page = paginate(_get_datasets_for_category(category), request.GET)    
     
-    return render_to_response('categories/view_datasets.html', 
-                              {'category': category,
-							   'datasets_page': datasets_page},
-                               context_instance=RequestContext(request))
+    return render_to_response(
+        'categories/view_datasets.html', 
+        {'category': category, 'datasets_page': datasets_page},
+        context_instance=RequestContext(request))
 
 def view_projects_for_category(request, category_id):
     category = get_object_or_404(Category, pk=category_id)
@@ -70,7 +73,9 @@ def _get_datasets_for_category(category):
 def _get_projects_for_category(category):
     datasets = _get_datasets_for_category(category)
     projects_from_datasets = get_projects_containing_datasets(datasets)
-    projects_from_category = Project.objects.active().filter(category=category).order_by('-created_at').distinct()
+    projects_from_category = \
+        Project.objects.active().filter(category=category).order_by('-created_at').distinct()
+
     return (projects_from_datasets | projects_from_category).order_by('-created_at')
 
 def _get_datarequests_for_category(category):

@@ -65,7 +65,7 @@ def confirm_delete_project(request, item_id, slug):
         return HttpResponseRedirect(view_project_url)
     
     return render_to_response(
-        'projects/confirm_delete_project.html', 
+        'projects/confirm_delete_project.html',
         {'project': project,},
         context_instance=RequestContext(request))
 

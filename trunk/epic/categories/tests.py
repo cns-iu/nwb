@@ -232,7 +232,6 @@ class CategoryTemplateTagsTestCase(CustomTestCase):
         self.datarequest = DataRequest.objects.active()[0]
         
         self.view_categories_url = reverse('epic.categories.views.view_categories')
-        
         self.view_all_items_url = reverse(
             'epic.categories.views.view_items_for_category',
             kwargs={'category_id': self.category1.id})

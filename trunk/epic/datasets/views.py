@@ -562,9 +562,10 @@ def rate_dataset(request, item_id, input_rating=None, slug=None):
             else:
                 pass
                 
-        return render_to_response('datasets/rate_dataset.html', 
-                                  {'form':form, 'item':dataset,}, 
-                                  context_instance=RequestContext(request))
+        return render_to_response(
+            'datasets/rate_dataset.html',
+            {'form': form, 'item': dataset,},
+            context_instance=RequestContext(request))
     
 @login_required
 @active_user_required
@@ -595,9 +596,10 @@ def tag_dataset(request, item_id, slug=None):
         current_tags = Tagging.objects.get_edit_string(item=dataset,user=request.user)
         form = TagDataSetForm(initial={'tags': current_tags})
         
-        return render_to_response('datasets/tag_dataset.html',
-                                  {'item_id': dataset.id, 'form': form,}, 
-                                  context_instance=RequestContext(request))
+        return render_to_response(
+            'datasets/tag_dataset.html',
+            {'item_id': dataset.id, 'form': form,},
+            context_instance=RequestContext(request))
     else:
         form = TagDataSetForm(request.POST)
 
@@ -606,12 +608,13 @@ def tag_dataset(request, item_id, slug=None):
             tags = form.cleaned_data['tags']
             Tagging.objects.update_tags(tags, item=dataset, user=request.user)
             
-            return HttpResponseRedirect(reverse('epic.datasets.views.view_dataset',
-                                                kwargs={'item_id': dataset.id, 'slug': slug,}))
+            return HttpResponseRedirect(reverse(
+                'epic.datasets.views.view_dataset', kwargs={'item_id': dataset.id, 'slug': slug,}))
         else:
-            return render_to_response('datasets/tag_dataset.html', 
-                                      {'form':form,'item':dataset}, 
-                                      context_instance=RequestContext(request))
+            return render_to_response(
+                'datasets/tag_dataset.html',
+                {'form': form, 'item': dataset},
+                context_instance=RequestContext(request))
 @login_required
 @active_user_required
 def delete_dataset_files(request, item_id, slug):
@@ -619,23 +622,26 @@ def delete_dataset_files(request, item_id, slug):
     dataset = DataSet.objects.get(pk=item_id)
     user = request.user
     if request.method != 'POST':
-        return render_to_response('datasets/confirm_delete_dataset_files.html', 
-                                  {'dataset':dataset}, 
-                                  context_instance=RequestContext(request))
+        return render_to_response(
+            'datasets/confirm_delete_dataset_files.html',
+            {'dataset': dataset},
+            context_instance=RequestContext(request))
     else:
         try:
              # Make sure the user confirmed the deletion.
             request.POST['confirmed']
         except MultiValueDictKeyError:
-            return render_to_response('datasets/confirm_delete_dataset_files.html', 
-                                      {'dataset':dataset}, 
-                                      context_instance=RequestContext(request))
+            return render_to_response(
+                'datasets/confirm_delete_dataset_files.html', 
+                {'dataset': dataset}, 
+                context_instance=RequestContext(request))
         if user == dataset.creator:
             for file in dataset.files.all():
                  file.delete()
         
-        return HttpResponseRedirect(reverse('epic.datasets.views.view_dataset',
-                                            kwargs={'item_id': dataset.id, 'slug': dataset.slug,}))
+        return HttpResponseRedirect(reverse(
+            'epic.datasets.views.view_dataset',
+            kwargs={'item_id': dataset.id, 'slug': dataset.slug,}))
     
 def _get_geolocs_from_formset(formset, key='add_location'):
     """Return the proper 'Geoloc's from a formset.

@@ -22,11 +22,11 @@ from epic.search import perform_search_for_item
 
 
 def get_search(request):
-    # TODO: Just redirect to search_all.
-    if 'q' in request.GET:
-        return search_all(request, request.GET.get('q'))
+    if 'q' in request.GET and request.GET.get('q'):
+        return HttpResponseRedirect(reverse(
+            'all-query-search', kwargs={'query': request.GET.get('q')}))
     else:
-        return search_all(request, '')
+        return HttpResponseRedirect(reverse('all-empty-search'))
 
 def search_all(request, query=None):
     display_form = SearchForm(initial={'q': query,}, load_all=True)
@@ -86,9 +86,7 @@ def generic_search(request, query, template_objects, template):
             render_to_response_data[key] = template_objects[key]
 
         return render_to_response(
-            template,
-            render_to_response_data,
-            context_instance=RequestContext(request))
+            template, render_to_response_data, context_instance=RequestContext(request))
     else:
         return render_to_response(
             template,

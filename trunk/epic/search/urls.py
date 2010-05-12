@@ -3,7 +3,7 @@ from django.conf.urls.defaults import *
 
 urlpatterns = patterns('epic.search.views',
     # All
-    (r'^form/$', 'get_search'),
+    url(r'^form/$', 'get_search', name='form-search'),
     url(r'^all/$', 'search_all', kwargs={'query': ''}, name='all-empty-search'),
     url(r'^all/(?P<query>.+)/$', 'search_all', name='all-query-search'),
     # Data Requests

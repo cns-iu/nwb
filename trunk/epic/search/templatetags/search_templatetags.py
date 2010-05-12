@@ -5,9 +5,9 @@ from django.template import RequestContext
 
 register = template.Library()
 
-@register.inclusion_tag('templatetags/search_box.html')
-def search_box(search_string=None):
-    return {'search_string': search_string}
+@register.inclusion_tag('templatetags/search_box.html', takes_context=True)
+def search_box(context, search_string=None):
+    return {'search_string': search_string, 'search_box': context['search_box'],}
 
 @register.inclusion_tag('templatetags/submenu.html')
 def search_submenu(query, active=None):

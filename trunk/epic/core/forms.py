@@ -28,7 +28,6 @@ def password_too_short_message(password):
 def username_already_used_message(username):
     return u"The username '%s' was already registered to an account." % username
 
-
 class RegistrationForm(forms.Form):
     FIRST_AND_LAST_NAME_HELP_TEXT = 'Note: This may be displayed to other users on the site.'
 

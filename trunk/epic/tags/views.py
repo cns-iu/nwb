@@ -23,9 +23,7 @@ def index(request):
     count_tag_list = Tagging.objects.get_tags()
 
     return render_to_response(
-        'tags/index.html',
-        {'tags': count_tag_list},
-        context_instance=RequestContext(request))
+        'tags/index.html', {'tags': count_tag_list}, context_instance=RequestContext(request))
 
 def view_items_for_tag(request, tag_name):
     tags = Tagging.objects.filter(tag=tag_name)

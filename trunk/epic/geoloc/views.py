@@ -1,15 +1,22 @@
 from django.contrib.auth import logout
 from django.contrib.auth.decorators import login_required
-from django.contrib.auth.models import User, UserManager
+from django.contrib.auth.models import User
+from django.contrib.auth.models import UserManager
 from django.core.urlresolvers import reverse
-from django.http import HttpResponseRedirect, HttpResponse
-from django.shortcuts import render_to_response, get_object_or_404, get_list_or_404
-from django.template import RequestContext, Context, loader
+from django.http import HttpResponseRedirect
+from django.http import HttpResponse
+from django.shortcuts import  get_list_or_404
+from django.shortcuts import get_object_or_404
+from django.shortcuts import render_to_response
+from django.template import Context
+from django.template import loader
+from django.template import RequestContext
 from django.utils import simplejson
 from epic.geoloc.models import GeoLoc
-from epic.geoloc.utils import get_best_location, CouldNotFindLocation
-from geopy.geocoders.base import GeocoderError, GeocoderResultError
-
+from epic.geoloc.utils import get_best_location
+from epic.geoloc.utils import CouldNotFindLocation
+from geopy.geocoders.base import GeocoderError
+from geopy.geocoders.base import GeocoderResultError
 
 
 def geoloc_get_best_location(request):	

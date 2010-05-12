@@ -21,7 +21,7 @@ def view_datarequests(request):
     datarequests_page = paginate(datarequests, request.GET, PER_PAGE)
     
     return render_to_response(
-        'datarequests/view_datarequests.html', 
+        'datarequests/view_datarequests.html',
         {'datarequests_page': datarequests_page},
         context_instance=RequestContext(request))
 
@@ -30,9 +30,10 @@ def view_datarequest(request, item_id, slug):
     form = PostCommentForm()
     user = request.user
     
-    return render_to_response('datarequests/view_datarequest.html', 
-                              {'datarequest': datarequest, 'form': form},
-                               context_instance=RequestContext(request))
+    return render_to_response(
+        'datarequests/view_datarequest.html',
+        {'datarequest': datarequest, 'form': form},
+        context_instance=RequestContext(request))
 
 @login_required
 @active_user_required
@@ -59,9 +60,10 @@ def new_datarequest(request):
             
             return HttpResponseRedirect(view_datarequest_url)
     
-    return render_to_response('datarequests/new_datarequest.html', 
-                              {'form': form},
-                              context_instance=RequestContext(request))
+    return render_to_response(
+        'datarequests/new_datarequest.html',
+        {'form': form},
+        context_instance=RequestContext(request))
 
 @login_required
 @active_user_required
@@ -97,9 +99,10 @@ def edit_datarequest(request, item_id, slug):
                 
                 return HttpResponseRedirect(view_datarequest_url)
         
-        return render_to_response('datarequests/edit_datarequest.html',
-                                  {'form': form, 'datarequest': datarequest},
-                                  context_instance=RequestContext(request))
+        return render_to_response(
+            'datarequests/edit_datarequest.html',
+            {'form': form, 'datarequest': datarequest},
+            context_instance=RequestContext(request))
     
 @login_required
 @active_user_required
@@ -155,8 +158,7 @@ def choose_fulfilling_item(request, fulfilling_item_id):
     requests = DataRequest.objects.active(). \
         filter(status='U', creator=user).order_by('-created_at')
     
-    return render_to_response('datarequests/choose_fulfilling_item.html',
-                              {'item': item,
-                               'specific': item.specific,
-                               'requests': requests},
-                               context_instance=RequestContext(request))
+    return render_to_response(
+        'datarequests/choose_fulfilling_item.html',
+        {'item': item, 'specific': item.specific, 'requests': requests},
+        context_instance=RequestContext(request))

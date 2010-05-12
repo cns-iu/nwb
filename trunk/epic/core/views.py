@@ -202,13 +202,15 @@ def register(request):
         else:
             return render_to_response(
                 'core/register.html',
-                {REGISTRATION_FORM_NAME: form}, context_instance=RequestContext(request))
+                {REGISTRATION_FORM_NAME: form},
+                context_instance=RequestContext(request))
     else:
         form = RegistrationForm()
 
         return render_to_response(
             'core/register.html',
-            {REGISTRATION_FORM_NAME: form}, context_instance=RequestContext(request))
+            {REGISTRATION_FORM_NAME: form},
+            context_instance=RequestContext(request))
 
 def activate(request, activation_key):
     profile = get_object_or_404(Profile, activation_key=activation_key)
