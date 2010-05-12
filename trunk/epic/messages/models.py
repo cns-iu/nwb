@@ -3,7 +3,7 @@ from django.contrib.auth.models import User
 from django.core.urlresolvers import reverse
 
 class Message(models.Model):
-	MAX_SUBJECT_LENGTH = 128
+	MAX_SUBJECT_LENGTH = 256
 	MAX_MESSAGE_LENGTH = 16384
 	
 	recipient = models.ForeignKey(User, related_name="recipient")
