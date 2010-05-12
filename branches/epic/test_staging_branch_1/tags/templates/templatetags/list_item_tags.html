@@ -1,0 +1,167 @@
+{% load tags_templatetags %}
+<ul class="taglist" id="taglist">
+  {% if tags %}
+    {# TODO: Better logic here?  Or rather, left-bordered CSS instead of right-bordered! #}
+      {% for tag in tags %}
+        {% if not forloop.last %}
+          <li>
+            <a href="{{ tag.get_tag_url }}" id="taglist_name_{{ tag.tag }}">
+              {{ tag.tag }}
+            </a>
+            {% if show_addtag %}
+              {% ifequal user tag.user %}
+                <a class="removelink" id="taglist_remove_{{ tag.tag }}" href="#" onclick="javascript:deleteTagWithConfirmation('{{ tag.tag }}'); return false;">x</a>
+              {% else %}
+                {% ifequal user item.creator %}
+                  <a class="removelink" id="taglist_remove_{{ tag.tag }}" href="#" onclick="javascript:deleteTagWithConfirmation('{{ tag.tag }}'); return false;">x</a>
+                {% endifequal %}
+              {% endifequal %}
+            {% endif %}
+          </li>
+        {% else %}
+          <li class="lasttag">
+            <a href="{{ tag.get_tag_url }}" id="taglist_name_{{ tag.tag }}">
+              {{ tag.tag }}
+            </a>
+            {% if show_addtag %}
+              {% ifequal user tag.user %}
+                <a class="removelink" id="taglist_remove_{{ tag.tag }}" href="#" onclick="javascript:deleteTagWithConfirmation('{{ tag.tag }}'); return false;">x</a>
+              {% else %}
+                {% ifequal user item.creator %}
+                  <a class="removelink" id="taglist_remove_{{ tag.tag }}" href="#" onclick="javascript:deleteTagWithConfirmation('{{ tag.tag }}'); return false;">x</a>
+                {% endifequal %}
+              {% endifequal %}
+            {% endif %}
+          </li>
+        {% endif %}
+      {% endfor %}
+    {% else %}
+      <li class="lasttag">No Tags</li>
+    {% endif %}
+</ul>
+  {% if user.is_authenticated and show_addtag %}
+  	<span id="add_tag">
+      <a href="#" class="lasttag" onclick="javascript:showAddTagsBox('add_tag'); return false;">
+        <img src="/media/core/images/add-transparent_34_34.gif" width"49" height="21" />
+      </a>
+    </span>
+  {% endif %}
+
+<script type="text/javascript">
+var ADD_TAGS__URL = '{% url tags.views.add_tags_and_return_successful_tag_names %}';
+var DELETE_TAG__URL = '{% url tags.views.delete_tag %}';
+var ITEM_TO_BE_TAGGED = '{{ item.id }}';
+</script>
+<script type="text/javascript">
+/**
+ * This script requires that the following variables are defined:
+	 ADD_TAGS__URL -- the post url for adding tags
+	 DELETE_TAG__URL -- the post url for deleting tags
+	 ITEM_TO_BE_TAGGED -- the id for the item that is tagged 
+ */
+ 
+// Add or delete tags using AJAX
+		
+//- Adding tags -
+
+function addTagsFromUserInput(){
+	addTags(getTagsFromUserInput());
+	clearUserInput();
+	hideAddTagsBox();
+}
+
+function addTags(tag_names_to_add){
+	
+	var data = {};
+	data.unparsed_tag_names = tag_names_to_add;
+	data.item_id = ITEM_TO_BE_TAGGED;
+	
+	jQuery.post(ADD_TAGS__URL, data,
+    	function(responseData){
+			if (responseData.success) {
+				var added_tag_names = responseData.success;
+				for(var i = 0; i < added_tag_names.length; i++){
+					var added_tag_name = added_tag_names[i];
+					showTag(added_tag_name);
+				}
+			}else{
+				displayErrorMesssage(responseData.failure);
+			}
+		}
+		, 'json');
+}
+
+//- Deleting tags -
+
+function deleteTagWithConfirmation(tag_name){
+	var confirmed = confirm("Delete selected tag?");
+	if(confirmed){
+  		deleteTag(tag_name);
+   	}
+	return false;
+}
+
+function deleteTag(tag_name){
+
+	var data = {};
+	data.tag_name = tag_name;
+	data.item_id = ITEM_TO_BE_TAGGED;
+	
+	jQuery.post(DELETE_TAG__URL, data, 
+    	function(responseData){
+			if (responseData.success) {
+				hideTag(data.tag_name);
+			}else{
+				displayErrorMesssage(responseData.failure);
+			}
+		}
+		, 'json');
+}
+
+function displayErrorMesssage(message){
+	jQuery('#error-message').html(message + jQuery('#error-message').html());
+}
+
+//----- Tag List -----
+// The taglist is the display on the page of all the tag names
+
+function showTag(tag_name){
+	//TODO: This should not hard code the links and stuff.
+	var tag_name_html = '<a id="taglist_name_' + tag_name +'" href="/tags/' + tag_name +'/">' + tag_name + '</a>';
+	var tag_remove_html = '<a id="taglist_remove_' + tag_name + '" class="removelink" href="" onclick="javascript:deleteTagWithConfirmation(\'' + tag_name + '\'); return false;">x</a>';
+	var tag_html = '<li>' + tag_name_html + tag_remove_html + '</li>';
+
+	jQuery('#taglist').append(tag_html);
+}
+
+function hideTag(tag_name){
+	jQuery('#taglist_name_' + tag_name).parent().hide()
+}
+
+//------ Add Tag Box -----
+// The AddTagsBox is the span that contains the input text field and the input submit field
+
+function showAddTagsBox(parent_id){
+	var addTagsBox = jQuery('#add_tags_box');
+
+	if (addTagsBox.length != 0){
+		addTagsBox.show();
+	}else{
+		var tagBox_html = '<span id="add_tags_box"><input type="text" id="add_tags_input" name="add_tags" /><input type="submit" value="Submit" onclick="javascript:addTagsFromUserInput(\''+ITEM_TO_BE_TAGGED+'\'); return false;" /></span>';
+		jQuery('#' + parent_id).append(tagBox_html);
+	}
+}
+
+function hideAddTagsBox(){
+	var addTagsBox = jQuery('#add_tags_box');
+	addTagsBox.hide();
+}
+
+function getTagsFromUserInput(){
+	return document.getElementById('add_tags_input').value;
+}
+
+function clearUserInput(){
+	document.getElementById('add_tags_input').value = '';
+}
+</script>
