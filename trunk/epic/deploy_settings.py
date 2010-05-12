@@ -13,7 +13,6 @@ MEDIA_ROOT = '/home/epic_website/epic_data/'
 
 csrfProtect()
 
-log_settings.safeSetup('/home/epic_website/epic_data/server.log')
 
 
 TEMPLATE_DIRS = (
