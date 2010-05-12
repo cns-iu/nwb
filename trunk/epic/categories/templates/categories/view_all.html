@@ -13,7 +13,7 @@
   <span class="highlight">Category > {{ category.name }}</span>
   <p>Description: {{ category.description }}</p>
   
-  <h1>Recent data requests</h1>
+  <h1>Recent Data Requests</h1>
   {% if datarequests %}
     [<a href="{% url categories.views.view_datarequests_for_category category.id %}">view more</a> recent data requests in this category]
     {% datarequest_list_short datarequests %}
@@ -21,15 +21,15 @@
    <p>There are no datarequests in this category.</p>
   {% endif %}
   
-  <h1>Recent data sets</h1>
+  <h1>Recent Datasets</h1>
   {% if datasets %}
-    [<a href="{% url categories.views.view_datasets_for_category category.id %}">view more</a> recent data sets in this category]
+    [<a href="{% url categories.views.view_datasets_for_category category.id %}">view more</a> recent datasets in this category]
   	{% dataset_list datasets %}
   {% else %}
-    <p>There are no data sets in this category.</p>
+    <p>There are no datasets in this category.</p>
   {% endif %}
     
-  <h1>Recent projects</h1>
+  <h1>Recent Projects</h1>
   
   {% if projects %}
     [<a href="{% url categories.views.view_projects_for_category category.id %}">view more</a> recent projects in this category]

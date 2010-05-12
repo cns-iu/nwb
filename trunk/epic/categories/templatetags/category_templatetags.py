@@ -1,4 +1,5 @@
 from django import template
+from django.core.urlresolvers import reverse
 
 from epic.categories.models import Category
 
@@ -18,4 +19,15 @@ def category_link(item):
 
 @register.inclusion_tag('templatetags/submenu.html')
 def category_submenu(category, active=None):
-    return {'category': category, 'active': active}
+    return {
+        'active': active,
+        'header': "Browse by category in",
+        'all_url': reverse(
+            'view-items-for-category', kwargs={'category_id': category.id}),
+        'data_requests_url': reverse(
+            'view-datarequests-for-category', kwargs={'category_id': category.id}),
+        'datasets_url': reverse(
+            'view-datasets-for-category', kwargs={'category_id': category.id}),
+        'projects_url': reverse(
+            'view-projects-for-category', kwargs={'category_id': category.id}),
+    }

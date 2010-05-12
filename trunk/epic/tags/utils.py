@@ -7,6 +7,7 @@ from django.utils.translation import ugettext as _
 
 from common import LOGARITHMIC, LINEAR, Tag
 
+
 # Huge thanks go to http://code.google.com/p/django-tagging/
 # under MIT license found here: http://www.opensource.org/licenses/mit-license.php
 
@@ -251,9 +252,9 @@ def calculate_cloud(model, steps=5, distribution=LOGARITHMIC):
 	>>> user = User.objects.create_user("billy", "billybob@gmail.com", "thornton")
 	>>> user
 	<User: billy>
-	>>> data_set = DataSet(creator=user, name="Data Set", description="Description!", created_at=date)
+	>>> data_set = DataSet(creator=user, name="Dataset", description="Description!", created_at=date)
 	>>> data_set
-	<DataSet: Dataset Data Set>
+	<DataSet: Dataset Dataset>
 	>>> data_set.save()
 	>>> tags = "tag1 tag2 tag3"
 	>>> data_set.update_tags(tags, user=user)

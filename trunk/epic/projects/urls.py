@@ -2,7 +2,7 @@ from django.conf.urls.defaults import *
 
 
 urlpatterns = patterns('epic.projects.views',
-    (r'^$', 'view_projects'),
+    url(r'^$', 'view_projects', name='browse-projects'),
     (r'^list/(?P<user_id>.+)/$', 'view_user_project_list'),
     (r'^new/$', 'create_project'),
     (r'^(?P<item_id>\d+)/(?P<slug>[-\w]+)/$', 'view_project'),

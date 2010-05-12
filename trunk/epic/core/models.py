@@ -37,14 +37,13 @@ from django.db import models
 from django.template.defaultfilters import slugify
 from django.utils.hashcompat import sha_constructor
 
-from epic.categories.constants import NO_CATEGORY, NO_CATEGORY_DESCRIPTION
+from epic.categories.constants import NO_CATEGORY
+from epic.categories.constants import NO_CATEGORY_DESCRIPTION
 from epic.categories.models import Category
+from epic.categories.models import default_category
 from epic.core.util.model_exists_utils import profile_exists
 from epic.core.util.postmarkup import PostMarkup
 
-
-def _default_category():
-    return Category.objects.get_or_create(name=NO_CATEGORY, defaults={'description': NO_CATEGORY_DESCRIPTION})[0] #the second result is whether or not a new object was created
 
 class Item(models.Model):
     MAX_ITEM_NAME_LENGTH = 256
@@ -63,29 +62,33 @@ class Item(models.Model):
     rendered_description = models.TextField(blank=True, null=True)
     tagless_description = models.TextField(blank=True, null=True)
     
-    category = models.ForeignKey(Category, default=_default_category)
+    category = models.ForeignKey(Category, default=default_category)
     
     slug = models.SlugField()
     created_at = models.DateTimeField(auto_now_add=True, db_index=True)
     is_active = models.BooleanField(default=False)
     
-    #no @models.permalink because the .specific versions already do it
+    #no @models.permalink because the .specific versions already do it.
     def get_absolute_url(self):
         return self.specific.get_absolute_url()
     
-    # TODO: Fix this terrible hack
+    # TODO: Fix this terrible hack.
     def is_dataset(self):
-        return type(self.specific).__name__ == 'DataSet'
+        return self.specific_name == 'DataSet'
     
-    # TODO: Fix this terrible hack
+    # TODO: Fix this terrible hack.
     def is_datarequest(self):
-        return type(self.specific).__name__ == 'DataRequest'
+        return self.specific_name == 'DataRequest'
     
-    # TODO: Fix this terrible hack
+    # TODO: Fix this terrible hack.
     def is_project(self):
-        return type(self.specific).__name__ == 'Project'
-    
-    # TODO: Fix this terrible hack
+        return self.specific_name == 'Project'
+
+    # TODO: Fix this terrible hack.
+    def _specific_name(self):
+        return type(self.specific).__name__
+
+    # TODO: Fix this terrible hack.
     def _specific(self):
         possibilities = ['dataset', 'datarequest', 'project']
 
@@ -95,6 +98,7 @@ class Item(models.Model):
 
         raise Exception('No subclass found for %s' % (self))
 
+    specific_name = property(_specific_name)
     specific = property(_specific)
 
     def save(self, *args, **kwargs):
@@ -103,7 +107,7 @@ class Item(models.Model):
         self.slug = slugify(self.name)
         
         if not self.category:
-            self.category = Category.objects.get(name=NO_CATEGORY)
+            self.category = default_category()
 
         super(Item, self).save()
 

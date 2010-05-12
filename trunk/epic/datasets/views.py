@@ -1,5 +1,11 @@
+import re
+import tarfile
+import tempfile
+import zipfile
+
 from datetime import datetime
 from decimal import Decimal
+
 from django.conf import settings
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
@@ -8,59 +14,73 @@ from django.core.servers.basehttp import FileWrapper
 from django.core.urlresolvers import reverse
 from django.forms.formsets import formset_factory
 from django.forms.util import ErrorList
-from django.http import HttpResponse, HttpResponseRedirect
-from django.shortcuts import get_list_or_404, get_object_or_404, render_to_response
+from django.http import HttpResponse
+from django.http import HttpResponseRedirect
+from django.shortcuts import get_list_or_404
+from django.shortcuts import get_object_or_404
+from django.shortcuts import render_to_response
 from django.template import RequestContext
 from django.template.defaultfilters import slugify
 from django.utils import simplejson
 from django.utils.datastructures import MultiValueDictKeyError
+
 from epic.comments.forms import PostCommentForm
 from epic.core.models import AcademicReference
 from epic.core.models import Author
 from epic.core.models import Item
 from epic.core.util import active_user_required
 from epic.core.util.view_utils import *
-from epic.datasets.forms import AcademicReferenceFormSet, AuthorFormSet, EditDataSetForm, \
-	GeoLocationFormSet, NewDataSetForm, RatingDataSetForm, RemoveGeoLocationFormSet, TagDataSetForm, \
-	UploadReadMeForm
-from epic.datasets.models import DataSet, DataSetFile, RATING_SCALE
+from epic.datasets.forms import AcademicReferenceFormSet
+from epic.datasets.forms import AuthorFormSet
+from epic.datasets.forms import EditDataSetForm
+from epic.datasets.forms import GeoLocationFormSet
+from epic.datasets.forms import NewDataSetForm
+from epic.datasets.forms import RatingDataSetForm
+from epic.datasets.forms import RemoveGeoLocationFormSet
+from epic.datasets.forms import TagDataSetForm
+from epic.datasets.forms import UploadReadMeForm
+from epic.datasets.models import DataSet
+from epic.datasets.models import DataSetFile
+from epic.datasets.models import RATING_SCALE
 from epic.geoloc.models import GeoLoc
-from epic.geoloc.utils import CouldNotFindLocation, get_best_location, parse_geolocation
+from epic.geoloc.utils import CouldNotFindLocation
+from epic.geoloc.utils import get_best_location
+from epic.geoloc.utils import parse_geolocation
+from epic.search import perform_search_for_item
 from epic.tags.models import Tagging
-import epic.core.util.view_utils
-import re
-import tarfile
-import tempfile
-import zipfile
 
+import epic.core.util.view_utils
 
 
 PER_PAGE = epic.core.util.view_utils.DEFAULT_OBJECTS_PER_PAGE
+
 def view_datasets(request):
     datasets = DataSet.objects.active().order_by('-created_at')
-    
     datasets_page = paginate(datasets, request.GET, PER_PAGE)
     
-    return render_to_response('datasets/view_datasets.html',
-                              {'datasets_page': datasets_page},
-                              context_instance=RequestContext(request))
+    return render_to_response(
+        'datasets/view_datasets.html',
+        {'datasets_page': datasets_page,},
+        context_instance=RequestContext(request))
 
 def view_dataset(request, item_id=None, slug=None):
     dataset = get_object_or_404(DataSet, pk=item_id)
     form = PostCommentForm()
     user = request.user
     
-    return render_to_response('datasets/view_dataset.html', 
-                              {'dataset': dataset, 'form': form},
-                              context_instance=RequestContext(request))
+    return render_to_response(
+        'datasets/view_dataset.html', 
+        {'dataset': dataset, 'form': form},
+        context_instance=RequestContext(request))
 
 def view_user_dataset_list(request, user_id=None):
-
     requested_user = get_object_or_404(User, pk=user_id)
     datasets = DataSet.objects.active().filter(creator=user_id).order_by('-created_at')
-    return render_to_response('datasets/view_user_dataset_list.html', 
-                              {'datasets': datasets, 'requested_user':requested_user,},
-                              context_instance=RequestContext(request))
+
+    return render_to_response(
+        'datasets/view_user_dataset_list.html', 
+        {'datasets': datasets, 'requested_user': requested_user,},
+        context_instance=RequestContext(request))
 
 @login_required
 @active_user_required
@@ -80,14 +100,11 @@ def create_dataset(request):
                                                prefix='reference')
         author_formset = AuthorFormSet(request.POST, prefix='author')
         
-        if form.is_valid() and ref_formset.is_valid() \
-                and author_formset.is_valid():
+        if form.is_valid() and ref_formset.is_valid() and author_formset.is_valid():
             new_dataset = _save_new_dataset(form, request.user)
             _save_previous_version(form, new_dataset)
             _save_tags(form, new_dataset, request.user)
-            _save_geolocs(geoloc_add_formset, 
-                          geoloc_remove_formset, 
-                          new_dataset)
+            _save_geolocs(geoloc_add_formset, geoloc_remove_formset, new_dataset)
             _save_references(ref_formset, new_dataset)
             _save_authors(author_formset, new_dataset)
             

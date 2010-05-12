@@ -154,7 +154,10 @@ class TagManager(models.Manager):
         from utils import calculate_cloud
         
         return calculate_cloud(Tagging, steps, distribution)
-    
+
+    def all(self):
+        return super(TagManager, self).all()
+
 #TODO: Make it possible to view a tag(?? or not)
 class Tagging(models.Model):
     """
@@ -163,8 +166,9 @@ class Tagging(models.Model):
     objects = TagManager()
     
     tag = models.CharField(max_length=Item.MAX_ITEM_INDIVIDUAL_TAG_LENGTH)
-    user = models.ForeignKey(User)
-    item = models.ForeignKey(Item)
+    user = models.ForeignKey(User, related_name='tags')
+    # TODO: search for tagging_set and change to tags
+    item = models.ForeignKey(Item, related_name='tags')
     created_at = models.DateTimeField(auto_now_add=True)
                              
     class Meta:

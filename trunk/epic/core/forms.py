@@ -6,6 +6,7 @@ from django.forms.util import ErrorList
 
 from epic.categories.constants import NO_CATEGORY
 from epic.categories.models import Category
+from epic.categories.models import default_category
 from epic.core.util.model_exists_utils import user_exists
 from epic.core.models import Item
 from epic.core.models import Profile
@@ -183,7 +184,7 @@ class CategoryChoiceField(forms.ModelChoiceField):
     
     def clean(self, value):
         if value is None:
-            no_category = Category.objects.get(name=NO_CATEGORY)
+            no_category = default_category()
             
             return super(CategoryChoiceField, self).clean(no_category.id)
         

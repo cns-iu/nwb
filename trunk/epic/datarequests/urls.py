@@ -1,7 +1,7 @@
 from django.conf.urls.defaults import *
 
 urlpatterns = patterns('epic.datarequests.views',
-    (r'^$', 'view_datarequests'),
+    url(r'^$', 'view_datarequests', name='browse-data-requests'),
     (r'^new/$', 'new_datarequest'),
     (r'^(?P<item_id>\d+)/(?P<slug>[-\w]+)/$', 'view_datarequest'),
     (r'^(?P<item_id>\d+)/(?P<slug>[-\w]+)/edit/$', 'edit_datarequest'),

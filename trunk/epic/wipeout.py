@@ -1,4 +1,7 @@
-from django.db import connection, transaction
+from django.db import connection
+from django.db import transaction
+
+
 cursor = connection.cursor()
 cursor.execute('DROP SCHEMA public CASCADE')
 cursor.execute('CREATE SCHEMA public')

@@ -10,16 +10,16 @@
 
 {% block submenu %}
   {# TODO: Figure out how to actually space this over the *proper* way. #}
-  <ul>
-    <li><a href="{% url core.views.browse %}">Overview</a></li> 
-    <li><a href="{% url datarequests.views.view_datarequests %}">Data Requests</a></li>
-    <li><a class="active_submenu" href="{% url datasets.views.view_datasets %}">Data Sets</a></li>
-    <li><a href="{% url projects.views.view_projects %}">Projects</a></li> 
-  </ul>
+  {% browse_submenu 'datasets' %}
 {% endblock %}
 
 {% block content %}
-  <h1> Datasets </h1>
+  {% if query %}
+    <span class="highlight">Search Results for "{{ query }}" in Datasets:</span>
+  {% else %}
+    <h1>Datasets</h1>
+  {% endif %}
+
   {% pagination datasets_page %} 
   {% dataset_list datasets_page.object_list %}
   {% pagination datasets_page %}

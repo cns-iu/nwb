@@ -11,7 +11,7 @@ urlpatterns = decorated_patterns('', logged_view,
     (r'^$', 'epic.core.views.site_index'),
     (r'^terms_and_conditions', 'epic.core.views.terms_and_conditions'),
     (r'^privacy_policy', 'epic.core.views.privacy_policy'),
-    (r'^browse/$', 'epic.core.views.browse'),
+    url(r'^browse/$', 'epic.core.views.browse', name='browse'),
     (r'^about/$', 'epic.core.views.about'),
     (r'^register/$', 'epic.core.views.register'),
     (r'^activate/(?P<activation_key>.+?)/$', 'epic.core.views.activate'),
@@ -20,11 +20,8 @@ urlpatterns = decorated_patterns('', logged_view,
     (r'^user/', include('epic.core.urls')),
     (r'^datasets/', include('epic.datasets.urls')),
     (r'^datarequests/', include('epic.datarequests.urls')),
-    # TODO: Must change static media serving for security and performance
-    # reasons later on.
-    (r'^files/(?P<path>.*)$',
-     'django.views.static.serve',
-     {'document_root': settings.MEDIA_ROOT}),
+    # TODO: Must change static media serving for security and performance reasons later on.
+    (r'^files/(?P<path>.*)$', 'django.views.static.serve', {'document_root': settings.MEDIA_ROOT}),
     (r'^admin/doc/', include('django.contrib.admindocs.urls')),
     (r'^admin/(.*)', admin.site.root),
     (r'^comments/', include('epic.comments.urls')),
@@ -34,7 +31,7 @@ urlpatterns = decorated_patterns('', logged_view,
     (r'^categories/', include('epic.categories.urls')),
     (r'^authors/(?P<author_name>.+?)/$', 'epic.core.views.view_items_for_author'),
     (r'^search/', include('epic.search.urls')),
-    (r'^search2/', include('haystack.urls')),
+#    (r'^search2/', include('haystack.urls')),
 )
 
 if settings.DEBUG:

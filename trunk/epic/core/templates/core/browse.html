@@ -1,5 +1,6 @@
 {% extends "core/bases/browse_base.html" %}
 
+{% load core_templatetags %}
 {% load datarequest_templatetags %}
 {% load dataset_templatetags %}
 {% load project_templatetags %}
@@ -16,40 +17,38 @@
 
 {% block nav %}
   <div id="nav"> 
-    {% load core_templatetags %}
     {% nav_bar 'Browse' %}
   </div>
 {% endblock %}
 
 {% block submenu %}
   {# TODO: Figure out how to actually space this over the *proper* way. #}
-  <ul>
-    <li><a class="active_submenu" href="{% url core.views.browse %}">Overview</a></li>
-    <li><a href="{% url datarequests.views.view_datarequests %}">Data Requests</a></li> 
-    <li><a href="{% url datasets.views.view_datasets %}">Data Sets</a></li>
-    <li><a href="{% url projects.views.view_projects %}">Projects</a></li> 
-  </ul>
+  {% browse_submenu 'all' %}
 {% endblock %}
 
 {% block content %}
-  <h1>Recent data requests</h1>
+  <h1>Recent Data Requests</h1>
   {% if datarequests %}
     [<a href="{% url epic.datarequests.views.view_datarequests %}">view more</a> recent data requests]
   {% endif %}
+
   {% datarequest_list_short datarequests %}
   
-  <h1>Recent data sets</h1>
+  <h1>Recent Datasets</h1>
   {% if datasets %}
-    [<a href="{% url epic.datasets.views.view_datasets %}">view more</a> recent data sets]
+    [<a href="{% url epic.datasets.views.view_datasets %}">view more</a> recent datasets]
   {% endif %}
-  {% dataset_list datasets %}  
+
+  {% dataset_list datasets %}
   
-  <h1>Recent projects</h1>
+  <h1>Recent Projects</h1>
   {% if projects %}
     [<a href="{% url epic.projects.views.view_projects %}">view more</a> recent projects]
   {% endif %}
+
   {% project_list projects %}
 {% endblock %}
+
 {% block request %}
   <div class="databox">
     <h1>Can't find what you're looking for?

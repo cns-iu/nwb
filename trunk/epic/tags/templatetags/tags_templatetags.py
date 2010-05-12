@@ -1,7 +1,10 @@
 from django import template
+from django.core.urlresolvers import reverse
+
 from epic.tags.models import Tagging
-from epic.tags.utils import LOGARITHMIC, LINEAR
-from epic.tags.models import Tagging
+from epic.tags.utils import LOGARITHMIC
+from epic.tags.utils import LINEAR
+
 
 register = template.Library()
 
@@ -24,3 +27,18 @@ def show_tag_cloud(steps=10, distribution="logarithmic", min_count=None):
 		min_count=min_count)
 	
 	return { "tags": tags }
+
+@register.inclusion_tag('templatetags/submenu.html')
+def tag_submenu(tag_name, active=None):
+    return {
+        'active': active,
+        'header': "Browse by tag in",
+        'all_url': reverse(
+            'view-items-for-tag', kwargs={'tag_name': tag_name}),
+        'data_requests_url': reverse(
+            'view-data-requests-for-tag', kwargs={'tag_name': tag_name}),
+        'datasets_url': reverse(
+            'view-datasets-for-tag', kwargs={'tag_name': tag_name}),
+        'projects_url': reverse(
+            'view-projects-for-tag', kwargs={'tag_name': tag_name}),
+    }

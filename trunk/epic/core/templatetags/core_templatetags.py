@@ -66,6 +66,17 @@ def nav_bar_link(current_link, link_to_be_highlighted, view_function_name):
     
     return nav_bar_link_html
 
+@register.inclusion_tag('templatetags/submenu.html')
+def browse_submenu(active=None):
+    return {
+        'active': active,
+        'header': "Browse in",
+        'all_url': reverse('browse',),
+        'data_requests_url': reverse('browse-data-requests',),
+        'datasets_url': reverse('browse-datasets',),
+        'projects_url': reverse('browse-projects',),
+    }
+
 @register.inclusion_tag('templatetags/user_title.html')
 def user_title(user, show_affiliation=None):
     if user.first_name and user.last_name:

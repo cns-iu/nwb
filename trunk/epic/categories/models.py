@@ -2,6 +2,7 @@ from django.contrib.auth.models import User
 from django.db import models
 
 from epic.categories.constants import NO_CATEGORY
+from epic.categories.constants import NO_CATEGORY_DESCRIPTION
 
 
 class Category(models.Model):
@@ -19,7 +20,7 @@ class Category(models.Model):
         if self.name == NO_CATEGORY:
             raise CannotDeleteNoCategoryException()
         
-        no_category = Category.objects.get(name=NO_CATEGORY)
+        no_category = default_category()
         self.item_set.update(category=no_category)
         super(Category, self).delete()
 
@@ -29,3 +30,8 @@ class CannotDeleteNoCategoryException(Exception):
 
     def __str__(self):
         return repr(self.value)
+
+def default_category():
+    # The second result is whether or not a new object was created.
+    return Category.objects.get_or_create(
+        name=NO_CATEGORY, defaults={'description': NO_CATEGORY_DESCRIPTION})[0]

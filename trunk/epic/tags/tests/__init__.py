@@ -97,20 +97,20 @@
 >>> dataset3 = DataSet.objects.create(name="DS3", description="The third dataset item", creator=user2, is_active=True)
 >>> dataset3
 <DataSet: Dataset DS3>
->>> dataset3.tagging_set.all()
+>>> dataset3.tags.all()
 []
 >>> Tagging.objects.update_tags("one two three", dataset3, user1)
->>> dataset3.tagging_set.all()
+>>> dataset3.tags.all()
 [<Tagging: bob55 tagged Item object as one>, <Tagging: bob55 tagged Item object as three>, <Tagging: bob55 tagged Item object as two>]
 >>> Tagging.objects.update_tags("one two three", dataset3, user2)
 >>> Tagging.objects.update_tags("1, 2, 3 4 5", dataset2, user2)
->>> dataset2.tagging_set.all()
+>>> dataset2.tags.all()
 [<Tagging: bob255 tagged Item object as 1>, <Tagging: bob255 tagged Item object as 2>, <Tagging: bob255 tagged Item object as 3 4 5>]
 >>> Tagging.objects.update_tags("1, 2, 3 4 5, 7, 8, 9", dataset2, user1)
->>> dataset2.tagging_set.all()
+>>> dataset2.tags.all()
 [<Tagging: bob255 tagged Item object as 1>, <Tagging: bob255 tagged Item object as 2>, <Tagging: bob255 tagged Item object as 3 4 5>, <Tagging: bob55 tagged Item object as 7>, <Tagging: bob55 tagged Item object as 8>, <Tagging: bob55 tagged Item object as 9>]
 >>> Tagging.objects.update_tags("", dataset2, user2)
->>> dataset2.tagging_set.all()
+>>> dataset2.tags.all()
 [<Tagging: bob55 tagged Item object as 7>, <Tagging: bob55 tagged Item object as 8>, <Tagging: bob55 tagged Item object as 9>]
 """
 

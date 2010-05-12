@@ -4,7 +4,10 @@ from django.contrib.auth.models import User
 from epic.categories.constants import NO_CATEGORY
 from epic.categories.models import Category
 from epic.categories.models import CannotDeleteNoCategoryException
-from epic.categories.views import _get_datasets_for_category, _get_datarequests_for_category, _get_projects_for_category
+from epic.categories.models import default_category
+from epic.categories.views import _get_datarequests_for_category
+from epic.categories.views import _get_datasets_for_category
+from epic.categories.views import _get_projects_for_category
 from epic.core.test import CustomTestCase
 from epic.core.util.view_utils import *
 from epic.datarequests.models import DataRequest
@@ -283,7 +286,7 @@ class DeleteCategoryTestCase(CustomTestCase):
             self.fail()
     
     def testDeletingNoCategory(self):
-        no_category = Category.objects.get(name=NO_CATEGORY)
+        no_category = default_category()
         test_passed = False
         
         try:
