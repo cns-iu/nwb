@@ -1,0 +1,8 @@
+{% if user.is_authenticated %}
+  <form action="{% url comments.views.post_comment item_id=item.id slug=item.slug %}" method="POST">
+    {{ form.as_p }}
+    <input type="image" value="Post comment" src="/media/core/images/post-button_26.jpg" alt="Post Comment" />
+  </form>
+{% else %}
+  <p>You must be logged in to comment. Please login <a href="{% url django.contrib.auth.views.login %}">here.</a></p>
+{% endif %}
