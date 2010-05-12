@@ -1,0 +1,19 @@
+{% extends "core/bases/simple_base.html" %}
+
+{% block content %}
+  <h4>Items created by {{ author.author }}</h4>
+  
+  {% if items %}
+    <ul>
+      {% for item in items %}
+        <li>
+          <a href="{{ item.specific.get_absolute_url }}">
+            {{ item.specific }}
+          </a>
+        </li>
+      {% endfor %}
+    </ul>
+  {% else %}
+    <p>There are no items for this author</p>
+  {% endif %}
+{% endblock %}

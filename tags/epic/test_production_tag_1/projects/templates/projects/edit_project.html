@@ -1,0 +1,92 @@
+{% extends "core/bases/simple_base.html" %}
+
+{% block content %}
+  <h3>Edit {{ project.name }}:</h3>
+  <form action="{% url projects.views.edit_project item_id=project.id slug=project.slug %}" method="POST">
+        <table class="create_project_form">
+      <thead style="color: #FFFFFF; background-color: #D13165; font-weight: bold;">
+      <tr>
+        <th align="left" colspan="3">
+          Required Information
+        </th>
+      </tr>   
+      </thead>
+      <tbody>
+        <tr>
+          <th>
+            {{ edit_project_form.name.label_tag }}
+          </th>
+          <td>
+            {{ edit_project_form.name.errors }}
+        	{{ edit_project_form.name }}
+       	  </td>
+       	  <td {% if form.name.help_text %}class="formtips"{% endif %}>
+        	  {{ edit_project_form.name.help_text }}
+          </td>
+        </tr>
+        <tr>
+          <th>
+            {{ edit_project_form.description.label_tag }}
+          </th>
+          <td>
+            {{ edit_project_form.description.errors }}
+        	{{ edit_project_form.description }}
+       	  </td>
+       	  <td {% if form.description.help_text %}class="formtips"{% endif %}>
+        	{{ edit_project_form.description.help_text }}
+          </td>
+        </tr>
+        <tr>
+          <td>
+		    <input type="image" alt="Save Project" src="/media/core/images/submit.jpg" value="Upload" />
+		  </td>
+		</tr>
+        <tr style="color: #FFFFFF; background-color: #999999; font-weight: bold;">
+          <th align="left" colspan="3">
+            Optional Information
+          </th>
+        </tr>
+        <tr>
+          <th>
+            {{ edit_project_form.category.label_tag }}
+          </th>
+          <td>
+          	{{ edit_project_form.category.errors }}
+          	{{ edit_project_form.category }}
+          </td>
+        </tr>
+        {{ project_datasets.management_form }}
+        {% for form in project_datasets.forms %}
+          <tr>
+            <th>
+              {{ form.dataset_url.label_tag }}
+            </th>
+            <td>
+              {{ form.dataset_url.errors }}
+              {{ form.dataset_url }}
+            </td>
+            <td{% if form.dataset_url.help_text %}class="formtips"{% endif %}>
+              {{ form.dataset_url.help_text }}
+            </td>
+          </tr>
+        {% endfor %}
+    	<tr>
+    	  <td>
+    	    <input type="image" alt="Save Project" src="/media/core/images/submit.jpg" value="Upload" />
+    	  </td>
+    	</tr>
+      </tbody>
+    </table>
+    <a href="{% url projects.views.confirm_delete_project item_id=project.id slug=project.slug %}">
+      <input type="button" value="Delete this project" />
+    </a>
+    <a href="{% url projects.views.view_project item_id=project.id slug=project.slug %}">
+      <input type="button" value ="Cancel" />
+    </a>
+  </form>
+  <script type="text/javascript" src="/media/core/javascript/add_more_forms_to_formset.js"></script>
+  <script type="text/javascript">
+    projectDatasetsFormSet = new FormSet('projectDatasetsFormSet', 'project_datasets', 'dataset_url', 'DataSet URL:');
+	initialize(projectDatasetsFormSet);
+  </script>
+{% endblock %}
