@@ -1,0 +1,24 @@
+{% extends "core/browse.html" %}
+
+{% load category_templatetags %}
+{% load core_templatetags %}
+{% load project_templatetags %}
+
+{% block submenu %}
+  {% category_submenu category 'projects' %}
+{% endblock %}
+
+{% block content %}
+  <span class="highlight">Category > {{ category.name }}</span>
+  <p>Description: {{ category.description }}</p>
+  
+  <h1>Projects</h1>
+  
+  {% if projects_page %}
+    {% pagination projects_page %}
+    {% project_list projects_page.object_list %}
+    {% pagination projects_page %}
+  {% else %}
+    <p>There are no projects in this category.</p>
+  {% endif %}
+{% endblock %}
