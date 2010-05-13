@@ -1,0 +1,16 @@
+<div id="searchbox">
+  {#<form action="{% url all-query-search query=search_box.q %}"></form>#}
+  <form action="{% url form-search %}" method="get">
+    {{ search_box.q }}
+  {% comment %}
+  <form name="search" action="{% url search.views.get_search %}" method="get">
+    {% if query %}
+      <input type="text" name="q" value="{{ query }}" size="17" />
+    {% else %}
+      <input type="text" name="q" size="17" />
+    {% endif %}
+  {% endcomment %}
+    
+    <input type="image" alt="Search" src="/media/search/images/search_48.jpg" value="Search" align="top" />
+  </form>
+</div>

@@ -1,0 +1,10 @@
+{% block content %}
+Dear {{ user.first_name }} {{ user.last_name }},
+
+Congratulations on registering for the EpiC Marketplace website!  Before you can login, you will need to activate your account.  You can do this by following this link: {{ activation_url }}
+
+Once you have activated your account, you may proceed to login here: {{ login_url }}
+
+Sincerely,
+The EpiC Team
+{% endblock %}
