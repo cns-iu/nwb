@@ -19,5 +19,5 @@ TEMPLATE_DIRS = (
 	'/home/epic_website/epic_code/epic/templates',
 )
 
-EMAIL_HOST = 'mail-relay.iu.edu'
+EMAIL_HOST = 'localhost'
 EMAIL_PORT = '25'
