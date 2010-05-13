@@ -1271,3 +1271,7 @@ ul.errorlist li {
 .add_more_link {
 	font-size: 77%;
 }
+
+#map div span {
+    visibility: hidden;
+}

@@ -250,7 +250,7 @@ def _email_user_about_password_changed(request, user, new_password):
     return success_message
 
 def form_email_about_registration(request, user, profile):
-    email_body = loader.get_template('core/registration_email.html')
+    email_body = loader.get_template('core/registration_email.txt')
     activation_url = request.build_absolute_uri(
         reverse('epic.core.views.activate', kwargs={'activation_key': profile.activation_key}))
     login_url = request.build_absolute_uri(reverse('django.contrib.auth.views.login'))
@@ -264,7 +264,7 @@ def form_email_about_registration(request, user, profile):
     return rendered_email
 
 def _form_email_about_password_changed(request, user, new_password):
-    email_body = loader.get_template('core/password_reset_email.html')
+    email_body = loader.get_template('core/password_reset_email.txt')
     login_url = request.build_absolute_uri(reverse('django.contrib.auth.views.login'))
     
     # TODO: Probably not the best security to be sending a plaintext password.
