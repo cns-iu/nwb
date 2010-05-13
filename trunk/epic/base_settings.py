@@ -6,7 +6,7 @@ TEMPLATE_DEBUG = DEBUG
 DEBUG_SQL = False
 
 ADMINS = (
-    # ('Your Name', 'your_email@domain.com'),
+    ('Epic Devs', 'cns-epic-dev-l@listserv.indiana.edu'),
 )
 
 MANAGERS = ADMINS
@@ -144,7 +144,7 @@ GOOGLE_KEY = \
 FILE_UPLOAD_MAX_MEMORY_SIZE = 0
 
 # For registration.
-DEFAULT_FROM_EMAIL = 'registration@localhost'
+DEFAULT_FROM_EMAIL = 'NOREPLY@epic.slis.indiana.edu'
 
 DEACTIVATED_ACCOUNT_VIEW = 'epic.core.views.deactivated_account'
 
