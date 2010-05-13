@@ -1,6 +1,6 @@
 from django.contrib.auth.models import User
 
-from epic.categories.models import Category
+from epic.categories.models import Category, default_category
 from epic.core.models import Profile
 from epic.datarequests.models import DataRequest
 from epic.datasets.models import DataSet
@@ -9,6 +9,7 @@ from epic.projects.models import Project
 from epic.tags.models import Tagging
 
 
+default_category()
 
 User.objects.create_superuser('super_user', 'super_user@gmail.com', 'super_user')
 super_user = User.objects.get(username='super_user')
