@@ -152,7 +152,7 @@ def forgot_password(request):
             user = form.cleaned_data['user']
 
             if not user.is_active:
-                return HttpResponseredirect(reverse(DEACTIVATED_ACCOUNT_VIEW))
+                return HttpResponseRedirect(reverse(DEACTIVATED_ACCOUNT_VIEW))
 
             new_password = UserManager().make_random_password()
             user.set_password(new_password)
