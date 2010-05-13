@@ -1,0 +1,53 @@
+{% extends "core/bases/simple_base.html" %}
+
+{% block login_box %}
+{% endblock %}
+
+{% block content %}
+  <center>
+    {% if form.errors %}
+      <ul>
+        {% for error in form.non_field_errors %}
+          <li class="highlight">{{ error }}</li>
+        {% endfor %}
+      </ul>
+    {% endif %}
+    
+    <form method="post" action="{% url django.contrib.auth.views.login %}" accept-charset="utf-8">
+      <table border="0" cellpadding="0" cellspacing="0">
+        <tbody>
+          <tr>
+            <td>
+              <div id="loginbox">
+                <h1 id="username">
+                  Username 
+                  <br/>
+                  
+                  {{ form.username }}
+                </h1>
+                
+                <h1 id="password">
+                  Password
+                  <br/>
+                  
+                  {{ form.password }}
+                </h1>
+              </div>
+            </td>
+          </tr>
+          
+          <tr>
+            <td>
+              <input type="image" src="/media/core/images/login-bottom.gif" value="login" />
+              <input type="hidden" name="next" value="{{ next }}" />
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </form>
+    <br />
+    <h2>
+      Not registered yet? <a href='{% url epic.core.views.register %}'>Register now</a>.
+    </h2>
+  </center>
+{% endblock %}
