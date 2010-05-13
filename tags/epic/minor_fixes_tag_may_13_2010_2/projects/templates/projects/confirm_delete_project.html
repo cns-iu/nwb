@@ -1,0 +1,13 @@
+{% extends "core/bases/simple_base.html" %}
+
+{% block content %}
+  <h2>This will delete your project '{{ project.name }}'.  Are you sure you want to do this?</h2>
+  
+  <a href="{% url projects.views.delete_project item_id=project.id slug=project.slug %}">
+    Delete Project '{{ project.name }}'
+  </a>
+  <br />
+  <a href="{% url projects.views.view_project item_id=project.id slug=project.slug %}">
+    Cancel Delete
+  </a>
+{% endblock %}
