@@ -1,6 +1,6 @@
 from django.contrib.auth.views import login
 from django.contrib.auth import logout
-from django.contrib.auth.decorators import login_required
+from django.contrib.auth.decorators import login_required, user_passes_test
 from django.contrib.auth.models import User
 from django.contrib.auth.models import UserManager
 from django.contrib.auth.views import password_change
@@ -21,7 +21,7 @@ from epic.core.forms import RegistrationForm
 from epic.core.forms import UserForm
 from epic.core.models import Author
 from epic.core.models import Profile
-from epic.core.util import active_user_required, admin_user_required
+from epic.core.util import active_user_required
 from epic.core.util.view_utils import paginate, request_user_is_authenticated
 from epic.datarequests.models import DataRequest
 from epic.datasets.models import DataSet, DataSetFile, DataSetDownload
@@ -63,8 +63,7 @@ def about(request):
                               context_instance=RequestContext(request),
                               )
 
-@login_required
-@admin_user_required
+@user_passes_test(lambda user: user.is_staff or user.is_superuser)
 def stats(request):
     from collections import defaultdict
     from datetime import date
