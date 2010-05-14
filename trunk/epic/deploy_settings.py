@@ -21,3 +21,5 @@ TEMPLATE_DIRS = (
 
 EMAIL_HOST = 'localhost'
 EMAIL_PORT = '25'
+
+HAYSTACK_WHOOSH_PATH = '/tmp/whoosh'
