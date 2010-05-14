@@ -11,7 +11,7 @@ DATABASE_OPTIONS = {'sslmode': 'require'}
 
 MEDIA_ROOT = '/home/epic_website/epic_data/'
 
-csrfProtect()
+#csrfProtect()
 
 
 
