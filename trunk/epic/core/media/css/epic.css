@@ -39,7 +39,7 @@ body, html {
 
 #leftsidebar {  float:left; left:15em; margin:0; padding:0;}
 
-#leftsidebarindex {  left:-15em; width:200px; margin-top:0; margin-bottom: auto; margin-left: 0; margin-right: 0; padding:0; top:0; }
+#leftsidebarindex {  position: relative; left: 0px; top: -670px; width:200px; margin: 0; padding:0; }
 
 
 #homebox {
