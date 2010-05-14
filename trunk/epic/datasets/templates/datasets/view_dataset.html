@@ -159,14 +159,14 @@ $(document).ready(function() {
           {% for file in dataset.files.all %}      
               {# TODO: this should be a reverse? #}
               {% if file.is_readme %}
-                <a href="{{ file.file_contents.url }}">
-                  <img src="/media/core/images/readme_icon.jpeg" width="69" height="17" align="texttop" />
-                </a>
+                <a href="{% url datasets.views.download_file file_id=file.id item_id=dataset.id slug=dataset.slug %}">
+	              <img src="/media/core/images/readme_icon.jpeg" width="69" height="17" align="texttop" />
+	            </a>  
                 {{ file.get_short_name }}
               {% else %}
-                <a href="{{ file.file_contents.url }}">
-                  <img src="/media/core/images/download-icon_30.jpg" width="69" height="17" align="texttop" />
-                </a>
+                <a href="{% url datasets.views.download_file file_id=file.id item_id=dataset.id slug=dataset.slug %}">
+	              <img src="/media/core/images/download-icon_30.jpg" width="69" height="17" align="texttop" />
+	            </a>  
                 {{ file.get_short_name }}
               {% endif %}
               <br />

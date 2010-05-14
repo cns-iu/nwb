@@ -1,0 +1,2666 @@
+[ { "fields" : { "codename" : "add_logentry",
+        "content_type" : 8,
+        "name" : "Can add log entry"
+      },
+    "model" : "auth.permission",
+    "pk" : 22
+  },
+  { "fields" : { "codename" : "change_logentry",
+        "content_type" : 8,
+        "name" : "Can change log entry"
+      },
+    "model" : "auth.permission",
+    "pk" : 23
+  },
+  { "fields" : { "codename" : "delete_logentry",
+        "content_type" : 8,
+        "name" : "Can delete log entry"
+      },
+    "model" : "auth.permission",
+    "pk" : 24
+  },
+  { "fields" : { "codename" : "add_group",
+        "content_type" : 2,
+        "name" : "Can add group"
+      },
+    "model" : "auth.permission",
+    "pk" : 4
+  },
+  { "fields" : { "codename" : "add_message",
+        "content_type" : 4,
+        "name" : "Can add message"
+      },
+    "model" : "auth.permission",
+    "pk" : 10
+  },
+  { "fields" : { "codename" : "add_permission",
+        "content_type" : 1,
+        "name" : "Can add permission"
+      },
+    "model" : "auth.permission",
+    "pk" : 1
+  },
+  { "fields" : { "codename" : "add_user",
+        "content_type" : 3,
+        "name" : "Can add user"
+      },
+    "model" : "auth.permission",
+    "pk" : 7
+  },
+  { "fields" : { "codename" : "change_group",
+        "content_type" : 2,
+        "name" : "Can change group"
+      },
+    "model" : "auth.permission",
+    "pk" : 5
+  },
+  { "fields" : { "codename" : "change_message",
+        "content_type" : 4,
+        "name" : "Can change message"
+      },
+    "model" : "auth.permission",
+    "pk" : 11
+  },
+  { "fields" : { "codename" : "change_permission",
+        "content_type" : 1,
+        "name" : "Can change permission"
+      },
+    "model" : "auth.permission",
+    "pk" : 2
+  },
+  { "fields" : { "codename" : "change_user",
+        "content_type" : 3,
+        "name" : "Can change user"
+      },
+    "model" : "auth.permission",
+    "pk" : 8
+  },
+  { "fields" : { "codename" : "delete_group",
+        "content_type" : 2,
+        "name" : "Can delete group"
+      },
+    "model" : "auth.permission",
+    "pk" : 6
+  },
+  { "fields" : { "codename" : "delete_message",
+        "content_type" : 4,
+        "name" : "Can delete message"
+      },
+    "model" : "auth.permission",
+    "pk" : 12
+  },
+  { "fields" : { "codename" : "delete_permission",
+        "content_type" : 1,
+        "name" : "Can delete permission"
+      },
+    "model" : "auth.permission",
+    "pk" : 3
+  },
+  { "fields" : { "codename" : "delete_user",
+        "content_type" : 3,
+        "name" : "Can delete user"
+      },
+    "model" : "auth.permission",
+    "pk" : 9
+  },
+  { "fields" : { "codename" : "add_category",
+        "content_type" : 13,
+        "name" : "Can add category"
+      },
+    "model" : "auth.permission",
+    "pk" : 37
+  },
+  { "fields" : { "codename" : "change_category",
+        "content_type" : 13,
+        "name" : "Can change category"
+      },
+    "model" : "auth.permission",
+    "pk" : 38
+  },
+  { "fields" : { "codename" : "delete_category",
+        "content_type" : 13,
+        "name" : "Can delete category"
+      },
+    "model" : "auth.permission",
+    "pk" : 39
+  },
+  { "fields" : { "codename" : "add_comment",
+        "content_type" : 18,
+        "name" : "Can add comment"
+      },
+    "model" : "auth.permission",
+    "pk" : 52
+  },
+  { "fields" : { "codename" : "change_comment",
+        "content_type" : 18,
+        "name" : "Can change comment"
+      },
+    "model" : "auth.permission",
+    "pk" : 53
+  },
+  { "fields" : { "codename" : "delete_comment",
+        "content_type" : 18,
+        "name" : "Can delete comment"
+      },
+    "model" : "auth.permission",
+    "pk" : 54
+  },
+  { "fields" : { "codename" : "add_contenttype",
+        "content_type" : 5,
+        "name" : "Can add content type"
+      },
+    "model" : "auth.permission",
+    "pk" : 13
+  },
+  { "fields" : { "codename" : "change_contenttype",
+        "content_type" : 5,
+        "name" : "Can change content type"
+      },
+    "model" : "auth.permission",
+    "pk" : 14
+  },
+  { "fields" : { "codename" : "delete_contenttype",
+        "content_type" : 5,
+        "name" : "Can delete content type"
+      },
+    "model" : "auth.permission",
+    "pk" : 15
+  },
+  { "fields" : { "codename" : "add_academicreference",
+        "content_type" : 11,
+        "name" : "Can add academic reference"
+      },
+    "model" : "auth.permission",
+    "pk" : 31
+  },
+  { "fields" : { "codename" : "add_author",
+        "content_type" : 10,
+        "name" : "Can add author"
+      },
+    "model" : "auth.permission",
+    "pk" : 28
+  },
+  { "fields" : { "codename" : "add_item",
+        "content_type" : 9,
+        "name" : "Can add item"
+      },
+    "model" : "auth.permission",
+    "pk" : 25
+  },
+  { "fields" : { "codename" : "add_profile",
+        "content_type" : 12,
+        "name" : "Can add profile"
+      },
+    "model" : "auth.permission",
+    "pk" : 34
+  },
+  { "fields" : { "codename" : "change_academicreference",
+        "content_type" : 11,
+        "name" : "Can change academic reference"
+      },
+    "model" : "auth.permission",
+    "pk" : 32
+  },
+  { "fields" : { "codename" : "change_author",
+        "content_type" : 10,
+        "name" : "Can change author"
+      },
+    "model" : "auth.permission",
+    "pk" : 29
+  },
+  { "fields" : { "codename" : "change_item",
+        "content_type" : 9,
+        "name" : "Can change item"
+      },
+    "model" : "auth.permission",
+    "pk" : 26
+  },
+  { "fields" : { "codename" : "change_profile",
+        "content_type" : 12,
+        "name" : "Can change profile"
+      },
+    "model" : "auth.permission",
+    "pk" : 35
+  },
+  { "fields" : { "codename" : "delete_academicreference",
+        "content_type" : 11,
+        "name" : "Can delete academic reference"
+      },
+    "model" : "auth.permission",
+    "pk" : 33
+  },
+  { "fields" : { "codename" : "delete_author",
+        "content_type" : 10,
+        "name" : "Can delete author"
+      },
+    "model" : "auth.permission",
+    "pk" : 30
+  },
+  { "fields" : { "codename" : "delete_item",
+        "content_type" : 9,
+        "name" : "Can delete item"
+      },
+    "model" : "auth.permission",
+    "pk" : 27
+  },
+  { "fields" : { "codename" : "delete_profile",
+        "content_type" : 12,
+        "name" : "Can delete profile"
+      },
+    "model" : "auth.permission",
+    "pk" : 36
+  },
+  { "fields" : { "codename" : "add_datarequest",
+        "content_type" : 14,
+        "name" : "Can add data request"
+      },
+    "model" : "auth.permission",
+    "pk" : 40
+  },
+  { "fields" : { "codename" : "change_datarequest",
+        "content_type" : 14,
+        "name" : "Can change data request"
+      },
+    "model" : "auth.permission",
+    "pk" : 41
+  },
+  { "fields" : { "codename" : "delete_datarequest",
+        "content_type" : 14,
+        "name" : "Can delete data request"
+      },
+    "model" : "auth.permission",
+    "pk" : 42
+  },
+  { "fields" : { "codename" : "add_dataset",
+        "content_type" : 15,
+        "name" : "Can add data set"
+      },
+    "model" : "auth.permission",
+    "pk" : 43
+  },
+  { "fields" : { "codename" : "add_datasetdownload",
+        "content_type" : 17,
+        "name" : "Can add data set download"
+      },
+    "model" : "auth.permission",
+    "pk" : 49
+  },
+  { "fields" : { "codename" : "add_datasetfile",
+        "content_type" : 16,
+        "name" : "Can add data set file"
+      },
+    "model" : "auth.permission",
+    "pk" : 46
+  },
+  { "fields" : { "codename" : "change_dataset",
+        "content_type" : 15,
+        "name" : "Can change data set"
+      },
+    "model" : "auth.permission",
+    "pk" : 44
+  },
+  { "fields" : { "codename" : "change_datasetdownload",
+        "content_type" : 17,
+        "name" : "Can change data set download"
+      },
+    "model" : "auth.permission",
+    "pk" : 50
+  },
+  { "fields" : { "codename" : "change_datasetfile",
+        "content_type" : 16,
+        "name" : "Can change data set file"
+      },
+    "model" : "auth.permission",
+    "pk" : 47
+  },
+  { "fields" : { "codename" : "delete_dataset",
+        "content_type" : 15,
+        "name" : "Can delete data set"
+      },
+    "model" : "auth.permission",
+    "pk" : 45
+  },
+  { "fields" : { "codename" : "delete_datasetdownload",
+        "content_type" : 17,
+        "name" : "Can delete data set download"
+      },
+    "model" : "auth.permission",
+    "pk" : 51
+  },
+  { "fields" : { "codename" : "delete_datasetfile",
+        "content_type" : 16,
+        "name" : "Can delete data set file"
+      },
+    "model" : "auth.permission",
+    "pk" : 48
+  },
+  { "fields" : { "codename" : "add_score",
+        "content_type" : 20,
+        "name" : "Can add score"
+      },
+    "model" : "auth.permission",
+    "pk" : 58
+  },
+  { "fields" : { "codename" : "add_vote",
+        "content_type" : 19,
+        "name" : "Can add vote"
+      },
+    "model" : "auth.permission",
+    "pk" : 55
+  },
+  { "fields" : { "codename" : "change_score",
+        "content_type" : 20,
+        "name" : "Can change score"
+      },
+    "model" : "auth.permission",
+    "pk" : 59
+  },
+  { "fields" : { "codename" : "change_vote",
+        "content_type" : 19,
+        "name" : "Can change vote"
+      },
+    "model" : "auth.permission",
+    "pk" : 56
+  },
+  { "fields" : { "codename" : "delete_score",
+        "content_type" : 20,
+        "name" : "Can delete score"
+      },
+    "model" : "auth.permission",
+    "pk" : 60
+  },
+  { "fields" : { "codename" : "delete_vote",
+        "content_type" : 19,
+        "name" : "Can delete vote"
+      },
+    "model" : "auth.permission",
+    "pk" : 57
+  },
+  { "fields" : { "codename" : "add_geoloc",
+        "content_type" : 25,
+        "name" : "Can add geo loc"
+      },
+    "model" : "auth.permission",
+    "pk" : 73
+  },
+  { "fields" : { "codename" : "change_geoloc",
+        "content_type" : 25,
+        "name" : "Can change geo loc"
+      },
+    "model" : "auth.permission",
+    "pk" : 74
+  },
+  { "fields" : { "codename" : "delete_geoloc",
+        "content_type" : 25,
+        "name" : "Can delete geo loc"
+      },
+    "model" : "auth.permission",
+    "pk" : 75
+  },
+  { "fields" : { "codename" : "add_message",
+        "content_type" : 22,
+        "name" : "Can add message"
+      },
+    "model" : "auth.permission",
+    "pk" : 64
+  },
+  { "fields" : { "codename" : "add_receivedmessage",
+        "content_type" : 23,
+        "name" : "Can add received message"
+      },
+    "model" : "auth.permission",
+    "pk" : 67
+  },
+  { "fields" : { "codename" : "add_sentmessage",
+        "content_type" : 24,
+        "name" : "Can add sent message"
+      },
+    "model" : "auth.permission",
+    "pk" : 70
+  },
+  { "fields" : { "codename" : "change_message",
+        "content_type" : 22,
+        "name" : "Can change message"
+      },
+    "model" : "auth.permission",
+    "pk" : 65
+  },
+  { "fields" : { "codename" : "change_receivedmessage",
+        "content_type" : 23,
+        "name" : "Can change received message"
+      },
+    "model" : "auth.permission",
+    "pk" : 68
+  },
+  { "fields" : { "codename" : "change_sentmessage",
+        "content_type" : 24,
+        "name" : "Can change sent message"
+      },
+    "model" : "auth.permission",
+    "pk" : 71
+  },
+  { "fields" : { "codename" : "delete_message",
+        "content_type" : 22,
+        "name" : "Can delete message"
+      },
+    "model" : "auth.permission",
+    "pk" : 66
+  },
+  { "fields" : { "codename" : "delete_receivedmessage",
+        "content_type" : 23,
+        "name" : "Can delete received message"
+      },
+    "model" : "auth.permission",
+    "pk" : 69
+  },
+  { "fields" : { "codename" : "delete_sentmessage",
+        "content_type" : 24,
+        "name" : "Can delete sent message"
+      },
+    "model" : "auth.permission",
+    "pk" : 72
+  },
+  { "fields" : { "codename" : "add_project",
+        "content_type" : 26,
+        "name" : "Can add project"
+      },
+    "model" : "auth.permission",
+    "pk" : 76
+  },
+  { "fields" : { "codename" : "add_projectdownload",
+        "content_type" : 27,
+        "name" : "Can add project download"
+      },
+    "model" : "auth.permission",
+    "pk" : 79
+  },
+  { "fields" : { "codename" : "change_project",
+        "content_type" : 26,
+        "name" : "Can change project"
+      },
+    "model" : "auth.permission",
+    "pk" : 77
+  },
+  { "fields" : { "codename" : "change_projectdownload",
+        "content_type" : 27,
+        "name" : "Can change project download"
+      },
+    "model" : "auth.permission",
+    "pk" : 80
+  },
+  { "fields" : { "codename" : "delete_project",
+        "content_type" : 26,
+        "name" : "Can delete project"
+      },
+    "model" : "auth.permission",
+    "pk" : 78
+  },
+  { "fields" : { "codename" : "delete_projectdownload",
+        "content_type" : 27,
+        "name" : "Can delete project download"
+      },
+    "model" : "auth.permission",
+    "pk" : 81
+  },
+  { "fields" : { "codename" : "add_session",
+        "content_type" : 6,
+        "name" : "Can add session"
+      },
+    "model" : "auth.permission",
+    "pk" : 16
+  },
+  { "fields" : { "codename" : "change_session",
+        "content_type" : 6,
+        "name" : "Can change session"
+      },
+    "model" : "auth.permission",
+    "pk" : 17
+  },
+  { "fields" : { "codename" : "delete_session",
+        "content_type" : 6,
+        "name" : "Can delete session"
+      },
+    "model" : "auth.permission",
+    "pk" : 18
+  },
+  { "fields" : { "codename" : "add_site",
+        "content_type" : 7,
+        "name" : "Can add site"
+      },
+    "model" : "auth.permission",
+    "pk" : 19
+  },
+  { "fields" : { "codename" : "change_site",
+        "content_type" : 7,
+        "name" : "Can change site"
+      },
+    "model" : "auth.permission",
+    "pk" : 20
+  },
+  { "fields" : { "codename" : "delete_site",
+        "content_type" : 7,
+        "name" : "Can delete site"
+      },
+    "model" : "auth.permission",
+    "pk" : 21
+  },
+  { "fields" : { "codename" : "add_tagging",
+        "content_type" : 21,
+        "name" : "Can add tagging"
+      },
+    "model" : "auth.permission",
+    "pk" : 61
+  },
+  { "fields" : { "codename" : "change_tagging",
+        "content_type" : 21,
+        "name" : "Can change tagging"
+      },
+    "model" : "auth.permission",
+    "pk" : 62
+  },
+  { "fields" : { "codename" : "delete_tagging",
+        "content_type" : 21,
+        "name" : "Can delete tagging"
+      },
+    "model" : "auth.permission",
+    "pk" : 63
+  },
+  { "fields" : { "date_joined" : "2009-05-23 10:51:35",
+        "email" : "super_user@gmail.com",
+        "first_name" : "Super",
+        "groups" : [  ],
+        "is_active" : true,
+        "is_staff" : true,
+        "is_superuser" : true,
+        "last_login" : "2010-05-11 14:15:39",
+        "last_name" : "User",
+        "password" : "sha1$dfecb$98e304861cd6d0fe4c9f0923128932f72ac2163c",
+        "user_permissions" : [  ],
+        "username" : "super_user"
+      },
+    "model" : "auth.user",
+    "pk" : 1
+  },
+  { "fields" : { "date_joined" : "2009-06-22 10:51:35",
+        "email" : "tankchintan@gmail.com",
+        "first_name" : "Chintan",
+        "groups" : [  ],
+        "is_active" : true,
+        "is_staff" : true,
+        "is_superuser" : false,
+        "last_login" : "2010-05-10 19:06:26",
+        "last_name" : "Tank",
+        "password" : "sha1$806ea$5f4d42f155d01db57a5766bef4fb5484b56b47f4",
+        "user_permissions" : [  ],
+        "username" : "chintan"
+      },
+    "model" : "auth.user",
+    "pk" : 2
+  },
+  { "fields" : { "date_joined" : "2009-04-22 10:51:35",
+        "email" : "david@gmail.com",
+        "first_name" : "David",
+        "groups" : [  ],
+        "is_active" : true,
+        "is_staff" : false,
+        "is_superuser" : false,
+        "last_login" : "2010-05-07 10:51:35",
+        "last_name" : "Coe",
+        "password" : "sha1$28f0e$aeb9ee199bca48d6e30f77ee49af3adfacab01b4",
+        "user_permissions" : [  ],
+        "username" : "david"
+      },
+    "model" : "auth.user",
+    "pk" : 3
+  },
+  { "fields" : { "date_joined" : "2009-05-22 10:51:35",
+        "email" : "elisha@gmail.com",
+        "first_name" : "David",
+        "groups" : [  ],
+        "is_active" : true,
+        "is_staff" : false,
+        "is_superuser" : false,
+        "last_login" : "2010-05-07 10:51:35",
+        "last_name" : "Coe",
+        "password" : "sha1$78526$18c1a56c0361dbfd67d4573e66f8ee5e84ddd60a",
+        "user_permissions" : [  ],
+        "username" : "elisha"
+      },
+    "model" : "auth.user",
+    "pk" : 4
+  },
+  { "fields" : { "date_joined" : "2009-05-29 10:51:35",
+        "email" : "micah@gmail.com",
+        "first_name" : "Micah",
+        "groups" : [  ],
+        "is_active" : true,
+        "is_staff" : false,
+        "is_superuser" : false,
+        "last_login" : "2010-05-10 19:24:42",
+        "last_name" : "Linnemeier",
+        "password" : "sha1$b397e$8b037a3664b1d9abb3b20ccf863ed7369f663f5c",
+        "user_permissions" : [  ],
+        "username" : "micah"
+      },
+    "model" : "auth.user",
+    "pk" : 5
+  },
+  { "fields" : { "date_joined" : "2007-05-22 10:51:35",
+        "email" : "patrick@gmail.com",
+        "first_name" : "Patrick",
+        "groups" : [  ],
+        "is_active" : true,
+        "is_staff" : false,
+        "is_superuser" : false,
+        "last_login" : "2010-05-07 10:51:35",
+        "last_name" : "Phillips",
+        "password" : "sha1$ce7a7$86b966b5ad90884cec7fd283369d69c02ee187a7",
+        "user_permissions" : [  ],
+        "username" : "patrick"
+      },
+    "model" : "auth.user",
+    "pk" : 6
+  },
+  { "fields" : { "date_joined" : "2007-05-22 10:51:35",
+        "email" : "russell@gmail.com",
+        "first_name" : "Russell",
+        "groups" : [  ],
+        "is_active" : true,
+        "is_staff" : false,
+        "is_superuser" : false,
+        "last_login" : "2010-05-07 10:51:35",
+        "last_name" : "Duhon",
+        "password" : "sha1$efff6$2b8e59a09b2dce6d1d58eb45c07073cde064ba69",
+        "user_permissions" : [  ],
+        "username" : "russell"
+      },
+    "model" : "auth.user",
+    "pk" : 7
+  },
+  { "fields" : { "date_joined" : "2009-01-22 10:51:35",
+        "email" : "alex@gmail.com",
+        "first_name" : "Alessandro",
+        "groups" : [  ],
+        "is_active" : true,
+        "is_staff" : false,
+        "is_superuser" : false,
+        "last_login" : "2010-05-07 10:51:35",
+        "last_name" : "Vespignani",
+        "password" : "sha1$c79c2$ea1769b76dd4dbeabf340d7536b2cd4807562067",
+        "user_permissions" : [  ],
+        "username" : "alex"
+      },
+    "model" : "auth.user",
+    "pk" : 8
+  },
+  { "fields" : { "date_joined" : "2009-11-22 10:51:35",
+        "email" : "bruno@gmail.com",
+        "first_name" : "Bruno",
+        "groups" : [  ],
+        "is_active" : true,
+        "is_staff" : false,
+        "is_superuser" : false,
+        "last_login" : "2010-05-07 10:51:35",
+        "last_name" : "Goncalves",
+        "password" : "sha1$9a833$8777a4a09e7d001dccf774c22e43461946475172",
+        "user_permissions" : [  ],
+        "username" : "bruno"
+      },
+    "model" : "auth.user",
+    "pk" : 9
+  },
+  { "fields" : { "date_joined" : "2009-05-22 10:51:35",
+        "email" : "jim@gmail.com",
+        "first_name" : "Jim",
+        "groups" : [  ],
+        "is_active" : true,
+        "is_staff" : false,
+        "is_superuser" : false,
+        "last_login" : "2010-05-07 10:51:35",
+        "last_name" : "Sherman",
+        "password" : "sha1$52491$b34226b41ed4de2bd69a1790967ca884f6b68ea5",
+        "user_permissions" : [  ],
+        "username" : "jim"
+      },
+    "model" : "auth.user",
+    "pk" : 10
+  },
+  { "fields" : { "date_joined" : "2009-11-22 10:51:35",
+        "email" : "katy@gmail.com",
+        "first_name" : "Katy",
+        "groups" : [  ],
+        "is_active" : true,
+        "is_staff" : false,
+        "is_superuser" : false,
+        "last_login" : "2010-05-07 10:51:35",
+        "last_name" : "Borner",
+        "password" : "sha1$08d38$432ef04afb70d5bbf56003c68c69c675b4aab155",
+        "user_permissions" : [  ],
+        "username" : "katy"
+      },
+    "model" : "auth.user",
+    "pk" : 11
+  },
+  { "fields" : { "app_label" : "core",
+        "model" : "academicreference",
+        "name" : "academic reference"
+      },
+    "model" : "contenttypes.contenttype",
+    "pk" : 11
+  },
+  { "fields" : { "app_label" : "core",
+        "model" : "author",
+        "name" : "author"
+      },
+    "model" : "contenttypes.contenttype",
+    "pk" : 10
+  },
+  { "fields" : { "app_label" : "categories",
+        "model" : "category",
+        "name" : "category"
+      },
+    "model" : "contenttypes.contenttype",
+    "pk" : 13
+  },
+  { "fields" : { "app_label" : "comments",
+        "model" : "comment",
+        "name" : "comment"
+      },
+    "model" : "contenttypes.contenttype",
+    "pk" : 18
+  },
+  { "fields" : { "app_label" : "contenttypes",
+        "model" : "contenttype",
+        "name" : "content type"
+      },
+    "model" : "contenttypes.contenttype",
+    "pk" : 5
+  },
+  { "fields" : { "app_label" : "datarequests",
+        "model" : "datarequest",
+        "name" : "data request"
+      },
+    "model" : "contenttypes.contenttype",
+    "pk" : 14
+  },
+  { "fields" : { "app_label" : "datasets",
+        "model" : "dataset",
+        "name" : "data set"
+      },
+    "model" : "contenttypes.contenttype",
+    "pk" : 15
+  },
+  { "fields" : { "app_label" : "datasets",
+        "model" : "datasetdownload",
+        "name" : "data set download"
+      },
+    "model" : "contenttypes.contenttype",
+    "pk" : 17
+  },
+  { "fields" : { "app_label" : "datasets",
+        "model" : "datasetfile",
+        "name" : "data set file"
+      },
+    "model" : "contenttypes.contenttype",
+    "pk" : 16
+  },
+  { "fields" : { "app_label" : "geoloc",
+        "model" : "geoloc",
+        "name" : "geo loc"
+      },
+    "model" : "contenttypes.contenttype",
+    "pk" : 25
+  },
+  { "fields" : { "app_label" : "auth",
+        "model" : "group",
+        "name" : "group"
+      },
+    "model" : "contenttypes.contenttype",
+    "pk" : 2
+  },
+  { "fields" : { "app_label" : "core",
+        "model" : "item",
+        "name" : "item"
+      },
+    "model" : "contenttypes.contenttype",
+    "pk" : 9
+  },
+  { "fields" : { "app_label" : "admin",
+        "model" : "logentry",
+        "name" : "log entry"
+      },
+    "model" : "contenttypes.contenttype",
+    "pk" : 8
+  },
+  { "fields" : { "app_label" : "auth",
+        "model" : "message",
+        "name" : "message"
+      },
+    "model" : "contenttypes.contenttype",
+    "pk" : 4
+  },
+  { "fields" : { "app_label" : "messages",
+        "model" : "message",
+        "name" : "message"
+      },
+    "model" : "contenttypes.contenttype",
+    "pk" : 22
+  },
+  { "fields" : { "app_label" : "auth",
+        "model" : "permission",
+        "name" : "permission"
+      },
+    "model" : "contenttypes.contenttype",
+    "pk" : 1
+  },
+  { "fields" : { "app_label" : "core",
+        "model" : "profile",
+        "name" : "profile"
+      },
+    "model" : "contenttypes.contenttype",
+    "pk" : 12
+  },
+  { "fields" : { "app_label" : "projects",
+        "model" : "project",
+        "name" : "project"
+      },
+    "model" : "contenttypes.contenttype",
+    "pk" : 26
+  },
+  { "fields" : { "app_label" : "projects",
+        "model" : "projectdownload",
+        "name" : "project download"
+      },
+    "model" : "contenttypes.contenttype",
+    "pk" : 27
+  },
+  { "fields" : { "app_label" : "messages",
+        "model" : "receivedmessage",
+        "name" : "received message"
+      },
+    "model" : "contenttypes.contenttype",
+    "pk" : 23
+  },
+  { "fields" : { "app_label" : "djangoratings",
+        "model" : "score",
+        "name" : "score"
+      },
+    "model" : "contenttypes.contenttype",
+    "pk" : 20
+  },
+  { "fields" : { "app_label" : "messages",
+        "model" : "sentmessage",
+        "name" : "sent message"
+      },
+    "model" : "contenttypes.contenttype",
+    "pk" : 24
+  },
+  { "fields" : { "app_label" : "sessions",
+        "model" : "session",
+        "name" : "session"
+      },
+    "model" : "contenttypes.contenttype",
+    "pk" : 6
+  },
+  { "fields" : { "app_label" : "sites",
+        "model" : "site",
+        "name" : "site"
+      },
+    "model" : "contenttypes.contenttype",
+    "pk" : 7
+  },
+  { "fields" : { "app_label" : "tags",
+        "model" : "tagging",
+        "name" : "tagging"
+      },
+    "model" : "contenttypes.contenttype",
+    "pk" : 21
+  },
+  { "fields" : { "app_label" : "auth",
+        "model" : "user",
+        "name" : "user"
+      },
+    "model" : "contenttypes.contenttype",
+    "pk" : 3
+  },
+  { "fields" : { "app_label" : "djangoratings",
+        "model" : "vote",
+        "name" : "vote"
+      },
+    "model" : "contenttypes.contenttype",
+    "pk" : 19
+  },
+  { "fields" : { "expire_date" : "2010-05-24 19:24:42",
+        "session_data" : "gAJ9cQEoVRJfYXV0aF91c2VyX2JhY2tlbmRxAlUpZGphbmdvLmNvbnRyaWIuYXV0aC5iYWNrZW5k\ncy5Nb2RlbEJhY2tlbmRxA1UNX2F1dGhfdXNlcl9pZHEESwV1LjNlYjAzZDk1ZjQwOTVmOWFhY2Q5\nOWZiNGNmMjlhODc5\n"
+      },
+    "model" : "sessions.session",
+    "pk" : "a4cd1f59bd450f29383ccd6f027b58ac"
+  },
+  { "fields" : { "expire_date" : "2010-05-25 14:15:39",
+        "session_data" : "gAJ9cQEoVRJfYXV0aF91c2VyX2JhY2tlbmRxAlUpZGphbmdvLmNvbnRyaWIuYXV0aC5iYWNrZW5k\ncy5Nb2RlbEJhY2tlbmRxA1UNX2F1dGhfdXNlcl9pZHEESwF1LmVmMTlkYTFhYzE3MTBhODY1MTk4\nODhmZWVmZDQyNTI0\n"
+      },
+    "model" : "sessions.session",
+    "pk" : "03560ef91dc1e4a24458e965e4c44632"
+  },
+  { "fields" : { "domain" : "example.com",
+        "name" : "example.com"
+      },
+    "model" : "sites.site",
+    "pk" : 1
+  },
+  { "fields" : { "action_flag" : 2,
+        "action_time" : "2010-05-10 19:06:18",
+        "change_message" : "Changed is_staff.",
+        "content_type" : 3,
+        "object_id" : "2",
+        "object_repr" : "chintan",
+        "user" : 1
+      },
+    "model" : "admin.logentry",
+    "pk" : 1
+  },
+  { "fields" : { "category" : 2,
+        "created_at" : "2009-05-23 10:51:35",
+        "creator" : 3,
+        "description" : "Acquired immune deficiency syndrome or acquired immunodeficiency syndrome (AIDS) is a disease of the human immune system caused by the human immunodeficiency virus (HIV). This condition progressively reduces the effectiveness of the immune system and leaves individuals susceptible to opportunistic infections and tumors. HIV is transmitted through direct contact of a mucous membrane or the bloodstream with a bodily fluid containing HIV, such as blood, semen, vaginal fluid, preseminal fluid, and breast milk.",
+        "is_active" : true,
+        "name" : "HIV/AIDS",
+        "rendered_description" : "Acquired immune deficiency syndrome or acquired immunodeficiency syndrome (AIDS) is a disease of the human immune system caused by the human immunodeficiency virus (HIV). This condition progressively reduces the effectiveness of the immune system and leaves individuals susceptible to opportunistic infections and tumors. HIV is transmitted through direct contact of a mucous membrane or the bloodstream with a bodily fluid containing HIV, such as blood, semen, vaginal fluid, preseminal fluid, and breast milk.",
+        "slug" : "hivaids",
+        "tagless_description" : "Acquired immune deficiency syndrome or acquired immunodeficiency syndrome (AIDS) is a disease of the human immune system caused by the human immunodeficiency virus (HIV). This condition progressively reduces the effectiveness of the immune system and leaves individuals susceptible to opportunistic infections and tumors. HIV is transmitted through direct contact of a mucous membrane or the bloodstream with a bodily fluid containing HIV, such as blood, semen, vaginal fluid, preseminal fluid, and breast milk."
+      },
+    "model" : "core.item",
+    "pk" : 1
+  },
+  { "fields" : { "category" : 2,
+        "created_at" : "2009-05-23 10:51:35",
+        "creator" : 8,
+        "description" : "The 1918 flu pandemic (commonly referred to as the Spanish flu) was an influenza pandemic that spread to nearly every part of the world. It was caused by an unusually virulent and deadly Influenza A virus strain of subtype H1N1. Historical and epidemiological data are inadequate to identify the geographic origin of the virus. Most of its victims were healthy young adults, in contrast to most influenza outbreaks which predominantly affect juvenile, elderly, or otherwise weakened patients. The flu pandemic has also been implicated in the sudden outbreak of Encephalitis lethargica in the 1920s.",
+        "is_active" : true,
+        "name" : "Spanish Flu",
+        "rendered_description" : "The 1918 flu pandemic (commonly referred to as the Spanish flu) was an influenza pandemic that spread to nearly every part of the world. It was caused by an unusually virulent and deadly Influenza A virus strain of subtype H1N1. Historical and epidemiological data are inadequate to identify the geographic origin of the virus. Most of its victims were healthy young adults, in contrast to most influenza outbreaks which predominantly affect juvenile, elderly, or otherwise weakened patients. The flu pandemic has also been implicated in the sudden outbreak of Encephalitis lethargica in the 1920s.",
+        "slug" : "spanish-flu",
+        "tagless_description" : "The 1918 flu pandemic (commonly referred to as the Spanish flu) was an influenza pandemic that spread to nearly every part of the world. It was caused by an unusually virulent and deadly Influenza A virus strain of subtype H1N1. Historical and epidemiological data are inadequate to identify the geographic origin of the virus. Most of its victims were healthy young adults, in contrast to most influenza outbreaks which predominantly affect juvenile, elderly, or otherwise weakened patients. The flu pandemic has also been implicated in the sudden outbreak of Encephalitis lethargica in the 1920s."
+      },
+    "model" : "core.item",
+    "pk" : 2
+  },
+  { "fields" : { "category" : 2,
+        "created_at" : "2009-06-23 10:51:35",
+        "creator" : 5,
+        "description" : "Poliomyelitis, often called infantile paralysis, is an acute viral infectious disease spread from person to person, primarily via the fecal-oral route. The term derives from the Greek polios, meaning \"grey\", myelos, referring to the \"spinal cord\", and the suffix-itis, which denotes inflammation. Although around 90% of polio infections cause no symptoms at all, affected individuals can exhibit a range of symptoms if the virus enters the blood stream. In about 1% of cases the virus enters the central nervous system, preferentially infecting and destroying motor neurons, leading to muscle weakness and acute flaccid paralysis. Different types of paralysis may occur, depending on the nerves involved. Spinal polio is the most common form, characterized by asymmetric paralysis that most often involves the legs. Bulbar polio leads to weakness of muscles innervated by cranial nerves. Bulbospinal polio is a combination of bulbar and spinal paralysis.",
+        "is_active" : true,
+        "name" : "Poliomyelitis",
+        "rendered_description" : "Poliomyelitis, often called infantile paralysis, is an acute viral infectious disease spread from person to person, primarily via the fecal-oral route. The term derives from the Greek polios, meaning \"grey\", myelos, referring to the \"spinal cord\", and the suffix-itis, which denotes inflammation. Although around 90% of polio infections cause no symptoms at all, affected individuals can exhibit a range of symptoms if the virus enters the blood stream. In about 1% of cases the virus enters the central nervous system, preferentially infecting and destroying motor neurons, leading to muscle weakness and acute flaccid paralysis. Different types of paralysis may occur, depending on the nerves involved. Spinal polio is the most common form, characterized by asymmetric paralysis that most often involves the legs. Bulbar polio leads to weakness of muscles innervated by cranial nerves. Bulbospinal polio is a combination of bulbar and spinal paralysis.",
+        "slug" : "poliomyelitis",
+        "tagless_description" : "Poliomyelitis, often called infantile paralysis, is an acute viral infectious disease spread from person to person, primarily via the fecal-oral route. The term derives from the Greek polios, meaning \"grey\", myelos, referring to the \"spinal cord\", and the suffix-itis, which denotes inflammation. Although around 90% of polio infections cause no symptoms at all, affected individuals can exhibit a range of symptoms if the virus enters the blood stream. In about 1% of cases the virus enters the central nervous system, preferentially infecting and destroying motor neurons, leading to muscle weakness and acute flaccid paralysis. Different types of paralysis may occur, depending on the nerves involved. Spinal polio is the most common form, characterized by asymmetric paralysis that most often involves the legs. Bulbar polio leads to weakness of muscles innervated by cranial nerves. Bulbospinal polio is a combination of bulbar and spinal paralysis."
+      },
+    "model" : "core.item",
+    "pk" : 3
+  },
+  { "fields" : { "category" : 2,
+        "created_at" : "2009-05-24 10:51:35",
+        "creator" : 4,
+        "description" : "Third Pandemic is the designation of a major plague pandemic that began in the Yunnan province in China in 1855. This episode of bubonic plague spread to all inhabited continents, and ultimately killed more than 12 million people in India and China alone. According to the World Health Organization, the pandemic was considered active until 1959, when worldwide casualties dropped to 200 per year.",
+        "is_active" : true,
+        "name" : "Third Pandemic",
+        "rendered_description" : "Third Pandemic is the designation of a major plague pandemic that began in the Yunnan province in China in 1855. This episode of bubonic plague spread to all inhabited continents, and ultimately killed more than 12 million people in India and China alone. According to the World Health Organization, the pandemic was considered active until 1959, when worldwide casualties dropped to 200 per year.",
+        "slug" : "third-pandemic",
+        "tagless_description" : "Third Pandemic is the designation of a major plague pandemic that began in the Yunnan province in China in 1855. This episode of bubonic plague spread to all inhabited continents, and ultimately killed more than 12 million people in India and China alone. According to the World Health Organization, the pandemic was considered active until 1959, when worldwide casualties dropped to 200 per year."
+      },
+    "model" : "core.item",
+    "pk" : 4
+  },
+  { "fields" : { "category" : 2,
+        "created_at" : "2008-05-23 10:51:35",
+        "creator" : 11,
+        "description" : "The viral hemorrhagic fevers (VHFs) are a diverse group of animal and human illnesses that are caused by five distinct families of RNA viruses: the Arenaviridae, Filoviridae, Bunyaviridae, Togaviridae, and Flaviviridae. All types of VHF are characterized by fever and bleeding disorders and all can progress to high fever, shock and death in extreme cases. Some of the VHF agents cause relatively mild illnesses, such as the Scandinavian nephropathia epidemica, whilst others, such as the African Ebola virus, can cause severe, life-threatening disease.",
+        "is_active" : true,
+        "name" : "Viral hemorrhagic fever",
+        "rendered_description" : "The viral hemorrhagic fevers (VHFs) are a diverse group of animal and human illnesses that are caused by five distinct families of RNA viruses: the Arenaviridae, Filoviridae, Bunyaviridae, Togaviridae, and Flaviviridae. All types of VHF are characterized by fever and bleeding disorders and all can progress to high fever, shock and death in extreme cases. Some of the VHF agents cause relatively mild illnesses, such as the Scandinavian nephropathia epidemica, whilst others, such as the African Ebola virus, can cause severe, life-threatening disease.",
+        "slug" : "viral-hemorrhagic-fever",
+        "tagless_description" : "The viral hemorrhagic fevers (VHFs) are a diverse group of animal and human illnesses that are caused by five distinct families of RNA viruses: the Arenaviridae, Filoviridae, Bunyaviridae, Togaviridae, and Flaviviridae. All types of VHF are characterized by fever and bleeding disorders and all can progress to high fever, shock and death in extreme cases. Some of the VHF agents cause relatively mild illnesses, such as the Scandinavian nephropathia epidemica, whilst others, such as the African Ebola virus, can cause severe, life-threatening disease."
+      },
+    "model" : "core.item",
+    "pk" : 5
+  },
+  { "fields" : { "category" : 3,
+        "created_at" : "2009-05-24 10:51:35",
+        "creator" : 3,
+        "description" : "Since 1993, the number of college students who drink and binge drink has remained about the same, but the intensity of excessive drinking and rates of drug abuse have jumped sharply, according to The National Center on Addiction and Substance Abuse at Columbia University.",
+        "is_active" : true,
+        "name" : "College Binge Drinking",
+        "rendered_description" : "Since 1993, the number of college students who drink and binge drink has remained about the same, but the intensity of excessive drinking and rates of drug abuse have jumped sharply, according to The National Center on Addiction and Substance Abuse at Columbia University.",
+        "slug" : "college-binge-drinking",
+        "tagless_description" : "Since 1993, the number of college students who drink and binge drink has remained about the same, but the intensity of excessive drinking and rates of drug abuse have jumped sharply, according to The National Center on Addiction and Substance Abuse at Columbia University."
+      },
+    "model" : "core.item",
+    "pk" : 6
+  },
+  { "fields" : { "category" : 2,
+        "created_at" : "2009-06-23 10:51:35",
+        "creator" : 3,
+        "description" : "Need dataset for the 2004 Leishmaniasis epidemic that happened in Afghanistan.",
+        "is_active" : true,
+        "name" : "Leishmaniasis",
+        "rendered_description" : "Need dataset for the 2004 Leishmaniasis epidemic that happened in Afghanistan.",
+        "slug" : "leishmaniasis",
+        "tagless_description" : "Need dataset for the 2004 Leishmaniasis epidemic that happened in Afghanistan."
+      },
+    "model" : "core.item",
+    "pk" : 7
+  },
+  { "fields" : { "category" : 2,
+        "created_at" : "2009-01-23 10:51:35",
+        "creator" : 2,
+        "description" : "Need dataset for the 1968 - 1969 Avian influenza or Hong Kong flu that happened in Hong Kong.",
+        "is_active" : true,
+        "name" : "Avian influenza",
+        "rendered_description" : "Need dataset for the 1968 - 1969 Avian influenza or Hong Kong flu that happened in Hong Kong.",
+        "slug" : "avian-influenza",
+        "tagless_description" : "Need dataset for the 1968 - 1969 Avian influenza or Hong Kong flu that happened in Hong Kong."
+      },
+    "model" : "core.item",
+    "pk" : 8
+  },
+  { "fields" : { "category" : 2,
+        "created_at" : "2009-05-28 10:51:35",
+        "creator" : 6,
+        "description" : "Need dataset for the 2004 Dengue fever epidemic that happened in Indonesia.",
+        "is_active" : true,
+        "name" : "Dengue fever",
+        "rendered_description" : "Need dataset for the 2004 Dengue fever epidemic that happened in Indonesia.",
+        "slug" : "dengue-fever",
+        "tagless_description" : "Need dataset for the 2004 Dengue fever epidemic that happened in Indonesia."
+      },
+    "model" : "core.item",
+    "pk" : 9
+  },
+  { "fields" : { "category" : 2,
+        "created_at" : "2006-05-23 10:51:35",
+        "creator" : 7,
+        "description" : "Need dataset for the 2007 Infantile paralysis epidemic that happened in Nigeria.",
+        "is_active" : true,
+        "name" : "Infantile paralysis",
+        "rendered_description" : "Need dataset for the 2007 Infantile paralysis epidemic that happened in Nigeria.",
+        "slug" : "infantile-paralysis",
+        "tagless_description" : "Need dataset for the 2007 Infantile paralysis epidemic that happened in Nigeria."
+      },
+    "model" : "core.item",
+    "pk" : 10
+  },
+  { "fields" : { "category" : 2,
+        "created_at" : "2007-01-25 10:51:35",
+        "creator" : 5,
+        "description" : "Need dataset for the 1996 Menigitis epidemic that happened in West Africa.",
+        "is_active" : true,
+        "name" : "Menigitis",
+        "rendered_description" : "Need dataset for the 1996 Menigitis epidemic that happened in West Africa.",
+        "slug" : "menigitis",
+        "tagless_description" : "Need dataset for the 1996 Menigitis epidemic that happened in West Africa."
+      },
+    "model" : "core.item",
+    "pk" : 11
+  },
+  { "fields" : { "category" : 2,
+        "created_at" : "2007-01-25 10:51:35",
+        "creator" : 10,
+        "description" : "Need data on HIV.",
+        "is_active" : true,
+        "name" : "HIV/AIDS",
+        "rendered_description" : "Need data on HIV.",
+        "slug" : "hivaids",
+        "tagless_description" : "Need data on HIV."
+      },
+    "model" : "core.item",
+    "pk" : 12
+  },
+  { "fields" : { "category" : 2,
+        "created_at" : "2009-05-28 10:51:35",
+        "creator" : 11,
+        "description" : "Need data on all strains of the flu virus.",
+        "is_active" : true,
+        "name" : "Flu",
+        "rendered_description" : "Need data on all strains of the flu virus.",
+        "slug" : "flu",
+        "tagless_description" : "Need data on all strains of the flu virus."
+      },
+    "model" : "core.item",
+    "pk" : 13
+  },
+  { "fields" : { "category" : 2,
+        "created_at" : "2010-01-23 10:51:35",
+        "creator" : 4,
+        "description" : "Need data on all types of infant diseases.",
+        "is_active" : true,
+        "name" : "Infant diseases",
+        "rendered_description" : "Need data on all types of infant diseases.",
+        "slug" : "infant-diseases",
+        "tagless_description" : "Need data on all types of infant diseases."
+      },
+    "model" : "core.item",
+    "pk" : 14
+  },
+  { "fields" : { "category" : 2,
+        "created_at" : "2004-05-23 10:51:35",
+        "creator" : 5,
+        "description" : "Need data on pandemics in Chinese history",
+        "is_active" : true,
+        "name" : "Historical Chinese Pandemics",
+        "rendered_description" : "Need data on pandemics in Chinese history",
+        "slug" : "historical-chinese-pandemics",
+        "tagless_description" : "Need data on pandemics in Chinese history"
+      },
+    "model" : "core.item",
+    "pk" : 15
+  },
+  { "fields" : { "category" : 2,
+        "created_at" : "2009-10-25 10:51:35",
+        "creator" : 3,
+        "description" : "Need dataset for the 1829 Malaria - Groningen epidemic that happened in Netherlands.",
+        "is_active" : true,
+        "name" : "Malaria - Groningen",
+        "rendered_description" : "Need dataset for the 1829 Malaria - Groningen epidemic that happened in Netherlands.",
+        "slug" : "malaria-groningen",
+        "tagless_description" : "Need dataset for the 1829 Malaria - Groningen epidemic that happened in Netherlands."
+      },
+    "model" : "core.item",
+    "pk" : 16
+  },
+  { "fields" : { "category" : 2,
+        "created_at" : "2009-10-25 10:51:35",
+        "creator" : 2,
+        "description" : "Need dataset for the 1771 Plague Riot epidemic that happened in Moscow possibly caused by bubonic plague.",
+        "is_active" : true,
+        "name" : "Plague Riot",
+        "rendered_description" : "Need dataset for the 1771 Plague Riot epidemic that happened in Moscow possibly caused by bubonic plague.",
+        "slug" : "plague-riot",
+        "tagless_description" : "Need dataset for the 1771 Plague Riot epidemic that happened in Moscow possibly caused by bubonic plague."
+      },
+    "model" : "core.item",
+    "pk" : 17
+  },
+  { "fields" : { "category" : 2,
+        "created_at" : "2009-05-15 10:51:35",
+        "creator" : 11,
+        "description" : "Need dataset for the 1770s Smallpox epidemic that happened in Northwest Coast Indians.",
+        "is_active" : true,
+        "name" : "Smallpox",
+        "rendered_description" : "Need dataset for the 1770s Smallpox epidemic that happened in Northwest Coast Indians.",
+        "slug" : "smallpox",
+        "tagless_description" : "Need dataset for the 1770s Smallpox epidemic that happened in Northwest Coast Indians."
+      },
+    "model" : "core.item",
+    "pk" : 18
+  },
+  { "fields" : { "category" : 2,
+        "created_at" : "2009-03-23 10:51:35",
+        "creator" : 9,
+        "description" : "Need dataset for the 1783 Bilious disorder epidemic that happened in Dover, Delaware.",
+        "is_active" : true,
+        "name" : "Bilious disorder",
+        "rendered_description" : "Need dataset for the 1783 Bilious disorder epidemic that happened in Dover, Delaware.",
+        "slug" : "bilious-disorder",
+        "tagless_description" : "Need dataset for the 1783 Bilious disorder epidemic that happened in Dover, Delaware."
+      },
+    "model" : "core.item",
+    "pk" : 19
+  },
+  { "fields" : { "category" : 2,
+        "created_at" : "2004-05-23 10:51:35",
+        "creator" : 6,
+        "description" : "Need dataset for the 2006 Chikungunya outbreaks that happened in India.",
+        "is_active" : true,
+        "name" : "Chikungunya outbreaks in India",
+        "rendered_description" : "Need dataset for the 2006 Chikungunya outbreaks that happened in India.",
+        "slug" : "chikungunya-outbreaks-in-india",
+        "tagless_description" : "Need dataset for the 2006 Chikungunya outbreaks that happened in India."
+      },
+    "model" : "core.item",
+    "pk" : 20
+  },
+  { "fields" : { "category" : 1,
+        "created_at" : "2005-06-23 10:51:35",
+        "creator" : 8,
+        "description" : "Depression in the US Lorem ipsum dolor sit amet, consectetur adipiscing elit. Mauris quam mauris, rutrum ullamcorper mattis et, venenatis et elit. Cras faucibus diam a nibh tempor ut imperdiet sapien euismod. In cursus purus nec ligula varius at aliquet est hendrerit. Nam felis arcu, malesuada sit amet feugiat ac, tristique eget augue. Vivamus sed velit magna. Proin eu consequat orci. Pellentesque vehicula auctor ullamcorper. Pellentesque imperdiet lacus id sapien condimentum ut fringilla metus tempor. Morbi iaculis ultricies augue eu fermentum. Pellentesque cursus nulla et elit pellentesque condimentum. Curabitur at mauris at eros rutrum dictum nec ut risus. Mauris tempus nulla vitae tellus sollicitudin adipiscing",
+        "is_active" : true,
+        "name" : "Depression in the US",
+        "rendered_description" : "Depression in the US Lorem ipsum dolor sit amet, consectetur adipiscing elit. Mauris quam mauris, rutrum ullamcorper mattis et, venenatis et elit. Cras faucibus diam a nibh tempor ut imperdiet sapien euismod. In cursus purus nec ligula varius at aliquet est hendrerit. Nam felis arcu, malesuada sit amet feugiat ac, tristique eget augue. Vivamus sed velit magna. Proin eu consequat orci. Pellentesque vehicula auctor ullamcorper. Pellentesque imperdiet lacus id sapien condimentum ut fringilla metus tempor. Morbi iaculis ultricies augue eu fermentum. Pellentesque cursus nulla et elit pellentesque condimentum. Curabitur at mauris at eros rutrum dictum nec ut risus. Mauris tempus nulla vitae tellus sollicitudin adipiscing",
+        "slug" : "depression-in-the-us",
+        "tagless_description" : "Depression in the US Lorem ipsum dolor sit amet, consectetur adipiscing elit. Mauris quam mauris, rutrum ullamcorper mattis et, venenatis et elit. Cras faucibus diam a nibh tempor ut imperdiet sapien euismod. In cursus purus nec ligula varius at aliquet est hendrerit. Nam felis arcu, malesuada sit amet feugiat ac, tristique eget augue. Vivamus sed velit magna. Proin eu consequat orci. Pellentesque vehicula auctor ullamcorper. Pellentesque imperdiet lacus id sapien condimentum ut fringilla metus tempor. Morbi iaculis ultricies augue eu fermentum. Pellentesque cursus nulla et elit pellentesque condimentum. Curabitur at mauris at eros rutrum dictum nec ut risus. Mauris tempus nulla vitae tellus sollicitudin adipiscing"
+      },
+    "model" : "core.item",
+    "pk" : 21
+  },
+  { "fields" : { "category" : 2,
+        "created_at" : "2009-06-23 10:51:35",
+        "creator" : 2,
+        "description" : "Historical H1N1 Lorem ipsum dolor sit amet, consectetur adipiscing elit. Mauris quam mauris, rutrum ullamcorper mattis et, venenatis et elit. Cras faucibus diam a nibh tempor ut imperdiet sapien euismod. In cursus purus nec ligula varius at aliquet est hendrerit. Nam felis arcu, malesuada sit amet feugiat ac, tristique eget augue. Vivamus sed velit magna. Proin eu consequat orci. Pellentesque vehicula auctor ullamcorper. Pellentesque imperdiet lacus id sapien condimentum ut fringilla metus tempor. Morbi iaculis ultricies augue eu fermentum. Pellentesque cursus nulla et elit pellentesque condimentum. Curabitur at mauris at eros rutrum dictum nec ut risus. Mauris tempus nulla vitae tellus sollicitudin adipiscing",
+        "is_active" : true,
+        "name" : "Historical H1N1",
+        "rendered_description" : "Historical H1N1 Lorem ipsum dolor sit amet, consectetur adipiscing elit. Mauris quam mauris, rutrum ullamcorper mattis et, venenatis et elit. Cras faucibus diam a nibh tempor ut imperdiet sapien euismod. In cursus purus nec ligula varius at aliquet est hendrerit. Nam felis arcu, malesuada sit amet feugiat ac, tristique eget augue. Vivamus sed velit magna. Proin eu consequat orci. Pellentesque vehicula auctor ullamcorper. Pellentesque imperdiet lacus id sapien condimentum ut fringilla metus tempor. Morbi iaculis ultricies augue eu fermentum. Pellentesque cursus nulla et elit pellentesque condimentum. Curabitur at mauris at eros rutrum dictum nec ut risus. Mauris tempus nulla vitae tellus sollicitudin adipiscing",
+        "slug" : "historical-h1n1",
+        "tagless_description" : "Historical H1N1 Lorem ipsum dolor sit amet, consectetur adipiscing elit. Mauris quam mauris, rutrum ullamcorper mattis et, venenatis et elit. Cras faucibus diam a nibh tempor ut imperdiet sapien euismod. In cursus purus nec ligula varius at aliquet est hendrerit. Nam felis arcu, malesuada sit amet feugiat ac, tristique eget augue. Vivamus sed velit magna. Proin eu consequat orci. Pellentesque vehicula auctor ullamcorper. Pellentesque imperdiet lacus id sapien condimentum ut fringilla metus tempor. Morbi iaculis ultricies augue eu fermentum. Pellentesque cursus nulla et elit pellentesque condimentum. Curabitur at mauris at eros rutrum dictum nec ut risus. Mauris tempus nulla vitae tellus sollicitudin adipiscing"
+      },
+    "model" : "core.item",
+    "pk" : 22
+  },
+  { "fields" : { "category" : 2,
+        "created_at" : "2009-07-23 10:51:35",
+        "creator" : 7,
+        "description" : "HIV and You Lorem ipsum dolor sit amet, consectetur adipiscing elit. Mauris quam mauris, rutrum ullamcorper mattis et, venenatis et elit. Cras faucibus diam a nibh tempor ut imperdiet sapien euismod. In cursus purus nec ligula varius at aliquet est hendrerit. Nam felis arcu, malesuada sit amet feugiat ac, tristique eget augue. Vivamus sed velit magna. Proin eu consequat orci. Pellentesque vehicula auctor ullamcorper. Pellentesque imperdiet lacus id sapien condimentum ut fringilla metus tempor. Morbi iaculis ultricies augue eu fermentum. Pellentesque cursus nulla et elit pellentesque condimentum. Curabitur at mauris at eros rutrum dictum nec ut risus. Mauris tempus nulla vitae tellus sollicitudin adipiscing",
+        "is_active" : true,
+        "name" : "HIV and You",
+        "rendered_description" : "HIV and You Lorem ipsum dolor sit amet, consectetur adipiscing elit. Mauris quam mauris, rutrum ullamcorper mattis et, venenatis et elit. Cras faucibus diam a nibh tempor ut imperdiet sapien euismod. In cursus purus nec ligula varius at aliquet est hendrerit. Nam felis arcu, malesuada sit amet feugiat ac, tristique eget augue. Vivamus sed velit magna. Proin eu consequat orci. Pellentesque vehicula auctor ullamcorper. Pellentesque imperdiet lacus id sapien condimentum ut fringilla metus tempor. Morbi iaculis ultricies augue eu fermentum. Pellentesque cursus nulla et elit pellentesque condimentum. Curabitur at mauris at eros rutrum dictum nec ut risus. Mauris tempus nulla vitae tellus sollicitudin adipiscing",
+        "slug" : "hiv-and-you",
+        "tagless_description" : "HIV and You Lorem ipsum dolor sit amet, consectetur adipiscing elit. Mauris quam mauris, rutrum ullamcorper mattis et, venenatis et elit. Cras faucibus diam a nibh tempor ut imperdiet sapien euismod. In cursus purus nec ligula varius at aliquet est hendrerit. Nam felis arcu, malesuada sit amet feugiat ac, tristique eget augue. Vivamus sed velit magna. Proin eu consequat orci. Pellentesque vehicula auctor ullamcorper. Pellentesque imperdiet lacus id sapien condimentum ut fringilla metus tempor. Morbi iaculis ultricies augue eu fermentum. Pellentesque cursus nulla et elit pellentesque condimentum. Curabitur at mauris at eros rutrum dictum nec ut risus. Mauris tempus nulla vitae tellus sollicitudin adipiscing"
+      },
+    "model" : "core.item",
+    "pk" : 23
+  },
+  { "fields" : { "category" : 1,
+        "created_at" : "2009-05-21 10:51:35",
+        "creator" : 6,
+        "description" : "The Lorem ipsum dolor sit amet, consectetur adipiscing elit. Mauris quam mauris, rutrum ullamcorper mattis et, venenatis et elit. Cras faucibus diam a nibh tempor ut imperdiet sapien euismod. In cursus purus nec ligula varius at aliquet est hendrerit. Nam felis arcu, malesuada sit amet feugiat ac, tristique eget augue. Vivamus sed velit magna. Proin eu consequat orci. Pellentesque vehicula auctor ullamcorper. Pellentesque imperdiet lacus id sapien condimentum ut fringilla metus tempor. Morbi iaculis ultricies augue eu fermentum. Pellentesque cursus nulla et elit pellentesque condimentum. Curabitur at mauris at eros rutrum dictum nec ut risus. Mauris tempus nulla vitae tellus sollicitudin adipiscing of drinking Infections",
+        "is_active" : true,
+        "name" : "Drinking Habits",
+        "rendered_description" : "The Lorem ipsum dolor sit amet, consectetur adipiscing elit. Mauris quam mauris, rutrum ullamcorper mattis et, venenatis et elit. Cras faucibus diam a nibh tempor ut imperdiet sapien euismod. In cursus purus nec ligula varius at aliquet est hendrerit. Nam felis arcu, malesuada sit amet feugiat ac, tristique eget augue. Vivamus sed velit magna. Proin eu consequat orci. Pellentesque vehicula auctor ullamcorper. Pellentesque imperdiet lacus id sapien condimentum ut fringilla metus tempor. Morbi iaculis ultricies augue eu fermentum. Pellentesque cursus nulla et elit pellentesque condimentum. Curabitur at mauris at eros rutrum dictum nec ut risus. Mauris tempus nulla vitae tellus sollicitudin adipiscing of drinking Infections",
+        "slug" : "drinking-habits",
+        "tagless_description" : "The Lorem ipsum dolor sit amet, consectetur adipiscing elit. Mauris quam mauris, rutrum ullamcorper mattis et, venenatis et elit. Cras faucibus diam a nibh tempor ut imperdiet sapien euismod. In cursus purus nec ligula varius at aliquet est hendrerit. Nam felis arcu, malesuada sit amet feugiat ac, tristique eget augue. Vivamus sed velit magna. Proin eu consequat orci. Pellentesque vehicula auctor ullamcorper. Pellentesque imperdiet lacus id sapien condimentum ut fringilla metus tempor. Morbi iaculis ultricies augue eu fermentum. Pellentesque cursus nulla et elit pellentesque condimentum. Curabitur at mauris at eros rutrum dictum nec ut risus. Mauris tempus nulla vitae tellus sollicitudin adipiscing of drinking Infections"
+      },
+    "model" : "core.item",
+    "pk" : 24
+  },
+  { "fields" : { "category" : 2,
+        "created_at" : "2006-05-23 10:51:35",
+        "creator" : 4,
+        "description" : "Death by Lorem ipsum dolor sit amet, consectetur adipiscing elit. Mauris quam mauris, rutrum ullamcorper mattis et, venenatis et elit. Cras faucibus diam a nibh tempor ut imperdiet sapien euismod. In cursus purus nec ligula varius at aliquet est hendrerit. Nam felis arcu, malesuada sit amet feugiat ac, tristique eget augue. Vivamus sed velit magna. Proin eu consequat orci. Pellentesque vehicula auctor ullamcorper. Pellentesque imperdiet lacus id sapien condimentum ut fringilla metus tempor. Morbi iaculis ultricies augue eu fermentum. Pellentesque cursus nulla et elit pellentesque condimentum. Curabitur at mauris at eros rutrum dictum nec ut risus. Mauris tempus nulla vitae tellus sollicitudin adipiscing Plague",
+        "is_active" : true,
+        "name" : "Death by Plague",
+        "rendered_description" : "Death by Lorem ipsum dolor sit amet, consectetur adipiscing elit. Mauris quam mauris, rutrum ullamcorper mattis et, venenatis et elit. Cras faucibus diam a nibh tempor ut imperdiet sapien euismod. In cursus purus nec ligula varius at aliquet est hendrerit. Nam felis arcu, malesuada sit amet feugiat ac, tristique eget augue. Vivamus sed velit magna. Proin eu consequat orci. Pellentesque vehicula auctor ullamcorper. Pellentesque imperdiet lacus id sapien condimentum ut fringilla metus tempor. Morbi iaculis ultricies augue eu fermentum. Pellentesque cursus nulla et elit pellentesque condimentum. Curabitur at mauris at eros rutrum dictum nec ut risus. Mauris tempus nulla vitae tellus sollicitudin adipiscing Plague",
+        "slug" : "death-by-plague",
+        "tagless_description" : "Death by Lorem ipsum dolor sit amet, consectetur adipiscing elit. Mauris quam mauris, rutrum ullamcorper mattis et, venenatis et elit. Cras faucibus diam a nibh tempor ut imperdiet sapien euismod. In cursus purus nec ligula varius at aliquet est hendrerit. Nam felis arcu, malesuada sit amet feugiat ac, tristique eget augue. Vivamus sed velit magna. Proin eu consequat orci. Pellentesque vehicula auctor ullamcorper. Pellentesque imperdiet lacus id sapien condimentum ut fringilla metus tempor. Morbi iaculis ultricies augue eu fermentum. Pellentesque cursus nulla et elit pellentesque condimentum. Curabitur at mauris at eros rutrum dictum nec ut risus. Mauris tempus nulla vitae tellus sollicitudin adipiscing Plague"
+      },
+    "model" : "core.item",
+    "pk" : 25
+  },
+  { "fields" : { "category" : 2,
+        "created_at" : "2009-06-24 10:51:35",
+        "creator" : 8,
+        "description" : "These diseases are just [i]so[/i] interesting[b]![/b]",
+        "is_active" : true,
+        "name" : "My favorite diseases",
+        "rendered_description" : "These diseases are just <em>so</em> interesting<b>!</b>",
+        "slug" : "my-favorite-diseases",
+        "tagless_description" : "These diseases are just  so  interesting ! "
+      },
+    "model" : "core.item",
+    "pk" : 26
+  },
+  { "fields" : { "category" : 3,
+        "created_at" : "2010-05-09 22:09:02",
+        "creator" : 2,
+        "description" : "Test Dataset Description",
+        "is_active" : true,
+        "name" : "Test Dataset Name",
+        "rendered_description" : "Test Dataset Description",
+        "slug" : "test-dataset-name",
+        "tagless_description" : "Test Dataset Description"
+      },
+    "model" : "core.item",
+    "pk" : 27
+  },
+  { "fields" : { "category" : 3,
+        "created_at" : "2010-05-10 00:12:54",
+        "creator" : 2,
+        "description" : "Test Dataset Description 2",
+        "is_active" : true,
+        "name" : "Test Dataset Name 2",
+        "rendered_description" : "Test Dataset Description 2",
+        "slug" : "test-dataset-name-2",
+        "tagless_description" : "Test Dataset Description 2"
+      },
+    "model" : "core.item",
+    "pk" : 28
+  },
+  { "fields" : { "category" : 3,
+        "created_at" : "2010-05-11 15:37:01",
+        "creator" : 1,
+        "description" : "Test Dataset Description 3",
+        "is_active" : true,
+        "name" : "Test Dataset Name 3",
+        "rendered_description" : "Test Dataset Description 3",
+        "slug" : "test-dataset-name-3",
+        "tagless_description" : "Test Dataset Description 3"
+      },
+    "model" : "core.item",
+    "pk" : 29
+  },
+  { "fields" : { "activation_key" : "52efef870f8931d9528a0c4e7505e6e121cc20a6",
+        "affiliation" : "",
+        "has_activated_account" : false,
+        "user" : 1
+      },
+    "model" : "core.profile",
+    "pk" : 1
+  },
+  { "fields" : { "activation_key" : "a47844bd567f5c92f05d26bc06db972467e24324",
+        "affiliation" : "",
+        "has_activated_account" : false,
+        "user" : 2
+      },
+    "model" : "core.profile",
+    "pk" : 2
+  },
+  { "fields" : { "activation_key" : "dabe9301eb7d20deef1b00be47a3c1d25aa4a1d7",
+        "affiliation" : "",
+        "has_activated_account" : false,
+        "user" : 3
+      },
+    "model" : "core.profile",
+    "pk" : 3
+  },
+  { "fields" : { "activation_key" : "30f39d84bde439b54cb4ff0d76ae61c70114ebc4",
+        "affiliation" : "",
+        "has_activated_account" : false,
+        "user" : 4
+      },
+    "model" : "core.profile",
+    "pk" : 4
+  },
+  { "fields" : { "activation_key" : "ad1703130a0497377e99a399d55b3ed097c2831b",
+        "affiliation" : "",
+        "has_activated_account" : false,
+        "user" : 5
+      },
+    "model" : "core.profile",
+    "pk" : 5
+  },
+  { "fields" : { "activation_key" : "16768e6215393a2d57f0e251819ea3fd92fd24f2",
+        "affiliation" : "",
+        "has_activated_account" : false,
+        "user" : 6
+      },
+    "model" : "core.profile",
+    "pk" : 6
+  },
+  { "fields" : { "activation_key" : "85c502a0ad212dfc095e954788cb39dd7a0a55a1",
+        "affiliation" : "",
+        "has_activated_account" : false,
+        "user" : 7
+      },
+    "model" : "core.profile",
+    "pk" : 7
+  },
+  { "fields" : { "activation_key" : "1f00e7d3187426fc6cc9e07751d183fa52bccd59",
+        "affiliation" : "",
+        "has_activated_account" : false,
+        "user" : 8
+      },
+    "model" : "core.profile",
+    "pk" : 8
+  },
+  { "fields" : { "activation_key" : "6884774b91c170ff562a405bc6cd14a57f1f2e1c",
+        "affiliation" : "",
+        "has_activated_account" : false,
+        "user" : 9
+      },
+    "model" : "core.profile",
+    "pk" : 9
+  },
+  { "fields" : { "activation_key" : "8f1c6c4d4e9c754d550907e7d79c714b9576499d",
+        "affiliation" : "",
+        "has_activated_account" : false,
+        "user" : 10
+      },
+    "model" : "core.profile",
+    "pk" : 10
+  },
+  { "fields" : { "activation_key" : "de2f2dd7c7e863b146fa1e9632e0c52b892cca64",
+        "affiliation" : "",
+        "has_activated_account" : false,
+        "user" : 11
+      },
+    "model" : "core.profile",
+    "pk" : 11
+  },
+  { "fields" : { "created_at" : "2009-05-23 10:51:35",
+        "description" : "Social Contagion Category Description",
+        "name" : "Social Contagion"
+      },
+    "model" : "categories.category",
+    "pk" : 1
+  },
+  { "fields" : { "created_at" : "2009-05-23 10:51:35",
+        "description" : "Infectious Diseases Category Description",
+        "name" : "Infectious Diseases"
+      },
+    "model" : "categories.category",
+    "pk" : 2
+  },
+  { "fields" : { "created_at" : "2010-05-07 10:51:35",
+        "description" : "Demographics Category Description",
+        "name" : "Demographics"
+      },
+    "model" : "categories.category",
+    "pk" : 3
+  },
+  { "fields" : { "created_at" : "2010-05-09 22:08:13",
+        "description" : "Items that do not fall under any other category",
+        "name" : "Uncategorized"
+      },
+    "model" : "categories.category",
+    "pk" : 4
+  },
+  { "fields" : { "fulfilling_item" : null,
+        "status" : "C"
+      },
+    "model" : "datarequests.datarequest",
+    "pk" : 7
+  },
+  { "fields" : { "fulfilling_item" : null,
+        "status" : "C"
+      },
+    "model" : "datarequests.datarequest",
+    "pk" : 8
+  },
+  { "fields" : { "fulfilling_item" : null,
+        "status" : "C"
+      },
+    "model" : "datarequests.datarequest",
+    "pk" : 9
+  },
+  { "fields" : { "fulfilling_item" : null,
+        "status" : "C"
+      },
+    "model" : "datarequests.datarequest",
+    "pk" : 10
+  },
+  { "fields" : { "fulfilling_item" : null,
+        "status" : "C"
+      },
+    "model" : "datarequests.datarequest",
+    "pk" : 11
+  },
+  { "fields" : { "fulfilling_item" : 1,
+        "status" : "F"
+      },
+    "model" : "datarequests.datarequest",
+    "pk" : 12
+  },
+  { "fields" : { "fulfilling_item" : 2,
+        "status" : "F"
+      },
+    "model" : "datarequests.datarequest",
+    "pk" : 13
+  },
+  { "fields" : { "fulfilling_item" : 3,
+        "status" : "F"
+      },
+    "model" : "datarequests.datarequest",
+    "pk" : 14
+  },
+  { "fields" : { "fulfilling_item" : 4,
+        "status" : "F"
+      },
+    "model" : "datarequests.datarequest",
+    "pk" : 15
+  },
+  { "fields" : { "fulfilling_item" : null,
+        "status" : "U"
+      },
+    "model" : "datarequests.datarequest",
+    "pk" : 16
+  },
+  { "fields" : { "fulfilling_item" : null,
+        "status" : "U"
+      },
+    "model" : "datarequests.datarequest",
+    "pk" : 17
+  },
+  { "fields" : { "fulfilling_item" : null,
+        "status" : "U"
+      },
+    "model" : "datarequests.datarequest",
+    "pk" : 18
+  },
+  { "fields" : { "fulfilling_item" : null,
+        "status" : "U"
+      },
+    "model" : "datarequests.datarequest",
+    "pk" : 19
+  },
+  { "fields" : { "fulfilling_item" : null,
+        "status" : "U"
+      },
+    "model" : "datarequests.datarequest",
+    "pk" : 20
+  },
+  { "fields" : { "geolocations" : [ 1 ],
+        "next_version" : null,
+        "previous_version" : null,
+        "rating_score" : 0,
+        "rating_votes" : 0
+      },
+    "model" : "datasets.dataset",
+    "pk" : 1
+  },
+  { "fields" : { "geolocations" : [ 2 ],
+        "next_version" : null,
+        "previous_version" : null,
+        "rating_score" : 0,
+        "rating_votes" : 0
+      },
+    "model" : "datasets.dataset",
+    "pk" : 2
+  },
+  { "fields" : { "geolocations" : [ 3 ],
+        "next_version" : null,
+        "previous_version" : null,
+        "rating_score" : 0,
+        "rating_votes" : 0
+      },
+    "model" : "datasets.dataset",
+    "pk" : 3
+  },
+  { "fields" : { "geolocations" : [ 4 ],
+        "next_version" : null,
+        "previous_version" : null,
+        "rating_score" : 0,
+        "rating_votes" : 0
+      },
+    "model" : "datasets.dataset",
+    "pk" : 4
+  },
+  { "fields" : { "geolocations" : [ 5 ],
+        "next_version" : null,
+        "previous_version" : null,
+        "rating_score" : 0,
+        "rating_votes" : 0
+      },
+    "model" : "datasets.dataset",
+    "pk" : 5
+  },
+  { "fields" : { "geolocations" : [  ],
+        "next_version" : null,
+        "previous_version" : null,
+        "rating_score" : 0,
+        "rating_votes" : 0
+      },
+    "model" : "datasets.dataset",
+    "pk" : 6
+  },
+  { "fields" : { "geolocations" : [  ],
+        "next_version" : null,
+        "previous_version" : null,
+        "rating_score" : 0,
+        "rating_votes" : 0
+      },
+    "model" : "datasets.dataset",
+    "pk" : 27
+  },
+  { "fields" : { "geolocations" : [  ],
+        "next_version" : null,
+        "previous_version" : null,
+        "rating_score" : 0,
+        "rating_votes" : 0
+      },
+    "model" : "datasets.dataset",
+    "pk" : 28
+  },
+  { "fields" : { "geolocations" : [  ],
+        "next_version" : null,
+        "previous_version" : null,
+        "rating_score" : 0,
+        "rating_votes" : 0
+      },
+    "model" : "datasets.dataset",
+    "pk" : 29
+  },
+  { "fields" : { "file_contents" : "dataset_files/27/download-model-design.txt",
+        "is_readme" : false,
+        "parent_dataset" : 27,
+        "uploaded_at" : "2009-04-08 22:09:02"
+      },
+    "model" : "datasets.datasetfile",
+    "pk" : 1
+  },
+  { "fields" : { "file_contents" : "dataset_files/27/test-data.txt",
+        "is_readme" : false,
+        "parent_dataset" : 27,
+        "uploaded_at" : "2010-05-09 22:09:02"
+      },
+    "model" : "datasets.datasetfile",
+    "pk" : 2
+  },
+  { "fields" : { "file_contents" : "dataset_files/27/readme.txt",
+        "is_readme" : true,
+        "parent_dataset" : 27,
+        "uploaded_at" : "2010-05-09 22:09:02"
+      },
+    "model" : "datasets.datasetfile",
+    "pk" : 3
+  },
+  { "fields" : { "file_contents" : "dataset_files/28/download-model-design-Copy.txt",
+        "is_readme" : false,
+        "parent_dataset" : 28,
+        "uploaded_at" : "2009-04-15 00:12:54"
+      },
+    "model" : "datasets.datasetfile",
+    "pk" : 4
+  },
+  { "fields" : { "file_contents" : "dataset_files/28/test-data-Copy.txt",
+        "is_readme" : false,
+        "parent_dataset" : 28,
+        "uploaded_at" : "2007-05-10 00:12:54"
+      },
+    "model" : "datasets.datasetfile",
+    "pk" : 5
+  },
+  { "fields" : { "file_contents" : "dataset_files/28/readme.txt",
+        "is_readme" : true,
+        "parent_dataset" : 28,
+        "uploaded_at" : "2010-04-10 00:12:54"
+      },
+    "model" : "datasets.datasetfile",
+    "pk" : 6
+  },
+  { "fields" : { "file_contents" : "dataset_files/29/test-data-Copy.txt",
+        "is_readme" : false,
+        "parent_dataset" : 29,
+        "uploaded_at" : "2010-05-09 15:37:01"
+      },
+    "model" : "datasets.datasetfile",
+    "pk" : 7
+  },
+  { "fields" : { "file_contents" : "dataset_files/29/download-model-design-Copy.txt",
+        "is_readme" : false,
+        "parent_dataset" : 29,
+        "uploaded_at" : "2010-03-11 15:37:01"
+      },
+    "model" : "datasets.datasetfile",
+    "pk" : 8
+  },
+  { "fields" : { "file_contents" : "dataset_files/29/download-model-design.txt",
+        "is_readme" : false,
+        "parent_dataset" : 29,
+        "uploaded_at" : "2010-03-11 15:37:01"
+      },
+    "model" : "datasets.datasetfile",
+    "pk" : 9
+  },
+  { "fields" : { "file_contents" : "dataset_files/29/test-data.txt",
+        "is_readme" : false,
+        "parent_dataset" : 29,
+        "uploaded_at" : "2008-05-11 15:37:01"
+      },
+    "model" : "datasets.datasetfile",
+    "pk" : 10
+  },
+  { "fields" : { "file_contents" : "dataset_files/29/readme.txt",
+        "is_readme" : true,
+        "parent_dataset" : 29,
+        "uploaded_at" : "2008-05-15 15:37:01"
+      },
+    "model" : "datasets.datasetfile",
+    "pk" : 11
+  },
+  { "fields" : { "downloaded_at" : "2010-05-09 22:09:26",
+        "downloader" : 2,
+        "file_name" : "download-model-design.txt",
+        "is_download_all" : false,
+        "is_readme" : false,
+        "parent_dataset" : 27,
+        "parent_project" : null
+      },
+    "model" : "datasets.datasetdownload",
+    "pk" : 1
+  },
+  { "fields" : { "downloaded_at" : "2010-05-09 22:09:28",
+        "downloader" : 2,
+        "file_name" : "test-data.txt",
+        "is_download_all" : false,
+        "is_readme" : false,
+        "parent_dataset" : 27,
+        "parent_project" : null
+      },
+    "model" : "datasets.datasetdownload",
+    "pk" : 2
+  },
+  { "fields" : { "downloaded_at" : "2010-05-08 22:09:30",
+        "downloader" : 2,
+        "file_name" : "readme.txt",
+        "is_download_all" : false,
+        "is_readme" : true,
+        "parent_dataset" : 27,
+        "parent_project" : null
+      },
+    "model" : "datasets.datasetdownload",
+    "pk" : 3
+  },
+  { "fields" : { "downloaded_at" : "2010-04-09 22:09:32",
+        "downloader" : 2,
+        "file_name" : "test-dataset-name-zip",
+        "is_download_all" : true,
+        "is_readme" : true,
+        "parent_dataset" : 27,
+        "parent_project" : null
+      },
+    "model" : "datasets.datasetdownload",
+    "pk" : 4
+  },
+  { "fields" : { "downloaded_at" : "2009-03-09 22:11:47",
+        "downloader" : 2,
+        "file_name" : "hivaids-all.zip",
+        "is_download_all" : true,
+        "is_readme" : true,
+        "parent_dataset" : 1,
+        "parent_project" : 1
+      },
+    "model" : "datasets.datasetdownload",
+    "pk" : 5
+  },
+  { "fields" : { "downloaded_at" : "2009-04-09 22:11:47",
+        "downloader" : 2,
+        "file_name" : "spanish-flu-all.zip",
+        "is_download_all" : true,
+        "is_readme" : true,
+        "parent_dataset" : 2,
+        "parent_project" : 2
+      },
+    "model" : "datasets.datasetdownload",
+    "pk" : 6
+  },
+  { "fields" : { "downloaded_at" : "2010-05-10 22:11:47",
+        "downloader" : 2,
+        "file_name" : "viral-hemorrhagic-fever-all.zip",
+        "is_download_all" : true,
+        "is_readme" : true,
+        "parent_dataset" : 5,
+        "parent_project" : 3
+      },
+    "model" : "datasets.datasetdownload",
+    "pk" : 7
+  },
+  { "fields" : { "downloaded_at" : "2008-06-09 22:15:28",
+        "downloader" : 2,
+        "file_name" : "hivaids-all.zip",
+        "is_download_all" : true,
+        "is_readme" : true,
+        "parent_dataset" : 1,
+        "parent_project" : 4
+      },
+    "model" : "datasets.datasetdownload",
+    "pk" : 8
+  },
+  { "fields" : { "downloaded_at" : "2008-06-09 22:15:28",
+        "downloader" : 2,
+        "file_name" : "spanish-flu-all.zip",
+        "is_download_all" : true,
+        "is_readme" : true,
+        "parent_dataset" : 2,
+        "parent_project" : 4
+      },
+    "model" : "datasets.datasetdownload",
+    "pk" : 9
+  },
+  { "fields" : { "downloaded_at" : "2008-06-09 22:15:28",
+        "downloader" : 2,
+        "file_name" : "viral-hemorrhagic-fever-all.zip",
+        "is_download_all" : true,
+        "is_readme" : true,
+        "parent_dataset" : 5,
+        "parent_project" : 4
+      },
+    "model" : "datasets.datasetdownload",
+    "pk" : 10
+  },
+  { "fields" : { "downloaded_at" : "2010-05-10 00:06:11",
+        "downloader" : 2,
+        "file_name" : "hivaids-all.zip",
+        "is_download_all" : true,
+        "is_readme" : true,
+        "parent_dataset" : 1,
+        "parent_project" : 5
+      },
+    "model" : "datasets.datasetdownload",
+    "pk" : 11
+  },
+  { "fields" : { "downloaded_at" : "2010-05-10 00:06:11",
+        "downloader" : 2,
+        "file_name" : "spanish-flu-all.zip",
+        "is_download_all" : true,
+        "is_readme" : true,
+        "parent_dataset" : 2,
+        "parent_project" : 5
+      },
+    "model" : "datasets.datasetdownload",
+    "pk" : 12
+  },
+  { "fields" : { "downloaded_at" : "2010-05-10 00:06:11",
+        "downloader" : 2,
+        "file_name" : "viral-hemorrhagic-fever-all.zip",
+        "is_download_all" : true,
+        "is_readme" : true,
+        "parent_dataset" : 5,
+        "parent_project" : 5
+      },
+    "model" : "datasets.datasetdownload",
+    "pk" : 13
+  },
+  { "fields" : { "downloaded_at" : "2009-02-10 00:06:17",
+        "downloader" : 2,
+        "file_name" : "download-model-design.txt",
+        "is_download_all" : false,
+        "is_readme" : false,
+        "parent_dataset" : 27,
+        "parent_project" : null
+      },
+    "model" : "datasets.datasetdownload",
+    "pk" : 14
+  },
+  { "fields" : { "downloaded_at" : "2005-06-10 00:06:19",
+        "downloader" : 2,
+        "file_name" : "download-model-design.txt",
+        "is_download_all" : false,
+        "is_readme" : false,
+        "parent_dataset" : 27,
+        "parent_project" : null
+      },
+    "model" : "datasets.datasetdownload",
+    "pk" : 15
+  },
+  { "fields" : { "downloaded_at" : "2005-06-10 00:06:22",
+        "downloader" : 2,
+        "file_name" : "test-data.txt",
+        "is_download_all" : false,
+        "is_readme" : false,
+        "parent_dataset" : 27,
+        "parent_project" : null
+      },
+    "model" : "datasets.datasetdownload",
+    "pk" : 16
+  },
+  { "fields" : { "downloaded_at" : "2008-05-10 00:06:23",
+        "downloader" : 2,
+        "file_name" : "test-data.txt",
+        "is_download_all" : false,
+        "is_readme" : false,
+        "parent_dataset" : 27,
+        "parent_project" : null
+      },
+    "model" : "datasets.datasetdownload",
+    "pk" : 17
+  },
+  { "fields" : { "downloaded_at" : "2008-05-10 00:06:24",
+        "downloader" : 2,
+        "file_name" : "test-data.txt",
+        "is_download_all" : false,
+        "is_readme" : false,
+        "parent_dataset" : 27,
+        "parent_project" : null
+      },
+    "model" : "datasets.datasetdownload",
+    "pk" : 18
+  },
+  { "fields" : { "downloaded_at" : "2010-05-07 00:06:25",
+        "downloader" : 2,
+        "file_name" : "readme.txt",
+        "is_download_all" : false,
+        "is_readme" : true,
+        "parent_dataset" : 27,
+        "parent_project" : null
+      },
+    "model" : "datasets.datasetdownload",
+    "pk" : 19
+  },
+  { "fields" : { "downloaded_at" : "2010-05-06 00:07:40",
+        "downloader" : 2,
+        "file_name" : "readme.txt",
+        "is_download_all" : false,
+        "is_readme" : true,
+        "parent_dataset" : 27,
+        "parent_project" : null
+      },
+    "model" : "datasets.datasetdownload",
+    "pk" : 20
+  },
+  { "fields" : { "downloaded_at" : "2010-04-05 00:07:41",
+        "downloader" : 2,
+        "file_name" : "readme.txt",
+        "is_download_all" : false,
+        "is_readme" : true,
+        "parent_dataset" : 27,
+        "parent_project" : null
+      },
+    "model" : "datasets.datasetdownload",
+    "pk" : 21
+  },
+  { "fields" : { "downloaded_at" : "2010-02-10 00:07:42",
+        "downloader" : 2,
+        "file_name" : "readme.txt",
+        "is_download_all" : false,
+        "is_readme" : true,
+        "parent_dataset" : 27,
+        "parent_project" : null
+      },
+    "model" : "datasets.datasetdownload",
+    "pk" : 22
+  },
+  { "fields" : { "downloaded_at" : "2008-05-12 00:13:26",
+        "downloader" : 2,
+        "file_name" : "test-data-Copy.txt",
+        "is_download_all" : false,
+        "is_readme" : false,
+        "parent_dataset" : 28,
+        "parent_project" : null
+      },
+    "model" : "datasets.datasetdownload",
+    "pk" : 23
+  },
+  { "fields" : { "downloaded_at" : "2010-01-12 00:13:28",
+        "downloader" : 2,
+        "file_name" : "download-model-design-Copy.txt",
+        "is_download_all" : false,
+        "is_readme" : false,
+        "parent_dataset" : 28,
+        "parent_project" : null
+      },
+    "model" : "datasets.datasetdownload",
+    "pk" : 24
+  },
+  { "fields" : { "downloaded_at" : "2008-05-11 00:13:29",
+        "downloader" : 2,
+        "file_name" : "download-model-design-Copy.txt",
+        "is_download_all" : false,
+        "is_readme" : false,
+        "parent_dataset" : 28,
+        "parent_project" : null
+      },
+    "model" : "datasets.datasetdownload",
+    "pk" : 25
+  },
+  { "fields" : { "downloaded_at" : "2010-04-12 00:13:30",
+        "downloader" : 2,
+        "file_name" : "download-model-design-Copy.txt",
+        "is_download_all" : false,
+        "is_readme" : false,
+        "parent_dataset" : 28,
+        "parent_project" : null
+      },
+    "model" : "datasets.datasetdownload",
+    "pk" : 26
+  },
+  { "fields" : { "downloaded_at" : "2006-08-17 00:13:31",
+        "downloader" : 2,
+        "file_name" : "download-model-design-Copy.txt",
+        "is_download_all" : false,
+        "is_readme" : false,
+        "parent_dataset" : 28,
+        "parent_project" : null
+      },
+    "model" : "datasets.datasetdownload",
+    "pk" : 27
+  },
+  { "fields" : { "downloaded_at" : "2009-06-10 00:13:32",
+        "downloader" : 2,
+        "file_name" : "download-model-design-Copy.txt",
+        "is_download_all" : false,
+        "is_readme" : false,
+        "parent_dataset" : 28,
+        "parent_project" : null
+      },
+    "model" : "datasets.datasetdownload",
+    "pk" : 28
+  },
+  { "fields" : { "downloaded_at" : "2008-08-10 00:13:35",
+        "downloader" : 2,
+        "file_name" : "test-data-Copy.txt",
+        "is_download_all" : false,
+        "is_readme" : false,
+        "parent_dataset" : 28,
+        "parent_project" : null
+      },
+    "model" : "datasets.datasetdownload",
+    "pk" : 29
+  },
+  { "fields" : { "downloaded_at" : "2009-04-10 00:13:36",
+        "downloader" : 2,
+        "file_name" : "test-data-Copy.txt",
+        "is_download_all" : false,
+        "is_readme" : false,
+        "parent_dataset" : 28,
+        "parent_project" : null
+      },
+    "model" : "datasets.datasetdownload",
+    "pk" : 30
+  },
+  { "fields" : { "downloaded_at" : "2010-05-01 00:13:37",
+        "downloader" : 2,
+        "file_name" : "test-data-Copy.txt",
+        "is_download_all" : false,
+        "is_readme" : false,
+        "parent_dataset" : 28,
+        "parent_project" : null
+      },
+    "model" : "datasets.datasetdownload",
+    "pk" : 31
+  },
+  { "fields" : { "downloaded_at" : "2010-01-10 00:17:18",
+        "downloader" : 2,
+        "file_name" : "readme.txt",
+        "is_download_all" : false,
+        "is_readme" : true,
+        "parent_dataset" : 28,
+        "parent_project" : null
+      },
+    "model" : "datasets.datasetdownload",
+    "pk" : 32
+  },
+  { "fields" : { "downloaded_at" : "2006-05-10 13:59:57",
+        "downloader" : 2,
+        "file_name" : "hivaids-all.zip",
+        "is_download_all" : true,
+        "is_readme" : true,
+        "parent_dataset" : 1,
+        "parent_project" : 6
+      },
+    "model" : "datasets.datasetdownload",
+    "pk" : 33
+  },
+  { "fields" : { "downloaded_at" : "2010-05-09 14:00:36",
+        "downloader" : 2,
+        "file_name" : "hivaids-all.zip",
+        "is_download_all" : true,
+        "is_readme" : true,
+        "parent_dataset" : 1,
+        "parent_project" : 7
+      },
+    "model" : "datasets.datasetdownload",
+    "pk" : 34
+  },
+  { "fields" : { "downloaded_at" : "2010-04-10 14:00:37",
+        "downloader" : 2,
+        "file_name" : "hivaids-all.zip",
+        "is_download_all" : true,
+        "is_readme" : true,
+        "parent_dataset" : 1,
+        "parent_project" : 8
+      },
+    "model" : "datasets.datasetdownload",
+    "pk" : 35
+  },
+  { "fields" : { "downloaded_at" : "2010-05-01 14:00:38",
+        "downloader" : 2,
+        "file_name" : "hivaids-all.zip",
+        "is_download_all" : true,
+        "is_readme" : true,
+        "parent_dataset" : 1,
+        "parent_project" : 9
+      },
+    "model" : "datasets.datasetdownload",
+    "pk" : 36
+  },
+  { "fields" : { "downloaded_at" : "2005-05-10 14:00:40",
+        "downloader" : 2,
+        "file_name" : "hivaids-all.zip",
+        "is_download_all" : true,
+        "is_readme" : true,
+        "parent_dataset" : 1,
+        "parent_project" : 10
+      },
+    "model" : "datasets.datasetdownload",
+    "pk" : 37
+  },
+  { "fields" : { "downloaded_at" : "2010-05-10 14:00:41",
+        "downloader" : 2,
+        "file_name" : "hivaids-all.zip",
+        "is_download_all" : true,
+        "is_readme" : true,
+        "parent_dataset" : 1,
+        "parent_project" : 11
+      },
+    "model" : "datasets.datasetdownload",
+    "pk" : 38
+  },
+  { "fields" : { "downloaded_at" : "2010-05-10 14:01:14",
+        "downloader" : 2,
+        "file_name" : "college-binge-drinking-all.zip",
+        "is_download_all" : true,
+        "is_readme" : true,
+        "parent_dataset" : 6,
+        "parent_project" : 12
+      },
+    "model" : "datasets.datasetdownload",
+    "pk" : 39
+  },
+  { "fields" : { "downloaded_at" : "2010-05-10 14:01:15",
+        "downloader" : 2,
+        "file_name" : "college-binge-drinking-all.zip",
+        "is_download_all" : true,
+        "is_readme" : true,
+        "parent_dataset" : 6,
+        "parent_project" : 13
+      },
+    "model" : "datasets.datasetdownload",
+    "pk" : 40
+  },
+  { "fields" : { "downloaded_at" : "2010-05-11 15:34:13",
+        "downloader" : 1,
+        "file_name" : "hivaids-all.zip",
+        "is_download_all" : true,
+        "is_readme" : true,
+        "parent_dataset" : 1,
+        "parent_project" : 14
+      },
+    "model" : "datasets.datasetdownload",
+    "pk" : 41
+  },
+  { "fields" : { "downloaded_at" : "2010-05-11 15:34:26",
+        "downloader" : 1,
+        "file_name" : "readme.txt",
+        "is_download_all" : false,
+        "is_readme" : true,
+        "parent_dataset" : 27,
+        "parent_project" : null
+      },
+    "model" : "datasets.datasetdownload",
+    "pk" : 42
+  },
+  { "fields" : { "downloaded_at" : "2010-05-11 15:34:28",
+        "downloader" : 1,
+        "file_name" : "test-data.txt",
+        "is_download_all" : false,
+        "is_readme" : false,
+        "parent_dataset" : 27,
+        "parent_project" : null
+      },
+    "model" : "datasets.datasetdownload",
+    "pk" : 43
+  },
+  { "fields" : { "downloaded_at" : "2010-05-11 15:34:29",
+        "downloader" : 1,
+        "file_name" : "download-model-design.txt",
+        "is_download_all" : false,
+        "is_readme" : false,
+        "parent_dataset" : 27,
+        "parent_project" : null
+      },
+    "model" : "datasets.datasetdownload",
+    "pk" : 44
+  },
+  { "fields" : { "downloaded_at" : "2010-05-11 15:34:31",
+        "downloader" : 1,
+        "file_name" : "download-model-design.txt",
+        "is_download_all" : false,
+        "is_readme" : false,
+        "parent_dataset" : 27,
+        "parent_project" : null
+      },
+    "model" : "datasets.datasetdownload",
+    "pk" : 45
+  },
+  { "fields" : { "downloaded_at" : "2010-05-11 15:34:33",
+        "downloader" : 1,
+        "file_name" : "test-dataset-name-all.zip",
+        "is_download_all" : true,
+        "is_readme" : true,
+        "parent_dataset" : 27,
+        "parent_project" : null
+      },
+    "model" : "datasets.datasetdownload",
+    "pk" : 46
+  },
+  { "fields" : { "downloaded_at" : "2010-05-11 15:34:34",
+        "downloader" : 1,
+        "file_name" : "test-dataset-name-all.zip",
+        "is_download_all" : true,
+        "is_readme" : true,
+        "parent_dataset" : 27,
+        "parent_project" : null
+      },
+    "model" : "datasets.datasetdownload",
+    "pk" : 47
+  },
+  { "fields" : { "downloaded_at" : "2010-05-11 15:34:36",
+        "downloader" : 1,
+        "file_name" : "test-dataset-name-all.zip",
+        "is_download_all" : true,
+        "is_readme" : true,
+        "parent_dataset" : 27,
+        "parent_project" : null
+      },
+    "model" : "datasets.datasetdownload",
+    "pk" : 48
+  },
+  { "fields" : { "downloaded_at" : "2010-02-11 15:34:48",
+        "downloader" : 1,
+        "file_name" : "download-model-design.txt",
+        "is_download_all" : false,
+        "is_readme" : false,
+        "parent_dataset" : 27,
+        "parent_project" : null
+      },
+    "model" : "datasets.datasetdownload",
+    "pk" : 49
+  },
+  { "fields" : { "downloaded_at" : "2010-05-11 15:34:49",
+        "downloader" : 1,
+        "file_name" : "test-data.txt",
+        "is_download_all" : false,
+        "is_readme" : false,
+        "parent_dataset" : 27,
+        "parent_project" : null
+      },
+    "model" : "datasets.datasetdownload",
+    "pk" : 50
+  },
+  { "fields" : { "downloaded_at" : "2010-03-11 15:41:03",
+        "downloader" : 1,
+        "file_name" : "test-dataset-name-3-all.zip",
+        "is_download_all" : true,
+        "is_readme" : true,
+        "parent_dataset" : 29,
+        "parent_project" : null
+      },
+    "model" : "datasets.datasetdownload",
+    "pk" : 51
+  },
+  { "fields" : { "downloaded_at" : "2010-05-11 15:41:05",
+        "downloader" : 1,
+        "file_name" : "readme.txt",
+        "is_download_all" : false,
+        "is_readme" : true,
+        "parent_dataset" : 29,
+        "parent_project" : null
+      },
+    "model" : "datasets.datasetdownload",
+    "pk" : 52
+  },
+  { "fields" : { "downloaded_at" : "2010-05-15 15:41:06",
+        "downloader" : 1,
+        "file_name" : "test-data.txt",
+        "is_download_all" : false,
+        "is_readme" : false,
+        "parent_dataset" : 29,
+        "parent_project" : null
+      },
+    "model" : "datasets.datasetdownload",
+    "pk" : 53
+  },
+  { "fields" : { "downloaded_at" : "2010-03-11 15:41:07",
+        "downloader" : 1,
+        "file_name" : "download-model-design-Copy.txt",
+        "is_download_all" : false,
+        "is_readme" : false,
+        "parent_dataset" : 29,
+        "parent_project" : null
+      },
+    "model" : "datasets.datasetdownload",
+    "pk" : 54
+  },
+  { "fields" : { "downloaded_at" : "2007-05-11 15:41:08",
+        "downloader" : 1,
+        "file_name" : "download-model-design.txt",
+        "is_download_all" : false,
+        "is_readme" : false,
+        "parent_dataset" : 29,
+        "parent_project" : null
+      },
+    "model" : "datasets.datasetdownload",
+    "pk" : 55
+  },
+  { "fields" : { "downloaded_at" : "2006-05-11 15:41:09",
+        "downloader" : 1,
+        "file_name" : "test-data-Copy.txt",
+        "is_download_all" : false,
+        "is_readme" : false,
+        "parent_dataset" : 29,
+        "parent_project" : null
+      },
+    "model" : "datasets.datasetdownload",
+    "pk" : 56
+  },
+  { "fields" : { "downloaded_at" : "2010-05-11 15:43:32",
+        "downloader" : 1,
+        "file_name" : "college-binge-drinking-all.zip",
+        "is_download_all" : true,
+        "is_readme" : true,
+        "parent_dataset" : 6,
+        "parent_project" : 15
+      },
+    "model" : "datasets.datasetdownload",
+    "pk" : 57
+  },
+  { "fields" : { "downloaded_at" : "2010-05-11 15:43:40",
+        "downloader" : 1,
+        "file_name" : "third-pandemic-all.zip",
+        "is_download_all" : true,
+        "is_readme" : true,
+        "parent_dataset" : 4,
+        "parent_project" : 16
+      },
+    "model" : "datasets.datasetdownload",
+    "pk" : 58
+  },
+  { "fields" : { "downloaded_at" : "2010-05-11 15:44:02",
+        "downloader" : 1,
+        "file_name" : "hivaids-all.zip",
+        "is_download_all" : true,
+        "is_readme" : true,
+        "parent_dataset" : 1,
+        "parent_project" : 17
+      },
+    "model" : "datasets.datasetdownload",
+    "pk" : 59
+  },
+  { "fields" : { "created_at" : "2010-05-07 10:51:35",
+        "item" : 1,
+        "tag" : "aids",
+        "user" : 11
+      },
+    "model" : "tags.tagging",
+    "pk" : 1
+  },
+  { "fields" : { "created_at" : "2010-05-07 10:51:35",
+        "item" : 1,
+        "tag" : "hiv",
+        "user" : 11
+      },
+    "model" : "tags.tagging",
+    "pk" : 2
+  },
+  { "fields" : { "created_at" : "2010-05-07 10:51:35",
+        "item" : 1,
+        "tag" : "bodily",
+        "user" : 3
+      },
+    "model" : "tags.tagging",
+    "pk" : 3
+  },
+  { "fields" : { "created_at" : "2010-05-07 10:51:35",
+        "item" : 1,
+        "tag" : "fluids",
+        "user" : 3
+      },
+    "model" : "tags.tagging",
+    "pk" : 4
+  },
+  { "fields" : { "created_at" : "2010-05-07 10:51:35",
+        "item" : 2,
+        "tag" : "1918",
+        "user" : 5
+      },
+    "model" : "tags.tagging",
+    "pk" : 5
+  },
+  { "fields" : { "created_at" : "2010-05-07 10:51:35",
+        "item" : 2,
+        "tag" : "spanish",
+        "user" : 5
+      },
+    "model" : "tags.tagging",
+    "pk" : 6
+  },
+  { "fields" : { "created_at" : "2010-05-07 10:51:35",
+        "item" : 2,
+        "tag" : "flu",
+        "user" : 8
+      },
+    "model" : "tags.tagging",
+    "pk" : 7
+  },
+  { "fields" : { "created_at" : "2010-05-07 10:51:35",
+        "item" : 3,
+        "tag" : "Poliomyelitis",
+        "user" : 6
+      },
+    "model" : "tags.tagging",
+    "pk" : 8
+  },
+  { "fields" : { "created_at" : "2010-05-07 10:51:35",
+        "item" : 3,
+        "tag" : "greek",
+        "user" : 6
+      },
+    "model" : "tags.tagging",
+    "pk" : 9
+  },
+  { "fields" : { "created_at" : "2010-05-07 10:51:35",
+        "item" : 3,
+        "tag" : "infantile",
+        "user" : 2
+      },
+    "model" : "tags.tagging",
+    "pk" : 10
+  },
+  { "fields" : { "created_at" : "2010-05-07 10:51:35",
+        "item" : 4,
+        "tag" : "Pandemic",
+        "user" : 10
+      },
+    "model" : "tags.tagging",
+    "pk" : 11
+  },
+  { "fields" : { "created_at" : "2010-05-07 10:51:35",
+        "item" : 4,
+        "tag" : "Third",
+        "user" : 10
+      },
+    "model" : "tags.tagging",
+    "pk" : 12
+  },
+  { "fields" : { "created_at" : "2010-05-07 10:51:35",
+        "item" : 4,
+        "tag" : "1855",
+        "user" : 4
+      },
+    "model" : "tags.tagging",
+    "pk" : 13
+  },
+  { "fields" : { "created_at" : "2010-05-07 10:51:35",
+        "item" : 5,
+        "tag" : "1918",
+        "user" : 7
+      },
+    "model" : "tags.tagging",
+    "pk" : 14
+  },
+  { "fields" : { "created_at" : "2010-05-07 10:51:35",
+        "item" : 5,
+        "tag" : "spanish",
+        "user" : 7
+      },
+    "model" : "tags.tagging",
+    "pk" : 15
+  },
+  { "fields" : { "created_at" : "2010-05-07 10:51:35",
+        "item" : 5,
+        "tag" : "flu",
+        "user" : 9
+      },
+    "model" : "tags.tagging",
+    "pk" : 16
+  },
+  { "fields" : { "canonical_name" : "Central Africa",
+        "latitude" : "2.235151",
+        "longitude" : "18.028564"
+      },
+    "model" : "geoloc.geoloc",
+    "pk" : 1
+  },
+  { "fields" : { "canonical_name" : "Continental USA",
+        "latitude" : "29.425037",
+        "longitude" : "-98.493722"
+      },
+    "model" : "geoloc.geoloc",
+    "pk" : 2
+  },
+  { "fields" : { "canonical_name" : "Greece",
+        "latitude" : "39.074208",
+        "longitude" : "21.824312"
+      },
+    "model" : "geoloc.geoloc",
+    "pk" : 3
+  },
+  { "fields" : { "canonical_name" : "Yunnan province, China",
+        "latitude" : "25.043844",
+        "longitude" : "102.704567"
+      },
+    "model" : "geoloc.geoloc",
+    "pk" : 4
+  },
+  { "fields" : { "canonical_name" : "Mekambo, Gabon",
+        "latitude" : "1.0101",
+        "longitude" : "13.9675"
+      },
+    "model" : "geoloc.geoloc",
+    "pk" : 5
+  },
+  { "fields" : { "datasets" : [  ] },
+    "model" : "projects.project",
+    "pk" : 21
+  },
+  { "fields" : { "datasets" : [  ] },
+    "model" : "projects.project",
+    "pk" : 22
+  },
+  { "fields" : { "datasets" : [ 1 ] },
+    "model" : "projects.project",
+    "pk" : 23
+  },
+  { "fields" : { "datasets" : [ 6 ] },
+    "model" : "projects.project",
+    "pk" : 24
+  },
+  { "fields" : { "datasets" : [ 4 ] },
+    "model" : "projects.project",
+    "pk" : 25
+  },
+  { "fields" : { "datasets" : [ 1,
+            2,
+            5
+          ] },
+    "model" : "projects.project",
+    "pk" : 26
+  },
+  { "fields" : { "downloaded_at" : "2009-03-09 22:11:47",
+        "downloader" : 2,
+        "parent_project" : 26
+      },
+    "model" : "projects.projectdownload",
+    "pk" : 1
+  },
+  { "fields" : { "downloaded_at" : "2009-04-09 22:11:47",
+        "downloader" : 2,
+        "parent_project" : 26
+      },
+    "model" : "projects.projectdownload",
+    "pk" : 2
+  },
+  { "fields" : { "downloaded_at" : "2010-05-10 22:11:47",
+        "downloader" : 2,
+        "parent_project" : 26
+      },
+    "model" : "projects.projectdownload",
+    "pk" : 3
+  },
+  { "fields" : { "downloaded_at" : "2008-06-09 22:15:28",
+        "downloader" : 2,
+        "parent_project" : 26
+      },
+    "model" : "projects.projectdownload",
+    "pk" : 4
+  },
+  { "fields" : { "downloaded_at" : "2010-05-10 00:06:11",
+        "downloader" : 2,
+        "parent_project" : 26
+      },
+    "model" : "projects.projectdownload",
+    "pk" : 5
+  },
+  { "fields" : { "downloaded_at" : "2006-05-10 13:59:57",
+        "downloader" : 2,
+        "parent_project" : 23
+      },
+    "model" : "projects.projectdownload",
+    "pk" : 6
+  },
+  { "fields" : { "downloaded_at" : "2010-05-09 14:00:36",
+        "downloader" : 2,
+        "parent_project" : 23
+      },
+    "model" : "projects.projectdownload",
+    "pk" : 7
+  },
+  { "fields" : { "downloaded_at" : "2010-04-10 14:00:37",
+        "downloader" : 2,
+        "parent_project" : 23
+      },
+    "model" : "projects.projectdownload",
+    "pk" : 8
+  },
+  { "fields" : { "downloaded_at" : "2010-05-01 14:00:38",
+        "downloader" : 2,
+        "parent_project" : 23
+      },
+    "model" : "projects.projectdownload",
+    "pk" : 9
+  },
+  { "fields" : { "downloaded_at" : "2010-05-10 14:00:40",
+        "downloader" : 2,
+        "parent_project" : 23
+      },
+    "model" : "projects.projectdownload",
+    "pk" : 10
+  },
+  { "fields" : { "downloaded_at" : "2010-05-10 14:00:41",
+        "downloader" : 2,
+        "parent_project" : 23
+      },
+    "model" : "projects.projectdownload",
+    "pk" : 11
+  },
+  { "fields" : { "downloaded_at" : "2010-05-10 14:01:14",
+        "downloader" : 2,
+        "parent_project" : 24
+      },
+    "model" : "projects.projectdownload",
+    "pk" : 12
+  },
+  { "fields" : { "downloaded_at" : "2010-05-10 14:01:15",
+        "downloader" : 2,
+        "parent_project" : 24
+      },
+    "model" : "projects.projectdownload",
+    "pk" : 13
+  },
+  { "fields" : { "downloaded_at" : "2010-05-11 15:34:13",
+        "downloader" : 1,
+        "parent_project" : 23
+      },
+    "model" : "projects.projectdownload",
+    "pk" : 14
+  },
+  { "fields" : { "downloaded_at" : "2010-05-11 15:43:32",
+        "downloader" : 1,
+        "parent_project" : 24
+      },
+    "model" : "projects.projectdownload",
+    "pk" : 15
+  },
+  { "fields" : { "downloaded_at" : "2010-05-11 15:43:40",
+        "downloader" : 1,
+        "parent_project" : 25
+      },
+    "model" : "projects.projectdownload",
+    "pk" : 16
+  },
+  { "fields" : { "downloaded_at" : "2010-05-11 15:44:02",
+        "downloader" : 1,
+        "parent_project" : 23
+      },
+    "model" : "projects.projectdownload",
+    "pk" : 17
+  }
+]

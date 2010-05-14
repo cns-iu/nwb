@@ -17,7 +17,6 @@ from epic.core.util.view_utils import *
 from epic.djangoratings import RatingField
 from epic.geoloc.models import GeoLoc
 
-
 RATING_SCALE = [(n, str(n)) for n in range(1, 6)]
 
 class DataSetManager(models.Manager):
@@ -90,3 +89,16 @@ class DataSetFile(models.Model):
     
     def get_upload_to(self, attrname=None):
         return str('dataset_files/%d/' % self.parent_dataset.id)
+    
+class DataSetDownload(models.Model):
+    parent_dataset = models.ForeignKey(DataSet, related_name="downloaded_files")
+    downloaded_at = models.DateTimeField(auto_now_add=True, db_index=True)
+    downloader = models.ForeignKey(User)
+    is_readme = models.BooleanField(default=False)
+    is_download_all = models.BooleanField(default=False)
+#    change this 1000 limit to something which was eaRLIER USED for file name limit. where is it?
+    file_name = models.CharField(max_length=1000)
+    parent_project = models.ForeignKey("projects.ProjectDownload", related_name="downloaded_projects", null=True)
+    
+    class Admin:
+        pass

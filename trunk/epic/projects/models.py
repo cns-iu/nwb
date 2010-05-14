@@ -1,7 +1,8 @@
+from django.contrib.auth.models import User
 from django.db import models
-
 from epic.core.models import Item
 from epic.datasets.models import DataSet
+
 
 
 class ProjectManager(models.Manager):
@@ -25,3 +26,11 @@ class Project(Item):
         kwargs = {'item_id': self.id, 'slug': self.slug,}
         
         return ('epic.projects.views.view_project', [], kwargs)
+
+class ProjectDownload(models.Model):
+    parent_project = models.ForeignKey(Project, related_name="downloaded_project")
+    downloaded_at = models.DateTimeField(auto_now_add=True, db_index=True)
+    downloader = models.ForeignKey(User)
+    
+    class Admin:
+        pass

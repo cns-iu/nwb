@@ -6,10 +6,24 @@
     {% nav_bar 'About' %}
 {% endblock %}
 
+
+
+{% block submenu %}
+	  {# TODO: Figure out how to actually space this over the *proper* way. #}
+	  
+	  {# TODO: Why cant I put if_admin condition for the whole block?  #}
+	  {% if is_admin %}
+		  <ul>
+		    <li><a class="active_submenu" href="{% url core.views.stats %}">Statistics</a></li>
+		  </ul>
+	  {% endif %}
+{% endblock %}
+
+
 {% block content %}
   <h3>Goal</h3>
   <h2>EpiC: A Computational Infrastructure for Epidemics Research</h2>
-  
+
   <p>
     Epidemic and diffusion processes are of great importance in the
     modeling, forecast, and analysis of a wide range of problems relevant to
@@ -27,7 +41,7 @@
     physics, computer science, and social and behavioral sciences, among
     others.
   </p>
-  
+
   <p>
     This project will the design, implementation, deployment, and
     maintenance of a computational infrastructure for epidemics research,
@@ -44,7 +58,7 @@
     modeling, and visualization at multiple levels of analysis of social
     contagion and epidemic processes.
   </p>
-  
+
   <ol>
     Specifically, this project will
     <li>
@@ -55,19 +69,19 @@
       assembly of EpiC Tools aimed at specific research projects for a few
       weeks, months, or years.
     </li>
-    
+
     <li>
       Setup and maintain an EpiC Marketplace that serves as an
       index to EpiC resources. The marketplace will draw on the successful
       interaction designs that drive popular file and content sharing
-      community sites like <a href="http://flickr.com/">Flickr</a>, 
-      <a href="http://youtube.com/">YouTube</a>, or 
+      community sites like <a href="http://flickr.com/">Flickr</a>,
+      <a href="http://youtube.com/">YouTube</a>, or
       <a href="http://wikipedia.org/">Wikipedia</a>. However,
       instead of sharing images, movies, or encyclopedia entries, scholars
       will use EpiC to share datasets, algorithms, visualizations, and other
       items relevant to the study of epidemics.
     </li>
-    
+
     <li>
       Apply EpiC prototypically to tackle research questions about
       computational approaches to epidemic modeling. This will lead to the
@@ -76,7 +90,7 @@
       processes in the area of smoking habits.
     </li>
   </ol>
-  
+
   <p>
     The overarching goals of EpiC are the improvement and
     facilitation of multi-scale analysis of social data integrated into
@@ -87,20 +101,20 @@
     scientific community; the development of a cyberinfrastructure
     technology that is open, usable, extensible, and sustainable.
   </p>
-  
+
   <p></p>
-  
+
   <div class="acknowledgements">
     <h3>Acknowledgements</h3>
-    
+
     <div class="individual-acknowledgement">
       Supported in part by the NIH RM-07-004 award.
       <br />
       <img src="/media/core/images/NIH.jpg" alt="NIH" width="100" height="100" />
       <br />
-      
+
       <span class="inner-text">
-        Any opinions, findings, and conclusions or recommendations expressed in this material are those of the author(s) 
+        Any opinions, findings, and conclusions or recommendations expressed in this material are those of the author(s)
         and do not necessarily reflect the views of the National Institutes of Health (<a href="http://www.nih.gov/">NIH</a>).
       </span>
     </div>

@@ -10,9 +10,9 @@ from epic.comments.forms import PostCommentForm
 from epic.core.util import active_user_required
 from epic.core.models import Item
 from epic.core.util.view_utils import *
-from epic.datasets.models import DataSet
+from epic.datasets.models import DataSet, DataSetDownload
 from epic.projects.forms import ProjectDataSetFormSet, ProjectForm
-from epic.projects.models import Project
+from epic.projects.models import Project, ProjectDownload
 import epic.core.util.view_utils
 import re
 import tempfile
@@ -154,7 +154,7 @@ PER_PAGE = epic.core.util.view_utils.DEFAULT_OBJECTS_PER_PAGE
 def view_projects(request):
     projects = Project.objects.active().order_by('-created_at')
     projects_page = paginate(projects, request.GET, PER_PAGE)
-    
+
     return render_to_response(
         'projects/view_projects.html',
         {'projects_page': projects_page},
@@ -164,7 +164,7 @@ def view_project(request, item_id, slug):
     project = get_object_or_404(Project, pk=item_id)
     form = PostCommentForm()
     user = request.user
-    
+
     return render_to_response(
         'projects/view_project.html',
         {'project': project, 'form': form},
@@ -183,13 +183,29 @@ def view_user_project_list(request, user_id):
 @active_user_required
 def download_all(request, item_id, slug):
     project = get_object_or_404(Project, pk=item_id)
+    user = request.user
     
     if project.is_active:
         datasets = project.datasets.all()
         temp = tempfile.TemporaryFile()
         archive = zipfile.ZipFile(temp, 'w')
         
+        project_download = ProjectDownload(parent_project=project,
+                                           downloader=user)
+        project_download.save()
+        
         for dataset in datasets:
+            
+            dataset_zip_file_name = dataset.slug + "-all.zip"
+                   
+            dataset_download = DataSetDownload(parent_dataset=dataset,
+                                               downloader=user,
+                                               file_name=dataset_zip_file_name,
+                                               is_readme=True, 
+                                               is_download_all=True,
+                                               parent_project=project_download)
+            dataset_download.save()
+            
             for file in dataset.files.all():
                 file.file_contents.open('r')
                 archive.writestr(

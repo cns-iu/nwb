@@ -12,6 +12,7 @@ from django.contrib.auth.models import User
 from django.core.files.base import ContentFile
 from django.core.servers.basehttp import FileWrapper
 from django.core.urlresolvers import reverse
+from django.core.exceptions import ObjectDoesNotExist
 from django.forms.formsets import formset_factory
 from django.forms.util import ErrorList
 from django.http import HttpResponse
@@ -41,6 +42,7 @@ from epic.datasets.forms import TagDataSetForm
 from epic.datasets.forms import UploadReadMeForm
 from epic.datasets.models import DataSet
 from epic.datasets.models import DataSetFile
+from epic.datasets.models import DataSetDownload
 from epic.datasets.models import RATING_SCALE
 from epic.geoloc.models import GeoLoc
 from epic.geoloc.utils import CouldNotFindLocation
@@ -677,6 +679,36 @@ def _safe(string):
 
 @login_required
 @active_user_required
+def download_file(request, file_id, item_id, slug):
+    dataset = DataSet.objects.get(pk=item_id)
+    user = request.user
+    
+    if dataset.is_active:
+        try:
+            
+            downloading_file = DataSetFile.objects.get(pk=file_id)
+            
+            dataset_download = DataSetDownload(parent_dataset=dataset,
+                                               downloader=user,
+                                               file_name=downloading_file.get_short_name(),
+                                               is_readme=downloading_file.is_readme, 
+                                               is_download_all=False)
+            dataset_download.save()
+           
+            response = HttpResponse(downloading_file.file_contents.read(), content_type='application/octet-stream')
+            response['Content-Disposition'] = 'attachment; filename=%s' % downloading_file.get_short_name()
+            response['Content-Length'] = downloading_file.file_contents.size
+            return response
+        except ObjectDoesNotExist:
+#            i sjhould add an error message when the file is not found or for whatever reaAson the serving does not happen
+            return HttpResponseRedirect(reverse('epic.datasets.views.view_dataset',
+                                        kwargs={'item_id': dataset.id, 'slug': dataset.slug,})) 
+    else:
+       return HttpResponseRedirect(reverse('epic.datasets.views.view_dataset',
+                                            kwargs={'item_id': dataset.id, 'slug': dataset.slug,})) 
+
+@login_required
+@active_user_required
 def download_all_files(request, item_id, slug):
     dataset = DataSet.objects.get(pk=item_id)
     user = request.user
@@ -685,6 +717,15 @@ def download_all_files(request, item_id, slug):
     
         temp = tempfile.TemporaryFile()
         archive = zipfile.ZipFile(temp, 'w')
+        
+        dataset_zip_file_name = dataset.slug + "-all.zip"
+        
+        dataset_download = DataSetDownload(parent_dataset=dataset,
+                                           downloader=user,
+                                           file_name=dataset_zip_file_name,
+                                           is_readme=True, 
+                                           is_download_all=True)
+        dataset_download.save()
         
         for file in dataset.files.all():
             file.file_contents.open('r')
