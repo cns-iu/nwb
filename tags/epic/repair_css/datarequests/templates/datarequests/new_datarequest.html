@@ -1,0 +1,93 @@
+{% extends "core/bases/simple_base.html" %}
+
+{% load core_templatetags %}
+{% load datarequest_templatetags %}
+
+{% block nav %}
+    {% nav_bar 'Request' %}
+{% endblock %}
+
+{% block content %}
+  <div class="requestbox">
+    <h1>Make a Request</h1>
+    
+    <form id="request_form" name="request_form" action="{% url datarequests.views.new_datarequest %}" method="POST" onsubmit="ClearAll()">
+      <br />
+      {{ form.name.errors }}
+      <label>{{ form.name }}</label>
+      
+      <br />
+      {{ form.description.errors }}
+      <label>{{ form.description }}</label>
+      
+      <br />
+      {{ form.category.errors }}
+      <label>{{ form.category }}</label>
+      
+      <br />
+      {{ form.tags.errors }}
+      <label>{{ form.tags }}</label>
+      
+      <br />
+      <input type="image" src="/media/core/images/makerequest_button.jpg" value="Make Request" alt="Make Request" />
+      
+      <br/>
+    </form>
+  </div>
+  
+  <script type="text/javascript">
+/** 
+ * Code from http://www.mindpalette.com/tutorials/clear_defaults/index.php
+ */
+var thisForm = "request_form";
+var defaultVals = new Array();
+defaultVals[0] = new Array("name", "Name this data request.");
+defaultVals[1] = new Array("description", "Describe the data you are requesting.");
+defaultVals[2] = new Array("tags", "Add your tags here (not required).");
+
+window.onload = LoadDefaults();
+
+// Populate fields with default values on page load.
+function LoadDefaults() {
+  with (document.forms[thisForm]) {
+    for (var n=0; n<defaultVals.length; n++) {
+      var thisField = defaultVals[n][0];
+      var thisDefault = defaultVals[n][1];
+      
+      if (elements[thisField].value == '')
+        elements[thisField].value = thisDefault;
+    }
+  }
+}
+
+// Clear default value from field when selected.
+function ClearField(field) {
+  var fieldName = field.name;
+  
+  for (var n=0; n<defaultVals.length; n++) {
+    var thisField = defaultVals[n][0];
+    var thisDefault = defaultVals[n][1];
+    
+    if (thisField == fieldName) {
+      if (field.value == thisDefault) field.value = '';
+        break;
+    }
+  }
+}
+
+// Clear all defaults when form is submitted.
+function ClearAll() {
+  with (document.forms[thisForm]) {
+    for (var n=0; n<defaultVals.length; n++) {
+      var thisField = defaultVals[n][0];
+      var thisDefault = defaultVals[n][1];
+      
+      if (elements[thisField].value == thisDefault)
+        elements[thisField].value = '';
+  	}
+  }
+}
+  </script>
+  
+  {% recently_fulfilled_requests %}
+{% endblock %}

@@ -1,0 +1,72 @@
+{% extends "core/bases/browse_base.html" %}
+
+{% load core_templatetags %}
+{% load datarequest_templatetags %}
+{% load dataset_templatetags %}
+{% load project_templatetags %}
+{% load search_templatetags %}
+
+{% block css %}
+  {{ block.super }}
+  <link href="/media/core/css/star_rating.css" rel="stylesheet" type="text/css" />
+{% endblock %}
+
+{% block scripts_header %}
+  {{ block.super }}
+  <script type="text/javascript" src="/media/core/javascript/image_swap.js"></script>
+{% endblock %}
+
+
+{% block submenu %}
+  {# TODO: Figure out how to actually space this over the *proper* way. #}
+  {% search_submenu query 'all' %}
+{% endblock %}
+
+{% block content %}
+  {% if query %}
+    <span class="highlight">Search Results for "{{ query }}"</span>
+
+    <h1>Data Requests</h1>
+    {% if data_requests %}
+      [<a href="{% url data-requests-query-search query=query %}">view more</a> data requests]
+      {% datarequest_list data_requests %}
+      {# TODO: Just use datarequest_list outside of if because it does the check itself. #}
+    {% else %}
+      <p>No data requests were found.</p>
+    {% endif %}
+
+    <h1>Datasets</h1>
+    {% if datasets %}
+      [<a href="{% url datasets-query-search query=query%}">view more</a> datasets]
+      {% dataset_list datasets %}
+    {% else %}
+      <p>No datasets were found.</p>
+    {% endif %}
+
+    <h1>Projects</h1>
+    {% if projects %}
+      [<a href="{% url projects-query-search query=query %}">view more</a> projects]
+      {% project_list projects %}
+    {% else %}
+      <p>No projects were found.</p>
+    {% endif %}
+  {% endif %}
+{% endblock %}
+
+{% block request %}
+  <div class="databox">
+    <h1>Can't find what you're looking for?
+      <a href="{% url datarequests.views.new_datarequest %}" 
+         onmouseout="MM_swapImgRestore()" 
+         onmouseover="MM_swapImage('Image3','','/media/core/images/request_hover_27.jpg',1)">
+             <img src="/media/core/images/request_27.jpg" 
+                alt="makerequest" 
+                name="Image3" 
+                width="150" 
+                height="35" 
+                border="0" 
+                id="Image3" />
+      </a>
+    </h1>
+  </div>
+{% endblock %}
