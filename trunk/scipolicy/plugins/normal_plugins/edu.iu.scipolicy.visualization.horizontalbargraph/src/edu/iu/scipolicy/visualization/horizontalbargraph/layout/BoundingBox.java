@@ -28,4 +28,12 @@ public class BoundingBox {
 	public long getTop() {
 		return this.top;
 	}
+
+	public long getWidth() {
+		return Math.abs(getRight() - getLeft());
+	}
+
+	public long getHeight() {
+		return Math.abs(getTop() - getBottom());
+	}
 }

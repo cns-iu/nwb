@@ -1,4 +1,4 @@
-package edu.iu.scipolicy.visualization.horizontalbargraph;
+package edu.iu.scipolicy.visualization.horizontalbargraph.visualizationgeneration.generator;
 
 import java.awt.Color;
 import java.text.DateFormat;
@@ -11,16 +11,20 @@ import org.antlr.stringtemplate.StringTemplateGroup;
 import org.cishell.utilities.NumberUtilities;
 import org.joda.time.DateTime;
 
+import edu.iu.scipolicy.visualization.horizontalbargraph.HeaderAndFooterPositioningData;
+import edu.iu.scipolicy.visualization.horizontalbargraph.Metadata;
+import edu.iu.scipolicy.visualization.horizontalbargraph.PageOrientation;
 import edu.iu.scipolicy.visualization.horizontalbargraph.bar.Bar;
 import edu.iu.scipolicy.visualization.horizontalbargraph.layout.BasicLayout;
 import edu.iu.scipolicy.visualization.horizontalbargraph.layout.BoundingBox;
-import edu.iu.scipolicy.visualization.horizontalbargraph.layout.Cursor;
 import edu.iu.scipolicy.visualization.horizontalbargraph.layout.BasicLayout.Arrow;
 import edu.iu.scipolicy.visualization.horizontalbargraph.record.Record;
 import edu.iu.scipolicy.visualization.horizontalbargraph.record.RecordCollection;
 import edu.iu.scipolicy.visualization.horizontalbargraph.utility.Utilities;
+import edu.iu.scipolicy.visualization.horizontalbargraph.visualizationgeneration.visualization.HorizontalBarGraphVisualization;
 
-public class PostScriptCreator {
+public class PostScriptGenerator extends HorizontalBarGraphVisualizationGenerator<
+		HorizontalBarGraphVisualization> {
 	public static final Color YEAR_LABEL_COLOR = new Color(0.0f, 0.0f, 0.0f);
 	public static final double YEAR_TICK_LINE_LINE_WIDTH = 1.5;
 	public static final String YEAR_LABEL_FONT_FAMILY = "Garamond";
@@ -33,27 +37,35 @@ public class PostScriptCreator {
 
 	private StringTemplateGroup templateGroup;
 	private BasicLayout layout;
-	private Metadata metadata;
-	private RecordCollection recordCollection;
 	private List<Bar> bars;
 	private PageOrientation pageOrientation;
 
-	public PostScriptCreator(
+	public PostScriptGenerator(
 			StringTemplateGroup templateGroup,
 			BasicLayout layout,
 			Metadata metadata,
 			RecordCollection recordCollection) {
+		super(layout, metadata, recordCollection);
 		this.templateGroup = templateGroup;
 		this.layout = layout;
-		this.metadata = metadata;
-		this.recordCollection = recordCollection;
 		Collection<Record> records = recordCollection.getSortedRecords();
 		this.bars = layout.createBars(records);
 		this.pageOrientation = layout.determinePageOrientation(bars);
 	}
 
-	public String toString() {
-		BoundingBox boundingBox = this.layout.calculateBoundingBox(this.bars);
+	public PageOrientation getPageOrientation() {
+		return this.pageOrientation;
+	}
+
+	public HorizontalBarGraphVisualization generateVisualization() {
+		String postScript = generatePostScript();
+
+		return new HorizontalBarGraphVisualization(
+			getMetadata(), this.bars, this.pageOrientation, this.layout, postScript);
+	}
+
+	private String generatePostScript() {
+		BoundingBox boundingBox = getLayout().calculateBoundingBox(this.bars);
 
 		String header = createPostScriptHeader(boundingBox);
 		String functions = createFunctions();
@@ -88,7 +100,7 @@ public class PostScriptCreator {
 		headerTemplate.setAttribute("boundingBoxBottom", boundingBox.getBottom());
 		headerTemplate.setAttribute("boundingBoxRight", boundingBox.getRight());
 		headerTemplate.setAttribute("boundingBoxTop", boundingBox.getTop());
-		headerTemplate.setAttribute("sourceDataName", this.metadata.getInputDataPath());
+		headerTemplate.setAttribute("sourceDataName", getMetadata().getInputDataPath());
 		headerTemplate.setAttribute("pageWidth", BasicLayout.PAGE_WIDTH);
 		headerTemplate.setAttribute("pageHeight", BasicLayout.PAGE_HEIGHT);
 
@@ -103,37 +115,37 @@ public class PostScriptCreator {
 			Utilities.postscriptEscape(DateFormat.getDateTimeInstance(
 				DateFormat.LONG, DateFormat.LONG).format(new Date())));
 		showHeaderAndFooterTemplate.setAttribute(
-			"inputData", Utilities.postscriptEscape(this.metadata.getInputDataPath()));
+			"inputData", Utilities.postscriptEscape(getMetadata().getInputDataPath()));
 
 		showHeaderAndFooterTemplate.setAttribute(
-			"datasetName", Utilities.postscriptEscape(this.metadata.getDatasetName()));
+			"datasetName", Utilities.postscriptEscape(getMetadata().getDatasetName()));
 
 		showHeaderAndFooterTemplate.setAttribute(
-			"label", Utilities.postscriptEscape(this.metadata.getLabelColumn()));
+			"label", Utilities.postscriptEscape(getMetadata().getLabelColumn()));
 		showHeaderAndFooterTemplate.setAttribute(
 			"startDate",
-			Utilities.postscriptEscape(this.metadata.getStartDateColumn()));
+			Utilities.postscriptEscape(getMetadata().getStartDateColumn()));
 		showHeaderAndFooterTemplate.setAttribute(
 			"endDate",
-			Utilities.postscriptEscape(this.metadata.getEndDateColumn()));
+			Utilities.postscriptEscape(getMetadata().getEndDateColumn()));
 		showHeaderAndFooterTemplate.setAttribute(
 			"sizeBy",
-			Utilities.postscriptEscape(this.metadata.getSizeByColumn()));
+			Utilities.postscriptEscape(getMetadata().getSizeByColumn()));
 		showHeaderAndFooterTemplate.setAttribute(
 			"minimumAmountPerDayForBarScaling",
-			this.metadata.getMinimumAmountPerDayForScaling());
+			getMetadata().getMinimumAmountPerDayForScaling());
 		showHeaderAndFooterTemplate.setAttribute(
 			"barScaling",
-			Utilities.postscriptEscape(this.metadata.getScalingFunction().getDisplayName()));
+			Utilities.postscriptEscape(getMetadata().getScalingFunction().getDisplayName()));
 		showHeaderAndFooterTemplate.setAttribute(
 			"dateFormat",
-			Utilities.postscriptEscape(this.metadata.getDateFormat()));
+			Utilities.postscriptEscape(getMetadata().getDateFormat()));
 		showHeaderAndFooterTemplate.setAttribute(
 			"yearLabelFontSize",
-			Utilities.postscriptEscape("" + this.metadata.getYearLabelFontSize()));
+			Utilities.postscriptEscape("" + getMetadata().getYearLabelFontSize()));
 		showHeaderAndFooterTemplate.setAttribute(
 			"barLabelFontSize",
-			Utilities.postscriptEscape("" + this.metadata.getBarLabelFontSize()));
+			Utilities.postscriptEscape("" + getMetadata().getBarLabelFontSize()));
 
 		showHeaderAndFooterTemplate.setAttribute("x", HeaderAndFooterPositioningData.X_POSITION);
 		showHeaderAndFooterTemplate.setAttribute(
@@ -243,16 +255,16 @@ public class PostScriptCreator {
 		yearLabelPropertiesTemplate.setAttribute(
 			"lineWidth", NumberUtilities.convertToDecimalNotation(YEAR_TICK_LINE_LINE_WIDTH));
 		yearLabelPropertiesTemplate.setAttribute("fontFamily", YEAR_LABEL_FONT_FAMILY);
-		yearLabelPropertiesTemplate.setAttribute("fontSize", this.layout.getYearLabelFontSize());
+		yearLabelPropertiesTemplate.setAttribute("fontSize", getLayout().getYearLabelFontSize());
 
 		return yearLabelPropertiesTemplate.toString();
 	}
 
 	private String createYearLabelsWithVerticalTicks() {
-		DateTime startDate = this.recordCollection.getMinimumDate();
-		DateTime endDate = this.recordCollection.getMaximumDate();
+		DateTime startDate = getRecordCollection().getMinimumDate();
+		DateTime endDate = getRecordCollection().getMaximumDate();
 		int endYear = endDate.getYear();
-		double totalHeight = this.layout.calculateTotalHeightWithoutMargins(this.bars);
+		double totalHeight = getLayout().calculateTotalHeightWithoutMargins(this.bars);
 		StringBuffer yearLabelsWithVerticalTicks = new StringBuffer();
 
 		for (DateTime currentDate = startDate;
@@ -274,14 +286,14 @@ public class PostScriptCreator {
 
 		StringTemplate barPropertiesTemplate = this.templateGroup.getInstanceOf("barProperties");
 		barPropertiesTemplate.setAttribute("fontFamily", BAR_LABEL_FONT_FAMILY);
-		barPropertiesTemplate.setAttribute("fontSize", this.layout.getBarLabelFontSize());
+		barPropertiesTemplate.setAttribute("fontSize", getLayout().getBarLabelFontSize());
 
 		return undoYearLabelPropertiesTemplate.toString() + barPropertiesTemplate.toString();
 	}
 
 	private String createYearLabelWithVerticalTick(
 			DateTime startDate, DateTime endDate, DateTime targetDate, double totalHeight) {
-		double x = this.layout.calculateX(targetDate);
+		double x = getLayout().calculateX(targetDate);
 
 		StringTemplate yearLabelWithVerticalTickTemplate =
 			this.templateGroup.getInstanceOf("yearLabelWithVerticalTick");
@@ -296,26 +308,23 @@ public class PostScriptCreator {
 	}
 
 	private String createVisualBars() {
-		Cursor cursor = this.layout.createCursor(this.layout.getBarLabelFontSize());
 		StringBuffer records = new StringBuffer();
 
 		for (Bar bar : this.bars) {
-			String record = createBar(cursor, bar);
+			String record = createBar(bar);
 			records.append(record);
 		}
 
 		return records.toString();
 	}
 
-	private String createBar(Cursor cursor, Bar bar) {
+	private String createBar(Bar bar) {
 		double barX = bar.getX();
-		double barY = NumberUtilities.roundToNDecimalPlaces(
-			this.layout.positionBar(bar, cursor), DECIMAL_PLACE_COUNT);
+		double barY = NumberUtilities.roundToNDecimalPlaces(bar.getY(), DECIMAL_PLACE_COUNT);
 		double barWidth = bar.getWidth();
 		double barHeight = NumberUtilities.roundToNDecimalPlaces(
 			bar.getHeight(), DECIMAL_PLACE_COUNT);
-		double textX = NumberUtilities.roundToNDecimalPlaces(
-			bar.getX(), DECIMAL_PLACE_COUNT);
+		double textX = NumberUtilities.roundToNDecimalPlaces(bar.getX(), DECIMAL_PLACE_COUNT);
 		double textY = barY;
 
 		StringTemplate barTemplate = getBarStringTemplate(bar);
@@ -331,7 +340,7 @@ public class PostScriptCreator {
 		String rightArrowPostScript = "";
 		
 		if (bar.continuesLeft()) {
-			Arrow leftArrow = this.layout.createLeftArrow(bar, barX, barY, barWidth);
+			Arrow leftArrow = getLayout().createLeftArrow(bar, barX, barY, barWidth);
 
 			textX = NumberUtilities.roundToNDecimalPlaces(leftArrow.middleX, DECIMAL_PLACE_COUNT);
 
@@ -349,7 +358,7 @@ public class PostScriptCreator {
 		barTemplate.setAttribute("textX", textX);
 		
 		if (bar.continuesRight()) {
-			Arrow rightArrow = this.layout.createRightArrow(bar, barX, barY, barWidth);
+			Arrow rightArrow = getLayout().createRightArrow(bar, barX, barY, barWidth);
 			
 			StringTemplate rightArrowTemplate = getArrowStringTemplate(bar);;
 

@@ -5,6 +5,9 @@ Bundle-SymbolicName: edu.iu.scipolicy.visualization.horizontalbargraph
 Bundle-Version: 0.0.1
 Bundle-ClassPath: .
 Import-Package: edu.iu.cns.utilities.testing;resolution:=optional,
+ edu.iu.cns.visualization,
+ edu.iu.cns.visualization.exception,
+ edu.iu.cns.visualization.utility,
  edu.iu.nwb.converter.prefusecsv.reader;resolution:=optional,
  org.antlr.stringtemplate,
  org.cishell.framework;version="1.0.0",
@@ -15,6 +18,8 @@ Import-Package: edu.iu.cns.utilities.testing;resolution:=optional,
  org.cishell.utilities,
  org.cishell.utilities.mutateParameter,
  org.cishell.utilities.osgi.logging,
+ org.freehep.graphics2d,
+ org.freehep.util.export,
  org.joda.time,
  org.joda.time.base,
  org.joda.time.chrono,

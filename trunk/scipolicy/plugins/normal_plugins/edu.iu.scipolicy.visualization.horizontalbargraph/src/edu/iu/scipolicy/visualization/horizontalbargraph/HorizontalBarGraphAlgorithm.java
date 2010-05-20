@@ -1,5 +1,6 @@
 package edu.iu.scipolicy.visualization.horizontalbargraph;
 
+import java.awt.Dimension;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
@@ -18,11 +19,16 @@ import org.joda.time.DateTime;
 import org.osgi.service.log.LogService;
 
 import prefuse.data.Table;
+import edu.iu.cns.visualization.exception.VisualizationExportException;
+import edu.iu.cns.visualization.utility.VisualizationRunner;
 import edu.iu.scipolicy.visualization.horizontalbargraph.layout.BasicLayout;
+import edu.iu.scipolicy.visualization.horizontalbargraph.layout.BoundingBox;
 import edu.iu.scipolicy.visualization.horizontalbargraph.record.RecordCollection;
 import edu.iu.scipolicy.visualization.horizontalbargraph.record.TableRecordExtractor;
 import edu.iu.scipolicy.visualization.horizontalbargraph.record.exception.BadDatasetException;
 import edu.iu.scipolicy.visualization.horizontalbargraph.utility.PreprocessedRecordInformation;
+import edu.iu.scipolicy.visualization.horizontalbargraph.visualizationgeneration.generator.PostScriptGenerator;
+import edu.iu.scipolicy.visualization.horizontalbargraph.visualizationgeneration.visualization.HorizontalBarGraphVisualization;
 
 public class HorizontalBarGraphAlgorithm implements Algorithm {
 	public static final String LABEL_FIELD_ID = "label";
@@ -124,16 +130,37 @@ public class HorizontalBarGraphAlgorithm implements Algorithm {
     			minimumAmountPerUnitOfTime,
     			this.metadata.getYearLabelFontSize(),
     			this.metadata.getBarLabelFontSize());
-    		PostScriptCreator postScriptCreator = new PostScriptCreator(
+    		PostScriptGenerator generator = new PostScriptGenerator(
     			horizontalBarGraphGroup, layout, this.metadata, recordCollection);
-    		String postScript = postScriptCreator.toString();
+    		HorizontalBarGraphVisualization visualization = generator.generateVisualization();
 
-        	File temporaryPostScriptFile =
-        		writePostScriptCodeToTemporaryFile(postScript, "horizontal-line-graph");
+    		BoundingBox boundingBox = layout.calculateBoundingBox(visualization.getBars());
+    		int width = (int)boundingBox.getWidth();
+    		int height = (int)boundingBox.getHeight();
+    		VisualizationRunner visualizationRunner = new VisualizationRunner(
+    			visualization, new Dimension(width, height));
+    		visualizationRunner.setUp();
+    		visualizationRunner.run();
+    		
+    		try {
+    			File temporaryPostScriptFile =
+    				visualization.export(EPS_FILE_EXTENSION, "horizontal-bar-graph");
+//    		String postScript = generator.toString();
+//
+//        	File temporaryPostScriptFile =
+//        		writePostScriptCodeToTemporaryFile(postScript, "horizontal-bar-graph");
 
-			return formOutData(temporaryPostScriptFile, inputData);
-    	} catch (AlgorithmExecutionException e) {
-    		throw e;
+				return formOutData(temporaryPostScriptFile, inputData);
+    		} catch (VisualizationExportException e) {
+    			String exceptionMessage =
+    				"An error occurred when trying to generate your visualization.  " +
+    				" Please submit this entire message to the Help Desk: \"" +
+    				e.getMessage() + "\"";
+
+    			throw new AlgorithmExecutionException(exceptionMessage, e);
+    		}
+//    	} catch (AlgorithmExecutionException e) {
+//    		throw e;
     	} catch (BadDatasetException e) {
     		throw new AlgorithmExecutionException(e.getMessage(), e);
     	}/* catch (Exception e) {

@@ -251,8 +251,7 @@ public class BasicLayout {
 		return new BasicCursor(0.0);
 	}
 
-	public double positionBar(Bar bar, Cursor cursor) {
-		double barHeight = bar.getHeight();
+	public double positionBar(double barHeight, Cursor cursor) {
 		double halfBarHeight = (barHeight / 2.0);
 		cursor.move(calculateSpaceBetweenBars(this.barLabelFontSize));
 		cursor.move(halfBarHeight);
@@ -263,16 +262,17 @@ public class BasicLayout {
 	}
 
 	public List<Bar> createBars(Collection<Record> records) {
+		Cursor cursor = createCursor(getBarLabelFontSize());
 		List<Bar> bars = new ArrayList<Bar>();
 
 		for (Record record : records) {
-			bars.add(createBar(record));
+			bars.add(createBar(record, cursor));
 		}
 
 		return bars;
 	}
 
-	public Bar createBar(Record record) {
+	public Bar createBar(Record record, Cursor cursor) {
 		String trimmedLabel = record.getLabel().trim();
 		String label = trimmedLabel;
 		
@@ -296,6 +296,7 @@ public class BasicLayout {
 			!record.hasStartDate(),
 			!record.hasEndDate(),
 			startX,
+			positionBar(height, cursor),
 			width,
 			height,
 			recordAmount,
