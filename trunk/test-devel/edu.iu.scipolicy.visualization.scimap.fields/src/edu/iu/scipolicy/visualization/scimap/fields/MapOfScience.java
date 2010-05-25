@@ -120,15 +120,15 @@ public class MapOfScience {
 		categories.put("255:133:255", "Electrical Engineering & Computer Science");
 		categories.put("0:153:0", "Biology");
 		categories.put("0:255:127", "Biotechnology");
-		categories.put("255:0:0", "Brain Research");
+		categories.put("255:143:0", "Brain Research");
 		categories.put("97:255:255", "Chemical, Mechanical, & Civil Engineering");
 		categories.put("0:0:255", "Chemistry");
-		categories.put("166:0:0", "Earth Sciences");
-		categories.put("255:127:76", "Health Professionals");
+		categories.put("133:49:12", "Earth Sciences");
+		categories.put("240:139:129", "Health Professionals");
 		categories.put("255:255:127", "Humanities");
 		categories.put("184:0:0", "Infectious Diseases");
 		categories.put("163:20:250", "Math & Physics");
-		categories.put("255:181:40", "Medical Specialties");
+		categories.put("255:0:0", "Medical Specialties");
 
 		return categories;
 	}
