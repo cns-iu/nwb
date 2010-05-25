@@ -8,6 +8,7 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.Arrays;
 import java.util.Dictionary;
+import java.util.Hashtable;
 
 import org.antlr.stringtemplate.StringTemplateGroup;
 import org.cishell.framework.CIShellContext;
@@ -95,8 +96,10 @@ public class MapReferences implements Algorithm {
 
 	public static void main(String[] args) {
 		try {
-
-			MapReferences mapReferences = new MapReferences(null, null, new CIShellContext(){
+			Dictionary<String, Object> parameters = new Hashtable<String, Object>();
+			parameters.put("scalingFactor", 1.0);
+			
+			MapReferences mapReferences = new MapReferences(null, parameters, new CIShellContext(){
 
 				public Object getService(String service) {
 					// TODO Auto-generated method stub
@@ -127,7 +130,7 @@ public class MapReferences implements Algorithm {
 
 					};
 				}});
-			File ps = mapReferences.writePostscriptFile(mapReferences.generatePostscriptVisualization("/home/rduhon/Documents/references/pdfs/"));
+			File ps = mapReferences.writePostscriptFile(mapReferences.generatePostscriptVisualization("C:\\Documents and Settings\\jrbibers\\Desktop\\nih demo\\scienceMap\\refmapper test pdfs"));//"/home/rduhon/Documents/references/pdfs/"));
 			System.err.println(ps.getAbsolutePath());
 		} catch (AlgorithmExecutionException e) {
 			// TODO Auto-generated catch block

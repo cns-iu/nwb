@@ -82,7 +82,7 @@ public class MapOfScience {
 		categories.put("255:0:0", "Brain Research");
 		categories.put("97:255:255", "Chemical, Mechanical, & Civil Engineering");
 		categories.put("0:0:255", "Chemistry");
-		categories.put("166:0:0", "Earth Sciences");
+		categories.put("133:49:12", "Earth Sciences");
 		categories.put("255:127:76", "Health Professionals");
 		categories.put("255:255:127", "Humanities");
 		categories.put("184:0:0", "Infectious Diseases");

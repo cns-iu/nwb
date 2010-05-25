@@ -168,13 +168,13 @@ show
 % 2.08 inch 1.1 inch moveto
 % (Chemical, Mechanical, & Civil Engineering) show
 
-(Chemistry) 0 1 1 2.38 inch 2.45 inch category
+(Chemistry) 0 0 1 2.38 inch 2.45 inch category
 
 % 0 0 1 setrgbcolor
 % 2.38 inch 2.45 inch moveto
 % (Chemistry) show
 
-(Earth Sciences) .651 0 0 2.65 inch .4 inch category
+(Earth Sciences) .52 .19 .05 2.65 inch .4 inch category
 
 % .651 0 0 setrgbcolor
 % 2.65 inch .4 inch moveto
