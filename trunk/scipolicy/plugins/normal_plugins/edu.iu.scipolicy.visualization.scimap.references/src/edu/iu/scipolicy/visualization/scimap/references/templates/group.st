@@ -150,13 +150,13 @@ show
 % 3.1 inch 1.45 inch moveto
 % (Biotechnology) show
 
-(Brain Research) 1 0 0 5.63 inch 1.23 inch category
+(Brain Research) 1 .56 0 5.63 inch 1.23 inch category
 
 % 1 0 0 setrgbcolor
 % 5.63 inch 1.23 inch moveto
 % (Brain Research) show
 
-(Medical Specialties) 1 .71 .157 5.1 inch .88 inch category
+(Medical Specialties) 1 0 0 5.1 inch .88 inch category
 
 % 1 .71 .157 setrgbcolor
 % 5.1 inch .88 inch moveto
@@ -180,7 +180,7 @@ show
 % 2.65 inch .4 inch moveto
 % (Earth Sciences) show
 
-(Health Professionals) 1 .5 .3 5.3 inch 2.55 inch category
+(Health Professionals) .94 .55 .51 5.3 inch 2.55 inch category
 
 % 1 .5 .3 setrgbcolor
 % 5.3 inch 2.55 inch moveto
