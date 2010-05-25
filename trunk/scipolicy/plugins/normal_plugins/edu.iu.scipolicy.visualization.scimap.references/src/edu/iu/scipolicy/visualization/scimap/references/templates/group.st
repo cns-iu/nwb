@@ -296,6 +296,8 @@ gsave
 (Date and time of analysis: ) show analysistime show
 .5 inch 10.55 inch moveto
 (Input directory: ) show analysisdirectory show
+.5 inch 10.4 inch moveto
+(Scaling factor: ) show scalingFactor show
 incrementpage
 7.6 inch 10.7 inch moveto
 (page ) show page 5 string cvs show
@@ -328,7 +330,7 @@ grestore
 
 >>
 
-overview(overviewMap,pages,title,totals,number,analysisTime,categories,clustering) ::= <<
+overview(overviewMap,pages,title,totals,number,analysisTime,scalingFactor,categories,clustering) ::= <<
 %!
 %%Title: Reference Overlay on the Map of Science
 %%EndComments
@@ -341,7 +343,7 @@ overview(overviewMap,pages,title,totals,number,analysisTime,categories,clusterin
 
 /analysistime (<analysisTime>) def
 /analysisdirectory (<title>) def
-
+/scalingFactor (<scalingFactor>) def
 
 /Palatino-Bold findfont 14 scalefont setfont
 

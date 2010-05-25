@@ -96,8 +96,9 @@ public class Analysis {
 	private String reason = "";
 
 	private String name;
+	private double scalingFactor;
 
-	public Analysis(File pdf) {
+	public Analysis(File pdf, double scalingFactor) {
 		try {
 			name = pdf.getName();
 			String text = normalize(extractText(pdf));
@@ -129,6 +130,7 @@ public class Analysis {
 			System.err.println("FAILED: " + reason);
 		}
 
+		this.scalingFactor = scalingFactor;
 	}
 
 	private Map<String, Integer> totalMap(String[] citations) {
@@ -634,7 +636,7 @@ public class Analysis {
 		if(this.failed)  {
 			return "1 inch 5 inch moveto (" + this.reason + ") show showpage";
 		}
-		MapOfScience map = new MapOfScience(found);
+		MapOfScience map = new MapOfScience(found, scalingFactor);
 		
 		StringTemplate proposalTemplate = MapReferences.group.getInstanceOf("proposal");
 		

@@ -15,15 +15,16 @@ import cern.colt.matrix.DoubleMatrix2D;
 import cern.colt.matrix.ObjectFactory1D;
 import cern.colt.matrix.ObjectMatrix1D;
 
-public class Clustering {
-	
+public class Clustering {	
 	private static final int NUMBER_SIMILAR = 10;
 	private DoubleMatrix2D similarities;
 	private List<Analysis> analyses;
+	private double scalingFactor;
 	
-	public Clustering(List<Analysis> analyses) {
+	public Clustering(List<Analysis> analyses, double scalingFactor) {
 		this.analyses = analyses;
 		this.similarities = createSimilarityMatrix(analyses);
+		this.scalingFactor = scalingFactor;
 	}
 
 	private DoubleMatrix2D createSimilarityMatrix(List<Analysis> analyses) {
@@ -86,7 +87,7 @@ public class Clustering {
 		int values = analyses.size();
 		for(int ii = 0; ii < values; ii++) {
 			DoubleMatrix1D analysisSim = similarities.viewRow(ii);
-			clusters.add(new Cluster(topTen(analyses, analysisSim)));
+			clusters.add(new Cluster(topTen(analyses, analysisSim), scalingFactor));
 		}
 		return clusters;
 	}

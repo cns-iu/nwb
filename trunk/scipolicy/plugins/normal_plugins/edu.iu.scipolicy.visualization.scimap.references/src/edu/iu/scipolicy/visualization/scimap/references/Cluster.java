@@ -9,17 +9,20 @@ import org.antlr.stringtemplate.StringTemplate;
 public class Cluster {
 	private Similar[] similars;
 	private Combination combo = new Combination();
+	private double scalingFactor;
 
-	public Cluster(Similar[] similars) {
+	public Cluster(Similar[] similars, double scalingFactor) {
 		this.similars = similars;
 		for(Similar similar : similars) {
 			Analysis analysis = similar.getAnalysis();
 			combo.acquire(analysis);
 		}
+		
+		this.scalingFactor = scalingFactor;
 	}
 
 	public String getPostscript() {
-		MapOfScience map = new MapOfScience(combo.found);
+		MapOfScience map = new MapOfScience(combo.found, scalingFactor);
 		
 		StringTemplate overviewTemplate = MapReferences.group.getInstanceOf("cluster");
 		

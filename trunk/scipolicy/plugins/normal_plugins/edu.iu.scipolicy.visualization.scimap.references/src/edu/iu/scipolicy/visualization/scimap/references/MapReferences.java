@@ -24,15 +24,19 @@ public class MapReferences implements Algorithm {
 	private Dictionary<String, String> parameters;
 	private CIShellContext context;
 	private LogService logger;
+	private String directory;
+	private double scalingFactor;
 	
 	public static StringTemplateGroup group = loadTemplates();
 	
 
 	public MapReferences(Data[] data, Dictionary parameters, CIShellContext context) {
 		this.data = data;
-		this.parameters = parameters;
 		this.context = context;
 		this.logger = (LogService) context.getService(LogService.class.getName());
+		
+		this.directory = (String) parameters.get("directory");
+		this.scalingFactor = (Double) parameters.get("scalingFactor");
 	}
 
 	private static StringTemplateGroup loadTemplates() {
@@ -40,7 +44,6 @@ public class MapReferences implements Algorithm {
 	}
 
 	public Data[] execute() throws AlgorithmExecutionException {
-		String directory = parameters.get("directory");
 		Overview overview = generatePostscriptVisualization(directory);
 
 		return new Data[] {wrapPostscript(writePostscriptFile(overview), directory), wrapCsv(writeFoundFile(overview), "Found journals for proposals in " + directory), wrapCsv(writeUnfoundFile(overview), "Unlocated references for proposals in " + directory)};
@@ -144,7 +147,7 @@ public class MapReferences implements Algorithm {
 		for(File pdf : pdfs) {
 			//this.logger.log(LogService.LOG_WARNING, "  . . . starting PDF");
 			try {
-				Analysis analysis = new Analysis(pdf);
+				Analysis analysis = new Analysis(pdf, scalingFactor);
 				//this.logger.log(LogService.LOG_WARNING, "  . . . PDF analyzed");
 				overview.update(analysis);
 				//this.logger.log(LogService.LOG_WARNING, "  . . . analysis assimilated");
@@ -175,7 +178,7 @@ public class MapReferences implements Algorithm {
 
 	private Overview initializeOverview(File directory) {
 		//this.logger.log(LogService.LOG_WARNING, "Loading Overview");
-		return new Overview(directory.getAbsolutePath());
+		return new Overview(directory.getAbsolutePath(), scalingFactor);
 
 	}
 

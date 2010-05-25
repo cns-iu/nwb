@@ -29,12 +29,12 @@ public class MapOfScience {
 	protected static Map<String, String> lookup = loadLookup();
 	//private static List<Edge> edges = loadEdges();
 	
-	
-	
-
 	private Map<Integer, Double> totals = new HashMap<Integer, Double>();
+	private double scalingFactor;
 
-	public MapOfScience(Map<String, Integer> found) {
+	public MapOfScience(Map<String, Integer> found, double scalingFactor) {
+		this.scalingFactor = scalingFactor;
+		
 		int total = 0;
 		for(String key : found.keySet()) {
 			total += found.get(key);
@@ -209,7 +209,7 @@ public class MapOfScience {
 	}
 
 	private String nodePostscript(double x, double y, double red, double green, double blue, Double total) {
-		double radius = Math.sqrt(total) * RADIUS_MULTIPLIER + MINIMUM_SIZE;
+		double radius = Math.sqrt(scalingFactor * total) * RADIUS_MULTIPLIER + MINIMUM_SIZE;
 		return "" + x + " " + y + " " + radius + " " + red + " " + green + " " + blue + " node";
 	}
 

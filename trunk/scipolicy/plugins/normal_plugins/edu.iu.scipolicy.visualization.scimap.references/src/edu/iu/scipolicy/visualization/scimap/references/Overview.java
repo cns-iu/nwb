@@ -20,15 +20,15 @@ import org.antlr.stringtemplate.StringTemplate;
 import au.com.bytecode.opencsv.CSVWriter;
 
 public class Overview {
-
-
 	private String name;
 	private List<Analysis> analyses = new ArrayList<Analysis>();
 	private Map<String, String> rows = new HashMap<String, String>();
 	private Combination combo = new Combination();
+	private double scalingFactor;
 
-	public Overview(String name) {
+	public Overview(String name, double scalingFactor) {
 		this.name = name;
+		this.scalingFactor = scalingFactor;
 	}
 
 	public void update(Analysis analysis) {
@@ -80,17 +80,18 @@ public class Overview {
 	
 
 	public void renderPostscript(Writer writer) throws IOException {
-		MapOfScience map = new MapOfScience(combo.found);
+		MapOfScience map = new MapOfScience(combo.found, scalingFactor);
 		
 		StringTemplate overviewTemplate = MapReferences.group.getInstanceOf("overview"); //MapReferences.templatePaths.get("overview"));
 		
 		overviewTemplate.setAttribute("overviewMap", map.getPostscript());
 		overviewTemplate.setAttribute("pages", this.analyses);
-		overviewTemplate.setAttribute("clustering", new Clustering(this.analyses));
+		overviewTemplate.setAttribute("clustering", new Clustering(this.analyses, scalingFactor));
 		overviewTemplate.setAttribute("title", Utils.postscriptEscape(this.name));
 		overviewTemplate.setAttribute("totals", combo.getTotals());
 		overviewTemplate.setAttribute("number", Totals.formatter.format(this.analyses.size()));
 		overviewTemplate.setAttribute("analysisTime", Utils.postscriptEscape(DateFormat.getDateTimeInstance(DateFormat.LONG, DateFormat.LONG).format(new Date())));
+		overviewTemplate.setAttribute("scalingFactor", scalingFactor);
 		
 		
 		overviewTemplate.setAttribute("categories", combo.getCollated());
