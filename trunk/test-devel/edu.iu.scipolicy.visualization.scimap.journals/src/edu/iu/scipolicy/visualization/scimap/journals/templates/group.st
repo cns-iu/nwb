@@ -300,7 +300,7 @@ gsave
 	/Garamond findfont 7 scalefont setfont
 	newpath
 	1 setlinewidth
-	.6 setgray
+	.3 setgray %OLD .6
 	dup stringwidth pop 2 div dup 1 inch add neg 2 moveto
 	.8 inch 0 rlineto
 	stroke
@@ -446,7 +446,7 @@ headerfooter() ::= <<
 
 gsave
 /Garamond findfont 8 scalefont setfont
-.6 setgray
+.3 setgray
 .5 inch 10.7 inch moveto
 (Date and time of analysis: ) show analysistime show
 .5 inch 10.55 inch moveto
@@ -475,7 +475,7 @@ gsave
 } bind def
 
 .5 inch .35 inch moveto
-(Cyberinfrastructure for Network Science Center (2009) Science Map. Indiana University, ) show
+(Cyberinfrastructure for Network Science Center (2010) Science Map. Indiana University, ) show
 (http://sci.slis.indiana.edu) underlinedShow
 (.) show
 
@@ -540,7 +540,7 @@ currentfont 1.5 scalefont setfont
 
 grestore
 
-.5 setgray
+.4 setgray
 
 <unfound:referenceEntry();separator="\n">
 

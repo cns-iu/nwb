@@ -18,7 +18,6 @@ justShow() ::= <<
 >>
 
 
-
 legendDefinitions() ::= <<
 
 /legendLabelDict 1 dict def
@@ -223,7 +222,6 @@ circleAreaLegend(x,y,minRadius,midRadius,maxRadius,circleBrightness,minLabel,mid
 
 
 
-
 categoryName(nameFormat) ::= <<
 
 0 lineHeight -1.3 mul translate
@@ -287,7 +285,9 @@ referenceEntry() ::= <<
 
 mapofscience(edges,emptyNodes,nodes,x,y,minRadius,midRadius,maxRadius,circleBrightness,minLabel,midLabel,maxLabel,extremaLabelBrightness,extremaLabelFontSize,typeLabel,typeLabelBrightness,typeLabelFontSize,scalingLabel,scalingLabelBrightness,keyLabel,keyLabelBrightness,keyLabelFontSize,fontName) ::= <<
 
+gsave
 <circleAreaLegend(x=x,y=y,minRadius=minRadius,midRadius=midRadius,maxRadius=maxRadius,circleBrightness=circleBrightness,minLabel=minLabel,midLabel=midLabel,maxLabel=maxLabel,extremaLabelBrightness=extremaLabelBrightness,extremaLabelFontSize=extremaLabelFontSize,typeLabel=typeLabel,typeLabelBrightness=typeLabelBrightness,typeLabelFontSize=typeLabelFontSize,scalingLabel=scalingLabel,scalingLabelBrightness=scalingLabelBrightness,keyLabel=keyLabel,keyLabelBrightness=keyLabelBrightness,keyLabelFontSize=keyLabelFontSize,fontName=fontName)>
+grestore
 
 gsave
 
@@ -505,10 +505,8 @@ gsave
 (Science Map via 554 Fields for <title>) show
 grestore
 
-
 .5 inch 9.9 inch moveto
 (<goodRecordCount> out of <totalRecordCount> records located.) show
-
 
 .5 inch 9.62 inch moveto
 (These <goodRecordCount> records are associated with <numberOfHitCategories> of 13 disciplines of science and <numberOfIDsHit> of 554 research specialties in the UCSD Map of Science.) show
