@@ -24,7 +24,7 @@ public class Merger {
 	private Map<String, EntityGroup> groups = Maps.newHashMap();
 	private DatabaseTable databaseTable;
 	private int entitiesMergedAway;
-	private ProgressMonitor monitor;
+	private ProgressMonitor monitor = ProgressMonitor.NULL_MONITOR;
 
 	public Merger(DatabaseTable toBeMerged, ProgressMonitor monitor) {
 		this.databaseTable = toBeMerged;
