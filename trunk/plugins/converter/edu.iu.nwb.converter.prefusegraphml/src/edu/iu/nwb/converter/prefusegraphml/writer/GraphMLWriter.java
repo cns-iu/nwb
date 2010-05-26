@@ -58,8 +58,8 @@ public class GraphMLWriter extends AbstractGraphWriter {
         TYPES.put(Integer.class, Tokens.INT);
         TYPES.put(long.class, Tokens.LONG);
         TYPES.put(Long.class, Tokens.LONG);
-        TYPES.put(float.class, Tokens.FLOAT);
-        TYPES.put(Float.class, Tokens.FLOAT);
+        TYPES.put(float.class, Tokens.DOUBLE);
+        TYPES.put(Float.class, Tokens.DOUBLE);
         TYPES.put(double.class, Tokens.DOUBLE);
         TYPES.put(Double.class, Tokens.DOUBLE);
         TYPES.put(boolean.class, Tokens.BOOLEAN);
