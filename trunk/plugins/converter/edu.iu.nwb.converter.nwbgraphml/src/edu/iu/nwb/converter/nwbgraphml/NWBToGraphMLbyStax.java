@@ -213,7 +213,7 @@ public class NWBToGraphMLbyStax implements Algorithm {
 				xtw.writeAttribute(ID_ATTRIBUTE_KEY, attr.getAttrName().toLowerCase());
 				xtw.writeAttribute("for", EDGE_ELEMENT);
 				xtw.writeAttribute("attr.name", attr.getAttrName());
-				xtw.writeAttribute("attr.type", attr.getDataType());
+				xtw.writeAttribute("attr.type", getGraphMLType(attr));
 				xtw.writeEndElement();
 				
 			}
@@ -515,16 +515,14 @@ public class NWBToGraphMLbyStax implements Algorithm {
 	private String getGraphMLType(NWBAttribute attr) {
 		String type = attr.getDataType();
 
-		if (NWBFileProperty.TYPE_REAL.equals(type)) {
+		if (NWBFileProperty.TYPE_REAL.equals(type)) { //REAL needs to be ripped out of NWB. It was a stupid idea in the first place.
 			type = DOUBLE_TYPE_TOKEN;
 		} else if (NWBFileProperty.TYPE_FLOAT.equals(type)) {
-			/* TODO: GUESS can't handle the float type for unknown reasons.
-			 * If we ever have a converter from GraphML to GUESS, move this
-			 * into that code.
+			/* This is because GraphML does not have a float type, only a double type.
 			 */
 			type = DOUBLE_TYPE_TOKEN;
 		}
-
+		//other types from NWB match graphml's types
 		return type;
-	}	
+	}
 }
