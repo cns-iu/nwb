@@ -143,7 +143,7 @@ public class ExtractGraphWithQueriesFactory implements AlgorithmFactory {
     	addIfNotNull(parameters, ExtractGraphFactory.TARGET_COLUMN_KEY, targetColumn((String) propertiesFromFile.get(TARGET_COLUMN_PROPERTY)));
     	addIfNotNull(parameters, ExtractGraphFactory.DIRECTED_KEY, directed((new Boolean((String)propertiesFromFile.get(DIRECTED_PROPERTY)))));
     	addIfNotNull(parameters, ExtractGraphFactory.LABEL_KEY, label((String) propertiesFromFile.get(LABEL_PROPERTY)));
-    
+    	parameters.put(ExtractGraphFactory.CUSTOM_KEY, "not custom"); //indicates this is not a custom graph (though the value is arbitrary)
     	return parameters;
     }
     

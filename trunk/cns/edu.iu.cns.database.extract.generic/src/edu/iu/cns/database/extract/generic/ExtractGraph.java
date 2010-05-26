@@ -43,6 +43,7 @@ public class ExtractGraph implements Algorithm {
 	private static final String internalId = "_x_nwb_id";
 	private static final String internalSource = "_x_nwb_source";
 	private static final String internalTarget = "_x_nwb_target";
+	private boolean custom;
 
 	public ExtractGraph(Data[] data, Dictionary parameters, CIShellContext context) {
 		this.data = data;
@@ -59,11 +60,16 @@ public class ExtractGraph implements Algorithm {
 		if(parameters.get(ExtractGraphFactory.LABEL_KEY) != null) {
 			this.label = (String) parameters.get(ExtractGraphFactory.LABEL_KEY);
 		}
+		custom = parameters.get(ExtractGraphFactory.CUSTOM_KEY) == null;
 	}
 
 	public Data[] execute() throws AlgorithmExecutionException {
-
-
+		if(custom) {
+			logger.log(LogService.LOG_INFO, "If you see unexpected results with the resulting network from analysis algorithms or " +
+				"inconsistencies between the Network Analysis Toolkit and GUESS, this is probably due to the queries including " +
+				"duplicates of nodes or edges. To verify your queries are producing exactly what you expect, " +
+				"try running each of them separately as table extractions, and looking over the results manually.");
+		}
 
 		Database database = (Database) data[0].getData();
 		Connection connection = DatabaseUtilities.connect(database, "Unable to communicate with the database.");
@@ -72,9 +78,14 @@ public class ExtractGraph implements Algorithm {
 			Data outputData = wrapWithMetadata(graph);
 			return new Data[] { outputData };
 		} catch (SQLException e) {
+			e.printStackTrace();
 			throw new AlgorithmExecutionException("Unable to communicate with the selected database.", e);
 		} catch (DataIOException e) {
+			e.printStackTrace();
 			throw new AlgorithmExecutionException("There was a problem executing a query: " + e.getMessage(), e);
+		} catch (RuntimeException e) {
+			e.printStackTrace(); //really, CIShell should be doing this
+			throw e;
 		} finally {
 			DatabaseUtilities.closeConnectionQuietly(connection);
 		}

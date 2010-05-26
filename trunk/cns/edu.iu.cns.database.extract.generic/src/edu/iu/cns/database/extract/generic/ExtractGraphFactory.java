@@ -16,6 +16,7 @@ public class ExtractGraphFactory implements AlgorithmFactory {
 	public static final String TARGET_COLUMN_KEY = "target_column";
 	public static final Object DIRECTED_KEY = "directed";
 	public static final Object LABEL_KEY = "label";
+	public static final Object CUSTOM_KEY = "custom";
     
     public Algorithm createAlgorithm(Data[] data, Dictionary parameters, CIShellContext context) {
         return new ExtractGraph(data, parameters, context);
