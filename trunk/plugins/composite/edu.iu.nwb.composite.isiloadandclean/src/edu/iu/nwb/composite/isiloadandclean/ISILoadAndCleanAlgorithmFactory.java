@@ -6,66 +6,56 @@ import org.cishell.framework.CIShellContext;
 import org.cishell.framework.algorithm.Algorithm;
 import org.cishell.framework.algorithm.AlgorithmFactory;
 import org.cishell.framework.data.Data;
+import org.cishell.utilities.AlgorithmUtilities;
 import org.osgi.framework.BundleContext;
-import org.osgi.framework.InvalidSyntaxException;
-import org.osgi.framework.ServiceReference;
 import org.osgi.service.component.ComponentContext;
 import org.osgi.service.log.LogService;
 
 
 public class ISILoadAndCleanAlgorithmFactory implements AlgorithmFactory {
-    private BundleContext bContext;
-    
-    private LogService log;
-    private AlgorithmFactory isiValidator;
-    private AlgorithmFactory isiToPrefuseConverter;
-    private AlgorithmFactory isiDupRemover;
-    
-    protected void activate(ComponentContext ctxt) {
-    	this.log = (LogService) 
-    		ctxt.locateService("LOG");
-    	
-        bContext = ctxt.getBundleContext();
+    private BundleContext bundleContext;
+    private LogService logger;
+
+    protected void activate(ComponentContext componentContext) {
+    	this.bundleContext = componentContext.getBundleContext();
+    	this.logger = (LogService)componentContext.locateService("LOG");
     }
-    
-    public Algorithm createAlgorithm(Data[] data, Dictionary parameters, CIShellContext context) {
-    	String filter = "";
-        try {
-        	filter = "(& (in_data=file-ext:isi) (out_data=file:text/isi))";
-        	isiValidator = getAlgorithmFactory(filter);
-        	
-        	filter = "(& (in_data=file:text/isi) (out_data=prefuse.data.Table))";
-        	isiToPrefuseConverter = getAlgorithmFactory(filter);
-        	
-        	filter = "(service.pid=edu.iu.nwb.analysis.isidupremover.ISIDupRemoverAlgorithm)";
-        	isiDupRemover = getAlgorithmFactory(filter);
-			
-		} catch (InvalidSyntaxException e) {
-			log.log(LogService.LOG_ERROR, "Invalid syntax in filter " + filter, e);
-		}
+
+    @SuppressWarnings("unchecked")	// Dictionary<String, Object>
+    public Algorithm createAlgorithm(
+    		Data[] data, Dictionary parameters, CIShellContext ciShellContext) {
+    	AlgorithmFactory fileLoader = getFileLoader(this.bundleContext, this.logger);
+    	AlgorithmFactory isiToPrefuseConverter =
+    		getISIToPrefuseConverter(this.bundleContext, this.logger);
+    	AlgorithmFactory isiDuplicateRemover =
+    		getISIDuplicateRemover(this.bundleContext, this.logger);
 		
-        return new ISILoadAndCleanAlgorithm(data, parameters, context,
-        		isiValidator, isiToPrefuseConverter, isiDupRemover);
+        return new ISILoadAndCleanAlgorithm(
+        	data,
+        	parameters,
+        	ciShellContext,
+        	fileLoader,
+        	isiToPrefuseConverter,
+        	isiDuplicateRemover);
     }
-    
-    private AlgorithmFactory getAlgorithmFactory (String filter) 
-    throws InvalidSyntaxException {
-    	ServiceReference[] algFactoryRefs = bContext
-    	.getServiceReferences(AlgorithmFactory.class.getName(), filter);
-    	
-    	if (algFactoryRefs != null && algFactoryRefs.length != 0) {
-    		ServiceReference algFactoryRef = algFactoryRefs[0];
-    		
-    		AlgorithmFactory algFactory = 
-    			(AlgorithmFactory) bContext.getService(algFactoryRef);
-    		
-    		return algFactory;
-    	} else {
-    		this.log.log(LogService.LOG_ERROR, "ISI Load and Clean Algorithm" +
-    				" was unable to find an algorithm that satisfied the " +
-    				"following filter: " + filter);
-    		return null;
-    	}
-    	
+
+    private static AlgorithmFactory getFileLoader(BundleContext bundleContext, LogService logger) {
+    	return AlgorithmUtilities.getAlgorithmFactoryByPID(
+    		"org.cishell.reference.gui.persistence.load.FileLoadAlgorithm", bundleContext);
     }
+
+	private static AlgorithmFactory getISIToPrefuseConverter(
+			BundleContext bundleContext, LogService logger) {
+		String isiToPrefuseConverterFilter =
+    		"(& (in_data=file:text/isi) (out_data=prefuse.data.Table))";
+
+		return AlgorithmUtilities.getAlgorithmFactoryByFilter(
+    		isiToPrefuseConverterFilter, bundleContext);
+	}
+
+	private static AlgorithmFactory getISIDuplicateRemover(
+			BundleContext bundleContext, LogService logger) {
+		return AlgorithmUtilities.getAlgorithmFactoryByPID(
+    		"edu.iu.nwb.analysis.isidupremover.ISIDupRemoverAlgorithm", bundleContext);
+	}
 }

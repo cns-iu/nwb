@@ -7,65 +7,53 @@ import org.cishell.framework.algorithm.Algorithm;
 import org.cishell.framework.algorithm.AlgorithmExecutionException;
 import org.cishell.framework.algorithm.AlgorithmFactory;
 import org.cishell.framework.data.Data;
+import org.cishell.utilities.AlgorithmUtilities;
 import org.osgi.service.log.LogService;
 
-import edu.iu.nwb.composite.isiloadandclean.loading.SWTISILoader;
-import edu.iu.nwb.composite.isiloadandclean.loading.SpecialISILoader;
-
 public class ISILoadAndCleanAlgorithm implements Algorithm {
-    Data[] data;
-    Dictionary parameters;
-    CIShellContext context;
-    
-    private LogService log;
-    
-    private SpecialISILoader isiLoader;
-    
-    private AlgorithmFactory isiValidator;
+	private LogService logger;
+    private Dictionary parameters;
+    private CIShellContext ciShellContext;
+
+    private AlgorithmFactory fileLoader;
     private AlgorithmFactory isiToPrefuseConverter;
     private AlgorithmFactory isiDupRemover;
+
+//    private SpecialISILoader isiLoader;
    
-    public ISILoadAndCleanAlgorithm(Data[] data, Dictionary parameters, CIShellContext context,
-    		AlgorithmFactory isiValidator, AlgorithmFactory isiToPrefuseConverter,
+    public ISILoadAndCleanAlgorithm(
+    		Data[] data,
+    		Dictionary parameters,
+    		CIShellContext context,
+    		AlgorithmFactory fileLoader,
+    		AlgorithmFactory isiToPrefuseConverter,
     		AlgorithmFactory isiDupRemover) {
-        this.data = data;
         this.parameters = parameters;
-        this.context = context;
-        
-        this.log = (LogService)context.getService(LogService.class.getName());      
-        
-        //Change this if you want to do it with a web gui
-        this.isiLoader = new SWTISILoader();
-        
-        this.isiValidator = isiValidator;
+        this.ciShellContext = context;
+
+        this.logger = (LogService)context.getService(LogService.class.getName());      
+
+        this.fileLoader = fileLoader;
         this.isiToPrefuseConverter = isiToPrefuseConverter;
         this.isiDupRemover = isiDupRemover;
-        
     }
 
     public Data[] execute() throws AlgorithmExecutionException {
+    	Data[] loadedData = AlgorithmUtilities.executeAlgorithm(
+    		this.fileLoader, this.parameters, this.ciShellContext, null); 
     	
-    	Data[] loadedISIData = isiLoader.getISIDataFromUser();
-    	
-    	if (loadedISIData == null || loadedISIData.length == 0) {
-    		log.log(LogService.LOG_WARNING, "File loading canceled");
+    	if ((loadedData == null) || (loadedData.length == 0)) {
     		return new Data[0];
     	}
-    
-    	Data[] validatedISIData = executeAlgorithm(isiValidator, loadedISIData);
+
+    	Data[] convertedToPrefuseData = AlgorithmUtilities.executeAlgorithm(
+    		this.isiToPrefuseConverter, this.parameters, this.ciShellContext, loadedData);
+    	Data[] duplicatesRemovedData = AlgorithmUtilities.executeAlgorithm(
+    		this.isiDupRemover, this.parameters, this.ciShellContext, convertedToPrefuseData);
+    	Data[] originalAndDuplicatesRemovedData = new Data[] {
+    		convertedToPrefuseData[0], duplicatesRemovedData[0]
+		};
     	
-    	Data[] convertedToPrefuseISIData = executeAlgorithm(isiToPrefuseConverter, validatedISIData);
-    	
-    	Data[] dupRemovedISIData = executeAlgorithm(isiDupRemover, convertedToPrefuseISIData);
-    	
-    	Data[] origAndDupRemovedISIData = new Data[]{convertedToPrefuseISIData[0], dupRemovedISIData[0]};
-    	
-    	return origAndDupRemovedISIData;
-    }
-    
-    private Data[] executeAlgorithm(AlgorithmFactory algFactory, Data[] data) throws AlgorithmExecutionException{
-    	Algorithm alg = algFactory.createAlgorithm(data, parameters, context);
-    	Data[] result = alg.execute();
-    	return result;
+    	return originalAndDuplicatesRemovedData;
     }
 }
