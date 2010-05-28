@@ -423,8 +423,7 @@ public class Document extends Entity<Document> {
 			attributes,
 			new DictionaryEntry<String, Object>(ISI.ABSTRACT_TEXT, abstractText),
 			new DictionaryEntry<String, Object>(ISI.BEGINNING_PAGE, beginningPage),
-			new DictionaryEntry<String, Object>(
-				ISI.CITED_REFERENCE_COUNT, citedReferenceCount),
+			new DictionaryEntry<String, Object>(ISI.CITED_REFERENCE_COUNT, citedReferenceCount),
 			new DictionaryEntry<String, Object>(ISI.CITED_YEAR, citedYear),
 			new DictionaryEntry<String, Object>(ISI.DOCUMENT_TYPE, documentType),
 			new DictionaryEntry<String, Object>(ISI.DOCUMENT_VOLUME, documentVolume),

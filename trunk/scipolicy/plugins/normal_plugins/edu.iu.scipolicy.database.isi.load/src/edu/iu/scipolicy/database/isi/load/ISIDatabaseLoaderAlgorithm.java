@@ -17,6 +17,7 @@ import org.cishell.framework.data.DataProperty;
 import org.cishell.service.database.Database;
 import org.cishell.service.database.DatabaseCreationException;
 import org.cishell.service.database.DatabaseService;
+import org.cishell.utilities.FileUtilities;
 import org.osgi.service.log.LogService;
 
 import prefuse.data.Table;
@@ -41,7 +42,7 @@ public class ISIDatabaseLoaderAlgorithm implements Algorithm, ProgressTrackable 
     private ProgressMonitor progressMonitor = ProgressMonitor.NULL_MONITOR;
     
     public ISIDatabaseLoaderAlgorithm(
-    		Data[] data, Dictionary parameters, CIShellContext ciShellContext) {
+    		Data[] data, Dictionary<String, Object> parameters, CIShellContext ciShellContext) {
         this.inData = data[0];
 
         this.logger = (LogService)ciShellContext.getService(LogService.class.getName());
@@ -88,7 +89,9 @@ public class ISIDatabaseLoaderAlgorithm implements Algorithm, ProgressTrackable 
     
     private Table convertISIToTable(Data isiData, LogService logger)
     		throws AlgorithmExecutionException {
-    	File inISIFile = (File)isiData.getData();
+    	String filePath = (String)isiData.getData();
+    	File inISIFile = new File(filePath);
+//    	File inISIFile = (File)isiData.getData();
 
     	try {
     		return ISITableReaderHelper.readISIFile(
@@ -144,12 +147,14 @@ public class ISIDatabaseLoaderAlgorithm implements Algorithm, ProgressTrackable 
     	this.progressMonitor.done();
     }
 
+    @SuppressWarnings("unchecked")	// Dictionary<String, Object>
     private Data[] annotateOutputData(Database isiDatabase, Data parentData) {
     	Data data = new BasicData(isiDatabase, ISI.ISI_DATABASE_MIME_TYPE);
-    	Dictionary<String, Object> parentMetadata = parentData.getMetadata();
     	Dictionary<String, Object> metadata = data.getMetadata();
     	metadata.put(
-    		DataProperty.LABEL, "ISI Database From " + parentMetadata.get(DataProperty.LABEL));
+    		DataProperty.LABEL,
+    		"ISI Database From " +
+    			FileUtilities.extractFileNameWithExtension((String)parentData.getData()));
     	metadata.put(DataProperty.TYPE, DataProperty.DATABASE_TYPE);
     	metadata.put(DataProperty.PARENT, parentData);
 

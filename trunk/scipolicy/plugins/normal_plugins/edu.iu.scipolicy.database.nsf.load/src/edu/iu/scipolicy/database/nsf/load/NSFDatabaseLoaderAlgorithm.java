@@ -18,6 +18,7 @@ import org.cishell.framework.data.DataProperty;
 import org.cishell.service.database.Database;
 import org.cishell.service.database.DatabaseCreationException;
 import org.cishell.service.database.DatabaseService;
+import org.cishell.utilities.FileUtilities;
 import org.osgi.service.log.LogService;
 
 import au.com.bytecode.opencsv.CSVReader;
@@ -55,7 +56,8 @@ public class NSFDatabaseLoaderAlgorithm implements Algorithm, ProgressTrackable 
     	 * Get the file data.
     	 */
 
-		File nsfCSVFile = (File) data[0].getData();
+    	String fileName = (String)data[0].getData();
+		File nsfCSVFile = new File(fileName);
 		
 		try {
 			/*
@@ -71,7 +73,7 @@ public class NSFDatabaseLoaderAlgorithm implements Algorithm, ProgressTrackable 
 			/*
 			 * Provide the finished database in the data manager.
 			 */
-			return annotateOutputData(database);
+			return annotateOutputData(database, data[0]);
 		} catch (AlgorithmCanceledException e) {
 			return new Data[] {};
 		} catch (IOException e) {
@@ -96,12 +98,15 @@ public class NSFDatabaseLoaderAlgorithm implements Algorithm, ProgressTrackable 
 	 * @return
 	 */
 	@SuppressWarnings("unchecked")
-	private Data[] annotateOutputData(Database database) {
+	private Data[] annotateOutputData(Database database, Data parentData) {
 		Data output = new BasicData(database, NSF_Database_FieldNames.NSF_DATABASE_MIME_TYPE);
-		Dictionary<String, Object> parentMetadata = data[0].getMetadata();
+//		Dictionary<String, Object> parentMetadata = data[0].getMetadata();
 		Dictionary<String, Object> metadata = output.getMetadata();
 		metadata.put(
-			DataProperty.LABEL, "NSF Database From " + parentMetadata.get(DataProperty.LABEL));
+			DataProperty.LABEL,
+			"NSF Database From " +
+				FileUtilities.extractFileNameWithExtension((String)parentData.getData()));
+//			DataProperty.LABEL, "NSF Database From " + parentMetadata.get(DataProperty.LABEL));
 		metadata.put(DataProperty.TYPE, DataProperty.DATABASE_TYPE);
 		metadata.put(DataProperty.PARENT, data[0]);
 		
