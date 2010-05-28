@@ -2,7 +2,7 @@
 <!-- <?xml version="1.0" encoding="ISO-8859-1" ?> -->
 <menu_layout> 
     <top_menu name="File">
-	<menu pid= "org.cishell.reference.gui.persistence.load.FileLoad"/>
+	<menu pid= "org.cishell.reference.gui.persistence.load.FileLoadAlgorithm"/>
 	<menu pid="edu.iu.nwb.composite.isiloadandclean.ISILoadAndCleanAlgorithm"/>
 	<menu pid= "edu.iu.nwb.preprocessing.prefuse.beta.directoryhierarchyreader.DirectoryHierarchyReaderAlgorithm"/>
 	<menu name = "Datasets" type="group">
