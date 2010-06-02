@@ -8,4 +8,7 @@ Export-Package: edu.iu.cns.visualization,
  edu.iu.cns.visualization.exception,
  edu.iu.cns.visualization.utility
 Import-Package: org.freehep.graphics2d,
- org.freehep.util.export
+ org.freehep.graphicsio,
+ org.freehep.graphicsio.pdf,
+ org.freehep.util.export,
+ org.freehep.util.images
