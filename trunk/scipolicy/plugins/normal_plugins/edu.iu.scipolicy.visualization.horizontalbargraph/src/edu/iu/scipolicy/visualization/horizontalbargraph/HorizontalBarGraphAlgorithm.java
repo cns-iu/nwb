@@ -1,6 +1,5 @@
 package edu.iu.scipolicy.visualization.horizontalbargraph;
 
-import java.awt.Dimension;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
@@ -20,7 +19,6 @@ import org.osgi.service.log.LogService;
 
 import prefuse.data.Table;
 import edu.iu.cns.visualization.exception.VisualizationExportException;
-import edu.iu.cns.visualization.utility.VisualizationRunner;
 import edu.iu.scipolicy.visualization.horizontalbargraph.layout.BasicLayout;
 import edu.iu.scipolicy.visualization.horizontalbargraph.layout.BoundingBox;
 import edu.iu.scipolicy.visualization.horizontalbargraph.record.RecordCollection;
@@ -137,10 +135,10 @@ public class HorizontalBarGraphAlgorithm implements Algorithm {
     		BoundingBox boundingBox = layout.calculateBoundingBox(visualization.getBars());
     		int width = (int)boundingBox.getWidth();
     		int height = (int)boundingBox.getHeight();
-    		VisualizationRunner visualizationRunner = new VisualizationRunner(
-    			visualization, new Dimension(width, height));
-    		visualizationRunner.setUp();
-    		visualizationRunner.run();
+//    		AWTVisualizationRunner visualizationRunner = new AWTVisualizationRunner(
+//    			visualization, new Dimension(width, height));
+//    		visualizationRunner.setUp();
+//    		visualizationRunner.run();
     		
     		try {
     			File temporaryPostScriptFile =

@@ -23,8 +23,8 @@ import edu.iu.scipolicy.visualization.horizontalbargraph.record.RecordCollection
 import edu.iu.scipolicy.visualization.horizontalbargraph.utility.Utilities;
 import edu.iu.scipolicy.visualization.horizontalbargraph.visualizationgeneration.visualization.HorizontalBarGraphVisualization;
 
-public class PostScriptGenerator extends HorizontalBarGraphVisualizationGenerator<
-		HorizontalBarGraphVisualization> {
+public class PostScriptGenerator {/*extends HorizontalBarGraphVisualizationGenerator<
+		HorizontalBarGraphVisualization> {*/
 	public static final Color YEAR_LABEL_COLOR = new Color(0.0f, 0.0f, 0.0f);
 	public static final double YEAR_TICK_LINE_LINE_WIDTH = 1.5;
 	public static final String YEAR_LABEL_FONT_FAMILY = "Garamond";
@@ -39,15 +39,19 @@ public class PostScriptGenerator extends HorizontalBarGraphVisualizationGenerato
 	private BasicLayout layout;
 	private List<Bar> bars;
 	private PageOrientation pageOrientation;
+	private Metadata metadata;
+	private RecordCollection recordCollection;
 
 	public PostScriptGenerator(
 			StringTemplateGroup templateGroup,
 			BasicLayout layout,
 			Metadata metadata,
 			RecordCollection recordCollection) {
-		super(layout, metadata, recordCollection);
+//		super(layout, metadata, recordCollection);
 		this.templateGroup = templateGroup;
 		this.layout = layout;
+		this.metadata = metadata;
+		this.recordCollection = recordCollection;
 		Collection<Record> records = recordCollection.getSortedRecords();
 		this.bars = layout.createBars(records);
 		this.pageOrientation = layout.determinePageOrientation(bars);
@@ -55,6 +59,18 @@ public class PostScriptGenerator extends HorizontalBarGraphVisualizationGenerato
 
 	public PageOrientation getPageOrientation() {
 		return this.pageOrientation;
+	}
+
+	public BasicLayout getLayout() {
+		return this.layout;
+	}
+
+	public Metadata getMetadata() {
+		return this.metadata;
+	}
+
+	public RecordCollection getRecordCollection() {
+		return this.recordCollection;
 	}
 
 	public HorizontalBarGraphVisualization generateVisualization() {
