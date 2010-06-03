@@ -79,15 +79,15 @@
 		    <!-- Co-citation networks -->
 		    <menu pid="edu.iu.scipolicy.database.isi.extract.network.cocitation.document.all"/>
 		    <menu pid="edu.iu.scipolicy.database.isi.extract.network.cocitation.document.core"/>
-		    <menu pid="edu.iu.scipolicy.database.isi.extract.network.cocitation.journal.all"/>
-		    <menu pid="edu.iu.scipolicy.database.isi.extract.network.cocitation.journal.core"/>
+		    <menu pid="edu.iu.scipolicy.database.isi.extract.network.cocitation.document_source.all"/>
+		    <menu pid="edu.iu.scipolicy.database.isi.extract.network.cocitation.document_source.core"/>
 		    <menu pid="edu.iu.scipolicy.database.isi.extract.network.cocitation.author.core"/> 
 		    
 		    <menu type="break"/>	    
 		    <!-- Bibliographic coupling networks -->
 		    <menu pid="edu.iu.scipolicy.database.isi.extract.network.bibcoupling.author"/>
 		    <menu pid="edu.iu.scipolicy.database.isi.extract.network.bibcoupling.document"/>
-		    <menu pid="edu.iu.scipolicy.database.isi.extract.network.bibcoupling.journal"/>
+		    <menu pid="edu.iu.scipolicy.database.isi.extract.network.bibcoupling.document_source"/>
 	    </menu>
 	    
 	    <menu name="From NSF Database" type="group">

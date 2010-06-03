@@ -177,15 +177,15 @@
   	
   	<antcall target="svn.co">
   	  	  <param name="target" value="plugins"/>
-  	  	  <param name="element.id" value="edu.iu.scipolicy.database.isi.extract.network.cocitation.journal.all"/>
-  	  	  <param name="project.name" value="edu.iu.scipolicy.database.isi.extract.network.cocitation.journal.all"/>
+  	  	  <param name="element.id" value="edu.iu.scipolicy.database.isi.extract.network.cocitation.document_source.all"/>
+  	  	  <param name="project.name" value="edu.iu.scipolicy.database.isi.extract.network.cocitation.document_source.all"/>
   	  	  <param name="url" value="http://nwb.slis.indiana.edu/svn/nwb/trunk/scipolicy/plugins/normal_plugins"/>
   	</antcall>
   	  	  	
 	<antcall target="svn.co">
 	  	  <param name="target" value="plugins"/>
-	  	  <param name="element.id" value="edu.iu.scipolicy.database.isi.extract.network.cocitation.journal.core"/>
-	  	  <param name="project.name" value="edu.iu.scipolicy.database.isi.extract.network.cocitation.journal.core"/>
+	  	  <param name="element.id" value="edu.iu.scipolicy.database.isi.extract.network.cocitation.document_source.core"/>
+	  	  <param name="project.name" value="edu.iu.scipolicy.database.isi.extract.network.cocitation.document_source.core"/>
 	  	  <param name="url" value="http://nwb.slis.indiana.edu/svn/nwb/trunk/scipolicy/plugins/normal_plugins"/>
 	</antcall>
   	
@@ -205,8 +205,8 @@
   		
 	<antcall target="svn.co">
 	  	  <param name="target" value="plugins"/>
-	  	  <param name="element.id" value="edu.iu.scipolicy.database.isi.extract.network.bibcoupling.journal"/>
-	  	  <param name="project.name" value="edu.iu.scipolicy.database.isi.extract.network.bibcoupling.journal"/>
+	  	  <param name="element.id" value="edu.iu.scipolicy.database.isi.extract.network.bibcoupling.document_source"/>
+	  	  <param name="project.name" value="edu.iu.scipolicy.database.isi.extract.network.bibcoupling.document_source"/>
 	  	  <param name="url" value="http://nwb.slis.indiana.edu/svn/nwb/trunk/scipolicy/plugins/normal_plugins"/>
 	</antcall>
   	
