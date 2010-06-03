@@ -1,4 +1,4 @@
-package edu.iu.scipolicy.database.isi.merge.journal;
+package edu.iu.scipolicy.database.isi.merge.document_source;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -16,7 +16,6 @@ import org.cishell.framework.algorithm.AlgorithmExecutionException;
 import org.cishell.framework.algorithm.ProgressMonitor;
 import org.cishell.framework.algorithm.ProgressTrackable;
 import org.cishell.framework.data.Data;
-import org.cishell.utilities.FileUtilities;
 import org.osgi.service.log.LogService;
 
 import edu.iu.cns.database.merge.generic.maker.KeyMaker;
@@ -39,7 +38,7 @@ import edu.iu.nwb.shared.isiutil.database.ISI;
  * known-good form from the manual annotation task, or falling back on a form having
  * the most information about it.
  */
-public class MergeJournalsAlgorithm implements Algorithm, ProgressTrackable {
+public class MergeDocumentSourcesAlgorithm implements Algorithm, ProgressTrackable {
 	public static final String MERGE_GROUPS_FILE_NAME = "JournalGroups.txt";
 	public static final String SOURCE_TABLE_ID = "APP" + "." + ISI.SOURCE_TABLE_NAME;
 	public static final Map<String, String> NAME_FORM_LOOKUP = createNameFormLookup();
@@ -49,7 +48,7 @@ public class MergeJournalsAlgorithm implements Algorithm, ProgressTrackable {
 	private LogService logger;
 	private ProgressMonitor monitor;	
         
-    public MergeJournalsAlgorithm(Data[] data, CIShellContext ciShellContext) {
+    public MergeDocumentSourcesAlgorithm(Data[] data, CIShellContext ciShellContext) {
     	this.originalDatabaseData = data[0];
         this.ciShellContext = ciShellContext;
         this.logger = (LogService) ciShellContext.getService(LogService.class.getName());
@@ -58,20 +57,27 @@ public class MergeJournalsAlgorithm implements Algorithm, ProgressTrackable {
     
     public Data[] execute() throws AlgorithmExecutionException {
 		if (NAME_FORM_LOOKUP.isEmpty()) {
-			String message = "Failed to load journal merging data.  If this problem persists " +
-				"after restarting the tool, please contact the NWB development team at " +
-				"nwb-helpdesk@googlegroups.com";
+			String message =
+				"Failed to load document source merging data.  " +
+				"If this problem persists after restarting the tool, " +
+				"please contact the NWB development team at nwb-helpdesk@googlegroups.com";
 			throw new AlgorithmExecutionException(message);
 		} else {
 			logLookupStatistics();
 		}
 
-    	KeyMaker keyMaker = new JournalKeyMaker(NAME_FORM_LOOKUP);
-    	PreferrableFormComparator journalComparator = new JournalComparator();	    	
+    	KeyMaker keyMaker = new DocumentSourceKeyMaker(NAME_FORM_LOOKUP);
+    	PreferrableFormComparator documentSourceComparator = new DocumentSourceComparator();	    	
     	
     	return MergeMaker.mergeTable(
-    			SOURCE_TABLE_ID, originalDatabaseData, keyMaker, 
-    			true, journalComparator, ciShellContext, monitor, "with journals merged");	    	
+    			SOURCE_TABLE_ID,
+    			originalDatabaseData,
+    			keyMaker, 
+    			true,
+    			documentSourceComparator,
+    			ciShellContext,
+    			monitor,
+    			"with document sources merged");	    	
     }
 
     private void logLookupStatistics() {
@@ -79,12 +85,17 @@ public class MergeJournalsAlgorithm implements Algorithm, ProgressTrackable {
     	int numberOfKnownVariants = NAME_FORM_LOOKUP.size();			
 		
 		logger.log(
-				LogService.LOG_INFO,
-				"This algorithm can merge " + numberOfKnownVariants + " journal name variants " +
-					"into " + numberOfCanonicalForms + " canonical forms.");
-		logger.log(LogService.LOG_WARNING, "Warning: while we use Web of Science's official list of Journal Title Abbreviations, " +
-				"that list does not cover all spellings of cited sources. Additionally, in some cited references it is not possible to " +
-				"disambiguate between members of a book or conference series and a journal with the same name.");
+			LogService.LOG_INFO,
+			"This algorithm can merge " + numberOfKnownVariants +
+				" document source name variants into " + numberOfCanonicalForms +
+				" canonical forms.");
+		logger.log(
+			LogService.LOG_WARNING,
+			"Warning: while we use Web of Science's official list of " +
+				"Journal Title Abbreviations, that list does not cover all spellings of " +
+				"cited sources. Additionally, in some cited references it is not possible to " +
+				"disambiguate between members of a book or conference series and a " +
+				"journal with the same name.");
 	}
 
 

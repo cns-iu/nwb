@@ -1,4 +1,4 @@
-package edu.iu.scipolicy.database.isi.merge.journal;
+package edu.iu.scipolicy.database.isi.merge.document_source;
 
 import java.util.Map;
 import java.util.UUID;
@@ -7,10 +7,10 @@ import prefuse.data.Tuple;
 import edu.iu.cns.database.merge.generic.maker.KeyMaker;
 import edu.iu.nwb.shared.isiutil.database.ISI;
 
-public class JournalKeyMaker implements KeyMaker {	
+public class DocumentSourceKeyMaker implements KeyMaker {	
 	private Map<String, String> nameFormLookup;
 
-	public JournalKeyMaker(Map<String, String> nameFormLookup) {
+	public DocumentSourceKeyMaker(Map<String, String> nameFormLookup) {
 		this.nameFormLookup = nameFormLookup;
 	}
 	
