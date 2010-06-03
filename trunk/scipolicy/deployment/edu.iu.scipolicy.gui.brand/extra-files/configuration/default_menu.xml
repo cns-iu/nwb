@@ -72,8 +72,8 @@
 		    <menu pid="edu.iu.scipolicy.database.isi.extract.network.citation.author.ISIExtractAuthorCitationNetworkAlgorithm"/>
 		    <menu pid="edu.iu.scipolicy.database.isi.extract.network.citation.document.ISIDocumentCitationNetworkWithoutOuterNodes"/>
 		    <menu pid="edu.iu.scipolicy.database.isi.extract.network.citation.document.ISIDocumentCitationNetworkWithOuterNodes"/>
-		    <menu pid="edu.iu.scipolicy.database.isi.extract.network.citation.source.ISISourceCitationNetworkWithoutOuterNodes"/>
-		    <menu pid="edu.iu.scipolicy.database.isi.extract.network.citation.source.ISISourceCitationNetworkWithOuterNodes"/>
+		    <menu pid="edu.iu.scipolicy.database.isi.extract.network.citation.document_source.ISIDocumentSourceCitationNetworkWithoutOuterNodes"/>
+		    <menu pid="edu.iu.scipolicy.database.isi.extract.network.citation.document_source.ISIDocumentSourceCitationNetworkWithOuterNodes"/>
 		    
 		    <menu type="break"/>	    
 		    <!-- Co-citation networks -->

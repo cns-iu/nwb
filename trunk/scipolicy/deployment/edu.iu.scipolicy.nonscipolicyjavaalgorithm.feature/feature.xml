@@ -785,7 +785,7 @@ Dr. Katy Borner (katy@indiana.edu)
          unpack="false"/>
 
    <plugin
-         id="edu.iu.scipolicy.database.isi.extract.network.citation.source"
+         id="edu.iu.scipolicy.database.isi.extract.network.citation.document_source"
          download-size="0"
          install-size="0"
          version="0.0.0"
