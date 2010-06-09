@@ -29,29 +29,25 @@ import edu.iu.nwb.util.nwbfile.NWBFileParser;
 import edu.iu.nwb.util.nwbfile.ParsingException;
 
 public class NWBAndTreeFilesMerger {
-	public static File mergeCommunitiesFileWithNWBFile(File communitiesFile,
-													   File nwbFile,
-													   NetworkInfo networkInfo)
+	public static File mergeCommunitiesFileWithNWBFile(
+			File communitiesFile, File nwbFile, NetworkInfo networkInfo)
     		throws NWBAndTreeFileMergingException {
     	try {
-    		File outputNWBFile =
-    			FileUtilities.createTemporaryFileInDefaultTemporaryDirectory(
-    					"blondel-nwb-", "nwb");
-    		Merger merger = new Merger(
-    			communitiesFile, outputNWBFile, networkInfo);
-    		
+    		File outputNWBFile = FileUtilities.createTemporaryFileInDefaultTemporaryDirectory(
+				"blondel-nwb-", "nwb");
+    		Merger merger = new Merger(communitiesFile, outputNWBFile, networkInfo);
     		NWBFileParser fileParser = new NWBFileParser(nwbFile);
     		fileParser.parse(merger);
-    		
+
     		return outputNWBFile;
-    	} catch (FileNotFoundException fileNotFoundException) {
-    		throw new NWBAndTreeFileMergingException(fileNotFoundException);
-    	} catch (IOException ioException) {
-    		throw new NWBAndTreeFileMergingException(ioException);
-    	} catch (ParsingException parsingException) {
-    		throw new NWBAndTreeFileMergingException(parsingException);
-    	} catch (TreeFileParsingException treeFileParsingException) {
-    		throw new NWBAndTreeFileMergingException(treeFileParsingException);
+    	} catch (FileNotFoundException e) {
+    		throw new NWBAndTreeFileMergingException(e);
+    	} catch (IOException e) {
+    		throw new NWBAndTreeFileMergingException(e);
+    	} catch (ParsingException e) {
+    		throw new NWBAndTreeFileMergingException(e);
+    	} catch (TreeFileParsingException e) {
+    		throw new NWBAndTreeFileMergingException(e);
     	}
     }
 }

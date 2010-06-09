@@ -3,7 +3,7 @@ package edu.iu.nwb.analysis.blondelcommunitydetection;
 import java.util.ArrayList;
 
 public class NetworkInfo {
-	private ArrayList nodes = new ArrayList();
+	private ArrayList<Node> nodes = new ArrayList<Node>();
 	private int maxCommunityLevel = 0;
 	
 	private int renumberingID = 0;
@@ -12,7 +12,7 @@ public class NetworkInfo {
 	public NetworkInfo() {
 	}
 	
-	public ArrayList getNodes() {
+	public ArrayList<Node> getNodes() {
 		return this.nodes;
 	}
 	
@@ -50,9 +50,9 @@ public class NetworkInfo {
 		if (originalID < 0) {
 			return null;
 		} else {
-			//TODO: turn into a map. Absolutely must not go into production
+			// TODO: Turn into a map. Absolutely must not go into production.
 			for (int ii = 0; ii < nodeCount; ii++) {
-				Node node = (Node)this.nodes.get(ii);
+				Node node = this.nodes.get(ii);
 				
 				if (node.getOriginalID() == originalID) {
 					return node;

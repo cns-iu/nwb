@@ -8,13 +8,12 @@ import org.cishell.framework.data.Data;
 import org.cishell.framework.data.DataProperty;
 
 public class Utilities {
-	public static Data[] wrapFileAsOutputData(File outputFile,
-    									String mimeType,
-    									Data inputData) {
+	@SuppressWarnings("unchecked")
+		public static Data[] wrapFileAsOutputData(
+				File outputFile, String mimeType, Data inputData) {
     	Data outputFileData = new BasicData(outputFile, mimeType);
     	Dictionary outputFileMetaData = outputFileData.getMetadata();
-    	outputFileMetaData.put(DataProperty.LABEL,
-    						   "With community attributes");
+    	outputFileMetaData.put(DataProperty.LABEL, "With community attributes");
     	outputFileMetaData.put(DataProperty.PARENT, inputData);
     	outputFileMetaData.put(DataProperty.TYPE, DataProperty.NETWORK_TYPE);
     	

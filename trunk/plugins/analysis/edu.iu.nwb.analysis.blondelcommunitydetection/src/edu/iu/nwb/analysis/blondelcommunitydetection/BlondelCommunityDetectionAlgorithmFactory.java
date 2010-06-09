@@ -31,20 +31,20 @@ public class BlondelCommunityDetectionAlgorithmFactory implements
 		this.bundleContext = componentContext.getBundleContext();
 	}
 	
-    public Algorithm createAlgorithm(Data[] data,
-    								 Dictionary parameters,
-    								 CIShellContext context) {
+    @SuppressWarnings("unchecked")	// Dictionary<String, Object>
+    public Algorithm createAlgorithm(
+    		Data[] data, Dictionary parameters, CIShellContext context) {
     	AlgorithmFactory blondelExecutableAlgorithmFactory =
     		AlgorithmUtilities.getAlgorithmFactoryByPID(
-    			"edu.iu.nwb.shared.blondelexecutable",
-    			this.bundleContext);
+    			"edu.iu.nwb.shared.blondelexecutable", this.bundleContext);
     	
         return new BlondelCommunityDetectionAlgorithm(
         	blondelExecutableAlgorithmFactory, data, parameters, context);
     }
     
-    public ObjectClassDefinition mutateParameters
-    		(Data[] data, ObjectClassDefinition oldParameters) {
+    @SuppressWarnings("unchecked")	// LinkedHashMap<String, String>
+    public ObjectClassDefinition mutateParameters(
+    		Data[] data, ObjectClassDefinition oldParameters) {
     	Data inData = data[0];
     	File inputNWBFile = (File)inData.getData();
     	
@@ -55,79 +55,57 @@ public class BlondelCommunityDetectionAlgorithmFactory implements
     	try {
     		nwbParser = new NWBFileParser(inputNWBFile);
     		nwbParser.parse(nwbFileMetaDataGetter);
-    	} catch (IOException ioException) {
-    		throw new RuntimeException(ioException);
-    	} catch (ParsingException parsingException) {
-    		throw new RuntimeException(parsingException);
+    	} catch (IOException e) {
+    		throw new RuntimeException(e);
+    	} catch (ParsingException e) {
+    		throw new RuntimeException(e);
     	}
-    	
-    	LinkedHashMap directedEdgeSchema =
-    		nwbFileMetaDataGetter.getDirectedEdgeSchema();
-    	LinkedHashMap undirectedEdgeSchema =
-    		nwbFileMetaDataGetter.getUndirectedEdgeSchema();
-    	LinkedHashMap edgeSchema;
-    	
-    	if (directedEdgeSchema != null) {
-    		edgeSchema = directedEdgeSchema;
-    	} else {
-    		edgeSchema = undirectedEdgeSchema;
-    	}
-    	
-    	BasicObjectClassDefinition newParameters;
-    	
-    	try {
-			newParameters =
-				new BasicObjectClassDefinition(oldParameters.getID(),
-											   oldParameters.getName(),
-											   oldParameters.getDescription(),
-											   oldParameters.getIcon(16));
-		} catch (IOException e) {
-			newParameters = new BasicObjectClassDefinition
-				(oldParameters.getID(),
-				 oldParameters.getName(),
-				 oldParameters.getDescription(), null);
-		}
-		
+
+    	LinkedHashMap edgeSchema = getEdgeSchema(nwbFileMetaDataGetter);
+    	BasicObjectClassDefinition newParameters =
+    		MutateParameterUtilities.createNewParameters(oldParameters);
 		AttributeDefinition[] oldAttributeDefinitions =
 			oldParameters.getAttributeDefinitions(ObjectClassDefinition.ALL);
-		
 		String[] numberKeysTypes = new String[] {
-			NWBFileProperty.TYPE_INT,
-			NWBFileProperty.TYPE_FLOAT
+			NWBFileProperty.TYPE_INT, NWBFileProperty.TYPE_FLOAT
 		};
-		
 		String[] numberKeysToSkip = new String[] {
-			NWBFileProperty.ATTRIBUTE_SOURCE,
-			NWBFileProperty.ATTRIBUTE_TARGET
+			NWBFileProperty.ATTRIBUTE_SOURCE, NWBFileProperty.ATTRIBUTE_TARGET
 		};
-		
 		String[] numberKeysToAdd = new String[] {
 			BlondelCommunityDetectionAlgorithm.NO_EDGE_WEIGHT_VALUE
 		};
 		
-		for (AttributeDefinition oldAttributeDefinition :
-				oldAttributeDefinitions) {
+		for (AttributeDefinition oldAttributeDefinition : oldAttributeDefinitions) {
 			String oldAttributeDefinitionID = oldAttributeDefinition.getID();
-			AttributeDefinition newAttributeDefinition =
-				oldAttributeDefinition;
+			AttributeDefinition newAttributeDefinition = oldAttributeDefinition;
 			
 			if (oldAttributeDefinitionID.equals
 				(BlondelCommunityDetectionAlgorithm.WEIGHT_FIELD_ID))
 			{
-				newAttributeDefinition =
-					MutateParameterUtilities.formAttributeDefinitionFromMap
-						(oldAttributeDefinition,
-						 edgeSchema,
-						 numberKeysTypes,
-						 numberKeysToSkip,
-						 numberKeysToAdd);
+				newAttributeDefinition = MutateParameterUtilities.formAttributeDefinitionFromMap(
+					oldAttributeDefinition,
+					edgeSchema,
+					numberKeysTypes,
+					numberKeysToSkip,
+					numberKeysToAdd);
 			}
 			
 			newParameters.addAttributeDefinition(
-				ObjectClassDefinition.REQUIRED,
-				newAttributeDefinition);
+				ObjectClassDefinition.REQUIRED, newAttributeDefinition);
 		}
 		
 		return newParameters;
+    }
+
+    @SuppressWarnings("unchecked")	// LinkedHashMap<String, String>
+    private LinkedHashMap getEdgeSchema(GetNWBFileMetadata nwbFileMetaDataGetter) {
+    	LinkedHashMap directedEdgeSchema = nwbFileMetaDataGetter.getDirectedEdgeSchema();
+
+    	if (directedEdgeSchema != null) {
+    		return directedEdgeSchema;
+    	} else {
+    		return nwbFileMetaDataGetter.getUndirectedEdgeSchema();
+    	}
     }
 }

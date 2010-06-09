@@ -15,15 +15,13 @@ public class PreProcessor extends NWBFileParserAdapter {
 		this.networkInfo = networkInfo;
 	}
 	
-	public void addDirectedEdge(int sourceNode,
-								int targetNode,
-								Map attributes) {
+	@SuppressWarnings("unchecked")	// Raw Map
+	public void addDirectedEdge(int sourceNode, int targetNode, Map attributes) {
 		this.addEdge(sourceNode, targetNode, attributes);
 	}
 	
-	public void addUndirectedEdge(int sourceNode,
-								  int targetNode,
-								  Map attributes) {
+	@SuppressWarnings("unchecked")	// Raw Map
+	public void addUndirectedEdge(int sourceNode, int targetNode, Map attributes) {
 		this.addEdge(sourceNode, targetNode, attributes);
 	}
 	
@@ -35,13 +33,12 @@ public class PreProcessor extends NWBFileParserAdapter {
 		return this.shouldHaltParsing;
 	}
 	
+	@SuppressWarnings("unchecked")	// Raw Map
 	private void addEdge(int sourceNodeID, int targetNodeID, Map attributes) {
-		Node sourceNode =
-			Node.getOrCreateNode(sourceNodeID, this.networkInfo);
+		Node sourceNode = Node.getOrCreateNode(sourceNodeID, this.networkInfo);
 		sourceNode.incrementEdgeCount(this.networkInfo);
 		
-		Node targetNode =
-			Node.getOrCreateNode(targetNodeID, this.networkInfo);
+		Node targetNode = Node.getOrCreateNode(targetNodeID, this.networkInfo);
 		targetNode.incrementEdgeCount(this.networkInfo);
 	}
 }

@@ -18,8 +18,7 @@ import edu.iu.nwb.util.nwbfile.NWBFileProperty;
 import edu.iu.nwb.util.nwbfile.NWBFileWriter;
 
 public class Merger extends NWBFileWriter  {
-	public static final String BASE_COMMUNITY_LEVEL_ATTRIBUTE_NAME =
-		"blondel_community_level_";
+	public static final String BASE_COMMUNITY_LEVEL_ATTRIBUTE_NAME = "blondel_community_level_";
 	public static final String BASE_COMMUNITY_LABEL = "community_";
 	public static final String BASE_ISOLATE_LABEL = "isolate_";
 	
@@ -27,16 +26,14 @@ public class Merger extends NWBFileWriter  {
 	private int isolateCount = 0;
 	
 	public Merger(File treeFile, File outputFile, NetworkInfo networkInfo)
-			throws FileNotFoundException,
-				   IOException,
-				   TreeFileParsingException {
+			throws FileNotFoundException, IOException, TreeFileParsingException {
 		super(outputFile);
-		
+
 		this.networkInfo = networkInfo;
-		
 		this.readTreeFileAndAnnotateNodes(new Scanner(treeFile));
 	}
 	
+	@SuppressWarnings("unchecked")
 	public void addNode(int id, String label, Map attributes) {
 		Node node = this.networkInfo.findNodeByOriginalID(id);
 		Map annotatedAttributes = new HashMap();
@@ -46,57 +43,48 @@ public class Merger extends NWBFileWriter  {
 			ArrayList nodeCommunities = node.getCommunities();
 			
 			for (int ii = 0; ii < nodeCommunities.size(); ii++) {
-				String communityLevelAttributeName =
-					BASE_COMMUNITY_LEVEL_ATTRIBUTE_NAME + ii;
-				String communityName =
-					BASE_COMMUNITY_LABEL + nodeCommunities.get(ii);
-				annotatedAttributes.put(communityLevelAttributeName,
-										communityName);
+				String communityLevelAttributeName = BASE_COMMUNITY_LEVEL_ATTRIBUTE_NAME + ii;
+				String communityName = BASE_COMMUNITY_LABEL + nodeCommunities.get(ii);
+				annotatedAttributes.put(communityLevelAttributeName, communityName);
 			}
 		} else {
 			// Isolate nodes would not have been added to our nodes list.
-			for (int ii = 0;
-					ii < this.networkInfo.getMaxCommunityLevel();
-					ii++) {
-				String communityLevelAttributeName =
-					BASE_COMMUNITY_LEVEL_ATTRIBUTE_NAME + ii;
+			for (int ii = 0; ii < this.networkInfo.getMaxCommunityLevel(); ii++) {
+				String communityLevelAttributeName = BASE_COMMUNITY_LEVEL_ATTRIBUTE_NAME + ii;
 				String communityName = BASE_ISOLATE_LABEL + this.isolateCount;
-				annotatedAttributes.put(communityLevelAttributeName,
-										communityName);
-				
+				annotatedAttributes.put(communityLevelAttributeName, communityName);
 				this.isolateCount++;
 			}
 		}
-		
+
 		super.addNode(id, label, annotatedAttributes);
 	}
-	
+
+	@SuppressWarnings("unchecked")	// Raw LinkedHashMap
 	public void setNodeSchema(LinkedHashMap schema) {
 		for (int ii = 0; ii < this.networkInfo.getMaxCommunityLevel(); ii++) {
-			String communityLevelAttributeName =
-				BASE_COMMUNITY_LEVEL_ATTRIBUTE_NAME + ii;
-			schema.put(communityLevelAttributeName,
-					   NWBFileProperty.TYPE_STRING);
+			String communityLevelAttributeName = BASE_COMMUNITY_LEVEL_ATTRIBUTE_NAME + ii;
+			schema.put(communityLevelAttributeName, NWBFileProperty.TYPE_STRING);
 		}
 		
 		super.setNodeSchema(schema);
 	}
 	
+	@SuppressWarnings("unchecked")	// Raw Map
 	private void readTreeFileAndAnnotateNodes(Scanner treeFileScanner)
 			throws TreeFileParsingException {
 		Map previousMap = null;
 		Map currentMap = null;
-		ArrayList nodes = this.networkInfo.getNodes();
-		
+		ArrayList<Node> nodes = this.networkInfo.getNodes();
+
 		boolean shouldKeepReading = true;
-		
+
 		while (shouldKeepReading) {
 			if (!this.checkForAnotherEntry(treeFileScanner)) {
 				shouldKeepReading = false;
 			} else {
 				Integer nodeID = this.readNextNodeID(treeFileScanner);
-				Integer communityID =
-					this.readNextCommunityID(treeFileScanner);
+				Integer communityID = this.readNextCommunityID(treeFileScanner);
 				
 				if (nodeID.intValue() == 0) {
 					previousMap = currentMap;
@@ -106,12 +94,10 @@ public class Merger extends NWBFileWriter  {
 				if (previousMap != null) {
 					// nodeID is a community from the previous level.
 					ArrayList nodesInCommunity =
-						SetUtilities.getKeysOfMapEntrySetWithValue(
-							previousMap.entrySet(), nodeID);
+						SetUtilities.getKeysOfMapEntrySetWithValue(previousMap.entrySet(), nodeID);
 					
 					for (int ii = 0; ii < nodesInCommunity.size(); ii++) {
-						Integer currentNodeID =
-							(Integer)nodesInCommunity.get(ii);
+						Integer currentNodeID = (Integer)nodesInCommunity.get(ii);
 						currentMap.put(currentNodeID, communityID);
 						Node node = (Node)nodes.get(currentNodeID.intValue());
 						node.addCommunity(communityID, this.networkInfo);
@@ -124,14 +110,12 @@ public class Merger extends NWBFileWriter  {
 			}
 		}
 	}
-	
-	private boolean checkForAnotherEntry(Scanner treeFileScanner)
-			throws TreeFileParsingException {
+
+	private boolean checkForAnotherEntry(Scanner treeFileScanner) throws TreeFileParsingException {
 		if (treeFileScanner.hasNext()) {
 			if (!treeFileScanner.hasNextInt()) {
 				throw new TreeFileParsingException(
-					"A non-integer was found.  " +
-					"Tree files must contain only pairs of integers.");
+					"A non-integer was found.  Tree files must contain only pairs of integers.");
 			} else {
 				return true;
 			}
@@ -140,18 +124,14 @@ public class Merger extends NWBFileWriter  {
 		}
 	}
 	
-	private Integer readNextNodeID(Scanner treeFileScanner)
-			throws TreeFileParsingException {
+	private Integer readNextNodeID(Scanner treeFileScanner) throws TreeFileParsingException {
 		return new Integer(treeFileScanner.nextInt());
 	}
 	
-	private Integer readNextCommunityID(Scanner treeFileScanner)
-			throws TreeFileParsingException {
-		if (!treeFileScanner.hasNext() ||
-				!treeFileScanner.hasNextInt()) {
+	private Integer readNextCommunityID(Scanner treeFileScanner) throws TreeFileParsingException {
+		if (!treeFileScanner.hasNext() || !treeFileScanner.hasNextInt()) {
 			throw new TreeFileParsingException(
-				"A single integer was found.  " +
-				"Tree files must contain only pairs of integers.");
+				"A single integer was found.  Tree files must contain only pairs of integers.");
 		} else {
 			return new Integer(treeFileScanner.nextInt());
 		}

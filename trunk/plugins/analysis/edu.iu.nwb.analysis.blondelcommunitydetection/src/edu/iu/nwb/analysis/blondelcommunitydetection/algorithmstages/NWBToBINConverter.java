@@ -27,22 +27,18 @@ import edu.iu.nwb.util.nwbfile.ParsingException;
    *  are processed.
  */
 public class NWBToBINConverter {
-	public static File convertNWBFileToBINFile(File inputNWBFile,
-											   NetworkInfo networkInfo,
-											   String weightAttribute,
-											   boolean isWeighted)
+	public static File convertNWBFileToBINFile(
+			File inputNWBFile, NetworkInfo networkInfo, String weightAttribute, boolean isWeighted)
 			throws NWBToBINConversionException {
 		
 		// (networkInfo gets side-effected in both of these steps.)
 
 		preProcessNWBFile(inputNWBFile, networkInfo);
     	
-    	return doConversion(
-    		inputNWBFile, networkInfo, weightAttribute, isWeighted);
+    	return doConversion(inputNWBFile, networkInfo, weightAttribute, isWeighted);
 	}
 	
-	private static void preProcessNWBFile(File nwbFile,
-										  NetworkInfo networkInfo)
+	private static void preProcessNWBFile(File nwbFile, NetworkInfo networkInfo)
     		throws NWBToBINConversionException {
     	PreProcessor preProcessor = new PreProcessor(networkInfo);
     	NWBFileParser preProcessorFileParser;
@@ -50,55 +46,43 @@ public class NWBToBINConverter {
     	try {
     		preProcessorFileParser = new NWBFileParser(nwbFile);
     		preProcessorFileParser.parse(preProcessor);
-    	} catch (IOException ioException) {
-    		throw new NWBToBINConversionException(
-    			"Failed to read NWB file that is being preprocessed for " +
-    				"conversion to BIN file.",
-    			ioException);
-    	} catch (ParsingException parsingException) {
-    		throw new NWBToBINConversionException(
-    			"Failed to parse NWB file that is " +
-    				"being preprocessed for conversion to BIN file.",
-    			parsingException);
+    	} catch (IOException e) {
+    		String exceptionMessage =
+    			"Failed to read NWB file that is being preprocessed for conversion to BIN file.";
+    		throw new NWBToBINConversionException(exceptionMessage, e);
+    	} catch (ParsingException e) {
+    		String exceptionMessage =
+    			"Failed to parse NWB file that is being preprocessed for conversion to BIN file.";
+    		throw new NWBToBINConversionException(exceptionMessage, e);
     	}
     }
 	
 	// This modifies networkInfo.
-	private static File doConversion(File nwbFile,
-									 NetworkInfo networkInfo,
-									 String weightAttribute,
-									 boolean isWeighted)
+	private static File doConversion(
+			File nwbFile, NetworkInfo networkInfo, String weightAttribute, boolean isWeighted)
     		throws NWBToBINConversionException {
     	File outputBINFile;
     	
     	try {
-    		outputBINFile = FileUtilities.
-    			createTemporaryFileInDefaultTemporaryDirectory("TEMP-BLONDEL",
-    														   "bin");
-    	} catch (IOException ioException) {
-    		throw new NWBToBINConversionException(
-    			"Failed to create temporary BIN file.", ioException);
+    		outputBINFile = FileUtilities.createTemporaryFileInDefaultTemporaryDirectory(
+    			"TEMP-BLONDEL", "bin");
+    	} catch (IOException e) {
+    		throw new NWBToBINConversionException("Failed to create temporary BIN file.", e);
     	}
     	
-    	Converter converter =
-    		new Converter(networkInfo,
-    							  outputBINFile,
-    							  weightAttribute,
-    							  isWeighted);
+    	Converter converter = new Converter(
+    		networkInfo, outputBINFile, weightAttribute, isWeighted);
     	NWBFileParser converterFileParser;
     	
     	try {
     		converterFileParser = new NWBFileParser(nwbFile);
     		converterFileParser.parse(converter);
-    	} catch (IOException ioException) {
+    	} catch (IOException e) {
     		throw new NWBToBINConversionException(
-    			"Failed to read NWB file that is being converted to BIN file.",
-    			ioException);
-    	} catch (ParsingException parsingException) {
+    			"Failed to read NWB file that is being converted to BIN file.", e);
+    	} catch (ParsingException e) {
     		throw new NWBToBINConversionException(
-    			"Failed to parse NWB file that is " +
-    				"being converted to BIN file.",
-    			parsingException);
+    			"Failed to parse NWB file that is being converted to BIN file.", e);
     	}
     	
     	return outputBINFile;

@@ -21,6 +21,7 @@ public class Converter extends NWBFileParserAdapter {
 	// TODO: Verify this.
 	private static final String WINDOWS_7_PLATFORM = "Windows 7";
 	
+	@SuppressWarnings("unused")
 	private static final String[] WINDOWS_PLATFORMS = new String[] {
 		WINDOWS_95_PLATFORM,
 		WINDOWS_98_PLATFORM,
@@ -29,60 +30,47 @@ public class Converter extends NWBFileParserAdapter {
 		WINDOWS_XP_PLATFORM,
 		WINDOWS_7_PLATFORM
 	};
-	
-	private static final String NON_POSITIVE_WEIGHT_HALT_REASON =
-		"Non-positive weights are not allowed.  To use this algorithm, " +
-		"preprocess your network further.";
-	
-	private String haltParsingReason = "";
+
 	private boolean shouldHaltParsing = false;
-	
-	NetworkInfo networkInfo;
-	
+	private NetworkInfo networkInfo;
 	private RandomAccessFile outputBINFile;
-	
 	private String weightAttribute;
 	private boolean isWeighted;
 	
-	public Converter(NetworkInfo networkInfo,
-					 File outputFile,
-					 String weightAttribute,
-					 boolean isWeighted) {
+	public Converter(
+			NetworkInfo networkInfo, File outputFile, String weightAttribute, boolean isWeighted) {
 		this.networkInfo = networkInfo;
-		
 		this.weightAttribute = weightAttribute;
 		this.isWeighted = isWeighted;
 		
 		try {
 			this.outputBINFile = new RandomAccessFile(outputFile, "rw");
-		} catch (FileNotFoundException fileNotFoundException) {
-			throw new RuntimeException(fileNotFoundException);
+		} catch (FileNotFoundException e) {
+			throw new RuntimeException(e);
 		}
 		
 		try {
 			this.createBINFile();
-		} catch (IOException ioException) {
-			throw new RuntimeException(ioException);
+		} catch (IOException e) {
+			throw new RuntimeException(e);
 		}
 	}
 	
-	public void addDirectedEdge(int sourceNode,
-								int targetNode,
-								Map attributes) {
+	@SuppressWarnings("unchecked")
+	public void addDirectedEdge(int sourceNode, int targetNode, Map attributes) {
 		this.addEdge(sourceNode, targetNode, attributes);
 	}
 	
-	public void addUndirectedEdge(int sourceNode,
-								  int targetNode,
-								  Map attributes) {
+	@SuppressWarnings("unchecked")
+	public void addUndirectedEdge(int sourceNode, int targetNode, Map attributes) {
 		this.addEdge(sourceNode, targetNode, attributes);
 	}
 	
 	public void finishedParsing() {
 		try {
 			this.outputBINFile.close();
-		} catch (Exception exception) {
-			throw new RuntimeException(exception);
+		} catch (Exception e) {
+			throw new RuntimeException(e);
 		}
 	}
 	
@@ -90,6 +78,7 @@ public class Converter extends NWBFileParserAdapter {
 		return this.shouldHaltParsing;
 	}
 	
+	@SuppressWarnings("unchecked")
 	private void addEdge(int sourceNodeID, int targetNodeID, Map attributes) {
 		int weight;
 		
@@ -100,19 +89,16 @@ public class Converter extends NWBFileParserAdapter {
 		}
 		
 		if (weight < 0.0) {
-			this.haltParsingReason = NON_POSITIVE_WEIGHT_HALT_REASON;
 			this.shouldHaltParsing = true;
 		} else {
-			Node sourceNode =
-				this.networkInfo.findNodeByOriginalID(sourceNodeID);
-			Node targetNode =
-				this.networkInfo.findNodeByOriginalID(targetNodeID);
+			Node sourceNode = this.networkInfo.findNodeByOriginalID(sourceNodeID);
+			Node targetNode = this.networkInfo.findNodeByOriginalID(targetNodeID);
 			
 			try {
 				this.writeEdgeAndWeightForNode(sourceNode, targetNode, weight);
 				this.writeEdgeAndWeightForNode(targetNode, sourceNode, weight);
-			} catch (IOException ioException) {
-				throw new RuntimeException(ioException);
+			} catch (IOException e) {
+				throw new RuntimeException(e);
 			}
 		}
 	}
@@ -139,14 +125,13 @@ public class Converter extends NWBFileParserAdapter {
 	private long writeHeader() throws IOException {
 		long headerSize = 0;
 		
-		ArrayList nodes = this.networkInfo.getNodes();
+		ArrayList<Node> nodes = this.networkInfo.getNodes();
 		int nodeCount = nodes.size();
 		headerSize += this.writeProperInt(nodeCount);
 		
 		for (int ii = 0; ii < nodeCount; ii++) {
 			Node node = (Node)nodes.get(ii);
-			headerSize +=
-				this.writeProperInt(node.getEdgeCountForOutput());
+			headerSize += this.writeProperInt(node.getEdgeCountForOutput());
 		}
 		
 		return headerSize;
@@ -155,7 +140,7 @@ public class Converter extends NWBFileParserAdapter {
 	private void writeEmptyBody(long headerSize) throws IOException {
 		long numBytesWritten = headerSize;
 		
-		ArrayList nodes = this.networkInfo.getNodes();
+		ArrayList<Node> nodes = this.networkInfo.getNodes();
 		int nodeCount = nodes.size();
 		
 		// Write the fake edges.

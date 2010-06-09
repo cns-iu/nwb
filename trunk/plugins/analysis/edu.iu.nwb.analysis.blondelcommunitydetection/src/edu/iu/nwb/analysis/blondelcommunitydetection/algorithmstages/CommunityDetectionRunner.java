@@ -21,30 +21,27 @@ import edu.iu.nwb.analysis.blondelcommunitydetection.algorithmstages.exceptionty
 // BIN file.  The "community" executable produces a tree file, which is the
 // output of this stage.
 public class CommunityDetectionRunner {
-	private AlgorithmFactory blondelCommunityDetectionAlgorithmFactory;
-	private Dictionary parameters;
+	private AlgorithmFactory communityDetectionFactory;
+	private Dictionary<String, Object> parameters;
 	private CIShellContext ciShellContext;
 	
 	public CommunityDetectionRunner(
-			AlgorithmFactory blondelCommunityDetectionAlgorithmFactory,
-			Dictionary parameters,
+			AlgorithmFactory communityDetectionFactory,
+			Dictionary<String, Object> parameters,
 			CIShellContext ciShellContext) {
-		this.blondelCommunityDetectionAlgorithmFactory =
-			blondelCommunityDetectionAlgorithmFactory;
+		this.communityDetectionFactory = communityDetectionFactory;
 		this.parameters = parameters;
 		this.ciShellContext = ciShellContext;
 	}
 	
-	//TODO: Don't bother with inputData
+	// TODO: Don't bother with inputData.
 	public File runCommunityDetection(File inputBINFile, Data inputData)
 			throws CommunityDetectionRunnerException {
 		Data[] communityDetectionData =
-    		Utilities.wrapFileAsOutputData(
-    			inputBINFile, "file:text/bin", inputData);
+    		Utilities.wrapFileAsOutputData(inputBINFile, "file:text/bin", inputData);
 		
-    	Algorithm communityDetectionAlgorithm =
-    		this.blondelCommunityDetectionAlgorithmFactory.createAlgorithm(
-    			communityDetectionData, this.parameters, this.ciShellContext);
+    	Algorithm communityDetectionAlgorithm = this.communityDetectionFactory.createAlgorithm(
+    		communityDetectionData, this.parameters, this.ciShellContext);
     	
     	try {
     		Data[] executionResultData = communityDetectionAlgorithm.execute();
@@ -52,9 +49,8 @@ public class CommunityDetectionRunner {
     		File treeFile = (File)executionResultData[0].getData();
     	
     		return treeFile;
-    	} catch (AlgorithmExecutionException algorithmExecutionException) {
-    		throw new CommunityDetectionRunnerException(
-    			algorithmExecutionException);
+    	} catch (AlgorithmExecutionException e) {
+    		throw new CommunityDetectionRunnerException(e);
     	}
 	}
 }

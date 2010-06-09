@@ -15,7 +15,7 @@ public class Node {
 	private long startingWeightOffsetInFile = 0;
 	private long workingWeightOffsetInFile = 0;
 	
-	private ArrayList communities = new ArrayList();
+	private ArrayList<Integer> communities = new ArrayList<Integer>();
 	
 	private Node(int originalID, int newID) {
 		this.originalID = originalID;
@@ -55,7 +55,7 @@ public class Node {
 	}
 	
 	
-	public ArrayList getCommunities() {
+	public ArrayList<Integer> getCommunities() {
 		return this.communities;
 	}
 	
@@ -92,8 +92,7 @@ public class Node {
 	}
 	
 	
-	public NetworkInfo addCommunity(Integer communityID,
-									NetworkInfo networkInfo) {
+	public NetworkInfo addCommunity(Integer communityID, NetworkInfo networkInfo) {
 		this.communities.add(communityID);
 		int communityCount = this.communities.size();
 		
@@ -105,17 +104,13 @@ public class Node {
 	}
 	
 		
-	public static Node getOrCreateNode(int originalID,
-									   NetworkInfo networkInfo) {
-		Node nodeThatAlreadyExists =
-			networkInfo.findNodeByOriginalID(originalID);
+	public static Node getOrCreateNode(int originalID, NetworkInfo networkInfo) {
+		Node nodeThatAlreadyExists = networkInfo.findNodeByOriginalID(originalID);
 		
 		if (nodeThatAlreadyExists != null) {
 			return nodeThatAlreadyExists;
 		} else {
-			Node newNode =
-				new Node(originalID, networkInfo.getRenumberingID());
-			
+			Node newNode = new Node(originalID, networkInfo.getRenumberingID());
 			networkInfo.addNode(newNode);
 			networkInfo.incrementRenumberingID();
 			
