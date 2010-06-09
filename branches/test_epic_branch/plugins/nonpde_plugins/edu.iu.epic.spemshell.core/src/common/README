@@ -1,0 +1,69 @@
+== Requirements == 
+
+The code is pretty straightforward, but I use gsl for the random number generator, so you need to link it with the appropriate libraries. 
+
+Right now, the Makefile is hand crafted so it is not particularly generic. I'll try to add autotools support before we "release" the final version. In the mean time,  you'll have to take a look at the directories in the Makefile and make sure they make sense. In particular, you should have to change /sw/include/ since this is a Mac convention.
+
+== Compiling == 
+
+Assuming you adjusted the appropriate directories,
+
+-> make 
+
+should work fine and generate SPEM.x. In case you need to compile with debugging flags (for use with gdb) you can just do
+
+-> make dbg
+
+to create SPEM_dbg.x. Finally, 
+
+-> make clean 
+
+will remove all executable and object files.
+
+== Running SPEMShell ==
+
+You can create a couple of test directories using:
+
+-> make test_dir
+
+After which you should have this directory structure:
+
+runs/
+-- multi/
+---- 1247499707714.A0C/
+------ output/
+-- single/
+---- 1247498152606.1EE/
+------output/
+
+With example .in .mdl and .cfg files inside the 1247499707714.A0C/ and 1247498152606.1EE/ directories. At this point you should be able to do:
+
+-> ./SPEMShell.py runs/multi/1247499707714.A0C/
+   Running in runs/multi/1247499707714.A0C/
+   Running 3 runs for 3 compartments
+   Child 83145 exited with status 0
+   Child 83156 exited with status 0
+   Child 83177 exited with status 0
+->
+
+to run the multi run and
+
+-> ./SPEMShell.py runs/single/1247498152606.1EE/
+   Running in runs/single/1247498152606.1EE/
+   Running 1 runs for 3 compartments
+   Child 83515 exited with status 0
+->
+
+for the single run. During each run, you should be able to find the pid numbers of the respective SPEM.x instance in the respective directories as agreed. 
+
+== Output ==
+
+This version has limited output capabilities, as NO post processing is currently being done. Afer each run, you'll find the output generated inside the output_data/ sub directory. For each run there are three files, but only *.out.dat.gz is interesting for us right now. Here you'll find the complete information for each compartment and basin at each time step. The order in which the compartments are listed (since it varies from model to model) is listed in the first line. The first column represents the basin and the second time step starting at 0. 
+
+The other two files *.err.dat.gz and *.sec.dat.gz also contain interesting information (like number of transitions and number of secondary cases at each time-basin pair), but they still need to be modified to fit the formats we agreed. 
+
+There is still no support for averages/CI. I'm currently working on those and hope to have them done by tomorrow or wed.
+
+== Caveats ==
+
+At this point, SPEMShell.py assumes the directory structure I'm sending in this package. In particular, SPEM.x and data/ should be in the same directory from where SPEMShell.py is called and above the "runs/" directory. I can add a configuration file for SPEMShell.py if you want

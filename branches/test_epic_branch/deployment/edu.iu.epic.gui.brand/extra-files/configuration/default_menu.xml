@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?> 
+<!-- <?xml version="1.0" encoding="ISO-8859-1" ?> -->
+<menu_layout> 
+    <top_menu name="File">
+		<menu pid="org.cishell.reference.gui.persistence.load.FileLoadAlgorithm"/>
+		<menu type="break"/>
+		<menu pid= "org.cishell.reference.gui.persistence.save.Save"/>
+		<menu type="break"/>
+		<menu pid="org.cishell.reference.gui.persistence.view.FileView"/>
+		<menu pid="org.cishell.reference.gui.persistence.viewwith.FileViewWith"/>
+		<menu type="break"/>
+		<menu name="Exit" type="preserved"/>
+    </top_menu>
+    
+    <top_menu name="Modeling">
+    	<menu pid="edu.iu.epic.modelbuilder.gui.ModelBuilderNewModelAlgorithmFactory"/>
+    	<menu pid="edu.iu.epic.modelbuilder.gui.ModelBuilderImportModelAlgorithmFactory"/>
+    </top_menu>
+    
+    <top_menu name="Simulation">
+    	<menu pid="edu.iu.epic.spemshell.runner.batch.SPEMShellBatchRunnerAlgorithm"/>
+    </top_menu>
+    
+    <top_menu name="Visualization">
+    	<menu pid="edu.iu.epic.visualization.linegraph.LineGraphAlgorithm"/>
+    </top_menu>
+    
+    <top_menu name="Help">      
+		<menu name="Documentation" pid=""/>
+		<menu type="break"/>
+		<menu name="Update" pid=""/>
+		<menu name="Manage Configuration" pid=""/>
+		<menu type="break"/>
+		<menu name="About Network Workbench Tool" pid=""/>
+    </top_menu>    
+</menu_layout>
