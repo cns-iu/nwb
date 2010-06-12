@@ -8,7 +8,7 @@ import org.cishell.utilities.FileUtilities;
 import edu.iu.nwb.analysis.blondelcommunitydetection.NetworkInfo;
 import edu.iu.nwb.analysis.blondelcommunitydetection.algorithmstages.exceptiontypes.NWBToBINConversionException;
 import edu.iu.nwb.analysis.blondelcommunitydetection.nwbfileparserhandlers.nwb_to_bin.Converter;
-import edu.iu.nwb.analysis.blondelcommunitydetection.nwbfileparserhandlers.nwb_to_bin.PreProcessor;
+import edu.iu.nwb.analysis.blondelcommunitydetection.nwbfileparserhandlers.nwb_to_bin.Preprocessor;
 import edu.iu.nwb.util.nwbfile.NWBFileParser;
 import edu.iu.nwb.util.nwbfile.ParsingException;
 
@@ -42,7 +42,7 @@ public class NWBToBINConverter {
 			File nwbFile, NetworkInfo networkInfo, String weightAttribute, boolean isWeighted)
     		throws NWBToBINConversionException {
 		// TODO Preprocessor etc.
-    	PreProcessor preprocessor = new PreProcessor(networkInfo, weightAttribute, isWeighted);
+    	Preprocessor preprocessor = new Preprocessor(networkInfo, weightAttribute, isWeighted);
     	NWBFileParser preprocessorFileParser;
     	
     	try {
