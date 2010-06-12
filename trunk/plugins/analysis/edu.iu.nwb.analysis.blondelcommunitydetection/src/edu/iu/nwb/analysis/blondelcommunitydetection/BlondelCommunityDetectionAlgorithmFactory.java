@@ -80,8 +80,8 @@ public class BlondelCommunityDetectionAlgorithmFactory implements
 			String oldAttributeDefinitionID = oldAttributeDefinition.getID();
 			AttributeDefinition newAttributeDefinition = oldAttributeDefinition;
 			
-			if (oldAttributeDefinitionID.equals
-				(BlondelCommunityDetectionAlgorithm.WEIGHT_FIELD_ID))
+			if (oldAttributeDefinitionID.equals(
+					BlondelCommunityDetectionAlgorithm.WEIGHT_FIELD_ID))
 			{
 				newAttributeDefinition = MutateParameterUtilities.formAttributeDefinitionFromMap(
 					oldAttributeDefinition,

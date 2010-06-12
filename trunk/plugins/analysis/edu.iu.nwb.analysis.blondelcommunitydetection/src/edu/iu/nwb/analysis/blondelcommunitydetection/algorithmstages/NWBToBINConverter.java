@@ -33,26 +33,43 @@ public class NWBToBINConverter {
 		
 		// (networkInfo gets side-effected in both of these steps.)
 
-		preProcessNWBFile(inputNWBFile, networkInfo);
+		preprocessNWBFile(inputNWBFile, networkInfo, weightAttribute, isWeighted);
     	
     	return doConversion(inputNWBFile, networkInfo, weightAttribute, isWeighted);
 	}
 	
-	private static void preProcessNWBFile(File nwbFile, NetworkInfo networkInfo)
+	private static void preprocessNWBFile(
+			File nwbFile, NetworkInfo networkInfo, String weightAttribute, boolean isWeighted)
     		throws NWBToBINConversionException {
-    	PreProcessor preProcessor = new PreProcessor(networkInfo);
-    	NWBFileParser preProcessorFileParser;
+		// TODO Preprocessor etc.
+    	PreProcessor preprocessor = new PreProcessor(networkInfo, weightAttribute, isWeighted);
+    	NWBFileParser preprocessorFileParser;
     	
     	try {
-    		preProcessorFileParser = new NWBFileParser(nwbFile);
-    		preProcessorFileParser.parse(preProcessor);
+    		preprocessorFileParser = new NWBFileParser(nwbFile);
+    		preprocessorFileParser.parse(preprocessor);
+
+    		NWBToBINConversionException exceptionThrown = preprocessor.getExceptionThrown();
+
+    		if (exceptionThrown != null) {
+    			throw exceptionThrown;
+    		}
     	} catch (IOException e) {
     		String exceptionMessage =
-    			"Failed to read NWB file that is being preprocessed for conversion to BIN file.";
+    			"Failed to read NWB file that is being preprocessed for conversion to BIN file: " +
+    			"\"" + e.getMessage() + "\"";
     		throw new NWBToBINConversionException(exceptionMessage, e);
     	} catch (ParsingException e) {
     		String exceptionMessage =
-    			"Failed to parse NWB file that is being preprocessed for conversion to BIN file.";
+    			"Failed to parse NWB file that is being preprocessed for " +
+    			"conversion to BIN file: " +
+    			"\"" + e.getMessage() + "\"";
+    		throw new NWBToBINConversionException(exceptionMessage, e);
+    	} catch (NWBToBINConversionException e) {
+    		String exceptionMessage =
+    			"Failed to parse NWB file that is being preprocessed for " +
+    			"conversion to BIN file: " +
+    			"\"" + e.getMessage() + "\"";
     		throw new NWBToBINConversionException(exceptionMessage, e);
     	}
     }

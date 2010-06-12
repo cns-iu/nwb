@@ -31,6 +31,8 @@ public class Converter extends NWBFileParserAdapter {
 		WINDOWS_7_PLATFORM
 	};
 
+	public static final int WEIGHT_RESOLUTION = (int) 10e6;
+
 	private boolean shouldHaltParsing = false;
 	private NetworkInfo networkInfo;
 	private RandomAccessFile outputBINFile;
@@ -80,13 +82,7 @@ public class Converter extends NWBFileParserAdapter {
 	
 	@SuppressWarnings("unchecked")
 	private void addEdge(int sourceNodeID, int targetNodeID, Map attributes) {
-		int weight;
-		
-		if (this.isWeighted) {
-			weight = ((Number)attributes.get(this.weightAttribute)).intValue();
-		} else {
-			weight = 1;
-		}
+		int weight = fetchNormalizedWeight(attributes);
 		
 		if (weight < 0.0) {
 			this.shouldHaltParsing = true;
@@ -102,10 +98,25 @@ public class Converter extends NWBFileParserAdapter {
 			}
 		}
 	}
+
+	@SuppressWarnings("unchecked") // Raw Map
+	private int fetchNormalizedWeight(Map attributes) {
+		double weight;
+		
+		if (this.isWeighted) {
+			weight = ((Number)attributes.get(this.weightAttribute)).doubleValue();
+		} else {
+			weight = 1.0;
+		}
+
+		double normalizedWeight = weight / this.networkInfo.getMaximumWeight();
+		int fixedWeight = (int)(normalizedWeight * WEIGHT_RESOLUTION);
+
+		return fixedWeight;
+	}
 	
-	private void writeEdgeAndWeightForNode(Node sourceNode,
-										   Node targetNode,
-										   int weight) throws IOException {
+	private void writeEdgeAndWeightForNode(
+			Node sourceNode, Node targetNode, int weight) throws IOException {
 		// Write the target node id.
 		this.outputBINFile.seek(sourceNode.getWorkingEdgeOffsetInFile());
 		this.writeProperInt(targetNode.getNewID());

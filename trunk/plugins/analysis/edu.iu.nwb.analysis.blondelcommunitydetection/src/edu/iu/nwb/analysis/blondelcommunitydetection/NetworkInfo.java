@@ -8,6 +8,8 @@ public class NetworkInfo {
 	
 	private int renumberingID = 0;
 	private int totalEdgeCount = 0;
+
+	private double maximumWeight;
 	
 	public NetworkInfo() {
 	}
@@ -27,6 +29,10 @@ public class NetworkInfo {
 	public int getTotalEdgeCount() {
 		return this.totalEdgeCount;
 	}
+
+	public double getMaximumWeight() {
+		return this.maximumWeight;
+	}
 	
 	public void addNode(Node node) {
 		this.nodes.add(node);
@@ -42,6 +48,10 @@ public class NetworkInfo {
 	
 	public void setMaxCommunityLevel(int maxCommunityLevel) {
 		this.maxCommunityLevel = maxCommunityLevel;
+	}
+
+	public void setMaximumWeight(double maximumWeight) {
+		this.maximumWeight = maximumWeight;
 	}
 	
 	public Node findNodeByOriginalID(int originalID) {
