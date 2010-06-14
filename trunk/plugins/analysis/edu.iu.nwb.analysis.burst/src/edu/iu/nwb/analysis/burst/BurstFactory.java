@@ -17,7 +17,9 @@ import prefuse.data.Schema;
 import prefuse.data.Table;
 
 public class BurstFactory implements AlgorithmFactory, ParameterMutator {
-    public Algorithm createAlgorithm(Data[] data, Dictionary parameters, CIShellContext context) {
+    protected static final String NO_DOCUMENT_COLUMN = "No document column.";
+
+	public Algorithm createAlgorithm(Data[] data, Dictionary parameters, CIShellContext context) {
         return new Burst(data, parameters, context);
     }
 
@@ -35,6 +37,7 @@ public class BurstFactory implements AlgorithmFactory, ParameterMutator {
 		}
 
 		String[] columnNames = createKeyArray(t.getSchema());
+		String[] documentColumnNames = addNoColumnOption(columnNames, NO_DOCUMENT_COLUMN);
 		
 
 		AttributeDefinition[] definitions = oldDefinition.getAttributeDefinitions(ObjectClassDefinition.ALL);
@@ -49,7 +52,10 @@ public class BurstFactory implements AlgorithmFactory, ParameterMutator {
 			} else if("text".equals(id)) {
 				definition.addAttributeDefinition(ObjectClassDefinition.REQUIRED,
 						new BasicAttributeDefinition("text", attribute.getName(), attribute.getDescription(), AttributeDefinition.STRING, columnNames, columnNames));
-			} else{
+			} else if("document".equals(id)) {
+				definition.addAttributeDefinition(ObjectClassDefinition.REQUIRED,
+						new BasicAttributeDefinition("document", attribute.getName(), attribute.getDescription(), AttributeDefinition.STRING, documentColumnNames, documentColumnNames));
+			} else {
 				definition.addAttributeDefinition(ObjectClassDefinition.REQUIRED, attribute);
 			}
 		}
@@ -58,6 +64,15 @@ public class BurstFactory implements AlgorithmFactory, ParameterMutator {
 		return definition;
 	}
 	
+	private String[] addNoColumnOption(String[] columnNames, String noColumnDescriptor) {
+		String[] withNoColumn = new String[columnNames.length + 1];
+		withNoColumn[0] = noColumnDescriptor;
+		for(int ii = 0; ii < columnNames.length; ii++) {
+			withNoColumn[ii+1] = columnNames[ii];
+		}
+		return withNoColumn;
+	}
+
 	private String[] createKeyArray(Schema schema) {
 		String[] keys = new String[schema.getColumnCount()];
 

@@ -7,8 +7,10 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.Dictionary;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.SortedMap;
 import java.util.TreeMap;
 
@@ -59,24 +61,29 @@ public class Burst implements Algorithm {
 		int states = ((Integer) parameters.get("states")).intValue() + 1; */
 		String dateColumn = (String) parameters.get("date");
 		String textColumn = (String) parameters.get("text");
+		String documentColumn = (String) parameters.get("document");
+		boolean ignoreEmpty = (Boolean) parameters.get("ignore");
 		String separator = (String) parameters.get("separator");
 		String formatString = (String) parameters.get("format");
 		format = new SimpleDateFormat(formatString);
 		
-		inputLevels = ((Integer) parameters.get("states")).intValue();
-		baseRatio = ((Double) parameters.get("ratio")).doubleValue();
-		increaseRatio = ((Double) parameters.get("first")).doubleValue();
-		trans = ((Double) parameters.get("gamma")).doubleValue();
+		inputLevels = ((Integer) parameters.get("states"));
+		baseRatio = ((Double) parameters.get("ratio"));
+		increaseRatio = ((Double) parameters.get("first"));
+		trans = ((Double) parameters.get("gamma"));
 		
 		Table data = (Table) this.data[0].getData();
 		
 		checkColumns(data, dateColumn, textColumn);
 		
+		DocumentRetriever retriever = DocumentRetrieverFactory.createForColumn(documentColumn);
+		
 		Map<Date, String> datePairs = new HashMap<Date, String>();
 		SortedMap<Date, List<String>> wordsMap = new TreeMap<Date, List<String>>();
 		SortedMap<Date, Integer> dates = new TreeMap<Date, Integer>();
 		Map<String, int[]> entryMap = new HashMap<String, int[]>();
-		
+		Set<Object> documents = new HashSet<Object>();
+				
 		for(int row = 0; row < data.getRowCount(); row++) {
 			String dateString = data.getString(row, dateColumn);
 			if(!"".equals(dateString)) {
@@ -85,12 +92,20 @@ public class Burst implements Algorithm {
 					datePairs.put(rowDate, dateString);
 					String rowText = data.getString(row, textColumn);
 					List<String> rowWords = this.words(rowText, separator);
-					if(wordsMap.containsKey(rowDate)) {
-						wordsMap.get(rowDate).addAll(rowWords);
-						dates.put(rowDate, new Integer(dates.get(rowDate).intValue() + 1));
-					} else {
-						wordsMap.put(rowDate, rowWords);
-						dates.put(rowDate, new Integer(1));
+					if(ignoreEmpty && rowWords.size() == 0) {
+						continue;
+					}
+					if(!wordsMap.containsKey(rowDate)) {
+						wordsMap.put(rowDate, new ArrayList<String>());
+						dates.put(rowDate, 0);
+					}
+					wordsMap.get(rowDate).addAll(rowWords);
+					Object document = retriever.retrieve(data, row, documentColumn);
+					if(document == null || !documents.contains(document)) {
+						dates.put(rowDate, dates.get(rowDate) + 1);
+						if(document != null) {
+							documents.add(document);
+						}
 					}
 				} catch (ParseException e) {
 					logger.log(LogService.LOG_WARNING, "Problems parsing value " + dateString + ", verify chosen date format " + formatString + " matches format in file.", e);
@@ -98,11 +113,12 @@ public class Burst implements Algorithm {
 			}
 		}
 		
+		
 		int numDates = dates.size();
 		int currentDate = 0;
 		int[] binBase = new int[numDates];
 		for(Integer count : dates.values()) {
-			binBase[currentDate] = count.intValue();
+			binBase[currentDate] = count;
 			currentDate++;
 		}
 		
@@ -181,11 +197,14 @@ public class Burst implements Algorithm {
 	}
 
 	private void checkColumns(Table data, String dateColumn, String textColumn) throws AlgorithmExecutionException {
+		checkForColumn(data, dateColumn);
+		checkForColumn(data, textColumn);
+	}
+
+	private void checkForColumn(Table data, String dateColumn)
+			throws AlgorithmExecutionException {
 		if(!data.canGetString(dateColumn)) {
 			throw new AlgorithmExecutionException("The column '" + dateColumn + "' does not exist or cannot be accessed as a string.");
-		}
-		if(!data.canGetString(textColumn)) {
-			throw new AlgorithmExecutionException("The column '" + textColumn + "' does not exist or cannot be accessed as a string.");
 		}
 	}
 	
@@ -447,6 +466,7 @@ public class Burst implements Algorithm {
 		
 		String[] strings = text.split("\\" + separator);
 		for(String word : strings) {
+			word = word.trim();
 			if(word.length() > 0) {
 				words.add(word);
 			}
