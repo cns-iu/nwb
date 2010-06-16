@@ -67,10 +67,8 @@ public class PajekmatToPajeknet implements Algorithm{
 			throws AlgorithmExecutionException {
 		try{
 			File outNETFile =
-				FileUtilities.createTemporaryFileInDefaultTemporaryDirectory(
-						"Pajek-", "net");
-			PrintWriter out =
-				new PrintWriter(new BufferedWriter(new FileWriter(outNETFile)));	
+				FileUtilities.createTemporaryFileInDefaultTemporaryDirectory("Pajek-", "net");
+			PrintWriter out = new PrintWriter(outNETFile, "UTF-8");	
 			writeVertices(matValidator, out);
 			writeArcs(matValidator, out);
 			out.close();

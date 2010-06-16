@@ -1,8 +1,8 @@
 package edu.iu.nwb.converter.prefusebibtex;
 
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileNotFoundException;
-import java.io.FileReader;
 import java.io.IOException;
 import java.util.Dictionary;
 import java.util.Iterator;
@@ -14,6 +14,7 @@ import org.cishell.framework.algorithm.AlgorithmExecutionException;
 import org.cishell.framework.data.BasicData;
 import org.cishell.framework.data.Data;
 import org.cishell.framework.data.DataProperty;
+import org.cishell.utilities.UnicodeReader;
 import org.osgi.service.log.LogService;
 
 import prefuse.data.DataTypeException;
@@ -110,7 +111,7 @@ public class BibtexReaderAlgorithm implements Algorithm {
     	BibtexFile bibtexFile = new BibtexFile();
     	BibtexParser parser = new BibtexParser(false);
     	try {
-    		parser.parse(bibtexFile, new FileReader(bibtexFilePath));
+    		parser.parse(bibtexFile, new UnicodeReader(new FileInputStream(bibtexFilePath)));
     	} catch (FileNotFoundException e) {
 			throw new AlgorithmExecutionException(e.getMessage(), e);
 		} catch (ParseException e) {

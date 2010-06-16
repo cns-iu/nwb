@@ -5,9 +5,11 @@ import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.PrintWriter;
 import java.util.Dictionary;
 import java.util.Iterator;
 
@@ -19,12 +21,12 @@ import org.cishell.framework.data.Data;
 import org.cishell.framework.data.DataProperty;
 import org.cishell.service.conversion.ConversionException;
 import org.cishell.service.conversion.DataConversionService;
+import org.cishell.utilities.UnicodeReader;
 import org.osgi.service.log.LogService;
 
 import prefuse.data.Table;
 import prefuse.data.Tuple;
 import prefuse.data.column.Column;
-import edu.iu.nwb.converter.prefusensf.util.UnicodeReader;
 
 public class NSFReaderAlgorithm implements Algorithm {
 	public static final String CSV_MIME_TYPE = "file:text/csv";
@@ -221,7 +223,7 @@ public class NSFReaderAlgorithm implements Algorithm {
 	
 	private File cleanNSFCSVFormat(File escapedQuoteFile) throws AlgorithmExecutionException {
 		BufferedReader in = null;
-		BufferedWriter out = null;
+		PrintWriter out = null;
 
 		try {
 			InputStream stream = new FileInputStream(escapedQuoteFile);
@@ -230,12 +232,10 @@ public class NSFReaderAlgorithm implements Algorithm {
 			 * characters that are sometimes stuck onto the beginning of files
 			 * (BOMs). Necessary due to bug in standard reader.
 			 */
-			UnicodeReader unicodeReader = new UnicodeReader(stream, "UTF-8");
-			in = new BufferedReader(unicodeReader);
+			in = new BufferedReader(new UnicodeReader(stream));
 
 			File outFile = File.createTempFile("cleanedNSFCSV", "csv");
-			FileWriter fstream = new FileWriter(outFile);
-			out = new BufferedWriter(fstream);
+			out = new PrintWriter(outFile, "UTF-8");
 
 			String headerLine = in.readLine();
 			if (headerLine != null) {

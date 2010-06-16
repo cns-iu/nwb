@@ -40,7 +40,7 @@ public class PrefuseCsvWriter implements Algorithm {
 	    try {
 	    	File outCSVFile =
 				FileUtilities.createTemporaryFileInDefaultTemporaryDirectory(
-						"NWB-Session-", "csv");
+						"PrefuseToCSV-", "csv");
 			
 			(new CSVTableWriter()).writeTable(
 					inTable,

@@ -2,6 +2,7 @@ package edu.iu.nwb.converter.edgelist.common;
 
 import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.HashMap;
@@ -10,6 +11,7 @@ import java.util.Map;
 import java.util.regex.Matcher;
 
 import org.cishell.framework.algorithm.AlgorithmExecutionException;
+import org.cishell.utilities.UnicodeReader;
 
 import edu.iu.nwb.util.nwbfile.NWBFileParserHandler;
 import edu.iu.nwb.util.nwbfile.NWBFileProperty;
@@ -37,7 +39,7 @@ public class EdgeSectionWriter {
 		writeEdgeSectionHeader(isWeighted, isDirected);
 	
 		final BufferedReader edgeReader =
-			new BufferedReader(new FileReader(edgeListFile));
+			new BufferedReader(new UnicodeReader(new FileInputStream(edgeListFile)));
 		String line = edgeReader.readLine();
 	
 		// Skip the directedness line, if present
@@ -127,7 +129,7 @@ public class EdgeSectionWriter {
 	private boolean isDirected(File edgeListFile)
 			throws IOException, InvalidEdgeListFormatException {
 		final BufferedReader edgeReader =
-			new BufferedReader(new FileReader(edgeListFile));
+			new BufferedReader(new UnicodeReader(new FileInputStream(edgeListFile)));
 		String firstLine = edgeReader.readLine();
 		edgeReader.close();
 		
@@ -151,7 +153,7 @@ public class EdgeSectionWriter {
 	private boolean findWeightedness(File edgeListFile)
 			throws InvalidEdgeListFormatException, IOException {
 		final BufferedReader edgeReader =
-			new BufferedReader(new FileReader(edgeListFile));
+			new BufferedReader(new UnicodeReader(new FileInputStream(edgeListFile)));
 		String line = edgeReader.readLine();
 		
 		// Skip the directedness line, if present

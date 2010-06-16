@@ -3,6 +3,7 @@ package edu.iu.nwb.converter.pajekmatpajeknet;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.FileWriter;
@@ -17,6 +18,7 @@ import org.cishell.framework.algorithm.AlgorithmExecutionException;
 import org.cishell.framework.data.BasicData;
 import org.cishell.framework.data.Data;
 import org.cishell.utilities.FileUtilities;
+import org.cishell.utilities.UnicodeReader;
 import org.osgi.service.log.LogService;
 
 import edu.iu.nwb.converter.pajekmat.common.MATFileProperty;
@@ -65,9 +67,8 @@ public class PajeknetToPajekmat implements Algorithm{
 		File outMATFile =
 			FileUtilities.createTemporaryFileInDefaultTemporaryDirectory(
 					"Pajek-", "mat");
-		PrintWriter out =
-			new PrintWriter(new BufferedWriter(new FileWriter(outMATFile)));
-		BufferedReader br = new BufferedReader(new FileReader(f));
+		PrintWriter out = new PrintWriter(outMATFile, "UTF-8");
+		BufferedReader br = new BufferedReader(new UnicodeReader(new FileInputStream(f)));
 		processFile(vmf,br,out);
 		out.close();
 		return outMATFile;

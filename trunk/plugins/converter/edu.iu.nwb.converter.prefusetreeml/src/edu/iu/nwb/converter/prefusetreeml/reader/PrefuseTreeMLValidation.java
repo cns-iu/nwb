@@ -15,6 +15,7 @@ import org.cishell.framework.algorithm.AlgorithmFactory;
 import org.cishell.framework.data.BasicData;
 import org.cishell.framework.data.Data;
 import org.cishell.framework.data.DataProperty;
+import org.cishell.utilities.UnicodeReader;
 import org.osgi.service.log.LogService;
 
 import prefuse.data.io.DataIOException;
@@ -84,7 +85,7 @@ public class PrefuseTreeMLValidation implements AlgorithmFactory {
         	boolean hasTreeMLHeader = false;
     		
         	BufferedReader reader = 
-    			new BufferedReader(new FileReader(inData));
+    			new BufferedReader(new UnicodeReader(new FileInputStream(inData)));
     		
     		String line = reader.readLine();
     		while(line != null){

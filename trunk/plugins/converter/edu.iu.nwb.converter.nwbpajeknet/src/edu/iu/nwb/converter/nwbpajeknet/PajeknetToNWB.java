@@ -3,10 +3,11 @@ package edu.iu.nwb.converter.nwbpajeknet;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileNotFoundException;
-import java.io.FileReader;
-import java.io.FileWriter;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
 import java.util.Dictionary;
 import java.util.Iterator;
@@ -18,13 +19,13 @@ import org.cishell.framework.algorithm.AlgorithmExecutionException;
 import org.cishell.framework.data.BasicData;
 import org.cishell.framework.data.Data;
 import org.cishell.utilities.FileUtilities;
-import org.osgi.service.log.LogService;
+import org.cishell.utilities.UnicodeReader;
 
 import edu.iu.nwb.converter.pajeknet.common.NETArcsnEdges;
 import edu.iu.nwb.converter.pajeknet.common.NETAttribute;
 import edu.iu.nwb.converter.pajeknet.common.NETFileProperty;
-import edu.iu.nwb.converter.pajeknet.common.NETVertex;
 import edu.iu.nwb.converter.pajeknet.common.NETFileValidator;
+import edu.iu.nwb.converter.pajeknet.common.NETVertex;
 import edu.iu.nwb.util.nwbfile.NWBFileProperty;
 
 public class PajeknetToNWB implements Algorithm {
@@ -73,11 +74,9 @@ public class PajeknetToNWB implements Algorithm {
 			File outNWBFile =
 				FileUtilities.createTemporaryFileInDefaultTemporaryDirectory(
 						"NWB-", "nwb");
-			PrintWriter out =
-				new PrintWriter(new BufferedWriter(
-						new FileWriter(outNWBFile)), true);
+			PrintWriter out = new PrintWriter(outNWBFile, "UTF-8");
 			//	out.flush();
-			BufferedReader br = new BufferedReader(new FileReader(f));
+			BufferedReader br = new BufferedReader(new UnicodeReader(new FileInputStream(f)));
 			processFile(validator,br,out);	
 			out.close();
 			return outNWBFile;

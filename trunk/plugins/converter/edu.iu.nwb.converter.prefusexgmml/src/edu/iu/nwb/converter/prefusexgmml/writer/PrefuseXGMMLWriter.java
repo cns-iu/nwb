@@ -35,8 +35,7 @@ public class PrefuseXGMMLWriter implements Algorithm {
 				FileUtilities.createTemporaryFileInDefaultTemporaryDirectory(
 						"XGMML-", XGMML_FILE_EXTENSION);
 			
-			(new XGMMLGraphWriter()).writeGraph(
-					inGraph, outXGMMLFile);
+			(new XGMMLGraphWriter()).writeGraph(inGraph, outXGMMLFile);
 
 			 return new Data[]{ new BasicData(outXGMMLFile, XGMML_MIME_TYPE) };
 		} catch (IOException e) {

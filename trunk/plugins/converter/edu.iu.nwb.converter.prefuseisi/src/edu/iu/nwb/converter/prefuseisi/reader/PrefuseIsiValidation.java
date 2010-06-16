@@ -2,6 +2,7 @@ package edu.iu.nwb.converter.prefuseisi.reader;
 
 import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.Dictionary;
@@ -14,6 +15,7 @@ import org.cishell.framework.algorithm.AlgorithmFactory;
 import org.cishell.framework.data.BasicData;
 import org.cishell.framework.data.Data;
 import org.cishell.framework.data.DataProperty;
+import org.cishell.utilities.UnicodeReader;
 
 /**
  * @author Weixia(Bonnie) Huang
@@ -96,7 +98,7 @@ public class PrefuseIsiValidation implements AlgorithmFactory {
 			boolean isiIdentifierFound = false;
 			try {
 				BufferedReader isiInputFileReader =
-					new BufferedReader(new FileReader(fileHandler));
+					new BufferedReader(new UnicodeReader(new FileInputStream(fileHandler)));
 				String lineContent;
 				int currentNumberOfLinesCounter = 0;				
 

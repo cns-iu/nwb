@@ -17,6 +17,7 @@ package edu.iu.nwb.converter.pajekmat.common;
 
 import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
@@ -26,6 +27,7 @@ import java.util.StringTokenizer;
 import java.util.logging.Logger;
 
 import org.cishell.framework.algorithm.AlgorithmExecutionException;
+import org.cishell.utilities.UnicodeReader;
 
 import sun.util.logging.resources.logging;
 
@@ -50,7 +52,8 @@ public class MATFileValidator {
 		currentLine = 0;
 		totalNumOfNodes = 0;
 		
-		BufferedReader reader = new BufferedReader(new FileReader(fileHandler));
+		BufferedReader reader =
+			new BufferedReader(new UnicodeReader(new FileInputStream(fileHandler)));
 		this.processFile(reader);
 	}
 	

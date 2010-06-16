@@ -2,6 +2,7 @@ package edu.iu.nwb.converter.prefusexgmml.reader;
 
 import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
@@ -14,6 +15,7 @@ import org.cishell.framework.algorithm.AlgorithmFactory;
 import org.cishell.framework.data.BasicData;
 import org.cishell.framework.data.Data;
 import org.cishell.framework.data.DataProperty;
+import org.cishell.utilities.UnicodeReader;
 
 import edu.berkeley.guir.prefuse.graph.io.XMLGraphReader;
 
@@ -84,7 +86,7 @@ public class PrefuseXGMMLValidation implements AlgorithmFactory {
         	boolean hasXGMMLHeader = false;
     		
         	BufferedReader reader = 
-    			new BufferedReader(new FileReader(inData));
+    			new BufferedReader(new UnicodeReader(new FileInputStream(inData)));
     		
     		String line = reader.readLine();
     		while(line != null){

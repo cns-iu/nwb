@@ -5,7 +5,10 @@
 package edu.iu.nwb.converter.prefusegraphml.writer;
 
 import java.io.OutputStream;
+import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
+import java.io.UnsupportedEncodingException;
+import java.nio.charset.Charset;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -92,8 +95,16 @@ public class GraphMLWriter extends AbstractGraphWriter {
     		checkGraphMLSchema(es);
     	}
 
+    	XMLWriter xml = null;
+        try {
+        	xml = new XMLWriter(new PrintWriter(new OutputStreamWriter(os, "UTF-8")));
+        } catch (UnsupportedEncodingException e) {
+        	String message =
+        		"Error: The standard character encoding UTF-8 is not supported on this system.  "
+        		+ "Please report this to the development team.";
+        	throw new RuntimeException(message, e);
+        }
         
-        XMLWriter xml = new XMLWriter(new PrintWriter(os));
         xml.begin(Tokens.GRAPHML_HEADER, 2);
         
         xml.comment("prefuse GraphML Writer | "

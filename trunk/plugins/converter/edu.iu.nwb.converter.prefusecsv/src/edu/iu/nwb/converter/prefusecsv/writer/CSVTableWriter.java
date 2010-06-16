@@ -1,8 +1,8 @@
 package edu.iu.nwb.converter.prefusecsv.writer;
 
-import java.io.BufferedOutputStream;
 import java.io.OutputStream;
-import java.io.PrintStream;
+import java.io.OutputStreamWriter;
+import java.io.PrintWriter;
 
 import prefuse.data.Table;
 import prefuse.data.io.AbstractTableWriter;
@@ -61,7 +61,7 @@ public class CSVTableWriter extends AbstractTableWriter {
     public void writeTable(Table table, OutputStream os) throws DataIOException {
         try {            
             // get print stream
-            PrintStream out = new PrintStream(new BufferedOutputStream(os));
+            PrintWriter out = new PrintWriter(new OutputStreamWriter(os, "UTF-8"));
             
             // write out header row
             if ( m_printHeader ) {

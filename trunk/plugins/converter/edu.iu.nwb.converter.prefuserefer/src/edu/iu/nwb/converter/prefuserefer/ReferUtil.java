@@ -12,12 +12,12 @@ import org.cishell.framework.algorithm.AlgorithmExecutionException;
 import org.cishell.framework.data.BasicData;
 import org.cishell.framework.data.Data;
 import org.cishell.framework.data.DataProperty;
+import org.cishell.utilities.UnicodeReader;
 import org.osgi.service.log.LogService;
 
 import prefuse.data.Schema;
 import prefuse.data.Table;
 import edu.iu.nwb.converter.prefuserefer.util.TableData;
-import edu.iu.nwb.converter.prefuserefer.util.UnicodeReader;
 
 public class ReferUtil {
 	
@@ -36,9 +36,7 @@ public class ReferUtil {
 	    	 * sometimes stuck onto the beginning of files. Necessary
 	    	 *  due to bug in standard reader.
 	    	 */
-	    	UnicodeReader unicodeReader = new UnicodeReader(stream, "UTF-8"); 
-	    	BufferedReader reader = new BufferedReader(unicodeReader);
-	    	return reader;
+	    	return new BufferedReader(new UnicodeReader(stream));
     	} catch (FileNotFoundException e) {
     		throw new AlgorithmExecutionException(
     				"ReferReader could not find a file at "

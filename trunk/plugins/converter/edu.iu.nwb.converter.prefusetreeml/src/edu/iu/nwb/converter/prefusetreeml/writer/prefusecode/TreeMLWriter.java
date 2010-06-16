@@ -10,7 +10,9 @@
 package edu.iu.nwb.converter.prefusetreeml.writer.prefusecode;
 
 import java.io.OutputStream;
+import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
+import java.io.UnsupportedEncodingException;
 import java.util.Date;
 import java.util.HashMap;
 
@@ -68,7 +70,16 @@ public class TreeMLWriter extends AbstractGraphWriter {
         Schema ns = graph.getNodeTable().getSchema();
         checkTreeMLSchema(ns);
         
-        XMLWriter xml = new XMLWriter(new PrintWriter(os));
+        XMLWriter xml;
+		try {
+			xml = new XMLWriter(new PrintWriter(new OutputStreamWriter(os, "UTF-8")));
+		} catch (UnsupportedEncodingException e) {
+        	String message =
+        		"Error: The standard character encoding UTF-8 is not supported on this system.  "
+        		+ "Please report this to the development team.";
+        	throw new RuntimeException(message, e);
+        }
+		
         xml.begin();
         
         xml.comment("prefuse TreeML Writer | "

@@ -17,11 +17,12 @@ package edu.iu.nwb.converter.pajeknet.common;
 
 import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileNotFoundException;
-import java.io.FileReader;
 import java.io.IOException;
 import java.util.List;
 import java.util.StringTokenizer;
+import org.cishell.utilities.UnicodeReader;
 
 public class NETFileValidator {
 	private boolean hasHeader_Vertices = false;
@@ -51,7 +52,8 @@ public class NETFileValidator {
 		numArcs = 0;
 		numEdges = 0;
 
-		BufferedReader reader = new BufferedReader(new FileReader(fileHandler));
+		BufferedReader reader =
+			new BufferedReader(new UnicodeReader(new FileInputStream(fileHandler)));
 		this.processFile(reader);
 	}
 

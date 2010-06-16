@@ -5,12 +5,12 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.StringTokenizer;
 
 import org.cishell.framework.algorithm.AlgorithmExecutionException;
+import org.cishell.utilities.UnicodeReader;
 
 import edu.iu.nwb.util.nwbfile.NWBFileProperty;
 
@@ -52,9 +52,8 @@ public class ValidateNWBFile {
 		countedNumDirected = 0;
 		countedNumUnDirected = 0;
 		countedNodes = 0;
-		BufferedReader reader = new BufferedReader(
-								 new InputStreamReader(
-								  new FileInputStream(fileHandler),"UTF-8"));
+		BufferedReader reader =
+			new BufferedReader(new UnicodeReader(new FileInputStream(fileHandler)));
 		processFile(reader);
 	}
 
@@ -118,7 +117,7 @@ public class ValidateNWBFile {
 			errorMessages.append(
 				"There was an inconsistency between the specified number of nodes: " 
 				+ this.totalNumOfNodes + " and the " +
-				"number of nodes counted: " + this.countedNodes);  
+				"number of nodes counted: " + this.countedNodes);
 		}
 		
 		this.totalNumOfNodes = this.countedNodes;

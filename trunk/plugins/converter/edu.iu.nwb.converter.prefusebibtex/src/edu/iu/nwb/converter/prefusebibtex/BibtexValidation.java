@@ -2,6 +2,7 @@ package edu.iu.nwb.converter.prefusebibtex;
 
 
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
@@ -14,6 +15,7 @@ import org.cishell.framework.algorithm.AlgorithmFactory;
 import org.cishell.framework.data.BasicData;
 import org.cishell.framework.data.Data;
 import org.cishell.framework.data.DataProperty;
+import org.cishell.utilities.UnicodeReader;
 
 import bibtex.dom.BibtexFile;
 import bibtex.expansions.ExpansionException;
@@ -69,7 +71,7 @@ public class BibtexValidation implements AlgorithmFactory {
 	    	BibtexParser parser = new BibtexParser(true);
 	    	
 	    	try {
-				parser.parse(bibtexFile, new FileReader(fileHandler));
+				parser.parse(bibtexFile, new UnicodeReader(new FileInputStream(fileHandler)));
 			} catch (ParseException e) {
 				String message =
 					"Error parsing BibTeX file: " + e.getMessage();

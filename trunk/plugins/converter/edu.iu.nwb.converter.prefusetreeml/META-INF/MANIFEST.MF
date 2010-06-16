@@ -18,3 +18,4 @@ Import-Package: org.cishell.framework;version="1.0.0",
  prefuse.util.io
 X-AutoStart: true
 Service-Component: OSGI-INF/reader.xml, OSGI-INF/writer.xml, OSGI-INF/validation.xml, OSGI-INF/filehandler.xml
+Bundle-RequiredExecutionEnvironment: J2SE-1.5

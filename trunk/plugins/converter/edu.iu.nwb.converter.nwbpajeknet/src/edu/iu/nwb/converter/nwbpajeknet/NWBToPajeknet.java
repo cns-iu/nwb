@@ -10,6 +10,7 @@ package edu.iu.nwb.converter.nwbpajeknet;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.FileWriter;
@@ -27,6 +28,7 @@ import org.cishell.framework.algorithm.AlgorithmExecutionException;
 import org.cishell.framework.data.BasicData;
 import org.cishell.framework.data.Data;
 import org.cishell.utilities.FileUtilities;
+import org.cishell.utilities.UnicodeReader;
 
 import edu.iu.nwb.converter.nwb.common.NWBAttribute;
 import edu.iu.nwb.converter.nwb.common.ValidateNWBFile;
@@ -82,12 +84,11 @@ public class NWBToPajeknet implements Algorithm {
 			File outNetFile =
 				FileUtilities.createTemporaryFileInDefaultTemporaryDirectory(
 						"NWBToPajekNet-", "net");
-			PrintWriter out =
-				new PrintWriter(
-					new BufferedWriter(new FileWriter(outNetFile)), true);
+			PrintWriter out = new PrintWriter(outNetFile, "UTF-8");
 			out.flush();
-			BufferedReader reader = new BufferedReader(new FileReader(nwbFile));
-			printGraph(out,validator,reader);
+			BufferedReader reader =
+				new BufferedReader(new UnicodeReader(new FileInputStream(nwbFile)));
+			printGraph(out, validator, reader);
 
 			return outNetFile;
 		} catch (FileNotFoundException e) {

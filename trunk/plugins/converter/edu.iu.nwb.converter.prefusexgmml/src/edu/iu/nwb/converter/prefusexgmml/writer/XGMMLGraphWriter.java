@@ -77,6 +77,7 @@ public class XGMMLGraphWriter extends AbstractGraphWriter {
 	public static final String XML_NAMESPACE_ATTRIBUTE_KEY = "xmlns";
 	public static final String XGMML_NAMESPACE = "http://www.cs.rpi.edu/XGMML";
 
+	@Override
 	public void writeGraph(Graph graph, OutputStream os) {		
 		PrefuseNodeIDer.assignMissingIDs(graph);
 		PrefuseNodeLabeler.assignMissingNodeLabels(graph);

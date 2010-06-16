@@ -15,6 +15,7 @@ import org.cishell.framework.algorithm.AlgorithmFactory;
 import org.cishell.framework.data.BasicData;
 import org.cishell.framework.data.Data;
 import org.cishell.framework.data.DataProperty;
+import org.cishell.utilities.UnicodeReader;
 
 import prefuse.data.io.DataIOException;
 
@@ -74,8 +75,7 @@ public class PrefuseGraphMLValidation implements AlgorithmFactory {
         		throws FileNotFoundException, IOException {
         	boolean hasGraphMLHeader = false;
     		
-        	BufferedReader reader = 
-    			new BufferedReader(new FileReader(inData));
+        	BufferedReader reader = new BufferedReader(new UnicodeReader(new FileInputStream(inData)));
     		
     		String line = reader.readLine();
     		while(line != null){
