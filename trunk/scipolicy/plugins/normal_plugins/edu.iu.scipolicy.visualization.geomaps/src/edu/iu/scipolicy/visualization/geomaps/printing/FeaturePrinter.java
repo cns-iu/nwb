@@ -144,7 +144,7 @@ public class FeaturePrinter {
 					+ "region name key \""
 					+ shapefileFeatureNameKey
 					+ "\"): "
-					+ StringUtilities.implodeList(unfoundFeatureNames, ", ")
+					+ StringUtilities.implodeItems(unfoundFeatureNames, ", ")
 					+ "."));					
 		}
 	}
