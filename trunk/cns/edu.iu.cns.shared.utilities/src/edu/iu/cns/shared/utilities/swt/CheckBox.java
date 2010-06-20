@@ -1,4 +1,4 @@
-package edu.iu.cns.database.extract.queryrunner.swt;
+package edu.iu.cns.shared.utilities.swt;
 
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;

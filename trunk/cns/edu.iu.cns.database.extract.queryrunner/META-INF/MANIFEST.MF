@@ -4,7 +4,8 @@ Bundle-Name: edu.iu.cns.database.extract.queryrunner
 Bundle-SymbolicName: edu.iu.cns.database.extract.queryrunner
 Bundle-Version: 0.0.1
 Bundle-ClassPath: .
-Import-Package: org.cishell.app.service.datamanager;version="1.0.0",
+Import-Package: edu.iu.cns.shared.utilities.swt,
+ org.cishell.app.service.datamanager;version="1.0.0",
  org.cishell.framework;version="1.0.0",
  org.cishell.framework.algorithm;version="1.0.0",
  org.cishell.framework.data;version="1.0.0",

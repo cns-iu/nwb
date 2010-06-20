@@ -31,7 +31,7 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
 import org.osgi.service.log.LogService;
 
-import edu.iu.cns.database.extract.queryrunner.swt.CheckBox;
+import edu.iu.cns.shared.utilities.swt.CheckBox;
 
 public class DatabaseQueryRunnerAlgorithm implements Algorithm, ProgressTrackable {
 	public static final int WINDOW_WIDTH = 400;
