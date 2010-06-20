@@ -129,7 +129,7 @@ public class MergeTable implements Algorithm, ProgressTrackable {
 
 	private String formatProblems(List<String> problems) {
 		String delimiter = "\n\n  ";
-		return delimiter + StringUtilities.implodeList(problems, delimiter) + "\n\n";
+		return delimiter + StringUtilities.implodeItems(problems, delimiter) + "\n\n";
 	}
 
 	private DatabaseTable inferTableToBeMerged(Table mergingTable) throws AlgorithmExecutionException {
