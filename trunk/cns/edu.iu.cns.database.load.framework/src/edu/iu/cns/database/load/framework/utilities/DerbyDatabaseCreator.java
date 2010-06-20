@@ -147,7 +147,7 @@ public class DerbyDatabaseCreator {
 			schemaToFieldsForCreateTableQueryString(schema) +
 			schemaToPrimaryKeysForCreateTableQueryString(schema);
 
-		String createTableQuery = "CREATE TABLE " + tableName + "(" + fieldNamesForQuery + ")";
+		String createTableQuery = "CREATE TABLE " + tableName + " (" + fieldNamesForQuery + ")";
 		createTableStatement.execute(createTableQuery);
 	}
 
@@ -351,7 +351,7 @@ public class DerbyDatabaseCreator {
 			primaryKeyStrings.add("\"" + primaryKey.getFieldName() + "\"");
 		}
 
-		return ", PRIMARY KEY (" + StringUtilities.implodeList(primaryKeyStrings, ", ") + ")";
+		return ", PRIMARY KEY (" + StringUtilities.implodeItems(primaryKeyStrings, ", ") + ")";
 	}
 
 	public static String schemaToFieldsForInsertQueryString(Schema<? extends RowItem<?>> schema) {
@@ -361,7 +361,7 @@ public class DerbyDatabaseCreator {
 			fieldNames.add(field.getName());
 		}
 
-		return StringUtilities.implodeList(fieldNames, ", ");
+		return StringUtilities.implodeItems(fieldNames, ", ");
 	}
 
 	public static String createAttributesStringAccordingToSchemaForInsertQuery(
@@ -372,7 +372,7 @@ public class DerbyDatabaseCreator {
 			attributeValues.add(valueFormattingForField(attributes.get(field.getName()), field));
 		}
 
-		return "(" + StringUtilities.implodeList(attributeValues, ", ") + ")";
+		return "(" + StringUtilities.implodeItems(attributeValues, ", ") + ")";
 	}
 
 	public static String valueFormattingForField(Object toString, Field field) {

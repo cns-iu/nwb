@@ -7,7 +7,8 @@ import edu.iu.cns.database.load.framework.RowItem;
 import edu.iu.cns.database.load.framework.RowItemContainer;
 
 public class DatabaseModel {
-	private List<RowItemContainer<?>> rowItemLists = new ArrayList<RowItemContainer<?>>();
+	private List<RowItemContainer<? extends RowItem<?>>> rowItemLists =
+		new ArrayList<RowItemContainer<? extends RowItem<?>>>();
 
 	public DatabaseModel(RowItemContainer<?>... rowItemLists) {
 		for (RowItemContainer<?> rowItemList : rowItemLists) {
@@ -17,7 +18,11 @@ public class DatabaseModel {
 		}
 	}
 
-	public List<RowItemContainer<?>> getRowItemLists() {
+	public DatabaseModel(List<RowItemContainer<? extends RowItem<?>>> rowItemLists) {
+		this.rowItemLists = rowItemLists;
+	}
+
+	public List<RowItemContainer<? extends RowItem<?>>> getRowItemLists() {
 		return this.rowItemLists;
 	}
 
@@ -34,6 +39,7 @@ public class DatabaseModel {
 		return null;
 	}
 
+	@SuppressWarnings("unchecked")	// Cast ? To T.
 	public<T extends RowItem<T>> RowItemContainer<T> getRowItemListOfTypeByHumanReadableName(
 			String humanReadableName, boolean caseMatters) {
 		return (RowItemContainer<T>)getRowItemListByHumanReadableName(
@@ -50,6 +56,7 @@ public class DatabaseModel {
 		return null;
 	}
 
+	@SuppressWarnings("unchecked")	// Cast ? To T.
 	public<T extends RowItem<T>> RowItemContainer<T> getRowItemListOfTypeByDatabaseTableName(
 			String humanReadableName) {
 		return (RowItemContainer<T>)getRowItemListByDatabaseTableName(humanReadableName);
