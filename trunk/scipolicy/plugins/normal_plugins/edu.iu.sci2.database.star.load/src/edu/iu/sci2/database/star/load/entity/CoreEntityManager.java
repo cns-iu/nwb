@@ -21,8 +21,7 @@ public class CoreEntityManager {
 			coreEntityTableName,
 			GenericEntityManager.createEntitySchema(coreEntityColumns));
 		this.entityColumns = coreEntityColumns;
-		this.shouldMergeIdenticalValues =
-			GenericEntityManager.determineIdenticalValueMerging(this.entityColumns);
+		this.shouldMergeIdenticalValues = false;
 	}
 
 	public RowItemContainer<GenericEntity> getEntities() {

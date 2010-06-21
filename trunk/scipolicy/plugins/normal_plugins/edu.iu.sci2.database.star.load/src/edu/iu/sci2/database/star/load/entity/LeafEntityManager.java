@@ -30,15 +30,19 @@ public class LeafEntityManager {
 			leafEntityColumn.getNameForDatabase(),
 			GenericEntityManager.createEntitySchema(leafEntityColumn));
 		this.entityColumn = leafEntityColumn;
-		this.shouldMergeIdenticalValues = GenericEntityManager.determineIdenticalValueMerging(
-			ListUtilities.createAndFillList(this.entityColumn));
+		this.shouldMergeIdenticalValues = this.entityColumn.shouldMergeIdenticalValues();
+
+		String coreTableName = coreEntities.getDatabaseTableName();
+		String leafTableName = leafEntityColumn.getNameForDatabase();
+		String relationshipTableName =
+			constructRelationshipTableName(coreEntities.getDatabaseTableName(), leafTableName);
 
 		this.coreEntityForeignKeyColumnName =
-			constructColumnName(coreEntities.getDatabaseTableName());
+			constructColumnName(relationshipTableName, coreEntities.getDatabaseTableName());
 		this.leafEntityForeignKeyColumnName =
-			constructColumnName(leafEntityColumn.getNameForDatabase());
-		this.relationships =
-			constructRelationshipTable(coreEntities, leafEntityColumn);
+			constructColumnName(relationshipTableName, leafEntityColumn.getNameForDatabase());
+		this.relationships = constructRelationshipTable(
+			coreEntities, leafEntityColumn, coreTableName, leafTableName, relationshipTableName);
 	}
 
 	public Collection<RowItemContainer<? extends RowItem<?>>> getRowItemContainers() {
@@ -60,7 +64,9 @@ public class LeafEntityManager {
 			String[] entityValues =
 				StringUtilities.getAllTokens(rawEntityValue, column.getSeparator(), true);
 
-			for (String entityValue : entityValues) {
+			for (int ii = 0; ii < entityValues.length; ii++) {
+				String entityValue = entityValues[ii];
+
 				if (StringUtilities.isNull_Empty_OrWhitespace(entityValue)) {
 					continue;
 				}
@@ -75,7 +81,8 @@ public class LeafEntityManager {
 					this.coreEntityForeignKeyColumnName,
 					this.leafEntityForeignKeyColumnName,
 					coreEntity,
-					entity));
+					entity,
+					(ii + 1)));
 			}
 		} else if (!StringUtilities.isNull_Empty_OrWhitespace(rawEntityValue)) {
 			GenericEntity entity = this.entities.add(new LeafEntity(
@@ -88,25 +95,30 @@ public class LeafEntityManager {
 				this.coreEntityForeignKeyColumnName,
 				this.leafEntityForeignKeyColumnName,
 				coreEntity,
-				entity));
+				entity,
+				1));
 		}
 	}
 
-	public static String constructColumnName(String tableName) {
-		return tableName + "_FOREIGN_KEY";
+	public static String constructColumnName(
+			String relationshipTableName, String entityTableName) {
+		return relationshipTableName + "_" + entityTableName + "_FOREIGN_KEY";
 	}
 
 	private RowItemContainer<GenericRelationship> constructRelationshipTable(
-			RowItemContainer<GenericEntity> coreEntities, ColumnDescriptor leafEntityColumn) {
+			RowItemContainer<GenericEntity> coreEntities,
+			ColumnDescriptor leafEntityColumn,
+			String coreTableName,
+			String leafTableName,
+			String relationshipTableName) {
 		return new RelationshipContainer<GenericRelationship>(
-			constructRelationshipDisplayName(
-				coreEntities.getHumanReadableName(), leafEntityColumn.getName()),
-			constructRelationshipTableName(
-				coreEntities.getDatabaseTableName(), leafEntityColumn.getNameForDatabase()),
+			constructRelationshipDisplayName(coreEntities.getHumanReadableName(), coreTableName),
+			relationshipTableName,
 			constructRelationshipSchema(
-				leafEntityColumn,
 				this.coreEntityForeignKeyColumnName,
-				this.leafEntityForeignKeyColumnName));
+				this.leafEntityForeignKeyColumnName,
+				coreTableName,
+				leafTableName));
 	}
 
 	public static String constructRelationshipDisplayName(
@@ -120,13 +132,18 @@ public class LeafEntityManager {
 	}
 
 	public static Schema<GenericRelationship> constructRelationshipSchema(
-			ColumnDescriptor leafEntityColumn,
 			String coreEntityForeignKeyColumnName,
-			String leafEntityForeignKeyColumnName) {
+			String leafEntityForeignKeyColumnName,
+			String coreTableName,
+			String leafTableName) {
 		Schema<GenericRelationship> schema = new Schema<GenericRelationship>(
 			false,
 			coreEntityForeignKeyColumnName, DerbyFieldType.FOREIGN_KEY,
-			leafEntityForeignKeyColumnName, DerbyFieldType.FOREIGN_KEY);
+			leafEntityForeignKeyColumnName, DerbyFieldType.FOREIGN_KEY,
+			GenericRelationship.ORDER_NAME, DerbyFieldType.INTEGER).
+			FOREIGN_KEYS(
+				coreEntityForeignKeyColumnName, coreTableName,
+				leafEntityForeignKeyColumnName, leafTableName);
 
 		return schema;
 	}

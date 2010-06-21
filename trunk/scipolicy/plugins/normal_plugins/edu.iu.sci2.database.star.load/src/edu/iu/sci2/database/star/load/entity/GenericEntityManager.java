@@ -25,15 +25,4 @@ public class GenericEntityManager {
 
 		return schema;
 	}
-
-	public static boolean determineIdenticalValueMerging(
-			Collection<ColumnDescriptor> entityColumns) {
-		for (ColumnDescriptor column : entityColumns) {
-			if (!column.shouldMergeIdenticalValues()) {
-				return false;
-			}
-		}
-
-		return true;
-	}
 }

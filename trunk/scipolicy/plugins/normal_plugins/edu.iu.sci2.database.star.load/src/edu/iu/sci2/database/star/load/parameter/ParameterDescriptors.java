@@ -46,12 +46,12 @@ public class ParameterDescriptors {
 		}
 
 		public static String name(String columnName) {
-			return "Should " + columnName + " be a separate table?";
+			return "Should " + columnName + " be a separate type of entity?";
 		}
 
 		public static String description(String columnName) {
 			return
-				"Should " + columnName + " be a separate table?  " +
+				"Should " + columnName + " be a separate type of entity?  " +
 				"If so and if it is multi-valued, specify the value separator below.  " +
 				"Otherwise, " + columnName + " will be included in the core table, and the " +
 				"value separator below will be ignored.";
@@ -78,8 +78,7 @@ public class ParameterDescriptors {
 		public static String description(String columnName) {
 			return
 				"Should " + columnName + "'s values be merged if identical?  " +
-				"Note: If " + columnName + " is a column on the core table and this is not " +
-				"checked, no two entries of the core table will ever be merged.";
+				"This will be ignored if this is a core entity column."; 
 		}
 
 		public static int valueType() {
@@ -102,8 +101,8 @@ public class ParameterDescriptors {
 
 		public static String description(String columnName) {
 			return
-				"If " + columnName + " is a separate table, this is the separator that will " +
-				"be used to split each entry into multiple values.  If you do not want " +
+				"If " + columnName + " is a separate type of entity, this is the separator that " +
+				"will be used to split each entry into multiple values.  If you do not want " +
 				columnName + " split into multiple values, leave this field blank.";
 		}
 

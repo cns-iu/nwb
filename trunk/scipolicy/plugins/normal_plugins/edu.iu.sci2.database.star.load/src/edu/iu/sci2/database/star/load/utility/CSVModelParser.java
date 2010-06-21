@@ -67,6 +67,7 @@ public class CSVModelParser {
 
 		List<RowItemContainer<? extends RowItem<?>>> rowItemLists =
 			new ArrayList<RowItemContainer<? extends RowItem<?>>>();
+		rowItemLists.add(coreEntityManager.getEntities());
 
 		for (LeafEntityManager entityManager : leafEntityManagers.values()) {
 			for (RowItemContainer<? extends RowItem<?>> rowItems :
