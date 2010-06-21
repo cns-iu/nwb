@@ -111,7 +111,7 @@ public class ParameterDescriptors {
 		}
 
 		public static String defaultValue() {
-			return ",";
+			return "";
 		}
 	}
 
