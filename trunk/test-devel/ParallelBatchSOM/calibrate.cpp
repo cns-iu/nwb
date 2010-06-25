@@ -1,7 +1,7 @@
 /*
  * calibrate.cpp
  * Locate the best-matching unit in the given codebook for each vector in the given training data.
- *  Created on: Feb 2, 2009
+ *  Created on: Feb 2, 2010
  *      Author: jrbibers
  */
 
@@ -76,6 +76,48 @@ float* calculateNodeIndex(float* net, Coordinate coord) {
 	return net + (g_dim * (coord.row * g_columns + coord.column));
 }
 
+//float shannonEntropy(float* neuronVector) {
+//	float entropy = 0.0;
+//
+//	for (int ii = 0; ii < g_dim; ii++) {
+//		if (neuronVector[ii] > 0) {
+//			entropy += (neuronVector[ii] * log2f(neuronVector[ii]));
+//		}
+//	}
+//
+//	return (-(entropy));
+//}
+//
+//float shannonEntropy(map<int, float>* trainingVector) {
+//	float entropy = 0.0;
+//
+//	for (map<int, float>::const_iterator it = trainingVector->begin(); it != trainingVector->end(); it++) {
+//		if (it->second > 0) { // TODO With some of the accepted file formats, this is impossible.
+//			entropy += ((it->second) * log2(it->second));
+//		}
+//	}
+//
+//	return (-(entropy));
+//}
+//
+//float* jsdMean; // Recyclable memory for jensenShannonDivergence.
+//
+///* TODO Both entropy(neuronVector) and entropy(trainingVector) can and should be pre-computed. */
+//float jensenShannonDivergence(
+//		float* neuronVector, TrainingDatum* trainingDatum, float codebookVectorEntropy) {
+//	for (int ii = 0; ii < g_dim; ii++) {
+//		jsdMean[ii] = (neuronVector[ii] / 2.0);
+//	}
+//
+//	map<int, float> trainingVector = trainingDatum->sparseVector;
+//
+//	for (map<int, float>::const_iterator it = trainingVector.begin(); it != trainingVector.end(); it++) {
+//		jsdMean[it->first] += (it->second / 2.0);
+//	}
+//
+//	return (shannonEntropy(jsdMean) - ((codebookVectorEntropy + shannonEntropy(&trainingVector)) / 2.0));
+//}
+
 
 float calculateCosineSimilarity(
 		float* netVector, TrainingDatum* trainingDatum, float recentSquaredNorm) {
@@ -97,33 +139,6 @@ float calculateCosineSimilarity(
  */
 float calculateCosineDissimilarity(float* netVector, TrainingDatum* trainingDatum, float recentSquaredNorm) {
 	return 1 - calculateCosineSimilarity(netVector, trainingDatum, recentSquaredNorm);
-}
-
-
-// From SOM_PAK
-float hexa_dist(int bx, int by, int tx, int ty){
-	float ret, diff;
-
-	diff = bx - tx;
-
-	if (((by - ty) % 2) != 0) {
-		if ((by % 2) == 0) {
-			diff -= 0.5;
-		}
-		else {
-			diff += 0.5;
-		}
-	}
-
-	ret = diff * diff;
-	diff = by - ty;
-	ret += 0.75 * diff * diff;
-
-	return ret;
-}
-
-float hexa_dist(int xDelta, int yDelta) {
-	return hexa_dist(0, 0, xDelta, yDelta);
 }
 
 
@@ -196,11 +211,7 @@ void readConfigurationFile() {
 	cout << "Done." << endl;
 }
 
-
-// Assumes that the file contains lines which give indices to non-zeroes in a binary-valued vector.
-training_data_t* loadMyTrainingDataFromSparse(int myRank) {
-	cout << "Loading training vectors (from sparse representation).. " << endl;
-
+training_data_t* loadMyTrainingVectorsFromSparse(int myRank) {
 	if (myRank == 0) {
 		cout << "Starting training vectors load at " << getAsctime() << endl;
 	}
@@ -220,7 +231,9 @@ training_data_t* loadMyTrainingDataFromSparse(int myRank) {
 		int dimensions;
 		firstLineStream >> g_numberOfVectors >> dimensions;
 		if (dimensions != g_dim) {
-			cerr << "Dimensionality of the training set (" << dimensions << ") does not agree with the dimensionality of the codebook vectors (" << g_dim << ")." << endl;
+			cerr << "Dimensionality of the training set (" << dimensions;
+			cout << ") does not agree with the dimensionality of the codebook vectors (";
+			cout << g_dim << ")." << endl;
 			exit(1);
 		}
 
@@ -260,10 +273,13 @@ training_data_t* loadMyTrainingDataFromSparse(int myRank) {
 				while (linestream >> oneBasedIndex) {
 					int zeroBasedIndex = oneBasedIndex - 1;
 
-					if (zeroBasedIndex < g_dim) {
-						trainingVector[zeroBasedIndex] = 1;
+					if (0 <= zeroBasedIndex && zeroBasedIndex < g_dim) {
+						float value;
+						linestream >> value;
+
+						trainingVector[zeroBasedIndex] = value;
 					} else {
-						cerr << "Dimensionality of training vectors exceeds that of the codebook." << endl;
+						cerr << "Dimensionality of a training vector exceeded that of the codebook." << endl;
 						exit(1);
 					}
 				}
@@ -277,10 +293,6 @@ training_data_t* loadMyTrainingDataFromSparse(int myRank) {
 			}
 
 			lineNumber++;
-		}
-
-		if (myRank == 0) {
-			outFile.close();
 		}
 
 		trainingFile.close();
@@ -298,8 +310,6 @@ training_data_t* loadMyTrainingDataFromSparse(int myRank) {
 			}
 		}
 
-
-
 		cout << "Done." << endl;
 
 		return trainingData;
@@ -308,6 +318,248 @@ training_data_t* loadMyTrainingDataFromSparse(int myRank) {
 		exit(1);
 	}
 }
+
+//// Assumes that the file contains lines which give indices to non-zeroes in a binary-valued vector.
+//training_data_t* loadMyBinaryValuedTrainingVectorsFromSparse(int myRank) {
+//	if (myRank == 0) {
+//		cout << "Starting binary-valued  training vectors load at " << getAsctime() << endl;
+//	}
+//
+//	ifstream trainingFile(g_inTrainingDataPath.c_str());
+//
+//	if (trainingFile.is_open()) {
+//		// Process 0 (only) will echo out the first line and all comments.
+//		ofstream outFile;
+//		if (myRank == 0) {
+//			outFile.open(g_outTrainingDataPath.c_str(), ios::app);
+//		}
+//
+//		string firstLine;
+//		getline(trainingFile, firstLine);
+//		istringstream firstLineStream(firstLine);
+//		int dimensions;
+//		firstLineStream >> g_numberOfVectors >> dimensions;
+//		if (dimensions != g_dim) {
+//			cerr << "Dimensionality of the training set (" << dimensions << ") does not agree with the dimensionality of the codebook vectors (" << g_dim << ")." << endl;
+//			exit(1);
+//		}
+//
+//		// Echo first line to output.
+//		if (myRank == 0) {
+//			outFile << g_numberOfVectors << " " << g_dim << endl;
+//		}
+//
+//		const string commentMarker("#");
+//
+//		training_data_t* trainingData = new training_data_t();
+//
+//		int skippedVectorCount = 0;
+//		int lineNumber = 0;
+//		string line;
+//		while (getline(trainingFile, line)) {
+//			// Comments are ignored by the algorithm, but are echoed to the output file.
+//			if (0 == line.find(commentMarker)) {
+//				if (myRank == 0) {
+//					outFile << line << endl;
+//				}
+//
+//				continue;
+//			}
+//
+//			// Only read lines assigned to my rank.
+//			if (lineNumber % g_numberOfJobs == myRank) {
+//				istringstream linestream(line);
+//
+//				// Read and ignore document ID.
+//				string documentID;
+//				linestream >> documentID;
+//
+//				/* TODO Could be mapping into ints, or shorts, or bools even.
+//				 * Or even some nice bitset instead of a map.
+//				 * For the work we're currently doing, this could be a set of ints.  Test speed-up.
+//				 */
+//				map<int, float> trainingVector;
+//
+//				int oneBasedIndex;
+//				while (linestream >> oneBasedIndex) {
+//					int zeroBasedIndex = oneBasedIndex - 1;
+//
+//					if (zeroBasedIndex < g_dim) {
+//						trainingVector[zeroBasedIndex] = 1;
+//					} else {
+//						cerr << "Dimensionality of training vectors exceeds that of the codebook." << endl;
+//						exit(1);
+//					}
+//				}
+//
+//				if (trainingVector.empty()) {
+//					skippedVectorCount++;
+//				} else {
+//					TrainingDatum trainingDatum(documentID, trainingVector);
+//					trainingData->push_back(trainingDatum);
+//				}
+//			}
+//
+//			lineNumber++;
+//		}
+//
+//		trainingFile.close();
+//
+//		if (skippedVectorCount > 0) {
+//			if (myRank == 0) {
+//				cerr << "WARNING: Skipped " << skippedVectorCount
+//					<< " training vectors with no non-zero coordinates.  "
+//					<< "If you are not using the cosine similarity metric than remove this check/skip!"
+//					<< endl;
+//			}
+//		}
+//
+//		if (myRank == 0) {
+//			cout << "Finishing binary-valued training vectors load at " << getAsctime() << endl;
+//		}
+//
+//		return trainingData;
+//	} else {
+//		cerr << "Error opening training data file!" << endl;
+//		exit(1);
+//	}
+//}
+
+
+//// Assumes that the file contains lines which give indices to non-zeroes in a binary-valued vector.
+//training_data_t* loadMyTrainingDataFromSparse(int myRank) {
+//	cout << "Loading training vectors (from sparse representation).. " << endl;
+//
+//	if (myRank == 0) {
+//		cout << "Starting training vectors load at " << getAsctime() << endl;
+//	}
+//
+//	ifstream trainingFile(g_inTrainingDataPath.c_str());
+//
+//	if (trainingFile.is_open()) {
+//		// Process 0 (only) will echo out the first line and all comments.
+//		ofstream outFile;
+//		if (myRank == 0) {
+//			outFile.open(g_outTrainingDataPath.c_str(), ios::app);
+//		}
+//
+//		string firstLine;
+//		getline(trainingFile, firstLine);
+//		istringstream firstLineStream(firstLine);
+//		int dimensions;
+//		firstLineStream >> g_numberOfVectors >> dimensions;
+//		if (dimensions != g_dim) {
+//			cerr << "Dimensionality of the training set (" << dimensions << ") does not agree with the dimensionality of the codebook vectors (" << g_dim << ")." << endl;
+//			exit(1);
+//		}
+//
+//		// Echo first line to output.
+//		if (myRank == 0) {
+//			outFile << g_numberOfVectors << " " << g_dim << endl;
+//		}
+//
+//		const string commentMarker("#");
+//
+//		training_data_t* trainingData = new training_data_t();
+//
+//		int skippedVectorCount = 0;
+//		int lineNumber = 0;
+//		string line;
+//		while (getline(trainingFile, line)) {
+//			// Comments are ignored by the algorithm, but are echoed to the output file.
+//			if (0 == line.find(commentMarker)) {
+//				if (myRank == 0) {
+//					outFile << line << endl;
+//				}
+//
+//				continue;
+//			}
+//
+//			// Only read lines assigned to my rank.
+//			if (lineNumber % g_numberOfJobs == myRank) {
+//				istringstream linestream(line);
+//
+//				// Read and ignore document ID.
+//				string documentID;
+//				linestream >> documentID;
+//
+//				map<int, float> trainingVector;
+//
+//				int oneBasedIndex;
+//				while (linestream >> oneBasedIndex) {
+//					int zeroBasedIndex = oneBasedIndex - 1;
+//
+//					if (zeroBasedIndex < g_dim) {
+//						trainingVector[zeroBasedIndex] = 1;
+//					} else {
+//						cerr << "Dimensionality of training vectors exceeds that of the codebook." << endl;
+//						exit(1);
+//					}
+//				}
+//
+//				if (trainingVector.empty()) {
+//					skippedVectorCount++;
+//				} else {
+//					TrainingDatum trainingDatum(documentID, trainingVector);
+//					trainingData->push_back(trainingDatum);
+//				}
+//			}
+//
+//			lineNumber++;
+//		}
+//
+//		if (myRank == 0) {
+//			outFile.close();
+//		}
+//
+//		trainingFile.close();
+//
+//		if (myRank == 0) {
+//			cout << "Finishing training vectors load at " << getAsctime() << endl;
+//		}
+//
+//		if (skippedVectorCount > 0) {
+//			if (myRank == 0) {
+//				cerr << "WARNING: Skipped " << skippedVectorCount
+//					<< " training vectors with no non-zero coordinates.  "
+//					<< "If you are not using the cosine similarity metric than remove this check/skip!"
+//					<< endl;
+//			}
+//		}
+//
+//
+//
+//		cout << "Done." << endl;
+//
+//		return trainingData;
+//	} else {
+//		cerr << "Error opening training data file!" << endl;
+//		exit(1);
+//	}
+//}
+
+//Coordinate findWinnerDivergence(TrainingDatum* trainingDatum, float* net, float* codebookVectorEntropies) {
+//    float leastDivergence = numeric_limits<float>::max();
+//    Coordinate winner(0, 0);
+//
+//    for (int row = 0; row < g_rows; row++) {
+//    	for (int column = 0; column < g_columns; column++) {
+//    		Coordinate coord(row, column);
+//
+//    		float codebookVectorEntropy = codebookVectorEntropies[(row * g_columns) + column];
+//
+//    		float divergence =
+//    				jensenShannonDivergence(calculateNodeIndex(net, coord), trainingDatum, codebookVectorEntropy);
+//
+//    		if (divergence < leastDivergence) {
+//    			leastDivergence = divergence;
+//				winner = coord;
+//    		}
+//    	}
+//    }
+//
+//    return winner;
+//}
 
 Coordinate findWinnerCosine(TrainingDatum* trainingDatum, float* net, float* recentSquaredNorms) {
     float leastDissimilarity = numeric_limits<float>::max();
@@ -332,6 +584,16 @@ Coordinate findWinnerCosine(TrainingDatum* trainingDatum, float* net, float* rec
     return winner;
 }
 
+//void calculateCodebookVectorEntropies(float* oldEntropies, float* codebook) {
+//	int numberOfNodes = g_rows * g_columns;
+//
+//	for (int nodeIndex = 0; nodeIndex < numberOfNodes; nodeIndex++) {
+//		float* currentNode = codebook + nodeIndex * g_dim;
+//		float* currentEntropy = oldEntropies + nodeIndex;
+//
+//		(*currentEntropy) = shannonEntropy(currentNode);
+//	}
+//}
 
 void calculateSquaredNorms(float* oldSquaredNorms, float* net) {
 	int numberOfNodes = g_rows * g_columns;
@@ -355,7 +617,11 @@ void calibrate(int myRank, float* net, training_data_t* myTrainingData) {
 	}
 
 	const int numberOfNodes = g_rows * g_columns;
-	const int flatSize = numberOfNodes * g_dim;
+
+//	jsdMean = new float[g_dim];
+//	float* codebookVectorEntropies = new float[numberOfNodes];
+//	zeroOut(codebookVectorEntropies, numberOfNodes);
+//	calculateCodebookVectorEntropies(codebookVectorEntropies, net);
 
 	float* recentSquaredNorms = new float[numberOfNodes];
 	zeroOut(recentSquaredNorms, numberOfNodes);
@@ -369,12 +635,17 @@ void calibrate(int myRank, float* net, training_data_t* myTrainingData) {
 			vecIt++) {
 		TrainingDatum myTrainingDatum = *vecIt;
 
-		Coordinate winnerCoordinate = findWinnerCosine(&myTrainingDatum, net, recentSquaredNorms);
+		Coordinate winnerCoordinate =
+//				findWinnerDivergence(&myTrainingDatum, net, codebookVectorEntropies);
+				findWinnerCosine(&myTrainingDatum, net, recentSquaredNorms);
 		float* winner = calculateNodeIndex(net, winnerCoordinate);
 
+//		float codebookVectorEntropy =
+//				codebookVectorEntropies[(winnerCoordinate.row * g_columns) + winnerCoordinate.column];
 		float recentSquaredNorm =
 				recentSquaredNorms[(winnerCoordinate.row * g_columns) + winnerCoordinate.column];
 		float dissimilarity =
+//				jensenShannonDivergence(winner, &myTrainingDatum, codebookVectorEntropy);
 				calculateCosineDissimilarity(winner, &myTrainingDatum, recentSquaredNorm);
 
 		ostringstream ss;
@@ -388,7 +659,7 @@ void calibrate(int myRank, float* net, training_data_t* myTrainingData) {
 				ss << " ";
 			}
 
-			ss << (1 + it->first);
+			ss << (1 + it->first) << " " << it->second;
 
 			beyondFirstCoordinate = true;
 		}
@@ -426,7 +697,7 @@ int main(int argc, char *argv[]) {
 	float* net = loadInitialCodebook(myRank);
 
 	// TODO Manually swapping out these function names is lame.
-	training_data_t* myTrainingData = loadMyTrainingDataFromSparse(myRank);
+	training_data_t* myTrainingData = loadMyTrainingVectorsFromSparse(myRank);
 
 	/* Ensure process 0 gets the time it needs to write out the first line and comments
 	 * (see loadMyTrainingDataFromSparse).
