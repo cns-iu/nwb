@@ -1,6 +1,8 @@
 package edu.iu.sci2.database.star.gui.builder;
 
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.graphics.Font;
+import org.eclipse.swt.graphics.FontData;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
@@ -8,6 +10,7 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
 
 public class CoreEntityNameWidget extends Composite {
+	public static final int HEIGHT = 30;
 	public static final String LABEL_TEXT = "Core Entity Name:";
 
 	private Label label;
@@ -34,6 +37,8 @@ public class CoreEntityNameWidget extends Composite {
 
 	private static GridLayout createLayout() {
 		GridLayout layout = new GridLayout(2, true);
+//		Utilities.clearMargins(layout);
+		Utilities.clearSpacing(layout);
 
 		return layout;
 	}
@@ -61,9 +66,10 @@ public class CoreEntityNameWidget extends Composite {
 	}
 
 	private static GridData createInputTextLayoutData() {
-		GridData layoutData = new GridData();
-		layoutData.grabExcessHorizontalSpace = true;
-		layoutData.horizontalAlignment = SWT.FILL;
+		GridData layoutData = new GridData(SWT.FILL, SWT.CENTER, true, true);
+//		layoutData.grabExcessHorizontalSpace = true;
+//		layoutData.horizontalAlignment = SWT.FILL;
+		layoutData.heightHint = HEIGHT;
 
 		return layoutData;
 	}

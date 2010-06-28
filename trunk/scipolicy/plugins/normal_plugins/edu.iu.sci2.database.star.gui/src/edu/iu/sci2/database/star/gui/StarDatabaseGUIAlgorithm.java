@@ -7,12 +7,10 @@ import org.cishell.framework.algorithm.Algorithm;
 import org.cishell.framework.algorithm.AlgorithmExecutionException;
 import org.cishell.framework.data.Data;
 
-import edu.iu.sci2.database.star.gui.builder.LoadStarDatabaseGUIBuilder;
-
 public class StarDatabaseGUIAlgorithm implements Algorithm {
 	public static final String WINDOW_TITLE = "Star Database Loader";
 	public static final int WINDOW_WIDTH = 400;
-	public static final int WINDOW_HEIGHT = 600;
+	public static final int WINDOW_HEIGHT = 800;
 
     private Data[] data;
     private Dictionary<String, Object> parameters;

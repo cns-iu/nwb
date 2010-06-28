@@ -19,4 +19,6 @@ Import-Package: edu.iu.cns.shared.utilities.swt,
 X-AutoStart: true
 Service-Component: OSGI-INF/component.xml
 Require-Bundle: org.eclipse.swt,
- org.eclipse.ui
+ org.eclipse.ui,
+ org.eclipse.ui.forms;bundle-version="3.3.101",
+ org.eclipse.core.runtime;bundle-version="3.4.0"
