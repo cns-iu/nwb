@@ -28,7 +28,7 @@ public class CirclePrinter {
 	public static final double OUTLINE_ADDITIONAL_RADIUS = 0.1;
 	public static final Color OUTLINE_COLOR = Color.BLACK;
 	public static final String INDENT = "  ";
-	public static final double DEFAULT_CIRCLE_LINE_WIDTH = 2.5;
+	public static final double DEFAULT_CIRCLE_LINE_WIDTH = 1.5;
 	
 	private GeometryProjector geometryProjector;
 	private MapDisplayer mapDisplayer;
@@ -36,7 +36,7 @@ public class CirclePrinter {
 	public static final Scaler DEFAULT_CIRCLE_AREA_SCALER = new LinearScaler();
 	
 	public static final double DEFAULT_CIRCLE_RADIUS_MINIMUM =
-		0.0035 * Constants.MAP_PAGE_AREA_WIDTH_IN_POINTS;
+		0.0027 * Constants.MAP_PAGE_AREA_WIDTH_IN_POINTS;
 	public static final double DEFAULT_CIRCLE_AREA_MINIMUM =
 		Circle.calculateAreaFromRadius(DEFAULT_CIRCLE_RADIUS_MINIMUM);
 	
