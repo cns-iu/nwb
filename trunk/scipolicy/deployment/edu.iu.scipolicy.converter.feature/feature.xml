@@ -240,6 +240,13 @@ Dr. Katy Borner (katy@indiana.edu)
          version="1.0.0"
          unpack="false"/>
 
+    <plugin
+         id="google-collections"
+         download-size="0"
+         install-size="0"
+         version="0.0.1"
+         unpack="false"/>
+
 	<plugin
          id="edu.iu.cns.database.load.framework"
          download-size="0"
@@ -253,6 +260,14 @@ Dr. Katy Borner (katy@indiana.edu)
          install-size="0"
          version="0.0.1"
          unpack="false"/>
+
+    <plugin
+         id="edu.iu.scipolicy.database.star.load"
+         download-size="0"
+         install-size="0"
+         version="0.0.1"
+         unpack="false"/>
+         
 
          -->
    
