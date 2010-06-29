@@ -114,12 +114,52 @@ float shannonEntropy(float* neuronVector) {
 	return (-(entropy));
 }
 
-float shannonEntropy(map<int, float>* trainingVector) {
+float normalizedShannonEntropy(float* neuronVector) {
 	float entropy = 0.0;
 
+	float total = 0.0;
+	for (int ii = 0; ii < g_dim; ii++) {
+		total += neuronVector[ii];
+	}
+
+	for (int ii = 0; ii < g_dim; ii++) {
+		float normalized = neuronVector[ii] / total;
+
+		if (normalized > 0) {
+			entropy += (normalized * log2f(normalized));
+		}
+	}
+
+	return (-(entropy));
+}
+
+//float shannonEntropy(map<int, float>* trainingVector) {
+//	float entropy = 0.0;
+//
+//	for (map<int, float>::const_iterator it = trainingVector->begin(); it != trainingVector->end(); it++) {
+//		if (it->second > 0) { // TODO With some of the accepted file formats, this is impossible.
+//			entropy += ((it->second) * log2(it->second));
+//		}
+//	}
+//
+//	return (-(entropy));
+//}
+
+float normalizedShannonEntropy(map<int, float>* trainingVector) {
+	float entropy = 0.0;
+
+	float total = 0.0;
 	for (map<int, float>::const_iterator it = trainingVector->begin(); it != trainingVector->end(); it++) {
 		if (it->second > 0) { // TODO With some of the accepted file formats, this is impossible.
-			entropy += ((it->second) * log2(it->second));
+			total += it->second;
+		}
+	}
+
+	for (map<int, float>::const_iterator it = trainingVector->begin(); it != trainingVector->end(); it++) {
+		float normalized = (it->second) / total;
+
+		if (normalized > 0) { // TODO With some of the accepted file formats, this is impossible.
+			entropy += (normalized * log2(normalized));
 		}
 	}
 
@@ -127,17 +167,47 @@ float shannonEntropy(map<int, float>* trainingVector) {
 }
 
 float* jsdMean; // Recyclable memory for jensenShannonDivergence.
-/* TODO Both entropy(neuronVector) and entropy(trainingVector) can and should be pre-computed. */
-float jensenShannonDivergence(
+
+///* TODO Both entropy(neuronVector) and entropy(trainingVector) can and should be pre-computed. */
+//float jensenShannonDivergence(
+//		float* neuronVector, map<int, float>* trainingVector, float codebookVectorEntropy) {
+//	for (int ii = 0; ii < g_dim; ii++) {
+//		jsdMean[ii] = (neuronVector[ii] / 2.0);
+//	}
+//	for (map<int, float>::const_iterator it = trainingVector->begin(); it != trainingVector->end(); it++) {
+//		jsdMean[it->first] += (it->second / 2.0);
+//	}
+//
+//	return (shannonEntropy(jsdMean) - ((codebookVectorEntropy + shannonEntropy(trainingVector)) / 2.0));
+//}
+
+
+float weightedJensenShannonDivergence(
 		float* neuronVector, map<int, float>* trainingVector, float codebookVectorEntropy) {
+	float neuronTotal = 0.0;
 	for (int ii = 0; ii < g_dim; ii++) {
-		jsdMean[ii] = (neuronVector[ii] / 2.0);
-	}
-	for (map<int, float>::const_iterator it = trainingVector->begin(); it != trainingVector->end(); it++) {
-		jsdMean[it->first] += (it->second / 2.0);
+		neuronTotal += neuronVector[ii];
 	}
 
-	return (shannonEntropy(jsdMean) - ((codebookVectorEntropy + shannonEntropy(trainingVector)) / 2.0));
+	float trainingTotal = 0.0;
+	for (map<int, float>::const_iterator it = trainingVector->begin(); it != trainingVector->end(); it++) {
+		trainingTotal += it->second;
+	}
+
+	float total = neuronTotal + trainingTotal;
+	float neuronWeight = (neuronTotal / total);
+	float trainingWeight = (trainingTotal / total);
+	
+	for (int ii = 0; ii < g_dim; ii++) {
+		jsdMean[ii] = neuronVector[ii] / total;
+	}
+	for (map<int, float>::const_iterator it = trainingVector->begin(); it != trainingVector->end(); it++) {
+		jsdMean[it->first] += (it->second) / total;
+	}
+
+	float jsd = shannonEntropy(jsdMean) - ((neuronWeight * codebookVectorEntropy) + (trainingWeight * normalizedShannonEntropy(trainingVector)));
+
+	return jsd;
 }
 
 
@@ -678,7 +748,9 @@ Coordinate findWinnerDivergence(map<int, float> trainingVector, float* net, floa
     		float codebookVectorEntropy = codebookVectorEntropies[(row * g_columns) + column];
 
     		float divergence =
-    				jensenShannonDivergence(calculateNodeIndex(net, coord), &trainingVector, codebookVectorEntropy);
+//    				jensenShannonDivergence(calculateNodeIndex(net, coord), &trainingVector, codebookVectorEntropy);
+    				weightedJensenShannonDivergence(calculateNodeIndex(net, coord), &trainingVector, codebookVectorEntropy);
+
 
     		if (divergence < leastDivergence) {
     			leastDivergence = divergence;
@@ -777,7 +849,8 @@ void calculateCodebookVectorEntropies(float* oldEntropies, float* codebook) {
 		float* currentNode = codebook + nodeIndex * g_dim;
 		float* currentEntropy = oldEntropies + nodeIndex;
 
-		(*currentEntropy) = shannonEntropy(currentNode);
+//		(*currentEntropy) = shannonEntropy(currentNode);
+		(*currentEntropy) = normalizedShannonEntropy(currentNode); // osin jsd norm divergence
 	}
 }
 
@@ -847,7 +920,9 @@ float calculateDivergenceQuantizationError(
 
 		float codebookVectorEntropy =
 				codebookVectorEntropies[(winnerCoordinate.row * g_columns) + winnerCoordinate.column];
-		float divergence = jensenShannonDivergence(winner, &trainingVector, codebookVectorEntropy);
+		float divergence =
+//				jensenShannonDivergence(winner, &trainingVector, codebookVectorEntropy);
+				weightedJensenShannonDivergence(winner, &trainingVector, codebookVectorEntropy);
 
 		totalDivergence += divergence;
 	}
@@ -1034,10 +1109,12 @@ void train(int myRank, float* net, training_data_t* myTrainingVectors) {
 			zeroOut(g_myNumerators, flatSize);
 			zeroOut(g_myDenominators, numberOfNodes);
 
-			zeroOut(codebookVectorEntropies, numberOfNodes);
-			calculateCodebookVectorEntropies(codebookVectorEntropies, net);
+
 //			zeroOut(codebookVectorNorms, numberOfNodes);
 //			calculateCodebookVectorNorms(codebookVectorNorms, net);
+			zeroOut(codebookVectorEntropies, numberOfNodes);
+			calculateCodebookVectorEntropies(codebookVectorEntropies, net);
+
 
 //			reportAverageQuantizationError(&sampledTrainingVectors, net, myRank, codebookVectorNorms);
 			reportAverageQuantizationError(&sampledTrainingVectors, net, myRank, codebookVectorEntropies);

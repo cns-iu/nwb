@@ -6,15 +6,15 @@ def main():
 
     nodes = []
 
-    codebookFilename = 'trained.cod'
+    codebookFilename = 'normalized.cod'
     codebookFile = open(codebookFilename, 'r')
     dim, topology, columns, rows, neighborhood = codebookFile.next().split()
     lineIndex = 0
     for line in codebookFile:
         r, g, b = line.split()
-        i, j = (int(lineIndex / int(columns)), lineIndex % int(columns))
+        row, column = (int(lineIndex / int(columns)), lineIndex % int(columns))
 
-        nodes += [(i, j, float(r), float(g), float(b))]
+        nodes += [(row, column, float(r), float(g), float(b))]
         
         lineIndex += 1
     codebookFile.close()
@@ -25,8 +25,9 @@ def main():
     for line in inFile:
         if line.startswith('NEURONS GO HERE'):
             for node in nodes:
-                i, j, r, g, b = node
-                print >> outFile, str(19.7 + 39.4*j + ((i%2)*19.7)), str(17 + 34*i), str(r), str(g), str(b), 'myLN'
+                row, column, r, g, b = node
+                yrow = int(rows) - row - 1
+                print >> outFile, str(19.7 + 39.4*column + ((row%2)*19.7)), str(17 + 34*yrow), str(r), str(g), str(b), 'myLN'
         else:
             print >> outFile, line,
     inFile.close()

@@ -3,26 +3,7 @@ import sys
 import operator
 import math
 
-'''
-Don't use this -- too slow.
-'''
-
-def similarity(oneIndices, vector):
-    dotProduct = 0.0
-    
-    for oneIndex in oneIndices:
-        dotProduct += vector[oneIndex]
-
-    vectorSquaredNorm = 0.0
-    for coord in vector:
-        vectorSquaredNorm += coord * coord
-
-    return dotProduct / (math.sqrt(len(oneIndices)) * math.sqrt(vectorSquaredNorm))
-        
-
-def dissimilarity(oneIndices, vector):
-    return 1 - similarity(oneIndices, vector)
-
+# Rewrite to use data from C++ calibration
 
 def main():
     # Use hard-coded input codebook filename unless 1 argument is given.

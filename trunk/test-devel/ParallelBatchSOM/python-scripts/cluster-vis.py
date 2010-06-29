@@ -1,8 +1,8 @@
 from math import sqrt, fmod
 
 
-g_rows = 300
-g_columns = 252
+g_rows = 200
+g_columns = 240
 
 neuronToCluster = dict()
 
@@ -105,7 +105,7 @@ def printNeurons(outFile):
 
 
 def main():
-    inClusterFile = open('neuron-to-cluster.bysizethensim.txt', 'r')
+    inClusterFile = open('nih_2007_doc_topic_prob.neuron-to-cluster.bysim.tosize2.txt', 'r')
     for line in inClusterFile:
         neuron, cluster = line.split()
         row, column = map(lambda s: int(s.strip()), neuron.split(','))
@@ -114,7 +114,7 @@ def main():
     inClusterFile.close()
 
 
-    outFile = open('cluster.bysizethensim.eps', 'w')
+    outFile = open('nih_2007_doc_topic_prob.neuron-to-cluster.bysim.tosize2.eps', 'w')
     inFile = open('clusterTemplate.eps')
     for line in inFile:
         if line.startswith('NEURONS GO HERE'):

@@ -18,7 +18,7 @@ for i in range(numberOfVectors):
 
     nonzeroCount = min(3, max(1, int(random.gauss(mean, stddev))))
     for index in sorted(random.sample(validIndices, nonzeroCount)):
-        print >> outFile, index, round(random.random(), 4),
+        print >> outFile, index, 10*round(random.random(), 4),
 
     '''
     for j in range(dimension):

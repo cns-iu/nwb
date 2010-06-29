@@ -8,7 +8,7 @@ def neuronCmp(n1, n2):
 neuronToCluster = dict()
 
 
-inClusterFile = open('final.25.bysizethensim.clustered', 'r')
+inClusterFile = open('nih_2007_doc_topic_prob.clustered.dat', 'r')
 
 inClusterFile.next()
 inClusterFile.next()
@@ -32,7 +32,7 @@ for line in inClusterFile:
 
 inClusterFile.close()
 
-outKevinFile = open('neuron-to-cluster.bysizethensim.txt', 'w')
+outKevinFile = open('nih_2007_doc_topic_prob.neuron-to-cluster.bysim.tosize2.txt', 'w')
 for neuron, cluster in sorted(neuronToCluster.iteritems()):#, cmp=neuronCmp):
     row, column = neuron
     print >> outKevinFile, (str(row) + ',' + str(column)), cluster

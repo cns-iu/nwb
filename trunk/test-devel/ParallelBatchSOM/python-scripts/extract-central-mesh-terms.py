@@ -1,13 +1,22 @@
 import os
-import gzip
 from operator import itemgetter
 import random
 
-numberOfTopMeshToSkip = 0
-requestedNumberOfMeshes = 2300
+NUMBER_OF_TERMS = 2300
+
+# Check tags -- ignore them.
+MESH_TO_SKIP = {'Adolescent', 'Adult', 'Aged', 'Aged, 80 and over', 'Animals',  \
+                'Cats', 'Cattle', 'Chick Embryo', 'Child', 'Child, Preschool', \
+                'Cricetinae', 'Dogs', 'Female', 'Guinea Pigs', 'History, 15th Century', \
+                'History, 16th Century', 'History, 17th Century', 'History, 18th Century', \
+                'History, 19th Century', 'History, 20th Century', 'History, 21st Century', \
+                'History, Ancient', 'History, Medieval', 'Humans', 'Infant', 'Infant, Newborn', \
+                'Male', 'Mice', 'Middle Aged', 'Pregnancy', 'Rabbits', 'Rats', 'Young Adult'}
+
 
 meshToMeshID = dict()
 documentToMeshID = dict()
+skippedMesh = set()
 
 
 # Pass through the file, creating vector indices for each MeSH term
@@ -16,53 +25,55 @@ documentToMeshID = dict()
 previousMesh = None
 runningMeshCount = 0
 nextAvailableMeshID = 1
-meshHits = 0
-previousMeshHits = 0
+annotationCount = 0
+previousAnnotationCount = 0
 
-inFile = open('sts-mesh-adj-top-first', 'r')
-for line in inFile:    
-    _rank, mesh, document, _garbage = line.split('|')
-
-    meshHits += 1
-    
-    if mesh != previousMesh:
-        runningMeshCount += 1
-        previousMesh = mesh
-        previousMeshHits = meshHits
-        meshHits = 0
+with open('sts-mesh-adj-top-first', 'r') as inFile:
+    for line in inFile:
+        if runningMeshCount >= NUMBER_OF_TERMS:
+            break
         
-    if runningMeshCount > (numberOfTopMeshToSkip + requestedNumberOfMeshes):
-        break
-    
-    if runningMeshCount > numberOfTopMeshToSkip:        
+        _rank, mesh, document, _garbage = tuple(map(lambda s: s.strip(), line.split('|')))
+
+        if mesh in MESH_TO_SKIP:
+            skippedMesh.add(mesh)
+            continue
+
+        annotationCount += 1
+        
+        if mesh != previousMesh:
+            runningMeshCount += 1
+            previousMesh = mesh
+            previousAnnotationCount = annotationCount
+            annotationCount = 0
+        
         if mesh not in meshToMeshID:
-            print "Reading MeSH term ", mesh, ".  The previous MeSH term hit ", previousMeshHits, " documents."
+            print(previousMesh + ',', str(previousAnnotationCount) + ',', mesh)
             meshToMeshID[mesh] = nextAvailableMeshID
             nextAvailableMeshID += 1
-            
-        documentToMeshID.setdefault(document, []).append(meshToMeshID[mesh])
-    
-inFile.close()
+
+        documentToMeshID.setdefault(document, set()).add(meshToMeshID[mesh])
+
+        
 
 
 # Create the output file, each line a vector representing one document
 # and each binary-valued coordinate indicating its having that MeSH term.
-outFile = open('training-top-' + str(requestedNumberOfMeshes) + '-after-' + str(numberOfTopMeshToSkip) + '.dat', 'w')
-
-print >> outFile, str(len(documentToMeshID)), str(len(meshToMeshID))
-for meshToMeshIDItem in sorted(meshToMeshID.items(), key=itemgetter(1)):
-    print >> outFile, "#", meshToMeshIDItem[1], meshToMeshIDItem[0]
-
-documentKeys = documentToMeshID.keys()
-random.shuffle(documentKeys)
-for document in documentKeys:
-    print >> outFile, document,
+with open('training-top-' + str(NUMBER_OF_TERMS) + '.dat', 'w') as outFile:
+    print(str(len(documentToMeshID)), str(len(meshToMeshID)), file=outFile)
     
-    for meshID in documentToMeshID[document]:
-        print >> outFile, meshID,
+    for meshToMeshIDItem in sorted(meshToMeshID.items(), key=itemgetter(1)):
+        print('#', meshToMeshIDItem[1], meshToMeshIDItem[0], file=outFile)
 
-    print >> outFile
+    documentKeys = list(documentToMeshID.keys())
+    random.shuffle(documentKeys)
+    for document in documentKeys:
+        print(document, end=' ', file=outFile)
+        
+        for meshID in sorted(documentToMeshID[document]):
+            print(meshID, end=' ', file=outFile)
 
-outFile.close()
+        print(file=outFile)
 
-print "Done."
+print('Skipped the following MeSH terms:')
+print(sorted(skippedMesh))

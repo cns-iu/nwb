@@ -88,12 +88,52 @@ float* calculateNodeIndex(float* net, Coordinate coord) {
 //	return (-(entropy));
 //}
 //
-//float shannonEntropy(map<int, float>* trainingVector) {
+//float normalizedShannonEntropy(float* neuronVector) {
 //	float entropy = 0.0;
 //
+//	float total = 0.0;
+//	for (int ii = 0; ii < g_dim; ii++) {
+//		total += neuronVector[ii];
+//	}
+//
+//	for (int ii = 0; ii < g_dim; ii++) {
+//		float normalized = neuronVector[ii] / total;
+//
+//		if (normalized > 0) {
+//			entropy += (normalized * log2f(normalized));
+//		}
+//	}
+//
+//	return (-(entropy));
+//}
+//
+////float shannonEntropy(map<int, float>* trainingVector) {
+////	float entropy = 0.0;
+////
+////	for (map<int, float>::const_iterator it = trainingVector->begin(); it != trainingVector->end(); it++) {
+////		if (it->second > 0) { // TODO With some of the accepted file formats, this is impossible.
+////			entropy += ((it->second) * log2(it->second));
+////		}
+////	}
+////
+////	return (-(entropy));
+////}
+//
+//float normalizedShannonEntropy(map<int, float>* trainingVector) {
+//	float entropy = 0.0;
+//
+//	float total = 0.0;
 //	for (map<int, float>::const_iterator it = trainingVector->begin(); it != trainingVector->end(); it++) {
 //		if (it->second > 0) { // TODO With some of the accepted file formats, this is impossible.
-//			entropy += ((it->second) * log2(it->second));
+//			total += it->second;
+//		}
+//	}
+//
+//	for (map<int, float>::const_iterator it = trainingVector->begin(); it != trainingVector->end(); it++) {
+//		float normalized = (it->second) / total;
+//
+//		if (normalized > 0) { // TODO With some of the accepted file formats, this is impossible.
+//			entropy += (normalized * log2(normalized));
 //		}
 //	}
 //
@@ -102,22 +142,52 @@ float* calculateNodeIndex(float* net, Coordinate coord) {
 //
 //float* jsdMean; // Recyclable memory for jensenShannonDivergence.
 //
-///* TODO Both entropy(neuronVector) and entropy(trainingVector) can and should be pre-computed. */
-//float jensenShannonDivergence(
+/////* TODO Both entropy(neuronVector) and entropy(trainingVector) can and should be pre-computed. */
+////float jensenShannonDivergence(
+////		float* neuronVector, TrainingDatum* trainingDatum, float codebookVectorEntropy) {
+////	for (int ii = 0; ii < g_dim; ii++) {
+////		jsdMean[ii] = (neuronVector[ii] / 2.0);
+////	}
+////
+////	map<int, float> trainingVector = trainingDatum->sparseVector;
+////
+////	for (map<int, float>::const_iterator it = trainingVector.begin(); it != trainingVector.end(); it++) {
+////		jsdMean[it->first] += (it->second / 2.0);
+////	}
+////
+////	return (shannonEntropy(jsdMean) - ((codebookVectorEntropy + shannonEntropy(&trainingVector)) / 2.0));
+////}
+//
+//float weightedJensenShannonDivergence(
 //		float* neuronVector, TrainingDatum* trainingDatum, float codebookVectorEntropy) {
+//	float neuronTotal = 0.0;
 //	for (int ii = 0; ii < g_dim; ii++) {
-//		jsdMean[ii] = (neuronVector[ii] / 2.0);
+//		neuronTotal += neuronVector[ii];
 //	}
 //
 //	map<int, float> trainingVector = trainingDatum->sparseVector;
 //
+//	float trainingTotal = 0.0;
 //	for (map<int, float>::const_iterator it = trainingVector.begin(); it != trainingVector.end(); it++) {
-//		jsdMean[it->first] += (it->second / 2.0);
+//		trainingTotal += it->second;
 //	}
 //
-//	return (shannonEntropy(jsdMean) - ((codebookVectorEntropy + shannonEntropy(&trainingVector)) / 2.0));
+//	float total = neuronTotal + trainingTotal;
+//
+//	float neuronWeight = (neuronTotal / total);
+//	float trainingWeight = (trainingTotal / total);
+//
+//	for (int ii = 0; ii < g_dim; ii++) {
+//		jsdMean[ii] = neuronVector[ii] / total;
+//	}
+//	for (map<int, float>::const_iterator it = trainingVector.begin(); it != trainingVector.end(); it++) {
+//		jsdMean[it->first] += (it->second) / total;
+//	}
+//
+//	float jsd = shannonEntropy(jsdMean) - ((neuronWeight * codebookVectorEntropy) + (trainingWeight * normalizedShannonEntropy(&trainingVector)));
+//
+//	return jsd;
 //}
-
 
 float calculateCosineSimilarity(
 		float* netVector, TrainingDatum* trainingDatum, float recentSquaredNorm) {
@@ -549,7 +619,8 @@ training_data_t* loadMyTrainingVectorsFromSparse(int myRank) {
 //    		float codebookVectorEntropy = codebookVectorEntropies[(row * g_columns) + column];
 //
 //    		float divergence =
-//    				jensenShannonDivergence(calculateNodeIndex(net, coord), trainingDatum, codebookVectorEntropy);
+////    				jensenShannonDivergence(calculateNodeIndex(net, coord), trainingDatum, codebookVectorEntropy);
+//					weightedJensenShannonDivergence(calculateNodeIndex(net, coord), trainingDatum, codebookVectorEntropy);
 //
 //    		if (divergence < leastDivergence) {
 //    			leastDivergence = divergence;
@@ -591,7 +662,9 @@ Coordinate findWinnerCosine(TrainingDatum* trainingDatum, float* net, float* rec
 //		float* currentNode = codebook + nodeIndex * g_dim;
 //		float* currentEntropy = oldEntropies + nodeIndex;
 //
-//		(*currentEntropy) = shannonEntropy(currentNode);
+//		(*currentEntropy) =
+////				shannonEntropy(currentNode);
+//				normalizedShannonEntropy(currentNode);
 //	}
 //}
 
@@ -618,14 +691,14 @@ void calibrate(int myRank, float* net, training_data_t* myTrainingData) {
 
 	const int numberOfNodes = g_rows * g_columns;
 
+	float* recentSquaredNorms = new float[numberOfNodes];
+	zeroOut(recentSquaredNorms, numberOfNodes);
+	calculateSquaredNorms(recentSquaredNorms, net);
+
 //	jsdMean = new float[g_dim];
 //	float* codebookVectorEntropies = new float[numberOfNodes];
 //	zeroOut(codebookVectorEntropies, numberOfNodes);
 //	calculateCodebookVectorEntropies(codebookVectorEntropies, net);
-
-	float* recentSquaredNorms = new float[numberOfNodes];
-	zeroOut(recentSquaredNorms, numberOfNodes);
-	calculateSquaredNorms(recentSquaredNorms, net);
 
 	ofstream outFile;
 	outFile.open(g_outTrainingDataPath.c_str(), ios::app);
@@ -636,17 +709,21 @@ void calibrate(int myRank, float* net, training_data_t* myTrainingData) {
 		TrainingDatum myTrainingDatum = *vecIt;
 
 		Coordinate winnerCoordinate =
-//				findWinnerDivergence(&myTrainingDatum, net, codebookVectorEntropies);
 				findWinnerCosine(&myTrainingDatum, net, recentSquaredNorms);
+//				findWinnerDivergence(&myTrainingDatum, net, codebookVectorEntropies);
+
 		float* winner = calculateNodeIndex(net, winnerCoordinate);
 
-//		float codebookVectorEntropy =
-//				codebookVectorEntropies[(winnerCoordinate.row * g_columns) + winnerCoordinate.column];
+
 		float recentSquaredNorm =
 				recentSquaredNorms[(winnerCoordinate.row * g_columns) + winnerCoordinate.column];
+//		float codebookVectorEntropy =
+//				codebookVectorEntropies[(winnerCoordinate.row * g_columns) + winnerCoordinate.column];
 		float dissimilarity =
-//				jensenShannonDivergence(winner, &myTrainingDatum, codebookVectorEntropy);
 				calculateCosineDissimilarity(winner, &myTrainingDatum, recentSquaredNorm);
+//				jensenShannonDivergence(winner, &myTrainingDatum, codebookVectorEntropy);
+//				weightedJensenShannonDivergence(winner, &myTrainingDatum, codebookVectorEntropy);
+
 
 		ostringstream ss;
 		ss << myTrainingDatum.id << " ";
