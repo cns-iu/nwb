@@ -3,9 +3,17 @@ package edu.iu.sci2.database.star.gui.builder;
 import java.util.ArrayList;
 import java.util.Collection;
 
+import org.cishell.utilities.swt.SWTUtilities;
+import org.cishell.utilities.swt.URLClickedListener;
+import org.cishell.utilities.swt.URLMouseCursorListener;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.custom.StyledText;
+import org.eclipse.swt.events.SelectionAdapter;
+import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
+import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
@@ -13,58 +21,88 @@ import org.eclipse.swt.widgets.Shell;
 import edu.iu.sci2.database.star.gui.ColumnDescriptor;
 import edu.iu.sci2.database.star.gui.ColumnsDataForLoader;
 import edu.iu.sci2.database.star.gui.StarDatabaseGUIAlgorithm;
+import edu.iu.sci2.database.star.load.parameter.ParameterDescriptors;
 
 public class LoadStarDatabaseGUIBuilder {
-	public static final int NEW_NAME_WIDGET_HEIGHT = 100;
+	public static final boolean GRAY_OUT_NON_CORE_COLUMN_CONTROLS = true;
+
+	public static final int INSTRUCTIONS_WIDTH = 300;
+	public static final int INSTRUCTIONS_HEIGHT = 150;
+
+	public static final int FINISHED_BUTTON_HEIGHT = 50;
 
 	public static final String DEFAULT_CORE_ENTITY_NAME = "CORE";
 
-	public static final String COLUMN_OPTION_CHOOSE_TYPE = "Choose Type";
-	public static final String COLUMN_OPTION_STRING = "String";
-	public static final String COLUMN_OPTION_INTEGER = "Integer";
-	public static final String COLUMN_OPTION_DOUBLE = "Double";
-	public static final String[] COLUMN_TYPE_OPTIONS = new String[] {
-		COLUMN_OPTION_CHOOSE_TYPE,
-		COLUMN_OPTION_STRING,
-		COLUMN_OPTION_INTEGER,
-		COLUMN_OPTION_DOUBLE
-	};
+	public static final String TUTORIAL_DISPLAY_URL = "Sci2 Tutorial";
+	public static final String TUTORIAL_URL =
+		"https://nwb.slis.indiana.edu/community/?n=Sci2Algorithm.LoadStarDatabase";
+	public static final String INSTRUCTIONS_LABEL_TEXT =
+		"The Star Database Loader loads a csv file into a database with a \"star\" schema. " +
+		"The star schema has one \"core\" or central table for the primary entity of your csv " +
+		"(e.g. publications, grants, etc...) and zero or more \"leaf\" tables with entities " +
+		"related to the primary entity. For example if your central table contained " +
+		"publications, your leaf tables might contain authors, journals, and institutions. " +
+		"For each column, please specify whether it belongs to the primary entity or should be " +
+		"used to form a leaf table entity.\n\n" +
+		"For more information see the Sci2 tutorial at: ";
 
-	// TODO: Needs new name.
-	public static ColumnsDataForLoader getStuffFromUser(
+	public static final String FINISHED_BUTTON_TEXT = "I'm Finished!";
+
+	public static ColumnsDataForLoader gatherUserInput(
 			String windowTitle,
 			int windowWidth,
 			int windowHeight,
 			Collection<ColumnDescriptor> columnDescriptors) {
 		Display display = createDisplay();
-    	Shell shell = createShell(display, windowTitle, windowWidth, windowHeight);
-    	CoreEntityNameWidget coreEntityNameWidget = createCoreEntityNameWidget(shell);
-    	ColumnListWidget columnListWidget = createColumnListWidget(shell, columnDescriptors);
-    	BottomWidgetThingy newNameAreaWidget = createNewNameArea(shell);
-    	shell.setMinimumSize(shell.computeSize(SWT.DEFAULT, SWT.DEFAULT).x, windowHeight);
+    	final Shell shell = createShell(display, windowTitle, windowWidth, windowHeight);
 
-//    	dispatch(display, shell, windowHeight);
-    	// TODO: Hack
-    	dispatch(display, shell, columnListWidget, windowHeight);
+    	@SuppressWarnings("unused")
+    	StyledText instructionsLabel = createInstructionsLabel(shell);
 
-    	return gatherColumnsDataForLoader(coreEntityNameWidget, columnListWidget);
+    	final CoreEntityNameWidget coreEntityNameWidget = createCoreEntityNameWidget(shell);
+
+    	final ColumnListWidget columnListWidget = createColumnListWidget(shell, columnDescriptors);
+
+    	Button finishedButton = createFinishedButton(shell);
+    	shell.setDefaultButton(finishedButton);
+    	final ColumnsDataForLoader[] columnsDataForLoader = new ColumnsDataForLoader[1];
+    	finishedButton.addSelectionListener(new SelectionAdapter() {
+			public void widgetSelected(SelectionEvent event) {
+				columnsDataForLoader[0] =
+					gatherColumnsDataForLoader(coreEntityNameWidget, columnListWidget);
+				shell.close();
+			}
+		});
+
+    	/* (So far, we've created the shell at the maximum possible size we'll allow (according to
+    	 *  windowHeight).  This line shrinks the shell to be a more fitting size if the actual
+    	 *  contents (i.e. our (number of) columns) are smaller than the maximum size we set.)
+    	 */
+    	Point shellSize = shell.computeSize(SWT.DEFAULT, SWT.DEFAULT);
+    	shell.setMinimumSize(shellSize.x, Math.min(windowHeight, shellSize.y));
+
+    	runGUI(display, shell, columnListWidget, windowHeight);
+
+    	return columnsDataForLoader[0];
 	}
 
 	private static Display createDisplay() {
 		return new Display();
 	}
 
-//	private static void dispatch(Display display, Shell shell, int windowHeight) {
-	// TODO: Hack
-	private static void dispatch(
+	private static void runGUI(
 			Display display,
 			Shell shell,
 			ColumnListWidget columnListWidget,
 			int windowHeight) {
 		shell.pack();
     	shell.open();
-    	shell.setSize(shell.getSize().x, windowHeight);
-    	hackHideSomeStuff(columnListWidget);
+    	Point shellSize = shell.computeSize(SWT.DEFAULT, SWT.DEFAULT);
+    	shell.setSize(shell.getSize().x, Math.min(windowHeight, shellSize.y));
+
+    	if (!GRAY_OUT_NON_CORE_COLUMN_CONTROLS) {
+    		hackHideSomeStuff(columnListWidget);
+    	}
 
     	while (!shell.isDisposed()) {
     		if (!display.readAndDispatch()) {
@@ -77,12 +115,44 @@ public class LoadStarDatabaseGUIBuilder {
 
 	private static Shell createShell(
 			Display display, String windowTitle, int windowWidth, int windowHeight) {
-		Shell shell = new Shell(display, SWT.CLOSE | SWT.MIN | SWT.ON_TOP | SWT.TITLE);
+		Shell shell = new Shell(display, SWT.CLOSE | SWT.MIN | SWT.TITLE);
 		shell.setText(windowTitle);
     	shell.setSize(windowWidth, windowHeight);
     	shell.setLayout(createShellLayout());
 
     	return shell;
+	}
+
+	private static StyledText createInstructionsLabel(Composite parent) {
+		StyledText instructionsLabel =
+			new StyledText(parent, SWT.LEFT | SWT.READ_ONLY | SWT.WRAP);
+		instructionsLabel.setBackground(
+			parent.getDisplay().getSystemColor(SWT.COLOR_WIDGET_BACKGROUND));
+		instructionsLabel.setLayoutData(createInstructionsLabelLayoutData());
+		instructionsLabel.getCaret().setVisible(false);
+
+		URLClickedListener urlClickedListener = new URLClickedListener(instructionsLabel);
+		URLMouseCursorListener urlCursorListener =
+			new URLMouseCursorListener(parent, instructionsLabel);
+		instructionsLabel.addMouseListener(urlClickedListener);
+		instructionsLabel.addMouseMoveListener(urlCursorListener);
+
+		SWTUtilities.styledPrint(
+			instructionsLabel,
+			INSTRUCTIONS_LABEL_TEXT,
+			parent.getDisplay().getSystemColor(SWT.COLOR_BLACK),
+			SWT.NORMAL);
+        urlClickedListener.addURL(
+        	instructionsLabel.getText().length(), TUTORIAL_URL, TUTORIAL_DISPLAY_URL);
+        urlCursorListener.addURL(
+        	instructionsLabel.getText().length(), TUTORIAL_URL, TUTORIAL_DISPLAY_URL);
+        SWTUtilities.styledPrint(
+        	instructionsLabel,
+        	TUTORIAL_DISPLAY_URL,
+        	parent.getDisplay().getSystemColor(SWT.COLOR_BLUE),
+        	SWT.BOLD);
+
+		return instructionsLabel;
 	}
 
 	private static CoreEntityNameWidget createCoreEntityNameWidget(Composite parent) {
@@ -96,25 +166,33 @@ public class LoadStarDatabaseGUIBuilder {
 	private static ColumnListWidget createColumnListWidget(
 			Composite parent, Collection<ColumnDescriptor> columnDescriptors) {
 		ColumnListWidget columnList =
-			new ColumnListWidget(parent, columnDescriptors, COLUMN_TYPE_OPTIONS);
+			new ColumnListWidget(parent, columnDescriptors, ParameterDescriptors.Type.OPTIONS);
     	columnList.setLayoutData(createColumnListLayoutData());
 
     	return columnList;
 	}
 
-	private static BottomWidgetThingy createNewNameArea(Composite parent) {
-		BottomWidgetThingy newNameArea = new BottomWidgetThingy(parent);
-		newNameArea.setLayoutData(createNewNameAreaLayoutData());
+	private static Button createFinishedButton(final Composite parent) {
+		Button finishedButton = new Button(parent, SWT.BORDER | SWT.PUSH);
+		finishedButton.setLayoutData(createFinishedButtonLayoutData());
+		finishedButton.setText(FINISHED_BUTTON_TEXT);
 
-		return newNameArea;
+		return finishedButton;
 	}
 
 	private static GridLayout createShellLayout() {
 		GridLayout layout = new GridLayout(1, true);
-		Utilities.clearMargins(layout);
 		Utilities.clearSpacing(layout);
 
 		return layout;
+	}
+
+	private static GridData createInstructionsLabelLayoutData() {
+		GridData layoutData = new GridData(SWT.FILL, SWT.TOP, true, false);
+		layoutData.widthHint = INSTRUCTIONS_WIDTH;
+		layoutData.heightHint = INSTRUCTIONS_HEIGHT;
+
+		return layoutData;
 	}
 
 	private static GridData createCoreEntityNameLayoutData() {
@@ -129,51 +207,61 @@ public class LoadStarDatabaseGUIBuilder {
 		return layoutData;
 	}
 
-	private static GridData createNewNameAreaLayoutData() {
+	private static GridData createFinishedButtonLayoutData() {
 		GridData layoutData = new GridData(SWT.FILL, SWT.BOTTOM, true, false);
-		layoutData.heightHint = NEW_NAME_WIDGET_HEIGHT;
+		layoutData.heightHint = FINISHED_BUTTON_HEIGHT;
 
 		return layoutData;
 	}
 
 	private static void hackHideSomeStuff(ColumnListWidget columnList) {
 		for (ColumnWidget columnWidget : columnList.getColumnWidgets()) {
-    		columnWidget.getProperties().getIsNotCoreColumnProperties().setExpanded(false);
+    		columnWidget.getProperties().getNonCoreColumnProperties().setExpanded(false);
     	}
 	}
 
+	/**
+	 * This method extracts user-inputted data from the GUI and transforms it into ColumnDescriptor
+	 *  objects that can later be used to invoke the Star Database Loader algorithm.
+	 */
 	private static ColumnsDataForLoader gatherColumnsDataForLoader(
 			CoreEntityNameWidget coreEntityNameWidget, ColumnListWidget columnListWidget) {
 		String coreEntityName = coreEntityNameWidget.getCoreEntityName();
 		Collection<ColumnDescriptor> columnDescriptors = new ArrayList<ColumnDescriptor>();
 
 		for (ColumnWidget columnWidget : columnListWidget.getColumnWidgets()) {
-			ColumnHeaderWidget headerWidget = columnWidget.getHeader();
-			ColumnPropertiesWidget propertiesWidget = columnWidget.getProperties();
-			String name = headerWidget.getColumnName();
-			String type = headerWidget.getType();
-			boolean isCoreColumn = propertiesWidget.getIsCoreColumn().isCoreColumn();
-
-			if (isCoreColumn) {
-				columnDescriptors.add(new ColumnDescriptor(name, type, true, false, ""));
-			} else {
-				IsNotCoreColumnPropertiesWidget isNotCoreColumnPropertiesWidget =
-					propertiesWidget.getIsNotCoreColumnProperties();
-				boolean isMultiValued =
-					isNotCoreColumnPropertiesWidget.getSingleValuesInputField().isSelected();
-
-				if (isMultiValued) {
-					String separator =
-						isNotCoreColumnPropertiesWidget.getSeparatorInputField().getText();
-					columnDescriptors.add(
-						new ColumnDescriptor(name, type, false, true, separator));
-				} else {
-					columnDescriptors.add(new ColumnDescriptor(name, type, false, true, ""));
-				}
-			}	
+			columnDescriptors.add(gatherColumnDescriptorFromGUI(columnWidget));
 		}
 
 		return new ColumnsDataForLoader(coreEntityName, columnDescriptors);
+	}
+
+	private static ColumnDescriptor gatherColumnDescriptorFromGUI(ColumnWidget columnWidget) {
+		ColumnHeaderWidget headerWidget = columnWidget.getHeader();
+		ColumnPropertiesWidget propertiesWidget = columnWidget.getProperties();
+		String name = headerWidget.getColumnName();
+		String type = headerWidget.getType();
+		boolean isCoreColumn = propertiesWidget.getIsCoreColumn().isCoreColumn();
+
+		if (isCoreColumn) {
+			return new ColumnDescriptor(name, type, true, false, false, "");
+		} else {
+			NonCoreColumnPropertiesWidget isNotCoreColumnPropertiesWidget =
+				propertiesWidget.getNonCoreColumnProperties();
+			boolean mergeIdenticalValues = isNotCoreColumnPropertiesWidget.
+				getMergeIdenticalValuesInputField().isSelected();
+			boolean isMultiValued =
+				isNotCoreColumnPropertiesWidget.getMultiValuedFieldInputField().isSelected();
+
+			if (isMultiValued) {
+				String separator =
+					isNotCoreColumnPropertiesWidget.getSeparatorInputField().getText();
+				return new ColumnDescriptor(
+					name, type, false, mergeIdenticalValues, true, separator);
+			} else {
+				return new ColumnDescriptor(name, type, false, mergeIdenticalValues, true, "");
+			}
+		}
 	}
 
 	public static void main(String[] args) {
@@ -188,7 +276,7 @@ public class LoadStarDatabaseGUIBuilder {
 		columnDescriptors.add(new ColumnDescriptor("Test 8"));
 		columnDescriptors.add(new ColumnDescriptor("Test 9"));
 
-		getStuffFromUser(
+		gatherUserInput(
 			StarDatabaseGUIAlgorithm.WINDOW_TITLE,
 			StarDatabaseGUIAlgorithm.WINDOW_WIDTH,
 			StarDatabaseGUIAlgorithm.WINDOW_HEIGHT,

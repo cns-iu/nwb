@@ -12,7 +12,8 @@ import org.eclipse.swt.widgets.Composite;
 import edu.iu.sci2.database.star.gui.ColumnDescriptor;
 
 public class ColumnListWidget extends ScrolledComposite {
-	public static int COLUMN_AREA_LAYOUT_VERTICAL_SPACING = 1;
+	public static final int COLUMN_AREA_LAYOUT_VERTICAL_SPACING = 1;
+	public static final int VERTICAL_SCROLL_INCREMENT = 50;
 
 	private Composite columnArea;
 	private Collection<ColumnWidget> columns;
@@ -31,6 +32,7 @@ public class ColumnListWidget extends ScrolledComposite {
 
 		setContent(this.columnArea);
 		fixSize();
+		getVerticalBar().setPageIncrement(VERTICAL_SCROLL_INCREMENT);
 	}
 
 	public Composite getColumnArea() {
@@ -55,7 +57,7 @@ public class ColumnListWidget extends ScrolledComposite {
 
 	private static Composite createColumnArea(Composite parent) {
 		Composite columnArea = new Composite(parent, SWT.BORDER);
-		columnArea.setBackground(Utilities.splitterBarColor(parent.getDisplay()));
+//		columnArea.setBackground(Utilities.splitterBarColor(parent.getDisplay()));
 		columnArea.setLayoutData(createColumnAreaLayoutData());
 		columnArea.setLayout(createColumnAreaLayout());
 
@@ -79,7 +81,7 @@ public class ColumnListWidget extends ScrolledComposite {
 	}
 
 	private static GridData createColumnAreaLayoutData() {
-		GridData layoutData = new GridData(SWT.FILL, SWT.FILL, true, true);
+		GridData layoutData = new GridData(SWT.LEFT, SWT.FILL, false, true);
 
 		return layoutData;
 	}
@@ -87,13 +89,14 @@ public class ColumnListWidget extends ScrolledComposite {
 	private static GridLayout createColumnAreaLayout() {
 		GridLayout layout = new GridLayout(1, false);
 		Utilities.clearMargins(layout);
-		layout.verticalSpacing = 2;
+		Utilities.clearSpacing(layout);
+//		layout.verticalSpacing = 2;
 
 		return layout;
 	}
 
 	private static GridData createColumnLayoutData() {
-		GridData layoutData = new GridData(SWT.FILL, SWT.CENTER, true, true);
+		GridData layoutData = new GridData(SWT.FILL, SWT.TOP, true, false);
 
 		return layoutData;
 	}

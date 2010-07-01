@@ -1,4 +1,4 @@
-package edu.iu.sci2.database.star.load.utility.validator.exception;
+package edu.iu.sci2.database.star.load.utility.csv.validator.exception;
 
 public class CSVBodyValidationException extends CSVDataValidationException {
 	private static final long serialVersionUID = 1L;

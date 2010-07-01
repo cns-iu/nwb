@@ -23,11 +23,15 @@ import org.cishell.utilities.FileUtilities;
 import org.osgi.service.log.LogService;
 
 import au.com.bytecode.opencsv.CSVReader;
+import edu.iu.cns.database.load.framework.exception.InvalidDerbyFieldTypeException;
 import edu.iu.cns.database.load.framework.utilities.DatabaseModel;
 import edu.iu.cns.database.load.framework.utilities.DerbyDatabaseCreator;
 import edu.iu.sci2.database.star.load.parameter.ColumnDescriptor;
+import edu.iu.sci2.database.star.load.parameter.ColumnDescriptorFactory;
 import edu.iu.sci2.database.star.load.utility.CSVModelParser;
 import edu.iu.sci2.database.star.load.utility.CSVReaderUtilities;
+import edu.iu.sci2.database.star.load.utility.StarDatabaseDataValidator;
+import edu.iu.sci2.database.star.load.utility.csv.validator.exception.CSVHeaderValidationException;
 
 public class StarDatabaseLoaderAlgorithm implements Algorithm, ProgressTrackable {
 	// TODO: Move this somewhere else.
@@ -37,25 +41,29 @@ public class StarDatabaseLoaderAlgorithm implements Algorithm, ProgressTrackable
     private File file;
     private String coreEntityDisplayName;
     private String coreEntityTableName;
-    private Map<String, ColumnDescriptor> columnDescriptors;
     private LogService logger;
     private DatabaseService databaseProvider;
+    private Map<String, ColumnDescriptor> columnDescriptors;
     private ProgressMonitor progressMonitor = ProgressMonitor.NULL_MONITOR;
     
     public StarDatabaseLoaderAlgorithm(
     		Data data,
     		String coreEntityDisplayName,
-    		String coreEntityTableName,
-    		Map<String, ColumnDescriptor> columnDescriptors,
     		LogService logger,
-    		DatabaseService databaseProvider) {
+    		DatabaseService databaseProvider,
+    		Dictionary<String, Object> parameters)
+    		throws CSVHeaderValidationException, InvalidDerbyFieldTypeException, IOException {
         this.data = data;
         this.file = (File) this.data.getData();
         this.coreEntityDisplayName = coreEntityDisplayName;
-        this.coreEntityTableName = coreEntityTableName;
-        this.columnDescriptors = columnDescriptors;
+        this.coreEntityTableName = constructCoreEntityTableName(coreEntityDisplayName);
         this.logger = logger;
         this.databaseProvider = databaseProvider;
+        this.columnDescriptors =
+			ColumnDescriptorFactory.createColumnDescriptors(this.data, parameters);
+
+        StarDatabaseDataValidator.validateCoreEntityTableName(
+        	coreEntityTableName, columnDescriptors, this.logger);
     }
 
     public Data[] execute() throws AlgorithmExecutionException {
@@ -126,6 +134,10 @@ public class StarDatabaseLoaderAlgorithm implements Algorithm, ProgressTrackable
     		throw new AlgorithmExecutionException(exceptionMessage, e);
     	}
     }
+
+    private static String constructCoreEntityTableName(String coreEntityDisplayName) {
+		return StarDatabaseCSVDataValidationRules.normalizeName(coreEntityDisplayName);
+	}
 
     private static String[] determineCoreColumns(
     		String[] header, Map<String, ColumnDescriptor> columnDescriptors) {

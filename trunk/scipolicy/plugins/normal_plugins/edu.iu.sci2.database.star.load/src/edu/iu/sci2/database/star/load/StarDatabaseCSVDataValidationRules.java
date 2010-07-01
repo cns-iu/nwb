@@ -11,9 +11,9 @@ import org.osgi.service.log.LogService;
 import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.Multimap;
 
-import edu.iu.sci2.database.star.load.utility.validator.CSVDataValidationRules;
-import edu.iu.sci2.database.star.load.utility.validator.exception.CSVBodyValidationException;
-import edu.iu.sci2.database.star.load.utility.validator.exception.CSVHeaderValidationException;
+import edu.iu.sci2.database.star.load.utility.csv.validator.CSVDataValidationRules;
+import edu.iu.sci2.database.star.load.utility.csv.validator.exception.CSVBodyValidationException;
+import edu.iu.sci2.database.star.load.utility.csv.validator.exception.CSVHeaderValidationException;
 
 public class StarDatabaseCSVDataValidationRules implements CSVDataValidationRules {
 	private LogService logger;

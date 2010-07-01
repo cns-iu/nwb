@@ -13,12 +13,4 @@ public class Utilities {
 	public static void clearSpacing(GridLayout layout) {
 		layout.horizontalSpacing = layout.verticalSpacing = 0;
 	}
-
-	public static Color backgroundColor(Display display) {
-		return new Color(display, 255, 255, 255);
-	}
-
-	public static Color splitterBarColor(Display display) {
-		return new Color(display, 32, 32, 32);
-	}
 }

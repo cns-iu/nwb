@@ -1,4 +1,4 @@
-package edu.iu.sci2.database.star.load.utility.validator;
+package edu.iu.sci2.database.star.load.utility.csv.validator;
 
 import java.io.File;
 import java.io.IOException;
@@ -7,8 +7,8 @@ import org.cishell.framework.data.Data;
 
 import au.com.bytecode.opencsv.CSVReader;
 import edu.iu.sci2.database.star.load.utility.CSVReaderUtilities;
-import edu.iu.sci2.database.star.load.utility.validator.exception.CSVBodyValidationException;
-import edu.iu.sci2.database.star.load.utility.validator.exception.CSVHeaderValidationException;
+import edu.iu.sci2.database.star.load.utility.csv.validator.exception.CSVBodyValidationException;
+import edu.iu.sci2.database.star.load.utility.csv.validator.exception.CSVHeaderValidationException;
 
 public class CSVDataValidator {
 	private CSVReader reader;

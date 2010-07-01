@@ -10,8 +10,12 @@ import org.eclipse.swt.widgets.Label;
 import edu.iu.sci2.database.star.gui.ColumnDescriptor;
 
 public class ColumnHeaderWidget extends Composite {
+	public static final String DATA_TYPE_LABEL_TEXT =
+		"What type of data does this column contain?";
+
 	private String name;
-	private Label label;
+	private Label columnLabel;
+	private Label dataTypeLabel;
 	private Combo inputField;
 	
 	public ColumnHeaderWidget(
@@ -26,9 +30,9 @@ public class ColumnHeaderWidget extends Composite {
 			int defaultOptionIndex) {
 		super(parent, SWT.NONE);
 		this.name = columnDescriptor.getName();
-		setBackground(Utilities.backgroundColor(getDisplay()));
 		setLayout(createLayout());
-		this.label = createLabel(this, columnDescriptor);
+		this.columnLabel = createColumnLabel(this, columnDescriptor);
+		this.dataTypeLabel = createDataTypeLabel(this);
 		this.inputField = createInputField(this, columnTypeOptions, defaultOptionIndex);
 	}
 
@@ -36,8 +40,12 @@ public class ColumnHeaderWidget extends Composite {
 		return this.name;
 	}
 
-	public Label getLabel() {
-		return this.label;
+	public Label getColumnLabel() {
+		return this.columnLabel;
+	}
+
+	public Label getDataTypeLabel() {
+		return this.dataTypeLabel;
 	}
 
 	public Combo getInputField() {
@@ -54,13 +62,21 @@ public class ColumnHeaderWidget extends Composite {
 		return layout;
 	}
 
-	private static Label createLabel(Composite parent, ColumnDescriptor columnDescriptor) {
-		Label label = new Label(parent, SWT.NONE);
-		label.setBackground(Utilities.backgroundColor(parent.getDisplay()));
-		label.setLayoutData(createLabelLayoutData());
-		label.setText("Column " + columnDescriptor.getName());
+	private static Label createColumnLabel(Composite parent, ColumnDescriptor columnDescriptor) {
+		// TODO: Make this actually be bold. :-(
+		Label columnLabel = new Label(parent, SWT.BOLD | SWT.BORDER | SWT.CENTER);
+		columnLabel.setLayoutData(createColumnLabelLayoutData());
+		columnLabel.setText("Column \"" + columnDescriptor.getName() + "\"");
 
-		return label;
+		return columnLabel;
+	}
+
+	private static Label createDataTypeLabel(Composite parent) {
+		Label dataTypeLabel = new Label(parent, SWT.NONE);
+		dataTypeLabel.setLayoutData(createDataTypeLabelLayoutData());
+		dataTypeLabel.setText(DATA_TYPE_LABEL_TEXT);
+
+		return dataTypeLabel;
 	}
 
 	private static Combo createInputField(
@@ -73,7 +89,14 @@ public class ColumnHeaderWidget extends Composite {
 		return inputField;
 	}
 
-	private static GridData createLabelLayoutData() {
+	private static GridData createColumnLabelLayoutData() {
+		GridData layoutData = new GridData(SWT.FILL, SWT.CENTER, true, true);
+		layoutData.horizontalSpan = 2;
+
+		return layoutData;
+	}
+
+	private static GridData createDataTypeLabelLayoutData() {
 		GridData layoutData = new GridData(SWT.LEFT, SWT.CENTER, true, true);
 
 		return layoutData;

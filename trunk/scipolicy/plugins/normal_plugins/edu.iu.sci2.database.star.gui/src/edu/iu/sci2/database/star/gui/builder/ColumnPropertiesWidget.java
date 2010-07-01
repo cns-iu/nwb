@@ -10,24 +10,21 @@ import org.eclipse.swt.widgets.Composite;
 
 public class ColumnPropertiesWidget extends Composite {
 	private IsCoreColumnWidget isCoreColumn;
-//	private IsCoreColumnPropertiesWidget isCoreColumnProperties;
-	private IsNotCoreColumnPropertiesWidget isNotCoreColumnProperties;
+	private NonCoreColumnPropertiesWidget coreNonColumnProperties;
 
-	public ColumnPropertiesWidget(Composite parent, ColumnListWidget columnList) {
+	public ColumnPropertiesWidget(Composite parent) {
 		super(parent, SWT.NONE);
-		setBackground(Utilities.backgroundColor(getDisplay()));
 		setLayout(createLayout());
 		this.isCoreColumn = createIsCoreColumn(this);
-//		this.isCoreColumnProperties = createIsCoreColumnProperties(this, this.isCoreColumn);
-		this.isNotCoreColumnProperties = createIsNotCoreColumnProperties(this, this.isCoreColumn);
+		this.coreNonColumnProperties = createNonCoreColumnProperties(this, this.isCoreColumn);
 	}
 
 	public IsCoreColumnWidget getIsCoreColumn() {
 			return this.isCoreColumn;
 	}
 
-	public IsNotCoreColumnPropertiesWidget getIsNotCoreColumnProperties() {
-		return this.isNotCoreColumnProperties;
+	public NonCoreColumnPropertiesWidget getNonCoreColumnProperties() {
+		return this.coreNonColumnProperties;
 	}
 
 	private static IsCoreColumnWidget createIsCoreColumn(Composite parent) {
@@ -37,12 +34,12 @@ public class ColumnPropertiesWidget extends Composite {
 		return isCoreColumn;
 	}
 
-	private static IsNotCoreColumnPropertiesWidget createIsNotCoreColumnProperties(
+	private static NonCoreColumnPropertiesWidget createNonCoreColumnProperties(
 			final ColumnPropertiesWidget parent, IsCoreColumnWidget isCoreColumn) {
-		final IsNotCoreColumnPropertiesWidget isNotCoreColumnProperties =
-			new IsNotCoreColumnPropertiesWidget(parent);
-		final GridData layoutData = createIsNotCoreColumnPropertiesLayoutData();
-		isNotCoreColumnProperties.setLayoutData(layoutData);
+		final NonCoreColumnPropertiesWidget nonCoreColumnProperties =
+			new NonCoreColumnPropertiesWidget(parent);
+		final GridData layoutData = createCoreColumnPropertiesLayoutData();
+		nonCoreColumnProperties.setLayoutData(layoutData);
 
 		Button yesButton = isCoreColumn.getYesButton();
 		Button noButton = isCoreColumn.getNoButton();
@@ -56,11 +53,12 @@ public class ColumnPropertiesWidget extends Composite {
 			}
 
 			private void selected(SelectionEvent event) {
-				isNotCoreColumnProperties.setExpanded(false);
-//				layoutData.exclude = true;
-//				Shell shell = parent.getShell();
-//				shell.layout(true);
-//				shell.setSize(shell.computeSize(SWT.DEFAULT, SWT.DEFAULT));
+				if (!LoadStarDatabaseGUIBuilder.GRAY_OUT_NON_CORE_COLUMN_CONTROLS) {
+					nonCoreColumnProperties.setExpanded(false);
+				} else {
+					nonCoreColumnProperties.setEnabled(false);
+				}
+				
 			}
 		});
 		noButton.addSelectionListener(new SelectionListener() {
@@ -73,20 +71,23 @@ public class ColumnPropertiesWidget extends Composite {
 			}
 
 			private void selected(SelectionEvent event) {
-				isNotCoreColumnProperties.setExpanded(true);
-//				layoutData.exclude = false;
-//				Shell shell = parent.getShell();
-//				shell.layout(true);
-//				shell.setSize(shell.computeSize(SWT.DEFAULT, SWT.DEFAULT));
+				if (!LoadStarDatabaseGUIBuilder.GRAY_OUT_NON_CORE_COLUMN_CONTROLS) {
+					nonCoreColumnProperties.setExpanded(true);
+				} else {
+					nonCoreColumnProperties.setEnabled(true);
+				}
 			}
 		});
 
-		return isNotCoreColumnProperties;
+		if (LoadStarDatabaseGUIBuilder.GRAY_OUT_NON_CORE_COLUMN_CONTROLS) {
+			nonCoreColumnProperties.setEnabled(false);
+		}
+
+		return nonCoreColumnProperties;
 	}
 
 	private static GridLayout createLayout() {
 		GridLayout layout = new GridLayout(1, false);
-//		Utilities.clearMargins(layout);
 
 		return layout;
 	}
@@ -97,9 +98,8 @@ public class ColumnPropertiesWidget extends Composite {
 		return layoutData;
 	}
 
-	private static GridData createIsNotCoreColumnPropertiesLayoutData() {
+	private static GridData createCoreColumnPropertiesLayoutData() {
 		GridData layoutData = new GridData(SWT.FILL, SWT.CENTER, false, true);
-//		layoutData.exclude = true;
 
 		return layoutData;
 	}
