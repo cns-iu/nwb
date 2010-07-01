@@ -4,7 +4,7 @@
     <top_menu name="File">
 		<menu pid= "org.cishell.reference.gui.persistence.load.FileLoadAlgorithm"/>
 		<menu pid="edu.iu.nwb.composite.isiloadandclean.ISILoadAndCleanAlgorithm"/>
-		<menu pid="edu.iu.sci2.database.star.load"/>
+		<menu pid="edu.iu.sci2.database.star.gui"/>
 		<menu type="break"/>
 		<menu pid= "edu.iu.nwb.preprocessing.prefuse.beta.directoryhierarchyreader.DirectoryHierarchyReaderAlgorithm"/>
 		<menu type="break"/>
