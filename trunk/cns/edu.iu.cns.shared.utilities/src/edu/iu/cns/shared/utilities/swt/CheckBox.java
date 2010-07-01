@@ -31,6 +31,7 @@ public class CheckBox {
 	}
 
 	public void toggle() {
-		this.button.setSelection(!this.isSelected);
+		this.isSelected = !this.isSelected;
+		this.button.setSelection(this.isSelected);
 	}
 }
