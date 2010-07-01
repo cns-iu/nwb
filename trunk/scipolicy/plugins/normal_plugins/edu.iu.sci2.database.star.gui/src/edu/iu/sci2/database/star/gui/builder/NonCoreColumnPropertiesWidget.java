@@ -61,7 +61,6 @@ public class NonCoreColumnPropertiesWidget extends ExpandableComposite {
 			}
 
 			private void selected(SelectionEvent event) {
-				NonCoreColumnPropertiesWidget.this.multiValuedFieldInputField.toggle();
 				boolean isSelected =
 					NonCoreColumnPropertiesWidget.this.multiValuedFieldInputField.isSelected();
 				NonCoreColumnPropertiesWidget.this.separatorInputField.setEnabled(!isSelected);
