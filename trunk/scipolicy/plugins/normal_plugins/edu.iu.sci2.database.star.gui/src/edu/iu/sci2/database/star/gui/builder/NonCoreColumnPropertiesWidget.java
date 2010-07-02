@@ -51,6 +51,7 @@ public class NonCoreColumnPropertiesWidget extends ExpandableComposite {
 		});
 
 		this.multiValuedFieldInputField.toggle();
+		System.err.println(this.multiValuedFieldInputField.isSelected());
 		this.multiValuedFieldInputField.getButton().addSelectionListener(new SelectionListener() {
 			public void widgetDefaultSelected(SelectionEvent event) {
 				selected(event);
@@ -63,7 +64,7 @@ public class NonCoreColumnPropertiesWidget extends ExpandableComposite {
 			private void selected(SelectionEvent event) {
 				boolean isSelected =
 					NonCoreColumnPropertiesWidget.this.multiValuedFieldInputField.isSelected();
-				NonCoreColumnPropertiesWidget.this.separatorInputField.setEnabled(!isSelected);
+				NonCoreColumnPropertiesWidget.this.separatorInputField.setEnabled(isSelected);
 			}
 		});
 	}
