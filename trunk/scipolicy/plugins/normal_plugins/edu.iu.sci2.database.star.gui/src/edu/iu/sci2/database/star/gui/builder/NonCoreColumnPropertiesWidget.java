@@ -51,7 +51,6 @@ public class NonCoreColumnPropertiesWidget extends ExpandableComposite {
 		});
 
 		this.multiValuedFieldInputField.toggle();
-		System.err.println(this.multiValuedFieldInputField.isSelected());
 		this.multiValuedFieldInputField.getButton().addSelectionListener(new SelectionListener() {
 			public void widgetDefaultSelected(SelectionEvent event) {
 				selected(event);
