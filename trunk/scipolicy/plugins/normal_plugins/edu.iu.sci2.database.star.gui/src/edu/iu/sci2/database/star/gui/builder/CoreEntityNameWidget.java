@@ -7,6 +7,8 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
 
+import edu.iu.cns.shared.utilities.swt.GUIBuilderUtilities;
+
 public class CoreEntityNameWidget extends Composite {
 	public static final int HEIGHT = 30;
 	public static final String LABEL_TEXT = "Core Entity Name:";
@@ -35,8 +37,7 @@ public class CoreEntityNameWidget extends Composite {
 
 	private static GridLayout createLayout() {
 		GridLayout layout = new GridLayout(2, true);
-//		Utilities.clearMargins(layout);
-		Utilities.clearSpacing(layout);
+		GUIBuilderUtilities.clearSpacing(layout);
 
 		return layout;
 	}

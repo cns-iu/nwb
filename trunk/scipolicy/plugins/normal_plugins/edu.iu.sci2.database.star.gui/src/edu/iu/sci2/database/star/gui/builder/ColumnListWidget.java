@@ -9,6 +9,7 @@ import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 
+import edu.iu.cns.shared.utilities.swt.GUIBuilderUtilities;
 import edu.iu.sci2.database.star.gui.ColumnDescriptor;
 
 public class ColumnListWidget extends ScrolledComposite {
@@ -49,8 +50,8 @@ public class ColumnListWidget extends ScrolledComposite {
 
 	private static GridLayout createLayout() {
 		GridLayout layout = new GridLayout(1, true);
-		Utilities.clearMargins(layout);
-		Utilities.clearSpacing(layout);
+		GUIBuilderUtilities.clearMargins(layout);
+		GUIBuilderUtilities.clearSpacing(layout);
 
 		return layout;
 	}
@@ -88,8 +89,8 @@ public class ColumnListWidget extends ScrolledComposite {
 
 	private static GridLayout createColumnAreaLayout() {
 		GridLayout layout = new GridLayout(1, false);
-		Utilities.clearMargins(layout);
-		Utilities.clearSpacing(layout);
+		GUIBuilderUtilities.clearMargins(layout);
+		GUIBuilderUtilities.clearSpacing(layout);
 //		layout.verticalSpacing = 2;
 
 		return layout;

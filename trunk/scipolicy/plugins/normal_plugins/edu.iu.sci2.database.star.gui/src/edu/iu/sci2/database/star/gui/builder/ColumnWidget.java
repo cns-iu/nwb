@@ -5,6 +5,7 @@ import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 
+import edu.iu.cns.shared.utilities.swt.GUIBuilderUtilities;
 import edu.iu.sci2.database.star.gui.ColumnDescriptor;
 
 public class ColumnWidget extends Composite {
@@ -53,8 +54,8 @@ public class ColumnWidget extends Composite {
 
 	private static GridLayout createLayout() {
 		GridLayout layout = new GridLayout(1, false);
-		Utilities.clearMargins(layout);
-		Utilities.clearSpacing(layout);
+		GUIBuilderUtilities.clearMargins(layout);
+		GUIBuilderUtilities.clearSpacing(layout);
 
 		return layout;
 	}

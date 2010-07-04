@@ -10,14 +10,13 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.StyledText;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
-import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.layout.GridData;
-import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
 
+import edu.iu.cns.shared.utilities.swt.GUIBuilderUtilities;
 import edu.iu.sci2.database.star.gui.ColumnDescriptor;
 import edu.iu.sci2.database.star.gui.ColumnsDataForLoader;
 import edu.iu.sci2.database.star.gui.StarDatabaseGUIAlgorithm;
@@ -53,8 +52,9 @@ public class LoadStarDatabaseGUIBuilder {
 			int windowWidth,
 			int windowHeight,
 			Collection<ColumnDescriptor> columnDescriptors) {
-		Display display = createDisplay();
-    	final Shell shell = createShell(display, windowTitle, windowWidth, windowHeight);
+		Display display = GUIBuilderUtilities.createDisplay();
+    	final Shell shell =
+    		GUIBuilderUtilities.createShell(display, windowTitle, windowWidth, windowHeight);
 
     	@SuppressWarnings("unused")
     	StyledText instructionsLabel = createInstructionsLabel(shell);
@@ -74,20 +74,9 @@ public class LoadStarDatabaseGUIBuilder {
 			}
 		});
 
-    	/* (So far, we've created the shell at the maximum possible size we'll allow (according to
-    	 *  windowHeight).  This line shrinks the shell to be a more fitting size if the actual
-    	 *  contents (i.e. our (number of) columns) are smaller than the maximum size we set.)
-    	 */
-    	Point shellSize = shell.computeSize(SWT.DEFAULT, SWT.DEFAULT);
-    	shell.setMinimumSize(shellSize.x, Math.min(windowHeight, shellSize.y));
-
     	runGUI(display, shell, columnListWidget, windowHeight);
 
     	return columnsDataForLoader[0];
-	}
-
-	private static Display createDisplay() {
-		return new Display();
 	}
 
 	private static void runGUI(
@@ -95,32 +84,13 @@ public class LoadStarDatabaseGUIBuilder {
 			Shell shell,
 			ColumnListWidget columnListWidget,
 			int windowHeight) {
-		shell.pack();
-    	shell.open();
-    	Point shellSize = shell.computeSize(SWT.DEFAULT, SWT.DEFAULT);
-    	shell.setSize(shell.getSize().x, Math.min(windowHeight, shellSize.y));
+		GUIBuilderUtilities.openShell(shell, windowHeight, true);
 
     	if (!GRAY_OUT_NON_CORE_COLUMN_CONTROLS) {
     		hackHideSomeStuff(columnListWidget);
     	}
 
-    	while (!shell.isDisposed()) {
-    		if (!display.readAndDispatch()) {
-    			display.sleep();
-    		}
-    	}
-
-    	display.dispose();
-	}
-
-	private static Shell createShell(
-			Display display, String windowTitle, int windowWidth, int windowHeight) {
-		Shell shell = new Shell(display, SWT.CLOSE | SWT.MIN | SWT.TITLE);
-		shell.setText(windowTitle);
-    	shell.setSize(windowWidth, windowHeight);
-    	shell.setLayout(createShellLayout());
-
-    	return shell;
+    	GUIBuilderUtilities.swtLoop(display, shell);
 	}
 
 	private static StyledText createInstructionsLabel(Composite parent) {
@@ -178,13 +148,6 @@ public class LoadStarDatabaseGUIBuilder {
 		finishedButton.setText(FINISHED_BUTTON_TEXT);
 
 		return finishedButton;
-	}
-
-	private static GridLayout createShellLayout() {
-		GridLayout layout = new GridLayout(1, true);
-		Utilities.clearSpacing(layout);
-
-		return layout;
 	}
 
 	private static GridData createInstructionsLabelLayoutData() {

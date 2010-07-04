@@ -8,6 +8,8 @@ import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 
+import edu.iu.cns.shared.utilities.swt.GUIBuilderUtilities;
+
 public class IsCoreColumnWidget extends Composite {
 	public static final String LABEL_TEXT = "Is Core Column?";
 	public static final String YES_BUTTON_TEXT = "Include this column in the core entity table?";
@@ -88,7 +90,7 @@ public class IsCoreColumnWidget extends Composite {
 
 	private static GridLayout createLayout() {
 		GridLayout layout = new GridLayout(1, false);
-		Utilities.clearMargins(layout);
+		GUIBuilderUtilities.clearMargins(layout);
 
 		return layout;
 	}
