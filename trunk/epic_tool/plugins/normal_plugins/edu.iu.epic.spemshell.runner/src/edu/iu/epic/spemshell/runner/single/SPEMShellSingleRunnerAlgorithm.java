@@ -96,27 +96,22 @@ public class SPEMShellSingleRunnerAlgorithm implements Algorithm {
 			 * won't be read anyhow, but to emphasize that fact,
 			 * we instead give an empty Dictionary.
 			 */
-			Dictionary<Object, Object> emptyParameters =
-				new Hashtable<Object, Object>();
+			Dictionary<String, Object> emptyParameters = new Hashtable<String, Object>();
 			
-			Algorithm spemShellCoreAlgorithm =
-				spemShellCoreAlgorithmFactory.createAlgorithm(
-						data, emptyParameters, ciContext);
-			
+			Algorithm spemShellCoreAlgorithm = spemShellCoreAlgorithmFactory.createAlgorithm(
+				data, emptyParameters, ciContext);
 			Data[] outData = spemShellCoreAlgorithm.execute();
 			File outDatFile = (File) outData[0].getData();
 		
 			return outDatFile;
 		} catch (AlgorithmExecutionException e) {
 			throw new AlgorithmExecutionException(
-				"Error running SPEMShell: " + e.getMessage(),
-				e);
+				"Error running SPEMShell: " + e.getMessage(), e);
 		}
 	}
 
-	private Data[] createSPEMShellInData(
-			Data[] data, Dictionary<String, Object> parameters)
-				throws IOException, ParseException {
+	private Data[] createSPEMShellInData(Data[] data, Dictionary<String, Object> parameters)
+			throws IOException, ParseException {
 		/* Fetch the compartment initial populations
 		 * from the algorithm parameters.
 		 */
