@@ -23,9 +23,8 @@ public class NWBFileToCernColtMatrixAlgorithm implements Algorithm {
     private boolean isWeighted;
     private String weightAttribute;
     
-    public NWBFileToCernColtMatrixAlgorithm(Data[] data,
-    										Dictionary parameters,
-    										CIShellContext context) {
+    public NWBFileToCernColtMatrixAlgorithm(
+    		Data[] data, Dictionary<String, Object> parameters, CIShellContext context) {
         this.inputData = data[0];
         this.inputFile = (File)this.inputData.getData();
         this.weightAttribute = parameters.get(WEIGHT_FIELD_ID).toString();
@@ -58,9 +57,10 @@ public class NWBFileToCernColtMatrixAlgorithm implements Algorithm {
     	}
     }
     
+    @SuppressWarnings("unchecked")	// Raw Dictionary.
     private Data[] wrapOutData(DoubleMatrix2D matrix) {
     	Data outData = new BasicData(matrix, matrix.getClass().getName());
-    	Dictionary metaData = outData.getMetadata();
+    	Dictionary<String, Object> metaData = outData.getMetadata();
     	metaData.put(DataProperty.LABEL, "As Matrix");
     	metaData.put(DataProperty.TYPE, DataProperty.MATRIX_TYPE);
     	metaData.put(DataProperty.PARENT, this.inputData);

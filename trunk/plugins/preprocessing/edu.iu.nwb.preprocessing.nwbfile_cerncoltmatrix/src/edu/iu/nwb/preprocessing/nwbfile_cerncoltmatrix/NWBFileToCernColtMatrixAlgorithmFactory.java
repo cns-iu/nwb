@@ -1,8 +1,10 @@
 package edu.iu.nwb.preprocessing.nwbfile_cerncoltmatrix;
 
 import java.io.File;
+import java.util.Arrays;
+import java.util.Collection;
 import java.util.Dictionary;
-import java.util.LinkedHashMap;
+import java.util.Map;
 
 import org.cishell.framework.CIShellContext;
 import org.cishell.framework.algorithm.Algorithm;
@@ -19,11 +21,11 @@ import edu.iu.nwb.util.nwbfile.NWBMetadataParsingException;
 
 public class NWBFileToCernColtMatrixAlgorithmFactory
 		implements AlgorithmFactory, ParameterMutator {
-	public static final String[] DEFAULT_NUMBER_KEYS_TO_ADD = { "unweighted" };
+	public static final Collection<String> DEFAULT_NUMBER_KEYS_TO_ADD =
+		Arrays.asList("unweighted");
 	
-    public Algorithm createAlgorithm(Data[] data,
-    								 Dictionary parameters,
-    								 CIShellContext context) {
+    public Algorithm createAlgorithm(
+    		Data[] data, Dictionary<String, Object> parameters, CIShellContext context) {
         return new NWBFileToCernColtMatrixAlgorithm(data, parameters, context);
     }
     
@@ -33,13 +35,13 @@ public class NWBFileToCernColtMatrixAlgorithmFactory
     	Data inData = data[0];
     	File inputNWBFile = (File)inData.getData();
     	
-    	//TODO: Create empty parameters, dude!
+    	// TODO: Create empty parameters, dude!
     	BasicObjectClassDefinition newParameters =
     		MutateParameterUtilities.createNewParameters(oldParameters);
     	AttributeDefinition[] oldAttributeDefinitions =
 			oldParameters.getAttributeDefinitions(ObjectClassDefinition.ALL);
     	
-    	LinkedHashMap edgeMetadata;
+    	Map<String, String> edgeMetadata;
 
     	try {
     		edgeMetadata = NWBFileUtilities.getEdgeMetadata(inputNWBFile);
@@ -54,16 +56,15 @@ public class NWBFileToCernColtMatrixAlgorithmFactory
 			AttributeDefinition newAttributeDefinition =
 				oldAttributeDefinition;
 			
-			if (oldAttributeDefinitionID.equals
-				(NWBFileToCernColtMatrixAlgorithm.WEIGHT_FIELD_ID))
-			{
+			if (oldAttributeDefinitionID.equals(
+					NWBFileToCernColtMatrixAlgorithm.WEIGHT_FIELD_ID)) {
 				newAttributeDefinition =
-					MutateParameterUtilities.formAttributeDefinitionFromMap
-						(oldAttributeDefinition,
-						 edgeMetadata,
-						 NWBFileUtilities.DEFAULT_NUMBER_KEY_TYPES,
-						 NWBFileUtilities.DEFAULT_NUMBER_KEYS_TO_SKIP,
-						 DEFAULT_NUMBER_KEYS_TO_ADD);
+					MutateParameterUtilities.formAttributeDefinitionFromMap(
+						oldAttributeDefinition,
+						edgeMetadata,
+						NWBFileUtilities.DEFAULT_NUMBER_KEY_TYPES,
+						NWBFileUtilities.DEFAULT_NUMBER_KEYS_TO_SKIP,
+						DEFAULT_NUMBER_KEYS_TO_ADD);
 			}
 			
 			newParameters.addAttributeDefinition(
