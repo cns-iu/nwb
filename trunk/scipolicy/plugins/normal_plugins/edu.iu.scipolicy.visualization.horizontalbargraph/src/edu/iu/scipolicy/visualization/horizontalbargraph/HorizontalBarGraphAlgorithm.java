@@ -1,8 +1,6 @@
 package edu.iu.scipolicy.visualization.horizontalbargraph;
 
 import java.io.File;
-import java.io.FileWriter;
-import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.Dictionary;
 
@@ -20,7 +18,6 @@ import org.osgi.service.log.LogService;
 import prefuse.data.Table;
 import edu.iu.cns.visualization.exception.VisualizationExportException;
 import edu.iu.scipolicy.visualization.horizontalbargraph.layout.BasicLayout;
-import edu.iu.scipolicy.visualization.horizontalbargraph.layout.BoundingBox;
 import edu.iu.scipolicy.visualization.horizontalbargraph.record.RecordCollection;
 import edu.iu.scipolicy.visualization.horizontalbargraph.record.TableRecordExtractor;
 import edu.iu.scipolicy.visualization.horizontalbargraph.record.exception.BadDatasetException;
@@ -132,9 +129,9 @@ public class HorizontalBarGraphAlgorithm implements Algorithm {
     			horizontalBarGraphGroup, layout, this.metadata, recordCollection);
     		HorizontalBarGraphVisualization visualization = generator.generateVisualization();
 
-    		BoundingBox boundingBox = layout.calculateBoundingBox(visualization.getBars());
-    		int width = (int)boundingBox.getWidth();
-    		int height = (int)boundingBox.getHeight();
+//    		BoundingBox boundingBox = layout.calculateBoundingBox(visualization.getBars());
+//    		int width = (int)boundingBox.getWidth();
+//    		int height = (int)boundingBox.getHeight();
 //    		AWTVisualizationRunner visualizationRunner = new AWTVisualizationRunner(
 //    			visualization, new Dimension(width, height));
 //    		visualizationRunner.setUp();
@@ -174,43 +171,44 @@ public class HorizontalBarGraphAlgorithm implements Algorithm {
     			HorizontalBarGraphAlgorithm.class.getResourceAsStream(STRING_TEMPLATE_FILE_PATH)));
     }
     
-    private File writePostScriptCodeToTemporaryFile(
-    		String postScriptCode, String temporaryFileName) throws AlgorithmExecutionException {
-    	File temporaryPostScriptFile = null;
-    	
-    	try {
-    		temporaryPostScriptFile = FileUtilities.createTemporaryFileInDefaultTemporaryDirectory(
-    			temporaryFileName, EPS_FILE_EXTENSION);
-    	} catch (IOException postScriptFileCreationException) {
-    		String exceptionMessage = "Error creating temporary PostScript file.";
-    		
-    		throw new AlgorithmExecutionException(
-    			exceptionMessage, postScriptFileCreationException);
-    	}
-    	
-		try {		
-			FileWriter temporaryPostScriptFileWriter = new FileWriter(temporaryPostScriptFile);
-			
-			temporaryPostScriptFileWriter.write(postScriptCode);
-			temporaryPostScriptFileWriter.flush();
-			temporaryPostScriptFileWriter.close();
-		}
-		catch (IOException postScriptFileWritingException) {
-			String exceptionMessage = "Error writing PostScript out to temporary file";
-			
-			throw new AlgorithmExecutionException(
-				exceptionMessage, postScriptFileWritingException);
-		}
-		
-		return temporaryPostScriptFile;
-    }
+//    private File writePostScriptCodeToTemporaryFile(
+//    		String postScriptCode, String temporaryFileName) throws AlgorithmExecutionException {
+//    	File temporaryPostScriptFile = null;
+//    	
+//    	try {
+//    		temporaryPostScriptFile = FileUtilities.createTemporaryFileInDefaultTemporaryDirectory(
+//    			temporaryFileName, EPS_FILE_EXTENSION);
+//    	} catch (IOException postScriptFileCreationException) {
+//    		String exceptionMessage = "Error creating temporary PostScript file.";
+//    		
+//    		throw new AlgorithmExecutionException(
+//    			exceptionMessage, postScriptFileCreationException);
+//    	}
+//    	
+//		try {		
+//			FileWriter temporaryPostScriptFileWriter = new FileWriter(temporaryPostScriptFile);
+//			
+//			temporaryPostScriptFileWriter.write(postScriptCode);
+//			temporaryPostScriptFileWriter.flush();
+//			temporaryPostScriptFileWriter.close();
+//		}
+//		catch (IOException postScriptFileWritingException) {
+//			String exceptionMessage = "Error writing PostScript out to temporary file";
+//			
+//			throw new AlgorithmExecutionException(
+//				exceptionMessage, postScriptFileWritingException);
+//		}
+//		
+//		return temporaryPostScriptFile;
+//    }
     
+    @SuppressWarnings("unchecked")
     private Data[] formOutData(File postScriptFile, Data singleInData) {
-    	Dictionary inMetaData = singleInData.getMetadata();
+    	Dictionary<String, Object> inMetaData = singleInData.getMetadata();
     	
 		Data postScriptData = new BasicData(postScriptFile, POST_SCRIPT_MIME_TYPE);
 
-		Dictionary postScriptMetaData = postScriptData.getMetadata();
+		Dictionary<String, Object> postScriptMetaData = postScriptData.getMetadata();
 
 		String label =
 			"HorizontalBarGraph_" +
