@@ -2,6 +2,8 @@ package edu.iu.nwb.analysis.blondelcommunitydetection;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.Arrays;
+import java.util.Collection;
 import java.util.Dictionary;
 import java.util.LinkedHashMap;
 
@@ -66,15 +68,12 @@ public class BlondelCommunityDetectionAlgorithmFactory implements
     		MutateParameterUtilities.createNewParameters(oldParameters);
 		AttributeDefinition[] oldAttributeDefinitions =
 			oldParameters.getAttributeDefinitions(ObjectClassDefinition.ALL);
-		String[] numberKeysTypes = new String[] {
-			NWBFileProperty.TYPE_INT, NWBFileProperty.TYPE_FLOAT
-		};
-		String[] numberKeysToSkip = new String[] {
-			NWBFileProperty.ATTRIBUTE_SOURCE, NWBFileProperty.ATTRIBUTE_TARGET
-		};
-		String[] numberKeysToAdd = new String[] {
-			BlondelCommunityDetectionAlgorithm.NO_EDGE_WEIGHT_VALUE
-		};
+		Collection<String> numberKeysTypes = Arrays.asList(
+			NWBFileProperty.TYPE_INT, NWBFileProperty.TYPE_FLOAT);
+		Collection<String> numberKeysToSkip = Arrays.asList(
+			NWBFileProperty.ATTRIBUTE_SOURCE, NWBFileProperty.ATTRIBUTE_TARGET);
+		Collection<String> numberKeysToAdd = Arrays.asList(
+			BlondelCommunityDetectionAlgorithm.NO_EDGE_WEIGHT_VALUE);
 		
 		for (AttributeDefinition oldAttributeDefinition : oldAttributeDefinitions) {
 			String oldAttributeDefinitionID = oldAttributeDefinition.getID();
@@ -98,9 +97,9 @@ public class BlondelCommunityDetectionAlgorithmFactory implements
 		return newParameters;
     }
 
-    @SuppressWarnings("unchecked")	// LinkedHashMap<String, String>
-    private LinkedHashMap getEdgeSchema(GetNWBFileMetadata nwbFileMetaDataGetter) {
-    	LinkedHashMap directedEdgeSchema = nwbFileMetaDataGetter.getDirectedEdgeSchema();
+    private LinkedHashMap<String, String> getEdgeSchema(GetNWBFileMetadata nwbFileMetaDataGetter) {
+    	LinkedHashMap<String, String> directedEdgeSchema =
+    		nwbFileMetaDataGetter.getDirectedEdgeSchema();
 
     	if (directedEdgeSchema != null) {
     		return directedEdgeSchema;

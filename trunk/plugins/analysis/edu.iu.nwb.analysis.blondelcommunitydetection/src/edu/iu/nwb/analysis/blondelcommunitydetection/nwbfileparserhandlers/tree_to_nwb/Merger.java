@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
@@ -69,12 +70,11 @@ public class Merger extends NWBFileWriter  {
 		
 		super.setNodeSchema(schema);
 	}
-	
-	@SuppressWarnings("unchecked")	// Raw Map
+
 	private void readTreeFileAndAnnotateNodes(Scanner treeFileScanner)
 			throws TreeFileParsingException {
-		Map previousMap = null;
-		Map currentMap = null;
+		Map<Integer, Integer> previousMap = null;
+		Map<Integer, Integer> currentMap = null;
 		ArrayList<Node> nodes = this.networkInfo.getNodes();
 
 		boolean shouldKeepReading = true;
@@ -88,16 +88,15 @@ public class Merger extends NWBFileWriter  {
 				
 				if (nodeID.intValue() == 0) {
 					previousMap = currentMap;
-					currentMap = new HashMap();
+					currentMap = new HashMap<Integer, Integer>();
 				}
 				
 				if (previousMap != null) {
 					// nodeID is a community from the previous level.
-					ArrayList nodesInCommunity =
+					Collection<Integer> nodesInCommunity =
 						SetUtilities.getKeysOfMapEntrySetWithValue(previousMap.entrySet(), nodeID);
-					
-					for (int ii = 0; ii < nodesInCommunity.size(); ii++) {
-						Integer currentNodeID = (Integer)nodesInCommunity.get(ii);
+
+					for (Integer currentNodeID : nodesInCommunity) {
 						currentMap.put(currentNodeID, communityID);
 						Node node = (Node)nodes.get(currentNodeID.intValue());
 						node.addCommunity(communityID, this.networkInfo);
