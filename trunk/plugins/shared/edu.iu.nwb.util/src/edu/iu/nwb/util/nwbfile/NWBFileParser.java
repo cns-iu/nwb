@@ -7,10 +7,9 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.LinkedHashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.StringTokenizer;
 
@@ -22,38 +21,9 @@ import java.util.StringTokenizer;
  * @author ValidateNWBFile.java authors
  */
 public class NWBFileParser {
-	private BufferedReader in;
+	private BufferedReader fileReader;
 	private NWBFileParserHandler handler;
-	
-	public NWBFileParser(String file) throws IOException {
-		this(new File(file));
-	}
-	
-	public NWBFileParser(File file) throws IOException {
-		this(new FileInputStream(file));
-	}
-	
-	public NWBFileParser(InputStream input) throws IOException {
-		in = new BufferedReader(new InputStreamReader(input,"UTF-8"));
-	}
 
-	public void parse(NWBFileParserHandler handler) throws ParsingException, IOException {
-		this.handler = handler;
-		
-		try {
-			processFile(in);
-		} catch (IOException e) {
-			throw e;
-		}catch (Exception e) {
-			throw new ParsingException(e);
-		} finally {
-			handler.finishedParsing();
-		}
-		if (errorMessages.length() > 0) {
-			throw new ParsingException(errorMessages.toString());
-		}
-	}
-	
 	/***** Start adapted guts from ValidateNWBFile. *****/
 	private boolean hasHeader_Nodes = false;
 	private boolean hasHeader_UndirectedEdges = false;
@@ -64,152 +34,186 @@ public class NWBFileParser {
 	private boolean inDirectededgesSection = false;
 	private boolean hasTotalNumOfNodes = false;
 
-	//if true, it indicates the previous line is a section header
-	//It is useful to parse the attribute line
+	/* If true, it indicates the previous line is a section header.
+	 * It is useful to parse the attribute line.
+	 */
 	private boolean passHeader = false;
 
-	private int totalNumOfNodes, currentLine, countedNumDirected, countedNumUnDirected, countedNodes;
+	private int totalNumOfNodes;
+	private int currentLine;
+	private int countedNumDirected;
+	private int countedNumUndirected;
+	private int countedNodes;
 
 	private StringBuffer errorMessages = new StringBuffer();
 
-	private List nodeAttrList, directedEdgeAttrList, undirectedEdgeAttrList;
+	private Collection<NWBAttribute> nodeAttributes;
+	private Collection<NWBAttribute> directedEdgeAttributes;
+	private Collection<NWBAttribute> undirectedEdgeAttributes;
+	
+	public NWBFileParser(String file) throws IOException {
+		this(new File(file));
+	}
+	
+	public NWBFileParser(File file) throws IOException {
+		this(new FileInputStream(file));
+	}
+	
+	public NWBFileParser(InputStream input) throws IOException {
+		this.fileReader = new BufferedReader(new InputStreamReader(input, "UTF-8"));
+	}
+
+	public void parse(NWBFileParserHandler handler) throws ParsingException, IOException {
+		this.handler = handler;
+		
+		try {
+			processFile(fileReader);
+		} catch (IOException e) {
+			throw e;
+		}catch (Exception e) {
+			throw new ParsingException(e);
+		} finally {
+			handler.finishedParsing();
+		}
+		if (this.errorMessages.length() > 0) {
+			throw new ParsingException(this.errorMessages.toString());
+		}
+	}
 
 	private void processFile(BufferedReader reader) throws IOException {
 		String line = reader.readLine();
 		
-		while (line != null && isFileGood && !handler.haltParsingNow()) {
-			currentLine++;
+		while ((line != null) && this.isFileGood && !this.handler.haltParsingNow()) {
+			this.currentLine++;
 			line = line.trim();
 			
 			if (line.startsWith(NWBFileProperty.PREFIX_COMMENTS)) { 
-				handler.addComment(line.substring(1));
+				this.handler.addComment(line.substring(1));
 			} else if (line.length() == 0) {
 			} else if (validateNodeHeader(line)) {
 			} else if (validateDirectedEdgeHeader(line)) {
-			} else if(validateUndirectedEdgeHeader(line)) {
-			} else if (inNodesSection && isFileGood) {
+			} else if (validateUndirectedEdgeHeader(line)) {
+			} else if (this.inNodesSection && this.isFileGood) {
 				processNodes(line);
-			} else if (inDirectededgesSection && isFileGood) {
+			} else if (this.inDirectededgesSection && this.isFileGood) {
 				processDirectedEdges(line);
-			} else if (inUndirectededgesSection && isFileGood) {
+			} else if (this.inUndirectededgesSection && this.isFileGood) {
 				processUndirectedEdges(line);
 			}
 			
 			line = reader.readLine();
 		}
 
-		if (handler.haltParsingNow()) {
-			//the Handler has said to stop, so we assume
-			//no error messages should be thrown.
-			errorMessages = new StringBuffer();
+		if (this.handler.haltParsingNow()) {
+			// The handler has said to stop, so we assume no error messages should be thrown.
+			this.errorMessages = new StringBuffer();
 		} else {
-			if (isFileGood) {
+			if (this.isFileGood) {
 				checkFile();
 			}
 			
-			if(this.hasTotalNumOfNodes && ((this.countedNodes) != this.totalNumOfNodes)){
-				isFileGood = false; //I'm not sure if we should set this to false or not.
-				errorMessages.append("There was an inconsistency between the specified number of nodes: " 
-						+ this.totalNumOfNodes + " and the " +
-						"number of nodes counted: " + this.countedNodes);  
+			if (this.hasTotalNumOfNodes && ((this.countedNodes) != this.totalNumOfNodes)){
+				// I'm not sure if we should set this to false or not.
+				this.isFileGood = false;
+				this.errorMessages.append(
+					"There was an inconsistency between the specified number of nodes: " +
+					this.totalNumOfNodes + " and the " +
+					"number of nodes counted: " + this.countedNodes);  
 			}
 			
 			this.totalNumOfNodes = this.countedNodes;
 		}
-		in.close();
+
+		this.fileReader.close();
 	}
 	
 	
 	private void checkFile() {
-		if (!hasHeader_Nodes) {
-			isFileGood = false;
-			errorMessages
-					.append("*The file does not specify the node header.\n\n");
-		} else if (!hasHeader_DirectedEdges && !hasHeader_UndirectedEdges) {
-			isFileGood = false;
-			errorMessages.append("This file has not specified a valid edge header.");
+		if (!this.hasHeader_Nodes) {
+			this.isFileGood = false;
+			this.errorMessages.append("*The file does not specify the node header.\n\n");
+		} else if (!this.hasHeader_DirectedEdges && !this.hasHeader_UndirectedEdges) {
+			this.isFileGood = false;
+			this.errorMessages.append("This file has not specified a valid edge header.");
 		} 		
 	}
 	
 	/**
-	 *  validateNodeHeader takes in a string and checks to see if it starts with 
+	 *  validateNodeHeader takes fileReader a string and checks to see if it starts with 
 	 *  *nodes with an optional integer following the nodes declaration.
 	 */
+	private boolean validateNodeHeader(String header) throws IOException {
+		if (header.startsWith(NWBFileProperty.HEADER_NODE)) {
+			this.hasHeader_Nodes = true;
+			this.inNodesSection = true;
+			this.inDirectededgesSection = false;
+			this.inUndirectededgesSection = false;
+			this.passHeader = true;
+			this.nodeAttributes = new ArrayList<NWBAttribute>();
 
-	private boolean validateNodeHeader(String s) throws IOException {
-		
-		if (s.startsWith(NWBFileProperty.HEADER_NODE)) {
-			hasHeader_Nodes = true;
-			inNodesSection = true;
-			inDirectededgesSection = false;
-			inUndirectededgesSection = false;
-			passHeader = true;
-			nodeAttrList = new ArrayList();
+			// Get the total number of nodes.
+			StringTokenizer stringTokenizer = new StringTokenizer(header);
 
-			//get the total number of nodes
-			StringTokenizer st = new StringTokenizer(s);
-			if (st.countTokens() > 1) {
-				st.nextToken();
-				//*****If it is not an integer...
-				totalNumOfNodes = new Integer(st.nextToken()).intValue();
-				hasTotalNumOfNodes = true;
+			if (stringTokenizer.countTokens() > 1) {
+				stringTokenizer.nextToken();
+				// *****If it is not an integer...
+				this.totalNumOfNodes = new Integer(stringTokenizer.nextToken()).intValue();
+				this.hasTotalNumOfNodes = true;
 				
-				handler.setNodeCount(totalNumOfNodes);
+				this.handler.setNodeCount(totalNumOfNodes);
 			} else {
-				hasTotalNumOfNodes = false;
+				this.hasTotalNumOfNodes = false;
 			}
-			return true;
 
-		}
-		else{
-//			String lower = s.toLowerCase();
-//			if(lower.equals(NWBFileProperty.HEADER_NODE.toLowerCase())){
-			if(s.equalsIgnoreCase(NWBFileProperty.HEADER_NODE)){
-				isFileGood = false;
-				errorMessages
-				.append("The header of the node section in an nwb file should be "+
-						NWBFileProperty.HEADER_NODE+
-						" and it is case sensitive. The current header is "+s+".\n\n");
+			return true;
+		} else {
+			if (header.equalsIgnoreCase(NWBFileProperty.HEADER_NODE)){
+				this.isFileGood = false;
+				this.errorMessages.append(
+					"The header of the node section fileReader an nwb file should be " +
+					NWBFileProperty.HEADER_NODE +
+					" and it is case sensitive. The current header is "+header+".\n\n");
+
 				return false;				
 			}			
 		}
+
 		return false;
 
 	}
 
 	/*
-	 * validateDirectedEdgeHeader takes a string corresponding to a line in the current NWB file 
+	 * validateDirectedEdgeHeader takes a string corresponding to a line fileReader the current NWB file 
 	 * being processed.  The function returns a boolean corresponding to whether the string
 	 * is a header for a directed edge.
 	 */
-	private boolean validateDirectedEdgeHeader(String s) throws IOException {
-		if (s.startsWith(NWBFileProperty.HEADER_DIRECTED_EDGES)) {
-			hasHeader_DirectedEdges = true;
-			inDirectededgesSection = true;
-			inNodesSection = false;
-			inUndirectededgesSection = false;
-			passHeader = true;
-			directedEdgeAttrList = new ArrayList();
+	private boolean validateDirectedEdgeHeader(String header) throws IOException {
+		if (header.startsWith(NWBFileProperty.HEADER_DIRECTED_EDGES)) {
+			this.hasHeader_DirectedEdges = true;
+			this.inDirectededgesSection = true;
+			this.inNodesSection = false;
+			this.inUndirectededgesSection = false;
+			this.passHeader = true;
+			this.directedEdgeAttributes = new ArrayList<NWBAttribute>();
 			
-			//get the total number of edges, if available
-			StringTokenizer st = new StringTokenizer(s);
-			if (st.countTokens() > 1) {
-				st.nextToken();
-				//*****If it is not an integer...
-				int totalEdges = new Integer(st.nextToken()).intValue();
-				handler.setDirectedEdgeCount(totalEdges);
+			// Get the total number of edges, if available.
+			StringTokenizer tokenizer = new StringTokenizer(header);
+			if (tokenizer.countTokens() > 1) {
+				tokenizer.nextToken();
+				// *****If it is not an integer...
+				int totalEdges = new Integer(tokenizer.nextToken()).intValue();
+				this.handler.setDirectedEdgeCount(totalEdges);
 			}
+
 			return true;
-		}
-		else{
-//			String lower = s.toLowerCase();
-//			if(lower.equals(NWBFileProperty.HEADER_DIRECTED_EDGES.toLowerCase())){
-			if(s.equalsIgnoreCase(NWBFileProperty.HEADER_DIRECTED_EDGES)){
-				isFileGood = false;
-				errorMessages
-				.append("The header of the directed edge section should be "+
-						NWBFileProperty.HEADER_DIRECTED_EDGES+
-						" and it is case sensitive. The current header is "+s+".\n\n");
+		} else {
+			if (header.equalsIgnoreCase(NWBFileProperty.HEADER_DIRECTED_EDGES)) {
+				this.isFileGood = false;
+				this.errorMessages.append(
+					"The header of the directed edge section should be " +
+					NWBFileProperty.HEADER_DIRECTED_EDGES +
+					" and it is case sensitive. The current header is " + header + ".\n\n");
+
 				return false;				
 			}			
 		}
@@ -221,34 +225,34 @@ public class NWBFileParser {
 	 * validateUndirectedEdgeHeader will check the input string and return true if that string
 	 * refers to a valid undirected edge header.
 	 */
-	private boolean validateUndirectedEdgeHeader(String s) throws IOException {
-		if (s.startsWith(NWBFileProperty.HEADER_UNDIRECTED_EDGES)) {
-			hasHeader_UndirectedEdges = true;
-			inUndirectededgesSection = true;
-			inNodesSection = false;
-			inDirectededgesSection = false;
-			passHeader = true;
-			undirectedEdgeAttrList = new ArrayList();
+	private boolean validateUndirectedEdgeHeader(String header) throws IOException {
+		if (header.startsWith(NWBFileProperty.HEADER_UNDIRECTED_EDGES)) {
+			this.hasHeader_UndirectedEdges = true;
+			this.inUndirectededgesSection = true;
+			this.inNodesSection = false;
+			this.inDirectededgesSection = false;
+			this.passHeader = true;
+			this.undirectedEdgeAttributes = new ArrayList<NWBAttribute>();
 			
-			//get the total number of edges, if available
-			StringTokenizer st = new StringTokenizer(s);
-			if (st.countTokens() > 1) {
-				st.nextToken();
-				//*****If it is not an integer...
-				int totalEdges = new Integer(st.nextToken()).intValue();
-				handler.setUndirectedEdgeCount(totalEdges);
+			// Get the total number of edges, if available.
+			StringTokenizer tokenizer = new StringTokenizer(header);
+
+			if (tokenizer.countTokens() > 1) {
+				tokenizer.nextToken();
+				// *****If it is not an integer...
+				int totalEdges = new Integer(tokenizer.nextToken()).intValue();
+				this.handler.setUndirectedEdgeCount(totalEdges);
 			}
+
 			return true;
-		}
-		else{
-			//String lower = s.toLowerCase();
-			//if(lower.equals(NWBFileProperty.HEADER_UNDIRECTED_EDGES.toLowerCase())){
-			if(s.equalsIgnoreCase(NWBFileProperty.HEADER_UNDIRECTED_EDGES)){
-				isFileGood = false;
-				errorMessages
-				.append("The header of the undirected edge section should be "+
-						NWBFileProperty.HEADER_UNDIRECTED_EDGES+
-						" and it is case sensitive. The current header is "+s+".\n\n");
+		} else {
+			if (header.equalsIgnoreCase(NWBFileProperty.HEADER_UNDIRECTED_EDGES)){
+				this.isFileGood = false;
+				this.errorMessages.append(
+					"The header of the undirected edge section should be " +
+					NWBFileProperty.HEADER_UNDIRECTED_EDGES +
+					" and it is case sensitive. The current header is "+header+".\n\n");
+
 				return false;				
 			}			
 		}
@@ -259,254 +263,271 @@ public class NWBFileParser {
 	/*
 	 * 
 	 */
-	private void processNodes(String s) {
-		//s = s.toLowerCase();
-		if (passHeader) {// if previous line is a node header
+	private void processNodes(String rawNodes) {
+		if (this.passHeader) {// if previous line is a node header
 			/*
-			 * get attribute line handle only one case: 
+			 * Get attribute line handle only one case: 
 			 * id*int label*string attr3*dataType .... 
 			 */
-			if (s.startsWith(NWBFileProperty.ATTRIBUTE_ID)) {
+			if (rawNodes.startsWith(NWBFileProperty.ATTRIBUTE_ID)) {
 				// process attribut line
-				StringTokenizer st = new StringTokenizer(s);
+				StringTokenizer st = new StringTokenizer(rawNodes);
 				int totalTokens = st.countTokens();
 				for (int i = 1; i <= totalTokens; i++) {
 					// process token
 					try {
-						NWBAttribute attr = processAttrToken(st.nextToken());
-						nodeAttrList.add(attr);
+						NWBAttribute attribute = processAttributeToken(st.nextToken());
+						this.nodeAttributes.add(attribute);
 					} catch (Exception e) {
-						isFileGood = false;
-						errorMessages.append("*Wrong NWB format at line "
-								+ currentLine + ".\n" + e.toString()+"\n\n");
+						this.isFileGood = false;
+						this.errorMessages.append(
+							"*Wrong NWB format at line " +
+							this.currentLine + ".\n" + e.toString() + "\n\n");
+
 						break;
 					}
 				}
 				
-				if (isFileGood) {
-					LinkedHashMap nodeSchema = new LinkedHashMap();
-					for (Iterator attrs = nodeAttrList.iterator(); attrs.hasNext(); ) {
-						NWBAttribute attr = (NWBAttribute) attrs.next();
-						
-						nodeSchema.put(attr.getAttrName(), attr.getDataType());
+				if (this.isFileGood) {
+					LinkedHashMap<String, String> nodeSchema = new LinkedHashMap<String, String>();
+
+					for (NWBAttribute attribute : this.nodeAttributes) {
+						nodeSchema.put(attribute.getAttrName(), attribute.getDataType());
 					}
-					handler.setNodeSchema(nodeSchema);
+
+					this.handler.setNodeSchema(nodeSchema);
 				}
 			}
 			else {
-				isFileGood = false;
-				errorMessages.append("*Wrong NWB format at line "
-						+ currentLine + ". The attribute line is missing.\n\n");
+				this.isFileGood = false;
+				this.errorMessages.append(
+					"*Wrong NWB format at line " +
+					this.currentLine + ". The attribute line is missing.\n\n");
 				
 			}
-			passHeader = false;
+
+			this.passHeader = false;
 			
 		} else {// process node list
-			// based on nodeAttrList to detect each node item in the node list
+			// based on nodeAttributes to detect each node item fileReader the node list
 			// basically, make sure if there's a value, the value belongs to the
 			// declared data type. If it is a string, it must be surrounded by double
 			// quotations.
 			try {
-				Map attr = validateALine(s, nodeAttrList);
-				int id = ((Integer)attr.remove(NWBFileProperty.ATTRIBUTE_ID)).intValue();
-				String label = (String) attr.remove(NWBFileProperty.ATTRIBUTE_LABEL);
-					
-				handler.addNode(id, label, attr);
+				Map<String, Object> attributes = validateALine(rawNodes, this.nodeAttributes);
+				int id = ((Integer) attributes.remove(NWBFileProperty.ATTRIBUTE_ID)).intValue();
+				String label = (String) attributes.remove(NWBFileProperty.ATTRIBUTE_LABEL);
+				this.handler.addNode(id, label, attributes);
 				
 				this.countedNodes++;
 			} catch (Exception e) {
-				isFileGood = false;
-				errorMessages.append("*Wrong NWB format at line " + currentLine
-						+ ".\n" + e.toString() + "\n\n");
+				this.isFileGood = false;
+				this.errorMessages.append(
+					"*Wrong NWB format at line " +
+					this.currentLine + ".\n" + e.toString() + "\n\n");
 			}
 		}
 
 	}
 
-	private void processDirectedEdges(String s) {
-		//s.toLowerCase();
-		if (passHeader) {// if previous line is an edge header
+	private void processDirectedEdges(String rawDirectedEdges) {
+		if (this.passHeader) {// if previous line is an edge header
 			/*
 			 * get attribute line handle only one case:
 			 * source*int target*int attr3*dataType .... 
 			 */
-			if (s.startsWith(NWBFileProperty.ATTRIBUTE_SOURCE)) {
+			if (rawDirectedEdges.startsWith(NWBFileProperty.ATTRIBUTE_SOURCE)) {
 				// process attribut line
-				StringTokenizer st = new StringTokenizer(s);
-				int tokens = st.countTokens();
-				for (int i = 1; i <= tokens; i++) {
-					String token = st.nextToken();
-					// process token
+				StringTokenizer tokenizer = new StringTokenizer(rawDirectedEdges);
+				int tokens = tokenizer.countTokens();
+
+				for (int ii = 1; ii <= tokens; ii++) {
+					String token = tokenizer.nextToken();
+					// Process token.
 					try {
-						NWBAttribute attr = processAttrToken(token);
-						directedEdgeAttrList.add(attr);
+						NWBAttribute attribute = processAttributeToken(token);
+						this.directedEdgeAttributes.add(attribute);
 					} catch (Exception e) {
-						isFileGood = false;
-						errorMessages.append("*Wrong NWB format at line "
-								+ currentLine + ".\n" + e.toString() + "\n\n");
+						this.isFileGood = false;
+						this.errorMessages.append(
+							"*Wrong NWB format at line " +
+							this.currentLine + ".\n" + e.toString() + "\n\n");
+
 						break;
 					}
 				}
 				
-				if (isFileGood) {
-					LinkedHashMap edgeSchema = new LinkedHashMap();
-					for (Iterator attrs = directedEdgeAttrList.iterator(); attrs.hasNext(); ) {
-						NWBAttribute attr = (NWBAttribute) attrs.next();
-						
-						edgeSchema.put(attr.getAttrName(), attr.getDataType());
+				if (this.isFileGood) {
+					LinkedHashMap<String, String> edgeSchema = new LinkedHashMap<String, String>();
+
+					for (NWBAttribute attribute : this.directedEdgeAttributes) {
+						edgeSchema.put(attribute.getAttrName(), attribute.getDataType());
 					}
-					handler.setDirectedEdgeSchema(edgeSchema);
+
+					this.handler.setDirectedEdgeSchema(edgeSchema);
 				}
+			} else {
+					this.isFileGood = false;
+					this.errorMessages.append(
+						"*Wrong NWB format at line " +
+						this.currentLine + ".\n" + "The attribute line is missing.\n\n");
 			}
-			else {
-					isFileGood = false;
-					errorMessages
-							.append("*Wrong NWB format at line "
-									+ currentLine
-									+ ".\n"
-									+ "The attribute line is missing.\n\n");
-			}
-			passHeader = false;
-			
+
+			this.passHeader = false;
 		} else {
 			try {
-				Map attr = validateALine(s, directedEdgeAttrList);
-				int src = ((Integer)attr.remove(NWBFileProperty.ATTRIBUTE_SOURCE)).intValue();
-				int target = ((Integer)attr.remove(NWBFileProperty.ATTRIBUTE_TARGET)).intValue();
+				Map<String, Object> attributes = validateALine(rawDirectedEdges, this.directedEdgeAttributes);
+				int source =
+					((Integer) attributes.remove(NWBFileProperty.ATTRIBUTE_SOURCE)).intValue();
+				int target =
+					((Integer) attributes.remove(NWBFileProperty.ATTRIBUTE_TARGET)).intValue();
 					
-				handler.addDirectedEdge(src, target, attr);
+				this.handler.addDirectedEdge(source, target, attributes);
 				
 				this.countedNumDirected++;
-			//TODO: make this not catch everything as an error with the NWB format, because it should be possible to throw Exceptions in an implementation to reflect other issues and handle them yourself.
+			/* TODO: Make this not catch everything as an error with the NWB format,
+			 *  because it should be possible to throw Exceptions fileReader an implementation to
+			 *  reflect other issues and handle them yourself.
+			 */
 			} catch (Exception e) {
-				isFileGood = false;
-				errorMessages.append("*Wrong NWB format at line " + currentLine
-						+ ".\n" + e.toString() + "\n\n");
+				this.isFileGood = false;
+				this.errorMessages.append(
+					"*Wrong NWB format at line " +
+					this.currentLine + ".\n" + e.toString() + "\n\n");
 			}
 		}
 	}
 
-	private void processUndirectedEdges(String s) {
-		//s.toLowerCase();
-		if (passHeader) {// if previous line is an edge header
+	private void processUndirectedEdges(String rawUndirectedEdges) {
+		// If previous line is an edge header.
+		if (this.passHeader) {
 			/*
-			 * get attribute line handle one cases: 
+			 * Get attribute line handle one cases: 
 			 * source*int target*int attr3*dataType .... 
 			 */
-			if (s.startsWith(NWBFileProperty.ATTRIBUTE_SOURCE)) {
+			if (rawUndirectedEdges.startsWith(NWBFileProperty.ATTRIBUTE_SOURCE)) {
 				// process attribut line
-				StringTokenizer st = new StringTokenizer(s);
-				int tokens = st.countTokens();
-				for (int i = 1; i <= tokens; i++) {
-					String token = st.nextToken();
-					// process token
+				StringTokenizer tokenizer = new StringTokenizer(rawUndirectedEdges);
+				int tokens = tokenizer.countTokens();
+
+				for (int ii = 1; ii <= tokens; ii++) {
 					try {
-						NWBAttribute attr = processAttrToken(token);
-						undirectedEdgeAttrList.add(attr);
+						String token = tokenizer.nextToken();
+						NWBAttribute attribute = processAttributeToken(token);
+						this.undirectedEdgeAttributes.add(attribute);
 					} catch (Exception e) {
-						isFileGood = false;
-						errorMessages.append("*Wrong NWB format at line "
-								+ currentLine + ".\n" + e.toString() + "\n\n");
+						this.isFileGood = false;
+						this.errorMessages.append(
+							"*Wrong NWB format at line " +
+							this.currentLine + ".\n" + e.toString() + "\n\n");
+
 						break;
 					}
 				}
 				
-				if (isFileGood) {
-					LinkedHashMap edgeSchema = new LinkedHashMap();
-					for (Iterator attrs = undirectedEdgeAttrList.iterator(); attrs.hasNext(); ) {
-						NWBAttribute attr = (NWBAttribute) attrs.next();
-						
-						edgeSchema.put(attr.getAttrName(), attr.getDataType());
+				if (this.isFileGood) {
+					LinkedHashMap<String, String> edgeSchema = new LinkedHashMap<String, String>();
+
+					for (NWBAttribute attribute : this.undirectedEdgeAttributes) {
+						edgeSchema.put(attribute.getAttrName(), attribute.getDataType());
 					}
-					handler.setUndirectedEdgeSchema(edgeSchema);
+
+					this.handler.setUndirectedEdgeSchema(edgeSchema);
 				}
+			} else {
+				this.isFileGood = false;
+				this.errorMessages.append(
+					"*Wrong NWB format at line " + this.currentLine + ".\n" +
+					"The attribute line is missing.\n\n");
 			}
-			else {
-					isFileGood = false;
-					errorMessages
-							.append("*Wrong NWB format at line "
-									+ currentLine
-									+ ".\n"
-									+ "The attribute line is missing.\n\n");
-			}
-			passHeader = false;			
+
+			this.passHeader = false;			
 		} else {
 			try {
-				Map attr = validateALine(s, undirectedEdgeAttrList);
-				int src = ((Integer)attr.remove(NWBFileProperty.ATTRIBUTE_SOURCE)).intValue();
-				int target = ((Integer)attr.remove(NWBFileProperty.ATTRIBUTE_TARGET)).intValue();
-					
-				handler.addUndirectedEdge(src, target, attr);
-				
-				this.countedNumUnDirected++;
+				Map<String, Object> attributes = validateALine(rawUndirectedEdges, this.undirectedEdgeAttributes);
+				int source =
+					((Integer) attributes.remove(NWBFileProperty.ATTRIBUTE_SOURCE)).intValue();
+				int target =
+					((Integer) attributes.remove(NWBFileProperty.ATTRIBUTE_TARGET)).intValue();
+
+				this.handler.addUndirectedEdge(source, target, attributes);
+				this.countedNumUndirected++;
 
 			} catch (Exception e) {
-				isFileGood = false;
-				errorMessages.append("*Wrong NWB format at line " + currentLine
-						+ ".\n" + e.toString() + "\n\n");
+				this.isFileGood = false;
+				this.errorMessages.append(
+					"*Wrong NWB format at line " +
+					this.currentLine + ".\n" + e.toString() + "\n\n");
 			}
 		}
 	}
 
-	private Map validateALine(String line, List attrList) throws Exception {
-		StringTokenizer st = new StringTokenizer(line);
-		int totalTokens = st.countTokens();
-		if (totalTokens < attrList.size())
-			//TODO: don't throw generic exceptions
-			throw new Exception(
-					"Did not specify all values for defined attributes!");
-		Map entity = new HashMap();
-		String[] columns = processTokens(st);
-		for (int i = 0; i < attrList.size(); i++) {
-			NWBAttribute nwbAttr = (NWBAttribute) attrList.get(i);
-			String dt = nwbAttr.getDataType();
-			if(columns[i].equalsIgnoreCase("*")){
-			}
-			else if (dt.equalsIgnoreCase(NWBFileProperty.TYPE_STRING)) {
-				isAString(columns[i], nwbAttr.getAttrName());
-				
-				columns[i] = columns[i].replace('\"', ' ').trim();
-				entity.put(nwbAttr.getAttrName(), columns[i]);
-			} else if (dt.equalsIgnoreCase(NWBFileProperty.TYPE_INT)) {
-				isAnInteger(columns[i], nwbAttr.getAttrName());
-				entity.put(nwbAttr.getAttrName(), new Integer(columns[i]));
-			} else if (dt.equalsIgnoreCase(NWBFileProperty.TYPE_FLOAT)||
-					dt.equalsIgnoreCase(NWBFileProperty.TYPE_REAL)) {
-				isAFloat(columns[i], nwbAttr.getAttrName());
-				entity.put(nwbAttr.getAttrName(), new Float(columns[i]));
+	private Map<String, Object> validateALine(
+			String line, Collection<NWBAttribute> attributes) throws Exception {
+		StringTokenizer stringTokenizer = new StringTokenizer(line);
+		int totalTokens = stringTokenizer.countTokens();
+
+		if (totalTokens < attributes.size()) {
+			// TODO: Don't throw generic exceptions.
+			throw new Exception("Did not specify all values for defined attributes!");
+		}
+
+		Map<String, Object> entity = new HashMap<String, Object>();
+		String[] columns = processTokens(stringTokenizer);
+
+		int columnIndex = -1;
+		for (NWBAttribute nwbAttribute : attributes) {
+			columnIndex++;
+			String dataType = nwbAttribute.getDataType();
+
+			if (columns[columnIndex].equalsIgnoreCase("*")) {}
+			else if (dataType.equalsIgnoreCase(NWBFileProperty.TYPE_STRING)) {
+				validateIsAString(columns[columnIndex], nwbAttribute.getAttrName());
+				columns[columnIndex] = columns[columnIndex].replace('\"', ' ').trim();
+				entity.put(nwbAttribute.getAttrName(), columns[columnIndex]);
+			} else if (dataType.equalsIgnoreCase(NWBFileProperty.TYPE_INT)) {
+				validateIsAnInteger(columns[columnIndex], nwbAttribute.getAttrName());
+				entity.put(nwbAttribute.getAttrName(), new Integer(columns[columnIndex]));
+			} else if (dataType.equalsIgnoreCase(NWBFileProperty.TYPE_FLOAT)||
+					dataType.equalsIgnoreCase(NWBFileProperty.TYPE_REAL)) {
+				validateIsAFloat(columns[columnIndex], nwbAttribute.getAttrName());
+				entity.put(nwbAttribute.getAttrName(), new Float(columns[columnIndex]));
 			}
 		}
+
 		return entity;
 	}
 
-	private boolean isAnInteger(String input, String attr)
+	private boolean validateIsAnInteger(String input, String attribute)
 			throws NumberFormatException, Exception {
 		Integer value = new Integer(input);
-		if (attr.equalsIgnoreCase(NWBFileProperty.ATTRIBUTE_ID)
-				|| attr.equalsIgnoreCase(NWBFileProperty.ATTRIBUTE_SOURCE)
-				|| attr.equalsIgnoreCase(NWBFileProperty.ATTRIBUTE_TARGET)) {
+		if (attribute.equalsIgnoreCase(NWBFileProperty.ATTRIBUTE_ID) ||
+				attribute.equalsIgnoreCase(NWBFileProperty.ATTRIBUTE_SOURCE) ||
+				attribute.equalsIgnoreCase(NWBFileProperty.ATTRIBUTE_TARGET)) {
 			if (value.intValue() < 1)
 				throw new Exception("The node id must be greater than 0.");
 		}
+
 		return true;
 	}
 
-	private boolean isAString(String input, String attr) throws Exception {
+	private boolean validateIsAString(String input, String attribute) throws Exception {
 		if (!input.startsWith("\"") || !input.endsWith("\"")) {
-			throw new Exception(
-					"A string value must be surrounded by double quatation marks.");
+			throw new Exception("A string value must be surrounded by double quatation marks.");
 		}
+
 		return true;
 	}
 
-	private boolean isAFloat(String input, String attr)
+	private boolean validateIsAFloat(String input, String attribute)
 			throws NumberFormatException, Exception {
-		Float f = new Float(input);
-		f.floatValue();
+		Float floatValue = new Float(input);
+		floatValue.floatValue();
+
 		return true;
 	}
 
-	private NWBAttribute processAttrToken(String token) throws Exception {
+	private NWBAttribute processAttributeToken(String token) throws Exception {
 		if (token.indexOf("*") != -1) {
 			String attr_name = token.substring(0, token.indexOf("*"));
 			if (attr_name.startsWith("//"))
@@ -519,7 +540,7 @@ public class NWBFileParser {
 				throw new Exception(
 						"The data type of the attribute "
 								+ attr_name
-								+ " is not acceptable. Only float, int and string are valid data types in the NWB format.\n" +
+								+ " is not acceptable. Only float, int and string are valid data types fileReader the NWB format.\n" +
 										"You supplied an attribute of " + attr_type);
 			} else
 				return new NWBAttribute(attr_name, attr_type);

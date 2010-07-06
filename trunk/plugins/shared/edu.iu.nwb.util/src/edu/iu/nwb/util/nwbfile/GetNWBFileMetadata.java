@@ -9,42 +9,42 @@ import java.util.Map;
  * @author Bruce Herr (bh2@bh2.net)
  */
 public class GetNWBFileMetadata extends NWBFileParserAdapter {
-	private LinkedHashMap nodeSchema;
-	private LinkedHashMap directedEdgeSchema;
-	private LinkedHashMap undirectedEdgeSchema;
+	private LinkedHashMap<String, String> nodeSchema;
+	private LinkedHashMap<String, String> directedEdgeSchema;
+	private LinkedHashMap<String, String> undirectedEdgeSchema;
 	
 	private int nodeCount = 0;
 	private int directedEdgeCount = 0;
 	private int undirectedEdgeCount = 0;
 	
-	public LinkedHashMap getNodeSchema() {
-		return nodeSchema;
+	public LinkedHashMap<String, String> getNodeSchema() {
+		return this.nodeSchema;
 	}
-	public void setNodeSchema(LinkedHashMap nodeSchema) {
+	public void setNodeSchema(LinkedHashMap<String, String> nodeSchema) {
 		this.nodeSchema = nodeSchema;
 	}
-	public LinkedHashMap getDirectedEdgeSchema() {
-		return directedEdgeSchema;
+	public LinkedHashMap<String, String> getDirectedEdgeSchema() {
+		return this.directedEdgeSchema;
 	}
-	public void setDirectedEdgeSchema(LinkedHashMap directedEdgeSchema) {
+	public void setDirectedEdgeSchema(LinkedHashMap<String, String> directedEdgeSchema) {
 		this.directedEdgeSchema = directedEdgeSchema;
 	}
-	public LinkedHashMap getUndirectedEdgeSchema() {
-		return undirectedEdgeSchema;
+	public LinkedHashMap<String, String> getUndirectedEdgeSchema() {
+		return this.undirectedEdgeSchema;
 	}
-	public void setUndirectedEdgeSchema(LinkedHashMap undirectedEdgeSchema) {
+	public void setUndirectedEdgeSchema(LinkedHashMap<String, String> undirectedEdgeSchema) {
 		this.undirectedEdgeSchema = undirectedEdgeSchema;
 	}
 	
-	public void addNode(int id, String label, Map attributes) {
+	public void addNode(int id, String label, Map<String, Object> attributes) {
 		this.nodeCount++;
 	}
 	
-	public void addDirectedEdge(int sourceNode, int targetNode, Map attributes) {
+	public void addDirectedEdge(int sourceNode, int targetNode, Map<String, Object> attributes) {
 		this.directedEdgeCount++;
 	}
 	
-	public void addUndirectedEdge(int node1, int node2, Map attributes) {
+	public void addUndirectedEdge(int node1, int node2, Map<String, Object> attributes) {
 		this.undirectedEdgeCount++;
 	}
 	
@@ -65,6 +65,9 @@ public class GetNWBFileMetadata extends NWBFileParserAdapter {
 	}
 	
 	public boolean haltParsingNow() { 
-		return nodeSchema != null && directedEdgeSchema != null && undirectedEdgeSchema != null; 
+		return
+			(this.nodeSchema != null) &&
+			(this.directedEdgeSchema != null) &&
+			(this.undirectedEdgeSchema != null); 
 	}
 }

@@ -37,7 +37,7 @@ public interface NWBFileParserHandler {
 	 * 
 	 * @param schema The node schema, a Map from attribute->expected type
 	 */
-	public void setNodeSchema(LinkedHashMap schema);
+	public void setNodeSchema(LinkedHashMap<String, String> schema);
 	
 	/**
 	 * Adds a new node. The attributes map goes from attribute name
@@ -52,7 +52,7 @@ public interface NWBFileParserHandler {
 	 * @param label the label for the node
 	 * @param attributes The nodes attributes, a Map from attribute name->its value
 	 */
-	public void addNode(int id, String label, Map attributes);
+	public void addNode(int id, String label, Map<String, Object> attributes);
 	
 	/**
 	 * Sets the total number of directed eges in the document according to its 
@@ -82,7 +82,7 @@ public interface NWBFileParserHandler {
 	 * 
 	 * @param schema The directed edge schema, a Map from attribute->expected type
 	 */
-	public void setDirectedEdgeSchema(LinkedHashMap schema);
+	public void setDirectedEdgeSchema(LinkedHashMap<String, String> schema);
 	
 	/**
 	 * Adds a new directed edge. The attributes map goes from attribute name
@@ -96,7 +96,7 @@ public interface NWBFileParserHandler {
 	 * @param targetNode the ID of the target node
 	 * @param attributes The directed edge attributes, a Map from attribute name->its value
 	 */	
-	public void addDirectedEdge(int sourceNode, int targetNode, Map attributes);
+	public void addDirectedEdge(int sourceNode, int targetNode, Map<String, Object> attributes);
 
 	
 	/**
@@ -127,7 +127,7 @@ public interface NWBFileParserHandler {
 	 * 
 	 * @param schema The undirected edge schema, a Map from attribute->expected type
 	 */
-	public void setUndirectedEdgeSchema(LinkedHashMap schema);
+	public void setUndirectedEdgeSchema(LinkedHashMap<String, String> schema);
 	
 	/**
 	 * Adds a new undirected edge. The attributes map goes from attribute name
@@ -141,7 +141,7 @@ public interface NWBFileParserHandler {
 	 * @param node2 the ID of the second node
 	 * @param attributes The undirected edge attributes, a Map from attribute name->its value
 	 */	
-	public void addUndirectedEdge(int node1, int node2, Map attributes);
+	public void addUndirectedEdge(int node1, int node2, Map<String, Object> attributes);
 	
 	/**
 	 * Adds a new comment. This method will be called as comment lines are found.
