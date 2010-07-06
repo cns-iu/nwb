@@ -248,19 +248,20 @@ public class ScienceMapAlgorithm implements Algorithm {
 						new Data[]{ data });
 			Data[] convertedData = prefuseCSVReader.execute();
 
-			Dictionary<Object, Object> parameters =
-				new Hashtable<Object, Object>();
-			parameters.put(ScienceMapAlgorithmFactory.NODE_ID_COLUMN_NAME_ID, "UCSD Map Field Name");
-			parameters.put(ScienceMapAlgorithmFactory.NODE_LABEL_COLUMN_NAME_ID, "Knowledge Areas");
-			parameters.put(ScienceMapAlgorithmFactory.NODE_VALUE_COLUMN_NAME_ID, "Value");
-			parameters.put(ScienceMapAlgorithmFactory.DATA_DISPLAY_NAME_ID, "Knowledge Areas");
+			Dictionary<String, Object> parameters = new Hashtable<String, Object>();
+			parameters.put(
+				ScienceMapAlgorithmFactory.NODE_ID_COLUMN_NAME_ID, "UCSD Map Field Name");
+			parameters.put(
+				ScienceMapAlgorithmFactory.NODE_LABEL_COLUMN_NAME_ID, "Knowledge Areas");
+			parameters.put(
+				ScienceMapAlgorithmFactory.NODE_VALUE_COLUMN_NAME_ID, "Value");
+			parameters.put(
+				ScienceMapAlgorithmFactory.DATA_DISPLAY_NAME_ID, "Knowledge Areas");
 
-			AlgorithmFactory algorithmFactory =
-				new ScienceMapAlgorithmFactory();
+			AlgorithmFactory algorithmFactory = new ScienceMapAlgorithmFactory();
 			CIShellContext ciContext = new LogOnlyCIShellContext();
-			Algorithm algorithm =
-				algorithmFactory.createAlgorithm(
-						convertedData, parameters, ciContext);
+			Algorithm algorithm = algorithmFactory.createAlgorithm(
+				convertedData, parameters, ciContext);
 
 			System.out.println("Executing.. ");
 			Data[] psFileData = algorithm.execute();
