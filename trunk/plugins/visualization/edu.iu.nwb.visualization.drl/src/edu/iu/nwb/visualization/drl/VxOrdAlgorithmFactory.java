@@ -1,6 +1,9 @@
 package edu.iu.nwb.visualization.drl;
 
 import java.io.File;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.Dictionary;
 import java.util.LinkedHashMap;
 
@@ -10,6 +13,7 @@ import org.cishell.framework.algorithm.AlgorithmFactory;
 import org.cishell.framework.algorithm.DataValidator;
 import org.cishell.framework.algorithm.ParameterMutator;
 import org.cishell.framework.data.Data;
+import org.cishell.utilities.ArrayListUtilities;
 import org.cishell.utilities.MapUtilities;
 import org.cishell.utilities.MutateParameterUtilities;
 import org.osgi.framework.BundleContext;
@@ -21,22 +25,21 @@ import edu.iu.nwb.util.nwbfile.NWBFileProperty;
 import edu.iu.nwb.util.nwbfile.NWBFileUtilities;
 import edu.iu.nwb.util.nwbfile.NWBMetadataParsingException;
 
-public class VxOrdAlgorithmFactory implements AlgorithmFactory,
-											  DataValidator,
-											  ParameterMutator {
-    public static final String USE_NO_EDGE_WEIGHT_TOKEN =
-    	"None (all edges treated equally)";
+public class VxOrdAlgorithmFactory implements AlgorithmFactory, DataValidator, ParameterMutator {
+    public static final String USE_NO_EDGE_WEIGHT_TOKEN = "None (all edges treated equally)";
 	public static final String EDGE_WEIGHT_ID = "edgeWeight";
-	private BundleContext bContext;
+	public static final Collection<String> EDGE_WEIGHT_KEYS_TO_ADD_TO_FRONT =
+		Collections.unmodifiableList(Arrays.asList(USE_NO_EDGE_WEIGHT_TOKEN));
+
+	private BundleContext bundleContext;
     
-    protected void activate(ComponentContext ctxt) {
-    	bContext = ctxt.getBundleContext();
+    protected void activate(ComponentContext componentContext) {
+    	bundleContext = componentContext.getBundleContext();
     }
     
-    public Algorithm createAlgorithm(Data[] data,
-    								 Dictionary parameters,
-    								 CIShellContext context) {
-        return new VxOrdAlgorithm(data, parameters, context, bContext);
+    public Algorithm createAlgorithm(
+    		Data[] data, Dictionary<String, Object> parameters, CIShellContext ciShellContext) {
+        return new VxOrdAlgorithm(data, parameters, ciShellContext, bundleContext);
     }
     
     // Ensure the input file is a valid, undirected NWB network.
@@ -70,32 +73,27 @@ public class VxOrdAlgorithmFactory implements AlgorithmFactory,
 			ObjectClassDefinition parameters) {
 		File nwbFile = (File) data[0].getData();
 		
-		GetMetadataAndCounts metadata;
 		try {
-			metadata = NWBFileUtilities.parseMetadata(nwbFile);
-		} catch (NWBMetadataParsingException e) {
-			return parameters;
-		}
-		
-		LinkedHashMap edgeSchema = metadata.getUndirectedEdgeSchema();
-		
-		String[] numericAttributeTypes = (String[])
-			NWBFileProperty.NUMERIC_ATTRIBUTE_TYPES.toArray(new String[0]);
-		
-		/* Get the numeric edge attributes, excepting SKIP, and including
-		 * the option to use no edge weight.
-		 */
-		String[] edgeWeightOptions =
-			MapUtilities.getValidKeysOfTypesInMap(
+			GetMetadataAndCounts metadata = NWBFileUtilities.parseMetadata(nwbFile);
+			LinkedHashMap<String, String> edgeSchema = metadata.getUndirectedEdgeSchema();
+
+			/* Get the numeric edge attributes, excepting SKIP, and including
+		 	 * the option to use no edge weight.
+		 	 */
+			Collection<String> edgeWeightOptions = MapUtilities.getValidKeysOfTypesInMap(
 				edgeSchema,
-				numericAttributeTypes,
-				NWBFileUtilities.DEFAULT_NUMBER_KEYS_TO_SKIP,
-				new String[]{ USE_NO_EDGE_WEIGHT_TOKEN });
-		
-		return MutateParameterUtilities.mutateToDropdown(
+				NWBFileProperty.NUMERIC_ATTRIBUTE_TYPES,
+				NWBFileUtilities.DEFAULT_NUMBER_KEYS_TO_SKIP);
+			edgeWeightOptions = ArrayListUtilities.unionCollections(
+				EDGE_WEIGHT_KEYS_TO_ADD_TO_FRONT, edgeWeightOptions, null);
+
+			return MutateParameterUtilities.mutateToDropdown(
 				parameters,
 				EDGE_WEIGHT_ID,
 				edgeWeightOptions,
 				edgeWeightOptions);
+		} catch (NWBMetadataParsingException e) {
+			return parameters;
+		}
 	}
 }

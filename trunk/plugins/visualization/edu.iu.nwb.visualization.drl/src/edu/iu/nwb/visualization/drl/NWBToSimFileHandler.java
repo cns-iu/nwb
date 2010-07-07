@@ -7,30 +7,27 @@ import java.util.Map;
 import edu.iu.nwb.util.nwbfile.NWBFileParserAdapter;
 
 public class NWBToSimFileHandler extends NWBFileParserAdapter {
-	private static final double DEFAULT_EDGE_WEIGHT = 1.0;
+	public static final double DEFAULT_EDGE_WEIGHT = 1.0;
 	
 	private boolean useEdgeWeight;
 	private String weightAttribute;
 	private PrintWriter out;
 	
-	public NWBToSimFileHandler(boolean useEdgeWeight,
-							   String weightAttribute,
-							   OutputStream output) {
+	public NWBToSimFileHandler(
+			boolean useEdgeWeight, String weightAttribute, OutputStream output) {
 		this.useEdgeWeight = useEdgeWeight;
 		this.weightAttribute = weightAttribute;
 		this.out = new PrintWriter(output);
 	}
 	
-	public void addUndirectedEdge(int source, int target, Map attributes) {
-		if (useEdgeWeight) {
-			if (attributes.containsKey(weightAttribute)) {
-				out.println(createEdgeLine(source,
-										   target,
-										   attributes.get(weightAttribute)));
+	public void addUndirectedEdge(int source, int target, Map<String, Object> attributes) {
+		if (this.useEdgeWeight) {
+			if (attributes.containsKey(this.weightAttribute)) {
+				this.out.println(createEdgeLine(
+					source, target, attributes.get(this.weightAttribute)));
 			}
-		}
-		else {
-			out.println(createEdgeLine(source, target, ""+DEFAULT_EDGE_WEIGHT));
+		} else {
+			this.out.println(createEdgeLine(source, target, ""+DEFAULT_EDGE_WEIGHT));
 		}
 	}
 	
@@ -39,6 +36,6 @@ public class NWBToSimFileHandler extends NWBFileParserAdapter {
 	}
 	
 	public void finishedParsing() {
-		out.close();
+		this.out.close();
 	}
 }

@@ -36,24 +36,25 @@ public class VxOrdAlgorithm implements Algorithm {
 	
 	private Data[] data;
     private File inputNWBFile;
-    private Dictionary parameters;
-    private CIShellContext context;
+    private Dictionary<String, Object> parameters;
+    private CIShellContext ciShellContext;
 	
     private static StaticExecutableAlgorithmFactory staticAlgorithmFactory;
     
     
-    public VxOrdAlgorithm(Data[] data,
-    					  Dictionary parameters,
-    					  CIShellContext context,
-    					  BundleContext bContext) {
+    public VxOrdAlgorithm(
+    		Data[] data,
+    		Dictionary<String, Object> parameters,
+    		CIShellContext ciShellContext,
+    		BundleContext bundleContext) {
     	this.data = data;
     	this.inputNWBFile = (File) data[0].getData();
         this.parameters = parameters;
-        this.context = context;
+        this.ciShellContext = ciShellContext;
+
         if (staticAlgorithmFactory == null) {
         	staticAlgorithmFactory =
-        		new StaticExecutableAlgorithmFactory(VXORD_ALGORITHM_NAME,
-        											 bContext);
+        		new StaticExecutableAlgorithmFactory(VXORD_ALGORITHM_NAME, bundleContext);
         }
     }
 
@@ -126,7 +127,7 @@ public class VxOrdAlgorithm implements Algorithm {
 			throws AlgorithmExecutionException {
 		// Run DRL (VxOrd) on SIM File
 		Algorithm layoutAlg = staticAlgorithmFactory.createAlgorithm(
-				new Data[]{ simData }, parameters, context);
+				new Data[]{ simData }, parameters, ciShellContext);
 		Data[] layoutData;
 		try {
 			layoutData = layoutAlg.execute();
@@ -162,13 +163,14 @@ public class VxOrdAlgorithm implements Algorithm {
 	}
 
 
+	@SuppressWarnings("unchecked")
 	private Data[] createOutData(File outputNWBFile) {
-		Data outNWBData = new BasicData(outputNWBFile,
-										NWBFileProperty.NWB_MIME_TYPE);
-		outNWBData.getMetadata().put(DataProperty.LABEL, OUTPUT_DATA_LABEL);
-		outNWBData.getMetadata().put(DataProperty.TYPE,
-									 DataProperty.NETWORK_TYPE);
-		outNWBData.getMetadata().put(DataProperty.PARENT, data[0]);
-		return new Data[]{outNWBData};
+		Data outNWBData = new BasicData(outputNWBFile, NWBFileProperty.NWB_MIME_TYPE);
+		Dictionary<String, Object> metadata = outNWBData.getMetadata();
+		metadata.put(DataProperty.LABEL, OUTPUT_DATA_LABEL);
+		metadata.put(DataProperty.TYPE, DataProperty.NETWORK_TYPE);
+		metadata.put(DataProperty.PARENT, data[0]);
+
+		return new Data[] { outNWBData };
 	}
 }

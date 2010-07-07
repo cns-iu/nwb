@@ -33,11 +33,9 @@ public class NWBCoordMerger implements NWBFileParserHandler {
 	private OpenIntDoubleHashMap idToXMap;
 	private OpenIntDoubleHashMap idToYMap;
 	
-	public NWBCoordMerger(File coordFile,
-						  File srcNWBFile,
-						  String xpos,
-						  String ypos,
-						  File outputNWBFile) throws IOException {
+	public NWBCoordMerger(
+			File coordFile, File srcNWBFile, String xpos, String ypos, File outputNWBFile)
+			throws IOException {
 		this.xpos = xpos;
 		this.ypos = ypos;
 		this.coordFile = coordFile;
@@ -86,7 +84,7 @@ public class NWBCoordMerger implements NWBFileParserHandler {
 		out.setNodeCount(numberOfNodes);
 	}
 	
-	public void setNodeSchema(LinkedHashMap schema) {
+	public void setNodeSchema(LinkedHashMap<String, String> schema) {
 		schema.put(xpos, NWBFileProperty.TYPE_REAL);
 		schema.put(ypos, NWBFileProperty.TYPE_REAL);
 		
@@ -101,7 +99,7 @@ public class NWBCoordMerger implements NWBFileParserHandler {
 		}
 	}
 	
-	public void addNode(int id, String label, Map attributes) {
+	public void addNode(int id, String label, Map<String, Object> attributes) {
 		if (idToXMap.containsKey(id)) {
 			attributes.put(xpos,""+idToXMap.get(id));
 			attributes.put(ypos,""+idToYMap.get(id));
@@ -109,22 +107,22 @@ public class NWBCoordMerger implements NWBFileParserHandler {
 		out.addNode(id, label, attributes);
 	}
 	
-	public void addDirectedEdge(int sourceNode, int targetNode, Map attributes) {
+	public void addDirectedEdge(int sourceNode, int targetNode, Map<String, Object> attributes) {
 		out.addDirectedEdge(sourceNode, targetNode, attributes);
 	}
-	public void addUndirectedEdge(int node1, int node2, Map attributes) {
+	public void addUndirectedEdge(int node1, int node2, Map<String, Object> attributes) {
 		out.addUndirectedEdge(node1, node2, attributes);
 	}
 	public void setDirectedEdgeCount(int numberOfEdges) {
 		out.setDirectedEdgeCount(numberOfEdges);
 	}
-	public void setDirectedEdgeSchema(LinkedHashMap schema) {
+	public void setDirectedEdgeSchema(LinkedHashMap<String, String> schema) {
 		out.setDirectedEdgeSchema(schema);
 	}
 	public void setUndirectedEdgeCount(int numberOfEdges) {
 		out.setUndirectedEdgeCount(numberOfEdges);
 	}
-	public void setUndirectedEdgeSchema(LinkedHashMap schema) {
+	public void setUndirectedEdgeSchema(LinkedHashMap<String, String> schema) {
 		out.setUndirectedEdgeSchema(schema);
 	}
 
