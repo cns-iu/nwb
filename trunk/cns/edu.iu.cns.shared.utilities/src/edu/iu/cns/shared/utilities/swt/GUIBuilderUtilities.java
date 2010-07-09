@@ -12,18 +12,26 @@ public class GUIBuilderUtilities {
 	}
 
 	public static Shell createShell(
-			Display display, String windowTitle, int windowWidth, int windowHeight) {
+			Display display,
+			String windowTitle,
+			int windowWidth,
+			int windowHeight,
+			int columnCount,
+			boolean clearSpacing) {
 		Shell shell = new Shell(display, SWT.CLOSE | SWT.MIN | SWT.TITLE);
 		shell.setText(windowTitle);
     	shell.setSize(windowWidth, windowHeight);
-    	shell.setLayout(createShellLayout());
+    	shell.setLayout(createShellLayout(columnCount, clearSpacing));
 
     	return shell;
 	}
 
-	public static GridLayout createShellLayout() {
-		GridLayout layout = new GridLayout(1, true);
-		clearSpacing(layout);
+	public static GridLayout createShellLayout(int columnCount, boolean clearSpacing) {
+		GridLayout layout = new GridLayout(columnCount, true);
+
+		if (clearSpacing) {
+			clearSpacing(layout);
+		}
 
 		return layout;
 	}
