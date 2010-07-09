@@ -53,8 +53,8 @@ public class LoadStarDatabaseGUIBuilder {
 			int windowHeight,
 			Collection<ColumnDescriptor> columnDescriptors) {
 		Display display = GUIBuilderUtilities.createDisplay();
-    	final Shell shell =
-    		GUIBuilderUtilities.createShell(display, windowTitle, windowWidth, windowHeight);
+    	final Shell shell = GUIBuilderUtilities.createShell(
+    		display, windowTitle, windowWidth, windowHeight, 1, true);
 
     	@SuppressWarnings("unused")
     	StyledText instructionsLabel = createInstructionsLabel(shell);
