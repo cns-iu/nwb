@@ -7,10 +7,6 @@ import java.util.Map;
 
 import org.cishell.utilities.ArrayListUtilities;
 import org.cishell.utilities.MapUtilities;
-import org.cishell.utilities.swt.model.GUIModel;
-import org.eclipse.swt.SWT;
-import org.eclipse.swt.widgets.Combo;
-import org.eclipse.swt.widgets.Composite;
 
 import edu.iu.cns.database.load.framework.DerbyFieldType;
 
@@ -44,24 +40,7 @@ public class CoreTableDescriptor {
 		return this.columnNamesToTypes;
 	}
 
-	public Combo createLeafSelectionInputField(
-			GUIModel model, String name, Composite parent, int style, boolean isForAggregate) {
-		if (isForAggregate) {
-			return model.addDropDown(
-				name,
-				0,
-				this.columnNamesForAggregates,
-				MapUtilities.mirror(this.columnNamesForAggregates),
-				parent,
-				style | SWT.BORDER | SWT.DROP_DOWN | SWT.READ_ONLY);
-		} else {
-			return model.addDropDown(
-				name,
-				0,
-				this.columnNames,
-				MapUtilities.mirror(this.columnNames),
-				parent,
-				style | SWT.BORDER | SWT.DROP_DOWN | SWT.READ_ONLY);
-		}
+	public Collection<String> getColumnNames() {
+		return this.columnNames;
 	}
 }
