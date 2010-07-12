@@ -1,11 +1,11 @@
 package edu.iu.sci2.database.star.gui.builder;
 
+import org.cishell.utilities.swt.GUIBuilderUtilities;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 
-import edu.iu.cns.shared.utilities.swt.GUIBuilderUtilities;
 import edu.iu.sci2.database.star.gui.ColumnDescriptor;
 
 public class ColumnWidget extends Composite {

@@ -1,5 +1,6 @@
 package edu.iu.sci2.database.star.gui.builder;
 
+import org.cishell.utilities.swt.GUIBuilderUtilities;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
@@ -7,8 +8,6 @@ import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
-
-import edu.iu.cns.shared.utilities.swt.GUIBuilderUtilities;
 
 public class IsCoreColumnWidget extends Composite {
 	public static final String LABEL_TEXT = "Is Core Column?";

@@ -3,6 +3,7 @@ package edu.iu.sci2.database.star.gui.builder;
 import java.util.ArrayList;
 import java.util.Collection;
 
+import org.cishell.utilities.swt.GUIBuilderUtilities;
 import org.cishell.utilities.swt.SWTUtilities;
 import org.cishell.utilities.swt.URLClickedListener;
 import org.cishell.utilities.swt.URLMouseCursorListener;
@@ -16,7 +17,6 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
 
-import edu.iu.cns.shared.utilities.swt.GUIBuilderUtilities;
 import edu.iu.sci2.database.star.gui.ColumnDescriptor;
 import edu.iu.sci2.database.star.gui.ColumnsDataForLoader;
 import edu.iu.sci2.database.star.gui.StarDatabaseGUIAlgorithm;

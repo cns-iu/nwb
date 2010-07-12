@@ -3,13 +3,13 @@ package edu.iu.sci2.database.star.gui.builder;
 import java.util.ArrayList;
 import java.util.Collection;
 
+import org.cishell.utilities.swt.GUIBuilderUtilities;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.ScrolledComposite;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 
-import edu.iu.cns.shared.utilities.swt.GUIBuilderUtilities;
 import edu.iu.sci2.database.star.gui.ColumnDescriptor;
 
 public class ColumnListWidget extends ScrolledComposite {
@@ -58,7 +58,6 @@ public class ColumnListWidget extends ScrolledComposite {
 
 	private static Composite createColumnArea(Composite parent) {
 		Composite columnArea = new Composite(parent, SWT.BORDER);
-//		columnArea.setBackground(Utilities.splitterBarColor(parent.getDisplay()));
 		columnArea.setLayoutData(createColumnAreaLayoutData());
 		columnArea.setLayout(createColumnAreaLayout());
 
@@ -91,7 +90,6 @@ public class ColumnListWidget extends ScrolledComposite {
 		GridLayout layout = new GridLayout(1, false);
 		GUIBuilderUtilities.clearMargins(layout);
 		GUIBuilderUtilities.clearSpacing(layout);
-//		layout.verticalSpacing = 2;
 
 		return layout;
 	}

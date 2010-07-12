@@ -1,13 +1,12 @@
 package edu.iu.sci2.database.star.gui.builder;
 
+import org.cishell.utilities.swt.GUIBuilderUtilities;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
-
-import edu.iu.cns.shared.utilities.swt.GUIBuilderUtilities;
 
 public class CoreEntityNameWidget extends Composite {
 	public static final int HEIGHT = 30;
