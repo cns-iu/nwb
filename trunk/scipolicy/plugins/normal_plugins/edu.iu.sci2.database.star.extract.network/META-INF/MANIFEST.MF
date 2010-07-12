@@ -23,9 +23,8 @@ Import-Package: edu.iu.cns.database.load.framework,
  org.osgi.service.metatype;version="1.1.0",
  org.osgi.service.prefs;version="1.1.0"
 X-AutoStart: true
-Service-Component: OSGI-INF/component.xml
+Service-Component: OSGI-INF/co_occurrence.xml, OSGI-INF/leaf_leaf.xml, OSGI-INF/leaf_core.xml
 Require-Bundle: org.eclipse.ui,
- org.eclipse.swt.spy,
  org.eclipse.ui.forms,
  org.eclipse.core.runtime
 Bundle-RequiredExecutionEnvironment: J2SE-1.5

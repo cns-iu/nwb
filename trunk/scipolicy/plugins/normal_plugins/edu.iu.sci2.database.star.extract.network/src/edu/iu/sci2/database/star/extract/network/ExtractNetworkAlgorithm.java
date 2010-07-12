@@ -4,8 +4,8 @@ import org.cishell.framework.algorithm.Algorithm;
 import org.cishell.framework.algorithm.AlgorithmExecutionException;
 import org.cishell.framework.data.Data;
 
-public class ExtractCoOccurrenceNetworkAlgorithm implements Algorithm {
-    public ExtractCoOccurrenceNetworkAlgorithm() {
+public class ExtractNetworkAlgorithm implements Algorithm {
+    public ExtractNetworkAlgorithm() {
     }
 
     public Data[] execute() throws AlgorithmExecutionException {

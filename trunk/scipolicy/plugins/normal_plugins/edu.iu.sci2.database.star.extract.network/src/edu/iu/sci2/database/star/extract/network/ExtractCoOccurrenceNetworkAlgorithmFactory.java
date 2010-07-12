@@ -10,6 +10,6 @@ import org.cishell.framework.data.Data;
 public class ExtractCoOccurrenceNetworkAlgorithmFactory implements AlgorithmFactory {
     public Algorithm createAlgorithm(
     		Data[] data, Dictionary<String, Object> parameters, CIShellContext ciShellContext) {
-        return new ExtractCoOccurrenceNetworkAlgorithm();
+        return new ExtractNetworkAlgorithm();
     }
 }
