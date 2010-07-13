@@ -17,10 +17,8 @@ public class AttributeListWidget extends ExpandableComponentWidget<AttributeWidg
 	public static final String ADD_ATTRIBUTE_BUTTON_TEXT_FORMAT = "Add Another %s Attribute Field";
 
 	public static final String AGGREGATE_FUNCTION_LABEL_TEXT = "Summarize By:";
-	public static final String CORE_ENTITY_COLUMN_LABEL_TEXT = "Column to Summarize";
+	public static final String CORE_ENTITY_COLUMN_LABEL_TEXT = "Column to Summarize:";
 	public static final String RESULT_COLUMN_LABEL_TEXT = "Attribute Name:";
-
-//	private GUIModel model;
 
 	public AttributeListWidget(
 			GUIModel model,
@@ -38,7 +36,6 @@ public class AttributeListWidget extends ExpandableComponentWidget<AttributeWidg
 				coreEntityColumnBaseName,
 				coreEntityColumns,
 				resultColumnLabelBaseName));
-//		this.model = model;
 		createAddAttributeButton(getHeaderArea(), type);
 	}
 

@@ -1,16 +1,25 @@
 package edu.iu.sci2.database.star.extract.network.guibuilder;
 
+import java.util.Arrays;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.cishell.service.database.Database;
+import org.cishell.utilities.ArrayListUtilities;
+import org.cishell.utilities.CollectionUtilities;
 import org.cishell.utilities.MapUtilities;
 import org.cishell.utilities.swt.GUIBuilderUtilities;
+import org.cishell.utilities.swt.SWTUtilities;
 import org.cishell.utilities.swt.model.GUIModel;
 import org.cishell.utilities.swt.model.GUIModelField;
 import org.cishell.utilities.swt.model.datasynchronizer.DropDownDataSynchronizer;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.custom.StyledText;
+import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Combo;
@@ -25,14 +34,31 @@ import edu.iu.sci2.database.star.extract.network.LeafTableDescriptor;
 import edu.iu.sci2.database.star.extract.network.StarDatabase;
 import edu.iu.sci2.database.star.extract.network.guibuilder.attribute.AttributeListWidget;
 
-public class SingleLeafGUIBuilder extends GUIBuilder {
-	public static final String LEAF_FIELD_LABEL =
-		"Choose the Leaf column to extract the co-occurrence network on: ";
+public class DirectedNetworkGUIBuilder extends GUIBuilder {
+	public static final String INSTRUCTIONS_LABEL_TEXT = "INSERT INSTRUCTIONS HERE: ";
+	public static final String TUTORIAL_URL =
+		"https://nwb.slis.indiana.edu/community/?n=Sci2Algorithm.ExtractStarDirectedNetwork";
+	public static final String TUTORIAL_DISPLAY_URL = "INSERT INSTRUCTIONS HERE";
+
+	public static final String SOURCE_LEAF_FIELD_LABEL =
+		"Choose the Source for your directed network extraction: ";
+	public static final String TARGET_LEAF_FIELD_LABEL =
+		"Choose the Target for your directed network extraction: ";
 	public static final String HEADER_GROUP_TEXT = "";
+
+	public static final String CORE_OPTION = "Core Entity";
+	public static final Collection<String> OPTIONS_TO_ADD_TO_FRONT_OF_LEAF_WIDGET =
+		Collections.unmodifiableList(Arrays.asList(CORE_OPTION));
 
 	public GUIModel createGUI(
 			String windowTitle, int windowWidth, int windowHeight, StarDatabase starDatabase) {
+		// TODO: Verify that starDatabase is valid for us.
+
 		GUIModel model = new GUIModel();
+
+		/* Create the GUI shell, and set up its basic structure (header, node aggregates,
+		 *  edge aggregates).
+		 */
 
 		Display display = GUIBuilderUtilities.createDisplay();
 		Shell shell = GUIBuilderUtilities.createShell(
@@ -42,10 +68,44 @@ public class SingleLeafGUIBuilder extends GUIBuilder {
 		Group edgeAggregatesGroup = createEdgeAggregatesGroup(shell, model);
 
 		@SuppressWarnings("unused")
-		GUIModelField<String, Combo, DropDownDataSynchronizer> leafField =
-			createLeafSelectionField(headerGroup, starDatabase, model);
+    	StyledText instructionsLabel = createInstructionsLabel(headerGroup);
 
-		AttributeListWidget nodeAggregatesTable = createAggregateList(
+		// Create the options for the Source and Target selection fields.
+
+		List<String> allOptionsExceptCore = starDatabase.getLeafTableNames();
+		Collections.sort(allOptionsExceptCore);
+		Map<String, String> allOptionsByLabelsExceptCore =
+			MapUtilities.mirror(allOptionsExceptCore);
+		List<String> allOptions = ArrayListUtilities.unionCollectionsAsList(
+			OPTIONS_TO_ADD_TO_FRONT_OF_LEAF_WIDGET,
+			starDatabase.getLeafTableNames(),
+			null);
+		Collections.sort(allOptions);
+		Map<String, String> allOptionsByLabels = MapUtilities.mirror(allOptions);
+
+		// Create and setup the Source and Target selection fields.
+
+		GUIModelField<String, Combo, DropDownDataSynchronizer> sourceLeafField =
+			createLeafSelectionField(
+				SOURCE_LEAF_FIELD_LABEL,
+				SOURCE_LEAF_FIELD_NAME,
+				allOptions,
+				allOptionsByLabels,
+				starDatabase,
+				model,
+				headerGroup);
+
+		GUIModelField<String, Combo, DropDownDataSynchronizer> targetLeafField =
+			createLeafSelectionField(
+				TARGET_LEAF_FIELD_LABEL,
+				TARGET_LEAF_FIELD_NAME,
+				allOptions,
+				allOptionsByLabels,
+				starDatabase,
+				model,
+				headerGroup);
+
+		AttributeListWidget nodeAggregatesWidget = createAggregateWidget(
 			model,
 			NODE_ATTRIBUTE_FUNCTION_BASE_NAME,
 			NODE_CORE_ENTITY_COLUMN_BASE_NAME,
@@ -53,7 +113,7 @@ public class SingleLeafGUIBuilder extends GUIBuilder {
 			NODE_RESULT_BASE_NAME,
 			NODE_TYPE,
 			nodeAggregatesGroup);
-		AttributeListWidget edgeAggregatesTable = createAggregateList(
+		AttributeListWidget edgeAggregatesWidget = createAggregateWidget(
 			model,
 			EDGE_ATTRIBUTE_FUNCTION_BASE_NAME,
 			EDGE_CORE_ENTITY_COLUMN_BASE_NAME,
@@ -63,8 +123,8 @@ public class SingleLeafGUIBuilder extends GUIBuilder {
 			edgeAggregatesGroup);
 
 		for (int ii = 0; ii < DEFAULT_AGGREGATE_WIDGET_COUNT; ii++) {
-			nodeAggregatesTable.addComponent(SWT.NONE, null);
-			edgeAggregatesTable.addComponent(SWT.NONE, null);
+			nodeAggregatesWidget.addComponent(SWT.NONE, null);
+			edgeAggregatesWidget.addComponent(SWT.NONE, null);
 		}
 
 		runGUI(display, shell, windowHeight);
@@ -138,22 +198,53 @@ public class SingleLeafGUIBuilder extends GUIBuilder {
 		return layout;
 	}
 
+	private static StyledText createInstructionsLabel(Composite parent) {
+		StyledText instructionsLabel =
+			new StyledText(parent, SWT.LEFT | SWT.READ_ONLY | SWT.WRAP);
+		instructionsLabel.setBackground(
+			parent.getDisplay().getSystemColor(SWT.COLOR_WIDGET_BACKGROUND));
+		instructionsLabel.setLayoutData(createInstructionsLabelLayoutData());
+		instructionsLabel.getCaret().setVisible(false);
+
+		SWTUtilities.styledPrint(
+			instructionsLabel,
+			INSTRUCTIONS_LABEL_TEXT,
+			parent.getDisplay().getSystemColor(SWT.COLOR_BLACK),
+			SWT.NORMAL);
+		SWTUtilities.printURL(
+			parent,
+			instructionsLabel,
+			TUTORIAL_URL,
+			TUTORIAL_DISPLAY_URL,
+			parent.getDisplay().getSystemColor(SWT.COLOR_BLUE),
+			SWT.BOLD);
+
+		return instructionsLabel;
+	}
+
+	private static GridData createInstructionsLabelLayoutData() {
+		GridData layoutData = new GridData(SWT.FILL, SWT.TOP, true, false);
+		layoutData.horizontalSpan = 2;
+
+		return layoutData;
+	}
+
 	private static GUIModelField<String, Combo, DropDownDataSynchronizer> createLeafSelectionField(
-			Composite parent, StarDatabase starDatabase, GUIModel model) {
+			String labelText,
+			String fieldName,
+			Collection<String> allOptions,
+			Map<String, String> allOptionsByLabels,
+			StarDatabase starDatabase,
+			GUIModel model,
+			Composite parent) {
 		Label label = new Label(parent, SWT.READ_ONLY);
 		label.setLayoutData(createLeafSelectionFieldLabelLayoutData());
-		label.setText(LEAF_FIELD_LABEL);
+		label.setText(labelText);
 
-		Collection<String> columnNames = starDatabase.getLeafTableNames();
-		GUIModelField<String, Combo, DropDownDataSynchronizer> leafField =
-			model.addSingleSelectionDropDown(
-			LEAF_FIELD_NAME,
-			0,
-			columnNames,
-			MapUtilities.mirror(columnNames),
-			parent,
-			SWT.BORDER | SWT.READ_ONLY);
+		GUIModelField<String, Combo, DropDownDataSynchronizer> leafField = model.addDropDown(
+			fieldName, 0, allOptions, allOptionsByLabels, parent, SWT.BORDER | SWT.READ_ONLY);
 		leafField.getWidget().setLayoutData(createLeafSelectionFieldLayoutData());
+		leafField.setValue(CollectionUtilities.get(allOptions, 1));
 
 		return leafField;
 	}
@@ -170,7 +261,29 @@ public class SingleLeafGUIBuilder extends GUIBuilder {
 		return layoutData;
 	}
 
-	private static AttributeListWidget createAggregateList(
+	// TODO:
+	private static SelectionListener createLeafSelectionListener(
+			final Collection<String> allOptionsExceptCore,
+			final Map<String, String> allOptionsByLabelsExceptCore,
+			final Collection<String> allOptions,
+			final Map<String, String> allOptionsByLabels,
+			final GUIModelField<String, Combo, DropDownDataSynchronizer> sourceLeafField,
+			final GUIModelField<String, Combo, DropDownDataSynchronizer> targetLeafField) {
+		return new SelectionListener() {
+			public void widgetDefaultSelected(SelectionEvent event) {
+				selected(event);
+			}
+
+			public void widgetSelected(SelectionEvent event) {
+				selected(event);
+			}
+
+			private void selected(SelectionEvent event) {
+			}
+		};
+	}
+
+	private static AttributeListWidget createAggregateWidget(
 			GUIModel model,
 			String aggregateFunctionBaseName,
 			String coreEntityColumnName,
@@ -206,10 +319,10 @@ public class SingleLeafGUIBuilder extends GUIBuilder {
 			createLeafTableDescriptorsByName();
 		StarDatabase starDatabase =
 			new StarDatabase(database, coreTableDescriptor, leafTableDescriptorsByName);
-		SingleLeafGUIBuilder guiBuilder = new SingleLeafGUIBuilder();
+		DirectedNetworkGUIBuilder guiBuilder = new DirectedNetworkGUIBuilder();
 
 		guiBuilder.createGUI(
-			"Extract Co-Occurrence Network", WINDOW_WIDTH, WINDOW_HEIGHT, starDatabase);
+			"Extract Directed Network", WINDOW_WIDTH, WINDOW_HEIGHT, starDatabase);
 	}
 
 	private static Map<String, String> createColumnNamesToTypes() {

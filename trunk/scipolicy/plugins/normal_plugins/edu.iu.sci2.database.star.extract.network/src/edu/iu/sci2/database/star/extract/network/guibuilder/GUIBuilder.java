@@ -18,7 +18,8 @@ public abstract class GUIBuilder {
 	public static final String NODE_TYPE = "Node";
 	public static final String EDGE_TYPE = "Edge";
 
-	public static final String LEAF_FIELD_NAME = "leafEntity";
+	public static final String SOURCE_LEAF_FIELD_NAME = "sourceLeafEntity";
+	public static final String TARGET_LEAF_FIELD_NAME = "targetLeafEntity";
 	public static final String NODE_ATTRIBUTES_GROUP_BASE_NAME = "nodeAttributes.";
 	public static final String EDGE_ATTRIBUTES_GROUP_BASE_NAME = "edgeAttributes.";
 	public static final String ATTRIBUTE_FUNCTION_BASE_NAME = "attributeFunction.";

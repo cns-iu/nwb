@@ -43,7 +43,6 @@ public class AttributeWidgetContainer {
 		this.model = model;
 		this.index = index;
 
-//		setLayout(createLayout());
 		this.aggregateFunction =
 			createAggregateFunction(this.model, aggregateFunctionName, componentWidget, grid);
 		this.coreEntityColumn = createCoreEntityColumn(
@@ -69,19 +68,13 @@ public class AttributeWidgetContainer {
 		this.index = newIndex;
 	}
 
-//	private static GridLayout createLayout() {
-//		GridLayout layout = new GridLayout(4, false);
-//
-//		return layout;
-//	}
-
 	private static GUIModelField<String, Combo, DropDownDataSynchronizer> createAggregateFunction(
 			GUIModel model,
 			String aggregateFunctionName,
 			ExpandableComponentWidget<AttributeWidgetContainer> componentWidget,
 			GridContainer grid) {
 		GUIModelField<String, Combo, DropDownDataSynchronizer> aggregateFunction =
-			model.addSingleSelectionDropDown(
+			model.addDropDown(
 				aggregateFunctionName,
 				0,
 				AttributeFunction.AGGREGATE_FUNCTION_NAMES,
@@ -107,7 +100,7 @@ public class AttributeWidgetContainer {
 			ExpandableComponentWidget<AttributeWidgetContainer> componentWidget,
 			GridContainer grid) {
 		GUIModelField<String, Combo, DropDownDataSynchronizer> coreEntityColumn =
-			model.addSingleSelectionDropDown(
+			model.addDropDown(
 				coreEntityColumnName,
 				0,
 				coreEntityColumns,
@@ -133,7 +126,7 @@ public class AttributeWidgetContainer {
 			int uniqueIndex,
 			GridContainer grid) {
 		GUIModelField<String, Text, TextDataSynchronizer> resultColumnLabelNameField =
-			model.addUnstyledText(
+			model.addText(
 				resultColumnLabelName,
 				"RESULT" + uniqueIndex,
 				false,

@@ -7,7 +7,7 @@ import org.cishell.framework.algorithm.Algorithm;
 import org.cishell.framework.algorithm.AlgorithmFactory;
 import org.cishell.framework.data.Data;
 
-public class ExtractLeafToLeafNetworkAlgorithmFactory implements AlgorithmFactory {
+public class ExtractDirectedNetworkAlgorithmFactory implements AlgorithmFactory {
     public Algorithm createAlgorithm(
     		Data[] data, Dictionary<String, Object> parameters, CIShellContext ciShellContext) {
         return new ExtractNetworkAlgorithm();

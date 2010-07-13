@@ -1,7 +1,6 @@
 package edu.iu.sci2.database.star.extract.network;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
@@ -33,7 +32,7 @@ public class StarDatabase {
 		return this.leafTableDescriptorsByName;
 	}
 
-	public Collection<String> getLeafTableNames() {
+	public List<String> getLeafTableNames() {
 		List<String> leafTableNames = new ArrayList<String>();
 		leafTableNames.addAll(this.leafTableDescriptorsByName.keySet());
 
