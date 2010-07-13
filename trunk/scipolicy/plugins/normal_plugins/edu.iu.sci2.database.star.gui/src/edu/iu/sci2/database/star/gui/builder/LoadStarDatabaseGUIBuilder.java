@@ -5,8 +5,6 @@ import java.util.Collection;
 
 import org.cishell.utilities.swt.GUIBuilderUtilities;
 import org.cishell.utilities.swt.SWTUtilities;
-import org.cishell.utilities.swt.URLClickedListener;
-import org.cishell.utilities.swt.URLMouseCursorListener;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.StyledText;
 import org.eclipse.swt.events.SelectionAdapter;
@@ -101,26 +99,33 @@ public class LoadStarDatabaseGUIBuilder {
 		instructionsLabel.setLayoutData(createInstructionsLabelLayoutData());
 		instructionsLabel.getCaret().setVisible(false);
 
-		URLClickedListener urlClickedListener = new URLClickedListener(instructionsLabel);
-		URLMouseCursorListener urlCursorListener =
-			new URLMouseCursorListener(parent, instructionsLabel);
-		instructionsLabel.addMouseListener(urlClickedListener);
-		instructionsLabel.addMouseMoveListener(urlCursorListener);
-
+//		URLClickedListener urlClickedListener = new URLClickedListener(instructionsLabel);
+//		URLMouseCursorListener urlCursorListener =
+//			new URLMouseCursorListener(parent, instructionsLabel);
+//		instructionsLabel.addMouseListener(urlClickedListener);
+//		instructionsLabel.addMouseMoveListener(urlCursorListener);
+//
 		SWTUtilities.styledPrint(
 			instructionsLabel,
 			INSTRUCTIONS_LABEL_TEXT,
 			parent.getDisplay().getSystemColor(SWT.COLOR_BLACK),
 			SWT.NORMAL);
-        urlClickedListener.addURL(
-        	instructionsLabel.getText().length(), TUTORIAL_URL, TUTORIAL_DISPLAY_URL);
-        urlCursorListener.addURL(
-        	instructionsLabel.getText().length(), TUTORIAL_URL, TUTORIAL_DISPLAY_URL);
-        SWTUtilities.styledPrint(
-        	instructionsLabel,
-        	TUTORIAL_DISPLAY_URL,
-        	parent.getDisplay().getSystemColor(SWT.COLOR_BLUE),
-        	SWT.BOLD);
+		SWTUtilities.printURL(
+			parent,
+			instructionsLabel,
+			TUTORIAL_URL,
+			TUTORIAL_DISPLAY_URL,
+			parent.getDisplay().getSystemColor(SWT.COLOR_BLUE),
+			SWT.BOLD);
+//        urlClickedListener.addURL(
+//        	instructionsLabel.getText().length(), TUTORIAL_URL, TUTORIAL_DISPLAY_URL);
+//        urlCursorListener.addURL(
+//        	instructionsLabel.getText().length(), TUTORIAL_URL, TUTORIAL_DISPLAY_URL);
+//        SWTUtilities.styledPrint(
+//        	instructionsLabel,
+//        	TUTORIAL_DISPLAY_URL,
+//        	parent.getDisplay().getSystemColor(SWT.COLOR_BLUE),
+//        	SWT.BOLD);
 
 		return instructionsLabel;
 	}
