@@ -134,7 +134,7 @@ public class GeoMapsAlgorithm implements Algorithm {
 		Dictionary<String, Object> postScriptMetaData =
 			postScriptData.getMetadata();
 
-		postScriptMetaData.put(DataProperty.LABEL, outputAlgorithmName + "_" + FileUtilities.extractFileName(inMetaData.get(DataProperty.LABEL).toString()) + ".ps");
+		postScriptMetaData.put(DataProperty.LABEL, outputAlgorithmName + "_" + FileUtilities.extractFileName(inMetaData.get(DataProperty.LABEL).toString()));
 		postScriptMetaData.put(DataProperty.PARENT, inDatum);
 		postScriptMetaData.put(DataProperty.TYPE,
 				DataProperty.VECTOR_IMAGE_TYPE);
