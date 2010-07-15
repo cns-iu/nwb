@@ -10,7 +10,7 @@ import org.cishell.service.database.DatabaseService;
 import org.osgi.service.component.ComponentContext;
 import org.osgi.service.log.LogService;
 
-import edu.iu.sci2.database.star.load.utility.StarDatabaseDataValidator;
+import edu.iu.sci2.database.star.common.utility.StarDatabaseDataValidator;
 
 public class StarDatabaseGUIAlgorithmFactory implements AlgorithmFactory {
 	private LogService logger;

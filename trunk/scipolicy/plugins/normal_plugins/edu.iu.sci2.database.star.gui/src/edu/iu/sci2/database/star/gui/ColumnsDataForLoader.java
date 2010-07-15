@@ -2,6 +2,8 @@ package edu.iu.sci2.database.star.gui;
 
 import java.util.Collection;
 
+import edu.iu.sci2.database.star.common.parameter.ColumnDescriptor;
+
 public class ColumnsDataForLoader {
 	private String coreEntityName;
 	private Collection<ColumnDescriptor> columnDescriptors;

@@ -6,7 +6,7 @@ import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 
-import edu.iu.sci2.database.star.gui.ColumnDescriptor;
+import edu.iu.sci2.database.star.common.parameter.ColumnDescriptor;
 
 public class ColumnWidget extends Composite {
 	public static final int ERROR_MESSAGE_LAYOUT_DATA_MAXIMUM_WIDTH = 125;
@@ -75,8 +75,8 @@ public class ColumnWidget extends Composite {
 			ColumnDescriptor columnDescriptor,
 			String[] columnTypeOptions,
 			int defaultOptionIndex) {
-		ColumnHeaderWidget header =
-			new ColumnHeaderWidget(parent, columnDescriptor, columnTypeOptions, defaultOptionIndex);
+		ColumnHeaderWidget header = new ColumnHeaderWidget(
+			parent, columnDescriptor, columnTypeOptions, defaultOptionIndex);
 		header.setLayoutData(createColumnHeaderLayoutData());
 
 		return header;

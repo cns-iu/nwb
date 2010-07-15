@@ -15,10 +15,13 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
 
-import edu.iu.sci2.database.star.gui.ColumnDescriptor;
+import edu.iu.cns.database.load.framework.DerbyFieldType;
+import edu.iu.cns.database.load.framework.exception.InvalidDerbyFieldTypeException;
+import edu.iu.sci2.database.star.common.StarDatabaseCSVDataValidationRules;
+import edu.iu.sci2.database.star.common.parameter.ColumnDescriptor;
+import edu.iu.sci2.database.star.common.parameter.ParameterDescriptors;
 import edu.iu.sci2.database.star.gui.ColumnsDataForLoader;
 import edu.iu.sci2.database.star.gui.StarDatabaseGUIAlgorithm;
-import edu.iu.sci2.database.star.load.parameter.ParameterDescriptors;
 
 public class LoadStarDatabaseGUIBuilder {
 	public static final boolean GRAY_OUT_NON_CORE_COLUMN_CONTROLS = true;
@@ -66,9 +69,12 @@ public class LoadStarDatabaseGUIBuilder {
     	final ColumnsDataForLoader[] columnsDataForLoader = new ColumnsDataForLoader[1];
     	finishedButton.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent event) {
-				columnsDataForLoader[0] =
-					gatherColumnsDataForLoader(coreEntityNameWidget, columnListWidget);
-				shell.close();
+				try {
+					columnsDataForLoader[0] =
+						gatherColumnsDataForLoader(coreEntityNameWidget, columnListWidget);
+					shell.close();
+				} catch (InvalidDerbyFieldTypeException e) {
+				}
 			}
 		});
 
@@ -193,26 +199,33 @@ public class LoadStarDatabaseGUIBuilder {
 	 *  objects that can later be used to invoke the Star Database Loader algorithm.
 	 */
 	private static ColumnsDataForLoader gatherColumnsDataForLoader(
-			CoreEntityNameWidget coreEntityNameWidget, ColumnListWidget columnListWidget) {
+			CoreEntityNameWidget coreEntityNameWidget, ColumnListWidget columnListWidget)
+			throws InvalidDerbyFieldTypeException {
 		String coreEntityName = coreEntityNameWidget.getCoreEntityName();
 		Collection<ColumnDescriptor> columnDescriptors = new ArrayList<ColumnDescriptor>();
+		int index = 0;
 
 		for (ColumnWidget columnWidget : columnListWidget.getColumnWidgets()) {
-			columnDescriptors.add(gatherColumnDescriptorFromGUI(columnWidget));
+			columnDescriptors.add(gatherColumnDescriptorFromGUI(index, columnWidget));
+			index++;
 		}
 
 		return new ColumnsDataForLoader(coreEntityName, columnDescriptors);
 	}
 
-	private static ColumnDescriptor gatherColumnDescriptorFromGUI(ColumnWidget columnWidget) {
+	private static ColumnDescriptor gatherColumnDescriptorFromGUI(
+			int index, ColumnWidget columnWidget) throws InvalidDerbyFieldTypeException {
 		ColumnHeaderWidget headerWidget = columnWidget.getHeader();
 		ColumnPropertiesWidget propertiesWidget = columnWidget.getProperties();
 		String name = headerWidget.getColumnName();
-		String type = headerWidget.getType();
+		String databaseName = StarDatabaseCSVDataValidationRules.normalizeName(name);
+		// TODO: Handle this error better?
+		DerbyFieldType type =
+			DerbyFieldType.getFieldTypeByHumanReadableName(headerWidget.getType());
 		boolean isCoreColumn = propertiesWidget.getIsCoreColumn().isCoreColumn();
 
 		if (isCoreColumn) {
-			return new ColumnDescriptor(name, type, true, false, false, "");
+			return new ColumnDescriptor(index, name, databaseName, type, true, false, false, "");
 		} else {
 			NonCoreColumnPropertiesWidget isNotCoreColumnPropertiesWidget =
 				propertiesWidget.getNonCoreColumnProperties();
@@ -224,25 +237,29 @@ public class LoadStarDatabaseGUIBuilder {
 			if (isMultiValued) {
 				String separator =
 					isNotCoreColumnPropertiesWidget.getSeparatorInputField().getText();
+
 				return new ColumnDescriptor(
-					name, type, false, mergeIdenticalValues, true, separator);
+					index,
+					name,
+					databaseName,
+					type,
+					false,
+					mergeIdenticalValues,
+					true,
+					separator);
 			} else {
-				return new ColumnDescriptor(name, type, false, mergeIdenticalValues, true, "");
+				return new ColumnDescriptor(
+					index, name, databaseName, type, false, mergeIdenticalValues, true, "");
 			}
 		}
 	}
 
 	public static void main(String[] args) {
 		Collection<ColumnDescriptor> columnDescriptors = new ArrayList<ColumnDescriptor>();
-		columnDescriptors.add(new ColumnDescriptor("Test 1"));
-		columnDescriptors.add(new ColumnDescriptor("Test 2"));
-		columnDescriptors.add(new ColumnDescriptor("Test 3"));
-		columnDescriptors.add(new ColumnDescriptor("Test 4"));
-		columnDescriptors.add(new ColumnDescriptor("Test 5"));
-		columnDescriptors.add(new ColumnDescriptor("Test 6"));
-		columnDescriptors.add(new ColumnDescriptor("Test 7"));
-		columnDescriptors.add(new ColumnDescriptor("Test 8"));
-		columnDescriptors.add(new ColumnDescriptor("Test 9"));
+
+		for (int ii = 1; ii < 10; ii++) {
+			columnDescriptors.add(new ColumnDescriptor(ii, "Test " + ii));
+		}
 
 		gatherUserInput(
 			StarDatabaseGUIAlgorithm.WINDOW_TITLE,

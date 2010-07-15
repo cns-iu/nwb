@@ -10,7 +10,7 @@ import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 
-import edu.iu.sci2.database.star.gui.ColumnDescriptor;
+import edu.iu.sci2.database.star.common.parameter.ColumnDescriptor;
 
 public class ColumnListWidget extends ScrolledComposite {
 	public static final int COLUMN_AREA_LAYOUT_VERTICAL_SPACING = 1;

@@ -7,7 +7,7 @@ import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Label;
 
-import edu.iu.sci2.database.star.gui.ColumnDescriptor;
+import edu.iu.sci2.database.star.common.parameter.ColumnDescriptor;
 
 public class ColumnHeaderWidget extends Composite {
 	public static final String DATA_TYPE_LABEL_TEXT =
