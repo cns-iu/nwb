@@ -10,7 +10,8 @@ import org.cishell.utilities.mutateParameter.MetaAttributeDefinition;
 import org.osgi.service.metatype.AttributeDefinition;
 import org.osgi.service.metatype.ObjectClassDefinition;
 
-import edu.iu.sci2.database.star.load.utility.CSVReaderUtilities;
+import edu.iu.sci2.database.star.common.parameter.ParameterDescriptors;
+import edu.iu.sci2.database.star.common.utility.CSVReaderUtilities;
 
 public class ParameterFactory {
 	public static ObjectClassDefinition createParameters(

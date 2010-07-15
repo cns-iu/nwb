@@ -9,6 +9,12 @@ Import-Package: au.com.bytecode.opencsv,
  edu.iu.cns.database.load.framework,
  edu.iu.cns.database.load.framework.exception,
  edu.iu.cns.database.load.framework.utilities,
+ edu.iu.sci2.database.star.common,
+ edu.iu.sci2.database.star.common.entity,
+ edu.iu.sci2.database.star.common.parameter,
+ edu.iu.sci2.database.star.common.utility,
+ edu.iu.sci2.database.star.common.utility.csv.validator,
+ edu.iu.sci2.database.star.common.utility.csv.validator.exception,
  org.cishell.framework;version="1.0.0",
  org.cishell.framework.algorithm;version="1.0.0",
  org.cishell.framework.data;version="1.0.0",
@@ -26,10 +32,3 @@ Import-Package: au.com.bytecode.opencsv,
  org.osgi.service.prefs;version="1.1.0"
 X-AutoStart: true
 Service-Component: OSGI-INF/star_load.xml, OSGI-INF/converter.xml
-Export-Package: edu.iu.sci2.database.star.load,
- edu.iu.sci2.database.star.load.converter,
- edu.iu.sci2.database.star.load.entity,
- edu.iu.sci2.database.star.load.parameter,
- edu.iu.sci2.database.star.load.utility,
- edu.iu.sci2.database.star.load.utility.csv.validator,
- edu.iu.sci2.database.star.load.utility.csv.validator.exception

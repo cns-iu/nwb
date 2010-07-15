@@ -15,10 +15,10 @@ import org.osgi.service.log.LogService;
 import org.osgi.service.metatype.ObjectClassDefinition;
 
 import edu.iu.cns.database.load.framework.exception.InvalidDerbyFieldTypeException;
-import edu.iu.sci2.database.star.load.parameter.ParameterDescriptors;
+import edu.iu.sci2.database.star.common.parameter.ParameterDescriptors;
+import edu.iu.sci2.database.star.common.utility.StarDatabaseDataValidator;
+import edu.iu.sci2.database.star.common.utility.csv.validator.exception.CSVHeaderValidationException;
 import edu.iu.sci2.database.star.load.parameter.ParameterFactory;
-import edu.iu.sci2.database.star.load.utility.StarDatabaseDataValidator;
-import edu.iu.sci2.database.star.load.utility.csv.validator.exception.CSVHeaderValidationException;
 
 public class StarDatabaseLoaderAlgorithmFactory implements AlgorithmFactory, ParameterMutator {
 	private LogService logger;

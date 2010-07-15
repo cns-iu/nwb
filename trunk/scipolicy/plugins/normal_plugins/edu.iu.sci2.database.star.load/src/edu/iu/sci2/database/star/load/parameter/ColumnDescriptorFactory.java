@@ -9,8 +9,10 @@ import org.cishell.framework.data.Data;
 
 import edu.iu.cns.database.load.framework.DerbyFieldType;
 import edu.iu.cns.database.load.framework.exception.InvalidDerbyFieldTypeException;
-import edu.iu.sci2.database.star.load.StarDatabaseCSVDataValidationRules;
-import edu.iu.sci2.database.star.load.utility.CSVReaderUtilities;
+import edu.iu.sci2.database.star.common.StarDatabaseCSVDataValidationRules;
+import edu.iu.sci2.database.star.common.parameter.ColumnDescriptor;
+import edu.iu.sci2.database.star.common.parameter.ParameterDescriptors;
+import edu.iu.sci2.database.star.common.utility.CSVReaderUtilities;
 
 public class ColumnDescriptorFactory {
 	public static Map<String, ColumnDescriptor> createColumnDescriptors(
@@ -53,6 +55,7 @@ public class ColumnDescriptorFactory {
 			columnName,
 			databaseName,
 			type,
+			!isMultiValued.booleanValue(),
 			isMultiValued.booleanValue(),
 			shouldMergeIdenticalValues.booleanValue(),
 			separator);
