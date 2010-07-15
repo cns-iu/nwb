@@ -81,7 +81,7 @@
 		    	<menu pid="edu.iu.scipolicy.database.isi.extract.network.bibcoupling.document"/>
 		    	<menu pid="edu.iu.scipolicy.database.isi.extract.network.bibcoupling.document_source"/>
 		</menu>
-	         <menu name="NSF" type="group">
+	    <menu name="NSF" type="group">
 			<!-- Merging -->
 			<menu pid="edu.iu.scipolicy.database.nsf.merge.MergeIdenticalPeople" />
 			<menu type="break"/>
@@ -93,7 +93,11 @@
 	    		<menu type="break"/>
 	    		<!--  Co-PI network -->
 	    		<menu pid="edu.iu.scipolicy.database.nsf.extract.network.copi"/>
-	    	 </menu>
+    	</menu>
+    	<menu name="Star" type="group">
+    		<menu pid="edu.iu.sci2.database.star.extract.network.ExtractCoOccurrenceNetworkAlgorithm"/>
+    		<menu pid="edu.iu.sci2.database.star.extract.network.ExtractDirectedNetworkAlgorithm"/>
+    	</menu>
 		<menu name="General" type="group">
 			<menu pid="edu.iu.cns.database.merge.generic.CreateMergingTable"/>
 			<menu pid="edu.iu.cns.database.merge.generic.MergeTable"/>
