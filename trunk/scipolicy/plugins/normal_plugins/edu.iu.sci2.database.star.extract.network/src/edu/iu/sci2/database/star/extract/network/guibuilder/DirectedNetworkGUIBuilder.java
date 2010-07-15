@@ -2,15 +2,11 @@ package edu.iu.sci2.database.star.extract.network.guibuilder;
 
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.Collections;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.cishell.service.database.Database;
 import org.cishell.utilities.ArrayListUtilities;
 import org.cishell.utilities.CollectionUtilities;
-import org.cishell.utilities.MapUtilities;
 import org.cishell.utilities.swt.GUIBuilderUtilities;
 import org.cishell.utilities.swt.SWTUtilities;
 import org.cishell.utilities.swt.model.GUIModel;
@@ -21,7 +17,7 @@ import org.eclipse.swt.custom.StyledText;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.layout.GridData;
-import org.eclipse.swt.layout.GridLayout;
+import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
@@ -29,9 +25,7 @@ import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
 
-import edu.iu.sci2.database.star.extract.network.CoreTableDescriptor;
-import edu.iu.sci2.database.star.extract.network.LeafTableDescriptor;
-import edu.iu.sci2.database.star.extract.network.StarDatabase;
+import edu.iu.sci2.database.star.extract.network.StarDatabaseDescriptor;
 import edu.iu.sci2.database.star.extract.network.guibuilder.attribute.AttributeListWidget;
 
 public class DirectedNetworkGUIBuilder extends GUIBuilder {
@@ -44,16 +38,21 @@ public class DirectedNetworkGUIBuilder extends GUIBuilder {
 		"Choose the Source for your directed network extraction: ";
 	public static final String TARGET_LEAF_FIELD_LABEL =
 		"Choose the Target for your directed network extraction: ";
-	public static final String HEADER_GROUP_TEXT = "";
 
-	public static final String CORE_OPTION = "Core Entity";
-	public static final Collection<String> OPTIONS_TO_ADD_TO_FRONT_OF_LEAF_WIDGET =
-		Collections.unmodifiableList(Arrays.asList(CORE_OPTION));
+	public static final String SOURCE_LEAF_FIELD_NAME = "sourceLeafEntity";
+	public static final String TARGET_LEAF_FIELD_NAME = "targetLeafEntity";
 
 	public GUIModel createGUI(
-			String windowTitle, int windowWidth, int windowHeight, StarDatabase starDatabase) {
-		// TODO: Verify that starDatabase is valid for us.
+			String windowTitle,
+			int windowWidth,
+			int windowHeight,
+			StarDatabaseDescriptor databaseDescriptor) {
+		// TODO: Verify that databaseDescriptor is valid for us.
 
+		final String coreEntityHumanReadableName =
+			databaseDescriptor.getCoreTableDescriptor().getCoreEntityHumanReadableName();
+		final String coreEntityTableName =
+			databaseDescriptor.getCoreTableDescriptor().getCoreEntityTableName();
 		GUIModel model = new GUIModel();
 
 		/* Create the GUI shell, and set up its basic structure (header, node aggregates,
@@ -64,24 +63,26 @@ public class DirectedNetworkGUIBuilder extends GUIBuilder {
 		Shell shell = GUIBuilderUtilities.createShell(
 			display, windowTitle, windowWidth, windowHeight, 1, false);
 		Group headerGroup = createHeaderGroup(shell);
-		Group nodeAggregatesGroup = createNodeAggregatesGroup(shell, model);
-		Group edgeAggregatesGroup = createEdgeAggregatesGroup(shell, model);
+		Group nodeAggregatesGroup = createAggregatesGroup(shell, NODE_ATTRIBUTES_GROUP_TEXT);
+		Group edgeAggregatesGroup = createAggregatesGroup(shell, EDGE_ATTRIBUTES_GROUP_TEXT);
+		Group footerGroup = createFooterGroup(shell);
 
 		@SuppressWarnings("unused")
     	StyledText instructionsLabel = createInstructionsLabel(headerGroup);
 
 		// Create the options for the Source and Target selection fields.
 
-		List<String> allOptionsExceptCore = starDatabase.getLeafTableNames();
-		Collections.sort(allOptionsExceptCore);
+		List<String> allOptionsExceptCore =
+			ArrayListUtilities.copyAndSort(databaseDescriptor.getLeafTableNames());
 		Map<String, String> allOptionsByLabelsExceptCore =
-			MapUtilities.mirror(allOptionsExceptCore);
-		List<String> allOptions = ArrayListUtilities.unionCollectionsAsList(
-			OPTIONS_TO_ADD_TO_FRONT_OF_LEAF_WIDGET,
-			starDatabase.getLeafTableNames(),
+			databaseDescriptor.getTableNameOptionsWithoutCore();
+		List<String> allOptions =
+			ArrayListUtilities.copyAndSort(databaseDescriptor.getLeafTableNames());
+		allOptions = ArrayListUtilities.unionCollectionsAsList(
+			Arrays.asList(coreEntityHumanReadableName),
+			allOptions,
 			null);
-		Collections.sort(allOptions);
-		Map<String, String> allOptionsByLabels = MapUtilities.mirror(allOptions);
+		Map<String, String> allOptionsByLabels = databaseDescriptor.getTableNameOptionsWithCore();
 
 		// Create and setup the Source and Target selection fields.
 
@@ -91,25 +92,50 @@ public class DirectedNetworkGUIBuilder extends GUIBuilder {
 				SOURCE_LEAF_FIELD_NAME,
 				allOptions,
 				allOptionsByLabels,
-				starDatabase,
+				databaseDescriptor,
 				model,
 				headerGroup);
-
 		GUIModelField<String, Combo, DropDownDataSynchronizer> targetLeafField =
 			createLeafSelectionField(
 				TARGET_LEAF_FIELD_LABEL,
 				TARGET_LEAF_FIELD_NAME,
 				allOptions,
 				allOptionsByLabels,
-				starDatabase,
+				databaseDescriptor,
 				model,
 				headerGroup);
+
+		/*
+		 * Make it so only one of the Source and Target selection fields can be the core
+		 *  entity option.
+		 */
+
+		sourceLeafField.getWidget().addSelectionListener(createLeafSelectionListener(
+			allOptionsExceptCore,
+			allOptionsByLabelsExceptCore,
+			allOptions,
+			allOptionsByLabels,
+			coreEntityHumanReadableName,
+			coreEntityTableName,
+			sourceLeafField,
+			targetLeafField));
+		targetLeafField.getWidget().addSelectionListener(createLeafSelectionListener(
+			allOptionsExceptCore,
+			allOptionsByLabelsExceptCore,
+			allOptions,
+			allOptionsByLabels,
+			coreEntityHumanReadableName,
+			coreEntityTableName,
+			targetLeafField,
+			sourceLeafField));
+
+		// Create the widget that allows users to specify node and edge aggregate fields.
 
 		AttributeListWidget nodeAggregatesWidget = createAggregateWidget(
 			model,
 			NODE_ATTRIBUTE_FUNCTION_BASE_NAME,
 			NODE_CORE_ENTITY_COLUMN_BASE_NAME,
-			starDatabase.getCoreTableDescriptor().getColumnNames(),
+			databaseDescriptor.getCoreTableDescriptor().getColumnNames(),
 			NODE_RESULT_BASE_NAME,
 			NODE_TYPE,
 			nodeAggregatesGroup);
@@ -117,85 +143,28 @@ public class DirectedNetworkGUIBuilder extends GUIBuilder {
 			model,
 			EDGE_ATTRIBUTE_FUNCTION_BASE_NAME,
 			EDGE_CORE_ENTITY_COLUMN_BASE_NAME,
-			starDatabase.getCoreTableDescriptor().getColumnNames(),
+			databaseDescriptor.getCoreTableDescriptor().getColumnNames(),
 			EDGE_RESULT_BASE_NAME,
 			EDGE_TYPE,
 			edgeAggregatesGroup);
+
+		// Create the finished button so the user can actually execute the resulting queries.
+
+		@SuppressWarnings("unused")
+		Button finishedButton = createFinishedButton(footerGroup, 1);
+
+		// Fill the aggregate widgets with some aggregate fields by default (for the user's ease).
 
 		for (int ii = 0; ii < DEFAULT_AGGREGATE_WIDGET_COUNT; ii++) {
 			nodeAggregatesWidget.addComponent(SWT.NONE, null);
 			edgeAggregatesWidget.addComponent(SWT.NONE, null);
 		}
 
+		// Run the GUI and return the model with the data that the user entered.
+
 		runGUI(display, shell, windowHeight);
 
 		return model;
-	}
-
-	private static Group createHeaderGroup(Composite parent) {
-		Group headerGroup = new Group(parent, SWT.NONE);
-		headerGroup.setLayoutData(createHeaderGroupLayoutData());
-		headerGroup.setLayout(createHeaderGroupLayout());
-		headerGroup.setText(HEADER_GROUP_TEXT);
-
-		return headerGroup;
-	}
-
-	private static GridData createHeaderGroupLayoutData() {
-		GridData layoutData = new GridData(SWT.FILL, SWT.FILL, true, true);
-		layoutData.horizontalSpan = 2;
-
-		return layoutData;
-	}
-
-	private static GridLayout createHeaderGroupLayout() {
-		GridLayout layout = new GridLayout(2, false);
-
-		return layout;
-	}
-
-	private static Group createNodeAggregatesGroup(Composite parent, GUIModel model) {
-		Group nodeAggregatesGroup = new Group(parent, SWT.SHADOW_ETCHED_IN);
-		nodeAggregatesGroup.setLayoutData(createNodeAggregatesGroupLayoutData());
-		nodeAggregatesGroup.setLayout(createNodeAggregatesGroupLayout());
-		nodeAggregatesGroup.setText(NODE_ATTRIBUTES_GROUP_TEXT);
-
-		return nodeAggregatesGroup;
-	}
-
-	private static GridData createNodeAggregatesGroupLayoutData() {
-		GridData layoutData = new GridData(SWT.FILL, SWT.FILL, true, true);
-		layoutData.horizontalSpan = 2;
-
-		return layoutData;
-	}
-
-	private static GridLayout createNodeAggregatesGroupLayout() {
-		GridLayout layout = new GridLayout(1, false);
-
-		return layout;
-	}
-
-	private static Group createEdgeAggregatesGroup(Composite parent, GUIModel model) {
-		Group edgeAggregatesGroup = new Group(parent, SWT.SHADOW_ETCHED_IN);
-		edgeAggregatesGroup.setLayoutData(createEdgeAggregatesGroupLayoutData());
-		edgeAggregatesGroup.setLayout(createEdgeAggregatesGroupLayout());
-		edgeAggregatesGroup.setText(EDGE_ATTRIBUTES_GROUP_TEXT);
-
-		return edgeAggregatesGroup;
-	}
-
-	private static GridData createEdgeAggregatesGroupLayoutData() {
-		GridData layoutData = new GridData(SWT.FILL, SWT.FILL, true, true);
-		layoutData.horizontalSpan = 2;
-
-		return layoutData;
-	}
-
-	private static GridLayout createEdgeAggregatesGroupLayout() {
-		GridLayout layout = new GridLayout(1, false);
-
-		return layout;
 	}
 
 	private static StyledText createInstructionsLabel(Composite parent) {
@@ -232,9 +201,9 @@ public class DirectedNetworkGUIBuilder extends GUIBuilder {
 	private static GUIModelField<String, Combo, DropDownDataSynchronizer> createLeafSelectionField(
 			String labelText,
 			String fieldName,
-			Collection<String> allOptions,
-			Map<String, String> allOptionsByLabels,
-			StarDatabase starDatabase,
+			Collection<String> allOptionLabels,
+			Map<String, String> allOptionValuesByLabels,
+			StarDatabaseDescriptor databaseDescriptor,
 			GUIModel model,
 			Composite parent) {
 		Label label = new Label(parent, SWT.READ_ONLY);
@@ -242,9 +211,15 @@ public class DirectedNetworkGUIBuilder extends GUIBuilder {
 		label.setText(labelText);
 
 		GUIModelField<String, Combo, DropDownDataSynchronizer> leafField = model.addDropDown(
-			fieldName, 0, allOptions, allOptionsByLabels, parent, SWT.BORDER | SWT.READ_ONLY);
+			fieldName,
+			0,
+			allOptionLabels,
+			allOptionValuesByLabels,
+			parent,
+			SWT.BORDER | SWT.READ_ONLY);
 		leafField.getWidget().setLayoutData(createLeafSelectionFieldLayoutData());
-		leafField.setValue(CollectionUtilities.get(allOptions, 1));
+		leafField.setValue(
+			allOptionValuesByLabels.get(CollectionUtilities.get(allOptionLabels, 1)));
 
 		return leafField;
 	}
@@ -261,12 +236,13 @@ public class DirectedNetworkGUIBuilder extends GUIBuilder {
 		return layoutData;
 	}
 
-	// TODO:
 	private static SelectionListener createLeafSelectionListener(
-			final Collection<String> allOptionsExceptCore,
+			final List<String> allOptionsExceptCore,
 			final Map<String, String> allOptionsByLabelsExceptCore,
-			final Collection<String> allOptions,
+			final List<String> allOptions,
 			final Map<String, String> allOptionsByLabels,
+			final String coreEntityHumanReadableName,
+			final String coreEntityTableName,
 			final GUIModelField<String, Combo, DropDownDataSynchronizer> sourceLeafField,
 			final GUIModelField<String, Combo, DropDownDataSynchronizer> targetLeafField) {
 		return new SelectionListener() {
@@ -279,72 +255,18 @@ public class DirectedNetworkGUIBuilder extends GUIBuilder {
 			}
 
 			private void selected(SelectionEvent event) {
+				if (coreEntityTableName.equals(sourceLeafField.getValue())) {
+					final String targetLeafFieldValue = targetLeafField.getValue();
+					targetLeafField.getDataSynchronizer().setOptions(
+						allOptionsExceptCore, allOptionsByLabelsExceptCore);
+					targetLeafField.setValue(targetLeafFieldValue);
+				} else if (coreEntityTableName.equals(sourceLeafField.getPreviousValue())) {
+					final String targetLeafFieldValue = targetLeafField.getValue();
+					targetLeafField.getDataSynchronizer().setOptions(
+						allOptions, allOptionsByLabels);
+					targetLeafField.setValue(targetLeafFieldValue);
+				}
 			}
 		};
-	}
-
-	private static AttributeListWidget createAggregateWidget(
-			GUIModel model,
-			String aggregateFunctionBaseName,
-			String coreEntityColumnName,
-			Collection<String> coreEntityColumns,
-			String resultColumnLabelBaseName,
-			String type,
-			Composite parent) {
-		AttributeListWidget aggregateList = new AttributeListWidget(
-			model,
-			aggregateFunctionBaseName,
-			coreEntityColumnName,
-			coreEntityColumns,
-			resultColumnLabelBaseName,
-			type,
-			parent);
-		aggregateList.setLayoutData(createAggregateListLayoutData());
-
-		return aggregateList;
-	}
-
-	private static GridData createAggregateListLayoutData() {
-		GridData layoutData = new GridData(SWT.FILL, SWT.FILL, true, true);
-		layoutData.heightHint = 300;
-
-		return layoutData;
-	}
-
-	public static void main(String[] arguments) {
-		Database database = null;
-		Map<String, String> columnNamesToTypes = createColumnNamesToTypes();
-		CoreTableDescriptor coreTableDescriptor = new CoreTableDescriptor(columnNamesToTypes);
-		Map<String, LeafTableDescriptor> leafTableDescriptorsByName =
-			createLeafTableDescriptorsByName();
-		StarDatabase starDatabase =
-			new StarDatabase(database, coreTableDescriptor, leafTableDescriptorsByName);
-		DirectedNetworkGUIBuilder guiBuilder = new DirectedNetworkGUIBuilder();
-
-		guiBuilder.createGUI(
-			"Extract Directed Network", WINDOW_WIDTH, WINDOW_HEIGHT, starDatabase);
-	}
-
-	private static Map<String, String> createColumnNamesToTypes() {
-		Map<String, String> columnNamesToTypes = new HashMap<String, String>();
-		columnNamesToTypes.put("CITES", "INTEGER");
-		columnNamesToTypes.put("YEAR", "INTEGER");
-
-		return columnNamesToTypes;
-	}
-
-	private static Map<String, LeafTableDescriptor> createLeafTableDescriptorsByName() {
-		String[] types = new String[] { "STRING", "INTEGER", "DOUBLE" };
-
-		Map<String, LeafTableDescriptor> leafTableDescriptorsByName =
-			new HashMap<String, LeafTableDescriptor>();
-
-		for (int ii = 0; ii < 10; ii++) {
-			String name = "Leaf " + ii;
-			leafTableDescriptorsByName.put(
-				name, new LeafTableDescriptor(name, types[ii % types.length]));
-		}
-
-		return leafTableDescriptorsByName;
 	}
 }

@@ -3,6 +3,7 @@ package edu.iu.sci2.database.star.extract.network.guibuilder.attribute;
 import java.util.Collection;
 
 import org.cishell.utilities.MapUtilities;
+import org.cishell.utilities.StringUtilities;
 import org.cishell.utilities.swt.ExpandableComponentWidget;
 import org.cishell.utilities.swt.GridContainer;
 import org.cishell.utilities.swt.model.GUIModel;
@@ -10,6 +11,8 @@ import org.cishell.utilities.swt.model.GUIModelField;
 import org.cishell.utilities.swt.model.datasynchronizer.DropDownDataSynchronizer;
 import org.cishell.utilities.swt.model.datasynchronizer.TextDataSynchronizer;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.KeyEvent;
+import org.eclipse.swt.events.KeyListener;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.layout.GridData;
@@ -28,6 +31,8 @@ public class AttributeWidgetContainer {
 	private GUIModelField<String, Combo, DropDownDataSynchronizer> aggregateFunction;
 	private GUIModelField<String, Combo, DropDownDataSynchronizer> coreEntityColumn;
 	private GUIModelField<String, Text, TextDataSynchronizer> resultColumnLabelName;
+
+	private boolean userEnteredCustomResultColumnLabelName = false;
 
 	public AttributeWidgetContainer(
 			GUIModel model,
@@ -50,6 +55,41 @@ public class AttributeWidgetContainer {
 		this.resultColumnLabelName = createResultColumnLabelName(
 			this.model, resultColumnLabelName, componentWidget, uniqueIndex, grid);
 		createDeleteButton(componentWidget, grid);
+
+		SelectionListener suggestedResultColumnNameSelectionListener = new SelectionListener() {
+			public void widgetDefaultSelected(SelectionEvent event) {
+				selected(event);
+			}
+
+			public void widgetSelected(SelectionEvent event) {
+				selected(event);
+			}
+
+			private void selected(SelectionEvent event) {
+				if (!AttributeWidgetContainer.this.userEnteredCustomResultColumnLabelName) {
+					AttributeWidgetContainer.this.suggestName();
+				}
+			}
+		};
+		this.aggregateFunction.getWidget().addSelectionListener(
+			suggestedResultColumnNameSelectionListener);
+		this.coreEntityColumn.getWidget().addSelectionListener(
+			suggestedResultColumnNameSelectionListener);
+
+		suggestName();
+		this.resultColumnLabelName.getWidget().addKeyListener(new KeyListener() {
+			public void keyPressed(KeyEvent event) {
+				key(event);
+			}
+
+			public void keyReleased(KeyEvent event) {
+				key(event);
+			}
+
+			public void key(KeyEvent event) {
+				AttributeWidgetContainer.this.userEnteredCustomResultColumnLabelName = true;
+			}
+		});
 	}
 
 	public String getAggregateFunction() {
@@ -66,6 +106,22 @@ public class AttributeWidgetContainer {
 
 	public void reindex(int newIndex) {
 		this.index = newIndex;
+	}
+
+	private void suggestName() {
+		String aggregateFunction = suggestName_FixValue(this.aggregateFunction.getValue());
+		String coreEntityColumn = suggestName_FixValue(this.coreEntityColumn.getValue());
+		String value = String.format(
+			"%s_%s", aggregateFunction, coreEntityColumn);
+		this.resultColumnLabelName.setValue(value);
+	}
+
+	private String suggestName_FixValue(String originalValue) {
+		String[] tokenized =
+			StringUtilities.tokenizeByWhitespace(originalValue);
+		String reimplodedWithUnderscores = StringUtilities.implodeStringArray(tokenized, "_");
+
+		return reimplodedWithUnderscores.toUpperCase();
 	}
 
 	private static GUIModelField<String, Combo, DropDownDataSynchronizer> createAggregateFunction(

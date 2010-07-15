@@ -6,10 +6,40 @@ import org.cishell.framework.CIShellContext;
 import org.cishell.framework.algorithm.Algorithm;
 import org.cishell.framework.algorithm.AlgorithmFactory;
 import org.cishell.framework.data.Data;
+import org.cishell.utilities.swt.model.GUIModel;
+import org.osgi.framework.BundleContext;
+import org.osgi.service.component.ComponentContext;
+import org.osgi.service.log.LogService;
 
-public class ExtractCoOccurrenceNetworkAlgorithmFactory implements AlgorithmFactory {
+import edu.iu.sci2.database.star.common.StarDatabaseMetadata;
+import edu.iu.sci2.database.star.extract.network.guibuilder.CoOccurrenceNetworkGUIBuilder;
+import edu.iu.sci2.database.star.extract.network.query.CoOccurrenceNetworkQueryConstructor;
+import edu.iu.sci2.database.star.extract.network.query.QueryConstructor;
+
+public class ExtractCoOccurrenceNetworkAlgorithmFactory extends ExtractionAlgorithmFactory {
+	private BundleContext bundleContext;
+	private LogService logger;
+
+	protected void activate(ComponentContext componentContext) {
+		this.bundleContext = componentContext.getBundleContext();
+		this.logger = (LogService)componentContext.locateService("LOG");
+	}
+
     public Algorithm createAlgorithm(
     		Data[] data, Dictionary<String, Object> parameters, CIShellContext ciShellContext) {
-        return new ExtractNetworkAlgorithm();
+    	Data parentData = data[0];
+    	StarDatabaseMetadata databaseMetadata = getMetadata(parentData);
+    	verifyLeafTables(databaseMetadata, this.logger);
+    	GUIModel model = getModelFromUser(databaseMetadata);
+    	QueryConstructor queryConstructor = new CoOccurrenceNetworkQueryConstructor();
+    	AlgorithmFactory networkQueryRunner = getNetworkQueryRunner(this.bundleContext);
+
+        return new ExtractNetworkAlgorithm(
+        	ciShellContext, parentData, model, queryConstructor, networkQueryRunner);
+    }
+
+    private static GUIModel getModelFromUser(StarDatabaseMetadata metadata) {
+    	return new CoOccurrenceNetworkGUIBuilder().createGUI(
+    		WINDOW_TITLE, WINDOW_WIDTH, WINDOW_HEIGHT, new StarDatabaseDescriptor(metadata));
     }
 }
