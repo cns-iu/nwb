@@ -1,6 +1,7 @@
 package edu.iu.sci2.database.star.extract.network.guibuilder;
 
 import java.util.Collection;
+import java.util.Map;
 
 import org.cishell.utilities.swt.GUIBuilderUtilities;
 import org.cishell.utilities.swt.model.GUIModel;
@@ -34,25 +35,15 @@ public abstract class GUIBuilder {
 	public static final String NODE_TYPE = "Node";
 	public static final String EDGE_TYPE = "Edge";
 
-	public static final String NODE_ATTRIBUTES_GROUP_BASE_NAME = "nodeAttributes.";
-	public static final String EDGE_ATTRIBUTES_GROUP_BASE_NAME = "edgeAttributes.";
-	public static final String ATTRIBUTE_FUNCTION_BASE_NAME = "attributeFunction.";
-	public static final String CORE_ENTITY_COLUMN_BASE_NAME = "coreEntityColumn.";
-	public static final String RESULT_NAME_FIELD_BASE_NAME = "result.";
+	public static final String HEADER_GROUP_NAME = "header";
 
-	public static final String NODE_ATTRIBUTE_FUNCTION_BASE_NAME =
-		NODE_ATTRIBUTES_GROUP_BASE_NAME + ATTRIBUTE_FUNCTION_BASE_NAME;
-	public static final String NODE_CORE_ENTITY_COLUMN_BASE_NAME =
-		NODE_ATTRIBUTES_GROUP_BASE_NAME + CORE_ENTITY_COLUMN_BASE_NAME;
-	public static final String NODE_RESULT_BASE_NAME =
-		NODE_ATTRIBUTES_GROUP_BASE_NAME + RESULT_NAME_FIELD_BASE_NAME;
+	public static final String NODE_ATTRIBUTE_FUNCTION_GROUP_NAME = "nodeAttributeFunction";
+	public static final String NODE_CORE_ENTITY_COLUMN_GROUP_NAME = "nodeCoreEntityColumn";
+	public static final String NODE_RESULT_NAME_GROUP_NAME = "nodeResult";
 
-	public static final String EDGE_ATTRIBUTE_FUNCTION_BASE_NAME =
-		EDGE_ATTRIBUTES_GROUP_BASE_NAME + ATTRIBUTE_FUNCTION_BASE_NAME;
-	public static final String EDGE_CORE_ENTITY_COLUMN_BASE_NAME =
-		EDGE_ATTRIBUTES_GROUP_BASE_NAME + CORE_ENTITY_COLUMN_BASE_NAME;
-	public static final String EDGE_RESULT_BASE_NAME =
-		EDGE_ATTRIBUTES_GROUP_BASE_NAME + RESULT_NAME_FIELD_BASE_NAME;
+	public static final String EDGE_ATTRIBUTE_FUNCTION_GROUP_NAME = "edgeAttributeFunction";
+	public static final String EDGE_CORE_ENTITY_COLUMN_GROUP_NAME = "edgeCoreEntityColumn";
+	public static final String EDGE_RESULT_NAME_GROUP_NAME = "edgeResult";
 
 	public abstract GUIModel createGUI(
 			String windowTitle,
@@ -136,18 +127,20 @@ public abstract class GUIBuilder {
 
 	protected static AttributeListWidget createAggregateWidget(
 			GUIModel model,
-			String aggregateFunctionBaseName,
-			String coreEntityColumnName,
-			Collection<String> coreEntityColumns,
-			String resultColumnLabelBaseName,
+			String aggregateFunctionGroupName,
+			String coreEntityColumnGroupName,
+			Collection<String> coreEntityColumnLabels,
+			Map<String, String> coreEntityColumnsByLabels,
+			String resultColumnLabelGroupName,
 			String type,
 			Composite parent) {
 		AttributeListWidget aggregateList = new AttributeListWidget(
 			model,
-			aggregateFunctionBaseName,
-			coreEntityColumnName,
-			coreEntityColumns,
-			resultColumnLabelBaseName,
+			aggregateFunctionGroupName,
+			coreEntityColumnGroupName,
+			coreEntityColumnLabels,
+			coreEntityColumnsByLabels,
+			resultColumnLabelGroupName,
 			type,
 			parent);
 		aggregateList.setLayoutData(createAggregateListLayoutData());

@@ -1,6 +1,7 @@
 package edu.iu.sci2.database.star.extract.network.guibuilder.attribute;
 
 import java.util.Collection;
+import java.util.Map;
 
 import org.cishell.utilities.MapUtilities;
 import org.cishell.utilities.StringUtilities;
@@ -36,10 +37,11 @@ public class AttributeWidgetContainer {
 
 	public AttributeWidgetContainer(
 			GUIModel model,
-			String aggregateFunctionName,
-			String coreEntityColumnName,
-			Collection<String> coreEntityColumns,
-			String resultColumnLabelName,
+			String aggregateFunctionGroupName,
+			String coreEntityColumnGroupName,
+			Collection<String> coreEntityColumnLabels,
+			Map<String, String> coreEntityColumnsByLabels,
+			String resultColumnLabelGroupName,
 			ExpandableComponentWidget<AttributeWidgetContainer> componentWidget,
 			int index,
 			int uniqueIndex,
@@ -48,12 +50,23 @@ public class AttributeWidgetContainer {
 		this.model = model;
 		this.index = index;
 
-		this.aggregateFunction =
-			createAggregateFunction(this.model, aggregateFunctionName, componentWidget, grid);
+		this.aggregateFunction = createAggregateFunction(
+			this.model, aggregateFunctionGroupName, "" + uniqueIndex, componentWidget, grid);
 		this.coreEntityColumn = createCoreEntityColumn(
-			this.model, coreEntityColumnName, coreEntityColumns, componentWidget, grid);
+			this.model,
+			coreEntityColumnGroupName,
+			"" + uniqueIndex,
+			coreEntityColumnLabels,
+			coreEntityColumnsByLabels,
+			componentWidget,
+			grid);
 		this.resultColumnLabelName = createResultColumnLabelName(
-			this.model, resultColumnLabelName, componentWidget, uniqueIndex, grid);
+			this.model,
+			resultColumnLabelGroupName,
+			"" + uniqueIndex,
+			componentWidget,
+			uniqueIndex,
+			grid);
 		createDeleteButton(componentWidget, grid);
 
 		SelectionListener suggestedResultColumnNameSelectionListener = new SelectionListener() {
@@ -126,15 +139,17 @@ public class AttributeWidgetContainer {
 
 	private static GUIModelField<String, Combo, DropDownDataSynchronizer> createAggregateFunction(
 			GUIModel model,
+			String groupName,
 			String aggregateFunctionName,
 			ExpandableComponentWidget<AttributeWidgetContainer> componentWidget,
 			GridContainer grid) {
 		GUIModelField<String, Combo, DropDownDataSynchronizer> aggregateFunction =
 			model.addDropDown(
+				groupName,
 				aggregateFunctionName,
 				0,
-				AttributeFunction.AGGREGATE_FUNCTION_NAMES,
-				MapUtilities.mirror(AttributeFunction.AGGREGATE_FUNCTION_NAMES),
+				AttributeFunction.ATTRIBUTE_FUNCTIONS_BY_NAME.keySet(),
+				MapUtilities.mirror(AttributeFunction.ATTRIBUTE_FUNCTIONS_BY_NAME.keySet()),
 				grid.getActualParent(),
 				SWT.BORDER | SWT.READ_ONLY);
 		aggregateFunction.getWidget().setLayoutData(createAggregateFunctionLayoutData());
@@ -151,16 +166,19 @@ public class AttributeWidgetContainer {
 
 	private static GUIModelField<String, Combo, DropDownDataSynchronizer> createCoreEntityColumn(
 			GUIModel model,
+			String groupName,
 			String coreEntityColumnName,
-			Collection<String> coreEntityColumns,
+			Collection<String> coreEntityColumnLabels,
+			Map<String, String> coreEntityColumnsByLabels,
 			ExpandableComponentWidget<AttributeWidgetContainer> componentWidget,
 			GridContainer grid) {
 		GUIModelField<String, Combo, DropDownDataSynchronizer> coreEntityColumn =
 			model.addDropDown(
+				groupName,
 				coreEntityColumnName,
 				0,
-				coreEntityColumns,
-				MapUtilities.mirror(coreEntityColumns),
+				coreEntityColumnLabels,
+				coreEntityColumnsByLabels,
 				grid.getActualParent(),
 				SWT.BORDER | SWT.READ_ONLY);
 		coreEntityColumn.getWidget().setLayoutData(createCoreEntityColumnLayoutData());
@@ -177,12 +195,14 @@ public class AttributeWidgetContainer {
 
 	private static GUIModelField<String, Text, TextDataSynchronizer> createResultColumnLabelName(
 			GUIModel model,
+			String groupName,
 			String resultColumnLabelName,
 			ExpandableComponentWidget<AttributeWidgetContainer> componentWidget,
 			int uniqueIndex,
 			GridContainer grid) {
 		GUIModelField<String, Text, TextDataSynchronizer> resultColumnLabelNameField =
 			model.addText(
+				groupName,
 				resultColumnLabelName,
 				"RESULT" + uniqueIndex,
 				false,
@@ -218,6 +238,12 @@ public class AttributeWidgetContainer {
 
 			private void selected(SelectionEvent event) {
 				componentWidget.removeComponent(AttributeWidgetContainer.this.index);
+				AttributeWidgetContainer.this.model.removeField(
+					AttributeWidgetContainer.this.aggregateFunction);
+				AttributeWidgetContainer.this.model.removeField(
+					AttributeWidgetContainer.this.coreEntityColumn);
+				AttributeWidgetContainer.this.model.removeField(
+					AttributeWidgetContainer.this.resultColumnLabelName);
 			}
 		});
 		grid.addComponent(deleteButton);

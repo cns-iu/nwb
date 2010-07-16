@@ -13,6 +13,7 @@ import org.osgi.service.log.LogService;
 
 import edu.iu.sci2.database.star.common.StarDatabaseMetadata;
 import edu.iu.sci2.database.star.extract.network.guibuilder.CoOccurrenceNetworkGUIBuilder;
+import edu.iu.sci2.database.star.extract.network.guibuilder.GUIBuilder;
 import edu.iu.sci2.database.star.extract.network.query.CoOccurrenceNetworkQueryConstructor;
 import edu.iu.sci2.database.star.extract.network.query.QueryConstructor;
 
@@ -31,7 +32,17 @@ public class ExtractCoOccurrenceNetworkAlgorithmFactory extends ExtractionAlgori
     	StarDatabaseMetadata databaseMetadata = getMetadata(parentData);
     	verifyLeafTables(databaseMetadata, this.logger);
     	GUIModel model = getModelFromUser(databaseMetadata);
-    	QueryConstructor queryConstructor = new CoOccurrenceNetworkQueryConstructor();
+    	QueryConstructor queryConstructor = new CoOccurrenceNetworkQueryConstructor(
+    		GUIBuilder.HEADER_GROUP_NAME,
+    		CoOccurrenceNetworkGUIBuilder.LEAF_FIELD_NAME,
+    		GUIBuilder.NODE_ATTRIBUTE_FUNCTION_GROUP_NAME,
+    		GUIBuilder.NODE_CORE_ENTITY_COLUMN_GROUP_NAME,
+    		GUIBuilder.NODE_RESULT_NAME_GROUP_NAME,
+    		GUIBuilder.EDGE_ATTRIBUTE_FUNCTION_GROUP_NAME,
+    		GUIBuilder.EDGE_CORE_ENTITY_COLUMN_GROUP_NAME,
+    		GUIBuilder.EDGE_RESULT_NAME_GROUP_NAME,
+    		model,
+    		databaseMetadata);
     	AlgorithmFactory networkQueryRunner = getNetworkQueryRunner(this.bundleContext);
 
         return new ExtractNetworkAlgorithm(

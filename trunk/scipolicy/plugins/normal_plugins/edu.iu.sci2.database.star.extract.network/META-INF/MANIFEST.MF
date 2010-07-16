@@ -4,7 +4,8 @@ Bundle-Name: edu.iu.sci2.database.star.extract.network
 Bundle-SymbolicName: edu.iu.sci2.database.star.extract.network
 Bundle-Version: 0.0.1
 Bundle-ClassPath: .
-Import-Package: edu.iu.cns.database.load.framework,
+Import-Package: com.google.common.collect,
+ edu.iu.cns.database.load.framework,
  edu.iu.cns.database.load.framework.exception,
  edu.iu.cns.shared.utilities.swt,
  edu.iu.sci2.database.star.common,
@@ -13,6 +14,7 @@ Import-Package: edu.iu.cns.database.load.framework,
  edu.iu.sci2.database.star.common.utility,
  edu.iu.sci2.database.star.common.utility.csv.validator,
  edu.iu.sci2.database.star.common.utility.csv.validator.exception,
+ org.antlr.stringtemplate,
  org.cishell.framework;version="1.0.0",
  org.cishell.framework.algorithm;version="1.0.0",
  org.cishell.framework.data;version="1.0.0",

@@ -24,7 +24,7 @@ public class CoreTableDescriptor {
 
 	private String coreEntityHumanReadableName;
 	private String coreEntityTableName;
-	private Map<String, String> columnNamesToTypes;
+	private Map<String, String> columnNamesByLabels;
 	private Collection<String> columnNames;
 	private Collection<String> columnNamesForAggregates;
 
@@ -32,19 +32,19 @@ public class CoreTableDescriptor {
 		this(
 			metadata.getCoreEntityHumanReadableName(),
 			metadata.getCoreEntityTableName(),
-			constructColumnNamesToTypes(metadata));
+			constructColumnNamesByLabels(metadata));
 	}
 
 	public CoreTableDescriptor(
 			String coreEntityHumanReadableName,
 			String coreEntityTableName,
-			Map<String, String> columnNamesToTypes) {
+			Map<String, String> columnNamesByLabels) {
 		this.coreEntityHumanReadableName = coreEntityHumanReadableName;
 		this.coreEntityTableName = coreEntityTableName;
-		this.columnNamesToTypes = columnNamesToTypes;
-		this.columnNames = this.columnNamesToTypes.keySet();
+		this.columnNamesByLabels = columnNamesByLabels;
+		this.columnNames = this.columnNamesByLabels.keySet();
 		this.columnNamesForAggregates = MapUtilities.getValidKeysOfTypesInMap(
-			columnNamesToTypes,
+			columnNamesByLabels,
 			TYPES_OF_COLUMNS_FOR_AGGREGATES,
 			OPTIONS_TO_SKIP_IN_TYPES_OF_COLUMNS_FOR_AGGREGATES);
 		this.columnNamesForAggregates = ArrayListUtilities.unionCollections(
@@ -61,22 +61,25 @@ public class CoreTableDescriptor {
 		return this.coreEntityTableName;
 	}
 
-	public Map<String, String> getColumnNamesToTypes() {
-		return this.columnNamesToTypes;
+	public Map<String, String> getColumnNamesByLabels() {
+		return this.columnNamesByLabels;
 	}
 
 	public Collection<String> getColumnNames() {
 		return this.columnNames;
 	}
 
-	private static Map<String, String> constructColumnNamesToTypes(StarDatabaseMetadata metadata) {
+//	public Map<String, String> getColumnNamesByLabels() {
+//	}
+
+	private static Map<String, String> constructColumnNamesByLabels(StarDatabaseMetadata metadata) {
 		Map<String, String> namesToTypes = new HashMap<String, String>();
 
 		for (ColumnDescriptor columnDescriptor : metadata.getColumnDescriptors().values()) {
 			if (columnDescriptor.isCoreColumn()) {
-				String name = columnDescriptor.getName();
-				String type = columnDescriptor.getType().getHumanReadableName();
-				namesToTypes.put(name, type);
+				String label = columnDescriptor.getName();
+				String name = columnDescriptor.getNameForDatabase();
+				namesToTypes.put(label, name);
 			}
 		}
 

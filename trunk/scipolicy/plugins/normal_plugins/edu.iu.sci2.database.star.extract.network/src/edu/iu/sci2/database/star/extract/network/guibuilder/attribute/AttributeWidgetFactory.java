@@ -10,22 +10,25 @@ import org.cishell.utilities.swt.model.GUIModel;
 
 public class AttributeWidgetFactory implements ScrolledComponentFactory<AttributeWidgetContainer> {
 	private GUIModel model;
-	private String aggregateFunctionBaseName;
-	private String baseCoreEntityColumnBaseName;
-	private Collection<String> coreEntityColumns;
-	private String resultColumnLabelBaseName;
+	private String aggregateFunctionGroupName;
+	private String baseCoreEntityColumnGroupName;
+	private Collection<String> coreEntityColumnLabels;
+	private Map<String, String> coreEntityColumnsByLabels;
+	private String resultColumnLabelGroupName;
 
 	public AttributeWidgetFactory(
 			GUIModel model,
-			String aggregateFunctionBaseName,
-			String baseCoreEntityColumnBaseName,
-			Collection<String> coreEntityColumns,
-			String resultColumnLabelBaseName) {
+			String aggregateFunctionGroupName,
+			String baseCoreEntityColumnGroupName,
+			Collection<String> coreEntityColumnLabels,
+			Map<String, String> coreEntityColumnsByLabels,
+			String resultColumnLabelGroupName) {
 		this.model = model;
-		this.aggregateFunctionBaseName = aggregateFunctionBaseName;
-		this.baseCoreEntityColumnBaseName = baseCoreEntityColumnBaseName;
-		this.coreEntityColumns = coreEntityColumns;
-		this.resultColumnLabelBaseName = resultColumnLabelBaseName;
+		this.aggregateFunctionGroupName = aggregateFunctionGroupName;
+		this.baseCoreEntityColumnGroupName = baseCoreEntityColumnGroupName;
+		this.coreEntityColumnLabels = coreEntityColumnLabels;
+		this.coreEntityColumnsByLabels = coreEntityColumnsByLabels;
+		this.resultColumnLabelGroupName = resultColumnLabelGroupName;
 	}
 
 	public AttributeWidgetContainer constructWidget(
@@ -37,10 +40,11 @@ public class AttributeWidgetFactory implements ScrolledComponentFactory<Attribut
 			int uniqueIndex) {
 		return new AttributeWidgetContainer(
 			model,
-			this.aggregateFunctionBaseName + uniqueIndex,
-			this.baseCoreEntityColumnBaseName + uniqueIndex,
-			this.coreEntityColumns,
-			this.resultColumnLabelBaseName + uniqueIndex,
+			this.aggregateFunctionGroupName,
+			this.baseCoreEntityColumnGroupName,
+			this.coreEntityColumnLabels,
+			this.coreEntityColumnsByLabels,
+			this.resultColumnLabelGroupName,
 			componentWidget,
 			index,
 			uniqueIndex,

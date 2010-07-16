@@ -68,18 +68,20 @@ public class CoOccurrenceNetworkGUIBuilder extends GUIBuilder {
 
 		AttributeListWidget nodeAggregatesTable = createAggregateWidget(
 			model,
-			NODE_ATTRIBUTE_FUNCTION_BASE_NAME,
-			NODE_CORE_ENTITY_COLUMN_BASE_NAME,
+			NODE_ATTRIBUTE_FUNCTION_GROUP_NAME,
+			NODE_CORE_ENTITY_COLUMN_GROUP_NAME,
 			databaseDescriptor.getCoreTableDescriptor().getColumnNames(),
-			NODE_RESULT_BASE_NAME,
+			databaseDescriptor.getCoreTableDescriptor().getColumnNamesByLabels(),
+			NODE_RESULT_NAME_GROUP_NAME,
 			NODE_TYPE,
 			nodeAggregatesGroup);
 		AttributeListWidget edgeAggregatesTable = createAggregateWidget(
 			model,
-			EDGE_ATTRIBUTE_FUNCTION_BASE_NAME,
-			EDGE_CORE_ENTITY_COLUMN_BASE_NAME,
+			EDGE_ATTRIBUTE_FUNCTION_GROUP_NAME,
+			EDGE_CORE_ENTITY_COLUMN_GROUP_NAME,
 			databaseDescriptor.getCoreTableDescriptor().getColumnNames(),
-			EDGE_RESULT_BASE_NAME,
+			databaseDescriptor.getCoreTableDescriptor().getColumnNamesByLabels(),
+			EDGE_RESULT_NAME_GROUP_NAME,
 			EDGE_TYPE,
 			edgeAggregatesGroup);
 
@@ -142,6 +144,7 @@ public class CoOccurrenceNetworkGUIBuilder extends GUIBuilder {
 		Collection<String> columnNames = databaseDescriptor.getLeafTableNames();
 		GUIModelField<String, Combo, DropDownDataSynchronizer> leafField =
 			model.addDropDown(
+			HEADER_GROUP_NAME,
 			LEAF_FIELD_NAME,
 			0,
 			columnNames,

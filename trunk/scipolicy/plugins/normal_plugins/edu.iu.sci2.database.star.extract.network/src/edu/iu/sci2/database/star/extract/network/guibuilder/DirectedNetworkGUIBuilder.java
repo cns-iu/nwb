@@ -89,6 +89,7 @@ public class DirectedNetworkGUIBuilder extends GUIBuilder {
 		GUIModelField<String, Combo, DropDownDataSynchronizer> sourceLeafField =
 			createLeafSelectionField(
 				SOURCE_LEAF_FIELD_LABEL,
+				HEADER_GROUP_NAME,
 				SOURCE_LEAF_FIELD_NAME,
 				allOptions,
 				allOptionsByLabels,
@@ -98,6 +99,7 @@ public class DirectedNetworkGUIBuilder extends GUIBuilder {
 		GUIModelField<String, Combo, DropDownDataSynchronizer> targetLeafField =
 			createLeafSelectionField(
 				TARGET_LEAF_FIELD_LABEL,
+				HEADER_GROUP_NAME,
 				TARGET_LEAF_FIELD_NAME,
 				allOptions,
 				allOptionsByLabels,
@@ -133,18 +135,20 @@ public class DirectedNetworkGUIBuilder extends GUIBuilder {
 
 		AttributeListWidget nodeAggregatesWidget = createAggregateWidget(
 			model,
-			NODE_ATTRIBUTE_FUNCTION_BASE_NAME,
-			NODE_CORE_ENTITY_COLUMN_BASE_NAME,
+			NODE_ATTRIBUTE_FUNCTION_GROUP_NAME,
+			NODE_CORE_ENTITY_COLUMN_GROUP_NAME,
 			databaseDescriptor.getCoreTableDescriptor().getColumnNames(),
-			NODE_RESULT_BASE_NAME,
+			databaseDescriptor.getCoreTableDescriptor().getColumnNamesByLabels(),
+			NODE_RESULT_NAME_GROUP_NAME,
 			NODE_TYPE,
 			nodeAggregatesGroup);
 		AttributeListWidget edgeAggregatesWidget = createAggregateWidget(
 			model,
-			EDGE_ATTRIBUTE_FUNCTION_BASE_NAME,
-			EDGE_CORE_ENTITY_COLUMN_BASE_NAME,
+			EDGE_ATTRIBUTE_FUNCTION_GROUP_NAME,
+			EDGE_CORE_ENTITY_COLUMN_GROUP_NAME,
 			databaseDescriptor.getCoreTableDescriptor().getColumnNames(),
-			EDGE_RESULT_BASE_NAME,
+			databaseDescriptor.getCoreTableDescriptor().getColumnNamesByLabels(),
+			EDGE_RESULT_NAME_GROUP_NAME,
 			EDGE_TYPE,
 			edgeAggregatesGroup);
 
@@ -200,6 +204,7 @@ public class DirectedNetworkGUIBuilder extends GUIBuilder {
 
 	private static GUIModelField<String, Combo, DropDownDataSynchronizer> createLeafSelectionField(
 			String labelText,
+			String groupName,
 			String fieldName,
 			Collection<String> allOptionLabels,
 			Map<String, String> allOptionValuesByLabels,
@@ -211,6 +216,7 @@ public class DirectedNetworkGUIBuilder extends GUIBuilder {
 		label.setText(labelText);
 
 		GUIModelField<String, Combo, DropDownDataSynchronizer> leafField = model.addDropDown(
+			groupName,
 			fieldName,
 			0,
 			allOptionLabels,

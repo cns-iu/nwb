@@ -8,12 +8,14 @@ import org.cishell.framework.algorithm.AlgorithmFactory;
 import org.cishell.framework.data.Data;
 import org.cishell.utilities.swt.model.GUIModel;
 import org.cishell.utilities.swt.model.GUIModelField;
+import org.cishell.utilities.swt.model.GUIModelGroup;
 import org.osgi.framework.BundleContext;
 import org.osgi.service.component.ComponentContext;
 import org.osgi.service.log.LogService;
 
 import edu.iu.sci2.database.star.common.StarDatabaseMetadata;
 import edu.iu.sci2.database.star.extract.network.guibuilder.DirectedNetworkGUIBuilder;
+import edu.iu.sci2.database.star.extract.network.guibuilder.GUIBuilder;
 import edu.iu.sci2.database.star.extract.network.query.LeafToCoreDirectedNetworkQueryConstructor;
 import edu.iu.sci2.database.star.extract.network.query.LeafToLeafDirectedNetworkQueryConstructor;
 import edu.iu.sci2.database.star.extract.network.query.QueryConstructor;
@@ -47,16 +49,23 @@ public class ExtractDirectedNetworkAlgorithmFactory extends ExtractionAlgorithmF
 
     private static QueryConstructor decideQueryConstructor(
     		StarDatabaseMetadata metadata, GUIModel model) {
-    	GUIModelField entity1 = model.getField(DirectedNetworkGUIBuilder.SOURCE_LEAF_FIELD_NAME);
-    	GUIModelField entity2 = model.getField(DirectedNetworkGUIBuilder.TARGET_LEAF_FIELD_NAME);
+	    // TODO: Specify generic types?
+    	GUIModelGroup headerGroup = model.getGroup(GUIBuilder.HEADER_GROUP_NAME);
+    	GUIModelField entity1 =
+    		headerGroup.getField(DirectedNetworkGUIBuilder.SOURCE_LEAF_FIELD_NAME);
+    	GUIModelField entity2 =
+    		headerGroup.getField(DirectedNetworkGUIBuilder.TARGET_LEAF_FIELD_NAME);
     	String coreEntityTableName = metadata.getCoreEntityTableName();
+    	String entity1Value = (String) entity1.getValue();
+    	String entity2Value = (String) entity2.getValue();
 
-    	if (coreEntityTableName.equals(entity1.getValue()) ||
-    			coreEntityTableName.equals(entity2.getValue())) {
-    		System.err.println("Leaf to core");
-    		return new LeafToCoreDirectedNetworkQueryConstructor();
+    	if (coreEntityTableName.equals(entity1Value)) {
+    		return new LeafToCoreDirectedNetworkQueryConstructor(
+    			entity1Value, entity2Value, true);
+    	} else if  (coreEntityTableName.equals(entity2Value)) {
+    		return new LeafToCoreDirectedNetworkQueryConstructor(
+    			entity1Value, entity2Value, false);
     	} else {
-    		System.err.println("Leaf to leaf");
     		return new LeafToLeafDirectedNetworkQueryConstructor();
     	}
     }

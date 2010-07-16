@@ -3,6 +3,7 @@ package edu.iu.sci2.database.star.extract.network.guibuilder.attribute;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
+import java.util.Map;
 
 import org.cishell.utilities.swt.ExpandableComponentWidget;
 import org.cishell.utilities.swt.model.GUIModel;
@@ -22,20 +23,22 @@ public class AttributeListWidget extends ExpandableComponentWidget<AttributeWidg
 
 	public AttributeListWidget(
 			GUIModel model,
-			String aggregateFunctionBaseName,
-			String coreEntityColumnBaseName,
-			Collection<String> coreEntityColumns,
-			String resultColumnLabelBaseName,
+			String aggregateFunctionGroupName,
+			String coreEntityColumnGroupName,
+			Collection<String> coreEntityColumnLabels,
+			Map<String, String> coreEntityColumnsByLabels,
+			String resultColumnLabelGroupName,
 			String type,
 			Composite parent) {
 		super(
 			parent,
 			new AttributeWidgetFactory(
 				model,
-				aggregateFunctionBaseName,
-				coreEntityColumnBaseName,
-				coreEntityColumns,
-				resultColumnLabelBaseName));
+				aggregateFunctionGroupName,
+				coreEntityColumnGroupName,
+				coreEntityColumnLabels,
+				coreEntityColumnsByLabels,
+				resultColumnLabelGroupName));
 		createAddAttributeButton(getHeaderArea(), type);
 	}
 

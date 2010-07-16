@@ -1,7 +1,7 @@
 package edu.iu.sci2.database.star.extract.network.attribute;
 
-import java.util.Arrays;
-import java.util.Collection;
+import java.util.HashMap;
+import java.util.Map;
 
 public enum AttributeFunction {
 	ARITHMETIC_MEAN("Arithmetic Mean", "") {
@@ -26,21 +26,20 @@ public enum AttributeFunction {
 //	MODE("Mode", "") {}...
 	SUM("Sum", "SUM");
 
-	public static final String AGGREGATE_FUNCTION_COUNT = "Count";
-	public static final String AGGREGATE_FUNCTION_ARITHMETIC_MEAN = "Arithmetic Mean";
-	public static final String AGGREGATE_FUNCTION_GEOMETRIC_MEAN = "Geometric Mean";
-	public static final String AGGREGATE_FUNCTION_MIN = "Min";
-	public static final String AGGREGATE_FUNCTION_MAX = "Max";
-	public static final String AGGREGATE_FUNCTION_MODE = "Mode";
-	public static final String AGGREGATE_FUNCTION_SUM = "Sum";
-	public static final Collection<String> AGGREGATE_FUNCTION_NAMES = Arrays.asList(
-		AGGREGATE_FUNCTION_COUNT,
-		AGGREGATE_FUNCTION_ARITHMETIC_MEAN,
-		AGGREGATE_FUNCTION_GEOMETRIC_MEAN,
-		AGGREGATE_FUNCTION_MIN,
-		AGGREGATE_FUNCTION_MAX,
-		AGGREGATE_FUNCTION_MODE,
-		AGGREGATE_FUNCTION_SUM);
+	public static final Map<String, AttributeFunction> ATTRIBUTE_FUNCTIONS_BY_NAME =
+		createAttributeFunctionsByName();
+
+	private static Map<String, AttributeFunction> createAttributeFunctionsByName() {
+		Map<String, AttributeFunction> attributeFunctionsByName =
+			new HashMap<String, AttributeFunction>();
+
+		for (AttributeFunction attributeFunction : AttributeFunction.values()) {
+			attributeFunctionsByName.put(
+				attributeFunction.getHumanReadableName(), attributeFunction);
+		}
+
+		return attributeFunctionsByName;
+	}
 
 	private String humanReadableName;
 	private String sqlName;
