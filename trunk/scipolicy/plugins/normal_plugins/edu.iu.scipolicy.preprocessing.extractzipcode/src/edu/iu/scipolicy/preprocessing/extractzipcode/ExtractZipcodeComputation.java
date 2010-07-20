@@ -119,8 +119,7 @@ public class ExtractZipcodeComputation {
 				 * */
 				zipcode = selectZipcodeFromExtractedCandidates(zipcodeCandidatesInfo);
 			} else {
-				zipcode.setPrimaryZipcode(null);
-				zipcode.setExtensionZipcode(null);
+				zipcode = new Zipcode(null, null);
 			}
 				
 			
@@ -131,8 +130,17 @@ public class ExtractZipcodeComputation {
 			 * */
 			if (zipcode.getPrimaryZipcode() == null) {
 				outputZipcode = "";
-				logger.log(LogService.LOG_WARNING, "No ZIP code information found in " 
-													+ currentAddress);
+				String message;
+				if (currentAddress == null) {
+					message = addressColumnName + " was empty in row " + currentRowNumber + ".";
+				} else {
+					message = "No ZIP code found in '" + currentAddress 
+						+ "' in row " + currentRowNumber + ".";
+				}
+				message += " Leaving the " + outputTableZipcodeColumnName 
+					+ " column empty for this row.";
+				
+				logger.log(LogService.LOG_WARNING, message);
 			} else {
 				/*
 				 * At least primary ZIP code is present check if the user wanted truncated ZIP code
