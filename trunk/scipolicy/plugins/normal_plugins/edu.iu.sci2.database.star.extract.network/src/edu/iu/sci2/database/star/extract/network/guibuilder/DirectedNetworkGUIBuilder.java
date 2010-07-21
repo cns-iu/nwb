@@ -7,7 +7,9 @@ import java.util.Map;
 
 import org.cishell.utilities.ArrayListUtilities;
 import org.cishell.utilities.CollectionUtilities;
+import org.cishell.utilities.ObjectContainer;
 import org.cishell.utilities.swt.GUIBuilderUtilities;
+import org.cishell.utilities.swt.GUICanceledException;
 import org.cishell.utilities.swt.SWTUtilities;
 import org.cishell.utilities.swt.model.GUIModel;
 import org.cishell.utilities.swt.model.GUIModelField;
@@ -46,7 +48,7 @@ public class DirectedNetworkGUIBuilder extends GUIBuilder {
 			String windowTitle,
 			int windowWidth,
 			int windowHeight,
-			StarDatabaseDescriptor databaseDescriptor) {
+			StarDatabaseDescriptor databaseDescriptor) throws GUICanceledException {
 		// TODO: Verify that databaseDescriptor is valid for us.
 
 		final String coreEntityHumanReadableName =
@@ -154,8 +156,9 @@ public class DirectedNetworkGUIBuilder extends GUIBuilder {
 
 		// Create the finished button so the user can actually execute the resulting queries.
 
+		final ObjectContainer<Boolean> userFinished = new ObjectContainer<Boolean>(false);
 		@SuppressWarnings("unused")
-		Button finishedButton = createFinishedButton(footerGroup, 1);
+		Button finishedButton = createFinishedButton(footerGroup, 1, userFinished);
 
 		// Fill the aggregate widgets with some aggregate fields by default (for the user's ease).
 
@@ -164,9 +167,20 @@ public class DirectedNetworkGUIBuilder extends GUIBuilder {
 			edgeAggregatesWidget.addComponent(SWT.NONE, null);
 		}
 
+		// Set the GUI up to be cancelable.
+
+		final ObjectContainer<GUICanceledException> exceptionThrown =
+			new ObjectContainer<GUICanceledException>();
+		GUIBuilderUtilities.setCancelable(shell, exceptionThrown);
+
 		// Run the GUI and return the model with the data that the user entered.
 
 		runGUI(display, shell, windowHeight);
+
+		if ((userFinished.object == false) && (exceptionThrown.object != null)) {
+    		throw new GUICanceledException(
+    			exceptionThrown.object.getMessage(), exceptionThrown.object);
+    	}
 
 		return model;
 	}

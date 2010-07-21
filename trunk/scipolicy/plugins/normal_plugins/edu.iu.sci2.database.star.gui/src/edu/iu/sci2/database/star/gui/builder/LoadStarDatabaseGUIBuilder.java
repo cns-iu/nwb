@@ -3,7 +3,9 @@ package edu.iu.sci2.database.star.gui.builder;
 import java.util.ArrayList;
 import java.util.Collection;
 
+import org.cishell.utilities.ObjectContainer;
 import org.cishell.utilities.swt.GUIBuilderUtilities;
+import org.cishell.utilities.swt.GUICanceledException;
 import org.cishell.utilities.swt.SWTUtilities;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.StyledText;
@@ -21,7 +23,6 @@ import edu.iu.sci2.database.star.common.StarDatabaseCSVDataValidationRules;
 import edu.iu.sci2.database.star.common.parameter.ColumnDescriptor;
 import edu.iu.sci2.database.star.common.parameter.ParameterDescriptors;
 import edu.iu.sci2.database.star.gui.ColumnsDataForLoader;
-import edu.iu.sci2.database.star.gui.StarDatabaseGUIAlgorithm;
 
 public class LoadStarDatabaseGUIBuilder {
 	public static final boolean GRAY_OUT_NON_CORE_COLUMN_CONTROLS = true;
@@ -52,7 +53,11 @@ public class LoadStarDatabaseGUIBuilder {
 			String windowTitle,
 			int windowWidth,
 			int windowHeight,
-			Collection<ColumnDescriptor> columnDescriptors) {
+			Collection<ColumnDescriptor> columnDescriptors) throws GUICanceledException {
+		final ObjectContainer<GUICanceledException> exceptionThrown =
+			new ObjectContainer<GUICanceledException>();
+		final ObjectContainer<Boolean> userFinished = new ObjectContainer<Boolean>(false);
+
 		Display display = GUIBuilderUtilities.createDisplay();
     	final Shell shell = GUIBuilderUtilities.createShell(
     		display, windowTitle, windowWidth, windowHeight, 1, true);
@@ -73,21 +78,26 @@ public class LoadStarDatabaseGUIBuilder {
 					columnsDataForLoader[0] =
 						gatherColumnsDataForLoader(coreEntityNameWidget, columnListWidget);
 					shell.close();
+					userFinished.object = true;
 				} catch (InvalidDerbyFieldTypeException e) {
+					exceptionThrown.object = new GUICanceledException(e.getMessage(), e);
 				}
 			}
 		});
 
+    	GUIBuilderUtilities.setCancelable(shell, exceptionThrown);
     	runGUI(display, shell, columnListWidget, windowHeight);
+
+    	if ((userFinished.object == false) && (exceptionThrown.object != null)) {
+    		throw new GUICanceledException(
+    			exceptionThrown.object.getMessage(), exceptionThrown.object);
+    	}
 
     	return columnsDataForLoader[0];
 	}
 
 	private static void runGUI(
-			Display display,
-			Shell shell,
-			ColumnListWidget columnListWidget,
-			int windowHeight) {
+			Display display, Shell shell, ColumnListWidget columnListWidget, int windowHeight) {
 		GUIBuilderUtilities.openShell(shell, windowHeight, true);
 
     	if (!GRAY_OUT_NON_CORE_COLUMN_CONTROLS) {
@@ -105,12 +115,6 @@ public class LoadStarDatabaseGUIBuilder {
 		instructionsLabel.setLayoutData(createInstructionsLabelLayoutData());
 		instructionsLabel.getCaret().setVisible(false);
 
-//		URLClickedListener urlClickedListener = new URLClickedListener(instructionsLabel);
-//		URLMouseCursorListener urlCursorListener =
-//			new URLMouseCursorListener(parent, instructionsLabel);
-//		instructionsLabel.addMouseListener(urlClickedListener);
-//		instructionsLabel.addMouseMoveListener(urlCursorListener);
-//
 		SWTUtilities.styledPrint(
 			instructionsLabel,
 			INSTRUCTIONS_LABEL_TEXT,
@@ -123,15 +127,6 @@ public class LoadStarDatabaseGUIBuilder {
 			TUTORIAL_DISPLAY_URL,
 			parent.getDisplay().getSystemColor(SWT.COLOR_BLUE),
 			SWT.BOLD);
-//        urlClickedListener.addURL(
-//        	instructionsLabel.getText().length(), TUTORIAL_URL, TUTORIAL_DISPLAY_URL);
-//        urlCursorListener.addURL(
-//        	instructionsLabel.getText().length(), TUTORIAL_URL, TUTORIAL_DISPLAY_URL);
-//        SWTUtilities.styledPrint(
-//        	instructionsLabel,
-//        	TUTORIAL_DISPLAY_URL,
-//        	parent.getDisplay().getSystemColor(SWT.COLOR_BLUE),
-//        	SWT.BOLD);
 
 		return instructionsLabel;
 	}
@@ -253,18 +248,18 @@ public class LoadStarDatabaseGUIBuilder {
 			}
 		}
 	}
-
-	public static void main(String[] args) {
-		Collection<ColumnDescriptor> columnDescriptors = new ArrayList<ColumnDescriptor>();
-
-		for (int ii = 1; ii < 10; ii++) {
-			columnDescriptors.add(new ColumnDescriptor(ii, "Test " + ii));
-		}
-
-		gatherUserInput(
-			StarDatabaseGUIAlgorithm.WINDOW_TITLE,
-			StarDatabaseGUIAlgorithm.WINDOW_WIDTH,
-			StarDatabaseGUIAlgorithm.WINDOW_HEIGHT,
-			columnDescriptors);
-	}
+//
+//	public static void main(String[] args) {
+//		Collection<ColumnDescriptor> columnDescriptors = new ArrayList<ColumnDescriptor>();
+//
+//		for (int ii = 1; ii < 10; ii++) {
+//			columnDescriptors.add(new ColumnDescriptor(ii, "Test " + ii));
+//		}
+//
+//		gatherUserInput(
+//			StarDatabaseGUIAlgorithm.WINDOW_TITLE,
+//			StarDatabaseGUIAlgorithm.WINDOW_WIDTH,
+//			StarDatabaseGUIAlgorithm.WINDOW_HEIGHT,
+//			columnDescriptors);
+//	}
 }

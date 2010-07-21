@@ -14,6 +14,7 @@ import org.cishell.framework.algorithm.ProgressTrackable;
 import org.cishell.framework.data.Data;
 import org.cishell.service.database.Database;
 import org.cishell.service.database.DatabaseService;
+import org.cishell.utilities.swt.GUICanceledException;
 import org.osgi.service.log.LogService;
 
 import edu.iu.sci2.database.star.common.StarDatabaseLoader;
@@ -49,6 +50,14 @@ public class StarDatabaseGUIAlgorithm implements Algorithm, ProgressTrackable {
     			WINDOW_TITLE, WINDOW_WIDTH, WINDOW_HEIGHT, columnDescriptors);
 
     		return runDatabaseLoader(columnsDataForLoader);
+    	} catch (AlgorithmCanceledException e) { 
+    		this.logger.log(LogService.LOG_WARNING, e.getMessage());
+
+    		return null;
+    	} catch (GUICanceledException e) { 
+    		this.logger.log(LogService.LOG_WARNING, e.getMessage());
+
+    		return null;
     	} catch (IOException e) {
     		String exceptionMessage =
     			"The following error occurred when attempting to read your CSV file: \"" +
@@ -81,7 +90,7 @@ public class StarDatabaseGUIAlgorithm implements Algorithm, ProgressTrackable {
     }
 
     private Data[] runDatabaseLoader(ColumnsDataForLoader columnsDataForLoader)
-    		throws AlgorithmExecutionException {
+    		throws AlgorithmCanceledException, AlgorithmExecutionException {
     	String coreEntityDisplayName = columnsDataForLoader.getCoreEntityName();
     	String coreEntityTableName =
     		StarDatabaseLoader.constructCoreEntityTableName(coreEntityDisplayName);
@@ -92,53 +101,22 @@ public class StarDatabaseGUIAlgorithm implements Algorithm, ProgressTrackable {
     		ColumnDescriptorFactory.mapColumnDescriptorDatabaseNamesToColumnDescriptors(
     			columnsDataForLoader.getColumnDescriptors());
 
-    	try {
-    		Database starDatabase = StarDatabaseLoader.readCSVIntoStarDatabase(
-				(File) this.parentData.getData(),
+		Database starDatabase = StarDatabaseLoader.readCSVIntoStarDatabase(
+			(File) this.parentData.getData(),
+			coreEntityDisplayName,
+			coreEntityTableName,
+			columnDescriptorsByHumanReadableName,
+			this.logger,
+			this.databaseService,
+			this.progressMonitor);
+
+		return StarDatabaseLoader.annotateOutputData(
+			starDatabase,
+			this.parentData,
+			new StarDatabaseMetadata(
 				coreEntityDisplayName,
 				coreEntityTableName,
 				columnDescriptorsByHumanReadableName,
-				this.logger,
-				this.databaseService,
-				this.progressMonitor);
-
-    		return StarDatabaseLoader.annotateOutputData(
-    			starDatabase,
-    			this.parentData,
-    			new StarDatabaseMetadata(
-    				coreEntityDisplayName,
-    				coreEntityTableName,
-    				columnDescriptorsByHumanReadableName,
-    				columnDescriptorsByDatabaseName));
-    	} catch (AlgorithmCanceledException e) {
-    		throw new AlgorithmExecutionException(e.getMessage(), e);
-    	}
-//    	} catch (CSVHeaderValidationException e) {
-//    		throw new AlgorithmExecutionException(e.getMessage(), e);
-//    	} catch (InvalidDerbyFieldTypeException e) {
-//    		throw new AlgorithmExecutionException(e.getMessage(), e);
-//    	} catch (IOException e) {
-//    		throw new AlgorithmExecutionException(e.getMessage(), e);
-//    	}
+				columnDescriptorsByDatabaseName));
     }
-
-//    private static Dictionary<String, Object> createParameters(
-//    		ColumnsDataForLoader columnsDataForLoader) {
-//    	Dictionary<String, Object> parameters = new Hashtable<String, Object>();
-//
-//    	for (ColumnDescriptor columnDescriptor : columnsDataForLoader.getColumnDescriptors()) {
-//    		String columnName = columnDescriptor.getName();
-//    		parameters.put(ParameterDescriptors.Type.id(columnName), columnDescriptor.getType());
-//    		parameters.put(
-//    			ParameterDescriptors.SeparateEntity.id(columnName),
-//    			!columnDescriptor.isCoreColumn());
-//    		parameters.put(
-//    			ParameterDescriptors.MergeIdentical.id(columnName),
-//    			columnDescriptor.mergeIdenticalValues());
-//    		parameters.put(
-//    			ParameterDescriptors.Separator.id(columnName), columnDescriptor.getSeparator());
-//    	}
-//
-//    	return parameters;
-//    }
 }

@@ -3,8 +3,9 @@ package edu.iu.sci2.database.star.extract.network.guibuilder;
 import java.util.Collection;
 import java.util.Map;
 
-import org.cishell.utilities.MapUtilities;
+import org.cishell.utilities.ObjectContainer;
 import org.cishell.utilities.swt.GUIBuilderUtilities;
+import org.cishell.utilities.swt.GUICanceledException;
 import org.cishell.utilities.swt.SWTUtilities;
 import org.cishell.utilities.swt.model.GUIModel;
 import org.cishell.utilities.swt.model.GUIModelField;
@@ -39,7 +40,7 @@ public class CoOccurrenceNetworkGUIBuilder extends GUIBuilder {
 			String windowTitle,
 			int windowWidth,
 			int windowHeight,
-			StarDatabaseDescriptor databaseDescriptor) {
+			StarDatabaseDescriptor databaseDescriptor) throws GUICanceledException {
 		// TODO: Verify that databaseDescriptor is valid for us.
 
 		GUIModel model = new GUIModel();
@@ -88,8 +89,9 @@ public class CoOccurrenceNetworkGUIBuilder extends GUIBuilder {
 
 		// Create the finished button so the user can actually execute the resulting queries.
 
-		@SuppressWarnings("unused")
-		Button finishedButton = createFinishedButton(footerGroup, 1);
+		final ObjectContainer<Boolean> userFinished = new ObjectContainer<Boolean>(false);
+		Button finishedButton = createFinishedButton(footerGroup, 1, userFinished);
+		shell.setDefaultButton(finishedButton);
 
 		// Fill the aggregate widgets with some aggregate fields by default (for the user's ease).
 
@@ -98,9 +100,20 @@ public class CoOccurrenceNetworkGUIBuilder extends GUIBuilder {
 			edgeAggregatesTable.addComponent(SWT.NONE, null);
 		}
 
+		// Set the GUI up to be cancelable.
+
+		final ObjectContainer<GUICanceledException> exceptionThrown =
+			new ObjectContainer<GUICanceledException>();
+		GUIBuilderUtilities.setCancelable(shell, exceptionThrown);
+
 		// Run the GUI and return the model with the data that the user entered.
 
 		runGUI(display, shell, windowHeight);
+
+		if ((userFinished.object == false) && (exceptionThrown.object != null)) {
+    		throw new GUICanceledException(
+    			exceptionThrown.object.getMessage(), exceptionThrown.object);
+    	}
 
 		return model;
 	}

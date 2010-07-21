@@ -3,7 +3,9 @@ package edu.iu.sci2.database.star.extract.network.guibuilder;
 import java.util.Collection;
 import java.util.Map;
 
+import org.cishell.utilities.ObjectContainer;
 import org.cishell.utilities.swt.GUIBuilderUtilities;
+import org.cishell.utilities.swt.GUICanceledException;
 import org.cishell.utilities.swt.model.GUIModel;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
@@ -49,12 +51,9 @@ public abstract class GUIBuilder {
 			String windowTitle,
 			int windowWidth,
 			int windowHeight,
-			StarDatabaseDescriptor databaseDescriptor);
+			StarDatabaseDescriptor databaseDescriptor) throws GUICanceledException;
 
-	public static void runGUI(
-			Display display,
-			Shell shell,
-			int windowHeight) {
+	public static void runGUI(Display display, Shell shell, int windowHeight) {
 		GUIBuilderUtilities.openShell(shell, windowHeight, true);
     	GUIBuilderUtilities.swtLoop(display, shell);
 	}
@@ -155,13 +154,17 @@ public abstract class GUIBuilder {
 		return layoutData;
 	}
 
-	protected static Button createFinishedButton(final Composite parent, int horizontalSpan) {
+	protected static Button createFinishedButton(
+			final Composite parent,
+			int horizontalSpan,
+			final ObjectContainer<Boolean> userFinished) {
 		Button finishedButton = new Button(parent, SWT.PUSH);
 		finishedButton.setLayoutData(createFinishedButtonLayoutData(horizontalSpan));
 		finishedButton.setText(FINISHED_BUTTON_TEXT);
 		finishedButton.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent event) {
 				parent.getShell().close();
+				userFinished.object = true;
 			}
 		});
 

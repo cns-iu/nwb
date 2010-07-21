@@ -4,8 +4,10 @@ import java.util.Dictionary;
 
 import org.cishell.framework.CIShellContext;
 import org.cishell.framework.algorithm.Algorithm;
+import org.cishell.framework.algorithm.AlgorithmCreationCanceledException;
 import org.cishell.framework.algorithm.AlgorithmFactory;
 import org.cishell.framework.data.Data;
+import org.cishell.utilities.swt.GUICanceledException;
 import org.cishell.utilities.swt.model.GUIModel;
 import org.cishell.utilities.swt.model.GUIModelField;
 import org.cishell.utilities.swt.model.GUIModelGroup;
@@ -46,8 +48,12 @@ public class ExtractDirectedNetworkAlgorithmFactory extends ExtractionAlgorithmF
     }
 
     private static GUIModel getModelFromUser(StarDatabaseMetadata metadata) {
-    	return new DirectedNetworkGUIBuilder().createGUI(
-    		WINDOW_TITLE, WINDOW_WIDTH, WINDOW_HEIGHT, new StarDatabaseDescriptor(metadata));
+    	try {
+    		return new DirectedNetworkGUIBuilder().createGUI(
+    			WINDOW_TITLE, WINDOW_WIDTH, WINDOW_HEIGHT, new StarDatabaseDescriptor(metadata));
+    	} catch (GUICanceledException e) {
+    		throw new AlgorithmCreationCanceledException(e.getMessage(), e);
+    	}
     }
 
     private static QueryConstructor decideQueryConstructor(
