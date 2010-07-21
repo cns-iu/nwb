@@ -37,8 +37,8 @@ edgeQuery(
 		coreTableName_ForEntityType,
 		idSize) ::= <<
 SELECT
-	CHAR ('<leafTableName_ForEntityType> ' || CHAR ("<leafTableName>".PK), <idSize>) AS SOURCE,
-	CHAR ('<coreTableName_ForEntityType> ' || CHAR ("<coreTableName>".PK), <idSize>) AS TARGET,
+	CHAR ('<leafTableName_ForEntityType> ' || CHAR ("<leafTableName>".PK), <idSize>) AS TARGET,
+	CHAR ('<coreTableName_ForEntityType> ' || CHAR ("<coreTableName>".PK), <idSize>) AS SOURCE,
 	COUNT (*) AS "Weight"
 FROM
 	"<leafTableName>"

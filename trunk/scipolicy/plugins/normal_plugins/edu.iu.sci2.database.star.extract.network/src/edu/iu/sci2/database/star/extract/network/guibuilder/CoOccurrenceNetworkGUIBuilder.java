@@ -1,6 +1,7 @@
 package edu.iu.sci2.database.star.extract.network.guibuilder;
 
 import java.util.Collection;
+import java.util.Map;
 
 import org.cishell.utilities.MapUtilities;
 import org.cishell.utilities.swt.GUIBuilderUtilities;
@@ -142,13 +143,14 @@ public class CoOccurrenceNetworkGUIBuilder extends GUIBuilder {
 		label.setText(LEAF_FIELD_LABEL);
 
 		Collection<String> columnNames = databaseDescriptor.getLeafTableNames();
+		Map<String, String> columnOptions = databaseDescriptor.getTableNameOptionsWithoutCore();
 		GUIModelField<String, Combo, DropDownDataSynchronizer> leafField =
 			model.addDropDown(
 			HEADER_GROUP_NAME,
 			LEAF_FIELD_NAME,
 			0,
 			columnNames,
-			MapUtilities.mirror(columnNames),
+			columnOptions,
 			parent,
 			SWT.BORDER | SWT.READ_ONLY);
 		leafField.getWidget().setLayoutData(createLeafSelectionFieldLayoutData());

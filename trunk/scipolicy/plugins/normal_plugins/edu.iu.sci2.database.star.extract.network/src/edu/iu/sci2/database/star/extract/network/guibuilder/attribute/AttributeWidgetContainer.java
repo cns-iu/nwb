@@ -3,7 +3,6 @@ package edu.iu.sci2.database.star.extract.network.guibuilder.attribute;
 import java.util.Collection;
 import java.util.Map;
 
-import org.cishell.utilities.MapUtilities;
 import org.cishell.utilities.StringUtilities;
 import org.cishell.utilities.swt.ExpandableComponentWidget;
 import org.cishell.utilities.swt.GridContainer;
@@ -21,7 +20,7 @@ import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Text;
 
-import edu.iu.sci2.database.star.extract.network.attribute.AttributeFunction;
+import edu.iu.sci2.database.star.extract.network.aggregate.AggregateFunction;
 
 public class AttributeWidgetContainer {
 	public static final String DELETE_BUTTON_TEXT = "Delete";
@@ -148,8 +147,9 @@ public class AttributeWidgetContainer {
 				groupName,
 				aggregateFunctionName,
 				0,
-				AttributeFunction.ATTRIBUTE_FUNCTIONS_BY_NAME.keySet(),
-				MapUtilities.mirror(AttributeFunction.ATTRIBUTE_FUNCTIONS_BY_NAME.keySet()),
+				AggregateFunction.FUNCTIONS_BY_HUMAN_READABLE_NAMES.keySet(),
+				AggregateFunction.SQL_NAMES_BY_HUMAN_READABLE_NAMES,
+//				MapUtilities.mirror(AggregateFunction.FUNCTIONS_BY_HUMAN_READABLE_NAMES.keySet()),
 				grid.getActualParent(),
 				SWT.BORDER | SWT.READ_ONLY);
 		aggregateFunction.getWidget().setLayoutData(createAggregateFunctionLayoutData());

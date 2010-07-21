@@ -3,10 +3,7 @@ package edu.iu.sci2.database.star.extract.network.query;
 import java.util.Map;
 
 import org.antlr.stringtemplate.StringTemplateGroup;
-import org.cishell.utilities.StringUtilities;
 import org.cishell.utilities.swt.model.GUIModel;
-
-import com.google.common.collect.Multimap;
 
 import edu.iu.sci2.database.star.common.StarDatabaseMetadata;
 
@@ -22,14 +19,12 @@ public class CoOccurrenceNetworkQueryConstructor extends QueryConstructor {
 		loadTemplate(CO_OCCURRENCE_WITHOUT_AGGREGATES_STRING_TEMPLATE_FILE_PATH);
 
 	private String leafTableName;
-	private String coreTableName;
-	private String nodeAggregatesForQuery;
-	private String edgeAggregatesForQuery;
-	private String nonAggregateCoreColumnsForQuery;
+	private String edgeNonAggregateCoreColumnsForQuery;
+	private String edgeNonAggregateCoreTableNameColumnsForGroupBy;
 
 	public CoOccurrenceNetworkQueryConstructor(
-			String headerGroupName,
 			String leafTableFieldName,
+			String headerGroupName,
 			String nodeAttributeFunctionGroupName,
 			String nodeCoreEntityColumnGroupName,
 			String nodeResultNameGroupName,
@@ -38,43 +33,82 @@ public class CoOccurrenceNetworkQueryConstructor extends QueryConstructor {
 			String edgeResultNameGroupName,
 			GUIModel model,
 			StarDatabaseMetadata metadata) {
+		super(
+			headerGroupName,
+			nodeAttributeFunctionGroupName,
+			nodeCoreEntityColumnGroupName,
+			nodeResultNameGroupName,
+			edgeAttributeFunctionGroupName,
+			edgeCoreEntityColumnGroupName,
+			edgeResultNameGroupName,
+			model,
+			metadata);
 		this.leafTableName =
 			(String) model.getGroup(headerGroupName).getField(leafTableFieldName).getValue();
-		this.coreTableName = metadata.getCoreEntityTableName();
-
-		Multimap<String, String> nodeAggregatedColumnNamesToQueryString =
-			mapAggregatedColumnNamesToQueryString(
-				model.getGroup(nodeAttributeFunctionGroupName),
-				model.getGroup(nodeCoreEntityColumnGroupName),
-				model.getGroup(nodeResultNameGroupName));
-		this.nodeAggregatesForQuery =
-			StringUtilities.implodeItems(nodeAggregatedColumnNamesToQueryString.values(), ", ");
-		System.err.println(nodeAggregatesForQuery);
-
-		Multimap<String, String> edgeAggregatedColumnNamesToQueryString =
-			mapAggregatedColumnNamesToQueryString(
-				model.getGroup(edgeAttributeFunctionGroupName),
-				model.getGroup(edgeCoreEntityColumnGroupName),
-				model.getGroup(edgeResultNameGroupName));
-		this.edgeAggregatesForQuery =
-			StringUtilities.implodeItems(edgeAggregatedColumnNamesToQueryString.values(), ", ");
-		System.err.println(edgeAggregatesForQuery);
-
-		this.nonAggregateCoreColumnsForQuery = getNonAggregateCoreColumnsForQuery(
-			metadata, edgeAggregatedColumnNamesToQueryString);
-
-		System.err.println(nonAggregateCoreColumnsForQuery);
+		this.edgeNonAggregateCoreColumnsForQuery =
+			formCoreColumnsQuerySection(getEdgeNonAggregatedCoreColumns());
+		this.edgeNonAggregateCoreTableNameColumnsForGroupBy =
+			formCoreColumnsForGroupByQuerySection(getEdgeNonAggregatedCoreColumns());
 	}
 
-	public String constructNodeQuery(GUIModel model) {
-		return null;
+	@Override
+	public StringTemplateGroup getAggregatesStringTemplateGroup() {
+		return AGGREGATES_GROUP;
 	}
 
-	public String constructEdgeQuery(GUIModel model) {
-		return null;
+	@Override
+	public StringTemplateGroup getNoAggregatesStringTemplateGroup() {
+		return NO_AGGREGATES_GROUP;
 	}
 
-	public boolean isDirected(GUIModel model) {
+	@Override
+	public Map<String, String> formNodeQueryWithAggregatesStringTemplateArguments(
+			Map<String, String> arguments) {
+		System.err.println("formNodeQueryWithAggregatesStringTemplateArguments");
+		arguments.put("leafTableName", this.leafTableName);
+		arguments.put("coreTableName", getCoreTableName());
+		System.err.println("aggregates: " + getNodeAggregatesForQuery());
+		arguments.put("aggregates", getNodeAggregatesForQuery());
+
+		return arguments;
+	}
+
+	@Override
+	public Map<String, String> formNodeQueryWithoutAggregatesStringTemplateArguments(
+			Map<String, String> arguments) {
+		System.err.println("formNodeQueryWithoutAggregatesStringTemplateArguments");
+		arguments.put("leafTableName", this.leafTableName);
+		arguments.put("coreTableName", getCoreTableName());
+
+		return arguments;
+	}
+
+	@Override
+	public Map<String, String> formEdgeQueryWithAggregatesStringTemplateArguments(
+			Map<String, String> arguments) {
+		arguments.put("leafTableName", this.leafTableName);
+		arguments.put("coreTableName", getCoreTableName());
+		arguments.put(
+			"nonAggregateCoreTableNameColumns", this.edgeNonAggregateCoreColumnsForQuery);
+		arguments.put(
+			"nonAggregateCoreTableNameColumnsForGroupBy",
+			this.edgeNonAggregateCoreTableNameColumnsForGroupBy);
+		arguments.put("aggregates", getEdgeAggregatesForQuery());
+
+		return arguments;
+	}
+
+	public Map<String, String> formEdgeQueryWithoutAggregatesStringTemplateArguments(
+			Map<String, String> arguments) {
+		arguments.put("leafTableName", this.leafTableName);
+		arguments.put("coreTableName", getCoreTableName());
+		arguments.put("coreTableNameColumns", this.edgeNonAggregateCoreTableNameColumnsForGroupBy);
+
+		return arguments;
+	}
+
+	@Override
+	public boolean isDirected() {
 		return false;
 	}
 }

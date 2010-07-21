@@ -11,38 +11,41 @@ import org.cishell.framework.algorithm.ProgressMonitor;
 import org.cishell.framework.algorithm.ProgressTrackable;
 import org.cishell.framework.data.Data;
 import org.cishell.utilities.AlgorithmUtilities;
-import org.cishell.utilities.swt.model.GUIModel;
+import org.osgi.service.log.LogService;
 
 import edu.iu.sci2.database.star.extract.network.query.QueryConstructor;
 
 public class ExtractNetworkAlgorithm implements Algorithm, ProgressTrackable {
 	private CIShellContext ciShellContext;
 	private Data parentData;
-	private GUIModel model;
 	private QueryConstructor queryConstructor;
 	private AlgorithmFactory networkQueryRunner;
+	private LogService logger;
 	private ProgressMonitor progressMonitor = ProgressMonitor.NULL_MONITOR;
 
     public ExtractNetworkAlgorithm(
     		CIShellContext ciShellContext,
     		Data parentData,
-    		GUIModel model,
     		QueryConstructor queryConstructor,
-    		AlgorithmFactory networkQueryRunner) {
+    		AlgorithmFactory networkQueryRunner,
+    		LogService logger) {
     	this.ciShellContext = ciShellContext;
     	this.parentData = parentData;
-    	this.model = model;
     	this.queryConstructor = queryConstructor;
     	this.networkQueryRunner = networkQueryRunner;
+    	this.logger = logger;
     }
 
     public Data[] execute() throws AlgorithmExecutionException {
-    	String nodeQuery = this.queryConstructor.constructNodeQuery(this.model);
-    	String edgeQuery = this.queryConstructor.constructEdgeQuery(this.model);
-    	String nodeIDColumn = this.queryConstructor.getNodeIDColumn(this.model);
-    	String sourceNodeName = this.queryConstructor.getSourceNodeName(this.model);
-    	String targetNodeName = this.queryConstructor.getTargetNodeName(this.model);
-    	boolean isDirected = this.queryConstructor.isDirected(this.model);
+    	String nodeQuery = this.queryConstructor.constructNodeQuery();
+    	String edgeQuery = this.queryConstructor.constructEdgeQuery();
+    	String nodeIDColumn = this.queryConstructor.getNodeIDColumn();
+    	String sourceNodeName = this.queryConstructor.getSourceNodeName();
+    	String targetNodeName = this.queryConstructor.getTargetNodeName();
+    	boolean isDirected = this.queryConstructor.isDirected();
+
+    	this.logger.log(LogService.LOG_INFO, "Node Query: " + nodeQuery);
+    	this.logger.log(LogService.LOG_INFO, "Edge Query: " + edgeQuery);
 
     	try {
     		return runNetworkQuery(

@@ -27,7 +27,7 @@ public abstract class ExtractionAlgorithmFactory implements AlgorithmFactory {
 	public static void verifyLeafTables(StarDatabaseMetadata metadata, LogService logger) {
 		int leafTableCount = 0;
 
-		for (ColumnDescriptor columnDescriptor : metadata.getColumnDescriptors().values()) {
+		for (ColumnDescriptor columnDescriptor : metadata.getColumnDescriptorsByHumanReadableName().values()) {
 			if (!columnDescriptor.isCoreColumn()) {
 				leafTableCount++;
 			}

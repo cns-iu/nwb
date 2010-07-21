@@ -75,7 +75,7 @@ public class CoreTableDescriptor {
 	private static Map<String, String> constructColumnNamesByLabels(StarDatabaseMetadata metadata) {
 		Map<String, String> namesToTypes = new HashMap<String, String>();
 
-		for (ColumnDescriptor columnDescriptor : metadata.getColumnDescriptors().values()) {
+		for (ColumnDescriptor columnDescriptor : metadata.getColumnDescriptorsByHumanReadableName().values()) {
 			if (columnDescriptor.isCoreColumn()) {
 				String label = columnDescriptor.getName();
 				String name = columnDescriptor.getNameForDatabase();

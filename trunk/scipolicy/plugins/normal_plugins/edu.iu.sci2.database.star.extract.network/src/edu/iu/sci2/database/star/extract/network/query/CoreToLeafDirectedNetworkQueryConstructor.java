@@ -8,23 +8,23 @@ import org.cishell.utilities.swt.model.GUIModel;
 
 import edu.iu.sci2.database.star.common.StarDatabaseMetadata;
 
-public class LeafToCoreDirectedNetworkQueryConstructor extends QueryConstructor {
-	public static final String LEAF_TO_CORE_WITH_AGGREGATES_STRING_TEMPLATE_FILE_PATH =
-		"leaf_core_aggregates.st";
-	public static final String LEAF_TO_CORE_WITHOUT_AGGREGATES_STRING_TEMPLATE_FILE_PATH =
-		"leaf_core_no_aggregates.st";
+public class CoreToLeafDirectedNetworkQueryConstructor extends QueryConstructor {
+	public static final String CORE_TO_LEAF_WITH_AGGREGATES_STRING_TEMPLATE_FILE_PATH =
+		"core_leaf_aggregates.st";
+	public static final String CORE_TO_LEAF_WITHOUT_AGGREGATES_STRING_TEMPLATE_FILE_PATH =
+		"core_leaf_no_aggregates.st";
 
 	public static final StringTemplateGroup AGGREGATES_GROUP =
-		loadTemplate(LEAF_TO_CORE_WITH_AGGREGATES_STRING_TEMPLATE_FILE_PATH);
+		loadTemplate(CORE_TO_LEAF_WITH_AGGREGATES_STRING_TEMPLATE_FILE_PATH);
 	public static final StringTemplateGroup NO_AGGREGATES_GROUP =
-		loadTemplate(LEAF_TO_CORE_WITHOUT_AGGREGATES_STRING_TEMPLATE_FILE_PATH);
+		loadTemplate(CORE_TO_LEAF_WITHOUT_AGGREGATES_STRING_TEMPLATE_FILE_PATH);
 
 	private String leafTableName;
 	private String coreColumnsForQuery;
 	private String emptyCoreTableNameColumns;
 	private String coreTableNameColumnsForGroupBy;
 
-	public LeafToCoreDirectedNetworkQueryConstructor(
+	public CoreToLeafDirectedNetworkQueryConstructor(
 			String leafTableName,
 			String headerGroupName,
 			String nodeAttributeFunctionGroupName,

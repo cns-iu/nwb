@@ -62,7 +62,7 @@ public class StarDatabaseDescriptor {
 		Map<String, ColumnDescriptor> leafTableDescriptorsByName =
 			new HashMap<String, ColumnDescriptor>();
 
-		for (ColumnDescriptor columnDescriptor : metadata.getColumnDescriptors().values()) {
+		for (ColumnDescriptor columnDescriptor : metadata.getColumnDescriptorsByHumanReadableName().values()) {
 			if (!columnDescriptor.isCoreColumn()) {
 				leafTableDescriptorsByName.put(columnDescriptor.getName(), columnDescriptor);
 			}

@@ -33,8 +33,8 @@ public class ExtractCoOccurrenceNetworkAlgorithmFactory extends ExtractionAlgori
     	verifyLeafTables(databaseMetadata, this.logger);
     	GUIModel model = getModelFromUser(databaseMetadata);
     	QueryConstructor queryConstructor = new CoOccurrenceNetworkQueryConstructor(
-    		GUIBuilder.HEADER_GROUP_NAME,
     		CoOccurrenceNetworkGUIBuilder.LEAF_FIELD_NAME,
+    		GUIBuilder.HEADER_GROUP_NAME,
     		GUIBuilder.NODE_ATTRIBUTE_FUNCTION_GROUP_NAME,
     		GUIBuilder.NODE_CORE_ENTITY_COLUMN_GROUP_NAME,
     		GUIBuilder.NODE_RESULT_NAME_GROUP_NAME,
@@ -46,7 +46,7 @@ public class ExtractCoOccurrenceNetworkAlgorithmFactory extends ExtractionAlgori
     	AlgorithmFactory networkQueryRunner = getNetworkQueryRunner(this.bundleContext);
 
         return new ExtractNetworkAlgorithm(
-        	ciShellContext, parentData, model, queryConstructor, networkQueryRunner);
+        	ciShellContext, parentData, queryConstructor, networkQueryRunner, this.logger);
     }
 
     private static GUIModel getModelFromUser(StarDatabaseMetadata metadata) {
