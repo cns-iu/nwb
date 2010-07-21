@@ -4,7 +4,6 @@ import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.HashMap;
 import java.util.Map;
 
 import org.cishell.framework.algorithm.Algorithm;
@@ -20,6 +19,7 @@ import org.osgi.service.log.LogService;
 import edu.iu.sci2.database.star.common.StarDatabaseLoader;
 import edu.iu.sci2.database.star.common.StarDatabaseMetadata;
 import edu.iu.sci2.database.star.common.parameter.ColumnDescriptor;
+import edu.iu.sci2.database.star.common.parameter.ColumnDescriptorFactory;
 import edu.iu.sci2.database.star.common.utility.CSVReaderUtilities;
 import edu.iu.sci2.database.star.gui.builder.LoadStarDatabaseGUIBuilder;
 
@@ -85,8 +85,11 @@ public class StarDatabaseGUIAlgorithm implements Algorithm, ProgressTrackable {
     	String coreEntityDisplayName = columnsDataForLoader.getCoreEntityName();
     	String coreEntityTableName =
     		StarDatabaseLoader.constructCoreEntityTableName(coreEntityDisplayName);
-    	Map<String, ColumnDescriptor> columnDescriptors =
-    		mapColumnDescriptorNamesToColumnDescriptors(
+    	Map<String, ColumnDescriptor> columnDescriptorsByHumanReadableName =
+    		ColumnDescriptorFactory.mapColumnDescriptorHumanReadableNamesToColumnDescriptors(
+    			columnsDataForLoader.getColumnDescriptors());
+    	Map<String, ColumnDescriptor> columnDescriptorsByDatabaseName =
+    		ColumnDescriptorFactory.mapColumnDescriptorDatabaseNamesToColumnDescriptors(
     			columnsDataForLoader.getColumnDescriptors());
 
     	try {
@@ -94,7 +97,7 @@ public class StarDatabaseGUIAlgorithm implements Algorithm, ProgressTrackable {
 				(File) this.parentData.getData(),
 				coreEntityDisplayName,
 				coreEntityTableName,
-				columnDescriptors,
+				columnDescriptorsByHumanReadableName,
 				this.logger,
 				this.databaseService,
 				this.progressMonitor);
@@ -103,7 +106,10 @@ public class StarDatabaseGUIAlgorithm implements Algorithm, ProgressTrackable {
     			starDatabase,
     			this.parentData,
     			new StarDatabaseMetadata(
-    				coreEntityDisplayName, coreEntityTableName, columnDescriptors));
+    				coreEntityDisplayName,
+    				coreEntityTableName,
+    				columnDescriptorsByHumanReadableName,
+    				columnDescriptorsByDatabaseName));
     	} catch (AlgorithmCanceledException e) {
     		throw new AlgorithmExecutionException(e.getMessage(), e);
     	}
@@ -114,18 +120,6 @@ public class StarDatabaseGUIAlgorithm implements Algorithm, ProgressTrackable {
 //    	} catch (IOException e) {
 //    		throw new AlgorithmExecutionException(e.getMessage(), e);
 //    	}
-    }
-
-    private static Map<String, ColumnDescriptor> mapColumnDescriptorNamesToColumnDescriptors(
-    		Collection<ColumnDescriptor> columnDescriptors) {
-    	Map<String, ColumnDescriptor> namesToDescriptors =
-    		new HashMap<String, ColumnDescriptor>();
-
-    	for (ColumnDescriptor columnDescriptor : columnDescriptors) {
-    		namesToDescriptors.put(columnDescriptor.getName(), columnDescriptor);
-    	}
-
-    	return namesToDescriptors;
     }
 
 //    private static Dictionary<String, Object> createParameters(

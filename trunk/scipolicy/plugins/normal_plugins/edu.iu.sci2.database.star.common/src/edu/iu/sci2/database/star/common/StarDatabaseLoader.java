@@ -39,7 +39,7 @@ public class StarDatabaseLoader {
     		File file,
     		String coreEntityDisplayName,
     		String coreEntityTableName,
-    		Map<String, ColumnDescriptor> columnDescriptors,
+    		Map<String, ColumnDescriptor> columnDescriptorsByHumanReadableName,
     		LogService logger,
     		DatabaseService databaseService,
     		ProgressMonitor progressMonitor)
@@ -47,15 +47,17 @@ public class StarDatabaseLoader {
     	try {
     		CSVReader reader = CSVReaderUtilities.createCSVReader(file, true);
 			String[] header = reader.readNext();
-			String[] coreColumns = determineCoreColumns(header, columnDescriptors);
-			String[] nonCoreColumns = determineNonCoreColumns(header, columnDescriptors);
+			String[] coreColumns =
+				determineCoreColumns(header, columnDescriptorsByHumanReadableName);
+			String[] nonCoreColumns =
+				determineNonCoreColumns(header, columnDescriptorsByHumanReadableName);
     		DatabaseModel model = CSVModelParser.parse(
     			coreEntityDisplayName,
     			coreEntityTableName,
     			coreColumns,
     			nonCoreColumns,
     			reader,
-    			columnDescriptors,
+    			columnDescriptorsByHumanReadableName,
     			progressMonitor);
     		Database database = DerbyDatabaseCreator.createFromModel(
     			databaseService, model, "Star", progressMonitor);

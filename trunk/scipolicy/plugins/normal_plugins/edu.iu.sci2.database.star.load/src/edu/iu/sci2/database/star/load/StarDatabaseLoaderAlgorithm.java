@@ -19,9 +19,9 @@ import edu.iu.cns.database.load.framework.exception.InvalidDerbyFieldTypeExcepti
 import edu.iu.sci2.database.star.common.StarDatabaseLoader;
 import edu.iu.sci2.database.star.common.StarDatabaseMetadata;
 import edu.iu.sci2.database.star.common.parameter.ColumnDescriptor;
+import edu.iu.sci2.database.star.common.parameter.ColumnDescriptorFactory;
 import edu.iu.sci2.database.star.common.utility.StarDatabaseDataValidator;
 import edu.iu.sci2.database.star.common.utility.csv.validator.exception.CSVHeaderValidationException;
-import edu.iu.sci2.database.star.load.parameter.ColumnDescriptorFactory;
 
 public class StarDatabaseLoaderAlgorithm implements Algorithm, ProgressTrackable {
     private Data data;
@@ -30,7 +30,8 @@ public class StarDatabaseLoaderAlgorithm implements Algorithm, ProgressTrackable
     private String coreEntityTableName;
     private LogService logger;
     private DatabaseService databaseProvider;
-    private Map<String, ColumnDescriptor> columnDescriptors;
+    private Map<String, ColumnDescriptor> columnDescriptorsByHumanReadableName;
+    private Map<String, ColumnDescriptor> columnDescriptorsByDatabaseName;
     private ProgressMonitor progressMonitor = ProgressMonitor.NULL_MONITOR;
     
     public StarDatabaseLoaderAlgorithm(
@@ -47,11 +48,15 @@ public class StarDatabaseLoaderAlgorithm implements Algorithm, ProgressTrackable
         	StarDatabaseLoader.constructCoreEntityTableName(coreEntityDisplayName);
         this.logger = logger;
         this.databaseProvider = databaseProvider;
-        this.columnDescriptors =
-			ColumnDescriptorFactory.createColumnDescriptors(this.data, parameters);
+        this.columnDescriptorsByHumanReadableName =
+			ColumnDescriptorFactory.createColumnDescriptorsByHumanReadableName(
+				this.data, parameters);
+        this.columnDescriptorsByDatabaseName =
+			ColumnDescriptorFactory.mapColumnDescriptorDatabaseNamesToColumnDescriptors(
+				this.columnDescriptorsByHumanReadableName.values());
 
         StarDatabaseDataValidator.validateCoreEntityTableName(
-        	coreEntityTableName, columnDescriptors, this.logger);
+        	coreEntityTableName, columnDescriptorsByHumanReadableName, this.logger);
     }
 
     public Data[] execute() throws AlgorithmExecutionException {
@@ -60,7 +65,7 @@ public class StarDatabaseLoaderAlgorithm implements Algorithm, ProgressTrackable
 				this.file,
 				this.coreEntityDisplayName,
 				this.coreEntityTableName,
-				this.columnDescriptors,
+				this.columnDescriptorsByHumanReadableName,
 				this.logger,
 				this.databaseProvider,
 				this.progressMonitor);
@@ -69,7 +74,10 @@ public class StarDatabaseLoaderAlgorithm implements Algorithm, ProgressTrackable
 				starDatabase,
 				this.data,
 				new StarDatabaseMetadata(
-					this.coreEntityDisplayName, this.coreEntityTableName, this.columnDescriptors));
+					this.coreEntityDisplayName,
+					this.coreEntityTableName,
+					this.columnDescriptorsByHumanReadableName,
+					this.columnDescriptorsByDatabaseName));
     	} catch (AlgorithmCanceledException e) {
     		return null;
     	}

@@ -7,15 +7,18 @@ import edu.iu.sci2.database.star.common.parameter.ColumnDescriptor;
 public class StarDatabaseMetadata {
 	private String coreEntityHumanReadableName;
 	private String coreEntityTableName;
-	private Map<String, ColumnDescriptor> columnDescriptors;
+	private Map<String, ColumnDescriptor> columnDescriptorsByHumanReadableName;
+	private Map<String, ColumnDescriptor> columnDescriptorsByDatabaseName;
 
 	public StarDatabaseMetadata(
 			String coreEntityHumanReadableName,
 			String coreEntityTableName,
-			Map<String, ColumnDescriptor> columnDescriptors) {
+			Map<String, ColumnDescriptor> columnDescriptorsByHumanReadableName,
+			Map<String, ColumnDescriptor> columnDescriptorsByDatabaseName) {
 		this.coreEntityHumanReadableName = coreEntityHumanReadableName;
 		this.coreEntityTableName = coreEntityTableName;
-		this.columnDescriptors = columnDescriptors;
+		this.columnDescriptorsByHumanReadableName = columnDescriptorsByHumanReadableName;
+		this.columnDescriptorsByDatabaseName = columnDescriptorsByDatabaseName;
 	}
 
 	public String getCoreEntityHumanReadableName() {
@@ -26,7 +29,11 @@ public class StarDatabaseMetadata {
 		return this.coreEntityTableName;
 	}
 
-	public Map<String, ColumnDescriptor> getColumnDescriptors() {
-		return this.columnDescriptors;
+	public Map<String, ColumnDescriptor> getColumnDescriptorsByHumanReadableName() {
+		return this.columnDescriptorsByHumanReadableName;
+	}
+
+	public Map<String, ColumnDescriptor> getColumnDescriptorsByDatabaseName() {
+		return this.columnDescriptorsByDatabaseName;
 	}
 }
