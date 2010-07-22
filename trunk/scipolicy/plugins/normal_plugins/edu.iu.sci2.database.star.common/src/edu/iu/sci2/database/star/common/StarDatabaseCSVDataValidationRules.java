@@ -70,8 +70,11 @@ public class StarDatabaseCSVDataValidationRules implements CSVDataValidationRule
 
 	public static String normalizeName(String name) {
 		Pattern punctuationMatcher = Pattern.compile("[^a-zA-Z \\w\\d _]");
+		String withoutPunctuation = punctuationMatcher.matcher(name.toUpperCase()).replaceAll("");
+		String withWhitespaceReplacedByUnderscores = StringUtilities.implodeStringArray(
+			StringUtilities.tokenizeByWhitespace(withoutPunctuation), "_");
 
-		return punctuationMatcher.matcher(name.toUpperCase()).replaceAll("");
+		return withWhitespaceReplacedByUnderscores;
 	}
 
 	private static String buildLogMessage(Collection<Collection<String>> duplicateNamesSets) {
