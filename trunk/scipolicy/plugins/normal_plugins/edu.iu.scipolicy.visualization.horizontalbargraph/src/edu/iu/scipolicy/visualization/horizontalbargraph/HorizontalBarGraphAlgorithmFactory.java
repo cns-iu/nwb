@@ -43,7 +43,8 @@ public class HorizontalBarGraphAlgorithmFactory implements AlgorithmFactory, Par
 				String oldAttributeDefinitionID = oldAttributeDefinition.getID();
 				AttributeDefinition newAttributeDefinition = oldAttributeDefinition;
 
-				if (oldAttributeDefinitionID.equals(HorizontalBarGraphAlgorithm.LABEL_FIELD_ID)) {
+				if (oldAttributeDefinitionID.equals(HorizontalBarGraphAlgorithm.LABEL_FIELD_ID) ||
+					oldAttributeDefinitionID.equals(HorizontalBarGraphAlgorithm.COLORIZED_BY_FIELD_ID)) {
 					newAttributeDefinition = MutateParameterUtilities.formLabelAttributeDefinition(
 						oldAttributeDefinition, table);
 				} else if (oldAttributeDefinitionID.equals(

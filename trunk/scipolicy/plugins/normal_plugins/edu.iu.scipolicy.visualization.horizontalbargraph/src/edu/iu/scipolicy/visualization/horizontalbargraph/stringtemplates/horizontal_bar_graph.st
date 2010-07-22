@@ -54,7 +54,7 @@ functions() ::= <<
 /period {
 	% Starting stack: lineHeight lineLength lineStartingY lineStartingX
 	gsave
-		0.0 0.0 0.0 setrgbcolor
+		setrgbcolor
 
 		% (lineHeight) setlinewidth
 		setlinewidth
@@ -76,7 +76,7 @@ functions() ::= <<
 /infinitePeriod {
 	% Starting stack: lineHeight lineLength lineStartingY lineStartingX
 	gsave
-		0.0 0.0 0.0 setrgbcolor
+		setrgbcolor
 		[15] 0 setdash
 
 		% (lineHeight) setlinewidth
@@ -97,6 +97,7 @@ functions() ::= <<
 } def
 
 /arrow {
+	setrgbcolor
 	newpath
 		5 index 5 index moveto
 		3 index 3 index lineto
@@ -106,6 +107,7 @@ functions() ::= <<
 } def
 
 /infiniteArrow {
+	setrgbcolor
 	newpath
 		5 index 5 index moveto
 		3 index 3 index lineto
@@ -271,32 +273,32 @@ barProperties(fontFamily, fontSize) ::= <<
 >>
 
 
-bar(label, textX, textY, barX, barY, barWidth, barHeight) ::= <<
+bar(label, textX, textY, barX, barY, barWidth, barHeight, r, g, b) ::= <<
 
 (<label>) <textX> <textY> recordLabel
-<barX> <barY> <barWidth> <barHeight> period
+<barX> <barY> <barWidth> <barHeight> <r> <g> <b> period
 
 >>
 
 
-infiniteBar(label, textX, textY, barX, barY, barWidth, barHeight) ::= <<
+infiniteBar(label, textX, textY, barX, barY, barWidth, barHeight, r, g, b) ::= <<
 
 (<label>) <textX> <textY> recordLabel
-<barX> <barY> <barWidth> <barHeight> infinitePeriod
+<barX> <barY> <barWidth> <barHeight> <r> <g> <b> infinitePeriod
 
 >>
 
 
-arrow(startX, startY, middleX, middleY, endX, endY) ::= <<
+arrow(startX, startY, middleX, middleY, endX, endY, r, g, b) ::= <<
 
-<startX> <startY> <middleX> <middleY> <endX> <endY> arrow
+<startX> <startY> <middleX> <middleY> <endX> <endY> <r> <g> <b> arrow
 
 >>
 
 
-infiniteArrow(startX, startY, middleX, middleY, endX, endY) ::= <<
+infiniteArrow(startX, startY, middleX, middleY, endX, endY, r, g, b) ::= <<
 
-<startX> <startY> <middleX> <middleY> <endX> <endY> infiniteArrow
+<startX> <startY> <middleX> <middleY> <endX> <endY> <r> <g> <b> infiniteArrow
 
 >>
 

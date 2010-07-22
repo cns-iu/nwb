@@ -2,6 +2,7 @@ package edu.iu.scipolicy.visualization.horizontalbargraph.bar;
 
 public class Bar {
 	private String label;
+	private Color color;
 	private boolean continuesLeft;
 	private boolean continuesRight;
 	private double x;
@@ -13,6 +14,7 @@ public class Bar {
 
 	public Bar(
 			String label,
+			Color color,
 			boolean continuesLeft,
 			boolean continuesRight,
 			double x,
@@ -22,6 +24,7 @@ public class Bar {
 			double originalAmount,
 			boolean hasInfiniteAmount) {
 		this.label = label;
+		this.color = color;
 		this.continuesLeft = continuesLeft;
 		this.continuesRight = continuesRight;
 		this.x = x;
@@ -34,6 +37,10 @@ public class Bar {
 
 	public String getLabel() {
 		return this.label;
+	}
+	
+	public Color getColor() {
+		return this.color;
 	}
 
 	public boolean continuesLeft() {

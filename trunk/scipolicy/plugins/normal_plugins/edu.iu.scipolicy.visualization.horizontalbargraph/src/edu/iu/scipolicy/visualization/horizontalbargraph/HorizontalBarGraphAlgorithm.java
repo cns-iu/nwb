@@ -37,6 +37,7 @@ public class HorizontalBarGraphAlgorithm implements Algorithm {
 	public static final String YEAR_LABEL_FONT_SIZE_FIELD_ID = "year_label_font_size";
 	public static final String BAR_LABEL_FONT_SIZE_FIELD_ID = "bar_label_font_size";
 	public static final String SCALE_TO_FIT_PAGE_ID = "scale_to_fit_page";
+	public static final String COLORIZED_BY_FIELD_ID = "colorized_by";
 
 	public static final String POST_SCRIPT_MIME_TYPE = "file:text/ps";
 	public static final String EPS_FILE_EXTENSION = "eps";

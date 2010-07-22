@@ -69,6 +69,8 @@ public class TableRecordExtractor {
 
 			String label = this.labelGenerator.generateLabel(
 				row, rowIndex, metadata.getLabelColumn());
+			String colorizedBy = this.labelGenerator.generateLabel(
+			 	row, rowIndex, metadata.getColorizedByColumn()).trim();
 			DateTimeWrapper startDateWrapper = Utilities.extractDate(
 				row, metadata.getStartDateColumn(), metadata.getDateFormat());
 			DateTimeWrapper endDateWrapper =
@@ -78,7 +80,7 @@ public class TableRecordExtractor {
 				double amount = Utilities.extractAmount(row, metadata.getSizeByColumn());
 
 				addRecordToCollector(
-					recordCollection, label, startDateWrapper, endDateWrapper, amount);
+					recordCollection, label, colorizedBy, startDateWrapper, endDateWrapper, amount);
 			} catch (InvalidAmountException e) {
 				/*
 				 * Needing to catch the InvalidAmountException is an artifact of using
@@ -97,24 +99,26 @@ public class TableRecordExtractor {
 	private void addRecordToCollector(
 			RecordCollection recordCollector,
 			String label,
+			String colorizedBy,
 			DateTimeWrapper startDateWrapper,
 			DateTimeWrapper endDateWrapper,
 			double amount) {
 		if (!startDateWrapper.isSpecified()) {
 			handleUnspecifiedStartDateCases(
-				recordCollector, label, startDateWrapper, endDateWrapper, amount);
+				recordCollector, label, colorizedBy, startDateWrapper, endDateWrapper, amount);
 		} else if (!startDateWrapper.isValid()) {
 			handleInvalidStartDateCases(
-				recordCollector, label, startDateWrapper, endDateWrapper, amount);
+				recordCollector, label, colorizedBy, startDateWrapper, endDateWrapper, amount);
 		} else {
 			handleValidStartDateCases(
-				recordCollector, label, startDateWrapper, endDateWrapper, amount);
+				recordCollector, label, colorizedBy, startDateWrapper, endDateWrapper, amount);
 		}
 	}
 
 	private void handleUnspecifiedStartDateCases(
 			RecordCollection recordCollector,
 			String label,
+			String colorizedBy,
 			DateTimeWrapper startDateWrapper,
 			DateTimeWrapper endDateWrapper,
 			double amount) {
@@ -126,7 +130,7 @@ public class TableRecordExtractor {
 			this.logMessageHandler.handleMessage(
 				this.recordWithoutValidStartOrEndDateType, LogService.LOG_WARNING, logMessage);
 		
-			recordCollector.addRecordWithNoDates(label, amount);
+			recordCollector.addRecordWithNoDates(label, colorizedBy, amount);
 		} else if (!endDateWrapper.isValid()) {
 			String logMessage =
 				logPrefix +
@@ -135,19 +139,20 @@ public class TableRecordExtractor {
 			this.logMessageHandler.handleMessage(
 				this.recordWithoutValidStartOrEndDateType, LogService.LOG_WARNING, logMessage);
 		
-			recordCollector.addRecordWithNoDates(label, amount);
+			recordCollector.addRecordWithNoDates(label, colorizedBy, amount);
 		} else {
 			String logMessage = logPrefix + "an unspecified start date." + NO_START_DATE_MESSAGE;
 			this.logMessageHandler.handleMessage(
 				this.recordWithoutValidStartDateType, LogService.LOG_WARNING, logMessage);
 		
-			recordCollector.addRecordWithNoStartDate(label, endDateWrapper.getDateTime(), amount);
+			recordCollector.addRecordWithNoStartDate(label, colorizedBy, endDateWrapper.getDateTime(), amount);
 		}
 	}
 	
 	private void handleInvalidStartDateCases(
 			RecordCollection recordCollector,
 			String label,
+			String colorizedBy,
 			DateTimeWrapper startDateWrapper,
 			DateTimeWrapper endDateWrapper,
 			double amount) {
@@ -161,26 +166,27 @@ public class TableRecordExtractor {
 			this.logMessageHandler.handleMessage(
 				this.recordWithoutValidStartOrEndDateType, LogService.LOG_WARNING, logMessage);
 		
-			recordCollector.addRecordWithNoDates(label, amount);
+			recordCollector.addRecordWithNoDates(label, colorizedBy, amount);
 		} else if (!endDateWrapper.isValid()) {
 			String logMessage =
 				logPrefix + "invalid start date and end dates." + NO_START_AND_END_DATES_MESSAGE;
 			this.logMessageHandler.handleMessage(
 				this.recordWithoutValidStartOrEndDateType, LogService.LOG_WARNING, logMessage);
 		
-			recordCollector.addRecordWithNoDates(label, amount);
+			recordCollector.addRecordWithNoDates(label, colorizedBy, amount);
 		} else {
 			String logMessage = logPrefix + "an invalid start date." + NO_START_DATE_MESSAGE;
 			this.logMessageHandler.handleMessage(
 				this.recordWithoutValidStartDateType, LogService.LOG_WARNING, logMessage);
 		
-			recordCollector.addRecordWithNoStartDate(label, endDateWrapper.getDateTime(), amount);
+			recordCollector.addRecordWithNoStartDate(label, colorizedBy, endDateWrapper.getDateTime(), amount);
 		}
 	}
 	
 	private void handleValidStartDateCases(
 			RecordCollection recordCollector,
 			String label,
+			String colorizedBy,
 			DateTimeWrapper startDateWrapper,
 			DateTimeWrapper endDateWrapper,
 			double amount) {
@@ -192,17 +198,17 @@ public class TableRecordExtractor {
 				this.recordWithoutValidEndDateType, LogService.LOG_WARNING, logMessage);
 		
 			recordCollector.addRecordWithNoEndDate(
-				label, startDateWrapper.getDateTime(), amount);
+				label, colorizedBy, startDateWrapper.getDateTime(), amount);
 		} else if (!endDateWrapper.isValid()) {
 			String logMessage =
 				logPrefix + "an invalid end date." + NO_END_DATE_MESSAGE;
 			this.logMessageHandler.handleMessage(
 				this.recordWithoutValidEndDateType, LogService.LOG_WARNING, logMessage);
 		
-			recordCollector.addRecordWithNoEndDate(label, startDateWrapper.getDateTime(), amount);
+			recordCollector.addRecordWithNoEndDate(label, colorizedBy, startDateWrapper.getDateTime(), amount);
 		} else {
 			recordCollector.addNormalRecord(
-				label, startDateWrapper.getDateTime(), endDateWrapper.getDateTime(), amount);
+				label, colorizedBy, startDateWrapper.getDateTime(), endDateWrapper.getDateTime(), amount);
 		}
 	}
 }

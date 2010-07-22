@@ -20,6 +20,7 @@ public final class Metadata {
 	private double yearLabelFontSize;
 	private double barLabelFontSize;
 	private boolean scaleToFitPage;
+	private String colorizedByColumn;
 
 	public Metadata(
 			String inputDataPath,
@@ -33,7 +34,8 @@ public final class Metadata {
 			String dateFormat,
 			double yearLabelFontSize,
 			double barLabelFontSize,
-			boolean scaleToFitPage) {
+			boolean scaleToFitPage,
+			String colorizedBy) {
 		this.inputDataPath = inputDataPath;
 		this.datasetName = datasetName;
 		this.labelColumn = labelColumn;
@@ -46,6 +48,7 @@ public final class Metadata {
 		this.yearLabelFontSize = yearLabelFontSize;
 		this.barLabelFontSize = barLabelFontSize;
 		this.scaleToFitPage = scaleToFitPage;
+		this.colorizedByColumn = colorizedBy;
 	}
 
 	public Metadata(Data inputData, Dictionary<String, Object> parameters) {
@@ -68,7 +71,8 @@ public final class Metadata {
         	((Double)parameters.get(
         		HorizontalBarGraphAlgorithm.BAR_LABEL_FONT_SIZE_FIELD_ID)).doubleValue(),
         	((Boolean)parameters.get(
-        		HorizontalBarGraphAlgorithm.SCALE_TO_FIT_PAGE_ID)).booleanValue());
+        		HorizontalBarGraphAlgorithm.SCALE_TO_FIT_PAGE_ID)).booleanValue(),
+        	(String)parameters.get(HorizontalBarGraphAlgorithm.COLORIZED_BY_FIELD_ID));
 	}
 
 	public String getInputDataPath() {
@@ -117,6 +121,10 @@ public final class Metadata {
 
 	public boolean scaleToFitPage() {
 		return this.scaleToFitPage;
+	}
+	
+	public String getColorizedByColumn() {
+		return this.colorizedByColumn;
 	}
 
 	private static ScalingFunction determineScalingFunction(String scalingFunctionName) {

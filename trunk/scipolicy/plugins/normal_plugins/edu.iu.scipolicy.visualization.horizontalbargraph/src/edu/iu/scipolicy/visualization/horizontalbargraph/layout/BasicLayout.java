@@ -9,6 +9,8 @@ import org.joda.time.DateTime;
 import edu.iu.scipolicy.visualization.horizontalbargraph.PageOrientation;
 import edu.iu.scipolicy.visualization.horizontalbargraph.UnitOfTime;
 import edu.iu.scipolicy.visualization.horizontalbargraph.bar.Bar;
+import edu.iu.scipolicy.visualization.horizontalbargraph.bar.Color;
+import edu.iu.scipolicy.visualization.horizontalbargraph.bar.ColorizedByRegistry;
 import edu.iu.scipolicy.visualization.horizontalbargraph.record.Record;
 
 public class BasicLayout {
@@ -264,18 +266,27 @@ public class BasicLayout {
 	public List<Bar> createBars(Collection<Record> records) {
 		Cursor cursor = createCursor(getBarLabelFontSize());
 		List<Bar> bars = new ArrayList<Bar>();
-
+		
+		List<String> colorizedByList = new ArrayList<String>();
 		for (Record record : records) {
-			bars.add(createBar(record, cursor));
+			colorizedByList.add(record.getColorizedBy().trim());
+		}
+		ColorizedByRegistry colorizedByResgitry = new ColorizedByRegistry(colorizedByList);
+	
+		for (Record record : records) {
+			bars.add(createBar(record, cursor, colorizedByResgitry));
 		}
 
 		return bars;
 	}
 
-	public Bar createBar(Record record, Cursor cursor) {
+	public Bar createBar(Record record, Cursor cursor, ColorizedByRegistry colorizedByResgitry) {
+		// TODO (for Patrick): Document why ths label is trimmed here instead of earlier.
 		String trimmedLabel = record.getLabel().trim();
 		String label = trimmedLabel;
-		
+
+		Color color = colorizedByResgitry.getColorOf(record.getColorizedBy());
+			
 		if (trimmedLabel.length() > MAXIMUM_BAR_LABEL_CHARACTER_COUNT) {
 			label =
 				trimmedLabel.substring(0, MAXIMUM_BAR_LABEL_CHARACTER_COUNT - 3) + "...";
@@ -293,6 +304,7 @@ public class BasicLayout {
 
 		return new Bar(
 			label,
+			color,
 			!record.hasStartDate(),
 			!record.hasEndDate(),
 			startX,

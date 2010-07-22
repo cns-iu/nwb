@@ -351,6 +351,9 @@ public class PostScriptGenerator {/*extends HorizontalBarGraphVisualizationGener
 		barTemplate.setAttribute("barY", barY);
 		barTemplate.setAttribute("barWidth", barWidth);
 		barTemplate.setAttribute("barHeight", barHeight);
+		barTemplate.setAttribute("r", bar.getColor().getRed());
+		barTemplate.setAttribute("g", bar.getColor().getGreen());
+		barTemplate.setAttribute("b", bar.getColor().getBlue());
 
 		String leftArrowPostScript = "";
 		String rightArrowPostScript = "";
@@ -367,6 +370,9 @@ public class PostScriptGenerator {/*extends HorizontalBarGraphVisualizationGener
 			leftArrowTemplate.setAttribute("middleY", leftArrow.middleY);
 			leftArrowTemplate.setAttribute("endX", leftArrow.endX);
 			leftArrowTemplate.setAttribute("endY", leftArrow.endY);
+			barTemplate.setAttribute("r", bar.getColor().getRed());
+			barTemplate.setAttribute("g", bar.getColor().getGreen());
+			barTemplate.setAttribute("b", bar.getColor().getBlue());
 			
 			leftArrowPostScript = leftArrowTemplate.toString();
 		}
@@ -384,6 +390,9 @@ public class PostScriptGenerator {/*extends HorizontalBarGraphVisualizationGener
 			rightArrowTemplate.setAttribute("middleY", rightArrow.middleY);
 			rightArrowTemplate.setAttribute("endX", rightArrow.endX);
 			rightArrowTemplate.setAttribute("endY", rightArrow.endY);
+			barTemplate.setAttribute("r", bar.getColor().getRed());
+			barTemplate.setAttribute("g", bar.getColor().getGreen());
+			barTemplate.setAttribute("b", bar.getColor().getBlue());
 			
 			rightArrowPostScript = rightArrowTemplate.toString();
 		}

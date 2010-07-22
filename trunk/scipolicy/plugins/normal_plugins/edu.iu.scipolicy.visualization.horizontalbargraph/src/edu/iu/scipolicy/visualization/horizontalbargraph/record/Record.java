@@ -4,6 +4,7 @@ import org.joda.time.DateTime;
 
 public interface Record extends Comparable<Record> {
 	public String getLabel();
+	public String getColorizedBy();
 	public boolean hasStartDate();
 	public DateTime getStartDate();
 	public boolean hasEndDate();

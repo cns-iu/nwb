@@ -5,17 +5,23 @@ import org.joda.time.Months;
 
 public abstract class AbstractRecord implements Record {
 	private String label;
+	private String colorizedBy;
 	private double amount;
 	private boolean hasInvalidAmount;
 	
-	public AbstractRecord(String label, double amount, boolean hasInvalidAmount) {
+	public AbstractRecord(String label, String colorizedBy, double amount, boolean hasInvalidAmount) {
 		this.label = label;
+		this.colorizedBy = colorizedBy;
 		this.amount = amount;
 		this.hasInvalidAmount = hasInvalidAmount;
 	}
 	
 	public String getLabel() {
 		return this.label;
+	}
+	
+	public String getColorizedBy() {
+		return this.colorizedBy;
 	}
 	
 	public double getAmount() {

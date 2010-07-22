@@ -58,21 +58,21 @@ public class RecordCollection {
 	}
 	
 	public void addNormalRecord(
-			String label, DateTime startDate, DateTime endDate, double originalAmount) {
+			String label, String colorizedBy, DateTime startDate, DateTime endDate, double originalAmount) {
 		DateTime fixedEndDate = fixEndDate(startDate, endDate);
 		double fixedAmount = fixAmount(originalAmount);
 		boolean hasInvalidAmount = hasInvalidAmount(originalAmount);
 		Record record =
-			new NormalRecord(label, startDate, fixedEndDate, fixedAmount, hasInvalidAmount);
+			new NormalRecord(label, colorizedBy, startDate, fixedEndDate, fixedAmount, hasInvalidAmount);
 		
 		addRecord(record);
 	}
 	
 	public void addRecordWithNoStartDate(
-			String label, final DateTime endDate, double originalAmount) {
+			String label, String colorizedBy, final DateTime endDate, double originalAmount) {
 		double fixedAmount = fixAmount(originalAmount);
 		boolean hasInvalidAmount = hasInvalidAmount(originalAmount);
-		Record record = new AbstractRecord(label, fixedAmount, hasInvalidAmount) {
+		Record record = new AbstractRecord(label, colorizedBy, fixedAmount, hasInvalidAmount) {
 			public boolean hasStartDate() {
 				return false;
 			}
@@ -97,10 +97,10 @@ public class RecordCollection {
 	}
 	
 	public void addRecordWithNoEndDate(
-			String label, final DateTime startDate, double originalAmount) {
+			String label, String colorizedBy, final DateTime startDate, double originalAmount) {
 		double fixedAmount = fixAmount(originalAmount);
 		boolean hasInvalidAmount = hasInvalidAmount(originalAmount);
-		Record record = new AbstractRecord(label, fixedAmount, hasInvalidAmount) {
+		Record record = new AbstractRecord(label, colorizedBy, fixedAmount, hasInvalidAmount) {
 			public boolean hasStartDate() {
 				return true;
 			}
@@ -124,10 +124,10 @@ public class RecordCollection {
 		addRecord(record);
 	}
 	
-	public void addRecordWithNoDates(String label, double originalAmount) {
+	public void addRecordWithNoDates(String label, String colorizedBy, double originalAmount) {
 		double fixedAmount = fixAmount(originalAmount);
 		boolean hasInvalidAmount = hasInvalidAmount(originalAmount);
-		Record record = new AbstractRecord(label, fixedAmount, hasInvalidAmount) {
+		Record record = new AbstractRecord(label, colorizedBy, fixedAmount, hasInvalidAmount) {
 			public boolean hasStartDate() {
 				return false;
 			}
@@ -231,11 +231,12 @@ public class RecordCollection {
 		
 		public NormalRecord(
 				String label,
+				String colorizedBy,
 				DateTime startDate,
 				DateTime endDate,
 				double amount,
 				boolean hasInvalidAmount) {
-			super(label, amount, hasInvalidAmount);
+			super(label, colorizedBy, amount, hasInvalidAmount);
 			this.startDate = startDate;
 			this.endDate = endDate;
 		}
