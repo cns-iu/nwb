@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.IOException;
 
 import org.cishell.framework.data.Data;
+import org.cishell.utilities.StringUtilities;
 
 import au.com.bytecode.opencsv.CSVReader;
 import edu.iu.sci2.database.star.common.utility.CSVReaderUtilities;
@@ -34,7 +35,7 @@ public class CSVDataValidator {
 		}
 
 		try {
-			String[] header = this.reader.readNext();
+			String[] header = StringUtilities.simpleCleanStrings(this.reader.readNext());
 			this.rules.validateHeader(header);
 			this.hasValidatedHeader = true;
 		} catch (IOException e) {

@@ -5,6 +5,7 @@ import java.io.FileInputStream;
 import java.io.IOException;
 
 import org.cishell.framework.data.Data;
+import org.cishell.utilities.StringUtilities;
 import org.cishell.utilities.UnicodeReader;
 
 import au.com.bytecode.opencsv.CSVReader;
@@ -12,9 +13,13 @@ import au.com.bytecode.opencsv.CSVReader;
 public class CSVReaderUtilities {
 	public static String[] getHeader(Data data) throws IOException {
 		CSVReader reader = createCSVReader((File)data.getData(), true);
-		String[] header = reader.readNext();
+		String[] header = StringUtilities.simpleCleanStrings(reader.readNext());
 
-		return header;
+		if (header != null) {
+			return StringUtilities.simpleCleanStrings(header);
+		} else {
+			return null;
+		}
 	}
 
 	public static CSVReader createCSVReader(File file, boolean includeHeader) throws IOException {

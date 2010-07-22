@@ -18,6 +18,7 @@ import org.cishell.service.database.Database;
 import org.cishell.service.database.DatabaseCreationException;
 import org.cishell.service.database.DatabaseService;
 import org.cishell.utilities.FileUtilities;
+import org.cishell.utilities.StringUtilities;
 import org.osgi.service.log.LogService;
 
 import au.com.bytecode.opencsv.CSVReader;
@@ -46,7 +47,7 @@ public class StarDatabaseLoader {
     		throws AlgorithmCanceledException, AlgorithmExecutionException {
     	try {
     		CSVReader reader = CSVReaderUtilities.createCSVReader(file, true);
-			String[] header = reader.readNext();
+			String[] header = StringUtilities.simpleCleanStrings(reader.readNext());
 			String[] coreColumns =
 				determineCoreColumns(header, columnDescriptorsByHumanReadableName);
 			String[] nonCoreColumns =
@@ -81,7 +82,6 @@ public class StarDatabaseLoader {
     	}
     }
 
-	@SuppressWarnings("unchecked")
     public static Data[] annotateOutputData(
     		Database isiDatabase, Data parentData, StarDatabaseMetadata starDatabaseMetadata) {
     	Data data = new BasicData(isiDatabase, STAR_DATABASE_MIME_TYPE);
@@ -106,6 +106,7 @@ public class StarDatabaseLoader {
     	List<String> coreColumns = new ArrayList<String>();
 
     	for (String columnName : header) {
+    		System.err.println("columnDescriptors.get(columnName): " + columnDescriptors.get(columnName));
     		if (!columnDescriptors.get(columnName).isMultiValued()) {
     			coreColumns.add(columnName);
     		}
@@ -117,7 +118,7 @@ public class StarDatabaseLoader {
     private static String[] determineNonCoreColumns(
     		String[] header, Map<String, ColumnDescriptor> columnDescriptors) {
     	List<String> nonCoreColumns = new ArrayList<String>();
-
+ 
     	for (String columnName : header) {
     		if (columnDescriptors.get(columnName).isMultiValued()) {
     			nonCoreColumns.add(columnName);
