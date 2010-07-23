@@ -2,10 +2,19 @@ package edu.iu.scipolicy.visualization.horizontalbargraph.bar;
 
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+/**
+ * ColorizedByRegistry provide algorithm to rank the items of 
+ * the category to be colorized. AVAILABLE_COLOR_LIST contains
+ * that supported colors. The display ordering of the colors is
+ * provided by using LinkedHashMap.
+ * @author kongch
+ *
+ */
 public class ColorizedByRegistry {
 	public final static Color YELLOW = new Color(0xFFCC33);
 	public final static Color LIGHT_BLUE = new Color(0x99CCFF);
@@ -16,8 +25,15 @@ public class ColorizedByRegistry {
 	public final static Color BLACK = new Color(0x000000);
 	public static final Color[] AVAILABLE_COLOR_LIST = {YELLOW, LIGHT_BLUE, LIGHT_BROWN, GREEN, PURPLE, KHAKI};
 	public static final PhraseFrequency EMPTY_PHRASE = new PhraseFrequency("");
+	public final static String OTHER_CATEGORY = "Others";
 
 	private Map<String, Color> categoriesToColors;
+	
+	public ColorizedByRegistry(List<String> stringList){
+		/* LinkedHashMap provide the ordering of the color */
+		categoriesToColors = new LinkedHashMap<String, Color>();
+		this.rankingAlgorithm(stringList);
+	}
 	
 	static class PhraseFrequency{
 		private String phrase;
@@ -43,24 +59,29 @@ public class ColorizedByRegistry {
 		}
 	}
 	
-	public ColorizedByRegistry(List<String> stringList){
-		this.rankingAlgorithm(stringList);
-	}
-	
 	// TODO: If time ever permits, rethink this design a little bit (i.e. using Google Collections.Multiset)
 	private void rankingAlgorithm(List<String> stringList){
-		this.categoriesToColors = new HashMap<String, Color>();
+		this.categoriesToColors.clear();
 		Set<PhraseFrequency> frequencySet = generateFrequency(stringList);
 		for(Color color: AVAILABLE_COLOR_LIST){
 			
-			this.categoriesToColors.put(getAndRemoveTopRank(frequencySet), color);
+			PhraseFrequency topRankPhrase = getTopRankPhraseFrequency(frequencySet);
+			if(topRankPhrase!=EMPTY_PHRASE){
+				frequencySet.remove(topRankPhrase);
+				this.categoriesToColors.put(topRankPhrase.getPhrase(), color);
+			}
+			
 			if(frequencySet.isEmpty()){
 				break;
 			}
 		}
+		
+		/* Assign other to black if there is more than 6 items */
+		if(!frequencySet.isEmpty())
+			this.categoriesToColors.put(OTHER_CATEGORY, BLACK);
 	}
 	
-	private String getAndRemoveTopRank(Set<PhraseFrequency> frequencySet){
+	private PhraseFrequency getTopRankPhraseFrequency(Set<PhraseFrequency> frequencySet){
 		PhraseFrequency topRankPhrase = EMPTY_PHRASE;
 		
 		for(PhraseFrequency phraseFreq : frequencySet){
@@ -68,10 +89,7 @@ public class ColorizedByRegistry {
 				topRankPhrase = phraseFreq;
 		}
 		
-		if(topRankPhrase!=EMPTY_PHRASE)
-			frequencySet.remove(topRankPhrase);
-		
-		return topRankPhrase.getPhrase();
+		return topRankPhrase;
 	}
 	
 	private Set<PhraseFrequency> generateFrequency(List<String> stringList){
@@ -86,10 +104,13 @@ public class ColorizedByRegistry {
         		set.add(phraseFreq);
         	}
         	phraseFreq.increaseFrequency(str);
-
         }
         
         return set;
+	}
+	
+	public Set<String> getKeySet(){
+		return categoriesToColors.keySet();
 	}
 	
 	public Color getColorOf(String colorizedBy){

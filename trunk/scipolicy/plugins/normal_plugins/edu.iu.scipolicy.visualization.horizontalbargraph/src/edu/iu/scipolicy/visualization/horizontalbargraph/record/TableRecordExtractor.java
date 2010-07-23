@@ -8,7 +8,6 @@ import prefuse.data.Table;
 import prefuse.data.Tuple;
 import edu.iu.scipolicy.visualization.horizontalbargraph.DateTimeWrapper;
 import edu.iu.scipolicy.visualization.horizontalbargraph.Metadata;
-import edu.iu.scipolicy.visualization.horizontalbargraph.ScalingFunction;
 import edu.iu.scipolicy.visualization.horizontalbargraph.record.exception.InvalidAmountException;
 import edu.iu.scipolicy.visualization.horizontalbargraph.utility.PreprocessedRecordInformation;
 import edu.iu.scipolicy.visualization.horizontalbargraph.utility.RecordLabelGenerator;

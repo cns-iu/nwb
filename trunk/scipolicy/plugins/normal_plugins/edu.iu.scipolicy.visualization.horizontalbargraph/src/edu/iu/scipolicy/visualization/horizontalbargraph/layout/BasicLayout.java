@@ -10,6 +10,8 @@ import edu.iu.scipolicy.visualization.horizontalbargraph.PageOrientation;
 import edu.iu.scipolicy.visualization.horizontalbargraph.UnitOfTime;
 import edu.iu.scipolicy.visualization.horizontalbargraph.bar.Bar;
 import edu.iu.scipolicy.visualization.horizontalbargraph.bar.Color;
+import edu.iu.scipolicy.visualization.horizontalbargraph.bar.ColorLegend;
+import edu.iu.scipolicy.visualization.horizontalbargraph.bar.ColorLegendCreator;
 import edu.iu.scipolicy.visualization.horizontalbargraph.bar.ColorizedByRegistry;
 import edu.iu.scipolicy.visualization.horizontalbargraph.record.Record;
 
@@ -46,6 +48,7 @@ public class BasicLayout {
 	private double barHeightScale;
 	private double yearLabelFontSize;
 	private double barLabelFontSize;
+	private ColorizedByRegistry colorizedByResgitry;
 
 	public BasicLayout(
 			boolean scaleToFitPage,
@@ -72,6 +75,18 @@ public class BasicLayout {
 
 	public double getBarLabelFontSize() {
 		return this.barLabelFontSize;
+	}
+	
+	private ColorizedByRegistry getColorizedByResgitry(Collection<Record> records) {
+		if(this.colorizedByResgitry==null){
+			/* Create a color mapping to the colorizedByColumn */
+			List<String> colorizedByList = new ArrayList<String>();
+			for (Record record : records) {
+				colorizedByList.add(record.getColorizedBy());
+			}
+			this.colorizedByResgitry = new ColorizedByRegistry(colorizedByList);
+		}
+		return this.colorizedByResgitry;
 	}
 
 	public PageOrientation determinePageOrientation(Collection<Bar> bars) {
@@ -266,15 +281,9 @@ public class BasicLayout {
 	public List<Bar> createBars(Collection<Record> records) {
 		Cursor cursor = createCursor(getBarLabelFontSize());
 		List<Bar> bars = new ArrayList<Bar>();
-		
-		List<String> colorizedByList = new ArrayList<String>();
-		for (Record record : records) {
-			colorizedByList.add(record.getColorizedBy().trim());
-		}
-		ColorizedByRegistry colorizedByResgitry = new ColorizedByRegistry(colorizedByList);
 	
 		for (Record record : records) {
-			bars.add(createBar(record, cursor, colorizedByResgitry));
+			bars.add(createBar(record, cursor, this.getColorizedByResgitry(records)));
 		}
 
 		return bars;
@@ -397,5 +406,9 @@ public class BasicLayout {
 		public void move(double yAmount) {
 			this.y += yAmount;
 		}
+	}
+	
+	public ColorLegend createColorLegend(String columnTitle, Collection<Record> records){
+		return new ColorLegendCreator(columnTitle, this.getColorizedByResgitry(records)).create();
 	}
 }

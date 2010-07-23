@@ -15,6 +15,8 @@ import edu.iu.scipolicy.visualization.horizontalbargraph.HeaderAndFooterPosition
 import edu.iu.scipolicy.visualization.horizontalbargraph.Metadata;
 import edu.iu.scipolicy.visualization.horizontalbargraph.PageOrientation;
 import edu.iu.scipolicy.visualization.horizontalbargraph.bar.Bar;
+import edu.iu.scipolicy.visualization.horizontalbargraph.bar.ColorLegend;
+import edu.iu.scipolicy.visualization.horizontalbargraph.bar.ColorLegendLabel;
 import edu.iu.scipolicy.visualization.horizontalbargraph.layout.BasicLayout;
 import edu.iu.scipolicy.visualization.horizontalbargraph.layout.BoundingBox;
 import edu.iu.scipolicy.visualization.horizontalbargraph.layout.BasicLayout.Arrow;
@@ -41,6 +43,7 @@ public class PostScriptGenerator {/*extends HorizontalBarGraphVisualizationGener
 	private PageOrientation pageOrientation;
 	private Metadata metadata;
 	private RecordCollection recordCollection;
+	private ColorLegend colorLegend;
 
 	public PostScriptGenerator(
 			StringTemplateGroup templateGroup,
@@ -53,6 +56,7 @@ public class PostScriptGenerator {/*extends HorizontalBarGraphVisualizationGener
 		this.metadata = metadata;
 		this.recordCollection = recordCollection;
 		Collection<Record> records = recordCollection.getSortedRecords();
+		this.colorLegend = layout.createColorLegend(this.metadata.getColorizedByColumn(), records);
 		this.bars = layout.createBars(records);
 		this.pageOrientation = layout.determinePageOrientation(bars);
 	}
@@ -89,6 +93,7 @@ public class PostScriptGenerator {/*extends HorizontalBarGraphVisualizationGener
 		String visualizationHeaderAndFooter = createVisualizationHeaderAndFooter(boundingBox);
 		String otherTransformations = createOtherTransformations();
 		String yearLabelProperties = createYearLabelProperties();
+		String colorLengendRecords = createColorLegend();
 		String yearLabelsWithVerticalTicks = createYearLabelsWithVerticalTicks();
 		String barLabelProperties = createBarProperties();
 		String postScriptRecords = createVisualBars();
@@ -98,6 +103,7 @@ public class PostScriptGenerator {/*extends HorizontalBarGraphVisualizationGener
 			functions +
 			orientation +
 			visualizationHeaderAndFooter +
+			colorLengendRecords +
 			otherTransformations +
 			yearLabelProperties +
 			yearLabelsWithVerticalTicks +
@@ -274,6 +280,43 @@ public class PostScriptGenerator {/*extends HorizontalBarGraphVisualizationGener
 		yearLabelPropertiesTemplate.setAttribute("fontSize", getLayout().getYearLabelFontSize());
 
 		return yearLabelPropertiesTemplate.toString();
+	}
+	
+	private String createColorLegend() {
+		List<ColorLegendLabel> colorLegendLabelList = colorLegend.getColorLegendLabelList();
+		StringBuilder records = new StringBuilder();
+
+		records.append(createColorLegendTitle());
+		for (ColorLegendLabel label : colorLegendLabelList) {
+			records.append(createColorLegendlabel(label));
+		}
+
+		return records.toString();
+	}
+	
+	private String createColorLegendTitle(){
+		StringTemplate colorLegendTitleTemplate = this.templateGroup.getInstanceOf("colorLegendTitle");
+		colorLegendTitleTemplate.setAttribute("label", colorLegend.getTitle());
+		colorLegendTitleTemplate.setAttribute("labelX", colorLegend.getX());
+		colorLegendTitleTemplate.setAttribute("labelY", colorLegend.getY());
+		return colorLegendTitleTemplate.toString();
+	}
+	
+	private String createColorLegendlabel(ColorLegendLabel colorLegendLabel){
+		
+		StringTemplate colorLegendLabelTemplate = this.templateGroup.getInstanceOf("colorLegendLabelItem");
+		colorLegendLabelTemplate.setAttribute("label", colorLegendLabel.getLabel());
+		colorLegendLabelTemplate.setAttribute("labelX", colorLegendLabel.getLabelX());
+		colorLegendLabelTemplate.setAttribute("labelY", colorLegendLabel.getLabelY());
+		colorLegendLabelTemplate.setAttribute("boxX", colorLegendLabel.getBoxX());
+		colorLegendLabelTemplate.setAttribute("boxY", colorLegendLabel.getBoxY());
+		colorLegendLabelTemplate.setAttribute("width", colorLegendLabel.getWidth());
+		colorLegendLabelTemplate.setAttribute("height", colorLegendLabel.getHeight());
+		colorLegendLabelTemplate.setAttribute("r", colorLegendLabel.getColor().getRed());
+		colorLegendLabelTemplate.setAttribute("g", colorLegendLabel.getColor().getGreen());
+		colorLegendLabelTemplate.setAttribute("b", colorLegendLabel.getColor().getBlue());
+		
+		return colorLegendLabelTemplate.toString();
 	}
 
 	private String createYearLabelsWithVerticalTicks() {

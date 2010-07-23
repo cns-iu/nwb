@@ -116,6 +116,75 @@ functions() ::= <<
 	fill
 } def
 
+% label x y fontSize
+% Draw label based on the given size
+/colorLegendLabelDict 1 dict def
+/colorLegendLabel  {
+	colorLegendLabelDict  begin
+		/fontSize exch def
+		/y exch def
+		/x exch def
+		/label exch def
+
+		gsave
+			x y moveto
+			gsave
+				/Garamond findfont fontSize scalefont setfont
+				0 setgray
+				label show
+			grestore
+		grestore
+	end
+} def
+
+% x y width height red green blue
+% Draw counter-clockwise from lower-left the box whose
+% lower-left corner is (x, y) having the given width and height.
+/boxDict 1 dict def
+/colorLabelBox {
+	boxDict begin
+		/b exch def
+		/g exch def
+		/r exch def
+		/height exch def
+		/width exch def
+		/y exch def
+		/x exch def
+
+		r g b setrgbcolor
+		newpath
+			x y moveto
+			width 0 rlineto
+			0 height rlineto
+			width neg 0 rlineto
+		closepath
+		fill
+	end
+} def
+
+% label labelX labelY boxX boxY width height red green blue
+% Draw a color label item which include the label and the color box
+/colorLegendLabelItemDict 1 dict def
+/colorLegendLabelItem  {
+	colorLegendLabelItemDict  begin
+		/b exch def
+		/g exch def
+		/r exch def
+		/height exch def
+		/width exch def
+		/boxY exch def
+		/boxX exch def
+		/labelY exch def
+		/labelX exch def
+		/typeLabel exch def
+
+		gsave
+			boxX boxY width height r g b colorLabelBox
+			typeLabel labelX labelY 10.0 colorLegendLabel 
+		grestore
+	end
+} def
+
 /vertical {
 	gsave
 	[15] 0 setdash
@@ -256,6 +325,17 @@ undoYearLabelProperties(fontFamily, inverseFontSize) ::= <<
 
 >>
 
+colorLegendTitle (label, labelX, labelY) ::= <<
+
+(<label>) <labelX> <labelY> 12.0 colorLegendLabel
+
+>>
+
+colorLegendLabelItem (label, labelX, labelY, boxX, boxY, width, height, r, g, b) ::= <<
+
+(<label>) <labelX> <labelY> <boxX> <boxY> <width> <height> <r> <g> <b> colorLegendLabelItem
+
+>>
 
 yearLabelWithVerticalTick(year, x, tickSize, height) ::= <<
 
