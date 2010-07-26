@@ -28,4 +28,8 @@ public final class HeaderAndFooterPositioningData {
 		YEAR_LABEL_FONT_SIZE_Y + SUBHEADER_SPACING_DIFFERENCE;
 
 	public static final double FOOTER_Y = 0.35;
+
+	public static final double LEGEND_START_Y = 1.7;
+	public static final double LEGEND_SUBITEM_GAP = 0.1396;
+	public static final double LEGEND_SUBLABEL_GAP = 0.09;
 }

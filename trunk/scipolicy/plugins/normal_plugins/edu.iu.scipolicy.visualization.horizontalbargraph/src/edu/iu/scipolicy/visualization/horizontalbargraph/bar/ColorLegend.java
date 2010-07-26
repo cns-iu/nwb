@@ -36,6 +36,10 @@ public class ColorLegend {
 		return y;
 	}
 	
+	public void setY(double y) {
+		this.y = y;
+	}
+	
 	public List<ColorLegendLabel> getColorLegendLabelList() {
 		return labelList;
 	}

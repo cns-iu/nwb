@@ -56,9 +56,9 @@ public class PostScriptGenerator {/*extends HorizontalBarGraphVisualizationGener
 		this.metadata = metadata;
 		this.recordCollection = recordCollection;
 		Collection<Record> records = recordCollection.getSortedRecords();
-		this.colorLegend = layout.createColorLegend(this.metadata.getColorizedByColumn(), records);
 		this.bars = layout.createBars(records);
 		this.pageOrientation = layout.determinePageOrientation(bars);
+		this.colorLegend = layout.createColorLegend(this.metadata.getColorizedByColumn(), records);
 	}
 
 	public PageOrientation getPageOrientation() {
@@ -93,7 +93,7 @@ public class PostScriptGenerator {/*extends HorizontalBarGraphVisualizationGener
 		String visualizationHeaderAndFooter = createVisualizationHeaderAndFooter(boundingBox);
 		String otherTransformations = createOtherTransformations();
 		String yearLabelProperties = createYearLabelProperties();
-		String colorLengendRecords = createColorLegend();
+		String colorLengendRecords = createColorLegend(boundingBox);
 		String yearLabelsWithVerticalTicks = createYearLabelsWithVerticalTicks();
 		String barLabelProperties = createBarProperties();
 		String postScriptRecords = createVisualBars();
@@ -282,34 +282,37 @@ public class PostScriptGenerator {/*extends HorizontalBarGraphVisualizationGener
 		return yearLabelPropertiesTemplate.toString();
 	}
 	
-	private String createColorLegend() {
+	private String createColorLegend(BoundingBox boundingBox) {
 		List<ColorLegendLabel> colorLegendLabelList = colorLegend.getColorLegendLabelList();
 		StringBuilder records = new StringBuilder();
 
-		records.append(createColorLegendTitle());
+		records.append(createColorLegendTitle(boundingBox));
 		for (ColorLegendLabel label : colorLegendLabelList) {
-			records.append(createColorLegendlabel(label));
+			records.append(createColorLegendlabel(label, boundingBox));
 		}
 
 		return records.toString();
 	}
 	
-	private String createColorLegendTitle(){
+	private String createColorLegendTitle(BoundingBox boundingBox){
 		StringTemplate colorLegendTitleTemplate = this.templateGroup.getInstanceOf("colorLegendTitle");
 		colorLegendTitleTemplate.setAttribute("label", colorLegend.getTitle());
 		colorLegendTitleTemplate.setAttribute("labelX", colorLegend.getX());
-		colorLegendTitleTemplate.setAttribute("labelY", colorLegend.getY());
+		colorLegendTitleTemplate.setAttribute("labelY", this.pageOrientation.getYTranslateForFooter(
+				boundingBox, colorLegend.getY()));
 		return colorLegendTitleTemplate.toString();
 	}
 	
-	private String createColorLegendlabel(ColorLegendLabel colorLegendLabel){
+	private String createColorLegendlabel(ColorLegendLabel colorLegendLabel, BoundingBox boundingBox){
 		
 		StringTemplate colorLegendLabelTemplate = this.templateGroup.getInstanceOf("colorLegendLabelItem");
 		colorLegendLabelTemplate.setAttribute("label", colorLegendLabel.getLabel());
 		colorLegendLabelTemplate.setAttribute("labelX", colorLegendLabel.getLabelX());
-		colorLegendLabelTemplate.setAttribute("labelY", colorLegendLabel.getLabelY());
+		colorLegendLabelTemplate.setAttribute("labelY", this.pageOrientation.getYTranslateForFooter(
+												boundingBox,colorLegendLabel.getLabelY()));
 		colorLegendLabelTemplate.setAttribute("boxX", colorLegendLabel.getBoxX());
-		colorLegendLabelTemplate.setAttribute("boxY", colorLegendLabel.getBoxY());
+		colorLegendLabelTemplate.setAttribute("boxY", this.pageOrientation.getYTranslateForFooter(
+												boundingBox, colorLegendLabel.getBoxY()));
 		colorLegendLabelTemplate.setAttribute("width", colorLegendLabel.getWidth());
 		colorLegendLabelTemplate.setAttribute("height", colorLegendLabel.getHeight());
 		colorLegendLabelTemplate.setAttribute("r", colorLegendLabel.getColor().getRed());
