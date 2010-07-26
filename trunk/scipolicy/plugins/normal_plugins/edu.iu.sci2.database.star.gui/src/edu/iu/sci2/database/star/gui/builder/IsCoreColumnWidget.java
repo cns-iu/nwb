@@ -38,6 +38,18 @@ public class IsCoreColumnWidget extends Composite {
 		return this.noButton;
 	}
 
+	public void setIsCoreColumn(boolean isCoreColumn) {
+		this.isCoreColumn = isCoreColumn;
+
+		if (isCoreColumn) {
+			this.yesButton.setSelection(true);
+			this.noButton.setSelection(false);
+		} else {
+			this.yesButton.setSelection(false);
+			this.noButton.setSelection(true);
+		}
+	}
+
 	private static Button createYesButton(final IsCoreColumnWidget parent) {
 		final Button yesButton = new Button(parent, SWT.RADIO);
 		yesButton.setLayoutData(createYesButtonLayoutData());

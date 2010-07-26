@@ -34,6 +34,10 @@ public class CoreEntityNameWidget extends Composite {
 		return this.inputField.getText();
 	}
 
+	public void setCoreEntityName(String coreEntityName) {
+		this.inputField.setText(coreEntityName);
+	}
+
 	private static GridLayout createLayout() {
 		GridLayout layout = new GridLayout(2, true);
 		GUIBuilderUtilities.clearSpacing(layout);

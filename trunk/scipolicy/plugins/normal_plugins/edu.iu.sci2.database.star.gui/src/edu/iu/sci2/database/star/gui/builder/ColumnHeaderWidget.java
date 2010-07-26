@@ -1,5 +1,6 @@
 package edu.iu.sci2.database.star.gui.builder;
 
+import org.cishell.utilities.ArrayUtilities;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
@@ -13,6 +14,7 @@ public class ColumnHeaderWidget extends Composite {
 	public static final String DATA_TYPE_LABEL_TEXT =
 		"What type of data does this column contain?";
 
+	private String[] columnTypeOptions;
 	private String name;
 	private Label columnLabel;
 	private Label dataTypeLabel;
@@ -29,11 +31,12 @@ public class ColumnHeaderWidget extends Composite {
 			String[] columnTypeOptions,
 			int defaultOptionIndex) {
 		super(parent, SWT.NONE);
+		this.columnTypeOptions = columnTypeOptions;
 		this.name = columnDescriptor.getName();
 		setLayout(createLayout());
 		this.columnLabel = createColumnLabel(this, columnDescriptor);
 		this.dataTypeLabel = createDataTypeLabel(this);
-		this.inputField = createInputField(this, columnTypeOptions, defaultOptionIndex);
+		this.inputField = createInputField(this, this.columnTypeOptions, defaultOptionIndex);
 	}
 
 	public String getColumnName() {
@@ -54,6 +57,10 @@ public class ColumnHeaderWidget extends Composite {
 
 	public String getType() {
 		return this.inputField.getItem(this.inputField.getSelectionIndex());
+	}
+
+	public void setType(String type) {
+		this.inputField.select(ArrayUtilities.indexOf(this.columnTypeOptions, type));
 	}
 
 	private static GridLayout createLayout() {

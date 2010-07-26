@@ -11,7 +11,9 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.StyledText;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.layout.GridData;
+import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
@@ -65,6 +67,16 @@ public class LoadStarDatabaseGUIBuilder {
     	@SuppressWarnings("unused")
     	StyledText instructionsLabel = createInstructionsLabel(shell);
 
+    	Composite persistButtonArea = new Composite(shell, SWT.BORDER);
+    	persistButtonArea.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false));
+    	persistButtonArea.setLayout(new GridLayout(2, true));
+    	Button saveButton = new Button(persistButtonArea, SWT.PUSH);
+    	saveButton.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
+    	saveButton.setText("Save Session");
+    	Button loadButton = new Button(persistButtonArea, SWT.PUSH);
+    	loadButton.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
+    	loadButton.setText("Load Session");
+
     	final CoreEntityNameWidget coreEntityNameWidget = createCoreEntityNameWidget(shell);
 
     	final ColumnListWidget columnListWidget = createColumnListWidget(shell, columnDescriptors);
@@ -84,6 +96,34 @@ public class LoadStarDatabaseGUIBuilder {
 				}
 			}
 		});
+
+    	
+    	saveButton.addSelectionListener(new SelectionListener() {
+			public void widgetDefaultSelected(SelectionEvent event) {
+				selected(event);
+			}
+
+			public void widgetSelected(SelectionEvent event) {
+				selected(event);
+			}
+
+			private void selected(SelectionEvent event) {
+				Persister.saveSession(shell, coreEntityNameWidget, columnListWidget);
+			}
+    	});
+    	loadButton.addSelectionListener(new SelectionListener() {
+			public void widgetDefaultSelected(SelectionEvent event) {
+				selected(event);
+			}
+
+			public void widgetSelected(SelectionEvent event) {
+				selected(event);
+			}
+
+			private void selected(SelectionEvent event) {
+				Persister.loadSession(shell, coreEntityNameWidget, columnListWidget);
+			}
+    	});
 
     	GUIBuilderUtilities.setCancelable(shell, exceptionThrown);
     	runGUI(display, shell, columnListWidget, windowHeight);
@@ -193,7 +233,7 @@ public class LoadStarDatabaseGUIBuilder {
 	 * This method extracts user-inputted data from the GUI and transforms it into ColumnDescriptor
 	 *  objects that can later be used to invoke the Star Database Loader algorithm.
 	 */
-	private static ColumnsDataForLoader gatherColumnsDataForLoader(
+	public static ColumnsDataForLoader gatherColumnsDataForLoader(
 			CoreEntityNameWidget coreEntityNameWidget, ColumnListWidget columnListWidget)
 			throws InvalidDerbyFieldTypeException {
 		String coreEntityName = coreEntityNameWidget.getCoreEntityName();

@@ -63,6 +63,7 @@ public class NonCoreColumnPropertiesWidget extends ExpandableComposite {
 			private void selected(SelectionEvent event) {
 				boolean isSelected =
 					NonCoreColumnPropertiesWidget.this.multiValuedFieldInputField.isSelected();
+				NonCoreColumnPropertiesWidget.this.separatorLabel.setEnabled(isSelected);
 				NonCoreColumnPropertiesWidget.this.separatorInputField.setEnabled(isSelected);
 			}
 		});
@@ -92,16 +93,35 @@ public class NonCoreColumnPropertiesWidget extends ExpandableComposite {
 		return this.separatorInputField;
 	}
 
+	public void setMergeIdenticalValues(boolean mergeIdenticalValues) {
+		if (this.mergeIdenticalValuesInputField.isSelected() != mergeIdenticalValues) {
+			this.mergeIdenticalValuesInputField.toggle();
+		}
+	}
+
+	public void setIsMultiValued(boolean isMultiValued) {
+		if (this.multiValuedFieldInputField.isSelected() != isMultiValued) {
+			this.multiValuedFieldInputField.toggle();
+		}
+	}
+
+	public void setSeparator(String separator) {
+		this.separatorInputField.setText(separator);
+	}
+
 	@Override
 	public void setEnabled(boolean enabled) {
-		this.propertiesArea.setEnabled(enabled);
-		this.mergeIdenticalValuesLabel.setEnabled(enabled);
-		this.mergeIdenticalValuesInputField.getButton().setEnabled(enabled);
-		this.multiValuedFieldLabel.setEnabled(enabled);
-		this.multiValuedFieldInputField.getButton().setEnabled(enabled);
-		this.separatorLabel.setEnabled(enabled);
-		this.separatorInputField.setEnabled(enabled);
 		super.setEnabled(enabled);
+
+		this.propertiesArea.setEnabled(isEnabled() && enabled);
+		this.mergeIdenticalValuesLabel.setEnabled(isEnabled() && enabled);
+		this.mergeIdenticalValuesInputField.getButton().setEnabled(isEnabled() && enabled);
+		this.multiValuedFieldLabel.setEnabled(isEnabled() && enabled);
+		this.multiValuedFieldInputField.getButton().setEnabled(isEnabled() && enabled);
+		this.separatorLabel.setEnabled(
+			isEnabled() && this.multiValuedFieldInputField.isSelected());
+		this.separatorInputField.setEnabled(
+			isEnabled() && this.multiValuedFieldInputField.isSelected());
 	}
 
 	private static Composite createPropertiesArea(Composite parent) {

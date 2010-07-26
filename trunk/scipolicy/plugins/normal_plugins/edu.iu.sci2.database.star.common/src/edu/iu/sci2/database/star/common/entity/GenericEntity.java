@@ -4,6 +4,7 @@ import java.sql.Types;
 import java.util.Collection;
 import java.util.Dictionary;
 
+import org.cishell.utilities.StringUtilities;
 import org.cishell.utilities.dictionary.DictionaryEntry;
 import org.cishell.utilities.dictionary.DictionaryIterator;
 
@@ -55,12 +56,21 @@ public abstract class GenericEntity extends Entity<GenericEntity> {
 	public abstract Dictionary<String, Object> createJustAttributesForInsertion();
 
 	public static Object interpretValue(String value, ColumnDescriptor column) {
-		// This is terrible.
+		String cleanedValue = StringUtilities.simpleClean(value);
+
 		switch (column.getType().getSQLType()) {
 		case Types.INTEGER:
-			return Integer.parseInt(value);
+			if (StringUtilities.isNull_Empty_OrWhitespace(cleanedValue)) {
+				return null;
+			} else {
+				return Integer.parseInt(cleanedValue);
+			}
 		case Types.DOUBLE:
-			return Double.parseDouble(value);
+			if (StringUtilities.isNull_Empty_OrWhitespace(cleanedValue)) {
+				return null;
+			} else {
+				return Double.parseDouble(value);
+			}
 		default:
 			return value;
 		}

@@ -106,7 +106,6 @@ public class StarDatabaseLoader {
     	List<String> coreColumns = new ArrayList<String>();
 
     	for (String columnName : header) {
-    		System.err.println("columnDescriptors.get(columnName): " + columnDescriptors.get(columnName));
     		if (!columnDescriptors.get(columnName).isMultiValued()) {
     			coreColumns.add(columnName);
     		}
