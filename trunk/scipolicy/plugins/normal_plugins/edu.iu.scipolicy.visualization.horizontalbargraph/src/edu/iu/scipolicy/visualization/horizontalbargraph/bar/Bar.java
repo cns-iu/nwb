@@ -1,5 +1,7 @@
 package edu.iu.scipolicy.visualization.horizontalbargraph.bar;
 
+import java.awt.Color;
+
 public class Bar {
 	private String label;
 	private Color color;

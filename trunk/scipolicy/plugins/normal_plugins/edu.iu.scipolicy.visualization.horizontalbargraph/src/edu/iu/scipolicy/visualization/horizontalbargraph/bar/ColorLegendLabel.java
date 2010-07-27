@@ -1,5 +1,7 @@
 package edu.iu.scipolicy.visualization.horizontalbargraph.bar;
 
+import java.awt.Color;
+
 /**
  * The legend that represents categories of the colors. It contains
  * the title (colorized column name), (x,y) position in the graph and

@@ -32,7 +32,7 @@ public class Utilities {
 
 	public static DateTimeWrapper extractDate(Tuple row, String dateKey, String dateFormat) {
 		Object potentialDate = row.get(dateKey);
-		
+
 		if ((potentialDate == null) ||
 				StringUtilities.isEmptyOrWhitespace(potentialDate.toString())) {
 			return DateTimeWrapper.createUnspecifiedDateTimeWrapper();

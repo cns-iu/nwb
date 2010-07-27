@@ -32,7 +32,6 @@ public class PostScriptGenerator {/*extends HorizontalBarGraphVisualizationGener
 	public static final String YEAR_LABEL_FONT_FAMILY = "Garamond";
 	public static final int YEAR_LABEL_FONT_SIZE = 25;
 	public static final int TICK_SIZE = 5;
-	public static final Color RGB_COLOR = new Color(0, 0, 255);
 	public static final String BAR_LABEL_FONT_FAMILY = "Garamond";
 	public static final int YEAR_CHARACTER_COUNT = 4;
 	public static final int DECIMAL_PLACE_COUNT = 5;
@@ -262,9 +261,9 @@ public class PostScriptGenerator {/*extends HorizontalBarGraphVisualizationGener
 	}
 
 	private String createYearLabelProperties() {
-		double red = (double)YEAR_LABEL_COLOR.getRed() / 255.0;
-		double green = (double)YEAR_LABEL_COLOR.getGreen() / 255.0;
-		double blue = (double)YEAR_LABEL_COLOR.getBlue() / 255.0;
+		double red = ((double) YEAR_LABEL_COLOR.getRed()) / 255.0;
+		double green = ((double) YEAR_LABEL_COLOR.getGreen()) / 255.0;
+		double blue = ((double) YEAR_LABEL_COLOR.getBlue()) / 255.0;
 
 		StringTemplate yearLabelPropertiesTemplate =
 			this.templateGroup.getInstanceOf("yearLabelProperties");
@@ -315,9 +314,12 @@ public class PostScriptGenerator {/*extends HorizontalBarGraphVisualizationGener
 												boundingBox, colorLegendLabel.getBoxY()));
 		colorLegendLabelTemplate.setAttribute("width", colorLegendLabel.getWidth());
 		colorLegendLabelTemplate.setAttribute("height", colorLegendLabel.getHeight());
-		colorLegendLabelTemplate.setAttribute("r", colorLegendLabel.getColor().getRed());
-		colorLegendLabelTemplate.setAttribute("g", colorLegendLabel.getColor().getGreen());
-		colorLegendLabelTemplate.setAttribute("b", colorLegendLabel.getColor().getBlue());
+		colorLegendLabelTemplate.setAttribute(
+			"r", ((double) colorLegendLabel.getColor().getRed()) / 255.0);
+		colorLegendLabelTemplate.setAttribute(
+			"g", ((double) colorLegendLabel.getColor().getGreen()) / 255.0);
+		colorLegendLabelTemplate.setAttribute(
+			"b", ((double) colorLegendLabel.getColor().getBlue()) / 255.0);
 		
 		return colorLegendLabelTemplate.toString();
 	}
@@ -388,6 +390,9 @@ public class PostScriptGenerator {/*extends HorizontalBarGraphVisualizationGener
 			bar.getHeight(), DECIMAL_PLACE_COUNT);
 		double textX = NumberUtilities.roundToNDecimalPlaces(bar.getX(), DECIMAL_PLACE_COUNT);
 		double textY = barY;
+		double red = ((double) bar.getColor().getRed()) / 255.0;
+		double green = ((double) bar.getColor().getGreen()) / 255.0;
+		double blue = ((double) bar.getColor().getBlue()) / 255.0;
 
 		StringTemplate barTemplate = getBarStringTemplate(bar);
 
@@ -397,9 +402,9 @@ public class PostScriptGenerator {/*extends HorizontalBarGraphVisualizationGener
 		barTemplate.setAttribute("barY", barY);
 		barTemplate.setAttribute("barWidth", barWidth);
 		barTemplate.setAttribute("barHeight", barHeight);
-		barTemplate.setAttribute("r", bar.getColor().getRed());
-		barTemplate.setAttribute("g", bar.getColor().getGreen());
-		barTemplate.setAttribute("b", bar.getColor().getBlue());
+		barTemplate.setAttribute("r", red);
+		barTemplate.setAttribute("g", green);
+		barTemplate.setAttribute("b", blue);
 
 		String leftArrowPostScript = "";
 		String rightArrowPostScript = "";
@@ -416,9 +421,9 @@ public class PostScriptGenerator {/*extends HorizontalBarGraphVisualizationGener
 			leftArrowTemplate.setAttribute("middleY", leftArrow.middleY);
 			leftArrowTemplate.setAttribute("endX", leftArrow.endX);
 			leftArrowTemplate.setAttribute("endY", leftArrow.endY);
-			barTemplate.setAttribute("r", bar.getColor().getRed());
-			barTemplate.setAttribute("g", bar.getColor().getGreen());
-			barTemplate.setAttribute("b", bar.getColor().getBlue());
+			leftArrowTemplate.setAttribute("r", red);
+			leftArrowTemplate.setAttribute("g", green);
+			leftArrowTemplate.setAttribute("b", blue);
 			
 			leftArrowPostScript = leftArrowTemplate.toString();
 		}
@@ -436,9 +441,9 @@ public class PostScriptGenerator {/*extends HorizontalBarGraphVisualizationGener
 			rightArrowTemplate.setAttribute("middleY", rightArrow.middleY);
 			rightArrowTemplate.setAttribute("endX", rightArrow.endX);
 			rightArrowTemplate.setAttribute("endY", rightArrow.endY);
-			barTemplate.setAttribute("r", bar.getColor().getRed());
-			barTemplate.setAttribute("g", bar.getColor().getGreen());
-			barTemplate.setAttribute("b", bar.getColor().getBlue());
+			rightArrowTemplate.setAttribute("r", red);
+			rightArrowTemplate.setAttribute("g", green);
+			rightArrowTemplate.setAttribute("b", blue);
 			
 			rightArrowPostScript = rightArrowTemplate.toString();
 		}

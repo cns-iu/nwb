@@ -66,8 +66,8 @@ public class TableRecordExtractor {
 		for (Integer rowIndex : recordInformation.getValidRows()) {
 			Tuple row = source.getTuple(rowIndex);
 
-			String label = this.labelGenerator.generateLabel(
-				row, rowIndex, metadata.getLabelColumn());
+			String label =
+				this.labelGenerator.generateLabel(row, rowIndex, metadata.getLabelColumn()).trim();
 			String colorizedBy = this.labelGenerator.generateLabel(
 			 	row, rowIndex, metadata.getColorizedByColumn()).trim();
 			DateTimeWrapper startDateWrapper = Utilities.extractDate(
@@ -79,7 +79,12 @@ public class TableRecordExtractor {
 				double amount = Utilities.extractAmount(row, metadata.getSizeByColumn());
 
 				addRecordToCollector(
-					recordCollection, label, colorizedBy, startDateWrapper, endDateWrapper, amount);
+					recordCollection,
+					label,
+					colorizedBy,
+					startDateWrapper,
+					endDateWrapper,
+					amount);
 			} catch (InvalidAmountException e) {
 				/*
 				 * Needing to catch the InvalidAmountException is an artifact of using

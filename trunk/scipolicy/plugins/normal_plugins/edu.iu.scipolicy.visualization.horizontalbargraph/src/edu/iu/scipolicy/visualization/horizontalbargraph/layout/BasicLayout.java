@@ -1,5 +1,6 @@
 package edu.iu.scipolicy.visualization.horizontalbargraph.layout;
 
+import java.awt.Color;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -9,7 +10,6 @@ import org.joda.time.DateTime;
 import edu.iu.scipolicy.visualization.horizontalbargraph.PageOrientation;
 import edu.iu.scipolicy.visualization.horizontalbargraph.UnitOfTime;
 import edu.iu.scipolicy.visualization.horizontalbargraph.bar.Bar;
-import edu.iu.scipolicy.visualization.horizontalbargraph.bar.Color;
 import edu.iu.scipolicy.visualization.horizontalbargraph.bar.ColorLegend;
 import edu.iu.scipolicy.visualization.horizontalbargraph.bar.ColorLegendCreator;
 import edu.iu.scipolicy.visualization.horizontalbargraph.bar.ColorizedByRegistry;

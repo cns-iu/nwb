@@ -1,5 +1,6 @@
 package edu.iu.scipolicy.visualization.horizontalbargraph.bar;
 
+import java.awt.Color;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
@@ -16,51 +17,53 @@ import java.util.Set;
  *
  */
 public class ColorizedByRegistry {
-	public final static Color YELLOW = new Color(0xFFCC33);
-	public final static Color LIGHT_BLUE = new Color(0x99CCFF);
-	public final static Color LIGHT_BROWN = new Color(0x996666);
-	public final static Color GREEN = new Color(0x669966);
-	public final static Color PURPLE = new Color(0x9966FF);
-	public final static Color KHAKI = new Color(0x666600);
-	public final static Color BLACK = new Color(0x000000);
-	public static final Color[] AVAILABLE_COLOR_LIST = {YELLOW, LIGHT_BLUE, LIGHT_BROWN, GREEN, PURPLE, KHAKI};
+	public final static Color YELLOW = new Color(1.0f, 0.8f, 0.2f);
+	public final static Color LIGHT_BLUE = new Color(0.6f, 0.8f, 1.0f);
+	public final static Color LIGHT_BROWN = new Color(0.6f, 0.4f, 0.4f);
+	public final static Color GREEN = new Color(0.4f, 0.6f, 0.4f);
+	public final static Color PURPLE = new Color(0.6f, 0.4f, 1.0f);
+	public final static Color KHAKI = new Color(0.4f, 0.4f, 0);
+	public final static Color BLACK = new Color(0, 0, 0);
+	public static final Color[] AVAILABLE_COLOR_LIST = {
+		YELLOW, LIGHT_BLUE, LIGHT_BROWN, GREEN, PURPLE, KHAKI
+	};
 	public static final PhraseFrequency EMPTY_PHRASE = new PhraseFrequency("");
 	public final static String OTHER_CATEGORY = "Others";
 
 	private Map<String, Color> categoriesToColors;
 	
-	public ColorizedByRegistry(List<String> stringList){
+	public ColorizedByRegistry(List<String> stringList) {
 		/* LinkedHashMap provide the ordering of the color */
 		categoriesToColors = new LinkedHashMap<String, Color>();
 		this.rankingAlgorithm(stringList);
 	}
 	
-	static class PhraseFrequency{
+	static class PhraseFrequency {
 		private String phrase;
 		private int frequency;
 		
-		public PhraseFrequency(String phrase){
+		public PhraseFrequency(String phrase) {
 			this.phrase = phrase;
 			this.frequency = 0;
 		}
 		
-		public void increaseFrequency(String phrase){
+		public void increaseFrequency(String phrase) {
 			if(this.phrase.equals(phrase)) {
 				this.frequency++;
 			}
 		}
 		
-		public int getFrequency(){
+		public int getFrequency() {
 			return this.frequency;
 		}
 		
-		public String getPhrase(){
+		public String getPhrase() {
 			return this.phrase;
 		}
 	}
 	
 	// TODO: If time ever permits, rethink this design a little bit (i.e. using Google Collections.Multiset)
-	private void rankingAlgorithm(List<String> stringList){
+	private void rankingAlgorithm(List<String> stringList) {
 		this.categoriesToColors.clear();
 		Set<PhraseFrequency> frequencySet = generateFrequency(stringList);
 		for(Color color: AVAILABLE_COLOR_LIST){

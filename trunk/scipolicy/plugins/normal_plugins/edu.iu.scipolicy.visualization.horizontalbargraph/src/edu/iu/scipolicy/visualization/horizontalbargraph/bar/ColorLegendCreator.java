@@ -1,7 +1,8 @@
 package edu.iu.scipolicy.visualization.horizontalbargraph.bar;
 
+import java.awt.Color;
+
 import edu.iu.scipolicy.visualization.horizontalbargraph.HeaderAndFooterPositioningData;
-import edu.iu.scipolicy.visualization.horizontalbargraph.bar.ColorizedByRegistry;
 
 /**
  * Create the ColorLegend that used for the bars. It used the data
