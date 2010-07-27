@@ -67,15 +67,16 @@ public class LoadStarDatabaseGUIBuilder {
     	@SuppressWarnings("unused")
     	StyledText instructionsLabel = createInstructionsLabel(shell);
 
+    	// TODO: Make this more official (less quick-and-dirty'd in).
     	Composite persistButtonArea = new Composite(shell, SWT.BORDER);
     	persistButtonArea.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false));
     	persistButtonArea.setLayout(new GridLayout(2, true));
     	Button saveButton = new Button(persistButtonArea, SWT.PUSH);
     	saveButton.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
-    	saveButton.setText("Save Session");
+    	saveButton.setText("Save Column Attributes");
     	Button loadButton = new Button(persistButtonArea, SWT.PUSH);
     	loadButton.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
-    	loadButton.setText("Load Session");
+    	loadButton.setText("Load Column Attributes");
 
     	final CoreEntityNameWidget coreEntityNameWidget = createCoreEntityNameWidget(shell);
 

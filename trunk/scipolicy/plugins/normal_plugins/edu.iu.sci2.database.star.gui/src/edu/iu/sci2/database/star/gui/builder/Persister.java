@@ -13,12 +13,14 @@ import java.util.List;
 import java.util.Properties;
 
 import org.cishell.utilities.StringUtilities;
+import org.cishell.utilities.swt.FileSaveAs;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.FileDialog;
 import org.eclipse.swt.widgets.Shell;
 
 import edu.iu.sci2.database.star.common.StarDatabaseCSVDataValidationRules;
 
+// TODO: Code Review this.
 public class Persister {
 	public static final String CORE_ENTITY_NAME_PROPERTY = "coreEntityName";
 	public static final String COLUMN_INDEX_PROPERTY = "columnIndex";
@@ -111,7 +113,7 @@ public class Persister {
 			saveDialog.setText("Save Star Database Loading Session");
 			String[] extensions = { "*.sdb" };
 			saveDialog.setFilterExtensions(extensions);
-			String selectedFilePath = saveDialog.open();
+			String selectedFilePath = FileSaveAs.saveFileAs(saveDialog);
 
 			if (!StringUtilities.isNull_Empty_OrWhitespace(selectedFilePath)) {
 				properties.store(new FileOutputStream(selectedFilePath), null);
