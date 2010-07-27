@@ -27,7 +27,8 @@ public class LeafEntityManager {
 		this.entities = new EntityContainer<GenericEntity>(
 			leafEntityColumn.getName(),
 			leafEntityColumn.getNameForDatabase(),
-			GenericEntityManager.createEntitySchema(leafEntityColumn));
+			GenericEntityManager.createEntitySchema(leafEntityColumn),
+			GenericEntityManager.BATCH_SIZE);
 		this.entityColumn = leafEntityColumn;
 		this.shouldMergeIdenticalValues = this.entityColumn.shouldMergeIdenticalValues();
 

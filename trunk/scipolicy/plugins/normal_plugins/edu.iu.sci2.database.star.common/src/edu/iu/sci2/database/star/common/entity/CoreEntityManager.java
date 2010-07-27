@@ -19,7 +19,8 @@ public class CoreEntityManager {
 		this.entities = new EntityContainer<GenericEntity>(
 			coreEntityDisplayName,
 			coreEntityTableName,
-			GenericEntityManager.createEntitySchema(coreEntityColumns));
+			GenericEntityManager.createEntitySchema(coreEntityColumns),
+			GenericEntityManager.BATCH_SIZE);
 		this.entityColumns = coreEntityColumns;
 		this.shouldMergeIdenticalValues = false;
 	}

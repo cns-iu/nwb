@@ -6,6 +6,7 @@ import java.util.Hashtable;
 
 import org.cishell.utilities.dictionary.DictionaryEntry;
 import org.cishell.utilities.dictionary.DictionaryIterator;
+import org.cishell.utilities.dictionary.DictionaryUtilities;
 
 import edu.iu.cns.database.load.framework.utilities.DatabaseTableKeyGenerator;
 import edu.iu.sci2.database.star.common.parameter.ColumnDescriptor;
@@ -28,7 +29,7 @@ public class CoreEntity extends GenericEntity {
 
 		for (DictionaryEntry<String, Object> entry :
 				new DictionaryIterator<String, Object>(getAttributes())) {
-			attributes.put(entry.getKey(), entry.getValue());
+			DictionaryUtilities.addIfNotNull(attributes, entry.getKey(), entry.getValue());
 		}
 
 		return attributes;
@@ -39,7 +40,8 @@ public class CoreEntity extends GenericEntity {
 		Dictionary<String, Object> attributes = new Hashtable<String, Object>();
 
 		for (ColumnDescriptor column : getColumnDescriptors()) {
-			attributes.put(
+			DictionaryUtilities.addIfNotNull(
+				attributes,
 				column.getNameForDatabase(),
 				interpretValue(this.row[column.getColumnIndex()], column));
 		}
