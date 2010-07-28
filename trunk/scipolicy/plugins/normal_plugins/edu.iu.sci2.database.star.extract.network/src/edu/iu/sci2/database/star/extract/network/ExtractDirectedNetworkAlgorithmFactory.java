@@ -26,6 +26,8 @@ import edu.iu.sci2.database.star.extract.network.query.LeafToLeafDirectedNetwork
 import edu.iu.sci2.database.star.extract.network.query.QueryConstructor;
 
 public class ExtractDirectedNetworkAlgorithmFactory extends ExtractionAlgorithmFactory {
+	public static final String WINDOW_TITLE = "Extract Bipartite Network";
+
 	private BundleContext bundleContext;
 	private LogService logger;
 

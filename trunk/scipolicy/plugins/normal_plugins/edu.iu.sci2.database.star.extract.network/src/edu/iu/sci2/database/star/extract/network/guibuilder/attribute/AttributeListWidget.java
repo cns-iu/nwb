@@ -39,7 +39,9 @@ public class AttributeListWidget extends ExpandableComponentWidget<AttributeWidg
 				coreEntityColumnLabels,
 				coreEntityColumnsByLabels,
 				resultColumnLabelGroupName));
-		createAddAttributeButton(getHeaderArea(), type);
+		Composite headerArea = getHeaderArea();
+		createAddAttributeButton(headerArea, type);
+		createRemoveAllAttributesButton(headerArea, type);
 	}
 
 	@Override
@@ -85,6 +87,36 @@ public class AttributeListWidget extends ExpandableComponentWidget<AttributeWidg
 	}
 
 	private static GridData createAddAttributeButtonLayoutData() {
+		GridData layoutData = new GridData(SWT.FILL, SWT.CENTER, true, true);
+
+		return layoutData;
+	}
+
+	private Button createRemoveAllAttributesButton(Composite parent, String type) {
+		Button removeAllAttributesButton = new Button(parent, SWT.PUSH);
+		removeAllAttributesButton.setLayoutData(createRemoveAllAttributesButtonLayoutData());
+		removeAllAttributesButton.setText(String.format(ADD_ATTRIBUTE_BUTTON_TEXT_FORMAT, type));
+		removeAllAttributesButton.addSelectionListener(new SelectionListener() {
+			public void widgetDefaultSelected(SelectionEvent event) {
+				selected(event);
+			}
+
+			public void widgetSelected(SelectionEvent event) {
+				selected(event);
+			}
+
+			private void selected(SelectionEvent event) {
+				for (AttributeWidgetContainer attributeWidget :
+						AttributeListWidget.this.getComponents()) {
+					attributeWidget.dispose();
+				}
+			}
+		});
+
+		return removeAllAttributesButton;
+	}
+
+	private static GridData createRemoveAllAttributesButtonLayoutData() {
 		GridData layoutData = new GridData(SWT.FILL, SWT.CENTER, true, true);
 
 		return layoutData;

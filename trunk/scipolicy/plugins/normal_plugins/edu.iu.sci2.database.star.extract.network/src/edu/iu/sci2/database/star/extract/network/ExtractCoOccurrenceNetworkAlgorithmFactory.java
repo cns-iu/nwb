@@ -20,6 +20,8 @@ import edu.iu.sci2.database.star.extract.network.query.CoOccurrenceNetworkQueryC
 import edu.iu.sci2.database.star.extract.network.query.QueryConstructor;
 
 public class ExtractCoOccurrenceNetworkAlgorithmFactory extends ExtractionAlgorithmFactory {
+	public static final String WINDOW_TITLE = "Extract Co-Occurrence Network";
+
 	private BundleContext bundleContext;
 	private LogService logger;
 

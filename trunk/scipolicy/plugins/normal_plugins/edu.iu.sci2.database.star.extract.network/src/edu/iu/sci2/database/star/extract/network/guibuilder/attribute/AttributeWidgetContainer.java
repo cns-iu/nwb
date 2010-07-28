@@ -27,6 +27,7 @@ public class AttributeWidgetContainer {
 
 	private GUIModel model;
 	private int index;
+	private ExpandableComponentWidget<AttributeWidgetContainer> componentWidget;
 
 	private GUIModelField<String, Combo, DropDownDataSynchronizer> aggregateFunction;
 	private GUIModelField<String, Combo, DropDownDataSynchronizer> coreEntityColumn;
@@ -48,6 +49,7 @@ public class AttributeWidgetContainer {
 			int style) {
 		this.model = model;
 		this.index = index;
+		this.componentWidget = componentWidget;
 
 		this.aggregateFunction = createAggregateFunction(
 			this.model, aggregateFunctionGroupName, "" + uniqueIndex, componentWidget, grid);
@@ -66,7 +68,7 @@ public class AttributeWidgetContainer {
 			componentWidget,
 			uniqueIndex,
 			grid);
-		createDeleteButton(componentWidget, grid);
+		createDeleteButton(this.componentWidget, grid);
 
 		SelectionListener suggestedResultColumnNameSelectionListener = new SelectionListener() {
 			public void widgetDefaultSelected(SelectionEvent event) {
@@ -118,6 +120,13 @@ public class AttributeWidgetContainer {
 
 	public void reindex(int newIndex) {
 		this.index = newIndex;
+	}
+
+	public void dispose() {
+		this.componentWidget.removeComponent(AttributeWidgetContainer.this.index);
+		this.model.removeField(this.aggregateFunction);
+		this.model.removeField(this.coreEntityColumn);
+		this.model.removeField(this.resultColumnLabelName);
 	}
 
 	private void suggestName() {
@@ -229,21 +238,11 @@ public class AttributeWidgetContainer {
 		deleteButton.setText(DELETE_BUTTON_TEXT);
 		deleteButton.addSelectionListener(new SelectionListener() {
 			public void widgetDefaultSelected(SelectionEvent event) {
-				selected(event);
+				dispose();
 			}
 
 			public void widgetSelected(SelectionEvent event) {
-				selected(event);
-			}
-
-			private void selected(SelectionEvent event) {
-				componentWidget.removeComponent(AttributeWidgetContainer.this.index);
-				AttributeWidgetContainer.this.model.removeField(
-					AttributeWidgetContainer.this.aggregateFunction);
-				AttributeWidgetContainer.this.model.removeField(
-					AttributeWidgetContainer.this.coreEntityColumn);
-				AttributeWidgetContainer.this.model.removeField(
-					AttributeWidgetContainer.this.resultColumnLabelName);
+				dispose();
 			}
 		});
 		grid.addComponent(deleteButton);

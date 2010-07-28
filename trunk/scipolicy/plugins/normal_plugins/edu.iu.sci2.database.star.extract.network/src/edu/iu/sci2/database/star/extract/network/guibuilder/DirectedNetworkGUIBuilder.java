@@ -37,9 +37,9 @@ public class DirectedNetworkGUIBuilder extends GUIBuilder {
 	public static final String TUTORIAL_DISPLAY_URL = "INSERT INSTRUCTIONS HERE";
 
 	public static final String SOURCE_LEAF_FIELD_LABEL =
-		"Choose the Source for your directed network extraction: ";
+		"Choose the Source for your bipartite network extraction: ";
 	public static final String TARGET_LEAF_FIELD_LABEL =
-		"Choose the Target for your directed network extraction: ";
+		"Choose the Target for your bipartite network extraction: ";
 
 	public static final String SOURCE_LEAF_FIELD_NAME = "sourceLeafEntity";
 	public static final String TARGET_LEAF_FIELD_NAME = "targetLeafEntity";
