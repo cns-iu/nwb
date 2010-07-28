@@ -64,10 +64,8 @@ public class CoOccurrenceNetworkQueryConstructor extends QueryConstructor {
 	@Override
 	public Map<String, String> formNodeQueryWithAggregatesStringTemplateArguments(
 			Map<String, String> arguments) {
-		System.err.println("formNodeQueryWithAggregatesStringTemplateArguments");
 		arguments.put("leafTableName", this.leafTableName);
 		arguments.put("coreTableName", getCoreTableName());
-		System.err.println("aggregates: " + getNodeAggregatesForQuery());
 		arguments.put("aggregates", getNodeAggregatesForQuery());
 
 		return arguments;
@@ -76,7 +74,6 @@ public class CoOccurrenceNetworkQueryConstructor extends QueryConstructor {
 	@Override
 	public Map<String, String> formNodeQueryWithoutAggregatesStringTemplateArguments(
 			Map<String, String> arguments) {
-		System.err.println("formNodeQueryWithoutAggregatesStringTemplateArguments");
 		arguments.put("leafTableName", this.leafTableName);
 		arguments.put("coreTableName", getCoreTableName());
 

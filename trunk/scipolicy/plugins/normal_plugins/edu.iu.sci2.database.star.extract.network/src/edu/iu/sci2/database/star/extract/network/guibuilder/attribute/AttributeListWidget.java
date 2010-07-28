@@ -16,6 +16,7 @@ import org.eclipse.swt.widgets.Composite;
 
 public class AttributeListWidget extends ExpandableComponentWidget<AttributeWidgetContainer> {
 	public static final String ADD_ATTRIBUTE_BUTTON_TEXT_FORMAT = "Add Another %s Attribute Field";
+	public static final String REMOVE_ALL_BUTTON_TEXT_FORMAT = "Remove All %s Fields";
 
 	public static final String AGGREGATE_FUNCTION_LABEL_TEXT = "Summarize By:";
 	public static final String CORE_ENTITY_COLUMN_LABEL_TEXT = "Column to Summarize:";
@@ -95,7 +96,7 @@ public class AttributeListWidget extends ExpandableComponentWidget<AttributeWidg
 	private Button createRemoveAllAttributesButton(Composite parent, String type) {
 		Button removeAllAttributesButton = new Button(parent, SWT.PUSH);
 		removeAllAttributesButton.setLayoutData(createRemoveAllAttributesButtonLayoutData());
-		removeAllAttributesButton.setText(String.format(ADD_ATTRIBUTE_BUTTON_TEXT_FORMAT, type));
+		removeAllAttributesButton.setText(String.format(REMOVE_ALL_BUTTON_TEXT_FORMAT, type));
 		removeAllAttributesButton.addSelectionListener(new SelectionListener() {
 			public void widgetDefaultSelected(SelectionEvent event) {
 				selected(event);
@@ -106,9 +107,11 @@ public class AttributeListWidget extends ExpandableComponentWidget<AttributeWidg
 			}
 
 			private void selected(SelectionEvent event) {
-				for (AttributeWidgetContainer attributeWidget :
-						AttributeListWidget.this.getComponents()) {
-					attributeWidget.dispose();
+				/* We loop this way because dispose actually removes components from the Collection
+				 * getComponents() returns!
+				 */
+				while (AttributeListWidget.this.getComponents().size() > 0) {
+					AttributeListWidget.this.getComponents().get(0).dispose();
 				}
 			}
 		});

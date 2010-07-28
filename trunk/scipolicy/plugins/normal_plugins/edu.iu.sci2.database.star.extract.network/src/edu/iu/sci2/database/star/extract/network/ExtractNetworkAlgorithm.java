@@ -44,9 +44,6 @@ public class ExtractNetworkAlgorithm implements Algorithm, ProgressTrackable {
     	String targetNodeName = this.queryConstructor.getTargetNodeName();
     	boolean isDirected = this.queryConstructor.isDirected();
 
-    	this.logger.log(LogService.LOG_INFO, "Node Query: " + nodeQuery);
-    	this.logger.log(LogService.LOG_INFO, "Edge Query: " + edgeQuery);
-
     	try {
     		return runNetworkQuery(
     			nodeQuery, edgeQuery, nodeIDColumn, sourceNodeName, targetNodeName, isDirected);
