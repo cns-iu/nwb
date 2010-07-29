@@ -25,7 +25,7 @@ import edu.iu.sci2.database.star.common.utility.CSVReaderUtilities;
 import edu.iu.sci2.database.star.gui.builder.LoadStarDatabaseGUIBuilder;
 
 public class StarDatabaseGUIAlgorithm implements Algorithm, ProgressTrackable {
-	public static final String WINDOW_TITLE = "Star Database Loader";
+	public static final String WINDOW_TITLE = "Generic-CSV Database Loader";
 	public static final int WINDOW_WIDTH = 400;
 	public static final int WINDOW_HEIGHT = 800;
 

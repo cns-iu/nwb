@@ -61,7 +61,7 @@ public class StarDatabaseLoader {
     			columnDescriptorsByHumanReadableName,
     			progressMonitor);
     		Database database = DerbyDatabaseCreator.createFromModel(
-    			databaseService, model, "Star", progressMonitor);
+    			databaseService, model, "Generic-CSV", progressMonitor);
 
     		return database;
     	} catch (DatabaseCreationException e) {
@@ -98,7 +98,8 @@ public class StarDatabaseLoader {
     	String absoluteFilePath = ((File)parentData.getData()).getAbsolutePath();
 
     	return
-    		"Star Database From " + FileUtilities.extractFileNameWithExtension(absoluteFilePath);
+    		"Generic-CSV Database From " +
+    		FileUtilities.extractFileNameWithExtension(absoluteFilePath);
     }
 
 	private static String[] determineCoreColumns(

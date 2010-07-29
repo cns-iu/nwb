@@ -38,11 +38,11 @@ public class LoadStarDatabaseGUIBuilder {
 
 	public static final String TUTORIAL_DISPLAY_URL = "Sci2 Tutorial";
 	public static final String TUTORIAL_URL =
-		"https://nwb.slis.indiana.edu/community/?n=Sci2Algorithm.LoadStarDatabase";
+		"https://nwb.slis.indiana.edu/community/?n=Sci2Algorithm.LoadGenericCSVDatabase";
 	public static final String INSTRUCTIONS_LABEL_TEXT =
-		"The Star Database Loader loads a csv file into a database with a \"star\" schema. " +
-		"The star schema has one \"core\" or central table for the primary entity of your csv " +
-		"(e.g. publications, grants, etc...) and zero or more \"leaf\" tables with entities " +
+		"The Generic-CSV Database Loader loads a CSV file into a database with a \"star\" " +
+		"schema. The star schema has one \"core\" or central table for the primary entity of " +
+		"your csv (e.g. publications, grants, etc...) and zero or more \"leaf\" tables with entities " +
 		"related to the primary entity. For example if your central table contained " +
 		"publications, your leaf tables might contain authors, journals, and institutions. " +
 		"For each column, please specify whether it belongs to the primary entity or should be " +
@@ -76,7 +76,7 @@ public class LoadStarDatabaseGUIBuilder {
     	saveButton.setText("Save Column Attributes");
     	Button loadButton = new Button(persistButtonArea, SWT.PUSH);
     	loadButton.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
-    	loadButton.setText("Load Column Attributes");
+    	loadButton.setText("Restore Column Attributes");
 
     	final CoreEntityNameWidget coreEntityNameWidget = createCoreEntityNameWidget(shell);
 

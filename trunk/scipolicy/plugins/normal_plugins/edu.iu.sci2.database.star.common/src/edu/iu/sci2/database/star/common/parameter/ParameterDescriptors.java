@@ -119,7 +119,7 @@ public class ParameterDescriptors {
 		public static final String CORE_ENTITY_NAME_ID = "coreEntityName";
 		public static final String CORE_ENTITY_NAME_NAME = "Core Entity Name";
 		public static final String CORE_ENTITY_NAME_DESCRIPTION =
-			"The name of the core entity in this star database.  " +
+			"The name of the core entity in this generic-CSV database.  " +
 			"(The database table name will also be based on this.)";
 		public static final int CORE_ENTITY_NAME_TYPE = AttributeDefinition.STRING;
 		public static final String DEFAULT_CORE_ENTITY_NAME_VALUE = "CORE";

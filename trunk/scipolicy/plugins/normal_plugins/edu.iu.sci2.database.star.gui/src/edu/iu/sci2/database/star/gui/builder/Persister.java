@@ -37,6 +37,9 @@ public class Persister {
 	public static final Collection<String> SKIP_TOKENS_WHEN_LOADING =
 		Arrays.asList(PROPERTIES_SEPARATOR);
 
+	// TODO: Figure out a better extension than GCL?  *Generic*-*C*SV *L*oading
+	public static final String[] FILE_EXTENSIONS = new String[] { "*.gcl" };
+
 	public static boolean saveSession(
 			final Shell shell,
 			final CoreEntityNameWidget coreEntityNameWidget,
@@ -110,9 +113,8 @@ public class Persister {
 				StringUtilities.implodeItems(shouldMergeIdenticalValues, PROPERTIES_SEPARATOR));
 
 			FileDialog saveDialog = new FileDialog(shell, SWT.SAVE);
-			saveDialog.setText("Save Star Database Loading Session");
-			String[] extensions = { "*.sdb" };
-			saveDialog.setFilterExtensions(extensions);
+			saveDialog.setText("Save Column Attributes for Generic-CSV Database Loading");
+			saveDialog.setFilterExtensions(FILE_EXTENSIONS);
 			String selectedFilePath = FileSaveAs.saveFileAs(saveDialog);
 
 			if (!StringUtilities.isNull_Empty_OrWhitespace(selectedFilePath)) {
@@ -134,9 +136,8 @@ public class Persister {
 			final CoreEntityNameWidget coreEntityNameWidget,
 			final ColumnListWidget columnListWidget) {
 		FileDialog saveDialog = new FileDialog(shell, SWT.OPEN);
-		saveDialog.setText("Load Star Database Loading Session");
-		String[] extensions = { "*.sdb" };
-		saveDialog.setFilterExtensions(extensions);
+		saveDialog.setText("Restore Column Attributes for Generic-CSV Database Loading");
+		saveDialog.setFilterExtensions(FILE_EXTENSIONS);
 		String selectedFilePath = saveDialog.open();
 
 		if (!StringUtilities.isNull_Empty_OrWhitespace(selectedFilePath)) {
