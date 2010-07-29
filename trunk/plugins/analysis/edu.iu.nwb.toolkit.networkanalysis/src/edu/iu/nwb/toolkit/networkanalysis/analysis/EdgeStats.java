@@ -208,6 +208,8 @@ public class EdgeStats extends Thread {
 		sb.append(System.getProperty("line.separator"));
 		sb.append(this.selfLoopInfo());
 		sb.append(this.appendParallelEdgeInfo());
+		sb.append(System.getProperty("line.separator"));
+		
 		int nonNumericAttributesSize = this.nonNumericAttributes.size();
 		int numericAttributesSize = this.numericAttributes.size();
 		if((nonNumericAttributesSize+numericAttributesSize) > 0){

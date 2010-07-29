@@ -178,9 +178,34 @@ public class NetworkProperties {
 		if(numberOfAdditionalNumericAttributes > 0){
 			sb.append(LINE_SEP);
 			sb.append("Additional Densities by Numeric Attribute");
-			sb.append(LINE_SEP);
-			sb.append(printWeightedDensities(false,es,numNodes,isDirected));
-			sb.append(printWeightedDensities(true,es,numNodes,isDirected));
+			/*
+			 * Removing the metrics below for the following reasons.
+			 * 
+			 * These metrics have some major problems:
+			 *  1) they count date attributes as edge weights, which gives results that make no sense.
+				2) standard is strange, since it can result in densities above 1, which shouldn't be 
+					possible (1, or 100%, is supposed to be 'as dense as possible').
+				3) observed tries to cover up for the problem with the second. It assumes the maximum 
+					possible weight is the highest weight in the current network. But for most of our
+					networks, there is no maximum possible weight (what's the maximum number of times
+					two people can collaborate with each other?). Thus a network where everyone 
+					collaborates with each other once (having a max weight of 1) will be more dense 
+					than that same network where one person collaborates 20 additional times 
+					(having a max weight of 21). More collaboration shouldn't result in a less dense
+					 network.
+			 
+			 	Also, they take up a lot of vertical console space, usually causing the user to have
+			 	 to scroll up to see the node and edge counts, which are needed much more often.
+			 */
+			
+			/*
+			 * TODO: Remove the comment above, and remove the code associated with the commented
+			 *  		out calculation.
+			 */
+			
+//			sb.append(LINE_SEP);
+//			sb.append(printWeightedDensities(false,es,numNodes,isDirected));
+//			sb.append(printWeightedDensities(true,es,numNodes,isDirected));
 
 		}
 
