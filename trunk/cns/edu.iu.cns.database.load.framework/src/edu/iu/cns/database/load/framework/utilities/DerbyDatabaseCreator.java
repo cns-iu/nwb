@@ -147,7 +147,10 @@ public class DerbyDatabaseCreator {
 			schemaToFieldsForCreateTableQueryString(schema) +
 			schemaToPrimaryKeysForCreateTableQueryString(schema);
 
-		String createTableQuery = "CREATE TABLE " + tableName + " (" + fieldNamesForQuery + ")";
+		String createTableQuery =
+			String.format("CREATE TABLE \"%s\" (%s)", tableName, fieldNamesForQuery);
+//		String createTableQuery = "CREATE TABLE " + tableName + " (" + fieldNamesForQuery + ")";
+		System.err.println(createTableQuery);
 		createTableStatement.execute(createTableQuery);
 	}
 
@@ -321,20 +324,17 @@ public class DerbyDatabaseCreator {
 			return "";
 		}
 
-		StringBuffer fieldsForCreateTableQueryString = new StringBuffer();
+		List<String> fieldsForSchema = new ArrayList<String>();
 
 		for (Field field : schema.getFields()) {
-			fieldsForCreateTableQueryString.append(
-				"\"" + field.getName() + "\" " +
-				field.getType().getDerbyQueryStringRepresentation() +
-				", ");
+			String fieldForSchema = String.format(
+				"\"%s\" %s",
+				field.getName(),
+				field.getType().getDerbyQueryStringRepresentation());
+			fieldsForSchema.add(fieldForSchema);
 		}
 
-		// To remove the last ", ".
-		fieldsForCreateTableQueryString.deleteCharAt(fieldsForCreateTableQueryString.length() - 1);
-		fieldsForCreateTableQueryString.deleteCharAt(fieldsForCreateTableQueryString.length() - 1);
-
-		return fieldsForCreateTableQueryString.toString();
+		return StringUtilities.implodeItems(fieldsForSchema, ", ");
 	}
 
 	public static String schemaToPrimaryKeysForCreateTableQueryString(
@@ -351,7 +351,10 @@ public class DerbyDatabaseCreator {
 			primaryKeyStrings.add("\"" + primaryKey.getFieldName() + "\"");
 		}
 
-		return ", PRIMARY KEY (" + StringUtilities.implodeItems(primaryKeyStrings, ", ") + ")";
+		String primaryKeysForQuery = String.format(
+			", PRIMARY KEY (%s)", StringUtilities.implodeItems(primaryKeyStrings, ", "));
+
+		return primaryKeysForQuery;
 	}
 
 	public static String schemaToFieldsForInsertQueryString(Schema<? extends RowItem<?>> schema) {
