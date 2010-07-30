@@ -149,8 +149,6 @@ public class DerbyDatabaseCreator {
 
 		String createTableQuery =
 			String.format("CREATE TABLE \"%s\" (%s)", tableName, fieldNamesForQuery);
-//		String createTableQuery = "CREATE TABLE " + tableName + " (" + fieldNamesForQuery + ")";
-		System.err.println(createTableQuery);
 		createTableStatement.execute(createTableQuery);
 	}
 
@@ -163,18 +161,14 @@ public class DerbyDatabaseCreator {
 		Schema<? extends RowItem<?>> schema = itemContainer.getSchema();
 
 		for (Schema.ForeignKey foreignKey : schema.getForeignKeys()) {
-			String addForeignKeyQuery =
-				"ALTER TABLE " +
-				tableName +
-				" ADD CONSTRAINT \"" +
-				foreignKey.getFieldName() + "_CONSTRAINT" +
-				"\" FOREIGN KEY (\"" +
-				foreignKey.getFieldName() +
-				"\") REFERENCES " +
-				foreignKey.getReferenceTo_TableName() +
-				" (\"" +
-				Schema.PRIMARY_KEY +
-				"\")";
+			String addForeignKeyQuery = String.format(
+				"ALTER TABLE \"%s\" ADD CONSTRAINT \"%s_CONSTRAINT\" FOREIGN KEY (\"%s\") " +
+					"REFERENCES \"%s\" (\"%s\")",
+				tableName,
+				foreignKey.getFieldName(),
+				foreignKey.getFieldName(),
+				foreignKey.getReferenceTo_TableName(),
+				Schema.PRIMARY_KEY);
 			addForeignKeysStatement.execute(addForeignKeyQuery);
 		}
 	}
@@ -302,14 +296,14 @@ public class DerbyDatabaseCreator {
 	private static PreparedStatement createInsertStatement(
 			RowItemContainer<? extends RowItem<?>> itemContainer,
 			Connection databaseConnection) throws SQLException {
-		String placeholderContents =
-			StringUtilities.multiplyWithSeparator("?", ", ",
-					itemContainer.getSchema().getFields().size());
+		String placeholderContents = StringUtilities.multiplyWithSeparator(
+			"?", ", ", itemContainer.getSchema().getFields().size());
 		String placeholder = "(" + placeholderContents + ")";
 	
-		String insertQuery = "INSERT INTO " + 
-			itemContainer.getDatabaseTableName() + " VALUES " + placeholder;
+		String insertQuery = String.format(
+			"INSERT INTO \"%s\" VALUES %s", itemContainer.getDatabaseTableName(), placeholder);
 		PreparedStatement insertStatement = databaseConnection.prepareStatement(insertQuery);
+
 		return insertStatement;
 	}
 
