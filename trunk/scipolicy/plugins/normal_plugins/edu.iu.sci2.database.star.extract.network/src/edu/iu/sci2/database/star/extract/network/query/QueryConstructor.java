@@ -34,6 +34,9 @@ public abstract class QueryConstructor {
 	public static final String DEFAULT_SOURCE_COLUMN = "SOURCE";
 	public static final String DEFAULT_TARGET_COLUMN = "TARGET";
 
+	public static final String NODE_OBJECT_TYPE = "NODE";
+	public static final String EDGE_OBJECT_TYPE = "EDGE";
+
 	public static final int ID_CHARACTER_COUNT = 10;
 	public static final int MAXIMUM_LABEL_SIZE = 32000;
 
@@ -156,6 +159,7 @@ public abstract class QueryConstructor {
 		List<Aggregate> aggregates = new ArrayList<Aggregate>();
 		organizeAggregateStuff(
 			nonAggregatedColumns,
+			NODE_OBJECT_TYPE,
 			aggregates,
 			aggregateFunctionGroup,
 			coreEntityColumnGroup,
@@ -179,6 +183,7 @@ public abstract class QueryConstructor {
 		List<Aggregate> aggregates = new ArrayList<Aggregate>();
 		organizeAggregateStuff(
 			nonAggregatedColumns,
+			EDGE_OBJECT_TYPE,
 			aggregates,
 			aggregateFunctionGroup,
 			coreEntityColumnGroup,
@@ -197,6 +202,7 @@ public abstract class QueryConstructor {
 	// TODO: Document more (on how/why it mutates them)?
 	private void organizeAggregateStuff(
 			List<ColumnDescriptor> nonAggregatedColumns,
+			String objectType,
 			List<Aggregate> aggregates,
 			GUIModelGroup aggregateFunctionGroup,
 			GUIModelGroup coreEntityColumnGroup,
@@ -214,7 +220,7 @@ public abstract class QueryConstructor {
 
 			aggregatedColumns.add(coreEntityColumnName);
 			aggregates.add(new Aggregate(
-				resultColumnLabelName,
+				objectType + "_" + resultColumnLabelName,
 				aggregateFunctionName,
 				coreEntityColumnName,
 				columnDescriptors));
