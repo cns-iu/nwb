@@ -734,6 +734,7 @@ class GraphModifier(com.hp.hpl.guess.ui.DockableAdapter):
         # These are for both resizeLinear and colorize.
         nodeNumberFields = _filterNumberFields(nodePropertiesList, g.nodes[0])
         edgeNumberFields = _filterNumberFields(edgePropertiesList, g.edges[0])
+        # TODO: Why?
         uniqueEdgeNumberFields = \
             _listsDifference(nodeNumberFields, edgeNumberFields)
         
