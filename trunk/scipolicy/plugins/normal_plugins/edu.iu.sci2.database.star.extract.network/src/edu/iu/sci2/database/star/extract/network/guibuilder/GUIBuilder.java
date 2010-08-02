@@ -3,7 +3,7 @@ package edu.iu.sci2.database.star.extract.network.guibuilder;
 import java.util.Collection;
 import java.util.Map;
 
-import org.cishell.utilities.ObjectContainer;
+import org.cishell.utilities.datastructure.ObjectContainer;
 import org.cishell.utilities.swt.GUIBuilderUtilities;
 import org.cishell.utilities.swt.GUICanceledException;
 import org.cishell.utilities.swt.model.GUIModel;
@@ -24,13 +24,17 @@ import edu.iu.sci2.database.star.extract.network.guibuilder.attribute.AttributeL
 public abstract class GUIBuilder {
 	public static final int WINDOW_WIDTH = 1000;
 	public static final int WINDOW_HEIGHT = 850;
+
+	public static final int INSTRUCTIONS_WIDTH = 400;
+
 	public static final int AGGREGATE_LIST_HEIGHT = 300;
 
-	public static final int DEFAULT_AGGREGATE_WIDGET_COUNT = 3;
+	public static final int DEFAULT_AGGREGATE_WIDGET_COUNT = 1;
 
+	public static final String INSTRUCTIONS_GROUP_TEXT = "";
+	public static final String HEADER_GROUP_TEXT = "";
 	public static final String NODE_ATTRIBUTES_GROUP_TEXT = "Node Attributes";
 	public static final String EDGE_ATTRIBUTES_GROUP_TEXT = "Edge Attributes";
-	public static final String HEADER_GROUP_TEXT = "";
 
 	public static final String FINISHED_BUTTON_TEXT = "Run the Extraction!";
 
@@ -58,6 +62,30 @@ public abstract class GUIBuilder {
     	GUIBuilderUtilities.swtLoop(display, shell);
 	}
 
+	protected static Group createInstructionsGroup(Composite parent) {
+		Group instructionsGroup = new Group(parent, SWT.NONE);
+		instructionsGroup.setLayoutData(createInstructionsGroupLayoutData());
+		instructionsGroup.setLayout(createInstructionsGroupLayout());
+		instructionsGroup.setText(INSTRUCTIONS_GROUP_TEXT);
+		instructionsGroup.setBackground(parent.getDisplay().getSystemColor(SWT.COLOR_WHITE));
+
+		return instructionsGroup;
+	}
+
+	private static GridData createInstructionsGroupLayoutData() {
+		GridData layoutData = new GridData(SWT.FILL, SWT.TOP, true, false);
+		layoutData.horizontalSpan = 2;
+		layoutData.widthHint = INSTRUCTIONS_WIDTH;
+
+		return layoutData;
+	}
+
+	private static GridLayout createInstructionsGroupLayout() {
+		GridLayout layout = new GridLayout(2, false);
+
+		return layout;
+	}
+
 	protected static Group createHeaderGroup(Composite parent) {
 		Group headerGroup = new Group(parent, SWT.NONE);
 		headerGroup.setLayoutData(createHeaderGroupLayoutData());
@@ -68,8 +96,9 @@ public abstract class GUIBuilder {
 	}
 
 	private static GridData createHeaderGroupLayoutData() {
-		GridData layoutData = new GridData(SWT.FILL, SWT.FILL, true, true);
+		GridData layoutData = new GridData(SWT.FILL, SWT.TOP, true, false);
 		layoutData.horizontalSpan = 2;
+		layoutData.widthHint = INSTRUCTIONS_WIDTH;
 
 		return layoutData;
 	}
@@ -112,7 +141,7 @@ public abstract class GUIBuilder {
 	}
 
 	private static GridData createFooterGroupLayoutData() {
-		GridData layoutData = new GridData(SWT.FILL, SWT.FILL, true, true);
+		GridData layoutData = new GridData(SWT.FILL, SWT.TOP, true, false);
 		layoutData.horizontalSpan = 2;
 
 		return layoutData;

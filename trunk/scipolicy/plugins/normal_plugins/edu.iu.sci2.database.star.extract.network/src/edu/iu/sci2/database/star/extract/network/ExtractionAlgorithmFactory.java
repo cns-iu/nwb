@@ -14,9 +14,8 @@ import edu.iu.sci2.database.star.common.parameter.ColumnDescriptor;
 
 public abstract class ExtractionAlgorithmFactory implements AlgorithmFactory {
 	public static final int WINDOW_WIDTH = 1000;
-	public static final int WINDOW_HEIGHT = 800;
+	public static final int WINDOW_HEIGHT = 600;
 
-	@SuppressWarnings("unchecked")
 	public static StarDatabaseMetadata getMetadata(Data data) {
     	Dictionary<String, Object> metadata = data.getMetadata();
 

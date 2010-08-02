@@ -7,7 +7,7 @@ import java.util.Map;
 
 import org.cishell.utilities.ArrayListUtilities;
 import org.cishell.utilities.CollectionUtilities;
-import org.cishell.utilities.ObjectContainer;
+import org.cishell.utilities.datastructure.ObjectContainer;
 import org.cishell.utilities.swt.GUIBuilderUtilities;
 import org.cishell.utilities.swt.GUICanceledException;
 import org.cishell.utilities.swt.SWTUtilities;
@@ -31,10 +31,14 @@ import edu.iu.sci2.database.star.extract.network.StarDatabaseDescriptor;
 import edu.iu.sci2.database.star.extract.network.guibuilder.attribute.AttributeListWidget;
 
 public class DirectedNetworkGUIBuilder extends GUIBuilder {
-	public static final String INSTRUCTIONS_LABEL_TEXT = "INSERT INSTRUCTIONS HERE: ";
+	public static final String INSTRUCTIONS_LABEL_TEXT =
+		"Choose the entity tables to extract your bipartite between from.\n" +
+		"Then, setup any node and edge attributes you want on your resulting network.\n" +
+		"For more information see the Sci2 tutorial at: ";
 	public static final String TUTORIAL_URL =
-		"https://nwb.slis.indiana.edu/community/?n=Sci2Algorithm.ExtractStarDirectedNetwork";
-	public static final String TUTORIAL_DISPLAY_URL = "INSERT INSTRUCTIONS HERE";
+		"https://nwb.slis.indiana.edu/community/" +
+		"?n=Sci2Algorithm.GenericCSVExtractBipartiteNetwork";
+	public static final String TUTORIAL_DISPLAY_URL = "Sci2 Tutorial";
 
 	public static final String SOURCE_LEAF_FIELD_LABEL =
 		"Choose the Source for your bipartite network extraction: ";
@@ -64,13 +68,13 @@ public class DirectedNetworkGUIBuilder extends GUIBuilder {
 		Display display = GUIBuilderUtilities.createDisplay();
 		Shell shell = GUIBuilderUtilities.createShell(
 			display, windowTitle, windowWidth, windowHeight, 1, false);
+		Group instructionsGroup = createInstructionsGroup(shell);
 		Group headerGroup = createHeaderGroup(shell);
 		Group nodeAggregatesGroup = createAggregatesGroup(shell, NODE_ATTRIBUTES_GROUP_TEXT);
 		Group edgeAggregatesGroup = createAggregatesGroup(shell, EDGE_ATTRIBUTES_GROUP_TEXT);
 		Group footerGroup = createFooterGroup(shell);
 
-		@SuppressWarnings("unused")
-    	StyledText instructionsLabel = createInstructionsLabel(headerGroup);
+    	createInstructionsLabel(instructionsGroup);
 
 		// Create the options for the Source and Target selection fields.
 

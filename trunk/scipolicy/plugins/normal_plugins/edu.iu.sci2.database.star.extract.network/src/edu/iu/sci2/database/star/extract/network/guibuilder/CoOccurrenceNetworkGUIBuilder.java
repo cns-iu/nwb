@@ -3,7 +3,7 @@ package edu.iu.sci2.database.star.extract.network.guibuilder;
 import java.util.Collection;
 import java.util.Map;
 
-import org.cishell.utilities.ObjectContainer;
+import org.cishell.utilities.datastructure.ObjectContainer;
 import org.cishell.utilities.swt.GUIBuilderUtilities;
 import org.cishell.utilities.swt.GUICanceledException;
 import org.cishell.utilities.swt.SWTUtilities;
@@ -25,10 +25,14 @@ import edu.iu.sci2.database.star.extract.network.StarDatabaseDescriptor;
 import edu.iu.sci2.database.star.extract.network.guibuilder.attribute.AttributeListWidget;
 
 public class CoOccurrenceNetworkGUIBuilder extends GUIBuilder {
-	public static final String INSTRUCTIONS_LABEL_TEXT = "INSERT INSTRUCTIONS HERE: ";
+	public static final String INSTRUCTIONS_LABEL_TEXT =
+		"Choose the leaf entity table to extract your co-occurrence network from.\n" +
+		"Then, setup any node and edge attributes you want on your resulting network.\n" +
+		"For more information see the Sci2 tutorial at: ";
 	public static final String TUTORIAL_URL =
-		"https://nwb.slis.indiana.edu/community/?n=Sci2Algorithm.ExtractStarCoOccurrenceNetwork";
-	public static final String TUTORIAL_DISPLAY_URL = "INSERT INSTRUCTIONS HERE";
+		"https://nwb.slis.indiana.edu/community/" +
+		"?n=Sci2Algorithm.GenericCSVExtractCoOccurrenceNetwork";
+	public static final String TUTORIAL_DISPLAY_URL = "Sci2 Tutorial";
 
 	public static final String LEAF_FIELD_LABEL =
 		"Choose the Leaf column to extract the co-occurrence network on: ";
@@ -52,19 +56,17 @@ public class CoOccurrenceNetworkGUIBuilder extends GUIBuilder {
 		Display display = GUIBuilderUtilities.createDisplay();
 		Shell shell = GUIBuilderUtilities.createShell(
 			display, windowTitle, windowWidth, windowHeight, 1, false);
+		Group instructionsGroup = createInstructionsGroup(shell);
 		Group headerGroup = createHeaderGroup(shell);
 		Group nodeAggregatesGroup = createAggregatesGroup(shell, NODE_ATTRIBUTES_GROUP_TEXT);
 		Group edgeAggregatesGroup = createAggregatesGroup(shell, EDGE_ATTRIBUTES_GROUP_TEXT);
 		Group footerGroup = createFooterGroup(shell);
 
-		@SuppressWarnings("unused")
-    	StyledText instructionsLabel = createInstructionsLabel(headerGroup);
+    	createInstructionsLabel(instructionsGroup);
 
 		// Create and setup the Leaf selection field.
 
-		@SuppressWarnings("unused")
-		GUIModelField<String, Combo, DropDownDataSynchronizer> leafField =
-			createLeafSelectionField(headerGroup, databaseDescriptor, model);
+		createLeafSelectionField(headerGroup, databaseDescriptor, model);
 
 		// Create the widget that allows users to specify node and edge aggregate fields.
 
