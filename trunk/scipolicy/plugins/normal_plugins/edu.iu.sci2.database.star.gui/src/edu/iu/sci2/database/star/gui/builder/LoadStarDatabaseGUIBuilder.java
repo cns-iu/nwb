@@ -3,7 +3,7 @@ package edu.iu.sci2.database.star.gui.builder;
 import java.util.ArrayList;
 import java.util.Collection;
 
-import org.cishell.utilities.ObjectContainer;
+import org.cishell.utilities.datastructure.ObjectContainer;
 import org.cishell.utilities.swt.GUIBuilderUtilities;
 import org.cishell.utilities.swt.GUICanceledException;
 import org.cishell.utilities.swt.SWTUtilities;
@@ -42,8 +42,8 @@ public class LoadStarDatabaseGUIBuilder {
 	public static final String INSTRUCTIONS_LABEL_TEXT =
 		"The Generic-CSV Database Loader loads a CSV file into a database with a \"star\" " +
 		"schema. The star schema has one \"core\" or central table for the primary entity of " +
-		"your csv (e.g. publications, grants, etc...) and zero or more \"leaf\" tables with entities " +
-		"related to the primary entity. For example if your central table contained " +
+		"your csv (e.g. publications, grants, etc...) and zero or more \"leaf\" tables with " +
+		"entities related to the primary entity. For example if your central table contained " +
 		"publications, your leaf tables might contain authors, journals, and institutions. " +
 		"For each column, please specify whether it belongs to the primary entity or should be " +
 		"used to form a leaf table entity.\n\n" +
