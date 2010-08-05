@@ -5,8 +5,8 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
-import org.cishell.utilities.swt.ExpandableComponentWidget;
-import org.cishell.utilities.swt.model.GUIModel;
+import org.cishell.utility.swt.ExpandableComponentWidget;
+import org.cishell.utility.swt.model.GUIModel;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;

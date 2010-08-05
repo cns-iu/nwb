@@ -4,12 +4,12 @@ import java.util.Collection;
 import java.util.Map;
 
 import org.cishell.utilities.StringUtilities;
-import org.cishell.utilities.swt.ExpandableComponentWidget;
-import org.cishell.utilities.swt.GridContainer;
-import org.cishell.utilities.swt.model.GUIModel;
-import org.cishell.utilities.swt.model.GUIModelField;
-import org.cishell.utilities.swt.model.datasynchronizer.DropDownDataSynchronizer;
-import org.cishell.utilities.swt.model.datasynchronizer.TextDataSynchronizer;
+import org.cishell.utility.swt.ExpandableComponentWidget;
+import org.cishell.utility.swt.GridContainer;
+import org.cishell.utility.swt.model.GUIModel;
+import org.cishell.utility.swt.model.GUIModelField;
+import org.cishell.utility.swt.model.datasynchronizer.DropDownDataSynchronizer;
+import org.cishell.utility.swt.model.datasynchronizer.TextDataSynchronizer;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.KeyEvent;
 import org.eclipse.swt.events.KeyListener;

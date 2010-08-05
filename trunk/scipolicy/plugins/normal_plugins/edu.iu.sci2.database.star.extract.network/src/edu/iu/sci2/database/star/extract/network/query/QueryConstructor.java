@@ -13,10 +13,10 @@ import org.antlr.stringtemplate.StringTemplate;
 import org.antlr.stringtemplate.StringTemplateGroup;
 import org.cishell.utilities.MapUtilities;
 import org.cishell.utilities.StringUtilities;
-import org.cishell.utilities.swt.model.GUIModel;
-import org.cishell.utilities.swt.model.GUIModelField;
-import org.cishell.utilities.swt.model.GUIModelGroup;
-import org.cishell.utilities.swt.model.datasynchronizer.ModelDataSynchronizer;
+import org.cishell.utility.swt.model.GUIModel;
+import org.cishell.utility.swt.model.GUIModelField;
+import org.cishell.utility.swt.model.GUIModelGroup;
+import org.cishell.utility.swt.model.datasynchronizer.ModelDataSynchronizer;
 import org.eclipse.swt.widgets.Widget;
 
 import com.google.common.base.Predicate;

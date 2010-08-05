@@ -4,9 +4,9 @@ import java.util.ArrayList;
 import java.util.Collection;
 
 import org.cishell.utilities.datastructure.ObjectContainer;
-import org.cishell.utilities.swt.GUIBuilderUtilities;
-import org.cishell.utilities.swt.GUICanceledException;
-import org.cishell.utilities.swt.SWTUtilities;
+import org.cishell.utility.swt.GUIBuilderUtilities;
+import org.cishell.utility.swt.GUICanceledException;
+import org.cishell.utility.swt.SWTUtilities;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.StyledText;
 import org.eclipse.swt.events.SelectionAdapter;

@@ -3,7 +3,7 @@ package edu.iu.sci2.database.star.gui.builder;
 import java.util.ArrayList;
 import java.util.Collection;
 
-import org.cishell.utilities.swt.GUIBuilderUtilities;
+import org.cishell.utility.swt.GUIBuilderUtilities;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.ScrolledComposite;
 import org.eclipse.swt.layout.GridData;

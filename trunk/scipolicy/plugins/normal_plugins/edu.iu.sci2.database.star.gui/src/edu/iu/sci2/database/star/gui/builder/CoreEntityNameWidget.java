@@ -1,6 +1,6 @@
 package edu.iu.sci2.database.star.gui.builder;
 
-import org.cishell.utilities.swt.GUIBuilderUtilities;
+import org.cishell.utility.swt.GUIBuilderUtilities;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;

@@ -4,9 +4,9 @@ import java.util.Collection;
 import java.util.Map;
 
 import org.cishell.utilities.datastructure.ObjectContainer;
-import org.cishell.utilities.swt.GUIBuilderUtilities;
-import org.cishell.utilities.swt.GUICanceledException;
-import org.cishell.utilities.swt.model.GUIModel;
+import org.cishell.utility.swt.GUIBuilderUtilities;
+import org.cishell.utility.swt.GUICanceledException;
+import org.cishell.utility.swt.model.GUIModel;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;

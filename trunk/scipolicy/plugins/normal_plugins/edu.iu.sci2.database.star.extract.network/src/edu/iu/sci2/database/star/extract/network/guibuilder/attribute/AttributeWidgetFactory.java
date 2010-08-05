@@ -3,10 +3,10 @@ package edu.iu.sci2.database.star.extract.network.guibuilder.attribute;
 import java.util.Collection;
 import java.util.Map;
 
-import org.cishell.utilities.swt.ExpandableComponentWidget;
-import org.cishell.utilities.swt.GridContainer;
-import org.cishell.utilities.swt.ScrolledComponentFactory;
-import org.cishell.utilities.swt.model.GUIModel;
+import org.cishell.utility.swt.ExpandableComponentWidget;
+import org.cishell.utility.swt.GridContainer;
+import org.cishell.utility.swt.ScrolledComponentFactory;
+import org.cishell.utility.swt.model.GUIModel;
 
 public class AttributeWidgetFactory implements ScrolledComponentFactory<AttributeWidgetContainer> {
 	private GUIModel model;

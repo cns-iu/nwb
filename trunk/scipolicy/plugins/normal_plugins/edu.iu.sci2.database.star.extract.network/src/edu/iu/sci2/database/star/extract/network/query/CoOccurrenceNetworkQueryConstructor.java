@@ -3,7 +3,7 @@ package edu.iu.sci2.database.star.extract.network.query;
 import java.util.Map;
 
 import org.antlr.stringtemplate.StringTemplateGroup;
-import org.cishell.utilities.swt.model.GUIModel;
+import org.cishell.utility.swt.model.GUIModel;
 
 import edu.iu.sci2.database.star.common.StarDatabaseMetadata;
 

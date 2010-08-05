@@ -13,7 +13,7 @@ import java.util.List;
 import java.util.Properties;
 
 import org.cishell.utilities.StringUtilities;
-import org.cishell.utilities.swt.FileSaveAs;
+import org.cishell.utility.swt.FileSaveAs;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.FileDialog;
 import org.eclipse.swt.widgets.Shell;

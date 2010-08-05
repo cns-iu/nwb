@@ -14,7 +14,7 @@ import org.cishell.framework.algorithm.ProgressTrackable;
 import org.cishell.framework.data.Data;
 import org.cishell.service.database.Database;
 import org.cishell.service.database.DatabaseService;
-import org.cishell.utilities.swt.GUICanceledException;
+import org.cishell.utility.swt.GUICanceledException;
 import org.osgi.service.log.LogService;
 
 import edu.iu.sci2.database.star.common.StarDatabaseLoader;
