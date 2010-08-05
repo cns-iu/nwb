@@ -47,7 +47,7 @@ public class ColumnDescriptorFactory {
 			(Boolean)parameters.get(shouldMergeIdenticalValuesID);
 
 		String separatorID = ParameterDescriptors.Separator.id(columnName);
-		String separator = (String)parameters.get(separatorID);
+		String separator = ((String) parameters.get(separatorID)).trim();
 
 		return new ColumnDescriptor(
 			columnIndex,
