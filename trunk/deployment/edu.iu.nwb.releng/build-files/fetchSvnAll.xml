@@ -36,14 +36,14 @@
   	</antcall>
   	<antcall target="svn.co">
 		<param name="target" value="plugins"/>
-		<param name="element.id" value="org.cishell.utilities.datastructure"/>
-		<param name="project.name" value="/core/org.cishell.utilities.datastructure"/>
+		<param name="element.id" value="org.cishell.utility.datastructure"/>
+		<param name="project.name" value="/core/org.cishell.utility.datastructure"/>
 		<param name="url" value="https://cishell.svn.sourceforge.net/svnroot/cishell/trunk"/>
   	</antcall>
   	<antcall target="svn.co">
 		<param name="target" value="plugins"/>
-		<param name="element.id" value="org.cishell.utilities.swt"/>
-		<param name="project.name" value="/core/org.cishell.utilities.swt"/>
+		<param name="element.id" value="org.cishell.utility.swt"/>
+		<param name="project.name" value="/core/org.cishell.utility.swt"/>
 		<param name="url" value="https://cishell.svn.sourceforge.net/svnroot/cishell/trunk"/>
   	</antcall>
     <antcall target="svn.co">

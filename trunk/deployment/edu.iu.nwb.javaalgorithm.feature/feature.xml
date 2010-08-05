@@ -578,14 +578,14 @@ Dr. Katy Borner (katy@indiana.edu)
          unpack="false"/>
 
 	<plugin
-         id="org.cishell.utilities.datastructure"
+         id="org.cishell.utility.datastructure"
          download-size="0"
          install-size="0"
          version="0.0.0"
          unpack="false"/>
 
 	<plugin
-         id="org.cishell.utilities.swt"
+         id="org.cishell.utility.swt"
          download-size="0"
          install-size="0"
          version="0.0.0"
