@@ -6,39 +6,38 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.URL;
 import java.net.URLConnection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
 import au.com.bytecode.opencsv.CSVReader;
 
-public class ZipCoder {
+public class ZipCodeCoder implements GeoCoder {
+	public static final String LOCATION_AS_ZIPCODE_IDENTIFIER = "ZIP CODE";
 
-	private static URL zipCodeFile = null;
+	public static final Map<String, String> EMPTY_FORMS_TO_LOCATIONS =
+		Collections.unmodifiableMap(new HashMap<String, String>());
 
-	private static Map<String, GeoLocation> zipCodeToLocation = null;
+	private Map<String, GeoLocation> zipCodeToLocation;
 
-	public static void setZipCodeFile(URL zipCodeFile) {
-		ZipCoder.zipCodeFile = zipCodeFile;
+	public ZipCodeCoder(URL zipCodeFile) {
+		initializeZipCodeLocationMappings(zipCodeFile);
 	}
 
-	/**
-	 * @return the zipCodeToLocation
-	 */
-	public static Map<String, GeoLocation> getZipCodeToLocation() {
-		if (zipCodeToLocation == null) {
-			initializeZipCodeLocationMappings(zipCodeFile);
-		}
-
-		return zipCodeToLocation;
+	public String getLocationType() {
+		return LOCATION_AS_ZIPCODE_IDENTIFIER;
 	}
 
-	private static void initializeZipCodeLocationMappings(URL zipCodeFile) {
-		if (zipCodeFile == null) {
-			throw new NoCacheFoundException(
-					"You must call setZipCodeFile before calling this method!");
-		}
-		
-		//open zip code file
+	public Map<String, GeoLocation> getFullFormsToLocations() {
+		return this.zipCodeToLocation;
+	}
+
+	public Map<String, String> getAbbreviationsToFullForms() {
+		return EMPTY_FORMS_TO_LOCATIONS;
+	}
+
+	private void initializeZipCodeLocationMappings(URL zipCodeFile) {
+		// Open zip code file.
 		
 		InputStream inStream = null;
 		BufferedReader input = null;
@@ -50,15 +49,15 @@ public class ZipCoder {
 			input = new BufferedReader(new InputStreamReader(inStream, "UTF-8"));
 			
 			CSVReader zipCsvReader = createZipcodeCsvReader(input);
-			
-			//
+
 			Map<String, GeoLocation> zipCodeToLocation = 
 				createMapFromZipcodeToLocation(zipCsvReader);
 			
-			ZipCoder.zipCodeToLocation = zipCodeToLocation;
+			this.zipCodeToLocation = zipCodeToLocation;
 		} catch (IOException e) {
-			throw new NoCacheFoundException(
-					"Unable to zipcode database URL " + zipCodeFile.toString());
+			String exceptionMessage = String.format(
+				"Unable to access zipcode database URL %s", zipCodeFile.toString());
+			throw new NoCacheFoundException(exceptionMessage);
 		} finally {
 			try {
 				if (input != null) {
@@ -68,8 +67,9 @@ public class ZipCoder {
 					inStream.close();
 				}
 			} catch (IOException e) {
-				throw new GeoCoderException("Unable to close file for " + "zipcode database "
-						+ zipCodeFile.toString());
+				String exceptionMessage = String.format(
+					"Unable to close file for zipcode database %s", zipCodeFile.toString());
+				throw new GeoCoderException(exceptionMessage, e);
 			}
 		}
 	}
@@ -93,7 +93,8 @@ public class ZipCoder {
 	private static final int LATITUDE_INDEX = 1;
 	private static final int LONGITUDE_INDEX = 2;
 
-	private static Map<String, GeoLocation> createMapFromZipcodeToLocation(CSVReader zipCsvReader) {
+	private static Map<String, GeoLocation> createMapFromZipcodeToLocation(
+			CSVReader zipCsvReader) {
 		try {
 			zipCsvReader.readNext(); // (we ignore the first row, which contains column headers)
 

@@ -2,7 +2,6 @@ package edu.iu.scipolicy.preprocessing.geocoder;
 
 import java.util.Dictionary;
 
-import org.cishell.framework.CIShellContext;
 import org.cishell.framework.algorithm.Algorithm;
 import org.cishell.framework.data.BasicData;
 import org.cishell.framework.data.Data;
@@ -10,6 +9,7 @@ import org.cishell.framework.data.DataProperty;
 import org.osgi.service.log.LogService;
 
 import prefuse.data.Table;
+import edu.iu.scipolicy.preprocessing.geocoder.coders.GeoCoder;
 
 /**
  * This algorithm converts the place information provided into Latitude, Longitude co-ordinates. 
@@ -28,49 +28,39 @@ import prefuse.data.Table;
 
 public class GeocoderAlgorithm implements Algorithm {
 	private Data[] data;
-    private Dictionary<String, Object> parameters;
 	private LogService logger;
-	
-	public static final String LOCATION_AS_STATE_IDENTIFIER = "STATE";
-	public static final String LOCATION_AS_COUNTRY_IDENTIFIER = "COUNTRY";
-	public static final String LOCATION_AS_ZIPCODE_IDENTIFIER = "ZIP CODE";
-
-    public static final String PLACE_NAME_COLUMN = "place_name_column";
-    public static final String PLACE_TYPE = "place_type";
-    
+	private Table originalInputTable;
+	private String locationColumnName;
+	private GeoCoder geoCoder;
     
     public GeocoderAlgorithm(
-    		Data[] data, Dictionary<String, Object> parameters, CIShellContext context) {    	
+    		Data[] data,
+    		LogService logger,
+    		Table originalInputTable,
+    		String locationColumnName,
+    		GeoCoder geoCoder) {
         this.data = data;
-        this.parameters = parameters;
-        
-		this.logger = (LogService) context.getService(LogService.class.getName());
+		this.logger = logger;
+		this.originalInputTable = originalInputTable;
+		this.locationColumnName = locationColumnName;
+		this.geoCoder = geoCoder;
 	}
 
-    @SuppressWarnings("unchecked") // Raw Dictionary
 	public Data[] execute() {
-		String locationType = (String)parameters.get(PLACE_TYPE);
-		String locationColumnName = (String)parameters.get(PLACE_NAME_COLUMN);
-		
-		Table originalInputTable = (Table) this.data[0].getData();
-		
-		/*
-		 * After getting the Prefuse Table data pass it for making lookups & getting co-ordinates.
-		 * */
-		GeocoderComputation geoCoderComputation = new GeocoderComputation(
-				locationType, locationColumnName,
-				originalInputTable, logger);
+		Table outputTable = GeocoderComputation.compute(
+			this.locationColumnName, this.originalInputTable, this.logger, this.geoCoder);
 		
 		/*
 		 * After getting the output in table format make it available to the user.
 		 * */
-		Data output = new BasicData(geoCoderComputation.getOutputTable(), Table.class.getName());
-		Dictionary metadata = output.getMetadata();
-		metadata.put(DataProperty.LABEL, "With Latitude & Longitude from '" 
-			+ locationColumnName + "'");
+		Data output = new BasicData(outputTable, Table.class.getName());
+		Dictionary<String, Object> metadata = output.getMetadata();
+		metadata.put(
+			DataProperty.LABEL,
+			String.format("With Latitude & Longitude from '%s'", this.locationColumnName));
 		metadata.put(DataProperty.PARENT, this.data[0]);
 		metadata.put(DataProperty.TYPE, DataProperty.TABLE_TYPE);
 		
-		return new Data[]{ output };
+		return new Data[] { output };
     }
 }

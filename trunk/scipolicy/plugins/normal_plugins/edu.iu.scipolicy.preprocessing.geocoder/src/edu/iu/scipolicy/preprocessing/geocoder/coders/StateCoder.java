@@ -9,58 +9,39 @@ import java.net.URLConnection;
 import java.util.HashMap;
 import java.util.Map;
 
-public class StateCoder {
+public class StateCoder implements GeoCoder {
+	public static final String LOCATION_AS_STATE_IDENTIFIER = "STATE";
 
-	private static final int CACHE_ROW_ABBREVIATION_INDEX = 1;
-	private static final int CACHE_ROW_FULLFORM_INDEX = 0;
-	private static final int CACHE_ROW_LONGITUDE_INDEX = 3;
-	private static final int CACHE_ROW_LATITUDE_INDEX = 2;
-	
-	private static URL stateFile = null;
-	
-	private static Map<String, GeoLocation> stateFullformToLocation = null;
-	
-	private static Map<String, String> stateAbbreviationToFullform = null;
-	
+	public static final int CACHE_ROW_ABBREVIATION_INDEX = 1;
+	public static final int CACHE_ROW_FULLFORM_INDEX = 0;
+	public static final int CACHE_ROW_LONGITUDE_INDEX = 3;
+	public static final int CACHE_ROW_LATITUDE_INDEX = 2;
 
-	public static void setStateFile(URL stateFile) {
-		StateCoder.stateFile = stateFile;
-	}
+	private Map<String, GeoLocation> stateFullFormToLocation = null;
+	private Map<String, String> stateAbbreviationToFullForm = null;
 	
-	/**
-	 * @return the stateFullformToLocation
-	 */
-	public static Map<String, GeoLocation> getStateFullformToLocation() {
-		if (stateFullformToLocation == null) {
-			initializeStateLocationMappings(stateFile);
-		}
-		
-		return stateFullformToLocation;
+	public StateCoder(URL stateFile) {
+		initializeStateLocationMappings(stateFile);
 	}
-	
-	/**
-	 * @return the stateAbbreviationToFullform
-	 */
-	public static Map<String, String> getStateAbbreviationToFullform() {
-		if (stateAbbreviationToFullform == null) {
-			initializeStateLocationMappings(stateFile);
-		}
-		
-		return stateAbbreviationToFullform;
+
+	public String getLocationType() {
+		return LOCATION_AS_STATE_IDENTIFIER;
+	}
+
+	public Map<String, GeoLocation> getFullFormsToLocations() {
+		return this.stateFullFormToLocation;
+	}
+
+	public Map<String, String> getAbbreviationsToFullForms() {
+		return this.stateAbbreviationToFullForm;
 	}
 	
 	/*
 	 * Initialize the Map for State from the text file.
 	 * */
-	private static void initializeStateLocationMappings(
-			URL stateLocationFilePath) {
-		if (stateFile == null) {
-			throw new NoCacheFoundException(
-					"You must call setStateFile before calling this method!");
-		}
-		
-		stateFullformToLocation = new HashMap<String, GeoLocation>();
-		stateAbbreviationToFullform = new HashMap<String, String>();
+	private void initializeStateLocationMappings(URL stateLocationFilePath) {
+		this.stateFullFormToLocation = new HashMap<String, GeoLocation>();
+		this.stateAbbreviationToFullForm = new HashMap<String, String>();
 		
     	InputStream inStream = null;
     	BufferedReader input = null;
@@ -73,7 +54,6 @@ public class StateCoder {
              input = new BufferedReader(new InputStreamReader(inStream, "UTF-8"));
     		    		
     	    while (null != (line = input.readLine())) {
-    	    	
     	    	String[] lineTokens = line.split(";");
     	    	
     	    	double latitude = Double.parseDouble(lineTokens[CACHE_ROW_LATITUDE_INDEX]);
@@ -84,17 +64,19 @@ public class StateCoder {
     	    	/*
     	    	 * Map with Full Form as the Key and List of Latitude, Longitude as the Value.
     	    	 * */
-    	    	stateFullformToLocation.put(lineTokens[CACHE_ROW_FULLFORM_INDEX], location);
+    	    	this.stateFullFormToLocation.put(lineTokens[CACHE_ROW_FULLFORM_INDEX], location);
     	    	
        	    	/*
     	    	 * Map with Abbreviation as the Key and Full Form as the value.
     	    	 * */
-    	    	stateAbbreviationToFullform.put(
-    	    			lineTokens[CACHE_ROW_ABBREVIATION_INDEX],
-    	    			lineTokens[CACHE_ROW_FULLFORM_INDEX]);
+    	    	this.stateAbbreviationToFullForm.put(
+	    			lineTokens[CACHE_ROW_ABBREVIATION_INDEX],
+	    			lineTokens[CACHE_ROW_FULLFORM_INDEX]);
         	}
     	} catch (IOException e) {
-    		e.printStackTrace();
+    		String exceptionMessage = String.format(
+				"Unable to access state database URL %s", stateLocationFilePath.toString());
+			throw new NoCacheFoundException(exceptionMessage);
     	} finally {
     		try {
     			if (input != null) {
@@ -104,7 +86,10 @@ public class StateCoder {
     	        	inStream.close();
     	        }
     	    } catch (IOException e) {
-    	        e.printStackTrace();
+    	    	String exceptionMessage = String.format(
+					"Unable to close file for state database %s",
+					stateLocationFilePath.toString());
+				throw new GeoCoderException(exceptionMessage, e);
     	    }
     	}
 	}
