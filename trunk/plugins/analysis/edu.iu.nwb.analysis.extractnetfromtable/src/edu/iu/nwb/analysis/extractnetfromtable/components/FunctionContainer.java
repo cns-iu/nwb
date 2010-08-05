@@ -37,7 +37,7 @@ public class FunctionContainer {
 				appliedNodeType = aggregateFunctionMappings.getAppliedNodeType(columnName);
 
 				if (appliedNodeType == nodeType
-						|| appliedNodeType == AggregateFunctionMappings.SOURCEANDTARGET) {
+						|| appliedNodeType == AggregateFunctionMappings.SOURCE_AND_TARGET) {
 					aggregateFunction.operate(t.get(rowNumber, operateColumn));
 					tuple.set(cc, aggregateFunction.getResult());
 				}

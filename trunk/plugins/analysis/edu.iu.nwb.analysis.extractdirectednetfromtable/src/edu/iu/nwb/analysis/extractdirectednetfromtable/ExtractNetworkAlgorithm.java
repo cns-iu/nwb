@@ -53,19 +53,25 @@ public class ExtractNetworkAlgorithm implements Algorithm, ProgressTrackable {
 
 	public Data[] execute() throws AlgorithmExecutionException {
 		final Table dataTable = (Table) data[0].getData();
-
 		Properties functions = null;
+
 		if (aggregationFunctionFilePath != null) {
-			functions = PropertyHandler.getProperties(aggregationFunctionFilePath.toString(),
-					logger);
+			functions =
+				PropertyHandler.getProperties(aggregationFunctionFilePath.toString(), logger);
 		}
 
 		try {
-			GraphContainer gc = GraphContainer.initializeGraph(dataTable, sourceColumnName,
-					targetColumnName, true, functions, logger, progressMonitor);
+			GraphContainer graphContainer = GraphContainer.initializeGraph(
+				dataTable,
+				sourceColumnName,
+				targetColumnName,
+				true,
+				functions,
+				logger,
+				progressMonitor);
 
-			Graph network = gc.buildGraph(sourceColumnName, targetColumnName, delimiter,
-					isBipartite, logger);
+			Graph network = graphContainer.buildGraph(
+				sourceColumnName, targetColumnName, delimiter, isBipartite, logger);
 
 			BasicDataPlus outData = new BasicDataPlus(network, data[0]);
 			outData.markAsModified();

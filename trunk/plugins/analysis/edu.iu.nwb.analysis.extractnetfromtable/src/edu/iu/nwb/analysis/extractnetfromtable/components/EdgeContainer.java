@@ -28,7 +28,7 @@ public class EdgeContainer {
 
 		ValueAttributes va = new ValueAttributes(edge.getRow());
 		va = FunctionContainer.mutateFunctions(edge, table, rowNumber, va, afm,
-				AggregateFunctionMappings.SOURCEANDTARGET);
+				AggregateFunctionMappings.SOURCE_AND_TARGET);
 		afm.addFunctionRow(edgeVector, va);
 	}
 
@@ -59,7 +59,7 @@ public class EdgeContainer {
 		} else {
 			int edgeNumber = va.getRowNumber();
 			FunctionContainer.mutateFunctions(graph.getEdge(edgeNumber), table, rowNumber, va, afm,
-					AggregateFunctionMappings.SOURCEANDTARGET);
+					AggregateFunctionMappings.SOURCE_AND_TARGET);
 		}
 	}
 

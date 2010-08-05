@@ -16,14 +16,14 @@ public class AggregateFunctionMappings {
 	private final HashMap functionColumnToOriginalColumnMap = new HashMap();
 	private final HashMap functionColumnToAppliedNodeTypeMap = new HashMap();
 	private final HashMap labelToFunctionMap = new HashMap();
-	public static final int SOURCEANDTARGET = 0;
+	public static final int SOURCE_AND_TARGET = 0;
 	public static final int SOURCE = 1;
 	public static final int TARGET = 2;
 
 	public void addFunctionMapping(String functionValueCol, String originalCol, String functionType) {
 		this.metaColumnNameToFunctionMap.put(functionValueCol, functionType);
 		this.functionColumnToOriginalColumnMap.put(functionValueCol, originalCol);
-		this.functionColumnToAppliedNodeTypeMap.put(functionValueCol, new Integer(SOURCEANDTARGET));
+		this.functionColumnToAppliedNodeTypeMap.put(functionValueCol, new Integer(SOURCE_AND_TARGET));
 	}
 
 	public void addFunctionMapping(String functionValueCol, String originalCol,
@@ -83,14 +83,14 @@ public class AggregateFunctionMappings {
 				}
 
 				if (applyToNodeType == null) {
-					nodeType = AggregateFunctionMappings.SOURCEANDTARGET;
+					nodeType = AggregateFunctionMappings.SOURCE_AND_TARGET;
 				} else {
 					if ("source".equalsIgnoreCase(applyToNodeType)) {
 						nodeType = AggregateFunctionMappings.SOURCE;
 					} else if ("target".equalsIgnoreCase(applyToNodeType)) {
 						nodeType = AggregateFunctionMappings.TARGET;
 					} else {
-						nodeType = AggregateFunctionMappings.SOURCEANDTARGET;
+						nodeType = AggregateFunctionMappings.SOURCE_AND_TARGET;
 					}
 				}
 

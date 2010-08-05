@@ -42,20 +42,25 @@ public class GraphContainer {
 		this.progMonitor = pm;
 	}
 
-	public Graph buildGraph(String sourceColumnName, String targetColumnName, String delimiter,
-			boolean requestBipartite, LogService log) {
+	public Graph buildGraph(
+			String sourceColumnName,
+			String targetColumnName,
+			String delimiter,
+			boolean requestBipartite,
+			LogService logger) {
 		String[] targetColumnNames = targetColumnName.split("\\,");
 
 		if (this.graph.isDirected()) {
-			return buildDirectedGraph(sourceColumnName, targetColumnNames, delimiter,
-					requestBipartite, log);
+			return buildDirectedGraph(
+				sourceColumnName, targetColumnNames, delimiter, requestBipartite, logger);
 		} else {
-			return buildUndirectedGraph(targetColumnNames, delimiter, log);
+			return buildUndirectedGraph(targetColumnNames, delimiter, logger);
 		}
 	}
 
-	private Graph buildUndirectedGraph(String[] targetColumnNames, String delimiter, LogService log) {
-		boolean dupValues = false;
+	private Graph buildUndirectedGraph(
+			String[] targetColumnNames, String delimiter, LogService logger) {
+		boolean duplicateValues = false;
 		final HashMap dupValuesErrorMessages = new HashMap();
 		int numTotalRows = this.table.getRowCount();
 		int numRowsProcessedSoFar = 0;
@@ -72,14 +77,15 @@ public class GraphContainer {
 			Node node1 = null;
 			Node node2 = null;
 
-			final String targetString = buildRowTargetStringFromColumnNames(row, targetColumnNames,
-					this.table, delimiter);
+			final String targetString =
+				buildRowTargetStringFromColumnNames(row, targetColumnNames, this.table, delimiter);
 
 			Set seenObject = new HashSet();
 
 			if (targetString != null) { // no values to extract from
 				final Pattern splitPattern = Pattern.compile("\\Q" + delimiter + "\\E");
-				final String[] splitTargetStringArray = splitPattern.split(targetString);
+				final String[] splitTargetStringArray =
+					splitIfDelimiterIsValid(targetString, delimiter, splitPattern);
 
 				// Trim each target.
 				for (int ii = 0; ii < splitTargetStringArray.length; ii++) {
@@ -94,8 +100,14 @@ public class GraphContainer {
 					if (seenObject.add(splitTargetStringArray[ii])) { // No
 						// duplicate
 						// nodes.
-						node1 = nodeMaintainer.mutateNode(splitTargetStringArray[ii], null, this.graph,
-								this.table, row, this.nodeMap, AggregateFunctionMappings.SOURCEANDTARGET);
+						node1 = nodeMaintainer.mutateNode(
+							splitTargetStringArray[ii],
+							null,
+							this.graph,
+							this.table,
+							row,
+							this.nodeMap,
+							AggregateFunctionMappings.SOURCE_AND_TARGET);
 					}
 
 					node1 = this.graph.getNode(this.nodeMap.getFunctionRow(
@@ -110,21 +122,28 @@ public class GraphContainer {
 							if (seenObject.add(splitTargetStringArray[jj])) { // No
 								// duplicate
 								// nodes.
-								node2 = nodeMaintainer.mutateNode(splitTargetStringArray[jj],
-										null, this.graph, this.table, row, this.nodeMap, AggregateFunctionMappings.SOURCEANDTARGET);
+								node2 = nodeMaintainer.mutateNode(
+									splitTargetStringArray[jj],
+									null,
+									this.graph,
+									this.table,
+									row,
+									this.nodeMap,
+									AggregateFunctionMappings.SOURCE_AND_TARGET);
 
 							}
 							// Create or modify an edge as necessary.
 							node2 = this.graph.getNode(this.nodeMap.getFunctionRow(
-									new NodeID(splitTargetStringArray[jj], null)).getRowNumber());
-							EdgeContainer.mutateEdge(node1, node2, this.graph, this.table, row,
-									this.edgeMap);
+								new NodeID(splitTargetStringArray[jj], null)).getRowNumber());
+							EdgeContainer.mutateEdge(
+								node1, node2, this.graph, this.table, row, this.edgeMap);
 						} else {
-							dupValues = true; // Detected a self-loop.
+							duplicateValues = true; // Detected a self-loop.
 						}
 					}
 				}
-				if (dupValues) {
+
+				if (duplicateValues) {
 					// String title =
 					// (String)pdt.get(row,pdt.getColumnNumber("TI"));
 					// String title = "unknown";
@@ -140,13 +159,14 @@ public class GraphContainer {
 				// columnName, this.log);
 			}
 			numRowsProcessedSoFar = numRowsProcessedSoFar + 1;
-			if (this.progMonitor != null)
-				this.progMonitor.worked(numRowsProcessedSoFar);
 
+			if (this.progMonitor != null) {
+				this.progMonitor.worked(numRowsProcessedSoFar);
+			}
 		}
 
 		for (Iterator dupIter = dupValuesErrorMessages.keySet().iterator(); dupIter.hasNext();) {
-			log.log(LogService.LOG_WARNING, (String) dupValuesErrorMessages.get(dupIter.next()));
+			logger.log(LogService.LOG_WARNING, (String) dupValuesErrorMessages.get(dupIter.next()));
 		}
 
 		return this.graph;
@@ -167,8 +187,12 @@ public class GraphContainer {
 		return s.substring(0, 1).toUpperCase() + s.substring(1).toLowerCase();
 	}
 
-	private Graph buildDirectedGraph(String sourceColumnName, String[] targetColumnNames,
-			String delimiter, boolean requestBipartite, LogService log) {
+	private Graph buildDirectedGraph(
+			String sourceColumnName,
+			String[] targetColumnNames,
+			String delimiter,
+			boolean requestBipartite,
+			LogService log) {
 		final Pattern splitPattern = Pattern.compile("\\Q" + delimiter + "\\E");
 		final HashMap dupValuesErrorMessages = new HashMap();
 		Column sourceColumn = this.table.getColumn(sourceColumnName);
@@ -177,6 +201,7 @@ public class GraphContainer {
 
 		String sourceBipartiteType = null;
 		String targetBipartiteType = null;
+
 		if (requestBipartite) {
 			sourceBipartiteType = sourceColumnName;
 			targetBipartiteType = separate(targetColumnNames, " OR ");
@@ -193,14 +218,16 @@ public class GraphContainer {
 			int row = ((Integer) rows.next()).intValue();
 
 			final String sourceString = sourceColumn.getString(row);
-			final String targetString = buildRowTargetStringFromColumnNames(row, targetColumnNames,
-					table, delimiter);
+			final String targetString =
+				buildRowTargetStringFromColumnNames(row, targetColumnNames, table, delimiter);
 
 			if (sourceString != null && targetString != null) {
 				// Split, trim, remove duplicates.
-				final String[] sources = splitPattern.split(sourceString);
+				final String[] sources =
+					splitIfDelimiterIsValid(sourceString, delimiter, splitPattern);
 				Set cleanSourceNames = clean(sources);
-				final String[] targets = splitPattern.split(targetString);
+				final String[] targets =
+					splitIfDelimiterIsValid(targetString, delimiter, splitPattern);
 				Set cleanTargetNames = clean(targets);
 				
 				// Update nodes.
@@ -370,8 +397,8 @@ public class GraphContainer {
 		return edgeSchema;
 	}
 
-	private static String buildRowTargetStringFromColumnNames(int row, String[] targetColumnNames,
-			Table table, String delimiter) {
+	private static String buildRowTargetStringFromColumnNames(
+			int row, String[] targetColumnNames, Table table, String delimiter) {
 		String targetString = "";
 
 		// This is outside of the proceeding for loop because that loop appends
@@ -386,5 +413,14 @@ public class GraphContainer {
 		}
 
 		return targetString;
+	}
+
+	private static String[] splitIfDelimiterIsValid(
+			String toSplit, String delimiter, Pattern splitPattern) {
+		if (!StringUtilities.isNull_Empty_OrWhitespace(delimiter)) {
+			return splitPattern.split(toSplit);
+		} else {
+			return new String[] { toSplit };
+		}
 	}
 }
