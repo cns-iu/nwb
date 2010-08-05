@@ -7,7 +7,7 @@ import java.util.Map;
 
 import org.cishell.utilities.ArrayListUtilities;
 import org.cishell.utilities.CollectionUtilities;
-import org.cishell.utilities.datastructure.ObjectContainer;
+import org.cishell.utility.datastructure.ObjectContainer;
 import org.cishell.utility.swt.GUIBuilderUtilities;
 import org.cishell.utility.swt.GUICanceledException;
 import org.cishell.utility.swt.SWTUtilities;

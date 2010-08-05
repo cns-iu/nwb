@@ -3,7 +3,7 @@ package edu.iu.sci2.database.star.extract.network.guibuilder;
 import java.util.Collection;
 import java.util.Map;
 
-import org.cishell.utilities.datastructure.ObjectContainer;
+import org.cishell.utility.datastructure.ObjectContainer;
 import org.cishell.utility.swt.GUIBuilderUtilities;
 import org.cishell.utility.swt.GUICanceledException;
 import org.cishell.utility.swt.model.GUIModel;

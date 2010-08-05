@@ -3,7 +3,7 @@ package edu.iu.sci2.database.star.gui.builder;
 import java.util.ArrayList;
 import java.util.Collection;
 
-import org.cishell.utilities.datastructure.ObjectContainer;
+import org.cishell.utility.datastructure.ObjectContainer;
 import org.cishell.utility.swt.GUIBuilderUtilities;
 import org.cishell.utility.swt.GUICanceledException;
 import org.cishell.utility.swt.SWTUtilities;
