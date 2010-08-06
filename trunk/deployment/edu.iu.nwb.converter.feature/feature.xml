@@ -285,4 +285,34 @@ Dr. Katy Borner (katy@indiana.edu)
          install-size="0"
          version="0.0.1"
          unpack="false"/>
+
+   <plugin
+         id="org.apache.commons.collections"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"/>
+
+   <plugin
+         id="commons_dbcp"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"/>
+
+   <plugin
+         id="commons_pool"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"/>
+
+   <plugin
+         id="hsqldb"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"/>
+
+   <plugin
+         id="Apache_Derby"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"/>
 </feature>
