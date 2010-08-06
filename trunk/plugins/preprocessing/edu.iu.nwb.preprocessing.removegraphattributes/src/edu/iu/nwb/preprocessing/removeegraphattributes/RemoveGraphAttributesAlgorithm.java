@@ -37,18 +37,16 @@ public abstract class RemoveGraphAttributesAlgorithm implements Algorithm {
 	
 	private File inNWBFile;
 	private Data inData;
-	private Dictionary parameters;  
+	private Dictionary<String, Object> parameters;  
 	private LogService logger;
     
     
 	public RemoveGraphAttributesAlgorithm(
-			Data[] data, Dictionary parameters, CIShellContext context) {
+			Data[] data, Dictionary<String, Object> parameters, CIShellContext ciShellContext) {
 		this.inNWBFile = (File) data[0].getData();
         this.inData = data[0];
         this.parameters = parameters;
-        
-        this.logger =
-        	(LogService) context.getService(LogService.class.getName());
+        this.logger = (LogService) ciShellContext.getService(LogService.class.getName());
     }
 	
 	public Data[] execute() throws AlgorithmExecutionException {    	
@@ -56,11 +54,11 @@ public abstract class RemoveGraphAttributesAlgorithm implements Algorithm {
 			// Read the attribute keys on inNWBFile.
 			NWBRemovableAttributeReader attributeReader =
 				createAttributeReader(inNWBFile);
-			Collection removableAttributeKeys = 
+			Collection<String> removableAttributeKeys = 
 				attributeReader.determineRemovableAttributeKeys();
 			
 			// Take from those only the ones that the user selected.
-			Collection keysToRemove =
+			Collection<String> keysToRemove =
 				CollectionUtilities.grabSelectedValues(
 						removableAttributeKeys, parameters);
 	
@@ -101,12 +99,11 @@ public abstract class RemoveGraphAttributesAlgorithm implements Algorithm {
 			File inputNWBFile) throws NWBMetadataParsingException;
 	
 	public abstract AttributeFilteringNWBWriter createAttributeFilteringFileWriter(
-			File outputNWBFile, Collection keysToRemove) throws IOException;
+			File outputNWBFile, Collection<String> keysToRemove) throws IOException;
 	
-	public abstract String createOutDataLabel(Collection keysToRemove);
+	public abstract String createOutDataLabel(Collection<String> keysToRemove);
 	
-	private static String createRemovedAttributesReport(
-			Collection keysToRemove) {
+	private static String createRemovedAttributesReport(Collection<String> keysToRemove) {
 		if (keysToRemove.isEmpty()) {
 			return "No attributes removed.";
 		} else {

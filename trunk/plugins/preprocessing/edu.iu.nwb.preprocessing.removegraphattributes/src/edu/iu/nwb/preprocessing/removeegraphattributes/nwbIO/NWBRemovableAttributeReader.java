@@ -10,20 +10,20 @@ import edu.iu.nwb.util.nwbfile.NWBMetadataParsingException;
 
 public abstract class NWBRemovableAttributeReader {	
 	private File nwbFile;
-	
-	
+
 	public NWBRemovableAttributeReader(File nwbFile) {
 		this.nwbFile = nwbFile;
 	}
-	
-	protected abstract LinkedHashMap getSchema(File nwbFile)
-		throws NWBMetadataParsingException;
-	protected abstract LinkedHashMap getNecessaryAttributes();
-	
+
+	protected abstract LinkedHashMap<String, String> getSchema(File nwbFile)
+			throws NWBMetadataParsingException;
+	protected abstract LinkedHashMap<String, String> getNecessaryAttributes();
+
 	/* Keys on this schema for attributes which are not necessary
 	 * and so can be removed
 	 */
-	public Collection determineRemovableAttributeKeys()
+	@SuppressWarnings("unchecked")	// Apache Collections
+	public Collection<String> determineRemovableAttributeKeys()
 			throws NWBMetadataParsingException {
 		return CollectionUtils.subtract(
 				getSchema(nwbFile).keySet(),

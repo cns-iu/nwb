@@ -21,7 +21,7 @@ import edu.iu.nwb.util.nwbfile.NWBMetadataParsingException;
 public abstract class RemoveGraphAttributesAlgorithmFactory
 		implements AlgorithmFactory, ParameterMutator {
 	public abstract Algorithm createAlgorithm(
-			Data[] data, Dictionary parameters, CIShellContext context);
+			Data[] data, Dictionary<String, Object> parameters, CIShellContext context);
 	public abstract NWBRemovableAttributeReader createAttributeReader(
 			File inNWBFile)
 				throws NWBMetadataParsingException;
@@ -35,7 +35,7 @@ public abstract class RemoveGraphAttributesAlgorithmFactory
 			File inNWBFile = (File) data[0].getData();
 			NWBRemovableAttributeReader reader =
 				createAttributeReader(inNWBFile);
-			Collection removableAttributeKeys =
+			Collection<String> removableAttributeKeys =
 				reader.determineRemovableAttributeKeys();
 
 			// Remove the dummy AttributeDefinition from oldParameters

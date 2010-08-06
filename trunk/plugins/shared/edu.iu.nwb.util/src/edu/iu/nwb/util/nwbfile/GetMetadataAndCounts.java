@@ -7,13 +7,13 @@ public class GetMetadataAndCounts extends GetNWBFileMetadata {
 	private int nodeCount = 0;
 	private int directedEdgeCount = 0;
 	private int undirectedEdgeCount = 0;
-	public void addNode(int id, String label, Map attributes) {
+	public void addNode(int id, String label, Map<String, Object> attributes) {
 		this.nodeCount += 1;
 	}
-	public void addDirectedEdge(int sourceNode, int targetNode, Map attributes) {
+	public void addDirectedEdge(int sourceNode, int targetNode, Map<String, Object> attributes) {
 		this.directedEdgeCount  += 1;
 	}
-	public void addUndirectedEdge(int node1, int node2, Map attributes) {
+	public void addUndirectedEdge(int node1, int node2, Map<String, Object> attributes) {
 		this.undirectedEdgeCount  += 1;
 	}
 	

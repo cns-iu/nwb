@@ -4,7 +4,6 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.LinkedHashMap;
-import java.util.List;
 
 public class NWBFileProperty {
 	public static final String PRESERVED_STAR = "*";
@@ -34,34 +33,40 @@ public class NWBFileProperty {
     
     public static final String NWB_MIME_TYPE = "file:text/nwb";
     public static final String NWB_FILE_TYPE = "file-ext:nwb";
-    
-    public static LinkedHashMap NECESSARY_NODE_ATTRIBUTES;
-	static {
+
+    public static final LinkedHashMap<String, String> NECESSARY_NODE_ATTRIBUTES =
+    	formNecessaryNodeAttributes();
+
+    private static LinkedHashMap<String, String> formNecessaryNodeAttributes() {
 		/* It's very important that the implementation is LinkedHashMap,
 		 * as this preserves key order according to insertion order.
 		 * An unordered map could violate the schema specification that
 		 * ATTRIBUTE_ID must come before ATTRIBUTE_LABEL.
 		 * By the same reasoning, you must not re-order the insertions below.
 		 */
-		LinkedHashMap m = new LinkedHashMap();
-		m.put(NWBFileProperty.ATTRIBUTE_ID, NWBFileProperty.TYPE_INT);
-		m.put(NWBFileProperty.ATTRIBUTE_LABEL, NWBFileProperty.TYPE_STRING);
-		NECESSARY_NODE_ATTRIBUTES =
-			new LinkedHashMap(Collections.unmodifiableMap(m));
+		LinkedHashMap<String, String> necessaryNodeAttributes =
+			new LinkedHashMap<String, String>();
+		necessaryNodeAttributes.put(NWBFileProperty.ATTRIBUTE_ID, NWBFileProperty.TYPE_INT);
+		necessaryNodeAttributes.put(NWBFileProperty.ATTRIBUTE_LABEL, NWBFileProperty.TYPE_STRING);
+
+		return new LinkedHashMap<String, String>(
+			Collections.unmodifiableMap(necessaryNodeAttributes));
 	}
     
-	public static LinkedHashMap NECESSARY_EDGE_ATTRIBUTES;
-	static {
+	public static final LinkedHashMap<String, String> NECESSARY_EDGE_ATTRIBUTES =
+		formNecessaryEdgeAttributes();
+
+	private static LinkedHashMap<String, String> formNecessaryEdgeAttributes() {
 		/* It's very important that the implementation is LinkedHashMap,
 		 * as this preserves key order according to insertion order.
 		 * An unordered map could violate the schema specification that
 		 * ATTRIBUTE_SOURCE must come before ATTRIBUTE_TARGET.
 		 * By the same reasoning, you must not re-order the insertions below.
 		 */
-		LinkedHashMap m = new LinkedHashMap();
+		LinkedHashMap<String, String> m = new LinkedHashMap<String, String>();
 		m.put(NWBFileProperty.ATTRIBUTE_SOURCE, NWBFileProperty.TYPE_INT);
 		m.put(NWBFileProperty.ATTRIBUTE_TARGET, NWBFileProperty.TYPE_INT);
-		NECESSARY_EDGE_ATTRIBUTES =
-			new LinkedHashMap(Collections.unmodifiableMap(m));
+
+		return new LinkedHashMap<String, String>(Collections.unmodifiableMap(m));
 	}
 }

@@ -24,11 +24,10 @@ public class RemoveEdgeAttributesAlgorithmFactory
 	
 	
 	public Algorithm createAlgorithm(
-			Data[] data, Dictionary parameters, CIShellContext context) {
-		this.logger =
-			(LogService) context.getService(LogService.class.getName());
-		
-		return new RemoveEdgeAttributesAlgorithm(data, parameters, context);
+			Data[] data, Dictionary<String, Object> parameters, CIShellContext ciShellContext) {
+		this.logger = (LogService) ciShellContext.getService(LogService.class.getName());
+
+		return new RemoveEdgeAttributesAlgorithm(data, parameters, ciShellContext);
 	}
 	
 	
@@ -39,31 +38,27 @@ public class RemoveEdgeAttributesAlgorithmFactory
 	
 	private class RemoveEdgeAttributesAlgorithm extends RemoveGraphAttributesAlgorithm {
 		public RemoveEdgeAttributesAlgorithm(
-				Data[] data, Dictionary parameters, CIShellContext context) {
+				Data[] data, Dictionary<String, Object> parameters, CIShellContext context) {
 			super(data, parameters, context);
 		}
-		
 
 		public NWBRemovableAttributeReader createAttributeReader(File inputNWBFile) {
 			return new NWBRemovableEdgeAttributeReader(inputNWBFile);
 		}
 
 		public AttributeFilteringNWBWriter createAttributeFilteringFileWriter(
-				File outputNWBFile,
-				Collection keysToRemove)
-					throws IOException {
+				File outputNWBFile, Collection<String> keysToRemove) throws IOException {
 			return new EdgeAttributeFilteringWriter(
 					outputNWBFile, keysToRemove);
 		}		
 
-		public String createOutDataLabel(Collection keysToRemove) {
+		public String createOutDataLabel(Collection<String> keysToRemove) {
 			int numberOfRemovedAttributes = keysToRemove.size();
+
 			if (numberOfRemovedAttributes == 0) {
 				return "With no edge attributes removed";
 			} else {
-				return ("With "
-						+ numberOfRemovedAttributes
-						+ " select edge attributes removed.");
+				return "With " + numberOfRemovedAttributes + " select edge attributes removed.";
 			}
 		}
 	}

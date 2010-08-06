@@ -14,12 +14,12 @@ import org.osgi.service.metatype.ObjectClassDefinition;
  * ObjectClassDefinition .
  */
 public class BooleanMutator {	
-	private Collection names;
+	private Collection<String> names;
 	private DescriptionCreator descriptionCreator;
 
 
 	public BooleanMutator(
-			Collection names, DescriptionCreator descriptionCreator) {
+			Collection<String> names, DescriptionCreator descriptionCreator) {
 		this.names = names;
 		this.descriptionCreator = descriptionCreator;
 	}
@@ -38,7 +38,7 @@ public class BooleanMutator {
 		}
 		
 		// Add a Boolean AttributeDefinition for each name in names
-		for (Iterator optionIt = names.iterator(); optionIt.hasNext();) {
+		for (Iterator<String> optionIt = names.iterator(); optionIt.hasNext();) {
 			String name = (String) optionIt.next();
 			
 			AttributeDefinition attributeDefinition =

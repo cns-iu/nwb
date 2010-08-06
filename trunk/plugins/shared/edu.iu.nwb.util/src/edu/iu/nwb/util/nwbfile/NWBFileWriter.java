@@ -19,9 +19,9 @@ import java.util.Map;
 public class NWBFileWriter implements NWBFileParserHandler {
 	private PrintStream out;
 	
-	LinkedHashMap nodeSchema;
-	LinkedHashMap directedEdgeSchema;
-	LinkedHashMap undirectedEdgeSchema;
+	LinkedHashMap<String, String> nodeSchema;
+	LinkedHashMap<String, String> directedEdgeSchema;
+	LinkedHashMap<String, String> undirectedEdgeSchema;
 	
 	int nodeCount = -1;
 	int directedEdgeCount = -1;
@@ -47,9 +47,9 @@ public class NWBFileWriter implements NWBFileParserHandler {
 		out.close();
 	}
 	
-	public void addNode(int id, String label, Map attributes) {
-		for (Iterator keys = nodeSchema.keySet().iterator(); keys.hasNext(); ) {
-			String key = (String) keys.next();
+	public void addNode(int id, String label, Map<String, Object> attributes) {
+		for (Iterator<String> keys = this.nodeSchema.keySet().iterator(); keys.hasNext(); ) {
+			String key = keys.next();
 			String value;
 			
 			if (key.equals(NWBFileProperty.ATTRIBUTE_ID)) {
@@ -74,7 +74,7 @@ public class NWBFileWriter implements NWBFileParserHandler {
 		}		
 	}
 
-	public void addDirectedEdge(int sourceNode, int targetNode, Map attributes) {
+	public void addDirectedEdge(int sourceNode, int targetNode, Map<String, Object> attributes) {
 		if (directedEdgeSchema != null) {
 			printEdge(sourceNode,targetNode,attributes,directedEdgeSchema);
 		} else {
@@ -82,7 +82,7 @@ public class NWBFileWriter implements NWBFileParserHandler {
 		}
 	}
 	
-	public void addUndirectedEdge(int sourceNode, int targetNode, Map attributes) {
+	public void addUndirectedEdge(int sourceNode, int targetNode, Map<String, Object> attributes) {
 		if (undirectedEdgeSchema != null) {
 			printEdge(sourceNode,targetNode,attributes,undirectedEdgeSchema);
 		} else {
@@ -90,9 +90,13 @@ public class NWBFileWriter implements NWBFileParserHandler {
 		}
 	}
 	
-	private void printEdge(int sourceNode, int targetNode, Map attributes, LinkedHashMap schema) {
-		for (Iterator keys = schema.keySet().iterator(); keys.hasNext(); ) {
-			String key = (String) keys.next();
+	private void printEdge(
+			int sourceNode,
+			int targetNode,
+			Map<String, Object> attributes,
+			LinkedHashMap<String, String> schema) {
+		for (Iterator<String> keys = schema.keySet().iterator(); keys.hasNext(); ) {
+			String key = keys.next();
 			String value;
 			
 			if (key.equals(NWBFileProperty.ATTRIBUTE_SOURCE)) {
@@ -129,19 +133,19 @@ public class NWBFileWriter implements NWBFileParserHandler {
 		undirectedEdgeCount = numberOfEdges;
 	}
 	
-	public void setNodeSchema(LinkedHashMap schema) {
+	public void setNodeSchema(LinkedHashMap<String, String> schema) {
 		nodeSchema = schema;
 		
 		out.print(NWBFileProperty.HEADER_NODE);
 		if (nodeCount >= 0) {
-			out.println(" "+nodeCount);
+			out.println(" " + nodeCount);
 		} else { 
 			out.println();
 		}
 		
-		for (Iterator keys = schema.keySet().iterator(); keys.hasNext(); ) {
+		for (Iterator<String> keys = schema.keySet().iterator(); keys.hasNext(); ) {
 			String key = (String) keys.next();
-			out.print(key+NWBFileProperty.PRESERVED_STAR+schema.get(key));
+			out.print(key + NWBFileProperty.PRESERVED_STAR + schema.get(key));
 			
 			if (keys.hasNext()) {
 				out.print("\t");
@@ -151,7 +155,7 @@ public class NWBFileWriter implements NWBFileParserHandler {
 		}
 	}
 	
-	public void setDirectedEdgeSchema(LinkedHashMap schema) {
+	public void setDirectedEdgeSchema(LinkedHashMap<String, String> schema) {
 		directedEdgeSchema = schema;
 		
 		out.print(NWBFileProperty.HEADER_DIRECTED_EDGES);
@@ -161,9 +165,9 @@ public class NWBFileWriter implements NWBFileParserHandler {
 			out.println();
 		}
 		
-		for (Iterator keys = schema.keySet().iterator(); keys.hasNext(); ) {
+		for (Iterator<String> keys = schema.keySet().iterator(); keys.hasNext(); ) {
 			String key = (String) keys.next();
-			out.print(key+NWBFileProperty.PRESERVED_STAR+schema.get(key));
+			out.print(key + NWBFileProperty.PRESERVED_STAR + schema.get(key));
 			
 			if (keys.hasNext()) {
 				out.print("\t");
@@ -173,21 +177,23 @@ public class NWBFileWriter implements NWBFileParserHandler {
 		}
 	}
 	
-	public static LinkedHashMap getDefaultNodeSchema(){
-		LinkedHashMap defaultNodeSchema = new LinkedHashMap();
+	public static LinkedHashMap<String, String> getDefaultNodeSchema(){
+		LinkedHashMap<String, String> defaultNodeSchema = new LinkedHashMap<String, String>();
 		defaultNodeSchema.put(NWBFileProperty.ATTRIBUTE_ID, NWBFileProperty.TYPE_INT);
 		defaultNodeSchema.put(NWBFileProperty.ATTRIBUTE_LABEL, NWBFileProperty.TYPE_STRING);
+
 		return defaultNodeSchema;
 	}
 	
-	public static LinkedHashMap getDefaultEdgeSchema(){
-		LinkedHashMap defaultEdgeSchema = new LinkedHashMap();
+	public static LinkedHashMap<String, String> getDefaultEdgeSchema(){
+		LinkedHashMap<String, String> defaultEdgeSchema = new LinkedHashMap<String, String>();
 		defaultEdgeSchema.put(NWBFileProperty.ATTRIBUTE_SOURCE, NWBFileProperty.TYPE_INT);
 		defaultEdgeSchema.put(NWBFileProperty.ATTRIBUTE_TARGET, NWBFileProperty.TYPE_INT);
+
 		return defaultEdgeSchema;
 	}
 
-	public void setUndirectedEdgeSchema(LinkedHashMap schema) {
+	public void setUndirectedEdgeSchema(LinkedHashMap<String, String> schema) {
 		undirectedEdgeSchema = schema;
 		
 		out.print(NWBFileProperty.HEADER_UNDIRECTED_EDGES);
@@ -197,9 +203,9 @@ public class NWBFileWriter implements NWBFileParserHandler {
 			out.println();
 		}
 		
-		for (Iterator keys = schema.keySet().iterator(); keys.hasNext(); ) {
+		for (Iterator<String> keys = schema.keySet().iterator(); keys.hasNext(); ) {
 			String key = (String) keys.next();
-			out.print(key+NWBFileProperty.PRESERVED_STAR+schema.get(key));
+			out.print(key + NWBFileProperty.PRESERVED_STAR + schema.get(key));
 			
 			if (keys.hasNext()) {
 				out.print("\t");

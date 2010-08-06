@@ -17,9 +17,8 @@ import org.osgi.service.metatype.ObjectClassDefinition;
  * with this tool.
  */
 public class DummyAttributeDefinitionRemover {	
-	public static final String DEFAULT_DUMMY_ATTRIBUTE_DEFINITION_ID =
-		"DUMMY_AD";
-	
+	public static final String DEFAULT_DUMMY_ATTRIBUTE_DEFINITION_ID = "DUMMY_AD";
+
 	private String dummyAttributeDefinitionID;
 	
 	public DummyAttributeDefinitionRemover() {

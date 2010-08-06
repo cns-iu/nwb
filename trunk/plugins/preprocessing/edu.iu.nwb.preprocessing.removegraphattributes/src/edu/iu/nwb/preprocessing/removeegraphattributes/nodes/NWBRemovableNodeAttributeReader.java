@@ -15,11 +15,11 @@ public class NWBRemovableNodeAttributeReader
 	}
 	
 
-	protected LinkedHashMap getNecessaryAttributes() {
+	protected LinkedHashMap<String, String> getNecessaryAttributes() {
 		return NWBFileProperty.NECESSARY_NODE_ATTRIBUTES;
 	}
 
-	protected LinkedHashMap getSchema(File nwbFile)
+	protected LinkedHashMap<String, String> getSchema(File nwbFile)
 			throws NWBMetadataParsingException {
 		return NWBFileUtilities.getNodeSchema(nwbFile);
 	}

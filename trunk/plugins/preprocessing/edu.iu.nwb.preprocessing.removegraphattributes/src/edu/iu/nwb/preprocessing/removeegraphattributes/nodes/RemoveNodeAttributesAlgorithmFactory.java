@@ -18,15 +18,15 @@ import edu.iu.nwb.preprocessing.removeegraphattributes.nwbIO.NWBRemovableAttribu
 public class RemoveNodeAttributesAlgorithmFactory
 		extends RemoveGraphAttributesAlgorithmFactory {
 	private LogService logger;
+
 	public LogService getLogger() {
 		return logger;
 	}
 	
 	public Algorithm createAlgorithm(
-			Data[] data, Dictionary parameters, CIShellContext context) {
-		this.logger =
-			(LogService) context.getService(LogService.class.getName());
-		
+			Data[] data, Dictionary<String, Object> parameters, CIShellContext context) {
+		this.logger = (LogService) context.getService(LogService.class.getName());
+
 		return new RemoveNodeAttributesAlgorithm(data, parameters, context);
 	}
 	
@@ -38,30 +38,27 @@ public class RemoveNodeAttributesAlgorithmFactory
 	private class RemoveNodeAttributesAlgorithm
 			extends RemoveGraphAttributesAlgorithm {
 		public RemoveNodeAttributesAlgorithm(
-				Data[] data, Dictionary parameters, CIShellContext context) {
+				Data[] data, Dictionary<String, Object> parameters, CIShellContext context) {
 			super(data, parameters, context);
 		}
-		
 
 		public NWBRemovableAttributeReader createAttributeReader(File inputNWBFile) {
 			return new NWBRemovableNodeAttributeReader(inputNWBFile);
 		}
 
 		public AttributeFilteringNWBWriter createAttributeFilteringFileWriter(
-				File outputNWBFile, Collection keysToRemove)
-					throws IOException {
+				File outputNWBFile, Collection<String> keysToRemove) throws IOException {
 			return new NodeAttributeFilteringWriter(
 					outputNWBFile, keysToRemove);
 		}
 
-		public String createOutDataLabel(Collection keysToRemove) {
+		public String createOutDataLabel(Collection<String> keysToRemove) {
 			int numberOfRemovedAttributes = keysToRemove.size();
+
 			if (numberOfRemovedAttributes == 0) {
 				return "With no node attributes removed";
 			} else {
-				return ("With "
-						+ numberOfRemovedAttributes
-						+ " select node attributes removed.");
+				return "With " + numberOfRemovedAttributes + " select node attributes removed.";
 			}
 		}
 	}

@@ -16,14 +16,15 @@ public class LinkedHashMapUtilities {
 	 * treated as LinkedHashMaps since the NWB file format specification
 	 * enforces a particular ordering on some of the entries.  
 	 */
-	public static LinkedHashMap excludeKeysFromMap(
-			Map oldMap, Collection keysToExclude) {
-		LinkedHashMap prunedMap = new LinkedHashMap();
+	public static<K, V> LinkedHashMap<K, V> excludeKeysFromMap(
+			Map<K, V> oldMap, Collection<K> keysToExclude) {
+		LinkedHashMap<K, V> prunedMap = new LinkedHashMap<K, V>();
 		
-		for (Iterator entryIt = oldMap.entrySet().iterator(); entryIt.hasNext();) {
-			Entry entry = (Entry) entryIt.next();
-			Object key = entry.getKey();
-			Object value = entry.getValue();
+		for (Iterator<Map.Entry<K, V>> entryIt = oldMap.entrySet().iterator();
+				entryIt.hasNext();) {
+			Entry<K, V> entry = entryIt.next();
+			K key = entry.getKey();
+			V value = entry.getValue();
 	
 			// If we want to exclude this key, don't add it to prunedMap
 			if (keysToExclude.contains(key)) {
