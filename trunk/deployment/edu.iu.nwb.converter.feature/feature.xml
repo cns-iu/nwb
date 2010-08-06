@@ -268,10 +268,10 @@ Dr. Katy Borner (katy@indiana.edu)
          unpack="false"/>
 
    <plugin
-         id="au.com.bytecode.opencsv"
+         id="opencsv"
          download-size="0"
          install-size="0"
-         version="0.0.1"
+         version="1.0.0"
          unpack="false"/>
    <plugin
          id="edu.iu.cns.converter.plotcsv"
