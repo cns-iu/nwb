@@ -281,10 +281,16 @@ public class PostScriptGenerator {/*extends HorizontalBarGraphVisualizationGener
 		return yearLabelPropertiesTemplate.toString();
 	}
 	
+	/**
+	 * Only create region if there is item to be colorized
+	 */
 	private String createColorLegend(BoundingBox boundingBox) {
 		List<ColorLegendLabel> colorLegendLabelList = colorLegend.getColorLegendLabelList();
+		if(colorLegendLabelList.size() == 0) {
+			return "";
+		}
+		
 		StringBuilder records = new StringBuilder();
-
 		records.append(createColorLegendTitle(boundingBox));
 		for (ColorLegendLabel label : colorLegendLabelList) {
 			records.append(createColorLegendlabel(label, boundingBox));

@@ -7,6 +7,7 @@ import org.osgi.service.log.LogService;
 import prefuse.data.Table;
 import prefuse.data.Tuple;
 import edu.iu.scipolicy.visualization.horizontalbargraph.DateTimeWrapper;
+import edu.iu.scipolicy.visualization.horizontalbargraph.HorizontalBarGraphAlgorithm;
 import edu.iu.scipolicy.visualization.horizontalbargraph.Metadata;
 import edu.iu.scipolicy.visualization.horizontalbargraph.record.exception.InvalidAmountException;
 import edu.iu.scipolicy.visualization.horizontalbargraph.utility.PreprocessedRecordInformation;
@@ -68,8 +69,7 @@ public class TableRecordExtractor {
 
 			String label =
 				this.labelGenerator.generateLabel(row, rowIndex, metadata.getLabelColumn()).trim();
-			String colorizedBy = this.labelGenerator.generateLabel(
-			 	row, rowIndex, metadata.getColorizedByColumn()).trim();
+			String colorizedBy = getColorizedBy(row, rowIndex, metadata.getColorizedByColumn());
 			DateTimeWrapper startDateWrapper = Utilities.extractDate(
 				row, metadata.getStartDateColumn(), metadata.getDateFormat());
 			DateTimeWrapper endDateWrapper =
@@ -98,6 +98,17 @@ public class TableRecordExtractor {
 		this.logMessageHandler.printOverloadedMessageTypes(LogService.LOG_WARNING);
 	
 		return recordCollection;
+	}
+		
+	private String getColorizedBy(Tuple row, int rowIndex, String labelColumn) {
+		
+		/* return null if NO_COLORIZED_BY is chosen because a special string might appear in the data */
+		if(labelColumn.equals(HorizontalBarGraphAlgorithm.NO_COLORIZED_BY)) {
+			return null;
+		}
+		
+		return this.labelGenerator.generateLabel(
+			 	row, rowIndex, labelColumn.trim());
 	}
 	
 	private void addRecordToCollector(

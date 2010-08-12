@@ -1,8 +1,12 @@
 package edu.iu.scipolicy.visualization.horizontalbargraph;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Dictionary;
 import java.util.HashSet;
+import java.util.List;
 
 import org.cishell.framework.CIShellContext;
 import org.cishell.framework.algorithm.Algorithm;
@@ -18,6 +22,9 @@ import org.osgi.service.metatype.ObjectClassDefinition;
 import prefuse.data.Table;
 
 public class HorizontalBarGraphAlgorithmFactory implements AlgorithmFactory, ParameterMutator {
+	public static final List<String> LABELS_TO_ADD_FOR_COLORIZATION =
+		Collections.unmodifiableList(Arrays.asList(HorizontalBarGraphAlgorithm.NO_COLORIZED_BY));
+
     public Algorithm createAlgorithm(
     		Data[] data, Dictionary<String, Object> parameters, CIShellContext ciShellContext) {
         return new HorizontalBarGraphAlgorithm(data, parameters, ciShellContext);
@@ -43,11 +50,13 @@ public class HorizontalBarGraphAlgorithmFactory implements AlgorithmFactory, Par
 				String oldAttributeDefinitionID = oldAttributeDefinition.getID();
 				AttributeDefinition newAttributeDefinition = oldAttributeDefinition;
 
-				if (oldAttributeDefinitionID.equals(HorizontalBarGraphAlgorithm.LABEL_FIELD_ID) ||
-					oldAttributeDefinitionID.equals(HorizontalBarGraphAlgorithm.COLORIZED_BY_FIELD_ID)) {
+				if (oldAttributeDefinitionID.equals(HorizontalBarGraphAlgorithm.LABEL_FIELD_ID)) {
 					newAttributeDefinition = MutateParameterUtilities.formLabelAttributeDefinition(
 						oldAttributeDefinition, table);
-				} else if (oldAttributeDefinitionID.equals(
+				} else if (oldAttributeDefinitionID.equals(HorizontalBarGraphAlgorithm.COLORIZED_BY_FIELD_ID)) {
+					newAttributeDefinition = MutateParameterUtilities.formLabelAttributeDefinition(
+							oldAttributeDefinition, table, LABELS_TO_ADD_FOR_COLORIZATION);
+				}else if (oldAttributeDefinitionID.equals(
 							HorizontalBarGraphAlgorithm.START_DATE_FIELD_ID) ||
 						oldAttributeDefinitionID.equals(
 							HorizontalBarGraphAlgorithm.END_DATE_FIELD_ID)) {

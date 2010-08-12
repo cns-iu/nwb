@@ -100,13 +100,15 @@ public class ColorizedByRegistry {
 		Map<String, PhraseFrequency> map = new HashMap<String, PhraseFrequency>();
 		
         for (String str : stringList) {
-        	PhraseFrequency phraseFreq = map.get(str);
-        	if(phraseFreq == null){
-        		phraseFreq = new PhraseFrequency(str);
-        		map.put(str, phraseFreq);
-        		set.add(phraseFreq);
+        	if(str != null) {
+	        	PhraseFrequency phraseFreq = map.get(str);
+	        	if(phraseFreq == null) {
+	        		phraseFreq = new PhraseFrequency(str);
+	        		map.put(str, phraseFreq);
+	        		set.add(phraseFreq);
+	        	}
+	        	phraseFreq.increaseFrequency(str);
         	}
-        	phraseFreq.increaseFrequency(str);
         }
         
         return set;
