@@ -29,84 +29,173 @@ import edu.iu.cns.database.merge.generic.MergeTableFactory;
 
 public class MergeMaker {
 
-	private static Data[] mergeTable(String tableName, Data database,
-			KeyMaker keyMaker, MergeCheck mergeCheck, boolean keyDeterminesMerge,
+	private static Data[] mergeTable(
+			String tableName,
+			Data database,
+			KeyMaker keyMaker,
+			MergeCheck mergeCheck,
+			boolean keyDeterminesMerge,
 			PreferrableFormComparator preferrableFormComparator,
-			CIShellContext context, ProgressMonitor monitor, String label) throws AlgorithmExecutionException {
+			CIShellContext context,
+			ProgressMonitor monitor,
+			String label) throws AlgorithmExecutionException {
 		Data mergingTable = extractMarkedTable(tableName, database, keyMaker,
 				mergeCheck, keyDeterminesMerge, preferrableFormComparator, context);
 
 		return performMerge(mergingTable, database, context, monitor, label);
 	}
 
-	public static Data[] mergeTable(String tableName, Data database,
-			KeyMaker keyMaker, boolean keyDeterminesMerge,
+	public static Data[] mergeTable(
+			String tableName,
+			Data database,
+			KeyMaker keyMaker,
+			boolean keyDeterminesMerge,
 			PreferrableFormComparator preferrableFormComparator,
-			CIShellContext context, ProgressMonitor monitor, String label) throws AlgorithmExecutionException {
-		return mergeTable(tableName, database, keyMaker, null, keyDeterminesMerge, preferrableFormComparator, context, monitor, label);
+			CIShellContext context,
+			ProgressMonitor monitor,
+			String label) throws AlgorithmExecutionException {
+		return mergeTable(
+			tableName,
+			database,
+			keyMaker,
+			null,
+			keyDeterminesMerge,
+			preferrableFormComparator,
+			context,
+			monitor,
+			label);
 	}
 
-	public static Data[] mergeTable(String tableName, Data database,
-			KeyMaker keyMaker, MergeCheck mergeCheck, 
+	public static Data[] mergeTable(
+			String tableName,
+			Data database,
+			KeyMaker keyMaker,
+			MergeCheck mergeCheck, 
 			PreferrableFormComparator preferrableFormComparator,
-			CIShellContext context, ProgressMonitor monitor, String label) throws AlgorithmExecutionException {
-		return mergeTable(tableName, database, keyMaker, mergeCheck, false, preferrableFormComparator, context, monitor, label);
+			CIShellContext context,
+			ProgressMonitor monitor,
+			String label) throws AlgorithmExecutionException {
+		return mergeTable(
+			tableName,
+			database,
+			keyMaker,
+			mergeCheck,
+			false,
+			preferrableFormComparator,
+			context,
+			monitor,
+			label);
 	}
 
-	private static Data extractMarkedTable(String tableName, Data database,
-			KeyMaker keyMaker, MergeCheck mergeCheck, boolean keyDeterminesMerge,
+	private static Data extractMarkedTable(
+			String tableName,
+			Data database,
+			KeyMaker keyMaker,
+			MergeCheck mergeCheck,
+			boolean keyDeterminesMerge,
 			PreferrableFormComparator preferrableFormComparator,
-			CIShellContext context) throws AlgorithmExecutionException {
+			CIShellContext context)
+			throws AlgorithmExecutionException {
 		Data mergingTableData = extractTable(tableName, database, context);
 		Table mergingTable = (Table) mergingTableData.getData();
-		MergeMaker.markMerges(mergingTable, keyMaker, mergeCheck, keyDeterminesMerge,
-				preferrableFormComparator);
+		MergeMaker.markMerges(
+			mergingTable, keyMaker, mergeCheck, keyDeterminesMerge, preferrableFormComparator);
+
 		return mergingTableData;
 	}
 
-	private static Data[] markTable(String tableName, Data database,
-			KeyMaker keyMaker, MergeCheck mergeCheck, boolean keyDeterminesMerge,
+	private static Data[] markTable(
+			String tableName,
+			Data database,
+			KeyMaker keyMaker,
+			MergeCheck mergeCheck,
+			boolean keyDeterminesMerge,
 			PreferrableFormComparator preferrableFormComparator,
-			CIShellContext context, String label) throws AlgorithmExecutionException {
-		Data tableData = extractMarkedTable(tableName, database, keyMaker,
-				mergeCheck, keyDeterminesMerge, preferrableFormComparator, context);
+			CIShellContext context,
+			String label) throws AlgorithmExecutionException {
+		Data tableData = extractMarkedTable(
+			tableName,
+			database,
+			keyMaker,
+			mergeCheck,
+			keyDeterminesMerge,
+			preferrableFormComparator,
+			context);
 		tableData.getMetadata().put(DataProperty.LABEL, label);
+
 		return new Data[]{tableData};
 	}
 
-	public static Data[] markTable(String tableName, Data database,
-			KeyMaker keyMaker, boolean keyDeterminesMerge,
+	public static Data[] markTable(
+			String tableName,
+			Data database,
+			KeyMaker keyMaker,
+			boolean keyDeterminesMerge,
 			PreferrableFormComparator preferrableFormComparator,
-			CIShellContext context, String label) throws AlgorithmExecutionException {
-		return markTable(tableName, database, keyMaker, null, keyDeterminesMerge, preferrableFormComparator, context, label);
+			CIShellContext context,
+			String label) throws AlgorithmExecutionException {
+		return markTable(
+			tableName,
+			database,
+			keyMaker,
+			null,
+			keyDeterminesMerge,
+			preferrableFormComparator,
+			context,
+			label);
 	}
 
-	public static Data[] markTable(String tableName, Data database,
-			KeyMaker keyMaker, MergeCheck mergeCheck,
+	public static Data[] markTable(
+			String tableName,
+			Data database,
+			KeyMaker keyMaker,
+			MergeCheck mergeCheck,
 			PreferrableFormComparator preferrableFormComparator,
-			CIShellContext context, String label) throws AlgorithmExecutionException {
-		return markTable(tableName, database, keyMaker, mergeCheck, false, preferrableFormComparator, context, label);
+			CIShellContext context,
+			String label) throws AlgorithmExecutionException {
+		return markTable(
+			tableName,
+			database,
+			keyMaker,
+			mergeCheck,
+			false,
+			preferrableFormComparator,
+			context,
+			label);
 	}
 
-	private static Data[] performMerge(Data mergingTableData, Data databaseData, CIShellContext context, ProgressMonitor monitor, String label)
-	throws AlgorithmExecutionException {
+	private static Data[] performMerge(
+			Data mergingTableData,
+			Data databaseData,
+			CIShellContext context,
+			ProgressMonitor monitor,
+			String label)
+			throws AlgorithmExecutionException {
 
-		Algorithm mergingAlgorithm = new MergeTableFactory().createAlgorithm(new Data[]{mergingTableData, databaseData}, new Hashtable<Object, Object>(), context);
-		if(mergingAlgorithm instanceof ProgressTrackable) {
+		Algorithm mergingAlgorithm = new MergeTableFactory().createAlgorithm(
+			new Data[]{mergingTableData, databaseData}, new Hashtable<Object, Object>(), context);
+
+		if (mergingAlgorithm instanceof ProgressTrackable) {
 			((ProgressTrackable) mergingAlgorithm).setProgressMonitor(monitor);
 		}
+
 		Data[] mergedOutput = mergingAlgorithm.execute();
 		mergedOutput[0].getMetadata().put(DataProperty.LABEL, label);
+
 		return mergedOutput;
 	}
 
 
 
 
-	private static Data extractTable(String tableName, Data databaseData, CIShellContext context) throws AlgorithmExecutionException {
+	private static Data extractTable(
+			String tableName, Data databaseData, CIShellContext context)
+			throws AlgorithmExecutionException {
 		Dictionary<Object, Object> extractTableParams = new Hashtable<Object, Object>();
 		extractTableParams.put(CreateMergingTableFactory.TABLE_PARAMETER, tableName);
-		Data[] mergingTableData = new CreateMergingTableFactory().createAlgorithm(new Data[]{databaseData}, extractTableParams, context).execute();
+		Data[] mergingTableData = new CreateMergingTableFactory().createAlgorithm(
+			new Data[]{databaseData}, extractTableParams, context).execute();
+
 		return mergingTableData[0];
 	}
 

@@ -8,7 +8,6 @@ import org.cishell.framework.algorithm.ProgressTrackable;
 import org.cishell.framework.data.Data;
 
 import edu.iu.cns.database.merge.generic.maker.KeyMaker;
-import edu.iu.cns.database.merge.generic.maker.MergeCheck;
 import edu.iu.cns.database.merge.generic.maker.MergeMaker;
 import edu.iu.cns.database.merge.generic.maker.PreferrableFormComparator;
 
@@ -29,8 +28,15 @@ public class MergeIdenticalPeople implements Algorithm, ProgressTrackable {
     	PreferrableFormComparator preferrableFormComparator = new IsiPersonPriorities();
     	
     	
-    	return MergeMaker.mergeTable(personTable, data[0], keyMaker,
-				true, preferrableFormComparator, context, monitor, "with identical people merged");
+    	return MergeMaker.mergeTable(
+    		personTable,
+    		data[0],
+    		keyMaker,
+			true,
+			preferrableFormComparator,
+			context,
+			monitor,
+			"with identical people merged");
     }
 
 	public ProgressMonitor getProgressMonitor() {

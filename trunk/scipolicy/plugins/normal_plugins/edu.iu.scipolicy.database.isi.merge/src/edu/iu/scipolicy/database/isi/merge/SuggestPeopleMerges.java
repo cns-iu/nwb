@@ -34,7 +34,10 @@ public class SuggestPeopleMerges implements Algorithm {
 	private InterfaceStringMetric metric;
 	private String metricName;
     
-    public SuggestPeopleMerges(Data[] data, Dictionary parameters, CIShellContext context) {
+    public SuggestPeopleMerges(
+    		Data[] data,
+    		Dictionary<String, Object> parameters,
+    		CIShellContext context) {
         this.data = data;
         this.context = context;
         this.prefixLength = (Integer) parameters.get(NUM_PREFIX_LETTERS);
@@ -62,7 +65,11 @@ public class SuggestPeopleMerges implements Algorithm {
     	PreferrableFormComparator preferrableFormComparator = new IsiPersonPriorities();
     	
     	
-    	return MergeMaker.markTable(personTable, data[0], keyMaker, mergeCheck,
+    	return MergeMaker.markTable(
+    		personTable,
+    		data[0],
+    		keyMaker,
+    		mergeCheck,
 				preferrableFormComparator, context, "suggested people merges ("
 						+ metricName + " similarity >= "
 						+ similarityCutoff + ", prefix " + prefixLength + ")");
