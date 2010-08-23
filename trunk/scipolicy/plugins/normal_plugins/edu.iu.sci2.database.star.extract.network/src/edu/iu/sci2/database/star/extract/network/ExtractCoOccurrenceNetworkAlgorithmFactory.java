@@ -7,8 +7,9 @@ import org.cishell.framework.algorithm.Algorithm;
 import org.cishell.framework.algorithm.AlgorithmCreationCanceledException;
 import org.cishell.framework.algorithm.AlgorithmFactory;
 import org.cishell.framework.data.Data;
+import org.cishell.utility.datastructure.datamodel.DataModel;
+import org.cishell.utility.datastructure.datamodel.exception.UniqueNameException;
 import org.cishell.utility.swt.GUICanceledException;
-import org.cishell.utility.swt.model.GUIModel;
 import org.osgi.framework.BundleContext;
 import org.osgi.service.component.ComponentContext;
 import org.osgi.service.log.LogService;
@@ -35,7 +36,7 @@ public class ExtractCoOccurrenceNetworkAlgorithmFactory extends ExtractionAlgori
     	Data parentData = data[0];
     	StarDatabaseMetadata databaseMetadata = getMetadata(parentData);
     	verifyLeafTables(databaseMetadata, this.logger);
-    	GUIModel model = getModelFromUser(databaseMetadata);
+    	DataModel model = getModelFromUser(databaseMetadata);
     	QueryConstructor queryConstructor = new CoOccurrenceNetworkQueryConstructor(
     		CoOccurrenceNetworkGUIBuilder.LEAF_FIELD_NAME,
     		GUIBuilder.HEADER_GROUP_NAME,
@@ -53,11 +54,14 @@ public class ExtractCoOccurrenceNetworkAlgorithmFactory extends ExtractionAlgori
         	ciShellContext, parentData, queryConstructor, networkQueryRunner, this.logger);
     }
 
-    private static GUIModel getModelFromUser(StarDatabaseMetadata metadata) {
+    private static DataModel getModelFromUser(StarDatabaseMetadata metadata)
+    		throws AlgorithmCreationCanceledException {
     	try {
     		return new CoOccurrenceNetworkGUIBuilder().createGUI(
     			WINDOW_TITLE, WINDOW_WIDTH, WINDOW_HEIGHT, new StarDatabaseDescriptor(metadata));
     	} catch (GUICanceledException e) {
+    		throw new AlgorithmCreationCanceledException(e.getMessage(), e);
+    	} catch (UniqueNameException e) {
     		throw new AlgorithmCreationCanceledException(e.getMessage(), e);
     	}
     }

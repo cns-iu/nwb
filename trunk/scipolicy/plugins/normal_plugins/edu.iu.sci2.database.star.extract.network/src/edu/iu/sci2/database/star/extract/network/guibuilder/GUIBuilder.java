@@ -1,12 +1,18 @@
 package edu.iu.sci2.database.star.extract.network.guibuilder;
 
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.Map;
 
 import org.cishell.utility.datastructure.ObjectContainer;
+import org.cishell.utility.datastructure.datamodel.DataModel;
+import org.cishell.utility.datastructure.datamodel.exception.ModelValidationException;
+import org.cishell.utility.datastructure.datamodel.exception.UniqueNameException;
+import org.cishell.utility.datastructure.datamodel.field.DataModelField;
+import org.cishell.utility.datastructure.datamodel.field.FieldValidationAction;
 import org.cishell.utility.swt.GUIBuilderUtilities;
 import org.cishell.utility.swt.GUICanceledException;
-import org.cishell.utility.swt.model.GUIModel;
+import org.cishell.utility.swt.model.SWTModel;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
@@ -51,28 +57,32 @@ public abstract class GUIBuilder {
 	public static final String EDGE_CORE_ENTITY_COLUMN_GROUP_NAME = "edgeCoreEntityColumn";
 	public static final String EDGE_RESULT_NAME_GROUP_NAME = "edgeResult";
 
-	public abstract GUIModel createGUI(
+	protected Button finishedButton;
+	protected DisableFinishedButtonAction disableFinishedButtonAction =
+		new DisableFinishedButtonAction();
+
+	public abstract DataModel createGUI(
 			String windowTitle,
 			int windowWidth,
 			int windowHeight,
-			StarDatabaseDescriptor databaseDescriptor) throws GUICanceledException;
+			StarDatabaseDescriptor databaseDescriptor)
+			throws GUICanceledException, UniqueNameException;
 
 	public static void runGUI(Display display, Shell shell, int windowHeight) {
 		GUIBuilderUtilities.openShell(shell, windowHeight, true);
     	GUIBuilderUtilities.swtLoop(display, shell);
 	}
 
-	protected static Group createInstructionsGroup(Composite parent) {
-		Group instructionsGroup = new Group(parent, SWT.NONE);
-		instructionsGroup.setLayoutData(createInstructionsGroupLayoutData());
-		instructionsGroup.setLayout(createInstructionsGroupLayout());
-		instructionsGroup.setText(INSTRUCTIONS_GROUP_TEXT);
-		instructionsGroup.setBackground(parent.getDisplay().getSystemColor(SWT.COLOR_WHITE));
+	protected static Composite createInstructionsArea(Composite parent) {
+		Composite instructionsArea = new Composite(parent, SWT.NONE);
+		instructionsArea.setLayoutData(createInstructionsAreaLayoutData());
+		instructionsArea.setLayout(createInstructionsAreaLayout());
+		instructionsArea.setBackground(parent.getDisplay().getSystemColor(SWT.COLOR_WHITE));
 
-		return instructionsGroup;
+		return instructionsArea;
 	}
 
-	private static GridData createInstructionsGroupLayoutData() {
+	private static GridData createInstructionsAreaLayoutData() {
 		GridData layoutData = new GridData(SWT.FILL, SWT.TOP, true, false);
 		layoutData.horizontalSpan = 2;
 		layoutData.widthHint = INSTRUCTIONS_WIDTH;
@@ -80,7 +90,7 @@ public abstract class GUIBuilder {
 		return layoutData;
 	}
 
-	private static GridLayout createInstructionsGroupLayout() {
+	private static GridLayout createInstructionsAreaLayout() {
 		GridLayout layout = new GridLayout(2, false);
 
 		return layout;
@@ -153,8 +163,8 @@ public abstract class GUIBuilder {
 		return layout;
 	}
 
-	protected static AttributeListWidget createAggregateWidget(
-			GUIModel model,
+	protected AttributeListWidget createAggregateWidget(
+			SWTModel model,
 			String aggregateFunctionGroupName,
 			String coreEntityColumnGroupName,
 			Collection<String> coreEntityColumnLabels,
@@ -170,7 +180,8 @@ public abstract class GUIBuilder {
 			coreEntityColumnsByLabels,
 			resultColumnLabelGroupName,
 			type,
-			parent);
+			parent,
+			this.disableFinishedButtonAction);
 		aggregateList.setLayoutData(createAggregateListLayoutData());
 
 		return aggregateList;
@@ -205,5 +216,42 @@ public abstract class GUIBuilder {
 		layoutData.horizontalSpan = horizontalSpan;
 
 		return layoutData;
+	}
+
+	public class DisableFinishedButtonAction implements FieldValidationAction<String> {
+		private Map<DataModelField<String>, Boolean> fieldsToValidationStatuses =
+			new HashMap<DataModelField<String>, Boolean>();
+
+		public synchronized void fieldDoesValidate(DataModelField<String> field) {
+			this.fieldsToValidationStatuses.put(field, true);
+			System.err.println("----");
+			for (DataModelField<String> key : this.fieldsToValidationStatuses.keySet()) {
+				System.err.println(key.getName() + " field validates? " + this.fieldsToValidationStatuses.get(key) + " " + key.getValue());
+			}
+
+			GUIBuilder.this.finishedButton.setEnabled(
+				!this.fieldsToValidationStatuses.containsValue(false));
+		}
+
+		public synchronized void fieldDoesNotValidate(
+				DataModelField<String> field, Collection<ModelValidationException> reasons) {
+			this.fieldsToValidationStatuses.put(field, false);
+			System.err.println("----");
+			for (DataModelField<String> key : this.fieldsToValidationStatuses.keySet()) {
+				System.err.println(key.getName() + " field validates? " + this.fieldsToValidationStatuses.get(key) + " " + key.toString());
+			}
+
+			GUIBuilder.this.finishedButton.setEnabled(false);
+		}
+
+		public void fieldDisposed(DataModelField<String> field) {
+			this.fieldsToValidationStatuses.remove(field);
+			GUIBuilder.this.finishedButton.setEnabled(
+				!this.fieldsToValidationStatuses.containsValue(false));
+		}
+
+		protected void addField(DataModelField<String> field, boolean validationStatus) {
+			this.fieldsToValidationStatuses.put(field, validationStatus);
+		}
 	}
 }

@@ -1,13 +1,20 @@
 package edu.iu.sci2.database.star.extract.network.guibuilder.attribute;
 
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.Map;
 
 import org.cishell.utilities.StringUtilities;
+import org.cishell.utility.datastructure.datamodel.DataModel;
+import org.cishell.utility.datastructure.datamodel.exception.ModelValidationException;
+import org.cishell.utility.datastructure.datamodel.exception.UniqueNameException;
+import org.cishell.utility.datastructure.datamodel.field.DataModelField;
+import org.cishell.utility.datastructure.datamodel.field.FieldValidationRule;
+import org.cishell.utility.datastructure.datamodel.group.DataModelGroup;
 import org.cishell.utility.swt.ExpandableComponentWidget;
 import org.cishell.utility.swt.GridContainer;
-import org.cishell.utility.swt.model.GUIModel;
-import org.cishell.utility.swt.model.GUIModelField;
+import org.cishell.utility.swt.model.SWTModel;
+import org.cishell.utility.swt.model.SWTModelField;
 import org.cishell.utility.swt.model.datasynchronizer.DropDownDataSynchronizer;
 import org.cishell.utility.swt.model.datasynchronizer.TextDataSynchronizer;
 import org.eclipse.swt.SWT;
@@ -21,22 +28,23 @@ import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Text;
 
 import edu.iu.sci2.database.star.extract.network.aggregate.AggregateFunction;
+import edu.iu.sci2.database.star.extract.network.guibuilder.GUIBuilder.DisableFinishedButtonAction;
 
 public class AttributeWidgetContainer {
 	public static final String DELETE_BUTTON_TEXT = "Delete";
 
-	private GUIModel model;
+	private SWTModel model;
 	private int index;
 	private ExpandableComponentWidget<AttributeWidgetContainer> componentWidget;
 
-	private GUIModelField<String, Combo, DropDownDataSynchronizer> aggregateFunction;
-	private GUIModelField<String, Combo, DropDownDataSynchronizer> coreEntityColumn;
-	private GUIModelField<String, Text, TextDataSynchronizer> resultColumnLabelName;
+	private SWTModelField<String, Combo, DropDownDataSynchronizer<String>> aggregateFunction;
+	private SWTModelField<String, Combo, DropDownDataSynchronizer<String>> coreEntityColumn;
+	private SWTModelField<String, Text, TextDataSynchronizer> resultColumnLabelName;
 
 	private boolean userEnteredCustomResultColumnLabelName = false;
 
 	public AttributeWidgetContainer(
-			GUIModel model,
+			SWTModel model,
 			String aggregateFunctionGroupName,
 			String coreEntityColumnGroupName,
 			Collection<String> coreEntityColumnLabels,
@@ -46,7 +54,8 @@ public class AttributeWidgetContainer {
 			int index,
 			int uniqueIndex,
 			GridContainer grid,
-			int style) {
+			int style,
+			DisableFinishedButtonAction disableFinishedButtonAction) throws UniqueNameException {
 		this.model = model;
 		this.index = index;
 		this.componentWidget = componentWidget;
@@ -67,7 +76,8 @@ public class AttributeWidgetContainer {
 			"" + uniqueIndex,
 			componentWidget,
 			uniqueIndex,
-			grid);
+			grid,
+			disableFinishedButtonAction);
 		createDeleteButton(this.componentWidget, grid);
 
 		SelectionListener suggestedResultColumnNameSelectionListener = new SelectionListener() {
@@ -124,9 +134,9 @@ public class AttributeWidgetContainer {
 
 	public void dispose() {
 		this.componentWidget.removeComponent(AttributeWidgetContainer.this.index);
-		this.model.removeField(this.aggregateFunction);
-		this.model.removeField(this.coreEntityColumn);
-		this.model.removeField(this.resultColumnLabelName);
+		this.aggregateFunction.dispose();
+		this.coreEntityColumn.dispose();
+		this.resultColumnLabelName.dispose();
 	}
 
 	private void suggestName() {
@@ -145,20 +155,21 @@ public class AttributeWidgetContainer {
 		return reimplodedWithUnderscores.toUpperCase();
 	}
 
-	private static GUIModelField<String, Combo, DropDownDataSynchronizer> createAggregateFunction(
-			GUIModel model,
-			String groupName,
-			String aggregateFunctionName,
-			ExpandableComponentWidget<AttributeWidgetContainer> componentWidget,
-			GridContainer grid) {
-		GUIModelField<String, Combo, DropDownDataSynchronizer> aggregateFunction =
+	private static SWTModelField<
+			String, Combo, DropDownDataSynchronizer<String>> createAggregateFunction(
+				SWTModel model,
+				String groupName,
+				String aggregateFunctionName,
+				ExpandableComponentWidget<AttributeWidgetContainer> componentWidget,
+				GridContainer grid) throws UniqueNameException {
+		SWTModelField<String, Combo, DropDownDataSynchronizer<String>> aggregateFunction =
 			model.addDropDown(
-				groupName,
 				aggregateFunctionName,
+				"",
+				groupName,
 				0,
 				AggregateFunction.FUNCTIONS_BY_HUMAN_READABLE_NAMES.keySet(),
 				AggregateFunction.SQL_NAMES_BY_HUMAN_READABLE_NAMES,
-//				MapUtilities.mirror(AggregateFunction.FUNCTIONS_BY_HUMAN_READABLE_NAMES.keySet()),
 				grid.getActualParent(),
 				SWT.BORDER | SWT.READ_ONLY);
 		aggregateFunction.getWidget().setLayoutData(createAggregateFunctionLayoutData());
@@ -173,18 +184,20 @@ public class AttributeWidgetContainer {
 		return layoutData;
 	}
 
-	private static GUIModelField<String, Combo, DropDownDataSynchronizer> createCoreEntityColumn(
-			GUIModel model,
-			String groupName,
-			String coreEntityColumnName,
-			Collection<String> coreEntityColumnLabels,
-			Map<String, String> coreEntityColumnsByLabels,
-			ExpandableComponentWidget<AttributeWidgetContainer> componentWidget,
-			GridContainer grid) {
-		GUIModelField<String, Combo, DropDownDataSynchronizer> coreEntityColumn =
+	private static SWTModelField<
+			String, Combo, DropDownDataSynchronizer<String>> createCoreEntityColumn(
+				SWTModel model,
+				String groupName,
+				String coreEntityColumnName,
+				Collection<String> coreEntityColumnLabels,
+				Map<String, String> coreEntityColumnsByLabels,
+				ExpandableComponentWidget<AttributeWidgetContainer> componentWidget,
+				GridContainer grid) throws UniqueNameException {
+		SWTModelField<String, Combo, DropDownDataSynchronizer<String>> coreEntityColumn =
 			model.addDropDown(
-				groupName,
 				coreEntityColumnName,
+				"",
+				groupName,
 				0,
 				coreEntityColumnLabels,
 				coreEntityColumnsByLabels,
@@ -202,17 +215,19 @@ public class AttributeWidgetContainer {
 		return layoutData;
 	}
 
-	private static GUIModelField<String, Text, TextDataSynchronizer> createResultColumnLabelName(
-			GUIModel model,
+	private static SWTModelField<String, Text, TextDataSynchronizer> createResultColumnLabelName(
+			SWTModel model,
 			String groupName,
 			String resultColumnLabelName,
 			ExpandableComponentWidget<AttributeWidgetContainer> componentWidget,
 			int uniqueIndex,
-			GridContainer grid) {
-		GUIModelField<String, Text, TextDataSynchronizer> resultColumnLabelNameField =
+			GridContainer grid,
+			DisableFinishedButtonAction disableFinishedButtonAction) throws UniqueNameException {
+		SWTModelField<String, Text, TextDataSynchronizer> resultColumnLabelNameField =
 			model.addText(
-				groupName,
 				resultColumnLabelName,
+				"",
+				groupName,
 				"RESULT" + uniqueIndex,
 				false,
 				grid.getActualParent(),
@@ -220,6 +235,9 @@ public class AttributeWidgetContainer {
 		resultColumnLabelNameField.getWidget().setLayoutData(
 			createResultColumnLabelNameLayoutData());
 		grid.addComponent(resultColumnLabelNameField.getWidget());
+		resultColumnLabelNameField.addValidationRule(
+			new AttributeNameValidator<String>(groupName), false, model);
+		resultColumnLabelNameField.addValidationAction(disableFinishedButtonAction);
 
 		return resultColumnLabelNameField;
 	}
@@ -254,5 +272,44 @@ public class AttributeWidgetContainer {
 		GridData layoutData = new GridData(SWT.CENTER, SWT.CENTER, false, false);
 
 		return layoutData;
+	}
+
+	private static class AttributeNameValidator<ValueType> implements FieldValidationRule<ValueType> {
+		private String attributeNameGroup;
+
+		public AttributeNameValidator(String attributeNameGroup) {
+			this.attributeNameGroup = attributeNameGroup;
+		}
+
+		public void validateField(DataModelField<ValueType> field, DataModel model)
+				throws ModelValidationException {
+			DataModelGroup attributeNameGroup = model.getGroup(this.attributeNameGroup);
+			Map<Object, Integer> attributeNamesToCounts = new HashMap<Object, Integer>();
+
+			for (DataModelField<?> fieldInGroup : attributeNameGroup.getFields()) {
+				Object attributeName = fieldInGroup.getValue();
+
+				if (attributeNamesToCounts.containsKey(attributeName)) {
+					attributeNamesToCounts.put(
+						attributeName, attributeNamesToCounts.get(attributeName) + 1);
+				} else {
+					attributeNamesToCounts.put(attributeName, 1);
+				}
+			}
+
+			int attributeNameCount = attributeNamesToCounts.get(field.getValue());
+
+			if (attributeNameCount > 1) {
+				String exceptionMessage = String.format(
+					"You have %d attributes named '%s'.  All attributes must have unique names.",
+					attributeNameCount,
+					field.getName());
+				throw new ModelValidationException(exceptionMessage);
+			} else {
+			}
+		}
+
+		public void fieldDisposed(DataModelField<ValueType> field) {
+		}
 	}
 }

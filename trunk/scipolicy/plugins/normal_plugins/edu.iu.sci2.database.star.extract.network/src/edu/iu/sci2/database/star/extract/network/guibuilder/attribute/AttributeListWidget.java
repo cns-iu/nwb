@@ -6,7 +6,8 @@ import java.util.List;
 import java.util.Map;
 
 import org.cishell.utility.swt.ExpandableComponentWidget;
-import org.cishell.utility.swt.model.GUIModel;
+import org.cishell.utility.swt.WidgetConstructionException;
+import org.cishell.utility.swt.model.SWTModel;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
@@ -14,8 +15,10 @@ import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 
+import edu.iu.sci2.database.star.extract.network.guibuilder.GUIBuilder.DisableFinishedButtonAction;
+
 public class AttributeListWidget extends ExpandableComponentWidget<AttributeWidgetContainer> {
-	public static final String ADD_ATTRIBUTE_BUTTON_TEXT_FORMAT = "Add Another %s Attribute Field";
+	public static final String ADD_ATTRIBUTE_BUTTON_TEXT_FORMAT = "Add Another %s Attribute DataModelField";
 	public static final String REMOVE_ALL_BUTTON_TEXT_FORMAT = "Remove All %s Fields";
 
 	public static final String AGGREGATE_FUNCTION_LABEL_TEXT = "Summarize By:";
@@ -23,14 +26,15 @@ public class AttributeListWidget extends ExpandableComponentWidget<AttributeWidg
 	public static final String RESULT_COLUMN_LABEL_TEXT = "Attribute Name:";
 
 	public AttributeListWidget(
-			GUIModel model,
+			SWTModel model,
 			String aggregateFunctionGroupName,
 			String coreEntityColumnGroupName,
 			Collection<String> coreEntityColumnLabels,
 			Map<String, String> coreEntityColumnsByLabels,
 			String resultColumnLabelGroupName,
 			String type,
-			Composite parent) {
+			Composite parent,
+			DisableFinishedButtonAction disableFinishedButtonAction) {
 		super(
 			parent,
 			new AttributeWidgetFactory(
@@ -39,7 +43,8 @@ public class AttributeListWidget extends ExpandableComponentWidget<AttributeWidg
 				coreEntityColumnGroupName,
 				coreEntityColumnLabels,
 				coreEntityColumnsByLabels,
-				resultColumnLabelGroupName));
+				resultColumnLabelGroupName,
+				disableFinishedButtonAction));
 		Composite headerArea = getHeaderArea();
 		createAddAttributeButton(headerArea, type);
 		createRemoveAllAttributesButton(headerArea, type);
@@ -80,7 +85,11 @@ public class AttributeListWidget extends ExpandableComponentWidget<AttributeWidg
 			}
 
 			private void selected(SelectionEvent event) {
-				AttributeListWidget.this.addComponent(SWT.NONE, null);
+				try {
+					AttributeListWidget.this.addComponent(SWT.NONE, null);
+				} catch (WidgetConstructionException e) {
+					throw new RuntimeException(e.getMessage(), e);
+				}
 			}
 		});
 

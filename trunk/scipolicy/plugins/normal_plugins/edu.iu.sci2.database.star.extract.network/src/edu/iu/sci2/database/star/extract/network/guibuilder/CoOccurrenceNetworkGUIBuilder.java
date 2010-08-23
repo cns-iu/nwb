@@ -4,16 +4,18 @@ import java.util.Collection;
 import java.util.Map;
 
 import org.cishell.utility.datastructure.ObjectContainer;
+import org.cishell.utility.datastructure.datamodel.DataModel;
+import org.cishell.utility.datastructure.datamodel.exception.UniqueNameException;
 import org.cishell.utility.swt.GUIBuilderUtilities;
 import org.cishell.utility.swt.GUICanceledException;
 import org.cishell.utility.swt.SWTUtilities;
-import org.cishell.utility.swt.model.GUIModel;
-import org.cishell.utility.swt.model.GUIModelField;
+import org.cishell.utility.swt.WidgetConstructionException;
+import org.cishell.utility.swt.model.SWTModel;
+import org.cishell.utility.swt.model.SWTModelField;
 import org.cishell.utility.swt.model.datasynchronizer.DropDownDataSynchronizer;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.StyledText;
 import org.eclipse.swt.layout.GridData;
-import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
@@ -40,14 +42,15 @@ public class CoOccurrenceNetworkGUIBuilder extends GUIBuilder {
 
 	public static final String LEAF_FIELD_NAME = "leafEntity";
 
-	public GUIModel createGUI(
+	public DataModel createGUI(
 			String windowTitle,
 			int windowWidth,
 			int windowHeight,
-			StarDatabaseDescriptor databaseDescriptor) throws GUICanceledException {
+			StarDatabaseDescriptor databaseDescriptor)
+			throws GUICanceledException, UniqueNameException {
 		// TODO: Verify that databaseDescriptor is valid for us.
 
-		GUIModel model = new GUIModel();
+		SWTModel model = new SWTModel(SWT.NONE);
 
 		/* Create the GUI shell, and set up its basic structure (header, node aggregates,
 		 *  edge aggregates).
@@ -56,13 +59,13 @@ public class CoOccurrenceNetworkGUIBuilder extends GUIBuilder {
 		Display display = GUIBuilderUtilities.createDisplay();
 		Shell shell = GUIBuilderUtilities.createShell(
 			display, windowTitle, windowWidth, windowHeight, 1, false);
-		Group instructionsGroup = createInstructionsGroup(shell);
+		Composite instructionsArea = createInstructionsArea(shell);
 		Group headerGroup = createHeaderGroup(shell);
 		Group nodeAggregatesGroup = createAggregatesGroup(shell, NODE_ATTRIBUTES_GROUP_TEXT);
 		Group edgeAggregatesGroup = createAggregatesGroup(shell, EDGE_ATTRIBUTES_GROUP_TEXT);
 		Group footerGroup = createFooterGroup(shell);
 
-    	createInstructionsLabel(instructionsGroup);
+    	createInstructionsLabel(instructionsArea);
 
 		// Create and setup the Leaf selection field.
 
@@ -92,14 +95,18 @@ public class CoOccurrenceNetworkGUIBuilder extends GUIBuilder {
 		// Create the finished button so the user can actually execute the resulting queries.
 
 		final ObjectContainer<Boolean> userFinished = new ObjectContainer<Boolean>(false);
-		Button finishedButton = createFinishedButton(footerGroup, 1, userFinished);
+		this.finishedButton = createFinishedButton(footerGroup, 1, userFinished);
 		shell.setDefaultButton(finishedButton);
 
 		// Fill the aggregate widgets with some aggregate fields by default (for the user's ease).
 
-		for (int ii = 0; ii < DEFAULT_AGGREGATE_WIDGET_COUNT; ii++) {
-			nodeAggregatesTable.addComponent(SWT.NONE, null);
-			edgeAggregatesTable.addComponent(SWT.NONE, null);
+		try {
+			for (int ii = 0; ii < DEFAULT_AGGREGATE_WIDGET_COUNT; ii++) {
+				nodeAggregatesTable.addComponent(SWT.NONE, null);
+				edgeAggregatesTable.addComponent(SWT.NONE, null);
+			}
+		} catch (WidgetConstructionException e) {
+			throw new RuntimeException(e.getMessage(), e);
 		}
 
 		// Set the GUI up to be cancelable.
@@ -107,6 +114,10 @@ public class CoOccurrenceNetworkGUIBuilder extends GUIBuilder {
 		final ObjectContainer<GUICanceledException> exceptionThrown =
 			new ObjectContainer<GUICanceledException>();
 		GUIBuilderUtilities.setCancelable(shell, exceptionThrown);
+
+		// Set up validation.
+
+		// TODO
 
 		// Run the GUI and return the model with the data that the user entered.
 
@@ -124,7 +135,7 @@ public class CoOccurrenceNetworkGUIBuilder extends GUIBuilder {
 		StyledText instructionsLabel =
 			new StyledText(parent, SWT.LEFT | SWT.READ_ONLY | SWT.WRAP);
 		instructionsLabel.setBackground(
-			parent.getDisplay().getSystemColor(SWT.COLOR_WIDGET_BACKGROUND));
+			parent.getDisplay().getSystemColor(SWT.COLOR_WHITE));
 		instructionsLabel.setLayoutData(createInstructionsLabelLayoutData());
 		instructionsLabel.getCaret().setVisible(false);
 
@@ -151,18 +162,21 @@ public class CoOccurrenceNetworkGUIBuilder extends GUIBuilder {
 		return layoutData;
 	}
 
-	private static GUIModelField<String, Combo, DropDownDataSynchronizer> createLeafSelectionField(
-			Composite parent, StarDatabaseDescriptor databaseDescriptor, GUIModel model) {
+	private static SWTModelField<
+			String, Combo, DropDownDataSynchronizer<String>> createLeafSelectionField(
+				Composite parent, StarDatabaseDescriptor databaseDescriptor, SWTModel model)
+				throws UniqueNameException {
 		Label label = new Label(parent, SWT.READ_ONLY);
 		label.setLayoutData(createLeafSelectionFieldLabelLayoutData());
 		label.setText(LEAF_FIELD_LABEL);
 
 		Collection<String> columnNames = databaseDescriptor.getLeafTableNames();
 		Map<String, String> columnOptions = databaseDescriptor.getTableNameOptionsWithoutCore();
-		GUIModelField<String, Combo, DropDownDataSynchronizer> leafField =
+		SWTModelField<String, Combo, DropDownDataSynchronizer<String>> leafField =
 			model.addDropDown(
-			HEADER_GROUP_NAME,
 			LEAF_FIELD_NAME,
+			"",
+			HEADER_GROUP_NAME,
 			0,
 			columnNames,
 			columnOptions,

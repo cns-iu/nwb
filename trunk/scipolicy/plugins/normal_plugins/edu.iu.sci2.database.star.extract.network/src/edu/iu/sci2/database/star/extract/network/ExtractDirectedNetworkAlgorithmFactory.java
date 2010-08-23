@@ -7,12 +7,11 @@ import org.cishell.framework.algorithm.Algorithm;
 import org.cishell.framework.algorithm.AlgorithmCreationCanceledException;
 import org.cishell.framework.algorithm.AlgorithmFactory;
 import org.cishell.framework.data.Data;
+import org.cishell.utility.datastructure.datamodel.exception.UniqueNameException;
+import org.cishell.utility.datastructure.datamodel.field.DataModelField;
+import org.cishell.utility.datastructure.datamodel.group.DataModelGroup;
 import org.cishell.utility.swt.GUICanceledException;
-import org.cishell.utility.swt.model.GUIModel;
-import org.cishell.utility.swt.model.GUIModelField;
-import org.cishell.utility.swt.model.GUIModelGroup;
-import org.cishell.utility.swt.model.datasynchronizer.ModelDataSynchronizer;
-import org.eclipse.swt.widgets.Widget;
+import org.cishell.utility.swt.model.SWTModel;
 import org.osgi.framework.BundleContext;
 import org.osgi.service.component.ComponentContext;
 import org.osgi.service.log.LogService;
@@ -25,6 +24,7 @@ import edu.iu.sci2.database.star.extract.network.query.LeafToCoreDirectedNetwork
 import edu.iu.sci2.database.star.extract.network.query.LeafToLeafDirectedNetworkQueryConstructor;
 import edu.iu.sci2.database.star.extract.network.query.QueryConstructor;
 
+// TODO: Rename this at some point to reflect bipartite terminology.
 public class ExtractDirectedNetworkAlgorithmFactory extends ExtractionAlgorithmFactory {
 	public static final String WINDOW_TITLE = "Extract Bipartite Network";
 
@@ -41,7 +41,7 @@ public class ExtractDirectedNetworkAlgorithmFactory extends ExtractionAlgorithmF
     	Data parentData = data[0];
     	StarDatabaseMetadata databaseMetadata = getMetadata(parentData);
     	verifyLeafTables(databaseMetadata, this.logger);
-    	GUIModel model = getModelFromUser(databaseMetadata);
+    	SWTModel model = getModelFromUser(databaseMetadata);
     	QueryConstructor queryConstructor = decideQueryConstructor(databaseMetadata, model);
     	AlgorithmFactory networkQueryRunner = getNetworkQueryRunner(this.bundleContext);
 
@@ -49,22 +49,25 @@ public class ExtractDirectedNetworkAlgorithmFactory extends ExtractionAlgorithmF
         	ciShellContext, parentData, queryConstructor, networkQueryRunner, this.logger);
     }
 
-    private static GUIModel getModelFromUser(StarDatabaseMetadata metadata) {
+    private static SWTModel getModelFromUser(StarDatabaseMetadata metadata)
+    		throws AlgorithmCreationCanceledException {
     	try {
     		return new DirectedNetworkGUIBuilder().createGUI(
     			WINDOW_TITLE, WINDOW_WIDTH, WINDOW_HEIGHT, new StarDatabaseDescriptor(metadata));
     	} catch (GUICanceledException e) {
     		throw new AlgorithmCreationCanceledException(e.getMessage(), e);
+    	} catch (UniqueNameException e) {
+    		throw new AlgorithmCreationCanceledException(e.getMessage(), e);
     	}
     }
 
     private static QueryConstructor decideQueryConstructor(
-    		StarDatabaseMetadata metadata, GUIModel model) {
+    		StarDatabaseMetadata metadata, SWTModel model) {
 	    // TODO: Specify generic types?
-    	GUIModelGroup headerGroup = model.getGroup(GUIBuilder.HEADER_GROUP_NAME);
-    	GUIModelField<?, ? extends Widget, ? extends ModelDataSynchronizer<?>> entity1 =
+    	DataModelGroup headerGroup = model.getGroup(GUIBuilder.HEADER_GROUP_NAME);
+    	DataModelField<?> entity1 =
     		headerGroup.getField(DirectedNetworkGUIBuilder.SOURCE_LEAF_FIELD_NAME);
-    	GUIModelField<?, ? extends Widget, ? extends ModelDataSynchronizer<?>> entity2 =
+    	DataModelField<?> entity2 =
     		headerGroup.getField(DirectedNetworkGUIBuilder.TARGET_LEAF_FIELD_NAME);
     	String coreEntityTableName = metadata.getCoreEntityTableName();
     	String entity1Value = (String) entity1.getValue();
@@ -111,5 +114,6 @@ public class ExtractDirectedNetworkAlgorithmFactory extends ExtractionAlgorithmF
     			model,
     			metadata);
     	}
+    	// TODO: Leaf1 -> Leaf1 (via Core) via Leaf2
     }
 }

@@ -3,7 +3,7 @@ package edu.iu.sci2.database.star.extract.network.query;
 import java.util.Map;
 
 import org.antlr.stringtemplate.StringTemplateGroup;
-import org.cishell.utility.swt.model.GUIModel;
+import org.cishell.utility.datastructure.datamodel.DataModel;
 
 import edu.iu.sci2.database.star.common.StarDatabaseMetadata;
 
@@ -31,7 +31,7 @@ public class CoOccurrenceNetworkQueryConstructor extends QueryConstructor {
 			String edgeAttributeFunctionGroupName,
 			String edgeCoreEntityColumnGroupName,
 			String edgeResultNameGroupName,
-			GUIModel model,
+			DataModel model,
 			StarDatabaseMetadata metadata) {
 		super(
 			headerGroupName,

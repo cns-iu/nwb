@@ -1,5 +1,6 @@
 package edu.iu.sci2.database.star.extract.network.guibuilder;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
@@ -8,18 +9,21 @@ import java.util.Map;
 import org.cishell.utilities.ArrayListUtilities;
 import org.cishell.utilities.CollectionUtilities;
 import org.cishell.utility.datastructure.ObjectContainer;
+import org.cishell.utility.datastructure.datamodel.DataModel;
+import org.cishell.utility.datastructure.datamodel.exception.ModelValidationException;
+import org.cishell.utility.datastructure.datamodel.exception.UniqueNameException;
+import org.cishell.utility.datastructure.datamodel.field.DataModelField;
+import org.cishell.utility.datastructure.datamodel.field.FieldValidationRule;
 import org.cishell.utility.swt.GUIBuilderUtilities;
 import org.cishell.utility.swt.GUICanceledException;
 import org.cishell.utility.swt.SWTUtilities;
-import org.cishell.utility.swt.model.GUIModel;
-import org.cishell.utility.swt.model.GUIModelField;
+import org.cishell.utility.swt.WidgetConstructionException;
+import org.cishell.utility.swt.model.SWTModel;
+import org.cishell.utility.swt.model.SWTModelField;
 import org.cishell.utility.swt.model.datasynchronizer.DropDownDataSynchronizer;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.StyledText;
-import org.eclipse.swt.events.SelectionEvent;
-import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.layout.GridData;
-import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
@@ -32,7 +36,8 @@ import edu.iu.sci2.database.star.extract.network.guibuilder.attribute.AttributeL
 
 public class DirectedNetworkGUIBuilder extends GUIBuilder {
 	public static final String INSTRUCTIONS_LABEL_TEXT =
-		"Choose the entity tables to extract your bipartite between from.\n" +
+		"Choose the entity tables that extract your bipartite network should be " +
+		"extracted between.\n" +
 		"Then, setup any node and edge attributes you want on your resulting network.\n" +
 		"For more information see the Sci2 tutorial at: ";
 	public static final String TUTORIAL_URL =
@@ -48,18 +53,19 @@ public class DirectedNetworkGUIBuilder extends GUIBuilder {
 	public static final String SOURCE_LEAF_FIELD_NAME = "sourceLeafEntity";
 	public static final String TARGET_LEAF_FIELD_NAME = "targetLeafEntity";
 
-	public GUIModel createGUI(
+	public SWTModel createGUI(
 			String windowTitle,
 			int windowWidth,
 			int windowHeight,
-			StarDatabaseDescriptor databaseDescriptor) throws GUICanceledException {
+			StarDatabaseDescriptor databaseDescriptor)
+			throws GUICanceledException, UniqueNameException {
 		// TODO: Verify that databaseDescriptor is valid for us.
 
 		final String coreEntityHumanReadableName =
 			databaseDescriptor.getCoreTableDescriptor().getCoreEntityHumanReadableName();
-		final String coreEntityTableName =
-			databaseDescriptor.getCoreTableDescriptor().getCoreEntityTableName();
-		GUIModel model = new GUIModel();
+//		final String coreEntityTableName =
+//			databaseDescriptor.getCoreTableDescriptor().getCoreEntityTableName();
+		SWTModel model = new SWTModel(SWT.NONE);
 
 		/* Create the GUI shell, and set up its basic structure (header, node aggregates,
 		 *  edge aggregates).
@@ -68,20 +74,20 @@ public class DirectedNetworkGUIBuilder extends GUIBuilder {
 		Display display = GUIBuilderUtilities.createDisplay();
 		Shell shell = GUIBuilderUtilities.createShell(
 			display, windowTitle, windowWidth, windowHeight, 1, false);
-		Group instructionsGroup = createInstructionsGroup(shell);
+		Composite instructionsArea = createInstructionsArea(shell);
 		Group headerGroup = createHeaderGroup(shell);
 		Group nodeAggregatesGroup = createAggregatesGroup(shell, NODE_ATTRIBUTES_GROUP_TEXT);
 		Group edgeAggregatesGroup = createAggregatesGroup(shell, EDGE_ATTRIBUTES_GROUP_TEXT);
 		Group footerGroup = createFooterGroup(shell);
 
-    	createInstructionsLabel(instructionsGroup);
+    	createInstructionsLabel(instructionsArea);
 
 		// Create the options for the Source and Target selection fields.
 
-		List<String> allOptionsExceptCore =
-			ArrayListUtilities.copyAndSort(databaseDescriptor.getLeafTableNames());
-		Map<String, String> allOptionsByLabelsExceptCore =
-			databaseDescriptor.getTableNameOptionsWithoutCore();
+//		List<String> allOptionsExceptCore =
+//			ArrayListUtilities.copyAndSort(databaseDescriptor.getLeafTableNames());
+//		Map<String, String> allOptionsByLabelsExceptCore =
+//			databaseDescriptor.getTableNameOptionsWithoutCore();
 		List<String> allOptions =
 			ArrayListUtilities.copyAndSort(databaseDescriptor.getLeafTableNames());
 		allOptions = ArrayListUtilities.unionCollectionsAsList(
@@ -92,7 +98,7 @@ public class DirectedNetworkGUIBuilder extends GUIBuilder {
 
 		// Create and setup the Source and Target selection fields.
 
-		GUIModelField<String, Combo, DropDownDataSynchronizer> sourceLeafField =
+		SWTModelField<String, Combo, DropDownDataSynchronizer<String>> sourceLeafField =
 			createLeafSelectionField(
 				SOURCE_LEAF_FIELD_LABEL,
 				HEADER_GROUP_NAME,
@@ -102,7 +108,8 @@ public class DirectedNetworkGUIBuilder extends GUIBuilder {
 				databaseDescriptor,
 				model,
 				headerGroup);
-		GUIModelField<String, Combo, DropDownDataSynchronizer> targetLeafField =
+		this.disableFinishedButtonAction.addField(sourceLeafField, true);
+		SWTModelField<String, Combo, DropDownDataSynchronizer<String>> targetLeafField =
 			createLeafSelectionField(
 				TARGET_LEAF_FIELD_LABEL,
 				HEADER_GROUP_NAME,
@@ -112,30 +119,31 @@ public class DirectedNetworkGUIBuilder extends GUIBuilder {
 				databaseDescriptor,
 				model,
 				headerGroup);
+		this.disableFinishedButtonAction.addField(sourceLeafField, true);
 
 		/*
 		 * Make it so only one of the Source and Target selection fields can be the core
 		 *  entity option.
 		 */
 
-		sourceLeafField.getWidget().addSelectionListener(createLeafSelectionListener(
-			allOptionsExceptCore,
-			allOptionsByLabelsExceptCore,
-			allOptions,
-			allOptionsByLabels,
-			coreEntityHumanReadableName,
-			coreEntityTableName,
-			sourceLeafField,
-			targetLeafField));
-		targetLeafField.getWidget().addSelectionListener(createLeafSelectionListener(
-			allOptionsExceptCore,
-			allOptionsByLabelsExceptCore,
-			allOptions,
-			allOptionsByLabels,
-			coreEntityHumanReadableName,
-			coreEntityTableName,
-			targetLeafField,
-			sourceLeafField));
+//		sourceLeafField.getWidget().addSelectionListener(createLeafSelectionListener(
+//			allOptionsExceptCore,
+//			allOptionsByLabelsExceptCore,
+//			allOptions,
+//			allOptionsByLabels,
+//			coreEntityHumanReadableName,
+//			coreEntityTableName,
+//			sourceLeafField,
+//			targetLeafField));
+//		targetLeafField.getWidget().addSelectionListener(createLeafSelectionListener(
+//			allOptionsExceptCore,
+//			allOptionsByLabelsExceptCore,
+//			allOptions,
+//			allOptionsByLabels,
+//			coreEntityHumanReadableName,
+//			coreEntityTableName,
+//			targetLeafField,
+//			sourceLeafField));
 
 		// Create the widget that allows users to specify node and edge aggregate fields.
 
@@ -161,14 +169,17 @@ public class DirectedNetworkGUIBuilder extends GUIBuilder {
 		// Create the finished button so the user can actually execute the resulting queries.
 
 		final ObjectContainer<Boolean> userFinished = new ObjectContainer<Boolean>(false);
-		@SuppressWarnings("unused")
-		Button finishedButton = createFinishedButton(footerGroup, 1, userFinished);
+		this.finishedButton = createFinishedButton(footerGroup, 1, userFinished);
 
 		// Fill the aggregate widgets with some aggregate fields by default (for the user's ease).
 
-		for (int ii = 0; ii < DEFAULT_AGGREGATE_WIDGET_COUNT; ii++) {
-			nodeAggregatesWidget.addComponent(SWT.NONE, null);
-			edgeAggregatesWidget.addComponent(SWT.NONE, null);
+		try {
+			for (int ii = 0; ii < DEFAULT_AGGREGATE_WIDGET_COUNT; ii++) {
+				nodeAggregatesWidget.addComponent(SWT.NONE, null);
+				edgeAggregatesWidget.addComponent(SWT.NONE, null);
+			}
+		} catch (WidgetConstructionException e) {
+			throw new RuntimeException(e.getMessage(), e);
 		}
 
 		// Set the GUI up to be cancelable.
@@ -176,6 +187,16 @@ public class DirectedNetworkGUIBuilder extends GUIBuilder {
 		final ObjectContainer<GUICanceledException> exceptionThrown =
 			new ObjectContainer<GUICanceledException>();
 		GUIBuilderUtilities.setCancelable(shell, exceptionThrown);
+
+		// Set up validation for the leaf table selectors.
+
+		LeafTableSelectionValidator leafTableSelectionValidator =
+			new LeafTableSelectionValidator(sourceLeafField, targetLeafField);
+//		sourceLeafField.addValidator(leafTableSelectionValidator, true, model);
+//		targetLeafField.addValidator(leafTableSelectionValidator, true, model);
+		sourceLeafField.addValidationRule(leafTableSelectionValidator, false, model);
+		targetLeafField.addValidationRule(leafTableSelectionValidator, false, model);
+		this.finishedButton.setEnabled(false);
 
 		// Run the GUI and return the model with the data that the user entered.
 
@@ -193,7 +214,7 @@ public class DirectedNetworkGUIBuilder extends GUIBuilder {
 		StyledText instructionsLabel =
 			new StyledText(parent, SWT.LEFT | SWT.READ_ONLY | SWT.WRAP);
 		instructionsLabel.setBackground(
-			parent.getDisplay().getSystemColor(SWT.COLOR_WIDGET_BACKGROUND));
+			parent.getDisplay().getSystemColor(SWT.COLOR_WHITE));
 		instructionsLabel.setLayoutData(createInstructionsLabelLayoutData());
 		instructionsLabel.getCaret().setVisible(false);
 
@@ -220,30 +241,34 @@ public class DirectedNetworkGUIBuilder extends GUIBuilder {
 		return layoutData;
 	}
 
-	private static GUIModelField<String, Combo, DropDownDataSynchronizer> createLeafSelectionField(
-			String labelText,
-			String groupName,
-			String fieldName,
-			Collection<String> allOptionLabels,
-			Map<String, String> allOptionValuesByLabels,
-			StarDatabaseDescriptor databaseDescriptor,
-			GUIModel model,
-			Composite parent) {
+	private SWTModelField<
+			String, Combo, DropDownDataSynchronizer<String>> createLeafSelectionField(
+				String labelText,
+				String groupName,
+				String fieldName,
+				Collection<String> allOptionLabels,
+				Map<String, String> allOptionValuesByLabels,
+				StarDatabaseDescriptor databaseDescriptor,
+				SWTModel model,
+				Composite parent) throws UniqueNameException {
 		Label label = new Label(parent, SWT.READ_ONLY);
 		label.setLayoutData(createLeafSelectionFieldLabelLayoutData());
 		label.setText(labelText);
 
-		GUIModelField<String, Combo, DropDownDataSynchronizer> leafField = model.addDropDown(
-			groupName,
-			fieldName,
-			0,
-			allOptionLabels,
-			allOptionValuesByLabels,
-			parent,
-			SWT.BORDER | SWT.READ_ONLY);
+		SWTModelField<String, Combo, DropDownDataSynchronizer<String>> leafField =
+			model.addDropDown(
+				fieldName,
+				"",
+				groupName,
+				0,
+				allOptionLabels,
+				allOptionValuesByLabels,
+				parent,
+				SWT.BORDER | SWT.READ_ONLY);
 		leafField.getWidget().setLayoutData(createLeafSelectionFieldLayoutData());
 		leafField.setValue(
 			allOptionValuesByLabels.get(CollectionUtilities.get(allOptionLabels, 1)));
+		leafField.addValidationAction(this.disableFinishedButtonAction);
 
 		return leafField;
 	}
@@ -260,37 +285,69 @@ public class DirectedNetworkGUIBuilder extends GUIBuilder {
 		return layoutData;
 	}
 
-	private static SelectionListener createLeafSelectionListener(
-			final List<String> allOptionsExceptCore,
-			final Map<String, String> allOptionsByLabelsExceptCore,
-			final List<String> allOptions,
-			final Map<String, String> allOptionsByLabels,
-			final String coreEntityHumanReadableName,
-			final String coreEntityTableName,
-			final GUIModelField<String, Combo, DropDownDataSynchronizer> sourceLeafField,
-			final GUIModelField<String, Combo, DropDownDataSynchronizer> targetLeafField) {
-		return new SelectionListener() {
-			public void widgetDefaultSelected(SelectionEvent event) {
-				selected(event);
-			}
+//	private static SelectionListener createLeafSelectionListener(
+//			final List<String> allOptionsExceptCore,
+//			final Map<String, String> allOptionsByLabelsExceptCore,
+//			final List<String> allOptions,
+//			final Map<String, String> allOptionsByLabels,
+//			final String coreEntityHumanReadableName,
+//			final String coreEntityTableName,
+//			final SWTModelField<String, Combo, DropDownDataSynchronizer<String>> sourceLeafField,
+//			final SWTModelField<String, Combo, DropDownDataSynchronizer<String>> targetLeafField) {
+//		return new SelectionListener() {
+//			public void widgetDefaultSelected(SelectionEvent event) {
+//				selected(event);
+//			}
+//
+//			public void widgetSelected(SelectionEvent event) {
+//				selected(event);
+//			}
+//
+//			private void selected(SelectionEvent event) {
+//				if (coreEntityTableName.equals(sourceLeafField.getValue())) {
+//					final String targetLeafFieldValue = targetLeafField.getValue();
+//					targetLeafField.getDataSynchronizer().setOptions(
+//						allOptionsExceptCore, allOptionsByLabelsExceptCore);
+//					targetLeafField.setValue(targetLeafFieldValue);
+//				} else if (coreEntityTableName.equals(sourceLeafField.getPreviousValue())) {
+//					final String targetLeafFieldValue = targetLeafField.getValue();
+//					targetLeafField.getDataSynchronizer().setOptions(
+//						allOptions, allOptionsByLabels);
+//					targetLeafField.setValue(targetLeafFieldValue);
+//				}
+//			}
+//		};
+//	}
 
-			public void widgetSelected(SelectionEvent event) {
-				selected(event);
-			}
+	private class LeafTableSelectionValidator implements FieldValidationRule<String> {
+		private SWTModelField<String, Combo, DropDownDataSynchronizer<String>> sourceLeafField;
+		private SWTModelField<String, Combo, DropDownDataSynchronizer<String>> targetLeafField;
+		private List<DataModelField<?>> alsoValidateFields =
+			new ArrayList<DataModelField<?>>(1);
 
-			private void selected(SelectionEvent event) {
-				if (coreEntityTableName.equals(sourceLeafField.getValue())) {
-					final String targetLeafFieldValue = targetLeafField.getValue();
-					targetLeafField.getDataSynchronizer().setOptions(
-						allOptionsExceptCore, allOptionsByLabelsExceptCore);
-					targetLeafField.setValue(targetLeafFieldValue);
-				} else if (coreEntityTableName.equals(sourceLeafField.getPreviousValue())) {
-					final String targetLeafFieldValue = targetLeafField.getValue();
-					targetLeafField.getDataSynchronizer().setOptions(
-						allOptions, allOptionsByLabels);
-					targetLeafField.setValue(targetLeafFieldValue);
-				}
+		public LeafTableSelectionValidator(
+				SWTModelField<String, Combo, DropDownDataSynchronizer<String>> sourceLeafField,
+				SWTModelField<String, Combo, DropDownDataSynchronizer<String>> targetLeafField) {
+			this.sourceLeafField = sourceLeafField;
+			this.targetLeafField = targetLeafField;
+		}
+
+		public void validateField(DataModelField<String> field, DataModel model)
+				throws ModelValidationException {
+			if (this.sourceLeafField.getValue().equals(this.targetLeafField.getValue())) {
+//				if (field == this.sourceLeafField) {
+//					this.alsoValidateFields.set(0, this.targetLeafField)
+//				}
+
+				String format =
+					"The Source and Target leaf tables must differ for this type of network " +
+					"extraction.  They both have the '%s' table selected.";
+				String exceptionMessage = String.format(format, this.sourceLeafField.getValue());
+				throw new ModelValidationException(exceptionMessage);
 			}
-		};
+		}
+
+		public void fieldDisposed(DataModelField<String> field) {
+		}
 	}
 }

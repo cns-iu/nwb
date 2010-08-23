@@ -13,11 +13,9 @@ import org.antlr.stringtemplate.StringTemplate;
 import org.antlr.stringtemplate.StringTemplateGroup;
 import org.cishell.utilities.MapUtilities;
 import org.cishell.utilities.StringUtilities;
-import org.cishell.utility.swt.model.GUIModel;
-import org.cishell.utility.swt.model.GUIModelField;
-import org.cishell.utility.swt.model.GUIModelGroup;
-import org.cishell.utility.swt.model.datasynchronizer.ModelDataSynchronizer;
-import org.eclipse.swt.widgets.Widget;
+import org.cishell.utility.datastructure.datamodel.DataModel;
+import org.cishell.utility.datastructure.datamodel.field.DataModelField;
+import org.cishell.utility.datastructure.datamodel.group.DataModelGroup;
 
 import com.google.common.base.Predicate;
 import com.google.common.collect.Collections2;
@@ -64,7 +62,7 @@ public abstract class QueryConstructor {
 			String edgeAttributeFunctionGroupName,
 			String edgeCoreEntityColumnGroupName,
 			String edgeResultNameGroupName,
-			GUIModel model,
+			DataModel model,
 			StarDatabaseMetadata metadata) {
 		this.coreTableName = metadata.getCoreEntityTableName();
 
@@ -151,9 +149,9 @@ public abstract class QueryConstructor {
 	public abstract boolean isDirected();
 
 	private void organizeNodeAggregateStuff(
-			GUIModelGroup aggregateFunctionGroup,
-			GUIModelGroup coreEntityColumnGroup,
-			GUIModelGroup resultColumnLabelGroup,
+			DataModelGroup aggregateFunctionGroup,
+			DataModelGroup coreEntityColumnGroup,
+			DataModelGroup resultColumnLabelGroup,
 			Map<String, ColumnDescriptor> columnDescriptors) {
 		List<ColumnDescriptor> nonAggregatedColumns = new ArrayList<ColumnDescriptor>();
 		List<Aggregate> aggregates = new ArrayList<Aggregate>();
@@ -175,9 +173,9 @@ public abstract class QueryConstructor {
 	}
 
 	private void organizeEdgeAggregateStuff(
-			GUIModelGroup aggregateFunctionGroup,
-			GUIModelGroup coreEntityColumnGroup,
-			GUIModelGroup resultColumnLabelGroup,
+			DataModelGroup aggregateFunctionGroup,
+			DataModelGroup coreEntityColumnGroup,
+			DataModelGroup resultColumnLabelGroup,
 			Map<String, ColumnDescriptor> columnDescriptors) {
 		List<ColumnDescriptor> nonAggregatedColumns = new ArrayList<ColumnDescriptor>();
 		List<Aggregate> aggregates = new ArrayList<Aggregate>();
@@ -204,15 +202,16 @@ public abstract class QueryConstructor {
 			List<ColumnDescriptor> nonAggregatedColumns,
 			String objectType,
 			List<Aggregate> aggregates,
-			GUIModelGroup aggregateFunctionGroup,
-			GUIModelGroup coreEntityColumnGroup,
-			GUIModelGroup resultColumnLabelGroup,
+			DataModelGroup aggregateFunctionGroup,
+			DataModelGroup coreEntityColumnGroup,
+			DataModelGroup resultColumnLabelGroup,
 			Map<String, ColumnDescriptor> columnDescriptors) {
 		Set<String> aggregatedColumns = new HashSet<String>();
+		System.err.println("aggregateFunctionGroup: " + aggregateFunctionGroup);
+		System.err.println("coreEntityColumnGroup: " + coreEntityColumnGroup);
+		System.err.println("resultColumnLabelGroup: " + resultColumnLabelGroup);
 
-		for (GUIModelField<
-				?, ? extends Widget, ? extends ModelDataSynchronizer<?>> aggregateFunctionField :
-					aggregateFunctionGroup.getFields()) {
+		for (DataModelField<?> aggregateFunctionField : aggregateFunctionGroup.getFields()) {
 			String id = aggregateFunctionField.getName();
 			String coreEntityColumnName = (String) coreEntityColumnGroup.getField(id).getValue();
 			String aggregateFunctionName = (String) aggregateFunctionField.getValue();

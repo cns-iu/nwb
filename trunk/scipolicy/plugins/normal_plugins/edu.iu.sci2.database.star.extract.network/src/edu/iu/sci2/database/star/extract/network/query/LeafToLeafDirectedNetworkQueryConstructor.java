@@ -4,7 +4,7 @@ import java.util.Map;
 
 import org.antlr.stringtemplate.StringTemplateGroup;
 import org.cishell.utilities.StringUtilities;
-import org.cishell.utility.swt.model.GUIModel;
+import org.cishell.utility.swt.model.SWTModel;
 
 import edu.iu.sci2.database.star.common.StarDatabaseMetadata;
 
@@ -32,7 +32,7 @@ public class LeafToLeafDirectedNetworkQueryConstructor extends QueryConstructor 
 			String edgeAttributeFunctionGroupName,
 			String edgeCoreEntityColumnGroupName,
 			String edgeResultNameGroupName,
-			GUIModel model,
+			SWTModel model,
 			StarDatabaseMetadata metadata) {
 		super(
 			headerGroupName,
