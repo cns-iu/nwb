@@ -138,8 +138,10 @@ public class GraphMLWriter extends AbstractGraphWriter {
         			xml.start(Tokens.NODE, Tokens.ID, "n" + String.valueOf(n.getRow()));
         			for ( int i=0; i<ns.getColumnCount(); ++i ) {
         				String field = ns.getColumnName(i);
-        				if(n.get(field) != null) {
-        					xml.contentTag(Tokens.DATA, Tokens.KEY, field.toLowerCase(), n.get(field).toString());
+        				
+        				Object value = n.get(field);
+        				if (value != null) {
+        					xml.contentTag(Tokens.DATA, Tokens.KEY, field.toLowerCase(), value.toString());
         				}
         		}
                 xml.end();
@@ -172,8 +174,12 @@ public class GraphMLWriter extends AbstractGraphWriter {
         						field.equals(graph.getEdgeTargetField()) )
         					continue;
                     
-        				xml.contentTag(Tokens.DATA, Tokens.KEY, field.toLowerCase(), 
-                                   e.get(field).toString());
+        				Object value = e.get(field);
+        				
+        				if (value != null) { // Suppress elements for null-valued edge attributes
+	        				xml.contentTag(Tokens.DATA, Tokens.KEY, field.toLowerCase(), 
+	                                   e.get(field).toString());
+        				}
         			}
                 xml.end();
         		} else {
