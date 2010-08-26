@@ -54,6 +54,10 @@ public class ExtractCoOccurrenceNetworkAlgorithmFactory extends ExtractionAlgori
         	ciShellContext, parentData, queryConstructor, networkQueryRunner, this.logger);
     }
 
+    public int minimumLeafTableCount() {
+    	return 1;
+    }
+
     private static DataModel getModelFromUser(StarDatabaseMetadata metadata)
     		throws AlgorithmCreationCanceledException {
     	try {

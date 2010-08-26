@@ -49,6 +49,10 @@ public class ExtractDirectedNetworkAlgorithmFactory extends ExtractionAlgorithmF
         	ciShellContext, parentData, queryConstructor, networkQueryRunner, this.logger);
     }
 
+    public int minimumLeafTableCount() {
+    	return 1;
+    }
+
     private static SWTModel getModelFromUser(StarDatabaseMetadata metadata)
     		throws AlgorithmCreationCanceledException {
     	try {

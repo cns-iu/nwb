@@ -1,16 +1,11 @@
 package edu.iu.sci2.database.star.extract.network.guibuilder.attribute;
 
 import java.util.Collection;
-import java.util.HashMap;
 import java.util.Map;
 
 import org.cishell.utilities.StringUtilities;
-import org.cishell.utility.datastructure.datamodel.DataModel;
-import org.cishell.utility.datastructure.datamodel.exception.ModelValidationException;
 import org.cishell.utility.datastructure.datamodel.exception.UniqueNameException;
-import org.cishell.utility.datastructure.datamodel.field.DataModelField;
-import org.cishell.utility.datastructure.datamodel.field.FieldValidationRule;
-import org.cishell.utility.datastructure.datamodel.group.DataModelGroup;
+import org.cishell.utility.datastructure.datamodel.field.validation.FieldValidator;
 import org.cishell.utility.swt.ExpandableComponentWidget;
 import org.cishell.utility.swt.GridContainer;
 import org.cishell.utility.swt.model.SWTModel;
@@ -28,6 +23,7 @@ import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Text;
 
 import edu.iu.sci2.database.star.extract.network.aggregate.AggregateFunction;
+import edu.iu.sci2.database.star.extract.network.guibuilder.DisplayErrorMessagesValidationAction;
 import edu.iu.sci2.database.star.extract.network.guibuilder.GUIBuilder.DisableFinishedButtonAction;
 
 public class AttributeWidgetContainer {
@@ -39,7 +35,7 @@ public class AttributeWidgetContainer {
 
 	private SWTModelField<String, Combo, DropDownDataSynchronizer<String>> aggregateFunction;
 	private SWTModelField<String, Combo, DropDownDataSynchronizer<String>> coreEntityColumn;
-	private SWTModelField<String, Text, TextDataSynchronizer> resultColumnLabelName;
+	private SWTModelField<String, Text, TextDataSynchronizer> attributeNameField;
 
 	private boolean userEnteredCustomResultColumnLabelName = false;
 
@@ -55,7 +51,11 @@ public class AttributeWidgetContainer {
 			int uniqueIndex,
 			GridContainer grid,
 			int style,
-			DisableFinishedButtonAction disableFinishedButtonAction) throws UniqueNameException {
+			FieldValidator<String> attributeNameValidator,
+			Collection<FieldValidator<String>> otherValidators,
+			DisableFinishedButtonAction disableFinishedButtonAction,
+			DisplayErrorMessagesValidationAction displayErrorMessagesValidationAction)
+			throws UniqueNameException {
 		this.model = model;
 		this.index = index;
 		this.componentWidget = componentWidget;
@@ -70,14 +70,17 @@ public class AttributeWidgetContainer {
 			coreEntityColumnsByLabels,
 			componentWidget,
 			grid);
-		this.resultColumnLabelName = createResultColumnLabelName(
+		this.attributeNameField = createAttributeNameField(
 			this.model,
 			resultColumnLabelGroupName,
 			"" + uniqueIndex,
 			componentWidget,
 			uniqueIndex,
 			grid,
-			disableFinishedButtonAction);
+			attributeNameValidator,
+			otherValidators,
+			disableFinishedButtonAction,
+			displayErrorMessagesValidationAction);
 		createDeleteButton(this.componentWidget, grid);
 
 		SelectionListener suggestedResultColumnNameSelectionListener = new SelectionListener() {
@@ -101,7 +104,7 @@ public class AttributeWidgetContainer {
 			suggestedResultColumnNameSelectionListener);
 
 		suggestName();
-		this.resultColumnLabelName.getWidget().addKeyListener(new KeyListener() {
+		this.attributeNameField.getWidget().addKeyListener(new KeyListener() {
 			public void keyPressed(KeyEvent event) {
 				key(event);
 			}
@@ -125,7 +128,7 @@ public class AttributeWidgetContainer {
 	}
 
 	public String getResultColumnLabelName() {
-		return this.resultColumnLabelName.getValue();
+		return this.attributeNameField.getValue();
 	}
 
 	public void reindex(int newIndex) {
@@ -136,7 +139,7 @@ public class AttributeWidgetContainer {
 		this.componentWidget.removeComponent(AttributeWidgetContainer.this.index);
 		this.aggregateFunction.dispose();
 		this.coreEntityColumn.dispose();
-		this.resultColumnLabelName.dispose();
+		this.attributeNameField.dispose();
 	}
 
 	private void suggestName() {
@@ -144,7 +147,7 @@ public class AttributeWidgetContainer {
 		String coreEntityColumn = suggestName_FixValue(this.coreEntityColumn.getValue());
 		String value = String.format(
 			"%s_%s", aggregateFunction, coreEntityColumn);
-		this.resultColumnLabelName.setValue(value);
+		this.attributeNameField.setValue(value);
 	}
 
 	private String suggestName_FixValue(String originalValue) {
@@ -215,15 +218,20 @@ public class AttributeWidgetContainer {
 		return layoutData;
 	}
 
-	private static SWTModelField<String, Text, TextDataSynchronizer> createResultColumnLabelName(
-			SWTModel model,
-			String groupName,
-			String resultColumnLabelName,
-			ExpandableComponentWidget<AttributeWidgetContainer> componentWidget,
-			int uniqueIndex,
-			GridContainer grid,
-			DisableFinishedButtonAction disableFinishedButtonAction) throws UniqueNameException {
-		SWTModelField<String, Text, TextDataSynchronizer> resultColumnLabelNameField =
+	private SWTModelField<
+			String, Text, TextDataSynchronizer> createAttributeNameField(
+				SWTModel model,
+				String groupName,
+				String resultColumnLabelName,
+				ExpandableComponentWidget<AttributeWidgetContainer> componentWidget,
+				int uniqueIndex,
+				GridContainer grid,
+				FieldValidator<String> attributeNameValidator,
+				Collection<FieldValidator<String>> otherValidators,
+				DisableFinishedButtonAction disableFinishedButtonAction,
+				DisplayErrorMessagesValidationAction displayErrorMessagesValidationAction)
+			throws UniqueNameException {
+		SWTModelField<String, Text, TextDataSynchronizer> attributeNameField =
 			model.addText(
 				resultColumnLabelName,
 				"",
@@ -232,17 +240,17 @@ public class AttributeWidgetContainer {
 				false,
 				grid.getActualParent(),
 				SWT.BORDER);
-		resultColumnLabelNameField.getWidget().setLayoutData(
-			createResultColumnLabelNameLayoutData());
-		grid.addComponent(resultColumnLabelNameField.getWidget());
-		resultColumnLabelNameField.addValidationRule(
-			new AttributeNameValidator<String>(groupName), false, model);
-		resultColumnLabelNameField.addValidationAction(disableFinishedButtonAction);
+		attributeNameField.getWidget().setLayoutData(createAttributeNameFieldLayoutData());
+		grid.addComponent(attributeNameField.getWidget());
+		attributeNameField.addValidator(attributeNameValidator);
+		attributeNameField.addOtherValidators(otherValidators);
+		attributeNameField.addValidationAction(disableFinishedButtonAction);
+		attributeNameField.addValidationAction(displayErrorMessagesValidationAction);
 
-		return resultColumnLabelNameField;
+		return attributeNameField;
 	}
 
-	private static GridData createResultColumnLabelNameLayoutData() {
+	private static GridData createAttributeNameFieldLayoutData() {
 		GridData layoutData = new GridData(SWT.FILL, SWT.CENTER, true, false);
 
 		return layoutData;
@@ -274,42 +282,42 @@ public class AttributeWidgetContainer {
 		return layoutData;
 	}
 
-	private static class AttributeNameValidator<ValueType> implements FieldValidationRule<ValueType> {
-		private String attributeNameGroup;
-
-		public AttributeNameValidator(String attributeNameGroup) {
-			this.attributeNameGroup = attributeNameGroup;
-		}
-
-		public void validateField(DataModelField<ValueType> field, DataModel model)
-				throws ModelValidationException {
-			DataModelGroup attributeNameGroup = model.getGroup(this.attributeNameGroup);
-			Map<Object, Integer> attributeNamesToCounts = new HashMap<Object, Integer>();
-
-			for (DataModelField<?> fieldInGroup : attributeNameGroup.getFields()) {
-				Object attributeName = fieldInGroup.getValue();
-
-				if (attributeNamesToCounts.containsKey(attributeName)) {
-					attributeNamesToCounts.put(
-						attributeName, attributeNamesToCounts.get(attributeName) + 1);
-				} else {
-					attributeNamesToCounts.put(attributeName, 1);
-				}
-			}
-
-			int attributeNameCount = attributeNamesToCounts.get(field.getValue());
-
-			if (attributeNameCount > 1) {
-				String exceptionMessage = String.format(
-					"You have %d attributes named '%s'.  All attributes must have unique names.",
-					attributeNameCount,
-					field.getName());
-				throw new ModelValidationException(exceptionMessage);
-			} else {
-			}
-		}
-
-		public void fieldDisposed(DataModelField<ValueType> field) {
-		}
-	}
+//	private static class AttributeNameValidator<ValueType> implements FieldValidationRule<ValueType> {
+//		private String attributeNameGroup;
+//
+//		public AttributeNameValidator(String attributeNameGroup) {
+//			this.attributeNameGroup = attributeNameGroup;
+//		}
+//
+//		public void validateField(DataModelField<ValueType> field, DataModel model)
+//				throws ModelValidationException {
+//			DataModelGroup attributeNameGroup = model.getGroup(this.attributeNameGroup);
+//			Map<Object, Integer> attributeNamesToCounts = new HashMap<Object, Integer>();
+//
+//			for (DataModelField<?> fieldInGroup : attributeNameGroup.getFields()) {
+//				Object attributeName = fieldInGroup.getValue();
+//
+//				if (attributeNamesToCounts.containsKey(attributeName)) {
+//					attributeNamesToCounts.put(
+//						attributeName, attributeNamesToCounts.get(attributeName) + 1);
+//				} else {
+//					attributeNamesToCounts.put(attributeName, 1);
+//				}
+//			}
+//
+//			int attributeNameCount = attributeNamesToCounts.get(field.getValue());
+//
+//			if (attributeNameCount > 1) {
+//				String exceptionMessage = String.format(
+//					"You have %d attributes named '%s'.  All attributes must have unique names.",
+//					attributeNameCount,
+//					field.getName());
+//				throw new ModelValidationException(exceptionMessage);
+//			} else {
+//			}
+//		}
+//
+//		public void fieldDisposed(DataModelField<ValueType> field) {
+//		}
+//	}
 }

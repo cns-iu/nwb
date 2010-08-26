@@ -20,7 +20,6 @@ public class ExtractNetworkAlgorithm implements Algorithm, ProgressTrackable {
 	private Data parentData;
 	private QueryConstructor queryConstructor;
 	private AlgorithmFactory networkQueryRunner;
-//	private LogService logger;
 	private ProgressMonitor progressMonitor = ProgressMonitor.NULL_MONITOR;
 
     public ExtractNetworkAlgorithm(
@@ -33,7 +32,6 @@ public class ExtractNetworkAlgorithm implements Algorithm, ProgressTrackable {
     	this.parentData = parentData;
     	this.queryConstructor = queryConstructor;
     	this.networkQueryRunner = networkQueryRunner;
-//    	this.logger = logger;
     }
 
     public Data[] execute() throws AlgorithmExecutionException {

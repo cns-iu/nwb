@@ -1,14 +1,15 @@
 package edu.iu.sci2.database.star.extract.network.guibuilder;
 
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Map;
 
 import org.cishell.utility.datastructure.ObjectContainer;
 import org.cishell.utility.datastructure.datamodel.DataModel;
 import org.cishell.utility.datastructure.datamodel.exception.UniqueNameException;
+import org.cishell.utility.datastructure.datamodel.field.validation.FieldValidator;
 import org.cishell.utility.swt.GUIBuilderUtilities;
 import org.cishell.utility.swt.GUICanceledException;
-import org.cishell.utility.swt.SWTUtilities;
 import org.cishell.utility.swt.WidgetConstructionException;
 import org.cishell.utility.swt.model.SWTModel;
 import org.cishell.utility.swt.model.SWTModelField;
@@ -35,6 +36,7 @@ public class CoOccurrenceNetworkGUIBuilder extends GUIBuilder {
 		"https://nwb.slis.indiana.edu/community/" +
 		"?n=Sci2Algorithm.GenericCSVExtractCoOccurrenceNetwork";
 	public static final String TUTORIAL_DISPLAY_URL = "Sci2 Tutorial";
+	public static final int INSTRUCTIONS_LABEL_HEIGHT = 55;
 
 	public static final String LEAF_FIELD_LABEL =
 		"Choose the Leaf column to extract the co-occurrence network on: ";
@@ -42,6 +44,7 @@ public class CoOccurrenceNetworkGUIBuilder extends GUIBuilder {
 
 	public static final String LEAF_FIELD_NAME = "leafEntity";
 
+	@SuppressWarnings("unchecked")	// Arrays.asList creating genericly-typed arrays.
 	public DataModel createGUI(
 			String windowTitle,
 			int windowWidth,
@@ -49,6 +52,15 @@ public class CoOccurrenceNetworkGUIBuilder extends GUIBuilder {
 			StarDatabaseDescriptor databaseDescriptor)
 			throws GUICanceledException, UniqueNameException {
 		// TODO: Verify that databaseDescriptor is valid for us.
+
+		// Create validators that all of our valiated fields should know about.
+
+		Collection<FieldValidator<String>> otherValidatorsForNodeAttributes =
+			Arrays.<FieldValidator<String>>asList(
+				this.leafSelectorFieldValidator, this.edgeAttributesFieldValidator);
+		Collection<FieldValidator<String>> otherValidatorsForEdgeAttributes =
+			Arrays.<FieldValidator<String>>asList(
+				this.leafSelectorFieldValidator, this.nodeAttributesFieldValidator);
 
 		SWTModel model = new SWTModel(SWT.NONE);
 
@@ -65,7 +77,13 @@ public class CoOccurrenceNetworkGUIBuilder extends GUIBuilder {
 		Group edgeAggregatesGroup = createAggregatesGroup(shell, EDGE_ATTRIBUTES_GROUP_TEXT);
 		Group footerGroup = createFooterGroup(shell);
 
-    	createInstructionsLabel(instructionsArea);
+    	StyledText instructionsLabel = createInstructionsLabel(instructionsArea);
+    	DisplayErrorMessagesValidationAction displayErrorMessagesValidationAction =
+    		new DisplayErrorMessagesValidationAction(
+    			instructionsLabel,
+    			INSTRUCTIONS_LABEL_TEXT,
+    			TUTORIAL_URL,
+    			TUTORIAL_DISPLAY_URL);
 
 		// Create and setup the Leaf selection field.
 
@@ -81,7 +99,10 @@ public class CoOccurrenceNetworkGUIBuilder extends GUIBuilder {
 			databaseDescriptor.getCoreTableDescriptor().getColumnNamesByLabels(),
 			NODE_RESULT_NAME_GROUP_NAME,
 			NODE_TYPE,
-			nodeAggregatesGroup);
+			nodeAggregatesGroup,
+			this.nodeAttributesFieldValidator,
+			otherValidatorsForNodeAttributes,
+			displayErrorMessagesValidationAction);
 		AttributeListWidget edgeAggregatesTable = createAggregateWidget(
 			model,
 			EDGE_ATTRIBUTE_FUNCTION_GROUP_NAME,
@@ -90,7 +111,10 @@ public class CoOccurrenceNetworkGUIBuilder extends GUIBuilder {
 			databaseDescriptor.getCoreTableDescriptor().getColumnNamesByLabels(),
 			EDGE_RESULT_NAME_GROUP_NAME,
 			EDGE_TYPE,
-			edgeAggregatesGroup);
+			edgeAggregatesGroup,
+			this.edgeAttributesFieldValidator,
+			otherValidatorsForEdgeAttributes,
+			displayErrorMessagesValidationAction);
 
 		// Create the finished button so the user can actually execute the resulting queries.
 
@@ -132,25 +156,12 @@ public class CoOccurrenceNetworkGUIBuilder extends GUIBuilder {
 	}
 
 	private static StyledText createInstructionsLabel(Composite parent) {
-		StyledText instructionsLabel =
-			new StyledText(parent, SWT.LEFT | SWT.READ_ONLY | SWT.WRAP);
+		StyledText instructionsLabel = new StyledText(
+			parent, SWT.H_SCROLL | SWT.V_SCROLL | SWT.LEFT | SWT.READ_ONLY | SWT.WRAP);
 		instructionsLabel.setBackground(
 			parent.getDisplay().getSystemColor(SWT.COLOR_WHITE));
 		instructionsLabel.setLayoutData(createInstructionsLabelLayoutData());
 		instructionsLabel.getCaret().setVisible(false);
-
-		SWTUtilities.styledPrint(
-			instructionsLabel,
-			INSTRUCTIONS_LABEL_TEXT,
-			parent.getDisplay().getSystemColor(SWT.COLOR_BLACK),
-			SWT.NORMAL);
-		SWTUtilities.printURL(
-			parent,
-			instructionsLabel,
-			TUTORIAL_URL,
-			TUTORIAL_DISPLAY_URL,
-			parent.getDisplay().getSystemColor(SWT.COLOR_BLUE),
-			SWT.BOLD);
 
 		return instructionsLabel;
 	}
@@ -158,6 +169,7 @@ public class CoOccurrenceNetworkGUIBuilder extends GUIBuilder {
 	private static GridData createInstructionsLabelLayoutData() {
 		GridData layoutData = new GridData(SWT.FILL, SWT.TOP, true, false);
 		layoutData.horizontalSpan = 2;
+		layoutData.heightHint = INSTRUCTIONS_LABEL_HEIGHT;
 
 		return layoutData;
 	}

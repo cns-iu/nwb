@@ -1,15 +1,17 @@
 package edu.iu.sci2.database.star.extract.network.guibuilder;
 
 import java.util.Collection;
-import java.util.HashMap;
 import java.util.Map;
 
 import org.cishell.utility.datastructure.ObjectContainer;
 import org.cishell.utility.datastructure.datamodel.DataModel;
-import org.cishell.utility.datastructure.datamodel.exception.ModelValidationException;
 import org.cishell.utility.datastructure.datamodel.exception.UniqueNameException;
-import org.cishell.utility.datastructure.datamodel.field.DataModelField;
-import org.cishell.utility.datastructure.datamodel.field.FieldValidationAction;
+import org.cishell.utility.datastructure.datamodel.field.validation.BasicFieldValidator;
+import org.cishell.utility.datastructure.datamodel.field.validation.EmptyTextFieldValidationRule;
+import org.cishell.utility.datastructure.datamodel.field.validation.FieldValidationAction;
+import org.cishell.utility.datastructure.datamodel.field.validation.FieldValidationRule;
+import org.cishell.utility.datastructure.datamodel.field.validation.FieldValidator;
+import org.cishell.utility.datastructure.datamodel.field.validation.UniqueValueValidationRule;
 import org.cishell.utility.swt.GUIBuilderUtilities;
 import org.cishell.utility.swt.GUICanceledException;
 import org.cishell.utility.swt.model.SWTModel;
@@ -57,9 +59,36 @@ public abstract class GUIBuilder {
 	public static final String EDGE_CORE_ENTITY_COLUMN_GROUP_NAME = "edgeCoreEntityColumn";
 	public static final String EDGE_RESULT_NAME_GROUP_NAME = "edgeResult";
 
+	public static final String LEAF_SELECTOR_FIELD_VALIDATOR_BASE_NAME = "";
+	public static final String NODE_ATTRIBUTES_FIELD_VALIDATOR_BASE_NAME = "Node Attribute ";
+	public static final String EDGE_ATTRIBUTES_FIELD_VALIDATOR_BASE_NAME = "Edge Attribute ";
+
 	protected Button finishedButton;
+	protected FieldValidator<String> leafSelectorFieldValidator =
+		new BasicFieldValidator<String>(LEAF_SELECTOR_FIELD_VALIDATOR_BASE_NAME);
+	protected FieldValidator<String> nodeAttributesFieldValidator =
+		new BasicFieldValidator<String>(NODE_ATTRIBUTES_FIELD_VALIDATOR_BASE_NAME);
+	protected FieldValidator<String> edgeAttributesFieldValidator =
+		new BasicFieldValidator<String>(EDGE_ATTRIBUTES_FIELD_VALIDATOR_BASE_NAME);
 	protected DisableFinishedButtonAction disableFinishedButtonAction =
 		new DisableFinishedButtonAction();
+
+	public GUIBuilder() {
+		FieldValidationRule<String> uniqueLeafSelectorValueValidationRule =
+			new UniqueValueValidationRule<String>(LEAF_SELECTOR_FIELD_VALIDATOR_BASE_NAME);
+		FieldValidationRule<String> emptyAttributeNameValidationRule =
+			new EmptyTextFieldValidationRule();
+		FieldValidationRule<String> uniqueNodeAttributeNameValidationRule =
+			new UniqueValueValidationRule<String>(NODE_ATTRIBUTES_FIELD_VALIDATOR_BASE_NAME);
+		FieldValidationRule<String> uniqueEdgeAttributeNameValidationRule =
+			new UniqueValueValidationRule<String>(EDGE_ATTRIBUTES_FIELD_VALIDATOR_BASE_NAME);
+
+		this.leafSelectorFieldValidator.addValidationRule(uniqueLeafSelectorValueValidationRule);
+		this.nodeAttributesFieldValidator.addValidationRule(emptyAttributeNameValidationRule);
+		this.nodeAttributesFieldValidator.addValidationRule(uniqueNodeAttributeNameValidationRule);
+		this.edgeAttributesFieldValidator.addValidationRule(emptyAttributeNameValidationRule);
+		this.edgeAttributesFieldValidator.addValidationRule(uniqueEdgeAttributeNameValidationRule);
+	}
 
 	public abstract DataModel createGUI(
 			String windowTitle,
@@ -171,7 +200,10 @@ public abstract class GUIBuilder {
 			Map<String, String> coreEntityColumnsByLabels,
 			String resultColumnLabelGroupName,
 			String type,
-			Composite parent) {
+			Composite parent,
+			FieldValidator<String> attributeNameValidator,
+			Collection<FieldValidator<String>> otherValidators,
+			DisplayErrorMessagesValidationAction displayErrorMessagesValidationAction) {
 		AttributeListWidget aggregateList = new AttributeListWidget(
 			model,
 			aggregateFunctionGroupName,
@@ -181,7 +213,10 @@ public abstract class GUIBuilder {
 			resultColumnLabelGroupName,
 			type,
 			parent,
-			this.disableFinishedButtonAction);
+			attributeNameValidator,
+			otherValidators,
+			this.disableFinishedButtonAction,
+			displayErrorMessagesValidationAction);
 		aggregateList.setLayoutData(createAggregateListLayoutData());
 
 		return aggregateList;
@@ -218,40 +253,13 @@ public abstract class GUIBuilder {
 		return layoutData;
 	}
 
-	public class DisableFinishedButtonAction implements FieldValidationAction<String> {
-		private Map<DataModelField<String>, Boolean> fieldsToValidationStatuses =
-			new HashMap<DataModelField<String>, Boolean>();
-
-		public synchronized void fieldDoesValidate(DataModelField<String> field) {
-			this.fieldsToValidationStatuses.put(field, true);
-			System.err.println("----");
-			for (DataModelField<String> key : this.fieldsToValidationStatuses.keySet()) {
-				System.err.println(key.getName() + " field validates? " + this.fieldsToValidationStatuses.get(key) + " " + key.getValue());
-			}
-
-			GUIBuilder.this.finishedButton.setEnabled(
-				!this.fieldsToValidationStatuses.containsValue(false));
+	public class DisableFinishedButtonAction implements FieldValidationAction {
+		public synchronized void doesValidate() {
+			GUIBuilder.this.finishedButton.setEnabled(true);
 		}
 
-		public synchronized void fieldDoesNotValidate(
-				DataModelField<String> field, Collection<ModelValidationException> reasons) {
-			this.fieldsToValidationStatuses.put(field, false);
-			System.err.println("----");
-			for (DataModelField<String> key : this.fieldsToValidationStatuses.keySet()) {
-				System.err.println(key.getName() + " field validates? " + this.fieldsToValidationStatuses.get(key) + " " + key.toString());
-			}
-
+		public synchronized void doesNotValidate(Collection<String> reasons) {
 			GUIBuilder.this.finishedButton.setEnabled(false);
-		}
-
-		public void fieldDisposed(DataModelField<String> field) {
-			this.fieldsToValidationStatuses.remove(field);
-			GUIBuilder.this.finishedButton.setEnabled(
-				!this.fieldsToValidationStatuses.containsValue(false));
-		}
-
-		protected void addField(DataModelField<String> field, boolean validationStatus) {
-			this.fieldsToValidationStatuses.put(field, validationStatus);
 		}
 	}
 }

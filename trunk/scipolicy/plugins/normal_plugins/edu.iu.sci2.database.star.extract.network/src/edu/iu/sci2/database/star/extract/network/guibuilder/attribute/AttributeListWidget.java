@@ -5,6 +5,7 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
+import org.cishell.utility.datastructure.datamodel.field.validation.FieldValidator;
 import org.cishell.utility.swt.ExpandableComponentWidget;
 import org.cishell.utility.swt.WidgetConstructionException;
 import org.cishell.utility.swt.model.SWTModel;
@@ -15,10 +16,11 @@ import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 
+import edu.iu.sci2.database.star.extract.network.guibuilder.DisplayErrorMessagesValidationAction;
 import edu.iu.sci2.database.star.extract.network.guibuilder.GUIBuilder.DisableFinishedButtonAction;
 
 public class AttributeListWidget extends ExpandableComponentWidget<AttributeWidgetContainer> {
-	public static final String ADD_ATTRIBUTE_BUTTON_TEXT_FORMAT = "Add Another %s Attribute DataModelField";
+	public static final String ADD_ATTRIBUTE_BUTTON_TEXT_FORMAT = "Add Another %s Attribute";
 	public static final String REMOVE_ALL_BUTTON_TEXT_FORMAT = "Remove All %s Fields";
 
 	public static final String AGGREGATE_FUNCTION_LABEL_TEXT = "Summarize By:";
@@ -34,7 +36,10 @@ public class AttributeListWidget extends ExpandableComponentWidget<AttributeWidg
 			String resultColumnLabelGroupName,
 			String type,
 			Composite parent,
-			DisableFinishedButtonAction disableFinishedButtonAction) {
+			FieldValidator<String> attributeNameValidator,
+			Collection<FieldValidator<String>> otherValidators,
+			DisableFinishedButtonAction disableFinishedButtonAction,
+			DisplayErrorMessagesValidationAction displayErrorMessagesValidationAction) {
 		super(
 			parent,
 			new AttributeWidgetFactory(
@@ -44,7 +49,10 @@ public class AttributeListWidget extends ExpandableComponentWidget<AttributeWidg
 				coreEntityColumnLabels,
 				coreEntityColumnsByLabels,
 				resultColumnLabelGroupName,
-				disableFinishedButtonAction));
+				attributeNameValidator,
+				otherValidators,
+				disableFinishedButtonAction,
+				displayErrorMessagesValidationAction));
 		Composite headerArea = getHeaderArea();
 		createAddAttributeButton(headerArea, type);
 		createRemoveAllAttributesButton(headerArea, type);
