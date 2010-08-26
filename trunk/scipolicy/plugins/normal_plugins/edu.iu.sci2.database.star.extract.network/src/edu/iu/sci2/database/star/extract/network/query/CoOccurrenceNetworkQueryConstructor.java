@@ -6,6 +6,7 @@ import org.antlr.stringtemplate.StringTemplateGroup;
 import org.cishell.utility.datastructure.datamodel.DataModel;
 
 import edu.iu.sci2.database.star.common.StarDatabaseMetadata;
+import edu.iu.sci2.database.star.extract.common.query.QueryConstructor;
 
 public class CoOccurrenceNetworkQueryConstructor extends QueryConstructor {
 	public static final String CO_OCCURRENCE_WITH_AGGREGATES_STRING_TEMPLATE_FILE_PATH =

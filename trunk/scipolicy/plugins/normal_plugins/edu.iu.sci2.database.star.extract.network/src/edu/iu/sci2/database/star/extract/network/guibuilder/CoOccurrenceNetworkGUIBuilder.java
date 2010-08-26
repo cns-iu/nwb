@@ -24,8 +24,10 @@ import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
 
-import edu.iu.sci2.database.star.extract.network.StarDatabaseDescriptor;
-import edu.iu.sci2.database.star.extract.network.guibuilder.attribute.AttributeListWidget;
+import edu.iu.sci2.database.star.extract.common.StarDatabaseDescriptor;
+import edu.iu.sci2.database.star.extract.common.guibuilder.DisplayErrorMessagesValidationAction;
+import edu.iu.sci2.database.star.extract.common.guibuilder.GUIBuilder;
+import edu.iu.sci2.database.star.extract.common.guibuilder.attribute.AttributeListWidget;
 
 public class CoOccurrenceNetworkGUIBuilder extends GUIBuilder {
 	public static final String INSTRUCTIONS_LABEL_TEXT =

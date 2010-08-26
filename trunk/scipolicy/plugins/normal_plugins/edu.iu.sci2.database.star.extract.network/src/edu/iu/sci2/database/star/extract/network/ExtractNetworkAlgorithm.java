@@ -13,7 +13,7 @@ import org.cishell.framework.data.Data;
 import org.cishell.utilities.AlgorithmUtilities;
 import org.osgi.service.log.LogService;
 
-import edu.iu.sci2.database.star.extract.network.query.QueryConstructor;
+import edu.iu.sci2.database.star.extract.common.query.QueryConstructor;
 
 public class ExtractNetworkAlgorithm implements Algorithm, ProgressTrackable {
 	private CIShellContext ciShellContext;

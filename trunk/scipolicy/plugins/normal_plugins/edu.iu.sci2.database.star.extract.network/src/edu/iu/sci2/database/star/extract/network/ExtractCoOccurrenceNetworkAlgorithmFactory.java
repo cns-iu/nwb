@@ -15,10 +15,11 @@ import org.osgi.service.component.ComponentContext;
 import org.osgi.service.log.LogService;
 
 import edu.iu.sci2.database.star.common.StarDatabaseMetadata;
+import edu.iu.sci2.database.star.extract.common.StarDatabaseDescriptor;
+import edu.iu.sci2.database.star.extract.common.guibuilder.GUIBuilder;
+import edu.iu.sci2.database.star.extract.common.query.QueryConstructor;
 import edu.iu.sci2.database.star.extract.network.guibuilder.CoOccurrenceNetworkGUIBuilder;
-import edu.iu.sci2.database.star.extract.network.guibuilder.GUIBuilder;
 import edu.iu.sci2.database.star.extract.network.query.CoOccurrenceNetworkQueryConstructor;
-import edu.iu.sci2.database.star.extract.network.query.QueryConstructor;
 
 public class ExtractCoOccurrenceNetworkAlgorithmFactory extends ExtractionAlgorithmFactory {
 	public static final String WINDOW_TITLE = "Extract Co-Occurrence Network";
