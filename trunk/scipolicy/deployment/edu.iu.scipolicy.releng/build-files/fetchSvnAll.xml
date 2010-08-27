@@ -108,7 +108,7 @@
   		<param name="target" value="plugins"/>
   	  	<param name="element.id" value="edu.iu.sci2.database.star.extract.common"/>
   	  	<param name="project.name" value="edu.iu.sci2.database.star.extract.common"/>
-  	  	<param name="url" value="http://nwb.slis.indiana.edu/svn/nwb/trunk/scipolicy/plugins/common"/>
+  	  	<param name="url" value="http://nwb.slis.indiana.edu/svn/nwb/trunk/scipolicy/plugins/shared"/>
   	</antcall>
 
 	<antcall target="svn.co">
