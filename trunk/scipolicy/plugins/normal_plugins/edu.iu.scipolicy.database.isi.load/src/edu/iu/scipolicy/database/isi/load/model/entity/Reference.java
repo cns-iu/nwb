@@ -93,7 +93,7 @@ public class Reference extends Entity<Reference> {
 			this.originalRow.getString(ISITag.CITED_REFERENCES.getColumnName()));
 
 		return StringUtilities.getNthToken(
-			rawReferencesString, "\\|", this.referenceStringIndex, true);
+			rawReferencesString, "\\|", this.referenceStringIndex, true, false);
 	}
 
 	public Source getSource() {

@@ -62,7 +62,7 @@ public class LeafEntityManager {
 		if (column.isMultiValued() &&
 				!StringUtilities.isNull_Empty_OrWhitespace(column.getSeparator())) {
 			String[] entityValues =
-				StringUtilities.getAllTokens(rawEntityValue, column.getSeparator(), true);
+				StringUtilities.getAllTokens(rawEntityValue, column.getSeparator(), true, true);
 
 			for (int ii = 0; ii < entityValues.length; ii++) {
 				String entityValue = entityValues[ii];
