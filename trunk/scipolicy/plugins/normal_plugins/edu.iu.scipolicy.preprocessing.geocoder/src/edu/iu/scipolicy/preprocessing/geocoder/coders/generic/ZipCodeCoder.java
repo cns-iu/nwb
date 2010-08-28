@@ -1,4 +1,4 @@
-package edu.iu.scipolicy.preprocessing.geocoder.coders;
+package edu.iu.scipolicy.preprocessing.geocoder.coders.generic;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -10,33 +10,32 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
+import edu.iu.scipolicy.preprocessing.geocoder.coders.Geocoder;
+import edu.iu.scipolicy.preprocessing.geocoder.coders.GeoCoderException;
+import edu.iu.scipolicy.preprocessing.geocoder.coders.Geolocation;
+import edu.iu.scipolicy.preprocessing.geocoder.coders.NoCacheFoundException;
+import edu.iu.scipolicy.preprocessing.geocoder.coders.USZipCode;
+
 import au.com.bytecode.opencsv.CSVReader;
 
-public class ZipCodeCoder implements GeoCoder {
+public class ZipCodeCoder implements Geocoder {
 	public static final String LOCATION_AS_ZIPCODE_IDENTIFIER = "ZIP CODE";
 
 	public static final Map<String, String> EMPTY_FORMS_TO_LOCATIONS =
 		Collections.unmodifiableMap(new HashMap<String, String>());
 
-	private Map<String, GeoLocation> zipCodeToLocation;
+	private Map<String, Geolocation> zipCodeToLocation;
+	private URL zipCodeFile;
 
 	public ZipCodeCoder(URL zipCodeFile) {
-		initializeZipCodeLocationMappings(zipCodeFile);
+		this.zipCodeFile = zipCodeFile;
 	}
 
-	public String getLocationType() {
-		return LOCATION_AS_ZIPCODE_IDENTIFIER;
+	public CODER_TYPE getLocationType() {
+		return CODER_TYPE.US_ZIP_CODE;
 	}
 
-	public Map<String, GeoLocation> getFullFormsToLocations() {
-		return this.zipCodeToLocation;
-	}
-
-	public Map<String, String> getAbbreviationsToFullForms() {
-		return EMPTY_FORMS_TO_LOCATIONS;
-	}
-
-	private void initializeZipCodeLocationMappings(URL zipCodeFile) {
+	private void initializeZipCodeLocationMappings(URL zipCodeFile) throws GeoCoderException {
 		// Open zip code file.
 		
 		InputStream inStream = null;
@@ -50,7 +49,7 @@ public class ZipCodeCoder implements GeoCoder {
 			
 			CSVReader zipCsvReader = createZipcodeCsvReader(input);
 
-			Map<String, GeoLocation> zipCodeToLocation = 
+			Map<String, Geolocation> zipCodeToLocation = 
 				createMapFromZipcodeToLocation(zipCsvReader);
 			
 			this.zipCodeToLocation = zipCodeToLocation;
@@ -93,12 +92,12 @@ public class ZipCodeCoder implements GeoCoder {
 	private static final int LATITUDE_INDEX = 1;
 	private static final int LONGITUDE_INDEX = 2;
 
-	private static Map<String, GeoLocation> createMapFromZipcodeToLocation(
-			CSVReader zipCsvReader) {
+	private static Map<String, Geolocation> createMapFromZipcodeToLocation(
+			CSVReader zipCsvReader) throws GeoCoderException {
 		try {
 			zipCsvReader.readNext(); // (we ignore the first row, which contains column headers)
 
-			Map<String, GeoLocation> zipCodeToLocation = new HashMap<String, GeoLocation>();
+			Map<String, Geolocation> zipCodeToLocation = new HashMap<String, Geolocation>();
 			String[] zipAndLocationLine;
 			while ((zipAndLocationLine = zipCsvReader.readNext()) != null) {
 				String zip = zipAndLocationLine[ZIPCODE_INDEX];
@@ -109,9 +108,9 @@ public class ZipCodeCoder implements GeoCoder {
 				double latitude = Double.valueOf(latitudeString);
 				double longitude = Double.valueOf(longitudeString);
 					
-				GeoLocation location = new GeoLocation(latitude, longitude); 
+				Geolocation location = new Geolocation(latitude, longitude); 
 					
-				zipCodeToLocation.put(zip, location);
+				zipCodeToLocation.put(USZipCode.parse(zip).getUzip(), location);
 
 			}
 
@@ -120,5 +119,31 @@ public class ZipCodeCoder implements GeoCoder {
 			throw new GeoCoderException("IO error occurred while reading zipcodes from zipcode"
 					+ " database file", e);
 		}
+	}
+
+	/**
+	 * Find the geolocation for the given location from the given maps.
+	 * @param fullForm - a ZIP code in string
+	 * @return result if success
+	 * @throws GeoCoderException - throw while there is error or no result is found
+	 */
+	public Geolocation geocodingFullForm(String fullForm) throws GeoCoderException {
+		if (zipCodeToLocation == null) {
+			initializeZipCodeLocationMappings(zipCodeFile);
+		}
+		
+		Geolocation geolocation = zipCodeToLocation.get(USZipCode.parse(fullForm).getUzip());
+		if (geolocation == null) {
+			throw new GeoCoderException("Result not found");
+		}
+		
+		return geolocation;
+	}
+
+	/*
+	 * Zip code don't have short term
+	 */
+	public Geolocation geocodingAbbreviation(String abbreviation) throws GeoCoderException {
+		throw new GeoCoderException("No result is found");
 	}
 }

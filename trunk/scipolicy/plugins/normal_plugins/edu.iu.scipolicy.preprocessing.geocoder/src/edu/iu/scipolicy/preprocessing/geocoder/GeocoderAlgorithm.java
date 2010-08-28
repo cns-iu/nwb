@@ -9,7 +9,7 @@ import org.cishell.framework.data.DataProperty;
 import org.osgi.service.log.LogService;
 
 import prefuse.data.Table;
-import edu.iu.scipolicy.preprocessing.geocoder.coders.GeoCoder;
+import edu.iu.scipolicy.preprocessing.geocoder.coders.Geocoder;
 
 /**
  * This algorithm converts the place information provided into Latitude, Longitude co-ordinates. 
@@ -31,24 +31,24 @@ public class GeocoderAlgorithm implements Algorithm {
 	private LogService logger;
 	private Table originalInputTable;
 	private String locationColumnName;
-	private GeoCoder geoCoder;
+	private Geocoder geocoder;
     
     public GeocoderAlgorithm(
     		Data[] data,
     		LogService logger,
     		Table originalInputTable,
     		String locationColumnName,
-    		GeoCoder geoCoder) {
+    		Geocoder geocoder) {
         this.data = data;
 		this.logger = logger;
 		this.originalInputTable = originalInputTable;
 		this.locationColumnName = locationColumnName;
-		this.geoCoder = geoCoder;
+		this.geocoder = geocoder;
 	}
 
 	public Data[] execute() {
 		Table outputTable = GeocoderComputation.compute(
-			this.locationColumnName, this.originalInputTable, this.logger, this.geoCoder);
+			this.locationColumnName, this.originalInputTable, this.logger, this.geocoder);
 		
 		/*
 		 * After getting the output in table format make it available to the user.

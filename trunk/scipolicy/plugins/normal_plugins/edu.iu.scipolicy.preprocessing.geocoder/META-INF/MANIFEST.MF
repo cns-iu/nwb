@@ -5,6 +5,8 @@ Bundle-SymbolicName: edu.iu.scipolicy.preprocessing.geocoder
 Bundle-Version: 0.0.1
 Bundle-ClassPath: .
 Import-Package: au.com.bytecode.opencsv,
+ javax.xml.bind,
+ javax.xml.bind.annotation,
  org.cishell.framework;version="1.0.0",
  org.cishell.framework.algorithm;version="1.0.0",
  org.cishell.framework.data;version="1.0.0",
@@ -19,5 +21,5 @@ Import-Package: au.com.bytecode.opencsv,
  org.osgi.service.prefs;version="1.1.0",
  prefuse.data
 X-AutoStart: true
-Service-Component: OSGI-INF/component.xml
+Service-Component: OSGI-INF/component.xml, OSGI-INF/yahooAlgorithm.xml
 Bundle-RequiredExecutionEnvironment: J2SE-1.5

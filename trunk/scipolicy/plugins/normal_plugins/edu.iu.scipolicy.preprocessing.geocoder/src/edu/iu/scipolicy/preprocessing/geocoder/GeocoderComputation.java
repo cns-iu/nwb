@@ -1,5 +1,7 @@
 package edu.iu.scipolicy.preprocessing.geocoder;
 
+import java.text.NumberFormat;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 
@@ -7,34 +9,37 @@ import org.cishell.utilities.TableUtilities;
 import org.osgi.service.log.LogService;
 
 import prefuse.data.Table;
-import edu.iu.scipolicy.preprocessing.geocoder.coders.GeoCoder;
-import edu.iu.scipolicy.preprocessing.geocoder.coders.GeoLocation;
+import edu.iu.scipolicy.preprocessing.geocoder.coders.GeoCoderException;
+import edu.iu.scipolicy.preprocessing.geocoder.coders.Geocoder;
+import edu.iu.scipolicy.preprocessing.geocoder.coders.Geolocation;
 
 /**
  * @author cdtank
  *
  */
-public class GeocoderComputation {
+public final class GeocoderComputation {
+	
 	public static final String[] LATITUDE_COLUMN_NAME_SUGGESTIONS = { "Latitude", "Lat" };
 	public static final String[] LONGITUDE_COLUMN_NAME_SUGGESTIONS = { "Longitude", "Lon" };
+	public static final Geolocation DEFAULT_NO_LOCATION_VALUE = new Geolocation(null, null);
 
-	public static GeoLocation DEFAULT_NO_LOCATION_VALUE = new GeoLocation(null, null);
-
+	private GeocoderComputation() {
+	}
+	
 	/*
 	 * Input data from the "Place_Column_Name" is obtained from the original table & Lookups 
 	 * are made to appropriate maps. After processing all rows, the new output table is
 	 * returned having original data and 2 new columns for Latitude & Longitude. 
-	 * */
+	 */
 	public static Table compute(
 			String locationColumnName,
 			Table originalTable,
 			LogService logger,
-			GeoCoder geoCoder) {
+			Geocoder geocoder) {
 		/*
 		 * Create Blank new output table using the schema from the original table.
-		 * */
-		// TODO Replace with schema.instantiate() and test.
-		Table outputTable = TableUtilities.createTableUsingSchema(originalTable.getSchema());
+		 */
+		Table outputTable = originalTable.getSchema().instantiate();
 		String outputTableLatitudeColumnName = TableUtilities.formNonConflictingNewColumnName(
 			originalTable.getSchema(), LATITUDE_COLUMN_NAME_SUGGESTIONS);
 		String outputTableLongitudeColumnName = TableUtilities.formNonConflictingNewColumnName(
@@ -50,76 +55,78 @@ public class GeocoderComputation {
 				outputTableLatitudeColumnName, 
 				outputTableLongitudeColumnName));
 		
-		Iterator locationColumnIterator = originalTable.iterator();
-		
-		Map<String, GeoLocation> fullFormToLocation = geoCoder.getFullFormsToLocations();
-		Map<String, String> abbreviationToFullForm = geoCoder.getAbbreviationsToFullForms();
-
+		int failedCount = 0;
+		int locationColumnNumber = originalTable.getColumnNumber(locationColumnName);
+		int latitudeColumnNumber = outputTable.getColumnNumber(outputTableLatitudeColumnName);
+		int longitudeColumnNumber = outputTable.getColumnNumber(outputTableLongitudeColumnName);
+		Map <String, Geolocation> geocodedAddressToGeoLocation = new HashMap<String, Geolocation>();
+		Iterator<?> locationColumnIterator = originalTable.iterator();
 		while (locationColumnIterator.hasNext()) {
 			int currentRowNumber = Integer.parseInt(locationColumnIterator.next().toString());
-			int locationColumnNumber = 
-				originalTable.getColumnNumber(locationColumnName);
-			int latitudeColumnNumber =
-				outputTable.getColumnNumber(outputTableLatitudeColumnName);
-			int longitudeColumnNumber = 
-				outputTable.getColumnNumber(outputTableLongitudeColumnName);
-			String currentLocationKey = 
-				originalTable.get(currentRowNumber, locationColumnNumber).toString(); 
-
-			// TODO: Refactor this further.
-			GeoLocation cachedLocationValue = null;
-
-			String currentLocationKeyUppercase = currentLocationKey.toUpperCase();
-			cachedLocationValue = fullFormToLocation.get(currentLocationKeyUppercase);
 			
-			/*
-			 * If the lookup was unsuccessful due to no match try lookup in the abbreviation map. 
-			 * */
-			if (cachedLocationValue == null) {
-				String fullformForAbbreviation = 
-					abbreviationToFullForm.get(currentLocationKey.toUpperCase());
-
-				/*
-				 * If the lookup was successful,
-				 * then the input string was an abbreviation of a state or country.
-				 * Populate the co-ordinates by now making lookup from the recent lookup 
-				 * i.e. use fullformForAbbreviation. 
-				 * */
-				if (fullformForAbbreviation != null) {
-					cachedLocationValue = 
-						fullFormToLocation.get(fullformForAbbreviation.toUpperCase());
+			/* Start geocoding */
+			Geolocation geolocation = DEFAULT_NO_LOCATION_VALUE;
+			String currentLocation = "";
+			Object currentLocationObject = originalTable.get(currentRowNumber, 
+																locationColumnNumber);
+			if (currentLocationObject != null) {
+				currentLocation = currentLocationObject.toString();
+				String currentLocationUppercase = currentLocation.toUpperCase();
+	
+				/* Avoid re-geocoding the same place */
+				if (geocodedAddressToGeoLocation.containsKey(currentLocationUppercase)) {
+					geolocation = geocodedAddressToGeoLocation.get(currentLocationUppercase);
 				} else {
-					/*
-					 * The input string is not found either in full-form or abbreviations list.
-					 * Assume default value for the co-ordinates. Warn user about it. 
-					 * */
-					cachedLocationValue = DEFAULT_NO_LOCATION_VALUE;
-					String formatString =
-						"No \"%s\" location coordinates found. The row with \"%s\" location has" +
-						" not been given a latitude or longitude.";
-					String logMessage = String.format(
-						formatString, geoCoder.getLocationType(), currentLocationKey);
-					logger.log(LogService.LOG_WARNING, logMessage);
-//					logger.log(LogService.LOG_WARNING, "No \"" 
-//							+ geoCoder.getLocationType() + "\" location co-ordinates found. " 
-//							+ "The row with \"" + currentLocationKey 
-//							+ "\" location has not been given a latitude " 
-//							+ "or longitude.");
+					try {
+						geolocation = geocoder.geocodingFullForm(currentLocationUppercase);
+					} catch (GeoCoderException e) {
+						try {
+							/* Try lookup in the abbreviation */
+							geolocation = geocoder.geocodingAbbreviation(currentLocationUppercase);
+						} catch (GeoCoderException e1) {
+							/* No result is found */
+							failedCount++;
+							printWarningMessage(logger, locationColumnName, currentLocation);
+						}
+					}
+					
+					/* Add to geocoded map */
+					geocodedAddressToGeoLocation.put(currentLocationUppercase, geolocation);
 				}
+			} else {
+				failedCount++;
+				printWarningMessage(logger, locationColumnName, currentLocation);
 			}
 
 			/*
 			 * Add the new row to the new table
 			 * by copying the original row & then adding 2 new columns to it.
-			 * */
+			 */
 			outputTable.addRow();
 			TableUtilities.copyTableRow(
 				currentRowNumber, currentRowNumber, outputTable, originalTable);
-			outputTable.set(currentRowNumber, latitudeColumnNumber, cachedLocationValue.latitude);
+			outputTable.set(currentRowNumber, latitudeColumnNumber, geolocation.getLatitude());
 			outputTable.set(
-				currentRowNumber, longitudeColumnNumber, cachedLocationValue.longitude);
+				currentRowNumber, longitudeColumnNumber, geolocation.getLongitude());
 		}
 
+		/* Show statistic information */
+		int totalRow = originalTable.getRowCount();
+		NumberFormat numberFormat = NumberFormat.getInstance();
+		logger.log(LogService.LOG_INFO, String.format(
+				"Successfully geocoded %s out of %s locations to geographic coordinates", 
+				numberFormat.format(totalRow - failedCount),
+				numberFormat.format(totalRow)));
 		return outputTable;
+	}
+	
+	private static void printWarningMessage(LogService logger, String locationColumnName, 
+																	String location) {
+
+			String formatString =
+				"No geographic coordinate found for the row with \"%s\" location at column \"%s\" ";
+			
+			logger.log(LogService.LOG_WARNING, String.format(formatString, 
+												location, locationColumnName));
 	}
 }
