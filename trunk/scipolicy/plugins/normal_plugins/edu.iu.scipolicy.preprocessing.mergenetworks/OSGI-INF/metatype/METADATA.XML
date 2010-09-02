@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<metatype:MetaData xmlns:metatype="http://www.osgi.org/xmlns/metatype/v1.0.0">
+	<OCD name="Merge Networks" id="edu.iu.scipolicy.preprocessing.mergenetworks.MergeNetworks.OCD"
+		 	description="Merge networks based on common nodes.">
+		<AD name="Shared unique identifier column" id="identifier" type="String" 
+			description="This column will be used for node disambiguation between the two networks. 
+			This column should be present in both the networks." default="id"/>
+	</OCD>
+	<Designate pid="edu.iu.scipolicy.preprocessing.mergenetworks.MergeNetworks">
+		<Object ocdref="edu.iu.scipolicy.preprocessing.mergenetworks.MergeNetworks.OCD" />
+	</Designate>
+</metatype:MetaData>
