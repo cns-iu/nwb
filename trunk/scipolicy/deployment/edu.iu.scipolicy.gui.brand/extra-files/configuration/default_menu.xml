@@ -96,7 +96,7 @@
     	</menu>
     	<menu name="Generic-CSV" type="group">
     		<menu pid="edu.iu.sci2.database.star.extract.network.ExtractCoOccurrenceNetworkAlgorithm"/>
-    		<menu pid="edu.iu.sci2.database.star.extract.network.ExtractDirectedNetworkAlgorithm"/>
+    		<menu pid="edu.iu.sci2.database.star.extract.network.ExtractBipartiteNetworkAlgorithm"/>
     	</menu>
 		<menu name="General" type="group">
 			<menu pid="edu.iu.cns.database.merge.generic.CreateMergingTable"/>
@@ -161,7 +161,8 @@
 	    <menu type="break"/>
 	    <menu pid="edu.iu.nwb.analysis.symmetrize.Symmetrize"/>
 	    <menu pid="edu.iu.nwb.analysis.dichotomize.Dichotomize"/>
-            <menu pid="edu.iu.nwb.analysis.multipartitejoining.JoiningAlgorithm"/>
+        <menu pid="edu.iu.nwb.analysis.multipartitejoining.JoiningAlgorithm"/>
+        <menu pid="edu.iu.scipolicy.preprocessing.mergenetworks"/>
 	    <menu type="break"/>
 	 </menu>
     </top_menu>   
