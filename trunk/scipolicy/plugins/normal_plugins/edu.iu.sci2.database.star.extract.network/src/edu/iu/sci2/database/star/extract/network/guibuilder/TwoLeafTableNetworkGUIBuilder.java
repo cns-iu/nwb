@@ -11,7 +11,6 @@ import org.cishell.utility.datastructure.datamodel.exception.UniqueNameException
 import org.cishell.utility.datastructure.datamodel.field.validation.FieldValidator;
 import org.cishell.utility.swt.GUIBuilderUtilities;
 import org.cishell.utility.swt.GUICanceledException;
-import org.cishell.utility.swt.SWTUtilities;
 import org.cishell.utility.swt.WidgetConstructionException;
 import org.cishell.utility.swt.model.SWTModel;
 import org.cishell.utility.swt.model.SWTModelField;
@@ -31,25 +30,34 @@ import edu.iu.sci2.database.star.extract.common.guibuilder.DisplayErrorMessagesV
 import edu.iu.sci2.database.star.extract.common.guibuilder.GUIBuilder;
 import edu.iu.sci2.database.star.extract.common.guibuilder.attribute.AttributeListWidget;
 
-public class DirectedNetworkGUIBuilder extends GUIBuilder {
-	public static final String INSTRUCTIONS_LABEL_TEXT =
-		"Choose the entity tables that extract your bipartite network should be " +
-		"extracted between.\n" +
-		"Then, setup any node and edge attributes you want on your resulting network.\n" +
-		"For more information see the Sci2 tutorial at: ";
-	public static final String TUTORIAL_URL =
-		"https://nwb.slis.indiana.edu/community/" +
-		"?n=Sci2Algorithm.GenericCSVExtractBipartiteNetwork";
-	public static final String TUTORIAL_DISPLAY_URL = "Sci2 Tutorial";
-	public static final int INSTRUCTIONS_LABEL_HEIGHT = 70;
+public class TwoLeafTableNetworkGUIBuilder extends GUIBuilder {
+	private String instructionsLabelText;
+	private String tutorialURL;
+	private String tutorialDisplayURL;
+	private int instructionsLabelHeight;
+	private String sourceLeafFieldLabel;
+	private String sourceLeafFieldName;
+	private String targetLeafFieldLabel;
+	private String targetLeafFieldName;
 
-	public static final String SOURCE_LEAF_FIELD_LABEL =
-		"Choose the Source for your bipartite network extraction: ";
-	public static final String TARGET_LEAF_FIELD_LABEL =
-		"Choose the Target for your bipartite network extraction: ";
-
-	public static final String SOURCE_LEAF_FIELD_NAME = "To Treat As The Source Nodes";
-	public static final String TARGET_LEAF_FIELD_NAME = "To Treat As The Target Nodes";
+	public TwoLeafTableNetworkGUIBuilder(
+			String instructionsLabelText,
+			String tutorialURL,
+			String tutorialDisplayURL,
+			int instructionsLabelHeight,
+			String sourceLeafFieldLabel,
+			String sourceLeafFieldName,
+			String targetLeafFieldLabel,
+			String targetLeafFieldName) {
+		this.instructionsLabelText = instructionsLabelText;
+		this.tutorialURL = tutorialURL;
+		this.tutorialDisplayURL = tutorialDisplayURL;
+		this.instructionsLabelHeight = instructionsLabelHeight;
+		this.sourceLeafFieldLabel = sourceLeafFieldLabel;
+		this.sourceLeafFieldName = sourceLeafFieldName;
+		this.targetLeafFieldLabel = targetLeafFieldLabel;
+		this.targetLeafFieldName = targetLeafFieldName;
+	}
 
 	@Override
 	@SuppressWarnings("unchecked")	// Arrays.asList creating genericly-typed arrays.
@@ -91,13 +99,13 @@ public class DirectedNetworkGUIBuilder extends GUIBuilder {
 		// Create the instructions/error message label.
 
     	StyledText instructionsLabel =
-    		createInstructionsLabel(instructionsArea, INSTRUCTIONS_LABEL_HEIGHT);
+    		createInstructionsLabel(instructionsArea, instructionsLabelHeight);
     	DisplayErrorMessagesValidationAction displayErrorMessagesValidationAction =
     		new DisplayErrorMessagesValidationAction(
     			instructionsLabel,
-    			INSTRUCTIONS_LABEL_TEXT,
-    			TUTORIAL_URL,
-    			TUTORIAL_DISPLAY_URL);
+    			this.instructionsLabelText,
+    			this.tutorialURL,
+    			this.tutorialDisplayURL);
 
 		// Create the options for the Source and Target selection fields.
 
@@ -113,9 +121,9 @@ public class DirectedNetworkGUIBuilder extends GUIBuilder {
 
 		SWTModelField<String, Combo, DropDownDataSynchronizer<String>> sourceLeafField =
 			createLeafSelectionField(
-				SOURCE_LEAF_FIELD_LABEL,
+				this.sourceLeafFieldLabel,
 				HEADER_GROUP_NAME,
-				SOURCE_LEAF_FIELD_NAME,
+				this.sourceLeafFieldName,
 				0,
 				allOptions,
 				allOptionsByLabels,
@@ -126,9 +134,9 @@ public class DirectedNetworkGUIBuilder extends GUIBuilder {
 				displayErrorMessagesValidationAction);
 		SWTModelField<String, Combo, DropDownDataSynchronizer<String>> targetLeafField =
 			createLeafSelectionField(
-				TARGET_LEAF_FIELD_LABEL,
+				this.targetLeafFieldLabel,
 				HEADER_GROUP_NAME,
-				TARGET_LEAF_FIELD_NAME,
+				this.targetLeafFieldName,
 				1,
 				allOptions,
 				allOptionsByLabels,
@@ -212,25 +220,12 @@ public class DirectedNetworkGUIBuilder extends GUIBuilder {
 		return model;
 	}
 
-	@Override
-	protected StyledText createInstructionsLabel(Composite parent, int height) {
-		StyledText instructionsLabel = super.createInstructionsLabel(parent, height);
-
-		SWTUtilities.styledPrint(
-			instructionsLabel,
-			INSTRUCTIONS_LABEL_TEXT,
-			parent.getDisplay().getSystemColor(SWT.COLOR_BLACK),
-			SWT.NORMAL);
-		SWTUtilities.printURL(
-			parent,
-			instructionsLabel,
-			TUTORIAL_URL,
-			TUTORIAL_DISPLAY_URL,
-			parent.getDisplay().getSystemColor(SWT.COLOR_BLUE),
-			SWT.BOLD);
-
-		return instructionsLabel;
-	}
+//	@Override
+//	protected StyledText createInstructionsLabel(Composite parent, int height) {
+//		StyledText instructionsLabel = super.createInstructionsLabel(parent, height);
+//
+//		return instructionsLabel;
+//	}
 
 	private SWTModelField<
 			String, Combo, DropDownDataSynchronizer<String>> createLeafSelectionField(

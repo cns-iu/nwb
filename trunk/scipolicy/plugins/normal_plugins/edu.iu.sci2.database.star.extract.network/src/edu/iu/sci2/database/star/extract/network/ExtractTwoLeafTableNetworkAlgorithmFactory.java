@@ -20,14 +20,15 @@ import edu.iu.sci2.database.star.common.StarDatabaseMetadata;
 import edu.iu.sci2.database.star.extract.common.ExtractionAlgorithmFactory;
 import edu.iu.sci2.database.star.extract.common.StarDatabaseDescriptor;
 import edu.iu.sci2.database.star.extract.common.guibuilder.GUIBuilder;
-import edu.iu.sci2.database.star.extract.network.guibuilder.DirectedNetworkGUIBuilder;
+import edu.iu.sci2.database.star.extract.network.guibuilder.TwoLeafTableNetworkGUIBuilder;
 import edu.iu.sci2.database.star.extract.network.query.CoreToLeafDirectedNetworkQueryConstructor;
 import edu.iu.sci2.database.star.extract.network.query.LeafToCoreDirectedNetworkQueryConstructor;
 import edu.iu.sci2.database.star.extract.network.query.LeafToLeafDirectedNetworkQueryConstructor;
 import edu.iu.sci2.database.star.extract.network.query.NetworkQueryConstructor;
 
 // TODO: Rename this at some point to reflect bipartite terminology.
-public class ExtractDirectedNetworkAlgorithmFactory extends ExtractionAlgorithmFactory {
+public abstract class ExtractTwoLeafTableNetworkAlgorithmFactory
+		extends ExtractionAlgorithmFactory {
 	public static final String WINDOW_TITLE = "Extract Bipartite Network";
 
 	private BundleContext bundleContext;
@@ -59,10 +60,27 @@ public class ExtractDirectedNetworkAlgorithmFactory extends ExtractionAlgorithmF
     	return NETWORK_EXTRACTION_TYPE;
     }
 
-    private static SWTModel getModelFromUser(StarDatabaseMetadata metadata)
+    public abstract String instructionsLabelText();
+	public abstract String tutorialURL();
+	public abstract String tutorialDisplayURL();
+	public abstract int instructionsLabelHeight();
+	public abstract String sourceLeafFieldLabel();
+	public abstract String sourceLeafFieldName();
+	public abstract String targetLeafFieldLabel();
+	public abstract String targetLeafFieldName();
+
+    public SWTModel getModelFromUser(StarDatabaseMetadata metadata)
     		throws AlgorithmCreationCanceledException {
     	try {
-    		return new DirectedNetworkGUIBuilder().createGUI(
+    		return new TwoLeafTableNetworkGUIBuilder(
+    			instructionsLabelText(),
+    			tutorialURL(),
+    			tutorialDisplayURL(),
+    			instructionsLabelHeight(),
+    			sourceLeafFieldLabel(),
+    			sourceLeafFieldName(),
+    			targetLeafFieldLabel(),
+    			targetLeafFieldName()).createGUI(
     			WINDOW_TITLE, WINDOW_WIDTH, WINDOW_HEIGHT, new StarDatabaseDescriptor(metadata));
     	} catch (GUICanceledException e) {
     		throw new AlgorithmCreationCanceledException(e.getMessage(), e);
@@ -71,13 +89,13 @@ public class ExtractDirectedNetworkAlgorithmFactory extends ExtractionAlgorithmF
     	}
     }
 
-    private static NetworkQueryConstructor decideQueryConstructor(
+    private NetworkQueryConstructor decideQueryConstructor(
     		StarDatabaseMetadata metadata, SWTModel model) {
     	DataModelGroup headerGroup = model.getGroup(GUIBuilder.HEADER_GROUP_NAME);
     	DataModelField<?> entity1 =
-    		headerGroup.getField(DirectedNetworkGUIBuilder.SOURCE_LEAF_FIELD_NAME);
+    		headerGroup.getField(sourceLeafFieldName());
     	DataModelField<?> entity2 =
-    		headerGroup.getField(DirectedNetworkGUIBuilder.TARGET_LEAF_FIELD_NAME);
+    		headerGroup.getField(targetLeafFieldName());
     	String coreEntityTableName = metadata.getCoreEntityTableName();
     	String entity1Value = (String) entity1.getValue();
     	String entity2Value = (String) entity2.getValue();
