@@ -4,6 +4,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 import org.cishell.reference.service.metatype.BasicAttributeDefinition;
+import org.cishell.utilities.StringUtilities;
 import org.osgi.service.log.LogService;
 
 public class NetworkPrefixAttributeDefinition extends BasicAttributeDefinition {
@@ -45,7 +46,7 @@ public class NetworkPrefixAttributeDefinition extends BasicAttributeDefinition {
 			 * */
 			if (value != null && otherPrefixCurrValue != null) {
 				
-				if (value.trim().isEmpty()) {
+				if (StringUtilities.isEmptyOrWhitespace(value.trim())) {
 					String errorMessage = "Prefix cannot be empty.";
 //					logger.log(LogService.LOG_ERROR, errorMessage);
 					return errorMessage;	
