@@ -13,19 +13,19 @@ import org.cishell.framework.data.Data;
 import org.cishell.utilities.AlgorithmUtilities;
 import org.osgi.service.log.LogService;
 
-import edu.iu.sci2.database.star.extract.common.query.QueryConstructor;
+import edu.iu.sci2.database.star.extract.network.query.NetworkQueryConstructor;
 
 public class ExtractNetworkAlgorithm implements Algorithm, ProgressTrackable {
 	private CIShellContext ciShellContext;
 	private Data parentData;
-	private QueryConstructor queryConstructor;
+	private NetworkQueryConstructor queryConstructor;
 	private AlgorithmFactory networkQueryRunner;
 	private ProgressMonitor progressMonitor = ProgressMonitor.NULL_MONITOR;
 
     public ExtractNetworkAlgorithm(
     		CIShellContext ciShellContext,
     		Data parentData,
-    		QueryConstructor queryConstructor,
+    		NetworkQueryConstructor queryConstructor,
     		AlgorithmFactory networkQueryRunner,
     		LogService logger) {
     	this.ciShellContext = ciShellContext;

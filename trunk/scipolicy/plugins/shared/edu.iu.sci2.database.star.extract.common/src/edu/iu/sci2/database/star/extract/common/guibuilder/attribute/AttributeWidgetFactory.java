@@ -14,13 +14,14 @@ import org.cishell.utility.swt.model.SWTModel;
 import edu.iu.sci2.database.star.extract.common.guibuilder.DisplayErrorMessagesValidationAction;
 import edu.iu.sci2.database.star.extract.common.guibuilder.GUIBuilder.DisableFinishedButtonAction;
 
-public class AttributeWidgetFactory implements ScrolledComponentFactory<AttributeWidgetContainer> {
+public class AttributeWidgetFactory
+		implements ScrolledComponentFactory<AttributeWidgetContainer> {
 	private SWTModel model;
 	private String aggregateFunctionGroupName;
 	private String baseCoreEntityColumnGroupName;
 	private Collection<String> coreEntityColumnLabels;
 	private Map<String, String> coreEntityColumnsByLabels;
-	private String resultColumnLabelGroupName;
+	private String attributeNameGroupName;
 	private FieldValidator<String> attributeNameValidator;
 	private Collection<FieldValidator<String>> otherValidators;
 	private DisableFinishedButtonAction disableFinishedButtonAction;
@@ -32,7 +33,7 @@ public class AttributeWidgetFactory implements ScrolledComponentFactory<Attribut
 			String baseCoreEntityColumnGroupName,
 			Collection<String> coreEntityColumnLabels,
 			Map<String, String> coreEntityColumnsByLabels,
-			String resultColumnLabelGroupName,
+			String attributeNameGroupName,
 			FieldValidator<String> attributeNameValidator,
 			Collection<FieldValidator<String>> otherValidators,
 			DisableFinishedButtonAction disableFinishedButtonAction,
@@ -42,7 +43,7 @@ public class AttributeWidgetFactory implements ScrolledComponentFactory<Attribut
 		this.baseCoreEntityColumnGroupName = baseCoreEntityColumnGroupName;
 		this.coreEntityColumnLabels = coreEntityColumnLabels;
 		this.coreEntityColumnsByLabels = coreEntityColumnsByLabels;
-		this.resultColumnLabelGroupName = resultColumnLabelGroupName;
+		this.attributeNameGroupName = attributeNameGroupName;
 		this.attributeNameValidator = attributeNameValidator;
 		this.otherValidators = otherValidators;
 		this.disableFinishedButtonAction = disableFinishedButtonAction;
@@ -63,7 +64,7 @@ public class AttributeWidgetFactory implements ScrolledComponentFactory<Attribut
 				this.baseCoreEntityColumnGroupName,
 				this.coreEntityColumnLabels,
 				this.coreEntityColumnsByLabels,
-				this.resultColumnLabelGroupName,
+				this.attributeNameGroupName,
 				componentWidget,
 				index,
 				uniqueIndex,

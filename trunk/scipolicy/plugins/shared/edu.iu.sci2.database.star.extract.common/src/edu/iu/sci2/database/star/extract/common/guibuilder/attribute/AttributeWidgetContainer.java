@@ -27,6 +27,9 @@ import edu.iu.sci2.database.star.extract.common.guibuilder.DisplayErrorMessagesV
 import edu.iu.sci2.database.star.extract.common.guibuilder.GUIBuilder.DisableFinishedButtonAction;
 
 public class AttributeWidgetContainer {
+	public static final int AGGREGATE_FUNCTION_COLUMN_WIDTH = 45;
+	public static final int CORE_ENTITY_COLUMN_WIDTH = 80;
+
 	public static final String DELETE_BUTTON_TEXT = "Delete";
 
 	private SWTModel model;
@@ -45,7 +48,7 @@ public class AttributeWidgetContainer {
 			String coreEntityColumnGroupName,
 			Collection<String> coreEntityColumnLabels,
 			Map<String, String> coreEntityColumnsByLabels,
-			String resultColumnLabelGroupName,
+			String attributeNameGroupName,
 			ExpandableComponentWidget<AttributeWidgetContainer> componentWidget,
 			int index,
 			int uniqueIndex,
@@ -72,7 +75,7 @@ public class AttributeWidgetContainer {
 			grid);
 		this.attributeNameField = createAttributeNameField(
 			this.model,
-			resultColumnLabelGroupName,
+			attributeNameGroupName,
 			"" + uniqueIndex,
 			componentWidget,
 			uniqueIndex,
@@ -183,6 +186,7 @@ public class AttributeWidgetContainer {
 
 	private static GridData createAggregateFunctionLayoutData() {
 		GridData layoutData = new GridData(SWT.CENTER, SWT.CENTER, false, false);
+		layoutData.widthHint = AGGREGATE_FUNCTION_COLUMN_WIDTH;
 
 		return layoutData;
 	}
@@ -214,6 +218,7 @@ public class AttributeWidgetContainer {
 
 	private static GridData createCoreEntityColumnLayoutData() {
 		GridData layoutData = new GridData(SWT.CENTER, SWT.CENTER, false, false);
+		layoutData.widthHint = CORE_ENTITY_COLUMN_WIDTH;
 
 		return layoutData;
 	}
@@ -222,7 +227,7 @@ public class AttributeWidgetContainer {
 			String, Text, TextDataSynchronizer> createAttributeNameField(
 				SWTModel model,
 				String groupName,
-				String resultColumnLabelName,
+				String attributeName,
 				ExpandableComponentWidget<AttributeWidgetContainer> componentWidget,
 				int uniqueIndex,
 				GridContainer grid,
@@ -233,7 +238,7 @@ public class AttributeWidgetContainer {
 			throws UniqueNameException {
 		SWTModelField<String, Text, TextDataSynchronizer> attributeNameField =
 			model.addText(
-				resultColumnLabelName,
+				attributeName,
 				"",
 				groupName,
 				"RESULT" + uniqueIndex,
@@ -281,43 +286,4 @@ public class AttributeWidgetContainer {
 
 		return layoutData;
 	}
-
-//	private static class AttributeNameValidator<ValueType> implements FieldValidationRule<ValueType> {
-//		private String attributeNameGroup;
-//
-//		public AttributeNameValidator(String attributeNameGroup) {
-//			this.attributeNameGroup = attributeNameGroup;
-//		}
-//
-//		public void validateField(DataModelField<ValueType> field, DataModel model)
-//				throws ModelValidationException {
-//			DataModelGroup attributeNameGroup = model.getGroup(this.attributeNameGroup);
-//			Map<Object, Integer> attributeNamesToCounts = new HashMap<Object, Integer>();
-//
-//			for (DataModelField<?> fieldInGroup : attributeNameGroup.getFields()) {
-//				Object attributeName = fieldInGroup.getValue();
-//
-//				if (attributeNamesToCounts.containsKey(attributeName)) {
-//					attributeNamesToCounts.put(
-//						attributeName, attributeNamesToCounts.get(attributeName) + 1);
-//				} else {
-//					attributeNamesToCounts.put(attributeName, 1);
-//				}
-//			}
-//
-//			int attributeNameCount = attributeNamesToCounts.get(field.getValue());
-//
-//			if (attributeNameCount > 1) {
-//				String exceptionMessage = String.format(
-//					"You have %d attributes named '%s'.  All attributes must have unique names.",
-//					attributeNameCount,
-//					field.getName());
-//				throw new ModelValidationException(exceptionMessage);
-//			} else {
-//			}
-//		}
-//
-//		public void fieldDisposed(DataModelField<ValueType> field) {
-//		}
-//	}
 }

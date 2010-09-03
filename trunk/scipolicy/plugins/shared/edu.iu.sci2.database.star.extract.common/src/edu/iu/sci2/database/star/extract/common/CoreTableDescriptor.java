@@ -69,13 +69,12 @@ public class CoreTableDescriptor {
 		return this.columnNames;
 	}
 
-//	public Map<String, String> getColumnNamesByLabels() {
-//	}
-
-	private static Map<String, String> constructColumnNamesByLabels(StarDatabaseMetadata metadata) {
+	private static Map<String, String> constructColumnNamesByLabels(
+			StarDatabaseMetadata metadata) {
 		Map<String, String> namesToTypes = new HashMap<String, String>();
 
-		for (ColumnDescriptor columnDescriptor : metadata.getColumnDescriptorsByHumanReadableName().values()) {
+		for (ColumnDescriptor columnDescriptor :
+				metadata.getColumnDescriptorsByHumanReadableName().values()) {
 			if (columnDescriptor.isCoreColumn()) {
 				String label = columnDescriptor.getName();
 				String name = columnDescriptor.getNameForDatabase();

@@ -34,7 +34,7 @@ public class Aggregate {
 
 	public String databaseRepresentation() {
 		return this.function.databaseRepresentation(
-			this.targetColumnDescriptor.getNameForDatabase(), this.name);
+			this.targetColumnDescriptor.getNameForDatabase(), true, this.name);
 	}
 
 	public String emptyDatabaseRepresentation() {

@@ -16,6 +16,7 @@ import org.cishell.utility.swt.GUIBuilderUtilities;
 import org.cishell.utility.swt.GUICanceledException;
 import org.cishell.utility.swt.model.SWTModel;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.custom.StyledText;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.layout.GridData;
@@ -43,23 +44,30 @@ public abstract class GUIBuilder {
 	public static final String HEADER_GROUP_TEXT = "";
 	public static final String NODE_ATTRIBUTES_GROUP_TEXT = "Node Attributes";
 	public static final String EDGE_ATTRIBUTES_GROUP_TEXT = "Edge Attributes";
+	public static final String TABLE_ATTRIBUTES_GROUP_TEXT = "Attributes";
 
 	public static final String FINISHED_BUTTON_TEXT = "Run the Extraction!";
 
+	// TODO enum?
 	public static final String NODE_TYPE = "Node";
 	public static final String EDGE_TYPE = "Edge";
+	public static final String TABLE_TYPE = "Table";
 
 	public static final String HEADER_GROUP_NAME = "header";
 
 	public static final String NODE_ATTRIBUTE_FUNCTION_GROUP_NAME = "nodeAttributeFunction";
 	public static final String NODE_CORE_ENTITY_COLUMN_GROUP_NAME = "nodeCoreEntityColumn";
-	public static final String NODE_RESULT_NAME_GROUP_NAME = "nodeResult";
+	public static final String NODE_ATTRIBUTE_NAME_GROUP_NAME = "nodeAttribute";
 
 	public static final String EDGE_ATTRIBUTE_FUNCTION_GROUP_NAME = "edgeAttributeFunction";
 	public static final String EDGE_CORE_ENTITY_COLUMN_GROUP_NAME = "edgeCoreEntityColumn";
-	public static final String EDGE_RESULT_NAME_GROUP_NAME = "edgeResult";
+	public static final String EDGE_ATTRIBUTE_NAME_GROUP_NAME = "edgeAttribute";
 
-	public static final String LEAF_SELECTOR_FIELD_VALIDATOR_BASE_NAME = "";
+	public static final String TABLE_ATTRIBUTE_FUNCTION_GROUP_NAME = "tableAttributeFunction";
+	public static final String TABLE_COLUMN_GROUP_NAME = "tableColumn";
+	public static final String TABLE_ATTRIBUTE_NAME_GROUP_NAME = "tableAttribute";
+
+	public static final String LEAF_SELECTOR_FIELD_VALIDATOR_BASE_NAME = "Leaf Entity "; // TODO update suffixes
 	public static final String NODE_ATTRIBUTES_FIELD_VALIDATOR_BASE_NAME = "Node Attribute ";
 	public static final String EDGE_ATTRIBUTES_FIELD_VALIDATOR_BASE_NAME = "Edge Attribute ";
 
@@ -192,6 +200,25 @@ public abstract class GUIBuilder {
 		return layout;
 	}
 
+	protected StyledText createInstructionsLabel(Composite parent, int height) {
+		StyledText instructionsLabel = new StyledText(
+			parent, SWT.H_SCROLL | SWT.V_SCROLL | SWT.LEFT | SWT.READ_ONLY | SWT.WRAP);
+		instructionsLabel.setBackground(
+			parent.getDisplay().getSystemColor(SWT.COLOR_WHITE));
+		instructionsLabel.setLayoutData(createInstructionsLabelLayoutData(height));
+		instructionsLabel.getCaret().setVisible(false);
+
+		return instructionsLabel;
+	}
+
+	private static GridData createInstructionsLabelLayoutData(int height) {
+		GridData layoutData = new GridData(SWT.FILL, SWT.TOP, true, false);
+		layoutData.horizontalSpan = 2;
+		layoutData.heightHint = height;
+
+		return layoutData;
+	}
+
 	protected AttributeListWidget createAggregateWidget(
 			SWTModel model,
 			String aggregateFunctionGroupName,
@@ -239,7 +266,7 @@ public abstract class GUIBuilder {
 		finishedButton.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent event) {
 				parent.getShell().close();
-				userFinished.object = true;
+				userFinished.object = true; // TODO Pass to GUI a "CompletionEvent" or something
 			}
 		});
 

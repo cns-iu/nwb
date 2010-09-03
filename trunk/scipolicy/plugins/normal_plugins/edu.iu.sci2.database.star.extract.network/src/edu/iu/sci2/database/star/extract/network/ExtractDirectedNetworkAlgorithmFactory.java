@@ -17,13 +17,14 @@ import org.osgi.service.component.ComponentContext;
 import org.osgi.service.log.LogService;
 
 import edu.iu.sci2.database.star.common.StarDatabaseMetadata;
+import edu.iu.sci2.database.star.extract.common.ExtractionAlgorithmFactory;
 import edu.iu.sci2.database.star.extract.common.StarDatabaseDescriptor;
 import edu.iu.sci2.database.star.extract.common.guibuilder.GUIBuilder;
-import edu.iu.sci2.database.star.extract.common.query.QueryConstructor;
 import edu.iu.sci2.database.star.extract.network.guibuilder.DirectedNetworkGUIBuilder;
 import edu.iu.sci2.database.star.extract.network.query.CoreToLeafDirectedNetworkQueryConstructor;
 import edu.iu.sci2.database.star.extract.network.query.LeafToCoreDirectedNetworkQueryConstructor;
 import edu.iu.sci2.database.star.extract.network.query.LeafToLeafDirectedNetworkQueryConstructor;
+import edu.iu.sci2.database.star.extract.network.query.NetworkQueryConstructor;
 
 // TODO: Rename this at some point to reflect bipartite terminology.
 public class ExtractDirectedNetworkAlgorithmFactory extends ExtractionAlgorithmFactory {
@@ -43,7 +44,7 @@ public class ExtractDirectedNetworkAlgorithmFactory extends ExtractionAlgorithmF
     	StarDatabaseMetadata databaseMetadata = getMetadata(parentData);
     	verifyLeafTables(databaseMetadata, this.logger);
     	SWTModel model = getModelFromUser(databaseMetadata);
-    	QueryConstructor queryConstructor = decideQueryConstructor(databaseMetadata, model);
+    	NetworkQueryConstructor queryConstructor = decideQueryConstructor(databaseMetadata, model);
     	AlgorithmFactory networkQueryRunner = getNetworkQueryRunner(this.bundleContext);
 
         return new ExtractNetworkAlgorithm(
@@ -52,6 +53,10 @@ public class ExtractDirectedNetworkAlgorithmFactory extends ExtractionAlgorithmF
 
     public int minimumLeafTableCount() {
     	return 1;
+    }
+
+    public String extractionType() {
+    	return NETWORK_EXTRACTION_TYPE;
     }
 
     private static SWTModel getModelFromUser(StarDatabaseMetadata metadata)
@@ -66,9 +71,8 @@ public class ExtractDirectedNetworkAlgorithmFactory extends ExtractionAlgorithmF
     	}
     }
 
-    private static QueryConstructor decideQueryConstructor(
+    private static NetworkQueryConstructor decideQueryConstructor(
     		StarDatabaseMetadata metadata, SWTModel model) {
-	    // TODO: Specify generic types?
     	DataModelGroup headerGroup = model.getGroup(GUIBuilder.HEADER_GROUP_NAME);
     	DataModelField<?> entity1 =
     		headerGroup.getField(DirectedNetworkGUIBuilder.SOURCE_LEAF_FIELD_NAME);
@@ -85,10 +89,10 @@ public class ExtractDirectedNetworkAlgorithmFactory extends ExtractionAlgorithmF
     			GUIBuilder.HEADER_GROUP_NAME,
     			GUIBuilder.NODE_ATTRIBUTE_FUNCTION_GROUP_NAME,
     			GUIBuilder.NODE_CORE_ENTITY_COLUMN_GROUP_NAME,
-    			GUIBuilder.NODE_RESULT_NAME_GROUP_NAME,
+    			GUIBuilder.NODE_ATTRIBUTE_NAME_GROUP_NAME,
     			GUIBuilder.EDGE_ATTRIBUTE_FUNCTION_GROUP_NAME,
     			GUIBuilder.EDGE_CORE_ENTITY_COLUMN_GROUP_NAME,
-    			GUIBuilder.EDGE_RESULT_NAME_GROUP_NAME,
+    			GUIBuilder.EDGE_ATTRIBUTE_NAME_GROUP_NAME,
     			model,
     			metadata);
     	// Core -> Leaf
@@ -98,10 +102,10 @@ public class ExtractDirectedNetworkAlgorithmFactory extends ExtractionAlgorithmF
     			GUIBuilder.HEADER_GROUP_NAME,
     			GUIBuilder.NODE_ATTRIBUTE_FUNCTION_GROUP_NAME,
     			GUIBuilder.NODE_CORE_ENTITY_COLUMN_GROUP_NAME,
-    			GUIBuilder.NODE_RESULT_NAME_GROUP_NAME,
+    			GUIBuilder.NODE_ATTRIBUTE_NAME_GROUP_NAME,
     			GUIBuilder.EDGE_ATTRIBUTE_FUNCTION_GROUP_NAME,
     			GUIBuilder.EDGE_CORE_ENTITY_COLUMN_GROUP_NAME,
-    			GUIBuilder.EDGE_RESULT_NAME_GROUP_NAME,
+    			GUIBuilder.EDGE_ATTRIBUTE_NAME_GROUP_NAME,
     			model,
     			metadata);
     	// Leaf1 -> Leaf2
@@ -112,10 +116,10 @@ public class ExtractDirectedNetworkAlgorithmFactory extends ExtractionAlgorithmF
     			GUIBuilder.HEADER_GROUP_NAME,
     			GUIBuilder.NODE_ATTRIBUTE_FUNCTION_GROUP_NAME,
     			GUIBuilder.NODE_CORE_ENTITY_COLUMN_GROUP_NAME,
-    			GUIBuilder.NODE_RESULT_NAME_GROUP_NAME,
+    			GUIBuilder.NODE_ATTRIBUTE_NAME_GROUP_NAME,
     			GUIBuilder.EDGE_ATTRIBUTE_FUNCTION_GROUP_NAME,
     			GUIBuilder.EDGE_CORE_ENTITY_COLUMN_GROUP_NAME,
-    			GUIBuilder.EDGE_RESULT_NAME_GROUP_NAME,
+    			GUIBuilder.EDGE_ATTRIBUTE_NAME_GROUP_NAME,
     			model,
     			metadata);
     	}

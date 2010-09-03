@@ -5,21 +5,50 @@ import java.util.Map;
 
 public enum AggregateFunction {
 	ARITHMETIC_MEAN("Arithmetic Mean", "ARITHMETIC_MEAN") {
+		@Override
 		public String databaseRepresentation(
-				String expressionToAggregate, String resultColumnName) {
-			return String.format(
-				"SUM (\"%s\") / COUNT (\"%s\") AS \"%s\"",
-				expressionToAggregate,
-				expressionToAggregate,
-				resultColumnName);
+				String expressionToAggregate,
+				boolean escapeExpressionToAggregate,
+				String resultColumnName) {
+			if (escapeExpressionToAggregate) {
+				return String.format(
+					"SUM (\"%1$s\") / COUNT (\"%1$s\") AS \"%2$s\"",
+					expressionToAggregate,
+					resultColumnName);
+			} else {
+				return String.format(
+					"SUM (%1$s) / COUNT (%1$s) AS \"%2$s\"",
+					expressionToAggregate,
+					resultColumnName);
+			}
 		}
 	},
 	COUNT("Count", "COUNT"),
+	COUNT_DISTINCT("Count Distinct", "COUNT_DISTINCT") {
+		public String databaseRepresentation(
+				String expressionToAggregate,
+				boolean escapeExpressionToAggregate,
+				String resultColumnName) {
+			if (escapeExpressionToAggregate) {
+				return String.format(
+					"COUNT (DISTINCT \"%s\") AS \"%s\"",
+					expressionToAggregate,
+					resultColumnName);
+			} else {
+				return String.format(
+					"COUNT (DISTINCT %s) AS \"%s\"",
+					expressionToAggregate,
+					resultColumnName);
+			}
+		}
+	},
 //	GEOMETRIC_MEAN("Geometric Mean", "") {
 //		public String databaseRepresentation(
 //				String expressionToAggregate, String resultColumnName) {
 //			return "";
-//		}
+//		}	
+	// TODO  (a_1 * a_2 * ... * a_n) ^ (1/n) or ((a_1)^(1/n) * (a_2)^(1/n) * ...), literally, but check if anyone has a smarter implementation to avoid overflow etc.
+	
 //	},
 	MIN("Min", "MIN"),
 	MAX("Max", "MAX"),
@@ -83,12 +112,17 @@ public enum AggregateFunction {
 		return this.sqlName;
 	}
 
-	public String databaseRepresentation(String expressionToAggregate, String resultColumnName) {
-		// TODO: Escape stuff.
-//		String escaped = StringUtilities.e
-
-		return String.format(
-			"%s (\"%s\") AS \"%s\"", this.sqlName, expressionToAggregate, resultColumnName);
+	public String databaseRepresentation(
+			String expressionToAggregate,
+			boolean escapeExpressionToAggregate,
+			String resultColumnName) {
+		if (escapeExpressionToAggregate) {
+			return String.format(
+				"%s (\"%s\") AS \"%s\"", this.sqlName, expressionToAggregate, resultColumnName);
+		} else {
+			return String.format(
+				"%s (%s) AS \"%s\"", this.sqlName, expressionToAggregate, resultColumnName);
+		}
 	}
 
 	public String emptyDatabaseRepresentation(String resultColumnName) {

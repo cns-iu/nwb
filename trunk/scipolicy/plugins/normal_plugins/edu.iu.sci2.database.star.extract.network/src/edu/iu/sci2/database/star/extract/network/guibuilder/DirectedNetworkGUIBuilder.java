@@ -48,9 +48,10 @@ public class DirectedNetworkGUIBuilder extends GUIBuilder {
 	public static final String TARGET_LEAF_FIELD_LABEL =
 		"Choose the Target for your bipartite network extraction: ";
 
-	public static final String SOURCE_LEAF_FIELD_NAME = "sourceLeafEntity";
-	public static final String TARGET_LEAF_FIELD_NAME = "targetLeafEntity";
+	public static final String SOURCE_LEAF_FIELD_NAME = "To Treat As The Source Nodes";
+	public static final String TARGET_LEAF_FIELD_NAME = "To Treat As The Target Nodes";
 
+	@Override
 	@SuppressWarnings("unchecked")	// Arrays.asList creating genericly-typed arrays.
 	public SWTModel createGUI(
 			String windowTitle,
@@ -58,8 +59,6 @@ public class DirectedNetworkGUIBuilder extends GUIBuilder {
 			int windowHeight,
 			StarDatabaseDescriptor databaseDescriptor)
 			throws GUICanceledException, UniqueNameException {
-		// TODO: Verify that databaseDescriptor is valid for us.
-
 		// Create validators that all of our valiated fields should know about.
 
 		Collection<FieldValidator<String>> otherValidatorsForLeafSelectionFields =
@@ -89,7 +88,10 @@ public class DirectedNetworkGUIBuilder extends GUIBuilder {
 		Group edgeAggregatesGroup = createAggregatesGroup(shell, EDGE_ATTRIBUTES_GROUP_TEXT);
 		Group footerGroup = createFooterGroup(shell);
 
-    	StyledText instructionsLabel = createInstructionsLabel(instructionsArea);
+		// Create the instructions/error message label.
+
+    	StyledText instructionsLabel =
+    		createInstructionsLabel(instructionsArea, INSTRUCTIONS_LABEL_HEIGHT);
     	DisplayErrorMessagesValidationAction displayErrorMessagesValidationAction =
     		new DisplayErrorMessagesValidationAction(
     			instructionsLabel,
@@ -149,7 +151,7 @@ public class DirectedNetworkGUIBuilder extends GUIBuilder {
 			NODE_CORE_ENTITY_COLUMN_GROUP_NAME,
 			databaseDescriptor.getCoreTableDescriptor().getColumnNames(),
 			databaseDescriptor.getCoreTableDescriptor().getColumnNamesByLabels(),
-			NODE_RESULT_NAME_GROUP_NAME,
+			NODE_ATTRIBUTE_NAME_GROUP_NAME,
 			NODE_TYPE,
 			nodeAggregatesGroup,
 			this.nodeAttributesFieldValidator,
@@ -161,7 +163,7 @@ public class DirectedNetworkGUIBuilder extends GUIBuilder {
 			EDGE_CORE_ENTITY_COLUMN_GROUP_NAME,
 			databaseDescriptor.getCoreTableDescriptor().getColumnNames(),
 			databaseDescriptor.getCoreTableDescriptor().getColumnNamesByLabels(),
-			EDGE_RESULT_NAME_GROUP_NAME,
+			EDGE_ATTRIBUTE_NAME_GROUP_NAME,
 			EDGE_TYPE,
 			edgeAggregatesGroup,
 			this.edgeAttributesFieldValidator,
@@ -173,7 +175,10 @@ public class DirectedNetworkGUIBuilder extends GUIBuilder {
 		final ObjectContainer<Boolean> userFinished = new ObjectContainer<Boolean>(false);
 		this.finishedButton = createFinishedButton(footerGroup, 1, userFinished);
 
-		// Fill the aggregate widgets with some aggregate fields by default (for the user's ease).
+		/* Fill the aggregate widgets with some aggregate fields by default (for the user's ease).
+		 * (This has to be done after the finished button is created because the components we're
+		 * about to create validate upon creation, and to validate the finished button must exist.
+		 */
 
 		try {
 			for (int ii = 0; ii < DEFAULT_AGGREGATE_WIDGET_COUNT; ii++) {
@@ -194,7 +199,6 @@ public class DirectedNetworkGUIBuilder extends GUIBuilder {
 
 		sourceLeafField.validate();
 		targetLeafField.validate();
-//		this.finishedButton.setEnabled(false);
 
 		// Run the GUI and return the model with the data that the user entered.
 
@@ -208,13 +212,9 @@ public class DirectedNetworkGUIBuilder extends GUIBuilder {
 		return model;
 	}
 
-	private static StyledText createInstructionsLabel(Composite parent) {
-		StyledText instructionsLabel = new StyledText(
-			parent, SWT.H_SCROLL | SWT.V_SCROLL | SWT.LEFT | SWT.READ_ONLY | SWT.WRAP);
-		instructionsLabel.setBackground(
-			parent.getDisplay().getSystemColor(SWT.COLOR_WHITE));
-		instructionsLabel.setLayoutData(createInstructionsLabelLayoutData());
-		instructionsLabel.getCaret().setVisible(false);
+	@Override
+	protected StyledText createInstructionsLabel(Composite parent, int height) {
+		StyledText instructionsLabel = super.createInstructionsLabel(parent, height);
 
 		SWTUtilities.styledPrint(
 			instructionsLabel,
@@ -230,14 +230,6 @@ public class DirectedNetworkGUIBuilder extends GUIBuilder {
 			SWT.BOLD);
 
 		return instructionsLabel;
-	}
-
-	private static GridData createInstructionsLabelLayoutData() {
-		GridData layoutData = new GridData(SWT.FILL, SWT.TOP, true, false);
-		layoutData.horizontalSpan = 2;
-		layoutData.heightHint = INSTRUCTIONS_LABEL_HEIGHT;
-
-		return layoutData;
 	}
 
 	private SWTModelField<

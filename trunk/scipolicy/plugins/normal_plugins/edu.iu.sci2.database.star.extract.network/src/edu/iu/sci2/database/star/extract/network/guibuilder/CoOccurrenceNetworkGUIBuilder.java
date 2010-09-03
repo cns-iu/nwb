@@ -44,8 +44,9 @@ public class CoOccurrenceNetworkGUIBuilder extends GUIBuilder {
 		"Choose the Leaf column to extract the co-occurrence network on: ";
 	public static final String HEADER_GROUP_TEXT = "";
 
-	public static final String LEAF_FIELD_NAME = "leafEntity";
+	public static final String LEAF_FIELD_NAME = "To Run Co-Occurrence On";
 
+	@Override
 	@SuppressWarnings("unchecked")	// Arrays.asList creating genericly-typed arrays.
 	public DataModel createGUI(
 			String windowTitle,
@@ -53,8 +54,6 @@ public class CoOccurrenceNetworkGUIBuilder extends GUIBuilder {
 			int windowHeight,
 			StarDatabaseDescriptor databaseDescriptor)
 			throws GUICanceledException, UniqueNameException {
-		// TODO: Verify that databaseDescriptor is valid for us.
-
 		// Create validators that all of our valiated fields should know about.
 
 		Collection<FieldValidator<String>> otherValidatorsForNodeAttributes =
@@ -79,7 +78,10 @@ public class CoOccurrenceNetworkGUIBuilder extends GUIBuilder {
 		Group edgeAggregatesGroup = createAggregatesGroup(shell, EDGE_ATTRIBUTES_GROUP_TEXT);
 		Group footerGroup = createFooterGroup(shell);
 
-    	StyledText instructionsLabel = createInstructionsLabel(instructionsArea);
+		// Create the instructions/error message label.
+
+    	StyledText instructionsLabel =
+    		createInstructionsLabel(instructionsArea, INSTRUCTIONS_LABEL_HEIGHT);
     	DisplayErrorMessagesValidationAction displayErrorMessagesValidationAction =
     		new DisplayErrorMessagesValidationAction(
     			instructionsLabel,
@@ -99,7 +101,7 @@ public class CoOccurrenceNetworkGUIBuilder extends GUIBuilder {
 			NODE_CORE_ENTITY_COLUMN_GROUP_NAME,
 			databaseDescriptor.getCoreTableDescriptor().getColumnNames(),
 			databaseDescriptor.getCoreTableDescriptor().getColumnNamesByLabels(),
-			NODE_RESULT_NAME_GROUP_NAME,
+			NODE_ATTRIBUTE_NAME_GROUP_NAME,
 			NODE_TYPE,
 			nodeAggregatesGroup,
 			this.nodeAttributesFieldValidator,
@@ -111,7 +113,7 @@ public class CoOccurrenceNetworkGUIBuilder extends GUIBuilder {
 			EDGE_CORE_ENTITY_COLUMN_GROUP_NAME,
 			databaseDescriptor.getCoreTableDescriptor().getColumnNames(),
 			databaseDescriptor.getCoreTableDescriptor().getColumnNamesByLabels(),
-			EDGE_RESULT_NAME_GROUP_NAME,
+			EDGE_ATTRIBUTE_NAME_GROUP_NAME,
 			EDGE_TYPE,
 			edgeAggregatesGroup,
 			this.edgeAttributesFieldValidator,
@@ -124,7 +126,10 @@ public class CoOccurrenceNetworkGUIBuilder extends GUIBuilder {
 		this.finishedButton = createFinishedButton(footerGroup, 1, userFinished);
 		shell.setDefaultButton(finishedButton);
 
-		// Fill the aggregate widgets with some aggregate fields by default (for the user's ease).
+		/* Fill the aggregate widgets with some aggregate fields by default (for the user's ease).
+		 * (This has to be done after the finished button is created because the components we're
+		 * about to create validate upon creation, and to validate the finished button must exist.
+		 */
 
 		try {
 			for (int ii = 0; ii < DEFAULT_AGGREGATE_WIDGET_COUNT; ii++) {
@@ -141,10 +146,6 @@ public class CoOccurrenceNetworkGUIBuilder extends GUIBuilder {
 			new ObjectContainer<GUICanceledException>();
 		GUIBuilderUtilities.setCancelable(shell, exceptionThrown);
 
-		// Set up validation.
-
-		// TODO
-
 		// Run the GUI and return the model with the data that the user entered.
 
 		runGUI(display, shell, windowHeight);
@@ -155,25 +156,6 @@ public class CoOccurrenceNetworkGUIBuilder extends GUIBuilder {
     	}
 
 		return model;
-	}
-
-	private static StyledText createInstructionsLabel(Composite parent) {
-		StyledText instructionsLabel = new StyledText(
-			parent, SWT.H_SCROLL | SWT.V_SCROLL | SWT.LEFT | SWT.READ_ONLY | SWT.WRAP);
-		instructionsLabel.setBackground(
-			parent.getDisplay().getSystemColor(SWT.COLOR_WHITE));
-		instructionsLabel.setLayoutData(createInstructionsLabelLayoutData());
-		instructionsLabel.getCaret().setVisible(false);
-
-		return instructionsLabel;
-	}
-
-	private static GridData createInstructionsLabelLayoutData() {
-		GridData layoutData = new GridData(SWT.FILL, SWT.TOP, true, false);
-		layoutData.horizontalSpan = 2;
-		layoutData.heightHint = INSTRUCTIONS_LABEL_HEIGHT;
-
-		return layoutData;
 	}
 
 	private static SWTModelField<

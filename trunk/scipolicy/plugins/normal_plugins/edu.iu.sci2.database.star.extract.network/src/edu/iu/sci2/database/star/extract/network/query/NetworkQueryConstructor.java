@@ -1,17 +1,14 @@
-package edu.iu.sci2.database.star.extract.common.query;
+package edu.iu.sci2.database.star.extract.network.query;
 
 import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 import org.antlr.stringtemplate.StringTemplate;
 import org.antlr.stringtemplate.StringTemplateGroup;
-import org.cishell.utilities.MapUtilities;
 import org.cishell.utilities.StringUtilities;
 import org.cishell.utility.datastructure.datamodel.DataModel;
 import org.cishell.utility.datastructure.datamodel.field.DataModelField;
@@ -22,9 +19,10 @@ import com.google.common.collect.Collections2;
 
 import edu.iu.sci2.database.star.common.StarDatabaseMetadata;
 import edu.iu.sci2.database.star.common.parameter.ColumnDescriptor;
+import edu.iu.sci2.database.star.extract.common.StarDatabaseExtractionUtilities;
 import edu.iu.sci2.database.star.extract.common.aggregate.Aggregate;
 
-public abstract class QueryConstructor {
+public abstract class NetworkQueryConstructor {
 	public static final String STRING_TEMPLATE_BASE_FILE_PATH =
 		"/edu/iu/sci2/database/star/extract/network/query/stringtemplate/";
 
@@ -48,13 +46,13 @@ public abstract class QueryConstructor {
 	private Collection<Aggregate> edgeAggregates;
 
 	private String nodeAggregatesForQuery;
-	private String emptyNodeaggregatesForQuery;
+	private String emptyNodeAggregatesForQuery;
 	private String edgeAggregatesForQuery;
 
 	private StringTemplateGroup aggregatesStringTemplateGroup;
 	private StringTemplateGroup noAggregatesStringTemplateGroup;
 
-	public QueryConstructor(
+	public NetworkQueryConstructor(
 			String headerGroupName,
 			String nodeAttributeFunctionGroupName,
 			String nodeCoreEntityColumnGroupName,
@@ -78,7 +76,7 @@ public abstract class QueryConstructor {
 			metadata.getColumnDescriptorsByDatabaseName());
 
 		this.nodeAggregatesForQuery = formAggregateQuerySection(this.nodeAggregates);
-		this.emptyNodeaggregatesForQuery = formEmptyAggregateQuerySection(this.nodeAggregates);
+		this.emptyNodeAggregatesForQuery = formEmptyAggregateQuerySection(this.nodeAggregates);
 		this.edgeAggregatesForQuery = formAggregateQuerySection(this.edgeAggregates);
 
 		this.aggregatesStringTemplateGroup = getAggregatesStringTemplateGroup();
@@ -102,7 +100,7 @@ public abstract class QueryConstructor {
 	}
 
 	public String getEmptyNodeAggregatesForQuery() {
-		return this.emptyNodeaggregatesForQuery;
+		return this.emptyNodeAggregatesForQuery;
 	}
 
 	public String getEdgeAggregatesForQuery() {
@@ -151,21 +149,21 @@ public abstract class QueryConstructor {
 	private void organizeNodeAggregateStuff(
 			DataModelGroup aggregateFunctionGroup,
 			DataModelGroup coreEntityColumnGroup,
-			DataModelGroup resultColumnLabelGroup,
+			DataModelGroup attributeNameGroup,
 			Map<String, ColumnDescriptor> columnDescriptors) {
-		List<ColumnDescriptor> nonAggregatedColumns = new ArrayList<ColumnDescriptor>();
+		List<ColumnDescriptor> aggregatedColumns = new ArrayList<ColumnDescriptor>();
 		List<Aggregate> aggregates = new ArrayList<Aggregate>();
-		organizeAggregateStuff(
-			nonAggregatedColumns,
+		determineNetworkAggregateData(
+			aggregatedColumns,
 			NODE_OBJECT_TYPE,
 			aggregates,
 			aggregateFunctionGroup,
 			coreEntityColumnGroup,
-			resultColumnLabelGroup,
+			attributeNameGroup,
 			columnDescriptors);
 		this.nodeNonAggregatedCoreColumns =
-			Collections2.filter(nonAggregatedColumns, new Predicate<ColumnDescriptor>() {
-				public boolean apply(ColumnDescriptor columnDescriptor){
+			Collections2.filter(aggregatedColumns, new Predicate<ColumnDescriptor>() {
+				public boolean apply(ColumnDescriptor columnDescriptor) {
 					return columnDescriptor.isCoreColumn();
 				}
 			});
@@ -175,57 +173,25 @@ public abstract class QueryConstructor {
 	private void organizeEdgeAggregateStuff(
 			DataModelGroup aggregateFunctionGroup,
 			DataModelGroup coreEntityColumnGroup,
-			DataModelGroup resultColumnLabelGroup,
+			DataModelGroup attributeNameGroup,
 			Map<String, ColumnDescriptor> columnDescriptors) {
-		List<ColumnDescriptor> nonAggregatedColumns = new ArrayList<ColumnDescriptor>();
+		List<ColumnDescriptor> aggregatedColumns = new ArrayList<ColumnDescriptor>();
 		List<Aggregate> aggregates = new ArrayList<Aggregate>();
-		organizeAggregateStuff(
-			nonAggregatedColumns,
+		determineNetworkAggregateData(
+			aggregatedColumns,
 			EDGE_OBJECT_TYPE,
 			aggregates,
 			aggregateFunctionGroup,
 			coreEntityColumnGroup,
-			resultColumnLabelGroup,
+			attributeNameGroup,
 			columnDescriptors);
 		this.edgeNonAggregatedCoreColumns =
-			Collections2.filter(nonAggregatedColumns, new Predicate<ColumnDescriptor>() {
-				public boolean apply(ColumnDescriptor columnDescriptor){
+			Collections2.filter(aggregatedColumns, new Predicate<ColumnDescriptor>() {
+				public boolean apply(ColumnDescriptor columnDescriptor) {
 					return columnDescriptor.isCoreColumn();
 				}
 			});
 		this.edgeAggregates = aggregates;
-	}
-
-	/// Mutates nonAggregatedColumns and aggregates.
-	// TODO: Document more (on how/why it mutates them)?
-	private void organizeAggregateStuff(
-			List<ColumnDescriptor> nonAggregatedColumns,
-			String objectType,
-			List<Aggregate> aggregates,
-			DataModelGroup aggregateFunctionGroup,
-			DataModelGroup coreEntityColumnGroup,
-			DataModelGroup resultColumnLabelGroup,
-			Map<String, ColumnDescriptor> columnDescriptors) {
-		Set<String> aggregatedColumns = new HashSet<String>();
-		System.err.println("aggregateFunctionGroup: " + aggregateFunctionGroup);
-		System.err.println("coreEntityColumnGroup: " + coreEntityColumnGroup);
-		System.err.println("resultColumnLabelGroup: " + resultColumnLabelGroup);
-
-		for (DataModelField<?> aggregateFunctionField : aggregateFunctionGroup.getFields()) {
-			String id = aggregateFunctionField.getName();
-			String coreEntityColumnName = (String) coreEntityColumnGroup.getField(id).getValue();
-			String aggregateFunctionName = (String) aggregateFunctionField.getValue();
-			String resultColumnLabelName = (String) resultColumnLabelGroup.getField(id).getValue();
-
-			aggregatedColumns.add(coreEntityColumnName);
-			aggregates.add(new Aggregate(
-				objectType + "_" + resultColumnLabelName,
-				aggregateFunctionName,
-				coreEntityColumnName,
-				columnDescriptors));
-		}
-
-		MapUtilities.valuesByKeys(columnDescriptors, aggregatedColumns, nonAggregatedColumns);
 	}
 
 	private StringTemplate getNodeQueryStringTemplate() {
@@ -254,11 +220,42 @@ public abstract class QueryConstructor {
 		}
 	}
 
+	/// Mutates nonAggregatedColumns and aggregates.
+	// TODO: Document more (on how/why it mutates them)?
+	public static void determineNetworkAggregateData(
+			List<ColumnDescriptor> nonAggregatedColumns,
+			String objectType,
+			List<Aggregate> aggregates,
+			DataModelGroup aggregateFunctionGroup,
+			DataModelGroup coreEntityColumnGroup,
+			DataModelGroup attributeGroup,
+			Map<String, ColumnDescriptor> columnDescriptors) {
+		Map<String, ColumnDescriptor> workingNonAggregatedColumns =
+			new HashMap<String, ColumnDescriptor>();
+		workingNonAggregatedColumns.putAll(columnDescriptors);
+
+		for (DataModelField<?> aggregateFunctionField : aggregateFunctionGroup.getFields()) {
+			String id = aggregateFunctionField.getName();
+			String coreEntityColumnName = (String) coreEntityColumnGroup.getField(id).getValue();
+			String aggregateFunctionName = (String) aggregateFunctionField.getValue();
+			String attributeName = (String) attributeGroup.getField(id).getValue();
+
+			aggregates.add(new Aggregate(
+				objectType + "_" + attributeName,
+				aggregateFunctionName,
+				coreEntityColumnName,
+				columnDescriptors));
+			workingNonAggregatedColumns.remove(coreEntityColumnName);
+		}
+
+		nonAggregatedColumns.addAll(workingNonAggregatedColumns.values());
+	}
+
 	public static StringTemplateGroup loadTemplate(String relativeTemplatePath) {
 		String absoluteTemplatePath = STRING_TEMPLATE_BASE_FILE_PATH + relativeTemplatePath;
 
 		return new StringTemplateGroup(new InputStreamReader(
-			QueryConstructor.class.getResourceAsStream(absoluteTemplatePath)));
+			NetworkQueryConstructor.class.getResourceAsStream(absoluteTemplatePath)));
 	}
 
 	public static String formAggregateQuerySection(Collection<Aggregate> aggregates) {
@@ -268,7 +265,8 @@ public abstract class QueryConstructor {
 			querySections.add(aggregate.databaseRepresentation());
 		}
 
-		return fixQuerySectionWithCommaPrefix(StringUtilities.implodeItems(querySections, ", "));
+		return StarDatabaseExtractionUtilities.fixQuerySectionWithCommaPrefix(
+			StringUtilities.implodeItems(querySections, ", "));
 	}
 
 	public static String formEmptyAggregateQuerySection(Collection<Aggregate> aggregates) {
@@ -278,7 +276,8 @@ public abstract class QueryConstructor {
 			querySections.add(aggregate.emptyDatabaseRepresentation());
 		}
 
-		return fixQuerySectionWithCommaPrefix(StringUtilities.implodeItems(querySections, ", "));
+		return StarDatabaseExtractionUtilities.fixQuerySectionWithCommaPrefix(
+			StringUtilities.implodeItems(querySections, ", "));
 	}
 
 	public static String formCoreColumnsQuerySection(
@@ -293,7 +292,8 @@ public abstract class QueryConstructor {
 				columnDescriptor.getName()));
 		}
 
-		return fixQuerySectionWithCommaPrefix(StringUtilities.implodeItems(querySections, ", "));
+		return StarDatabaseExtractionUtilities.fixQuerySectionWithCommaPrefix(
+			StringUtilities.implodeItems(querySections, ", "));
 	}
 
 	public static String formCoreColumnsForGroupByQuerySection(
@@ -304,7 +304,8 @@ public abstract class QueryConstructor {
 			querySections.add(String.format("\"%s\"", columnDescriptor.getNameForDatabase()));
 		}
 
-		return fixQuerySectionWithCommaPrefix(StringUtilities.implodeItems(querySections, ", "));
+		return StarDatabaseExtractionUtilities.fixQuerySectionWithCommaPrefix(
+			StringUtilities.implodeItems(querySections, ", "));
 	}
 
 	public static String formEmptyCoreColumnsQuerySection(
@@ -313,17 +314,12 @@ public abstract class QueryConstructor {
 
 		for (ColumnDescriptor columnDescriptor : nonAggregatedColumns) {
 			querySections.add(String.format(
-				"VARCHAR (CHAR (\'\'), %d) AS \"%s\"", MAXIMUM_LABEL_SIZE, columnDescriptor.getName()));
+				"VARCHAR (CHAR (\'\'), %d) AS \"%s\"",
+				MAXIMUM_LABEL_SIZE,
+				columnDescriptor.getName()));
 		}
 
-		return fixQuerySectionWithCommaPrefix(StringUtilities.implodeItems(querySections, ", "));
-	}
-
-	private static String fixQuerySectionWithCommaPrefix(String querySection) {
-		if (StringUtilities.isNull_Empty_OrWhitespace(querySection)) {
-			return "";
-		} else {
-			return ", " + querySection;
-		}
+		return StarDatabaseExtractionUtilities.fixQuerySectionWithCommaPrefix(
+			StringUtilities.implodeItems(querySections, ", "));
 	}
 }

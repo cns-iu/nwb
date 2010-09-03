@@ -1,7 +1,7 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
-Bundle-Name: edu.iu.sci2.database.star.extract.network
-Bundle-SymbolicName: edu.iu.sci2.database.star.extract.network
+Bundle-Name: edu.iu.sci2.database.star.extract.common
+Bundle-SymbolicName: edu.iu.sci2.database.star.extract.common
 Bundle-Version: 1.0.0
 Import-Package: com.google.common.base,
  com.google.common.collect,
@@ -45,5 +45,4 @@ Bundle-RequiredExecutionEnvironment: J2SE-1.5
 Export-Package: edu.iu.sci2.database.star.extract.common,
  edu.iu.sci2.database.star.extract.common.aggregate,
  edu.iu.sci2.database.star.extract.common.guibuilder,
- edu.iu.sci2.database.star.extract.common.guibuilder.attribute,
- edu.iu.sci2.database.star.extract.common.query
+ edu.iu.sci2.database.star.extract.common.guibuilder.attribute

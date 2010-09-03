@@ -7,9 +7,8 @@ import org.cishell.utilities.StringUtilities;
 import org.cishell.utility.swt.model.SWTModel;
 
 import edu.iu.sci2.database.star.common.StarDatabaseMetadata;
-import edu.iu.sci2.database.star.extract.common.query.QueryConstructor;
 
-public class CoreToLeafDirectedNetworkQueryConstructor extends QueryConstructor {
+public class CoreToLeafDirectedNetworkQueryConstructor extends NetworkQueryConstructor {
 	public static final String CORE_TO_LEAF_WITH_AGGREGATES_STRING_TEMPLATE_FILE_PATH =
 		"core_leaf_aggregates.st";
 	public static final String CORE_TO_LEAF_WITHOUT_AGGREGATES_STRING_TEMPLATE_FILE_PATH =
