@@ -24,6 +24,13 @@
   	
 	<!-- (might be able to replace this with a script that gets the entire contents of the directory... -->
   		<!-- normal_plugins -->
+
+  	<antcall target="svn.co">
+		<param name="target" value="plugins"/>
+		<param name="element.id" value="jaxb"/>
+		<param name="project.name" value="jaxb"/>
+		<param name="url" value="http://nwb.slis.indiana.edu/svn/nwb/trunk/epic_tool/plugins/libs"/>
+  	</antcall>
   	
   	<antcall target="svn.co">
   	  <param name="target" value="plugins"/>
