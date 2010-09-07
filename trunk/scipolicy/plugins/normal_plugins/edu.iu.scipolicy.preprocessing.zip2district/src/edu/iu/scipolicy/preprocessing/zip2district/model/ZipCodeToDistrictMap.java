@@ -3,6 +3,7 @@ package edu.iu.scipolicy.preprocessing.zip2district.model;
 import java.util.HashMap;
 import java.util.Map;
 
+import edu.iu.scipolicy.model.geocode.USZipCode;
 import edu.iu.scipolicy.preprocessing.zip2district.ZipToDistrictException;
 
 /**

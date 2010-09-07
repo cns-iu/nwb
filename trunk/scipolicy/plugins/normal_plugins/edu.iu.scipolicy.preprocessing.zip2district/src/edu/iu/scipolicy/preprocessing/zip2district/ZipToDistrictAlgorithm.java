@@ -9,10 +9,13 @@ import org.cishell.framework.algorithm.Algorithm;
 import org.cishell.framework.data.BasicData;
 import org.cishell.framework.data.Data;
 import org.cishell.framework.data.DataProperty;
+import org.cishell.utilities.FrequencyMap;
 import org.cishell.utilities.TableUtilities;
 import org.osgi.service.log.LogService;
 
 import prefuse.data.Table;
+import edu.iu.scipolicy.model.geocode.Geolocation;
+import edu.iu.scipolicy.model.geocode.USDistrict;
 import edu.iu.scipolicy.preprocessing.zip2district.mapper.Mapper;
 
 /**
@@ -28,6 +31,8 @@ import edu.iu.scipolicy.preprocessing.zip2district.mapper.Mapper;
 
 public class ZipToDistrictAlgorithm implements Algorithm {
 	public static final String[] DISTRICT_COLUMN_NAMES = {"Congressional District", "District"};
+	public static final String[] LATITUDE_COLUMN_NAMES = {"Latitude", "Lat"};
+	public static final String[] LONGITUDE_COLUMN_NAMES = {"Longitude", "Lon"};
 	private Data[] data;
 	private LogService logger;
 	private Table originalTable;
@@ -76,21 +81,30 @@ public class ZipToDistrictAlgorithm implements Algorithm {
 		 */
 		String districtColumnName = TableUtilities.formNonConflictingNewColumnName(
 											originalTable.getSchema(), DISTRICT_COLUMN_NAMES);
+		String latitudeColumnName = TableUtilities.formNonConflictingNewColumnName(
+											originalTable.getSchema(), LATITUDE_COLUMN_NAMES);
+		String longitudeColumnName = TableUtilities.formNonConflictingNewColumnName(
+											originalTable.getSchema(), LONGITUDE_COLUMN_NAMES);
 		logger.log(LogService.LOG_INFO,
-				String.format("District values added to %s, respectively.", districtColumnName));
+				String.format("District values added to %s, %s and %s respectively.", 
+								districtColumnName, latitudeColumnName, longitudeColumnName));
 		
 		Table outputTable = originalTable.getSchema().instantiate();
 		outputTable.addColumn(districtColumnName, String.class);
-		
-		int failedCount = 0;
-		int zipCodeColumnNumber = originalTable.getColumnNumber(zipCodeColumnName);
+		outputTable.addColumn(latitudeColumnName, Double.class);
+		outputTable.addColumn(longitudeColumnName, Double.class);
 		int districtColumnNumber = outputTable.getColumnNumber(districtColumnName);
+		int latitudeColumnNumber = outputTable.getColumnNumber(latitudeColumnName);
+		int longitudeColumnNumber = outputTable.getColumnNumber(longitudeColumnName);
+		
+		int zipCodeColumnNumber = originalTable.getColumnNumber(zipCodeColumnName);
+		FrequencyMap<String> failedFrequency = new FrequencyMap<String>(true);
 		Iterator<?> zipCodeColumnIterator = originalTable.iterator();
 		while (zipCodeColumnIterator.hasNext()) {
 			int currentRowNumber = Integer.parseInt(zipCodeColumnIterator.next().toString());
 			
 			/* Convert Zip code to district */
-			String district = "";
+			USDistrict district = null;
 			String currentZipCode = "";
 			
 			Object zipCodeObject = originalTable.get(currentRowNumber, zipCodeColumnNumber);
@@ -100,15 +114,13 @@ public class ZipToDistrictAlgorithm implements Algorithm {
 					district = mapper.getCongressionalDistrict(currentZipCode);
 				} catch (ZipToDistrictException e) {
 					/* Look up failed. Warn user about it */
-					failedCount++;
-					printWarningMessage(currentZipCode);
+					failedFrequency.add(currentZipCode);
 				}
 			} else {
 				/* Look up failed. Warn user about it */
-				failedCount++;
-				printWarningMessage(currentZipCode);
+				failedFrequency.add(currentZipCode);
 			}
-
+			
 			/*
 			 * Add the new row to the new table
 			 * by copying the original row & then adding 2 new columns to it.
@@ -116,23 +128,47 @@ public class ZipToDistrictAlgorithm implements Algorithm {
 			outputTable.addRow();
 			TableUtilities.copyTableRow(currentRowNumber, currentRowNumber, 
 										outputTable, originalTable);
-			outputTable.set(currentRowNumber, districtColumnNumber, district);
+			
+			if (district != null) {
+				Geolocation geolocation = district.getGeolocation();
+				outputTable.set(currentRowNumber, districtColumnNumber, district.getLabel());
+				outputTable.set(currentRowNumber, latitudeColumnNumber, 
+								geolocation.getLatitude());
+				outputTable.set(currentRowNumber, longitudeColumnNumber, 
+								geolocation.getLongitude());
+			}
+		}
+		
+		if (!failedFrequency.isEmpty()) {
+			printWarningMessage(failedFrequency);
 		}
 		/* Show statistic information */
 		int totalRow = originalTable.getRowCount();
 		NumberFormat numberFormat = NumberFormat.getInstance();
 		logger.log(LogService.LOG_INFO, String.format(
 				"Successfully converted %s out of %s ZIP codes to congressional districts.", 
-				numberFormat.format(totalRow - failedCount),
+				numberFormat.format(totalRow - failedFrequency.sum()),
 				numberFormat.format(totalRow)));
 		return outputTable;
 	}
 	
-	private void printWarningMessage(String zipCodeString) {
+	private void printWarningMessage(FrequencyMap<String> failedFrequency) {
+		for (String zipCodeString : failedFrequency.keySet()) {
+			logger.log(LogService.LOG_WARNING,
+						String.format(
+						"There are %d rows with \"%s\" ZIP code, which could not been given a"
+						+ "congressional district.",
+						failedFrequency.getFrequency(zipCodeString), zipCodeString));
+		}
 		logger.log(LogService.LOG_WARNING,
-					String.format(
-					"The row with \"%s\" ZIP code has not been given a"
-					+ "congressional district. ZIP+4 code is needed",
-					zipCodeString));
+				"5-digit ZIP codes may often be insufficient," 
+				+ " as many zip codes contain multiple congressional districts. " 
+				+ "9-digit zip codes may be required." 
+				+ " If a zip code was recently created,"
+			    + " it may also not be contained in our database." 
+				+ " If this is the case," 
+				+ " please contact nwb-helpdesk@googlegroups.com or katy@indiana.edu");
+				
+		
 	}
 }

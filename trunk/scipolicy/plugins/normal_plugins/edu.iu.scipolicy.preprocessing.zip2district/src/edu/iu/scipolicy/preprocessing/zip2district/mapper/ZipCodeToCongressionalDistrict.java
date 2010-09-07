@@ -8,8 +8,9 @@ import java.net.URLConnection;
 
 import org.osgi.framework.BundleContext;
 
+import edu.iu.scipolicy.model.geocode.USDistrict;
+import edu.iu.scipolicy.model.geocode.USZipCode;
 import edu.iu.scipolicy.preprocessing.zip2district.ZipToDistrictException;
-import edu.iu.scipolicy.preprocessing.zip2district.model.USZipCode;
 import edu.iu.scipolicy.preprocessing.zip2district.model.ZipCodeToDistrictMap;
 
 /**
@@ -40,17 +41,29 @@ public class ZipCodeToCongressionalDistrict implements Mapper {
 	 * consequent new instance since the data set is 25MB
 	 */
 	private static ZipCodeToDistrictMap zipCodeToDistrictMap;
+	private DistrictRegistry districtRegistry;
 	private URL url;
 	
 	public ZipCodeToCongressionalDistrict() {
 		url = ClassLoader.getSystemResource(ZIP_CODE_TO_DISTRICT_FILE_PATH);
 		zipCodeToDistrictMap = new ZipCodeToDistrictMap();
+		try {
+			districtRegistry = DistrictRegistry.getInstance();
+		} catch (ZipToDistrictException e) {
+			throw new RuntimeException(e.getMessage());
+		}
 	}
 	
 	public ZipCodeToCongressionalDistrict(BundleContext bundleContext) {
 		url = bundleContext.getBundle().getResource(ZIP_CODE_TO_DISTRICT_FILE_PATH);
 		zipCodeToDistrictMap = new ZipCodeToDistrictMap();
+		try {
+			districtRegistry = DistrictRegistry.getInstance(bundleContext);
+		} catch (ZipToDistrictException e) {
+			throw new RuntimeException(e.getMessage());
+		}
 	}
+	
 /** add into JUnit test
 	public static void main(String[] args) {
 		ZipCodeToCongressionalDistrict converter = new ZipCodeToCongressionalDistrict();
@@ -67,12 +80,14 @@ public class ZipCodeToCongressionalDistrict implements Mapper {
 	}
  * @throws ZipToDistrictException 
 **/
-	public String getCongressionalDistrict(USZipCode zipCode) throws ZipToDistrictException {
-		return getZipCodeToDistrictMap(url).getDistrict(zipCode);
+	public USDistrict getCongressionalDistrict(USZipCode zipCode) throws ZipToDistrictException {
+		String districtName = getZipCodeToDistrictMap(url).getDistrict(zipCode);
+		return getUSDistrict(districtName);
 	}
 	
-	public String getCongressionalDistrict(String zipCode) throws ZipToDistrictException {
-		return getZipCodeToDistrictMap(url).getDistrict(USZipCode.parse(zipCode));
+	public USDistrict getCongressionalDistrict(String zipCode) throws ZipToDistrictException {
+		String districtName = getZipCodeToDistrictMap(url).getDistrict(USZipCode.parse(zipCode));
+		return getUSDistrict(districtName);
 	}
 	
 	public void reloadMap() throws ZipToDistrictException {
@@ -89,6 +104,10 @@ public class ZipCodeToCongressionalDistrict implements Mapper {
 			initializeZipCodeToDistrictMap(url);
 		}
 		return zipCodeToDistrictMap;
+	}
+	
+	private USDistrict getUSDistrict(String districtName) throws ZipToDistrictException {
+		return districtRegistry.getDistrict(districtName);
 	}
 	
 	private void initializeZipCodeToDistrictMap(URL zipCodeToDistrictFilePath) 

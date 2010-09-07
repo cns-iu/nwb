@@ -1,9 +1,10 @@
 package edu.iu.scipolicy.preprocessing.zip2district.mapper;
 
+import edu.iu.scipolicy.model.geocode.USDistrict;
+import edu.iu.scipolicy.model.geocode.USZipCode;
 import edu.iu.scipolicy.preprocessing.zip2district.ZipToDistrictException;
-import edu.iu.scipolicy.preprocessing.zip2district.model.USZipCode;
 
 public interface Mapper {
-	public String getCongressionalDistrict(USZipCode zipCode) throws ZipToDistrictException;
-	public String getCongressionalDistrict(String zipCode) throws ZipToDistrictException;
+	public USDistrict getCongressionalDistrict(USZipCode zipCode) throws ZipToDistrictException;
+	public USDistrict getCongressionalDistrict(String zipCode) throws ZipToDistrictException;
 }
