@@ -21,6 +21,6 @@ public class YahooStateCoder extends AbstractYahooCoder {
 	@Override
 	public ResultSet requestYahooService(String location, String applicationId)
 											throws IOException, JAXBException {
-		return PlaceFinderClient.requestState(location, "US", applicationId);
+		return PlaceFinderClient.requestState(location, "United States", applicationId);
 	}
 }

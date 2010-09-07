@@ -23,6 +23,6 @@ public class YahooZipCodeCoder extends AbstractYahooCoder {
 	public ResultSet requestYahooService(String location, String applicationId)
 												throws IOException, JAXBException {
 		return PlaceFinderClient.requestZipCode(USZipCode.parse(location).getUzip(), 
-												"US", applicationId);
+												"United States", applicationId);
 	}
 }
