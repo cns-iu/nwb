@@ -31,13 +31,13 @@ import prefuse.data.Table;
 public class AggregateDataAlgorithm implements Algorithm {
 	
 	private Data[] data;
-    private Dictionary parameters;
+    private Dictionary<String, Object> parameters;
 	private LogService logger;
 	private List<Integer> tableColumnNumericalParameterIDs, tableColumnStringParameterIDs;
 	
     public static final String AGGREGATE_ON_COLUMN = "aggregateoncolumn";
     
-    public AggregateDataAlgorithm(Data[] data, Dictionary parameters,
+    public AggregateDataAlgorithm(Data[] data, Dictionary<String, Object> parameters,
 								  CIShellContext context, 
 								  List<Integer> inputNumericalParameterIDs, 
 								  List<Integer> inputStringParameterIDs) {
@@ -84,10 +84,10 @@ public class AggregateDataAlgorithm implements Algorithm {
 		 * After getting the output in table format make it available to the user.
 		 * */
 		Data output = new BasicData(aggregationComputation.getOutputTable(), Table.class.getName());
-		Dictionary metadata = output.getMetadata();
-		metadata.put(DataProperty.LABEL, "Aggregation performed using unique values in \"" 
+		Dictionary<String, Object> metadata = output.getMetadata();
+		metadata.put(DataProperty.LABEL, "Aggregation performed using unique values in \'" 
 										 + aggregateOnColumnName 
-										 + "\" column.");
+										 + "\' column.");
 		metadata.put(DataProperty.PARENT, this.data[0]);
 		metadata.put(DataProperty.TYPE, DataProperty.TABLE_TYPE);
 		

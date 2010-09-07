@@ -65,7 +65,7 @@ public class AggregateDataComputation {
 
 	private String outputTableCountColumnName;
 	private Map<Integer, String> columnNumberToAggregationType;
-	private Map<Integer, SingleFunctionAggregator> columnNumberToAggregationFunction;
+	private Map<Integer, SingleFunctionAggregator<?>> columnNumberToAggregationFunction;
 	
 	private List<Integer> stringAggregationColumnNumbers;
 	private List<Integer> numericalAggregationColumnNumbers;
@@ -180,7 +180,8 @@ public class AggregateDataComputation {
 				 * Create a new "merged" row in the output table
 				 * Populate the output table. Set the value of each cell in the output table.
 				 * */
-				populateColumnFields(outputTableRowCount,
+				populateColumnFields(outputTableGroupedOnValue,
+									 outputTableRowCount,
 									 finalNumericalAggregationColumnNumbers,
 									 finalStringAggregationColumnNumbers,
 									 groupedOnValueRowNumbers);
@@ -231,7 +232,8 @@ public class AggregateDataComputation {
 	 * @param finalStringAggregationColumnNumbers
 	 * @param groupedOnValueRowNumbers
 	 */
-	private void populateColumnFields(int outputTableRowCount,
+	private void populateColumnFields(Object groupedOnValue,
+			int outputTableRowCount,
 			List<Integer> finalNumericalAggregationColumnNumbers,
 			List<Integer> finalStringAggregationColumnNumbers,
 			List<Integer> groupedOnValueRowNumbers) {
@@ -241,7 +243,8 @@ public class AggregateDataComputation {
 		 * 			specified & those that do not belong to "Grouped On" column are 
 		 * 			populated.
 		 * */
-		populateNumericalColumnFields(outputTableRowCount,
+		populateNumericalColumnFields(groupedOnValue,
+				outputTableRowCount,
 				groupedOnValueRowNumbers,
 				finalNumericalAggregationColumnNumbers);
 		
@@ -251,7 +254,8 @@ public class AggregateDataComputation {
 		 * 			delimiters are specified & those that do not belong to "Grouped On" 
 		 * 			column.
 		 * */
-		populateStringColumnFields(outputTableRowCount,
+		populateStringColumnFields(groupedOnValue,
+				outputTableRowCount,
 				groupedOnValueRowNumbers,
 				finalStringAggregationColumnNumbers);
 	}
@@ -261,12 +265,14 @@ public class AggregateDataComputation {
 	 * @param groupedOnValueRowNumbers
 	 * @param finalStringAggregationColumnNumbers
 	 */
-	private void populateStringColumnFields(int outputTableRowCount,
+	private void populateStringColumnFields(Object groupedOnValue,
+			int outputTableRowCount,
 			List<Integer> groupedOnValueRowNumbers,
 			List<Integer> finalStringAggregationColumnNumbers) {
 		for (Integer currentColumnNumber : finalStringAggregationColumnNumbers) {
 			
 			List<String> cellValuesToBeAggregated = new ArrayList<String>();
+			int nullCount = 0;
 			
 			for (Integer currentRowNumber : groupedOnValueRowNumbers) {
 				
@@ -283,16 +289,17 @@ public class AggregateDataComputation {
 					currentCellContent = "";
 				}
 				
-				/*
-				 * Consider only non-empty string contents.
-				 * */
 				if (!currentCellContent.equals("")) {
 					cellValuesToBeAggregated.add(currentCellContent);
+				} else {
+					nullCount++;
 				}
 			}
 			
-			SingleFunctionAggregator currentColumnAggregatorFunction = 
-				columnNumberToAggregationFunction.get(currentColumnNumber);
+			@SuppressWarnings("unchecked")
+			SingleFunctionAggregator<String> currentColumnAggregatorFunction = 
+						(SingleFunctionAggregator<String>) 
+						columnNumberToAggregationFunction.get(currentColumnNumber);
 
 			// aggregate all the column values into a single value
 			StringBuffer outputStringAggegatedValue = new StringBuffer();
@@ -303,6 +310,18 @@ public class AggregateDataComputation {
 				columnNumberToAggregationType.get(currentColumnNumber);
 			
 			int currentCellContentLength = outputStringAggegatedValue.length();
+			
+			//log the error to user
+			if (nullCount > 0) {
+				if (nullCount == groupedOnValueRowNumbers.size()) {
+					/* All rows were skipped */
+					logSkippedAll(groupedOnValue, outputTable.getColumnName(currentColumnNumber));
+				} else {
+					/* Some of the rows were skipped */
+					logSkipped(groupedOnValue, outputTable.getColumnName(currentColumnNumber),
+							nullCount);
+				}
+			}
 			
 			/*
 			 * Try to delete trailing text delimiters only if there was any
@@ -328,30 +347,49 @@ public class AggregateDataComputation {
 	 * @param groupedOnValueRowNumbers
 	 * @param finalNumericalAggregationColumnNumbers
 	 */
-	private void populateNumericalColumnFields(int outputTableRowCount,
+	private void populateNumericalColumnFields(Object groupedOnValue,
+			int outputTableRowCount,
 			List<Integer> groupedOnValueRowNumbers,
 			List<Integer> finalNumericalAggregationColumnNumbers) {
 		for (Integer currentColumnNumber : finalNumericalAggregationColumnNumbers) {
 			
 			List<Number> cellValuesToBeAggregated = new ArrayList<Number>();
+			int nullCount = 0;
 			
 			for (Integer currentRowNumber : groupedOnValueRowNumbers) {
-				
-				cellValuesToBeAggregated.add((Number) originalTable
-												.get(currentRowNumber, 
-													 currentColumnNumber));
-				
+				Number number = (Number)   originalTable.get(currentRowNumber, currentColumnNumber);
+				if (number != null) {
+					cellValuesToBeAggregated.add(number);
+				} else {
+					nullCount++;
+				}
+			}
+			
+			//log the error to user
+			if (nullCount > 0) {
+				if (nullCount == groupedOnValueRowNumbers.size()) {
+					/* All rows were skipped */
+					logSkippedAll(groupedOnValue, outputTable.getColumnName(currentColumnNumber));
+				} else {
+					/* Some of the rows were skipped */
+					logSkipped(groupedOnValue, outputTable.getColumnName(currentColumnNumber),
+							nullCount);
+				}
 			}
 			
 			// aggregate all the column values into a single value
-			SingleFunctionAggregator currentColumnAggregatorFunction = 
+			@SuppressWarnings("unchecked")
+			SingleFunctionAggregator<Number> currentColumnAggregatorFunction = 
+				(SingleFunctionAggregator<Number>) 
 				columnNumberToAggregationFunction.get(currentColumnNumber);
 			
 		    // set the value of our "merged" row for this column to the aggregated value
-			outputTable.set(outputTableRowCount, 
-							currentColumnNumber,
-							currentColumnAggregatorFunction
-								.aggregateValue(cellValuesToBeAggregated)); 
+			if (!cellValuesToBeAggregated.isEmpty()) {
+				outputTable.set(outputTableRowCount, 
+								currentColumnNumber,
+								currentColumnAggregatorFunction
+									.aggregateValue(cellValuesToBeAggregated));
+			}
 			
 		}
 	}
@@ -360,12 +398,12 @@ public class AggregateDataComputation {
 	 * @param groupedOnColumnNumber 
 	 * @param columnNumberToAggregationFunction
 	 */
-	private Map<Integer, SingleFunctionAggregator> 
+	private Map<Integer, SingleFunctionAggregator<?>> 
 				createColumnNumberToAggregationFunctionMap(
 						int groupedOnColumnNumber) {
 		
-		Map<Integer, SingleFunctionAggregator> columnNumberToAggregationFunction = 
-			new HashMap<Integer, SingleFunctionAggregator>();
+		Map<Integer, SingleFunctionAggregator<?>> columnNumberToAggregationFunction = 
+			new HashMap<Integer, SingleFunctionAggregator<?>>();
 		
 		/*
 		 * For 
@@ -373,7 +411,7 @@ public class AggregateDataComputation {
 		for (Integer currentColumnNumber : numericalAggregationColumnNumbers) {
 			String aggregationType = columnNumberToAggregationType.get(currentColumnNumber);
 			
-			Class currentColumnClass = originalTable.getColumnType(currentColumnNumber);
+			Class<?> currentColumnClass = originalTable.getColumnType(currentColumnNumber);
 			
 			if (currentColumnNumber.intValue() == groupedOnColumnNumber) {
 				
@@ -484,8 +522,6 @@ public class AggregateDataComputation {
 		for (Integer currentColumnNumber : stringAggregationColumnNumbers) {
 			String aggregationType = columnNumberToAggregationType.get(currentColumnNumber);
 			
-			Class currentColumnClass = originalTable.getColumnType(currentColumnNumber);
-			
 			if (currentColumnNumber.intValue() == groupedOnColumnNumber) {
 				
 				columnNumberToAggregationFunction.put(currentColumnNumber, 
@@ -510,7 +546,7 @@ public class AggregateDataComputation {
 	 */
 	private void removeNoneAggregationColumns(
 			Set<String> columnNumbersToBeRemovedFromOutput) {
-		for (Iterator columnNumbersToBeRemovedFromOutputIterator 
+		for (Iterator<?> columnNumbersToBeRemovedFromOutputIterator 
 				= columnNumbersToBeRemovedFromOutput.iterator();
 				columnNumbersToBeRemovedFromOutputIterator.hasNext();) {
 			String currentColumnName = (String) columnNumbersToBeRemovedFromOutputIterator.next();
@@ -618,7 +654,7 @@ public class AggregateDataComputation {
 		Map<String, List<Integer>> uniqueGroupedValueToRowNumbers = 
 			new LinkedHashMap<String, List<Integer>>();
 		Set<String> uniqueGroupedValues = new HashSet<String>();
-		Iterator groupedOnColumnIterator = originalTable.iterator();
+		Iterator<?> groupedOnColumnIterator = originalTable.iterator();
 		
 		while (groupedOnColumnIterator.hasNext()) {
 			int currentRowNumber = Integer.parseInt(groupedOnColumnIterator
@@ -662,5 +698,37 @@ public class AggregateDataComputation {
 	public Table getOutputTable() {
 		//return the output table
 		return outputTable;
+	}
+	
+	/**
+	 * Log warning message to user regarding all rows were skipped due
+	 * to null values.
+	 */
+	private void logSkippedAll(Object groupedOnValue, String columnName) {
+		String groupedOnValueString = "";
+		if (groupedOnValue != null) {
+			groupedOnValueString = groupedOnValue.toString();
+		}
+		
+		logger.log(LogService.LOG_WARNING, String.format(
+			"Aggregated by \'%s\': All rows of %s column were skipped"
+			+ " due to no non-null, non-empty values.", 
+			groupedOnValueString, columnName));
+	}
+	
+	/**
+	 * Log warning message to user regarding rows were skipped due to
+	 * null values.
+	 */
+	private void logSkipped(Object groupedOnValue, String columnName, int totalSkipped) {
+		String groupedOnValueString = "";
+		if (groupedOnValue != null) {
+			groupedOnValueString = groupedOnValue.toString();
+		}
+		
+		logger.log(LogService.LOG_WARNING, String.format(
+			"Aggregated by \'%s\': %d rows of %s column were skipped"
+			+ " due to no non-null, non-empty values.", 
+			groupedOnValueString, totalSkipped, columnName));
 	}
 }
