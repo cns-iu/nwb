@@ -1,5 +1,7 @@
 package edu.iu.scipolicy.preprocessing.geocoder.coders;
 
+import edu.iu.scipolicy.model.geocode.Geolocation;
+
 /**
  * 
  * New Geocoder interface favor by OO concept. Avoid returning Map 

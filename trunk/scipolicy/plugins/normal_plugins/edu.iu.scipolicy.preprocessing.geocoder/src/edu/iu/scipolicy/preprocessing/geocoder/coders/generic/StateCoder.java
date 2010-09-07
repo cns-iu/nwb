@@ -9,9 +9,9 @@ import java.net.URLConnection;
 import java.util.HashMap;
 import java.util.Map;
 
+import edu.iu.scipolicy.model.geocode.Geolocation;
 import edu.iu.scipolicy.preprocessing.geocoder.coders.Geocoder;
 import edu.iu.scipolicy.preprocessing.geocoder.coders.GeoCoderException;
-import edu.iu.scipolicy.preprocessing.geocoder.coders.Geolocation;
 import edu.iu.scipolicy.preprocessing.geocoder.coders.NoCacheFoundException;
 
 public class StateCoder implements Geocoder {

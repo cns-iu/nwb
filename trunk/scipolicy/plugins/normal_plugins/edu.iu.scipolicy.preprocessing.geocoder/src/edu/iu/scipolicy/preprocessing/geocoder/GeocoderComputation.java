@@ -5,13 +5,14 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 
+import org.cishell.utilities.FrequencyMap;
 import org.cishell.utilities.TableUtilities;
 import org.osgi.service.log.LogService;
 
 import prefuse.data.Table;
+import edu.iu.scipolicy.model.geocode.Geolocation;
 import edu.iu.scipolicy.preprocessing.geocoder.coders.GeoCoderException;
 import edu.iu.scipolicy.preprocessing.geocoder.coders.Geocoder;
-import edu.iu.scipolicy.preprocessing.geocoder.coders.Geolocation;
 
 /**
  * @author cdtank
@@ -55,11 +56,11 @@ public final class GeocoderComputation {
 				outputTableLatitudeColumnName, 
 				outputTableLongitudeColumnName));
 		
-		int failedCount = 0;
 		int locationColumnNumber = originalTable.getColumnNumber(locationColumnName);
 		int latitudeColumnNumber = outputTable.getColumnNumber(outputTableLatitudeColumnName);
 		int longitudeColumnNumber = outputTable.getColumnNumber(outputTableLongitudeColumnName);
 		Map <String, Geolocation> geocodedAddressToGeoLocation = new HashMap<String, Geolocation>();
+		FrequencyMap<String> failedFrequency = new FrequencyMap<String>(true);
 		Iterator<?> locationColumnIterator = originalTable.iterator();
 		while (locationColumnIterator.hasNext()) {
 			int currentRowNumber = Integer.parseInt(locationColumnIterator.next().toString());
@@ -76,6 +77,9 @@ public final class GeocoderComputation {
 				/* Avoid re-geocoding the same place */
 				if (geocodedAddressToGeoLocation.containsKey(currentLocationUppercase)) {
 					geolocation = geocodedAddressToGeoLocation.get(currentLocationUppercase);
+					if (geolocation == DEFAULT_NO_LOCATION_VALUE) {
+						failedFrequency.add(currentLocation);
+					}
 				} else {
 					try {
 						geolocation = geocoder.geocodingFullForm(currentLocationUppercase);
@@ -85,8 +89,7 @@ public final class GeocoderComputation {
 							geolocation = geocoder.geocodingAbbreviation(currentLocationUppercase);
 						} catch (GeoCoderException e1) {
 							/* No result is found */
-							failedCount++;
-							printWarningMessage(logger, locationColumnName, currentLocation);
+							failedFrequency.add(currentLocation);
 						}
 					}
 					
@@ -94,8 +97,7 @@ public final class GeocoderComputation {
 					geocodedAddressToGeoLocation.put(currentLocationUppercase, geolocation);
 				}
 			} else {
-				failedCount++;
-				printWarningMessage(logger, locationColumnName, currentLocation);
+				failedFrequency.add(currentLocation);
 			}
 
 			/*
@@ -110,23 +112,34 @@ public final class GeocoderComputation {
 				currentRowNumber, longitudeColumnNumber, geolocation.getLongitude());
 		}
 
+		/* Warning user about failure */
+		if (!failedFrequency.isEmpty()) {
+			printWarningMessage(logger, locationColumnName, failedFrequency);
+		}
+		
 		/* Show statistic information */
 		int totalRow = originalTable.getRowCount();
 		NumberFormat numberFormat = NumberFormat.getInstance();
 		logger.log(LogService.LOG_INFO, String.format(
 				"Successfully geocoded %s out of %s locations to geographic coordinates", 
-				numberFormat.format(totalRow - failedCount),
+				numberFormat.format(totalRow - failedFrequency.sum()),
 				numberFormat.format(totalRow)));
 		return outputTable;
 	}
 	
 	private static void printWarningMessage(LogService logger, String locationColumnName, 
-																	String location) {
+													FrequencyMap<String> failedFrequency) {
 
+		for (String location : failedFrequency.keySet()) {
 			String formatString =
-				"No geographic coordinate found for the row with \"%s\" location at column \"%s\" ";
+			"No geographic coordinate found for location \"%s\" (from column  \"%s\")."
+				+ " %d rows had this location.";
 			
 			logger.log(LogService.LOG_WARNING, String.format(formatString, 
-												location, locationColumnName));
+											location, 
+											locationColumnName,
+											failedFrequency.getFrequency(location)
+											));
+		}
 	}
 }

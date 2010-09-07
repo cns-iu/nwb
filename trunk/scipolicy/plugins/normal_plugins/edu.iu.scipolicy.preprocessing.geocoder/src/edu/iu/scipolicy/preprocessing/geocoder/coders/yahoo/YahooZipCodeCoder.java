@@ -4,7 +4,7 @@ import java.io.IOException;
 
 import javax.xml.bind.JAXBException;
 
-import edu.iu.scipolicy.preprocessing.geocoder.coders.USZipCode;
+import edu.iu.scipolicy.model.geocode.USZipCode;
 import edu.iu.scipolicy.preprocessing.geocoder.coders.yahoo.placefinder.PlaceFinderClient;
 import edu.iu.scipolicy.preprocessing.geocoder.coders.yahoo.placefinder.beans.ResultSet;
 

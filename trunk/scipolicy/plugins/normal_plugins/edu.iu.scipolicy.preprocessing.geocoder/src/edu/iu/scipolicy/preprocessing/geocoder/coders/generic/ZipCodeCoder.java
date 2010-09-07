@@ -10,11 +10,11 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
+import edu.iu.scipolicy.model.geocode.Geolocation;
+import edu.iu.scipolicy.model.geocode.USZipCode;
 import edu.iu.scipolicy.preprocessing.geocoder.coders.Geocoder;
 import edu.iu.scipolicy.preprocessing.geocoder.coders.GeoCoderException;
-import edu.iu.scipolicy.preprocessing.geocoder.coders.Geolocation;
 import edu.iu.scipolicy.preprocessing.geocoder.coders.NoCacheFoundException;
-import edu.iu.scipolicy.preprocessing.geocoder.coders.USZipCode;
 
 import au.com.bytecode.opencsv.CSVReader;
 

@@ -4,9 +4,9 @@ import java.io.IOException;
 
 import javax.xml.bind.JAXBException;
 
+import edu.iu.scipolicy.model.geocode.Geolocation;
 import edu.iu.scipolicy.preprocessing.geocoder.coders.Geocoder;
 import edu.iu.scipolicy.preprocessing.geocoder.coders.GeoCoderException;
-import edu.iu.scipolicy.preprocessing.geocoder.coders.Geolocation;
 import edu.iu.scipolicy.preprocessing.geocoder.coders.yahoo.placefinder.beans.ResultSet;
 import edu.iu.scipolicy.preprocessing.geocoder.coders.yahoo.placefinder.beans.YahooServiceResult;
 
