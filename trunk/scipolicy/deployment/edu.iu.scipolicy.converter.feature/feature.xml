@@ -289,11 +289,7 @@ Dr. Katy Borner (katy@indiana.edu)
          version="0.0.1"
          unpack="false"/>
 
-	<plugin
-         id="jaxb"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"/>
+
          
 
          -->
