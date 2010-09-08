@@ -21,4 +21,4 @@ Import-Package: edu.uci.ics.jung.graph,
  prefuse.data.tuple
 X-AutoStart: true
 Service-Component: OSGI-INF/jungprefusebeta.xml, OSGI-INF/prefusebetajung.xml
-Bundle-RequiredExecutionEnvironment: J2SE-1.4
+Bundle-RequiredExecutionEnvironment: J2SE-1.5
