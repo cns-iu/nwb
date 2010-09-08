@@ -1,7 +1,8 @@
-package edu.iu.scipolicy.preprocessing.geocoder;
+package edu.iu.scipolicy.preprocessing.geocoder.coders.yahoo;
 
 import org.osgi.service.component.ComponentContext;
-import edu.iu.scipolicy.preprocessing.geocoder.coders.yahoo.YahooFamilyOfGeocoder;
+
+import edu.iu.scipolicy.preprocessing.geocoder.AbstractGeocoderFactory;
 
 /**
  * 

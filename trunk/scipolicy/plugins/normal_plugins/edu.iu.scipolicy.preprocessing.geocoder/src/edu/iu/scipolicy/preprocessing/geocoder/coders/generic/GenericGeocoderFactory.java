@@ -1,8 +1,9 @@
-package edu.iu.scipolicy.preprocessing.geocoder;
+package edu.iu.scipolicy.preprocessing.geocoder.coders.generic;
 
 import org.osgi.framework.BundleContext;
 import org.osgi.service.component.ComponentContext;
-import edu.iu.scipolicy.preprocessing.geocoder.coders.generic.GenericFamilyOfGeocoder;
+
+import edu.iu.scipolicy.preprocessing.geocoder.AbstractGeocoderFactory;
 
 /**
  * 
