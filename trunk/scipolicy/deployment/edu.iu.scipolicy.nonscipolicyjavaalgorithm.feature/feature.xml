@@ -618,12 +618,7 @@ Dr. Katy Borner (katy@indiana.edu)
          install-size="0"
          version="0.0.0"/>
 
-   <plugin
-         id="edu.iu.scipolicy.preprocessing.geocoder"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         unpack="false"/>
+
 
    <plugin
          id="edu.iu.nwb.analysis.blondelcommunitydetection"
@@ -1006,5 +1001,11 @@ Dr. Katy Borner (katy@indiana.edu)
          install-size="0"
          version="0.0.0"
          unpack="false"/>
+
+   <plugin
+         id="jaxb"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"/>
 
 </feature>
