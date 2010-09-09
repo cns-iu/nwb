@@ -1,5 +1,6 @@
 package edu.iu.sci2.database.star.common;
 
+import java.util.Collections;
 import java.util.Map;
 
 import edu.iu.sci2.database.star.common.parameter.ColumnDescriptor;
@@ -17,8 +18,10 @@ public class StarDatabaseMetadata {
 			Map<String, ColumnDescriptor> columnDescriptorsByDatabaseName) {
 		this.coreEntityHumanReadableName = coreEntityHumanReadableName;
 		this.coreEntityTableName = coreEntityTableName;
-		this.columnDescriptorsByHumanReadableName = columnDescriptorsByHumanReadableName;
-		this.columnDescriptorsByDatabaseName = columnDescriptorsByDatabaseName;
+		this.columnDescriptorsByHumanReadableName =
+			Collections.unmodifiableMap(columnDescriptorsByHumanReadableName);
+		this.columnDescriptorsByDatabaseName =
+			Collections.unmodifiableMap(columnDescriptorsByDatabaseName);
 	}
 
 	public String getCoreEntityHumanReadableName() {
