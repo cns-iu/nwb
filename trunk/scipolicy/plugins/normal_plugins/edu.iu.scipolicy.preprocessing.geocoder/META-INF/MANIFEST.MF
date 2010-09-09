@@ -6,8 +6,6 @@ Bundle-Version: 0.0.1
 Bundle-ClassPath: .
 Import-Package: au.com.bytecode.opencsv,
  edu.iu.scipolicy.model.geocode,
- javax.xml.bind,
- javax.xml.bind.annotation,
  org.cishell.framework;version="1.0.0",
  org.cishell.framework.algorithm;version="1.0.0",
  org.cishell.framework.data;version="1.0.0",
