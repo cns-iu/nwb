@@ -21,4 +21,4 @@ X-AutoStart: true
 Service-Component: OSGI-INF/component.xml
 Export-Package: edu.iu.nwb.analysis.extractnetfromtable.aggregate,
  edu.iu.nwb.analysis.extractnetfromtable.components
-Bundle-RequiredExecutionEnvironment: J2SE-1.4
+Bundle-RequiredExecutionEnvironment: J2SE-1.5
