@@ -31,13 +31,6 @@
   	  	<param name="project.name" value="edu.iu.scipolicy.model"/>
   	  	<param name="url" value="http://nwb.slis.indiana.edu/svn/nwb/trunk/scipolicy/plugins/normal_plugins"/>
   	</antcall>
-
-  	<antcall target="svn.co">
-  		<param name="target" value="plugins"/>
-		<param name="element.id" value="jaxb"/>
-		<param name="project.name" value="jaxb"/>
-		<param name="url" value="http://nwb.slis.indiana.edu/svn/nwb/trunk/epic_tool/plugins/libs"/>
-  	</antcall>
   	
   	<antcall target="svn.co">
   		<param name="target" value="plugins"/>
