@@ -1,53 +1,19 @@
 package edu.iu.sci2.database.star.extract.common.guibuilder.attribute;
 
-import java.util.Collection;
 import java.util.Map;
 
 import org.cishell.utility.datastructure.datamodel.exception.UniqueNameException;
-import org.cishell.utility.datastructure.datamodel.field.validation.FieldValidator;
 import org.cishell.utility.swt.ExpandableComponentWidget;
 import org.cishell.utility.swt.GridContainer;
 import org.cishell.utility.swt.ScrolledComponentFactory;
 import org.cishell.utility.swt.WidgetConstructionException;
-import org.cishell.utility.swt.model.SWTModel;
-
-import edu.iu.sci2.database.star.extract.common.guibuilder.DisplayErrorMessagesValidationAction;
-import edu.iu.sci2.database.star.extract.common.guibuilder.GUIBuilder.DisableFinishedButtonAction;
 
 public class AttributeWidgetFactory
 		implements ScrolledComponentFactory<AttributeWidgetContainer> {
-	private SWTModel model;
-	private String aggregateFunctionGroupName;
-	private String baseCoreEntityColumnGroupName;
-	private Collection<String> coreEntityColumnLabels;
-	private Map<String, String> coreEntityColumnsByLabels;
-	private String attributeNameGroupName;
-	private FieldValidator<String> attributeNameValidator;
-	private Collection<FieldValidator<String>> otherValidators;
-	private DisableFinishedButtonAction disableFinishedButtonAction;
-	private DisplayErrorMessagesValidationAction displayErrorMessagesValidationAction;
+	private AttributeWidgetProperties properties;
 
-	public AttributeWidgetFactory(
-			SWTModel model,
-			String aggregateFunctionGroupName,
-			String baseCoreEntityColumnGroupName,
-			Collection<String> coreEntityColumnLabels,
-			Map<String, String> coreEntityColumnsByLabels,
-			String attributeNameGroupName,
-			FieldValidator<String> attributeNameValidator,
-			Collection<FieldValidator<String>> otherValidators,
-			DisableFinishedButtonAction disableFinishedButtonAction,
-			DisplayErrorMessagesValidationAction displayErrorMessagesValidationAction) {
-		this.model = model;
-		this.aggregateFunctionGroupName = aggregateFunctionGroupName;
-		this.baseCoreEntityColumnGroupName = baseCoreEntityColumnGroupName;
-		this.coreEntityColumnLabels = coreEntityColumnLabels;
-		this.coreEntityColumnsByLabels = coreEntityColumnsByLabels;
-		this.attributeNameGroupName = attributeNameGroupName;
-		this.attributeNameValidator = attributeNameValidator;
-		this.otherValidators = otherValidators;
-		this.disableFinishedButtonAction = disableFinishedButtonAction;
-		this.displayErrorMessagesValidationAction = displayErrorMessagesValidationAction;
+	public AttributeWidgetFactory(AttributeWidgetProperties properties) {
+		this.properties = properties;
 	}
 
 	public AttributeWidgetContainer constructWidget(
@@ -59,21 +25,7 @@ public class AttributeWidgetFactory
 			int uniqueIndex) throws WidgetConstructionException {
 		try {
 			return new AttributeWidgetContainer(
-				model,
-				this.aggregateFunctionGroupName,
-				this.baseCoreEntityColumnGroupName,
-				this.coreEntityColumnLabels,
-				this.coreEntityColumnsByLabels,
-				this.attributeNameGroupName,
-				componentWidget,
-				index,
-				uniqueIndex,
-				scrolledAreaGrid,
-				style,
-				this.attributeNameValidator,
-				this.otherValidators,
-				this.disableFinishedButtonAction,
-				this.displayErrorMessagesValidationAction);
+				this.properties, componentWidget, index, uniqueIndex, scrolledAreaGrid, style);
 		} catch (UniqueNameException e) {
 			throw new WidgetConstructionException(e.getMessage(), e);
 		}

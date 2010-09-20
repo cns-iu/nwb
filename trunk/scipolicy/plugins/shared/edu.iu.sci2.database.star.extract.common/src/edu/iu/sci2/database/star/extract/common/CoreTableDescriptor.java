@@ -10,7 +10,6 @@ import org.cishell.utilities.ArrayListUtilities;
 import org.cishell.utilities.MapUtilities;
 
 import edu.iu.cns.database.load.framework.DerbyFieldType;
-import edu.iu.sci2.database.star.common.StarDatabaseMetadata;
 import edu.iu.sci2.database.star.common.parameter.ColumnDescriptor;
 
 public class CoreTableDescriptor {
@@ -28,23 +27,23 @@ public class CoreTableDescriptor {
 	private Collection<String> columnNames;
 	private Collection<String> columnNamesForAggregates;
 
-	public CoreTableDescriptor(StarDatabaseMetadata metadata) {
-		this(
-			metadata.getCoreEntityHumanReadableName(),
-			metadata.getCoreEntityTableName(),
-			constructColumnNamesByLabels(metadata));
-	}
+//	public CoreTableDescriptor(StarDatabaseMetadata metadata) {
+//		this(
+//			metadata.getCoreEntityHumanReadableName(),
+//			metadata.getCoreEntityTableName(),
+//			constructColumnNamesByLabels(metadata));
+//	}
 
 	public CoreTableDescriptor(
 			String coreEntityHumanReadableName,
 			String coreEntityTableName,
-			Map<String, String> columnNamesByLabels) {
+			Map<String, ColumnDescriptor> coreColumnDescriptorsByName) {
 		this.coreEntityHumanReadableName = coreEntityHumanReadableName;
 		this.coreEntityTableName = coreEntityTableName;
-		this.columnNamesByLabels = columnNamesByLabels;
+		this.columnNamesByLabels = constructColumnNamesByLabels(coreColumnDescriptorsByName);
 		this.columnNames = this.columnNamesByLabels.keySet();
 		this.columnNamesForAggregates = MapUtilities.getValidKeysOfTypesInMap(
-			columnNamesByLabels,
+			this.columnNamesByLabels,
 			TYPES_OF_COLUMNS_FOR_AGGREGATES,
 			OPTIONS_TO_SKIP_IN_TYPES_OF_COLUMNS_FOR_AGGREGATES);
 		this.columnNamesForAggregates = ArrayListUtilities.unionCollections(
@@ -70,18 +69,31 @@ public class CoreTableDescriptor {
 	}
 
 	private static Map<String, String> constructColumnNamesByLabels(
-			StarDatabaseMetadata metadata) {
+			Map<String, ColumnDescriptor> coreColumnDescriptorsByName) {
 		Map<String, String> namesToTypes = new HashMap<String, String>();
 
-		for (ColumnDescriptor columnDescriptor :
-				metadata.getColumnDescriptorsByHumanReadableName().values()) {
-			if (columnDescriptor.isCoreColumn()) {
-				String label = columnDescriptor.getName();
-				String name = columnDescriptor.getNameForDatabase();
-				namesToTypes.put(label, name);
-			}
+		for (ColumnDescriptor columnDescriptor : coreColumnDescriptorsByName.values()) {
+			String label = columnDescriptor.getName();
+			String name = columnDescriptor.getNameForDatabase();
+			namesToTypes.put(label, name);
 		}
 
 		return namesToTypes;
 	}
+
+//	private static Map<String, String> constructColumnNamesByLabels(
+//			StarDatabaseMetadata metadata) {
+//		Map<String, String> namesToTypes = new HashMap<String, String>();
+//
+//		for (ColumnDescriptor columnDescriptor :
+//				metadata.getColumnDescriptorsByHumanReadableName().values()) {
+//			if (columnDescriptor.isCoreColumn()) {
+//				String label = columnDescriptor.getName();
+//				String name = columnDescriptor.getNameForDatabase();
+//				namesToTypes.put(label, name);
+//			}
+//		}
+//
+//		return namesToTypes;
+//	}
 }

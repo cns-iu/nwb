@@ -17,6 +17,7 @@ import org.osgi.service.log.LogService;
 import edu.iu.sci2.database.star.common.StarDatabaseMetadata;
 import edu.iu.sci2.database.star.extract.common.ExtractionAlgorithmFactory;
 import edu.iu.sci2.database.star.extract.common.StarDatabaseDescriptor;
+import edu.iu.sci2.database.star.extract.common.aggregate.Aggregate;
 import edu.iu.sci2.database.star.extract.common.guibuilder.GUIBuilder;
 import edu.iu.sci2.database.star.extract.network.guibuilder.CoOccurrenceNetworkGUIBuilder;
 import edu.iu.sci2.database.star.extract.network.query.CoOccurrenceNetworkQueryConstructor;
@@ -37,19 +38,21 @@ public class ExtractCoOccurrenceNetworkAlgorithmFactory extends ExtractionAlgori
     		Data[] data, Dictionary<String, Object> parameters, CIShellContext ciShellContext) {
     	Data parentData = data[0];
     	StarDatabaseMetadata databaseMetadata = getMetadata(parentData);
+    	StarDatabaseDescriptor databaseDescriptor = new StarDatabaseDescriptor(databaseMetadata);
     	verifyLeafTables(databaseMetadata, this.logger);
-    	DataModel model = getModelFromUser(databaseMetadata);
-    	NetworkQueryConstructor queryConstructor = new CoOccurrenceNetworkQueryConstructor(
-    		CoOccurrenceNetworkGUIBuilder.LEAF_FIELD_NAME,
-    		GUIBuilder.HEADER_GROUP_NAME,
-    		GUIBuilder.NODE_ATTRIBUTE_FUNCTION_GROUP_NAME,
-    		GUIBuilder.NODE_CORE_ENTITY_COLUMN_GROUP_NAME,
-    		GUIBuilder.NODE_ATTRIBUTE_NAME_GROUP_NAME,
-    		GUIBuilder.EDGE_ATTRIBUTE_FUNCTION_GROUP_NAME,
-    		GUIBuilder.EDGE_CORE_ENTITY_COLUMN_GROUP_NAME,
-    		GUIBuilder.EDGE_ATTRIBUTE_NAME_GROUP_NAME,
-    		model,
-    		databaseMetadata);
+    	DataModel model = getModelFromUser(databaseDescriptor);
+    	NetworkQueryConstructor<? extends Aggregate, ? extends Aggregate> queryConstructor =
+    		new CoOccurrenceNetworkQueryConstructor(
+    			CoOccurrenceNetworkGUIBuilder.LEAF_FIELD_NAME,
+    			GUIBuilder.HEADER_GROUP_NAME,
+    			GUIBuilder.ATTRIBUTE_FUNCTION_GROUP1_NAME,
+    			GUIBuilder.CORE_ENTITY_COLUMN_GROUP1_NAME,
+    			GUIBuilder.ATTRIBUTE_NAME_GROUP1_NAME,
+    			GUIBuilder.ATTRIBUTE_FUNCTION_GROUP2_NAME,
+    			GUIBuilder.CORE_ENTITY_COLUMN_GROUP2_NAME,
+    			GUIBuilder.ATTRIBUTE_NAME_GROUP2_NAME,
+    			model,
+    			databaseDescriptor);
     	AlgorithmFactory networkQueryRunner = getNetworkQueryRunner(this.bundleContext);
 
         return new ExtractNetworkAlgorithm(
@@ -64,11 +67,11 @@ public class ExtractCoOccurrenceNetworkAlgorithmFactory extends ExtractionAlgori
     	return NETWORK_EXTRACTION_TYPE;
     }
 
-    private static DataModel getModelFromUser(StarDatabaseMetadata metadata)
+    private static DataModel getModelFromUser(StarDatabaseDescriptor databaseDescriptor)
     		throws AlgorithmCreationCanceledException {
     	try {
-    		return new CoOccurrenceNetworkGUIBuilder().createGUI(
-    			WINDOW_TITLE, WINDOW_WIDTH, WINDOW_HEIGHT, new StarDatabaseDescriptor(metadata));
+    		return new CoOccurrenceNetworkGUIBuilder(databaseDescriptor).createGUI(
+				WINDOW_TITLE, WINDOW_WIDTH, WINDOW_HEIGHT, databaseDescriptor);
     	} catch (GUICanceledException e) {
     		throw new AlgorithmCreationCanceledException(e.getMessage(), e);
     	} catch (UniqueNameException e) {

@@ -1,6 +1,8 @@
 package edu.iu.sci2.database.star.extract.common.guibuilder;
 
 import java.util.Collection;
+import java.util.Collections;
+import java.util.LinkedHashMap;
 import java.util.Map;
 
 import org.cishell.utility.datastructure.ObjectContainer;
@@ -11,10 +13,10 @@ import org.cishell.utility.datastructure.datamodel.field.validation.EmptyTextFie
 import org.cishell.utility.datastructure.datamodel.field.validation.FieldValidationAction;
 import org.cishell.utility.datastructure.datamodel.field.validation.FieldValidationRule;
 import org.cishell.utility.datastructure.datamodel.field.validation.FieldValidator;
+import org.cishell.utility.datastructure.datamodel.field.validation.OneOccurrenceOfValueValidationRule;
 import org.cishell.utility.datastructure.datamodel.field.validation.UniqueValueValidationRule;
 import org.cishell.utility.swt.GUIBuilderUtilities;
 import org.cishell.utility.swt.GUICanceledException;
-import org.cishell.utility.swt.model.SWTModel;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.StyledText;
 import org.eclipse.swt.events.SelectionAdapter;
@@ -27,8 +29,17 @@ import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Shell;
 
+import com.google.common.base.Function;
+import com.google.common.collect.BiMap;
+import com.google.common.collect.HashBiMap;
+import com.google.common.collect.Maps;
+import com.google.common.collect.Sets;
+
 import edu.iu.sci2.database.star.extract.common.StarDatabaseDescriptor;
+import edu.iu.sci2.database.star.extract.common.aggregate.AggregateFunction;
+import edu.iu.sci2.database.star.extract.common.field.validation.ColumnWorksWithAggregateFunctionValidationRule;
 import edu.iu.sci2.database.star.extract.common.guibuilder.attribute.AttributeListWidget;
+import edu.iu.sci2.database.star.extract.common.guibuilder.attribute.AttributeWidgetProperties;
 
 public abstract class GUIBuilder {
 	public static final int WINDOW_WIDTH = 1000;
@@ -36,9 +47,12 @@ public abstract class GUIBuilder {
 
 	public static final int INSTRUCTIONS_WIDTH = 400;
 
+	public static final int LEAF_SELECTOR_LABEL_WIDTH = 280;
+	public static final int LEAF_SELECTOR_WIDTH = 78;
+
 	public static final int AGGREGATE_LIST_HEIGHT = 300;
 
-	public static final int DEFAULT_AGGREGATE_WIDGET_COUNT = 1;
+	public static final int DEFAULT_AGGREGATE_WIDGET_COUNT = 0;
 
 	public static final String INSTRUCTIONS_GROUP_TEXT = "";
 	public static final String HEADER_GROUP_TEXT = "";
@@ -55,48 +69,148 @@ public abstract class GUIBuilder {
 
 	public static final String HEADER_GROUP_NAME = "header";
 
-	public static final String NODE_ATTRIBUTE_FUNCTION_GROUP_NAME = "nodeAttributeFunction";
-	public static final String NODE_CORE_ENTITY_COLUMN_GROUP_NAME = "nodeCoreEntityColumn";
-	public static final String NODE_ATTRIBUTE_NAME_GROUP_NAME = "nodeAttribute";
+	public static final String ATTRIBUTE_FUNCTION_GROUP1_NAME = "attributeFunction1";
+	public static final String CORE_ENTITY_COLUMN_GROUP1_NAME = "coreEntityColumn1";
+	public static final String ATTRIBUTE_NAME_GROUP1_NAME = "attributeName1";
 
-	public static final String EDGE_ATTRIBUTE_FUNCTION_GROUP_NAME = "edgeAttributeFunction";
-	public static final String EDGE_CORE_ENTITY_COLUMN_GROUP_NAME = "edgeCoreEntityColumn";
-	public static final String EDGE_ATTRIBUTE_NAME_GROUP_NAME = "edgeAttribute";
+	public static final String ATTRIBUTE_FUNCTION_GROUP2_NAME = "attributeFunction2";
+	public static final String CORE_ENTITY_COLUMN_GROUP2_NAME = "coreEntityColumn2";
+	public static final String ATTRIBUTE_NAME_GROUP2_NAME = "attributeName2";
 
-	public static final String TABLE_ATTRIBUTE_FUNCTION_GROUP_NAME = "tableAttributeFunction";
-	public static final String TABLE_COLUMN_GROUP_NAME = "tableColumn";
-	public static final String TABLE_ATTRIBUTE_NAME_GROUP_NAME = "tableAttribute";
+	public static final String LEAF_SELECTOR_FIELD_VALIDATOR_BASE_NAME = "Leaf Entity ";
+	public static final String NODE_AGGREGATE_FUNCTION_FIELD_VALIDATOR_BASE_NAME =
+		"Node Aggregate Function";
+	public static final String EDGE_AGGREGATE_FUNCTION_FIELD_VALIDATOR_BASE_NAME =
+		"Edge Aggregate Function";
+	public static final String NODE_AGGREGATED_COLUMN_FIELD_VALIDATOR_BASE_NAME =
+		"Node Aggregated Column";
+	public static final String EDGE_AGGREGATED_COLUMN_FIELD_VALIDATOR_BASE_NAME =
+		"Edge Aggregated Column";
+	public static final String NODE_ATTRIBUTE_FIELD_VALIDATOR_BASE_NAME = "Node Attribute ";
+	public static final String EDGE_ATTRIBUTE_FIELD_VALIDATOR_BASE_NAME = "Edge Attribute ";
+	public static final String TABLE_ATTRIBUTE_FIELD_VALIDATOR_BASE_NAME = "Table Attribute ";
 
-	public static final String LEAF_SELECTOR_FIELD_VALIDATOR_BASE_NAME = "Leaf Entity "; // TODO update suffixes
-	public static final String NODE_ATTRIBUTES_FIELD_VALIDATOR_BASE_NAME = "Node Attribute ";
-	public static final String EDGE_ATTRIBUTES_FIELD_VALIDATOR_BASE_NAME = "Edge Attribute ";
+	protected StarDatabaseDescriptor databaseDescriptor;
 
 	protected Button finishedButton;
+
 	protected FieldValidator<String> leafSelectorFieldValidator =
 		new BasicFieldValidator<String>(LEAF_SELECTOR_FIELD_VALIDATOR_BASE_NAME);
-	protected FieldValidator<String> nodeAttributesFieldValidator =
-		new BasicFieldValidator<String>(NODE_ATTRIBUTES_FIELD_VALIDATOR_BASE_NAME);
-	protected FieldValidator<String> edgeAttributesFieldValidator =
-		new BasicFieldValidator<String>(EDGE_ATTRIBUTES_FIELD_VALIDATOR_BASE_NAME);
+
+	protected FieldValidator<String> aggregateFunctionValidator1 =
+		new BasicFieldValidator<String>(NODE_AGGREGATE_FUNCTION_FIELD_VALIDATOR_BASE_NAME);
+	protected FieldValidator<String> aggregateFunctionValidator2 =
+		new BasicFieldValidator<String>(EDGE_AGGREGATE_FUNCTION_FIELD_VALIDATOR_BASE_NAME);
+
+	protected FieldValidator<String> aggregatedColumnValidator1 =
+		new BasicFieldValidator<String>(NODE_AGGREGATED_COLUMN_FIELD_VALIDATOR_BASE_NAME);
+	protected FieldValidator<String> aggregatedColumnValidator2 =
+		new BasicFieldValidator<String>(EDGE_AGGREGATED_COLUMN_FIELD_VALIDATOR_BASE_NAME);
+
+	protected FieldValidator<String> attributeNameValidator1 =
+		new BasicFieldValidator<String>(NODE_ATTRIBUTE_FIELD_VALIDATOR_BASE_NAME);
+	protected FieldValidator<String> attributeNameValidator2 =
+		new BasicFieldValidator<String>(EDGE_ATTRIBUTE_FIELD_VALIDATOR_BASE_NAME);
+
+	@SuppressWarnings("unchecked")
+	protected final Collection<FieldValidator<String>> allValidators =
+		Collections.unmodifiableSet(Sets.newHashSet(
+			this.leafSelectorFieldValidator,
+			this.aggregateFunctionValidator1,
+			this.aggregateFunctionValidator2,
+			this.aggregatedColumnValidator1,
+			this.aggregatedColumnValidator2,
+			this.attributeNameValidator2,
+			this.attributeNameValidator1));
+
 	protected DisableFinishedButtonAction disableFinishedButtonAction =
 		new DisableFinishedButtonAction();
 
-	public GUIBuilder() {
+	public GUIBuilder(StarDatabaseDescriptor databaseDescriptor) {
+		this.databaseDescriptor = databaseDescriptor;
+
+		String countDistinctAggregateFunctionSQLName =
+			AggregateFunction.COUNT_DISTINCT.getSQLName();
+
+		/* Setup the validation rule that ensures that the two leaf selection widgets have
+		 * unique values.
+		 */
+
 		FieldValidationRule<String> uniqueLeafSelectorValueValidationRule =
 			new UniqueValueValidationRule<String>(LEAF_SELECTOR_FIELD_VALIDATOR_BASE_NAME);
+		this.leafSelectorFieldValidator.addValidationRule(uniqueLeafSelectorValueValidationRule);
+
+		/* Setup the validation rule that ensures that only one of the node aggregate function
+		 * widgets contains the value COUNT DISTINCT.
+		 */
+
+		FieldValidationRule<String> aggregateFunction_CountDistinct_SingletonValidationRule1 =
+			new OneOccurrenceOfValueValidationRule<String>(
+				attributeFieldValidator1BaseName(), countDistinctAggregateFunctionSQLName);
+		this.aggregateFunctionValidator1.addValidationRule(
+			aggregateFunction_CountDistinct_SingletonValidationRule1);
+
+		/* Setup the validation rule that ensures that only one of the edge aggregate function
+		 * widgets contains the value COUNT DISTINCT.
+		 */
+
+		FieldValidationRule<String> aggregateFunction_CountDistinct_SingletonValidationRule2 =
+			new OneOccurrenceOfValueValidationRule<String>(
+				attributeFieldValidator2BaseName(), countDistinctAggregateFunctionSQLName);
+		this.aggregateFunctionValidator2.addValidationRule(
+			aggregateFunction_CountDistinct_SingletonValidationRule2);
+
+		/* Setup the validation rules that ensure that aggregated columns are compatible with
+		 * their respective, chosen aggregate functions.
+		 */
+		ColumnWorksWithAggregateFunctionValidationRule
+			columnWorksWithAggregateFunctionValidationRule1 =
+				new ColumnWorksWithAggregateFunctionValidationRule(
+					this.databaseDescriptor.getAllColumnDescriptorsBySQLName(),
+					ATTRIBUTE_FUNCTION_GROUP1_NAME,
+					CORE_ENTITY_COLUMN_GROUP1_NAME);
+		this.aggregateFunctionValidator1.addValidationRule(
+			columnWorksWithAggregateFunctionValidationRule1);
+		this.aggregatedColumnValidator1.addValidationRule(
+			columnWorksWithAggregateFunctionValidationRule1);
+
+		ColumnWorksWithAggregateFunctionValidationRule
+			columnWorksWithAggregateFunctionValidationRule2 =
+				new ColumnWorksWithAggregateFunctionValidationRule(
+					this.databaseDescriptor.getAllColumnDescriptorsBySQLName(),
+					ATTRIBUTE_FUNCTION_GROUP2_NAME,
+					CORE_ENTITY_COLUMN_GROUP2_NAME);
+		this.aggregateFunctionValidator2.addValidationRule(
+			columnWorksWithAggregateFunctionValidationRule2);
+		this.aggregatedColumnValidator2.addValidationRule(
+			columnWorksWithAggregateFunctionValidationRule2);
+
+		// Setup the validation rule that ensures that all attribute name widgets are NOT empty.
+
 		FieldValidationRule<String> emptyAttributeNameValidationRule =
 			new EmptyTextFieldValidationRule();
-		FieldValidationRule<String> uniqueNodeAttributeNameValidationRule =
-			new UniqueValueValidationRule<String>(NODE_ATTRIBUTES_FIELD_VALIDATOR_BASE_NAME);
-		FieldValidationRule<String> uniqueEdgeAttributeNameValidationRule =
-			new UniqueValueValidationRule<String>(EDGE_ATTRIBUTES_FIELD_VALIDATOR_BASE_NAME);
+		this.attributeNameValidator1.addValidationRule(emptyAttributeNameValidationRule);
+		this.attributeNameValidator2.addValidationRule(emptyAttributeNameValidationRule);
 
-		this.leafSelectorFieldValidator.addValidationRule(uniqueLeafSelectorValueValidationRule);
-		this.nodeAttributesFieldValidator.addValidationRule(emptyAttributeNameValidationRule);
-		this.nodeAttributesFieldValidator.addValidationRule(uniqueNodeAttributeNameValidationRule);
-		this.edgeAttributesFieldValidator.addValidationRule(emptyAttributeNameValidationRule);
-		this.edgeAttributesFieldValidator.addValidationRule(uniqueEdgeAttributeNameValidationRule);
+		/* Setup the validation rule that ensures that all node attribute name widgets have
+		 * unique values.
+		 */
+
+		FieldValidationRule<String> uniqueAttributeNameValidationRule1 =
+			new UniqueValueValidationRule<String>(attributeFieldValidator1BaseName());
+		this.attributeNameValidator1.addValidationRule(uniqueAttributeNameValidationRule1);
+
+		/* Setup the validation rule that ensures that all edge attribute name widgets have
+		 * unique values.
+		 */
+
+		FieldValidationRule<String> uniqueAttributeNameValidationRule2 =
+			new UniqueValueValidationRule<String>(attributeFieldValidator2BaseName());
+		this.attributeNameValidator2.addValidationRule(uniqueAttributeNameValidationRule2);
 	}
+
+	public abstract String attributeFieldValidator1BaseName();
+	public abstract String attributeFieldValidator2BaseName();
 
 	public abstract DataModel createGUI(
 			String windowTitle,
@@ -219,31 +333,27 @@ public abstract class GUIBuilder {
 		return layoutData;
 	}
 
+	protected static Map<String, String> createAggregateOptions(
+			StarDatabaseDescriptor databaseDescriptor) {
+		Map<String, String> aggregateOptions = new LinkedHashMap<String, String>();
+		BiMap<String, String> leafTableNameOptions = HashBiMap.create(
+			Maps.newLinkedHashMap(databaseDescriptor.createTableNameOptionsWithoutCore()));
+		Map<String, String> annotatedLeafTableNameOptions =
+			Maps.transformValues(leafTableNameOptions.inverse(), new Function<String, String>() {
+				public String apply(String value) {
+					return String.format("%s (Leaf Table)", value);
+				}
+			});
+		aggregateOptions.putAll(HashBiMap.create(annotatedLeafTableNameOptions).inverse());
+		aggregateOptions.putAll(
+			databaseDescriptor.getCoreTableDescriptor().getColumnNamesByLabels());
+
+		return aggregateOptions;
+	}
+
 	protected AttributeListWidget createAggregateWidget(
-			SWTModel model,
-			String aggregateFunctionGroupName,
-			String coreEntityColumnGroupName,
-			Collection<String> coreEntityColumnLabels,
-			Map<String, String> coreEntityColumnsByLabels,
-			String resultColumnLabelGroupName,
-			String type,
-			Composite parent,
-			FieldValidator<String> attributeNameValidator,
-			Collection<FieldValidator<String>> otherValidators,
-			DisplayErrorMessagesValidationAction displayErrorMessagesValidationAction) {
-		AttributeListWidget aggregateList = new AttributeListWidget(
-			model,
-			aggregateFunctionGroupName,
-			coreEntityColumnGroupName,
-			coreEntityColumnLabels,
-			coreEntityColumnsByLabels,
-			resultColumnLabelGroupName,
-			type,
-			parent,
-			attributeNameValidator,
-			otherValidators,
-			this.disableFinishedButtonAction,
-			displayErrorMessagesValidationAction);
+			AttributeWidgetProperties properties, String type, Composite parent) {
+		AttributeListWidget aggregateList = new AttributeListWidget(properties, type, parent);
 		aggregateList.setLayoutData(createAggregateListLayoutData());
 
 		return aggregateList;

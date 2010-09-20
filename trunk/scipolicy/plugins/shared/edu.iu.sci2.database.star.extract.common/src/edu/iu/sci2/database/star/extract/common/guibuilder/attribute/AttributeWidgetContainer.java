@@ -1,11 +1,9 @@
 package edu.iu.sci2.database.star.extract.common.guibuilder.attribute;
 
-import java.util.Collection;
 import java.util.Map;
 
 import org.cishell.utilities.StringUtilities;
 import org.cishell.utility.datastructure.datamodel.exception.UniqueNameException;
-import org.cishell.utility.datastructure.datamodel.field.validation.FieldValidator;
 import org.cishell.utility.swt.ExpandableComponentWidget;
 import org.cishell.utility.swt.GridContainer;
 import org.cishell.utility.swt.model.SWTModel;
@@ -23,12 +21,11 @@ import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Text;
 
 import edu.iu.sci2.database.star.extract.common.aggregate.AggregateFunction;
-import edu.iu.sci2.database.star.extract.common.guibuilder.DisplayErrorMessagesValidationAction;
-import edu.iu.sci2.database.star.extract.common.guibuilder.GUIBuilder.DisableFinishedButtonAction;
 
 public class AttributeWidgetContainer {
 	public static final int AGGREGATE_FUNCTION_COLUMN_WIDTH = 45;
 	public static final int CORE_ENTITY_COLUMN_WIDTH = 80;
+	public static final int ATTRIBUTE_NAME_COLUMN_WIDTH = 110;
 
 	public static final String DELETE_BUTTON_TEXT = "Delete";
 
@@ -43,48 +40,27 @@ public class AttributeWidgetContainer {
 	private boolean userEnteredCustomResultColumnLabelName = false;
 
 	public AttributeWidgetContainer(
-			SWTModel model,
-			String aggregateFunctionGroupName,
-			String coreEntityColumnGroupName,
-			Collection<String> coreEntityColumnLabels,
-			Map<String, String> coreEntityColumnsByLabels,
-			String attributeNameGroupName,
+			AttributeWidgetProperties properties,
 			ExpandableComponentWidget<AttributeWidgetContainer> componentWidget,
 			int index,
 			int uniqueIndex,
-			GridContainer grid,
-			int style,
-			FieldValidator<String> attributeNameValidator,
-			Collection<FieldValidator<String>> otherValidators,
-			DisableFinishedButtonAction disableFinishedButtonAction,
-			DisplayErrorMessagesValidationAction displayErrorMessagesValidationAction)
+			GridContainer scrolledAreaGrid,
+			int style)
 			throws UniqueNameException {
-		this.model = model;
-		this.index = index;
+		this.model = properties.model;
 		this.componentWidget = componentWidget;
+		this.index = index;
 
 		this.aggregateFunction = createAggregateFunction(
-			this.model, aggregateFunctionGroupName, "" + uniqueIndex, componentWidget, grid);
+			properties, componentWidget, "" + uniqueIndex, scrolledAreaGrid);
 		this.coreEntityColumn = createCoreEntityColumn(
-			this.model,
-			coreEntityColumnGroupName,
-			"" + uniqueIndex,
-			coreEntityColumnLabels,
-			coreEntityColumnsByLabels,
+			properties,
 			componentWidget,
-			grid);
+			"" + uniqueIndex,
+			scrolledAreaGrid);
 		this.attributeNameField = createAttributeNameField(
-			this.model,
-			attributeNameGroupName,
-			"" + uniqueIndex,
-			componentWidget,
-			uniqueIndex,
-			grid,
-			attributeNameValidator,
-			otherValidators,
-			disableFinishedButtonAction,
-			displayErrorMessagesValidationAction);
-		createDeleteButton(this.componentWidget, grid);
+			properties, componentWidget, "" + uniqueIndex, uniqueIndex, scrolledAreaGrid);
+		createDeleteButton(this.componentWidget, scrolledAreaGrid);
 
 		SelectionListener suggestedResultColumnNameSelectionListener = new SelectionListener() {
 			public void widgetDefaultSelected(SelectionEvent event) {
@@ -163,23 +139,44 @@ public class AttributeWidgetContainer {
 
 	private static SWTModelField<
 			String, Combo, DropDownDataSynchronizer<String>> createAggregateFunction(
-				SWTModel model,
-				String groupName,
-				String aggregateFunctionName,
+				AttributeWidgetProperties properties,
 				ExpandableComponentWidget<AttributeWidgetContainer> componentWidget,
-				GridContainer grid) throws UniqueNameException {
+				String aggregateFunctionFieldName,
+				GridContainer scrolledAreaGrid)
+				throws UniqueNameException {
+		Map<String, AggregateFunction> aggregateFunctionsByHumanReadableNames;
+		Map<String, String> sqlNamesByHumanReadableNames;
+
+		// TODO: Hacky.
+		if (properties.allowCountDistinct) {
+			aggregateFunctionsByHumanReadableNames =
+				AggregateFunction.FUNCTIONS_BY_HUMAN_READABLE_NAMES;
+			sqlNamesByHumanReadableNames = AggregateFunction.SQL_NAMES_BY_HUMAN_READABLE_NAMES;
+		} else {
+			aggregateFunctionsByHumanReadableNames =
+				AggregateFunction.FUNCTIONS_WITHOUT_COUNT_DISTINCT_BY_HUMAN_READABLE_NAMES;
+			sqlNamesByHumanReadableNames =
+				AggregateFunction.SQL_NAMES_WITHOUT_COUNT_DISTINCT_BY_HUMAN_READABLE_NAMES;
+		}
+
 		SWTModelField<String, Combo, DropDownDataSynchronizer<String>> aggregateFunction =
-			model.addDropDown(
-				aggregateFunctionName,
+			properties.model.addDropDown(
+				aggregateFunctionFieldName,
 				"",
-				groupName,
+				properties.aggregateFunctionGroupName,
 				0,
-				AggregateFunction.FUNCTIONS_BY_HUMAN_READABLE_NAMES.keySet(),
-				AggregateFunction.SQL_NAMES_BY_HUMAN_READABLE_NAMES,
-				grid.getActualParent(),
+				aggregateFunctionsByHumanReadableNames.keySet(),
+				sqlNamesByHumanReadableNames,
+//				AggregateFunction.FUNCTIONS_BY_HUMAN_READABLE_NAMES.keySet(),
+//				AggregateFunction.SQL_NAMES_BY_HUMAN_READABLE_NAMES,
+				scrolledAreaGrid.getActualParent(),
 				SWT.BORDER | SWT.READ_ONLY);
 		aggregateFunction.getWidget().setLayoutData(createAggregateFunctionLayoutData());
-		grid.addComponent(aggregateFunction.getWidget());
+		scrolledAreaGrid.addComponent(aggregateFunction.getWidget());
+		aggregateFunction.addValidators(properties.aggregateFunctionValidators);
+		aggregateFunction.addOtherValidators(properties.allValidators);
+		aggregateFunction.addValidationAction(properties.disableFinishedButtonAction);
+		aggregateFunction.addValidationAction(properties.displayErrorMessagesValidationAction);
 
 		return aggregateFunction;
 	}
@@ -193,25 +190,22 @@ public class AttributeWidgetContainer {
 
 	private static SWTModelField<
 			String, Combo, DropDownDataSynchronizer<String>> createCoreEntityColumn(
-				SWTModel model,
-				String groupName,
-				String coreEntityColumnName,
-				Collection<String> coreEntityColumnLabels,
-				Map<String, String> coreEntityColumnsByLabels,
+				AttributeWidgetProperties properties,
 				ExpandableComponentWidget<AttributeWidgetContainer> componentWidget,
-				GridContainer grid) throws UniqueNameException {
+				String coreEntityColumnFieldName,
+				GridContainer scrolledAreaGrid) throws UniqueNameException {
 		SWTModelField<String, Combo, DropDownDataSynchronizer<String>> coreEntityColumn =
-			model.addDropDown(
-				coreEntityColumnName,
+			properties.model.addDropDown(
+				coreEntityColumnFieldName,
 				"",
-				groupName,
+				properties.columnGroupName,
 				0,
-				coreEntityColumnLabels,
-				coreEntityColumnsByLabels,
-				grid.getActualParent(),
+				properties.coreEntityColumnLabels,
+				properties.coreEntityColumnsByLabels,
+				scrolledAreaGrid.getActualParent(),
 				SWT.BORDER | SWT.READ_ONLY);
 		coreEntityColumn.getWidget().setLayoutData(createCoreEntityColumnLayoutData());
-		grid.addComponent(coreEntityColumn.getWidget());
+		scrolledAreaGrid.addComponent(coreEntityColumn.getWidget());
 
 		return coreEntityColumn;
 	}
@@ -225,38 +219,34 @@ public class AttributeWidgetContainer {
 
 	private SWTModelField<
 			String, Text, TextDataSynchronizer> createAttributeNameField(
-				SWTModel model,
-				String groupName,
-				String attributeName,
+				AttributeWidgetProperties properties,
 				ExpandableComponentWidget<AttributeWidgetContainer> componentWidget,
+				String attributeFieldName,
 				int uniqueIndex,
-				GridContainer grid,
-				FieldValidator<String> attributeNameValidator,
-				Collection<FieldValidator<String>> otherValidators,
-				DisableFinishedButtonAction disableFinishedButtonAction,
-				DisplayErrorMessagesValidationAction displayErrorMessagesValidationAction)
+				GridContainer scrolledAreaGrid)
 			throws UniqueNameException {
 		SWTModelField<String, Text, TextDataSynchronizer> attributeNameField =
 			model.addText(
-				attributeName,
+				attributeFieldName,
 				"",
-				groupName,
+				properties.attributeNameGroupName,
 				"RESULT" + uniqueIndex,
 				false,
-				grid.getActualParent(),
+				scrolledAreaGrid.getActualParent(),
 				SWT.BORDER);
 		attributeNameField.getWidget().setLayoutData(createAttributeNameFieldLayoutData());
-		grid.addComponent(attributeNameField.getWidget());
-		attributeNameField.addValidator(attributeNameValidator);
-		attributeNameField.addOtherValidators(otherValidators);
-		attributeNameField.addValidationAction(disableFinishedButtonAction);
-		attributeNameField.addValidationAction(displayErrorMessagesValidationAction);
+		scrolledAreaGrid.addComponent(attributeNameField.getWidget());
+		attributeNameField.addValidators(properties.aggregateNameValidators);
+		attributeNameField.addOtherValidators(properties.allValidators);
+		attributeNameField.addValidationAction(properties.disableFinishedButtonAction);
+		attributeNameField.addValidationAction(properties.displayErrorMessagesValidationAction);
 
 		return attributeNameField;
 	}
 
 	private static GridData createAttributeNameFieldLayoutData() {
-		GridData layoutData = new GridData(SWT.FILL, SWT.CENTER, true, false);
+		GridData layoutData = new GridData(SWT.CENTER, SWT.CENTER, false, false);
+		layoutData.widthHint = ATTRIBUTE_NAME_COLUMN_WIDTH;
 
 		return layoutData;
 	}

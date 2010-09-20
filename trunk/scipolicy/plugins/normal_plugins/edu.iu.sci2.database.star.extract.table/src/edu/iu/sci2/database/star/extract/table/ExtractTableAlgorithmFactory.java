@@ -42,9 +42,9 @@ public class ExtractTableAlgorithmFactory extends ExtractionAlgorithmFactory {
     	TableQueryConstructor queryConstructor = new TableQueryConstructor(
     		TableGUIBuilder.LEAF_FIELD_NAME,
     		GUIBuilder.HEADER_GROUP_NAME,
-    		GUIBuilder.TABLE_ATTRIBUTE_FUNCTION_GROUP_NAME,
-    		GUIBuilder.TABLE_COLUMN_GROUP_NAME,
-    		GUIBuilder.TABLE_ATTRIBUTE_NAME_GROUP_NAME,
+    		GUIBuilder.ATTRIBUTE_FUNCTION_GROUP1_NAME,
+    		GUIBuilder.CORE_ENTITY_COLUMN_GROUP1_NAME,
+    		GUIBuilder.ATTRIBUTE_NAME_GROUP1_NAME,
     		model,
     		databaseMetadata);
     	AlgorithmFactory tableQueryRunner = getTableQueryRunner(this.bundleContext);
@@ -64,8 +64,10 @@ public class ExtractTableAlgorithmFactory extends ExtractionAlgorithmFactory {
     private static DataModel getModelFromUser(StarDatabaseMetadata metadata)
     		throws AlgorithmCreationCanceledException {
     	try {
-    		return new TableGUIBuilder().createGUI(
-    			WINDOW_TITLE, WINDOW_WIDTH, WINDOW_HEIGHT, new StarDatabaseDescriptor(metadata));
+    		StarDatabaseDescriptor databaseDescriptor = new StarDatabaseDescriptor(metadata);
+
+    		return new TableGUIBuilder(databaseDescriptor).createGUI(
+				WINDOW_TITLE, WINDOW_WIDTH, WINDOW_HEIGHT, databaseDescriptor);
     	} catch (GUICanceledException e) {
     		throw new AlgorithmCreationCanceledException(e.getMessage(), e);
     	} catch (UniqueNameException e) {

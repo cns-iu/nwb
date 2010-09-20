@@ -23,6 +23,8 @@ public class DisplayErrorMessagesValidationAction implements FieldValidationActi
 		this.instructionsLabelText = instructionsLabelText;
 		this.tutorialURL = tutorialURL;
 		this.tutorialDisplayURL = tutorialDisplayURL;
+
+		doesValidate();
 	}
 
 	public void doesValidate() {

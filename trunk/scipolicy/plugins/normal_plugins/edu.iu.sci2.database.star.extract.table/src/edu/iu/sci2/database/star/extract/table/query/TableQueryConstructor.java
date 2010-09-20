@@ -37,23 +37,9 @@ public class TableQueryConstructor {
 
 	private String leafTableName;
 	private String coreTableName;
-	private String coreNonAggregatesForQuery;
-	private String coreAggregatesForQuery;
-	private String leafTableAggregatesForQuery;
-	private String leafTableAggregates_JoinsForQuery;
-	private String groupByForQuery;
-
-	/**
-	 * to avoid stringifying at java level:
-	 * 
-	 * template:
-	 * <coreAggregates.it(), sep=", ">
-	 * 
-	 * java:
-	 * Collecton<Aggregate> coreAggregates; // fill up
-	 * template.set("coreAggregates", coreAggregates)
-	 * 
-	 */
+	private Collection<String> coreAggregateElements;
+	private Collection<String> leafTableAggregateElements;
+	private Collection<String> leafTableAggregateJoinElements;
 	
 	public TableQueryConstructor(
 			String leafTableFieldName,
@@ -79,11 +65,12 @@ public class TableQueryConstructor {
 		this.leafTableName =
 			(String) model.getGroup(headerGroupName).getField(leafTableFieldName).getValue();
 		this.coreTableName = metadata.getCoreEntityTableName();
-		this.coreNonAggregatesForQuery = formCoreColumnsSelectionQuerySection(nonAggregatedCoreColumns);
-		this.coreAggregatesForQuery = formAggregateQuerySection(aggregates);
-		this.leafTableAggregatesForQuery = formAggregateQuerySection(leafAggregates);
-		this.leafTableAggregates_JoinsForQuery = formJoinsForQuery(leafAggregates);
-		this.groupByForQuery = formGroupBy(this.leafTableName, nonAggregatedCoreColumns);
+		this.coreAggregateElements =
+			StarDatabaseExtractionUtilities.formAggregateElements(aggregates);
+		this.leafTableAggregateElements =
+			StarDatabaseExtractionUtilities.formAggregateElements(leafAggregates);
+		this.leafTableAggregateJoinElements =
+			StarDatabaseExtractionUtilities.formJoinElements(leafAggregates);
 	}
 
 	public String constructQuery() {
@@ -137,83 +124,23 @@ public class TableQueryConstructor {
 		nonAggregatedColumns.addAll(workingNonAggregatedColumns.values());
 	}
 
-	public static String formCoreColumnsSelectionQuerySection(
-			Collection<ColumnDescriptor> nonAggregatedColumns) {
-		Collection<String> querySections = new ArrayList<String>();
-
-		for (ColumnDescriptor columnDescriptor : nonAggregatedColumns) {
-//			if (columnDescriptor.isCoreColumn()) {
-				querySections.add(String.format(
-					"VARCHAR (CHAR (\"%s\"), %d) AS \"%s\"",
-					columnDescriptor.getNameForDatabase(),
-					MAXIMUM_LABEL_SIZE,
-					columnDescriptor.getName()));
-//			}
-		}
-
-		// TODO hopefully not necessary after refactoring string template
-		return StarDatabaseExtractionUtilities.fixQuerySectionWithCommaPrefix(
-			StringUtilities.implodeItems(querySections, ", "));
-	}
-
-	public static String formAggregateQuerySection(Collection<? extends Aggregate> aggregates) {
-		Collection<String> querySections = new ArrayList<String>();
-
-		for (Aggregate aggregate : aggregates) {
-			querySections.add(aggregate.databaseRepresentation());
-		}
-
-		return StarDatabaseExtractionUtilities.fixQuerySectionWithCommaPrefix(
-			StringUtilities.implodeItems(querySections, ", "));
-	}
-
-	private static String formJoinsForQuery(Collection<LeafAggregate> leafAggregates) {
-		Map<String, String> joins = new HashMap<String, String>();
-
-		for (LeafAggregate leafAggregate : leafAggregates) {
-			String columnName = leafAggregate.getTargetColumnDescriptor().getNameForDatabase();
-			if (!joins.containsKey(columnName)) {
-				joins.put(columnName, leafAggregate.joinExpression());
-			}
-		}
-
-		return StringUtilities.implodeItems(joins.values(), "");
-	}
-
-	private static String formGroupBy(
-			String leafTableName, List<ColumnDescriptor> nonAggregatedCoreColumns) {
-		Collection<String> groupedBy = new ArrayList<String>();
-
-//		for (ColumnDescriptor nonAggregatedCoreColumn : nonAggregatedCoreColumns) {
-//			groupedBy.add(String.format("\"%s\"", nonAggregatedCoreColumn.getNameForDatabase()));
-//		}
-
-		String nonAggregatedColumnsForQuery =
-			StarDatabaseExtractionUtilities.fixQuerySectionWithCommaPrefix(
-				StringUtilities.implodeItems(groupedBy, ", "));
-
-		return String.format(
-			"GROUP BY \"%1$s\".\"%1$s\", \"%1$s\".PK %2$s",
-			leafTableName,
-			nonAggregatedColumnsForQuery);
-	}
-
 	private StringTemplate getQueryStringTemplate() {
 		return STRING_TEMPLATE_GROUP.getInstanceOf(
 			QUERY_STRING_TEMPLATE_NAME, formStringTemplateArguments());
 	}
 
-	private Map<String, String> formStringTemplateArguments() {
-		Map<String, String> arguments = new HashMap<String, String>();
+	private Map<String, Object> formStringTemplateArguments() {
+		Map<String, Object> arguments = new HashMap<String, Object>();
 		arguments.put("leafTableName", this.leafTableName);
 		arguments.put("coreTableName", this.coreTableName);
 		arguments.put(
 			"sentenceCased_LeafTableName", StringUtilities.toSentenceCase(this.leafTableName));
-		arguments.put("coreNonAggregates", this.coreNonAggregatesForQuery);
-		arguments.put("coreAggregates", this.coreAggregatesForQuery);
-		arguments.put("leafTableAggregates", this.leafTableAggregatesForQuery);
-		arguments.put("leafTableAggregates_Joins", this.leafTableAggregates_JoinsForQuery);
-		arguments.put("groupBy", this.groupByForQuery);
+		StarDatabaseExtractionUtilities.putIfNotEmpty(
+			arguments, "coreAggregates", this.coreAggregateElements);
+		StarDatabaseExtractionUtilities.putIfNotEmpty(
+			arguments, "leafTableAggregates", this.leafTableAggregateElements);
+		StarDatabaseExtractionUtilities.putIfNotEmpty(
+			arguments, "leafTableAggregates_Joins", this.leafTableAggregateJoinElements);
 
 		return arguments;
 	}

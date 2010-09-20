@@ -3,21 +3,15 @@ package edu.iu.sci2.database.star.extract.common.guibuilder.attribute;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
-import java.util.Map;
 
-import org.cishell.utility.datastructure.datamodel.field.validation.FieldValidator;
 import org.cishell.utility.swt.ExpandableComponentWidget;
 import org.cishell.utility.swt.WidgetConstructionException;
-import org.cishell.utility.swt.model.SWTModel;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
-
-import edu.iu.sci2.database.star.extract.common.guibuilder.DisplayErrorMessagesValidationAction;
-import edu.iu.sci2.database.star.extract.common.guibuilder.GUIBuilder.DisableFinishedButtonAction;
 
 public class AttributeListWidget extends ExpandableComponentWidget<AttributeWidgetContainer> {
 	public static final String ADD_ATTRIBUTE_BUTTON_TEXT_FORMAT = "Add Another %s Attribute";
@@ -28,31 +22,8 @@ public class AttributeListWidget extends ExpandableComponentWidget<AttributeWidg
 	public static final String RESULT_COLUMN_LABEL_TEXT = "Attribute Name:";
 
 	public AttributeListWidget(
-			SWTModel model,
-			String aggregateFunctionGroupName,
-			String coreEntityColumnGroupName,
-			Collection<String> coreEntityColumnLabels,
-			Map<String, String> coreEntityColumnsByLabels,
-			String attributeNameGroupName,
-			String type,
-			Composite parent,
-			FieldValidator<String> attributeNameValidator,
-			Collection<FieldValidator<String>> otherValidators,
-			DisableFinishedButtonAction disableFinishedButtonAction,
-			DisplayErrorMessagesValidationAction displayErrorMessagesValidationAction) {
-		super(
-			parent,
-			new AttributeWidgetFactory(
-				model,
-				aggregateFunctionGroupName,
-				coreEntityColumnGroupName,
-				coreEntityColumnLabels,
-				coreEntityColumnsByLabels,
-				attributeNameGroupName,
-				attributeNameValidator,
-				otherValidators,
-				disableFinishedButtonAction,
-				displayErrorMessagesValidationAction));
+			AttributeWidgetProperties properties, String type, Composite parent) {
+		super(parent, new AttributeWidgetFactory(properties));
 		Composite headerArea = getHeaderArea();
 		createAddAttributeButton(headerArea, type);
 		createRemoveAllAttributesButton(headerArea, type);

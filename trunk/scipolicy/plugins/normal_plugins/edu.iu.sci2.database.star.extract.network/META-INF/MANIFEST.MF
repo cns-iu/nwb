@@ -44,7 +44,7 @@ Import-Package: com.google.common.base,
  org.osgi.service.metatype;version="1.1.0",
  org.osgi.service.prefs;version="1.1.0"
 X-AutoStart: true
-Service-Component: OSGI-INF/co_occurrence.xml, OSGI-INF/bipartite.xml
+Service-Component: OSGI-INF/co_occurrence.xml, OSGI-INF/bipartite.xml, OSGI-INF/co_entity_occurrence.xml
 Require-Bundle: org.eclipse.ui,
  org.eclipse.ui.forms,
  org.eclipse.core.runtime

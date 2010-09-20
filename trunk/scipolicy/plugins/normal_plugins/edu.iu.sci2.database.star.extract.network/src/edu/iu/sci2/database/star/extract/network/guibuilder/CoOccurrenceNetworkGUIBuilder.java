@@ -1,13 +1,11 @@
 package edu.iu.sci2.database.star.extract.network.guibuilder;
 
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.Map;
 
 import org.cishell.utility.datastructure.ObjectContainer;
 import org.cishell.utility.datastructure.datamodel.DataModel;
 import org.cishell.utility.datastructure.datamodel.exception.UniqueNameException;
-import org.cishell.utility.datastructure.datamodel.field.validation.FieldValidator;
 import org.cishell.utility.swt.GUIBuilderUtilities;
 import org.cishell.utility.swt.GUICanceledException;
 import org.cishell.utility.swt.WidgetConstructionException;
@@ -24,10 +22,13 @@ import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
 
+import com.google.common.collect.Sets;
+
 import edu.iu.sci2.database.star.extract.common.StarDatabaseDescriptor;
 import edu.iu.sci2.database.star.extract.common.guibuilder.DisplayErrorMessagesValidationAction;
 import edu.iu.sci2.database.star.extract.common.guibuilder.GUIBuilder;
 import edu.iu.sci2.database.star.extract.common.guibuilder.attribute.AttributeListWidget;
+import edu.iu.sci2.database.star.extract.common.guibuilder.attribute.AttributeWidgetProperties;
 
 public class CoOccurrenceNetworkGUIBuilder extends GUIBuilder {
 	public static final String INSTRUCTIONS_LABEL_TEXT =
@@ -46,24 +47,35 @@ public class CoOccurrenceNetworkGUIBuilder extends GUIBuilder {
 
 	public static final String LEAF_FIELD_NAME = "To Run Co-Occurrence On";
 
+	public CoOccurrenceNetworkGUIBuilder(StarDatabaseDescriptor databaseDescriptor) {
+		super(databaseDescriptor);
+	}
+
 	@Override
-	@SuppressWarnings("unchecked")	// Arrays.asList creating genericly-typed arrays.
+	public String attributeFieldValidator1BaseName() {
+		return NODE_ATTRIBUTE_FIELD_VALIDATOR_BASE_NAME;
+	}
+
+	@Override
+	public String attributeFieldValidator2BaseName() {
+		return EDGE_ATTRIBUTE_FIELD_VALIDATOR_BASE_NAME;
+	}
+
+	@Override
+	@SuppressWarnings("unchecked")	// Sets.newHashSet creating genericly-typed arrays.
 	public DataModel createGUI(
 			String windowTitle,
 			int windowWidth,
 			int windowHeight,
 			StarDatabaseDescriptor databaseDescriptor)
 			throws GUICanceledException, UniqueNameException {
-		// Create validators that all of our valiated fields should know about.
-
-		Collection<FieldValidator<String>> otherValidatorsForNodeAttributes =
-			Arrays.<FieldValidator<String>>asList(
-				this.leafSelectorFieldValidator, this.edgeAttributesFieldValidator);
-		Collection<FieldValidator<String>> otherValidatorsForEdgeAttributes =
-			Arrays.<FieldValidator<String>>asList(
-				this.leafSelectorFieldValidator, this.nodeAttributesFieldValidator);
-
 		SWTModel model = new SWTModel(SWT.NONE);
+		model.createGroup(ATTRIBUTE_FUNCTION_GROUP1_NAME);
+		model.createGroup(CORE_ENTITY_COLUMN_GROUP1_NAME);
+		model.createGroup(ATTRIBUTE_NAME_GROUP1_NAME);
+		model.createGroup(ATTRIBUTE_FUNCTION_GROUP2_NAME);
+		model.createGroup(CORE_ENTITY_COLUMN_GROUP2_NAME);
+		model.createGroup(ATTRIBUTE_NAME_GROUP2_NAME);
 
 		/* Create the GUI shell, and set up its basic structure (header, node aggregates,
 		 *  edge aggregates).
@@ -95,30 +107,42 @@ public class CoOccurrenceNetworkGUIBuilder extends GUIBuilder {
 
 		// Create the widget that allows users to specify node and edge aggregate fields.
 
-		AttributeListWidget nodeAggregatesTable = createAggregateWidget(
-			model,
-			NODE_ATTRIBUTE_FUNCTION_GROUP_NAME,
-			NODE_CORE_ENTITY_COLUMN_GROUP_NAME,
-			databaseDescriptor.getCoreTableDescriptor().getColumnNames(),
-			databaseDescriptor.getCoreTableDescriptor().getColumnNamesByLabels(),
-			NODE_ATTRIBUTE_NAME_GROUP_NAME,
+		Map<String, String> aggregateOptions = createAggregateOptions(databaseDescriptor);
+
+		AttributeListWidget nodeAggregatesTable =
+			createAggregateWidget(new AttributeWidgetProperties(
+				model,
+				ATTRIBUTE_FUNCTION_GROUP1_NAME,
+				CORE_ENTITY_COLUMN_GROUP1_NAME,
+				aggregateOptions.keySet(),
+				aggregateOptions,
+				ATTRIBUTE_NAME_GROUP1_NAME,
+				Sets.newHashSet(this.aggregateFunctionValidator1),
+				null,//TODO: column validators
+				Sets.newHashSet(this.attributeNameValidator1),
+				this.allValidators,
+				this.disableFinishedButtonAction,
+				displayErrorMessagesValidationAction,
+				true),
 			NODE_TYPE,
-			nodeAggregatesGroup,
-			this.nodeAttributesFieldValidator,
-			otherValidatorsForNodeAttributes,
-			displayErrorMessagesValidationAction);
-		AttributeListWidget edgeAggregatesTable = createAggregateWidget(
-			model,
-			EDGE_ATTRIBUTE_FUNCTION_GROUP_NAME,
-			EDGE_CORE_ENTITY_COLUMN_GROUP_NAME,
-			databaseDescriptor.getCoreTableDescriptor().getColumnNames(),
-			databaseDescriptor.getCoreTableDescriptor().getColumnNamesByLabels(),
-			EDGE_ATTRIBUTE_NAME_GROUP_NAME,
+			nodeAggregatesGroup);
+		AttributeListWidget edgeAggregatesTable =
+			createAggregateWidget(new AttributeWidgetProperties(
+				model,
+				ATTRIBUTE_FUNCTION_GROUP2_NAME,
+				CORE_ENTITY_COLUMN_GROUP2_NAME,
+				aggregateOptions.keySet(),
+				aggregateOptions,
+				ATTRIBUTE_NAME_GROUP2_NAME,
+				Sets.newHashSet(this.aggregateFunctionValidator2),
+				null,//TODO: column validators
+				Sets.newHashSet(this.attributeNameValidator2),
+				this.allValidators,
+				this.disableFinishedButtonAction,
+				displayErrorMessagesValidationAction,
+				true),
 			EDGE_TYPE,
-			edgeAggregatesGroup,
-			this.edgeAttributesFieldValidator,
-			otherValidatorsForEdgeAttributes,
-			displayErrorMessagesValidationAction);
+			edgeAggregatesGroup);
 
 		// Create the finished button so the user can actually execute the resulting queries.
 
@@ -167,7 +191,7 @@ public class CoOccurrenceNetworkGUIBuilder extends GUIBuilder {
 		label.setText(LEAF_FIELD_LABEL);
 
 		Collection<String> columnNames = databaseDescriptor.getLeafTableNames();
-		Map<String, String> columnOptions = databaseDescriptor.getTableNameOptionsWithoutCore();
+		Map<String, String> columnOptions = databaseDescriptor.createTableNameOptionsWithoutCore();
 		SWTModelField<String, Combo, DropDownDataSynchronizer<String>> leafField =
 			model.addDropDown(
 			LEAF_FIELD_NAME,

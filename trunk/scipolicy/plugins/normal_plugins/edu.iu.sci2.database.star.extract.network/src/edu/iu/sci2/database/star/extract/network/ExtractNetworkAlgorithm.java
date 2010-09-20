@@ -13,30 +13,37 @@ import org.cishell.framework.data.Data;
 import org.cishell.utilities.AlgorithmUtilities;
 import org.osgi.service.log.LogService;
 
+import edu.iu.sci2.database.star.extract.common.aggregate.Aggregate;
 import edu.iu.sci2.database.star.extract.network.query.NetworkQueryConstructor;
 
 public class ExtractNetworkAlgorithm implements Algorithm, ProgressTrackable {
 	private CIShellContext ciShellContext;
 	private Data parentData;
-	private NetworkQueryConstructor queryConstructor;
+	private NetworkQueryConstructor<? extends Aggregate, ? extends Aggregate> queryConstructor;
 	private AlgorithmFactory networkQueryRunner;
+//	private LogService logger;
 	private ProgressMonitor progressMonitor = ProgressMonitor.NULL_MONITOR;
 
     public ExtractNetworkAlgorithm(
     		CIShellContext ciShellContext,
     		Data parentData,
-    		NetworkQueryConstructor queryConstructor,
+    		NetworkQueryConstructor<? extends Aggregate, ? extends Aggregate> queryConstructor,
     		AlgorithmFactory networkQueryRunner,
     		LogService logger) {
     	this.ciShellContext = ciShellContext;
     	this.parentData = parentData;
     	this.queryConstructor = queryConstructor;
     	this.networkQueryRunner = networkQueryRunner;
+//    	this.logger = logger;
     }
 
     public Data[] execute() throws AlgorithmExecutionException {
     	String nodeQuery = this.queryConstructor.constructNodeQuery();
+//    	this.logger.log(LogService.LOG_DEBUG, "Node Query:");
+//    	this.logger.log(LogService.LOG_DEBUG, nodeQuery);
     	String edgeQuery = this.queryConstructor.constructEdgeQuery();
+//    	this.logger.log(LogService.LOG_DEBUG, "Edge Query:");
+//    	this.logger.log(LogService.LOG_DEBUG, edgeQuery);
     	String nodeIDColumn = this.queryConstructor.getNodeIDColumn();
     	String sourceNodeName = this.queryConstructor.getSourceNodeName();
     	String targetNodeName = this.queryConstructor.getTargetNodeName();

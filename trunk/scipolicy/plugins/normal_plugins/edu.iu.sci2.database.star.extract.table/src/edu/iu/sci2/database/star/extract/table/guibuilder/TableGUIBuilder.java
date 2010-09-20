@@ -1,15 +1,11 @@
 package edu.iu.sci2.database.star.extract.table.guibuilder;
 
-import java.util.ArrayList;
 import java.util.Collection;
-import java.util.HashMap;
-import java.util.LinkedHashMap;
 import java.util.Map;
 
 import org.cishell.utility.datastructure.ObjectContainer;
 import org.cishell.utility.datastructure.datamodel.DataModel;
 import org.cishell.utility.datastructure.datamodel.exception.UniqueNameException;
-import org.cishell.utility.datastructure.datamodel.field.validation.FieldValidator;
 import org.cishell.utility.swt.GUIBuilderUtilities;
 import org.cishell.utility.swt.GUICanceledException;
 import org.cishell.utility.swt.SWTUtilities;
@@ -27,20 +23,18 @@ import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
 
-import com.google.common.base.Function;
-import com.google.common.collect.BiMap;
-import com.google.common.collect.HashBiMap;
-import com.google.common.collect.Maps;
+import com.google.common.collect.Sets;
 
 import edu.iu.sci2.database.star.extract.common.StarDatabaseDescriptor;
 import edu.iu.sci2.database.star.extract.common.guibuilder.DisplayErrorMessagesValidationAction;
 import edu.iu.sci2.database.star.extract.common.guibuilder.GUIBuilder;
 import edu.iu.sci2.database.star.extract.common.guibuilder.attribute.AttributeListWidget;
+import edu.iu.sci2.database.star.extract.common.guibuilder.attribute.AttributeWidgetProperties;
 
 public class TableGUIBuilder extends GUIBuilder {
 	public static final String INSTRUCTIONS_LABEL_TEXT =
-		"Choose the leaf entity table to extract your co-occurrence network from.\n" +
-		"Then, setup any node and edge attributes you want on your resulting network.\n" +
+		"Choose the leaf entity that your extracted data table should pertain to.\n" +
+		"Then, setup any attributes you want on your resulting data table.\n" +
 		"For more information see the Sci2 tutorial at: ";
 	public static final String TUTORIAL_URL =
 		"https://nwb.slis.indiana.edu/community/?n=Sci2Algorithm.GenericCSVExtractTable";
@@ -48,11 +42,26 @@ public class TableGUIBuilder extends GUIBuilder {
 	public static final int INSTRUCTIONS_LABEL_HEIGHT = 55;
 
 	public static final String LEAF_FIELD_LABEL =
-		"Choose the Leaf column to extract the co-occurrence network on: ";
+		"Choose the leaf entity that you want your extracted data table to pertain to: ";
 	public static final String HEADER_GROUP_TEXT = "";
 
-	public static final String LEAF_FIELD_NAME = "leafEntity";
+	public static final String LEAF_FIELD_NAME = "That Your Data Table Should Pertain To";
 
+	public TableGUIBuilder(StarDatabaseDescriptor databaseDescriptor) {
+		super(databaseDescriptor);
+	}
+
+	@Override
+	public String attributeFieldValidator1BaseName() {
+		return TABLE_ATTRIBUTE_FIELD_VALIDATOR_BASE_NAME;
+	}
+
+	@Override
+	public String attributeFieldValidator2BaseName() {
+		return "";
+	}
+
+	@SuppressWarnings("unchecked")
 	@Override
 	public DataModel createGUI(
 			String windowTitle,
@@ -60,8 +69,10 @@ public class TableGUIBuilder extends GUIBuilder {
 			int windowHeight,
 			StarDatabaseDescriptor databaseDescriptor)
 			throws GUICanceledException, UniqueNameException {
-
 		SWTModel model = new SWTModel(SWT.NONE);
+		model.createGroup(ATTRIBUTE_FUNCTION_GROUP1_NAME);
+		model.createGroup(CORE_ENTITY_COLUMN_GROUP1_NAME);
+		model.createGroup(ATTRIBUTE_NAME_GROUP1_NAME);
 
 		// Create the GUI shell, and set up its basic structure (header, aggregates).
 
@@ -92,18 +103,23 @@ public class TableGUIBuilder extends GUIBuilder {
 
     	Map<String, String> aggregateOptions = createAggregateOptions(databaseDescriptor);
 
-		AttributeListWidget tableAggregatesWidget = createAggregateWidget(
-			model,
-			TABLE_ATTRIBUTE_FUNCTION_GROUP_NAME,
-			TABLE_COLUMN_GROUP_NAME,
-			aggregateOptions.keySet(),
-			aggregateOptions,
-			TABLE_ATTRIBUTE_NAME_GROUP_NAME,
+		AttributeListWidget tableAggregatesWidget =
+			createAggregateWidget(new AttributeWidgetProperties(
+				model,
+				ATTRIBUTE_FUNCTION_GROUP1_NAME,
+				CORE_ENTITY_COLUMN_GROUP1_NAME,
+				aggregateOptions.keySet(),
+				aggregateOptions,
+				ATTRIBUTE_NAME_GROUP1_NAME,
+				Sets.newHashSet(this.aggregateFunctionValidator1),
+				null,//TODO: column validators
+				Sets.newHashSet(this.attributeNameValidator1),
+				this.allValidators,
+				this.disableFinishedButtonAction,
+				displayErrorMessagesValidationAction,
+				true),
 			TABLE_TYPE,
-			aggregatesGroup,
-			this.nodeAttributesFieldValidator,
-			new ArrayList<FieldValidator<String>>(),
-			displayErrorMessagesValidationAction);
+			aggregatesGroup);
 
 		// Create the finished button so the user can actually execute the resulting queries.
 
@@ -165,12 +181,12 @@ public class TableGUIBuilder extends GUIBuilder {
 			String, Combo, DropDownDataSynchronizer<String>> createLeafSelectionField(
 				Composite parent, StarDatabaseDescriptor databaseDescriptor, SWTModel model)
 				throws UniqueNameException {
-		Label label = new Label(parent, SWT.READ_ONLY);
+		Label label = new Label(parent, SWT.READ_ONLY | SWT.WRAP);
 		label.setLayoutData(createLeafSelectionFieldLabelLayoutData());
 		label.setText(LEAF_FIELD_LABEL);
 
 		Collection<String> columnNames = databaseDescriptor.getLeafTableNames();
-		Map<String, String> columnOptions = databaseDescriptor.getTableNameOptionsWithoutCore();
+		Map<String, String> columnOptions = databaseDescriptor.createTableNameOptionsWithoutCore();
 		SWTModelField<String, Combo, DropDownDataSynchronizer<String>> leafField =
 			model.addDropDown(
 			LEAF_FIELD_NAME,
@@ -188,31 +204,15 @@ public class TableGUIBuilder extends GUIBuilder {
 
 	private static GridData createLeafSelectionFieldLabelLayoutData() {
 		GridData layoutData = new GridData(SWT.LEFT, SWT.CENTER, false, false);
+		layoutData.widthHint = LEAF_SELECTOR_LABEL_WIDTH;
 
 		return layoutData;
 	}
 
 	private static GridData createLeafSelectionFieldLayoutData() {
 		GridData layoutData = new GridData(SWT.FILL, SWT.CENTER, true, true);
+		layoutData.widthHint = LEAF_SELECTOR_WIDTH;
 
 		return layoutData;
-	}
-
-	private static Map<String, String> createAggregateOptions(
-			StarDatabaseDescriptor databaseDescriptor) {
-		Map<String, String> aggregateOptions = new LinkedHashMap<String, String>();
-		BiMap<String, String> leafTableNameOptions = HashBiMap.create(
-			Maps.newLinkedHashMap(databaseDescriptor.getTableNameOptionsWithoutCore()));
-		Map<String, String> annotatedLeafTableNameOptions =
-			Maps.transformValues(leafTableNameOptions.inverse(), new Function<String, String>() {
-				public String apply(String value) {
-					return String.format("%s (Leaf Table)", value);
-				}
-			});
-		aggregateOptions.putAll(HashBiMap.create(annotatedLeafTableNameOptions).inverse());
-		aggregateOptions.putAll(
-			databaseDescriptor.getCoreTableDescriptor().getColumnNamesByLabels());
-
-		return aggregateOptions;
 	}
 }

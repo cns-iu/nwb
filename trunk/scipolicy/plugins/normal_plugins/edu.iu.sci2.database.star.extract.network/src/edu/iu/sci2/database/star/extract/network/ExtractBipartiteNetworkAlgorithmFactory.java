@@ -1,19 +1,12 @@
 package edu.iu.sci2.database.star.extract.network;
 
-import org.cishell.framework.algorithm.AlgorithmCreationCanceledException;
-import org.cishell.utility.datastructure.datamodel.exception.UniqueNameException;
-import org.cishell.utility.swt.GUICanceledException;
-import org.cishell.utility.swt.model.SWTModel;
+import edu.iu.sci2.database.star.extract.common.guibuilder.GUIBuilder;
 
-import edu.iu.sci2.database.star.common.StarDatabaseMetadata;
-import edu.iu.sci2.database.star.extract.common.StarDatabaseDescriptor;
-import edu.iu.sci2.database.star.extract.network.guibuilder.TwoLeafTableNetworkGUIBuilder;
 
 public class ExtractBipartiteNetworkAlgorithmFactory
 		extends ExtractTwoLeafTableNetworkAlgorithmFactory {
 	public static final String INSTRUCTIONS_LABEL_TEXT =
-		"Choose the entity tables that extract your bipartite network should be " +
-		"extracted between.\n" +
+		"Choose the entity tables that your bipartite network should be extracted between.\n" +
 		"Then, setup any node and edge attributes you want on your resulting network.\n" +
 		"For more information see the Sci2 tutorial at: ";
 	public static final String TUTORIAL_URL =
@@ -29,6 +22,8 @@ public class ExtractBipartiteNetworkAlgorithmFactory
 
 	public static final String SOURCE_LEAF_FIELD_NAME = "To Treat As The Source Nodes";
 	public static final String TARGET_LEAF_FIELD_NAME = "To Treat As The Target Nodes";
+
+	public static final String WINDOW_TITLE = "Extract Bipartite Network";
 
 	@Override
 	public String instructionsLabelText() {
@@ -51,22 +46,47 @@ public class ExtractBipartiteNetworkAlgorithmFactory
 	}
 
 	@Override
-	public String sourceLeafFieldLabel() {
+	public String leafField1Label() {
 		return SOURCE_LEAF_FIELD_LABEL;
 	}
 
 	@Override
-	public String sourceLeafFieldName() {
+	public String leafField1Name() {
 		return SOURCE_LEAF_FIELD_LABEL;
 	}
 
 	@Override
-	public String targetLeafFieldLabel() {
+	public String leafField2Label() {
 		return TARGET_LEAF_FIELD_LABEL;
 	}
 
 	@Override
-    public String targetLeafFieldName() {
+    public String leafField2Name() {
 		return TARGET_LEAF_FIELD_NAME;
+	}
+
+	@Override
+	public boolean includeCoreTableInLeafSelectors() {
+		return true;
+	}
+
+	@Override
+	public int defaultAggregateWidgetCount() {
+		return GUIBuilder.DEFAULT_AGGREGATE_WIDGET_COUNT;
+	}
+
+	@Override
+	public String windowTitle() {
+		return WINDOW_TITLE;
+	}
+
+	@Override
+	public boolean allowCountDistinctFor1() {
+		return true;
+	}
+
+	@Override
+	public boolean allowCountDistinctFor2() {
+		return true;
 	}
 }
