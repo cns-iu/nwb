@@ -22,7 +22,7 @@ import edu.iu.sci2.database.star.common.StarDatabaseMetadata;
 import edu.iu.sci2.database.star.common.parameter.ColumnDescriptor;
 import edu.iu.sci2.database.star.common.parameter.ColumnDescriptorFactory;
 import edu.iu.sci2.database.star.common.utility.CSVReaderUtilities;
-import edu.iu.sci2.database.star.gui.builder.LoadStarDatabaseGUIBuilder;
+import edu.iu.sci2.database.star.gui.builder.GUIBuilder;
 
 public class StarDatabaseGUIAlgorithm implements Algorithm, ProgressTrackable {
 	public static final String WINDOW_TITLE = "Generic-CSV Database Loader";
@@ -46,7 +46,7 @@ public class StarDatabaseGUIAlgorithm implements Algorithm, ProgressTrackable {
     public Data[] execute() throws AlgorithmExecutionException {
     	try {
     		Collection<ColumnDescriptor> columnDescriptors = createColumnDescriptors();
-    		ColumnsDataForLoader columnsDataForLoader = LoadStarDatabaseGUIBuilder.gatherUserInput(
+    		ColumnsDataForLoader columnsDataForLoader = GUIBuilder.gatherUserInput(
     			WINDOW_TITLE, WINDOW_WIDTH, WINDOW_HEIGHT, columnDescriptors);
 
     		return runDatabaseLoader(columnsDataForLoader);

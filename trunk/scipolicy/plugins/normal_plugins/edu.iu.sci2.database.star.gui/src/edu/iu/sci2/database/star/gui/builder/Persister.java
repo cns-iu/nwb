@@ -181,7 +181,7 @@ public class Persister {
 					nonCoreColumnProperties.setMergeIdenticalValues(shouldMergeIdenticalValues);
 					headerWidget.setType(type);
 
-					if (!LoadStarDatabaseGUIBuilder.GRAY_OUT_NON_CORE_COLUMN_CONTROLS) {
+					if (!GUIBuilder.GRAY_OUT_NON_CORE_COLUMN_CONTROLS) {
 						nonCoreColumnProperties.setExpanded(!isCoreColumn);
 					} else {
 						nonCoreColumnProperties.setEnabled(!isCoreColumn);

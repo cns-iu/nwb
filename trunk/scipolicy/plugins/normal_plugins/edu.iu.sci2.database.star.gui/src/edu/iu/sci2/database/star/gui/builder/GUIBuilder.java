@@ -26,7 +26,7 @@ import edu.iu.sci2.database.star.common.parameter.ColumnDescriptor;
 import edu.iu.sci2.database.star.common.parameter.ParameterDescriptors;
 import edu.iu.sci2.database.star.gui.ColumnsDataForLoader;
 
-public class LoadStarDatabaseGUIBuilder {
+public class GUIBuilder {
 	public static final boolean GRAY_OUT_NON_CORE_COLUMN_CONTROLS = true;
 
 	public static final int INSTRUCTIONS_WIDTH = 300;

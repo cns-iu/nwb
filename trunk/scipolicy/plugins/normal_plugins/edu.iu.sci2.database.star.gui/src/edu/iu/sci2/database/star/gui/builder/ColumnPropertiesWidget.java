@@ -53,7 +53,7 @@ public class ColumnPropertiesWidget extends Composite {
 			}
 
 			private void selected(SelectionEvent event) {
-				if (!LoadStarDatabaseGUIBuilder.GRAY_OUT_NON_CORE_COLUMN_CONTROLS) {
+				if (!GUIBuilder.GRAY_OUT_NON_CORE_COLUMN_CONTROLS) {
 					nonCoreColumnProperties.setExpanded(false);
 				} else {
 					nonCoreColumnProperties.setEnabled(false);
@@ -71,7 +71,7 @@ public class ColumnPropertiesWidget extends Composite {
 			}
 
 			private void selected(SelectionEvent event) {
-				if (!LoadStarDatabaseGUIBuilder.GRAY_OUT_NON_CORE_COLUMN_CONTROLS) {
+				if (!GUIBuilder.GRAY_OUT_NON_CORE_COLUMN_CONTROLS) {
 					nonCoreColumnProperties.setExpanded(true);
 				} else {
 					nonCoreColumnProperties.setEnabled(true);
@@ -79,7 +79,7 @@ public class ColumnPropertiesWidget extends Composite {
 			}
 		});
 
-		if (LoadStarDatabaseGUIBuilder.GRAY_OUT_NON_CORE_COLUMN_CONTROLS) {
+		if (GUIBuilder.GRAY_OUT_NON_CORE_COLUMN_CONTROLS) {
 			nonCoreColumnProperties.setEnabled(false);
 		}
 

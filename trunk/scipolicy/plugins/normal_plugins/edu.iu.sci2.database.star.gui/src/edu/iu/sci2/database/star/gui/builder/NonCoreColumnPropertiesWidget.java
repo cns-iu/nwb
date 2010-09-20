@@ -22,6 +22,7 @@ public class NonCoreColumnPropertiesWidget extends ExpandableComposite {
 	public static final String SEPARATOR_INPUT_FIELD_LABEL =
 		"What character(s) separate(s) the values?";
 
+	public static final int SEPARATOR_INPUT_FIELD_WIDTH = 10;
 	public static final String DEFAULT_SEPARATOR = ",";
 
 	private Composite propertiesArea;
@@ -218,7 +219,8 @@ public class NonCoreColumnPropertiesWidget extends ExpandableComposite {
 	}
 
 	private static GridData createSeparatorInputFieldLayoutData() {
-		GridData layoutData = new GridData(SWT.FILL, SWT.CENTER, false, true);
+		GridData layoutData = new GridData(SWT.LEFT, SWT.CENTER, false, true);
+		layoutData.widthHint = SEPARATOR_INPUT_FIELD_WIDTH;
 
 		return layoutData;
 	}
