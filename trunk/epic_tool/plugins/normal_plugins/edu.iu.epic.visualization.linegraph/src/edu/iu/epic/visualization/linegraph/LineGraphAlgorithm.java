@@ -7,18 +7,16 @@ import java.lang.reflect.InvocationTargetException;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.ArrayList;
-import java.util.Dictionary;
+import java.util.Collection;
 import java.util.List;
 
 import javax.swing.SwingUtilities;
 
-import org.cishell.framework.CIShellContext;
 import org.cishell.framework.algorithm.Algorithm;
 import org.cishell.framework.algorithm.AlgorithmExecutionException;
 import org.cishell.framework.data.Data;
 import org.cishell.utilities.FileUtilities;
 
-import prefuse.data.Schema;
 import prefuse.data.Table;
 import edu.iu.epic.visualization.linegraph.core.StencilGUI;
 import edu.iu.epic.visualization.linegraph.stencil.hack.PropertiesSource;
@@ -29,108 +27,106 @@ import edu.iu.epic.visualization.linegraph.utilities.TableStreamSource;
 public class LineGraphAlgorithm implements Algorithm {
 	public static final String WINDOW_TITLE = "Line Graph Visualization";
 	
-	public static final String TIME_STEP_COLUMN_NAME_KEY = "timeStepColumn";
-	public static final String BASE_LINE_COLUMN_NAME_KEY = "line_";
-	
 	public static final String STENCIL_STREAM_NAME = "Data";
 	public static final String STENCIL_TIMESTEP_NAME = "Timestep";
 	public static final String STENCIL_LINE_NAME = "Line";
 	public static final String STENCIL_VALUE_NAME = "Value";
 
-	
-
 	public static final String BASE_STENCIL_PATH = "/edu/iu/epic/visualization/linegraph/stencil/";
 	public static final String LINE_GRAPH_STENCIL_PATH = BASE_STENCIL_PATH + "lineGraph.stencil";
-	//public static final String LINE_GRAPH_STENCIL_PATH = BASE_STENCIL_PATH + "lineGraph2.stencil";
 	public static final String STENCIL_CONFIGURATION_PATH =
 		BASE_STENCIL_PATH + "Stencil.properties";
 
 	public static final String CSV_MIME_TYPE = "file:text/csv";
 
-
+	private String title;
 	private Table inputTable;
-	
 	private String timeStepColumnName;
-	private List<String> lineColumnNames;
-
-	//private LogService logger;
+	private Collection<String> lineColumnNames;
+	private ActiveAlgorithmHook activeAlgorithmHook;
+	private StencilGUI stencilGUI;
+	private Integer dummy = new Integer(0);
 
 	public LineGraphAlgorithm(
-			Data[] data, Dictionary<String, Object> parameters, CIShellContext ciShellContext) {
-		/*try {
-			data = createTestData(TEST_DATASET_1_PATH);
-			parameters = constructParameters();
-		} catch (Exception e) {
-			e.printStackTrace();
-		}*/
-		this.inputTable = (Table)data[0].getData();
-		
-		this.timeStepColumnName = (String)parameters.get(TIME_STEP_COLUMN_NAME_KEY);
-		this.lineColumnNames = extractLineColumnNames(parameters, this.inputTable);
-		
-		/*System.err.println("lineColumnNames:");
-		for (String s : this.lineColumnNames) {
-			System.err.println(s);
-		}*/
+			Table inputTable,
+			String title,
+			String timeStepColumnName,
+			Collection<String> lineColumnNames,
+			ActiveAlgorithmHook activeAlgorithmHook) {
+		this.title = title;
+		this.inputTable = inputTable;
+		this.timeStepColumnName = timeStepColumnName;
+		this.lineColumnNames = lineColumnNames;
+		this.activeAlgorithmHook = activeAlgorithmHook;
+	}
 
-		//this.logger = (LogService)ciShellContext.getService(LogService.class.getName());
+	public String getTitle() {
+		return this.title;
+	}
+
+	public void addDataToGraph(
+			String title,
+			Table inputTable,
+			String timeStepColumnName,
+			Collection<String> lineColumnNames) throws AlgorithmExecutionException {
+		try {
+			while (this.stencilGUI == null) {
+				this.dummy.wait();
+			}
+		} catch (InterruptedException e) {
+		}
+
+		StencilData stencilDatum =
+			collectStencilData(title, inputTable, timeStepColumnName, lineColumnNames);
+		this.stencilGUI.addStencilDataToGraph(title, stencilDatum);
+
+		runStencilGUI();
 	}
 
 	public Data[] execute() throws AlgorithmExecutionException {
-		StencilData stencilData = collectStencilData();
-		
-		StencilGUI stencilGUI = createStencilGUI(stencilData);
+		this.activeAlgorithmHook.nowActive(this);
 
-		showStencilGUI(stencilGUI);
-
-		runStencilGUI(stencilGUI);
-
-		// TODO: Make Export parameters work (will need Joseph Cottem to update).
-		// stencil I think).
-		
-		return new Data[0];
-	}
-
-	// TODO: Make this a utility?
-	private List<String> extractLineColumnNames(
-			Dictionary<String, Object> parameters, Table table) {
-		List<String> lineColumnNames = new ArrayList<String>();
-		Schema schema = table.getSchema();
-
-		for (int ii = 0; ii < schema.getColumnCount(); ii++) {
-			String columnName = schema.getColumnName(ii);
-			String keyName = BASE_LINE_COLUMN_NAME_KEY + columnName;
-			Boolean value = (Boolean)parameters.get(keyName);
-			
-			if ((value != null) && value.booleanValue()) {
-				lineColumnNames.add(columnName);
-			}
-		}
-		
-		return lineColumnNames;
-	}
-	
-	private StencilData collectStencilData() throws AlgorithmExecutionException {
 		// Get the Stencil script.
-
-		//File stencilFile = getStencilFile();
-		//String stencilScript = extractStencilScript(stencilFile);
-		
 		InputStream stencilInputStream = getStencilInputStream();
 		String stencilScript = extractStencilScript(stencilInputStream);
 
+		StencilData initialData = collectStencilData(
+			this.title, this.inputTable, this.timeStepColumnName, this.lineColumnNames);
+
+		synchronized (this.dummy) {
+			this.stencilGUI = createStencilGUI(stencilScript, initialData);
+		}
+
+		showStencilGUI();
+
+		runStencilGUI();
+
+		/* TODO: Make Export parameters work (will need Joseph Cottam to update stencil
+		 * I think).
+		 */
+
+		return new Data[0];
+	}
+	
+	private StencilData collectStencilData(
+			String title,
+			Table inputTable,
+			String timeStepColumnName,
+			Collection<String> lineColumnNames)
+			throws AlgorithmExecutionException {
 		// Get the Stencil streams.
 
-		List<TableStreamSource> streamSources = createStreamSources();
+		List<TableStreamSource> streamSources =
+			createStreamSources(title, inputTable, timeStepColumnName, lineColumnNames);
 
-		// Return the Stencil script and streams together as "Stencil data".
+		// Return the Stencil streams together as "Stencil data".
 
-		final StencilData stencilData = new StencilData(stencilScript, streamSources);
+		final StencilData stencilDatum = new StencilData(streamSources);
 
-		return stencilData;
+		return stencilDatum;
 	}
 
-	private StencilGUI createStencilGUI(final StencilData stencilData)
+	private StencilGUI createStencilGUI(final String stencilScript, final StencilData initialData)
 			throws AlgorithmExecutionException {
 		try {
 			final PropertiesSource configurationSource =
@@ -142,11 +138,13 @@ public class LineGraphAlgorithm implements Algorithm {
 			SwingUtilities.invokeAndWait(new Runnable() {
 				public void run() {
 					try {
-						// TODO: Make the data's label part of the window title?
 						stencilGUI[0] = new StencilGUI(
 							configurationSource,
-							stencilData,
-							"Line Graph Visualization");
+							stencilScript,
+							initialData,
+							LineGraphAlgorithm.this.title,
+							LineGraphAlgorithm.this,
+							LineGraphAlgorithm.this.activeAlgorithmHook);
 					} catch (StencilException stencilException) {
 						exceptionThrown[0] = stencilException;
 					}
@@ -158,9 +156,6 @@ public class LineGraphAlgorithm implements Algorithm {
 					exceptionThrown[0].getMessage(), exceptionThrown[0]);
 			}
 
-			/*return new StencilGUI(
-				configurationSource, stencilData, "Line Graph Visualization - YOUR DATA");*/
-			
 			return stencilGUI[0];
 		} catch (InterruptedException stencilGUICreationInterruptedException) {
 			throw new AlgorithmExecutionException(
@@ -173,12 +168,12 @@ public class LineGraphAlgorithm implements Algorithm {
 		}
 	}
 
-	private void showStencilGUI(final StencilGUI stencilGUI) throws AlgorithmExecutionException {
+	private void showStencilGUI() throws AlgorithmExecutionException {
 		try {
 			SwingUtilities.invokeAndWait(new Runnable() {
 				public void run() {
 					try {
-						stencilGUI.show();
+						LineGraphAlgorithm.this.stencilGUI.show();
 					} catch (Exception e) {
 						/*
 						 * Wrap all Exceptions as RuntimeExceptions, and rethrow the inner
@@ -198,25 +193,13 @@ public class LineGraphAlgorithm implements Algorithm {
 		}
 	}
 	
-	private void runStencilGUI(final StencilGUI stencilGUI) throws AlgorithmExecutionException {
+	private void runStencilGUI() throws AlgorithmExecutionException {
 		try {
-			stencilGUI.run();
+			this.stencilGUI.run();
 		} catch (StencilException stencilException) {
 			throw new AlgorithmExecutionException(stencilException.getMessage(), stencilException);
 		}
 	}
-	
-	/*private String extractStencilScript(File stencilFile)
-			throws AlgorithmExecutionException {
-		try {
-			return FileUtilities.readEntireTextFile(stencilFile);
-		} catch (IOException ioException) {
-			String exceptionMessage =
-				"A problem occurred while trying to read the source Stencil file.";
-
-			throw new AlgorithmExecutionException(exceptionMessage, ioException);
-		}
-	}*/
 
 	private String extractStencilScript(InputStream stencilFileStream)
 			throws AlgorithmExecutionException {
@@ -232,12 +215,11 @@ public class LineGraphAlgorithm implements Algorithm {
 	
 	public File getStencilFile() throws AlgorithmExecutionException {
 		try {
-			return loadFileFromClassPath(LineGraphAlgorithm.class,
-					LINE_GRAPH_STENCIL_PATH);
+			return loadFileFromClassPath(LineGraphAlgorithm.class, LINE_GRAPH_STENCIL_PATH);
 		} catch (URISyntaxException e) {
-			String message = "Unable to load Stencil file " + "'"
-					+ LINE_GRAPH_STENCIL_PATH + "'."
-					+ "Cannot complete operation.";
+			String message = String.format(
+				"Unable to load Stencil file '%s'.  Cannot complete operation.",
+				LINE_GRAPH_STENCIL_PATH);
 
 			throw new AlgorithmExecutionException(message, e);
 		}
@@ -247,13 +229,18 @@ public class LineGraphAlgorithm implements Algorithm {
 		return loadStreamFromClassPath(LineGraphAlgorithm.class, LINE_GRAPH_STENCIL_PATH);
 	}
 
-	public List<TableStreamSource> createStreamSources() {
+	public List<TableStreamSource> createStreamSources(
+			String title,
+			Table inputTable,
+			String timeStepColumnName,
+			Collection<String> lineColumnNames) {
 		List<TableStreamSource> streams = new ArrayList<TableStreamSource>();
 
-		for (String lineColumnName : this.lineColumnNames) {
+		for (String lineColumnName : lineColumnNames) {
 			TableStreamSource stream = new TableStreamSource(
-				this.inputTable,
-				this.timeStepColumnName,
+				title,
+				inputTable,
+				timeStepColumnName,
 				lineColumnName,
 				STENCIL_STREAM_NAME,
 				STENCIL_TIMESTEP_NAME,
@@ -265,14 +252,15 @@ public class LineGraphAlgorithm implements Algorithm {
 		return streams;
 	}
 	
-	private static File loadFileFromClassPath(Class clazz, String filePath)
-	throws URISyntaxException {
+	private static File loadFileFromClassPath(Class<LineGraphAlgorithm> clazz, String filePath)
+			throws URISyntaxException {
 		URL fileURL = clazz.getResource(filePath);
 
 		return new File(fileURL.toURI());
 	}
 
-	private static InputStream loadStreamFromClassPath(Class clazz, String filePath) {
+	private static InputStream loadStreamFromClassPath(
+			Class<LineGraphAlgorithm> clazz, String filePath) {
 		return clazz.getResourceAsStream(filePath);
 	}
 }

@@ -2,7 +2,9 @@ package edu.iu.epic.visualization.linegraph.core;
 
 import java.awt.Rectangle;
 import java.io.File;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.List;
 
 import javax.swing.JComponent;
@@ -26,20 +28,18 @@ import edu.iu.epic.visualization.linegraph.utilities.TupleStream;
  * This class performs a single run of a Stencil. 
  */
 public class StencilRun {
-
 	private Panel panel;
 	private boolean hasStarted = false;
 	
-	private StencilData data;
+	private Collection<StencilData> stencilData;
 	private JSplitPane parent;
 
-	public StencilRun(JSplitPane parent, StencilData data) throws StencilException {
+	public StencilRun(JSplitPane parent, String stencilScript, Collection<StencilData> stencilData)
+			throws StencilException {
 		this.parent = parent;
-		this.data = data;
+		this.stencilData = stencilData;
 
 		try {
-			String stencilScript = data.getStencilScript();
-
 			Adapter displayAdapter = Adapter.INSTANCE;
 			Panel stencilPanel = displayAdapter.compile(stencilScript);
 			stencilPanel.preRun();
@@ -56,7 +56,7 @@ public class StencilRun {
 			throw new DoubleStartException("StencilRun can only be started once.");
 		}
 		
-		(new TupleFeeder(this.data)).execute();
+		(new TupleFeeder(this.stencilData)).execute();
 		this.hasStarted = true;
 	}
 
@@ -151,10 +151,15 @@ public class StencilRun {
 	 * TODO: The first half-second of drawing looks odd because the graph is so
 	 * small. We might want to do something about it eventually.
 	 */
-	private void feedTuplesToStencilPanel(StencilData stencilData)
+	private void feedTuplesToStencilPanel(Collection<StencilData> stencilData)
 			throws StencilException {
 
-		List<TupleStream> streams = stencilData.createStreams();
+		List<TupleStream> streams = new ArrayList<TupleStream>();
+
+		for (StencilData stencilDatum : stencilData) {
+			streams.addAll(stencilDatum.createStreams());
+		}
+
 		/*
 		 * TODO: Provide the option of playing the streams in parallel vs.
 		 * playing them one after another?
@@ -189,9 +194,9 @@ public class StencilRun {
 	}
 
 	private class TupleFeeder extends SwingWorker<Object, Object> {
-		private StencilData stencilData;
+		private Collection<StencilData> stencilData;
 
-		public TupleFeeder(StencilData stencilData) {
+		public TupleFeeder(Collection<StencilData> stencilData) {
 			this.stencilData = stencilData;
 		}
 

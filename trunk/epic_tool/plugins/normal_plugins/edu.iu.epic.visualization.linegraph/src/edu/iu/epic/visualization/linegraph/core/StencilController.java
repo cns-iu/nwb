@@ -1,6 +1,9 @@
 package edu.iu.epic.visualization.linegraph.core;
 
 import java.awt.Color;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
@@ -24,16 +27,22 @@ public class StencilController {
 
 	private JSplitPane parent;
 	private StencilRun currentPanel;
-	private StencilData data;
+	private String stencilScript;
+	private Collection<StencilData> stencilData = new ArrayList<StencilData>();
 	
-	//TODO: THIS IS A CRIME!
+	// TODO: THIS IS A CRIME!
 	private JComponent stencilPanel;
+	private Map<String, Boolean> lineVisibilityStates =
+		Collections.synchronizedMap(new HashMap<String, Boolean>());
 
-	private Map<String, Boolean> lineVisibilityStates = 
-		new HashMap<String, Boolean>();
-	public StencilController(JSplitPane parent, StencilData stencilData) {
+	public StencilController(JSplitPane parent, String stencilScript, StencilData initialData) {
 		this.parent = parent;
-		this.data = stencilData;
+		this.stencilScript = stencilScript;
+		this.stencilData.add(initialData);
+	}
+
+	public void addStencilDataToGraph(StencilData stencilDatum) {
+		this.stencilData.add(stencilDatum);
 	}
 
 	public void playFromStart() throws StencilException {
@@ -44,7 +53,8 @@ public class StencilController {
 				try {
 					// Replace the old panel with a new one.
 
-					StencilRun newPanel = createNewPanel(StencilController.this.data);
+					StencilRun newPanel = createNewPanel(
+						StencilController.this.stencilScript, StencilController.this.stencilData);
 					swapInNewPanel(newPanel);
 					StencilController.this.currentPanel = newPanel;
 
@@ -111,9 +121,9 @@ public class StencilController {
 		}
 	}
 
-	private StencilRun createNewPanel(StencilData stencilData)
+	private StencilRun createNewPanel(String stencilScript, Collection<StencilData> stencilData)
 			throws StencilException {
-		StencilRun panel = new StencilRun(this.parent, stencilData);
+		StencilRun panel = new StencilRun(this.parent, stencilScript, stencilData);
 		
 		return panel;
 	}

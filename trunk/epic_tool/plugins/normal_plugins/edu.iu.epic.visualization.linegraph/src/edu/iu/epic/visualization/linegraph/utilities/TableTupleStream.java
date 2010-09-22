@@ -10,9 +10,11 @@ import stencil.tuple.PrototypedTuple;
 import stencil.tuple.Tuple;
 
 public class TableTupleStream implements TupleStream {
+//	private String title;
 	private Table table;
 	private String timeStepColumnName;
 	private String lineColumnName;
+	private String lineColumnDisplayName;
 	private String stencilStreamName;
 	private List<String> stencilNames;
 	private IntIterator rows;
@@ -22,16 +24,20 @@ public class TableTupleStream implements TupleStream {
 	 * general-use this should be.
 	 */
 	public TableTupleStream(
+//			String title,
 			Table table,
 			String timeStepColumnName,
 			String lineColumnName,
+			String lineColumnDisplayName,
 			String stencilStreamName,
 			String stencilTimeStepID,
 			String stencilLineID,
 			String stencilValueID) {
+//		this.title = title;
 		this.table = table;
 		this.timeStepColumnName = timeStepColumnName;
 		this.lineColumnName = lineColumnName;
+		this.lineColumnDisplayName = lineColumnDisplayName;
 		this.stencilStreamName = stencilStreamName;
 		this.stencilNames = Arrays.asList(
 			Tuple.SOURCE_KEY, stencilTimeStepID, stencilLineID, stencilValueID);
@@ -63,9 +69,9 @@ public class TableTupleStream implements TupleStream {
 		String value = row.get(this.lineColumnName).toString();
 
 		return new PrototypedTuple(
-			this.stencilNames,
-			Arrays.asList(
-				new String[] { this.stencilStreamName, timeStep, this.lineColumnName, value }));
+			this.stencilNames, Arrays.asList(new String[] {
+				this.stencilStreamName, timeStep, this.lineColumnDisplayName, value
+			}));
 	}
 	
 	public void reset() {

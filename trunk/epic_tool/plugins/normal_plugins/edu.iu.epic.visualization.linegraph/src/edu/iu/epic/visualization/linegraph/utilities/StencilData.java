@@ -1,30 +1,23 @@
 package edu.iu.epic.visualization.linegraph.utilities;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
 public class StencilData {
-	private String stencilScript;
-	private List<TableStreamSource> streamSources;
+	private Collection<TableStreamSource> streamSources;
+	private Collection<String> lineColumnNames = new ArrayList<String>();
 	
-	public StencilData(
-			String stencilScript, List<TableStreamSource> streamSources) {
-		this.stencilScript = stencilScript;
+	public StencilData(Collection<TableStreamSource> streamSources) {
 		this.streamSources = streamSources;
-	}
-	
-	public String getStencilScript() {
-		return this.stencilScript;
-	}
-	
-	public List<String> getLineColumnNames() {
-		List<String> lineColumnNames = new ArrayList<String>();
-		
+
 		for (TableStreamSource streamSource : this.streamSources) {
-			lineColumnNames.add(streamSource.getLineColumnName());
+			this.lineColumnNames.add(streamSource.getLineColumnDisplayName());
 		}
-		
-		return lineColumnNames;
+	}
+	
+	public Collection<String> getLineColumnNames() {
+		return this.lineColumnNames;
 	}
 	
 	public List<TupleStream> createStreams() {

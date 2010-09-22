@@ -44,17 +44,22 @@ public class Main {
 	private static Dictionary<String, Object> constructParameters() {
 		Dictionary<String, Object> parameters = new Hashtable<String, Object>();
 		parameters.put(
-				LineGraphAlgorithm.TIME_STEP_COLUMN_NAME_KEY, TEST_TIME_STEP_COLUMN_NAME);
-		parameters.put(LineGraphAlgorithm.BASE_LINE_COLUMN_NAME_KEY + TEST_LINE_COLUMN_NAME_1,
-				Boolean.TRUE);
-		parameters.put(LineGraphAlgorithm.BASE_LINE_COLUMN_NAME_KEY + TEST_LINE_COLUMN_NAME_2,
-				Boolean.TRUE);
-		parameters.put(LineGraphAlgorithm.BASE_LINE_COLUMN_NAME_KEY + TEST_LINE_COLUMN_NAME_3,
-				Boolean.TRUE);
-		parameters.put(LineGraphAlgorithm.BASE_LINE_COLUMN_NAME_KEY + TEST_LINE_COLUMN_NAME_4,
-				Boolean.TRUE);
-		parameters.put(LineGraphAlgorithm.BASE_LINE_COLUMN_NAME_KEY + TEST_LINE_COLUMN_NAME_5,
-				Boolean.FALSE);
+				LineGraphAlgorithmFactory.TIME_STEP_ID, TEST_TIME_STEP_COLUMN_NAME);
+		parameters.put(
+			LineGraphAlgorithmFactory.BASE_LINE_ID + TEST_LINE_COLUMN_NAME_1,
+			Boolean.TRUE);
+		parameters.put(
+			LineGraphAlgorithmFactory.BASE_LINE_ID + TEST_LINE_COLUMN_NAME_2,
+			Boolean.TRUE);
+		parameters.put(
+			LineGraphAlgorithmFactory.BASE_LINE_ID + TEST_LINE_COLUMN_NAME_3,
+			Boolean.TRUE);
+		parameters.put(
+			LineGraphAlgorithmFactory.BASE_LINE_ID + TEST_LINE_COLUMN_NAME_4,
+			Boolean.TRUE);
+		parameters.put(
+			LineGraphAlgorithmFactory.BASE_LINE_ID + TEST_LINE_COLUMN_NAME_5,
+			Boolean.FALSE);
 
 		return parameters;
 	}

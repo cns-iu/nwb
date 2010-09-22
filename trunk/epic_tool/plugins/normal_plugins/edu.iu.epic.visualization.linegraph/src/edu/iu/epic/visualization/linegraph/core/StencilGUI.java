@@ -7,7 +7,10 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
-import java.util.List;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
+import java.util.HashMap;
+import java.util.Map;
 
 import javax.swing.BoxLayout;
 import javax.swing.JButton;
@@ -17,6 +20,8 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JSplitPane;
 
+import edu.iu.epic.visualization.linegraph.ActiveAlgorithmHook;
+import edu.iu.epic.visualization.linegraph.LineGraphAlgorithm;
 import edu.iu.epic.visualization.linegraph.stencil.hack.PropertiesSource;
 import edu.iu.epic.visualization.linegraph.stencil.hack.PropertyManager2;
 import edu.iu.epic.visualization.linegraph.utilities.StencilData;
@@ -32,25 +37,44 @@ public class StencilGUI {
 	public static final String FILE_SAVE_DIALOG_TEXT = "Export Line Graph Rendering As...";
 	
 	private JFrame frame;
+	private JPanel userControlPanel;
 	private JSplitPane splitPane;
 	private StencilController controller;
-	List<String> lineColumnNames;
+	private Map<String, StencilData> stencilDataByTitle = new HashMap<String, StencilData>();
 
 	public StencilGUI(
 			PropertiesSource stencilConfiguration,
-			StencilData stencilData,
-			String guiTitle) throws StencilException {
-		this.lineColumnNames = stencilData.getLineColumnNames();
+			String stencilScript,
+			StencilData initialData,
+			String guiTitle,
+			final LineGraphAlgorithm hostAlgorithm,
+			final ActiveAlgorithmHook activeAlgorithmHook) throws StencilException {
 
 		PropertyManager2.loadProperties(stencilConfiguration);
 
 		createStencilGUI(guiTitle, new Dimension(800, 600));
+		this.stencilDataByTitle.put(hostAlgorithm.getTitle(), initialData);
+
+		// TODO: Hack.  Refactor this and addStencilDataToGraph to be/use the same code?
+		for (String lineColumnName : initialData.getLineColumnNames()) {
+			JCheckBox lineCheckBox = createVisibilityCheckbox(lineColumnName);
+			this.userControlPanel.add(lineCheckBox);
+		}
+
+		/* This sets it up so the algorithm that this StencilGUI is attached to unregisters itself
+		 * with the factory when it's been closed.
+		 */
+		this.frame.addWindowListener(new WindowAdapter() {
+			public void windowClosing(WindowEvent event) {
+				activeAlgorithmHook.nowInactive(hostAlgorithm);
+			}
+		});
 		
-		this.controller = new StencilController(splitPane, stencilData);
+		this.controller = new StencilController(splitPane, stencilScript, initialData);
 	}
 
 	public void run() throws StencilException {
-		controller.playFromStart();
+		this.controller.playFromStart();
 	}
 
 	public void show() {
@@ -65,10 +89,22 @@ public class StencilGUI {
 		return this.frame.isVisible();
 	}
 
+	public void addStencilDataToGraph(String title, StencilData stencilDatum) {
+		this.stencilDataByTitle.put(title, stencilDatum);
+
+		// Create and add check boxes for the new data being graphed.
+		for (String lineColumnName : stencilDatum.getLineColumnNames()) {
+			JCheckBox lineCheckBox = createVisibilityCheckbox(lineColumnName);
+			this.userControlPanel.add(lineCheckBox);
+		}
+
+		this.controller.addStencilDataToGraph(stencilDatum);
+	}
+
 	private JFrame createStencilGUI(String frameTitle, Dimension frameSize)
 			throws StencilException {
 		if (this.frame == null) {
-			this.frame = new JFrame(frameTitle);
+			this.frame = new JFrame(frameTitle + " Line Graph");
 
 			JSplitPane splitPane = createSplitPane();
 			this.splitPane = splitPane;
@@ -98,8 +134,10 @@ public class StencilGUI {
 		return splitPane;
 	}
 
+	/** This side-effects userControlPanel. */
 	private JPanel createUserControlPanel() {
-		JPanel userControlPanel = new JPanel();
+		// TODO: I wish there were a way to do this better.
+		this.userControlPanel = new JPanel();
 		BoxLayout layout = new BoxLayout(userControlPanel, BoxLayout.Y_AXIS);
 		userControlPanel.setLayout(layout);
 
@@ -110,11 +148,6 @@ public class StencilGUI {
 		JButton exportButton = createExportButton();
 		// TODO: Set layout data or something for the exportButton?
 		userControlPanel.add(exportButton);
-
-		for (String lineColumnName : this.lineColumnNames) {
-			JCheckBox lineCheckBox = createVisibilityCheckbox(lineColumnName);
-			userControlPanel.add(lineCheckBox);
-		}
 
 		return userControlPanel;
 	}
