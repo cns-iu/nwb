@@ -4,7 +4,6 @@ Bundle-Name: EpiC Model Builder GUI
 Bundle-SymbolicName: edu.iu.epic.modelbuilder.gui
 Bundle-Version: 1.0.0
 Bundle-ClassPath: .
-Bundle-Localization: plugin
 Import-Package: edu.iu.epic.modeling.compartment.model,
  edu.iu.epic.modeling.compartment.model.exception,
  edu.iu.nwb.converter.nwb.common,
@@ -39,3 +38,4 @@ X-AutoStart: true
 Service-Component: OSGI-INF/import_model.xml, OSGI-INF/new_model.xml  
 Require-Bundle: cern.colt,
  org.apache.commons.collections
+Bundle-RequiredExecutionEnvironment: J2SE-1.5
