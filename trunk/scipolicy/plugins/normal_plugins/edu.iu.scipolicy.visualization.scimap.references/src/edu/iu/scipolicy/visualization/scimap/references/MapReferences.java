@@ -52,7 +52,7 @@ public class MapReferences implements Algorithm {
 
 	private Data wrapCsv(File csvFile, String title) {
 		BasicData csvData = new BasicData(csvFile, "file:text/csv");
-		Dictionary<String, String> metadata = csvData.getMetadata();
+		Dictionary<String, Object> metadata = csvData.getMetadata();
 		
 		metadata.put(DataProperty.LABEL, title);
 		metadata.put(DataProperty.TYPE, DataProperty.TEXT_TYPE);
@@ -86,7 +86,7 @@ public class MapReferences implements Algorithm {
 
 	private BasicData wrapPostscript(File postscript, String directory) {
 		BasicData postscriptData = new BasicData(postscript, "file:text/ps");
-		Dictionary<String, String> metadata = postscriptData.getMetadata();
+		Dictionary<String, Object> metadata = postscriptData.getMetadata();
 		
 		metadata.put(DataProperty.LABEL, "Postscript of Proposals in " + directory);
 		metadata.put(DataProperty.TYPE, DataProperty.VECTOR_IMAGE_TYPE);
