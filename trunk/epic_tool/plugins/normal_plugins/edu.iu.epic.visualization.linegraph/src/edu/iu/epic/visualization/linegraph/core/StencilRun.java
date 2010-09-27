@@ -189,8 +189,6 @@ public class StencilRun {
 		 * 
 		 * }
 		 */
-		// We're assuming all of our streams are of the same size.
-		// TODO: Change this?
 		/*
 		 * TODO: Currently if a user clicks 'replay', the old stencil will
 		 * continue to draw. We should stop feeding a stencil tuples if it is no
@@ -199,10 +197,14 @@ public class StencilRun {
 
 		if (streams.size() != 0) {
 			try {
-				long streamSize = streams.get(0).streamSize();
-
+				long streamSize = determineMaximumStreamSize(streams);
+				
 				for (long ii = 0; ii < streamSize; ii++) {
 					for (TupleStream stream : streams) {
+						if (!stream.hasNext()) {
+							continue;
+						}
+
 						this.panel.processTuple(stream.nextTuple());
 					}
 				}
@@ -211,6 +213,16 @@ public class StencilRun {
 				processTupleFailedException.printStackTrace();
 			}
 		}
+	}
+
+	private static long determineMaximumStreamSize(List<TupleStream> streams) {
+		long maximumStreamSizeSoFar = streams.get(0).streamSize();
+
+		for (TupleStream stream : streams) {
+			maximumStreamSizeSoFar = Math.max(stream.streamSize(), maximumStreamSizeSoFar);
+		}
+
+		return maximumStreamSizeSoFar;
 	}
 
 	private class TupleFeeder extends SwingWorker<Object, Object> {

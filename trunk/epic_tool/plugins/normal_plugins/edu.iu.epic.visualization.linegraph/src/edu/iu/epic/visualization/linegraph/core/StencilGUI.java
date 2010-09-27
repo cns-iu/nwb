@@ -15,7 +15,6 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 
-import javax.swing.plaf.metal.MetalCheckBoxIcon;
 import javax.swing.BoxLayout;
 import javax.swing.Icon;
 import javax.swing.JButton;
@@ -24,6 +23,7 @@ import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JSplitPane;
+import javax.swing.plaf.metal.MetalCheckBoxIcon;
 
 import org.cishell.utilities.color.ColorRegistry;
 
@@ -220,31 +220,28 @@ public class StencilGUI {
 
 		/* Create color icon */
 		Icon colorIcon = new Icon() {
-							private Color color;
-							private Dimension dimension;
-							
-							public Icon colorIcon(Dimension dimension, Color color) {
-								this.dimension = dimension;
-								this.color = color;
-								return this;
-							}
-							
-							@Override
-							public int getIconHeight() {
-								return (int) this.dimension.getHeight();
-							}
-				
-							@Override
-							public int getIconWidth() {
-								return (int) this.dimension.getWidth();
-							}
-				
-							@Override
-							public void paintIcon(Component c, Graphics g, int x, int y) {
-								g.setColor(color);
-							    g.fillRect(x, y, getIconWidth(), getIconHeight());
-							}
-						} .colorIcon(COLOR_ICON_SIZE, colorRegistry.getColorOf(lineName));
+			private Color color;
+			private Dimension dimension;
+			
+			public Icon colorIcon(Dimension dimension, Color color) {
+				this.dimension = dimension;
+				this.color = color;
+
+				return this;
+			}
+
+			public int getIconHeight() {
+				return (int) this.dimension.getHeight();
+			}
+			public int getIconWidth() {
+				return (int) this.dimension.getWidth();
+			}
+
+			public void paintIcon(Component component, Graphics graphics, int x, int y) {
+				graphics.setColor(color);
+			    graphics.fillRect(x, y, getIconWidth(), getIconHeight());
+			}
+		}.colorIcon(COLOR_ICON_SIZE, colorRegistry.getColorOf(lineName));
 		
 		return new JLabel(lineName, colorIcon, JLabel.LEFT);
 	}
