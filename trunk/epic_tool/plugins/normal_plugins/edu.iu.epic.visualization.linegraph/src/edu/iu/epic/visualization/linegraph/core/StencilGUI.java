@@ -1,18 +1,23 @@
 package edu.iu.epic.visualization.linegraph.core;
 
 import java.awt.Color;
+import java.awt.Component;
 import java.awt.Container;
 import java.awt.Dimension;
+import java.awt.Graphics;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 
+import javax.swing.plaf.metal.MetalCheckBoxIcon;
 import javax.swing.BoxLayout;
+import javax.swing.Icon;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JFrame;
@@ -20,10 +25,13 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JSplitPane;
 
+import org.cishell.utilities.color.ColorRegistry;
+
 import edu.iu.epic.visualization.linegraph.ActiveAlgorithmHook;
 import edu.iu.epic.visualization.linegraph.LineGraphAlgorithm;
 import edu.iu.epic.visualization.linegraph.stencil.hack.PropertiesSource;
 import edu.iu.epic.visualization.linegraph.stencil.hack.PropertyManager2;
+import edu.iu.epic.visualization.linegraph.utilities.StencilColorSchema;
 import edu.iu.epic.visualization.linegraph.utilities.StencilData;
 import edu.iu.epic.visualization.linegraph.utilities.StencilException;
 
@@ -35,11 +43,16 @@ public class StencilGUI {
 	public static final String REPLAY_BUTTON_LABEL = "Replay";
 	public static final String EXPORT_BUTTON_LABEL = "Export";
 	public static final String FILE_SAVE_DIALOG_TEXT = "Export Line Graph Rendering As...";
+	public static final Dimension STENCIL_GUI_SIZE = new Dimension(800, 600);
+	public static final Dimension COLOR_ICON_SIZE = new Dimension(
+								(int) (new MetalCheckBoxIcon().getIconHeight()),
+								(int) (new MetalCheckBoxIcon().getIconHeight()));
 	
 	private JFrame frame;
 	private JPanel userControlPanel;
 	private JSplitPane splitPane;
 	private StencilController controller;
+	private ColorRegistry<String> colorRegistry;
 	private Map<String, StencilData> stencilDataByTitle = new HashMap<String, StencilData>();
 
 	public StencilGUI(
@@ -50,16 +63,13 @@ public class StencilGUI {
 			final LineGraphAlgorithm hostAlgorithm,
 			final ActiveAlgorithmHook activeAlgorithmHook) throws StencilException {
 
+		this.colorRegistry = new ColorRegistry<String>(new StencilColorSchema());
 		PropertyManager2.loadProperties(stencilConfiguration);
 
-		createStencilGUI(guiTitle, new Dimension(800, 600));
+		createStencilGUI(guiTitle, STENCIL_GUI_SIZE);
 		this.stencilDataByTitle.put(hostAlgorithm.getTitle(), initialData);
 
-		// TODO: Hack.  Refactor this and addStencilDataToGraph to be/use the same code?
-		for (String lineColumnName : initialData.getLineColumnNames()) {
-			JCheckBox lineCheckBox = createVisibilityCheckbox(lineColumnName);
-			this.userControlPanel.add(lineCheckBox);
-		}
+		initCheckBoxes(initialData.getLineColumnNames());
 
 		/* This sets it up so the algorithm that this StencilGUI is attached to unregisters itself
 		 * with the factory when it's been closed.
@@ -70,7 +80,8 @@ public class StencilGUI {
 			}
 		});
 		
-		this.controller = new StencilController(splitPane, stencilScript, initialData);
+		this.controller = new StencilController(splitPane, stencilScript, 
+												initialData, colorRegistry);
 	}
 
 	public void run() throws StencilException {
@@ -93,11 +104,7 @@ public class StencilGUI {
 		this.stencilDataByTitle.put(title, stencilDatum);
 
 		// Create and add check boxes for the new data being graphed.
-		for (String lineColumnName : stencilDatum.getLineColumnNames()) {
-			JCheckBox lineCheckBox = createVisibilityCheckbox(lineColumnName);
-			this.userControlPanel.add(lineCheckBox);
-		}
-
+		initCheckBoxes(stencilDatum.getLineColumnNames());
 		this.controller.addStencilDataToGraph(stencilDatum);
 	}
 
@@ -140,6 +147,7 @@ public class StencilGUI {
 		this.userControlPanel = new JPanel();
 		BoxLayout layout = new BoxLayout(userControlPanel, BoxLayout.Y_AXIS);
 		userControlPanel.setLayout(layout);
+		userControlPanel.setBackground(Color.WHITE);
 
 		JButton replayButton = createReplayButton();
 		// TODO: Set layout data or something for the replayButton?
@@ -152,11 +160,38 @@ public class StencilGUI {
 		return userControlPanel;
 	}
 	
+	/*
+	 * Create check boxes for the given lineColumnNames
+	 */
+	private void initCheckBoxes(Collection<String> lineColumnNames) {
+		for (String lineColumnName : lineColumnNames) {
+			/* Create a panel for check box */
+			JPanel checkBoxPanel = new JPanel();
+			checkBoxPanel.setLayout(new BoxLayout(checkBoxPanel, BoxLayout.X_AXIS));
+			checkBoxPanel.setAlignmentX(0.0f);
+			checkBoxPanel.setBackground(Color.WHITE);
+			userControlPanel.add(checkBoxPanel);
+			
+			/* Create line check box */
+			JCheckBox lineCheckBox = createVisibilityCheckbox(lineColumnName);
+			checkBoxPanel.add(lineCheckBox);
+			
+			/* Create the label of the line check box */
+			JLabel lineCheckBoxLabel = createLineCheckBoxLabel(lineColumnName);
+			checkBoxPanel.add(lineCheckBoxLabel);
+		}
+	}
+	
+	/*
+	 * Create a CheckBox and its JLabel 
+	 */
 	private JCheckBox createVisibilityCheckbox(final String lineName) {
-		JCheckBox checkBox = new JCheckBox(lineName);
+		JCheckBox checkBox = new JCheckBox();
+		checkBox.setBackground(Color.WHITE);
 		checkBox.setSelected(true);
+		checkBox.setName(lineName);
 		checkBox.addItemListener(new ItemListener() {
-			public void itemStateChanged (ItemEvent event) {
+			public void itemStateChanged(ItemEvent event) {
 				try {
 					boolean visible = true;
 					if (event.getStateChange() == ItemEvent.SELECTED) {
@@ -176,6 +211,44 @@ public class StencilGUI {
 		
 		return checkBox;
 	}
+	
+	/*
+	 * Create line check box label that contains a color icon and 
+	 * the text label
+	 */
+	private JLabel createLineCheckBoxLabel(final String lineName) {
+
+		/* Create color icon */
+		Icon colorIcon = new Icon() {
+							private Color color;
+							private Dimension dimension;
+							
+							public Icon colorIcon(Dimension dimension, Color color) {
+								this.dimension = dimension;
+								this.color = color;
+								return this;
+							}
+							
+							@Override
+							public int getIconHeight() {
+								return (int) this.dimension.getHeight();
+							}
+				
+							@Override
+							public int getIconWidth() {
+								return (int) this.dimension.getWidth();
+							}
+				
+							@Override
+							public void paintIcon(Component c, Graphics g, int x, int y) {
+								g.setColor(color);
+							    g.fillRect(x, y, getIconWidth(), getIconHeight());
+							}
+						} .colorIcon(COLOR_ICON_SIZE, colorRegistry.getColorOf(lineName));
+		
+		return new JLabel(lineName, colorIcon, JLabel.LEFT);
+	}
+	
 
 	/*
 	 * This panel is shown briefly while the first stencil is loading

@@ -1,5 +1,7 @@
 package edu.iu.epic.visualization.linegraph.core;
 
+import java.awt.Color;
+import java.awt.Dimension;
 import java.awt.Rectangle;
 import java.io.File;
 import java.util.ArrayList;
@@ -18,6 +20,7 @@ import stencil.adapters.java2D.Adapter;
 import stencil.adapters.java2D.Panel;
 import stencil.tuple.PrototypedTuple;
 import stencil.tuple.Tuple;
+import stencil.types.color.ColorTuple;
 import edu.iu.epic.visualization.linegraph.utilities.DoubleStartException;
 import edu.iu.epic.visualization.linegraph.utilities.ExtensionFileFilter;
 import edu.iu.epic.visualization.linegraph.utilities.StencilData;
@@ -28,6 +31,9 @@ import edu.iu.epic.visualization.linegraph.utilities.TupleStream;
  * This class performs a single run of a Stencil. 
  */
 public class StencilRun {
+	
+	public static final Dimension ESP_DIMENSION = new Dimension(400, 1600);
+	public static final int DOTS_PER_INCH = 64;
 	private Panel panel;
 	private boolean hasStarted = false;
 	
@@ -55,7 +61,6 @@ public class StencilRun {
 		if (this.hasStarted) {
 			throw new DoubleStartException("StencilRun can only be started once.");
 		}
-		
 		(new TupleFeeder(this.stencilData)).execute();
 		this.hasStarted = true;
 	}
@@ -105,17 +110,16 @@ public class StencilRun {
 
 			if (approvedOrCancelled == JFileChooser.APPROVE_OPTION) {
 	        	String fullFileName = 
-	        		fileChooser.getCurrentDirectory().toString() + "/" +
-	        		fileChooser.getSelectedFile().getName();
+	        		fileChooser.getCurrentDirectory().toString() + "/"
+	        		+ fileChooser.getSelectedFile().getName();
 
 				Object exportInfo = null;
 
 				// TODO: Disabled until EPS works and dotsPerInch is handled right.
 				if (selectedFormat.equals("PNG")) {
-					int dotsPerInch = 64;
-					exportInfo = dotsPerInch; 
+					exportInfo = DOTS_PER_INCH; 
 				} else if (selectedFormat.equals("EPS")) {
-					Rectangle dimensions = new Rectangle(400,1600);
+					Rectangle dimensions = new Rectangle(ESP_DIMENSION);
 					exportInfo = dimensions;
 				}
 
@@ -134,13 +138,29 @@ public class StencilRun {
 
 	public void setLineVisible(String lineName, boolean visible) throws StencilException {
 		try {
-			System.out.println(lineName);
-			System.out.println(visible);
 			Tuple visibilityTuple = new PrototypedTuple(
 				"Visibility",
 				Arrays.asList(new String[] { "Line", "Visible" }), 
 				Arrays.asList(new String[] { lineName, String.valueOf(visible) }));
 			this.panel.processTuple(visibilityTuple);
+			
+		} catch (Exception exception) {
+			// TODO Handle this exception better.
+			throw new StencilException(exception);
+		}
+	}
+	
+	/*
+	 * Set color for the line that match the given lineName.
+	 * Throw StencilException when failed
+	 */
+	public void setLineColor(String lineName, Color color) throws StencilException {
+		try {
+			Tuple colorTuple = new PrototypedTuple(
+					"LineColor",
+					Arrays.asList(new String[] { "Line", "Color" }), 
+					Arrays.asList(new String[] { lineName, ColorTuple.toString(color) }));
+			this.panel.processTuple(colorTuple);
 		} catch (Exception exception) {
 			// TODO Handle this exception better.
 			throw new StencilException(exception);
@@ -212,6 +232,7 @@ public class StencilRun {
 			}
 		}
 
-		protected void done() {}
+		protected void done() {
+		}
 	}
 }

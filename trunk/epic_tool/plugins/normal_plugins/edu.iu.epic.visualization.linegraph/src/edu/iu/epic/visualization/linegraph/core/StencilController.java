@@ -8,12 +8,12 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 
-import javax.swing.JButton;
 import javax.swing.JComponent;
 import javax.swing.JPanel;
 import javax.swing.JSplitPane;
 import javax.swing.SwingUtilities;
 
+import org.cishell.utilities.color.ColorRegistry;
 import edu.iu.epic.visualization.linegraph.utilities.StencilData;
 import edu.iu.epic.visualization.linegraph.utilities.StencilException;
 
@@ -30,15 +30,22 @@ public class StencilController {
 	private String stencilScript;
 	private Collection<StencilData> stencilData = new ArrayList<StencilData>();
 	
-	// TODO: THIS IS A CRIME!
-	private JComponent stencilPanel;
 	private Map<String, Boolean> lineVisibilityStates =
 		Collections.synchronizedMap(new HashMap<String, Boolean>());
 
-	public StencilController(JSplitPane parent, String stencilScript, StencilData initialData) {
+	
+	/* Assigned color based on ColorSchema */
+	private ColorRegistry<String> colorRegistry;
+	
+	public StencilController(
+			JSplitPane parent,
+			String stencilScript, 
+			StencilData initialData,
+			ColorRegistry<String> colorRegistry) {
 		this.parent = parent;
 		this.stencilScript = stencilScript;
 		this.stencilData.add(initialData);
+		this.colorRegistry = colorRegistry;
 	}
 
 	public void addStencilDataToGraph(StencilData stencilDatum) {
@@ -58,13 +65,15 @@ public class StencilController {
 					swapInNewPanel(newPanel);
 					StencilController.this.currentPanel = newPanel;
 
+					/* Assigned colors to lines before the run starts. */
+					assignColorsToLines();
+					
 					/*
 	 				 * Tell the new panel which lines should be visible
 	 				 * (lines visible/invisible carries over between stencil runs).
 	 				 */
 
 					Set<String> lineNames = lineVisibilityStates.keySet();
-
 					for (String lineName : lineNames) {
 						Boolean lineVisibility = lineVisibilityStates.get(lineName);
 						StencilController.this.currentPanel.setLineVisible(
@@ -84,10 +93,20 @@ public class StencilController {
 			throw stencilExceptionThrown[0];
 		}
 	}
+	
+	/* Assign color for each lines */
+	private void assignColorsToLines() throws StencilException {
+		
+		for (StencilData data : this.stencilData) {
+			for (String lineName : data.getLineColumnNames()) {
+				Color color = colorRegistry.getColorOf(lineName);
+				StencilController.this.currentPanel.setLineColor(lineName, color);
+			}
+		}
+	}
 
 	public void setLineVisible(String lineName, boolean visible) throws StencilException {
 		// TODO: Put in runnable?
-		System.out.println(stencilPanel.getSize().width + ", " + stencilPanel.getSize().height);
 		// Make the line visible/invisible on the current panel.
 		this.currentPanel.setLineVisible(lineName, visible);
 		// And remember its visibility/invisibility for future panels.
@@ -105,11 +124,11 @@ public class StencilController {
 			this.currentPanel = newPanel;
 			
 			JPanel wrapperPanel = new JPanel();
-		wrapperPanel.setBackground(Color.BLUE);
-		JComponent stencilPanel = this.currentPanel.getComponent();
-		wrapperPanel.add(stencilPanel);
-		this.stencilPanel = stencilPanel;
-		wrapperPanel.add(new JButton("Meep"));
+			wrapperPanel.setBackground(Color.BLUE);
+			JComponent stencilPanel = this.currentPanel.getComponent();
+			wrapperPanel.add(stencilPanel);
+			// TODO: Does this do anything?
+//			wrapperPanel.add(new JButton("Meep"));
 		
 			this.parent.setRightComponent(this.currentPanel.getComponent());
 			

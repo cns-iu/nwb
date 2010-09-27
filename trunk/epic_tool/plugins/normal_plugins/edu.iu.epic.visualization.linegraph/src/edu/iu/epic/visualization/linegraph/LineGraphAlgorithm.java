@@ -74,6 +74,7 @@ public class LineGraphAlgorithm implements Algorithm {
 				this.dummy.wait();
 			}
 		} catch (InterruptedException e) {
+			/* TODO: Should this be thrown as a new AlgorithmExecutionException? */
 		}
 
 		StencilData stencilDatum =
