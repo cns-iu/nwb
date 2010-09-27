@@ -21,6 +21,20 @@
   	-->
 
   	<!-- EpiC plugins -->
+
+  	<antcall target="svn.co">
+  		<param name="target" value="plugins"/>
+  		<param name="element.id" value="edu.iu.nwb.preprocessing.removegraphattributes"/>
+  	    <param name="project.name" value="/preprocessing/edu.iu.nwb.preprocessing.removegraphattributes"/>
+        <param name="url" value="http://nwb.slis.indiana.edu/svn/nwb/trunk/plugins"/>
+  	</antcall>
+
+  	<antcall target="svn.co">
+  		<param name="target" value="plugins"/>
+        <param name="element.id" value="edu.iu.nwb.preprocessing.deleteisolates"/>
+        <param name="project.name" value="/plugins/preprocessing/edu.iu.nwb.preprocessing.deleteisolates"/>
+        <param name="url" value="http://nwb.slis.indiana.edu/svn/nwb/trunk"/>
+    </antcall>
   	
   	<!-- cns plugins? -->
 	 
@@ -1031,25 +1045,27 @@
     </antcall>
   
   	
-  	<!-- Disabled from EpiC for now
     <antcall target="svn.co">
       <param name="target" value="plugins"/>
       <param name="element.id" value="edu.iu.nwb.analysis.multipartitejoining"/>
       <param name="project.name" value="/plugins/analysis/edu.iu.nwb.analysis.multipartitejoining"/>
       <param name="url" value="http://nwb.slis.indiana.edu/svn/nwb/trunk"/>
     </antcall>
+  	<!--
     <antcall target="svn.co">
       <param name="target" value="plugins"/>
       <param name="element.id" value="edu.iu.nwb.analysis.burst"/>
       <param name="project.name" value="/plugins/analysis/edu.iu.nwb.analysis.burst"/>
       <param name="url" value="http://nwb.slis.indiana.edu/svn/nwb/trunk"/>
     </antcall>
+    -->
     <antcall target="svn.co">
       <param name="target" value="plugins"/>
       <param name="element.id" value="edu.iu.nwb.analysis.kcore"/>
       <param name="project.name" value="/plugins/analysis/edu.iu.nwb.analysis.kcore"/>
       <param name="url" value="http://nwb.slis.indiana.edu/svn/nwb/trunk"/>
     </antcall>
+  	<!--
     <antcall target="svn.co">
       <param name="target" value="plugins"/>
       <param name="element.id" value="edu.iu.nwb.analysis.isidupremover"/>
@@ -1124,22 +1140,19 @@
       <param name="project.name" value="/plugins/composite/edu.iu.nwb.composite.isiloadandclean"/>
       <param name="url" value="http://nwb.slis.indiana.edu/svn/nwb/trunk"/>
     </antcall>
-    
   	<antcall target="svn.co">
   	  <param name="target" value="plugins"/>
   	  <param name="element.id" value="edu.iu.nwb.composite.extractcowordfromtable"/>
   	  <param name="project.name" value="/plugins/composite/edu.iu.nwb.composite.extractcowordfromtable"/>
   	  <param name="url" value="http://nwb.slis.indiana.edu/svn/nwb/trunk"/>
   	</antcall>
+  	-->
   	<antcall target="svn.co">
   	  <param name="target" value="plugins"/>
   	  <param name="element.id" value="edu.iu.nwb.preprocessing.timeslice"/>
   	  <param name="project.name" value="/plugins/preprocessing/edu.iu.nwb.preprocessing.timeslice"/>
   	  <param name="url" value="http://nwb.slis.indiana.edu/svn/nwb/trunk"/>
   	</antcall>
-  	
-  	-->
-  	
   
   	
   	
@@ -1152,7 +1165,6 @@
   	
   	<!-- Scipolicy non-PDE plugin -->
   	
-  	<!-- Disabled from EpiC for now
   	<antcall target="svn.co">
   	       <param name="target" value="nonpde_plugins"/>
   	       <param name="element.id" value="edu.iu.nwb.shared.blondelexecutable"/>
@@ -1160,7 +1172,6 @@
   	       <param name="url" value="http://nwb.slis.indiana.edu/svn/nwb/trunk/plugins"/>
   	</antcall>
 	<ant dir="${buildDirectory}/nonpde_plugins/edu.iu.nwb.shared.blondelexecutable"/>
-  	-->
   	<antcall target="svn.co">
   	      <param name="target" value="nonpde_plugins"/>
   	      <param name="element.id" value="edu.iu.nwb.analysis.weighted.averageclusteringcoefficient"/>
