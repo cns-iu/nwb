@@ -11,6 +11,10 @@ import org.cishell.utilities.mutateParameter.dropdown.DropdownMutator;
 import org.osgi.service.metatype.ObjectClassDefinition;
 
 import prefuse.data.Table;
+
+import com.google.common.collect.Lists;
+import com.google.common.collect.Ordering;
+
 import edu.iu.scipolicy.visualization.geomaps.scaling.ScalerFactory;
 import edu.iu.scipolicy.visualization.geomaps.utility.Constants;
 
@@ -49,12 +53,12 @@ public class GeoMapsCirclesFactory extends GeoMapsAlgorithmFactory {
 
 		String[] numberColumnsForLatitude =
 			TableUtilities.getValidNumberColumnNamesInTable(table);		
-		swapFirstMatchToFront(numberColumnsForLatitude, LATITUDE_KEYS_TO_GUESS);		
+		Arrays.sort(numberColumnsForLatitude, new Latitudishness().reverse());		
 		mutator.add(CircleAnnotationMode.LATITUDE_ID, numberColumnsForLatitude);
 		
 		String[] numericColumnsForLongitude =
-			TableUtilities.getValidNumberColumnNamesInTable(table);	
-		swapFirstMatchToFront(numericColumnsForLongitude, LONGITUDE_KEYS_TO_GUESS);		
+			TableUtilities.getValidNumberColumnNamesInTable(table);
+		Arrays.sort(numericColumnsForLongitude, new Longitudishness().reverse());	
 		mutator.add(CircleAnnotationMode.LONGITUDE_ID, numericColumnsForLongitude);
 		
 		mutator.add(CircleAnnotationMode.AREA_ID,
@@ -64,7 +68,7 @@ public class GeoMapsCirclesFactory extends GeoMapsAlgorithmFactory {
 		// Expose circle area range?
 		
 		List<String> numericColumnsForOuterColorQuantity =
-			toList(TableUtilities.getValidNumberColumnNamesInTable(table));
+			Lists.newArrayList(TableUtilities.getValidNumberColumnNamesInTable(table));
 		numericColumnsForOuterColorQuantity.add(
 				CircleAnnotationMode.USE_NO_OUTER_COLOR_TOKEN);		
 		mutator.add(CircleAnnotationMode.OUTER_COLOR_QUANTITY_ID,
@@ -76,7 +80,7 @@ public class GeoMapsCirclesFactory extends GeoMapsAlgorithmFactory {
 					new ArrayList<String>(Constants.COLOR_RANGES.keySet()));
 		
 		List<String> numericColumnsForInnerColorQuantity =
-			toList(TableUtilities.getValidNumberColumnNamesInTable(table));
+			Lists.newArrayList(TableUtilities.getValidNumberColumnNamesInTable(table));
 		numericColumnsForInnerColorQuantity.add(
 				CircleAnnotationMode.USE_NO_INNER_COLOR_TOKEN);	
 		mutator.add(CircleAnnotationMode.INNER_COLOR_QUANTITY_ID,
@@ -89,46 +93,40 @@ public class GeoMapsCirclesFactory extends GeoMapsAlgorithmFactory {
 		
 		return mutator.mutate(oldParameters);
 	}
-	
-	private static void swapFirstMatchToFront(String[] array, List<String> targets) {
-		for ( String target : targets ) {
-			int index = indexOf(target, array);
-			
-			if ( index != -1 ) {
-				swap(array, 0, index);
-				return;
-			}
-		}
-	}
-	
-	private static int indexOf(Object o, Object[] array) {
-		for ( int ii = 0; ii < array.length; ii++ ) {
-			if ( array[ii].equals(o) ) {
-				return ii;
-			}
-		}
-		
-		return -1;
-	}
-	
-	private static void swap(Object[] array, int i, int j) {
-		Object temp = array[i];
-		array[i] = array[j];
-		array[j] = temp;
-	}
-	
-	private static <T> List<T> toList(T[] array) {
-		List<T> list = new ArrayList<T>(array.length);
-		
-		for (T element : array) {
-			list.add(element);
-		}
-		
-		return list;
-	}
 
 	@Override
 	protected String getOutputAlgorithmName() {
 		return "GeoMapsCircles";
+	}
+	
+	
+	protected static class Latitudishness extends Ordering<String> {
+		public int compare(String left, String right) {
+			return score(left).compareTo(score(right));
+		}
+
+		private Integer score(String s) {
+			String normal = s.toLowerCase();
+
+			if (normal.contains("latitude")) 	{ return 3;	}
+			else if (normal.contains("lat."))	{ return 2; }
+			else if (normal.contains("lat"))	{ return 1; }
+			else								{ return 0;	}
+		}		
+	}
+	
+	protected static class Longitudishness extends Ordering<String> {
+		public int compare(String left, String right) {
+			return score(left).compareTo(score(right));
+		}
+
+		private Integer score(String s) {
+			String normal = s.toLowerCase();
+
+			if (normal.contains("longitude"))	{ return 3; }
+			else if (normal.contains("lng"))	{ return 2; }
+			else if (normal.contains("long"))	{ return 1;	}
+			else								{ return 0;	}
+		}		
 	}
 }
