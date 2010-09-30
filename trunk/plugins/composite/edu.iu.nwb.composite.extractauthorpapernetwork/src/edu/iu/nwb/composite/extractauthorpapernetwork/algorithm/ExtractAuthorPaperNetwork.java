@@ -6,7 +6,6 @@ import java.io.InputStream;
 import java.util.Dictionary;
 import java.util.Properties;
 
-import org.cishell.framework.CIShellContext;
 import org.cishell.framework.algorithm.Algorithm;
 import org.cishell.framework.algorithm.AlgorithmExecutionException;
 import org.cishell.framework.algorithm.ProgressMonitor;
@@ -16,94 +15,124 @@ import org.cishell.framework.data.Data;
 import org.cishell.framework.data.DataProperty;
 import org.osgi.service.log.LogService;
 
+import prefuse.data.Graph;
+import prefuse.data.Table;
 import edu.iu.nwb.analysis.extractnetfromtable.components.ExtractNetworkFromTable;
 import edu.iu.nwb.analysis.extractnetfromtable.components.GraphContainer;
 import edu.iu.nwb.analysis.extractnetfromtable.components.InvalidColumnNameException;
-import edu.iu.nwb.composite.extractauthorpapernetwork.metadata.SupportedFileTypes;
+import edu.iu.nwb.composite.extractauthorpapernetwork.metadata.AuthorPaperFormat;
 
-public class ExtractAuthorPaperNetwork implements Algorithm,ProgressTrackable,SupportedFileTypes {
+public class ExtractAuthorPaperNetwork implements Algorithm, ProgressTrackable {
+	private Data inData;
+	private LogService logger;
+	private Table table;
+	private String fileFormat;
+	private String fileFormatPropertiesFileName;
+	private ProgressMonitor progressMonitor;
 
-	Data[] data;
-	Dictionary parameters;
-	CIShellContext ciContext;
-	LogService logger;
-	ProgressMonitor progressMonitor;
-
-	public ExtractAuthorPaperNetwork(Data[] data, Dictionary parameters, CIShellContext context) {
-		this.data = data;
-		this.parameters = parameters;
-		this.ciContext = context;
-		this.logger = (LogService) ciContext.getService(LogService.class.getName());
+	public ExtractAuthorPaperNetwork(
+			Table table, String fileFormat, Data inData, LogService logger) {
+		this.table = table;
+		this.fileFormat = fileFormat;
+		this.inData = inData;
+		this.logger = logger;
+		
+		this.fileFormatPropertiesFileName = getFileTypePropertiesFileName(this.fileFormat);
 	}
 
 	public Data[] execute() throws AlgorithmExecutionException {
-		final prefuse.data.Table dataTable = (prefuse.data.Table) data[0]
-		                                                               .getData();
-
-
-		String fileFormat = this.parameters.get("fileFormat").toString();
-		String fileFormatPropertiesFile = this.getFileTypeProperties(fileFormat);
-		final ClassLoader loader = getClass().getClassLoader();
-		final InputStream fileTypePropertiesFile = loader
-		.getResourceAsStream(fileFormatPropertiesFile);
-
-		final Properties metaData = new Properties();
 		try {
-			metaData.load(fileTypePropertiesFile);
-		} catch (final FileNotFoundException fnfe) {
-			logger.log(LogService.LOG_ERROR, fnfe.getMessage(), fnfe);
-		} catch (final IOException ie) {
-			logger.log(LogService.LOG_ERROR, ie.getMessage(), ie);
-		}
-		try{
-			String authorColumn = AuthorPaperFormat.getAuthorColumnByName(fileFormat);
-			String paperColumn = AuthorPaperFormat.getPaperColumnByName(fileFormat);
-			GraphContainer gc = GraphContainer.initializeGraph(dataTable, authorColumn, paperColumn, true, metaData, this.logger,this.progressMonitor);
-			final prefuse.data.Graph outputGraph = gc.buildGraph(authorColumn, paperColumn, "|", false, this.logger);
-			final Data outputData1 = new BasicData(outputGraph,
-					prefuse.data.Graph.class.getName());
-			final Dictionary graphAttributes = outputData1.getMetadata();
-			graphAttributes.put(DataProperty.MODIFIED, new Boolean(true));
-			graphAttributes.put(DataProperty.PARENT, data[0]);
-			graphAttributes.put(DataProperty.TYPE, DataProperty.NETWORK_TYPE);
-			graphAttributes.put(DataProperty.LABEL,
-					"Extracted author-paper network");
+			Graph outputNetwork = constructNetwork();
+			Data graphData = wrapOutputNetworkAsData(outputNetwork);
 
+			Table outputTable = ExtractNetworkFromTable.constructTable(outputNetwork);
+			Data tableData = wrapOutputTableAsData(outputTable);
 
-
-			final prefuse.data.Table outputTable = ExtractNetworkFromTable.constructTable(outputGraph);
-
-			final Data outputData2 = new BasicData(outputTable,
-					prefuse.data.Table.class.getName());
-
-			final Dictionary tableAttributes = outputData2.getMetadata();
-			tableAttributes.put(DataProperty.MODIFIED, new Boolean(true));
-			tableAttributes.put(DataProperty.PARENT, data[0]);
-			tableAttributes.put(DataProperty.TYPE, DataProperty.MATRIX_TYPE);
-			tableAttributes.put(DataProperty.LABEL, "author-paper information");
-
-			return new Data[] { outputData1, outputData2 };
-		}catch(InvalidColumnNameException ex){
-			throw new AlgorithmExecutionException(ex.getMessage(),ex);
+			return new Data[] { graphData, tableData };
+		} catch (InvalidColumnNameException e) {
+			throw new AlgorithmExecutionException(e.getMessage(), e);
 		}
 	}
 
-
-
 	public ProgressMonitor getProgressMonitor() {
-		// TODO Auto-generated method stub
 		return this.progressMonitor;
 	}
 
-	public void setProgressMonitor(ProgressMonitor monitor) {
-		this.progressMonitor = monitor;
+	public void setProgressMonitor(ProgressMonitor progressMonitor) {
+		this.progressMonitor = progressMonitor;
 
+	}
+
+	private Data wrapOutputNetworkAsData(Graph outputNetwork) throws InvalidColumnNameException {
+		Data networkData = new BasicData(outputNetwork, Graph.class.getName());
+		Dictionary<String, Object> graphAttributes = networkData.getMetadata();
+		graphAttributes.put(DataProperty.MODIFIED, new Boolean(true));
+		graphAttributes.put(DataProperty.PARENT, inData);
+		graphAttributes.put(DataProperty.TYPE, DataProperty.NETWORK_TYPE);
+		graphAttributes.put(DataProperty.LABEL, "Extracted author-paper network");
+
+		return networkData;
+	}
+
+	private Data wrapOutputTableAsData(Table outputTable) {
+		Data tableData = new BasicData(outputTable, Table.class.getName());
+		Dictionary<String, Object> tableAttributes = tableData.getMetadata();
+		tableAttributes.put(DataProperty.MODIFIED, new Boolean(true));
+		tableAttributes.put(DataProperty.PARENT, inData);
+		tableAttributes.put(DataProperty.TYPE, DataProperty.MATRIX_TYPE);
+		tableAttributes.put(DataProperty.LABEL, "author-paper information");
+
+		return tableData;
+	}
+
+	private Graph constructNetwork() throws InvalidColumnNameException {
+		Properties aggregateProperties =
+			loadAggregatePropertiesFile(this.fileFormatPropertiesFileName);
+
+		String authorColumn =
+			AuthorPaperFormat.AUTHOR_NAME_COLUMNS_BY_FORMATS.get(this.fileFormat);
+		String paperColumn = AuthorPaperFormat.PAPER_NAME_COLUMNS_BY_FORMATS.get(this.fileFormat);
+		GraphContainer graphContainer = GraphContainer.initializeGraph(
+			this.table,
+			authorColumn,
+			paperColumn,
+			true,
+			aggregateProperties,
+			this.logger,
+			this.progressMonitor);
+		// TODO Test whether we can really hard-core "|".  Use sampledata bibtex etc.
+		Graph outputNetwork = graphContainer.buildGraph(
+			authorColumn, paperColumn, "|", false, this.logger);
+
+		return outputNetwork;
+	}
+
+	private Properties loadAggregatePropertiesFile(String fileFormatPropertiesFileName) {
+		InputStream fileTypePropertiesFile =
+			getFileTypePropertiesFile(this.fileFormatPropertiesFileName);
+
+		Properties aggregateProperties = new Properties();
+
+		try {
+			aggregateProperties.load(fileTypePropertiesFile);
+		} catch (FileNotFoundException e) {
+			this.logger.log(LogService.LOG_ERROR, e.getMessage(), e);
+		} catch (IOException e) {
+			this.logger.log(LogService.LOG_ERROR, e.getMessage(), e);
+		}
+
+		return aggregateProperties;
+	}
+
+	private InputStream getFileTypePropertiesFile(String fileFormatPropertiesFile) {
+		ClassLoader loader = getClass().getClassLoader();
+
+		return loader.getResourceAsStream(fileFormatPropertiesFile);
 	}
 	
-	private String getFileTypeProperties(String fileType){
+	private static String getFileTypePropertiesFileName(String fileType){
 		String propertiesFileName = "/edu/iu/nwb/composite/extractauthorpapernetwork/metadata/";
 		
-		return propertiesFileName+fileType+".properties";
+		return propertiesFileName + fileType + ".properties";
 	}
-
 }

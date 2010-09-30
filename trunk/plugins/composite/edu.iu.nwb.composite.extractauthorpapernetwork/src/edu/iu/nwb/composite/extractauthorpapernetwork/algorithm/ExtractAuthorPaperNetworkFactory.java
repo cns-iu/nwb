@@ -1,6 +1,5 @@
 package edu.iu.nwb.composite.extractauthorpapernetwork.algorithm;
 
-import java.io.IOException;
 import java.util.Dictionary;
 
 import org.cishell.framework.CIShellContext;
@@ -10,40 +9,47 @@ import org.cishell.framework.algorithm.ParameterMutator;
 import org.cishell.framework.data.Data;
 import org.cishell.reference.service.metatype.BasicAttributeDefinition;
 import org.cishell.reference.service.metatype.BasicObjectClassDefinition;
+import org.cishell.utilities.MutateParameterUtilities;
+import org.osgi.service.log.LogService;
 import org.osgi.service.metatype.AttributeDefinition;
-import org.osgi.service.metatype.MetaTypeInformation;
 import org.osgi.service.metatype.ObjectClassDefinition;
 
-import edu.iu.nwb.composite.extractauthorpapernetwork.metadata.SupportedFileTypes;
+import prefuse.data.Table;
+import edu.iu.nwb.composite.extractauthorpapernetwork.metadata.AuthorPaperFormat;
 
-public class ExtractAuthorPaperNetworkFactory implements AlgorithmFactory, ParameterMutator,SupportedFileTypes {
-	private MetaTypeInformation originalProvider;
-	private String pid;
+public class ExtractAuthorPaperNetworkFactory implements AlgorithmFactory, ParameterMutator {
+	public static final String FILE_FORMAT_ID = "fileFormat";
 
-	
-	public ObjectClassDefinition mutateParameters(Data[] data,
-			ObjectClassDefinition parameters) {
+	public Algorithm createAlgorithm(
+			Data[] data, Dictionary<String, Object> parameters, CIShellContext ciShellContext) {
+		String fileFormat = parameters.get(FILE_FORMAT_ID).toString();
+		Data inData = data[0];
+		Table table = (Table) inData.getData();
+		LogService logger = (LogService) ciShellContext.getService(LogService.class.getName());
 
-		ObjectClassDefinition oldDefinition = originalProvider.getObjectClassDefinition(this.pid, null);
-
-		BasicObjectClassDefinition definition;
-		try {
-			definition = new BasicObjectClassDefinition(oldDefinition.getID(), oldDefinition.getName(), oldDefinition.getDescription(), oldDefinition.getIcon(16));
-		} catch (IOException e) {
-			definition = new BasicObjectClassDefinition(oldDefinition.getID(), oldDefinition.getName(), oldDefinition.getDescription(), null);
-		}
-
-		String[] supportedFormats = SupportedFileTypes.supportedFormats;
-
-		definition.addAttributeDefinition(ObjectClassDefinition.REQUIRED,
-				new BasicAttributeDefinition("fileFormat", "File Format", "The file format of the original data.", AttributeDefinition.STRING, supportedFormats, supportedFormats));
-
-
-
-		return definition;	
+		return new ExtractAuthorPaperNetwork(table, fileFormat, inData, logger);
 	}
+	
+	public ObjectClassDefinition mutateParameters(
+			Data[] data, ObjectClassDefinition oldParameters) {
 
-	public Algorithm createAlgorithm(Data[] data, Dictionary parameters, CIShellContext context) {
-		return new ExtractAuthorPaperNetwork(data, parameters, context);
+		BasicObjectClassDefinition newParameters =
+			MutateParameterUtilities.createNewParameters(oldParameters);
+
+		String[] supportedFormatOptions =
+			AuthorPaperFormat.FORMATS_SUPPORTED.toArray(new String[0]);
+
+		newParameters.addAttributeDefinition(
+			ObjectClassDefinition.REQUIRED,
+			new BasicAttributeDefinition(
+				FILE_FORMAT_ID,
+				"File Format",
+				"The file format of the original data.",
+				AttributeDefinition.STRING,
+				supportedFormatOptions, supportedFormatOptions));
+
+
+
+		return newParameters;	
 	}
 }
