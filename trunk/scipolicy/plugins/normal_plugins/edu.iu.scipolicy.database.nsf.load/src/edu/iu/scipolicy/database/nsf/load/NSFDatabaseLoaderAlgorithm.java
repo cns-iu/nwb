@@ -26,6 +26,7 @@ import edu.iu.cns.database.load.framework.utilities.DatabaseModel;
 import edu.iu.cns.database.load.framework.utilities.DerbyDatabaseCreator;
 import edu.iu.scipolicy.database.nsf.load.exception.NSFDatabaseCreationException;
 import edu.iu.scipolicy.database.nsf.load.exception.NSFReadingException;
+import edu.iu.scipolicy.database.nsf.load.utilities.CSVReaderUtilities;
 import edu.iu.scipolicy.database.nsf.load.utilities.NSFMetadata;
 import edu.iu.scipolicy.database.nsf.load.utilities.NSFTableModelParser;
 import edu.iu.scipolicy.utilities.nsf.NSF_CSV_FieldNames;
@@ -44,7 +45,7 @@ public class NSFDatabaseLoaderAlgorithm implements Algorithm, ProgressTrackable 
 	private ProgressMonitor progressMonitor = ProgressMonitor.NULL_MONITOR;
 	
     public NSFDatabaseLoaderAlgorithm(
-    		Data[] data, Dictionary parameters, CIShellContext context) {
+    		Data[] data, Dictionary<String, Object> parameters, CIShellContext context) {
         this.data = data;
 		this.logger = (LogService) context.getService(LogService.class.getName());
         this.databaseProvider =
@@ -60,6 +61,12 @@ public class NSFDatabaseLoaderAlgorithm implements Algorithm, ProgressTrackable 
 		File nsfCSVFile = new File(fileName);
 		
 		try {
+			// Setup the progress monitor.
+
+			int rowCount = CSVReaderUtilities.rowCount(nsfCSVFile, false);
+    		double totalWork = calculateTotalWork(rowCount);
+    		startProgressMonitor(progressMonitor, totalWork);
+
 			/*
 			 * Create in-memory nsf model with all its entities & relationships.
 			 */
@@ -68,8 +75,12 @@ public class NSFDatabaseLoaderAlgorithm implements Algorithm, ProgressTrackable 
 			/*
 			 * Extract the actual database from the in-memory model. 
 			 */
-			Database database = convertNSFInMemoryModelToDatabase(inMemoryModel);
-			
+			Database database = convertNSFInMemoryModelToDatabase(inMemoryModel, totalWork);
+
+			// Notify the progress monitor that we're done.
+
+			stopProgressMonitor(progressMonitor);
+
 			/*
 			 * Provide the finished database in the data manager.
 			 */
@@ -93,20 +104,13 @@ public class NSFDatabaseLoaderAlgorithm implements Algorithm, ProgressTrackable 
     	return this.progressMonitor;
     }
 
-	/**
-	 * @param database
-	 * @return
-	 */
-	@SuppressWarnings("unchecked")
 	private Data[] annotateOutputData(Database database, Data parentData) {
 		Data output = new BasicData(database, NSF_Database_FieldNames.NSF_DATABASE_MIME_TYPE);
-//		Dictionary<String, Object> parentMetadata = data[0].getMetadata();
 		Dictionary<String, Object> metadata = output.getMetadata();
 		metadata.put(
 			DataProperty.LABEL,
 			"NSF Database From " +
 				FileUtilities.extractFileNameWithExtension((String)parentData.getData()));
-//			DataProperty.LABEL, "NSF Database From " + parentMetadata.get(DataProperty.LABEL));
 		metadata.put(DataProperty.TYPE, DataProperty.DATABASE_TYPE);
 		metadata.put(DataProperty.PARENT, data[0]);
 		
@@ -130,10 +134,8 @@ public class NSFDatabaseLoaderAlgorithm implements Algorithm, ProgressTrackable 
 			new NSFMetadata(nsfFileColumnNames, nsfCSVFile, createNSF_CSVReader(nsfCSVFile));
 
 		try {
-			startProgressMonitorForModelCreation(nsfMetadata.getRowCount());
 			DatabaseModel model = new NSFTableModelParser().parseModel(
 				nsfCSVReader, nsfMetadata, logger, this.progressMonitor);
-			stopProgressMonitorForModelCreation();
 
 			return model;
 		} catch (IOException e) {
@@ -149,13 +151,10 @@ public class NSFDatabaseLoaderAlgorithm implements Algorithm, ProgressTrackable 
 	 * @throws SQLException
 	 */
 	private Database convertNSFInMemoryModelToDatabase(
-			DatabaseModel inMemoryModel) throws NSFDatabaseCreationException {
+			DatabaseModel inMemoryModel, double totalWork) throws NSFDatabaseCreationException {
 		try {
-			this.logger.log(
-    			LogService.LOG_INFO, "Beginning Phase 2 of loading the NSF file into a database.");
-
 			return DerbyDatabaseCreator.createFromModel(
-				databaseProvider, inMemoryModel, "NSF", this.progressMonitor);
+				databaseProvider, inMemoryModel, "NSF", this.progressMonitor, totalWork);
 		} catch (AlgorithmCanceledException e) {
 			throw new NSFDatabaseCreationException(e.getMessage(), e);
 		} catch (DatabaseCreationException e) {
@@ -165,21 +164,24 @@ public class NSFDatabaseLoaderAlgorithm implements Algorithm, ProgressTrackable 
 		}
 	}
 
-	private void startProgressMonitorForModelCreation(int rowCount) {
-    	this.logger.log(
-    		LogService.LOG_INFO, "Beginning Phase 1 of loading the NSF file into a database.");
-    	// rowCount - 1 to account for the header row.
-    	int workUnitCountForCreatingModel = rowCount - 1;
-		this.progressMonitor.start(
+	private static double calculateTotalWork(int rowCount) {
+    	double workUnitCount =
+			(double) rowCount / DerbyDatabaseCreator.PERCENTAGE_OF_PROGRESS_FOR_MODEL_CREATION;
+
+    	return workUnitCount;
+    }
+
+    private static void startProgressMonitor(ProgressMonitor progressMonitor, double totalWork) {
+		progressMonitor.start(
 			(ProgressMonitor.WORK_TRACKABLE |
 				ProgressMonitor.CANCELLABLE |
 				ProgressMonitor.PAUSEABLE),
-			workUnitCountForCreatingModel);
-		this.progressMonitor.describeWork("Parsing ISI data.");
+			totalWork);
+		progressMonitor.describeWork("Loading Generic-CSV data into a database.");
     }
 
-    private void stopProgressMonitorForModelCreation() {
-    	this.progressMonitor.done();
+    private static void stopProgressMonitor(ProgressMonitor progressMonitor) {
+    	progressMonitor.done();
     }
 
 	private static CSVReader createNSF_CSVReader(File nsfCsv) throws IOException {

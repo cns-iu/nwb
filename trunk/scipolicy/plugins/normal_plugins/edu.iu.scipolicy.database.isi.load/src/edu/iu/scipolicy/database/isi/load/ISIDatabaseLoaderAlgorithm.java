@@ -91,7 +91,6 @@ public class ISIDatabaseLoaderAlgorithm implements Algorithm, ProgressTrackable 
     		throws AlgorithmExecutionException {
     	String filePath = (String)isiData.getData();
     	File inISIFile = new File(filePath);
-//    	File inISIFile = (File)isiData.getData();
 
     	try {
     		return ISITableReaderHelper.readISIFile(
@@ -106,24 +105,25 @@ public class ISIDatabaseLoaderAlgorithm implements Algorithm, ProgressTrackable 
     	}
     }
 
-    private Database convertTableToDatabase(
-    		Table table, Collection<Integer> rows)
+    private Database convertTableToDatabase(Table table, Collection<Integer> rows)
     		throws AlgorithmCanceledException, ISILoadingException {
     	try {
+    		double totalWork = calculateTotalWork(rows);
+    		startProgressMonitor(totalWork);
+
 	    	// Create an in-memory ISI model based off of the table.
 
-    		startProgressMonitorForModelCreation(rows);
     		DatabaseModel model =
     			new ISITableModelParser(this.progressMonitor).parseModel(table, rows);
-    		stopProgressMonitorForModelCreation();
 
 	    	// Use the ISI model to create an ISI database.
 
-    		this.logger.log(
-    			LogService.LOG_INFO, "Beginning Phase 2 of loading the ISI file into a database.");
+    		Database database = DerbyDatabaseCreator.createFromModel(
+    			this.databaseProvider, model, "ISI", this.progressMonitor, totalWork);
 
-    		return DerbyDatabaseCreator.createFromModel(
-    			this.databaseProvider, model, "ISI", this.progressMonitor);
+    		stopProgressMonitor();
+
+    		return database;
     	} catch (DatabaseCreationException e) {
     		throw new ISILoadingException(e.getMessage(), e);
     	} catch (SQLException e) {
@@ -131,23 +131,26 @@ public class ISIDatabaseLoaderAlgorithm implements Algorithm, ProgressTrackable 
     	}
     }
 
-    private void startProgressMonitorForModelCreation(Collection<Integer> rows) {
-    	this.logger.log(
-    		LogService.LOG_INFO, "Beginning Phase 1 of loading the ISI file into a database.");
-    	int workUnitCountForCreatingModel = rows.size();
+    private double calculateTotalWork(Collection<Integer> rows) {
+    	double totalWork =
+			(double) rows.size() / DerbyDatabaseCreator.PERCENTAGE_OF_PROGRESS_FOR_MODEL_CREATION;
+
+    	return totalWork;
+    }
+
+    private void startProgressMonitor(double totalWork) {
 		this.progressMonitor.start(
 			(ProgressMonitor.WORK_TRACKABLE |
 				ProgressMonitor.CANCELLABLE |
 				ProgressMonitor.PAUSEABLE),
-			workUnitCountForCreatingModel);
-		this.progressMonitor.describeWork("Parsing ISI data.");
+			totalWork);
+		this.progressMonitor.describeWork("Loading ISI data into a database.");
     }
 
-    private void stopProgressMonitorForModelCreation() {
+    private void stopProgressMonitor() {
     	this.progressMonitor.done();
     }
 
-    @SuppressWarnings("unchecked")	// Dictionary<String, Object>
     private Data[] annotateOutputData(Database isiDatabase, Data parentData) {
     	Data data = new BasicData(isiDatabase, ISI.ISI_DATABASE_MIME_TYPE);
     	Dictionary<String, Object> metadata = data.getMetadata();

@@ -46,6 +46,10 @@ public class StarDatabaseLoader {
     		ProgressMonitor progressMonitor)
     		throws AlgorithmCanceledException, AlgorithmExecutionException {
     	try {
+    		int rowCount = CSVReaderUtilities.rowCount(file, false);
+    		double totalWork = calculateTotalWork(rowCount);
+    		startProgressMonitor(progressMonitor, totalWork);
+
     		CSVReader reader = CSVReaderUtilities.createCSVReader(file, true);
 			String[] header = StringUtilities.simpleCleanStrings(reader.readNext());
 			String[] coreColumns =
@@ -61,7 +65,9 @@ public class StarDatabaseLoader {
     			columnDescriptorsByHumanReadableName,
     			progressMonitor);
     		Database database = DerbyDatabaseCreator.createFromModel(
-    			databaseService, model, "Generic-CSV", progressMonitor);
+    			databaseService, model, "Generic-CSV", progressMonitor, totalWork);
+
+    		stopProgressMonitor(progressMonitor);
 
     		return database;
     	} catch (DatabaseCreationException e) {
@@ -95,11 +101,31 @@ public class StarDatabaseLoader {
     }
 
     private static String formOutDataLabel(Data parentData) {
-    	String absoluteFilePath = ((File)parentData.getData()).getAbsolutePath();
+    	String absoluteFilePath = ((File) parentData.getData()).getAbsolutePath();
 
     	return
     		"Generic-CSV Database From " +
     		FileUtilities.extractFileNameWithExtension(absoluteFilePath);
+    }
+
+    private static double calculateTotalWork(int rowCount) {
+    	double workUnitCount =
+			(double) rowCount / DerbyDatabaseCreator.PERCENTAGE_OF_PROGRESS_FOR_MODEL_CREATION;
+
+    	return workUnitCount;
+    }
+
+    private static void startProgressMonitor(ProgressMonitor progressMonitor, double totalWork) {
+		progressMonitor.start(
+			(ProgressMonitor.WORK_TRACKABLE |
+				ProgressMonitor.CANCELLABLE |
+				ProgressMonitor.PAUSEABLE),
+			totalWork);
+		progressMonitor.describeWork("Loading Generic-CSV data into a database.");
+    }
+
+    private static void stopProgressMonitor(ProgressMonitor progressMonitor) {
+    	progressMonitor.done();
     }
 
 	private static String[] determineCoreColumns(

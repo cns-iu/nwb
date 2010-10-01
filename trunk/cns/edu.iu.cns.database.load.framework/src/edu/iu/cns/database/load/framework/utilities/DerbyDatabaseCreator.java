@@ -30,9 +30,8 @@ public class DerbyDatabaseCreator {
 	public static final int MAX_VARCHAR_LENGTH = 32000;
 	public static final String NULL_VALUE = "null";
 
-	public static final float PERCENTAGE_OF_PROGRESS_FOR_CREATING_TABLES = 0.04f;
-	public static final float PERCENTAGE_OF_PROGRESS_FOR_INSERTING_VALUES = 0.85f;
-	public static final float PERCENTAGE_OF_PROGRESS_FOR_ADDING_FOREIGN_KEYS = 0.01f;
+	public static final double PERCENTAGE_OF_PROGRESS_FOR_MODEL_CREATION = 0.05;
+	public static final double PERCENTAGE_OF_PROGRESS_FOR_DATABASE_CREATION = 0.95;
 
 	/**
 	 * dataType should be the human-readable display name of the type of originating data,
@@ -42,45 +41,21 @@ public class DerbyDatabaseCreator {
 			DatabaseService databaseProvider,
 			DatabaseModel model,
 			String dataType,
-			ProgressMonitor progressMonitor)
+			ProgressMonitor progressMonitor,
+			double totalWork)
 			throws AlgorithmCanceledException, DatabaseCreationException, SQLException {
-		startProgressMonitorForDatabaseInsertion(progressMonitor, model);
-
 		Database database = databaseProvider.createNewDatabase();
 		Connection databaseConnection = database.getConnection();
 
 		try {
 			createEmptyTablesFromModel(model, databaseConnection, progressMonitor);
-			fillTablesFromModel(model, databaseConnection, progressMonitor);
+			fillTablesFromModel(model, databaseConnection, progressMonitor, totalWork);
 			addForeignKeysToTablesFromModel(model, databaseConnection, progressMonitor);
 		} finally {
 			DatabaseUtilities.closeConnectionQuietly(databaseConnection);
-			stopProgressMonitorForDatabaseInsertion(progressMonitor);
 		}
 
 		return database;
-	}
-
-	private static void startProgressMonitorForDatabaseInsertion(
-			ProgressMonitor progressMonitor, DatabaseModel model) {
-		int recordCountSoFar = 0;
-
-		for (RowItemContainer <?> rowItems : model.getRowItemLists()) {
-			recordCountSoFar += rowItems.getItems().size();
-		}
-		
-		final int totalWorkUnits = recordCountSoFar;	
-		
-		progressMonitor.start(
-			(ProgressMonitor.WORK_TRACKABLE |
-				ProgressMonitor.CANCELLABLE |
-				ProgressMonitor.PAUSEABLE),
-			totalWorkUnits);
-		progressMonitor.describeWork("Inserting ISI data into database tables.");
-	}
-
-	private static void stopProgressMonitorForDatabaseInsertion(ProgressMonitor progressMonitor) {
-		progressMonitor.done();
 	}
 
 	private static void createEmptyTablesFromModel(
@@ -104,9 +79,14 @@ public class DerbyDatabaseCreator {
 	}
 
 	private static void fillTablesFromModel(
-			DatabaseModel model, Connection databaseConnection, ProgressMonitor progressMonitor)
+			DatabaseModel model,
+			Connection databaseConnection,
+			ProgressMonitor progressMonitor,
+			double totalWork)
 			throws AlgorithmCanceledException, SQLException {
-		int unitsWorked = 0;
+		double totalFillTablesWork = (totalWork * PERCENTAGE_OF_PROGRESS_FOR_DATABASE_CREATION);
+		double unitsWorked = (totalWork * PERCENTAGE_OF_PROGRESS_FOR_MODEL_CREATION);
+		double totalRowItemCount = calculateTotalRowItemCount(model);
 
 		for (RowItemContainer<? extends RowItem<?>> itemContainer : model.getRowItemLists()) {
 			ProgressMonitorUtilities.handleCanceledOrPausedAlgorithm(progressMonitor);
@@ -117,8 +97,16 @@ public class DerbyDatabaseCreator {
 				continue;
 			}
 
-			fillTable(databaseConnection, itemContainer, progressMonitor, unitsWorked);
-			unitsWorked += itemContainer.getItems().size();
+			double workPercentageForThisTable =
+				((double) itemContainer.getItems().size() / totalRowItemCount);
+			double unitsOfWorkForThisTable = (workPercentageForThisTable * totalFillTablesWork);
+			fillTable(
+				databaseConnection,
+				itemContainer,
+				progressMonitor,
+				unitsWorked,
+				unitsOfWorkForThisTable);
+			unitsWorked += unitsOfWorkForThisTable;
 		}
 	}
 
@@ -173,6 +161,16 @@ public class DerbyDatabaseCreator {
 		}
 	}
 
+	private static double calculateTotalRowItemCount(DatabaseModel model) {
+		long totalRowItemCount = 0;
+
+		for (RowItemContainer<? extends RowItem<?>> itemContainer : model.getRowItemLists()) {
+			totalRowItemCount += itemContainer.getItems().size();
+		}
+
+		return (double) totalRowItemCount;
+	}
+
 	/**
  	 * Given all of the entities of the current entity type, form an SQL query that
 	 *  constructs the corresponding entity table in the database, and then run
@@ -182,7 +180,8 @@ public class DerbyDatabaseCreator {
 			Connection connection,
 			RowItemContainer<? extends RowItem<?>> itemContainer,
 			ProgressMonitor progressMonitor,
-			int previousUnitsWorked)
+			double previousUnitsWorked,
+			double unitsWorkedForThisTable)
 			throws SQLException {
 		
 		PreparedStatement insertStatement = createInsertStatement(itemContainer, connection);	
@@ -190,10 +189,18 @@ public class DerbyDatabaseCreator {
 		try {
 			if (!itemContainer.shouldInsertInBatches()) {
 				fillEntireTable(
-					insertStatement, itemContainer, progressMonitor, previousUnitsWorked);
+					insertStatement,
+					itemContainer,
+					progressMonitor,
+					previousUnitsWorked,
+					unitsWorkedForThisTable);
 			} else {
 				fillTableInBatches(
-					insertStatement, itemContainer, progressMonitor, previousUnitsWorked);
+					insertStatement,
+					itemContainer,
+					progressMonitor,
+					previousUnitsWorked,
+					unitsWorkedForThisTable);
 			}
 		} finally {
 			insertStatement.close();
@@ -205,7 +212,8 @@ public class DerbyDatabaseCreator {
 			PreparedStatement insertStatement,
 			RowItemContainer<? extends RowItem<?>> itemContainer,
 			ProgressMonitor progressMonitor,
-			int previousUnitsWorked)
+			double previousUnitsWorked,
+			double unitsWorkedForThisTable)
 			throws SQLException {
 		Schema<? extends RowItem<?>> schema = itemContainer.getSchema();
 		Collection<? extends RowItem<?>> items = itemContainer.getItems();
@@ -232,7 +240,7 @@ public class DerbyDatabaseCreator {
 
 		long beforeBatch = System.currentTimeMillis();
 		insertStatement.executeBatch();
-		progressMonitor.worked(previousUnitsWorked + items.size());
+		progressMonitor.worked(previousUnitsWorked + unitsWorkedForThisTable);
 		long afterBatch = System.currentTimeMillis();
 		long insertTime = afterBatch - beforeBatch;
 
@@ -244,7 +252,8 @@ public class DerbyDatabaseCreator {
 			PreparedStatement insertStatement,
 			RowItemContainer<? extends RowItem<?>> itemContainer,
 			ProgressMonitor progressMonitor,
-			int previousUnitsWorked)
+			double previousUnitsWorked,
+			double unitsWorkedForThisTable)
 			throws SQLException {
 		Schema<? extends RowItem<?>> schema = itemContainer.getSchema();
 
@@ -253,10 +262,9 @@ public class DerbyDatabaseCreator {
 		Iterator<? extends RowItem<?>> iterator = items.iterator();
 		final int totalItemCount = items.size();
 		int itemsInsertedCount = 0;
-		int workUnitsDone = 0;
+		double workUnitsDone = 0;
 
 		while (iterator.hasNext()) {
-
 			for (int ii = 0; iterator.hasNext() && (ii < batchSize); ii++) {
 				RowItem<?> item = iterator.next();
 				int fieldIndex = 1;
@@ -276,8 +284,10 @@ public class DerbyDatabaseCreator {
 
 				insertStatement.addBatch();
 				itemsInsertedCount++;
-				workUnitsDone++;
 			}
+
+			workUnitsDone =
+				((double) itemsInsertedCount / (double) totalItemCount) * unitsWorkedForThisTable;
 
 			long beforeBatch = System.currentTimeMillis();
 			insertStatement.executeBatch();

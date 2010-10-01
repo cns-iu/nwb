@@ -37,7 +37,7 @@ public class CSVModelParser {
 		String[] row;
 		int last = 0;
 		int total = 0;
-		int unitsWorked = 0;
+		double unitsWorked = 0;
 
 		while ((row = reader.readNext()) != null) {
 			ProgressMonitorUtilities.handleCanceledOrPausedAlgorithm(progressMonitor);
@@ -53,8 +53,8 @@ public class CSVModelParser {
 				leafEntityManagers.get(column.getNameForDatabase()).addEntity(row, coreEntity);
 			}
 
-			progressMonitor.worked(unitsWorked);
 			unitsWorked++;
+			progressMonitor.worked(unitsWorked);
 
 			last++;
 			total++;

@@ -154,7 +154,7 @@ public class ISITableModelParser {
 
 		int last = 0;
 		int total = 0;
-		int unitsWorked = 0;
+		double unitsWorked = 0;
 
 		for (Integer rowIndex : rows) {
 			ProgressMonitorUtilities.handleCanceledOrPausedAlgorithm(progressMonitor);
