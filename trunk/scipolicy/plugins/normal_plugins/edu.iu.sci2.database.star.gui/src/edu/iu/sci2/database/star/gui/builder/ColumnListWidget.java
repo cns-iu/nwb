@@ -14,7 +14,7 @@ import edu.iu.sci2.database.star.common.parameter.ColumnDescriptor;
 
 public class ColumnListWidget extends ScrolledComposite {
 	public static final int COLUMN_AREA_LAYOUT_VERTICAL_SPACING = 1;
-	public static final int VERTICAL_SCROLL_INCREMENT = 50;
+	public static final int VERTICAL_SCROLL_INCREMENT = 250;
 
 	private Composite columnArea;
 	private Collection<ColumnWidget> columns;
