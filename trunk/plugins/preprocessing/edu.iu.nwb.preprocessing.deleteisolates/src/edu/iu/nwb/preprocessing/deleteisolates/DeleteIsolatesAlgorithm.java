@@ -84,6 +84,7 @@ public class DeleteIsolatesAlgorithm implements Algorithm {
 				createTemporaryFileInDefaultTemporaryDirectory("DeleteIsolates-", "nwb");
     		NodeIDFilteringNWBWriter nodeIDFilteringNWBWriter =
     			new NodeIDFilteringNWBWriter(nonIsolateNodeIDs, outputNWBFile);
+    		nodeIDFilteringNWBWriter.setNodeCount(nonIsolateNodeIDs.size());
     		NWBFileParser isolateStripperFileParser =
     			new NWBFileParser(inputNWBFile);
     		isolateStripperFileParser.parse(nodeIDFilteringNWBWriter);
