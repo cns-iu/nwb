@@ -8,7 +8,6 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
-import java.util.Dictionary;
 import java.util.List;
 import java.util.StringTokenizer;
 
@@ -16,7 +15,6 @@ import javax.xml.stream.XMLOutputFactory;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamWriter;
 
-import org.cishell.framework.CIShellContext;
 import org.cishell.framework.algorithm.Algorithm;
 import org.cishell.framework.algorithm.AlgorithmExecutionException;
 import org.cishell.framework.data.BasicData;
@@ -28,104 +26,94 @@ import org.osgi.service.log.LogService;
 import edu.iu.nwb.converter.nwb.common.NWBAttribute;
 import edu.iu.nwb.converter.nwb.common.ValidateNWBFile;
 import edu.iu.nwb.util.nwbfile.NWBFileProperty;
-/**
- * @author Weixia(Bonnie) Huang 
- */
+
+// TODO: If not rewrite this, at least finish cleaning it up?
 public class NWBToGraphMLbyStax implements Algorithm {
 	public static final String GRAPHML_MIME_TYPE = "file:text/graphml+xml";
 	public static final String EDGEDEFAULT_ATTRIBUTE_KEY = "edgedefault";
-	private static final String GRAPH_ELEMENT = "graph";
-	private static final String NODE_ELEMENT = "node";
-	private static final String KEY_ATTRIBUTE_KEY = "key";
-	private static final String DATA_ELEMENT = "data";
-	private static final String EDGE_ELEMENT = "edge";
-	private static final String ID_ATTRIBUTE_KEY = "id";
+	public static final String GRAPH_ELEMENT = "graph";
+	public static final String NODE_ELEMENT = "node";
+	public static final String KEY_ATTRIBUTE_KEY = "key";
+	public static final String DATA_ELEMENT = "data";
+	public static final String EDGE_ELEMENT = "edge";
+	public static final String ID_ATTRIBUTE_KEY = "id";
 	public static final String TARGET_ATTRIBUTE_KEY = "target";
 	public static final String SOURCE_ATTRIBUTE_KEY = "source";
 	public static final String DOUBLE_TYPE_TOKEN = "double";
 	public static final String XML_FILE_EXTENSION = "xml";
+
+	public static final String SLIS_SOFTWARE_URL = "http://nwb.slis.indiana.edu/software.html";
+
 	private File inNWBFile;
 	private LogService logger;
-	
 
-	public NWBToGraphMLbyStax(Data[] data, Dictionary parameters, CIShellContext context) {
-		this.inNWBFile = (File) data[0].getData();
-		
-		this.logger =
-			(LogService) context.getService(LogService.class.getName());
+	public NWBToGraphMLbyStax(File inNWBFile, LogService logger) {
+		this.inNWBFile = inNWBFile;
+		this.logger = logger;
 	}
 
-	
 	public Data[] execute() throws AlgorithmExecutionException {
-		ValidateNWBFile validator = new ValidateNWBFile();
-		
 		try {
-			validator.validateNWBFormat(inNWBFile);
+			ValidateNWBFile validator = new ValidateNWBFile();
+			validator.validateNWBFormat(this.inNWBFile);
+
 			if (validator.getValidationResult()) {
-				File outGraphMLFile =
-					convertNWBToGraphMLbyStax(inNWBFile, validator);
-				
+				File outGraphMLFile = convertNWBToGraphMLbyStax(this.inNWBFile, validator);
+
 				return createOutData(outGraphMLFile);
 			} else {
-				throw new AlgorithmExecutionException(
-					"Error: Unable to validate NWB file. \n "
-					+ validator.getErrorMessages() + "\n"
-					+ "Please review the latest NWB File Format Specification "
-					+ "at \nhttp://nwb.slis.indiana.edu/software.html, "
-					+ "and update your file."
-				);
+				String format =
+					"Error: Unable to validate NWB file. %n %s%nPlease review the latest " +
+					"NWB Format Specification at %n%s, and update your file.";
+				String exceptionMessage =
+					String.format(format, validator.getErrorMessages(), SLIS_SOFTWARE_URL);
+				throw new AlgorithmExecutionException(exceptionMessage);
 			}
 		} catch (FileNotFoundException e) {
-			String message =
-				"Couldn't find NWB file to validate: " + e.getMessage();
-			throw new AlgorithmExecutionException(message, e);
+			String exceptionMessage =
+				String.format("Couldn't find NWB file to validate: %s", e.getMessage());
+			throw new AlgorithmExecutionException(exceptionMessage, e);
 		} catch (IOException e) {
-			String message =
-				"File access error: " + e.getMessage();
-			throw new AlgorithmExecutionException(message, e);
+			String exceptionMessage = String.format("File access error: %s", e.getMessage());
+			throw new AlgorithmExecutionException(exceptionMessage, e);
 		}
 	}
 
 
 	private Data[] createOutData(File outGraphMLFile) {
-		Data[] outData = new Data[]{
-				new BasicData(outGraphMLFile, GRAPHML_MIME_TYPE) };
+		Data[] outData = new Data[] { new BasicData(outGraphMLFile, GRAPHML_MIME_TYPE) };
+
 		return outData;
 	}
 	
-	private File convertNWBToGraphMLbyStax(
-			File nwbFile, ValidateNWBFile validator)
-				throws AlgorithmExecutionException {
+	private File convertNWBToGraphMLbyStax(File nwbFile, ValidateNWBFile validator)
+			throws AlgorithmExecutionException {
 		try {
-			File graphml =
-				FileUtilities.createTemporaryFileInDefaultTemporaryDirectory(
-						"GraphML-", XML_FILE_EXTENSION);
-			BufferedReader reader;
-			
-			reader = new BufferedReader(new UnicodeReader(new FileInputStream(nwbFile)));			
+			File graphml = FileUtilities.createTemporaryFileInDefaultTemporaryDirectory(
+				"GraphML-", XML_FILE_EXTENSION);
+			BufferedReader reader =
+				new BufferedReader(new UnicodeReader(new FileInputStream(nwbFile)));			
+
+			XMLOutputFactory xmlOutputFactory =  XMLOutputFactory.newInstance();  
+			XMLStreamWriter xmlWriter =
+				xmlOutputFactory.createXMLStreamWriter(new FileOutputStream(graphml), "utf-8");
 	
-			XMLOutputFactory xof =  XMLOutputFactory.newInstance();  
-			XMLStreamWriter xtw = null;  
-			xtw = xof.createXMLStreamWriter(  
-					new FileOutputStream(graphml), "utf-8");
+			writeGraphMLHeader(xmlWriter);
+			writeAttributes(xmlWriter, validator);
+			printGraph(xmlWriter, validator, reader);
 	
-			writeGraphMLHeader (xtw);
-			writeAttributes(xtw, validator);
-			printGraph (xtw, validator, reader);
-	
-			//write </graph></graphml>
+			// write </graph></graphml>
 			try {
-				xtw.writeEndElement();
-				
-				xtw.writeEndElement();
+				xmlWriter.writeEndElement();
+				xmlWriter.writeEndElement();
 			} catch (XMLStreamException e) {
-				logger.log(LogService.LOG_WARNING, e.getMessage(), e);
+				this.logger.log(LogService.LOG_WARNING, e.getMessage(), e);
 			}
-	
+
 			reader.close();
-			xtw.flush();  
-			xtw.close();
-			
+			xmlWriter.flush();  
+			xmlWriter.close();
+
 			return graphml;
 		} catch (UnsupportedEncodingException e) {
 			throw new AlgorithmExecutionException(e.getMessage(), e);
@@ -139,25 +127,30 @@ public class NWBToGraphMLbyStax implements Algorithm {
 	}
 
 	// Write a Header with XML Schema reference 
-	private void writeGraphMLHeader(XMLStreamWriter xtw)
-			throws XMLStreamException {
-
-		xtw.writeStartDocument("UTF-8","1.0");
-		xtw.writeComment("This file is generated by XMLStreamWriter");
-		xtw.writeStartElement("graphml");
-		xtw.writeNamespace("", "http://graphml.graphdrawing.org/xmlns"); 
-		xtw.writeAttribute("xmlns","http://graphml.graphdrawing.org/xmlns",
-				"xsi","http://www.w3.org/2001/XMLSchema-instance");
-		xtw.writeAttribute("xsi", "http://www.w3.org/2001/XMLSchema-instance",
-				"schemaLocation", 
-				"http://graphml.graphdrawing.org/xmlns http://graphml.graphdrawing.org/xmlns/1.0/graphml.xsd");
+	private void writeGraphMLHeader(XMLStreamWriter xmlWriter) throws XMLStreamException {
+		// TODO: Make these constants?
+		xmlWriter.writeStartDocument("UTF-8","1.0");
+		xmlWriter.writeComment("This file is generated by XMLStreamWriter");
+		xmlWriter.writeStartElement("graphml");
+		xmlWriter.writeNamespace("", "http://graphml.graphdrawing.org/xmlns"); 
+		xmlWriter.writeAttribute(
+			"xmlns",
+			"http://graphml.graphdrawing.org/xmlns",
+			"xsi",
+			"http://www.w3.org/2001/XMLSchema-instance");
+		xmlWriter.writeAttribute(
+			"xsi",
+			"http://www.w3.org/2001/XMLSchema-instance",
+			"schemaLocation", 
+			("http://graphml.graphdrawing.org/xmlns " +
+				"http://graphml.graphdrawing.org/xmlns/1.0/graphml.xsd"));
 	}
 
 	// Write GraphML-Attributes
 	private void writeAttributes(XMLStreamWriter xtw, ValidateNWBFile validator)
 			throws XMLStreamException, AlgorithmExecutionException {
 		// First handle node attributes
-		List array = validator.getNodeAttrList();
+		List<NWBAttribute> array = validator.getNodeAttrList();
 		for (int ii = 0; ii < array.size(); ii++) {
 			NWBAttribute attr = (NWBAttribute) array.get(ii);
 			String attrName = attr.getAttrName();

@@ -109,10 +109,11 @@ public class ValidateNWBFile {
 		if (isFileGood) {
 			checkFile();
 		}
-		
-		if (this.hasTotalNumOfNodes
-				&& ((this.countedNodes) != this.totalNumOfNodes)) {
+
+		// TODO: Should this really matter?
+		if (this.hasTotalNumOfNodes && (this.countedNodes != this.totalNumOfNodes)) {
 			// I'm not sure if we should set this to false or not.
+			// TODO: It should not?
 			isFileGood = false;
 			errorMessages.append(
 				"There was an inconsistency between the specified number of nodes: " 
@@ -126,12 +127,10 @@ public class ValidateNWBFile {
 	private void checkFile() {
 		if (!hasHeader_Nodes) {
 			isFileGood = false;
-			errorMessages.append(
-					"*The file does not specify the node header.\n\n");
+			errorMessages.append("*The file does not specify the node header.\n\n");
 		} else if (!hasHeader_DirectedEdges && !hasHeader_UndirectedEdges) {
 			isFileGood = false;
-			errorMessages.append(
-					"This file has not specified a valid edge header.");
+			errorMessages.append("This file has not specified a valid edge header.");
 		} 		
 	}
 	
