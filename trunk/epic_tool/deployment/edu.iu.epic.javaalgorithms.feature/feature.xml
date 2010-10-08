@@ -196,8 +196,8 @@ Dr. Katy Borner (katy@indiana.edu)
          install-size="0"
          version="1.0.0"/>
 
-   <plugin
-         id="stax"
+	<plugin
+         id="jaxb_stax_jpa"
          download-size="0"
          install-size="0"
          version="0.0.0"/>
@@ -449,7 +449,7 @@ Dr. Katy Borner (katy@indiana.edu)
          version="0.0.0"/>
 
    <plugin
-         id="jaxb"
+         id="jaxb_stax_jpa"
          download-size="0"
          install-size="0"
          version="0.0.0"/>

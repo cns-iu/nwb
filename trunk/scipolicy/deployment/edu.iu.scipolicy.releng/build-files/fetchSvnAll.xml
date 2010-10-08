@@ -1250,8 +1250,8 @@
     </antcall>  	
     <antcall target="svn.co">
       <param name="target" value="plugins"/>
-      <param name="element.id" value="stax"/>
-      <param name="project.name" value="/plugins/libs/staxlib"/>
+      <param name="element.id" value="jaxb_stax_jpa"/>
+      <param name="project.name" value="/plugins/libs/jaxb_stax_jpa"/>
       <param name="url" value="http://nwb.slis.indiana.edu/svn/nwb/trunk"/>
     </antcall>
     <antcall target="svn.co">

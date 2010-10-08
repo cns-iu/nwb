@@ -49,13 +49,6 @@
   	<!--EpiC libraries -->
   	
   	<antcall target="svn.co">
-  	  	  	  	  <param name="target" value="plugins"/>
-  	  	  	  	  <param name="element.id" value="jaxb"/>
-  	  	  	  	  <param name="project.name" value="jaxb"/>
-  	  	  	  	  <param name="url" value="http://nwb.slis.indiana.edu/svn/nwb/trunk/epic_tool/plugins/libs"/>
-  	</antcall>
-  	
-  	<antcall target="svn.co">
   	  	  	  	  	  <param name="target" value="plugins"/>
   	  	  	  	  	  <param name="element.id" value="stencil"/>
   	  	  	  	  	  <param name="project.name" value="stencil"/>
@@ -474,11 +467,11 @@
         <param name="element.id" value="uk.ac.shef.wit.simmetrics"/>
         <param name="project.name" value="/plugins/libs/uk.ac.shef.wit.simmetrics"/>
         <param name="url" value="http://nwb.slis.indiana.edu/svn/nwb/trunk"/>
-      </antcall>  	
+      </antcall>
       <antcall target="svn.co">
         <param name="target" value="plugins"/>
-        <param name="element.id" value="stax"/>
-        <param name="project.name" value="/plugins/libs/staxlib"/>
+        <param name="element.id" value="jaxb_stax_jpa"/>
+        <param name="project.name" value="/plugins/libs/jaxb_stax_jpa"/>
         <param name="url" value="http://nwb.slis.indiana.edu/svn/nwb/trunk"/>
       </antcall>
   	
