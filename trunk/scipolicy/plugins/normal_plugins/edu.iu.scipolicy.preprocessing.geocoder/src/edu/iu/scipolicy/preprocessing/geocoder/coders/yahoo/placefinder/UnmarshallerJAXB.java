@@ -5,8 +5,10 @@ import java.net.URL;
 
 import javax.xml.XMLConstants;
 import javax.xml.bind.JAXBContext;
+import javax.xml.bind.JAXBElement;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Unmarshaller;
+import javax.xml.transform.stream.StreamSource;
 import javax.xml.validation.Schema;
 import javax.xml.validation.SchemaFactory;
 
@@ -24,22 +26,25 @@ import edu.iu.scipolicy.preprocessing.geocoder.coders.yahoo.placefinder.beans.Re
 public final class UnmarshallerJAXB {
 	private Unmarshaller unmarshaller;
 	
-	private UnmarshallerJAXB(URL schemaURL, String packageNameSpace) 
+	private UnmarshallerJAXB(URL schemaURL) 
 									throws JAXBException, SAXException {
 		
 		/* create JAXB context that contains the ResultSet.java (JAVA Object) */
-		JAXBContext jc = JAXBContext.newInstance(packageNameSpace);
+		JAXBContext jc =
+			JAXBContext.newInstance(
+					ResultSet.class.getPackage().getName(),
+					ResultSet.class.getClassLoader());
 		this.unmarshaller = jc.createUnmarshaller();
 		
 		/* load schema */
 		unmarshaller.setSchema(createSchema(schemaURL));
 	}
 	
-	public static UnmarshallerJAXB newInstance(URL schemaURL, String packageNameSpace) {
+	public static UnmarshallerJAXB newInstance(URL schemaURL) {
 		UnmarshallerJAXB unmarshallerJAXB = null;
 		
 		try {
-			unmarshallerJAXB = new UnmarshallerJAXB(schemaURL, packageNameSpace);
+			unmarshallerJAXB = new UnmarshallerJAXB(schemaURL);
 		} catch (JAXBException e) {
 			e.printStackTrace();
 		} catch (SAXException e) {
@@ -60,6 +65,9 @@ public final class UnmarshallerJAXB {
 	 * @throws JAXBException 
 	 */
 	public ResultSet unmarshal(Reader reader) throws JAXBException {
-		return (ResultSet) unmarshaller.unmarshal(reader);
+		JAXBElement<ResultSet> resultSetElement =
+			unmarshaller.unmarshal(new StreamSource(reader), ResultSet.class);
+		
+		return resultSetElement.getValue();
 	}
 }

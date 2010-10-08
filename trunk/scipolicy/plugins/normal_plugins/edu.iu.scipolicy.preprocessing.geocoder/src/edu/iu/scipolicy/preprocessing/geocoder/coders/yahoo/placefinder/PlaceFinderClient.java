@@ -1,15 +1,15 @@
 package edu.iu.scipolicy.preprocessing.geocoder.coders.yahoo.placefinder;
 
-import java.math.BigInteger;
-import java.net.MalformedURLException;
-import java.net.URL;
-import java.net.HttpURLConnection;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.Map;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.StringReader;
+import java.math.BigInteger;
+import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Map;
 
 import javax.xml.bind.JAXBException;
 
@@ -41,8 +41,6 @@ public final class PlaceFinderClient {
 	public static final char SPACE_CHAR = ' ';
 	public static final char SPACE_REPLACEMENT = '+';
 	public static final String SCHEMA_FILENAME = "placeFinder.xsd";
-	public static final String BEANS_PACKAGE = 
-					"edu.iu.scipolicy.preprocessing.geocoder.coders.yahoo.placefinder.beans";
 
 	private PlaceFinderClient() {	
 	}
@@ -152,7 +150,7 @@ public final class PlaceFinderClient {
 		/* Get Schema URL */
 		URL schemaURL = PlaceFinderClient.class.getResource(SCHEMA_FILENAME);
 		
-		UnmarshallerJAXB unmarshallerJAXB = UnmarshallerJAXB.newInstance(schemaURL, BEANS_PACKAGE);
+		UnmarshallerJAXB unmarshallerJAXB = UnmarshallerJAXB.newInstance(schemaURL);
 		if (unmarshallerJAXB != null) {
 			StringReader reader = new StringReader(inputString);
 			return unmarshallerJAXB.unmarshal(reader);

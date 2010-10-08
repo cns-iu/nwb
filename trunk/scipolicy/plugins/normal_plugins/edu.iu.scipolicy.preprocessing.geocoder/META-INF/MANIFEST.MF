@@ -3,13 +3,13 @@ Bundle-ManifestVersion: 2
 Bundle-Name: Geocoder
 Bundle-SymbolicName: edu.iu.scipolicy.preprocessing.geocoder
 Bundle-Version: 0.0.1
-Bundle-ClassPath: .,
- activation.jar,
- jaxb-api.jar,
- jaxb-impl.jar,
- jsr173_1.0_api.jar
 Import-Package: au.com.bytecode.opencsv,
+ com.sun.xml.bind.v2,
+ edu.iu.nwb.converter.prefusecsv.reader,
  edu.iu.scipolicy.model.geocode,
+ javax.xml.bind,
+ javax.xml.bind.annotation,
+ javax.xml.stream,
  org.cishell.framework;version="1.0.0",
  org.cishell.framework.algorithm;version="1.0.0",
  org.cishell.framework.data;version="1.0.0",

@@ -49,10 +49,7 @@ public class ZipCodeCoder implements Geocoder {
 			
 			CSVReader zipCsvReader = createZipcodeCsvReader(input);
 
-			Map<String, Geolocation> zipCodeToLocation = 
-				createMapFromZipcodeToLocation(zipCsvReader);
-			
-			this.zipCodeToLocation = zipCodeToLocation;
+			this.zipCodeToLocation = createMapFromZipcodeToLocation(zipCsvReader);
 		} catch (IOException e) {
 			String exceptionMessage = String.format(
 				"Unable to access zipcode database URL %s", zipCodeFile.toString());
