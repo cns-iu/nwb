@@ -22,13 +22,17 @@ public class InfectionTransition implements Transition {
 	public String toString() {
 		String s = "";
 
-		if (target == null) {
+		if (target == null) { // TODO Can we remove this?
 			/* When there is no explicit target "target" compartment,
 			 * one assumes that the infector is also the target.
 			 */
 			s += source + " " + SYNTAX + " " + infector + " " + ratio;
 		} else {
 			s += source + " " + SYNTAX + " " + infector + " = " + target + " " + ratio;
+			
+			if (target.isSecondary()) {
+				s += " secondary";
+			}
 		}
 
 		return s;

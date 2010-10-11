@@ -11,8 +11,8 @@ import org.osgi.service.log.LogService;
 import edu.iu.epic.modeling.compartment.model.Model;
 
 public class ModelWriterAlgorithmFactory implements AlgorithmFactory {
-	@SuppressWarnings("unchecked") // Raw Dictionary.
-	public Algorithm createAlgorithm(Data[] data, Dictionary parameters, CIShellContext context) {
+	public Algorithm createAlgorithm(
+			Data[] data, Dictionary<String, Object> parameters, CIShellContext context) {
 		Data inputData = data[0];
 		Model inputModel = (Model) data[0].getData();
 		LogService logger = (LogService) context.getService(LogService.class.getName());

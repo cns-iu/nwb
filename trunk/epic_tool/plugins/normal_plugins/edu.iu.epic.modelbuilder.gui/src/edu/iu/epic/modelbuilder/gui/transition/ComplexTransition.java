@@ -7,7 +7,7 @@ import java.awt.geom.Point2D.Double;
 import java.util.ArrayList;
 import java.util.List;
 
-import edu.iu.epic.modelbuilder.gui.utility.CompartmentIDToLableMap;
+import edu.iu.epic.modelbuilder.gui.utility.CompartmentIDToLabelMap;
 import edu.iu.epic.modelbuilder.gui.utility.GlobalConstants;
 import edu.iu.epic.modelbuilder.gui.utility.IDGenerator;
 import edu.iu.epic.modelbuilder.gui.utility.NotificationArea;
@@ -352,7 +352,7 @@ public class ComplexTransition extends PPath {
 			
 			Observer infectorBoxModel = 
 				((InfectorInformationPanel)currentInfector).getInfectorComboBoxModel();
-			CompartmentIDToLableMap.removeObserver(infectorBoxModel);
+			CompartmentIDToLabelMap.removeObserver(infectorBoxModel);
 		}
 		
 	}

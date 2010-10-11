@@ -6,7 +6,7 @@ import java.util.Map.Entry;
 
 import javax.swing.DefaultComboBoxModel;
 
-import edu.iu.epic.modelbuilder.gui.utility.CompartmentIDToLableMap;
+import edu.iu.epic.modelbuilder.gui.utility.CompartmentIDToLabelMap;
 import edu.iu.epic.modelbuilder.gui.utility.Observer;
 
 public class InfectorComboBoxModel extends DefaultComboBoxModel implements Observer {
@@ -15,7 +15,7 @@ public class InfectorComboBoxModel extends DefaultComboBoxModel implements Obser
 	private Map<Integer, String> initialIndexToCompartmentID;
 	
 	public InfectorComboBoxModel(Map<String, String> initialCompartmentIDToLabel) {
-		CompartmentIDToLableMap.addObserver(this);
+		CompartmentIDToLabelMap.addObserver(this);
 		this.initialIndexToCompartmentID = new HashMap<Integer, String>();
 		
 		int index = 0;
@@ -26,7 +26,7 @@ public class InfectorComboBoxModel extends DefaultComboBoxModel implements Obser
 		}
 	}
 
-	public void update(Map<String, String> compartmentIDToLable) {
+	public void update(Map<String, String> compartmentIDToLabel) {
 		String currentSelectedInfectorLabel = this.getSelectedItem().toString();
 		int currentSelectedInfectorIndex = this.getIndexOf(currentSelectedInfectorLabel);
 		String currentSelectedInfectorID = initialIndexToCompartmentID.get(currentSelectedInfectorIndex);
@@ -40,9 +40,9 @@ public class InfectorComboBoxModel extends DefaultComboBoxModel implements Obser
 		 * If the currently (before refreshing the combo box) selected option is also available in 
 		 * the new options set, then set the new selected index belonging to this option.
 		 * */
-		if (compartmentIDToLable.containsKey(currentSelectedInfectorID)) {
+		if (compartmentIDToLabel.containsKey(currentSelectedInfectorID)) {
 			int index = 0;
-			for (Entry<String, String> currentMapping : compartmentIDToLable.entrySet()) {
+			for (Entry<String, String> currentMapping : compartmentIDToLabel.entrySet()) {
 				if (currentMapping.getKey().equalsIgnoreCase(currentSelectedInfectorID)) {
 					newInfectorComboBoxIndex = index;
 					break;
@@ -61,7 +61,7 @@ public class InfectorComboBoxModel extends DefaultComboBoxModel implements Obser
 		initialIndexToCompartmentID = new HashMap<Integer, String>();
 		
 		int index = 0;
-		for (Entry<String, String> currentMapping : compartmentIDToLable.entrySet()) {
+		for (Entry<String, String> currentMapping : compartmentIDToLabel.entrySet()) {
 			this.addElement(currentMapping.getValue());
 			initialIndexToCompartmentID.put(index, currentMapping.getKey());
 			index++;

@@ -5,33 +5,35 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
-public class CompartmentIDToLableMap{
+// TODO: This class should be refactored to not be static (so it's used for instance variables).
+// Think of the concurrency!
+public class CompartmentIDToLabelMap{
 	
-	private static Map<String, String> compartmentIDToLable = new LinkedHashMap<String, String>();
+	private static Map<String, String> compartmentIDToLabel = new LinkedHashMap<String, String>();
 	private static List<Observer> observers = new ArrayList<Observer>();
 	
-	public static void resetCompartmentIDToLableMap() {
-		compartmentIDToLable = new LinkedHashMap<String, String>();
+	public static void resetCompartmentIDToLabelMap() {
+		compartmentIDToLabel = new LinkedHashMap<String, String>();
 		observers = new ArrayList<Observer>();
 	}
 	
-	public static Map<String, String> getCompartmentIDToLableMap() {
-		return compartmentIDToLable;
+	public static Map<String, String> getCompartmentIDToLabelMap() {
+		return compartmentIDToLabel;
 	}
 
 	public static void addCompartmentID(String key, String value) {
-		compartmentIDToLable.put(key, value);
+		compartmentIDToLabel.put(key, value);
 		notifyObservers();
 	}
 
 	public static void removeCompartmentID(String key) {
-		compartmentIDToLable.remove(key);
+		compartmentIDToLabel.remove(key);
 		notifyObservers();
 	}
 	
 	public static void notifyObservers() {
 		for (Observer currentObserver : observers) {
-			currentObserver.update(compartmentIDToLable);
+			currentObserver.update(compartmentIDToLabel);
 		}
 	}
 

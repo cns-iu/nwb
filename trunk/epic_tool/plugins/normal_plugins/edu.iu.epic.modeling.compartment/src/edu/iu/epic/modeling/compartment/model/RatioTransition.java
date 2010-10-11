@@ -6,20 +6,17 @@ public class RatioTransition implements Transition {
 	private Compartment source;
 	private Compartment target;
 	private String ratio;
-	private boolean isSecondary;
 
-	protected RatioTransition(Compartment source, Compartment target, String ratio,
-			boolean isSecondary) {
+	protected RatioTransition(Compartment source, Compartment target, String ratio) {
 		this.source = source;
 		this.target = target;
 		this.ratio = ratio;
-		this.isSecondary = isSecondary;
 	}
 
 	@Override
 	public String toString() {
 		String s = source + " " + SYNTAX + " " + target + " " + ratio;
-		if (isSecondary) {
+		if (target.isSecondary()) {
 			s += " " + "secondary";
 		}
 
@@ -48,12 +45,5 @@ public class RatioTransition implements Transition {
 		} else {
 			return false;
 		}
-	}
-
-	public boolean isSecondary() {
-		return isSecondary;
-	}
-	public void setSecondary(boolean isSecondary) {
-		this.isSecondary = isSecondary;
 	}	
 }

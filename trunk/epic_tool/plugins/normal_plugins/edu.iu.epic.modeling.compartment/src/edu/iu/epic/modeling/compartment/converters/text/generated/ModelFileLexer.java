@@ -1,4 +1,4 @@
-// $ANTLR 3.2 Sep 23, 2009 12:02:23 C:\\Documents and Settings\\jrbibers\\workspace\\edu.iu.epic.modeling.compartment\\src\\edu\\iu\\epic\\modeling\\compartment\\converters\\text\\ModelFile.g 2009-11-30 18:17:11
+// $ANTLR 3.2 Sep 23, 2009 12:02:23 C:\\Documents and Settings\\jrbibers\\workspace\\edu.iu.epic.modeling.compartment\\src\\edu\\iu\\epic\\modeling\\compartment\\converters\\text\\ModelFile.g 2010-10-04 17:43:44
 
 package edu.iu.epic.modeling.compartment.converters.text.generated;
 
@@ -395,8 +395,8 @@ public class ModelFileLexer extends Lexer {
     // $ANTLR start "NUMERIC"
     public final void mNUMERIC() throws RecognitionException {
         try {
-            // C:\\Documents and Settings\\jrbibers\\workspace\\edu.iu.epic.modeling.compartment\\src\\edu\\iu\\epic\\modeling\\compartment\\converters\\text\\ModelFile.g:164:2: ( '0' .. '9' )
-            // C:\\Documents and Settings\\jrbibers\\workspace\\edu.iu.epic.modeling.compartment\\src\\edu\\iu\\epic\\modeling\\compartment\\converters\\text\\ModelFile.g:164:4: '0' .. '9'
+            // C:\\Documents and Settings\\jrbibers\\workspace\\edu.iu.epic.modeling.compartment\\src\\edu\\iu\\epic\\modeling\\compartment\\converters\\text\\ModelFile.g:169:2: ( '0' .. '9' )
+            // C:\\Documents and Settings\\jrbibers\\workspace\\edu.iu.epic.modeling.compartment\\src\\edu\\iu\\epic\\modeling\\compartment\\converters\\text\\ModelFile.g:169:4: '0' .. '9'
             {
             matchRange('0','9'); if (state.failed) return ;
 
@@ -413,8 +413,8 @@ public class ModelFileLexer extends Lexer {
         try {
             int _type = ID;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // C:\\Documents and Settings\\jrbibers\\workspace\\edu.iu.epic.modeling.compartment\\src\\edu\\iu\\epic\\modeling\\compartment\\converters\\text\\ModelFile.g:189:2: ( ( 'a' .. 'z' | 'A' .. 'Z' | '_' ) ( 'a' .. 'z' | 'A' .. 'Z' | '0' .. '9' | '_' )* )
-            // C:\\Documents and Settings\\jrbibers\\workspace\\edu.iu.epic.modeling.compartment\\src\\edu\\iu\\epic\\modeling\\compartment\\converters\\text\\ModelFile.g:189:4: ( 'a' .. 'z' | 'A' .. 'Z' | '_' ) ( 'a' .. 'z' | 'A' .. 'Z' | '0' .. '9' | '_' )*
+            // C:\\Documents and Settings\\jrbibers\\workspace\\edu.iu.epic.modeling.compartment\\src\\edu\\iu\\epic\\modeling\\compartment\\converters\\text\\ModelFile.g:194:2: ( ( 'a' .. 'z' | 'A' .. 'Z' | '_' ) ( 'a' .. 'z' | 'A' .. 'Z' | '0' .. '9' | '_' )* )
+            // C:\\Documents and Settings\\jrbibers\\workspace\\edu.iu.epic.modeling.compartment\\src\\edu\\iu\\epic\\modeling\\compartment\\converters\\text\\ModelFile.g:194:4: ( 'a' .. 'z' | 'A' .. 'Z' | '_' ) ( 'a' .. 'z' | 'A' .. 'Z' | '0' .. '9' | '_' )*
             {
             if ( (input.LA(1)>='A' && input.LA(1)<='Z')||input.LA(1)=='_'||(input.LA(1)>='a' && input.LA(1)<='z') ) {
                 input.consume();
@@ -426,7 +426,7 @@ public class ModelFileLexer extends Lexer {
                 recover(mse);
                 throw mse;}
 
-            // C:\\Documents and Settings\\jrbibers\\workspace\\edu.iu.epic.modeling.compartment\\src\\edu\\iu\\epic\\modeling\\compartment\\converters\\text\\ModelFile.g:189:28: ( 'a' .. 'z' | 'A' .. 'Z' | '0' .. '9' | '_' )*
+            // C:\\Documents and Settings\\jrbibers\\workspace\\edu.iu.epic.modeling.compartment\\src\\edu\\iu\\epic\\modeling\\compartment\\converters\\text\\ModelFile.g:194:28: ( 'a' .. 'z' | 'A' .. 'Z' | '0' .. '9' | '_' )*
             loop5:
             do {
                 int alt5=2;
@@ -476,14 +476,14 @@ public class ModelFileLexer extends Lexer {
         try {
             int _type = UNSIGNED_NUMBER;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // C:\\Documents and Settings\\jrbibers\\workspace\\edu.iu.epic.modeling.compartment\\src\\edu\\iu\\epic\\modeling\\compartment\\converters\\text\\ModelFile.g:197:2: ( ( NUMERIC )+ | ( NUMERIC )* '.' ( NUMERIC )+ )
+            // C:\\Documents and Settings\\jrbibers\\workspace\\edu.iu.epic.modeling.compartment\\src\\edu\\iu\\epic\\modeling\\compartment\\converters\\text\\ModelFile.g:202:2: ( ( NUMERIC )+ | ( NUMERIC )* '.' ( NUMERIC )+ )
             int alt9=2;
             alt9 = dfa9.predict(input);
             switch (alt9) {
                 case 1 :
-                    // C:\\Documents and Settings\\jrbibers\\workspace\\edu.iu.epic.modeling.compartment\\src\\edu\\iu\\epic\\modeling\\compartment\\converters\\text\\ModelFile.g:197:4: ( NUMERIC )+
+                    // C:\\Documents and Settings\\jrbibers\\workspace\\edu.iu.epic.modeling.compartment\\src\\edu\\iu\\epic\\modeling\\compartment\\converters\\text\\ModelFile.g:202:4: ( NUMERIC )+
                     {
-                    // C:\\Documents and Settings\\jrbibers\\workspace\\edu.iu.epic.modeling.compartment\\src\\edu\\iu\\epic\\modeling\\compartment\\converters\\text\\ModelFile.g:197:4: ( NUMERIC )+
+                    // C:\\Documents and Settings\\jrbibers\\workspace\\edu.iu.epic.modeling.compartment\\src\\edu\\iu\\epic\\modeling\\compartment\\converters\\text\\ModelFile.g:202:4: ( NUMERIC )+
                     int cnt6=0;
                     loop6:
                     do {
@@ -497,7 +497,7 @@ public class ModelFileLexer extends Lexer {
 
                         switch (alt6) {
                     	case 1 :
-                    	    // C:\\Documents and Settings\\jrbibers\\workspace\\edu.iu.epic.modeling.compartment\\src\\edu\\iu\\epic\\modeling\\compartment\\converters\\text\\ModelFile.g:197:5: NUMERIC
+                    	    // C:\\Documents and Settings\\jrbibers\\workspace\\edu.iu.epic.modeling.compartment\\src\\edu\\iu\\epic\\modeling\\compartment\\converters\\text\\ModelFile.g:202:5: NUMERIC
                     	    {
                     	    mNUMERIC(); if (state.failed) return ;
 
@@ -518,9 +518,9 @@ public class ModelFileLexer extends Lexer {
                     }
                     break;
                 case 2 :
-                    // C:\\Documents and Settings\\jrbibers\\workspace\\edu.iu.epic.modeling.compartment\\src\\edu\\iu\\epic\\modeling\\compartment\\converters\\text\\ModelFile.g:198:4: ( NUMERIC )* '.' ( NUMERIC )+
+                    // C:\\Documents and Settings\\jrbibers\\workspace\\edu.iu.epic.modeling.compartment\\src\\edu\\iu\\epic\\modeling\\compartment\\converters\\text\\ModelFile.g:203:4: ( NUMERIC )* '.' ( NUMERIC )+
                     {
-                    // C:\\Documents and Settings\\jrbibers\\workspace\\edu.iu.epic.modeling.compartment\\src\\edu\\iu\\epic\\modeling\\compartment\\converters\\text\\ModelFile.g:198:4: ( NUMERIC )*
+                    // C:\\Documents and Settings\\jrbibers\\workspace\\edu.iu.epic.modeling.compartment\\src\\edu\\iu\\epic\\modeling\\compartment\\converters\\text\\ModelFile.g:203:4: ( NUMERIC )*
                     loop7:
                     do {
                         int alt7=2;
@@ -533,7 +533,7 @@ public class ModelFileLexer extends Lexer {
 
                         switch (alt7) {
                     	case 1 :
-                    	    // C:\\Documents and Settings\\jrbibers\\workspace\\edu.iu.epic.modeling.compartment\\src\\edu\\iu\\epic\\modeling\\compartment\\converters\\text\\ModelFile.g:198:5: NUMERIC
+                    	    // C:\\Documents and Settings\\jrbibers\\workspace\\edu.iu.epic.modeling.compartment\\src\\edu\\iu\\epic\\modeling\\compartment\\converters\\text\\ModelFile.g:203:5: NUMERIC
                     	    {
                     	    mNUMERIC(); if (state.failed) return ;
 
@@ -546,7 +546,7 @@ public class ModelFileLexer extends Lexer {
                     } while (true);
 
                     match('.'); if (state.failed) return ;
-                    // C:\\Documents and Settings\\jrbibers\\workspace\\edu.iu.epic.modeling.compartment\\src\\edu\\iu\\epic\\modeling\\compartment\\converters\\text\\ModelFile.g:198:19: ( NUMERIC )+
+                    // C:\\Documents and Settings\\jrbibers\\workspace\\edu.iu.epic.modeling.compartment\\src\\edu\\iu\\epic\\modeling\\compartment\\converters\\text\\ModelFile.g:203:19: ( NUMERIC )+
                     int cnt8=0;
                     loop8:
                     do {
@@ -560,7 +560,7 @@ public class ModelFileLexer extends Lexer {
 
                         switch (alt8) {
                     	case 1 :
-                    	    // C:\\Documents and Settings\\jrbibers\\workspace\\edu.iu.epic.modeling.compartment\\src\\edu\\iu\\epic\\modeling\\compartment\\converters\\text\\ModelFile.g:198:20: NUMERIC
+                    	    // C:\\Documents and Settings\\jrbibers\\workspace\\edu.iu.epic.modeling.compartment\\src\\edu\\iu\\epic\\modeling\\compartment\\converters\\text\\ModelFile.g:203:20: NUMERIC
                     	    {
                     	    mNUMERIC(); if (state.failed) return ;
 
@@ -787,7 +787,7 @@ public class ModelFileLexer extends Lexer {
             this.transition = DFA9_transition;
         }
         public String getDescription() {
-            return "196:1: UNSIGNED_NUMBER : ( ( NUMERIC )+ | ( NUMERIC )* '.' ( NUMERIC )+ );";
+            return "201:1: UNSIGNED_NUMBER : ( ( NUMERIC )+ | ( NUMERIC )* '.' ( NUMERIC )+ );";
         }
     }
     static final String DFA10_eotS =

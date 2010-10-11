@@ -11,7 +11,7 @@ import java.util.Map;
 import edu.iu.epic.modelbuilder.gui.compartment.PCompartment;
 import edu.iu.epic.modelbuilder.gui.editablelabel.EditableLabel;
 import edu.iu.epic.modelbuilder.gui.editablelabel.TransitionEditableLabelEventHandler;
-import edu.iu.epic.modelbuilder.gui.utility.CompartmentIDToLableMap;
+import edu.iu.epic.modelbuilder.gui.utility.CompartmentIDToLabelMap;
 import edu.iu.epic.modelbuilder.gui.utility.GlobalConstants;
 import edu.iu.epic.modelbuilder.gui.utility.NotificationArea;
 import edu.iu.epic.modelbuilder.gui.utility.Observer;
@@ -329,7 +329,7 @@ public class InfectorInformationPanel extends PNode {
 		Observer infectorBoxModel = 
 			((InfectorComboBoxModel) infectorComboBox.getModel());
 		
-		CompartmentIDToLableMap.removeObserver(infectorBoxModel);
+		CompartmentIDToLabelMap.removeObserver(infectorBoxModel);
 		
 		
 		//TODO: check if references were removed from appropriate attributes

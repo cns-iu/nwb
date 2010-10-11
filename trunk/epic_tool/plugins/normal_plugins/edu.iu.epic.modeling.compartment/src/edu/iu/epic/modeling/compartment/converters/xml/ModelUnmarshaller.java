@@ -36,8 +36,10 @@ public class ModelUnmarshaller {
 
 	private static CompartmentalModel unmarshalJAXBModelFromFile(File file, boolean isValidating)
 			throws JAXBException, SAXException, IOException {
-		JAXBContext jaxbContext = JAXBContext.newInstance(CompartmentalModel.class.getPackage()
-				.getName(), CompartmentalModel.class.getClassLoader());
+		JAXBContext jaxbContext =
+			JAXBContext.newInstance(
+					CompartmentalModel.class.getPackage().getName(),
+					CompartmentalModel.class.getClassLoader());
 		Unmarshaller unmarshaller = jaxbContext.createUnmarshaller();
 		FileInputStream inputStream = new FileInputStream(file);
 		if (isValidating) {
@@ -57,13 +59,16 @@ public class ModelUnmarshaller {
 		for (Compartment xCompartment : xModel.getCompartments().getCompartment()) {
 			Point2D position = new Point.Double(xCompartment.getX(), xCompartment.getY());
 
-			model.addCompartment(xCompartment.getId(), position);
+			edu.iu.epic.modeling.compartment.model.Compartment compartment =
+				model.addCompartment(xCompartment.getId(), position);
+			
+			compartment.setSecondary(xCompartment.isIsSecondary());
 		}
 
 		for (RatioTransition xRatioTransition : xModel.getRatioTransitions().getRatioTransition()) {
 			model.addRatioTransition(model.getOrAddCompartment(xRatioTransition.getSource()), model
 					.getOrAddCompartment(xRatioTransition.getTarget()),
-					xRatioTransition.getRatio(), xRatioTransition.isIsSecondary());
+					xRatioTransition.getRatio());
 		}
 
 		for (Infection xInfection : xModel.getInfections().getInfection()) {

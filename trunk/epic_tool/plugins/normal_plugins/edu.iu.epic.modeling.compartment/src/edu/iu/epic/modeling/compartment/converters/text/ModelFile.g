@@ -120,18 +120,23 @@ transition
 	@init { boolean isSecondary = false; }
 	: ratioTransition transitionRatio ('secondary' { isSecondary = true; })?
 		{
+		Compartment target = model.getOrAddCompartment($ratioTransition.target);
+		target.setSecondary(isSecondary);
+		
 		model.addRatioTransition(
 			model.getOrAddCompartment($ratioTransition.source),
-			model.getOrAddCompartment($ratioTransition.target),
-			$transitionRatio.text,
-			isSecondary);
+			target,
+			$transitionRatio.text);
 		}
 	| infectionTransition transitionRatio ('secondary' { isSecondary = true; })?
 		{
+		Compartment target = model.getOrAddCompartment($infectionTransition.target);
+		target.setSecondary(isSecondary);
+		
 		model.addInfectionTransition(
 			model.getOrAddCompartment($infectionTransition.source),
 			model.getOrAddCompartment($infectionTransition.infector),
-			model.getOrAddCompartment($infectionTransition.target),
+			target,
 			$transitionRatio.text);
 		}
 	;

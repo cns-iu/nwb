@@ -8,7 +8,7 @@ import java.awt.event.KeyListener;
 import javax.swing.JTextField;
 
 import edu.iu.epic.modelbuilder.gui.compartment.PCompartment;
-import edu.iu.epic.modelbuilder.gui.utility.CompartmentIDToLableMap;
+import edu.iu.epic.modelbuilder.gui.utility.CompartmentIDToLabelMap;
 import edu.iu.epic.modelbuilder.gui.utility.GlobalConstants;
 import edu.iu.epic.modelbuilder.gui.utility.NotificationArea;
 import edu.umd.cs.piccolo.PNode;
@@ -130,7 +130,7 @@ public class CompartmentEditableLabelEventHandler
 		compartment.setWidth(compartment.getWidth() + deltaCompartmentLabelWidth);
 		
 		
-		CompartmentIDToLableMap.addCompartmentID(
+		CompartmentIDToLabelMap.addCompartmentID(
 				(String) compartment.getAttribute(
 						GlobalConstants.NODE_ID_ATTRIBUTE_NAME),
 				newCompartmentLabelText);

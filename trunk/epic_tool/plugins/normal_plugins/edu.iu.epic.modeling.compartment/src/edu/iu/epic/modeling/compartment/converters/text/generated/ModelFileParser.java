@@ -1,4 +1,4 @@
-// $ANTLR 3.2 Sep 23, 2009 12:02:23 C:\\Documents and Settings\\jrbibers\\workspace\\edu.iu.epic.modeling.compartment\\src\\edu\\iu\\epic\\modeling\\compartment\\converters\\text\\ModelFile.g 2009-11-30 18:17:11
+// $ANTLR 3.2 Sep 23, 2009 12:02:23 C:\\Documents and Settings\\jrbibers\\workspace\\edu.iu.epic.modeling.compartment\\src\\edu\\iu\\epic\\modeling\\compartment\\converters\\text\\ModelFile.g 2010-10-04 17:43:44
 
 package edu.iu.epic.modeling.compartment.converters.text.generated;
 
@@ -22,6 +22,8 @@ import java.util.HashMap;
 import org.antlr.stringtemplate.*;
 import org.antlr.stringtemplate.language.*;
 import java.util.HashMap;
+
+
 public class ModelFileParser extends Parser {
     public static final String[] tokenNames = new String[] {
         "<invalid>", "<EOR>", "<DOWN>", "<UP>", "WHITESPACE", "NEWLINE", "COMMENT", "ID", "NUMERIC", "UNSIGNED_NUMBER", "'='", "'+'", "'-'", "'*'", "'/'", "'secondary'", "'->'", "'--'"
@@ -66,7 +68,7 @@ public class ModelFileParser extends Parser {
     /** allows convenient multi-value initialization:
      *  "new STAttrMap().put(...).put(...)"
      */
-    public static class STAttrMap extends HashMap {
+	public static class STAttrMap extends HashMap {
       public STAttrMap put(String attrName, Object value) {
         super.put(attrName, value);
         return this;
@@ -853,18 +855,20 @@ public class ModelFileParser extends Parser {
 
                     if ( state.backtracking==0 ) {
 
+                      		Compartment target = model.getOrAddCompartment((ratioTransition4!=null?ratioTransition4.target:null));
+                      		target.setSecondary(isSecondary);
+                      		
                       		model.addRatioTransition(
                       			model.getOrAddCompartment((ratioTransition4!=null?ratioTransition4.source:null)),
-                      			model.getOrAddCompartment((ratioTransition4!=null?ratioTransition4.target:null)),
-                      			(transitionRatio5!=null?input.toString(transitionRatio5.start,transitionRatio5.stop):null),
-                      			isSecondary);
+                      			target,
+                      			(transitionRatio5!=null?input.toString(transitionRatio5.start,transitionRatio5.stop):null));
                       		
                     }
 
                     }
                     break;
                 case 2 :
-                    // C:\\Documents and Settings\\jrbibers\\workspace\\edu.iu.epic.modeling.compartment\\src\\edu\\iu\\epic\\modeling\\compartment\\converters\\text\\ModelFile.g:129:4: infectionTransition transitionRatio ( 'secondary' )?
+                    // C:\\Documents and Settings\\jrbibers\\workspace\\edu.iu.epic.modeling.compartment\\src\\edu\\iu\\epic\\modeling\\compartment\\converters\\text\\ModelFile.g:131:4: infectionTransition transitionRatio ( 'secondary' )?
                     {
                     pushFollow(FOLLOW_infectionTransition_in_transition383);
                     infectionTransition6=infectionTransition();
@@ -876,7 +880,7 @@ public class ModelFileParser extends Parser {
 
                     state._fsp--;
                     if (state.failed) return retval;
-                    // C:\\Documents and Settings\\jrbibers\\workspace\\edu.iu.epic.modeling.compartment\\src\\edu\\iu\\epic\\modeling\\compartment\\converters\\text\\ModelFile.g:129:40: ( 'secondary' )?
+                    // C:\\Documents and Settings\\jrbibers\\workspace\\edu.iu.epic.modeling.compartment\\src\\edu\\iu\\epic\\modeling\\compartment\\converters\\text\\ModelFile.g:131:40: ( 'secondary' )?
                     int alt8=2;
                     int LA8_0 = input.LA(1);
 
@@ -885,7 +889,7 @@ public class ModelFileParser extends Parser {
                     }
                     switch (alt8) {
                         case 1 :
-                            // C:\\Documents and Settings\\jrbibers\\workspace\\edu.iu.epic.modeling.compartment\\src\\edu\\iu\\epic\\modeling\\compartment\\converters\\text\\ModelFile.g:129:41: 'secondary'
+                            // C:\\Documents and Settings\\jrbibers\\workspace\\edu.iu.epic.modeling.compartment\\src\\edu\\iu\\epic\\modeling\\compartment\\converters\\text\\ModelFile.g:131:41: 'secondary'
                             {
                             match(input,15,FOLLOW_15_in_transition388); if (state.failed) return retval;
                             if ( state.backtracking==0 ) {
@@ -899,10 +903,13 @@ public class ModelFileParser extends Parser {
 
                     if ( state.backtracking==0 ) {
 
+                      		Compartment target = model.getOrAddCompartment((infectionTransition6!=null?infectionTransition6.target:null));
+                      		target.setSecondary(isSecondary);
+                      		
                       		model.addInfectionTransition(
                       			model.getOrAddCompartment((infectionTransition6!=null?infectionTransition6.source:null)),
                       			model.getOrAddCompartment((infectionTransition6!=null?infectionTransition6.infector:null)),
-                      			model.getOrAddCompartment((infectionTransition6!=null?infectionTransition6.target:null)),
+                      			target,
                       			(transitionRatio7!=null?input.toString(transitionRatio7.start,transitionRatio7.stop):null));
                       		
                     }
@@ -932,7 +939,7 @@ public class ModelFileParser extends Parser {
     };
 
     // $ANTLR start "ratioTransition"
-    // C:\\Documents and Settings\\jrbibers\\workspace\\edu.iu.epic.modeling.compartment\\src\\edu\\iu\\epic\\modeling\\compartment\\converters\\text\\ModelFile.g:139:1: ratioTransition returns [String source, String target] : s= compartmentID '->' t= compartmentID ;
+    // C:\\Documents and Settings\\jrbibers\\workspace\\edu.iu.epic.modeling.compartment\\src\\edu\\iu\\epic\\modeling\\compartment\\converters\\text\\ModelFile.g:144:1: ratioTransition returns [String source, String target] : s= compartmentID '->' t= compartmentID ;
     public final ModelFileParser.ratioTransition_return ratioTransition() throws RecognitionException {
         ModelFileParser.ratioTransition_return retval = new ModelFileParser.ratioTransition_return();
         retval.start = input.LT(1);
@@ -943,8 +950,8 @@ public class ModelFileParser extends Parser {
 
 
         try {
-            // C:\\Documents and Settings\\jrbibers\\workspace\\edu.iu.epic.modeling.compartment\\src\\edu\\iu\\epic\\modeling\\compartment\\converters\\text\\ModelFile.g:140:2: (s= compartmentID '->' t= compartmentID )
-            // C:\\Documents and Settings\\jrbibers\\workspace\\edu.iu.epic.modeling.compartment\\src\\edu\\iu\\epic\\modeling\\compartment\\converters\\text\\ModelFile.g:140:4: s= compartmentID '->' t= compartmentID
+            // C:\\Documents and Settings\\jrbibers\\workspace\\edu.iu.epic.modeling.compartment\\src\\edu\\iu\\epic\\modeling\\compartment\\converters\\text\\ModelFile.g:145:2: (s= compartmentID '->' t= compartmentID )
+            // C:\\Documents and Settings\\jrbibers\\workspace\\edu.iu.epic.modeling.compartment\\src\\edu\\iu\\epic\\modeling\\compartment\\converters\\text\\ModelFile.g:145:4: s= compartmentID '->' t= compartmentID
             {
             pushFollow(FOLLOW_compartmentID_in_ratioTransition418);
             s=compartmentID();
@@ -989,7 +996,7 @@ public class ModelFileParser extends Parser {
     };
 
     // $ANTLR start "infectionTransition"
-    // C:\\Documents and Settings\\jrbibers\\workspace\\edu.iu.epic.modeling.compartment\\src\\edu\\iu\\epic\\modeling\\compartment\\converters\\text\\ModelFile.g:146:1: infectionTransition returns [String source, String infector, String target] : s= compartmentID '--' i= compartmentID '=' t= compartmentID ;
+    // C:\\Documents and Settings\\jrbibers\\workspace\\edu.iu.epic.modeling.compartment\\src\\edu\\iu\\epic\\modeling\\compartment\\converters\\text\\ModelFile.g:151:1: infectionTransition returns [String source, String infector, String target] : s= compartmentID '--' i= compartmentID '=' t= compartmentID ;
     public final ModelFileParser.infectionTransition_return infectionTransition() throws RecognitionException {
         ModelFileParser.infectionTransition_return retval = new ModelFileParser.infectionTransition_return();
         retval.start = input.LT(1);
@@ -1002,8 +1009,8 @@ public class ModelFileParser extends Parser {
 
 
         try {
-            // C:\\Documents and Settings\\jrbibers\\workspace\\edu.iu.epic.modeling.compartment\\src\\edu\\iu\\epic\\modeling\\compartment\\converters\\text\\ModelFile.g:147:2: (s= compartmentID '--' i= compartmentID '=' t= compartmentID )
-            // C:\\Documents and Settings\\jrbibers\\workspace\\edu.iu.epic.modeling.compartment\\src\\edu\\iu\\epic\\modeling\\compartment\\converters\\text\\ModelFile.g:147:4: s= compartmentID '--' i= compartmentID '=' t= compartmentID
+            // C:\\Documents and Settings\\jrbibers\\workspace\\edu.iu.epic.modeling.compartment\\src\\edu\\iu\\epic\\modeling\\compartment\\converters\\text\\ModelFile.g:152:2: (s= compartmentID '--' i= compartmentID '=' t= compartmentID )
+            // C:\\Documents and Settings\\jrbibers\\workspace\\edu.iu.epic.modeling.compartment\\src\\edu\\iu\\epic\\modeling\\compartment\\converters\\text\\ModelFile.g:152:4: s= compartmentID '--' i= compartmentID '=' t= compartmentID
             {
             pushFollow(FOLLOW_compartmentID_in_infectionTransition444);
             s=compartmentID();
@@ -1052,14 +1059,14 @@ public class ModelFileParser extends Parser {
     };
 
     // $ANTLR start "compartmentID"
-    // C:\\Documents and Settings\\jrbibers\\workspace\\edu.iu.epic.modeling.compartment\\src\\edu\\iu\\epic\\modeling\\compartment\\converters\\text\\ModelFile.g:154:1: compartmentID : ID ;
+    // C:\\Documents and Settings\\jrbibers\\workspace\\edu.iu.epic.modeling.compartment\\src\\edu\\iu\\epic\\modeling\\compartment\\converters\\text\\ModelFile.g:159:1: compartmentID : ID ;
     public final ModelFileParser.compartmentID_return compartmentID() throws RecognitionException {
         ModelFileParser.compartmentID_return retval = new ModelFileParser.compartmentID_return();
         retval.start = input.LT(1);
 
         try {
-            // C:\\Documents and Settings\\jrbibers\\workspace\\edu.iu.epic.modeling.compartment\\src\\edu\\iu\\epic\\modeling\\compartment\\converters\\text\\ModelFile.g:155:2: ( ID )
-            // C:\\Documents and Settings\\jrbibers\\workspace\\edu.iu.epic.modeling.compartment\\src\\edu\\iu\\epic\\modeling\\compartment\\converters\\text\\ModelFile.g:155:4: ID
+            // C:\\Documents and Settings\\jrbibers\\workspace\\edu.iu.epic.modeling.compartment\\src\\edu\\iu\\epic\\modeling\\compartment\\converters\\text\\ModelFile.g:160:2: ( ID )
+            // C:\\Documents and Settings\\jrbibers\\workspace\\edu.iu.epic.modeling.compartment\\src\\edu\\iu\\epic\\modeling\\compartment\\converters\\text\\ModelFile.g:160:4: ID
             {
             match(input,ID,FOLLOW_ID_in_compartmentID470); if (state.failed) return retval;
 
@@ -1085,14 +1092,14 @@ public class ModelFileParser extends Parser {
     };
 
     // $ANTLR start "compartmentIDValidator"
-    // C:\\Documents and Settings\\jrbibers\\workspace\\edu.iu.epic.modeling.compartment\\src\\edu\\iu\\epic\\modeling\\compartment\\converters\\text\\ModelFile.g:157:1: compartmentIDValidator : compartmentID EOF ;
+    // C:\\Documents and Settings\\jrbibers\\workspace\\edu.iu.epic.modeling.compartment\\src\\edu\\iu\\epic\\modeling\\compartment\\converters\\text\\ModelFile.g:162:1: compartmentIDValidator : compartmentID EOF ;
     public final ModelFileParser.compartmentIDValidator_return compartmentIDValidator() throws RecognitionException {
         ModelFileParser.compartmentIDValidator_return retval = new ModelFileParser.compartmentIDValidator_return();
         retval.start = input.LT(1);
 
         try {
-            // C:\\Documents and Settings\\jrbibers\\workspace\\edu.iu.epic.modeling.compartment\\src\\edu\\iu\\epic\\modeling\\compartment\\converters\\text\\ModelFile.g:158:2: ( compartmentID EOF )
-            // C:\\Documents and Settings\\jrbibers\\workspace\\edu.iu.epic.modeling.compartment\\src\\edu\\iu\\epic\\modeling\\compartment\\converters\\text\\ModelFile.g:158:4: compartmentID EOF
+            // C:\\Documents and Settings\\jrbibers\\workspace\\edu.iu.epic.modeling.compartment\\src\\edu\\iu\\epic\\modeling\\compartment\\converters\\text\\ModelFile.g:163:2: ( compartmentID EOF )
+            // C:\\Documents and Settings\\jrbibers\\workspace\\edu.iu.epic.modeling.compartment\\src\\edu\\iu\\epic\\modeling\\compartment\\converters\\text\\ModelFile.g:163:4: compartmentID EOF
             {
             pushFollow(FOLLOW_compartmentID_in_compartmentIDValidator480);
             compartmentID();
@@ -1123,16 +1130,16 @@ public class ModelFileParser extends Parser {
     };
 
     // $ANTLR start "number"
-    // C:\\Documents and Settings\\jrbibers\\workspace\\edu.iu.epic.modeling.compartment\\src\\edu\\iu\\epic\\modeling\\compartment\\converters\\text\\ModelFile.g:193:1: number : ( '-' )? UNSIGNED_NUMBER ;
+    // C:\\Documents and Settings\\jrbibers\\workspace\\edu.iu.epic.modeling.compartment\\src\\edu\\iu\\epic\\modeling\\compartment\\converters\\text\\ModelFile.g:198:1: number : ( '-' )? UNSIGNED_NUMBER ;
     public final ModelFileParser.number_return number() throws RecognitionException {
         ModelFileParser.number_return retval = new ModelFileParser.number_return();
         retval.start = input.LT(1);
 
         try {
-            // C:\\Documents and Settings\\jrbibers\\workspace\\edu.iu.epic.modeling.compartment\\src\\edu\\iu\\epic\\modeling\\compartment\\converters\\text\\ModelFile.g:194:2: ( ( '-' )? UNSIGNED_NUMBER )
-            // C:\\Documents and Settings\\jrbibers\\workspace\\edu.iu.epic.modeling.compartment\\src\\edu\\iu\\epic\\modeling\\compartment\\converters\\text\\ModelFile.g:194:4: ( '-' )? UNSIGNED_NUMBER
+            // C:\\Documents and Settings\\jrbibers\\workspace\\edu.iu.epic.modeling.compartment\\src\\edu\\iu\\epic\\modeling\\compartment\\converters\\text\\ModelFile.g:199:2: ( ( '-' )? UNSIGNED_NUMBER )
+            // C:\\Documents and Settings\\jrbibers\\workspace\\edu.iu.epic.modeling.compartment\\src\\edu\\iu\\epic\\modeling\\compartment\\converters\\text\\ModelFile.g:199:4: ( '-' )? UNSIGNED_NUMBER
             {
-            // C:\\Documents and Settings\\jrbibers\\workspace\\edu.iu.epic.modeling.compartment\\src\\edu\\iu\\epic\\modeling\\compartment\\converters\\text\\ModelFile.g:194:4: ( '-' )?
+            // C:\\Documents and Settings\\jrbibers\\workspace\\edu.iu.epic.modeling.compartment\\src\\edu\\iu\\epic\\modeling\\compartment\\converters\\text\\ModelFile.g:199:4: ( '-' )?
             int alt10=2;
             int LA10_0 = input.LA(1);
 
@@ -1141,7 +1148,7 @@ public class ModelFileParser extends Parser {
             }
             switch (alt10) {
                 case 1 :
-                    // C:\\Documents and Settings\\jrbibers\\workspace\\edu.iu.epic.modeling.compartment\\src\\edu\\iu\\epic\\modeling\\compartment\\converters\\text\\ModelFile.g:194:5: '-'
+                    // C:\\Documents and Settings\\jrbibers\\workspace\\edu.iu.epic.modeling.compartment\\src\\edu\\iu\\epic\\modeling\\compartment\\converters\\text\\ModelFile.g:199:5: '-'
                     {
                     match(input,12,FOLLOW_12_in_number555); if (state.failed) return retval;
 

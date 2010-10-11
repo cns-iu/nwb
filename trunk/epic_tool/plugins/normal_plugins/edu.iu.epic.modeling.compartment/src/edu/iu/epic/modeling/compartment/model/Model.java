@@ -76,13 +76,15 @@ public class Model {
 			return addCompartment(name);
 		}
 	}
+	
+	
 
 	public Compartment getCompartment(String name) throws CompartmentDoesNotExistException {
 		if (compartments.containsKey(name)) {
 			return compartments.get(name);
 		} else {
-			throw new CompartmentDoesNotExistException(
-					"Model has no compartment named '" + name + "'.");
+			String message = String.format("Model has no compartment named '%s'.", name);
+			throw new CompartmentDoesNotExistException(message);
 		}
 	}
 
@@ -93,15 +95,15 @@ public class Model {
 		if (compartments.containsKey(name)) {
 			throw new CompartmentExistsException(name);
 		}
-
-		if (isValidCompartmentName(name)) {
-			Compartment compartment = new Compartment(this, name);
-			this.compartments.put(name, compartment);
-			
-			return compartment;
-		} else {
+		
+		if (!isValidCompartmentName(name)) {
 			throw new InvalidCompartmentNameException(name);
 		}
+		
+		Compartment compartment = new Compartment(this, name);
+		this.compartments.put(name, compartment);
+			
+		return compartment;
 	}
 	
 	public synchronized Compartment addCompartment(String name, Point2D position)
@@ -115,7 +117,7 @@ public class Model {
 	}
 
 	public synchronized RatioTransition addRatioTransition(Compartment source,
-			Compartment target, String ratio, boolean isSecondary)
+			Compartment target, String ratio)
 			throws InvalidParameterExpressionException {
 		Utility.checkForNullArgument("source", source);
 		Utility.checkForNullArgument("target", target);
@@ -123,10 +125,8 @@ public class Model {
 		if (!isValidParameterExpression(ratio)) {
 			throw new InvalidParameterExpressionException(ratio);
 		}
-		Utility.checkForNullArgument("isSecondary", isSecondary);
 
-		RatioTransition transition = new RatioTransition(source, target, ratio,
-				isSecondary);
+		RatioTransition transition = new RatioTransition(source, target, ratio);
 		this.transitions.add(transition);
 		return transition;
 	}
@@ -367,7 +367,9 @@ public class Model {
 			double newY = compartment.getPosition().getY();
 			Point2D newPosition = new Point2D.Double(newX, newY);
 			
-			newModel.addCompartment(compartment.getName(), newPosition);
+			Compartment newCompartment =
+				newModel.addCompartment(compartment.getName(), newPosition);
+			newCompartment.setSecondary(compartment.isSecondary());
 		}
 		
 		for (Entry<String, String> parameterDefinition : getParameterDefinitions().entrySet()) {
@@ -382,8 +384,7 @@ public class Model {
 				newModel.addRatioTransition(
 						newModel.getCompartment(ratioTransition.getSource().getName()),
 						newModel.getCompartment(ratioTransition.getTarget().getName()),
-						ratioTransition.getRatio(),
-						ratioTransition.isSecondary());
+						ratioTransition.getRatio());
 			} else if (transition instanceof InfectionTransition) {
 				InfectionTransition infectionTransition = (InfectionTransition) transition;
 				

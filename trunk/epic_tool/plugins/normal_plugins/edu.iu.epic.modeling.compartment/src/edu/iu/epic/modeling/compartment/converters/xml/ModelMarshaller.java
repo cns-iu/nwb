@@ -20,21 +20,20 @@ import org.cishell.utilities.FileUtilities;
 import org.xml.sax.SAXException;
 
 import edu.iu.epic.modeling.compartment.converters.xml.generated.CompartmentalModel;
-import edu.iu.epic.modeling.compartment.converters.xml.generated.ObjectFactory;
 import edu.iu.epic.modeling.compartment.converters.xml.generated.CompartmentalModel.Compartments;
-import edu.iu.epic.modeling.compartment.converters.xml.generated.CompartmentalModel.Infections;
-import edu.iu.epic.modeling.compartment.converters.xml.generated.CompartmentalModel.RatioTransitions;
-import edu.iu.epic.modeling.compartment.converters.xml.generated.CompartmentalModel.Variables;
 import edu.iu.epic.modeling.compartment.converters.xml.generated.CompartmentalModel.Compartments.Compartment;
+import edu.iu.epic.modeling.compartment.converters.xml.generated.CompartmentalModel.Infections;
 import edu.iu.epic.modeling.compartment.converters.xml.generated.CompartmentalModel.Infections.Infection;
 import edu.iu.epic.modeling.compartment.converters.xml.generated.CompartmentalModel.Infections.Infection.Infector;
+import edu.iu.epic.modeling.compartment.converters.xml.generated.CompartmentalModel.RatioTransitions;
 import edu.iu.epic.modeling.compartment.converters.xml.generated.CompartmentalModel.RatioTransitions.RatioTransition;
+import edu.iu.epic.modeling.compartment.converters.xml.generated.CompartmentalModel.Variables;
 import edu.iu.epic.modeling.compartment.converters.xml.generated.CompartmentalModel.Variables.Variable;
+import edu.iu.epic.modeling.compartment.converters.xml.generated.ObjectFactory;
 import edu.iu.epic.modeling.compartment.converters.xml.in.ModelReaderAlgorithm;
 import edu.iu.epic.modeling.compartment.model.Model;
 import edu.iu.epic.modeling.compartment.model.Transition;
 import edu.iu.epic.modeling.compartment.model.exception.ModelModificationException;
-
 public final class ModelMarshaller {
 	public static final String XML_SCHEMA_RESOURCE_PATH =
 		"/edu/iu/epic/modeling/compartment/converters/xml/compartmentalModel.xsd";
@@ -60,13 +59,14 @@ public final class ModelMarshaller {
 		// Convert compartments.
 		Compartments xCompartments = objectFactory.createCompartmentalModelCompartments();
 		xModel.setCompartments(xCompartments);
-	
+		
 		for (edu.iu.epic.modeling.compartment.model.Compartment c : model.getCompartments()) {
 			Compartment xCompartment =
 				objectFactory.createCompartmentalModelCompartmentsCompartment();
 			xCompartment.setId(c.getName());
 			xCompartment.setX(c.getPosition().getX());
 			xCompartment.setY(c.getPosition().getY());
+			xCompartment.setIsSecondary(c.isSecondary());
 			
 			xCompartments.getCompartment().add(xCompartment);
 		}
@@ -88,7 +88,6 @@ public final class ModelMarshaller {
 				xRatioTransition.setSource(rt.getSource().getName());
 				xRatioTransition.setTarget(rt.getTarget().getName());
 				xRatioTransition.setRatio(rt.getRatio());
-				xRatioTransition.setIsSecondary(rt.isSecondary());
 				
 				xRatioTransitions.getRatioTransition().add(xRatioTransition);
 			} else if (t instanceof edu.iu.epic.modeling.compartment.model.InfectionTransition) {
@@ -154,6 +153,8 @@ public final class ModelMarshaller {
 		InputStream schemaStream =
 			ModelMarshaller.class.getResourceAsStream(XML_SCHEMA_RESOURCE_PATH);
 		Schema schema = schemaFactory.newSchema(new StreamSource(schemaStream));
+		
+		System.out.println("The schema is " + schema.toString());
 		
 		return schema;
 	}

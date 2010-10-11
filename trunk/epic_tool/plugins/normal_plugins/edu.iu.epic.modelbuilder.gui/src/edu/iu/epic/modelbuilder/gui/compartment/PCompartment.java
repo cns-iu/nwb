@@ -10,7 +10,7 @@ import java.util.List;
 
 import edu.iu.epic.modelbuilder.gui.editablelabel.CompartmentEditableLabelEventHandler;
 import edu.iu.epic.modelbuilder.gui.editablelabel.EditableLabel;
-import edu.iu.epic.modelbuilder.gui.utility.CompartmentIDToLableMap;
+import edu.iu.epic.modelbuilder.gui.utility.CompartmentIDToLabelMap;
 import edu.iu.epic.modelbuilder.gui.utility.GlobalConstants;
 import edu.iu.epic.modelbuilder.gui.utility.NotificationArea;
 import edu.iu.epic.modelbuilder.gui.utility.PiccoloUtilities;
@@ -36,7 +36,7 @@ public class PCompartment extends PPath {
 		
 		this.inMemoryModel = inMemoryModel;
 		
-		System.out.println("Observers " + CompartmentIDToLableMap.getObservers());
+		System.out.println("Observers " + CompartmentIDToLabelMap.getObservers());
 		
 		List<PNode> emptyTransitionPlaceHolder = new ArrayList<PNode>();
 		
@@ -116,27 +116,26 @@ public class PCompartment extends PPath {
 		
 		this.addChild(complexTransitionHandle);		
 		
-		String compartmentLableText = (String) this
-											.getAttribute(GlobalConstants.NODE_ID_ATTRIBUTE_NAME);
+		String compartmentLabelText = (String) getAttribute(GlobalConstants.NODE_ID_ATTRIBUTE_NAME);
 		
 		boolean isCompartmentLabelAccepted = false;
-		int erroneousNewLableCounter = 0;
+		int erroneousNewLabelCounter = 0;
 		
 		while (!isCompartmentLabelAccepted) {
 			boolean errorPresent = false;
 			
 			try {
-				inMemoryCompartment = this.inMemoryModel.addCompartment(compartmentLableText);
+				inMemoryCompartment = this.inMemoryModel.addCompartment(compartmentLabelText);
 				setInMemoryCompartmentPosition(this.getFullBoundsReference().getX(),
 								   		   	   this.getFullBoundsReference().getY());
 			} catch (CompartmentExistsException e) {
 				System.out.println("name already exists" + e.getMessage());
 				notificationArea.addNotification("Compartment with name \"" 
-												 + compartmentLableText + "\" already exists. ");
+												 + compartmentLabelText + "\" already exists. ");
 				errorPresent = true;
 			} catch (InvalidCompartmentNameException e) {
 				System.out.println("invalid compartment name" + e.getMessage());
-				notificationArea.addNotification("\"" + compartmentLableText 
+				notificationArea.addNotification("\"" + compartmentLabelText 
 						 						 + "\" is an invalid compartment name.");
 				errorPresent = true;
 			}
@@ -144,26 +143,26 @@ public class PCompartment extends PPath {
 			if (!errorPresent) {
 				isCompartmentLabelAccepted = true;
 			} else {
-				compartmentLableText =  (String) this
+				compartmentLabelText =  (String) this
 											.getAttribute(GlobalConstants.NODE_ID_ATTRIBUTE_NAME)
-										+ "_" + erroneousNewLableCounter;
-				erroneousNewLableCounter++;
+										+ "_" + erroneousNewLabelCounter;
+				erroneousNewLabelCounter++;
 			}
 		}
 		
 		
-		double translateCompartmentLableX = translateSimpleTransitionHandleX 
-											+ GlobalConstants.COMPARTMENT_LABLE_X_OFFSET;
-		double translateCompartmentLableY = this.getY() 
-											+ GlobalConstants.COMPARTMENT_LABLE_Y_OFFSET;
+		double translateCompartmentLabelX = translateSimpleTransitionHandleX 
+											+ GlobalConstants.COMPARTMENT_LABEL_X_OFFSET;
+		double translateCompartmentLabelY = this.getY() 
+											+ GlobalConstants.COMPARTMENT_LABEL_Y_OFFSET;
 		EditableLabel compartmentLabel = 
 			new EditableLabel(GlobalConstants.COMPARTMENT_LABEL_TYPE_ATTRIBUTE_VALUE, 
-							  compartmentLableText,
-							  translateCompartmentLableX,
-							  translateCompartmentLableY,
+							  compartmentLabelText,
+							  translateCompartmentLabelX,
+							  translateCompartmentLabelY,
 							  new CompartmentEditableLabelEventHandler(notificationArea));
 
-		CompartmentIDToLableMap.addCompartmentID(compartmentID, compartmentLableText);
+		CompartmentIDToLabelMap.addCompartmentID(compartmentID, compartmentLabelText);
 		
 		this.addChild(compartmentLabel);
 	

@@ -36,7 +36,7 @@ import edu.iu.epic.modelbuilder.gui.parametertable.ParameterTable;
 import edu.iu.epic.modelbuilder.gui.transition.ComplexTransition;
 import edu.iu.epic.modelbuilder.gui.transition.ComplexTransitionInfectionInformation;
 import edu.iu.epic.modelbuilder.gui.transition.SimpleTransition;
-import edu.iu.epic.modelbuilder.gui.utility.CompartmentIDToLableMap;
+import edu.iu.epic.modelbuilder.gui.utility.CompartmentIDToLabelMap;
 import edu.iu.epic.modelbuilder.gui.utility.GlobalConstants;
 import edu.iu.epic.modelbuilder.gui.utility.IDGenerator;
 import edu.iu.epic.modelbuilder.gui.utility.NotificationArea;
@@ -269,7 +269,7 @@ public class ModelBuilderGUI implements ActionListener {
 		isModelBuildingComplete = false;
 		inMemoryModel = new Model();
 		pObjectIDGenerator = new IDGenerator();
-		CompartmentIDToLableMap.resetCompartmentIDToLableMap();
+		CompartmentIDToLabelMap.resetCompartmentIDToLabelMap();
 		
 		notificationAreas = new NotificationArea[2];
 		
@@ -461,7 +461,6 @@ public class ModelBuilderGUI implements ActionListener {
 	        							 targetCompartment,
 	        							 pObjectIDGenerator,
 	        							 transitionRatio,
-	        							 ((RatioTransition) inMemoryTransition).isSecondary(),
 	        							 inMemoryModel,
 	        							 notificationAreas);
 	        

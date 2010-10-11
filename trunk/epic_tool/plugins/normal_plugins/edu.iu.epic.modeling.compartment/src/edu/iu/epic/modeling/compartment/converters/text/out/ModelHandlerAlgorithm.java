@@ -24,9 +24,11 @@ public class ModelHandlerAlgorithm implements Algorithm {
 		if (Constants.MODEL_MIME_TYPE.equals(inputFormat)) {
 			return new Data[]{ new BasicData(inputModelFile, Constants.MODEL_FILE_EXTENSION) };
 		} else {
-			throw new AlgorithmExecutionException(
-				"Expected " + Constants.MODEL_MIME_TYPE
-				+ " but the input format is " + inputFormat);
+			String message = String.format(
+				"Expected %s, but the input format is %s.",
+				Constants.MODEL_MIME_TYPE,
+				inputFormat);
+			throw new AlgorithmExecutionException(message);
 		}
     }
 }

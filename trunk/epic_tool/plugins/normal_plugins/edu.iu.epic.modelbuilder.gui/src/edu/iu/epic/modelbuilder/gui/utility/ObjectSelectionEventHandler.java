@@ -63,7 +63,7 @@ public class ObjectSelectionEventHandler extends PSelectionEventHandler {
 					 * */
 					((PCompartment) currentSelectedNode).removeInMemoryCompartment();
 					
-					CompartmentIDToLableMap.removeCompartmentID(compartmentID);
+					CompartmentIDToLabelMap.removeCompartmentID(compartmentID);
 					
 					
 					List<PNode> currentSelectedNodeTransitions = 

@@ -7,8 +7,8 @@ public final class GlobalConstants {
 	//Prevents instantiation
 	private GlobalConstants() { }
 	
-	public static final double COMPARTMENT_LABLE_X_OFFSET = 5.0;
-	public static final double COMPARTMENT_LABLE_Y_OFFSET = 5.0;
+	public static final double COMPARTMENT_LABEL_X_OFFSET = 5.0;
+	public static final double COMPARTMENT_LABEL_Y_OFFSET = 5.0;
 	
 	public static final Dimension SIMPLE_TRANSITION_BUTTON_DIMENSIONS = new Dimension(15, 15);
 	public static final Dimension COMPLEX_TRANSITION_BUTTON_DIMENSIONS = new Dimension(15, 15);

@@ -1,9 +1,6 @@
 package edu.iu.epic.modelbuilder.gui.transition;
 
-import java.awt.Color;
 import java.awt.geom.Point2D;
-import java.awt.geom.Rectangle2D;
-import java.awt.geom.Point2D.Double;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -34,7 +31,6 @@ public class SimpleTransition extends PPath {
 							PNode targetCompartment,
 							IDGenerator pObjectIDGenerator,
 							String transitionRatio,
-							boolean isSecondary, 
 							Model inMemoryModel, 
 							NotificationArea[] notificationAreas) {
 		super();
@@ -47,7 +43,6 @@ public class SimpleTransition extends PPath {
 							   targetCompartment, 
 							   pObjectIDGenerator, 
 							   transitionRatio,
-							   isSecondary,
 							   notificationAreas);
 
 	}
@@ -57,7 +52,6 @@ public class SimpleTransition extends PPath {
 	 * @param sourceCompartment
 	 * @param targetCompartment
 	 * @param transitionRatio 
-	 * @param isSecondary 
 	 * @param notificationAreas 
 	 * @param bound1
 	 * @param bound2
@@ -67,7 +61,6 @@ public class SimpleTransition extends PPath {
 										   PNode targetCompartment,
 										   IDGenerator pObjectIDGenerator, 
 										   String transitionRatio, 
-										   boolean isSecondary, 
 										   NotificationArea[] notificationAreas) {
 		
 		if (transitionRatio == null 
@@ -80,7 +73,6 @@ public class SimpleTransition extends PPath {
 					inMemoryAddRatioTransition(sourceCompartment, 
 											   targetCompartment, 
 											   transitionRatio,
-											   isSecondary,
 											   notificationAreas);
 		
 		/*
@@ -165,14 +157,12 @@ public class SimpleTransition extends PPath {
 	 * @param sourceCompartment
 	 * @param targetCompartment
 	 * @param transitionRatio
-	 * @param isSecondary 
 	 * @param notificationAreas 
 	 * @return
 	 */
 	private boolean inMemoryAddRatioTransition(PNode sourceCompartment,
 											   PNode targetCompartment, 
 											   String transitionRatio, 
-											   boolean isSecondary, 
 											   NotificationArea[] notificationAreas) {
 		boolean isInMemoryTransitionAdditionSuccessful = true;
 		try {
@@ -181,8 +171,7 @@ public class SimpleTransition extends PPath {
 				inMemoryModel.addRatioTransition(
 						((PCompartment) sourceCompartment).getInMemoryCompartment(), 
 						((PCompartment) targetCompartment).getInMemoryCompartment(), 
-						transitionRatio, 
-						isSecondary);
+						transitionRatio);
 			
 		} catch (InvalidParameterExpressionException e) {
 			//TODO: how best to handle this? should i create a parameter definition? 

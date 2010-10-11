@@ -8,19 +8,22 @@ import edu.iu.epic.modeling.compartment.model.exception.InvalidCompartmentNameEx
 
 public class Compartment {
 	public static final Point2D DEFAULT_POSITION = new Point2D.Double(0, 0);
-	
-	private String name;
-	private Point2D position;
+
 	private Model model;
+	private String name;
+	private boolean isSecondary;
 	
+	private Point2D position = DEFAULT_POSITION;
 	
 	protected Compartment(Model model, String name) {
-		this.name = name;
-		this.model = model;
-		
-		this.position = DEFAULT_POSITION;
+		this(model, name, false);
 	}
-
+	
+	protected Compartment(Model model, String name, boolean isSecondary) {
+		this.model = model;
+		this.name = name;		
+		this.isSecondary = isSecondary;
+	}
 	
 	@Override
 	public String toString() {
@@ -38,6 +41,13 @@ public class Compartment {
 
 	public String getName() {
 		return name;
+	}
+	
+	public boolean isSecondary() {
+		return isSecondary;
+	}
+	public void setSecondary(boolean isSecondary) {
+		this.isSecondary = isSecondary;
 	}
 	
 	public Point2D getPosition() {
