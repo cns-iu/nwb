@@ -81,7 +81,7 @@
 		<menu pid="edu.iu.nwb.analysis.diameter"/>
 		<menu pid="edu.iu.nwb.analysis.averageshortestpath"/>
 		<menu pid="edu.iu.nwb.analysis.shortestpathdistr"/>
-		<menu pid="edu.iu.nwb.analysis.sitebetweenness"/>
+		<menu pid="edu.iu.nwb.analysis.sitebetweenness.wrapper.SiteBetweennessWrapperAlgorithm"/>
 		<menu pid="edu.iu.nwb.analysis.connectedcomponents"/>
 		<menu type="break"/>
 		<menu pid="edu.iu.nwb.analysis.hits.HITSAlgorithm"/>

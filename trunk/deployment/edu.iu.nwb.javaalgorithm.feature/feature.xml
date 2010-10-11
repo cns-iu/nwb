@@ -30,6 +30,13 @@ Weixia Huang (huangb@indiana.edu)
 Bruce Herr (bh2@bh2.net)
 Dr. Katy Borner (katy@indiana.edu)
    </license>
+
+	<plugin
+		id="edu.iu.nwb.analysis.sitebetweenness.wrapper"
+        download-size="0"
+        install-size="0"
+        version="0.0.0"
+        unpack="false"/>
    
    <plugin
          id="edu.iu.cns.converter.graceplot"
