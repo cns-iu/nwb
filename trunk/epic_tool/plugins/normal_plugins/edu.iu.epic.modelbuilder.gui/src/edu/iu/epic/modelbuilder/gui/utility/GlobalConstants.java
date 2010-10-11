@@ -48,8 +48,8 @@ public final class GlobalConstants {
 	
 	public static final String SIMPLE_TRANSITION_HANDLE_TYPE_ATTRIBUTE_VALUE = "SIMPLE_TRANSITION_HANDLE";
 	public static final String COMPLEX_TRANSITION_HANDLE_TYPE_ATTRIBUTE_VALUE = "COMPLEX_TRANSITION_HANDLE";
-	public static final String SIMPLE_TRANSITION_RATIO_DEFAULT_VALUE = "ratio";
-	public static final String COMPLEX_TRANSITION_RATIO_DEFAULT_VALUE = "c_ratio";
+	public static final String SIMPLE_TRANSITION_RATIO_DEFAULT_VALUE = "rate";
+	public static final String COMPLEX_TRANSITION_RATIO_DEFAULT_VALUE = "c_rate";
 	
 	public static final String NEW_PARAMETER_DEFAULT_VALUE = "1.0";
 
