@@ -39,6 +39,13 @@ Dr. Katy Borner (katy@indiana.edu)
       <import feature="edu.iu.scipolicy.converter.feature" version="1.0.0"/>
    </requires>
 
+	<plugin
+		id="edu.iu.nwb.analysis.sitebetweenness.wrapper"
+        download-size="0"
+        install-size="0"
+        version="0.0.0"
+        unpack="false"/>
+
    <plugin
          id="org.cishell.utilities"
          download-size="0"
