@@ -3,10 +3,6 @@ Bundle-ManifestVersion: 2
 Bundle-Name: edu.iu.nwb.converter.nwbgraphml
 Bundle-SymbolicName: edu.iu.nwb.converter.nwbgraphml
 Bundle-Version: 1.0.0
-Bundle-ClassPath: .,
- stax-1.2.0_rc2-dev.jar,
- stax-api-1.0.1.jar
-Bundle-Localization: plugin
 Import-Package: edu.iu.nwb.converter.nwb.common,
  edu.iu.nwb.util.nwbfile,
  javax.xml.stream,
@@ -22,3 +18,4 @@ Import-Package: edu.iu.nwb.converter.nwb.common,
  org.osgi.service.prefs;version="1.1.0"
 X-AutoStart: true
 Service-Component: OSGI-INF/nwbtographmlbystax.xml, OSGI-INF/graphmltonwbbystax.xml
+Bundle-RequiredExecutionEnvironment: J2SE-1.5
