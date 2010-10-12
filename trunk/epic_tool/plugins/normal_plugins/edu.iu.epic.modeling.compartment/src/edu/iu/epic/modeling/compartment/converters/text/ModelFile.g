@@ -121,7 +121,9 @@ transition
 	: ratioTransition transitionRatio ('secondary' { isSecondary = true; })?
 		{
 		Compartment target = model.getOrAddCompartment($ratioTransition.target);
-		target.setSecondary(isSecondary);
+		if (isSecondary) {
+			target.setSecondary(isSecondary);
+		}
 		
 		model.addRatioTransition(
 			model.getOrAddCompartment($ratioTransition.source),
@@ -131,7 +133,9 @@ transition
 	| infectionTransition transitionRatio ('secondary' { isSecondary = true; })?
 		{
 		Compartment target = model.getOrAddCompartment($infectionTransition.target);
-		target.setSecondary(isSecondary);
+		if (isSecondary) {
+			target.setSecondary(isSecondary);
+		}
 		
 		model.addInfectionTransition(
 			model.getOrAddCompartment($infectionTransition.source),
