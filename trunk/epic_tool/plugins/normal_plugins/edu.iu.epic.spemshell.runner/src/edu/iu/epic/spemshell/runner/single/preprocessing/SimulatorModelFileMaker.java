@@ -4,12 +4,11 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Dictionary;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import java.util.Map.Entry;
+import java.util.Set;
 
 import org.antlr.stringtemplate.StringTemplate;
 import org.antlr.stringtemplate.StringTemplateGroup;
@@ -26,7 +25,7 @@ import edu.iu.epic.spemshell.runner.single.SPEMShellSingleRunnerAlgorithmFactory
  * we should kill off the notion of a SPEMShell model file (against an EpiC model file)
  * as no difference remains.  In that case, we can just use Model.toString.
  */
-public class SPEMShellModelFileMaker {
+public class SimulatorModelFileMaker {
 	public static final String FILENAME = "simul";
 	public static final String FILE_EXTENSION = "mdl";	
 	
@@ -38,7 +37,7 @@ public class SPEMShellModelFileMaker {
 	private Map<String, Object> modelParameterDefinitions;
 
 	
-	public SPEMShellModelFileMaker(Model epicModel, Dictionary<String, Object> parameters) {
+	public SimulatorModelFileMaker(Model epicModel, Dictionary<String, Object> parameters) {
 		this.epicModel = epicModel;
 		
 		this.modelParameterDefinitions = CIShellParameterUtilities.filterByAndStripIDPrefixes(
@@ -57,7 +56,8 @@ public class SPEMShellModelFileMaker {
 		//parameterDefinitions.addAll(epicModel.getParameterDefinitions().entrySet());
 		
 		
-		for (Entry<String, String> parameterDefinition : epicModel.getParameterDefinitions().entrySet()) {
+		for (Entry<String, String> parameterDefinition
+				: epicModel.getParameterDefinitions().entrySet()) {
 			parameterDefinition.setValue(fixRawDecimalPoints(parameterDefinition.getValue()));
 			parameterDefinitions.add(parameterDefinition);
 		}

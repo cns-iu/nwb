@@ -80,9 +80,8 @@ public class SPEMShellSingleRunnerAlgorithmFactory
 		return bundleContext;
 	}
 	
-    @SuppressWarnings("unchecked") // Raw Dictionary
-	public Algorithm createAlgorithm(Data[] data,
-    								 Dictionary parameters,
+    public Algorithm createAlgorithm(Data[] data,
+    								 Dictionary<String, Object> parameters,
     								 CIShellContext context) {
     	return new SPEMShellSingleRunnerAlgorithm(data, parameters, context, getBundleContext());
     }

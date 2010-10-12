@@ -12,7 +12,6 @@ import org.antlr.stringtemplate.StringTemplateGroup;
 import org.cishell.framework.CIShellContext;
 import org.cishell.framework.algorithm.Algorithm;
 import org.cishell.framework.algorithm.AlgorithmExecutionException;
-import org.cishell.framework.algorithm.AlgorithmFactory;
 import org.cishell.framework.data.BasicData;
 import org.cishell.framework.data.Data;
 import org.cishell.framework.data.DataProperty;
@@ -24,7 +23,7 @@ import edu.iu.epic.modeling.compartment.model.Model;
 import edu.iu.epic.spemshell.runner.single.postprocessing.DatToCsv;
 import edu.iu.epic.spemshell.runner.single.preprocessing.InFileMaker;
 import edu.iu.epic.spemshell.runner.single.preprocessing.InfectionsFileMaker;
-import edu.iu.epic.spemshell.runner.single.preprocessing.SPEMShellModelFileMaker;
+import edu.iu.epic.spemshell.runner.single.preprocessing.SimulatorModelFileMaker;
 
 public class SPEMShellSingleRunnerAlgorithm implements Algorithm {	
 	public static final String PLAIN_TEXT_MIME_TYPE = "file:text/plain";
@@ -54,21 +53,19 @@ public class SPEMShellSingleRunnerAlgorithm implements Algorithm {
 			(LogService) ciContext.getService(LogService.class.getName());
 	}
 
-	// Run SPEMShell and interpret its output.
+	// Run simulator and interpret its output.
 	public Data[] execute() throws AlgorithmExecutionException {		
 		File datFile;
 		try {
-			Data[] spemShellData =
-				createSPEMShellInData(this.data, this.parameters);
-			datFile = executeSPEMShell(spemShellData, ciContext, bundleContext);
+			Data[] simulatorInputData =
+				createSimulatorInputData(this.data, this.parameters);
+			datFile = executeSimulator(simulatorInputData, ciContext, bundleContext);
 		} catch (IOException e) {
 			throw new AlgorithmExecutionException(
-					"Error creating data for SPEMShell: " + e.getMessage(),
-					e);
+					"Error creating data for SPEMShell: " + e.getMessage(), e);
 		} catch (ParseException e) {
 			throw new AlgorithmExecutionException(
-					"Error parsing the given start date: " + e.getMessage(),
-					e);
+					"Error parsing the given start date: " + e.getMessage(), e);
 		}
 		
 		try {
@@ -78,104 +75,90 @@ public class SPEMShellSingleRunnerAlgorithm implements Algorithm {
 	    	return createOutData(csvFile, "Simulation results", this.data[0]);
 		} catch (IOException e) {
 			throw new AlgorithmExecutionException(
-					"Error translating from .dat to .csv:" + e.getMessage(),
-					e);
+					"Error translating from .dat to .csv:" + e.getMessage(), e);
 		}
 	}
 
-	// Execute the inner Algorithm, the SPEMShell core, and return its output.
-	private File executeSPEMShell(
-			Data[] data, CIShellContext ciContext, BundleContext bundleContext)
-			throws AlgorithmExecutionException {
+	private File executeSimulator(
+			Data[] coreData, CIShellContext coreCIContext, BundleContext coreBundleContext)
+				throws AlgorithmExecutionException {
 		try {			
-			AlgorithmFactory spemShellCoreAlgorithmFactory =
-				AlgorithmUtilities.getAlgorithmFactoryByPID(
-					SPEMSHELL_CORE_PID, bundleContext);
-			
-			/* We could pass in this.parameters since the argument
-			 * won't be read anyhow, but to emphasize that fact,
-			 * we instead give an empty Dictionary.
-			 */
-			Dictionary<String, Object> emptyParameters = new Hashtable<String, Object>();
-			
-			Algorithm spemShellCoreAlgorithm = spemShellCoreAlgorithmFactory.createAlgorithm(
-				data, emptyParameters, ciContext);
-			Data[] outData = spemShellCoreAlgorithm.execute();
-			File outDatFile = (File) outData[0].getData();
-		
-			return outDatFile;
+			Data[] simulatorOutData =
+				AlgorithmUtilities.executeAlgorithm(
+					AlgorithmUtilities.getAlgorithmFactoryByPID(
+							SPEMSHELL_CORE_PID, coreBundleContext),
+					null,
+					coreData,
+					new Hashtable<String, Object>(),
+					coreCIContext);
+
+			return (File) simulatorOutData[0].getData();
 		} catch (AlgorithmExecutionException e) {
 			throw new AlgorithmExecutionException(
-				"Error running SPEMShell: " + e.getMessage(), e);
+				"Error running simulator: " + e.getMessage(), e);
 		}
 	}
 
-	private Data[] createSPEMShellInData(Data[] data, Dictionary<String, Object> parameters)
-			throws IOException, ParseException {
-		/* Fetch the compartment initial populations
-		 * from the algorithm parameters.
-		 */
+	private Data[] createSimulatorInputData(
+			Data[] runnerData, Dictionary<String, Object> runnerParameters)
+				throws IOException, ParseException {
+		/* Fetch the compartment initial populations from the algorithm parameters. */
 		Map<String, Object> infectedCompartmentPopulations =
 			CIShellParameterUtilities.filterByAndStripIDPrefixes(
-					parameters,
+					runnerParameters,
 					SPEMShellSingleRunnerAlgorithmFactory.COMPARTMENT_POPULATION_PREFIX
 					+ SPEMShellSingleRunnerAlgorithmFactory.INFECTION_PREFIX);
 		
 		Map<String, Object> latentCompartmentPopulations =
 			CIShellParameterUtilities.filterByAndStripIDPrefixes(
-					parameters,
+					runnerParameters,
 					SPEMShellSingleRunnerAlgorithmFactory.COMPARTMENT_POPULATION_PREFIX
 					+ SPEMShellSingleRunnerAlgorithmFactory.LATENT_PREFIX);
 		
 		Map<String, Object> recoveredCompartmentPopulations =
 			CIShellParameterUtilities.filterByAndStripIDPrefixes(
-					parameters,
+					runnerParameters,
 					SPEMShellSingleRunnerAlgorithmFactory.COMPARTMENT_POPULATION_PREFIX
 					+ SPEMShellSingleRunnerAlgorithmFactory.RECOVERED_PREFIX);
 		
-		// Create the SPEMShell model file from the EpiC model file.
-		Model epicModel = (Model) data[0].getData();
-		SPEMShellModelFileMaker spemShellModelFileMaker =
-			new SPEMShellModelFileMaker(epicModel, parameters);		
-		File spemShellModelFile = spemShellModelFileMaker.make();		
-//		ModelFileReader modelFileReader =
-//			new ModelFileReader(epicModelFile.getPath());
 		
-		/* Create the .in file, making sure to give it the path to the
-		 * created SPEMShell model file.
-		 */
+		// Create the simulator model file from the EpiC model file.
+		Model epicModel = (Model) runnerData[0].getData();
+		SimulatorModelFileMaker simulatorModelFileMaker =
+			new SimulatorModelFileMaker(epicModel, runnerParameters);		
+		File spemShellModelFile = simulatorModelFileMaker.make();		
+
+		
+		// Create the .in file.
 		String initialCompartmentName =
-			(String) parameters.get(
+			(String) runnerParameters.get(
 					SPEMShellSingleRunnerAlgorithmFactory.INITIAL_COMPARTMENT_PARAMETER_ID);
 		InFileMaker inFileMaker =
 			new InFileMaker(
 					spemShellModelFile.getPath(),
-					parameters,
+					runnerParameters,
 					initialCompartmentName,
 					infectedCompartmentPopulations,
 					latentCompartmentPopulations,
 					recoveredCompartmentPopulations);
 		File inFile = inFileMaker.make();
 		
+		
 		// Create the infections file.
 		InfectionsFileMaker infectionsFileMaker = new InfectionsFileMaker();
 		File infectionsFile =
 			infectionsFileMaker.make(infectedCompartmentPopulations);
 		
-		// Put it all together to get the in data for the SPEMShell core.
-		Data[] spemShellData =
-			new Data[]{
+
+		return new Data[] {
 				new BasicData(inFile, IN_FILE_MIME_TYPE),
 				new BasicData(infectionsFile, PLAIN_TEXT_MIME_TYPE) };
-		
-		return spemShellData;
 	}
 	
-	@SuppressWarnings("unchecked") // Raw Dictionary
 	private static Data[] createOutData(
 			File outDatFile, String label, Data parentData) {
 		Data outData = new BasicData(outDatFile, CSV_MIME_TYPE);
-		Dictionary metadata = outData.getMetadata();
+		Dictionary<String, Object> metadata = outData.getMetadata();
 		metadata.put(DataProperty.LABEL, label);
 		metadata.put(DataProperty.TYPE, DataProperty.TABLE_TYPE);
 		metadata.put(DataProperty.PARENT, parentData);

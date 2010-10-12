@@ -106,7 +106,6 @@ public class SPEMShellBatchRunnerAlgorithm implements Algorithm {
 		}
 	}
 
-	@SuppressWarnings("unchecked") // Raw Dictionary from getMetadata.
 	private void setSingleOutputDataLabel(Data data, int runIndex) {
 		data.getMetadata().put(DataProperty.LABEL, createSingleOutputDataLabel(runIndex));
 	}	

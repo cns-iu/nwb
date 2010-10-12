@@ -26,8 +26,8 @@ public class SPEMShellBatchRunnerAlgorithmFactory implements AlgorithmFactory, P
 	}
 	
 	
-	@SuppressWarnings("unchecked") // Raw Dictionary
-	public Algorithm createAlgorithm(Data[] data, Dictionary parameters, CIShellContext context) {
+	public Algorithm createAlgorithm(
+			Data[] data, Dictionary<String, Object> parameters, CIShellContext context) {
 		return new SPEMShellBatchRunnerAlgorithm(data, parameters, context, getBundleContext());
 	}
 
