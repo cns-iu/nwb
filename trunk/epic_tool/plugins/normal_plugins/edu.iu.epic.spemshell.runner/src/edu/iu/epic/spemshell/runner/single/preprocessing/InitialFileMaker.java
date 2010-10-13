@@ -68,7 +68,7 @@ public class InitialFileMaker {
 		
 		@Override
 		public String toString() {
-			return this.compartmentName + " " + "1.0";
+			return this.compartmentName + " " + this.population;
 		}
 	}
 }
