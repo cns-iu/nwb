@@ -80,7 +80,7 @@ public class InFileMaker {
 		return file;
 	}
 	
-	private StringTemplate prepareTemplate() throws ParseException {
+	private StringTemplate prepareTemplate() throws ParseException, IOException {
 		StringTemplate template =
 			inFileTemplateGroup.getInstanceOf(IN_FILE_TEMPLATE_NAME);
 		template.setAttribute("modelFileName", this.modelFilePath);
@@ -108,7 +108,7 @@ public class InFileMaker {
 		template.setAttribute("date", formattedDateString);
 		template.setAttribute("seed", this.parameters.get("seed"));
 		
-		for (Entry<String, Object> compartmentPopulation
+		/*for (Entry<String, Object> compartmentPopulation
 				: this.infectionCompartmentPopulations.entrySet()) {
 			template.setAttribute(
 					"compartmentPopulations",
@@ -116,6 +116,7 @@ public class InFileMaker {
 							"infection",
 							compartmentPopulation.getKey(),
 							compartmentPopulation.getValue()));
+			compartmentsString += compartmentPopulation.getKey() + compartmentsSeparator;
 		}
 		
 		for (Entry<String, Object> compartmentPopulation
@@ -126,6 +127,7 @@ public class InFileMaker {
 							"latent",
 							compartmentPopulation.getKey(),
 							compartmentPopulation.getValue()));
+			compartmentsString += compartmentPopulation.getKey() + compartmentsSeparator;
 		}
 		
 		for (Entry<String, Object> compartmentPopulation
@@ -136,11 +138,41 @@ public class InFileMaker {
 							"recovered",
 							compartmentPopulation.getKey(),
 							compartmentPopulation.getValue()));
-		}
+			compartmentsString += compartmentPopulation.getKey() + compartmentsSeparator;
+		}*/
 		
+		template.setAttribute("outVal", createOutVal());
+		template.setAttribute("initialFile", createInitialFile().getAbsolutePath());
 		return template;
 	}
 	
+	private  String createOutVal() {
+		String compartmentsSeparator = ";";
+		String compartmentsString = "";
+		
+		for (String compartmentName : this.infectionCompartmentPopulations.keySet()) {
+			compartmentsString += compartmentName + compartmentsSeparator;
+		}
+		
+		for (String compartmentName : this.latentCompartmentPopulations.keySet()) {
+			compartmentsString += compartmentName + compartmentsSeparator;
+		}
+		
+		for (String compartmentName : this.recoveredCompartmentPopulations.keySet()) {
+			compartmentsString += compartmentName + compartmentsSeparator;
+		}
+		
+		return compartmentsString;
+	}
+	
+	private  File createInitialFile() throws IOException {
+		InitialFileMaker initialFileMaker = new InitialFileMaker((Integer) parameters.get(
+											SPEMShellSingleRunnerAlgorithmFactory.POPULATION_ID));
+		initialFileMaker.addInitialCompartmentPopulations(infectionCompartmentPopulations);
+		initialFileMaker.addInitialCompartmentPopulations(latentCompartmentPopulations);
+		initialFileMaker.addInitialCompartmentPopulations(recoveredCompartmentPopulations);
+		return initialFileMaker.make(); 
+	}
 	
 	private static class CompartmentPopulationFormatter {
 		private String type;

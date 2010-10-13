@@ -1,6 +1,6 @@
 group inFile;
 
-inFile(modelFileName,numberOfSecondaryEvents,population,susceptibleCompartmentID,compartmentPopulations,numberOfDays,date,seed) ::= <<
+inFile(modelFileName,numberOfSecondaryEvents,population,susceptibleCompartmentID,numberOfDays,date,seed, outVal, initialFile) ::= <<
 ###############################################################################
 # Single Population Model Input File                                          #
 ###############################################################################
@@ -12,9 +12,6 @@ inFile(modelFileName,numberOfSecondaryEvents,population,susceptibleCompartmentID
 # Model definition
 model <modelFileName>
 
-# Calendar
-calendar airport_3378_month.txt
-
 # Number of secondary events
 # Defaults to 0
 events <numberOfSecondaryEvents>
@@ -22,15 +19,18 @@ events <numberOfSecondaryEvents>
 # City population
 population <population>
 
+# Components label
+outVal <outVal>
+
+# City location
+hemisphere N
+
 ###############################################################################
 # Various                                                                     #
 ###############################################################################
 
 # What is the label for the susceptible compartment?
 susceptible <susceptibleCompartmentID>
-
-# initial compartment populations
-<compartmentPopulations; separator="\n">
 
 # number of days
 days <numberOfDays>
@@ -43,6 +43,21 @@ output .
 
 # Random number generator seed
 seed <seed>
+
+# Seasonality value
+#alphamin 0.6
+
+#maximum reply
+maxRuns 100 
+
+#name
+name 0
+
+#set frame
+output_frames none
+
+# initial compartment populations
+initial <initialFile>
 
 ###############################################################################
 # End Input File                                                              #
