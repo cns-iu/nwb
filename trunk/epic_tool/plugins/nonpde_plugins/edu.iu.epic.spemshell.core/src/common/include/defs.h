@@ -12,7 +12,7 @@
 
 enum TYPE{
   INTERACTION = 0,
-  SPONTANEOUS = 1,
+  SPONTANEOUS = 1
 };
 
 typedef struct
@@ -29,4 +29,4 @@ typedef struct
 
 #define BUFFER_SIZE 2048
 
-#endif _DEFS_H_
+#endif /* _DEFS_H_ */
