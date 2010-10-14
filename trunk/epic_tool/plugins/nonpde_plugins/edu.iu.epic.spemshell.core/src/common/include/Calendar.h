@@ -16,24 +16,22 @@
 #include <fstream>
 #include <map>
 #include <sstream>
+#include <boost/date_time/gregorian/gregorian.hpp>
+#include <defs.h>
 
 class Calendar
 {
-  std::vector<unsigned> months;
-  std::map<std::string, unsigned> keys;
-  bool leap;
-  unsigned year;
-
-  bool isLeap(unsigned year);
-
+  boost::gregorian::date birthday;
+  void setDate(std::string date);
+  char buffer[BUFFER_SIZE];
+  
 public:	
-  Calendar(std::string m, unsigned y=2001);
-
-  unsigned day(std::string date);
-  
-  unsigned day(unsigned d, unsigned m);
-  
-  unsigned month(unsigned day);
+  Calendar(std::string date);
+  unsigned day();
+  unsigned day(unsigned d, unsigned m, unsigned y);
+  unsigned increment();
+  std::string getDate();
+  std::string getDateTomorrow();
 };
 
 #endif /* CALENDAR_H */

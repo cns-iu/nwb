@@ -44,12 +44,8 @@ class input_file
 	
   string Evaluate(vector<string> &numbers);
 	
-  /**
-   * Convert a string to a long
-   */
-  uint64_t AToLong(string temp);
-	
-  /**
+
+    /**
    * Convert a string to an int
    */
   int AToInt(string temp);
@@ -144,24 +140,6 @@ public:
   bool getBoolOpt(string which, bool value);
 	
   /**
-   * Return the value of an long integer variable
-   * 
-   * @param which The variable to access
-   * @return The variable's unsigned integer value
-   */
-  uint64_t getLongOpt(string which);
-	
-  /**
-   * Return the value of an long integer variable
-   * 
-   * @param which The variable to access
-   * @param value The variable's default value
-   * 
-   * @return The variable's unsigned int64_t integer value
-   */
-  uint64_t getLongOpt(string which, uint64_t value);
-
-  /**
    * Return the value of an unsigned integer variable
    * 
    * @param which The variable to access
@@ -227,7 +205,7 @@ public:
    * @param value The variable's default value.
    * @return The variable's string value.
    */
-  string getStringOpt(string which,string &value);
+  string getStringOpt(string which, string value);
 
   /**
    * Return the value of a string variable

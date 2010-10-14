@@ -56,6 +56,47 @@ to run the multi run and
 
 for the single run. During each run, you should be able to find the pid numbers of the respective SPEM.x instance in the respective directories as agreed. 
 
+== Input ==
+outVal:
+> In the format.pdf, it is the label to be output. Please let me know if i'm
+> wrong. If there are three compartment with the following labels:
+> COMPARTMENT_A, COMPARTMENT_B and COMPARTMENT_C. The outVal value should be
+> "COMPARTMENT_A;COMPARTMENT_B;COMPARTMENT_C"
+This is correct.
+
+> maxRuns:
+> What is the MAX_RUN? How to decide the suitable value for MAX_RUN?
+maxRuns is the maximum number of tries that the code will run. If
+there is no outbreak after these many tries, it quits. (otherwise it
+would run forever). I usually keep it at 100. If there is no outbreak
+after 100 runs, chances are that there is something wrong with the
+model specified.
+
+> output_frames:
+> What is output_frames? Should we always use 'none'?
+Right now, "none" is correct value. The most general code has support
+for day by day animations in the case of single runs. This is the
+directly where the resulting time frames should go. In the case of a
+single population, this is not particularly interesting, but it will
+become more relevant in the network version.
+
+> initial.txt:
+> If I understand the Python code right, this file contains all the initial
+> populations of all compartments. For example,
+> COMPARTMENT_A 1000
+> COMPARTMENT_B 100
+> COMPARTMENT_C 0
+Just the non-zero ones are required, and they should be in percentage
+(50%) or fraction (.5) and should sum up to 100% (or 1.).
+
+> nonTravel:
+> What is the content in the file? How to generate it in Epic?
+Non traveling. Irrelevant for single population.
+
+> rho:
+> Same question with NT.txt
+Non commuting. Again, irrelevant for single population.
+
 == Output ==
 
 This version has limited output capabilities, as NO post processing is currently being done. Afer each run, you'll find the output generated inside the output_data/ sub directory. For each run there are three files, but only *.out.dat.gz is interesting for us right now. Here you'll find the complete information for each compartment and basin at each time step. The order in which the compartments are listed (since it varies from model to model) is listed in the first line. The first column represents the basin and the second time step starting at 0. 

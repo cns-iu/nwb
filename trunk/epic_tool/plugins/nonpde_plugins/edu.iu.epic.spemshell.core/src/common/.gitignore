@@ -1,0 +1,9 @@
+*.x
+*.o
+*.pyc
+*.out
+*.err
+*.dSYM
+bla*
+temp*
+doc/

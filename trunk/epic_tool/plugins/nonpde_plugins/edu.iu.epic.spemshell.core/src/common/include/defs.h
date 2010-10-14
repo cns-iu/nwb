@@ -12,18 +12,8 @@
 
 enum TYPE{
   INTERACTION = 0,
-  SPONTANEOUS = 1
+  SPONTANEOUS = 1,
 };
-
-typedef struct
-{
-  char airport[4];
-  unsigned population;
-  unsigned country;
-  unsigned region;
-  unsigned continent;
-  int hemisphere;
-} City;
 
 typedef struct
 {
@@ -37,4 +27,6 @@ typedef struct
   int index;
 } Transition;
 
-#endif /* _DEFS_H_ */
+#define BUFFER_SIZE 2048
+
+#endif _DEFS_H_

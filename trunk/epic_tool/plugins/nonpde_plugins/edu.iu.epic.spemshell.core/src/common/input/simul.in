@@ -7,10 +7,7 @@
 ###############################################################################
 
 # Model definition
-model simul.mdl
-
-# Calendar
-calendar data/airport_3378_month.txt 
+model C:/Users/kongch/Documents/Projects/Epic/EpiC-SPEM/SPEM/input/simul.mdl
 
 # Number of secondary events
 # Defaults to 0
@@ -19,6 +16,9 @@ events 0
 # City population
 population 1000000
 
+# City location
+hemisphere N
+
 ###############################################################################
 # Various                                                                     #
 ###############################################################################
@@ -26,21 +26,24 @@ population 1000000
 # What is the label for the susceptible compartiment?
 susceptible S
 
-# initial infections
-infection Ia 7
-infection It 3 
-
 # number of days
-days 2*365
+days 365
 
 # First day of the infection
-date 04/01/2007
+date 05/05/2007
 
 # run output directory
 output output/
 
 # Random number generator seed
 seed 0
+
+# Seasonality value
+#alphamin 0.6
+
+initial S 1
+
+infection I 15
 
 ###############################################################################
 # End Input File                                                              #

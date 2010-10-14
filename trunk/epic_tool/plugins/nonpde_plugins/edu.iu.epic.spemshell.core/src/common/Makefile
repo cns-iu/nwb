@@ -1,19 +1,42 @@
 CPP = g++
-INCLUDE = -Iinclude/
-DEBUG = -g -Wall -Wextra --pedantic --ansi 
-GSL = -I/sw/include/
-GSL_LIB = -L/sw/lib -lgsl -lgslcblas
+INCLUDE = -static -Iinclude/
+DEBUG = -g -Wall -Wextra --pedantic 
+GSL = -IGnuWin32/include
+GSL_LIB = -LGnuWin32/lib -lgsl -lgslcblas
 RM = rm
 MKDIR = mkdir
 CP = cp
+SPEM_EXECUTABLE = SPEM.exe
+SPEM_DEBUG_EXECUTABLE = SPEM_dbg.exe
+EXACTEM_EXECUTABLE = EXACTEM.exe
+EXACTEM_DEBUG_EXECUTABLE = EXACTEM_dbg.exe
 
 FILE = $*
 
-all: src/Model.o src/Calendar.o src/Parse.o src/input.o src/Calculator.o
-	$(CPP) $(INCLUDE) $(GSL) $(GSL_LIB) SPEM.cpp $^ -o SPEM
+all: SPEM ExactEM
 
-dbg: src/Model_dbg.o src/Calendar_dbg.o src/Parse_dbg.o src/input_dbg.o src/Calculator_dbg.o
-	$(CPP) $(DEBUG) $(INCLUDE) $(GSL) $(GSL_LIB) SPEM.cpp $^ -o SPEM_dbg
+ExactEM: src/ExactModel.o src/Parse.o src/input.o src/Calculator.o
+	$(CPP) $(INCLUDE) $(GSL) ExactEM.cpp $^ -o $(EXACTEM_EXECUTABLE) $(GSL_LIB) 
+	
+
+SPEM: src/Output.o src/Model.o src/Calendar.o src/Parse.o src/input.o src/Calculator.o 
+	$(CPP) $(INCLUDE) $(GSL) SPEM.cpp $^ -o $(SPEM_EXECUTABLE) $(GSL_LIB)
+
+DynaNetSPEM: src/Model.o src/Calendar.o src/Parse.o src/input.o src/Calculator.o src/DynaNet.o
+	$(CPP) $(INCLUDE) $(GSL) NetSPEM.cpp $^ -o NetSPEM.x $(GSL_LIB)
+
+dbg: SPEM_dbg ExactEM_dbg
+
+archive:
+	git archive --format=tar --prefix=EpiC/ EpiC > EpiC-1.0.tar
+	tar -rvf EpiC-1.0.tar ../EpiC/ShellFramework/*.py
+	gzip EpiC-1.0.tar
+
+SPEM_dbg: src/Output_dbg.o src/Model_dbg.o src/Calendar_dbg.o src/Parse_dbg.o src/input_dbg.o src/Calculator_dbg.o 
+	$(CPP) $(DEBUG) $(INCLUDE) $(GSL) SPEM.cpp $^ -o $(SPEM_DEBUG_EXECUTABLE) $(GSL_LIB)
+
+NetSPEM_dbg: src/Model_dbg.o src/Calendar_dbg.o src/Parse_dbg.o src/input_dbg.o src/Calculator_dbg.o src/DynaNet_dbg.o
+	$(CPP) $(DEBUG) $(INCLUDE) $(GSL) NetSPEM.cpp $^ -o NetSPEM_dbg.x $(GSL_LIB)
 
 %_dbg.o: %.cpp
 	$(CPP) -c $(DEBUG) $(INCLUDE) $(GSL) $(FILE).cpp -o $(FILE)_dbg.o
@@ -33,8 +56,10 @@ test_dir:
 
 clean:
 	$(RM) -f src/*.o
-	$(RM) -f SPEM 
-	$(RM) -rf SPEM_dbg*
+	$(RM) -f *SPEM.x 
+	$(RM) -f *ExactEM.x 
+	$(RM) -f *ExactEM_dbg.x 
+	$(RM) -rf *SPEM_dbg.x*
 	$(RM) -rf runs/
 
 clean_run:

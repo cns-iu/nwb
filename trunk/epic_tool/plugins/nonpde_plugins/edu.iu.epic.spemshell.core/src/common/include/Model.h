@@ -35,7 +35,7 @@ class Model
   unsigned *n;
 
  public:
-  Model(Parser &parse, Rand &r2);
+   Model(Parser &parse, Rand &r2);
 
   std::vector<std::vector<std::vector<double> > > getRates()
   {
@@ -50,7 +50,7 @@ class Model
    * @param fp
    * @return The number of secondary infections
    */
-  int step(std::vector<int64_t> &current, int64_t N, int x, int y, FILE **fp);
+  int step(std::vector<int64_t> &current, int64_t N, int day, int hemi, FILE **fp, std::vector<unsigned> &outTrans, vector<uint64_t> &transCount);
 };
 
-#endif /* _MODEL_H_ */ 
+#endif _MODEL_H_ 

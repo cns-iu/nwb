@@ -59,6 +59,9 @@ class Parse : public Parser
 
   void makeAgeStructure(std::string filename);
 
+  std::vector<std::string> split(std::string line, std::string sep);
+
+
  public:
   Parse(std::string filename);
     
@@ -66,16 +69,23 @@ class Parse : public Parser
   int label(std::string state)
   {
     if(states.find(state) == states.end())
-      return -1;
+      {
+	fprintf(stderr,"-- Unknown state: %s\n",state.c_str());
+	exit(2);
+      }
 
     return states[state];
   }
+
+    unsigned susceptible();
+
+    unsigned recovered();
 
   std::string index(unsigned index)
     {
       if(index >= indices.size())
 	{
-	  fprintf(stderr,"Invalid index: %u\n",index);
+	  fprintf(stderr,"-- Invalid index: %u\n",index);
 	  exit(10);
 	}
 

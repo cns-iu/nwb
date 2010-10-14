@@ -1,8 +1,9 @@
 /** -*- mode:C++; -*-
  * @file Calculator.h
  * @author Bruno Goncalves
+ * @package HIV
  *
- * Created by Bruno Goncalves on 09/17/08
+ * @date Created by Bruno Goncalves on 09/17/08
  * Copywright 2008 Bruno Goncalves. All rights reserved.
  *
  */
@@ -20,7 +21,7 @@
 class Calculator
 {
   std::map<char,unsigned> prec;
-  std::map<std::string, double> vars;
+  std::map<std::string, std::string> vars;
 
   double Evaluate(std::string expr)
   {
@@ -44,11 +45,20 @@ public:
     prec['|']=0;
   }
 
-  void set(std::string var, double value)
+  void set(std::string var, std::string value)
   {
     vars[var] = value;
   }
 
+	void set(std::string var, double value)
+  {
+		char v[2048];
+		
+		sprintf(v, "%lf", value);
+		
+    vars[var] = v;
+  }	
+	
   double calculate(std::string exp)
   {
     return Evaluate(exp);

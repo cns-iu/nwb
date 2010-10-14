@@ -126,6 +126,11 @@ class Rand
     return gsl_ran_gaussian(r,sigma);
   }
 
+  inline double poisson(double sigma)
+  {
+    return gsl_ran_poisson(r,sigma);
+  }
+
   inline double exponential(double mu)
   {
     return gsl_ran_exponential(r,mu);
@@ -135,7 +140,7 @@ class Rand
   {
     double x;
 	  
-    while((x=gsl_ran_exponential(r,mu))>muMax);
+    while((x=gsl_ran_exponential(r,mu))>muMax){};
   
     return x;
   }
@@ -160,7 +165,7 @@ class Rand
   {
     unsigned y;
 	 
-    while((y=unsigned(floor(log(1-gsl_rng_uniform(r)*(1-pow(2.0,(1.0-tau)*N)))/((1.0-tau)*log(2.0)))))>=N);
+    while((y=unsigned(floor(log(1-gsl_rng_uniform(r)*(1-pow(2.0,(1.0-tau)*N)))/((1.0-tau)*log(2.0)))))>=N){};
 	  
     return y;
   }

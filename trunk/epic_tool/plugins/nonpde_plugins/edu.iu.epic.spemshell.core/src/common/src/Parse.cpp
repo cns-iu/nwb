@@ -28,6 +28,46 @@
  * class to implement it properly.
  */
 
+unsigned Parse::susceptible()
+{
+        std::vector<Transition> transList = getTransitions();
+        std::vector<unsigned> trans(states.size());
+        
+        for(unsigned i=0; i<transList.size(); ++i)
+                trans[transList[i].j]++;
+        
+        unsigned susIndex;
+        
+        for(unsigned i=0;i<trans.size();++i)
+                if(trans[i] == 0)
+                {
+                        susIndex = i;
+                        break;
+                }
+        
+        return susIndex;
+}
+
+unsigned Parse::recovered()
+{
+        std::vector<Transition> transList = getTransitions();
+        std::vector<unsigned> trans(states.size());
+        
+        for(unsigned i=0; i<transList.size(); ++i)
+                trans[transList[i].i]++;
+        
+        unsigned recIndex;
+        
+        for(unsigned i=0;i<trans.size();++i)
+                if(trans[i] == 0)
+                {
+                        recIndex = i;
+                        break;
+                }
+        
+        return recIndex;
+}
+
 bool Parse::addCompartment(std::string initial)
 {
   if(states.find(initial) == states.end())
@@ -38,6 +78,7 @@ bool Parse::addCompartment(std::string initial)
       return true;
     }
     
+
   return false;
 }
 
@@ -68,6 +109,7 @@ int Parse::getFile(std::string &expr)
   std::set<std::string> vars = calc.getVars(expr);
   std::set<std::string>::iterator i;
 
+
   for(i = vars.begin(); i!=vars.end(); ++i)
     if(time.find(*i) != time.end())
       {
@@ -88,7 +130,7 @@ void Parse::makeLongTransition(std::string comp)
   tmp = transitions[transitions.size()-1];
   transitions.pop_back();
 
-  char newComp[10];
+  char newComp[BUFFER_SIZE];
 
   //Long agent is long
   unsigned duration = durations[comp];
@@ -108,9 +150,42 @@ void Parse::makeLongTransition(std::string comp)
     }
 }
 
+std::vector<std::string> Parse::split(std::string line, std::string sep=" ")
+{
+  std::vector<std::string> vars;
+  std::string temp="";
+  
+  unsigned pos=0;
+  bool isSep;
+        
+  while(pos!=line.size())
+    {
+      isSep=false;
+      
+      for(unsigned i=0;i<sep.size();++i)
+	if(line[pos]==sep[i] && temp.size()!=0)
+	  {
+	    vars.push_back(temp);
+	    temp="";
+	    isSep=true;
+	    break;
+	  }
+      
+      if(isSep==false && line[pos]!='\n')
+	temp+=line[pos];
+      
+      ++pos;
+    }
+  
+  vars.push_back(temp);
+  
+  return vars;
+}
+
+
 void Parse::makeDurationStates(std::string comp)
 {
-  char newComp[10];
+  char newComp[BUFFER_SIZE];
   unsigned last;
   unsigned duration = durations[comp];
 
@@ -121,6 +196,7 @@ void Parse::makeDurationStates(std::string comp)
   tmp.secondary = false;
   tmp.rate = 1.0;
   tmp.agent = -1;
+
 
   for(unsigned i=1;i<duration;++i)
     {
@@ -142,7 +218,7 @@ void Parse::makeAgeStructure(std::string filename)
 
   if(!in.is_open())
     {
-      fprintf(stderr,"Error age file: %s\n",filename.c_str());
+      fprintf(stderr,"-- Error age file: %s\n",filename.c_str());
       exit(9);
     }
     
@@ -295,7 +371,7 @@ Parse::Parse(std::string filename)
       
   if(!in.is_open())
     {
-      fprintf(stderr,"Error opening model file: %s\n",filename.c_str());
+      fprintf(stderr,"-- Error opening model file: %s\n",filename.c_str());
       exit(9);
     }
 
@@ -315,23 +391,23 @@ Parse::Parse(std::string filename)
       if(input.size()==0 || input[0]=='#')
 	continue;
 
-      std::stringstream ss(input);
-      ss >> initial;
-      ss >> operation;
+      std::vector<std::string> fields = split(input);
+      
+      unsigned count = 0;
+      initial = fields[count++];
+      operation = fields[count++];
 
       if(toLower(initial) == "time")
 	{
-	  ss >> final;
-
-	  fprintf(stderr,"# Found a time dependent variable %s from file %s\n",operation.c_str(), final.c_str());
-	  time[operation] = final;
-	  calc.set(operation, 1.0);
+	  fprintf(stderr,"# Found a seasonal effect from file %s\n",operation.c_str());
+	  time["seasonal"] = operation;
+	  files.push_back(operation);
 	  continue;
 	}
       else if(toLower(initial) == "duration")
 	{
-	  std::string expr;
-	  ss >> expr;
+	  std::string expr = fields[count++];
+
 	  unsigned duration = lround(calc.calculate(expr));
 	  durations[operation] = duration;
 	  fprintf(stderr,"# Set duration of state %s to %u days\n",operation.c_str(),duration);
@@ -340,8 +416,8 @@ Parse::Parse(std::string filename)
 	}
       else if(toLower(initial) == "age")
 	{
-	  ss >> final;
-	      
+	  final = fields[count++];
+
 	  fprintf(stderr,"# Found age structure %s from file %s\n",operation.c_str(), final.c_str());
 	  calc.set(operation, 1.0);
 	  hasAge = true;
@@ -363,16 +439,18 @@ Parse::Parse(std::string filename)
 
       if(operation == "=")
 	{
-	  ss >> expr;
-	  double value = calc.calculate(expr);
-	  calc.set(initial, value);
-	  fprintf(stderr,"# Defined variable %s with value %g\n",initial.c_str(),value);
+	  expr = fields[count++];	  
+	  
+	  //double value = calc.calculate(expr);
+	  //calc.set(initial, value);
+	  calc.set(initial, expr);
+	  fprintf(stderr,"# Defined variable %s with value %s\n",initial.c_str(),expr.c_str());
 	  continue;
 	}
       else
 	{
-	  ss >> final;
-	  ss >> expr;
+	  final = fields[count++];
+	  expr = fields[count++];
 
 	  std::string temp;
 	      
@@ -380,8 +458,8 @@ Parse::Parse(std::string filename)
 	    {
 	    case '=':
 	      agent = final;
-	      ss >> final;
-	      ss >> expr;
+	      final = fields[count++];
+	      expr = fields[count++];
 		  
 	      rate = getRate(expr);
 	      break;
@@ -393,7 +471,7 @@ Parse::Parse(std::string filename)
 	    }
 	}
 	  
-      char newComp[10];
+      char newComp[BUFFER_SIZE];
 	  
       if(durations.find(initial) != durations.end())
 	{
@@ -431,36 +509,52 @@ Parse::Parse(std::string filename)
       tmp.secondary = false;
       tmp.index = -1;
 
-      if(!ss.eof())
+      while(count != fields.size())
 	{
-	  std::string sec;
-	      
-	  ss >> sec;
+	  std::string sec = fields[count++];
 	      
 	  if(toLower(sec) == "secondary")
 	    tmp.secondary = true;
+	  else if(toLower(sec) == "seasonal")
+	    tmp.rate *= -1;
 	}
 
       if(operation == "->")
 	{
 	  tmp.type = SPONTANEOUS;
-	  if(rate>0)
+
+	  if(tmp.rate>0)
 	    fprintf(stderr,"# Created spontaneous transition from state %s to state %s with rate %g\n", initial.c_str(), final.c_str(), rate);
 	  else
 	    {
 	      fprintf(stderr,"# Created spontaneous transition from state %s to state %s with time dependent rate \"%s\"\n", initial.c_str(), final.c_str(), expr.c_str());
-	      tmp.index = getFile(expr);
+	      
+	      for(unsigned j=0; j<files.size(); ++j)
+		if(files[j] == time["seasonal"])
+		  {
+		    tmp.index = j;
+		    break;
+		    //tmp.index = time["seasonal"]; //getFile(name);
+		  }
 	    }
 	}
       else if(operation == "--")
 	{
 	  tmp.type = INTERACTION;
-	  if(rate>0)
+
+	  if(tmp.rate>0)
 	    fprintf(stderr,"# Created interating transition from state %s to state %s via state %s with rate %g\n",initial.c_str(), final.c_str(), agent.c_str(), rate);
 	  else
 	    {
 	      fprintf(stderr,"# Created interating transition from state %s to state %s via state %s with time dependent rate \"%s\"\n", initial.c_str(), final.c_str(), agent.c_str(), expr.c_str());
-	      tmp.index = getFile(expr);
+
+	      for(unsigned j=0; j<files.size(); ++j)
+		if(files[j] == time["seasonal"])
+		  {
+		    tmp.index = j;
+		    break;
+		    //tmp.index = time["seasonal"]; //getFile(name);
+		  }
 	    }
 	}
 	  

@@ -7,6 +7,7 @@
  *
  */
 
+#include <cstdlib>
 #include <string>
 #include <vector>
 #include <iostream>
@@ -14,139 +15,67 @@
 #include <map>
 #include <sstream>
 #include <Calendar.h>
+#include <cstdlib>
+#include <boost/date_time/gregorian/gregorian.hpp>
 
-bool Calendar::isLeap(unsigned year)
+using namespace boost::gregorian;
+
+void Calendar::setDate(std::string d2)
 {
-  if(year%400 == 0)
-    return true;
+  for(unsigned i=0;i<d2.size();++i)
+    if(d2[i] == '/')
+      d2[i] = ' ';
 
-  if(year%100 == 0)
-    return false;
-
-  if(year%4 == 0)
-    return true;
-
-  return false;
-}
-
-
-Calendar::Calendar(std::string m, unsigned y) : year(y)
-{
-  leap = isLeap(year);
-
-  months.resize(12);
-
-  std::ifstream in(m.c_str());
-
-  if(!in.is_open())
-    {
-      fprintf(stderr,"Error opening file: %s\n",m.c_str());
-      exit(3);
-    }
-
-  std::string input;
-
-  while(!in.eof())
-    {
-      getline(in, input);
-
-      if(input.size() == 0)
-	continue;
-
-      std::stringstream ss(input);
-	
-      unsigned index, days;
-      std::string key;
-
-      ss >> index;
-      ss >> key;
-      ss >> days;
-
-      if(index > 11)
-	{
-	  fprintf(stderr,"Error: wrong format for month file %s\n", m.c_str());
-	  exit(3);
-	}
-	  
-      keys[key] = index;
-      months[index] = days;
-    }
-
-  in.close();
-}
-
-unsigned Calendar::day(std::string date)
-{
-
-  for(unsigned i=0;i<date.size();++i)
-    if(date[i] == '/')
-      date[i] = ' ';
-
-  std::stringstream ss(date);
+  std::stringstream ss(d2);
   unsigned d, m, y;
 
   ss>>m;
   ss>>d;
   ss>>y;
     
-  return day(d,m);
+  birthday = date(y, m, d);
 }
 
-unsigned Calendar::day(unsigned d, unsigned m)
+Calendar::Calendar(std::string date)
 {
-  unsigned day = 0;
-        
-  if(d>months[m])
-    {
-      fprintf(stderr,"Unable to parse date: %02u/%02u\n",m,d);
-      exit(3);
-    }
-
-  for(unsigned i=0; i<m-1; ++i)
-    day += months[i];
-
-  day += d;
-
-  //In leap years Feb has one extra day
-  if(leap == true && m>1)
-    day ++;
-
-  return day;
+  setDate(date);
 }
 
-unsigned Calendar::month(unsigned day)
+unsigned Calendar::day()
 {
-  unsigned count=0;
+  return birthday.day_of_year();
+}
 
-  unsigned dy = day/366;
-    
-  unsigned day2 = day;
+unsigned Calendar::day(unsigned d, unsigned m, unsigned y)
+{
+  date birthday(y, m, d);
 
-  for(unsigned i=0;i<dy;++i)
-    if(!isLeap(i+year))
-      day2 = day2 - 365;
-    else
-      day2 = day2 - 366;
+  return birthday.day_of_year();
+}
 
+unsigned Calendar::increment()
+{
+  days one_day(1);
+  birthday += one_day;
 
-  if(leap or isLeap(year+dy))
-    months[1]++;
+  return birthday.day_of_year();
+}
 
-  unsigned final = 12;
+std::string Calendar::getDate()
+{
+  date::ymd_type ymd = birthday.year_month_day();
+  
+  sprintf(buffer,"%04u-%02u-%02u", (int) ymd.year, (int) ymd.month, (int) ymd.day);
 
-  for(unsigned i=0;i<months.size();++i)
-    {
-      count += months[i];
+  return buffer;
+}
 
-      if(count >= day2)
-	{
-	  final = i;
-	  break;
-	}
-    }
-    
-  if(leap or isLeap(year+dy))
-    months[1]--;
+std::string Calendar::getDateTomorrow()
+{
+  days one_day(1);
+  date::ymd_type ymd = (birthday + one_day).year_month_day();
+  
+  sprintf(buffer,"%04u-%02u-%02u", (int) ymd.year, (int) ymd.month, (int) ymd.day);
 
-  return final;
+  return buffer;
 }
