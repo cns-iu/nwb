@@ -1,0 +1,46 @@
+###############################################################################
+# Global Epidemic Model Input File                                            #
+###############################################################################
+
+###############################################################################
+# Data Files                                                                  #
+###############################################################################
+
+# City Population
+N 100000
+
+# Model definition
+model input/SLIR.in
+
+# Outbreak size
+# How many countries need to be infected for us to consider that an outbreak
+# has occured?
+# It defaults to 2
+outbreakSize 2
+
+# Number of secondary events
+# Defaults to 0
+events 0
+
+###############################################################################
+# Various                                                                     #
+###############################################################################
+
+# What is the label for the susceptible compartiment?
+susceptible S
+
+# initial infections
+infections data/infected.txt
+
+# number of days
+days 2*365
+
+# run output directory
+output output/
+
+# Random number generator seed
+seed 0
+
+###############################################################################
+# End Input File                                                              #
+###############################################################################
