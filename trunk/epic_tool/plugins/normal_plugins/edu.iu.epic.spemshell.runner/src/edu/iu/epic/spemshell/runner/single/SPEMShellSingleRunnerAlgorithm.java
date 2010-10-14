@@ -5,8 +5,10 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.text.ParseException;
 import java.util.Dictionary;
+import java.util.HashMap;
 import java.util.Hashtable;
 import java.util.Map;
+import java.util.Map.Entry;
 
 import org.antlr.stringtemplate.StringTemplateGroup;
 import org.cishell.framework.CIShellContext;
@@ -101,25 +103,40 @@ public class SPEMShellSingleRunnerAlgorithm implements Algorithm {
 
 	private Data[] createSimulatorInputData(
 			Data[] runnerData, Dictionary<String, Object> runnerParameters)
-				throws IOException, ParseException {
-		/* Fetch the compartment initial populations from the algorithm parameters. */
-		Map<String, Object> infectedCompartmentPopulations =
+				throws IOException, ParseException, AlgorithmExecutionException {
+		/* Fetch the infector seed populations from the algorithm parameters. */
+		Map<String, Object> rawInfectorSeedPopulations =
 			CIShellParameterUtilities.filterByAndStripIDPrefixes(
 					runnerParameters,
-					SPEMShellSingleRunnerAlgorithmFactory.COMPARTMENT_POPULATION_PREFIX
-					+ SPEMShellSingleRunnerAlgorithmFactory.INFECTION_PREFIX);
+					SPEMShellSingleRunnerAlgorithmFactory.INFECTOR_SEED_POPULATION_PREFIX);
+		Map<String, Integer> infectorSeedPopulations = new HashMap<String, Integer>();
+		for (Entry<String, Object> rawInfectorSeedPopulation : rawInfectorSeedPopulations.entrySet()) {
+			infectorSeedPopulations.put(
+					rawInfectorSeedPopulation.getKey(),
+					(Integer) rawInfectorSeedPopulation.getValue());
+		}
 		
-		Map<String, Object> latentCompartmentPopulations =
-			CIShellParameterUtilities.filterByAndStripIDPrefixes(
-					runnerParameters,
-					SPEMShellSingleRunnerAlgorithmFactory.COMPARTMENT_POPULATION_PREFIX
-					+ SPEMShellSingleRunnerAlgorithmFactory.LATENT_PREFIX);
 		
-		Map<String, Object> recoveredCompartmentPopulations =
+		/* Fetch the compartment initial distribution from the algorithm parameters. */
+		Map<String, Object> rawInitialDistribution =
 			CIShellParameterUtilities.filterByAndStripIDPrefixes(
 					runnerParameters,
-					SPEMShellSingleRunnerAlgorithmFactory.COMPARTMENT_POPULATION_PREFIX
-					+ SPEMShellSingleRunnerAlgorithmFactory.RECOVERED_PREFIX);
+					SPEMShellSingleRunnerAlgorithmFactory.INITIAL_DISTRIBUTION_PREFIX);
+		Map<String, Float> initialDistribution = new HashMap<String, Float>();
+		for (Entry<String, Object> rawCompartmentFraction : rawInitialDistribution.entrySet()) {
+			initialDistribution.put(
+					rawCompartmentFraction.getKey(),
+					(Float) rawCompartmentFraction.getValue());
+		}
+		
+		float distributionTotal = InFileMaker.total(initialDistribution.values());
+		if (distributionTotal != 1.0f) {
+			String message = String.format(
+					"The fractions for the initial distribution of the population among the " +
+					"compartments must sum to exactly 1.0.  The given numbers summed to %f.",
+					distributionTotal);
+			throw new AlgorithmExecutionException(message);
+		}
 		
 		
 		// Create the simulator model file from the EpiC model file.
@@ -128,6 +145,11 @@ public class SPEMShellSingleRunnerAlgorithm implements Algorithm {
 			new SimulatorModelFileMaker(epicModel, runnerParameters);		
 		File spemShellModelFile = simulatorModelFileMaker.make();		
 
+		
+		// Create the infections file.
+		InfectionsFileMaker infectionsFileMaker = new InfectionsFileMaker();
+		File infectionsFile = infectionsFileMaker.make(infectorSeedPopulations);
+		
 		
 		// Create the .in file.
 		String initialCompartmentName =
@@ -138,21 +160,15 @@ public class SPEMShellSingleRunnerAlgorithm implements Algorithm {
 					spemShellModelFile.getPath(),
 					runnerParameters,
 					initialCompartmentName,
-					infectedCompartmentPopulations,
-					latentCompartmentPopulations,
-					recoveredCompartmentPopulations);
+					infectionsFile,
+					initialDistribution);
 		File inFile = inFileMaker.make();
 		
 		
-		// Create the infections file.
-		InfectionsFileMaker infectionsFileMaker = new InfectionsFileMaker();
-		File infectionsFile =
-			infectionsFileMaker.make(infectedCompartmentPopulations);
+		
 		
 
-		return new Data[] {
-				new BasicData(inFile, IN_FILE_MIME_TYPE),
-				new BasicData(infectionsFile, PLAIN_TEXT_MIME_TYPE) };
+		return new Data[] {	new BasicData(inFile, IN_FILE_MIME_TYPE) };
 	}
 	
 	private static Data[] createOutData(

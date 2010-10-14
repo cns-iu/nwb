@@ -3,8 +3,6 @@ package edu.iu.epic.spemshell.runner.single.preprocessing;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
@@ -17,26 +15,31 @@ import edu.iu.epic.spemshell.runner.single.SPEMShellSingleRunnerAlgorithm;
 public class InitialFileMaker {
 	public static final String FILENAME = "initial";
 	public static final String FILE_EXTENSION = "txt";
-	private float totalPopulation;
-	private List<CompartmentPopulationFormatter> compartmentPopulationFormatterList;
+	
+	private Map<String, Float> initialDistribution;
 	
 	private static StringTemplateGroup initialFileTemplateGroup =
 		SPEMShellSingleRunnerAlgorithm.loadTemplates(
 				"/edu/iu/epic/spemshell/runner/single/preprocessing/initialFile.st");
 	
-	public InitialFileMaker(Integer totalPopulation) {
-		this.totalPopulation = totalPopulation.floatValue();
-		compartmentPopulationFormatterList = new ArrayList<CompartmentPopulationFormatter>();
+	public InitialFileMaker(Map<String, Float> initialDistribution) {
+		this.initialDistribution = initialDistribution;
 	}
 	
 	public File make() throws IOException {		
 		StringTemplate template = initialFileTemplateGroup.getInstanceOf("initialFile");
-
-		for (CompartmentPopulationFormatter compartmentPopulationFormatter
-				: compartmentPopulationFormatterList) {
-			template.setAttribute("compartmentPopulations", compartmentPopulationFormatter);
-			System.out.println("Initial Compartments: " + compartmentPopulationFormatter);
+		
+		// TODO Move this somewhere earlier and assert == 1.0
+		InFileMaker.total(initialDistribution.values());
+		
+		for (Entry<String, Float> compartmentFraction : initialDistribution.entrySet()) {
+			String compartmentName = compartmentFraction.getKey();
+			Float fraction = compartmentFraction.getValue();
+			
+			template.setAttribute("compartmentPopulations",
+					new CompartmentPopulationFormatter(compartmentName, fraction));
 		}
+		
 		
 		File file = FileUtilities.createTemporaryFileInDefaultTemporaryDirectory(
 					FILENAME, FILE_EXTENSION);
@@ -46,14 +49,6 @@ public class InitialFileMaker {
 		writer.close();
 		
 		return file;
-	}
-	
-	public void addInitialCompartmentPopulations(Map<String, Object> compartmentPopulations) {
-		for (Entry<String, Object> compartmentPopulation : compartmentPopulations.entrySet()) {
-			compartmentPopulationFormatterList.add(new CompartmentPopulationFormatter(
-					compartmentPopulation.getKey(),
-					((Integer) compartmentPopulation.getValue()).floatValue() / totalPopulation));
-		}
 	}
 	
 	private static class CompartmentPopulationFormatter {

@@ -31,6 +31,7 @@ public class SPEMShellSingleRunnerAlgorithmFactory
 	public static final String START_DATE_ID = "startDate";
 	public static final String NUMBER_OF_DAYS_ID = "days";
 	public static final int DEFAULT_NUMBER_OF_DAYS = 730;
+	
 	public static final BasicAttributeDefinition NUMBER_OF_DAYS_ATTRIBUTE_DEFINITION =
 		new BasicAttributeDefinition(
 							NUMBER_OF_DAYS_ID,
@@ -64,12 +65,11 @@ public class SPEMShellSingleRunnerAlgorithmFactory
 	 * parameter in the Algorithm (to the exclusion of other kinds).
 	 */
 	public static final String MODEL_PARAMETER_PREFIX = "MODEL_PARAMETER_";
-	public static final String COMPARTMENT_POPULATION_PREFIX =
-		"COMPARTMENT_POPULATION_";
-	public static final String INFECTION_PREFIX = "INFECTION_";
-	public static final String LATENT_PREFIX = "LATENT_";
-	public static final String RECOVERED_PREFIX = "RECOVERED_";
-	public static final int DEFAULT_COMPARTMENT_INITIAL_POPULATION = 0;
+	public static final String INFECTOR_SEED_POPULATION_PREFIX =
+		"INFECTOR_SEED_POPULATION_";
+	public static final int DEFAULT_INFECTOR_SEED_POPULATION = 0;
+	public static final String INITIAL_DISTRIBUTION_PREFIX = "INITIAL_DISTRIBUTION_";
+	private static final float DEFAULT_INITIAL_DISTRIBUTION_FRACTION = 0.0f;
 	
 	private static BundleContext bundleContext;
 	protected void activate(ComponentContext componentContext) {
@@ -131,54 +131,39 @@ public class SPEMShellSingleRunnerAlgorithmFactory
 		
 		
 		// Add a parameter for the initial population of each compartment.
-		Collection<Compartment> infectedCompartments = model.getInfectedCompartments();
-		for (Compartment infectedCompartment : infectedCompartments) {
-			String infectionCompartmentName = infectedCompartment.getName();
+		for (Compartment infector : model.getInfectedCompartments()) {
+			String compartmentName = infector.getName();
 			
-			String id =
-				COMPARTMENT_POPULATION_PREFIX + INFECTION_PREFIX + infectionCompartmentName;
+			String id =	INFECTOR_SEED_POPULATION_PREFIX + compartmentName;
 			
 			newParameters.addAttributeDefinition(
 					ObjectClassDefinition.REQUIRED,
 					new BasicAttributeDefinition(
 						id,
-						createCompartmentPopulationParameterName(infectionCompartmentName),
-						createCompartmentPopulationParameterDescription(infectionCompartmentName),
+						createInfectorSeedPopulationParameterName(compartmentName),
+						createInfectorSeedPopulationParameterDescription(compartmentName),
 						AttributeDefinition.INTEGER,
-						String.valueOf(DEFAULT_COMPARTMENT_INITIAL_POPULATION)));
+						String.valueOf(DEFAULT_INFECTOR_SEED_POPULATION)));
 		}
 		
-//			/* As of version v0.1, asking SPEMShell to take initial populations
-//			 * in a latent or recovered compartment appears to have no effect,
-//			 * so for now we won't give the illusion of choice.
-//			 */
-//			// Add a parameter for the initial population of each compartment.
-//			Set<String> latentCompartments = modelFileReader.getLatentCompartments();
-//			for (String compartment : latentCompartments) {
-//				newParameters.addAttributeDefinition(
-//						ObjectClassDefinition.REQUIRED,
-//						new BasicAttributeDefinition(
-//								COMPARTMENT_POPULATION_PREFIX + LATENT_PREFIX + compartment,
-//								createCompartmentPopulationParameterName(
-//										compartment),
-//								createCompartmentPopulationParameterDescription(
-//										compartment),
-//								AttributeDefinition.INTEGER));
-//			}
-//			
-//			// Add a parameter for the initial population of each compartment.
-//			Set<String> recoveredCompartments = modelFileReader.getRecoveredCompartments();
-//			for (String compartment : recoveredCompartments) {
-//				newParameters.addAttributeDefinition(
-//						ObjectClassDefinition.REQUIRED,
-//						new BasicAttributeDefinition(
-//								COMPARTMENT_POPULATION_PREFIX + RECOVERED_PREFIX + compartment,
-//								createCompartmentPopulationParameterName(
-//										compartment),
-//								createCompartmentPopulationParameterDescription(
-//										compartment),
-//								AttributeDefinition.INTEGER));
-//			}
+
+		// Add a parameter for the initial distribution into each compartment
+		for (Compartment compartment : model.getCompartments()) {
+			String compartmentName = compartment.getName();
+			
+			String id =	INITIAL_DISTRIBUTION_PREFIX + compartmentName;
+			
+			newParameters.addAttributeDefinition(
+					ObjectClassDefinition.REQUIRED,
+					new BasicAttributeDefinition(
+						id,
+						createInitialDistributionParameterName(compartmentName),
+						createInitialDistributionParameterDescription(compartmentName),
+						AttributeDefinition.FLOAT,
+						String.valueOf(DEFAULT_INITIAL_DISTRIBUTION_FRACTION)));
+		}
+		
+		
 		
 		/* Add an algorithm parameter for each model parameter
 		 * that is needed and not already specified.
@@ -209,13 +194,19 @@ public class SPEMShellSingleRunnerAlgorithmFactory
 		return newParameters;		
 	}
 	
-	private static String createCompartmentPopulationParameterName(String compartmentName) {
-		return "Initial population of " + compartmentName;
+	private String createInitialDistributionParameterName(String compartmentName) {
+		return "Initial population distribution to " + compartmentName;
 	}
+	private String createInitialDistributionParameterDescription(String compartmentName) {
+		return "Fraction of the initial population belonging to the " + compartmentName + " compartment.  The sum of the fractions for each compartment must be exactly 1.0";
+	}	
 	
-	private static String createCompartmentPopulationParameterDescription(
+	private static String createInfectorSeedPopulationParameterName(String compartmentName) {
+		return "Seed population for infector " + compartmentName;
+	}	
+	private static String createInfectorSeedPopulationParameterDescription(
 			String compartmentName) {
-		return "The initial population of the " + compartmentName + " compartment";
+		return "The initial population of the " + compartmentName + " infector compartment.";
 	}
 	
 	private static String createModelParametersAlgorithmParameterName(

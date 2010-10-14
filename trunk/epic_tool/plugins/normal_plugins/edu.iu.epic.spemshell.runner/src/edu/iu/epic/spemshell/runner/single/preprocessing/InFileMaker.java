@@ -7,10 +7,10 @@ import java.io.IOException;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.Collection;
 import java.util.Date;
 import java.util.Dictionary;
 import java.util.Map;
-import java.util.Map.Entry;
 
 import org.antlr.stringtemplate.StringTemplate;
 import org.antlr.stringtemplate.StringTemplateGroup;
@@ -32,24 +32,21 @@ public class InFileMaker {
 	private String modelFilePath;
 	private Dictionary<String, Object> parameters;
 	private String susceptibleCompartmentID;
-	private Map<String, Object> infectionCompartmentPopulations;
-	private Map<String, Object> latentCompartmentPopulations;
-	private Map<String, Object> recoveredCompartmentPopulations;
+	private File infectionsFile;
+	private Map<String, Float> initialDistribution;
 	
 	
 	public InFileMaker(
 			String modelFilePath,
 			Dictionary<String, Object> parameters,
 			String susceptibleCompartmentID,
-			Map<String, Object> infectionCompartmentPopulations,
-			Map<String, Object> latentCompartmentPopulations,
-			Map<String, Object> recoveredCompartmentPopulations) {
+			File infectionsFile,
+			Map<String, Float> initialDistribution) {
 		this.modelFilePath = modelFilePath;
 		this.parameters = parameters;
 		this.susceptibleCompartmentID = susceptibleCompartmentID;
-		this.infectionCompartmentPopulations = infectionCompartmentPopulations;
-		this.latentCompartmentPopulations = latentCompartmentPopulations;
-		this.recoveredCompartmentPopulations = recoveredCompartmentPopulations;
+		this.infectionsFile = infectionsFile;
+		this.initialDistribution = initialDistribution;
 	}
 
 
@@ -80,6 +77,16 @@ public class InFileMaker {
 		return file;
 	}
 	
+	public static <T extends Number> float total(Collection<T> numbers) {
+		float total = 0;
+		
+		for (T number : numbers) {			
+			total += number.floatValue();
+		}
+		
+		return total;
+	}
+	
 	private StringTemplate prepareTemplate() throws ParseException, IOException {
 		StringTemplate template =
 			inFileTemplateGroup.getInstanceOf(IN_FILE_TEMPLATE_NAME);
@@ -88,8 +95,7 @@ public class InFileMaker {
 				"numberOfSecondaryEvents",
 				DEFAULT_NUMBER_OF_SECONDARY_EVENTS);
 		template.setAttribute("population",
-				this.parameters.get(
-						SPEMShellSingleRunnerAlgorithmFactory.POPULATION_ID));
+				this.parameters.get(SPEMShellSingleRunnerAlgorithmFactory.POPULATION_ID));
 		template.setAttribute(
 				"susceptibleCompartmentID",
 				this.susceptibleCompartmentID);
@@ -97,7 +103,7 @@ public class InFileMaker {
 				"numberOfDays",
 				this.parameters.get(
 						SPEMShellSingleRunnerAlgorithmFactory.NUMBER_OF_DAYS_ID));
-		
+
 		String rawDateString =
 			(String) this.parameters.get(
 					SPEMShellSingleRunnerAlgorithmFactory.START_DATE_ID);
@@ -108,87 +114,27 @@ public class InFileMaker {
 		template.setAttribute("date", formattedDateString);
 		template.setAttribute("seed", this.parameters.get("seed"));
 		
-		/*for (Entry<String, Object> compartmentPopulation
-				: this.infectionCompartmentPopulations.entrySet()) {
-			template.setAttribute(
-					"compartmentPopulations",
-					new CompartmentPopulationFormatter(
-							"infection",
-							compartmentPopulation.getKey(),
-							compartmentPopulation.getValue()));
-			compartmentsString += compartmentPopulation.getKey() + compartmentsSeparator;
-		}
-		
-		for (Entry<String, Object> compartmentPopulation
-				: this.latentCompartmentPopulations.entrySet()) {
-			template.setAttribute(
-					"compartmentPopulations",
-					new CompartmentPopulationFormatter(
-							"latent",
-							compartmentPopulation.getKey(),
-							compartmentPopulation.getValue()));
-			compartmentsString += compartmentPopulation.getKey() + compartmentsSeparator;
-		}
-		
-		for (Entry<String, Object> compartmentPopulation
-				: this.recoveredCompartmentPopulations.entrySet()) {
-			template.setAttribute(
-					"compartmentPopulations",
-					new CompartmentPopulationFormatter(
-							"recovered",
-							compartmentPopulation.getKey(),
-							compartmentPopulation.getValue()));
-			compartmentsString += compartmentPopulation.getKey() + compartmentsSeparator;
-		}*/
-		
 		template.setAttribute("outVal", createOutVal());
-		template.setAttribute("initialFile", createInitialFile().getAbsolutePath());
+		template.setAttribute("initialFile", createInitialFile().getPath());
+		template.setAttribute("infectionsFile", infectionsFile.getPath());
+		
 		return template;
 	}
 	
-	private  String createOutVal() {
+	private String createOutVal() {
 		String compartmentsSeparator = ";";
 		String compartmentsString = "";
 		
-		for (String compartmentName : this.infectionCompartmentPopulations.keySet()) {
-			compartmentsString += compartmentName + compartmentsSeparator;
-		}
-		
-		for (String compartmentName : this.latentCompartmentPopulations.keySet()) {
-			compartmentsString += compartmentName + compartmentsSeparator;
-		}
-		
-		for (String compartmentName : this.recoveredCompartmentPopulations.keySet()) {
+		// TODO LinkedHashMap, maybe?
+		for (String compartmentName : this.initialDistribution.keySet()) {
 			compartmentsString += compartmentName + compartmentsSeparator;
 		}
 		
 		return compartmentsString;
 	}
 	
-	private  File createInitialFile() throws IOException {
-		InitialFileMaker initialFileMaker = new InitialFileMaker((Integer) parameters.get(
-											SPEMShellSingleRunnerAlgorithmFactory.POPULATION_ID));
-		initialFileMaker.addInitialCompartmentPopulations(infectionCompartmentPopulations);
-		initialFileMaker.addInitialCompartmentPopulations(latentCompartmentPopulations);
-		initialFileMaker.addInitialCompartmentPopulations(recoveredCompartmentPopulations);
+	private File createInitialFile() throws IOException {
+		InitialFileMaker initialFileMaker =	new InitialFileMaker(initialDistribution);
 		return initialFileMaker.make(); 
-	}
-	
-	private static class CompartmentPopulationFormatter {
-		private String type;
-		private String name;
-		private Object initialPopulation;
-		
-		public CompartmentPopulationFormatter(
-				String type, String name, Object initialPopulation) {
-			this.type = type;
-			this.name = name;
-			this.initialPopulation = initialPopulation;
-		}
-		
-		@Override
-		public String toString() {
-			return this.type + " " + this.name + " " + this.initialPopulation;
-		}
 	}
 }

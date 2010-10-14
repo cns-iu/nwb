@@ -1,6 +1,6 @@
 group inFile;
 
-inFile(modelFileName,numberOfSecondaryEvents,population,susceptibleCompartmentID,numberOfDays,date,seed, outVal, initialFile) ::= <<
+inFile(modelFileName,numberOfSecondaryEvents,population,susceptibleCompartmentID,numberOfDays,date,seed, outVal, initialFile, infectionsFile) ::= <<
 ###############################################################################
 # Single Population Model Input File                                          #
 ###############################################################################
@@ -58,6 +58,9 @@ output_frames none
 
 # initial compartment populations
 initial <initialFile>
+
+# infector seed populations
+infections <infectionsFile>
 
 ###############################################################################
 # End Input File                                                              #

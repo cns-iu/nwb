@@ -55,29 +55,31 @@ public class DatToCsv {
 		} else if (line.startsWith(DAT_FILE_COMMENT_MARKER)) {
 			return "";
 		} else {
-			return removeLastEntryFromCSVLine(commaSeparate(line)) + "\n";
+			// TODO ?
+//			return removeLastEntryFromCSVLine(commaSeparate(line)) + "\n";
+			return commaSeparate(line) + "\n";
 		}
 	}
 
-	private static String removeLastEntryFromCSVLine(String commaSeparated) {
-		String[] tokens = commaSeparated.split(",");
-		
-		StringBuilder builder = new StringBuilder();
-		
-		for (int ii = 0; ii < tokens.length; ii++) {			
-			boolean isFinalToken = (ii == tokens.length - 1);
-			if (!isFinalToken) {
-				builder.append(tokens[ii]);
-				
-				boolean isSecondToLastEntry = (ii == tokens.length - 2);
-				if (!isSecondToLastEntry) {
-					builder.append(",");
-				}
-			}
-		}
-		
-		return builder.toString();
-	}
+//	private static String removeLastEntryFromCSVLine(String commaSeparated) {
+//		String[] tokens = commaSeparated.split(",");
+//		
+//		StringBuilder builder = new StringBuilder();
+//		
+//		for (int ii = 0; ii < tokens.length; ii++) {			
+//			boolean isFinalToken = (ii == tokens.length - 1);
+//			if (!isFinalToken) {
+//				builder.append(tokens[ii]);
+//				
+//				boolean isSecondToLastEntry = (ii == tokens.length - 2);
+//				if (!isSecondToLastEntry) {
+//					builder.append(",");
+//				}
+//			}
+//		}
+//		
+//		return builder.toString();
+//	}
 
 	private String commaSeparate(String spaceSeparated) {
 		String[] tokens = spaceSeparated.split(" +");

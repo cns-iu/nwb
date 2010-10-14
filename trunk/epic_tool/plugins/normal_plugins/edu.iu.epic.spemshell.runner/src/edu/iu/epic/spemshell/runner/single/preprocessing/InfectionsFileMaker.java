@@ -21,12 +21,12 @@ public class InfectionsFileMaker {
 				"/edu/iu/epic/spemshell/runner/single/preprocessing/infectionsFile.st");
 	
 	
-	public File make(Map<String, Object> infectionCompartmentPopulations)
+	public File make(Map<String, Integer> infectionCompartmentPopulations)
 			throws IOException {		
 		StringTemplate template =
 			infectionsFileTemplateGroup.getInstanceOf("infectionsFile");
 
-		for (Entry<String, Object> compartmentPopulation
+		for (Entry<String, Integer> compartmentPopulation
 				: infectionCompartmentPopulations.entrySet()) {
 			template.setAttribute(
 					"compartmentPopulations",
@@ -51,7 +51,7 @@ public class InfectionsFileMaker {
 		private Object population;
 		
 		public CompartmentPopulationFormatter(
-				String compartmentName, Object population) {
+				String compartmentName, Integer population) {
 			this.compartmentName = compartmentName;
 			this.population = population;
 		}

@@ -4,12 +4,13 @@ Bundle-Name: edu.iu.epic.spemshell.runner
 Bundle-SymbolicName: edu.iu.epic.spemshell.runner
 Bundle-Version: 0.0.1
 Bundle-ClassPath: .
-Import-Package: edu.iu.epic.modeling.compartment.model,
+Import-Package: com.google.common.base,
+ com.google.common.collect,
+ edu.iu.epic.modeling.compartment.model,
  edu.iu.epic.modeling.compartment.model.exception,
  org.antlr.runtime,
  org.antlr.stringtemplate,
  org.antlr.stringtemplate.language,
- org.apache.commons.collections,
  org.cishell.framework;version="1.0.0",
  org.cishell.framework.algorithm;version="1.0.0",
  org.cishell.framework.data;version="1.0.0",
