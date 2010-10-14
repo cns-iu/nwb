@@ -11,10 +11,10 @@ import glob
 from ShellFramework import run, stats, input
 
 # Config
-data_path = '/Users/bgoncalves/progs/EpiC/data'
-gleam_path = '/Users/bgoncalves/progs/EpiC/'
+data_path = '/Users/kongch/Desktop/EpiC-SPEM/SPEM/data/'
+gleam_path = '/Users/kongch/Desktop/EpiC-SPEM/SPEM/'
 
-SPEM = os.path.join(gleam_path, 'SPEM.x')
+SPEM = os.path.join(gleam_path, 'SPEM')
 
 def main():
     sim_dir = os.path.join(os.getcwd(),argv[1])
@@ -71,8 +71,8 @@ def main():
     if not os.path.exists(os.path.realpath(sim_dir)+"/data"):
         os.symlink(os.path.realpath("data"),os.path.realpath(sim_dir)+"/data")
 
-    input.infections(input_file, sim_dir, False)
-    input.initial(input_file, sim_dir)
+    infection_file = input.infections(input_file, sim_dir, False)
+    initial_file = input.initial(input_file, sim_dir)
     runTime, startDate = input.parameters(input_file)
     
     os.chdir(sim_dir)
@@ -92,7 +92,7 @@ def main():
     aggregate.append("basins")
 
     if nruns == 1:
-        run.runSingle(gleam_path, 0, outVal, output_dir, GLEaM = SPEM)
+        run.runSingle(gleam_path, input_file, model_file, initial_file, infection_file, 0, outVal, output_dir, GLEaM = SPEM)
 
         fp = open(os.path.join(output_dir, "outVal.dat"), "w")
 

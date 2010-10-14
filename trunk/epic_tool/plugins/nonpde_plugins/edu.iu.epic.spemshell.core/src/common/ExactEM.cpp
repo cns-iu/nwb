@@ -77,7 +77,7 @@ int main (int argc, char *argv[])
 		y[susIndex] -= seeds;
 	}
 
-    FILE *fpout = input.openFile(output + "ExactEM." + name + ".out.dat.gz");
+    FILE *fpout = input.openFile(output + "ExactEM." + name + ".out");
 
     fprintf(fpout,"# time");
     

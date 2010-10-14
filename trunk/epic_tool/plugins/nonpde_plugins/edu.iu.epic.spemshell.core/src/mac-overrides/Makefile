@@ -1,21 +1,42 @@
 CPP = g++
-INCLUDE = -Iinclude
-DEBUG = -g -Wall -Wextra --pedantic --ansi
-GSL =
+INCLUDE = -s -O2 -Iinclude/
+DEBUG = -g -Wall -Wextra --pedantic --ansi 
+GSL = 
 GSL_LIB = ./libgsl.a ./libgslcblas.a
 RM = rm
 MKDIR = mkdir
 CP = cp
-EXECUTABLE_NAME = SPEM
-DEBUG_EXECUTABLE_NAME = SPEM_dbg
+SPEM_EXECUTABLE = SPEM
+SPEM_DEBUG_EXECUTABLE = SPEM_dbg
+EXACTEM_EXECUTABLE = ExactEM
+EXACTEM_DEBUG_EXECUTABLE = ExactEM_dbg
 
 FILE = $*
 
-all: src/Model.o src/Calendar.o src/Parse.o src/input.o src/Calculator.o
-	$(CPP) $(GSL) $(INCLUDE) SPEM.cpp $^ -o $(EXECUTABLE_NAME) $(GSL_LIB)
+all: SPEM ExactEM
 
-dbg: src/Model_dbg.o src/Calendar_dbg.o src/Parse_dbg.o src/input_dbg.o src/Calculator_dbg.o
-	$(CPP) $(DEBUG) $(INCLUDE) $(GSL) SPEM.cpp $^ -o $(DEBUG_EXECUTABLE_NAME) $(GSL_LIB)
+ExactEM: src/ExactModel.o src/Parse.o src/input.o src/Calculator.o
+	$(CPP) $(INCLUDE) $(GSL) $(GSL_LIB) ExactEM.cpp $^ -o $(EXACTEM_EXECUTABLE)
+	
+
+SPEM: src/Output.o src/Model.o src/Calendar.o src/Parse.o src/input.o src/Calculator.o 
+	$(CPP) $(INCLUDE) $(GSL) $(GSL_LIB) SPEM.cpp $^ -o $(SPEM_EXECUTABLE)
+
+DynaNetSPEM: src/Model.o src/Calendar.o src/Parse.o src/input.o src/Calculator.o src/DynaNet.o
+	$(CPP) $(INCLUDE) $(GSL) $(GSL_LIB) NetSPEM.cpp $^ -o NetSPEM.x
+
+dbg: SPEM_dbg ExactEM_dbg
+
+archive:
+	git archive --format=tar --prefix=EpiC/ EpiC > EpiC-1.0.tar
+	tar -rvf EpiC-1.0.tar ../EpiC/ShellFramework/*.py
+	gzip EpiC-1.0.tar
+
+SPEM_dbg: src/Output_dbg.o src/Model_dbg.o src/Calendar_dbg.o src/Parse_dbg.o src/input_dbg.o src/Calculator_dbg.o 
+	$(CPP) $(DEBUG) $(INCLUDE) $(GSL) $(GSL_LIB) SPEM.cpp $^ -o $(SPEM_DEBUG_EXECUTABLE)
+
+NetSPEM_dbg: src/Model_dbg.o src/Calendar_dbg.o src/Parse_dbg.o src/input_dbg.o src/Calculator_dbg.o src/DynaNet_dbg.o
+	$(CPP) $(DEBUG) $(INCLUDE) $(GSL) $(GSL_LIB) NetSPEM.cpp $^ -o NetSPEM_dbg.x
 
 %_dbg.o: %.cpp
 	$(CPP) -c $(DEBUG) $(INCLUDE) $(GSL) $(FILE).cpp -o $(FILE)_dbg.o
@@ -24,20 +45,22 @@ dbg: src/Model_dbg.o src/Calendar_dbg.o src/Parse_dbg.o src/input_dbg.o src/Calc
 	$(CPP) -c $(INCLUDE) $(GSL) $(FILE).cpp -o $(FILE).o
 
 test_dir:
-	$(MKDIR) runs\multi\1247499707714.A0C\output
-	$(MKDIR) runs\single\1247498152606.1EE\output
+	$(MKDIR) -p runs/multi/1247499707714.A0C/output
+	$(MKDIR) -p runs/single/1247498152606.1EE/output
 
-	$(CP) input\simul.* runs\multi\1247499707714.A0C\
-	$(CP) input\req_multi.cfg runs\multi\1247499707714.A0C\req.cfg
+	$(CP) input/simul.* runs/multi/1247499707714.A0C/
+	$(CP) input/req_multi.cfg runs/multi/1247499707714.A0C/req.cfg
 
-	$(CP) input\simul.* runs\single\1247498152606.1EE\
-	$(CP) input\req_single.cfg runs\single\1247498152606.1EE\req.cfg
+	$(CP) input/simul.* runs/single/1247498152606.1EE/
+	$(CP) input/req_single.cfg runs/single/1247498152606.1EE/req.cfg
 
 clean:
 	$(RM) -f src/*.o
-	$(RM) -f $(EXECUTABLE_NAME)
-	$(RM) -f $(DEBUG_EXECUTABLE_NAME)
-	$(RM) -f runs
+	$(RM) -f *SPEM.x 
+	$(RM) -f *ExactEM.x 
+	$(RM) -f *ExactEM_dbg.x 
+	$(RM) -rf *SPEM_dbg.x*
+	$(RM) -rf runs/
 
 clean_run:
-	$(RM) -f runs
+	$(RM) -rf runs/

@@ -235,9 +235,9 @@ int main(int argc, char *argv[])
     }
   
   do{
-    FILE *fpout = input.openFile(output + "SPEM." + name + ".out.dat.gz");
-    FILE *fperr = input.openFile(output + "SPEM." + name + ".err.dat.gz");
-    FILE *fpsec = input.openFile(output + "SPEM." + name + ".sec.dat.gz");
+    FILE *fpout = input.openFile(output + "SPEM." + name + ".out");
+    FILE *fperr = input.openFile(output + "SPEM." + name + ".err");
+    FILE *fpsec = input.openFile(output + "SPEM." + name + ".sec");
 
     initPopulation(population, initialPop, pop, r);
 
