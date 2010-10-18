@@ -153,12 +153,20 @@
   	
   	<!--- EpiC non_pde plugins -->
   	<antcall target="svn.co">
-  	  		  	  <param name="target" value="nonpde_plugins"/>
-  	  		  	  <param name="element.id" value="edu.iu.epic.spemshell.core"/>
-  	  		  	  <param name="project.name" value="edu.iu.epic.spemshell.core"/>
-  	  		  	  <param name="url" value="http://nwb.slis.indiana.edu/svn/nwb/trunk/epic_tool/plugins/nonpde_plugins"/>
-  	    </antcall>
-  	  	<ant dir="${buildDirectory}/nonpde_plugins/edu.iu.epic.spemshell.core"/>
+		<param name="target" value="nonpde_plugins"/>
+		<param name="element.id" value="edu.iu.epic.exactshell.core"/>
+		<param name="project.name" value="edu.iu.epic.exactshell.core"/>
+		<param name="url" value="http://nwb.slis.indiana.edu/svn/nwb/trunk/epic_tool/plugins/nonpde_plugins"/>
+    </antcall>
+  	<ant dir="${buildDirectory}/nonpde_plugins/edu.iu.epic.exactshell.core"/>
+  	
+  	<antcall target="svn.co">
+		<param name="target" value="nonpde_plugins"/>
+		<param name="element.id" value="edu.iu.epic.spemshell.core"/>
+		<param name="project.name" value="edu.iu.epic.spemshell.core"/>
+		<param name="url" value="http://nwb.slis.indiana.edu/svn/nwb/trunk/epic_tool/plugins/nonpde_plugins"/>
+    </antcall>
+  	<ant dir="${buildDirectory}/nonpde_plugins/edu.iu.epic.spemshell.core"/>
   	
   	
   	 <antcall target="svn.co">
@@ -758,12 +766,14 @@
       <param name="project.name" value="/plugins/converter/edu.iu.nwb.converter.nwb"/>
       <param name="url" value="http://nwb.slis.indiana.edu/svn/nwb/trunk"/>
     </antcall>
+  	<!--
     <antcall target="svn.co">
       <param name="target" value="plugins"/>
       <param name="element.id" value="edu.iu.nwb.converter.nwbgraphml"/>
       <param name="project.name" value="/plugins/converter/edu.iu.nwb.converter.nwbgraphml"/>
       <param name="url" value="http://nwb.slis.indiana.edu/svn/nwb/trunk"/>
     </antcall>
+    -->
     <antcall target="svn.co">
       <param name="target" value="plugins"/>
       <param name="element.id" value="edu.iu.nwb.converter.nwbpajeknet"/>
