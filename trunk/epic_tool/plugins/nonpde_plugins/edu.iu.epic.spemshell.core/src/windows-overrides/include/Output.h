@@ -12,8 +12,9 @@
 
 #include <vector>
 #include <stdint.h>
-#include <cstdio>
+#include<cstdio>
 #include <string>
+
 class Output
 {
   std::vector<std::vector<uint64_t> > basin;
