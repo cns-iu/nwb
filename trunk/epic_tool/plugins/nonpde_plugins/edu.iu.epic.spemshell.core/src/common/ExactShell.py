@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 
-from sys import argv, stderr
+from sys import argv, stderr, stdout
 import optparse
 import os
 from math import floor, ceil, sin
@@ -11,11 +11,12 @@ import time
 
 from ShellFramework import run, stats, input
 
-# Config
-data_path = '/Users/kongch/Desktop/EpiC-SPEM/SPEM/data/'
-gleam_path = '/Users/kongch/Desktop/EpiC-SPEM/SPEM/'
+quoteString = input.quoteString
 
-SPEM = os.path.join(gleam_path, 'ExactEM')
+# Config
+gleam_path = 'C:/input/'
+
+SPEM = os.path.join(gleam_path, 'ExactEM.exe')
 
 def main():
     sim_dir = os.path.join(os.getcwd(),argv[1])
@@ -46,8 +47,8 @@ def main():
     
     outVal = ""
     
-    infection_file = input.infections(input_file, sim_dir, False)
-    initial_file = input.initial(input_file, sim_dir)
+    input.infections(input_file, sim_dir, False)
+    input.initial(input_file, sim_dir)
     #runTime, startDate = input.parameters(input_file)
     
     os.chdir(sim_dir)
@@ -56,7 +57,9 @@ def main():
     
     aggregate.append("basins")
 
-    run.runSingle(gleam_path, input_file, model_file, initial_file, infection_file, 0, outVal, output_dir, GLEaM = SPEM)
+    args = [SPEM, "simul.in", "-outVal", quoteString(outVal), "-infections", "infections.txt", "-initial", "initial.txt", "-output", quoteString(output_dir)]
+	
+    run.runSingle(args, 0, outVal, output_dir)
     time.sleep(2)
     stats.extract_compartments(os.path.join(output_dir,"ExactEM.0.out"), output_dir)
 

@@ -1,5 +1,5 @@
 ###############################################################################
-# Single Population Model Input File                                          #
+# Network Model Input File                                                    #
 ###############################################################################
 
 ###############################################################################
@@ -13,8 +13,7 @@ model simul.mdl
 # Defaults to 0
 events 0
 
-# City population
-population 1000000
+network BA.dat
 
 # City location
 hemisphere N

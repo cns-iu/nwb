@@ -17,6 +17,7 @@
 #include <cmath>
 #include <sstream>
 #include <set>
+#include <cstdio>
 
 class Calculator
 {

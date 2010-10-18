@@ -12,7 +12,7 @@
 
 enum TYPE{
   INTERACTION = 0,
-  SPONTANEOUS = 1
+  SPONTANEOUS = 1,
 };
 
 typedef struct
@@ -27,6 +27,15 @@ typedef struct
   int index;
 } Transition;
 
+typedef struct
+{
+        unsigned endNode;
+        double weight;
+        int backLink;
+        unsigned type;
+} NODE;
+
 #define BUFFER_SIZE 2048
+#define TRANS_SIZE 10
 
 #endif /* _DEFS_H_ */

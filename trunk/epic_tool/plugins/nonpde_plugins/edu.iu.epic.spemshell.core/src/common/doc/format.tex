@@ -91,15 +91,15 @@ For each simulation successfully ended there will be a directory called:\\
 
 \noindent
 where \texttt{<ROOT\_DIRECTORY>} is the simulation directory that was passed to SPEMShell.py.
-Inside the \texttt{output\_data} directory there will be, for each of the  $N$ runs, three files called, respectively, \texttt{SPEM.<r>.out.dat.gz},  \texttt{SPEM.<r>.err.dat.gz}  and \texttt{SPEM.<r>.sec.dat.gz} where \texttt{<r>} is a progressive number identifying the run, ranging from $0$ to $N-1$ when $N$ is the number of runs (the value set in the Simulation Requirements).
+Inside the \texttt{output\_data} directory there will be, for each of the  $N$ runs, three files called, respectively, \texttt{SPEM.<r>.out},  \texttt{SPEM.<r>.err}  and \texttt{SPEM.<r>.sec} where \texttt{<r>} is a progressive number identifying the run, ranging from $0$ to $N-1$ when $N$ is the number of runs (the value set in the Simulation Requirements).
 
-\paragraph*{SPEM.\texttt{<r>}.out.dat.gz}
+\paragraph*{SPEM.\texttt{<r>}.out}
 
 These files contain the complete description of the instantaneous populations in each compartment at every time step.
 
 The first column corresponds to the time step, followed one column for each compartment defined in the model. The sequence of compartments is documented in the first line of the file that starts with a comment char ``\#'' followed by the word ``time''. No blank lines are allowed and every line (including the first one) has the same number of columns, where this number varies from model to model. All entries are listed, even ones composed of all $0$'s. 
 
-\paragraph*{SPEM.\texttt{<r>}.err.dat.gz}
+\paragraph*{SPEM.\texttt{<r>}.err}
 
 These files contain complete information about all the transitions that occurred during the run. Only non-zero values are listed.
 
@@ -114,9 +114,9 @@ Each line contains four columns, a transition ID, the time step, the number $0$,
 
 where $0.36$ and $0.7$ are the respective rates. The ID number indicates the order by which it was parsed from the model input file and are used simply as a short hand to refer to a given transition.The rate values listed here are the final numerical values used after all the appropriate substitutions and calculations have been done. 
 
-\paragraph*{SPEM.\texttt{<r>}.sec.dat.gz}
+\paragraph*{SPEM.\texttt{<r>}.sec}
 
-These files contain a subset of the information contained in the previous ones. Again, only non-zero values are listed.  Here we list the total number of secondary cases occurring in each time step. This corresponds to a simple aggregation of the corresponding transitions listed in the respective \texttt{SPEM.<r>.err.dat.gz}. These files have a two column format, time step and number of secondary cases.
+These files contain a subset of the information contained in the previous ones. Again, only non-zero values are listed.  Here we list the total number of secondary cases occurring in each time step. This corresponds to a simple aggregation of the corresponding transitions listed in the respective \texttt{SPEM.<r>.err}. These files have a two column format, time step and number of secondary cases.
 
 \paragraph*{comp.\texttt{<c>}.dat}
 
@@ -153,7 +153,15 @@ In this case, the model, defined as above, is converted into the respective part
 
 \section{Epidemic Models on a Network (NetEM)}
 
-For the near future. Currently working out the best format for network input and outputs.
+For the network case, we consider each individual to be a node on a network interacting with its nearest neighbors. In this formulation, since we are considering single individuals, all values defined in the model are considered to be probabilities instead of rates as above. The exact value of $R_{0}$ depends on the properties of the network.
+
+\subsection{\texttt{NetEMShell.py}}
+
+\texttt{NetEMShell.py} works similarly to the scripts defined above. OUTVAL is correctly defined, and, in addition to producing the same files as \texttt{SPEMShell.py} one extra file can be produced.
+
+\paragraph*{\texttt{NetEM.*.state}}
+
+If the ''frames'' parameter is set to a directory name in the req.cfg file, a file \texttt{NetEM.*.state} will be generated for each run containing the status of every node on the network at each time step. This file can be used to generate an animation showing the disease progression on the network. While this option is also valid in the case of multiple runs, it is probably only useful for single runs as it is not clear how to aggregate it over various instances.
 
 \end{document}
 

@@ -81,7 +81,12 @@ def extract_compartments(filename, output_data):
     Found = False
     files = {}
     
-    for line in gzOpen(filename):
+    myOpen = gzOpen
+    
+    if filename[:-3] != ".gz":
+    	myOpen = open
+    
+    for line in myOpen(filename):
         fields = line.strip().split()
         
         if len(fields) == 0:
@@ -111,7 +116,12 @@ def compartments(filename, output_data):
     for file in open(filename):
         print >> stderr, "Reading %s..." % file.strip()
 
-        for line in gzOpen(os.path.join(output_data, file.strip())):
+        myOpen = gzOpen
+    
+        if filename[:-3] != ".gz":
+            myOpen = open
+
+        for line in myOpen(os.path.join(output_data, file.strip())):
             fields = line.strip().split()
 
             if len(fields) == 0:

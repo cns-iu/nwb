@@ -11,10 +11,11 @@ import glob
 from ShellFramework import run, stats, input
 
 quoteString = input.quoteString
+
 # Config
 gleam_path = 'C:/input/'
 
-SPEM = os.path.join(gleam_path, 'SPEM.exe')
+NetEM = os.path.join(gleam_path, 'NetEM.exe')
 
 def main():
     sim_dir = os.path.join(os.getcwd(),argv[1])
@@ -32,8 +33,8 @@ def main():
     frames_dir = os.path.join(sim_dir, "frames")
     output_dir = os.path.join(sim_dir,"output")
     
-    if not os.path.exists(SPEM):
-        print >> stderr, "SPEM not found!"
+    if not os.path.exists(NetEM):
+        print >> stderr, "NetEM.x not found!"
         exit(1)
     
     if not os.path.exists(input_file) or not os.path.exists(model_file) or not os.path.exists(cfg_file):
@@ -87,9 +88,9 @@ def main():
     aggregate = []
     
     aggregate.append("basins")
-    
-    args = [SPEM, "simul.in", "-outVal", quoteString(outVal), "-infections", "infections.txt", "-initial", "initial.txt", "-output", quoteString(output_dir)]
-    
+
+    args = [NetEM, "simul.in", "-outVal", quoteString(outVal), "-infections", "infections.txt", "-initial", "initial.txt", "-output", quoteString(output_dir)]
+
     if nruns == 1:
         run.runSingle(args, 0, outVal, output_dir)
 
@@ -101,7 +102,7 @@ def main():
                 fields = line.strip()
                 
                 print >> fp, time, fields[1:]
-        stats.extract_compartments(os.path.join(output_dir,"SPEM.0.out"), output_dir)
+        stats.extract_compartments(os.path.join(output_dir,"NetEM.0.out"), output_dir)
         
     else:
         run.runSequential(args, nruns, outVal, output_dir)

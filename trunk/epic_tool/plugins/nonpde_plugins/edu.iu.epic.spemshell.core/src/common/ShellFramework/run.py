@@ -4,48 +4,36 @@ import glob
 
 MAX_RUNS = '100'# (must be a string)
 
-def runSequential(gleam_dir, nRuns, outVal, output_dir, frames = "none", GLEaM = "GLEaM.x"):
+def runSequential(args, nRuns, outVal, output_dir, frames = "none"):
 
     for run_num in xrange(nRuns):
-        runSingle(gleam_dir, run_num, outVal, output_dir, frames, GLEaM)
+        runSingle(args, run_num, outVal, output_dir, frames)
 
     listFile = os.path.join(output_dir, "list.out.dat")
     fp = open(listFile, "w")
     
-    list = glob.glob(os.path.join(output_dir,"*.out.dat.gz"))
+    list = glob.glob(os.path.join(output_dir,"*.out"))
     
     for file in list:
         print >> fp, file
 
-def runSingle(gleam_dir, run_num, outVal, output_dir, frames = "none", GLEaM = "GLEaM.x"):
-    
-    args = [GLEaM, "simul.in", "-outVal", outVal, "-infections", "infections.txt",
-            "-nonTravel", "NT.txt","-name", str(run_num), "-maxRuns", MAX_RUNS,
-            "-initial", "initial.txt", "-output", output_dir, "-rho", "rho.txt", "-output_frames"]
-    
+def runSingle(argv, run_num, outVal, output_dir, frames = "none"):
+    args = argv
+    args.append("-maxRuns")
+    args.append(MAX_RUNS)
+    args.append("-name")
+    args.append(str(run_num))
+    args.append("-output_frames")
     args.append(frames)
-    
-    #print " ".join(args)
-    
+
+    executable = args[0]
+	
     fp = open("run.args","w")
     print >> fp, " ".join(args);
     fp.close()
 
-    pid = os.fork()
-    
-    if pid == 0:
-        # Child code
-        os.execv(GLEaM, args)
-    else:
-        # Parent code
-        
-        pid_file = "run."+str(pid)+".pid"
-        open(pid_file,"w").close()
-        
-        ppid = 0
-        
-        while ppid != pid:
-            ppid, status = os.wait()
-        
-        print >> sys.stderr, "Child", pid, "exited with status", status
-        os.remove(pid_file)
+    try:
+        return os.spawnv(os.P_WAIT, executable, args)
+    except os.error:
+        print >> sys.stderr, "Failed to spawnv child"
+        pass

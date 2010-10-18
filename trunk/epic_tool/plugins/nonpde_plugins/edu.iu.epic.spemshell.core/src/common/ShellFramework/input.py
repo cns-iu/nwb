@@ -145,3 +145,7 @@ def seasonality(alpha_max, alpha_min):
         SS = ((alpha_max-alpha_min)*sin(2 * Pi * (t-TmaxS)/365 + Pi / 2)+(alpha_max+alpha_min))/2.0
 
         print >> fp, t, SS, 1.0, SN
+		
+def quoteString(string):
+	return '"' + string + '"'
+	

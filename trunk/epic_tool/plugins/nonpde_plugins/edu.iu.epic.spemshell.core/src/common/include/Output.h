@@ -13,6 +13,7 @@
 #include <vector>
 #include <stdint.h>
 #include<cstdio>
+#include <string>
 
 class Output
 {

@@ -226,6 +226,11 @@ class Rand
   {
     return gsl_ran_gamma(r,a,b);
   }
+  
+  unsigned operator()(unsigned N)
+  {
+      return get()%N;
+  }
 
   ~Rand()
     {

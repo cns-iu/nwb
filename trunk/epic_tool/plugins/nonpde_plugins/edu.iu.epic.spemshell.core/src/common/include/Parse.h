@@ -77,6 +77,12 @@ class Parse : public Parser
     return states[state];
   }
 
+		bool isLabel(std::string state)
+		{
+			return !(states.find(state) == states.end());
+		}
+
+
     unsigned susceptible();
 
     unsigned recovered();
