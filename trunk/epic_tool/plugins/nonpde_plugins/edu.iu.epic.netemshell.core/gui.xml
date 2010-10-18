@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<metatype:MetaData xmlns:metatype="http://www.osgi.org/xmlns/metatype/v1.0.0">
+	<OCD name="edu.iu.epic.netemshell.core" id="edu.iu.epic.netemshell.core.gui"
+		 description="TODO">
+		 
+	</OCD>
+	<Designate pid="edu.iu.epic.netemshell.core">
+		<Object ocdref="edu.iu.epic.netemshell.core.gui" />
+	</Designate>
+</metatype:MetaData>
