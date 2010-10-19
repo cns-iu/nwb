@@ -159,7 +159,8 @@ public class LineGraphAlgorithmFactory implements AlgorithmFactory, ParameterMut
     		AttributeDefinition attributeDefinition =
     			new BasicAttributeDefinition(id, name, description, type, defaultValue);
 
-			newParameters.addAttributeDefinition(ObjectClassDefinition.REQUIRED, attributeDefinition);
+			newParameters.addAttributeDefinition(
+				ObjectClassDefinition.REQUIRED, attributeDefinition);
     	}
 
     	for (AttributeDefinition oldAttributeDefinition : oldAttributeDefinitions) {
@@ -220,7 +221,6 @@ public class LineGraphAlgorithmFactory implements AlgorithmFactory, ParameterMut
 
     		newParameters.addAttributeDefinition(
     			ObjectClassDefinition.REQUIRED, newAttributeDefinition);
-    
     	}
 
     	return newParameters;
