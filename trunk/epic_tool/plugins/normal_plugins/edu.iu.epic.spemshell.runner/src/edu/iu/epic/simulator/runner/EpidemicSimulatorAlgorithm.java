@@ -1,11 +1,10 @@
-package edu.iu.epic.spemshell.runner.single;
+package edu.iu.epic.simulator.runner;
 
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.text.ParseException;
 import java.util.Dictionary;
-import java.util.HashMap;
 import java.util.Hashtable;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -21,27 +20,28 @@ import org.cishell.utilities.AlgorithmUtilities;
 import org.osgi.framework.BundleContext;
 import org.osgi.service.log.LogService;
 
-import edu.iu.epic.modeling.compartment.model.Model;
-import edu.iu.epic.spemshell.runner.single.postprocessing.DatToCsv;
-import edu.iu.epic.spemshell.runner.single.preprocessing.InFileMaker;
-import edu.iu.epic.spemshell.runner.single.preprocessing.InfectionsFileMaker;
-import edu.iu.epic.spemshell.runner.single.preprocessing.SimulatorModelFileMaker;
+import com.google.common.collect.Maps;
 
-public class SPEMShellSingleRunnerAlgorithm implements Algorithm {	
+import edu.iu.epic.modeling.compartment.model.Model;
+import edu.iu.epic.simulator.runner.utility.CIShellParameterUtilities;
+import edu.iu.epic.simulator.runner.utility.postprocessing.DatToCsv;
+import edu.iu.epic.simulator.runner.utility.preprocessing.InFileMaker;
+import edu.iu.epic.simulator.runner.utility.preprocessing.InfectionsFileMaker;
+import edu.iu.epic.simulator.runner.utility.preprocessing.SimulatorModelFileMaker;
+
+public abstract class EpidemicSimulatorAlgorithm implements Algorithm {
 	public static final String PLAIN_TEXT_MIME_TYPE = "file:text/plain";
 	public static final String CSV_MIME_TYPE = "file:text/csv";
 	public static final String IN_FILE_MIME_TYPE = "file:text/in";
-
-	public static final String SPEMSHELL_CORE_PID = "edu.iu.epic.spemshell.core";
 	
-	private Data[] data;
-	private Dictionary<String, Object> parameters;
-	private CIShellContext ciContext;
-	private BundleContext bundleContext;
-	private static LogService logger;
+	protected Data[] data;
+	protected Dictionary<String, Object> parameters;
+	protected CIShellContext ciContext;
+	protected BundleContext bundleContext;
+	protected static LogService logger;
 
-
-	public SPEMShellSingleRunnerAlgorithm(
+	
+	public EpidemicSimulatorAlgorithm(
 			Data[] data,
 			Dictionary<String, Object> parameters,
 			CIShellContext ciContext,
@@ -51,11 +51,11 @@ public class SPEMShellSingleRunnerAlgorithm implements Algorithm {
 		this.ciContext = ciContext;
 		this.bundleContext = bundleContext;
 		
-		SPEMShellSingleRunnerAlgorithm.logger =
+		EpidemicSimulatorAlgorithm.logger =
 			(LogService) ciContext.getService(LogService.class.getName());
 	}
-
-	// Run simulator and interpret its output.
+	
+	
 	public Data[] execute() throws AlgorithmExecutionException {		
 		File datFile;
 		try {
@@ -64,7 +64,7 @@ public class SPEMShellSingleRunnerAlgorithm implements Algorithm {
 			datFile = executeSimulator(simulatorInputData, ciContext, bundleContext);
 		} catch (IOException e) {
 			throw new AlgorithmExecutionException(
-					"Error creating data for SPEMShell: " + e.getMessage(), e);
+					"Error formatting input data for simulation: " + e.getMessage(), e);
 		} catch (ParseException e) {
 			throw new AlgorithmExecutionException(
 					"Error parsing the given start date: " + e.getMessage(), e);
@@ -81,26 +81,6 @@ public class SPEMShellSingleRunnerAlgorithm implements Algorithm {
 		}
 	}
 
-	private File executeSimulator(
-			Data[] coreData, CIShellContext coreCIContext, BundleContext coreBundleContext)
-				throws AlgorithmExecutionException {
-		try {			
-			Data[] simulatorOutData =
-				AlgorithmUtilities.executeAlgorithm(
-					AlgorithmUtilities.getAlgorithmFactoryByPID(
-							SPEMSHELL_CORE_PID, coreBundleContext),
-					null,
-					coreData,
-					new Hashtable<String, Object>(),
-					coreCIContext);
-
-			return (File) simulatorOutData[0].getData();
-		} catch (AlgorithmExecutionException e) {
-			throw new AlgorithmExecutionException(
-				"Error running simulator: " + e.getMessage(), e);
-		}
-	}
-
 	private Data[] createSimulatorInputData(
 			Data[] runnerData, Dictionary<String, Object> runnerParameters)
 				throws IOException, ParseException, AlgorithmExecutionException {
@@ -108,9 +88,10 @@ public class SPEMShellSingleRunnerAlgorithm implements Algorithm {
 		Map<String, Object> rawInfectorSeedPopulations =
 			CIShellParameterUtilities.filterByAndStripIDPrefixes(
 					runnerParameters,
-					SPEMShellSingleRunnerAlgorithmFactory.INFECTOR_SEED_POPULATION_PREFIX);
-		Map<String, Integer> infectorSeedPopulations = new HashMap<String, Integer>();
-		for (Entry<String, Object> rawInfectorSeedPopulation : rawInfectorSeedPopulations.entrySet()) {
+					EpidemicSimulatorAlgorithmFactory.INFECTOR_SEED_POPULATION_PREFIX);
+		Map<String, Integer> infectorSeedPopulations = Maps.newHashMap();
+		for (Entry<String, Object> rawInfectorSeedPopulation
+						: rawInfectorSeedPopulations.entrySet()) {
 			infectorSeedPopulations.put(
 					rawInfectorSeedPopulation.getKey(),
 					(Integer) rawInfectorSeedPopulation.getValue());
@@ -121,8 +102,8 @@ public class SPEMShellSingleRunnerAlgorithm implements Algorithm {
 		Map<String, Object> rawInitialDistribution =
 			CIShellParameterUtilities.filterByAndStripIDPrefixes(
 					runnerParameters,
-					SPEMShellSingleRunnerAlgorithmFactory.INITIAL_DISTRIBUTION_PREFIX);
-		Map<String, Float> initialDistribution = new HashMap<String, Float>();
+					EpidemicSimulatorAlgorithmFactory.INITIAL_DISTRIBUTION_PREFIX);
+		Map<String, Float> initialDistribution = Maps.newHashMap();
 		for (Entry<String, Object> rawCompartmentFraction : rawInitialDistribution.entrySet()) {
 			initialDistribution.put(
 					rawCompartmentFraction.getKey(),
@@ -132,8 +113,8 @@ public class SPEMShellSingleRunnerAlgorithm implements Algorithm {
 		float distributionTotal = InFileMaker.total(initialDistribution.values());
 		if (distributionTotal != 1.0f) {
 			String message = String.format(
-					"The fractions for the initial distribution of the population among the " +
-					"compartments must sum to exactly 1.0.  The given numbers summed to %f.",
+					"The fractions for the initial distribution of the population among the "
+					+ "compartments must sum to exactly 1.0.  The given numbers summed to %f.",
 					distributionTotal);
 			throw new AlgorithmExecutionException(message);
 		}
@@ -143,8 +124,8 @@ public class SPEMShellSingleRunnerAlgorithm implements Algorithm {
 		Model epicModel = (Model) runnerData[0].getData();
 		SimulatorModelFileMaker simulatorModelFileMaker =
 			new SimulatorModelFileMaker(epicModel, runnerParameters);		
-		File spemShellModelFile = simulatorModelFileMaker.make();		
-
+		File simulatorModelFile = simulatorModelFileMaker.make();		
+	
 		
 		// Create the infections file.
 		InfectionsFileMaker infectionsFileMaker = new InfectionsFileMaker();
@@ -154,25 +135,44 @@ public class SPEMShellSingleRunnerAlgorithm implements Algorithm {
 		// Create the .in file.
 		String initialCompartmentName =
 			(String) runnerParameters.get(
-					SPEMShellSingleRunnerAlgorithmFactory.INITIAL_COMPARTMENT_PARAMETER_ID);
+					EpidemicSimulatorAlgorithmFactory.INITIAL_COMPARTMENT_PARAMETER_ID);
 		InFileMaker inFileMaker =
 			new InFileMaker(
-					spemShellModelFile.getPath(),
+					simulatorModelFile.getPath(),
 					runnerParameters,
 					initialCompartmentName,
 					infectionsFile,
 					initialDistribution);
 		File inFile = inFileMaker.make();
 		
-		
-		
-		
-
+	
 		return new Data[] {	new BasicData(inFile, IN_FILE_MIME_TYPE) };
 	}
 	
-	private static Data[] createOutData(
-			File outDatFile, String label, Data parentData) {
+	protected abstract String getCoreAlgorithmPID();
+
+	private File executeSimulator(
+			Data[] coreData, CIShellContext coreCIContext, BundleContext coreBundleContext)
+				throws AlgorithmExecutionException {
+		try {
+			
+			Data[] simulatorOutData =
+				AlgorithmUtilities.executeAlgorithm(
+					AlgorithmUtilities.getAlgorithmFactoryByPID(
+							getCoreAlgorithmPID(), coreBundleContext),
+					null,
+					coreData,
+					new Hashtable<String, Object>(),
+					coreCIContext);
+	
+			return (File) simulatorOutData[0].getData();
+		} catch (AlgorithmExecutionException e) {
+			throw new AlgorithmExecutionException(
+				"Error running simulator: " + e.getMessage(), e);
+		}
+	}
+
+	private static Data[] createOutData(File outDatFile, String label, Data parentData) {
 		Data outData = new BasicData(outDatFile, CSV_MIME_TYPE);
 		Dictionary<String, Object> metadata = outData.getMetadata();
 		metadata.put(DataProperty.LABEL, label);
@@ -185,8 +185,7 @@ public class SPEMShellSingleRunnerAlgorithm implements Algorithm {
 	public static StringTemplateGroup loadTemplates(String templatePath) {
 		return new StringTemplateGroup(
 				new InputStreamReader(
-						SPEMShellSingleRunnerAlgorithm.class.getResourceAsStream(
-								templatePath)));
+						EpidemicSimulatorAlgorithm.class.getResourceAsStream(templatePath)));
 	}
 
 	public static LogService getLogger() {

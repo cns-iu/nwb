@@ -1,18 +1,18 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <metatype:MetaData xmlns:metatype="http://www.osgi.org/xmlns/metatype/v1.0.0">
-	<OCD name="Single-Population" id="edu.iu.epic.spemshell.runner.single.SPEMShellSingleRunnerAlgorithm.OCD"
-		 description="Simulate an infection or infections with given epidemics model and a simple single-population population model.">
+	<OCD name="Exact" id="edu.iu.epic.simulator.runner.exact.ExactRunnerAlgorithm.OCD"
+		 description="Convert the model to a system of partial differential equations and numerically integrate them using an adaptive Runge-Kutta procedure.">
 		<AD name="Initial Compartment"
 			id="initialCompartment"
 			type="String"
 			description="Which compartment represents the initial population?"
 			default="Mutate"/>
 	</OCD>
-	<Designate pid="edu.iu.epic.spemshell.runner.single.SPEMShellSingleRunnerAlgorithm">
-		<Object ocdref="edu.iu.epic.spemshell.runner.single.SPEMShellSingleRunnerAlgorithm.OCD" />
+	<Designate pid="edu.iu.epic.simulator.runner.exact.ExactRunnerAlgorithm">
+		<Object ocdref="edu.iu.epic.simulator.runner.exact.ExactRunnerAlgorithm.OCD" />
 	</Designate>
 	
-	<OCD name="Single-Population" id="edu.iu.epic.spemshell.runner.batch.SPEMShellBatchRunnerAlgorithm.OCD"
+	<OCD name="Single-Population" id="edu.iu.epic.simulator.runner.singlepopulation.batch.SinglePopulationBatchRunnerAlgorithm.OCD"
 		 description="Simulate an infection or infections with given epidemics model and a simple single-population population model.">
 		<AD name="Number of Runs"
 			id="numberOfRuns"
@@ -20,13 +20,14 @@
 			description="Numbers of times to run the simulation."
 			min="1"
 			default="1"/>
+			
 		<AD name="Initial Compartment"
 			id="initialCompartment"
 			type="String"
 			description="Which compartment represents the initial population?"
 			default="Mutate"/>
 	</OCD>
-	<Designate pid="edu.iu.epic.spemshell.runner.batch.SPEMShellBatchRunnerAlgorithm">
-		<Object ocdref="edu.iu.epic.spemshell.runner.batch.SPEMShellBatchRunnerAlgorithm.OCD" />
+	<Designate pid="edu.iu.epic.simulator.runner.singlepopulation.batch.SinglePopulationBatchRunnerAlgorithm">
+		<Object ocdref="edu.iu.epic.simulator.runner.singlepopulation.batch.SinglePopulationBatchRunnerAlgorithm.OCD" />
 	</Designate>
 </metatype:MetaData>

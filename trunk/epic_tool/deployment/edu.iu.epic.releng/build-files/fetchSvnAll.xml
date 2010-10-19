@@ -99,12 +99,12 @@
   	  	  	  	  <param name="url" value="http://nwb.slis.indiana.edu/svn/nwb/trunk/epic_tool/plugins/normal_plugins"/>
   	</antcall>
   	
-  	<antcall target="svn.co">
-  		  	  	  	  <param name="target" value="plugins"/>
-  		  	  	  	  <param name="element.id" value="edu.iu.epic.spemshell.runner"/>
-  		  	  	  	  <param name="project.name" value="edu.iu.epic.spemshell.runner"/>
-  		  	  	  	  <param name="url" value="http://nwb.slis.indiana.edu/svn/nwb/trunk/epic_tool/plugins/normal_plugins"/>
-  	</antcall>
+	<antcall target="svn.co">
+		<param name="target" value="plugins"/>
+		<param name="element.id" value="edu.iu.epic.simulator.runner"/>
+		<param name="project.name" value="edu.iu.epic.simulator.runner"/>
+		<param name="url" value="http://nwb.slis.indiana.edu/svn/nwb/trunk/epic_tool/plugins/normal_plugins"/>
+	</antcall>
   		
   	
   		
@@ -154,19 +154,27 @@
   	<!--- EpiC non_pde plugins -->
   	<antcall target="svn.co">
 		<param name="target" value="nonpde_plugins"/>
-		<param name="element.id" value="edu.iu.epic.exactshell.core"/>
-		<param name="project.name" value="edu.iu.epic.exactshell.core"/>
+		<param name="element.id" value="edu.iu.epic.simulator.core.exact"/>
+		<param name="project.name" value="edu.iu.epic.simulator.core.exact"/>
 		<param name="url" value="http://nwb.slis.indiana.edu/svn/nwb/trunk/epic_tool/plugins/nonpde_plugins"/>
     </antcall>
-  	<ant dir="${buildDirectory}/nonpde_plugins/edu.iu.epic.exactshell.core"/>
+  	<ant dir="${buildDirectory}/nonpde_plugins/edu.iu.epic.simulator.core.exact"/>
   	
   	<antcall target="svn.co">
 		<param name="target" value="nonpde_plugins"/>
-		<param name="element.id" value="edu.iu.epic.spemshell.core"/>
-		<param name="project.name" value="edu.iu.epic.spemshell.core"/>
+		<param name="element.id" value="edu.iu.epic.simulator.core.singlepopulation"/>
+		<param name="project.name" value="edu.iu.epic.simulator.core.singlepopulation"/>
 		<param name="url" value="http://nwb.slis.indiana.edu/svn/nwb/trunk/epic_tool/plugins/nonpde_plugins"/>
     </antcall>
-  	<ant dir="${buildDirectory}/nonpde_plugins/edu.iu.epic.spemshell.core"/>
+  	<ant dir="${buildDirectory}/nonpde_plugins/edu.iu.epic.simulator.core.singlepopulation"/>
+  	
+  	<antcall target="svn.co">
+		<param name="target" value="nonpde_plugins"/>
+		<param name="element.id" value="edu.iu.epic.simulator.core.network"/>
+		<param name="project.name" value="edu.iu.epic.simulator.core.network"/>
+		<param name="url" value="http://nwb.slis.indiana.edu/svn/nwb/trunk/epic_tool/plugins/nonpde_plugins"/>
+    </antcall>
+  	<ant dir="${buildDirectory}/nonpde_plugins/edu.iu.epic.simulator.core.network"/>
   	
   	
   	 <antcall target="svn.co">

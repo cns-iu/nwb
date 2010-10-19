@@ -1,4 +1,4 @@
-package edu.iu.epic.spemshell.runner.single.postprocessing;
+package edu.iu.epic.simulator.runner.utility.postprocessing;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
@@ -25,9 +25,10 @@ public class DatToCsv {
 
 	
 	public File convert() throws IOException {
+		// TODO Fix ordering of columns?
 		File csvFile =
 			FileUtilities.createTemporaryFileInDefaultTemporaryDirectory(
-					"spemshell_output", CSV_FILE_EXTENSION);
+					"simulator_output", CSV_FILE_EXTENSION);
 		BufferedWriter writer = new BufferedWriter(new FileWriter(csvFile));
 		
 		BufferedReader reader = new BufferedReader(new FileReader(this.datFile));
@@ -55,31 +56,9 @@ public class DatToCsv {
 		} else if (line.startsWith(DAT_FILE_COMMENT_MARKER)) {
 			return "";
 		} else {
-			// TODO ?
-//			return removeLastEntryFromCSVLine(commaSeparate(line)) + "\n";
 			return commaSeparate(line) + "\n";
 		}
 	}
-
-//	private static String removeLastEntryFromCSVLine(String commaSeparated) {
-//		String[] tokens = commaSeparated.split(",");
-//		
-//		StringBuilder builder = new StringBuilder();
-//		
-//		for (int ii = 0; ii < tokens.length; ii++) {			
-//			boolean isFinalToken = (ii == tokens.length - 1);
-//			if (!isFinalToken) {
-//				builder.append(tokens[ii]);
-//				
-//				boolean isSecondToLastEntry = (ii == tokens.length - 2);
-//				if (!isSecondToLastEntry) {
-//					builder.append(",");
-//				}
-//			}
-//		}
-//		
-//		return builder.toString();
-//	}
 
 	private String commaSeparate(String spaceSeparated) {
 		String[] tokens = spaceSeparated.split(" +");
@@ -97,5 +76,4 @@ public class DatToCsv {
 		
 		return builder.toString();
 	}
-	
 }

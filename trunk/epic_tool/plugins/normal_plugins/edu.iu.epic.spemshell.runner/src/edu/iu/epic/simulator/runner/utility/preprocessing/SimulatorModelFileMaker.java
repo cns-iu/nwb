@@ -1,4 +1,4 @@
-package edu.iu.epic.spemshell.runner.single.preprocessing;
+package edu.iu.epic.simulator.runner.utility.preprocessing;
 
 import java.io.File;
 import java.io.FileWriter;
@@ -16,22 +16,24 @@ import org.cishell.utilities.FileUtilities;
 
 import edu.iu.epic.modeling.compartment.model.Model;
 import edu.iu.epic.modeling.compartment.model.Transition;
-import edu.iu.epic.spemshell.runner.single.CIShellParameterUtilities;
-import edu.iu.epic.spemshell.runner.single.SPEMShellSingleRunnerAlgorithm;
-import edu.iu.epic.spemshell.runner.single.SPEMShellSingleRunnerAlgorithmFactory;
+import edu.iu.epic.simulator.runner.EpidemicSimulatorAlgorithm;
+import edu.iu.epic.simulator.runner.EpidemicSimulatorAlgorithmFactory;
+import edu.iu.epic.simulator.runner.utility.CIShellParameterUtilities;
 
-// Converts from an EpiC-style model file to a SPEMShell-style model file.
+// Converts from an EpiC-style model file to a simulator-style model file.
 /* TODO If we decide to do away with compartment declarations permanently,
- * we should kill off the notion of a SPEMShell model file (against an EpiC model file)
+ * we should kill off the notion of a simulator model file (against an EpiC model file)
  * as no difference remains.  In that case, we can just use Model.toString.
  */
 public class SimulatorModelFileMaker {
 	public static final String FILENAME = "simul";
 	public static final String FILE_EXTENSION = "mdl";	
-	
-	private static StringTemplateGroup spemShellModelFileTemplateGroup =
-		SPEMShellSingleRunnerAlgorithm.loadTemplates(
-				"/edu/iu/epic/spemshell/runner/single/preprocessing/spemShellModelFile.st");
+	public static final String SIMULATOR_MODEL_FILE_TEMPLATE_NAME = "simulatorModelFile";
+	public static final String PARAMETER_DEFINITIONS_ATTR = "parameterDefinitions";
+	public static final String TRANSITIONS_ATTR = "transitions";
+	private static StringTemplateGroup simulatorModelFileTemplateGroup =
+		EpidemicSimulatorAlgorithm.loadTemplates(
+				"/edu/iu/epic/simulator/runner/utility/preprocessing/simulatorModelFile.st");
 	
 	private Model epicModel;
 	private Map<String, Object> modelParameterDefinitions;
@@ -41,13 +43,13 @@ public class SimulatorModelFileMaker {
 		this.epicModel = epicModel;
 		
 		this.modelParameterDefinitions = CIShellParameterUtilities.filterByAndStripIDPrefixes(
-				parameters, SPEMShellSingleRunnerAlgorithmFactory.MODEL_PARAMETER_PREFIX);
+				parameters, EpidemicSimulatorAlgorithmFactory.MODEL_PARAMETER_PREFIX);
 	}
 	
 	
 	public File make() throws IOException {
 		StringTemplate template =
-			spemShellModelFileTemplateGroup.getInstanceOf("spemShellModelFile");
+			simulatorModelFileTemplateGroup.getInstanceOf(SIMULATOR_MODEL_FILE_TEMPLATE_NAME);
 
 		List<Entry<String, ? extends Object>> parameterDefinitions =
 			new ArrayList<Entry<String, ? extends Object>>();
@@ -66,14 +68,14 @@ public class SimulatorModelFileMaker {
 		parameterDefinitions.addAll(modelParameterDefinitions.entrySet());
 		
 		
-		template.setAttribute("parameterDefinitions", parameterDefinitions);
+		template.setAttribute(PARAMETER_DEFINITIONS_ATTR, parameterDefinitions);
 		
 		
 		Set<Transition> transitions = epicModel.getTransitions();
 		for (Transition transition : transitions) {
 			transition.setRatio(fixRawDecimalPoints(transition.getRatio()));
 		}		
-		template.setAttribute("transitions", epicModel.getTransitions());
+		template.setAttribute(TRANSITIONS_ATTR, epicModel.getTransitions());
 
 		
 		File file = FileUtilities.createTemporaryFileInDefaultTemporaryDirectory(

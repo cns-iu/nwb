@@ -1,4 +1,4 @@
-package edu.iu.epic.spemshell.runner.batch;
+package edu.iu.epic.simulator.runner.singlepopulation.batch;
 
 import java.util.Collection;
 import java.util.Dictionary;
@@ -19,10 +19,10 @@ import org.cishell.framework.data.Data;
 import org.cishell.framework.data.DataProperty;
 import org.osgi.framework.BundleContext;
 
-import edu.iu.epic.spemshell.runner.single.SPEMShellSingleRunnerAlgorithm;
-import edu.iu.epic.spemshell.runner.single.SPEMShellSingleRunnerAlgorithmFactory;
+import edu.iu.epic.simulator.runner.singlepopulation.SinglePopulationSingleRunnerAlgorithm;
+import edu.iu.epic.simulator.runner.singlepopulation.SinglePopulationSingleRunnerAlgorithmFactory;
 
-public class SPEMShellBatchRunnerAlgorithm implements Algorithm {
+public class SinglePopulationBatchRunnerAlgorithm implements Algorithm {
 	public static final int THREAD_POOL_SIZE = 4;
 	
 	private Data[] data;
@@ -31,7 +31,7 @@ public class SPEMShellBatchRunnerAlgorithm implements Algorithm {
 	private BundleContext bundleContext;
 
 	
-	public SPEMShellBatchRunnerAlgorithm(
+	public SinglePopulationBatchRunnerAlgorithm(
 			Data[] data,
 			Dictionary<String, Object> parameters,
 			CIShellContext ciContext,
@@ -49,14 +49,15 @@ public class SPEMShellBatchRunnerAlgorithm implements Algorithm {
 		 * AttributeDefinitions in its Factory's mutateParameters method.
 		 */
 		int batchSeed =
-			(Integer) batchParameters.get(SPEMShellSingleRunnerAlgorithmFactory.SEED_PARAMETER_ID);
+			(Integer) batchParameters.get(
+					SinglePopulationSingleRunnerAlgorithmFactory.SEED_PARAMETER_ID);
 		// For generating the sequence of single-run seeds.
 		Random batchRandom = new Random(batchSeed);
 		
 		
 		int numberOfRuns =
 			(Integer) batchParameters.get(
-					SPEMShellBatchRunnerAlgorithmFactory.NUMBER_OF_RUNS_PARAMETER_ID);
+					SinglePopulationBatchRunnerAlgorithmFactory.NUMBER_OF_RUNS_PARAMETER_ID);
 		
 
 		// Create the single run tasks.
@@ -66,10 +67,10 @@ public class SPEMShellBatchRunnerAlgorithm implements Algorithm {
 
 			Dictionary<String, Object> singleParameters = createShallowCopy(batchParameters);
 			singleParameters.put(
-					SPEMShellSingleRunnerAlgorithmFactory.SEED_PARAMETER_ID, singleSeed);
+					SinglePopulationSingleRunnerAlgorithmFactory.SEED_PARAMETER_ID, singleSeed);
 			
 			Algorithm singleAlgorithm =
-				new SPEMShellSingleRunnerAlgorithm(
+				new SinglePopulationSingleRunnerAlgorithm(
 						data, singleParameters, ciContext, bundleContext);
 			
 			Callable<Data[]> runTask = new SingleRunTask(singleAlgorithm);

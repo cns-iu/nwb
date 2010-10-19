@@ -1,6 +1,6 @@
-group spemShellModelFile;
+group simulatorModelFile;
 
-spemShellModelFile(parameterDefinitions, transitions) ::= <<
+simulatorModelFile(parameterDefinitions, transitions) ::= <<
 <parameterDefinitions:parameterDefinition();separator="\n">
 <transitions;separator="\n">
 >>

@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<component name="edu.iu.epic.simulator.runner.singlepopulation.batch.SinglePopulationBatchRunnerAlgorithm.component" immediate="false">
+	<implementation class="edu.iu.epic.simulator.runner.singlepopulation.batch.SinglePopulationBatchRunnerAlgorithmFactory"/>
+	<properties entry="OSGI-INF/singlepopulation.properties"/>
+	
+	<service>
+		<provide interface=
+			"org.cishell.framework.algorithm.AlgorithmFactory"/>
+	</service>
+</component>

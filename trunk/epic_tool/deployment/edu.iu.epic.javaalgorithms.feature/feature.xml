@@ -142,6 +142,15 @@ Dr. Katy Borner (katy@indiana.edu)
          version="0.0.0"
          unpack="false"/>
 
+	<!-- 
+   <plugin
+         id="edu.iu.nwb.converter.nwbgraphml"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+         -->
+		 
    <plugin
          id="edu.iu.nwb.converter.prefusebibtex"
          download-size="0"
@@ -429,7 +438,7 @@ Dr. Katy Borner (katy@indiana.edu)
          unpack="false"/>
 
    <plugin
-         id="edu.iu.epic.spemshell.runner"
+         id="edu.iu.epic.simulator.runner"
          download-size="0"
          install-size="0"
          version="0.0.0"

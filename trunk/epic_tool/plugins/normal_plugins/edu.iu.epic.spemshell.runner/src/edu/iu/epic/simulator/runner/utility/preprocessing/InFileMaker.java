@@ -1,4 +1,4 @@
-package edu.iu.epic.spemshell.runner.single.preprocessing;
+package edu.iu.epic.simulator.runner.utility.preprocessing;
 
 import java.io.BufferedWriter;
 import java.io.File;
@@ -16,8 +16,8 @@ import org.antlr.stringtemplate.StringTemplate;
 import org.antlr.stringtemplate.StringTemplateGroup;
 import org.cishell.utilities.FileUtilities;
 
-import edu.iu.epic.spemshell.runner.single.SPEMShellSingleRunnerAlgorithm;
-import edu.iu.epic.spemshell.runner.single.SPEMShellSingleRunnerAlgorithmFactory;
+import edu.iu.epic.simulator.runner.EpidemicSimulatorAlgorithm;
+import edu.iu.epic.simulator.runner.EpidemicSimulatorAlgorithmFactory;
 
 public class InFileMaker {
 	public static final int DEFAULT_NUMBER_OF_SECONDARY_EVENTS = 0;
@@ -26,8 +26,8 @@ public class InFileMaker {
 	
 	public static final String IN_FILE_TEMPLATE_NAME = "inFile";	
 	private static StringTemplateGroup inFileTemplateGroup =
-		SPEMShellSingleRunnerAlgorithm.loadTemplates(
-				"/edu/iu/epic/spemshell/runner/single/preprocessing/inFile.st");
+		EpidemicSimulatorAlgorithm.loadTemplates(
+				"/edu/iu/epic/simulator/runner/utility/preprocessing/inFile.st");
 	
 	private String modelFilePath;
 	private Dictionary<String, Object> parameters;
@@ -52,20 +52,6 @@ public class InFileMaker {
 
 	public File make() throws IOException, ParseException {
 		StringTemplate template = prepareTemplate();
-
-		// TODO For now, we will instead put such parameters in the mdl file.
-//		for (Enumeration<String> parameterKeys = parameters.keys();
-//				parameterKeys.hasMoreElements();) {
-//			String key = parameterKeys.nextElement();
-//			
-//			if (key.startsWith(
-//					SPEMShellSingleRunnerAlgorithmFactory.MODEL_PARAMETER_PREFIX)) {
-//				Object value = parameters.get(key);
-//			
-//				inFileTemplate.setAttribute("parameters",
-//						new Parameter(key, value));
-//			}
-//		}
 		
 		File file =
 			FileUtilities.createTemporaryFileInDefaultTemporaryDirectory(
@@ -95,20 +81,19 @@ public class InFileMaker {
 				"numberOfSecondaryEvents",
 				DEFAULT_NUMBER_OF_SECONDARY_EVENTS);
 		template.setAttribute("population",
-				this.parameters.get(SPEMShellSingleRunnerAlgorithmFactory.POPULATION_ID));
+				this.parameters.get(EpidemicSimulatorAlgorithmFactory.POPULATION_ID));
 		template.setAttribute(
 				"susceptibleCompartmentID",
 				this.susceptibleCompartmentID);
 		template.setAttribute(
 				"numberOfDays",
-				this.parameters.get(
-						SPEMShellSingleRunnerAlgorithmFactory.NUMBER_OF_DAYS_ID));
+				this.parameters.get(EpidemicSimulatorAlgorithmFactory.NUMBER_OF_DAYS_ID));
 
 		String rawDateString =
 			(String) this.parameters.get(
-					SPEMShellSingleRunnerAlgorithmFactory.START_DATE_ID);
+					EpidemicSimulatorAlgorithmFactory.START_DATE_ID);
 		DateFormat dateFormat =
-			new SimpleDateFormat(SPEMShellSingleRunnerAlgorithmFactory.DATE_PATTERN);
+			new SimpleDateFormat(EpidemicSimulatorAlgorithmFactory.DATE_PATTERN);
 		Date date = dateFormat.parse(rawDateString);
 		String formattedDateString = dateFormat.format(date);
 		template.setAttribute("date", formattedDateString);
@@ -125,7 +110,6 @@ public class InFileMaker {
 		String compartmentsSeparator = ";";
 		String compartmentsString = "";
 		
-		// TODO LinkedHashMap, maybe?
 		for (String compartmentName : this.initialDistribution.keySet()) {
 			compartmentsString += compartmentName + compartmentsSeparator;
 		}

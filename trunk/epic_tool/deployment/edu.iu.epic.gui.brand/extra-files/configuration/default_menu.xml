@@ -36,7 +36,8 @@
     </top_menu>
     
     <top_menu name="Simulation">
-    	<menu pid="edu.iu.epic.spemshell.runner.batch.SPEMShellBatchRunnerAlgorithm"/>
+    	<menu pid="edu.iu.epic.simulator.runner.singlepopulation.batch.SinglePopulationBatchRunnerAlgorithm"/>
+    	<menu pid="edu.iu.epic.simulator.runner.exact.ExactRunnerAlgorithm"/>
     </top_menu>
 
 	<top_menu name="Preprocessing">
