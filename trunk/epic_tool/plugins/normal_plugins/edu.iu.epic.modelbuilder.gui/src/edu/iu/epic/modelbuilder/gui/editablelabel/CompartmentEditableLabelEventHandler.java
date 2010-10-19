@@ -21,16 +21,18 @@ public class CompartmentEditableLabelEventHandler
 				extends PBasicInputEventHandler {
 	
 	private NotificationArea notificationArea;
+	private CompartmentIDToLabelMap compartmentIDToLabelMap;
 
-	public CompartmentEditableLabelEventHandler(NotificationArea notificationArea) {
+	public CompartmentEditableLabelEventHandler(CompartmentIDToLabelMap compartmentIDToLabelMap, 
+												NotificationArea notificationArea) {
 		this.notificationArea = notificationArea;
+		this.compartmentIDToLabelMap = compartmentIDToLabelMap;
 	}
 	
 	@Override
 	public void mousePressed(PInputEvent inputEvent) {
 		PText currentCompartmentLabel = (PText) inputEvent.getPickedNode();
 		PNode compartment = currentCompartmentLabel.getParent();
-		System.out.println(compartment);
 		double initialCompartmentLabelWidth = currentCompartmentLabel.getWidth();
 		PNode compartmentLabelEditor = createNodeLabelEditor(initialCompartmentLabelWidth,
 														     currentCompartmentLabel,
@@ -117,7 +119,7 @@ public class CompartmentEditableLabelEventHandler
 					notificationArea);
 		
 		/*
-		 * Always rename in memory comaprtment first.. before triggering off
+		 * Always rename in memory compartment first.. before triggering off
 		 * observers (combo boxes...)
 		 * */
 		if (isRenameCompartmentLabelSuccessful) {
@@ -127,10 +129,18 @@ public class CompartmentEditableLabelEventHandler
 		double deltaCompartmentLabelWidth = 
 			currentCompartmentLabel.getWidth() - initialCompartmentLabelWidth;
 		
-		compartment.setWidth(compartment.getWidth() + deltaCompartmentLabelWidth);
+		double compartmentNewWidth = compartment.getWidth() + deltaCompartmentLabelWidth;
+		
+		int numOfHandles = 3;
+		
+		if (compartmentNewWidth < (GlobalConstants.DEFAULT_HANDLE_WIDTH * numOfHandles)) {
+			compartmentNewWidth = GlobalConstants.DEFAULT_HANDLE_WIDTH * numOfHandles;
+		}
+		
+		compartment.setWidth(compartmentNewWidth);
 		
 		
-		CompartmentIDToLabelMap.addCompartmentID(
+		compartmentIDToLabelMap.addCompartmentID(
 				(String) compartment.getAttribute(
 						GlobalConstants.NODE_ID_ATTRIBUTE_NAME),
 				newCompartmentLabelText);
@@ -142,8 +152,8 @@ public class CompartmentEditableLabelEventHandler
 		currentCompartmentLabel.setVisible(true);
 		compartmentTagTransform.removeFromParent();
 	
-		for (FocusListener currentFocusListener : 
-				compartmentEditorJTextField.getFocusListeners()) {
+		for (FocusListener currentFocusListener 
+				: compartmentEditorJTextField.getFocusListeners()) {
 			compartmentEditorJTextField.removeFocusListener(currentFocusListener);
 		}
 	}

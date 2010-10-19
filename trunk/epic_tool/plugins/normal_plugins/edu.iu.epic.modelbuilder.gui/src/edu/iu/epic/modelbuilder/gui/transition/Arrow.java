@@ -12,6 +12,7 @@ import edu.umd.cs.piccolo.PNode;
 import edu.umd.cs.piccolo.nodes.PPath;
 
  
+@SuppressWarnings("serial")
 public class Arrow extends PPath {
 
 	private static final int ARROW_SIDE_SIZE = 10;
@@ -90,34 +91,36 @@ public class Arrow extends PPath {
 	}
 	
 	/**
-	 * Based on http://local.wasp.uwa.edu.au/~pbourke/geometry/lineline2d/
+	 * Based on {@link http://local.wasp.uwa.edu.au/~pbourke/geometry/lineline2d/}.
 	 * @param edgePoints
 	 * @param nodeBoundsPoints
 	 * @return
 	 */
-	private static Double getArrowDisplayPoint(List<Double> edgePoints,
-											List<Double> nodeBoundsPoints) {
+	private static Double getArrowDisplayPoint(
+			List<Double> edgePoints, List<Double> nodeBoundsPoints) {
+		final int NUMBER_OF_CORNERS = 4;
 		
 		Point2D.Double intersectingPoint = null;
 		
-		for (int ii = 0; ii < 4; ii++) {
-		intersectingPoint = getIntersectingPoint(edgePoints.get(0), 
-												 edgePoints.get(1),
-												 nodeBoundsPoints.get(ii),
-												 nodeBoundsPoints.get((ii + 1) % 4));
-		if (intersectingPoint != null) {
-			return intersectingPoint;
+		for (int ii = 0; ii < NUMBER_OF_CORNERS; ii++) {
+			intersectingPoint =
+				getIntersectingPoint(edgePoints.get(0), 
+									 edgePoints.get(1),
+									 nodeBoundsPoints.get(ii),
+									 nodeBoundsPoints.get((ii + 1) % NUMBER_OF_CORNERS));
+			if (intersectingPoint != null) {
+				return intersectingPoint;
+			}			
 		}
 		
-		}
 		return null;
 	}
 	
 	/**
 	 * Refer to
-	 * http://stackoverflow.com/questions/563198/how-do-you-detect-where
-	 * -two-line-segments-intersect for the explanation. Also there is the a
-	 * modification to the algorithm mentioned. >Explain g<
+	 * {@link http://stackoverflow.com/questions/563198/how-do-you-detect-where
+	 * -two-line-segments-intersect for the explanation}. Also there is the a
+	 * modification to the algorithm mentioned.  Look for "Explain g".
 	 * 
 	 * @param edgePoint1
 	 * @param edgePoint2
@@ -127,45 +130,43 @@ public class Arrow extends PPath {
 	 */
 	private static Double getIntersectingPoint(Double edgePoint1, Double edgePoint2,
 			Double nodeSidePoint1, Double nodeSidePoint2) {
+		Point2D.Double e =
+			new Point2D.Double(
+					edgePoint2.getX() - edgePoint1.getX(),
+					edgePoint2.getY() - edgePoint1.getY());
 
-		double intersectingPointX, intersectingPointY;
-		Point2D.Double intersectingPoint;
+		Point2D.Double f =
+			new Point2D.Double(
+					nodeSidePoint2.getX() - nodeSidePoint1.getX(),
+					nodeSidePoint2.getY() - nodeSidePoint1.getY());
 
-		Point2D.Double E = new Point2D.Double(edgePoint2.getX()
-				- edgePoint1.getX(), edgePoint2.getY() - edgePoint1.getY());
+		Point2D.Double p = new Point2D.Double(-1 * e.getY(), e.getX());
 
-		Point2D.Double F = new Point2D.Double(nodeSidePoint2.getX()
-				- nodeSidePoint1.getX(), nodeSidePoint2.getY()
-				- nodeSidePoint1.getY());
+		Point2D.Double q = new Point2D.Double(-1 * f.getY(), f.getX());
 
-		Point2D.Double P = new Point2D.Double(-1 * E.getY(), E.getX());
+		double hDenominator = (f.getX() * p.getX()) + (f.getY() * p.getY());
 
-		Point2D.Double Q = new Point2D.Double(-1 * F.getY(), F.getX());
+		double gDenominator = (e.getX() * q.getX()) + (e.getY() * q.getY());
 
-		double h_denominator = (F.getX() * P.getX()) + (F.getY() * P.getY());
-
-		double g_denominator = (E.getX() * Q.getX()) + (E.getY() * Q.getY());
-
-		if (h_denominator == 0.0 || g_denominator == 0.0) {
+		if (hDenominator == 0.0 || gDenominator == 0.0) {
 			return null;
 		}
 
-		Point2D.Double A_C = new Point2D.Double(edgePoint1.getX()
+		Point2D.Double ac = new Point2D.Double(edgePoint1.getX()
 				- nodeSidePoint1.getX(), edgePoint1.getY()
 				- nodeSidePoint1.getY());
 
-		double h_numerator = (A_C.getX() * P.getX()) + (A_C.getY() * P.getY());
-		double g_numerator = -1.0
-				* ((A_C.getX() * Q.getX()) + (A_C.getY() * Q.getY()));
+		double hNumerator = (ac.getX() * p.getX()) + (ac.getY() * p.getY());
+		double gNumerator =	-1.0 * ((ac.getX() * q.getX()) + (ac.getY() * q.getY()));
 
-		double h = h_numerator / h_denominator;
-		double g = g_numerator / g_denominator;
+		double h = hNumerator / hDenominator;
+		double g = gNumerator / gDenominator;
 
 		if ((h <= 1.0 && h >= 0.0) && (g <= 1.0 && g >= 0.0)) {
-			intersectingPointX = nodeSidePoint1.getX() + F.getX() * h;
-			intersectingPointY = nodeSidePoint1.getY() + F.getY() * h;
-			intersectingPoint = new Point2D.Double(intersectingPointX,
-					intersectingPointY);
+			double intersectingPointX = nodeSidePoint1.getX() + f.getX() * h;
+			double intersectingPointY = nodeSidePoint1.getY() + f.getY() * h;
+			Point2D.Double intersectingPoint =
+				new Point2D.Double(intersectingPointX, intersectingPointY);
 
 			return intersectingPoint;
 		} else {

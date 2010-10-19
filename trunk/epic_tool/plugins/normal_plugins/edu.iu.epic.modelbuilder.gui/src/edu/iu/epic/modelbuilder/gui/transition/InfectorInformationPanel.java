@@ -8,13 +8,15 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.lang.StringUtils;
+
 import edu.iu.epic.modelbuilder.gui.compartment.PCompartment;
 import edu.iu.epic.modelbuilder.gui.editablelabel.EditableLabel;
 import edu.iu.epic.modelbuilder.gui.editablelabel.TransitionEditableLabelEventHandler;
 import edu.iu.epic.modelbuilder.gui.utility.CompartmentIDToLabelMap;
 import edu.iu.epic.modelbuilder.gui.utility.GlobalConstants;
 import edu.iu.epic.modelbuilder.gui.utility.NotificationArea;
-import edu.iu.epic.modelbuilder.gui.utility.Observer;
+import edu.iu.epic.modelbuilder.gui.utility.CompartmentIDChangeObserver;
 import edu.iu.epic.modelbuilder.gui.utility.PiccoloUtilities;
 import edu.iu.epic.modeling.compartment.model.Compartment;
 import edu.iu.epic.modeling.compartment.model.InfectionTransition;
@@ -30,10 +32,9 @@ import edu.umd.cs.piccolox.pswing.PComboBox;
 import edu.umd.cs.piccolox.pswing.PSwing;
 import edu.umd.cs.piccolox.pswing.PSwingCanvas;
 
+@SuppressWarnings("serial")
 public class InfectorInformationPanel extends PNode {
 
-	private static final long serialVersionUID = -76035194606028048L;
-	
 	private EditableLabel complexTransitionLabel;
 	private PComboBox infectorComboBox;
 	private Model inMemoryModel;
@@ -42,54 +43,74 @@ public class InfectorInformationPanel extends PNode {
 
 	private List<Transition> inMemoryInfectionTransitions;
 
-	private NotificationArea[] notificationAreas; 
+	private NotificationArea[] notificationAreas;
 
-	public InfectorInformationPanel(PNode sourceCompartment, 
+	private CompartmentIDToLabelMap compartmentIDToLabelMap; 
+
+	public InfectorInformationPanel(boolean createOnlyGUI, 
+									PNode sourceCompartment, 
 									PNode targetCompartment,
-									String infectorCompartmentName,
-									String transitionRatio, 
+									ComplexTransitionInfectionInformation infection, 
 									Point2D.Double mainTransitionConnectingPoint, 
 									List<Transition> inMemoryInfectionTransitions, 
+									CompartmentIDToLabelMap compartmentIDToLabelMap, 
 									Model inMemoryModel,
 									NotificationArea[] notificationAreas,
 									PSwingCanvas mainWorkbenchCanvas) {
 		super();
 		this.inMemoryModel = inMemoryModel;
+		this.compartmentIDToLabelMap = compartmentIDToLabelMap;
 		this.inMemoryInfectionTransitions = inMemoryInfectionTransitions;
 		this.notificationAreas = notificationAreas;
 		
-		if (transitionRatio == null 
-				|| transitionRatio.equalsIgnoreCase("")) {
-			transitionRatio = GlobalConstants.COMPLEX_TRANSITION_RATIO_DEFAULT_VALUE;
-		}
+		String transitionRatio, infectorCompartmentName;
 		
-		if (infectorCompartmentName == null
-				|| infectorCompartmentName.equalsIgnoreCase("")) {
-
+		if (infection != null) {
+			
+			if (StringUtils.isNotBlank(infection.getTransitionRatio())) {
+				transitionRatio = infection.getTransitionRatio();
+			} else {
+				transitionRatio = GlobalConstants.COMPLEX_TRANSITION_RATIO_DEFAULT_VALUE;
+			}
+			
+			if (StringUtils.isNotBlank(infection.getInfectorCompartmentName())) {				
+				infectorCompartmentName = infection.getInfectorCompartmentName();				
+			} else {				
+				infectorCompartmentName = 
+					((EditableLabel) PiccoloUtilities.getChildComponentBasedOnGivenAttribute(
+								sourceCompartment, 
+								GlobalConstants.NODE_TYPE_ATTRIBUTE_NAME, 
+								GlobalConstants.COMPARTMENT_LABEL_TYPE_ATTRIBUTE_VALUE)).getText();
+			}
+			
+		} else {			
+			transitionRatio = GlobalConstants.COMPLEX_TRANSITION_RATIO_DEFAULT_VALUE;
 			infectorCompartmentName = 
 				((EditableLabel) PiccoloUtilities.getChildComponentBasedOnGivenAttribute(
 							sourceCompartment, 
 							GlobalConstants.NODE_TYPE_ATTRIBUTE_NAME, 
 							GlobalConstants.COMPARTMENT_LABEL_TYPE_ATTRIBUTE_VALUE)).getText();
-			
-			isInfectorAdditionSuccessful = addInMemoryInfectionTransition(
-					((PCompartment) sourceCompartment).getInMemoryCompartment(),
-					infectorCompartmentName,
-					((PCompartment) targetCompartment).getInMemoryCompartment(),
-					transitionRatio,
-					inMemoryModel);
-			
-		} else {
-			isInfectorAdditionSuccessful = addInMemoryInfectionTransition(
-					((PCompartment) sourceCompartment).getInMemoryCompartment(),
-					infectorCompartmentName,
-					((PCompartment) targetCompartment).getInMemoryCompartment(),
-					transitionRatio,
-					inMemoryModel);
 		}
 		
 		
-        
+		if (createOnlyGUI 
+				&& infection.getInMemoryInfectionTransition() != null) {
+			
+			isInfectorAdditionSuccessful = true;
+			inMemoryInfectionTransition = infection.getInMemoryInfectionTransition();
+			printNotifications(inMemoryModel, isInfectorAdditionSuccessful);
+			
+		} else {
+		
+				isInfectorAdditionSuccessful = addInMemoryInfectionTransition(
+						((PCompartment) sourceCompartment).getInMemoryCompartment(),
+						infectorCompartmentName,
+						((PCompartment) targetCompartment).getInMemoryCompartment(),
+						transitionRatio,
+						inMemoryModel);
+				
+		} 
+		
 		/*
 		 * Go ahead with building of the infector info panel only if succeful 
 		 * inmeomory was built in the first place.
@@ -97,7 +118,9 @@ public class InfectorInformationPanel extends PNode {
 		//TODO: what to be done in the else situation?
 		if (isInfectorAdditionSuccessful) {
 			
-			infectorComboBox = new InfectorComboBox(this, infectorCompartmentName);
+			infectorComboBox = new InfectorComboBox(this, 
+													infectorCompartmentName, 
+													compartmentIDToLabelMap);
 		
 			Map<String, PNode> infectorParentTypeToParentObject = new HashMap<String, PNode>();
 			infectorParentTypeToParentObject.put("SOURCE", sourceCompartment);
@@ -239,7 +262,6 @@ public class InfectorInformationPanel extends PNode {
 						targetCompartment,
 						ratio);
 			
-			System.out.println("just added complex transition " + inMemoryInfectionTransition);  
 		} catch (InvalidParameterExpressionException e) {
 			//TODO: how best to handle this? should i create a parameter definition? 
 			//or a new parameter expression.
@@ -277,6 +299,17 @@ public class InfectorInformationPanel extends PNode {
 											 + infectorCompartment + "\" does not exist. ");
 		}
 		
+		printNotifications(inMemoryModel, isInfectorAdditionSuccessful);
+		
+		return isInfectorAdditionSuccessful;
+	}
+
+	/**
+	 * @param inMemoryModel
+	 * @param isInfectorAdditionSuccessful
+	 */
+	private void printNotifications(Model inMemoryModel,
+			boolean isInfectorAdditionSuccessful) {
 		/*
 		 * check if the ratio is defined yet.
 		 * */
@@ -288,7 +321,6 @@ public class InfectorInformationPanel extends PNode {
 				notificationAreas[1].addNotification("Errors in testing of undefined parameters.");
 			}
 		}
-		return isInfectorAdditionSuccessful;
 	}
 	
 	public String getCurrentSelectedInfectorName() {
@@ -326,10 +358,10 @@ public class InfectorInformationPanel extends PNode {
 		inMemoryModel.removeTransition(inMemoryInfectionTransition);
 		inMemoryInfectionTransitions.remove(inMemoryInfectionTransition);
 		
-		Observer infectorBoxModel = 
+		CompartmentIDChangeObserver infectorBoxModel = 
 			((InfectorComboBoxModel) infectorComboBox.getModel());
 		
-		CompartmentIDToLabelMap.removeObserver(infectorBoxModel);
+		compartmentIDToLabelMap.removeObserver(infectorBoxModel);
 		
 		
 		//TODO: check if references were removed from appropriate attributes
@@ -432,7 +464,7 @@ public class InfectorInformationPanel extends PNode {
 	/**
 	 * @return the infectorComboBoxModel
 	 */
-	public Observer getInfectorComboBoxModel() {
+	public CompartmentIDChangeObserver getInfectorComboBoxModel() {
 		return ((InfectorComboBoxModel) infectorComboBox.getModel());
 	}
 	

@@ -6,9 +6,8 @@ import edu.iu.epic.modelbuilder.gui.utility.GlobalConstants;
 import edu.umd.cs.piccolo.event.PInputEventListener;
 import edu.umd.cs.piccolo.nodes.PText;
 
+@SuppressWarnings("serial")
 public class EditableLabel extends PText {
-	
-	private static final long serialVersionUID = 1L;
 	
 	public EditableLabel(String labelTypeAttributeValue,
 						 String labelText, 

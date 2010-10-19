@@ -7,12 +7,9 @@ import org.cishell.framework.algorithm.Algorithm;
 import org.cishell.framework.data.Data;
 
 public class ModelBuilderImportModelAlgorithmFactory extends ModelBuilderGUIAlgorithmFactory {
-
 	@Override
-	public Algorithm createAlgorithm(Data[] data, Dictionary parameters,
+	public Algorithm createAlgorithm(Data[] data, Dictionary<String, Object> parameters,
 			CIShellContext context) {
-		System.out.println("import model builder algorithm factory was selected");
 		return new ModelBuilderGUIAlgorithm(data, context);
 	}
-
 }

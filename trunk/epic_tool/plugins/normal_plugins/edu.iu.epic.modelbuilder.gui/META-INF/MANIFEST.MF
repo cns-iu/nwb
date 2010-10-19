@@ -4,7 +4,8 @@ Bundle-Name: EpiC Model Builder GUI
 Bundle-SymbolicName: edu.iu.epic.modelbuilder.gui
 Bundle-Version: 1.0.0
 Bundle-ClassPath: .
-Import-Package: edu.iu.epic.modeling.compartment.model,
+Import-Package: com.google.common.collect,
+ edu.iu.epic.modeling.compartment.model,
  edu.iu.epic.modeling.compartment.model.exception,
  edu.iu.nwb.converter.nwb.common,
  edu.iu.nwb.util.nwbfile,
@@ -23,6 +24,7 @@ Import-Package: edu.iu.epic.modeling.compartment.model,
  edu.umd.cs.piccolox.swt,
  edu.umd.cs.piccolox.util,
  org.apache.commons.collections.map,
+ org.apache.commons.lang,
  org.cishell.framework,
  org.cishell.framework.algorithm,
  org.cishell.framework.data,

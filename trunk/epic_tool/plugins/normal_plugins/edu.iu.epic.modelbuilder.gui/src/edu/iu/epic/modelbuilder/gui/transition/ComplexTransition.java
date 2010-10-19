@@ -2,7 +2,6 @@ package edu.iu.epic.modelbuilder.gui.transition;
 
 import java.awt.Color;
 import java.awt.geom.Point2D;
-import java.awt.geom.Rectangle2D;
 import java.awt.geom.Point2D.Double;
 import java.util.ArrayList;
 import java.util.List;
@@ -11,7 +10,7 @@ import edu.iu.epic.modelbuilder.gui.utility.CompartmentIDToLabelMap;
 import edu.iu.epic.modelbuilder.gui.utility.GlobalConstants;
 import edu.iu.epic.modelbuilder.gui.utility.IDGenerator;
 import edu.iu.epic.modelbuilder.gui.utility.NotificationArea;
-import edu.iu.epic.modelbuilder.gui.utility.Observer;
+import edu.iu.epic.modelbuilder.gui.utility.CompartmentIDChangeObserver;
 import edu.iu.epic.modelbuilder.gui.utility.PiccoloUtilities;
 import edu.iu.epic.modeling.compartment.model.Model;
 import edu.iu.epic.modeling.compartment.model.Transition;
@@ -21,21 +20,26 @@ import edu.umd.cs.piccolo.event.PInputEvent;
 import edu.umd.cs.piccolo.nodes.PPath;
 import edu.umd.cs.piccolox.pswing.PSwingCanvas;
 
+@SuppressWarnings("serial")
 public class ComplexTransition extends PPath {
 
-	private static final long serialVersionUID = 1L;
 	private Model inMemoryModel;
 	private List<Transition> inMemoryInfectionTransitions = new ArrayList<Transition>();
+	private CompartmentIDToLabelMap compartmentIDToLabelMap;
 	
-	public ComplexTransition(PNode sourceCompartment, 
+	public ComplexTransition(boolean createOnlyGUI, 
+							 PNode sourceCompartment, 
 							 PNode targetCompartment,
 							 List<ComplexTransitionInfectionInformation> infections,
 							 IDGenerator objectIDGenerator, 
+							 CompartmentIDToLabelMap compartmentIDToLabelMap, 
 							 Model inMemoryModel,
 							 NotificationArea[] notificationAreas, 
 							 PSwingCanvas mainWorkbenchCanvas) {
 		super();
 		this.inMemoryModel = inMemoryModel;
+		this.compartmentIDToLabelMap = compartmentIDToLabelMap;
+		
 		createComplexTransition(sourceCompartment, 
 							   targetCompartment,
 							   objectIDGenerator,
@@ -49,20 +53,18 @@ public class ComplexTransition extends PPath {
 			infections.add(
 					new ComplexTransitionInfectionInformation(
 								null,
+								null,
 								null));
 			
 		}
 		
 		
 		for (ComplexTransitionInfectionInformation infection : infections) {
-			System.out.println(infection.getInfectorCompartmentName() + " -- " 
-								+ infection.getTransitionRatio() );
 			
-			
-			if (addInfector(sourceCompartment, 
+			if (addInfector(createOnlyGUI,
+							sourceCompartment, 
 							targetCompartment,
-							infection.getInfectorCompartmentName(),
-							infection.getTransitionRatio(),
+							infection,
 							notificationAreas, 
 							mainWorkbenchCanvas)) {
 				//TODO: since this is the defaultbehavior of the complex transition
@@ -159,9 +161,9 @@ public class ComplexTransition extends PPath {
 		infectorAdderHandle.addInputEventListener(new PBasicInputEventHandler() {
 			@Override
 			public void mouseClicked(PInputEvent event) {
-				addInfector(sourceCompartment, 
+				addInfector(false,
+							sourceCompartment, 
 							targetCompartment,
-							null,
 							null,
 							notificationAreas,
 							mainWorkbenchCanvas);
@@ -176,16 +178,17 @@ public class ComplexTransition extends PPath {
 	/**
 	 * @param sourceCompartment
 	 * @param targetCompartment
+	 * @param infection 
 	 * @param notificationAreas 
 	 * @param mainWorkbenchCanvas 
 	 * @param normalizedBounds1
 	 * @param normalizedBounds2
 	 * @return 
 	 */ 
-	private boolean addInfector(PNode sourceCompartment, 
+	private boolean addInfector(boolean createOnlyGUI,
+								PNode sourceCompartment, 
 								PNode targetCompartment,
-								String infectorCompartmentName,
-								String transitionRatio,
+								ComplexTransitionInfectionInformation infection, 
 								NotificationArea[] notificationAreas, 
 								PSwingCanvas mainWorkbenchCanvas) {
 		
@@ -196,12 +199,13 @@ public class ComplexTransition extends PPath {
 												.getFullBoundsReference().getCenter2D();
 		 
 		PNode infectorInformationPanel = new InfectorInformationPanel(
+											createOnlyGUI,
 											sourceCompartment,
 											targetCompartment,
-											infectorCompartmentName,
-											transitionRatio, 
+											infection,
 											new Point2D.Double(0, 0),
 											inMemoryInfectionTransitions,
+											compartmentIDToLabelMap,
 											inMemoryModel,
 											notificationAreas,
 											mainWorkbenchCanvas);
@@ -350,9 +354,9 @@ public class ComplexTransition extends PPath {
 	
 		for (PNode currentInfector : infectors) { 
 			
-			Observer infectorBoxModel = 
-				((InfectorInformationPanel)currentInfector).getInfectorComboBoxModel();
-			CompartmentIDToLabelMap.removeObserver(infectorBoxModel);
+			CompartmentIDChangeObserver infectorBoxModel = 
+				((InfectorInformationPanel) currentInfector).getInfectorComboBoxModel();
+			compartmentIDToLabelMap.removeObserver(infectorBoxModel);
 		}
 		
 	}

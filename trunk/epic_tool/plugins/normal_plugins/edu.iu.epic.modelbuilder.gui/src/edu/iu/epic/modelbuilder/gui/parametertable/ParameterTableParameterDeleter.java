@@ -19,13 +19,13 @@ import edu.iu.epic.modelbuilder.gui.utility.NotificationArea;
 import edu.iu.epic.modeling.compartment.model.Model;
 import edu.iu.epic.modeling.compartment.model.exception.InvalidParameterExpressionException;
 
+@SuppressWarnings("serial")
 public class ParameterTableParameterDeleter 
 	extends AbstractCellEditor
 	implements TableCellRenderer, TableCellEditor, ActionListener {
 	/**
 	 * 
 	 */
-	private static final long serialVersionUID = -8452210426946803348L;
 	private JTable table;
 	private DefaultTableModel defaultTableModel;
 	private JButton renderButton;
@@ -50,7 +50,6 @@ public class ParameterTableParameterDeleter
          * First image for when the Button is not pressed. Second image for when the Button is 
          * pressed. 
          * */
-//        	deleteButtonNormalStateImage, deleteButtonMousePressedImage
 		
 		renderButton = new JButton(new ImageIcon(deleteButtonNormalStateImage));
 		
@@ -60,8 +59,8 @@ public class ParameterTableParameterDeleter
 		editButton.addActionListener(this);
 
 		TableColumnModel columnModel = table.getColumnModel();
-		columnModel.getColumn(ParameterTable.deleteButtonColumnIndex).setCellRenderer(this);
-		columnModel.getColumn(ParameterTable.deleteButtonColumnIndex).setCellEditor(this);
+		columnModel.getColumn(ParameterTable.DELETE_BUTTON_COLUMN_INDEX).setCellRenderer(this);
+		columnModel.getColumn(ParameterTable.DELETE_BUTTON_COLUMN_INDEX).setCellEditor(this);
 		
 	}
 
@@ -106,7 +105,7 @@ public class ParameterTableParameterDeleter
 		String parameterNameToBeDeleted = (String) table.getModel()
 												.getValueAt(rowNumberActedUpon, 
 															ParameterTable
-																.parameterNameColumnIndex);
+																.PARAMETER_NAME_COLUMN_INDEX);
 		defaultTableModel.removeRow(rowNumberActedUpon);
 		inMemoryModel.removeParameterDefinition(parameterNameToBeDeleted);
 		

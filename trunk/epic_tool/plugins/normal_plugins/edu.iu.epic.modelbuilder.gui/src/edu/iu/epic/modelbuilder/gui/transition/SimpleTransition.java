@@ -21,13 +21,14 @@ import edu.umd.cs.piccolo.nodes.PPath;
  * @author cdtank
  *
  */
+@SuppressWarnings("serial")
 public class SimpleTransition extends PPath {
 
-	private static final long serialVersionUID = 1L;
 	private Model inMemoryModel;
 	private Transition inMemoryRatioTransition;
 	
-	public SimpleTransition(PNode sourceCompartment, 
+	public SimpleTransition(boolean createOnlyGUI, 
+							PNode sourceCompartment, 
 							PNode targetCompartment,
 							IDGenerator pObjectIDGenerator,
 							String transitionRatio,
@@ -36,10 +37,9 @@ public class SimpleTransition extends PPath {
 		super();
 		this.inMemoryModel = inMemoryModel;
 		
-		
-		
-		//TODO: do something useful with the boolean of inmemeomry addition
-		createSimpleTransition(sourceCompartment, 
+		//TODO: do something useful with the boolean of in memory addition
+		createSimpleTransition(createOnlyGUI,
+							   sourceCompartment, 
 							   targetCompartment, 
 							   pObjectIDGenerator, 
 							   transitionRatio,
@@ -49,6 +49,7 @@ public class SimpleTransition extends PPath {
 
 	
 	/**
+	 * @param createOnlyGUI 
 	 * @param sourceCompartment
 	 * @param targetCompartment
 	 * @param transitionRatio 
@@ -57,7 +58,8 @@ public class SimpleTransition extends PPath {
 	 * @param bound2
 	 * @return 
 	 */
-	private boolean createSimpleTransition(PNode sourceCompartment,
+	private boolean createSimpleTransition(boolean createOnlyGUI, 
+										   PNode sourceCompartment,
 										   PNode targetCompartment,
 										   IDGenerator pObjectIDGenerator, 
 										   String transitionRatio, 
@@ -68,12 +70,19 @@ public class SimpleTransition extends PPath {
 			transitionRatio = GlobalConstants.SIMPLE_TRANSITION_RATIO_DEFAULT_VALUE;
 		}
 		
+		boolean isInMemoryTransitionAdditionSuccessful;
 		
-		boolean isInMemoryTransitionAdditionSuccessful = 
-					inMemoryAddRatioTransition(sourceCompartment, 
-											   targetCompartment, 
-											   transitionRatio,
-											   notificationAreas);
+		if (createOnlyGUI) {
+			isInMemoryTransitionAdditionSuccessful = true;
+			printNotifications(notificationAreas, isInMemoryTransitionAdditionSuccessful);
+		} else {
+			isInMemoryTransitionAdditionSuccessful = 
+				inMemoryAddRatioTransition(sourceCompartment, 
+										   targetCompartment, 
+										   transitionRatio,
+										   notificationAreas);
+		}
+		
 		
 		/*
 		 * Only if in memory addition was successful then go ahead and create the gui.
@@ -177,13 +186,25 @@ public class SimpleTransition extends PPath {
 			//TODO: how best to handle this? should i create a parameter definition? 
 			//or a new parameter expression. in this specific case it will NEVER happen
 			//because the default value of ratio is used which is legal.
-			System.out.println("invalid parameetr expression");
 			isInMemoryTransitionAdditionSuccessful = false;
 			notificationAreas[1].addNotification("\"" + transitionRatio 
 					 						+ "\" is an invalid parameter expression.");
 			
 		}
 		
+		printNotifications(notificationAreas,
+				isInMemoryTransitionAdditionSuccessful);
+		
+		return isInMemoryTransitionAdditionSuccessful;
+	}
+
+
+	/**
+	 * @param notificationAreas
+	 * @param isInMemoryTransitionAdditionSuccessful
+	 */
+	private void printNotifications(NotificationArea[] notificationAreas,
+			boolean isInMemoryTransitionAdditionSuccessful) {
 		/*
 		 * check if the ratio is defined yet.
 		 * */
@@ -195,8 +216,6 @@ public class SimpleTransition extends PPath {
 				notificationAreas[1].addNotification("Errors in testing of undefined parameters.");
 			}
 		}
-		
-		return isInMemoryTransitionAdditionSuccessful;
 	}
 
 	
@@ -253,10 +272,6 @@ public class SimpleTransition extends PPath {
 	
 	public void removeInMemoryRatioTransition() {
 		inMemoryModel.removeTransition(inMemoryRatioTransition);
-		System.out.println("SIMPLE i was deleted " + inMemoryRatioTransition);
-		for (Transition name : inMemoryModel.getTransitions()) {
-			System.out.println("RATIO transition name > " + name );
-		}
 	}
 	
 	private void updateTransitionAttributeForInvolvedCompartments(
@@ -284,13 +299,10 @@ public class SimpleTransition extends PPath {
 		
 		tempPNodePlaceHolder.add(this);
 		
-		
 		/*
 		 * Updating Target PCompartment with reference to the newly added
 		 * SimpleTransition.
 		 */
-		
-		
 		tempPNodePlaceHolder = (ArrayList) targetCompartment
 				.getAttribute(GlobalConstants.COMPARTMENT_TRANSITIONS_ATTRIBUTE_NAME);
 		

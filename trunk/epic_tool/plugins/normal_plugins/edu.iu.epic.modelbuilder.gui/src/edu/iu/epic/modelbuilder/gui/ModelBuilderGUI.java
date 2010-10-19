@@ -12,6 +12,7 @@ import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
 import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
+import java.awt.geom.Point2D.Double;
 import java.beans.PropertyVetoException;
 import java.util.ArrayList;
 import java.util.List;
@@ -30,7 +31,7 @@ import org.apache.commons.collections.MapIterator;
 import org.apache.commons.collections.keyvalue.MultiKey;
 import org.apache.commons.collections.map.MultiKeyMap;
 
-import edu.iu.epic.modelbuilder.gui.compartment.CompartmentMoveEventHandler;
+import edu.iu.epic.modelbuilder.gui.compartment.CompartmentActivityEventHandler;
 import edu.iu.epic.modelbuilder.gui.compartment.PCompartment;
 import edu.iu.epic.modelbuilder.gui.parametertable.ParameterTable;
 import edu.iu.epic.modelbuilder.gui.transition.ComplexTransition;
@@ -57,14 +58,12 @@ import edu.umd.cs.piccolox.swing.PScrollPane;
 
 public class ModelBuilderGUI implements ActionListener {
 
-	
-	
+
+	private Dimension parentFrameDimensionsAtDisposal;
 
 	private static final double ADD_NEW_COMPARTMENT_Y_INCREMENT = 10.0;
 	private static final double ADD_NEW_COMPARTMENT_X_INCREMENT = 5.0;
 
-	private static final long serialVersionUID = 8679069222688097887L;
-	
 	private JDesktopPane desktopPane;
 	private JFrame parentJFrame;
 	private WorkBenchInternalFrame workbench;
@@ -78,6 +77,7 @@ public class ModelBuilderGUI implements ActionListener {
     
     private Model inMemoryModel;
     private IDGenerator pObjectIDGenerator;
+    private CompartmentIDToLabelMap compartmentIDToLabelMap;
 
 	private NotificationArea[] notificationAreas;
 
@@ -109,24 +109,33 @@ public class ModelBuilderGUI implements ActionListener {
     }
 
 	public void start(Model inputInMemoryModel) {
-
+		
+		this.inMemoryModel = inputInMemoryModel;
+		
+		if (inMemoryModel == null) {
+			inMemoryModel = new Model();
+		}
+		
+		this.compartmentIDToLabelMap = new CompartmentIDToLabelMap();
+		
         //Set up the GUI.
         desktopPane = new JDesktopPane(); //a specialized layered pane
         createModelBuilderWorkbench(); //create first "window"
-        
-       
         
         parentJFrame.setContentPane(desktopPane);
         parentJFrame.setJMenuBar(createMenuBar());
 
         //Make dragging a little faster but perhaps uglier.
         desktopPane.setDragMode(JDesktopPane.OUTLINE_DRAG_MODE);
-        
-		if (inputInMemoryModel == null) {
-			inputInMemoryModel = new Model();
-		}
 		
-		initialize(inputInMemoryModel);
+        /*
+         * Initialize all the GUI layers, components, canvas etc. Also if we are importing a model
+         * then import all its model elements like parameter definitions, compartments, transitions 
+         * etc.
+         * 
+         * This mainly side-effects the "inMemoryModel" & GUI Elements. 
+         * */
+		initialize();
         
         parentJFrame.addWindowListener(new WindowListener() {
 
@@ -159,12 +168,11 @@ public class ModelBuilderGUI implements ActionListener {
 	  } catch (PropertyVetoException e1) {
 		  System.out.println("workbench focus set issues");
 	  }
-      
 	}
 
-    private void initialize(Model inputInMemoryModel) {
-        
-        mainWorkbenchCanvas = new PSwingCanvas();
+	private void initialize() {
+
+		mainWorkbenchCanvas = new PSwingCanvas();
         
         PRoot root = mainWorkbenchCanvas.getRoot();
         
@@ -231,6 +239,7 @@ public class ModelBuilderGUI implements ActionListener {
 					new PCompartment(
 							compartmentShape, 
 							pObjectIDGenerator.getCompartmentCounter(), 
+							compartmentIDToLabelMap,
 							inMemoryModel,
 							notificationAreas[1]);
 	        	compartmentLayer.addChild(compartment);
@@ -248,8 +257,7 @@ public class ModelBuilderGUI implements ActionListener {
          * 		1. In-Memory model
          * 		2. Piccolo based GUI
          * */
-        importModelElementsFromInputInMemoryModel(inputInMemoryModel);
-		
+        importModelElementsFromInputInMemoryModel();
 		
 		/*
 		 * Used to manage input event listeners for the workbench. It takes care of adding 
@@ -259,7 +267,6 @@ public class ModelBuilderGUI implements ActionListener {
 		
         workbench.validate();
         desktopPane.validate();
-        
     }
 
 	/**
@@ -267,9 +274,8 @@ public class ModelBuilderGUI implements ActionListener {
 	 */
 	private void initializeModelHelpers() {
 		isModelBuildingComplete = false;
-		inMemoryModel = new Model();
 		pObjectIDGenerator = new IDGenerator();
-		CompartmentIDToLabelMap.resetCompartmentIDToLabelMap();
+//		CompartmentIDToLabelMap.resetCompartmentIDToLabelMap();
 		
 		notificationAreas = new NotificationArea[2];
 		
@@ -293,8 +299,7 @@ public class ModelBuilderGUI implements ActionListener {
 	/**
 	 * @param inputInMemoryModel
 	 */
-	private void importModelElementsFromInputInMemoryModel(
-			Model inputInMemoryModel) {
+	private void importModelElementsFromInputInMemoryModel() {
 		/*
          * Used to import parameter definitions from the input in-memory model 
          * into the Model Builder & add them into current in-memory model of the 
@@ -303,7 +308,7 @@ public class ModelBuilderGUI implements ActionListener {
          * 		1. In-Memory model
          * 		2. Piccolo based GUI
          * */
-        importParameterDefinitionsFromInputInMemoryModel(inputInMemoryModel);
+        importParameterDefinitionsFromInputInMemoryModel();
 
         /*
          * Used to import compartments from the input in-memory model into the Model 
@@ -312,7 +317,7 @@ public class ModelBuilderGUI implements ActionListener {
          * 		1. In-Memory model
          * 		2. Piccolo based GUI
          * */
-		importCompartmentsFromInputInMemoryModel(inputInMemoryModel);
+		importCompartmentsFromInputInMemoryModel();
 		
 		
         /*
@@ -324,17 +329,16 @@ public class ModelBuilderGUI implements ActionListener {
          * 		1. In-Memory model
          * 		2. Piccolo based GUI
          * */
-		importTransitionsFromInputInMemoryModel(inputInMemoryModel);
+		importTransitionsFromInputInMemoryModel();
 	}
 
 	/**
 	 * @param inputInMemoryModel
 	 */
-	private void importParameterDefinitionsFromInputInMemoryModel(
-			Model inputInMemoryModel) {
+	private void importParameterDefinitionsFromInputInMemoryModel() {
 		PNode parameterTable;
-		ParameterTable parameterTableWorkbench = new ParameterTable(pObjectIDGenerator,
-        															inputInMemoryModel,
+		ParameterTable parameterTableWorkbench = new ParameterTable(true,
+																	pObjectIDGenerator,
         															inMemoryModel,
         															notificationAreas,
         															helperComponentsLayer);
@@ -343,8 +347,6 @@ public class ModelBuilderGUI implements ActionListener {
         
         parameterTable.addAttribute(GlobalConstants.NODE_TYPE_ATTRIBUTE_NAME,
         							GlobalConstants.PARAMETER_TABLE_TYPE_ATTRIBUTE_VALUE);
-        
-        
         
         helperComponentsLayer.addChild(parameterTable);
 	}
@@ -363,10 +365,11 @@ public class ModelBuilderGUI implements ActionListener {
 
 		
 		compartmentLayer.addInputEventListener(
-				new CompartmentMoveEventHandler(compartmentLayer, 
+				new CompartmentActivityEventHandler(compartmentLayer, 
 												temporaryComponentsLayer, 
 												transitionLayer,
 												pObjectIDGenerator,
+												compartmentIDToLabelMap,
 												inMemoryModel,
 												notificationAreas,
 												mainWorkbenchCanvas));
@@ -385,10 +388,9 @@ public class ModelBuilderGUI implements ActionListener {
 				Dimension currentJInternalFrameSize = ((JInternalFrame) e.getSource()).getSize();
 				ParameterTable.refreshParameterWorkbenchLocation(currentJInternalFrameSize, 
 																 helperComponentsLayer);	
+				
 			}
-			public void componentShown(ComponentEvent e) { 
-				System.out.println(" @#$%%^&*( " + ((JInternalFrame) e.getSource()).getSize());
-			}
+			public void componentShown(ComponentEvent e) { }
         });
 	}
 
@@ -402,7 +404,8 @@ public class ModelBuilderGUI implements ActionListener {
         
         ObjectSelectionEventHandler selectionEventHandler = 
         	new ObjectSelectionEventHandler(canvasLayer, 
-        									selectionEventHandledLayers);
+        									selectionEventHandledLayers,
+        									this.compartmentIDToLabelMap);
 		
 		mainWorkbenchCanvas.addInputEventListener(selectionEventHandler);
 		return selectionEventHandler;
@@ -411,30 +414,22 @@ public class ModelBuilderGUI implements ActionListener {
 	/**
 	 * @param inputInMemoryModel
 	 */
-	private void importTransitionsFromInputInMemoryModel(
-			Model inputInMemoryModel) {
+	private void importTransitionsFromInputInMemoryModel() {
 		MultiKeyMap complexTransitionParentsToInfectionInformation = new MultiKeyMap();
 		
-		for (Transition inMemoryTransition : inputInMemoryModel.getTransitions()) { 
+		for (Transition currentTransition : inMemoryModel.getTransitions()) { 			
+			String sourceCompartmentName = currentTransition.getSource().getName();
+			String targetCompartmentName = currentTransition.getTarget().getName();
 			
-			String sourceCompartmentName = inMemoryTransition
-												.getSource().getName();
-
-			String targetCompartmentName = inMemoryTransition
-												.getTarget().getName();
+			String transitionRatio = currentTransition.getRatio();
 			
-			String transitionRatio = inMemoryTransition.getRatio();
-			
-			if (inMemoryTransition instanceof RatioTransition) {
-				
-
-				
+			if (currentTransition instanceof RatioTransition) {				
 				/*
 				 * We are comparing here against the id of the compartment bcoz it is
 				 * guaranteed that just after creation of the piccolo compartments they 
 				 * will have the same id & label.
-				 * TODO: later i shouold refactor it so that i can access the label of 
-				 * the compartment duirectly instead of getting it through the editablLabel.
+				 * TODO: later i should refactor it so that i can access the label of 
+				 * the compartment directly instead of getting it through the editablLabel.
 				 * */
 				PNode sourceCompartment = 
 					PiccoloUtilities
@@ -456,23 +451,24 @@ public class ModelBuilderGUI implements ActionListener {
 		        		transitionLayer)) {
 					
 				
-	        	PNode simpleTransition = 
-	        		new SimpleTransition(sourceCompartment, 
-	        							 targetCompartment,
-	        							 pObjectIDGenerator,
-	        							 transitionRatio,
-	        							 inMemoryModel,
-	        							 notificationAreas);
-	        
-	        	transitionLayer.addChild(simpleTransition);
+		        	PNode simpleTransition = 
+		        		new SimpleTransition(true,
+		        							 sourceCompartment, 
+		        							 targetCompartment,
+		        							 pObjectIDGenerator,
+		        							 transitionRatio,
+		        							 inMemoryModel,
+		        							 notificationAreas);
+		        
+		        	transitionLayer.addChild(simpleTransition);
+	        	
 				} else {
-					System.out.println("it was a duplicate");
-				}
-				
-			} else if (inMemoryTransition instanceof InfectionTransition) {
-				
-				String infectorCompartmentName = ((InfectionTransition) inMemoryTransition)
-														.getInfector().getName();
+					/* TODO Think about putting this in the notifications area.*/
+					System.out.println("The Transition was a duplicate");
+				}				
+			} else if (currentTransition instanceof InfectionTransition) {				
+				String infectorCompartmentName =
+				((InfectionTransition) currentTransition).getInfector().getName();
 				
 				List<ComplexTransitionInfectionInformation> infectionsInformation = 
 						(List<ComplexTransitionInfectionInformation>) 
@@ -485,7 +481,8 @@ public class ModelBuilderGUI implements ActionListener {
 					infectionsInformation.add(
 							new ComplexTransitionInfectionInformation(
 										infectorCompartmentName,
-										transitionRatio));
+										transitionRatio,
+										(InfectionTransition) currentTransition));
 					
 					complexTransitionParentsToInfectionInformation.put(
 							sourceCompartmentName,
@@ -498,7 +495,8 @@ public class ModelBuilderGUI implements ActionListener {
 					infectionsInformation.add(
 							new ComplexTransitionInfectionInformation(
 										infectorCompartmentName,
-										transitionRatio));
+										transitionRatio,
+										(InfectionTransition) currentTransition));
 				
 				}
 			}
@@ -513,11 +511,11 @@ public class ModelBuilderGUI implements ActionListener {
 			MultiKey infectionParents = (MultiKey) inMemoryComplexTransitionIterator.getKey();
 			
 			/*
-			 * We are comparing here against the id of the compartment bcoz it is
+			 * We are comparing here against the id of the compartment because it is
 			 * guaranteed that just after creation of the piccolo compartments they 
 			 * will have the same id & label.
-			 * TODO: later i shouold refactor it so that i can access the label of 
-			 * the compartment duirectly instead of getting it through the editablLabel.
+			 * TODO: later i should refactor it so that i can access the label of 
+			 * the compartment directly instead of getting it through the editablLabel.
 			 * */
 			PNode sourceCompartment = 
 				PiccoloUtilities
@@ -539,48 +537,68 @@ public class ModelBuilderGUI implements ActionListener {
 	        		transitionLayer)) { 
 				
 	        	PNode complexTransition = 
-	            	new ComplexTransition(sourceCompartment, 
+	            	new ComplexTransition(true,
+	            						  sourceCompartment, 
 	            						  targetCompartment,
-	            						  (List<ComplexTransitionInfectionInformation>) 
-	      								  inMemoryComplexTransitionIterator.getValue(),
+  (List<ComplexTransitionInfectionInformation>) inMemoryComplexTransitionIterator.getValue(),
 				  						  pObjectIDGenerator,
+				  						  compartmentIDToLabelMap,
 										  inMemoryModel,
 										  notificationAreas,
 										  mainWorkbenchCanvas);
 	        
-	        	transitionLayer.addChild(complexTransition);
-	        	
-			} else {
-				System.out.println("comlpex it was a duplicate");
-			}
-			
+	        	transitionLayer.addChild(complexTransition);	        	
+			}			
 		}
 	}
 
 	/**
 	 * @param inputInMemoryModel
 	 */
-	private void importCompartmentsFromInputInMemoryModel(
-			Model inputInMemoryModel) {
-		for (Compartment inMemoryCompartment : inputInMemoryModel.getCompartments()) {
+	private void importCompartmentsFromInputInMemoryModel() {		
+		for (Compartment inMemoryCompartment : this.inMemoryModel.getCompartments()) {			
+			Point2D.Double denormalizedCompartmentPoistion = 
+					getDenormalizedCompartmentPosition(inMemoryCompartment.getPosition(),
+							parentJFrame.getSize());
+			
 			Shape compartmentShape = new Rectangle2D.Double(
-					inMemoryCompartment.getPosition().getX(), 
-					inMemoryCompartment.getPosition().getY(),
+					denormalizedCompartmentPoistion.getX(), 
+					denormalizedCompartmentPoistion.getY(),
         			GlobalConstants.COMPARTMENT_DIMENSIONS.getWidth(), 
         			GlobalConstants.COMPARTMENT_DIMENSIONS.getHeight());
-        	
         	
         	PNode compartment = 
         		new PCompartment(
         				compartmentShape,
-        				inMemoryCompartment.getName(),
+        				inMemoryCompartment,
+        				compartmentIDToLabelMap,
 						inMemoryModel,
 						notificationAreas[1]);
         	compartmentLayer.addChild(compartment);
 		}
 	}
 
-    
+	private Double getDenormalizedCompartmentPosition(Point2D position,	Dimension dimension) {
+		double denormalizedXPosition =
+			(position.getX() * (dimension.getWidth()))
+				/ GlobalConstants.COMPARTMENT_POSITION_NORMALIZING_FACTOR;
+		
+		double denormalizedYPosition =
+			(position.getY() * (dimension.getHeight()))
+				/ GlobalConstants.COMPARTMENT_POSITION_NORMALIZING_FACTOR;
+		
+		if (denormalizedXPosition + GlobalConstants.COMPARTMENT_DIMENSIONS.getWidth() 
+					> dimension.getWidth()) {
+			denormalizedXPosition -= GlobalConstants.COMPARTMENT_DIMENSIONS.getWidth(); 
+		}
+		
+		if (denormalizedYPosition + GlobalConstants.COMPARTMENT_DIMENSIONS.getHeight()
+					> dimension.getHeight()) {
+			denormalizedYPosition -= GlobalConstants.COMPARTMENT_DIMENSIONS.getHeight(); 
+		}
+		
+		return new Point2D.Double(denormalizedXPosition, denormalizedYPosition);
+	}
 
 	private JMenuBar createMenuBar() {
         JMenuBar menuBar = new JMenuBar();
@@ -652,15 +670,23 @@ public class ModelBuilderGUI implements ActionListener {
     	
     	initializeModelHelpers();
     	
-    	importModelElementsFromInputInMemoryModel(new Model());
+    	importModelElementsFromInputInMemoryModel();
     	
 		ParameterTable.refreshParameterWorkbenchLocation(workbench.getSize(), 
 				 helperComponentsLayer);
-    	
 	}
 
 	private void quitModelBuilderAfterSaving() {
     	isModelBuildingComplete = true;
+    	
+    	/*
+    	 * We cannot null the inmemory Model yet because it has to be exported first.
+    	 * */
+    	
+    	parentFrameDimensionsAtDisposal = parentJFrame.getSize();
+    	
+    	parentFrameDimensionsAtDisposal.setSize(parentFrameDimensionsAtDisposal.getWidth(), 
+    											parentFrameDimensionsAtDisposal.getHeight());
     	
         parentJFrame.dispose();
         synchronized (this) {
@@ -718,20 +744,16 @@ public class ModelBuilderGUI implements ActionListener {
         	workbench.setClosable(false);
         	workbench.setMaximum(true);
             workbench.setSelected(true);
-        } catch (java.beans.PropertyVetoException e) {}
+        } catch (java.beans.PropertyVetoException e) {
+        	// Benign exception.
+        }
     }
 
 
-	/**
-	 * @return the isModelBuildingComplete
-	 */
 	public boolean isModelBuildingComplete() {
 		return isModelBuildingComplete;
 	}
 
-	/**
-	 * @return the inMemoryModel
-	 */
 	public Model getInMemoryModel() {
 		return inMemoryModel;
 	}
@@ -740,26 +762,32 @@ public class ModelBuilderGUI implements ActionListener {
 		return mainWorkbenchCanvas;
 	}
 
-	/**
-	 * @return the addNewCompartmentPosition
-	 */
-	public Point2D.Double getNewCompartmentPosition() {
+	public Point2D.Double getNewCompartmentPosition() {		
+		int maxCascadedCompartments = 21;
+		double cascadeWidthOffset = 21.0;
 		
 		/*
 		 * Reset the position of the new series of compartments when it reaches a certain
 		 * threshold, in this case it is 21. 
 		 * */
-		if (addNewCompartmentCount <= 21) {
+		if (addNewCompartmentCount <= maxCascadedCompartments) {
 			addNewCompartmentPosition.x += ADD_NEW_COMPARTMENT_X_INCREMENT;
 			addNewCompartmentPosition.y += ADD_NEW_COMPARTMENT_Y_INCREMENT;
 		} else {
 			addNewCompartmentCount = 0;
-			newCompartmentSeriesPosition.x += 21.0 + GlobalConstants.COMPARTMENT_DIMENSIONS.getWidth(); 
+			
+			newCompartmentSeriesPosition.x +=
+				cascadeWidthOffset + GlobalConstants.COMPARTMENT_DIMENSIONS.getWidth();
+			
 			addNewCompartmentPosition.x = newCompartmentSeriesPosition.x;
-			addNewCompartmentPosition.y = newCompartmentSeriesPosition.y 
-										  + ADD_NEW_COMPARTMENT_Y_INCREMENT;
+			addNewCompartmentPosition.y =
+				newCompartmentSeriesPosition.y + ADD_NEW_COMPARTMENT_Y_INCREMENT;
 		}
+		
 		return addNewCompartmentPosition;
 	}
-
+	
+	public Dimension getParentFrameDimensionsAtDisposal() {		
+		return parentFrameDimensionsAtDisposal;
+	}
 }

@@ -8,10 +8,12 @@ import java.util.Iterator;
 
 import edu.iu.epic.modelbuilder.gui.transition.ComplexTransition;
 import edu.iu.epic.modelbuilder.gui.transition.SimpleTransition;
+import edu.iu.epic.modelbuilder.gui.utility.CompartmentIDToLabelMap;
 import edu.iu.epic.modelbuilder.gui.utility.GlobalConstants;
 import edu.iu.epic.modelbuilder.gui.utility.IDGenerator;
 import edu.iu.epic.modelbuilder.gui.utility.NotificationArea;
 import edu.iu.epic.modelbuilder.gui.utility.PiccoloUtilities;
+import edu.iu.epic.modeling.compartment.model.Compartment;
 import edu.iu.epic.modeling.compartment.model.Model;
 import edu.umd.cs.piccolo.PLayer;
 import edu.umd.cs.piccolo.PNode;
@@ -29,7 +31,7 @@ import edu.umd.cs.piccolox.pswing.PSwingCanvas;
 /// edges where each edge is a PPath which each have a Tag that references an ArrayList
 /// with a list of associated nodes.
 /// </summary>
-public class CompartmentMoveEventHandler extends PDragSequenceEventHandler {
+public class CompartmentActivityEventHandler extends PDragSequenceEventHandler {
 	
 	private PPath newSimpleTransition, newComplexTransition;
 	
@@ -38,32 +40,35 @@ public class CompartmentMoveEventHandler extends PDragSequenceEventHandler {
 	private PLayer transitionLayer;
 	
 	private Model inMemoryModel;
-//	PNode currentNode;
 
 	private PSwingCanvas mainWorkbenchCanvas;
 
 	private IDGenerator pObjectIDGenerator;
 
-	private NotificationArea[] notificationAreas; 
+	private NotificationArea[] notificationAreas;
+
+	private CompartmentIDToLabelMap compartmentIDToLabelMap; 
 	
 	
-	public CompartmentMoveEventHandler(PLayer compartmentLayer,  
+	public CompartmentActivityEventHandler(PLayer compartmentLayer,  
 									   PLayer temporaryComponentsLayer,
 									   PLayer transitionLayer,
 									   IDGenerator pObjectIDGenerator,
+									   CompartmentIDToLabelMap compartmentIDToLabelMap, 
 									   Model inMemoryModel,
 									   NotificationArea[] notificationAreas, 
-									   PSwingCanvas mainWorkbenchCanvas
-										  ) {
+									   PSwingCanvas mainWorkbenchCanvas) {
 		getEventFilter().setMarksAcceptedEventsAsHandled(true);
 		this.compartmentLayer = compartmentLayer;
 		this.temporaryComponentsLayer = temporaryComponentsLayer;
 		this.transitionLayer = transitionLayer;
 		this.pObjectIDGenerator = pObjectIDGenerator;
+		this.compartmentIDToLabelMap = compartmentIDToLabelMap;
 		this.inMemoryModel = inMemoryModel;
 		this.notificationAreas = notificationAreas;
 		this.mainWorkbenchCanvas = mainWorkbenchCanvas;
 	}
+	
 	public void mouseEntered(PInputEvent e) {
 		PNode pickedNode = e.getPickedNode();
 		
@@ -81,7 +86,7 @@ public class CompartmentMoveEventHandler extends PDragSequenceEventHandler {
 				&& GlobalConstants.COMPLEX_TRANSITION_HANDLE_TYPE_ATTRIBUTE_VALUE
 					.equalsIgnoreCase(pickedNodeType)) {
 			pickedNode.setPaint(Color.YELLOW);
-		}
+		} 
 	}
 
 	public void mouseExited(PInputEvent e) {
@@ -114,19 +119,29 @@ public class CompartmentMoveEventHandler extends PDragSequenceEventHandler {
 	
 	@Override
 	public void mouseClicked(PInputEvent event) {
-		PNode node = event.getPickedNode();
-		String pickedNodeType = (String) node
+		PNode pickedNode = event.getPickedNode();
+		String pickedNodeType = (String) pickedNode
 									.getAttribute(GlobalConstants.NODE_TYPE_ATTRIBUTE_NAME);
 		
-		//TODO: deletwe this if not required.. currently it is doing nothing.
-		if (GlobalConstants.SIMPLE_TRANSITION_HANDLE_TYPE_ATTRIBUTE_VALUE
-				.equalsIgnoreCase(pickedNodeType)) { }
+		if (GlobalConstants.IS_SECONDARY_HANDLE_TYPE_ATTRIBUTE_VALUE
+					.equalsIgnoreCase(pickedNodeType)) {
+			
+			if (((PCompartment) pickedNode.getParent()).getInMemoryCompartment().isSecondary()) {
+				pickedNode.setPaint(GlobalConstants.SECONDARY_COMPARTMENT_IDENTIFYING_COLOR);
+				pickedNode.addAttribute(GlobalConstants.NODE_COLOR_ATTRIBUTE_NAME, 
+										GlobalConstants.SECONDARY_COMPARTMENT_IDENTIFYING_COLOR);
+			} else {
+				pickedNode.setPaint(GlobalConstants.PRIMARY_COMPARTMENT_IDENTIFYING_COLOR);
+				pickedNode.addAttribute(GlobalConstants.NODE_COLOR_ATTRIBUTE_NAME, 
+										GlobalConstants.PRIMARY_COMPARTMENT_IDENTIFYING_COLOR);
+			}
+			
+		}
 		
 	}
 	
 	@Override
-	public void mouseReleased(PInputEvent e) {
-		
+	public void mouseReleased(PInputEvent e) {		
 		PNode currentPickedNode = e.getPickedNode();
 		
 		if  (GlobalConstants.SIMPLE_TRANSITION_HANDLE_TYPE_ATTRIBUTE_VALUE
@@ -143,7 +158,8 @@ public class CompartmentMoveEventHandler extends PDragSequenceEventHandler {
 				
 				if (!isTransitionDuplicate) {
 					PNode simpleTransition = 
-						new SimpleTransition(currentPickedNode.getParent(),
+						new SimpleTransition(false,
+											 currentPickedNode.getParent(),
 											 destinationCompartment,
 											 pObjectIDGenerator,
 											 GlobalConstants.SIMPLE_TRANSITION_RATIO_DEFAULT_VALUE,
@@ -162,9 +178,7 @@ public class CompartmentMoveEventHandler extends PDragSequenceEventHandler {
 			if (newSimpleTransition != null) {
 				newSimpleTransition.removeFromParent();
 				newSimpleTransition = null;
-			}
-			
-			
+			}			
 		} else if  (GlobalConstants.COMPLEX_TRANSITION_HANDLE_TYPE_ATTRIBUTE_VALUE
 				.equalsIgnoreCase(((String) currentPickedNode
 						.getAttribute(GlobalConstants.NODE_TYPE_ATTRIBUTE_NAME)))) {
@@ -179,17 +193,19 @@ public class CompartmentMoveEventHandler extends PDragSequenceEventHandler {
 				
 				if (!isTransitionDuplicate) {
 					PNode complexTransition = 
-						new ComplexTransition(currentPickedNode.getParent(),
+						new ComplexTransition(false,
+											 currentPickedNode.getParent(),
 											 destinationCompartment,
 											 null,
 											 pObjectIDGenerator,
+											 compartmentIDToLabelMap,
 											 inMemoryModel,
 											 notificationAreas,
 											 mainWorkbenchCanvas);
 
 					transitionLayer.addChild(complexTransition);	
 				}
-			}
+			} 
 			
 			/*
 			 * To make sure that if the user presses & releases the mouse on the same 
@@ -199,6 +215,18 @@ public class CompartmentMoveEventHandler extends PDragSequenceEventHandler {
 			if (newComplexTransition != null) {
 				newComplexTransition.removeFromParent();
 				newComplexTransition = null;
+			}
+		} else if  (GlobalConstants.IS_SECONDARY_HANDLE_TYPE_ATTRIBUTE_VALUE
+				.equalsIgnoreCase(((String) currentPickedNode
+						.getAttribute(GlobalConstants.NODE_TYPE_ATTRIBUTE_NAME)))) {
+			PNode destinationCompartment = getIntersectingCompartment(e.getCanvasPosition());
+			
+			if (currentPickedNode.getParent() == destinationCompartment) {
+				Compartment inMemoryCompartment =
+					((PCompartment) destinationCompartment).getInMemoryCompartment();
+				
+				// Toggle secondariness
+				inMemoryCompartment.setSecondary(!inMemoryCompartment.isSecondary());
 			}
 		}
 	}
@@ -263,16 +291,17 @@ public class CompartmentMoveEventHandler extends PDragSequenceEventHandler {
 		}
 	}
 	
-	private PNode getIntersectingCompartment(Point2D mouseReleasePoint) {
-		
+	private PNode getIntersectingCompartment(Point2D mouseReleasePoint) {		
 		for (Iterator<PNode> compartmentsIterator = compartmentLayer.getChildrenIterator(); 
 				compartmentsIterator.hasNext();) {
 			PNode currentCompartment = (PNode) compartmentsIterator.next();
 			Rectangle2D currentCompartmentFullBounds = currentCompartment.getFullBoundsReference(); 
+			
 			if (currentCompartmentFullBounds.contains(mouseReleasePoint)) {
 				return currentCompartment;
 			}
 		}
+		
 		return null;
 	}
 	

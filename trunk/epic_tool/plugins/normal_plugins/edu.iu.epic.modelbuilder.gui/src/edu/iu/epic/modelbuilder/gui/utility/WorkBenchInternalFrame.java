@@ -2,6 +2,7 @@ package edu.iu.epic.modelbuilder.gui.utility;
 
 import javax.swing.JInternalFrame;
 
+@SuppressWarnings("serial")
 public class WorkBenchInternalFrame extends JInternalFrame {
 
     public WorkBenchInternalFrame() {
@@ -10,7 +11,7 @@ public class WorkBenchInternalFrame extends JInternalFrame {
               true, //closable
               true, //maximizable
               true);//iconifiable
+        
         pack();
-        //Set the window's location.
     }
 }

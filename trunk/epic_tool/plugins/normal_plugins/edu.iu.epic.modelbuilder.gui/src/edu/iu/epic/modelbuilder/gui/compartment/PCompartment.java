@@ -21,22 +21,85 @@ import edu.iu.epic.modeling.compartment.model.exception.InvalidCompartmentNameEx
 import edu.umd.cs.piccolo.PNode;
 import edu.umd.cs.piccolo.nodes.PPath;
 
+@SuppressWarnings("serial")
 public class PCompartment extends PPath {
 	
-	private static final long serialVersionUID = -3166464174491867683L;
 	private Compartment inMemoryCompartment;
 	private Model inMemoryModel;
+	private CompartmentIDToLabelMap compartmentIDToLabelMap;
 
 
 	public PCompartment(Shape compartmentShape, 
-					   String compartmentID, 
+			   String newCompartmentID, 
+			   CompartmentIDToLabelMap compartmentIDToLabelMap, 
+			   Model inMemoryModel, 
+			   NotificationArea notificationArea) {		
+		super(compartmentShape);
+		
+		this.inMemoryModel = inMemoryModel;
+		this.compartmentIDToLabelMap = compartmentIDToLabelMap;
+		
+		boolean isNewCompartmentIDAccepted = false;
+		int erroneousNewLabelCounter = 0;
+		Compartment newCompartment = null;
+		
+		while (!isNewCompartmentIDAccepted) {
+			boolean errorPresent = false;
+			
+			try {
+				newCompartment = this.inMemoryModel.addCompartment(newCompartmentID);
+				
+			} catch (CompartmentExistsException e) {
+				notificationArea.addNotification("Compartment with name \"" 
+												 + newCompartmentID + "\" already exists. ");
+				errorPresent = true;
+			} catch (InvalidCompartmentNameException e) {
+				notificationArea.addNotification("\"" + newCompartmentID 
+						 						 + "\" is an invalid compartment name.");
+				errorPresent = true;
+			}
+			
+			if (!errorPresent) {
+				isNewCompartmentIDAccepted = true;
+			} else {
+				newCompartmentID += "_" + erroneousNewLabelCounter;
+				erroneousNewLabelCounter++;
+			}
+		}
+		
+		
+		this.inMemoryCompartment = newCompartment;
+		
+		setupCompartmentGUI(notificationArea);
+		
+	}
+	
+	public PCompartment(Shape compartmentShape, 
+					   Compartment compartment,
+					   CompartmentIDToLabelMap compartmentIDToLabelMap,
 					   Model inMemoryModel, 
 					   NotificationArea notificationArea) { 
 		super(compartmentShape);
 		
 		this.inMemoryModel = inMemoryModel;
+		this.inMemoryCompartment = compartment;
+		this.compartmentIDToLabelMap = compartmentIDToLabelMap;
 		
-		System.out.println("Observers " + CompartmentIDToLabelMap.getObservers());
+		setupCompartmentGUI(notificationArea);
+	
+	}
+
+	/**
+	 * @param compartment
+	 * @param inMemoryModel
+	 * @param notificationArea
+	 */
+	private void setupCompartmentGUI(NotificationArea notificationArea) {
+		String compartmentID = inMemoryCompartment.getName();
+		
+		inMemoryCompartment.setPosition(new Point2D.Double(
+											this.getFullBoundsReference().getX(),
+											this.getFullBoundsReference().getY()));
 		
 		List<PNode> emptyTransitionPlaceHolder = new ArrayList<PNode>();
 		
@@ -56,6 +119,9 @@ public class PCompartment extends PPath {
 			}
 		});
 		
+		/*
+		 * Creation of Complex Transition Handle
+		 * */
 		PNode simpleTransitionHandle = 
 			PPath.createRectangle(
 				0, 
@@ -63,7 +129,7 @@ public class PCompartment extends PPath {
 				(float) GlobalConstants.SIMPLE_TRANSITION_BUTTON_DIMENSIONS.getWidth(), 
 				(float) GlobalConstants.SIMPLE_TRANSITION_BUTTON_DIMENSIONS.getHeight());
 		
-		simpleTransitionHandle.setPaint(Color.CYAN);
+		simpleTransitionHandle.setPaint(GlobalConstants.SIMPLE_TRANSITION_HANDLE_COLOR);
 		
 		double translateSimpleTransitionHandleX = this.getX();
 		double tranlateSimpleTransitionHandleY = this.getY() 
@@ -73,7 +139,8 @@ public class PCompartment extends PPath {
 		simpleTransitionHandle.translate(translateSimpleTransitionHandleX, 
 										 tranlateSimpleTransitionHandleY);
 		
-		simpleTransitionHandle.addAttribute(GlobalConstants.NODE_COLOR_ATTRIBUTE_NAME, Color.CYAN);
+		simpleTransitionHandle.addAttribute(GlobalConstants.NODE_COLOR_ATTRIBUTE_NAME, 
+											GlobalConstants.SIMPLE_TRANSITION_HANDLE_COLOR);
 		
 		simpleTransitionHandle.addAttribute(GlobalConstants.NODE_ID_ATTRIBUTE_NAME, 
 											"simple_translation_handle_" + compartmentID);
@@ -84,13 +151,17 @@ public class PCompartment extends PPath {
 		
 		this.addChild(simpleTransitionHandle);
 		
+		
+		/*
+		 * Creation of Complex Transition Handle
+		 * */
 		PNode complexTransitionHandle 
 			= PPath.createRectangle(0, 
 				 0, 
 				 (float) GlobalConstants.COMPLEX_TRANSITION_BUTTON_DIMENSIONS.getWidth(), 
 				 (float) GlobalConstants.COMPLEX_TRANSITION_BUTTON_DIMENSIONS.getHeight());
 		
-		complexTransitionHandle.setPaint(Color.BLUE);
+		complexTransitionHandle.setPaint(GlobalConstants.COMPLEX_TRANSITION_HANDLE_COLOR);
 		
 		double translateComplexTransitionHandleX = translateSimpleTransitionHandleX 
 												   + GlobalConstants
@@ -105,7 +176,8 @@ public class PCompartment extends PPath {
 		complexTransitionHandle.translate(translateComplexTransitionHandleX, 
 										  translateComplexTransitionHandleY);
 		
-		complexTransitionHandle.addAttribute(GlobalConstants.NODE_COLOR_ATTRIBUTE_NAME, Color.BLUE);
+		complexTransitionHandle.addAttribute(GlobalConstants.NODE_COLOR_ATTRIBUTE_NAME, 
+											 GlobalConstants.COMPLEX_TRANSITION_HANDLE_COLOR);
 		
 		complexTransitionHandle.addAttribute(GlobalConstants.NODE_ID_ATTRIBUTE_NAME, 
 											"complex_translation_handle_" + compartmentID);
@@ -116,40 +188,44 @@ public class PCompartment extends PPath {
 		
 		this.addChild(complexTransitionHandle);		
 		
-		String compartmentLabelText = (String) getAttribute(GlobalConstants.NODE_ID_ATTRIBUTE_NAME);
+		/*
+		 * Creation of Is Secondary?
+		 * */
+		PNode isSecondaryHandle 
+			= PPath.createRectangle(0, 
+				 0, 
+				 (float) GlobalConstants.IS_SECONDARY_BUTTON_DIMENSIONS.getWidth(), 
+				 (float) GlobalConstants.IS_SECONDARY_BUTTON_DIMENSIONS.getHeight());
 		
-		boolean isCompartmentLabelAccepted = false;
-		int erroneousNewLabelCounter = 0;
+		double translateIsSecondaryHandleX = translateSimpleTransitionHandleX 
+												   + GlobalConstants
+												   		.SIMPLE_TRANSITION_BUTTON_DIMENSIONS
+												   			.getWidth()
+												   + GlobalConstants
+												   		.COMPLEX_TRANSITION_BUTTON_DIMENSIONS
+												   			.getWidth();
 		
-		while (!isCompartmentLabelAccepted) {
-			boolean errorPresent = false;
-			
-			try {
-				inMemoryCompartment = this.inMemoryModel.addCompartment(compartmentLabelText);
-				setInMemoryCompartmentPosition(this.getFullBoundsReference().getX(),
-								   		   	   this.getFullBoundsReference().getY());
-			} catch (CompartmentExistsException e) {
-				System.out.println("name already exists" + e.getMessage());
-				notificationArea.addNotification("Compartment with name \"" 
-												 + compartmentLabelText + "\" already exists. ");
-				errorPresent = true;
-			} catch (InvalidCompartmentNameException e) {
-				System.out.println("invalid compartment name" + e.getMessage());
-				notificationArea.addNotification("\"" + compartmentLabelText 
-						 						 + "\" is an invalid compartment name.");
-				errorPresent = true;
-			}
-			
-			if (!errorPresent) {
-				isCompartmentLabelAccepted = true;
-			} else {
-				compartmentLabelText =  (String) this
-											.getAttribute(GlobalConstants.NODE_ID_ATTRIBUTE_NAME)
-										+ "_" + erroneousNewLabelCounter;
-				erroneousNewLabelCounter++;
-			}
-		}
+		double translateIsSecondaryHandleY = this.getY() 
+												   + this.getHeight() 
+												   - GlobalConstants
+												   		.IS_SECONDARY_BUTTON_DIMENSIONS
+												   			.getHeight();
 		
+		isSecondaryHandle.translate(translateIsSecondaryHandleX, 
+										  translateIsSecondaryHandleY);
+		
+		isSecondaryHandle.addAttribute(GlobalConstants.NODE_ID_ATTRIBUTE_NAME, 
+											"is_secondary_handle_" + compartmentID);
+		
+		isSecondaryHandle.addAttribute(GlobalConstants.NODE_TYPE_ATTRIBUTE_NAME, 
+											 GlobalConstants
+											 	.IS_SECONDARY_HANDLE_TYPE_ATTRIBUTE_VALUE);
+		
+		isSecondaryHandle.addAttribute(GlobalConstants.NODE_COLOR_ATTRIBUTE_NAME, 
+									   getCompartmentTypeColor(inMemoryCompartment.isSecondary()));
+		isSecondaryHandle.setPaint(getCompartmentTypeColor(inMemoryCompartment.isSecondary()));
+		
+		this.addChild(isSecondaryHandle);		
 		
 		double translateCompartmentLabelX = translateSimpleTransitionHandleX 
 											+ GlobalConstants.COMPARTMENT_LABEL_X_OFFSET;
@@ -157,27 +233,33 @@ public class PCompartment extends PPath {
 											+ GlobalConstants.COMPARTMENT_LABEL_Y_OFFSET;
 		EditableLabel compartmentLabel = 
 			new EditableLabel(GlobalConstants.COMPARTMENT_LABEL_TYPE_ATTRIBUTE_VALUE, 
-							  compartmentLabelText,
+					 		  compartmentID,
 							  translateCompartmentLabelX,
 							  translateCompartmentLabelY,
-							  new CompartmentEditableLabelEventHandler(notificationArea));
+							  new CompartmentEditableLabelEventHandler(this.compartmentIDToLabelMap,
+									  								   notificationArea));
 
-		CompartmentIDToLabelMap.addCompartmentID(compartmentID, compartmentLabelText);
+		compartmentIDToLabelMap.addCompartmentID(compartmentID, compartmentID);
 		
 		this.addChild(compartmentLabel);
-	
 	}
 	
-	private void updateTransition(PNode node) {
+	private Color getCompartmentTypeColor(boolean isSecondary) {
+		if (isSecondary) {
+			return GlobalConstants.SECONDARY_COMPARTMENT_IDENTIFYING_COLOR;
+		} else {
+			return GlobalConstants.PRIMARY_COMPARTMENT_IDENTIFYING_COLOR;
+		}
+	}
 
+	private void updateTransition(PNode node) {
 		String updatingNodeType = (String) node
 										.getAttribute(GlobalConstants.NODE_TYPE_ATTRIBUTE_NAME);
 		
 		if (GlobalConstants.COMPARTMENT_TYPE_ATTRIBUTE_VALUE.equalsIgnoreCase(updatingNodeType)) {
 
-		ArrayList transitions = (ArrayList) node
-									.getAttribute(
-											GlobalConstants.COMPARTMENT_TRANSITIONS_ATTRIBUTE_NAME);
+		ArrayList transitions =
+			(ArrayList) node.getAttribute(GlobalConstants.COMPARTMENT_TRANSITIONS_ATTRIBUTE_NAME);
 		
 		/*
 		 * Refreshes position of the transition along with all its child elements like
@@ -204,15 +286,11 @@ public class PCompartment extends PPath {
 			try {
 				inMemoryCompartment.setName(newCompartmentLabelText);
 			} catch (InvalidCompartmentNameException e) {
-				System.out.println("invalid compartment name" + e.getMessage());
-				System.out.println("reverting to old compartment name");
 				notificationArea.addNotification("\"" + newCompartmentLabelText 
 												 + "\" is an invalid compartment name."
 												 + " Reverting to old compartment name.");
 				isCompartmentLabelAccepted = false;
 			} catch (CompartmentExistsException e) {
-				System.out.println("name already exists" + e.getMessage());
-				System.out.println("reverting to old compartment name");
 				notificationArea.addNotification("Compartment with name \"" 
 												 + newCompartmentLabelText + "\" already exists.");
 				isCompartmentLabelAccepted = false;

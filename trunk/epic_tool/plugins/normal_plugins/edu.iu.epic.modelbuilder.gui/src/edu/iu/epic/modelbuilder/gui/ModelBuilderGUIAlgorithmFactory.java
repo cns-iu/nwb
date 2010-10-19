@@ -16,9 +16,9 @@ public abstract class ModelBuilderGUIAlgorithmFactory implements AlgorithmFactor
 	
 	private URL deleteButtonMousePressedImagePath, deleteButtonNormalStateImagePath;
 	
-	private static final String deleteButtonMousePressedImageFilePath
+	private static final String DELETE_BUTTON_MOUSE_PRESSED_IMAGE_FILE_PATH
 									= "delete_button_pressed_state.png";
-	private static final String deleteButtonNormalStateImageFilePath 
+	private static final String DELETE_BUTTON_NORMAL_STATE_IMAGE_FILE_PATH 
 									= "delete_button_normal_state.png";
 
 	/*
@@ -29,14 +29,15 @@ public abstract class ModelBuilderGUIAlgorithmFactory implements AlgorithmFactor
     	BundleContext bContext = ctxt.getBundleContext();
     	
     	this.deleteButtonMousePressedImagePath = bContext.getBundle().getResource(
-    												deleteButtonMousePressedImageFilePath);
+    												DELETE_BUTTON_MOUSE_PRESSED_IMAGE_FILE_PATH);
     	ParameterTable.setDeleteButtonMousePressedImageFile(deleteButtonMousePressedImagePath);
     	
     	this.deleteButtonNormalStateImagePath = bContext.getBundle().getResource(
-    												deleteButtonNormalStateImageFilePath);
+    												DELETE_BUTTON_NORMAL_STATE_IMAGE_FILE_PATH);
     	ParameterTable.setDeleteButtonNormalStateImageFile(deleteButtonNormalStateImagePath);
     	
     }
 	
-	public abstract Algorithm createAlgorithm(Data[] data, Dictionary parameters, CIShellContext context);
+	public abstract Algorithm createAlgorithm(
+			Data[] data, Dictionary<String, Object> parameters, CIShellContext context);
 }

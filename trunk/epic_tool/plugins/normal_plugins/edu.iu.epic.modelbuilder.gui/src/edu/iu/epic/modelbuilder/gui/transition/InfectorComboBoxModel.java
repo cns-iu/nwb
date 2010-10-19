@@ -6,16 +6,14 @@ import java.util.Map.Entry;
 
 import javax.swing.DefaultComboBoxModel;
 
-import edu.iu.epic.modelbuilder.gui.utility.CompartmentIDToLabelMap;
-import edu.iu.epic.modelbuilder.gui.utility.Observer;
+import edu.iu.epic.modelbuilder.gui.utility.CompartmentIDChangeObserver;
 
-public class InfectorComboBoxModel extends DefaultComboBoxModel implements Observer {
+@SuppressWarnings("serial")
+public class InfectorComboBoxModel extends DefaultComboBoxModel implements CompartmentIDChangeObserver {
 
-	private static final long serialVersionUID = 448436998855719993L;
 	private Map<Integer, String> initialIndexToCompartmentID;
 	
 	public InfectorComboBoxModel(Map<String, String> initialCompartmentIDToLabel) {
-		CompartmentIDToLabelMap.addObserver(this);
 		this.initialIndexToCompartmentID = new HashMap<Integer, String>();
 		
 		int index = 0;
@@ -29,7 +27,8 @@ public class InfectorComboBoxModel extends DefaultComboBoxModel implements Obser
 	public void update(Map<String, String> compartmentIDToLabel) {
 		String currentSelectedInfectorLabel = this.getSelectedItem().toString();
 		int currentSelectedInfectorIndex = this.getIndexOf(currentSelectedInfectorLabel);
-		String currentSelectedInfectorID = initialIndexToCompartmentID.get(currentSelectedInfectorIndex);
+		String currentSelectedInfectorID =
+			initialIndexToCompartmentID.get(currentSelectedInfectorIndex);
 
 		/*
 		 * Set the default new combo box index as the First option.

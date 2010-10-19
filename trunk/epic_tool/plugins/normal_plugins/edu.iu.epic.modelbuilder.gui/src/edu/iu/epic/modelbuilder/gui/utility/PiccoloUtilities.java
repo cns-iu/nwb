@@ -44,6 +44,7 @@ public class PiccoloUtilities {
 			
 		}
 	}
+	
 	public static boolean isTransitionDuplicate(PNode sourceCompartment,
 			  									PNode targetCompartment,
 			  									PLayer transitionLayer
@@ -59,8 +60,6 @@ public class PiccoloUtilities {
 		for (Iterator transitionIterator = transitionLayer.getChildrenIterator();
 				transitionIterator.hasNext();) {
 			PPath transition = (PPath) transitionIterator.next();
-			
-			System.out.println(" --> " + transition.getAttribute(GlobalConstants.NODE_ID_ATTRIBUTE_NAME));
 			
 			List<PNode> compartmentsInvolved = 
 					(ArrayList<PNode>) transition

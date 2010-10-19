@@ -6,6 +6,7 @@ import java.util.Set;
 import javax.swing.JTextArea;
 
 
+@SuppressWarnings("serial")
 public class NotificationArea extends JTextArea {
 	
 	private static final String DEFAULT_NOTIFICATION_SEPERATOR = "\n";

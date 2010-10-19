@@ -7,17 +7,19 @@ import java.awt.event.ItemListener;
 import edu.iu.epic.modelbuilder.gui.utility.CompartmentIDToLabelMap;
 import edu.umd.cs.piccolox.pswing.PComboBox;
 
+@SuppressWarnings("serial")
 public class InfectorComboBox extends PComboBox {
 
-	private static final long serialVersionUID = -2697730594337025625L;
-
 	public InfectorComboBox(final InfectorInformationPanel infectorInformationPanel, 
-							String infectorCompartmentName) {
+							String infectorCompartmentName, 
+							CompartmentIDToLabelMap compartmentIDToLabelMap) {
 		
 		super();
 		
 		InfectorComboBoxModel infectorComboBoxModel = 
-			new InfectorComboBoxModel(CompartmentIDToLabelMap.getCompartmentIDToLabelMap());
+			new InfectorComboBoxModel(compartmentIDToLabelMap.getCompartmentIDToLabelMap());
+		
+		compartmentIDToLabelMap.addObserver(infectorComboBoxModel);
 		
 		this.setModel(infectorComboBoxModel);
 		

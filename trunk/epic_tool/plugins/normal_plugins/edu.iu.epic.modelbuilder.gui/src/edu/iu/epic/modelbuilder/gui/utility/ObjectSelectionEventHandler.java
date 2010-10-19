@@ -15,12 +15,20 @@ import edu.umd.cs.piccolox.event.PSelectionEventHandler;
 
 public class ObjectSelectionEventHandler extends PSelectionEventHandler {
 
-	public ObjectSelectionEventHandler(PNode marqueeParent, List selectableParents) {
+	private CompartmentIDToLabelMap compartmentIDToLabelMap;
+
+	public ObjectSelectionEventHandler(PNode marqueeParent, 
+									   List selectableParents, 
+									   CompartmentIDToLabelMap compartmentIDToLabelMap) {
 		super(marqueeParent, selectableParents);
+		this.compartmentIDToLabelMap = compartmentIDToLabelMap;
 	}
 	
-	public ObjectSelectionEventHandler(PNode marqueeParent, PNode selectableParent) {
+	public ObjectSelectionEventHandler(PNode marqueeParent, 
+									   PNode selectableParent, 
+									   CompartmentIDToLabelMap compartmentIDToLabelMap) {
 		super(marqueeParent, selectableParent);
+		this.compartmentIDToLabelMap = compartmentIDToLabelMap;
 	}
 	
 	@Override
@@ -63,7 +71,7 @@ public class ObjectSelectionEventHandler extends PSelectionEventHandler {
 					 * */
 					((PCompartment) currentSelectedNode).removeInMemoryCompartment();
 					
-					CompartmentIDToLabelMap.removeCompartmentID(compartmentID);
+					compartmentIDToLabelMap.removeCompartmentID(compartmentID);
 					
 					
 					List<PNode> currentSelectedNodeTransitions = 
@@ -90,6 +98,7 @@ public class ObjectSelectionEventHandler extends PSelectionEventHandler {
 					System.out.println("COMPLEX TRANSITION DELETE");
 					((ComplexTransition) currentSelectedNode)
 							.removeInfectorInformationPanels(currentSelectedNode);
+					
 					((ComplexTransition) currentSelectedNode).removeInMemoryInfectionTransitions();
 					
 				}
