@@ -150,7 +150,7 @@ public class NWBToGraphMLbyStax implements Algorithm {
 	private void writeAttributes(XMLStreamWriter xtw, ValidateNWBFile validator)
 			throws XMLStreamException, AlgorithmExecutionException {
 		// First handle node attributes
-		List<?> array = validator.getNodeAttrList();
+		List<NWBAttribute> array = validator.getNodeAttrList();
 		for (int ii = 0; ii < array.size(); ii++) {
 			NWBAttribute attr = (NWBAttribute) array.get(ii);
 			String attrName = attr.getAttrName();
@@ -290,7 +290,7 @@ public class NWBToGraphMLbyStax implements Algorithm {
 					//System.out.println(line);
 					StringTokenizer st = new StringTokenizer(line);
 					String[] columns = validator.processTokens(st);
-					List<?> nodeAttrList = validator.getNodeAttrList();
+					List nodeAttrList = validator.getNodeAttrList();
 					//print <node id=\""+columns[0]+"\">
 
 					xtw.writeStartElement(NODE_ELEMENT);
@@ -346,7 +346,7 @@ public class NWBToGraphMLbyStax implements Algorithm {
 					continue;
 				}
 				else{
-					List<?> edgeAttrList = new ArrayList<NWBAttribute>();
+					List edgeAttrList = new ArrayList();
 					StringTokenizer st = new StringTokenizer(line);
 					String[] columns = validator.processTokens(st);
 					if (inDirectededgesSection)
@@ -482,7 +482,7 @@ public class NWBToGraphMLbyStax implements Algorithm {
 		}//end while
 	}
 
-	private int findAttr(String attrName, List<?> attrList) {
+	private int findAttr(String attrName, List attrList) {
 		for (int ii = 0; ii < attrList.size(); ii++){
 			NWBAttribute attr = (NWBAttribute) attrList.get(ii); 
 			if (attr.getAttrName().equalsIgnoreCase(attrName)) {

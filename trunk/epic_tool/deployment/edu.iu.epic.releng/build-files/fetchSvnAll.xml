@@ -780,14 +780,12 @@
       <param name="project.name" value="/plugins/converter/edu.iu.nwb.converter.nwb"/>
       <param name="url" value="http://nwb.slis.indiana.edu/svn/nwb/trunk"/>
     </antcall>
-  	<!--
     <antcall target="svn.co">
       <param name="target" value="plugins"/>
       <param name="element.id" value="edu.iu.nwb.converter.nwbgraphml"/>
       <param name="project.name" value="/plugins/converter/edu.iu.nwb.converter.nwbgraphml"/>
       <param name="url" value="http://nwb.slis.indiana.edu/svn/nwb/trunk"/>
     </antcall>
-    -->
     <antcall target="svn.co">
       <param name="target" value="plugins"/>
       <param name="element.id" value="edu.iu.nwb.converter.nwbpajeknet"/>

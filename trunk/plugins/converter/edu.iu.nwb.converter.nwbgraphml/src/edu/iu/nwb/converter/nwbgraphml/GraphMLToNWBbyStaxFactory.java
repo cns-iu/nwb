@@ -18,8 +18,7 @@ import org.cishell.framework.data.Data;
  * using edu.iu.nwb.util.nwbfile utilities.
  */
 public class GraphMLToNWBbyStaxFactory implements AlgorithmFactory  {
-    public Algorithm createAlgorithm(
-    		Data[] data, Dictionary<String, Object> parameters, CIShellContext context) {
-		return new GraphMLToNWBbyStax(data);
+    public Algorithm createAlgorithm(Data[] data, Dictionary parameters, CIShellContext context) {
+		return new GraphMLToNWBbyStax(data, parameters, context);
     }
 }
