@@ -8,16 +8,15 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.commons.lang.StringUtils;
-
 import edu.iu.epic.modelbuilder.gui.compartment.PCompartment;
 import edu.iu.epic.modelbuilder.gui.editablelabel.EditableLabel;
 import edu.iu.epic.modelbuilder.gui.editablelabel.TransitionEditableLabelEventHandler;
+import edu.iu.epic.modelbuilder.gui.utility.CompartmentIDChangeObserver;
 import edu.iu.epic.modelbuilder.gui.utility.CompartmentIDToLabelMap;
 import edu.iu.epic.modelbuilder.gui.utility.GlobalConstants;
 import edu.iu.epic.modelbuilder.gui.utility.NotificationArea;
-import edu.iu.epic.modelbuilder.gui.utility.CompartmentIDChangeObserver;
 import edu.iu.epic.modelbuilder.gui.utility.PiccoloUtilities;
+import edu.iu.epic.modelbuilder.gui.utility.StringUtilities;
 import edu.iu.epic.modeling.compartment.model.Compartment;
 import edu.iu.epic.modeling.compartment.model.InfectionTransition;
 import edu.iu.epic.modeling.compartment.model.Model;
@@ -67,13 +66,13 @@ public class InfectorInformationPanel extends PNode {
 		
 		if (infection != null) {
 			
-			if (StringUtils.isNotBlank(infection.getTransitionRatio())) {
+			if (StringUtilities.isNotBlank(infection.getTransitionRatio())) {
 				transitionRatio = infection.getTransitionRatio();
 			} else {
 				transitionRatio = GlobalConstants.COMPLEX_TRANSITION_RATIO_DEFAULT_VALUE;
 			}
 			
-			if (StringUtils.isNotBlank(infection.getInfectorCompartmentName())) {				
+			if (StringUtilities.isNotBlank(infection.getInfectorCompartmentName())) {				
 				infectorCompartmentName = infection.getInfectorCompartmentName();				
 			} else {				
 				infectorCompartmentName = 
@@ -232,9 +231,7 @@ public class InfectorInformationPanel extends PNode {
 			
 			this.addChild(infectorDeleterHandle);
 			
-		}
-		
-			
+		}	
 	}
 
 	/**

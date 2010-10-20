@@ -252,7 +252,7 @@ public class ParameterTable {
 		});
 		
 		legendTable.setPreferredScrollableViewportSize(new Dimension(285, 70));
-		legendTable.setFillsViewportHeight(true);
+//		legendTable.setFillsViewportHeight(true); New in Java 6
 
 		legendTable.getColumnModel().getColumn(0).setMaxWidth(30);
 		legendTable.setDefaultRenderer(Color.class, new ColorRenderer(true));
