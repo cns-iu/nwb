@@ -1,4 +1,4 @@
-package edu.iu.epic.simulator.runner.singlepopulation;
+package edu.iu.epic.simulator.runner.stochastic.singlepopulation;
 
 import java.util.Dictionary;
 

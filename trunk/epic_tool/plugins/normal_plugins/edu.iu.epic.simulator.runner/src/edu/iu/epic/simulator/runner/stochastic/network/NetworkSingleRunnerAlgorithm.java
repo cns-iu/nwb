@@ -1,4 +1,4 @@
-package edu.iu.epic.simulator.runner.exact;
+package edu.iu.epic.simulator.runner.stochastic.network;
 
 import java.util.Dictionary;
 
@@ -8,13 +8,10 @@ import org.osgi.framework.BundleContext;
 
 import edu.iu.epic.simulator.runner.EpidemicSimulatorAlgorithm;
 
-/**
- * For now, the exact runner adds nothing to the generic EpidemicSimulatorAlgorithm.
- */
-public class ExactRunnerAlgorithm extends EpidemicSimulatorAlgorithm {
-	public static final String EXACT_CORE_PID = "edu.iu.epic.simulator.core.exact";
+public class NetworkSingleRunnerAlgorithm extends EpidemicSimulatorAlgorithm {
+	public static final String NETWORK_CORE_PID = "edu.iu.epic.simulator.core.network";
 	
-	public ExactRunnerAlgorithm(
+	public NetworkSingleRunnerAlgorithm(
 			Data[] data,
 			Dictionary<String, Object> parameters,
 			CIShellContext ciContext,
@@ -24,6 +21,6 @@ public class ExactRunnerAlgorithm extends EpidemicSimulatorAlgorithm {
 
 	@Override
 	protected String getCoreAlgorithmPID() {
-		return EXACT_CORE_PID;
+		return NETWORK_CORE_PID;
 	}
 }

@@ -1,4 +1,4 @@
-package edu.iu.epic.simulator.runner.exact;
+package edu.iu.epic.simulator.runner.stochastic.singlepopulation;
 
 import java.util.Dictionary;
 
@@ -11,14 +11,12 @@ import org.osgi.service.component.ComponentContext;
 import org.osgi.service.metatype.ObjectClassDefinition;
 
 import edu.iu.epic.simulator.runner.EpidemicSimulatorAlgorithmFactory;
+import edu.iu.epic.simulator.runner.stochastic.BatchRunnerAlgorithmFactory;
 
-/**
- * For now, the exact runner adds nothing to the generic EpidemicSimulatorAlgorithmFactory
- */
-public class ExactRunnerAlgorithmFactory extends EpidemicSimulatorAlgorithmFactory {
+public class SinglePopulationBatchRunnerAlgorithmFactory extends BatchRunnerAlgorithmFactory {
 	private static BundleContext bundleContext;
 	protected void activate(ComponentContext componentContext) {
-		bundleContext =	componentContext.getBundleContext();
+		bundleContext = componentContext.getBundleContext();
 	}
 	protected static BundleContext getBundleContext() {
 		return bundleContext;
@@ -26,9 +24,10 @@ public class ExactRunnerAlgorithmFactory extends EpidemicSimulatorAlgorithmFacto
 	
 	
 	@Override
-	public Algorithm createAlgorithm(Data[] data, Dictionary<String, Object> parameters,
-			CIShellContext context) {
-		return new ExactRunnerAlgorithm(data, parameters, context, getBundleContext());
+	public Algorithm createAlgorithm(
+			Data[] data, Dictionary<String, Object> parameters,	CIShellContext ciContext) {
+		return new SinglePopulationBatchRunnerAlgorithm(
+				data, parameters, ciContext, getBundleContext());
 	}
 	
 	

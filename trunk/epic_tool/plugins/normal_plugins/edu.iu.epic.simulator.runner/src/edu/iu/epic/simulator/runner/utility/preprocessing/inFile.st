@@ -1,6 +1,6 @@
 group inFile;
 
-inFile(modelFileName,numberOfSecondaryEvents,population,susceptibleCompartmentID,numberOfDays,date,seed, outVal, initialFile, infectionsFile) ::= <<
+inFile(modelFilePath, networkFilePath, numberOfSecondaryEvents, population, susceptibleCompartmentID, numberOfDays, date, seed, outVal, initialFile, infectionsFile) ::= <<
 ###############################################################################
 # Single Population Model Input File                                          #
 ###############################################################################
@@ -10,14 +10,27 @@ inFile(modelFileName,numberOfSecondaryEvents,population,susceptibleCompartmentID
 ###############################################################################
 
 # Model definition
-model <modelFileName>
+model <modelFilePath>
+
+# Network file path
+<if(networkFilePath)>
+network <networkFilePath>
+<else>
+#network
+<endif>
+
 
 # Number of secondary events
 # Defaults to 0
 events <numberOfSecondaryEvents>
 
 # City population
+<if(population)>
 population <population>
+<else>
+#population
+<endif>
+
 
 # Components label
 outVal <outVal>
@@ -47,13 +60,13 @@ seed <seed>
 # Seasonality value
 #alphamin 0.6
 
-#maximum reply
+# maximum reply
 maxRuns 100 
 
-#name
+# name
 name 0
 
-#set frame
+# set frame
 output_frames none
 
 # initial compartment populations

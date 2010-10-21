@@ -20,6 +20,7 @@ import edu.iu.epic.simulator.runner.EpidemicSimulatorAlgorithm;
 import edu.iu.epic.simulator.runner.EpidemicSimulatorAlgorithmFactory;
 
 public class InFileMaker {
+	public static final String IN_FILE_MIME_TYPE = "file:text/in";
 	public static final int DEFAULT_NUMBER_OF_SECONDARY_EVENTS = 0;
 	public static final String FILENAME = "simul";
 	public static final String FILE_EXTENSION = "in";
@@ -30,19 +31,22 @@ public class InFileMaker {
 				"/edu/iu/epic/simulator/runner/utility/preprocessing/inFile.st");
 	
 	private String modelFilePath;
+	private String networkFilePath;
 	private Dictionary<String, Object> parameters;
 	private String susceptibleCompartmentID;
 	private File infectionsFile;
 	private Map<String, Float> initialDistribution;
-	
-	
+		
+		
 	public InFileMaker(
 			String modelFilePath,
+			String networkFilePath,
 			Dictionary<String, Object> parameters,
 			String susceptibleCompartmentID,
 			File infectionsFile,
 			Map<String, Float> initialDistribution) {
 		this.modelFilePath = modelFilePath;
+		this.networkFilePath = networkFilePath;
 		this.parameters = parameters;
 		this.susceptibleCompartmentID = susceptibleCompartmentID;
 		this.infectionsFile = infectionsFile;
@@ -76,22 +80,23 @@ public class InFileMaker {
 	private StringTemplate prepareTemplate() throws ParseException, IOException {
 		StringTemplate template =
 			inFileTemplateGroup.getInstanceOf(IN_FILE_TEMPLATE_NAME);
-		template.setAttribute("modelFileName", this.modelFilePath);
-		template.setAttribute(
-				"numberOfSecondaryEvents",
-				DEFAULT_NUMBER_OF_SECONDARY_EVENTS);
+		
+		template.setAttribute("modelFilePath", this.modelFilePath);
+		
+		template.setAttribute("networkFilePath", this.networkFilePath);
+		
+		template.setAttribute("numberOfSecondaryEvents", DEFAULT_NUMBER_OF_SECONDARY_EVENTS);
+		
 		template.setAttribute("population",
 				this.parameters.get(EpidemicSimulatorAlgorithmFactory.POPULATION_ID));
-		template.setAttribute(
-				"susceptibleCompartmentID",
-				this.susceptibleCompartmentID);
+		
+		template.setAttribute("susceptibleCompartmentID", this.susceptibleCompartmentID);
 		template.setAttribute(
 				"numberOfDays",
 				this.parameters.get(EpidemicSimulatorAlgorithmFactory.NUMBER_OF_DAYS_ID));
 
 		String rawDateString =
-			(String) this.parameters.get(
-					EpidemicSimulatorAlgorithmFactory.START_DATE_ID);
+			(String) this.parameters.get(EpidemicSimulatorAlgorithmFactory.START_DATE_ID);
 		DateFormat dateFormat =
 			new SimpleDateFormat(EpidemicSimulatorAlgorithmFactory.DATE_PATTERN);
 		Date date = dateFormat.parse(rawDateString);

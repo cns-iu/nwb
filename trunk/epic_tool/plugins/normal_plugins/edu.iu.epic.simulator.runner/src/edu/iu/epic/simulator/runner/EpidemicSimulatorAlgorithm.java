@@ -27,12 +27,11 @@ import edu.iu.epic.simulator.runner.utility.CIShellParameterUtilities;
 import edu.iu.epic.simulator.runner.utility.postprocessing.DatToCsv;
 import edu.iu.epic.simulator.runner.utility.preprocessing.InFileMaker;
 import edu.iu.epic.simulator.runner.utility.preprocessing.InfectionsFileMaker;
+import edu.iu.epic.simulator.runner.utility.preprocessing.NetworkFileMaker;
 import edu.iu.epic.simulator.runner.utility.preprocessing.SimulatorModelFileMaker;
-
 public abstract class EpidemicSimulatorAlgorithm implements Algorithm {
 	public static final String PLAIN_TEXT_MIME_TYPE = "file:text/plain";
 	public static final String CSV_MIME_TYPE = "file:text/csv";
-	public static final String IN_FILE_MIME_TYPE = "file:text/in";
 	
 	protected Data[] data;
 	protected Dictionary<String, Object> parameters;
@@ -77,7 +76,7 @@ public abstract class EpidemicSimulatorAlgorithm implements Algorithm {
 	    	return createOutData(csvFile, "Simulation results", this.data[0]);
 		} catch (IOException e) {
 			throw new AlgorithmExecutionException(
-					"Error translating from .dat to .csv:" + e.getMessage(), e);
+					"Error translating from .dat to .csv: " + e.getMessage(), e);
 		}
 	}
 
@@ -111,7 +110,7 @@ public abstract class EpidemicSimulatorAlgorithm implements Algorithm {
 		}
 		
 		float distributionTotal = InFileMaker.total(initialDistribution.values());
-		if (distributionTotal != 1.0f) {
+		if (!(Math.abs(distributionTotal - 1.0f) < 1e-3f)) { // TODO Need to know tolerance of core code.
 			String message = String.format(
 					"The fractions for the initial distribution of the population among the "
 					+ "compartments must sum to exactly 1.0.  The given numbers summed to %f.",
@@ -130,6 +129,17 @@ public abstract class EpidemicSimulatorAlgorithm implements Algorithm {
 		// Create the infections file.
 		InfectionsFileMaker infectionsFileMaker = new InfectionsFileMaker();
 		File infectionsFile = infectionsFileMaker.make(infectorSeedPopulations);
+	
+		
+		/* If the runnerData includes a File as a second element,
+		 * we assume that it is a network. */
+		String simulatorNetworkFilePath = null;
+		if (runnerData.length >= 2) {
+			File runnerNetworkFile = (File) runnerData[1].getData();			
+			File simulatorNetworkFile =
+				NetworkFileMaker.make(runnerNetworkFile);
+			simulatorNetworkFilePath = simulatorNetworkFile.getPath();
+		}
 		
 		
 		// Create the .in file.
@@ -139,6 +149,7 @@ public abstract class EpidemicSimulatorAlgorithm implements Algorithm {
 		InFileMaker inFileMaker =
 			new InFileMaker(
 					simulatorModelFile.getPath(),
+					simulatorNetworkFilePath,
 					runnerParameters,
 					initialCompartmentName,
 					infectionsFile,
@@ -146,9 +157,10 @@ public abstract class EpidemicSimulatorAlgorithm implements Algorithm {
 		File inFile = inFileMaker.make();
 		
 	
-		return new Data[] {	new BasicData(inFile, IN_FILE_MIME_TYPE) };
+		return new Data[] {	new BasicData(inFile, InFileMaker.IN_FILE_MIME_TYPE) };
 	}
-	
+
+
 	protected abstract String getCoreAlgorithmPID();
 
 	private File executeSimulator(

@@ -13,8 +13,6 @@ import org.cishell.framework.data.Data;
 import org.cishell.reference.service.metatype.BasicAttributeDefinition;
 import org.cishell.reference.service.metatype.BasicObjectClassDefinition;
 import org.cishell.utilities.MutateParameterUtilities;
-import org.osgi.framework.BundleContext;
-import org.osgi.service.component.ComponentContext;
 import org.osgi.service.log.LogService;
 import org.osgi.service.metatype.AttributeDefinition;
 import org.osgi.service.metatype.ObjectClassDefinition;
@@ -37,7 +35,7 @@ public abstract class EpidemicSimulatorAlgorithmFactory
 	public static final BasicAttributeDefinition NUMBER_OF_DAYS_ATTRIBUTE_DEFINITION =
 		new BasicAttributeDefinition(
 				NUMBER_OF_DAYS_ID,
-				"Number of Days",
+				"Number of days",
 				"Length of the simulation (in days)",
 				AttributeDefinition.INTEGER,
 				String.valueOf(DEFAULT_NUMBER_OF_DAYS));
@@ -74,18 +72,6 @@ public abstract class EpidemicSimulatorAlgorithmFactory
 	public static final String INITIAL_DISTRIBUTION_PREFIX = "INITIAL_DISTRIBUTION_";
 	private static final float DEFAULT_INITIAL_DISTRIBUTION_FRACTION = 0.0f;
 	
-	private static BundleContext bundleContext;
-
-	
-	protected void activate(ComponentContext componentContext) {
-		EpidemicSimulatorAlgorithmFactory.bundleContext =
-			componentContext.getBundleContext();
-	}
-
-	protected static BundleContext getBundleContext() {
-		return bundleContext;
-	}
-
 	
 	public abstract Algorithm createAlgorithm(
 			Data[] data, Dictionary<String, Object> parameters, CIShellContext context);
@@ -104,9 +90,6 @@ public abstract class EpidemicSimulatorAlgorithmFactory
 					compartmentNames);
 		
 		newParameters.addAttributeDefinition(
-				ObjectClassDefinition.REQUIRED,	POPULATION_ATTRIBUTE_DEFINITION);
-		
-		newParameters.addAttributeDefinition(
 				ObjectClassDefinition.REQUIRED, NUMBER_OF_DAYS_ATTRIBUTE_DEFINITION);
 		
 		newParameters.addAttributeDefinition(
@@ -114,7 +97,7 @@ public abstract class EpidemicSimulatorAlgorithmFactory
 		
 		// Add a parameter for the initial population of each compartment.
 		for (Compartment infector
-				: new CompartmentNameOrdering().ofCompartments().sortedCopy(
+				: CompartmentNameOrdering.BY_COMPARTMENT.sortedCopy(
 						model.getInfectedCompartments())) {
 			String compartmentName = infector.getName();
 			
@@ -133,8 +116,7 @@ public abstract class EpidemicSimulatorAlgorithmFactory
 	
 		// Add a parameter for the initial distribution into each compartment
 		for (Compartment compartment
-				: new CompartmentNameOrdering().ofCompartments().sortedCopy(
-						model.getCompartments())) {
+				: CompartmentNameOrdering.BY_COMPARTMENT.sortedCopy(model.getCompartments())) {
 			String compartmentName = compartment.getName();
 			
 			String id =	INITIAL_DISTRIBUTION_PREFIX + compartmentName;

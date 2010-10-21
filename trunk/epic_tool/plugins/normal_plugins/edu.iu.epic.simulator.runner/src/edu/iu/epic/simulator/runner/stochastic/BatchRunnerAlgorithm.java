@@ -1,4 +1,4 @@
-package edu.iu.epic.simulator.runner.singlepopulation.batch;
+package edu.iu.epic.simulator.runner.stochastic;
 
 import java.util.Collection;
 import java.util.Dictionary;
@@ -19,10 +19,7 @@ import org.cishell.framework.data.Data;
 import org.cishell.framework.data.DataProperty;
 import org.osgi.framework.BundleContext;
 
-import edu.iu.epic.simulator.runner.singlepopulation.SinglePopulationSingleRunnerAlgorithm;
-import edu.iu.epic.simulator.runner.singlepopulation.SinglePopulationSingleRunnerAlgorithmFactory;
-
-public class SinglePopulationBatchRunnerAlgorithm implements Algorithm {
+public abstract class BatchRunnerAlgorithm implements Algorithm {
 	public static final int THREAD_POOL_SIZE = 4;
 	
 	private Data[] data;
@@ -31,7 +28,7 @@ public class SinglePopulationBatchRunnerAlgorithm implements Algorithm {
 	private BundleContext bundleContext;
 
 	
-	public SinglePopulationBatchRunnerAlgorithm(
+	public BatchRunnerAlgorithm(
 			Data[] data,
 			Dictionary<String, Object> parameters,
 			CIShellContext ciContext,
@@ -42,6 +39,11 @@ public class SinglePopulationBatchRunnerAlgorithm implements Algorithm {
 		this.bundleContext = bundleContext;
 	}
 
+	public abstract Algorithm getSingleRunnerAlgorithm(
+			Data[] singleData,
+			Dictionary<String, Object> singleParameters,
+			CIShellContext singleCIContext,
+			BundleContext singleBundleContext);
 	
 	public Data[] execute() throws AlgorithmExecutionException {
 		/* Note that the batch runner seed parameter ID is the same as the single runner seed
@@ -49,15 +51,14 @@ public class SinglePopulationBatchRunnerAlgorithm implements Algorithm {
 		 * AttributeDefinitions in its Factory's mutateParameters method.
 		 */
 		int batchSeed =
-			(Integer) batchParameters.get(
-					SinglePopulationSingleRunnerAlgorithmFactory.SEED_PARAMETER_ID);
+			(Integer) batchParameters.get(BatchRunnerAlgorithmFactory.SEED_PARAMETER_ID);
 		// For generating the sequence of single-run seeds.
 		Random batchRandom = new Random(batchSeed);
 		
 		
 		int numberOfRuns =
 			(Integer) batchParameters.get(
-					SinglePopulationBatchRunnerAlgorithmFactory.NUMBER_OF_RUNS_PARAMETER_ID);
+					BatchRunnerAlgorithmFactory.NUMBER_OF_RUNS_PARAMETER_ID);
 		
 
 		// Create the single run tasks.
@@ -67,11 +68,10 @@ public class SinglePopulationBatchRunnerAlgorithm implements Algorithm {
 
 			Dictionary<String, Object> singleParameters = createShallowCopy(batchParameters);
 			singleParameters.put(
-					SinglePopulationSingleRunnerAlgorithmFactory.SEED_PARAMETER_ID, singleSeed);
+					BatchRunnerAlgorithmFactory.SEED_PARAMETER_ID, singleSeed);
 			
 			Algorithm singleAlgorithm =
-				new SinglePopulationSingleRunnerAlgorithm(
-						data, singleParameters, ciContext, bundleContext);
+				getSingleRunnerAlgorithm(data, singleParameters, ciContext, bundleContext);
 			
 			Callable<Data[]> runTask = new SingleRunTask(singleAlgorithm);
 			

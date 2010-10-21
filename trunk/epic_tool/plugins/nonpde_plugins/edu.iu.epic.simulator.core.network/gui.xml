@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <metatype:MetaData xmlns:metatype="http://www.osgi.org/xmlns/metatype/v1.0.0">
 	<OCD name="edu.iu.epic.simulator.core.network" id="edu.iu.epic.simulator.core.network.gui"
-		 description="TODO">
+		 description="/edu.iu.epic.simulator.runner/OSGI-INF/network.properties">
 		 
 	</OCD>
 	<Designate pid="edu.iu.epic.simulator.core.network">
