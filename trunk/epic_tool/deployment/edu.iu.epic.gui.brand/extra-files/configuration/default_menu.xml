@@ -36,8 +36,9 @@
     </top_menu>
     
     <top_menu name="Simulation">
-    	<menu pid="edu.iu.epic.simulator.runner.singlepopulation.batch.SinglePopulationBatchRunnerAlgorithm"/>
+    	<menu pid="edu.iu.epic.simulator.runner.stochastic.singlepopulation.SinglePopulationBatchRunnerAlgorithm"/>
     	<menu pid="edu.iu.epic.simulator.runner.exact.ExactRunnerAlgorithm"/>
+    	<menu pid="edu.iu.epic.simulator.runner.stochastic.network.NetworkBatchRunnerAlgorithm"/>
     </top_menu>
 
 	<top_menu name="Preprocessing">
