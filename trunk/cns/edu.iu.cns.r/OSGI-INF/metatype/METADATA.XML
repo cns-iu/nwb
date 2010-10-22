@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<metatype:MetaData xmlns:metatype="http://www.osgi.org/xmlns/metatype/v1.0.0">
+	<OCD name="Run R" id="edu.iu.cns.r.CreateRAlgorithm.OCD"
+		 description="This algorithm integrates R into the CIShell environment.">
+		<AD	name="R Executable Directory" id="rExecutableDirectory" type="String" 
+			description="Point us to where R is located on your computer." 
+			default="directory:"/>
+	</OCD>
+	<Designate pid="edu.iu.cns.r.CreateRAlgorithm">
+		<Object ocdref="edu.iu.cns.r.CreateRAlgorithm.OCD" />
+	</Designate>
+
+	<OCD name="Import Table Into R" id="edu.iu.cns.r.importdata.ImportCSVIntoRAlgorithm.OCD"
+		 description="This algorithm imports a CSV into a running R instance.">
+		<AD	name="Variable name in R" id="variableNameInR" type="String" 
+			description="What variable name should be used in R for this imported CSV?" 
+			default="importedTable"/>
+	</OCD>
+	<Designate pid="edu.iu.cns.r.importdata.ImportCSVIntoRAlgorithm">
+		<Object ocdref="edu.iu.cns.r.importdata.ImportCSVIntoRAlgorithm.OCD" />
+	</Designate>
+
+	<OCD name="Export Table From R" id="edu.iu.cns.r.exportdata.ExportCSVFromRAlgorithm.OCD"
+		 description="This algorithm exports a CSV from a running R instance back onto the Data Manager.">
+		<AD	name="Variable name in R" id="variableNameInR" type="String" 
+			description="What variable name should we export as a table from R?" 
+			default="importedTable"/>
+	</OCD>
+	<Designate pid="edu.iu.cns.r.exportdata.ExportCSVFromRAlgorithm">
+		<Object ocdref="edu.iu.cns.r.exportdata.ExportCSVFromRAlgorithm.OCD" />
+	</Designate>
+</metatype:MetaData>

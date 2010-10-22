@@ -1,0 +1,27 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: R
+Bundle-SymbolicName: edu.iu.cns.r
+Bundle-Version: 0.0.1
+Bundle-ClassPath: .,
+ bsh-core-2.0b4.jar
+Import-Package: com.google.common.annotations,
+ com.google.common.base,
+ com.google.common.collect,
+ org.cishell.framework;version="1.0.0",
+ org.cishell.framework.algorithm;version="1.0.0",
+ org.cishell.framework.data;version="1.0.0",
+ org.cishell.framework.userprefs;version="1.0.0",
+ org.cishell.reference.service.metatype,
+ org.cishell.utilities,
+ org.osgi.framework;version="1.3.0",
+ org.osgi.service.cm;version="1.2.0",
+ org.osgi.service.component;version="1.0.0",
+ org.osgi.service.log;version="1.3.0",
+ org.osgi.service.metatype;version="1.1.0",
+ org.osgi.service.prefs;version="1.1.0"
+X-AutoStart: true
+Service-Component: OSGI-INF/create_r/algorithm.xml, OSGI-INF/run_r/algorithm.xml, OSGI-INF/import_csv/algorithm.xml, OSGI-INF/export_csv/algorithm.xml
+Export-Package: bsh,
+ edu.iu.cns.r,
+ edu.iu.cns.r.utility
