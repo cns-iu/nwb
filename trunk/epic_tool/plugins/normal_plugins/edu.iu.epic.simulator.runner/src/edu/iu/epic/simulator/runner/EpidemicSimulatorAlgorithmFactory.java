@@ -21,9 +21,9 @@ import com.google.common.collect.Ordering;
 import com.google.common.collect.Sets;
 
 import edu.iu.epic.modeling.compartment.model.Compartment;
+import edu.iu.epic.modeling.compartment.model.Compartment.CompartmentNameOrdering;
 import edu.iu.epic.modeling.compartment.model.Model;
 import edu.iu.epic.modeling.compartment.model.exception.InvalidParameterExpressionException;
-import edu.iu.epic.simulator.runner.utility.CompartmentNameOrdering;
 
 public abstract class EpidemicSimulatorAlgorithmFactory
 		implements AlgorithmFactory, ParameterMutator {
@@ -80,14 +80,8 @@ public abstract class EpidemicSimulatorAlgorithmFactory
 			Data[] data, ObjectClassDefinition oldParameters) {
 		Model model = (Model) data[0].getData();
 		
-		Collection<String> compartmentNames = Sets.newTreeSet(new CompartmentNameOrdering());
-		compartmentNames.addAll(model.getCompartmentNames());
 		BasicObjectClassDefinition newParameters =
-			MutateParameterUtilities.mutateToDropdown(
-					oldParameters,
-					INITIAL_COMPARTMENT_PARAMETER_ID,
-					compartmentNames,
-					compartmentNames);
+			addInitialCompartmentDropdown(oldParameters, model);
 		
 		newParameters.addAttributeDefinition(
 				ObjectClassDefinition.REQUIRED, NUMBER_OF_DAYS_ATTRIBUTE_DEFINITION);
@@ -95,47 +89,9 @@ public abstract class EpidemicSimulatorAlgorithmFactory
 		newParameters.addAttributeDefinition(
 				ObjectClassDefinition.REQUIRED,	START_DATE_ATTRIBUTE_DEFINITION);
 		
-		// Add a parameter for the seed population of each infector compartment.
-		for (Compartment infector
-				: CompartmentNameOrdering.BY_COMPARTMENT.sortedCopy(
-						model.getInfectedCompartments())) {
-			String compartmentName = infector.getName();
-			
-			String id =	INFECTOR_SEED_POPULATION_PREFIX + compartmentName;
-			
-			newParameters.addAttributeDefinition(
-					ObjectClassDefinition.REQUIRED,
-					new BasicAttributeDefinition(
-						id,
-						createInfectorSeedPopulationParameterName(compartmentName),
-						createInfectorSeedPopulationParameterDescription(compartmentName),
-						AttributeDefinition.INTEGER,
-						String.valueOf(DEFAULT_INFECTOR_SEED_POPULATION)));
-		}
-		
+		addInfectorSeedPopulations(model, newParameters);		
 	
-		// Add a parameter for the initial distribution into each compartment
-		for (Compartment compartment
-				: CompartmentNameOrdering.BY_COMPARTMENT.sortedCopy(model.getCompartments())) {
-			String compartmentName = compartment.getName();
-			
-			String id =	INITIAL_DISTRIBUTION_PREFIX + compartmentName;
-			
-			// Weak attempt to default distribution into the susceptible compartment.
-			float defaultValue = DEFAULT_INITIAL_DISTRIBUTION_FRACTION;
-			if (compartmentName.equalsIgnoreCase("S")) {
-				defaultValue = 1.0f;
-			}
-			
-			newParameters.addAttributeDefinition(
-					ObjectClassDefinition.REQUIRED,
-					new BasicAttributeDefinition(
-						id,
-						createInitialDistributionParameterName(compartmentName),
-						createInitialDistributionParameterDescription(compartmentName),
-						AttributeDefinition.FLOAT,
-						String.valueOf(defaultValue)));
-		}
+		addInitialDistributions(model, newParameters);
 		
 		
 		
@@ -167,6 +123,66 @@ public abstract class EpidemicSimulatorAlgorithmFactory
 		}
 		
 		return newParameters;		
+	}
+
+	private void addInitialDistributions(Model model, BasicObjectClassDefinition newParameters) {
+		// Add a parameter for the initial distribution into each compartment
+		for (Compartment compartment
+				: CompartmentNameOrdering.BY_COMPARTMENT.sortedCopy(model.getCompartments())) {
+			String compartmentName = compartment.getName();
+			
+			String id =	INITIAL_DISTRIBUTION_PREFIX + compartmentName;
+			
+			// Weak attempt to default distribution into the susceptible compartment.
+			float defaultValue = DEFAULT_INITIAL_DISTRIBUTION_FRACTION;
+			if (compartmentName.equalsIgnoreCase("S")) {
+				defaultValue = 1.0f;
+			}
+			
+			newParameters.addAttributeDefinition(
+					ObjectClassDefinition.REQUIRED,
+					new BasicAttributeDefinition(
+						id,
+						createInitialDistributionParameterName(compartmentName),
+						createInitialDistributionParameterDescription(compartmentName),
+						AttributeDefinition.FLOAT,
+						String.valueOf(defaultValue)));
+		}
+	}
+
+	private void addInfectorSeedPopulations(Model model, BasicObjectClassDefinition newParameters) {
+		// Add a parameter for the seed population of each infector compartment.
+		for (Compartment infector
+				: CompartmentNameOrdering.BY_COMPARTMENT.sortedCopy(
+						model.getInfectedCompartments())) {
+			String compartmentName = infector.getName();
+			
+			String id =	INFECTOR_SEED_POPULATION_PREFIX + compartmentName;
+			
+			newParameters.addAttributeDefinition(
+					ObjectClassDefinition.REQUIRED,
+					new BasicAttributeDefinition(
+						id,
+						createInfectorSeedPopulationParameterName(compartmentName),
+						createInfectorSeedPopulationParameterDescription(compartmentName),
+						AttributeDefinition.INTEGER,
+						String.valueOf(DEFAULT_INFECTOR_SEED_POPULATION)));
+		}
+	}
+
+	private BasicObjectClassDefinition addInitialCompartmentDropdown(
+			ObjectClassDefinition oldParameters, Model model) {
+		Collection<String> compartmentNames = Sets.newTreeSet(CompartmentNameOrdering.BY_NAME);
+		compartmentNames.addAll(model.getCompartmentNames());
+		
+		BasicObjectClassDefinition newParameters =
+			MutateParameterUtilities.mutateToDropdown(
+					oldParameters,
+					INITIAL_COMPARTMENT_PARAMETER_ID,
+					compartmentNames,
+					compartmentNames);
+		
+		return newParameters;
 	}
 
 	private String createInitialDistributionParameterName(String compartmentName) {
