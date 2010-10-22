@@ -41,6 +41,15 @@
     	<menu pid="edu.iu.epic.simulator.runner.stochastic.network.NetworkBatchRunnerAlgorithm"/>
     </top_menu>
 
+	<top_menu name="R">
+		<menu pid="edu.iu.cns.r.CreateRAlgorithm"/>
+		<menu pid="edu.iu.cns.r.RunRAlgorithm"/>
+		<menu type="break"/>
+		<menu pid="edu.iu.cns.r.importdata.ImportCSVIntoRAlgorithm"/>
+		<menu type="break"/>
+		<menu pid="edu.iu.cns.r.exportdata.ExportCSVFromRAlgorithm"/>
+	</top_menu>
+
 	<top_menu name="Preprocessing">
 		<menu pid="edu.iu.nwb.preprocessing.extractnodesandedges.extractnodes.top.ExtractTopNodesAlgorithm"/>
     	<menu pid="edu.iu.nwb.preprocessing.extractnodesandedges.extractnodes.abovebelow.ExtractNodesAboveBelowAlgorithm"/>
