@@ -95,7 +95,7 @@ public abstract class EpidemicSimulatorAlgorithmFactory
 		newParameters.addAttributeDefinition(
 				ObjectClassDefinition.REQUIRED,	START_DATE_ATTRIBUTE_DEFINITION);
 		
-		// Add a parameter for the initial population of each compartment.
+		// Add a parameter for the seed population of each infector compartment.
 		for (Compartment infector
 				: CompartmentNameOrdering.BY_COMPARTMENT.sortedCopy(
 						model.getInfectedCompartments())) {
@@ -121,6 +121,12 @@ public abstract class EpidemicSimulatorAlgorithmFactory
 			
 			String id =	INITIAL_DISTRIBUTION_PREFIX + compartmentName;
 			
+			// Weak attempt to default distribution into the susceptible compartment.
+			float defaultValue = DEFAULT_INITIAL_DISTRIBUTION_FRACTION;
+			if (compartmentName.equalsIgnoreCase("S")) {
+				defaultValue = 1.0f;
+			}
+			
 			newParameters.addAttributeDefinition(
 					ObjectClassDefinition.REQUIRED,
 					new BasicAttributeDefinition(
@@ -128,7 +134,7 @@ public abstract class EpidemicSimulatorAlgorithmFactory
 						createInitialDistributionParameterName(compartmentName),
 						createInitialDistributionParameterDescription(compartmentName),
 						AttributeDefinition.FLOAT,
-						String.valueOf(DEFAULT_INITIAL_DISTRIBUTION_FRACTION)));
+						String.valueOf(defaultValue)));
 		}
 		
 		
