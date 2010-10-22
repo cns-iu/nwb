@@ -56,11 +56,12 @@ public abstract class EpidemicSimulatorAlgorithm implements Algorithm {
 	
 	
 	public Data[] execute() throws AlgorithmExecutionException {		
-		File datFile;
+		Data[] datFileData;
 		try {
 			Data[] simulatorInputData =
 				createSimulatorInputData(this.data, this.parameters);
-			datFile = executeSimulator(simulatorInputData, ciContext, bundleContext);
+			datFileData = executeSimulator(simulatorInputData, ciContext, bundleContext);
+			
 		} catch (IOException e) {
 			throw new AlgorithmExecutionException(
 					"Error formatting input data for simulation: " + e.getMessage(), e);
@@ -70,10 +71,13 @@ public abstract class EpidemicSimulatorAlgorithm implements Algorithm {
 		}
 		
 		try {
+			File datFile = (File) datFileData[0].getData();
 			DatToCsv datToCSV = new DatToCsv(datFile);
 			File csvFile = datToCSV.convert();
 	    	
-	    	return createOutData(csvFile, "Simulation results", this.data[0]);
+			String label = (String) datFileData[0].getMetadata().get(DataProperty.LABEL);
+			
+	    	return createOutData(csvFile, label, this.data[0]);
 		} catch (IOException e) {
 			throw new AlgorithmExecutionException(
 					"Error translating from .dat to .csv: " + e.getMessage(), e);
@@ -163,12 +167,12 @@ public abstract class EpidemicSimulatorAlgorithm implements Algorithm {
 
 	protected abstract String getCoreAlgorithmPID();
 
-	private File executeSimulator(
+	private Data[] executeSimulator(
 			Data[] coreData, CIShellContext coreCIContext, BundleContext coreBundleContext)
 				throws AlgorithmExecutionException {
 		try {
 			
-			Data[] simulatorOutData =
+			return
 				AlgorithmUtilities.executeAlgorithm(
 					AlgorithmUtilities.getAlgorithmFactoryByPID(
 							getCoreAlgorithmPID(), coreBundleContext),
@@ -176,8 +180,6 @@ public abstract class EpidemicSimulatorAlgorithm implements Algorithm {
 					coreData,
 					new Hashtable<String, Object>(),
 					coreCIContext);
-	
-			return (File) simulatorOutData[0].getData();
 		} catch (AlgorithmExecutionException e) {
 			throw new AlgorithmExecutionException(
 				"Error running simulator: " + e.getMessage(), e);

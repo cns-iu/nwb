@@ -108,11 +108,13 @@ public abstract class BatchRunnerAlgorithm implements Algorithm {
 	}
 
 	private void setSingleOutputDataLabel(Data data, int runIndex) {
-		data.getMetadata().put(DataProperty.LABEL, createSingleOutputDataLabel(runIndex));
+		data.getMetadata().put(DataProperty.LABEL, createSingleOutputDataLabel(data, runIndex));
 	}	
-	private String createSingleOutputDataLabel(int runIndex) {
+	private String createSingleOutputDataLabel(Data coreOutData, int runIndex) {
+		String originalLabel = (String) coreOutData.getMetadata().get(DataProperty.LABEL);
+		
 		int userFriendlyRunIndex = runIndex + 1;
-		return "Simulation " + userFriendlyRunIndex + " results";
+		return originalLabel + ": Run " + userFriendlyRunIndex;
 	}
 	
 	// Note that key and value are not cloned.
