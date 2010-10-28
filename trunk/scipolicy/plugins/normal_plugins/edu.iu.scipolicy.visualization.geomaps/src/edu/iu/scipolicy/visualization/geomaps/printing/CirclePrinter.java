@@ -36,7 +36,7 @@ public class CirclePrinter {
 	public static final Scaler DEFAULT_CIRCLE_AREA_SCALER = new LinearScaler();
 	
 	public static final double DEFAULT_CIRCLE_RADIUS_MINIMUM =
-		0.0027 * Constants.MAP_PAGE_AREA_WIDTH_IN_POINTS;
+		0.00135 * Constants.MAP_PAGE_AREA_WIDTH_IN_POINTS;
 	public static final double DEFAULT_CIRCLE_AREA_MINIMUM =
 		Circle.calculateAreaFromRadius(DEFAULT_CIRCLE_RADIUS_MINIMUM);
 	
