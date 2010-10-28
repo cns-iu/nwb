@@ -104,7 +104,7 @@ public class MergeNetworks implements Algorithm {
 										 firstNetworkMetadata,
 										 secondNetworkMetadata);
 		} catch (AlgorithmExecutionException e) {
-			throw new AlgorithmExecutionException(e.getMessage());
+			throw new RuntimeException(e.getMessage(), e);
 		}
 		
 		/*
@@ -150,9 +150,9 @@ public class MergeNetworks implements Algorithm {
 			return outData;
 		
 		} catch (IOException e) {
-			throw new AlgorithmExecutionException(e.getMessage());
+			throw new AlgorithmExecutionException(e.getMessage(), e);
 		} catch (ParsingException e) {
- 			throw new AlgorithmExecutionException(e.getMessage());
+ 			throw new AlgorithmExecutionException(e.getMessage(), e);
 		}
 		
 	}
@@ -347,15 +347,19 @@ public class MergeNetworks implements Algorithm {
 			numberOfEdges = validateParser.getTotalNumOfUndirectedEdges();
 			isUndirectedNetwork = validateParser.isUndirectedGraph();
 			
-			if (isUndirectedNetwork && numberOfEdges >= 1 && numberOfNodes > 1) {
+			/* TODO: This used to check if numberOfEdges >= 1, but I'm thinking that's wrong.
+			 * Look into this more though.
+			 * -Patrick
+			 */
+			if (isUndirectedNetwork && numberOfEdges >= 0 && numberOfNodes > 1) {
 				networkMetadata = new NetworkMetadata(validateParser.getNodeAttrList(), 
 													  validateParser.getUndirectedEdgeAttrList());
 			} 
 			
 		} catch (FileNotFoundException e) {
-			throw new AlgorithmExecutionException(e.getMessage());
+			throw new AlgorithmExecutionException(e.getMessage(), e);
 		} catch (IOException e) {
-			throw new AlgorithmExecutionException(e.getMessage());
+			throw new AlgorithmExecutionException(e.getMessage(), e);
 		}
 		return networkMetadata;
 	}

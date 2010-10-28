@@ -69,11 +69,12 @@ public class MergeNetworksFactory implements AlgorithmFactory, ParameterMutator 
 			NWBFileParser parser2 = new NWBFileParser(secondNetworkFile);
 			parser2.parse(secondNetworkMetaDataHandler);
 			
-		} catch (IOException ioException) {
-			throw new AlgorithmCreationFailedException(ioException.getMessage());	
-		} catch (ParsingException parsingException) {
-			throw new AlgorithmCreationFailedException(parsingException.getMessage() 
-					+ "One (or both) networks do not conform to NWB File Format.");	
+		} catch (IOException e) {
+			throw new AlgorithmCreationFailedException(e.getMessage(), e);	
+		} catch (ParsingException e) {
+			throw new AlgorithmCreationFailedException(
+				e.getMessage() + "One (or both) networks do not conform to NWB File Format.",
+				e);	
 		}
 		
 		BasicObjectClassDefinition definition;
