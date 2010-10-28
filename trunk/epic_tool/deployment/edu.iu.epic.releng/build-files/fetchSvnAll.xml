@@ -25,8 +25,8 @@
   	<antcall target="svn.co">
   		<param name="target" value="plugins"/>
   		<param name="element.id" value="edu.iu.cns.r"/>
-  	    <param name="project.name" value="/edu.iu.cns.r"/>
-        <param name="url" value="http://nwb.slis.indiana.edu/svn/nwb/trunk/cns/edu.iu.cns.r"/>
+  	    <param name="project.name" value="/cns/edu.iu.cns.r"/>
+        <param name="url" value="http://nwb.slis.indiana.edu/svn/nwb/trunk"/>
   	</antcall>
 
   	<antcall target="svn.co">
