@@ -22,6 +22,6 @@ Import-Package: com.google.common.annotations,
  org.osgi.service.prefs;version="1.1.0"
 X-AutoStart: true
 Service-Component: OSGI-INF/create_r/algorithm.xml, OSGI-INF/run_r/algorithm.xml, OSGI-INF/import_csv/algorithm.xml, OSGI-INF/export_csv/algorithm.xml
-Export-Package: bsh,
- edu.iu.cns.r,
+Export-Package: edu.iu.cns.r,
  edu.iu.cns.r.utility
+Bundle-RequiredExecutionEnvironment: J2SE-1.5

@@ -2,16 +2,16 @@ package edu.iu.cns.r.exportdata;
 
 import java.io.File;
 
-import edu.iu.cns.r.utility.ROutput;
+import edu.iu.cns.r.utility.RStreamLog;
 
-public class RWriteFileOutput extends ROutput {
+public class RFileExportLog extends RStreamLog {
 	private File writtenFile;
 
-	public RWriteFileOutput(ROutput output, File writtenFile) {
+	public RFileExportLog(RStreamLog output, File writtenFile) {
 		this(output.getStandardOutput(), output.getErrorOutput(), writtenFile);
 	}
 
-	public RWriteFileOutput(String standardOutput, String errorOutput, File writtenFile) {
+	public RFileExportLog(String standardOutput, String errorOutput, File writtenFile) {
 		super(standardOutput, errorOutput);
 
 		this.writtenFile = writtenFile;

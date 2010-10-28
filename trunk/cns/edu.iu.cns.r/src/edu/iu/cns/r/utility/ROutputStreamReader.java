@@ -3,6 +3,7 @@ package edu.iu.cns.r.utility;
 import java.io.BufferedReader;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.io.PrintStream;
 
 public class ROutputStreamReader extends Thread {
 	private InputStream inputStream;
@@ -33,21 +34,18 @@ public class ROutputStreamReader extends Thread {
 			BufferedReader reader = new BufferedReader(new InputStreamReader(this.inputStream));
 			String line = null;
 
+			PrintStream stream = null;
 			if (this.isStandardError) {
-				while ((line = reader.readLine()) != null) {
-					output.append(line);
-
-					if (this.shouldPrintImmediately) {
-						System.err.println(line);
-					}
-				}
+				stream = System.err;
 			} else {
-				while ((line = reader.readLine()) != null) {
-					output.append(line);
+				stream = System.out;
+			}
+			
+			while ((line = reader.readLine()) != null) {
+				output.append(line);
 
-					if (this.shouldPrintImmediately) {
-						System.out.println(line);
-					}
+				if (this.shouldPrintImmediately) {
+					stream.println(line);
 				}
 			}
 		} catch (Exception e) {

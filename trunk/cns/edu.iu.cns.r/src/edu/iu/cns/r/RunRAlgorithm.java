@@ -8,7 +8,7 @@ import org.cishell.framework.data.Data;
 import org.osgi.service.log.LogService;
 
 import edu.iu.cns.r.utility.RInstance;
-import edu.iu.cns.r.utility.ROutput;
+import edu.iu.cns.r.utility.RStreamLog;
 
 public class RunRAlgorithm implements Algorithm {
 	private RInstance rInstance;
@@ -20,7 +20,7 @@ public class RunRAlgorithm implements Algorithm {
 
 	public Data[] execute() throws AlgorithmExecutionException {
 		try {
-			ROutput messagesFromRunningRGUI = this.rInstance.runRGUI();
+			RStreamLog messagesFromRunningRGUI = this.rInstance.runRGUI();
 			messagesFromRunningRGUI.log(this.logger, true, true);
 		} catch (IOException e) {
 			throw new AlgorithmExecutionException(e.getMessage(), e);

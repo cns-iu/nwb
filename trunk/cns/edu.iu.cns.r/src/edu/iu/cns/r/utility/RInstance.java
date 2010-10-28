@@ -16,7 +16,7 @@ import bsh.EvalError;
 
 import com.google.common.collect.Sets;
 
-import edu.iu.cns.r.exportdata.RWriteFileOutput;
+import edu.iu.cns.r.exportdata.RFileExportLog;
 
 public class RInstance {
 	public static final String CSV_FILE_EXTENSION = "csv";
@@ -36,8 +36,13 @@ public class RInstance {
 	public RInstance(String rHome, LogService logger) {
 		this.rHome = rHome;
 
+		/* TODO Document what we're doing here.  a start:
+		 * 1: Run R, feeding it the definitions in makejava.r.  Flag it to save the session we just
+		 * 		made those definitions into, then stop R.
+		 * 2: ?
+		 */
 		try {
-			ROutput messagesFromPreparingR = reportOutputFromProcess(
+			RStreamLog messagesFromPreparingR = reportOutputFromProcess(
 				installMakeJavaRModule(), false);
 			messagesFromPreparingR.log(logger, false, true);
 		} catch (Exception e) {
@@ -68,7 +73,7 @@ public class RInstance {
 		return rScriptProcessBuilder.start();
 	}
 
-	public ROutput runRGUI() throws IOException {
+	public RStreamLog runRGUI() throws IOException {
 		String rGUIPath = String.format(
 			"%s%s%s", this.rHome, File.separator, RProperties.R_GUI_EXECUTABLE_BASE_NAME);
 		String rDataPath = String.format(
@@ -150,7 +155,7 @@ public class RInstance {
 
 	// Put stuff into R.
 
-	public ROutput importTable(File tableFile, boolean hasHeader, String rVariableName)
+	public RStreamLog importTable(File tableFile, boolean hasHeader, String rVariableName)
 			throws FileCopyingException, IOException {
 		String temporaryTableFileName =
 			tableFile.getName() + TEMPORARY_IMPORT_TABLE_BASE_NAME + UUID.randomUUID().toString();
@@ -162,6 +167,9 @@ public class RInstance {
 		FileUtilities.copyFile(tableFile, localTableFile);
 
 		String hasHeaderString = new Boolean(hasHeader).toString().toUpperCase();
+		/* TODO Examine R's behavior for different values of fill and strip.white.
+		 * What best fits our needs?
+		 */
 		String rCode = String.format(
 			"%s <- read.table('%s', header=%s, fill=TRUE, strip.white=TRUE, sep=',')",
 			rVariableName,
@@ -173,7 +181,7 @@ public class RInstance {
 
 	// Get Stuff out of R.
 
-	public RWriteFileOutput exportTable(String rVariableName) throws IOException {
+	public RFileExportLog exportTable(String rVariableName) throws IOException {
 		String baseTemporaryTableFileName = String.format(
 			"%s%s%s",
 			rVariableName,
@@ -185,21 +193,22 @@ public class RInstance {
 			"write.csv(%s, file='%s', sep=',', quote=TRUE, row.names=FALSE)",
 			rVariableName,
 			temporaryTableFileName);
-		ROutput output = executeArbitaryRCode(rCode);
+		RStreamLog output = executeArbitaryRCode(rCode);
 
 		String fullWrittenFilePath = String.format(
 			"%s%s%s",
 			this.temporaryWorkingDirectory.getAbsolutePath(),
 			File.separator,
 			temporaryTableFileName);
+		/* TODO Check a file exists at fullWrittenFilePath and if not, tell the user nicely that R messed up */
 		File writtenFile = new File(fullWrittenFilePath);
 
-		return new RWriteFileOutput(output, writtenFile);
+		return new RFileExportLog(output, writtenFile);
 	}
 
 	// Miscellaneous/Utilities.
 
-	public ROutput executeArbitaryRCode(String rCode) throws IOException {
+	public RStreamLog executeArbitaryRCode(String rCode) throws IOException {
 		String rPath = String.format(
 			"%s%s%s", this.rHome, File.separator, RProperties.R_EXECUTABLE_BASE_NAME);
 		String rDataPath = String.format(
@@ -220,7 +229,7 @@ public class RInstance {
 		return reportOutputFromProcess(rProcessBuilder.start(), false);
 	}
 
-	public static ROutput reportOutputFromProcess(
+	public static RStreamLog reportOutputFromProcess(
 			Process process, boolean shouldPrintImmediately) {
 		try {
 			ROutputStreamReader standardOut =
@@ -233,12 +242,12 @@ public class RInstance {
 
         	process.waitFor();
 
-        	return new ROutput(standardOut.getOutput(), standardError.getOutput());
+        	return new RStreamLog(standardOut.getOutput(), standardError.getOutput());
 		} catch (Exception e) {
-			// TODO: Throw a more relevant exception here.
+			// TODO: Throw a more relevant exception here. !
 			e.printStackTrace();
 
-			return new ROutput("", "");
+			return new RStreamLog("", "");
 		}
 	}
 }

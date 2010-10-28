@@ -31,11 +31,11 @@ public class ExportCSVFromRAlgorithmFactory implements AlgorithmFactory, Paramet
 
 	public Algorithm createAlgorithm(
     		Data[] data, Dictionary<String, Object> parameters, CIShellContext ciShellContext) {
-		Data inputData = data[0];
+		Data rInstanceData = data[0];
     	String variableNameInR = (String) parameters.get(VARIABLE_NAME_IN_R_ID);
-    	RInstance rInstance = (RInstance) inputData.getData();
+    	RInstance rInstance = (RInstance) rInstanceData.getData();
 
-        return new ExportCSVFromRAlgorithm(inputData, variableNameInR, rInstance, this.logger);
+        return new ExportCSVFromRAlgorithm(rInstanceData, variableNameInR, rInstance, this.logger);
     }
 
 	public ObjectClassDefinition mutateParameters(

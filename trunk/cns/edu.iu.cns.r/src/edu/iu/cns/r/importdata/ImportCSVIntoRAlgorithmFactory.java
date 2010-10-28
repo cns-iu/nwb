@@ -77,10 +77,10 @@ public class ImportCSVIntoRAlgorithmFactory implements AlgorithmFactory, Paramet
 	}
 
 	private File findTableToImport(Data[] data) {
-		if (data[0].getData() instanceof RInstance) {
-			return (File) data[1].getData();
-		} else {
+		if (data[0].getData() instanceof File) {
 			return (File) data[0].getData();
+		} else {
+			return (File) data[1].getData();
 		}
 	}
 

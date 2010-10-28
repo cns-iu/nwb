@@ -13,10 +13,9 @@ import com.google.common.collect.Sets;
 
 public class RHomeFinder {
 	public static final Collection<String> R_HOME_ENVIRONMENT_VARIABLES_TO_CHECK =
-		Sets.newHashSet("R", "R_HOME");
-	public static final Collection<String> LOWER_CASE_R_HOME_ENVIRONMENT_VARIABLES_TO_CHECK =
 		Collections2.transform(
-			R_HOME_ENVIRONMENT_VARIABLES_TO_CHECK, ToCaseFunction.TO_LOWER_CASE_FUNCTION);
+				Sets.newHashSet("R", "R_HOME"),
+				ToCaseFunction.LOWER);
 
 	public static String findRHome() {
 		Map<String, String> environmentVariables = System.getenv();
@@ -24,7 +23,7 @@ public class RHomeFinder {
 		for (String key : environmentVariables.keySet()) {
 			String lowerCasedKey = key.toLowerCase();
 
-			if (LOWER_CASE_R_HOME_ENVIRONMENT_VARIABLES_TO_CHECK.contains(lowerCasedKey)) {
+			if (R_HOME_ENVIRONMENT_VARIABLES_TO_CHECK.contains(lowerCasedKey)) {
 				String rHome =
 					StringUtilities.stripSurroundingQuotes(environmentVariables.get(key));
 				String rHomeWithBin = String.format("%s%sbin", rHome, File.separator);
@@ -53,7 +52,7 @@ public class RHomeFinder {
 			/* So we've got this list of file names in this directory, but directory names are
 			 * included.
 			 * At least in Windows, case persists but doesn't matter.
-			 * So, to accommodate both of this concerns, we loop through all of the files in this
+			 * So, to accommodate both of these concerns, we loop through all of the files in this
 			 * directory, making sure they're actually files, and checking them against our
 			 * designated R executable file name (ignoring case).
 			 */
@@ -64,6 +63,7 @@ public class RHomeFinder {
 				continue;
 			}
 
+			/* TODO can we use some other utility? if not, that'll do. */
 			String rBaseFileName = FileUtilities.extractFileName(rDirectoryFile.getName());
 
 			if (RProperties.R_EXECUTABLE_BASE_NAME.equalsIgnoreCase(rBaseFileName)) {

@@ -1,3 +1,5 @@
+# TODO Add some kind of link to the source of this and any documentation.  "Adapted from .. documented at .."
+
 makeNumericArray <- function(targetObject, javaCode, variableName) {
 	targetObjectType <- "Double"
 

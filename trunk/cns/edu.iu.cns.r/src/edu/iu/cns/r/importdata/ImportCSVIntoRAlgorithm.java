@@ -10,8 +10,9 @@ import org.cishell.utilities.FileCopyingException;
 import org.osgi.service.log.LogService;
 
 import edu.iu.cns.r.utility.RInstance;
-import edu.iu.cns.r.utility.ROutput;
+import edu.iu.cns.r.utility.RStreamLog;
 
+/* TODO Rename to reverse all imports and exports */
 public class ImportCSVIntoRAlgorithm implements Algorithm {
 	private String variableNameInR;
 	private RInstance rInstance;
@@ -28,11 +29,11 @@ public class ImportCSVIntoRAlgorithm implements Algorithm {
 
 	public Data[] execute() throws AlgorithmExecutionException {
 		try {
-			ROutput output =
+			RStreamLog output =
 				this.rInstance.importTable(this.tableFileToImport, true, this.variableNameInR);
 			output.log(this.logger, true, true);
 			String logMessage = String.format(
-				"The file '%s' was successfully read into your R instance as the variable %s!",
+				"The file '%s' was successfully imported into your R instance as the variable %s!",
 				this.tableFileToImport.getName(),
 				this.variableNameInR);
 			this.logger.log(LogService.LOG_INFO, logMessage);

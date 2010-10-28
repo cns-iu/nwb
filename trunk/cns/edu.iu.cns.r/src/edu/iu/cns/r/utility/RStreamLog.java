@@ -3,11 +3,11 @@ package edu.iu.cns.r.utility;
 import org.cishell.utilities.StringUtilities;
 import org.osgi.service.log.LogService;
 
-public class ROutput {
+public class RStreamLog {
 	private String standardOutput = "";
 	private String errorOutput = "";
 
-	public ROutput(String standardOutput, String errorOutput) {
+	public RStreamLog(String standardOutput, String errorOutput) {
 		this.standardOutput = standardOutput;
 		this.errorOutput = errorOutput;
 	}

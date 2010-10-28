@@ -22,8 +22,8 @@ public class ExportCSVFromRAlgorithm implements Algorithm {
 	private LogService logger;
 
 	public ExportCSVFromRAlgorithm(
-			Data inputData, String variableNameInR, RInstance rInstance, LogService logger) {
-		this.inputData = inputData;
+			Data rInstanceData, String variableNameInR, RInstance rInstance, LogService logger) {
+		this.inputData = rInstanceData;
 		this.variableNameInR = variableNameInR;
 		this.rInstance = rInstance;
 		this.logger = logger;
@@ -31,7 +31,7 @@ public class ExportCSVFromRAlgorithm implements Algorithm {
 
 	public Data[] execute() throws AlgorithmExecutionException {
 		try {
-			RWriteFileOutput output = this.rInstance.exportTable(this.variableNameInR);
+			RFileExportLog output = this.rInstance.exportTable(this.variableNameInR);
 			output.log(this.logger, true, true);
 
 			return wrapWrittenFileAsOutputData(output.getWrittenFile());

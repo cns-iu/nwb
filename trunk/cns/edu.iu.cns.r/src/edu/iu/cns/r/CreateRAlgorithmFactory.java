@@ -52,6 +52,7 @@ public class CreateRAlgorithmFactory implements AlgorithmFactory, ParameterMutat
 		}
 	}
 
+	/* TODO would be useful for other ParameterMutators -- perhaps put in MutateParameterUtilities */
 	private void processAttributeDefinitions(
 			ObjectClassDefinition oldParameters,
 			BasicObjectClassDefinition newParameters,
@@ -91,7 +92,7 @@ public class CreateRAlgorithmFactory implements AlgorithmFactory, ParameterMutat
     						if (!RHomeFinder.isValidRHome(value)) {
     							String format =
     								"%s is not a valid R home.  " +
-    								"(The R executable could not be found.)" +
+    								"(The R executable could not be found.) " +
     								"Please choose a different directory as your R home.";
     							String errorMessage = String.format(format, value);
     							CreateRAlgorithmFactory.this.logger.log(
