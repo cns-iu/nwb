@@ -1,5 +1,4 @@
 <?xml version="1.0" encoding="UTF-8"?> 
-<!-- test commit TODO remove -->
 <!-- <?xml version="1.0" encoding="ISO-8859-1" ?> -->
 <menu_layout> 
     <top_menu name="File">
@@ -16,7 +15,24 @@
 		<menu name="Exit" type="preserved"/>
     </top_menu>
     
-    <top_menu name="Modeling">
+    <top_menu name="Network Modeling">
+    	<menu pid="edu.iu.nwb.modeling.erdosrandomgraph"/>
+		<menu pid="edu.iu.nwb.modeling.smallworld"/>
+		<menu pid="edu.iu.nwb.modeling.barabasialbert"/>
+		<menu type="break"/>
+		<menu pid="edu.iu.iv.modeling.p2p.can.CanAlgorithm"/>
+		<menu pid="edu.iu.iv.modeling.p2p.chord.ChordAlgorithm"/>
+		<menu pid="edu.id.iv.modeling.p2p.hypergrid.Hypergrid"/>
+		<menu pid="edu.iu.iv.modeling.p2p.pru.PruAlgorithm"/>
+		<menu type="break"/>
+		<menu pid="edu.iu.iv.modeling.tarl.TarlAlgorithm"/>
+		<menu type="break"/>
+		<menu pid="edu.iu.nwb.modeling.discretenetworkdynamics.DNDAlgorithm"/>
+		<menu type="break"/>
+		<menu pid="edu.iu.nwb.modeling.weighted.evolvingnetwork"/>
+    </top_menu>
+    
+    <top_menu name="Compartmental Modeling">
     	<menu pid="edu.iu.epic.modelbuilder.gui.ModelBuilderNewModelAlgorithmFactory"/>
     	<menu pid="edu.iu.epic.modelbuilder.gui.ModelBuilderImportModelAlgorithmFactory"/>
     	<menu type="break"/>
