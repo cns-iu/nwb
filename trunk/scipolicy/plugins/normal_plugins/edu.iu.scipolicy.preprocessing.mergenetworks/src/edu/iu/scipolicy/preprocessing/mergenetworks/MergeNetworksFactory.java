@@ -33,6 +33,10 @@ import edu.iu.scipolicy.preprocessing.mergenetworks.utils.NetworkPrefixAttribute
 
 public class MergeNetworksFactory implements AlgorithmFactory, ParameterMutator  {
 	
+	public static final String PREFIX_RULES = "\n1. Prefix cannot be empty." 
+										+ "\n2. Prefix cannot start with a number."
+										+ "\n3. Prefix for different networks cannot be the same." 
+										+ "\n4. Prefix cannot be more than 10 in length.";
 	private LogService logger;
 
 	protected void activate(ComponentContext componentContext) {
@@ -125,19 +129,19 @@ public class MergeNetworksFactory implements AlgorithmFactory, ParameterMutator 
 			}
 		}
 
-		if (areThereCommonNodeOrEdgeAttributes(firstNetworkMetaDataHandler, 
-											   secondNetworkMetaDataHandler)) {
+		/*(Micah: Unlike before, where we only needed to pick network names when there were column name
+		 * clashes, we now always need to get names for the networks in order to know what to call the 
+		 * "present_in_[network_name]" columns.
+		 */
+		
+		if (true) {
 			
-			String prefixRules = "\n1. Prefix cannot be empty." 
-									+ "\n2. Prefix cannot start with a number."
-									+ "\n3. Prefix for different networks cannot be the same." 
-									+ "\n4. Prefix cannot be more than 10 in length.";
 			
 			BasicAttributeDefinition firstPrefixTextbox = new NetworkPrefixAttributeDefinition(
 					  "firstnetworkprefix",
 					  getPrefixDisplayName(firstNetworkFile.getName(), "1st"),
 					  "This prefix will be used for the first network to resolve attribute name " 
-					  + "collisions." + prefixRules,
+					  + "collisions." + PREFIX_RULES,
 					  1,
 					  "NETWORK_1",
 					  logger
@@ -148,7 +152,7 @@ public class MergeNetworksFactory implements AlgorithmFactory, ParameterMutator 
 					  "secondnetworkprefix",
 					  getPrefixDisplayName(secondNetworkFile.getName(), "2nd"),
 					  "This prefix will be used for the second network to resolve attribute name " 
-					  + "collisions." + prefixRules,
+					  + "collisions." + PREFIX_RULES,
 					  1,
 					  "NETWORK_2",
 					  logger

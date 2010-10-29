@@ -14,16 +14,16 @@ public class Node {
 		this.nodeLabel = nodeLabel;
 	}
 	
-	public void addNodeAttribute(String attributeName, Object attributeValue) {
+	public void addAttribute(String attributeName, Object attributeValue) {
 		this.attributeNameToValue.put(attributeName, attributeValue);
 	}
 	
-	public int getNodeID() {
+	public int getID() {
 		System.err.println(nodeID);
 		return nodeID;
 	}
 
-	public String getNodeLabel() {
+	public String getLabel() {
 		if (nodeLabel != null) {
 			return nodeLabel;
 		} else {

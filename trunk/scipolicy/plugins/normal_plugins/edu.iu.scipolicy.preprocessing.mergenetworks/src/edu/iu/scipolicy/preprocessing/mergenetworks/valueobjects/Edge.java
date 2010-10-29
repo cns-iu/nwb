@@ -14,7 +14,7 @@ public class Edge {
 		this.targetID = targetID;
 	}
 	
-	public void addEdgeAttribute(String attributeName, Object attributeValue) {
+	public void addAttribute(String attributeName, Object attributeValue) {
 		this.attributeNameToValue.put(attributeName, attributeValue);
 	}
 	

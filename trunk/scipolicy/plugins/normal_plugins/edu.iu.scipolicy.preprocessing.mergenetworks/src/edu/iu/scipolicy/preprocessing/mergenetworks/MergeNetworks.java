@@ -51,6 +51,9 @@ public class MergeNetworks implements Algorithm {
 	private Data[] data;
     private Dictionary parameters;
 	private LogService logger;
+	
+	// e.g. 'present_in_COAUTHOR_NETWORK' or 'present_in_COPI_NETWORK'
+	public static final String IS_PRESENT_IN_NETWORK_PREFIX = "present_in_";
 
 
     public MergeNetworks(Data[] data, Dictionary parameters, CIShellContext context) {
@@ -71,10 +74,8 @@ public class MergeNetworks implements Algorithm {
 		/*
 		 * Get user input for different parameters. 
 		 * */
-		String firstInputAttributeCollisionResolvingName = (String) parameters
-																.get("firstnetworkprefix");
-		String secondInputAttributeCollisionResolvingName = (String) parameters
-																.get("secondnetworkprefix");
+		String firstNetworkName = (String) parameters.get("firstnetworkprefix");
+		String secondNetworkName = (String) parameters.get("secondnetworkprefix");
 		
 		String nodeIdentifierColumnName = (String) parameters.get("identifier");
 		
@@ -99,8 +100,8 @@ public class MergeNetworks implements Algorithm {
 			 * */
 			mergeNetworksHelper = resolveNodeAndEdgeSchema(
 										 nodeIdentifierColumnName, 
-										 firstInputAttributeCollisionResolvingName, 
-										 secondInputAttributeCollisionResolvingName,
+										 firstNetworkName, 
+										 secondNetworkName,
 										 firstNetworkMetadata,
 										 secondNetworkMetadata);
 		} catch (AlgorithmExecutionException e) {
@@ -135,7 +136,9 @@ public class MergeNetworks implements Algorithm {
 									  nodeIdentifierColumnName,
 									  mergeNetworksHelper,
 									  nodeIDToNodeObject,
-									  edgeIDToEdgeObject);
+									  edgeIDToEdgeObject,
+									  firstNetworkName,
+									  secondNetworkName);
 			
 			/*
 			 * This is used to generate the output NWB file containing the merged network. 
@@ -236,15 +239,16 @@ public class MergeNetworks implements Algorithm {
 			String nodeIdentifierColumnName,
 			MergeNetworksHelper mergeNetworksHelper, 
 			Map<Object, Node> nodeIDToNodeObject,
-			Map<String, Edge> edgeIDToEdgeObject) throws IOException,
-			ParsingException {
+			Map<String, Edge> edgeIDToEdgeObject,
+			String firstNetworkName,
+			String secondNetworkName) throws IOException, ParsingException {
 		
 		NWBFileParser parser;
 		parser = new NWBFileParser(firstInputNetwork);
 		
 		/*
 		 * Create networks assets (node & edge) for the first network.
-		 * */
+		 */
 		MergeNetworkAssetsComputation mergeNetworkAssetsComputation = 
 			new MergeNetworkAssetsComputation(nodeIdentifierColumnName, 
 					mergeNetworksHelper.getOldAttributeNameToNewNodeAttributeNameAndType()
@@ -253,6 +257,8 @@ public class MergeNetworks implements Algorithm {
 							.get(MergedNetworkSchemas.NETWORK_HANDLE.FIRST),
 					nodeIDToNodeObject,
 					edgeIDToEdgeObject,
+					firstNetworkName,
+					secondNetworkName,
 					logger);
 		parser.parse(mergeNetworkAssetsComputation);
 		
@@ -270,6 +276,8 @@ public class MergeNetworks implements Algorithm {
 					.get(MergedNetworkSchemas.NETWORK_HANDLE.SECOND),
 					nodeIDToNodeObject,
 					edgeIDToEdgeObject,
+					secondNetworkName,
+					firstNetworkName,
 					logger);
 		
 		parser.parse(mergeNetworkAssetsComputation);

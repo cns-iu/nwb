@@ -19,9 +19,9 @@ import edu.iu.scipolicy.preprocessing.mergenetworks.valueobjects.Node;
  * @author cdtank
  */
 public class MergeNetworkAssetsComputation  implements NWBFileParserHandler {
-	
-	private Map<Object, Node> nodeIDToNodeObject;
-	private Map<String, Edge> edgeIdentifierToEdgeObject;
+	// TODO: Don't pass these in (as empty maps), but rather ask for them back out when the caller is done with this thing.
+	private Map<Object, Node> nodeIDToNode;
+	private Map<String, Edge> edgeIDToEdge;
 
 	private String uniqueNodeIdentifierColumnName; 
 
@@ -31,7 +31,13 @@ public class MergeNetworkAssetsComputation  implements NWBFileParserHandler {
 
 	private Map<String, NWBAttribute> oldEdgeAttributeNameToNewAttribute;
 	
+	private String thisNetworkName;
+	private String otherNetworkName;
+	
 	private String EDGE_SEPARATOR = "$";
+	
+	public static final String YES = "T";
+	public static final String NO = "F";
 
 	public MergeNetworkAssetsComputation(
 			String uniqueNodeIdentifierColumnName,
@@ -39,16 +45,19 @@ public class MergeNetworkAssetsComputation  implements NWBFileParserHandler {
 			Map<String, NWBAttribute> oldEdgeAttributeNameToNewAttribute,
 			Map<Object, Node> nodeIDToNodeObject,
 			Map<String, Edge> edgeIdentifierToEdgeObject,
+			String thisNetworkName,
+			String otherNetworkName,
 			LogService logger) {
 		
 		this.uniqueNodeIdentifierColumnName = uniqueNodeIdentifierColumnName; 
 		this.oldNodeAttributeNameToNewAttribute = oldNodeAttributeNameToNewAttribute;
 		this.oldEdgeAttributeNameToNewAttribute = oldEdgeAttributeNameToNewAttribute;
-		this.nodeIDToNodeObject = nodeIDToNodeObject;
-		this.edgeIdentifierToEdgeObject = edgeIdentifierToEdgeObject;
+		this.nodeIDToNode = nodeIDToNodeObject;
+		this.edgeIDToEdge = edgeIdentifierToEdgeObject;
+		this.thisNetworkName = thisNetworkName;
+		this.otherNetworkName = otherNetworkName;
 		this.logger = logger;
 	}
-
 
 	/**
 	 * Check if the edge with a given source & target already exists if so then merge the new 
@@ -68,13 +77,13 @@ public class MergeNetworkAssetsComputation  implements NWBFileParserHandler {
 		 * Unique edge identifier is constructed using the format - 
 		 * "<SOURCE NODE ID>$<TARGET NODE ID>".
 		 * */
-		String edgeIdentifier = getEdgeIdentifier(node1, node2);
+		String edgeIdentifier = getEdgeID(node1, node2);
 		
-		if (!edgeIdentifierToEdgeObject.containsKey(edgeIdentifier)) {
+		if (!edgeIDToEdge.containsKey(edgeIdentifier)) {
 			edge = new Edge(node1, node2);
-			edgeIdentifierToEdgeObject.put(edgeIdentifier, edge);	
+			edgeIDToEdge.put(edgeIdentifier, edge);	
 		} else {
-			edge = edgeIdentifierToEdgeObject.get(edgeIdentifier);
+			edge = edgeIDToEdge.get(edgeIdentifier);
 		}
 		
 		for (Object nameToTypeObject : attributes.entrySet()) {
@@ -84,18 +93,59 @@ public class MergeNetworkAssetsComputation  implements NWBFileParserHandler {
 			String newAttributeName = oldEdgeAttributeNameToNewAttribute
 											.get(nameToValue.getKey()).getAttrName();
 			
-			edge.addEdgeAttribute(newAttributeName, nameToValue.getValue());
+			edge.addAttribute(newAttributeName, nameToValue.getValue());
 		}
+		
+		/*
+		 * the code below, when performed on the edges from each network we are merging (as it will be),
+		 *  should result in two columns,
+		 *    one saying YES or NO to whether that edge was present in the first input network, 
+		 *    and the other similarly saying YES or NO to whether that edge was present in the second input network.
+		 *   
+		 *    Note that it is very possible for an edge to be present in both networks.
+		 */
+		
+		//for this edge...
+		//consider the mark for whether this edge is present in my network
+		String edgeIsInThisNetwork_AttributeName = MergeNetworks.IS_PRESENT_IN_NETWORK_PREFIX 
+			+ this.thisNetworkName;
+		Object edgeIsInThisNetwork = edge.getAttribute(edgeIsInThisNetwork_AttributeName);
+		//if there is no mark yet, make the mark YES
+		if (edgeIsInThisNetwork == null) { 
+			edge.addAttribute(edgeIsInThisNetwork_AttributeName, YES);
+		}
+		//if the mark says YES, leave it as YES
+		else if (YES.equals(edgeIsInThisNetwork)) {}
+		//if the mark says NO, change it to YES
+		else if (NO.equals(edgeIsInThisNetwork)) {
+			edge.addAttribute(edgeIsInThisNetwork_AttributeName, YES);
+		}
+		//now consider the mark for whether this edge is present in the other network
+		String edgeIsInOtherNetwork_AttributeName = MergeNetworks.IS_PRESENT_IN_NETWORK_PREFIX 
+			+ this.otherNetworkName;
+		Object edgeIsInOtherNetwork = edge.getAttribute(edgeIsInOtherNetwork_AttributeName);
+		//if there is no mark yet, make the mark NO
+		if (edgeIsInOtherNetwork == null) {
+			edge.addAttribute(edgeIsInOtherNetwork_AttributeName, NO);
+		}
+		//if the mark says YES, leave it as YES
+		if (YES.equals(edgeIsInOtherNetwork)) {}
+		//if the mark says NO, leave it as NO
+		if (NO.equals(edgeIsInOtherNetwork)) {}
+		
+		/*
+		 * (the consideration of edges in the 'other' network is necessary
+		 * in order to have edges that aren't from a particular network have "NO" in
+		 * the appropriate column, rather than just having a null value.)
+		 */
 	}
 	
-	private String getEdgeIdentifier(int node1, int node2) {
-		return String.format("%s%s%s", node1, EDGE_SEPARATOR, node2);
-		
-		/*if (node1 > node2) {
+	private String getEdgeID(int node1, int node2) {
+		if (node1 > node2) {
 			return String.format("%s%s%s", node2, EDGE_SEPARATOR, node1);
 		} else {
 			return String.format("%s%s%s", node1, EDGE_SEPARATOR, node2);
-		}*/
+		}
 	}
 
 
@@ -110,18 +160,18 @@ public class MergeNetworkAssetsComputation  implements NWBFileParserHandler {
 		 * get the identifier value. 
 		 * */
 		Object uniqueIdentifierValue = getUniqueIdentifierValue(id, label, attributes);
-		if (!nodeIDToNodeObject.containsKey(uniqueIdentifierValue)) {
+		if (!nodeIDToNode.containsKey(uniqueIdentifierValue)) {
 			node = new Node(id, label);
-			nodeIDToNodeObject.put(uniqueIdentifierValue, node);	
+			nodeIDToNode.put(uniqueIdentifierValue, node);	
 		} else {
-			node = nodeIDToNodeObject.get(uniqueIdentifierValue);
+			node = nodeIDToNode.get(uniqueIdentifierValue);
 		}
 		
 		for (Object nameToTypeObject : attributes.entrySet()) {
 			Map.Entry<String, Object> nameToValue = (Map.Entry<String, Object>) nameToTypeObject;
 			String newAttributeName = oldNodeAttributeNameToNewAttribute
 											.get(nameToValue.getKey()).getAttrName();
-			node.addNodeAttribute(newAttributeName, nameToValue.getValue());
+			node.addAttribute(newAttributeName, nameToValue.getValue());
 		}
 	} 
 

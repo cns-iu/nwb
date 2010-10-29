@@ -8,6 +8,7 @@ import java.util.Map;
 import java.util.Set;
 
 import edu.iu.nwb.converter.nwb.common.NWBAttribute;
+import edu.iu.scipolicy.preprocessing.mergenetworks.MergeNetworks;
 
 /**
  * 
@@ -160,6 +161,13 @@ public class MergedNetworkSchemas {
 				
 			}
 			
+			/*
+			 * Add special columns that indicate whether a given edge was in each of the input networks.
+			 */
+			resolvedEdgeSchema.put(MergeNetworks.IS_PRESENT_IN_NETWORK_PREFIX 
+					+ firstNetworkCollisionResolvingPrefix, "string");
+			resolvedEdgeSchema.put(MergeNetworks.IS_PRESENT_IN_NETWORK_PREFIX 
+					+ secondNetworkCollisionResolvingPrefix, "string");
 		}
 		return resolvedEdgeSchema;
 	}

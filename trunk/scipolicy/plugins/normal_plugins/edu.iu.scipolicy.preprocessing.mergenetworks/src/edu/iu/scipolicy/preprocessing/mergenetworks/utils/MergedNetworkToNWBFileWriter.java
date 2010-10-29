@@ -27,8 +27,8 @@ public class MergedNetworkToNWBFileWriter {
 			
 			Node currentNode = currentNodeIdentifierToNode.getValue();
 			
-			nwbFileWriter.addNode(currentNode.getNodeID(), 
-								  currentNode.getNodeLabel(), 
+			nwbFileWriter.addNode(currentNode.getID(), 
+								  currentNode.getLabel(), 
 								  currentNode.getAttributes());
 		}
 		
