@@ -95,8 +95,6 @@ public class CreateRAlgorithmFactory implements AlgorithmFactory, ParameterMutat
     								"(The R executable could not be found.) " +
     								"Please choose a different directory as your R home.";
     							String errorMessage = String.format(format, value);
-    							CreateRAlgorithmFactory.this.logger.log(
-    								LogService.LOG_ERROR, errorMessage);
 
     							return errorMessage;
     						} else {
