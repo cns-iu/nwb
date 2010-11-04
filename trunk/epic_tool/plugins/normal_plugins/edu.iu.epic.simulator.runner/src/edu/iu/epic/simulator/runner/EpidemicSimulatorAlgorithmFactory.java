@@ -135,7 +135,7 @@ public abstract class EpidemicSimulatorAlgorithmFactory
 			
 			// Weak attempt to default distribution into the susceptible compartment.
 			float defaultValue = DEFAULT_INITIAL_DISTRIBUTION_FRACTION;
-			if (compartmentName.equalsIgnoreCase("S")) {
+			if (compartmentName.substring(0,1).equalsIgnoreCase("S")) {
 				defaultValue = 1.0f;
 			}
 			
