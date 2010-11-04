@@ -1309,27 +1309,7 @@
       <param name="url" value="http://nwb.slis.indiana.edu/svn/nwb/trunk/plugins"/>
     </antcall>
     <ant dir="${buildDirectory}/nonpde_plugins/edu.iu.nwb.analysis.diameter"/>
-    <antcall target="svn.co">
-      <param name="target" value="nonpde_plugins"/>
-      <param name="element.id" value="edu.iu.nwb.analysis.directedknn"/>
-      <param name="project.name" value="/analysis/edu.iu.nwb.analysis.directedknn"/>
-      <param name="url" value="http://nwb.slis.indiana.edu/svn/nwb/trunk/plugins"/>
-    </antcall>
-    <ant dir="${buildDirectory}/nonpde_plugins/edu.iu.nwb.analysis.directedknn"/>
-    <antcall target="svn.co">
-      <param name="target" value="nonpde_plugins"/>
-      <param name="element.id" value="edu.iu.nwb.analysis.indegreedistribution"/>
-      <param name="project.name" value="/analysis/edu.iu.nwb.analysis.indegreedistribution"/>
-      <param name="url" value="http://nwb.slis.indiana.edu/svn/nwb/trunk/plugins"/>
-    </antcall>
     <ant dir="${buildDirectory}/nonpde_plugins/edu.iu.nwb.analysis.indegreedistribution"/>
-    <antcall target="svn.co">
-      <param name="target" value="nonpde_plugins"/>
-      <param name="element.id" value="edu.iu.nwb.analysis.indegreesequence"/>
-      <param name="project.name" value="/analysis/edu.iu.nwb.analysis.indegreesequence"/>
-      <param name="url" value="http://nwb.slis.indiana.edu/svn/nwb/trunk/plugins"/>
-    </antcall>
-    <ant dir="${buildDirectory}/nonpde_plugins/edu.iu.nwb.analysis.indegreesequence"/>
     <antcall target="svn.co">
       <param name="target" value="nonpde_plugins"/>
       <param name="element.id" value="edu.iu.nwb.analysis.onepointcorrelations"/>
@@ -1344,13 +1324,6 @@
       <param name="url" value="http://nwb.slis.indiana.edu/svn/nwb/trunk/plugins"/>
     </antcall>
     <ant dir="${buildDirectory}/nonpde_plugins/edu.iu.nwb.analysis.outdegreedistribution"/>
-    <antcall target="svn.co">
-      <param name="target" value="nonpde_plugins"/>
-      <param name="element.id" value="edu.iu.nwb.analysis.outdegreesequence"/>
-      <param name="project.name" value="/analysis/edu.iu.nwb.analysis.outdegreesequence"/>
-      <param name="url" value="http://nwb.slis.indiana.edu/svn/nwb/trunk/plugins"/>
-    </antcall>
-    <ant dir="${buildDirectory}/nonpde_plugins/edu.iu.nwb.analysis.outdegreesequence"/>
     <antcall target="svn.co">
       <param name="target" value="nonpde_plugins"/>
       <param name="element.id" value="edu.iu.nwb.analysis.pagerank"/>
@@ -1387,20 +1360,6 @@
       <param name="url" value="http://nwb.slis.indiana.edu/svn/nwb/trunk/plugins"/>
     </antcall>
     <ant dir="${buildDirectory}/nonpde_plugins/edu.iu.nwb.analysis.totaldegreedistribution"/>
-    <antcall target="svn.co">
-      <param name="target" value="nonpde_plugins"/>
-      <param name="element.id" value="edu.iu.nwb.analysis.totaldegreesequence"/>
-      <param name="project.name" value="/analysis/edu.iu.nwb.analysis.totaldegreesequence"/>
-      <param name="url" value="http://nwb.slis.indiana.edu/svn/nwb/trunk/plugins"/>
-    </antcall>
-    <ant dir="${buildDirectory}/nonpde_plugins/edu.iu.nwb.analysis.totaldegreesequence"/>
-    <antcall target="svn.co">
-      <param name="target" value="nonpde_plugins"/>
-      <param name="element.id" value="edu.iu.nwb.analysis.undirectedknn"/>
-      <param name="project.name" value="/analysis/edu.iu.nwb.analysis.undirectedknn"/>
-      <param name="url" value="http://nwb.slis.indiana.edu/svn/nwb/trunk/plugins"/>
-    </antcall>
-    <ant dir="${buildDirectory}/nonpde_plugins/edu.iu.nwb.analysis.undirectedknn"/>
     <antcall target="svn.co">
       <param name="target" value="nonpde_plugins"/>
       <param name="element.id" value="edu.iu.nwb.analysis.reciprocity.arc"/>
