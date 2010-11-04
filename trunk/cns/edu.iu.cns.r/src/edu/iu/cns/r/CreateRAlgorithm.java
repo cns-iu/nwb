@@ -31,7 +31,7 @@ public class CreateRAlgorithm implements Algorithm {
     	Dictionary<String, Object> metadata = rDatum.getMetadata();
     	metadata.put(DataProperty.LABEL, "R Instance");
     	// TODO: Make an R icon.
-    	metadata.put(DataProperty.TYPE, DataProperty.OTHER_TYPE);
+    	metadata.put(DataProperty.TYPE, DataProperty.R_INSTANCE_TYPE);
 
     	return new Data[] { rDatum };
     }
