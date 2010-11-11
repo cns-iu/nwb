@@ -153,8 +153,6 @@
 	    </menu>
 	    
 	    <menu name="Visualization" type="group">
-	    	<menu pid="edu.iu.epic.visualization.linegraph.LineGraphAlgorithm"/>
-	    	<menu type="break"/>
 	    	<menu pid="edu.iu.nwb.visualization.guess"/>
 		    <menu type="break"/>
 		    <menu pid="edu.iu.nwb.visualization.gnuplot"/>
@@ -190,6 +188,10 @@
     	<menu pid="edu.iu.epic.simulator.runner.exact.ExactRunnerAlgorithm"/>
     	<menu pid="edu.iu.epic.simulator.runner.stochastic.network.NetworkBatchRunnerAlgorithm"/>
     </top_menu>
+    
+    <top_menu name="Visualization">
+	    <menu pid="edu.iu.epic.visualization.linegraph.LineGraphAlgorithm"/>
+	</top_menu>
 
 	<top_menu name="R">
 		<menu pid="edu.iu.cns.r.CreateRAlgorithm"/>
