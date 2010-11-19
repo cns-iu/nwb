@@ -34,10 +34,10 @@ public class Burst implements Algorithm {
 	private DateFormat format;
 	
 	private static double HUGEN = 1000000.0;
-	private static double trans = 1.0;
 	private static double DTRANS = 1.0;
 	
 	//get these from params
+	private double trans = 1.0;
 	private int inputLevels = 1;
 	private double baseRatio = 2;
 	private double increaseRatio = 2;
