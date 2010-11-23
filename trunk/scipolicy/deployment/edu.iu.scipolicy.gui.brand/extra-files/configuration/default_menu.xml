@@ -22,64 +22,64 @@
     <top_menu name="Data Preparation">
 	   <menu name="Database" type="group">
 		<menu name="ISI" type="group">
-		<!-- Merging -->
+			<!-- Merging -->
 			<menu pid="edu.iu.scipolicy.database.isi.merge.MergeIdenticalPeople" />
 			<menu pid="edu.iu.scipolicy.database.isi.merge.SuggestPeopleMerges" />
 			<menu pid="edu.iu.scipolicy.database.isi.merge.document_source.MergeDocumentSourcesAlgorithm" />
 			<menu pid="edu.iu.scipolicy.database.isi.merge.document_source.CreateDocumentSourceMergingTable" />
 			<menu pid="edu.iu.scipolicy.database.isi.match.reference_to_paper.MatchReferenceToPaperAlgorithm" />
 			<menu type="break"/>
+			
 	    	<!-- Core entities -->
-	    		<menu pid="edu.iu.scipolicy.database.isi.extract.table.core_entities.ExtractAuthorsAlgorithm"/>
-	    		<menu pid="edu.iu.scipolicy.database.isi.extract.table.core_entities.ExtractDocumentsAlgorithm"/>
-	    		<menu pid="edu.iu.scipolicy.database.isi.extract.table.core_entities.ExtractKeywordsAlgorithm"/>
-	    		<menu pid="edu.iu.scipolicy.database.isi.extract.table.core_entities.ExtractDocumentSourcesAlgorithm"/>
+	    	<menu pid="edu.iu.scipolicy.database.isi.extract.table.core_entities.ExtractAuthorsAlgorithm"/>
+	    	<menu pid="edu.iu.scipolicy.database.isi.extract.table.core_entities.ExtractDocumentsAlgorithm"/>
+	    	<menu pid="edu.iu.scipolicy.database.isi.extract.table.core_entities.ExtractKeywordsAlgorithm"/>
+	    	<menu pid="edu.iu.scipolicy.database.isi.extract.table.core_entities.ExtractDocumentSourcesAlgorithm"/>
 	    	
 	    	<!-- Core entities by year -->
-	    		<menu type="break"/>
-	    		<menu pid="edu.iu.scipolicy.database.isi.extract.table.entities_by_year.ExtractAuthorsByYearAlgorithm"/>
-	    		<menu pid="edu.iu.scipolicy.database.isi.extract.table.entities_by_year.ExtractReferencesByYearAlgorithm"/>
-	    		<menu pid="edu.iu.scipolicy.database.isi.extract.table.entities_by_year.ExtractOriginalKeywordsByYearAlgorithm"/>
-	    		<menu pid="edu.iu.scipolicy.database.isi.extract.table.entities_by_year.ExtractNewISIKeywordsByYearAlgorithm"/>
+	    	<menu type="break"/>
+	    	<menu pid="edu.iu.scipolicy.database.isi.extract.table.entities_by_year.ExtractAuthorsByYearAlgorithm"/>
+	    	<menu pid="edu.iu.scipolicy.database.isi.extract.table.entities_by_year.ExtractReferencesByYearAlgorithm"/>
+	    	<menu pid="edu.iu.scipolicy.database.isi.extract.table.entities_by_year.ExtractOriginalKeywordsByYearAlgorithm"/>
+	    	<menu pid="edu.iu.scipolicy.database.isi.extract.table.entities_by_year.ExtractNewISIKeywordsByYearAlgorithm"/>
 
 			<!-- Core entities by year for burst detection -->
 			<menu type="break"/>
 			<menu pid="edu.iu.scipolicy.database.isi.extract.table.entities_by_year_for_burst.ExtractAuthorsByYearForBurstDetectionAlgorithm"/>
 			<menu pid="edu.iu.scipolicy.database.isi.extract.table.entities_by_year_for_burst.ExtractDocumentsByYearForBurstDetectionAlgorithm"/>
-	    		<menu pid="edu.iu.scipolicy.database.isi.extract.table.entities_by_year_for_burst.ExtractOriginalKeywordsByYearForBurstDetectionAlgorithm"/>
-	    		<menu pid="edu.iu.scipolicy.database.isi.extract.table.entities_by_year_for_burst.ExtractNewISIKeywordsByYearForBurstDetectionAlgorithm"/>
-	    		<menu pid="edu.iu.scipolicy.database.isi.extract.table.entities_by_year_for_burst.ExtractReferencesByYearForBurstDetectionAlgorithm"/>
+	    	<menu pid="edu.iu.scipolicy.database.isi.extract.table.entities_by_year_for_burst.ExtractOriginalKeywordsByYearForBurstDetectionAlgorithm"/>
+	    	<menu pid="edu.iu.scipolicy.database.isi.extract.table.entities_by_year_for_burst.ExtractNewISIKeywordsByYearForBurstDetectionAlgorithm"/>
+	    	<menu pid="edu.iu.scipolicy.database.isi.extract.table.entities_by_year_for_burst.ExtractReferencesByYearForBurstDetectionAlgorithm"/>
 	    
-	    		<menu type="break"/>
-	    		<!-- Summaries that result in tables (originally "Tabular summaries") -->
-	    		<menu pid="edu.iu.scipolicy.database.isi.extract.table.longitudinalsummary"/> 
+	    	<!-- Summaries that result in tables (originally "Tabular summaries") -->
+	    	<menu type="break"/>
+	    	<menu pid="edu.iu.scipolicy.database.isi.extract.table.longitudinalsummary"/> 
 	    	
-	    		<menu type="break"/>
-	    		<!-- Co-authorship network -->	    	
-		    	<menu pid="edu.iu.scipolicy.database.isi.extract.network.coauthor"/>
-		    
-		   	 <menu type="break"/>	    
-		    <!-- Citation networks-->
-		    	<menu pid="edu.iu.scipolicy.database.isi.extract.network.citation.author.ISIExtractAuthorCitationNetworkAlgorithm"/>
-		   	<menu pid="edu.iu.scipolicy.database.isi.extract.network.citation.document.ISIDocumentCitationNetworkWithoutOuterNodes"/>
-		    	<menu pid="edu.iu.scipolicy.database.isi.extract.network.citation.document.ISIDocumentCitationNetworkWithOuterNodes"/>
-		    	<menu pid="edu.iu.scipolicy.database.isi.extract.network.citation.document_source.ISIDocumentSourceCitationNetworkWithoutOuterNodes"/>
-		    	<menu pid="edu.iu.scipolicy.database.isi.extract.network.citation.document_source.ISIDocumentSourceCitationNetworkWithOuterNodes"/>
-		    
-		    	<menu type="break"/>	    
-		    	<!-- Co-citation networks -->
-		    	<menu pid="edu.iu.scipolicy.database.isi.extract.network.cocitation.document.core"/>
-		    	<menu pid="edu.iu.scipolicy.database.isi.extract.network.cocitation.document.all"/>
-			<menu pid="edu.iu.scipolicy.database.isi.extract.network.cocitation.document_source.core"/>
-		    	<menu pid="edu.iu.scipolicy.database.isi.extract.network.cocitation.document_source.all"/>
+	    	<!-- Co-authorship network -->
+	    	<menu type="break"/>
+	    	<menu pid="edu.iu.scipolicy.database.isi.extract.network.coauthor"/>
 
-		    	<menu pid="edu.iu.scipolicy.database.isi.extract.network.cocitation.author.core"/> 
-		    
-		    	<menu type="break"/>	    
-		    	<!-- Bibliographic coupling networks -->
-		    	<menu pid="edu.iu.scipolicy.database.isi.extract.network.bibcoupling.author"/>
-		    	<menu pid="edu.iu.scipolicy.database.isi.extract.network.bibcoupling.document"/>
-		    	<menu pid="edu.iu.scipolicy.database.isi.extract.network.bibcoupling.document_source"/>
+			<!-- Citation networks-->
+		   	<menu type="break"/>
+		   	<menu pid="edu.iu.scipolicy.database.isi.extract.network.citation.author.ISIExtractAuthorCitationNetworkAlgorithm"/>
+		   	<menu pid="edu.iu.scipolicy.database.isi.extract.network.citation.document.ISIDocumentCitationNetworkWithoutOuterNodes"/>
+		    <menu pid="edu.iu.scipolicy.database.isi.extract.network.citation.document.ISIDocumentCitationNetworkWithOuterNodes"/>
+		    <menu pid="edu.iu.scipolicy.database.isi.extract.network.citation.document_source.ISIDocumentSourceCitationNetworkWithoutOuterNodes"/>
+		    <menu pid="edu.iu.scipolicy.database.isi.extract.network.citation.document_source.ISIDocumentSourceCitationNetworkWithOuterNodes"/>
+
+			<!-- Co-citation networks -->
+			<menu type="break"/>
+			<menu pid="edu.iu.scipolicy.database.isi.extract.network.cocitation.document.core"/>
+			<menu pid="edu.iu.scipolicy.database.isi.extract.network.cocitation.document.all"/>
+			<menu pid="edu.iu.scipolicy.database.isi.extract.network.cocitation.document_source.core"/>
+			<menu pid="edu.iu.scipolicy.database.isi.extract.network.cocitation.document_source.all"/>
+			<menu pid="edu.iu.scipolicy.database.isi.extract.network.cocitation.author.core"/>
+
+			<!-- Bibliographic coupling networks -->
+			<menu type="break"/>
+			<menu pid="edu.iu.scipolicy.database.isi.extract.network.bibcoupling.author"/>
+			<menu pid="edu.iu.scipolicy.database.isi.extract.network.bibcoupling.document"/>
+			<menu pid="edu.iu.scipolicy.database.isi.extract.network.bibcoupling.document_source"/>
 		</menu>
 	    <menu name="NSF" type="group">
 			<!-- Merging -->
