@@ -959,6 +959,7 @@ Dr. Katy Borner (katy@indiana.edu)
          version="0.0.0"
          unpack="false"/>
 
+	<!-- BEGIN GENERIC-CSV DATABASE FUNCTIONALITY. REMOVED FROM BUILD FOR NOW.
    <plugin
          id="edu.iu.sci2.database.star.common"
          download-size="0"
@@ -993,6 +994,7 @@ Dr. Katy Borner (katy@indiana.edu)
          install-size="0"
          version="0.0.0"
          unpack="false"/>
+	END GENERIC-CSV DATABASE FUNCTIONALITY. REMOVED FROM BUILD FOR NOW. -->
 
    <plugin
          id="edu.iu.scipolicy.preprocessing.mergenetworks"

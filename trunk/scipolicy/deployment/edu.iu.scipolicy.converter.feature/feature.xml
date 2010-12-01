@@ -274,23 +274,6 @@ Dr. Katy Borner (katy@indiana.edu)
          install-size="0"
          version="0.0.1"
          unpack="false"/>
-
-	<plugin
-         id="edu.iu.sci2.database.star.common"
-         download-size="0"
-         install-size="0"
-         version="0.0.1"
-         unpack="false"/>
-
-    <plugin
-         id="edu.iu.scipolicy.database.star.load"
-         download-size="0"
-         install-size="0"
-         version="0.0.1"
-         unpack="false"/>
-         
-
          -->
-   
 
 </feature>
