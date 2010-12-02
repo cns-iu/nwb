@@ -4,7 +4,7 @@
     <top_menu name="File">
 		<menu pid= "org.cishell.reference.gui.persistence.load.FileLoadAlgorithm"/>
 		<menu pid="edu.iu.nwb.composite.isiloadandclean.ISILoadAndCleanAlgorithm"/>
-		<menu pid="edu.iu.sci2.database.star.gui.StarDatabaseGUIAlgorithm"/>
+		<!-- <menu pid="edu.iu.sci2.database.star.gui.StarDatabaseGUIAlgorithm"/> -->
 		<menu type="break"/>
 		<menu pid= "edu.iu.nwb.preprocessing.prefuse.beta.directoryhierarchyreader.DirectoryHierarchyReaderAlgorithm"/>
 		<menu type="break"/>
@@ -94,13 +94,13 @@
 	    		<!--  Co-PI network -->
 	    		<menu pid="edu.iu.scipolicy.database.nsf.extract.network.copi"/>
     	</menu>
-    	<menu name="Generic-CSV" type="group">
+    	<!-- <menu name="Generic-CSV" type="group">
     		<menu pid="edu.iu.sci2.database.star.extract.network.ExtractCoOccurrenceNetworkAlgorithm"/>
     		<menu pid="edu.iu.sci2.database.star.extract.network.ExtractBipartiteNetworkAlgorithm"/>
     		<menu pid="edu.iu.sci2.database.star.extract.network.ExtractCoEntityOccurrenceNetworkAlgorithm"/>
     		<menu type="break"/>
     		<menu pid="edu.iu.sci2.database.star.extract.table.ExtractTableAlgorithm"/>
-    	</menu>
+    	</menu> -->
 		<menu name="General" type="group">
 			<menu pid="edu.iu.cns.database.merge.generic.CreateMergingTable"/>
 			<menu pid="edu.iu.cns.database.merge.generic.MergeTable"/>
