@@ -10,8 +10,9 @@ import org.cishell.framework.data.Data;
 
 public class BetweennessCentralityAlgorithmFactory implements AlgorithmFactory {
 	
-    public Algorithm createAlgorithm(Data[] data, Dictionary parameters, CIShellContext context) {
-        return new BetweennessCentralityAlgorithm(data, parameters, context);
+    public Algorithm createAlgorithm(
+    		Data[] data, Dictionary<String, Object> parameters, CIShellContext ciShellContext) {
+        return new BetweennessCentralityAlgorithm(data, parameters, ciShellContext);
     }
 
 }

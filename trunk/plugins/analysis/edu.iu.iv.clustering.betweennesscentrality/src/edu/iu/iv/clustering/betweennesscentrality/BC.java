@@ -12,12 +12,6 @@ import edu.uci.ics.jung.algorithms.importance.BetweennessCentrality;
 import edu.uci.ics.jung.algorithms.importance.EdgeRanking;
 import edu.uci.ics.jung.graph.Graph;
 
-
-
-/**
- * 
- * @author Bruce Herr
- */
 public class BC {
 
 	private static LogService logger;
