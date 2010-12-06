@@ -35,7 +35,11 @@ public class USZipCode {
 	
 	@Override
 	public String toString() {
-		return this.uzip + UZIP_SEPARATOR + this.postBox;
+		if (this.postBox == DEFAULT_VALUE) {
+			return this.uzip;
+		} else {
+			return this.uzip + UZIP_SEPARATOR + this.postBox;
+		}
 	}
 	
 	/**
@@ -45,6 +49,9 @@ public class USZipCode {
 	 * empty ZipCode object
 	 */
 	public static USZipCode parse(String zipString) {
+		if (zipString == null) {
+			zipString = DEFAULT_VALUE;
+		}
 		String[] zipStrings = zipString.split(UZIP_SEPARATOR);
 		String uzip = parseUzip(zipStrings);
 		String postBox = parsePostBox(zipStrings);
