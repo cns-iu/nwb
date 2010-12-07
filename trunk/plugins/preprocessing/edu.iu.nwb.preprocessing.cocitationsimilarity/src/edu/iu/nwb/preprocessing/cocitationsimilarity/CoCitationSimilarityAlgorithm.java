@@ -36,7 +36,7 @@ public class CoCitationSimilarityAlgorithm implements Algorithm {
     	try {
     		//File tmpEdgeFile = File.createTempFile("nwb-", ".edge");
 			File inputNWBFile = (File)data[0].getData();
-			File outputNWBFile = File.createTempFile("nwb-", ".nwb");
+			File outputNWBFile = File.createTempFile("CoCitationSimilarity-", ".nwb");
 			
 			//create the network File
 			

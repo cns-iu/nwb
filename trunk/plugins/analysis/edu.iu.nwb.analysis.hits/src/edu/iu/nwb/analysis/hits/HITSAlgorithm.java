@@ -88,7 +88,7 @@ public class HITSAlgorithm implements Algorithm{
 				 * Used to generate the output file containing the modified graph information. 2 new 
 				 * attributes - authority & hub score are added for each node.
 				*/
-				File outputNWBFile = File.createTempFile("nwb-", ".nwb");
+				File outputNWBFile = File.createTempFile("hits-", ".nwb");
 				NWBFileParser outputParser = new NWBFileParser(inputData);
 				outputParser.parse(new HITSAlgorithmOutputGenerator(hitsComputation, outputNWBFile));
 				
