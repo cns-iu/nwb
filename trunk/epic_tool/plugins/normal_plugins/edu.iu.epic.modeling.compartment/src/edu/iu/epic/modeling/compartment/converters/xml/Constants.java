@@ -9,5 +9,5 @@ public final class Constants {
 	}
 
 	public static final String MODEL_FILE_EXTENSION = "file-ext:xml";
-	public static final String MODEL_MIME_TYPE = "file:text/xml+compartmentalmodel";
+	public static final String MODEL_MIME_TYPE = "file:text/compartmentalmodel+xml";
 }
