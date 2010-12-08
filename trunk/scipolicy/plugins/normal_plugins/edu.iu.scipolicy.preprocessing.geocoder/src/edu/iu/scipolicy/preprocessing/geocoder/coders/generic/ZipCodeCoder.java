@@ -47,7 +47,7 @@ public class ZipCodeCoder implements Geocoder {
 			inStream = connection.getInputStream();
 			input = new BufferedReader(new InputStreamReader(inStream, "UTF-8"));
 			
-			CSVReader zipCsvReader = createZipcodeCsvReader(input);
+			CSVReader zipCsvReader = new CSVReader(input);
 
 			this.zipCodeToLocation = createMapFromZipcodeToLocation(zipCsvReader);
 		} catch (IOException e) {
@@ -68,20 +68,6 @@ public class ZipCodeCoder implements Geocoder {
 				throw new GeoCoderException(exceptionMessage, e);
 			}
 		}
-	}
-
-	private static CSVReader createZipcodeCsvReader(BufferedReader input) {
-		final char fieldSeparator = ',';
-		final char fieldQuoteCharacter = '"';
-		final int lineToStartReadingFrom = 0;
-		final char quoteEscapeCharacter = '\\';
-
-			CSVReader zipCsvReader = new CSVReader(input, fieldSeparator, fieldQuoteCharacter,
-					lineToStartReadingFrom, quoteEscapeCharacter);
-
-			return zipCsvReader;
-
-
 	}
 
 	// us_zipcode_geo_code format is "zip, latitude, longitude"
