@@ -139,8 +139,8 @@ public class ScienceMapAlgorithm implements Algorithm {
 						new Data[]{ data });
 			Data[] convertedData = prefuseCSVReader.execute();
 
-			Dictionary<Object, Object> parameters =
-				new Hashtable<Object, Object>();
+			Dictionary<String, Object> parameters =
+				new Hashtable<String, Object>();
 			parameters.put(ScienceMapAlgorithmFactory.JOURNAL_COLUMN_ID, "Journal Title Abbr");
 			parameters.put(ScienceMapAlgorithmFactory.DATA_DISPLAY_NAME_ID, "CTSA, 2005-2009");
 
