@@ -59,6 +59,7 @@ public class NWBIntoAnnotatedGraphFileParser extends NWBFileParserAdapter {
 	}
 
 	private String createEdgeID(String node1ID, String node2ID) {
+//		String edgeID = String.format("%s_%s", node1ID, node2ID);
 		String edgeID = Integer.toString(this.edgeCount);
 		this.edgeCount++;
 

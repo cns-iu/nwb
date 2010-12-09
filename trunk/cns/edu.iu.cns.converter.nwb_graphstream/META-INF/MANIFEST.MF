@@ -21,4 +21,3 @@ Import-Package: edu.iu.cns.graphstream.common,
  org.osgi.service.prefs;version="1.1.0"
 X-AutoStart: true
 Service-Component: OSGI-INF/nwb_graphstream.xml, OSGI-INF/graphstream_nwb.xml
-Bundle-RequiredExecutionEnvironment: J2SE-1.5
