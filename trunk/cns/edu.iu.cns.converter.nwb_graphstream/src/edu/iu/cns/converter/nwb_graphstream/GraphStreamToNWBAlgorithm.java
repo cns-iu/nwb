@@ -3,7 +3,6 @@ package edu.iu.cns.converter.nwb_graphstream;
 import java.io.File;
 import java.io.IOException;
 import java.util.Dictionary;
-import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.Map;
@@ -15,10 +14,10 @@ import org.cishell.framework.data.Data;
 import org.cishell.framework.data.DataProperty;
 import org.cishell.utilities.FileUtilities;
 import org.graphstream.graph.Edge;
-import org.graphstream.graph.Element;
 import org.graphstream.graph.Node;
 
 import edu.iu.cns.graphstream.common.AnnotatedGraph;
+import edu.iu.cns.graphstream.common.Utilities;
 import edu.iu.nwb.util.nwbfile.NWBFileWriter;
 
 public class GraphStreamToNWBAlgorithm implements Algorithm {
@@ -60,7 +59,7 @@ public class GraphStreamToNWBAlgorithm implements Algorithm {
 			nwbWriter.addNode(
 				id,
 				this.inputGraph.getNodeLabel(nodeID),
-				getAttributes(node));
+				Utilities.getElementAttributes(node));
 		}
 	}
 
@@ -71,7 +70,7 @@ public class GraphStreamToNWBAlgorithm implements Algorithm {
 			Edge edge = edges.next();
 			int node1ID = Integer.parseInt(edge.getNode0().getId());
 			int node2ID = Integer.parseInt(edge.getNode1().getId());
-			Map<String, Object> attributes = getAttributes(edge);
+			Map<String, Object> attributes = Utilities.getElementAttributes(edge);
 
 			if (edge.isDirected()) {
 				nwbWriter.addDirectedEdge(node1ID, node2ID, attributes);
@@ -86,7 +85,7 @@ public class GraphStreamToNWBAlgorithm implements Algorithm {
 			Edge edge = edges.next();
 			int node1ID = Integer.parseInt(edge.getNode0().getId());
 			int node2ID = Integer.parseInt(edge.getNode1().getId());
-			Map<String, Object> attributes = getAttributes(edge);
+			Map<String, Object> attributes = Utilities.getElementAttributes(edge);
 
 			if (!edge.isDirected()) {
 				nwbWriter.addUndirectedEdge(node1ID, node2ID, attributes);
@@ -120,14 +119,4 @@ public class GraphStreamToNWBAlgorithm implements Algorithm {
     	
     	return new Data[] { outputNWBFileData };
     }
-
-	private Map<String, Object> getAttributes(Element element) {
-		Map<String, Object> attributes = new HashMap<String, Object>();
-
-		for (String attributeName : element.getAttributeKeySet()) {
-			attributes.put(attributeName, element.getAttribute(attributeName));
-		}
-
-		return attributes;
-	}
 }
