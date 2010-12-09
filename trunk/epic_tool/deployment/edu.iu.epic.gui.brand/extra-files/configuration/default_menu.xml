@@ -99,7 +99,7 @@
 				<menu pid="edu.iu.nwb.analysis.weighted.strengthdistribution"/>
 				<menu pid="edu.iu.nwb.analysis.weighted.weightdistribution"/>
 				<menu pid="edu.iu.nwb.analysis.weighted.randomweight"/>
-				<menu pid="edu.iu.nwb.analysis.pagerank"/>
+				<menu pid="edu.iu.nwb.analysis.pagerank.weighted.WeightedPagerank"/>
 				<menu pid="edu.iu.nwb.analysis.hits.HITSAlgorithm"/>
 				<menu type="break"/>
 				<menu pid="edu.iu.nwb.preprocessing.pathfindernetworkscaling.mst.MSTPathfinderNetworkScalingAlgorithm"/>
@@ -116,7 +116,7 @@
 		      	<menu pid="edu.iu.nwb.analysis.java.directedknn"/>
 				<menu pid="edu.iu.nwb.analysis.onepointcorrelations"/>
 				<menu type="break"/>
-				<menu pid="edu.iu.nwb.analysis.pagerank"/>
+				<menu pid="edu.iu.nwb.analysis.pagerank.weighted.WeightedPagerank"/>
 				<menu pid="edu.iu.nwb.analysis.hits.HITSAlgorithm"/>
 				<menu type="break"/>
 				<menu pid="edu.iu.nwb.analysis.reciprocity.dyad"/>
