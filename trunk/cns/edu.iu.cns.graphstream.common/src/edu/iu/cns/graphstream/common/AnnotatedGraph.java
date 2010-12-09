@@ -6,9 +6,9 @@ import java.util.Map;
 
 import org.graphstream.graph.Edge;
 import org.graphstream.graph.Node;
-import org.graphstream.graph.implementations.DefaultGraph;
+import org.graphstream.graph.implementations.MultiGraph;
 
-public class AnnotatedGraph extends DefaultGraph {
+public class AnnotatedGraph extends MultiGraph {
 	private LinkedHashMap<String, String> nodeSchema;
 	private LinkedHashMap<String, String> directedEdgeSchema;
 	private LinkedHashMap<String, String> undirectedEdgeSchema;
@@ -66,11 +66,17 @@ public class AnnotatedGraph extends DefaultGraph {
 
 	public void setNodeAttributes(String nodeID, Map<String, Object> attributes) {
 		Node node = getNode(nodeID);
-		node.addAttributes(attributes);
+
+		if (attributes != null) {
+			node.addAttributes(attributes);
+		}
 	}
 
 	public void setEdgeAttributes(String edgeID, Map<String, Object> attributes) {
 		Edge edge = getEdge(edgeID);
-		edge.addAttributes(attributes);
+
+		if (attributes != null) {
+			edge.addAttributes(attributes);
+		}
 	}
 }
