@@ -32,6 +32,29 @@ public class AnnotatedGraph extends MultiGraph {
 		super(id, strictChecking, autoCreate);
 	}
 
+	@SuppressWarnings("deprecation")
+	public AnnotatedGraph(AnnotatedGraph copyFrom) {
+		super();
+		setupFrom(copyFrom);
+	}
+
+	@SuppressWarnings("deprecation")
+	public AnnotatedGraph(AnnotatedGraph copyFrom, boolean strictChecking, boolean autoCreate) {
+		super(strictChecking, autoCreate);
+		setupFrom(copyFrom);
+	}
+
+	public AnnotatedGraph(AnnotatedGraph copyFrom, String id) {
+		super(id);
+		setupFrom(copyFrom);
+	}
+
+	public AnnotatedGraph(
+			AnnotatedGraph copyFrom, String id, boolean strictChecking, boolean autoCreate) {
+		super(id, strictChecking, autoCreate);
+		setupFrom(copyFrom);
+	}
+
 	public LinkedHashMap<String, String> getNodeSchema() {
 		return this.nodeSchema;
 	}
@@ -77,6 +100,57 @@ public class AnnotatedGraph extends MultiGraph {
 
 		if (attributes != null) {
 			edge.addAttributes(attributes);
+		}
+	}
+
+	private void setupFrom(AnnotatedGraph copyFrom) {
+		setupNodeSchemaFrom(copyFrom);
+		setupDirectedEdgeSchemaFrom(copyFrom);
+		setupUndirectedEdgeSchemaFrom(copyFrom);
+
+		for (Node node : copyFrom.getEachNode()) {
+			String id = node.getId();
+			String label = copyFrom.getNodeLabel(id);
+			Map<String, Object> attributes = Utilities.getElementAttributes(node);
+
+			addNode(id);
+			setNodeLabel(id, label);
+			setNodeAttributes(id, attributes);
+		}
+
+		for (Edge edge : copyFrom.getEachEdge()) {
+			String id = edge.getId();
+			String node1ID = edge.getNode0().getId();
+			String node2ID = edge.getNode1().getId();
+			boolean isDirected = edge.isDirected();
+			Map<String, Object> attributes = Utilities.getElementAttributes(edge);
+
+			addEdge(id, node1ID, node2ID, isDirected);
+			setEdgeAttributes(id, attributes);
+		}
+	}
+
+	private void setupNodeSchemaFrom(AnnotatedGraph copyFrom) {
+		LinkedHashMap<String, String> nodeSchema = copyFrom.getNodeSchema();
+
+		if (nodeSchema != null) {
+			setNodeSchema(new LinkedHashMap<String, String>(nodeSchema));
+		}
+	}
+
+	private void setupDirectedEdgeSchemaFrom(AnnotatedGraph copyFrom) {
+		LinkedHashMap<String, String> directedEdgeSchema = copyFrom.getDirectedEdgeSchema();
+
+		if (directedEdgeSchema != null) {
+			setDirectedEdgeSchema(new LinkedHashMap<String, String>(directedEdgeSchema));
+		}
+	}
+
+	private void setupUndirectedEdgeSchemaFrom(AnnotatedGraph copyFrom) {
+		LinkedHashMap<String, String> undirectedEdgeSchema = copyFrom.getUndirectedEdgeSchema();
+
+		if (undirectedEdgeSchema != null) {
+			setUndirectedEdgeSchema(new LinkedHashMap<String, String>(undirectedEdgeSchema));
 		}
 	}
 }
