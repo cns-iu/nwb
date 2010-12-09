@@ -17,7 +17,7 @@ public class MetadataReporterAlgorithmFactory implements AlgorithmFactory {
 	}
 
     public Algorithm createAlgorithm(
-    		Data[] data, Dictionary parameters, CIShellContext ciShellContext) {
-        return new MetadataReporterAlgorithm(data, parameters, ciShellContext, this.bundleContext);
+    		Data[] data, Dictionary<String, Object> parameters, CIShellContext ciShellContext) {
+        return new MetadataReporterAlgorithm(this.bundleContext);
     }
 }
