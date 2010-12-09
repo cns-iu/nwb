@@ -39,12 +39,26 @@ Dr. Katy Borner (katy@indiana.edu)
       <import feature="edu.iu.scipolicy.converter.feature" version="1.0.0"/>
    </requires>
 
+	<!-- Node Between Centrality Plugins -->
 	<plugin
-		id="edu.iu.nwb.analysis.sitebetweenness.wrapper"
-        download-size="0"
-        install-size="0"
-        version="0.0.0"
-        unpack="false"/>
+         id="graphstream"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+    <plugin
+         id="edu.iu.cns.graphstream.common"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+    <plugin
+         id="edu.iu.nwb.analysis.nodebetweennesscentrality"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+	<!-- End Node Betweenness Centrality Plugins -->
 
    <plugin
          id="org.cishell.utilities"

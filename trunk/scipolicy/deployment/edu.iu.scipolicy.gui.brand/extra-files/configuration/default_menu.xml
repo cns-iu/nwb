@@ -195,13 +195,15 @@
 			<menu pid="edu.iu.nwb.analysis.diameter"/>
 			<menu pid="edu.iu.nwb.analysis.averageshortestpath"/>
 			<menu pid="edu.iu.nwb.analysis.shortestpathdistr"/>
-			<menu pid="edu.iu.nwb.analysis.sitebetweenness.wrapper.SiteBetweennessWrapperAlgorithm"/>
+			<menu pid="edu.iu.nwb.analysis.nodebetweennesscentrality.NodeBetweennessCentralityAlgorithm"/>
 			<menu type="break"/>
 			<menu pid="edu.iu.nwb.analysis.weakcomponentclustering.ClusteringAlgorithm"/>
 			<menu pid="edu.iu.nwb.analysis.connectedcomponents"/>
 			<menu type="break"/>
 			<menu pid="edu.iu.nwb.analysis.kcore.Extract"/>
 	        <menu pid="edu.iu.nwb.analysis.kcore.Annotate"/>
+	        <menu type="break"/>
+			<menu pid="edu.iu.nwb.analysis.blondelcommunitydetection.BlondelCommunityDetectionAlgorithm"/>
 	        <menu type="break"/>	
 			<menu pid="edu.iu.nwb.analysis.hits.HITSAlgorithm"/>
 		</menu>
@@ -214,6 +216,8 @@
 			<menu pid="edu.iu.nwb.analysis.weighted.strengthdistribution"/>
 			<menu pid="edu.iu.nwb.analysis.weighted.weightdistribution"/>
 			<menu pid="edu.iu.nwb.analysis.weighted.randomweight"/>
+			<menu type="break"/>
+			<menu pid="edu.iu.nwb.analysis.nodebetweennesscentrality.NodeBetweennessCentralityAlgorithm"/>
 			<menu type="break"/>
 			<menu pid="edu.iu.nwb.analysis.blondelcommunitydetection.BlondelCommunityDetectionAlgorithm"/>
 			<menu type="break"/>	
@@ -232,6 +236,8 @@
 			<menu pid="edu.iu.nwb.analysis.reciprocity.arc"/>
 			<menu pid="edu.iu.nwb.analysis.transitivity.adjacency"/>
 			<menu type="break"/>
+			<menu pid="edu.iu.nwb.analysis.nodebetweennesscentrality.NodeBetweennessCentralityAlgorithm"/>
+			<menu type="break"/>
 			<menu pid="edu.iu.nwb.analysis.weakcomponentclustering.ClusteringAlgorithm"/>	
 			<menu pid="edu.iu.nwb.analysis.java.strongcomponentclustering"/>
 			<!--  	
@@ -240,7 +246,9 @@
 			<menu type="break"/>
 			<menu pid="edu.iu.nwb.analysis.kcore.Extract"/>
 	        <menu pid="edu.iu.nwb.analysis.kcore.Annotate"/>
-	        <menu type="break"/>	
+	        <menu type="break"/>
+	        <menu pid="edu.iu.nwb.analysis.nodebetweennesscentrality.NodeBetweennessCentralityAlgorithm"/>
+			<menu type="break"/>
 			<menu pid="edu.iu.nwb.analysis.hits.HITSAlgorithm"/>
 			<menu pid="edu.iu.nwb.analysis.pagerank"/>
 		<menu type="break"/>			

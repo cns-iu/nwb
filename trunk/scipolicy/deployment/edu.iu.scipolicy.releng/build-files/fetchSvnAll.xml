@@ -25,6 +25,27 @@
 	<!-- (might be able to replace this with a script that gets the entire contents of the directory... -->
   		<!-- normal_plugins -->
 
+  	<!-- Node Between Centrality Plugins -->
+  	<antcall target="svn.co">
+  	     <param name="target" value="plugins"/>
+  	     <param name="element.id" value="graphstream"/>
+  	     <param name="project.name" value="graphstream"/>
+  	     <param name="url" value="http://nwb.slis.indiana.edu/svn/nwb/trunk/cns/libs"/>
+  	</antcall>
+	<antcall target="svn.co">
+		<param name="target" value="plugins"/>
+  	  	<param name="element.id" value="edu.iu.cns.graphstream.common"/>
+  	  	<param name="project.name" value="edu.iu.cns.graphstream.common"/>
+  	  	<param name="url" value="http://nwb.slis.indiana.edu/svn/nwb/trunk/cns"/>
+  	</antcall>
+  	<antcall target="svn.co">
+		<param name="target" value="plugins"/>
+  	  	<param name="element.id" value="edu.iu.nwb.analysis.nodebetweennesscentrality"/>
+  	  	<param name="project.name" value="edu.iu.nwb.analysis.nodebetweennesscentrality"/>
+  	  	<param name="url" value="http://nwb.slis.indiana.edu/svn/nwb/trunk/plugins/analysis"/>
+  	</antcall>
+  	<!-- End Node Betweenness Centrality Plugins -->
+
   	<antcall target="svn.co">
 		<param name="target" value="plugins"/>
   	  	<param name="element.id" value="edu.iu.scipolicy.model"/>
@@ -1568,20 +1589,6 @@
       <param name="url" value="http://nwb.slis.indiana.edu/svn/nwb/trunk/plugins"/>
     </antcall>
     <ant dir="${buildDirectory}/nonpde_plugins/edu.iu.nwb.analysis.shortestpathdistr"/>
-  	
-	<antcall target="svn.co">
-		<param name="target" value="plugins"/>
-		<param name="element.id" value="edu.iu.nwb.analysis.sitebetweenness.wrapper"/>
-		<param name="project.name" value="/analysis/edu.iu.nwb.analysis.sitebetweenness.wrapper"/>
-		<param name="url" value="http://nwb.slis.indiana.edu/svn/nwb/trunk/plugins"/>
-	</antcall>
-    <antcall target="svn.co">
-    	<param name="target" value="nonpde_plugins"/>
-    	<param name="element.id" value="edu.iu.nwb.analysis.sitebetweenness"/>
-    	<param name="project.name" value="/analysis/edu.iu.nwb.analysis.sitebetweenness"/>
-    	<param name="url" value="http://nwb.slis.indiana.edu/svn/nwb/trunk/plugins"/>
-    </antcall>
-    <ant dir="${buildDirectory}/nonpde_plugins/edu.iu.nwb.analysis.sitebetweenness"/>
   	
     <antcall target="svn.co">
       <param name="target" value="nonpde_plugins"/>
