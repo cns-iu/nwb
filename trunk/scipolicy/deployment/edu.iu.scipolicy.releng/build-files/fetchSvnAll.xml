@@ -30,7 +30,7 @@
   	     <param name="target" value="plugins"/>
   	     <param name="element.id" value="graphstream"/>
   	     <param name="project.name" value="graphstream"/>
-  	     <param name="url" value="http://nwb.slis.indiana.edu/svn/nwb/trunk/cns/libs"/>
+  	     <param name="url" value="http://nwb.slis.indiana.edu/svn/nwb/trunk/cns/lib"/>
   	</antcall>
 	<antcall target="svn.co">
 		<param name="target" value="plugins"/>
