@@ -102,7 +102,7 @@ public class WeightedPagerank implements Algorithm {
 		Dictionary<String, Object> metadata = nwbOutput.getMetadata();
 		metadata.put(DataProperty.PARENT, data[0]);
 		metadata.put(DataProperty.TYPE, DataProperty.NETWORK_TYPE);
-		metadata.put(DataProperty.LABEL, "with Weighted Pagerank");
+		metadata.put(DataProperty.LABEL, "with Pagerank");
 		return nwbOutput;
 	}
 
