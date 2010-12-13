@@ -65,12 +65,10 @@ public class NodeGroup {
 	}
 	
 	public Node getPrimaryNode (){
-		if (primaryNodesSet.size()>1 || primaryNodesSet.isEmpty())
+		if ((primaryNodesSet.size() > 1) || (primaryNodesSet.isEmpty())) {
 			return null;
-		else{
-			Iterator nodes = primaryNodesSet.iterator();
-			Node theNode = (Node) nodes.next();
-			return theNode;
+		} else {
+			return (Node) primaryNodesSet.iterator().next();
 		}		
 	}
 	
