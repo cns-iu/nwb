@@ -20,6 +20,7 @@ import operator
 
 execfile("scripts/ResizeLinear.py")
 execfile("scripts/Colorize.py")
+execfile("scripts/ChangeAttribute.py")
 
 # Graph Modifier
 # By: Jeffrey Wong and Bernie Hogan
@@ -738,7 +739,10 @@ class GraphModifier(com.hp.hpl.guess.ui.DockableAdapter):
         
         # colour button
         dockSelf.colourButton = JButton("Colour")
-        dockSelf.colourButton.actionPerformed = lambda event:  updateBottomPanel(GraphModifier.self, GraphModifier.self.colorPanel)# this line has problems
+        dockSelf.colourButton.actionPerformed = \
+            lambda event: \
+                updateBottomPanel(
+                    GraphModifier.self, GraphModifier.self.colorPanel)# this line has problems
         
         dockSelf.showButton = JButton("Show")
         dockSelf.showButton.actionPerformed = lambda event: setVisible(true, GraphModifier.self) # show objects
@@ -846,16 +850,16 @@ def updateBottomPanel(o, p):
 
 # set the color to change
 # b, which button is pressed
-def setColor(b, o):
-    o.currentAction = "color"
+def setColor(b, graphModifier):
+    graphModifier.currentAction = "color"
     # figure out which button was pressed
-    for color in o.colorInfo:
-        if b.getSource() == o.colors[color[0]]:
-            o.currentColor = color[0]
+    for color in graphModifier.colorInfo:
+        if b.getSource() == graphModifier.colors[color[0]]:
+            graphModifier.currentColor = color[0]
             break
-    t[1] = o.currentColor
-    changeAttribute(o)
-    o.colorPanel.setVisible(false)
+    t[1] = graphModifier.currentColor
+    changeAttribute(graphModifier)
+    graphModifier.colorPanel.setVisible(false)
     
 # set the node style to change    
 def setNodeStyle(b, o):
@@ -902,182 +906,27 @@ def changeLabel(o):
     o.changeLabelPanel.setVisible(false)
     
 # change the specified attribute based on the value
-def changeAttribute(o):
+def changeAttribute(graphModifier):
     # history trackers
-    action = o.currentAction # the current action we're going to do
+    action = graphModifier.currentAction # the current action we're going to do
     objects = ""
     property = ""
     operator = ""
     value = ""
-    selectedIndex = o.objectBox.getSelectedIndex()
+    selectedIndex = graphModifier.objectBox.getSelectedIndex()
     
     # so the script will work if nothing is selected
     if selectedIndex < 0:
         selectedIndex = 0
         
     # get values of objects in string format
-    if selectedIndex <= len(general)-1:
-        
-        # all is selected
-        if selectedIndex == 0:
-            objects = "all objects"
-            # apply attribute change to all colours
-            if o.currentAction == "color":
-                # change all node colors
-                g.nodes.color = o.currentColor
-                
-                # change all edge colors
-                g.edges.color = o.currentColor
-            elif o.currentAction == "node_style":
-                g.nodes.style = image_style # a hack to fix problem in switching between styles in GUESS
-                g.nodes.style = o.currentNodeStyle
-            elif o.currentAction == "show":
-                # show all nodes
-                g.nodes.visible = true
-                
-                # show all edges
-                g.edges.visible = true
-            elif o.currentAction == "hide":
-                # hide all nodes
-                g.nodes.visible = false
-                
-                # hide all edges
-                g.nodes.visible = false
-            elif o.currentAction == "size":
-                # set the width and height of all nodes
-                g.nodes.width = o.widthSlider.getValue()
-                g.nodes.height = o.heightSlider.getValue()
-                g.edges.width = o.widthSlider.getValue()
-            elif o.currentAction == "show label":
-                # show all labels of nodes
-                g.nodes.labelVisible = true
-                
-                # show all labels of edges
-                g.edges.labelVisible = true
-                
-                # repaint the graph
-                v.repaint()
-            elif o.currentAction == "hide label":
-                # hide all labels of nodes
-                g.nodes.labelVisible = false
-                
-                # hide all labels of edges
-                g.edges.labelVisible = false
-                
-                # repaint the graph
-                v.repaint()
-            elif o.currentAction == "change label":
-                # change the label of all nodes and edges
-                all = g.nodes + g.edges
-                for i in all:
-                    t[0] = i
-                    setLabel(t)
-        # set all nodes to something
-        elif selectedIndex == 1:
-            objects = "all nodes"
-            if o.currentAction == "color":
-                g.nodes.color = o.currentColor
-            elif o.currentAction == "node_style":
-                g.nodes.style = image_style
-                g.nodes.style = o.currentNodeStyle
-            elif o.currentAction == "show":
-                g.nodes.visible = true
-            elif o.currentAction == "hide":
-                g.nodes.visible = false
-            elif o.currentAction == "size":
-                g.nodes.width = o.widthSlider.getValue()
-                g.nodes.height = o.heightSlider.getValue()
-            elif o.currentAction == "show label":
-                g.nodes.labelVisible = true
-            elif o.currentAction == "hide label":
-                g.nodes.labelVisible = false
-            elif o.currentAction == "change label":
-                for i in g.nodes:
-                    t[0] = i
-                    setLabel(t)
-        # set all edges to something
-        elif selectedIndex == 2:
-            objects = "all edges"
-            if o.currentAction == "color":
-                g.edges.color = o.currentColor
-            elif o.currentAction == "node_style":
-                g.nodes.style = image_style
-                g.nodes.style = o.currentNodeStyle
-            elif o.currentAction == "show":
-                g.edges.visible = true
-            elif o.currentAction == "hide":
-                g.edges.visible = false
-            elif o.currentAction == "size":
-                g.edges.width = o.widthSlider.getValue()
-            elif o.currentAction == "show label":
-                g.edges.labelVisible = true
-            elif o.currentAction == "hide label":
-                g.edges.labelVisible = false
-            elif o.currentAction == "change label":
-                for i in g.edges:
-                    t[0] = i
-                    setLabel(t)
-        else:
-            indexList = ""
-            propertyIndex = o.propertyBox.getSelectedIndex()
-            propertyList = ""
-            propertyDictionary = ""
-            if selectedIndex == 3:
-                objects = "all nodes whose property: "
-                propertyList = o.nodeProperties
-                propertyDictionary = nodeProperties
-                indexList = nodeIndex
-            else:
-                objects = "all edges whose property: "
-                propertyList = o.edgeProperties
-                propertyDictionary = edgeProperties
-                indexList = edgeIndex
-            
-            property = propertyList[propertyIndex]
-            propertyType = propertyDictionary[property]
-            currentOperatorIndex = o.operatorBox.getSelectedIndex()
-            currentOperator = o.numberOperators[currentOperatorIndex]
-            currentValue = ""
-            if propertyType == type("string"):
-                if nodePropertyValues.has_key(property):                
-                    currentValue = nodePropertyValues[property][o.valueBox.getSelectedIndex()]
-                elif edgePropertyValues.has_key(property):
-                    currentValue = edgePropertyValues[property][o.valueBox.getSelectedIndex()]
-                else:
-                    raise AttributeError
-
-            elif propertyType == type(1) or propertyType == type(1.5):
-                currentValue = float(o.valueBoxValue.theText())
-            value = currentValue
-            operator = currentOperator
-            # check to see which nodes or edges fulfill that property
-            for i in indexList:
-                currentThing = ""
-                theValue = ""
-                if selectedIndex == 3:
-                    currentThing = g.nodes[i[1]]
-                    theValue = eval("g.nodes[" + str(i[1]) + "]." + property)
-                else:
-                    currentThing = g.edges[i[1]]
-                    theValue = eval("g.edges[" + str(i[1]) + "]." + property)
-                t[0] = currentThing
-                if currentOperator == o.numberOperators[0] and theValue == currentValue:
-                    method[o.currentAction](t)
-                elif currentOperator == o.numberOperators[1] and theValue != currentValue:
-                    method[o.currentAction](t)
-                elif currentOperator == o.numberOperators[2] and theValue <= currentValue:
-                    method[o.currentAction](t)
-                elif currentOperator == o.numberOperators[3] and theValue < currentValue:
-                    method[o.currentAction](t)
-                elif currentOperator == o.numberOperators[4] and theValue >= currentValue:
-                    method[o.currentAction](t)
-                elif currentOperator == o.numberOperators[5] and theValue > currentValue:
-                    method[o.currentAction](t)
+    if selectedIndex <= len(general) - 1:
+        changeAttribute_General(selectedIndex, graphModifier)
     else:
         currentObject = ""
         # check to see if a node or edge is selected
         # have to include the 3 things at the beginning
-        selectedIndex = o.objectBox.getSelectedIndex()
+        selectedIndex = graphModifier.objectBox.getSelectedIndex()
         if selectedIndex >= len(g.nodes) + len(general):
             selectedIndex = selectedIndex - len(g.nodes) - len(general)
             currentObject = g.edges[edgeIndex[selectedIndex][1]]
@@ -1089,13 +938,13 @@ def changeAttribute(o):
             
         # check what action were doing
         t[0] = currentObject
-        method[o.currentAction](t)
-        object = o.getName()
-        action = o.currentAction
+        method[graphModifier.currentAction](t)
+        object = graphModifier.getName()
+        action = graphModifier.currentAction
     
     # save history
-    saveHistory(o, action, objects, property, operator, value)    
-    o.bottomPanel.setVisible(false)
+    saveHistory(graphModifier, action, objects, property, operator, value)    
+    graphModifier.bottomPanel.setVisible(false)
             
 # change colour method
 def changeColor(tup):
