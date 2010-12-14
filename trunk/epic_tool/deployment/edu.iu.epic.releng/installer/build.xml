@@ -85,10 +85,11 @@
 		<appversion>@{version}</appversion>
 		<authors>
 			<author name="Micah W. Linnemeier" email="mwlinnem@indiana.edu"/>
-			<author name="Russell J. Duhon" email="rduhon@indiana.edu" />
 			<author name="Patrick A. Phillips" email="pataphil@indiana.edu" />
 			<author name="Chintan Tank" email="cdtank@indiana.edu" />
 			<author name="Joseph Biberstine" email="jrbibers@indiana.edu" />
+			<author name="Chin Hua Kong" email="kongch@indiana.edu" />
+			<author name="Russell J. Duhon" email="rduhon@indiana.edu" />
 		</authors>
 		<url>@{home.url}/</url>
 		<javaversion>1.4</javaversion>
