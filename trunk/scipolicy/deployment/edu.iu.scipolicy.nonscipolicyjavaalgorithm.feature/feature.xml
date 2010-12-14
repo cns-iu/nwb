@@ -750,62 +750,51 @@ Dr. Katy Borner (katy@indiana.edu)
          version="0.0.0"
          unpack="false"/>
 
-   <plugin
-         id="edu.iu.cns.database.load.framework"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         unpack="false"/>
+	<!-- BEGIN (REMOVED) DATABASE FUNCTIONALITY -->
+	<!--
+	<plugin
+		id="edu.iu.cns.database.load.framework"
+		download-size="0"
+		install-size="0"
+		version="0.0.0"
+		unpack="false"/>
 
-   <plugin
-         id="edu.iu.cns.database.extract.generic"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         unpack="false"/>
+	<plugin
+		id="edu.iu.cns.database.extract.generic"
+		download-size="0"
+		install-size="0"
+		version="0.0.0"
+		unpack="false"/>
 
-   <plugin
-         id="edu.iu.scipolicy.database.isi.load"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         unpack="false"/>
+	<plugin
+		id="edu.iu.scipolicy.database.isi.load"
+		download-size="0"
+		install-size="0"
+		version="0.0.0"
+		unpack="false"/>
 
-   <plugin
-         id="google_collections"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"/>
+	<plugin
+		id="edu.iu.cns.database.merge.generic"
+		download-size="0"
+		install-size="0"
+		version="0.0.0"
+		unpack="false"/>
 
-   <plugin
-         id="edu.iu.cns.database.merge.generic"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         unpack="false"/>
+	<plugin
+		id="edu.iu.scipolicy.database.isi.merge"
+		download-size="0"
+		install-size="0"
+		version="0.0.0"
+		unpack="false"/>
 
-   <plugin
-         id="edu.iu.scipolicy.database.isi.merge"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         unpack="false"/>
+	<plugin
+		id="edu.iu.scipolicy.database.nsf.merge"
+		download-size="0"
+		install-size="0"
+		version="0.0.0"
+		unpack="false"/>
 
-   <plugin
-         id="edu.iu.scipolicy.database.nsf.merge"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         unpack="false"/>
-
-   <plugin
-         id="edu.iu.cns.utilities.testing"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         unpack="false"/>
-
-   <plugin
+	<plugin
          id="edu.iu.scipolicy.database.nsf.load"
          download-size="0"
          install-size="0"
@@ -954,6 +943,21 @@ Dr. Katy Borner (katy@indiana.edu)
 
    <plugin
          id="edu.iu.scipolicy.database.converters.anytoall"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+	-->
+	<!-- END (REMOVED) DATABASE FUNCTIONALITY -->
+
+   <plugin
+         id="google_collections"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"/>
+
+   <plugin
+         id="edu.iu.cns.utilities.testing"
          download-size="0"
          install-size="0"
          version="0.0.0"

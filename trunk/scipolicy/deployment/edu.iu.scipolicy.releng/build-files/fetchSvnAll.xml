@@ -90,6 +90,50 @@
   	  	  <param name="url" value="http://nwb.slis.indiana.edu/svn/nwb/trunk/scipolicy/plugins/normal_plugins"/>
   	</antcall>
 
+  	<!-- BEGIN (REMOVED) DATABASE FUNCTIONALITY -->
+  	<!--
+  	<antcall target="svn.co">
+  		<param name="target" value="plugins"/>
+  		<param name="element.id" value="edu.iu.scipolicy.database.converters.anytoall"/>
+  		<param name="project.name" value="edu.iu.scipolicy.database.converters.anytoall"/>
+  		<param name="url" value="http://nwb.slis.indiana.edu/svn/nwb/trunk/scipolicy/plugins/converters"/>
+  	</antcall>
+
+	<antcall target="svn.co">
+		<param name="target" value="plugins"/>
+		<param name="element.id" value="org.cishell.reference.service.database"/>
+		<param name="project.name" value="/core/org.cishell.reference.service.database"/>
+		<param name="url" value="https://cishell.svn.sourceforge.net/svnroot/cishell/trunk"/>
+	</antcall>
+
+	<antcall target="svn.co">
+		<param name="target" value="plugins"/>
+		<param name="element.id" value="org.cishell.reference.service.database"/>
+		<param name="project.name" value="/core/org.cishell.reference.service.database"/>
+		<param name="url" value="https://cishell.svn.sourceforge.net/svnroot/cishell/trunk"/>
+	</antcall>
+
+	<antcall target="svn.co">
+		<param name="target" value="plugins"/>
+		<param name="element.id" value="org.cishell.service.database"/>
+		<param name="project.name" value="/core/org.cishell.service.database"/>
+		<param name="url" value="https://cishell.svn.sourceforge.net/svnroot/cishell/trunk"/>
+	</antcall>
+
+	<antcall target="svn.co">
+  	      <param name="target" value="features"/>
+  	      <param name="element.id" value="org.cishell.reference.database.feature"/>
+  	      <param name="project.name" value="/deployment/org.cishell.reference.database.feature"/>
+  	      <param name="url" value="https://cishell.svn.sourceforge.net/svnroot/cishell/trunk"/>
+  	    </antcall>
+  	
+  	 <antcall target="svn.co">
+  	  	      <param name="target" value="plugins"/>
+  	  	      <param name="element.id" value="org.cishell.templates.database"/>
+  	  	      <param name="project.name" value="/templates/org.cishell.templates.database"/>
+  	  	      <param name="url" value="https://cishell.svn.sourceforge.net/svnroot/cishell/trunk"/>
+  	  	    </antcall>
+
   	<antcall target="svn.co">
   	  	  <param name="target" value="plugins"/>
   	  	  <param name="element.id" value="edu.iu.cns.database.load.framework"/>
@@ -111,51 +155,7 @@
   	  	  <param name="url" value="http://nwb.slis.indiana.edu/svn/nwb/trunk/scipolicy/plugins/normal_plugins"/>
   	</antcall>
 
-  	<!-- BEGIN GENERIC-CSV DATABASE FUNCTIONALITY. REMOVED FROM BUILD FOR NOW.
 	<antcall target="svn.co">
-  	  	  <param name="target" value="plugins"/>
-  	  	  <param name="element.id" value="edu.iu.sci2.database.star.common"/>
-  	  	  <param name="project.name" value="edu.iu.sci2.database.star.common"/>
-  	  	  <param name="url" value="http://nwb.slis.indiana.edu/svn/nwb/trunk/scipolicy/plugins/normal_plugins"/>
-  	</antcall>
-
-  	<antcall target="svn.co">
-  	  	  <param name="target" value="plugins"/>
-  	  	  <param name="element.id" value="edu.iu.sci2.database.star.load"/>
-  	  	  <param name="project.name" value="edu.iu.sci2.database.star.load"/>
-  	  	  <param name="url" value="http://nwb.slis.indiana.edu/svn/nwb/trunk/scipolicy/plugins/normal_plugins"/>
-  	</antcall>
-
-  	<antcall target="svn.co">
-  	  	  <param name="target" value="plugins"/>
-  	  	  <param name="element.id" value="edu.iu.sci2.database.star.gui"/>
-  	  	  <param name="project.name" value="edu.iu.sci2.database.star.gui"/>
-  	  	  <param name="url" value="http://nwb.slis.indiana.edu/svn/nwb/trunk/scipolicy/plugins/normal_plugins"/>
-  	</antcall>
-
-  	<antcall target="svn.co">
-  		<param name="target" value="plugins"/>
-  	  	<param name="element.id" value="edu.iu.sci2.database.star.extract.common"/>
-  	  	<param name="project.name" value="edu.iu.sci2.database.star.extract.common"/>
-  	  	<param name="url" value="http://nwb.slis.indiana.edu/svn/nwb/trunk/scipolicy/plugins/shared"/>
-  	</antcall>
-
-	<antcall target="svn.co">
-		<param name="target" value="plugins"/>
-  	  	<param name="element.id" value="edu.iu.sci2.database.star.extract.network"/>
-  	  	<param name="project.name" value="edu.iu.sci2.database.star.extract.network"/>
-  	  	<param name="url" value="http://nwb.slis.indiana.edu/svn/nwb/trunk/scipolicy/plugins/normal_plugins"/>
-  	</antcall>
-
-  	<antcall target="svn.co">
-		<param name="target" value="plugins"/>
-  	  	<param name="element.id" value="edu.iu.sci2.database.star.extract.table"/>
-  	  	<param name="project.name" value="edu.iu.sci2.database.star.extract.table"/>
-  	  	<param name="url" value="http://nwb.slis.indiana.edu/svn/nwb/trunk/scipolicy/plugins/normal_plugins"/>
-  	</antcall>
-  	END GENERIC-CSV DATABASE FUNCTIONALITY. REMOVED FROM BUILD FOR NOW. -->
-
-  	<antcall target="svn.co">
   		<param name="target" value="plugins"/>
   		<param name="element.id" value="edu.iu.scipolicy.database.isi.match.reference_to_paper"/>
   		<param name="project.name" value="edu.iu.scipolicy.database.isi.match.reference_to_paper"/>
@@ -183,15 +183,8 @@
 		<param name="project.name" value="edu.iu.scipolicy.database.nsf.merge"/>
 		<param name="url" value="http://nwb.slis.indiana.edu/svn/nwb/trunk/scipolicy/plugins/normal_plugins"/>
 	</antcall>
-  	  	  	  	  	  	 
-	<antcall target="svn.co">
-		<param name="target" value="plugins"/>
-		<param name="element.id" value="google-collections"/>
-		<param name="project.name" value="google-collections"/>
-		<param name="url" value="http://nwb.slis.indiana.edu/svn/nwb/trunk/plugins/libs"/>
-  	 </antcall>
 
-  	<antcall target="svn.co">
+	<antcall target="svn.co">
   	  	  <param name="target" value="plugins"/>
   	  	  <param name="element.id" value="edu.iu.cns.database.extract.generic"/>
   	  	  <param name="project.name" value="edu.iu.cns.database.extract.generic"/>
@@ -323,22 +316,74 @@
   	  	  <param name="project.name" value="edu.iu.scipolicy.database.nsf.extract.table.core_entities"/>
   	  	  <param name="url" value="http://nwb.slis.indiana.edu/svn/nwb/trunk/scipolicy/plugins/normal_plugins"/>
   	</antcall>
-  	
-  	  	  	
+  	-->
+  	<!-- END (REMOVED) DATABASE FUNCTIONALITY -->
+
+  	<!-- BEGIN GENERIC-CSV DATABASE FUNCTIONALITY. REMOVED FROM BUILD FOR NOW.
+	<antcall target="svn.co">
+  	  	  <param name="target" value="plugins"/>
+  	  	  <param name="element.id" value="edu.iu.sci2.database.star.common"/>
+  	  	  <param name="project.name" value="edu.iu.sci2.database.star.common"/>
+  	  	  <param name="url" value="http://nwb.slis.indiana.edu/svn/nwb/trunk/scipolicy/plugins/normal_plugins"/>
+  	</antcall>
+
+  	<antcall target="svn.co">
+  	  	  <param name="target" value="plugins"/>
+  	  	  <param name="element.id" value="edu.iu.sci2.database.star.load"/>
+  	  	  <param name="project.name" value="edu.iu.sci2.database.star.load"/>
+  	  	  <param name="url" value="http://nwb.slis.indiana.edu/svn/nwb/trunk/scipolicy/plugins/normal_plugins"/>
+  	</antcall>
+
+  	<antcall target="svn.co">
+  	  	  <param name="target" value="plugins"/>
+  	  	  <param name="element.id" value="edu.iu.sci2.database.star.gui"/>
+  	  	  <param name="project.name" value="edu.iu.sci2.database.star.gui"/>
+  	  	  <param name="url" value="http://nwb.slis.indiana.edu/svn/nwb/trunk/scipolicy/plugins/normal_plugins"/>
+  	</antcall>
+
+  	<antcall target="svn.co">
+  		<param name="target" value="plugins"/>
+  	  	<param name="element.id" value="edu.iu.sci2.database.star.extract.common"/>
+  	  	<param name="project.name" value="edu.iu.sci2.database.star.extract.common"/>
+  	  	<param name="url" value="http://nwb.slis.indiana.edu/svn/nwb/trunk/scipolicy/plugins/shared"/>
+  	</antcall>
+
+	<antcall target="svn.co">
+		<param name="target" value="plugins"/>
+  	  	<param name="element.id" value="edu.iu.sci2.database.star.extract.network"/>
+  	  	<param name="project.name" value="edu.iu.sci2.database.star.extract.network"/>
+  	  	<param name="url" value="http://nwb.slis.indiana.edu/svn/nwb/trunk/scipolicy/plugins/normal_plugins"/>
+  	</antcall>
+
+  	<antcall target="svn.co">
+		<param name="target" value="plugins"/>
+  	  	<param name="element.id" value="edu.iu.sci2.database.star.extract.table"/>
+  	  	<param name="project.name" value="edu.iu.sci2.database.star.extract.table"/>
+  	  	<param name="url" value="http://nwb.slis.indiana.edu/svn/nwb/trunk/scipolicy/plugins/normal_plugins"/>
+  	</antcall>
+  	END GENERIC-CSV DATABASE FUNCTIONALITY. REMOVED FROM BUILD FOR NOW. -->
+
+	<antcall target="svn.co">
+		<param name="target" value="plugins"/>
+		<param name="element.id" value="google-collections"/>
+		<param name="project.name" value="google-collections"/>
+		<param name="url" value="http://nwb.slis.indiana.edu/svn/nwb/trunk/plugins/libs"/>
+  	 </antcall>
+
 	<antcall target="svn.co">
   	      <param name="target" value="plugins"/>
   	      <param name="element.id" value="edu.iu.scipolicy.visualization.geomaps"/>
   	      <param name="project.name" value="edu.iu.scipolicy.visualization.geomaps"/>
   	      <param name="url" value="http://nwb.slis.indiana.edu/svn/nwb/trunk/scipolicy/plugins/normal_plugins"/>
   	 </antcall>
-  	
+
   	<antcall target="svn.co">
   	      <param name="target" value="plugins"/>
   	      <param name="element.id" value="geolibs"/>
   	      <param name="project.name" value="geolibs"/>
   	      <param name="url" value="http://nwb.slis.indiana.edu/svn/nwb/trunk/scipolicy/plugins/libs"/>
   	 </antcall>
-  	
+
   	<antcall target="svn.co">
   	      <param name="target" value="plugins"/>
   	      <param name="element.id" value="edu.iu.scipolicy.preprocessing.geocoder"/>
@@ -470,13 +515,6 @@
   	-->
   	
   	<antcall target="svn.co">
-  	  	  	  	  	  	  <param name="target" value="plugins"/>
-  	  	  	  	  	  	  <param name="element.id" value="edu.iu.scipolicy.database.converters.anytoall"/>
-  	  	  	  	  	  	  <param name="project.name" value="edu.iu.scipolicy.database.converters.anytoall"/>
-  	  	  	  	  	  	  <param name="url" value="http://nwb.slis.indiana.edu/svn/nwb/trunk/scipolicy/plugins/converters"/>
-  	  	</antcall>
-  	
-  	<antcall target="svn.co">
   	  	  	  	  	  <param name="target" value="plugins"/>
   	  	  	  	  	  <param name="element.id" value="edu.iu.scipolicy.converter.psraster"/>
   	  	  	  	  	  <param name="project.name" value="edu.iu.scipolicy.converter.psraster"/>
@@ -490,35 +528,6 @@
   	<!-- CIShell plugins -->
   	
   	  <!-- These arguably shouldn't be CIShell plugins, but they are for now, so oh well -->
-  	
-  	
-  	 <antcall target="svn.co">
-  	  	      <param name="target" value="plugins"/>
-  	  	      <param name="element.id" value="org.cishell.reference.service.database"/>
-  	  	      <param name="project.name" value="/core/org.cishell.reference.service.database"/>
-  	  	      <param name="url" value="https://cishell.svn.sourceforge.net/svnroot/cishell/trunk"/>
-  	  	    </antcall>
-  	
-  	 <antcall target="svn.co">
-  	      <param name="target" value="plugins"/>
-  	      <param name="element.id" value="org.cishell.reference.service.database"/>
-  	      <param name="project.name" value="/core/org.cishell.reference.service.database"/>
-  	      <param name="url" value="https://cishell.svn.sourceforge.net/svnroot/cishell/trunk"/>
-  	    </antcall>
-  	
-  	<antcall target="svn.co">
-  	  	      <param name="target" value="plugins"/>
-  	  	      <param name="element.id" value="org.cishell.service.database"/>
-  	  	      <param name="project.name" value="/core/org.cishell.service.database"/>
-  	  	      <param name="url" value="https://cishell.svn.sourceforge.net/svnroot/cishell/trunk"/>
-  	  	    </antcall>
-  	
-  	 <antcall target="svn.co">
-  	  	      <param name="target" value="plugins"/>
-  	  	      <param name="element.id" value="org.cishell.templates.database"/>
-  	  	      <param name="project.name" value="/templates/org.cishell.templates.database"/>
-  	  	      <param name="url" value="https://cishell.svn.sourceforge.net/svnroot/cishell/trunk"/>
-  	  	    </antcall>
   	
 	<antcall target="svn.co">
   	  	      <param name="target" value="plugins"/>
@@ -599,13 +608,7 @@
       <param name="project.name" value="/deployment/org.cishell.reference.feature"/>
       <param name="url" value="https://cishell.svn.sourceforge.net/svnroot/cishell/trunk"/>
     </antcall>
-  	<!-- optional database feature, but we're using it in SciPolicy -->
-  	<antcall target="svn.co">
-  	      <param name="target" value="features"/>
-  	      <param name="element.id" value="org.cishell.reference.database.feature"/>
-  	      <param name="project.name" value="/deployment/org.cishell.reference.database.feature"/>
-  	      <param name="url" value="https://cishell.svn.sourceforge.net/svnroot/cishell/trunk"/>
-  	    </antcall>
+  	
     <antcall target="svn.co">
       <param name="target" value="plugins"/>
       <param name="element.id" value="org.cishell.reference"/>
