@@ -407,13 +407,15 @@
   	  	      <param name="project.name" value="edu.iu.scipolicy.utilities"/>
   	  	      <param name="url" value="http://nwb.slis.indiana.edu/svn/nwb/trunk/scipolicy/plugins/normal_plugins"/>
   	  	 </antcall>
-  	
+
+  	<!--
   	<antcall target="svn.co">
   	  	      <param name="target" value="plugins"/>
   	  	      <param name="element.id" value="edu.iu.scipolicy.visualization.horizontalbargraph"/>
   	  	      <param name="project.name" value="edu.iu.scipolicy.visualization.horizontalbargraph"/>
   	  	      <param name="url" value="http://nwb.slis.indiana.edu/svn/nwb/trunk/scipolicy/plugins/normal_plugins"/>
   	  	 </antcall>
+	-->
   	
   	<antcall target="svn.co">
   	  	      <param name="target" value="plugins"/>
@@ -1116,12 +1118,15 @@
       <param name="project.name" value="/plugins/analysis/edu.iu.nwb.analysis.selfloops"/>
       <param name="url" value="http://nwb.slis.indiana.edu/svn/nwb/trunk"/>
     </antcall>
+
+	<!--
     <antcall target="svn.co">
       <param name="target" value="plugins"/>
       <param name="element.id" value="edu.iu.nwb.analysis.symmetrize"/>
       <param name="project.name" value="/plugins/analysis/edu.iu.nwb.analysis.symmetrize"/>
       <param name="url" value="http://nwb.slis.indiana.edu/svn/nwb/trunk"/>
-    </antcall>	  	
+    </antcall>
+    -->
     
     <antcall target="svn.co">
       <param name="target" value="plugins"/>

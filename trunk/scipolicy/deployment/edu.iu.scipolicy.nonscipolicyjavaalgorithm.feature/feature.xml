@@ -365,12 +365,14 @@ Dr. Katy Borner (katy@indiana.edu)
          version="0.0.0"
          unpack="false"/>
 
+   <!--
    <plugin
          id="edu.iu.nwb.analysis.symmetrize"
          download-size="0"
          install-size="0"
          version="0.0.0"
          unpack="false"/>
+	-->
 
    <plugin
          id="edu.iu.nwb.preprocessing.tablefilter"
@@ -612,12 +614,14 @@ Dr. Katy Borner (katy@indiana.edu)
          version="1.0.0"
          unpack="false"/>
 
+	<!--
    <plugin
          id="edu.iu.scipolicy.visualization.horizontalbargraph"
          download-size="0"
          install-size="0"
          version="0.0.1"
          unpack="false"/>
+	-->
 
    <plugin
          id="edu.iu.scipolicy.visualization.imageviewer"
