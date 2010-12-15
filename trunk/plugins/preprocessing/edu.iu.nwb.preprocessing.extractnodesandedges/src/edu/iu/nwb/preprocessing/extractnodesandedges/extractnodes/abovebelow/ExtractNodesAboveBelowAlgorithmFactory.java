@@ -4,6 +4,7 @@ import java.util.Dictionary;
 
 import org.cishell.framework.CIShellContext;
 import org.cishell.framework.algorithm.Algorithm;
+import org.cishell.framework.algorithm.AlgorithmCreationFailedException;
 import org.cishell.framework.algorithm.AlgorithmFactory;
 import org.cishell.framework.algorithm.ParameterMutator;
 import org.cishell.framework.data.Data;
@@ -16,19 +17,23 @@ import edu.uci.ics.jung.graph.Graph;
 
 
 public class ExtractNodesAboveBelowAlgorithmFactory implements AlgorithmFactory, ParameterMutator {
-	
-    public Algorithm createAlgorithm(Data[] data, Dictionary parameters, CIShellContext context) {
-        return new ExtractNodesAboveBelowAlgorithm(data, parameters, context);
+    public Algorithm createAlgorithm(
+    		Data[] data, Dictionary<String, Object> parameters, CIShellContext ciShellContext) {
+        return new ExtractNodesAboveBelowAlgorithm(data, parameters, ciShellContext);
     }
 
-	public ObjectClassDefinition mutateParameters(Data[] data, ObjectClassDefinition parameters) {
+	public ObjectClassDefinition mutateParameters(
+			Data[] data, ObjectClassDefinition oldParameters) {
 		Graph graph = (Graph) data[0].getData();
+
 		try {
-		ObjectClassDefinition newParameters =
-			AddNumericAttributeParamMutator.mutateForNodes(graph, parameters);
-		return newParameters;
+			ObjectClassDefinition newParameters =
+				AddNumericAttributeParamMutator.mutateForNodes(graph, oldParameters);
+
+			return newParameters;
 		} catch (NoNumericAttributesException e) {
-			return new BasicObjectClassDefinition("No Numeric Attributes", "No Numeric Attributes", "Nodes must have some numeric attribute as a basis for filtering/extraction", null);
+			throw new AlgorithmCreationFailedException(
+				"Nodes must have some numeric attribute as a basis for filtering/extraction");
 		}
 	}
 }
