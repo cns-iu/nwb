@@ -24,6 +24,6 @@ Import-Package: edu.iu.nwb.shared.isiutil,
  prefuse.util.collections,
  prefuse.util.io
 X-AutoStart: true
-Service-Component: OSGI-INF/reader.xml, OSGI-INF/validation.xml
+Service-Component: OSGI-INF/reader.xml, OSGI-INF/validation.xml, OSGI-INF/customvalidation.xml
 Export-Package: edu.iu.nwb.converter.prefuseisi.reader
-Bundle-RequiredExecutionEnvironment: J2SE-1.4
+Bundle-RequiredExecutionEnvironment: J2SE-1.5

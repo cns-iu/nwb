@@ -1,9 +1,6 @@
 package edu.iu.nwb.converter.prefuseisi.reader;
 
 import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.io.UnsupportedEncodingException;
 
 import org.cishell.framework.CIShellContext;
 import org.cishell.framework.algorithm.Algorithm;
@@ -14,12 +11,8 @@ import org.cishell.framework.data.DataProperty;
 import org.osgi.service.log.LogService;
 
 import prefuse.data.Table;
-import edu.iu.nwb.shared.isiutil.ISICitationExtractionPreparer;
-import edu.iu.nwb.shared.isiutil.ISITableReader;
 import edu.iu.nwb.shared.isiutil.ISITableReaderHelper;
-import edu.iu.nwb.shared.isiutil.exception.CitationExtractionPreparationException;
 import edu.iu.nwb.shared.isiutil.exception.ReadISIFileException;
-import edu.iu.nwb.shared.isiutil.exception.ReadTableException;
 
 public class PrefuseIsiReader implements Algorithm {	
 	public static final boolean SHOULD_NORMALIZE_AUTHOR_NAMES = true;

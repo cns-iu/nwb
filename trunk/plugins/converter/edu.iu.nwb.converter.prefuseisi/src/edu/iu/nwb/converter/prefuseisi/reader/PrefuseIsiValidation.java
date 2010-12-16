@@ -3,7 +3,6 @@ package edu.iu.nwb.converter.prefuseisi.reader;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileReader;
 import java.io.IOException;
 import java.util.Dictionary;
 import java.util.regex.Pattern;
@@ -29,7 +28,7 @@ public class PrefuseIsiValidation implements AlgorithmFactory {
 	public static final int NUMBER_LINES_CONSIDERED = 5;
 
 	public Algorithm createAlgorithm(
-			Data[] data, Dictionary parameters, CIShellContext context) {
+			Data[] data, Dictionary<String, Object> parameters, CIShellContext context) {
 		return new ISIValidationAlgorithm(data);
 	}
 

@@ -3,7 +3,6 @@
 <menu_layout> 
     <top_menu name="File">
 		<menu pid= "org.cishell.reference.gui.persistence.load.FileLoadAlgorithm"/>
-		<menu pid="edu.iu.nwb.composite.isiloadandclean.ISILoadAndCleanAlgorithm"/>
 		<!-- <menu pid="edu.iu.sci2.database.star.gui.StarDatabaseGUIAlgorithm"/> -->
 		<menu type="break"/>
 		<menu pid= "edu.iu.nwb.preprocessing.prefuse.beta.directoryhierarchyreader.DirectoryHierarchyReaderAlgorithm"/>
