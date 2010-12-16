@@ -1,7 +1,6 @@
 package edu.iu.scipolicy.database.nsf.load;
 
 import java.io.File;
-import java.io.FileReader;
 import java.io.IOException;
 import java.sql.SQLException;
 import java.util.Dictionary;
@@ -29,7 +28,6 @@ import edu.iu.scipolicy.database.nsf.load.exception.NSFReadingException;
 import edu.iu.scipolicy.database.nsf.load.utilities.CSVReaderUtilities;
 import edu.iu.scipolicy.database.nsf.load.utilities.NSFMetadata;
 import edu.iu.scipolicy.database.nsf.load.utilities.NSFTableModelParser;
-import edu.iu.scipolicy.utilities.nsf.NSF_CSV_FieldNames;
 import edu.iu.scipolicy.utilities.nsf.NSF_Database_FieldNames;
 
 /**
@@ -63,7 +61,7 @@ public class NSFDatabaseLoaderAlgorithm implements Algorithm, ProgressTrackable 
 		try {
 			// Setup the progress monitor.
 
-			int rowCount = CSVReaderUtilities.rowCount(nsfCSVFile, false);
+			int rowCount = CSVReaderUtilities.rowCount(nsfCSVFile, true);
     		double totalWork = calculateTotalWork(rowCount);
     		startProgressMonitor(progressMonitor, totalWork);
 
@@ -127,18 +125,19 @@ public class NSFDatabaseLoaderAlgorithm implements Algorithm, ProgressTrackable 
 	 */
 	private DatabaseModel createInMemoryNSFModel(File nsfCSVFile, LogService logger)
 			throws AlgorithmCanceledException, IOException, NSFReadingException {
-		CSVReader nsfCSVReader = createNSF_CSVReader(nsfCSVFile);
-		String[] nsfFileColumnNames = getNSFFileColumnNames(nsfCSVReader);
-
-		NSFMetadata nsfMetadata =
-			new NSFMetadata(nsfFileColumnNames, nsfCSVFile, createNSF_CSVReader(nsfCSVFile));
+		
+		String[] nsfFileColumnNames = getNSFFileColumnNames(nsfCSVFile);
+		CSVReader nsfCSVReader = CSVReaderUtilities.createCSVReaderWithRightSeparator(nsfCSVFile);
+		NSFMetadata nsfMetadata = new NSFMetadata(nsfFileColumnNames, nsfCSVFile, nsfCSVReader);
 
 		try {
+			nsfCSVReader = CSVReaderUtilities.createCSVReaderWithRightSeparator(nsfCSVFile, true);
 			DatabaseModel model = new NSFTableModelParser().parseModel(
 				nsfCSVReader, nsfMetadata, logger, this.progressMonitor);
 
 			return model;
 		} catch (IOException e) {
+			System.out.println("in 8");
 			throw new NSFReadingException(e.getMessage(), e);
 		}
 	}
@@ -183,48 +182,11 @@ public class NSFDatabaseLoaderAlgorithm implements Algorithm, ProgressTrackable 
     private static void stopProgressMonitor(ProgressMonitor progressMonitor) {
     	progressMonitor.done();
     }
-
-	private static CSVReader createNSF_CSVReader(File nsfCsv) throws IOException {
-		// TODO: Currently we only support "csv" nsf files, not "excel" nsf files.
-		// TODO: Add flexibility to support tabbed separated and double-quote escape chars.
-		final char defaultFieldSeparator = ',';
-		final char secondaryFieldSeparator = '\t';
-		final char fieldQuoteCharacter = '"';
-		final int lineToStartReadingFrom = 0;
-		final char quoteEscapeCharacter = '\\';
-		
-		CSVReader nsfCsvReader = new CSVReader(
-			new FileReader(nsfCsv),
-			defaultFieldSeparator, 
-			fieldQuoteCharacter, 
-			lineToStartReadingFrom, 
-			quoteEscapeCharacter);
-		
-		/*
-		 * Test if "," as a separator failed to create appropriate csv handler. If so create a
-		 * new csv handler by using "\t" as the field separator.
-		 * TODO: If this approach seems inefficient refactor to use better approach or library
-		 * since the current library is not flexible enough. 
-		 * */
-		if (nsfCsvReader.readNext().length < NSF_CSV_FieldNames.CSV.DEFAULT_TOTAL_NSF_FIELDS) {
-			return new CSVReader(new FileReader(nsfCsv),
-								 secondaryFieldSeparator, 
-								 fieldQuoteCharacter, 
-								 lineToStartReadingFrom, 
-								 quoteEscapeCharacter);
-		} else {
-			return new CSVReader(new FileReader(nsfCsv),
-								 defaultFieldSeparator, 
-								 fieldQuoteCharacter, 
-								 lineToStartReadingFrom, 
-								 quoteEscapeCharacter);
-		}
-	}
 	
-	private static String[] getNSFFileColumnNames(CSVReader nsfCSVReader) 
+	private static String[] getNSFFileColumnNames(File nsfCSVFile) 
 			throws NSFReadingException {
 		try {
-			String[] columnNames = nsfCSVReader.readNext();
+			String[] columnNames = CSVReaderUtilities.getHeader(nsfCSVFile);
 			
 			if (columnNames == null || columnNames.length == 0) {
 				throw new NSFReadingException("Cannot read in an empty nsf file");

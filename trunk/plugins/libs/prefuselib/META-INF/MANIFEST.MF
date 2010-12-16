@@ -3,7 +3,8 @@ Bundle-ManifestVersion: 2
 Bundle-Name: Prefuse Visualization Library
 Bundle-SymbolicName: org.prefuse.lib
 Bundle-Version: 20071021
-Bundle-ClassPath: prefuse-beta-20071021.jar,prefuse-alpha-20060526.jar
+Bundle-ClassPath: prefuse-alpha-20060526.jar,
+ prefuse.jar
 Export-Package: edu.berkeley.guir.prefuse,
  edu.berkeley.guir.prefuse.action,
  edu.berkeley.guir.prefuse.action.animate,
@@ -41,6 +42,7 @@ Export-Package: edu.berkeley.guir.prefuse,
  prefuse.data.expression,
  prefuse.data.expression.parser,
  prefuse.data.io,
+ prefuse.data.io.handler,
  prefuse.data.io.sql,
  prefuse.data.parser,
  prefuse.data.query,
@@ -58,3 +60,4 @@ Export-Package: edu.berkeley.guir.prefuse,
  prefuse.visual.expression,
  prefuse.visual.sort,
  prefuse.visual.tuple
+Import-Package: au.com.bytecode.opencsv

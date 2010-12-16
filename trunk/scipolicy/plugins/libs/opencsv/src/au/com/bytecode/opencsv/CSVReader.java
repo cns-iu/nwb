@@ -17,6 +17,7 @@ package au.com.bytecode.opencsv;
  */
 
 import java.io.BufferedReader;
+import java.io.Closeable;
 import java.io.IOException;
 import java.io.Reader;
 import java.util.ArrayList;
@@ -28,34 +29,18 @@ import java.util.List;
  * @author Glen Smith
  * 
  */
-
-//TODO: Contribute this back to opencsv project (and clean it up a little first)
-
-public class CSVReader {
+public class CSVReader implements Closeable {
 
     private BufferedReader br;
 
     private boolean hasNext = true;
 
-    private char separator;
-
-    private char quotechar;
-    
-    private char quoteEscapeChar;
+    private CSVParser parser;
     
     private int skipLines;
 
     private boolean linesSkiped;
 
-    /** The default separator to use if none is supplied to the constructor. */
-    public static final char DEFAULT_SEPARATOR = ',';
-
-    /**
-     * The default quote character to use if none is supplied to the
-     * constructor.
-     */
-    public static final char DEFAULT_QUOTE_CHARACTER = '"';
-    
     /**
      * The default line to start reading.
      */
@@ -68,7 +53,7 @@ public class CSVReader {
      *            the reader to an underlying CSV source.
      */
     public CSVReader(Reader reader) {
-        this(reader, DEFAULT_SEPARATOR);
+        this(reader, CSVParser.DEFAULT_SEPARATOR, CSVParser.DEFAULT_QUOTE_CHARACTER, CSVParser.DEFAULT_ESCAPE_CHARACTER);
     }
 
     /**
@@ -80,10 +65,8 @@ public class CSVReader {
      *            the delimiter to use for separating entries.
      */
     public CSVReader(Reader reader, char separator) {
-        this(reader, separator, DEFAULT_QUOTE_CHARACTER);
+        this(reader, separator, CSVParser.DEFAULT_QUOTE_CHARACTER, CSVParser.DEFAULT_ESCAPE_CHARACTER);
     }
-    
-    
 
     /**
      * Constructs CSVReader with supplied separator and quote char.
@@ -96,8 +79,43 @@ public class CSVReader {
      *            the character to use for quoted elements
      */
     public CSVReader(Reader reader, char separator, char quotechar) {
-        this(reader, separator, quotechar, DEFAULT_SKIP_LINES);
+        this(reader, separator, quotechar, CSVParser.DEFAULT_ESCAPE_CHARACTER, DEFAULT_SKIP_LINES, CSVParser.DEFAULT_STRICT_QUOTES);
     }
+
+    /**
+     * Constructs CSVReader with supplied separator, quote char and quote handling
+     * behavior.
+     *
+     * @param reader
+     *            the reader to an underlying CSV source.
+     * @param separator
+     *            the delimiter to use for separating entries
+     * @param quotechar
+     *            the character to use for quoted elements
+     * @param strictQuotes
+     *            sets if characters outside the quotes are ignored
+     */
+    public CSVReader(Reader reader, char separator, char quotechar, boolean strictQuotes) {
+        this(reader, separator, quotechar, CSVParser.DEFAULT_ESCAPE_CHARACTER, DEFAULT_SKIP_LINES, strictQuotes);
+    }
+
+   /**
+     * Constructs CSVReader with supplied separator and quote char.
+     *
+     * @param reader
+     *            the reader to an underlying CSV source.
+     * @param separator
+     *            the delimiter to use for separating entries
+     * @param quotechar
+     *            the character to use for quoted elements
+     * @param escape
+     *            the character to use for escaping a separator or quote
+     */
+
+    public CSVReader(Reader reader, char separator,
+			char quotechar, char escape) {
+        this(reader, separator, quotechar, escape, DEFAULT_SKIP_LINES, CSVParser.DEFAULT_STRICT_QUOTES);
+	}
     
     /**
      * Constructs CSVReader with supplied separator and quote char.
@@ -112,13 +130,26 @@ public class CSVReader {
      *            the line number to skip for start reading 
      */
     public CSVReader(Reader reader, char separator, char quotechar, int line) {
-        this.br = new BufferedReader(reader);
-        this.separator = separator;
-        this.quotechar = quotechar;
-        this.quoteEscapeChar = quotechar;
-        this.skipLines = line;
+        this(reader, separator, quotechar, CSVParser.DEFAULT_ESCAPE_CHARACTER, line, CSVParser.DEFAULT_STRICT_QUOTES);
     }
-    
+
+    /**
+     * Constructs CSVReader with supplied separator and quote char.
+     *
+     * @param reader
+     *            the reader to an underlying CSV source.
+     * @param separator
+     *            the delimiter to use for separating entries
+     * @param quotechar
+     *            the character to use for quoted elements
+     * @param escape
+     *            the character to use for escaping a separator or quote
+     * @param line
+     *            the line number to skip for start reading
+     */
+    public CSVReader(Reader reader, char separator, char quotechar, char escape, int line) {
+        this(reader, separator, quotechar, escape, line, CSVParser.DEFAULT_STRICT_QUOTES);
+    }
     
     /**
      * Constructs CSVReader with supplied separator and quote char.
@@ -129,18 +160,42 @@ public class CSVReader {
      *            the delimiter to use for separating entries
      * @param quotechar
      *            the character to use for quoted elements
+     * @param escape
+     *            the character to use for escaping a separator or quote
      * @param line
-     *            the line number to skip for start reading 
+     *            the line number to skip for start reading
+     * @param strictQuotes
+     *            sets if characters outside the quotes are ignored
      */
-    public CSVReader(Reader reader, char separator, char quotechar, int line, char quoteEscapeChar) {
-        this.br = new BufferedReader(reader);
-        this.separator = separator;
-        this.quotechar = quotechar;
-        this.skipLines = line;
-        this.quoteEscapeChar = quoteEscapeChar;
+    public CSVReader(Reader reader, char separator, char quotechar, char escape, int line, boolean strictQuotes) {
+        this(reader, separator, quotechar, escape, line, strictQuotes, CSVParser.DEFAULT_IGNORE_LEADING_WHITESPACE);
     }
 
     /**
+     * Constructs CSVReader with supplied separator and quote char.
+     * 
+     * @param reader
+     *            the reader to an underlying CSV source.
+     * @param separator
+     *            the delimiter to use for separating entries
+     * @param quotechar
+     *            the character to use for quoted elements
+     * @param escape
+     *            the character to use for escaping a separator or quote
+     * @param line
+     *            the line number to skip for start reading
+     * @param strictQuotes
+     *            sets if characters outside the quotes are ignored
+     * @param ignoreLeadingWhiteSpace
+     *            it true, parser should ignore white space before a quote in a field
+     */
+    public CSVReader(Reader reader, char separator, char quotechar, char escape, int line, boolean strictQuotes, boolean ignoreLeadingWhiteSpace) {
+    	this.br = new BufferedReader(reader);
+        this.parser = new CSVParser(separator, quotechar, escape, strictQuotes, ignoreLeadingWhiteSpace);
+        this.skipLines = line;
+    }
+
+	/**
      * Reads the entire file into a List with each element being a String[] of
      * tokens.
      * 
@@ -150,9 +205,9 @@ public class CSVReader {
      * @throws IOException
      *             if bad things happen during the read
      */
-    public List readAll() throws IOException {
+    public List<String[]> readAll() throws IOException {
 
-        List allElements = new ArrayList();
+        List<String[]> allElements = new ArrayList<String[]>();
         while (hasNext) {
             String[] nextLineAsTokens = readNext();
             if (nextLineAsTokens != null)
@@ -172,9 +227,26 @@ public class CSVReader {
      *             if bad things happen during the read
      */
     public String[] readNext() throws IOException {
-
-        String nextLine = getNextLine();
-        return hasNext ? parseLine(nextLine) : null;
+    	
+    	String[] result = null;
+    	do {
+    		String nextLine = getNextLine();
+    		if (!hasNext) {
+    			return result; // should throw if still pending?
+    		}
+    		String[] r = parser.parseLineMulti(nextLine);
+    		if (r.length > 0) {
+    			if (result == null) {
+    				result = r;
+    			} else {
+    				String[] t = new String[result.length+r.length];
+    				System.arraycopy(result, 0, t, 0, result.length);
+    				System.arraycopy(r, 0, t, result.length, r.length);
+    				result = t;
+    			}
+    		}
+    	} while (parser.isPending());
+    	return result;
     }
 
     /**
@@ -196,70 +268,6 @@ public class CSVReader {
             hasNext = false;
         }
         return hasNext ? nextLine : null;
-    }
-
-    /**
-     * Parses an incoming String and returns an array of elements.
-     * 
-     * @param nextLine
-     *            the string to parse
-     * @return the comma-tokenized list of elements, or null if nextLine is null
-     * @throws IOException if bad things happen during the read
-     */
-    private String[] parseLine(String nextLine) throws IOException {
-
-        if (nextLine == null) {
-            return null;
-        }
-
-        List tokensOnThisLine = new ArrayList();
-        StringBuffer sb = new StringBuffer();
-        boolean inQuotes = false;
-        do {
-        	if (inQuotes) {
-                // continuing a quoted section, reappend newline
-                sb.append("\n");
-                nextLine = getNextLine();
-                if (nextLine == null)
-                    break;
-            }
-            for (int i = 0; i < nextLine.length(); i++) {
-
-                char c = nextLine.charAt(i);
-                
-                if (c == quoteEscapeChar //if we see a quote escape character (like first char of /" or "")...
-                		&& nextLine.length() > (i+1) //and there is another character on this line...
-                		&& nextLine.charAt(i + 1) == quotechar) { //and it is a quote
-                	//the current character is escaping the following quote.
-                	//add a quote to the output
-                	sb.append(nextLine.charAt(i+1));
-                	//skip over the escaped character (we just added it, so no need to process it)
-                	i++;
-                	//do no further processing for this escaped quote.
-                	continue;
-                }
-            		
-                if (c == quotechar) {
-                	inQuotes = !inQuotes;
-                	// the tricky case of an embedded quote in the middle: a,bc"d"ef,g
-                	if(i>2 //not on the begining of the line
-                			&& nextLine.charAt(i-1) != this.separator //not at the begining of an escape sequence 
-                			&& nextLine.length()>(i+1) &&
-                			nextLine.charAt(i+1) != this.separator //not at the	end of an escape sequence
-                	){
-                		sb.append(c);
-                	}
-                } else if (c == separator && !inQuotes) {
-                    tokensOnThisLine.add(sb.toString());
-                    sb = new StringBuffer(); // start work on next token
-                } else {
-                    sb.append(c);
-                }
-            }
-        } while (inQuotes);
-        tokensOnThisLine.add(sb.toString());
-        return (String[]) tokensOnThisLine.toArray(new String[0]);
-
     }
 
     /**

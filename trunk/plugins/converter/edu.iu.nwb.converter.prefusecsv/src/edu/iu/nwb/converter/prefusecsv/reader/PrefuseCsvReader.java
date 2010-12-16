@@ -3,6 +3,7 @@ package edu.iu.nwb.converter.prefusecsv.reader;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.util.Dictionary;
 
 import org.cishell.framework.CIShellContext;
@@ -12,6 +13,8 @@ import org.cishell.framework.algorithm.AlgorithmFactory;
 import org.cishell.framework.data.BasicData;
 import org.cishell.framework.data.Data;
 import org.cishell.framework.data.DataProperty;
+
+import edu.iu.nwb.converter.prefusecsv.preprocessing.CSVFilePreprocessor;
 
 import prefuse.data.Table;
 import prefuse.data.io.CSVTableReader;
@@ -30,6 +33,7 @@ public class PrefuseCsvReader implements Algorithm {
             return new PrefuseCsvReader(data);
         }
     }
+    
     public PrefuseCsvReader(Data[] data) {
         this.inCSVFile = (File) data[0].getData();
     }
@@ -37,18 +41,19 @@ public class PrefuseCsvReader implements Algorithm {
 
     public Data[] execute() throws AlgorithmExecutionException {
     	try {
+    		File tmpCSVFile = CSVFilePreprocessor.execute(inCSVFile);
     		CSVTableReader tableReader = new CSVTableReader();
     		tableReader.setHasHeader(true);
-			Table table = tableReader.readTable(new FileInputStream(inCSVFile));
+			Table table = tableReader.readTable(new FileInputStream(tmpCSVFile));
 			
-    		return createOutData(inCSVFile, table);
+    		return createOutData(tmpCSVFile, table);
     	} catch (DataIOException e) {
     		throw new AlgorithmExecutionException(e.getMessage(), e);
     	} catch (SecurityException e) {
     		throw new AlgorithmExecutionException(e.getMessage(), e);
-    	} catch (FileNotFoundException e) {
+    	} catch (IOException e) {
     		throw new AlgorithmExecutionException(e.getMessage(), e);
-    	}
+		}
     }
 
 	private Data[] createOutData(File file, Table table) {

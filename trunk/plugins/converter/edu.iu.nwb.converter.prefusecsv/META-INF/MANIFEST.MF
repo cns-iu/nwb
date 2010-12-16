@@ -4,7 +4,8 @@ Bundle-Name: edu.iu.nwb.converter.prefusecsv
 Bundle-SymbolicName: edu.iu.nwb.converter.prefusecsv
 Bundle-Version: 0.7.0
 Bundle-ClassPath: .
-Import-Package: org.cishell.framework;version="1.0.0",
+Import-Package: au.com.bytecode.opencsv,
+ org.cishell.framework;version="1.0.0",
  org.cishell.framework.algorithm;version="1.0.0",
  org.cishell.framework.data;version="1.0.0",
  org.cishell.utilities,

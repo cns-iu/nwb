@@ -16,20 +16,12 @@ package au.com.bytecode.opencsv;
  limitations under the License.
  */
 
+import java.io.Closeable;
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.io.Reader;
 import java.io.Writer;
-import java.math.BigDecimal;
-import java.sql.Clob;
 import java.sql.ResultSet;
-import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
-import java.sql.Time;
-import java.sql.Timestamp;
-import java.sql.Types;
-import java.text.SimpleDateFormat;
-import java.util.Iterator;
 import java.util.List;
 
 /**
@@ -38,9 +30,11 @@ import java.util.List;
  * @author Glen Smith
  *
  */
-public class CSVWriter {
+public class CSVWriter implements Closeable {
     
-    private Writer rawWriter;
+    public static final int INITIAL_STRING_SIZE = 128;
+
+	private Writer rawWriter;
 
     private PrintWriter pw;
 
@@ -73,13 +67,7 @@ public class CSVWriter {
     /** Default line terminator uses platform encoding. */
     public static final String DEFAULT_LINE_END = "\n";
 
-    private static final SimpleDateFormat
-    	TIMESTAMP_FORMATTER = 
-    		new SimpleDateFormat("dd-MMM-yyyy HH:mm:ss");
-
-    private static final SimpleDateFormat
-    	DATE_FORMATTER = 
-    		new SimpleDateFormat("dd-MMM-yyyy");
+    private ResultSetHelper resultService = new ResultSetHelperService();
     
     /**
      * Constructs CSVWriter using a comma for the separator.
@@ -183,25 +171,16 @@ public class CSVWriter {
      *            a List of String[], with each String[] representing a line of
      *            the file.
      */
-    public void writeAll(List allLines)  {
-
-        for (Iterator iter = allLines.iterator(); iter.hasNext();) {
-            String[] nextLine = (String[]) iter.next();
-            writeNext(nextLine);
-        }
-
+    public void writeAll(List<String[]> allLines)  {
+    	for (String[] line : allLines) {
+			writeNext(line);
+		}
     }
 
-    protected void writeColumnNames(ResultSetMetaData metadata)
+    protected void writeColumnNames(ResultSet rs)
     	throws SQLException {
-    	
-    	int columnCount =  metadata.getColumnCount();
-    	
-    	String[] nextLine = new String[columnCount];
-		for (int i = 0; i < columnCount; i++) {
-			nextLine[i] = metadata.getColumnName(i + 1);
-		}
-    	writeNext(nextLine);
+
+    	writeNext(resultService.getColumnNames(rs));
     }
     
     /**
@@ -212,130 +191,22 @@ public class CSVWriter {
      * @param rs the recordset to write
      * @param includeColumnNames true if you want column names in the output, false otherwise
      *
+     * @throws java.io.IOException thrown by getColumnValue
+     * @throws java.sql.SQLException thrown by getColumnValue
      */
     public void writeAll(java.sql.ResultSet rs, boolean includeColumnNames)  throws SQLException, IOException {
     	
-    	ResultSetMetaData metadata = rs.getMetaData();
-    	
     	
     	if (includeColumnNames) {
-			writeColumnNames(metadata);
+			writeColumnNames(rs);
 		}
-
-    	int columnCount =  metadata.getColumnCount();
     	
     	while (rs.next())
     	{
-        	String[] nextLine = new String[columnCount];
-        	
-        	for (int i = 0; i < columnCount; i++) {
-				nextLine[i] = getColumnValue(rs, metadata.getColumnType(i + 1), i + 1);
-			}
-        	
-    		writeNext(nextLine);
+    		writeNext(resultService.getColumnValues(rs));
     	}
     }
-    
-    private static String getColumnValue(ResultSet rs, int colType, int colIndex)
-    		throws SQLException, IOException {
 
-    	String value = "";
-    	
-		switch (colType)
-		{
-			case Types.BIT:
-				Object bit = rs.getObject(colIndex);
-				if (bit != null) {
-					value = String.valueOf(bit);
-				}
-			break;
-			case Types.BOOLEAN:
-				boolean b = rs.getBoolean(colIndex);
-				if (!rs.wasNull()) {
-					value = Boolean.valueOf(b).toString();
-				}
-			break;
-			case Types.CLOB:
-				Clob c = rs.getClob(colIndex);
-				if (c != null) {
-					value = read(c);
-				}
-			break;
-			case Types.BIGINT:
-			case Types.DECIMAL:
-			case Types.DOUBLE:
-			case Types.FLOAT:
-			case Types.REAL:
-			case Types.NUMERIC:
-				BigDecimal bd = rs.getBigDecimal(colIndex);
-				if (bd != null) {
-					value = "" + bd.doubleValue();
-				}
-			break;
-			case Types.INTEGER:
-			case Types.TINYINT:
-			case Types.SMALLINT:
-				int intValue = rs.getInt(colIndex);
-				if (!rs.wasNull()) {
-					value = "" + intValue;
-				}
-			break;
-			case Types.JAVA_OBJECT:
-				Object obj = rs.getObject(colIndex);
-				if (obj != null) {
-					value = String.valueOf(obj);
-				}
-			break;
-			case Types.DATE:
-				java.sql.Date date = rs.getDate(colIndex);
-				if (date != null) {
-					value = DATE_FORMATTER.format(date);;
-				}
-			break;
-			case Types.TIME:
-				Time t = rs.getTime(colIndex);
-				if (t != null) {
-					value = t.toString();
-				}
-			break;
-			case Types.TIMESTAMP:
-				Timestamp tstamp = rs.getTimestamp(colIndex);
-				if (tstamp != null) {
-					value = TIMESTAMP_FORMATTER.format(tstamp);
-				}
-			break;
-			case Types.LONGVARCHAR:
-			case Types.VARCHAR:
-			case Types.CHAR:
-				value = rs.getString(colIndex);
-			break;
-			default:
-				value = "";
-		}
-
-		
-		if (value == null)
-		{
-			value = "";
-		}
-		
-		return value;
-    	
-    }
-
-	private static String read(Clob c) throws SQLException, IOException
-	{
-		StringBuffer sb = new StringBuffer( (int) c.length());
-		Reader r = c.getCharacterStream();
-		char[] cbuf = new char[2048];
-		int n = 0;
-		while ((n = r.read(cbuf, 0, cbuf.length)) != -1) {
-			if (n > 0) {
-				sb.append(cbuf, 0, n);
-			}
-		}
-		return sb.toString();
-	}
     
     /**
      * Writes the next line to the file.
@@ -349,7 +220,7 @@ public class CSVWriter {
     	if (nextLine == null)
     		return;
     	
-        StringBuffer sb = new StringBuffer();
+        StringBuilder sb = new StringBuilder(INITIAL_STRING_SIZE);
         for (int i = 0; i < nextLine.length; i++) {
 
             if (i != 0) {
@@ -361,16 +232,9 @@ public class CSVWriter {
                 continue;
             if (quotechar !=  NO_QUOTE_CHARACTER)
             	sb.append(quotechar);
-            for (int j = 0; j < nextElement.length(); j++) {
-                char nextChar = nextElement.charAt(j);
-                if (escapechar != NO_ESCAPE_CHARACTER && nextChar == quotechar) {
-                	sb.append(escapechar).append(nextChar);
-                } else if (escapechar != NO_ESCAPE_CHARACTER && nextChar == escapechar) {
-                	sb.append(escapechar).append(nextChar);
-                } else {
-                    sb.append(nextChar);
-                }
-            }
+            
+            sb.append(stringContainsSpecialCharacters(nextElement) ? processLine(nextElement) : nextElement);
+
             if (quotechar != NO_QUOTE_CHARACTER)
             	sb.append(quotechar);
         }
@@ -378,6 +242,27 @@ public class CSVWriter {
         sb.append(lineEnd);
         pw.write(sb.toString());
 
+    }
+
+	private boolean stringContainsSpecialCharacters(String line) {
+	    return line.indexOf(quotechar) != -1 || line.indexOf(escapechar) != -1;
+    }
+
+	protected StringBuilder processLine(String nextElement)
+    {
+		StringBuilder sb = new StringBuilder(INITIAL_STRING_SIZE);
+	    for (int j = 0; j < nextElement.length(); j++) {
+	        char nextChar = nextElement.charAt(j);
+	        if (escapechar != NO_ESCAPE_CHARACTER && nextChar == quotechar) {
+	        	sb.append(escapechar).append(nextChar);
+	        } else if (escapechar != NO_ESCAPE_CHARACTER && nextChar == escapechar) {
+	        	sb.append(escapechar).append(nextChar);
+	        } else {
+	            sb.append(nextChar);
+	        }
+	    }
+	    
+	    return sb;
     }
 
     /**
@@ -398,9 +283,20 @@ public class CSVWriter {
      *
      */
     public void close() throws IOException {
-        pw.flush();
+        flush();
         pw.close();
         rawWriter.close();
+    }
+
+    /**
+     *  Checks to see if the there has been an error in the printstream. 
+     */
+    public boolean checkError() {
+        return pw.checkError();
+    }
+
+    public void setResultService(ResultSetHelper resultService) {
+        this.resultService = resultService;
     }
 
 }
