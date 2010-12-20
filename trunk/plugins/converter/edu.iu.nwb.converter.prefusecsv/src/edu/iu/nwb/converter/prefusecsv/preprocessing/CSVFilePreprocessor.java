@@ -7,6 +7,7 @@ import java.io.IOException;
 import java.util.Arrays;
 import java.util.List;
 
+import org.cishell.utilities.ArrayUtilities;
 import org.cishell.utilities.FileUtilities;
 
 import au.com.bytecode.opencsv.CSVReader;
@@ -136,7 +137,7 @@ public final class CSVFilePreprocessor {
 		}
 		
 		if (cuttedIndex != size) {
-			return Arrays.copyOf(row, cuttedIndex);
+			return ArrayUtilities.copyOf(row, cuttedIndex);
 		}
 		return row;
 	}
@@ -199,7 +200,7 @@ public final class CSVFilePreprocessor {
 			int oldSize = row.length;
 			
 			/* Copy the array with additional size */
-			row = Arrays.copyOf(row, oldSize + expendedSize);
+			row = ArrayUtilities.copyOf(row, oldSize + expendedSize);
 			
 			/* Fill null with DEFAULT_EMPTY_VALUE */
 			for (int i = oldSize; i < row.length; i++) {
