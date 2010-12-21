@@ -1,5 +1,7 @@
 package edu.iu.scipolicy.visualization.horizontallinegraph;
 
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Dictionary;
 
 import org.cishell.framework.CIShellContext;
@@ -61,10 +63,9 @@ public class HorizontalLineGraphAlgorithmFactory
 						oldAttributeDefinition, table);
 			} else if (oldAttributeDefinitionID.equals(
 					HorizontalLineGraphAlgorithm.DATE_FORMAT_FIELD_ID)) {
-				String[] dateFormatLabels = formDateFormatLabels();
-				String[] dateFormatOptions = formDateFormatOptions();
-				newAttributeDefinition = MutateParameterUtilities.
-					cloneToDropdownAttributeDefinition(
+				Collection<String> dateFormatLabels = formDateFormatLabels();
+				Collection<String> dateFormatOptions = formDateFormatOptions();
+				newAttributeDefinition = MutateParameterUtilities.cloneToDropdownAttributeDefinition(
 						oldAttributeDefinition,
 						dateFormatLabels,
 						dateFormatOptions);
@@ -80,19 +81,18 @@ public class HorizontalLineGraphAlgorithmFactory
     	return newParameters;
     }
     
-    private static String[] formDateFormatLabels() {
-    	return new String[] {
-    		(DateUtilities.MONTH_DAY_YEAR_DATE_FORMAT +
-    			" (U.S., e.g. 10/15/2010)"),
-    		(DateUtilities.DAY_MONTH_YEAR_DATE_FORMAT +
-    			" (Europe, e.g. 15/10/2010)")
-    	};
+    private static Collection<String> formDateFormatLabels() {
+    	Collection<String> dateList = new ArrayList<String>();
+    	dateList.add(DateUtilities.MONTH_DAY_YEAR_DATE_FORMAT + " (U.S., e.g. 10/15/2010)");
+    	dateList.add(DateUtilities.DAY_MONTH_YEAR_DATE_FORMAT + " (Europe, e.g. 15/10/2010)");
+    	return dateList;
     }
     
-    private static String[] formDateFormatOptions() {
-    	return new String[] {
-    		DateUtilities.MONTH_DAY_YEAR_DATE_FORMAT,
-    		DateUtilities.DAY_MONTH_YEAR_DATE_FORMAT,
-    	};
+    private static Collection<String> formDateFormatOptions() {
+    	Collection<String> formatList = new ArrayList<String>();
+    	formatList.add(DateUtilities.MONTH_DAY_YEAR_DATE_FORMAT);
+    	formatList.add(DateUtilities.DAY_MONTH_YEAR_DATE_FORMAT);
+    	
+    	return formatList;
     }
 }
