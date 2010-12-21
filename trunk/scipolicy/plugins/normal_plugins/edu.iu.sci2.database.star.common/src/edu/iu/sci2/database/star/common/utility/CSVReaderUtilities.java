@@ -25,27 +25,27 @@ public class CSVReaderUtilities {
 
 	public static CSVReader createCSVReader(File file, boolean includeHeader) throws IOException {
 		CSVReader reader = new CSVReader(
-			new UnicodeReader(new FileInputStream(file)), ',', '"', 0, '\\');
+			new UnicodeReader(new FileInputStream(file)));
 
 		if (allRowsHaveTheSameColumnCount(reader)) {
 			reader.close();
 
 			if (includeHeader) {
 				return new CSVReader(
-					new UnicodeReader(new FileInputStream(file)), ',', '"', 0, '\\');
+					new UnicodeReader(new FileInputStream(file)));
 			} else {
 				return new CSVReader(
-					new UnicodeReader(new FileInputStream(file)), ',', '"', 0, '\\');
+					new UnicodeReader(new FileInputStream(file)));
 			}
 		} else {
 			reader.close();
 
 			if (includeHeader) {
 				return new CSVReader(
-					new UnicodeReader(new FileInputStream(file)), '\t', '"', 0, '\\');
+					new UnicodeReader(new FileInputStream(file)), '\t');
 			} else {
 				reader = new CSVReader(
-						new UnicodeReader(new FileInputStream(file)), '\t', '"', 0, '\\');
+						new UnicodeReader(new FileInputStream(file)), '\t');
 				reader.readNext();
 
 				return reader;
