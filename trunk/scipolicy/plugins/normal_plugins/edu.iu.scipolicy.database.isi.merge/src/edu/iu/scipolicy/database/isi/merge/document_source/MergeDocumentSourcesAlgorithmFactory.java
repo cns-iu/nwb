@@ -8,9 +8,8 @@ import org.cishell.framework.algorithm.AlgorithmFactory;
 import org.cishell.framework.data.Data;
 
 public class MergeDocumentSourcesAlgorithmFactory implements AlgorithmFactory {
-	@SuppressWarnings("unchecked") // Raw Dictionary
 	public Algorithm createAlgorithm(Data[] data,
-    								 Dictionary parameters,
+    								 Dictionary<String, Object> parameters,
     								 CIShellContext ciShellContext) {
         return new MergeDocumentSourcesAlgorithm(data, ciShellContext);
     }

@@ -51,6 +51,7 @@ public class MergeDocumentSourcesAlgorithm implements Algorithm, ProgressTrackab
     public MergeDocumentSourcesAlgorithm(Data[] data, CIShellContext ciShellContext) {
     	this.originalDatabaseData = data[0];
         this.ciShellContext = ciShellContext;
+        
         this.logger = (LogService) ciShellContext.getService(LogService.class.getName());
     }
 
@@ -113,7 +114,10 @@ public class MergeDocumentSourcesAlgorithm implements Algorithm, ProgressTrackab
      */
 	private static Map<String, String> createNameFormLookup() {
 		try {
-			File mergeGroupsFile = new File(new URL(new URL(System.getProperty("osgi.configuration.area")), MERGE_GROUPS_FILE_NAME).getPath());
+			File mergeGroupsFile =
+				new File(new URL(
+						new URL(System.getProperty("osgi.configuration.area")),
+						MERGE_GROUPS_FILE_NAME).getPath());
 			BufferedReader mergeGroupsFileReader =
 				new BufferedReader(new FileReader(mergeGroupsFile));
 			

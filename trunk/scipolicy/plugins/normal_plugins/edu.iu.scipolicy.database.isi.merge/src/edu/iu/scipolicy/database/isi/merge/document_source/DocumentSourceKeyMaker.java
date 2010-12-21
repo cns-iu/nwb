@@ -16,14 +16,14 @@ public class DocumentSourceKeyMaker implements KeyMaker {
 	
 	public Object makeKey(Tuple tuple) {
 		String j9 = retrieveNormalized(tuple, ISI.TWENTY_NINE_CHARACTER_SOURCE_TITLE_ABBREVIATION);
-		String so = retrieveNormalized(tuple, ISI.FULL_TITLE);
+		String fullTitle = retrieveNormalized(tuple, ISI.FULL_TITLE);
 		
 		//prepend book series title/subtitle, conference title?
-		if(nameFormLookup.containsKey(so)) {
-			return nameFormLookup.get(so);
+		if(nameFormLookup.containsKey(fullTitle)) {
+			return nameFormLookup.get(fullTitle);
 		} else if (nameFormLookup.containsKey(j9)) {
 			return nameFormLookup.get(j9);
-		} else if(j9.length() == 0) {
+		} else if (j9.length() == 0) {
 			return UUID.randomUUID();
 		} else {
 			return j9;
