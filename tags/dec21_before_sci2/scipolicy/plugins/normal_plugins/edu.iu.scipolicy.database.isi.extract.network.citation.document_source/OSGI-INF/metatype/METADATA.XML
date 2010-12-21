@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<metatype:MetaData xmlns:metatype="http://www.osgi.org/xmlns/metatype/v1.0.0">
+	<OCD name="Extract Document Source Citation Network Without Outer Nodes" id="edu.iu.scipolicy.database.isi.extract.network.citation.document_source.ISIDocumentSourceCitationNetworkWithOuterNodes.OCD"
+		 description="This algorithm extracts a Document Source to Document Source citation network excluding outer nodes from an ISI database. ">
+	</OCD>
+	<Designate pid="edu.iu.scipolicy.database.isi.extract.network.citation.document_source.ISIDocumentSourceCitationNetworkWithOuterNodes">
+		<Object ocdref="edu.iu.scipolicy.database.isi.extract.network.citation.document_source.ISIDocumentSourceCitationNetworkWithOuterNodes.OCD" />
+	</Designate>
+</metatype:MetaData>

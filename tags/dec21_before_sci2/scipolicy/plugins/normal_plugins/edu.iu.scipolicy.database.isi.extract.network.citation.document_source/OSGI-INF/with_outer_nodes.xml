@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<component name="edu.iu.scipolicy.database.isi.extract.network.citation.document_source.ISIDocumentSourceCitationNetworkWithOuterNodes.component" immediate="false">
+	<implementation class="edu.iu.cns.database.extract.generic.ExtractGraphWithQueriesFactory"/>
+	<properties entry="OSGI-INF/with_outer_nodes.properties"/>
+	
+	<service>
+		<provide interface=
+			"org.cishell.framework.algorithm.AlgorithmFactory"/>
+	</service>
+</component>

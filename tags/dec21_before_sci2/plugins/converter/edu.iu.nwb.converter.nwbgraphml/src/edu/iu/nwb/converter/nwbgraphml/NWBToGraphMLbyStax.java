@@ -1,0 +1,517 @@
+package edu.iu.nwb.converter.nwbgraphml;
+
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.UnsupportedEncodingException;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.StringTokenizer;
+
+import javax.xml.stream.XMLOutputFactory;
+import javax.xml.stream.XMLStreamException;
+import javax.xml.stream.XMLStreamWriter;
+
+import org.cishell.framework.algorithm.Algorithm;
+import org.cishell.framework.algorithm.AlgorithmExecutionException;
+import org.cishell.framework.data.BasicData;
+import org.cishell.framework.data.Data;
+import org.cishell.utilities.FileUtilities;
+import org.cishell.utilities.UnicodeReader;
+import org.osgi.service.log.LogService;
+
+import edu.iu.nwb.converter.nwb.common.NWBAttribute;
+import edu.iu.nwb.converter.nwb.common.ValidateNWBFile;
+import edu.iu.nwb.util.nwbfile.NWBFileProperty;
+
+// TODO: If not rewrite this, at least finish cleaning it up?
+public class NWBToGraphMLbyStax implements Algorithm {
+	public static final String GRAPHML_MIME_TYPE = "file:text/graphml+xml";
+	public static final String EDGEDEFAULT_ATTRIBUTE_KEY = "edgedefault";
+	public static final String GRAPH_ELEMENT = "graph";
+	public static final String NODE_ELEMENT = "node";
+	public static final String KEY_ATTRIBUTE_KEY = "key";
+	public static final String DATA_ELEMENT = "data";
+	public static final String EDGE_ELEMENT = "edge";
+	public static final String ID_ATTRIBUTE_KEY = "id";
+	public static final String TARGET_ATTRIBUTE_KEY = "target";
+	public static final String SOURCE_ATTRIBUTE_KEY = "source";
+	public static final String DOUBLE_TYPE_TOKEN = "double";
+	public static final String XML_FILE_EXTENSION = "xml";
+
+	public static final String SLIS_SOFTWARE_URL = "http://nwb.slis.indiana.edu/software.html";
+
+	private File inNWBFile;
+	private LogService logger;
+
+	public NWBToGraphMLbyStax(File inNWBFile, LogService logger) {
+		this.inNWBFile = inNWBFile;
+		this.logger = logger;
+	}
+
+	public Data[] execute() throws AlgorithmExecutionException {
+		try {
+			ValidateNWBFile validator = new ValidateNWBFile();
+			validator.validateNWBFormat(this.inNWBFile);
+
+			if (validator.getValidationResult()) {
+				File outGraphMLFile = convertNWBToGraphMLbyStax(this.inNWBFile, validator);
+
+				return createOutData(outGraphMLFile);
+			} else {
+				String format =
+					"Error: Unable to validate NWB file. %n %s%nPlease review the latest " +
+					"NWB Format Specification at %n%s, and update your file.";
+				String exceptionMessage =
+					String.format(format, validator.getErrorMessages(), SLIS_SOFTWARE_URL);
+				throw new AlgorithmExecutionException(exceptionMessage);
+			}
+		} catch (FileNotFoundException e) {
+			String exceptionMessage =
+				String.format("Couldn't find NWB file to validate: %s", e.getMessage());
+			throw new AlgorithmExecutionException(exceptionMessage, e);
+		} catch (IOException e) {
+			String exceptionMessage = String.format("File access error: %s", e.getMessage());
+			throw new AlgorithmExecutionException(exceptionMessage, e);
+		}
+	}
+
+
+	private Data[] createOutData(File outGraphMLFile) {
+		Data[] outData = new Data[] { new BasicData(outGraphMLFile, GRAPHML_MIME_TYPE) };
+
+		return outData;
+	}
+	
+	private File convertNWBToGraphMLbyStax(File nwbFile, ValidateNWBFile validator)
+			throws AlgorithmExecutionException {
+		try {
+			File graphml = FileUtilities.createTemporaryFileInDefaultTemporaryDirectory(
+				"GraphML-", XML_FILE_EXTENSION);
+			BufferedReader reader =
+				new BufferedReader(new UnicodeReader(new FileInputStream(nwbFile)));			
+
+			XMLOutputFactory xmlOutputFactory =  XMLOutputFactory.newInstance();  
+			XMLStreamWriter xmlWriter =
+				xmlOutputFactory.createXMLStreamWriter(new FileOutputStream(graphml), "utf-8");
+	
+			writeGraphMLHeader(xmlWriter);
+			writeAttributes(xmlWriter, validator);
+			printGraph(xmlWriter, validator, reader);
+	
+			// write </graph></graphml>
+			try {
+				xmlWriter.writeEndElement();
+				xmlWriter.writeEndElement();
+			} catch (XMLStreamException e) {
+				this.logger.log(LogService.LOG_WARNING, e.getMessage(), e);
+			}
+
+			reader.close();
+			xmlWriter.flush();  
+			xmlWriter.close();
+
+			return graphml;
+		} catch (UnsupportedEncodingException e) {
+			throw new AlgorithmExecutionException(e.getMessage(), e);
+		} catch (FileNotFoundException e) {
+			throw new AlgorithmExecutionException(e.getMessage(), e);
+		} catch (XMLStreamException e) {
+			throw new AlgorithmExecutionException(e.getMessage(), e);
+		} catch (IOException e) {
+			throw new AlgorithmExecutionException(e.getMessage(), e);
+		}
+	}
+
+	// Write a Header with XML Schema reference 
+	private void writeGraphMLHeader(XMLStreamWriter xmlWriter) throws XMLStreamException {
+		// TODO: Make these constants?
+		xmlWriter.writeStartDocument("UTF-8","1.0");
+		xmlWriter.writeComment("This file is generated by XMLStreamWriter");
+		xmlWriter.writeStartElement("graphml");
+		xmlWriter.writeNamespace("", "http://graphml.graphdrawing.org/xmlns"); 
+		xmlWriter.writeAttribute(
+			"xmlns",
+			"http://graphml.graphdrawing.org/xmlns",
+			"xsi",
+			"http://www.w3.org/2001/XMLSchema-instance");
+		xmlWriter.writeAttribute(
+			"xsi",
+			"http://www.w3.org/2001/XMLSchema-instance",
+			"schemaLocation", 
+			("http://graphml.graphdrawing.org/xmlns " +
+				"http://graphml.graphdrawing.org/xmlns/1.0/graphml.xsd"));
+	}
+
+	// Write GraphML-Attributes
+	private void writeAttributes(XMLStreamWriter xtw, ValidateNWBFile validator)
+			throws XMLStreamException, AlgorithmExecutionException {
+		// First handle node attributes
+		List<NWBAttribute> array = validator.getNodeAttrList();
+		for (int ii = 0; ii < array.size(); ii++) {
+			NWBAttribute attr = (NWBAttribute) array.get(ii);
+			String attrName = attr.getAttrName();
+			if (attrName.equalsIgnoreCase(NWBFileProperty.ATTRIBUTE_ID)) {
+				continue;
+			}    		
+			xtw.writeStartElement(KEY_ATTRIBUTE_KEY);
+			xtw.writeAttribute(ID_ATTRIBUTE_KEY, attr.getAttrName().toLowerCase());
+			xtw.writeAttribute("for", NODE_ELEMENT);
+			xtw.writeAttribute("attr.name", attr.getAttrName());
+			xtw.writeAttribute("attr.type", getGraphMLType(attr));
+			xtw.writeEndElement();
+		}
+
+		if (validator.isDirectedGraph() && (!validator.isUndirectedGraph() || validator.getTotalNumOfUndirectedEdges() == 0)){
+			//this is a directed graph
+			array = validator.getDirectedEdgeAttrList();
+			for (int i=0; i<array.size(); i++){
+				NWBAttribute attr = (NWBAttribute) array.get(i);
+				String attrName = attr.getAttrName();
+				if (attrName.equalsIgnoreCase(NWBFileProperty.ATTRIBUTE_SOURCE)||
+						attrName.equalsIgnoreCase(NWBFileProperty.ATTRIBUTE_TARGET)	||
+						attrName.equalsIgnoreCase(NWBFileProperty.ATTRIBUTE_ID)){
+					continue;
+				}        		
+				xtw.writeStartElement(KEY_ATTRIBUTE_KEY);
+				xtw.writeAttribute(ID_ATTRIBUTE_KEY, attr.getAttrName().toLowerCase());
+				xtw.writeAttribute("for", EDGE_ELEMENT);
+				xtw.writeAttribute("attr.name", attr.getAttrName());
+				xtw.writeAttribute("attr.type", getGraphMLType(attr));
+				xtw.writeEndElement();
+
+			}
+			xtw.writeStartElement(GRAPH_ELEMENT);
+			xtw.writeAttribute(EDGEDEFAULT_ATTRIBUTE_KEY, "directed");
+		}
+		else if ((!validator.isDirectedGraph() || validator.getTotalNumOfDirectedEdges() == 0) && validator.isUndirectedGraph()){
+			//this is a undirected graph
+			array = validator.getUndirectedEdgeAttrList();
+			for (int i=0; i<array.size(); i++){
+				NWBAttribute attr = (NWBAttribute) array.get(i);
+				String attrName = attr.getAttrName();
+				if (attrName.equalsIgnoreCase(NWBFileProperty.ATTRIBUTE_SOURCE)||
+						attrName.equalsIgnoreCase(NWBFileProperty.ATTRIBUTE_TARGET)	||
+						attrName.equalsIgnoreCase(NWBFileProperty.ATTRIBUTE_ID)){
+					continue;
+				}
+				xtw.writeStartElement(KEY_ATTRIBUTE_KEY);
+				xtw.writeAttribute(ID_ATTRIBUTE_KEY, attr.getAttrName().toLowerCase());
+				xtw.writeAttribute("for", EDGE_ELEMENT);
+				xtw.writeAttribute("attr.name", attr.getAttrName());
+				xtw.writeAttribute("attr.type", getGraphMLType(attr));
+				xtw.writeEndElement();
+				
+			}
+			xtw.writeStartElement(GRAPH_ELEMENT);
+			xtw.writeAttribute(EDGEDEFAULT_ATTRIBUTE_KEY, "undirected");
+			
+		}
+		else if (validator.isDirectedGraph() && validator.isUndirectedGraph()){
+			//hybrid graph, don't know how to handle it???
+			throw new AlgorithmExecutionException(
+					"Unable to convert hybrid NWB graph file to GraphML.");
+		} else {
+			/* graph is neither directed nor undirected. Must have no edges.
+			 * Strange case.
+			 */
+			xtw.writeStartElement(GRAPH_ELEMENT);
+			/* Since you must specify edgedefault,
+			 * let's just call it undirected
+			 */
+			xtw.writeAttribute(EDGEDEFAULT_ATTRIBUTE_KEY, "undirected");
+		}
+	}
+
+	private void printGraph(XMLStreamWriter xtw,
+							ValidateNWBFile validator,
+							BufferedReader reader)
+								throws XMLStreamException, IOException {
+		// Read from nwb file and write to the graphml file
+		boolean inNodesSection = false;
+		boolean inDirectededgesSection = false;
+		boolean inUndirectededgesSection = false;
+		String line = reader.readLine();
+		int edgeID = 0;
+
+		while (line != null){
+			line = line.trim();
+			if (line.length()==0
+					|| line.startsWith(NWBFileProperty.PREFIX_COMMENTS)) {
+				line = reader.readLine();
+				continue;
+			}
+//			String line_lower = line.toLowerCase();
+
+			//find node section header that looks like
+			//  *nodes   or  *nodes 1000
+			if(line.startsWith(NWBFileProperty.HEADER_NODE)) 
+			{
+				inNodesSection = true;
+				inDirectededgesSection = false;
+				inUndirectededgesSection = false;
+				line = reader.readLine();
+				continue;
+			}
+			if(line.startsWith(NWBFileProperty.HEADER_DIRECTED_EDGES)) 
+			{
+				//System.out.println(line);
+				inDirectededgesSection = true;
+				inNodesSection = false;
+				inUndirectededgesSection = false;
+				line = reader.readLine();
+				continue;    				
+			}
+
+			if(line.startsWith(NWBFileProperty.HEADER_UNDIRECTED_EDGES)) 
+			{
+				inUndirectededgesSection =true;
+				inNodesSection = false;
+				inDirectededgesSection = false;	
+				line = reader.readLine();
+				continue;
+			}
+
+			if (inNodesSection)
+			{	//ignore attribute list line or comment line(s)
+				if (line.startsWith(NWBFileProperty.ATTRIBUTE_ID)||
+						line.startsWith(NWBFileProperty.PREFIX_COMMENTS+
+								NWBFileProperty.ATTRIBUTE_ID)||
+								line.startsWith(NWBFileProperty.PREFIX_COMMENTS))
+				{
+					line = reader.readLine();
+					continue;
+				}
+				else
+				{   
+					//System.out.println(line);
+					StringTokenizer st = new StringTokenizer(line);
+					String[] columns = validator.processTokens(st);
+					List nodeAttrList = validator.getNodeAttrList();
+					//print <node id=\""+columns[0]+"\">
+
+					xtw.writeStartElement(NODE_ELEMENT);
+					xtw.writeAttribute(ID_ATTRIBUTE_KEY, "n" + columns[0]);
+					
+
+					for(int i = 1; i<nodeAttrList.size(); i++){
+						NWBAttribute attr = (NWBAttribute) nodeAttrList.get(i);
+						String value = columns[i];
+						//System.out.println(value);
+						if(attr.getDataType().equalsIgnoreCase(NWBFileProperty.TYPE_STRING)){
+							if (value.startsWith("\"")){
+								value=value.substring(1);
+							}
+							if (value.endsWith("\"")){
+								value = value.substring(0, value.length()-1);
+							}
+						}
+						if(! value.equalsIgnoreCase("*")) {
+							//out.println("<data key=\""+attr.getAttrName()+
+							//		"\">"+escape(value)+"</data>");  
+							xtw.writeStartElement(DATA_ELEMENT);
+							xtw.writeAttribute(KEY_ATTRIBUTE_KEY, attr.getAttrName().toLowerCase());
+							xtw.writeCharacters(value);
+							xtw.writeEndElement();	
+							
+
+						} else {
+							/*
+							 * Don't print anything.
+							 * 
+							 * If no data is specified for a 
+							 * field, it should be okay to
+							 * just not print the tag.
+							 */
+						}
+					}
+					//write </node>
+					xtw.writeEndElement();
+					
+
+				}
+			}//end if (inNodesSection)
+
+			if (inDirectededgesSection || inUndirectededgesSection){
+				//ignore attribute list line or comment line(s)
+				if (line.startsWith(NWBFileProperty.ATTRIBUTE_SOURCE)||
+						line.startsWith(NWBFileProperty.PREFIX_COMMENTS+
+								NWBFileProperty.ATTRIBUTE_SOURCE)||
+								line.startsWith(NWBFileProperty.PREFIX_COMMENTS))	
+				{
+					line = reader.readLine();
+					continue;
+				}
+				else{
+					List edgeAttrList = new ArrayList();
+					StringTokenizer st = new StringTokenizer(line);
+					String[] columns = validator.processTokens(st);
+					if (inDirectededgesSection)
+						edgeAttrList = validator.getDirectedEdgeAttrList();
+					else if (inUndirectededgesSection)
+						edgeAttrList = validator.getUndirectedEdgeAttrList();
+					edgeID++;
+					//find if there is an id attribute
+					int idColumnNumber = findAttr(NWBFileProperty.ATTRIBUTE_ID,edgeAttrList);
+					int sourceColumnNumber = findAttr(NWBFileProperty.ATTRIBUTE_SOURCE, edgeAttrList);
+					int targetColumnNumber = findAttr(NWBFileProperty.ATTRIBUTE_TARGET, edgeAttrList);
+					if (idColumnNumber == -1)
+					{
+						if (edgeAttrList.size()>2){
+							//out.println("<edge id=\""+edgeID+"\" source=\""+columns[sourceColumnNumber]+
+							//	"\" target=\""+columns[targetColumnNumber]+"\">");
+							xtw.writeStartElement(EDGE_ELEMENT);
+							xtw.writeAttribute(ID_ATTRIBUTE_KEY, "e" + new Integer(edgeID).toString());
+							xtw.writeAttribute(SOURCE_ATTRIBUTE_KEY, "n" + columns[sourceColumnNumber]);
+							xtw.writeAttribute(TARGET_ATTRIBUTE_KEY, "n" + columns[targetColumnNumber]);
+							
+
+							for(int i = 0; i<edgeAttrList.size(); i++){
+								NWBAttribute attr = (NWBAttribute) edgeAttrList.get(i);
+								String  attrName = attr.getAttrName();
+								if (!(attrName.equalsIgnoreCase(NWBFileProperty.ATTRIBUTE_SOURCE) ||
+										attrName.equalsIgnoreCase(NWBFileProperty.ATTRIBUTE_TARGET)	||
+										attrName.equalsIgnoreCase(NWBFileProperty.ATTRIBUTE_ID))){
+									String value = columns[i];
+									//System.out.println(value);
+									if(attr.getDataType().equalsIgnoreCase(NWBFileProperty.TYPE_STRING)){
+										if (value.startsWith("\"")){
+											value=value.substring(1);
+										}
+										if (value.endsWith("\"")){
+											value = value.substring(0, value.length()-1);
+										}
+									}
+									if(! value.equalsIgnoreCase("*")) {
+										//out.println("<data key=\""+attr.getAttrName()+
+										//		"\">"+escape(value)+"</data>");  
+										xtw.writeStartElement(DATA_ELEMENT);
+										xtw.writeAttribute(KEY_ATTRIBUTE_KEY, attr.getAttrName().toLowerCase());
+										xtw.writeCharacters(value);
+										xtw.writeEndElement();
+										
+									} else {
+										/*
+										 * Don't print anything.
+										 * 
+										 * If no data is specified for a 
+										 * field, it should be okay to
+										 * just not print the tag.
+										 */
+									}
+								}
+							}
+							//write </edge>
+							xtw.writeEndElement();
+							
+							
+						}else{
+							//out.println("<edge id=\""+edgeID+"\" source=\""+columns[sourceColumnNumber]+
+							//		"\" target=\""+columns[targetColumnNumber]+"\"/>");
+							xtw.writeStartElement(EDGE_ELEMENT);
+							xtw.writeAttribute(ID_ATTRIBUTE_KEY, "e" + new Integer(edgeID).toString());
+							xtw.writeAttribute(SOURCE_ATTRIBUTE_KEY, "n" + columns[sourceColumnNumber]);
+							xtw.writeAttribute(TARGET_ATTRIBUTE_KEY, "n" + columns[targetColumnNumber]);
+							xtw.writeEndElement();
+							
+							
+						}
+					}
+					else {
+						if (edgeAttrList.size()>3){
+							//out.println("<edge id=\""+columns[idColumnNumber]+
+							//		"\" source=\""+columns[sourceColumnNumber]+
+							//		"\" target=\""+columns[targetColumnNumber]+"\">");
+							xtw.writeStartElement(EDGE_ELEMENT);
+							xtw.writeAttribute(ID_ATTRIBUTE_KEY, "e" + columns[idColumnNumber]);
+							xtw.writeAttribute(SOURCE_ATTRIBUTE_KEY, "n" + columns[sourceColumnNumber]);
+							xtw.writeAttribute(TARGET_ATTRIBUTE_KEY, "n" + columns[targetColumnNumber]);
+							
+
+							for(int i = 0; i<edgeAttrList.size(); i++){
+								NWBAttribute attr = (NWBAttribute) edgeAttrList.get(i);
+								String  attrName = attr.getAttrName();
+								if (!(attrName.equalsIgnoreCase(NWBFileProperty.ATTRIBUTE_SOURCE) ||
+										attrName.equalsIgnoreCase(NWBFileProperty.ATTRIBUTE_TARGET)	||
+										attrName.equalsIgnoreCase(NWBFileProperty.ATTRIBUTE_ID))){
+
+									if(! columns[i].equalsIgnoreCase("*")) {
+										//System.out.println(escape(columns[i]));
+										//out.println("<data key=\""+attr.getAttrName()+
+										//		"\">"+escape(columns[i])+"</data>");
+										xtw.writeStartElement(DATA_ELEMENT);
+										xtw.writeAttribute(KEY_ATTRIBUTE_KEY, attr.getAttrName().toLowerCase());
+										xtw.writeCharacters(columns[i]);
+										xtw.writeEndElement();
+										
+										
+									} else {
+										/*
+										 * Don't print anything.
+										 * 
+										 * If no data is specified for a 
+										 * field, it should be okay to
+										 * just not print the tag.
+										 */
+									}
+								}
+							}
+							//out.println("</edge>");  
+							xtw.writeEndElement();
+							
+						}
+						else{
+							//out.println("<edge id=\""+columns[idColumnNumber]+
+							//		"\" source=\""+columns[sourceColumnNumber]+
+							//		"\" target=\""+columns[targetColumnNumber]+"\"/>");
+							xtw.writeStartElement(EDGE_ELEMENT);
+							xtw.writeAttribute(ID_ATTRIBUTE_KEY, "e" + columns[idColumnNumber]);
+							xtw.writeAttribute(SOURCE_ATTRIBUTE_KEY, "n" + columns[sourceColumnNumber]);
+							xtw.writeAttribute(TARGET_ATTRIBUTE_KEY, "n" + columns[targetColumnNumber]);
+							xtw.writeEndElement();
+						}
+					} 		    			
+				}
+			}//end if (inDirectededgesSection || inUndirectededgesSection)
+
+			line = reader.readLine();    		
+
+		}//end while
+	}
+
+	private int findAttr(String attrName, List attrList) {
+		for (int ii = 0; ii < attrList.size(); ii++){
+			NWBAttribute attr = (NWBAttribute) attrList.get(ii); 
+			if (attr.getAttrName().equalsIgnoreCase(attrName)) {
+				return ii;
+			}
+		}
+		return -1;
+	}		
+
+	protected static String escape(String s){
+		String val = s.replaceAll("&amp;|&", "&amp;");
+		val = val.replaceAll("&lt;|<", "&lt;");
+		val = val.replaceAll("&gt;|>", "&gt;");
+		val = val.replaceAll("&quot;|\"", "&quot;");
+		val = val.replaceAll("&apos;|\'", "&apos;");
+		return val;
+	}
+
+	private String getGraphMLType(NWBAttribute attr) {
+		String type = attr.getDataType();
+
+		if (NWBFileProperty.TYPE_REAL.equals(type)) { //REAL needs to be ripped out of NWB. It was a stupid idea in the first place.
+			type = DOUBLE_TYPE_TOKEN;
+		} else if (NWBFileProperty.TYPE_FLOAT.equals(type)) {
+			/* This is because GraphML does not have a float type, only a double type.
+			 */
+			type = DOUBLE_TYPE_TOKEN;
+		}
+		//other types from NWB match graphml's types
+		return type;
+	}
+}

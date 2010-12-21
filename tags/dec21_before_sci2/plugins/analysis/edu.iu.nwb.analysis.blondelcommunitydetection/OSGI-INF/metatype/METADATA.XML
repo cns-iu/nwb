@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<metatype:MetaData xmlns:metatype="http://www.osgi.org/xmlns/metatype/v1.0.0">
+	<OCD name="Blondel Community Detection" id="edu.iu.nwb.analysis.blondelcommunitydetection.BlondelCommunityDetectionAlgorithm.OCD"
+		 description="This algorithm implements Blondel's community detection algorithm. ">
+		 <AD name="Weight" id="weight" type="String" description="The field used for the weight" default="weight"/>
+	</OCD>
+	<Designate pid="edu.iu.nwb.analysis.blondelcommunitydetection.BlondelCommunityDetectionAlgorithm">
+		<Object ocdref="edu.iu.nwb.analysis.blondelcommunitydetection.BlondelCommunityDetectionAlgorithm.OCD" />
+	</Designate>
+</metatype:MetaData>

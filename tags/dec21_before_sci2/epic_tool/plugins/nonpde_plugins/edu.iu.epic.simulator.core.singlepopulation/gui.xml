@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<metatype:MetaData xmlns:metatype="http://www.osgi.org/xmlns/metatype/v1.0.0">
+	<OCD name="edu.iu.epic.simulator.core.singlepopulation" id="edu.iu.epic.simulator.core.singlepopulation.gui"
+		 description="Simulate an infection or infections using with given epidemics model with a single-population population model.">
+		 <!-- Note that the only hard-coded parameter is a dummy.
+		 		All other parameters will be injected in #mutateParameters.
+		 		The dummy is included only so that the given OCD reference is not null.
+		 		The dummy will be removed in #mutateParameters. -->
+		 <AD name="DUMMY_AD" id="DUMMY_AD" type="String" description="This dummy 
+		 attribute definition is included only so that mutateParameters does not 
+		 receive a null OCD.  This will be removed in mutateParameters." 
+		 default="DUMMY_AD"/>
+	</OCD>
+	<Designate pid="edu.iu.epic.simulator.core.singlepopulation">
+		<Object ocdref="edu.iu.epic.simulator.core.singlepopulation.gui" />
+	</Designate>
+</metatype:MetaData>

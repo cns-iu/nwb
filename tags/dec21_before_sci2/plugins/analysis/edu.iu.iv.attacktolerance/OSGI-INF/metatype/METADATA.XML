@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<metatype:MetaData xmlns:metatype="http://www.osgi.org/xmlns/metatype/v1.0.0">
+	<OCD name="Delete High Degree Nodes" id="edu.iu.iv.attacktolerance.AttackToleranceAlgorithm.OCD">
+		<AD name="Number of Nodes" id="numNodes" type="Integer" description="Enter number of nodes to delete randomly" default="1" min="0"/>
+	</OCD>
+	<Designate pid="edu.iu.iv.attacktolerance.AttackToleranceAlgorithm">
+		<Object ocdref="edu.iu.iv.attacktolerance.AttackToleranceAlgorithm.OCD" />
+	</Designate>
+</metatype:MetaData>

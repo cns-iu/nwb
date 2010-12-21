@@ -1,0 +1,60 @@
+# -*- mode: Python;-*-
+###############################################################################
+# Epidemic Model                                                              #
+###############################################################################
+
+###############################################################################
+# Variable Definition                                                         #
+###############################################################################
+
+# Relative Infectiousness of Assymptomatic Individuals
+rbeta = 0.5
+
+# Probability of being assymptomatic
+pa = 0.33
+
+# Probability of travel restrictions
+pt = 0.5
+
+# Infectious rate
+#time csi data/airport_3378_month_hemisphereseason.txt 
+
+# Recovery rate 
+miu = 1/3
+
+# Latent rate
+epsilon = 1/1.9
+
+pa1 = 1-pa
+pt1 = 1-pt
+
+# Reproductive number
+R0 = 1.5
+
+temp = rbeta*pa+pa1
+
+beta = R0*miu/temp
+
+###############################################################################
+# Model Definition                                                            #
+###############################################################################
+
+# Legend
+# S -- I             => S becomes I when it interacts with I
+# I -> R             => I spontaneously decays in to R
+# L -> R secondary   => Represents a secondary infection case
+# S -- I = L         => S becomes L when it interacts with I
+############
+S -- Int = L beta 
+S -- It = L beta 
+S -- Ia  = L rbeta*beta
+L -> It pt*pa1*epsilon secondary
+L -> Ia pa*epsilon secondary
+L -> Int pa1*pt1*epsilon
+It -> R miu
+Ia -> R miu
+Int -> R miu
+
+###############################################################################
+# End Input File                                                              #
+###############################################################################

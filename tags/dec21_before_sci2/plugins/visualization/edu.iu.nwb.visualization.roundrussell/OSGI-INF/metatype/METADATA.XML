@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<metatype:MetaData xmlns:metatype="http://www.osgi.org/xmlns/metatype/v1.0.0">
+	<OCD name="Circular Hierarchy" id="edu.iu.nwb.visualization.roundrussell.RoundRussellAlgorithm.OCD"
+		 	description="Provides Circular Hierarchy Visualization on the network.">
+		<AD name="Degree of Edge Bundling" id="betacolumn" type="Float" description="Degree of edge bundling must be between 0.0 and 1.0 inclusive." default=".75" min="0" max="1.0"/>
+		<AD name="Node Strength Column" id="strengthcolumn" type="String" description="Column with node strength value." default="strength"/>
+		<AD name="Level 0" id="level0_column" type="String" description="Column with level 0 information." default="level_0"/>
+		<AD name="Level 1" id="level1_column" type="String" description="Column with level 1 information." default="level_1"/>
+		<AD name="Level 2" id="level2_column" type="String" description="Column with level 2 information." default="level_2"/>
+		<AD name="Level 3" id="level3_column" type="String" description="Column with level 3 information." default="level_3"/>
+		<AD name="Edge Weight Column" id="weightcolumn" type="String" description="Column with edge weight value." default="weight"/>
+		<AD name="Node Color Column" id="nodecolorcolumn" type="String" 
+		description="Column with node attribute value that decides node color." default="color"/>	
+		<AD name="Node Color Range" id="nodecolorrange" type="String" 
+		description="Two colors that the node colors should range between, from least to greatest" default="Yellow to blue"/>	
+	</OCD>
+	<Designate pid="edu.iu.nwb.visualization.roundrussell.RoundRussellAlgorithm">
+		<Object ocdref="edu.iu.nwb.visualization.roundrussell.RoundRussellAlgorithm.OCD" />
+	</Designate>
+</metatype:MetaData>

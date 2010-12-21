@@ -1,0 +1,15 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: Database Loader Framework
+Bundle-SymbolicName: edu.iu.cns.database.load.framework
+Bundle-Version: 1.0.0
+Bundle-RequiredExecutionEnvironment: J2SE-1.5
+Export-Package: edu.iu.cns.database.load.framework,
+ edu.iu.cns.database.load.framework.exception,
+ edu.iu.cns.database.load.framework.utilities
+Import-Package: edu.iu.nwb.shared.isiutil.database,
+ org.cishell.framework;version="1.0.0",
+ org.cishell.framework.algorithm;version="1.0.0",
+ org.cishell.service.database,
+ org.cishell.utilities,
+ org.cishell.utilities.dictionary

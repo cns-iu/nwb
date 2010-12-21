@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<component name="edu.iu.cns.converter.csv_to_plot.CSVToPlotConverterAlgorithm.component" immediate="false">
+	<implementation class="edu.iu.cns.converter.csv_to_plot.CSVToPlotConverterAlgorithmFactory"/>
+	<properties entry="OSGI-INF/csv-to-plot-converter/csv-to-plot-converter.properties"/>
+	<reference name="LOG" interface="org.osgi.service.log.LogService"/>
+	<reference name="MTS" interface="org.osgi.service.metatype.MetaTypeService"/>
+	
+	<service>
+		<provide interface=
+			"org.cishell.framework.algorithm.AlgorithmFactory"/>
+	</service>
+</component>

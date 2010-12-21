@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<metatype:MetaData xmlns:metatype="http://www.osgi.org/xmlns/metatype/v1.0.0">
+	<OCD name="Discrete Network Dynamics (DND)"
+		id="edu.iu.nwb.modeling.discretenetworkdynamics.DNDAlgorithm.network.OCD"
+		description="A tool for enumerating the state space of discrete network models.">
+		<AD default="function"
+			description="The column name of the functions." id="functionLabel"
+			name="Function Label" required="true" type="String">
+		</AD>
+		<AD name="Node Label" id="nodeLabel"
+			description="The column that holds a label for each node. If provided, the dependency graphs will use this label instead of row numbers."
+			default='' type="String" required="false" />
+		<AD name="Number of States per Node" id="noStates"
+			type="Integer"
+			description="This represents the number of sates a node can be in."
+			default="2" required="true" />
+		<AD id="inputFormat" name="Input Function Format" type="String"
+			description="This determines whether the function should be considered Polynomial or Boolean."
+			default="1" required="true">
+			<Option label="Polynomial" value="1" />
+			<Option label="Boolean" value="0" />
+		</AD>
+		<AD name="Updating Scheme" id="updateScheme"
+			description="Select whether you will update functions in a Synchronous or Sequential manner."
+			default="1" required="true" type="String">
+			<Option label="Synchronous" value="1"></Option>
+			<Option label="Asyncrhonous" value="0"></Option>
+		</AD>
+		<AD default=''
+			description="If you have chose Asynchronous updating, specify the update Schedule separated by spaces. Use each number 1...N, where N is number of Nodes, once."
+			id="updateSchedule" name="Enter update schedule separated by space"
+			required="false" type="String">
+		</AD>
+		<AD default="1"
+			description="Choose whether to generate all trajectories from all possible initial conditions or to generate a single trajectory from a given state space."
+			id="stateSpaceSpec" name="State Space Specification" required="true"
+			type="String">
+			<Option label="All trajectories" value="1"></Option>
+			<Option label="One trajectory" value="0"></Option>
+		</AD>
+		<AD default=""
+			description="If a single trajectory is selected, specify the initial condition to evaluate separated by spaces. There should be N numbers 0...K-1, where N is the number of nodes and K is the number of states per node."
+			id="initialCond" name="Enter Initial Condition to Evaluate"
+			required="false" type="String">
+		</AD>
+
+
+	</OCD>
+	<Designate pid="edu.iu.nwb.modeling.discretenetworkdynamics.DNDAlgorithm">
+		<Object ocdref="edu.iu.nwb.modeling.discretenetworkdynamics.DNDAlgorithm.network.OCD" />
+	</Designate>
+</metatype:MetaData>

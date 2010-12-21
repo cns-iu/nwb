@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<metatype:MetaData xmlns:metatype="http://www.osgi.org/xmlns/metatype/v1.0.0">
+	<OCD name="Pathfinder Network Scaling" id="edu.iu.iv.analysis.pathfindernetworkscaling.edu.iu.iv.analysis.pathfindernetworkscaling.OCD"
+		 description="">
+	</OCD>
+	<Designate pid="edu.iu.iv.analysis.pathfindernetworkscaling.edu.iu.iv.analysis.pathfindernetworkscaling">
+		<Object ocdref="edu.iu.iv.analysis.pathfindernetworkscaling.edu.iu.iv.analysis.pathfindernetworkscaling.OCD" />
+	</Designate>
+</metatype:MetaData>

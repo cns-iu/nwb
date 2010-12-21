@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?pde version="3.4"?>
+
+<product name="SciPolicy Tool" id="edu.iu.scipolicy.gui.brand.cishell" application="org.cishell.reference.gui.workspace.CIShellApplication" useFeatures="true">
+
+   <aboutInfo>
+      <image path="/edu.iu.scipolicy.gui.brand/icons/about.gif"/>
+      <text>
+         %blurb
+      </text>
+   </aboutInfo>
+
+   <configIni use="default">
+      <linux>/edu.iu.scipolicy.gui.brand/extra-files/configuration/config.ini</linux>
+      <macosx>/edu.iu.scipolicy.gui.brand/extra-files/configuration/config.ini</macosx>
+      <solaris>/edu.iu.scipolicy.gui.brand/extra-files/configuration/config.ini</solaris>
+      <win32>/edu.iu.scipolicy.gui.brand/extra-files/configuration/config.ini</win32>
+   </configIni>
+
+   <launcherArgs>
+   </launcherArgs>
+
+   <windowImages/>
+
+   <splash
+      location="edu.iu.scipolicy.gui.brand"
+      startupProgressRect="0,163,500,10" />
+   <launcher name="sci2">
+      <linux icon="/edu.iu.scipolicy.gui.brand/icons/scisip32.xpm"/>
+      <macosx icon="/edu.iu.scipolicy.gui.brand/icons/scisip128.icns"/>
+      <solaris/>
+      <win useIco="true">
+         <ico path="/edu.iu.scipolicy.gui.brand/icons/scisip128.ico"/>
+         <bmp
+            winSmallHigh="icons/ivc_sm_32.bmp"
+            winSmallLow="icons/ivc_sm_16.bmp"
+            winMediumHigh="icons/ivc_lg_32.bmp"
+            winMediumLow="icons/ivc_lg_16.bmp"
+            winLargeHigh="icons/ivc_xlg_32.bmp"
+            winLargeLow="icons/ivc_xlg_16.bmp"/>
+      </win>
+   </launcher>
+
+
+   <vm>
+   </vm>
+
+   <plugins>
+   </plugins>
+
+   <features>
+      <feature id="org.cishell.environment.equinox.feature" version="0.0.0"/>
+      <feature id="org.cishell.feature" version="0.3.0"/>
+      <feature id="org.cishell.reference.feature" version="1.0.0"/>
+      <feature id="org.cishell.reference.database.feature" version="1.0.0"/>
+      <feature id="org.cishell.reference.gui.feature" version="0.4.0"/>
+      <feature id="edu.iu.scipolicy.gui.brand.feature" version="0.6.0"/>
+      <feature id="edu.iu.scipolicy.nonscipolicyjavaalgorithm.feature" version="1.0.0"/>
+      <feature id="edu.iu.scipolicy.converter.feature" version="1.0.0"/>
+   </features>
+
+</product>

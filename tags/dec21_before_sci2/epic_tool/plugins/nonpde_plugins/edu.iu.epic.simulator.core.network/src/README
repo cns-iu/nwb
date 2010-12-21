@@ -1,0 +1,4 @@
+See the make target for NetEM in
+/edu.iu.epic.simulator.core.singlepopulation/src/<target platform>-overrides/Makefile
+
+Compile it there and copy the executable over.

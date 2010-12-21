@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<metatype:MetaData xmlns:metatype="http://www.osgi.org/xmlns/metatype/v1.0.0">
+	<OCD name="Generic Geocoder" id="edu.iu.scipolicy.preprocessing.geocoder.GeocoderAlgorithm.OCD"
+		 description="Geocodes place names to geographic coordinates (latitudes and longitudes) ">
+		<AD name="Place Type" id="place_type" type="String" description="Select the type of place, State or Country" default="State"/>
+		<AD name="Place Name Column" id="place_name_column" type="String" description="Find longitudes and latitudes for the place names in this column" default=""/>
+	</OCD>
+	<Designate pid="edu.iu.scipolicy.preprocessing.geocoder.GeocoderAlgorithm">
+		<Object ocdref="edu.iu.scipolicy.preprocessing.geocoder.GeocoderAlgorithm.OCD" />
+	</Designate>
+	
+	<OCD name="Yahoo Geocoder" id="edu.iu.scipolicy.preprocessing.geocoder.YahooGeocoderAlgorithm.OCD"
+		 description="Geocodes place names to geographic coordinates (latitudes and longitudes) using Yahoo.  Ensure your machine is connected to the Internet.  If you need to geocode more than a few entities, you may wish to obtain a Yahoo Place Finder application ID from http://developer.yahoo.com/geo/placefinder/ .  You may otherwise leave this field blank.  Each ID is limited to 50,000 requests per day.  Performance may vary due to network latency; expect about 500 unique requests per minute.">
+		<AD name="Yahoo Application ID" id="application_id" type="String" description="Please obtain a Yahoo Place Finder application ID from \nhttp://developer.yahoo.com/geo/placefinder/" default=""/>
+		<AD name="Place Type" id="place_type" type="String" description="Select the type of place: State, Country, Zip Code or Address" default="Address"/>
+		<AD name="Place Name Column" id="place_name_column" type="String" description="Find longitudes and latitudes for the place names in this column" default=""/>
+	</OCD>
+	<Designate pid="edu.iu.scipolicy.preprocessing.geocoder.YahooGeocoderAlgorithm">
+		<Object ocdref="edu.iu.scipolicy.preprocessing.geocoder.YahooGeocoderAlgorithm.OCD" />
+	</Designate>
+</metatype:MetaData>

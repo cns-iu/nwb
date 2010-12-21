@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<component name="edu.iu.scipolicy.converter.psraster.jpg.jpgwriter.JPGWriter.component" immediate="false">
+	<implementation class="edu.iu.scipolicy.converter.psraster.jpg.jpgwriter.JPGWriterFactory"/>
+	<properties entry="OSGI-INF/jpg-writer/jpgwriter.properties"/>
+	
+	<service>
+		<provide interface=
+			"org.cishell.framework.algorithm.AlgorithmFactory"/>
+	</service>
+</component>

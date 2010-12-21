@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<metatype:MetaData xmlns:metatype="http://www.osgi.org/xmlns/metatype/v1.0.0">
+	<OCD name="DrL (VxOrd)" id="edu.iu.nwb.visualization.drl.VxOrdAlgorithm.OCD"
+		 description="This algorithm lays out nodes based on the VxOrd force-directed layout algorithm. ">
+		
+		<!-- <AD name="Max Edges Per Node" id="truncateEdges" type="Integer" description="Sets the maximum number of edges per node to use. Set to -1 to disable any edge truncating." default="-1"/> -->
+		<!-- <AD name="Save Uncut Edges" id="saveEdges" type="Boolean" description="Set to save the uncut edges into the produced NWB File. WARNING: All other edges will be discarded!" default="false"/> -->
+		<AD name="Edge Weight Attribute" id="edgeWeight" type="String" description="Enter the exact name of the edge attribute to use as the weight. The attribute values must be numbers." default="weight"/>
+		<AD name="New X-Position Attribute Name" id="xpos" type="String" description="Enter the exact name of the attribute to create for the X position of the layout." default="xpos"/>
+		<AD name="New Y-Position Attribute Name" id="ypos" type="String" description="Enter the exact name of the attribute to create for the Y position of the layout." default="ypos"/>
+		<AD name="Do not cut edges" id="shouldNotCutEdges" type="Boolean" description="Select to perform with no edge cutting.  This will override any strength specified below." default="false"/>
+		<AD name="Edge Cutting Strength" id="edgeCut" type="Double" description="Sets the amount of automatic edge-cutting to do, between 0.0 (no edge cutting) and 1.0 (maximal edge cutting).  Ignored if 'Do not cut edges' is selected." default="0.0" min="0.0" max="1.0"/>
+	</OCD>
+	<Designate pid="edu.iu.nwb.visualization.drl.VxOrdAlgorithm">
+		<Object ocdref="edu.iu.nwb.visualization.drl.VxOrdAlgorithm.OCD" />
+	</Designate>
+</metatype:MetaData>

@@ -1,0 +1,1 @@
+Guess.getMainUIWindow().dock(InfoWindow.getInfoWindow())

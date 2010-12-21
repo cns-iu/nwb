@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<metatype:MetaData xmlns:metatype="http://www.osgi.org/xmlns/metatype/v1.0.0">
+	<OCD name="NWB Format Static Executable Helper" id="edu.iu.nwb.templates.staticexecutable.nwb.Helper.OCD"
+		 description=" ">
+	</OCD>
+	<Designate pid="edu.iu.nwb.templates.staticexecutable.nwb.Helper">
+		<Object ocdref="edu.iu.nwb.templates.staticexecutable.nwb.Helper.OCD" />
+	</Designate>
+</metatype:MetaData>

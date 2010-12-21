@@ -1,0 +1,110 @@
+FN ISI Export Format
+VR 1.0
+PT J
+AU Takeda, H
+   Nishimura, K
+   Agata, K
+AF Takeda, Hiroyuki
+   Nishimura, Kaneyasu
+   Agata, Kiyokazu
+TI Planarians Maintain a Constant Ratio of Different Cell Types During
+   Changes in Body Size by Using the Stem Cell System
+SO ZOOLOGICAL SCIENCE
+LA English
+DT Article
+DE planarian; regeneration
+ID CENTRAL-NERVOUS-SYSTEM; TUMOR-SUPPRESSOR GENE
+AB Planarians change in body size depending upon whether they are in
+   feeding or starving conditions. To investigate how planarians regulate
+   this flexible system, the numbers of total cells and specific cell
+   types were counted and compared among worms 2 mm to 9 mm in body
+   length. The total cell number increased linearly with increasing body
+   length, but the ratio of cell numbers between the head and the trunk
+   portion was constant (1:3). Interestingly, counting the numbers of
+   specific neurons in the eye and brain after immunostaining using cell
+   type-specific antibodies revealed that the ratio between different
+   neuron types was constant regardless of the brain and body size. These
+   results suggest that planarians can maintain proportionality while
+   changing their body size by maintaining a constant ratio of different
+   cell types. To understand this system and reveal how planarians restore
+   the original ratio during eye and brain regeneration, the numbers of
+   specialized cells were investigated during regeneration. The results
+   further substantiate the existence of some form of "counting mechanism"
+   that has the ability to regulate both the absolute and relative numbers
+   of different cell types in complex organs such as the brain during cell
+   turnover, starvation, and regeneration.
+C1 [Takeda, Hiroyuki; Nishimura, Kaneyasu; Agata, Kiyokazu] Kyoto Univ, Dept Biophys, Grad Sch Sci, Sakyo Ku, Kyoto 6068502, Japan.
+RP Agata, K, Kyoto Univ, Dept Biophys, Grad Sch Sci, Sakyo Ku, Kyoto
+   6068502, Japan.
+EM agata@mdb.biophys.kyoto-u.ac.jp
+FU Kyoto University [A06]; Ministry of Education, Culture, Sports, Science
+   and Technology of Japan 
+FX We thank Elizabeth Nakajima for critical reading of the manuscript,
+   Hiroshi Yamamoto for technical support, and all our laboratory members
+   for helpful encouragement. This study was supported in part by Global
+   COE Program A06 of Kyoto University and a Grant- in- Aid for Creative
+   Research to K. A. from the Ministry of Education, Culture, Sports,
+   Science and Technology of Japan.
+CR AGATA K, 1998, ZOOL SCI, V15, P433
+   AGATA K, 2008, PHILOS T R SOC B, V363, P2071, DOI 10.1098/rstb.2008.2260
+   ASANO Y, 1998, J EXP BIOL, V201, P1263
+   BAGUNA J, 1981, HYDROBIOLOGIA, V84, P181
+   BOHNI R, 1999, CELL, V97, P865
+   CEBRIA F, 2002, NATURE, V419, P620, DOI 10.1038/nature01042
+   CEBRIA F, 2008, NEUROSCI RES, V61, P375, DOI
+   10.1016/j.neures.2008.04.005
+   CHO E, 2006, NAT GENET, V38, P1142, DOI 10.1038/ng1887
+   DOWAR BL, 1973, STAIN TECHNOL, V48, P93
+   HAFEN E, 2003, PLOS BIOL, V1, P319, DOI 10.1371/journal.pbio.000086
+   HAMARATOGLU F, 2006, NAT CELL BIOL, V8, P27, DOI 10.1038/ncb1339
+   HWANG JS, 2004, GENE, V333, P15, DOI 10.1016/j.gene.2004.02.034
+   INOUE T, 2004, ZOOL SCI, V21, P275
+   ITO H, 2001, DEV GENES EVOL, V211, P2
+   KOBAYASHI C, 1998, ZOOL SCI, V15, P861
+   KOBAYASHI C, 2007, DEV BIOL, V306, P714, DOI 10.1016/j.ydbio.2007.04.010
+   NAIRZ K, 2006, DEV BIOL, V291, P314, DOI 10.1016/j.ydbio.2005.11.047
+   NAKAZAWA M, 2003, MOL BIOL EVOL, V20, P784, DOI 10.1039/molbev/msg086
+   NEWMARK PA, 2000, DEV BIOL, V220, P142
+   NISHIMURA K, 2007, DEV NEUROBIOL, V67, P1059, DOI 10.1002/dneu.20377
+   NISHIMURA K, 2007, NEUROSCI RES, V59, P101, DOI
+   10.1016/j.neures.2007.05.014
+   NISHIMURA K, 2008, NEUROCHEM INT, V53, P184, DOI
+   10.1016/j.neuint.2008.09.006
+   NISHIMURA K, 2008, NEUROSCIENCE, V153, P1103, DOI
+   10.1016/j.neuroscience.2008.03.026
+   OKAMOTO K, 2005, ZOOL SCI, V22, P535
+   OVIEDO NJ, 2003, DEV DYNAM, V226, P326, DOI 10.1002/dvdy.10228
+   PAN DJ, 2007, GENE DEV, V21, P886, DOI 10.1101/gad.1536007
+   ROMERO R, 1991, INVERTEBR REPROD DEV, V19, P157
+   SAKAI F, 2000, ZOOL SCI, V17, P375
+   SHIMIZU T, 2008, GENETICS, V178, P957, DOI 10.1534/genetics.107.081570
+   SILVA E, 2006, CURR BIOL, V16, P2081, DOI 10.1016/j.cub.2006.09.004
+   TAKANO T, 2007, DEV GROWTH DIFFER, V49, P383, DOI
+   10.1111/j.1440-169x.2007.00936.x
+   TAZAKI A, 1999, BIOCHEM BIOPH RES CO, V260, P426
+   UMESONO Y, 1997, DEV GROWTH DIFFER, V39, P723
+   UMESONO Y, 1999, DEV GENES EVOL, V209, P31
+   UMESONO Y, 2009, DEV GROWTH DIFFER, V51, P185, DOI
+   10.1111/j.1440-169X.2009.01099.x
+NR 35
+TC 0
+PU ZOOLOGICAL SOC JAPAN
+PI TOKYO
+PA TOSHIN-BUILDING, HONGO 2-27-2, BUNKYO-KU, TOKYO, 113-0033, JAPAN
+SN 0289-0003
+J9 ZOOL SCI
+JI Zool. Sci.
+PD DEC
+PY 2009
+VL 26
+IS 12
+BP 805
+EP 813
+DI 10.2108/zsj.26.805
+PG 9
+SC Zoology
+GA 528OU
+UT ISI:000272456900001
+ER
+
+EF

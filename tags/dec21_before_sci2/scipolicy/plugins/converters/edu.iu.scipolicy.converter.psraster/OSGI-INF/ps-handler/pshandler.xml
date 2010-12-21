@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<component name="edu.iu.scipolicy.converter.psraster.postscript.pshandler.PSHandler.component" immediate="false">
+	<implementation class="edu.iu.scipolicy.converter.psraster.postscript.pshandler.PSHandlerFactory"/>
+	<properties entry="OSGI-INF/ps-handler/pshandler.properties"/>
+	
+	<service>
+		<provide interface=
+			"org.cishell.framework.algorithm.AlgorithmFactory"/>
+	</service>
+</component>

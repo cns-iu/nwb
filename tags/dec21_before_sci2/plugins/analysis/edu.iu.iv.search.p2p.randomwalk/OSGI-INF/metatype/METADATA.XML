@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<metatype:MetaData xmlns:metatype="http://www.osgi.org/xmlns/metatype/v1.0.0">
+	<OCD name="K Random-Walk" id="edu.iu.iv.search.p2p.randomwalk.RandomWalkAlgorithm.OCD">
+		<AD name="Source Node Number" id="sourceNode" type="Integer" description="Enter source node number in the network, must be &gt; 0" default="1" min="1"/>
+		<AD name="Target Node Number" id="targetNode" type="Integer" description="Enter target node number in the network, must be &gt; 0" default="1" min="1"/>
+		<AD name="Number of Walkers" id="walkers" type="Integer" description="Enter the number of walkers in the network, must be &gt; 0" default="1" min="1"/>
+	</OCD>
+	<Designate pid="edu.iu.iv.search.p2p.randomwalk.RandomWalkAlgorithm">
+		<Object ocdref="edu.iu.iv.search.p2p.randomwalk.RandomWalkAlgorithm.OCD" />
+	</Designate>
+</metatype:MetaData>

@@ -1,0 +1,21 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: Map References
+Bundle-SymbolicName: edu.iu.scipolicy.visualization.scimap.references
+Bundle-Version: 0.0.1
+Bundle-ClassPath: .
+Bundle-RequiredExecutionEnvironment: J2SE-1.5
+X-AutoStart: true
+Service-Component: OSGI-INF/component.xml
+Import-Package: au.com.bytecode.opencsv,
+ cern.colt,
+ cern.colt.function,
+ cern.colt.matrix,
+ org.antlr.stringtemplate,
+ org.apache.pdfbox.pdmodel,
+ org.apache.pdfbox.util,
+ org.cishell.framework,
+ org.cishell.framework.algorithm,
+ org.cishell.framework.data,
+ org.osgi.framework;version="1.3.0",
+ org.osgi.service.log;version="1.3.0"

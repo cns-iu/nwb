@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<metatype:MetaData xmlns:metatype="http://www.osgi.org/xmlns/metatype/v1.0.0">
+	<OCD name="Document to Document Citation Network Extraction" id="edu.iu.scipolicy.database.isi.extract.network.citation.document.ISIDocumentCitationNetworkAlgorithm.OCD"
+		 description="This algorithm extracts a Document to Document citation network from an ISI database. ">
+	</OCD>
+	<Designate pid="edu.iu.scipolicy.database.isi.extract.network.citation.document.ISIDocumentCitationNetworkAlgorithm">
+		<Object ocdref="edu.iu.scipolicy.database.isi.extract.network.citation.document.ISIDocumentCitationNetworkAlgorithm.OCD" />
+	</Designate>
+</metatype:MetaData>

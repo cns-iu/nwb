@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<metatype:MetaData xmlns:metatype="http://www.osgi.org/xmlns/metatype/v1.0.0">
+	<OCD name="Map References" id="edu.iu.scipolicy.visualization.scimap.references.MapReferences.OCD"
+		 description="Visualize References from PDFs on the Map of Science">
+		<AD name="Directory with PDFs" id="directory" type="String" description="A Directory with reference PDFs" default="directory:"/>
+		<AD name="Scaling Factor" id="scalingFactor" type="Double" description="Scale the resulting circle areas by some constant" default="1.0"/>
+	</OCD>
+	<Designate pid="edu.iu.scipolicy.visualization.scimap.references.MapReferences">
+		<Object ocdref="edu.iu.scipolicy.visualization.scimap.references.MapReferences.OCD" />
+	</Designate>
+</metatype:MetaData>

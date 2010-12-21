@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<metatype:MetaData xmlns:metatype="http://www.osgi.org/xmlns/metatype/v1.0.0">
+	<OCD name="Attribute removal parameters"
+		 id="edu.iu.nwb.preprocessing.removeegraphattributes.parameters.nodes.OCD"
+		 description="Select attributes to remove from all nodes in the network:">
+		 <!-- Note that the only hard-coded parameter is a dummy.
+		 		All other parameters will be injected in #mutateParameters.
+		 		The dummy is included only so that the given OCD reference is not null.
+		 		The dummy will be removed in #mutateParameters. -->
+		 <AD name="DUMMY_AD" id="DUMMY_AD" type="String" description="This dummy 
+		 attribute definition is included only so that mutateParameters does not 
+		 receive a null OCD.  This will be removed in mutateParameters." 
+		 default="DUMMY_AD"/>
+	</OCD>
+	<Designate pid="edu.iu.nwb.preprocessing.removeegraphattributes.nodes.RemoveNodeAttributesAlgorithmFactory">
+		<Object ocdref="edu.iu.nwb.preprocessing.removeegraphattributes.parameters.nodes.OCD" />
+	</Designate>
+	
+	<OCD name="Attribute removal parameters"
+		 id="edu.iu.nwb.preprocessing.removeegraphattributes.parameters.edges.OCD"
+		 description="Select attributes to remove from all edges in the network:">
+		 <!-- Note that the only hard-coded parameter is a dummy.
+		 		All other parameters will be injected in #mutateParameters.
+		 		The dummy is included only so that the given OCD reference is not null.
+		 		The dummy will be removed in #mutateParameters. -->
+		 <AD name="DUMMY_AD" id="DUMMY_AD" type="String" description="This dummy 
+		 attribute definition is included only so that mutateParameters does not 
+		 receive a null OCD.  This will be removed in mutateParameters." 
+		 default="DUMMY_AD"/>
+	</OCD>
+	<Designate pid="edu.iu.nwb.preprocessing.removeegraphattributes.edges.RemoveEdgeAttributesAlgorithmFactory">
+		<Object ocdref="edu.iu.nwb.preprocessing.removeegraphattributes.parameters.edges.OCD" />
+	</Designate>	
+</metatype:MetaData>

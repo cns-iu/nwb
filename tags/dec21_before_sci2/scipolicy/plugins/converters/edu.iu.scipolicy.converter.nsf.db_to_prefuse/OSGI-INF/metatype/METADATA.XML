@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<metatype:MetaData xmlns:metatype="http://www.osgi.org/xmlns/metatype/v1.0.0">
+	<OCD name="NSF db to prefuse" id="edu.iu.scipolicy.converter.nsf.db_to_prefuse.OCD"
+		 description="Extracts a prefuse table from an NSF db">
+	</OCD>
+	<Designate pid="edu.iu.scipolicy.converter.nsf.db_to_prefuse.DbToPrefuseAlgorithm">
+		<Object ocdref="edu.iu.scipolicy.converter.nsf.db_to_prefuse.DbToPrefuseAlgorithm.OCD" />
+	</Designate>
+</metatype:MetaData>

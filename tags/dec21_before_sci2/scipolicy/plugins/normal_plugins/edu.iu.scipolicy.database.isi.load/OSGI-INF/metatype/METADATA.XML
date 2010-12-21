@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<metatype:MetaData xmlns:metatype="http://www.osgi.org/xmlns/metatype/v1.0.0">
+	<OCD name="ISI Database Loader" id="edu.iu.scipolicy.database.isi.load.ISIDatabaseLoaderAlgorithm.OCD"
+		 description="This algorithm loads an ISI file into a database. ">
+	</OCD>
+	<Designate pid="edu.iu.scipolicy.database.isi.load.ISIDatabaseLoaderAlgorithm">
+		<Object ocdref="edu.iu.scipolicy.database.isi.load.ISIDatabaseLoaderAlgorithm.OCD" />
+	</Designate>
+</metatype:MetaData>

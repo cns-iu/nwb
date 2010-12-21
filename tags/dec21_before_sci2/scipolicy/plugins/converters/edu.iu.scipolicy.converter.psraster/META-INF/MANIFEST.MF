@@ -1,0 +1,21 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: PostScript/Raster Image validating, convering, and handling
+Bundle-SymbolicName: edu.iu.scipolicy.converter.psraster
+Bundle-Version: 0.0.1
+Bundle-ClassPath: .
+Import-Package: org.cishell.framework;version="1.0.0",
+ org.cishell.framework.algorithm;version="1.0.0",
+ org.cishell.framework.data;version="1.0.0",
+ org.cishell.framework.userprefs;version="1.0.0",
+ org.cishell.utilities,
+ org.freehep.postscript,
+ org.osgi.framework;version="1.3.0",
+ org.osgi.service.cm;version="1.2.0",
+ org.osgi.service.component;version="1.0.0",
+ org.osgi.service.log;version="1.3.0",
+ org.osgi.service.metatype;version="1.1.0",
+ org.osgi.service.prefs;version="1.1.0"
+X-AutoStart: true
+Service-Component: OSGI-INF/ps-validator/psvalidator.xml, OSGI-INF/ps-validator/epsvalidator.xml, OSGI-INF/ps-handler/pshandler.xml, OSGI-INF/jpg-validator/jpegvalidator.xml, OSGI-INF/jpg-validator/jpgvalidator.xml, OSGI-INF/jpg-reader/jpgreader.xml, OSGI-INF/jpg-writer/jpgwriter.xml, OSGI-INF/jpg-handler/jpghandler.xml, OSGI-INF/postscript-renderer/postscriptrenderer.xml
+Bundle-RequiredExecutionEnvironment: J2SE-1.5
