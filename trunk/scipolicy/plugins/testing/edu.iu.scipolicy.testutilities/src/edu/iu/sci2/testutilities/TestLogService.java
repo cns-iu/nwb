@@ -1,4 +1,4 @@
-package edu.iu.scipolicy.testutilities;
+package edu.iu.sci2.testutilities;
 
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.ServiceReference;

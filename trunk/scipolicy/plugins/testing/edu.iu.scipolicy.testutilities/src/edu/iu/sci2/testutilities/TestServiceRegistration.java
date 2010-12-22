@@ -1,4 +1,4 @@
-package edu.iu.scipolicy.testutilities;
+package edu.iu.sci2.testutilities;
 
 import java.util.Dictionary;
 

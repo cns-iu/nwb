@@ -1,4 +1,4 @@
-package edu.iu.scipolicy.testutilities;
+package edu.iu.sci2.testutilities;
 
 import java.io.File;
 import java.io.InputStream;
@@ -29,7 +29,7 @@ import org.osgi.service.log.LogService;
    start and stop, and explicitly checking for its pid in the one version of
    getService that actually has a body.
  * This class should only ever be used for testing, hence why it is in
-   edu.iu.scipolicy.testutilities.
+   edu.iu.sci2.testutilities.
  **/
 public class TestContext extends BundleContextImpl implements CIShellContext {
 	private Object logService;
