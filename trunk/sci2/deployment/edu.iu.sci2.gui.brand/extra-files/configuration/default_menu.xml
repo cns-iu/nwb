@@ -42,7 +42,7 @@
 	<menu name="General" type="group"> 
  	    <menu pid="edu.iu.sci2.filtering.topnpercent.TopNPercentAlgorithm"/>
 	    <menu pid="edu.iu.sci2.filtering.topn.TopNAlgorithm"/>
-            <menu pid="edu.iu.sci2.preprocessing.aggregatedata.AggregateDataAlgorithm"/>
+        <menu pid="edu.iu.sci2.preprocessing.aggregatedata.AggregateDataAlgorithm"/>
 	</menu>
 	<menu name="Temporal" type="group"> 
 	    <menu pid="edu.iu.nwb.preprocessing.timeslice.Slice"/>
@@ -60,12 +60,12 @@
 	    <menu pid="edu.iu.nwb.preprocessing.extractnodesandedges.extractedges.top.ExtractTopEdgesAlgorithm"/>
 	    <menu pid="edu.iu.nwb.preprocessing.extractnodesandedges.extractedges.abovebelow.ExtractEdgesAboveBelowAlgorithm"/>
 	    <menu pid="edu.iu.nwb.analysis.selfloops.Remove"/>
-            <menu pid="edu.iu.nwb.preprocessing.trimedges.Trim"/>
+        <menu pid="edu.iu.nwb.preprocessing.trimedges.Trim"/>
 	    <menu pid="edu.iu.nwb.preprocessing.pathfindernetworkscaling.mst.MSTPathfinderNetworkScalingAlgorithm"/>
 	    <menu pid="edu.iu.nwb.preprocessing.pathfindernetworkscaling.fast.FastPathfinderNetworkScalingAlgorithm"/>
-            <menu type="break"/>
+        <menu type="break"/>
 	    <menu pid="edu.iu.nwb.analysis.sampling.snowball.SnowballAlgorithm"/>
-            <menu pid="edu.iu.nwb.analysis.sampling.node.NodeAlgorithm"/>
+        <menu pid="edu.iu.nwb.analysis.sampling.node.NodeAlgorithm"/>
 	    <menu pid="edu.iu.nwb.analysis.sampling.edge.EdgeAlgorithm"/>
 	    <menu type="break"/>
 	    <!-- <menu pid="edu.iu.nwb.analysis.symmetrize.Symmetrize"/> -->
