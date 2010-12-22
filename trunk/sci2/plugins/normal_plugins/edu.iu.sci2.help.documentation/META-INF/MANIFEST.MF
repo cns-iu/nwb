@@ -1,7 +1,7 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: Documentation
-Bundle-SymbolicName: edu.iu.scipolicy.help.documentation
+Bundle-SymbolicName: edu.iu.sci2.help.documentation
 Bundle-Version: 0.0.1
 Bundle-ClassPath: .
 Import-Package: org.cishell.framework;version="1.0.0",

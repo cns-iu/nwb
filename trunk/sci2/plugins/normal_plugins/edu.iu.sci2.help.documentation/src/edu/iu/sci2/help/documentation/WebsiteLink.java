@@ -1,4 +1,4 @@
-package edu.iu.scipolicy.help.documentation;
+package edu.iu.sci2.help.documentation;
 
 import java.net.URL;
 
