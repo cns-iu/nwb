@@ -9,7 +9,7 @@ import org.cishell.framework.data.Data;
 import org.cishell.utilities.StringUtilities;
 import org.cishell.utilities.UnicodeReader;
 
-import edu.iu.scipolicy.utilities.nsf.NSF_CSV_FieldNames;
+import edu.iu.sci2.utilities.nsf.NSF_CSV_FieldNames;
 
 import au.com.bytecode.opencsv.CSVReader;
 

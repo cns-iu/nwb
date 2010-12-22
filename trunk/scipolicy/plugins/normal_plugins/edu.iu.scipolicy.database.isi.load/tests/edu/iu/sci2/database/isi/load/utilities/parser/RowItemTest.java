@@ -25,7 +25,7 @@ import edu.iu.nwb.shared.isiutil.database.ISI;
 import edu.iu.nwb.shared.isiutil.exception.ReadISIFileException;
 import edu.iu.sci2.database.isi.load.utilities.ISITablePreprocessor;
 import edu.iu.sci2.database.isi.load.utilities.parser.ISITableModelParser;
-import edu.iu.scipolicy.testutilities.TestUtilities;
+import edu.iu.sci2.testutilities.TestUtilities;
 
 // TODO: Just make this a utility class?
 public class RowItemTest {
@@ -37,7 +37,7 @@ public class RowItemTest {
 	public static final String ISI_MIME_TYPE = "file:text/isi";
 
 	public static final String BASE_TEST_DATA_PATH =
-		"/edu/iu/scipolicy/database/isi/load/testdata/";
+		"/edu/iu/sci2/database/isi/load/testdata/";
 
 	public static final String EMPTY_TEST_DATA_PATH = BASE_TEST_DATA_PATH + "Empty.isi";
 

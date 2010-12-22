@@ -13,7 +13,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 
 import au.com.bytecode.opencsv.CSVReader;
-import edu.iu.scipolicy.utilities.nsf.NSF_CSV_FieldNames;
+import edu.iu.sci2.utilities.nsf.NSF_CSV_FieldNames;
 
 public class NSFMetadata {
 	private String fileName;

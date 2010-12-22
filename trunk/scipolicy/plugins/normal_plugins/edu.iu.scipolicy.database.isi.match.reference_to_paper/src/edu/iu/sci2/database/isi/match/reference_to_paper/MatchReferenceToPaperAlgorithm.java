@@ -30,7 +30,7 @@ public class MatchReferenceToPaperAlgorithm implements Algorithm {
 		"An error occurred when attempting to match references to papers: ";
 
 	public static final String STRING_TEMPLATE_BASE_FILE_PATH =
-		"/edu/iu/scipolicy/database/isi/match/reference_to_paper/stringtemplate/";
+		"/edu/iu/sci2/database/isi/match/reference_to_paper/stringtemplate/";
 	public static final String STRING_TEMPLATE_FILE_PATH =
 		STRING_TEMPLATE_BASE_FILE_PATH + "MatchReferenceToPaperQuery.st";
 

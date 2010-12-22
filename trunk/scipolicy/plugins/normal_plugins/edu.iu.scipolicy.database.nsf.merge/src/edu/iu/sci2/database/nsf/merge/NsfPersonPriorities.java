@@ -3,7 +3,7 @@ package edu.iu.sci2.database.nsf.merge;
 import prefuse.data.Tuple;
 import edu.iu.cns.database.merge.generic.maker.LongerColumn;
 import edu.iu.cns.database.merge.generic.maker.PreferrableFormComparator;
-import edu.iu.scipolicy.utilities.nsf.NSF_Database_FieldNames;
+import edu.iu.sci2.utilities.nsf.NSF_Database_FieldNames;
 
 public class NsfPersonPriorities implements PreferrableFormComparator {
 	

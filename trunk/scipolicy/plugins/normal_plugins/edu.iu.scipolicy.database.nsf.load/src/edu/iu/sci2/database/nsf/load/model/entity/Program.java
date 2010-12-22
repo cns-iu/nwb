@@ -11,7 +11,7 @@ import edu.iu.cns.database.load.framework.DerbyFieldType;
 import edu.iu.cns.database.load.framework.Entity;
 import edu.iu.cns.database.load.framework.Schema;
 import edu.iu.cns.database.load.framework.utilities.DatabaseTableKeyGenerator;
-import edu.iu.scipolicy.utilities.nsf.NSF_Database_FieldNames;
+import edu.iu.sci2.utilities.nsf.NSF_Database_FieldNames;
 
 public class Program extends Entity<Program> {
 

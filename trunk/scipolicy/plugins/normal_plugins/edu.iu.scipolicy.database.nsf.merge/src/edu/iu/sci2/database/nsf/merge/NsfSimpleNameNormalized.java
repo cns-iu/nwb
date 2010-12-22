@@ -4,7 +4,7 @@ import java.util.regex.Pattern;
 
 import prefuse.data.Tuple;
 import edu.iu.cns.database.merge.generic.maker.KeyMaker;
-import edu.iu.scipolicy.utilities.nsf.NSF_Database_FieldNames;
+import edu.iu.sci2.utilities.nsf.NSF_Database_FieldNames;
 
 
 public class NsfSimpleNameNormalized implements KeyMaker {

@@ -28,7 +28,7 @@ import edu.iu.sci2.database.nsf.load.exception.NSFReadingException;
 import edu.iu.sci2.database.nsf.load.utilities.CSVReaderUtilities;
 import edu.iu.sci2.database.nsf.load.utilities.NSFMetadata;
 import edu.iu.sci2.database.nsf.load.utilities.NSFTableModelParser;
-import edu.iu.scipolicy.utilities.nsf.NSF_Database_FieldNames;
+import edu.iu.sci2.utilities.nsf.NSF_Database_FieldNames;
 
 /**
  * @author cdtank

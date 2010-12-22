@@ -34,8 +34,8 @@ import edu.iu.sci2.database.nsf.load.model.entity.relationship.InvestigatorOrgan
 import edu.iu.sci2.database.nsf.load.model.entity.relationship.ProgramManager;
 import edu.iu.sci2.database.nsf.load.model.entity.relationship.ProgramNameAndElementCode;
 import edu.iu.sci2.database.nsf.load.model.entity.relationship.ProgramReferenceCode;
-import edu.iu.scipolicy.utilities.nsf.NSF_CSV_FieldNames;
-import edu.iu.scipolicy.utilities.nsf.NSF_Database_FieldNames;
+import edu.iu.sci2.utilities.nsf.NSF_CSV_FieldNames;
+import edu.iu.sci2.utilities.nsf.NSF_Database_FieldNames;
 
 public class NSFTableModelParser {
 

@@ -8,7 +8,7 @@ import edu.iu.cns.database.load.framework.RowItem;
 import edu.iu.cns.database.load.framework.Schema;
 import edu.iu.sci2.database.nsf.load.model.entity.Award;
 import edu.iu.sci2.database.nsf.load.model.entity.Program;
-import edu.iu.scipolicy.utilities.nsf.NSF_Database_FieldNames;
+import edu.iu.sci2.utilities.nsf.NSF_Database_FieldNames;
 
 public class ProgramNameAndElementCode extends RowItem<ProgramNameAndElementCode> {
 
