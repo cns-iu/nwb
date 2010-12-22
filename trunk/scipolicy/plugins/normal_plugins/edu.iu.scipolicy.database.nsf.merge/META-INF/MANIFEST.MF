@@ -1,7 +1,7 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: ISI Merge Algorithms
-Bundle-SymbolicName: edu.iu.scipolicy.database.nsf.merge
+Bundle-SymbolicName: edu.iu.sci2.database.nsf.merge
 Bundle-Version: 0.0.1
 Bundle-ClassPath: .
 Import-Package: com.google.common.annotations,
