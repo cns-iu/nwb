@@ -1,4 +1,4 @@
-Installation of the SciPolicy Tool was successful.
+Installation of the Sci2 Tool was successful.
 
 Please feel free to report bugs or request features through NWB Trac system at 
 https://cns-trac.slis.indiana.edu/trac/nwb/newticket, or directly contact the 
@@ -10,9 +10,9 @@ free to sign up NWB mailing lists at http://nwb.slis.indiana.edu/mailing.html.
 
 Please go to http://nwb.slis.indiana.edu for more information and breaking news.
 
-If you use the SciPolicy tool or information contained in the 
+If you use the Sci2 tool or information contained in the 
 http://nwb.slis.indiana.edu website for any publication, please cite as follows:
 
-SciPolicy Team. (2009). SciPolicy Tool. Indiana University, Northeastern University, 
+Sci2 Team. (2009). Sci2 Tool. Indiana University, Northeastern University, 
 and University of Michigan, http://sci.slis.indiana.edu. 
 

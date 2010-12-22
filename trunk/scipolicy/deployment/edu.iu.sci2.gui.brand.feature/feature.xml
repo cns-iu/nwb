@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <feature
-      id="edu.iu.scipolicy.gui.brand.feature"
-      label="Sci^2 Brand "
+      id="edu.iu.sci2.gui.brand.feature"
+      label="Sci2 Brand "
       version="1.0.0"
-      provider-name="Sci^2 Team">
+      provider-name="Sci2 Team">
 
    <description>
       Sci^2 Tool
@@ -35,7 +35,7 @@ Dr. Katy Borner (katy@indiana.edu)
          version="0.0.0"/>
 
    <plugin
-         id="edu.iu.scipolicy.gui.brand"
+         id="edu.iu.sci2.gui.brand"
          download-size="0"
          install-size="0"
          version="0.0.0"

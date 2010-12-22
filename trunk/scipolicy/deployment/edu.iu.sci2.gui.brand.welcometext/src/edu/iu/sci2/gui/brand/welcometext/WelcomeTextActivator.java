@@ -1,4 +1,4 @@
-package edu.iu.scipolicy.gui.brand.welcometext;
+package edu.iu.sci2.gui.brand.welcometext;
 
 import java.io.BufferedWriter;
 import java.io.FileWriter;
@@ -13,7 +13,7 @@ import org.osgi.service.log.LogService;
 
 public class WelcomeTextActivator {
 	public static final String PLUGIN_ID =
-		"edu.iu.scipolicy.gui.brand.welcometext";
+		"edu.iu.sci2.gui.brand.welcometext";
 	
 	private static WelcomeTextActivator plugin;
 

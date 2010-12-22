@@ -1,7 +1,7 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: Welcome Text
-Bundle-SymbolicName: edu.iu.scipolicy.gui.brand.welcometext
+Bundle-SymbolicName: edu.iu.sci2.gui.brand.welcometext
 Bundle-Version: 0.0.1
 Bundle-ClassPath: .
 Import-Package: org.cishell.framework.algorithm;version="1.0.0",

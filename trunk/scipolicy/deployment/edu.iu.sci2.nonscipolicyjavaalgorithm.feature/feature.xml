@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <feature
-      id="edu.iu.scipolicy.nonscipolicyjavaalgorithm.feature"
+      id="edu.iu.sci2.javaalgorithms.feature"
       label="Java-based algorithms"
       version="1.0.0"
-      provider-name="SciPolicy Team">
+      provider-name="Sci2 Team">
 
    <description>
-      Java-based algorithms that have been integrated in the SciPolicy tool.
+      Java-based algorithms that have been integrated in the Sci2 tool.
    </description>
 
    <copyright>
@@ -14,7 +14,7 @@
    </copyright>
 
    <license url="http://www.apache.org/licenses/LICENSE-2.0">
-      SciPolicy Tool
+      Sci2 Tool
 Copyright 2006 Indiana University
 Licensed under the Apache License, Version 2.0 (the &quot;License&quot;);
 you may not use this file except in compliance with the License.
@@ -32,11 +32,11 @@ Dr. Katy Borner (katy@indiana.edu)
    </license>
 
    <includes
-         id="edu.iu.scipolicy.converter.feature"
+         id="edu.iu.sci2.converter.feature"
          version="0.0.0"/>
 
    <requires>
-      <import feature="edu.iu.scipolicy.converter.feature" version="1.0.0"/>
+      <import feature="edu.iu.sci2.converter.feature" version="1.0.0"/>
    </requires>
 
 	<!-- Node Between Centrality Plugins -->
@@ -222,14 +222,14 @@ Dr. Katy Borner (katy@indiana.edu)
          unpack="false"/>
 
    <plugin
-         id="edu.iu.scipolicy.converter.psraster"
+         id="edu.iu.sci2.converter.psraster"
          download-size="0"
          install-size="0"
          version="0.0.1"
          unpack="false"/>
 
    <plugin
-         id="edu.iu.scipolicy.utilities"
+         id="edu.iu.sci2.utilities"
          download-size="0"
          install-size="0"
          version="0.0.0"
@@ -505,7 +505,7 @@ Dr. Katy Borner (katy@indiana.edu)
          unpack="false"/>
 
    <plugin
-         id="edu.iu.scipolicy.help.documentation"
+         id="edu.iu.sci2.help.documentation"
          download-size="0"
          install-size="0"
          version="0.0.1"
@@ -594,21 +594,21 @@ Dr. Katy Borner (katy@indiana.edu)
          version="1.0.0"/>
 
    <plugin
-         id="edu.iu.scipolicy.filtering.topn"
+         id="edu.iu.sci2.filtering.topn"
          download-size="0"
          install-size="0"
          version="0.0.1"
          unpack="false"/>
 
    <plugin
-         id="edu.iu.scipolicy.utilities"
+         id="edu.iu.sci2.utilities"
          download-size="0"
          install-size="0"
          version="1.0.0"
          unpack="false"/>
 
    <plugin
-         id="edu.iu.scipolicy.utilities.nsf"
+         id="edu.iu.sci2.utilities.nsf"
          download-size="0"
          install-size="0"
          version="1.0.0"
@@ -616,7 +616,7 @@ Dr. Katy Borner (katy@indiana.edu)
 
 	<!--
    <plugin
-         id="edu.iu.scipolicy.visualization.horizontalbargraph"
+         id="edu.iu.sci2.visualization.horizontalbargraph"
          download-size="0"
          install-size="0"
          version="0.0.1"
@@ -624,7 +624,7 @@ Dr. Katy Borner (katy@indiana.edu)
 	-->
 
    <plugin
-         id="edu.iu.scipolicy.visualization.imageviewer"
+         id="edu.iu.sci2.visualization.imageviewer"
          download-size="0"
          install-size="0"
          version="0.0.1"
@@ -644,7 +644,7 @@ Dr. Katy Borner (katy@indiana.edu)
          version="0.0.0"/>
 
    <plugin
-         id="edu.iu.scipolicy.preprocessing.geocoder"
+         id="edu.iu.sci2.preprocessing.geocoder"
          download-size="0"
          install-size="0"
          version="0.0.0"
@@ -658,7 +658,7 @@ Dr. Katy Borner (katy@indiana.edu)
          unpack="false"/>
 
    <plugin
-         id="edu.iu.scipolicy.visualization.geomaps"
+         id="edu.iu.sci2.visualization.geomaps"
          download-size="0"
          install-size="0"
          version="0.0.0"
@@ -727,14 +727,14 @@ Dr. Katy Borner (katy@indiana.edu)
          unpack="false"/>
 
    <plugin
-         id="edu.iu.scipolicy.preprocessing.extractzipcode"
+         id="edu.iu.sci2.preprocessing.extractzipcode"
          download-size="0"
          install-size="0"
          version="0.0.0"
          unpack="false"/>
 
    <plugin
-         id="edu.iu.scipolicy.preprocessing.aggregatedata"
+         id="edu.iu.sci2.preprocessing.aggregatedata"
          download-size="0"
          install-size="0"
          version="0.0.0"
@@ -748,7 +748,7 @@ Dr. Katy Borner (katy@indiana.edu)
          unpack="false"/>
 
    <plugin
-         id="edu.iu.scipolicy.utilities.nsf"
+         id="edu.iu.sci2.utilities.nsf"
          download-size="0"
          install-size="0"
          version="0.0.0"
@@ -771,7 +771,7 @@ Dr. Katy Borner (katy@indiana.edu)
 		unpack="false"/>
 
 	<plugin
-		id="edu.iu.scipolicy.database.isi.load"
+		id="edu.iu.sci2.database.isi.load"
 		download-size="0"
 		install-size="0"
 		version="0.0.0"
@@ -785,168 +785,168 @@ Dr. Katy Borner (katy@indiana.edu)
 		unpack="false"/>
 
 	<plugin
-		id="edu.iu.scipolicy.database.isi.merge"
+		id="edu.iu.sci2.database.isi.merge"
 		download-size="0"
 		install-size="0"
 		version="0.0.0"
 		unpack="false"/>
 
 	<plugin
-		id="edu.iu.scipolicy.database.nsf.merge"
+		id="edu.iu.sci2.database.nsf.merge"
 		download-size="0"
 		install-size="0"
 		version="0.0.0"
 		unpack="false"/>
 
 	<plugin
-         id="edu.iu.scipolicy.database.nsf.load"
+         id="edu.iu.sci2.database.nsf.load"
          download-size="0"
          install-size="0"
          version="0.0.0"
          unpack="false"/>
 
    <plugin
-         id="edu.iu.scipolicy.database.isi.extract.network.citation.author"
+         id="edu.iu.sci2.database.isi.extract.network.citation.author"
          download-size="0"
          install-size="0"
          version="0.0.0"
          unpack="false"/>
 
    <plugin
-         id="edu.iu.scipolicy.database.isi.extract.network.citation.document"
+         id="edu.iu.sci2.database.isi.extract.network.citation.document"
          download-size="0"
          install-size="0"
          version="0.0.0"
          unpack="false"/>
 
    <plugin
-         id="edu.iu.scipolicy.database.isi.extract.network.citation.document_source"
+         id="edu.iu.sci2.database.isi.extract.network.citation.document_source"
          download-size="0"
          install-size="0"
          version="0.0.0"
          unpack="false"/>
 
    <plugin
-         id="edu.iu.scipolicy.database.isi.extract.network.coauthor"
+         id="edu.iu.sci2.database.isi.extract.network.coauthor"
          download-size="0"
          install-size="0"
          version="0.0.0"
          unpack="false"/>
 
    <plugin
-         id="edu.iu.scipolicy.database.isi.extract.network.cocitation.author.core"
+         id="edu.iu.sci2.database.isi.extract.network.cocitation.author.core"
          download-size="0"
          install-size="0"
          version="0.0.0"
          unpack="false"/>
 
    <plugin
-         id="edu.iu.scipolicy.database.isi.extract.network.cocitation.document.all"
+         id="edu.iu.sci2.database.isi.extract.network.cocitation.document.all"
          download-size="0"
          install-size="0"
          version="0.0.0"
          unpack="false"/>
 
    <plugin
-         id="edu.iu.scipolicy.database.isi.extract.network.cocitation.document.core"
+         id="edu.iu.sci2.database.isi.extract.network.cocitation.document.core"
          download-size="0"
          install-size="0"
          version="0.0.0"
          unpack="false"/>
 
    <plugin
-         id="edu.iu.scipolicy.database.isi.extract.network.cocitation.document_source.all"
+         id="edu.iu.sci2.database.isi.extract.network.cocitation.document_source.all"
          download-size="0"
          install-size="0"
          version="0.0.0"
          unpack="false"/>
 
    <plugin
-         id="edu.iu.scipolicy.database.isi.extract.network.cocitation.document_source.core"
+         id="edu.iu.sci2.database.isi.extract.network.cocitation.document_source.core"
          download-size="0"
          install-size="0"
          version="0.0.0"
          unpack="false"/>
 
    <plugin
-         id="edu.iu.scipolicy.database.isi.extract.network.bibcoupling.author"
+         id="edu.iu.sci2.database.isi.extract.network.bibcoupling.author"
          download-size="0"
          install-size="0"
          version="0.0.0"
          unpack="false"/>
 
    <plugin
-         id="edu.iu.scipolicy.database.isi.extract.network.bibcoupling.document"
+         id="edu.iu.sci2.database.isi.extract.network.bibcoupling.document"
          download-size="0"
          install-size="0"
          version="0.0.0"
          unpack="false"/>
 
    <plugin
-         id="edu.iu.scipolicy.database.isi.extract.network.bibcoupling.document_source"
+         id="edu.iu.sci2.database.isi.extract.network.bibcoupling.document_source"
          download-size="0"
          install-size="0"
          version="0.0.0"
          unpack="false"/>
 
    <plugin
-         id="edu.iu.scipolicy.database.isi.extract.table.core_entities"
+         id="edu.iu.sci2.database.isi.extract.table.core_entities"
          download-size="0"
          install-size="0"
          version="0.0.0"
          unpack="false"/>
 
    <plugin
-         id="edu.iu.scipolicy.database.isi.extract.table.longitudinalsummary"
+         id="edu.iu.sci2.database.isi.extract.table.longitudinalsummary"
          download-size="0"
          install-size="0"
          version="0.0.0"
          unpack="false"/>
 
    <plugin
-         id="edu.iu.scipolicy.database.nsf.extract.network.copi"
+         id="edu.iu.sci2.database.nsf.extract.network.copi"
          download-size="0"
          install-size="0"
          version="0.0.0"
          unpack="false"/>
 
    <plugin
-         id="edu.iu.scipolicy.database.nsf.extract.table.core_entities"
+         id="edu.iu.sci2.database.nsf.extract.table.core_entities"
          download-size="0"
          install-size="0"
          version="0.0.0"
          unpack="false"/>
 
    <plugin
-         id="edu.iu.scipolicy.database.isi.match.reference_to_paper"
+         id="edu.iu.sci2.database.isi.match.reference_to_paper"
          download-size="0"
          install-size="0"
          version="0.0.0"
          unpack="false"/>
 
    <plugin
-         id="edu.iu.scipolicy.tool.db_to_prefuse"
+         id="edu.iu.sci2.tool.db_to_prefuse"
          download-size="0"
          install-size="0"
          version="0.0.0"
          unpack="false"/>
 
    <plugin
-         id="edu.iu.scipolicy.database.isi.extract.table.entities_by_year"
+         id="edu.iu.sci2.database.isi.extract.table.entities_by_year"
          download-size="0"
          install-size="0"
          version="0.0.0"
          unpack="false"/>
 
    <plugin
-         id="edu.iu.scipolicy.database.isi.extract.table.entities_by_year_for_burst"
+         id="edu.iu.sci2.database.isi.extract.table.entities_by_year_for_burst"
          download-size="0"
          install-size="0"
          version="0.0.0"
          unpack="false"/>
 
    <plugin
-         id="edu.iu.scipolicy.database.converters.anytoall"
+         id="edu.iu.sci2.database.converters.anytoall"
          download-size="0"
          install-size="0"
          version="0.0.0"
@@ -1026,7 +1026,7 @@ Dr. Katy Borner (katy@indiana.edu)
 	END GENERIC-CSV DATABASE FUNCTIONALITY. REMOVED FROM BUILD FOR NOW. -->
 
    <plugin
-         id="edu.iu.scipolicy.preprocessing.mergenetworks"
+         id="edu.iu.sci2.preprocessing.mergenetworks"
          download-size="0"
          install-size="0"
          version="0.0.0"
@@ -1039,7 +1039,7 @@ Dr. Katy Borner (katy@indiana.edu)
          version="0.0.0"/>
 
    <plugin
-         id="edu.iu.scipolicy.model"
+         id="edu.iu.sci2.model"
          download-size="0"
          install-size="0"
          version="0.0.0"
