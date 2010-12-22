@@ -1,7 +1,7 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: Horizontal Line Graph Visualization
-Bundle-SymbolicName: edu.iu.scipolicy.visualization.horizontallinegraph
+Bundle-SymbolicName: edu.iu.sci2.visualization.horizontallinegraph
 Bundle-Version: 0.0.1
 Bundle-ClassPath: .
 Import-Package: org.cishell.framework;version="1.0.0",

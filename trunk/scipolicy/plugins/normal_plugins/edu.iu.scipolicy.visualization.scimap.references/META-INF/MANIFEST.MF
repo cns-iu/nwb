@@ -1,7 +1,7 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: Map References
-Bundle-SymbolicName: edu.iu.scipolicy.visualization.scimap.references
+Bundle-SymbolicName: edu.iu.sci2.visualization.scimap.references
 Bundle-Version: 0.0.1
 Bundle-ClassPath: .
 Bundle-RequiredExecutionEnvironment: J2SE-1.5
