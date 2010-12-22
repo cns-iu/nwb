@@ -1,7 +1,7 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: Aggregate Data
-Bundle-SymbolicName: edu.iu.scipolicy.preprocessing.aggregatedata
+Bundle-SymbolicName: edu.iu.sci2.preprocessing.aggregatedata
 Bundle-Version: 1.0.0
 Bundle-ClassPath: .
 Bundle-Localization: plugin

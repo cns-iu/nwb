@@ -1,7 +1,7 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: Extract Top N Results
-Bundle-SymbolicName: edu.iu.scipolicy.filtering.topn
+Bundle-SymbolicName: edu.iu.sci2.filtering.topn
 Bundle-Version: 0.0.1
 Bundle-ClassPath: .
 Import-Package: org.cishell.framework;version="1.0.0",

@@ -1,7 +1,7 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: Extract ZIP code
-Bundle-SymbolicName: edu.iu.scipolicy.preprocessing.extractzipcode
+Bundle-SymbolicName: edu.iu.sci2.preprocessing.extractzipcode
 Bundle-Version: 1.0.0
 Bundle-ClassPath: .
 Import-Package: org.cishell.framework,

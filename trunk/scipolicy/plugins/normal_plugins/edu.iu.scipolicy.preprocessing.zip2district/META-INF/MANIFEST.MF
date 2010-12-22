@@ -1,7 +1,7 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: ZipToDistrict
-Bundle-SymbolicName: edu.iu.scipolicy.preprocessing.zip2district
+Bundle-SymbolicName: edu.iu.sci2.preprocessing.zip2district
 Bundle-Version: 0.0.1
 Bundle-ClassPath: .
 Import-Package: edu.iu.scipolicy.model.geocode,
