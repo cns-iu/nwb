@@ -1362,12 +1362,6 @@
       <param name="project.name" value="/plugins/preprocessing/edu.iu.nwb.preprocessing.duplicatenodedetector"/>
       <param name="url" value="http://nwb.slis.indiana.edu/svn/nwb/trunk"/>
     </antcall>  	
-    <antcall target="svn.co">
-      <param name="target" value="plugins"/>
-      <param name="element.id" value="edu.iu.nwb.composite.isiloadandclean"/>
-      <param name="project.name" value="/plugins/composite/edu.iu.nwb.composite.isiloadandclean"/>
-      <param name="url" value="http://nwb.slis.indiana.edu/svn/nwb/trunk"/>
-    </antcall>
     
   	<antcall target="svn.co">
   	  <param name="target" value="plugins"/>

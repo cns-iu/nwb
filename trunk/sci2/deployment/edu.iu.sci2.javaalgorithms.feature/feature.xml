@@ -332,13 +332,6 @@ Dr. Katy Borner (katy@indiana.edu)
          unpack="false"/>
 
    <plugin
-         id="edu.iu.nwb.composite.isiloadandclean"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         unpack="false"/>
-
-   <plugin
          id="edu.iu.nwb.shared.isiutil"
          download-size="0"
          install-size="0"
