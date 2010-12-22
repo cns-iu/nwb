@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<component name="edu.iu.scipolicy.filtering.topn.TopNAlgorithm.component" immediate="false">
-	<implementation class="edu.iu.scipolicy.filtering.topn.TopNFactory"/>
+<component name="edu.iu.sci2.filtering.topn.TopNAlgorithm.component" immediate="false">
+	<implementation class="edu.iu.sci2.filtering.topn.TopNFactory"/>
 	<properties entry="OSGI-INF/topn.properties"/>
 	
 	<service>

@@ -1,21 +1,21 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <metatype:MetaData xmlns:metatype="http://www.osgi.org/xmlns/metatype/v1.0.0">
-	<OCD name="Extract Top N Results" id="edu.iu.scipolicy.filtering.topn.TopNAlgorithm.OCD"
+	<OCD name="Extract Top N Results" id="edu.iu.sci2.filtering.topn.TopNAlgorithm.OCD"
 		 description="Takes a table and returns the top n rows by some sorting criteria ">
 		<AD name="Number of rows to keep (N)" id="topN" type="Integer" description="How many of the top rows should we keep (first 10, 20?)" default="1"/>
 		<AD name="Column to sort by" id="columnToSortBy" type="String" description="Which column should the rows be sorted by?" default="AWARDED_AMOUNT_TO_DATE"/>
 		<AD name="Sort in descending order" id="isDescending" type="Boolean" description="When choosing the top n rows, should the rows be ranked in descending or ascending order? Default (checked) is descending." default="true"/>
 	</OCD>
-	<Designate pid="edu.iu.scipolicy.filtering.topn.TopNAlgorithm">
-		<Object ocdref="edu.iu.scipolicy.filtering.topn.TopNAlgorithm.OCD" />
+	<Designate pid="edu.iu.sci2.filtering.topn.TopNAlgorithm">
+		<Object ocdref="edu.iu.sci2.filtering.topn.TopNAlgorithm.OCD" />
 	</Designate>
-	<OCD name="Extract Top N% Results" id="edu.iu.scipolicy.filtering.topnpercent.TopNPercentAlgorithm.OCD"
+	<OCD name="Extract Top N% Results" id="edu.iu.sci2.filtering.topnpercent.TopNPercentAlgorithm.OCD"
 		 description="Takes a table and returns the top n rows by some sorting criteria ">
 		<AD name="Percentage of rows to keep (N%)" id="topNPercent" type="Integer" description="What percentage of the top rows should we keep (first 10%, 20%?)" default="10"/>
 		<AD name="Column to sort by" id="columnToSortBy" type="String" description="Which column should the rows be sorted by?" default="AWARDED_AMOUNT_TO_DATE"/>
 		<AD name="Sort in descending order" id="isDescending" type="Boolean" description="When choosing the top n rows, should the rows be ranked in descending or ascending order? Default (checked) is descending." default="true"/>
 	</OCD>
-	<Designate pid="edu.iu.scipolicy.filtering.topnpercent.TopNPercentAlgorithm">
-		<Object ocdref="edu.iu.scipolicy.filtering.topnpercent.TopNPercentAlgorithm.OCD" />
+	<Designate pid="edu.iu.sci2.filtering.topnpercent.TopNPercentAlgorithm">
+		<Object ocdref="edu.iu.sci2.filtering.topnpercent.TopNPercentAlgorithm.OCD" />
 	</Designate>
 </metatype:MetaData>

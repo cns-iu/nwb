@@ -4,7 +4,7 @@ Bundle-Name: NSF Reader/Validator
 Bundle-SymbolicName: edu.iu.sci2.converter.nsf.db_to_prefuse
 Bundle-Version: 0.0.1
 Bundle-ClassPath: .
-Import-Package: edu.iu.scipolicy.utilities.nsf,
+Import-Package: edu.iu.sci2.utilities.nsf,
  org.cishell.framework,
  org.cishell.framework.algorithm;version="1.0.0",
  org.cishell.framework.data;version="1.0.0",

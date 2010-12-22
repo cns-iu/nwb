@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <metatype:MetaData xmlns:metatype="http://www.osgi.org/xmlns/metatype/v1.0.0">
-	<OCD name="Congressional District Geocoder" id="edu.iu.scipolicy.preprocessing.zip2district.ZipToDistrictAlgorithm.OCD"
+	<OCD name="Congressional District Geocoder" id="edu.iu.sci2.preprocessing.zip2district.ZipToDistrictAlgorithm.OCD"
 		 description="Converts U.S. ZIP codes to congressional districts">
 		<AD name="Place Name Column" id="zip_code_column" type="String" description="Find the congressional districts for the ZIP codes in this column" default=""/>
 	</OCD>
-	<Designate pid="edu.iu.scipolicy.preprocessing.zip2district.ZipToDistrictAlgorithm">
-		<Object ocdref="edu.iu.scipolicy.preprocessing.zip2district.ZipToDistrictAlgorithm.OCD" />
+	<Designate pid="edu.iu.sci2.preprocessing.zip2district.ZipToDistrictAlgorithm">
+		<Object ocdref="edu.iu.sci2.preprocessing.zip2district.ZipToDistrictAlgorithm.OCD" />
 	</Designate>
 </metatype:MetaData>

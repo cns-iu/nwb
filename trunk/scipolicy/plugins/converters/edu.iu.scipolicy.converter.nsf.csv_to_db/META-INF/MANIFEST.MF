@@ -5,7 +5,7 @@ Bundle-SymbolicName: edu.iu.sci2.converter.nsf.csv_to_db
 Bundle-Version: 0.0.1
 Bundle-ClassPath: .
 Import-Package: au.com.bytecode.opencsv,
- edu.iu.scipolicy.utilities.nsf,
+ edu.iu.sci2.utilities.nsf,
  org.cishell.framework,
  org.cishell.framework.algorithm;version="1.0.0",
  org.cishell.framework.data;version="1.0.0",

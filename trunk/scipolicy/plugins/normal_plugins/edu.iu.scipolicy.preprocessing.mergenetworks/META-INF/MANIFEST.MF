@@ -1,7 +1,7 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: Minimum Spanning Tree based Pathfinder Network Scaling Implementation
-Bundle-SymbolicName: edu.iu.scipolicy.preprocessing.mergenetworks
+Bundle-SymbolicName: edu.iu.sci2.preprocessing.mergenetworks
 Bundle-Version: 1.0.0
 Bundle-ClassPath: .
 Bundle-Localization: plugin

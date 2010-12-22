@@ -6,7 +6,7 @@ Bundle-Version: 0.0.1
 Import-Package: au.com.bytecode.opencsv,
  com.sun.xml.bind.v2,
  edu.iu.nwb.converter.prefusecsv.reader,
- edu.iu.scipolicy.model.geocode,
+ edu.iu.sci2.model.geocode,
  javax.xml.bind,
  javax.xml.bind.annotation,
  javax.xml.stream,

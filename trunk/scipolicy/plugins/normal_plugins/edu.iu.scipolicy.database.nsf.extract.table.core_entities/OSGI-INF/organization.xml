@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<component name="edu.iu.scipolicy.database.nsf.extract.table.core_entities.ExtractOrganizations.component" immediate="false">
+<component name="edu.iu.sci2.database.nsf.extract.table.core_entities.ExtractOrganizations.component" immediate="false">
 	<implementation class="edu.iu.cns.database.extract.generic.ExtractTableWithQueryFactory"/>
 	<properties entry="OSGI-INF/organization.properties"/>
 	

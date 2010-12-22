@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <metatype:MetaData xmlns:metatype="http://www.osgi.org/xmlns/metatype/v1.0.0">
-	<OCD name="Extract Author Citation Network" id="edu.iu.scipolicy.database.isi.extract.network.citation.author.ISIExtractAuthorCitationNetworkAlgorithm.OCD"
+	<OCD name="Extract Author Citation Network" id="edu.iu.sci2.database.isi.extract.network.citation.author.ISIExtractAuthorCitationNetworkAlgorithm.OCD"
 		 description="This algorithm extracts an Author to Author citation network from an ISI database. ">
 	</OCD>
-	<Designate pid="edu.iu.scipolicy.database.isi.extract.network.citation.author.ISIExtractAuthorCitationNetworkAlgorithm">
-		<Object ocdref="edu.iu.scipolicy.database.isi.extract.network.citation.author.ISIExtractAuthorCitationNetworkAlgorithm.OCD" />
+	<Designate pid="edu.iu.sci2.database.isi.extract.network.citation.author.ISIExtractAuthorCitationNetworkAlgorithm">
+		<Object ocdref="edu.iu.sci2.database.isi.extract.network.citation.author.ISIExtractAuthorCitationNetworkAlgorithm.OCD" />
 	</Designate>
 </metatype:MetaData>

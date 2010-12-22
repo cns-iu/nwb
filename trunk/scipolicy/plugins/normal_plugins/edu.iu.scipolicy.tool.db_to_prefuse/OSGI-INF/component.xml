@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<component name="edu.iu.scipolicy.tool.db_to_prefuse.DbToPrefuseAlgorithm.component" immediate="false">
-	<implementation class="edu.iu.scipolicy.tool.db_to_prefuse.DbToPrefuseAlgorithmFactory"/>
+<component name="edu.iu.sci2.tool.db_to_prefuse.DbToPrefuseAlgorithm.component" immediate="false">
+	<implementation class="edu.iu.sci2.tool.db_to_prefuse.DbToPrefuseAlgorithmFactory"/>
 	<properties entry="OSGI-INF/algorithm.properties"/>
 	
 	<service>

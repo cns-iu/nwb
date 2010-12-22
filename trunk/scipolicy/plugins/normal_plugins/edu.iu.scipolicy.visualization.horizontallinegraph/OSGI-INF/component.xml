@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<component name="edu.iu.scipolicy.visualization.horizontallinegraph.HorizontalLineGraphAlgorithm.component" immediate="false">
-	<implementation class="edu.iu.scipolicy.visualization.horizontallinegraph.HorizontalLineGraphAlgorithmFactory"/>
+<component name="edu.iu.sci2.visualization.horizontallinegraph.HorizontalLineGraphAlgorithm.component" immediate="false">
+	<implementation class="edu.iu.sci2.visualization.horizontallinegraph.HorizontalLineGraphAlgorithmFactory"/>
 	<properties entry="OSGI-INF/algorithm.properties"/>
 	
 	<service>

@@ -1,6 +1,6 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
-Bundle-Name: edu.iu.scipolicy.database.nsf.extract.network.copi
+Bundle-Name: edu.iu.sci2.database.nsf.extract.network.copi
 Bundle-SymbolicName: edu.iu.sci2.database.nsf.extract.network.copi
 Bundle-Version: 0.0.1
 Bundle-ClassPath: .

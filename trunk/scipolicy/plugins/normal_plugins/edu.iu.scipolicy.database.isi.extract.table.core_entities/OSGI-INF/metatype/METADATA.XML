@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <metatype:MetaData xmlns:metatype="http://www.osgi.org/xmlns/metatype/v1.0.0">
-	<OCD name="Extract Authors" id="edu.iu.scipolicy.database.isi.extract.table.core_entities.ExtractAuthorsAlgorithm.OCD"
+	<OCD name="Extract Authors" id="edu.iu.sci2.database.isi.extract.table.core_entities.ExtractAuthorsAlgorithm.OCD"
 		 description="Extracts the table of authors from an ISI database ">
 	</OCD>
-	<Designate pid="edu.iu.scipolicy.database.isi.extract.table.core_entities.ExtractAuthorsAlgorithm">
-		<Object ocdref="edu.iu.scipolicy.database.isi.extract.table.core_entities.ExtractAuthorsAlgorithm.OCD" />
+	<Designate pid="edu.iu.sci2.database.isi.extract.table.core_entities.ExtractAuthorsAlgorithm">
+		<Object ocdref="edu.iu.sci2.database.isi.extract.table.core_entities.ExtractAuthorsAlgorithm.OCD" />
 	</Designate>
 </metatype:MetaData>

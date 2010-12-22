@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<component name="edu.iu.scipolicy.preprocessing.geocoder.GeocoderAlgorithm.component" immediate="false">
-	<implementation class="edu.iu.scipolicy.preprocessing.geocoder.coders.generic.GenericGeocoderFactory"/>
+<component name="edu.iu.sci2.preprocessing.geocoder.GeocoderAlgorithm.component" immediate="false">
+	<implementation class="edu.iu.sci2.preprocessing.geocoder.coders.generic.GenericGeocoderFactory"/>
 	<properties entry="OSGI-INF/algorithm.properties"/>
 	
 	<service>

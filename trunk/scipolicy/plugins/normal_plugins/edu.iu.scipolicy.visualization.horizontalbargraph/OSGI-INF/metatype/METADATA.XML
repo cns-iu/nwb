@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <metatype:MetaData xmlns:metatype="http://www.osgi.org/xmlns/metatype/v1.0.0">
-	<OCD name="Horizontal Bar Graph" id="edu.iu.scipolicy.visualization.horizontalbargraph.HorizontalBarGraphAlgorithm.OCD"
+	<OCD name="Horizontal Bar Graph" id="edu.iu.sci2.visualization.horizontalbargraph.HorizontalBarGraphAlgorithm.OCD"
 		 description="Takes tabular data and generates PostScript for a horizontal bar graph.">
 		 <AD name="Label" id="label" type="String" description="The field used to label the bar lines" default="TITLE"/>
 		 <AD name="Start Date" id="start_date" type="String" description="The field used for the starting date" default="START_DATE"/>
@@ -21,7 +21,7 @@
 		 <AD name="Colorized by" id="colorized_by" type="String" description="The field used to color the bar lines" default=""/>
 		 <AD name="Scale to Fit an 8.5x11 page?" id="scale_to_fit_page" type="Boolean" description="When this is checked, the resulting visualization will be scaled to fit a page." default="true"/>
 	</OCD>
-	<Designate pid="edu.iu.scipolicy.visualization.horizontalbargraph.HorizontalBarGraphAlgorithm">
-		<Object ocdref="edu.iu.scipolicy.visualization.horizontalbargraph.HorizontalBarGraphAlgorithm.OCD" />
+	<Designate pid="edu.iu.sci2.visualization.horizontalbargraph.HorizontalBarGraphAlgorithm">
+		<Object ocdref="edu.iu.sci2.visualization.horizontalbargraph.HorizontalBarGraphAlgorithm.OCD" />
 	</Designate>
 </metatype:MetaData>

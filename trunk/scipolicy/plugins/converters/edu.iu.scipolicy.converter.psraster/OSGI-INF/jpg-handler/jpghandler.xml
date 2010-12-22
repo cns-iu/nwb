@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<component name="edu.iu.scipolicy.converter.psraster.jpg.jpghandler.JPGHandler.component" immediate="false">
-	<implementation class="edu.iu.scipolicy.converter.psraster.jpg.jpghandler.JPGHandlerFactory"/>
+<component name="edu.iu.sci2.converter.psraster.jpg.jpghandler.JPGHandler.component" immediate="false">
+	<implementation class="edu.iu.sci2.converter.psraster.jpg.jpghandler.JPGHandlerFactory"/>
 	<properties entry="OSGI-INF/jpg-handler/jpghandler.properties"/>
 	
 	<service>

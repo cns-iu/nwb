@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<component name="edu.iu.scipolicy.visualization.geomaps.GeoMapsRegionsFactory.component" immediate="false">
-	<implementation class="edu.iu.scipolicy.visualization.geomaps.GeoMapsRegionsFactory"/>
+<component name="edu.iu.sci2.visualization.geomaps.GeoMapsRegionsFactory.component" immediate="false">
+	<implementation class="edu.iu.sci2.visualization.geomaps.GeoMapsRegionsFactory"/>
 	<properties entry="OSGI-INF/regions.properties"/>
 	<reference name="LOG" interface="org.osgi.service.log.LogService"/>
 	<reference name="MTS" interface="org.osgi.service.metatype.MetaTypeService"/>

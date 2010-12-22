@@ -15,4 +15,4 @@ Import-Package: org.cishell.framework.algorithm;version="1.0.0",
  prefuse.data.util,
  prefuse.util,
  prefuse.util.collections
-Export-Package: edu.iu.scipolicy.utilities
+Export-Package: edu.iu.sci2.utilities

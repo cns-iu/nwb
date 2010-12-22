@@ -1,6 +1,6 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
-Bundle-Name: edu.iu.scipolicy.database.isi.extract.network.cocitation.author.core
+Bundle-Name: edu.iu.sci2.database.isi.extract.network.cocitation.author.core
 Bundle-SymbolicName: edu.iu.sci2.database.isi.extract.network.cocitation.author.core
 Bundle-Version: 0.0.1
 Bundle-ClassPath: .

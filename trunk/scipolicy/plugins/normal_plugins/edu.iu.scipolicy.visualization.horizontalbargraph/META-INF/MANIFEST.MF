@@ -1,6 +1,6 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
-Bundle-Name: edu.iu.scipolicy.visualization.horizontalbargraph
+Bundle-Name: edu.iu.sci2.visualization.horizontalbargraph
 Bundle-SymbolicName: edu.iu.sci2.visualization.horizontalbargraph
 Bundle-Version: 0.0.1
 Bundle-ClassPath: .

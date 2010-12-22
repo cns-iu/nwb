@@ -1,6 +1,6 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
-Bundle-Name: edu.iu.scipolicy.isi.extract.table.entities_by_year
+Bundle-Name: edu.iu.sci2.isi.extract.table.entities_by_year
 Bundle-SymbolicName: edu.iu.sci2.database.isi.extract.table.entities_by_year
 Bundle-Version: 0.0.1
 Bundle-ClassPath: .

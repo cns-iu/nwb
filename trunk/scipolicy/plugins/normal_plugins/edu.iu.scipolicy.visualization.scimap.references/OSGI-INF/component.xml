@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<component name="edu.iu.scipolicy.visualization.scimap.references.MapReferences.component" immediate="false">
-	<implementation class="edu.iu.scipolicy.visualization.scimap.references.MapReferencesFactory"/>
+<component name="edu.iu.sci2.visualization.scimap.references.MapReferences.component" immediate="false">
+	<implementation class="edu.iu.sci2.visualization.scimap.references.MapReferencesFactory"/>
 	<properties entry="OSGI-INF/algorithm.properties"/>
 	<reference name="LOG" interface="org.osgi.service.log.LogService"/>
 	<reference name="MTS" interface="org.osgi.service.metatype.MetaTypeService"/>

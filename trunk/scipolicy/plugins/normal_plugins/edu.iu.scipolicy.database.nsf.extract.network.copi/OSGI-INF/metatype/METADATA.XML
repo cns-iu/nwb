@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <metatype:MetaData xmlns:metatype="http://www.osgi.org/xmlns/metatype/v1.0.0">
-	<OCD name="Extract Co-PI Network" id="edu.iu.scipolicy.database.nsf.extract.network.copi.OCD"
+	<OCD name="Extract Co-PI Network" id="edu.iu.sci2.database.nsf.extract.network.copi.OCD"
 		 description="Extract the co-PI network from this database.">
 	</OCD>
-	<Designate pid="edu.iu.scipolicy.database.nsf.extract.network.copi">
-		<Object ocdref="edu.iu.scipolicy.database.nsf.extract.network.copi.OCD" />
+	<Designate pid="edu.iu.sci2.database.nsf.extract.network.copi">
+		<Object ocdref="edu.iu.sci2.database.nsf.extract.network.copi.OCD" />
 	</Designate>
 </metatype:MetaData>

@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <metatype:MetaData xmlns:metatype="http://www.osgi.org/xmlns/metatype/v1.0.0">
-	<OCD name="PostScript Viewer" id="edu.iu.scipolicy.visualization.imageviewer.ImageViewer.OCD"
+	<OCD name="PostScript Viewer" id="edu.iu.sci2.visualization.imageviewer.ImageViewer.OCD"
 		 description="This algorithm displays images.">
 	</OCD>
-	<Designate pid="edu.iu.scipolicy.visualization.imageviewer.ImageViewer">
-		<Object ocdref="edu.iu.scipolicy.visualization.imageviewer.ImageViewer.OCD" />
+	<Designate pid="edu.iu.sci2.visualization.imageviewer.ImageViewer">
+		<Object ocdref="edu.iu.sci2.visualization.imageviewer.ImageViewer.OCD" />
 	</Designate>
 </metatype:MetaData>

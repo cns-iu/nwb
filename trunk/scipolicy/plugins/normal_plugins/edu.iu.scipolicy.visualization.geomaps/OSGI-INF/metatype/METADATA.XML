@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <metatype:MetaData xmlns:metatype="http://www.osgi.org/xmlns/metatype/v1.0.0">
-	<OCD name="Geo Maps (region coloring)" id="edu.iu.scipolicy.visualization.geomaps.GeoMapsRegionsFactory.OCD"
+	<OCD name="Geo Maps (region coloring)" id="edu.iu.sci2.visualization.geomaps.GeoMapsRegionsFactory.OCD"
 		 description="Creates a map with colored-region annotations.  Regions are identified and colored according to columns in the input table.  The table data can be log-scaled before processing.">
 		<AD name="Map" id="shapefile" type="String" description="Map to annotate" default="Mutate"/>
 		<AD name="Projection" id="projection" type="String" description="Mercator is a standard entire-globe projection (though it distorts the size and shape of large objects, especially near the poles).  Albers, which preserves area, and Lambert, which preserves angles (or shapes) are recommended for state maps" default="Mutate"/>
@@ -10,11 +10,11 @@
 		<AD name="Color Scaling" id="featureColorScaling" type="String" description="How to scale the color attribute (linear implies no rescaling)" default="Mutate"/>
 		<AD name="Color Range" id="featureColorRange" type="String" description="Two colors that the region colors should range between, from least to greatest" default="Mutate"/>
 	</OCD>
-	<Designate pid="edu.iu.scipolicy.visualization.geomaps.GeoMapsRegionsFactory">
-		<Object ocdref="edu.iu.scipolicy.visualization.geomaps.GeoMapsRegionsFactory.OCD"/>
+	<Designate pid="edu.iu.sci2.visualization.geomaps.GeoMapsRegionsFactory">
+		<Object ocdref="edu.iu.sci2.visualization.geomaps.GeoMapsRegionsFactory.OCD"/>
 	</Designate>
 	
-	<OCD name="Geo Maps (circles)" id="edu.iu.scipolicy.visualization.geomaps.GeoMapsCirclesFactory.OCD"
+	<OCD name="Geo Maps (circles)" id="edu.iu.sci2.visualization.geomaps.GeoMapsCirclesFactory.OCD"
 		 description="Creates a map with circle annotations.  Circles are positioned, sized, and colored (inside and outside) according to columns in the input table. Either or both kinds of coloring can also be disabled.  The table data for each dimension can be log-scaled before processing.">
 		<AD name="Map" id="shapefile" type="String" description="Map to annotate" default="Mutate"/>
 		<AD name="Projection" id="projection" type="String" description="Mercator is a standard entire-globe projection (though it distorts the size and shape of large objects, especially near the poles).  Albers, which preserves area, and Lambert, which preserves angles (or shapes) are recommended for state maps" default="Mutate"/>
@@ -31,8 +31,8 @@
 		<AD name="Interior Color Scaling" id="innerColorScaling" type="String" description="How to scale the inner color attribute (linear implies no rescaling)" default="Mutate"/>
 		<AD name="Interior Color Range" id="innerColorRange" type="String" description="Two colors that the color should range between, from least to greatest" default="Mutate"/>
 	</OCD>
-	<Designate pid="edu.iu.scipolicy.visualization.geomaps.GeoMapsCirclesFactory">
-		<Object ocdref="edu.iu.scipolicy.visualization.geomaps.GeoMapsCirclesFactory.OCD"/>
+	<Designate pid="edu.iu.sci2.visualization.geomaps.GeoMapsCirclesFactory">
+		<Object ocdref="edu.iu.sci2.visualization.geomaps.GeoMapsCirclesFactory.OCD"/>
 	</Designate>
 </metatype:MetaData>
 
