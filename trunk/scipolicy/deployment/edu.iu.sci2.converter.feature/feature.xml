@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <feature
-      id="edu.iu.scipolicy.converter.feature"
-      label="SciPolicy Data Format Converters"
+      id="edu.iu.sci2.converter.feature"
+      label="Sci2 Data Format Converters"
       version="1.0.0"
-      provider-name="SciPolicy Team">
+      provider-name="Sci2 Team">
 
    <description>
-      The tool supports various file formats for the SciPolicy tool.
+      The tool supports various file formats for the Sci2 tool.
 
 The tool deliver the following data/file converters:
    </description>
@@ -16,7 +16,7 @@ The tool deliver the following data/file converters:
    </copyright>
 
    <license url="http://www.apache.org/licenses/LICENSE-2.0">
-      SciPolicy Tool
+      Sci2 Tool
 Copyright 2009 Indiana University
 Licensed under the Apache License, Version 2.0 (the &quot;License&quot;);
 you may not use this file except in compliance with the License.
@@ -181,28 +181,28 @@ Dr. Katy Borner (katy@indiana.edu)
          
 
    <plugin
-         id="edu.iu.scipolicy.converter.psraster"
+         id="edu.iu.sci2.converter.psraster"
          download-size="0"
          install-size="0"
          version="0.0.1"
          unpack="false"/>
 
    <plugin
-         id="edu.iu.scipolicy.converter.nsf.csv_to_db"
+         id="edu.iu.sci2.converter.nsf.csv_to_db"
          download-size="0"
          install-size="0"
          version="0.0.1"
          unpack="false"/>
 
    <plugin
-         id="edu.iu.scipolicy.converter.nsf.db_to_prefuse"
+         id="edu.iu.sci2.converter.nsf.db_to_prefuse"
          download-size="0"
          install-size="0"
          version="0.0.1"
          unpack="false"/>
 
    <plugin
-         id="edu.iu.scipolicy.utilities"
+         id="edu.iu.sci2.utilities"
          download-size="0"
          install-size="0"
          version="0.0.0"
@@ -269,7 +269,7 @@ Dr. Katy Borner (katy@indiana.edu)
          unpack="false"/>
 
 	<plugin
-         id="edu.iu.scipolicy.database.isi.load"
+         id="edu.iu.sci2.database.isi.load"
          download-size="0"
          install-size="0"
          version="0.0.1"
