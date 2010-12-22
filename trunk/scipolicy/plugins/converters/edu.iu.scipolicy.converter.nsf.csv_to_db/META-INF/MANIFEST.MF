@@ -1,7 +1,7 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: NSF Reader/Validator
-Bundle-SymbolicName: edu.iu.scipolicy.converter.nsf.csv_to_db
+Bundle-SymbolicName: edu.iu.sci2.converter.nsf.csv_to_db
 Bundle-Version: 0.0.1
 Bundle-ClassPath: .
 Import-Package: au.com.bytecode.opencsv,

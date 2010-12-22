@@ -1,7 +1,7 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: NSF Reader/Validator
-Bundle-SymbolicName: edu.iu.scipolicy.converter.nsf.db_to_prefuse
+Bundle-SymbolicName: edu.iu.sci2.converter.nsf.db_to_prefuse
 Bundle-Version: 0.0.1
 Bundle-ClassPath: .
 Import-Package: edu.iu.scipolicy.utilities.nsf,

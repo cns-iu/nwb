@@ -1,7 +1,7 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: Extract Tables from Database
-Bundle-SymbolicName: edu.iu.scipolicy.tool.db_to_prefuse
+Bundle-SymbolicName: edu.iu.sci2.tool.db_to_prefuse
 Bundle-Version: 0.0.1
 Bundle-ClassPath: .
 Import-Package: edu.iu.scipolicy.utilities.nsf,

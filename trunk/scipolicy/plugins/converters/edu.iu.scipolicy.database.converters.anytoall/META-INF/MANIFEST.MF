@@ -1,7 +1,7 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: Temporary Converters from Specific Types to db:any
-Bundle-SymbolicName: edu.iu.scipolicy.database.converters.anytoall
+Bundle-SymbolicName: edu.iu.sci2.database.converters.anytoall
 Bundle-Version: 0.0.1
 Bundle-ClassPath: .
 Import-Package: org.cishell.framework.algorithm;version="1.0.0",
