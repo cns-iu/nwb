@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<component name="edu.iu.scipolicy.database.isi.merge.document_source.CreateDocumentSourceMergingTable.component" immediate="false">
+<component name="edu.iu.sci2.database.isi.merge.document_source.CreateDocumentSourceMergingTable.component" immediate="false">
 	<implementation class="edu.iu.cns.database.extract.generic.ExtractTableWithQueryFactory"/>
 	<properties entry="OSGI-INF/documentSourceMergeTable.properties"/>
 	

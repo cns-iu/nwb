@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<component name="edu.iu.scipolicy.database.isi.load.converter.ISIDatabaseToAnyDatabaseConverterAlgorithm.component" immediate="false">
-	<implementation class="edu.iu.scipolicy.database.isi.load.converter.ISIDatabaseToAnyDatabaseConverterAlgorithmFactory"/>
+<component name="edu.iu.sci2.database.isi.load.converter.ISIDatabaseToAnyDatabaseConverterAlgorithm.component" immediate="false">
+	<implementation class="edu.iu.sci2.database.isi.load.converter.ISIDatabaseToAnyDatabaseConverterAlgorithmFactory"/>
 	<properties entry="OSGI-INF/converter.properties"/>
 	<reference name="LOG" interface="org.osgi.service.log.LogService"/>
 	<reference name="MTS" interface="org.osgi.service.metatype.MetaTypeService"/>

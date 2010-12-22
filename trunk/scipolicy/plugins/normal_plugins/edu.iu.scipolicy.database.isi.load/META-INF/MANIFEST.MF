@@ -1,6 +1,6 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
-Bundle-Name: edu.iu.scipolicy.loader.isi.db
+Bundle-Name: edu.iu.sci2.loader.isi.db
 Bundle-SymbolicName: edu.iu.sci2.database.isi.load
 Bundle-Version: 0.0.1
 Bundle-ClassPath: .
@@ -30,10 +30,10 @@ Import-Package: edu.iu.cns.database.load.framework,
  prefuse.util.collections
 X-AutoStart: true
 Service-Component: OSGI-INF/isi_load.xml, OSGI-INF/converter.xml
-Export-Package: edu.iu.scipolicy.database.isi.load,
- edu.iu.scipolicy.database.isi.load.model.entity,
- edu.iu.scipolicy.database.isi.load.model.entity.relationship,
- edu.iu.scipolicy.database.isi.load.utilities,
- edu.iu.scipolicy.database.isi.load.utilities.exception,
- edu.iu.scipolicy.database.isi.load.utilities.parser,
- edu.iu.scipolicy.database.isi.load.utilities.parser.exception
+Export-Package: edu.iu.sci2.database.isi.load,
+ edu.iu.sci2.database.isi.load.model.entity,
+ edu.iu.sci2.database.isi.load.model.entity.relationship,
+ edu.iu.sci2.database.isi.load.utilities,
+ edu.iu.sci2.database.isi.load.utilities.exception,
+ edu.iu.sci2.database.isi.load.utilities.parser,
+ edu.iu.sci2.database.isi.load.utilities.parser.exception

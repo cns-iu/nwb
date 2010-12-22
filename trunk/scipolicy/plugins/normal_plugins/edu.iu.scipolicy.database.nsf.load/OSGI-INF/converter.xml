@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<component name="edu.iu.scipolicy.database.nsf.load.converter.NSFDatabaseToAnyDatabaseConverterAlgorithm.component" immediate="false">
-	<implementation class="edu.iu.scipolicy.database.nsf.load.converter.NSFDatabaseToAnyDatabaseConverterAlgorithmFactory"/>
+<component name="edu.iu.sci2.database.nsf.load.converter.NSFDatabaseToAnyDatabaseConverterAlgorithm.component" immediate="false">
+	<implementation class="edu.iu.sci2.database.nsf.load.converter.NSFDatabaseToAnyDatabaseConverterAlgorithmFactory"/>
 	<properties entry="OSGI-INF/converter.properties"/>
 	<reference name="LOG" interface="org.osgi.service.log.LogService"/>
 	<reference name="MTS" interface="org.osgi.service.metatype.MetaTypeService"/>

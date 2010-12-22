@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<component name="edu.iu.scipolicy.database.isi.merge.document_source.MergeDocumentSourcesAlgorithm.component" immediate="false">
-	<implementation class="edu.iu.scipolicy.database.isi.merge.document_source.MergeDocumentSourcesAlgorithmFactory"/>
+<component name="edu.iu.sci2.database.isi.merge.document_source.MergeDocumentSourcesAlgorithm.component" immediate="false">
+	<implementation class="edu.iu.sci2.database.isi.merge.document_source.MergeDocumentSourcesAlgorithmFactory"/>
 	<properties entry="OSGI-INF/document_source.properties"/>
 	
 	<service>
