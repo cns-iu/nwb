@@ -33,7 +33,7 @@ package edu.iu.cns.visualization.utility;
 // * @author Yannick Saillet
 // */
 //
-//package edu.iu.scipolicy.visualization.horizontalbargraph.visualizationgeneration.utility;
+//package edu.iu.sci2.visualization.horizontalbargraph.visualizationgeneration.utility;
 //
 //import java.awt.Graphics2D;
 //import java.awt.image.BufferedImage;
