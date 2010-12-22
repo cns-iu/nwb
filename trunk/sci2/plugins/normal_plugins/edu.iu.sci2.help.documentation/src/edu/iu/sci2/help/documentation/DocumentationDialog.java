@@ -16,17 +16,17 @@ import org.eclipse.swt.widgets.Shell;
 //the important part of this plugin. 
 //A dialog box which links to various online documentation for Scipolicy.
 public class DocumentationDialog extends Dialog {
-	private static final String MAIN_DOC_PAGE_TEXT = "<A>Main Sci^2 Tool Website</A>";
-	private static final String MAIN_DOC_PAGE_URL = "http://sci.slis.indiana.edu/";
+	private static final String MAIN_DOC_PAGE_TEXT = "<A>Main Sci2 Tool Website</A>";
+	private static final String MAIN_DOC_PAGE_URL = "https://sci2.cns.iu.edu/user";
 
 	private static final String ALL_ALGORITHMS_DOC_TEXT = "<A>Algorithms Documentation</A>";
-	private static final String ALL_ALGORITHMS_DOC_URL = "https://nwb.slis.indiana.edu/community/?n=Algorithms.HomePage";
+	private static final String ALL_ALGORITHMS_DOC_URL = "http://wiki.slis.indiana.edu:8080/display/ALGDOC";
 
 	private static final String ALL_SUPPORTED_FORMATS_DOC_TEXT = "<A>Supported Formats Documentation</A>";
-	private static final String ALL_SUPPORTED_FORMATS_DOC_URL = "https://nwb.slis.indiana.edu/community/?n=DataFormats.HomePage";
+	private static final String ALL_SUPPORTED_FORMATS_DOC_URL = "http://wiki.slis.indiana.edu:8080/display/ALGDOC/Data+Formats";
 	
-	private static final String TUTORIALS_DOC_TEXT = "<A>Tutorials on NWB Community Wiki</A>";
-	private static final String TUTORIALS_DOC_URL = "https://nwb.slis.indiana.edu/community/?n=Tutorials.HomePage";
+	private static final String TUTORIALS_DOC_TEXT = "<A>Sci2 Tutorials</A>";
+	private static final String TUTORIALS_DOC_URL = "http://wiki.slis.indiana.edu:8080/display/SCI2TUTORIAL";
 	
 	Shell shell = null;
 
