@@ -1,7 +1,7 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: edu.iu.scipolicy.loader.isi.db
-Bundle-SymbolicName: edu.iu.scipolicy.database.isi.load
+Bundle-SymbolicName: edu.iu.sci2.database.isi.load
 Bundle-Version: 0.0.1
 Bundle-ClassPath: .
 Import-Package: edu.iu.cns.database.load.framework,

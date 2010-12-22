@@ -1,7 +1,7 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: NSF Loader
-Bundle-SymbolicName: edu.iu.scipolicy.database.nsf.load
+Bundle-SymbolicName: edu.iu.sci2.database.nsf.load
 Bundle-Version: 1.0.0
 Bundle-ClassPath: .
 Import-Package: au.com.bytecode.opencsv,
